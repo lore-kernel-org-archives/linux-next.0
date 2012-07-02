@@ -1,55 +1,75 @@
-From: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Request VFIO inclusion in linux-next
-Date: Sun, 01 Jul 2012 22:14:20 -0600
-Message-ID: <1341202460.1207.384.camel@bling.home>
-References: <1340686552.1207.128.camel@bling.home>
-	<20120627123733.GA5449@mwanda> <4FF11855.2060605@ozlabs.ru>
+From: Lin Ming <ming.m.lin@intel.com>
+Subject: Re: linux-next: build warnings after merge of the libata tree
+Date: Mon, 02 Jul 2012 12:31:19 +0800
+Message-ID: <1341203479.31272.4.camel@minggr>
+References: <20120702131914.510857dc84182e95641e7e97@canb.auug.org.au>
+	 <1341199318.31272.2.camel@minggr>
+	 <20120702135429.0d17c1f4fe46828bd29b3458@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4FF11855.2060605-sLpHqDYs0B2HXe+LvDLADg@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Alexey Kardashevskiy <aik-sLpHqDYs0B2HXe+LvDLADg@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, kvm <kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, qemu-devel <qemu-devel-qX2TKyscuCcdnm+yROfE0A@public.gmane.org>, chrisw <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>, iommu <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, David Gibson <david-xT8FGy+AXnRB3Ne2BGzF6laj5H9X9Tb+@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga03.intel.com ([143.182.124.21]:12970 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750961Ab2GBEbW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Jul 2012 00:31:22 -0400
+In-Reply-To: <20120702135429.0d17c1f4fe46828bd29b3458@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jeff Garzik <jeff@garzik.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Holger Macht <holger@homac.de>
 
-On Mon, 2012-07-02 at 13:41 +1000, Alexey Kardashevskiy wrote:
-> On 27/06/12 22:37, Dan Carpenter wrote:
-> > On Mon, Jun 25, 2012 at 10:55:52PM -0600, Alex Williamson wrote:
-> >> Hi,
-> >>
-> >> VFIO has been kicking around for well over a year now and has been
-> >> posted numerous times for review.  The pre-requirements are finally
-> >> available in linux-next (or will be in the 20120626 build) so I'd like
-> >> to request a new branch be included in linux-next with a goal of being
-> >> accepted into v3.6.
-> >>
-> > 
-> > Could you run Sparse over the driver?
-> > http://lwn.net/Articles/205624/
-> > 
-> > It reports a bunch of endian problems.  Some are definitely bugs
-> > like:
-> > 	*prev |= cpu_to_le32((u32)epos << 20);
+On Mon, 2012-07-02 at 13:54 +1000, Stephen Rothwell wrote:
+> Hi Lin,
 > 
+> On Mon, 02 Jul 2012 11:21:58 +0800 Lin Ming <ming.m.lin@intel.com> wrote:
+> >
+> > Could you please send me your ppc64 .config?
+> > I'll do cross build on my x86 machine.
 > 
-> What is wrong here?
+> Please just look at the code added in drivers/ata/libata.h.  Hint: what
+> happens if CONFIG_ATA_ACPI is *not* defined?
+> 
 
-I believe the only thing wrong here was that prev was a u32* instead of
-a __le32*.  The new version in my tree has much better endian annotation
-after going through all the sparse errors.  The only bug I found in the
-cleanup was the handling of rbar.  It was missing the le32_to_cpu as we
-copied it out of vconfig.  This is later used with
-pci_user_write_config_dword, so it needs to be in native endian.
-Thanks,
+Hi Stephen,
 
-Alex
+Could you pick below fix?
+Thanks.
+
+>From cc270d0b3b132a37290db5fe3941361243540a18 Mon Sep 17 00:00:00 2001
+From: Lin Ming <ming.m.lin@intel.com>
+Date: Mon, 2 Jul 2012 12:20:39 +0800
+Subject: [PATCH] libata-acpi: add missing inlines in libata.h
+
+Adds inline for ata_acpi_unregister/ata_acpi_bind/ata_acpi_unbind
+in drivers/ata/libata.h for !CONFIG_ATA_ACPI to fix below warnings.
+
+warning: 'ata_acpi_unregister' defined but not used [-Wunused-function]
+warning: 'ata_acpi_bind' defined but not used [-Wunused-function]
+warning: 'ata_acpi_unbind' defined but not used [-Wunused-function]
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Lin Ming <ming.m.lin@intel.com>
+---
+ drivers/ata/libata.h |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
+index 44a7939..50e4dff 100644
+--- a/drivers/ata/libata.h
++++ b/drivers/ata/libata.h
+@@ -131,9 +131,9 @@ static inline void ata_acpi_on_disable(struct ata_device *dev) { }
+ static inline void ata_acpi_set_state(struct ata_port *ap,
+ 				      pm_message_t state) { }
+ static inline int ata_acpi_register(void) { return 0; }
+-static void ata_acpi_unregister(void) { }
+-static void ata_acpi_bind(struct ata_device *dev) { }
+-static void ata_acpi_unbind(struct ata_device *dev) { }
++static inline void ata_acpi_unregister(void) { }
++static inline void ata_acpi_bind(struct ata_device *dev) { }
++static inline void ata_acpi_unbind(struct ata_device *dev) { }
+ #endif
+ 
+ /* libata-scsi.c */
+-- 
+1.7.2.5
