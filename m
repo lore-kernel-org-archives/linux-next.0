@@ -1,31 +1,34 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for July 2 (crypto/hifn_795x)
-Date: Mon, 02 Jul 2012 09:27:30 -0700
-Message-ID: <4FF1CBF2.8060303@xenotime.net>
-References: <20120702172334.2618cae84cc57b4ec5a63ed7@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: mmotm 2012-06-29-17-00 uploaded
+Date: Mon, 2 Jul 2012 11:39:55 -0700
+Message-ID: <20120702113955.9f0d8dde.akpm@linux-foundation.org>
+References: <20120630000055.AF381A02DE@akpm.mtv.corp.google.com>
+	<4FF180D6.4090205@parallels.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20120702172334.2618cae84cc57b4ec5a63ed7@canb.auug.org.au>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54004 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753277Ab2GBSj4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jul 2012 14:39:56 -0400
+In-Reply-To: <4FF180D6.4090205@parallels.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Glauber Costa <glommer@parallels.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 
-On 07/02/2012 12:23 AM, Stephen Rothwell wrote:
+On Mon, 2 Jul 2012 15:07:02 +0400
+Glauber Costa <glommer@parallels.com> wrote:
 
-> Hi all,
+> On 06/30/2012 04:00 AM, akpm@linux-foundation.org wrote:
+> > * memcg-rename-config-variables.patch
+> > * memcg-rename-config-variables-fix.patch
+> > * memcg-rename-config-variables-fix-fix.patch
 > 
-> Changes since 20120629:
+> Hi Andrew,
+> 
+> Do you intend to fold those ?
 > 
 
-
-on i386:
-
-
-ERROR: "__divdi3" [drivers/crypto/hifn_795x.ko] undefined!
-
-
--- 
-~Randy
+yup.  That naming scheme says "remember to fold these".
