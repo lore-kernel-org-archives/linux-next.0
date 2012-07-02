@@ -1,53 +1,46 @@
-From: Lin Ming <ming.m.lin@intel.com>
-Subject: Re: linux-next: build warnings after merge of the libata tree
-Date: Mon, 02 Jul 2012 11:21:58 +0800
-Message-ID: <1341199318.31272.2.camel@minggr>
-References: <20120702131914.510857dc84182e95641e7e97@canb.auug.org.au>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
+Subject: Re: Request VFIO inclusion in linux-next
+Date: Mon, 02 Jul 2012 13:41:09 +1000
+Message-ID: <4FF11855.2060605@ozlabs.ru>
+References: <1340686552.1207.128.camel@bling.home> <20120627123733.GA5449@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=KOI8-R
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:15608 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750819Ab2GBDWB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Jul 2012 23:22:01 -0400
-In-Reply-To: <20120702131914.510857dc84182e95641e7e97@canb.auug.org.au>
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:34939 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751032Ab2GBDlS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Jul 2012 23:41:18 -0400
+Received: by dady13 with SMTP id y13so6819975dad.19
+        for <linux-next@vger.kernel.org>; Sun, 01 Jul 2012 20:41:17 -0700 (PDT)
+In-Reply-To: <20120627123733.GA5449@mwanda>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jeff Garzik <jeff@garzik.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Holger Macht <holger@homac.de>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>, iommu <iommu@lists.linux-foundation.org>, qemu-devel <qemu-devel@nongnu.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, David Gibson <david@gibson.dropbear.id.au>, chrisw <chrisw@sous-sol.org>, "Roedel, Joerg" <Joerg.Roedel@amd.com>, linux-next@vger.kernel.org
 
-On Mon, 2012-07-02 at 13:19 +1000, Stephen Rothwell wrote:
-> Hi Jeff,
+On 27/06/12 22:37, Dan Carpenter wrote:
+> On Mon, Jun 25, 2012 at 10:55:52PM -0600, Alex Williamson wrote:
+>> Hi,
+>>
+>> VFIO has been kicking around for well over a year now and has been
+>> posted numerous times for review.  The pre-requirements are finally
+>> available in linux-next (or will be in the 20120626 build) so I'd like
+>> to request a new branch be included in linux-next with a goal of being
+>> accepted into v3.6.
+>>
 > 
-> After merging the libata tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced these warnings:
+> Could you run Sparse over the driver?
+> http://lwn.net/Articles/205624/
 > 
-> drivers/ata/libata.h:134:13: warning: 'ata_acpi_unregister' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:135:13: warning: 'ata_acpi_bind' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:136:13: warning: 'ata_acpi_unbind' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:134:13: warning: 'ata_acpi_unregister' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:134:13: warning: 'ata_acpi_unregister' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:135:13: warning: 'ata_acpi_bind' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:136:13: warning: 'ata_acpi_unbind' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:135:13: warning: 'ata_acpi_bind' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:136:13: warning: 'ata_acpi_unbind' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:134:13: warning: 'ata_acpi_unregister' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:135:13: warning: 'ata_acpi_bind' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:136:13: warning: 'ata_acpi_unbind' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:134:13: warning: 'ata_acpi_unregister' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:135:13: warning: 'ata_acpi_bind' defined but not used [-Wunused-function]
-> drivers/ata/libata.h:136:13: warning: 'ata_acpi_unbind' defined but not used [-Wunused-function]
-> 
-> Introduced by commits 6b66d95895c1 ("libata: bind the Linux device tree
-> to the ACPI device tree") and 3bd46600a7a7 ("libata-acpi: add ata port
-> runtime D3Cold support").  Several "inline"s missing ...
-> 
+> It reports a bunch of endian problems.  Some are definitely bugs
+> like:
+> 	*prev |= cpu_to_le32((u32)epos << 20);
 
-Hi Stephen,
 
-Could you please send me your ppc64 .config?
-I'll do cross build on my x86 machine.
+What is wrong here?
 
-Thanks,
-Lin Ming
+
+
+-- 
+Alexey
