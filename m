@@ -1,36 +1,59 @@
-From: Jeff Garzik <jeff@garzik.org>
-Subject: Re: linux-next: build warnings after merge of the libata tree
-Date: Mon, 02 Jul 2012 02:11:52 -0400
-Message-ID: <4FF13BA8.5010407@garzik.org>
-References: <20120702131914.510857dc84182e95641e7e97@canb.auug.org.au> <1341199318.31272.2.camel@minggr> <20120702135429.0d17c1f4fe46828bd29b3458@canb.auug.org.au> <1341203479.31272.4.camel@minggr>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with Linus' tree
+Date: Mon, 2 Jul 2012 16:12:00 +1000
+Message-ID: <20120702161200.10c26ba2b57f9c7e493e85cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__2_Jul_2012_16_12_00_+1000_nkTJFC5yUq+xu0Tv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gh0-f174.google.com ([209.85.160.174]:36369 "EHLO
-	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932148Ab2GBGLz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jul 2012 02:11:55 -0400
-In-Reply-To: <1341203479.31272.4.camel@minggr>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60178 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932148Ab2GBGMM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jul 2012 02:12:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lin Ming <ming.m.lin@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Holger Macht <holger@homac.de>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tiejun Chen <tiejun.chen@windriver.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-On 07/02/2012 12:31 AM, Lin Ming wrote:
-> diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
-> index 44a7939..50e4dff 100644
-> --- a/drivers/ata/libata.h
-> +++ b/drivers/ata/libata.h
-> @@ -131,9 +131,9 @@ static inline void ata_acpi_on_disable(struct ata_device *dev) { }
->   static inline void ata_acpi_set_state(struct ata_port *ap,
->   				      pm_message_t state) { }
->   static inline int ata_acpi_register(void) { return 0; }
-> -static void ata_acpi_unregister(void) { }
-> -static void ata_acpi_bind(struct ata_device *dev) { }
-> -static void ata_acpi_unbind(struct ata_device *dev) { }
-> +static inline void ata_acpi_unregister(void) { }
-> +static inline void ata_acpi_bind(struct ata_device *dev) { }
-> +static inline void ata_acpi_unbind(struct ata_device *dev) { }
+--Signature=_Mon__2_Jul_2012_16_12_00_+1000_nkTJFC5yUq+xu0Tv
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-applied (and #NEXT updated, of course)
+Hi Al,
+
+Today's linux-next merge of the signal tree got a conflict in
+arch/powerpc/kernel/entry_64.S between commit c58ce2b1e3c7 ("ppc64: fix
+missing to check all bits of _TIF_USER_WORK_MASK in preempt") from Linus'
+tree and commit d07644a97726 ("powerpc: missing NOTIFY_RESUME check on
+64bit if CONFIG_PREEMPT is set") from the signal tree.
+
+I *think* that the former is a superset of the latter, so I just used the
+former.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__2_Jul_2012_16_12_00_+1000_nkTJFC5yUq+xu0Tv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP8TuwAAoJEECxmPOUX5FE4rkP/jfe3fZRzlUs14v2FKKBtsuA
+LTDEQ4D6K+2nCPfoa/icHmA1GoQZGCUqKVhLcxNI5eGQKQPOiVo1AgkC8oKFx8HD
+Sm8qAX6VEEuVQLl2iSU/I7aFy6GCesQHctKl2ENXIOABuWmpLlmJoihXXV55YV7q
+FgAfkZoiJks7OwgF0jq5M7U8eOJsYNsz3cHtR72NsvYZiK8vPDpoS7tFvQVN+cbS
+xsMlekkf5kuVdBVcyLGFmySClqp9wuavwpY+oJXY79Kt/24EKDy4WKiz58CD9F8e
+QtqfXAutKsFYC4CrGy/aQKu4/v1C7lV+I3sN89cEXrdekxn0niRH4ErwSc93q7rG
+UxmeD+PexFMmaty6UZONp16hZULK0XA1H4eZLVV7YN2K7k6eegQbvERZUOgvONb0
+d45o3+8RegkSpmhHRbtxTBhw4b/l3s/zVaZ/kAHzIampMJzVcBOBjCtNvOmIYAh1
+hfuEvPXYNfy4Ceb13QJm3hp7vKR2ADpl0rsrhFW30Q9kdMojlItylQ1mXSMG3Bqt
+G3z+sGDGR0VkA1FVMgmesMeLX2ZybRqUaSO52FKm0nuytwk1pYCFnlIpOD2mHssn
+bIEU36rsY/fIDrrK0+8nf/8ibxnGb7AJNMf+9VCDVK+/6EqAHpiCdDH06y6UH+se
+09bj+vrkc1Q7zbnqk5FN
+=WJ4C
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__2_Jul_2012_16_12_00_+1000_nkTJFC5yUq+xu0Tv--
