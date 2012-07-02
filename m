@@ -1,46 +1,50 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: linux-next : cpuidle - could you add my tree please
-Date: Mon, 02 Jul 2012 14:51:19 +0200
-Message-ID: <4FF19947.3040608@linaro.org>
-References: <4FDEE98D.7010802@linaro.org> <4FDF2D58.9010006@ti.com> <4FE86727.5010400@linaro.org> <CACRpkdYaLweX-4YkWotuFFWoqEjOLKoNCsurCxxWNfq7QznPnw@mail.gmail.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: Tree for Jun 19 (mfd/max77693-irq.c)
+Date: Mon, 2 Jul 2012 15:43:58 +0200
+Message-ID: <20120702134358.GE22065@sortiz-mobl>
+References: <20120619150513.364d8c9f19a21b4c6feebbbf@canb.auug.org.au>
+ <4FE0B464.6020207@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYaLweX-4YkWotuFFWoqEjOLKoNCsurCxxWNfq7QznPnw@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Amit Kucheria <amit.kucheria@linaro.org>, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Rob Lee <rob.lee@linaro.org>, "lenb@kernel.org" <lenb@kernel.org>, "rjw@sisk.pl" <rjw@sisk.pl>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga14.intel.com ([143.182.124.37]:29948 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751412Ab2GBNcm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Jul 2012 09:32:42 -0400
+Content-Disposition: inline
+In-Reply-To: <4FE0B464.6020207@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, SangYoung Son <hello.son@samsung.com>
 
+Hi Randy,
 
-On 07/02/2012 11:09 AM, Linus Walleij wrote:
-> On Mon, Jun 25, 2012 at 3:27 PM, Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->=20
->> we discussed last week to put in place a tree grouping the cpuidle
->> modifications [1]. Is it possible to add the tree ?
->>
->> git://git.linaro.org/people/dlezcano/cpuidle-next.git #cpuidle-next
->=20
-> Thanks for doing this.
->=20
-> Since MAINTAINERS is lacking a listed maintainer for cpuidle,
-> are you also going to add yourself as maintainer and list this
-> tree in that file, or is this a one-time exercise?
+On Tue, Jun 19, 2012 at 10:18:28AM -0700, Randy Dunlap wrote:
+> On 06/18/2012 10:05 PM, Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > Changes since 20120618:
+> 
+> 
+> on x86_64:
+> 
+>   CC      drivers/mfd/max77693-irq.o
+> drivers/mfd/max77693-irq.c: In function 'max77693_irq_thread':
+> drivers/mfd/max77693-irq.c:217:4: error: implicit declaration of function 'irq_find_mapping'
+> drivers/mfd/max77693-irq.c: In function 'max77693_irq_init':
+> drivers/mfd/max77693-irq.c:286:2: error: implicit declaration of function 'irq_domain_add_linear'
+> drivers/mfd/max77693-irq.c:286:9: warning: assignment makes pointer from integer without a cast
+> make[3]: *** [drivers/mfd/max77693-irq.o] Error 1
+> 
+> 
+> Full randconfig file is attached.
+This should be fixed in my for-next branch now.
 
-I will be glad to do that if Len and Rafael agree on that.
+Cheers,
+Samuel.
 
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
