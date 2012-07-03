@@ -1,54 +1,70 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: Kconfig HID dependency error from roccat merge
-Date: Tue, 3 Jul 2012 11:23:46 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1207031123050.17304@pobox.suse.cz>
-References: <20120703042920.GC7328@windriver.com>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: linux-next: build failure after merge of the final tree (pwm
+ tree related)
+Date: Tue, 3 Jul 2012 12:00:49 +0200
+Message-ID: <20120703100049.GA8455@avionic-0098.mockup.avionic-design.de>
+References: <20120629174826.546cc991459b12833f2aaebd@canb.auug.org.au>
+ <201207030806.49561.arnd.bergmann@linaro.org>
+ <20120703081138.GA25183@avionic-0098.mockup.avionic-design.de>
+ <201207030859.11975.arnd.bergmann@linaro.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:55762 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753153Ab2GCJXw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 3 Jul 2012 05:23:52 -0400
-In-Reply-To: <20120703042920.GC7328@windriver.com>
+Received: from moutng.kundenserver.de ([212.227.17.8]:54128 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751981Ab2GCKBB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jul 2012 06:01:01 -0400
+Content-Disposition: inline
+In-Reply-To: <201207030859.11975.arnd.bergmann@linaro.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org
+To: Arnd Bergmann <arnd.bergmann@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
 
-On Tue, 3 Jul 2012, Paul Gortmaker wrote:
 
-> This is showing up in all the linux-next builds since Monday.
-> 
-> -------------
-> drivers/hid/Kconfig:7:error: recursive dependency detected!
-> drivers/hid/Kconfig:7:	symbol HID is selected by USB_HID
-> drivers/hid/usbhid/Kconfig:4:	symbol USB_HID depends on HID
-> ------------
-> 
-> It can be easily reproduced by doing a simple x86-64 defconfig.
-> I've traced (bisected) it to this:
-> 
-> -------------
-> commit 71e9fd494490cdb7ae9b7f7c16ee5dd5760bbc23
-> Merge: ccfa24b 7392d73
-> Author: Jiri Kosina <jkosina@suse.cz>
-> Date:   Fri Jun 29 15:02:22 2012 +0200
-> 
->     Merge branch 'roccat' into for-next
-> 
->     Conflicts:
->         drivers/hid/Kconfig
-> -------------
-> 
-> Please have a look at it when you have a chance.
+--9jxsPFA5p3P2qPhR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, sorry for that, already reported to me by several people. I have 
-messed up the conflict resolution. I have just pushed out fixed for-next 
-branch, so it should show up in the next -next :) release properly.
+On Tue, Jul 03, 2012 at 08:59:11AM +0000, Arnd Bergmann wrote:
+> On Tuesday 03 July 2012, Thierry Reding wrote:
+> > I came up with the attached patch. What do you think? It fixes the
+> > PowerPC allyesconfig issue for me.
+>=20
+> This one looks correct, but I would still do it the other way around,
+> putting the depends statements into the locations of the other drivers.
+> The main difference is that we can then independently convert the
+> remaining drivers, without having merge conflicts in the same line
+> every time we remove one of the dependencies.
 
-Thanks,
+The downside of that approach, however, is to make PWM override other
+settings. For instance if you have TWL6030_PWM selected and then decide
+to also select PWM, then the former will be automatically deselected to
+satisfy the dependency. I'm not sure if that's desired.
 
--- 
-Jiri Kosina
-SUSE Labs
+Thierry
+
+--9jxsPFA5p3P2qPhR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJP8sLRAAoJEN0jrNd/PrOhfnsP/jhU4fXJpS831+3XsUGoyFHk
+xsfSqbT73oWrxao+hv/i3Ni8zS7o6DGR72bllYTzK6XUcVNJz8ibPW3R4EWTsKlX
+OTyR6s7KYixP0+iz/Yx0vPoOPmzED6OZIgUmC88/60ykFdzSv3/aHIP0F7aYDK5/
+9OqvvrC2Tagkm1sEzLSUm10i7KKaCvZ7YFJzy3AvcRl3Kz3v2zZVPDmAbKZmgj9c
+y1NC0IE/2S9uqHhrnDFiqv4Gp6kRrDi3rEy1zuV8EfSlNATFdzZMvUFpbGx//Fql
+U14CsS8K9DqdjlePnwMv4V+IiUokdq3jomoWSs325eI6sX9rNaGDiR/5lkZjzjbP
+lI585Vrh04Oh25EVqn3mjXkN5qff1hG8TSpApKW0weX3e+j9HFAcbX1M2gIv+aGq
+gPhR/rLrPtMn7w/7VVHEGHaDhKI76hH/Z1o9dKcieLilKSpZ6JF+E2Aj2nO8IKn0
+FTE57cQKMCCPurt+kaMqh6zMPS9JL3qo97n0cvAJ1O/quZ4m56Ns4mID0pRxMxz8
+QOFr8cKKpCQBaXBSD8NIg2fYDA0huOJD7mgijeTih5X1tlKFQoiW8O64PpMBTe7T
+j9+pFIKh5TyaRfKNjpCAjWNvo1AeBhOI1/UHoyi5iEzE8/9yQGxbeqO+gqa8hiw9
+Bvcmr+kUKIT5hN1n9snq
+=FN0x
+-----END PGP SIGNATURE-----
+
+--9jxsPFA5p3P2qPhR--
