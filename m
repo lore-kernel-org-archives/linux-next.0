@@ -1,129 +1,53 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: linux-next: build failure after merge of the final tree (pwm
- tree related)
-Date: Tue, 3 Jul 2012 10:11:38 +0200
-Message-ID: <20120703081138.GA25183@avionic-0098.mockup.avionic-design.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: build failure after merge of the final tree (pwm tree related)
+Date: Tue, 3 Jul 2012 10:23:54 +0200
+Message-ID: <CAMuHMdVBs=i5i02_AxZ7CHBukmrj-ik-EjDTG58hZaLkxkc+dQ@mail.gmail.com>
 References: <20120629174826.546cc991459b12833f2aaebd@canb.auug.org.au>
- <20120703161846.59fee8d3815993bcea122eeb@canb.auug.org.au>
- <20120703062351.GA25217@avionic-0098.mockup.avionic-design.de>
- <201207030806.49561.arnd.bergmann@linaro.org>
+	<20120630181006.GC23990@avionic-0098.adnet.avionic-design.de>
+	<201206301920.21158.arnd.bergmann@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XF85m9dhOBO43t/C"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:56679 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751914Ab2GCILt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jul 2012 04:11:49 -0400
-Content-Disposition: inline
-In-Reply-To: <201207030806.49561.arnd.bergmann@linaro.org>
+Received: from mail-gh0-f174.google.com ([209.85.160.174]:38344 "EHLO
+	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750710Ab2GCIXz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jul 2012 04:23:55 -0400
+In-Reply-To: <201206301920.21158.arnd.bergmann@linaro.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Arnd Bergmann <arnd.bergmann@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Thierry Reding <thierry.reding@avionic-design.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
 
+On Sat, Jun 30, 2012 at 9:20 PM, Arnd Bergmann <arnd.bergmann@linaro.org> wrote:
+> On Saturday 30 June 2012, Thierry Reding wrote:
+>> I hadn't thought about the allyesconfig case yet. Adding a "depends on
+>> !HAVE_PWM" to the PWM symbol should work and is the easiest fix to this
+>> kind of problem while other PWM legacy API implementations are ported to
+>> the PWM subsystem.
+>>
+>> Sascha, Arnd (Cc'ed): what do you think?
+>>
+>> I don't know if I'll get enough time to test this over the weekend but I
+>> should get to it when I'm back in the office on Monday.
+>>
+> You cannot depend on a symbol in the same place that provides it -- that
+> would be a recursive dependency (or a paradox).
+>
+> I think that all the drivers that are not converted to the common PWM
+> layer yet should depend on not enabling the common code. Once they
+> are all moved over, that dependency will go away.
 
---XF85m9dhOBO43t/C
-Content-Type: multipart/mixed; boundary="CE+1k2dSO48ffgeK"
-Content-Disposition: inline
+Hence you cannot have a single kernel image that contains both legacy and new
+drivers. I don't know whether there's any such combination that makes sense,
+though.
 
+Gr{oetje,eeting}s,
 
---CE+1k2dSO48ffgeK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+                        Geert
 
-On Tue, Jul 03, 2012 at 08:06:49AM +0000, Arnd Bergmann wrote:
-> On Tuesday 03 July 2012, Thierry Reding wrote:
-> > On Tue, Jul 03, 2012 at 04:18:46PM +1000, Stephen Rothwell wrote:
-> > > Hi Thierry,
-> > >=20
-> > > On Tue, 3 Jul 2012 08:11:15 +0200 Thierry Reding <thierry.reding@avio=
-nic-design.de> wrote:
-> > > >
-> > > > I don't see how that can happen. If you have CONFIG_TWL6030_PWM=3Dy=
-, then
-> > > > you should also have CONFIG_HAVE_PWM=3Dy, which would in turn confl=
-ict
-> > > > with CONFIG_PWM=3Dy.
-> > > >=20
-> > > > I'll have to fetch a powerpc toolchain and try to reproduce this.
-> > >=20
-> > > CONFIG_HAVE_PWM only exists on arm, mips and unicore32 ... so the "se=
-lect
-> > > HAVE_PWM" will not do anything on any other architecture.
-> >=20
-> > So one option would be to add HAVE_PWM on powerpc, or alternatively to
-> > explicitly add a conflict to the TWL6030_PWM symbol (and any others that
-> > implement the legacy API). I'd think the second alternative is
-> > preferable and actually matches what Arnd proposed previously. Maybe
-> > this was exactly the reason he suggested that solution in the first
-> > place.
->=20
-> It's not what I was thinking of explicitly, but it's a good
-> reason nonetheless ;-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I came up with the attached patch. What do you think? It fixes the
-PowerPC allyesconfig issue for me.
-
-Thierry
-
---CE+1k2dSO48ffgeK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline; filename="0001-pwm-Conflict-with-legacy-PWM-API.patch"
-Content-Transfer-Encoding: quoted-printable
-
-=46rom 33859c48f1c771584312885bc37d14433bd2de7f Mon Sep 17 00:00:00 2001
-=46rom: Thierry Reding <thierry.reding@avionic-design.de>
-Date: Mon, 2 Jul 2012 21:29:45 +0200
-Subject: [PATCH] pwm: Conflict with legacy PWM API
-
-In order to avoid duplicate symbols with legacy PWM API implementations,
-the new PWM framework needs to conflict with any of the existing legacy
-implementations. This can be removed once all legacy implementations
-have been moved to the PWM subsystem.
-
-Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
----
- drivers/pwm/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 5227415..6e49f81 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -1,5 +1,6 @@
- menuconfig PWM
- 	bool "PWM Support"
-+	depends on !MACH_JZ4740 && !PUV3_NB0916 && !TWL6030_PWM && !AB8500_PWM
- 	help
- 	  This enables PWM support through the generic PWM framework.
- 	  You only need to enable this, if you also want to enable
---=20
-1.7.11.1
-
-
---CE+1k2dSO48ffgeK--
-
---XF85m9dhOBO43t/C
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP8qk6AAoJEN0jrNd/PrOhfG8P/izN8O9wjwFs0vxQKBVNrPTn
-sV+dVZmDGsV7NrFWK7OFa1E4PKScxzKSIWMzOoF/s2qDbNfhAFDenlCLVtJDbvKz
-udZEPGtfgxp4lL9ZYe/dVwKfgYqb+FJt+0cn7qhfhEQ6n7xZjawRmT+nBwea+7D8
-PPRxbEvYIT37Y5S097/zUMm9A1Y2xsGd9qmwGXXVjKpHDkgUrq8J3ct+2RwVE6uG
-wGSATGrdhcvueYbGVR8WxEv3WpX5UNcYGjB4aXyB864qxL7ctOYV5tVI9eEzKCzZ
-Fg1xH6PbpAfadUf8JLfRMq0sMdLntZQAZ9hbPgmfEcHHZvrO5kJLPR6b7Jb2wHqy
-IjjlZVNKNjKHZvj01lxGrkXGgdM10sPCnusJZc3H9RBZdGeruSJRl+4VnP6awDVf
-AMOgNWJgMIQumxDj9IPV6a5qQBzao1Ujy6i23bf37AmC/vYmQ6jYprJrDy7EBzko
-yN5U5OZhu30rkoh+Lr0vLm6APdux06//aBPkFPEfYC/2p3thUAV+9OkMsV3swOxb
-I4xRs1A00rsYdr6tfIt3TvLiSe+UUGkgeH2DQChoXLggJh/JKxWow/7jB4W/eJwO
-kUXlYydZtM6CrY8YSRszWckUG3Esaz+1cmh4VEqylcZBPl9zisNB5U6edF8mo/FN
-VMj/LjPVHlzzixjtpEYj
-=8RL8
------END PGP SIGNATURE-----
-
---XF85m9dhOBO43t/C--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
