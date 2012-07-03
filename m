@@ -1,88 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the wireless
- tree
-Date: Tue, 3 Jul 2012 11:44:43 +1000
-Message-ID: <20120703114443.26e03246debd0652e8d1e92b@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the mfd tree
+Date: Tue, 3 Jul 2012 14:09:38 +1000
+Message-ID: <20120703140938.b2ae0cf0ce2a3a470bb6cec6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__3_Jul_2012_11_44_43_+1000_t3tlV20DXxg=t5iF"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:32793 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752921Ab2GCBoy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jul 2012 21:44:54 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eliad Peller <eliad@wizery.com>, "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes.berg@intel.com>
+ boundary="Signature=_Tue__3_Jul_2012_14_09_38_+1000_TFRfmXuKPAQ.dnHj"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russ Dill <Russ.Dill@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__3_Jul_2012_11_44_43_+1000_t3tlV20DXxg=t5iF
+--Signature=_Tue__3_Jul_2012_14_09_38_+1000_TFRfmXuKPAQ.dnHj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/mac80211/mlme.c between commit 0030bc586591 ("mac80211: destroy
-assoc_data correctly if assoc fails") from the wireless tree and commit
-bdcbd8e0e3ff ("mac80211: clean up debugging") from the net-next tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/host/ehci-omap.c between commit 996439f8fa07 ("mfd: USB: Fix
+the omap-usb EHCI ULPI PHY reset fix issues") from the mfd tree and
+commit 984e97483a14 ("ARM: OMAP: USB: Fixup ehci_hcd_omap_probe error
+path") from the usb tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/mac80211/mlme.c
-index 0db5d34,e6fe84a..0000000
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@@ -2170,17 -2148,19 +2148,17 @@@ ieee80211_rx_mgmt_assoc_resp(struct iee
-  	*bss =3D assoc_data->bss;
+diff --cc drivers/usb/host/ehci-omap.c
+index c304354,6e15fc8..0000000
+--- a/drivers/usb/host/ehci-omap.c
++++ b/drivers/usb/host/ehci-omap.c
+@@@ -329,11 -330,6 +329,11 @@@ static int ehci_hcd_omap_probe(struct p
+  	omap_ehci->hcs_params =3D readl(&omap_ehci->caps->hcs_params);
  =20
-  	if (status_code !=3D WLAN_STATUS_SUCCESS) {
-- 		printk(KERN_DEBUG "%s: %pM denied association (code=3D%d)\n",
-- 		       sdata->name, mgmt->sa, status_code);
-+ 		sdata_info(sdata, "%pM denied association (code=3D%d)\n",
-+ 			   mgmt->sa, status_code);
-  		ieee80211_destroy_assoc_data(sdata, false);
-  	} else {
- -		sdata_info(sdata, "associated\n");
- -
-  		if (!ieee80211_assoc_success(sdata, *bss, mgmt, len)) {
-  			/* oops -- internal error -- send timeout for now */
- -			ieee80211_destroy_assoc_data(sdata, true);
- -			sta_info_destroy_addr(sdata, mgmt->bssid);
- +			ieee80211_destroy_assoc_data(sdata, false);
-  			cfg80211_put_bss(*bss);
-  			return RX_MGMT_CFG80211_ASSOC_TIMEOUT;
-  		}
-- 		printk(KERN_DEBUG "%s: associated\n", sdata->name);
-++		sdata_info(sdata, "associated\n");
+  	ehci_reset(omap_ehci);
+ +	ret =3D usb_add_hcd(hcd, irq, IRQF_SHARED);
+ +	if (ret) {
+ +		dev_err(dev, "failed to add hcd with err %d\n", ret);
+- 		goto err_add_hcd;
+++		goto err_pm_runtime;
+ +	}
  =20
-  		/*
-  		 * destroy assoc_data afterwards, as otherwise an idle
+  	if (pdata->phy_reset) {
+  		/* Hold the PHY in RESET for enough time till
 
---Signature=_Tue__3_Jul_2012_11_44_43_+1000_t3tlV20DXxg=t5iF
+--Signature=_Tue__3_Jul_2012_14_09_38_+1000_TFRfmXuKPAQ.dnHj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP8k6LAAoJEECxmPOUX5FEzd4QAJ62Dn3pILRBP5uC/07tPQTu
-p/NNiwmawJ7TD4yFVYHPe7iMOYQjIG33aRbKwq5hyNguARG9dCURQUClqqWBoHln
-9c9NdiLdsieyB906w3V4vZDtXaVwqDsLHCUlbfMXSn8KWFanjeGGrCsJB2PtgFKh
-D4UQQJaCXieQIkzAieL3sYV5midiX9+fpaU0eBQjjBrclehgTCw9QRFBlNvi9wov
-uSrMACyiChTWzmG25bGRCTBgLKv+5eW27BRDTYiD3bEeDufZA4xz1ED2MRymAcnP
-0zfl2MHTYLKdCqOcD1Nkml0PHLpLUMdsui5gykkuat2KqENlLUEn75Iyh7qjmyjl
-YbVg58vSN0Vl8+SKR3S8cuEb6ztxpsy1AvEHqRgejcVVkVi7vpoAYyUuYVZNB9Sr
-jiSbGVD7HunNQo+PKPAOGtschTpHjEo9BuuIvd8dfFtXDEkGTtEUMCzWXJcERyyd
-gGSUEoSCt5AXAEBPIGdCxh7atlsmEhXRgq53A3yejIZ6zGz6/y6ySnwYl/IySFex
-Zx8CoDeNeO2UUhmelGzyjApdUP5Kl96izQgFxUCcHFGYTosWz/hEYSi5NQHg7YEX
-h0qvU0g4B6KU8nMwP7jnN0Z4866i86q1Bzqcr/RK5RKKAv2mbIVIURRXvMFmO26L
-OuxBU3RhCZ+q7ZbK9IcB
-=nWND
+iQIcBAEBCAAGBQJP8nCCAAoJEECxmPOUX5FEIjkP/2W3sgy5Z56tLuOWTxFq+1ec
+k2JeDocO15XMrCt6kpIFeDTjgTGvaPBDFb8uXKBvncbG3FcwvGUlJ1i0ex0SX70t
+4wJxfFJyzsiNzqRmHJZkQUuHSWLtaXpLDb5fTk6Y9AEKRhvYYhg/ZaBzgHvaVRe7
+Q6r4tmEi9HvDHU0mlQy9PQZZ34kgFTP8cwr/xHEU0Ru7OYe3TQaFVqyjWQYyUfVQ
+KpTCFuKKMi92ojo67C4/7j/47yBnDCAEW4DKhiRvRR7Nl7NeWwzkoAGLN4LhH8GT
+r/z5TIFpbZC2fBKejsEH2dvECXEhMhYmYd/5KxS5d//mzBGzq4wUhXOq5jMDXKA6
+nqfNnHfpXhNbX2sF78Z60fmVVAvXlnlVHWhnjoKedm0nmmrQioTfnnfbEffVdVqL
+F6TWm1MGNe22/iTY70tjORbKjm9lo23S0jQZ9NM74LQOfJACLuDaXDISDgoQPCVd
+qiTHlqo1FoG5IwKohO5WB/HGohv5zmGlykUiHaPZOs8qKZT2thQ9LbWA5V2eqnQ6
+q9i20mGOj1NqseTa+Q12Dn0aTkddjzoY5CpouZEDvo93onOkvH25I+OkRUV/8uTj
+t0WXkJFIIfLbksJQSlKC3mFu6WnU/Ygj+1fBk+4zC0G7H7lZsE9JeUso8syOAApq
+4lKyLRgjwxLuspSLAOJp
+=Ayzz
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__3_Jul_2012_11_44_43_+1000_t3tlV20DXxg=t5iF--
+--Signature=_Tue__3_Jul_2012_14_09_38_+1000_TFRfmXuKPAQ.dnHj--
