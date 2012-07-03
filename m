@@ -1,76 +1,31 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next : cpuidle - could you add my tree please
-Date: Tue, 3 Jul 2012 10:59:13 +0200
-Message-ID: <201207031059.13758.rjw@sisk.pl>
-References: <4FDEE98D.7010802@linaro.org> <201207022149.36629.rjw@sisk.pl> <4FF21D48.50301@linaro.org>
+From: Arnd Bergmann <arnd.bergmann@linaro.org>
+Subject: Re: linux-next: build failure after merge of the final tree (pwm tree related)
+Date: Tue, 3 Jul 2012 08:59:11 +0000
+Message-ID: <201207030859.11975.arnd.bergmann@linaro.org>
+References: <20120629174826.546cc991459b12833f2aaebd@canb.auug.org.au> <201207030806.49561.arnd.bergmann@linaro.org> <20120703081138.GA25183@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
-  charset="utf-8"
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <4FF21D48.50301@linaro.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Amit Kucheria <amit.kucheria@linaro.org>, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Rob Lee <rob.lee@linaro.org>, "lenb@kernel.org" <lenb@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.17.10]:61208 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752219Ab2GCI72 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jul 2012 04:59:28 -0400
+In-Reply-To: <20120703081138.GA25183@avionic-0098.mockup.avionic-design.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
 
-On Tuesday, July 03, 2012, Daniel Lezcano wrote:
-> On 07/02/2012 09:49 PM, Rafael J. Wysocki wrote:
-> > On Monday, July 02, 2012, Daniel Lezcano wrote:
-> >>
-> >> On 07/02/2012 11:09 AM, Linus Walleij wrote:
-> >>> On Mon, Jun 25, 2012 at 3:27 PM, Daniel Lezcano
-> >>> <daniel.lezcano@linaro.org> wrote:
-> >>>
-> >>>> we discussed last week to put in place a tree grouping the cpuidle
-> >>>> modifications [1]. Is it possible to add the tree ?
-> >>>>
-> >>>> git://git.linaro.org/people/dlezcano/cpuidle-next.git #cpuidle-next
-> >>>
-> >>> Thanks for doing this.
-> >>>
-> >>> Since MAINTAINERS is lacking a listed maintainer for cpuidle,
-> >>> are you also going to add yourself as maintainer and list this
-> >>> tree in that file, or is this a one-time exercise?
-> >>
-> >> I will be glad to do that if Len and Rafael agree on that.
-> > 
-> > Len Brown has been a cpuidle maintainer for some time now.  Moreover,
-> > he's been taking patches, but Linus refused to pull his entire tree during the
-> > last merge window (as you probably know).  I honestly don't think this is
-> > a good enough reason for replacing him as a cpuidle maintainer by force.
-> > 
-> > So, you should ask Len whether or not he's willing to pass the cpuidle
-> > maintenance to someone else.
-> 
-> No, no. You are misunderstanding what I am proposing. I don't want to
-> replace Len I just want to act as a "proxy". I understand a maintainer
-> can be busy and could not have enough time to take care of the subsystem
-> is maintaining during a period because he's too busy for that.
-> Trust me, I fully understand that :)
-> 
-> As there are a lot of modifications of cpuidle, I am proposing to take
-> the patches when they are acked-by, to create a consolidated tree,
-> providing a better integration for cpuidle, a wider testing, preventing
-> conflicts and facilitating Len's work if he agrees to pull from this tree.
-> 
-> If that makes sense to add myself to the MAINTAINER file as a
-> co-maintainer (understand: send to me also the patches, so I can take
-> care of them if Len does not respond), I am ok with that.
-> 
-> It is just about helping :)
+On Tuesday 03 July 2012, Thierry Reding wrote:
+> I came up with the attached patch. What do you think? It fixes the
+> PowerPC allyesconfig issue for me.
 
-Cool. :-)
+This one looks correct, but I would still do it the other way around,
+putting the depends statements into the locations of the other drivers.
+The main difference is that we can then independently convert the
+remaining drivers, without having merge conflicts in the same line
+every time we remove one of the dependencies.
 
-So do you have a branch in the cpuidle-next.git tree that isn't going to
-be rebased?
- 
-> > I know that Len hasn't been responsive recently, but I also know that he
-> > _does_ respond to inquiries sent directly to him.
-> 
-> Do you mean to its intel address ?
-
-Yes, CCing the Len's Intel address won't hurt I think.
-
-Thanks,
-Rafael
+	Arnd
