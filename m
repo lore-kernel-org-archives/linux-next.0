@@ -1,46 +1,82 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Kconfig HID dependency error from roccat merge
-Date: Tue, 3 Jul 2012 00:29:20 -0400
-Message-ID: <20120703042920.GC7328@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (pwm
+ tree related)
+Date: Tue, 3 Jul 2012 15:43:18 +1000
+Message-ID: <20120703154318.9e32d4a490c0b32e7d955ca4@canb.auug.org.au>
+References: <20120629174826.546cc991459b12833f2aaebd@canb.auug.org.au>
+	<201206301920.21158.arnd.bergmann@linaro.org>
+	<20120630194139.GA24300@avionic-0098.mockup.avionic-design.de>
+	<201206302012.32476.arnd.bergmann@linaro.org>
+	<20120701065639.GA25470@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__3_Jul_2012_15_43_18_+1000_mg8h.ytcjI5SBTwJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:57963 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750735Ab2GCE31 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jul 2012 00:29:27 -0400
-Content-Disposition: inline
+Received: from haggis.pcug.org.au ([203.10.76.10]:34925 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751672Ab2GCFn3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jul 2012 01:43:29 -0400
+In-Reply-To: <20120701065639.GA25470@avionic-0098.adnet.avionic-design.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Arnd Bergmann <arnd.bergmann@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
 
-Hi Jiri,
+--Signature=_Tue__3_Jul_2012_15_43_18_+1000_mg8h.ytcjI5SBTwJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is showing up in all the linux-next builds since Monday.
+Hi all,
 
--------------
-drivers/hid/Kconfig:7:error: recursive dependency detected!
-drivers/hid/Kconfig:7:	symbol HID is selected by USB_HID
-drivers/hid/usbhid/Kconfig:4:	symbol USB_HID depends on HID
-------------
+On Sun, 1 Jul 2012 08:56:39 +0200 Thierry Reding <thierry.reding@avionic-de=
+sign.de> wrote:
+>
+> But if we make the new PWM symbol conflict with HAVE_PWM, then it'll do
+> the right thing for any of the legacy PWM implementations, without
+> having to track them down. Furthermore it'll also keep the legacy
+> version by default and not allow the generic one to be enabled in that
+> case. This is more likely to cause less side-effects than the other way
+> around.
+>=20
+> > One question though: if the generic pwm implementation does not set
+> > HAVE_PWM, how can a driver check its presence?
+>=20
+> The driver depends on PWM. HAVE_PWM is the symbol for the legacy
+> implementations, while PWM is the new PWM API symbol.
 
-It can be easily reproduced by doing a simple x86-64 defconfig.
-I've traced (bisected) it to this:
+I am still getting the mutliple definition errors from my powerpc
+allyesconfg build.
 
--------------
-commit 71e9fd494490cdb7ae9b7f7c16ee5dd5760bbc23
-Merge: ccfa24b 7392d73
-Author: Jiri Kosina <jkosina@suse.cz>
-Date:   Fri Jun 29 15:02:22 2012 +0200
+$ grep PWM .config
+CONFIG_TWL6030_PWM=3Dy
+CONFIG_BACKLIGHT_PWM=3Dy
+CONFIG_PWM=3Dy
 
-    Merge branch 'roccat' into for-next
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-    Conflicts:
-        drivers/hid/Kconfig
--------------
+--Signature=_Tue__3_Jul_2012_15_43_18_+1000_mg8h.ytcjI5SBTwJ
+Content-Type: application/pgp-signature
 
-Please have a look at it when you have a chance.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Thanks,
-Paul.
+iQIcBAEBCAAGBQJP8oZ2AAoJEECxmPOUX5FEkFoP/i+sS7E8wxKvpnaScdfyWwx8
+rXwKJizBOgvcsdLkFrHV4XpBN006BBhkd3CfLA3PuxdBYLr4ZUIMmS0Z6jYgn3Ei
+tNl8PJ5KHUHhjlapX5Yv7iQzsEprnPgEGF/+NAF4AFpRDQutI/2FeogodhIdLtqG
+CBcvEQg90uzjEFRoDd7xOv/lpOLFJKPnm0G17vm95PnjKJSr4088FJXr544pF0EG
+F+sMDbE5kvQfO2lkj0+yeOWMJqcmUZfm8+5TV+4JHQFsopFGUG10Qqslnd/t9/Ug
+P8k9fCLI6Do2Ddt9bdRTQTlcSkx+jPJ1r8u1KI/aRZuG/uei2/VCwUWkJQgsFwH2
+YJje+xYSnY0WPrHOPYeYAQPQ0d2E5us3BgvENHuC5o+WH/PWmOth2lZplcIS2dH6
+NAlXmgGD5fS8PXBA173yRLXC8sF0arsDXMmVJTyK7XRsxNCzcn9qqaN819CYq7sN
+yOWBB0HLcb3hTwPdK+ooq1AmN+Tp+Jh5VMy5RGjkJUrk5EVpLgKwNCoo0wi0h5Ob
+Ck/E6Z2NxA/xFf162y75/Qbs5zLjeAy8nxmrdZPSU7rgzrM0QQkbkCvHfvXK7Xph
+isNSJsAURzc7nblfpu7C2wD17aXrCLcigi7ASYjIpv0i2mj4Elhi8nHLiv9ra9cD
+RhiStMWnLyIPACZQlrTq
+=UVzW
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__3_Jul_2012_15_43_18_+1000_mg8h.ytcjI5SBTwJ--
