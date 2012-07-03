@@ -1,43 +1,44 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next : cpuidle - could you add my tree please
-Date: Tue, 3 Jul 2012 18:54:50 +0200
-Message-ID: <201207031854.51163.rjw@sisk.pl>
-References: <4FDEE98D.7010802@linaro.org> <20120703231948.33cca18e3cc3d6e497ab022d@canb.auug.org.au> <4FF2F2D3.4090200@linaro.org>
+From: Marcelo Tosatti <mtosatti@redhat.com>
+Subject: Re: [PATCH] apic: fix kvm build on UP without IOAPIC
+Date: Tue, 3 Jul 2012 15:55:11 -0300
+Message-ID: <20120703185511.GA24415@amt.cnet>
+References: <20120701150506.GA31304@redhat.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <4FF2F2D3.4090200@linaro.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Amit Kucheria <amit.kucheria@linaro.org>, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Rob Lee <rob.lee@linaro.org>, "lenb@kernel.org" <lenb@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120701150506.GA31304@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Avi Kivity <avi@redhat.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org, kvm@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tuesday, July 03, 2012, Daniel Lezcano wrote:
-> On 07/03/2012 03:19 PM, Stephen Rothwell wrote:
-> > Hi Daniel,
-> > 
-> > On Tue, 03 Jul 2012 14:56:58 +0200 Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-> >>
-> >>> So do you have a branch in the cpuidle-next.git tree that isn't going to
-> >>> be rebased?
-> >>
-> >> No. I am following Linus tree and adding the patches on top of it.
-> > 
-> > Please don't rebase your tree more than necessary - it just makes thing
-> > hard for anyone using your tree as a base for further development and
-> > throws away any testing you may have done.
+On Sun, Jul 01, 2012 at 06:05:06PM +0300, Michael S. Tsirkin wrote:
+> On UP i386, when APIC is disabled
+> # CONFIG_X86_UP_APIC is not set
+> # CONFIG_PCI_IOAPIC is not set
 > 
-> Ok, let me sync with Len and Rafael about the best way to do that.
+> code looking at apicdrivers never has any effect but it
+> still gets compiled in. In particular, this causes
+> build failures with kvm, but it generally bloats the kernel
+> unnecessarily.
+> 
+> Fix by defining both __apicdrivers and __apicdrivers_end
+> to be NULL when CONFIG_X86_LOCAL_APIC is unset: I verified
+> that as the result any loop scanning __apicdrivers gets optimized out by
+> the compiler.
+> 
+> Warning: a .config with apic disabled doesn't seem to boot
+> for me (even without this patch). Still verifying why,
+> meanwhile this patch is compile-tested only.
+> 
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+> 
+> Note: if this patch makes sense, can x86 maintainers
+> please ACK applying it through the kvm tree, since that is
+> where we see the issue that it addresses?
+> Avi, Marcelo, maybe you can carry this in kvm/linux-next as a temporary
+> measure so that linux-next builds?
 
-Please create a branch in your tree for me to pull from and let me know
-which one it is.  Please note that this branch must not be rebased after I've
-pulled from it and it's going to be included into my linux-next branch
-automatically.
-
-I'll include it into my v3.6 push, because I have a couple of cpuidle patches
-queued up already.  We'll need to discuss the future of it after 3.6, though.
-
-Thanks,
-Rafael
+Applied, thanks.
