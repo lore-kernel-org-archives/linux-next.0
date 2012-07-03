@@ -1,85 +1,72 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the final tree (pwm
  tree related)
-Date: Tue, 3 Jul 2012 08:11:15 +0200
-Message-ID: <20120703061115.GA27989@avionic-0098.mockup.avionic-design.de>
+Date: Tue, 3 Jul 2012 16:18:46 +1000
+Message-ID: <20120703161846.59fee8d3815993bcea122eeb@canb.auug.org.au>
 References: <20120629174826.546cc991459b12833f2aaebd@canb.auug.org.au>
- <201206301920.21158.arnd.bergmann@linaro.org>
- <20120630194139.GA24300@avionic-0098.mockup.avionic-design.de>
- <201206302012.32476.arnd.bergmann@linaro.org>
- <20120701065639.GA25470@avionic-0098.adnet.avionic-design.de>
- <20120703154318.9e32d4a490c0b32e7d955ca4@canb.auug.org.au>
+	<201206301920.21158.arnd.bergmann@linaro.org>
+	<20120630194139.GA24300@avionic-0098.mockup.avionic-design.de>
+	<201206302012.32476.arnd.bergmann@linaro.org>
+	<20120701065639.GA25470@avionic-0098.adnet.avionic-design.de>
+	<20120703154318.9e32d4a490c0b32e7d955ca4@canb.auug.org.au>
+	<20120703061115.GA27989@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120703154318.9e32d4a490c0b32e7d955ca4@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__3_Jul_2012_16_18_46_+1000_x/IB3M4MkQKmz7+_"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34468 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753291Ab2GCGSx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jul 2012 02:18:53 -0400
+In-Reply-To: <20120703061115.GA27989@avionic-0098.mockup.avionic-design.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thierry Reding <thierry.reding@avionic-design.de>
 Cc: Arnd Bergmann <arnd.bergmann@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
-List-Id: linux-next.vger.kernel.org
 
-
---WIyZ46R2i8wDzkSu
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Tue__3_Jul_2012_16_18_46_+1000_x/IB3M4MkQKmz7+_
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 03, 2012 at 03:43:18PM +1000, Stephen Rothwell wrote:
-> Hi all,
+Hi Thierry,
+
+On Tue, 3 Jul 2012 08:11:15 +0200 Thierry Reding <thierry.reding@avionic-de=
+sign.de> wrote:
+>
+> I don't see how that can happen. If you have CONFIG_TWL6030_PWM=3Dy, then
+> you should also have CONFIG_HAVE_PWM=3Dy, which would in turn conflict
+> with CONFIG_PWM=3Dy.
 >=20
-> On Sun, 1 Jul 2012 08:56:39 +0200 Thierry Reding <thierry.reding@avionic-=
-design.de> wrote:
-> >
-> > But if we make the new PWM symbol conflict with HAVE_PWM, then it'll do
-> > the right thing for any of the legacy PWM implementations, without
-> > having to track them down. Furthermore it'll also keep the legacy
-> > version by default and not allow the generic one to be enabled in that
-> > case. This is more likely to cause less side-effects than the other way
-> > around.
-> >=20
-> > > One question though: if the generic pwm implementation does not set
-> > > HAVE_PWM, how can a driver check its presence?
-> >=20
-> > The driver depends on PWM. HAVE_PWM is the symbol for the legacy
-> > implementations, while PWM is the new PWM API symbol.
->=20
-> I am still getting the mutliple definition errors from my powerpc
-> allyesconfg build.
->=20
-> $ grep PWM .config
-> CONFIG_TWL6030_PWM=3Dy
-> CONFIG_BACKLIGHT_PWM=3Dy
-> CONFIG_PWM=3Dy
+> I'll have to fetch a powerpc toolchain and try to reproduce this.
 
-I don't see how that can happen. If you have CONFIG_TWL6030_PWM=3Dy, then
-you should also have CONFIG_HAVE_PWM=3Dy, which would in turn conflict
-with CONFIG_PWM=3Dy.
+CONFIG_HAVE_PWM only exists on arm, mips and unicore32 ... so the "select
+HAVE_PWM" will not do anything on any other architecture.
 
-I'll have to fetch a powerpc toolchain and try to reproduce this.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thierry
-
---WIyZ46R2i8wDzkSu
+--Signature=_Tue__3_Jul_2012_16_18_46_+1000_x/IB3M4MkQKmz7+_
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJP8o0DAAoJEN0jrNd/PrOh1wEP/RIYM9bSnFt7as74fzSgK01v
-lTpbRiJmeHPDMfGF2k5sR0chxjmTW5uERjO8O7opqKjQtKqeWRtlfsJlA6B1pWN0
-dDqVLE+XJlidBLbAwWoJUU1qPSjLHMmluBO43+dYvpuYrQb8V1FKbAlITrgP3zPq
-k3SIejeyUR1L+UyvsV4Lp9LaFU4iG7MJGTAfm3EDYoT9sAddg9LIjAOl5OgDGDqY
-0w9SCJLAgMC1YFttNEVWMHJWf3z59odLq11E6hg/ShMRhkG6p4/brpbswJOrSMEn
-Nzyda23sAMSBQgu57J/9HZqtrRvZpnLPTNeMp5mso0Ffyqit4XDkrLxGEQnNZrGP
-TaPGrqr1Txcr97vZgMTisLfyMA4XrtF2xqxeWBdibWZGmgHhiEIjZ5UsdKS88EHa
-Z0pe7a6WR6rf/dE7I/gbkeokz5+acYKq8aT/HfItjYo5ajJuG1hRkgtxpdaIkwpM
-GoxaZ89rFp7ZAoAqlau3hQES49W0CnStwlFoIVK4CwF+icr0506WKVlT3pTDlZ1i
-aYcP4zlOXnPo4aeEC+MtHM1gT8jwUqK9un5xQxH+2WLBwxl+rbjyjNkCGJ8aximM
-VITil0bNO7WP0obdEXmff8keBahj7Zwftg+BYU8AWkekwoZaPcnwiBM2LUGNFGU2
-OUe0+lsAKHCGF/MpPnUS
-=+wwd
+iQIcBAEBCAAGBQJP8o7GAAoJEECxmPOUX5FE3zQQAIEQkJ5bc+wrd+/8d9qyrjd3
+ru1HI7QtdBjSRmqFR78HdeJB/voHh4lIU7e2jgWoHi7MZgE9mVcyIbLhKHRZy23W
+E8eSvXD+ubtnnHObiKrZ5eefYcx190CXXqJ24hbHdaq88ti+VdV/3R9wVWRRtInh
+fnjPMEjUSEBDzbda0lgK5MtEagelnFthzgUo+mdvYRIxdLpm7ykNWLhzq1jUezA7
+vky9gS8mWx564ynZih3a+qTRdEbP9rPQEGVwgGSf5bu07q/sNw8ze8Cy7PYxZ5iJ
+L94XyDU881UsXiyJHNnU8MTS2SMr6G4CncK4hCA+n7nwgu8aODCMmrD1acGW8w04
+YGHAQhX6LIqg08R5mmrWYFhfNW1/LZiavDAqyvqfj/5aKeIw30kQl0NXF1yVREOE
+majNVE8pyGmVLQNXHCoUHjzj713CdRUrgXzg5GpMNdbqen8NHxADZVt4B6CTSXRl
+spSMk6nORQ9Ss8Lc/Ajgp6YDpdRL9IRzyeYg3QYlWEdgh+mcF/jPTmESga3sGyjl
+NL/d8LrdbUchfLgbV9mGyPcPN2a1rvmu/Ie4zO7W+9/zry92aniBhi+l6C4fShIY
+TWc/gp8U9ezyAoD2z8JariO1VDKNyUQ2Ol/qjVbu/I2CHVAttRhqSA4kXwUYmUBG
+5SV0k/IYjBuzrQsT8/ee
+=EUMc
 -----END PGP SIGNATURE-----
 
---WIyZ46R2i8wDzkSu--
+--Signature=_Tue__3_Jul_2012_16_18_46_+1000_x/IB3M4MkQKmz7+_--
