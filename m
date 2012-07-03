@@ -1,94 +1,110 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: linux-next: build failure after merge of the final tree (pwm
- tree related)
-Date: Tue, 3 Jul 2012 13:14:26 +0200
-Message-ID: <20120703111426.GA26468@avionic-0098.mockup.avionic-design.de>
-References: <20120629174826.546cc991459b12833f2aaebd@canb.auug.org.au>
- <201207030859.11975.arnd.bergmann@linaro.org>
- <20120703100049.GA8455@avionic-0098.mockup.avionic-design.de>
- <201207031106.42915.arnd.bergmann@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: linux-next : cpuidle - could you add my tree please
+Date: Tue, 03 Jul 2012 14:56:58 +0200
+Message-ID: <4FF2EC1A.7020702@linaro.org>
+References: <4FDEE98D.7010802@linaro.org> <201207022149.36629.rjw@sisk.pl> <4FF21D48.50301@linaro.org> <201207031059.13758.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:59288 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754256Ab2GCLPG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jul 2012 07:15:06 -0400
-Content-Disposition: inline
-In-Reply-To: <201207031106.42915.arnd.bergmann@linaro.org>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:44970 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752086Ab2GCM5D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jul 2012 08:57:03 -0400
+Received: by bkwj10 with SMTP id j10so1574093bkw.19
+        for <linux-next@vger.kernel.org>; Tue, 03 Jul 2012 05:57:02 -0700 (PDT)
+In-Reply-To: <201207031059.13758.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd.bergmann@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Amit Kucheria <amit.kucheria@linaro.org>, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Rob Lee <rob.lee@linaro.org>, "lenb@kernel.org" <lenb@kernel.org>
 
-
---qMm9M+Fa2AknHoGS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jul 03, 2012 at 11:06:42AM +0000, Arnd Bergmann wrote:
-> On Tuesday 03 July 2012, Thierry Reding wrote:
-> >   Show Details
-> >   On Tue, Jul 03, 2012 at 08:59:11AM +0000, Arnd Bergmann wrote:
-> > > On Tuesday 03 July 2012, Thierry Reding wrote:
-> > > > I came up with the attached patch. What do you think? It fixes the
-> > > > PowerPC allyesconfig issue for me.
-> > >=20
-> > > This one looks correct, but I would still do it the other way around,
-> > > putting the depends statements into the locations of the other driver=
-s.
-> > > The main difference is that we can then independently convert the
-> > > remaining drivers, without having merge conflicts in the same line
-> > > every time we remove one of the dependencies.
-> >=20
-> > The downside of that approach, however, is to make PWM override other
-> > settings. For instance if you have TWL6030_PWM selected and then decide
-> > to also select PWM, then the former will be automatically deselected to
-> > satisfy the dependency. I'm not sure if that's desired.
+On 07/03/2012 10:59 AM, Rafael J. Wysocki wrote:
+> On Tuesday, July 03, 2012, Daniel Lezcano wrote:
+>> On 07/02/2012 09:49 PM, Rafael J. Wysocki wrote:
+>>> On Monday, July 02, 2012, Daniel Lezcano wrote:
+>>>>
+>>>> On 07/02/2012 11:09 AM, Linus Walleij wrote:
+>>>>> On Mon, Jun 25, 2012 at 3:27 PM, Daniel Lezcano
+>>>>> <daniel.lezcano@linaro.org> wrote:
+>>>>>
+>>>>>> we discussed last week to put in place a tree grouping the cpuid=
+le
+>>>>>> modifications [1]. Is it possible to add the tree ?
+>>>>>>
+>>>>>> git://git.linaro.org/people/dlezcano/cpuidle-next.git #cpuidle-n=
+ext
+>>>>>
+>>>>> Thanks for doing this.
+>>>>>
+>>>>> Since MAINTAINERS is lacking a listed maintainer for cpuidle,
+>>>>> are you also going to add yourself as maintainer and list this
+>>>>> tree in that file, or is this a one-time exercise?
+>>>>
+>>>> I will be glad to do that if Len and Rafael agree on that.
+>>>
+>>> Len Brown has been a cpuidle maintainer for some time now.  Moreove=
+r,
+>>> he's been taking patches, but Linus refused to pull his entire tree=
+ during the
+>>> last merge window (as you probably know).  I honestly don't think t=
+his is
+>>> a good enough reason for replacing him as a cpuidle maintainer by f=
+orce.
+>>>
+>>> So, you should ask Len whether or not he's willing to pass the cpui=
+dle
+>>> maintenance to someone else.
+>>
+>> No, no. You are misunderstanding what I am proposing. I don't want t=
+o
+>> replace Len I just want to act as a "proxy". I understand a maintain=
+er
+>> can be busy and could not have enough time to take care of the subsy=
+stem
+>> is maintaining during a period because he's too busy for that.
+>> Trust me, I fully understand that :)
+>>
+>> As there are a lot of modifications of cpuidle, I am proposing to ta=
+ke
+>> the patches when they are acked-by, to create a consolidated tree,
+>> providing a better integration for cpuidle, a wider testing, prevent=
+ing
+>> conflicts and facilitating Len's work if he agrees to pull from this=
+ tree.
+>>
+>> If that makes sense to add myself to the MAINTAINER file as a
+>> co-maintainer (understand: send to me also the patches, so I can tak=
+e
+>> care of them if Len does not respond), I am ok with that.
+>>
+>> It is just about helping :)
 >=20
-> It's true that this may be confusing, but I think it's the right
-> approach for future multiplatform kernels. If we have e.g. a combined
-> omap+ux500+imx kernel, we can only have one implementation of the
-> PWM interfaces, and that should be the new one.
+> Cool. :-)
+>=20
+> So do you have a branch in the cpuidle-next.git tree that isn't going=
+ to
+> be rebased?
 
-It will certainly be an incentive to port other PWM implementations to
-the new framework.
+No. I am following Linus tree and adding the patches on top of it.
 
-> It's less clear for the other architectures. Maybe a mixed approach
-> is better there, making CONFIG_PWM depend on !MACH_JZ4740 &&
-> !PUV3_NB0916 && !BLACKFIN, but letting the remaining ARM versions
-> of the PWM code depend on !PWM.
+>>> I know that Len hasn't been responsive recently, but I also know th=
+at he
+>>> _does_ respond to inquiries sent directly to him.
+>>
+>> Do you mean to its intel address ?
+>=20
+> Yes, CCing the Len's Intel address won't hurt I think.
 
-Yes, that would certainly be less confusing if somebody wants to build
-with e.g. JZ4740 support because Kconfig will then disable the new PWM
-instead of the other way around. Then again, maybe that's exactly the
-opposite of what we want.
+Ok, I will ping him and give him the pointers to the discussion we had.
 
-Also note that I already ported the blackfin PWM driver.
+Thanks
+  -- Daniel
 
-Thierry
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
 
---qMm9M+Fa2AknHoGS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP8tQSAAoJEN0jrNd/PrOhGh8P/RUK2nTvwK7HOb1qr8q4gYKl
-6+hPAKz9mMnvIH25J2Z7ALrCZjjCfsPPJd3EVTTs/8yhWWEMKAUxACgKKgxhmPL9
-ZA6xVo5MtARyYQj6TFemW4aeRdIWFIMHtdz245AcxTO6xPnRxnsf5drUlrrhiL4/
-RlDNI0Z7FV3HZrSkjRKd/MG0AfbvKVvCnN8QiDL0P3HfdPhAayixOJAFJKfikPed
-7buUqXBZo4dQydyZrMPrGUjV1i6xUGnwZ4FZpZw/kYYVMeIQZ89iAeTtFnXsx57d
-O5ln+p7ZIQ7jwbnhkJ5fUoXDEzFK4pOYyvMRaJXJQiRpc3bA2dYpENedgi4V90bo
-g/hrnz250AnE+uOAdjlzuNSRHYlol4wgXDYdTppj8q6DFHAB7Lek7x64oGvKoytc
-R6+HQuhHPh85Y68lNP2TmJcEw+dppafVJ76oGYVYhbS9uWg9sEyl7FFBRFVX0s5p
-PuR7jKasgTNBoMWmFjD4ECMWK8xcfraYI633PUM7PzSDtfh89G0CQu1LiM1IN/Hz
-owJFOsQNX2gmdeZIsIZMG8KCMGjNUSi6kJtld0N+zIqlpXAGHz2l4yKpHySLNIJD
-D8GA3V09xm5jfOpBSgcr9rYWmxftNrlQXKIrq7SjRLo/H/GatsE8xYefN3L+eCu9
-TDr4XYJxA3BI1kKSTi+K
-=nCDs
------END PGP SIGNATURE-----
-
---qMm9M+Fa2AknHoGS--
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
