@@ -1,53 +1,76 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: build failure after merge of the final tree (pwm tree related)
-Date: Tue, 3 Jul 2012 10:23:54 +0200
-Message-ID: <CAMuHMdVBs=i5i02_AxZ7CHBukmrj-ik-EjDTG58hZaLkxkc+dQ@mail.gmail.com>
-References: <20120629174826.546cc991459b12833f2aaebd@canb.auug.org.au>
-	<20120630181006.GC23990@avionic-0098.adnet.avionic-design.de>
-	<201206301920.21158.arnd.bergmann@linaro.org>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next : cpuidle - could you add my tree please
+Date: Tue, 3 Jul 2012 10:59:13 +0200
+Message-ID: <201207031059.13758.rjw@sisk.pl>
+References: <4FDEE98D.7010802@linaro.org> <201207022149.36629.rjw@sisk.pl> <4FF21D48.50301@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gh0-f174.google.com ([209.85.160.174]:38344 "EHLO
-	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750710Ab2GCIXz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jul 2012 04:23:55 -0400
-In-Reply-To: <201206301920.21158.arnd.bergmann@linaro.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd.bergmann@linaro.org>
-Cc: Thierry Reding <thierry.reding@avionic-design.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <4FF21D48.50301@linaro.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Amit Kucheria <amit.kucheria@linaro.org>, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Rob Lee <rob.lee@linaro.org>, "lenb@kernel.org" <lenb@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, Jun 30, 2012 at 9:20 PM, Arnd Bergmann <arnd.bergmann@linaro.org> wrote:
-> On Saturday 30 June 2012, Thierry Reding wrote:
->> I hadn't thought about the allyesconfig case yet. Adding a "depends on
->> !HAVE_PWM" to the PWM symbol should work and is the easiest fix to this
->> kind of problem while other PWM legacy API implementations are ported to
->> the PWM subsystem.
->>
->> Sascha, Arnd (Cc'ed): what do you think?
->>
->> I don't know if I'll get enough time to test this over the weekend but I
->> should get to it when I'm back in the office on Monday.
->>
-> You cannot depend on a symbol in the same place that provides it -- that
-> would be a recursive dependency (or a paradox).
->
-> I think that all the drivers that are not converted to the common PWM
-> layer yet should depend on not enabling the common code. Once they
-> are all moved over, that dependency will go away.
+On Tuesday, July 03, 2012, Daniel Lezcano wrote:
+> On 07/02/2012 09:49 PM, Rafael J. Wysocki wrote:
+> > On Monday, July 02, 2012, Daniel Lezcano wrote:
+> >>
+> >> On 07/02/2012 11:09 AM, Linus Walleij wrote:
+> >>> On Mon, Jun 25, 2012 at 3:27 PM, Daniel Lezcano
+> >>> <daniel.lezcano@linaro.org> wrote:
+> >>>
+> >>>> we discussed last week to put in place a tree grouping the cpuidle
+> >>>> modifications [1]. Is it possible to add the tree ?
+> >>>>
+> >>>> git://git.linaro.org/people/dlezcano/cpuidle-next.git #cpuidle-next
+> >>>
+> >>> Thanks for doing this.
+> >>>
+> >>> Since MAINTAINERS is lacking a listed maintainer for cpuidle,
+> >>> are you also going to add yourself as maintainer and list this
+> >>> tree in that file, or is this a one-time exercise?
+> >>
+> >> I will be glad to do that if Len and Rafael agree on that.
+> > 
+> > Len Brown has been a cpuidle maintainer for some time now.  Moreover,
+> > he's been taking patches, but Linus refused to pull his entire tree during the
+> > last merge window (as you probably know).  I honestly don't think this is
+> > a good enough reason for replacing him as a cpuidle maintainer by force.
+> > 
+> > So, you should ask Len whether or not he's willing to pass the cpuidle
+> > maintenance to someone else.
+> 
+> No, no. You are misunderstanding what I am proposing. I don't want to
+> replace Len I just want to act as a "proxy". I understand a maintainer
+> can be busy and could not have enough time to take care of the subsystem
+> is maintaining during a period because he's too busy for that.
+> Trust me, I fully understand that :)
+> 
+> As there are a lot of modifications of cpuidle, I am proposing to take
+> the patches when they are acked-by, to create a consolidated tree,
+> providing a better integration for cpuidle, a wider testing, preventing
+> conflicts and facilitating Len's work if he agrees to pull from this tree.
+> 
+> If that makes sense to add myself to the MAINTAINER file as a
+> co-maintainer (understand: send to me also the patches, so I can take
+> care of them if Len does not respond), I am ok with that.
+> 
+> It is just about helping :)
 
-Hence you cannot have a single kernel image that contains both legacy and new
-drivers. I don't know whether there's any such combination that makes sense,
-though.
+Cool. :-)
 
-Gr{oetje,eeting}s,
+So do you have a branch in the cpuidle-next.git tree that isn't going to
+be rebased?
+ 
+> > I know that Len hasn't been responsive recently, but I also know that he
+> > _does_ respond to inquiries sent directly to him.
+> 
+> Do you mean to its intel address ?
 
-                        Geert
+Yes, CCing the Len's Intel address won't hurt I think.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Rafael
