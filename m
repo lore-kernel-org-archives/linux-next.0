@@ -1,68 +1,68 @@
-From: Yoder Stuart-B08248 <B08248@freescale.com>
-Subject: RE: linux-next: build failure after merge of the kvm-ppc tree
-Date: Thu, 5 Jul 2012 14:20:18 +0000
-Message-ID: <9F6FE96B71CF29479FF1CDC8046E150339A388@039-SN1MPN1-002.039d.mgd.msft.net>
-References: <20120705154929.219789032ef59f9243d0b8a5@canb.auug.org.au>
- <92A87EB2-E859-456C-85DE-7F0A4CC5F127@suse.de>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the wireless
+ tree
+Date: Mon, 2 Jul 2012 22:33:25 -0400
+Message-ID: <20120703023325.GA12530@tuxdriver.com>
+References: <20120703114443.26e03246debd0652e8d1e92b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <92A87EB2-E859-456C-85DE-7F0A4CC5F127@suse.de>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Alexander Graf <agraf@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:33180 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756264Ab2GEOwW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jul 2012 10:52:22 -0400
+Content-Disposition: inline
+In-Reply-To: <20120703114443.26e03246debd0652e8d1e92b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eliad Peller <eliad@wizery.com>, Johannes Berg <johannes.berg@intel.com>
 
+On Tue, Jul 03, 2012 at 11:44:43AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net-next tree got a conflict in
+> net/mac80211/mlme.c between commit 0030bc586591 ("mac80211: destroy
+> assoc_data correctly if assoc fails") from the wireless tree and commit
+> bdcbd8e0e3ff ("mac80211: clean up debugging") from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc net/mac80211/mlme.c
+> index 0db5d34,e6fe84a..0000000
+> --- a/net/mac80211/mlme.c
+> +++ b/net/mac80211/mlme.c
+> @@@ -2170,17 -2148,19 +2148,17 @@@ ieee80211_rx_mgmt_assoc_resp(struct iee
+>   	*bss = assoc_data->bss;
+>   
+>   	if (status_code != WLAN_STATUS_SUCCESS) {
+> - 		printk(KERN_DEBUG "%s: %pM denied association (code=%d)\n",
+> - 		       sdata->name, mgmt->sa, status_code);
+> + 		sdata_info(sdata, "%pM denied association (code=%d)\n",
+> + 			   mgmt->sa, status_code);
+>   		ieee80211_destroy_assoc_data(sdata, false);
+>   	} else {
+>  -		sdata_info(sdata, "associated\n");
+>  -
+>   		if (!ieee80211_assoc_success(sdata, *bss, mgmt, len)) {
+>   			/* oops -- internal error -- send timeout for now */
+>  -			ieee80211_destroy_assoc_data(sdata, true);
+>  -			sta_info_destroy_addr(sdata, mgmt->bssid);
+>  +			ieee80211_destroy_assoc_data(sdata, false);
+>   			cfg80211_put_bss(*bss);
+>   			return RX_MGMT_CFG80211_ASSOC_TIMEOUT;
+>   		}
+> - 		printk(KERN_DEBUG "%s: associated\n", sdata->name);
+> ++		sdata_info(sdata, "associated\n");
+>   
+>   		/*
+>   		 * destroy assoc_data afterwards, as otherwise an idle
 
+Looks good to me.
 
-> -----Original Message-----
-> From: Alexander Graf [mailto:agraf@suse.de]
-> Sent: Thursday, July 05, 2012 1:03 AM
-> To: Stephen Rothwell
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Yoder Stuart-B08248; ppc-dev
-> Subject: Re: linux-next: build failure after merge of the kvm-ppc tree
-> 
-> 
-> On 05.07.2012, at 07:49, Stephen Rothwell wrote:
-> 
-> > Hi Alexander,
-> >
-> > After merging the kvm-ppc tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >
-> > arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
-> > arch/powerpc/kernel/exceptions-64s.S:479: Error: wrong number of operands
-> > arch/powerpc/kernel/exceptions-64s.S:486: Error: wrong number of operands
-> > arch/powerpc/kernel/exceptions-64s.S:486: Error: wrong number of operands
-> > arch/powerpc/kernel/exceptions-64s.S:487: Error: wrong number of operands
-> > arch/powerpc/kernel/exceptions-64s.S:487: Error: wrong number of operands
-> > arch/powerpc/kernel/exceptions-64s.S:494: Error: wrong number of operands
-> > arch/powerpc/kernel/exceptions-64s.S:494: Error: wrong number of operands
-> >
-> > Caused by commit bc8cc4993e19 ("PPC: use CURRENT_THREAD_INFO instead of
-> > open coded assembly").  The fact that this patch has problems was already
-> > pointed out on the linuxppc-dev mailing list and it clearly hasn't been
-> > build tested.
-> >
-> > I have used the version of the kvm-ppc tree from next-20120703 for today.
-> 
-> Ah, yes, thanks. I kept the old, broken version in my tree to make sure I have the dependencies for (and
-> don't forget) the (hopefully good) patches that follow on top, but was planning to replace it once we
-> have a new version of the CURRENT_THREAD_INFO one.
-> 
-> Stuart, could you please send a new version of the CURRENT_THREAD_INFO patch?
-
-Yes, will send that shortly.
-
-Stuart
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
