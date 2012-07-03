@@ -1,96 +1,88 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: linux-next : cpuidle - could you add my tree please
-Date: Tue, 03 Jul 2012 00:14:32 +0200
-Message-ID: <4FF21D48.50301@linaro.org>
-References: <4FDEE98D.7010802@linaro.org> <CACRpkdYaLweX-4YkWotuFFWoqEjOLKoNCsurCxxWNfq7QznPnw@mail.gmail.com> <4FF19947.3040608@linaro.org> <201207022149.36629.rjw@sisk.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the wireless
+ tree
+Date: Tue, 3 Jul 2012 11:44:43 +1000
+Message-ID: <20120703114443.26e03246debd0652e8d1e92b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__3_Jul_2012_11_44_43_+1000_t3tlV20DXxg=t5iF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:64544 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933102Ab2GBWOg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jul 2012 18:14:36 -0400
-Received: by wibhm11 with SMTP id hm11so3617597wib.1
-        for <linux-next@vger.kernel.org>; Mon, 02 Jul 2012 15:14:35 -0700 (PDT)
-In-Reply-To: <201207022149.36629.rjw@sisk.pl>
+Received: from haggis.pcug.org.au ([203.10.76.10]:32793 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752921Ab2GCBoy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jul 2012 21:44:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Amit Kucheria <amit.kucheria@linaro.org>, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Rob Lee <rob.lee@linaro.org>, "lenb@kernel.org" <lenb@kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eliad Peller <eliad@wizery.com>, "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes.berg@intel.com>
 
-On 07/02/2012 09:49 PM, Rafael J. Wysocki wrote:
-> On Monday, July 02, 2012, Daniel Lezcano wrote:
->>
->> On 07/02/2012 11:09 AM, Linus Walleij wrote:
->>> On Mon, Jun 25, 2012 at 3:27 PM, Daniel Lezcano
->>> <daniel.lezcano@linaro.org> wrote:
->>>
->>>> we discussed last week to put in place a tree grouping the cpuidle
->>>> modifications [1]. Is it possible to add the tree ?
->>>>
->>>> git://git.linaro.org/people/dlezcano/cpuidle-next.git #cpuidle-nex=
-t
->>>
->>> Thanks for doing this.
->>>
->>> Since MAINTAINERS is lacking a listed maintainer for cpuidle,
->>> are you also going to add yourself as maintainer and list this
->>> tree in that file, or is this a one-time exercise?
->>
->> I will be glad to do that if Len and Rafael agree on that.
->=20
-> Len Brown has been a cpuidle maintainer for some time now.  Moreover,
-> he's been taking patches, but Linus refused to pull his entire tree d=
-uring the
-> last merge window (as you probably know).  I honestly don't think thi=
-s is
-> a good enough reason for replacing him as a cpuidle maintainer by for=
-ce.
->=20
-> So, you should ask Len whether or not he's willing to pass the cpuidl=
-e
-> maintenance to someone else.
+--Signature=_Tue__3_Jul_2012_11_44_43_+1000_t3tlV20DXxg=t5iF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No, no. You are misunderstanding what I am proposing. I don't want to
-replace Len I just want to act as a "proxy". I understand a maintainer
-can be busy and could not have enough time to take care of the subsyste=
-m
-is maintaining during a period because he's too busy for that.
-Trust me, I fully understand that :)
+Hi all,
 
-As there are a lot of modifications of cpuidle, I am proposing to take
-the patches when they are acked-by, to create a consolidated tree,
-providing a better integration for cpuidle, a wider testing, preventing
-conflicts and facilitating Len's work if he agrees to pull from this tr=
-ee.
+Today's linux-next merge of the net-next tree got a conflict in
+net/mac80211/mlme.c between commit 0030bc586591 ("mac80211: destroy
+assoc_data correctly if assoc fails") from the wireless tree and commit
+bdcbd8e0e3ff ("mac80211: clean up debugging") from the net-next tree.
 
-If that makes sense to add myself to the MAINTAINER file as a
-co-maintainer (understand: send to me also the patches, so I can take
-care of them if Len does not respond), I am ok with that.
-
-It is just about helping :)
-
-> I know that Len hasn't been responsive recently, but I also know that=
- he
-> _does_ respond to inquiries sent directly to him.
-
-Do you mean to its intel address ?
-
-Thanks
-  -- Daniel
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+diff --cc net/mac80211/mlme.c
+index 0db5d34,e6fe84a..0000000
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@@ -2170,17 -2148,19 +2148,17 @@@ ieee80211_rx_mgmt_assoc_resp(struct iee
+  	*bss =3D assoc_data->bss;
+ =20
+  	if (status_code !=3D WLAN_STATUS_SUCCESS) {
+- 		printk(KERN_DEBUG "%s: %pM denied association (code=3D%d)\n",
+- 		       sdata->name, mgmt->sa, status_code);
++ 		sdata_info(sdata, "%pM denied association (code=3D%d)\n",
++ 			   mgmt->sa, status_code);
+  		ieee80211_destroy_assoc_data(sdata, false);
+  	} else {
+ -		sdata_info(sdata, "associated\n");
+ -
+  		if (!ieee80211_assoc_success(sdata, *bss, mgmt, len)) {
+  			/* oops -- internal error -- send timeout for now */
+ -			ieee80211_destroy_assoc_data(sdata, true);
+ -			sta_info_destroy_addr(sdata, mgmt->bssid);
+ +			ieee80211_destroy_assoc_data(sdata, false);
+  			cfg80211_put_bss(*bss);
+  			return RX_MGMT_CFG80211_ASSOC_TIMEOUT;
+  		}
+- 		printk(KERN_DEBUG "%s: associated\n", sdata->name);
+++		sdata_info(sdata, "associated\n");
+ =20
+  		/*
+  		 * destroy assoc_data afterwards, as otherwise an idle
+
+--Signature=_Tue__3_Jul_2012_11_44_43_+1000_t3tlV20DXxg=t5iF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP8k6LAAoJEECxmPOUX5FEzd4QAJ62Dn3pILRBP5uC/07tPQTu
+p/NNiwmawJ7TD4yFVYHPe7iMOYQjIG33aRbKwq5hyNguARG9dCURQUClqqWBoHln
+9c9NdiLdsieyB906w3V4vZDtXaVwqDsLHCUlbfMXSn8KWFanjeGGrCsJB2PtgFKh
+D4UQQJaCXieQIkzAieL3sYV5midiX9+fpaU0eBQjjBrclehgTCw9QRFBlNvi9wov
+uSrMACyiChTWzmG25bGRCTBgLKv+5eW27BRDTYiD3bEeDufZA4xz1ED2MRymAcnP
+0zfl2MHTYLKdCqOcD1Nkml0PHLpLUMdsui5gykkuat2KqENlLUEn75Iyh7qjmyjl
+YbVg58vSN0Vl8+SKR3S8cuEb6ztxpsy1AvEHqRgejcVVkVi7vpoAYyUuYVZNB9Sr
+jiSbGVD7HunNQo+PKPAOGtschTpHjEo9BuuIvd8dfFtXDEkGTtEUMCzWXJcERyyd
+gGSUEoSCt5AXAEBPIGdCxh7atlsmEhXRgq53A3yejIZ6zGz6/y6ySnwYl/IySFex
+Zx8CoDeNeO2UUhmelGzyjApdUP5Kl96izQgFxUCcHFGYTosWz/hEYSi5NQHg7YEX
+h0qvU0g4B6KU8nMwP7jnN0Z4866i86q1Bzqcr/RK5RKKAv2mbIVIURRXvMFmO26L
+OuxBU3RhCZ+q7ZbK9IcB
+=nWND
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__3_Jul_2012_11_44_43_+1000_t3tlV20DXxg=t5iF--
