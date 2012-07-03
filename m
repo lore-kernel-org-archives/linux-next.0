@@ -1,44 +1,38 @@
-From: Marcelo Tosatti <mtosatti@redhat.com>
-Subject: Re: [PATCH] apic: fix kvm build on UP without IOAPIC
-Date: Tue, 3 Jul 2012 15:55:11 -0300
-Message-ID: <20120703185511.GA24415@amt.cnet>
-References: <20120701150506.GA31304@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next : cpuidle - could you add my tree please
+Date: Tue, 3 Jul 2012 21:20:00 +0200
+Message-ID: <CACRpkdY-vmA57uXWCzG7b7JXkZi0n-HCdCK0C4wPFgv51Q_KFA@mail.gmail.com>
+References: <4FDEE98D.7010802@linaro.org>
+	<CACRpkdYaLweX-4YkWotuFFWoqEjOLKoNCsurCxxWNfq7QznPnw@mail.gmail.com>
+	<4FF19947.3040608@linaro.org> <201207022149.36629.rjw@sisk.pl>
+	<4FF21D48.50301@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120701150506.GA31304@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Avi Kivity <avi@redhat.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org, kvm@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-bounces@lists.linux-foundation.org>
+In-Reply-To: <4FF21D48.50301@linaro.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
+List-Post: <mailto:linux-pm@lists.linux-foundation.org>
+List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
+Sender: linux-pm-bounces@lists.linux-foundation.org
+Errors-To: linux-pm-bounces@lists.linux-foundation.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Len.Brown@intel.com
+Cc: Kevin Hilman <khilman@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Rob Lee <rob.lee@linaro.org>, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, linux-pm@lists.linux-foundation.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Jul 01, 2012 at 06:05:06PM +0300, Michael S. Tsirkin wrote:
-> On UP i386, when APIC is disabled
-> # CONFIG_X86_UP_APIC is not set
-> # CONFIG_PCI_IOAPIC is not set
-> 
-> code looking at apicdrivers never has any effect but it
-> still gets compiled in. In particular, this causes
-> build failures with kvm, but it generally bloats the kernel
-> unnecessarily.
-> 
-> Fix by defining both __apicdrivers and __apicdrivers_end
-> to be NULL when CONFIG_X86_LOCAL_APIC is unset: I verified
-> that as the result any loop scanning __apicdrivers gets optimized out by
-> the compiler.
-> 
-> Warning: a .config with apic disabled doesn't seem to boot
-> for me (even without this patch). Still verifying why,
-> meanwhile this patch is compile-tested only.
-> 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
-> 
-> Note: if this patch makes sense, can x86 maintainers
-> please ACK applying it through the kvm tree, since that is
-> where we see the issue that it addresses?
-> Avi, Marcelo, maybe you can carry this in kvm/linux-next as a temporary
-> measure so that linux-next builds?
+On Tue, Jul 3, 2012 at 12:14 AM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
 
-Applied, thanks.
+> If that makes sense to add myself to the MAINTAINER file as a
+> co-maintainer (understand: send to me also the patches, so I can take
+> care of them if Len does not respond), I am ok with that.
+
+What about a patch adding both you and Len as MAINTAINERs,
+right now there is noone just some informal consensus and noone
+really knows who to send patches to. Let's formalize it.
+
+Yours,
+Linus Walleij
