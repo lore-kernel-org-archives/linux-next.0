@@ -1,52 +1,27 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: Re: mmotm 2012-06-29-17-00 uploaded
-Date: Wed, 4 Jul 2012 11:07:43 +0200
-Message-ID: <20120704090743.GA29842@tiehlicka.suse.cz>
-References: <20120630000055.AF381A02DE@akpm.mtv.corp.google.com>
- <20120702105934.GD8050@tiehlicka.suse.cz>
- <4FF39FE5.7050702@kernel.org>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Please add the random tree to linux-next
+Date: Wed, 04 Jul 2012 15:26:50 -0400
+Message-ID: <nsxbojvqqdh.fsf@closure.thunk.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <4FF39FE5.7050702@kernel.org>
-Sender: owner-linux-mm@kvack.org
-To: Minchan Kim <minchan@kernel.org>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from li9-11.members.linode.com ([67.18.176.11]:36720 "EHLO
+	imap.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932195Ab2GDT0w (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Jul 2012 15:26:52 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed 04-07-12 10:44:05, Minchan Kim wrote:
-> Hi Michal,
-> 
-> On 07/02/2012 07:59 PM, Michal Hocko wrote:
-> 
-> > On Fri 29-06-12 17:00:54, Andrew Morton wrote:
-> >> The mm-of-the-moment snapshot 2012-06-29-17-00 has been uploaded to
-> >>
-> >>    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > memcg-devel tree has been updated as well
-> 
-> 
-> It's very helpful. Thanks a lot!
-> 
-> Just a wish.
-> It could have tags like mmotm-06-29-17-00.
+Hi Stephen,
 
-Yes, this is a very good idea. I will tag the current tip and update my
-scripts to do it for the further trees.
+I would appreicate it if you could add
 
-Thanks a lot for your feedback!
--- 
-Michal Hocko
-SUSE Labs
-SUSE LINUX s.r.o.
-Lihovarska 1060/12
-190 00 Praha 9    
-Czech Republic
+git://git.kernel.org/pub/scm/linux/kernel/git/tytso/random.git dev
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+to the linux-next tree.
+
+Thanks!!
+
+                                                - Ted
