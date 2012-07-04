@@ -1,29 +1,41 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the mfd tree
-Date: Tue, 3 Jul 2012 16:03:04 -0700
-Message-ID: <20120703230304.GA15624@kroah.com>
-References: <20120703140938.b2ae0cf0ce2a3a470bb6cec6@canb.auug.org.au>
+From: Minchan Kim <minchan@kernel.org>
+Subject: Re: mmotm 2012-06-29-17-00 uploaded
+Date: Wed, 04 Jul 2012 10:44:05 +0900
+Message-ID: <4FF39FE5.7050702@kernel.org>
+References: <20120630000055.AF381A02DE@akpm.mtv.corp.google.com> <20120702105934.GD8050@tiehlicka.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120703140938.b2ae0cf0ce2a3a470bb6cec6@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russ Dill <Russ.Dill@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20120702105934.GD8050@tiehlicka.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Michal Hocko <mhocko@suse.cz>
+Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 03, 2012 at 02:09:38PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the usb tree got a conflict in
-> drivers/usb/host/ehci-omap.c between commit 996439f8fa07 ("mfd: USB: Fix
-> the omap-usb EHCI ULPI PHY reset fix issues") from the mfd tree and
-> commit 984e97483a14 ("ARM: OMAP: USB: Fixup ehci_hcd_omap_probe error
-> path") from the usb tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+Hi Michal,
 
-Looks good to me, thanks.
+On 07/02/2012 07:59 PM, Michal Hocko wrote:
 
-greg k-h
+> On Fri 29-06-12 17:00:54, Andrew Morton wrote:
+>> The mm-of-the-moment snapshot 2012-06-29-17-00 has been uploaded to
+>>
+>>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> memcg-devel tree has been updated as well
+
+
+It's very helpful. Thanks a lot!
+
+Just a wish.
+It could have tags like mmotm-06-29-17-00.
+
+-- 
+Kind regards,
+Minchan Kim
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
