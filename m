@@ -1,53 +1,77 @@
-From: Alan Modra <amodra@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Thu, 5 Jul 2012 19:13:48 +0930
-Message-ID: <20120705094348.GA5805@bubble.grove.modra.org>
-References: <20120705183345.ee84ec1048a19aa1c7129578@canb.auug.org.au>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: linux-next : cpuidle - could you add my tree please
+Date: Thu, 05 Jul 2012 15:33:16 +0200
+Message-ID: <4FF5979C.6030802@linaro.org>
+References: <4FDEE98D.7010802@linaro.org> <20120703231948.33cca18e3cc3d6e497ab022d@canb.auug.org.au> <4FF2F2D3.4090200@linaro.org> <201207031854.51163.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:42700 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754028Ab2GEJn4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jul 2012 05:43:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20120705183345.ee84ec1048a19aa1c7129578@canb.auug.org.au>
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:57064 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932876Ab2GENdU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jul 2012 09:33:20 -0400
+Received: by eeit10 with SMTP id t10so3229526eei.19
+        for <linux-next@vger.kernel.org>; Thu, 05 Jul 2012 06:33:19 -0700 (PDT)
+In-Reply-To: <201207031854.51163.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Amit Kucheria <amit.kucheria@linaro.org>, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Rob Lee <rob.lee@linaro.org>, "lenb@kernel.org" <lenb@kernel.org>
 
-On Thu, Jul 05, 2012 at 06:33:45PM +1000, Stephen Rothwell wrote:
-> powerpc64-linux-ld: drivers/built-in.o: In function `.gpiochip_is_requested':
-> (.text+0x4): sibling call optimization to `_savegpr0_29' does not allow automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `_savegpr0_29' extern
-> 
-> I got more than 60000 of these messages before I killed the link. :-(  I
-> am not sure what has changed to do this, but it may have been masked for
-> the past few releases due to other linking problems.
+On 07/03/2012 06:54 PM, Rafael J. Wysocki wrote:
+> On Tuesday, July 03, 2012, Daniel Lezcano wrote:
+>> On 07/03/2012 03:19 PM, Stephen Rothwell wrote:
+>>> Hi Daniel,
+>>>
+>>> On Tue, 03 Jul 2012 14:56:58 +0200 Daniel Lezcano <daniel.lezcano@l=
+inaro.org> wrote:
+>>>>
+>>>>> So do you have a branch in the cpuidle-next.git tree that isn't g=
+oing to
+>>>>> be rebased?
+>>>>
+>>>> No. I am following Linus tree and adding the patches on top of it.
+>>>
+>>> Please don't rebase your tree more than necessary - it just makes t=
+hing
+>>> hard for anyone using your tree as a base for further development a=
+nd
+>>> throws away any testing you may have done.
+>>
+>> Ok, let me sync with Len and Rafael about the best way to do that.
+>=20
+> Please create a branch in your tree for me to pull from and let me kn=
+ow
+> which one it is.  Please note that this branch must not be rebased af=
+ter I've
+> pulled from it and it's going to be included into my linux-next branc=
+h
+> automatically.
 
-Let me guess.  You're using bleeding edge gcc but not binutils.
+Ok that sounds good.
 
-a) Recent gcc has fixed prologue and epilogue generation which now
-   properly makes use of out-of-line register save and restore
-   functions when compiling with -Os.
-b) Recent ld doesn't emit out-of-line save/restore function for ld -r,
-   but yours does.  You need my 2012-06-22 patch.
-c) Kernel uses ld -r for packaging.
+Let me put in place the branch and rework my patches because they
+conflict with the 'disable' flag moved to the per cpu structure.
+In the meantime, I will send you the other patches which do not conflic=
+t.
 
-(b) and (c) together mean you get a definition for _savegpr0_29 munged
-together with other functions.  That's bad.  If _savegpr0_29 wasn't
-emitted until the final link stage then it would be in a code section
-containing just save/restore functions.  ld will analyse that section
-and notice the absense of toc relocations; functions therein don't
-use the toc and can thus be called from any toc group without needing
-a toc adjusting stub.  In your case _savegpr0_29 is in a section that
-has toc relocations (from normal compiled code), so ld decides that
-any function in that section must have a proper value for the toc
-register.  But calls to _savegpr0_29 don't have a following nop to
-overwrite with a toc restore insn, hence the ld error.
 
-Score another black mark for ld -r.
+> I'll include it into my v3.6 push, because I have a couple of cpuidle=
+ patches
+> queued up already.  We'll need to discuss the future of it after 3.6,=
+ though.
 
--- 
-Alan Modra
-Australia Development Lab, IBM
+Ok, cool.
+
+Thanks
+  -- Daniel
+
+
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
