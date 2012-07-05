@@ -1,46 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Next: please switch the GPIO tree to mine
-Date: Thu, 5 Jul 2012 16:55:43 +0200
-Message-ID: <CACRpkda5-2zgq8UnGzJj2g15bbPMGgoW29vjZbASK9Q0+gRdtQ@mail.gmail.com>
-References: <CACRpkdb+5ATkMQrW4jBDUyWn2cSRnvyoFyGnFEJQJAO9XkdM2A@mail.gmail.com>
-	<CACxGe6s9moLj-zF9CnRS1R0rJ73JF+PeeXQ9_ntc0MJnnpu8Nw@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: manual merge of the input-mt tree with the
+ input-current tree
+Date: Thu, 5 Jul 2012 10:19:05 -0700
+Message-ID: <20120705171904.GA31383@core.coreip.homeip.net>
+References: <20120705135220.9f8f95082833a0d6fadeb136@canb.auug.org.au>
+ <CAGS+omDab9mOOf6pCryRTyLvYA66h0XjqmFPc-vrAo4hkfGN0A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:48766 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752448Ab2GEOzo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jul 2012 10:55:44 -0400
-Received: by qcro28 with SMTP id o28so4862772qcr.19
-        for <linux-next@vger.kernel.org>; Thu, 05 Jul 2012 07:55:43 -0700 (PDT)
-In-Reply-To: <CACxGe6s9moLj-zF9CnRS1R0rJ73JF+PeeXQ9_ntc0MJnnpu8Nw@mail.gmail.com>
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:44036 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751278Ab2GERTN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jul 2012 13:19:13 -0400
+Content-Disposition: inline
+In-Reply-To: <CAGS+omDab9mOOf6pCryRTyLvYA66h0XjqmFPc-vrAo4hkfGN0A@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Henrik Rydberg <rydberg@euromail.se>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
 
-On Thu, Jul 5, 2012 at 4:42 PM, Grant Likely <grant.likely@secretlab.ca> wrote:
-> On Jul 5, 2012 8:04 AM, "Linus Walleij" <linus.walleij@linaro.org> wrote:
->>
->> Hi Stephen,
->>
->> Grant asked me to take over the GPIO tree for a while.
->> (See: https://lkml.org/lkml/2012/7/1/220)
->>
->> Can you please replace Grants tree:
->> gpio-current    git     git://git.secretlab.ca/git/linux-2.6#gpio/merge
->>
->> With this one:
->> gpio git
->> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
->>
->> Until further notice.
->
-> Actually, don't replace mine. Just add Linus' as another GPIO tree.
+Hi Henrik,
 
-I pulled your gpio/merge tag into my tree so all is in one place though.
+On Thu, Jul 05, 2012 at 11:57:14AM +0800, Daniel Kurtz wrote:
+> On Thu, Jul 5, 2012 at 11:52 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi Henrik,
+> >
+> > Today's linux-next merge of the input-mt tree got a conflict in
+> > drivers/input/touchscreen/atmel_mxt_ts.c between commit 9b7e31bbf4bb
+> > ("Input: request threaded-only IRQs with IRQF_ONESHOT") from the
+> > input-current tree and commit c2ef9a1a248b ("Input: atmel_mxt_ts - use
+> > client name for irq") from the input-mt tree.
+> >
+> > I fixed it up (see below) and can carry the fix as necessary.
+> 
+> Looks good to me. Don't know if you need it for a merge, but:
+> 
+> Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+> 
 
-But git will cope I guess so no big deal.
+Hmm, maybe it is time I pull your tree?
 
-Yours,
-Linus Walleij
+Thanks.
+
+-- 
+Dmitry
