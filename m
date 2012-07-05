@@ -1,53 +1,62 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the signal tree with the
-	arm-current tree
-Date: Thu, 5 Jul 2012 08:52:04 +0100
-Message-ID: <20120705075204.GA12344@flint.arm.linux.org.uk>
-References: <20120705173526.bf8772adb18edfc91adddea8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Thu, 5 Jul 2012 18:33:45 +1000
+Message-ID: <20120705183345.ee84ec1048a19aa1c7129578@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:38431 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752423Ab2GEHwM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jul 2012 03:52:12 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__5_Jul_2012_18_33_45_+1000_611tFbWnbaq1mpxy"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Modra <amodra@gmail.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__5_Jul_2012_18_33_45_+1000_611tFbWnbaq1mpxy
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20120705173526.bf8772adb18edfc91adddea8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 05, 2012 at 05:35:26PM +1000, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> Today's linux-next merge of the signal tree got a conflict in
-> arch/arm/kernel/signal.c between commit f73e2ca64281 ("ARM: 7443/1:
-> Revert "new way of handling ERESTART_RESTARTBLOCK"") from the arm-current
-> tree and commits 9c802c169f96 ("arm: deal with handlerless restarts
-> without leaving the kernel") and 76c3f4da3ee4 ("arm: get rid of
-> TIF_SYSCALL_RESTARTSYS") from the signal tree.
-> 
-> I have no idea how to cope with this.  So I have effectively reverted
-> commit f73e2ca64281 ("ARM: 7443/1: Revert "new way of handling
-> ERESTART_RESTARTBLOCK"") for today (though parts of that commit are also
-> implemented by the above signal tree commits).
+Hi all,
 
-Currently, bugs have been found with the signal handling updates which
-happened during the last merge window.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Will has concerns with Al's proposed fixes for the signal handling.
-Unfortunately, Al isn't responding to attempts to discuss this (for
-whatever reason), and as we're now at -rc5, we believe Al's patches are
-now too complex to go into this stage of -rc.
+powerpc64-linux-ld: drivers/built-in.o: In function `.gpiochip_is_requested=
+':
+(.text+0x4): sibling call optimization to `_savegpr0_29' does not allow aut=
+omatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling=
+-calls, or make `_savegpr0_29' extern
 
-We have had to find a way forward on this - which means reverting some
-of the commits that went in during the previous merge window.
+I got more than 60000 of these messages before I killed the link. :-(  I
+am not sure what has changed to do this, but it may have been masked for
+the past few releases due to other linking problems.
 
-So, your revert to "fix" this isn't a good idea, because it isn't what
-will be going to Linus this weekend.
+I have left this broken for today.
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__5_Jul_2012_18_33_45_+1000_611tFbWnbaq1mpxy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP9VFpAAoJEECxmPOUX5FEr/YQAIx9U+6XTE36nEohZEY6fKJL
+hffLwEBbdUk0HWbk5x9oMTltSKK00V+Xgu/IJ7OCpsIbmWvZ10sn7NYqrSYmmO4B
+aArh0od6j/Gd4cLKwfgBzTzMYI74XHHjGCm5t5yOzihFjDZwK9peg81RCqgbQ9YM
+CjQDAuDgoI5Mx05/Bqg8yT70ACBOjsRV0n+0CslLu9+FanqHTvIPPQSQsZ/wbWu2
+O/2v6nv+ZImgDkdUedzm1KGug61s3GJir8OSdcHb0RZYGgd+CAAT3mobtbA563PW
+9r/1AfWJgcXnvDxJ2b/7QrBJ3lej0Wi6y/o5yjdQw80iR7dLKZ7ObonPZ7jHTm96
+oFIXv0fA4SFS9H0pmNN0X2tIKL/ZZVF5Y+Yohzo4pEbSONNZY73/v+U9YYbOV+c1
+w1GHfee6jvTem76IkXgGqotCYtXTa+21c5FaJgg+gU/FlmrSqpSSkdYriEPi+5CC
+hW6/xrt90m1zQ4MSc9bp8yA47IKlPETTtSyymZ1nMjxzgvARo/sABEKNXythN3l2
+X3kmaeK1ZGF8VBz1E/M1jzEOiSEoQupr3O0A3D5bjAQUCDopeaRVMz8xl5qB5Gfy
+hVGCehopZMbW51+q9OHN92DcDFZaKuVi/NDKXMlrXuZNPNFkpdkETk5dM2JmWO33
+XKNmYjZB0RyM7Q/XDY6k
+=qvIb
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__5_Jul_2012_18_33_45_+1000_611tFbWnbaq1mpxy--
