@@ -1,61 +1,69 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: linux-next: manual merge of the input-mt tree with the
- input-current tree
-Date: Thu, 5 Jul 2012 11:57:14 +0800
-Message-ID: <CAGS+omDab9mOOf6pCryRTyLvYA66h0XjqmFPc-vrAo4hkfGN0A@mail.gmail.com>
-References: <20120705135220.9f8f95082833a0d6fadeb136@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the vfs tree
+Date: Thu, 5 Jul 2012 15:00:12 +1000
+Message-ID: <20120705150012.63b7d7be0a0f549cfe650515@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:56177 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751418Ab2GED5f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jul 2012 23:57:35 -0400
-Received: by obbuo13 with SMTP id uo13so12412453obb.19
-        for <linux-next@vger.kernel.org>; Wed, 04 Jul 2012 20:57:35 -0700 (PDT)
-In-Reply-To: <20120705135220.9f8f95082833a0d6fadeb136@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Henrik Rydberg <rydberg@euromail.se>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__5_Jul_2012_15_00_12_+1000_YnM/5neaDbvMchVN"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 5, 2012 at 11:52 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Henrik,
->
-> Today's linux-next merge of the input-mt tree got a conflict in
-> drivers/input/touchscreen/atmel_mxt_ts.c between commit 9b7e31bbf4bb
-> ("Input: request threaded-only IRQs with IRQF_ONESHOT") from the
-> input-current tree and commit c2ef9a1a248b ("Input: atmel_mxt_ts - use
-> client name for irq") from the input-mt tree.
->
-> I fixed it up (see below) and can carry the fix as necessary.
+--Signature=_Thu__5_Jul_2012_15_00_12_+1000_YnM/5neaDbvMchVN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks good to me. Don't know if you need it for a merge, but:
+Hi all,
 
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+Today's linux-next merge of the tip tree got a conflict in kernel/fork.c
+between commit 7ab538da1f8a ("trim task_work: get rid of hlist") from the
+vfs tree and commit 0ea86208345b ("sched, mm: Rework sched_{fork,exec}
+node assignment") from the tip tree.
 
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->
-> diff --cc drivers/input/touchscreen/atmel_mxt_ts.c
-> index 25fd056,37190ab..0000000
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@@ -1144,13 -1167,8 +1167,9 @@@ static int __devinit mxt_probe(struct i
->         input_set_drvdata(input_dev, data);
->         i2c_set_clientdata(client, data);
->
-> -       error = mxt_initialize(data);
-> -       if (error)
-> -               goto err_free_object;
-> -
->         error = request_threaded_irq(client->irq, NULL, mxt_interrupt,
->  -                      pdata->irqflags, client->name, data);
->  +                                   pdata->irqflags | IRQF_ONESHOT,
-> -                                    client->dev.driver->name, data);
-> ++                                   client->name, data);
->         if (error) {
->                 dev_err(&client->dev, "Failed to register interrupt\n");
->                 goto err_free_object;
+diff --cc kernel/fork.c
+index bebabad,1a69745..0000000
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@@ -1414,8 -1415,7 +1415,7 @@@ static struct task_struct *copy_process
+  	 * We dont wake it up yet.
+  	 */
+  	p->group_leader =3D p;
+- 	INIT_LIST_HEAD(&p->thread_group);
+ -	INIT_HLIST_HEAD(&p->task_works);
+ +	p->task_works =3D NULL;
+ =20
+  	/* Now that the task is set up, run cgroup callbacks if
+  	 * necessary. We need to run them before the task is visible
+
+--Signature=_Thu__5_Jul_2012_15_00_12_+1000_YnM/5neaDbvMchVN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP9R9cAAoJEECxmPOUX5FEwmwQAJariZxQ3Ns7OP6K4rhzHPdH
+6UVYciiZBozMS1Jk+uMeI8sdgFmAVDEvAjXU5bd5LoNTq4jq9xWDyuGwXIk+oU6d
+HmxhT6al/GzZuJFKqRAA8dMgm54AisDigZMl5EEO7ps2VUslnablu9pJUdcQ+Vwj
+Whr/G05jVtm7dZqPRght9eVgjdWWKM8vN4pVdToCN24gcuUnKdfyd7O5EnZkMR7M
+f1DSmp1sc5lAUfJUUJxHS9wKA5c4mKtHrwJ13wCqtSZymAJk3Jhp4+HyHYVGFJuI
+MsQr7kwbS/UP++wzAXEskirDqRTskgfUKew3YVvdML6XkjdVi+Jbulrfq4FapPmt
+g+dVkBIm+mpyyWmpMTti62X4ittzd0AdN7MdRSW7nx12TcYK1olU5GArhhZlYgtq
+NprbaPNMd7XBGVtTFnYPYnvjqx8AkLEsCBMChWxWk2Hn84rY+dkmctyev2miz3ue
+SCRuyF7awugYP5xVu71cXrgKNWbV0jJE0GiJ0SuU78N0o9HisE1V/szSFWZtrHA8
+GGGciacrCdV90zjLtIUt9MvQ/0/hw89OpuBDX1LY2o29GPx8ejHVkXwn/hpkgefE
+KBeOOWczX53ba6WmmubGuAeZggPhAb4Bjy2b7PIZQiQMxyfLd8rw8bpJ6EgEe3mY
+RhpBaM1E1yZjg6jkCyxi
+=U0pl
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__5_Jul_2012_15_00_12_+1000_YnM/5neaDbvMchVN--
