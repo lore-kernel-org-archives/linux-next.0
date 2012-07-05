@@ -1,28 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the vfs tree
-Date: Thu, 5 Jul 2012 15:00:12 +1000
-Message-ID: <20120705150012.63b7d7be0a0f549cfe650515@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-ppc tree with Linus' tree
+Date: Thu, 5 Jul 2012 15:37:28 +1000
+Message-ID: <20120705153728.19e2318efa0cfb0eedecc4f1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Jul_2012_15_00_12_+1000_YnM/5neaDbvMchVN"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__5_Jul_2012_15_37_28_+1000_YjxlVTSD630I0fVd"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58804 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750927Ab2GEFhn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jul 2012 01:37:43 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexander Graf <agraf@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stuart Yoder <stuart.yoder@freescale.com>, Tiejun Chen <tiejun.chen@windriver.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
---Signature=_Thu__5_Jul_2012_15_00_12_+1000_YnM/5neaDbvMchVN
+--Signature=_Thu__5_Jul_2012_15_37_28_+1000_YjxlVTSD630I0fVd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Alexander,
 
-Today's linux-next merge of the tip tree got a conflict in kernel/fork.c
-between commit 7ab538da1f8a ("trim task_work: get rid of hlist") from the
-vfs tree and commit 0ea86208345b ("sched, mm: Rework sched_{fork,exec}
-node assignment") from the tip tree.
+Today's linux-next merge of the kvm-ppc tree got a conflict in
+arch/powerpc/kernel/entry_64.S between commit c58ce2b1e3c7 ("ppc64: fix
+missing to check all bits of _TIF_USER_WORK_MASK in preempt") from Linus'
+tree and commit bc8cc4993e19 ("PPC: use CURRENT_THREAD_INFO instead of
+open coded assembly") from the kvm-ppc tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -30,40 +35,100 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc kernel/fork.c
-index bebabad,1a69745..0000000
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@@ -1414,8 -1415,7 +1415,7 @@@ static struct task_struct *copy_process
-  	 * We dont wake it up yet.
-  	 */
-  	p->group_leader =3D p;
-- 	INIT_LIST_HEAD(&p->thread_group);
- -	INIT_HLIST_HEAD(&p->task_works);
- +	p->task_works =3D NULL;
+diff --cc arch/powerpc/kernel/entry_64.S
+index cf38a17,ba943b9..0000000
+--- a/arch/powerpc/kernel/entry_64.S
++++ b/arch/powerpc/kernel/entry_64.S
+@@@ -559,54 -558,27 +559,54 @@@ _GLOBAL(ret_from_except_lite
+  	mtmsrd	r10,1		  /* Update machine state */
+  #endif /* CONFIG_PPC_BOOK3E */
  =20
-  	/* Now that the task is set up, run cgroup callbacks if
-  	 * necessary. We need to run them before the task is visible
+- 	clrrdi	r9,r1,THREAD_SHIFT	/* current_thread_info() */
+ -#ifdef CONFIG_PREEMPT
++ 	CURRENT_THREAD_INFO(r9, r1)
+ -	li	r0,_TIF_NEED_RESCHED	/* bits to check */
+  	ld	r3,_MSR(r1)
+  	ld	r4,TI_FLAGS(r9)
+ -	/* Move MSR_PR bit in r3 to _TIF_SIGPENDING position in r0 */
+ -	rlwimi	r0,r3,32+TIF_SIGPENDING-MSR_PR_LG,_TIF_SIGPENDING
+ -	and.	r0,r4,r0	/* check NEED_RESCHED and maybe SIGPENDING */
+ -	bne	do_work
+ -
+ -#else /* !CONFIG_PREEMPT */
+ -	ld	r3,_MSR(r1)	/* Returning to user mode? */
+  	andi.	r3,r3,MSR_PR
+ -	beq	restore		/* if not, just restore regs and return */
+ +	beq	resume_kernel
+ =20
+  	/* Check current_thread_info()->flags */
+ +	andi.	r0,r4,_TIF_USER_WORK_MASK
+ +	beq	restore
+ +
+ +	andi.	r0,r4,_TIF_NEED_RESCHED
+ +	beq	1f
+ +	bl	.restore_interrupts
+ +	bl	.schedule
+ +	b	.ret_from_except_lite
+ +
+ +1:	bl	.save_nvgprs
+ +	bl	.restore_interrupts
+ +	addi	r3,r1,STACK_FRAME_OVERHEAD
+ +	bl	.do_notify_resume
+ +	b	.ret_from_except
+ +
+ +resume_kernel:
+ +#ifdef CONFIG_PREEMPT
+ +	/* Check if we need to preempt */
+ +	andi.	r0,r4,_TIF_NEED_RESCHED
+ +	beq+	restore
+ +	/* Check that preempt_count() =3D=3D 0 and interrupts are enabled */
+ +	lwz	r8,TI_PREEMPT(r9)
+ +	cmpwi	cr1,r8,0
+ +	ld	r0,SOFTE(r1)
+ +	cmpdi	r0,0
+ +	crandc	eq,cr1*4+eq,eq
+ +	bne	restore
+ +
+ +	/*
+ +	 * Here we are preempting the current task. We want to make
+ +	 * sure we are soft-disabled first
+ +	 */
+ +	SOFT_DISABLE_INTS(r3,r4)
+ +1:	bl	.preempt_schedule_irq
+ +
+ +	/* Re-test flags and eventually loop */
+- 	clrrdi	r9,r1,THREAD_SHIFT
++ 	CURRENT_THREAD_INFO(r9, r1)
+  	ld	r4,TI_FLAGS(r9)
+ -	andi.	r0,r4,_TIF_USER_WORK_MASK
+ -	bne	do_work
+ -#endif /* !CONFIG_PREEMPT */
+ +	andi.	r0,r4,_TIF_NEED_RESCHED
+ +	bne	1b
+ +#endif /* CONFIG_PREEMPT */
+ =20
+  	.globl	fast_exc_return_irq
+  fast_exc_return_irq:
 
---Signature=_Thu__5_Jul_2012_15_00_12_+1000_YnM/5neaDbvMchVN
+--Signature=_Thu__5_Jul_2012_15_37_28_+1000_YjxlVTSD630I0fVd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP9R9cAAoJEECxmPOUX5FEwmwQAJariZxQ3Ns7OP6K4rhzHPdH
-6UVYciiZBozMS1Jk+uMeI8sdgFmAVDEvAjXU5bd5LoNTq4jq9xWDyuGwXIk+oU6d
-HmxhT6al/GzZuJFKqRAA8dMgm54AisDigZMl5EEO7ps2VUslnablu9pJUdcQ+Vwj
-Whr/G05jVtm7dZqPRght9eVgjdWWKM8vN4pVdToCN24gcuUnKdfyd7O5EnZkMR7M
-f1DSmp1sc5lAUfJUUJxHS9wKA5c4mKtHrwJ13wCqtSZymAJk3Jhp4+HyHYVGFJuI
-MsQr7kwbS/UP++wzAXEskirDqRTskgfUKew3YVvdML6XkjdVi+Jbulrfq4FapPmt
-g+dVkBIm+mpyyWmpMTti62X4ittzd0AdN7MdRSW7nx12TcYK1olU5GArhhZlYgtq
-NprbaPNMd7XBGVtTFnYPYnvjqx8AkLEsCBMChWxWk2Hn84rY+dkmctyev2miz3ue
-SCRuyF7awugYP5xVu71cXrgKNWbV0jJE0GiJ0SuU78N0o9HisE1V/szSFWZtrHA8
-GGGciacrCdV90zjLtIUt9MvQ/0/hw89OpuBDX1LY2o29GPx8ejHVkXwn/hpkgefE
-KBeOOWczX53ba6WmmubGuAeZggPhAb4Bjy2b7PIZQiQMxyfLd8rw8bpJ6EgEe3mY
-RhpBaM1E1yZjg6jkCyxi
-=U0pl
+iQIcBAEBCAAGBQJP9SgYAAoJEECxmPOUX5FE5TEP/jwozfX4TVhoqhThdEQI8w0W
+oRscf1EedAzupKLj2rLiDZfe2AUlxCVOSY37CcoLBx87zVlXowTcHZkS3J6ihWtO
+YsaZUMmd8fuTBfVppQOflAEzmXjYln8ye/XGgwij4cn8P3hmisPY+NhgudHMmvph
+WES/Or9ZYf4ikAH6A413VivaTM2zy+IghboJ0vhhOx2mXBpMM0wT6fK0vAD7srex
+ZqQ8mnTnSW5yyZ1O/B4hFowMlj2cTsoruxUV5UJ07SlUIvTQUsRb6fcIOQoM21Mu
+e89lMTLy6uFV5wOT6CVFkkNSAOniO7eSGfiMLLFljgWyFU8muPcF2UDuB7d6rUM2
+yQkveN8oTsVhY6GNDukrYARIOgs0PNGVmQDXvBjqm5gRVVsebst3U6kSw2ty7mcD
+kplYcG7g87y2FgcsF5GQJNf8f2r845qY2nS0KlAyqAvcZylZ4nLIiMyI1Gk9bz9T
+ijWmHPMfAtRUPCre81dW96+48RCuT6A6tMTZpOdolsflibHD8urPw1MlxreHKUvH
+hYZx7r7H3bMKSJcIey64GkEv+WRY9vV4hVVoo8+1SpACm/YNO2mCIuW5/9V2RWyL
+SNL18HTlWHWzwp1rFyRORgGeAVg46WRr6VrrI9alhwWsI/ydZPxuUBObjrIVzn6e
+J/jngMB/sS/DMsbVFQyV
+=O7Ve
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__5_Jul_2012_15_00_12_+1000_YnM/5neaDbvMchVN--
+--Signature=_Thu__5_Jul_2012_15_37_28_+1000_YjxlVTSD630I0fVd--
