@@ -1,64 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with the arm-current
- tree
-Date: Thu, 5 Jul 2012 17:35:26 +1000
-Message-ID: <20120705173526.bf8772adb18edfc91adddea8@canb.auug.org.au>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the signal tree with the
+	arm-current tree
+Date: Thu, 5 Jul 2012 08:52:04 +0100
+Message-ID: <20120705075204.GA12344@flint.arm.linux.org.uk>
+References: <20120705173526.bf8772adb18edfc91adddea8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Jul_2012_17_35_26_+1000_/=+Hn5Nt1x+sjv1d"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44334 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752581Ab2GEHfq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jul 2012 03:35:46 -0400
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:38431 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752423Ab2GEHwM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jul 2012 03:52:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20120705173526.bf8772adb18edfc91adddea8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
 
---Signature=_Thu__5_Jul_2012_17_35_26_+1000_/=+Hn5Nt1x+sjv1d
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 05, 2012 at 05:35:26PM +1000, Stephen Rothwell wrote:
+> Hi Al,
+> 
+> Today's linux-next merge of the signal tree got a conflict in
+> arch/arm/kernel/signal.c between commit f73e2ca64281 ("ARM: 7443/1:
+> Revert "new way of handling ERESTART_RESTARTBLOCK"") from the arm-current
+> tree and commits 9c802c169f96 ("arm: deal with handlerless restarts
+> without leaving the kernel") and 76c3f4da3ee4 ("arm: get rid of
+> TIF_SYSCALL_RESTARTSYS") from the signal tree.
+> 
+> I have no idea how to cope with this.  So I have effectively reverted
+> commit f73e2ca64281 ("ARM: 7443/1: Revert "new way of handling
+> ERESTART_RESTARTBLOCK"") for today (though parts of that commit are also
+> implemented by the above signal tree commits).
 
-Hi Al,
+Currently, bugs have been found with the signal handling updates which
+happened during the last merge window.
 
-Today's linux-next merge of the signal tree got a conflict in
-arch/arm/kernel/signal.c between commit f73e2ca64281 ("ARM: 7443/1:
-Revert "new way of handling ERESTART_RESTARTBLOCK"") from the arm-current
-tree and commits 9c802c169f96 ("arm: deal with handlerless restarts
-without leaving the kernel") and 76c3f4da3ee4 ("arm: get rid of
-TIF_SYSCALL_RESTARTSYS") from the signal tree.
+Will has concerns with Al's proposed fixes for the signal handling.
+Unfortunately, Al isn't responding to attempts to discuss this (for
+whatever reason), and as we're now at -rc5, we believe Al's patches are
+now too complex to go into this stage of -rc.
 
-I have no idea how to cope with this.  So I have effectively reverted
-commit f73e2ca64281 ("ARM: 7443/1: Revert "new way of handling
-ERESTART_RESTARTBLOCK"") for today (though parts of that commit are also
-implemented by the above signal tree commits).
+We have had to find a way forward on this - which means reverting some
+of the commits that went in during the previous merge window.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+So, your revert to "fix" this isn't a good idea, because it isn't what
+will be going to Linus this weekend.
 
---Signature=_Thu__5_Jul_2012_17_35_26_+1000_/=+Hn5Nt1x+sjv1d
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJP9UO+AAoJEECxmPOUX5FEuKQP/RAjzQcnV49SDLCaXk3YPne7
-lrdJGj1qg/VcjUyfSZCMZo7WUUkhkK/YCSWEUOJM0B8vyA8zFOwhxZYbQDvWgt59
-T7Ulac4fftaI5RTqsDmN/A10M8lPUq/UxCxPuhiViIyxvzjgDS4X+f0/u0VMReAn
-ETFn3N0E65X453dY4m21ywygF8ukW7TCTd5WNAzOWmD4Rj82Qmn88R1T4x2BmVab
-tiYGnahJPa4XiXhOMqETTiJy0KZu7QIFtyJoTeTaWd/YNjzrZjRejpw2KwdIpuYG
-QCaQd/yp+VCODvtj5Y9Os5kzXBqt5VtaR2lyBhVq/ikt4WPW5lib2J3J0Qdt7A64
-PhK34AestcCVWTkn74+EcpBfwL8f8o8NubnG78ZT3NiMWP+1wbvBTTai+ybho/nV
-sJ2FUpVwJruo1U6ORQIctMGIZZ8lCv0FICa6EiYEGKfAtl3L6BgWhDqvXqlifFm0
-D7Z5CfLfV8i+cPDQKDj8GS2AGa4GdxNFgFumxXntSjs6opX/14QMBwTmY8dLpSeZ
-t1HY1IXF9/U6b+tZ30kycaFVlYdwmaFalxJCbPGl2GbANMkVCq1pcJhRwB8ooA1W
-IOGFXsaIZHmhO3QaNqB6A09RX5Zxq/JkxHFBgxXEhP/hVwv7suXt6ldWZcM18rJB
-MF9w8+slq6wkpwqJccT3
-=dxst
------END PGP SIGNATURE-----
-
---Signature=_Thu__5_Jul_2012_17_35_26_+1000_/=+Hn5Nt1x+sjv1d--
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
