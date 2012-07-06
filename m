@@ -1,79 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the signal tree with the
- arm-current tree
-Date: Fri, 6 Jul 2012 11:29:26 +1000
-Message-ID: <20120706112926.42f2548cb2eebc74c547c847@canb.auug.org.au>
-References: <20120705173526.bf8772adb18edfc91adddea8@canb.auug.org.au>
-	<20120705075204.GA12344@flint.arm.linux.org.uk>
+Subject: linux-next: build failure after merge of the infiniband tree
+Date: Fri, 6 Jul 2012 12:35:55 +1000
+Message-ID: <20120706123555.949d8efb4de5c4df18fb1ec0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__6_Jul_2012_11_29_26_+1000_ePkjjWFPGrFafbv7"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33392 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754842Ab2GFB3h (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jul 2012 21:29:37 -0400
-In-Reply-To: <20120705075204.GA12344@flint.arm.linux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
+ boundary="Signature=_Fri__6_Jul_2012_12_35_55_+1000_CO4._s2p=E/sOMIf"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Hefty <sean.hefty@intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__6_Jul_2012_11_29_26_+1000_ePkjjWFPGrFafbv7
+--Signature=_Fri__6_Jul_2012_12_35_55_+1000_CO4._s2p=E/sOMIf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Thu, 5 Jul 2012 08:52:04 +0100 Russell King <rmk@arm.linux.org.uk> wrote:
->
-> Currently, bugs have been found with the signal handling updates which
-> happened during the last merge window.
->=20
-> Will has concerns with Al's proposed fixes for the signal handling.
-> Unfortunately, Al isn't responding to attempts to discuss this (for
-> whatever reason), and as we're now at -rc5, we believe Al's patches are
-> now too complex to go into this stage of -rc.
->=20
-> We have had to find a way forward on this - which means reverting some
-> of the commits that went in during the previous merge window.
->=20
-> So, your revert to "fix" this isn't a good idea, because it isn't what
-> will be going to Linus this weekend.
+After merging the infiniband tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-OK, so for today, I have reverted these commits from Al's signal tree:
+drivers/infiniband/core/cma.c: In function 'rdma_bind_addr':
+drivers/infiniband/core/cma.c:2411:30: error: 'struct net' has no member na=
+med 'ipv6'
 
-c1eafa6fc84a	"arm: pull all work_pending logics into C function"
-9c802c169f96	"arm: deal with handlerless restarts without leaving the kerne=
-l"
-76c3f4da3ee4	"arm: get rid of TIF_SYSCALL_RESTARTSYS"
+Caused by commit e7925058b0ed ("RDMA/cma: Bind to a specific address
+family"). CONFIG_IPV6 is not enabled for this build.
 
-(I was not sure if I needed to revert the first of these.)
+I have used the version of the infiniband tree from next-20120705 for
+today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__6_Jul_2012_11_29_26_+1000_ePkjjWFPGrFafbv7
+--Signature=_Fri__6_Jul_2012_12_35_55_+1000_CO4._s2p=E/sOMIf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP9j92AAoJEECxmPOUX5FEFRwQAKXCd4HsakjBr9HhQlIpI6O+
-/CQ/LuMULW0ow7MBJKe8IYgRWavCpm+nrC1aFmd8yWwa5cDdWl+2NJpHc6YBfUvT
-hjyvYzzD50i7Cx5W3EL1VbqZW2O3syfyhzUCxfu3rs+E+RLgAuEfaqe4Xn06YAce
-N6VE1I3hI5xNusV7/JDroXlvG4K7BiHB4P9eDcGLxi2XcSqzRf7qMQ0bRi0pEN1j
-46AF3Vwuo9Gvsvn77dEJVYmr3pFIp1SsB71S3R+ayBXJfXzwZCOm4nAvEX3QKJ0f
-LEHmN+efMT+nrZ5JhPUjlgBL5wwAmzS26toV1IpurkthmMnBq1fRDgCDs4FCRH6O
-nXHOEtCGFkv18AA9OW1xGx1P8GlC5IvsiNPoFLhug8wXUiX2PFV8+0wHntnTSaT/
-uIRXtefXrkubdPCgG4MYgRDqzrBXR+BFxPtHhT1XoOEVZUwE8WrWWXoaNhR84g1B
-O9+gmR3/0PZWB8rXqH9ki1A7IdRqtz8IDOuLZsITacyj6U0vRlynbPbw/hsrmcIo
-9uNSbcYURQNd21Lzuo2gHN9OGiXc+8a+s+2u08iBspWZ+7daVvTTu3tt9RqPZ5iE
-vGgOkQIecShg7/G2Zf+gYiDxdnZW89fDaxbDzZIgjwTZSFCv83fFNECPtII+YXZU
-Ilj/ulooC+iWVQSh4OJ+
-=ovv9
+iQIcBAEBCAAGBQJP9k8LAAoJEECxmPOUX5FEGvsP/3cYLhdGMBiN+aGnUZNvbEjW
+qaV25Uf61x631HlCXP0uhFvPFta8q7h6LH++kSSgPeEzMUOUymXfxtZtWGFg+C+z
+SXmuXcdiWb+ax7lE402RZ8lOxba61n356OYfNyHuSK6uc5vdlng0D/0L9oNudpPy
+8CL226BBWgY/qrEfesEdIxyI9mpywZPSJHw9FGlqP87YWLEBb+5fHLRT6RZTgG6A
+ImuDzuMxHE98no3ACUQ2A1VIpKMtIjVALi3YT9Pciskc5TDx++BXQ0k+nTRWtr5S
+bn39sheyLp5AqX5+m7kKxMFjws3E3F+46Q72vDHU+GjuBHp7sZ2DAToaX7r/2+zd
+JodfrZ3zSjvZERKYDfXcCO4l8LmaJDr4qSkQ54vkD+KTdl+Pk/DMi/LwcNi6G8YY
+0W4oyrFoUrO7cB2F7N7tpZJvVt87W977Lk6Jb9bOh5AapE2xbxFKy5pvHyGe4c9j
+25CNhjgpuymtw/iEt071jsb/7eJkDUJmobvm5QnvaK4+Qm6d+LBxUx+gjCahSKJs
+yQk0hr8fRhrPXXeUMP0ynna9uDSweflwHBtSLXS/7xDqd/66GYm8A9AjGyFBZNYX
+hDs3Z/KsesKB/Cj7YBJrDZXSpya3Rb//on5VZGlixO2BpceiEQzXoCu3PqVJ56Yg
+RrbWVxVhcsX74+4fQGnN
+=6tCn
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__6_Jul_2012_11_29_26_+1000_ePkjjWFPGrFafbv7--
+--Signature=_Fri__6_Jul_2012_12_35_55_+1000_CO4._s2p=E/sOMIf--
