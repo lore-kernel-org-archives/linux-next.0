@@ -1,61 +1,42 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: manual merge of the input-mt tree with the
- input-current tree
-Date: Thu, 5 Jul 2012 22:25:51 -0700
-Message-ID: <20120706052551.GB6804@core.coreip.homeip.net>
-References: <20120705135220.9f8f95082833a0d6fadeb136@canb.auug.org.au>
- <CAGS+omDab9mOOf6pCryRTyLvYA66h0XjqmFPc-vrAo4hkfGN0A@mail.gmail.com>
- <20120705171904.GA31383@core.coreip.homeip.net>
- <20120705175723.GA3286@polaris.bitmath.org>
+From: Alan Modra <amodra@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Fri, 6 Jul 2012 15:38:34 +0930
+Message-ID: <20120706060834.GC5805@bubble.grove.modra.org>
+References: <20120705183345.ee84ec1048a19aa1c7129578@canb.auug.org.au>
+ <20120705094348.GA5805@bubble.grove.modra.org>
+ <20120706102151.fd4f769cf2aa3f753ad178bf@canb.auug.org.au>
+ <20120706005709.GB5805@bubble.grove.modra.org>
+ <20120706130137.6aae96c0072af1f330249c0d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:61023 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:43586 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753329Ab2GFFZz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jul 2012 01:25:55 -0400
+	with ESMTP id S1751309Ab2GFGIm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jul 2012 02:08:42 -0400
 Content-Disposition: inline
-In-Reply-To: <20120705175723.GA3286@polaris.bitmath.org>
+In-Reply-To: <20120706130137.6aae96c0072af1f330249c0d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Henrik Rydberg <rydberg@euromail.se>
-Cc: Daniel Kurtz <djkurtz@chromium.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, tony@bakeyournoodle.com
 
-On Thu, Jul 05, 2012 at 07:57:23PM +0200, Henrik Rydberg wrote:
-> On Thu, Jul 05, 2012 at 10:19:05AM -0700, Dmitry Torokhov wrote:
-> > Hi Henrik,
-> > 
-> > On Thu, Jul 05, 2012 at 11:57:14AM +0800, Daniel Kurtz wrote:
-> > > On Thu, Jul 5, 2012 at 11:52 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > Hi Henrik,
-> > > >
-> > > > Today's linux-next merge of the input-mt tree got a conflict in
-> > > > drivers/input/touchscreen/atmel_mxt_ts.c between commit 9b7e31bbf4bb
-> > > > ("Input: request threaded-only IRQs with IRQF_ONESHOT") from the
-> > > > input-current tree and commit c2ef9a1a248b ("Input: atmel_mxt_ts - use
-> > > > client name for irq") from the input-mt tree.
-> > > >
-> > > > I fixed it up (see below) and can carry the fix as necessary.
-> > > 
-> > > Looks good to me. Don't know if you need it for a merge, but:
-> > > 
-> > > Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-> > > 
-> > 
-> > Hmm, maybe it is time I pull your tree?
-> 
-> By all means, I have nothing further planned for the merge window. I
-> wanted to wait until Linus pulls your current tree, then pull in the
-> merge conflict, then eventual reverts, then send you a pull
-> request. IOW, something like tomorrow. Sounds good?
+On Fri, Jul 06, 2012 at 01:01:37PM +1000, Stephen Rothwell wrote:
+> solos-pci.c:(.text+0x1ff923c): relocation truncated to fit: R_PPC64_REL24
+                     ^^^^^^^^^
 
-You do not need to wait for Linus to pull and push: I will merge my
-for-linus branch into next and pull and resolve your changes and then
-git magic should take care of the rest.
+> I assume at this point, we are just too large.
 
-So just send me a pull request.
+Yeah, but not in total.  I didn't see any of these in the allyes
+kernel I built with our proof of concept hack to avoid ld -r.  I think
+you'll find that these are all from ld -r output, as I assume no one
+in kernel land writes drivers or whatever with 33M of text in a single
+file.  Branches in that monstrous section can't even reach the
+trampolines that ld inserts to extend branch reach.  Did I mention
+that ld -r is a bad idea?
 
-Thanks.
+One workaround might be to compile with -ffunction-sections.
 
 -- 
-Dmitry
+Alan Modra
+Australia Development Lab, IBM
