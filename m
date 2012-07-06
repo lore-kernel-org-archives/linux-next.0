@@ -1,66 +1,72 @@
-From: Ingo Molnar <mingo@kernel.org>
+From: Marcelo Tosatti <mtosatti@redhat.com>
 Subject: Re: [PATCH] apic: fix kvm build on UP without IOAPIC
-Date: Fri, 6 Jul 2012 13:13:14 +0200
-Message-ID: <20120706111314.GG19552@gmail.com>
+Date: Fri, 6 Jul 2012 08:32:09 -0300
+Message-ID: <20120706113209.GB18059@amt.cnet>
 References: <20120701150506.GA31304@redhat.com>
  <4FF0849D.5080406@zytor.com>
+ <20120706111314.GG19552@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:37195 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756283Ab2GFLNT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jul 2012 07:13:19 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4FF0849D.5080406@zytor.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Avi Kivity <avi@redhat.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, mtosatti@redhat.com, x86@kernel.org, kvm@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
+In-Reply-To: <20120706111314.GG19552@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, "Michael S. Tsirkin" <mst@redhat.com>, Avi Kivity <avi@redhat.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org, kvm@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-
-* H. Peter Anvin <hpa@zytor.com> wrote:
-
-> On 07/01/2012 08:05 AM, Michael S. Tsirkin wrote:
-> >On UP i386, when APIC is disabled
-> ># CONFIG_X86_UP_APIC is not set
-> ># CONFIG_PCI_IOAPIC is not set
-> >
-> >code looking at apicdrivers never has any effect but it
-> >still gets compiled in. In particular, this causes
-> >build failures with kvm, but it generally bloats the kernel
-> >unnecessarily.
-> >
-> >Fix by defining both __apicdrivers and __apicdrivers_end
-> >to be NULL when CONFIG_X86_LOCAL_APIC is unset: I verified
-> >that as the result any loop scanning __apicdrivers gets optimized out by
-> >the compiler.
-> >
-> >Warning: a .config with apic disabled doesn't seem to boot
-> >for me (even without this patch). Still verifying why,
-> >meanwhile this patch is compile-tested only.
-> >
-> >Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> >---
-> >
-> >Note: if this patch makes sense, can x86 maintainers
-> >please ACK applying it through the kvm tree, since that is
-> >where we see the issue that it addresses?
-> >Avi, Marcelo, maybe you can carry this in kvm/linux-next as a temporary
-> >measure so that linux-next builds?
-> >
+On Fri, Jul 06, 2012 at 01:13:14PM +0200, Ingo Molnar wrote:
 > 
-> I'm not happy about that as a workflow, but since you guys have an
-> immediate problem I guess we can do that.
+> * H. Peter Anvin <hpa@zytor.com> wrote:
+> 
+> > On 07/01/2012 08:05 AM, Michael S. Tsirkin wrote:
+> > >On UP i386, when APIC is disabled
+> > ># CONFIG_X86_UP_APIC is not set
+> > ># CONFIG_PCI_IOAPIC is not set
+> > >
+> > >code looking at apicdrivers never has any effect but it
+> > >still gets compiled in. In particular, this causes
+> > >build failures with kvm, but it generally bloats the kernel
+> > >unnecessarily.
+> > >
+> > >Fix by defining both __apicdrivers and __apicdrivers_end
+> > >to be NULL when CONFIG_X86_LOCAL_APIC is unset: I verified
+> > >that as the result any loop scanning __apicdrivers gets optimized out by
+> > >the compiler.
+> > >
+> > >Warning: a .config with apic disabled doesn't seem to boot
+> > >for me (even without this patch). Still verifying why,
+> > >meanwhile this patch is compile-tested only.
+> > >
+> > >Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > >---
+> > >
+> > >Note: if this patch makes sense, can x86 maintainers
+> > >please ACK applying it through the kvm tree, since that is
+> > >where we see the issue that it addresses?
+> > >Avi, Marcelo, maybe you can carry this in kvm/linux-next as a temporary
+> > >measure so that linux-next builds?
+> > >
+> > 
+> > I'm not happy about that as a workflow, but since you guys have an
+> > immediate problem I guess we can do that.
+> 
+> I'm rather unhappy about this workflow - we've got quite a few 
+> apic bits in the x86 tree this cycle as well and need extra 
+> external interaction, not.
+> 
+> Which KVM tree commit caused this, could someone please give a 
+> lkml link or quote it here? It's not referenced in the fix patch 
+> either.
+> 
+> Thanks,
+> 
+> 	Ingo
 
-I'm rather unhappy about this workflow - we've got quite a few 
-apic bits in the x86 tree this cycle as well and need extra 
-external interaction, not.
+This tree (kvm.git next):
 
-Which KVM tree commit caused this, could someone please give a 
-lkml link or quote it here? It's not referenced in the fix patch 
-either.
+http://git.kernel.org/?p=virt/kvm/kvm.git;a=shortlog;h=refs/heads/next
 
-Thanks,
+Introduced by this commit:
 
-	Ingo
+http://git.kernel.org/?p=virt/kvm/kvm.git;a=commit;h=ab9cf4996bb989983e73da894b8dd0239aa2c3c2
