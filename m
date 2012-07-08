@@ -1,107 +1,81 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: [PATCH] apic: fix kvm build on UP without IOAPIC
-Date: Sun, 8 Jul 2012 23:56:25 +0300
-Message-ID: <20120708205625.GA5292@redhat.com>
-References: <20120701150506.GA31304@redhat.com>
- <4FF0849D.5080406@zytor.com>
- <20120706111314.GG19552@gmail.com>
- <20120706113209.GB18059@amt.cnet>
- <20120706141222.GA23400@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: comment on pm tree commit
+Date: Mon, 9 Jul 2012 09:40:13 +1000
+Message-ID: <20120709094013.88a1117c9ef4510555147280@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__9_Jul_2012_09_40_13_+1000_aI/1g8FqOhZNB/sp"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40855 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752390Ab2GHXk2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Jul 2012 19:40:28 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Preeti U Murthy <preeti@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+
+--Signature=_Mon__9_Jul_2012_09_40_13_+1000_aI/1g8FqOhZNB/sp
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20120706141222.GA23400@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Avi Kivity <avi@redhat.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org, kvm@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 06, 2012 at 04:12:23PM +0200, Ingo Molnar wrote:
-> 
-> * Marcelo Tosatti <mtosatti@redhat.com> wrote:
-> 
-> > On Fri, Jul 06, 2012 at 01:13:14PM +0200, Ingo Molnar wrote:
-> > > 
-> > > * H. Peter Anvin <hpa@zytor.com> wrote:
-> > > 
-> > > > On 07/01/2012 08:05 AM, Michael S. Tsirkin wrote:
-> > > > >On UP i386, when APIC is disabled
-> > > > ># CONFIG_X86_UP_APIC is not set
-> > > > ># CONFIG_PCI_IOAPIC is not set
-> > > > >
-> > > > >code looking at apicdrivers never has any effect but it
-> > > > >still gets compiled in. In particular, this causes
-> > > > >build failures with kvm, but it generally bloats the kernel
-> > > > >unnecessarily.
-> > > > >
-> > > > >Fix by defining both __apicdrivers and __apicdrivers_end
-> > > > >to be NULL when CONFIG_X86_LOCAL_APIC is unset: I verified
-> > > > >that as the result any loop scanning __apicdrivers gets optimized out by
-> > > > >the compiler.
-> > > > >
-> > > > >Warning: a .config with apic disabled doesn't seem to boot
-> > > > >for me (even without this patch). Still verifying why,
-> > > > >meanwhile this patch is compile-tested only.
-> > > > >
-> > > > >Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > > > >---
-> > > > >
-> > > > >Note: if this patch makes sense, can x86 maintainers
-> > > > >please ACK applying it through the kvm tree, since that is
-> > > > >where we see the issue that it addresses?
-> > > > >Avi, Marcelo, maybe you can carry this in kvm/linux-next as a temporary
-> > > > >measure so that linux-next builds?
-> > > > >
-> > > > 
-> > > > I'm not happy about that as a workflow, but since you guys have an
-> > > > immediate problem I guess we can do that.
-> > > 
-> > > I'm rather unhappy about this workflow - we've got quite a few 
-> > > apic bits in the x86 tree this cycle as well and need extra 
-> > > external interaction, not.
-> > > 
-> > > Which KVM tree commit caused this, could someone please give a 
-> > > lkml link or quote it here? It's not referenced in the fix patch 
-> > > either.
-> > > 
-> > > Thanks,
-> > > 
-> > > 	Ingo
-> > 
-> > This tree (kvm.git next):
-> > 
-> > http://git.kernel.org/?p=virt/kvm/kvm.git;a=shortlog;h=refs/heads/next
-> > 
-> > Introduced by this commit:
-> > 
-> > http://git.kernel.org/?p=virt/kvm/kvm.git;a=commit;h=ab9cf4996bb989983e73da894b8dd0239aa2c3c2
-> 
-> This bit:
-> 
-> > +	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI)) {
-> > +		struct apic **drv;
-> > +
-> > +		for (drv = __apicdrivers; drv < __apicdrivers_end; drv++) {
-> > +			/* Should happen once for each apic */
-> > +			WARN_ON((*drv)->eoi_write == kvm_guest_apic_eoi_write);
-> > +			(*drv)->eoi_write = kvm_guest_apic_eoi_write;
-> > +		}
-> > +	}
-> > +
-> 
-> is rather disgusting I have to say.
-> 
-> WTH is the KVM code meddling with core x86 apic driver data 
-> structures directly? At minimum factor this out and create a 
-> proper apic.c function which is EXPORT_SYMBOL_GPL() exported or 
-> so...
-> 
-> Thanks,
-> 
-> 	Ingo
+Hi Rafael,
 
-OK, so apic_set_eoi_write()?
+I noticed commit b8eec56cd8e5 ("PM / cpuidle: System resume hang fix with
+cpuidle") in the pm tree needs some work (I noticed it because it was
+changed in a rebase ...).
 
--- 
-MST
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index a6b3f2e..b90ccb2 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -146,6 +146,8 @@ extern void cpuidle_unregister_device(struct cpuidle_de=
+vice *dev);
+=20
+ extern void cpuidle_pause_and_lock(void);
+ extern void cpuidle_resume_and_unlock(void);
++extern void cpuidle_pause(void);
++extern void cpuidle_resume(void);
+ extern int cpuidle_enable_device(struct cpuidle_device *dev);
+ extern void cpuidle_disable_device(struct cpuidle_device *dev);
+ extern int cpuidle_wrap_enter(struct cpuidle_device *dev,
+@@ -169,6 +171,8 @@ static inline void cpuidle_unregister_device(struct cpu=
+idle_device *dev) { }
+=20
+ static inline void cpuidle_pause_and_lock(void) { }
+ static inline void cpuidle_resume_and_unlock(void) { }
++static inline cpuidle_pause(void) { }
++static inline cpuidle_resume(void) { }
+
+These need to be "static inline void".  I wonder what review and build
+testing this went through (the above should produce warnings since they
+are non void returning functions with no return statements).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__9_Jul_2012_09_40_13_+1000_aI/1g8FqOhZNB/sp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP+hpdAAoJEECxmPOUX5FEieYP/1ARW6uSbPcfEOpAynMyvaTU
+A8KiMQUvoU9UYkAJ5TUPJMJ/Es8lEbVKwqLVhJmpq+02QdeuO+bFiMNUX5BbGZUO
+ZHqMlAhT3r6vbFPh1XDVfBEGwAmYTOk8h8Zh7B5z8NGu0cHtFLYKFScPPP6GFOaw
+s+UD51/ufwQHz73yA8ogDmRcHGpEtRH3LevtSptcQW6fO4lIo9Qx517QY9GI0bvs
+A2EWqVQR29w8CDLzXfu6rdDPFTyI6WHR+5HsZ5Xu8Hhg3p5Fa5okqMQjFg6WZaHt
+aDnBEypT9X09RHRd2A9C6pSKMklpVIvkZdQPH+wDj5qy6zd43J+HUFy9aKPmn+tz
+BsyGqgHISD7Z6frseDHCjPvpUVfu2XiVrSRAMrGMbhMsWDOk7NaF1dSA/m5UkAOJ
+ESt3erEje0mSYJtc+OTc8lhu16xEIuUh5HcxAZZ4uJjzwdxQZto8Yxkg+M2yqRnF
+xNC85UyRbgTdDifUDktLn0zPuVa1xXlXURVErogOMUz9TbkHGLpCvwyN2/I8RfNM
+V+9ay+tphLg5rSwmTQmiB0Wc5OYhfgtNzsgbTxG8kdMJW4NxxyMyUWnOqaVBVcto
+8rjqgZMwcKIyMAvPZoj8nZDcyxxkuFlLmPawpoEXCuBwzLp+oBt7ha4ADwBQQdb8
+yKxzZtQk6/5h/mmoJQCQ
+=HkOY
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__9_Jul_2012_09_40_13_+1000_aI/1g8FqOhZNB/sp--
