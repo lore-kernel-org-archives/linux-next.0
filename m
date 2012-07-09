@@ -1,72 +1,121 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: boot failure in next-20120705 and 20120706
-Date: Mon, 09 Jul 2012 15:19:23 +1000
-Message-ID: <1341811163.3804.2.camel@pasglop>
-References: <20120709144946.ada290480c0edc6a99f9c9c6@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the gpio-lw tree
+Date: Mon, 9 Jul 2012 16:02:48 +1000
+Message-ID: <20120709160248.c746b4286aa2558160f86571@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <20120709144946.ada290480c0edc6a99f9c9c6@canb.auug.org.au>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__9_Jul_2012_16_02_48_+1000_=cF3KxarBO531fmH"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, =?UTF-8?B?IkJlbm/DrnQgVGjDqWJhdWRlYXUi?= <benoit.thebaudeau@advansee.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Sascha Hauer <kernel@pengutronix.de>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2012-07-09 at 14:49 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Boot testing next-20120705 and 20120706 one of my PowerPC machines get this BUG:
-> 
-> (this one just after the console login prompt appeared.)
+--Signature=_Mon__9_Jul_2012_16_02_48_+1000_=cF3KxarBO531fmH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll have a look tomorrow. Make sure you keep the .config & machine at
-hand :-) Any chance you can check with just powerpc-next ?
+Hi all,
 
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/gpio/gpio-mxc.c between commit fef2bca203e9 ("gpio/mxc: use the
+edge_sel feature if available") from the gpio-lw tree and commit
+1ab7ef158dfb ("gpio/mxc: move irq_domain_add_legacy call into gpio
+driver") from the arm-soc tree.
+
+I fixed it up (I think - see below) and can carry the fix as necessary.
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> kernel BUG at arch/powerpc/kernel/irq.c:188!
-> Oops: Exception in kernel mode, sig: 5 [#1]
-> SMP NR_CPUS=32 NUMA pSeries
-> Modules linked in: binfmt_misc dm_mirror dm_region_hash dm_log ibmveth
-> NIP: c00000000000f7d4 LR: c00000000000f838 CTR: c0000000007222a0
-> REGS: c000000000d17a30 TRAP: 0700   Not tainted  (3.5.0-rc5-autokern1)
-> MSR: 8000000000021032 <SF,ME,IR,DR,RI>  CR: 24000048  XER: 00000000
-> SOFTE: 0
-> TASK = c000000000c41a10[0] 'swapper/0' THREAD: c000000000d14000 CPU: 0
-> GPR00: 0000000000000001 c000000000d17cb0 c000000000d12d10 0000000000000500 
-> GPR04: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-> GPR08: 001752557ab9dd5b c000000007ffb000 0000000000000000 c000000000bf5200 
-> GPR12: 0000000000000000 c000000007ffb000 0000000002b00000 00000000009d7000 
-> GPR16: 0000000000d454f0 00000000027dc6f0 0000000001b5f994 0000000000000060 
-> GPR20: 0000000000000000 ffffffffffffffff ffffffffffffffff 8000000000009032 
-> GPR24: c000000000d14000 c000000000d30290 c000000000d30178 c000000000d30290 
-> GPR28: c0000000008a6180 0000000000000008 c000000000c7e130 0000000000000001 
-> NIP [c00000000000f7d4] .__check_irq_replay+0xc4/0xf0
-> LR [c00000000000f838] .arch_local_irq_restore+0x38/0x90
-> Call Trace:
-> [c000000000d17cb0] [c000000000d17d30] init_thread_union+0x3d30/0x4000 (unreliable)
-> [c000000000d17d40] [c00000000000f838] .arch_local_irq_restore+0x38/0x90
-> [c000000000d17db0] [c000000000015c60] .cpu_idle+0x230/0x2b0
-> [c000000000d17e70] [c00000000000b3f8] .rest_init+0x88/0xa0
-> [c000000000d17ef0] [c000000000b86c0c] .start_kernel+0x478/0x498
-> [c000000000d17f90] [c0000000000096f8] .start_here_common+0x20/0x28
-> Instruction dump:
-> 4e800020 7da96b78 7beaf7e3 880901f3 38600500 5400e87e 5400183e 980901f3 
-> 4082ffcc 880d01f3 7c0000d0 78000fe0 <0b000000> 38600000 4bffffb4 38610070 
-> 
-> This is:
-> 	BUG_ON(local_paca->irq_happened != 0);
-> in __check_irq_replay().
-> 
-> This only happens on my Power5+ machine.
+diff --cc drivers/gpio/gpio-mxc.c
+index f45bb54,e5db670..0000000
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@@ -184,19 -160,15 +184,19 @@@ static int gpio_set_irq_type(struct irq
+  		edge =3D GPIO_INT_FALL_EDGE;
+  		break;
+  	case IRQ_TYPE_EDGE_BOTH:
+ -		val =3D gpio_get_value(gpio);
+ -		if (val) {
+ -			edge =3D GPIO_INT_LOW_LEV;
+ -			pr_debug("mxc: set GPIO %d to low trigger\n", gpio);
+ +		if (GPIO_EDGE_SEL >=3D 0) {
+ +			edge =3D GPIO_INT_BOTH_EDGES;
+  		} else {
+ -			edge =3D GPIO_INT_HIGH_LEV;
+ -			pr_debug("mxc: set GPIO %d to high trigger\n", gpio);
+ +			val =3D gpio_get_value(gpio);
+ +			if (val) {
+ +				edge =3D GPIO_INT_LOW_LEV;
+ +				pr_debug("mxc: set GPIO %d to low trigger\n", gpio);
+ +			} else {
+ +				edge =3D GPIO_INT_HIGH_LEV;
+ +				pr_debug("mxc: set GPIO %d to high trigger\n", gpio);
+ +			}
+- 			port->both_edges |=3D 1 << (gpio & 31);
+++			port->both_edges |=3D 1 << gpio_idx;
+  		}
+ -		port->both_edges |=3D 1 << gpio_idx;
+  		break;
+  	case IRQ_TYPE_LEVEL_LOW:
+  		edge =3D GPIO_INT_LOW_LEV;
+@@@ -208,24 -180,11 +208,24 @@@
+  		return -EINVAL;
+  	}
+ =20
+ -	reg +=3D GPIO_ICR1 + ((gpio_idx & 0x10) >> 2); /* ICR1 or ICR2 */
+ -	bit =3D gpio_idx & 0xf;
+ -	val =3D readl(reg) & ~(0x3 << (bit << 1));
+ -	writel(val | (edge << (bit << 1)), reg);
+ +	if (GPIO_EDGE_SEL >=3D 0) {
+ +		val =3D readl(port->base + GPIO_EDGE_SEL);
+ +		if (edge =3D=3D GPIO_INT_BOTH_EDGES)
+- 			writel(val | (1 << (gpio & 0x1f)),
+++			writel(val | (1 << gpio_idx),
+ +				port->base + GPIO_EDGE_SEL);
+ +		else
+- 			writel(val & ~(1 << (gpio & 0x1f)),
+++			writel(val & ~(1 << gpio_idx),
+ +				port->base + GPIO_EDGE_SEL);
+ +	}
+ +
+ +	if (edge !=3D GPIO_INT_BOTH_EDGES) {
+- 		reg +=3D GPIO_ICR1 + ((gpio & 0x10) >> 2); /* lower or upper register */
+- 		bit =3D gpio & 0xf;
+++		reg +=3D GPIO_ICR1 + ((gpio_idx & 0x10) >> 2); /* ICR1 or ICR2 */
+++		bit =3D gpio_idx & 0xf;
+ +		val =3D readl(reg) & ~(0x3 << (bit << 1));
+ +		writel(val | (edge << (bit << 1)), reg);
+ +	}
+ +
+- 	writel(1 << (gpio & 0x1f), port->base + GPIO_ISR);
++ 	writel(1 << gpio_idx, port->base + GPIO_ISR);
+ =20
+  	return 0;
+  }
+
+--Signature=_Mon__9_Jul_2012_16_02_48_+1000_=cF3KxarBO531fmH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP+nQIAAoJEECxmPOUX5FETa4P/As2MbQOqRDrNtn3N3W0kKxZ
+Z8uNhxWU7acrMH8DVal5ycpjEqQHahUDm6Co1j6WdbsnbfUY3ofDnaew7WMPugZB
+xsleT+mveE1togexsdhKKNihFdguhdjivTpSlmXVJnMDjtzPeIeiimKHa5iEvU3Z
+2D9pJ9JhPcEa0AHQhGtm5T584P1RGzwJCx1jpWj6qfOWjOsOXKBGhuFMPR/KRzqL
+yZaz0KSxVXymroeC8Czo3e8kHr0VdSovO2mG8g6kYy/CZAGOijSncVPmatz1Pnn5
+Yh0gmoFhbdUkT8JgnpFFnFqUf5J12jHrkZK0Vbf9bjYCeEedTXlLcAYckraFO3dH
+c9UYkTkUC/j7gaUtpQ7mh4SGYeC7TWEajNQRwZBj/s+7OzFvJuqSZEG+H8vSE3/G
+NIZYoUyTk87/PXqOc5oW3RMlLxPBwffZLoro9zb/cLWZ9o96DTFL5J9nxFl2ho7c
+dtjvixKJiujVF0MHN2Kv+oEuRZE1oTxO0p5wV1aK4tJftdKe8+FOBwz0602YcvmR
+mePbIxKuWmMv/6FatYWxEqgcaheZy1yI6XVJbWQmFdf77Y3nXNagPfVgkKT7agLO
+LF6jj+0bMi34lA0vJ6Ee5Gtk/m7nkDjdrKMnyNcPYzII4DSRhEWzTmxgaTEaQ7k2
+F6gahvrxUHscAM7oCsH4
+=zEoi
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__9_Jul_2012_16_02_48_+1000_=cF3KxarBO531fmH--
