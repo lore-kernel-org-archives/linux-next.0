@@ -1,96 +1,54 @@
-From: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-Subject: Re: linux-next: Tree for July 2 (crypto/hifn_795x)
-Date: Mon, 09 Jul 2012 20:54:41 +0300
-Message-ID: <20120709205441.11422bntesq3cdno@www.81.fi>
-References: <20120702172334.2618cae84cc57b4ec5a63ed7@canb.auug.org.au>
- <4FF1CBF2.8060303@xenotime.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build failure after merge of the gpio-lw tree
+Date: Mon, 9 Jul 2012 22:34:23 +0200
+Message-ID: <CACRpkdYSLRiAQd3kGGv8xktAvi+YbBSe1hGqMX2y7fFXQOHPXQ@mail.gmail.com>
+References: <20120706161455.dd899154fbc8a79ee530572f@canb.auug.org.au>
+	<CACRpkdbZddOBf0PXFJjr_aRD3TEa9hSvXjAjf3--8Ko_W0zZcg@mail.gmail.com>
+	<w3psjd55kwl.wl%kuninori.morimoto.gx@renesas.com>
+	<CACRpkdb=bg7fc1HEW5U2PBjs_hLDRgGUNP=O6BEJRmYfCiSWpA@mail.gmail.com>
+	<87r4slg063.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="=_28zo09nk67fo"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sd-mail-sa-01.sanoma.fi ([158.127.18.161]:43479 "EHLO
-	sd-mail-sa-01.sanoma.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751929Ab2GIRyo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jul 2012 13:54:44 -0400
-In-Reply-To: <4FF1CBF2.8060303@xenotime.net>
+Received: from mail-qa0-f53.google.com ([209.85.216.53]:43441 "EHLO
+	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753205Ab2GIUeY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jul 2012 16:34:24 -0400
+Received: by qaas11 with SMTP id s11so1920047qaa.19
+        for <linux-next@vger.kernel.org>; Mon, 09 Jul 2012 13:34:23 -0700 (PDT)
+In-Reply-To: <87r4slg063.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-This message is in MIME format.
+On Mon, Jul 9, 2012 at 4:04 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
 
---=_28zo09nk67fo
-Content-Type: text/plain;
- charset=ISO-8859-1;
- DelSp="Yes";
- format="flowed"
-Content-Disposition: inline
-Content-Transfer-Encoding: 7bit
-
-Quoting Randy Dunlap <rdunlap@xenotime.net>:
-
-> On 07/02/2012 12:23 AM, Stephen Rothwell wrote:
+> Hi Linus Walleij, Stephen, and Thomas
 >
->> Hi all,
+>> >> > After merging the gpio-lw tree, today's linux-next build (x86_64
+>> >> > allmodconfig) failed like this:
+>> >> >
+>> >> > ERROR: "irq_set_chip_and_handler_name" [drivers/gpio/gpio-pcf857x.ko] undefined!
+>> >> > ERROR: "dummy_irq_chip" [drivers/gpio/gpio-pcf857x.ko] undefined!
+>> >>
+>> >> Thanks, I've dropped the offending patch, Kuninori can you look into this and
+>> >> provide a new patch? It's the second patch from your patch set.
+>> >
+>> > OK. I will, but it will be next week.
+>> > And could you please show me where is your repository/branch ?
 >>
->> Changes since 20120629:
->>
+>> http://git.kernel.org/?p=linux/kernel/git/linusw/linux-gpio.git;a=summary
+>> branch devel/for-next
 >
+> In my check, these are export symbol issue.
+> I think above 2 function/struct were not exported for module.
 >
-> on i386:
->
->
-> ERROR: "__divdi3" [drivers/crypto/hifn_795x.ko] undefined!
->
+> Is it poosible to solve this issue by these patches ?
 
-This is caused by commit feb7b7ab928afa97a79a9c424e4e0691f49d63be.  
-hifn_795x has "DIV_ROUND_UP(NSEC_PER_SEC, dev->pk_clk_freq)", which  
-should be changed to DIV_ROUND_UP_ULL now that NSEC_PER_SEC is 64bit  
-on 32bit archs. Patch to fix hifn_795x is attached (only compile  
-tested).
+Hm Thomas has to answer to that (and merge the patches, if he
+likes them).
 
--Jussi
-
-
---=_28zo09nk67fo
-Content-Type: text/x-patch;
- charset=ISO-8859-1;
- name="01-crypto-hifn_795x-fix-64bit-division-and-undefined-__divdi3.patch"
-Content-Disposition: attachment;
- filename*0="01-crypto-hifn_795x-fix-64bit-division-and-undefined-__divdi3.pat";
- filename*1="ch"
-Content-Transfer-Encoding: 7bit
-
-crypto: hifn_795x - fix 64bit division and undefined __divdi3 on 32bit archs
-
-From: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-
-Commit feb7b7ab928afa97a79a9c424e4e0691f49d63be changed NSEC_PER_SEC to 64-bit
-constant, which causes "DIV_ROUND_UP(NSEC_PER_SEC, dev->pk_clk_freq)" to
-generate __divdi3 call on 32-bit archs. Fix this by changing DIV_ROUND_UP to
-DIV_ROUND_UP_ULL.
-
-Signed-off-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
----
- drivers/crypto/hifn_795x.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/crypto/hifn_795x.c b/drivers/crypto/hifn_795x.c
-index c9c4bef..df14358 100644
---- a/drivers/crypto/hifn_795x.c
-+++ b/drivers/crypto/hifn_795x.c
-@@ -821,8 +821,8 @@ static int hifn_register_rng(struct hifn_device *dev)
- 	/*
- 	 * We must wait at least 256 Pk_clk cycles between two reads of the rng.
- 	 */
--	dev->rng_wait_time	= DIV_ROUND_UP(NSEC_PER_SEC, dev->pk_clk_freq) *
--				  256;
-+	dev->rng_wait_time	= DIV_ROUND_UP_ULL(NSEC_PER_SEC,
-+						   dev->pk_clk_freq) * 256;
- 
- 	dev->rng.name		= dev->name;
- 	dev->rng.data_present	= hifn_rng_data_present,
-
---=_28zo09nk67fo--
+Yours,
+Linus Walleij
