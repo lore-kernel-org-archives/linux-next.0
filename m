@@ -1,81 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: comment on pm tree commit
-Date: Mon, 9 Jul 2012 09:40:13 +1000
-Message-ID: <20120709094013.88a1117c9ef4510555147280@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 9 Jul 2012 11:50:46 +1000
+Message-ID: <20120709115046.f09fe2d15e33e7502cbad222@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__9_Jul_2012_09_40_13_+1000_aI/1g8FqOhZNB/sp"
+ boundary="Signature=_Mon__9_Jul_2012_11_50_46_+1000_ZbeRoIkMmk_tV4h_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40855 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43021 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752390Ab2GHXk2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Jul 2012 19:40:28 -0400
+	with ESMTP id S1751405Ab2GIBvG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Jul 2012 21:51:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Preeti U Murthy <preeti@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
---Signature=_Mon__9_Jul_2012_09_40_13_+1000_aI/1g8FqOhZNB/sp
+--Signature=_Mon__9_Jul_2012_11_50_46_+1000_ZbeRoIkMmk_tV4h_
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Mauro,
 
-I noticed commit b8eec56cd8e5 ("PM / cpuidle: System resume hang fix with
-cpuidle") in the pm tree needs some work (I noticed it because it was
-changed in a rebase ...).
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
-index a6b3f2e..b90ccb2 100644
---- a/include/linux/cpuidle.h
-+++ b/include/linux/cpuidle.h
-@@ -146,6 +146,8 @@ extern void cpuidle_unregister_device(struct cpuidle_de=
-vice *dev);
-=20
- extern void cpuidle_pause_and_lock(void);
- extern void cpuidle_resume_and_unlock(void);
-+extern void cpuidle_pause(void);
-+extern void cpuidle_resume(void);
- extern int cpuidle_enable_device(struct cpuidle_device *dev);
- extern void cpuidle_disable_device(struct cpuidle_device *dev);
- extern int cpuidle_wrap_enter(struct cpuidle_device *dev,
-@@ -169,6 +171,8 @@ static inline void cpuidle_unregister_device(struct cpu=
-idle_device *dev) { }
-=20
- static inline void cpuidle_pause_and_lock(void) { }
- static inline void cpuidle_resume_and_unlock(void) { }
-+static inline cpuidle_pause(void) { }
-+static inline cpuidle_resume(void) { }
+usr/include/linux/v4l2-subdev.h:28: included file 'linux/v4l2-common.h' is =
+not exported
+usr/include/linux/videodev2.h:63: included file 'linux/v4l2-common.h' is no=
+t exported
 
-These need to be "static inline void".  I wonder what review and build
-testing this went through (the above should produce warnings since they
-are non void returning functions with no return statements).
+Introduced by commit 5689b28890f4 ("[media] v4l: Unify selection targets
+across V4L2 and V4L2 subdev interfaces").
 
+I have used the v4l-dvb tree from next-20120706 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__9_Jul_2012_09_40_13_+1000_aI/1g8FqOhZNB/sp
+--Signature=_Mon__9_Jul_2012_11_50_46_+1000_ZbeRoIkMmk_tV4h_
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP+hpdAAoJEECxmPOUX5FEieYP/1ARW6uSbPcfEOpAynMyvaTU
-A8KiMQUvoU9UYkAJ5TUPJMJ/Es8lEbVKwqLVhJmpq+02QdeuO+bFiMNUX5BbGZUO
-ZHqMlAhT3r6vbFPh1XDVfBEGwAmYTOk8h8Zh7B5z8NGu0cHtFLYKFScPPP6GFOaw
-s+UD51/ufwQHz73yA8ogDmRcHGpEtRH3LevtSptcQW6fO4lIo9Qx517QY9GI0bvs
-A2EWqVQR29w8CDLzXfu6rdDPFTyI6WHR+5HsZ5Xu8Hhg3p5Fa5okqMQjFg6WZaHt
-aDnBEypT9X09RHRd2A9C6pSKMklpVIvkZdQPH+wDj5qy6zd43J+HUFy9aKPmn+tz
-BsyGqgHISD7Z6frseDHCjPvpUVfu2XiVrSRAMrGMbhMsWDOk7NaF1dSA/m5UkAOJ
-ESt3erEje0mSYJtc+OTc8lhu16xEIuUh5HcxAZZ4uJjzwdxQZto8Yxkg+M2yqRnF
-xNC85UyRbgTdDifUDktLn0zPuVa1xXlXURVErogOMUz9TbkHGLpCvwyN2/I8RfNM
-V+9ay+tphLg5rSwmTQmiB0Wc5OYhfgtNzsgbTxG8kdMJW4NxxyMyUWnOqaVBVcto
-8rjqgZMwcKIyMAvPZoj8nZDcyxxkuFlLmPawpoEXCuBwzLp+oBt7ha4ADwBQQdb8
-yKxzZtQk6/5h/mmoJQCQ
-=HkOY
+iQIcBAEBCAAGBQJP+jj2AAoJEECxmPOUX5FERP0QAIdYQntEeZAs7ditbNC4K90Z
+B3j0pjqsW0pEI+Qch8xrdggfXF7maFCRVSzUqaLp3kyn+TjMrMoDLbzDuOzmJSyv
+xyJatAKVwr4dQaRi2wgG5DAmFkoi2pueGpsv+FvcTUscKDDixlOLd6Ng97lpXqIo
+XAE3BWv4L+wQnNrnBRy0rkzFOJHRmcOogxORWDBpSeDzp8KXvYbm0a62jKjd2CZs
+9ye/ZaHMAHlH05wq3fX3fXA+uc2Mcvg1B3HrSlk8vjCj58fFsszd7G1rqPl2xBNx
+q0Ek4jrySKHm7eHzI9OxFHisAGazEcd/27ASdC97zMx4l2KLfUjXsLoNQj5qY2sy
+AeZ43R9FjKwVa83IrlvGTbhWS000+bvNGJloVRwGnzhan4zleDFFLwt8TrpG+Wh5
+Nkvy8nvUQ083STCz3MBsVmR4PLa+oTUE/zUhI46WIQB/dR9qCvCc+h2UhZXN+7DY
+z5PEL8Su+j5hIq0i8X1yQgZsq4biztIG+KqYPCVmdGN8TqmWvesCgMthIMbQjBXl
+lOEhUy2O2ZEsjYx+xSVxxcOPWcJo61bV/O1DPXIAwaGnv8GRnG3C37SQt4HL58mr
+/TvopX3lWXchV6aqU/2KIn9MyCOYW2w0SXjjJiwSSXbosQfMTFbCUH9MpMyDp1i4
+jaw7OGHIYSWiyK+DF7E9
+=KkNj
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__9_Jul_2012_09_40_13_+1000_aI/1g8FqOhZNB/sp--
+--Signature=_Mon__9_Jul_2012_11_50_46_+1000_ZbeRoIkMmk_tV4h_--
