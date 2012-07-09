@@ -1,60 +1,100 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd tree
-Date: Mon, 9 Jul 2012 13:57:19 +1000
-Message-ID: <20120709135719.5c8b0f033520f5981efb2c93@canb.auug.org.au>
+Subject: linux-next: boot failure in next-20120705 and 20120706
+Date: Mon, 9 Jul 2012 14:49:46 +1000
+Message-ID: <20120709144946.ada290480c0edc6a99f9c9c6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__9_Jul_2012_13_57_19_+1000_X9NBL4ABTclT0+6h"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__9_Jul_2012_14_49_46_+1000_Y61R0fb_HGnoXJAN"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44856 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750951Ab2GIEty (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jul 2012 00:49:54 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: ppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Mon__9_Jul_2012_13_57_19_+1000_X9NBL4ABTclT0+6h
+--Signature=_Mon__9_Jul_2012_14_49_46_+1000_Y61R0fb_HGnoXJAN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi all,
 
-After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Boot testing next-20120705 and 20120706 one of my PowerPC machines get this=
+ BUG:
 
-ERROR: "arizona_dai_ops" [sound/soc/codecs/snd-soc-wm5102.ko] undefined!
-ERROR: "wm5102_aod" [drivers/mfd/arizona-irq.ko] undefined!
-ERROR: "wm5102_irq" [drivers/mfd/arizona-irq.ko] undefined!
-ERROR: "irq_set_chip_and_handler_name" [drivers/mfd/arizona-irq.ko] undefin=
-ed!
-ERROR: "wm5102_patch" [drivers/mfd/arizona-core.ko] undefined!
-ERROR: "arizona_irq_init" [drivers/mfd/arizona-core.ko] undefined!
-ERROR: "arizona_irq_exit" [drivers/mfd/arizona-core.ko] undefined!
+(this one just after the console login prompt appeared.)
 
-I have used the mfd tree from next-20120706 for today.
+kernel BUG at arch/powerpc/kernel/irq.c:188!
+Oops: Exception in kernel mode, sig: 5 [#1]
+SMP NR_CPUS=3D32 NUMA pSeries
+Modules linked in: binfmt_misc dm_mirror dm_region_hash dm_log ibmveth
+NIP: c00000000000f7d4 LR: c00000000000f838 CTR: c0000000007222a0
+REGS: c000000000d17a30 TRAP: 0700   Not tainted  (3.5.0-rc5-autokern1)
+MSR: 8000000000021032 <SF,ME,IR,DR,RI>  CR: 24000048  XER: 00000000
+SOFTE: 0
+TASK =3D c000000000c41a10[0] 'swapper/0' THREAD: c000000000d14000 CPU: 0
+GPR00: 0000000000000001 c000000000d17cb0 c000000000d12d10 0000000000000500=
+=20
+GPR04: 0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+=20
+GPR08: 001752557ab9dd5b c000000007ffb000 0000000000000000 c000000000bf5200=
+=20
+GPR12: 0000000000000000 c000000007ffb000 0000000002b00000 00000000009d7000=
+=20
+GPR16: 0000000000d454f0 00000000027dc6f0 0000000001b5f994 0000000000000060=
+=20
+GPR20: 0000000000000000 ffffffffffffffff ffffffffffffffff 8000000000009032=
+=20
+GPR24: c000000000d14000 c000000000d30290 c000000000d30178 c000000000d30290=
+=20
+GPR28: c0000000008a6180 0000000000000008 c000000000c7e130 0000000000000001=
+=20
+NIP [c00000000000f7d4] .__check_irq_replay+0xc4/0xf0
+LR [c00000000000f838] .arch_local_irq_restore+0x38/0x90
+Call Trace:
+[c000000000d17cb0] [c000000000d17d30] init_thread_union+0x3d30/0x4000 (unre=
+liable)
+[c000000000d17d40] [c00000000000f838] .arch_local_irq_restore+0x38/0x90
+[c000000000d17db0] [c000000000015c60] .cpu_idle+0x230/0x2b0
+[c000000000d17e70] [c00000000000b3f8] .rest_init+0x88/0xa0
+[c000000000d17ef0] [c000000000b86c0c] .start_kernel+0x478/0x498
+[c000000000d17f90] [c0000000000096f8] .start_here_common+0x20/0x28
+Instruction dump:
+4e800020 7da96b78 7beaf7e3 880901f3 38600500 5400e87e 5400183e 980901f3=20
+4082ffcc 880d01f3 7c0000d0 78000fe0 <0b000000> 38600000 4bffffb4 38610070=20
+
+This is:
+	BUG_ON(local_paca->irq_happened !=3D 0);
+in __check_irq_replay().
+
+This only happens on my Power5+ machine.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__9_Jul_2012_13_57_19_+1000_X9NBL4ABTclT0+6h
+--Signature=_Mon__9_Jul_2012_14_49_46_+1000_Y61R0fb_HGnoXJAN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP+lafAAoJEECxmPOUX5FEX10P/2k02AhVnmjuy9oLGB8lZuTu
-2Me0EHXRlKb0CICjXgP2OIrfuSlj4ucbR3pOKAcnCWxIEi4mwiV6yajRn8DULZbd
-4e9NzF+rP1exFpTr/5j7IjpG5/ugCt0bs0xuIz71ix6z7WlInkC5PymaXbwpYhdf
-houq1HVRcEeHy1IwgBRq0KuJNzpISz0TClkr3/Espm8FO0hEiZ09EmW9MmqHiYX+
-5vVDmu1oYVPG0mkP18UlXsx240X4Gcbe1+7PAX+K6O6LaE/PStBiJRswPcoM7t7a
-M8alM6GoOUNPwe0DgFie4xb+hqybaPv62tIaf2gXJ01+GhhbhhQgZpeXhZUst9he
-ltMoVRXVb3Y6a4J68TRBHscmXg5R8jpXiHvdec38jkBl4YY97m1ra0KEby8NLepL
-3PBIshfuEy6ZviWPPqu449hgh0lL/z4EB82nX+8TmwS6hNFFLtyW84oOgY8K8tfG
-oPHpYibdEL/2FxMWGIsO3j6M9PUKrvrT9VEpZ7EAg9MI+HBY/49ZgfvhBQFRgBUc
-TMaaeqVS72eog2xftaOAi4KxrJQir3unMkeUIVBkGiCHQuaU3fmewqWHxJtcyjdV
-h5M9a4pNr6RBq3BprgJ+thGzx/QiHMAdvUZw4HiixyqoBUL1sHZtkjXpxc0WWiQt
-0wLSuaBYvWb2o3tELGEG
-=VUMX
+iQIcBAEBCAAGBQJP+mLqAAoJEECxmPOUX5FEXZ0P/1zzVSYQ128dySb3wWQED1mC
+HSC7/d/Z3FK+VSuUUWWpgIHX7qN/MMG20P/TUA+P7Q1s6LfQRGwF6IQXvFVKguOf
+x0CiMpAYhp98VPVLRyVij0/yA69h4ObEDXBi4URPhS/mK7ZscThsFphH86S+X0Zc
+OLm8plD3RfLW+a1yH854Zn1NnvbV80iff77ob+oz4DkJw1D63jIXDdCTohoMLjL7
+AO4is3CKkW5Pt5nJitsnCmJ+OT8z+AWBGfkBPc1TYFi0l3b6nENa3GZyZxce4B/q
+z4c7Y4fgQN3XFtjGLiUzkfk+c0HrNNYj6FfPuWhQ+C75jfPc/4tWPLRAZIc0FkKK
+LDlSJmqVc+YPfYsK3Z4m7ExwTGL+kifpV46CXOxFraCRPKITPO31Ol4rjsBLEIik
+8sKSo4u5aCTQHSngixTn3ixbDb0FrjEu6nYULTWAeyauERGXbUAfAFV7zT3KRQ0n
+ada8jjAhwNWdL8G2i4F4xEMvH16XZLt/sq7NUpWNpTLmHFEey4zDEecwdBncbYIc
+EToZ/zC469K5YxM31tjDi179y02Jw5JvOMapH5tWlmekhqemwpBqnJ1cJYWXhSWg
+Ahybw07ApCwQoxekRw2rZtpsoKVsRfu+ze+exCUY24vEyJ4S4FV/K9ATmTy2HE9R
+1EN1gHotkszo7ydfMght
+=ra6h
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__9_Jul_2012_13_57_19_+1000_X9NBL4ABTclT0+6h--
+--Signature=_Mon__9_Jul_2012_14_49_46_+1000_Y61R0fb_HGnoXJAN--
