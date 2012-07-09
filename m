@@ -1,58 +1,96 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Mon, 9 Jul 2012 12:52:58 +0200
-Message-ID: <20120709105258.GJ15345@sortiz-mobl>
-References: <20120709135719.5c8b0f033520f5981efb2c93@canb.auug.org.au>
+From: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+Subject: Re: linux-next: Tree for July 2 (crypto/hifn_795x)
+Date: Mon, 09 Jul 2012 20:54:41 +0300
+Message-ID: <20120709205441.11422bntesq3cdno@www.81.fi>
+References: <20120702172334.2618cae84cc57b4ec5a63ed7@canb.auug.org.au>
+ <4FF1CBF2.8060303@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed;
+ boundary="=_28zo09nk67fo"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:54116 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752721Ab2GIKl3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Jul 2012 06:41:29 -0400
-Content-Disposition: inline
-In-Reply-To: <20120709135719.5c8b0f033520f5981efb2c93@canb.auug.org.au>
+Received: from sd-mail-sa-01.sanoma.fi ([158.127.18.161]:43479 "EHLO
+	sd-mail-sa-01.sanoma.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751929Ab2GIRyo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jul 2012 13:54:44 -0400
+In-Reply-To: <4FF1CBF2.8060303@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Stephen, Mark,
+This message is in MIME format.
 
-On Mon, Jul 09, 2012 at 01:57:19PM +1000, Stephen Rothwell wrote:
-> Hi Samuel,
-> 
-> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> ERROR: "arizona_dai_ops" [sound/soc/codecs/snd-soc-wm5102.ko] undefined!
-> ERROR: "wm5102_aod" [drivers/mfd/arizona-irq.ko] undefined!
-> ERROR: "wm5102_irq" [drivers/mfd/arizona-irq.ko] undefined!
-> ERROR: "irq_set_chip_and_handler_name" [drivers/mfd/arizona-irq.ko] undefined!
-> ERROR: "wm5102_patch" [drivers/mfd/arizona-core.ko] undefined!
-> ERROR: "arizona_irq_init" [drivers/mfd/arizona-core.ko] undefined!
-> ERROR: "arizona_irq_exit" [drivers/mfd/arizona-core.ko] undefined!
+--=_28zo09nk67fo
+Content-Type: text/plain;
+ charset=ISO-8859-1;
+ DelSp="Yes";
+ format="flowed"
+Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+
+Quoting Randy Dunlap <rdunlap@xenotime.net>:
+
+> On 07/02/2012 12:23 AM, Stephen Rothwell wrote:
 >
-I pushed a patch that fixes the following build failures:
+>> Hi all,
+>>
+>> Changes since 20120629:
+>>
+>
+>
+> on i386:
+>
+>
+> ERROR: "__divdi3" [drivers/crypto/hifn_795x.ko] undefined!
+>
 
-ERROR: "wm5102_aod" [drivers/mfd/arizona-irq.ko] undefined!
-ERROR: "wm5102_irq" [drivers/mfd/arizona-irq.ko] undefined!
-ERROR: "irq_set_chip_and_handler_name" [drivers/mfd/arizona-irq.ko] undefined!
-ERROR: "wm5102_patch" [drivers/mfd/arizona-core.ko] undefined!
-ERROR: "arizona_irq_init" [drivers/mfd/arizona-core.ko] undefined!
-ERROR: "arizona_irq_exit" [drivers/mfd/arizona-core.ko] undefined!
+This is caused by commit feb7b7ab928afa97a79a9c424e4e0691f49d63be.  
+hifn_795x has "DIV_ROUND_UP(NSEC_PER_SEC, dev->pk_clk_freq)", which  
+should be changed to DIV_ROUND_UP_ULL now that NSEC_PER_SEC is 64bit  
+on 32bit archs. Patch to fix hifn_795x is attached (only compile  
+tested).
 
-This one:
-
-ERROR: "arizona_dai_ops" [sound/soc/codecs/snd-soc-wm5102.ko] undefined!
-
-comes from the fact that arizon_dai_ops is not an exported symbol while
-snd-soc-wm5102 is built as a module. This is coming from Mark's sound tree.
-
-Cheers,
-Samuel.
+-Jussi
 
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+--=_28zo09nk67fo
+Content-Type: text/x-patch;
+ charset=ISO-8859-1;
+ name="01-crypto-hifn_795x-fix-64bit-division-and-undefined-__divdi3.patch"
+Content-Disposition: attachment;
+ filename*0="01-crypto-hifn_795x-fix-64bit-division-and-undefined-__divdi3.pat";
+ filename*1="ch"
+Content-Transfer-Encoding: 7bit
+
+crypto: hifn_795x - fix 64bit division and undefined __divdi3 on 32bit archs
+
+From: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+
+Commit feb7b7ab928afa97a79a9c424e4e0691f49d63be changed NSEC_PER_SEC to 64-bit
+constant, which causes "DIV_ROUND_UP(NSEC_PER_SEC, dev->pk_clk_freq)" to
+generate __divdi3 call on 32-bit archs. Fix this by changing DIV_ROUND_UP to
+DIV_ROUND_UP_ULL.
+
+Signed-off-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+---
+ drivers/crypto/hifn_795x.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/crypto/hifn_795x.c b/drivers/crypto/hifn_795x.c
+index c9c4bef..df14358 100644
+--- a/drivers/crypto/hifn_795x.c
++++ b/drivers/crypto/hifn_795x.c
+@@ -821,8 +821,8 @@ static int hifn_register_rng(struct hifn_device *dev)
+ 	/*
+ 	 * We must wait at least 256 Pk_clk cycles between two reads of the rng.
+ 	 */
+-	dev->rng_wait_time	= DIV_ROUND_UP(NSEC_PER_SEC, dev->pk_clk_freq) *
+-				  256;
++	dev->rng_wait_time	= DIV_ROUND_UP_ULL(NSEC_PER_SEC,
++						   dev->pk_clk_freq) * 256;
+ 
+ 	dev->rng.name		= dev->name;
+ 	dev->rng.data_present	= hifn_rng_data_present,
+
+--=_28zo09nk67fo--
