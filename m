@@ -1,62 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ext4 tree
-Date: Tue, 10 Jul 2012 11:23:12 +1000
-Message-ID: <20120710112312.099a2f602cd6aea90226732c@canb.auug.org.au>
+From: Aditya Kali <adityakali@google.com>
+Subject: Re: linux-next: build failure after merge of the ext4 tree
+Date: Mon, 9 Jul 2012 18:48:02 -0700
+Message-ID: <CAGr1F2EB=BR+GSq34TYB+QE+3FNwzvBwBemYPpPu+=wENQf-ZA@mail.gmail.com>
+References: <20120710112312.099a2f602cd6aea90226732c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Jul_2012_11_23_12_+1000_Q3ERyouSQR3bNNiH"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43952 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751365Ab2GJBXX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jul 2012 21:23:23 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aditya Kali <adityakali@google.com>, Jan Kara <jack@suse.cz>, Johann Lombardi <johann@whamcloud.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <20120710112312.099a2f602cd6aea90226732c@canb.auug.org.au>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, wfg@linux.intel.com
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Johann Lombardi <johann@whamcloud.com>, ext4 development <linux-ext4@vger.kernel.org>, kernel-janitors@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__10_Jul_2012_11_23_12_+1000_Q3ERyouSQR3bNNiH
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry for the trouble. The following patch should fix the build.
 
-Hi Ted,
 
-After merging the ext4 tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+From: Aditya Kali <adityakali@google.com>
+Date: Mon, 9 Jul 2012 18:42:28 -0700
+Subject: [PATCH] ext4: Fix compilation error for ext4_enable_quotas
 
-fs/ext4/super.c: In function 'ext4_remount':
-fs/ext4/super.c:4739:4: error: implicit declaration of function 'ext4_enabl=
-e_quotas' [-Werror=3Dimplicit-function-declaration]
+ext4_enable_quotas should only be called under CONFIG_QUOTA
+block.
 
-Caused by commit 182bb8fec8f5 ("ext4: make quota as first class supported
-feature").  The quota code needs to be protected by CONFIG_QUOTA.
+Signed-off-by: Aditya Kali <adityakali@google.com>
+---
+ fs/ext4/super.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-I have used the ext4 tree from next-20120709 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index a9b87c3..e4b79fc 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4734,6 +4734,7 @@ static int ext4_remount(struct super_block *sb,
+int *flags, char *data)
+ 	if (enable_quota) {
+ 		if (sb_any_quota_suspended(sb))
+ 			dquot_resume(sb, -1);
++#ifdef CONFIG_QUOTA
+ 		else if (EXT4_HAS_RO_COMPAT_FEATURE(sb,
+ 					EXT4_FEATURE_RO_COMPAT_QUOTA)) {
+ 			err = ext4_enable_quotas(sb);
+@@ -4742,6 +4743,7 @@ static int ext4_remount(struct super_block *sb,
+int *flags, char *data)
+ 				goto restore_opts;
+ 			}
+ 		}
++#endif
+ 	}
 
---Signature=_Tue__10_Jul_2012_11_23_12_+1000_Q3ERyouSQR3bNNiH
-Content-Type: application/pgp-signature
+ 	ext4_msg(sb, KERN_INFO, "re-mounted. Opts: %s", orig_data);
+-- 
+1.7.7.3
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP+4QAAAoJEECxmPOUX5FEVjwP/iaBbFRzeNhCL102k2kHe5LP
-UZvAnjyt2v42oybXMYo5DtwL8WY8wi3H25kb7uK/OMHomcapq6DLEDI1tIP4L/nV
-4NM/hNfShDYQimRF1rU2m1s3HoksD/Y8EPo7iPZCHMb0eA7HMgT4ypuc9UzuCWtV
-HpWBbXl5PDJpo0U72GoYwEqoOuRr5koSMehxtFsDOJVPI4Q5v72H4lE+RhMUkIVL
-6YXFofgogJ3hzwEyTVItNxuHvquz1/WRDG8NffsLk7/rKn6xqcQ7Y9UeQZy+Wcp1
-3BIgvHUJgK3S6iZ/+RyGbeEc9+FNrkmPuVaKoK0gKVtCMoO6giQbTQrIJUkUKUCB
-WL+csd1MRERGj/Dcy5ZTLZr1U0H6xREMRvZKasMZ+0A0R/ENmiBCfr3yPUJrXsm/
-OqqolpVLeeKQ+0JCIPaGUxpqlGlijPXn05weFI9vB3xfPSWdwu250iJjCgUSoM5a
-nXcp+FwvjjKb+bHGyIjBoLAqJARZjCGDAPU0jDwRvsxSXnsxQfZDHvzBekEaOLRU
-tub6T27tjI2EbW+05EiuYYEKHICJrJ/CAHx7SrAyZi5tlVyBeLf3bgxb+m8i/IkJ
-4W3MKhVqakKXcBgXQvYBveE4mGYTo6IFAfffXDXAQb/4vvrfg5+gNd+Ok5EAF65q
-Uz+YNkap/mgmN6wxFlxt
-=C/w5
------END PGP SIGNATURE-----
+On Mon, Jul 9, 2012 at 6:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Ted,
+>
+> After merging the ext4 tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> fs/ext4/super.c: In function 'ext4_remount':
+> fs/ext4/super.c:4739:4: error: implicit declaration of function 'ext4_enable_quotas' [-Werror=implicit-function-declaration]
+>
+> Caused by commit 182bb8fec8f5 ("ext4: make quota as first class supported
+> feature").  The quota code needs to be protected by CONFIG_QUOTA.
+>
+> I have used the ext4 tree from next-20120709 for today.
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__10_Jul_2012_11_23_12_+1000_Q3ERyouSQR3bNNiH--
+
+
+-- 
+
+Aditya
