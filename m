@@ -1,67 +1,66 @@
-From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Tue, 10 Jul 2012 09:25:25 +0200
-Message-ID: <87y5msgjru.fsf@nemi.mork.no>
-References: <20120710130848.1014fbe05e5146a33a3c7d39@canb.auug.org.au>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the
+ i2c-embedded tree
+Date: Tue, 10 Jul 2012 10:38:19 +0200
+Message-ID: <20120710083819.GA25197@pengutronix.de>
+References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from canardo.mork.no ([148.122.252.1]:36189 "EHLO canardo.mork.no"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751939Ab2GJI0m convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jul 2012 04:26:42 -0400
-In-Reply-To: <20120710130848.1014fbe05e5146a33a3c7d39@canb.auug.org.au>
-	(Stephen Rothwell's message of "Tue, 10 Jul 2012 13:08:48 +1000")
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:53793 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753363Ab2GJIia (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jul 2012 04:38:30 -0400
+Content-Disposition: inline
+In-Reply-To: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Alessandro Rubini <rubini@gnudd.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 10, 2012 at 04:41:30PM +1000, Stephen Rothwell wrote:
 > Hi all,
->
-> After merging the net-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/net/usb/qmi_wwan.c:381:13: error: 'qmi_wwan_unbind_shared' un=
-declared here (not in a function)
->
-> Caused by a bad automatic merge between commit 6fecd35d4cd7 ("net:
-> qmi_wwan: add ZTE MF60") from the net tree and commit 230718bda1be ("=
-net:
-> qmi_wwan: bind to both control and data interface") from the net-next
-> tree.
->
-> I added the following merge fix patch:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 10 Jul 2012 13:06:01 +1000
-> Subject: [PATCH] net: fix for qmi_wwan_unbind_shared changes
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/net/usb/qmi_wwan.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-> index 06cfcc7..85c983d 100644
-> --- a/drivers/net/usb/qmi_wwan.c
-> +++ b/drivers/net/usb/qmi_wwan.c
-> @@ -378,7 +378,7 @@ static const struct driver_info qmi_wwan_force_in=
-t2 =3D {
->  	.description	=3D "Qualcomm WWAN/QMI device",
->  	.flags		=3D FLAG_WWAN,
->  	.bind		=3D qmi_wwan_bind_shared,
-> -	.unbind		=3D qmi_wwan_unbind_shared,
-> +	.unbind		=3D qmi_wwan_unbind,
->  	.manage_power	=3D qmi_wwan_manage_power,
->  	.data		=3D BIT(2), /* interface whitelist bitmap */
->  };
+>=20
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> drivers/i2c/busses/i2c-nomadik.c between commit af97bace2cca
+> ("i2c-nomadik: move header to <linux/platform_data/i2c-nomadik.h>") from
+> the i2c-embedded tree and commits 32e42c687e0a ("ARM: ux500: Remove
+> unused i2c platform_data initialisation code") and 8214fd238a66 ("i2c:
+> Add Device Tree support to the Nomadik I2C driver") from the arm-soc tree.
+>=20
+> I fixed it up (I think - see below) and can carry the fix as necessary.
+> Please check this and talk to each other ...
 
+Hmm, I can't recall any discussion that the DT support patch should go
+in via arm-soc. Did I miss something? Right now, I'd think it should go
+in via i2c. I am fine with the other patch going in via arm-soc, but can
+carry it as well.
 
-Looks good.  Thanks.
+Regards,
 
+   Wolfram
 
-Bj=C3=B8rn
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk/76fsACgkQD27XaX1/VRvjmQCgku1NQ2i5RzwCJpUb7OFj0T1Y
+8rEAnA26ufeXf40O2y/Wrt597dFNNVbt
+=Kh7M
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
