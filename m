@@ -1,45 +1,73 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Tue, 10 Jul 2012 11:20:44 +0200
-Message-ID: <20120710092044.GX15345@sortiz-mobl>
-References: <20120709135719.5c8b0f033520f5981efb2c93@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Tue, 10 Jul 2012 21:14:55 +1000
+Message-ID: <20120710211455.b9afb0741bdc16bec4b26c03@canb.auug.org.au>
+References: <20120710153210.45caf9cf0644898ab3d1c70b@canb.auug.org.au>
+	<20120710090324.GC3918@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:55695 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752893Ab2GJJJN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Jul 2012 05:09:13 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__10_Jul_2012_21_14_55_+1000_FLgJeGs=EWZI6CuS"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120710090324.GC3918@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, Stephen Warren <swarren@nvidia.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Tue__10_Jul_2012_21_14_55_+1000_FLgJeGs=EWZI6CuS
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20120709135719.5c8b0f033520f5981efb2c93@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi Mark,
 
-On Mon, Jul 09, 2012 at 01:57:19PM +1000, Stephen Rothwell wrote:
-> Hi Samuel,
-> 
-> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> ERROR: "arizona_dai_ops" [sound/soc/codecs/snd-soc-wm5102.ko] undefined!
-> ERROR: "wm5102_aod" [drivers/mfd/arizona-irq.ko] undefined!
-> ERROR: "wm5102_irq" [drivers/mfd/arizona-irq.ko] undefined!
-> ERROR: "irq_set_chip_and_handler_name" [drivers/mfd/arizona-irq.ko] undefined!
-> ERROR: "wm5102_patch" [drivers/mfd/arizona-core.ko] undefined!
-> ERROR: "arizona_irq_init" [drivers/mfd/arizona-core.ko] undefined!
-> ERROR: "arizona_irq_exit" [drivers/mfd/arizona-core.ko] undefined!
-> 
-> I have used the mfd tree from next-20120706 for today.
-The mfd and sound trees are now fixed and you should no longer get those
-failures.
+On Tue, 10 Jul 2012 10:03:25 +0100 Mark Brown <broonie@opensource.wolfsonmi=
+cro.com> wrote:
+>
+> On Tue, Jul 10, 2012 at 03:32:10PM +1000, Stephen Rothwell wrote:
+>=20
+> > Caused by commit 01eaf2458773 ("extcon: Convert extcon_gpio to
+> > devm_gpio_request_one").  devm_gpio_request_one is not currently export=
+ed
+> > to modules.
+>=20
+> A patch for this has been in -next for most of this release cycle and
+> really should've been sent to Linus by now - this issue is cropping up
+> an awful lot and there's further patches not getting applied due to the
+> dependency on this.
+>=20
+> I *think* the patch is sitting in Andrew's tree at the minute.
 
+Its actually in the gpio-lw tree (more cc's added).  It was in Andrew's
+tree before that.
+
+Linus (Walleij), Stephen, Grant, can someone please send this patch to
+Linus (Torvalds)?
+
+--=20
 Cheers,
-Samuel.
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+--Signature=_Tue__10_Jul_2012_21_14_55_+1000_FLgJeGs=EWZI6CuS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP/A6vAAoJEECxmPOUX5FEUNMP/jPu86esbOqb/XQTM7DbI7UD
+8tUxbnTDSLPIJ0iDf7aFKZUq0rTMMHNYhuN9vgIwZAdqoglgKrscPSjBom52BC7c
+FC0rEqinIklO4FWqepIFYzVrMMQl7UUo+Q/l4tSZhyOV7UBZbaCNCH0GsbIMH+Jz
+g7AW+hNCl6ZAfEdYxBV1zMdI/3tPMjdLq6B3IJ4emQKxCZiolUkOIY/IMAGiey7m
+XIkm8SgFfq45upcNXftVKQRkjOItBed9YqpeE6WnNim5GcwW3Y4PqeVJkW2zFTCD
+WV0GML4wOENlW1pDXDLIEeDpCdRpmlyLes4ZgBbRi/O9Xb6ohfDGe7E5o4AewIdg
+x4XGbQBhOhRMO7upLqC60ryRn4wSfpgCLOSOakMog91zrD2gLbWvxP0WtuTeIsde
+fMDs/ZJD2sIOLEhZobrr0lo5PV9Ta9TAFRbR6C8R2joHyMPwhXJE/WuMu1U/W3QD
+GlWkrUBPblKoqCJPbloOlfuNiW3nhen0au5j8g3ObY1NU/79lRjvQ3i2pXEsrhOe
+yeGjJdhIhXJBYu61zbcpVA/qv856yK9epkqnvSqh9cDPvXTAEWKrGoDTMLruqDxB
+MM2jkZ//2pzwRTWB0HcrXqBqCM1O5fGznI99RnmzIYbAjjNM2u8Wnqq9lZnB8g9u
+Y1+a606fg4s6E119OFK2
+=NFkc
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Jul_2012_21_14_55_+1000_FLgJeGs=EWZI6CuS--
