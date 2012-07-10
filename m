@@ -1,57 +1,45 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Tue, 10 Jul 2012 10:03:25 +0100
-Message-ID: <20120710090324.GC3918@opensource.wolfsonmicro.com>
-References: <20120710153210.45caf9cf0644898ab3d1c70b@canb.auug.org.au>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Tue, 10 Jul 2012 11:20:44 +0200
+Message-ID: <20120710092044.GX15345@sortiz-mobl>
+References: <20120709135719.5c8b0f033520f5981efb2c93@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="B4IIlcmfBL/1gGOG"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120710153210.45caf9cf0644898ab3d1c70b@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
-List-Id: linux-next.vger.kernel.org
-
-
---B4IIlcmfBL/1gGOG
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga14.intel.com ([143.182.124.37]:55695 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752893Ab2GJJJN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Jul 2012 05:09:13 -0400
 Content-Disposition: inline
+In-Reply-To: <20120709135719.5c8b0f033520f5981efb2c93@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Tue, Jul 10, 2012 at 03:32:10PM +1000, Stephen Rothwell wrote:
+Hi Stephen,
 
-> Caused by commit 01eaf2458773 ("extcon: Convert extcon_gpio to
-> devm_gpio_request_one").  devm_gpio_request_one is not currently exported
-> to modules.
+On Mon, Jul 09, 2012 at 01:57:19PM +1000, Stephen Rothwell wrote:
+> Hi Samuel,
+> 
+> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> ERROR: "arizona_dai_ops" [sound/soc/codecs/snd-soc-wm5102.ko] undefined!
+> ERROR: "wm5102_aod" [drivers/mfd/arizona-irq.ko] undefined!
+> ERROR: "wm5102_irq" [drivers/mfd/arizona-irq.ko] undefined!
+> ERROR: "irq_set_chip_and_handler_name" [drivers/mfd/arizona-irq.ko] undefined!
+> ERROR: "wm5102_patch" [drivers/mfd/arizona-core.ko] undefined!
+> ERROR: "arizona_irq_init" [drivers/mfd/arizona-core.ko] undefined!
+> ERROR: "arizona_irq_exit" [drivers/mfd/arizona-core.ko] undefined!
+> 
+> I have used the mfd tree from next-20120706 for today.
+The mfd and sound trees are now fixed and you should no longer get those
+failures.
 
-A patch for this has been in -next for most of this release cycle and
-really should've been sent to Linus by now - this issue is cropping up
-an awful lot and there's further patches not getting applied due to the
-dependency on this.
+Cheers,
+Samuel.
 
-I *think* the patch is sitting in Andrew's tree at the minute.
-
---B4IIlcmfBL/1gGOG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP+++cAAoJEBus8iNuMP3dvo0P/3IkDRd/5SGQvuiGWyBVVwqx
-hbPueTZT1S2Pk9cAhC6kANxZkWOC6VNw7hGNjSBNUNPFtUrSxu/SoyrcW/r0oT8B
-LwJRuqr1goJyKgnU/Q6PPYdVG2Uumtk4AvCFuYNIwX1SOH5+DNvdmxiI+37RETSs
-oI5NXtV8UDgsV9be6bNlY/5ffBwnNmE+PkvG6pFijLeqgfmn+WzAlIuKqSKJcVZ7
-c3busdii76R13/Cu0tfujVVm0HT7XsSbfGuZqGrPKo/k3d0FZC8GqKjIeZw9dDz6
-w+Z6qQS/DOHjOCHwihnNs18Lkbpd/M3aqXuULoSqNbkYMRVz1VWqCKx9got8yTQb
-Nz87GciCHcSfJgznOs10IHHv/S4MazFYiBtGknbqmFEMyIBe+GSV5sqVJSJmhS+a
-IR4Baa9GLGGnBbbEB9nPQZLSas2LpJ1ljRrrhjpYa7EkVLMR7NrR+0a++18yhtcT
-2jgEiOZOg7jukvzHqX4cX4Zl8SXouRy366IZXSvIP0EaXbqYfEnN/q75Dph2icFO
-p+WMxAwgPu8Xx2oMkeUI5sZVfqj9HrlcYID7GVskY5k8r1K+5/LF7iJ72IzmYr7v
-WkTqWLmtn/dgrpJw1D4j/+asi0mbAXFXK8DnDJKtAM7P9NvdZmhnhjn7qmTqDijI
-M6HqXwxNp2at6NusPRGz
-=ul2m
------END PGP SIGNATURE-----
-
---B4IIlcmfBL/1gGOG--
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
