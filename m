@@ -1,48 +1,62 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for July 2 (crypto/hifn_795x)
-Date: Mon, 09 Jul 2012 14:40:22 -0700
-Message-ID: <4FFB4FC6.7020509@xenotime.net>
-References: <20120702172334.2618cae84cc57b4ec5a63ed7@canb.auug.org.au> <4FF1CBF2.8060303@xenotime.net> <20120709205441.11422bntesq3cdno@www.81.fi>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ext4 tree
+Date: Tue, 10 Jul 2012 11:23:12 +1000
+Message-ID: <20120710112312.099a2f602cd6aea90226732c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__10_Jul_2012_11_23_12_+1000_Q3ERyouSQR3bNNiH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:52912 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752076Ab2GIVlG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jul 2012 17:41:06 -0400
-In-Reply-To: <20120709205441.11422bntesq3cdno@www.81.fi>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43952 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751365Ab2GJBXX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jul 2012 21:23:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aditya Kali <adityakali@google.com>, Jan Kara <jack@suse.cz>, Johann Lombardi <johann@whamcloud.com>
 
-On 07/09/2012 10:54 AM, Jussi Kivilinna wrote:
+--Signature=_Tue__10_Jul_2012_11_23_12_+1000_Q3ERyouSQR3bNNiH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Quoting Randy Dunlap <rdunlap@xenotime.net>:
-> 
->> On 07/02/2012 12:23 AM, Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> Changes since 20120629:
->>>
->>
->>
->> on i386:
->>
->>
->> ERROR: "__divdi3" [drivers/crypto/hifn_795x.ko] undefined!
->>
-> 
-> This is caused by commit feb7b7ab928afa97a79a9c424e4e0691f49d63be. hifn_795x has "DIV_ROUND_UP(NSEC_PER_SEC, dev->pk_clk_freq)", which should be changed to DIV_ROUND_UP_ULL now that NSEC_PER_SEC is 64bit on 32bit archs. Patch to fix hifn_795x is attached (only compile tested).
+Hi Ted,
 
+After merging the ext4 tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
+fs/ext4/super.c: In function 'ext4_remount':
+fs/ext4/super.c:4739:4: error: implicit declaration of function 'ext4_enabl=
+e_quotas' [-Werror=3Dimplicit-function-declaration]
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+Caused by commit 182bb8fec8f5 ("ext4: make quota as first class supported
+feature").  The quota code needs to be protected by CONFIG_QUOTA.
 
-Thanks.
+I have used the ext4 tree from next-20120709 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Signature=_Tue__10_Jul_2012_11_23_12_+1000_Q3ERyouSQR3bNNiH
+Content-Type: application/pgp-signature
 
--- 
-~Randy
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP+4QAAAoJEECxmPOUX5FEVjwP/iaBbFRzeNhCL102k2kHe5LP
+UZvAnjyt2v42oybXMYo5DtwL8WY8wi3H25kb7uK/OMHomcapq6DLEDI1tIP4L/nV
+4NM/hNfShDYQimRF1rU2m1s3HoksD/Y8EPo7iPZCHMb0eA7HMgT4ypuc9UzuCWtV
+HpWBbXl5PDJpo0U72GoYwEqoOuRr5koSMehxtFsDOJVPI4Q5v72H4lE+RhMUkIVL
+6YXFofgogJ3hzwEyTVItNxuHvquz1/WRDG8NffsLk7/rKn6xqcQ7Y9UeQZy+Wcp1
+3BIgvHUJgK3S6iZ/+RyGbeEc9+FNrkmPuVaKoK0gKVtCMoO6giQbTQrIJUkUKUCB
+WL+csd1MRERGj/Dcy5ZTLZr1U0H6xREMRvZKasMZ+0A0R/ENmiBCfr3yPUJrXsm/
+OqqolpVLeeKQ+0JCIPaGUxpqlGlijPXn05weFI9vB3xfPSWdwu250iJjCgUSoM5a
+nXcp+FwvjjKb+bHGyIjBoLAqJARZjCGDAPU0jDwRvsxSXnsxQfZDHvzBekEaOLRU
+tub6T27tjI2EbW+05EiuYYEKHICJrJ/CAHx7SrAyZi5tlVyBeLf3bgxb+m8i/IkJ
+4W3MKhVqakKXcBgXQvYBveE4mGYTo6IFAfffXDXAQb/4vvrfg5+gNd+Ok5EAF65q
+Uz+YNkap/mgmN6wxFlxt
+=C/w5
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Jul_2012_11_23_12_+1000_Q3ERyouSQR3bNNiH--
