@@ -1,66 +1,57 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the
- i2c-embedded tree
-Date: Tue, 10 Jul 2012 10:38:19 +0200
-Message-ID: <20120710083819.GA25197@pengutronix.de>
-References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Tue, 10 Jul 2012 10:03:25 +0100
+Message-ID: <20120710090324.GC3918@opensource.wolfsonmicro.com>
+References: <20120710153210.45caf9cf0644898ab3d1c70b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:53793 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753363Ab2GJIia (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jul 2012 04:38:30 -0400
+	protocol="application/pgp-signature"; boundary="B4IIlcmfBL/1gGOG"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20120710153210.45caf9cf0644898ab3d1c70b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Alessandro Rubini <rubini@gnudd.com>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
 
---yrj/dFKFPuw6o+aM
+--B4IIlcmfBL/1gGOG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 10, 2012 at 04:41:30PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> drivers/i2c/busses/i2c-nomadik.c between commit af97bace2cca
-> ("i2c-nomadik: move header to <linux/platform_data/i2c-nomadik.h>") from
-> the i2c-embedded tree and commits 32e42c687e0a ("ARM: ux500: Remove
-> unused i2c platform_data initialisation code") and 8214fd238a66 ("i2c:
-> Add Device Tree support to the Nomadik I2C driver") from the arm-soc tree.
->=20
-> I fixed it up (I think - see below) and can carry the fix as necessary.
-> Please check this and talk to each other ...
+On Tue, Jul 10, 2012 at 03:32:10PM +1000, Stephen Rothwell wrote:
 
-Hmm, I can't recall any discussion that the DT support patch should go
-in via arm-soc. Did I miss something? Right now, I'd think it should go
-in via i2c. I am fine with the other patch going in via arm-soc, but can
-carry it as well.
+> Caused by commit 01eaf2458773 ("extcon: Convert extcon_gpio to
+> devm_gpio_request_one").  devm_gpio_request_one is not currently exported
+> to modules.
 
-Regards,
+A patch for this has been in -next for most of this release cycle and
+really should've been sent to Linus by now - this issue is cropping up
+an awful lot and there's further patches not getting applied due to the
+dependency on this.
 
-   Wolfram
+I *think* the patch is sitting in Andrew's tree at the minute.
 
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---yrj/dFKFPuw6o+aM
+--B4IIlcmfBL/1gGOG
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iEYEARECAAYFAk/76fsACgkQD27XaX1/VRvjmQCgku1NQ2i5RzwCJpUb7OFj0T1Y
-8rEAnA26ufeXf40O2y/Wrt597dFNNVbt
-=Kh7M
+iQIcBAEBAgAGBQJP+++cAAoJEBus8iNuMP3dvo0P/3IkDRd/5SGQvuiGWyBVVwqx
+hbPueTZT1S2Pk9cAhC6kANxZkWOC6VNw7hGNjSBNUNPFtUrSxu/SoyrcW/r0oT8B
+LwJRuqr1goJyKgnU/Q6PPYdVG2Uumtk4AvCFuYNIwX1SOH5+DNvdmxiI+37RETSs
+oI5NXtV8UDgsV9be6bNlY/5ffBwnNmE+PkvG6pFijLeqgfmn+WzAlIuKqSKJcVZ7
+c3busdii76R13/Cu0tfujVVm0HT7XsSbfGuZqGrPKo/k3d0FZC8GqKjIeZw9dDz6
+w+Z6qQS/DOHjOCHwihnNs18Lkbpd/M3aqXuULoSqNbkYMRVz1VWqCKx9got8yTQb
+Nz87GciCHcSfJgznOs10IHHv/S4MazFYiBtGknbqmFEMyIBe+GSV5sqVJSJmhS+a
+IR4Baa9GLGGnBbbEB9nPQZLSas2LpJ1ljRrrhjpYa7EkVLMR7NrR+0a++18yhtcT
+2jgEiOZOg7jukvzHqX4cX4Zl8SXouRy366IZXSvIP0EaXbqYfEnN/q75Dph2icFO
+p+WMxAwgPu8Xx2oMkeUI5sZVfqj9HrlcYID7GVskY5k8r1K+5/LF7iJ72IzmYr7v
+WkTqWLmtn/dgrpJw1D4j/+asi0mbAXFXK8DnDJKtAM7P9NvdZmhnhjn7qmTqDijI
+M6HqXwxNp2at6NusPRGz
+=ul2m
 -----END PGP SIGNATURE-----
 
---yrj/dFKFPuw6o+aM--
+--B4IIlcmfBL/1gGOG--
