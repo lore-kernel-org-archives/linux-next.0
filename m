@@ -1,74 +1,104 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the
- i2c-embedded tree
-Date: Tue, 10 Jul 2012 16:50:33 +1000
-Message-ID: <20120710165033.ab9ffbee81e2aeb03cad8d00@canb.auug.org.au>
-References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the
+ driver-core.current tree
+Date: Tue, 10 Jul 2012 17:28:38 +1000
+Message-ID: <20120710172838.06f3fff7ab03d91898d18f51@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Jul_2012_16_50_33_+1000_TQzqAXBCGaEJ7u.I"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40969 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753094Ab2GJGuf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jul 2012 02:50:35 -0400
-In-Reply-To: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Wolfram Sang <w.sang@pengutronix.de>
+ boundary="Signature=_Tue__10_Jul_2012_17_28_38_+1000_XVWjoOvhq+4SIHHD"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Kay Sievers <kay@vrfy.org>, Greg KH <greg@kroah.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__10_Jul_2012_16_50_33_+1000_TQzqAXBCGaEJ7u.I
+--Signature=_Tue__10_Jul_2012_17_28_38_+1000_XVWjoOvhq+4SIHHD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-On Tue, 10 Jul 2012 16:41:30 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Hi all,
->=20
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> drivers/i2c/busses/i2c-nomadik.c between commit af97bace2cca
-> ("i2c-nomadik: move header to <linux/platform_data/i2c-nomadik.h>") from
+Today's linux-next merge of the akpm tree got a conflict in
+kernel/printk.c between commit 5becfb1df5ac ("kmsg: merge continuation
+records while printing") from the driver-core.current tree and commit
+"printk: only look for prefix levels in kernel messages" from the akpm
+tree.
 
-Also commit 235602146ec9 ("i2c-nomadik: turn the platform driver to an
-amba driver")
-
-> the i2c-embedded tree and commits 32e42c687e0a ("ARM: ux500: Remove
-> unused i2c platform_data initialisation code") and 8214fd238a66 ("i2c:
-> Add Device Tree support to the Nomadik I2C driver") from the arm-soc tree.
->=20
-> I fixed it up (I think - see below) and can carry the fix as necessary.
-> Please check this and talk to each other ...
-
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__10_Jul_2012_16_50_33_+1000_TQzqAXBCGaEJ7u.I
+diff --cc kernel/printk.c
+index 104a4ee,04983fc..0000000
+--- a/kernel/printk.c
++++ b/kernel/printk.c
+@@@ -1496,24 -1453,27 +1495,27 @@@ asmlinkage int vprintk_emit(int facilit
+  	/* mark and strip a trailing newline */
+  	if (text_len && text[text_len-1] =3D=3D '\n') {
+  		text_len--;
+ -		newline =3D true;
+ +		lflags |=3D LOG_NEWLINE;
+  	}
+ =20
+- 	/* strip syslog prefix and extract log level or control flags */
+- 	kern_level =3D printk_get_level(text);
+- 	if (kern_level) {
+- 		const char *end_of_header =3D printk_skip_level(text);
+- 		switch (kern_level) {
+- 		case '0' ... '7':
+- 			if (level =3D=3D -1)
+- 				level =3D kern_level - '0';
+- 		case 'd':	/* KERN_DEFAULT */
+- 			lflags |=3D LOG_PREFIX;
+- 		case 'c':	/* KERN_CONT */
+- 			break;
++ 	/* strip kernel syslog prefix and extract log level or control flags */
++ 	if (facility =3D=3D 0) {
++ 		int kern_level =3D printk_get_level(text);
++=20
++ 		if (kern_level) {
++ 			const char *end_of_header =3D printk_skip_level(text);
++ 			switch (kern_level) {
++ 			case '0' ... '7':
++ 				if (level =3D=3D -1)
++ 					level =3D kern_level - '0';
++ 			case 'd':	/* KERN_DEFAULT */
+ -				prefix =3D true;
+++				lflags |=3D LOG_PREFIX;
++ 			case 'c':	/* KERN_CONT */
++ 				break;
++ 			}
++ 			text_len -=3D end_of_header - text;
++ 			text =3D (char *)end_of_header;
+  		}
+- 		text_len -=3D end_of_header - text;
+- 		text =3D (char *)end_of_header;
+  	}
+ =20
+  	if (level =3D=3D -1)
+
+--Signature=_Tue__10_Jul_2012_17_28_38_+1000_XVWjoOvhq+4SIHHD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP+9C5AAoJEECxmPOUX5FE2UYP/0A9Mh+vwUUR3HpngD15sR1z
-0NDme8UGObFnWMY+0XOFeRs4h+JIDeOfjqG9q5iNchL3RLZIxlSrDEES7dYM62vV
-q6nPkLxGOyYTm1RvbJ7A+9N8ZP9LFf1zWaLbG0RffHp6n7+jBAY6ppOaMSLS7o/G
-0N5btt+rNU+qzNPRgIYuaic8QRXIv7f9s6LJxEenPULO5F2QmVweV0KGQFR5gQ5c
-qXHZN/c89QVbbnowpLkyIJ1e/Z6fQzJEkkYfC4lXIQHvb5jsAfmL5DDCMn5qbhF7
-C6zX7gqglM1lwBi+FoeD++I3ix/V6LlQxkBdCpYSX7u/tO111OBharfhep7ovPbw
-GHM0btkbb0c92NKM9jNw4y1GqyFBysP2e3qbZnCdSnSi/ei3nhz0JhcKA8XJNqM5
-dQTYd+5xop9hoFCYOokH4Ja/t+E11/MnrhhlrAt9aQ1KXEOLI1xPPd5Me2VfwKV5
-ysFFLvdtWXL9uQPHF1fMRLgMhF95UjB3Kl5WSaHmCVpdVWCvxxiURvtUK/heNVH0
-AFL/BztBAsked7sawMZ1WR2/lcS8I4KWn8AOgdy62Y7/debnjTRKC7Ii60JnYrFM
-lxT6ASZGVzTu3YIw2pCH/uMtUAtC0NTu1x/zbfboPc0+Kww+NFhBPc/jjRicjG+1
-UOZmzw/TkiXI8fm3fSjn
-=pZg/
+iQIcBAEBCAAGBQJP+9mmAAoJEECxmPOUX5FE0qEP/3In57sbk6UQm4LntPGUvasV
+UfNuxw5z7GkwYGEtKMyhm4z7weHzFx0iBtN2GrF3SNyFObym/AUkDXn487PcyCk8
+YgZ1ys+KjYBZ9ul5Q9yFYwMkWx4wIUrYDWwj1nwlXPc8ThUZHczeVpJivw/YKdC3
+HFI66NSxFD5BdnEkX4gMVZtAcqO8tv8U2O2KYxE38bowmR8CYKjq8WkbnRq7ZvxX
+VglHX5fVTiW1lJ+Uk5BIkUShSWXUwXAuSSKlLjRk0zrkne/xL/l5WuMQESEvyt2A
+MlR749A7o4dyfgEUc4T5q0V7UIMO8hS44wyXfYI0jWWoEGtNVpUbDupjdk1NyG1x
+Eq7uK7B2xVk7LT1xPf7/n7cAGhwnp7fxYt4vCMEi8s6lW/XtDVQbI2Zicx/mFzqZ
+D5vJ125u5I94EICRgA/5Uj3gEDjRukj4tKof80zVhgeFgNlFxpE8Ds2W/ZqSIo6T
+EpQ6uTXlG7AOE3l5zoNzAsyqYWslDZFo7B/6DyAa02BPPRAwsqiEle771buCp/jI
+BK4hCAariVsyY8xWqvIM1PeG1Bp9Mkd8wZIhHeY3WAVZDUBwK4YfbiwrqWeoMMDT
+GI59GmT0B8NzN4AEdSIS8gNCXciLLTbV19zZ3ZkZHbnSf0+FxZKrK0cSxqFmYl8D
+P6ormvlTayu2cLcXkWt2
+=5T0Z
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Jul_2012_16_50_33_+1000_TQzqAXBCGaEJ7u.I--
+--Signature=_Tue__10_Jul_2012_17_28_38_+1000_XVWjoOvhq+4SIHHD--
