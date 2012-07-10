@@ -1,90 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the driver-core tree
-Date: Tue, 10 Jul 2012 15:32:10 +1000
-Message-ID: <20120710153210.45caf9cf0644898ab3d1c70b@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the mfd tree
+Date: Tue, 10 Jul 2012 15:51:16 +1000
+Message-ID: <20120710155116.3dd45f8c86d8dc540e2091a8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Jul_2012_15_32_10_+1000_xNN4FiWCO/IemVts"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Tue__10_Jul_2012_15_51_16_+1000_tUiWke12ige6WmwC"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:32829 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753059Ab2GJFv3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jul 2012 01:51:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Axel Lin <axel.lin@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russ Dill <Russ.Dill@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Alan Stern <stern@rowland.harvard.edu>
 
---Signature=_Tue__10_Jul_2012_15_32_10_+1000_xNN4FiWCO/IemVts
+--Signature=_Tue__10_Jul_2012_15_51_16_+1000_tUiWke12ige6WmwC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-After merging the driver-core tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/host/ehci-omap.c between commit 2761a6394516 ("mfd: USB: Fix
+the omap-usb EHCI ULPI PHY reset fix issues") from the mfd tree and
+commit 1a49e2ac9651 ("EHCI: centralize controller initialization") from
+the usb tree.
 
-ERROR: "devm_gpio_request_one" [drivers/extcon/extcon-arizona.ko] undefined!
-
-Caused by commit 01eaf2458773 ("extcon: Convert extcon_gpio to
-devm_gpio_request_one").  devm_gpio_request_one is not currently exported
-to modules.
-
-This has not been seen earlier because CONFIG_MFD_ARIZONA only got added
-today :-(
-
-I have added the following merge fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 10 Jul 2012 15:25:14 +1000
-Subject: [PATCH] extcon: extcon-arizone can not be built as a module for now
-
-fixes this build error:
-
-ERROR: "devm_gpio_request_one" [drivers/extcon/extcon-arizona.ko] undefined!
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/extcon/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
-index dbd96af..a2071e4 100644
---- a/drivers/extcon/Kconfig
-+++ b/drivers/extcon/Kconfig
-@@ -30,7 +30,7 @@ config EXTCON_MAX8997
- 	  detector and switch.
-=20
- config EXTCON_ARIZONA
--	tristate "Wolfson Arizona EXTCON support"
-+	bool "Wolfson Arizona EXTCON support"
- 	depends on MFD_ARIZONA
- 	help
- 	  Say Y here to enable support for external accessory detection
---=20
-1.7.10.280.gaa39
-
+I am not sure how to fix this up, I have just effectively reverted the
+effect of the former commit on this file.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__10_Jul_2012_15_32_10_+1000_xNN4FiWCO/IemVts
+--Signature=_Tue__10_Jul_2012_15_51_16_+1000_tUiWke12ige6WmwC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP+75aAAoJEECxmPOUX5FE2PIP/jdyBDLWoYm2pvXlF4+Pv6mb
-8iS9m2LjQ7NHk0xRDsPdjwygxPjzZY7LPdZBZmKjSqD5/o2zpiP948sDmuQoBr/e
-/uJgUT8/fkUPj1OpuLUwFf/SWMnJTjoQ1X7+beeca9XYAUhnCKBOzvQPpWlLV/O8
-KhzSAycrR868nDPrd5uzknJXH7YU5NQG4jFYQi6vkvYf+bJZ8ZxCxRulNFe4kqww
-Vn8pbKXjAKYlvIKnto45skE3GPn/FzuTfR7ydBNy4UpOjgFCKcP4QcFbrkQd/kK7
-QcyWDCaYT9YKbV/xswn6Apij83mmqQVUqFL0hhrU+tXVaBX7zm+gWKephJqmRmai
-gfiHDl6yfGyS85hvmPhG8LUQewdryjB8Mq6wHUeRlzA0nnIFNK0hz71NkA1KLWOX
-a8Cv4QkhzVvEr516iczEEwRP+UjHIJkWpUTPhmEagNn3IR3J827RTw4nM2aDTnzF
-cEWsAq7xjwOoHJafvUFmUo/pYSvNYVKOeqJrvW7zTdJTepz+Y2iRt1CAfnU4I7Rt
-CN4y2AYU8LYLA0P6NfwXjxWhh8LSaPXUuQzaUcJZE9967McEumIAP8W9Toncb20h
-30iztu+XJOgNUSAoprL4/ELfb2zNirVw5p/vTkOyCxDHYZQ0mBHMw7xUQiv3x3Og
-JeLxf/LT5iMZP4nCvy4k
-=8mia
+iQIcBAEBCAAGBQJP+8LUAAoJEECxmPOUX5FEKJ8QAITQE/lvrNFdiTmNAh1g/vM8
+WODBcAVKbEwYxJtA6YoHdmuJAX6IqrXsavXI6NvRELOPejYrIK7vMZxsaNNzXg8O
+f6/VBq3gD8QQSxYoASFmZvzoItX1BSxnXKwPtxj9cDYIgkjmpJHZQVMyA9ELhLu0
+vK85BjV/1EHrjoG3m4t/OQPdETK9eO4XIpFJlXQydFXgi2wOmaTOi+0y1KiBresC
+jfMJb729c5RHyy2+8iktSHFqOMxCrG/NC/zcldgFlFE9onFGRCxMY5YoyeHwZ+sF
+VpUImTLDMyRO8KaSWDEHnXhBatFcP9k4jam1V2xi6uck1XJBv4tT0i14GXbk9lPu
+jAzk34zNIdVYPLXeRkCHXB8R3JFIAQLYjUxDnw1YdWSz/GqjgJ0KS7ZOuJOl1Xvo
+hMUxwW49fGfWbHGC1PdhZR3USUIvl8aZZTLD3lgCDuO8MekSoZrM7EUFZve1g03M
+5Xf6UqUVr6wU1aEFcgty654G7EzodpQpgf32+HEt4WX+iDuckD2k0yuCfacTJwvC
+/yotuh5oGfkAymda4t+3zN7Cij84d1H7CLaP3+tEatzVieAyeltG45ylt7yKNtsb
+Nj9T4N6ixGQSZoRKeciZZnbDTqRJUBj6pN+GgUp5c+7BD3vUR8Im+rqbzswG9V20
+mQKL5qRcA3fQSFCvD4uf
+=/fPj
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Jul_2012_15_32_10_+1000_xNN4FiWCO/IemVts--
+--Signature=_Tue__10_Jul_2012_15_51_16_+1000_tUiWke12ige6WmwC--
