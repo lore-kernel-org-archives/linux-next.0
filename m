@@ -1,38 +1,80 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for July 10 (gpio/gpio-tps65910.c)
-Date: Wed, 11 Jul 2012 14:29:10 +0200
-Message-ID: <CA+icZUX565WsuJNHKsohXi=vp34Acn+2D-nj8mQQtCfi=Pw_Nw@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Kevin Hilman <khilman@ti.com>
+Subject: Re: [linux-pm] cpuidle future and improvements
+Date: Wed, 11 Jul 2012 07:00:19 -0700
+Message-ID: <87a9z6pfd8.fsf@ti.com>
+References: <4FDEE98D.7010802@linaro.org>
+	<CAMbhsRQRFXcayyWjM1RirgFppVAK23z2+3EbYOCw-qmzuY9_2g@mail.gmail.com>
+	<4FE85F6A.80307@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <4FE85F6A.80307@linaro.org> (Daniel Lezcano's message of "Mon, 25
+	Jun 2012 14:54:02 +0200")
+Sender: linux-acpi-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Colin Cross <ccross@android.com>, Rob Lee <rob.lee@linaro.org>, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, linux-pm@lists.linux-foundation.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi,
+Daniel Lezcano <daniel.lezcano@linaro.org> writes:
 
-I see the same build-error as Randy in latest linux.git
-(055c9fa8874fa7261eec7a268366565db84af474).
+> On 06/18/2012 08:15 PM, Colin Cross wrote:
+>> On Mon, Jun 18, 2012 at 1:40 AM, Daniel Lezcano
+>> <daniel.lezcano@linaro.org> wrote:
+>>> I propose to host a cpuidle-next tree where all these modifications will
+>>> be and where people can send patches against, preventing last minutes
+>>> conflicts and perhaps Lenb will agree to pull from this tree. In the
+>>> meantime, the tree will be part of the linux-next, the patches will be
+>>> more widely tested and could be fixed earlier.
+>> 
+>> My coupled cpuidle patches were acked and temporarily in Len's
+>> next/Linus pull branch, but were later dropped when the first pull
+>> request to Linus was rejected.  I asked Len to either put the coupled
+>> cpuidle patches into his next branch, or let me host them so people
+>> could base SoC branches off of them and let Len pull them later, but
+>> got no response.  If you do start a cpuidle for-next branch, can you
+>> pull my coupled-cpuidle branch:
+>> 
+>> The following changes since commit 76e10d158efb6d4516018846f60c2ab5501900bc:
+>> 
+>>   Linux 3.4 (2012-05-20 15:29:13 -0700)
+>> 
+>> are available in the git repository at:
+>>   https://android.googlesource.com/kernel/common.git coupled-cpuidle
+>> 
+>> Colin Cross (4):
+>>       cpuidle: refactor out cpuidle_enter_state
+>>       cpuidle: fix error handling in __cpuidle_register_device
+>>       cpuidle: add support for states that affect multiple cpus
+>>       cpuidle: coupled: add parallel barrier function
+>> 
+>>  drivers/cpuidle/Kconfig   |    3 +
+>>  drivers/cpuidle/Makefile  |    1 +
+>>  drivers/cpuidle/coupled.c |  715 +++++++++++++++++++++++++++++++++++++++++++++
+>>  drivers/cpuidle/cpuidle.c |   68 ++++-
+>>  drivers/cpuidle/cpuidle.h |   32 ++
+>>  include/linux/cpuidle.h   |   11 +
+>>  6 files changed, 813 insertions(+), 17 deletions(-)
+>>  create mode 100644 drivers/cpuidle/coupled.c
+>
+>
+> Done.
+>
+> http://git.linaro.org/gitweb?p=people/dlezcano/cpuidle-next.git;a=shortlog;h=refs/heads/cpuidle-next
 
-Where is this patch queued up (see original posting)?
-I do not see any patch in [2].
-And please please please rename your repo... "linux-2.6" died many
-months ago :-).
+Great!
 
-I also do not see any patch sent to LKML.
+Daniel, thanks for tracking this.  Are you planning to submit a pull
+request to Rafael so we finally can get this into linux-next and merged
+for v3.6?
 
-Should that all disabled?
+Looks like there will be a slight problem to sort out though.  Len's
+'next' branch[1] is already included in linux-next and as some version
+of the coupled CPUidle already merged.
 
-CONFIG_GPIO_TPS65910=y
-CONFIG_MFD_TPS65910=y
-CONFIG_REGULATOR_TPS65910=m
+I hope we can sort this out in time for v3.6 because this series has
+been well reviewed, well tested and ready for merge since before the
+v3.5 merge window.
 
-...or is CONFIG_GPIO_TPS65910=n enough to workaround it?
+Kevin
 
-- Sedat -
-
-[1] http://marc.info/?l=linux-kernel&m=134199653428188&w=2
-[2] http://git.secretlab.ca/?p=linux-2.6.git;a=summary
-[3] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=Next/Trees;#l31
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux next
