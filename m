@@ -1,60 +1,29 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: mmotm 2012-07-10-16-59 uploaded
-Date: Wed, 11 Jul 2012 09:38:00 +0300
-Message-ID: <1341988680.2963.128.camel@sauron>
-References: <20120711000148.BAD1E5C0050@hpza9.eem.corp.google.com>
-Reply-To: dedekind1@gmail.com
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Tue, 10 Jul 2012 23:36:38 -0700 (PDT)
+Message-ID: <20120710.233638.1081913772093556666.davem@davemloft.net>
+References: <20120710130848.1014fbe05e5146a33a3c7d39@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-dPyVh5uilJOIp5u1cyI0"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120711000148.BAD1E5C0050@hpza9.eem.corp.google.com>
+In-Reply-To: <20120710130848.1014fbe05e5146a33a3c7d39@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn@mork.no
 List-Id: linux-next.vger.kernel.org
 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 10 Jul 2012 13:08:48 +1000
 
---=-dPyVh5uilJOIp5u1cyI0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> I added the following merge fix patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 10 Jul 2012 13:06:01 +1000
+> Subject: [PATCH] net: fix for qmi_wwan_unbind_shared changes
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Andrew, thanks for picking my changes!
+Thanks Stephen, I'll incorporate this when I merge net into net-next.
 
-On Tue, 2012-07-10 at 17:01 -0700, akpm@linux-foundation.org wrote:
-> * hfs-get-rid-of-hfs_sync_super-checkpatch-fixes.patch
-
-> * hfsplus-get-rid-of-write_super-checkpatch-fixes.patch
-
-I sent updated versions which would fix checkpatch.pl complaints. I
-guess you did not notice them or was unable to pick because I think I
-PGP-signed them?
-
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-dPyVh5uilJOIp5u1cyI0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAABAgAGBQJP/R9IAAoJECmIfjd9wqK0d9EP/14IcSxIp9fBBmmhTKjoHgZx
-Th/BV61uqD7oiigQUTpx5CqWQkWfLrFnliciy7fP2UWEB/RPwtW527aft6FuHeG2
-fFvJ0KtatZ3lz0/mUhNAWPfhGG+DnqxDK7cWdM/XlGnQYetNG08US4d+0pDEB/77
-ENH+/4qkm+RO1IV/79zAtgx0zHFiJtPesPO8AUL2sk7gudS6Ks6k0HPF5kW7k0bl
-PO3dCxjbsGv+7n7w2kCMLyGjDxED85xEidwVqa/GSofFyfQLy3dWtJGZ75A7lYKY
-pnoP+Lhmw9yjJXxYfCFmiD9XuIVugu8w0E3mWXMAeux9gfS9BdubwM7MpRTHnPXs
-XYhdrOScMFL/caHUyxHHM82g5ek4QVY6G5wNvm3pDsWdoxGpvr9ErP91avpRUf+j
-2m3m1qizF4yNJeRmTVPpJmlV2djy9yBpAPVlae5LV/WD2C+dpbGGG5cCKK1158wB
-DSwxpr1w7QHBnP1Sq3s9j2+haK0vItfNVGQcWfK3JSNapk/UtaSKPV8Z+0XZJLjs
-13ASPZONgJBX0TzRt2Es9Dswr4Y/Kr+SjhXsp5dBboCSQJHQSQfoywPKoeYJEGi5
-olZhKwc5Ml5xHSNDRyfqrtRygDStVzM4sP0DH8Sqf2Q9emRsL9iBr0bVo5ipu7NT
-a2xFEufqfw3k1PIBGx1/
-=cwNM
------END PGP SIGNATURE-----
-
---=-dPyVh5uilJOIp5u1cyI0--
+Thanks again!
