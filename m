@@ -1,37 +1,38 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: Re: mmotm 2012-07-10-16-59 uploaded
-Date: Wed, 11 Jul 2012 12:34:09 +0200
-Message-ID: <20120711103409.GB4820@tiehlicka.suse.cz>
-References: <20120711000148.BAD1E5C0050@hpza9.eem.corp.google.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for July 10 (gpio/gpio-tps65910.c)
+Date: Wed, 11 Jul 2012 14:29:10 +0200
+Message-ID: <CA+icZUX565WsuJNHKsohXi=vp34Acn+2D-nj8mQQtCfi=Pw_Nw@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20120711000148.BAD1E5C0050@hpza9.eem.corp.google.com>
-Sender: owner-linux-mm@kvack.org
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>
 List-Id: linux-next.vger.kernel.org
 
-On Tue 10-07-12 17:01:47, Andrew Morton wrote:
-> The mm-of-the-moment snapshot 2012-07-10-16-59 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> It contains the following patches against 3.5-rc6:
-> (patches marked "*" will be included in linux-next)
+Hi,
 
-https://github.com/mstsxfx/memcg-devel.git has been updated as well
--- 
-Michal Hocko
-SUSE Labs
-SUSE LINUX s.r.o.
-Lihovarska 1060/12
-190 00 Praha 9    
-Czech Republic
+I see the same build-error as Randy in latest linux.git
+(055c9fa8874fa7261eec7a268366565db84af474).
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Where is this patch queued up (see original posting)?
+I do not see any patch in [2].
+And please please please rename your repo... "linux-2.6" died many
+months ago :-).
+
+I also do not see any patch sent to LKML.
+
+Should that all disabled?
+
+CONFIG_GPIO_TPS65910=y
+CONFIG_MFD_TPS65910=y
+CONFIG_REGULATOR_TPS65910=m
+
+...or is CONFIG_GPIO_TPS65910=n enough to workaround it?
+
+- Sedat -
+
+[1] http://marc.info/?l=linux-kernel&m=134199653428188&w=2
+[2] http://git.secretlab.ca/?p=linux-2.6.git;a=summary
+[3] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=Next/Trees;#l31
