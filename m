@@ -1,80 +1,49 @@
-From: Kevin Hilman <khilman@ti.com>
-Subject: Re: [linux-pm] cpuidle future and improvements
-Date: Wed, 11 Jul 2012 07:00:19 -0700
-Message-ID: <87a9z6pfd8.fsf@ti.com>
-References: <4FDEE98D.7010802@linaro.org>
-	<CAMbhsRQRFXcayyWjM1RirgFppVAK23z2+3EbYOCw-qmzuY9_2g@mail.gmail.com>
-	<4FE85F6A.80307@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: Tree for July 10 (gpio/gpio-tps65910.c)
+Date: Wed, 11 Jul 2012 18:39:59 +0200
+Message-ID: <CACRpkdbazoCztqbT00_oBsRyee=VBDH+NiGEpzNk8uV7mvsNwQ@mail.gmail.com>
+References: <CA+icZUX565WsuJNHKsohXi=vp34Acn+2D-nj8mQQtCfi=Pw_Nw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <4FE85F6A.80307@linaro.org> (Daniel Lezcano's message of "Mon, 25
-	Jun 2012 14:54:02 +0200")
-Sender: linux-acpi-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Colin Cross <ccross@android.com>, Rob Lee <rob.lee@linaro.org>, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, linux-pm@lists.linux-foundation.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qa0-f53.google.com ([209.85.216.53]:54982 "EHLO
+	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756448Ab2GKQj7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jul 2012 12:39:59 -0400
+Received: by qaas11 with SMTP id s11so1096188qaa.19
+        for <linux-next@vger.kernel.org>; Wed, 11 Jul 2012 09:39:59 -0700 (PDT)
+In-Reply-To: <CA+icZUX565WsuJNHKsohXi=vp34Acn+2D-nj8mQQtCfi=Pw_Nw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>
 
-Daniel Lezcano <daniel.lezcano@linaro.org> writes:
+On Wed, Jul 11, 2012 at 2:29 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
 
-> On 06/18/2012 08:15 PM, Colin Cross wrote:
->> On Mon, Jun 18, 2012 at 1:40 AM, Daniel Lezcano
->> <daniel.lezcano@linaro.org> wrote:
->>> I propose to host a cpuidle-next tree where all these modifications will
->>> be and where people can send patches against, preventing last minutes
->>> conflicts and perhaps Lenb will agree to pull from this tree. In the
->>> meantime, the tree will be part of the linux-next, the patches will be
->>> more widely tested and could be fixed earlier.
->> 
->> My coupled cpuidle patches were acked and temporarily in Len's
->> next/Linus pull branch, but were later dropped when the first pull
->> request to Linus was rejected.  I asked Len to either put the coupled
->> cpuidle patches into his next branch, or let me host them so people
->> could base SoC branches off of them and let Len pull them later, but
->> got no response.  If you do start a cpuidle for-next branch, can you
->> pull my coupled-cpuidle branch:
->> 
->> The following changes since commit 76e10d158efb6d4516018846f60c2ab5501900bc:
->> 
->>   Linux 3.4 (2012-05-20 15:29:13 -0700)
->> 
->> are available in the git repository at:
->>   https://android.googlesource.com/kernel/common.git coupled-cpuidle
->> 
->> Colin Cross (4):
->>       cpuidle: refactor out cpuidle_enter_state
->>       cpuidle: fix error handling in __cpuidle_register_device
->>       cpuidle: add support for states that affect multiple cpus
->>       cpuidle: coupled: add parallel barrier function
->> 
->>  drivers/cpuidle/Kconfig   |    3 +
->>  drivers/cpuidle/Makefile  |    1 +
->>  drivers/cpuidle/coupled.c |  715 +++++++++++++++++++++++++++++++++++++++++++++
->>  drivers/cpuidle/cpuidle.c |   68 ++++-
->>  drivers/cpuidle/cpuidle.h |   32 ++
->>  include/linux/cpuidle.h   |   11 +
->>  6 files changed, 813 insertions(+), 17 deletions(-)
->>  create mode 100644 drivers/cpuidle/coupled.c
->
->
-> Done.
->
-> http://git.linaro.org/gitweb?p=people/dlezcano/cpuidle-next.git;a=shortlog;h=refs/heads/cpuidle-next
+> I see the same build-error as Randy in latest linux.git
+> (055c9fa8874fa7261eec7a268366565db84af474).
 
-Great!
+Yes, it is there.
 
-Daniel, thanks for tracking this.  Are you planning to submit a pull
-request to Rafael so we finally can get this into linux-next and merged
-for v3.6?
+> Where is this patch queued up (see original posting)?
 
-Looks like there will be a slight problem to sort out though.  Len's
-'next' branch[1] is already included in linux-next and as some version
-of the coupled CPUidle already merged.
+Here:
+http://git.kernel.org/?p=linux/kernel/git/linusw/linux-gpio.git;a=shortlog;h=refs/heads/fixes
 
-I hope we can sort this out in time for v3.6 because this series has
-been well reviewed, well tested and ready for merge since before the
-v3.5 merge window.
+> I do not see any patch in [2].
 
-Kevin
+Grant asked me to take over for a while, 10 days ago.
 
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux next
+> I also do not see any patch sent to LKML.
+
+But there was such a patch:
+http://lkml.org/lkml/2012/7/10/16
+
+And it's queued in my tree and on the for-next branch.
+
+And as noted, I also tried to send it to Linus (Torvalds)
+as an update to my last pull request. I guess I'll just have
+to send another request.
+
+Yours,
+Linus Walleij
