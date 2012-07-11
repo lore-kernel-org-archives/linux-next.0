@@ -1,33 +1,40 @@
-From: Gerard Snitselaar <dev-RR6//3E8fTwgb5+hjvvj3w@public.gmane.org>
-Subject: [PATCH] iio: dac: ad5064: fix section mismatch in ad5064_init() in linux-next
-Date: Tue, 10 Jul 2012 21:05:02 -0700
-Message-ID: <1341979502-27440-1-git-send-email-dev@snitselaar.org>
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for July 10 (gpio/gpio-tps65910.c)
+Date: Tue, 10 Jul 2012 22:44:37 -0700
+Message-ID: <4FFD12C5.9090204@xenotime.net>
+References: <20120710174320.3b7dd806e20ee74ca1b1685f@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:55146 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753315Ab2GKFpV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jul 2012 01:45:21 -0400
+In-Reply-To: <20120710174320.3b7dd806e20ee74ca1b1685f@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@stericsson.com>, Graeme Gregory <gg@slimlogic.co.uk>, Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
 
-ad5064_init() calls ad5064_spi_unregister_driver() which is annotated
-__exit.
+On 07/10/2012 12:43 AM, Stephen Rothwell wrote:
 
-Signed-off-by: Gerard Snitselaar <dev-RR6//3E8fTwgb5+hjvvj3w@public.gmane.org>
----
- drivers/iio/dac/ad5064.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi all,
+> 
+> Changes since 20120709:
+> 
 
-diff --git a/drivers/iio/dac/ad5064.c b/drivers/iio/dac/ad5064.c
-index aa739c4..6ec1319 100644
---- a/drivers/iio/dac/ad5064.c
-+++ b/drivers/iio/dac/ad5064.c
-@@ -582,7 +582,7 @@ static int __init ad5064_spi_register_driver(void)
- 	return spi_register_driver(&ad5064_spi_driver);
- }
- 
--static void __exit ad5064_spi_unregister_driver(void)
-+static void ad5064_spi_unregister_driver(void)
- {
- 	spi_unregister_driver(&ad5064_spi_driver);
- }
+
+
+on i386:
+
+when CONFIG_OF_GPIO is not enabled:
+
+drivers/gpio/gpio-tps65910.c: In function 'tps65910_gpio_probe':
+drivers/gpio/gpio-tps65910.c:152:26: error: 'struct gpio_chip' has no member named 'of_node'
+
+
+
 -- 
-1.7.11.1.165.g299666c
+
+~Randy
