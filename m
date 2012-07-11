@@ -1,36 +1,23 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: Tree for July 10 (gpio/gpio-tps65910.c)
-Date: Wed, 11 Jul 2012 10:44:35 +0200
-Message-ID: <CACRpkdY2CdHr+oMyckR_ozJ69vpzpyuC75qDwDLPi4Og2UD-7g@mail.gmail.com>
-References: <20120710174320.3b7dd806e20ee74ca1b1685f@canb.auug.org.au>
-	<4FFD12C5.9090204@xenotime.net>
+From: Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: mmotm 2012-07-10-16-59 uploaded
+Date: Wed, 11 Jul 2012 11:09:28 +0200
+Message-ID: <20120711090928.GA28071__27905.2621721805$1341997786$gmane$org@cmpxchg.org>
+References: <20120711000148.BAD1E5C0050@hpza9.eem.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:61822 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751069Ab2GKIog (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jul 2012 04:44:36 -0400
-Received: by qcro28 with SMTP id o28so585374qcr.19
-        for <linux-next@vger.kernel.org>; Wed, 11 Jul 2012 01:44:35 -0700 (PDT)
-In-Reply-To: <4FFD12C5.9090204@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@stericsson.com>, Graeme Gregory <gg@slimlogic.co.uk>, Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120711000148.BAD1E5C0050@hpza9.eem.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jul 11, 2012 at 7:44 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On 07/10/2012 12:43 AM, Stephen Rothwell wrote:
->>
->> Changes since 20120709:
->
-> when CONFIG_OF_GPIO is not enabled:
->
-> drivers/gpio/gpio-tps65910.c: In function 'tps65910_gpio_probe':
-> drivers/gpio/gpio-tps65910.c:152:26: error: 'struct gpio_chip' has no member named 'of_node'
+On Tue, Jul 10, 2012 at 05:01:47PM -0700, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2012-07-10-16-59 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
 
-I have a patche queued for this and even attempted to send it to Torvalds.
-It will be in tomorrows -next anyway.
+The automatic git import is going again, too, and can be found at
 
-Yours,
-Linus Walleij
+http://git.cmpxchg.org/?p=linux-mmotm.git;a=summary
