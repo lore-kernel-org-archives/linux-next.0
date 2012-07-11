@@ -1,105 +1,75 @@
-From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Subject: [PATCH] iio: ad5064: Move bus write callbacks to #if protected sections
-Date: Wed, 11 Jul 2012 10:01:30 +0200
-Message-ID: <1341993690-19125-1-git-send-email-lars@metafoo.de>
-References: <4FFD1458.6000404@xenotime.net>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: mmotm 2012-07-10-16-59 uploaded
+Date: Wed, 11 Jul 2012 11:08:26 +0300
+Message-ID: <1341994106.2963.138.camel@sauron>
+References: <20120711000148.BAD1E5C0050@hpza9.eem.corp.google.com>
+	 <1341988680.2963.128.camel@sauron>
+	 <20120711004430.0d14f0b6.akpm@linux-foundation.org>
+	 <1341993193.2963.132.camel@sauron>
+	 <20120711005926.25acc6c6.akpm@linux-foundation.org>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FFD1458.6000404-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-X0U5uJVxq+VmyXc+Btqt"
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20120711005926.25acc6c6.akpm@linux-foundation.org>
+Sender: owner-linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Move the SPI and I2C specific write callbacks to the respective
-"#if IS_ENABLED(CONFIG_SPI_MASTER)" and "#if IS_ENABLED(CONFIG_I2C)"
-protected sections of the code.
 
-This fixes the following warning which occurs if CONFIG_I2C is not set:
-	drivers/iio/dac/ad5064.c: In function =E2=80=98ad5064_i2c_write=E2=80=99=
-:
-	drivers/iio/dac/ad5064.c:132: error: implicit declaration of function =
-=E2=80=98i2c_master_send=E2=80=99
+--=-X0U5uJVxq+VmyXc+Btqt
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-And the follwing warning which occurs when CONFIG_SPI_MASTER is not set=
-:
-	drivers/iio/dac/ad5064.c:137: warning: =E2=80=98ad5064_spi_write=E2=80=
-=99 defined but not used
+On Wed, 2012-07-11 at 00:59 -0700, Andrew Morton wrote:
+> > > I looked at them, but they're identical to what I now have, so nothin=
+g
+> > > needed doing.
+> >=20
+> > Strange, I thought they had the white-spaces issue solved.=20
+>=20
+> They did, but I'd already fixed everything.  That's what those emails
+> in your inbox were about.
 
-Reported-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Signed-off-by: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
----
- drivers/iio/dac/ad5064.c |   38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+Sorry Andrew, you did not squash your changes in, and your fix-up patch
+did not have a nice commit message last time I looked, which made me
+think that it is temporary and you expect an updated version of my
+patches. It is fine with me if to have it separately, I was just
+confused.
 
-diff --git a/drivers/iio/dac/ad5064.c b/drivers/iio/dac/ad5064.c
-index aa739c4..de2c368 100644
---- a/drivers/iio/dac/ad5064.c
-+++ b/drivers/iio/dac/ad5064.c
-@@ -122,25 +122,6 @@ enum ad5064_type {
- 	ID_AD5668_2,
- };
-=20
--static int ad5064_i2c_write(struct ad5064_state *st, unsigned int cmd,
--	unsigned int addr, unsigned int val)
--{
--	struct i2c_client *i2c =3D to_i2c_client(st->dev);
--
--	st->data.i2c[0] =3D (cmd << 4) | addr;
--	put_unaligned_be16(val, &st->data.i2c[1]);
--	return i2c_master_send(i2c, st->data.i2c, 3);
--}
--
--static int ad5064_spi_write(struct ad5064_state *st, unsigned int cmd,
--	unsigned int addr, unsigned int val)
--{
--	struct spi_device *spi =3D to_spi_device(st->dev);
--
--	st->data.spi =3D cpu_to_be32(AD5064_CMD(cmd) | AD5064_ADDR(addr) | va=
-l);
--	return spi_write(spi, &st->data.spi, sizeof(st->data.spi));
--}
--
- static int ad5064_write(struct ad5064_state *st, unsigned int cmd,
- 	unsigned int addr, unsigned int val, unsigned int shift)
- {
-@@ -533,6 +514,15 @@ static int __devexit ad5064_remove(struct device *=
-dev)
-=20
- #if IS_ENABLED(CONFIG_SPI_MASTER)
-=20
-+static int ad5064_spi_write(struct ad5064_state *st, unsigned int cmd,
-+	unsigned int addr, unsigned int val)
-+{
-+	struct spi_device *spi =3D to_spi_device(st->dev);
-+
-+	st->data.spi =3D cpu_to_be32(AD5064_CMD(cmd) | AD5064_ADDR(addr) | va=
-l);
-+	return spi_write(spi, &st->data.spi, sizeof(st->data.spi));
-+}
-+
- static int __devinit ad5064_spi_probe(struct spi_device *spi)
- {
- 	const struct spi_device_id *id =3D spi_get_device_id(spi);
-@@ -596,6 +586,16 @@ static inline void ad5064_spi_unregister_driver(vo=
-id) { }
-=20
- #if IS_ENABLED(CONFIG_I2C)
-=20
-+static int ad5064_i2c_write(struct ad5064_state *st, unsigned int cmd,
-+	unsigned int addr, unsigned int val)
-+{
-+	struct i2c_client *i2c =3D to_i2c_client(st->dev);
-+
-+	st->data.i2c[0] =3D (cmd << 4) | addr;
-+	put_unaligned_be16(val, &st->data.i2c[1]);
-+	return i2c_master_send(i2c, st->data.i2c, 3);
-+}
-+
- static int __devinit ad5064_i2c_probe(struct i2c_client *i2c,
- 	const struct i2c_device_id *id)
- {
 --=20
-1.7.10.4
+Best Regards,
+Artem Bityutskiy
+
+--=-X0U5uJVxq+VmyXc+Btqt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAABAgAGBQJP/TR6AAoJECmIfjd9wqK0kV4QAJW6hUvwxaa0RPz/tO7UQBhk
+BMyBe5wkaoJ4nsbRmP8LRfhzHajRnhYhmvPEEagHl3XuBNl/Stij0y+zwBkbY4gt
+Qa89ikgoVlIOxEtE7LH2MaK+IeDP73C/7wNLQqdj8fI8Sm9edJaF+SlDTlHq+ugi
+k6Ji94L1bt2nnoGn702YwnpQJffzoar4pIs5tNPuDqc6hLkZqJoKwuK2eGGTyvG3
+wrVNs+EasBKSMTcyG/2TmokCmmIqcuLCungrSZbN+ucgk9+j3B0UI3UOOwSYxBGs
+0EFSIMElL/B/NMzfU5bjg+uvDbDqxIcbsKHPB0YVZ2CAZ/aghXzvHZgjHc028e8M
+RRu7xEYTvNsrJBri99w+avRY7ltqhEkxqyUMX5dCp/s0Us4XhDbqa7Al/nYAsDD8
+VycxSQWW/pSrsGd09FHBQZIF1swCe2Jv4fS964UcgC2IbjJQW5I/YUisLc+sxCJq
+TuX26UNhz9eozie1rnvUEGtZu/bzUoad2zAfFZX3wfE9CKtx9URmPmKdSyYc5am3
+TP7ea5QS14deC/hs4BD0QSKA+MzUT8eA4qn90IVjubl4cu4/qHbTCKCFhiQwOYGY
+FvPKFRTkZZmdUNvg0DpBLiF06bOEVJyJt2gIuoDKvLVFugihEsbpC4wBkyscpVxf
+FFZaJPa8ZdmLs2w5mbR3
+=wEXM
+-----END PGP SIGNATURE-----
+
+--=-X0U5uJVxq+VmyXc+Btqt--
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
