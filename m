@@ -1,43 +1,51 @@
-From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH] iio: dac: ad5064: fix section mismatch in ad5064_init()
- in linux-next
-Date: Wed, 11 Jul 2012 08:56:58 +0200
-Message-ID: <4FFD23BA.8070502@metafoo.de>
-References: <1341979502-27440-1-git-send-email-dev@snitselaar.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no tree for July 11
+Date: Wed, 11 Jul 2012 16:54:54 +1000
+Message-ID: <20120711165454.c25c1848a457233c1ea46d97@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1341979502-27440-1-git-send-email-dev-RR6//3E8fTwgb5+hjvvj3w@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gerard Snitselaar <dev-RR6//3E8fTwgb5+hjvvj3w@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__11_Jul_2012_16_54_54_+1000_M4bL4J8gKxGW6cze"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39905 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754186Ab2GKGy6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jul 2012 02:54:58 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On 07/11/2012 06:05 AM, Gerard Snitselaar wrote:
-> ad5064_init() calls ad5064_spi_unregister_driver() which is annotated
-> __exit.
-> 
-> Signed-off-by: Gerard Snitselaar <dev-RR6//3E8fTwgb5+hjvvj3w@public.gmane.org>
+--Signature=_Wed__11_Jul_2012_16_54_54_+1000_M4bL4J8gKxGW6cze
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+Normal service will resume tomorrow.
 
-Acked-by: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> ---
->  drivers/iio/dac/ad5064.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/dac/ad5064.c b/drivers/iio/dac/ad5064.c
-> index aa739c4..6ec1319 100644
-> --- a/drivers/iio/dac/ad5064.c
-> +++ b/drivers/iio/dac/ad5064.c
-> @@ -582,7 +582,7 @@ static int __init ad5064_spi_register_driver(void)
->  	return spi_register_driver(&ad5064_spi_driver);
->  }
->  
-> -static void __exit ad5064_spi_unregister_driver(void)
-> +static void ad5064_spi_unregister_driver(void)
->  {
->  	spi_unregister_driver(&ad5064_spi_driver);
->  }
+--Signature=_Wed__11_Jul_2012_16_54_54_+1000_M4bL4J8gKxGW6cze
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP/SM+AAoJEECxmPOUX5FEzokP/1a6hrArlWJoBoZcjRIqvqiR
+hL26+5/QUJjaW6LqQvHRv3inzQwWV5asLvpvfLiNaYGMI7t42ou7LBN4P27dw0c9
+Caf6YgVd6s7rLiLsiIHITXiaFLg5GvcdRHMj7a0o7tXjR9esZbQetz6HxmV10CfC
+56FoW/jdmQ0CjBTwluDqZx0g5tg0UZKbTUaqO4NuzCHWw/O/Y0DGCxHNrBRGTd1f
+FFfh0bz2yQfz4E+AdN5/ujtCeAujWF6JWNntrPXuUTwoMW1JrmCvfHfwvT7XAHvi
+AqbfnframjEMaohtPWk1yu/s60aC52h4kji4H2fecQ7GLUVHegZvJFnPWMjnEwl3
+D1L6jKg94gp66ruB6A86LvLTimfdbVbxs33PFjJnBJ7RplECqZ/w9L+Ij1zJnrdK
+1p9wb56PiPCULN4qnkuWPd6tQDW2QJIxyZ2+tMSvAJe/pVfX5NhGf9141czQuU8/
+nGqkhVomid1gLHx8+vVE4QfRWhIQwmBCiK6NhCPF+z3VAv+1lYEOmEh+e2czVcmq
+6uFTgAsOG66PZeeUj5pCyiXKyo26OISmgHEJ6aoHzVeWZQe1H2Ksx7U8kD3wOVLs
+Xc+BaI6fVBsjPJ09OvXg9iPEDHQ5YfwY+DoTyEGpf6SwbXc+NmdehxEreGrjIp/t
+5aHm5H3a2GgBxGvPnlN7
+=CLzC
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__11_Jul_2012_16_54_54_+1000_M4bL4J8gKxGW6cze--
