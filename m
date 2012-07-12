@@ -1,75 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi tree with the libata tree
-Date: Thu, 12 Jul 2012 11:54:18 +1000
-Message-ID: <20120712115418.c85da6d6dfc7825172cd58ce@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the infiniband
+ tree
+Date: Thu, 12 Jul 2012 12:09:50 +1000
+Message-ID: <20120712120950.223be053857381046b7d5db6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__12_Jul_2012_11_54_18_+1000_OQBXDRaZLQZwxcSq"
+ boundary="Signature=_Thu__12_Jul_2012_12_09_50_+1000_pdnzaz+9F0Ba7ZsB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46610 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:36315 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756383Ab2GLBya (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jul 2012 21:54:30 -0400
+	with ESMTP id S1756308Ab2GLCKA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jul 2012 22:10:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Lu <aaron.lu@amd.com>, Jeff Garzik <jeff@garzik.org>, Lin Ming <ming.m.lin@intel.com>, Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>, Amit Sahrawat <a.sahrawat@samsung.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jack Morgenstein <jackm@dev.mellanox.co.il>, Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org, Hadar Hen Zion <hadarh@mellanox.co.il>, Or Gerlitz <ogerlitz@mellanox.com>
 
---Signature=_Thu__12_Jul_2012_11_54_18_+1000_OQBXDRaZLQZwxcSq
+--Signature=_Thu__12_Jul_2012_12_09_50_+1000_pdnzaz+9F0Ba7ZsB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi all,
 
-Today's linux-next merge of the scsi tree got a conflict in
-include/scsi/scsi_device.h between commits 166a2967b45e ("libata: tell
-scsi layer device supports runtime power off") and a4120295a40a ("sr:
-support zero power ODD") from the libata tree and commit 2516034c2270
-("[SCSI] set to WCE if usb cache quirk is present") from the scsi tree.
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/mellanox/mlx4/main.c between commit 6634961c14d3
+("mlx4: Put physical GID and P_Key table sizes in mlx4_phys_caps struct
+and paravirtualize them") from the infiniband tree and commit
+0ff1fb654bec ("{NET, IB}/mlx4: Add device managed flow steering firmware
+API") from the net-next tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+Just context changes (I think).  I have fixed it up (see below) and can
+carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/scsi/scsi_device.h
-index cfd951b,7539f52..0000000
---- a/include/scsi/scsi_device.h
-+++ b/include/scsi/scsi_device.h
-@@@ -153,8 -154,7 +154,9 @@@ struct scsi_device=20
-  	unsigned no_read_capacity_16:1; /* Avoid READ_CAPACITY_16 cmds */
-  	unsigned try_rc_10_first:1;	/* Try READ_CAPACACITY_10 first */
-  	unsigned is_visible:1;	/* is the device visible in sysfs */
- +	unsigned can_power_off:1; /* Device supports runtime power off */
- +	unsigned wakeup_by_user:1;	/* user wakes up the ODD */
-+ 	unsigned wce_default_on:1;	/* Cache is ON by default */
+diff --cc drivers/net/ethernet/mellanox/mlx4/main.c
+index 5df3ac4,4264516..0000000
+--- a/drivers/net/ethernet/mellanox/mlx4/main.c
++++ b/drivers/net/ethernet/mellanox/mlx4/main.c
+@@@ -1232,10 -1231,26 +1258,29 @@@ static int mlx4_init_hca(struct mlx4_de
+  			goto err_stop_fw;
+  		}
  =20
-  	DECLARE_BITMAP(supported_events, SDEV_EVT_MAXBITS); /* supported events =
-*/
-  	struct list_head event_list;	/* asserted events */
+ +		if (mlx4_is_master(dev))
+ +			mlx4_parav_master_pf_caps(dev);
+ +
++ 		priv->fs_hash_mode =3D MLX4_FS_L2_HASH;
++=20
++ 		switch (priv->fs_hash_mode) {
++ 		case MLX4_FS_L2_HASH:
++ 			init_hca.fs_hash_enable_bits =3D 0;
++ 			break;
++=20
++ 		case MLX4_FS_L2_L3_L4_HASH:
++ 			/* Enable flow steering with
++ 			 * udp unicast and tcp unicast
++ 			 */
++ 			init_hca.fs_hash_enable_bits =3D
++ 				MLX4_FS_UDP_UC_EN | MLX4_FS_TCP_UC_EN;
++ 			break;
++ 		}
++=20
+  		profile =3D default_profile;
++ 		if (dev->caps.steering_mode =3D=3D
++ 		    MLX4_STEERING_MODE_DEVICE_MANAGED)
++ 			profile.num_mcg =3D MLX4_FS_NUM_MCG;
+ =20
+  		icm_size =3D mlx4_make_profile(dev, &profile, &dev_cap,
+  					     &init_hca);
 
---Signature=_Thu__12_Jul_2012_11_54_18_+1000_OQBXDRaZLQZwxcSq
+--Signature=_Thu__12_Jul_2012_12_09_50_+1000_pdnzaz+9F0Ba7ZsB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP/i5KAAoJEECxmPOUX5FEQhoP/jzixMfhpv3fMVP/GFvjd5kf
-2rCgBaZT2XipmRrCtR5PkRoE8euj6HNULNXgGIGAziG458oIoGUgp1tSnXt8A0AU
-A6w+uM8gx6tGYkWV90HNHPowRx1escHDP269TkkAPvnPP+4ooR7gHdZca2MfcvxH
-3q18VuDguDFlbkz5XgmnyLDwXRVZQRUcepJ43trKB+Ci/gtHRTQnw2EBudDi0tGK
-YZmj8ptMiwMR77YKOgBdakZNu8BYcAbxpgGCox4QirO+lm5szOxkgLzdi7KRNGA5
-1AjIAvqdZ6EURSq5iLDguCD2rONBjSfiHv+T4PQvyUEpFfIebxArkNTPJjta+ZWU
-9dHgaL5vDDLp9p5AbNyc6otQRP8cmDVeRxn6Jp+QvlaOqFdxIOHcd5ryrv8K22p0
-pc83umDfZhOiT04dbMPuIlHEjV3rQqhArUnplsedczkP6HmiEOs72peAIfJ8U8Me
-8X0kdr0mWfAKwRu5WRIdDdsT2pLBbaxOnkl6/8CERk66+k3RYsBy88R76xP/2PS3
-qK66zxlBcs16LKyp3527jYOBrNHTVBWqZ3sBONRkQk+WIScr/R5Fv5PArzvnJSL7
-dHVVuUy6RvIE0+cGUoPm96ehOg1Rv+oep4oqYt7cR+tTJNfwameWHulb0U7K+K1X
-VzHfQEBvr14QncMTizVM
-=xvOh
+iQIcBAEBCAAGBQJP/jHuAAoJEECxmPOUX5FEZQ8P+gLLWSj9a99XcmAur2V9iA/J
+0e45RhoEug5TZvnW6DFfCAIxQQ2vcUgQttPzjwx6gXEId/E1LM92Uc42sLjYgfqf
+m6kCM6HModyOxihQ46hlaW2w2s4eI26fCSA8vivf3YEtJJ/bQodVYgOoAAc4uKA1
+yNSET1INTkpSU2qfhxNKrtz1gz3bWyy2xs3vgn6I6tGAnijn1cAGVuEJVl0DAr58
+OxF9tor/Mct30fFaLaQ+u6YSzq3/4nRuWxQyijAChrEIM4+oeuH3iDOxhQIZCf/m
+sYOy+SGE+/hnkMXcKWObhngiZdfyqauKYeN+iMy/2NirvZQu7FcC5cTz7Y5pDUd1
+bJDfMtM3ozesBak+1sbGfGPPdinPNhgRa5js1BNx57OdjoU9LhTx460GhcnjL7Q7
+0AhltNCVGSU2O+Fikq7hvQF0eMS7fLTOsJiQbKeRoA0F4sHO5PKQgUsxIXaPW5Cy
+Uo7JoscmwWHf9eKnxhVzXJAI+dBIv60IC/cxBo1aslv0BCrdDXnFGCHNsUYK/v8y
+SPs+NxcXl16WwOtI6YZFzTdT3tE9l62PgDxbR8L6z4d8ldat2fG4sVPraUmx4aTR
+hnZalOcI/bOWCkKheSBHCisFFGopI3Ne7jSjLkehsnrdCpFS9ZVni04CGKwixoeM
+vubOGMBXhZ8NXBTVbXWB
+=1ReT
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__12_Jul_2012_11_54_18_+1000_OQBXDRaZLQZwxcSq--
+--Signature=_Thu__12_Jul_2012_12_09_50_+1000_pdnzaz+9F0Ba7ZsB--
