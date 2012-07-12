@@ -1,56 +1,78 @@
-From: Gerard Snitselaar <dev@snitselaar.org>
-Subject: [PATCH] powerpc: remove rejected merge file from arch/powerpc/kernel in linux-next
-Date: Thu, 12 Jul 2012 00:05:34 -0700
-Message-ID: <1342076734-30996-1-git-send-email-dev@snitselaar.org>
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: RE: mmotm 2012-07-10-16-59 uploaded (staging/ccg)
+Date: Thu, 12 Jul 2012 11:00:13 +0200
+Message-ID: <000001cd600c$c00e0230$402a0690$%p@samsung.com>
+References: <20120711000148.BAD1E5C0050@hpza9.eem.corp.google.com>
+ <4FFDF7BC.6050602@xenotime.net>
+ <20120711151644.23016bd8.akpm@linux-foundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:38050 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758645Ab2GLHFr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jul 2012 03:05:47 -0400
-Received: by pbbrp8 with SMTP id rp8so3283397pbb.19
-        for <linux-next@vger.kernel.org>; Thu, 12 Jul 2012 00:05:47 -0700 (PDT)
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:62524 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932826Ab2GLJAX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jul 2012 05:00:23 -0400
+In-reply-to: <20120711151644.23016bd8.akpm@linux-foundation.org>
+Content-language: pl
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, stuart.yoder@freescale.com, benh@kernel.crashing.org
+To: 'Andrew Morton' <akpm@linux-foundation.org>, 'Randy Dunlap' <rdunlap@xenotime.net>
+Cc: linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, 'Mike Lockwood' <lockwood@android.com>, 'Felipe Balbi' <balbi@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Commit 9778b696 (powerpc: Use CURRENT_THREAD_INFO instead of open
-coded assembly) got a rejected merge file iommu.c.rej committed with
-it.
+Dear Andrew,
 
-Signed-off-by: Gerard Snitselaar <dev@snitselaar.org>
----
- arch/powerpc/kernel/iommu.c.rej | 22 ----------------------
- 1 file changed, 22 deletions(-)
- delete mode 100644 arch/powerpc/kernel/iommu.c.rej
+On Thursday, July 12, 2012 12:17 AM Andrew Morton wrote:
 
-diff --git a/arch/powerpc/kernel/iommu.c.rej b/arch/powerpc/kernel/iommu.c.rej
-deleted file mode 100644
-index 9d10d34..0000000
---- a/arch/powerpc/kernel/iommu.c.rej
-+++ /dev/null
-@@ -1,22 +0,0 @@
----- arch/powerpc/kernel/iommu.c	2012-06-08 09:01:02.785709100 +1000
--+++ arch/powerpc/kernel/iommu.c	2012-06-08 09:01:07.489784856 +1000
--@@ -33,7 +33,9 @@
-- #include <linux/bitmap.h>
-- #include <linux/iommu-helper.h>
-- #include <linux/crash_dump.h>
--+#include <linux/fault-inject.h>
-- #include <asm/io.h>
--+#include <asm/vio.h>
-- #include <asm/prom.h>
-- #include <asm/iommu.h>
-- #include <asm/pci-bridge.h>
--@@ -171,6 +261,9 @@
-- 		return DMA_ERROR_CODE;
-- 	}
-- 
--+	if (should_fail_iommu(dev))
--+		return DMA_ERROR_CODE;
--+
-- 	if (handle && *handle)
-- 		start = *handle;
-- 	else
--- 
-1.7.11.1.165.g299666c
+> On Wed, 11 Jul 2012 15:01:32 -0700
+> Randy Dunlap <rdunlap@xenotime.net> wrote:
+> 
+> > In file included from drivers/staging/ccg/ccg.c:59:0:
+> > drivers/staging/ccg/../../usb/gadget/f_fs.c:41:0: warning: "pr_vdebug"
+> redefined
+> > drivers/staging/ccg/../../usb/gadget/u_serial.c:138:0: note: this is the
+> location of the previous definition
+> 
+> <looks at drivers/staging/ccg/ccg.c>
+
+<snip>
+
+@Randy:
+
+There is a patch for this:
+http://www.spinics.net/lists/linux-usb/msg65344.html
+
+I guess you acked it.
+
+@Feilpe, Greg:
+
+Should I send a pull request?
+
+> 
+> : /*
+> :  * Kbuild is not very cooperative with respect to linking separately
+> :  * compiled library objects into one module.  So for now we won't use
+> :  * separate compilation ... ensuring init/exit sections work to shrink
+> :  * the runtime footprint, and giving us at least some parts of what
+> :  * a "gcc --combine ... part1.c part2.c part3.c ... " build would.
+> :  */
+
+<snip>
+
+> Who wrote that
+
+<snip>
+
+> comment?  
+
+<snip>
+
+FYI: The text was taken from Gadget Zero (zero.c) and was originally
+written by David Brownell, may he Rest in Peace.
+
+I think that the #include approach is intended to be revised sometime:
+http://marc.info/?l=linux-usb&m=132431126927355&w=2 - if there is
+just one gadget module configurable through configfs, the things will
+probably be simplified.
+
+AP
