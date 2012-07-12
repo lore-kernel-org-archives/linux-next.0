@@ -1,61 +1,40 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH] powerpc: remove rejected merge file from
- arch/powerpc/kernel in linux-next
-Date: Thu, 12 Jul 2012 21:23:21 +1000
-Message-ID: <1342092201.15597.0.camel@pasglop>
-References: <1342076734-30996-1-git-send-email-dev@snitselaar.org>
+From: Hadar Hen Zion <hadarh@mellanox.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the infiniband
+ tree
+Date: Thu, 12 Jul 2012 15:57:50 +0300
+Message-ID: <4FFEC9CE.3000306@mellanox.com>
+References: <20120712121307.a482863a98848e3813690ef2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1342076734-30996-1-git-send-email-dev@snitselaar.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gerard Snitselaar <dev@snitselaar.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, stuart.yoder@freescale.com
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from eu1sys200aog102.obsmtp.com ([207.126.144.113]:46093 "HELO
+	eu1sys200aog102.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1754434Ab2GLM6E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Jul 2012 08:58:04 -0400
+In-Reply-To: <20120712121307.a482863a98848e3813690ef2@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hadar Hen Zion <hadarh@mellanox.co.il>, Or Gerlitz <ogerlitz@mellanox.com>, Jack Morgenstein <jackm@dev.mellanox.co.il>, Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org
 
-On Thu, 2012-07-12 at 00:05 -0700, Gerard Snitselaar wrote:
-> Commit 9778b696 (powerpc: Use CURRENT_THREAD_INFO instead of open
-> coded assembly) got a rejected merge file iommu.c.rej committed with
-> it.
+On 7/12/2012 5:13 AM, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the net-next tree got a conflict in
+> include/linux/mlx4/device.h between commit 396f2feb05d7 ("mlx4_core:
+> Implement mechanism for reserved Q_Keys") from the infiniband tree and
+> commit 0ff1fb654bec ("{NET, IB}/mlx4: Add device managed flow steering
+> firmware API") from the net-next tree.
+>
+> Just context changes.  I fixed it up (see below) and can carry the fix
+> as necessary.
+>
 
-Oops, that's me having too much coffee & using git citool ... I'll get
-rid of it, thanks.
+Thanks Stephen.
 
-Cheers,
-Ben.
+Please add:
+Acked-by: Hadar Hen Zion <hadarh@mellanox.co.il>
 
-> Signed-off-by: Gerard Snitselaar <dev@snitselaar.org>
-> ---
->  arch/powerpc/kernel/iommu.c.rej | 22 ----------------------
->  1 file changed, 22 deletions(-)
->  delete mode 100644 arch/powerpc/kernel/iommu.c.rej
-> 
-> diff --git a/arch/powerpc/kernel/iommu.c.rej b/arch/powerpc/kernel/iommu.c.rej
-> deleted file mode 100644
-> index 9d10d34..0000000
-> --- a/arch/powerpc/kernel/iommu.c.rej
-> +++ /dev/null
-> @@ -1,22 +0,0 @@
-> ---- arch/powerpc/kernel/iommu.c	2012-06-08 09:01:02.785709100 +1000
-> -+++ arch/powerpc/kernel/iommu.c	2012-06-08 09:01:07.489784856 +1000
-> -@@ -33,7 +33,9 @@
-> - #include <linux/bitmap.h>
-> - #include <linux/iommu-helper.h>
-> - #include <linux/crash_dump.h>
-> -+#include <linux/fault-inject.h>
-> - #include <asm/io.h>
-> -+#include <asm/vio.h>
-> - #include <asm/prom.h>
-> - #include <asm/iommu.h>
-> - #include <asm/pci-bridge.h>
-> -@@ -171,6 +261,9 @@
-> - 		return DMA_ERROR_CODE;
-> - 	}
-> - 
-> -+	if (should_fail_iommu(dev))
-> -+		return DMA_ERROR_CODE;
-> -+
-> - 	if (handle && *handle)
-> - 		start = *handle;
-> - 	else
+Hadar
