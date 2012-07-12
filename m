@@ -1,43 +1,36 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the i2c-embedded tree
-Date: Thu, 12 Jul 2012 15:54:02 +0000
-Message-ID: <201207121554.03240.arnd@arndb.de>
-References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au> <20120712131231.GH2194@pengutronix.de>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for July 12 (pci)
+Date: Thu, 12 Jul 2012 09:11:10 -0700
+Message-ID: <4FFEF71E.7080706@xenotime.net>
+References: <20120712160335.9cbff13c2f18eadc7d3cb0cf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:60659 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932676Ab2GLPyV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jul 2012 11:54:21 -0400
-In-Reply-To: <20120712131231.GH2194@pengutronix.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Wolfram Sang <w.sang@pengutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Linus Walleij <linus.walleij@stericsson.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20120712160335.9cbff13c2f18eadc7d3cb0cf@canb.auug.org.au>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thursday 12 July 2012, Wolfram Sang wrote:
-> 
-> > I fixed it up (I think - see below) and can carry the fix as necessary.
-> > Please check this and talk to each other ...
-> 
-> I also noticed the bindings today [1]. They came in via a seperate
-> patch (suboptimal) which has no ack by a devicetree maintainer which I'd
-> really like to see here, because the bindings look suspicious to me.
-> They look like they mostly export register settings which is usually
-> questionable since we might want to abstract bindings so they can be
-> useful for a number of drivers.
-> 
-> Arnd, since you committed the patches, can you please comment? I'd
-> prefer to drop this DT conversion for now, otherwise we might have to
-> support this possibly rushed bindings forever? LinusW, what do you
-> think?
+On 07/11/2012 11:03 PM, Stephen Rothwell wrote:
 
-I've dropped the ux500/dt branch for now. and will wait for a new one
-to get submitted as a replacement. There were other things wrong with
-the submission that Lee already knows about, so I think it's better
-to do this the proper way now.
+> Hi all,
+> 
+> Changes since 20120710:
+> 
+> 
+> The pci tree lost its conflicts.
 
-	Arnd
+
+on x86_64:
+
+drivers/built-in.o: In function `pci_bus_add_device':
+(.text+0x4f62): undefined reference to `pci_fixup_final_inited'
+
+
+when CONFIG_PCI_QUIRKS is not enabled.
+
+
+-- 
+~Randy
