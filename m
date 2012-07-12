@@ -1,59 +1,60 @@
-From: 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>
-Subject: Re: mmotm 2012-07-10-16-59 uploaded (staging/ccg)
-Date: Thu, 12 Jul 2012 08:23:40 -0700
-Message-ID: <20120712152340.GA17263@kroah.com>
-References: <20120711000148.BAD1E5C0050@hpza9.eem.corp.google.com>
- <4FFDF7BC.6050602@xenotime.net>
- <20120711151644.23016bd8.akpm@linux-foundation.org>
- <000001cd600c$c00e0230$402a0690$%p@samsung.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for July 12 (v4l2-ioctl.c)
+Date: Thu, 12 Jul 2012 08:49:46 -0700
+Message-ID: <4FFEF21A.7050701@xenotime.net>
+References: <20120712160335.9cbff13c2f18eadc7d3cb0cf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:64890 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932530Ab2GLPXr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jul 2012 11:23:47 -0400
-Received: by pbbrp8 with SMTP id rp8so3874174pbb.19
-        for <linux-next@vger.kernel.org>; Thu, 12 Jul 2012 08:23:47 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <000001cd600c$c00e0230$402a0690$%p@samsung.com>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:41040 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S934054Ab2GLPuf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jul 2012 11:50:35 -0400
+In-Reply-To: <20120712160335.9cbff13c2f18eadc7d3cb0cf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Cc: 'Andrew Morton' <akpm@linux-foundation.org>, 'Randy Dunlap' <rdunlap@xenotime.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, 'Felipe Balbi' <balbi@ti.com>, linux-next@vger.kernel.org, 'Mike Lockwood' <lockwood@android.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
 
-On Thu, Jul 12, 2012 at 11:00:13AM +0200, Andrzej Pietrasiewicz wrote:
-> Dear Andrew,
-> 
-> On Thursday, July 12, 2012 12:17 AM Andrew Morton wrote:
-> 
-> > On Wed, 11 Jul 2012 15:01:32 -0700
-> > Randy Dunlap <rdunlap@xenotime.net> wrote:
-> > 
-> > > In file included from drivers/staging/ccg/ccg.c:59:0:
-> > > drivers/staging/ccg/../../usb/gadget/f_fs.c:41:0: warning: "pr_vdebug"
-> > redefined
-> > > drivers/staging/ccg/../../usb/gadget/u_serial.c:138:0: note: this is the
-> > location of the previous definition
-> > 
-> > <looks at drivers/staging/ccg/ccg.c>
-> 
-> <snip>
-> 
-> @Randy:
-> 
-> There is a patch for this:
-> http://www.spinics.net/lists/linux-usb/msg65344.html
-> 
-> I guess you acked it.
-> 
-> @Feilpe, Greg:
-> 
-> Should I send a pull request?
+On 07/11/2012 11:03 PM, Stephen Rothwell wrote:
 
-Felipe is on vacation until next week, he should be handling this patch
-then.
+> Hi all,
+> 
+> Changes since 20120710:
 
-thanks,
 
-greg k-h
+
+on i386 and/or x86_64, drivers/media/video/v4l2-ioctl.c has too many
+errors to be listed here.  This is the beginning few lines of the errors:
+
+
+drivers/media/video/v4l2-ioctl.c:1848:2: error: unknown field 'func' specified in initializer
+drivers/media/video/v4l2-ioctl.c:1848:2: warning: missing braces around initializer
+drivers/media/video/v4l2-ioctl.c:1848:2: warning: (near initialization for 'v4l2_ioctls[0].<anonymous>')
+drivers/media/video/v4l2-ioctl.c:1848:2: warning: initialization makes integer from pointer without a cast
+drivers/media/video/v4l2-ioctl.c:1848:2: error: initializer element is not computable at load time
+drivers/media/video/v4l2-ioctl.c:1848:2: error: (near initialization for 'v4l2_ioctls[0].<anonymous>.offset')
+drivers/media/video/v4l2-ioctl.c:1849:2: error: unknown field 'func' specified in initializer
+drivers/media/video/v4l2-ioctl.c:1849:2: warning: initialization makes integer from pointer without a cast
+drivers/media/video/v4l2-ioctl.c:1849:2: error: initializer element is not computable at load time
+drivers/media/video/v4l2-ioctl.c:1849:2: error: (near initialization for 'v4l2_ioctls[2].<anonymous>.offset')
+drivers/media/video/v4l2-ioctl.c:1850:2: error: unknown field 'func' specified in initializer
+drivers/media/video/v4l2-ioctl.c:1850:2: warning: initialization makes integer from pointer without a cast
+drivers/media/video/v4l2-ioctl.c:1850:2: error: initializer element is not computable at load time
+drivers/media/video/v4l2-ioctl.c:1850:2: error: (near initialization for 'v4l2_ioctls[4].<anonymous>.offset')
+drivers/media/video/v4l2-ioctl.c:1851:2: error: unknown field 'func' specified in initializer
+drivers/media/video/v4l2-ioctl.c:1851:2: warning: initialization makes integer from pointer without a cast
+drivers/media/video/v4l2-ioctl.c:1851:2: error: initializer element is not computable at load time
+drivers/media/video/v4l2-ioctl.c:1851:2: error: (near initialization for 'v4l2_ioctls[5].<anonymous>.offset')
+drivers/media/video/v4l2-ioctl.c:1852:2: error: unknown field 'func' specified in initializer
+drivers/media/video/v4l2-ioctl.c:1852:2: warning: initialization makes integer from pointer without a cast
+drivers/media/video/v4l2-ioctl.c:1852:2: error: initializer element is not computable at load time
+drivers/media/video/v4l2-ioctl.c:1852:2: error: (near initialization for 'v4l2_ioctls[8].<anonymous>.offset')
+drivers/media/video/v4l2-ioctl.c:1853:2: error: unknown field 'func' specified in initializer
+
+
+
+-- 
+
+~Randy
