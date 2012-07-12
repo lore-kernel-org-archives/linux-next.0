@@ -1,47 +1,61 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for July 10 (gpio/gpio-tps65910.c)
-Date: Thu, 12 Jul 2012 12:47:14 +0200
-Message-ID: <CA+icZUW1rHLhAk0gtty1VLEHefBXfdng28Wv7ux4+Pqhn3Emxw@mail.gmail.com>
-References: <CA+icZUX565WsuJNHKsohXi=vp34Acn+2D-nj8mQQtCfi=Pw_Nw@mail.gmail.com>
-	<CACRpkdbazoCztqbT00_oBsRyee=VBDH+NiGEpzNk8uV7mvsNwQ@mail.gmail.com>
-	<CA+icZUUDt6uAHKf=B3Lfh6FxNaCPsjZS2xY7_DoG312aV0MJhA@mail.gmail.com>
-	<CACRpkdYzi8oDCCM2cMYsqoqrM7U4X55xqfHXxboL9wf_avvjGA@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH] powerpc: remove rejected merge file from
+ arch/powerpc/kernel in linux-next
+Date: Thu, 12 Jul 2012 21:23:21 +1000
+Message-ID: <1342092201.15597.0.camel@pasglop>
+References: <1342076734-30996-1-git-send-email-dev@snitselaar.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:62194 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030384Ab2GLKrQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jul 2012 06:47:16 -0400
-In-Reply-To: <CACRpkdYzi8oDCCM2cMYsqoqrM7U4X55xqfHXxboL9wf_avvjGA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1342076734-30996-1-git-send-email-dev@snitselaar.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gerard Snitselaar <dev@snitselaar.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, stuart.yoder@freescale.com
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 12, 2012 at 12:39 PM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Wed, Jul 11, 2012 at 9:01 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->
->> BTW, didn't see your tree in linux-next [1].
->>
->> [1] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=Next/Trees#l184
->
-> Look at line 185?
->
+On Thu, 2012-07-12 at 00:05 -0700, Gerard Snitselaar wrote:
+> Commit 9778b696 (powerpc: Use CURRENT_THREAD_INFO instead of open
+> coded assembly) got a rejected merge file iommu.c.rej committed with
+> it.
 
-Yesterday or more precisely next-20120710, your tree was listed at line #184 ...
+Oops, that's me having too much coffee & using git citool ... I'll get
+rid of it, thanks.
 
-184 gpio-lw         git
-git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+Cheers,
+Ben.
 
-linux.git got the patch now and I could build (even I do not need it)
-gpio/gpio-tps65910.c successfully.
-
-- Sedat -
-
-[1] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=Next/Trees;hb=refs/tags/next-20120710#l184
-
-> Yours,
-> Linus Walleij
+> Signed-off-by: Gerard Snitselaar <dev@snitselaar.org>
+> ---
+>  arch/powerpc/kernel/iommu.c.rej | 22 ----------------------
+>  1 file changed, 22 deletions(-)
+>  delete mode 100644 arch/powerpc/kernel/iommu.c.rej
+> 
+> diff --git a/arch/powerpc/kernel/iommu.c.rej b/arch/powerpc/kernel/iommu.c.rej
+> deleted file mode 100644
+> index 9d10d34..0000000
+> --- a/arch/powerpc/kernel/iommu.c.rej
+> +++ /dev/null
+> @@ -1,22 +0,0 @@
+> ---- arch/powerpc/kernel/iommu.c	2012-06-08 09:01:02.785709100 +1000
+> -+++ arch/powerpc/kernel/iommu.c	2012-06-08 09:01:07.489784856 +1000
+> -@@ -33,7 +33,9 @@
+> - #include <linux/bitmap.h>
+> - #include <linux/iommu-helper.h>
+> - #include <linux/crash_dump.h>
+> -+#include <linux/fault-inject.h>
+> - #include <asm/io.h>
+> -+#include <asm/vio.h>
+> - #include <asm/prom.h>
+> - #include <asm/iommu.h>
+> - #include <asm/pci-bridge.h>
+> -@@ -171,6 +261,9 @@
+> - 		return DMA_ERROR_CODE;
+> - 	}
+> - 
+> -+	if (should_fail_iommu(dev))
+> -+		return DMA_ERROR_CODE;
+> -+
+> - 	if (handle && *handle)
+> - 		start = *handle;
+> - 	else
