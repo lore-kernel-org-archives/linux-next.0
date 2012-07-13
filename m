@@ -1,50 +1,29 @@
-From: Myron Stowe <myron.stowe@gmail.com>
-Subject: Re: linux-next: Tree for July 12 (pci)
-Date: Thu, 12 Jul 2012 15:24:15 -0600
-Message-ID: <CAL-B5D1a=OX9nuVpLFNhwfarq-WBgYbAh6w8+2deH7w0iY0NCg@mail.gmail.com>
-References: <20120712160335.9cbff13c2f18eadc7d3cb0cf@canb.auug.org.au>
-	<4FFEF71E.7080706@xenotime.net>
+From: Vinod Koul <vinod.koul@linux.intel.com>
+Subject: Re: linux-next: manual merge of the slave-dma tree with the arm
+ tree
+Date: Fri, 13 Jul 2012 08:39:02 +0530
+Message-ID: <1342148942.1726.0.camel@vkoul-udesk3>
+References: <20120702131645.a318e0db6ee778718b6de271@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <4FFEF71E.7080706@xenotime.net>
-Sender: linux-pci-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120702131645.a318e0db6ee778718b6de271@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhangfei Gao <zhangfei.gao@marvell.com>, Leo Yan <leoy@marvell.com>, Qiao Zhou <zhouqiao@marvell.com>, Russell King <rmk@arm.linux.org.uk>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 12, 2012 at 10:11 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On 07/11/2012 11:03 PM, Stephen Rothwell wrote:
->
->> Hi all,
->>
->> Changes since 20120710:
->>
->>
->> The pci tree lost its conflicts.
->
->
-> on x86_64:
->
-> drivers/built-in.o: In function `pci_bus_add_device':
-> (.text+0x4f62): undefined reference to `pci_fixup_final_inited'
->
->
-> when CONFIG_PCI_QUIRKS is not enabled.
+On Mon, 2012-07-02 at 13:16 +1000, Stephen Rothwell wrote:
+> Hi Vinod,
+> 
+> Today's linux-next merge of the slave-dma tree got conflicts in
+> drivers/dma/Kconfig and drivers/dma/Makefile between commit 06dba53e6fcf
+> ("dmaengine: add OMAP DMA engine driver") from the arm tree and commit
+> c6da0ba8dfc8 ("dmaengine: mmp_tdma: add mmp tdma support") from the
+> slave-dma tree.
+Thanks, Looks like Russell has merged the OMAP changes into his tree?
 
-Nice catch and thanks for the heads up.  My "[PATCH -v2 8/8] PCI:
-Integrate 'pci_fixup_final' quirks into hot-plug paths" patch
-introduced this - http://marc.info/?l=linux-pci&m=134187007917537&w=2
 
-I'll handle it.
-
-Thanks again,
- Myron
-
->
-> --
-> ~Randy
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+~Vinod
