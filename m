@@ -1,36 +1,29 @@
-From: "S, Venkatraman" <svenkatr@ti.com>
-Subject: Re: mmotm 2012-07-10-16-59 uploaded
-Date: Fri, 13 Jul 2012 17:12:03 +0530
-Message-ID: <CANfBPZ_7_K9mGL5jHWxN8C51wL=g_fREPef0n+wdWeN+0raLsA@mail.gmail.com>
-References: <20120711000148.BAD1E5C0050@hpza9.eem.corp.google.com>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: linux-next: Tree for July 13
+Date: Fri, 13 Jul 2012 08:29:10 -0400
+Message-ID: <20120713122910.GA17109@thunk.org>
+References: <20120713155121.6adf5468fdc72ad72dabb403@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog118.obsmtp.com ([74.125.149.244]:40923 "EHLO
-	na3sys009aog118.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756218Ab2GMLm1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Jul 2012 07:42:27 -0400
-Received: by bkwj4 with SMTP id j4so3087268bkw.26
-        for <linux-next@vger.kernel.org>; Fri, 13 Jul 2012 04:42:24 -0700 (PDT)
-In-Reply-To: <20120711000148.BAD1E5C0050@hpza9.eem.corp.google.com>
+Received: from li9-11.members.linode.com ([67.18.176.11]:38923 "EHLO
+	imap.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932653Ab2GMM3M (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Jul 2012 08:29:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20120713155121.6adf5468fdc72ad72dabb403@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Jej B <James.Bottomley@hansenpartnership.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Jul 11, 2012 at 5:31 AM,  <akpm@linux-foundation.org> wrote:
-> The mm-of-the-moment snapshot 2012-07-10-16-59 has been uploaded to
->
->    http://www.ozlabs.org/~akpm/mmotm/
->
->
-> * drivers-scsi-ufs-use-module_pci_driver.patch
-> * drivers-scsi-ufs-reverse-the-ufshcd_is_device_present-logic.patch
-> * ufs-fix-incorrect-return-value-about-success-and-failed.patch
+On Fri, Jul 13, 2012 at 03:51:21PM +1000, Stephen Rothwell wrote:
+> 
+> The ext4 tree still has its build failure so I used the version from
+> next-20120709.
 
-The above 3 patches have been queued in scsi/misc tree today, and can
-please be dropped from here ?
+I fixed this last night, but I probably just missed when you pulled in
+the ext4 tree.  So hopefully you should have no problems with your
+next linux-next build.
 
-Thanks,
-Venkat.
+						- Ted
