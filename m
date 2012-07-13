@@ -1,69 +1,61 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH] ARM: mxs: fix compile error caused by prom_update_property change
-Date: Fri, 13 Jul 2012 14:13:55 +0800
-Message-ID: <1342160035-24170-1-git-send-email-shawn.guo@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the i2c-embedded
+ tree
+Date: Fri, 13 Jul 2012 13:03:51 +0200
+Message-ID: <50000097.9010902@linaro.org>
+References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au> <20120712131231.GH2194@pengutronix.de> <201207121554.03240.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ch1ehsobe003.messaging.microsoft.com ([216.32.181.183]:47793
-	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1030184Ab2GMFxi convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Jul 2012 01:53:38 -0400
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:64817 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030437Ab2GMLD4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Jul 2012 07:03:56 -0400
+Received: by eaak11 with SMTP id k11so1023034eaa.19
+        for <linux-next@vger.kernel.org>; Fri, 13 Jul 2012 04:03:54 -0700 (PDT)
+In-Reply-To: <201207121554.03240.arnd@arndb.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Wolfram Sang <w.sang@pengutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, Linus Walleij <linus.walleij@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-The commit 475d009 (of: Improve prom_update_property() function)
-changed prom_update_property interface, and causes the compile
-error below.
+>> They look like they mostly export register settings which is usually
+>> questionable since we might want to abstract bindings so they can be
+>> useful for a number of drivers.
 
-  CC      arch/arm/mach-mxs/mach-mxs.o
-arch/arm/mach-mxs/mach-mxs.c: In function =E2=80=98update_fec_mac_prop=E2=
-=80=99:
-arch/arm/mach-mxs/mach-mxs.c:216:4: error: too many arguments to functi=
-on =E2=80=98prom_update_property=E2=80=99
-include/linux/of.h:263:12: note: declared here
-
-Update the caller update_fec_mac_prop to fix the error.
-
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
----
-The error is seen on next-20120712 where commit 475d009 (of: Improve
-prom_update_property() function) emerges.
-
- arch/arm/mach-mxs/mach-mxs.c |    8 ++------
- 1 files changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/mach-mxs/mach-mxs.c b/arch/arm/mach-mxs/mach-mxs.=
-c
-index 648bdd0..8dabfe8 100644
---- a/arch/arm/mach-mxs/mach-mxs.c
-+++ b/arch/arm/mach-mxs/mach-mxs.c
-@@ -162,7 +162,7 @@ enum mac_oui {
- static void __init update_fec_mac_prop(enum mac_oui oui)
- {
- 	struct device_node *np, *from =3D NULL;
--	struct property *oldmac, *newmac;
-+	struct property *newmac;
- 	const u32 *ocotp =3D mxs_get_ocotp();
- 	u8 *macaddr;
- 	u32 val;
-@@ -208,11 +208,7 @@ static void __init update_fec_mac_prop(enum mac_ou=
-i oui)
- 		macaddr[4] =3D (val >> 8) & 0xff;
- 		macaddr[5] =3D (val >> 0) & 0xff;
+I'm not exactly sure what you mean by this. These bindings are specific=
 =20
--		oldmac =3D of_find_property(np, newmac->name, NULL);
--		if (oldmac)
--			prom_update_property(np, newmac, oldmac);
--		else
--			prom_add_property(np, newmac);
-+		prom_update_property(np, newmac);
- 	}
- }
+to the ST-Ericsson driver and are localised, hence the 'stericsson,'=20
+vendor prefix. If you think other drivers might be able to make use of=20
+them then we can make them official i2c bindings and drop the 'stericss=
+on,'.
+
+>> Arnd, since you committed the patches, can you please comment? I'd
+>> prefer to drop this DT conversion for now, otherwise we might have t=
+o
+>> support this possibly rushed bindings forever? LinusW, what do you
+>> think?
+
+We would never have to support them forever. Even if they were deemed t=
+o=20
+be incorrect, or some other vendors wanted to use the same bindings, we=
 =20
+would just send a patch fixing them.
+
+> I've dropped the ux500/dt branch for now. and will wait for a new one
+> to get submitted as a replacement. There were other things wrong with
+> the submission that Lee already knows about, so I think it's better
+> to do this the proper way now.
+
+Okay, I've pulled the i2c patches out. I'll re-send the pull-request=20
+(less the i2c stuff) when we have an Ack from Sam on the AB8500=20
+documentation patch.
+
 --=20
-1.7.4.1
+Lee Jones
+Linaro ST-Ericsson Landing Team Lead
+M: +44 77 88 633 515
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
