@@ -1,55 +1,52 @@
-From: Myron Stowe <myron.stowe@gmail.com>
-Subject: Re: linux-next: Tree for July 12 (pci)
-Date: Fri, 13 Jul 2012 14:42:45 -0600
-Message-ID: <CAL-B5D2D8WfDgrQoz4AVojXxavrhap2XPRyhkR3AeD4NNZHHxQ@mail.gmail.com>
-References: <20120712160335.9cbff13c2f18eadc7d3cb0cf@canb.auug.org.au>
-	<4FFEF71E.7080706@xenotime.net>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the
+ i2c-embedded tree
+Date: Sat, 14 Jul 2012 23:34:54 +0200
+Message-ID: <CACRpkdboeF_G=sTPeSyuZ6KGLCmGSKx_NS=6Rim6HkR2f9=AAQ@mail.gmail.com>
+References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
+ <20120712131231.GH2194@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <4FFEF71E.7080706@xenotime.net>
-Sender: linux-pci-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20120712131231.GH2194-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Alessandro Rubini <rubini-kaDoWcXyVrEAvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Deepak Saxena <dsaxena-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 12, 2012 at 10:11 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On 07/11/2012 11:03 PM, Stephen Rothwell wrote:
->
->> Hi all,
->>
->> Changes since 20120710:
->>
->>
->> The pci tree lost its conflicts.
->
->
-> on x86_64:
->
-> drivers/built-in.o: In function `pci_bus_add_device':
-> (.text+0x4f62): undefined reference to `pci_fixup_final_inited'
->
->
-> when CONFIG_PCI_QUIRKS is not enabled.
->
-I just posted a patch to  resolve what you encountered.  Would you mind giving
-it a try and reporting back with the results?
+On Thu, Jul 12, 2012 at 3:12 PM, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
 
-It's obvious what you ran into, with CONFIG_PCI_QUIRKS not enabled,
-./drivers/pci/quirks.o ends up not being generated and included in the
-kernel thus
-the unresolved reference from ./drivers/pci/bus.o.
+> Arnd, since you committed the patches, can you please comment? I'd
+> prefer to drop this DT conversion for now, otherwise we might have to
+> support this possibly rushed bindings forever? LinusW, what do you
+> think?
 
-I tried to reproduce the failure by disabling my .config file's
-CONFIG_PCI_QUIRKS
-entry (which in turn required me to enable CONFIG_EXPERT) but that was not
-enough to encounter the unresolved reference - although it *should* have been.
+Well I think I ACKed that from the point of view that it will work as
+expected with ux500 with these bindings. What is best from the I2C
+subsystem point of view is another question ...
 
-Myron
->
-> --
-> ~Randy
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Overall I think we have this general problem with a lot of DT
+conversion happening right now: the tempo is set very high and
+all chip vendors want DT support RealQuickNowPreferrablyYesterday
+and that makes it hard for subsystem maintainers to hold back,
+and I also fear vendor-specific properties are overused for this
+reason.
+
+And about the perpetual nature of device tree bindings it
+appears to me that the modus operandi right now is to not
+regard any of these as written in stone until they are removed
+from the kernel tree. We have plenty of drivers patching
+trees and drivers in one for the moment.
+
+Yours,
+Linus Walleij
