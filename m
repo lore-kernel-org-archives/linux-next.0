@@ -1,52 +1,42 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the
- i2c-embedded tree
-Date: Sat, 14 Jul 2012 23:34:54 +0200
-Message-ID: <CACRpkdboeF_G=sTPeSyuZ6KGLCmGSKx_NS=6Rim6HkR2f9=AAQ@mail.gmail.com>
-References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
- <20120712131231.GH2194@pengutronix.de>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: manual merge of the signal tree with the arm-current
+ tree
+Date: Sun, 15 Jul 2012 12:27:35 +0100
+Message-ID: <20120715112735.GI31729@ZenIV.linux.org.uk>
+References: <20120705173526.bf8772adb18edfc91adddea8@canb.auug.org.au>
+ <20120705075204.GA12344@flint.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20120712131231.GH2194-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Alessandro Rubini <rubini-kaDoWcXyVrEAvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Deepak Saxena <dsaxena-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120705075204.GA12344@flint.arm.linux.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 12, 2012 at 3:12 PM, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+On Thu, Jul 05, 2012 at 08:52:04AM +0100, Russell King wrote:
+> On Thu, Jul 05, 2012 at 05:35:26PM +1000, Stephen Rothwell wrote:
+> > Hi Al,
+> > 
+> > Today's linux-next merge of the signal tree got a conflict in
+> > arch/arm/kernel/signal.c between commit f73e2ca64281 ("ARM: 7443/1:
+> > Revert "new way of handling ERESTART_RESTARTBLOCK"") from the arm-current
+> > tree and commits 9c802c169f96 ("arm: deal with handlerless restarts
+> > without leaving the kernel") and 76c3f4da3ee4 ("arm: get rid of
+> > TIF_SYSCALL_RESTARTSYS") from the signal tree.
+> > 
+> > I have no idea how to cope with this.  So I have effectively reverted
+> > commit f73e2ca64281 ("ARM: 7443/1: Revert "new way of handling
+> > ERESTART_RESTARTBLOCK"") for today (though parts of that commit are also
+> > implemented by the above signal tree commits).
+> 
+> Currently, bugs have been found with the signal handling updates which
+> happened during the last merge window.
+> 
+> Will has concerns with Al's proposed fixes for the signal handling.
 
-> Arnd, since you committed the patches, can you please comment? I'd
-> prefer to drop this DT conversion for now, otherwise we might have to
-> support this possibly rushed bindings forever? LinusW, what do you
-> think?
-
-Well I think I ACKed that from the point of view that it will work as
-expected with ux500 with these bindings. What is best from the I2C
-subsystem point of view is another question ...
-
-Overall I think we have this general problem with a lot of DT
-conversion happening right now: the tempo is set very high and
-all chip vendors want DT support RealQuickNowPreferrablyYesterday
-and that makes it hard for subsystem maintainers to hold back,
-and I also fear vendor-specific properties are overused for this
-reason.
-
-And about the perpetual nature of device tree bindings it
-appears to me that the modus operandi right now is to not
-regard any of these as written in stone until they are removed
-from the kernel tree. We have plenty of drivers patching
-trees and drivers in one for the moment.
-
-Yours,
-Linus Walleij
+Could you please resend whatever concerns those had been my way?
+The last I've seen from Will had been about the stuff in mainline,
+not in -next; I might have missed something quite easily, though -
+net.access had been really lousy lately and piles in l-k mbox... ouch.
