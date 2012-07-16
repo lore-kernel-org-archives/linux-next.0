@@ -1,34 +1,70 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the signal tree with the arm-current
- tree
-Date: Sun, 15 Jul 2012 13:04:57 +0100
-Message-ID: <20120715120457.GJ31729@ZenIV.linux.org.uk>
-References: <20120705173526.bf8772adb18edfc91adddea8@canb.auug.org.au>
- <20120705075204.GA12344@flint.arm.linux.org.uk>
- <20120715112735.GI31729@ZenIV.linux.org.uk>
- <CAMuHMdXP_rjwPhfTwcY+Jf3+Dq=AkWtMZvUUibCQ9D=c60_j5Q@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Mon, 16 Jul 2012 10:59:06 +1000
+Message-ID: <20120716105906.1abc525c01164b4f9031bcb2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__16_Jul_2012_10_59_06_+1000_bQnnk_fEJKWaP2x0"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43998 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751472Ab2GPA7V (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 15 Jul 2012 20:59:21 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, Steven Whitehouse <swhiteho@redhat.com>, Dave Kleikamp <shaggy@kernel.org>
+
+--Signature=_Mon__16_Jul_2012_10_59_06_+1000_bQnnk_fEJKWaP2x0
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXP_rjwPhfTwcY+Jf3+Dq=AkWtMZvUUibCQ9D=c60_j5Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 15, 2012 at 01:47:59PM +0200, Geert Uytterhoeven wrote:
-> Hi Al,
-> 
-> On Sun, Jul 15, 2012 at 1:27 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > On Thu, Jul 05, 2012 at 08:52:04AM +0100, Russell King wrote:
-> >> Will has concerns with Al's proposed fixes for the signal handling.
-> >
-> > Could you please resend whatever concerns those had been my way?
-> > The last I've seen from Will had been about the stuff in mainline,
-> > not in -next; I might have missed something quite easily, though -
-> > net.access had been really lousy lately and piles in l-k mbox... ouch.
-> 
-> Speaking about -next, there's still this fix for an avr32 regression:
+Hi Al,
 
-Yeah, grabbed it.  Will be in the next rebase (hopefully in a few hours).
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+fs/ext2/super.c: In function 'ext2_sync_fs':
+fs/ext2/super.c:1191:2: error: implicit declaration of function 'dquot_writ=
+eback_dquots' [-Werror=3Dimplicit-function-declaration]
+fs/ext3/super.c: In function 'ext3_sync_fs':
+fs/ext3/super.c:2534:2: error: implicit declaration of function 'dquot_writ=
+eback_dquots' [-Werror=3Dimplicit-function-declaration]
+fs/ext4/super.c: In function 'ext4_sync_fs':
+fs/ext4/super.c:4493:2: error: implicit declaration of function 'dquot_writ=
+eback_dquots' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commits 05566b558a47 ("quota: Move quota syncing to ->sync_fs
+method") and ad04033e79d2 ("quota: Split dquot_quota_sync() to writeback
+and cache flushing part").  Please do build testing with and without
+CONFIG QUOTA for quota changes ...
+
+I have used the vfs tree from next-20120713 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__16_Jul_2012_10_59_06_+1000_bQnnk_fEJKWaP2x0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQA2daAAoJEECxmPOUX5FEy74P/0UA3Ed0he+5i/4OAe8AlMdQ
+RTWesHEj5p2Conp5ZSlCFax9pfOkq+1z/G5ItcJhkGC9giC8Hpcv00OroZsft+Qu
+EtFxWycLkLE97XgGlNMR4qFi+Y6V3UCxRSYSSNfgX0dBFX3U/TWFDJvd7utAxBRx
+EzQxJdI7+ICQs7DS6r1t9guWVL4j8EljJTfrOCsqO0tzhntHq1ujmCePvyklutpp
+/GAtzDSjECInpMQNsK9knkx3w5+I7y+u1tZHzpdXgw9amGw/gCN4YMs8MwAG1AyO
+he/RVZQXrICC9UW2AIXvJZ2yoKQNcGqYt2wv5YK/z9IL3s8FtEP8Y6T8N395jqP0
+/zrjQA1X9QGZ3UO0OZ3ml3h64sP0Qe+wonvCU0bPWOiB/zgJBIk6USa9VRUlhLZW
+X74IKAhYbNz2aVus98/zzdaJuZnwlo1KohIvWmpolvFwcfTj1UmTo6PiGcjd2vV/
+ISl3WNOeRmQ7UiW9mddpggGwY3WtZyYBADs/aPBOJR+AKnAfIL9XXDoBGpCCny5B
+vv1aqeNxbARGWEyamYOas6pyiMcqRvqi4clvtJMwu93hUuBk2ZUTJ1ncwywxdwLk
+s01HvjcAd9tZ5Gnp+d2vHMsDYF/W6Uvzc4uGyb8LK16r6+xc96y1jqsVklw9JeqV
+ZNCcHzxcUgPWt2oCduos
+=+Aa2
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__16_Jul_2012_10_59_06_+1000_bQnnk_fEJKWaP2x0--
