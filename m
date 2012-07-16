@@ -1,44 +1,58 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] staging: fix sm7xxfb build, depends on PCI
-Date: Mon, 16 Jul 2012 08:32:03 -0700
-Message-ID: <500433F3.8030104@xenotime.net>
-References: <20120716171709.a2da2c69fd0052b1a519de65@canb.auug.org.au>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the
+ i2c-embedded tree
+Date: Mon, 16 Jul 2012 21:45:29 +0200
+Message-ID: <CACRpkdaMB-n7XYcxE8QtAm-WrGc2DR0krfTjQZCbvOL1HYep1Q@mail.gmail.com>
+References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
+ <20120712131231.GH2194@pengutronix.de>
+ <CACRpkdboeF_G=sTPeSyuZ6KGLCmGSKx_NS=6Rim6HkR2f9=AAQ@mail.gmail.com>
+ <20120716101706.GB17435@pengutronix.de>
+ <CACRpkdY626iYATorphAvg7cQxD2ufysBvXdt3Z644zEuW0wS=w@mail.gmail.com>
+ <20120716123550.GE17435@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:50010 "HELO
-	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1750890Ab2GPPcy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jul 2012 11:32:54 -0400
-In-Reply-To: <20120716171709.a2da2c69fd0052b1a519de65@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Teddy Wang <teddy.wang@siliconmotion.com.cn>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20120716123550.GE17435-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Alessandro Rubini <rubini-kaDoWcXyVrEAvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Deepak Saxena <dsaxena-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Mon, Jul 16, 2012 at 2:35 PM, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
 
-sm7xxfb.c is a PCI driver, so make it depend on PCI.
-Fixes these build warnings:
+> Uhm, I seem to have missed that bindings are deemed more "flexible" as
+> long as they are coupled to in-kernel dts files? Is that discussed
+> somewhere? I do wonder about it...
 
-drivers/staging/sm7xxfb/sm7xxfb.c:1063:1: warning: data definition has no type or storage class
-drivers/staging/sm7xxfb/sm7xxfb.c:1063:1: warning: type defaults to 'int' in declaration of 'module_pci_driver'
-drivers/staging/sm7xxfb/sm7xxfb.c:1063:1: warning: parameter names (without types) in function declaration
+Well patches like this are sent out but not commented on from
+the perspective of binding stability. So of course, they get merged.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Teddy Wang <teddy.wang@siliconmotion.com.cn>
----
- drivers/staging/sm7xxfb/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Have a look at this commit:
 
---- linux-next-20120716.orig/drivers/staging/sm7xxfb/Kconfig
-+++ linux-next-20120716/drivers/staging/sm7xxfb/Kconfig
-@@ -1,6 +1,6 @@
- config FB_SM7XX
- 	tristate "Silicon Motion SM7XX framebuffer support"
--	depends on FB
-+	depends on FB && PCI
- 	select FB_CFB_FILLRECT
- 	select FB_CFB_COPYAREA
- 	select FB_CFB_IMAGEBLIT
+commit 7f217794ffa72f208a250b79ab0b7ea3de19677f
+Author: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Date:   Sun May 13 00:14:24 2012 -0400
+
+    mmc: dt: Consolidate DT bindings
+
+This is deleting custom properties from DTS files without
+adding any code to fallback-support them on old device trees.
+
+(Actually I like this commit a lot, since it is removing custom MMC
+props and replacing these with standard bindings common for all
+MMC/SD controllers, but ...)
+
+I think there are more examples if you git log on arch/arm/boot/dts...
+
+Yours,
+Linus Walleij
