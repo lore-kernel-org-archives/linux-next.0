@@ -1,64 +1,80 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: Tree for July 16
-Date: Mon, 16 Jul 2012 09:31:46 +0100
-Message-ID: <20120716083146.GL31729@ZenIV.linux.org.uk>
-References: <20120716171709.a2da2c69fd0052b1a519de65@canb.auug.org.au>
- <20120716074825.GK31729@ZenIV.linux.org.uk>
- <CA+icZUWBPm7wa=cHUwaFQkaVO5rKT39SZHpq68UdD8+HiLfUqQ@mail.gmail.com>
- <CA+icZUV1_QUyBh-PQoFy5jL5ft=neUvVyxx77PhiVgAnOCFUYA@mail.gmail.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the
+ i2c-embedded tree
+Date: Mon, 16 Jul 2012 12:17:06 +0200
+Message-ID: <20120716101706.GB17435@pengutronix.de>
+References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
+ <20120712131231.GH2194@pengutronix.de>
+ <CACRpkdboeF_G=sTPeSyuZ6KGLCmGSKx_NS=6Rim6HkR2f9=AAQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MW5yreqqjyrRcusr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:60812 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752589Ab2GPIbu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jul 2012 04:31:50 -0400
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:42207 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751292Ab2GPKRa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jul 2012 06:17:30 -0400
 Content-Disposition: inline
-In-Reply-To: <CA+icZUV1_QUyBh-PQoFy5jL5ft=neUvVyxx77PhiVgAnOCFUYA@mail.gmail.com>
+In-Reply-To: <CACRpkdboeF_G=sTPeSyuZ6KGLCmGSKx_NS=6Rim6HkR2f9=AAQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Linus Walleij <linus.walleij@stericsson.com>, Stephen Warren <swarren@wwwdotorg.org>, Deepak Saxena <dsaxena@linaro.org>, devicetree-discuss@lists.ozlabs.org, Grant Likely <grant.likely@secretlab.ca>
 
-On Mon, Jul 16, 2012 at 09:56:45AM +0200, Sedat Dilek wrote:
-> On Mon, Jul 16, 2012 at 9:54 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> > On Mon, Jul 16, 2012 at 9:48 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >> On Mon, Jul 16, 2012 at 05:17:09PM +1000, Stephen Rothwell wrote:
-> >>> Hi all,
-> >>>
-> >>> Changes since 20120713:
-> >>>
-> >>> The ext4 tree lost its build failure.
-> >>>
-> >>> The vfs tree gained a build failure so I used the version from
-> >>> next-20120713.
-> >>
-> >> Details, please?
-> >
-> > [1] http://lkml.indiana.edu/hypermail/linux/kernel/1107.2/00046.html
-> >
-> 
-> Grr right subject - wrong email, Stephen's mail seems to be not in the
-> offline mail-archives, so I am quoting:
-> 
-> "Hi Al,
-> 
-> After merging the vfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/ext2/super.c: In function 'ext2_sync_fs':
-> fs/ext2/super.c:1191:2: error: implicit declaration of function
-> 'dquot_writeback_dquots' [-Werror=implicit-function-declaration]
-> fs/ext3/super.c: In function 'ext3_sync_fs':
-> fs/ext3/super.c:2534:2: error: implicit declaration of function
-> 'dquot_writeback_dquots' [-Werror=implicit-function-declaration]
-> fs/ext4/super.c: In function 'ext4_sync_fs':
-> fs/ext4/super.c:4493:2: error: implicit declaration of function
-> 'dquot_writeback_dquots' [-Werror=implicit-function-declaration]
-> 
-> Caused by commits 05566b558a47 ("quota: Move quota syncing to ->sync_fs
-> method") and ad04033e79d2 ("quota: Split dquot_quota_sync() to writeback
-> and cache flushing part").  Please do build testing with and without
-> CONFIG QUOTA for quota changes ...
 
-Fixed, folded and pushed...
+--MW5yreqqjyrRcusr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> Well I think I ACKed that from the point of view that it will work as
+> expected with ux500 with these bindings. What is best from the I2C
+> subsystem point of view is another question ...
+
+Okay, thanks for clarifying.
+
+> Overall I think we have this general problem with a lot of DT
+> conversion happening right now: the tempo is set very high and
+> all chip vendors want DT support RealQuickNowPreferrablyYesterday
+> and that makes it hard for subsystem maintainers to hold back,
+> and I also fear vendor-specific properties are overused for this
+> reason.
+
+Word.
+
+> And about the perpetual nature of device tree bindings it
+> appears to me that the modus operandi right now is to not
+> regard any of these as written in stone until they are removed
+> from the kernel tree. We have plenty of drivers patching
+> trees and drivers in one for the moment.
+
+I don't get this one. Yes, they are of perpetual nature, so how could we
+remove them from the kernel tree?
+
+What I am afraid of is: tentative solutions tend to stay, because the
+need for a proper solution is reduced. Yet, finding proper generic
+bindings might take some time which doesn't meet the high pressure
+around DT at the moment.
+
+Regards,
+
+   Wolfram
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--MW5yreqqjyrRcusr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAlAD6iIACgkQD27XaX1/VRtxEACfZtHvrw1MIgXyO1xqL9gXN3MA
+YAIAnjsEPtmTIatHwp4A0OjqtcOed/KL
+=+TIl
+-----END PGP SIGNATURE-----
+
+--MW5yreqqjyrRcusr--
