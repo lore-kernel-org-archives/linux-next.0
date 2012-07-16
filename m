@@ -1,110 +1,64 @@
 From: Wolfram Sang <w.sang@pengutronix.de>
 Subject: Re: linux-next: manual merge of the arm-soc tree with the
  i2c-embedded tree
-Date: Mon, 16 Jul 2012 14:35:50 +0200
-Message-ID: <20120716123550.GE17435@pengutronix.de>
+Date: Mon, 16 Jul 2012 15:00:15 +0200
+Message-ID: <20120716130015.GF17435@pengutronix.de>
 References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
  <20120712131231.GH2194@pengutronix.de>
  <CACRpkdboeF_G=sTPeSyuZ6KGLCmGSKx_NS=6Rim6HkR2f9=AAQ@mail.gmail.com>
  <20120716101706.GB17435@pengutronix.de>
- <CACRpkdY626iYATorphAvg7cQxD2ufysBvXdt3Z644zEuW0wS=w@mail.gmail.com>
+ <5003FB7C.4030509@linaro.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TD8GDToEDw0WLGOL"
+	protocol="application/pgp-signature"; boundary="Wb5NtZlyOqqy58h0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:42677 "EHLO
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:41952 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751014Ab2GPMgI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jul 2012 08:36:08 -0400
+	with ESMTP id S1751262Ab2GPNAY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jul 2012 09:00:24 -0400
 Content-Disposition: inline
-In-Reply-To: <CACRpkdY626iYATorphAvg7cQxD2ufysBvXdt3Z644zEuW0wS=w@mail.gmail.com>
+In-Reply-To: <5003FB7C.4030509@linaro.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Linus Walleij <linus.walleij@stericsson.com>, Stephen Warren <swarren@wwwdotorg.org>, Deepak Saxena <dsaxena@linaro.org>, devicetree-discuss@lists.ozlabs.org, Grant Likely <grant.likely@secretlab.ca>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, Linus Walleij <linus.walleij@stericsson.com>, Stephen Warren <swarren@wwwdotorg.org>, Deepak Saxena <dsaxena@linaro.org>, devicetree-discuss@lists.ozlabs.org, Grant Likely <grant.likely@secretlab.ca>
 
 
---TD8GDToEDw0WLGOL
+--Wb5NtZlyOqqy58h0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 16, 2012 at 01:37:13PM +0200, Linus Walleij wrote:
-> On Mon, Jul 16, 2012 at 12:17 PM, Wolfram Sang <w.sang@pengutronix.de> wr=
-ote:
+> >What I am afraid of is: tentative solutions tend to stay, because the
+> >need for a proper solution is reduced. Yet, finding proper generic
+> >bindings might take some time which doesn't meet the high pressure
+> >around DT at the moment.
 >=20
-> >> And about the perpetual nature of device tree bindings it
-> >> appears to me that the modus operandi right now is to not
-> >> regard any of these as written in stone until they are removed
-> >> from the kernel tree. We have plenty of drivers patching
-> >> trees and drivers in one for the moment.
-> >
-> > I don't get this one. Yes, they are of perpetual nature, so how could we
-> > remove them from the kernel tree?
->=20
-> What I meant was that at the point when arch/arm/boot/dts/*
-> is (if ever) removed from the kernel tree and into its own git, so that
-> the standardization of bindings is decoupled from the Linux kernel
-> tree, from that point it is no longer possible to alter the bindings
-> and the code in sync, so at that point the bindings need to be
-> frozen and all subsequent work will need to gear down and
-> work on bindings before deployment.
+> I agree with what you say to some extent, but I believe that it is
+> more important to have a working solution now than to ensure that
+> each bindings are as unique as possible. After any suggestion of
+> consolidation, a move from vendor specific to generically defined
+> Device Tree bindings is trivial. Especially in the current stage
+> where adaptions and definitions are still fluid.
 
-Uhm, I seem to have missed that bindings are deemed more "flexible" as
-long as they are coupled to in-kernel dts files? Is that discussed
-somewhere? I do wonder about it...
-
->=20
-> That said, this does not at all solve the problem of already-deployed
-> device trees using old bindings...
-
-=2E.. exactly because of this. I don't think it is possible to really drop
-a binding. Only to mark them deprecated. Which can really be messy in
-drivers.
-
-> > What I am afraid of is: tentative solutions tend to stay, because the
-> > need for a proper solution is reduced. Yet, finding proper generic
-> > bindings might take some time which doesn't meet the high pressure
-> > around DT at the moment.
->=20
-> I'm +1 on this. But I have learned that I have had to strike a
-> compromise with people who want to forge ahead. They see things
-> in the other way: perpetual committee discussions and no code
-> nor device trees being deployed... :-)
-
-I do know both sides. I easily agree that we have to find a balance
-somewhere to meet both interests. Though, currently my impressions from
-maintaining I2C are:
-
-a) it is not balanced, but too far on the "let's deploy stuff" side
-b) developers have a tendency to simply map platform_data to bindings
-   and are surprised when told this is often not possible
-
-which adds burden to the maintainers (who sometimes might not even be
-familiar with devicetree because they are not focused on embedded). And
-I worry about bindings of unmaintained subsystems.
-
-So, I guess, what I am basically hoping for is less pace and a wider
-acceptance that bindings can be really non-trivial.
-
-Regards,
-
-   Wolfram
+See my response to Linus. I do understand your view and where it comes
+=66rom. As a maintainer, I have other priorities. No offence involved,
+it needs some settlement.
 
 --=20
 Pengutronix e.K.                           | Wolfram Sang                |
 Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 
---TD8GDToEDw0WLGOL
+--Wb5NtZlyOqqy58h0
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iEYEARECAAYFAlAECqYACgkQD27XaX1/VRuJWgCeL87xeALRomphhoiGkjSyvlMx
-xYAAniVyl85W5gF7YhY77oPtx+BxI9Hy
-=UiNt
+iEYEARECAAYFAlAEEF8ACgkQD27XaX1/VRsWNgCfe0+JZ2Rxhzcwt/MRWuszihvN
+hXIAnRzaYpdnveXY261g/nCxzlYhMXT+
+=uOx2
 -----END PGP SIGNATURE-----
 
---TD8GDToEDw0WLGOL--
+--Wb5NtZlyOqqy58h0--
