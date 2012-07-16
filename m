@@ -1,51 +1,44 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the i2c-embedded
- tree
-Date: Mon, 16 Jul 2012 14:55:40 +0100
-Message-ID: <50041D5C.7010904@linaro.org>
-References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au> <20120712131231.GH2194@pengutronix.de> <CACRpkdboeF_G=sTPeSyuZ6KGLCmGSKx_NS=6Rim6HkR2f9=AAQ@mail.gmail.com> <20120716101706.GB17435@pengutronix.de> <5003FB7C.4030509@linaro.org> <20120716130015.GF17435@pengutronix.de>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] staging: fix sm7xxfb build, depends on PCI
+Date: Mon, 16 Jul 2012 08:32:03 -0700
+Message-ID: <500433F3.8030104@xenotime.net>
+References: <20120716171709.a2da2c69fd0052b1a519de65@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:50909 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751199Ab2GPNzo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jul 2012 09:55:44 -0400
-Received: by eekc13 with SMTP id c13so190853eek.19
-        for <linux-next@vger.kernel.org>; Mon, 16 Jul 2012 06:55:43 -0700 (PDT)
-In-Reply-To: <20120716130015.GF17435@pengutronix.de>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:50010 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750890Ab2GPPcy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jul 2012 11:32:54 -0400
+In-Reply-To: <20120716171709.a2da2c69fd0052b1a519de65@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wolfram Sang <w.sang@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, Linus Walleij <linus.walleij@stericsson.com>, Stephen Warren <swarren@wwwdotorg.org>, Deepak Saxena <dsaxena@linaro.org>, devicetree-discuss@lists.ozlabs.org, Grant Likely <grant.likely@secretlab.ca>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Teddy Wang <teddy.wang@siliconmotion.com.cn>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
 
-On 16/07/12 14:00, Wolfram Sang wrote:
->>> What I am afraid of is: tentative solutions tend to stay, because t=
-he
->>> need for a proper solution is reduced. Yet, finding proper generic
->>> bindings might take some time which doesn't meet the high pressure
->>> around DT at the moment.
->>
->> I agree with what you say to some extent, but I believe that it is
->> more important to have a working solution now than to ensure that
->> each bindings are as unique as possible. After any suggestion of
->> consolidation, a move from vendor specific to generically defined
->> Device Tree bindings is trivial. Especially in the current stage
->> where adaptions and definitions are still fluid.
->
-> See my response to Linus. I do understand your view and where it come=
-s
-> from. As a maintainer, I have other priorities. No offence involved,
-> it needs some settlement.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-I'm certainly not adverse to doing this, although I'd prefer it was=20
-completed in the short-term. So should we do it?
+sm7xxfb.c is a PCI driver, so make it depend on PCI.
+Fixes these build warnings:
 
---=20
-Lee Jones
-Linaro ST-Ericsson Landing Team Lead
-M: +44 77 88 633 515
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+drivers/staging/sm7xxfb/sm7xxfb.c:1063:1: warning: data definition has no type or storage class
+drivers/staging/sm7xxfb/sm7xxfb.c:1063:1: warning: type defaults to 'int' in declaration of 'module_pci_driver'
+drivers/staging/sm7xxfb/sm7xxfb.c:1063:1: warning: parameter names (without types) in function declaration
+
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Teddy Wang <teddy.wang@siliconmotion.com.cn>
+---
+ drivers/staging/sm7xxfb/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20120716.orig/drivers/staging/sm7xxfb/Kconfig
++++ linux-next-20120716/drivers/staging/sm7xxfb/Kconfig
+@@ -1,6 +1,6 @@
+ config FB_SM7XX
+ 	tristate "Silicon Motion SM7XX framebuffer support"
+-	depends on FB
++	depends on FB && PCI
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
