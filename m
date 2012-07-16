@@ -1,40 +1,64 @@
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Subject: Re: linux-next: manual merge of the net-next tree with the infiniband tree
-Date: Mon, 16 Jul 2012 11:34:34 +0300
-Message-ID: <201207161134.34574.jackm@dev.mellanox.co.il>
-References: <20120712121307.a482863a98848e3813690ef2@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: Tree for July 16
+Date: Mon, 16 Jul 2012 09:31:46 +0100
+Message-ID: <20120716083146.GL31729@ZenIV.linux.org.uk>
+References: <20120716171709.a2da2c69fd0052b1a519de65@canb.auug.org.au>
+ <20120716074825.GK31729@ZenIV.linux.org.uk>
+ <CA+icZUWBPm7wa=cHUwaFQkaVO5rKT39SZHpq68UdD8+HiLfUqQ@mail.gmail.com>
+ <CA+icZUV1_QUyBh-PQoFy5jL5ft=neUvVyxx77PhiVgAnOCFUYA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:54148 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752330Ab2GPIbP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jul 2012 04:31:15 -0400
-Received: by eekc13 with SMTP id c13so73711eek.19
-        for <linux-next@vger.kernel.org>; Mon, 16 Jul 2012 01:31:13 -0700 (PDT)
-In-Reply-To: <20120712121307.a482863a98848e3813690ef2@canb.auug.org.au>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:60812 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752589Ab2GPIbu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jul 2012 04:31:50 -0400
 Content-Disposition: inline
+In-Reply-To: <CA+icZUV1_QUyBh-PQoFy5jL5ft=neUvVyxx77PhiVgAnOCFUYA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hadar Hen Zion <hadarh@mellanox.co.il>, Or Gerlitz <ogerlitz@mellanox.com>, Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thursday 12 July 2012 05:13, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Jul 16, 2012 at 09:56:45AM +0200, Sedat Dilek wrote:
+> On Mon, Jul 16, 2012 at 9:54 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> > On Mon, Jul 16, 2012 at 9:48 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >> On Mon, Jul 16, 2012 at 05:17:09PM +1000, Stephen Rothwell wrote:
+> >>> Hi all,
+> >>>
+> >>> Changes since 20120713:
+> >>>
+> >>> The ext4 tree lost its build failure.
+> >>>
+> >>> The vfs tree gained a build failure so I used the version from
+> >>> next-20120713.
+> >>
+> >> Details, please?
+> >
+> > [1] http://lkml.indiana.edu/hypermail/linux/kernel/1107.2/00046.html
+> >
 > 
-> Today's linux-next merge of the net-next tree got a conflict in
-> include/linux/mlx4/device.h between commit 396f2feb05d7 ("mlx4_core:
-> Implement mechanism for reserved Q_Keys") from the infiniband tree and
-> commit 0ff1fb654bec ("{NET, IB}/mlx4: Add device managed flow steering
-> firmware API") from the net-next tree.
+> Grr right subject - wrong email, Stephen's mail seems to be not in the
+> offline mail-archives, so I am quoting:
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix
-> as necessary.
+> "Hi Al,
+> 
+> After merging the vfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> fs/ext2/super.c: In function 'ext2_sync_fs':
+> fs/ext2/super.c:1191:2: error: implicit declaration of function
+> 'dquot_writeback_dquots' [-Werror=implicit-function-declaration]
+> fs/ext3/super.c: In function 'ext3_sync_fs':
+> fs/ext3/super.c:2534:2: error: implicit declaration of function
+> 'dquot_writeback_dquots' [-Werror=implicit-function-declaration]
+> fs/ext4/super.c: In function 'ext4_sync_fs':
+> fs/ext4/super.c:4493:2: error: implicit declaration of function
+> 'dquot_writeback_dquots' [-Werror=implicit-function-declaration]
+> 
+> Caused by commits 05566b558a47 ("quota: Move quota syncing to ->sync_fs
+> method") and ad04033e79d2 ("quota: Split dquot_quota_sync() to writeback
+> and cache flushing part").  Please do build testing with and without
+> CONFIG QUOTA for quota changes ...
 
-Thanks, Stephen!
-
-Your merge looks fine. Ack.
-
--Jack
+Fixed, folded and pushed...
