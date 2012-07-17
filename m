@@ -1,71 +1,73 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the i2c-embedded
- tree
-Date: Tue, 17 Jul 2012 14:30:01 +0100
-Message-ID: <500568D9.10805@linaro.org>
-References: <5003FB7C.4030509@linaro.org> <20120717130650.GB27595@sirena.org.uk>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the
+ i2c-embedded tree
+Date: Tue, 17 Jul 2012 14:35:51 +0100
+Message-ID: <20120717133550.GC4477@opensource.wolfsonmicro.com>
+References: <5003FB7C.4030509@linaro.org>
+ <20120717130650.GB27595@sirena.org.uk>
+ <500568D9.10805@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vOmOzSkFvhd7u8Ms"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:47901 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751891Ab2GQNaF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jul 2012 09:30:05 -0400
-Received: by eekc13 with SMTP id c13so156027eek.19
-        for <linux-next@vger.kernel.org>; Tue, 17 Jul 2012 06:30:04 -0700 (PDT)
-In-Reply-To: <20120717130650.GB27595@sirena.org.uk>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38009 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751060Ab2GQNfz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Jul 2012 09:35:55 -0400
+Content-Disposition: inline
+In-Reply-To: <500568D9.10805@linaro.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Lee Jones <lee.jones@linaro.org>
 Cc: Wolfram Sang <w.sang@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, Linus Walleij <linus.walleij@stericsson.com>, Stephen Warren <swarren@wwwdotorg.org>, Deepak Saxena <dsaxena@linaro.org>, devicetree-discuss@lists.ozlabs.org, Grant Likely <grant.likely@secretlab.ca>
 
-On 17/07/12 14:06, Mark Brown wrote:
-> On Mon, Jul 16, 2012 at 12:31:08PM +0100, Lee Jones wrote:
->
->> I agree with what you say to some extent, but I believe that it is
->> more important to have a working solution now than to ensure that
->> each bindings are as unique as possible. After any suggestion of
->> consolidation, a move from vendor specific to generically defined
->> Device Tree bindings is trivial. Especially in the current stage
->> where adaptions and definitions are still fluid.
->
->> Obviously some care is taken to ensure the bindings are as generic
->> as possible, but not to the extent that will put the project back
->> some months. Over past few months I have enabled many sub-systems;
->
-> It's not just about having generic bindings, it's also about having
-> bindings which have some abstraction and hope of reusability. An awfu=
-l
-> lot of bindings are just straight dumps of Linux data structures into
-> the device tree which don't make a terribly great deal of sense as
-> bindings.
 
-The Device Tree should supply any platform configuration which the=20
-driver needs in order to correctly setup for a particular machine. This=
-=20
-is exactly what the platform_data structure did before, hence is is=20
-reasonable to assume that whatever information resides in that structur=
-e=20
-would be required in the Device Tree.
+--vOmOzSkFvhd7u8Ms
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->> however, I think it would have been a fraction of that if we'd gone
->> through the laborious process of immediate forced consolidation. I
->> think it's fine to have platform/vendor specific bindings that work,
->> then come back to unify them once the dust settles.
->
-> In many of these cases we'd be better off just not putting things int=
-o
-> the device tree in the first place, leaving things at the basic "is t=
-he
-> device there" stuff.
+On Tue, Jul 17, 2012 at 02:30:01PM +0100, Lee Jones wrote:
+> On 17/07/12 14:06, Mark Brown wrote:
 
-Then what do you do with the platform data?
+> >It's not just about having generic bindings, it's also about having
+> >bindings which have some abstraction and hope of reusability. An awful
+> >lot of bindings are just straight dumps of Linux data structures into
+> >the device tree which don't make a terribly great deal of sense as
+> >bindings.
 
---=20
-Lee Jones
-Linaro ST-Ericsson Landing Team Lead
-M: +44 77 88 633 515
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+> The Device Tree should supply any platform configuration which the
+> driver needs in order to correctly setup for a particular machine.
+> This is exactly what the platform_data structure did before, hence
+> is is reasonable to assume that whatever information resides in that
+> structure would be required in the Device Tree.
+
+An *awful* lot of what people are trying to put into platform data is
+nothing to do with that, it's just the generic data the driver needs to
+be able to understand the hardware at all.  Things like the MFD
+breakdown, random parameters of the hardware which you can infer from
+the device name and so on.
+
+--vOmOzSkFvhd7u8Ms
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQBWobAAoJEBus8iNuMP3dysIQAJUP9/WdJ9VLTOG5bA3f/tLD
+iXDgfrm/9QJVz5POnOnjgR3fnrW0W2VyY9huF+1SBV+5IGMuCp55GhqEXruhYs4h
+CLfMvRsBZ2nAZZMgNWr8vDIMont2Q73cM/HZB1nWHSUFwtbOsq8pQrvoe9SF7/0Q
+78Q0MTWKDQvdfNfzjeF5ZItcN9GdezSRvcKhJN/tiiSeEsN3eh3ztZuEqVgLUKx0
+ODbCR2g6w4KZfxyOkRuZHXzNX4OnDr9SXaH6sUZ8Axf1X2d49AA2Cg1ijijeAVV2
+MI6mJSOERDV153zWUIOHLOyApbMZdsg/InZtFsMFwjkbs5G0reb2xCsbFZVBhsog
+37OyD9W5TixQWTaX0HY0mYt4lJkdXyQ7yEFRadCkUWnjb7M2PkciY1NscmPJPgW8
+ZATOpg643ouJ0w2q4Q9yaKQVG+8mQFcgahzYudYujzHB8KOV9AY6MJcY/w3hSY9X
+V21+YHXrvwiVf5e5QlEt275gTUIXz9dQHo2LADDcj7wAvpkB8B2U6K9np+ILTVcy
+cl+D4aSB7N7NVlLqbkVliOw//AeHLfGVyowcyPboi3P6BbAyr4l/NJ/hBiv3BxlJ
+CJvcOggci2vnYLYLRa1mPyio3Qo6q47oycTL9t3wvvU69RynC3uVflDNSjHCQHAA
+UDowXAzqLfqYRFlgSjPY
+=C2mU
+-----END PGP SIGNATURE-----
+
+--vOmOzSkFvhd7u8Ms--
