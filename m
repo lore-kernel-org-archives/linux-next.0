@@ -1,76 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for July 12 (v4l2-ioctl.c)
-Date: Tue, 17 Jul 2012 17:35:53 +1000
-Message-ID: <20120717173553.095663543a67620efe55c9e2@canb.auug.org.au>
-References: <20120712160335.9cbff13c2f18eadc7d3cb0cf@canb.auug.org.au>
-	<4FFEF21A.7050701@xenotime.net>
-	<CACVXFVOy7VGstdotnofq=o_UmFh0KwqH6p25MamwAbLfRgcTRg@mail.gmail.com>
-	<201207170848.37945.hverkuil@xs4all.nl>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for July 17 (mfd: AB3100 - ab3100_probe:
+ undefined reference to `rand_initialize_irq')
+Date: Tue, 17 Jul 2012 11:47:19 +0200
+Message-ID: <CA+icZUXjc+13YjoJ6FjDFboX20j3mqHNtvV2Av2-H0My8V2Mgg@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__17_Jul_2012_17_35_53_+1000_ZiYuRUdTjxeI0Qnm"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41644 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750832Ab2GQHgD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jul 2012 03:36:03 -0400
-In-Reply-To: <201207170848.37945.hverkuil@xs4all.nl>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Ming Lei <ming.lei@canonical.com>, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__17_Jul_2012_17_35_53_+1000_ZiYuRUdTjxeI0Qnm
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Tue, 17 Jul 2012 08:48:37 +0200 Hans Verkuil <hverkuil@xs4all.nl> wrote:
+On Tue, Jul 17, 2012 at 7:41 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> On Tue July 17 2012 04:25:35 Ming Lei wrote:
-> > On Thu, Jul 12, 2012 at 11:49 PM, Randy Dunlap <rdunlap@xenotime.net> w=
-rote:
-> > >
-> > > on i386 and/or x86_64, drivers/media/video/v4l2-ioctl.c has too many
-> > > errors to be listed here.  This is the beginning few lines of the err=
-ors:
-> >=20
-> > I see the errors on ARM too.
->=20
-> A fix can be found here:
->=20
-> http://patchwork.linuxtv.org/patch/13336/
+> Changes since 20120716:
+>
+> The vfs tree lost its build failure.
+>
+> The l2-mtd tree gained a conflict against the mtd tree.
+>
+> The battery tree tree lost its build failure.
+>
+> The regulator tree gained conflicts against the mfd tree.
+>
+> The tty tree lost its build failure but gained another, so I used the
+> version from next-20120712.
+>
+> I have still reverted 3 commits from the signal tree at the request of the
+> arm maintainer.
+>
+> The akpm tree lost a few patches that turned up elsewhere.
+>
 
-And I have been applying that fix to linux-next since next-20120713 -
-though Mauro has not applied it to the v4l-dvb tree yet ...
+>From my today's build-log on a Ubuntu/precise AMD64 host:
+[...]
+  LD      drivers/video/built-in.o
+  LD      drivers/built-in.o
+  LINK    vmlinux
+  LD      vmlinux.o
+  MODPOST vmlinux.o
+  GEN     .version
+  CHK     include/generated/compile.h
+  UPD     include/generated/compile.h
+  CC      init/version.o
+  LD      init/built-in.o
+drivers/built-in.o: In function `ab3100_probe':
+ab3100-core.c:(.devinit.text+0xbf97): undefined reference to
+`rand_initialize_irq'
+make[2]: *** [vmlinux] Error 1
+make[1]: *** [deb-pkg] Error 2
+make: *** [deb-pkg] Error 2
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+MFD / AB3100 kernel-config settings:
 
---Signature=_Tue__17_Jul_2012_17_35_53_+1000_ZiYuRUdTjxeI0Qnm
-Content-Type: application/pgp-signature
+CONFIG_AB3100_CORE=y
+CONFIG_AB3100_OTP=m
+CONFIG_REGULATOR_AB3100=m
+CONFIG_RTC_DRV_AB3100=m
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+If you need further informations, please let me know.
 
-iQIcBAEBCAAGBQJQBRXZAAoJEECxmPOUX5FEGdEP/2AwWiwtl3RECKWWuJSXJmWD
-OuwKx8UWtKn3TbsrSeB8PNFDtUsnyE4Tz6v2vYEP4xCA/QSqdPOHPLFxaKszjZ9j
-EwCEeLprncW1/JGVvWTvgqIivO+69GDZmB30L0aAuXwxy2xvT8q4QGqWK1e1w2dG
-Jse9HWbAMI7/TKlKuh1VLnxXhmpSwm/qsopHHVtHacPmn0bsPjlSYt/4DUx/Jz2+
-/KGhOf5N4KmmYqWFyfjWOhGei21qdGP6I3N5SCzOIIXaNFOtw55eIK1xFBYlgilI
-Wwc88tUPgdA7GRo+vgSLtnRhQ0JCPx+nN1Bg2gR1UQcPgeCjGjDRtRezBMJwFID+
-UjHvr3KDprt2lXMGqsly2HEcqHfyvIbjoF/26lNXv8FOo8IsLQ6jS6XyT4d4QtkA
-vYvwMu+UQ3PxM10uuelCRlE7lF8vC5n5r5fkgwNS80jOYIVrKf4n6x6jE/WsYCWd
-DkoWuGU7umoGQs3+UJuaZGNrkrSVrvMGSjDJeJe5H9OX8Ketp+hW183MjB/GspHs
-V2OQNYnbjJdO7t73RHN9x0AyCOypUE2ONImaa2dqEoTzEHTSE1YaEwg8pBPSHS88
-BinJ+iY3tJ1zjQkfVTPRRj2YKDAkzeBEiAqUjHGdZonmgo0EYfpYV4nFfAUh72ry
-JWe1fWDXCFnFomVA0avS
-=lpaz
------END PGP SIGNATURE-----
-
---Signature=_Tue__17_Jul_2012_17_35_53_+1000_ZiYuRUdTjxeI0Qnm--
+- Sedat -
