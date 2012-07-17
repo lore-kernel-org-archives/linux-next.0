@@ -1,65 +1,51 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for July 17 (mfd: AB3100 - ab3100_probe:
- undefined reference to `rand_initialize_irq')
-Date: Tue, 17 Jul 2012 11:47:19 +0200
-Message-ID: <CA+icZUXjc+13YjoJ6FjDFboX20j3mqHNtvV2Av2-H0My8V2Mgg@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Tue, 17 Jul 2012 11:10:53 +0100
+Message-ID: <20120717111053.287191b3@pyramind.ukuu.org.uk>
+References: <20120717134506.3f3f0614ad1d5193689de334@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:36937 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754076Ab2GQKHY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jul 2012 06:07:24 -0400
+In-Reply-To: <20120717134506.3f3f0614ad1d5193689de334@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2012 at 7:41 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Changes since 20120716:
->
-> The vfs tree lost its build failure.
->
-> The l2-mtd tree gained a conflict against the mtd tree.
->
-> The battery tree tree lost its build failure.
->
-> The regulator tree gained conflicts against the mfd tree.
->
-> The tty tree lost its build failure but gained another, so I used the
-> version from next-20120712.
->
-> I have still reverted 3 commits from the signal tree at the request of the
-> arm maintainer.
->
-> The akpm tree lost a few patches that turned up elsewhere.
->
+On Tue, 17 Jul 2012 13:45:06 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
->From my today's build-log on a Ubuntu/precise AMD64 host:
-[...]
-  LD      drivers/video/built-in.o
-  LD      drivers/built-in.o
-  LINK    vmlinux
-  LD      vmlinux.o
-  MODPOST vmlinux.o
-  GEN     .version
-  CHK     include/generated/compile.h
-  UPD     include/generated/compile.h
-  CC      init/version.o
-  LD      init/built-in.o
-drivers/built-in.o: In function `ab3100_probe':
-ab3100-core.c:(.devinit.text+0xbf97): undefined reference to
-`rand_initialize_irq'
-make[2]: *** [vmlinux] Error 1
-make[1]: *** [deb-pkg] Error 2
-make: *** [deb-pkg] Error 2
+> Hi Greg,
+> 
+> After merging the tty tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> drivers/tty/tty_ioctl.c: In function 'set_sgflags':
+> drivers/tty/tty_ioctl.c:741:9: error: request for member 'c_iflag' in something not a structure or union
+> drivers/tty/tty_ioctl.c:742:9: error: request for member 'c_oflag' in something not a structure or union
+> drivers/tty/tty_ioctl.c:743:9: error: request for member 'c_lflag' in something not a structure or union
+> drivers/tty/tty_ioctl.c:745:10: error: request for member 'c_iflag' in something not a structure or union
+> drivers/tty/tty_ioctl.c:746:10: error: request for member 'c_lflag' in something not a structure or union
+> drivers/tty/tty_ioctl.c:749:10: error: request for member 'c_lflag' in something not a structure or union
+> drivers/tty/tty_ioctl.c:753:10: error: request for member 'c_oflag' in something not a structure or union
+> drivers/tty/tty_ioctl.c:756:10: error: request for member 'c_iflag' in something not a structure or union
+> drivers/tty/tty_ioctl.c:757:10: error: request for member 'c_lflag' in something not a structure or union
+> drivers/tty/tty_ioctl.c:759:15: error: request for member 'c_lflag' in something not a structure or union
+> drivers/tty/tty_ioctl.c:760:10: error: request for member 'c_cc' in something not a structure or union
+> drivers/tty/tty_ioctl.c:761:10: error: request for member 'c_cc' in something not a structure or union
+> 
+> Caused by commit adc8d746caa6 ("tty: move the termios object into the
+> tty").  Did anyone build test this?  :-(
 
-MFD / AB3100 kernel-config settings:
+It's known not to build. I sent Greg some patches but he wants them
+versus a different tree. I hope to have that done and tested in the next
+couple of days, until then I'd suggest you drop the tty tree - in
+particular because the version you are currently using scribbles on other
+bits of of memory.
 
-CONFIG_AB3100_CORE=y
-CONFIG_AB3100_OTP=m
-CONFIG_REGULATOR_AB3100=m
-CONFIG_RTC_DRV_AB3100=m
-
-If you need further informations, please let me know.
-
-- Sedat -
+Alan
