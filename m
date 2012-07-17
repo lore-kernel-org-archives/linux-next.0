@@ -1,47 +1,43 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: linux-next: manual merge of the arm-soc tree with the
  i2c-embedded tree
-Date: Tue, 17 Jul 2012 14:06:50 +0100
-Message-ID: <20120717130650.GB27595@sirena.org.uk>
-References: <5003FB7C.4030509@linaro.org>
+Date: Tue, 17 Jul 2012 14:10:37 +0100
+Message-ID: <20120717131037.GC27595@sirena.org.uk>
+References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
+ <20120712131231.GH2194@pengutronix.de>
+ <CACRpkdboeF_G=sTPeSyuZ6KGLCmGSKx_NS=6Rim6HkR2f9=AAQ@mail.gmail.com>
+ <20120716101706.GB17435@pengutronix.de>
+ <CACRpkdY626iYATorphAvg7cQxD2ufysBvXdt3Z644zEuW0wS=w@mail.gmail.com>
+ <20120716123550.GE17435@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:52005 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:57303 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751717Ab2GQNHC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jul 2012 09:07:02 -0400
+	with ESMTP id S1753811Ab2GQNKl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jul 2012 09:10:41 -0400
 Content-Disposition: inline
-In-Reply-To: <5003FB7C.4030509@linaro.org>
+In-Reply-To: <20120716123550.GE17435@pengutronix.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Wolfram Sang <w.sang@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, Linus Walleij <linus.walleij@stericsson.com>, Stephen Warren <swarren@wwwdotorg.org>, Deepak Saxena <dsaxena@linaro.org>, devicetree-discuss@lists.ozlabs.org, Grant Likely <grant.likely@secretlab.ca>
+To: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Linus Walleij <linus.walleij@stericsson.com>, Stephen Warren <swarren@wwwdotorg.org>, Deepak Saxena <dsaxena@linaro.org>, devicetree-discuss@lists.ozlabs.org, Grant Likely <grant.likely@secretlab.ca>
 
-On Mon, Jul 16, 2012 at 12:31:08PM +0100, Lee Jones wrote:
+On Mon, Jul 16, 2012 at 02:35:50PM +0200, Wolfram Sang wrote:
 
-> I agree with what you say to some extent, but I believe that it is
-> more important to have a working solution now than to ensure that
-> each bindings are as unique as possible. After any suggestion of
-> consolidation, a move from vendor specific to generically defined
-> Device Tree bindings is trivial. Especially in the current stage
-> where adaptions and definitions are still fluid.
+> I do know both sides. I easily agree that we have to find a balance
+> somewhere to meet both interests. Though, currently my impressions from
+> maintaining I2C are:
 
-> Obviously some care is taken to ensure the bindings are as generic
-> as possible, but not to the extent that will put the project back
-> some months. Over past few months I have enabled many sub-systems;
+> a) it is not balanced, but too far on the "let's deploy stuff" side
+> b) developers have a tendency to simply map platform_data to bindings
+>    and are surprised when told this is often not possible
 
-It's not just about having generic bindings, it's also about having
-bindings which have some abstraction and hope of reusability. An awful
-lot of bindings are just straight dumps of Linux data structures into
-the device tree which don't make a terribly great deal of sense as
-bindings.
+> which adds burden to the maintainers (who sometimes might not even be
+> familiar with devicetree because they are not focused on embedded). And
+> I worry about bindings of unmaintained subsystems.
 
-> however, I think it would have been a fraction of that if we'd gone
-> through the laborious process of immediate forced consolidation. I
-> think it's fine to have platform/vendor specific bindings that work,
-> then come back to unify them once the dust settles.
-
-In many of these cases we'd be better off just not putting things into
-the device tree in the first place, leaving things at the basic "is the
-device there" stuff.
+A issue I'm seeing with some of the subsystems mantained by people who
+don't work on ARM is that they've got the DT message so strongly that
+they're pushing back on people trying to add platform data at all even
+on off SoC things that need to work with non-ARM processors.
