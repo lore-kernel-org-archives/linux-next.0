@@ -1,37 +1,56 @@
-From: Ming Lei <ming.lei@canonical.com>
-Subject: Re: linux-next: Tree for July 12 (v4l2-ioctl.c)
-Date: Tue, 17 Jul 2012 10:25:35 +0800
-Message-ID: <CACVXFVOy7VGstdotnofq=o_UmFh0KwqH6p25MamwAbLfRgcTRg@mail.gmail.com>
-References: <20120712160335.9cbff13c2f18eadc7d3cb0cf@canb.auug.org.au>
-	<4FFEF21A.7050701@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the regulator tree with the mfd tree
+Date: Tue, 17 Jul 2012 12:30:07 +1000
+Message-ID: <20120717123007.8e6aeb257ecb88378f3320e1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:50269 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753908Ab2GQCZi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jul 2012 22:25:38 -0400
-In-Reply-To: <4FFEF21A.7050701@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__17_Jul_2012_12_30_07_+1000_pOF_WitcXvhVIvnn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 12, 2012 at 11:49 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On 07/11/2012 11:03 PM, Stephen Rothwell wrote:
->
->> Hi all,
->>
->> Changes since 20120710:
->
->
->
-> on i386 and/or x86_64, drivers/media/video/v4l2-ioctl.c has too many
-> errors to be listed here.  This is the beginning few lines of the errors:
+--Signature=_Tue__17_Jul_2012_12_30_07_+1000_pOF_WitcXvhVIvnn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I see the errors on ARM too.
+Hi all,
 
+Today's linux-next merge of the regulator tree got a conflict in
+include/linux/mfd/s5m87xx/s5m-core.h between commits from the mfd tree
+and commit c848bc8538cd ("regulator: s5m8767a: Support AP watchdog reset
+operation") from the regulator tree.
 
-Thanks,
---
-Ming Lei
+This file was renamed (twice) in the mfd tree, so I removed the version
+in the regulator tree.  The changes from the regulator tree turned up in
+an mfd tree commit as well.=20
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__17_Jul_2012_12_30_07_+1000_pOF_WitcXvhVIvnn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQBM4vAAoJEECxmPOUX5FE3FIQAIf9FyNetO0OphxHDYnPGCpy
+7cDcZWeutx9j/cpbpBWSmcYFbvvl5KoJ/dyUnhvmpCJrkMdKSIX7qdjhKMKMAky1
+uvSbxEyQccljPfbRZNxpGRpzoVMryVqI4UN3b9dVTyal9y8arSy5FwDAlRLF9RrE
+wCwLyg1OTnbhjomCkwSYIEsUanAURfNUBQ1VHa3/x9L0hTUwH0jNNF/XQNukQ6uq
+szGlXl7kCRtJXGenYmnRWLWrnW5htzjcYKQEYu7aCp6JwL4s5SWex+ieCCLcMRim
+kmu07FPX1XUgmf8LXLW+s1BambD49GCJAA1//sn7WggmMT7XYyKsa2gLO5yf54Rh
+wVHO3mlDiEpeR6T4chmaSRY3LUPepFn/FV2kiD5a+/bxghOsJGiCxNl60O38T4bq
+02cX9UTqA8M9Mu1d87VUaZjdUYS3rAkJAefSEGRu1xiIx05x8WiKltAg/DYQeg1+
+cvq7RM29pnnoTSvgWzPFhqKyNmUdfuNwE0jEFN2khh06xCGmDpshzRrx3jfZh6Hb
+8y5mVWoSpWrGQdjmj4v6HUkOVPIC5WOTXQg3f6cGd3L58k7OgETt1XXiEpK7rR8Q
+leif6qTQE7+PQa2ELg1+dwTw1Cw/zBEcrMa84Zl6FUSGvdpk4947sWu7IpjQWL3S
+exi0pMY/7LftRAuVia6y
+=73Cr
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_Jul_2012_12_30_07_+1000_pOF_WitcXvhVIvnn--
