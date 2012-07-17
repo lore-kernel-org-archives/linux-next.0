@@ -1,66 +1,59 @@
-From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the
- i2c-embedded tree
-Date: Mon, 16 Jul 2012 16:04:25 -0400
-Message-ID: <874np7jwvq.fsf@octavius.laptop.org>
-References: <20120710164130.f38e4d1673f925ddb13914c9@canb.auug.org.au>
- <20120712131231.GH2194@pengutronix.de>
- <CACRpkdboeF_G=sTPeSyuZ6KGLCmGSKx_NS=6Rim6HkR2f9=AAQ@mail.gmail.com>
- <20120716101706.GB17435@pengutronix.de>
- <CACRpkdY626iYATorphAvg7cQxD2ufysBvXdt3Z644zEuW0wS=w@mail.gmail.com>
- <20120716123550.GE17435@pengutronix.de>
- <CACRpkdaMB-n7XYcxE8QtAm-WrGc2DR0krfTjQZCbvOL1HYep1Q@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the l2-mtd tree with the mtd tree
+Date: Tue, 17 Jul 2012 11:00:25 +1000
+Message-ID: <20120717110025.35e6d8404104e77019bef6ce@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <CACRpkdaMB-n7XYcxE8QtAm-WrGc2DR0krfTjQZCbvOL1HYep1Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
- (Linus Walleij's message of "Mon, 16 Jul 2012 21:45:29 +0200")
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Alessandro Rubini <rubini-kaDoWcXyVrEAvxtiuMwx3w@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Deepak Saxena <dsaxena-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__17_Jul_2012_11_00_25_+1000_5TN35iZq4z0d+gm_"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38383 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752693Ab2GQBAh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jul 2012 21:00:37 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Gerlando Falauto <gerlando.falauto@keymile.com>
 
-Hi,
+--Signature=_Tue__17_Jul_2012_11_00_25_+1000_5TN35iZq4z0d+gm_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 16 2012, Linus Walleij wrote:
->> Uhm, I seem to have missed that bindings are deemed more "flexible" as
->> long as they are coupled to in-kernel dts files? Is that discussed
->> somewhere? I do wonder about it...
->
-> Well patches like this are sent out but not commented on from
-> the perspective of binding stability. So of course, they get merged.
->
-> Have a look at this commit:
->
-> commit 7f217794ffa72f208a250b79ab0b7ea3de19677f
-> Author: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-> Date:   Sun May 13 00:14:24 2012 -0400
->
->     mmc: dt: Consolidate DT bindings
->
-> This is deleting custom properties from DTS files without
-> adding any code to fallback-support them on old device trees.
+Hi Artem,
 
-I agree with your point, but just as an FYI: this patch did involve
-a conversation about binding stability, and left some attributes
-(e.g. ti,non-removable) purposefully alone (and different to the
-new generic MMC bindings) to preserve backwards compatibility:
+Today's linux-next merge of the l2-mtd tree got a conflict in
+drivers/mtd/chips/cfi_cmdset_0002.c between commit 420962884379 ("mtd:
+cfi_cmdset_0002: Micron M29EW bugfixes as per TN-13-07") from the mtd
+tree and commit 39c0c188e160 ("mtd: cfi_cmdset_0002: Micron M29EW
+bugfixes as per TN-13-07") from the l2-mtd tree.
 
-http://article.gmane.org/gmane.linux.kernel.samsung-soc/10409
+I just used the version in the mtd tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks,
+--Signature=_Tue__17_Jul_2012_11_00_25_+1000_5TN35iZq4z0d+gm_
+Content-Type: application/pgp-signature
 
-- Chris.
--- 
-Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
-One Laptop Per Child
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQBLkpAAoJEECxmPOUX5FEjy4QAIhMeispn4G7srzuq1Z1iIs5
+6zgDBy0S8HKMN1Yw4gbHBsfrNdDhgb+dLkKEBbdO8zE42uVX7rxAP27DqbpjxtU5
+C3owLBgoRLsBG0HxXk3+F86LaR3Y7Z3ugv7xWFlq58VEgpl8WnciKnjFcC7Ux7V/
+k4erP518rcP3Gbq4Cqa+bD8l0WfJTXAkZXs4ZryH6Lx0DEE7j84FXD6+2bO/9W0J
+s10x4NjLeS8xnkahYAhAfYDRvIF/vsL/F7C2TCRlOGnYT/EwVZfFYt9n+Uv0uVaH
++bY+OAfoIdhITwmb8yT78KFz9wpC4K6jv50pyho5Pvsa/IKFd4R/CyjhZfAOKQjZ
+Sd8Isnzv7J5t37vw7iWaANCgP6E7sDSVct3D1E3p6Jy15Y+pe3E8/PmujnGAAXhy
+HomV5GjIoQs+Ufi5XxQKqboX6eDVrrvnwyohtGstNBBprzqgaX5Y8z81q8WQL0x+
+Qg2kZGmmGl7iS/LZ9kPuV16/6X0yOm9s70SIGOGCgTVuLvuV7zKWv7C6CWtif4BT
+XYXkOfg8SFVy8oc4eUWih628+WHAE3z83UXag0oBWGypKkGED7arOxO5vKIYZ6hv
+tVkXav4iiqW3pke/7bT1TS4aq3XR4XXgqLrQAQtpibOr1AsmPg115xIzXzft6YyX
+a/fLL0eF3/BwAJBvtcC4
+=Rohm
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_Jul_2012_11_00_25_+1000_5TN35iZq4z0d+gm_--
