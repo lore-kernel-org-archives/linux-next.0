@@ -1,64 +1,35 @@
-From: Alan Cox <alan@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Tue, 17 Jul 2012 17:05:40 +0100
-Message-ID: <20120717170540.2d457362@bob.linux.org.uk>
-References: <20120717134506.3f3f0614ad1d5193689de334@canb.auug.org.au>
-	<20120717154529.GD16283@kroah.com>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH -next] random: Remove remaining relicts of
+ rand_initialize_irq()
+Date: Tue, 17 Jul 2012 13:12:51 -0400
+Message-ID: <20120717171251.GD6049@thunk.org>
+References: <1342524793-2522-1-git-send-email-sedat.dilek@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:45318 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753431Ab2GQPsk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Jul 2012 11:48:40 -0400
-In-Reply-To: <20120717154529.GD16283@kroah.com>
+Received: from li9-11.members.linode.com ([67.18.176.11]:39504 "EHLO
+	imap.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754721Ab2GQRNW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Jul 2012 13:13:22 -0400
+Content-Disposition: inline
+In-Reply-To: <1342524793-2522-1-git-send-email-sedat.dilek@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Linus Walleij <linus.walleij@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, David Howells <dhowells@redhat.com>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, "H. Peter Anvin" <hpa@linux.intel.com>, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Tue, 17 Jul 2012 08:45:29 -0700
-Greg KH <greg@kroah.com> wrote:
-
-> On Tue, Jul 17, 2012 at 01:45:06PM +1000, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > After merging the tty tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> > 
-> > drivers/tty/tty_ioctl.c: In function 'set_sgflags':
-> > drivers/tty/tty_ioctl.c:741:9: error: request for member 'c_iflag'
-> > in something not a structure or union
-> > drivers/tty/tty_ioctl.c:742:9: error: request for member 'c_oflag'
-> > in something not a structure or union
-> > drivers/tty/tty_ioctl.c:743:9: error: request for member 'c_lflag'
-> > in something not a structure or union
-> > drivers/tty/tty_ioctl.c:745:10: error: request for member 'c_iflag'
-> > in something not a structure or union
-> > drivers/tty/tty_ioctl.c:746:10: error: request for member 'c_lflag'
-> > in something not a structure or union
-> > drivers/tty/tty_ioctl.c:749:10: error: request for member 'c_lflag'
-> > in something not a structure or union
-> > drivers/tty/tty_ioctl.c:753:10: error: request for member 'c_oflag'
-> > in something not a structure or union
-> > drivers/tty/tty_ioctl.c:756:10: error: request for member 'c_iflag'
-> > in something not a structure or union
-> > drivers/tty/tty_ioctl.c:757:10: error: request for member 'c_lflag'
-> > in something not a structure or union
-> > drivers/tty/tty_ioctl.c:759:15: error: request for member 'c_lflag'
-> > in something not a structure or union
-> > drivers/tty/tty_ioctl.c:760:10: error: request for member 'c_cc' in
-> > something not a structure or union drivers/tty/tty_ioctl.c:761:10:
-> > error: request for member 'c_cc' in something not a structure or
-> > union
-> > 
-> > Caused by commit adc8d746caa6 ("tty: move the termios object into
-> > the tty").  Did anyone build test this?  :-(
+On Tue, Jul 17, 2012 at 01:33:13PM +0200, Sedat Dilek wrote:
+> rand_initialize_irq() was removed here:
 > 
-> It builds here for me just fine, this is odd.
+> commit 946672f548682905d8ecdab33bb6e2c705418505
+> "random: remove rand_initialize_irq()"
+> 
+> The AB3100 mfd-driver is the only driver still using it and breaks
+> with the following error-messages in linux-next (next-20120717)
 
-Had me confused for a bit but while I couldn't find a config to test it
-I could find the bug 8)
+Oops.  Sorry, I thought I had caught all of the users of
+rand_initialize_irq().  Thanks for catching this!
 
-Alan
+I'll take your advice and merge it into the original commit.
+
+     	       	      	  	   	- Ted
