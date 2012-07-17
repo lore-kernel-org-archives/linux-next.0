@@ -1,77 +1,47 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: [PATCH -next] random: Remove remaining relicts of rand_initialize_irq()
-Date: Tue, 17 Jul 2012 13:33:13 +0200
-Message-ID: <1342524793-2522-1-git-send-email-sedat.dilek@gmail.com>
-Return-path: <linux-ia64-owner@vger.kernel.org>
-Sender: linux-ia64-owner@vger.kernel.org
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Linus Walleij <linus.walleij@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, David Howells <dhowells@redhat.com>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>, Theodore Ts'o <tytso@mit.edu>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, "H. Peter Anvin" <hpa@linux.intel.com>, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>
-List-Id: linux-next.vger.kernel.org
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the
+ i2c-embedded tree
+Date: Tue, 17 Jul 2012 14:06:50 +0100
+Message-ID: <20120717130650.GB27595@sirena.org.uk>
+References: <5003FB7C.4030509@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:52005 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751717Ab2GQNHC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jul 2012 09:07:02 -0400
+Content-Disposition: inline
+In-Reply-To: <5003FB7C.4030509@linaro.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Wolfram Sang <w.sang@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, Linus Walleij <linus.walleij@stericsson.com>, Stephen Warren <swarren@wwwdotorg.org>, Deepak Saxena <dsaxena@linaro.org>, devicetree-discuss@lists.ozlabs.org, Grant Likely <grant.likely@secretlab.ca>
 
-rand_initialize_irq() was removed here:
+On Mon, Jul 16, 2012 at 12:31:08PM +0100, Lee Jones wrote:
 
-commit 946672f548682905d8ecdab33bb6e2c705418505
-"random: remove rand_initialize_irq()"
+> I agree with what you say to some extent, but I believe that it is
+> more important to have a working solution now than to ensure that
+> each bindings are as unique as possible. After any suggestion of
+> consolidation, a move from vendor specific to generically defined
+> Device Tree bindings is trivial. Especially in the current stage
+> where adaptions and definitions are still fluid.
 
-The AB3100 mfd-driver is the only driver still using it and breaks
-with the following error-messages in linux-next (next-20120717):
-...
-drivers/built-in.o: In function `ab3100_probe':
-ab3100-core.c:(.devinit.text+0xbf97): undefined reference to `rand_initialize_irq'
+> Obviously some care is taken to ensure the bindings are as generic
+> as possible, but not to the extent that will put the project back
+> some months. Over past few months I have enabled many sub-systems;
 
-Fix this issue and remove all remaining relicts of rand_initialize_irq().
+It's not just about having generic bindings, it's also about having
+bindings which have some abstraction and hope of reusability. An awful
+lot of bindings are just straight dumps of Linux data structures into
+the device tree which don't make a terribly great deal of sense as
+bindings.
 
-Might be worth to fold-in these changes into the original commit.
+> however, I think it would have been a fraction of that if we'd gone
+> through the laborious process of immediate forced consolidation. I
+> think it's fine to have platform/vendor specific bindings that work,
+> then come back to unify them once the dust settles.
 
-Tested against linux-next (next-20120717) on a Ubuntu/precise AMD64 host.
-
-[ v2: Polish up subject and commit message ]
-
-Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
----
- arch/ia64/kernel/irq_ia64.c |    1 -
- drivers/mfd/ab3100-core.c   |    2 --
- include/linux/random.h      |    2 --
- 3 files changed, 5 deletions(-)
-
-diff --git a/arch/ia64/kernel/irq_ia64.c b/arch/ia64/kernel/irq_ia64.c
-index 5c3e088..1034884 100644
---- a/arch/ia64/kernel/irq_ia64.c
-+++ b/arch/ia64/kernel/irq_ia64.c
-@@ -23,7 +23,6 @@
- #include <linux/ioport.h>
- #include <linux/kernel_stat.h>
- #include <linux/ptrace.h>
--#include <linux/random.h>	/* for rand_initialize_irq() */
- #include <linux/signal.h>
- #include <linux/smp.h>
- #include <linux/threads.h>
-diff --git a/drivers/mfd/ab3100-core.c b/drivers/mfd/ab3100-core.c
-index e799050..78fca29 100644
---- a/drivers/mfd/ab3100-core.c
-+++ b/drivers/mfd/ab3100-core.c
-@@ -934,8 +934,6 @@ static int __devinit ab3100_probe(struct i2c_client *client,
- 					IRQF_ONESHOT, "ab3100-core", ab3100);
- 	if (err)
- 		goto exit_no_irq;
--	/* This real unpredictable IRQ is of course sampled for entropy */
--	rand_initialize_irq(client->irq);
- 
- 	err = abx500_register_ops(&client->dev, &ab3100_ops);
- 	if (err)
-diff --git a/include/linux/random.h b/include/linux/random.h
-index 29e217a..ac621ce 100644
---- a/include/linux/random.h
-+++ b/include/linux/random.h
-@@ -48,8 +48,6 @@ struct rnd_state {
- 
- #ifdef __KERNEL__
- 
--extern void rand_initialize_irq(int irq);
--
- extern void add_device_randomness(const void *, unsigned int);
- extern void add_input_randomness(unsigned int type, unsigned int code,
- 				 unsigned int value);
--- 
-1.7.9.5
-
+In many of these cases we'd be better off just not putting things into
+the device tree in the first place, leaving things at the basic "is the
+device there" stuff.
