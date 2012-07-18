@@ -1,63 +1,90 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: linux-next: Trees and MAINTAINERS of random drivers?
-Date: Wed, 18 Jul 2012 13:09:04 +0200
-Message-ID: <CA+icZUVPS=xkm0+=6JZPGmT9BRJgbGav3AHCgpYuvt-71+xhmg@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the
+ i2c-embedded tree
+Date: Wed, 18 Jul 2012 12:12:26 +0100
+Message-ID: <20120718111226.GH22739@opensource.wolfsonmicro.com>
+References: <50066739.4010206@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="K1n7F7fSdjvFAEnM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:61328 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751387Ab2GRLJG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jul 2012 07:09:06 -0400
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50094 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753322Ab2GRLM3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Jul 2012 07:12:29 -0400
+Content-Disposition: inline
+In-Reply-To: <50066739.4010206@linaro.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>, David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Matt Mackall <mpm@selenic.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Wolfram Sang <w.sang@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, Linus Walleij <linus.walleij@stericsson.com>, Stephen Warren <swarren@wwwdotorg.org>, Deepak Saxena <dsaxena@linaro.org>, devicetree-discuss@lists.ozlabs.org, Grant Likely <grant.likely@secretlab.ca>
 
-Hi,
 
-while digging into an issue with the random driver [0] yesterday, I
-checked today the "Next/Trees" and random driver related informations
-in "MAINTAINERS" files.
-...and have some questions.
+--K1n7F7fSdjvFAEnM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-David's random tree is listed in linux-next [1]:
+On Wed, Jul 18, 2012 at 08:35:21AM +0100, Lee Jones wrote:
 
-26 dwmw2           git
-git://git.infradead.org/users/dwmw2/random-2.6.git#master
+Fix your mailer to word wrap within paragraphs.  I've reformatted your
+mail for legibility.
 
-But [2] shows me that there were no activities in this tree for about 3 years.
-Is that still valid and/or should that tree be dropped?
-[ Sorry, for nitpicking but suffix "-2.6" should simply die in GIT
-repo and branch names after introduction of upstream's linux.git. ]
+> I agree, but in this instance it really does stand to reason.
 
-[3] lists Ted as new random driver maintainer, but in [4] I found Matt
-as maintainer:
+> 1. No unified bindings currently exist.
+> 2. I don't have time to create them.
+> 3. It will probably take quite a bit of time for someone else to get
+>    round to creating them.
+> 4. The bindings I'm proposing are siloed by vendor and driver, so will
+>    cause no harm.
 
-5656 RANDOM NUMBER DRIVER
-5657 M:      Matt Mackall <mpm@selenic.com>
-5658 S:      Maintained
-5659 F:      drivers/char/random.c
+Right, this is just a restatement of the standard vendor line.
 
-I do not think that this is still correct and furthermore in Ted's
-random.git#dev tree I see commits changing "drivers/char/random.c"
-file.
-So, that above block should IMHO be dropped and "F:
-drivers/char/random.c" added to [6]?
+If the issue is purely about having generic bindings quite frankly it's
+very hard to see how it could take much time or effort to handle the
+generic bits for I2C, it's basically just the maximum bus frequency and
+possibly also the various fast modes (though to a good approximation it
+seems reasonable to just infer them from the bus frequency and then see
+if we need any more).  One thing I frequently find is that people say
+any sort of generic work is hard without explaining why, if there are
+complex issues that's one thing but that's often not the case.
 
-Just noticed while looking into linux-next and the recent random
-revival from Ted.
+BTW, looking at the platform data again it seems like i2c_freq_mode it
+seems very odd that it's driver specific?
 
-Thanks to old and new random maintainers for their great work!
+> 5. I've already volunteered to move them over to the unified ones once
+>    created.
+> 6. These allow support for the driver to work with DT, at the moment
+>    it does not.
 
-Kind Regards,
-- Sedat -
+> Personally, I think there is more to be gained by applying the
+> (working) vendor specific bindings to the vendor specific driver until
+> some more consolidated ones appear.
 
-[0] http://marc.info/?l=linux-next&m=134252508224850&w=2
-[1] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=Next/Trees;hb=HEAD#l26
-[2] http://git.infradead.org/users/dwmw2/random-2.6.git
-[3] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=commitdiff;h=ec1b70506a9ec3be8191ddb2f4de9ac066e6a431
-[4] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=MAINTAINERS;hb=HEAD#l5656
-[5] http://git.kernel.org/?p=linux/kernel/git/tytso/random.git;a=shortlog;h=refs/heads/dev
-[6] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=MAINTAINERS;hb=HEAD#l3170
+Again, vendors always make great promises about how they're going to
+keep everything up to date...
+
+--K1n7F7fSdjvFAEnM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQBpn6AAoJEBus8iNuMP3dKeoP/RrR4e89lhefdhT9p9LijXqS
+GFOPHvqWSkKvwNYqaJnyYAEaski/RaQQyYHOhxStK+Ir8zwjAHibIXVM+J9t3807
+AfFb4LmOclyVEjN8V3lLP3DXdamk1htnf4dNhMHnvS6Zy7KEGBMyMv+r0xpZTPB2
+J+aMtAoHZ+tZ8Bkik54E+6JIHVaU0ojppcTKgWfVu1e6RrBaVi2CErxHtDpwVrot
+nRZ8QfYMttCJo9spjGPMx6SZ0PpDn5U6U2g7aIsZEmYjyVXEPb0oiON+FgOamrzd
+teAQxWi/P1wWlWXDXMKNGxZgRVOUrZu9jpLgOUp9VT/r9XbTu3PdDHhPXdsEJ1fC
+7pB6rIuOe7hIwGUIix9I3ocYgjG4O351B8hsxz6TqZXpWjSOXL4L5ocmom64LCRX
+0S6ua/mnRpq+/3UCsqJAXNDgqcnf9xCwPgYcZSTlB2JkqtJnqf8scO0WJt8Q4Uc5
+rDu33tDs9EmNjbjvungTWjGle3fDfD6Koh6woRF0Ngv/fm9G+Y4rNR3iyM9I5RTR
+yLpCS+23X2XRQDwSwbHb2wKvCWAPj3uh85KqfMD/+0Jk1/NKR62Ipnv6z9vj2t3+
+2f7AV3HOe/u47SvePQHs/hdzgm7bq8GtVI8ItrS+p7s+Fs2pAEh0qObNE1Rae891
+lcPAI9GbHAzvRET5yLv9
+=eCiZ
+-----END PGP SIGNATURE-----
+
+--K1n7F7fSdjvFAEnM--
