@@ -1,48 +1,63 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the i2c-embedded
- tree
-Date: Wed, 18 Jul 2012 11:43:45 +0100
-Message-ID: <50069361.1080509@linaro.org>
-References: <20120717130650.GB27595@sirena.org.uk> <500568D9.10805@linaro.org> <20120717133550.GC4477@opensource.wolfsonmicro.com> <50057058.2060002@linaro.org> <20120717142222.GE4477@opensource.wolfsonmicro.com> <50057C1A.80606@linaro.org> <20120717152001.GF4477@opensource.wolfsonmicro.com> <20120718053341.GA4009@S2100-06.ap.freescale.net> <20120718095937.GB22739@opensource.wolfsonmicro.com> <50069006.8050301@linaro.org> <20120718103311.GG22739@opensource.wolfsonmicro.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: linux-next: Trees and MAINTAINERS of random drivers?
+Date: Wed, 18 Jul 2012 13:09:04 +0200
+Message-ID: <CA+icZUVPS=xkm0+=6JZPGmT9BRJgbGav3AHCgpYuvt-71+xhmg@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120718103311.GG22739@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Shawn Guo <shawn.guo@freescale.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@stericsson.com>, devicetree-discuss@lists.ozlabs.org, Wolfram Sang <w.sang@pengutronix.de>, linux-kernel@vger.kernel.org, Deepak Saxena <dsaxena@linaro.org>, linux-next@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:61328 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751387Ab2GRLJG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jul 2012 07:09:06 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>, David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Matt Mackall <mpm@selenic.com>
 
-On 18/07/12 11:33, Mark Brown wrote:
-> On Wed, Jul 18, 2012 at 11:29:26AM +0100, Lee Jones wrote:
->> On 18/07/12 10:59, Mark Brown wrote:
->
->>> It's not the using device tree bit that creates concern for me here=
-,
->>> it's the fact that the board and silicon aren't being separated.
->
->> What's the difference?
->
->>> +- db8500.dtsi       // silicon
->>> \=09
->>> +-- snowball.dts    // board
->
-> I have glanced at some of this stuff in the past, thanks.  Now think =
-how
-> that's working for people when they put the configuration for the
-> silicon in the same DT node as the configuration for the board...
+Hi,
 
-Granted, ideally the configuration and silicon description should be=20
-separated. I don't know that is the case for us yet however. That is=20
-something I'll enforce when we have a new dts file, which will be comin=
-g=20
-very soon.
+while digging into an issue with the random driver [0] yesterday, I
+checked today the "Next/Trees" and random driver related informations
+in "MAINTAINERS" files.
+...and have some questions.
 
---=20
-Lee Jones
-Linaro ST-Ericsson Landing Team Lead
-M: +44 77 88 633 515
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+David's random tree is listed in linux-next [1]:
+
+26 dwmw2           git
+git://git.infradead.org/users/dwmw2/random-2.6.git#master
+
+But [2] shows me that there were no activities in this tree for about 3 years.
+Is that still valid and/or should that tree be dropped?
+[ Sorry, for nitpicking but suffix "-2.6" should simply die in GIT
+repo and branch names after introduction of upstream's linux.git. ]
+
+[3] lists Ted as new random driver maintainer, but in [4] I found Matt
+as maintainer:
+
+5656 RANDOM NUMBER DRIVER
+5657 M:      Matt Mackall <mpm@selenic.com>
+5658 S:      Maintained
+5659 F:      drivers/char/random.c
+
+I do not think that this is still correct and furthermore in Ted's
+random.git#dev tree I see commits changing "drivers/char/random.c"
+file.
+So, that above block should IMHO be dropped and "F:
+drivers/char/random.c" added to [6]?
+
+Just noticed while looking into linux-next and the recent random
+revival from Ted.
+
+Thanks to old and new random maintainers for their great work!
+
+Kind Regards,
+- Sedat -
+
+[0] http://marc.info/?l=linux-next&m=134252508224850&w=2
+[1] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=Next/Trees;hb=HEAD#l26
+[2] http://git.infradead.org/users/dwmw2/random-2.6.git
+[3] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=commitdiff;h=ec1b70506a9ec3be8191ddb2f4de9ac066e6a431
+[4] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=MAINTAINERS;hb=HEAD#l5656
+[5] http://git.kernel.org/?p=linux/kernel/git/tytso/random.git;a=shortlog;h=refs/heads/dev
+[6] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=MAINTAINERS;hb=HEAD#l3170
