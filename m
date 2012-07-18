@@ -1,57 +1,43 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] regulator: tps65217: fix build error if REGULATOR is not
- enabled
-Date: Wed, 18 Jul 2012 10:44:49 +0100
-Message-ID: <20120718094449.GA22739@opensource.wolfsonmicro.com>
+From: "AnilKumar, Chimata" <anilkumar@ti.com>
+Subject: RE: [PATCH] regulator: tps65217: fix build error if REGULATOR is
+ not enabled
+Date: Wed, 18 Jul 2012 09:55:57 +0000
+Message-ID: <331ABD5ECB02734CA317220B2BBEABC13E9F8BD7@DBDE01.ent.ti.com>
 References: <1342593663-23938-1-git-send-email-anilkumar@ti.com>
+ <20120718094449.GA22739@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1342593663-23938-1-git-send-email-anilkumar@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: AnilKumar Ch <anilkumar@ti.com>
-Cc: rdunlap@xenotime.net, sfr@canb.auug.org.au, sameo@linux.intel.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:49934 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751855Ab2GRJ4J convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jul 2012 05:56:09 -0400
+In-Reply-To: <20120718094449.GA22739@opensource.wolfsonmicro.com>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: "rdunlap@xenotime.net" <rdunlap@xenotime.net>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "sameo@linux.intel.com" <sameo@linux.intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
 
+Mark,
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 18, 2012 at 15:14:49, Mark Brown wrote:
+> On Wed, Jul 18, 2012 at 12:11:03PM +0530, AnilKumar Ch wrote:
+> > Fixes below build error if CONFIG_REGULATOR is not enabled.
+> > 
+> > drivers/built-in.o: In function `tps65217_probe':
+> > tps65217.c:(.devinit.text+0x13e37): undefined reference to `of_regulator_match'
+> 
+> This isn't a patch to the regulator driver, this is a patch to the MFD.
+> Normally this would be fixed by making the MFD driver not depend on the
+> regulator API - why is the MFD driver using the regulator API?
+> 
 
-On Wed, Jul 18, 2012 at 12:11:03PM +0530, AnilKumar Ch wrote:
-> Fixes below build error if CONFIG_REGULATOR is not enabled.
->=20
-> drivers/built-in.o: In function `tps65217_probe':
-> tps65217.c:(.devinit.text+0x13e37): undefined reference to `of_regulator_=
-match'
+Regulators platform data is added to platform device in MFD driver, which we
+need for regulator driver, of_regulator_match() is used to check the regulator
+consumers if we pass DT data. If we do not enable CONFIG_REGULATOR then
+of_regulator_match() is not exported, so we see this error.
 
-This isn't a patch to the regulator driver, this is a patch to the MFD.
-Normally this would be fixed by making the MFD driver not depend on the
-regulator API - why is the MFD driver using the regulator API?
-
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQBoV8AAoJEBus8iNuMP3dVXwP/1pxnlpS8W3n3KZbkYvTAQDb
-1yDP1EbGKF2CaEUrhop4tAQrEnnVW9YDTa7c4sjq2978q2Y1AcUeJeiZquHonhjR
-MvIlgO2WpAm+waRpk7CV5C3kGVdDxe8N6E7+rUrV2ghlrAGf9oLJWqudsWWbmRfS
-qls9qgnaQXY1HYH9yUZYgqF9//OSEIsCxdEG6G/AKxBj4Fka7FxfqtgewdSBbFxk
-AtoG0s/ywGDjw4A8iOKP9TevzIJ9XL7Rf9qFvE/JQ1Eywh12qyFy6qVgq4+tAMgm
-oHno1unLROEkc93nlNYQKWgKO90bbM5Hgo4NVId+JuEdZcQ73ZfB5h9B0dE28yVu
-4haPIPaiev+5B0ERF29W/uEJRV6gY0IHoJGfbsBdEHG5oqG7hKlYEBeW8DnOtxAZ
-IG0tGZKzVUi3Z/QydGBUtAuwTC4OOStVPRjVTQd7hvsAIrDX4rE1x7XveAOIiS7D
-WbggLKZH93pI232997o+gb8bcodT4AwwBzO5BQLEWTW3LWBb49UEWqq5ZIH3ZVN+
-rdtvYCocBdxINZtmF5psSKffAQOBNZQp9Qgm8hVq2BV/qLUj1WCae3cSnWQGpYoA
-LtH3W39Bb9pGxbE+F6Dh1xbBV4g4aaFvtbscq7BRNex88i7ehvCEhxX56kp1amIO
-Qgx2uEfvQyySjXmDwcrU
-=9gaP
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
+Regards
+AnilKumar
