@@ -1,58 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for July 17
-Date: Wed, 18 Jul 2012 20:07:12 +1000
-Message-ID: <20120718200712.309ccda508ae025651b30062@canb.auug.org.au>
-References: <20120717154153.b10774cb005add05e4c4e5f6@canb.auug.org.au>
-	<CA+icZUV_TC8CTJZH8f0=UYhHZUaEVLOZWDi3eZPMsvJLJHXvVg@mail.gmail.com>
+Subject: linux-next: no tree for July 18
+Date: Wed, 18 Jul 2012 20:11:18 +1000
+Message-ID: <20120718201118.d96a4c09702a94c46b709703@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__18_Jul_2012_20_07_12_+1000_PpBSHeiLJGqs3TlJ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUV_TC8CTJZH8f0=UYhHZUaEVLOZWDi3eZPMsvJLJHXvVg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sedat.dilek@gmail.com
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__18_Jul_2012_20_11_18_+1000_YoqrYsCctNNwAGgY"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:33379 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752713Ab2GRKLU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jul 2012 06:11:20 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__18_Jul_2012_20_07_12_+1000_PpBSHeiLJGqs3TlJ
+--Signature=_Wed__18_Jul_2012_20_11_18_+1000_YoqrYsCctNNwAGgY
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sedat,
-
-On Wed, 18 Jul 2012 11:27:01 +0200 Sedat Dilek <sedat.dilek@gmail.com> wrot=
-e:
->
-> Out of curiosity (and normally you are giving a reason why there
-> is...) no new Tree for July 18?
-
-Yeah, I will send out a message.  Thanks for prompting me.
+sorry about that, expect a new tree tomorrow.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__18_Jul_2012_20_07_12_+1000_PpBSHeiLJGqs3TlJ
+--Signature=_Wed__18_Jul_2012_20_11_18_+1000_YoqrYsCctNNwAGgY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQBorQAAoJEECxmPOUX5FETfsP/09uIfzaMahhN0BLWpRLPjuA
-fdUspBkcC+hfmWWAGYZRptU5CN497cZP9ymUr4DzLX5YqQ9UtsyupZXrDaRvrVhn
-P33CRmPNAt1OulMCVKwvYeqEiA6PfWfHNdlGk+qVjCGv8HP6EoM3gRnBmBFF5d5q
-JtKQas6XKrRF89gsmd4IGnQ7ORYvZGYYTxDWJ6z+WcukYyjoC4fB2rLd42I+vdlC
-zG2JVt28Kvkyl3vxd0NiyHqnQG3d/034F58aBJmVGgAf76ldSwbyVqNJE/zSmyZm
-9dW+KmQeWKxcF9eiJ3wCg1USdi1cWswA7EPK6ZJdd3jGgGTPxdBpv7r7mWAVcH4T
-TIj2o6f4pBniSXhnrjPdWOTZxc22isvtGQqecOii1gKo/+mg0R67oD705ZjD6kxk
-1fu7xCiSy7OTx9NT3zbAWPYm2KRrLZSom97l7Fd0Dwda6LU0sj+OhD4AQcRISxSJ
-HbVxApqnS7ApcSxPvUZqwXmgvdu56aCKvxRU24MN1OKaaSzDe15a38bLOQxrbAzO
-jchNrsNJCtjho2P881hc/VyYQL+KevIiUIgaYWos3c4XhU6bgt4sdp5ZBJECmWQJ
-ee2Ui9h7y5xdCjfeYvvbtik32kcSeTb40T8sG+O2zsZDxAL7OkMlHtecLP4R4M9d
-erAMzcPOCCiCFfGbhBpc
-=Jiwh
+iQIcBAEBCAAGBQJQBovGAAoJEECxmPOUX5FEBr4QAIAlwfClB1JBeCv+B3BYN2lC
+k49Exxe62tTlGLV4VFCykvvu3GT8fIdklkWsTRHTPe4oABwmzkJEpF586eoOv+8G
+heNNdeifT+wHN5YF/z6SHbAfaZV97hSms8WJ7CTu+lxYgiCsv9WrsuTzmchKnZXM
+WESSME2X2i+hE5kS8dpJEI4kwXzg4Vgkb34aoxZ+CZm3kvZhpul9BabjERGAARxw
+mQFOES/8eUob5ocAUE3/85f0FVNEagmAV8zVw9XU+Hdbp0+enbulFTfCPz8WBq9d
+AffDKHjbIfPSMzlb7ZoOZml4EmkwWK2SFXqCoOMNhQat7obUs2/GORUqw7aPykAq
+8SMdWgUCjt5COLvAkGERxJaWF0IDktK80NBDC+hPjXb0A/L7yzljgw56JlXrKE0w
+r4zTsupguswewvwTNkI4HRW7jVDgXA0FZ8QfdsCV1Q17ncSPgMKPoxwaUf8lRcCT
+33dDRs3Al+tkMovQbWqHkOne7FZhdkRZQsbcACtZiFn030CAFQCjHpaTlle45xjj
+qMYSg7V8qeP9kGr1fNyuhf0pqZR0IK0lvuLRQZ+VvHz5/RukIRSW5H9sh3qj7zVl
+RBbP0Yw8RhZMWFAdzmVNfV9ge0PMJDi2B5spcPfnRgyZLbSneaX0KCwkZxeZrIpl
+CeccuIdx/XRqP69geJ3o
+=xsa4
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__18_Jul_2012_20_07_12_+1000_PpBSHeiLJGqs3TlJ--
+--Signature=_Wed__18_Jul_2012_20_11_18_+1000_YoqrYsCctNNwAGgY--
