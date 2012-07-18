@@ -1,29 +1,57 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for July 17
-Date: Wed, 18 Jul 2012 11:27:01 +0200
-Message-ID: <CA+icZUV_TC8CTJZH8f0=UYhHZUaEVLOZWDi3eZPMsvJLJHXvVg@mail.gmail.com>
-References: <20120717154153.b10774cb005add05e4c4e5f6@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] regulator: tps65217: fix build error if REGULATOR is not
+ enabled
+Date: Wed, 18 Jul 2012 10:44:49 +0100
+Message-ID: <20120718094449.GA22739@opensource.wolfsonmicro.com>
+References: <1342593663-23938-1-git-send-email-anilkumar@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:42403 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752849Ab2GRJ1D (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jul 2012 05:27:03 -0400
-In-Reply-To: <20120717154153.b10774cb005add05e4c4e5f6@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1342593663-23938-1-git-send-email-anilkumar@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: AnilKumar Ch <anilkumar@ti.com>
+Cc: rdunlap@xenotime.net, sfr@canb.auug.org.au, sameo@linux.intel.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 17, 2012 at 7:41 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Changes since 20120716:
->
 
-Out of curiosity (and normally you are giving a reason why there
-is...) no new Tree for July 18?
+--IJpNTDwzlM2Ie8A6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-- Sedat -
+On Wed, Jul 18, 2012 at 12:11:03PM +0530, AnilKumar Ch wrote:
+> Fixes below build error if CONFIG_REGULATOR is not enabled.
+>=20
+> drivers/built-in.o: In function `tps65217_probe':
+> tps65217.c:(.devinit.text+0x13e37): undefined reference to `of_regulator_=
+match'
+
+This isn't a patch to the regulator driver, this is a patch to the MFD.
+Normally this would be fixed by making the MFD driver not depend on the
+regulator API - why is the MFD driver using the regulator API?
+
+--IJpNTDwzlM2Ie8A6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQBoV8AAoJEBus8iNuMP3dVXwP/1pxnlpS8W3n3KZbkYvTAQDb
+1yDP1EbGKF2CaEUrhop4tAQrEnnVW9YDTa7c4sjq2978q2Y1AcUeJeiZquHonhjR
+MvIlgO2WpAm+waRpk7CV5C3kGVdDxe8N6E7+rUrV2ghlrAGf9oLJWqudsWWbmRfS
+qls9qgnaQXY1HYH9yUZYgqF9//OSEIsCxdEG6G/AKxBj4Fka7FxfqtgewdSBbFxk
+AtoG0s/ywGDjw4A8iOKP9TevzIJ9XL7Rf9qFvE/JQ1Eywh12qyFy6qVgq4+tAMgm
+oHno1unLROEkc93nlNYQKWgKO90bbM5Hgo4NVId+JuEdZcQ73ZfB5h9B0dE28yVu
+4haPIPaiev+5B0ERF29W/uEJRV6gY0IHoJGfbsBdEHG5oqG7hKlYEBeW8DnOtxAZ
+IG0tGZKzVUi3Z/QydGBUtAuwTC4OOStVPRjVTQd7hvsAIrDX4rE1x7XveAOIiS7D
+WbggLKZH93pI232997o+gb8bcodT4AwwBzO5BQLEWTW3LWBb49UEWqq5ZIH3ZVN+
+rdtvYCocBdxINZtmF5psSKffAQOBNZQp9Qgm8hVq2BV/qLUj1WCae3cSnWQGpYoA
+LtH3W39Bb9pGxbE+F6Dh1xbBV4g4aaFvtbscq7BRNex88i7ehvCEhxX56kp1amIO
+Qgx2uEfvQyySjXmDwcrU
+=9gaP
+-----END PGP SIGNATURE-----
+
+--IJpNTDwzlM2Ie8A6--
