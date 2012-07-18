@@ -1,51 +1,80 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no tree for July 18
-Date: Wed, 18 Jul 2012 20:11:18 +1000
-Message-ID: <20120718201118.d96a4c09702a94c46b709703@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the i2c-embedded
+ tree
+Date: Wed, 18 Jul 2012 11:29:26 +0100
+Message-ID: <50069006.8050301@linaro.org>
+References: <5003FB7C.4030509@linaro.org> <20120717130650.GB27595@sirena.org.uk> <500568D9.10805@linaro.org> <20120717133550.GC4477@opensource.wolfsonmicro.com> <50057058.2060002@linaro.org> <20120717142222.GE4477@opensource.wolfsonmicro.com> <50057C1A.80606@linaro.org> <20120717152001.GF4477@opensource.wolfsonmicro.com> <20120718053341.GA4009@S2100-06.ap.freescale.net> <20120718095937.GB22739@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__18_Jul_2012_20_11_18_+1000_YoqrYsCctNNwAGgY"
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33379 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752713Ab2GRKLU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jul 2012 06:11:20 -0400
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:60249 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753396Ab2GRK3a (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jul 2012 06:29:30 -0400
+Received: by eaak11 with SMTP id k11so468538eaa.19
+        for <linux-next@vger.kernel.org>; Wed, 18 Jul 2012 03:29:29 -0700 (PDT)
+In-Reply-To: <20120718095937.GB22739@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Shawn Guo <shawn.guo@freescale.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@stericsson.com>, devicetree-discuss@lists.ozlabs.org, Wolfram Sang <w.sang@pengutronix.de>, linux-kernel@vger.kernel.org, Deepak Saxena <dsaxena@linaro.org>, linux-next@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, linux-arm-kernel@lists.infradead.org
 
---Signature=_Wed__18_Jul_2012_20_11_18_+1000_YoqrYsCctNNwAGgY
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 18/07/12 10:59, Mark Brown wrote:
+> On Wed, Jul 18, 2012 at 01:33:42PM +0800, Shawn Guo wrote:
+>
+>> I have an IP block getting different FIFO size on different IMX SoCs=
+=2E
+>> We could introduce a new compatible string for driver to figure it o=
+ut,
+>> but I think the simpler way is just have the data encoded in device
+>> tree.  In any case DT is not completely limited in encoding board
+>> specific data.  Today, we have IO region and interrupt number of
+>> hardware blocks encoded in DT, and to me, FIFO size could just be
+>> another aspect of hardware block we could choose to encode in DT.
+>
+> So, this is part of the problem with encoding the description of the =
+SoC
+> into the DT - we're not doing a good job of splitting out the silicon
+> description from the board specific description which is not a triump=
+h
+> for maintainability since it means that we end up needing to modify t=
+he
+> DT for every board using the silicon if we want to use the new featur=
+e
+> (assuming people maintain binary compatibility with old DTs, which we
+> don't do a good job at either even for established DT architectures).
+>
+> It's not the using device tree bit that creates concern for me here,
+> it's the fact that the board and silicon aren't being separated.
 
-sorry about that, expect a new tree tomorrow.
+What's the difference?
+
+The Device Tree describes the hardware (hardware =3D=3D silicon +=20
+peripherals). So different platforms are different pieces of hardware.=20
+Everything the driver can't figure itself out from the silicon itself=20
+needs to be described in the DT.
+
+We can describe the relationship with a hierarchical layout of the dts=20
+and dtsi files. So for my recent venture we have:
+
+> +- db8500.dtsi       // silicon
+> \=09
+>  +-- snowball.dts    // board
+
+We also have plans to split it up further:
+
+>           db8xx0.dtsi               // shared silicon
+>       _________/\_________
+>      /                    \
+> db8500.dtsi          db8540.dtsi    // differing silicon
+> \                    \
+>  +-- snowball.dts     +-- new_board.dts // board
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__18_Jul_2012_20_11_18_+1000_YoqrYsCctNNwAGgY
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQBovGAAoJEECxmPOUX5FEBr4QAIAlwfClB1JBeCv+B3BYN2lC
-k49Exxe62tTlGLV4VFCykvvu3GT8fIdklkWsTRHTPe4oABwmzkJEpF586eoOv+8G
-heNNdeifT+wHN5YF/z6SHbAfaZV97hSms8WJ7CTu+lxYgiCsv9WrsuTzmchKnZXM
-WESSME2X2i+hE5kS8dpJEI4kwXzg4Vgkb34aoxZ+CZm3kvZhpul9BabjERGAARxw
-mQFOES/8eUob5ocAUE3/85f0FVNEagmAV8zVw9XU+Hdbp0+enbulFTfCPz8WBq9d
-AffDKHjbIfPSMzlb7ZoOZml4EmkwWK2SFXqCoOMNhQat7obUs2/GORUqw7aPykAq
-8SMdWgUCjt5COLvAkGERxJaWF0IDktK80NBDC+hPjXb0A/L7yzljgw56JlXrKE0w
-r4zTsupguswewvwTNkI4HRW7jVDgXA0FZ8QfdsCV1Q17ncSPgMKPoxwaUf8lRcCT
-33dDRs3Al+tkMovQbWqHkOne7FZhdkRZQsbcACtZiFn030CAFQCjHpaTlle45xjj
-qMYSg7V8qeP9kGr1fNyuhf0pqZR0IK0lvuLRQZ+VvHz5/RukIRSW5H9sh3qj7zVl
-RBbP0Yw8RhZMWFAdzmVNfV9ge0PMJDi2B5spcPfnRgyZLbSneaX0KCwkZxeZrIpl
-CeccuIdx/XRqP69geJ3o
-=xsa4
------END PGP SIGNATURE-----
-
---Signature=_Wed__18_Jul_2012_20_11_18_+1000_YoqrYsCctNNwAGgY--
+Lee Jones
+Linaro ST-Ericsson Landing Team Lead
+M: +44 77 88 633 515
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
