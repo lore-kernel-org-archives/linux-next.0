@@ -1,89 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tty tree
-Date: Thu, 19 Jul 2012 14:36:27 +1000
-Message-ID: <20120719143627.adc9d5e5333449d6c8588a99@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the target-merge
+ tree
+Date: Thu, 19 Jul 2012 14:53:01 +1000
+Message-ID: <20120719145301.b8992aa986b47d7c44651710@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__19_Jul_2012_14_36_27_+1000_S2nEvJqwS=ePn2/D"
+ boundary="Signature=_Thu__19_Jul_2012_14_53_01_+1000_l.Lq/clWLO.lwVcv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58051 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:54682 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752529Ab2GSEgh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 00:36:37 -0400
+	with ESMTP id S1752341Ab2GSExJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 00:53:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Bellinger <nab@linux-iscsi.org>
 
---Signature=_Thu__19_Jul_2012_14_36_27_+1000_S2nEvJqwS=ePn2/D
+--Signature=_Thu__19_Jul_2012_14_53_01_+1000_l.Lq/clWLO.lwVcv
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/Kconfig between commit d0146d396bfa ("tcm_vhost: Initial
+merge for vhost level target fabric driver") from the target-merge tree
+and commit 15a4bc17b7f4 ("Staging: add CSR Wifi "os helper" module") from
+the staging tree.
 
-drivers/char/pcmcia/synclink_cs.c: In function 'shutdown':
-drivers/char/pcmcia/synclink_cs.c:1347:27: error: invalid type argument of =
-'->' (have 'struct ktermios')
-drivers/char/pcmcia/synclink_cs.c: In function 'mgslpc_program_hw':
-drivers/char/pcmcia/synclink_cs.c:1388:45: error: invalid type argument of =
-'->' (have 'struct ktermios')
-drivers/char/pcmcia/synclink_cs.c: In function 'mgslpc_change_params':
-drivers/char/pcmcia/synclink_cs.c:1401:14: error: wrong type argument to un=
-ary exclamation mark
-drivers/char/pcmcia/synclink_cs.c:1408:22: error: invalid type argument of =
-'->' (have 'struct ktermios')
-drivers/char/pcmcia/synclink_cs.c: In function 'mgslpc_throttle':
-drivers/char/pcmcia/synclink_cs.c:1731:19: error: invalid type argument of =
-'->' (have 'struct ktermios')
-drivers/char/pcmcia/synclink_cs.c: In function 'mgslpc_unthrottle':
-drivers/char/pcmcia/synclink_cs.c:1760:19: error: invalid type argument of =
-'->' (have 'struct ktermios')
-drivers/char/pcmcia/synclink_cs.c: In function 'mgslpc_set_termios':
-drivers/char/pcmcia/synclink_cs.c:2296:19: error: invalid type argument of =
-'->' (have 'struct ktermios')
-drivers/char/pcmcia/synclink_cs.c:2297:10: error: invalid type argument of =
-'->' (have 'struct ktermios')
-drivers/char/pcmcia/synclink_cs.c:2305:20: error: invalid type argument of =
-'->' (have 'struct ktermios')
-drivers/char/pcmcia/synclink_cs.c:2314:18: error: invalid type argument of =
-'->' (have 'struct ktermios')
-drivers/char/pcmcia/synclink_cs.c:2316:22: error: invalid type argument of =
-'->' (have 'struct ktermios')
-drivers/char/pcmcia/synclink_cs.c:2327:20: error: invalid type argument of =
-'->' (have 'struct ktermios')
-
-Caused by commit adc8d746caa6 ("tty: move the termios object into the
-tty").  Grep and build testing are your friends ...
-
-I have used the tty tree from next-20120712 again for today.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__19_Jul_2012_14_36_27_+1000_S2nEvJqwS=ePn2/D
+diff --cc drivers/staging/Kconfig
+index 67ec9fe,e3402d5..0000000
+--- a/drivers/staging/Kconfig
++++ b/drivers/staging/Kconfig
+@@@ -132,6 -132,8 +132,10 @@@ source "drivers/staging/ipack/Kconfig
+ =20
+  source "drivers/staging/gdm72xx/Kconfig"
+ =20
++ source "drivers/staging/csr/Kconfig"
++=20
++ source "drivers/staging/omap-thermal/Kconfig"
++=20
+ +source "drivers/vhost/Kconfig.tcm"
+ +
+  endif # STAGING
+
+--Signature=_Thu__19_Jul_2012_14_53_01_+1000_l.Lq/clWLO.lwVcv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQB47LAAoJEECxmPOUX5FEQCoP/2y5eAvx3O84sDZaSV1BS30q
-79xYK5T4ax2YDKn+cdayCmu0q2B72XShEPZ9eSO2VnVRPV3KcJyV4+gnLU0Mk1/X
-bK3rZGqyvYFZBBaSr4M6YwG2S8Fml5jIFJlawBMsogTEzVdna2vAfYwGcZjdnv+K
-FM28IsyU7WEl18Um6Y4yA/m6OB8QrD2q63D8hMq6jtpe8pXMRzd9LomshWcJxZTm
-6nxBqc5+F+//UyJmxwnzSZ1ZFHZGSkfe99U0xUR93FuBVrcg6Aeff49O2NMcIWPx
-jQm82kgzXLXRPocq1S6CHXN9j+FSL3ZC/OcT97fZjraVVVDhX9XcGCvTdLCIntSr
-m5opUuWRAx+thyFdWbNAcejFzmOu+SYdMtEjNvNpvErTRrHQjXnAN/e1B1lfBhvX
-+AZd2vwpQAuNI9jJrdVZFpciZaQVUvinI3Z0FEwjQY6C0hir9J+u6Frlt2PIaHte
-mtS2wEE0VN6q4CBmspywNA4DTCaayuCdkLd56/qgzwLzvQEo5fGKkeVxX1BkD3bi
-DOwx0c2PbVXl462+yTsUBssrM0GDuMwdpMtrhfXTm9tv8vHer9rk6XzE4k3LBsSV
-G8FYcEspbcJ5MNGrE+pb/uUoDFPjwMU/4eeHjx8+N6VUuS9ep10XkjaFwllfXmL2
-sxB8UGJtDFcZZ0jpaXXT
-=h345
+iQIcBAEBCAAGBQJQB5KtAAoJEECxmPOUX5FEXi0P/1zHn13N/HQSRLIQvAdNrGDz
+gkkajRttwpHwa5PRbiVPWeuZzwlIYZGLKAoVTzrZsWnJVWJ3zdGWtcs6DMJfFAo3
+6K3cMm3xOjHnyho+dZVEsQAZAO2hSnu/9sqNHmeNN/thb3E3hRljqZ3SM49EewvY
+AhE4yKYbLWsCp2UR0jfIdclMVyV3UfV1mNLaXIG3qjf6QAenIFk0kuVJLpx4/ak1
+biPhp4xD9DskEnYnjp7xswjy23xicZLBAlYK2y3KUeL6MAvwQBv1q8+/y/pHBhL5
+fr8hRuQz8+u2wva4X2lQRzPfXGBvVK5AHXL9yLLyXZWGGjT8pSfJFbu8uc3NUHaX
+GMYC6TI+WlMaHGJW5YPpO3Qx68RP5LAsP4oEA0W3yqGYNc+QuhphQIyYxub/Qvz4
+F3tjK2Q2Ix1Wew4RBuekocnAUNjfbFK5dNi/VSBBNgm43KglwFQ6UAQO7BZcST9s
+HRAYyeE6b7/K4oB/xS28IZH5krPfHi8C/AOlw9hbGR17POKZWVj8OW9TY+EcIsYJ
+KNS70qCMVB2yL1W0HnlDjr6JKGqgvnMAqqajpzuIJft1/tpOH96G2/w51xNgY+Hf
+/8Qdcltcfb+AVXlthKzFuywhC7KLb2WZrue/hNxibz6janBkjEpNOFGyz9uU8jsN
+NzCzl9kf224uNdYuzeFo
+=UFoH
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__19_Jul_2012_14_36_27_+1000_S2nEvJqwS=ePn2/D--
+--Signature=_Thu__19_Jul_2012_14_53_01_+1000_l.Lq/clWLO.lwVcv--
