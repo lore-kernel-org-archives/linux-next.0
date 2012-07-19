@@ -1,34 +1,57 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: linux-next: Trees and MAINTAINERS of random drivers?
-Date: Wed, 18 Jul 2012 14:17:09 -0400
-Message-ID: <20120718181709.GC22107@thunk.org>
-References: <CA+icZUVPS=xkm0+=6JZPGmT9BRJgbGav3AHCgpYuvt-71+xhmg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Thu, 19 Jul 2012 11:15:10 +1000
+Message-ID: <20120719111510.478d62e4f0778bd0de1f4c66@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__19_Jul_2012_11_15_10_+1000_.Xf0n7_SldUbmsPL"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36024 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751014Ab2GSBPU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jul 2012 21:15:20 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Narendra K <narendra_k@dell.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Alexander Duyck <alexander.h.duyck@intel.com>
+
+--Signature=_Thu__19_Jul_2012_11_15_10_+1000_.Xf0n7_SldUbmsPL
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <CA+icZUVPS=xkm0+=6JZPGmT9BRJgbGav3AHCgpYuvt-71+xhmg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Matt Mackall <mpm@selenic.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 18, 2012 at 01:09:04PM +0200, Sedat Dilek wrote:
-> [3] lists Ted as new random driver maintainer, but in [4] I found Matt
-> as maintainer:
-> 
-> 5656 RANDOM NUMBER DRIVER
-> 5657 M:      Matt Mackall <mpm@selenic.com>
-> 5658 S:      Maintained
-> 5659 F:      drivers/char/random.c
-> 
-> I do not think that this is still correct and furthermore in Ted's
-> random.git#dev tree I see commits changing "drivers/char/random.c"
-> file.
-> So, that above block should IMHO be dropped and "F:
-> drivers/char/random.c" added to [6]?
+Hi all,
 
-Oh, I see, I screwed up my update to the MAINTAINERS file and updated
-the wrong block.  I'll fix it....
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c between commit
+936597631dd3 ("ixgbevf: Prevent RX/TX statistics getting reset to zero")
+from Linus' tree and various commits from the net-next tree.
 
-					- Ted
+I just used the version from the net tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__19_Jul_2012_11_15_10_+1000_.Xf0n7_SldUbmsPL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQB1+eAAoJEECxmPOUX5FEAw4P/0oIBajI5br1DTfRou7SH/aS
+qjfMvnhdN6sFX/XF/jtmG0JvTQhr2CMwPBXoCdOaMmrzubKA14wbA7abSc/lWDtS
+zGrqPxHnxRiTAVLCvYk20Af2YvMJ2qopq64Ixa4PrHQEXcPhzXFeGFUn8lvByDx1
+ee6H+ozmCVFbdtQlFCpNv9NMF6HdWLB6WL+ethAKZqRv9fIsi5doJhzu+kk5zoCM
+23E444uTIB4OJ7Z+1Rmy8zBh1QghQZR54LhsOhY8nZUrAGUIlFL1ZoLUh2899fVQ
+AwEzlhk1SBdtEbDTwOzcKqa4MseYDhRh9g51n6+5R4ASq6j44dTU7ilMMU4ctV2h
+1XyiCeoCCZVhDvo3TcckUNPi1WygTQkJRZrWDuo6dDjJd2VnwltViSEWmrux1oJS
+qS1kRjKKO6nm9iF9NbEd7HUNVZYDgYLjPzE4bTS8KUU5TI664R265PXOFqibrf7B
+8+XC9qrCZ2JDlBZTt19Zq6vRx7T1boiBdJF1so5aP1CW1PpeWpxL6Z4EcNiVm1LW
+QwtftFoo9AD7eLdkOa4pRqV5ASGYHEY52O817vnvHr7EVLkbDVZ0wwzM+6dtULhc
+goQyKhbGVUn+oB09+CH55eGhengmS+QQMuSgpS7zTMLyM5CyCVjL5L1NHag8/ApT
+rXSTaHMJldwJfbiQNqgh
+=dRgP
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__19_Jul_2012_11_15_10_+1000_.Xf0n7_SldUbmsPL--
