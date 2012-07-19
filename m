@@ -1,64 +1,142 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: Re: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Wed, 18 Jul 2012 18:18:20 -0700
-Message-ID: <1342660700.2616.12.camel@jtkirshe-mobl>
-References: <20120719111510.478d62e4f0778bd0de1f4c66@canb.auug.org.au>
-Reply-To: jeffrey.t.kirsher@intel.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Thu, 19 Jul 2012 11:38:20 +1000
+Message-ID: <20120719113820.c15d1572d38d93b4581ecade@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-jF1SSGhB941y1SBdPiYI"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__19_Jul_2012_11_38_20_+1000_83sQYXXa1cRfAK.h"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:57199 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750962Ab2GSBSW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Jul 2012 21:18:22 -0400
-In-Reply-To: <20120719111510.478d62e4f0778bd0de1f4c66@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44923 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751652Ab2GSBib (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jul 2012 21:38:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Narendra K <narendra_k@dell.com>, Alexander Duyck <alexander.h.duyck@intel.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?B?IkNocmlzdGlhbiBLw7ZuaWci?= <deathsimple@vodafone.de>
 
-
---=-jF1SSGhB941y1SBdPiYI
-Content-Type: text/plain; charset="UTF-8"
+--Signature=_Thu__19_Jul_2012_11_38_20_+1000_83sQYXXa1cRfAK.h
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2012-07-19 at 11:15 +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the net-next tree got a conflict in
-> drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c between commit
-> 936597631dd3 ("ixgbevf: Prevent RX/TX statistics getting reset to zero")
-> from Linus' tree and various commits from the net-next tree.
->=20
-> I just used the version from the net tree.
+Hi Dave,
 
-I will take a look at it later tonight to verify the conflict resolution
-is correct.
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/radeon/radeon_gart.c between commit c21b328ea8c7
+("drm/radeon: fix VM page table setup on SI") from Linus' tree and commit
+c6105f249a63 ("drm/radeon: remove vm_manager start/suspend") from the drm
+tree.
 
-Thanks Stephen.
+I fixed it up (I think - see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---=-jF1SSGhB941y1SBdPiYI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+diff --cc drivers/gpu/drm/radeon/radeon_gart.c
+index 84b648a,56752da..0000000
+--- a/drivers/gpu/drm/radeon/radeon_gart.c
++++ b/drivers/gpu/drm/radeon/radeon_gart.c
+@@@ -282,31 -282,61 +282,62 @@@ void radeon_gart_fini(struct radeon_dev
+   *
+   * TODO bind a default page at vm initialization for default address
+   */
++=20
+  int radeon_vm_manager_init(struct radeon_device *rdev)
+  {
++ 	struct radeon_vm *vm;
++ 	struct radeon_bo_va *bo_va;
+  	int r;
+ =20
+- 	rdev->vm_manager.enabled =3D false;
++ 	if (!rdev->vm_manager.enabled) {
++ 		/* mark first vm as always in use, it's the system one */
+++		/* allocate enough for 2 full VM pts */
++ 		r =3D radeon_sa_bo_manager_init(rdev, &rdev->vm_manager.sa_manager,
+ -					      rdev->vm_manager.max_pfn * 8,
+++					      rdev->vm_manager.max_pfn * 8 * 2,
++ 					      RADEON_GEM_DOMAIN_VRAM);
++ 		if (r) {
++ 			dev_err(rdev->dev, "failed to allocate vm bo (%dKB)\n",
++ 				(rdev->vm_manager.max_pfn * 8) >> 10);
++ 			return r;
++ 		}
+ =20
+- 	/* mark first vm as always in use, it's the system one */
+- 	/* allocate enough for 2 full VM pts */
+- 	r =3D radeon_sa_bo_manager_init(rdev, &rdev->vm_manager.sa_manager,
+- 				      rdev->vm_manager.max_pfn * 8 * 2,
+- 				      RADEON_GEM_DOMAIN_VRAM);
+- 	if (r) {
+- 		dev_err(rdev->dev, "failed to allocate vm bo (%dKB)\n",
+- 			(rdev->vm_manager.max_pfn * 8) >> 10);
+- 		return r;
++ 		r =3D rdev->vm_manager.funcs->init(rdev);
++ 		if (r)
++ 			return r;
++ =09
++ 		rdev->vm_manager.enabled =3D true;
++=20
++ 		r =3D radeon_sa_bo_manager_start(rdev, &rdev->vm_manager.sa_manager);
++ 		if (r)
++ 			return r;
+  	}
+ =20
+- 	r =3D rdev->vm_manager.funcs->init(rdev);
+- 	if (r =3D=3D 0)
+- 		rdev->vm_manager.enabled =3D true;
++ 	/* restore page table */
++ 	list_for_each_entry(vm, &rdev->vm_manager.lru_vm, list) {
++ 		if (vm->id =3D=3D -1)
++ 			continue;
+ =20
+- 	return r;
++ 		list_for_each_entry(bo_va, &vm->va, vm_list) {
++ 			struct ttm_mem_reg *mem =3D NULL;
++ 			if (bo_va->valid)
++ 				mem =3D &bo_va->bo->tbo.mem;
++=20
++ 			bo_va->valid =3D false;
++ 			r =3D radeon_vm_bo_update_pte(rdev, vm, bo_va->bo, mem);
++ 			if (r) {
++ 				DRM_ERROR("Failed to update pte for vm %d!\n", vm->id);
++ 			}
++ 		}
++=20
++ 		r =3D rdev->vm_manager.funcs->bind(rdev, vm, vm->id);
++ 		if (r) {
++ 			DRM_ERROR("Failed to bind vm %d!\n", vm->id);
++ 		}
++ 	}
++ 	return 0;
+  }
+ =20
+- /* cs mutex must be lock */
++ /* global mutex must be lock */
+  static void radeon_vm_unbind_locked(struct radeon_device *rdev,
+  				    struct radeon_vm *vm)
+  {
+
+--Signature=_Thu__19_Jul_2012_11_38_20_+1000_83sQYXXa1cRfAK.h
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAABCgAGBQJQB2BcAAoJEOVv75VaS+3OS7kP/jk3ehYJHdmXLSPeJjRJZ7R9
-2CqkfK+zg3eK6+UiZeCZIYFOEKAVMfw5kdnSpsqlglxfrVU1CXfBmiUQec8SfgmX
-pdfCxWXsnIdBPJT3damfpPdEhYhoMBLF+WXBI4AeZ2kZ4Rc+YlFcYVDTXQjzSP3r
-Xobk929Dd/KKKBkgyDPhdxeYbzS5x8+V9XAg0calOnV/gK2R6OisDueZnn5nv30H
-6Nb2uzaBQr2b4Uwv+iXAcu0UqPFdBrw0Xp7zWrWIG8ivB7UpetD87x6AfKDrC7cH
-0V5G6LuUk9tHZ5h6zRfLTm00HBOsCXocfXlqvGZWcR/DOqp6aQ1qpohYX6zSQ7op
-RiLzc2M+cXXuFX8X8pEw2eJAUUhi1Y9BtkeT6hDJ8fHLqRkVYiw4r5KhyWHdPmGc
-r0xbKI/re98WQ2RM79VcGGkm/A4GB3Y9eUa+6mBQEwSHhQMOhRoKTx1G4dZqcb2D
-fxMGVpmOOvGKKS0D6VFyKQNX+7dXjSQW6uD8TsuNMErHy7jCXd8Pph9ptTQnS6UB
-OBw+AXKHs1Ha4S3MjR33NHCjQ8LFNLNDMZREvmaqwNxlrqtmo6+zZGVzK/3BxrW6
-14my4C5LHOuIjzkmEWPKWRGa2BJb234hqpkScs66xFt5njunoiQ0xCyCb+EDxjbD
-77cqYvQSWvtNASvXEBi2
-=YT0r
+iQIcBAEBCAAGBQJQB2UMAAoJEECxmPOUX5FEuCEQAJogmtOCfsTgo909Mp2gFyh3
+sZLgsPCK+bsj9iQ1gUDm8mhNPCrv6mKHFQN6F5HMbiHBnVgFwYHqyPnJLRmM+M+3
+Lwwza4R/9xWb8bUu8azBBdDh30fHxnMeW2NiQ2XQCbmigxuddtVcU/FxRoYE0A+h
+m+c0dliwjIDlCYvzsHWNGugUkudwEljNadMzR3n6siwhbXCDHO8gxCvhRBFxLEz+
+9ahuY9YGjRwqAcpYY9WYTtKxJks0A3rDxKCLrP8EraxcLWaMSSi1aQk8t9PrSoNV
+3MJLHcvdMz8dSUtIc6tFx09CZAHS3j+5rhwmIAEVjh50zKUAonMo4JRJ797EaAEB
+jFx03djqPsU8EBW0GOcLJawe7WELcpoRqFrj2sAdkISCPDJkz/TEvuFLKEvKZnG7
+UxhQJPAw47jk6A8eGnbaxiMmooOTqYV9Cpxxywzd+eM58GvLhuW4f8eRNIRTfP5P
+IxA6iFytoQ8B0rD+JbijRzMNjQhqcSrlYHi1p86DU/c3bSz7Ht0nG0/1504MSeo+
+APXRRk/TuFwF7ESvpEYJyvyfrkj4iCVqZYxlMFcPNKbr0mXP47/o5dyKGk0JFSUe
+C5dAxRK09EkaPSyeERZmmo/DTpesU2GtEerVEW8qZofa19a5EEFm35IqdvqrLmHT
+mI9U1Mg5Dg/0w80IanAw
+=RaZx
 -----END PGP SIGNATURE-----
 
---=-jF1SSGhB941y1SBdPiYI--
+--Signature=_Thu__19_Jul_2012_11_38_20_+1000_83sQYXXa1cRfAK.h--
