@@ -1,142 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Thu, 19 Jul 2012 11:38:20 +1000
-Message-ID: <20120719113820.c15d1572d38d93b4581ecade@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Thu, 19 Jul 2012 14:36:27 +1000
+Message-ID: <20120719143627.adc9d5e5333449d6c8588a99@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__19_Jul_2012_11_38_20_+1000_83sQYXXa1cRfAK.h"
+ boundary="Signature=_Thu__19_Jul_2012_14_36_27_+1000_S2nEvJqwS=ePn2/D"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44923 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58051 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751652Ab2GSBib (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jul 2012 21:38:31 -0400
+	with ESMTP id S1752529Ab2GSEgh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 00:36:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?B?IkNocmlzdGlhbiBLw7ZuaWci?= <deathsimple@vodafone.de>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
---Signature=_Thu__19_Jul_2012_11_38_20_+1000_83sQYXXa1cRfAK.h
+--Signature=_Thu__19_Jul_2012_14_36_27_+1000_S2nEvJqwS=ePn2/D
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Greg,
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/radeon/radeon_gart.c between commit c21b328ea8c7
-("drm/radeon: fix VM page table setup on SI") from Linus' tree and commit
-c6105f249a63 ("drm/radeon: remove vm_manager start/suspend") from the drm
-tree.
+After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
+drivers/char/pcmcia/synclink_cs.c: In function 'shutdown':
+drivers/char/pcmcia/synclink_cs.c:1347:27: error: invalid type argument of =
+'->' (have 'struct ktermios')
+drivers/char/pcmcia/synclink_cs.c: In function 'mgslpc_program_hw':
+drivers/char/pcmcia/synclink_cs.c:1388:45: error: invalid type argument of =
+'->' (have 'struct ktermios')
+drivers/char/pcmcia/synclink_cs.c: In function 'mgslpc_change_params':
+drivers/char/pcmcia/synclink_cs.c:1401:14: error: wrong type argument to un=
+ary exclamation mark
+drivers/char/pcmcia/synclink_cs.c:1408:22: error: invalid type argument of =
+'->' (have 'struct ktermios')
+drivers/char/pcmcia/synclink_cs.c: In function 'mgslpc_throttle':
+drivers/char/pcmcia/synclink_cs.c:1731:19: error: invalid type argument of =
+'->' (have 'struct ktermios')
+drivers/char/pcmcia/synclink_cs.c: In function 'mgslpc_unthrottle':
+drivers/char/pcmcia/synclink_cs.c:1760:19: error: invalid type argument of =
+'->' (have 'struct ktermios')
+drivers/char/pcmcia/synclink_cs.c: In function 'mgslpc_set_termios':
+drivers/char/pcmcia/synclink_cs.c:2296:19: error: invalid type argument of =
+'->' (have 'struct ktermios')
+drivers/char/pcmcia/synclink_cs.c:2297:10: error: invalid type argument of =
+'->' (have 'struct ktermios')
+drivers/char/pcmcia/synclink_cs.c:2305:20: error: invalid type argument of =
+'->' (have 'struct ktermios')
+drivers/char/pcmcia/synclink_cs.c:2314:18: error: invalid type argument of =
+'->' (have 'struct ktermios')
+drivers/char/pcmcia/synclink_cs.c:2316:22: error: invalid type argument of =
+'->' (have 'struct ktermios')
+drivers/char/pcmcia/synclink_cs.c:2327:20: error: invalid type argument of =
+'->' (have 'struct ktermios')
+
+Caused by commit adc8d746caa6 ("tty: move the termios object into the
+tty").  Grep and build testing are your friends ...
+
+I have used the tty tree from next-20120712 again for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/radeon/radeon_gart.c
-index 84b648a,56752da..0000000
---- a/drivers/gpu/drm/radeon/radeon_gart.c
-+++ b/drivers/gpu/drm/radeon/radeon_gart.c
-@@@ -282,31 -282,61 +282,62 @@@ void radeon_gart_fini(struct radeon_dev
-   *
-   * TODO bind a default page at vm initialization for default address
-   */
-+=20
-  int radeon_vm_manager_init(struct radeon_device *rdev)
-  {
-+ 	struct radeon_vm *vm;
-+ 	struct radeon_bo_va *bo_va;
-  	int r;
- =20
-- 	rdev->vm_manager.enabled =3D false;
-+ 	if (!rdev->vm_manager.enabled) {
-+ 		/* mark first vm as always in use, it's the system one */
-++		/* allocate enough for 2 full VM pts */
-+ 		r =3D radeon_sa_bo_manager_init(rdev, &rdev->vm_manager.sa_manager,
- -					      rdev->vm_manager.max_pfn * 8,
-++					      rdev->vm_manager.max_pfn * 8 * 2,
-+ 					      RADEON_GEM_DOMAIN_VRAM);
-+ 		if (r) {
-+ 			dev_err(rdev->dev, "failed to allocate vm bo (%dKB)\n",
-+ 				(rdev->vm_manager.max_pfn * 8) >> 10);
-+ 			return r;
-+ 		}
- =20
-- 	/* mark first vm as always in use, it's the system one */
-- 	/* allocate enough for 2 full VM pts */
-- 	r =3D radeon_sa_bo_manager_init(rdev, &rdev->vm_manager.sa_manager,
-- 				      rdev->vm_manager.max_pfn * 8 * 2,
-- 				      RADEON_GEM_DOMAIN_VRAM);
-- 	if (r) {
-- 		dev_err(rdev->dev, "failed to allocate vm bo (%dKB)\n",
-- 			(rdev->vm_manager.max_pfn * 8) >> 10);
-- 		return r;
-+ 		r =3D rdev->vm_manager.funcs->init(rdev);
-+ 		if (r)
-+ 			return r;
-+ =09
-+ 		rdev->vm_manager.enabled =3D true;
-+=20
-+ 		r =3D radeon_sa_bo_manager_start(rdev, &rdev->vm_manager.sa_manager);
-+ 		if (r)
-+ 			return r;
-  	}
- =20
-- 	r =3D rdev->vm_manager.funcs->init(rdev);
-- 	if (r =3D=3D 0)
-- 		rdev->vm_manager.enabled =3D true;
-+ 	/* restore page table */
-+ 	list_for_each_entry(vm, &rdev->vm_manager.lru_vm, list) {
-+ 		if (vm->id =3D=3D -1)
-+ 			continue;
- =20
-- 	return r;
-+ 		list_for_each_entry(bo_va, &vm->va, vm_list) {
-+ 			struct ttm_mem_reg *mem =3D NULL;
-+ 			if (bo_va->valid)
-+ 				mem =3D &bo_va->bo->tbo.mem;
-+=20
-+ 			bo_va->valid =3D false;
-+ 			r =3D radeon_vm_bo_update_pte(rdev, vm, bo_va->bo, mem);
-+ 			if (r) {
-+ 				DRM_ERROR("Failed to update pte for vm %d!\n", vm->id);
-+ 			}
-+ 		}
-+=20
-+ 		r =3D rdev->vm_manager.funcs->bind(rdev, vm, vm->id);
-+ 		if (r) {
-+ 			DRM_ERROR("Failed to bind vm %d!\n", vm->id);
-+ 		}
-+ 	}
-+ 	return 0;
-  }
- =20
-- /* cs mutex must be lock */
-+ /* global mutex must be lock */
-  static void radeon_vm_unbind_locked(struct radeon_device *rdev,
-  				    struct radeon_vm *vm)
-  {
-
---Signature=_Thu__19_Jul_2012_11_38_20_+1000_83sQYXXa1cRfAK.h
+--Signature=_Thu__19_Jul_2012_14_36_27_+1000_S2nEvJqwS=ePn2/D
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQB2UMAAoJEECxmPOUX5FEuCEQAJogmtOCfsTgo909Mp2gFyh3
-sZLgsPCK+bsj9iQ1gUDm8mhNPCrv6mKHFQN6F5HMbiHBnVgFwYHqyPnJLRmM+M+3
-Lwwza4R/9xWb8bUu8azBBdDh30fHxnMeW2NiQ2XQCbmigxuddtVcU/FxRoYE0A+h
-m+c0dliwjIDlCYvzsHWNGugUkudwEljNadMzR3n6siwhbXCDHO8gxCvhRBFxLEz+
-9ahuY9YGjRwqAcpYY9WYTtKxJks0A3rDxKCLrP8EraxcLWaMSSi1aQk8t9PrSoNV
-3MJLHcvdMz8dSUtIc6tFx09CZAHS3j+5rhwmIAEVjh50zKUAonMo4JRJ797EaAEB
-jFx03djqPsU8EBW0GOcLJawe7WELcpoRqFrj2sAdkISCPDJkz/TEvuFLKEvKZnG7
-UxhQJPAw47jk6A8eGnbaxiMmooOTqYV9Cpxxywzd+eM58GvLhuW4f8eRNIRTfP5P
-IxA6iFytoQ8B0rD+JbijRzMNjQhqcSrlYHi1p86DU/c3bSz7Ht0nG0/1504MSeo+
-APXRRk/TuFwF7ESvpEYJyvyfrkj4iCVqZYxlMFcPNKbr0mXP47/o5dyKGk0JFSUe
-C5dAxRK09EkaPSyeERZmmo/DTpesU2GtEerVEW8qZofa19a5EEFm35IqdvqrLmHT
-mI9U1Mg5Dg/0w80IanAw
-=RaZx
+iQIcBAEBCAAGBQJQB47LAAoJEECxmPOUX5FEQCoP/2y5eAvx3O84sDZaSV1BS30q
+79xYK5T4ax2YDKn+cdayCmu0q2B72XShEPZ9eSO2VnVRPV3KcJyV4+gnLU0Mk1/X
+bK3rZGqyvYFZBBaSr4M6YwG2S8Fml5jIFJlawBMsogTEzVdna2vAfYwGcZjdnv+K
+FM28IsyU7WEl18Um6Y4yA/m6OB8QrD2q63D8hMq6jtpe8pXMRzd9LomshWcJxZTm
+6nxBqc5+F+//UyJmxwnzSZ1ZFHZGSkfe99U0xUR93FuBVrcg6Aeff49O2NMcIWPx
+jQm82kgzXLXRPocq1S6CHXN9j+FSL3ZC/OcT97fZjraVVVDhX9XcGCvTdLCIntSr
+m5opUuWRAx+thyFdWbNAcejFzmOu+SYdMtEjNvNpvErTRrHQjXnAN/e1B1lfBhvX
++AZd2vwpQAuNI9jJrdVZFpciZaQVUvinI3Z0FEwjQY6C0hir9J+u6Frlt2PIaHte
+mtS2wEE0VN6q4CBmspywNA4DTCaayuCdkLd56/qgzwLzvQEo5fGKkeVxX1BkD3bi
+DOwx0c2PbVXl462+yTsUBssrM0GDuMwdpMtrhfXTm9tv8vHer9rk6XzE4k3LBsSV
+G8FYcEspbcJ5MNGrE+pb/uUoDFPjwMU/4eeHjx8+N6VUuS9ep10XkjaFwllfXmL2
+sxB8UGJtDFcZZ0jpaXXT
+=h345
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__19_Jul_2012_11_38_20_+1000_83sQYXXa1cRfAK.h--
+--Signature=_Thu__19_Jul_2012_14_36_27_+1000_S2nEvJqwS=ePn2/D--
