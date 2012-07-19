@@ -1,74 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the random tree with the mfd tree
-Date: Thu, 19 Jul 2012 15:59:10 +1000
-Message-ID: <20120719155910.d2730d9bbcabadd945d7c585@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Thu, 19 Jul 2012 17:08:27 +1000
+Message-ID: <20120719170827.32067d18457dc0e6c3b644f5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__19_Jul_2012_15_59_10_+1000_jWVvQHPcEnyY/WeL"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__19_Jul_2012_17_08_27_+1000_dbBnw_bv.6jeF+5u"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50072 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751210Ab2GSHIi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 03:08:38 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Javier M. Mellid" <jmunhoz@igalia.com>
 
---Signature=_Thu__19_Jul_2012_15_59_10_+1000_jWVvQHPcEnyY/WeL
+--Signature=_Thu__19_Jul_2012_17_08_27_+1000_dbBnw_bv.6jeF+5u
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Theodore,
+Hi all,
 
-Today's linux-next merge of the random tree got a conflict in
-drivers/mfd/ab3100-core.c between commit 7f0f07ce25b6 ("mfd: Use devm
-allocation for ab3100-core") from the mfd tree and commit 627574db8b21
-("random: remove rand_initialize_irq()") from the random tree.
+After merging the final tree, today's linux-next build (powerpc allyesconfi=
+g)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
+drivers/staging/sm7xxfb/sm7xxfb.c: In function 'smtcfb_pci_probe':
+drivers/staging/sm7xxfb/sm7xxfb.c:829:33: error: 'smtc_screen_info' undecla=
+red (first use in this function)
+
+Caused by commit 013db67415d1 ("staging: sm7xxfb: rename smtc_screen_info
+to smtc_scr_info").  Grep is your friend.
+
+I have added the following patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 19 Jul 2012 17:04:39 +1000
+Subject: [PATCH] staging: sm7xxfb: fix for "rename smtc_screen_info to smtc=
+_scr_info"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/sm7xxfb/sm7xxfb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/sm7xxfb/sm7xxfb.c b/drivers/staging/sm7xxfb/sm=
+7xxfb.c
+index 90c90db..1c1780c 100644
+--- a/drivers/staging/sm7xxfb/sm7xxfb.c
++++ b/drivers/staging/sm7xxfb/sm7xxfb.c
+@@ -826,7 +826,7 @@ static int __devinit smtcfb_pci_probe(struct pci_dev *p=
+dev,
+=20
+ #ifdef __BIG_ENDIAN
+ 	if (sfb->fb.var.bits_per_pixel =3D=3D 24)
+-		sfb->fb.var.bits_per_pixel =3D (smtc_screen_info.lfb_depth =3D 32);
++		sfb->fb.var.bits_per_pixel =3D (smtc_scr_info.lfb_depth =3D 32);
+ #endif
+ 	/* Map address and memory detection */
+ 	pFramebufferPhysical =3D pci_resource_start(pdev, 0);
+--=20
+1.7.10.280.gaa39
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/mfd/ab3100-core.c
-index 4276aab,1287645..0000000
---- a/drivers/mfd/ab3100-core.c
-+++ b/drivers/mfd/ab3100-core.c
-@@@ -931,13 -929,10 +929,11 @@@ static int __devinit ab3100_probe(struc
-  	if (err)
-  		goto exit_no_setup;
- =20
- -	err =3D request_threaded_irq(client->irq, NULL, ab3100_irq_handler,
- -				IRQF_ONESHOT, "ab3100-core", ab3100);
- +	err =3D devm_request_threaded_irq(&client->dev,
- +					client->irq, NULL, ab3100_irq_handler,
- +					IRQF_ONESHOT, "ab3100-core", ab3100);
-  	if (err)
-  		goto exit_no_irq;
-- 	/* This real unpredictable IRQ is of course sampled for entropy */
-- 	rand_initialize_irq(client->irq);
- =20
-  	err =3D abx500_register_ops(&client->dev, &ab3100_ops);
-  	if (err)
-
---Signature=_Thu__19_Jul_2012_15_59_10_+1000_jWVvQHPcEnyY/WeL
+--Signature=_Thu__19_Jul_2012_17_08_27_+1000_dbBnw_bv.6jeF+5u
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQB6IuAAoJEECxmPOUX5FECUUP/iDZH0Re3cXTEXx6C87/gfFz
-hzeSZjuLJGPVLpXDOrNeXRpTFyx4jGJOg2wHXyZCi/1nepH/OyLzOkGgXOeeF76c
-7nCWBp4Ec/KXyJKPnZ/JZBVeikCx2uQfdonY7nnb1esAFyqqsVT104oRbwWVvc76
-3EIwhDMpGdPKMAJaip9OvVTglKV75iTPVRkbyJU06N8PR0JCPgP5FNYfg2SCuqLo
-EvFIoPcfEiuxVKn8wWV3+XJgpkr6AfYZDuGtSAQIfnhuRLat3Qo2DdU551VkbR3V
-giEMQ6/zHN4i4Y/wyKLxhzDw5IsRQtgduaiu6blVFHpXx26x/QZYnDTtXylslqdW
-itM5QIKhm5J7xpgvHamEnNEbiWWVATy6Pqwnrk9koPYQm2TaAzmPN9DIf+UOE9tu
-v7yw1UR5pTRmhYlf8wUSbiPC1cpKlgBVB4B32aokzk5orfvyxJJ5/wousnTgA98D
-XPTg9vUlIlY6CZR6mCGkdHv4sp7mXm2ck8Idy0jfJnQm3YudcNKfyXT6qMjCwZoH
-5blKFXN4L7e4k53dVhjT3l8QUeQcGGLvBTZv8XVbi+TujckROw5/zXG33w3mMTCj
-S76EhHmU8EVk6gsGHzoEra0mO1xL/WS9Un+RWHIswRjxC96KK0fo4AXOEV4Mqkfl
-Ps69RvYCt4pDBIyTq1d3
-=6sv1
+iQIcBAEBCAAGBQJQB7JrAAoJEECxmPOUX5FE7tcP/3W6zNTFzzrV6EsuWnJlNih2
+ozZCBH7L7K0IuTJ78seAUanAiUWzOQwN6FgGjxKW654huPkUZ5WWpsPXKcNdUyB1
+mQ5FkQyXkZb6zpG0ogMRGuu82IqXU6TOftF/5ytN5r/FfDZcZ8vVXs0+1iHth4eH
+yRUktutDpOyrxmaARVkGjZlOh9jdlXM7pxRcb0BAMV11goWg5RSuC9Dm/88QBayv
+fPGeEkh6zkXciCQIgpCVrg03M/MZc0aLJ2PRpIhIoZb69v0GgAwyB0Hdy7myeKZX
+ZP1lX3zt42Fptymih3JSuJeyY1P9oqCcfQa61H/GMaviV4bLmgXir0d+W9xgmph0
+bb8bgAaTE420f0z1soIkggfzy3mooOdrfyA3pl8O3NiPKKOTWHAHwmHjNvpt2biw
+vrRUaXo+D1/O86bKobgbSc0oW5yWofN7YHDD/JBPJ4NABA0Bn8v75zdrg5LgMt6p
+3dvvt7L0DVNIyTFrRWorruItkZ9Q31IPEQwZyJAEhC8WwtMDTpcHwSlSrjrDk9zd
+rNiN1dRefQoPfgLdfwp/Vqdbh815+H+JwmleD0B+SExH084mmcAPIcJ0IasQ8nTU
+SV4yzC4JF7uGb/tb07FUgc0bgvgu/LQZGCoG/fUBMnsiLXaotW51ystbRRQJZtFa
+b2REG7CB6ImSiGC6sEDA
+=aghW
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__19_Jul_2012_15_59_10_+1000_jWVvQHPcEnyY/WeL--
+--Signature=_Thu__19_Jul_2012_17_08_27_+1000_dbBnw_bv.6jeF+5u--
