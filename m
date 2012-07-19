@@ -1,25 +1,46 @@
-From: Alan Cox <alan@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Thu, 19 Jul 2012 11:41:12 +0100
-Message-ID: <20120719114112.1ccccb54@bob.linux.org.uk>
-References: <20120719143627.adc9d5e5333449d6c8588a99@canb.auug.org.au>
+From: "AnilKumar, Chimata" <anilkumar@ti.com>
+Subject: RE: [PATCH] regulator: tps65217: fix build error if REGULATOR is
+ not enabled
+Date: Thu, 19 Jul 2012 12:35:24 +0000
+Message-ID: <331ABD5ECB02734CA317220B2BBEABC13E9F98DB@DBDE01.ent.ti.com>
+References: <1342593663-23938-1-git-send-email-anilkumar@ti.com>
+ <20120718094449.GA22739@opensource.wolfsonmicro.com>
+ <331ABD5ECB02734CA317220B2BBEABC13E9F8BD7@DBDE01.ent.ti.com>
+ <20120718100013.GC22739@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:57454 "EHLO mga01.intel.com"
+Received: from arroyo.ext.ti.com ([192.94.94.40]:54591 "EHLO arroyo.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752594Ab2GSKYK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Jul 2012 06:24:10 -0400
-In-Reply-To: <20120719143627.adc9d5e5333449d6c8588a99@canb.auug.org.au>
+	id S1750894Ab2GSMfm convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 08:35:42 -0400
+In-Reply-To: <20120718100013.GC22739@opensource.wolfsonmicro.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: "rdunlap@xenotime.net" <rdunlap@xenotime.net>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "sameo@linux.intel.com" <sameo@linux.intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
 
-> Caused by commit adc8d746caa6 ("tty: move the termios object into the
-> tty").  Grep and build testing are your friends ...
+Hi Mark,
+
+On Wed, Jul 18, 2012 at 15:30:13, Mark Brown wrote:
+> On Wed, Jul 18, 2012 at 09:55:57AM +0000, AnilKumar, Chimata wrote:
 > 
-> I have used the tty tree from next-20120712 again for today.
+> > Regulators platform data is added to platform device in MFD driver, which we
+> > need for regulator driver, of_regulator_match() is used to check the regulator
+> > consumers if we pass DT data. If we do not enable CONFIG_REGULATOR then
+> > of_regulator_match() is not exported, so we see this error.
+> 
+> Why are you doing that in the MFD driver?
+> 
 
-Doh, patch sent
+I got your point, I referred tps6586x driver while developing the initial driver.
+Based on tps6586x MFD driver I added REGULATOR flag. I think tps6586x MFD driver
+need to be cleaned up.
+
+I will submit a patch to make tps65217 MFD driver independent of REGULATOR
+framework.
+
+Thanks
+AnilKumar
