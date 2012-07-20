@@ -1,56 +1,105 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Fri, 20 Jul 2012 12:48:38 +1000
-Message-ID: <20120720124838.2bd0f1e5087c4f08c5a65eed@canb.auug.org.au>
-References: <20120720120118.465056f267ab5c3ac5ea45c4@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Fri, 20 Jul 2012 13:28:40 +1000
+Message-ID: <20120720132840.f8269e2c3658daa010904dca@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__20_Jul_2012_12_48_38_+1000_dVB_01ZF0Rp+ajtn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120720120118.465056f267ab5c3ac5ea45c4@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Neuling <mikey@neuling.org>, Christian Riesch <christian.riesch@omicron.at>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__20_Jul_2012_13_28_40_+1000_ZFQaNyPUeWwyG6mT"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60542 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750789Ab2GTD2t (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 23:28:49 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
---Signature=_Fri__20_Jul_2012_12_48_38_+1000_dVB_01ZF0Rp+ajtn
+--Signature=_Fri__20_Jul_2012_13_28_40_+1000_ZFQaNyPUeWwyG6mT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 20 Jul 2012 12:01:18 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the net-next tree, today's linux-next build (powerpc
-> pmac32_defconfig) failed like this:
+Hi Greg,
 
-This was actually yesterday's linux-next - I guess it is fixed by commit
-215029375c83 ("asix: AX88172A driver depends on phylib") in today's tree.
+After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+drivers/staging/ipack/devices/ipoctal.c: In function 'ipoctal_set_termios':
+drivers/staging/ipack/devices/ipoctal.c:614:22: error: invalid type argumen=
+t of '->' (have 'struct ktermios')
+drivers/staging/ipack/devices/ipoctal.c:640:15: error: invalid type argumen=
+t of '->' (have 'struct ktermios')
+drivers/staging/ipack/devices/ipoctal.c:654:14: error: invalid type argumen=
+t of '->' (have 'struct ktermios')
+drivers/staging/ipack/devices/ipoctal.c:691:2: error: incompatible type for=
+ argument 1 of 'tty_termios_encode_baud_rate'
+include/linux/tty.h:449:13: note: expected 'struct ktermios *' but argument=
+ is of type 'struct ktermios'
+drivers/staging/ipack/devices/ipoctal.c:694:22: error: invalid type argumen=
+t of '->' (have 'struct ktermios')
+drivers/staging/ipack/devices/ipoctal.c:735:3: error: incompatible type for=
+ argument 1 of 'tty_termios_encode_baud_rate'
+include/linux/tty.h:449:13: note: expected 'struct ktermios *' but argument=
+ is of type 'struct ktermios'
+
+Presumably caused by commit adc8d746caa6 ("tty: move the termios object
+into the tty").
+
+Under previous instructions about staging drivers, I have added the
+following patch for today:
+
+=46rom c4bc70a8fc9cc687690aaf51865561ffcd6190f9 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 20 Jul 2012 13:25:12 +1000
+Subject: [PATCH] disable SERIAL_IPOCTAL broken by tty updates
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/ipack/devices/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/ipack/devices/Kconfig b/drivers/staging/ipack/=
+devices/Kconfig
+index 39f7188..8d69ce3 100644
+--- a/drivers/staging/ipack/devices/Kconfig
++++ b/drivers/staging/ipack/devices/Kconfig
+@@ -1,6 +1,7 @@
+ config SERIAL_IPOCTAL
+ 	tristate "IndustryPack IP-OCTAL uart support"
+ 	depends on IPACK_BUS
++	depends on BROKEN
+ 	help
+ 	  This driver supports the IPOCTAL serial port device for the IndustryPac=
+k bus.
+ 	default n
+--=20
+1.7.10.280.gaa39
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__20_Jul_2012_12_48_38_+1000_dVB_01ZF0Rp+ajtn
+--Signature=_Fri__20_Jul_2012_13_28_40_+1000_ZFQaNyPUeWwyG6mT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQCMcGAAoJEECxmPOUX5FEMGoP/R9TyRWtqUh+reWTp1A+Fjt9
-6PTqHFo75znSWn7XWCMHrFaU0Iub6rsrwO0MZk4SniDHHk4VFJWpt4tGhYweLpEG
-QEK1DUqJ0AVE29iADxSdFxmxCjX8vnX6Lbm2H8bAnjS20RXLwjDNuzvjvC7MfwGt
-Z+Fb0eeZYXSzxwuxQeV9kZAyuuEultCgMmOV3t1LesD5kQP2nuWYWPokA/oIhTCF
-se98Tw9iNRy9kGLlZzKVA0wtj6pZ/iWYqtlrfsoCk1HHA4sbbn1PChtgTZ8GcT68
-Em1ye807wq7uG8y3Z86dcJEQxlL72yJoyc9i/pGDfWTAwwQOpmnZE9bF5egF1xOV
-bvKHQfFIfMhtFnwiPR9SJqwJHB1T6dj/rRA3xSkn9aVlxOixOOWQfbXwYfyKvosF
-yJKFf5khOPeEOF9ZpemwKRCdR3ahF2Mlnekrh/+b3UTEEygOu10KoLOGKmnamNJi
-XtIbCKZ0OJMiZodSblO7blER7yB6uIt695H/a0IGbeJpHKoDrolShOE6bl8XesHa
-ZfaArDGdmzQCmnQtJyUVz4gSCG1cRqPSbySX0c/hljzg1YpLEwvmB0dO0JnljdSr
-C2chWZimyAKyG3E9Jiv5u1jMiqO437sVTfP5uLV1e6XOhRs2RT8bHFIKtsiSXq1F
-ksl6z8VkLXl5DWC1Mx3n
-=xacN
+iQIcBAEBCAAGBQJQCNBoAAoJEECxmPOUX5FET2gP/R2RiO6lO5un70X4pkiGJgzO
+xR9mLIsicmoXdWNP9h4QtFQ9P1jc/crZg9AY0kSnfGSunT/iQ1QkrlP6nIuVtLj/
+8nxNKN3k1ExzCU3yc9QSUJ2y40027WyVGqD8SnF+2+A7S1d5CfD64J3BgphzFecC
+hibUYpHHgZBSKZMVE3SA+gQuQL4kmFAQQsb6NSH8eIeKs/aFn1MBIo/qxKvrYptJ
+g7TiGVD59NWb8PJBkj8ZSC9aa5qgNr7SYZiTeSZM11+VDQY4f8k37P3l9+fVLOVi
+Mhkbt5g3f93vKcSCHl1eqvfuCQ6nX/WbGyNlCVojpUVDkwaL4blQf7WVROZaUMeV
+4GbgPY87Oxuzq2PXPU7P9eM43zavXuHmTEEARtqfnaiWptF03pep8yWO9GjBdpsE
+cSz6G5v4zKYbKDEqOrjPULv6OVPi7ABjEe1ilvfRF8nG3Cs9LcLSvXiAuuqTFG06
+cxVvJq5GuMqgHpOG9OFrdUxxdmggj7u52rB1bvEi+IOgH9GxpcbcxUXXfmZzvIvA
+0fBoHlnhHiOVpk/qdKws6N4N+U3jzkJXdYsE3eIiIRnWv0UmclE+mRBAcsd+AqYQ
+ATQXJvj1dLXh8tT6YccH3NlGnkdfkz4SneOY1ej1MGE8v4DgWBy/uDTaqrCJxrZG
+LyuZMxAF+g1dj77S7feq
+=1/UZ
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__20_Jul_2012_12_48_38_+1000_dVB_01ZF0Rp+ajtn--
+--Signature=_Fri__20_Jul_2012_13_28_40_+1000_ZFQaNyPUeWwyG6mT--
