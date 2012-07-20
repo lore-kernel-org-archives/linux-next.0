@@ -1,20 +1,42 @@
-From: Standard Credit International Finance
-	<thomasdavidmarkloanfirm@gmail.com>
-Subject: (unknown)
-Date: Fri, 20 Jul 2012 01:41:09 -0700 (PDT)
-Message-ID: <1342773669.79206.YahooMailClassic@web5708.biz.mail.ne1.yahoo.com>
-Reply-To: funding_standardcreditfinance@yahoo.com
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Fri, 20 Jul 2012 09:50:05 +0100
+Message-ID: <1342774205.2984.9.camel@dabdike.int.hansenpartnership.com>
+References: <20120720104118.217d9adf6d7fd5253746c73a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nm12-vm0.access.bullet.mail.sp2.yahoo.com ([98.139.44.126]:39360
-	"HELO nm12-vm0.access.bullet.mail.sp2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1753191Ab2GTIlK convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jul 2012 04:41:10 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:47575 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752566Ab2GTIuJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Jul 2012 04:50:09 -0400
+In-Reply-To: <20120720104118.217d9adf6d7fd5253746c73a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Linus <torvalds@linux-foundation.org>
 
+On Fri, 2012-07-20 at 10:41 +1000, Stephen Rothwell wrote:
+> Hi James,
+> 
+> After merging the scsi tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> drivers/base/dd.c:27:28: fatal error: scsi/scsi_scan.h: No such file or directory
+> 
+> Caused by commit eea03c20ae38 ("Make wait_for_device_probe() also do
+> scsi_complete_async_scans()") from Linus' tree interacting with commit
+> 758da9dc2be8 ("[SCSI] cleanup usages of scsi_complete_async_scans") from
+> the scsi tree.
+> 
+> I have reverted commit 758da9dc2be8 for today (which may not be the best
+> thing to do).
 
-Do you need business loan or personal loan if yes contact us today?
+That probably just about works, since 758da9dc2be8 is just removing
+redundant code.
+
+I've got this all fixed up properly in for-next now.
+
+James
