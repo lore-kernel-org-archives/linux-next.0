@@ -1,45 +1,72 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the scsi tree with Linus' tree
-Date: Fri, 20 Jul 2012 09:31:39 -0700
-Message-ID: <CA+55aFxiichhzqokzAmHMEEUW1286V0d37YaStcOH_e=OutDiA@mail.gmail.com>
-References: <20120720103254.4a043ea94ef16992466a8b19@canb.auug.org.au> <1342769360.2984.2.camel@dabdike.int.hansenpartnership.com>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: linux-next: manual merge of the staging tree with the
+ target-merge tree
+Date: Fri, 20 Jul 2012 10:52:58 -0700
+Message-ID: <1342806778.25472.1.camel@haakon2.linux-iscsi.org>
+References: <20120719145301.b8992aa986b47d7c44651710@canb.auug.org.au>
+	 <20120719235523.GA13623@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:57675 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750969Ab2GTQcB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jul 2012 12:32:01 -0400
-In-Reply-To: <1342769360.2984.2.camel@dabdike.int.hansenpartnership.com>
+Received: from mail.linux-iscsi.org ([67.23.28.174]:35732 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751768Ab2GTRxL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jul 2012 13:53:11 -0400
+In-Reply-To: <20120719235523.GA13623@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>
 
-On Fri, Jul 20, 2012 at 12:29 AM, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> By the way, Linus, the patch says:
->
->     Cc: Dan Williams <dan.j.williams@gmail.com>
->     Cc: Alan Stern <stern@rowland.harvard.edu>
->     Cc: James Bottomley <jbottomley@parallels.com>
->     Cc: Borislav Petkov <bp@amd64.org>
->     Cc: linux-scsi <linux-scsi@vger.kernel.org>
->
-> But best I can tell it never went to either me or linux-scsi.
+Hi Greg,
 
-Both you and linux-scsi were cc'd at least in some of the discussion. Search for
+On Thu, 2012-07-19 at 16:55 -0700, Greg KH wrote:
+> On Thu, Jul 19, 2012 at 02:53:01PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > Today's linux-next merge of the staging tree got a conflict in
+> > drivers/staging/Kconfig between commit d0146d396bfa ("tcm_vhost: Initial
+> > merge for vhost level target fabric driver") from the target-merge tree
+> > and commit 15a4bc17b7f4 ("Staging: add CSR Wifi "os helper" module") from
+> > the staging tree.
+> > 
+> > Just context changes.  I fixed it up (see below) and can carry the fix as
+> > necessary.
+> > -- 
+> > Cheers,
+> > Stephen Rothwell                    sfr@canb.auug.org.au
+> > 
+> > diff --cc drivers/staging/Kconfig
+> > index 67ec9fe,e3402d5..0000000
+> > --- a/drivers/staging/Kconfig
+> > +++ b/drivers/staging/Kconfig
+> > @@@ -132,6 -132,8 +132,10 @@@ source "drivers/staging/ipack/Kconfig
+> >   
+> >   source "drivers/staging/gdm72xx/Kconfig"
+> >   
+> > + source "drivers/staging/csr/Kconfig"
+> > + 
+> > + source "drivers/staging/omap-thermal/Kconfig"
+> > + 
+> >  +source "drivers/vhost/Kconfig.tcm"
+> 
+> Why is someone putting a non drivers/staging/ Kconfig file here in
+> drivers/staging/Kconfig?  That's not ok at all.
+> 
+> Target people, please just depend on CONFIG_STAGING if you want to do
+> that, but don't mess with files in the drivers/staging/ directory for no
+> good reason at all.
+> 
 
-  "a7a20d103994fd760766e6c9d494daa569cbfe06 makes kernel 3.5
-unbootable on an Intel chipset based motherboard"
+This was a request from MST (CC'ed) in order to have TCM_VHOST show up
+under the staging configuration options..
 
-but most of the noise is in the bugzilla itself:
+If that's really not what should be done, I'm happy to drop this part
+and just use CONFIG_STAGING again.
 
-  https://bugzilla.kernel.org/show_bug.cgi?id=44771
+MST, is that OK..?
 
-and it may well be that you weren't listed for the bugzilla entry.
+Thanks,
 
-Ugh, how I hate bugzilla.
-
-                Linus
+--nab
