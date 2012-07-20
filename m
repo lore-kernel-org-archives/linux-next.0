@@ -1,104 +1,94 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH -next] m68k/apollo: Rename "timer" to "apollo_timer"
-Date: Fri, 20 Jul 2012 23:09:08 +0200
-Message-ID: <1342818548-11588-1-git-send-email-geert@linux-m68k.org>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: linux-next: manual merge of the staging tree with the
+ target-merge tree
+Date: Fri, 20 Jul 2012 16:12:08 -0700
+Message-ID: <1342825928.25472.68.camel@haakon2.linux-iscsi.org>
+References: <20120719145301.b8992aa986b47d7c44651710@canb.auug.org.au>
+	 <20120719235523.GA13623@kroah.com>
+	 <1342806778.25472.1.camel@haakon2.linux-iscsi.org>
+	 <20120720180358.GA9134@kroah.com>  <20120720184228.GA19243@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from georges.telenet-ops.be ([195.130.137.68]:58441 "EHLO
-	georges.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752375Ab2GTVJP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jul 2012 17:09:15 -0400
+Received: from mail.linux-iscsi.org ([67.23.28.174]:42251 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751768Ab2GTXML (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jul 2012 19:12:11 -0400
+In-Reply-To: <20120720184228.GA19243@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-m68k@lists.linux-m68k.org, Peter De Schrijver <p2@debian.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>
 
-In file included from include/linux/kgdb.h:17,
-                 from include/linux/fb.h:8,
-                 from drivers/video/dnfb.c:15:
-include/linux/serial_8250.h:71: error: expected identifier or =E2=80=98=
-(=E2=80=99 before numeric constant
-include/linux/serial_8250.h:72: error: expected =E2=80=98;=E2=80=99 bef=
-ore =E2=80=98struct=E2=80=99
-make[1]: *** [drivers/video/dnfb.o] Error 1
+Hi Greg,
 
-This is caused by
+On Fri, 2012-07-20 at 21:42 +0300, Michael S. Tsirkin wrote:
+> On Fri, Jul 20, 2012 at 11:03:58AM -0700, Greg KH wrote:
+> > On Fri, Jul 20, 2012 at 10:52:58AM -0700, Nicholas A. Bellinger wrote:
+> > > Hi Greg,
+> > > 
 
-    #define timer (IO_BASE + timer_physaddr)
+<SNIP>
 
-in <asm/apollohw.h>, which conflicts with the new "timer" struct member=
- in
-<linux/serial_8250.h>.
+> > > This was a request from MST (CC'ed) in order to have TCM_VHOST show up
+> > > under the staging configuration options..
+> > 
+> > If you really want it to show up there, then send me a patch adding the
+> > code to drivers/staging/.  Otherwise it really makes no sense.
+> > 
+> > > If that's really not what should be done, I'm happy to drop this part
+> > > and just use CONFIG_STAGING again.
+> > 
+> > Why are you wanting to depend on CONFIG_STAGING in the first place?
+> > What is wrong with the code that it can't be merged "properly" now?
+> > Don't use CONFIG_STAGING as a "crutch" unless you really need it.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> It's very similar to how it was with nouveau: we are not sure
+> we can commit to the userspace ABI yet.
+> 
+> Most importantly, it still seems not 100% clear whether this driver will
+> have major userspace using it. And if not, it would be very hard to
+> support a driver when recent userspace does not use it in the end.
+> 
+> At the moment arguments on upstream mailing list seem to be
+> a bit circular: there's no module in upstream kernel so
+> userspace does not want to accept the patches.
+> 
+> If we put enabling this driver in staging, then it works out in one of
+> two ways
+> - userspace starts using it then this effectively freezes the ABI and
+>   we move it out of staging next release
+> - no userspace uses it and we drop it completely or rework ABI
+> 
+> On the other hand, it is marginally better to not want code in staging
+> for two reasons:
+> - there are dependencies between this code and other code in
+>   drivers/vhost which are easier for me to handle if it's all
+>   in one place
+> - a bit easier to track history if we do not move code
+> 
+> What do you think?
+> 
 
-Rename "timer" to "apollo_timer", as it's a way too generic name for a
-global #define.
+After chatting with MST off-list he asked for a RFC-v4 series with one
+extra change to vhost.h wrt the vhost-scsi ioctl defs.  He also said he
+is OK with taking the first three patches -v4 through vhost.git and
+letting staging take tcm_vhost.   Of course we'd need staging to depend
+on vhost for that to work <cough> (compile) properly..  ;)
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
---
-http://kisskb.ellerman.id.au/kisskb/buildresult/6739606/
----
- arch/m68k/apollo/config.c        |   16 ++++++++--------
- arch/m68k/include/asm/apollohw.h |    2 +-
- 2 files changed, 9 insertions(+), 9 deletions(-)
+I'd like to re-spin -v4 this evening so that he can review + ACK the
+full series before leaving for holiday tomorrow, so please let me know
+what you'd prefer to do here.
 
-diff --git a/arch/m68k/apollo/config.c b/arch/m68k/apollo/config.c
-index 0a30406..f5565d6 100644
---- a/arch/m68k/apollo/config.c
-+++ b/arch/m68k/apollo/config.c
-@@ -177,8 +177,8 @@ irqreturn_t dn_timer_int(int irq, void *dev_id)
-=20
- 	timer_handler(irq, dev_id);
-=20
--	x=3D*(volatile unsigned char *)(timer+3);
--	x=3D*(volatile unsigned char *)(timer+5);
-+	x =3D *(volatile unsigned char *)(apollo_timer + 3);
-+	x =3D *(volatile unsigned char *)(apollo_timer + 5);
-=20
- 	return IRQ_HANDLED;
- }
-@@ -186,17 +186,17 @@ irqreturn_t dn_timer_int(int irq, void *dev_id)
- void dn_sched_init(irq_handler_t timer_routine)
- {
- 	/* program timer 1 */
--	*(volatile unsigned char *)(timer+3)=3D0x01;
--	*(volatile unsigned char *)(timer+1)=3D0x40;
--	*(volatile unsigned char *)(timer+5)=3D0x09;
--	*(volatile unsigned char *)(timer+7)=3D0xc4;
-+	*(volatile unsigned char *)(apollo_timer + 3) =3D 0x01;
-+	*(volatile unsigned char *)(apollo_timer + 1) =3D 0x40;
-+	*(volatile unsigned char *)(apollo_timer + 5) =3D 0x09;
-+	*(volatile unsigned char *)(apollo_timer + 7) =3D 0xc4;
-=20
- 	/* enable IRQ of PIC B */
- 	*(volatile unsigned char *)(pica+1)&=3D(~8);
-=20
- #if 0
--	printk("*(0x10803) %02x\n",*(volatile unsigned char *)(timer+0x3));
--	printk("*(0x10803) %02x\n",*(volatile unsigned char *)(timer+0x3));
-+	printk("*(0x10803) %02x\n",*(volatile unsigned char *)(apollo_timer +=
- 0x3));
-+	printk("*(0x10803) %02x\n",*(volatile unsigned char *)(apollo_timer +=
- 0x3));
- #endif
-=20
- 	if (request_irq(IRQ_APOLLO, dn_timer_int, 0, "time", timer_routine))
-diff --git a/arch/m68k/include/asm/apollohw.h b/arch/m68k/include/asm/a=
-pollohw.h
-index bbafc91..6c19e0c 100644
---- a/arch/m68k/include/asm/apollohw.h
-+++ b/arch/m68k/include/asm/apollohw.h
-@@ -86,7 +86,7 @@ extern u_long timer_physaddr;
- #define cpuctrl (*(volatile unsigned int *)(IO_BASE + cpuctrl_physaddr=
-))
- #define pica (IO_BASE + pica_physaddr)
- #define picb (IO_BASE + picb_physaddr)
--#define timer (IO_BASE + timer_physaddr)
-+#define apollo_timer (IO_BASE + timer_physaddr)
- #define addr_xlat_map ((unsigned short *)(IO_BASE + 0x17000))
-=20
- #define isaIO2mem(x) (((((x) & 0x3f8)  << 7) | (((x) & 0xfc00) >> 6) |=
- ((x) & 0x7)) + 0x40000 + IO_BASE)
---=20
-1.7.0.4
+So that said, do you prefer having tcm_vhost moved into drivers/staging
+for -v4, or should we just be using a CONFIG_STAGING tag in
+drivers/vhost/ and be done with it..?
+
+Thank you!
+
+--nab
