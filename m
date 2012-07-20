@@ -1,91 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tty tree
-Date: Fri, 20 Jul 2012 13:33:49 +1000
-Message-ID: <20120720133349.b71eeca40aa1758a12725dea@canb.auug.org.au>
+From: Christian Riesch <christian.riesch@omicron.at>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Fri, 20 Jul 2012 05:21:45 +0200
+Message-ID: <5008CEC9.2050908@omicron.at>
+References: <20120720120118.465056f267ab5c3ac5ea45c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__20_Jul_2012_13_33_49_+1000_s8hXdft_=Kmird.T"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53391 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751353Ab2GTDdv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 23:33:51 -0400
+Received: from smtprelay01.ispgateway.de ([80.67.29.23]:51001 "EHLO
+	smtprelay01.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751353Ab2GTDoY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 23:44:24 -0400
+In-Reply-To: <20120720120118.465056f267ab5c3ac5ea45c4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Neuling <mikey@neuling.org>
 
---Signature=_Fri__20_Jul_2012_13_33_49_+1000_s8hXdft_=Kmird.T
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[Sent again due to problems with email client]
 
-Hi Greg,
+Hi,
 
-After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+On 07/20/2012 04:01 AM, Stephen Rothwell wrote:
+> Hi all,
+>
+> After merging the net-next tree, today's linux-next build (powerpc
+> pmac32_defconfig) failed like this:
+>
+> ERROR: "phy_disconnect" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "phy_stop" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "phy_ethtool_gset" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "mdiobus_unregister" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "phy_start_aneg" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "phy_print_status" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "phy_start" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "mdiobus_free" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "mdiobus_register" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "genphy_resume" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "phy_connect" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "phy_mii_ioctl" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "phy_ethtool_sset" [drivers/net/usb/asix.ko] undefined!
+> ERROR: "mdiobus_alloc_size" [drivers/net/usb/asix.ko] undefined!
+>
+> Caused by commit 16626b0cc3d5 ("asix: Add a new driver for the AX88172A")
+> and reverting that commit fixes the build.
 
-drivers/staging/serqt_usb2/serqt_usb2.c: In function 'qt_set_termios':
-drivers/staging/serqt_usb2/serqt_usb2.c:1198:29: error: incompatible types =
-when initializing type 'struct ktermios *' using type 'struct ktermios'
-drivers/staging/serqt_usb2/serqt_usb2.c:1304:14: error: invalid type argume=
-nt of '->' (have 'struct ktermios')
+Sorry about that. I missed the dependency of the new driver on phylib. A 
+fix for this problem is already in net-next, see commit 215029375c83.
 
-Presumably caused by commit adc8d746caa6 ("tty: move the termios object
-into the tty").
+Thanks, Christian
 
-Under previous instructions about staging drivers, I have added the
-following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 20 Jul 2012 13:31:39 +1000
-Subject: [PATCH] disable USB_SERIAL_QUATECH2 broken by tty update
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/serqt_usb2/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/serqt_usb2/Kconfig b/drivers/staging/serqt_usb=
-2/Kconfig
-index f4fed40..dc624a4 100644
---- a/drivers/staging/serqt_usb2/Kconfig
-+++ b/drivers/staging/serqt_usb2/Kconfig
-@@ -1,6 +1,7 @@
- config USB_SERIAL_QUATECH2
- 	tristate "USB Quatech ESU-100 8 Port Serial Driver"
- 	depends on USB_SERIAL
-+	depends on BROKEN
- 	help
- 	  Say Y here if you want to use the Quatech ESU-100 8 port usb to
- 	  serial adapter.
---=20
-1.7.10.280.gaa39
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__20_Jul_2012_13_33_49_+1000_s8hXdft_=Kmird.T
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQCNGdAAoJEECxmPOUX5FEgagP/2ICWrLFVTbDarB+cTC9fsqP
-C/bFL1Za2HzaMxLPKx7V1faG2LUyN02yMt+jSE0opZeKfNtBYMGBOEFB0zx0CRul
-i6Prwkv+aeMmJwtjC67Tb7d9pfqlt2lWGQYacvcw6Aclnf3JFinYurrTteRi8Tx7
-lPcI8Uf7K2OihcllsY8jCyPpi1BAwBxpIw+V4mAujjo9rV/tOx4ql1vWhyWGMGH+
-2oT+abHYk2iw2LKHQ2nJn1l3h5/r75BreGirXkymtuBCuiIZQN1RBdgrYN/Mqhhu
-hyNylUgfwW7mnxPutpOdahdwgvwK8IhceNmbCUiZdPYvzWmL30JlRteNOAw/N7ke
-hyBsJuJjCO11K4gxLPESA16KfR6MlOERb7tHsBN1kY18PUe4Y88lITJ8Qi22KBVE
-P+VOB0dl2AsC4XWQrZNT5wRkw2/FjhLwhdb6JMOxtbInXPVdNtHApdjyC3PW1Zld
-Nibr6sBorUBPTjOtiRMFC/jGwTZcKXZnJhCVUe3CL43hhxQnGin4wi/QUzjcBPBb
-39wvjrKrqQNvWUPxBtR8pZ0/iht24nEl6k2u3x/CbWO3ETON7DI9NcgG+xvgz8x+
-CtJ9Ulxj8Q92z4WYM5/3LwbNeTUOP3zqS+jBEUsOw8O+UyozZLsakDgtYrERlkak
-wGajCS2SBijf6MifpA9T
-=L0Ea
------END PGP SIGNATURE-----
-
---Signature=_Fri__20_Jul_2012_13_33_49_+1000_s8hXdft_=Kmird.T--
+>
+> Thanks to Mikey for reporting this porblem.
