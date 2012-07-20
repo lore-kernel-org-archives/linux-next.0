@@ -1,64 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi tree
-Date: Fri, 20 Jul 2012 10:41:18 +1000
-Message-ID: <20120720104118.217d9adf6d7fd5253746c73a@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Fri, 20 Jul 2012 12:01:18 +1000
+Message-ID: <20120720120118.465056f267ab5c3ac5ea45c4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__20_Jul_2012_10_41_18_+1000_jvUm9dFJXSPR+g+/"
+ boundary="Signature=_Fri__20_Jul_2012_12_01_18_+1000_yc_XPQQFW=ZoDQyt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37685 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:59451 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752320Ab2GTAlW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 20:41:22 -0400
+	with ESMTP id S1752531Ab2GTCB2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 22:01:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Linus <torvalds@linux-foundation.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Neuling <mikey@neuling.org>, Christian Riesch <christian.riesch@omicron.at>
 
---Signature=_Fri__20_Jul_2012_10_41_18_+1000_jvUm9dFJXSPR+g+/
+--Signature=_Fri__20_Jul_2012_12_01_18_+1000_yc_XPQQFW=ZoDQyt
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi all,
 
-After merging the scsi tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the net-next tree, today's linux-next build (powerpc
+pmac32_defconfig) failed like this:
 
-drivers/base/dd.c:27:28: fatal error: scsi/scsi_scan.h: No such file or dir=
-ectory
+ERROR: "phy_disconnect" [drivers/net/usb/asix.ko] undefined!
+ERROR: "phy_stop" [drivers/net/usb/asix.ko] undefined!
+ERROR: "phy_ethtool_gset" [drivers/net/usb/asix.ko] undefined!
+ERROR: "mdiobus_unregister" [drivers/net/usb/asix.ko] undefined!
+ERROR: "phy_start_aneg" [drivers/net/usb/asix.ko] undefined!
+ERROR: "phy_print_status" [drivers/net/usb/asix.ko] undefined!
+ERROR: "phy_start" [drivers/net/usb/asix.ko] undefined!
+ERROR: "mdiobus_free" [drivers/net/usb/asix.ko] undefined!
+ERROR: "mdiobus_register" [drivers/net/usb/asix.ko] undefined!
+ERROR: "genphy_resume" [drivers/net/usb/asix.ko] undefined!
+ERROR: "phy_connect" [drivers/net/usb/asix.ko] undefined!
+ERROR: "phy_mii_ioctl" [drivers/net/usb/asix.ko] undefined!
+ERROR: "phy_ethtool_sset" [drivers/net/usb/asix.ko] undefined!
+ERROR: "mdiobus_alloc_size" [drivers/net/usb/asix.ko] undefined!
 
-Caused by commit eea03c20ae38 ("Make wait_for_device_probe() also do
-scsi_complete_async_scans()") from Linus' tree interacting with commit
-758da9dc2be8 ("[SCSI] cleanup usages of scsi_complete_async_scans") from
-the scsi tree.
+Caused by commit 16626b0cc3d5 ("asix: Add a new driver for the AX88172A")
+and reverting that commit fixes the build.
 
-I have reverted commit 758da9dc2be8 for today (which may not be the best
-thing to do).
+Thanks to Mikey for reporting this porblem.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__20_Jul_2012_10_41_18_+1000_jvUm9dFJXSPR+g+/
+--Signature=_Fri__20_Jul_2012_12_01_18_+1000_yc_XPQQFW=ZoDQyt
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQCKkuAAoJEECxmPOUX5FEnOkP/AkafMUZnOd90JjvacWEHPox
-78kzeIeTVsG6CCHkc6x/5+7SFbullM5uqcNi+X2DpO0LVd905oCoqer6mzOjbdhN
-dhDNsV+bR/AfwklqutIgkXlNYwaI4iOTfgr1umuWoFEnRzUaNxD0lFpHsr6H2H/k
-LLJHKGYNySCnL8dAVnZdpsTGbvW+N1Gh7mPSXz19zU57xlb7cVBUhzV9ILxiCrIi
-mGnzNgkZoxTRwGdXysbsayPbQclrEl5Hlw1AW0ogF6qiARfw9phIzLaOylUPxDnE
-Bu/BAhLpZaKf3/8bnsmDl6ZR6SvvQoI2L36qTrlVtZ9DuYCC5ha9IBqoDnV6hEaP
-UE2U/wKHCzQanFqrfPlvAGk9+RUZI7p9P4ZFRTJlXJL88mQL4ivA+d+pk6AAOjG8
-nNhkUC0Gh+McMz2gKkflfgK7NjrKCrU3iZuQ6WVGz08lFk7GLspJPk3f3nWsTFyP
-FHTeyfFUqrq3uhIeC6WmDcaeRH+L71nfhiXv9p0IM9LGGT1WbCgDBqecuuirXvyB
-I5ijL4hq14PPEcigwMQ3ZpKAywMActVR8POB9CKcYEtGlgikp00AhGDOZ3DtY5cf
-N9WhTerjldiR5v2UKbfWi2sJr6UVhlPjph+ULOw6oj/oHYa54Rc2CRdt/Pu5Jrt1
-S3Qp9Y2M2NbCzyDCqBHI
-=0tha
+iQIcBAEBCAAGBQJQCLvuAAoJEECxmPOUX5FEOH8P/180Jlo7BIX5dyA9xyM/smgT
+b2TcowgexOejmuA3mTHaSdvDrMNESuS3EhQPeYREA8jKbp90kpfizjybiKc968vy
+WiCh2cYO9jAphC7lihB/IC1Q2ffRg844+c4nJLFd8P6DT+LWMnzjpPfXekhaJNnJ
+hmQvp3OrzPSF/2T/Uy4IW9Q04n7uoW+ttmQ7d+YT+JRfTQi9xhOrKU05UwEh/4Nq
+KCUGzUO549u85JcHqFyGLhcLZC9ekHiVLmSYOoUH6+Y20m7ofcMg9Sczi8pTZelq
+Hvm9maPATtLw+mRxjF6Z+NhGznoRooaorHdD/a3CrMtJ5oeZ76miSuE5euSUrjTr
+m+Dwg8Fa1Jv8FgSBg4EsVYCONuHdwK8LcNosu30PJGB49B1Y8sdLa/LrmUSd3tWC
+KOdg/L1BIeLmar5f93qnvHpN9frNcstNfaMHawBAWuhuItHr3GNOY1RFDIUdcXey
+iSDM8kVep23wicqZXapyGSAgMw+H0Vqv/KooyYpWVYfKTxaYzWi+Dev7tcdKu5Zb
+UftnTlEX+93tAhHR110fKtVzuqxfYPEyaMh52lwzMZGAfXcEyIVqxpzWQ8Em6Oxs
+LU4dL4DU0H0ZHXHZBg9Jrl5FtEK/UnOiKnnY6HvlRD4lLnXyCQ5TzW67ACcGT8+Q
+wYd3gz3PT2p9lBAKXBh0
+=yz+h
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__20_Jul_2012_10_41_18_+1000_jvUm9dFJXSPR+g+/--
+--Signature=_Fri__20_Jul_2012_12_01_18_+1000_yc_XPQQFW=ZoDQyt--
