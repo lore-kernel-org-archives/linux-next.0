@@ -1,73 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Fri, 20 Jul 2012 12:01:18 +1000
-Message-ID: <20120720120118.465056f267ab5c3ac5ea45c4@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Fri, 20 Jul 2012 12:48:38 +1000
+Message-ID: <20120720124838.2bd0f1e5087c4f08c5a65eed@canb.auug.org.au>
+References: <20120720120118.465056f267ab5c3ac5ea45c4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__20_Jul_2012_12_01_18_+1000_yc_XPQQFW=ZoDQyt"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59451 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752531Ab2GTCB2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 22:01:28 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Fri__20_Jul_2012_12_48_38_+1000_dVB_01ZF0Rp+ajtn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120720120118.465056f267ab5c3ac5ea45c4@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Neuling <mikey@neuling.org>, Christian Riesch <christian.riesch@omicron.at>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__20_Jul_2012_12_01_18_+1000_yc_XPQQFW=ZoDQyt
+--Signature=_Fri__20_Jul_2012_12_48_38_+1000_dVB_01ZF0Rp+ajtn
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, 20 Jul 2012 12:01:18 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the net-next tree, today's linux-next build (powerpc
+> pmac32_defconfig) failed like this:
 
-After merging the net-next tree, today's linux-next build (powerpc
-pmac32_defconfig) failed like this:
+This was actually yesterday's linux-next - I guess it is fixed by commit
+215029375c83 ("asix: AX88172A driver depends on phylib") in today's tree.
 
-ERROR: "phy_disconnect" [drivers/net/usb/asix.ko] undefined!
-ERROR: "phy_stop" [drivers/net/usb/asix.ko] undefined!
-ERROR: "phy_ethtool_gset" [drivers/net/usb/asix.ko] undefined!
-ERROR: "mdiobus_unregister" [drivers/net/usb/asix.ko] undefined!
-ERROR: "phy_start_aneg" [drivers/net/usb/asix.ko] undefined!
-ERROR: "phy_print_status" [drivers/net/usb/asix.ko] undefined!
-ERROR: "phy_start" [drivers/net/usb/asix.ko] undefined!
-ERROR: "mdiobus_free" [drivers/net/usb/asix.ko] undefined!
-ERROR: "mdiobus_register" [drivers/net/usb/asix.ko] undefined!
-ERROR: "genphy_resume" [drivers/net/usb/asix.ko] undefined!
-ERROR: "phy_connect" [drivers/net/usb/asix.ko] undefined!
-ERROR: "phy_mii_ioctl" [drivers/net/usb/asix.ko] undefined!
-ERROR: "phy_ethtool_sset" [drivers/net/usb/asix.ko] undefined!
-ERROR: "mdiobus_alloc_size" [drivers/net/usb/asix.ko] undefined!
-
-Caused by commit 16626b0cc3d5 ("asix: Add a new driver for the AX88172A")
-and reverting that commit fixes the build.
-
-Thanks to Mikey for reporting this porblem.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__20_Jul_2012_12_01_18_+1000_yc_XPQQFW=ZoDQyt
+--Signature=_Fri__20_Jul_2012_12_48_38_+1000_dVB_01ZF0Rp+ajtn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQCLvuAAoJEECxmPOUX5FEOH8P/180Jlo7BIX5dyA9xyM/smgT
-b2TcowgexOejmuA3mTHaSdvDrMNESuS3EhQPeYREA8jKbp90kpfizjybiKc968vy
-WiCh2cYO9jAphC7lihB/IC1Q2ffRg844+c4nJLFd8P6DT+LWMnzjpPfXekhaJNnJ
-hmQvp3OrzPSF/2T/Uy4IW9Q04n7uoW+ttmQ7d+YT+JRfTQi9xhOrKU05UwEh/4Nq
-KCUGzUO549u85JcHqFyGLhcLZC9ekHiVLmSYOoUH6+Y20m7ofcMg9Sczi8pTZelq
-Hvm9maPATtLw+mRxjF6Z+NhGznoRooaorHdD/a3CrMtJ5oeZ76miSuE5euSUrjTr
-m+Dwg8Fa1Jv8FgSBg4EsVYCONuHdwK8LcNosu30PJGB49B1Y8sdLa/LrmUSd3tWC
-KOdg/L1BIeLmar5f93qnvHpN9frNcstNfaMHawBAWuhuItHr3GNOY1RFDIUdcXey
-iSDM8kVep23wicqZXapyGSAgMw+H0Vqv/KooyYpWVYfKTxaYzWi+Dev7tcdKu5Zb
-UftnTlEX+93tAhHR110fKtVzuqxfYPEyaMh52lwzMZGAfXcEyIVqxpzWQ8Em6Oxs
-LU4dL4DU0H0ZHXHZBg9Jrl5FtEK/UnOiKnnY6HvlRD4lLnXyCQ5TzW67ACcGT8+Q
-wYd3gz3PT2p9lBAKXBh0
-=yz+h
+iQIcBAEBCAAGBQJQCMcGAAoJEECxmPOUX5FEMGoP/R9TyRWtqUh+reWTp1A+Fjt9
+6PTqHFo75znSWn7XWCMHrFaU0Iub6rsrwO0MZk4SniDHHk4VFJWpt4tGhYweLpEG
+QEK1DUqJ0AVE29iADxSdFxmxCjX8vnX6Lbm2H8bAnjS20RXLwjDNuzvjvC7MfwGt
+Z+Fb0eeZYXSzxwuxQeV9kZAyuuEultCgMmOV3t1LesD5kQP2nuWYWPokA/oIhTCF
+se98Tw9iNRy9kGLlZzKVA0wtj6pZ/iWYqtlrfsoCk1HHA4sbbn1PChtgTZ8GcT68
+Em1ye807wq7uG8y3Z86dcJEQxlL72yJoyc9i/pGDfWTAwwQOpmnZE9bF5egF1xOV
+bvKHQfFIfMhtFnwiPR9SJqwJHB1T6dj/rRA3xSkn9aVlxOixOOWQfbXwYfyKvosF
+yJKFf5khOPeEOF9ZpemwKRCdR3ahF2Mlnekrh/+b3UTEEygOu10KoLOGKmnamNJi
+XtIbCKZ0OJMiZodSblO7blER7yB6uIt695H/a0IGbeJpHKoDrolShOE6bl8XesHa
+ZfaArDGdmzQCmnQtJyUVz4gSCG1cRqPSbySX0c/hljzg1YpLEwvmB0dO0JnljdSr
+C2chWZimyAKyG3E9Jiv5u1jMiqO437sVTfP5uLV1e6XOhRs2RT8bHFIKtsiSXq1F
+ksl6z8VkLXl5DWC1Mx3n
+=xacN
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__20_Jul_2012_12_01_18_+1000_yc_XPQQFW=ZoDQyt--
+--Signature=_Fri__20_Jul_2012_12_48_38_+1000_dVB_01ZF0Rp+ajtn--
