@@ -1,110 +1,47 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- target-merge tree
-Date: Fri, 20 Jul 2012 21:42:28 +0300
-Message-ID: <20120720184228.GA19243@redhat.com>
-References: <20120719145301.b8992aa986b47d7c44651710@canb.auug.org.au>
- <20120719235523.GA13623@kroah.com>
- <1342806778.25472.1.camel@haakon2.linux-iscsi.org>
- <20120720180358.GA9134@kroah.com>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Subject: Re: linux-next: Tree for July 20 (gfs2)
+Date: Fri, 20 Jul 2012 19:42:09 +0100
+Message-ID: <1342809729.2742.18.camel@menhir>
+References: <20120720151322.d952c13390b3078b2a5505bd@canb.auug.org.au>
+	 <5009823B.2010700@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:53304 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:52093 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751680Ab2GTSl7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jul 2012 14:41:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20120720180358.GA9134@kroah.com>
+	id S1752096Ab2GTSni (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Jul 2012 14:43:38 -0400
+In-Reply-To: <5009823B.2010700@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, cluster-devel@redhat.com
 
-On Fri, Jul 20, 2012 at 11:03:58AM -0700, Greg KH wrote:
-> On Fri, Jul 20, 2012 at 10:52:58AM -0700, Nicholas A. Bellinger wrote:
-> > Hi Greg,
+Hi,
+
+On Fri, 2012-07-20 at 09:07 -0700, Randy Dunlap wrote:
+> On 07/19/2012 10:13 PM, Stephen Rothwell wrote:
+> 
+> > Hi all,
 > > 
-> > On Thu, 2012-07-19 at 16:55 -0700, Greg KH wrote:
-> > > On Thu, Jul 19, 2012 at 02:53:01PM +1000, Stephen Rothwell wrote:
-> > > > Hi Greg,
-> > > > 
-> > > > Today's linux-next merge of the staging tree got a conflict in
-> > > > drivers/staging/Kconfig between commit d0146d396bfa ("tcm_vhost: Initial
-> > > > merge for vhost level target fabric driver") from the target-merge tree
-> > > > and commit 15a4bc17b7f4 ("Staging: add CSR Wifi "os helper" module") from
-> > > > the staging tree.
-> > > > 
-> > > > Just context changes.  I fixed it up (see below) and can carry the fix as
-> > > > necessary.
-> > > > -- 
-> > > > Cheers,
-> > > > Stephen Rothwell                    sfr@canb.auug.org.au
-> > > > 
-> > > > diff --cc drivers/staging/Kconfig
-> > > > index 67ec9fe,e3402d5..0000000
-> > > > --- a/drivers/staging/Kconfig
-> > > > +++ b/drivers/staging/Kconfig
-> > > > @@@ -132,6 -132,8 +132,10 @@@ source "drivers/staging/ipack/Kconfig
-> > > >   
-> > > >   source "drivers/staging/gdm72xx/Kconfig"
-> > > >   
-> > > > + source "drivers/staging/csr/Kconfig"
-> > > > + 
-> > > > + source "drivers/staging/omap-thermal/Kconfig"
-> > > > + 
-> > > >  +source "drivers/vhost/Kconfig.tcm"
-> > > 
-> > > Why is someone putting a non drivers/staging/ Kconfig file here in
-> > > drivers/staging/Kconfig?  That's not ok at all.
-> > > 
-> > > Target people, please just depend on CONFIG_STAGING if you want to do
-> > > that, but don't mess with files in the drivers/staging/ directory for no
-> > > good reason at all.
-> > > 
+> > Changes since 20120719:
 > > 
-> > This was a request from MST (CC'ed) in order to have TCM_VHOST show up
-> > under the staging configuration options..
 > 
-> If you really want it to show up there, then send me a patch adding the
-> code to drivers/staging/.  Otherwise it really makes no sense.
 > 
-> > If that's really not what should be done, I'm happy to drop this part
-> > and just use CONFIG_STAGING again.
 > 
-> Why are you wanting to depend on CONFIG_STAGING in the first place?
-> What is wrong with the code that it can't be merged "properly" now?
-> Don't use CONFIG_STAGING as a "crutch" unless you really need it.
 > 
-> thanks,
+> on i386 (modular):
 > 
-> greg k-h
+> ERROR: "__divdi3" [fs/gfs2/gfs2.ko] undefined!
+> 
+> or builtin:
+> 
+> fs/built-in.o: In function `gfs2_fallocate':
+> file.c:(.text+0x232086): undefined reference to `__divdi3'
+> 
 
-It's very similar to how it was with nouveau: we are not sure
-we can commit to the userspace ABI yet.
+Bob has sent me a patch to fix this, and I've just pushed it to the GFS2
+-nmw git tree. Thanks for letting us know,
 
-Most importantly, it still seems not 100% clear whether this driver will
-have major userspace using it. And if not, it would be very hard to
-support a driver when recent userspace does not use it in the end.
-
-At the moment arguments on upstream mailing list seem to be
-a bit circular: there's no module in upstream kernel so
-userspace does not want to accept the patches.
-
-If we put enabling this driver in staging, then it works out in one of
-two ways
-- userspace starts using it then this effectively freezes the ABI and
-  we move it out of staging next release
-- no userspace uses it and we drop it completely or rework ABI
-
-On the other hand, it is marginally better to not want code in staging
-for two reasons:
-- there are dependencies between this code and other code in
-  drivers/vhost which are easier for me to handle if it's all
-  in one place
-- a bit easier to track history if we do not move code
-
-What do you think?
-
--- 
-MST
+Steve.
