@@ -1,47 +1,32 @@
-From: Steven Whitehouse <swhiteho@redhat.com>
-Subject: Re: linux-next: Tree for July 20 (gfs2)
-Date: Fri, 20 Jul 2012 19:42:09 +0100
-Message-ID: <1342809729.2742.18.camel@menhir>
-References: <20120720151322.d952c13390b3078b2a5505bd@canb.auug.org.au>
-	 <5009823B.2010700@xenotime.net>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Fri, 20 Jul 2012 21:55:16 +0100
+Message-ID: <20120720215516.03abd164@pyramind.ukuu.org.uk>
+References: <20120713141345.f71b7c01f720d616d74721dd@canb.auug.org.au>
+	<20120713121053.0637219f@pyramind.ukuu.org.uk>
+	<CAMuHMdWRM0y07r1nL-9fXB3nLKXMgftqhiruEeuEe4QYDA2o9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:52093 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752096Ab2GTSni (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jul 2012 14:43:38 -0400
-In-Reply-To: <5009823B.2010700@xenotime.net>
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:42460 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751451Ab2GTUvu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jul 2012 16:51:50 -0400
+In-Reply-To: <CAMuHMdWRM0y07r1nL-9fXB3nLKXMgftqhiruEeuEe4QYDA2o9Q@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, cluster-devel@redhat.com
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: David Daney <david.daney@cavium.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MIPS Mailing List <linux-mips@linux-mips.org>
 
-Hi,
+> Today's build failed because there's a new user in the MIPS tree:
+> arch/mips/cavium-octeon/serial.c
+> 
+> http://kisskb.ellerman.id.au/kisskb/buildresult/6739341/
 
-On Fri, 2012-07-20 at 09:07 -0700, Randy Dunlap wrote:
-> On 07/19/2012 10:13 PM, Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20120719:
-> > 
-> 
-> 
-> 
-> 
-> on i386 (modular):
-> 
-> ERROR: "__divdi3" [fs/gfs2/gfs2.ko] undefined!
-> 
-> or builtin:
-> 
-> fs/built-in.o: In function `gfs2_fallocate':
-> file.c:(.text+0x232086): undefined reference to `__divdi3'
-> 
+The version in the tree I have registers a platform device rather than
+calling into 8250 directly. That appears to be rather better mannered
+than whatever you are building.
 
-Bob has sent me a patch to fix this, and I've just pushed it to the GFS2
--nmw git tree. Thanks for letting us know,
-
-Steve.
+If someone has moved from the platform device could they kindly explain
+*why* ?
