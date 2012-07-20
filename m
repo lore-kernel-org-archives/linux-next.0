@@ -1,60 +1,59 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- target-merge tree
-Date: Thu, 19 Jul 2012 16:55:23 -0700
-Message-ID: <20120719235523.GA13623@kroah.com>
-References: <20120719145301.b8992aa986b47d7c44651710@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi tree with Linus' tree
+Date: Fri, 20 Jul 2012 10:32:54 +1000
+Message-ID: <20120720103254.4a043ea94ef16992466a8b19@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__20_Jul_2012_10_32_54_+1000_Ct/iwzepj84PZVJS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:46562 "EHLO
-	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752022Ab2GSXzZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Jul 2012 19:55:25 -0400
-Content-Disposition: inline
-In-Reply-To: <20120719145301.b8992aa986b47d7c44651710@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:57885 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751856Ab2GTAdI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jul 2012 20:33:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Bellinger <nab@linux-iscsi.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On Thu, Jul 19, 2012 at 02:53:01PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/Kconfig between commit d0146d396bfa ("tcm_vhost: Initial
-> merge for vhost level target fabric driver") from the target-merge tree
-> and commit 15a4bc17b7f4 ("Staging: add CSR Wifi "os helper" module") from
-> the staging tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc drivers/staging/Kconfig
-> index 67ec9fe,e3402d5..0000000
-> --- a/drivers/staging/Kconfig
-> +++ b/drivers/staging/Kconfig
-> @@@ -132,6 -132,8 +132,10 @@@ source "drivers/staging/ipack/Kconfig
->   
->   source "drivers/staging/gdm72xx/Kconfig"
->   
-> + source "drivers/staging/csr/Kconfig"
-> + 
-> + source "drivers/staging/omap-thermal/Kconfig"
-> + 
->  +source "drivers/vhost/Kconfig.tcm"
+--Signature=_Fri__20_Jul_2012_10_32_54_+1000_Ct/iwzepj84PZVJS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Why is someone putting a non drivers/staging/ Kconfig file here in
-drivers/staging/Kconfig?  That's not ok at all.
+Hi James,
 
-Target people, please just depend on CONFIG_STAGING if you want to do
-that, but don't mess with files in the drivers/staging/ directory for no
-good reason at all.
+Today's linux-next merge of the scsi tree got a conflict in
+drivers/scsi/scsi_wait_scan.c between commit eea03c20ae38 ("Make
+wait_for_device_probe() also do scsi_complete_async_scans()") from Linus'
+tree and commit 01444e1106cb ("[SCSI] Remove scsi_wait_scan module") from
+the scsi tree.
 
-thanks,
+I just removed the file.
 
-greg k-h
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__20_Jul_2012_10_32_54_+1000_Ct/iwzepj84PZVJS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQCKc2AAoJEECxmPOUX5FE3XMP+wVoXncPzH4sj7GNA/2nDkuu
+tH3DD0djmhTbFVwwXoyfN5Q38bLy5xjdb5cku/WiqBsVigsC60iU+dz9U0EbEXnJ
+GqlBPmfsypLGybM6KDvV+WmpJCNdVckOBM3uOPoHeHayiRnU5KGmh40tPeJQyWS2
+5mNxh8ZPn0sskXxTYgbVAPToe0Z9IRfw7qZAcZvWC8pVWz1MyJRclXoNPNDMK7ZH
+H7VYTkqbfKXZd4ww6JtgyzV2PRDPpzgQaEmsvvDpbti+5lSeMveh/Qg4dX1wHxOc
+Wi15bO22DGleGjhEjiVnBIKvJ1T0WGNbdani/xywjTFTkIjqLs+Onz4UO28Q5eBD
+sRzIh9p8ggiuzystsIkyENJNnPCZzFf84mXpY49sFUoBAbKPMELZWheVab3FVH+o
+wFdN451zHyyZFWZGspTImOh170wT8cSbzYlTFF0l2VkJOTrCwqwh7x05T4ncLlig
+CesfTOB8HUOhFMOSeMuKhwpgEgbRg+nKfEwU+gY+kwVUfmwWwle/AiAYkFJDCUV8
+HaSEgQWD7pEWYeR+fMmtc55y41ZVnaGF+PrCUxiAL0Dg3tzCpXLOAsEM5JGjeHHC
+s3Bm9tzrQTACTAo/8OFg5C1VqaehejCTSI1dzhi3QgE7O1hg9+7DoZZiW0j8OL+K
+BIbXJCvxHtNYC7kMgie1
+=9ko3
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__20_Jul_2012_10_32_54_+1000_Ct/iwzepj84PZVJS--
