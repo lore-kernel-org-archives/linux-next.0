@@ -1,79 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the vfs tree
-Date: Sun, 22 Jul 2012 15:44:09 +1000
-Message-ID: <20120722154409.91ab34376657bc89b4ec1edc@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Sun, 22 Jul 2012 16:34:08 +1000
+Message-ID: <20120722163408.6f2b74d31f05d45a88ed49de@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sun__22_Jul_2012_15_44_09_+1000_QTr7t.e+n9fx3Wap"
+ boundary="Signature=_Sun__22_Jul_2012_16_34_08_+1000_zAdJ5gA9mk9fluvX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57781 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:57165 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750923Ab2GVFoN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Jul 2012 01:44:13 -0400
+	with ESMTP id S1750876Ab2GVGeR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Jul 2012 02:34:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Justin Lecher <jlec@gentoo.org>, Suresh Jayaraman <sjayaraman@suse.com>, Al Viro <viro@zeniv.linux.org.uk>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>
 
---Signature=_Sun__22_Jul_2012_15_44_09_+1000_QTr7t.e+n9fx3Wap
+--Signature=_Sun__22_Jul_2012_16_34_08_+1000_zAdJ5gA9mk9fluvX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Dave,
 
-Today's linux-next merge of the akpm tree got a conflict in
-fs/cachefiles/rdwr.c between commit e89cdeffe531 ("switch dentry_open()
-to struct path, make it grab references itself") from the vfs,  tree and
-commit "fs: cachefiles: add support for large files in filesystem
-caching" from the akpm tree.
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-I fixed it up (and rolled in the following build fix - see below) and can
-carry the fix as necessary.
+net/core/rtnetlink.c: In function 'rtnl_fill_ifinfo':
+net/core/rtnetlink.c:895:46: error: 'struct net_device' has no member named=
+ 'num_rx_queues'
+
+Caused by commit 76ff5cc91935 ("rtnl: allow to specify number of rx and
+tx queues on device creation").  This build does not have CONFIG_RPS set.
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/cachefiles/rdwr.c
-index c0353df,d136686..0000000
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@@ -917,9 -916,10 +917,9 @@@ int cachefiles_write_page(struct fscach
- =20
-  	/* write the page to the backing filesystem and let it store it in its
-  	 * own time */
- -	dget(object->backer);
- -	mntget(cache->mnt);
- -	file =3D dentry_open(object->backer, cache->mnt, O_RDWR,
- -			   (O_RDWR | O_LARGEFILE), cache->cache_cred);
- +	path.mnt =3D cache->mnt;
- +	path.dentry =3D object->backer;
-- 	file =3D dentry_open(&path, O_RDWR, cache->cache_cred);
-++	file =3D dentry_open(&path, O_RDWR | O_LARGEFILE, cache->cache_cred);
-  	if (IS_ERR(file)) {
-  		ret =3D PTR_ERR(file);
-  	} else {
-
---Signature=_Sun__22_Jul_2012_15_44_09_+1000_QTr7t.e+n9fx3Wap
+--Signature=_Sun__22_Jul_2012_16_34_08_+1000_zAdJ5gA9mk9fluvX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQC5MpAAoJEECxmPOUX5FEbxEP/0xlNJY4TzJUGr+Q/qgL6P3t
-vH8AJD/YQEKwwL9fFV5XnfAQDbdUdPaYF8hMCIigQVKkqssIcYOJE1y7Q3gvG4as
-ERNqsuqHo6xANFwIqqQlvmhpqmdrCjowFS1oAF5542Yhz1fPAqHAfGe1/GoOc/LE
-xfKQWy2Pk7qJwnpGPZx5Br4ih6y21jBJvykM9Nxkt2p+xiMMtdhqpo+cdJrav43b
-nDsoaDke9gldPke+10v58sO3AscfA0uSqmKyAWayVxc3jZypEk7D+Sqa8MFg6WrA
-Wt6fAWbUyxS8MEeQmgC42r2wM4pnOjb09hxiEG8zR2FUwe2qiikhs35LIxzC9B1B
-43ODvCwpM6jDAcsTmxDTmiBQ5Tp5ckuIR/6sPGh4IWSL8fk+TrstHi2GswSnTmRX
-XNn29fUa9VZWvuY8h+2cpWJ6y33t5jhvnWju0uZIA0yeszJ3BPTwHhQtmM1yEwF3
-WlZopwZ+vssIvcuZ7UqDc8cuO8zikQiKNxPRNoODCWS7eAsQAcDzbqlCTyjITVV+
-whFqXGP6dr1baP09GPEZI600szzvSu4lHlu0Tvkb1gjkisnAbsGJt3UcTgdpYGuO
-9DeFW34s59sLg9Ak2OH6K2Ck+g1KUmW/jrRrLdScZJIKJDhzAzWESqgqRVeZLuKa
-jDHTElBPZXJMiyQaWHQ5
-=8Gkb
+iQIcBAEBCAAGBQJQC57gAAoJEECxmPOUX5FE7bIP/Rwg1pDnVHSxv6uT6JUZggxm
+F1shMEsknWcWlKerOoM1VvVTbvlbZZcG0vVahFEWqaEXAPu1zqeUqU3hrG+suGRk
+kogT01Cy4eTndayBOFpvz8bhjQ0C807vcPPMyGtxkZMoeR5rHs9e+Do8fL6IMycB
+mNUoBVQlab6kKxBWq4S5UzxsEC79tgvQbswbYYaKOQFOE+AK16w/8I8+vDRsq3F+
+oSXPz3klyawBa/RWqx3WytrYCmw9nItLTOskE/Pl63vp5176xL9EK5pdQC0HxZ+6
+UCKi8D9CHiTETeW9fJtXbXaBfD/BYEoUAb9JRkK5yX9brrjDO2UL4cIQJPgKtOHD
+Q14FEswkF/5GXn9fONi3QfZzabOhOIgwWGEpHpQY/LsA1ouD1WLZEtSlzV0VxLmI
+jaAZ5KWYF6rrqacwnmb0dtty5HvmagWS/VkcOxwayE2G18Js5wJf/3TdgfkOv8Ku
+mIqtQHCIMH9nxsTSwLWr6idzqLr5f83Q/vaVP2HaGmSGYWR02n3N9ccPzHJgfAHc
+ihmVg7bWXu/QNXJVavn9IJt0x4T2LFzKQoGXH7BLB6rJxKmnLrDJh/3/B2Iu8tUY
+eVx8nn+OguY3LOebIPefUkHUWp7XNMUViyUeVgGpXcypYfdMKTrs48kvhVw/8ocO
+Ng8jxTs/Tnu4Zd81q4RA
+=IlPD
 -----END PGP SIGNATURE-----
 
---Signature=_Sun__22_Jul_2012_15_44_09_+1000_QTr7t.e+n9fx3Wap--
+--Signature=_Sun__22_Jul_2012_16_34_08_+1000_zAdJ5gA9mk9fluvX--
