@@ -1,131 +1,75 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- target-merge tree
-Date: Sat, 21 Jul 2012 19:07:46 -0700
-Message-ID: <20120722020746.GB31926@kroah.com>
-References: <20120719145301.b8992aa986b47d7c44651710@canb.auug.org.au>
- <20120719235523.GA13623@kroah.com>
- <1342806778.25472.1.camel@haakon2.linux-iscsi.org>
- <20120720180358.GA9134@kroah.com>
- <20120720184228.GA19243@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the slave-dma tree
+Date: Sun, 22 Jul 2012 15:35:48 +1000
+Message-ID: <20120722153548.48213df45606109be4f7952b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sun__22_Jul_2012_15_35_48_+1000_XE+u/rdbu56N1wv="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:51675 "EHLO
-	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751973Ab2GVCHs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sat, 21 Jul 2012 22:07:48 -0400
-Content-Disposition: inline
-In-Reply-To: <20120720184228.GA19243@redhat.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59498 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750892Ab2GVFgA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Jul 2012 01:36:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Vinod Koul <vinod.koul@linux.intel.com>, Fabio Estevam <fabio.estevam@freescale.com>
 
-On Fri, Jul 20, 2012 at 09:42:28PM +0300, Michael S. Tsirkin wrote:
-> On Fri, Jul 20, 2012 at 11:03:58AM -0700, Greg KH wrote:
-> > On Fri, Jul 20, 2012 at 10:52:58AM -0700, Nicholas A. Bellinger wrote:
-> > > Hi Greg,
-> > > 
-> > > On Thu, 2012-07-19 at 16:55 -0700, Greg KH wrote:
-> > > > On Thu, Jul 19, 2012 at 02:53:01PM +1000, Stephen Rothwell wrote:
-> > > > > Hi Greg,
-> > > > > 
-> > > > > Today's linux-next merge of the staging tree got a conflict in
-> > > > > drivers/staging/Kconfig between commit d0146d396bfa ("tcm_vhost: Initial
-> > > > > merge for vhost level target fabric driver") from the target-merge tree
-> > > > > and commit 15a4bc17b7f4 ("Staging: add CSR Wifi "os helper" module") from
-> > > > > the staging tree.
-> > > > > 
-> > > > > Just context changes.  I fixed it up (see below) and can carry the fix as
-> > > > > necessary.
-> > > > > -- 
-> > > > > Cheers,
-> > > > > Stephen Rothwell                    sfr@canb.auug.org.au
-> > > > > 
-> > > > > diff --cc drivers/staging/Kconfig
-> > > > > index 67ec9fe,e3402d5..0000000
-> > > > > --- a/drivers/staging/Kconfig
-> > > > > +++ b/drivers/staging/Kconfig
-> > > > > @@@ -132,6 -132,8 +132,10 @@@ source "drivers/staging/ipack/Kconfig
-> > > > >   
-> > > > >   source "drivers/staging/gdm72xx/Kconfig"
-> > > > >   
-> > > > > + source "drivers/staging/csr/Kconfig"
-> > > > > + 
-> > > > > + source "drivers/staging/omap-thermal/Kconfig"
-> > > > > + 
-> > > > >  +source "drivers/vhost/Kconfig.tcm"
-> > > > 
-> > > > Why is someone putting a non drivers/staging/ Kconfig file here in
-> > > > drivers/staging/Kconfig?  That's not ok at all.
-> > > > 
-> > > > Target people, please just depend on CONFIG_STAGING if you want to do
-> > > > that, but don't mess with files in the drivers/staging/ directory for no
-> > > > good reason at all.
-> > > > 
-> > > 
-> > > This was a request from MST (CC'ed) in order to have TCM_VHOST show up
-> > > under the staging configuration options..
-> > 
-> > If you really want it to show up there, then send me a patch adding the
-> > code to drivers/staging/.  Otherwise it really makes no sense.
-> > 
-> > > If that's really not what should be done, I'm happy to drop this part
-> > > and just use CONFIG_STAGING again.
-> > 
-> > Why are you wanting to depend on CONFIG_STAGING in the first place?
-> > What is wrong with the code that it can't be merged "properly" now?
-> > Don't use CONFIG_STAGING as a "crutch" unless you really need it.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> It's very similar to how it was with nouveau: we are not sure
-> we can commit to the userspace ABI yet.
+--Signature=_Sun__22_Jul_2012_15_35_48_+1000_XE+u/rdbu56N1wv=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Then you are in trouble :)
+Hi Andrew,
 
-> Most importantly, it still seems not 100% clear whether this driver will
-> have major userspace using it. And if not, it would be very hard to
-> support a driver when recent userspace does not use it in the end.
-> 
-> At the moment arguments on upstream mailing list seem to be
-> a bit circular: there's no module in upstream kernel so
-> userspace does not want to accept the patches.
-> 
-> If we put enabling this driver in staging, then it works out in one of
-> two ways
-> - userspace starts using it then this effectively freezes the ABI and
->   we move it out of staging next release
-> - no userspace uses it and we drop it completely or rework ABI
-> 
-> On the other hand, it is marginally better to not want code in staging
-> for two reasons:
-> - there are dependencies between this code and other code in
->   drivers/vhost which are easier for me to handle if it's all
->   in one place
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/dma/dmaengine.c between commit 634332502366 ("dmaengine: Cleanup
+logging messages") from the slave-dma tree and commit
+"drivers/dma/dmaengine.c: lower the priority of 'failed to get' dma
+channel message" from the akpm tree.
 
-If there are going to be lots of dependancies, then I don't want it in
-drivers/staging/ as it doesn't belong there, it belongs cleaned up and
-in the "real" place.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> - a bit easier to track history if we do not move code
+diff --cc drivers/dma/dmaengine.c
+index 3491654,6c87d67..0000000
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@@ -582,8 -578,8 +582,8 @@@ void dmaengine_get(void
+  				list_del_rcu(&device->global_node);
+  				break;
+  			} else if (err)
+- 				pr_err("%s: failed to get %s: (%d)\n",
++ 				pr_debug("%s: failed to get %s: (%d)\n",
+ -					__func__, dma_chan_name(chan), err);
+ +				       __func__, dma_chan_name(chan), err);
+  		}
+  	}
+ =20
 
-git preserves this, don't worry about that at all.
+--Signature=_Sun__22_Jul_2012_15_35_48_+1000_XE+u/rdbu56N1wv=
+Content-Type: application/pgp-signature
 
-So, if this code really does depend on core vhost changes that are going
-to be happening over time, I would not recommend it being in
-drivers/staging/ as you are right, you are going to have a hard time
-syncing with me.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-But don't think that by somehow marking the driver with CONFIG_STAGING
-that you get a free pass on the "we are going to break the userspace
-api", that's not ok.  Be careful about this.  Yes, it's tough, and it's
-a "chicken and egg" problem like you mention above, I know.
+iQIcBAEBCAAGBQJQC5E0AAoJEECxmPOUX5FEBu4P/3KNJygrQtW2RARpvVEFAwTS
+XUHHR2US/xEsvYenYF+whOnBuF16fZ/AKIbRTOTNpE+My11meUD2zg5jMiapLyPG
+L2RNue4KcSUC/k15HyBxJzMD7RI+sJDocfgfV2jZg1gp9W0ZM74B6kZd1s8w0S9T
+EIrf7ky9wdZb5Yrj0hB8Z6uWQ/VsedoTnr1sNLbaEcXX8DYeBErAP3XYR/QcXvQv
+XrrqF6+YOipbgqLM/o2+tTB04qA4b92A4bOvo4C73nnc+tY4gT02EqVQukemCKb5
+LtFQhYkJ6OBJSCoBNx7SJr84KgkQHzLDcjdjPMxM5sbvBJl6jD+DBbc6Kq5Qckn2
+l4KvWfkZlvuj89BTc2+WjtDqzaT1wrmitWV/qxDszIVFL2zmzAaC5JS1cKEDDJb5
+Cu1mY4LZsaQfuCsH1BpxYT6fPYVl7X8ycSDQ4jnlj++sEdyCGqLBTp/gPy5PMzIT
+49ZoBx+DO2ixFuH5ECkF1kYLTFSW5OpSVZfOibJ5qhcFBSaS9beEJdIuAeWQd8Pq
+u0D++zo5MEcTzaJuxD3/mBDQ0PtZzqpb3uhHGBYwiYk/W3P15L1cz0bhpfyS5Swr
+5zy9F7kBm4MM0dzRa0oDFIZKpX2h8TU3j1OB4mcYVE/z1Xp4JD+y0jWv3EqnyCMY
+Zh1G1XNE1uFbrGLbb+XE
+=CMJk
+-----END PGP SIGNATURE-----
 
-sorry,
-
-greg k-h
+--Signature=_Sun__22_Jul_2012_15_35_48_+1000_XE+u/rdbu56N1wv=--
