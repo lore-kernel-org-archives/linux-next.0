@@ -1,63 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the nfs tree
-Date: Sun, 22 Jul 2012 09:56:51 +1000
-Message-ID: <20120722095651.ab20a748e1c22fad075890f3@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the pci tree
+Date: Sun, 22 Jul 2012 11:04:35 +1000
+Message-ID: <20120722110435.a0872c4cb5be0de6a416b2fc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sun__22_Jul_2012_09_56_51_+1000_4J.nqYp_CehaqkMx"
+ boundary="Signature=_Sun__22_Jul_2012_11_04_35_+1000_sy46jB5ciaKuPHGR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54848 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:42459 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751936Ab2GUX5B (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Jul 2012 19:57:01 -0400
+	with ESMTP id S1752216Ab2GVBEr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Jul 2012 21:04:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>
 
---Signature=_Sun__22_Jul_2012_09_56_51_+1000_4J.nqYp_CehaqkMx
+--Signature=_Sun__22_Jul_2012_11_04_35_+1000_sy46jB5ciaKuPHGR
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Dave,
 
-Today's linux-next merge of the vfs tree got conflicts in fs/cifs/dir.c,
-fs/nfs/dir.c, fs/nfs/nfs4proc.c, ipc/mqueue.c, fs/open.c and fs/namei.c
-between commits from the nfs tree and commits from the vfs tree.
+Today's linux-next merge of the drm tree got a conflict in
+include/linux/pci_regs.h between commit a0dee2ed0cdc ("PCI: misc pci_reg
+additions") from the  tree and commit cdcac9cd7741 ("pci_regs: define
+LNKSTA2 pcie cap + bits") from the drm tree.
 
-These were all caused by the rebase of the vfs tree after it had been
-merged into the nfs tree.  This is one reason you should not rebase a
-published tree (especially so close to the merge window).
-
-I fixed up all the conflicts which meant taking some files from one tree
-and some from the other.  Now, unless the nfs tree is rebuilt (and tested
-etc) we will have duplicates of a large number of patches in Linus'
-tree :-(
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary (though I suspect that we may not need both of
+PCI_CAP_EXP_ENDPOINT_SIZEOF_V2 and  PCI_EXP_LNKCAP2).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Sun__22_Jul_2012_09_56_51_+1000_4J.nqYp_CehaqkMx
+diff --cc include/linux/pci_regs.h
+index 53274bf,7f04132..0000000
+--- a/include/linux/pci_regs.h
++++ b/include/linux/pci_regs.h
+@@@ -542,7 -521,11 +542,12 @@@
+  #define  PCI_EXP_OBFF_MSGA_EN	0x2000	/* OBFF enable with Message type A */
+  #define  PCI_EXP_OBFF_MSGB_EN	0x4000	/* OBFF enable with Message type B */
+  #define  PCI_EXP_OBFF_WAKE_EN	0x6000	/* OBFF using WAKE# signaling */
+ +#define PCI_CAP_EXP_ENDPOINT_SIZEOF_V2	44	/* v2 endpoints end here */
++ #define PCI_EXP_LNKCAP2		44	/* Link Capability 2 */
++ #define  PCI_EXP_LNKCAP2_SLS_2_5GB 0x01	/* Current Link Speed 2.5GT/s */
++ #define  PCI_EXP_LNKCAP2_SLS_5_0GB 0x02	/* Current Link Speed 5.0GT/s */
++ #define  PCI_EXP_LNKCAP2_SLS_8_0GB 0x04	/* Current Link Speed 8.0GT/s */
++ #define  PCI_EXP_LNKCAP2_CROSSLINK 0x100 /* Crosslink supported */
+  #define PCI_EXP_LNKCTL2		48	/* Link Control 2 */
+  #define PCI_EXP_SLTCTL2		56	/* Slot Control 2 */
+ =20
+
+--Signature=_Sun__22_Jul_2012_11_04_35_+1000_sy46jB5ciaKuPHGR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQC0HDAAoJEECxmPOUX5FET4EP/jXnGocHw98ob5moAEZQz5fr
-SvkVx56dDJe5mHUsx9C43nJWqmWUUtXeMxGydeDLugX7EmtWnll4fJfu1j42h+sI
-4oufzWTQ+fK3hkbAY3io4+z7hesoSTOdJpLP286UXPQAY1+kCLKHx4Uf9zn/LpS8
-sMwcqFj5jDr4Z3iE5Gh3ovepaQzHFEz6U+zb/d0+yEFaAQYwEHCCPgDaLDuNyHSk
-ACGtjuxjAbb4xg/EDvUS7amCvdq8oW5bdKqNdMkoV5q8YfAkoITlpK0Rfv2Actvz
-iRIqGvbG7ALXdwKhS4rq8ynF2g8gWuoTws8vi6MHWZcz3XcqyfuLmQAze9mayyLM
-f7/CpdbgfZf8KTF8pusfbuqDCvQHS6KB03tdczfBYXZ4Hqk/7uW6Vts8pyHVfJs2
-i+wolaQq9pkKSm5it8fOAXvSwG9ET/YRvha5ZnJY22m/dnmeT5EZ4Jik7xBDf0dl
-cZucXtkypZDdnMt984P5mGCCN3HJTfAH63KNPLqVIdlfDw1F5E3m5Jt2O5faRiqT
-5q0I87pocDot2R0DRtWcXyo3GtlcZyzoHzgbpJ/ir/Te3Ly22pT3Sf6LOSHBaa0i
-FzJDctNU7SgZrXo2tC+V+D0M8xYe/uucybblvjRrv0tSTu7iPandbQaG0RF7olsc
-ERyKFVevR7wEnrIx8JoN
-=NAcW
+iQIcBAEBCAAGBQJQC1GjAAoJEECxmPOUX5FEdb8QAJZfKRcBXEBPe6zoM1BJM5sd
+fum3jmcjFgMOb+cAxZdqoiVZ0mPpYHbrJonItBKtvTGf3ewCOEn2C/7pR5Pi1Cum
+ApMP2uaVgXqf5x6jOpGqD5M+OVRLj0//CFMQoddfnVhuf/2+KyIy9Dy2r9QZFc4A
+NFzg+YRrI64OcC7fHnGs5dXFTKubTQC2WIpYiVGhKSIp/puxeeUVLIgzgi0JnBxk
+BVdr4tT8XEOBU++VQ27f59w4KCGxmba0hkGwqVF4ZoIEv+mz4VrjO3xeujSPFXtP
+70Kl9aX9NiVVcjwS09mESv1eLWt31E8MFuy1bHPnfiEXnTGR2dv770ktH4hjxiZi
+dcQNEfMxwbqrbGDR1CyW84HyXPfjzojLjBheXkUWHGPVEhBGpnP4QIprUNOTdjEe
+zT/T05AA9PAkqtb7hKki84ZsZG25AW8E2BFOKwJZp40ZB5fjfi/IwgqxfebKPDC1
+VEBHrVI4QKtxR9+1t9NyoyDdQcFoJXSsmw0FCG65eWZoA84oMPvLsNJbpCoxrLDY
+frEmvzq0Th7/V0WtGX7VWQkziYHgWafc4xX7hJ+YfqpjTRyj9EDY3GlwuybO9Rbi
+FnFm0m1p9dXlMnwM3eXWzRr+Z86psU870cWtAD6AaF4fPwAyNyH57Scc2Yffom5g
+u5GBkeJvgTtBG5ed5NR3
+=fY8N
 -----END PGP SIGNATURE-----
 
---Signature=_Sun__22_Jul_2012_09_56_51_+1000_4J.nqYp_CehaqkMx--
+--Signature=_Sun__22_Jul_2012_11_04_35_+1000_sy46jB5ciaKuPHGR--
