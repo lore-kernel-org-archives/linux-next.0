@@ -1,48 +1,61 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] mfd: fix arizona-irq.c build by selecting REGMAP_IRQ
-Date: Mon, 23 Jul 2012 10:32:58 -0700
-Message-ID: <500D8ACA.4020501@xenotime.net>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH -next] mfd: fix arizona-irq.c build by selecting
+ REGMAP_IRQ
+Date: Mon, 23 Jul 2012 18:39:39 +0100
+Message-ID: <20120723173939.GB8247@opensource.wolfsonmicro.com>
 References: <20120723164036.52bc93caafcd165fc16f0284@canb.auug.org.au>
+ <500D8ACA.4020501@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7ZAtKRhVyVSsbBD2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:46986 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754151Ab2GWRd6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jul 2012 13:33:58 -0400
-In-Reply-To: <20120723164036.52bc93caafcd165fc16f0284@canb.auug.org.au>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:43166 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754320Ab2GWRjl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jul 2012 13:39:41 -0400
+Content-Disposition: inline
+In-Reply-To: <500D8ACA.4020501@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
 
-arizona-irq.c uses functions that are only available when
-CONFIG_REGMAP_IRQ is enabled, so select that symbol for
-arizona builds.
+--7ZAtKRhVyVSsbBD2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes these build errors:
+On Mon, Jul 23, 2012 at 10:32:58AM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+>=20
+> arizona-irq.c uses functions that are only available when
+> CONFIG_REGMAP_IRQ is enabled, so select that symbol for
+> arizona builds.
 
-arizona-irq.c:(.text+0xb2d47): undefined reference to `regmap_irq_get_virq'
-(.text+0xb2fe3): undefined reference to `regmap_add_irq_chip'
-(.text+0xb3173): undefined reference to `regmap_del_irq_chip'
+Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- drivers/mfd/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+--7ZAtKRhVyVSsbBD2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
---- linux-next-20120723.orig/drivers/mfd/Kconfig
-+++ linux-next-20120723/drivers/mfd/Kconfig
-@@ -523,6 +523,7 @@ config MFD_SEC_CORE
- 
- config MFD_ARIZONA
- 	select REGMAP
-+	select REGMAP_IRQ
- 	bool
- 
- config MFD_ARIZONA_I2C
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQDYxUAAoJEBus8iNuMP3d3RkP+wUstnXglL4SG6vrz7MmNOJk
+zC0kYfb5MHdhEOCkqeLwuRjp3N9GSZHU+sBinJxsfetragSTact204PYCjoh2W0k
+DXZC4kwMD1H6ieszt/YYmjsmklzb5kG/rsnRKsqcpr0+JoOczMEeH72VL95+6bVs
+eIgmvtcKVXncu7bsNFmfTj9g6mSOhxuvWTffcvW+XOVtLs/jVyRXf5anLj+6g3dC
+8RCtlwRfx0YaAJT5qd83vbj6Ud9UJUKzo8Clb0s+U9IhGPApbty5gcstZmkXrvke
+el1xxdfyTF5iJl1/HmxORt7u5pfSPEznLBvYyfmRV9HAUPJxBsqXgkRml+w79bLC
+ElbGMleWcGY289v+NAIC+p/L5S2bjn/CQV4qjrkuffW9lr8TeGZThKhxRP5ttzIE
+1lPraxapN3bVqOL4J260tIEUsti8ATsL+vwrm6fL0U3vVouhjc/UGWAHSOftfXQa
+jO/553HF8L0Yo401xCyA/+djnsws79ALCvwGes/mPIKKcG4ncmwDHT1NiLy97a7d
+34FueB2i9LpZ6i9H7t7JpyHxTCbQhSGe3XxGxs5v8wgrFv8dSZzssHqnG1rszX5Y
+bJpwH+yAZibRcHCwLo16HeOrNZi+W2uuq6jpowUAlFty3IHduN0nr0j2WVTmL18a
+DQI745qO+H/Hk9hd3IsU
+=yxzZ
+-----END PGP SIGNATURE-----
+
+--7ZAtKRhVyVSsbBD2--
