@@ -1,61 +1,43 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH -next] mfd: fix arizona-irq.c build by selecting
- REGMAP_IRQ
-Date: Mon, 23 Jul 2012 18:39:39 +0100
-Message-ID: <20120723173939.GB8247@opensource.wolfsonmicro.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] watchdog: fix watchdog-test.c build warning
+Date: Mon, 23 Jul 2012 10:46:11 -0700
+Message-ID: <500D8DE3.20104@xenotime.net>
 References: <20120723164036.52bc93caafcd165fc16f0284@canb.auug.org.au>
- <500D8ACA.4020501@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7ZAtKRhVyVSsbBD2"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:43166 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754320Ab2GWRjl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Jul 2012 13:39:41 -0400
-Content-Disposition: inline
-In-Reply-To: <500D8ACA.4020501@xenotime.net>
+Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:42003 "HELO
+	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754158Ab2GWRrL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jul 2012 13:47:11 -0400
+In-Reply-To: <20120723164036.52bc93caafcd165fc16f0284@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
+From: Randy Dunlap <rdunlap@xenotime.net>
 
---7ZAtKRhVyVSsbBD2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fix compiler warning by making the function static:
 
-On Mon, Jul 23, 2012 at 10:32:58AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
->=20
-> arizona-irq.c uses functions that are only available when
-> CONFIG_REGMAP_IRQ is enabled, so select that symbol for
-> arizona builds.
+Documentation/watchdog/src/watchdog-test.c:34:6: warning: no previous prototype for 'term'
 
-Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc:	Wim Van Sebroeck <wim@iguana.be>
+Cc:	linux-watchdog@vger.kernel.org
+---
+ Documentation/watchdog/src/watchdog-test.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---7ZAtKRhVyVSsbBD2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQDYxUAAoJEBus8iNuMP3d3RkP+wUstnXglL4SG6vrz7MmNOJk
-zC0kYfb5MHdhEOCkqeLwuRjp3N9GSZHU+sBinJxsfetragSTact204PYCjoh2W0k
-DXZC4kwMD1H6ieszt/YYmjsmklzb5kG/rsnRKsqcpr0+JoOczMEeH72VL95+6bVs
-eIgmvtcKVXncu7bsNFmfTj9g6mSOhxuvWTffcvW+XOVtLs/jVyRXf5anLj+6g3dC
-8RCtlwRfx0YaAJT5qd83vbj6Ud9UJUKzo8Clb0s+U9IhGPApbty5gcstZmkXrvke
-el1xxdfyTF5iJl1/HmxORt7u5pfSPEznLBvYyfmRV9HAUPJxBsqXgkRml+w79bLC
-ElbGMleWcGY289v+NAIC+p/L5S2bjn/CQV4qjrkuffW9lr8TeGZThKhxRP5ttzIE
-1lPraxapN3bVqOL4J260tIEUsti8ATsL+vwrm6fL0U3vVouhjc/UGWAHSOftfXQa
-jO/553HF8L0Yo401xCyA/+djnsws79ALCvwGes/mPIKKcG4ncmwDHT1NiLy97a7d
-34FueB2i9LpZ6i9H7t7JpyHxTCbQhSGe3XxGxs5v8wgrFv8dSZzssHqnG1rszX5Y
-bJpwH+yAZibRcHCwLo16HeOrNZi+W2uuq6jpowUAlFty3IHduN0nr0j2WVTmL18a
-DQI745qO+H/Hk9hd3IsU
-=yxzZ
------END PGP SIGNATURE-----
-
---7ZAtKRhVyVSsbBD2--
+--- linux-next-20120723.orig/Documentation/watchdog/src/watchdog-test.c
++++ linux-next-20120723/Documentation/watchdog/src/watchdog-test.c
+@@ -31,7 +31,7 @@ static void keep_alive(void)
+  * or "-e" to enable the card.
+  */
+ 
+-void term(int sig)
++static void term(int sig)
+ {
+     close(fd);
+     fprintf(stderr, "Stopping watchdog ticks...\n");
