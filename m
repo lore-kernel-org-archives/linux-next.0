@@ -1,53 +1,48 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- target-merge tree
-Date: Mon, 23 Jul 2012 08:16:53 -0700
-Message-ID: <20120723151653.GB19236@kroah.com>
-References: <20120719145301.b8992aa986b47d7c44651710@canb.auug.org.au>
- <20120719235523.GA13623@kroah.com>
- <1342806778.25472.1.camel@haakon2.linux-iscsi.org>
- <20120720180358.GA9134@kroah.com>
- <20120720184228.GA19243@redhat.com>
- <20120722020746.GB31926@kroah.com>
- <1342993463.25472.265.camel@haakon2.linux-iscsi.org>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] mfd: fix arizona-irq.c build by selecting REGMAP_IRQ
+Date: Mon, 23 Jul 2012 10:32:58 -0700
+Message-ID: <500D8ACA.4020501@xenotime.net>
+References: <20120723164036.52bc93caafcd165fc16f0284@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:43400 "EHLO
-	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753601Ab2GWPQz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Jul 2012 11:16:55 -0400
-Content-Disposition: inline
-In-Reply-To: <1342993463.25472.265.camel@haakon2.linux-iscsi.org>
+Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:46986 "HELO
+	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754151Ab2GWRd6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jul 2012 13:33:58 -0400
+In-Reply-To: <20120723164036.52bc93caafcd165fc16f0284@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Hajnoczi <stefanha@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Anthony Liguori <anthony@codemonkey.ws>, Zhi Yong Wu <wuzhy@cn.ibm.com>, David Miller <davem@davemloft.net>, kvm-devel <kvm@vger.kernel.org>, target-devel <target-devel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Sun, Jul 22, 2012 at 02:44:23PM -0700, Nicholas A. Bellinger wrote:
-> So Linus has merged target-pending/for-next this afternoon, so now we
-> are just waiting on net-next to hit mainline with the vhost patches
-> already ACK'ed by MST.  Hopefully that makes things easier for you to
-> considering taking tcm_vhost upstream via staging.  ;)
-> 
-> Also, MST asked for an RFC-v5 for the initial merge commit with some
-> minor debug wrapper changes that will be going out next week.  This will
-> include a move into drivers/staging/tcm_vhost/ against a rebased
-> staging.git patch with the necessary -rc0 mainline dependencies.
-> 
-> Please let me know if your OK with this, otherwise I'll just plan to
-> keep -v5 against target-pending/for-next-merge for now, and send a GIT
-> PULL after MST gets back from holiday on the 29th -> 30th.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-I have no idea what any of the above three paragraphs are asking for, or
-talking about, sorry.
+arizona-irq.c uses functions that are only available when
+CONFIG_REGMAP_IRQ is enabled, so select that symbol for
+arizona builds.
 
-Note, the merge window is closed for taking new stuff into the staging
-tree.  If it isn't already in my staging-next tree, it isn't going to go
-into 3.6 unless it's bug fixes, sorry.  How about we figure all of this
-out after 3.6-rc1 is out so we can understand what is going on for 3.7?
+Fixes these build errors:
 
-thanks,
+arizona-irq.c:(.text+0xb2d47): undefined reference to `regmap_irq_get_virq'
+(.text+0xb2fe3): undefined reference to `regmap_add_irq_chip'
+(.text+0xb3173): undefined reference to `regmap_del_irq_chip'
 
-greg k-h
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ drivers/mfd/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20120723.orig/drivers/mfd/Kconfig
++++ linux-next-20120723/drivers/mfd/Kconfig
+@@ -523,6 +523,7 @@ config MFD_SEC_CORE
+ 
+ config MFD_ARIZONA
+ 	select REGMAP
++	select REGMAP_IRQ
+ 	bool
+ 
+ config MFD_ARIZONA_I2C
