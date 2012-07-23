@@ -1,34 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next] random: Remove remaining relicts of rand_initialize_irq()
-Date: Mon, 23 Jul 2012 16:54:43 +0200
-Message-ID: <CACRpkdbgt9kNTbF6YfL1rEbwWLA85a6b4crsOzTfedM+3KJBbA@mail.gmail.com>
-References: <1342524793-2522-1-git-send-email-sedat.dilek@gmail.com>
-	<20120717171251.GD6049@thunk.org>
-	<CACRpkdZe48FrDJx1p8ojfqwVBE95hSJipE8rViAi=E28uumYOQ@mail.gmail.com>
-	<20120717214219.GF6049@thunk.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the
+ target-merge tree
+Date: Mon, 23 Jul 2012 08:16:53 -0700
+Message-ID: <20120723151653.GB19236@kroah.com>
+References: <20120719145301.b8992aa986b47d7c44651710@canb.auug.org.au>
+ <20120719235523.GA13623@kroah.com>
+ <1342806778.25472.1.camel@haakon2.linux-iscsi.org>
+ <20120720180358.GA9134@kroah.com>
+ <20120720184228.GA19243@redhat.com>
+ <20120722020746.GB31926@kroah.com>
+ <1342993463.25472.265.camel@haakon2.linux-iscsi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-ia64-owner@vger.kernel.org>
-In-Reply-To: <20120717214219.GF6049@thunk.org>
-Sender: linux-ia64-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>, Linus Walleij <linus.walleij@linaro.org>, Sedat Dilek <sedat.dilek@gmail.com>, Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Linus Walleij <linus.walleij@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, David Howells <dhowells@redhat.com>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, "H. Peter Anvin" <hpa@linux.intel.com>, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:43400 "EHLO
+	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753601Ab2GWPQz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jul 2012 11:16:55 -0400
+Content-Disposition: inline
+In-Reply-To: <1342993463.25472.265.camel@haakon2.linux-iscsi.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Hajnoczi <stefanha@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Anthony Liguori <anthony@codemonkey.ws>, Zhi Yong Wu <wuzhy@cn.ibm.com>, David Miller <davem@davemloft.net>, kvm-devel <kvm@vger.kernel.org>, target-devel <target-devel@vger.kernel.org>
 
-On Tue, Jul 17, 2012 at 11:42 PM, Theodore Ts'o <tytso@mit.edu> wrote:
-> On Tue, Jul 17, 2012 at 08:57:19PM +0200, Linus Walleij wrote:
->> So the IRQ will be auto-sampled now or something?
->>
->> Sorry for not quite following, which commit do I look at to
->> understand this now...
->
-> Yes, there was a huge discussion on LKML about two weeks ago.  The
-> key commit that will be going in during the next merge window is:
->
-> http://git.kernel.org/?p=linux/kernel/git/tytso/random.git;a=commitdiff;h=775f4b297b780601e61787b766f306ed3e1d23eb
+On Sun, Jul 22, 2012 at 02:44:23PM -0700, Nicholas A. Bellinger wrote:
+> So Linus has merged target-pending/for-next this afternoon, so now we
+> are just waiting on net-next to hit mainline with the vhost patches
+> already ACK'ed by MST.  Hopefully that makes things easier for you to
+> considering taking tcm_vhost upstream via staging.  ;)
+> 
+> Also, MST asked for an RFC-v5 for the initial merge commit with some
+> minor debug wrapper changes that will be going out next week.  This will
+> include a move into drivers/staging/tcm_vhost/ against a rebased
+> staging.git patch with the necessary -rc0 mainline dependencies.
+> 
+> Please let me know if your OK with this, otherwise I'll just plan to
+> keep -v5 against target-pending/for-next-merge for now, and send a GIT
+> PULL after MST gets back from holiday on the 29th -> 30th.
 
-I get it now, after checking the commit and reading the LWN
-article. It's all looking good,
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+I have no idea what any of the above three paragraphs are asking for, or
+talking about, sorry.
 
-Yours,
-Linus Walleij
+Note, the merge window is closed for taking new stuff into the staging
+tree.  If it isn't already in my staging-next tree, it isn't going to go
+into 3.6 unless it's bug fixes, sorry.  How about we figure all of this
+out after 3.6-rc1 is out so we can understand what is going on for 3.7?
+
+thanks,
+
+greg k-h
