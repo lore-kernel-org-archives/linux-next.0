@@ -1,34 +1,35 @@
-From: Mark Salter <msalter@redhat.com>
-Subject: linux-next link failure
-Date: Mon, 23 Jul 2012 14:16:49 -0400
-Message-ID: <1343067410.3672.8.camel@deneb.redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: Tree for July 17 (mfd: AB3100 - ab3100_probe:
+ undefined reference to `rand_initialize_irq')
+Date: Mon, 23 Jul 2012 21:10:05 +0200
+Message-ID: <CACRpkdYXcaWDd3s5NnxADh6cAhLGHTyRvoRNLiuN2oEDtMg6Bg@mail.gmail.com>
+References: <CA+icZUXjc+13YjoJ6FjDFboX20j3mqHNtvV2Av2-H0My8V2Mgg@mail.gmail.com>
+	<CA+icZUW4gNqspcJ1sjBD-3GCVee2VWVV5NPAr6Eo-aZHjp3y+Q@mail.gmail.com>
+	<CA+icZUW+Gp9HK-6dzHjtTwSc9RaLD3sV+WPMM-vO3A6fj6frwQ@mail.gmail.com>
+	<CACRpkdbAnBza0Nd4Qw_LinRDa4XVuzUdJFX==YeML2z7H6gzwg@mail.gmail.com>
+	<CA+icZUWzS==NVNstc3RUfKe-=4UVtAza36LuFRuAp-zeX=5WyA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:21357 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754085Ab2GWSQy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Jul 2012 14:16:54 -0400
+Received: from mail-qa0-f53.google.com ([209.85.216.53]:44691 "EHLO
+	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754520Ab2GWTKG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jul 2012 15:10:06 -0400
+Received: by qaas11 with SMTP id s11so1343924qaa.19
+        for <linux-next@vger.kernel.org>; Mon, 23 Jul 2012 12:10:05 -0700 (PDT)
+In-Reply-To: <CA+icZUWzS==NVNstc3RUfKe-=4UVtAza36LuFRuAp-zeX=5WyA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mel Gorman <mgorman@suse.de>
-Cc: linux-next <linux-next@vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-arm-kernel@lists.infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Today's linux-next has a link failure on no-mmu systems:
+On Wed, Jul 18, 2012 at 7:54 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
 
-  fs/built-in.o: In function `nfs_file_direct_read':
-  (.text+0x80968): undefined reference to `get_kernel_page'
-  fs/built-in.o: In function `nfs_file_direct_write':
-  (.text+0x81178): undefined reference to `get_kernel_page'
+> For the sake of completeness:
+> * Ted explained in his answer in [1].
+> * Just FYI: [2] has these changes merged into the original commit.
 
-The problem is that get_kernel_page does not exist if CONFIG_MMU is not
-defined. This is the patch that added get_kernel_page():
+Yep I read up on it and I'm all fine with it.
 
-  mm: add get_kernel_page[s] for pinning of kernel addresses for I/O
-
-and the reference to get_kernelpage was added with:
-
-  nfs: enable swap on NFS
-
---Mark
+Thanks!
+Linus Walleij
