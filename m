@@ -1,43 +1,34 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] watchdog: fix watchdog-test.c build warning
-Date: Mon, 23 Jul 2012 10:46:11 -0700
-Message-ID: <500D8DE3.20104@xenotime.net>
-References: <20120723164036.52bc93caafcd165fc16f0284@canb.auug.org.au>
+From: Mark Salter <msalter@redhat.com>
+Subject: linux-next link failure
+Date: Mon, 23 Jul 2012 14:16:49 -0400
+Message-ID: <1343067410.3672.8.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:42003 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754158Ab2GWRrL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jul 2012 13:47:11 -0400
-In-Reply-To: <20120723164036.52bc93caafcd165fc16f0284@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:21357 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754085Ab2GWSQy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jul 2012 14:16:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Mel Gorman <mgorman@suse.de>
+Cc: linux-next <linux-next@vger.kernel.org>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+Today's linux-next has a link failure on no-mmu systems:
 
-Fix compiler warning by making the function static:
+  fs/built-in.o: In function `nfs_file_direct_read':
+  (.text+0x80968): undefined reference to `get_kernel_page'
+  fs/built-in.o: In function `nfs_file_direct_write':
+  (.text+0x81178): undefined reference to `get_kernel_page'
 
-Documentation/watchdog/src/watchdog-test.c:34:6: warning: no previous prototype for 'term'
+The problem is that get_kernel_page does not exist if CONFIG_MMU is not
+defined. This is the patch that added get_kernel_page():
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc:	Wim Van Sebroeck <wim@iguana.be>
-Cc:	linux-watchdog@vger.kernel.org
----
- Documentation/watchdog/src/watchdog-test.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  mm: add get_kernel_page[s] for pinning of kernel addresses for I/O
 
---- linux-next-20120723.orig/Documentation/watchdog/src/watchdog-test.c
-+++ linux-next-20120723/Documentation/watchdog/src/watchdog-test.c
-@@ -31,7 +31,7 @@ static void keep_alive(void)
-  * or "-e" to enable the card.
-  */
- 
--void term(int sig)
-+static void term(int sig)
- {
-     close(fd);
-     fprintf(stderr, "Stopping watchdog ticks...\n");
+and the reference to get_kernelpage was added with:
+
+  nfs: enable swap on NFS
+
+--Mark
