@@ -1,59 +1,44 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: manual merge of the staging tree with the
- target-merge tree
-Date: Mon, 23 Jul 2012 12:47:06 -0700
-Message-ID: <1343072826.25472.280.camel@haakon2.linux-iscsi.org>
-References: <20120719145301.b8992aa986b47d7c44651710@canb.auug.org.au>
-	 <20120719235523.GA13623@kroah.com>
-	 <1342806778.25472.1.camel@haakon2.linux-iscsi.org>
-	 <20120720180358.GA9134@kroah.com> <20120720184228.GA19243@redhat.com>
-	 <20120722020746.GB31926@kroah.com>
-	 <1342993463.25472.265.camel@haakon2.linux-iscsi.org>
-	 <20120723151653.GB19236@kroah.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] pstore: fix printk format warning
+Date: Mon, 23 Jul 2012 16:58:31 -0700
+Message-ID: <500DE527.1030309@xenotime.net>
+References: <20120723164036.52bc93caafcd165fc16f0284@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <target-devel-owner@vger.kernel.org>
-In-Reply-To: <20120723151653.GB19236@kroah.com>
-Sender: target-devel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Hajnoczi <stefanha@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Anthony Liguori <anthony@codemonkey.ws>, Zhi Yong Wu <wuzhy@cn.ibm.com>, David Miller <davem@davemloft.net>, kvm-devel <kvm@vger.kernel.org>, target-devel <target-devel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:41116 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754681Ab2GWX7b (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jul 2012 19:59:31 -0400
+In-Reply-To: <20120723164036.52bc93caafcd165fc16f0284@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marco Stornelli <marco.stornelli@gmail.com>, Kees Cook <keescook@chromium.org>
 
-On Mon, 2012-07-23 at 08:16 -0700, Greg KH wrote:
-> On Sun, Jul 22, 2012 at 02:44:23PM -0700, Nicholas A. Bellinger wrote:
-> > So Linus has merged target-pending/for-next this afternoon, so now we
-> > are just waiting on net-next to hit mainline with the vhost patches
-> > already ACK'ed by MST.  Hopefully that makes things easier for you to
-> > considering taking tcm_vhost upstream via staging.  ;)
-> > 
-> > Also, MST asked for an RFC-v5 for the initial merge commit with some
-> > minor debug wrapper changes that will be going out next week.  This will
-> > include a move into drivers/staging/tcm_vhost/ against a rebased
-> > staging.git patch with the necessary -rc0 mainline dependencies.
-> > 
-> > Please let me know if your OK with this, otherwise I'll just plan to
-> > keep -v5 against target-pending/for-next-merge for now, and send a GIT
-> > PULL after MST gets back from holiday on the 29th -> 30th.
-> 
-> I have no idea what any of the above three paragraphs are asking for, or
-> talking about, sorry.
-> 
-> Note, the merge window is closed for taking new stuff into the staging
-> tree.  If it isn't already in my staging-next tree, it isn't going to go
-> into 3.6 unless it's bug fixes, sorry.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-In that case, I'll just keep tcm_vhost in drivers/vhost/ for now and
-await MST's return to determine if he's willing to ACK this round (via
-target-pending) for an initial merge.
+Fix printk format warning (on i386) in pstore:
 
-> How about we figure all of this
-> out after 3.6-rc1 is out so we can understand what is going on for 3.7?
-> 
+fs/pstore/ram.c:409:3: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'size_t'
 
-I'd like to try to avoid slipping to v3.7 if possible, as we'll have the
-necessary dependencies in mainline over the next days once net-next is
-merged.  It's also self-contained driver that does not effect existing
-code (aside from what's already been ACK'ed), so risk is very low..
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Acked-by: Kees Cook <keescook@chromium.org>
+---
+This patch from June 15 is still needed in linux-next.
 
---nab
+ fs/pstore/ram.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20120723.orig/fs/pstore/ram.c
++++ linux-next-20120723/fs/pstore/ram.c
+@@ -406,7 +406,7 @@ static int __devinit ramoops_probe(struc
+ 		goto fail_init_fprz;
+ 
+ 	if (!cxt->przs && !cxt->cprz && !cxt->fprz) {
+-		pr_err("memory size too small, minimum is %lu\n",
++		pr_err("memory size too small, minimum is %zu\n",
+ 			cxt->console_size + cxt->record_size +
+ 			cxt->ftrace_size);
+ 		goto fail_cnt;
