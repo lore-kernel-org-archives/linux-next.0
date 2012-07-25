@@ -1,33 +1,72 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the akpm tree with the tip tree
-Date: Wed, 25 Jul 2012 12:26:13 -0700
-Message-ID: <20120725122613.b971360b.akpm@linux-foundation.org>
-References: <20120725140827.4332a5448e4d8d200164ea2e@canb.auug.org.au>
-	<20120725071044.GA27535@gmail.com>
-	<20120725073503.GB1112@cmpxchg.org>
-	<20120725115713.e56239b5.akpm@linux-foundation.org>
-	<20120725190351.GA4143@gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Wed, 25 Jul 2012 15:47:31 -0700
+Message-ID: <20120725224731.GA14020@kroah.com>
+References: <20120720150237.af0d271624511fc18705f287@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120725190351.GA4143@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Schermerhorn <lee.schermerhorn@hp.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:34761 "EHLO
+	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751206Ab2GYWrd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Jul 2012 18:47:33 -0400
+Content-Disposition: inline
+In-Reply-To: <20120720150237.af0d271624511fc18705f287@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
-On Wed, 25 Jul 2012 21:03:51 +0200
-Ingo Molnar <mingo@kernel.org> wrote:
-
-> > This means that if the above code reappears in linux-next or 
-> > mainline, the current copy of 
-> > mm-memcg-fix-compaction-migration-failing-due-to-memcg-limits.patch 
-> > will no longer update it, and I probably won't notice that 
-> > omission.
+On Fri, Jul 20, 2012 at 03:02:37PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Did you plan to send Johannes's memcg bits to Linus in this 
-> merge window?
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/usb/serial/console.c: In function 'usb_console_setup':
+> drivers/usb/serial/console.c:168:16: error: invalid type argument of '->' (have 'struct ktermios')
+> drivers/usb/serial/console.c:169:4: error: incompatible type for argument 1 of 'tty_termios_encode_baud_rate'
+> include/linux/tty.h:449:13: note: expected 'struct ktermios *' but argument is of type 'struct ktermios'
+> 
+> Caused by commit adc8d746caa6 ("tty: move the termios object into the
+> tty").  Hopefully this is the last of them.
+> 
+> I have added the following fix patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 20 Jul 2012 14:58:31 +1000
+> Subject: [PATCH] tty: fix up usb serial console for termios change.
+> 
+> fixes these errors:
+> 
+> drivers/usb/serial/console.c: In function 'usb_console_setup':
+> drivers/usb/serial/console.c:168:16: error: invalid type argument of '->' (have 'struct ktermios')
+> drivers/usb/serial/console.c:169:4: error: incompatible type for argument 1 of 'tty_termios_encode_baud_rate'
+> include/linux/tty.h:449:13: note: expected 'struct ktermios *' but argument is of type 'struct ktermios'
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/usb/serial/console.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/serial/console.c b/drivers/usb/serial/console.c
+> index b9cca6d..9a56428 100644
+> --- a/drivers/usb/serial/console.c
+> +++ b/drivers/usb/serial/console.c
+> @@ -165,8 +165,8 @@ static int usb_console_setup(struct console *co, char *options)
+>  		}
+>  
+>  		if (serial->type->set_termios) {
+> -			tty->termios->c_cflag = cflag;
+> -			tty_termios_encode_baud_rate(tty->termios, baud, baud);
+> +			tty->termios.c_cflag = cflag;
+> +			tty_termios_encode_baud_rate(&tty->termios, baud, baud);
+>  			memset(&dummy, 0, sizeof(struct ktermios));
+>  			serial->type->set_termios(tty, port, &dummy);
+>  
 
-Yes.  I was kinda thinking of starting the bombing run on Monday but I
-guess I could do the MM queue on Thursday.
+Alan, any objection to this?
+
+greg k-h
