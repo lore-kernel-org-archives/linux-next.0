@@ -1,28 +1,22 @@
-From: Ingo Molnar <mingo@kernel.org>
+From: Johannes Weiner <hannes@cmpxchg.org>
 Subject: Re: linux-next: manual merge of the akpm tree with the tip tree
-Date: Wed, 25 Jul 2012 21:03:51 +0200
-Message-ID: <20120725190351.GA4143@gmail.com>
+Date: Wed, 25 Jul 2012 21:20:07 +0200
+Message-ID: <20120725192007.GD1112@cmpxchg.org>
 References: <20120725140827.4332a5448e4d8d200164ea2e@canb.auug.org.au>
  <20120725071044.GA27535@gmail.com>
  <20120725073503.GB1112@cmpxchg.org>
  <20120725115713.e56239b5.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:61673 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751026Ab2GYTED (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Jul 2012 15:04:03 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <20120725115713.e56239b5.akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Schermerhorn <lee.schermerhorn@hp.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Schermerhorn <lee.schermerhorn@hp.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-
-* Andrew Morton <akpm@linux-foundation.org> wrote:
-
+On Wed, Jul 25, 2012 at 11:57:13AM -0700, Andrew Morton wrote:
 > On Wed, 25 Jul 2012 09:35:03 +0200
 > Johannes Weiner <hannes@cmpxchg.org> wrote:
 > 
@@ -75,16 +69,10 @@ Cc: Johannes Weiner <hannes@cmpxchg.org>, Stephen Rothwell <sfr@canb.auug.org.au
 > 
 > Yes, that worked out OK.
 > 
-> This means that if the above code reappears in linux-next or 
-> mainline, the current copy of 
-> mm-memcg-fix-compaction-migration-failing-due-to-memcg-limits.patch 
-> will no longer update it, and I probably won't notice that 
-> omission.
+> This means that if the above code reappears in linux-next or mainline,
+> the current copy of
+> mm-memcg-fix-compaction-migration-failing-due-to-memcg-limits.patch
+> will no longer update it, and I probably won't notice that omission. 
 
-Did you plan to send Johannes's memcg bits to Linus in this 
-merge window? If yes then I'll delay pushing out anything that 
-might interfere.
-
-Thanks,
-
-	Ingo
+The gfp_t argument was dropped from mem_cgroup_prepare_migration(), so
+it'll blow up during compilation with CONFIG_NUMA=y.
