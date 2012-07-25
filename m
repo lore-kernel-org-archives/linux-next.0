@@ -1,50 +1,72 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: [PATCH -next] mfd: fix arizona-irq.c build by selecting
- REGMAP_IRQ
-Date: Wed, 25 Jul 2012 00:56:19 +0200
-Message-ID: <20120724225619.GE11304@sortiz-mobl>
-References: <20120723164036.52bc93caafcd165fc16f0284@canb.auug.org.au>
- <500D8ACA.4020501@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mfd tree with Linus' tree
+Date: Wed, 25 Jul 2012 11:18:55 +1000
+Message-ID: <20120725111855.bd9553a735807afa0bd03821@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__25_Jul_2012_11_18_55_+1000_eFvyyu7J=M2VId.2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:43170 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751748Ab2GXW4U (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Jul 2012 18:56:20 -0400
-Content-Disposition: inline
-In-Reply-To: <500D8ACA.4020501@xenotime.net>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45124 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753882Ab2GYBS5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Jul 2012 21:18:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>
 
-Hi Randy,
+--Signature=_Wed__25_Jul_2012_11_18_55_+1000_eFvyyu7J=M2VId.2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 23, 2012 at 10:32:58AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> arizona-irq.c uses functions that are only available when
-> CONFIG_REGMAP_IRQ is enabled, so select that symbol for
-> arizona builds.
-> 
-> Fixes these build errors:
-> 
-> arizona-irq.c:(.text+0xb2d47): undefined reference to `regmap_irq_get_virq'
-> (.text+0xb2fe3): undefined reference to `regmap_add_irq_chip'
-> (.text+0xb3173): undefined reference to `regmap_del_irq_chip'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> ---
->  drivers/mfd/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-Applied, thanks.
+Hi Samuel,
 
+Today's linux-next merge of the mfd tree got a conflict in
+arch/arm/configs/tegra_defconfig between commit dbebe1589d3a ("ARM:
+tegra: defconfig updates") from Linus' tree and commit 05f3ad2b8ae5
+("ARM: tegra: defconfig: Enable tps6586x gpio") from the mfd tree.
+
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
 Cheers,
-Samuel.
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+diff --cc arch/arm/configs/tegra_defconfig
+index 4be9c1e,7c0d115..0000000
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@@ -105,7 -106,7 +105,8 @@@ CONFIG_I2C_MUX_PINCTRL=3D
+  CONFIG_I2C_TEGRA=3Dy
+  CONFIG_SPI=3Dy
+  CONFIG_SPI_TEGRA=3Dy
++ CONFIG_GPIO_TPS6586X=3Dy
+ +CONFIG_GPIO_TPS65910=3Dy
+  CONFIG_POWER_SUPPLY=3Dy
+  CONFIG_BATTERY_SBS=3Dy
+  CONFIG_SENSORS_LM90=3Dy
+
+--Signature=_Wed__25_Jul_2012_11_18_55_+1000_eFvyyu7J=M2VId.2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQD0l/AAoJEECxmPOUX5FEkG8P/3q8609RcrJEEzNpUrfiM2p1
+9ayVMdHU7b2pv8uLG8tVWPy8Y4OQRv8I8nEJLc5vvrU99djk78BCnMXC2ztmPru4
+85U98YdAxd2eFT5X/yUD6at0iVEJhsjVGhqK9DiBtwYusLsmeS9beXogCUd/ZgfF
+P0kdaPtEhLALG9OG6pD4jPXTGLP1FI/X41TetKH4EHf2s942bZHxc3tG/0h1Sghg
+RNWV64LgOqtbwaxmBZ3XWXu8VuUeFSbZwATZnSw2r6OlExX0CAlsnBFzpM3B7rrR
+kj7UXwNZAi+RpW+dHFCLn1qLH9i76Jzrf9xuXyyA/4VU124Fk2oeGl6bwYkOr5Vn
+pBZTfk++91zJYkcAggg97oi73W6kP5z8AulNJZ6IjbGz0Y+ZCfYb3XiTHM3gDnRU
+TAMmAwcvv3QWAicfvnCOCJf6INqWTOHqOc7Gh1hU8DuEq0Y4cDmBSu7DNSWllMfb
+65JDfOkIe84ZqrVoCH+vc1ZjxyUCJCXL9ByLPkj0czuJI0BVYJQSlTfgxdrsJxwZ
+xL8LK0NsGvmt4Nu+UxH4MxSkYh/8xJ3yh54yMGPu+PybBBzTC1HZCw1lMHujwF3y
+eapbHQyFdqedjr76uZEgib8IjH9nl7EE1aWu6rbHlNSPQQaGNaUJ0I1o4poz2jw0
+VYuggZqTlcbLLXW7ughI
+=0DmF
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Jul_2012_11_18_55_+1000_eFvyyu7J=M2VId.2--
