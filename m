@@ -1,74 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the arm tree
-Date: Thu, 26 Jul 2012 11:59:51 +1000
-Message-ID: <20120726115951.9c4b248c00f869c0fc1f146b@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the rr tree
+Date: Thu, 26 Jul 2012 14:25:38 +1000
+Message-ID: <20120726142538.655bbbff1cc64fd141f950b1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__26_Jul_2012_11_59_51_+1000_0EE7KAJ/XeGjWdU/"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__26_Jul_2012_14_25_38_+1000_sYtt9v0Mrla=mTKV"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:33950 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751053Ab2GZEZq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jul 2012 00:25:46 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Thu__26_Jul_2012_11_59_51_+1000_0EE7KAJ/XeGjWdU/
+--Signature=_Thu__26_Jul_2012_14_25_38_+1000_sYtt9v0Mrla=mTKV
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Andrew,
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/arm/Kconfig between commits 8c56cc8be5b3 ("ARM: 7449/1: use generic
-strnlen_user and strncpy_from_user functions") and b9a50f74905a ("ARM:
-7450/1: dcache: select DCACHE_WORD_ACCESS for little-endian ARMv6+ CPUs")
-from the arm tree and commit 380470027b5c ("Make most arch asm/module.h
-files use asm-generic/module.h") from the rr tree.
+Today's linux-next merge of the akpm tree got a conflict in
+arch/s390/Kconfig arch/x86/Kconfig between commit 380470027b5c ("Make
+most arch asm/module.h files use asm-generic/module.h") from the rr tree
+and commit 3fcc9766e733 ("atomic64_test: simplify the #ifdef for
+atomic64_dec_if_positive() test") from the akpm tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+Just context changes.  I fixed it up and can carry it as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/Kconfig
-index 71257da,af8bf36..0000000
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@@ -45,9 -45,8 +45,11 @@@ config AR
-  	select GENERIC_SMP_IDLE_THREAD
-  	select KTIME_SCALAR
-  	select GENERIC_CLOCKEVENTS_BROADCAST if SMP
- +	select GENERIC_STRNCPY_FROM_USER
- +	select GENERIC_STRNLEN_USER
- +	select DCACHE_WORD_ACCESS if (CPU_V6 || CPU_V6K || CPU_V7) && !CPU_BIG_E=
-NDIAN
-+ 	select HAVE_MOD_ARCH_SPECIFIC if ARM_UNWIND
-+ 	select MODULES_USE_ELF_REL
-  	help
-  	  The ARM series is a line of low-power-consumption RISC chip designs
-  	  licensed by ARM Ltd and targeted at embedded applications and
-
---Signature=_Thu__26_Jul_2012_11_59_51_+1000_0EE7KAJ/XeGjWdU/
+--Signature=_Thu__26_Jul_2012_14_25_38_+1000_sYtt9v0Mrla=mTKV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQEKSXAAoJEECxmPOUX5FEemMP/i1WZCCL3ARQ5QwOoJby4Tsf
-ld778WuvjPE+al5u4tvTQwKFcV7xoDAbix8++HCwCc8IPUH1dsv4SHt+8MdJndX+
-LlOqNe4ouC8ZY6OM377Pbk62MLES+EGroxTu+IHg1JXGjm4uHfwTKIkQT5CydVoK
-/yzgBqhj4MAYWny/r4aQEXZP1IplzZ5yiNA4s+SebBIJwH4+HyRN1ZpyR1LNzjEk
-um0wdAh08yZ5mmJOOGBhOROZqy94DYr4v3NoynrfT1nu8oo3kI2LmpnyjiRiFcy7
-lw96XevXfpqHS8OUhxduWMuosjOJm1nFNmcgv6S5CxhL9OVRW4nPDghVYygYX64z
-3DfNpmCXAjf2vIlKlv9DhnJjXFXVui1iN5yZUkbY018/MbAoZxcqe7kh3jubXRqJ
-mrl9bo+bFhpgbjOHyseT9Aog9seXYsA6ecDSw1Ae7cNlxNV31azMly+3fvTVwULU
-jpTsLDqccMqyIH+qbmJC/18v16T39TrUVpFWa2C9oL0i8aHx8yVKpFU78fQ9jDgh
-uQzNC5VsH+LkpeFqndbXVEAuVE34Mv/oDpUKd1PWm3YKRCcMbwUyYuBaax7PyAyZ
-Mr5G6o3nxaXDEqtA1LH2MCBZ/r19KtOiwtKxpGIM/x1D1kLjXfhC5AMjjpJKnOIv
-tDzoDH64Y1WDed2lPLuG
-=1eHo
+iQIcBAEBCAAGBQJQEMbCAAoJEECxmPOUX5FEi/EP/iddUsKlk/BQH6sj84sUozW5
+9fTRmRbxPxAX8+/gn4mM7oEeS4N2iLmPO8wwYgEvYof+oOrS2EEM+8l00SHzB1vv
+Hkul/IbTrUv21EUNY97sePojiYFIvMlmLCDc8LkC7uq/G5DmB0Te1x3OCPOT7r8N
+A6TWkcqyITSz+/0B1fd8sUuATBa2Iydy6yBZ0i8UnkGeiB40iFsWxztJzyzUOCpy
+erNvWT2P9DyYQEUmfsZJxQxowI41gUrm4J8PJkQ4M9Qe33n9Zy/5EYAZSk6cO8ID
+YLK7+kpqXmy2AX7hTxJ3TzqUbIrPKHbNAqI/FHvZj2xj/TSavsEhi+QOOBZFrjYi
+CxFH9HLX0NUOW8OpKGX0geCkvgJckT+ZG/CsesyLiHTiKtMu2HFBrBfeFn2Td26u
++wKDr7xHNVucCsCI0S5rqLpRYiz1o6MSfZTDfPxq86e0nWhoedRsjiECd7zI6no+
+XwRp5WsgEbMeR/fEbESiNmRaqzT/mqksf2qiC7mDAqFVRk84FEUuMJ21DOXF2no6
+fLTYWuZ/SmEArntQ4wwkQMe1t8HkxI43eDLROEfNPUeuIw2vi7jQHWhrN5lux8eE
+RUMKsBbNT8VKofk8zQXeFY/F/bizbiOxrp8T5xamU2JsAYZUGxEMRxA1RTlfERBd
+wANUCebtYF2BOvNMDEfM
+=hKyV
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__26_Jul_2012_11_59_51_+1000_0EE7KAJ/XeGjWdU/--
+--Signature=_Thu__26_Jul_2012_14_25_38_+1000_sYtt9v0Mrla=mTKV--
