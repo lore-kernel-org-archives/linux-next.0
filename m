@@ -1,44 +1,74 @@
-From: Alan Cox <alan@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Thu, 26 Jul 2012 01:25:02 +0100
-Message-ID: <20120726012502.571205f4@bob.linux.org.uk>
-References: <20120720133349.b71eeca40aa1758a12725dea@canb.auug.org.au>
-	<20120726085127.1205fa271d6c5d7c485c5397@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree with the arm tree
+Date: Thu, 26 Jul 2012 11:59:51 +1000
+Message-ID: <20120726115951.9c4b248c00f869c0fc1f146b@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__26_Jul_2012_11_59_51_+1000_0EE7KAJ/XeGjWdU/"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__26_Jul_2012_11_59_51_+1000_0EE7KAJ/XeGjWdU/
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:45735 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751325Ab2GZAHy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Jul 2012 20:07:54 -0400
-In-Reply-To: <20120726085127.1205fa271d6c5d7c485c5397@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 26 Jul 2012 08:51:27 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Rusty,
 
-> Hi Greg, Alan,
-> 
-> [Sorry, Alan, I forgot to cc you the first time around.]
-> 
-> On Fri, 20 Jul 2012 13:33:49 +1000 Stephen Rothwell
-> <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the tty tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > drivers/staging/serqt_usb2/serqt_usb2.c: In function
-> > 'qt_set_termios': drivers/staging/serqt_usb2/serqt_usb2.c:1198:29:
-> > error: incompatible types when initializing type 'struct ktermios
-> > *' using type 'struct ktermios'
-> > drivers/staging/serqt_usb2/serqt_usb2.c:1304:14: error: invalid
-> > type argument of '->' (have 'struct ktermios')
-> > 
+Today's linux-next merge of the rr tree got a conflict in
+arch/arm/Kconfig between commits 8c56cc8be5b3 ("ARM: 7449/1: use generic
+strnlen_user and strncpy_from_user functions") and b9a50f74905a ("ARM:
+7450/1: dcache: select DCACHE_WORD_ACCESS for little-endian ARMv6+ CPUs")
+from the arm tree and commit 380470027b5c ("Make most arch asm/module.h
+files use asm-generic/module.h") from the rr tree.
 
-I sent you a fix for that one (I've not done the ipoctal one yet)
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Alan
+diff --cc arch/arm/Kconfig
+index 71257da,af8bf36..0000000
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@@ -45,9 -45,8 +45,11 @@@ config AR
+  	select GENERIC_SMP_IDLE_THREAD
+  	select KTIME_SCALAR
+  	select GENERIC_CLOCKEVENTS_BROADCAST if SMP
+ +	select GENERIC_STRNCPY_FROM_USER
+ +	select GENERIC_STRNLEN_USER
+ +	select DCACHE_WORD_ACCESS if (CPU_V6 || CPU_V6K || CPU_V7) && !CPU_BIG_E=
+NDIAN
++ 	select HAVE_MOD_ARCH_SPECIFIC if ARM_UNWIND
++ 	select MODULES_USE_ELF_REL
+  	help
+  	  The ARM series is a line of low-power-consumption RISC chip designs
+  	  licensed by ARM Ltd and targeted at embedded applications and
+
+--Signature=_Thu__26_Jul_2012_11_59_51_+1000_0EE7KAJ/XeGjWdU/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQEKSXAAoJEECxmPOUX5FEemMP/i1WZCCL3ARQ5QwOoJby4Tsf
+ld778WuvjPE+al5u4tvTQwKFcV7xoDAbix8++HCwCc8IPUH1dsv4SHt+8MdJndX+
+LlOqNe4ouC8ZY6OM377Pbk62MLES+EGroxTu+IHg1JXGjm4uHfwTKIkQT5CydVoK
+/yzgBqhj4MAYWny/r4aQEXZP1IplzZ5yiNA4s+SebBIJwH4+HyRN1ZpyR1LNzjEk
+um0wdAh08yZ5mmJOOGBhOROZqy94DYr4v3NoynrfT1nu8oo3kI2LmpnyjiRiFcy7
+lw96XevXfpqHS8OUhxduWMuosjOJm1nFNmcgv6S5CxhL9OVRW4nPDghVYygYX64z
+3DfNpmCXAjf2vIlKlv9DhnJjXFXVui1iN5yZUkbY018/MbAoZxcqe7kh3jubXRqJ
+mrl9bo+bFhpgbjOHyseT9Aog9seXYsA6ecDSw1Ae7cNlxNV31azMly+3fvTVwULU
+jpTsLDqccMqyIH+qbmJC/18v16T39TrUVpFWa2C9oL0i8aHx8yVKpFU78fQ9jDgh
+uQzNC5VsH+LkpeFqndbXVEAuVE34Mv/oDpUKd1PWm3YKRCcMbwUyYuBaax7PyAyZ
+Mr5G6o3nxaXDEqtA1LH2MCBZ/r19KtOiwtKxpGIM/x1D1kLjXfhC5AMjjpJKnOIv
+tDzoDH64Y1WDed2lPLuG
+=1eHo
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__26_Jul_2012_11_59_51_+1000_0EE7KAJ/XeGjWdU/--
