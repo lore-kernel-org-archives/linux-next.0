@@ -1,63 +1,65 @@
-From: Lauri Hintsala <lauri.hintsala@bluegiga.com>
+From: Olof Johansson <olof@lixom.net>
 Subject: Re: [PATCH] ARM: mxs: fix compile error caused by prom_update_property
  change
-Date: Thu, 26 Jul 2012 08:32:32 +0300
-Message-ID: <5010D670.6070303@bluegiga.com>
+Date: Wed, 25 Jul 2012 22:38:22 -0700
+Message-ID: <CAOesGMhwX_ZSZrUraMBazsj7BmJTi_ihGNoOjx__+kLS-SSJ=g@mail.gmail.com>
 References: <1342160035-24170-1-git-send-email-shawn.guo@linaro.org>
+	<5010D670.6070303@bluegiga.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1342160035-24170-1-git-send-email-shawn.guo@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Fabio Estevam <fabio.estevam@freescale.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:34775 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750916Ab2GZFiX convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jul 2012 01:38:23 -0400
+Received: by obbuo13 with SMTP id uo13so2189893obb.19
+        for <linux-next@vger.kernel.org>; Wed, 25 Jul 2012 22:38:22 -0700 (PDT)
+In-Reply-To: <5010D670.6070303@bluegiga.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lauri Hintsala <lauri.hintsala@bluegiga.com>
+Cc: Shawn Guo <shawn.guo@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Fabio Estevam <fabio.estevam@freescale.com>
 
-SGksCgpPbiAwNy8xMy8yMDEyIDA5OjEzIEFNLCBTaGF3biBHdW8gd3JvdGU6Cj4gVGhlIGNvbW1p
-dCA0NzVkMDA5IChvZjogSW1wcm92ZSBwcm9tX3VwZGF0ZV9wcm9wZXJ0eSgpIGZ1bmN0aW9uKQo+
-IGNoYW5nZWQgcHJvbV91cGRhdGVfcHJvcGVydHkgaW50ZXJmYWNlLCBhbmQgY2F1c2VzIHRoZSBj
-b21waWxlCj4gZXJyb3IgYmVsb3cuCj4KPiAgICBDQyAgICAgIGFyY2gvYXJtL21hY2gtbXhzL21h
-Y2gtbXhzLm8KPiBhcmNoL2FybS9tYWNoLW14cy9tYWNoLW14cy5jOiBJbiBmdW5jdGlvbiDigJh1
-cGRhdGVfZmVjX21hY19wcm9w4oCZOgo+IGFyY2gvYXJtL21hY2gtbXhzL21hY2gtbXhzLmM6MjE2
-OjQ6IGVycm9yOiB0b28gbWFueSBhcmd1bWVudHMgdG8gZnVuY3Rpb24g4oCYcHJvbV91cGRhdGVf
-cHJvcGVydHnigJkKPiBpbmNsdWRlL2xpbnV4L29mLmg6MjYzOjEyOiBub3RlOiBkZWNsYXJlZCBo
-ZXJlCj4KPiBVcGRhdGUgdGhlIGNhbGxlciB1cGRhdGVfZmVjX21hY19wcm9wIHRvIGZpeCB0aGUg
-ZXJyb3IuCj4KPiBTaWduZWQtb2ZmLWJ5OiBTaGF3biBHdW8gPHNoYXduLmd1b0BsaW5hcm8ub3Jn
-Pgo+IC0tLQo+IFRoZSBlcnJvciBpcyBzZWVuIG9uIG5leHQtMjAxMjA3MTIgd2hlcmUgY29tbWl0
-IDQ3NWQwMDkgKG9mOiBJbXByb3ZlCj4gcHJvbV91cGRhdGVfcHJvcGVydHkoKSBmdW5jdGlvbikg
-ZW1lcmdlcy4KCldoYXQncyB0aGUgc3RhdHVzIG9mIHRoaXMgcGF0Y2g/IEN1cnJlbnQgVG9ydmFs
-ZCdzIG1hc3RlciBpcyB1bmJ1aWxkYWJsZSAKZm9yIG14cyBiZWNhdXNlIG9mIHRoaXMgaXNzdWUu
-CgpDb21waWxlciBnaXZlcyBhbiBlcnJvcjoKYXJjaC9hcm0vbWFjaC1teHMvbWFjaC1teHMuYzog
-SW4gZnVuY3Rpb24gJ3VwZGF0ZV9mZWNfbWFjX3Byb3AnOgphcmNoL2FybS9tYWNoLW14cy9tYWNo
-LW14cy5jOjIxMzogZXJyb3I6IHRvbyBtYW55IGFyZ3VtZW50cyB0byBmdW5jdGlvbiAKJ3Byb21f
-dXBkYXRlX3Byb3BlcnR5JwptYWtlWzFdOiAqKiogW2FyY2gvYXJtL21hY2gtbXhzL21hY2gtbXhz
-Lm9dIEVycm9yIDEKCkJlc3QgcmVnYXJkcywKTGF1cmkgSGludHNhbGEKCgo+Cj4gICBhcmNoL2Fy
-bS9tYWNoLW14cy9tYWNoLW14cy5jIHwgICAgOCArKy0tLS0tLQo+ICAgMSBmaWxlcyBjaGFuZ2Vk
-LCAyIGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvYXJjaC9h
-cm0vbWFjaC1teHMvbWFjaC1teHMuYyBiL2FyY2gvYXJtL21hY2gtbXhzL21hY2gtbXhzLmMKPiBp
-bmRleCA2NDhiZGQwLi44ZGFiZmU4IDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtL21hY2gtbXhzL21h
-Y2gtbXhzLmMKPiArKysgYi9hcmNoL2FybS9tYWNoLW14cy9tYWNoLW14cy5jCj4gQEAgLTE2Miw3
-ICsxNjIsNyBAQCBlbnVtIG1hY19vdWkgewo+ICAgc3RhdGljIHZvaWQgX19pbml0IHVwZGF0ZV9m
-ZWNfbWFjX3Byb3AoZW51bSBtYWNfb3VpIG91aSkKPiAgIHsKPiAgIAlzdHJ1Y3QgZGV2aWNlX25v
-ZGUgKm5wLCAqZnJvbSA9IE5VTEw7Cj4gLQlzdHJ1Y3QgcHJvcGVydHkgKm9sZG1hYywgKm5ld21h
-YzsKPiArCXN0cnVjdCBwcm9wZXJ0eSAqbmV3bWFjOwo+ICAgCWNvbnN0IHUzMiAqb2NvdHAgPSBt
-eHNfZ2V0X29jb3RwKCk7Cj4gICAJdTggKm1hY2FkZHI7Cj4gICAJdTMyIHZhbDsKPiBAQCAtMjA4
-LDExICsyMDgsNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgdXBkYXRlX2ZlY19tYWNfcHJvcChlbnVt
-IG1hY19vdWkgb3VpKQo+ICAgCQltYWNhZGRyWzRdID0gKHZhbCA+PiA4KSAmIDB4ZmY7Cj4gICAJ
-CW1hY2FkZHJbNV0gPSAodmFsID4+IDApICYgMHhmZjsKPgo+IC0JCW9sZG1hYyA9IG9mX2ZpbmRf
-cHJvcGVydHkobnAsIG5ld21hYy0+bmFtZSwgTlVMTCk7Cj4gLQkJaWYgKG9sZG1hYykKPiAtCQkJ
-cHJvbV91cGRhdGVfcHJvcGVydHkobnAsIG5ld21hYywgb2xkbWFjKTsKPiAtCQllbHNlCj4gLQkJ
-CXByb21fYWRkX3Byb3BlcnR5KG5wLCBuZXdtYWMpOwo+ICsJCXByb21fdXBkYXRlX3Byb3BlcnR5
-KG5wLCBuZXdtYWMpOwo+ICAgCX0KPiAgIH0KPgo+CgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51
-eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On Wed, Jul 25, 2012 at 10:32 PM, Lauri Hintsala
+<lauri.hintsala@bluegiga.com> wrote:
+> Hi,
+>
+>
+> On 07/13/2012 09:13 AM, Shawn Guo wrote:
+>>
+>> The commit 475d009 (of: Improve prom_update_property() function)
+>> changed prom_update_property interface, and causes the compile
+>> error below.
+>>
+>>    CC      arch/arm/mach-mxs/mach-mxs.o
+>> arch/arm/mach-mxs/mach-mxs.c: In function =91update_fec_mac_prop=92:
+>> arch/arm/mach-mxs/mach-mxs.c:216:4: error: too many arguments to fun=
+ction
+>> =91prom_update_property=92
+>> include/linux/of.h:263:12: note: declared here
+>>
+>> Update the caller update_fec_mac_prop to fix the error.
+>>
+>> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+>> ---
+>> The error is seen on next-20120712 where commit 475d009 (of: Improve
+>> prom_update_property() function) emerges.
+>
+>
+> What's the status of this patch? Current Torvald's master is unbuilda=
+ble for
+> mxs because of this issue.
+>
+> Compiler gives an error:
+> arch/arm/mach-mxs/mach-mxs.c: In function 'update_fec_mac_prop':
+> arch/arm/mach-mxs/mach-mxs.c:213: error: too many arguments to functi=
+on
+> 'prom_update_property'
+> make[1]: *** [arch/arm/mach-mxs/mach-mxs.o] Error 1
+
+Thanks for the follow-up, I had missed it when first sent out. I've
+applied it to our fixes branch that will be sent out shortly.
+
+
+-Olof
