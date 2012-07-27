@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the tip tree
-Date: Fri, 27 Jul 2012 13:50:29 +1000
-Message-ID: <20120727135029.396efc08bc34e376376d251b@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Fri, 27 Jul 2012 13:57:02 +1000
+Message-ID: <20120727135702.ad50880aec871d2d747aa2fb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Jul_2012_13_50_29_+1000_FqANtVRejT40ibkR"
+ boundary="Signature=_Fri__27_Jul_2012_13_57_02_+1000_2xTKyEM4keEu3AEQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35401 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:38704 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752976Ab2G0Duj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jul 2012 23:50:39 -0400
+	with ESMTP id S1752809Ab2G0D5F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jul 2012 23:57:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Yan, Zheng" <zheng.z.yan@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Chris Mason <chris.mason@fusionio.com>, Joe Perches <joe@perches.com>
 
---Signature=_Fri__27_Jul_2012_13_50_29_+1000_FqANtVRejT40ibkR
+--Signature=_Fri__27_Jul_2012_13_57_02_+1000_2xTKyEM4keEu3AEQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,52 +24,54 @@ Content-Transfer-Encoding: quoted-printable
 Hi Andrew,
 
 Today's linux-next merge of the akpm tree got a conflict in
-arch/x86/kernel/cpu/perf_event_intel_uncore.h between commit 254298c726b9
-("perf/x86: Add Intel Nehalem-EX uncore support") from the tip tree and
-commit "arch/x86/kernel/cpu/perf_event_intel_uncore.h: make
-UNCORE_PMU_HRTIMER_INTERVAL 64-bit" from the akpm tree.
+fs/btrfs/relocation.c between commit 23291a044c31 ("Btrfs: fix error
+handling in __add_reloc_root()") from Linus' tree and commit "btrfs: use
+printk_get_level and printk_skip_level, add __printf, fix fallout" from
+the akpm tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/kernel/cpu/perf_event_intel_uncore.h
-index f385189,d85c25d..0000000
---- a/arch/x86/kernel/cpu/perf_event_intel_uncore.h
-+++ b/arch/x86/kernel/cpu/perf_event_intel_uncore.h
-@@@ -5,7 -5,9 +5,7 @@@
-  #include "perf_event.h"
+diff --cc fs/btrfs/relocation.c
+index c5dbd91,790f492..0000000
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@@ -1239,11 -1239,10 +1239,11 @@@ static int __must_check __add_reloc_roo
+  			      node->bytenr, &node->rb_node);
+  	spin_unlock(&rc->reloc_root_tree.lock);
+  	if (rb_node) {
+ -		kfree(node);
+  		btrfs_panic(root->fs_info, -EEXIST, "Duplicate root found "
+  			    "for start=3D%llu while inserting into relocation "
+- 			    "tree\n");
++ 			    "tree\n", node->bytenr);
+ +		kfree(node);
+ +		return -EEXIST;
+  	}
  =20
-  #define UNCORE_PMU_NAME_LEN		32
-- #define UNCORE_PMU_HRTIMER_INTERVAL	(60 * NSEC_PER_SEC)
- -#define UNCORE_BOX_HASH_SIZE		8
- -
-+ #define UNCORE_PMU_HRTIMER_INTERVAL	(60LL * NSEC_PER_SEC)
- =20
-  #define UNCORE_FIXED_EVENT		0xff
-  #define UNCORE_PMC_IDX_MAX_GENERIC	8
+  	list_add_tail(&root->root_list, &rc->reloc_roots);
 
---Signature=_Fri__27_Jul_2012_13_50_29_+1000_FqANtVRejT40ibkR
+--Signature=_Fri__27_Jul_2012_13_57_02_+1000_2xTKyEM4keEu3AEQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQEhAFAAoJEECxmPOUX5FEOnIQAKQ1MQbAZJBPob418/pupepA
-klSo4ADWiE/kFgaOzMhVDnfcq5R5Ajq3WHg34dim1Hp10KYf9VM+7ssZYCmUNeXA
-FCTovfvZVokIlJnj/6eukqZg+vlHRjef/UgrreGjMmkqGZP4XtcyGluj9RwRIY/E
-vxugJQHXcyKmi+nigOAu8zkHDsCRs7f5yv2NOgBq4WUTlind8MxBUbFQw52T+WOK
-yuuUj6Nf1lb1CQiSnIaEh27K3TK1H7zLKsx66+OBmRwb6CJFbPiQPrapSd7jI4Cv
-MsXj5vpk8Fe5AqKcGWpq9XZW0Ts+j41P3FPivdchMtBXnvnA5gyqZUtcpq0jevgn
-QBdfQ7t6C/sQCrMMnVigEBgkQWTL9WuWstEkl2/KHpfrE6SQAZ3wTUUFhFyNPhk4
-CMOGOXfGLBIsGTYlzVYKneJNkVqUsp1KaEhThoWrb5XvJl46GcEYmhuX/F1PMQK3
-wqouv92yinglr4xFLSoXZWYRYbGQ958778R380HotxmtDN/v1SZUHQ2116eEiWX3
-pnCr9FbcWc0NsJt5a4andmvFs50FdYL4W0TmM5QOBUPV9wesqTu1EK/zDmSzYXvu
-mGU4DAxvq3GOMGNZa3KNghVwbsuE4SK/CCq5CjH2IWpSRQfMIN5WrfwFnftEXK7f
-eFuSrb8/wockflVWVe4G
-=Fy+Q
+iQIcBAEBCAAGBQJQEhGOAAoJEECxmPOUX5FEq24P/A6j44/qyapuUFcAOqU0W6l0
+vQM//7hudQiOzSequpl9zfvGquihIdVF8tjx1NB0wznIRG7W0+DAagB+OiqPMqqE
+te/VsoHdQh8cjQ6+EoKhjGFOrSw4c+1LdXOEY0sBb6l5FNBJo6QL6vgqE88H4CiP
+lq3XksYBSeziJvr9FQiNPpDvcsFfhd3Un78kLGzIUpqhz9ZvCTorux/O5muq4yPw
+ErJHyC2fMFFMwanUyL0Eu7Bs9qTOJoxzHvgucjuA0/8rwvS7BGsLWVCEGz06W7S7
+p7lPD4l5HR+ag9DTmVFucZsqnRCfl+1lCGmDRCJmmiWwE7diDzutWdgH/su9PY3M
+eQ82KKgDSIWBZg5BIyBmhT1RZMqRuDBAcqSDtmKfqOf41nJynFW6y64gG/aNjRiT
+etVDIqZruWDHf/ge1iJ+n2Al6nkzFDF6t5CTbfRG/NQsuxexbX/T+li3xaNp1Ama
+viom/IS7j4oGjPL//KRki1gM8RLRxcZ90P604N2Je3yZosw/+PCgg1Ov/ppA4uTh
+HvYims8GTyrluUmjVWw6ALh8N0HEygnOF45cTI/PPzYoNDBQwKFvdWAmuMBNzLz/
+f2HWC03NdFIKniIZZLfNFsKW7ZQVjdcqryx5/gZ3MCHRcfoyksur9hWAIyVs3R/n
+dGgBa/rRakyyC9xzYK5I
+=Q7XF
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Jul_2012_13_50_29_+1000_FqANtVRejT40ibkR--
+--Signature=_Fri__27_Jul_2012_13_57_02_+1000_2xTKyEM4keEu3AEQ--
