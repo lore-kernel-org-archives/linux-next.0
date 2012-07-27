@@ -1,58 +1,44 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: Tree for July 25 (mfd/arizona)
-Date: Fri, 27 Jul 2012 15:26:34 +0200
-Message-ID: <20120727132634.GN16859@sortiz-mobl>
-References: <20120725143020.8c96b6d54b66364b69c330ad@canb.auug.org.au>
- <501038CF.9090902@xenotime.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] nfs: fix stub return type warnings
+Date: Fri, 27 Jul 2012 11:49:26 -0700
+Message-ID: <5012E2B6.5010009@xenotime.net>
+References: <20120727142126.15a52335cda4c39d5c120c49@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <501038CF.9090902@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy10-pub.bluehost.com ([67.222.39.61]:39370 "HELO
+	oproxy10-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752237Ab2G0Suc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Jul 2012 14:50:32 -0400
+In-Reply-To: <20120727142126.15a52335cda4c39d5c120c49@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org, Trond Myklebust <Trond.Myklebust@netapp.com>
 
-Hi Randy
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-On Wed, Jul 25, 2012 at 11:19:59AM -0700, Randy Dunlap wrote:
-> On 07/24/2012 09:30 PM, Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > 
-> > Changes since 20120724:
-> > 
-> > 
-> > The mfd tree gained a conflict against Linus' tree.
-> 
-> 
-> 
-> on i386 and x86_64:
-> 
-> CONFIG_MFD_ARIZONA=y
-> CONFIG_MFD_ARIZONA_I2C=m
-> CONFIG_MFD_CORE=m
-> 
-> drivers/built-in.o: In function `arizona_dev_init':
-> (.devinit.text+0x3ab0): undefined reference to `mfd_add_devices'
-> drivers/built-in.o: In function `arizona_dev_init':
-> (.devinit.text+0x3fdc): undefined reference to `mfd_add_devices'
-> drivers/built-in.o: In function `arizona_dev_init':
-> (.devinit.text+0x3fff): undefined reference to `mfd_add_devices'
-> drivers/built-in.o: In function `arizona_dev_init':
-> (.devinit.text+0x4059): undefined reference to `mfd_remove_devices'
-> drivers/built-in.o: In function `arizona_dev_exit':
-> (.devexit.text+0x9): undefined reference to `mfd_remove_devices'
-> 
-> because MFD_ARIZONA is bool, so builtin, while MFD_CORE=m,
-> so the builtin code cannot call the loadable module code.
-This is fixed now, by having MFD_ARIZONA selecting MFD_CORE.
+Fix numerous repeated warnings by making the stub function
+void instead of non-void:
 
-Cheers,
-Samuel.
+fs/nfs/nfs4_fs.h: In function 'nfs4_unregister_sysctl':
+fs/nfs/nfs4_fs.h:385:1: warning: no return statement in function returning non-void
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc:	Trond Myklebust <Trond.Myklebust@netapp.com>
+---
+ fs/nfs/nfs4_fs.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20120727.orig/fs/nfs/nfs4_fs.h
++++ linux-next-20120727/fs/nfs/nfs4_fs.h
+@@ -380,7 +380,7 @@ static inline int nfs4_register_sysctl(v
+ 	return 0;
+ }
+ 
+-static inline int nfs4_unregister_sysctl(void)
++static inline void nfs4_unregister_sysctl(void)
+ {
+ }
+ #endif
