@@ -1,60 +1,28 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: build failure in Linus' tree
-Date: Fri, 27 Jul 2012 10:23:48 +1000
-Message-ID: <20120727102348.d50d3c9e8cd5d7cae6603737@canb.auug.org.au>
+Date: Thu, 26 Jul 2012 18:04:30 -0700
+Message-ID: <CA+55aFxJjt_vTe4UXhfq7O4r0gCWbAj7FAFrNjpk9Tf0RD86rA@mail.gmail.com>
 References: <20120727101535.aa873d14cd8a6736413e9cea@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Jul_2012_10_23_48_+1000_jEMaofK1c9Z+F/KD"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59260 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752390Ab2G0AXu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jul 2012 20:23:50 -0400
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:63647 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752735Ab2G0BEw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jul 2012 21:04:52 -0400
 In-Reply-To: <20120727101535.aa873d14cd8a6736413e9cea@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Block <ablock84@googlemail.com>, David Sterba <dave@jikos.cz>, Arne Jansen <sensille@gmx.net>, Jan Schmidt <list.btrfs@jan-o-sch.net>, Alex Lyakas <alex.bolshoy.btrfs@gmail.com>, Chris Mason <chris.mason@fusionio.com>
 
---Signature=_Fri__27_Jul_2012_10_23_48_+1000_jEMaofK1c9Z+F/KD
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 27 Jul 2012 10:15:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Thu, Jul 26, 2012 at 5:15 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 27 Jul 2012 10:11:13 +1000
-> Subject: [PATCH] Btrfs: using vrmzalloc and friends needs vmalloc.h
+> After merging the origin tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 
-That should say "vmalloc". of course.
+Oh well. I did an x86-64 build after that pull (because of the need
+for that semantic merge thing), but apparently x86-64 gets the
+vmalloc.h indirectly through some other header.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__27_Jul_2012_10_23_48_+1000_jEMaofK1c9Z+F/KD
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQEd+UAAoJEECxmPOUX5FEVvkP/2hMG/+t+0XRn+nkCrBan73c
-7/EMgpfMLlGBrVxW/Ol5xrlRwGAYbXwKqGAbZf5/N3BkQQM8p9Rro0socvn3FgqA
-jdzC3sqmsj4kQ32Nznf1PbJOn9bqx+dluvJQTng+jhWFmMOyG+pWADswKXOq/3cW
-OmQ+2NO5xw+LAI1qpYV/dmPEBndHoUQ2w56U5WbPutArrEGP45McrTqIy1TuszGw
-YFldLvlpNd18FVPJ6+0RltmCg/32KfDrMUizAP9EyHlO7X7/HtePwIxO8elbj9yR
-pVSc22Gig4KAwu7MFtdyqoJt/GdDA14BH3swzT9w47no5zPQQwqTKFa6PsND20Gg
-KD4BI+6sqtMk3b3RbiU1RbqkqcsxCDHtxiluWIYNvp5Dr4ueOlrDrEqjgfm9TW5b
-2VQhEXeRawgabZHVLYwyJoIh1GXa+dB5e8MTmQ3gIy24QodJj0GWE4enYqJpli/o
-hhe87mLVbySs/1WBnzFRwGwH0E8jnpr6IT91gFjGbckL5SDNr5j5oaqQYhC5WEeJ
-APeBjh8VA+7bu4AJo1hWQU2uQ8N5sUctS/iZdsxhrAAphY+fsJqLv9vJsF1ilGjl
-T5QqIMicrwi8CLhQSuH/yyArbI6edTw08TXg2Qa7FVX0jekgrfh4xw/UfAKmnOcQ
-uwl1eIRs3ZdaDOANbBcf
-=mgZH
------END PGP SIGNATURE-----
-
---Signature=_Fri__27_Jul_2012_10_23_48_+1000_jEMaofK1c9Z+F/KD--
+          Linus
