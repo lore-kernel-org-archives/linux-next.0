@@ -1,77 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Mon, 30 Jul 2012 10:41:57 +1000
-Message-ID: <20120730104157.5ce37f60f4d5b39923c0adc2@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
+Date: Mon, 30 Jul 2012 12:53:14 +1000
+Message-ID: <20120730125314.8bad3b71a8e727b892a47590@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__30_Jul_2012_10_41_57_+1000_bbxckRGm7UHImcc/"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44289 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753747Ab2G3AmB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 29 Jul 2012 20:42:01 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Nazarewicz <mina86@mina86.com>, Felipe Balbi <balbi@ti.com>, Alan Stern <stern@rowland.harvard.edu>
+ boundary="Signature=_Mon__30_Jul_2012_12_53_14_+1000_2yKL_jiORpLOAt32"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Axel Lin <axel.lin@gmail.com>, Wim Van Sebroeck <wim@iguana.be>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__30_Jul_2012_10_41_57_+1000_bbxckRGm7UHImcc/
+--Signature=_Mon__30_Jul_2012_12_53_14_+1000_2yKL_jiORpLOAt32
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi all,
 
-Today's linux-next merge of the vfs tree got a conflict in
-drivers/usb/gadget/storage_common.c between commit d6e16a89578f ("usb:
-gadget: mass_storage: fail fsg_store_file() early if colud not open
-file") from Linus' tree and commit 20818a0caa84 ("gadgetfs: clean up")
-from the vfs tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/watchdog/orion_wdt.c between commit 0dd6e4847ed8 ("watchdog:
+orion_wdt: Convert driver to watchdog core") from Linus' tree and commit
+1e7bad0f5b91 ("ARM: Orion: DTify the watchdog timer") from the arm-soc
+tree.
 
-Context changes.  I fixed it up (I think - see below) and can carry the
-fix as necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/usb/gadget/storage_common.c
-index ae8b188,f929432..0000000
---- a/drivers/usb/gadget/storage_common.c
-+++ b/drivers/usb/gadget/storage_common.c
-@@@ -709,12 -706,6 +708,11 @@@ static int fsg_lun_open(struct fsg_lun=20
-  		goto out;
-  	}
+diff --cc drivers/watchdog/orion_wdt.c
+index a73bea4,1531e02..0000000
+--- a/drivers/watchdog/orion_wdt.c
++++ b/drivers/watchdog/orion_wdt.c
+@@@ -23,7 -24,8 +23,8 @@@
+  #include <linux/io.h>
+  #include <linux/spinlock.h>
+  #include <linux/clk.h>
+ +#include <linux/err.h>
++ #include <linux/of.h>
+  #include <mach/bridge-regs.h>
  =20
- +	if (fsg_lun_is_open(curlun))
- +		fsg_lun_close(curlun);
- +
-- 	get_file(filp);
- +	curlun->blksize =3D blksize;
- +	curlun->blkbits =3D blkbits;
-  	curlun->ro =3D ro;
-  	curlun->filp =3D filp;
-  	curlun->file_length =3D size;
+  /*
+@@@ -189,9 -292,16 +190,15 @@@ static int __devexit orion_wdt_remove(s
+ =20
+  static void orion_wdt_shutdown(struct platform_device *pdev)
+  {
+ -	if (test_bit(WDT_IN_USE, &wdt_status))
+ -		orion_wdt_disable();
+ +	orion_wdt_stop(&orion_wdt);
+  }
+ =20
++ static const struct of_device_id orion_wdt_of_match_table[] __devinitdata=
+ =3D {
++ 	{ .compatible =3D "marvell,orion-wdt", },
++ 	{},
++ };
++ MODULE_DEVICE_TABLE(of, orion_wdt_of_match_table);
++=20
+  static struct platform_driver orion_wdt_driver =3D {
+  	.probe		=3D orion_wdt_probe,
+  	.remove		=3D __devexit_p(orion_wdt_remove),
 
---Signature=_Mon__30_Jul_2012_10_41_57_+1000_bbxckRGm7UHImcc/
+--Signature=_Mon__30_Jul_2012_12_53_14_+1000_2yKL_jiORpLOAt32
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQFdhVAAoJEECxmPOUX5FEPXwP/2hkDkmphPoedm1WMT6oKgv9
-upkXFqyHBZktxZj8tBVzX3NxLW3go0UVgBtpwdFmPOx0tmOt6ayZtQrHHup0Px0G
-Egr1H5gtxN2u1/NeglHI67zcZJwpuqj3TeaHOd7wBNB7zFysin1nWHjLG977UeK9
-3NO+6/WntnlYoC6bWLeZHpSPXasIpZH5mExTgVjhPWwgogCtUFy4WWe53z3d828d
-HWnS6CIc/jswDwrXbDnvZMZMMemyzUz+ZjKFx0i33edmqOiRWY00IcSCF6PXWY6/
-1Mmj8V2oj1B4l7SzM9gKI8qtkdS677SjF/GPdDjKkEeVJRZ3rZzNQdcWVirzkxut
-VEmPlmOT69oPoDbISwsXDMT/uBw6VkNFxFrEurfE9ULvu8HJnn2c7+nYC3JjwD0B
-BhYGUeMRtcIhuLg3rogPopANOtbRqLqdd8tiJsQeUMn7wtXbPNtwSs4BT03eZJM8
-emxJVik+m8O/32YB1e+Fl/XXeI3sAUX4JBEzsnG5CxS5Gk+m8m2Mi7kSbx3VTgnt
-kYbhG18bEMky7zYtAmRqA08Zlyundqasi/wfQjJaoL7Mi6ltQyokikd8Z3ZusZll
-jTjfo6SJ8/uag+TI5ZrrMUdACxTTtZm4DjECZPz40S3bvDcIyOHj1oCheT8W//OM
-NQL6gGf7ZB3agUdwfB8L
-=awRv
+iQIcBAEBCAAGBQJQFfcaAAoJEECxmPOUX5FEBbAP/iU+Vc94cybknwRUIoIBcLLP
+NQvqVRyKBAick0W88qmC3D34Sc9Qqz2oj12aVZtiJ4lEdS6ydZiWYqzmWQ25SDOr
+12LJnnX43O5ZjGncRCLIQ061/rAomDfHKzPnbmmTe47HeHZVCqlDhAl7xK3gi0te
+EjknNtsBeJIYK2gGA0Eb0NXbZYEfLZnCmzytapZ1QVTDBZXCJrif048Tvjppzu+y
+vg7N4SloAtwZlFOGeY9hTph52i331IU1HgSobrk9TR5F7fZVqE85nVX8jft8uqaM
+7KBT5tSORX5ycpKqdJ9329y2hGa/1bxnUqLWIvrGijn6Kf19d+xwmy88DvO4ujZc
+mpDs/Kf6UM97c+R0wlfCGLL756WuNAelo+6Sa0ul1QnwFARKDnLKzRXnDUwGXhUP
+i1vD8nxfJ1NZctz3n2bLbjQUZuQnGdlcyzvNnGvQiib8UXmYGfL0R/FC/po5Zd/N
+Znp9OXpdP6i7YMgiwMflqDDWlD1l7PVV5a2OINBzuRaJj4aQ6JEzF6SSyX5AC2c1
+VT84BzFprsgAMsHANSMM+EWoRtaphXUagVMJ+35tDPsAylslhxMJPg0l2QZRGy84
+eti1C96saN/VkXlc8HBqitKWq867nhNU3m/PKe8aO1DScYtgeQpGGLJmg7RqoY67
+24qKvzzlaRbJW+uy7/WC
+=rNrj
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__30_Jul_2012_10_41_57_+1000_bbxckRGm7UHImcc/--
+--Signature=_Mon__30_Jul_2012_12_53_14_+1000_2yKL_jiORpLOAt32--
