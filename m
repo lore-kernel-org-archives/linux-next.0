@@ -1,44 +1,70 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] nfs: fix stub return type warnings
-Date: Fri, 27 Jul 2012 11:49:26 -0700
-Message-ID: <5012E2B6.5010009@xenotime.net>
-References: <20120727142126.15a52335cda4c39d5c120c49@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with Linus' tree
+Date: Mon, 30 Jul 2012 10:37:05 +1000
+Message-ID: <20120730103705.cd816d7f4016eb8d93e3825f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy10-pub.bluehost.com ([67.222.39.61]:39370 "HELO
-	oproxy10-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752237Ab2G0Suc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Jul 2012 14:50:32 -0400
-In-Reply-To: <20120727142126.15a52335cda4c39d5c120c49@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org, Trond Myklebust <Trond.Myklebust@netapp.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__30_Jul_2012_10_37_05_+1000_cMP=eZ.IlIB/.b6h"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Devendra Naga <devendra.aaru@gmail.com>, Greg KH <greg@kroah.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Mon__30_Jul_2012_10_37_05_+1000_cMP=eZ.IlIB/.b6h
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix numerous repeated warnings by making the stub function
-void instead of non-void:
+Hi Al,
 
-fs/nfs/nfs4_fs.h: In function 'nfs4_unregister_sysctl':
-fs/nfs/nfs4_fs.h:385:1: warning: no return statement in function returning non-void
+Today's linux-next merge of the vfs tree got a conflict in
+drivers/staging/gdm72xx/usb_boot.c between commit d67030d215ac
+("staging/gdm72xx: return PTR_ERR rather -ENOENT") from Linus' tree and
+commit 09fada5b5f1f ("slightly reduce lossage in gdm72xx") from the vfs
+tree.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc:	Trond Myklebust <Trond.Myklebust@netapp.com>
----
- fs/nfs/nfs4_fs.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---- linux-next-20120727.orig/fs/nfs/nfs4_fs.h
-+++ linux-next-20120727/fs/nfs/nfs4_fs.h
-@@ -380,7 +380,7 @@ static inline int nfs4_register_sysctl(v
- 	return 0;
- }
- 
--static inline int nfs4_unregister_sysctl(void)
-+static inline void nfs4_unregister_sysctl(void)
- {
- }
- #endif
+diff --cc drivers/staging/gdm72xx/usb_boot.c
+index fef290c,b366a54..0000000
+--- a/drivers/staging/gdm72xx/usb_boot.c
++++ b/drivers/staging/gdm72xx/usb_boot.c
+@@@ -173,8 -174,7 +173,7 @@@ int usb_boot(struct usb_device *usbdev
+  	filp =3D filp_open(img_name, O_RDONLY | O_LARGEFILE, 0);
+  	if (IS_ERR(filp)) {
+  		printk(KERN_ERR "Can't find %s.\n", img_name);
+- 		set_fs(fs);
+ -		ret =3D -ENOENT;
+ +		ret =3D PTR_ERR(filp);
+  		goto restore_fs;
+  	}
+ =20
+
+--Signature=_Mon__30_Jul_2012_10_37_05_+1000_cMP=eZ.IlIB/.b6h
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQFdcxAAoJEECxmPOUX5FEpoYP/ib2m3G2IiYSHugMDXNCUX71
+dZum5TnVB0xyVKLYJ/EBhQRp9tX52hT3WdlV6/SMzpHWbkuiGSkfT2l1Ajx1UWDA
+BcxjBEmjrTwbtS5abeziUQOy1VAebDSQjAiLN8lUCDIAKH8OlmhKO9SDL/iyka5+
+T0S0wCM7gIqOqu3t5UbANm3JEJUajgaaberPLmskgyTuaQXTBP/aNCkxh6LrxZ/1
+xIkFFxTcQv769fF0VYjcxGwAXZstlADO28XpB11alhsykgrnIX4nDrnHgsODIUKV
+z5M4WtnGfGi5xIkiswCqFak/8U+zJX3t/8WVXlc9mS9VJBpb1/QiKlJ4x2Ct5jd6
+grZncGngdsEJ9XjPm0UYWqMOS69z+/IXbelwpabUl5a9j52jRh99qQswa4gdUBYC
++T0eXhl6Kc7be8fnf91YqNLjhBZ5hCHoKLe6P/LEYhk+gV4c8xYQE3MEzudLCjcw
+y/n7AT0whBO8bvyOyCWMDj6g28d+wgf33WtVUeBGUz3++NmOTfaDzILo65pIoYBW
+CROst8sQ+BS1qxCOU49rh5KrsUDiwztR2T2/DweApDufZ+ZjlEkVB7OkbHSjSbp3
+9148z3RmnLa+77LBcmmc0GxKUKGwP9tWSi2cemIQYt4xvox/G+wVbyFRr6wx0H4c
+DCGRzs7ExUrnOc0EErfn
+=+rF4
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__30_Jul_2012_10_37_05_+1000_cMP=eZ.IlIB/.b6h--
