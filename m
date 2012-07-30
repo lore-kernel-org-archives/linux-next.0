@@ -1,18 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Mon, 30 Jul 2012 10:37:05 +1000
-Message-ID: <20120730103705.cd816d7f4016eb8d93e3825f@canb.auug.org.au>
+Date: Mon, 30 Jul 2012 10:41:57 +1000
+Message-ID: <20120730104157.5ce37f60f4d5b39923c0adc2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__30_Jul_2012_10_37_05_+1000_cMP=eZ.IlIB/.b6h"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Mon__30_Jul_2012_10_41_57_+1000_bbxckRGm7UHImcc/"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44289 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753747Ab2G3AmB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 29 Jul 2012 20:42:01 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Devendra Naga <devendra.aaru@gmail.com>, Greg KH <greg@kroah.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Nazarewicz <mina86@mina86.com>, Felipe Balbi <balbi@ti.com>, Alan Stern <stern@rowland.harvard.edu>
 
---Signature=_Mon__30_Jul_2012_10_37_05_+1000_cMP=eZ.IlIB/.b6h
+--Signature=_Mon__30_Jul_2012_10_41_57_+1000_bbxckRGm7UHImcc/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -20,51 +24,54 @@ Content-Transfer-Encoding: quoted-printable
 Hi Al,
 
 Today's linux-next merge of the vfs tree got a conflict in
-drivers/staging/gdm72xx/usb_boot.c between commit d67030d215ac
-("staging/gdm72xx: return PTR_ERR rather -ENOENT") from Linus' tree and
-commit 09fada5b5f1f ("slightly reduce lossage in gdm72xx") from the vfs
-tree.
+drivers/usb/gadget/storage_common.c between commit d6e16a89578f ("usb:
+gadget: mass_storage: fail fsg_store_file() early if colud not open
+file") from Linus' tree and commit 20818a0caa84 ("gadgetfs: clean up")
+from the vfs tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+Context changes.  I fixed it up (I think - see below) and can carry the
+fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/gdm72xx/usb_boot.c
-index fef290c,b366a54..0000000
---- a/drivers/staging/gdm72xx/usb_boot.c
-+++ b/drivers/staging/gdm72xx/usb_boot.c
-@@@ -173,8 -174,7 +173,7 @@@ int usb_boot(struct usb_device *usbdev
-  	filp =3D filp_open(img_name, O_RDONLY | O_LARGEFILE, 0);
-  	if (IS_ERR(filp)) {
-  		printk(KERN_ERR "Can't find %s.\n", img_name);
-- 		set_fs(fs);
- -		ret =3D -ENOENT;
- +		ret =3D PTR_ERR(filp);
-  		goto restore_fs;
+diff --cc drivers/usb/gadget/storage_common.c
+index ae8b188,f929432..0000000
+--- a/drivers/usb/gadget/storage_common.c
++++ b/drivers/usb/gadget/storage_common.c
+@@@ -709,12 -706,6 +708,11 @@@ static int fsg_lun_open(struct fsg_lun=20
+  		goto out;
   	}
  =20
+ +	if (fsg_lun_is_open(curlun))
+ +		fsg_lun_close(curlun);
+ +
+- 	get_file(filp);
+ +	curlun->blksize =3D blksize;
+ +	curlun->blkbits =3D blkbits;
+  	curlun->ro =3D ro;
+  	curlun->filp =3D filp;
+  	curlun->file_length =3D size;
 
---Signature=_Mon__30_Jul_2012_10_37_05_+1000_cMP=eZ.IlIB/.b6h
+--Signature=_Mon__30_Jul_2012_10_41_57_+1000_bbxckRGm7UHImcc/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQFdcxAAoJEECxmPOUX5FEpoYP/ib2m3G2IiYSHugMDXNCUX71
-dZum5TnVB0xyVKLYJ/EBhQRp9tX52hT3WdlV6/SMzpHWbkuiGSkfT2l1Ajx1UWDA
-BcxjBEmjrTwbtS5abeziUQOy1VAebDSQjAiLN8lUCDIAKH8OlmhKO9SDL/iyka5+
-T0S0wCM7gIqOqu3t5UbANm3JEJUajgaaberPLmskgyTuaQXTBP/aNCkxh6LrxZ/1
-xIkFFxTcQv769fF0VYjcxGwAXZstlADO28XpB11alhsykgrnIX4nDrnHgsODIUKV
-z5M4WtnGfGi5xIkiswCqFak/8U+zJX3t/8WVXlc9mS9VJBpb1/QiKlJ4x2Ct5jd6
-grZncGngdsEJ9XjPm0UYWqMOS69z+/IXbelwpabUl5a9j52jRh99qQswa4gdUBYC
-+T0eXhl6Kc7be8fnf91YqNLjhBZ5hCHoKLe6P/LEYhk+gV4c8xYQE3MEzudLCjcw
-y/n7AT0whBO8bvyOyCWMDj6g28d+wgf33WtVUeBGUz3++NmOTfaDzILo65pIoYBW
-CROst8sQ+BS1qxCOU49rh5KrsUDiwztR2T2/DweApDufZ+ZjlEkVB7OkbHSjSbp3
-9148z3RmnLa+77LBcmmc0GxKUKGwP9tWSi2cemIQYt4xvox/G+wVbyFRr6wx0H4c
-DCGRzs7ExUrnOc0EErfn
-=+rF4
+iQIcBAEBCAAGBQJQFdhVAAoJEECxmPOUX5FEPXwP/2hkDkmphPoedm1WMT6oKgv9
+upkXFqyHBZktxZj8tBVzX3NxLW3go0UVgBtpwdFmPOx0tmOt6ayZtQrHHup0Px0G
+Egr1H5gtxN2u1/NeglHI67zcZJwpuqj3TeaHOd7wBNB7zFysin1nWHjLG977UeK9
+3NO+6/WntnlYoC6bWLeZHpSPXasIpZH5mExTgVjhPWwgogCtUFy4WWe53z3d828d
+HWnS6CIc/jswDwrXbDnvZMZMMemyzUz+ZjKFx0i33edmqOiRWY00IcSCF6PXWY6/
+1Mmj8V2oj1B4l7SzM9gKI8qtkdS677SjF/GPdDjKkEeVJRZ3rZzNQdcWVirzkxut
+VEmPlmOT69oPoDbISwsXDMT/uBw6VkNFxFrEurfE9ULvu8HJnn2c7+nYC3JjwD0B
+BhYGUeMRtcIhuLg3rogPopANOtbRqLqdd8tiJsQeUMn7wtXbPNtwSs4BT03eZJM8
+emxJVik+m8O/32YB1e+Fl/XXeI3sAUX4JBEzsnG5CxS5Gk+m8m2Mi7kSbx3VTgnt
+kYbhG18bEMky7zYtAmRqA08Zlyundqasi/wfQjJaoL7Mi6ltQyokikd8Z3ZusZll
+jTjfo6SJ8/uag+TI5ZrrMUdACxTTtZm4DjECZPz40S3bvDcIyOHj1oCheT8W//OM
+NQL6gGf7ZB3agUdwfB8L
+=awRv
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__30_Jul_2012_10_37_05_+1000_cMP=eZ.IlIB/.b6h--
+--Signature=_Mon__30_Jul_2012_10_41_57_+1000_bbxckRGm7UHImcc/--
