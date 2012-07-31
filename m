@@ -1,52 +1,77 @@
-From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+From: Mel Gorman <mgorman@suse.de>
 Subject: Re: linux-next: manual merge of the akpm tree with the nfs tree
-Date: Tue, 31 Jul 2012 14:37:24 +0000
-Message-ID: <1343745442.519.20.camel@lade.trondhjem.org>
+Date: Tue, 31 Jul 2012 16:19:36 +0100
+Message-ID: <20120731151936.GR612@suse.de>
 References: <20120731142441.0d01100f9d050ec6e479c923@canb.auug.org.au>
-	 <20120731103336.GN612@suse.de>
+ <20120731103336.GN612@suse.de>
+ <1343745442.519.20.camel@lade.trondhjem.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=iso-8859-15
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.netapp.com ([216.240.18.37]:45012 "EHLO mx2.netapp.com"
+Received: from cantor2.suse.de ([195.135.220.15]:59658 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754393Ab2GaOh1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Jul 2012 10:37:27 -0400
-In-Reply-To: <20120731103336.GN612@suse.de>
-Content-Language: en-US
-Content-ID: <A6BB553D7D0ECB4DB001B8242D701D2E@tahoe.netapp.com>
+	id S1754955Ab2GaPTl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 Jul 2012 11:19:41 -0400
+Content-Disposition: inline
+In-Reply-To: <1343745442.519.20.camel@lade.trondhjem.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mel Gorman <mgorman@suse.de>
+To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jeff Layton <jlayton@redhat.com>
 
-T24gVHVlLCAyMDEyLTA3LTMxIGF0IDExOjMzICswMTAwLCBNZWwgR29ybWFuIHdyb3RlOg0KPiBP
-biBUdWUsIEp1bCAzMSwgMjAxMiBhdCAwMjoyNDo0MVBNICsxMDAwLCBTdGVwaGVuIFJvdGh3ZWxs
-IHdyb3RlOg0KPiA+IEhpIEFuZHJldywNCj4gPiANCj4gPiBUb2RheSdzIGxpbnV4LW5leHQgbWVy
-Z2Ugb2YgdGhlIGFrcG0gdHJlZSBnb3QgYSBjb25mbGljdCBpbg0KPiA+IG5ldC9zdW5ycGMveHBy
-dHNvY2suYyBiZXR3ZWVuIGNvbW1pdCA1Y2YwMmQwOWI1MGIgKCJuZnM6IHNraXAgY29tbWl0IGlu
-DQo+ID4gcmVsZWFzZXBhZ2UgaWYgd2UncmUgZnJlZWluZyBtZW1vcnkgZm9yIGZzLXJlbGF0ZWQg
-cmVhc29ucyIpIGZyb20gdGhlIG5mcw0KPiA+IHRyZWUgYW5kIGNvbW1pdCAibmZzOiBlbmFibGUg
-c3dhcCBvbiBORlMiIGZyb20gdGhlIGFrcG0gdHJlZS4NCj4gPiANCj4gPiBKdXN0IGNvbnRleHQg
-Y2hhbmdlcz8gIEkgZml4ZWQgaXQgdXAgKEkgdGhpbmsgLSBzZWUgYmVsb3cpIGFuZCBjYW4gY2Fy
-cnkNCj4gPiB0aGUgZml4IGFzIG5lY2Vzc2FyeS4NCj4gDQo+IEZ1bmN0aW9uYWxseSBpdCBsb29r
-cyBmaW5lLiBBcyB5b3Ugc2F5LCBpdCBhbGwgbG9va3MgbGlrZSBjb250ZXh0DQo+IGNoYW5nZXMu
-IEFyZ3VhYmx5IGNvZGUgbGlrZSB0aGlzDQo+IA0KPiBjdXJyZW50LT5mbGFncyAmPSB+UEZfRlNU
-UkFOUw0KPiANCj4gY291bGQgdXNlIHRza19yZXN0b3JlX2ZsYWdzIGluc3RlYWQoKSBldmVuIHRo
-b3VnaCBpdCBzaG91bGQgbmV2ZXIgYmUNCj4gbmVjZXNzYXJ5IGFzIFBGX0ZTVFJBTlMgd291bGQg
-bm90IGJlIHNldCBvbiBmdW5jdGlvbiBlbnRyeS4gSG93ZXZlciwNCj4gaXQgd291bGQgc2V0IHVw
-IGEgZGVwZWRlbmN5IGJldHdlZW4gdGhlIHBhdGNoIHNldHMgdGhhdCBpcyB1bmRlc2lyYWJsZS4N
-Cj4gSWYgYm90aCBzZXRzIGdldCBtZXJnZWQgdGhlbiBpdCBtaWdodCBtYWtlIHNlbnNlIGFzIGEg
-Y2xlYW51cCB0byB1c2UNCj4gdHNrX3Jlc3RvcmVfZmxhZ3MoKSBidXQgbm90IHVudGlsIHRoZW4u
-DQo+IA0KPiBUaGFua3MgU3RlcGhlbi4NCj4gDQoNCkRvIHdlIHJlYWxseSBuZWVkIHRvIHNldCBi
-b3RoIFBGX0ZTVFJBTlMgYW5kIFBGX01FTUFMTE9DIGhlcmU/IFRoZQ0KcmVhc29uIHdoeSBJIG1l
-cmdlZCB0aGUgUEZfRlNUUkFOUyBwYXRjaCBpcyB0aGF0IHdlIGhhdmUgdGhlIGRlYWRsb2NrDQpw
-cm9ibGVtIHdoZW4gYWxsb2NhdGluZyBhIG5ldyBzb2NrZXQgZXZlbiBiZWZvcmUgd2UgYWRkIHN3
-YXAtb3Zlci1uZnMuDQpBZGRpbmcgUEZfRlNUUkFOUyB0byBkaXNhbGxvdyBlbnRyeSBpbnRvIHRo
-ZSBORlMgbGF5ZXIgYnkgdGhlIG1lbW9yeQ0KYWxsb2NhdG9yIGZpeGVzIHRoYXQgaXNzdWUuDQpX
-aGF0IHZhbHVlIGRvZXMgUEZfTUVNQUxMT0MgYWRkPyBJcyB0aGF0IGluIG9yZGVyIHRvIHByZXZl
-bnQgcmVjdXJzaW9uDQppbnRvIG90aGVyIGFyZWFzIG9mIHRoZSBzd2FwIGNvZGUgKHNheSwgaWYg
-eW91IG1peCBzd2FwLW92ZXItbmZzIHdpdGgNCm9yZGluYXJ5IHN3YXAtdG8tZGlzayk/DQoNCkNo
-ZWVycw0KICBUcm9uZA0KLS0gDQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4IE5GUyBjbGllbnQgbWFp
-bnRhaW5lcg0KDQpOZXRBcHANClRyb25kLk15a2xlYnVzdEBuZXRhcHAuY29tDQp3d3cubmV0YXBw
-LmNvbQ0KDQo=
+On Tue, Jul 31, 2012 at 02:37:24PM +0000, Myklebust, Trond wrote:
+> On Tue, 2012-07-31 at 11:33 +0100, Mel Gorman wrote:
+> > On Tue, Jul 31, 2012 at 02:24:41PM +1000, Stephen Rothwell wrote:
+> > > Hi Andrew,
+> > > 
+> > > Today's linux-next merge of the akpm tree got a conflict in
+> > > net/sunrpc/xprtsock.c between commit 5cf02d09b50b ("nfs: skip commit in
+> > > releasepage if we're freeing memory for fs-related reasons") from the nfs
+> > > tree and commit "nfs: enable swap on NFS" from the akpm tree.
+> > > 
+> > > Just context changes?  I fixed it up (I think - see below) and can carry
+> > > the fix as necessary.
+> > 
+> > Functionally it looks fine. As you say, it all looks like context
+> > changes. Arguably code like this
+> > 
+> > current->flags &= ~PF_FSTRANS
+> > 
+> > could use tsk_restore_flags instead() even though it should never be
+> > necessary as PF_FSTRANS would not be set on function entry. However,
+> > it would set up a depedency between the patch sets that is undesirable.
+> > If both sets get merged then it might make sense as a cleanup to use
+> > tsk_restore_flags() but not until then.
+> > 
+> > Thanks Stephen.
+> > 
+> 
+> Do we really need to set both PF_FSTRANS and PF_MEMALLOC here? The
+> reason why I merged the PF_FSTRANS patch is that we have the deadlock
+> problem when allocating a new socket even before we add swap-over-nfs.
+> Adding PF_FSTRANS to disallow entry into the NFS layer by the memory
+> allocator fixes that issue.
+
+PF_FSTRANS is to prevent recursion into NFS and is set whether swap-over-NFS
+is used or not and for all requests.
+
+> What value does PF_MEMALLOC add? Is that in order to prevent recursion
+> into other areas of the swap code (say, if you mix swap-over-nfs with
+> ordinary swap-to-disk)?
+> 
+
+PF_MEMALLOC is normally to prevent the page reclaim recursing into
+itself. Page reclaim can call the page allocator and that cannot re-enter
+page reclaim.
+
+In the case of swap-over-NFS, PF_MEMALLOC is set only if the socket is
+being used for swapping. In softirq context, the allocation request is
+allowed to use PFMEMALLOC reserves to avoid deadlock.
+
+I do not see an obvious way to collapse the two flags together.
+PF_FSTRANS should not mean the PFMEMALLOC reserves can be used and
+PFMEMALLOC is not set for all requests.
+
+-- 
+Mel Gorman
+SUSE Labs
