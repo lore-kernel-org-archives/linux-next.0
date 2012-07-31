@@ -1,58 +1,58 @@
-From: Seth Jennings <sjenning@linux.vnet.ibm.com>
-Subject: Re: CRYPTO_DEV_NX merge problem (Re: linux-next: Tree for July 31)
-Date: Tue, 31 Jul 2012 08:30:46 -0500
-Message-ID: <5017DE06.3000103@linux.vnet.ibm.com>
-References: <20120731152614.de6ebe9e0d4b8fc6645b793a@canb.auug.org.au> <31974.1343714338@neuling.org>
+From: "AnilKumar, Chimata" <anilkumar@ti.com>
+Subject: RE: [PATCH] mfd/regulator: tps65217: Move regulator plat data
+ handling to regulator
+Date: Tue, 31 Jul 2012 14:30:21 +0000
+Message-ID: <331ABD5ECB02734CA317220B2BBEABC13EA06F79@DBDE01.ent.ti.com>
+References: <1342776601-8773-1-git-send-email-anilkumar@ti.com>
+ <20120727124816.GM16859@sortiz-mobl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e7.ny.us.ibm.com ([32.97.182.137]:55684 "EHLO e7.ny.us.ibm.com"
+Received: from bear.ext.ti.com ([192.94.94.41]:40276 "EHLO bear.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753365Ab2GaNcv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Jul 2012 09:32:51 -0400
-Received: from /spool/local
-	by e7.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <sjenning@linux.vnet.ibm.com>;
-	Tue, 31 Jul 2012 09:32:49 -0400
-In-Reply-To: <31974.1343714338@neuling.org>
+	id S1754341Ab2GaOaf convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Jul 2012 10:30:35 -0400
+In-Reply-To: <20120727124816.GM16859@sortiz-mobl>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Neuling <mikey@neuling.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kent Yoder <key@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, anton@samba.org, Herbert Xu <herbert@gondor.apana.org.au>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "rdunlap@xenotime.net" <rdunlap@xenotime.net>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
 
-On 07/31/2012 12:58 AM, Michael Neuling wrote:
->> Please do not add anything to linux-next included branches/series that is
->> destined for v3.7 until after v3.6-rc1 is released.
+Hi Samuel,
+
+On Fri, Jul 27, 2012 at 18:18:17, Samuel Ortiz wrote:
+> Hi Anilkumar,
 > 
-> Looks like there is a merge conflict between:
->   commit 1b074ac867a2bd08a6f12f0feed7d91e06941723
->   Author: Seth Jennings <sjenning@linux.vnet.ibm.com>
->   Subject: powerpc/crypto: rework Kconfig
+> On Fri, Jul 20, 2012 at 03:00:01PM +0530, AnilKumar Ch wrote:
+> > Regulator platform data handling was mistakenly added to MFD
+> > driver. So we will see build errors if we compile MFD drivers
+> > without CONFIG_REGULATOR. This patch moves regulator platform
+> > data handling from TPS65217 MFD driver to regulator driver.
+> > 
+> > This makes MFD driver independent of REGULATOR framework so
+> > build error is fixed if CONFIG_REGULATOR is not set.
+> > 
+> > drivers/built-in.o: In function `tps65217_probe':
+> > tps65217.c:(.devinit.text+0x13e37): undefined reference
+> > to `of_regulator_match'
+> > 
+> > This patch is based on linux-next (20120720) tree
+> > 
+> > Signed-off-by: AnilKumar Ch <anilkumar@ti.com>
+> > ---
+> >  drivers/mfd/tps65217.c                 |  130 +++++++++++---------------------
+> >  drivers/regulator/tps65217-regulator.c |  124 ++++++++++++++++++++++++++----
+> >  include/linux/mfd/tps65217.h           |   12 ++-
+> >  3 files changed, 161 insertions(+), 105 deletions(-)
+> It doesn't apply to my for-next branch. Could you please re-send this one
+> after the merge window is closed ? I'll push that as part of the MFD fixes for
+> 3.6.
 > 
-> and 
->   commit fd297b3a7302ab866306f53c1fd1e97b083fe83e
->   Author: Anton Blanchard <anton@samba.org>
->   powerpc: Enable pseries hardware RNG and crypto modules
-> 
-> Seth made CRYPTO_DEV_NX a bool and Anton set it as a module.
-> 
-> Hence I get this with a pseries_defconfig
->   arch/powerpc/configs/pseries_defconfig:372:warning: symbol value 'm' invalid for CRYPTO_DEV_NX
-> 
-> Seth: any reason this can stay as a tristate?
 
-My patch converted CRYPTO_DEV_NX to a submenu access config
-and the functionality that used to be enabled by it is now
-enabled by CRYPTO_DEV_NX_ENCRYPT.
+I fetch regulator tree and applied on top of for-next branch and it is cleanly
+applied.
 
-The resolution is to change Anton's patch from
-
-+CONFIG_CRYPTO_DEV_NX=m
-
-to
-
-+CONFIG_CRYPTO_DEV_NX=y
-+CONFIG_CRYPTO_DEV_NX_ENCRYPT=m
-
-Seth
+Regards
+AnilKumar
