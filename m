@@ -1,69 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Tue, 31 Jul 2012 16:31:10 +1000
-Message-ID: <20120731163110.9315064260c09da3bc77a4d4@canb.auug.org.au>
-References: <20120731144054.59b0a6da6d071ea1bc061db0@canb.auug.org.au>
-	<CANN689HeXEdnPQUnFzZ2E7nsUktqF70vCv2ANsYRz9HhyxVhXg@mail.gmail.com>
+From: Mel Gorman <mgorman@suse.de>
+Subject: Re: linux-next: manual merge of the akpm tree with the nfs tree
+Date: Tue, 31 Jul 2012 11:33:36 +0100
+Message-ID: <20120731103336.GN612@suse.de>
+References: <20120731142441.0d01100f9d050ec6e479c923@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__31_Jul_2012_16_31_10_+1000_s3j86J0BW1KIdV7M"
+Content-Type: text/plain; charset=iso-8859-15
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53188 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752239Ab2GaGbQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Jul 2012 02:31:16 -0400
-In-Reply-To: <CANN689HeXEdnPQUnFzZ2E7nsUktqF70vCv2ANsYRz9HhyxVhXg@mail.gmail.com>
+Received: from cantor2.suse.de ([195.135.220.15]:41577 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753302Ab2GaKdk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 Jul 2012 06:33:40 -0400
+Content-Disposition: inline
+In-Reply-To: <20120731142441.0d01100f9d050ec6e479c923@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michel Lespinasse <walken@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sage Weil <sage@inktank.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
 
---Signature=_Tue__31_Jul_2012_16_31_10_+1000_s3j86J0BW1KIdV7M
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 31, 2012 at 02:24:41PM +1000, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm tree got a conflict in
+> net/sunrpc/xprtsock.c between commit 5cf02d09b50b ("nfs: skip commit in
+> releasepage if we're freeing memory for fs-related reasons") from the nfs
+> tree and commit "nfs: enable swap on NFS" from the akpm tree.
+> 
+> Just context changes?  I fixed it up (I think - see below) and can carry
+> the fix as necessary.
 
-Hi Michel,
+Functionally it looks fine. As you say, it all looks like context
+changes. Arguably code like this
 
-On Mon, 30 Jul 2012 22:45:46 -0700 Michel Lespinasse <walken@google.com> wr=
-ote:
->
-> There is a good chance that this is the right fix, if ceph doesn't use
-> the RB_CLEAR_NODE / RB_EMPTY_NODE macros or try to directly access the
-> rb_node fields. I wanted to grab the ceph tree to make sure, however
-> the first repo I found under that name did not have a commit
-> cd43045c2de6; where would be the correct place for me to fetch that ?
+current->flags &= ~PF_FSTRANS
 
-These can always be found at
-http://git.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;a=3Dblob;f=
-=3DNext/Trees
-for the latest linux-next tree.  In this case it is
-git://github.com/ceph/ceph-client.git#master .
+could use tsk_restore_flags instead() even though it should never be
+necessary as PF_FSTRANS would not be set on function entry. However,
+it would set up a depedency between the patch sets that is undesirable.
+If both sets get merged then it might make sense as a cleanup to use
+tsk_restore_flags() but not until then.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks Stephen.
 
---Signature=_Tue__31_Jul_2012_16_31_10_+1000_s3j86J0BW1KIdV7M
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQF3uuAAoJEECxmPOUX5FEeCIP/jd0lhntvJ7/7CvOQTu04qDg
-TQpqGV1Lqi4xkvt97LjUhqG8twR5jENWICU1RkcwMCOIxaegQ1SzgFpdA6A8P503
-ymL2R0ItNQBJ00qU6gks3PaOcWoLEdD46JuSnV6exVXmJbsQ7bUpV0E2Qc3uJbT5
-Ms2DtAjmHE//5p3vH6fRV10tgRQoB7jT5FtXjT5KWqu3sIcCw7Or3H/+huwwO2Xl
-alvLknTlh3hGVcNgH3UNmxcxeDPint58SlQ6sMzjfZJbCtK57acNoOAvaWOn9CXf
-wf5VVccmfA/aKobGLUVCrnblV6/uqd66mo8hvPiiZiyIe/En3iDJctQr0yvx8EnA
-Yd+EDXlUvarmKdQM8bxflk74SawvSzJSPKdTTWisWdrodrNVZhUrostSdxSXq29d
-92Mc9jGsAUJxGAkZnT9lbeB/ICCSA0abO6vd64P2Bj1G3mDMMTm+9K6WAZtdIh2V
-xjSR1IMpaj1IWHB6tdjHZf8q1rjPpRrPOqe3l9B3izmOmm0s3iZ7El2XW7Hfd3ly
-YF3DrPNiFa+kTDSDmJTpc3SpLxRZ0hlDlzr4CgS7VQl4wwDYqVuvMqssWRl6W9Mq
-HuMfpuoJCCeLE7s/WTKJwAf9T72Z5usmtROU1+UZIz1BItgdtG+RbohCp5XPMrTk
-NIk/NyY6Wxu4bBEU3Bda
-=Yjri
------END PGP SIGNATURE-----
-
---Signature=_Tue__31_Jul_2012_16_31_10_+1000_s3j86J0BW1KIdV7M--
+-- 
+Mel Gorman
+SUSE Labs
