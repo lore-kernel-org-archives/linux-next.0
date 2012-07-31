@@ -1,170 +1,33 @@
-From: Mel Gorman <mgorman@suse.de>
+From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: linux-next: manual merge of the akpm tree with the nfs tree
-Date: Tue, 31 Jul 2012 18:50:22 +0100
-Message-ID: <20120731175022.GU612@suse.de>
+Date: Tue, 31 Jul 2012 11:44:26 -0700
+Message-ID: <20120731114426.029644e0.akpm@linux-foundation.org>
 References: <20120731142441.0d01100f9d050ec6e479c923@canb.auug.org.au>
- <20120731103336.GN612@suse.de>
- <1343745442.519.20.camel@lade.trondhjem.org>
- <20120731151936.GR612@suse.de>
- <1343748906.5528.17.camel@lade.trondhjem.org>
+	<20120731103336.GN612@suse.de>
+	<1343745442.519.20.camel@lade.trondhjem.org>
+	<20120731151936.GR612@suse.de>
+	<1343748906.5528.17.camel@lade.trondhjem.org>
+	<20120731175022.GU612@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:37890 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753776Ab2GaRu1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Jul 2012 13:50:27 -0400
-Content-Disposition: inline
-In-Reply-To: <1343748906.5528.17.camel@lade.trondhjem.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39033 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755656Ab2GaSo2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Jul 2012 14:44:28 -0400
+In-Reply-To: <20120731175022.GU612@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jeff Layton <jlayton@redhat.com>
+To: Mel Gorman <mgorman@suse.de>
+Cc: "Myklebust, Trond" <Trond.Myklebust@netapp.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jeff Layton <jlayton@redhat.com>
 
-On Tue, Jul 31, 2012 at 03:35:07PM +0000, Myklebust, Trond wrote:
-> On Tue, 2012-07-31 at 16:19 +0100, Mel Gorman wrote:
-> > On Tue, Jul 31, 2012 at 02:37:24PM +0000, Myklebust, Trond wrote:
-> > > On Tue, 2012-07-31 at 11:33 +0100, Mel Gorman wrote:
-> > > > On Tue, Jul 31, 2012 at 02:24:41PM +1000, Stephen Rothwell wrote:
-> > > > > Hi Andrew,
-> > > > > 
-> > > > > Today's linux-next merge of the akpm tree got a conflict in
-> > > > > net/sunrpc/xprtsock.c between commit 5cf02d09b50b ("nfs: skip commit in
-> > > > > releasepage if we're freeing memory for fs-related reasons") from the nfs
-> > > > > tree and commit "nfs: enable swap on NFS" from the akpm tree.
-> > > > > 
-> > > > > Just context changes?  I fixed it up (I think - see below) and can carry
-> > > > > the fix as necessary.
-> > > > 
-> > > > Functionally it looks fine. As you say, it all looks like context
-> > > > changes. Arguably code like this
-> > > > 
-> > > > current->flags &= ~PF_FSTRANS
-> > > > 
-> > > > could use tsk_restore_flags instead() even though it should never be
-> > > > necessary as PF_FSTRANS would not be set on function entry. However,
-> > > > it would set up a depedency between the patch sets that is undesirable.
-> > > > If both sets get merged then it might make sense as a cleanup to use
-> > > > tsk_restore_flags() but not until then.
-> > > > 
-> > > > Thanks Stephen.
-> > > > 
-> > > 
-> > > Do we really need to set both PF_FSTRANS and PF_MEMALLOC here? The
-> > > reason why I merged the PF_FSTRANS patch is that we have the deadlock
-> > > problem when allocating a new socket even before we add swap-over-nfs.
-> > > Adding PF_FSTRANS to disallow entry into the NFS layer by the memory
-> > > allocator fixes that issue.
-> > 
-> > PF_FSTRANS is to prevent recursion into NFS and is set whether swap-over-NFS
-> > is used or not and for all requests.
-> > 
-> > > What value does PF_MEMALLOC add? Is that in order to prevent recursion
-> > > into other areas of the swap code (say, if you mix swap-over-nfs with
-> > > ordinary swap-to-disk)?
-> > > 
-> > 
-> > PF_MEMALLOC is normally to prevent the page reclaim recursing into
-> > itself. Page reclaim can call the page allocator and that cannot re-enter
-> > page reclaim.
-> > 
-> > In the case of swap-over-NFS, PF_MEMALLOC is set only if the socket is
-> > being used for swapping. In softirq context, the allocation request is
-> > allowed to use PFMEMALLOC reserves to avoid deadlock.
-> > 
-> > I do not see an obvious way to collapse the two flags together.
-> > PF_FSTRANS should not mean the PFMEMALLOC reserves can be used and
-> > PFMEMALLOC is not set for all requests.
-> 
-> Right, but in this case, we're talking about a GFP_KERNEL allocation
-> that always happens in an rpciod workqueue process context, so we still
-> won't be able to access the PFMEMALLOC reserves if I understand you
-> correctly?
-> 
+On Tue, 31 Jul 2012 18:50:22 +0100
+Mel Gorman <mgorman@suse.de> wrote:
 
-Ah, I understand you now. The PFMEMALLOC flag only uses the reserves if
-running from softirq context. rpciod is never running in that context and
-PF_MEMALLOC in that path is counter-productive. Thanks for catching that.
+> Stephen Rothwell reported a merge conflict between a MM patch "nfs:
+> enable swap on NFS" and an NFS patch "nfs: skip commit in
+> releasepage if we're freeing memory for fs-related reasons".
 
-The actual way to resolve this conflict is to alter the "nfs: enable swap on
-NFS" patch in Andrew's tree. Andrew, can you apply this patch and collapse
-it with "nfs: enable swap on NFS" please?
-
----8<---
-buildfix: nfs: enable swap on NFS
-
-Stephen Rothwell reported a merge conflict between a MM patch "nfs:
-enable swap on NFS" and an NFS patch "nfs: skip commit in
-releasepage if we're freeing memory for fs-related reasons".
-
-Trond pointed out that at the points of the conflict the running context
-is rpciod and not a softirq context. This patch stops PF_MEMALLOC being
-set but rpc_malloc still uses __GFP_MEMALLOC where necessary to allocate
-from the reserves. When merged with the "nfs: enable swap on NFS", the
-conflict with the NFS tree should disappear.
-
-Signed-off-by: Mel Gorman <mgorman@suse.de>
----
- net/sunrpc/xprtsock.c |   11 -----------
- 1 file changed, 11 deletions(-)
-
-diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
-index 83bb0eb..bd59d01 100644
---- a/net/sunrpc/xprtsock.c
-+++ b/net/sunrpc/xprtsock.c
-@@ -2003,15 +2003,11 @@ static void xs_udp_setup_socket(struct work_struct *work)
- 		container_of(work, struct sock_xprt, connect_worker.work);
- 	struct rpc_xprt *xprt = &transport->xprt;
- 	struct socket *sock = transport->sock;
--	unsigned long pflags = current->flags;
- 	int status = -EIO;
- 
- 	if (xprt->shutdown)
- 		goto out;
- 
--	if (xprt->swapper)
--		current->flags |= PF_MEMALLOC;
--
- 	/* Start by resetting any existing state */
- 	xs_reset_transport(transport);
- 	sock = xs_create_sock(xprt, transport,
-@@ -2030,7 +2026,6 @@ static void xs_udp_setup_socket(struct work_struct *work)
- out:
- 	xprt_clear_connecting(xprt);
- 	xprt_wake_pending_tasks(xprt, status);
--	tsk_restore_flags(current, pflags, PF_MEMALLOC);
- }
- 
- /*
-@@ -2153,15 +2148,11 @@ static void xs_tcp_setup_socket(struct work_struct *work)
- 		container_of(work, struct sock_xprt, connect_worker.work);
- 	struct socket *sock = transport->sock;
- 	struct rpc_xprt *xprt = &transport->xprt;
--	unsigned long pflags = current->flags;
- 	int status = -EIO;
- 
- 	if (xprt->shutdown)
- 		goto out;
- 
--	if (xprt->swapper)
--		current->flags |= PF_MEMALLOC;
--
- 	if (!sock) {
- 		clear_bit(XPRT_CONNECTION_ABORT, &xprt->state);
- 		sock = xs_create_sock(xprt, transport,
-@@ -2211,7 +2202,6 @@ static void xs_tcp_setup_socket(struct work_struct *work)
- 	case -EINPROGRESS:
- 	case -EALREADY:
- 		xprt_clear_connecting(xprt);
--		tsk_restore_flags(current, pflags, PF_MEMALLOC);
- 		return;
- 	case -EINVAL:
- 		/* Happens, for instance, if the user specified a link
-@@ -2224,7 +2214,6 @@ out_eagain:
- out:
- 	xprt_clear_connecting(xprt);
- 	xprt_wake_pending_tasks(xprt, status);
--	tsk_restore_flags(current, pflags, PF_MEMALLOC);
- }
- 
- /**
+grumble.  This happened becase new stuff was added to -next right in
+the middle of the merge window.  Please don't dothat.
