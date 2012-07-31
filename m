@@ -1,89 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm tree
-Date: Tue, 31 Jul 2012 14:40:54 +1000
-Message-ID: <20120731144054.59b0a6da6d071ea1bc061db0@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Tue, 31 Jul 2012 15:14:52 +1000
+Message-ID: <20120731151452.472bb6b1775fad7998df59bb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__31_Jul_2012_14_40_54_+1000_gNgMG/1b=a7IM6rX"
+ boundary="Signature=_Tue__31_Jul_2012_15_14_52_+1000_k_Umz5TJjwYZnBkc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50837 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56156 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751968Ab2GaElD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Jul 2012 00:41:03 -0400
+	with ESMTP id S1754916Ab2GaFPD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Jul 2012 01:15:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sage Weil <sage@inktank.com>, Michel Lespinasse <walken@google.com>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Tue__31_Jul_2012_14_40_54_+1000_gNgMG/1b=a7IM6rX
+--Signature=_Tue__31_Jul_2012_15_14_52_+1000_k_Umz5TJjwYZnBkc
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-After merging the akpm tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-net/ceph/osd_client.c: In function 'ceph_osdc_alloc_request':
-net/ceph/osd_client.c:216:2: error: implicit declaration of function 'rb_in=
-it_node' [-Werror=3Dimplicit-function-declaration]
+drivers/regulator/s5m8767.c: In function 's5m8767_pmic_probe':
+drivers/regulator/s5m8767.c:575:2: error: implicit declaration of function =
+'s5m_reg_write' [-Werror=3Dimplicit-function-declaration]
 
-Caused by commit 753b960e52b7 ("rbtree: empty nodes have no color") from
-the akpm tree interacting with commit cd43045c2de6 ("libceph: initialize
-rb, list nodes in ceph_osd_request") from the ceph tree.
+Caused by a mismerge in Linus' tree between commits c848bc8538cd
+("regulator: s5m8767a: Support AP watchdog reset operation") and
+63063bfbffe9 ("mfd: Modify samsung mfd driver for common api").
 
-I added the following merge fix patch for today:
+Fixed by commit 938e05bf1313 ("regulator: Fix an s5m8767 build failure")
+from Linus' tree which I have cherry picked for today.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 31 Jul 2012 14:37:35 +1000
-Subject: [PATCH] libceph: remove rb_node initialisation
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/ceph/osd_client.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index ad427e6..06fb7a9 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -213,7 +213,6 @@ struct ceph_osd_request *ceph_osdc_alloc_request(struct=
- ceph_osd_client *osdc,
- 	kref_init(&req->r_kref);
- 	init_completion(&req->r_completion);
- 	init_completion(&req->r_safe_completion);
--	rb_init_node(&req->r_node);
- 	INIT_LIST_HEAD(&req->r_unsafe_item);
- 	INIT_LIST_HEAD(&req->r_linger_item);
- 	INIT_LIST_HEAD(&req->r_linger_osd);
---=20
-1.7.10.280.gaa39
+This was reported a couple of weeks ago when it caused a merge conflict
+in linux-next.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__31_Jul_2012_14_40_54_+1000_gNgMG/1b=a7IM6rX
+--Signature=_Tue__31_Jul_2012_15_14_52_+1000_k_Umz5TJjwYZnBkc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQF2HWAAoJEECxmPOUX5FE1V4P/3Xf1GU5E55ET0ijKSRoEobx
-2v4HrvYfGFBgRdXiNp41tgiLRLcscfFrsSM7bfsSYp7CT3Yoe3WvAnk8SZwKmZck
-/szbY5eLJARTBS84LnzATVz+BJvGbxBgS5U74+knm+HXdMZd2Baf48SVwR97mF3F
-W6y/IkzNdV/fqvUU8S/HiJf+6YX+CttACF/u5xIFcmt7LYD5g+eFE0oyqL11IWX0
-/JWZCitAULXmyvpXSu4UfYwhGC3I9kvjYM4KyTirA4rYfO81ZSM8FmL8S0EHa5qR
-oLF2trEmHiDK5DTWoMfN6txelQ28s0tFMFIWM4ou0yKCarh6oK8+R+PPg/xmsAev
-XyHaCkVHF2x1iGqAQiI9gpvXbPS30Ju3CvdaARyRYauAmcx5gP2eSkxtCcFOHmql
-KmkehyDcruaSx5upI7zN0EItiTTiTT+2nVjg21lCUs7miuvlF629ns+9EwQynKpO
-fQ3IPliBzOHeCm5c3at3KDGzD3RDrskCjlqJN54yeTtIiOYfc6mJEG57eioFa2Pa
-p0PzaVaZL9pUQxL670PV7ffy1fx1BjsmxzUjWS5LzJWEyVoGFEn1pwdrqbDga09Y
-TSS63b4+v0bCwq9d7DgLO0THJ6RPhjWbLzkc80IV8ZlmVgrD6REewAIktTCRK9Pz
-B6Ur7aaxPzJ1BcKYmGM1
-=XruD
+iQIcBAEBCAAGBQJQF2nMAAoJEECxmPOUX5FEdtQQAKosKvzYttGUBody9pE5wNsF
+X3YILOFmpIR3/QjCY4us4jA1qBvcFs67nlgr88oprVvAjJWfpH18xnRsZHeIezO2
+EYv6pTcTo9S+Kq7dMM0AOGL7tEojgzSJ10Bf/DsDJ6CMnx9XKJyn4Cz4V76vuoG6
+MwihvbafOaY5k0ZTyvOnribeqeHN+MqPYQTVzYxX4mTT2qYzjxK9OBc/BiisqoL2
+Hm3V3eFBlNGbBmpNtbXT0K88jAscNpuG58Azhfe68L/+4lGlmMgrlrm3uXITeiqi
+TOrmkMVeUAr4QHPRmo8Ss2/17a78FIoL8hJdSFhr7ocC9NNhK9PXLvi6hApAosan
+K6J2mgEs5iEPzcMFwVtNzSMFd0EadeuMAVKrgvJdLJRVQWvJfBbAjOB7Kh0rYNRO
+EeZUiG27IoINY7PUV675/IG97NDgXsv30b6wnh24pEC3Om1RfUYEmG3FNlhqfk0i
+f4ANsIsWPc0/FqE2xgk9odZjFr8eLcoNO9IPoGIYMHjaY7gredlUDIYG9jLuYwMt
+0tiaaLOpijRbN5OUkJ2T/Iv4+XWXxfPvM7ImnfBuKI0N/WBCBbrmMlxD5seVF9O7
+B2U3T3yi2fRweSYpFlQewqg5Wm3RzpgY8BewK45FKP/MCMDGzDVIw9qXUzu0LOsW
+XGoK0VNeKNCbcjRej/KG
+=RtcP
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__31_Jul_2012_14_40_54_+1000_gNgMG/1b=a7IM6rX--
+--Signature=_Tue__31_Jul_2012_15_14_52_+1000_k_Umz5TJjwYZnBkc--
