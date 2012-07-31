@@ -1,54 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ceph tree with Linus' tree
-Date: Tue, 31 Jul 2012 11:58:53 +1000
-Message-ID: <20120731115853.a642cbd22bddb96f667520d1@canb.auug.org.au>
+Subject: linux-next: manual merge of the bjdooks-i2c tree with Linus' tree
+Date: Tue, 31 Jul 2012 12:48:45 +1000
+Message-ID: <20120731124845.81837e64e22f78795a9e7dab@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__31_Jul_2012_11_58_53_+1000_wYdTEsOSu=D1+LUR"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sage Weil <sage@newdream.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <elder@inktank.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__31_Jul_2012_12_48_45_+1000_u/++0bT.czUIqkkf"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:41342 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751847Ab2GaCs4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Jul 2012 22:48:56 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benoit Cousson <b-cousson@ti.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Jean Delvare <khali@linux-fr.org>, Wolfram Sang <w.sang@pengutronix.de>
 
---Signature=_Tue__31_Jul_2012_11_58_53_+1000_wYdTEsOSu=D1+LUR
+--Signature=_Tue__31_Jul_2012_12_48_45_+1000_u/++0bT.czUIqkkf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sage,
+Hi Ben,
 
-Today's linux-next merge of the ceph tree got a conflict in
-net/ceph/messenger.c between commit 5bdca4e0768d ("libceph: fix messenger
-retry") from Linus' tree and commit ab166d5aa3bc ("libceph: separate
-banner and connect writes") from the ceph tree.
+Today's linux-next merge of the bjdooks-i2c tree got a conflict in
+drivers/i2c/busses/i2c-omap.c between various commits from Linus' tree
+and commit d06333b7a618 ("i2c: OMAP: Add DT support for i2c controller")
+from the bjdooks-i2c tree.
 
-I fixed it up (removed the calls to ceph_con_out_kvec_reset()) and can
-carry the fix as necessary.
+This was a complex conflict and since the bjdooks-i2c tree has not been
+updated since May 3 and I have been unable to access it for some time, I
+just dropped it for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__31_Jul_2012_11_58_53_+1000_wYdTEsOSu=D1+LUR
+--Signature=_Tue__31_Jul_2012_12_48_45_+1000_u/++0bT.czUIqkkf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQFzvdAAoJEECxmPOUX5FEeUQP/Az9+hMxPhQVnETe1SB7KAFi
-jNu+5vm7aF/m2p4qUmu6Qqy9ozHMKK3lmOWN9CAOA5ghc5uM3unS7npaY4CGLp0h
-Erxw5+lGdyrtDudYEbHbfa+WuV1TTthe+srRchxw5tw877xQDSh4D4oXji8AbstJ
-4n+WN0QrzyHLcVeWamD49cSJjMcZ4iCg0rM/mn+4VN1z+DD7S5yR2CiTdu+Rt0Jl
-bTaAVJ16PAua32lfMhe8+kKInV3Z77juAJ6/gk4+wsOaE8BfyHSgr3X9mrMfrtz2
-Q8YRhlAYVrjNRpmry1bA1s9vGzQzKko46KfWaeCVtkOIgjeshZ3+yu2OVPOhu6a4
-3PJ3C39VGnZBD2UpeDncjZD9io38vLduHtxEbDo/wy+CJZVfP/vuQu0GDh2bTbfo
-BWG/gQEjMSBphtctpo0aQV6UKERTbw6QvAkGLG9qpiOmqFD5c5NdF45IegP5B9OG
-uFG9StQVCTJCSH9PN8ZApxb9o/FJaxwzL341wSwgCcvic2vwQw1Y56Ek7WKj1ccy
-ntTbNuyiTZ242rV75hQqzLxrNd/CKgpCSJowv1F09s910IaPwyhFldJ8wGI0WRL3
-w4WKdqTI/16BER6hfibK0ZFSUTNteao1iOAlQ81p5Gn1fs3GBZU8hBJbqcEj3EYZ
-B9a+f9ZWH0bPS6zu70bu
-=9rxo
+iQIcBAEBCAAGBQJQF0eNAAoJEECxmPOUX5FEggoP/RQrxj2Pl8dBBjVBKkHJEMos
+OVRyk2lcO5BR7iHPJS+ArB/K6QfkosPAa+QgrBn+JIL04hbnGCAQzkqtNXidLgVG
+TMrupy/8msMv4jYAJG6wkGiOaFNeAJgkLlCaGARe3dA0QAYNGJkFfNOQoNP1uVtH
+vHAkp1ROAOl7sh6MJ+IQ2ibi0Q6UCsltxRHtbOU/WGJTLPQbYOuO2oAWKPl4sIUz
+vD8vKKF8SrXFcMZzeNx9/ty8AgJCMBEdxOqu7Z+iv9rrUSqKwsVJTOWpmdBm73OA
+llsUhrbQ+fx/jml9j84oMwT/k0kaPY7DQfgiTZ9Tc7rbR8IsJDfy30gl203SnyhQ
+OEZYJqj8CFyWzcdL3lZtQMrp51FQHM8DuPl41BKgqcmhZ7XTa9/jNzJgatuJ9DDG
+NWehV6C+dk0tY4K0w06o5zfaPVXLyDrRVhfBiKSfY0nbqGh9SEH4KJK5ZsBkrsVF
+oRNTt/Jz9ePwwLD+kGOw3Cf8NI7zqXe/uz1bpyV3Sf+ni03h+2mgJ+D2UdbldWXX
+fD7eumDhsumdcTBioXcVSYhvESbPYBNq3W9yEc0UKYtE9nTuo7Dvp6g/BidEUyd8
+zPDv93isC6Mwg1ixkj3bg8cpdJWwEcqZaW7TIPUFKCpQpMhplzZGiUMl9V4MP88N
+JxXsz8l4eeiMe2PBFLaA
+=yzRo
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__31_Jul_2012_11_58_53_+1000_wYdTEsOSu=D1+LUR--
+--Signature=_Tue__31_Jul_2012_12_48_45_+1000_u/++0bT.czUIqkkf--
