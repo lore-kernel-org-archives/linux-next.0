@@ -1,37 +1,55 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: CRYPTO_DEV_NX merge problem (Re: linux-next: Tree for July 31)
-Date: Wed, 01 Aug 2012 08:15:51 +1000
-Message-ID: <1343772951.16975.18.camel@pasglop>
-References: <20120731152614.de6ebe9e0d4b8fc6645b793a@canb.auug.org.au>
-	 <31974.1343714338@neuling.org> <5017DE06.3000103@linux.vnet.ibm.com>
-	 <19970.1343772018@neuling.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Seth Jennings <sjenning@linux.vnet.ibm.com>
+Subject: [PATCH] powerpc/crypto: fix pseries_defconfig break
+Date: Tue, 31 Jul 2012 18:34:51 -0500
+Message-ID: <1343777691-25601-1-git-send-email-sjenning@linux.vnet.ibm.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:56658 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754457Ab2GaWQR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Jul 2012 18:16:17 -0400
-In-Reply-To: <19970.1343772018@neuling.org>
+Received: from e34.co.us.ibm.com ([32.97.110.152]:40850 "EHLO
+	e34.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756294Ab2GaXgl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Jul 2012 19:36:41 -0400
+Received: from /spool/local
+	by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <sjenning@linux.vnet.ibm.com>;
+	Tue, 31 Jul 2012 17:36:41 -0600
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Neuling <mikey@neuling.org>
-Cc: Seth Jennings <sjenning@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kent Yoder <key@linux.vnet.ibm.com>, anton@samba.org, Herbert Xu <herbert@gondor.hengli.com.au>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Seth Jennings <sjenning@linux.vnet.ibm.com>, Michael Neuling <mikey@neuling.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kent Yoder <key@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, anton@samba.org
 
-On Wed, 2012-08-01 at 08:00 +1000, Michael Neuling wrote:
-> 
-> OK.  Please post the fix as a patch.  Anton's patch is already in the
-> powerpc next tree so it won't be changed/rebased directly.  
-> 
-> I'm not sure who can carry this, since the crypto tree doesn't have
-> Anton's change and the powerpc tree doesn't have Seth's change.
-> 
-> sfr: who normally carries it when we have a merge issue like this?
-> You?
+As part of the Kconfig rework for drivers/crypto/nx, the meaning of
+CONFIG_CRYPTO_DEV_NX was changed.  At the same time this commit was
+heading upstream
 
-There is no powerpc -next tree at this point, Anton patch is either
-upstream or in no tree.
+fd297b3a7302ab866306f53c1fd1e97b083fe83e
+powerpc: Enable pseries hardware RNG and crypto module
 
-Cheers,
-Ben.
+still used the old meaning, set CONFIG_CRYPTO_DEV_NX=m when it
+is now a bool in the Kconfig.  This patch repairs the break.
+
+Reported-by: Michael Neuling <mikey@neuling.org>
+Signed-off-by: Seth Jennings <sjenning@linux.vnet.ibm.com>
+---
+This patch is based on Linus master which already contains
+the commit above.  Please apply this patch before my patchset
+(powerpc/crypto: IBM Power7+ in-Nest compression support) to
+avoid the pseries_defconfig break.
+
+ arch/powerpc/configs/pseries_defconfig |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/configs/pseries_defconfig b/arch/powerpc/configs/pseries_defconfig
+index 1f65b3c..9f4a936 100644
+--- a/arch/powerpc/configs/pseries_defconfig
++++ b/arch/powerpc/configs/pseries_defconfig
+@@ -369,7 +369,8 @@ CONFIG_CRYPTO_TWOFISH=m
+ CONFIG_CRYPTO_LZO=m
+ # CONFIG_CRYPTO_ANSI_CPRNG is not set
+ CONFIG_CRYPTO_HW=y
+-CONFIG_CRYPTO_DEV_NX=m
++CONFIG_CRYPTO_DEV_NX=y
++CONFIG_CRYPTO_DEV_NX_ENCRYPT=m
+ CONFIG_VIRTUALIZATION=y
+ CONFIG_KVM_BOOK3S_64=m
+ CONFIG_KVM_BOOK3S_64_HV=y
+-- 
+1.7.9.5
