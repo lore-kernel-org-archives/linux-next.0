@@ -1,46 +1,39 @@
-From: Mel Gorman <mgorman@suse.de>
-Subject: Re: linux-next: manual merge of the akpm tree with the nfs tree
-Date: Tue, 31 Jul 2012 11:33:36 +0100
-Message-ID: <20120731103336.GN612@suse.de>
-References: <20120731142441.0d01100f9d050ec6e479c923@canb.auug.org.au>
+From: Michel Lespinasse <walken@google.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Tue, 31 Jul 2012 03:34:12 -0700
+Message-ID: <CANN689FGMfL_Y3afhYbmSdvQH4tU+7CErODb=NoqAZnmoZEa3w@mail.gmail.com>
+References: <20120731144054.59b0a6da6d071ea1bc061db0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:41577 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753302Ab2GaKdk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Jul 2012 06:33:40 -0400
-Content-Disposition: inline
-In-Reply-To: <20120731142441.0d01100f9d050ec6e479c923@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120731144054.59b0a6da6d071ea1bc061db0@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sage Weil <sage@inktank.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 31, 2012 at 02:24:41PM +1000, Stephen Rothwell wrote:
+On Mon, Jul 30, 2012 at 9:40 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Hi Andrew,
-> 
-> Today's linux-next merge of the akpm tree got a conflict in
-> net/sunrpc/xprtsock.c between commit 5cf02d09b50b ("nfs: skip commit in
-> releasepage if we're freeing memory for fs-related reasons") from the nfs
-> tree and commit "nfs: enable swap on NFS" from the akpm tree.
-> 
-> Just context changes?  I fixed it up (I think - see below) and can carry
-> the fix as necessary.
-
-Functionally it looks fine. As you say, it all looks like context
-changes. Arguably code like this
-
-current->flags &= ~PF_FSTRANS
-
-could use tsk_restore_flags instead() even though it should never be
-necessary as PF_FSTRANS would not be set on function entry. However,
-it would set up a depedency between the patch sets that is undesirable.
-If both sets get merged then it might make sense as a cleanup to use
-tsk_restore_flags() but not until then.
-
-Thanks Stephen.
+>
+> After merging the akpm tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> net/ceph/osd_client.c: In function 'ceph_osdc_alloc_request':
+> net/ceph/osd_client.c:216:2: error: implicit declaration of function 'rb_init_node' [-Werror=implicit-function-declaration]
+>
+> Caused by commit 753b960e52b7 ("rbtree: empty nodes have no color") from
+> the akpm tree interacting with commit cd43045c2de6 ("libceph: initialize
+> rb, list nodes in ceph_osd_request") from the ceph tree.
+>
+> I added the following merge fix patch for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 31 Jul 2012 14:37:35 +1000
+> Subject: [PATCH] libceph: remove rb_node initialisation
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Reviewed-by: Michel Lespinasse <walken@google.com>
 
 -- 
-Mel Gorman
-SUSE Labs
+Michel "Walken" Lespinasse
+A program is never fully debugged until the last user dies.
