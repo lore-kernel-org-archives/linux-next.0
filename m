@@ -1,79 +1,63 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for July 31 (media/radio-tea5777)
-Date: Tue, 31 Jul 2012 13:15:40 -0700
-Message-ID: <50183CEC.1050105@xenotime.net>
-References: <20120731152614.de6ebe9e0d4b8fc6645b793a@canb.auug.org.au> <50181451.5040202@xenotime.net> <50183865.9090700@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50183865.9090700@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
-List-Id: linux-next.vger.kernel.org
+From: Michael Neuling <mikey@neuling.org>
+Subject: Re: CRYPTO_DEV_NX merge problem (Re: linux-next: Tree for July 31)
+Date: Wed, 01 Aug 2012 08:00:18 +1000
+Message-ID: <19970.1343772018@neuling.org>
+References: <20120731152614.de6ebe9e0d4b8fc6645b793a@canb.auug.org.au> <31974.1343714338@neuling.org> <5017DE06.3000103@linux.vnet.ibm.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:56970 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753581Ab2GaWAU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 Jul 2012 18:00:20 -0400
+In-reply-to: <5017DE06.3000103@linux.vnet.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Seth Jennings <sjenning@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kent Yoder <key@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, anton@samba.org, Herbert Xu <herbert@gondor.apana.org.au>
 
-On 07/31/2012 12:56 PM, Mauro Carvalho Chehab wrote:
+Seth Jennings <sjenning@linux.vnet.ibm.com> wrote:
 
-> Em 31-07-2012 14:22, Randy Dunlap escreveu:
->> drivers/built-in.o: In function `radio_tea5777_set_freq':
->> radio-tea5777.c:(.text+0x4d8704): undefined reference to `__udivdi3'
->>
-> The patch below should fix it.
+> On 07/31/2012 12:58 AM, Michael Neuling wrote:
+> >> Please do not add anything to linux-next included branches/series that is
+> >> destined for v3.7 until after v3.6-rc1 is released.
+> > 
+> > Looks like there is a merge conflict between:
+> >   commit 1b074ac867a2bd08a6f12f0feed7d91e06941723
+> >   Author: Seth Jennings <sjenning@linux.vnet.ibm.com>
+> >   Subject: powerpc/crypto: rework Kconfig
+> > 
+> > and 
+> >   commit fd297b3a7302ab866306f53c1fd1e97b083fe83e
+> >   Author: Anton Blanchard <anton@samba.org>
+> >   powerpc: Enable pseries hardware RNG and crypto modules
+> > 
+> > Seth made CRYPTO_DEV_NX a bool and Anton set it as a module.
+> > 
+> > Hence I get this with a pseries_defconfig
+> >   arch/powerpc/configs/pseries_defconfig:372:warning: symbol value 'm' invalid for CRYPTO_DEV_NX
+> > 
+> > Seth: any reason this can stay as a tristate?
 > 
-> Thanks for reporting it!
+> My patch converted CRYPTO_DEV_NX to a submenu access config
+> and the functionality that used to be enabled by it is now
+> enabled by CRYPTO_DEV_NX_ENCRYPT.
 > 
-> Regards,
-> Mauro
+> The resolution is to change Anton's patch from
 > 
-> [media] radio-tea5777: use library for 64bits div
+> +CONFIG_CRYPTO_DEV_NX=m
 > 
-> From: Mauro Carvalho Chehab <mchehab@redhat.com>
+> to
 > 
-> drivers/built-in.o: In function `radio_tea5777_set_freq':
-> radio-tea5777.c:(.text+0x4d8704): undefined reference to `__udivdi3'
-> 
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+> +CONFIG_CRYPTO_DEV_NX=y
+> +CONFIG_CRYPTO_DEV_NX_ENCRYPT=m
 
+Seth,  
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+OK.  Please post the fix as a patch.  Anton's patch is already in the
+powerpc next tree so it won't be changed/rebased directly.  
 
-Thanks.
+I'm not sure who can carry this, since the crypto tree doesn't have
+Anton's change and the powerpc tree doesn't have Seth's change.
 
+sfr: who normally carries it when we have a merge issue like this?  You?
 
-> 
-> diff --git a/drivers/media/radio/radio-tea5777.c b/drivers/media/radio/radio-tea5777.c
-> index 3e12179..5bc9fa6 100644
-> --- a/drivers/media/radio/radio-tea5777.c
-> +++ b/drivers/media/radio/radio-tea5777.c
-> @@ -33,6 +33,7 @@
->  #include <media/v4l2-fh.h>
->  #include <media/v4l2-ioctl.h>
->  #include <media/v4l2-event.h>
-> +#include <asm/div64.h>
->  #include "radio-tea5777.h"
->  
->  MODULE_AUTHOR("Hans de Goede <perex@perex.cz>");
-> @@ -158,10 +159,11 @@ static int radio_tea5777_set_freq(struct radio_tea5777 *tea)
->  	int res;
->  
->  	freq = clamp_t(u32, tea->freq,
-> -		       TEA5777_FM_RANGELOW, TEA5777_FM_RANGEHIGH);
-> -	freq = (freq + 8) / 16; /* to kHz */
-> +		       TEA5777_FM_RANGELOW, TEA5777_FM_RANGEHIGH) + 8;
-> +	do_div(freq, 16); /* to kHz */
->  
-> -	freq = (freq - TEA5777_FM_IF) / TEA5777_FM_FREQ_STEP;
-> +	freq -= TEA5777_FM_IF;
-> +	do_div(freq, TEA5777_FM_FREQ_STEP);
->  
->  	tea->write_reg &= ~(TEA5777_W_FM_PLL_MASK | TEA5777_W_FM_FREF_MASK);
->  	tea->write_reg |= freq << TEA5777_W_FM_PLL_SHIFT;
-> 
-> --
-
-
--- 
-~Randy
+Mikey
