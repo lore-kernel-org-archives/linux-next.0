@@ -1,77 +1,71 @@
-From: Mel Gorman <mgorman@suse.de>
+From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
 Subject: Re: linux-next: manual merge of the akpm tree with the nfs tree
-Date: Tue, 31 Jul 2012 16:19:36 +0100
-Message-ID: <20120731151936.GR612@suse.de>
+Date: Tue, 31 Jul 2012 15:35:07 +0000
+Message-ID: <1343748906.5528.17.camel@lade.trondhjem.org>
 References: <20120731142441.0d01100f9d050ec6e479c923@canb.auug.org.au>
- <20120731103336.GN612@suse.de>
- <1343745442.519.20.camel@lade.trondhjem.org>
+	 <20120731103336.GN612@suse.de> <1343745442.519.20.camel@lade.trondhjem.org>
+	 <20120731151936.GR612@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:59658 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754955Ab2GaPTl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Jul 2012 11:19:41 -0400
-Content-Disposition: inline
-In-Reply-To: <1343745442.519.20.camel@lade.trondhjem.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120731151936.GR612@suse.de>
+Content-Language: en-US
+Content-ID: <6E2022E602772D42917A6AFB65E4D90B@tahoe.netapp.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mel Gorman <mgorman@suse.de>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jeff Layton <jlayton@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 31, 2012 at 02:37:24PM +0000, Myklebust, Trond wrote:
-> On Tue, 2012-07-31 at 11:33 +0100, Mel Gorman wrote:
-> > On Tue, Jul 31, 2012 at 02:24:41PM +1000, Stephen Rothwell wrote:
-> > > Hi Andrew,
-> > > 
-> > > Today's linux-next merge of the akpm tree got a conflict in
-> > > net/sunrpc/xprtsock.c between commit 5cf02d09b50b ("nfs: skip commit in
-> > > releasepage if we're freeing memory for fs-related reasons") from the nfs
-> > > tree and commit "nfs: enable swap on NFS" from the akpm tree.
-> > > 
-> > > Just context changes?  I fixed it up (I think - see below) and can carry
-> > > the fix as necessary.
-> > 
-> > Functionally it looks fine. As you say, it all looks like context
-> > changes. Arguably code like this
-> > 
-> > current->flags &= ~PF_FSTRANS
-> > 
-> > could use tsk_restore_flags instead() even though it should never be
-> > necessary as PF_FSTRANS would not be set on function entry. However,
-> > it would set up a depedency between the patch sets that is undesirable.
-> > If both sets get merged then it might make sense as a cleanup to use
-> > tsk_restore_flags() but not until then.
-> > 
-> > Thanks Stephen.
-> > 
-> 
-> Do we really need to set both PF_FSTRANS and PF_MEMALLOC here? The
-> reason why I merged the PF_FSTRANS patch is that we have the deadlock
-> problem when allocating a new socket even before we add swap-over-nfs.
-> Adding PF_FSTRANS to disallow entry into the NFS layer by the memory
-> allocator fixes that issue.
-
-PF_FSTRANS is to prevent recursion into NFS and is set whether swap-over-NFS
-is used or not and for all requests.
-
-> What value does PF_MEMALLOC add? Is that in order to prevent recursion
-> into other areas of the swap code (say, if you mix swap-over-nfs with
-> ordinary swap-to-disk)?
-> 
-
-PF_MEMALLOC is normally to prevent the page reclaim recursing into
-itself. Page reclaim can call the page allocator and that cannot re-enter
-page reclaim.
-
-In the case of swap-over-NFS, PF_MEMALLOC is set only if the socket is
-being used for swapping. In softirq context, the allocation request is
-allowed to use PFMEMALLOC reserves to avoid deadlock.
-
-I do not see an obvious way to collapse the two flags together.
-PF_FSTRANS should not mean the PFMEMALLOC reserves can be used and
-PFMEMALLOC is not set for all requests.
-
--- 
-Mel Gorman
-SUSE Labs
+T24gVHVlLCAyMDEyLTA3LTMxIGF0IDE2OjE5ICswMTAwLCBNZWwgR29ybWFuIHdyb3RlOg0KPiBP
+biBUdWUsIEp1bCAzMSwgMjAxMiBhdCAwMjozNzoyNFBNICswMDAwLCBNeWtsZWJ1c3QsIFRyb25k
+IHdyb3RlOg0KPiA+IE9uIFR1ZSwgMjAxMi0wNy0zMSBhdCAxMTozMyArMDEwMCwgTWVsIEdvcm1h
+biB3cm90ZToNCj4gPiA+IE9uIFR1ZSwgSnVsIDMxLCAyMDEyIGF0IDAyOjI0OjQxUE0gKzEwMDAs
+IFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+ID4gPiA+IEhpIEFuZHJldywNCj4gPiA+ID4gDQo+
+ID4gPiA+IFRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgYWtwbSB0cmVlIGdvdCBhIGNv
+bmZsaWN0IGluDQo+ID4gPiA+IG5ldC9zdW5ycGMveHBydHNvY2suYyBiZXR3ZWVuIGNvbW1pdCA1
+Y2YwMmQwOWI1MGIgKCJuZnM6IHNraXAgY29tbWl0IGluDQo+ID4gPiA+IHJlbGVhc2VwYWdlIGlm
+IHdlJ3JlIGZyZWVpbmcgbWVtb3J5IGZvciBmcy1yZWxhdGVkIHJlYXNvbnMiKSBmcm9tIHRoZSBu
+ZnMNCj4gPiA+ID4gdHJlZSBhbmQgY29tbWl0ICJuZnM6IGVuYWJsZSBzd2FwIG9uIE5GUyIgZnJv
+bSB0aGUgYWtwbSB0cmVlLg0KPiA+ID4gPiANCj4gPiA+ID4gSnVzdCBjb250ZXh0IGNoYW5nZXM/
+ICBJIGZpeGVkIGl0IHVwIChJIHRoaW5rIC0gc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5DQo+ID4g
+PiA+IHRoZSBmaXggYXMgbmVjZXNzYXJ5Lg0KPiA+ID4gDQo+ID4gPiBGdW5jdGlvbmFsbHkgaXQg
+bG9va3MgZmluZS4gQXMgeW91IHNheSwgaXQgYWxsIGxvb2tzIGxpa2UgY29udGV4dA0KPiA+ID4g
+Y2hhbmdlcy4gQXJndWFibHkgY29kZSBsaWtlIHRoaXMNCj4gPiA+IA0KPiA+ID4gY3VycmVudC0+
+ZmxhZ3MgJj0gflBGX0ZTVFJBTlMNCj4gPiA+IA0KPiA+ID4gY291bGQgdXNlIHRza19yZXN0b3Jl
+X2ZsYWdzIGluc3RlYWQoKSBldmVuIHRob3VnaCBpdCBzaG91bGQgbmV2ZXIgYmUNCj4gPiA+IG5l
+Y2Vzc2FyeSBhcyBQRl9GU1RSQU5TIHdvdWxkIG5vdCBiZSBzZXQgb24gZnVuY3Rpb24gZW50cnku
+IEhvd2V2ZXIsDQo+ID4gPiBpdCB3b3VsZCBzZXQgdXAgYSBkZXBlZGVuY3kgYmV0d2VlbiB0aGUg
+cGF0Y2ggc2V0cyB0aGF0IGlzIHVuZGVzaXJhYmxlLg0KPiA+ID4gSWYgYm90aCBzZXRzIGdldCBt
+ZXJnZWQgdGhlbiBpdCBtaWdodCBtYWtlIHNlbnNlIGFzIGEgY2xlYW51cCB0byB1c2UNCj4gPiA+
+IHRza19yZXN0b3JlX2ZsYWdzKCkgYnV0IG5vdCB1bnRpbCB0aGVuLg0KPiA+ID4gDQo+ID4gPiBU
+aGFua3MgU3RlcGhlbi4NCj4gPiA+IA0KPiA+IA0KPiA+IERvIHdlIHJlYWxseSBuZWVkIHRvIHNl
+dCBib3RoIFBGX0ZTVFJBTlMgYW5kIFBGX01FTUFMTE9DIGhlcmU/IFRoZQ0KPiA+IHJlYXNvbiB3
+aHkgSSBtZXJnZWQgdGhlIFBGX0ZTVFJBTlMgcGF0Y2ggaXMgdGhhdCB3ZSBoYXZlIHRoZSBkZWFk
+bG9jaw0KPiA+IHByb2JsZW0gd2hlbiBhbGxvY2F0aW5nIGEgbmV3IHNvY2tldCBldmVuIGJlZm9y
+ZSB3ZSBhZGQgc3dhcC1vdmVyLW5mcy4NCj4gPiBBZGRpbmcgUEZfRlNUUkFOUyB0byBkaXNhbGxv
+dyBlbnRyeSBpbnRvIHRoZSBORlMgbGF5ZXIgYnkgdGhlIG1lbW9yeQ0KPiA+IGFsbG9jYXRvciBm
+aXhlcyB0aGF0IGlzc3VlLg0KPiANCj4gUEZfRlNUUkFOUyBpcyB0byBwcmV2ZW50IHJlY3Vyc2lv
+biBpbnRvIE5GUyBhbmQgaXMgc2V0IHdoZXRoZXIgc3dhcC1vdmVyLU5GUw0KPiBpcyB1c2VkIG9y
+IG5vdCBhbmQgZm9yIGFsbCByZXF1ZXN0cy4NCj4gDQo+ID4gV2hhdCB2YWx1ZSBkb2VzIFBGX01F
+TUFMTE9DIGFkZD8gSXMgdGhhdCBpbiBvcmRlciB0byBwcmV2ZW50IHJlY3Vyc2lvbg0KPiA+IGlu
+dG8gb3RoZXIgYXJlYXMgb2YgdGhlIHN3YXAgY29kZSAoc2F5LCBpZiB5b3UgbWl4IHN3YXAtb3Zl
+ci1uZnMgd2l0aA0KPiA+IG9yZGluYXJ5IHN3YXAtdG8tZGlzayk/DQo+ID4gDQo+IA0KPiBQRl9N
+RU1BTExPQyBpcyBub3JtYWxseSB0byBwcmV2ZW50IHRoZSBwYWdlIHJlY2xhaW0gcmVjdXJzaW5n
+IGludG8NCj4gaXRzZWxmLiBQYWdlIHJlY2xhaW0gY2FuIGNhbGwgdGhlIHBhZ2UgYWxsb2NhdG9y
+IGFuZCB0aGF0IGNhbm5vdCByZS1lbnRlcg0KPiBwYWdlIHJlY2xhaW0uDQo+IA0KPiBJbiB0aGUg
+Y2FzZSBvZiBzd2FwLW92ZXItTkZTLCBQRl9NRU1BTExPQyBpcyBzZXQgb25seSBpZiB0aGUgc29j
+a2V0IGlzDQo+IGJlaW5nIHVzZWQgZm9yIHN3YXBwaW5nLiBJbiBzb2Z0aXJxIGNvbnRleHQsIHRo
+ZSBhbGxvY2F0aW9uIHJlcXVlc3QgaXMNCj4gYWxsb3dlZCB0byB1c2UgUEZNRU1BTExPQyByZXNl
+cnZlcyB0byBhdm9pZCBkZWFkbG9jay4NCj4gDQo+IEkgZG8gbm90IHNlZSBhbiBvYnZpb3VzIHdh
+eSB0byBjb2xsYXBzZSB0aGUgdHdvIGZsYWdzIHRvZ2V0aGVyLg0KPiBQRl9GU1RSQU5TIHNob3Vs
+ZCBub3QgbWVhbiB0aGUgUEZNRU1BTExPQyByZXNlcnZlcyBjYW4gYmUgdXNlZCBhbmQNCj4gUEZN
+RU1BTExPQyBpcyBub3Qgc2V0IGZvciBhbGwgcmVxdWVzdHMuDQoNClJpZ2h0LCBidXQgaW4gdGhp
+cyBjYXNlLCB3ZSdyZSB0YWxraW5nIGFib3V0IGEgR0ZQX0tFUk5FTCBhbGxvY2F0aW9uDQp0aGF0
+IGFsd2F5cyBoYXBwZW5zIGluIGFuIHJwY2lvZCB3b3JrcXVldWUgcHJvY2VzcyBjb250ZXh0LCBz
+byB3ZSBzdGlsbA0Kd29uJ3QgYmUgYWJsZSB0byBhY2Nlc3MgdGhlIFBGTUVNQUxMT0MgcmVzZXJ2
+ZXMgaWYgSSB1bmRlcnN0YW5kIHlvdQ0KY29ycmVjdGx5Pw0KDQpJIHVuZGVyc3RhbmQgdGhlIHZh
+bHVlIG9mIHByZXZlbnRpbmcgdGhlIHBhZ2UgcmVjbGFpbSByZWN1cnNpbmcgaW50bw0KaXRzZWxm
+LCBidXQgaW4gdGhpcyBjYXNlLCB3ZSdyZSB0YWxraW5nIGFib3V0IGEgc2VwYXJhdGUgcHJvY2Vz
+cyB0aGF0IGlzDQpvcGVyYXRpbmcgb24gYmVoYWxmIG9mIHRoZSBhbGxvY2F0b3IgKG11Y2ggbGlr
+ZSBrc3dhcGQgZG9lcykuDQoNCkNoZWVycw0KICBUcm9uZA0K
