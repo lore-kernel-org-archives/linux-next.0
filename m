@@ -1,161 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the nfs tree
-Date: Tue, 31 Jul 2012 14:24:41 +1000
-Message-ID: <20120731142441.0d01100f9d050ec6e479c923@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Tue, 31 Jul 2012 14:40:54 +1000
+Message-ID: <20120731144054.59b0a6da6d071ea1bc061db0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__31_Jul_2012_14_24_41_+1000_.h4LwnBao9kjuBYr"
+ boundary="Signature=_Tue__31_Jul_2012_14_40_54_+1000_gNgMG/1b=a7IM6rX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48660 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50837 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751282Ab2GaEYx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Jul 2012 00:24:53 -0400
+	with ESMTP id S1751968Ab2GaElD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Jul 2012 00:41:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>, Trond Myklebust <trond.myklebust@fys.uio.no>, Mel Gorman <mgorman@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sage Weil <sage@inktank.com>, Michel Lespinasse <walken@google.com>
 
---Signature=_Tue__31_Jul_2012_14_24_41_+1000_.h4LwnBao9kjuBYr
+--Signature=_Tue__31_Jul_2012_14_40_54_+1000_gNgMG/1b=a7IM6rX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in
-net/sunrpc/xprtsock.c between commit 5cf02d09b50b ("nfs: skip commit in
-releasepage if we're freeing memory for fs-related reasons") from the nfs
-tree and commit "nfs: enable swap on NFS" from the akpm tree.
+After merging the akpm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Just context changes?  I fixed it up (I think - see below) and can carry
-the fix as necessary.
+net/ceph/osd_client.c: In function 'ceph_osdc_alloc_request':
+net/ceph/osd_client.c:216:2: error: implicit declaration of function 'rb_in=
+it_node' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 753b960e52b7 ("rbtree: empty nodes have no color") from
+the akpm tree interacting with commit cd43045c2de6 ("libceph: initialize
+rb, list nodes in ceph_osd_request") from the ceph tree.
+
+I added the following merge fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 31 Jul 2012 14:37:35 +1000
+Subject: [PATCH] libceph: remove rb_node initialisation
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/ceph/osd_client.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index ad427e6..06fb7a9 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -213,7 +213,6 @@ struct ceph_osd_request *ceph_osdc_alloc_request(struct=
+ ceph_osd_client *osdc,
+ 	kref_init(&req->r_kref);
+ 	init_completion(&req->r_completion);
+ 	init_completion(&req->r_safe_completion);
+-	rb_init_node(&req->r_node);
+ 	INIT_LIST_HEAD(&req->r_unsafe_item);
+ 	INIT_LIST_HEAD(&req->r_linger_item);
+ 	INIT_LIST_HEAD(&req->r_linger_osd);
+--=20
+1.7.10.280.gaa39
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/sunrpc/xprtsock.c
-index 9266794,83bb0eb..0000000
---- a/net/sunrpc/xprtsock.c
-+++ b/net/sunrpc/xprtsock.c
-@@@ -1927,9 -1925,47 +1927,48 @@@ static void xs_local_setup_socket(struc
-  out:
-  	xprt_clear_connecting(xprt);
-  	xprt_wake_pending_tasks(xprt, status);
- +	current->flags &=3D ~PF_FSTRANS;
-  }
- =20
-+ #ifdef CONFIG_SUNRPC_SWAP
-+ static void xs_set_memalloc(struct rpc_xprt *xprt)
-+ {
-+ 	struct sock_xprt *transport =3D container_of(xprt, struct sock_xprt,
-+ 			xprt);
-+=20
-+ 	if (xprt->swapper)
-+ 		sk_set_memalloc(transport->inet);
-+ }
-+=20
-+ /**
-+  * xs_swapper - Tag this transport as being used for swap.
-+  * @xprt: transport to tag
-+  * @enable: enable/disable
-+  *
-+  */
-+ int xs_swapper(struct rpc_xprt *xprt, int enable)
-+ {
-+ 	struct sock_xprt *transport =3D container_of(xprt, struct sock_xprt,
-+ 			xprt);
-+ 	int err =3D 0;
-+=20
-+ 	if (enable) {
-+ 		xprt->swapper++;
-+ 		xs_set_memalloc(xprt);
-+ 	} else if (xprt->swapper) {
-+ 		xprt->swapper--;
-+ 		sk_clear_memalloc(transport->inet);
-+ 	}
-+=20
-+ 	return err;
-+ }
-+ EXPORT_SYMBOL_GPL(xs_swapper);
-+ #else
-+ static void xs_set_memalloc(struct rpc_xprt *xprt)
-+ {
-+ }
-+ #endif
-+=20
-  static void xs_udp_finish_connecting(struct rpc_xprt *xprt, struct socket=
- *sock)
-  {
-  	struct sock_xprt *transport =3D container_of(xprt, struct sock_xprt, xpr=
-t);
-@@@ -1970,7 -2009,8 +2012,9 @@@ static void xs_udp_setup_socket(struct=20
-  	if (xprt->shutdown)
-  		goto out;
- =20
- +	current->flags |=3D PF_FSTRANS;
-+ 	if (xprt->swapper)
-+ 		current->flags |=3D PF_MEMALLOC;
- =20
-  	/* Start by resetting any existing state */
-  	xs_reset_transport(transport);
-@@@ -1990,7 -2030,7 +2034,8 @@@
-  out:
-  	xprt_clear_connecting(xprt);
-  	xprt_wake_pending_tasks(xprt, status);
-+ 	tsk_restore_flags(current, pflags, PF_MEMALLOC);
- +	current->flags &=3D ~PF_FSTRANS;
-  }
- =20
-  /*
-@@@ -2116,7 -2159,8 +2164,9 @@@ static void xs_tcp_setup_socket(struct=20
-  	if (xprt->shutdown)
-  		goto out;
- =20
- +	current->flags |=3D PF_FSTRANS;
-+ 	if (xprt->swapper)
-+ 		current->flags |=3D PF_MEMALLOC;
- =20
-  	if (!sock) {
-  		clear_bit(XPRT_CONNECTION_ABORT, &xprt->state);
-@@@ -2167,7 -2211,7 +2217,8 @@@
-  	case -EINPROGRESS:
-  	case -EALREADY:
-  		xprt_clear_connecting(xprt);
-+ 		tsk_restore_flags(current, pflags, PF_MEMALLOC);
- +		current->flags &=3D ~PF_FSTRANS;
-  		return;
-  	case -EINVAL:
-  		/* Happens, for instance, if the user specified a link
-@@@ -2180,7 -2224,7 +2231,8 @@@ out_eagain
-  out:
-  	xprt_clear_connecting(xprt);
-  	xprt_wake_pending_tasks(xprt, status);
-+ 	tsk_restore_flags(current, pflags, PF_MEMALLOC);
- +	current->flags &=3D ~PF_FSTRANS;
-  }
- =20
-  /**
-
---Signature=_Tue__31_Jul_2012_14_24_41_+1000_.h4LwnBao9kjuBYr
+--Signature=_Tue__31_Jul_2012_14_40_54_+1000_gNgMG/1b=a7IM6rX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQF14JAAoJEECxmPOUX5FEvJ8QAJRe/SBD0/NWuvHTFFLK61fV
-s0a+82IEUip1YfUQbjPJtRKiNlmQaV99k1pI73N3tjMUkhDiLJ0oqS1SsF9Gz2FB
-M6ZcLSOqiw65LwTSGwwjPkDkuQrjXk3b3Cfmpa4EfMvHPqC6w1BjWZut/N+RgPMZ
-OajCHOD7nulHDJSipJ/0JGFpu6RnpTQccgKzwMTVAnZlw0Ds9OtHed7aOZo3FChr
-KtMVJaOJO3N/fjtDGlqtHVc7COTFprI4Acdk1hGQO9NRGVNhQFoDqJ5b9knpM4DF
-AK54CYTTsfHLBHa53hDGO5ifbmM35JE6eodZOyG1ohOu1TKO4gPRtGEbX4AVs/nK
-X5KTtphLcpjONPpKzwaelU/F0pOUVBso997Ej51+tUlQxFlDkHsDqDRPZpBm1Aws
-k+IYjkP1HoxahuLdExO1mnVFZQzbusD3NQbBRsIm2a1kPAMGk1JFlLUlkpHu0Gy4
-sxOfTPY1vlwCWF2tTL/bE+Rt39MLQuqf7FKyYq/UnmYK/81rJwi2z6cJQW5GB3Nr
-R9x0b3GbhJWzSAr3dGzTpbyHPWOs4ey7/+oZY/XfgtDXDsqAAZZ4T7AT9Ao/hT7p
-DrBQOxkI2FAkeTck8R4jYD2hd7I4jTAsvQTkqwO04Z2SN32tXmzIbYrgLP2bTQ9p
-jeBWqQmFSg+3eQ+CmYGK
-=Z9MA
+iQIcBAEBCAAGBQJQF2HWAAoJEECxmPOUX5FE1V4P/3Xf1GU5E55ET0ijKSRoEobx
+2v4HrvYfGFBgRdXiNp41tgiLRLcscfFrsSM7bfsSYp7CT3Yoe3WvAnk8SZwKmZck
+/szbY5eLJARTBS84LnzATVz+BJvGbxBgS5U74+knm+HXdMZd2Baf48SVwR97mF3F
+W6y/IkzNdV/fqvUU8S/HiJf+6YX+CttACF/u5xIFcmt7LYD5g+eFE0oyqL11IWX0
+/JWZCitAULXmyvpXSu4UfYwhGC3I9kvjYM4KyTirA4rYfO81ZSM8FmL8S0EHa5qR
+oLF2trEmHiDK5DTWoMfN6txelQ28s0tFMFIWM4ou0yKCarh6oK8+R+PPg/xmsAev
+XyHaCkVHF2x1iGqAQiI9gpvXbPS30Ju3CvdaARyRYauAmcx5gP2eSkxtCcFOHmql
+KmkehyDcruaSx5upI7zN0EItiTTiTT+2nVjg21lCUs7miuvlF629ns+9EwQynKpO
+fQ3IPliBzOHeCm5c3at3KDGzD3RDrskCjlqJN54yeTtIiOYfc6mJEG57eioFa2Pa
+p0PzaVaZL9pUQxL670PV7ffy1fx1BjsmxzUjWS5LzJWEyVoGFEn1pwdrqbDga09Y
+TSS63b4+v0bCwq9d7DgLO0THJ6RPhjWbLzkc80IV8ZlmVgrD6REewAIktTCRK9Pz
+B6Ur7aaxPzJ1BcKYmGM1
+=XruD
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__31_Jul_2012_14_24_41_+1000_.h4LwnBao9kjuBYr--
+--Signature=_Tue__31_Jul_2012_14_40_54_+1000_gNgMG/1b=a7IM6rX--
