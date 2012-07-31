@@ -1,37 +1,69 @@
-From: Michael Neuling <mikey@neuling.org>
-Subject: CRYPTO_DEV_NX merge problem (Re: linux-next: Tree for July 31)
-Date: Tue, 31 Jul 2012 15:58:58 +1000
-Message-ID: <31974.1343714338@neuling.org>
-References: <20120731152614.de6ebe9e0d4b8fc6645b793a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Tue, 31 Jul 2012 16:31:10 +1000
+Message-ID: <20120731163110.9315064260c09da3bc77a4d4@canb.auug.org.au>
+References: <20120731144054.59b0a6da6d071ea1bc061db0@canb.auug.org.au>
+	<CANN689HeXEdnPQUnFzZ2E7nsUktqF70vCv2ANsYRz9HhyxVhXg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__31_Jul_2012_16_31_10_+1000_s3j86J0BW1KIdV7M"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:49078 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752239Ab2GaF7A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Jul 2012 01:59:00 -0400
-In-reply-to: <20120731152614.de6ebe9e0d4b8fc6645b793a@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53188 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752239Ab2GaGbQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Jul 2012 02:31:16 -0400
+In-Reply-To: <CANN689HeXEdnPQUnFzZ2E7nsUktqF70vCv2ANsYRz9HhyxVhXg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kent Yoder <key@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, anton@samba.org, Seth Jennings <sjenning@linux.vnet.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>
+To: Michel Lespinasse <walken@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sage Weil <sage@inktank.com>
 
-> Please do not add anything to linux-next included branches/series that is
-> destined for v3.7 until after v3.6-rc1 is released.
+--Signature=_Tue__31_Jul_2012_16_31_10_+1000_s3j86J0BW1KIdV7M
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks like there is a merge conflict between:
-  commit 1b074ac867a2bd08a6f12f0feed7d91e06941723
-  Author: Seth Jennings <sjenning@linux.vnet.ibm.com>
-  Subject: powerpc/crypto: rework Kconfig
+Hi Michel,
 
-and 
-  commit fd297b3a7302ab866306f53c1fd1e97b083fe83e
-  Author: Anton Blanchard <anton@samba.org>
-  powerpc: Enable pseries hardware RNG and crypto modules
+On Mon, 30 Jul 2012 22:45:46 -0700 Michel Lespinasse <walken@google.com> wr=
+ote:
+>
+> There is a good chance that this is the right fix, if ceph doesn't use
+> the RB_CLEAR_NODE / RB_EMPTY_NODE macros or try to directly access the
+> rb_node fields. I wanted to grab the ceph tree to make sure, however
+> the first repo I found under that name did not have a commit
+> cd43045c2de6; where would be the correct place for me to fetch that ?
 
-Seth made CRYPTO_DEV_NX a bool and Anton set it as a module.
+These can always be found at
+http://git.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;a=3Dblob;f=
+=3DNext/Trees
+for the latest linux-next tree.  In this case it is
+git://github.com/ceph/ceph-client.git#master .
 
-Hence I get this with a pseries_defconfig
-  arch/powerpc/configs/pseries_defconfig:372:warning: symbol value 'm' invalid for CRYPTO_DEV_NX
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Seth: any reason this can stay as a tristate?
+--Signature=_Tue__31_Jul_2012_16_31_10_+1000_s3j86J0BW1KIdV7M
+Content-Type: application/pgp-signature
 
-Mikey
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQF3uuAAoJEECxmPOUX5FEeCIP/jd0lhntvJ7/7CvOQTu04qDg
+TQpqGV1Lqi4xkvt97LjUhqG8twR5jENWICU1RkcwMCOIxaegQ1SzgFpdA6A8P503
+ymL2R0ItNQBJ00qU6gks3PaOcWoLEdD46JuSnV6exVXmJbsQ7bUpV0E2Qc3uJbT5
+Ms2DtAjmHE//5p3vH6fRV10tgRQoB7jT5FtXjT5KWqu3sIcCw7Or3H/+huwwO2Xl
+alvLknTlh3hGVcNgH3UNmxcxeDPint58SlQ6sMzjfZJbCtK57acNoOAvaWOn9CXf
+wf5VVccmfA/aKobGLUVCrnblV6/uqd66mo8hvPiiZiyIe/En3iDJctQr0yvx8EnA
+Yd+EDXlUvarmKdQM8bxflk74SawvSzJSPKdTTWisWdrodrNVZhUrostSdxSXq29d
+92Mc9jGsAUJxGAkZnT9lbeB/ICCSA0abO6vd64P2Bj1G3mDMMTm+9K6WAZtdIh2V
+xjSR1IMpaj1IWHB6tdjHZf8q1rjPpRrPOqe3l9B3izmOmm0s3iZ7El2XW7Hfd3ly
+YF3DrPNiFa+kTDSDmJTpc3SpLxRZ0hlDlzr4CgS7VQl4wwDYqVuvMqssWRl6W9Mq
+HuMfpuoJCCeLE7s/WTKJwAf9T72Z5usmtROU1+UZIz1BItgdtG+RbohCp5XPMrTk
+NIk/NyY6Wxu4bBEU3Bda
+=Yjri
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__31_Jul_2012_16_31_10_+1000_s3j86J0BW1KIdV7M--
