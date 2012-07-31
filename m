@@ -1,48 +1,54 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: Tree for July 2 (crypto/hifn_795x)
-Date: Mon, 30 Jul 2012 15:49:18 +0800
-Message-ID: <20120730074918.GA5515@gondor.apana.org.au>
-References: <20120702172334.2618cae84cc57b4ec5a63ed7@canb.auug.org.au>
- <4FF1CBF2.8060303@xenotime.net>
- <20120709205441.11422bntesq3cdno@www.81.fi>
- <4FFB4FC6.7020509@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ceph tree with Linus' tree
+Date: Tue, 31 Jul 2012 11:58:53 +1000
+Message-ID: <20120731115853.a642cbd22bddb96f667520d1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4FFB4FC6.7020509@xenotime.net>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__31_Jul_2012_11_58_53_+1000_wYdTEsOSu=D1+LUR"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sage Weil <sage@newdream.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <elder@inktank.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jul 09, 2012 at 09:40:22PM +0000, Randy Dunlap wrote:
-> On 07/09/2012 10:54 AM, Jussi Kivilinna wrote:
-> 
-> > Quoting Randy Dunlap <rdunlap@xenotime.net>:
-> > 
-> >> On 07/02/2012 12:23 AM, Stephen Rothwell wrote:
-> >>
-> >>> Hi all,
-> >>>
-> >>> Changes since 20120629:
-> >>>
-> >>
-> >>
-> >> on i386:
-> >>
-> >>
-> >> ERROR: "__divdi3" [drivers/crypto/hifn_795x.ko] undefined!
-> >>
-> > 
-> > This is caused by commit feb7b7ab928afa97a79a9c424e4e0691f49d63be. hifn_795x has "DIV_ROUND_UP(NSEC_PER_SEC, dev->pk_clk_freq)", which should be changed to DIV_ROUND_UP_ULL now that NSEC_PER_SEC is 64bit on 32bit archs. Patch to fix hifn_795x is attached (only compile tested).
-> 
-> 
-> 
-> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Tue__31_Jul_2012_11_58_53_+1000_wYdTEsOSu=D1+LUR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Patch applied.  Thanks!
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Hi Sage,
+
+Today's linux-next merge of the ceph tree got a conflict in
+net/ceph/messenger.c between commit 5bdca4e0768d ("libceph: fix messenger
+retry") from Linus' tree and commit ab166d5aa3bc ("libceph: separate
+banner and connect writes") from the ceph tree.
+
+I fixed it up (removed the calls to ceph_con_out_kvec_reset()) and can
+carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__31_Jul_2012_11_58_53_+1000_wYdTEsOSu=D1+LUR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQFzvdAAoJEECxmPOUX5FEeUQP/Az9+hMxPhQVnETe1SB7KAFi
+jNu+5vm7aF/m2p4qUmu6Qqy9ozHMKK3lmOWN9CAOA5ghc5uM3unS7npaY4CGLp0h
+Erxw5+lGdyrtDudYEbHbfa+WuV1TTthe+srRchxw5tw877xQDSh4D4oXji8AbstJ
+4n+WN0QrzyHLcVeWamD49cSJjMcZ4iCg0rM/mn+4VN1z+DD7S5yR2CiTdu+Rt0Jl
+bTaAVJ16PAua32lfMhe8+kKInV3Z77juAJ6/gk4+wsOaE8BfyHSgr3X9mrMfrtz2
+Q8YRhlAYVrjNRpmry1bA1s9vGzQzKko46KfWaeCVtkOIgjeshZ3+yu2OVPOhu6a4
+3PJ3C39VGnZBD2UpeDncjZD9io38vLduHtxEbDo/wy+CJZVfP/vuQu0GDh2bTbfo
+BWG/gQEjMSBphtctpo0aQV6UKERTbw6QvAkGLG9qpiOmqFD5c5NdF45IegP5B9OG
+uFG9StQVCTJCSH9PN8ZApxb9o/FJaxwzL341wSwgCcvic2vwQw1Y56Ek7WKj1ccy
+ntTbNuyiTZ242rV75hQqzLxrNd/CKgpCSJowv1F09s910IaPwyhFldJ8wGI0WRL3
+w4WKdqTI/16BER6hfibK0ZFSUTNteao1iOAlQ81p5Gn1fs3GBZU8hBJbqcEj3EYZ
+B9a+f9ZWH0bPS6zu70bu
+=9rxo
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__31_Jul_2012_11_58_53_+1000_wYdTEsOSu=D1+LUR--
