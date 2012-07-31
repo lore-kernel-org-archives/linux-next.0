@@ -1,71 +1,32 @@
-From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Subject: Re: linux-next: manual merge of the akpm tree with the nfs tree
-Date: Tue, 31 Jul 2012 15:35:07 +0000
-Message-ID: <1343748906.5528.17.camel@lade.trondhjem.org>
-References: <20120731142441.0d01100f9d050ec6e479c923@canb.auug.org.au>
-	 <20120731103336.GN612@suse.de> <1343745442.519.20.camel@lade.trondhjem.org>
-	 <20120731151936.GR612@suse.de>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for July 31 (media/radio-tea5777)
+Date: Tue, 31 Jul 2012 10:22:25 -0700
+Message-ID: <50181451.5040202@xenotime.net>
+References: <20120731152614.de6ebe9e0d4b8fc6645b793a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120731151936.GR612@suse.de>
-Content-Language: en-US
-Content-ID: <6E2022E602772D42917A6AFB65E4D90B@tahoe.netapp.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mel Gorman <mgorman@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jeff Layton <jlayton@redhat.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20120731152614.de6ebe9e0d4b8fc6645b793a@canb.auug.org.au>
+Sender: linux-media-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-T24gVHVlLCAyMDEyLTA3LTMxIGF0IDE2OjE5ICswMTAwLCBNZWwgR29ybWFuIHdyb3RlOg0KPiBP
-biBUdWUsIEp1bCAzMSwgMjAxMiBhdCAwMjozNzoyNFBNICswMDAwLCBNeWtsZWJ1c3QsIFRyb25k
-IHdyb3RlOg0KPiA+IE9uIFR1ZSwgMjAxMi0wNy0zMSBhdCAxMTozMyArMDEwMCwgTWVsIEdvcm1h
-biB3cm90ZToNCj4gPiA+IE9uIFR1ZSwgSnVsIDMxLCAyMDEyIGF0IDAyOjI0OjQxUE0gKzEwMDAs
-IFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+ID4gPiA+IEhpIEFuZHJldywNCj4gPiA+ID4gDQo+
-ID4gPiA+IFRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgYWtwbSB0cmVlIGdvdCBhIGNv
-bmZsaWN0IGluDQo+ID4gPiA+IG5ldC9zdW5ycGMveHBydHNvY2suYyBiZXR3ZWVuIGNvbW1pdCA1
-Y2YwMmQwOWI1MGIgKCJuZnM6IHNraXAgY29tbWl0IGluDQo+ID4gPiA+IHJlbGVhc2VwYWdlIGlm
-IHdlJ3JlIGZyZWVpbmcgbWVtb3J5IGZvciBmcy1yZWxhdGVkIHJlYXNvbnMiKSBmcm9tIHRoZSBu
-ZnMNCj4gPiA+ID4gdHJlZSBhbmQgY29tbWl0ICJuZnM6IGVuYWJsZSBzd2FwIG9uIE5GUyIgZnJv
-bSB0aGUgYWtwbSB0cmVlLg0KPiA+ID4gPiANCj4gPiA+ID4gSnVzdCBjb250ZXh0IGNoYW5nZXM/
-ICBJIGZpeGVkIGl0IHVwIChJIHRoaW5rIC0gc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5DQo+ID4g
-PiA+IHRoZSBmaXggYXMgbmVjZXNzYXJ5Lg0KPiA+ID4gDQo+ID4gPiBGdW5jdGlvbmFsbHkgaXQg
-bG9va3MgZmluZS4gQXMgeW91IHNheSwgaXQgYWxsIGxvb2tzIGxpa2UgY29udGV4dA0KPiA+ID4g
-Y2hhbmdlcy4gQXJndWFibHkgY29kZSBsaWtlIHRoaXMNCj4gPiA+IA0KPiA+ID4gY3VycmVudC0+
-ZmxhZ3MgJj0gflBGX0ZTVFJBTlMNCj4gPiA+IA0KPiA+ID4gY291bGQgdXNlIHRza19yZXN0b3Jl
-X2ZsYWdzIGluc3RlYWQoKSBldmVuIHRob3VnaCBpdCBzaG91bGQgbmV2ZXIgYmUNCj4gPiA+IG5l
-Y2Vzc2FyeSBhcyBQRl9GU1RSQU5TIHdvdWxkIG5vdCBiZSBzZXQgb24gZnVuY3Rpb24gZW50cnku
-IEhvd2V2ZXIsDQo+ID4gPiBpdCB3b3VsZCBzZXQgdXAgYSBkZXBlZGVuY3kgYmV0d2VlbiB0aGUg
-cGF0Y2ggc2V0cyB0aGF0IGlzIHVuZGVzaXJhYmxlLg0KPiA+ID4gSWYgYm90aCBzZXRzIGdldCBt
-ZXJnZWQgdGhlbiBpdCBtaWdodCBtYWtlIHNlbnNlIGFzIGEgY2xlYW51cCB0byB1c2UNCj4gPiA+
-IHRza19yZXN0b3JlX2ZsYWdzKCkgYnV0IG5vdCB1bnRpbCB0aGVuLg0KPiA+ID4gDQo+ID4gPiBU
-aGFua3MgU3RlcGhlbi4NCj4gPiA+IA0KPiA+IA0KPiA+IERvIHdlIHJlYWxseSBuZWVkIHRvIHNl
-dCBib3RoIFBGX0ZTVFJBTlMgYW5kIFBGX01FTUFMTE9DIGhlcmU/IFRoZQ0KPiA+IHJlYXNvbiB3
-aHkgSSBtZXJnZWQgdGhlIFBGX0ZTVFJBTlMgcGF0Y2ggaXMgdGhhdCB3ZSBoYXZlIHRoZSBkZWFk
-bG9jaw0KPiA+IHByb2JsZW0gd2hlbiBhbGxvY2F0aW5nIGEgbmV3IHNvY2tldCBldmVuIGJlZm9y
-ZSB3ZSBhZGQgc3dhcC1vdmVyLW5mcy4NCj4gPiBBZGRpbmcgUEZfRlNUUkFOUyB0byBkaXNhbGxv
-dyBlbnRyeSBpbnRvIHRoZSBORlMgbGF5ZXIgYnkgdGhlIG1lbW9yeQ0KPiA+IGFsbG9jYXRvciBm
-aXhlcyB0aGF0IGlzc3VlLg0KPiANCj4gUEZfRlNUUkFOUyBpcyB0byBwcmV2ZW50IHJlY3Vyc2lv
-biBpbnRvIE5GUyBhbmQgaXMgc2V0IHdoZXRoZXIgc3dhcC1vdmVyLU5GUw0KPiBpcyB1c2VkIG9y
-IG5vdCBhbmQgZm9yIGFsbCByZXF1ZXN0cy4NCj4gDQo+ID4gV2hhdCB2YWx1ZSBkb2VzIFBGX01F
-TUFMTE9DIGFkZD8gSXMgdGhhdCBpbiBvcmRlciB0byBwcmV2ZW50IHJlY3Vyc2lvbg0KPiA+IGlu
-dG8gb3RoZXIgYXJlYXMgb2YgdGhlIHN3YXAgY29kZSAoc2F5LCBpZiB5b3UgbWl4IHN3YXAtb3Zl
-ci1uZnMgd2l0aA0KPiA+IG9yZGluYXJ5IHN3YXAtdG8tZGlzayk/DQo+ID4gDQo+IA0KPiBQRl9N
-RU1BTExPQyBpcyBub3JtYWxseSB0byBwcmV2ZW50IHRoZSBwYWdlIHJlY2xhaW0gcmVjdXJzaW5n
-IGludG8NCj4gaXRzZWxmLiBQYWdlIHJlY2xhaW0gY2FuIGNhbGwgdGhlIHBhZ2UgYWxsb2NhdG9y
-IGFuZCB0aGF0IGNhbm5vdCByZS1lbnRlcg0KPiBwYWdlIHJlY2xhaW0uDQo+IA0KPiBJbiB0aGUg
-Y2FzZSBvZiBzd2FwLW92ZXItTkZTLCBQRl9NRU1BTExPQyBpcyBzZXQgb25seSBpZiB0aGUgc29j
-a2V0IGlzDQo+IGJlaW5nIHVzZWQgZm9yIHN3YXBwaW5nLiBJbiBzb2Z0aXJxIGNvbnRleHQsIHRo
-ZSBhbGxvY2F0aW9uIHJlcXVlc3QgaXMNCj4gYWxsb3dlZCB0byB1c2UgUEZNRU1BTExPQyByZXNl
-cnZlcyB0byBhdm9pZCBkZWFkbG9jay4NCj4gDQo+IEkgZG8gbm90IHNlZSBhbiBvYnZpb3VzIHdh
-eSB0byBjb2xsYXBzZSB0aGUgdHdvIGZsYWdzIHRvZ2V0aGVyLg0KPiBQRl9GU1RSQU5TIHNob3Vs
-ZCBub3QgbWVhbiB0aGUgUEZNRU1BTExPQyByZXNlcnZlcyBjYW4gYmUgdXNlZCBhbmQNCj4gUEZN
-RU1BTExPQyBpcyBub3Qgc2V0IGZvciBhbGwgcmVxdWVzdHMuDQoNClJpZ2h0LCBidXQgaW4gdGhp
-cyBjYXNlLCB3ZSdyZSB0YWxraW5nIGFib3V0IGEgR0ZQX0tFUk5FTCBhbGxvY2F0aW9uDQp0aGF0
-IGFsd2F5cyBoYXBwZW5zIGluIGFuIHJwY2lvZCB3b3JrcXVldWUgcHJvY2VzcyBjb250ZXh0LCBz
-byB3ZSBzdGlsbA0Kd29uJ3QgYmUgYWJsZSB0byBhY2Nlc3MgdGhlIFBGTUVNQUxMT0MgcmVzZXJ2
-ZXMgaWYgSSB1bmRlcnN0YW5kIHlvdQ0KY29ycmVjdGx5Pw0KDQpJIHVuZGVyc3RhbmQgdGhlIHZh
-bHVlIG9mIHByZXZlbnRpbmcgdGhlIHBhZ2UgcmVjbGFpbSByZWN1cnNpbmcgaW50bw0KaXRzZWxm
-LCBidXQgaW4gdGhpcyBjYXNlLCB3ZSdyZSB0YWxraW5nIGFib3V0IGEgc2VwYXJhdGUgcHJvY2Vz
-cyB0aGF0IGlzDQpvcGVyYXRpbmcgb24gYmVoYWxmIG9mIHRoZSBhbGxvY2F0b3IgKG11Y2ggbGlr
-ZSBrc3dhcGQgZG9lcykuDQoNCkNoZWVycw0KICBUcm9uZA0K
+On 07/30/2012 10:26 PM, Stephen Rothwell wrote:
+
+> Hi all,
+> 
+> Changes since 20120730:
+> 
+
+
+on i386:
+
+drivers/built-in.o: In function `radio_tea5777_set_freq':
+radio-tea5777.c:(.text+0x4d8704): undefined reference to `__udivdi3'
+
+
+
+-- 
+~Randy
