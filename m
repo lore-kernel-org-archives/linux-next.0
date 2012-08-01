@@ -1,50 +1,79 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: No tree for Aug 1
-Date: Wed, 1 Aug 2012 17:58:27 +1000
-Message-ID: <20120801175827.c39ce1b02bef7b8f380c21f9@canb.auug.org.au>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: linux-next: Tree for July 31 (media/radio-tea5777)
+Date: Wed, 01 Aug 2012 10:22:53 +0200
+Message-ID: <5018E75D.3030907@redhat.com>
+References: <20120731152614.de6ebe9e0d4b8fc6645b793a@canb.auug.org.au> <50181451.5040202@xenotime.net> <50183865.9090700@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__1_Aug_2012_17_58_27_+1000_BLxzncQBt04RJ6ND"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40668 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753095Ab2HAH6g (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Aug 2012 03:58:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48766 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752416Ab2HAIRb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Aug 2012 04:17:31 -0400
+In-Reply-To: <50183865.9090700@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
 
---Signature=_Wed__1_Aug_2012_17_58_27_+1000_BLxzncQBt04RJ6ND
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for fixing this for me!
 
+Acked-by: Hans de Goede <hdegoede@redhat.com>
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__1_Aug_2012_17_58_27_+1000_BLxzncQBt04RJ6ND
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQGOGjAAoJEECxmPOUX5FElzYP/jvh6TCFl+CUKfgiId6lDuYN
-4kvjBgIbp4UyRjj4TjqJmxgx82uLI3+BPaAQbZ1XXaunoB5BCO96jTXbRCjKAnrt
-g9rwrnPdsNWqXoUFqLBuchBRaaos4XQcJ+hGbDT1wa5BajN/WBpC143Fnh1c/Pct
-v84dne65vy+pTek/oikfHC86K2xb0ECjbR1T8OjyKHr4QvzcXw+eDUX/TYOF2gBR
-y87ed4bikPSi4kBwz4F1u75HKdsZPQU58ay7APorEkhhFlNLMvyYBwfZLjAoObOk
-iuj+BL5bclIU77WlhyUiYzAN4Hndhw8OkpGcEqZ+Y1PE3onqlGsWUJIxOCxAY0Fq
-eqLQRCpKHFHxjd2TpuMJmH7AenmXzXT1rdwFsC7UPIP8C6Tn1dxDCqrrrqooT72H
-YFfX3Y6iFhQ8mz/h8qFWJ589ebi5jHRGnxioUMgEDniOUmYCRM195pKnP0XU0NGu
-VeXWj7i1LKmQ7WsYdRKmbzxCLWlc0AwtJrdot+Z7txrfXoPB7Jq6tvh9lB+kG+gr
-jnbEC1Tqjinc92nq+vQiZukf7DcrmaPFa0eKRT3jKAyt61Wg3bRU7BVOsumTrAjM
-AfGPEXQT+J5WpCFzodHCa8zqK/gboLx2Mnmi0MZgnJ6VjqO/v/HmhqKl4ESCHn2i
-wcVAD0FNvgL/Ew6DILr7
-=RCnI
------END PGP SIGNATURE-----
-
---Signature=_Wed__1_Aug_2012_17_58_27_+1000_BLxzncQBt04RJ6ND--
+On 07/31/2012 09:56 PM, Mauro Carvalho Chehab wrote:
+> Em 31-07-2012 14:22, Randy Dunlap escreveu:
+>> drivers/built-in.o: In function `radio_tea5777_set_freq':
+>> radio-tea5777.c:(.text+0x4d8704): undefined reference to `__udivdi3'
+>>
+> The patch below should fix it.
+>
+> Thanks for reporting it!
+>
+> Regards,
+> Mauro
+>
+> [media] radio-tea5777: use library for 64bits div
+>
+> From: Mauro Carvalho Chehab <mchehab@redhat.com>
+>
+> drivers/built-in.o: In function `radio_tea5777_set_freq':
+> radio-tea5777.c:(.text+0x4d8704): undefined reference to `__udivdi3'
+>
+> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+>
+> diff --git a/drivers/media/radio/radio-tea5777.c b/drivers/media/radio/radio-tea5777.c
+> index 3e12179..5bc9fa6 100644
+> --- a/drivers/media/radio/radio-tea5777.c
+> +++ b/drivers/media/radio/radio-tea5777.c
+> @@ -33,6 +33,7 @@
+>   #include <media/v4l2-fh.h>
+>   #include <media/v4l2-ioctl.h>
+>   #include <media/v4l2-event.h>
+> +#include <asm/div64.h>
+>   #include "radio-tea5777.h"
+>
+>   MODULE_AUTHOR("Hans de Goede <perex@perex.cz>");
+> @@ -158,10 +159,11 @@ static int radio_tea5777_set_freq(struct radio_tea5777 *tea)
+>   	int res;
+>
+>   	freq = clamp_t(u32, tea->freq,
+> -		       TEA5777_FM_RANGELOW, TEA5777_FM_RANGEHIGH);
+> -	freq = (freq + 8) / 16; /* to kHz */
+> +		       TEA5777_FM_RANGELOW, TEA5777_FM_RANGEHIGH) + 8;
+> +	do_div(freq, 16); /* to kHz */
+>
+> -	freq = (freq - TEA5777_FM_IF) / TEA5777_FM_FREQ_STEP;
+> +	freq -= TEA5777_FM_IF;
+> +	do_div(freq, TEA5777_FM_FREQ_STEP);
+>
+>   	tea->write_reg &= ~(TEA5777_W_FM_PLL_MASK | TEA5777_W_FM_FREF_MASK);
+>   	tea->write_reg |= freq << TEA5777_W_FM_PLL_SHIFT;
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
