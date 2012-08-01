@@ -1,76 +1,66 @@
-From: Michael Neuling <mikey@neuling.org>
-Subject: Re: [PATCH v2] powerpc/crypto: fix defconfig break
-Date: Wed, 01 Aug 2012 14:36:40 +1000
-Message-ID: <15996.1343795800@neuling.org>
-References: <1343794529-28329-1-git-send-email-sjenning@linux.vnet.ibm.com>
+From: "AnilKumar, Chimata" <anilkumar@ti.com>
+Subject: RE: [PATCH] mfd/regulator: tps65217: Move regulator plat data
+ handling to regulator
+Date: Wed, 1 Aug 2012 05:25:29 +0000
+Message-ID: <331ABD5ECB02734CA317220B2BBEABC13EA073F8@DBDE01.ent.ti.com>
+References: <1342776601-8773-1-git-send-email-anilkumar@ti.com>
+ <20120727124816.GM16859@sortiz-mobl>
+ <331ABD5ECB02734CA317220B2BBEABC13EA06F79@DBDE01.ent.ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:53199 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751015Ab2HAEgn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Aug 2012 00:36:43 -0400
-In-reply-to: <1343794529-28329-1-git-send-email-sjenning@linux.vnet.ibm.com>
+Received: from devils.ext.ti.com ([198.47.26.153]:33687 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751335Ab2HAFZs convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Aug 2012 01:25:48 -0400
+In-Reply-To: <331ABD5ECB02734CA317220B2BBEABC13EA06F79@DBDE01.ent.ti.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Seth Jennings <sjenning@linux.vnet.ibm.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kent Yoder <key@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, anton@samba.org
+To: "AnilKumar, Chimata" <anilkumar@ti.com>, 'Samuel Ortiz' <sameo@linux.intel.com>
+Cc: "'broonie@opensource.wolfsonmicro.com'" <broonie@opensource.wolfsonmicro.com>, "'dan.carpenter@oracle.com'" <dan.carpenter@oracle.com>, "'rdunlap@xenotime.net'" <rdunlap@xenotime.net>, "'sfr@canb.auug.org.au'" <sfr@canb.auug.org.au>, "'linux-next@vger.kernel.org'" <linux-next@vger.kernel.org>, "'linux-omap@vger.kernel.org'" <linux-omap@vger.kernel.org>
 
-Seth Jennings <sjenning@linux.vnet.ibm.com> wrote:
+Hi Samuel,
 
-> As part of the Kconfig rework for drivers/crypto/nx, the meaning of
-> CONFIG_CRYPTO_DEV_NX was changed.  At the same time this commit was
-> heading upstream
+On Tue, Jul 31, 2012 at 20:00:21, AnilKumar, Chimata wrote:
+> Hi Samuel,
 > 
-> fd297b3a7302ab866306f53c1fd1e97b083fe83e
-> powerpc: Enable pseries hardware RNG and crypto module
+> On Fri, Jul 27, 2012 at 18:18:17, Samuel Ortiz wrote:
+> > Hi Anilkumar,
+> > 
+> > On Fri, Jul 20, 2012 at 03:00:01PM +0530, AnilKumar Ch wrote:
+> > > Regulator platform data handling was mistakenly added to MFD
+> > > driver. So we will see build errors if we compile MFD drivers
+> > > without CONFIG_REGULATOR. This patch moves regulator platform
+> > > data handling from TPS65217 MFD driver to regulator driver.
+> > > 
+> > > This makes MFD driver independent of REGULATOR framework so
+> > > build error is fixed if CONFIG_REGULATOR is not set.
+> > > 
+> > > drivers/built-in.o: In function `tps65217_probe':
+> > > tps65217.c:(.devinit.text+0x13e37): undefined reference
+> > > to `of_regulator_match'
+> > > 
+> > > This patch is based on linux-next (20120720) tree
+> > > 
+> > > Signed-off-by: AnilKumar Ch <anilkumar@ti.com>
+> > > ---
+> > >  drivers/mfd/tps65217.c                 |  130 +++++++++++---------------------
+> > >  drivers/regulator/tps65217-regulator.c |  124 ++++++++++++++++++++++++++----
+> > >  include/linux/mfd/tps65217.h           |   12 ++-
+> > >  3 files changed, 161 insertions(+), 105 deletions(-)
+> > It doesn't apply to my for-next branch. Could you please re-send this one
+> > after the merge window is closed ? I'll push that as part of the MFD fixes for
+> > 3.6.
+> > 
 > 
-> still used the old meaning, set CONFIG_CRYPTO_DEV_NX=m when it
-> is now a bool in the Kconfig.  This patch repairs the break.
+> I fetch regulator tree and applied on top of for-next branch and it is cleanly
+> applied.
 > 
-> Reported-by: Michael Neuling <mikey@neuling.org>
-> Signed-off-by: Seth Jennings <sjenning@linux.vnet.ibm.com>
 
-Works, thanks.
+My bad I picked up wrong tree, I will send the new version (if require) based on
+"MFD for-next" tree once the merge window closed.
 
-Tested-by: Michael Neuling <mikey@neuling.org>
-
-> ---
-> This patch is based on Linus master which already contains
-> the commit above.  Please apply this patch before my patchset
-> (powerpc/crypto: IBM Power7+ in-Nest compression support) to
-> avoid the defconfig break.
-> 
->  arch/powerpc/configs/ppc64_defconfig   |    3 ++-
->  arch/powerpc/configs/pseries_defconfig |    3 ++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/configs/ppc64_defconfig b/arch/powerpc/configs/ppc64_defconfig
-> index db27c82..2d9150a1 100644
-> --- a/arch/powerpc/configs/ppc64_defconfig
-> +++ b/arch/powerpc/configs/ppc64_defconfig
-> @@ -487,7 +487,8 @@ CONFIG_CRYPTO_TWOFISH=m
->  CONFIG_CRYPTO_LZO=m
->  # CONFIG_CRYPTO_ANSI_CPRNG is not set
->  CONFIG_CRYPTO_HW=y
-> -CONFIG_CRYPTO_DEV_NX=m
-> +CONFIG_CRYPTO_DEV_NX=y
-> +CONFIG_CRYPTO_DEV_NX_ENCRYPT=m
->  CONFIG_VIRTUALIZATION=y
->  CONFIG_KVM_BOOK3S_64=m
->  CONFIG_KVM_BOOK3S_64_HV=y
-> diff --git a/arch/powerpc/configs/pseries_defconfig b/arch/powerpc/configs/pseries_defconfig
-> index 1f65b3c..9f4a936 100644
-> --- a/arch/powerpc/configs/pseries_defconfig
-> +++ b/arch/powerpc/configs/pseries_defconfig
-> @@ -369,7 +369,8 @@ CONFIG_CRYPTO_TWOFISH=m
->  CONFIG_CRYPTO_LZO=m
->  # CONFIG_CRYPTO_ANSI_CPRNG is not set
->  CONFIG_CRYPTO_HW=y
-> -CONFIG_CRYPTO_DEV_NX=m
-> +CONFIG_CRYPTO_DEV_NX=y
-> +CONFIG_CRYPTO_DEV_NX_ENCRYPT=m
->  CONFIG_VIRTUALIZATION=y
->  CONFIG_KVM_BOOK3S_64=m
->  CONFIG_KVM_BOOK3S_64_HV=y
-> -- 
-> 1.7.9.5
-> 
+Thanks,
+AnilKumar
