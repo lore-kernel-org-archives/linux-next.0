@@ -1,59 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: removal of some trees
-Date: Thu, 2 Aug 2012 08:41:54 +1000
-Message-ID: <20120802084154.875a13db0ec1ebd3f5a4dab3@canb.auug.org.au>
+Subject: linux-next: unable to fetch the moduleh tree
+Date: Thu, 2 Aug 2012 08:54:48 +1000
+Message-ID: <20120802085448.5fb877ce7747128ba354f605@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__2_Aug_2012_08_41_54_+1000_S6wVwb8Ag.PY_P/G"
+ boundary="Signature=_Thu__2_Aug_2012_08_54_48_+1000_16/lLegNb=dvhQ6H"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43921 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44381 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756204Ab2HAWmE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Aug 2012 18:42:04 -0400
+	with ESMTP id S1752398Ab2HAWy4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Aug 2012 18:54:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ben Dooks <ben-linux@fluff.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
---Signature=_Thu__2_Aug_2012_08_41_54_+1000_S6wVwb8Ag.PY_P/G
+--Signature=_Thu__2_Aug_2012_08_54_48_+1000_16/lLegNb=dvhQ6H
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ben,
+Hi Paul,
 
-Since I haven't been able to fetch these trees for quite some time and I
-haven't heard from you about them, I am removing the following trees from
-linux-next.  If/When you have time to maintain these trees again, we can
-add them back without problems.
+For the last few days, I have been getting this error when trying to
+fetch the moduleh tree:
 
-samsung	 	git://git.fluff.org/bjdooks/linux.git#next-samsung
-bjdooks-i2c	git://git.fluff.org/bjdooks/linux.git#next-i2c
+fatal: unable to connect to openlinux.windriver.com:
+openlinux.windriver.com[0: 192.124.127.100]: errno=3DConnection timed out
 
+Is this tree still in use?  Or should I just remove it from linux-next?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__2_Aug_2012_08_41_54_+1000_S6wVwb8Ag.PY_P/G
+--Signature=_Thu__2_Aug_2012_08_54_48_+1000_16/lLegNb=dvhQ6H
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQGbCyAAoJEECxmPOUX5FEh6EP/j/Axli6VGXC63GA1YVd0wBU
-FJ1WPqEefn9ceC9bq6Ypadh0avG8k2pYdJxinwfufH97BTOOV/htKIvwarhHH4c5
-13MV0xG+PmS+7FFU/TXAibDw993uIFIIOliKxzoyGtj8NtYCAizlt/8+NsQZ1isL
-eaj2WAB942O0NuK2EmF3RXxoXJm+Pd80IkJWMuy/Y8VvmrEbEJDyYbxE6Rmt7wkY
-DQj6+YEw5Gj3rq66lTQG53dVjWKM54ahlLH3LxVuFLp0soluUICqkr7P2CXDbwU6
-37ghkvkQ7u0+tS4FMMmV7SRtzwT5V99bZrN+MSPjSJtjQCKke5Ogag3qmM9oH9bU
-RNcZUQ54QOxNshXHTqSfssjhz1z8/3N1cHUn+T/9RCF7vz/TWDkNisRM4YdYW8mY
-JjZfNEC6iMyufIXqxVMdOA21Re6kRXhCKOJwdpRWslaP1qzWXaKd2IzEb3muf+8I
-FOLhuFKpGp4WAzON5pYT8CQpHSEuce2lyhB9sA0aLpmo/H1oBSdZF5V1d9jT0MI9
-AZwVeV+6IpzVbbkgCvqQA99Pb7vUoTRMo/j+RQdXfcpIY8GXYgNqeD6qMrjVP9or
-Y1awY3xEmvZGqS5qdDu3q9IQ49WJwrZiWZZ/Szh+lOh8to58wOD0u33DZu3yrPBW
-5NZBqIhR75XQeGjdh/AI
-=WbNY
+iQIcBAEBCAAGBQJQGbO4AAoJEECxmPOUX5FEeQMP/A1iXz6KhIwxGHijBFzYknun
+HDfQ70qHvEYM9IJfn59NDHQyY5NJOmoY4zlhcaYOGxy4hrKWgM7FhAiCVYTsOCsX
+aXyLh7QSQOIsNN8W59BLo6LLJiFeheTm/Of1dCTGGbmlxpOwbRom7zxFK/XpMh4Q
+nzATy4NNBJfaZ5TtaSSg3WRx48XVkhNhhH1eoV72D/qis+BTSc0A4YHVo2PpNOuz
+hyDjjRil4lo/Fm1MqpfBm7WRNXRj8PeUEuLtKHFc8y3GnK+dXY310zv/0t5wMTo4
+diS2lMiBDolkq2ienFp1VeiUtuKmXGhWJ3X10/yLK+N6PF8N/nBxZMSabxVX2FcN
+feATUt7r3WicA+0fI5YB7wo+0P72dbJYITpm263Wq4EJ232AWzTg9tNrfcKRlU3e
+TVJMsM667vtyYaLT8BBe5wswpwjVLtDCELZEQnOrQZzR+5OHPbmhsUZT4REXINw7
+47ik/pgWYtnpiv0zmhUEEim7IK0T5rYQksVASJSysesin2CnJ+ebjR0eB7CvHUJh
+QeUGl7C9GQfxqhpqV7kbs8LHXvJVseDB96nqfsmlNXqQvW76ubDWKdCt7dWc7Efg
+vzbM5jAunUrfDBadodgJV0MHftrxVC9SWx9O6XIXJMocLqDs7IZjUX4DyAA7aA4N
+CyFSEd7U1frexa+Vu/aU
+=BkOO
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__2_Aug_2012_08_41_54_+1000_S6wVwb8Ag.PY_P/G--
+--Signature=_Thu__2_Aug_2012_08_54_48_+1000_16/lLegNb=dvhQ6H--
