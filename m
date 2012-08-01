@@ -1,79 +1,51 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: linux-next: Tree for July 31 (media/radio-tea5777)
-Date: Wed, 01 Aug 2012 10:22:53 +0200
-Message-ID: <5018E75D.3030907@redhat.com>
-References: <20120731152614.de6ebe9e0d4b8fc6645b793a@canb.auug.org.au> <50181451.5040202@xenotime.net> <50183865.9090700@redhat.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH v2] powerpc/crypto: fix defconfig break
+Date: Wed, 1 Aug 2012 17:49:31 +0800
+Message-ID: <20120801094931.GA15975@gondor.apana.org.au>
+References: <1343794529-28329-1-git-send-email-sjenning@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:48766 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752416Ab2HAIRb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Aug 2012 04:17:31 -0400
-In-Reply-To: <50183865.9090700@redhat.com>
+Received: from sting.hengli.com.au ([178.18.18.71]:55070 "EHLO
+	fornost.hengli.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753601Ab2HAJto (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Aug 2012 05:49:44 -0400
+Content-Disposition: inline
+In-Reply-To: <1343794529-28329-1-git-send-email-sjenning@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
+To: Seth Jennings <sjenning@linux.vnet.ibm.com>
+Cc: Michael Neuling <mikey@neuling.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kent Yoder <key@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, anton@samba.org
 
-Thanks for fixing this for me!
+On Tue, Jul 31, 2012 at 11:15:29PM -0500, Seth Jennings wrote:
+> As part of the Kconfig rework for drivers/crypto/nx, the meaning of
+> CONFIG_CRYPTO_DEV_NX was changed.  At the same time this commit was
+> heading upstream
+> 
+> fd297b3a7302ab866306f53c1fd1e97b083fe83e
+> powerpc: Enable pseries hardware RNG and crypto module
+> 
+> still used the old meaning, set CONFIG_CRYPTO_DEV_NX=m when it
+> is now a bool in the Kconfig.  This patch repairs the break.
+> 
+> Reported-by: Michael Neuling <mikey@neuling.org>
+> Signed-off-by: Seth Jennings <sjenning@linux.vnet.ibm.com>
+> ---
+> This patch is based on Linus master which already contains
+> the commit above.  Please apply this patch before my patchset
+> (powerpc/crypto: IBM Power7+ in-Nest compression support) to
+> avoid the defconfig break.
 
-Acked-by: Hans de Goede <hdegoede@redhat.com>
+OK, I've rebased my tree and folded this into
 
-On 07/31/2012 09:56 PM, Mauro Carvalho Chehab wrote:
-> Em 31-07-2012 14:22, Randy Dunlap escreveu:
->> drivers/built-in.o: In function `radio_tea5777_set_freq':
->> radio-tea5777.c:(.text+0x4d8704): undefined reference to `__udivdi3'
->>
-> The patch below should fix it.
->
-> Thanks for reporting it!
->
-> Regards,
-> Mauro
->
-> [media] radio-tea5777: use library for 64bits div
->
-> From: Mauro Carvalho Chehab <mchehab@redhat.com>
->
-> drivers/built-in.o: In function `radio_tea5777_set_freq':
-> radio-tea5777.c:(.text+0x4d8704): undefined reference to `__udivdi3'
->
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
->
-> diff --git a/drivers/media/radio/radio-tea5777.c b/drivers/media/radio/radio-tea5777.c
-> index 3e12179..5bc9fa6 100644
-> --- a/drivers/media/radio/radio-tea5777.c
-> +++ b/drivers/media/radio/radio-tea5777.c
-> @@ -33,6 +33,7 @@
->   #include <media/v4l2-fh.h>
->   #include <media/v4l2-ioctl.h>
->   #include <media/v4l2-event.h>
-> +#include <asm/div64.h>
->   #include "radio-tea5777.h"
->
->   MODULE_AUTHOR("Hans de Goede <perex@perex.cz>");
-> @@ -158,10 +159,11 @@ static int radio_tea5777_set_freq(struct radio_tea5777 *tea)
->   	int res;
->
->   	freq = clamp_t(u32, tea->freq,
-> -		       TEA5777_FM_RANGELOW, TEA5777_FM_RANGEHIGH);
-> -	freq = (freq + 8) / 16; /* to kHz */
-> +		       TEA5777_FM_RANGELOW, TEA5777_FM_RANGEHIGH) + 8;
-> +	do_div(freq, 16); /* to kHz */
->
-> -	freq = (freq - TEA5777_FM_IF) / TEA5777_FM_FREQ_STEP;
-> +	freq -= TEA5777_FM_IF;
-> +	do_div(freq, TEA5777_FM_FREQ_STEP);
->
->   	tea->write_reg &= ~(TEA5777_W_FM_PLL_MASK | TEA5777_W_FM_FREF_MASK);
->   	tea->write_reg |= freq << TEA5777_W_FM_PLL_SHIFT;
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+commit 322cacce0a3c36d3ad89d8836b9ed6fcb06e1a61
+Author: Seth Jennings <sjenning@linux.vnet.ibm.com>
+Date:   Thu Jul 19 09:42:38 2012 -0500
+
+    powerpc/crypto: rework Kconfig
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
