@@ -1,66 +1,50 @@
-From: "AnilKumar, Chimata" <anilkumar@ti.com>
-Subject: RE: [PATCH] mfd/regulator: tps65217: Move regulator plat data
- handling to regulator
-Date: Wed, 1 Aug 2012 05:25:29 +0000
-Message-ID: <331ABD5ECB02734CA317220B2BBEABC13EA073F8@DBDE01.ent.ti.com>
-References: <1342776601-8773-1-git-send-email-anilkumar@ti.com>
- <20120727124816.GM16859@sortiz-mobl>
- <331ABD5ECB02734CA317220B2BBEABC13EA06F79@DBDE01.ent.ti.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: No tree for Aug 1
+Date: Wed, 1 Aug 2012 17:58:27 +1000
+Message-ID: <20120801175827.c39ce1b02bef7b8f380c21f9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__1_Aug_2012_17_58_27_+1000_BLxzncQBt04RJ6ND"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:33687 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751335Ab2HAFZs convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Aug 2012 01:25:48 -0400
-In-Reply-To: <331ABD5ECB02734CA317220B2BBEABC13EA06F79@DBDE01.ent.ti.com>
-Content-Language: en-US
+Received: from haggis.pcug.org.au ([203.10.76.10]:40668 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753095Ab2HAH6g (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Aug 2012 03:58:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "AnilKumar, Chimata" <anilkumar@ti.com>, 'Samuel Ortiz' <sameo@linux.intel.com>
-Cc: "'broonie@opensource.wolfsonmicro.com'" <broonie@opensource.wolfsonmicro.com>, "'dan.carpenter@oracle.com'" <dan.carpenter@oracle.com>, "'rdunlap@xenotime.net'" <rdunlap@xenotime.net>, "'sfr@canb.auug.org.au'" <sfr@canb.auug.org.au>, "'linux-next@vger.kernel.org'" <linux-next@vger.kernel.org>, "'linux-omap@vger.kernel.org'" <linux-omap@vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Hi Samuel,
+--Signature=_Wed__1_Aug_2012_17_58_27_+1000_BLxzncQBt04RJ6ND
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 31, 2012 at 20:00:21, AnilKumar, Chimata wrote:
-> Hi Samuel,
-> 
-> On Fri, Jul 27, 2012 at 18:18:17, Samuel Ortiz wrote:
-> > Hi Anilkumar,
-> > 
-> > On Fri, Jul 20, 2012 at 03:00:01PM +0530, AnilKumar Ch wrote:
-> > > Regulator platform data handling was mistakenly added to MFD
-> > > driver. So we will see build errors if we compile MFD drivers
-> > > without CONFIG_REGULATOR. This patch moves regulator platform
-> > > data handling from TPS65217 MFD driver to regulator driver.
-> > > 
-> > > This makes MFD driver independent of REGULATOR framework so
-> > > build error is fixed if CONFIG_REGULATOR is not set.
-> > > 
-> > > drivers/built-in.o: In function `tps65217_probe':
-> > > tps65217.c:(.devinit.text+0x13e37): undefined reference
-> > > to `of_regulator_match'
-> > > 
-> > > This patch is based on linux-next (20120720) tree
-> > > 
-> > > Signed-off-by: AnilKumar Ch <anilkumar@ti.com>
-> > > ---
-> > >  drivers/mfd/tps65217.c                 |  130 +++++++++++---------------------
-> > >  drivers/regulator/tps65217-regulator.c |  124 ++++++++++++++++++++++++++----
-> > >  include/linux/mfd/tps65217.h           |   12 ++-
-> > >  3 files changed, 161 insertions(+), 105 deletions(-)
-> > It doesn't apply to my for-next branch. Could you please re-send this one
-> > after the merge window is closed ? I'll push that as part of the MFD fixes for
-> > 3.6.
-> > 
-> 
-> I fetch regulator tree and applied on top of for-next branch and it is cleanly
-> applied.
-> 
 
-My bad I picked up wrong tree, I will send the new version (if require) based on
-"MFD for-next" tree once the merge window closed.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks,
-AnilKumar
+--Signature=_Wed__1_Aug_2012_17_58_27_+1000_BLxzncQBt04RJ6ND
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQGOGjAAoJEECxmPOUX5FElzYP/jvh6TCFl+CUKfgiId6lDuYN
+4kvjBgIbp4UyRjj4TjqJmxgx82uLI3+BPaAQbZ1XXaunoB5BCO96jTXbRCjKAnrt
+g9rwrnPdsNWqXoUFqLBuchBRaaos4XQcJ+hGbDT1wa5BajN/WBpC143Fnh1c/Pct
+v84dne65vy+pTek/oikfHC86K2xb0ECjbR1T8OjyKHr4QvzcXw+eDUX/TYOF2gBR
+y87ed4bikPSi4kBwz4F1u75HKdsZPQU58ay7APorEkhhFlNLMvyYBwfZLjAoObOk
+iuj+BL5bclIU77WlhyUiYzAN4Hndhw8OkpGcEqZ+Y1PE3onqlGsWUJIxOCxAY0Fq
+eqLQRCpKHFHxjd2TpuMJmH7AenmXzXT1rdwFsC7UPIP8C6Tn1dxDCqrrrqooT72H
+YFfX3Y6iFhQ8mz/h8qFWJ589ebi5jHRGnxioUMgEDniOUmYCRM195pKnP0XU0NGu
+VeXWj7i1LKmQ7WsYdRKmbzxCLWlc0AwtJrdot+Z7txrfXoPB7Jq6tvh9lB+kG+gr
+jnbEC1Tqjinc92nq+vQiZukf7DcrmaPFa0eKRT3jKAyt61Wg3bRU7BVOsumTrAjM
+AfGPEXQT+J5WpCFzodHCa8zqK/gboLx2Mnmi0MZgnJ6VjqO/v/HmhqKl4ESCHn2i
+wcVAD0FNvgL/Ew6DILr7
+=RCnI
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__1_Aug_2012_17_58_27_+1000_BLxzncQBt04RJ6ND--
