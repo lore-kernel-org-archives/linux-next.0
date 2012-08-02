@@ -1,79 +1,40 @@
-From: NeilBrown <neilb@suse.de>
-Subject: Re: [dm-devel] linux-next: Tree for Aug 2 (dm-raid)
-Date: Fri, 3 Aug 2012 06:34:26 +1000
-Message-ID: <20120803063426.7ccf7e73@notabene.brown>
-References: <20120802141505.d30da7f7113e955679383acb@canb.auug.org.au>
-	<501AA2F2.1000102@xenotime.net>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: unable to fetch the moduleh tree
+Date: Thu, 2 Aug 2012 17:05:19 -0400
+Message-ID: <501AEB8F.10908@windriver.com>
+References: <20120802085448.5fb877ce7747128ba354f605@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/vohp6FVF.dyNsWP9waSFoJm"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:37217 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751710Ab2HBUeo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Aug 2012 16:34:44 -0400
-In-Reply-To: <501AA2F2.1000102@xenotime.net>
+Received: from mail.windriver.com ([147.11.1.11]:48911 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751452Ab2HBVFY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Aug 2012 17:05:24 -0400
+In-Reply-To: <20120802085448.5fb877ce7747128ba354f605@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: device-mapper development <dm-devel@redhat.com>
-Cc: rdunlap@xenotime.net, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Alasdair Kergon <agk@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
---Sig_/vohp6FVF.dyNsWP9waSFoJm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 12-08-01 06:54 PM, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> For the last few days, I have been getting this error when trying to
+> fetch the moduleh tree:
+> 
+> fatal: unable to connect to openlinux.windriver.com:
+> openlinux.windriver.com[0: 192.124.127.100]: errno=Connection timed out
+> 
+> Is this tree still in use?  Or should I just remove it from linux-next?
 
-On Thu, 02 Aug 2012 08:55:30 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
-e:
+Hi Stephen,
 
-> On 08/01/2012 09:15 PM, Stephen Rothwell wrote:
->=20
-> > Hi all,
-> >=20
-> > Please do not add anything to linux-next included branches/series that =
-is
-> > destined for v3.7 until after v3.6-rc1 is released.
-> >=20
-> > Reminder: do not rebase your branches before asking Linus to pull them =
-...
-> >=20
-> > Changes since 20120731:
->=20
->=20
->=20
-> on i386:
->=20
-> ERROR: "md_raid10_congested" [drivers/md/dm-raid.ko] undefined!
->=20
-> Full randconfig file is attached.
->
+Go ahead and remove it.  If/when I've something else that I can't
+push via a maintainer tree, I'll get you to add one with a more
+appropriate name, and serve it from kernel.org instead.
 
-Thanks.  Fix was pulled by Linus about half and hour ago :-)
+Thanks,
+Paul.
 
-http://git.kernel.org/?p=3Dlinux/kernel/git/torvalds/linux.git;a=3Dcommitdi=
-ff;h=3Dd9f691c365a83ce2530f0e46b947365c2db44ea0
-
-NeilBrown
-
---Sig_/vohp6FVF.dyNsWP9waSFoJm
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.18 (GNU/Linux)
-
-iQIVAwUBUBrkUjnsnt1WYoG5AQI5bg//VatH2XpVslWMT0WAUMqZ8g7V5xr5gGyp
-01o38tykSl862C5fxb0NjBMKZvxcamYMfddCKSr1y4y82WNJ6LnstMm4h11E6JTD
-HeI9DeG8gokkNAyWfjy8oub5YkJC4kLpBQLi0VNLOKE8A0dUIB3l45YxUE7abrpl
-rqjga53rdp0KKZtEkZul4GXep5md59ziATu3EYmSiTy3pH4D1px4aI/DS9w5L3xS
-OTz9S+NJA+aIMsPot5EkmP1mK+BZcy0P+ql5i6QOPR0WsERcUihlyuHQlbLZyO1w
-UIx9facyIoriq0A+KF0fUtEFEqzMKX+f6U5fKpoiqFZkC7Hww3rGlPYeJQ1IetDW
-eXK17Q0j/WdVqYzPh7je9D3UoageZQ3snLZ6p8ph3gmiZnNn0BoV+1tArJrr3RLs
-DllQSIwnIrdhCTu8xurBLzalUYSJT95NTtkqIPbmlZaBcCAZdPkWBm+kQZKkgdGk
-WiAfxozXPjDTq/eWJ3m0So6WHR1Ql2YVLwTjOS4DZ/woQvTU9mTLpAhg2ZohDKsS
-3zaxTByyMe9dHFssZIy2C9JxOGTIz2+IIbcpUm1BQeGCJVFFgHsk/c+TmWPlyZAJ
-la06OI9cfA8Yo3Ry83beie/wdHqJOkEDqD4IIlgs2LPAAtbHzaON9+aMDrrz7vnj
-2YKHmEjoECo=
-=g3bQ
------END PGP SIGNATURE-----
-
---Sig_/vohp6FVF.dyNsWP9waSFoJm--
+> 
