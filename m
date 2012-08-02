@@ -1,79 +1,79 @@
-From: Seth Forshee <seth.forshee@canonical.com>
-Subject: Re: linux-next: Tree for Aug 2 (drivers/platform/x86/apple-gmux.c)
-Date: Thu, 2 Aug 2012 11:43:28 -0500
-Message-ID: <20120802164328.GJ32395@thinkpad-t410>
+From: NeilBrown <neilb@suse.de>
+Subject: Re: [dm-devel] linux-next: Tree for Aug 2 (dm-raid)
+Date: Fri, 3 Aug 2012 06:34:26 +1000
+Message-ID: <20120803063426.7ccf7e73@notabene.brown>
 References: <20120802141505.d30da7f7113e955679383acb@canb.auug.org.au>
- <501AA5A8.1070607@xenotime.net>
- <20120802161504.GG32395@thinkpad-t410>
- <501AA892.70207@xenotime.net>
- <20120802163154.GH32395@thinkpad-t410>
- <20120802163616.GI32395@thinkpad-t410>
+	<501AA2F2.1000102@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/vohp6FVF.dyNsWP9waSFoJm"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:38548 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753099Ab2HBQne (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Aug 2012 12:43:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20120802163616.GI32395@thinkpad-t410>
+Received: from cantor2.suse.de ([195.135.220.15]:37217 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751710Ab2HBUeo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Aug 2012 16:34:44 -0400
+In-Reply-To: <501AA2F2.1000102@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org
+To: device-mapper development <dm-devel@redhat.com>
+Cc: rdunlap@xenotime.net, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Alasdair Kergon <agk@redhat.com>
 
-On Thu, Aug 02, 2012 at 11:36:16AM -0500, Seth Forshee wrote:
-> On Thu, Aug 02, 2012 at 11:31:54AM -0500, Seth Forshee wrote:
-> > On Thu, Aug 02, 2012 at 09:19:30AM -0700, Randy Dunlap wrote:
-> > > On 08/02/2012 09:15 AM, Seth Forshee wrote:
-> > > 
-> > > > On Thu, Aug 02, 2012 at 09:07:04AM -0700, Randy Dunlap wrote:
-> > > >> On 08/01/2012 09:15 PM, Stephen Rothwell wrote:
-> > > >>
-> > > >>> Hi all,
-> > > >>>
-> > > >>> Please do not add anything to linux-next included branches/series that is
-> > > >>> destined for v3.7 until after v3.6-rc1 is released.
-> > > >>>
-> > > >>> Reminder: do not rebase your branches before asking Linus to pull them ...
-> > > >>>
-> > > >>> Changes since 20120731:
-> > > >>>
-> > > >>
-> > > >>
-> > > >> when CONFIG_ACPI is not enabled: (on i386)
-> > > >>
-> > > >> drivers/platform/x86/apple-gmux.c: In function 'gmux_probe':
-> > > >> drivers/platform/x86/apple-gmux.c:196:2: error: implicit declaration of function 'acpi_video_dmi_promote_vendor'
-> > > >> drivers/platform/x86/apple-gmux.c: In function 'gmux_remove':
-> > > >> drivers/platform/x86/apple-gmux.c:219:2: error: implicit declaration of function 'acpi_video_dmi_demote_vendor'
-> > > >>
-> > > >>
-> > > >> Full randconfig file is attached.
-> > > > 
-> > > > I sent Matthew a patch that should fix this [1], but he doesn't seem to
-> > > > have picked it up yet.
-> > > > 
-> > > > Seth
-> > > > 
-> > > > [1] https://lkml.org/lkml/2012/7/2/257
-> > > > 
-> > > 
-> > > 
-> > > That patch does not fix this build error.
-> > > There is still an implicit assumption in Kconfig and
-> > > the driver source that ACPI is enabled.
-> > 
-> > The functions in question are built or not based off of ACPI_VIDEO,
-> > which in turn depends on ACPI. So if ACPI=n, then ACPI_VIDEO=n and you
-> > can't configure APPLE_GMUX=(m|y). Is that right, or am I missing
-> > something?
-> 
-> Nevermind, I see what I missed.
-> 
-> This is kind of messy -- maybe those declartions should be extracted
-> from the #ifdef CONFIG_ACPI to avoid this kind of Kconfig madness?
+--Sig_/vohp6FVF.dyNsWP9waSFoJm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Eh, the driver doesn't make any sense without ACPI anyway, so I'll
-refresh the patch with that dependency.
+On Thu, 02 Aug 2012 08:55:30 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
 
-Seth
+> On 08/01/2012 09:15 PM, Stephen Rothwell wrote:
+>=20
+> > Hi all,
+> >=20
+> > Please do not add anything to linux-next included branches/series that =
+is
+> > destined for v3.7 until after v3.6-rc1 is released.
+> >=20
+> > Reminder: do not rebase your branches before asking Linus to pull them =
+...
+> >=20
+> > Changes since 20120731:
+>=20
+>=20
+>=20
+> on i386:
+>=20
+> ERROR: "md_raid10_congested" [drivers/md/dm-raid.ko] undefined!
+>=20
+> Full randconfig file is attached.
+>
+
+Thanks.  Fix was pulled by Linus about half and hour ago :-)
+
+http://git.kernel.org/?p=3Dlinux/kernel/git/torvalds/linux.git;a=3Dcommitdi=
+ff;h=3Dd9f691c365a83ce2530f0e46b947365c2db44ea0
+
+NeilBrown
+
+--Sig_/vohp6FVF.dyNsWP9waSFoJm
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.18 (GNU/Linux)
+
+iQIVAwUBUBrkUjnsnt1WYoG5AQI5bg//VatH2XpVslWMT0WAUMqZ8g7V5xr5gGyp
+01o38tykSl862C5fxb0NjBMKZvxcamYMfddCKSr1y4y82WNJ6LnstMm4h11E6JTD
+HeI9DeG8gokkNAyWfjy8oub5YkJC4kLpBQLi0VNLOKE8A0dUIB3l45YxUE7abrpl
+rqjga53rdp0KKZtEkZul4GXep5md59ziATu3EYmSiTy3pH4D1px4aI/DS9w5L3xS
+OTz9S+NJA+aIMsPot5EkmP1mK+BZcy0P+ql5i6QOPR0WsERcUihlyuHQlbLZyO1w
+UIx9facyIoriq0A+KF0fUtEFEqzMKX+f6U5fKpoiqFZkC7Hww3rGlPYeJQ1IetDW
+eXK17Q0j/WdVqYzPh7je9D3UoageZQ3snLZ6p8ph3gmiZnNn0BoV+1tArJrr3RLs
+DllQSIwnIrdhCTu8xurBLzalUYSJT95NTtkqIPbmlZaBcCAZdPkWBm+kQZKkgdGk
+WiAfxozXPjDTq/eWJ3m0So6WHR1Ql2YVLwTjOS4DZ/woQvTU9mTLpAhg2ZohDKsS
+3zaxTByyMe9dHFssZIy2C9JxOGTIz2+IIbcpUm1BQeGCJVFFgHsk/c+TmWPlyZAJ
+la06OI9cfA8Yo3Ry83beie/wdHqJOkEDqD4IIlgs2LPAAtbHzaON9+aMDrrz7vnj
+2YKHmEjoECo=
+=g3bQ
+-----END PGP SIGNATURE-----
+
+--Sig_/vohp6FVF.dyNsWP9waSFoJm--
