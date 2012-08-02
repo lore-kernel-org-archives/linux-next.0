@@ -1,67 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the acpi tree
-Date: Thu, 2 Aug 2012 11:20:33 +1000
-Message-ID: <20120802112033.c1531ffe7bf7147c461cac0a@canb.auug.org.au>
+From: Feng Tang <feng.tang@intel.com>
+Subject: Re: linux-next: build failure after merge of the acpi tree
+Date: Thu, 2 Aug 2012 10:00:22 +0800
+Message-ID: <20120802100022.58a5ebd8@feng-i7>
+References: <20120802112033.c1531ffe7bf7147c461cac0a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__2_Aug_2012_11_20_33_+1000_/PYu7p1ObOGRJx=U"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49680 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751614Ab2HBBUp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Aug 2012 21:20:45 -0400
+Received: from mga01.intel.com ([192.55.52.88]:25938 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753215Ab2HBCFV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Aug 2012 22:05:21 -0400
+In-Reply-To: <20120802112033.c1531ffe7bf7147c461cac0a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Feng Tang <feng.tang@intel.com>, Joerg Roedel <joro@8bytes.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>
 
---Signature=_Thu__2_Aug_2012_11_20_33_+1000_/PYu7p1ObOGRJx=U
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2 Aug 2012 11:20:33 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Len,
+> Hi Len,
+> 
+> After merging the acpi tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/iommu/amd_iommu_init.c: In function 'early_amd_iommu_init':
+> drivers/iommu/amd_iommu_init.c:1535:2: error: implicit declaration of
+> function 'acpi_get_table_with_size' [-Werror=implicit-function-declaration]
+> 
+> Caused by commit 705d9245d714 ("ACPI: remove acpi_get_table_with_size()
+> fucntion").
+> 
+> This extra call to acpi_get_table_with_size() was added by commit
+> 02f3b3f5449c ("iommu/amd: Use acpi_get_table instead of
+> acpi_table_parse") added to Linus' tree on about July 25 via the iommu
+> tree.
 
-After merging the acpi tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Thanks for the root cause, Yinghai also noticed me about that, and I've
+send a updated patch 
+	https://lkml.org/lkml/2012/8/1/25 
 
-drivers/iommu/amd_iommu_init.c: In function 'early_amd_iommu_init':
-drivers/iommu/amd_iommu_init.c:1535:2: error: implicit declaration of funct=
-ion 'acpi_get_table_with_size' [-Werror=3Dimplicit-function-declaration]
+So it should be ok after Len merge this v2 patch.
 
-Caused by commit 705d9245d714 ("ACPI: remove acpi_get_table_with_size()
-fucntion").
+Thanks,
+Feng
 
-This extra call to acpi_get_table_with_size() was added by commit
-02f3b3f5449c ("iommu/amd: Use acpi_get_table instead of
-acpi_table_parse") added to Linus' tree on about July 25 via the iommu
-tree.
-
-I have reverted the acpi tree commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__2_Aug_2012_11_20_33_+1000_/PYu7p1ObOGRJx=U
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQGdXhAAoJEECxmPOUX5FEhaYP/jKGfrhHlUi6UTwf3fR1sT+1
-zczwDyfhU0niyRMcL9N1uGJQt/Vtxt4Qqos1b1LRdHs5JlwlPGc5bNGL0opjOSom
-Pccfzsxfelx9tFQq+u1hv0j/h1LxKmYNT1kw37XbPICpm2OHun7vTPMBy4gY/4Lv
-cIRISDTgT1Ip6oXLly/aaXETdkVtfMs0SEkcVPt6ijegT68vtmJfBQQ1N7fvnuG8
-StZfIJStyBVjoAkunBvQ4ypTQN3ZSc8dKnISxPrLS0eLhYn2kasNZyP4RUue28dU
-VbPWa1NB2ieamGje5EqNMousVNlydO3w6AZzbgEszmmcUoEci1NEt5TmJx9YOUYz
-QVeG25+3E5dOGxmoyrmBXEjXDNNBLMZ/GqAeORda3NXnVg1jzgyj6i/eMsOdWDqQ
-AVDlzyDe8MU3fgxk4xz7lnjVFyGX0aqnE8SAhafzPb+3XdCmxO1GBZpAn9r1DIbd
-75wskBMJoPb0reMwbIjBnBiVsMlhyTP6aEanzzrapIgQajSV6R+PeR8ocPTYDdw9
-uxr/nFGK89eZNlx/Y4US/431pC7w0ENAF116pcVedPc09XNWO1P2z1J4FthSo8g4
-0UZnriO03RjIyR5TgTbtRiHofdHb5NhL+9/MbyN5d/5kcCh4h4SF4F1Vqa0Vriug
-JKtmcVLbbtEZ4zc7nV1l
-=4kZs
------END PGP SIGNATURE-----
-
---Signature=_Thu__2_Aug_2012_11_20_33_+1000_/PYu7p1ObOGRJx=U--
+> 
+> I have reverted the acpi tree commit for today.
