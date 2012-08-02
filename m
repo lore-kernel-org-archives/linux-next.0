@@ -1,39 +1,60 @@
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: removal of some trees
-Date: Thu, 02 Aug 2012 17:33:44 +0800
-Message-ID: <501A4978.3010409@gmail.com>
+Date: Thu, 2 Aug 2012 22:01:06 +1000
+Message-ID: <20120802220106.42bab0e216528eb2167ed43d@canb.auug.org.au>
 References: <20120802084154.875a13db0ec1ebd3f5a4dab3@canb.auug.org.au>
+	<501A4978.3010409@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__2_Aug_2012_22_01_06_+1000_kd/zoAP7OZ6.NjH0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:58567 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753840Ab2HBJdw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Aug 2012 05:33:52 -0400
-In-Reply-To: <20120802084154.875a13db0ec1ebd3f5a4dab3@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39556 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750810Ab2HBMBR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Aug 2012 08:01:17 -0400
+In-Reply-To: <501A4978.3010409@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Cong Wang <xiyou.wangcong@gmail.com>
 Cc: Ben Dooks <ben-linux@fluff.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On 08/02/2012 06:41 AM, Stephen Rothwell wrote:
-> Hi Ben,
+--Signature=_Thu__2_Aug_2012_22_01_06_+1000_kd/zoAP7OZ6.NjH0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 02 Aug 2012 17:33:44 +0800 Cong Wang <xiyou.wangcong@gmail.com> wro=
+te:
 >
-> Since I haven't been able to fetch these trees for quite some time and I
-> haven't heard from you about them, I am removing the following trees from
-> linux-next.  If/When you have time to maintain these trees again, we can
-> add them back without problems.
->
-> samsung	 	git://git.fluff.org/bjdooks/linux.git#next-samsung
-> bjdooks-i2c	git://git.fluff.org/bjdooks/linux.git#next-i2c
->
+> By the way, please remove my kmap_atomic tree[1] as well, its mission is=
+=20
+> completed now. :)
 
-Hi, Stephen,
+Thanks for letting me know.  Gone, now.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-By the way, please remove my kmap_atomic tree[1] as well, its mission is 
-completed now. :)
+--Signature=_Thu__2_Aug_2012_22_01_06_+1000_kd/zoAP7OZ6.NjH0
+Content-Type: application/pgp-signature
 
-Thanks!
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-1. git://github.com/congwang/linux
+iQIcBAEBCAAGBQJQGmwCAAoJEECxmPOUX5FEEo8P/3do3qvP+wrC1qko4n7PyRGC
+DmsMZC+synGPxGO77h3aFS85hKg0jnWlSftT0Bc1ygfCFH1DodSBK7HEv14TJ+DO
+HegU/ANmYlWeZoa12T1FZI/tXmO+cVZIDg8UQvoB1IUS+9+6LvI8o2Pa0tZrp0S/
+eDZp47Uh89eSP0dK9IOAJDFl6lxiS33sPHzZUSWRjn9YSaxxhmdV8Jq6El9tt3qd
+4xdmcgW2EmdzPB9MADvVkIzbxRLQpU/0wA/8nluApyjtsn8IApOT45UMPLAHqcNZ
+OvGUfjVig+r2QrXfWNVC0Inc5D6uR27i7tytGyrCJNivoCkYMRxE4TuRIVxYmVZ5
+dNYGvwFJ0/b5Pv4d2quByXjfRD2HkJwOFvWGO8Kvt4QXwUkeRbUervNAv8nFxwvq
+WOj+6tKIYiWJUxn9xs0/R5KodeS4fn4Br/y2cKoMZAOMcXnlLnDMrP7VY16PH4YI
+r8V2+D4mQj9cKbiwP4aUv7SSvQwwxLvD8yESyXdAIG+nODCZbV6KspsMHMtY07ad
+nyhoeRgN+c1D24J2JL78NTLei4cTYtqgFbsiYou0qsx7208VQFKEKp/85nCziz4K
+5BakwGlkz4zWSzbtqKKWHbMYyHhv7uq31MddvnKyqwgH38IHVxzTL4cImSPakCFJ
+r92oVR+4fu5mwzMcAHo5
+=H8KQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__2_Aug_2012_22_01_06_+1000_kd/zoAP7OZ6.NjH0--
