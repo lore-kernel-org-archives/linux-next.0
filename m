@@ -1,58 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unable to fetch the moduleh tree
-Date: Thu, 2 Aug 2012 08:54:48 +1000
-Message-ID: <20120802085448.5fb877ce7747128ba354f605@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the acpi tree
+Date: Thu, 2 Aug 2012 11:20:33 +1000
+Message-ID: <20120802112033.c1531ffe7bf7147c461cac0a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__2_Aug_2012_08_54_48_+1000_16/lLegNb=dvhQ6H"
+ boundary="Signature=_Thu__2_Aug_2012_11_20_33_+1000_/PYu7p1ObOGRJx=U"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44381 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49680 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752398Ab2HAWy4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Aug 2012 18:54:56 -0400
+	with ESMTP id S1751614Ab2HBBUp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Aug 2012 21:20:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Feng Tang <feng.tang@intel.com>, Joerg Roedel <joro@8bytes.org>
 
---Signature=_Thu__2_Aug_2012_08_54_48_+1000_16/lLegNb=dvhQ6H
+--Signature=_Thu__2_Aug_2012_11_20_33_+1000_/PYu7p1ObOGRJx=U
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Len,
 
-For the last few days, I have been getting this error when trying to
-fetch the moduleh tree:
+After merging the acpi tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-fatal: unable to connect to openlinux.windriver.com:
-openlinux.windriver.com[0: 192.124.127.100]: errno=3DConnection timed out
+drivers/iommu/amd_iommu_init.c: In function 'early_amd_iommu_init':
+drivers/iommu/amd_iommu_init.c:1535:2: error: implicit declaration of funct=
+ion 'acpi_get_table_with_size' [-Werror=3Dimplicit-function-declaration]
 
-Is this tree still in use?  Or should I just remove it from linux-next?
+Caused by commit 705d9245d714 ("ACPI: remove acpi_get_table_with_size()
+fucntion").
+
+This extra call to acpi_get_table_with_size() was added by commit
+02f3b3f5449c ("iommu/amd: Use acpi_get_table instead of
+acpi_table_parse") added to Linus' tree on about July 25 via the iommu
+tree.
+
+I have reverted the acpi tree commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__2_Aug_2012_08_54_48_+1000_16/lLegNb=dvhQ6H
+--Signature=_Thu__2_Aug_2012_11_20_33_+1000_/PYu7p1ObOGRJx=U
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQGbO4AAoJEECxmPOUX5FEeQMP/A1iXz6KhIwxGHijBFzYknun
-HDfQ70qHvEYM9IJfn59NDHQyY5NJOmoY4zlhcaYOGxy4hrKWgM7FhAiCVYTsOCsX
-aXyLh7QSQOIsNN8W59BLo6LLJiFeheTm/Of1dCTGGbmlxpOwbRom7zxFK/XpMh4Q
-nzATy4NNBJfaZ5TtaSSg3WRx48XVkhNhhH1eoV72D/qis+BTSc0A4YHVo2PpNOuz
-hyDjjRil4lo/Fm1MqpfBm7WRNXRj8PeUEuLtKHFc8y3GnK+dXY310zv/0t5wMTo4
-diS2lMiBDolkq2ienFp1VeiUtuKmXGhWJ3X10/yLK+N6PF8N/nBxZMSabxVX2FcN
-feATUt7r3WicA+0fI5YB7wo+0P72dbJYITpm263Wq4EJ232AWzTg9tNrfcKRlU3e
-TVJMsM667vtyYaLT8BBe5wswpwjVLtDCELZEQnOrQZzR+5OHPbmhsUZT4REXINw7
-47ik/pgWYtnpiv0zmhUEEim7IK0T5rYQksVASJSysesin2CnJ+ebjR0eB7CvHUJh
-QeUGl7C9GQfxqhpqV7kbs8LHXvJVseDB96nqfsmlNXqQvW76ubDWKdCt7dWc7Efg
-vzbM5jAunUrfDBadodgJV0MHftrxVC9SWx9O6XIXJMocLqDs7IZjUX4DyAA7aA4N
-CyFSEd7U1frexa+Vu/aU
-=BkOO
+iQIcBAEBCAAGBQJQGdXhAAoJEECxmPOUX5FEhaYP/jKGfrhHlUi6UTwf3fR1sT+1
+zczwDyfhU0niyRMcL9N1uGJQt/Vtxt4Qqos1b1LRdHs5JlwlPGc5bNGL0opjOSom
+Pccfzsxfelx9tFQq+u1hv0j/h1LxKmYNT1kw37XbPICpm2OHun7vTPMBy4gY/4Lv
+cIRISDTgT1Ip6oXLly/aaXETdkVtfMs0SEkcVPt6ijegT68vtmJfBQQ1N7fvnuG8
+StZfIJStyBVjoAkunBvQ4ypTQN3ZSc8dKnISxPrLS0eLhYn2kasNZyP4RUue28dU
+VbPWa1NB2ieamGje5EqNMousVNlydO3w6AZzbgEszmmcUoEci1NEt5TmJx9YOUYz
+QVeG25+3E5dOGxmoyrmBXEjXDNNBLMZ/GqAeORda3NXnVg1jzgyj6i/eMsOdWDqQ
+AVDlzyDe8MU3fgxk4xz7lnjVFyGX0aqnE8SAhafzPb+3XdCmxO1GBZpAn9r1DIbd
+75wskBMJoPb0reMwbIjBnBiVsMlhyTP6aEanzzrapIgQajSV6R+PeR8ocPTYDdw9
+uxr/nFGK89eZNlx/Y4US/431pC7w0ENAF116pcVedPc09XNWO1P2z1J4FthSo8g4
+0UZnriO03RjIyR5TgTbtRiHofdHb5NhL+9/MbyN5d/5kcCh4h4SF4F1Vqa0Vriug
+JKtmcVLbbtEZ4zc7nV1l
+=4kZs
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__2_Aug_2012_08_54_48_+1000_16/lLegNb=dvhQ6H--
+--Signature=_Thu__2_Aug_2012_11_20_33_+1000_/PYu7p1ObOGRJx=U--
