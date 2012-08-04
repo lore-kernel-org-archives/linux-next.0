@@ -1,60 +1,47 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 3 (drivers/i2c/busses/i2c-i801.c)
-Date: Fri, 03 Aug 2012 14:36:57 -0700
-Message-ID: <501C4479.4030306@xenotime.net>
-References: <20120803135110.0ba0e51758021b6a4ed9d1e9@canb.auug.org.au>	<501C0952.5050609@xenotime.net> <20120803215717.31376eb7@endymion.delvare>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: manual merge of the signal tree with the arm-current tree
+Date: Sat, 4 Aug 2012 21:19:17 +0200
+Message-ID: <CAMuHMdVBMu5KxPTGPzAk3u3W=o-=gsKa6K=q_-Z4YnELKvmZRw@mail.gmail.com>
+References: <20120705173526.bf8772adb18edfc91adddea8@canb.auug.org.au>
+	<20120705075204.GA12344@flint.arm.linux.org.uk>
+	<20120715112735.GI31729@ZenIV.linux.org.uk>
+	<CAMuHMdXP_rjwPhfTwcY+Jf3+Dq=AkWtMZvUUibCQ9D=c60_j5Q@mail.gmail.com>
+	<20120715120457.GJ31729@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:43939 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753189Ab2HCViO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Aug 2012 17:38:14 -0400
-In-Reply-To: <20120803215717.31376eb7@endymion.delvare>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mark Studebaker <mdsxyz123@yahoo.com>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120715120457.GJ31729@ZenIV.linux.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
+List-Id: linux-next.vger.kernel.org
 
-On 08/03/2012 12:57 PM, Jean Delvare wrote:
+Hi Al,
 
-> Hi Randy,
-> 
-> On Fri, 03 Aug 2012 10:24:34 -0700, Randy Dunlap wrote:
->> on x86_64:
+On Sun, Jul 15, 2012 at 2:04 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Sun, Jul 15, 2012 at 01:47:59PM +0200, Geert Uytterhoeven wrote:
+>> On Sun, Jul 15, 2012 at 1:27 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>> > On Thu, Jul 05, 2012 at 08:52:04AM +0100, Russell King wrote:
+>> >> Will has concerns with Al's proposed fixes for the signal handling.
+>> >
+>> > Could you please resend whatever concerns those had been my way?
+>> > The last I've seen from Will had been about the stuff in mainline,
+>> > not in -next; I might have missed something quite easily, though -
+>> > net.access had been really lousy lately and piles in l-k mbox... ouch.
 >>
->> when CONFIG_GPIOLIB is not enabled:
->>
->> drivers/i2c/busses/i2c-i801.c: In function 'match_gpio_chip_by_label':
->> drivers/i2c/busses/i2c-i801.c:1011:21: error: dereferencing pointer to incomplete type
->> drivers/i2c/busses/i2c-i801.c: In function 'i801_add_mux':
->> drivers/i2c/busses/i2c-i801.c:1028:2: error: implicit declaration of function 'gpiochip_find'
->> drivers/i2c/busses/i2c-i801.c:1028:7: warning: assignment makes pointer from integer without a cast
->> drivers/i2c/busses/i2c-i801.c:1047:27: error: dereferencing pointer to incomplete type
->> drivers/i2c/busses/i2c-i801.c: In function 'match_gpio_chip_by_label':
->> drivers/i2c/busses/i2c-i801.c:1012:1: warning: control reaches end of non-void function
-> 
-> Good catch, thanks for reporting. I'll fold the following in the
-> offending patch, that should fix it:
+>> Speaking about -next, there's still this fix for an avr32 regression:
+>
+> Yeah, grabbed it.  Will be in the next rebase (hopefully in a few hours).
 
-Ack, it does.
-Thanks.
+Still not there, though.
 
-> --- linux-3.6-rc0.orig/drivers/i2c/busses/Kconfig	2012-08-03 21:51:51.000000000 +0200
-> +++ linux-3.6-rc0/drivers/i2c/busses/Kconfig	2012-08-03 21:52:18.090537018 +0200
-> @@ -80,6 +80,7 @@ config I2C_I801
->  	tristate "Intel 82801 (ICH/PCH)"
->  	depends on PCI
->  	select CHECK_SIGNATURE if X86 && DMI
-> +	select GPIOLIB if I2C_MUX
->  	help
->  	  If you say yes to this option, support will be included for the Intel
->  	  801 family of mainboard I2C interfaces.  Specifically, the following
-> 
-> 
+Gr{oetje,eeting}s,
 
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--- 
-~Randy
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
