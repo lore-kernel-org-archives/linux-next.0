@@ -1,44 +1,72 @@
-From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: build failure after merge of the cifs tree
-Date: Sun, 5 Aug 2012 20:57:24 -0500
-Message-ID: <CAH2r5ms9EYUV7uwCpU6De9y_PFtFG6wfekPVRXQza6pE6TVC4Q@mail.gmail.com>
-References: <20120806104841.07ed3708b600529ff7eb6fa6@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the spi-mb tree
+Date: Mon, 6 Aug 2012 12:03:01 +1000
+Message-ID: <20120806120301.cafca6614722b92d92600904@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120806104841.07ed3708b600529ff7eb6fa6-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__6_Aug_2012_12_03_01_+1000_7Pb7Iy5ykOatWtmf"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59451 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755133Ab2HFCDP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Aug 2012 22:03:15 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <zonque@gmail.com>
 
-On Sun, Aug 5, 2012 at 7:48 PM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
-> Hi all,
->
-> After merging the cifs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> fs/cifs/Kconfig:3: syntax error
-> fs/Kconfig:244: missing end statement for this entry
-<snip>
->
-> Caused by commit 12f3f9b7c80c ("Remove sparse warning in cifsfs.c").
-> Please, please build test after doing updates and before publishing your
-> tree.
->
-> I have used the cifs tree from next-20120803 for today.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+--Signature=_Mon__6_Aug_2012_12_03_01_+1000_7Pb7Iy5ykOatWtmf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixed.  The corrupted commit came after a build test caught a few
-sparse warnings - forgot to rerun the build test though after fixing
-the warning (I had multiple
-Kconfigs I build test - fs/cifs/Kconfig obviously should not have changed)
+Hi Mark,
+
+After merging the spi-mb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/spi/spi-gpio.c: In function 'spi_gpio_setup':
+drivers/spi/spi-gpio.c:255:8: warning: cast from pointer to integer of diff=
+erent size [-Wpointer-to-int-cast]
+
+Caused by casting a pointer to "unsigned int" in commit a38e7a71f120
+("spi: spi-gpio: Add DT bindings").
 
 
+drivers/spi/spi-gpio.c: In function 'spi_probe_dt':
+drivers/spi/spi-gpio.c:389:39: error: parameter name omitted
+drivers/spi/spi-gpio.c: In function 'spi_gpio_probe':
+drivers/spi/spi-gpio.c:404:2: error: implicit declaration of function 'spi_=
+gpio_probe_dt' [-Werror=3Dimplicit-function-declaration]
 
--- 
-Thanks,
+Caused by commit a38e7a71f120 ("spi: spi-gpio: Add DT bindings").  This
+build does not have CONFIG_OF set.
 
-Steve
+I have used the spi-mb tree from next-20120803 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__6_Aug_2012_12_03_01_+1000_7Pb7Iy5ykOatWtmf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQHyXVAAoJEECxmPOUX5FEkwMP/1JhC2KwwlsOHkE8nM08B2aA
+q+AcKR3F7xpimhsf0s9ICOwaIBuy8Mkgyvt2uUHTT0K4lsqhjS3TAB+adMOcwWSt
+HEVYIJ9j3gJAGgJ0ZzrnKqIynKjKaGSn3a4JsBnpwOJq9Lob1jt3tUnzARwvSWl/
+YFI2g3hxn8akyG7uRvjyy+ySBR6YngsniHytUc07V3CgjrbggQan6GRu+O6+z0Kb
+3j5z9B/MHdN3w/g9FcqNbUCBQ7gFNaDELCDMCc7GCwfxZItMm48BTvZaOEKVv8TK
+RZmUUhaC7AV+pxdN8A/nQ+1agqGKF1X6/KK7OU7zvCMsQVQZ8mVznYUIZcGb8EBG
+OnEEei5768uNXyv+N1KQZ4QLMhobYO4Udbmsb3W3hqWSOzZGLE/wsSlqOHLfxtgc
+M7jfDSsdRaUDY3iQSZOcz/NVBRGFDI63TlaZNDm6R4XvhLxihoSQXKciS0ubj0df
++jgqze/V1I6lxEBkIqKy9BZBV+SYjXWs3EFDzbkIL5hNl3ileSV+a0/4rMsxal4s
+lJOQ4U7mL5zX3W/nB0jbCm2TSx5ngUwh6P8YcSxSNSZSfWKih9nE0xrJZYtDcP9E
+hNRvD4kVnXfK0AgY5tESk/vB2CDKlm7PLmp33wUtx8Tw3QI1KAgFLdRIsKIPmhI3
+86Yd/ZUZFu/sIUILwMcA
+=V7WA
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__6_Aug_2012_12_03_01_+1000_7Pb7Iy5ykOatWtmf--
