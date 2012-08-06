@@ -1,77 +1,60 @@
-From: "AnilKumar, Chimata" <anilkumar@ti.com>
-Subject: RE: [PATCH] mfd/regulator: tps65217: Move regulator plat data
- handling to regulator
-Date: Mon, 6 Aug 2012 07:10:10 +0000
-Message-ID: <331ABD5ECB02734CA317220B2BBEABC13EA0B4D9@DBDE01.ent.ti.com>
-References: <1342776601-8773-1-git-send-email-anilkumar@ti.com>
- <20120727124816.GM16859@sortiz-mobl>
- <331ABD5ECB02734CA317220B2BBEABC13EA06F79@DBDE01.ent.ti.com>
- <331ABD5ECB02734CA317220B2BBEABC13EA07402@DBDE01.ent.ti.com>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Mon, 06 Aug 2012 10:46:36 +0100
+Message-ID: <1344246396.2722.7.camel@menhir>
+References: <20120806134318.8af35d047e255fd25398210b@canb.auug.org.au>
+	 <CANN689GqydNH0-gisSfUPtGKAHVajzZ4KQCTKoJ7J76dJ8zVbg@mail.gmail.com>
+	 <20120806050408.GA12131@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:48661 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752681Ab2HFHKY convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Aug 2012 03:10:24 -0400
-In-Reply-To: <331ABD5ECB02734CA317220B2BBEABC13EA07402@DBDE01.ent.ti.com>
-Content-Language: en-US
+Received: from mx1.redhat.com ([209.132.183.28]:39035 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754970Ab2HFJsT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Aug 2012 05:48:19 -0400
+In-Reply-To: <20120806050408.GA12131@google.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "AnilKumar, Chimata" <anilkumar@ti.com>, 'Samuel Ortiz' <sameo@linux.intel.com>
-Cc: "'broonie@opensource.wolfsonmicro.com'" <broonie@opensource.wolfsonmicro.com>, "'dan.carpenter@oracle.com'" <dan.carpenter@oracle.com>, "'rdunlap@xenotime.net'" <rdunlap@xenotime.net>, "'sfr@canb.auug.org.au'" <sfr@canb.auug.org.au>, "'linux-next@vger.kernel.org'" <linux-next@vger.kernel.org>, "'linux-omap@vger.kernel.org'" <linux-omap@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+To: Michel Lespinasse <walken@google.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-+stable
+Hi,
 
-Hi Samuel,
+Thanks for the patch - I'd not realised that I'd used the wrong function
+there... it is fixed now in the GFS2 -nmw tree,
 
-On Wed, Aug 01, 2012 at 10:55:26, AnilKumar, Chimata wrote:
-> Hi Samuel,
+Steve.
+
+On Sun, 2012-08-05 at 22:04 -0700, Michel Lespinasse wrote:
+> gfs2 calls RB_EMPTY_NODE() to check if nodes are not on an rbtree.
+> The corresponding initialization function is RB_CLEAR_NODE().
+> rb_init_node() was never clearly defined and is going away.
 > 
-> On Tue, Jul 31, 2012 at 20:00:21, AnilKumar, Chimata wrote:
-> > Hi Samuel,
-> > 
-> > On Fri, Jul 27, 2012 at 18:18:17, Samuel Ortiz wrote:
-> > > Hi Anilkumar,
-> > > 
-> > > On Fri, Jul 20, 2012 at 03:00:01PM +0530, AnilKumar Ch wrote:
-> > > > Regulator platform data handling was mistakenly added to MFD
-> > > > driver. So we will see build errors if we compile MFD drivers
-> > > > without CONFIG_REGULATOR. This patch moves regulator platform
-> > > > data handling from TPS65217 MFD driver to regulator driver.
-> > > > 
-> > > > This makes MFD driver independent of REGULATOR framework so
-> > > > build error is fixed if CONFIG_REGULATOR is not set.
-> > > > 
-> > > > drivers/built-in.o: In function `tps65217_probe':
-> > > > tps65217.c:(.devinit.text+0x13e37): undefined reference
-> > > > to `of_regulator_match'
-> > > > 
-> > > > This patch is based on linux-next (20120720) tree
-> > > > 
-> > > > Signed-off-by: AnilKumar Ch <anilkumar@ti.com>
-> > > > ---
-> > > >  drivers/mfd/tps65217.c                 |  130 +++++++++++---------------------
-> > > >  drivers/regulator/tps65217-regulator.c |  124 ++++++++++++++++++++++++++----
-> > > >  include/linux/mfd/tps65217.h           |   12 ++-
-> > > >  3 files changed, 161 insertions(+), 105 deletions(-)
-> > > It doesn't apply to my for-next branch. Could you please re-send this one
-> > > after the merge window is closed ? I'll push that as part of the MFD fixes for
-> > > 3.6.
-> > > 
-> > 
-> > I fetch regulator tree and applied on top of for-next branch and it is cleanly
-> > applied.
-> > 
+> Signed-off-by: Michel Lespinasse <walken@google.com>
+> ---
+>  fs/gfs2/rgrp.c |    5 ++---
+>  1 files changed, 2 insertions(+), 3 deletions(-)
 > 
-> My bad I picked up wrong tree, I will send the new version (if require) based on
-> "MFD for-next" tree once the merge window closed.
-> 
-
-This patch is applied on top of your "MFD master" branch.
-Could you please pull this patch ASAP, this patch fixs the
-build break.
-
-Thanks
-AnilKumar
+> diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
+> index eaa4188..675e7cc 100644
+> --- a/fs/gfs2/rgrp.c
+> +++ b/fs/gfs2/rgrp.c
+> @@ -487,7 +487,7 @@ int gfs2_rs_alloc(struct gfs2_inode *ip)
+>  	if (!res)
+>  		error = -ENOMEM;
+>  
+> -	rb_init_node(&res->rs_node);
+> +	RB_CLEAR_NODE(&res->rs_node);
+>  
+>  	down_write(&ip->i_rw_mutex);
+>  	if (ip->i_res)
+> @@ -520,7 +520,7 @@ static void __rs_deltree(struct gfs2_inode *ip, struct gfs2_blkreserv *rs)
+>  	rgd = rs->rs_rbm.rgd;
+>  	trace_gfs2_rs(ip, rs, TRACE_RS_TREEDEL);
+>  	rb_erase(&rs->rs_node, &rgd->rd_rstree);
+> -	rb_init_node(&rs->rs_node);
+> +	RB_CLEAR_NODE(&rs->rs_node);
+>  	BUG_ON(!rgd->rd_rs_cnt);
+>  	rgd->rd_rs_cnt--;
+>  
