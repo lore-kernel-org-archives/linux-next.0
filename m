@@ -1,72 +1,113 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the spi-mb tree
-Date: Mon, 6 Aug 2012 12:03:01 +1000
-Message-ID: <20120806120301.cafca6614722b92d92600904@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with the rr tree
+Date: Mon, 6 Aug 2012 12:27:26 +1000
+Message-ID: <20120806122726.ac3e525f2d45de4470fa2703@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__6_Aug_2012_12_03_01_+1000_7Pb7Iy5ykOatWtmf"
+ boundary="Signature=_Mon__6_Aug_2012_12_27_26_+1000_jNKaJ0zHgi6eTim="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59451 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58566 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755133Ab2HFCDP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Aug 2012 22:03:15 -0400
+	with ESMTP id S1755476Ab2HFC1e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Aug 2012 22:27:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <zonque@gmail.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, Frederic Weisbecker <fweisbec@gmail.com>
 
---Signature=_Mon__6_Aug_2012_12_03_01_+1000_7Pb7Iy5ykOatWtmf
+--Signature=_Mon__6_Aug_2012_12_27_26_+1000_jNKaJ0zHgi6eTim=
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+Hi Paul,
 
-After merging the spi-mb tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the rcu tree got a conflict in arch/Kconfig
+arch/x86/Kconfig between commit d673c23ca730 ("Make most arch
+asm/module.h files use asm-generic/module.h") from the rr tree and commits
+3dbdfc26e27f ("rcu: Settle config for userspace extended quiescent
+state") and 1ea856be75ce ("x86: Exit RCU extended QS on notify resume")
+from the rcu tree.
 
-drivers/spi/spi-gpio.c: In function 'spi_gpio_setup':
-drivers/spi/spi-gpio.c:255:8: warning: cast from pointer to integer of diff=
-erent size [-Wpointer-to-int-cast]
-
-Caused by casting a pointer to "unsigned int" in commit a38e7a71f120
-("spi: spi-gpio: Add DT bindings").
-
-
-drivers/spi/spi-gpio.c: In function 'spi_probe_dt':
-drivers/spi/spi-gpio.c:389:39: error: parameter name omitted
-drivers/spi/spi-gpio.c: In function 'spi_gpio_probe':
-drivers/spi/spi-gpio.c:404:2: error: implicit declaration of function 'spi_=
-gpio_probe_dt' [-Werror=3Dimplicit-function-declaration]
-
-Caused by commit a38e7a71f120 ("spi: spi-gpio: Add DT bindings").  This
-build does not have CONFIG_OF set.
-
-I have used the spi-mb tree from next-20120803 for today.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__6_Aug_2012_12_03_01_+1000_7Pb7Iy5ykOatWtmf
+diff --cc arch/Kconfig
+index 3450115,1c7c9be..0000000
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@@ -281,23 -274,14 +281,33 @@@ config SECCOMP_FILTE
+ =20
+  	  See Documentation/prctl/seccomp_filter.txt for details.
+ =20
+ +config HAVE_MOD_ARCH_SPECIFIC
+ +	bool
+ +	help
+ +	  The arch uses struct mod_arch_specific to store data.  Many arches
+ +	  just need a simple module loader without arch specific data - those
+ +	  should not enable this.
+ +
+ +config MODULES_USE_ELF_RELA
+ +	bool
+ +	help
+ +	  Modules only use ELF RELA relocations.  Modules with ELF REL
+ +	  relocations will give an error.
+ +
+ +config MODULES_USE_ELF_REL
+ +	bool
+ +	help
+ +	  Modules only use ELF REL relocations.  Modules with ELF RELA
+ +	  relocations will give an error.
+ +
++ config HAVE_RCU_USER_QS
++ 	bool
++ 	help
++ 	  Provide kernel entry/exit hooks necessary for userspace
++ 	  RCU extended quiescent state. Syscalls need to be wrapped inside
++ 	  rcu_user_exit()-rcu_user_enter() through the slow path using
++ 	  TIF_NOHZ flag. Exceptions handlers must be wrapped as well. Irqs
++ 	  are already protected inside rcu_irq_enter/rcu_irq_exit() but
++ 	  preemption or signal handling on irq exit still need to be protected.
++=20
+  source "kernel/gcov/Kconfig"
+diff --cc arch/x86/Kconfig
+index a00d899,38dfcc2..0000000
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@@ -97,8 -95,7 +97,9 @@@ config X8
+  	select KTIME_SCALAR if X86_32
+  	select GENERIC_STRNCPY_FROM_USER
+  	select GENERIC_STRNLEN_USER
+ +	select MODULES_USE_ELF_REL if X86_32
+ +	select MODULES_USE_ELF_RELA if X86_64
++ 	select HAVE_RCU_USER_QS if X86_64
+ =20
+  config INSTRUCTION_DECODER
+  	def_bool (KPROBES || PERF_EVENTS || UPROBES)
+
+--Signature=_Mon__6_Aug_2012_12_27_26_+1000_jNKaJ0zHgi6eTim=
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQHyXVAAoJEECxmPOUX5FEkwMP/1JhC2KwwlsOHkE8nM08B2aA
-q+AcKR3F7xpimhsf0s9ICOwaIBuy8Mkgyvt2uUHTT0K4lsqhjS3TAB+adMOcwWSt
-HEVYIJ9j3gJAGgJ0ZzrnKqIynKjKaGSn3a4JsBnpwOJq9Lob1jt3tUnzARwvSWl/
-YFI2g3hxn8akyG7uRvjyy+ySBR6YngsniHytUc07V3CgjrbggQan6GRu+O6+z0Kb
-3j5z9B/MHdN3w/g9FcqNbUCBQ7gFNaDELCDMCc7GCwfxZItMm48BTvZaOEKVv8TK
-RZmUUhaC7AV+pxdN8A/nQ+1agqGKF1X6/KK7OU7zvCMsQVQZ8mVznYUIZcGb8EBG
-OnEEei5768uNXyv+N1KQZ4QLMhobYO4Udbmsb3W3hqWSOzZGLE/wsSlqOHLfxtgc
-M7jfDSsdRaUDY3iQSZOcz/NVBRGFDI63TlaZNDm6R4XvhLxihoSQXKciS0ubj0df
-+jgqze/V1I6lxEBkIqKy9BZBV+SYjXWs3EFDzbkIL5hNl3ileSV+a0/4rMsxal4s
-lJOQ4U7mL5zX3W/nB0jbCm2TSx5ngUwh6P8YcSxSNSZSfWKih9nE0xrJZYtDcP9E
-hNRvD4kVnXfK0AgY5tESk/vB2CDKlm7PLmp33wUtx8Tw3QI1KAgFLdRIsKIPmhI3
-86Yd/ZUZFu/sIUILwMcA
-=V7WA
+iQIcBAEBCAAGBQJQHyuOAAoJEECxmPOUX5FEy+MP/1IAi+EZ32VRSPeFypliCBD6
+Vdj32qrSOinIMs/qwO/8OwQ4MZ/aqrLsdLWTHNskaA+SMf4CR+8cd4IsII70k74P
+OP4T+zp38dW4raRpNnsmXGw437i2AcJKvryKYN9pbmUZ7OYrvahswRkiaT/Rtsjw
+eedKITHNRlBQplzFaf6fVkj+0hJBzvEZWF7Ijj4A0zjML7OhXqbCE+3jvBLt8Tzg
+kyFY0/kJXLInut5Cxk6OavmneRUQSUU+WDB98sNasn5uXSGJJzIVndMgrNq6oPck
+L4XsrK+oIbKpqr9mdEbjGbHAomFqJZshvGZA57Y3k5+qiCtqNe/poQKFWlLBlm8x
+e49AFwaWv0ZeALSIUJzH/S5agn4aDp4OJuk5kgpM/dFE9W3tvZwAkU5W0Muvv0vC
+yBdiCJ54vNYp/uSj6iaZJ5I9H0lRLwPCxcDpwpm4WZNsWDb6BKbhNCxHIdIFutgi
+8ZkTPninsPl6tZHZ9GSM5P8BIxrJXDpguE99cLTy30Yl7tGdRhq6NpC/6Gv5YaQp
+gzXFW52wDCG7z1t5eulXpn8A1Yc009NKtdvNwa17I9AaR0AIk6MR5Q0ULJvJvvZV
+tNN3mtiQOIzy7WFnHJzv2tGa7bwPGO68jkq8hg5aznULgIPCISsVt03MoqqbMHSb
+rdoaemDNJFKhbJulss7U
+=zOAq
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__6_Aug_2012_12_03_01_+1000_7Pb7Iy5ykOatWtmf--
+--Signature=_Mon__6_Aug_2012_12_27_26_+1000_jNKaJ0zHgi6eTim=--
