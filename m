@@ -1,73 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with the rcu tree
-Date: Mon, 6 Aug 2012 13:13:55 +1000
-Message-ID: <20120806131355.e3d3e892fe26b4832e752692@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Mon, 6 Aug 2012 13:43:18 +1000
+Message-ID: <20120806134318.8af35d047e255fd25398210b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__6_Aug_2012_13_13_55_+1000_zMXOBGB6jjKkXO_3"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__6_Aug_2012_13_43_18_+1000_jvNAPey6_wx/d_38"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59308 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755514Ab2HFDn1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Aug 2012 23:43:27 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>, Steven Whitehouse <swhiteho@redhat.com>
 
---Signature=_Mon__6_Aug_2012_13_13_55_+1000_zMXOBGB6jjKkXO_3
+--Signature=_Mon__6_Aug_2012_13_43_18_+1000_jvNAPey6_wx/d_38
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Andrew,
 
-Today's linux-next merge of the signal tree got a conflict in
-arch/x86/kernel/signal.c between commit 1ea856be75ce ("x86: Exit RCU
-extended QS on notify resume") from the rcu tree and commit 02bf6b04fcd5
-("x86: switch uses of TIF_IRET to TIF_NOTIFY_RESUME, kill TIF_IRET") from
-the signal tree.
+After merging the akpm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Just context changes.  I have fixed it up (see below) and can carry the
-fix as necessary.
+fs/gfs2/rgrp.c: In function 'gfs2_rs_alloc':
+fs/gfs2/rgrp.c:456:2: error: implicit declaration of function 'rb_init_node=
+' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 5599fe1ab023 ("rbtree: empty nodes have no color") from
+the akpm tree interacting with commit cde7c325077b ("GFS2: Add structure
+to contain rgrp, bitmap, offset tuple") from the gfs2 tree.
+
+I have applied the following merge fix patch (which is probably not
+sufficient).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 6 Aug 2012 13:35:11 +1000
+Subject: [PATCH] rbtree/gfs2: remove call to rb_init_node
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/gfs2/rgrp.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
+index 06476b3..6fb3a57 100644
+--- a/fs/gfs2/rgrp.c
++++ b/fs/gfs2/rgrp.c
+@@ -453,8 +453,6 @@ int gfs2_rs_alloc(struct gfs2_inode *ip)
+ 	if (!res)
+ 		error =3D -ENOMEM;
+=20
+-	rb_init_node(&res->rs_node);
+-
+ 	down_write(&ip->i_rw_mutex);
+ 	if (ip->i_res)
+ 		kmem_cache_free(gfs2_rsrv_cachep, res);
+@@ -486,7 +484,6 @@ static void __rs_deltree(struct gfs2_inode *ip, struct =
+gfs2_blkreserv *rs)
+ 	rgd =3D rs->rs_rbm.rgd;
+ 	trace_gfs2_rs(ip, rs, TRACE_RS_TREEDEL);
+ 	rb_erase(&rs->rs_node, &rgd->rd_rstree);
+-	rb_init_node(&rs->rs_node);
+ 	BUG_ON(!rgd->rd_rs_cnt);
+ 	rgd->rd_rs_cnt--;
+=20
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/kernel/signal.c
-index bca0ab9,16f61c4..0000000
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@@ -802,12 -797,6 +802,8 @@@ do_notify_resume(struct pt_regs *regs,=20
-  	}
-  	if (thread_info_flags & _TIF_USER_RETURN_NOTIFY)
-  		fire_user_return_notifiers();
- +
-- #ifdef CONFIG_X86_32
-- 	clear_thread_flag(TIF_IRET);
-- #endif /* CONFIG_X86_32 */
--=20
- +	rcu_user_enter();
-  }
- =20
-  void signal_fault(struct pt_regs *regs, void __user *frame, char *where)
-
---Signature=_Mon__6_Aug_2012_13_13_55_+1000_zMXOBGB6jjKkXO_3
+--Signature=_Mon__6_Aug_2012_13_43_18_+1000_jvNAPey6_wx/d_38
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQHzZzAAoJEECxmPOUX5FE+kcQAIdghI9SHdntej/Xa4W91ROv
-9g+hSlwMDMUHgP9cOb9nLXMpbdxPX71OEqX9p+DLYBgWVFue0kddifcQb+nuY/uT
-ijld8dM3gYYDpQanNPV1ePPqy6jy2CZGlciB3eOMRxKSBuGpYKQjwA84kazG7ZAw
-8w7hGkTqGMI863Hu2pzDXCyhGBy8zB2z75lmkhH7reKUp0OHNkQrlIWZEvTIkwJQ
-mtzQFSY4dgwShnJQRbVc22dpIykcMQVyKS5qZSZsdhBubDvM06o2eNHwd/x1gK6a
-fXE/klZyX7Ke+daLJNFlIevJsMZqHBKU+BiaPVNyI/QVMBscP2YPJZT6NTE0vD3H
-UtnTPH4JRVc8R5BeGrf1/x8218g9Axp4fM2U8ULeKNPLyb04by3sYFklq+/BXyv3
-zitZIVxK1ZhIaW2bcrqa8+sztSL2NuuoTAQanQCyCCU9YqyORWZLxGXZydeJJVce
-V1kp8sQiHSCSGQrU/jK99zZ+tlfBkemXX9omXE3cHCAJ7C0Q5hOnGujpKryLU9I3
-8nUxMzznppMiwCHbcbALGRrwLjSTMk6YG43SJao5FKrYYtK+2s7fySbf3dLg1iqm
-yjGCQz/gEj0E296mDiZo+Owp/s3OCFe8DXyoXOxmZADg6AHet/z1RfPhta8rU9EX
-6DP4zd4NR+IfgipKItdS
-=aEoY
+iQIcBAEBCAAGBQJQHz1WAAoJEECxmPOUX5FEShEP/iWP3QDeMn4Kk7DbDIMA0Bve
+AIEnLudK6Oo2znip+aHt2z9J/s4NazZb6XH76oIm/nnbm+W2U7s7lVBLadIQQofX
+SeqdQtIofExDp68XJIcDfeZcLwgbf76FwDBxZFJJHiC3l6Yhpu7+PrSHmcdHhPhU
+0KxsqUelCYphp6MSDBJCJfMQTVGP/f72+AnfTA7dSWqH0RtBUIaxMJx05anpqSux
+bdddvIaolb4l+6WJI+HwyuguWcPicIfMLlEP5rXNqNkImzCbm/089BoCywodbDKp
+UN18SvQ7M5g4ez+ni0XDNFsc2zqORiZBdQzvxVsiVtPck0IhyiBdxhwQbR/OR5gD
+pKVZMPO92/WMv+iAK4i8urt/9xzB0hAFfa3RkKD5xaqAQNXwlWMNxwgPuKo09CG3
+U2Pzn5cj1TE3vQJJHKA8dKF+VS3n+EnTzKm9a+8toe00WOxp424tc2BlH6UUuDKO
+9fIOuk8yyf57CsI37VlW4aC1Jbo9PK5Gi98CTUhGkgkHBenIGZwrpOdzpOkcb4Cc
+LK8vxAvC7CPs+jbfLo97ckWZHtlr8QVsAphekghyEODW676NB2Wg6+NpxyJVHKIG
+HeYprQQA8c6s0GmqvWa6Hwr3gupEZU1lNfPJhknN2sWnUK0Ffo75HXt8KV15tbYK
+yW2x3+pXn6ApbCKfgvGK
+=7V+m
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__6_Aug_2012_13_13_55_+1000_zMXOBGB6jjKkXO_3--
+--Signature=_Mon__6_Aug_2012_13_43_18_+1000_jvNAPey6_wx/d_38--
