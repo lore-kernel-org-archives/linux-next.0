@@ -1,47 +1,94 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of the signal tree with the arm-current tree
-Date: Sat, 4 Aug 2012 21:19:17 +0200
-Message-ID: <CAMuHMdVBMu5KxPTGPzAk3u3W=o-=gsKa6K=q_-Z4YnELKvmZRw@mail.gmail.com>
-References: <20120705173526.bf8772adb18edfc91adddea8@canb.auug.org.au>
-	<20120705075204.GA12344@flint.arm.linux.org.uk>
-	<20120715112735.GI31729@ZenIV.linux.org.uk>
-	<CAMuHMdXP_rjwPhfTwcY+Jf3+Dq=AkWtMZvUUibCQ9D=c60_j5Q@mail.gmail.com>
-	<20120715120457.GJ31729@ZenIV.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the cifs tree
+Date: Mon, 6 Aug 2012 10:48:41 +1000
+Message-ID: <20120806104841.07ed3708b600529ff7eb6fa6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120715120457.GJ31729@ZenIV.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__6_Aug_2012_10_48_41_+1000_Q0A.8HsKl6VsDv18"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50742 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754948Ab2HFAsu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Aug 2012 20:48:50 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Al,
+--Signature=_Mon__6_Aug_2012_10_48_41_+1000_Q0A.8HsKl6VsDv18
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 15, 2012 at 2:04 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Sun, Jul 15, 2012 at 01:47:59PM +0200, Geert Uytterhoeven wrote:
->> On Sun, Jul 15, 2012 at 1:27 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->> > On Thu, Jul 05, 2012 at 08:52:04AM +0100, Russell King wrote:
->> >> Will has concerns with Al's proposed fixes for the signal handling.
->> >
->> > Could you please resend whatever concerns those had been my way?
->> > The last I've seen from Will had been about the stuff in mainline,
->> > not in -next; I might have missed something quite easily, though -
->> > net.access had been really lousy lately and piles in l-k mbox... ouch.
->>
->> Speaking about -next, there's still this fix for an avr32 regression:
->
-> Yeah, grabbed it.  Will be in the next rebase (hopefully in a few hours).
+Hi all,
 
-Still not there, though.
+After merging the cifs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Gr{oetje,eeting}s,
+fs/cifs/Kconfig:3: syntax error
+fs/Kconfig:244: missing end statement for this entry
+fs/Kconfig:5: missing end statement for this entry
+fs/cifs/Kconfig:2: invalid statement
+fs/cifs/Kconfig:3: unexpected option "depends"
+fs/cifs/Kconfig:4: unexpected option "select"
+fs/cifs/Kconfig:5: unexpected option "select"
+fs/cifs/Kconfig:6: unexpected option "select"
+fs/cifs/Kconfig:7: unexpected option "select"
+fs/cifs/Kconfig:8: unexpected option "select"
+fs/cifs/Kconfig:9: unexpected option "select"
+fs/cifs/Kconfig:10: unexpected option "select"
+fs/cifs/Kconfig:11: unexpected option "select"
+fs/cifs/Kconfig:12: unexpected option "select"
+fs/cifs/Kconfig:13: invalid statement
+fs/cifs/Kconfig:14: unknown statement "This"
+fs/cifs/Kconfig:15: unknown statement "CIFS"
+fs/cifs/Kconfig:16: unknown statement "SMB"
+fs/cifs/Kconfig:17: unknown statement "PC"
+fs/cifs/Kconfig:18: unknown statement "file"
+fs/cifs/Kconfig:19: unknown statement "and"
+fs/cifs/Kconfig:20: unknown statement "server"
+fs/cifs/Kconfig:21: unknown statement "support"
+fs/cifs/Kconfig:22: unknown statement "well"
+fs/cifs/Kconfig:25: syntax error
+fs/cifs/Kconfig:24: unknown statement "The"
+fs/cifs/Kconfig:25: unknown statement "client"
+fs/cifs/Kconfig:26: unknown statement "support"
+fs/cifs/Kconfig:27: unknown statement "session"
+fs/cifs/Kconfig:28: unknown statement "safe"
+fs/cifs/Kconfig:29: unknown statement "signing"
+fs/cifs/Kconfig:30: unknown statement "If"
+fs/Kconfig:274: unexpected end statement
+fs/Kconfig:279: unexpected end statement
 
-                        Geert
+Caused by commit 12f3f9b7c80c ("Remove sparse warning in cifsfs.c").
+Please, please build test after doing updates and before publishing your
+tree.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I have used the cifs tree from next-20120803 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--Signature=_Mon__6_Aug_2012_10_48_41_+1000_Q0A.8HsKl6VsDv18
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQHxRpAAoJEECxmPOUX5FE4ooP/jn+QY9oPxV6evy7omzvSTky
+/9mrnVDZR61plLzThUAUhUfKXWO3Q7XvSEVctWOYZakJvcbfX4omw9hOyu5uiEw6
+IGGpZSguf3S3Cz/vCp+UcsM0ui2PCiwln923IAuEaOLimLacpvpN33HoOasKLwdf
+vKx3w2WRHICR773lz+ILqToVEoZ6g+tYZWO2IT4FB2CYxESnAVB41BStvl81boyL
+wNx4uH8gueJ1l/+0cUhPmWMz9Z+yxCfCUqmvUEteWTEq1XKCisZVi/+4uo8AUA/n
+LAYi3Es4UiLe7UfqX7uRkgeMy8l7uAGOMmSsfYNw/0SzPk70BGXokWKtjWbIXNJi
+8mG+/l5xM5r3HLKXU5u0JBNIG6DZ2ceuwMfTW3Abm62YqfCwA4OadpS4fCOu421X
+O541RMViWG6VxingM8KnKQyt6mHZCazNGatilWzz8Agv5Y37fPAJFAkFgSzuOLlh
+XGkWCyyO+3Bnym+zNcIF31bKOd5REtGmkvl+HTmErOYJRbiLreQHDglkarzZfp0a
+zEr5JLayAIUWi1iX9nMd7/VLko/fxfzXPZjRvfNnT5QAJgEa4J/TDDrTKMlik6Vi
+EOy4gv4SlJqlvd+DcC7kJbKFc9Ap5nRpp8fsUulxA88C1VfY8GZqRdskdwIpLHl5
+zV0mlgI75tDNiSGv8X0F
+=yqaf
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__6_Aug_2012_10_48_41_+1000_Q0A.8HsKl6VsDv18--
