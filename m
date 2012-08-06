@@ -1,94 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the cifs tree
-Date: Mon, 6 Aug 2012 10:48:41 +1000
-Message-ID: <20120806104841.07ed3708b600529ff7eb6fa6@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree with the s390 tree
+Date: Mon, 6 Aug 2012 11:23:28 +1000
+Message-ID: <20120806112328.6d5b5e21c37b753a2013b05b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__6_Aug_2012_10_48_41_+1000_Q0A.8HsKl6VsDv18"
+ boundary="Signature=_Mon__6_Aug_2012_11_23_28_+1000_PRJpI6N/d=V52fId"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50742 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:45343 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754948Ab2HFAsu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Aug 2012 20:48:50 -0400
+	with ESMTP id S1753202Ab2HFBXg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Aug 2012 21:23:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, David Howells <dhowells@redhat.com>
 
---Signature=_Mon__6_Aug_2012_10_48_41_+1000_Q0A.8HsKl6VsDv18
+--Signature=_Mon__6_Aug_2012_11_23_28_+1000_PRJpI6N/d=V52fId
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Rusty,
 
-After merging the cifs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the rr tree got a conflict in
+arch/s390/Kconfig between commit 867c2dcb369b ("s390/seccomp: add support
+for system call filtering using BPF") from the s390 tree and commit
+d673c23ca730 ("Make most arch asm/module.h files use
+asm-generic/module.h") from the rr tree.
 
-fs/cifs/Kconfig:3: syntax error
-fs/Kconfig:244: missing end statement for this entry
-fs/Kconfig:5: missing end statement for this entry
-fs/cifs/Kconfig:2: invalid statement
-fs/cifs/Kconfig:3: unexpected option "depends"
-fs/cifs/Kconfig:4: unexpected option "select"
-fs/cifs/Kconfig:5: unexpected option "select"
-fs/cifs/Kconfig:6: unexpected option "select"
-fs/cifs/Kconfig:7: unexpected option "select"
-fs/cifs/Kconfig:8: unexpected option "select"
-fs/cifs/Kconfig:9: unexpected option "select"
-fs/cifs/Kconfig:10: unexpected option "select"
-fs/cifs/Kconfig:11: unexpected option "select"
-fs/cifs/Kconfig:12: unexpected option "select"
-fs/cifs/Kconfig:13: invalid statement
-fs/cifs/Kconfig:14: unknown statement "This"
-fs/cifs/Kconfig:15: unknown statement "CIFS"
-fs/cifs/Kconfig:16: unknown statement "SMB"
-fs/cifs/Kconfig:17: unknown statement "PC"
-fs/cifs/Kconfig:18: unknown statement "file"
-fs/cifs/Kconfig:19: unknown statement "and"
-fs/cifs/Kconfig:20: unknown statement "server"
-fs/cifs/Kconfig:21: unknown statement "support"
-fs/cifs/Kconfig:22: unknown statement "well"
-fs/cifs/Kconfig:25: syntax error
-fs/cifs/Kconfig:24: unknown statement "The"
-fs/cifs/Kconfig:25: unknown statement "client"
-fs/cifs/Kconfig:26: unknown statement "support"
-fs/cifs/Kconfig:27: unknown statement "session"
-fs/cifs/Kconfig:28: unknown statement "safe"
-fs/cifs/Kconfig:29: unknown statement "signing"
-fs/cifs/Kconfig:30: unknown statement "If"
-fs/Kconfig:274: unexpected end statement
-fs/Kconfig:279: unexpected end statement
-
-Caused by commit 12f3f9b7c80c ("Remove sparse warning in cifsfs.c").
-Please, please build test after doing updates and before publishing your
-tree.
-
-I have used the cifs tree from next-20120803 for today.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__6_Aug_2012_10_48_41_+1000_Q0A.8HsKl6VsDv18
+diff --cc arch/s390/Kconfig
+index 107610e,11cc724..0000000
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@@ -124,7 -123,8 +124,9 @@@ config S39
+  	select GENERIC_TIME_VSYSCALL
+  	select GENERIC_CLOCKEVENTS
+  	select KTIME_SCALAR if 32BIT
+ +	select HAVE_ARCH_SECCOMP_FILTER
++ 	select HAVE_MOD_ARCH_SPECIFIC
++ 	select MODULES_USE_ELF_RELA
+ =20
+  config SCHED_OMIT_FRAME_POINTER
+  	def_bool y
+
+--Signature=_Mon__6_Aug_2012_11_23_28_+1000_PRJpI6N/d=V52fId
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQHxRpAAoJEECxmPOUX5FE4ooP/jn+QY9oPxV6evy7omzvSTky
-/9mrnVDZR61plLzThUAUhUfKXWO3Q7XvSEVctWOYZakJvcbfX4omw9hOyu5uiEw6
-IGGpZSguf3S3Cz/vCp+UcsM0ui2PCiwln923IAuEaOLimLacpvpN33HoOasKLwdf
-vKx3w2WRHICR773lz+ILqToVEoZ6g+tYZWO2IT4FB2CYxESnAVB41BStvl81boyL
-wNx4uH8gueJ1l/+0cUhPmWMz9Z+yxCfCUqmvUEteWTEq1XKCisZVi/+4uo8AUA/n
-LAYi3Es4UiLe7UfqX7uRkgeMy8l7uAGOMmSsfYNw/0SzPk70BGXokWKtjWbIXNJi
-8mG+/l5xM5r3HLKXU5u0JBNIG6DZ2ceuwMfTW3Abm62YqfCwA4OadpS4fCOu421X
-O541RMViWG6VxingM8KnKQyt6mHZCazNGatilWzz8Agv5Y37fPAJFAkFgSzuOLlh
-XGkWCyyO+3Bnym+zNcIF31bKOd5REtGmkvl+HTmErOYJRbiLreQHDglkarzZfp0a
-zEr5JLayAIUWi1iX9nMd7/VLko/fxfzXPZjRvfNnT5QAJgEa4J/TDDrTKMlik6Vi
-EOy4gv4SlJqlvd+DcC7kJbKFc9Ap5nRpp8fsUulxA88C1VfY8GZqRdskdwIpLHl5
-zV0mlgI75tDNiSGv8X0F
-=yqaf
+iQIcBAEBCAAGBQJQHxyQAAoJEECxmPOUX5FExnAP/icBXnyoHq8KmkftDdu+ShZc
+Wbrb0iIGLJkkPPkLl7WGsgrDfykQBvlwe5/hXFQ9BLZWD96Hn7RWTtS9E8MIdzgJ
+JZZf/WChqeWiSiCgVI84SlqyCVDqr1daKtwYIjYzAUNYjD7Jv+TNrbYDjbYeffsT
+O4JtS+qd1w1wWKUdL6j+GL2Rex5skbrgQXTq7MRPAFKQnL9/IY/AZv9tRsAxnB32
+VVukCSd/aEcx8mekuYKareRPdcePMAt0KwW0hUHzQtvFMSfgV+8HRSWyCiMJxHkK
+gYyll7zASAJGK5nJmRz+ny2RmOUvCwBimfBuK1yIrEHiIM1Qd6rR51eFPqz60Mi1
+QiIYocjBsXqM+dVs80m5iJDvJN4w7VYFVpW6z4zkegHg7TIVh8JxGBMrCq4VEr2e
+fM9w3OOHdTf5MeN3T+ZWTdzJPDi3uG1F9weg0NBM+T5GScGu2z/NpAm1VT26yj4c
+UGoZ+RRKRfOHWDcEgWEYRycg+eTucKukMb08ACiIsdO//WKC85YIAZ8i+IM0Heh3
+X0xeKgNJK1jp37wWVY1p+IhcitN8X2xLwI/tR6AwhLgw7aqbPFTG7byR1Je7vx2O
+EWLtsI1ZuodYg8WzGwstWnDGF1s3cYS7fFYxjd8JWQ6AmhHrvvWB3cB6/TmSh2Sa
+l4vSo9RzIVki4loAJo53
+=TGZM
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__6_Aug_2012_10_48_41_+1000_Q0A.8HsKl6VsDv18--
+--Signature=_Mon__6_Aug_2012_11_23_28_+1000_PRJpI6N/d=V52fId--
