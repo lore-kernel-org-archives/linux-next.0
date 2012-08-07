@@ -1,56 +1,37 @@
-From: Max Filippov <jcmvbkbc@gmail.com>
-Subject: xtensa port maintenance
-Date: Tue, 07 Aug 2012 03:38:58 +0400
-Message-ID: <50205592.1030205@gmail.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: thermal patches in linux-next
+Date: Tue, 07 Aug 2012 10:53:58 +0800
+Message-ID: <1344308038.1682.637.camel@rui.sh.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:52488 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756486Ab2HFXk1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Aug 2012 19:40:27 -0400
+Received: from mga01.intel.com ([192.55.52.88]:27144 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753999Ab2HGCwr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Aug 2012 22:52:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Chris Zankel <chris@zankel.net>, Marc Gauthier <marc@tensilica.com>, Kirill Krinkin <kirill.krinkin@gmail.com>
+To: linux-next <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amit Kachhap <amit.kachhap@linaro.org>, guenter.roeck@ericsson.com, kuninori.morimoto.gx@renesas.com, akpm@linux-foundation.org
 
-Hi.
+Hi, all,
 
-AFAIK xtensa linux port is currently in bad shape: it doesn't work in the
-mainline, it fails to build in the linux-next. The latest working kernels for
-xtensa are 2.6.29...31 trees hosted at the git.linux-xtensa.org.
+I just created a git tree for catching all thermal changes.
+http://git.kernel.org/?p=linux/kernel/git/rzhang/linux.git;a=summary
+and I also created the next branch, which I'd like to be set for
+linux-next inclusion, but don't know how.
 
-I have a goal to make xtensa arch in the linux mainline usable.
-Currently I have a number of patches on top of Linus' tree that allow to build
-working allnoconfig, defconfig and allmodconfig kernels for ISS machine with
-dc232b and fsf core variants [1]. For the next several weeks I'm planning to
-forward-port patches accumulated in linux-xtensa.org git trees and make the
-resulting kernels rock-solid. I'd like to restore xtensa participation in the
-linux-next. Further (currently undetailed) plans are to bring modern Linux
-features to the xtensa port, e.g. device trees.
+And, I just saw that there are a couple of thermal patches in
+linux-next, which I think it would be better if they can be re-based on
+my next branch first.
+For Guenter's and Kuninori's patch, I can take them directly, with few
+changes.
 
-I have a couple of questions regarding the path of xtensa-specific patches
-upstream:
-    - which git tree should they be targeted for? Should I set up a tree for
-      pull requests, or will patches be picked up into some existing tree?
-      (Looks like Linus' tree is the right target. AFAIK previously xtensa
-      patches went mostly through akpm tree).
+Amit,
+I really like the idea of generic cpufreq cooling. But can you please
+rebase the patches on top of my next branch? the recent thermal changes
+will make your patch much cleaner, as we discussed before. :)
 
-    - which mailing lists should they go to?
-      (I guess that besides linux-xtensa@linux-xtensa.org list they should go
-      to linux-kernel@vger.kernel.org for general review. Anything else?)
-
-Should you wonder what I am:
-I am a member of St.Petersburg Open Source and Linux Lab [2].
-My previous contributions to Linux are related to p54spi wireless driver.
-I'm also a developer and maintainer of the target-xtensa QEMU port [3].
-
-
-[1] https://github.com/jcmvbkbc/linux-xtensa
-[2] http://osll.spb.ru
-[3] http://wiki.qemu.org/Features/Xtensa
-
--- 
-Thanks.
--- Max
+thanks,
+rui
