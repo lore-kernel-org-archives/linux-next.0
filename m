@@ -1,44 +1,61 @@
-From: Amit Kachhap <amit.kachhap@linaro.org>
-Subject: Re: thermal patches in linux-next
-Date: Tue, 7 Aug 2012 17:43:30 +0530
-Message-ID: <CAK44p22ewPR2h_KLqHjmNY4KVG-E68s5BxdUXrzRy_hk4Nf7Cg@mail.gmail.com>
-References: <1344308038.1682.637.camel@rui.sh.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: xtensa port maintenance
+Date: Tue, 7 Aug 2012 16:35:05 +0200
+Message-ID: <CAMuHMdU885PUSmqr53-UdJiVBgtMXxPk-pQ27-E=-aw=P=K+_w@mail.gmail.com>
+References: <50205592.1030205@gmail.com>
+	<5020AA5B.4080407@zankel.net>
+	<CAMuHMdVh_D1yTYiPoRks8-sjoNb_dr5xpRbxv+AJLseUd2Kk0Q@mail.gmail.com>
+	<CAMo8BfLw0Rt8Z-Tn0k40szP1ZPtwGcV27aEp3MOVEBNx+C3tgA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1344308038.1682.637.camel@rui.sh.intel.com>
+In-Reply-To: <CAMo8BfLw0Rt8Z-Tn0k40szP1ZPtwGcV27aEp3MOVEBNx+C3tgA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, guenter.roeck@ericsson.com, kuninori.morimoto.gx@renesas.com, akpm@linux-foundation.org
+To: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Chris Zankel <chris@zankel.net>, linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Marc Gauthier <marc@tensilica.com>, Kirill Krinkin <kirill.krinkin@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi,
+Hi Max,
 
-Thanks Rui for creating the next tree. I will rebase my patches on top
-of your tree and post them shortly.
+On Tue, Aug 7, 2012 at 1:56 PM, Max Filippov <jcmvbkbc@gmail.com> wrote:
+> On Tue, Aug 7, 2012 at 3:36 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> On Tue, Aug 7, 2012 at 7:40 AM, Chris Zankel <chris@zankel.net> wrote:
+>>> On 08/06/2012 04:38 PM, Max Filippov wrote:
+>>>> AFAIK xtensa linux port is currently in bad shape: it doesn't work in the
+>>>> mainline, it fails to build in the linux-next. The latest working kernels
+>>>> for
+>>>> xtensa are 2.6.29...31 trees hosted at the git.linux-xtensa.org.
+>>>
+>>> I wouldn't say it's in bad shape, I just built an vmlinux image from the
+>>> latest tree (3.6.0-rc1), but it might not be very stable. One of the major
+>>> issues is not really the kernel but  there's actually no way to build a
+>>> fairly recent version of the toolchain. I have been using a somewhat more
+>>> recent buildroot version than what is on xtensa-linux.org, but even that
+>>> version of buildroot is rather old now and needed a few patches.
+>>
+>> Are the errors
+>>
+>> | dangerous relocation: l32r: literal placed after use: .literal.unlikely
+>> (http://kisskb.ellerman.id.au/kisskb/buildresult/6845615/)
+>>
+>> preventing linking of vmlinux toolchain issues?
+>
+> They may be considered as such (toolchain now adds *.unlikely sections which
+> was not the case previously), or may not, depending on what one would expect
+> from the toolchain. I have a fix for that issue:
+> https://github.com/jcmvbkbc/linux-xtensa/commit/edd7c14132388d5c09c57cf12c76c6631a1e0277
 
-Thanks,
-Amit Daniel
+Thanks, that indeed fixes the link issue for me!
 
-On 7 August 2012 08:23, Zhang Rui <rui.zhang@intel.com> wrote:
-> Hi, all,
->
-> I just created a git tree for catching all thermal changes.
-> http://git.kernel.org/?p=linux/kernel/git/rzhang/linux.git;a=summary
-> and I also created the next branch, which I'd like to be set for
-> linux-next inclusion, but don't know how.
->
-> And, I just saw that there are a couple of thermal patches in
-> linux-next, which I think it would be better if they can be re-based on
-> my next branch first.
-> For Guenter's and Kuninori's patch, I can take them directly, with few
-> changes.
->
-> Amit,
-> I really like the idea of generic cpufreq cooling. But can you please
-> rebase the patches on top of my next branch? the recent thermal changes
-> will make your patch much cleaner, as we discussed before. :)
->
-> thanks,
-> rui
->
+BTW, how do you export a "commitdiff" from the github web interface?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
