@@ -1,61 +1,65 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Max Filippov <jcmvbkbc@gmail.com>
 Subject: Re: xtensa port maintenance
-Date: Tue, 7 Aug 2012 16:35:05 +0200
-Message-ID: <CAMuHMdU885PUSmqr53-UdJiVBgtMXxPk-pQ27-E=-aw=P=K+_w@mail.gmail.com>
+Date: Tue, 7 Aug 2012 19:34:28 +0400
+Message-ID: <CAMo8BfJMBRq5gBw-5SjS5r4NGsN9-TeGOcZf91-i=sVwM5=Thw@mail.gmail.com>
 References: <50205592.1030205@gmail.com>
 	<5020AA5B.4080407@zankel.net>
 	<CAMuHMdVh_D1yTYiPoRks8-sjoNb_dr5xpRbxv+AJLseUd2Kk0Q@mail.gmail.com>
 	<CAMo8BfLw0Rt8Z-Tn0k40szP1ZPtwGcV27aEp3MOVEBNx+C3tgA@mail.gmail.com>
+	<CAMuHMdU885PUSmqr53-UdJiVBgtMXxPk-pQ27-E=-aw=P=K+_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMo8BfLw0Rt8Z-Tn0k40szP1ZPtwGcV27aEp3MOVEBNx+C3tgA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Max Filippov <jcmvbkbc@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qa0-f53.google.com ([209.85.216.53]:43372 "EHLO
+	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752421Ab2HGPe3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Aug 2012 11:34:29 -0400
+In-Reply-To: <CAMuHMdU885PUSmqr53-UdJiVBgtMXxPk-pQ27-E=-aw=P=K+_w@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Chris Zankel <chris@zankel.net>, linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Marc Gauthier <marc@tensilica.com>, Kirill Krinkin <kirill.krinkin@gmail.com>
-List-Id: linux-next.vger.kernel.org
 
-Hi Max,
-
-On Tue, Aug 7, 2012 at 1:56 PM, Max Filippov <jcmvbkbc@gmail.com> wrote:
-> On Tue, Aug 7, 2012 at 3:36 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Tue, Aug 7, 2012 at 7:40 AM, Chris Zankel <chris@zankel.net> wrote:
->>> On 08/06/2012 04:38 PM, Max Filippov wrote:
->>>> AFAIK xtensa linux port is currently in bad shape: it doesn't work in the
->>>> mainline, it fails to build in the linux-next. The latest working kernels
->>>> for
->>>> xtensa are 2.6.29...31 trees hosted at the git.linux-xtensa.org.
->>>
->>> I wouldn't say it's in bad shape, I just built an vmlinux image from the
->>> latest tree (3.6.0-rc1), but it might not be very stable. One of the major
->>> issues is not really the kernel but  there's actually no way to build a
->>> fairly recent version of the toolchain. I have been using a somewhat more
->>> recent buildroot version than what is on xtensa-linux.org, but even that
->>> version of buildroot is rather old now and needed a few patches.
->>
->> Are the errors
->>
->> | dangerous relocation: l32r: literal placed after use: .literal.unlikely
->> (http://kisskb.ellerman.id.au/kisskb/buildresult/6845615/)
->>
->> preventing linking of vmlinux toolchain issues?
+On Tue, Aug 7, 2012 at 6:35 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Max,
 >
-> They may be considered as such (toolchain now adds *.unlikely sections which
-> was not the case previously), or may not, depending on what one would expect
-> from the toolchain. I have a fix for that issue:
-> https://github.com/jcmvbkbc/linux-xtensa/commit/edd7c14132388d5c09c57cf12c76c6631a1e0277
+> On Tue, Aug 7, 2012 at 1:56 PM, Max Filippov <jcmvbkbc@gmail.com> wrote:
+>> On Tue, Aug 7, 2012 at 3:36 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>>> On Tue, Aug 7, 2012 at 7:40 AM, Chris Zankel <chris@zankel.net> wrote:
+>>>> On 08/06/2012 04:38 PM, Max Filippov wrote:
+>>>>> AFAIK xtensa linux port is currently in bad shape: it doesn't work in the
+>>>>> mainline, it fails to build in the linux-next. The latest working kernels
+>>>>> for
+>>>>> xtensa are 2.6.29...31 trees hosted at the git.linux-xtensa.org.
+>>>>
+>>>> I wouldn't say it's in bad shape, I just built an vmlinux image from the
+>>>> latest tree (3.6.0-rc1), but it might not be very stable. One of the major
+>>>> issues is not really the kernel but  there's actually no way to build a
+>>>> fairly recent version of the toolchain. I have been using a somewhat more
+>>>> recent buildroot version than what is on xtensa-linux.org, but even that
+>>>> version of buildroot is rather old now and needed a few patches.
+>>>
+>>> Are the errors
+>>>
+>>> | dangerous relocation: l32r: literal placed after use: .literal.unlikely
+>>> (http://kisskb.ellerman.id.au/kisskb/buildresult/6845615/)
+>>>
+>>> preventing linking of vmlinux toolchain issues?
+>>
+>> They may be considered as such (toolchain now adds *.unlikely sections which
+>> was not the case previously), or may not, depending on what one would expect
+>> from the toolchain. I have a fix for that issue:
+>> https://github.com/jcmvbkbc/linux-xtensa/commit/edd7c14132388d5c09c57cf12c76c6631a1e0277
+>
+> Thanks, that indeed fixes the link issue for me!
+>
+> BTW, how do you export a "commitdiff" from the github web interface?
 
-Thanks, that indeed fixes the link issue for me!
+Not sure what you mean... You can get raw commitdiff by adding
+'.patch' to the URL above:
 
-BTW, how do you export a "commitdiff" from the github web interface?
+https://github.com/jcmvbkbc/linux-xtensa/commit/edd7c14132388d5c09c57cf12c76c6631a1e0277.patch
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Thanks.
+-- Max
