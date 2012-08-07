@@ -1,50 +1,52 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: removal of some trees
-Date: Tue, 07 Aug 2012 17:08:18 +0900
-Message-ID: <097401cd7473$ce075320$6a15f960$%kim@samsung.com>
-References: <20120802084154.875a13db0ec1ebd3f5a4dab3@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: xtensa port maintenance
+Date: Tue, 7 Aug 2012 13:36:24 +0200
+Message-ID: <CAMuHMdVh_D1yTYiPoRks8-sjoNb_dr5xpRbxv+AJLseUd2Kk0Q@mail.gmail.com>
+References: <50205592.1030205@gmail.com>
+	<5020AA5B.4080407@zankel.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:23209 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751274Ab2HGIIU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Aug 2012 04:08:20 -0400
-In-reply-to: <20120802084154.875a13db0ec1ebd3f5a4dab3@canb.auug.org.au>
-Content-language: ko
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:50040 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754245Ab2HGLgZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Aug 2012 07:36:25 -0400
+In-Reply-To: <5020AA5B.4080407@zankel.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Ben Dooks' <ben-linux@fluff.org>
-Cc: 'LKML' <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Chris Zankel <chris@zankel.net>
+Cc: Max Filippov <jcmvbkbc@gmail.com>, linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Marc Gauthier <marc@tensilica.com>, Kirill Krinkin <kirill.krinkin@gmail.com>
 
-Stephen Rothwell wrote:
-> 
-> Hi Ben,
-> 
-> Since I haven't been able to fetch these trees for quite some time and I
-> haven't heard from you about them, I am removing the following trees from
-> linux-next.  If/When you have time to maintain these trees again, we can
-> add them back without problems.
-> 
-> samsung	 	git://git.fluff.org/bjdooks/linux.git#next-samsung
-> bjdooks-i2c	git://git.fluff.org/bjdooks/linux.git#next-i2c
-> 
-Hi Stephen,
+Hi Chris,
 
-I think, now, the 'samsung' can be removed from linux-next but I'm not sure
-about 'bjdooks-i2c'. If so, please change the name of my tree 's5p' to
-'samsung'.
+On Tue, Aug 7, 2012 at 7:40 AM, Chris Zankel <chris@zankel.net> wrote:
+> On 08/06/2012 04:38 PM, Max Filippov wrote:
+>> AFAIK xtensa linux port is currently in bad shape: it doesn't work in the
+>> mainline, it fails to build in the linux-next. The latest working kernels
+>> for
+>> xtensa are 2.6.29...31 trees hosted at the git.linux-xtensa.org.
+>
+> I wouldn't say it's in bad shape, I just built an vmlinux image from the
+> latest tree (3.6.0-rc1), but it might not be very stable. One of the major
+> issues is not really the kernel but  there's actually no way to build a
+> fairly recent version of the toolchain. I have been using a somewhat more
+> recent buildroot version than what is on xtensa-linux.org, but even that
+> version of buildroot is rather old now and needed a few patches.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-#for-next
+Are the errors
 
-If any problems, please kindly let me know.
+| dangerous relocation: l32r: literal placed after use: .literal.unlikely
+(http://kisskb.ellerman.id.au/kisskb/buildresult/6845615/)
 
-Thanks.
+preventing linking of vmlinux toolchain issues?
 
-Best regards,
-Kgene.
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
