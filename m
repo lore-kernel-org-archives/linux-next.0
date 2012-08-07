@@ -1,124 +1,52 @@
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: xtensa port maintenance
-Date: Tue, 7 Aug 2012 20:43:58 +0400
-Message-ID: <CAMo8BfLLxBeUC-vg6sAxWLjqPt=fwsQEQgjsqqbjurT3vzo-Pw@mail.gmail.com>
+Date: Tue, 7 Aug 2012 18:57:44 +0200
+Message-ID: <CAMuHMdXF+N2A5+=Y79dayffU8SYyhVG7yms_Edrrt388wjjMWA@mail.gmail.com>
 References: <50205592.1030205@gmail.com>
 	<5020AA5B.4080407@zankel.net>
+	<CAMuHMdVh_D1yTYiPoRks8-sjoNb_dr5xpRbxv+AJLseUd2Kk0Q@mail.gmail.com>
+	<CAMo8BfLw0Rt8Z-Tn0k40szP1ZPtwGcV27aEp3MOVEBNx+C3tgA@mail.gmail.com>
+	<CAMuHMdU885PUSmqr53-UdJiVBgtMXxPk-pQ27-E=-aw=P=K+_w@mail.gmail.com>
+	<CAMo8BfJMBRq5gBw-5SjS5r4NGsN9-TeGOcZf91-i=sVwM5=Thw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:62526 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755514Ab2HGQn7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Aug 2012 12:43:59 -0400
-In-Reply-To: <5020AA5B.4080407@zankel.net>
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:38942 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755540Ab2HGQ5p (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Aug 2012 12:57:45 -0400
+In-Reply-To: <CAMo8BfJMBRq5gBw-5SjS5r4NGsN9-TeGOcZf91-i=sVwM5=Thw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Zankel <chris@zankel.net>
-Cc: linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Marc Gauthier <marc@tensilica.com>, Kirill Krinkin <kirill.krinkin@gmail.com>
+To: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Chris Zankel <chris@zankel.net>, linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Marc Gauthier <marc@tensilica.com>, Kirill Krinkin <kirill.krinkin@gmail.com>
 
-On Tue, Aug 7, 2012 at 9:40 AM, Chris Zankel <chris@zankel.net> wrote:
-> Hi Max,
->
-> On 08/06/2012 04:38 PM, Max Filippov wrote:
+Hi Max,
+
+On Tue, Aug 7, 2012 at 5:34 PM, Max Filippov <jcmvbkbc@gmail.com> wrote:
+> On Tue, Aug 7, 2012 at 6:35 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> On Tue, Aug 7, 2012 at 1:56 PM, Max Filippov <jcmvbkbc@gmail.com> wrote:
+>>> https://github.com/jcmvbkbc/linux-xtensa/commit/edd7c14132388d5c09c57cf12c76c6631a1e0277
 >>
->> AFAIK xtensa linux port is currently in bad shape: it doesn't work in the
->> mainline, it fails to build in the linux-next. The latest working kernels
->> for
->> xtensa are 2.6.29...31 trees hosted at the git.linux-xtensa.org.
+>> Thanks, that indeed fixes the link issue for me!
+>>
+>> BTW, how do you export a "commitdiff" from the github web interface?
 >
-> I wouldn't say it's in bad shape, I just built an vmlinux image from the
-> latest tree (3.6.0-rc1), but it might not be very stable. One of the major
-> issues is not really the kernel but  there's actually no way to build a
-> fairly recent version of the toolchain. I have been using a somewhat more
-> recent buildroot version than what is on xtensa-linux.org, but even that
-> version of buildroot is rather old now and needed a few patches.
-
-I've been using userspace built from the buildroot image hosted on
-linux-xtensa.org with gcc-4.4.5 + binutils-2.20.1. I use gcc-4.6.3
-(without libc) + binutils-2.22 to build the kernel. I had an impression that
-mentioned buildroot was able to produce userspace where LTP could
-run successfully for days. So, my initial plan is to use that userspace
-with mainline kernel.
-
-[...]
-
->> forward-port patches accumulated in linux-xtensa.org git trees and make
->> the
->> resulting kernels rock-solid. I'd like to restore xtensa participation in
->> the
->> linux-next. Further (currently undetailed) plans are to bring modern Linux
->> features to the xtensa port, e.g. device trees.
+> Not sure what you mean... You can get raw commitdiff by adding
+> '.patch' to the URL above:
 >
-> That would be great. Might I also add that we'd need to have a working
-> toolchain and bootable image. For me, buildroot seems to be the quickest
-> route here. That would also require possibly adding patches to the toolchain
-> and uClibc that are currently missing. There's also the bootloader, etc.
->
->> I have a couple of questions regarding the path of xtensa-specific patches
->> upstream:
->>      - which git tree should they be targeted for? Should I set up a tree
->> for
->>        pull requests, or will patches be picked up into some existing
->> tree?
->>        (Looks like Linus' tree is the right target. AFAIK previously
->> xtensa
->>        patches went mostly through akpm tree).
->
-> Yes, Andrew has been very helpful stepping in and adding those patches. Most
-> if not all of those patches were fixes because of generic kernel changes and
-> not major fixes or changes to the core of the Xtensa port.
->
-> Ideally, it would be great if you could create a git tree (I saw you already
-> have a version on github already?) that would allow us to look over those
-> patches. The goal should be to have a system to build toolchain, bootable
-> image, and kernel, so we can run some regression tests on either the
-> simulator (qemu) or an actual board. Once we have a regression test system
-> in place, we can then add more features and funnel those patches either
-> through me or more directly..
->
-> What do you think?
+> https://github.com/jcmvbkbc/linux-xtensa/commit/edd7c14132388d5c09c57cf12c76c6631a1e0277.patch
 
-I have a subset thereof that builds toolchain (without libc) and the kernel.
-Buildroot gave me an impression of not very reproducible environment, perhaps
-I spent too little time on it. So I made an image and I hope that
-pre-built image
-may be used, at least in the beginning. I had to lightly patch U-boot hosted on
-linux-xtensa.org to make it work on LX60/110/200 QEMU models. I guess we
-can start with pre-built image of the bootloader too.
+Thanks, that's what I was looking for, but couldn't find, so I had to
+apply it manually.
 
-> If you already have such a system in place, it would be great if you could
-> send me some instructions to recreate it locally. We can give you also
-> access to the wiki to add any information there.
+Gr{oetje,eeting}s,
 
-Ok, I'll consolidate my scripts to something that could be used as such
-system and share them. I have an editor access to wiki.linux-xtensa.org.
+                        Geert
 
->>      - which mailing lists should they go to?
->>        (I guess that besides linux-xtensa@linux-xtensa.org list they
->> should go
->>        to linux-kernel@vger.kernel.org for general review. Anything else?)
->
-> For now, I would really appreciate if you could hold off sending any major
-> patch to the linux-kernel mailing list until we had a chance to look over
-> them unless it's some generic patch (fixing an issue because of an API
-> change to the kernel, etc.)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Ok. I'd like to have even generic patches (my current queue is mostly
-generic) reviewed. Do you prefer to read them on github or on the
-linux-xtensa mailing list?
-
->> I'm also a developer and maintainer of the target-xtensa QEMU port [3].
-> That's so great!! I didn't know there was a QEMU port for Xtensa.
-
-It's there since qemu-1.0.
-
-> Bottom line, I hope you agree with me that the kernel, although the most fun
-> part, is only one piece of the puzzle, and we also need a running system. If
-> you already have that in place, we can jump to the kernel fairly quickly.
-
-Completely agree.
-
--- 
-Thanks.
--- Max
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
