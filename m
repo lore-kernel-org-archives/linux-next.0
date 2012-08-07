@@ -1,108 +1,50 @@
-From: Chris Zankel <chris@zankel.net>
-Subject: Re: xtensa port maintenance
-Date: Mon, 06 Aug 2012 22:40:43 -0700
-Message-ID: <5020AA5B.4080407@zankel.net>
-References: <50205592.1030205@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: removal of some trees
+Date: Tue, 07 Aug 2012 17:08:18 +0900
+Message-ID: <097401cd7473$ce075320$6a15f960$%kim@samsung.com>
+References: <20120802084154.875a13db0ec1ebd3f5a4dab3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:56426 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751036Ab2HGFkq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Aug 2012 01:40:46 -0400
-Received: by yhmm54 with SMTP id m54so3301979yhm.19
-        for <linux-next@vger.kernel.org>; Mon, 06 Aug 2012 22:40:45 -0700 (PDT)
-In-Reply-To: <50205592.1030205@gmail.com>
+Received: from mailout1.samsung.com ([203.254.224.24]:23209 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751274Ab2HGIIU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Aug 2012 04:08:20 -0400
+In-reply-to: <20120802084154.875a13db0ec1ebd3f5a4dab3@canb.auug.org.au>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Max Filippov <jcmvbkbc@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Marc Gauthier <marc@tensilica.com>, Kirill Krinkin <kirill.krinkin@gmail.com>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Ben Dooks' <ben-linux@fluff.org>
+Cc: 'LKML' <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-Hi Max,
+Stephen Rothwell wrote:
+> 
+> Hi Ben,
+> 
+> Since I haven't been able to fetch these trees for quite some time and I
+> haven't heard from you about them, I am removing the following trees from
+> linux-next.  If/When you have time to maintain these trees again, we can
+> add them back without problems.
+> 
+> samsung	 	git://git.fluff.org/bjdooks/linux.git#next-samsung
+> bjdooks-i2c	git://git.fluff.org/bjdooks/linux.git#next-i2c
+> 
+Hi Stephen,
 
-On 08/06/2012 04:38 PM, Max Filippov wrote:
-> AFAIK xtensa linux port is currently in bad shape: it doesn't work in the
-> mainline, it fails to build in the linux-next. The latest working kernels for
-> xtensa are 2.6.29...31 trees hosted at the git.linux-xtensa.org.
-I wouldn't say it's in bad shape, I just built an vmlinux image from the 
-latest tree (3.6.0-rc1), but it might not be very stable. One of the 
-major issues is not really the kernel but  there's actually no way to 
-build a fairly recent version of the toolchain. I have been using a 
-somewhat more recent buildroot version than what is on xtensa-linux.org, 
-but even that version of buildroot is rather old now and needed a few 
-patches.
+I think, now, the 'samsung' can be removed from linux-next but I'm not sure
+about 'bjdooks-i2c'. If so, please change the name of my tree 's5p' to
+'samsung'.
 
-The tree on linux-xtensa.org has quite diverted from mainline now. Pete 
-has done a great job maintaining those kernel versions, fixing a lot of 
-bugs, and adding a ton of new additional features, but it will take 
-quite some effort to merge them with the latest kernel.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+#for-next
 
-> I have a goal to make xtensa arch in the linux mainline usable.
-Awesome!! Every help is very much appreciated.
+If any problems, please kindly let me know.
 
-> Currently I have a number of patches on top of Linus' tree that allow to build
-> working allnoconfig, defconfig and allmodconfig kernels for ISS machine with
-> dc232b and fsf core variants [1]. For the next several weeks I'm planning to
-You might expect that I'm more than curious to see those changes :-)
+Thanks.
 
-
-> forward-port patches accumulated in linux-xtensa.org git trees and make the
-> resulting kernels rock-solid. I'd like to restore xtensa participation in the
-> linux-next. Further (currently undetailed) plans are to bring modern Linux
-> features to the xtensa port, e.g. device trees.
-That would be great. Might I also add that we'd need to have a working 
-toolchain and bootable image. For me, buildroot seems to be the quickest 
-route here. That would also require possibly adding patches to the 
-toolchain and uClibc that are currently missing. There's also the 
-bootloader, etc.
-
-> I have a couple of questions regarding the path of xtensa-specific patches
-> upstream:
->      - which git tree should they be targeted for? Should I set up a tree for
->        pull requests, or will patches be picked up into some existing tree?
->        (Looks like Linus' tree is the right target. AFAIK previously xtensa
->        patches went mostly through akpm tree).
-Yes, Andrew has been very helpful stepping in and adding those patches. 
-Most if not all of those patches were fixes because of generic kernel 
-changes and not major fixes or changes to the core of the Xtensa port.
-
-Ideally, it would be great if you could create a git tree (I saw you 
-already have a version on github already?) that would allow us to look 
-over those patches. The goal should be to have a system to build 
-toolchain, bootable image, and kernel, so we can run some regression 
-tests on either the simulator (qemu) or an actual board. Once we have a 
-regression test system in place, we can then add more features and 
-funnel those patches either through me or more directly..
-
-What do you think?
-
-If you already have such a system in place, it would be great if you 
-could send me some instructions to recreate it locally. We can give you 
-also access to the wiki to add any information there.
-
->      - which mailing lists should they go to?
->        (I guess that besides linux-xtensa@linux-xtensa.org list they should go
->        to linux-kernel@vger.kernel.org for general review. Anything else?)
-For now, I would really appreciate if you could hold off sending any 
-major patch to the linux-kernel mailing list until we had a chance to 
-look over them unless it's some generic patch (fixing an issue because 
-of an API change to the kernel, etc.)
-
-Andrew is currently adding all Xtensa patches sent to that list, and I 
-would hate having to irritate him having to ask to remove or change 
-patches, etc.
-
-> Should you wonder what I am:
-> I am a member of St.Petersburg Open Source and Linux Lab [2].
-> My previous contributions to Linux are related to p54spi wireless driver.
-> I'm also a developer and maintainer of the target-xtensa QEMU port [3].
-That's so great!! I didn't know there was a QEMU port for Xtensa.
-
-Bottom line, I hope you agree with me that the kernel, although the most 
-fun part, is only one piece of the puzzle, and we also need a running 
-system. If you already have that in place, we can jump to the kernel 
-fairly quickly.
-
-Thanks,
--Chris
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
