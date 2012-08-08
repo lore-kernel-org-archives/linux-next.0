@@ -1,66 +1,38 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH] tools/perf: remove yet another strtoull()
-Date: Wed,  8 Aug 2012 19:37:26 +0300
-Message-ID: <1344443846-5594-1-git-send-email-andriy.shevchenko@linux.intel.com>
-References: <20120808161849.GC2210@infradead.org>
+From: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
+Subject: Re: [PATCH] tools/perf: fix build when WERROR=1
+Date: Wed, 8 Aug 2012 13:38:29 -0300
+Message-ID: <20120808163829.GD2210@infradead.org>
+References: <1344438350-22574-1-git-send-email-andriy.shevchenko@linux.intel.com>
+ <20120808161849.GC2210@infradead.org>
+ <1344443566.24513.35.camel@smile>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:40561 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758805Ab2HHQhI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Aug 2012 12:37:08 -0400
-In-Reply-To: <20120808161849.GC2210@infradead.org>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:44947 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752037Ab2HHQie (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Aug 2012 12:38:34 -0400
+Received: by yhmm54 with SMTP id m54so964463yhm.19
+        for <linux-next@vger.kernel.org>; Wed, 08 Aug 2012 09:38:34 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1344443566.24513.35.camel@smile>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-next@vger.kernel.org
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
----
- tools/perf/util/symbol.c |   24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+Em Wed, Aug 08, 2012 at 07:32:46PM +0300, Andy Shevchenko escreveu:
+> On Wed, 2012-08-08 at 13:18 -0300, Arnaldo Carvalho de Melo wrote: 
+> > >  {
+> > > -	const char *p = ptr;
+> > > +	char *p;
+> > >  
+> > >  	*long_val = strtoull(ptr, &p, 16);
+> > 
+> > What tree is this against? Here I have:
+> Ah, it's a fix on top on mine other fix.
+> I'll resend squashed version soon.
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 8b63b67..26e695c 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -2825,35 +2825,15 @@ int machines__create_kernel_maps(struct rb_root *machines, pid_t pid)
- 	return machine__create_kernel_maps(machine);
- }
- 
--static int hex(char ch)
--{
--	if ((ch >= '0') && (ch <= '9'))
--		return ch - '0';
--	if ((ch >= 'a') && (ch <= 'f'))
--		return ch - 'a' + 10;
--	if ((ch >= 'A') && (ch <= 'F'))
--		return ch - 'A' + 10;
--	return -1;
--}
--
- /*
-  * While we find nice hex chars, build a long_val.
-  * Return number of chars processed.
-  */
- int hex2u64(const char *ptr, u64 *long_val)
- {
--	const char *p = ptr;
--	*long_val = 0;
--
--	while (*p) {
--		const int hex_val = hex(*p);
-+	char *p;
- 
--		if (hex_val < 0)
--			break;
--
--		*long_val = (*long_val << 4) | hex_val;
--		p++;
--	}
-+	*long_val = strtoull(ptr, &p, 16);
- 
- 	return p - ptr;
- }
--- 
-1.7.10.4
+But are you having trouble with the current implementation of hex2u64?
+
+- Arnaldo
