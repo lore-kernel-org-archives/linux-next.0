@@ -1,187 +1,65 @@
 From: Chris Zankel <chris@zankel.net>
-Subject: Re: [Linux-Xtensa] Re: xtensa port maintenance
-Date: Wed, 08 Aug 2012 01:08:26 -0700
-Message-ID: <50221E7A.70003@zankel.net>
-References: <50205592.1030205@gmail.com> <5020AA5B.4080407@zankel.net> <CAJH6qSc=Xffk85To2wZ=Ynw41Wb385XEpcT_OGjPV7r=i7M+UQ@mail.gmail.com>
+Subject: Re: xtensa port maintenance
+Date: Wed, 08 Aug 2012 01:23:58 -0700
+Message-ID: <5022221E.5020804@zankel.net>
+References: <50205592.1030205@gmail.com> <5020AA5B.4080407@zankel.net> <CAMo8BfLLxBeUC-vg6sAxWLjqPt=fwsQEQgjsqqbjurT3vzo-Pw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:39896 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932351Ab2HHII3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Aug 2012 04:08:29 -0400
-Received: by pbbrr13 with SMTP id rr13so1080626pbb.19
-        for <linux-next@vger.kernel.org>; Wed, 08 Aug 2012 01:08:28 -0700 (PDT)
-In-Reply-To: <CAJH6qSc=Xffk85To2wZ=Ynw41Wb385XEpcT_OGjPV7r=i7M+UQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vadim Malenboim <vadim@tangotec.com>
-Cc: Max Filippov <jcmvbkbc@gmail.com>, linux-xtensa@linux-xtensa.org, Kirill Krinkin <kirill.krinkin@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMo8BfLLxBeUC-vg6sAxWLjqPt=fwsQEQgjsqqbjurT3vzo-Pw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Max Filippov <jcmvbkbc@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Marc Gauthier <marc@tensilica.com>, Kirill Krinkin <kirill.krinkin@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Vadim,
+Hi Max,
 
-On 08/06/2012 11:00 PM, Vadim Malenboim wrote:
-> Hi All,
->
-> I've beed dealing with the xtensa port for couple of months and I'd 
-> like to contribute / help as much as possible.
->
-> I have an ML605 Xilinx Evaluation Board and already succeeded running 
-> the clean-stable version from xtensa-linux on it.
->
-> I propose doing the testing on this board and any other tasks / issues 
-> you think I can help, I'd be glad to.
+On 08/07/2012 09:43 AM, Max Filippov wrote:
+> On Tue, Aug 7, 2012 at 9:40 AM, Chris Zankel <chris@zankel.net> wrote:
+>> Hi Max,
+>>
+>> On 08/06/2012 04:38 PM, Max Filippov wrote:
+>>> AFAIK xtensa linux port is currently in bad shape: it doesn't work in the
+>>> mainline, it fails to build in the linux-next. The latest working kernels
+>>> for
+>>> xtensa are 2.6.29...31 trees hosted at the git.linux-xtensa.org.
+>> I wouldn't say it's in bad shape, I just built an vmlinux image from the
+>> latest tree (3.6.0-rc1), but it might not be very stable. One of the major
+>> issues is not really the kernel but  there's actually no way to build a
+>> fairly recent version of the toolchain. I have been using a somewhat more
+>> recent buildroot version than what is on xtensa-linux.org, but even that
+>> version of buildroot is rather old now and needed a few patches.
+> I've been using userspace built from the buildroot image hosted on
+> linux-xtensa.org with gcc-4.4.5 + binutils-2.20.1. I use gcc-4.6.3
+> (without libc) + binutils-2.22 to build the kernel. I had an impression that
+> mentioned buildroot was able to produce userspace where LTP could
+> run successfully for days. So, my initial plan is to use that userspace
+> with mainline kernel.
+Good plan!
 
-Excellent!! I'm looking forward to your help.
+> I have a subset thereof that builds toolchain (without libc) and the kernel.
+> Buildroot gave me an impression of not very reproducible environment, perhaps
+> I spent too little time on it. So I made an image and I hope that
+> pre-built image
+> may be used, at least in the beginning. I had to lightly patch U-boot hosted on
+> linux-xtensa.org to make it work on LX60/110/200 QEMU models. I guess we
+> can start with pre-built image of the bootloader too.
+I'm not settled on Buildroot, but I had the best experience with it so 
+far. OpenEmbedded was a real pain when I used it (it might have improved 
+a lot since, though). I once even started my own build system, but it 
+became fairly complicated once I wanted to build a bootable system with 
+a C library and various packages.
 
+
+
+
+> Ok. I'd like to have even generic patches (my current queue is mostly 
+> generic) reviewed. Do you prefer to read them on github or on the 
+> linux-xtensa mailing list? 
+I looked over them briefly, and only had one or two questions. I'll send 
+them tomorrow (our time).
+
+
+Thanks,
 -Chris
-
->
-> Vadim.
->
-> On Tue, Aug 7, 2012 at 8:40 AM, Chris Zankel <chris@zankel.net 
-> <mailto:chris@zankel.net>> wrote:
->
->     Hi Max,
->
->
->     On 08/06/2012 04:38 PM, Max Filippov wrote:
->
->         AFAIK xtensa linux port is currently in bad shape: it doesn't
->         work in the
->         mainline, it fails to build in the linux-next. The latest
->         working kernels for
->         xtensa are 2.6.29...31 trees hosted at the
->         git.linux-xtensa.org <http://git.linux-xtensa.org>.
->
->     I wouldn't say it's in bad shape, I just built an vmlinux image
->     from the latest tree (3.6.0-rc1), but it might not be very stable.
->     One of the major issues is not really the kernel but  there's
->     actually no way to build a fairly recent version of the toolchain.
->     I have been using a somewhat more recent buildroot version than
->     what is on xtensa-linux.org <http://xtensa-linux.org>, but even
->     that version of buildroot is rather old now and needed a few patches.
->
->     The tree on linux-xtensa.org <http://linux-xtensa.org> has quite
->     diverted from mainline now. Pete has done a great job maintaining
->     those kernel versions, fixing a lot of bugs, and adding a ton of
->     new additional features, but it will take quite some effort to
->     merge them with the latest kernel.
->
->
->         I have a goal to make xtensa arch in the linux mainline usable.
->
->     Awesome!! Every help is very much appreciated.
->
->
->         Currently I have a number of patches on top of Linus' tree
->         that allow to build
->         working allnoconfig, defconfig and allmodconfig kernels for
->         ISS machine with
->         dc232b and fsf core variants [1]. For the next several weeks
->         I'm planning to
->
->     You might expect that I'm more than curious to see those changes :-)
->
->
->
->         forward-port patches accumulated in linux-xtensa.org
->         <http://linux-xtensa.org> git trees and make the
->         resulting kernels rock-solid. I'd like to restore xtensa
->         participation in the
->         linux-next. Further (currently undetailed) plans are to bring
->         modern Linux
->         features to the xtensa port, e.g. device trees.
->
->     That would be great. Might I also add that we'd need to have a
->     working toolchain and bootable image. For me, buildroot seems to
->     be the quickest route here. That would also require possibly
->     adding patches to the toolchain and uClibc that are currently
->     missing. There's also the bootloader, etc.
->
->
->         I have a couple of questions regarding the path of
->         xtensa-specific patches
->         upstream:
->              - which git tree should they be targeted for? Should I
->         set up a tree for
->                pull requests, or will patches be picked up into some
->         existing tree?
->                (Looks like Linus' tree is the right target. AFAIK
->         previously xtensa
->                patches went mostly through akpm tree).
->
->     Yes, Andrew has been very helpful stepping in and adding those
->     patches. Most if not all of those patches were fixes because of
->     generic kernel changes and not major fixes or changes to the core
->     of the Xtensa port.
->
->     Ideally, it would be great if you could create a git tree (I saw
->     you already have a version on github already?) that would allow us
->     to look over those patches. The goal should be to have a system to
->     build toolchain, bootable image, and kernel, so we can run some
->     regression tests on either the simulator (qemu) or an actual
->     board. Once we have a regression test system in place, we can then
->     add more features and funnel those patches either through me or
->     more directly..
->
->     What do you think?
->
->     If you already have such a system in place, it would be great if
->     you could send me some instructions to recreate it locally. We can
->     give you also access to the wiki to add any information there.
->
->
->              - which mailing lists should they go to?
->                (I guess that besides linux-xtensa@linux-xtensa.org
->         <mailto:linux-xtensa@linux-xtensa.org> list they should go
->                to linux-kernel@vger.kernel.org
->         <mailto:linux-kernel@vger.kernel.org> for general review.
->         Anything else?)
->
->     For now, I would really appreciate if you could hold off sending
->     any major patch to the linux-kernel mailing list until we had a
->     chance to look over them unless it's some generic patch (fixing an
->     issue because of an API change to the kernel, etc.)
->
->     Andrew is currently adding all Xtensa patches sent to that list,
->     and I would hate having to irritate him having to ask to remove or
->     change patches, etc.
->
->
->         Should you wonder what I am:
->         I am a member of St.Petersburg Open Source and Linux Lab [2].
->         My previous contributions to Linux are related to p54spi
->         wireless driver.
->         I'm also a developer and maintainer of the target-xtensa QEMU
->         port [3].
->
->     That's so great!! I didn't know there was a QEMU port for Xtensa.
->
->     Bottom line, I hope you agree with me that the kernel, although
->     the most fun part, is only one piece of the puzzle, and we also
->     need a running system. If you already have that in place, we can
->     jump to the kernel fairly quickly.
->
->     Thanks,
->     -Chris
->
->
->     _______________________________________________
->     linux-xtensa mailing list
->     linux-xtensa@linux-xtensa.org <mailto:linux-xtensa@linux-xtensa.org>
->     http://lists.linux-xtensa.org/mailman/listinfo/linux-xtensa
->
->
->
->
-> -- 
-> *Vadim Malenboim.*
->       Low Level Software Engineer.
->
->       Cellular : +972(544)925862
->       E-Mail   : vadim@tangotec.com <mailto:vadim@tangotec.com>
->       WEB     : www.tangotec.com <http://www.tangotec.com>
->
->
