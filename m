@@ -1,66 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: removal of some trees
-Date: Thu, 9 Aug 2012 08:33:12 +1000
-Message-ID: <20120809083312.cd9cd8f19cf2f329c8758288@canb.auug.org.au>
-References: <20120802084154.875a13db0ec1ebd3f5a4dab3@canb.auug.org.au>
-	<097401cd7473$ce075320$6a15f960$%kim@samsung.com>
+Subject: linux-next: manual merge of the osd tree with the nfs tree
+Date: Thu, 9 Aug 2012 10:03:28 +1000
+Message-ID: <20120809100328.b8d6af3b95e1537ffcb7b053@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__9_Aug_2012_08_33_12_+1000_WaEK7169T8i=lw1Z"
+ boundary="Signature=_Thu__9_Aug_2012_10_03_28_+1000_xLRv2IAxBR=6Pc+v"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53486 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:38827 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756117Ab2HHWdX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Aug 2012 18:33:23 -0400
-In-Reply-To: <097401cd7473$ce075320$6a15f960$%kim@samsung.com>
+	with ESMTP id S1752037Ab2HIADj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Aug 2012 20:03:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'LKML' <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>
 
---Signature=_Thu__9_Aug_2012_08_33_12_+1000_WaEK7169T8i=lw1Z
+--Signature=_Thu__9_Aug_2012_10_03_28_+1000_xLRv2IAxBR=6Pc+v
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Boaz,
 
-On Tue, 07 Aug 2012 17:08:18 +0900 Kukjin Kim <kgene.kim@samsung.com> wrote:
->
-> I think, now, the 'samsung' can be removed from linux-next but I'm not su=
-re
-> about 'bjdooks-i2c'. If so, please change the name of my tree 's5p' to
-> 'samsung'.
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> #for-next
+Today's linux-next merge of the osd tree got a conflict in
+fs/nfs/nfs4proc.c between commit 47fbf7976e0b ("NFSv4.1: Remove a bogus
+BUG_ON() in nfs4_layoutreturn_done") from the nfs tree and commit
+d8e8b68405db ("pnfs: Don't BUG on info received from Server") from the
+osd tree.
 
-Done.
-
+I just used the nfs tree version.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__9_Aug_2012_08_33_12_+1000_WaEK7169T8i=lw1Z
+--Signature=_Thu__9_Aug_2012_10_03_28_+1000_xLRv2IAxBR=6Pc+v
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQIukoAAoJEECxmPOUX5FEuJcP/RgQIWFpEcqxEWpFGo6ymOHX
-7sw0Y0YVtYNb/ckIUz+/NU0MvV3DsQfCONh3aJWF3plZN+161Yif6DpmgmW+YKiT
-JCVnlBZmR7LQLPUiD13wQpc+yblChGPqpakcRJ1JsJAqAUuEKc+guSq2o656x4cC
-F9a7/NsaWh8DDdQzYEEuqjtwc5l0sgbkfpllLDL8NwPYXo9uMRf6FJQa39s4APj9
-LGP5rMmvzVa99AnP1++YfxU8CDW54fJkvd659ceNgx+GyCUx7/JwAhyBg9hDNLff
-e6N7a1TQ6cXBnftOUeeEQmgOaz7yshAyLgXTbJEb3jNh2415HEIGfjD7FwCHwOHf
-adpHTXviB7SOv4eSMfYfT+rVvAWD/Pu0Sq75XOvqsND52tIRpR/Y+xOcCsFGbUWS
-LExlEhraOtixSL8WIGJNgylCdzz9keKPYN7+W8DzlLOkwVn8+uphJCMpJZ9l1dEz
-4dAnQ6fWzb01YaMeLupYoibx9ZG/cSuEuDaPuvoCLRaNDUa9ooAD90vKdrbfsfSh
-3IcqFSmg9h8otAejUp5dNvPp2Z6ZTBezl8NvjqUmr3BTNOPTnC6ZFtKoOM0bwBUQ
-LRkEIdrKFh6WFt07E14Prmwul5bSPmuEIpjim/z8sm1mSmeMsJ3GE3SspvXkoGUQ
-GwlxH3VizdZqln2VvS3n
-=IqGX
+iQIcBAEBCAAGBQJQIv5QAAoJEECxmPOUX5FECQIP/1mtrc9xRsq+dE5TyB9rgMfv
+HlNgZ0FJqabLcqA6aQ2eQJRxrZqSseyFNKxe8Uasfs8Djs0CsJB1dRXxsfsGackI
+6NNgjcERgjus7d6r2bqWELLgPQixDBMihiV4lITCjWnjdVGZf/vzyAORDbk+N//8
+mtFCOdya2lm8cGWxYwEN20BQstsMwlpoFvfTxDrWQiL8C5dpbVBUediccz7xPKtH
+qY7RJOqkf5ZiLOlG9dUS6+UeVXowFCGVfKjKBhBimjcocjcSrX3GM8iFfNTEAa03
+WF1Iozd5OzXqJnjm/hWSvYlb2oTPJCZPD1/j52MTHPjEE6ZHM/E9RZ8HXulEFEiC
+RNOpRAHI4LlsnZjoYw8n9tCITjiaMJPk96yGOXQFP9eevcXtQu0QGw+4tIrD2Tv2
+uFve/JT3S9n/bEtJeYK0+RElFLbsESxQg3wusj55uXchw9bEevp9p0uJdrGRwwtf
+jr4kz4ir0yHs52/0Mt9p3TxOJCH+2tgCTW3OpicbIafQNAy6fkU11maxC42xR7LG
+4Lc9Yj8xaS/GIjxEb3VHzfRKYiXMU9VmUvtIEVUcBMh4un8PrhFgcOxKiOGuNfLN
+jNIsk5G2HSA7TcI3bfYYbokzVI8QEhra6I9VGvX3oU27xzQnNKZztsMnd/RyMfJR
+OoM8nCuLUgzgRyb1RXVD
+=kcfz
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__9_Aug_2012_08_33_12_+1000_WaEK7169T8i=lw1Z--
+--Signature=_Thu__9_Aug_2012_10_03_28_+1000_xLRv2IAxBR=6Pc+v--
