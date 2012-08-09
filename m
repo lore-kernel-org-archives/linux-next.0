@@ -1,20 +1,36 @@
-From: "Mrs.Wendy" <gwcwg66@yale.edu>
-Subject: Attention
-Date: Thu, 09 Aug 2012 12:35:16 +0100
-Message-ID: <201208091135.q79B7K0A022697@vm-emlprdomr-04.its.yale.edu>
-Reply-To: cwendy.wong@e-mail.ua
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 9 (staging/csr)
+Date: Thu, 09 Aug 2012 12:11:44 -0700
+Message-ID: <50240B70.3000800@xenotime.net>
+References: <20120809131317.3d289a0b98a13c72001154fb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vm-emlprdomr-04.its.yale.edu ([130.132.50.145]:42556 "EHLO
-	vm-emlprdomr-04.its.yale.edu" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932262Ab2HIMpf convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Aug 2012 08:45:35 -0400
-Content-Description: Mail message body
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Recipients <gwcwg66@yale.edu>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120809131317.3d289a0b98a13c72001154fb@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Attention, please i do have a profitable business proposal for you kindly get back for more info
+On 08/08/2012 08:13 PM, Stephen Rothwell wrote:
+
+> Hi all,
+> 
+> Changes since 20120807:
+> 
+
+
+
+(on i386)
+
+ERROR: "register_inetaddr_notifier" [drivers/staging/csr/csr_wifi.ko] undefined!
+ERROR: "unregister_inetaddr_notifier" [drivers/staging/csr/csr_wifi.ko] undefined!
+
+when CONFIG_INET is not enabled.
+
+CSR_WIFI probably should depend on INET.
+
+
+-- 
+~Randy
