@@ -1,52 +1,124 @@
-From: Chris Zankel <chris@zankel.net>
-Subject: Re: Resurrecting linux-next tree for Xtensa
-Date: Thu, 09 Aug 2012 16:04:23 -0700
-Message-ID: <502441F7.2060208@zankel.net>
-References: <50232D57.4000205@zankel.net> <20120810085312.bb2f1df59f6f4dfdca965de1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: thermal patches in linux-next
+Date: Fri, 10 Aug 2012 09:08:59 +1000
+Message-ID: <20120810090859.7ec67594f794c38c52096544@canb.auug.org.au>
+References: <1344308038.1682.637.camel@rui.sh.intel.com>
+	<1344494746.1682.669.camel@rui.sh.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__10_Aug_2012_09_08_59_+1000_IbRlwGlNUwowM5Rp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:61067 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759926Ab2HIXEZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Aug 2012 19:04:25 -0400
-Received: by pbbrr13 with SMTP id rr13so1638754pbb.19
-        for <linux-next@vger.kernel.org>; Thu, 09 Aug 2012 16:04:25 -0700 (PDT)
-In-Reply-To: <20120810085312.bb2f1df59f6f4dfdca965de1@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40027 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755758Ab2HIXJJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Aug 2012 19:09:09 -0400
+In-Reply-To: <1344494746.1682.669.camel@rui.sh.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Amit Kachhap <amit.kachhap@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-Hi Stephen,
+--Signature=_Fri__10_Aug_2012_09_08_59_+1000_IbRlwGlNUwowM5Rp
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 08/09/2012 03:53 PM, Stephen Rothwell wrote:
-> Hi Chris.
+Hi Rui,
+
+On Thu, 09 Aug 2012 14:45:46 +0800 Zhang Rui <rui.zhang@intel.com> wrote:
 >
-> On Wed, 08 Aug 2012 20:24:07 -0700 Chris Zankel <chris@zankel.net> wrote:
->> I was wondering and hoping you could add the Xtensa 'next' tree back to
->> the linux-next tree?
->>
->> It's currently on github (at least, until I get my access back to
->> kernel.org)
-> You will need to get a gpg key signed so that you can move this tree to
-> kernel.org or to signed tags when you ask Linus to pull your tree.
-Working on it...
+> On =E4=BA=8C, 2012-08-07 at 10:53 +0800, Zhang Rui wrote:
+> > Hi, all,
+> >=20
+> > I just created a git tree for catching all thermal changes.
+> > http://git.kernel.org/?p=3Dlinux/kernel/git/rzhang/linux.git;a=3Dsummary
+> > and I also created the next branch, which I'd like to be set for
+> > linux-next inclusion, but don't know how.
+> >=20
+> I create a tree for thermal management,
+> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git
+>=20
+> could you please include my next branch for linux-next?
 
->> git://github.com/czankel/xtensa-linux.git#for-next
->                                                 ^
-> I used "for_next".  Just to be sure, that branch is currently empty,
-> right?
-Correct. Patches should be popping up in a few days...
+Included from today.
 
->> It's been outdated for some time now and with more help we want to bring
->> it up-to-date again.
-> Sounds like a good plan!
->
-> Thanks for adding your subsystem tree as a participant of linux-next.  As
-I appreciate all the time and effort you put into the linux-next tree! 
-Thanks so much!
+> And could you please drop these commits
+> ef25a0fe0087963c1611c1c8903886fbea053f76
+> 09ec52fca274ba88d68df3198de92abdaaff417b
+> ab6d2f029358c917508bf88bbd6a9193a8e39fc8
+> 66447fa993cbce56b4076f169a56f62350f6c7b8
+> ec62abb8b46021ca9ee6b8692b26974ace9007f0
+> 5ecbaf57d7885eedd924e391d91847d3df9fe0f8
+> 851414b2249afd8c128d29912dfd7060eaea8932
+> and pull my next branch instead?
 
-Cheers!
--Chris
+That is not how linux-next normally works.  Those commits are in Adnrew's
+quilt series, so you need to ask him to drop them.  However, because of
+the way the akpm tree works, any duplicate patches will disappear from my
+copy of Andrew's series.
+
+> these commits either will be rebased or has been applied in my tree.
+
+In this case, I will remove them if they conflict too much or you take
+them (rebased) into your tree.
+
+Andrew, any chance of a new mmotm series?  I am still working off (a reduced
+part) of the mmotm series from July 21 ...
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Fri__10_Aug_2012_09_08_59_+1000_IbRlwGlNUwowM5Rp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQJEMLAAoJEECxmPOUX5FE+qMP/1tgtS7srSeW28VamIBpwp+r
+H0DCK2ejmLcHOXczCvMDgonM9+cuakPOo+EnrBN2jDmnCf7AzxxmYvYtf8IkUaP4
+d4ml1OH3/oumO/bklGDKF+S+HSL8STBqHUrTmFNP9jzB5Ksl5t5CsN19j2nXf137
+p1EaAxsUsufdZNmR2m1jTGijUvrJzPvUyqBgBlUlQWHBixbiLmRKZG72/bfDW/mD
+iV3NEqVR6cSb2AgQXyn+h+aMitEsTB+ZfTYgMDWpDbTKugMKJZoqfDtl7h6GeL5A
+75NlRjPqV8MWhNgBpp4bAJoi0PTcjj7x2+XHc8eEn+EwROWKXQONGdA5lyvaRyUa
+rnI5/cpyX42oxyKQ5emSMru/32o09gKeQFrAAP/SvHoLt08PxpWOShFW2Wh0rdLG
+u1H61EuLuwOG7UW5TnUsbwPZ5ay5pyFYq7iZInDlDaMOJepEZ1jnpaJXpeQ+S3E1
+iyIPvbtbo3bgyMkcxRkSVwqEP+raZa92SOePUVDxeVgWvYS2mpkWdru6gs9povj0
+Q9leM5LDsXZ7cEalhEVmWciqcQoNtF5Af4nR0By+FDALF6ZTZ0QTYFT09AVFtKKY
+CvvbZFuLUbH8bmmT/xD6L1vA8PSXNKEY7O3CaUhkakYQcTOPP/EqzDPsJ3b6fqr3
+TZFwcafbUYAqOYwC85OV
+=M0iz
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__10_Aug_2012_09_08_59_+1000_IbRlwGlNUwowM5Rp--
