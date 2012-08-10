@@ -1,124 +1,103 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Zhang Rui <rui.zhang@intel.com>
 Subject: Re: thermal patches in linux-next
-Date: Fri, 10 Aug 2012 09:08:59 +1000
-Message-ID: <20120810090859.7ec67594f794c38c52096544@canb.auug.org.au>
+Date: Fri, 10 Aug 2012 09:41:06 +0800
+Message-ID: <1344562866.1682.698.camel@rui.sh.intel.com>
 References: <1344308038.1682.637.camel@rui.sh.intel.com>
-	<1344494746.1682.669.camel@rui.sh.intel.com>
+	 <1344494746.1682.669.camel@rui.sh.intel.com>
+	 <20120810090859.7ec67594f794c38c52096544@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__10_Aug_2012_09_08_59_+1000_IbRlwGlNUwowM5Rp"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40027 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755758Ab2HIXJJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Aug 2012 19:09:09 -0400
-In-Reply-To: <1344494746.1682.669.camel@rui.sh.intel.com>
+Received: from mga14.intel.com ([143.182.124.37]:8302 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755941Ab2HJBj6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Aug 2012 21:39:58 -0400
+In-Reply-To: <20120810090859.7ec67594f794c38c52096544@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Amit Kachhap <amit.kachhap@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
---Signature=_Fri__10_Aug_2012_09_08_59_+1000_IbRlwGlNUwowM5Rp
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi, Stephen,
 
-Hi Rui,
-
-On Thu, 09 Aug 2012 14:45:46 +0800 Zhang Rui <rui.zhang@intel.com> wrote:
->
-> On =E4=BA=8C, 2012-08-07 at 10:53 +0800, Zhang Rui wrote:
-> > Hi, all,
-> >=20
-> > I just created a git tree for catching all thermal changes.
-> > http://git.kernel.org/?p=3Dlinux/kernel/git/rzhang/linux.git;a=3Dsummary
-> > and I also created the next branch, which I'd like to be set for
-> > linux-next inclusion, but don't know how.
-> >=20
-> I create a tree for thermal management,
-> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git
+On =E4=BA=94, 2012-08-10 at 09:08 +1000, Stephen Rothwell wrote:
+> Hi Rui,
 >=20
-> could you please include my next branch for linux-next?
+> On Thu, 09 Aug 2012 14:45:46 +0800 Zhang Rui <rui.zhang@intel.com> wr=
+ote:
+> >
+> > On =E4=BA=8C, 2012-08-07 at 10:53 +0800, Zhang Rui wrote:
+> > > Hi, all,
+> > >=20
+> > > I just created a git tree for catching all thermal changes.
+> > > http://git.kernel.org/?p=3Dlinux/kernel/git/rzhang/linux.git;a=3D=
+summary
+> > > and I also created the next branch, which I'd like to be set for
+> > > linux-next inclusion, but don't know how.
+> > >=20
+> > I create a tree for thermal management,
+> > git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git
+> >=20
+> > could you please include my next branch for linux-next?
+>=20
+> Included from today.
+>=20
+Thank you.
 
-Included from today.
+> > And could you please drop these commits
+> > ef25a0fe0087963c1611c1c8903886fbea053f76
+> > 09ec52fca274ba88d68df3198de92abdaaff417b
+> > ab6d2f029358c917508bf88bbd6a9193a8e39fc8
+> > 66447fa993cbce56b4076f169a56f62350f6c7b8
+> > ec62abb8b46021ca9ee6b8692b26974ace9007f0
+> > 5ecbaf57d7885eedd924e391d91847d3df9fe0f8
+> > 851414b2249afd8c128d29912dfd7060eaea8932
+> > and pull my next branch instead?
+>=20
+> That is not how linux-next normally works.  Those commits are in Adnr=
+ew's
+> quilt series, so you need to ask him to drop them.  However, because =
+of
+> the way the akpm tree works, any duplicate patches will disappear fro=
+m my
+> copy of Andrew's series.
+>=20
+Andrew,
 
-> And could you please drop these commits
-> ef25a0fe0087963c1611c1c8903886fbea053f76
-> 09ec52fca274ba88d68df3198de92abdaaff417b
-> ab6d2f029358c917508bf88bbd6a9193a8e39fc8
-> 66447fa993cbce56b4076f169a56f62350f6c7b8
-> ec62abb8b46021ca9ee6b8692b26974ace9007f0
-> 5ecbaf57d7885eedd924e391d91847d3df9fe0f8
-> 851414b2249afd8c128d29912dfd7060eaea8932
-> and pull my next branch instead?
+could you please drop these patches?
+these commits either will be or has been re-based on top of my tree.
 
-That is not how linux-next normally works.  Those commits are in Adnrew's
-quilt series, so you need to ask him to drop them.  However, because of
-the way the akpm tree works, any duplicate patches will disappear from my
-copy of Andrew's series.
-
-> these commits either will be rebased or has been applied in my tree.
-
-In this case, I will remove them if they conflict too much or you take
-them (rebased) into your tree.
-
-Andrew, any chance of a new mmotm series?  I am still working off (a reduced
-part) of the mmotm series from July 21 ...
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Fri__10_Aug_2012_09_08_59_+1000_IbRlwGlNUwowM5Rp
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQJEMLAAoJEECxmPOUX5FE+qMP/1tgtS7srSeW28VamIBpwp+r
-H0DCK2ejmLcHOXczCvMDgonM9+cuakPOo+EnrBN2jDmnCf7AzxxmYvYtf8IkUaP4
-d4ml1OH3/oumO/bklGDKF+S+HSL8STBqHUrTmFNP9jzB5Ksl5t5CsN19j2nXf137
-p1EaAxsUsufdZNmR2m1jTGijUvrJzPvUyqBgBlUlQWHBixbiLmRKZG72/bfDW/mD
-iV3NEqVR6cSb2AgQXyn+h+aMitEsTB+ZfTYgMDWpDbTKugMKJZoqfDtl7h6GeL5A
-75NlRjPqV8MWhNgBpp4bAJoi0PTcjj7x2+XHc8eEn+EwROWKXQONGdA5lyvaRyUa
-rnI5/cpyX42oxyKQ5emSMru/32o09gKeQFrAAP/SvHoLt08PxpWOShFW2Wh0rdLG
-u1H61EuLuwOG7UW5TnUsbwPZ5ay5pyFYq7iZInDlDaMOJepEZ1jnpaJXpeQ+S3E1
-iyIPvbtbo3bgyMkcxRkSVwqEP+raZa92SOePUVDxeVgWvYS2mpkWdru6gs9povj0
-Q9leM5LDsXZ7cEalhEVmWciqcQoNtF5Af4nR0By+FDALF6ZTZ0QTYFT09AVFtKKY
-CvvbZFuLUbH8bmmT/xD6L1vA8PSXNKEY7O3CaUhkakYQcTOPP/EqzDPsJ3b6fqr3
-TZFwcafbUYAqOYwC85OV
-=M0iz
------END PGP SIGNATURE-----
-
---Signature=_Fri__10_Aug_2012_09_08_59_+1000_IbRlwGlNUwowM5Rp--
+thanks,
+rui
+>=20
+> In this case, I will remove them if they conflict too much or you tak=
+e
+> them (rebased) into your tree.
+>=20
+> Andrew, any chance of a new mmotm series?  I am still working off (a =
+reduced
+> part) of the mmotm series from July 21 ...
+>=20
+> Thanks for adding your subsystem tree as a participant of linux-next.=
+  As
+> you may know, this is not a judgment of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window.=20
+>=20
+> You will need to ensure that the patches/commits in your tree/series =
+have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor'=
+s
+> 	Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree)=
+,
+>      * successfully unit tested, and=20
+>      * destined for the current or next Linux merge window.
+>=20
+> Basically, this should be just what you would send to Linus (or ask h=
+im
+> to fetch).  It is allowed to be rebased if you deem it necessary.
+>=20
