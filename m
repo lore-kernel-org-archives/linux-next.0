@@ -1,44 +1,32 @@
-From: Marc Gauthier <marc@tensilica.com>
-Subject: Re: xtensa port maintenance
-Date: Fri, 10 Aug 2012 21:47:00 -0700
-Message-ID: <522C1DF17AF50042AD8AE87F7887BD3D022DEE8CB5@exch.hq.tensilica.com>
-References: <50205592.1030205@gmail.com> <201208102115.59946.arnd@arndb.de>
- <50258D88.7090903@zankel.net> <5025975D.9030100@gmail.com>
+From: Boaz Harrosh <bharrosh@panasas.com>
+Subject: Re: linux-next: manual merge of the osd tree with the nfs tree
+Date: Sun, 12 Aug 2012 18:13:58 +0300
+Message-ID: <5027C836.4070904@panasas.com>
+References: <20120809100328.b8d6af3b95e1537ffcb7b053@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailgw.tensilica.com ([65.119.96.134]:33771 "EHLO
-	mailgw.tensilica.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750914Ab2HKFHC convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 11 Aug 2012 01:07:02 -0400
-In-Reply-To: <5025975D.9030100@gmail.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Pete Delaney <piet.delaney@gmail.com>, Chris Zankel <chris@zankel.net>, Arnd Bergmann <arnd@arndb.de>, "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>, Kirill Krinkin <kirill.krinkin@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Max Filippov <jcmvbkbc@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, 'Mahavir Prasad' <er.mahavir@gmail.com>, Prasanna Rao <Prasanna.Rao@transwitch.com>, Shimon Edelhaus <Shimon.Edelhaus@transwitch.com>, Rakesh Jain <Rakesh.Jain@imgtec.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120809100328.b8d6af3b95e1537ffcb7b053@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>
+List-Id: linux-next.vger.kernel.org
 
-Chris Zankel wrote:
-> I have set up a tree on github for now, and will work close
-> with Max to get his changes to Stephen's linux-next tree and
-> eventually Linus' tree.
-> I think it's fine to add Max as a second maintainer [...]
+On 08/09/2012 03:03 AM, Stephen Rothwell wrote:
 
-Thanks for helping!
-
-
-Pete Delaney wrote:
-> I'm afraid that doing it piecemeal has failed in the past
-
-Proper patches work fine, was just never done.
-(Can discuss off this To: list.)
+> Hi Boaz,
+> 
+> Today's linux-next merge of the osd tree got a conflict in
+> fs/nfs/nfs4proc.c between commit 47fbf7976e0b ("NFSv4.1: Remove a bogus
+> BUG_ON() in nfs4_layoutreturn_done") from the nfs tree and commit
+> d8e8b68405db ("pnfs: Don't BUG on info received from Server") from the
+> osd tree.
+> 
+> I just used the nfs tree version.
 
 
-> Mind anding Marc and myself?
+Sorry, was on vacation will fix right now. Your fix was correct
 
-Acting as maintainer involves submitting useful patches over
-some period of time.  Right now that's Max and Chris.
-(Love to do it, but have plenty as it is on my plate.)
-
-Thanks,
--Marc
+Thanks
+Boaz
