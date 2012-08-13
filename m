@@ -1,46 +1,56 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2] mfd/regulator: tps65217: Move regulator plat data
- handling to regulator
-Date: Mon, 13 Aug 2012 08:23:54 -0700
-Message-ID: <20120813152354.GB5745@kroah.com>
-References: <1344870365-11645-1-git-send-email-anilkumar@ti.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for July 26 (uml)
+Date: Mon, 13 Aug 2012 10:00:16 -0700
+Message-ID: <502932A0.3060001@xenotime.net>
+References: <20120726150419.0de645e8750e3a15fa0f1aaa@canb.auug.org.au> <50115FCF.4060708@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1344870365-11645-1-git-send-email-anilkumar@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: AnilKumar Ch <anilkumar@ti.com>
-Cc: sameo@linux.intel.com, broonie@opensource.wolfsonmicro.com, dan.carpenter@oracle.com, rdunlap@xenotime.net, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-omap@vger.kernel.org, stable@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy12-pub.bluehost.com ([50.87.16.10]:37539 "HELO
+	oproxy12-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752667Ab2HMRBp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Aug 2012 13:01:45 -0400
+In-Reply-To: <50115FCF.4060708@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Richard Weinberger <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net
 
-On Mon, Aug 13, 2012 at 08:36:05PM +0530, AnilKumar Ch wrote:
-> Regulator platform data handling was mistakenly added to MFD
-> driver. So we will see build errors if we compile MFD drivers
-> without CONFIG_REGULATOR. This patch moves regulator platform
-> data handling from TPS65217 MFD driver to regulator driver.
-> 
-> This makes MFD driver independent of REGULATOR framework so
-> build error is fixed if CONFIG_REGULATOR is not set.
-> 
-> drivers/built-in.o: In function `tps65217_probe':
-> tps65217.c:(.devinit.text+0x13e37): undefined reference
-> to `of_regulator_match'
-> 
-> This patch also fix allocation size of tps65217 platform data.
-> Current implementation allocates a struct tps65217_board for each
-> regulator specified in the device tree. But the structure itself
-> provides array of regulators so one instance of it is sufficient.
-> 
-> Signed-off-by: AnilKumar Ch <anilkumar@ti.com>
-> ---
-> This patch is tested on BeagleBone with regulator device node
-> additions. And this is based on mfd/master.
+On 07/26/2012 08:18 AM, Randy Dunlap wrote:
 
-<formletter>
+> On 07/25/2012 10:04 PM, Stephen Rothwell wrote:
+> 
+>> Hi all,
+>>
+>> Please do not add anything to linux-next included branches/series that is
+>> destined for v3.7 until after v3.6-rc1 is released.
+>>
+>> Reminder: do not rebase your branches before asking Linus to pull them ...
+>>
+>> Changes since 20120725:
+>>
+> 
+> 
+> 
+> uml on x86_64 (defconfig) build fails with:
+> 
+>   CC      arch/x86/um/../kernel/module.o
+> arch/x86/um/../kernel/module.c:96:5: error: redefinition of 'apply_relocate_add'
+> include/linux/moduleloader.h:64:19: note: previous definition of 'apply_relocate_add' was here
+> make[2]: *** [arch/x86/um/../kernel/module.o] Error 1
+> 
+> 
+> 
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
-for how to do this properly.
 
-</formletter>
+
+Adding Rusty.
+
+
+This build error is still happening for uml on x86_64
+in linux-next 20120813.
+
+
+-- 
+~Randy
