@@ -1,31 +1,105 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 14 (drivers/input/touchscreen/edt-ft5x06.c)
-Date: Tue, 14 Aug 2012 10:59:28 -0700
-Message-ID: <502A9200.1020606@xenotime.net>
-References: <20120814135506.b6b86e3c8cb9da1eefb7bbd6@canb.auug.org.au>
+From: Antti Palosaari <crope@iki.fi>
+Subject: Re: linux-next: Tree for Aug 14 (media/dvb/dvb-usb-v2/anysee)
+Date: Tue, 14 Aug 2012 21:40:55 +0300
+Message-ID: <502A9BB7.8020204@iki.fi>
+References: <20120814135506.b6b86e3c8cb9da1eefb7bbd6@canb.auug.org.au> <502A90EC.40201@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+ boundary="------------060805000901090407040600"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120814135506.b6b86e3c8cb9da1eefb7bbd6@canb.auug.org.au>
+In-Reply-To: <502A90EC.40201@xenotime.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Simon Budig <simon.budig@kernelconcepts.de>, linux-input@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 08/13/2012 08:55 PM, Stephen Rothwell wrote:
+This is a multi-part message in MIME format.
+--------------060805000901090407040600
+Content-Type: text/plain; charset=ISO-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Hi all,
-> 
-> Changes since 20120813:
-> 
+On 08/14/2012 08:54 PM, Randy Dunlap wrote:
+> On 08/13/2012 08:55 PM, Stephen Rothwell wrote:
+>
+>> Hi all,
+>>
+>> Changes since 20120813:
+>>
+>
+>
+>
+> on x86_64:
+>
+> In file included from drivers/media/dvb/dvb-usb-v2/anysee.c:34:0:
+> drivers/media/dvb/dvb-usb-v2/anysee.h:51:0: warning: "debug_dump" redefined
+> drivers/media/dvb/dvb-usb-v2/anysee.h:47:0: note: this is the location of the previous definition
 
+Thank you Randy for the report. Attached patch fix it.
 
-on x86_64, when CONFIG_DEBUG_FS is not enabled:
+Unfortunately it will not apply for current next as Mauro reorganized 
+drivers/media/ today and this one is top of that. I will make another 
+patch to change whole driver to use Kernel dev_* debugging and sent 
+those linus-media. I hope those are in next quite soon.
 
-drivers/input/touchscreen/edt-ft5x06.c: In function 'edt_ft5x06_ts_remove':
-drivers/input/touchscreen/edt-ft5x06.c:846:14: error: 'struct edt_ft5x06_ts_data' has no member named 'raw_buffer'
-
+regards
+Antti
 
 -- 
-~Randy
+http://palosaari.fi/
+
+--------------060805000901090407040600
+Content-Type: text/x-patch;
+ name="0001-anysee-fix-compiler-warning.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="0001-anysee-fix-compiler-warning.patch"
+
+>From cbd18c187db27686f2fd14348255713defe1d90a Mon Sep 17 00:00:00 2001
+From: Antti Palosaari <crope@iki.fi>
+Date: Tue, 14 Aug 2012 21:23:01 +0300
+Subject: [PATCH] anysee: fix compiler warning
+
+debug_dump macro was defined twice when CONFIG_DVB_USB_DEBUG was
+not set. Move debug_dump macro to correct place.
+
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Antti Palosaari <crope@iki.fi>
+---
+ drivers/media/usb/dvb-usb-v2/anysee.h | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/usb/dvb-usb-v2/anysee.h b/drivers/media/usb/dvb-usb-v2/anysee.h
+index dc40dcf..834dc12 100644
+--- a/drivers/media/usb/dvb-usb-v2/anysee.h
++++ b/drivers/media/usb/dvb-usb-v2/anysee.h
+@@ -41,19 +41,18 @@
+ #ifdef CONFIG_DVB_USB_DEBUG
+ #define dprintk(var, level, args...) \
+ 	do { if ((var & level)) printk(args); } while (0)
+-#define DVB_USB_DEBUG_STATUS
+-#else
+-#define dprintk(args...)
+-#define debug_dump(b, l, func)
+-#define DVB_USB_DEBUG_STATUS " (debugging is not enabled)"
+-#endif
+-
+ #define debug_dump(b, l, func) {\
+ 	int loop_; \
+ 	for (loop_ = 0; loop_ < l; loop_++) \
+ 		func("%02x ", b[loop_]); \
+ 	func("\n");\
+ }
++#define DVB_USB_DEBUG_STATUS
++#else
++#define dprintk(args...)
++#define debug_dump(b, l, func)
++#define DVB_USB_DEBUG_STATUS " (debugging is not enabled)"
++#endif
+ 
+ #define deb_info(args...) dprintk(dvb_usb_anysee_debug, 0x01, args)
+ #define deb_xfer(args...) dprintk(dvb_usb_anysee_debug, 0x02, args)
+-- 
+1.7.11.2
+
+
+--------------060805000901090407040600--
