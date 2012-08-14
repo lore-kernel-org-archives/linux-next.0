@@ -1,44 +1,37 @@
 From: David Howells <dhowells@redhat.com>
 Subject: Re: linux-next: Tree for July 26 (uml)
-Date: Tue, 14 Aug 2012 16:09:08 +0100
-Message-ID: <19002.1344956948@warthog.procyon.org.uk>
-References: <18933.1344956788@warthog.procyon.org.uk> <502A6759.3090802@nod.at>
-	<15981.1344955883@warthog.procyon.org.uk>
-	<502A613F.1090600@nod.at> <87a9xys53h.fsf@rustcorp.com.au>
-	<20120726150419.0de645e8750e3a15fa0f1aaa@canb.auug.org.au>
-	<50115FCF.4060708@xenotime.net> <502932A0.3060001@xenotime.net>
-	<15532.1344954413@warthog.procyon.org.uk>
-	<18600.1344956051@warthog.procyon.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <user-mode-linux-devel-bounces@lists.sourceforge.net>
-In-Reply-To: <18933.1344956788@warthog.procyon.org.uk>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/user-mode-linux-devel>,
-	<mailto:user-mode-linux-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=user-mode-linux-devel>
-List-Post: <mailto:user-mode-linux-devel@lists.sourceforge.net>
-List-Help: <mailto:user-mode-linux-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/user-mode-linux-devel>,
-	<mailto:user-mode-linux-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: user-mode-linux-devel-bounces@lists.sourceforge.net
+Date: Tue, 14 Aug 2012 16:15:28 +0100
+Message-ID: <30102.1344957328@warthog.procyon.org.uk>
+References: <502A69FA.8040805@nod.at> <502A6759.3090802@nod.at> <15981.1344955883@warthog.procyon.org.uk> <502A613F.1090600@nod.at> <87a9xys53h.fsf@rustcorp.com.au> <20120726150419.0de645e8750e3a15fa0f1aaa@canb.auug.org.au> <50115FCF.4060708@xenotime.net> <502932A0.3060001@xenotime.net> <15532.1344954413@warthog.procyon.org.uk> <18600.1344956051@warthog.procyon.org.uk> <18933.1344956788@warthog.procyon.org.uk>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:53742 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751765Ab2HNPPt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Aug 2012 11:15:49 -0400
+In-Reply-To: <502A69FA.8040805@nod.at>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Richard Weinberger <richard@nod.at>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, user-mode-linux-devel@lists.sourceforge.net, Rusty Russell <rusty@rustcorp.com.au>, LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: dhowells@redhat.com, Rusty Russell <rusty@rustcorp.com.au>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, user-mode-linux-devel@lists.sourceforge.net
 
-David Howells <dhowells@redhat.com> wrote:
 
-> > I think arch/x86/um/Kconfig makes more sense.
-> ...
-> It doesn't exist.  Should I create it?
-
-Bah.  Helps if I read your message more closely.
+How about this then?
 
 David
-
-------------------------------------------------------------------------------
-Live Security Virtual Conference
-Exclusive live event will cover all the ways today's security and 
-threat landscape has changed and how IT managers can respond. Discussions 
-will include endpoint security, mobile security and the latest in malware 
-threats. http://www.accelacomm.com/jaw/sfrnl04242012/114/50122263/
+---
+diff --git a/arch/x86/um/Kconfig b/arch/x86/um/Kconfig
+index 9926e11..a4b0c10 100644
+--- a/arch/x86/um/Kconfig
++++ b/arch/x86/um/Kconfig
+@@ -21,9 +21,11 @@ config 64BIT
+ config X86_32
+ 	def_bool !64BIT
+ 	select HAVE_AOUT
++	select MODULES_USE_ELF_REL
+ 
+ config X86_64
+ 	def_bool 64BIT
++	select MODULES_USE_ELF_RELA
+ 
+ config RWSEM_XCHGADD_ALGORITHM
+ 	def_bool X86_XADD && 64BIT
