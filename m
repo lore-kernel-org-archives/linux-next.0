@@ -1,39 +1,36 @@
-From: Glauber Costa <glommer@parallels.com>
-Subject: Re: mmotm 2012-08-13-16-55 uploaded
-Date: Tue, 14 Aug 2012 16:26:56 +0400
-Message-ID: <502A4410.6070201@parallels.com>
-References: <20120813235651.00A13100047@wpzn3.hot.corp.google.com> <20120814105349.GA6905@dhcp22.suse.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: Tree for July 26 (uml)
+Date: Tue, 14 Aug 2012 15:26:53 +0100
+Message-ID: <15532.1344954413@warthog.procyon.org.uk>
+References: <87a9xys53h.fsf@rustcorp.com.au> <20120726150419.0de645e8750e3a15fa0f1aaa@canb.auug.org.au> <50115FCF.4060708@xenotime.net> <502932A0.3060001@xenotime.net>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.parallels.com ([64.131.90.16]:51677 "EHLO mx2.parallels.com"
+Received: from mx1.redhat.com ([209.132.183.28]:3853 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752292Ab2HNMaA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Aug 2012 08:30:00 -0400
-In-Reply-To: <20120814105349.GA6905@dhcp22.suse.cz>
+	id S1752655Ab2HNO1T (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Aug 2012 10:27:19 -0400
+In-Reply-To: <87a9xys53h.fsf@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Hocko <mhocko@suse.cz>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: dhowells@redhat.com, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Richard Weinberger <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net
 
-On 08/14/2012 02:53 PM, Michal Hocko wrote:
-> On Mon 13-08-12 16:56:50, Andrew Morton wrote:
->> > The mm-of-the-moment snapshot 2012-08-13-16-55 has been uploaded to
->> > 
->> >    http://www.ozlabs.org/~akpm/mmotm/
-> -mm git tree has been updated as well. You can find the tree at
-> https://github.com/mstsxfx/memcg-devel.git since-3.5
-> 
-> tagged as mmotm-2012-08-13-16-55
-> 
 
-On top of this tree, people following the kmemcg development may also
-want to checkout
+Rusty Russell <rusty@rustcorp.com.au> wrote:
 
-   git://github.com/glommer/linux.git memcg-3.5/kmemcg-stack
+> > >   CC      arch/x86/um/../kernel/module.o
+> > > arch/x86/um/../kernel/module.c:96:5: error: redefinition of 'apply_relocate_add'
+> > > include/linux/moduleloader.h:64:19: note: previous definition of 'apply_relocate_add' was here
+> > > make[2]: *** [arch/x86/um/../kernel/module.o] Error 1
 
-A branch called memcg-3.5/kmemcg-slab is also available with the slab
-changes ontop.
+Hmmm...  I'm not sure how to deal with this.  The problem is that UML doesn't
+draw the:
 
-Thanks.
+	select MODULES_USE_ELF_REL if X86_32
+	select MODULES_USE_ELF_RELA if X86_64
+
+definitions from arch/foo/Kconfig that tell it what modules will look like.
+
+Should I just enable both REL and RELA in UML, or is there a better way to do
+this?
+
+David
