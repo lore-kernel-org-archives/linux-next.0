@@ -1,62 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tip tree
-Date: Thu, 16 Aug 2012 13:12:36 +1000
-Message-ID: <20120816131236.13013e1ec18b1f1074f6dc92@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the s390 tree
+Date: Thu, 16 Aug 2012 13:49:11 +1000
+Message-ID: <20120816134911.1acd403bd420ad64c8ad9ef5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__16_Aug_2012_13_12_36_+1000_QSRTAGvVGfisfhjZ"
+ boundary="Signature=_Thu__16_Aug_2012_13_49_11_+1000_zWs0jqmZg_OxiI2e"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43431 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:39907 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751830Ab2HPDMt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Aug 2012 23:12:49 -0400
+	with ESMTP id S1751704Ab2HPDtY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Aug 2012 23:49:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Rusty Russell <rusty@rustcorp.com.au>, Namhyung Kim <namhyung@kernel.org>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
+To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>
 
---Signature=_Thu__16_Aug_2012_13_12_36_+1000_QSRTAGvVGfisfhjZ
+--Signature=_Thu__16_Aug_2012_13_49_11_+1000_zWs0jqmZg_OxiI2e
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the tip tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the kvm tree got a conflict in
+arch/s390/include/asm/processor.h between commit 3c011c612acb
+("s390/bpf,jit: BPF Just In Time compiler for s390") from the s390 tree
+and commit 9b7fb990e080 ("s390, /dis: Instruction decoding interface") from
+the kvm tree.
 
-drivers/infiniband/hw/ehca/ehca_irq.c: In function 'find_next_online_cpu':
-drivers/infiniband/hw/ehca/ehca_irq.c:672:2: error: expected ';' before 'sp=
-in_unlock_irqrestore'
-
-Caused by commit 81942621bd6b ("infiniband: Ehca: Use hotplug thread
-infrastructure").
-
-I have used the tip tree from next-20120814 for today.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__16_Aug_2012_13_12_36_+1000_QSRTAGvVGfisfhjZ
+diff --cc arch/s390/include/asm/processor.h
+index d4477ba,eac4fb5..0000000
+--- a/arch/s390/include/asm/processor.h
++++ b/arch/s390/include/asm/processor.h
+@@@ -140,7 -140,7 +140,8 @@@ extern int kernel_thread(int (*fn)(voi
+  extern unsigned long thread_saved_pc(struct task_struct *t);
+ =20
+  extern void show_code(struct pt_regs *regs);
+ +extern void print_fn_code(unsigned char *code, unsigned long len);
++ extern int insn_to_mnemonic(unsigned char *instruction, char buf[8]);
+ =20
+  unsigned long get_wchan(struct task_struct *p);
+  #define task_pt_regs(tsk) ((struct pt_regs *) \
+
+--Signature=_Thu__16_Aug_2012_13_49_11_+1000_zWs0jqmZg_OxiI2e
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQLGUkAAoJEECxmPOUX5FE3FIP/3f3ZzQQ6+Jhct760KatyUUp
-kM5nhuoSy0XPqtQ+YSK3GWS1CyAPHyewb09huAHuOstVvKdfwLCp+J9BzMaEU0lI
-/BZRDH5dghbIMulu1Uo3w/6YU62HaHRaZ+auPXrYt072DEa7WJzYYiJTq2NnDl90
-voBxC8f7ou/Kzyd6D3Ki/OuZdrTOZoGYbIN3iBKaZ24shj0hNCbgTsjuFg9+kRN7
-UkENmXxDN7sV7fiMNrV98TdM6zk7s3QXgV8Rlq/7erIEcGSwOB+qqXMac5MmcsFH
-31CJTUmI344751xsNO4Cw8/Gz4lvxsuD2nOVIvA98WF9inic/XgHmwAlKBKRlnoK
-IgiTz/EDfTGoMjCzeZzi/vV79gb2OqVsQbwu2pFwUoAxlqoeh2rVb4g1v+ZTZ5Bz
-vflg+D5EP7wUmFFejOHmpqOA++UBij24joCZyabc3EZR2HbN+ntLWiMdSMsKvrBx
-wEtSEMsavFEePBxkzkuPz+vHcAz3xgroDLpPMzBxSldx9JCifxOZ7hBVb+C5EZ5r
-faIeJ01GHgCRhQ927dhG2c/qt6WcNRG4YFd7vFgj3kQWwmAWOjyIbKI0Pr22cQ/f
-dcPEzMuGLAqb9APpsV3cZ+1ULZ+2UiNesEUELd9SUTYK8Yyc3KUW1kWNdG53MxgC
-t6xlQy96rgu1YiMKWxmN
-=TXia
+iQIcBAEBCAAGBQJQLG23AAoJEECxmPOUX5FEITwP+we3QuLSNmxsRDeE59TPSMmK
+CjyMHrPwOK9PUiVGN/7KfkMEbNqc/Rc9wXY8dKbA1KjuumAPD2q0TcWbf+JVx6LX
+A4IIKIPQALMUVkPWaVzyo6CrxGVNW1py8d2JiZN03gezPPV2nj68DsZdaRmKhaFJ
+loQ05L02vzgwjZriW3gRGqzLQRy47AHJFdf4eWhh3zf79c9gJq9jiDe8JxqV3lgO
+SymWZ0rWn59ZPeKDIFGPItQkyYPrvhFauaonn8mGLXZcn6Ok98JItNOO2b3BRuQG
+++0H2U05aqXDnRzTnS567zytWEt9rQkUzD7amHk9Z6dqBXOASWandXn2rKKWzOpJ
+6vMzUVArWPv2+b1N4jzzb1cY8Y5dqEK6qapAzX7wwuz+WlrUgGZJoAmxU2marM7M
+scsRKxpNoFy5K0NjcXyTUwRhhpbWgRS28dhp+8lWEL355SixcQK/j60rpZMmg+Kw
++p3SkigW0GPYXpH5qjRjATGPYuYto3Ikow+gW36fekdltJglkpxHvkfejAxFthSe
+nwziEP6vqk7ME/P/9qtSpfxUagyiq4vTgU9s7ZbtIbI3ndDpq6tUi9HCFM8h5MMD
+fKgsvS++KmeDYdbYw9BExrapRIHZhl2RYUizapPkmXkY0/GxfJ8+Ex/BN90AXIFN
+rydH5neht4wtNVHXPdxs
+=dzfD
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__16_Aug_2012_13_12_36_+1000_QSRTAGvVGfisfhjZ--
+--Signature=_Thu__16_Aug_2012_13_49_11_+1000_zWs0jqmZg_OxiI2e--
