@@ -1,44 +1,31 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: build failure after merge of the final tree (hid
- tree related)
-Date: Thu, 16 Aug 2012 12:05:57 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1208161204520.7026@pobox.suse.cz>
-References: <20120816152538.7f850ee1a3b8ce90d9f749a2@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (regulator tree related)
+Date: Thu, 16 Aug 2012 11:58:03 +0100
+Message-ID: <20120816105803.GI15365@opensource.wolfsonmicro.com>
+References: <20120816151605.b0a9932005b541956288ce96@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:41293 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756280Ab2HPKGF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Aug 2012 06:06:05 -0400
-In-Reply-To: <20120816152538.7f850ee1a3b8ce90d9f749a2@canb.auug.org.au>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38725 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753524Ab2HPK6G (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Aug 2012 06:58:06 -0400
+Content-Disposition: inline
+In-Reply-To: <20120816151605.b0a9932005b541956288ce96@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jikos@jikos.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-On Thu, 16 Aug 2012, Stephen Rothwell wrote:
-
+On Thu, Aug 16, 2012 at 03:16:05PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
 > After merging the final tree, today's linux-next build (powerpc
 > allyesconfig) failed like this:
-> 
-> drivers/hid/hid-picolcd_fb.c: In function 'picolcd_fb_destroy':
-> drivers/hid/hid-picolcd_fb.c:350:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
-> drivers/hid/hid-picolcd_fb.c: In function 'picolcd_init_framebuffer':
-> drivers/hid/hid-picolcd_fb.c:508:2: error: implicit declaration of function 'vmalloc' [-Werror=implicit-function-declaration]
-> drivers/hid/hid-picolcd_fb.c:508:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-> 
-> Caused by commit fabdbf2fd22f ("HID: picoLCD: split driver code") from
-> the hid tree.
 
-Hmm, seems config dependent, doesn't trigger here. Probably vmalloc.h gets 
-sucked in some other way under certain config options.
-
-Anyway I have now applied your patch Stephen, so you should be able to 
-drop it from your pile.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
+Applied, thanks.  I can't help but thinking that slab.h should just be
+automatically included, it's so widely used and frequently included
+implicitly that I bet it causes more time to be burned on this sort of
+error than has ever been saved by not referencing it.
