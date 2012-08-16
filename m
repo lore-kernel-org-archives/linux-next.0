@@ -1,23 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (regulator
- tree related)
-Date: Thu, 16 Aug 2012 15:16:05 +1000
-Message-ID: <20120816151605.b0a9932005b541956288ce96@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (hid tree
+ related)
+Date: Thu, 16 Aug 2012 15:25:38 +1000
+Message-ID: <20120816152538.7f850ee1a3b8ce90d9f749a2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__16_Aug_2012_15_16_05_+1000_Hll.proEM1UdR2//"
+ boundary="Signature=_Thu__16_Aug_2012_15_25_38_+1000_EBPolrnJ3nOqGEmf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36364 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:54513 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753168Ab2HPFQR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Aug 2012 01:16:17 -0400
+	with ESMTP id S1751026Ab2HPFZn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Aug 2012 01:25:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkJydW5vIFByw6ltb250IDxib25ib25zQGxpbnV4LXZzZXJ2ZXIub3JnPiI=?=@vger.kernel.org
 
---Signature=_Thu__16_Aug_2012_15_16_05_+1000_Hll.proEM1UdR2//
+--Signature=_Thu__16_Aug_2012_15_25_38_+1000_EBPolrnJ3nOqGEmf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -27,46 +27,53 @@ Hi all,
 After merging the final tree, today's linux-next build (powerpc
 allyesconfig) failed like this:
 
-drivers/regulator/twl-regulator.c: In function 'twlreg_probe':
-drivers/regulator/twl-regulator.c:1229:3: error: implicit declaration of fu=
-nction 'kfree' [-Werror=3Dimplicit-function-declaration]
+drivers/hid/hid-picolcd_fb.c: In function 'picolcd_fb_destroy':
+drivers/hid/hid-picolcd_fb.c:350:2: error: implicit declaration of function=
+ 'vfree' [-Werror=3Dimplicit-function-declaration]
+drivers/hid/hid-picolcd_fb.c: In function 'picolcd_init_framebuffer':
+drivers/hid/hid-picolcd_fb.c:508:2: error: implicit declaration of function=
+ 'vmalloc' [-Werror=3Dimplicit-function-declaration]
+drivers/hid/hid-picolcd_fb.c:508:12: warning: assignment makes pointer from=
+ integer without a cast [enabled by default]
 
-Caused by commit 537fbe92d723 ("regulator: twl: make twl_info tables
-const") from the regulator tree.
+Caused by commit fabdbf2fd22f ("HID: picoLCD: split driver code") from
+the hid tree.
 
-I have added the following patch for today:
+I added the following patch for today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 16 Aug 2012 15:11:22 +1000
-Subject: [PATCH] regulator: using kfree() requires including slab.h
+Date: Thu, 16 Aug 2012 15:20:10 +1000
+Subject: [PATCH] HID: using vmalloc() requires the include of vmalloc.h
 
-Fixes this build error:
+Fixes thes build errors:
 
-drivers/regulator/twl-regulator.c: In function 'twlreg_probe':
-drivers/regulator/twl-regulator.c:1229:3: error: implicit declaration of fu=
-nction 'kfree' [-Werror=3Dimplicit-function-declaration]
-
-Also added string.h for kmemdup().
+drivers/hid/hid-picolcd_fb.c: In function 'picolcd_fb_destroy':
+drivers/hid/hid-picolcd_fb.c:350:2: error: implicit declaration of function=
+ 'vfree' [-Werror=3Dimplicit-function-declaration]
+drivers/hid/hid-picolcd_fb.c: In function 'picolcd_init_framebuffer':
+drivers/hid/hid-picolcd_fb.c:508:2: error: implicit declaration of function=
+ 'vmalloc' [-Werror=3Dimplicit-function-declaration]
+drivers/hid/hid-picolcd_fb.c:508:12: warning: assignment makes pointer from=
+ integer without a cast [enabled by default]
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/regulator/twl-regulator.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/hid/hid-picolcd_fb.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regu=
-lator.c
-index a836522..564acae 100644
---- a/drivers/regulator/twl-regulator.c
-+++ b/drivers/regulator/twl-regulator.c
-@@ -10,6 +10,8 @@
-  */
+diff --git a/drivers/hid/hid-picolcd_fb.c b/drivers/hid/hid-picolcd_fb.c
+index 4d8e22c..cf295c5 100644
+--- a/drivers/hid/hid-picolcd_fb.c
++++ b/drivers/hid/hid-picolcd_fb.c
+@@ -18,6 +18,7 @@
+  *************************************************************************=
+**/
 =20
- #include <linux/module.h>
-+#include <linux/string.h>
-+#include <linux/slab.h>
- #include <linux/init.h>
- #include <linux/err.h>
- #include <linux/platform_device.h>
+ #include <linux/hid.h>
++#include <linux/vmalloc.h>
+ #include "usbhid/usbhid.h"
+ #include <linux/usb.h>
+=20
 --=20
 1.7.10.280.gaa39
 
@@ -74,25 +81,25 @@ index a836522..564acae 100644
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__16_Aug_2012_15_16_05_+1000_Hll.proEM1UdR2//
+--Signature=_Thu__16_Aug_2012_15_25_38_+1000_EBPolrnJ3nOqGEmf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQLIIVAAoJEECxmPOUX5FEkDUP/0Hqut54Leul3xtmVqEeY43j
-ITwVeT7Tqix9zYkMHykLSijnO/s7wksGe2qiO4nkpgop7p8dzaZmoJAN5RPCKu2d
-8wM5XLAmEFbNjz0e4U1n2YGzAa1q8nGreZagg5fldrQ8gD19Y/qr4YSk7I1eJEPV
-5AYmt2C1syuCEzPBfGv4M4H7VEy0CUVY2buvDg5KOMxGcvkQgDkkVQSZ/fOcRonS
-UsvKXw64wfSrgG6QS8TGOVgqtrqHuum4fHdiuKLa3fYpgrEoKvEwzdII0yy6UBN1
-FsGnB3rZ1CGH8oFTL13DVU3cAJZUjuZ+W0HrtTG87Avue+cZoF5p6y/OT/HXnCCg
-4F2x5dep5v5bSUXlQuYghHDKhmXleE5mhrewyvEciqJJoo5Tm3mkJKypIRrsa/oq
-ADAjT8FQ0eiYpQPB8oAwkQHQ4jZujxmg0AJ5iq/aanVStoiiEn7dl8/vZihmr+ni
-iEPQ1PMpbekgvjJ4jznfQ2JOJCtlMxwEkk0Qlmc4bSWMgfaXQ6znvx+nRFxIc/Dx
-D4v7H65gKDFIcV/1HezDN0zQ1FIbdMK0LCarRPemsiBg4lawQVNZAZC7vdH7mIs3
-AIaZqdgnaaPuvvXnlGRU9qUO6WlrIe4bJyFlLGAiyn1ElSPBfs50TGfnMjZr7i1Z
-nJXF6HD+TzxpwEr/bves
-=bxas
+iQIcBAEBCAAGBQJQLIRSAAoJEECxmPOUX5FE3OMP/3DHl0erVQJsgJ4QyGxAxLkL
+W/9P6q/u3mJSTkjQkEDfcc4Vask9N0/xUXN7/EC3Pi/rY7dvKX8w69CDnhdBKjXX
+V8/JZaFse8rVJWF/Ox8OS/UCfgq86S7lhO8RaY8ZHty8vJwA9hzsH3SVZvy0wVkV
+WBl980lcAQVYJZN7TdhA6a5sOC323/LK6FD/mtv7bbr+2xvsA+/lkTzu46g9N+a2
+ySQOyTveu+qmbRkyXmrF0gPVV+2/eHAlvXFlCa1oQ7+1gdzpb3BB7tkLzttCYnC9
+fNVtl5fGS89pPn4D+2P1AuiloNByZCKAYB+HMiOVODHcToSsn4D5uxwA62jrQ1vy
+jzKGHfSTeT1PXbBKA9lckvwXOcZS2sXJlbUoMrVyoz70LBRGmqgap+FeYC2XGY1t
+McsceF3VMbLV+pWBQSbWW1HIvJ3f1TpvPv4Z4dFNVercdV+SGKFxeIsdC9oOgJoT
+pkQ1a7/nujHPzxQATHbayw5lxTmmtewchMIfFNZ+4hlIdItUYwMwZ3O8ad5VQOnB
+r4rRxEJiKyDKsqFq+nSVY0+H0NOxs5AIDwipShzvaYYRFh63ruvc5oGQZ6HgRKaW
+ktEM8QQRLLlNpQLc4O+C9uH1GjMU5jxQrEhoCewM43SYb876ofpxGjHd3U0aOyrZ
+gnyC2EKHMLeZwrtPOBnf
+=ZeeH
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__16_Aug_2012_15_16_05_+1000_Hll.proEM1UdR2//--
+--Signature=_Thu__16_Aug_2012_15_25_38_+1000_EBPolrnJ3nOqGEmf--
