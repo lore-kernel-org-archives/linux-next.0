@@ -1,36 +1,98 @@
-From: Roland Dreier <roland@kernel.org>
-Subject: Re: linux-next: build failure after merge of the infiniband tree
-Date: Wed, 15 Aug 2012 21:07:37 -0700
-Message-ID: <CAG4TOxNLenjQxZNb7Rpm2G9RNBN77uWgEgfNXgoj+gLFdObuTg@mail.gmail.com>
-References: <20120816114443.600553d2fd103a5b2b36e061@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (regulator
+ tree related)
+Date: Thu, 16 Aug 2012 15:16:05 +1000
+Message-ID: <20120816151605.b0a9932005b541956288ce96@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__16_Aug_2012_15_16_05_+1000_Hll.proEM1UdR2//"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:57234 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750841Ab2HPEH6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Aug 2012 00:07:58 -0400
-In-Reply-To: <20120816114443.600553d2fd103a5b2b36e061@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36364 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753168Ab2HPFQR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Aug 2012 01:16:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-rdma@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yishai Hadas <yishaih@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-On Wed, Aug 15, 2012 at 6:44 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> After merging the infiniband tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> drivers/net/ethernet/mellanox/mlx4/mr.c: In function 'mlx4_buddy_init':
-> drivers/net/ethernet/mellanox/mlx4/mr.c:134:4: error: implicit declaration of function 'vzalloc' [-Werror=implicit-function-declaration]
-> drivers/net/ethernet/mellanox/mlx4/mr.c:134:19: warning: assignment makes pointer from integer without a cast [enabled by default]
-> drivers/net/ethernet/mellanox/mlx4/mr.c:148:4: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
+--Signature=_Thu__16_Aug_2012_15_16_05_+1000_Hll.proEM1UdR2//
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, should be fixed in tomorrow's for-next (added include of
-<linux/vmalloc.h>).
+Hi all,
 
-> See Rule 1 in Documentation/SubmitChecklist.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Heh, but it compiles fine on x86!
+drivers/regulator/twl-regulator.c: In function 'twlreg_probe':
+drivers/regulator/twl-regulator.c:1229:3: error: implicit declaration of fu=
+nction 'kfree' [-Werror=3Dimplicit-function-declaration]
 
- - R.
+Caused by commit 537fbe92d723 ("regulator: twl: make twl_info tables
+const") from the regulator tree.
+
+I have added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 16 Aug 2012 15:11:22 +1000
+Subject: [PATCH] regulator: using kfree() requires including slab.h
+
+Fixes this build error:
+
+drivers/regulator/twl-regulator.c: In function 'twlreg_probe':
+drivers/regulator/twl-regulator.c:1229:3: error: implicit declaration of fu=
+nction 'kfree' [-Werror=3Dimplicit-function-declaration]
+
+Also added string.h for kmemdup().
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/regulator/twl-regulator.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regu=
+lator.c
+index a836522..564acae 100644
+--- a/drivers/regulator/twl-regulator.c
++++ b/drivers/regulator/twl-regulator.c
+@@ -10,6 +10,8 @@
+  */
+=20
+ #include <linux/module.h>
++#include <linux/string.h>
++#include <linux/slab.h>
+ #include <linux/init.h>
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
+--=20
+1.7.10.280.gaa39
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__16_Aug_2012_15_16_05_+1000_Hll.proEM1UdR2//
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQLIIVAAoJEECxmPOUX5FEkDUP/0Hqut54Leul3xtmVqEeY43j
+ITwVeT7Tqix9zYkMHykLSijnO/s7wksGe2qiO4nkpgop7p8dzaZmoJAN5RPCKu2d
+8wM5XLAmEFbNjz0e4U1n2YGzAa1q8nGreZagg5fldrQ8gD19Y/qr4YSk7I1eJEPV
+5AYmt2C1syuCEzPBfGv4M4H7VEy0CUVY2buvDg5KOMxGcvkQgDkkVQSZ/fOcRonS
+UsvKXw64wfSrgG6QS8TGOVgqtrqHuum4fHdiuKLa3fYpgrEoKvEwzdII0yy6UBN1
+FsGnB3rZ1CGH8oFTL13DVU3cAJZUjuZ+W0HrtTG87Avue+cZoF5p6y/OT/HXnCCg
+4F2x5dep5v5bSUXlQuYghHDKhmXleE5mhrewyvEciqJJoo5Tm3mkJKypIRrsa/oq
+ADAjT8FQ0eiYpQPB8oAwkQHQ4jZujxmg0AJ5iq/aanVStoiiEn7dl8/vZihmr+ni
+iEPQ1PMpbekgvjJ4jznfQ2JOJCtlMxwEkk0Qlmc4bSWMgfaXQ6znvx+nRFxIc/Dx
+D4v7H65gKDFIcV/1HezDN0zQ1FIbdMK0LCarRPemsiBg4lawQVNZAZC7vdH7mIs3
+AIaZqdgnaaPuvvXnlGRU9qUO6WlrIe4bJyFlLGAiyn1ElSPBfs50TGfnMjZr7i1Z
+nJXF6HD+TzxpwEr/bves
+=bxas
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__16_Aug_2012_15_16_05_+1000_Hll.proEM1UdR2//--
