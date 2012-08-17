@@ -1,52 +1,138 @@
-From: Rakesh Jain <Rakesh.Jain@imgtec.com>
-Subject: RE: xtensa port maintenance
-Date: Thu, 16 Aug 2012 19:38:20 +0000
-Message-ID: <7E6CC3A7A7876F4BAC9F5E798E9726235C5926@bamail01.ba.imgtec.org>
-References: <50205592.1030205@gmail.com> <201208102115.59946.arnd@arndb.de>
- <50258D88.7090903@zankel.net> <5025975D.9030100@gmail.com>
- <522C1DF17AF50042AD8AE87F7887BD3D022DEE8CB5@exch.hq.tensilica.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: thermal patches in linux-next
+Date: Fri, 17 Aug 2012 08:42:35 +0800
+Message-ID: <1345164155.1682.871.camel@rui.sh.intel.com>
+References: <1344308038.1682.637.camel@rui.sh.intel.com>
+	 <1344494746.1682.669.camel@rui.sh.intel.com>
+	 <20120810090859.7ec67594f794c38c52096544@canb.auug.org.au>
+	 <1344562866.1682.698.camel@rui.sh.intel.com>
+	 <20120810122355.8d6429ac84aa26d296a89e7b@canb.auug.org.au>
+	 <1344566688.1682.711.camel@rui.sh.intel.com>
+	 <CAK44p21GpTdi1Gx=dcphXG_ZFicooLUe3Bc+dEhip+1TR0eBWg@mail.gmail.com>
+	 <1344577897.1682.724.camel@rui.sh.intel.com>
+	 <CAK44p23G8XR0TH0frbrQfa_r3PLG3j9=7209x74eBZSBUxJpEg@mail.gmail.com>
+	 <CAK44p23u18MsDxPL_NkZqJLpstJJAGTfxDP4SCSuFuYzQq8-oA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <522C1DF17AF50042AD8AE87F7887BD3D022DEE8CB5@exch.hq.tensilica.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Gauthier <marc@tensilica.com>, Pete Delaney <piet.delaney@gmail.com>, Chris Zankel <chris@zankel.net>, Arnd Bergmann <arnd@arndb.de>, "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>, Kirill Krinkin <kirill.krinkin@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Max Filippov <jcmvbkbc@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, 'Mahavir Prasad' <er.mahavir@gmail.com>, Prasanna Rao <Prasanna.Rao@transwitch.com>, Shimon Edelhaus <Shimon.Edelhaus@transwitch.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga14.intel.com ([143.182.124.37]:46449 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753720Ab2HQAlb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Aug 2012 20:41:31 -0400
+In-Reply-To: <CAK44p23u18MsDxPL_NkZqJLpstJJAGTfxDP4SCSuFuYzQq8-oA@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Amit Kachhap <amit.kachhap@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Guenter Roeck <linux@roeck-us.net>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-Hi Marc,
-Is Skype library available for Xtensa Linux port?
-They are available for ARM.
-Thanks.
--Rakesh
+Hi, Amit,
 
------Original Message-----
-From: Marc Gauthier [mailto:marc@tensilica.com] 
-Sent: Friday, August 10, 2012 9:47 PM
-To: Pete Delaney; Chris Zankel; Arnd Bergmann; linux-xtensa@linux-xtensa.org; Kirill Krinkin; Stephen Rothwell; Greg KH; linux-kernel@vger.kernel.org; Max Filippov; linux-next@vger.kernel.org; Andrew Morton; Linus Torvalds; 'Mahavir Prasad'; Prasanna Rao; Shimon Edelhaus; Rakesh Jain
-Subject: Re: xtensa port maintenance
+On =E5=9B=9B, 2012-08-16 at 17:17 +0530, Amit Kachhap wrote:
+> Hi Zhang,
+>=20
+> I have rebased my patches over your tree and submitted them. Also I
+> have added them in my tree
+> git://git.linaro.org/people/amitdanielk/linux.git
+> exynos_v6_thermal_tree.
+>=20
+> If required add them to your tree.
+>=20
+thanks for your work. I'll review them ASAP. :)
 
-Chris Zankel wrote:
-> I have set up a tree on github for now, and will work close with Max 
-> to get his changes to Stephen's linux-next tree and eventually Linus' 
-> tree.
-> I think it's fine to add Max as a second maintainer [...]
-
-Thanks for helping!
-
-
-Pete Delaney wrote:
-> I'm afraid that doing it piecemeal has failed in the past
-
-Proper patches work fine, was just never done.
-(Can discuss off this To: list.)
-
-
-> Mind anding Marc and myself?
-
-Acting as maintainer involves submitting useful patches over some period of time.  Right now that's Max and Chris.
-(Love to do it, but have plenty as it is on my plate.)
-
-Thanks,
--Marc
+thanks,
+rui
+> Thanks,
+> Amit Daniel
+>=20
+> On 14 August 2012 11:45, Amit Kachhap <amit.kachhap@linaro.org> wrote=
+:
+> > On 10 August 2012 11:21, Zhang Rui <rui.zhang@intel.com> wrote:
+> >> On =E4=BA=94, 2012-08-10 at 10:37 +0530, Amit Kachhap wrote:
+> >>> On 10 August 2012 08:14, Zhang Rui <rui.zhang@intel.com> wrote:
+> >>> > On =E4=BA=94, 2012-08-10 at 12:23 +1000, Stephen Rothwell wrote=
+:
+> >>> >> Hi Rui,
+> >>> >>
+> >>> >> On Fri, 10 Aug 2012 09:41:06 +0800 Zhang Rui
+> <rui.zhang@intel.com> wrote:
+> >>> >> >
+> >>> >> > > > And could you please drop these commits
+> >>> >> > > > ef25a0fe0087963c1611c1c8903886fbea053f76
+> >>> >> > > > 09ec52fca274ba88d68df3198de92abdaaff417b
+> >>> >> > > > ab6d2f029358c917508bf88bbd6a9193a8e39fc8
+> >>> >> > > > 66447fa993cbce56b4076f169a56f62350f6c7b8
+> >>> >> > > > ec62abb8b46021ca9ee6b8692b26974ace9007f0
+> >>> >> > > > 5ecbaf57d7885eedd924e391d91847d3df9fe0f8
+> >>> >> > > > 851414b2249afd8c128d29912dfd7060eaea8932
+> >>> >> > > > and pull my next branch instead?
+> >>> >> > >
+> >>> >> > > That is not how linux-next normally works.  Those commits
+> are in Adnrew's
+> >>> >> > > quilt series, so you need to ask him to drop them.
+>  However, because of
+> >>> >> > > the way the akpm tree works, any duplicate patches will
+> disappear from my
+> >>> >> > > copy of Andrew's series.
+> >>> >> >
+> >>> >> > could you please drop these patches?
+> >>> >> > these commits either will be or has been re-based on top of
+> my tree.
+> >>> >>
+> >>> >> You should always quote the summary line of commits.  Andrew i=
+s
+> using
+> >>> >> quilt to manage his patches and so those commit ids mean
+> nothing to him
+> >>> >> (and they have changed in today's linux-next anyway).
+> >>> >>
+> >>> > got it.
+> >>> >
+> >>> > Andrew,
+> >>> > could you please drop these patches from Amit for now?
+> >>> >
+> >>> > ARM: exynos: add thermal sensor driver platform data support
+> >>> > thermal: exynos: register the tmu sensor with the kernel therma=
+l
+> layer
+> >>> > thermal: exynos5: add exynos5 thermal sensor driver support
+> >>> > hwmon: exynos4: move thermal sensor driver to driver/thermal
+> directory
+> >>> > thermal: add generic cpufreq cooling implementation
+> >>> >
+> >>> > these patches can not build because of the recent thermal
+> changes, and
+> >>> > Amit agreed with me to re-base them on top of my tree.
+> >>>
+> >>> Or may be it is better to let them be in linux-next as it is and =
+I
+> >>> will create a separate adaptation patch to work with Zhang's new
+> >>> thermal enhancements. Actually the above patches are being used
+> >>> internally.
+> >>>
+> >> well, as the patches has not been in Linus' tree, and they do not
+> >> compile, IMO, it would be better to fix it in the patch rather tha=
+n
+> >> create an incremental one.
+> >> I can rewrite the generic cpufreq cooling patch if you do not have
+> time
+> >> to.
+> > Ok agreed Zhang. I am currently fixing my patches for the new
+> > framework. Will submit everything in a couple of days.
+> >
+> > Thanks,
+> > Amit Daniel
+> >>
+> >> thanks,
+> >> rui
+> >>
+> >>> Thanks,
+> >>> Amit Daniel
+> >>>
+> >>> >
+> >>> > thanks,
+> >>> > rui
+> >>> >
+> >>
+> >>
+>=20
