@@ -1,138 +1,95 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: thermal patches in linux-next
-Date: Fri, 17 Aug 2012 08:42:35 +0800
-Message-ID: <1345164155.1682.871.camel@rui.sh.intel.com>
-References: <1344308038.1682.637.camel@rui.sh.intel.com>
-	 <1344494746.1682.669.camel@rui.sh.intel.com>
-	 <20120810090859.7ec67594f794c38c52096544@canb.auug.org.au>
-	 <1344562866.1682.698.camel@rui.sh.intel.com>
-	 <20120810122355.8d6429ac84aa26d296a89e7b@canb.auug.org.au>
-	 <1344566688.1682.711.camel@rui.sh.intel.com>
-	 <CAK44p21GpTdi1Gx=dcphXG_ZFicooLUe3Bc+dEhip+1TR0eBWg@mail.gmail.com>
-	 <1344577897.1682.724.camel@rui.sh.intel.com>
-	 <CAK44p23G8XR0TH0frbrQfa_r3PLG3j9=7209x74eBZSBUxJpEg@mail.gmail.com>
-	 <CAK44p23u18MsDxPL_NkZqJLpstJJAGTfxDP4SCSuFuYzQq8-oA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Fri, 17 Aug 2012 10:56:33 +1000
+Message-ID: <20120817105633.0aba80ddf7eb9523e04c264d@canb.auug.org.au>
+References: <20120816131236.13013e1ec18b1f1074f6dc92@canb.auug.org.au>
+	<20120816194651.GK2445@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__17_Aug_2012_10_56_33_+1000_koGK1pFl/2YDOtkW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:46449 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753720Ab2HQAlb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Aug 2012 20:41:31 -0400
-In-Reply-To: <CAK44p23u18MsDxPL_NkZqJLpstJJAGTfxDP4SCSuFuYzQq8-oA@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54177 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752479Ab2HQA4q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Aug 2012 20:56:46 -0400
+In-Reply-To: <20120816194651.GK2445@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Amit Kachhap <amit.kachhap@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Guenter Roeck <linux@roeck-us.net>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: paulmck@linux.vnet.ibm.com
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Namhyung Kim <namhyung@kernel.org>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
 
-Hi, Amit,
+--Signature=_Fri__17_Aug_2012_10_56_33_+1000_koGK1pFl/2YDOtkW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On =E5=9B=9B, 2012-08-16 at 17:17 +0530, Amit Kachhap wrote:
-> Hi Zhang,
->=20
-> I have rebased my patches over your tree and submitted them. Also I
-> have added them in my tree
-> git://git.linaro.org/people/amitdanielk/linux.git
-> exynos_v6_thermal_tree.
->=20
-> If required add them to your tree.
->=20
-thanks for your work. I'll review them ASAP. :)
+Hi Paul,
 
-thanks,
-rui
-> Thanks,
-> Amit Daniel
+On Thu, 16 Aug 2012 12:46:51 -0700 "Paul E. McKenney" <paulmck@linux.vnet.i=
+bm.com> wrote:
+>
+> On Thu, Aug 16, 2012 at 01:12:36PM +1000, Stephen Rothwell wrote:
+> >=20
+> > After merging the tip tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >=20
+> > drivers/infiniband/hw/ehca/ehca_irq.c: In function 'find_next_online_cp=
+u':
+> > drivers/infiniband/hw/ehca/ehca_irq.c:672:2: error: expected ';' before=
+ 'spin_unlock_irqrestore'
+> >=20
+> > Caused by commit 81942621bd6b ("infiniband: Ehca: Use hotplug thread
+> > infrastructure").
+> >=20
+> > I have used the tip tree from next-20120814 for today.
 >=20
-> On 14 August 2012 11:45, Amit Kachhap <amit.kachhap@linaro.org> wrote=
-:
-> > On 10 August 2012 11:21, Zhang Rui <rui.zhang@intel.com> wrote:
-> >> On =E4=BA=94, 2012-08-10 at 10:37 +0530, Amit Kachhap wrote:
-> >>> On 10 August 2012 08:14, Zhang Rui <rui.zhang@intel.com> wrote:
-> >>> > On =E4=BA=94, 2012-08-10 at 12:23 +1000, Stephen Rothwell wrote=
-:
-> >>> >> Hi Rui,
-> >>> >>
-> >>> >> On Fri, 10 Aug 2012 09:41:06 +0800 Zhang Rui
-> <rui.zhang@intel.com> wrote:
-> >>> >> >
-> >>> >> > > > And could you please drop these commits
-> >>> >> > > > ef25a0fe0087963c1611c1c8903886fbea053f76
-> >>> >> > > > 09ec52fca274ba88d68df3198de92abdaaff417b
-> >>> >> > > > ab6d2f029358c917508bf88bbd6a9193a8e39fc8
-> >>> >> > > > 66447fa993cbce56b4076f169a56f62350f6c7b8
-> >>> >> > > > ec62abb8b46021ca9ee6b8692b26974ace9007f0
-> >>> >> > > > 5ecbaf57d7885eedd924e391d91847d3df9fe0f8
-> >>> >> > > > 851414b2249afd8c128d29912dfd7060eaea8932
-> >>> >> > > > and pull my next branch instead?
-> >>> >> > >
-> >>> >> > > That is not how linux-next normally works.  Those commits
-> are in Adnrew's
-> >>> >> > > quilt series, so you need to ask him to drop them.
->  However, because of
-> >>> >> > > the way the akpm tree works, any duplicate patches will
-> disappear from my
-> >>> >> > > copy of Andrew's series.
-> >>> >> >
-> >>> >> > could you please drop these patches?
-> >>> >> > these commits either will be or has been re-based on top of
-> my tree.
-> >>> >>
-> >>> >> You should always quote the summary line of commits.  Andrew i=
-s
-> using
-> >>> >> quilt to manage his patches and so those commit ids mean
-> nothing to him
-> >>> >> (and they have changed in today's linux-next anyway).
-> >>> >>
-> >>> > got it.
-> >>> >
-> >>> > Andrew,
-> >>> > could you please drop these patches from Amit for now?
-> >>> >
-> >>> > ARM: exynos: add thermal sensor driver platform data support
-> >>> > thermal: exynos: register the tmu sensor with the kernel therma=
-l
-> layer
-> >>> > thermal: exynos5: add exynos5 thermal sensor driver support
-> >>> > hwmon: exynos4: move thermal sensor driver to driver/thermal
-> directory
-> >>> > thermal: add generic cpufreq cooling implementation
-> >>> >
-> >>> > these patches can not build because of the recent thermal
-> changes, and
-> >>> > Amit agreed with me to re-base them on top of my tree.
-> >>>
-> >>> Or may be it is better to let them be in linux-next as it is and =
-I
-> >>> will create a separate adaptation patch to work with Zhang's new
-> >>> thermal enhancements. Actually the above patches are being used
-> >>> internally.
-> >>>
-> >> well, as the patches has not been in Linus' tree, and they do not
-> >> compile, IMO, it would be better to fix it in the patch rather tha=
-n
-> >> create an incremental one.
-> >> I can rewrite the generic cpufreq cooling patch if you do not have
-> time
-> >> to.
-> > Ok agreed Zhang. I am currently fixing my patches for the new
-> > framework. Will submit everything in a couple of days.
-> >
-> > Thanks,
-> > Amit Daniel
-> >>
-> >> thanks,
-> >> rui
-> >>
-> >>> Thanks,
-> >>> Amit Daniel
-> >>>
-> >>> >
-> >>> > thanks,
-> >>> > rui
-> >>> >
-> >>
-> >>
->=20
+> My first reaction was "we tested that!!!", but I see the conversion
+> from while(1) to do-while.  Does the following cure it?
+
+Yes, that fixes the build problem.
+
+However, the same commit is also responsible for all these new warnings:
+
+drivers/infiniband/hw/ehca/ehca_irq.c: In function 'queue_comp_task':
+drivers/infiniband/hw/ehca/ehca_irq.c:710:9: warning: assignment from incom=
+patible pointer type
+drivers/infiniband/hw/ehca/ehca_irq.c:719:10: warning: assignment from inco=
+mpatible pointer type
+drivers/infiniband/hw/ehca/ehca_irq.c: In function 'comp_task_park':
+drivers/infiniband/hw/ehca/ehca_irq.c:764:9: warning: assignment from incom=
+patible pointer type
+drivers/infiniband/hw/ehca/ehca_irq.c: In function 'comp_task':
+drivers/infiniband/hw/ehca/ehca_irq.c:803:1: warning: no return statement i=
+n function returning non-void
+drivers/infiniband/hw/ehca/ehca_irq.c: At top level:
+drivers/infiniband/hw/ehca/ehca_irq.c:807:2: warning: initialization from i=
+ncompatible pointer type
+
+Please address these.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__17_Aug_2012_10_56_33_+1000_koGK1pFl/2YDOtkW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQLZbBAAoJEECxmPOUX5FEnu4P/1t9ouJScG2zys2fwuk/woS1
+lxyoTyHj6mZ6kkvObYRhnhMs/CvilJlqvxZrYOyX9D9wUKRQiYLJNpKfqhUjF+7U
+MIRT4CyIzUY5y0xErVIvv7cTfP3+ijzAjy0JkNbKQYuvsdfD/n40hVQDfzvMDMQ/
+K1ntuE3eu7p4JnRaFRvbn13nemOY+2QNYHOdj1Y8VZIzjmS1LASnq4ItEpB1OKdh
+S0+5HXi90+/GsXAvQlX2xKJXtQywg3nzVDc3x/9B+sGGaMd9cBS5uSLNjzj5bGtd
+IhnFMlnxCDDjgh2nAo4tpHR6BYb49PeNay71z+23yhhWdeuXTz3iVYXMu4+rc7dz
+HEMnRone2P6OjFHshjdjlbr7cBaAkQmnSnduQXQXXjncxzYmNBicWVFLzqP0M8ow
+lTibOoeMoMEO30KFyJnXCab7dFxILC7f0uUH82uMAuWuYkZdV5T3xI2fcZI8CE2Q
+JIgRRqPn3bOWOgTfYt+RAuwVllN9RdohEc0bkTnQo467jSLlTg6APA4ltnxyThBJ
+Hi8ZrAYMk65U0nGf06kB2LBb2vBqTkBd47jN3vv8Rdu6kWyc5aCVZS+k/aXq/AcI
+08zJoxzuC8Hh8R8RPjPzbN6lPVAwuEq9TxJFfjOB7Zr+k84xZ0a3cBVsIRB9tDmg
+xqMTsAJGtW89Mb3/Jp6m
+=zNUV
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__17_Aug_2012_10_56_33_+1000_koGK1pFl/2YDOtkW--
