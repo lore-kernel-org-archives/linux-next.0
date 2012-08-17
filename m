@@ -1,95 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Fri, 17 Aug 2012 10:56:33 +1000
-Message-ID: <20120817105633.0aba80ddf7eb9523e04c264d@canb.auug.org.au>
-References: <20120816131236.13013e1ec18b1f1074f6dc92@canb.auug.org.au>
-	<20120816194651.GK2445@linux.vnet.ibm.com>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Fri, 17 Aug 2012 11:10:13 +1000
+Message-ID: <20120817111013.28c2f0b0ef72631968007d9a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__17_Aug_2012_10_56_33_+1000_koGK1pFl/2YDOtkW"
+ boundary="Signature=_Fri__17_Aug_2012_11_10_13_+1000_IqHcACf7uskDD6qf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54177 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:38004 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752479Ab2HQA4q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Aug 2012 20:56:46 -0400
-In-Reply-To: <20120816194651.GK2445@linux.vnet.ibm.com>
+	with ESMTP id S1755178Ab2HQBKW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Aug 2012 21:10:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Namhyung Kim <namhyung@kernel.org>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__17_Aug_2012_10_56_33_+1000_koGK1pFl/2YDOtkW
+--Signature=_Fri__17_Aug_2012_11_10_13_+1000_IqHcACf7uskDD6qf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Mauro,
 
-On Thu, 16 Aug 2012 12:46:51 -0700 "Paul E. McKenney" <paulmck@linux.vnet.i=
-bm.com> wrote:
->
-> On Thu, Aug 16, 2012 at 01:12:36PM +1000, Stephen Rothwell wrote:
-> >=20
-> > After merging the tip tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >=20
-> > drivers/infiniband/hw/ehca/ehca_irq.c: In function 'find_next_online_cp=
-u':
-> > drivers/infiniband/hw/ehca/ehca_irq.c:672:2: error: expected ';' before=
- 'spin_unlock_irqrestore'
-> >=20
-> > Caused by commit 81942621bd6b ("infiniband: Ehca: Use hotplug thread
-> > infrastructure").
-> >=20
-> > I have used the tip tree from next-20120814 for today.
->=20
-> My first reaction was "we tested that!!!", but I see the conversion
-> from while(1) to do-while.  Does the following cure it?
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Yes, that fixes the build problem.
+ERROR: "usb_cypress_load_firmware" [drivers/staging/media/go7007/s2250-load=
+er.ko] undefined!
+ERROR: "b2c2_flexcop_debug" [drivers/media/pci/b2c2/b2c2-flexcop-pci.ko] un=
+defined!
 
-However, the same commit is also responsible for all these new warnings:
+Given the major reorganisation going on, I have just used the v4l-dvb
+tree from next-20120816 for today.
 
-drivers/infiniband/hw/ehca/ehca_irq.c: In function 'queue_comp_task':
-drivers/infiniband/hw/ehca/ehca_irq.c:710:9: warning: assignment from incom=
-patible pointer type
-drivers/infiniband/hw/ehca/ehca_irq.c:719:10: warning: assignment from inco=
-mpatible pointer type
-drivers/infiniband/hw/ehca/ehca_irq.c: In function 'comp_task_park':
-drivers/infiniband/hw/ehca/ehca_irq.c:764:9: warning: assignment from incom=
-patible pointer type
-drivers/infiniband/hw/ehca/ehca_irq.c: In function 'comp_task':
-drivers/infiniband/hw/ehca/ehca_irq.c:803:1: warning: no return statement i=
-n function returning non-void
-drivers/infiniband/hw/ehca/ehca_irq.c: At top level:
-drivers/infiniband/hw/ehca/ehca_irq.c:807:2: warning: initialization from i=
-ncompatible pointer type
-
-Please address these.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__17_Aug_2012_10_56_33_+1000_koGK1pFl/2YDOtkW
+--Signature=_Fri__17_Aug_2012_11_10_13_+1000_IqHcACf7uskDD6qf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQLZbBAAoJEECxmPOUX5FEnu4P/1t9ouJScG2zys2fwuk/woS1
-lxyoTyHj6mZ6kkvObYRhnhMs/CvilJlqvxZrYOyX9D9wUKRQiYLJNpKfqhUjF+7U
-MIRT4CyIzUY5y0xErVIvv7cTfP3+ijzAjy0JkNbKQYuvsdfD/n40hVQDfzvMDMQ/
-K1ntuE3eu7p4JnRaFRvbn13nemOY+2QNYHOdj1Y8VZIzjmS1LASnq4ItEpB1OKdh
-S0+5HXi90+/GsXAvQlX2xKJXtQywg3nzVDc3x/9B+sGGaMd9cBS5uSLNjzj5bGtd
-IhnFMlnxCDDjgh2nAo4tpHR6BYb49PeNay71z+23yhhWdeuXTz3iVYXMu4+rc7dz
-HEMnRone2P6OjFHshjdjlbr7cBaAkQmnSnduQXQXXjncxzYmNBicWVFLzqP0M8ow
-lTibOoeMoMEO30KFyJnXCab7dFxILC7f0uUH82uMAuWuYkZdV5T3xI2fcZI8CE2Q
-JIgRRqPn3bOWOgTfYt+RAuwVllN9RdohEc0bkTnQo467jSLlTg6APA4ltnxyThBJ
-Hi8ZrAYMk65U0nGf06kB2LBb2vBqTkBd47jN3vv8Rdu6kWyc5aCVZS+k/aXq/AcI
-08zJoxzuC8Hh8R8RPjPzbN6lPVAwuEq9TxJFfjOB7Zr+k84xZ0a3cBVsIRB9tDmg
-xqMTsAJGtW89Mb3/Jp6m
-=zNUV
+iQIcBAEBCAAGBQJQLZn1AAoJEECxmPOUX5FEM5gP/2Sq4KO8w0+GGMMQ1PVcaILx
+PFb3I7oMGQfJ6fSqsnNfwa22orsmKrEqVwXJqpcQsvStf0oxRznI3hBrkLn/3gFh
+ane2zhd6La/M6gmls8dIUf0rdACmnUtH5kpiaSfMoEAjUs9drmWqrDUcuiI0ovIO
+CJXlK6pmoIpGH3zy0kH2jj4OXlYL44HICCj0CeEqMeM4/uDOHYabiMEehp/S2WtT
+QAPs1wtUtVBfiH81rKSgorBDVpMfBsE+NKNjztSci1231G9FC40nkVTodFjq0iDo
+NUKI4LSpMJxzQHVLn4zbkr4Ve4l/FVQZjDxk/lKirdeg2JCobSyO39/LqpR3dGEH
+WNW4sbn+6i4FlPyicfUr0wflSEiQiEV8YX8nzRBT5uTw+4oOA/JQxgbn/NxRkMM6
+ikdoB54Qel1otiKYpi3aCRYu0G+ERK0+hUTo8QYsbRCKgbtEcA+IkndLl/ES9eNZ
+rwfQpCjwev5Yq4bWgZr+DGy108mJIyJ+jZr9DZcV6yygODW334VFRoiUNSqlVrJ4
+vmBEAV+rJwdkINi65dk6TPgCbTzFskDbBSWb3TI6RNPUqB6sTamH2+3Jdsw6C0Lp
+GbKjW4pJWYSvHSl1JcmjsyE6dEF8dA/5tv5gyDL+348ds1BvlEFUFaJiwnc+4XEQ
+XRtiLEkceD5VQ7IX6a15
+=/v3c
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__17_Aug_2012_10_56_33_+1000_koGK1pFl/2YDOtkW--
+--Signature=_Fri__17_Aug_2012_11_10_13_+1000_IqHcACf7uskDD6qf--
