@@ -1,36 +1,35 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Fri, 17 Aug 2012 06:25:31 -0700
-Message-ID: <20120817132531.GD28980@kroah.com>
-References: <20120817140123.56bf158c14abc8fc0147bd67@canb.auug.org.au>
+From: "National Geographic International" <lr1@yale.edu>
+Subject: 500,000.00GBP Winner
+Date: Sat, 18 Aug 2012 20:38:13 +0800
+Message-ID: <201208181239.q7IC5BqK028983@vm-emlprdomr-02.its.yale.edu>
+Reply-To: ngi.co.uk1@aol.co.uk
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:50732 "EHLO
-	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751287Ab2HQNZd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Aug 2012 09:25:33 -0400
-Content-Disposition: inline
-In-Reply-To: <20120817140123.56bf158c14abc8fc0147bd67@canb.auug.org.au>
+Received: from vm-emlprdomr-02.its.yale.edu ([130.132.50.143]:57431 "EHLO
+	vm-emlprdomr-02.its.yale.edu" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752353Ab2HRVpA convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 18 Aug 2012 17:45:00 -0400
+Content-Description: Mail message body
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <ming.lei@canonical.com>
+To: Recipients <lr1@yale.edu>
 
-On Fri, Aug 17, 2012 at 02:01:23PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the driver-core tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> ERROR: "device_pm_lock" [drivers/base/firmware_class.ko] undefined!
-> ERROR: "dpm_list" [drivers/base/firmware_class.ko] undefined!
-> ERROR: "device_pm_unlock" [drivers/base/firmware_class.ko] undefined!
-> 
-> Caused by commit 37276a51f803 ("firmware: introduce
-> device_cache/uncache_fw_images").
+You have been award the sum of 500,000.00GBP National Geographic International Uk
 
-Thanks, known bug, Ming is working on resolving the issue.
+Claims Requirements.
 
-greg k-h
+Fill the below:
+1. Full Name:
+2. Address:
+3. Nationality:Sex:
+4. Age: Date of Birth:
+5. Occupation:
+6. Cell Phone:Fax:
+7. State of Origin:Country:
+
+Congratulations!! once again.
+Sincerely,
+Mrs.Caroline Cole
