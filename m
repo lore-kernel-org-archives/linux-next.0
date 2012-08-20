@@ -1,79 +1,115 @@
-From: Rakesh Jain <Rakesh.Jain@imgtec.com>
-Subject: RE: xtensa port maintenance
-Date: Mon, 20 Aug 2012 19:17:49 +0000
-Message-ID: <7E6CC3A7A7876F4BAC9F5E798E97262361F307@bamail01.ba.imgtec.org>
-References: <50205592.1030205@gmail.com> <201208102115.59946.arnd@arndb.de>
- <50258D88.7090903@zankel.net> <5025975D.9030100@gmail.com>
- <522C1DF17AF50042AD8AE87F7887BD3D022DEE8CB5@exch.hq.tensilica.com>
- <7E6CC3A7A7876F4BAC9F5E798E9726235C5926@bamail01.ba.imgtec.org>
- <502DD7EE.1070903@gmail.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: linux-next: Tree for Aug 20 (media: flexcop)
+Date: Mon, 20 Aug 2012 16:52:23 -0300
+Message-ID: <50329577.6040708@redhat.com>
+References: <20120820192336.1be51b225ce2883bdcad5b15@canb.auug.org.au> <503259AD.40602@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from multi.imgtec.com ([194.200.65.239]:2385 "EHLO multi.imgtec.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753752Ab2HTTWZ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Aug 2012 15:22:25 -0400
-In-Reply-To: <502DD7EE.1070903@gmail.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Pete Delaney <piet.delaney@gmail.com>
-Cc: Marc Gauthier <marc@tensilica.com>, Chris Zankel <chris@zankel.net>, Arnd Bergmann <arnd@arndb.de>, "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>, Kirill Krinkin <kirill.krinkin@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Max Filippov <jcmvbkbc@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, 'Mahavir Prasad' <er.mahavir@gmail.com>, Prasanna Rao <Prasanna.Rao@transwitch.com>, Shimon Edelhaus <Shimon.Edelhaus@transwitch.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <503259AD.40602@xenotime.net>
+Sender: linux-media-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Patrick Boettcher <patrick.boettcher@desy.de>, linux-media <linux-media@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Piet and Marc,
-Skype does not provide source code for their app.
-Skype provides libraries for embedded Linux platforms for ARM architecture such as TV widgets.
-If my customer wants to provide Skype application for Xtensa platform, is there way to get Skype library for xtensa?
--Rakesh
+Em 20-08-2012 12:37, Randy Dunlap escreveu:
+> On 08/20/12 02:23, Stephen Rothwell wrote:
+> 
+>> Hi all,
+>>
+>> Changes since 20120817:
+>>
+>> The v4l-dvb tree lost its build failure.
+>>
+> 
+> 
+> 
+> on x86_64:
+> 
+> flexcop-pci.c:(.text+0x19af63): undefined reference to `flexcop_device_exit'
+> flexcop-pci.c:(.text+0x19af77): undefined reference to `flexcop_device_kfree'
+> flexcop-pci.c:(.text+0x19b10f): undefined reference to `flexcop_pass_dmx_packets'
+> flexcop-pci.c:(.text+0x19b182): undefined reference to `flexcop_pass_dmx_data'
+> flexcop-pci.c:(.text+0x19b1ae): undefined reference to `flexcop_pass_dmx_data'
+> flexcop-pci.c:(.text+0x19b1f8): undefined reference to `flexcop_device_kmalloc'
+> flexcop-pci.c:(.text+0x19b256): undefined reference to `flexcop_i2c_request'
+> flexcop-pci.c:(.text+0x19b261): undefined reference to `flexcop_eeprom_check_mac_addr'
+> flexcop-pci.c:(.text+0x19b2c6): undefined reference to `flexcop_device_initialize'
+> flexcop-pci.c:(.text+0x19b332): undefined reference to `flexcop_sram_set_dest'
+> flexcop-pci.c:(.text+0x19b348): undefined reference to `flexcop_sram_set_dest'
+> flexcop-pci.c:(.text+0x19b3f8): undefined reference to `flexcop_device_exit'
+> flexcop-pci.c:(.text+0x19b408): undefined reference to `flexcop_device_kfree'
+> flexcop-pci.c:(.text+0x19b4a2): undefined reference to `flexcop_pid_feed_control'
+> flexcop-pci.c:(.text+0x19b4d7): undefined reference to `flexcop_pid_feed_control'
+> 
+> 
+> 
+> since it is possible to enable DVB_B2C2_FLEXCOP_PCI
+> when CONFIG_I2C is not enabled, but then DVB_B2C2_FLEXCOP
+> is not enabled because I2C is not enabled.
+> 
+> 
+> Full randconfig file is attached.
 
+Thanks!
 
------Original Message-----
-From: Pete Delaney [mailto:piet.delaney@gmail.com] 
-Sent: Thursday, August 16, 2012 10:35 PM
-To: Rakesh Jain
-Cc: Marc Gauthier; Chris Zankel; Arnd Bergmann; linux-xtensa@linux-xtensa.org; Kirill Krinkin; Stephen Rothwell; Greg KH; linux-kernel@vger.kernel.org; Max Filippov; linux-next@vger.kernel.org; Andrew Morton; Linus Torvalds; 'Mahavir Prasad'; Prasanna Rao; Shimon Edelhaus
-Subject: Re: xtensa port maintenance
+The following patch should be fixing it.
 
-On 08/16/2012 12:38 PM, Rakesh Jain wrote:
-> Hi Marc,
-> Is Skype library available for Xtensa Linux port?
-> They are available for ARM.
-I'd also like to know more about the Skype library.
+You'll likely notice a few more things like that, as we're reorganizing
+the media tree and their Kconfig files.
 
--piet
-> Thanks.
-> -Rakesh
+Thanks,
+Mauro
+
+-
+
+[media] Kconfig: Fix b2c2 common code selection
+
+As reported by Randy:
+
+> flexcop-pci.c:(.text+0x19af63): undefined reference to `flexcop_device_exit'
+> flexcop-pci.c:(.text+0x19af77): undefined reference to `flexcop_device_kfree'
+> flexcop-pci.c:(.text+0x19b10f): undefined reference to `flexcop_pass_dmx_packets'
+> flexcop-pci.c:(.text+0x19b182): undefined reference to `flexcop_pass_dmx_data'
+> flexcop-pci.c:(.text+0x19b1ae): undefined reference to `flexcop_pass_dmx_data'
+> flexcop-pci.c:(.text+0x19b1f8): undefined reference to `flexcop_device_kmalloc'
+> flexcop-pci.c:(.text+0x19b256): undefined reference to `flexcop_i2c_request'
+> flexcop-pci.c:(.text+0x19b261): undefined reference to `flexcop_eeprom_check_mac_addr'
+> flexcop-pci.c:(.text+0x19b2c6): undefined reference to `flexcop_device_initialize'
+> flexcop-pci.c:(.text+0x19b332): undefined reference to `flexcop_sram_set_dest'
+> flexcop-pci.c:(.text+0x19b348): undefined reference to `flexcop_sram_set_dest'
+> flexcop-pci.c:(.text+0x19b3f8): undefined reference to `flexcop_device_exit'
+> flexcop-pci.c:(.text+0x19b408): undefined reference to `flexcop_device_kfree'
+> flexcop-pci.c:(.text+0x19b4a2): undefined reference to `flexcop_pid_feed_control'
+> flexcop-pci.c:(.text+0x19b4d7): undefined reference to `flexcop_pid_feed_control'
 >
-> -----Original Message-----
-> From: Marc Gauthier [mailto:marc@tensilica.com]
-> Sent: Friday, August 10, 2012 9:47 PM
-> To: Pete Delaney; Chris Zankel; Arnd Bergmann; 
-> linux-xtensa@linux-xtensa.org; Kirill Krinkin; Stephen Rothwell; Greg 
-> KH; linux-kernel@vger.kernel.org; Max Filippov; 
-> linux-next@vger.kernel.org; Andrew Morton; Linus Torvalds; 'Mahavir 
-> Prasad'; Prasanna Rao; Shimon Edelhaus; Rakesh Jain
-> Subject: Re: xtensa port maintenance
->
-> Chris Zankel wrote:
->> I have set up a tree on github for now, and will work close with Max 
->> to get his changes to Stephen's linux-next tree and eventually Linus'
->> tree.
->> I think it's fine to add Max as a second maintainer [...]
-> Thanks for helping!
->
->
-> Pete Delaney wrote:
->> I'm afraid that doing it piecemeal has failed in the past
-> Proper patches work fine, was just never done.
-> (Can discuss off this To: list.)
->
->
->> Mind anding Marc and myself?
-> Acting as maintainer involves submitting useful patches over some period of time.  Right now that's Max and Chris.
-> (Love to do it, but have plenty as it is on my plate.)
->
-> Thanks,
-> -Marc
->
+> since it is possible to enable DVB_B2C2_FLEXCOP_PCI
+> when CONFIG_I2C is not enabled, but then DVB_B2C2_FLEXCOP
+> is not enabled because I2C is not enabled.
+
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+diff --git a/drivers/media/pci/b2c2/Kconfig b/drivers/media/pci/b2c2/Kconfig
+index aaa1f30..f99e25c 100644
+--- a/drivers/media/pci/b2c2/Kconfig
++++ b/drivers/media/pci/b2c2/Kconfig
+@@ -1,5 +1,6 @@
+ config DVB_B2C2_FLEXCOP_PCI
+ 	tristate "Technisat/B2C2 Air/Sky/Cable2PC PCI"
++	depends on DVB_CORE && I2C
+ 	help
+ 	  Support for the Air/Sky/CableStar2 PCI card (DVB/ATSC) by Technisat/B2C2.
+ 
+diff --git a/drivers/media/usb/b2c2/Kconfig b/drivers/media/usb/b2c2/Kconfig
+index 3af7c41..23de67c 100644
+--- a/drivers/media/usb/b2c2/Kconfig
++++ b/drivers/media/usb/b2c2/Kconfig
+@@ -1,5 +1,6 @@
+ config DVB_B2C2_FLEXCOP_USB
+ 	tristate "Technisat/B2C2 Air/Sky/Cable2PC USB"
++	depends on DVB_CORE && I2C
+ 	help
+ 	  Support for the Air/Sky/Cable2PC USB1.1 box (DVB/ATSC) by Technisat/B2C2,
+ 
