@@ -1,54 +1,63 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: Tree for July 26 (uml)
-Date: Mon, 20 Aug 2012 12:21:31 +0930
-Message-ID: <878vda5l8s.fsf@rustcorp.com.au>
-References: <502A69FA.8040805@nod.at> <502A6759.3090802@nod.at> <15981.1344955883@warthog.procyon.org.uk> <502A613F.1090600@nod.at> <87a9xys53h.fsf@rustcorp.com.au> <20120726150419.0de645e8750e3a15fa0f1aaa@canb.auug.org.au> <50115FCF.4060708@xenotime.net> <502932A0.3060001@xenotime.net> <15532.1344954413@warthog.procyon.org.uk> <18600.1344956051@warthog.procyon.org.uk> <18933.1344956788@warthog.procyon.org.uk> <30102.1344957328@warthog.procyon.org.uk> <502A6BF8.6040804@nod.at> <502A8DD6.90807@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drivers-x86 tree
+Date: Mon, 20 Aug 2012 16:11:46 +1000
+Message-ID: <20120820161146.8961b8d9151f11a27b2fb48f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__20_Aug_2012_16_11_46_+1000_KILVy.JL0v5_KzTC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:57432 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753695Ab2HTFBU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Aug 2012 01:01:20 -0400
-In-Reply-To: <502A8DD6.90807@xenotime.net>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50224 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750937Ab2HTGLz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Aug 2012 02:11:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>, Richard Weinberger <richard@nod.at>
-Cc: David Howells <dhowells@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, user-mode-linux-devel@lists.sourceforge.net
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, AceLan Kao <acelan.kao@canonical.com>
 
-On Tue, 14 Aug 2012 10:41:42 -0700, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On 08/14/2012 08:17 AM, Richard Weinberger wrote:
-> 
-> > Am 14.08.2012 17:15, schrieb David Howells:
-> >> How about this then?
-> >>
-> >> David
-> >> ---
-> >> diff --git a/arch/x86/um/Kconfig b/arch/x86/um/Kconfig
-> >> index 9926e11..a4b0c10 100644
-> >> --- a/arch/x86/um/Kconfig
-> >> +++ b/arch/x86/um/Kconfig
-> >> @@ -21,9 +21,11 @@ config 64BIT
-> >>  config X86_32
-> >>  	def_bool !64BIT
-> >>  	select HAVE_AOUT
-> >> +	select MODULES_USE_ELF_REL
-> >>  
-> >>  config X86_64
-> >>  	def_bool 64BIT
-> >> +	select MODULES_USE_ELF_RELA
-> >>  
-> >>  config RWSEM_XCHGADD_ALGORITHM
-> >>  	def_bool X86_XADD && 64BIT
-> > 
-> > Looks sane.
-> > 
-> > Acked-by: Richard Weinberger <richard@nod.at>
-> 
-> 
-> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Mon__20_Aug_2012_16_11_46_+1000_KILVy.JL0v5_KzTC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, folded into David's original patch.
+Hi Matthew,
 
+After merging the drivers-x86 tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/platform/x86/asus-wmi.c: In function 'asus_new_rfkill':
+drivers/platform/x86/asus-wmi.c:892:3: error: implicit declaration of funct=
+ion 'rfkill_set_led_trigger_name' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 154a7a7b2234 ("asus-wmi: update wlan LED through rfkill
+led trigger").  Please build test this stuff ... according to the bug
+report, this patch depends on another rfkill patch.
+
+I have used the drivers-x86 tree from next-20120817 for today.
+--=20
 Cheers,
-Rusty.
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__20_Aug_2012_16_11_46_+1000_KILVy.JL0v5_KzTC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQMdUiAAoJEECxmPOUX5FEfD4P/irbo588D9YNcsh2D6+VeAw3
+pctH0iGIRzbf7kJvGkfuJ2gr00kGDWB+CgVpWieu9ln8l99kj0E3NuNWc7FGQswI
+eyVZIpzrjdd3NW4G0E6wrCJ1lfg2nnlT1+BE4gn+skSEKmmKa5u6PoYExJOzUtsx
+9u/XnBFWOWklLD9RU3x2XtAvh5LjhjDD4ki/UJoDBkYodMkHzXF6hpovjJExPsJP
+U5tYZDg69MAV1bVGakwDco/reU2ufSd5uLshVWZqU+RicqgmR7Vpr3Iur0CQi1ka
+rpwVZ+yCSRj++k3P+rQ/UxiCVEskIyjBMz9JApLQ9axS5Vt9A68IjB+stjbyEpaT
+xNELZ92XUsCxxbzXZP/LwYNRzk3kSDUXAcFTk6hc5SdYYkQ4KMGPggdeSzLfT9jU
+naTn4gEyjIhwffUS0+KXLsGYNJKyigiUYo4gzjccV1nQO8Pj20MXYZ8k/LFSQVZo
+bXzK3mx0xiK5N+kBCZi6ZT+avjt63Lv5b9DTk/wpm7drPHeFz61CU9ip29ItCeb/
+/Tq1eGEe6IK6idlSil5qWbqzOX3JmC0IZlaTfoUbHKbxDCpBShxe6b348M80B7kK
+D8pJxWIeoM/F9yfdS+aTPpVEK2MS5yC4xa5W8fnOtYh40r15TxRfnAoSrk0qdL2Z
+2Z30juZbWgGmPj8IKzMn
+=lR65
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__20_Aug_2012_16_11_46_+1000_KILVy.JL0v5_KzTC--
