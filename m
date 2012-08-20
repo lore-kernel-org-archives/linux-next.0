@@ -1,73 +1,104 @@
 From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: Tree for Aug 20 (media: gspca)
-Date: Mon, 20 Aug 2012 17:23:02 -0300
-Message-ID: <50329CA6.6000705@redhat.com>
-References: <20120820192336.1be51b225ce2883bdcad5b15@canb.auug.org.au> <50325AE5.8060304@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 20 (media: saa7164)
+Date: Mon, 20 Aug 2012 18:42:45 -0300
+Message-ID: <5032AF55.5030208@redhat.com>
+References: <20120820192336.1be51b225ce2883bdcad5b15@canb.auug.org.au> <503260D9.4030208@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50325AE5.8060304@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:34604 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754308Ab2HTVmy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Aug 2012 17:42:54 -0400
+In-Reply-To: <503260D9.4030208@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>, Steven Toth <stoth@kernellabs.com>
 
-Em 20-08-2012 12:42, Randy Dunlap escreveu:
-> On 08/20/12 02:23, Stephen Rothwell wrote:
-> 
->> Hi all,
->>
->> Changes since 20120817:
->>
-> 
-> 
-> on x86_64:
-> 
-> gspca.c:(.text+0x22aa81): undefined reference to `usb_alloc_urb'
-> gspca.c:(.text+0x22aaad): undefined reference to `usb_alloc_coherent'
-> gspca.c:(.text+0x22ac38): undefined reference to `usb_submit_urb'
-> gspca.c:(.text+0x22af0a): undefined reference to `usb_free_coherent'
-> gspca.c:(.text+0x22af12): undefined reference to `usb_free_urb'
-> gspca.c:(.text+0x22af6c): undefined reference to `usb_ifnum_to_if'
-> gspca.c:(.text+0x22afef): undefined reference to `usb_kill_urb'
-> gspca.c:(.text+0x22b00a): undefined reference to `usb_free_coherent'
-> gspca.c:(.text+0x22b0f9): undefined reference to `usb_set_interface'
-> gspca.c:(.text+0x22b539): undefined reference to `usb_ifnum_to_if'
-> gspca.c:(.text+0x22b64e): undefined reference to `usb_set_interface'
-> gspca.c:(.text+0x22b6af): undefined reference to `usb_clear_halt'
-> 
-> 
-> when CONFIG_USB_SUPPORT is not enabled.
-> 
-> Full randconfig file is attached.
+Em 20-08-2012 13:07, Randy Dunlap escreveu:
+> (part of/due to kconfig menu restructuring?)
 
-Randy,
+Yes.
 
-Thanks for the report!
+Probably, there was an implicit dependency with the old Kconfig arrangement.
 
-Not really sure why it failed here... I suspect it is because:
-
-menu "Media USB Adapters"
-       visible if USB && MEDIA_SUPPORT
-
-doesn't do the same as:
-
-menuconfig MEDIA_USB_SUPPORT
-       bool "Media USB Adapters"
-       depends on USB && MEDIA_SUPPORT
-
-Anyway, there is one patch on my experimental tree changes from one
-syntax into the other one:
-
-http://git.linuxtv.org/mchehab/experimental.git/commitdiff/6dbbfefe6c101d617670c486b1aa665e09df5244
-
-Testing your randconfig against my experimental tree, after the above
-patch, fixed it.
-
-As I'm waiting for some feedback on this (hopefully) final series
-of reorg patches, I'll wait until tomorrow before merging it at
--next.
+Now that we're storing both analog and digital TV drivers at the same place,
+those dependencies need to be explicit.
 
 Thanks!
 Mauro
+
+> on i386:
+> 
+> drivers/built-in.o: In function `fops_open':
+> saa7164-encoder.c:(.text+0x68ed6f): undefined reference to `video_devdata'
+...
+
+-
+
+[media] saa7164: Add dependency for V4L2 core
+
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+As Reported by Randy:
+
+> drivers/built-in.o: In function `fops_open':
+> saa7164-encoder.c:(.text+0x68ed6f): undefined reference to `video_devdata'
+> drivers/built-in.o: In function `fill_queryctrl.clone.4':
+> saa7164-encoder.c:(.text+0x68f657): undefined reference to `v4l2_ctrl_query_fill'
+> saa7164-encoder.c:(.text+0x68f6a9): undefined reference to `v4l2_ctrl_query_fill'
+> saa7164-encoder.c:(.text+0x68f6e0): undefined reference to `v4l2_ctrl_query_fill'
+> saa7164-encoder.c:(.text+0x68f71a): undefined reference to `v4l2_ctrl_query_fill'
+> saa7164-encoder.c:(.text+0x68f73a): undefined reference to `v4l2_ctrl_query_fill'
+> drivers/built-in.o:saa7164-encoder.c:(.text+0x68f757): more undefined references to `v4l2_ctrl_query_fill' follow
+> drivers/built-in.o: In function `saa7164_encoder_register':
+> (.text+0x68fff7): undefined reference to `video_device_alloc'
+> drivers/built-in.o: In function `saa7164_encoder_register':
+> (.text+0x690073): undefined reference to `video_device_release'
+> drivers/built-in.o: In function `saa7164_encoder_register':
+> (.text+0x6900a1): undefined reference to `__video_register_device'
+> drivers/built-in.o: In function `saa7164_encoder_unregister':
+> (.text+0x690243): undefined reference to `video_unregister_device'
+> drivers/built-in.o: In function `saa7164_encoder_unregister':
+> (.text+0x690269): undefined reference to `video_device_release'
+> drivers/built-in.o: In function `fops_open':
+> saa7164-vbi.c:(.text+0x69125f): undefined reference to `video_devdata'
+> drivers/built-in.o: In function `fill_queryctrl.clone.4':
+> saa7164-vbi.c:(.text+0x6919b4): undefined reference to `v4l2_ctrl_query_fill'
+> saa7164-vbi.c:(.text+0x6919ee): undefined reference to `v4l2_ctrl_query_fill'
+> saa7164-vbi.c:(.text+0x691a23): undefined reference to `v4l2_ctrl_query_fill'
+> saa7164-vbi.c:(.text+0x691a47): undefined reference to `v4l2_ctrl_query_fill'
+> saa7164-vbi.c:(.text+0x691a6a): undefined reference to `v4l2_ctrl_query_fill'
+> drivers/built-in.o:saa7164-vbi.c:(.text+0x691a87): more undefined references to `v4l2_ctrl_query_fill' follow
+> drivers/built-in.o: In function `saa7164_vbi_register':
+> (.text+0x69220e): undefined reference to `video_device_alloc'
+> drivers/built-in.o: In function `saa7164_vbi_register':
+> (.text+0x69228a): undefined reference to `video_device_release'
+> drivers/built-in.o: In function `saa7164_vbi_register':
+> (.text+0x6922bb): undefined reference to `__video_register_device'
+> drivers/built-in.o: In function `saa7164_vbi_unregister':
+> (.text+0x6923de): undefined reference to `video_unregister_device'
+> drivers/built-in.o: In function `saa7164_vbi_unregister':
+> (.text+0x6923f9): undefined reference to `video_device_release'
+> drivers/built-in.o:(.rodata+0xb1054): undefined reference to `video_ioctl2'
+> drivers/built-in.o:(.rodata+0xb17d4): undefined reference to `video_ioctl2'
+
+That's due to the lack of an explicit Kconfig dependency for the V4L2 core.
+
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+diff --git a/drivers/media/pci/saa7164/Kconfig b/drivers/media/pci/saa7164/Kconfig
+index 3532637..d0b92fe 100644
+--- a/drivers/media/pci/saa7164/Kconfig
++++ b/drivers/media/pci/saa7164/Kconfig
+@@ -1,6 +1,6 @@
+ config VIDEO_SAA7164
+ 	tristate "NXP SAA7164 support"
+-	depends on DVB_CORE && PCI && I2C
++	depends on DVB_CORE && VIDEO_DEV && PCI && I2C
+ 	select I2C_ALGOBIT
+ 	select FW_LOADER
+ 	select VIDEO_TUNER
