@@ -1,115 +1,73 @@
 From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: Tree for Aug 20 (media: flexcop)
-Date: Mon, 20 Aug 2012 16:52:23 -0300
-Message-ID: <50329577.6040708@redhat.com>
-References: <20120820192336.1be51b225ce2883bdcad5b15@canb.auug.org.au> <503259AD.40602@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 20 (media: gspca)
+Date: Mon, 20 Aug 2012 17:23:02 -0300
+Message-ID: <50329CA6.6000705@redhat.com>
+References: <20120820192336.1be51b225ce2883bdcad5b15@canb.auug.org.au> <50325AE5.8060304@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <503259AD.40602@xenotime.net>
-Sender: linux-media-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <50325AE5.8060304@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Patrick Boettcher <patrick.boettcher@desy.de>, linux-media <linux-media@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Em 20-08-2012 12:37, Randy Dunlap escreveu:
+Em 20-08-2012 12:42, Randy Dunlap escreveu:
 > On 08/20/12 02:23, Stephen Rothwell wrote:
 > 
 >> Hi all,
 >>
 >> Changes since 20120817:
 >>
->> The v4l-dvb tree lost its build failure.
->>
-> 
 > 
 > 
 > on x86_64:
 > 
-> flexcop-pci.c:(.text+0x19af63): undefined reference to `flexcop_device_exit'
-> flexcop-pci.c:(.text+0x19af77): undefined reference to `flexcop_device_kfree'
-> flexcop-pci.c:(.text+0x19b10f): undefined reference to `flexcop_pass_dmx_packets'
-> flexcop-pci.c:(.text+0x19b182): undefined reference to `flexcop_pass_dmx_data'
-> flexcop-pci.c:(.text+0x19b1ae): undefined reference to `flexcop_pass_dmx_data'
-> flexcop-pci.c:(.text+0x19b1f8): undefined reference to `flexcop_device_kmalloc'
-> flexcop-pci.c:(.text+0x19b256): undefined reference to `flexcop_i2c_request'
-> flexcop-pci.c:(.text+0x19b261): undefined reference to `flexcop_eeprom_check_mac_addr'
-> flexcop-pci.c:(.text+0x19b2c6): undefined reference to `flexcop_device_initialize'
-> flexcop-pci.c:(.text+0x19b332): undefined reference to `flexcop_sram_set_dest'
-> flexcop-pci.c:(.text+0x19b348): undefined reference to `flexcop_sram_set_dest'
-> flexcop-pci.c:(.text+0x19b3f8): undefined reference to `flexcop_device_exit'
-> flexcop-pci.c:(.text+0x19b408): undefined reference to `flexcop_device_kfree'
-> flexcop-pci.c:(.text+0x19b4a2): undefined reference to `flexcop_pid_feed_control'
-> flexcop-pci.c:(.text+0x19b4d7): undefined reference to `flexcop_pid_feed_control'
+> gspca.c:(.text+0x22aa81): undefined reference to `usb_alloc_urb'
+> gspca.c:(.text+0x22aaad): undefined reference to `usb_alloc_coherent'
+> gspca.c:(.text+0x22ac38): undefined reference to `usb_submit_urb'
+> gspca.c:(.text+0x22af0a): undefined reference to `usb_free_coherent'
+> gspca.c:(.text+0x22af12): undefined reference to `usb_free_urb'
+> gspca.c:(.text+0x22af6c): undefined reference to `usb_ifnum_to_if'
+> gspca.c:(.text+0x22afef): undefined reference to `usb_kill_urb'
+> gspca.c:(.text+0x22b00a): undefined reference to `usb_free_coherent'
+> gspca.c:(.text+0x22b0f9): undefined reference to `usb_set_interface'
+> gspca.c:(.text+0x22b539): undefined reference to `usb_ifnum_to_if'
+> gspca.c:(.text+0x22b64e): undefined reference to `usb_set_interface'
+> gspca.c:(.text+0x22b6af): undefined reference to `usb_clear_halt'
 > 
 > 
-> 
-> since it is possible to enable DVB_B2C2_FLEXCOP_PCI
-> when CONFIG_I2C is not enabled, but then DVB_B2C2_FLEXCOP
-> is not enabled because I2C is not enabled.
-> 
+> when CONFIG_USB_SUPPORT is not enabled.
 > 
 > Full randconfig file is attached.
 
+Randy,
+
+Thanks for the report!
+
+Not really sure why it failed here... I suspect it is because:
+
+menu "Media USB Adapters"
+       visible if USB && MEDIA_SUPPORT
+
+doesn't do the same as:
+
+menuconfig MEDIA_USB_SUPPORT
+       bool "Media USB Adapters"
+       depends on USB && MEDIA_SUPPORT
+
+Anyway, there is one patch on my experimental tree changes from one
+syntax into the other one:
+
+http://git.linuxtv.org/mchehab/experimental.git/commitdiff/6dbbfefe6c101d617670c486b1aa665e09df5244
+
+Testing your randconfig against my experimental tree, after the above
+patch, fixed it.
+
+As I'm waiting for some feedback on this (hopefully) final series
+of reorg patches, I'll wait until tomorrow before merging it at
+-next.
+
 Thanks!
-
-The following patch should be fixing it.
-
-You'll likely notice a few more things like that, as we're reorganizing
-the media tree and their Kconfig files.
-
-Thanks,
 Mauro
-
--
-
-[media] Kconfig: Fix b2c2 common code selection
-
-As reported by Randy:
-
-> flexcop-pci.c:(.text+0x19af63): undefined reference to `flexcop_device_exit'
-> flexcop-pci.c:(.text+0x19af77): undefined reference to `flexcop_device_kfree'
-> flexcop-pci.c:(.text+0x19b10f): undefined reference to `flexcop_pass_dmx_packets'
-> flexcop-pci.c:(.text+0x19b182): undefined reference to `flexcop_pass_dmx_data'
-> flexcop-pci.c:(.text+0x19b1ae): undefined reference to `flexcop_pass_dmx_data'
-> flexcop-pci.c:(.text+0x19b1f8): undefined reference to `flexcop_device_kmalloc'
-> flexcop-pci.c:(.text+0x19b256): undefined reference to `flexcop_i2c_request'
-> flexcop-pci.c:(.text+0x19b261): undefined reference to `flexcop_eeprom_check_mac_addr'
-> flexcop-pci.c:(.text+0x19b2c6): undefined reference to `flexcop_device_initialize'
-> flexcop-pci.c:(.text+0x19b332): undefined reference to `flexcop_sram_set_dest'
-> flexcop-pci.c:(.text+0x19b348): undefined reference to `flexcop_sram_set_dest'
-> flexcop-pci.c:(.text+0x19b3f8): undefined reference to `flexcop_device_exit'
-> flexcop-pci.c:(.text+0x19b408): undefined reference to `flexcop_device_kfree'
-> flexcop-pci.c:(.text+0x19b4a2): undefined reference to `flexcop_pid_feed_control'
-> flexcop-pci.c:(.text+0x19b4d7): undefined reference to `flexcop_pid_feed_control'
->
-> since it is possible to enable DVB_B2C2_FLEXCOP_PCI
-> when CONFIG_I2C is not enabled, but then DVB_B2C2_FLEXCOP
-> is not enabled because I2C is not enabled.
-
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-
-diff --git a/drivers/media/pci/b2c2/Kconfig b/drivers/media/pci/b2c2/Kconfig
-index aaa1f30..f99e25c 100644
---- a/drivers/media/pci/b2c2/Kconfig
-+++ b/drivers/media/pci/b2c2/Kconfig
-@@ -1,5 +1,6 @@
- config DVB_B2C2_FLEXCOP_PCI
- 	tristate "Technisat/B2C2 Air/Sky/Cable2PC PCI"
-+	depends on DVB_CORE && I2C
- 	help
- 	  Support for the Air/Sky/CableStar2 PCI card (DVB/ATSC) by Technisat/B2C2.
- 
-diff --git a/drivers/media/usb/b2c2/Kconfig b/drivers/media/usb/b2c2/Kconfig
-index 3af7c41..23de67c 100644
---- a/drivers/media/usb/b2c2/Kconfig
-+++ b/drivers/media/usb/b2c2/Kconfig
-@@ -1,5 +1,6 @@
- config DVB_B2C2_FLEXCOP_USB
- 	tristate "Technisat/B2C2 Air/Sky/Cable2PC USB"
-+	depends on DVB_CORE && I2C
- 	help
- 	  Support for the Air/Sky/Cable2PC USB1.1 box (DVB/ATSC) by Technisat/B2C2,
- 
