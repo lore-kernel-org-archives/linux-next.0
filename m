@@ -1,63 +1,52 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: inux-next: Tree for Aug 21 (usb_speed_string)
-Date: Tue, 21 Aug 2012 12:36:56 -0700
-Message-ID: <20120821193656.GA10864@roeck-us.net>
-References: <20120821160403.6deca090a9a435d2b1e3d8ba@canb.auug.org.au>
- <5033CE2F.8000608@xenotime.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH -next] HID: picoLCD: Add missing #include <linux/uaccess.h>
+Date: Tue, 21 Aug 2012 22:41:23 +0200
+Message-ID: <1345581683-2099-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:57205 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754849Ab2HUTgy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Aug 2012 15:36:54 -0400
-Content-Disposition: inline
-In-Reply-To: <5033CE2F.8000608@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sean Young <sean@mess.org>, Mauro Carvalho Chehab <mchehab@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: =?UTF-8?q?Bruno=20Pr=C3=A9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jkosina@suse.cz>
+Cc: linux-input@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Aug 21, 2012 at 11:06:39AM -0700, Randy Dunlap wrote:
-> On 08/20/2012 11:04 PM, Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20120820:
-> > 
-> 
-> 
-> on x86_64:
-> 
-> ERROR: "usb_speed_string" [drivers/usb/core/usbcore.ko] undefined!
-> 
-> 
-> CONFIG_USB_SUPPORT is not enabled
-> (but many other USB drivers are enabled).
-> 
+m68k/allmodconfig:
 
-Caused by
+drivers/hid/hid-picolcd_debugfs.c: In function =E2=80=98picolcd_debug_r=
+eset_write=E2=80=99:
+drivers/hid/hid-picolcd_debugfs.c:54: error: implicit declaration of fu=
+nction =E2=80=98copy_from_user=E2=80=99
+drivers/hid/hid-picolcd_debugfs.c: In function =E2=80=98picolcd_debug_e=
+eprom_read=E2=80=99:
+drivers/hid/hid-picolcd_debugfs.c:112: error: implicit declaration of f=
+unction =E2=80=98copy_to_user=E2=80=99
 
-config IR_TTUSBIR
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+http://kisskb.ellerman.id.au/kisskb/buildresult/6990818/
 
-which selects USB but does not have the necessary dependency on USB_ARCH_HAS_HCD.
+ drivers/hid/hid-picolcd_debugfs.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-Introduced by commit 0938069fa08970f1c898970c1331a029efe9a1ce "[media] rc: Add
-support for the TechnoTrend USB IR Receiver".
+diff --git a/drivers/hid/hid-picolcd_debugfs.c b/drivers/hid/hid-picolc=
+d_debugfs.c
+index f2491fa..15c22f2 100644
+--- a/drivers/hid/hid-picolcd_debugfs.c
++++ b/drivers/hid/hid-picolcd_debugfs.c
+@@ -27,6 +27,7 @@
+ #include <linux/debugfs.h>
+=20
+ #include <linux/module.h>
++#include <linux/uaccess.h>
+=20
+ #include "hid-picolcd.h"
+=20
+--=20
+1.7.0.4
 
-Fixing this exposes
-
-ERROR: "usb_kill_urb" [drivers/media/usb/gspca/gspca_main.ko] undefined!
-ERROR: "usb_set_interface" [drivers/media/usb/gspca/gspca_main.ko] undefined!
-ERROR: "usb_free_coherent" [drivers/media/usb/gspca/gspca_main.ko] undefined!
-ERROR: "usb_submit_urb" [drivers/media/usb/gspca/gspca_main.ko] undefined!
-ERROR: "usb_clear_halt" [drivers/media/usb/gspca/gspca_main.ko] undefined!
-ERROR: "usb_ifnum_to_if" [drivers/media/usb/gspca/gspca_main.ko] undefined!
-ERROR: "usb_alloc_coherent" [drivers/media/usb/gspca/gspca_main.ko] undefined!
-ERROR: "usb_free_urb" [drivers/media/usb/gspca/gspca_main.ko] undefined!
-ERROR: "usb_alloc_urb" [drivers/media/usb/gspca/gspca_main.ko] undefined!
-
-which I think is due to CONFIG_USB_GSPCA=m, but I have no idea how that can be
-enabled w/o USB support.
-
-Guenter
+--
+To unsubscribe from this list: send the line "unsubscribe linux-input" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
