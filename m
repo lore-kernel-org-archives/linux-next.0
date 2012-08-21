@@ -1,73 +1,86 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: inux-next: Tree for Aug 21 (call-trace when suspending: PM?)
-Date: Tue, 21 Aug 2012 13:14:36 +0200
-Message-ID: <CA+icZUXD+oWqTKB2b_xu8UEDnX6mSs_aELaGu9UQs_U4fHaKGQ@mail.gmail.com>
+Date: Tue, 21 Aug 2012 13:53:10 +0200
+Message-ID: <CAKMK7uFr972_aC8+HojLYe+Dsa0Abo0_qkLq8mbgSQs09sXihQ@mail.gmail.com>
 References: <CA+icZUWg7qEFvAsTMb9OFKmdW7XD4op14Ps2y6PLByZRArjeLg@mail.gmail.com>
 	<CA+icZUVjr6aaopVAhGRr13RLDy=epdnU30YTHOhjXmrWb2sAjA@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+	<CA+icZUXD+oWqTKB2b_xu8UEDnX6mSs_aELaGu9UQs_U4fHaKGQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:47392 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751643Ab2HULOi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Aug 2012 07:14:38 -0400
-In-Reply-To: <CA+icZUVjr6aaopVAhGRr13RLDy=epdnU30YTHOhjXmrWb2sAjA@mail.gmail.com>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:62468 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757081Ab2HULxM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Aug 2012 07:53:12 -0400
+Received: by obbuo13 with SMTP id uo13so11085346obb.19
+        for <linux-next@vger.kernel.org>; Tue, 21 Aug 2012 04:53:11 -0700 (PDT)
+In-Reply-To: <CA+icZUXD+oWqTKB2b_xu8UEDnX6mSs_aELaGu9UQs_U4fHaKGQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Al Viro <viro@zeniv.linux.org.uk>, Daniel Vetter <daniel@ffwll.ch>
+To: sedat.dilek@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Al Viro <viro@zeniv.linux.org.uk>
 
-On Tue, Aug 21, 2012 at 1:03 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Tue, Aug 21, 2012 at 1:02 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> On Tue, Aug 21, 2012 at 8:04 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> Hi all,
+On Tue, Aug 21, 2012 at 1:14 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> On Tue, Aug 21, 2012 at 1:03 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> On Tue, Aug 21, 2012 at 1:02 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>>> On Tue, Aug 21, 2012 at 8:04 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>> Hi all,
+>>>>
+>>>> Changes since 20120820:
+>>>>
+>>>> The rr tree gained a conflict against Linus' tree.
+>>>>
+>>>> The tip tree still has its build failure so I used the version from
+>>>> next-20120814.
+>>>>
+>>>> The workqueues tree gained a conflict against the hid tree.
+>>>>
+>>>> The drivers-x86 tree still has its build failure so I used the version
+>>>> from next-20120817.
+>>>>
+>>>> The signal tree gained a conflict against Linus' tree.  I have still
+>>>> reverted 3 commits from the signal tree at the request of the arm
+>>>> maintainer.
+>>>>
+>>>> ----------------------------------------------------------------------------
+>>>>
 >>>
->>> Changes since 20120820:
+>>> Hi,
 >>>
->>> The rr tree gained a conflict against Linus' tree.
+>>> I have compiled linux-next (next-20120821) and see the attached
+>>> call-trace when suspending.
+>>> Suspending did NOT work (Xorg seems to cause it) - machine came back to desktop.
 >>>
->>> The tip tree still has its build failure so I used the version from
->>> next-20120814.
+>>> With yesterday's next-20120820 I haven't seen this.
 >>>
->>> The workqueues tree gained a conflict against the hid tree.
+>>> I am not sure what is this causing... PM, x86/sched or even VFS?
+>>> Any help for debugging appreciated.
 >>>
->>> The drivers-x86 tree still has its build failure so I used the version
->>> from next-20120817.
+>>> I am on Ubuntu/precise AMD64 and use systemd-v43 as init-system.
 >>>
->>> The signal tree gained a conflict against Linus' tree.  I have still
->>> reverted 3 commits from the signal tree at the request of the arm
->>> maintainer.
->>>
->>> ----------------------------------------------------------------------------
->>>
+>>> Regards,
+>>> - Sedat -
 >>
->> Hi,
+>> Forgot attachment!
+>> If you don't succeed - try try try...
 >>
->> I have compiled linux-next (next-20120821) and see the attached
->> call-trace when suspending.
->> Suspending did NOT work (Xorg seems to cause it) - machine came back to desktop.
->>
->> With yesterday's next-20120820 I haven't seen this.
->>
->> I am not sure what is this causing... PM, x86/sched or even VFS?
->> Any help for debugging appreciated.
->>
->> I am on Ubuntu/precise AMD64 and use systemd-v43 as init-system.
->>
->> Regards,
 >> - Sedat -
 >
-> Forgot attachment!
-> If you don't succeed - try try try...
+> [ CC danvet ]
 >
-> - Sedat -
+> I have pulled in drm-intel-fixes into my local GIT tree and rebuilt
+> i915 - this seems to fix the problem.
+> Daniel any suggestion which patch in d-i-f did it?
 
-[ CC danvet ]
+Without the backtrace it's kinda hard to tell ... Also, if you can
+dump a git log of the commits from -fixes that you don't yet have.
+-Daniel
 
-I have pulled in drm-intel-fixes into my local GIT tree and rebuilt
-i915 - this seems to fix the problem.
-Daniel any suggestion which patch in d-i-f did it?
+>
+> [1] http://cgit.freedesktop.org/~danvet/drm-intel/log/?h=drm-intel-fixes
 
-[1] http://cgit.freedesktop.org/~danvet/drm-intel/log/?h=drm-intel-fixes
+
+
+-- 
+Daniel Vetter
+daniel.vetter@ffwll.ch - +41 (0) 79 364 57 48 - http://blog.ffwll.ch
