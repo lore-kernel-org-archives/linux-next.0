@@ -1,70 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: expected linux-next conflicts from workqueue/for-3.7
-Date: Tue, 21 Aug 2012 08:48:49 +1000
-Message-ID: <20120821084849.28745bdae85f36bebcf5cff9@canb.auug.org.au>
-References: <20120820220421.GY24861@google.com>
+Subject: linux-next: manual merge of the rr tree with Linus' tree
+Date: Tue, 21 Aug 2012 12:11:26 +1000
+Message-ID: <20120821121126.f26a74eeeb19093b6d33d7ee@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__21_Aug_2012_08_48_49_+1000_phnoa_CDSbtFTxLx"
+ boundary="Signature=_Tue__21_Aug_2012_12_11_26_+1000_zRev/kkQXRj=fQJt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57731 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44744 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756618Ab2HTWtA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Aug 2012 18:49:00 -0400
-In-Reply-To: <20120820220421.GY24861@google.com>
+	with ESMTP id S1753067Ab2HUCLg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Aug 2012 22:11:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Bruno =?UTF-8?B?UHLDqW1v?= =?UTF-8?B?bnQ=?= <bonbons@linux-vserver.org>, linux-next@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Michael Cree <mcree@orcon.net.nz>
 
---Signature=_Tue__21_Aug_2012_08_48_49_+1000_phnoa_CDSbtFTxLx
+--Signature=_Tue__21_Aug_2012_12_11_26_+1000_zRev/kkQXRj=fQJt
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi Rusty,
 
-On Mon, 20 Aug 2012 15:04:21 -0700 Tejun Heo <tj@kernel.org> wrote:
->
-> I just applied patch series to deprecate flush[_delayed]_work_sync().
-> All in-kernel users are converted to use flush[_delayed]_work()
-> instead.  It will cause conflicts in the following files on
-> linux-next.
->=20
-> * drivers/media/video/omap24xxcam.c
-> * drivers/media/video/cx23885/cx23885-input.c
-> * drivers/media/video/cx18/cx18-driver.c
-> * drivers/hid/hid-picolcd.c
->=20
-> The first three files have been renamed and the last file has been
-> split.  Resolution should be simple and if not, for whatever reason,
-> the changes can be safely skipped.
+Today's linux-next merge of the rr tree got a conflict in
+arch/alpha/Kconfig between commit f2db633d301b ("alpha: Use new generic
+strncpy_from_user() and strnlen_user()") from Linus' tree and commit
+d673c23ca730 ("Make most arch asm/module.h files use
+asm-generic/module.h") from the rr tree.
 
-Thanks for the heads up.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__21_Aug_2012_08_48_49_+1000_phnoa_CDSbtFTxLx
+diff --cc arch/alpha/Kconfig
+index 9944ded,e73a1a7..0000000
+--- a/arch/alpha/Kconfig
++++ b/arch/alpha/Kconfig
+@@@ -18,8 -18,8 +18,10 @@@ config ALPH
+  	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+  	select GENERIC_SMP_IDLE_THREAD
+  	select GENERIC_CMOS_UPDATE
+ +	select GENERIC_STRNCPY_FROM_USER
+ +	select GENERIC_STRNLEN_USER
++ 	select HAVE_MOD_ARCH_SPECIFIC
++ 	select MODULES_USE_ELF_RELA
+  	help
+  	  The Alpha is a 64-bit general-purpose processor designed and
+  	  marketed by the Digital Equipment Corporation of blessed memory,
+
+--Signature=_Tue__21_Aug_2012_12_11_26_+1000_zRev/kkQXRj=fQJt
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQMr7RAAoJEECxmPOUX5FEMBcP/3ymo4ZvzCwTzlkyJBr9gmsk
-z7kVyTEVOffATh5uT91KFNLtKhRpJ2JEdkGF22cFjJroILJQjueyCScZPor0EZl+
-a5QQjvT6H/3IAcECubhOgMrDK85FjPdzv/Lnr6WuW+9Gkhz6BkTL6FAcUS4QRo6b
-CkVYQX87QuYBMQtblu1SZmcpfVQZ+T4DF0swbGIdNRl2dXg0cQhWkmRVSRo+4gDD
-kxTtjwWC0ZwUJTg2ZGrnK8Cb/sCfcDkmyaP5lh105yOkRjnp2R5mKtQakw1EKWmM
-0tCkGaYAr41mkyLGypkXXdGCvz2aZ8htXGj/27O0SrQPVQlivo25r8n4FR4G5Jvl
-VfIsYZdgxNBrA7zrNEvmVInPvadvT2AlEqCBnFvZ4mEHQU3lZyRjP4uvM91lWgbZ
-fJtl0WC0/9kImmMNDt2N9rLrTvDOytI4YFfnb4lCIk9on8UzZAXv6boy4f4fMELc
-WrLcvBsc5Bq0F7ZCBv7di1P7rkvKF9x+WG4QLxjjW0zmisPymHy9SEQ4C3sc5BII
-KYiHE2u4c3yRwA9iKX3cjkfXAQwukWdApOntwuTrW7y9QBFlrzEKyspYx1/Lo938
-FiNNhwZAwdZv3X8SZcRkv5h6gthX4hXwzCSg0AYYqBHsHcjhDDGe1Bx4DcivVGCE
-qKPevJenyJ+lp0wzmVNw
-=KBlw
+iQIcBAEBCAAGBQJQMu5OAAoJEECxmPOUX5FEXIUP/Ry8Y43w74Ww89HcHAah6ar+
+5yQh60cC7xCb/H5gncHUYr+bYP/Mx5p92DHQF15KJtiZ4X/UKewm2a1iPJLbxvhP
+F3+ZyAIA9eCh98wDv2LM7iO0glftdOehslydRy/Bq4y6kPOnIEKUBm8JYHdTgwID
+7gMXkQCYbh8F0zlC5p5qYXFb+TFCghYr1F1mlF7qfTUb3GSVcS1u78YmuZUwlDzu
+ac5W5rPivzv8rXwez7i5/oGQ73oKTM71Jh7CzX9e/+CQLN3bD5eV8EUK2M8ddBVo
+tfRVwPm4YjhgOFDai7MHHTxBet07L+L15zodPv5v5ceFDEXAwjlmcfg8bmiyDWnk
+HguHO2kFx/7uYJy5lh9q3y6otDojZ6D5IxnurvtBsPcwBv8zKYWvGwQD/LFK8gm1
+W0bQE4lBNUH1zmSIgd7ONS/pTuBvKNKE7GJbVL35SMOL56skySg11glLxoudf3rP
+VIXFJpF17g6pXPYTsVW+pE9gRHyFBVAXXPxU2Js9nPsKM+mT+wr3nE5P9XQmItsG
+Ko6JokiGXlRYvjexKI4BkgxerTDnh7p0CGcUdShGo1aqCBLCuNfz3RIEi7IJebp8
+2wA4AzVkIOAcrpWCnJGTmPOMvthdbeIfYRWMF1dTvIv2ry59yc/zeoZmIsX1A+r7
+uVSknJVOl9ynH/RdG3LF
+=PfZi
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__21_Aug_2012_08_48_49_+1000_phnoa_CDSbtFTxLx--
+--Signature=_Tue__21_Aug_2012_12_11_26_+1000_zRev/kkQXRj=fQJt--
