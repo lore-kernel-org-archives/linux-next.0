@@ -1,108 +1,63 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: inux-next: Tree for Aug 21 (call-trace when suspending: PM?)
-Date: Tue, 21 Aug 2012 18:39:12 +0200
-Message-ID: <CAKMK7uHfLOOWLfw6QJP4RQOoD3znOqZcY-qF-ry77z1seLWmBw@mail.gmail.com>
-References: <CA+icZUWg7qEFvAsTMb9OFKmdW7XD4op14Ps2y6PLByZRArjeLg@mail.gmail.com>
-	<CA+icZUVjr6aaopVAhGRr13RLDy=epdnU30YTHOhjXmrWb2sAjA@mail.gmail.com>
-	<CA+icZUXD+oWqTKB2b_xu8UEDnX6mSs_aELaGu9UQs_U4fHaKGQ@mail.gmail.com>
-	<CAKMK7uFr972_aC8+HojLYe+Dsa0Abo0_qkLq8mbgSQs09sXihQ@mail.gmail.com>
-	<CA+icZUVVjJ8wzJjM=Agw7xU65qgSekwW++wo_vNe_YELUT0bWA@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for July 26 (uml)
+Date: Tue, 21 Aug 2012 10:43:59 -0700
+Message-ID: <5033C8DF.2080403@xenotime.net>
+References: <502A69FA.8040805@nod.at> <502A6759.3090802@nod.at> <15981.1344955883@warthog.procyon.org.uk> <502A613F.1090600@nod.at> <87a9xys53h.fsf@rustcorp.com.au> <20120726150419.0de645e8750e3a15fa0f1aaa@canb.auug.org.au> <50115FCF.4060708@xenotime.net> <502932A0.3060001@xenotime.net> <15532.1344954413@warthog.procyon.org.uk> <18600.1344956051@warthog.procyon.org.uk> <18933.1344956788@warthog.procyon.org.uk> <30102.1344957328@warthog.procyon.org.uk> <502A6BF8.6040804@nod.at> <502A8DD6.90807@xenotime.net> <878vda5l8s.fsf@rustcorp.com.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:55395 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758059Ab2HUQjN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Aug 2012 12:39:13 -0400
-Received: by obbuo13 with SMTP id uo13so11418378obb.19
-        for <linux-next@vger.kernel.org>; Tue, 21 Aug 2012 09:39:12 -0700 (PDT)
-In-Reply-To: <CA+icZUVVjJ8wzJjM=Agw7xU65qgSekwW++wo_vNe_YELUT0bWA@mail.gmail.com>
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:53629 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932151Ab2HURoH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Aug 2012 13:44:07 -0400
+In-Reply-To: <878vda5l8s.fsf@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Al Viro <viro@zeniv.linux.org.uk>, intel-gfx <intel-gfx@lists.freedesktop.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Richard Weinberger <richard@nod.at>, David Howells <dhowells@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, user-mode-linux-devel@lists.sourceforge.net
 
-On Tue, Aug 21, 2012 at 3:24 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Tue, Aug 21, 2012 at 1:53 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
->> On Tue, Aug 21, 2012 at 1:14 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>> On Tue, Aug 21, 2012 at 1:03 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>>> On Tue, Aug 21, 2012 at 1:02 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>>>> On Tue, Aug 21, 2012 at 8:04 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>>>> Hi all,
->>>>>>
->>>>>> Changes since 20120820:
->>>>>>
->>>>>> The rr tree gained a conflict against Linus' tree.
->>>>>>
->>>>>> The tip tree still has its build failure so I used the version from
->>>>>> next-20120814.
->>>>>>
->>>>>> The workqueues tree gained a conflict against the hid tree.
->>>>>>
->>>>>> The drivers-x86 tree still has its build failure so I used the version
->>>>>> from next-20120817.
->>>>>>
->>>>>> The signal tree gained a conflict against Linus' tree.  I have still
->>>>>> reverted 3 commits from the signal tree at the request of the arm
->>>>>> maintainer.
->>>>>>
->>>>>> ----------------------------------------------------------------------------
->>>>>>
->>>>>
->>>>> Hi,
->>>>>
->>>>> I have compiled linux-next (next-20120821) and see the attached
->>>>> call-trace when suspending.
->>>>> Suspending did NOT work (Xorg seems to cause it) - machine came back to desktop.
->>>>>
->>>>> With yesterday's next-20120820 I haven't seen this.
->>>>>
->>>>> I am not sure what is this causing... PM, x86/sched or even VFS?
->>>>> Any help for debugging appreciated.
->>>>>
->>>>> I am on Ubuntu/precise AMD64 and use systemd-v43 as init-system.
->>>>>
->>>>> Regards,
->>>>> - Sedat -
->>>>
->>>> Forgot attachment!
->>>> If you don't succeed - try try try...
->>>>
->>>> - Sedat -
->>>
->>> [ CC danvet ]
->>>
->>> I have pulled in drm-intel-fixes into my local GIT tree and rebuilt
->>> i915 - this seems to fix the problem.
->>> Daniel any suggestion which patch in d-i-f did it?
+On 08/19/2012 07:51 PM, Rusty Russell wrote:
+
+> On Tue, 14 Aug 2012 10:41:42 -0700, Randy Dunlap <rdunlap@xenotime.net> wrote:
+>> On 08/14/2012 08:17 AM, Richard Weinberger wrote:
 >>
->> Without the backtrace it's kinda hard to tell ... Also, if you can
->> dump a git log of the commits from -fixes that you don't yet have.
->> -Daniel
+>>> Am 14.08.2012 17:15, schrieb David Howells:
+>>>> How about this then?
+>>>>
+>>>> David
+>>>> ---
+>>>> diff --git a/arch/x86/um/Kconfig b/arch/x86/um/Kconfig
+>>>> index 9926e11..a4b0c10 100644
+>>>> --- a/arch/x86/um/Kconfig
+>>>> +++ b/arch/x86/um/Kconfig
+>>>> @@ -21,9 +21,11 @@ config 64BIT
+>>>>  config X86_32
+>>>>  	def_bool !64BIT
+>>>>  	select HAVE_AOUT
+>>>> +	select MODULES_USE_ELF_REL
+>>>>  
+>>>>  config X86_64
+>>>>  	def_bool 64BIT
+>>>> +	select MODULES_USE_ELF_RELA
+>>>>  
+>>>>  config RWSEM_XCHGADD_ALGORITHM
+>>>>  	def_bool X86_XADD && 64BIT
+>>>
+>>> Looks sane.
+>>>
+>>> Acked-by: Richard Weinberger <richard@nod.at>
 >>
->
-> Hi Daniel,
->
-> $ git log --oneline v3.6.0-rc2-next20120821-1-iniza-generic..drm-intel-fixes
-> 1ee9ae3 drm/i915: use hsw rps tuning values everywhere on gen6+
-> f1a2f5b drm/i915: fall back to bit-banging if GMBUS fails in CRT EDID reads
-> 4eab813 drm/i915: extract connector update from intel_ddc_get_modes() for reuse
-> a843af1 drm/i915: fix hsw uncached pte
-> b6c7488 drm/i915/contexts: fix list corruption
-> 38ab8a2 drm/i915: fix EDID memory leak in SDVO
->
-> Looks like "1ee9ae3 drm/i915: use hsw rps tuning values everywhere on
-> gen6+" has PM fixes for i915.
->
-> I tried with only that patch on top of today's linux-next - and I can
-> suspend/resume again!
+>>
+>> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+> 
+> Thanks, folded into David's original patch.
 
-Well, this is slightly shocking - this patch /should/ only optimize
-power consumption, it should in now way fix suspend/resume (i.e. it
-doesn't even apply any h/w workaround). Do you have any more details
-what's going wrong here (logs, ...)?
 
-Thanks, Daniel
+When will this be fixed in linux-next?
+
+linux-next of 20120821 still fails.
+
+thanks,
 -- 
-Daniel Vetter
-daniel.vetter@ffwll.ch - +41 (0) 79 364 57 48 - http://blog.ffwll.ch
+~Randy
