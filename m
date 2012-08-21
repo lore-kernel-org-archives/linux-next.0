@@ -1,70 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: expected linux-next conflicts from workqueue/for-3.7
-Date: Tue, 21 Aug 2012 14:00:52 +1000
-Message-ID: <20120821140052.d23547d171adf5cfd79f2413@canb.auug.org.au>
-References: <20120820220421.GY24861@google.com>
+Subject: linux-next: manual merge of the signal tree with Linus' tree
+Date: Tue, 21 Aug 2012 14:57:42 +1000
+Message-ID: <20120821145742.8f4640e49ef079d83dfe0ba4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__21_Aug_2012_14_00_52_+1000_MZugLaY.pJ+7DuAv"
+ boundary="Signature=_Tue__21_Aug_2012_14_57_42_+1000_S4X1_.F84otUHhpv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37125 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:60743 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750716Ab2HUEA5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Aug 2012 00:00:57 -0400
-In-Reply-To: <20120820220421.GY24861@google.com>
+	with ESMTP id S1751311Ab2HUE5y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Aug 2012 00:57:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Bruno =?UTF-8?B?UHLDqW1v?= =?UTF-8?B?bnQ=?= <bonbons@linux-vserver.org>, linux-next@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Cree <mcree@orcon.net.nz>, Matt Turner <mattst88@gmail.com>
 
---Signature=_Tue__21_Aug_2012_14_00_52_+1000_MZugLaY.pJ+7DuAv
+--Signature=_Tue__21_Aug_2012_14_57_42_+1000_S4X1_.F84otUHhpv
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi Al,
 
-On Mon, 20 Aug 2012 15:04:21 -0700 Tejun Heo <tj@kernel.org> wrote:
->
-> I just applied patch series to deprecate flush[_delayed]_work_sync().
-> All in-kernel users are converted to use flush[_delayed]_work()
-> instead.  It will cause conflicts in the following files on
-> linux-next.
->=20
-> * drivers/media/video/omap24xxcam.c
-> * drivers/media/video/cx23885/cx23885-input.c
-> * drivers/media/video/cx18/cx18-driver.c
+Today's linux-next merge of the signal tree got a conflict in
+arch/alpha/kernel/process.c between commit 28d353d9891c ("alpha: take
+kernel_execve() out of entry.S") from Linus' tree and commit 68f596a7a045
+("alpha: rewrite kernel_execve in C") from the signal tree.
 
-git seems to have tracked and fixed these up
-
-> * drivers/hid/hid-picolcd.c
-
-I fixed this (the call has been removed).
-
+These appear to be the same patch with a slight difference in this file.
+I just used the version from Linus' tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__21_Aug_2012_14_00_52_+1000_MZugLaY.pJ+7DuAv
+--Signature=_Tue__21_Aug_2012_14_57_42_+1000_S4X1_.F84otUHhpv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQMwf0AAoJEECxmPOUX5FEkt4P/2krpU0sLgENwHFP27ZKdUqV
-4A1kGEjZor7Rhk9YwMMER7gfunuQjFxMQhOY9cQXD8kplhH1rm80RcmuZtobn/pD
-yup9gxx4i+uRgBAFfnySUqG8pg/iq8n23RlsPxQzZ3V26iZY+61saV0HGuRHgaH5
-ZdZmdVTPHIhgwfC746BgglqR8bLMsPcXJkukaZ2oZF+oEE6tiW2qP//CDj24cwoM
-50BDd7JDLLUP1o9zpqTlrIOZ77pQ/D1zDlFH+WX/5N8+jaMB+AvDBr8Y9464vgxZ
-a9TTlZ4duCAlDDzy22lj74hThan/mjfSR3bhsGTAWe7Dg0b7hkpuGVgd2f9bM45X
-JyyIKQ2na6R1k/Y7yXHeLxUOqDNKDLZ8KGvEsJLyk7Prb4+st+y7d/oo8ZUWr7x/
-iDBfadwOlSTCMnTruJqwi4IcrYRwKLk3YpAL3pEaR4q/QsXoyldb9QSrzDWj7H90
-Lhll8EWCJhESZhRwcmkAGSiM2GPaJFQAmUDkqi15PHskfrqJN3jiJgbBK0dQXZdn
-zj9qfILUUxsZFNiXqqI9tHV5wchpbAKGEEDFcwDwtooEmg+39eKZewuprv3eBXb1
-AZhpJj5/HlZDjXZo93HuEQMzEPz8o+i3EmXHeDMq3G/Y8poe3ZJ3Xjb3i72ZnMWP
-oAtSSU6LCUYbmfdKkCih
-=kTxj
+iQIcBAEBCAAGBQJQMxVGAAoJEECxmPOUX5FEwMQQAIfTvDDTJfkAn+A2eO0JE4VT
+n9Q3mnxZPK8k16YPEiyBzuwUljvkzvy0B7G3UJUjjGAZWcpZG54mvr5xyoXPyiy9
+C/RXHWMc51vgxVGod3C/3j6hC6enWTpT6J8PKD6T/L4D4m4pgLC1Hm+b7Qng6IIF
+z2rFWq4giZ53n3g5Fwr7tFCJIUFJLuSp0LEpBM+oSLNoO+sAq14hatuM1aGq62jK
+vS6mKtYr/9/TXvpS6rSvBSuamaw+A03gDEs9F2A4Onqc3sK8+uU0qWhz+9e/pKQu
+MSmgYqo2XZdyDCbbK06A0RMZhD93e+6KpmiOA5gaV75Xx4kdLGSPGQUolnaoKd7W
+GCKhBfGbwFH1EzlIg9uFFIo2sJSlDFBX4k0PH6fMJt0b2dyJrdf/bl7xL0HQ5yof
+6af2jB1dAXUfMndTH53aljzkhWl9ROkgGBcrbkiyg+Y0jqc49BaZeeNuS7QbuNy4
++ybKxYexngGNGjQ772hbJsTw2s8s7PiZf4j7Rnbpx44w35Y9Dw8vddMqcpr477Tp
+6L/a38chEEMQbx4g4G8seMcttUENX5M0j+uUX05BGwib2z9KkssTbFMd+RB93+JD
+0mIe7WMUaMNBNsNarPeVy5oaJFVrMvMuvtjUTzawkBc6hpadWRCrsY0cpLs8vfCA
+nWoAQD6bAppZSrcBc4ZV
+=AKu+
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__21_Aug_2012_14_00_52_+1000_MZugLaY.pJ+7DuAv--
+--Signature=_Tue__21_Aug_2012_14_57_42_+1000_S4X1_.F84otUHhpv--
