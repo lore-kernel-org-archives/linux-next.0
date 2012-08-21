@@ -1,56 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the workqueues tree with the hid tree
-Date: Tue, 21 Aug 2012 13:58:32 +1000
-Message-ID: <20120821135832.4788b9d64fea34502cca895a@canb.auug.org.au>
+Subject: Re: expected linux-next conflicts from workqueue/for-3.7
+Date: Tue, 21 Aug 2012 14:00:52 +1000
+Message-ID: <20120821140052.d23547d171adf5cfd79f2413@canb.auug.org.au>
+References: <20120820220421.GY24861@google.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__21_Aug_2012_13_58_32_+1000_3CsvSAo5SL7IK0rn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Tue__21_Aug_2012_14_00_52_+1000_MZugLaY.pJ+7DuAv"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37125 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750716Ab2HUEA5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Aug 2012 00:00:57 -0400
+In-Reply-To: <20120820220421.GY24861@google.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkJydW5vIFByw6ltb250Ig==?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@jikos.cz>
-List-Id: linux-next.vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Bruno =?UTF-8?B?UHLDqW1v?= =?UTF-8?B?bnQ=?= <bonbons@linux-vserver.org>, linux-next@vger.kernel.org
 
---Signature=_Tue__21_Aug_2012_13_58_32_+1000_3CsvSAo5SL7IK0rn
+--Signature=_Tue__21_Aug_2012_14_00_52_+1000_MZugLaY.pJ+7DuAv
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Tejun,
 
-Today's linux-next merge of the workqueues tree got a conflict in
-drivers/hid/hid-picolcd.c between commit fabdbf2fd22f ("HID: picoLCD:
-split driver code") from the hid tree and commit 43829731dd37
-("workqueue: deprecate flush[_delayed]_work_sync()") from the workqueues
-tree.
+On Mon, 20 Aug 2012 15:04:21 -0700 Tejun Heo <tj@kernel.org> wrote:
+>
+> I just applied patch series to deprecate flush[_delayed]_work_sync().
+> All in-kernel users are converted to use flush[_delayed]_work()
+> instead.  It will cause conflicts in the following files on
+> linux-next.
+>=20
+> * drivers/media/video/omap24xxcam.c
+> * drivers/media/video/cx23885/cx23885-input.c
+> * drivers/media/video/cx18/cx18-driver.c
 
-The former commit moved the code changed by the latter into a new file
-(and removed the old file) and then a later commit removed the call to
-flush_work_sync().  I just removed the file.
+git seems to have tracked and fixed these up
+
+> * drivers/hid/hid-picolcd.c
+
+I fixed this (the call has been removed).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__21_Aug_2012_13_58_32_+1000_3CsvSAo5SL7IK0rn
+--Signature=_Tue__21_Aug_2012_14_00_52_+1000_MZugLaY.pJ+7DuAv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQMwdoAAoJEECxmPOUX5FEMC0QAJvmLkK/cIngc38DpmI4WLtP
-zxwb7vU4z0OGoowkdUpyxLIxMqi5b98vJdS6pRaaOBaezdEgf1E817dxBJiliYgX
-oIE9ZzjK5tspw/BDJrvhbOZlJKbjzyygaTjiLQQqjhtt+Thuuy4FvPMfc5uLwBYo
-lCMgnrQzu15QrfzXq/Kv9FktDpWestIDwsxrRaQBSYfH44kC1tWWzN8wSYBVHXBO
-xYk3TF8DV1qQLXdgBLoq75aIDba88lBL0W50pFh5+Us9yoBjh9b+niYat2R2IuGD
-VLCVzZfPoTtAa5mvC0PtGGpeh1PwIXCoRUQ7daeaMnxNhtl4RI1ChXHyVA9O2vfs
-ryc4KdhvmA3OXMfbfXKPjoxOTaY2wmFOIOc0xHyrq7yjQ0CILSYJ1lE+eAPYzHLn
-RnVZfNiGvVpojbneGU6vsKvEeedjGLZnNtgR737fX0sa/KXaZyoCLuSHPt0OHbSU
-4gFqJMGEHUmAoC8d8LGgRykYqh08fqEBbSw8NsGgaVszTaQvngISt07nFxUgT2mO
-dcaXkQz3TDrkD3e/RFkrFwPvGb07sB3HTz0s+P9sHB0Ftkcutdb2jZwDJVNY/CYk
-jX6jTXN5klpyKmMcI2NgSzVbU2Iy4C9TtymOpDT3LjkOQc4GxFOPdiOsNdyMNBcL
-sfKFKfwN1dcsyobVOdvs
-=3Ewt
+iQIcBAEBCAAGBQJQMwf0AAoJEECxmPOUX5FEkt4P/2krpU0sLgENwHFP27ZKdUqV
+4A1kGEjZor7Rhk9YwMMER7gfunuQjFxMQhOY9cQXD8kplhH1rm80RcmuZtobn/pD
+yup9gxx4i+uRgBAFfnySUqG8pg/iq8n23RlsPxQzZ3V26iZY+61saV0HGuRHgaH5
+ZdZmdVTPHIhgwfC746BgglqR8bLMsPcXJkukaZ2oZF+oEE6tiW2qP//CDj24cwoM
+50BDd7JDLLUP1o9zpqTlrIOZ77pQ/D1zDlFH+WX/5N8+jaMB+AvDBr8Y9464vgxZ
+a9TTlZ4duCAlDDzy22lj74hThan/mjfSR3bhsGTAWe7Dg0b7hkpuGVgd2f9bM45X
+JyyIKQ2na6R1k/Y7yXHeLxUOqDNKDLZ8KGvEsJLyk7Prb4+st+y7d/oo8ZUWr7x/
+iDBfadwOlSTCMnTruJqwi4IcrYRwKLk3YpAL3pEaR4q/QsXoyldb9QSrzDWj7H90
+Lhll8EWCJhESZhRwcmkAGSiM2GPaJFQAmUDkqi15PHskfrqJN3jiJgbBK0dQXZdn
+zj9qfILUUxsZFNiXqqI9tHV5wchpbAKGEEDFcwDwtooEmg+39eKZewuprv3eBXb1
+AZhpJj5/HlZDjXZo93HuEQMzEPz8o+i3EmXHeDMq3G/Y8poe3ZJ3Xjb3i72ZnMWP
+oAtSSU6LCUYbmfdKkCih
+=kTxj
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__21_Aug_2012_13_58_32_+1000_3CsvSAo5SL7IK0rn--
+--Signature=_Tue__21_Aug_2012_14_00_52_+1000_MZugLaY.pJ+7DuAv--
