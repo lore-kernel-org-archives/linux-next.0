@@ -1,75 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with Linus' tree
-Date: Tue, 21 Aug 2012 12:11:26 +1000
-Message-ID: <20120821121126.f26a74eeeb19093b6d33d7ee@canb.auug.org.au>
+Subject: linux-next: manual merge of the workqueues tree with the hid tree
+Date: Tue, 21 Aug 2012 13:58:32 +1000
+Message-ID: <20120821135832.4788b9d64fea34502cca895a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__21_Aug_2012_12_11_26_+1000_zRev/kkQXRj=fQJt"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44744 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753067Ab2HUCLg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Aug 2012 22:11:36 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Michael Cree <mcree@orcon.net.nz>
+ boundary="Signature=_Tue__21_Aug_2012_13_58_32_+1000_3CsvSAo5SL7IK0rn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkJydW5vIFByw6ltb250Ig==?= <bonbons@linux-vserver.org>, Jiri Kosina <jikos@jikos.cz>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__21_Aug_2012_12_11_26_+1000_zRev/kkQXRj=fQJt
+--Signature=_Tue__21_Aug_2012_13_58_32_+1000_3CsvSAo5SL7IK0rn
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Tejun,
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/alpha/Kconfig between commit f2db633d301b ("alpha: Use new generic
-strncpy_from_user() and strnlen_user()") from Linus' tree and commit
-d673c23ca730 ("Make most arch asm/module.h files use
-asm-generic/module.h") from the rr tree.
+Today's linux-next merge of the workqueues tree got a conflict in
+drivers/hid/hid-picolcd.c between commit fabdbf2fd22f ("HID: picoLCD:
+split driver code") from the hid tree and commit 43829731dd37
+("workqueue: deprecate flush[_delayed]_work_sync()") from the workqueues
+tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+The former commit moved the code changed by the latter into a new file
+(and removed the old file) and then a later commit removed the call to
+flush_work_sync().  I just removed the file.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/alpha/Kconfig
-index 9944ded,e73a1a7..0000000
---- a/arch/alpha/Kconfig
-+++ b/arch/alpha/Kconfig
-@@@ -18,8 -18,8 +18,10 @@@ config ALPH
-  	select ARCH_HAVE_NMI_SAFE_CMPXCHG
-  	select GENERIC_SMP_IDLE_THREAD
-  	select GENERIC_CMOS_UPDATE
- +	select GENERIC_STRNCPY_FROM_USER
- +	select GENERIC_STRNLEN_USER
-+ 	select HAVE_MOD_ARCH_SPECIFIC
-+ 	select MODULES_USE_ELF_RELA
-  	help
-  	  The Alpha is a 64-bit general-purpose processor designed and
-  	  marketed by the Digital Equipment Corporation of blessed memory,
-
---Signature=_Tue__21_Aug_2012_12_11_26_+1000_zRev/kkQXRj=fQJt
+--Signature=_Tue__21_Aug_2012_13_58_32_+1000_3CsvSAo5SL7IK0rn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQMu5OAAoJEECxmPOUX5FEXIUP/Ry8Y43w74Ww89HcHAah6ar+
-5yQh60cC7xCb/H5gncHUYr+bYP/Mx5p92DHQF15KJtiZ4X/UKewm2a1iPJLbxvhP
-F3+ZyAIA9eCh98wDv2LM7iO0glftdOehslydRy/Bq4y6kPOnIEKUBm8JYHdTgwID
-7gMXkQCYbh8F0zlC5p5qYXFb+TFCghYr1F1mlF7qfTUb3GSVcS1u78YmuZUwlDzu
-ac5W5rPivzv8rXwez7i5/oGQ73oKTM71Jh7CzX9e/+CQLN3bD5eV8EUK2M8ddBVo
-tfRVwPm4YjhgOFDai7MHHTxBet07L+L15zodPv5v5ceFDEXAwjlmcfg8bmiyDWnk
-HguHO2kFx/7uYJy5lh9q3y6otDojZ6D5IxnurvtBsPcwBv8zKYWvGwQD/LFK8gm1
-W0bQE4lBNUH1zmSIgd7ONS/pTuBvKNKE7GJbVL35SMOL56skySg11glLxoudf3rP
-VIXFJpF17g6pXPYTsVW+pE9gRHyFBVAXXPxU2Js9nPsKM+mT+wr3nE5P9XQmItsG
-Ko6JokiGXlRYvjexKI4BkgxerTDnh7p0CGcUdShGo1aqCBLCuNfz3RIEi7IJebp8
-2wA4AzVkIOAcrpWCnJGTmPOMvthdbeIfYRWMF1dTvIv2ry59yc/zeoZmIsX1A+r7
-uVSknJVOl9ynH/RdG3LF
-=PfZi
+iQIcBAEBCAAGBQJQMwdoAAoJEECxmPOUX5FEMC0QAJvmLkK/cIngc38DpmI4WLtP
+zxwb7vU4z0OGoowkdUpyxLIxMqi5b98vJdS6pRaaOBaezdEgf1E817dxBJiliYgX
+oIE9ZzjK5tspw/BDJrvhbOZlJKbjzyygaTjiLQQqjhtt+Thuuy4FvPMfc5uLwBYo
+lCMgnrQzu15QrfzXq/Kv9FktDpWestIDwsxrRaQBSYfH44kC1tWWzN8wSYBVHXBO
+xYk3TF8DV1qQLXdgBLoq75aIDba88lBL0W50pFh5+Us9yoBjh9b+niYat2R2IuGD
+VLCVzZfPoTtAa5mvC0PtGGpeh1PwIXCoRUQ7daeaMnxNhtl4RI1ChXHyVA9O2vfs
+ryc4KdhvmA3OXMfbfXKPjoxOTaY2wmFOIOc0xHyrq7yjQ0CILSYJ1lE+eAPYzHLn
+RnVZfNiGvVpojbneGU6vsKvEeedjGLZnNtgR737fX0sa/KXaZyoCLuSHPt0OHbSU
+4gFqJMGEHUmAoC8d8LGgRykYqh08fqEBbSw8NsGgaVszTaQvngISt07nFxUgT2mO
+dcaXkQz3TDrkD3e/RFkrFwPvGb07sB3HTz0s+P9sHB0Ftkcutdb2jZwDJVNY/CYk
+jX6jTXN5klpyKmMcI2NgSzVbU2Iy4C9TtymOpDT3LjkOQc4GxFOPdiOsNdyMNBcL
+sfKFKfwN1dcsyobVOdvs
+=3Ewt
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__21_Aug_2012_12_11_26_+1000_zRev/kkQXRj=fQJt--
+--Signature=_Tue__21_Aug_2012_13_58_32_+1000_3CsvSAo5SL7IK0rn--
