@@ -1,152 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the mips tree
-Date: Wed, 22 Aug 2012 13:11:30 +1000
-Message-ID: <20120822131130.d669275edf903d9a38a35789@canb.auug.org.au>
+Subject: linux-next: manual merge of the fsnotify tree with Linus' tree
+Date: Wed, 22 Aug 2012 14:02:17 +1000
+Message-ID: <20120822140217.d64229c7e94091a9e8d27a1b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__22_Aug_2012_13_11_30_+1000_jeRjfQTmoTo=U7m0"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__22_Aug_2012_14_02_17_+1000_WxEmVHmgAFtzCUTC"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47932 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750695Ab2HVEC3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 00:02:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lino Sanfilippo <LinoSanfilippo@gmx.de>, Miklos Szeredi <mszeredi@suse.cz>
 
---Signature=_Wed__22_Aug_2012_13_11_30_+1000_jeRjfQTmoTo=U7m0
+--Signature=_Wed__22_Aug_2012_14_02_17_+1000_WxEmVHmgAFtzCUTC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Eric,
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/mips/kernel/module.c between commit c54de490a2e4 ("MIPS: Module:
-Deal with malformed HI16/LO16 relocation sequences") from the mips tree
-and commit 9db0bbe072c8 ("MIPS: Fix module.c build for 32 bit") from the
-rr tree.
+Today's linux-next merge of the fsnotify tree got a conflict in
+kernel/audit_tree.c between commits a2140fc0cb03 ("audit: fix refcounting
+in audit-tree") and b3e8692b4dde ("audit: clean up refcounting in
+audit-tree") from Linus' tree and commit 3c183c233284 ("fsnotify: pass
+group to fsnotify_destroy_mark()") from the fsnotify tree.
 
-Just context changes (I think).  I fixed it up (see below) and can carry
-the fix as necessary.
+Just context changes. I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/mips/kernel/module.c
-index 4f8c3cb,8ffd089..0000000
---- a/arch/mips/kernel/module.c
-+++ b/arch/mips/kernel/module.c
-@@@ -132,25 -107,6 +105,17 @@@ static int apply_r_mips_hi16_rel(struc
-  	return 0;
-  }
- =20
-- static int apply_r_mips_hi16_rela(struct module *me, u32 *location, Elf_A=
-ddr v)
-- {
-- 	*location =3D (*location & 0xffff0000) |
-- 	            ((((long long) v + 0x8000LL) >> 16) & 0xffff);
--=20
-- 	return 0;
-- }
--=20
- +static void free_relocation_chain(struct mips_hi16 *l)
- +{
- +	struct mips_hi16 *next;
- +
- +	while (l) {
- +		next =3D l->next;
- +		kfree(l);
- +		l =3D next;
- +	}
- +}
- +
-  static int apply_r_mips_lo16_rel(struct module *me, u32 *location, Elf_Ad=
-dr v)
-  {
-  	unsigned long insnlo =3D *location;
-@@@ -308,61 -217,9 +229,22 @@@ int apply_relocate(Elf_Shdr *sechdrs, c
-  			return res;
+diff --cc kernel/audit_tree.c
+index ed206fd,9cedf31..0000000
+--- a/kernel/audit_tree.c
++++ b/kernel/audit_tree.c
+@@@ -249,7 -249,8 +249,7 @@@ static void untag_chunk(struct node *p
+  		list_del_rcu(&chunk->hash);
+  		spin_unlock(&hash_lock);
+  		spin_unlock(&entry->lock);
+- 		fsnotify_destroy_mark(entry);
++ 		fsnotify_destroy_mark(entry, audit_tree_group);
+ -		fsnotify_put_mark(entry);
+  		goto out;
   	}
  =20
- +	/*
- +	 * Normally the hi16 list should be deallocated at this point.  A
- +	 * malformed binary however could contain a series of R_MIPS_HI16
- +	 * relocations not followed by a R_MIPS_LO16 relocation.  In that
- +	 * case, free up the list and return an error.
- +	 */
- +	if (me->arch.r_mips_hi16_list) {
- +		free_relocation_chain(me->arch.r_mips_hi16_list);
- +		me->arch.r_mips_hi16_list =3D NULL;
- +
- +		return -ENOEXEC;
- +	}
- +
+@@@ -291,8 -292,8 +291,8 @@@
+  		owner->root =3D new;
+  	spin_unlock(&hash_lock);
+  	spin_unlock(&entry->lock);
+- 	fsnotify_destroy_mark(entry);
++ 	fsnotify_destroy_mark(entry, audit_tree_group);
+ -	fsnotify_put_mark(entry);
+ +	fsnotify_put_mark(&new->mark);	/* drop initial reference */
+  	goto out;
+ =20
+  Fallback:
+@@@ -443,9 -443,9 +443,9 @@@ static int tag_chunk(struct inode *inod
+  	spin_unlock(&hash_lock);
+  	spin_unlock(&chunk_entry->lock);
+  	spin_unlock(&old_entry->lock);
+- 	fsnotify_destroy_mark(old_entry);
++ 	fsnotify_destroy_mark(old_entry, audit_tree_group);
+ +	fsnotify_put_mark(chunk_entry);	/* drop initial reference */
+  	fsnotify_put_mark(old_entry); /* pair to fsnotify_find mark_entry */
+ -	fsnotify_put_mark(old_entry); /* and kill it */
   	return 0;
   }
--=20
-- int apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
-- 		       unsigned int symindex, unsigned int relsec,
-- 		       struct module *me)
-- {
-- 	Elf_Mips_Rela *rel =3D (void *) sechdrs[relsec].sh_addr;
-- 	Elf_Sym *sym;
-- 	u32 *location;
-- 	unsigned int i;
-- 	Elf_Addr v;
-- 	int res;
--=20
-- 	pr_debug("Applying relocate section %u to %u\n", relsec,
-- 	       sechdrs[relsec].sh_info);
--=20
-- 	for (i =3D 0; i < sechdrs[relsec].sh_size / sizeof(*rel); i++) {
-- 		/* This is where to make the change */
-- 		location =3D (void *)sechdrs[sechdrs[relsec].sh_info].sh_addr
-- 			+ rel[i].r_offset;
-- 		/* This is the symbol it is referring to */
-- 		sym =3D (Elf_Sym *)sechdrs[symindex].sh_addr
-- 			+ ELF_MIPS_R_SYM(rel[i]);
-- 		if (IS_ERR_VALUE(sym->st_value)) {
-- 			/* Ignore unresolved weak symbol */
-- 			if (ELF_ST_BIND(sym->st_info) =3D=3D STB_WEAK)
-- 				continue;
-- 			printk(KERN_WARNING "%s: Unknown symbol %s\n",
-- 			       me->name, strtab + sym->st_name);
-- 			return -ENOENT;
-- 		}
--=20
-- 		v =3D sym->st_value + rel[i].r_addend;
--=20
-- 		res =3D reloc_handlers_rela[ELF_MIPS_R_TYPE(rel[i])](me, location, v);
-- 		if (res)
-- 			return res;
-- 	}
--=20
-- 	return 0;
-- }
-+ #endif
  =20
-  /* Given an address, look for it in the module exception tables. */
-  const struct exception_table_entry *search_module_dbetables(unsigned long=
- addr)
 
---Signature=_Wed__22_Aug_2012_13_11_30_+1000_jeRjfQTmoTo=U7m0
+--Signature=_Wed__22_Aug_2012_14_02_17_+1000_WxEmVHmgAFtzCUTC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQNE3iAAoJEECxmPOUX5FELsgP/iL0w4BiLva78NPAkcjUnB+5
-mhekY21veMwOVlhQV5F28IVc9hGXayE7DMXmdkbOkSbF6HV78V/IooA3Ek+Ym6Dw
-2PfBW2FFOOvcLiI8gFp5ni/xYGpMqehKOcHqNxD3/rRXpFOYPVg4XPH/Lt5X7QYm
-UlEfnP4KmICB1gcFgOFnE+JNufV7BQWdpi/uKu9JWXq4LxZBYcA4UoOnXXSrC/fr
-TYWzVdoVGiDWgmnDzUtwHSKYqX8sgDOvSyYLkCHMgIa55d+f2TsB9KVz6hc7hxaX
-EXUUVDmtvrwXfK9REpGLWoI2STLfSHah9+Kb9FvqYYVwsiPe6qmTa0QLtLchLO4H
-WzbjC54+FLZn5xZNILU67pCHgY4GStrXHNHw89XDQMOFPvbk8+EGGgnRfhKJhx2b
-JOS2GcfZKyL3NSImXv0XMKilB33wQKu558D6muy6wPEkptk+TPYAiRd7yMYucLM8
-L8H7xmqPy/Larrm5OjgWKQj8p0kFgWcANDw3Py1VLDaZZlQQvjxOs1EyZeJdlewU
-38BGj3Ks6eE3bpRR0u2nrq7TitImBcw7pUTBG0L7FKSiKzGJJiFirhHlr8cXCFLp
-4ugBjxfg5Siu6LwaBlwkhGUQbjFtYrIVJnjIrsRORmEcdCr98rDoGbfmAy1y4+yK
-B3R6g55rQ3/Ixf00Wc2h
-=DqFX
+iQIcBAEBCAAGBQJQNFnJAAoJEECxmPOUX5FEUn4P/1lz1BgE7uZCN1zQCdpsw/7f
+7ywzy89yV1zQI/txEP2aWzuj6v3JdXgdEMQTwK5vhXZT+xh1EIbMFfryHmN5R1up
+T6KK1RTPVp5OJsMC7UQbsyfVtK9FpvlnPf6EqOsnZJ+Mk7RAFw693qd+TqFkepFD
+jjwjJCy28SEZIhV1zRZ8MpL5K2fQKkLqiLKF8JyVvdbRL7u5qj3o9KRqByQAgkwH
+Mlh6pnsqG0ijiNEOQy62AaTW0yBVkDVGGCHOQ/u3c8jg/fn+aScSMsVEHLWw3sOP
+WG6l6TqaGP03+3k+mWt90UGXk5icx4xHFgPH+bcTkN2yUpc3mlIRvc9qQbmjwfGm
+WGbun14a+JmYrjiY+uYXx+D/ij7sLchyONSxyNW4Alpnvyjl//eX8jzGo/fwgIBx
+WAcr4np0enprUeEEy4QXV5D11OKWGtbfflpWre/ON16J65GgVFK1es88C0DRQIw0
+naFu8vJnS5XeuIm7G7ZpHWYnw/q4utqwKYBlN6S9tFKAZ+Fatd2kj7/fYO9OnAUf
+4lMDL9L1DOTD2Y7UP5Vf1h1ri+DikP2inUPJVu1In6FaTlF6ngC2nIX+7aedYs2x
+Sg7RFT6n5PLJyHjNQbIWcklXUG2RTPApJnmSd4nTy6DpCqYN5kvcjz8g8B0UWQOw
+g9E3/w3GecG9f5luucy2
+=aG/R
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__22_Aug_2012_13_11_30_+1000_jeRjfQTmoTo=U7m0--
+--Signature=_Wed__22_Aug_2012_14_02_17_+1000_WxEmVHmgAFtzCUTC--
