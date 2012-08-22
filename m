@@ -1,97 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the fsnotify tree with Linus' tree
-Date: Wed, 22 Aug 2012 14:02:17 +1000
-Message-ID: <20120822140217.d64229c7e94091a9e8d27a1b@canb.auug.org.au>
+From: "AnilKumar, Chimata" <anilkumar@ti.com>
+Subject: RE: linux-next: Tree for July 17 (mfd/tps65217.c)
+Date: Wed, 22 Aug 2012 04:25:20 +0000
+Message-ID: <331ABD5ECB02734CA317220B2BBEABC13EA1B4EA@DBDE01.ent.ti.com>
+References: <20120717154153.b10774cb005add05e4c4e5f6@canb.auug.org.au>
+ <5005DDA7.6050401@xenotime.net> <501C0A21.2010905@xenotime.net>
+ <331ABD5ECB02734CA317220B2BBEABC13EA0B471@DBDE01.ent.ti.com>
+ <5033CAA9.9000101@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__22_Aug_2012_14_02_17_+1000_WxEmVHmgAFtzCUTC"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47932 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750695Ab2HVEC3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 00:02:29 -0400
+Received: from comal.ext.ti.com ([198.47.26.152]:49728 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750771Ab2HVEZc convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 00:25:32 -0400
+In-Reply-To: <5033CAA9.9000101@xenotime.net>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lino Sanfilippo <LinoSanfilippo@gmx.de>, Miklos Szeredi <mszeredi@suse.cz>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>
 
---Signature=_Wed__22_Aug_2012_14_02_17_+1000_WxEmVHmgAFtzCUTC
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Samuel,
 
-Hi Eric,
+On Tue, Aug 21, 2012 at 23:21:37, Randy Dunlap wrote:
+> On 08/05/2012 11:38 PM, AnilKumar, Chimata wrote:
+> 
+> > On Fri, Aug 03, 2012 at 22:58:01, Randy Dunlap wrote:
+> >> On 07/17/2012 02:48 PM, Randy Dunlap wrote:
+> >>
+> >>> On 07/16/2012 10:41 PM, Stephen Rothwell wrote:
+> >>>
+> >>>> Hi all,
+> >>>>
+> >>>> Changes since 20120716:
+> >>>>
+> >>>
+> >>>
+> >>> on i386:
+> >>>
+> >>> drivers/built-in.o: In function `tps65217_probe':
+> >>> tps65217.c:(.devinit.text+0x13e37): undefined reference to `of_regulator_match'
+> >>>
+> >>>
+> >>> Full randconfig file is attached.
+> >>> CONFIG_REGULATOR is not enabled.
+> >>>
+> >>
+> >>
+> >> This build error is still present in linux-next of 20120803.
+> >>
+> > 
+> > This will be fixed with this patch
+> > https://patchwork.kernel.org/patch/1220151/
+> > 
+> > Today, I will submit v2 for this
+> 
+> 
+> This build still fails in linux-next 20120821.
 
-Today's linux-next merge of the fsnotify tree got a conflict in
-kernel/audit_tree.c between commits a2140fc0cb03 ("audit: fix refcounting
-in audit-tree") and b3e8692b4dde ("audit: clean up refcounting in
-audit-tree") from Linus' tree and commit 3c183c233284 ("fsnotify: pass
-group to fsnotify_destroy_mark()") from the fsnotify tree.
+Could you please push this patch ASAP?
+http://www.spinics.net/lists/linux-omap/msg75336.html
 
-Just context changes. I fixed it up (see below) and can carry the fix as
-necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc kernel/audit_tree.c
-index ed206fd,9cedf31..0000000
---- a/kernel/audit_tree.c
-+++ b/kernel/audit_tree.c
-@@@ -249,7 -249,8 +249,7 @@@ static void untag_chunk(struct node *p
-  		list_del_rcu(&chunk->hash);
-  		spin_unlock(&hash_lock);
-  		spin_unlock(&entry->lock);
-- 		fsnotify_destroy_mark(entry);
-+ 		fsnotify_destroy_mark(entry, audit_tree_group);
- -		fsnotify_put_mark(entry);
-  		goto out;
-  	}
- =20
-@@@ -291,8 -292,8 +291,8 @@@
-  		owner->root =3D new;
-  	spin_unlock(&hash_lock);
-  	spin_unlock(&entry->lock);
-- 	fsnotify_destroy_mark(entry);
-+ 	fsnotify_destroy_mark(entry, audit_tree_group);
- -	fsnotify_put_mark(entry);
- +	fsnotify_put_mark(&new->mark);	/* drop initial reference */
-  	goto out;
- =20
-  Fallback:
-@@@ -443,9 -443,9 +443,9 @@@ static int tag_chunk(struct inode *inod
-  	spin_unlock(&hash_lock);
-  	spin_unlock(&chunk_entry->lock);
-  	spin_unlock(&old_entry->lock);
-- 	fsnotify_destroy_mark(old_entry);
-+ 	fsnotify_destroy_mark(old_entry, audit_tree_group);
- +	fsnotify_put_mark(chunk_entry);	/* drop initial reference */
-  	fsnotify_put_mark(old_entry); /* pair to fsnotify_find mark_entry */
- -	fsnotify_put_mark(old_entry); /* and kill it */
-  	return 0;
-  }
- =20
-
---Signature=_Wed__22_Aug_2012_14_02_17_+1000_WxEmVHmgAFtzCUTC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQNFnJAAoJEECxmPOUX5FEUn4P/1lz1BgE7uZCN1zQCdpsw/7f
-7ywzy89yV1zQI/txEP2aWzuj6v3JdXgdEMQTwK5vhXZT+xh1EIbMFfryHmN5R1up
-T6KK1RTPVp5OJsMC7UQbsyfVtK9FpvlnPf6EqOsnZJ+Mk7RAFw693qd+TqFkepFD
-jjwjJCy28SEZIhV1zRZ8MpL5K2fQKkLqiLKF8JyVvdbRL7u5qj3o9KRqByQAgkwH
-Mlh6pnsqG0ijiNEOQy62AaTW0yBVkDVGGCHOQ/u3c8jg/fn+aScSMsVEHLWw3sOP
-WG6l6TqaGP03+3k+mWt90UGXk5icx4xHFgPH+bcTkN2yUpc3mlIRvc9qQbmjwfGm
-WGbun14a+JmYrjiY+uYXx+D/ij7sLchyONSxyNW4Alpnvyjl//eX8jzGo/fwgIBx
-WAcr4np0enprUeEEy4QXV5D11OKWGtbfflpWre/ON16J65GgVFK1es88C0DRQIw0
-naFu8vJnS5XeuIm7G7ZpHWYnw/q4utqwKYBlN6S9tFKAZ+Fatd2kj7/fYO9OnAUf
-4lMDL9L1DOTD2Y7UP5Vf1h1ri+DikP2inUPJVu1In6FaTlF6ngC2nIX+7aedYs2x
-Sg7RFT6n5PLJyHjNQbIWcklXUG2RTPApJnmSd4nTy6DpCqYN5kvcjz8g8B0UWQOw
-g9E3/w3GecG9f5luucy2
-=aG/R
------END PGP SIGNATURE-----
-
---Signature=_Wed__22_Aug_2012_14_02_17_+1000_WxEmVHmgAFtzCUTC--
+Thanks
+AnilKumar
