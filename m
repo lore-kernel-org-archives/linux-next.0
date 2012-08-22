@@ -1,72 +1,30 @@
-From: Mel Gorman <mgorman@suse.de>
-Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Wed, 22 Aug 2012 09:58:01 +0100
-Message-ID: <20120822085801.GA15058@suse.de>
-References: <20120822155941.ae0b4c163fc15346a9863e5e@canb.auug.org.au>
+From: "Luck, Tony" <tony.luck@intel.com>
+Subject: RE: ia64 won't boot because of rcu_sched self-detected stall
+Date: Wed, 22 Aug 2012 13:42:52 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F193966DE@ORSMSX104.amr.corp.intel.com>
+References: <CA+8MBbKnW=V_ytS-1qF+O9H63YWROhhc7dTru2BOYbS16iS3Tw@mail.gmail.com>
+ <20120821232038.GV2456@linux.vnet.ibm.com>
+ <3908561D78D1C84285E8C5FCA982C28F19396504@ORSMSX104.amr.corp.intel.com>
+ <20120822004608.GW2456@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120822155941.ae0b4c163fc15346a9863e5e@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:35036 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751286Ab2HVNmy convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 09:42:54 -0400
+In-Reply-To: <20120822004608.GW2456@linux.vnet.ibm.com>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "fweisbec@gmail.com" <fweisbec@gmail.com>
 
-On Wed, Aug 22, 2012 at 03:59:41PM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> Today's linux-next merge of the akpm tree got a conflict in
-> mm/page_alloc.c between commit c67fe3752abe ("mm: compaction: Abort async
-> compaction if locks are contended or taking too long") from Linus' tree
-> and commit "mm: remove __GFP_NO_KSWAPD" from the akpm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+> In the meantime, please let me know if the above additions fixes the
+> problem for IA64.
 
-Hi Stephen,
+I'm on a plane today ... so it will be Thursday before I can try this. Thanks
+for the quick response.
 
-I think this will be a temporary problem. In the patch series that contained
-"mm: compaction: Abort async compaction if locks are contended or taking
-too long" there is a replacement patch for "mm: remove __GFP_NO_KSWAPD"
-that handles the conflict. According to the mm-commits mailing list the
-replacement patch has been picked up by Andrew but I see the old
-versions in linux-next/akpm. It should get resolved the next time
-Andrews tree gets pushed out.
-
-> diff --cc mm/page_alloc.c
-> index 5b3cc33,cefac39..0000000
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@@ -2436,11 -2429,10 +2435,10 @@@ rebalance
->   	/*
->   	 * If compaction is deferred for high-order allocations, it is because
->   	 * sync compaction recently failed. In this is the case and the caller
->  -	 * has requested the system not be heavily disrupted, fail the
->  -	 * allocation now instead of entering direct reclaim
->  +	 * requested a movable allocation that does not heavily disrupt the
->  +	 * system then fail the allocation instead of entering direct reclaim.
->   	 */
-> - 	if ((deferred_compaction || contended_compaction) &&
-> - 						(gfp_mask & __GFP_NO_KSWAPD))
->  -	if (deferred_compaction)
-> ++	if (deferred_compaction || contended_compaction)
->   		goto nopage;
->   
->   	/* Try direct reclaim and then allocating */
-
-It is not obvious at all but the correct resolution is actually the
-following. Andrew should already have the right version.
-
-@@ -2437,7 +2436,7 @@ rebalance:
- 	 * system then fail the allocation instead of entering direct reclaim.
- 	 */
- 	if ((deferred_compaction || contended_compaction) &&
--						(gfp_mask & __GFP_NO_KSWAPD))
-+	    (gfp_mask & (__GFP_MOVABLE|__GFP_REPEAT)) == __GFP_MOVABLE)
- 		goto nopage;
- 
- 	/* Try direct reclaim and then allocating */
-
--- 
-Mel Gorman
-SUSE Labs
+-Tony
