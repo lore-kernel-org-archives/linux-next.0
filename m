@@ -1,30 +1,59 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: RE: ia64 won't boot because of rcu_sched self-detected stall
-Date: Wed, 22 Aug 2012 13:42:52 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F193966DE@ORSMSX104.amr.corp.intel.com>
-References: <CA+8MBbKnW=V_ytS-1qF+O9H63YWROhhc7dTru2BOYbS16iS3Tw@mail.gmail.com>
- <20120821232038.GV2456@linux.vnet.ibm.com>
- <3908561D78D1C84285E8C5FCA982C28F19396504@ORSMSX104.amr.corp.intel.com>
- <20120822004608.GW2456@linux.vnet.ibm.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [PATCH -next] HID: picoLCD: Add missing #include
+ <linux/uaccess.h>
+Date: Wed, 22 Aug 2012 16:28:27 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1208221628190.32304@pobox.suse.cz>
+References: <1345581683-2099-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:35036 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751286Ab2HVNmy convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 09:42:54 -0400
-In-Reply-To: <20120822004608.GW2456@linux.vnet.ibm.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "fweisbec@gmail.com" <fweisbec@gmail.com>
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1345581683-2099-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: =?ISO-8859-15?Q?Bruno_Pr=E9mont?= <bonbons@linux-vserver.org>, linux-input@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-> In the meantime, please let me know if the above additions fixes the
-> problem for IA64.
+On Tue, 21 Aug 2012, Geert Uytterhoeven wrote:
 
-I'm on a plane today ... so it will be Thursday before I can try this. Thanks
-for the quick response.
+> m68k/allmodconfig:
+>=20
+> drivers/hid/hid-picolcd_debugfs.c: In function =E2=80=98picolcd_debug=
+_reset_write=E2=80=99:
+> drivers/hid/hid-picolcd_debugfs.c:54: error: implicit declaration of =
+function =E2=80=98copy_from_user=E2=80=99
+> drivers/hid/hid-picolcd_debugfs.c: In function =E2=80=98picolcd_debug=
+_eeprom_read=E2=80=99:
+> drivers/hid/hid-picolcd_debugfs.c:112: error: implicit declaration of=
+ function =E2=80=98copy_to_user=E2=80=99
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> http://kisskb.ellerman.id.au/kisskb/buildresult/6990818/
+>=20
+>  drivers/hid/hid-picolcd_debugfs.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+>=20
+> diff --git a/drivers/hid/hid-picolcd_debugfs.c b/drivers/hid/hid-pico=
+lcd_debugfs.c
+> index f2491fa..15c22f2 100644
+> --- a/drivers/hid/hid-picolcd_debugfs.c
+> +++ b/drivers/hid/hid-picolcd_debugfs.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/debugfs.h>
+> =20
+>  #include <linux/module.h>
+> +#include <linux/uaccess.h>
+> =20
+>  #include "hid-picolcd.h"
 
--Tony
+Applied, thanks Geert.
+
+--=20
+Jiri Kosina
+SUSE Labs
+--
+To unsubscribe from this list: send the line "unsubscribe linux-input" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
