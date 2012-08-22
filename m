@@ -1,66 +1,73 @@
-From: "AnilKumar, Chimata" <anilkumar@ti.com>
-Subject: RE: linux-next: Tree for July 17 (mfd/tps65217.c)
-Date: Wed, 22 Aug 2012 04:25:20 +0000
-Message-ID: <331ABD5ECB02734CA317220B2BBEABC13EA1B4EA@DBDE01.ent.ti.com>
-References: <20120717154153.b10774cb005add05e4c4e5f6@canb.auug.org.au>
- <5005DDA7.6050401@xenotime.net> <501C0A21.2010905@xenotime.net>
- <331ABD5ECB02734CA317220B2BBEABC13EA0B471@DBDE01.ent.ti.com>
- <5033CAA9.9000101@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with the tip tree
+Date: Wed, 22 Aug 2012 14:27:22 +1000
+Message-ID: <20120822142722.1132127ef7d8a6214b7b2b32@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__22_Aug_2012_14_27_22_+1000_tYuUeqWYXpE261Ep"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:49728 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750771Ab2HVEZc convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 00:25:32 -0400
-In-Reply-To: <5033CAA9.9000101@xenotime.net>
-Content-Language: en-US
+Received: from haggis.pcug.org.au ([203.10.76.10]:33203 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751422Ab2HVE1d (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 00:27:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-Hi Samuel,
+--Signature=_Wed__22_Aug_2012_14_27_22_+1000_tYuUeqWYXpE261Ep
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 21, 2012 at 23:21:37, Randy Dunlap wrote:
-> On 08/05/2012 11:38 PM, AnilKumar, Chimata wrote:
-> 
-> > On Fri, Aug 03, 2012 at 22:58:01, Randy Dunlap wrote:
-> >> On 07/17/2012 02:48 PM, Randy Dunlap wrote:
-> >>
-> >>> On 07/16/2012 10:41 PM, Stephen Rothwell wrote:
-> >>>
-> >>>> Hi all,
-> >>>>
-> >>>> Changes since 20120716:
-> >>>>
-> >>>
-> >>>
-> >>> on i386:
-> >>>
-> >>> drivers/built-in.o: In function `tps65217_probe':
-> >>> tps65217.c:(.devinit.text+0x13e37): undefined reference to `of_regulator_match'
-> >>>
-> >>>
-> >>> Full randconfig file is attached.
-> >>> CONFIG_REGULATOR is not enabled.
-> >>>
-> >>
-> >>
-> >> This build error is still present in linux-next of 20120803.
-> >>
-> > 
-> > This will be fixed with this patch
-> > https://patchwork.kernel.org/patch/1220151/
-> > 
-> > Today, I will submit v2 for this
-> 
-> 
-> This build still fails in linux-next 20120821.
+Hi Paul,
 
-Could you please push this patch ASAP?
-http://www.spinics.net/lists/linux-omap/msg75336.html
+Today's linux-next merge of the rcu tree got a conflict in
+kernel/rcutree_plugin.h between commit 62ab7072476a ("rcu: Use
+smp_hotplug_thread facility for RCUs per-CPU kthread") from the tip tree
+and commit 8732d57a8ce0 ("rcu: Provide OOM handler to motivate lazy RCU
+callbacks") from the rcu tree.
 
-Thanks
-AnilKumar
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/rcutree_plugin.h
+index c1961ae,c3e3fc4..0000000
+--- a/kernel/rcutree_plugin.h
++++ b/kernel/rcutree_plugin.h
+@@@ -25,7 -25,7 +25,8 @@@
+   */
+ =20
+  #include <linux/delay.h>
+ +#include <linux/smpboot.h>
++ #include <linux/oom.h>
+ =20
+  #define RCU_KTHREAD_PRIO 1
+ =20
+
+--Signature=_Wed__22_Aug_2012_14_27_22_+1000_tYuUeqWYXpE261Ep
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQNF+qAAoJEECxmPOUX5FEL/UP/R9c5CHeaIOQ3SZbJu6b7u3l
+Ykk4gte3TXB5LVN8cM46JEMVXQ4KAhOmHZT5ibBzjdqWg5M4C+WJtoQ4JLhGH3yt
+edTxzG7b0dfBPEm+FfS/lxNXVQU/zyq0j9R8PnHIL4vKsoqc1Q/bucbsf5b7UnS+
+nLFHRENPn1W3dbKruKFy7/5x/JeGr5Lwg21YBPhR5a/6R40J2T06uIuWWv1yo8PQ
+CornQcwgYcPmUCqu5fxtK38xesgSFaud0PlH3HhsNxzeeNQmDz8J9muD70UP2MWD
+f0ijAA8MvpOobTDnB1qo3InDxKLOA7FSReNpeYUbyLNnlRr8x4lPXCoURs+wLJqX
+73txgk5kFbCSa5SgEYBt24GeGRcP9jAaa3FHdQVcpYmdb8yzfLT8YZ78skEybE87
+TZGIjgYIklK1cyP65O2bc4yAjApYsOIJrsVAOxearmuQR1B8mwGwMFi2XjbG5Ihv
+VxvscrNTCC9Z08Tpxu8kRAzGrlDSPdq+6TJzCH43f6wIIgpW3E7zJ9OknQizjHWC
+Fwjo3M2I+IdEWfyjuQqAYZhkrjxgSZi5MboBWWjVglq+wzxLgoaZEy9NjtKspGxO
+K9zV7a5TCaDmw/STFiZDkwGU0WKGqPZJm1eX8Wliav14xabY4NNONYEYi/ZJQFYP
+c5q3B/bbjPRu49iNKjGh
+=K3LU
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_Aug_2012_14_27_22_+1000_tYuUeqWYXpE261Ep--
