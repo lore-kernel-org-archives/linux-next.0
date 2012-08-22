@@ -1,62 +1,78 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the rcu tree with the tip tree
-Date: Tue, 21 Aug 2012 22:05:40 -0700
-Message-ID: <20120822050540.GC2531@linux.vnet.ibm.com>
-References: <20120822142735.5366c9abdee5274329e65fe3@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Wed, 22 Aug 2012 15:59:41 +1000
+Message-ID: <20120822155941.ae0b4c163fc15346a9863e5e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__22_Aug_2012_15_59_41_+1000_shjchiW+qPyt5LSs"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e34.co.us.ibm.com ([32.97.110.152]:46735 "EHLO
-	e34.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753911Ab2HVFGL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 01:06:11 -0400
-Received: from /spool/local
-	by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Tue, 21 Aug 2012 23:06:11 -0600
-Content-Disposition: inline
-In-Reply-To: <20120822142735.5366c9abdee5274329e65fe3@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51758 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756790Ab2HVF7w (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 01:59:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>
 
-On Wed, Aug 22, 2012 at 02:27:35PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> Today's linux-next merge of the rcu tree got a conflict in
-> kernel/rcutree.h between commit 62ab7072476a ("rcu: Use
-> smp_hotplug_thread facility for RCUs per-CPU kthread") from the tip tree
-> and commit daa5d37ff51b ("rcu: Prevent force_quiescent_state() memory
-> contention") from the rcu tree.
-> 
-> Just context changes (I think).  I fixed it up (see below) and can carry
-> the fix as necessary.
+--Signature=_Wed__22_Aug_2012_15_59_41_+1000_shjchiW+qPyt5LSs
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This one also looks correct.
+Hi Andrew,
 
-							Thanx, Paul
+Today's linux-next merge of the akpm tree got a conflict in
+mm/page_alloc.c between commit c67fe3752abe ("mm: compaction: Abort async
+compaction if locks are contended or taking too long") from Linus' tree
+and commit "mm: remove __GFP_NO_KSWAPD" from the akpm tree.
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc kernel/rcutree.h
-> index 1224d4c,c2a3e7d..0000000
-> --- a/kernel/rcutree.h
-> +++ b/kernel/rcutree.h
-> @@@ -196,6 -200,13 +200,7 @@@ struct rcu_node 
->   				/* Refused to boost: not sure why, though. */
->   				/*  This can happen due to race conditions. */
->   #endif /* #ifdef CONFIG_RCU_BOOST */
->  -	struct task_struct *node_kthread_task;
->  -				/* kthread that takes care of this rcu_node */
->  -				/*  structure, for example, awakening the */
->  -				/*  per-CPU kthreads as needed. */
->  -	unsigned int node_kthread_status;
->  -				/* State of node_kthread_task for tracing. */
-> + 	raw_spinlock_t fqslock ____cacheline_internodealigned_in_smp;
->   } ____cacheline_internodealigned_in_smp;
->   
->   /*
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc mm/page_alloc.c
+index 5b3cc33,cefac39..0000000
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@@ -2436,11 -2429,10 +2435,10 @@@ rebalance
+  	/*
+  	 * If compaction is deferred for high-order allocations, it is because
+  	 * sync compaction recently failed. In this is the case and the caller
+ -	 * has requested the system not be heavily disrupted, fail the
+ -	 * allocation now instead of entering direct reclaim
+ +	 * requested a movable allocation that does not heavily disrupt the
+ +	 * system then fail the allocation instead of entering direct reclaim.
+  	 */
+- 	if ((deferred_compaction || contended_compaction) &&
+- 						(gfp_mask & __GFP_NO_KSWAPD))
+ -	if (deferred_compaction)
+++	if (deferred_compaction || contended_compaction)
+  		goto nopage;
+ =20
+  	/* Try direct reclaim and then allocating */
+
+--Signature=_Wed__22_Aug_2012_15_59_41_+1000_shjchiW+qPyt5LSs
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQNHVNAAoJEECxmPOUX5FEL+8P/2G97GqOartwonS/sV11xvod
+eHagUWREkNHVMG9Mp09s8ujP1c1bNeF6b7kBuPW8t9izRpojCssHESQloPS9qBmY
+S0FHoMdv88nWNcMmIB2iUjnr9VrLGBsBDsSsh7XmAVFogp5ul2ZtJVNzUMLSY6FW
+IETCWBas3JuMGUzNgAc0V8EFtGnezsgi4u+ii9+x6utb0Kyp+edvpX1lInH2OlwG
+6K59TebRMqtZNaiPooooyI6NXCGzHd6QNJVYMGaJzH4GI74/7Zx+hDQehJz4N7Hr
+Xgh10u9qPDXu4wMaVioE0oNiDkha79QW64HYV92l2WvAD2YCWeDD4fMwPAPGQSeG
+eZktQsk4QFjfYz0yNQYlke7OFB6hNHAnZErf2kkLem1sVcROyMpPD0f2cCXO9oiI
+Sh5+4+sgT97gfpK24wvLXAbcq2LU8VV6oISP28gpVckFV4VVbNnuBG2MzYm6HpeC
+WoXuNWqsWlH8Fk5hKuNpijAYPgeHCDZN7tKnfnlHFVOR3fhksEdvlL67Oa24SZ7q
+w4cBkZcPhvryQqqUIWrijFhDGWJVomZmrH7SmZURxYyFCgwPWHNckK6HYddc/aoj
+8OXHuZLTzAACTEumrS5WNwzb409/uplqhnK64Hm6W7Weo4hxyRZPE6Tl13P+FuzD
+qlV7KLrH95lXhh5GkCBA
+=AU86
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_Aug_2012_15_59_41_+1000_shjchiW+qPyt5LSs--
