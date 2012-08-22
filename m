@@ -1,63 +1,72 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: [PATCH v2] mfd/regulator: tps65217: Move regulator plat data
- handling to regulator
-Date: Wed, 22 Aug 2012 11:02:29 +0200
-Message-ID: <20120822090229.GC9889@sortiz-mobl>
-References: <1344870365-11645-1-git-send-email-anilkumar@ti.com>
+From: Mel Gorman <mgorman@suse.de>
+Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Wed, 22 Aug 2012 09:58:01 +0100
+Message-ID: <20120822085801.GA15058@suse.de>
+References: <20120822155941.ae0b4c163fc15346a9863e5e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:11969 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753195Ab2HVJCd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Aug 2012 05:02:33 -0400
+Content-Type: text/plain; charset=iso-8859-15
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1344870365-11645-1-git-send-email-anilkumar@ti.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: AnilKumar Ch <anilkumar@ti.com>
-Cc: broonie@opensource.wolfsonmicro.com, dan.carpenter@oracle.com, rdunlap@xenotime.net, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-omap@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20120822155941.ae0b4c163fc15346a9863e5e@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi AnilKumar,
+On Wed, Aug 22, 2012 at 03:59:41PM +1000, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm tree got a conflict in
+> mm/page_alloc.c between commit c67fe3752abe ("mm: compaction: Abort async
+> compaction if locks are contended or taking too long") from Linus' tree
+> and commit "mm: remove __GFP_NO_KSWAPD" from the akpm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-On Mon, Aug 13, 2012 at 08:36:05PM +0530, AnilKumar Ch wrote:
-> Regulator platform data handling was mistakenly added to MFD
-> driver. So we will see build errors if we compile MFD drivers
-> without CONFIG_REGULATOR. This patch moves regulator platform
-> data handling from TPS65217 MFD driver to regulator driver.
-> 
-> This makes MFD driver independent of REGULATOR framework so
-> build error is fixed if CONFIG_REGULATOR is not set.
-> 
-> drivers/built-in.o: In function `tps65217_probe':
-> tps65217.c:(.devinit.text+0x13e37): undefined reference
-> to `of_regulator_match'
-> 
-> This patch also fix allocation size of tps65217 platform data.
-> Current implementation allocates a struct tps65217_board for each
-> regulator specified in the device tree. But the structure itself
-> provides array of regulators so one instance of it is sufficient.
-> 
-> Signed-off-by: AnilKumar Ch <anilkumar@ti.com>
-> ---
-> This patch is tested on BeagleBone with regulator device node
-> additions. And this is based on mfd/master.
-> 
-> Changes from v1:
-> 	- Incorporated Matthias Kaehlcke's commets on v1
-> 	  * Fixed allocation size of tps65217 platform data
-> 
->  drivers/mfd/tps65217.c                 |  130 +++++++++++---------------------
->  drivers/regulator/tps65217-regulator.c |  124 ++++++++++++++++++++++++++----
->  include/linux/mfd/tps65217.h           |   12 ++-
->  3 files changed, 161 insertions(+), 105 deletions(-)
-> 
-Applied to my for-next and for-linus branches, thanks.
-Btw, this is too big of a patch for stable.
+Hi Stephen,
 
-Cheers,
-Samuel.
+I think this will be a temporary problem. In the patch series that contained
+"mm: compaction: Abort async compaction if locks are contended or taking
+too long" there is a replacement patch for "mm: remove __GFP_NO_KSWAPD"
+that handles the conflict. According to the mm-commits mailing list the
+replacement patch has been picked up by Andrew but I see the old
+versions in linux-next/akpm. It should get resolved the next time
+Andrews tree gets pushed out.
+
+> diff --cc mm/page_alloc.c
+> index 5b3cc33,cefac39..0000000
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@@ -2436,11 -2429,10 +2435,10 @@@ rebalance
+>   	/*
+>   	 * If compaction is deferred for high-order allocations, it is because
+>   	 * sync compaction recently failed. In this is the case and the caller
+>  -	 * has requested the system not be heavily disrupted, fail the
+>  -	 * allocation now instead of entering direct reclaim
+>  +	 * requested a movable allocation that does not heavily disrupt the
+>  +	 * system then fail the allocation instead of entering direct reclaim.
+>   	 */
+> - 	if ((deferred_compaction || contended_compaction) &&
+> - 						(gfp_mask & __GFP_NO_KSWAPD))
+>  -	if (deferred_compaction)
+> ++	if (deferred_compaction || contended_compaction)
+>   		goto nopage;
+>   
+>   	/* Try direct reclaim and then allocating */
+
+It is not obvious at all but the correct resolution is actually the
+following. Andrew should already have the right version.
+
+@@ -2437,7 +2436,7 @@ rebalance:
+ 	 * system then fail the allocation instead of entering direct reclaim.
+ 	 */
+ 	if ((deferred_compaction || contended_compaction) &&
+-						(gfp_mask & __GFP_NO_KSWAPD))
++	    (gfp_mask & (__GFP_MOVABLE|__GFP_REPEAT)) == __GFP_MOVABLE)
+ 		goto nopage;
+ 
+ 	/* Try direct reclaim and then allocating */
 
 -- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+Mel Gorman
+SUSE Labs
