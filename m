@@ -1,40 +1,39 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: RE: ia64 won't boot because of rcu_sched self-detected stall
-Date: Thu, 23 Aug 2012 19:54:37 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F19397175@ORSMSX104.amr.corp.intel.com>
-References: <CA+8MBbKnW=V_ytS-1qF+O9H63YWROhhc7dTru2BOYbS16iS3Tw@mail.gmail.com>
- <20120821232038.GV2456@linux.vnet.ibm.com>
- <3908561D78D1C84285E8C5FCA982C28F19396504@ORSMSX104.amr.corp.intel.com>
- <20120822004608.GW2456@linux.vnet.ibm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build failure after merge of the gpio-lw tree
+Date: Thu, 23 Aug 2012 23:43:10 +0200
+Message-ID: <CACRpkdaOyA2jPLkimQEtPFVYyRpxQGV7nV+6kiZ5_+mV827ytw@mail.gmail.com>
+References: <20120706161455.dd899154fbc8a79ee530572f@canb.auug.org.au>
+	<CACRpkdbZddOBf0PXFJjr_aRD3TEa9hSvXjAjf3--8Ko_W0zZcg@mail.gmail.com>
+	<w3psjd55kwl.wl%kuninori.morimoto.gx@renesas.com>
+	<CACRpkdb=bg7fc1HEW5U2PBjs_hLDRgGUNP=O6BEJRmYfCiSWpA@mail.gmail.com>
+	<87r4slg063.wl%kuninori.morimoto.gx@renesas.com>
+	<CACRpkdYSLRiAQd3kGGv8xktAvi+YbBSe1hGqMX2y7fFXQOHPXQ@mail.gmail.com>
+	<87sjbfy0ue.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:12567 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759238Ab2HWTyj convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Aug 2012 15:54:39 -0400
-In-Reply-To: <20120822004608.GW2456@linux.vnet.ibm.com>
-Content-Language: en-US
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:61622 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758315Ab2HWVnM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Aug 2012 17:43:12 -0400
+Received: by wgbfm10 with SMTP id fm10so1106314wgb.1
+        for <linux-next@vger.kernel.org>; Thu, 23 Aug 2012 14:43:10 -0700 (PDT)
+In-Reply-To: <87sjbfy0ue.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "fweisbec@gmail.com" <fweisbec@gmail.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-> Without the calls to rcu_idle_enter() and rcu_idle_exit(), RCU has no
-> way of knowing that the CPU is idle, so waits forever for a context
-> switch.
+On Wed, Aug 22, 2012 at 7:03 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
 
-Adding the calls at the places you suggested solves the problem. Thanks.
+> Now, these fixup patches were accepted.
+>   http://git.kernel.org/tip/17d83127d4c2b322dd8f217e0ac08c66eb403779
+>   http://git.kernel.org/tip/b3ae66f209e8929db62b5a5f874ab2cdcf5ef1d4
+>
+> Could you please re-check this dropped patch ?
 
-Which tree is feeding these changes to linux-next? How do I get
-this ia64 fix into that tree so it will go to Linus in the same merge
-that the changes that required this will be in?
+Yes! I've applied it. Check that it lands nicely in -next.
 
-Do you want me to create a patch (I can do that, but I'm not sure
-that I can write a good commit message). If someone else does,
-then it can be marked:
-
-Tested-by: Tony Luck <tony.luck@intel.com>
-
--Tony
+Yours,
+Linus Walleij
