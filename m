@@ -1,32 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the rr tree
-Date: Thu, 23 Aug 2012 12:43:48 +1000
-Message-ID: <20120823124348.831760a775f7bcb9c8e26219@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with the tip tree
+Date: Thu, 23 Aug 2012 13:01:43 +1000
+Message-ID: <20120823130143.86cb19b5c9799d138cdb0b07@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__23_Aug_2012_12_43_48_+1000_Lnm5QgazjX=mkLQ6"
+ boundary="Signature=_Thu__23_Aug_2012_13_01_43_+1000_1wCCR6CWZH=Fah2Q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55217 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:39741 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752830Ab2HWCn7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 22:43:59 -0400
+	with ESMTP id S1757207Ab2HWDBz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 23:01:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, Frederic Weisbecker <fweisbec@gmail.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Thu__23_Aug_2012_12_43_48_+1000_Lnm5QgazjX=mkLQ6
+--Signature=_Thu__23_Aug_2012_13_01_43_+1000_1wCCR6CWZH=Fah2Q
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Paul,
 
-Today's linux-next merge of the tip tree got a conflict in arch/Kconfig
-between commit bd029f48459a ("Make most arch asm/module.h files use
-asm-generic/module.h") from the rr tree and commit b952741c8079
-("cputime: Generalize CONFIG_VIRT_CPU_ACCOUNTING") from the tip tree.
+Today's linux-next merge of the rcu tree got a conflict in arch/Kconfig
+between commit b952741c8079 ("cputime: Generalize
+CONFIG_VIRT_CPU_ACCOUNTING") from the tip tree and commit 3dbdfc26e27f
+("rcu: Settle config for userspace extended quiescent state") from the
+rcu tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -35,10 +36,10 @@ Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
 diff --cc arch/Kconfig
-index 3450115,ea5feb6..0000000
+index 07db929,1c7c9be..0000000
 --- a/arch/Kconfig
 +++ b/arch/Kconfig
-@@@ -281,23 -294,7 +294,26 @@@ config SECCOMP_FILTE
+@@@ -294,26 -274,14 +294,36 @@@ config SECCOMP_FILTE
  =20
   	  See Documentation/prctl/seccomp_filter.txt for details.
  =20
@@ -61,30 +62,40 @@ index 3450115,ea5feb6..0000000
  +	  Modules only use ELF REL relocations.  Modules with ELF RELA
  +	  relocations will give an error.
  +
-+ config HAVE_VIRT_CPU_ACCOUNTING
+ +config HAVE_VIRT_CPU_ACCOUNTING
+ +	bool
+ +
++ config HAVE_RCU_USER_QS
 + 	bool
++ 	help
++ 	  Provide kernel entry/exit hooks necessary for userspace
++ 	  RCU extended quiescent state. Syscalls need to be wrapped inside
++ 	  rcu_user_exit()-rcu_user_enter() through the slow path using
++ 	  TIF_NOHZ flag. Exceptions handlers must be wrapped as well. Irqs
++ 	  are already protected inside rcu_irq_enter/rcu_irq_exit() but
++ 	  preemption or signal handling on irq exit still need to be protected.
 +=20
   source "kernel/gcov/Kconfig"
 
---Signature=_Thu__23_Aug_2012_12_43_48_+1000_Lnm5QgazjX=mkLQ6
+--Signature=_Thu__23_Aug_2012_13_01_43_+1000_1wCCR6CWZH=Fah2Q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQNZjkAAoJEECxmPOUX5FEP7MP/1vzSQTiEwI1PoW9ehjDfeIp
-HCKUt6W4ci+aS1owhtmlEP7oWIdN+0EAW0uLNQYIiA4cE0du0/KU+6hfF4JvOWz1
-1yceDvvpz+CMq+X8Z7HMKdttrcWXqwCqtHIx549itW3laLeYQm6xUDWaEnlkfoZ1
-s1kX+Gog71SQdfGNOLm8IIYMrniVbDOQbSIfR7yGYwpf6VlRt+vS2UY8Lgt3auWF
-CkmGc9glzoXhuVkJRdbl4kADy/nRBdlU7VpaDk3+SZetOfIetDigBt6cgkhygiTZ
-6piwwwGlfeTZH0oUfoAXTGXYRIKAFvG2a5emz6HKD985RPKlSgA7Vmwl10swAgPM
-MKNF60MgrkYNuxKAurmvlgIGHBGCVh1BgU9vpbFUDAllG6B2E6+w+Z5MJtWvaZ3a
-jqFVJJNFLy8sECkt3UopITv1JGDXFiHq8TnxFNEqtM6j0/HO+kXphqZ6YfBZCPRL
-pD0nSXys0ieYzwHIyDCF5rciGmYNdmL/Uya3Hu/yxc/I5f0DIyCYiCXR09pv4Br6
-x5BSfsmB1j8pcnd2VfJMOTlZd3vbQ0q52enTv58DK1LZOi7lDaGDPaQZRThyPYnJ
-0g5KdSyPzrym013R1FjGsAUsA7FD+UqZky9L1DWBy0mQupaEgGhe0xh30P+kDWtG
-Jqlgv94+qstdFxbrXQeI
-=5Q7A
+iQIcBAEBCAAGBQJQNZ0XAAoJEECxmPOUX5FE+esQAJ/jU9lACctiBOfeKoQteAWL
+dNRqDduPPGMNQfxfJEtMH+741YuBNUUAEW3F+dXWDTn5sCjaDoIul7E55gnJPpOx
+Nz/FcvJqCLonpcYXdSKV7tX5xCP4UFOsbPP70eK01u0SSWx2zTmyN26Reidhdfuz
+TIraKQxHzB7u0371PzRjQlzB/Le5mcNS/UcoXScdYxrslxag1lhg1rWAcO3a2EUk
+P6x3bJ9EtzO5yzyj3mQN6HuzNh2rpfY7fBVOEOp0lTdP9dxn5+jOHLflXurGWCIS
+7D53T3ZbyRsjHG1Om4W+eqPAKYO9dFLABckXGsco1fGj+Ds6Tj5IKoIYxQvrPpi9
+jm4Rdc1DPMRZr2zv1FXcJot1w4G//l/YSc0cIB1AZWpiY2847b+c+MYTMGTZvc38
+bZ8OsFxYQ9deXcGbtDV8BCWyUqIjyOu5vDAM6zudFlquqp6P8IUg7hzC+6UBLuTD
+bNdypoEH9ZKMVBcVEriKUSSYWbsOd1bu/sYzm/VDFYWRNRdMFQtsNN0dDkhzyMDa
+9u/oyfW43v1CcyNjoz3Ssm+wx0l3vNBHOlpz8eFSRQN1i1p7x6tXWXxFzZaNqnK0
+GHyNMpGeJ7AO+WQYkoWOdBk2LtFVCfYlhLxRkWUHBnI9qUSnbAJ9ewpnWf2moQhg
+2h3sMJ3LxWbg/AdszxHA
+=zHqc
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__23_Aug_2012_12_43_48_+1000_Lnm5QgazjX=mkLQ6--
+--Signature=_Thu__23_Aug_2012_13_01_43_+1000_1wCCR6CWZH=Fah2Q--
