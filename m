@@ -1,101 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rcu tree with the tip tree
-Date: Thu, 23 Aug 2012 13:01:43 +1000
-Message-ID: <20120823130143.86cb19b5c9799d138cdb0b07@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kvm tree
+Date: Thu, 23 Aug 2012 13:21:54 +1000
+Message-ID: <20120823132154.e823d579e1f2c82b0e283a5e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__23_Aug_2012_13_01_43_+1000_1wCCR6CWZH=Fah2Q"
+ boundary="Signature=_Thu__23_Aug_2012_13_21_54_+1000_CvmtnfgW4=FwcpY5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39741 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:51868 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757207Ab2HWDBz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 23:01:55 -0400
+	with ESMTP id S1755709Ab2HWDWD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Aug 2012 23:22:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com>
 
---Signature=_Thu__23_Aug_2012_13_01_43_+1000_1wCCR6CWZH=Fah2Q
+--Signature=_Thu__23_Aug_2012_13_21_54_+1000_CvmtnfgW4=FwcpY5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi all,
 
-Today's linux-next merge of the rcu tree got a conflict in arch/Kconfig
-between commit b952741c8079 ("cputime: Generalize
-CONFIG_VIRT_CPU_ACCOUNTING") from the tip tree and commit 3dbdfc26e27f
-("rcu: Settle config for userspace extended quiescent state") from the
-rcu tree.
+After merging the kvm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+arch/powerpc/kvm/built-in.o: In function `.kvmppc_h_enter':
+(.text+0x2494): undefined reference to `.gfn_to_hva_memslot'
+
+Presumably caused by commit 4d8b81abc47b ("KVM: introduce readonly
+memslot").
+
+I have used the kvm tree from next-20120822 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/Kconfig
-index 07db929,1c7c9be..0000000
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@@ -294,26 -274,14 +294,36 @@@ config SECCOMP_FILTE
- =20
-  	  See Documentation/prctl/seccomp_filter.txt for details.
- =20
- +config HAVE_MOD_ARCH_SPECIFIC
- +	bool
- +	help
- +	  The arch uses struct mod_arch_specific to store data.  Many arches
- +	  just need a simple module loader without arch specific data - those
- +	  should not enable this.
- +
- +config MODULES_USE_ELF_RELA
- +	bool
- +	help
- +	  Modules only use ELF RELA relocations.  Modules with ELF REL
- +	  relocations will give an error.
- +
- +config MODULES_USE_ELF_REL
- +	bool
- +	help
- +	  Modules only use ELF REL relocations.  Modules with ELF RELA
- +	  relocations will give an error.
- +
- +config HAVE_VIRT_CPU_ACCOUNTING
- +	bool
- +
-+ config HAVE_RCU_USER_QS
-+ 	bool
-+ 	help
-+ 	  Provide kernel entry/exit hooks necessary for userspace
-+ 	  RCU extended quiescent state. Syscalls need to be wrapped inside
-+ 	  rcu_user_exit()-rcu_user_enter() through the slow path using
-+ 	  TIF_NOHZ flag. Exceptions handlers must be wrapped as well. Irqs
-+ 	  are already protected inside rcu_irq_enter/rcu_irq_exit() but
-+ 	  preemption or signal handling on irq exit still need to be protected.
-+=20
-  source "kernel/gcov/Kconfig"
-
---Signature=_Thu__23_Aug_2012_13_01_43_+1000_1wCCR6CWZH=Fah2Q
+--Signature=_Thu__23_Aug_2012_13_21_54_+1000_CvmtnfgW4=FwcpY5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQNZ0XAAoJEECxmPOUX5FE+esQAJ/jU9lACctiBOfeKoQteAWL
-dNRqDduPPGMNQfxfJEtMH+741YuBNUUAEW3F+dXWDTn5sCjaDoIul7E55gnJPpOx
-Nz/FcvJqCLonpcYXdSKV7tX5xCP4UFOsbPP70eK01u0SSWx2zTmyN26Reidhdfuz
-TIraKQxHzB7u0371PzRjQlzB/Le5mcNS/UcoXScdYxrslxag1lhg1rWAcO3a2EUk
-P6x3bJ9EtzO5yzyj3mQN6HuzNh2rpfY7fBVOEOp0lTdP9dxn5+jOHLflXurGWCIS
-7D53T3ZbyRsjHG1Om4W+eqPAKYO9dFLABckXGsco1fGj+Ds6Tj5IKoIYxQvrPpi9
-jm4Rdc1DPMRZr2zv1FXcJot1w4G//l/YSc0cIB1AZWpiY2847b+c+MYTMGTZvc38
-bZ8OsFxYQ9deXcGbtDV8BCWyUqIjyOu5vDAM6zudFlquqp6P8IUg7hzC+6UBLuTD
-bNdypoEH9ZKMVBcVEriKUSSYWbsOd1bu/sYzm/VDFYWRNRdMFQtsNN0dDkhzyMDa
-9u/oyfW43v1CcyNjoz3Ssm+wx0l3vNBHOlpz8eFSRQN1i1p7x6tXWXxFzZaNqnK0
-GHyNMpGeJ7AO+WQYkoWOdBk2LtFVCfYlhLxRkWUHBnI9qUSnbAJ9ewpnWf2moQhg
-2h3sMJ3LxWbg/AdszxHA
-=zHqc
+iQIcBAEBCAAGBQJQNaHSAAoJEECxmPOUX5FEQw0P/1M/kah/6hmN2IKeB2ffnoUj
++znMXWEGTLj/EhcmpG0Ga22R3nh0dKxXn3KjuYxBALDpam2sMvrC+5bc1noso5bx
+sTIdPkh8gcPT8psyFlXoEQMaKiqHiXmZe7vDw4qFD3MW7f3v0HyPLaLFH2w9djG0
+BWDBzKm4ez0xzggJJkBGH461Gd/QdtWrQjfyFEbQlK8u+lwpy8R2gsJ2aTJ0ix+y
+2/qX3RhB/pTtoT7FW109CgegbCB0kdLCfhYiILiT9FLPDc52Be7BgTEc6U4sz0HK
+rd6GjeIBFNRZJpPdWMP1YhSnOzumqHgdoNXq7IkF3Wbe5uHKlsYbuVJTB+0x8ONy
+dUdbnG/C8B04RP8vtHTcNFAyEsPN1WW9sMlOVWzBtgxvD29LOFRuTjcKckiNg7vb
+Pw6YBHrlzaLbGSFzuGbYELPf7AQg4rwqhsCEGPVKiWxNMTA+TR6KXKa9ENSiJFvv
+F6RlMAjn/9HyVtCf+IZGmE50B2xHVIlnBMQyuw8fggAydGDyVk0CHkj7o4Hf7zxp
+54tZi56I7aPXc5ZyoGjOPkt8bds/SHti3CXzArqmj9Say5u1O0E8M5cSAujvj50X
+pQx6QGs2eBG5Yrt9ViHMvndfBD9IGdW4j0b0htW2oc2ijDbk1Ba6/wXJxs0rqcj+
+6pesXB2L0piuSDLYayHX
+=R6RP
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__23_Aug_2012_13_01_43_+1000_1wCCR6CWZH=Fah2Q--
+--Signature=_Thu__23_Aug_2012_13_21_54_+1000_CvmtnfgW4=FwcpY5--
