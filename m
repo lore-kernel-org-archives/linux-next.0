@@ -1,24 +1,24 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 23 (staging/iio/gyro)
-Date: Thu, 23 Aug 2012 09:52:00 -0700
-Message-ID: <50365FB0.6020108@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 23 (sound/isa/cmi)
+Date: Thu, 23 Aug 2012 09:56:34 -0700
+Message-ID: <503660C2.4060208@xenotime.net>
 References: <20120823152203.34297f3bc5fbb43d10653fcc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------030205090609000004030700"
+ boundary="------------050900070709070705010405"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy12-pub.bluehost.com ([50.87.16.10]:43704 "HELO
-	oproxy12-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754726Ab2HWQwI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Aug 2012 12:52:08 -0400
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:40644 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754526Ab2HWQ4l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Aug 2012 12:56:41 -0400
 In-Reply-To: <20120823152203.34297f3bc5fbb43d10653fcc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Barry Song <21cnbao@gmail.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ondrej Zary <linux@rainbow-software.org>, alsa-devel@alsa-project.org
 
 This is a multi-part message in MIME format.
---------------030205090609000004030700
+--------------050900070709070705010405
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 
@@ -30,27 +30,27 @@ On 08/22/2012 10:22 PM, Stephen Rothwell wrote:
 > 
 
 
+
 on i386:
 
-  CC      drivers/staging/iio/gyro/adis16260_core.o
-drivers/staging/iio/gyro/adis16260_core.c: In function 'adis16260_probe':
-drivers/staging/iio/gyro/adis16260_core.c:655:7: warning: passing argument 2 of 'iio_buffer_register' discards qualifiers from pointer target type
-include/linux/iio/buffer.h:185:19: note: expected 'struct iio_chan_spec *' but argument is of type 'const struct iio_chan_spec *'
-drivers/staging/iio/gyro/adis16260_core.c:662:3: error: implicit declaration of function 'iio_scan_mask_set'
-make[5]: *** [drivers/staging/iio/gyro/adis16260_core.o] Error 1
+  CC      sound/isa/cmi8328.o
+sound/isa/cmi8328.c: In function 'snd_cmi8328_remove':
+sound/isa/cmi8328.c:416:24: error: 'cmi' undeclared (first use in this function)
+sound/isa/cmi8328.c:416:24: note: each undeclared identifier is reported only once for each function it appears in
+make[3]: *** [sound/isa/cmi8328.o] Error 1
+
 
 Full randconfig file is attached.
-
 
 -- 
 ~Randy
 
---------------030205090609000004030700
+--------------050900070709070705010405
 Content-Type: text/plain;
- name="config-r7296"
+ name="config.cmi"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment;
- filename="config-r7296"
+ filename="config.cmi"
 
 #
 # Automatically generated file; DO NOT EDIT.
@@ -1290,7 +1290,7 @@ CONFIG_AD9951=y
 CONFIG_ADIS16060=y
 CONFIG_ADIS16080=y
 # CONFIG_ADIS16130 is not set
-CONFIG_ADIS16260=y
+# CONFIG_ADIS16260 is not set
 # CONFIG_ADXRS450 is not set
 
 #
@@ -1826,4 +1826,4 @@ CONFIG_AVERAGE=y
 CONFIG_CORDIC=y
 CONFIG_DDR=y
 
---------------030205090609000004030700--
+--------------050900070709070705010405--
