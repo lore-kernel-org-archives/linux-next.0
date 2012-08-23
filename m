@@ -1,64 +1,67 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [next-20120823] NOHZ: local_softirq_pending 200 on s/r
-Date: Thu, 23 Aug 2012 12:46:37 +0200 (CEST)
-Message-ID: <alpine.LFD.2.02.1208231245510.2856@ionos>
-References: <CA+icZUW2aUP=vjBeoksFU=NAVFMJEiBQy6sNKZczzRPEP9kOfw@mail.gmail.com>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: linux-next: manual merge of the tip tree with the rr tree
+Date: Thu, 23 Aug 2012 12:52:04 +0200
+Message-ID: <20120823105200.GA18835@somewhere.redhat.com>
+References: <20120823124348.831760a775f7bcb9c8e26219@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:53703 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753395Ab2HWKqn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Aug 2012 06:46:43 -0400
-In-Reply-To: <CA+icZUW2aUP=vjBeoksFU=NAVFMJEiBQy6sNKZczzRPEP9kOfw@mail.gmail.com>
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:60475 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933164Ab2HWKwJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Aug 2012 06:52:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20120823124348.831760a775f7bcb9c8e26219@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Paul McKenney <paul.mckenney@linaro.org>, Paul McKenney <paulmck@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, x86@kernel.org, linux-next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
 
-On Thu, 23 Aug 2012, Sedat Dilek wrote:
+On Thu, Aug 23, 2012 at 12:43:48PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in arch/Kconfig
+> between commit bd029f48459a ("Make most arch asm/module.h files use
+> asm-generic/module.h") from the rr tree and commit b952741c8079
+> ("cputime: Generalize CONFIG_VIRT_CPU_ACCOUNTING") from the tip tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-> Hi,
-> 
-> this week I was seeing the below NOHZ messages in my logs especially
-> when suspending and resuming.
-> 
-> Currently, I am using linux-next (next-20120823) on Ubuntu/precise
-> AMD64 with a Intel S(a)N(dy)B(ridge)-CPU.
-> 
-> $ dmesg | grep -A1 -B1 -i nohz
-> [  720.331819] Disabling non-boot CPUs ...
-> [  720.332035] NOHZ: local_softirq_pending 200
-> [  720.434312] smpboot: CPU 1 is now offline
-> [  720.434825] NOHZ: local_softirq_pending 200
-> [  720.538237] smpboot: CPU 2 is now offline
-> [  720.538676] NOHZ: local_softirq_pending 200
-> [  720.642162] smpboot: CPU 3 is now offline
-> 
-> If I manually disable the cpuX... First I did not see NOHZ messages
-> but then there were some lines seen especially when cpuX went offline
-> (here: cpu1)
-> 
-> # echo 0 >/sys/devices/system/cpu/cpu1/online
-> 
-> [ dmeg ]
-> [ 2605.515771] smpboot: CPU 1 is now offline
-> 
-> The same with cpu2 and cpu3.
-> 
-> Jack Winter confirmed to see similiar NOHZ messages also on
-> v3.4.9-rt17 kernel (CPU: Core2Duo when no suspend performed):
-> 
-> [15223.171585] NOHZ: local_softirq_pending 08
+Looks good, thanks!
 
-That's a different issue. That's a pending networking softirq when we
-go idle. Unrelated to the RCU / hotplug issue you are observing.
-
-> So, the issue is seen on linux-next and -rt kernels.
 > 
-> According to Thomas "softirq 0x200 is the RCU one" and he requested me
-> to address the issue to Paul on #linux-rt.
-> 
-> Regards,
-> - Sedat -
-> 
+> diff --cc arch/Kconfig
+> index 3450115,ea5feb6..0000000
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@@ -281,23 -294,7 +294,26 @@@ config SECCOMP_FILTE
+>   
+>   	  See Documentation/prctl/seccomp_filter.txt for details.
+>   
+>  +config HAVE_MOD_ARCH_SPECIFIC
+>  +	bool
+>  +	help
+>  +	  The arch uses struct mod_arch_specific to store data.  Many arches
+>  +	  just need a simple module loader without arch specific data - those
+>  +	  should not enable this.
+>  +
+>  +config MODULES_USE_ELF_RELA
+>  +	bool
+>  +	help
+>  +	  Modules only use ELF RELA relocations.  Modules with ELF REL
+>  +	  relocations will give an error.
+>  +
+>  +config MODULES_USE_ELF_REL
+>  +	bool
+>  +	help
+>  +	  Modules only use ELF REL relocations.  Modules with ELF RELA
+>  +	  relocations will give an error.
+>  +
+> + config HAVE_VIRT_CPU_ACCOUNTING
+> + 	bool
+> + 
+>   source "kernel/gcov/Kconfig"
