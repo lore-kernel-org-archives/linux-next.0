@@ -1,78 +1,119 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ARM: OMAP2+: twl-common: Fix compile time
- error when omap-twl4030 audio is not enabled
-Date: Thu, 23 Aug 2012 15:39:43 +0100
-Message-ID: <20120823143943.GC7995@opensource.wolfsonmicro.com>
-References: <1345703701-27283-1-git-send-email-peter.ujfalusi@ti.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [next-20120823] NOHZ: local_softirq_pending 200 on s/r
+Date: Thu, 23 Aug 2012 08:43:46 -0700
+Message-ID: <20120823154346.GB2465@linux.vnet.ibm.com>
+References: <CA+icZUW2aUP=vjBeoksFU=NAVFMJEiBQy6sNKZczzRPEP9kOfw@mail.gmail.com>
+ <alpine.LFD.2.02.1208231245510.2856@ionos>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8153577186576456791=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1345703701-27283-1-git-send-email-peter.ujfalusi@ti.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Brian Austin <brian.austin@cirrus.com>, Tony Lindgren <tony@atomide.com>, alsa-devel@alsa-project.org, linux-next@vger.kernel.org, linux-omap@vger.kernel.org, Liam Girdwood <lrg@ti.com>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
-
-
---===============8153577186576456791==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="12mfjY/2IcLDkfPj"
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e31.co.us.ibm.com ([32.97.110.149]:51636 "EHLO
+	e31.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757321Ab2HWPpB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Aug 2012 11:45:01 -0400
+Received: from /spool/local
+	by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Thu, 23 Aug 2012 09:44:59 -0600
 Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.02.1208231245510.2856@ionos>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Sedat Dilek <sedat.dilek@gmail.com>, Paul McKenney <paul.mckenney@linaro.org>, LKML <linux-kernel@vger.kernel.org>, x86@kernel.org, linux-next <linux-next@vger.kernel.org>
 
+On Thu, Aug 23, 2012 at 12:46:37PM +0200, Thomas Gleixner wrote:
+> On Thu, 23 Aug 2012, Sedat Dilek wrote:
+> 
+> > Hi,
+> > 
+> > this week I was seeing the below NOHZ messages in my logs especially
+> > when suspending and resuming.
+> > 
+> > Currently, I am using linux-next (next-20120823) on Ubuntu/precise
+> > AMD64 with a Intel S(a)N(dy)B(ridge)-CPU.
+> > 
+> > $ dmesg | grep -A1 -B1 -i nohz
+> > [  720.331819] Disabling non-boot CPUs ...
+> > [  720.332035] NOHZ: local_softirq_pending 200
+> > [  720.434312] smpboot: CPU 1 is now offline
+> > [  720.434825] NOHZ: local_softirq_pending 200
+> > [  720.538237] smpboot: CPU 2 is now offline
+> > [  720.538676] NOHZ: local_softirq_pending 200
+> > [  720.642162] smpboot: CPU 3 is now offline
+> > 
+> > If I manually disable the cpuX... First I did not see NOHZ messages
+> > but then there were some lines seen especially when cpuX went offline
+> > (here: cpu1)
+> > 
+> > # echo 0 >/sys/devices/system/cpu/cpu1/online
+> > 
+> > [ dmeg ]
+> > [ 2605.515771] smpboot: CPU 1 is now offline
+> > 
+> > The same with cpu2 and cpu3.
 
---12mfjY/2IcLDkfPj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hmmm...  RCU is actually relying on being able to prevent entry into idle
+by raising softirq.  This is needed for the aggressive energy-efficiency
+CONFIG_RCU_FAST_NO_HZ feature of RCU.  Therefore, I propose the patch
+shown below.
 
-On Thu, Aug 23, 2012 at 09:35:01AM +0300, Peter Ujfalusi wrote:
-> Fixes:
-> CC      arch/arm/mach-omap2/twl-common.o arch/arm/mach-omap2/twl-common.c=
-:562: error: conflicting types for =E2=80=98omap_twl4030_audio_init=E2=80=99
-> arch/arm/mach-omap2/twl-common.h:62: error: previous declaration of =E2=
-=80=98omap_twl4030_audio_init=E2=80=99 was here
-> make[1]: *** [arch/arm/mach-omap2/twl-common.o] Error 1
-> make: *** [arch/arm/mach-omap2] Error 2
+Sedat, does this patch help?
 
-Applied, thanks.
+							Thanx, Paul
 
---12mfjY/2IcLDkfPj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> > Jack Winter confirmed to see similiar NOHZ messages also on
+> > v3.4.9-rt17 kernel (CPU: Core2Duo when no suspend performed):
+> > 
+> > [15223.171585] NOHZ: local_softirq_pending 08
+> 
+> That's a different issue. That's a pending networking softirq when we
+> go idle. Unrelated to the RCU / hotplug issue you are observing.
+> 
+> > So, the issue is seen on linux-next and -rt kernels.
+> > 
+> > According to Thomas "softirq 0x200 is the RCU one" and he requested me
+> > to address the issue to Paul on #linux-rt.
+> > 
+> > Regards,
+> > - Sedat -
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+time: RCU permitted to stop idle entry via softirq
 
-iQIcBAEBAgAGBQJQNkCmAAoJEFJkBDiqVpZ4b9YP/3Vkt1jQOL2oS8u5mObNoWKX
-vi5naBhFSY70MMByAotV38KG/GQQjQOElTdzrr7yT+78q82PmKaHzAu8tGbUWbgV
-9Opg56dboKHt+bXcjaVPvkb44omCQBPuuRY+kpH1QZN1DoQ+X/DvYe7nvaOJPIBq
-rEcRmq8NrQHCmi995AZX8d4mDzkrCLRVaVM5Xok9Bno4Mej4Byvai/dIXRHA0++A
-TieXvlyBlkD1V+xbLlWv/KlPC9fTW6oLmgwYmIcSu9Wenbm3pjeAscGNpIhMKLnZ
-9uoDDjmZUxcy1EwF26NAcmWdjcvdcKavnh6vBxCSj5x24rqvbvVPw5qVSR/JyBYl
-3QAxNvXCVebO03LZGftjBWxtQWftJA8nVBCORusFcKS4QH2VDYdw9MTSaIF7akHW
-kHQn8hMSUj9i7o/ZfrnUuuSewQG4IlpMk+/X0fURT3yMquYg/gmLMpO5/MOimKSL
-PJEE+1bCE3CfTzc8jReN7I9EnxZaBglh3yTWu+avJyr4ez56fqorUPE3US7HCvJ3
-ayoBjMhWUp20VONBtYuc4A/NghrtI1VG1tGzSkcQaYHVWKu7n1Jpp/92NUW6qNuV
-xMGfyRJhITZcs2q/xL/YInpa/yAAgVkQNSJSc89T2+bESSYlE5sS1uuSn+bI9Blw
-PjpRwe/ua+B9qNucp1Q+
-=RLTd
------END PGP SIGNATURE-----
+RCU needs to be able to use softirq to stop idle entry in order to
+be able to drain RCU callbacks from the current CPU, which in turn
+enables faster entry into dyntick-idle mode, which in turn reduces power
+consumption.  This commit therefore silences the error message that is
+sometimes produced when the going-idle CPU suddenly finds that it has
+an RCU_SOFTIRQ to process.
 
---12mfjY/2IcLDkfPj--
+Signed-off-by: Paul E. McKenney <paul.mckenney@linaro.org>
 
---===============8153577186576456791==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============8153577186576456791==--
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index c5f856a..c0359d2 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -430,6 +430,8 @@ enum
+ 	NR_SOFTIRQS
+ };
+ 
++const int softirq_stop_idle_mask = (~(1 << RCU_SOFTIRQ));
++
+ /* map softirq index to softirq name. update 'softirq_to_name' in
+  * kernel/softirq.c when adding a new softirq.
+  */
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 024540f..84932cf 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -436,7 +436,8 @@ static bool can_stop_idle_tick(int cpu, struct tick_sched *ts)
+ 	if (unlikely(local_softirq_pending() && cpu_online(cpu))) {
+ 		static int ratelimit;
+ 
+-		if (ratelimit < 10) {
++		if (ratelimit < 10 &&
++		    (local_softirq_pending() & softirq_stop_idle_mask)) {
+ 			printk(KERN_ERR "NOHZ: local_softirq_pending %02x\n",
+ 			       (unsigned int) local_softirq_pending());
+ 			ratelimit++;
