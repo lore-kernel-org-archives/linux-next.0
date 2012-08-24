@@ -1,39 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: build failure after merge of the gpio-lw tree
-Date: Thu, 23 Aug 2012 23:43:10 +0200
-Message-ID: <CACRpkdaOyA2jPLkimQEtPFVYyRpxQGV7nV+6kiZ5_+mV827ytw@mail.gmail.com>
-References: <20120706161455.dd899154fbc8a79ee530572f@canb.auug.org.au>
-	<CACRpkdbZddOBf0PXFJjr_aRD3TEa9hSvXjAjf3--8Ko_W0zZcg@mail.gmail.com>
-	<w3psjd55kwl.wl%kuninori.morimoto.gx@renesas.com>
-	<CACRpkdb=bg7fc1HEW5U2PBjs_hLDRgGUNP=O6BEJRmYfCiSWpA@mail.gmail.com>
-	<87r4slg063.wl%kuninori.morimoto.gx@renesas.com>
-	<CACRpkdYSLRiAQd3kGGv8xktAvi+YbBSe1hGqMX2y7fFXQOHPXQ@mail.gmail.com>
-	<87sjbfy0ue.wl%kuninori.morimoto.gx@renesas.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ubi tree
+Date: Fri, 24 Aug 2012 11:34:39 +1000
+Message-ID: <20120824113439.6fdb432e7d6057b3fae27d3f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__24_Aug_2012_11_34_39_+1000_vtrj1iM6.J=rgMAL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:61622 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758315Ab2HWVnM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Aug 2012 17:43:12 -0400
-Received: by wgbfm10 with SMTP id fm10so1106314wgb.1
-        for <linux-next@vger.kernel.org>; Thu, 23 Aug 2012 14:43:10 -0700 (PDT)
-In-Reply-To: <87sjbfy0ue.wl%kuninori.morimoto.gx@renesas.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48833 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754367Ab2HXBer (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Aug 2012 21:34:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2012 at 7:03 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
+--Signature=_Fri__24_Aug_2012_11_34_39_+1000_vtrj1iM6.J=rgMAL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Now, these fixup patches were accepted.
->   http://git.kernel.org/tip/17d83127d4c2b322dd8f217e0ac08c66eb403779
->   http://git.kernel.org/tip/b3ae66f209e8929db62b5a5f874ab2cdcf5ef1d4
->
-> Could you please re-check this dropped patch ?
+Hi Artem,
 
-Yes! I've applied it. Check that it lands nicely in -next.
+After merging the ubi tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Yours,
-Linus Walleij
+drivers/mtd/ubi/build.c: In function 'io_init':
+drivers/mtd/ubi/build.c:658:3: error: 'mtd' undeclared (first use in this f=
+unction)
+
+Caused by commit 8eb71060a0a5 ("UBI: disallow max_beb_per1024 on NOR flash"=
+).
+
+I have used the ubi tree from next-20120823 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__24_Aug_2012_11_34_39_+1000_vtrj1iM6.J=rgMAL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQNtovAAoJEECxmPOUX5FELAkQAKM196Vf4D3uX4vSQflsC4pn
+4vy35xrO0faXHUG8VMI1/Gc26nTehWWZLldcQujNi9sfZBgNMFrHBPP9q/E7yLxv
+Fmky8o53clMUqbDGN1JeW8Be7HXq4GAx98xclC8XmxTd5EYIx6aRSv+9Enr2vpoR
+uXvB6LcTY3SGonTWg78eYrrOx+xuYJ8aRqbTvpbip0/l4oZZEF/u68lHusVtnrFA
+FE7FpIHYhth+C60z5HTl2M0chrh++mJGPvY20XOiSDdCLIAXtaUH/zx+xMMmBb63
+i1Tq97G8YkRf2tRMYMs3wrhZrVUNmkY7qZIjMnzonTthwKz+9NpZu1IAGWzU04+6
+1IVNRIg2W6am/6VYPQml3DAMgf2O7M4wPBuDp69SIYVI20Rne0MgBdgg0IbC/Kjj
+MNDJzBDkvxdvRG9ajLLOui2URSvP4Cd9Qav9cLPAfbIaHbDqL3WPJSeZweo4EMVE
+XkUPwxFF8Oe0gKr+jHP9WkJ3ZwdURzxYMwT809Nklf2AMLQxk0/+MgJS4U/CMEeZ
+l9lW2aUMiP7doBXCJ2eHR0jm1iPNCz6SmG2kxZA9smg6xZvjrh5AGGegsEixV33P
+8A4BEX/CCxcpTBs5aNlZXh2gliQxszxvpQF+32C1t+puyGEAHJXt+t/BdpTTc5Vi
+yflu1F1b+Mk4IfIYdJgn
+=gwV7
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__24_Aug_2012_11_34_39_+1000_vtrj1iM6.J=rgMAL--
