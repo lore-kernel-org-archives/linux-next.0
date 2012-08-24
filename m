@@ -1,49 +1,50 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [next-20120823] NOHZ: local_softirq_pending 200 on s/r
-Date: Fri, 24 Aug 2012 17:40:06 +0200 (CEST)
-Message-ID: <alpine.LFD.2.02.1208241738130.2856@ionos>
-References: <CA+icZUW2aUP=vjBeoksFU=NAVFMJEiBQy6sNKZczzRPEP9kOfw@mail.gmail.com> <1345793168.4331.64.camel@marge.simpson.net> <20120824145247.GB2472@linux.vnet.ibm.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] extcon: extcon-arizona depends on INPUT
+Date: Fri, 24 Aug 2012 10:04:28 -0700
+Message-ID: <5037B41C.6040703@xenotime.net>
+References: <20120824172820.ee0f412d2944b08789414207@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:34036 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759303Ab2HXPkO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Aug 2012 11:40:14 -0400
-In-Reply-To: <20120824145247.GB2472@linux.vnet.ibm.com>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:37194 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756542Ab2HXREi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Aug 2012 13:04:38 -0400
+In-Reply-To: <20120824172820.ee0f412d2944b08789414207@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Mike Galbraith <efault@gmx.de>, sedat.dilek@gmail.com, Paul McKenney <paul.mckenney@linaro.org>, LKML <linux-kernel@vger.kernel.org>, x86@kernel.org, linux-next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Fri, 24 Aug 2012, Paul E. McKenney wrote:
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-> On Fri, Aug 24, 2012 at 09:26:08AM +0200, Mike Galbraith wrote:
-> > On Thu, 2012-08-23 at 12:04 +0200, Sedat Dilek wrote:
-> > 
-> > > Jack Winter confirmed to see similiar NOHZ messages also on
-> > > v3.4.9-rt17 kernel (CPU: Core2Duo when no suspend performed):
-> > > 
-> > > [15223.171585] NOHZ: local_softirq_pending 08
-> > 
-> > These can be caused by blocking while holding local_softirq_lock.
+extcon-arizona uses input_*() functions so it should depend
+on INPUT.
 
-> > Even with per softirq threads, and then (yet more overhead) splitting
-> > the lock to make sure one softirq type can't block another, _and_ only
-> > griping if the lock for the pending softirq is _not_ held, seems the
-> > little bugger can still be triggered very rarely by syn flood induced
-> > handler bail/raise.  Annoying little gripe :)
-> 
-> Hmmm...  Now that you mention it, if I understand correctly, the
-> conversion of spinlocks to sleeplocks in -rt would seem to invalidate
-> this particular diagnostic completely.
-> 
-> So, what am I missing?
+ERROR: "input_event" [drivers/extcon/extcon-arizona.ko] undefined!
+ERROR: "input_free_device" [drivers/extcon/extcon-arizona.ko] undefined!
+ERROR: "input_register_device" [drivers/extcon/extcon-arizona.ko] undefined!
+ERROR: "input_set_capability" [drivers/extcon/extcon-arizona.ko] undefined!
+ERROR: "input_allocate_device" [drivers/extcon/extcon-arizona.ko] undefined!
+ERROR: "input_unregister_device" [drivers/extcon/extcon-arizona.ko] undefined!
 
-I wonder whether the softirq_check_pending_idle() check needs a few
-tweaks for RT, but I have to see a proper context for the failure
-scenario first.
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ drivers/extcon/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-	tglx
+--- linux-next-20120824.orig/drivers/extcon/Kconfig
++++ linux-next-20120824/drivers/extcon/Kconfig
+@@ -41,7 +41,7 @@ config EXTCON_MAX8997
+ 
+ config EXTCON_ARIZONA
+ 	tristate "Wolfson Arizona EXTCON support"
+-	depends on MFD_ARIZONA
++	depends on MFD_ARIZONA && INPUT
+ 	help
+ 	  Say Y here to enable support for external accessory detection
+ 	  with Wolfson Arizona devices. These are audio CODECs with
