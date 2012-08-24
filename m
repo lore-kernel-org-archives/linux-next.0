@@ -1,56 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: probably no trees for the next week
-Date: Fri, 24 Aug 2012 17:45:41 +1000
-Message-ID: <20120824174541.7d659a1763a00fabd360a6de@canb.auug.org.au>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [next-20120823] NOHZ: local_softirq_pending 200 on s/r
+Date: Fri, 24 Aug 2012 07:52:47 -0700
+Message-ID: <20120824145247.GB2472@linux.vnet.ibm.com>
+References: <CA+icZUW2aUP=vjBeoksFU=NAVFMJEiBQy6sNKZczzRPEP9kOfw@mail.gmail.com>
+ <1345793168.4331.64.camel@marge.simpson.net>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__24_Aug_2012_17_45_41_+1000_jrp5pGYsJWHdSa0l"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46014 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751568Ab2HXHpt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Aug 2012 03:45:49 -0400
+Received: from e33.co.us.ibm.com ([32.97.110.151]:46171 "EHLO
+	e33.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754458Ab2HXOxP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Aug 2012 10:53:15 -0400
+Received: from /spool/local
+	by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Fri, 24 Aug 2012 08:53:14 -0600
+Content-Disposition: inline
+In-Reply-To: <1345793168.4331.64.camel@marge.simpson.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Mike Galbraith <efault@gmx.de>
+Cc: sedat.dilek@gmail.com, Paul McKenney <paul.mckenney@linaro.org>, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, linux-next <linux-next@vger.kernel.org>
 
---Signature=_Fri__24_Aug_2012_17_45_41_+1000_jrp5pGYsJWHdSa0l
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Aug 24, 2012 at 09:26:08AM +0200, Mike Galbraith wrote:
+> On Thu, 2012-08-23 at 12:04 +0200, Sedat Dilek wrote:
+> 
+> > Jack Winter confirmed to see similiar NOHZ messages also on
+> > v3.4.9-rt17 kernel (CPU: Core2Duo when no suspend performed):
+> > 
+> > [15223.171585] NOHZ: local_softirq_pending 08
+> 
+> These can be caused by blocking while holding local_softirq_lock.
+> 
+> Even with per softirq threads, and then (yet more overhead) splitting
+> the lock to make sure one softirq type can't block another, _and_ only
+> griping if the lock for the pending softirq is _not_ held, seems the
+> little bugger can still be triggered very rarely by syn flood induced
+> handler bail/raise.  Annoying little gripe :)
 
-Hi all,
+Hmmm...  Now that you mention it, if I understand correctly, the
+conversion of spinlocks to sleeplocks in -rt would seem to invalidate
+this particular diagnostic completely.
 
-Since I will be at Kernel Summit/Plumbers/Linuxcon for the next week,
-there will probably be no linux-next releases until September 4.   I have
-been known to get bored in the past while attending KS, so there may be
-one or two, but no promises.  :-)
+So, what am I missing?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__24_Aug_2012_17_45_41_+1000_jrp5pGYsJWHdSa0l
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQNzElAAoJEECxmPOUX5FEdZUP/iZ08BkumPXbf7jBy9FtwWeW
-2IDyf5/l2ERyLy7ycOzm0OLNvvu1RQJxdMokU44lTvRbMA1fXDTgmULka+Nsx6RZ
-zsOLbPWyHmk1kg/brYw0JDVt3x1nk3UQ4GC7XSZgy4FfDc3LKwMHJgFJatFRgP5Y
-lCQ6pJ2ZJ5gjtgFb/D6cIBgyqx6NEQw30vYN6fYAMzPKD7c8Wwz5PYqRzqPvx9ZG
-H45XHPlrzuGInl0e6Ijgdac1usFwnLPqLUdiGSjKgm18qmAEof75K9pKtvKyfFT7
-CcCtn0tPD2GIB1M+hxnSzCUITRL/xxxcYJyPwQVW3Fn7sbRe9OAImds1bMqc9t+f
-be/0Tr7ao4mf1/9N8djoQcSVFY9r5d/RhXXqV2QucbomyCDXd5zZo11Kc7KELI2n
-DnH8IhZhuyKzZ44NRTib4+eY4mM0fXMairFHijQ4iGxFMWuK9fGjpeSUtg5aPtgh
-5XKOr/DGNAqdwxLKLABkX3splCaB4652wD/lK3bwvFk2/b/hBGDPN2Fb0w7NaQgo
-0sqwRq/mfGJEUAqOkNPpFulh1KDdTt5Eu2RtpOKp6KM91jBM3bFfyAjnkz9shurn
-XxI3Ap1R+FxwVkh7pNIboh6XTs54vdZkw/wPaVBxEtNPWyLfcVAa5M7kS42/p9xS
-J2GAWApLgB+HHc2j8mrd
-=4WZT
------END PGP SIGNATURE-----
-
---Signature=_Fri__24_Aug_2012_17_45_41_+1000_jrp5pGYsJWHdSa0l--
+							Thanx, Paul
