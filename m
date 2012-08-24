@@ -1,62 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ubi tree
-Date: Fri, 24 Aug 2012 11:34:39 +1000
-Message-ID: <20120824113439.6fdb432e7d6057b3fae27d3f@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Fri, 24 Aug 2012 12:19:55 +1000
+Message-ID: <20120824121955.454ebce22142f238f89c9a9a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__24_Aug_2012_11_34_39_+1000_vtrj1iM6.J=rgMAL"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48833 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754367Ab2HXBer (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Aug 2012 21:34:47 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Fri__24_Aug_2012_12_19_55_+1000_wFS..8v=TjKZDnH/"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__24_Aug_2012_11_34_39_+1000_vtrj1iM6.J=rgMAL
+--Signature=_Fri__24_Aug_2012_12_19_55_+1000_wFS..8v=TjKZDnH/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Artem,
+Hi Dave,
 
-After merging the ubi tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/intel_modes.c between commit 4eab81366465
+("drm/i915: extract connector update from intel_ddc_get_modes() for
+reuse") from Linus' tree and commit 451023dc32d4 ("drm: remove the
+raw_edid field from struct drm_display_info") from the drm tree.
 
-drivers/mtd/ubi/build.c: In function 'io_init':
-drivers/mtd/ubi/build.c:658:3: error: 'mtd' undeclared (first use in this f=
-unction)
-
-Caused by commit 8eb71060a0a5 ("UBI: disallow max_beb_per1024 on NOR flash"=
-).
-
-I have used the ubi tree from next-20120823 for today.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__24_Aug_2012_11_34_39_+1000_vtrj1iM6.J=rgMAL
+diff --cc drivers/gpu/drm/i915/intel_modes.c
+index 29b7259,7a5238f..0000000
+--- a/drivers/gpu/drm/i915/intel_modes.c
++++ b/drivers/gpu/drm/i915/intel_modes.c
+@@@ -33,25 -33,6 +33,24 @@@
+  #include "i915_drv.h"
+ =20
+  /**
+ + * intel_connector_update_modes - update connector from edid
+ + * @connector: DRM connector device to use
+ + * @edid: previously read EDID information
+ + */
+ +int intel_connector_update_modes(struct drm_connector *connector,
+ +				struct edid *edid)
+ +{
+ +	int ret;
+ +
+ +	drm_mode_connector_update_edid_property(connector, edid);
+ +	ret =3D drm_add_edid_modes(connector, edid);
+ +	drm_edid_to_eld(connector, edid);
+- 	connector->display_info.raw_edid =3D NULL;
+ +	kfree(edid);
+ +
+ +	return ret;
+ +}
+ +
+ +/**
+   * intel_ddc_get_modes - get modelist from monitor
+   * @connector: DRM connector device to use
+   * @adapter: i2c adapter
+
+--Signature=_Fri__24_Aug_2012_12_19_55_+1000_wFS..8v=TjKZDnH/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQNtovAAoJEECxmPOUX5FELAkQAKM196Vf4D3uX4vSQflsC4pn
-4vy35xrO0faXHUG8VMI1/Gc26nTehWWZLldcQujNi9sfZBgNMFrHBPP9q/E7yLxv
-Fmky8o53clMUqbDGN1JeW8Be7HXq4GAx98xclC8XmxTd5EYIx6aRSv+9Enr2vpoR
-uXvB6LcTY3SGonTWg78eYrrOx+xuYJ8aRqbTvpbip0/l4oZZEF/u68lHusVtnrFA
-FE7FpIHYhth+C60z5HTl2M0chrh++mJGPvY20XOiSDdCLIAXtaUH/zx+xMMmBb63
-i1Tq97G8YkRf2tRMYMs3wrhZrVUNmkY7qZIjMnzonTthwKz+9NpZu1IAGWzU04+6
-1IVNRIg2W6am/6VYPQml3DAMgf2O7M4wPBuDp69SIYVI20Rne0MgBdgg0IbC/Kjj
-MNDJzBDkvxdvRG9ajLLOui2URSvP4Cd9Qav9cLPAfbIaHbDqL3WPJSeZweo4EMVE
-XkUPwxFF8Oe0gKr+jHP9WkJ3ZwdURzxYMwT809Nklf2AMLQxk0/+MgJS4U/CMEeZ
-l9lW2aUMiP7doBXCJ2eHR0jm1iPNCz6SmG2kxZA9smg6xZvjrh5AGGegsEixV33P
-8A4BEX/CCxcpTBs5aNlZXh2gliQxszxvpQF+32C1t+puyGEAHJXt+t/BdpTTc5Vi
-yflu1F1b+Mk4IfIYdJgn
-=gwV7
+iQIcBAEBCAAGBQJQNuTLAAoJEECxmPOUX5FEldsP/jL3ayJVeAjcLLJUyLVyhV2F
+HMZQ2UBAoI3noklLMEmbeozVVQqAlG6sZgZxBWNWj6IKI0Z3lX8YxbI0Z3aM2sOx
+c4oKO0t+C2YrKbF5E7pbVlu03KniBpGMAImDCMIhOtnWZ+mHjSFvHGtHSMvm3LEj
+KADeiaPXxOQkBQw/ZwsYP7IWjDGoROsjGa+gT56dW2ds6YvrOWYs/Ol4enFsYZz7
+rSdEsXhiUJqzV+A155DkZfq7+6xwfuSmj5wuS4b8wlPZ6aM53YYZvzx585DvVJ+O
+hVoMjEOgUvNlfxsDHJn1hseJArHmOOsuosPGC3DgHzZdNoNJQM5Sy4/yesGw/gkE
+uxkV8aArPGkxFy7+THUdlVFIMHWgMNr+d9CouL5MsHs+rNjArQYC2k3ICaqlwhIU
+OfhekW+uGIKODbDs7mrHsLhut5OeI7OMDinFnzCLAAtaDkihg1zUQw69OgobffSv
+aX+C9cINH5IW6mbNRHoZVPuIO1Vvv9kqfFmNvf5ea3Joz491kT8lWWU/Colo4vrO
+QnnKUFv0XaUFdR+deyQHkOhjIf0/2AutbRckWBKsqJdc3Ely4Fm1JbxYYZkiSeMP
+iYZlYEH0PiHNxbvtodcbOPZIwppLkgYVgv9cjgWT/0H5oICRLVpr35FQwwQLZnno
+ygUiicENYbwfqaRFlYXE
+=yY9T
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__24_Aug_2012_11_34_39_+1000_vtrj1iM6.J=rgMAL--
+--Signature=_Fri__24_Aug_2012_12_19_55_+1000_wFS..8v=TjKZDnH/--
