@@ -1,66 +1,77 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: linux-next: build failure after merge of the ubi tree
-Date: Fri, 24 Aug 2012 09:24:20 +0300
-Message-ID: <1345789460.2848.249.camel@sauron.fi.intel.com>
-References: <20120824113439.6fdb432e7d6057b3fae27d3f@canb.auug.org.au>
-Reply-To: dedekind1@gmail.com
+From: Jani Nikula <jani.nikula@intel.com>
+Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
+Date: Fri, 24 Aug 2012 10:13:07 +0300
+Message-ID: <87ehmwbw58.fsf@intel.com>
+References: <20120824121955.454ebce22142f238f89c9a9a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-dKtEwZ6BzLO6pY5cVa1Y"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:44502 "EHLO mga14.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:57032 "EHLO mga11.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756005Ab2HXGTb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 24 Aug 2012 02:19:31 -0400
-In-Reply-To: <20120824113439.6fdb432e7d6057b3fae27d3f@canb.auug.org.au>
+	id S1752554Ab2HXHJN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Aug 2012 03:09:13 -0400
+In-Reply-To: <20120824121955.454ebce22142f238f89c9a9a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>
 
+On Fri, 24 Aug 2012, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Dave,
+>
+> Today's linux-next merge of the drm tree got a conflict in
+> drivers/gpu/drm/i915/intel_modes.c between commit 4eab81366465
+> ("drm/i915: extract connector update from intel_ddc_get_modes() for
+> reuse") from Linus' tree and commit 451023dc32d4 ("drm: remove the
+> raw_edid field from struct drm_display_info") from the drm tree.
 
---=-dKtEwZ6BzLO6pY5cVa1Y
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Ugh, both from me, sorry about that. Wasn't sure when or in what order
+they'd go in.
 
-On Fri, 2012-08-24 at 11:34 +1000, Stephen Rothwell wrote:
-> Hi Artem,
->=20
-> After merging the ubi tree, today's linux-next build (x86_64 allmodconfig=
-)
-> failed like this:
->=20
-> drivers/mtd/ubi/build.c: In function 'io_init':
-> drivers/mtd/ubi/build.c:658:3: error: 'mtd' undeclared (first use in this=
- function)
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Thanks Stephen, fixed, sorry for the breakage.
+I'm not quite sure what the patch below is against, but just removing
+the reference to raw_edid from a slightly different place is the way to
+go. Like you seem to do, so:
 
---=20
-Best Regards,
-Artem Bityutskiy
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 
---=-dKtEwZ6BzLO6pY5cVa1Y
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+I can also provide a patch against drm-next if needed.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+BR,
+Jani.
 
-iQIcBAABAgAGBQJQNx4UAAoJECmIfjd9wqK0aO0P/RDDnUkxtdyojUlk+73uoBG6
-m+EKcULpWrItWyg49xuXqkHhjt015GwOvmz/w+2PPzDYrPOAz1rd72QqVun/3oli
-5o1ygxr+uZ2HjNT+4UhuwwXaaEIWy//jkboTfwaWvRMrGGIWfuG7hbnpLLLmu8iw
-0mhYO8v99eDiXMhVrlFpO+ZihkzoBu6bmEt21hk892Oqkb9+Qazu5cca+b5UekAy
-814prbZaiGmDHM8J0nkECb8CeMX73zge4clkKNw4M1VyNxTWUx/e96DbaEsX5Edt
-mGVsbhDxjmDvUE5kV3MQxXdMfXCZKpXdLSL1VYJREHHoz3SdWEpuyrmBaqDntTXp
-dJF0GpkQET/NicDd8kb9vyIuk7dYFQBEmdE4VBi85psiKEap14rThCenhKyx8o5T
-mevqZmmApWaf47tLt1w2ZvRxAX9TRUkW5aVrFGxdefkskpSDaI0DPy6W1EfLt4xf
-ZpZmpq9+ke+nyzJUiqqgmAKFf+sTvvkzhlxow+OC+DG3oDW5kG7rCRX8u84JMm5h
-xoNgAHSvSwuMviHoOtcxNVC3VRinFQNof7K8t6pXvs2/9/Th7z9CwwdsF/ITCLwg
-BL6G47MIDdPQZb+ertVb7jgbmkyiym9xWA3JDFEMb1fGfrby+z8EorSDGwZUqCE5
-QDiWogHemdG21sGZqf6z
-=Ng61
------END PGP SIGNATURE-----
-
---=-dKtEwZ6BzLO6pY5cVa1Y--
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>
+> diff --cc drivers/gpu/drm/i915/intel_modes.c
+> index 29b7259,7a5238f..0000000
+> --- a/drivers/gpu/drm/i915/intel_modes.c
+> +++ b/drivers/gpu/drm/i915/intel_modes.c
+> @@@ -33,25 -33,6 +33,24 @@@
+>   #include "i915_drv.h"
+>   
+>   /**
+>  + * intel_connector_update_modes - update connector from edid
+>  + * @connector: DRM connector device to use
+>  + * @edid: previously read EDID information
+>  + */
+>  +int intel_connector_update_modes(struct drm_connector *connector,
+>  +				struct edid *edid)
+>  +{
+>  +	int ret;
+>  +
+>  +	drm_mode_connector_update_edid_property(connector, edid);
+>  +	ret = drm_add_edid_modes(connector, edid);
+>  +	drm_edid_to_eld(connector, edid);
+> - 	connector->display_info.raw_edid = NULL;
+>  +	kfree(edid);
+>  +
+>  +	return ret;
+>  +}
+>  +
+>  +/**
+>    * intel_ddc_get_modes - get modelist from monitor
+>    * @connector: DRM connector device to use
+>    * @adapter: i2c adapter
