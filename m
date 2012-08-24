@@ -1,97 +1,106 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
-Date: Fri, 24 Aug 2012 22:29:28 +0200
-Message-ID: <CA+icZUUS1jwh2Dy4_fo+ALr07YCxRY3tcaKUsk3J_CinWZXcRg@mail.gmail.com>
-References: <20120824121955.454ebce22142f238f89c9a9a@canb.auug.org.au>
-	<87ehmwbw58.fsf@intel.com>
-	<CAPM=9twyQ_dFERy5DsBD60o1MZh=kZxpsgPV8J_zDWOo_Uj3bg@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: ia64 won't boot because of rcu_sched self-detected stall
+Date: Fri, 24 Aug 2012 13:37:15 -0700
+Message-ID: <20120824203714.GT2472@linux.vnet.ibm.com>
+References: <CA+8MBbKnW=V_ytS-1qF+O9H63YWROhhc7dTru2BOYbS16iS3Tw@mail.gmail.com>
+ <20120821232038.GV2456@linux.vnet.ibm.com>
+ <3908561D78D1C84285E8C5FCA982C28F19396504@ORSMSX104.amr.corp.intel.com>
+ <20120822004608.GW2456@linux.vnet.ibm.com>
+ <3908561D78D1C84285E8C5FCA982C28F19397175@ORSMSX104.amr.corp.intel.com>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=f46d0408da0738080704c808d530
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:51995 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933261Ab2HXU3b (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Aug 2012 16:29:31 -0400
-In-Reply-To: <CAPM=9twyQ_dFERy5DsBD60o1MZh=kZxpsgPV8J_zDWOo_Uj3bg@mail.gmail.com>
+Received: from e32.co.us.ibm.com ([32.97.110.150]:59204 "EHLO
+	e32.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757675Ab2HXUh3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Aug 2012 16:37:29 -0400
+Received: from /spool/local
+	by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Fri, 24 Aug 2012 14:37:28 -0600
+Received: from d03relay03.boulder.ibm.com (d03relay03.boulder.ibm.com [9.17.195.228])
+	by d03dlp02.boulder.ibm.com (Postfix) with ESMTP id 1DCAC3E4003D
+	for <linux-next@vger.kernel.org>; Fri, 24 Aug 2012 14:37:25 -0600 (MDT)
+Received: from d03av01.boulder.ibm.com (d03av01.boulder.ibm.com [9.17.195.167])
+	by d03relay03.boulder.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id q7OKbJdA133220
+	for <linux-next@vger.kernel.org>; Fri, 24 Aug 2012 14:37:22 -0600
+Received: from d03av01.boulder.ibm.com (loopback [127.0.0.1])
+	by d03av01.boulder.ibm.com (8.14.4/8.13.1/NCO v10.0 AVout) with ESMTP id q7OKbGVE029196
+	for <linux-next@vger.kernel.org>; Fri, 24 Aug 2012 14:37:18 -0600
+Content-Disposition: inline
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F19397175@ORSMSX104.amr.corp.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: Jani Nikula <jani.nikula@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "fweisbec@gmail.com" <fweisbec@gmail.com>
 
---f46d0408da0738080704c808d530
-Content-Type: text/plain; charset=UTF-8
+On Thu, Aug 23, 2012 at 07:54:37PM +0000, Luck, Tony wrote:
+> > Without the calls to rcu_idle_enter() and rcu_idle_exit(), RCU has no
+> > way of knowing that the CPU is idle, so waits forever for a context
+> > switch.
+> 
+> Adding the calls at the places you suggested solves the problem. Thanks.
+> 
+> Which tree is feeding these changes to linux-next? How do I get
+> this ia64 fix into that tree so it will go to Linus in the same merge
+> that the changes that required this will be in?
+> 
+> Do you want me to create a patch (I can do that, but I'm not sure
+> that I can write a good commit message). If someone else does,
+> then it can be marked:
+> 
+> Tested-by: Tony Luck <tony.luck@intel.com>
 
-On Fri, Aug 24, 2012 at 9:12 AM, Dave Airlie <airlied@gmail.com> wrote:
-> On Fri, Aug 24, 2012 at 5:13 PM, Jani Nikula <jani.nikula@intel.com> wrote:
->> On Fri, 24 Aug 2012, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> Hi Dave,
->>>
->>> Today's linux-next merge of the drm tree got a conflict in
->>> drivers/gpu/drm/i915/intel_modes.c between commit 4eab81366465
->>> ("drm/i915: extract connector update from intel_ddc_get_modes() for
->>> reuse") from Linus' tree and commit 451023dc32d4 ("drm: remove the
->>> raw_edid field from struct drm_display_info") from the drm tree.
->>
->> Ugh, both from me, sorry about that. Wasn't sure when or in what order
->> they'd go in.
->>
->>> I fixed it up (see below) and can carry the fix as necessary.
->>
->> I'm not quite sure what the patch below is against, but just removing
->> the reference to raw_edid from a slightly different place is the way to
->> go. Like you seem to do, so:
->>
->> Acked-by: Jani Nikula <jani.nikula@intel.com>
->>
->> I can also provide a patch against drm-next if needed.
->
-> That applied fine, I pulled it in for tomorrow -next.
->
+Does the following match what you tested?  I optimistically assumed
+that it was, but figured I should check.  ;-)
 
-Is that the correct fix for both issues reported by Stephen?
+							Thanx, Paul
 
-- Sedat -
+------------------------------------------------------------------------
 
-> Dave.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ia64: Add missing RCU idle APIs on idle loop
 
---f46d0408da0738080704c808d530
-Content-Type: application/octet-stream;
-	name="0001-drm-i915-Context-fixes.patch"
-Content-Disposition: attachment;
-	filename="0001-drm-i915-Context-fixes.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_h69qhetz0
+Traditionally, the entire idle task served as an RCU quiescent state.
+But when RCU read side critical sections started appearing within the
+idle loop, this traditional strategy became untenable.  The fix was to
+create new RCU APIs named rcu_idle_enter() and rcu_idle_exit(), which
+must be called by each architecture's idle loop so that RCU can tell
+when it is safe to ignore a given idle CPU.
 
-RnJvbSA5NGFlZTRlYjNkZWU1NzEzZjdjMzRjMWQ5NzA1MGM0ODFkMTIzM2Q5IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTZWRhdCBEaWxlayA8c2VkYXQuZGlsZWtAZ21haWwuY29tPgpE
-YXRlOiBGcmksIDI0IEF1ZyAyMDEyIDIyOjI0OjMxICswMjAwClN1YmplY3Q6IFtQQVRDSCAtbmV4
-dF0gZHJtOiBpOTE1OiBDb250ZXh0IGZpeGVzCgoKU2lnbmVkLW9mZi1ieTogU2VkYXQgRGlsZWsg
-PHNlZGF0LmRpbGVrQGdtYWlsLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dl
-bS5jICAgIHwgICAgNCArKy0tCiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9tb2Rlcy5jIHwg
-ICAgMSAtCiAyIGZpbGVzIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkK
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dlbS5jIGIvZHJpdmVycy9n
-cHUvZHJtL2k5MTUvaTkxNV9nZW0uYwppbmRleCA0ZjY4NDFkLi5lOGE1Y2IyIDEwMDY0NAotLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dlbS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9p
-OTE1L2k5MTVfZ2VtLmMKQEAgLTIyNzMsMTEgKzIyNzMsMTEgQEAgaW50IGk5MTVfZ3B1X2lkbGUo
-c3RydWN0IGRybV9kZXZpY2UgKmRldikKIAogCS8qIEZsdXNoIGV2ZXJ5dGhpbmcgb250byB0aGUg
-aW5hY3RpdmUgbGlzdC4gKi8KIAlmb3JfZWFjaF9yaW5nKHJpbmcsIGRldl9wcml2LCBpKSB7Ci0J
-CXJldCA9IGk5MTVfc3dpdGNoX2NvbnRleHQocmluZywgTlVMTCwgREVGQVVMVF9DT05URVhUX0lE
-KTsKKwkJcmV0ID0gaTkxNV9yaW5nX2lkbGUocmluZyk7CiAJCWlmIChyZXQpCiAJCQlyZXR1cm4g
-cmV0OwogCi0JCXJldCA9IGk5MTVfcmluZ19pZGxlKHJpbmcpOworCQlyZXQgPSBpOTE1X3N3aXRj
-aF9jb250ZXh0KHJpbmcsIE5VTEwsIERFRkFVTFRfQ09OVEVYVF9JRCk7CiAJCWlmIChyZXQpCiAJ
-CQlyZXR1cm4gcmV0OwogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9t
-b2Rlcy5jIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfbW9kZXMuYwppbmRleCAyOWI3MjU5
-Li40YmMxYzBmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9tb2Rlcy5j
-CisrKyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX21vZGVzLmMKQEAgLTQ1LDcgKzQ1LDYg
-QEAgaW50IGludGVsX2Nvbm5lY3Rvcl91cGRhdGVfbW9kZXMoc3RydWN0IGRybV9jb25uZWN0b3Ig
-KmNvbm5lY3RvciwKIAlkcm1fbW9kZV9jb25uZWN0b3JfdXBkYXRlX2VkaWRfcHJvcGVydHkoY29u
-bmVjdG9yLCBlZGlkKTsKIAlyZXQgPSBkcm1fYWRkX2VkaWRfbW9kZXMoY29ubmVjdG9yLCBlZGlk
-KTsKIAlkcm1fZWRpZF90b19lbGQoY29ubmVjdG9yLCBlZGlkKTsKLQljb25uZWN0b3ItPmRpc3Bs
-YXlfaW5mby5yYXdfZWRpZCA9IE5VTEw7CiAJa2ZyZWUoZWRpZCk7CiAKIAlyZXR1cm4gcmV0Owot
-LSAKMS43LjkuNQoK
---f46d0408da0738080704c808d530--
+Unfortunately, this fix was never applied to ia64, a shortcoming remedied
+by this commit.
+
+Reported by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Paul E. McKenney <paul.mckenney@linaro.org>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Tested by: Tony Luck <tony.luck@intel.com>
+
+diff --git a/arch/ia64/kernel/process.c b/arch/ia64/kernel/process.c
+index dd6fc14..3e316ec 100644
+--- a/arch/ia64/kernel/process.c
++++ b/arch/ia64/kernel/process.c
+@@ -29,6 +29,7 @@
+ #include <linux/kdebug.h>
+ #include <linux/utsname.h>
+ #include <linux/tracehook.h>
++#include <linux/rcupdate.h>
+ 
+ #include <asm/cpu.h>
+ #include <asm/delay.h>
+@@ -279,6 +280,7 @@ cpu_idle (void)
+ 
+ 	/* endless idle loop with no priority at all */
+ 	while (1) {
++		rcu_idle_enter();
+ 		if (can_do_pal_halt) {
+ 			current_thread_info()->status &= ~TS_POLLING;
+ 			/*
+@@ -309,6 +311,7 @@ cpu_idle (void)
+ 			normal_xtp();
+ #endif
+ 		}
++		rcu_idle_exit();
+ 		schedule_preempt_disabled();
+ 		check_pgt_cache();
+ 		if (cpu_is_offline(cpu))
