@@ -1,107 +1,102 @@
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH] ASoC: omap-mcbsp: Fix compilation error due to leftover
- code
-Date: Mon, 03 Sep 2012 11:56:21 +0300
-Message-ID: <504470B5.20404@ti.com>
-References: <1346335575-1592-1-git-send-email-peter.ujfalusi@ti.com> <20120830180219.GI4356@opensource.wolfsonmicro.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Renesas linux-next tree
+Date: Tue, 4 Sep 2012 09:58:29 +1000
+Message-ID: <20120904095829.e5fb4e978224ad3220d6cc15@canb.auug.org.au>
+References: <201208270936.09252.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__4_Sep_2012_09_58_29_+1000_q9DYRHeFvkgcsRwD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog133.obsmtp.com ([74.125.149.82]:35381 "EHLO
-	na3sys009aog133.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752208Ab2ICI4A (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Sep 2012 04:56:00 -0400
-Received: by obbuo13 with SMTP id uo13so8794243obb.19
-        for <linux-next@vger.kernel.org>; Mon, 03 Sep 2012 01:55:59 -0700 (PDT)
-In-Reply-To: <20120830180219.GI4356@opensource.wolfsonmicro.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39518 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754262Ab2ICX6j (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Sep 2012 19:58:39 -0400
+In-Reply-To: <201208270936.09252.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Liam Girdwood <lrg@ti.com>, alsa-devel@alsa-project.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
 
-Hi Mark,
+--Signature=_Tue__4_Sep_2012_09_58_29_+1000_q9DYRHeFvkgcsRwD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 08/30/2012 09:02 PM, Mark Brown wrote:
-> On Thu, Aug 30, 2012 at 05:06:15PM +0300, Peter Ujfalusi wrote:
->> Part of commit (which patches sound/soc/omap/mcbsp.c file):
->> 8fef626 ARM/ASoC: omap-mcbsp: Remove CLKR/FSR mux configuration code
->>
->> since the tree where it has been applied did not had the earlier pat=
-ch:
->> d0db84e ASoC: omap-mcbsp: Fix 6pin mux configuration
->> which changed code around omap_mcbsp_6pin_src_mux().
->>
->> Because of the missing part from 8fef626 the sound/soc/omap/mcbsp.c =
-does
->> not compile in linux-next.
+Hi Rafael,
+
+On Mon, 27 Aug 2012 09:36:09 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+>
+> Since the Renesas arm/mach-shmobile tree will be maintained by
+> Simon Horman now, please stop pulling from the 'next' branch
+> of my 'renesas.git' tree at:
 >=20
-> This makes little sense to me.  If the other patch is a dependency wh=
-y
-> not merge that dependency?  What does this mean at the code level?
-
-Commit d0db84e ASoC: omap-mcbsp: Fix 6pin mux configuration
-
-changed a line within omap_mcbsp_6pin_src_mux() function to fix an erro=
-r which
-prevents the mux configuration in 3.4, 3.5, 3.6 kernels.
-
-Commit 8fef626 ARM/ASoC: omap-mcbsp: Remove CLKR/FSR mux configuration =
-code
-
-should remove this function fir 3.7 and the mux configuration should be=
- done
-in the board files or via DTS.
-
-You have reported when you applied the McBSP DT series that commit 8fef=
-626 had
-conflict when you applied it. This was because I have created the serie=
-s on on
-a branch where the 6pin function was already fixed since I knew it is g=
-oing to
-be in 3.6 when the 3.7 merge will open.
-
-> You're just talking about textual issues here, there's no semantic
-> information about what any of this stuff does or how the changes rela=
-te
-> to each other at all.
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/renesas.git next
 >=20
->> When you applied 8fef626 you mentioned that it did not applied clean=
-ly.
->> The reason was that the branch did not had commit d0db84e applied pr=
-ior to the
->> series:
->> http://mailman.alsa-project.org/pipermail/alsa-devel/2012-August/054=
-668.html
+> and please include the Simon's tree at:
 >=20
->> Now I can not find the d0db84e commit in the asoc tree (not in for-3=
-=2E6, for-3.7
->> and not in for-next branch) anymore.
+> git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
 >=20
-> The above doesn't mean much to me.
+> into linux-next instead.
 
-So how can we resolve this?
-Are you going to rebase or update your 3.7, for-next topic/omap branche=
-s on
-mainline so they will contain the mainline patch (d0db84e)?
-Not sure if I mentioned it but I have created a branch (for you to take=
-, or
-observe):
-git://gitorious.org/omap-audio/linux-audio.git peter/topic/for-mark/oma=
-p-3.7
+I have changed that from today and set Simon as the contact person for
+problems.
 
-Here I have your topic/omap branch rebased on mainline and I have fixed=
- the
-commit 8fef626 and added the missing chunk in order to avoid build fail=
-ure.
+This is for Simon:
 
-A patch against your 3.7, for-next, topic/omap will not apply in linux-=
-next
-and a patch on top of linux-next would not apply in the asoc tree.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-Please let me know how can I help to resolve this - I do not want 3.7-r=
-c1 to
-be broken when it comes out for OMAP audio.
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-Thank you,
-P=E9ter
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Tue__4_Sep_2012_09_58_29_+1000_q9DYRHeFvkgcsRwD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQRUQlAAoJEECxmPOUX5FEPh4P/AyIYnNxRf8hkwtdvg5kWdOu
+ea65ktyVS1wprjZ6jXCSYI3mU864tSjuFieSwkoO2to8QwaIaTmlXwA2u4u5prLz
+SETz+ittBbSbcVi/6frDwFqKKYRGKH8p9R1I+f40eTpLnB1ddQf0AIa0nRUKyZF2
+JSWxy7CSSYoIxwg+xxAoCeBGmNFolPPaMwaHoJXbY5tqW/CT/lv97vZvHaKPUq9f
+a8CGOfVYap5bD3ejMBDotBx6VBU9Rn+aTZ3p8lcB9QUxTCbrs/5p7uDBrEwA22lx
+I9VUfowYZdE9xHubwtwpGPqfjfsgWE7fGYOemCcfbR8dMu840Z4KV7n26DT3E+lC
+k0Uy0VGoxS9rxuLn1sVrNUI20jpdA+XCTjbIu/y9qejLwb8FKHquckVDlF77Mp7Q
+2SBawbvP9lCX2Cjw72GVkPIInfpXqW2G+/Ldd1QJ6C1ZGQonNKVGhc02boDiiC/1
+SCcn4j62cZEpuytA0AHUJLYFc+6d9nED5NQQS6Ni0F7zVdfPylXmVEp8NpPIKRlp
+uccNyd4iFEubbvBYW42H5+Lr81IoVXhi/VwHyzQ0aaEEDomQ2QtAQk+gQaKf83VG
+iysdWVPgT5rGA/ZSIMLq0IISE2P2H59uUgGuQ1CSd6fZcjyJYRrJ8uXCEnEZz0vC
+XXDvNd91DnGaZIhip67Y
+=41Y0
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__4_Sep_2012_09_58_29_+1000_q9DYRHeFvkgcsRwD--
