@@ -1,38 +1,39 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the
-	arm-current tree
-Date: Tue, 4 Sep 2012 10:01:32 +0100
-Message-ID: <20120904090132.GG24085@n2100.arm.linux.org.uk>
-References: <20120904160626.f1dcb67ebbb145053c49da8c@canb.auug.org.au> <201209040808.25103.arnd@arndb.de>
+From: Jerry Snitselaar <dev@snitselaar.org>
+Subject: linux-next for Sept 4, recursive dependency detected
+Date: Tue, 4 Sep 2012 03:28:33 -0700
+Message-ID: <20120904102833.GA7095@cantor.Home>
+Reply-To: Jerry Snitselaar <dev@snitselaar.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:52202 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754688Ab2IDJCG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Sep 2012 05:02:06 -0400
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:48614 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752253Ab2IDK2i (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Sep 2012 06:28:38 -0400
+Received: by pbbrr13 with SMTP id rr13so9270217pbb.19
+        for <linux-next@vger.kernel.org>; Tue, 04 Sep 2012 03:28:37 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <201209040808.25103.arnd@arndb.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>
+To: linux-next@vger.kernel.org
 
-On Tue, Sep 04, 2012 at 08:08:24AM +0000, Arnd Bergmann wrote:
-> On Tuesday 04 September 2012, Stephen Rothwell wrote:
-> > Today's linux-next merge of the arm-soc tree got a conflict in
-> > arch/arm/mm/mmu.c between commit a849088aa155 ("ARM: Fix ioremap() of
-> > address zero") from the arm-current tree and commit c2794437091a ("ARM:
-> > Add fixed PCI i/o mapping") from the arm-soc tree.
-> > 
-> > I am not sure how to fix this, so I have used the arm-current version of
-> > the change to pmd_empty_section_gap() since that changed the vm->flags.
-> > It may be that just changing the vm->flags value in vm_reserve_area_early()
-> > would be ok?
-> 
-> If I read this correctly, we want pci_reserve_io to use VM_ARM_STATIC_MAPPING
-> while pmd_empty_section_gap should use VM_ARM_EMPTY_MAPPING, so we probably
-> want to add a flag argument to the vm_reserve_area_early() function.
+make allyesconfig gives the following output:
 
-Whereas Rob said to me that both can use VM_ARM_EMPTY_MAPPING when I
-queried this conflict last week.
+Switched to a new branch 'next'
+snits@cantor:~/dev/uek=>make allyesconfig
+  HOSTCC  scripts/basic/fixdep
+  HOSTCC  scripts/kconfig/conf.o
+  SHIPPED scripts/kconfig/zconf.tab.c
+  SHIPPED scripts/kconfig/zconf.lex.c
+  SHIPPED scripts/kconfig/zconf.hash.c
+  HOSTCC  scripts/kconfig/zconf.tab.o
+  HOSTLD  scripts/kconfig/conf
+scripts/kconfig/conf --allyesconfig Kconfig
+drivers/gpu/drm/udl/Kconfig:1:error: recursive dependency detected!
+drivers/gpu/drm/udl/Kconfig:1:	     symbol DRM_UDL depends on USB_ARCH_HAS_HCD
+drivers/usb/Kconfig:76:		     symbol USB_ARCH_HAS_HCD depends on USB_SUPPORT
+drivers/usb/Kconfig:58:		     symbol USB_SUPPORT is selected by DRM_USB
+drivers/gpu/drm/Kconfig:22:	     symbol DRM_USB is selected by DRM_UDL
+#
+# configuration written to .config
+#
