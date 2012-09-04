@@ -1,90 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the drm tree
-Date: Tue, 4 Sep 2012 13:58:29 +1000
-Message-ID: <20120904135829.6beb08f80919aa2b5c8bf55f@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-ppc tree with the kvm tree
+Date: Tue, 4 Sep 2012 15:04:30 +1000
+Message-ID: <20120904150430.3f8eda1a2021fb386082697c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__4_Sep_2012_13_58_29_+1000_Ns+_TNFZ68oHViFq"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49814 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756633Ab2IDD6k (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Sep 2012 23:58:40 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ boundary="Signature=_Tue__4_Sep_2012_15_04_30_+1000_4LaNRv6o8+q_4sla"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexander Graf <agraf@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com>, Avi Kivity <avi@redhat.com>, Bharat Bhushan <r65777@freescale.com>, Scott Wood <scottwood@freescale.com>, Liu Yu <yu.liu@freescale.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__4_Sep_2012_13_58_29_+1000_Ns+_TNFZ68oHViFq
+--Signature=_Tue__4_Sep_2012_15_04_30_+1000_4LaNRv6o8+q_4sla
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Alexander,
 
-After merging the drm tree, today's linux-next build (powerpc
-ppc64_defconfig) produced these warnings:
+Today's linux-next merge of the kvm-ppc tree got a conflict in
+include/linux/kvm.h between commit 4d8b81abc47b ("KVM: introduce readonly
+memslot") from the kvm tree and commit 1db21d25a11b ("KVM: PPC: booke:
+Add watchdog emulation") from the kvm-ppc tree.
 
-drivers/gpu/drm/udl/Kconfig:1:error: recursive dependency detected!
-drivers/gpu/drm/udl/Kconfig:1:	symbol DRM_UDL depends on USB_ARCH_HAS_HCD
-drivers/usb/Kconfig:76:	symbol USB_ARCH_HAS_HCD depends on USB_SUPPORT
-drivers/usb/Kconfig:58:	symbol USB_SUPPORT is selected by DRM_USB
-drivers/gpu/drm/Kconfig:22:	symbol DRM_USB is selected by DRM_UDL
-warning: (PPC_PS3) selects USB_OHCI_LITTLE_ENDIAN which has unmet direct de=
-pendencies (USB_SUPPORT && USB_OHCI_HCD)
-warning: (PPC_PS3 && PPC_CELLEB) selects USB_OHCI_BIG_ENDIAN_MMIO which has=
- unmet direct dependencies (USB_SUPPORT && USB_OHCI_HCD)
-warning: (PPC_PS3 && PPC_CELLEB && USB_EHCI_HCD_PMC_MSP && XPS_USB_HCD_XILI=
-NX && USB_OCTEON_EHCI) selects USB_EHCI_BIG_ENDIAN_MMIO which has unmet dir=
-ect dependencies (USB_SUPPORT && USB_EHCI_HCD && (PPC_CELLEB || PPC_PS3 || =
-440EPX || ARCH_IXP4XX || XPS_USB_HCD_XILINX || PPC_MPC512x || CPU_CAVIUM_OC=
-TEON || PMC_MSP || SPARC_LEON || MIPS_SEAD3))
-
-The x86_64 allmodconfig produces these:
-
-drivers/gpu/drm/udl/Kconfig:1:error: recursive dependency detected!
-drivers/gpu/drm/udl/Kconfig:1:	symbol DRM_UDL depends on USB_ARCH_HAS_HCD
-drivers/usb/Kconfig:76:	symbol USB_ARCH_HAS_HCD depends on USB_SUPPORT
-drivers/usb/Kconfig:58:	symbol USB_SUPPORT is selected by DRM_USB
-drivers/gpu/drm/Kconfig:22:	symbol DRM_USB is selected by DRM_UDL
-warning: (MOUSE_APPLETOUCH && MOUSE_BCM5974 && MOUSE_SYNAPTICS_USB && JOYST=
-ICK_XPAD && TABLET_USB_ACECAD && TABLET_USB_AIPTEK && TABLET_USB_HANWANG &&=
- TABLET_USB_KBTAB && TABLET_USB_WACOM && TOUCHSCREEN_USB_COMPOSITE && INPUT=
-_ATI_REMOTE2 && INPUT_KEYSPAN_REMOTE && INPUT_POWERMATE && INPUT_YEALINK &&=
- INPUT_CM109 && RC_ATI_REMOTE && IR_IMON && IR_MCEUSB && IR_REDRAT3 && IR_S=
-TREAMZAP && IR_IGUANA && IR_TTUSBIR && DRM_USB) selects USB which has unmet=
- direct dependencies (USB_SUPPORT && USB_ARCH_HAS_HCD)
-
-Maybe introduced by commit df0b34430072 ("drm/usb: select USB_SUPPORT in
-Kconfig"), maybe interacting with a commit 8f057d7bca54 ("gpu/mfd/usb:
-Fix USB randconfig problems") from Linus' tree (that added "depends on
-USB_ARCH_HAS_HCD" to "config DRM_USB" and "config DRM_UDL").
-
-I have left this mess for now, but it needs addressing.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__4_Sep_2012_13_58_29_+1000_Ns+_TNFZ68oHViFq
+diff --cc include/linux/kvm.h
+index d808694,f4f5be8..0000000
+--- a/include/linux/kvm.h
++++ b/include/linux/kvm.h
+@@@ -622,9 -621,7 +625,10 @@@ struct kvm_ppc_smmu_info=20
+  #define KVM_CAP_PPC_GET_SMMU_INFO 78
+  #define KVM_CAP_S390_COW 79
+  #define KVM_CAP_PPC_ALLOC_HTAB 80
+ -#define KVM_CAP_PPC_BOOKE_WATCHDOG 81
+ +#ifdef __KVM_HAVE_READONLY_MEM
+ +#define KVM_CAP_READONLY_MEM 81
+ +#endif
+++#define KVM_CAP_PPC_BOOKE_WATCHDOG 82
+ =20
+  #ifdef KVM_CAP_IRQ_ROUTING
+ =20
+
+--Signature=_Tue__4_Sep_2012_15_04_30_+1000_4LaNRv6o8+q_4sla
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQRXxlAAoJEECxmPOUX5FEG8sP/ifSYmjMeRBlnJEl+EqiCikG
-LJ5L4kIm+LfHinakkGIlGJJQ6vAqI9UMQjpQ+YGm/ZTMruQzOTDUOQKtUG4++n5o
-3kXscQVAomQJOvQUSWwPU9uiXDlfuRBbM33TtkHuyDOXzQFS08p02MNSclo3ETPe
-DXKLHTYr0jExz3v4j42p93Vu2I9CLEhGY9z3WuTq7SbRgSKZPUGjLNr5wj5i4nvB
-yVdFFTSIotNW57UhjP8ACoU6CnR69RaFeQfwfAgmtwx1bFMJeo7HDdVv33XBcQBg
-J06J/VCc8W6gVdlcQ3KdHkozhsSOxJ8Qdl+c6KI9xFpI+p51FqDHqTTSnBufMMAR
-SQ6XZ4jjeemIzQGKkmcrD+sbraltQn2onWJPeaqMzWRn7Sv8pUXNQKz3jpv2qGC4
-KJFyZMFJTeg/nqh3Z6Jt0rA5wyFoeFRPD+Pc/0PYCbYPjfJq8EQuSw5a1RAF6C1r
-x3diH5mhVvuIYK/LTCvAhlEhmCBX1gA2iIhl/jihaN+OAzVFMkfXttdffFBzlcwa
-OO8FFv4kIX7fq3Jwy8BrrdPHEecA1VFxteI4AVb9eS1jAzyuB8SsSsApuFx5TiF4
-VNXPXhvf9yUQdr92L+bGSvvQWbXAs+XtfNeXQoIrQXMzAuAJQcdVI5eXTIz3i1SV
-yiHOVkw8PDIdjb7fIAGA
-=bHKG
+iQIcBAEBCAAGBQJQRYveAAoJEECxmPOUX5FEJaQP/jcmNHUPmNFLVouJyNTma40g
+5fuGXPqvz6kaDDhdi5qMYe8noqLixjGhrksEiHEZ5gIE0619+WGqxpFMwHVUBDmV
+CmurQZxQ5nqcrVCpNLgItXNcjZuTZ1gf6sj5fMhP+PhuxKx2Iwlm5hJR7h8kTPZW
+rs0GvG6rHto2O06TCHWREMNl0E/duE08xoIlGN3V272ULY4ixd88jVrvrjEDGNWg
+YH76KbFp6tpOPLpKB5stLlX56+8YCMoNLEPi0WbjKbhy9pDHIGD60wOeqkaJoRXJ
+aLRlhLnH1faxalhX+q/ThQZbGKgF0BMO0HwpNB9KZwNHy6s09zkn4VYwtrXmEm9a
+HtMsKA7tR77yQx8O3lgQ1krqx6lnelBC7ue9expI4+SzgAViHLVMqZDJpVwk3u+F
+5fsEbrvRaWOCWDVRU2gDM0JHX57lCfyRqh6q6UMs8V1E9FHLmTNHTwe89wlq0bNc
++Q+sLsqyMOcP1/XcGyS7KUfwMNSB7GuhiussH/4/9BTOaR1UkNNBkmw1STkaDo+x
+vIwX2/Z9rA6+M3z32WJ2iaG1jralytn6mV/cVxiwLK5+lW06kfOEQFDBGEomRU9s
+XtMxzi5lD2o6Wog/0qUV2Mm94aMX/joFR/iGxZeZyi+0ZmZduA82dLh34ZXMVUja
+sVMxdSVoJrVf+7qnjehA
+=XtJU
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__4_Sep_2012_13_58_29_+1000_Ns+_TNFZ68oHViFq--
+--Signature=_Tue__4_Sep_2012_15_04_30_+1000_4LaNRv6o8+q_4sla--
