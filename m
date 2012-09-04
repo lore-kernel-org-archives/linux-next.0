@@ -1,90 +1,83 @@
-From: Jerry Chu <hkchu@google.com>
-Subject: Re: linux-next: build failure after merge of the final tree (net-next
- tree related)
-Date: Tue, 4 Sep 2012 12:50:49 -0700
-Message-ID: <CAPshTChcayG2ryKQ4N9FLHbHnC28mJh97598qQK05nV8WM9OQw@mail.gmail.com>
-References: <20120904165853.bc2f7b6524a3b03a09c4180d@canb.auug.org.au>
-	<20120904.142059.559850562286758578.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] bus: fix omap compile error if CONFIG_OF is true
+Date: Wed, 5 Sep 2012 07:37:10 +1000
+Message-ID: <20120905073710.566eabb8561b1a701a58e438@canb.auug.org.au>
+References: <20120904144123.25261.79625.stgit@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__5_Sep_2012_07_37_10_+1000_XFyW8kQxDc+iZM1q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:59445 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757689Ab2IDTuv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Sep 2012 15:50:51 -0400
-Received: by lbbgj3 with SMTP id gj3so3369119lbb.19
-        for <linux-next@vger.kernel.org>; Tue, 04 Sep 2012 12:50:50 -0700 (PDT)
-In-Reply-To: <20120904.142059.559850562286758578.davem@davemloft.net>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45633 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932569Ab2IDVh2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Sep 2012 17:37:28 -0400
+In-Reply-To: <20120904144123.25261.79625.stgit@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: kishon@ti.com, linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>
 
-On Tue, Sep 4, 2012 at 11:20 AM, David Miller <davem@davemloft.net> wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 4 Sep 2012 16:58:53 +1000
+--Signature=_Wed__5_Sep_2012_07_37_10_+1000_XFyW8kQxDc+iZM1q
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+On Tue, 04 Sep 2012 15:41:35 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
+e:
 >
->> net/built-in.o: In function `tcp_fastopen_ctx_free':
->> tcp_fastopen.c:(.text+0x5cc5c): undefined reference to `crypto_destroy_tfm'
->> net/built-in.o: In function `tcp_fastopen_reset_cipher':
->> (.text+0x5cccc): undefined reference to `crypto_alloc_base'
->> net/built-in.o: In function `tcp_fastopen_reset_cipher':
->> (.text+0x5cd6c): undefined reference to `crypto_destroy_tfm'
->>
->> Presumably caused by commit 104671636897 ("tcp: TCP Fast Open Server -
->> header & support functions") from the net-next tree.  I assume that some
->> dependency on the CRYPTO infrastructure is missing.
->
-> Thanks for the report, I've pushed the following change to net-next
-> which should address this:
->
-> --------------------
-> [PATCH] net: Add INET dependency on aes crypto for the sake of TCP fastopen.
->
-> Stephen Rothwell says:
->
-> ====================
-> After merging the final tree, today's linux-next build (powerpc
-> ppc44x_defconfig) failed like this:
->
-> net/built-in.o: In function `tcp_fastopen_ctx_free':
-> tcp_fastopen.c:(.text+0x5cc5c): undefined reference to `crypto_destroy_tfm'
-> net/built-in.o: In function `tcp_fastopen_reset_cipher':
-> (.text+0x5cccc): undefined reference to `crypto_alloc_base'
-> net/built-in.o: In function `tcp_fastopen_reset_cipher':
-> (.text+0x5cd6c): undefined reference to `crypto_destroy_tfm'
->
-> Presumably caused by commit 104671636897 ("tcp: TCP Fast Open Server -
-> header & support functions") from the net-next tree.  I assume that some
-> dependency on the CRYPTO infrastructure is missing.
->
-> I have reverted commit 1bed966cc3bd ("Merge branch
-> 'tcp_fastopen_server'") for today.
-> ====================
->
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
+> From: Alan Cox <alan@linux.intel.com>
+>=20
+> Signed-off-by: Alan Cox <alan@linux.intel.com>
 > ---
->  net/Kconfig |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
->
-> diff --git a/net/Kconfig b/net/Kconfig
-> index 245831b..30b48f5 100644
-> --- a/net/Kconfig
-> +++ b/net/Kconfig
-> @@ -52,6 +52,8 @@ source "net/iucv/Kconfig"
->
->  config INET
->         bool "TCP/IP networking"
-> +       select CRYPTO
-> +       select CRYPTO_AES
->         ---help---
->           These are the protocols used on the Internet and on most local
->           Ethernets. It is highly recommended to say Y here (this will enlarge
-> --
-> 1.7.7.6
->
+>=20
+>  drivers/bus/omap-ocp2scp.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/bus/omap-ocp2scp.c b/drivers/bus/omap-ocp2scp.c
+> index 9075ef8..ff63560 100644
+> --- a/drivers/bus/omap-ocp2scp.c
+> +++ b/drivers/bus/omap-ocp2scp.c
+> @@ -67,7 +67,7 @@ static const struct of_device_id omap_ocp2scp_id_table[=
+] =3D {
+>  	{ .compatible =3D "ti,omap-ocp2scp" },
+>  	{}
+>  };
+> -MODULE_DEVICE_TABLE(of, omap_usb2_id_table);
+> +MODULE_DEVICE_TABLE(of, omap_ocp2scp_id_table);
+>  #endif
+> =20
+>  static struct platform_driver omap_ocp2scp_driver =3D {
 
-Thanks for fixing this, David. (Sorry for missing the dependency.)
+This was caused by commit 26a84b3eaef0 ("drivers: bus: add a new driver
+for omap-ocp2scp") which has been in the arm-soc tree for a few days ...
 
-Jerry
+Thanks, Alan.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__5_Sep_2012_07_37_10_+1000_XFyW8kQxDc+iZM1q
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQRnSGAAoJEECxmPOUX5FESMYP/RvuucZOe7Xu6Uf/Jxa2tq1u
+fpnMNLer0+ytgMB/QOy3wcuYqqZOEO955vs3MdHPbLoCZHWw0Kk3ZKG3XtwxtLxK
+bHeAuWrBTkcHMf7guAXIttQdr6NH+yGc6z6VPkvxKpJcL6owt4M5PKAbBe4rQif9
+BfLeqRKgAIWeTP/sYXPFa6GDNLucv2vGm0veO8Mq446EbLfTSZb8whmk90w/Sgbj
+FjxuOXvTV/t9FemQVWx/QzjqFHc59XqxqGX1gpxRhMPAGiyFArRsofNlzPrEUaHv
+DQvvafq9unQCAux5CG5fDZH3Td/TBiw1BxOtDKKQ0xmzvzvKNeY9H3ilveVxMKcs
+aC6dCv5cvL/kvTjDE2hQf2ZO5MDsI+PEgWrw60E8DcmyBC6aQz2geZgSP0TMU8bW
+6y6F8IkSAnzPgUrs1+fwlXoPrCYhi0FobqSQwD05R9TiU6TcGxOp/tRUCe98q/0c
+bjHq8zK6uND18rmRVSTkhxC1XJ4Rby5QGStRex+dEFEOxE4INMyZaZOpVz4RXHhU
+SETGHhJinQm6J0BVoTp+z6j9ir4u3zenTOdnPtS4kkIDG3L3Gnw2Pgk5hV2uxf8D
+5wJFDCfV3P0ofoPkN062LQQWhJudInYFJsvXvhCZQqd++jozS1E3/ACtowWh3+Ot
+ahX8rJIa2EXfZAss8qoY
+=ju/P
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__5_Sep_2012_07_37_10_+1000_XFyW8kQxDc+iZM1q--
