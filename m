@@ -1,63 +1,68 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: build warnings after merge of the drm tree
-Date: Tue, 4 Sep 2012 08:40:48 +0200
-Message-ID: <CA+icZUXT=GgYMAUq2KGm1jYsuw72moo+jzhoCadt7yJUpOAUzg@mail.gmail.com>
-References: <20120904135829.6beb08f80919aa2b5c8bf55f@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Tue, 4 Sep 2012 16:58:53 +1000
+Message-ID: <20120904165853.bc2f7b6524a3b03a09c4180d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__4_Sep_2012_16_58_53_+1000_oEtjYTrRTiev9CXG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:54952 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751794Ab2IDGku convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Sep 2012 02:40:50 -0400
-In-Reply-To: <20120904135829.6beb08f80919aa2b5c8bf55f@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:57019 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752988Ab2IDG7G (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Sep 2012 02:59:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jerry Chu <hkchu@google.com>
 
-On Tue, Sep 4, 2012 at 5:58 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Dave,
->
-> After merging the drm tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced these warnings:
->
-> drivers/gpu/drm/udl/Kconfig:1:error: recursive dependency detected!
-> drivers/gpu/drm/udl/Kconfig:1:  symbol DRM_UDL depends on USB_ARCH_HAS_HCD
-> drivers/usb/Kconfig:76: symbol USB_ARCH_HAS_HCD depends on USB_SUPPORT
-> drivers/usb/Kconfig:58: symbol USB_SUPPORT is selected by DRM_USB
-> drivers/gpu/drm/Kconfig:22:     symbol DRM_USB is selected by DRM_UDL
-> warning: (PPC_PS3) selects USB_OHCI_LITTLE_ENDIAN which has unmet direct dependencies (USB_SUPPORT && USB_OHCI_HCD)
-> warning: (PPC_PS3 && PPC_CELLEB) selects USB_OHCI_BIG_ENDIAN_MMIO which has unmet direct dependencies (USB_SUPPORT && USB_OHCI_HCD)
-> warning: (PPC_PS3 && PPC_CELLEB && USB_EHCI_HCD_PMC_MSP && XPS_USB_HCD_XILINX && USB_OCTEON_EHCI) selects USB_EHCI_BIG_ENDIAN_MMIO which has unmet direct dependencies (USB_SUPPORT && USB_EHCI_HCD && (PPC_CELLEB || PPC_PS3 || 440EPX || ARCH_IXP4XX || XPS_USB_HCD_XILINX || PPC_MPC512x || CPU_CAVIUM_OCTEON || PMC_MSP || SPARC_LEON || MIPS_SEAD3))
->
-> The x86_64 allmodconfig produces these:
->
-> drivers/gpu/drm/udl/Kconfig:1:error: recursive dependency detected!
-> drivers/gpu/drm/udl/Kconfig:1:  symbol DRM_UDL depends on USB_ARCH_HAS_HCD
-> drivers/usb/Kconfig:76: symbol USB_ARCH_HAS_HCD depends on USB_SUPPORT
-> drivers/usb/Kconfig:58: symbol USB_SUPPORT is selected by DRM_USB
-> drivers/gpu/drm/Kconfig:22:     symbol DRM_USB is selected by DRM_UDL
-> warning: (MOUSE_APPLETOUCH && MOUSE_BCM5974 && MOUSE_SYNAPTICS_USB && JOYSTICK_XPAD && TABLET_USB_ACECAD && TABLET_USB_AIPTEK && TABLET_USB_HANWANG && TABLET_USB_KBTAB && TABLET_USB_WACOM && TOUCHSCREEN_USB_COMPOSITE && INPUT_ATI_REMOTE2 && INPUT_KEYSPAN_REMOTE && INPUT_POWERMATE && INPUT_YEALINK && INPUT_CM109 && RC_ATI_REMOTE && IR_IMON && IR_MCEUSB && IR_REDRAT3 && IR_STREAMZAP && IR_IGUANA && IR_TTUSBIR && DRM_USB) selects USB which has unmet direct dependencies (USB_SUPPORT && USB_ARCH_HAS_HCD)
->
-> Maybe introduced by commit df0b34430072 ("drm/usb: select USB_SUPPORT in
-> Kconfig"), maybe interacting with a commit 8f057d7bca54 ("gpu/mfd/usb:
-> Fix USB randconfig problems") from Linus' tree (that added "depends on
-> USB_ARCH_HAS_HCD" to "config DRM_USB" and "config DRM_UDL").
->
-> I have left this mess for now, but it needs addressing.
+--Signature=_Tue__4_Sep_2012_16_58_53_+1000_oEtjYTrRTiev9CXG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have sent a fix ("drm/udl: usb: Fix recursive Kconfig dependency")
-for this mess and pinged airlied on IRC.
-NOTE: I saw this when I merged drm(-intel){-fixes,next} into next-20120824.
+Hi ,
 
-- Sedat -
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-[1] https://patchwork.kernel.org/patch/1373391/
+net/built-in.o: In function `tcp_fastopen_ctx_free':
+tcp_fastopen.c:(.text+0x5cc5c): undefined reference to `crypto_destroy_tfm'
+net/built-in.o: In function `tcp_fastopen_reset_cipher':
+(.text+0x5cccc): undefined reference to `crypto_alloc_base'
+net/built-in.o: In function `tcp_fastopen_reset_cipher':
+(.text+0x5cd6c): undefined reference to `crypto_destroy_tfm'
 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+Presumably caused by commit 104671636897 ("tcp: TCP Fast Open Server -
+header & support functions") from the net-next tree.  I assume that some
+dependency on the CRYPTO infrastructure is missing.
+
+I have reverted commit 1bed966cc3bd ("Merge branch
+'tcp_fastopen_server'") for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__4_Sep_2012_16_58_53_+1000_oEtjYTrRTiev9CXG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQRaatAAoJEECxmPOUX5FEMnsP/3WJ61qSsvILCvFqa/vEYlj/
+4fD96LZQBVeLDgWPQpW84Dg+9Nl5jHnIORt5SWn/bqHo0xqDlCfqGVOS+yKxHVMG
+Fv7640wsp/s65nvc6lEN2yjL0zTpDYA12NDzCb6z+sLmZSKXUf0iane4VFd/eH2L
+AxZB8FvDsvUT0iAmVcz1kanR4NOZi7cw+qddUnm+W/Zt54obYQ14xfW2HXrraal3
+aCI0y2WEUT85DV+6QveC7IWaaWhWk4tH0PvqSPC9alJ8dm5grS0RXnIh37+yAoWk
+ydrYqROQW9ZpGiTglX8GXA6X4SWb/NfJ+wF9kT/nzQb6VpRLGO7McEHuburEM/Ac
+C4kQ2bfvUnBzqh+zjmvVXN8NuYgxtR920rMq0YK0RSvoOpk3DusIXMvNghIKQNCw
+af+shVDMzK/ftHEzRNzj+7mulWdAmdthnZ1x4bgZeYjUVNc7MmzZ3XoNBV6ijIh9
+WG7qz02YAMRVWRfDjoXGdqx5hWvEW9JbY7b9yHJufAP70503GPG9lAbMZS7pIxQP
+yVfCp1dF7OGVHoQM+c4i0Y6qPDeOzPwQeb3HJglmhkb8ltX3kV8X6+lbBaybquAI
+Pboc9NIb/jXumS8esQUbHbOWgiefwyAX7J+vLdCdC83DQkCNyWu9sGEzwzzBmcm6
+x2wwn5Zn+SP1PVkZf9KP
+=TNv1
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__4_Sep_2012_16_58_53_+1000_oEtjYTrRTiev9CXG--
