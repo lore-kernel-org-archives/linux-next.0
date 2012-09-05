@@ -1,222 +1,99 @@
-From: Masatake YAMATO <yamato@redhat.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the vfs tree
-Date: Wed, 05 Sep 2012 13:55:53 +0900 (JST)
-Message-ID: <20120905.135553.1191951431365833823.yamato@redhat.com>
-References: <20120905120204.a8990185fb80f6b1b65bc6ea@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Wed, 5 Sep 2012 15:39:32 +1000
+Message-ID: <20120905153932.eebf343364800678aecc98f2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__5_Sep_2012_15_39_32_+1000_9N60VTutzsfX4tGD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:31509 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751219Ab2IEE4B (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Sep 2012 00:56:01 -0400
-In-Reply-To: <20120905120204.a8990185fb80f6b1b65bc6ea@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50585 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750900Ab2IEFjk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Sep 2012 01:39:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Patrick McHardy <kaber@trash.net>
 
-Hi,
+--Signature=_Wed__5_Sep_2012_15_39_32_+1000_9N60VTutzsfX4tGD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-How can I see source files applied your patch?
-(I'm very new to kernel development.)
+Hi all,
 
-You patch looks like a patch for another patch.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Masatake YAMATO
+net/ipv6/netfilter/nf_nat_l3proto_ipv6.c: In function 'nf_nat_ipv6_csum_rec=
+alc':
+net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:144:4: error: implicit declaration=
+ of function 'csum_ipv6_magic' [-Werror=3Dimplicit-function-declaration]
 
-> Hi all,
-> 
-> Today's linux-next merge of the net-next tree got a conflict in
-> net/socket.c between commits f8a78429cc70 ("take descriptor handling from
-> sock_alloc_file() to callers") and 32b529f92ea7 ("unexport sock_map_fd(),
-> switch to sock_alloc_file()") from the vfs tree and commit 600e177920df
-> ("net: Providing protocol type via system.sockprotoname xattr
-> of /proc/PID/fd entries") from the net-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.  I also had
-> to add this merge fix patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 5 Sep 2012 11:52:06 +1000
-> Subject: [PATCH] net: cope with sock_alloc_file() API change
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/linux/net.h |    3 ++-
->  net/9p/trans_fd.c   |    2 +-
->  net/sctp/socket.c   |    2 +-
->  3 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/net.h b/include/linux/net.h
-> index c8a9708..a3831f3 100644
-> --- a/include/linux/net.h
-> +++ b/include/linux/net.h
-> @@ -247,7 +247,8 @@ extern int   	     sock_sendmsg(struct socket *sock, struct msghdr *msg,
->  				  size_t len);
->  extern int	     sock_recvmsg(struct socket *sock, struct msghdr *msg,
->  				  size_t size, int flags);
-> -extern struct file  *sock_alloc_file(struct socket *sock, int flags);
-> +extern struct file  *sock_alloc_file(struct socket *sock, int flags,
-> +				     const char *dname);
->  extern struct socket *sockfd_lookup(int fd, int *err);
->  extern struct socket *sock_from_file(struct file *file, int *err);
->  #define		     sockfd_put(sock) fput(sock->file)
-> diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-> index 8c4e0b5..1c8b557 100644
-> --- a/net/9p/trans_fd.c
-> +++ b/net/9p/trans_fd.c
-> @@ -801,7 +801,7 @@ static int p9_socket_open(struct p9_client *client, struct socket *csocket)
->  		return -ENOMEM;
->  
->  	csocket->sk->sk_allocation = GFP_NOIO;
-> -	file = sock_alloc_file(csocket, 0);
-> +	file = sock_alloc_file(csocket, 0, NULL);
->  	if (IS_ERR(file)) {
->  		pr_err("%s (%d): failed to map fd\n",
->  		       __func__, task_pid_nr(current));
-> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> index 5ba739e..59d16ea 100644
-> --- a/net/sctp/socket.c
-> +++ b/net/sctp/socket.c
-> @@ -4313,7 +4313,7 @@ static int sctp_getsockopt_peeloff(struct sock *sk, int len, char __user *optval
->  		goto out;
->  	}
->  
-> -	newfile = sock_alloc_file(newsock, 0);
-> +	newfile = sock_alloc_file(newsock, 0, NULL);
->  	if (unlikely(IS_ERR(newfile))) {
->  		put_unused_fd(retval);
->  		sock_release(newsock);
-> -- 
-> 1.7.10.280.gaa39
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc net/socket.c
-> index 79170dc,977c0f4..0000000
-> --- a/net/socket.c
-> +++ b/net/socket.c
-> @@@ -346,15 -347,30 +347,23 @@@ static struct file_system_type sock_fs_
->    *	but we take care of internal coherence yet.
->    */
->   
-> - struct file *sock_alloc_file(struct socket *sock, int flags)
->  -static int sock_alloc_file(struct socket *sock, struct file **f, int flags,
->  -			   const char *dname)
-> ++struct file *sock_alloc_file(struct socket *sock, int flags,
-> ++			     const char *dname)
->   {
->   	struct qstr name = { .name = "" };
->   	struct path path;
->   	struct file *file;
->  -	int fd;
->  -
->  -	fd = get_unused_fd_flags(flags);
->  -	if (unlikely(fd < 0))
->  -		return fd;
->   
-> + 	if (dname) {
-> + 		name.name = dname;
-> + 		name.len = strlen(name.name);
-> + 	} else if (sock->sk) {
-> + 		name.name = sock->sk->sk_prot_creator->name;
-> + 		name.len = strlen(name.name);
-> + 	}
->   	path.dentry = d_alloc_pseudo(sock_mnt->mnt_sb, &name);
->  -	if (unlikely(!path.dentry)) {
->  -		put_unused_fd(fd);
->  -		return -ENOMEM;
->  -	}
->  +	if (unlikely(!path.dentry))
->  +		return ERR_PTR(-ENOMEM);
->   	path.mnt = mntget(sock_mnt);
->   
->   	d_instantiate(path.dentry, SOCK_INODE(sock));
-> @@@ -373,26 -390,22 +382,26 @@@
->   	file->f_flags = O_RDWR | (flags & O_NONBLOCK);
->   	file->f_pos = 0;
->   	file->private_data = sock;
->  -
->  -	*f = file;
->  -	return fd;
->  +	return file;
->   }
->  +EXPORT_SYMBOL(sock_alloc_file);
->   
->  -int sock_map_fd(struct socket *sock, int flags)
->  +static int sock_map_fd(struct socket *sock, int flags)
->   {
->   	struct file *newfile;
->  -	int fd = sock_alloc_file(sock, &newfile, flags, NULL);
->  +	int fd = get_unused_fd_flags(flags);
->  +	if (unlikely(fd < 0))
->  +		return fd;
->   
-> - 	newfile = sock_alloc_file(sock, flags);
->  -	if (likely(fd >= 0))
-> ++	newfile = sock_alloc_file(sock, flags, NULL);
->  +	if (likely(!IS_ERR(newfile))) {
->   		fd_install(fd, newfile);
->  +		return fd;
->  +	}
->   
->  -	return fd;
->  +	put_unused_fd(fd);
->  +	return PTR_ERR(newfile);
->   }
->  -EXPORT_SYMBOL(sock_map_fd);
->   
->   struct socket *sock_from_file(struct file *file, int *err)
->   {
-> @@@ -1395,27 -1471,12 +1467,27 @@@ SYSCALL_DEFINE4(socketpair, int, family
->   		err = fd1;
->   		goto out_release_both;
->   	}
->  -
->  -	fd2 = sock_alloc_file(sock2, &newfile2, flags, NULL);
->  +	fd2 = get_unused_fd_flags(flags);
->   	if (unlikely(fd2 < 0)) {
->   		err = fd2;
->  +		put_unused_fd(fd1);
->  +		goto out_release_both;
->  +	}
->  +
-> - 	newfile1 = sock_alloc_file(sock1, flags);
-> ++	newfile1 = sock_alloc_file(sock1, flags, NULL);
->  +	if (unlikely(IS_ERR(newfile1))) {
->  +		err = PTR_ERR(newfile1);
->  +		put_unused_fd(fd1);
->  +		put_unused_fd(fd2);
->  +		goto out_release_both;
->  +	}
->  +
-> - 	newfile2 = sock_alloc_file(sock2, flags);
-> ++	newfile2 = sock_alloc_file(sock2, flags, NULL);
->  +	if (IS_ERR(newfile2)) {
->  +		err = PTR_ERR(newfile2);
->   		fput(newfile1);
->   		put_unused_fd(fd1);
->  +		put_unused_fd(fd2);
->   		sock_release(sock2);
->   		goto out;
->   	}
-> @@@ -1553,13 -1615,6 +1625,14 @@@ SYSCALL_DEFINE4(accept4, int, fd, struc
->   		sock_release(newsock);
->   		goto out_put;
->   	}
-> - 	newfile = sock_alloc_file(newsock, flags);
-> ++	newfile = sock_alloc_file(newsock, flags,
-> ++				  sock->sk->sk_prot_creator->name);
->  +	if (unlikely(IS_ERR(newfile))) {
->  +		err = PTR_ERR(newfile);
->  +		put_unused_fd(newfd);
->  +		sock_release(newsock);
->  +		goto out_put;
->  +	}
->   
->   	err = security_socket_accept(sock, newsock);
->   	if (err)
+Caused by commit 58a317f1061c ("netfilter: ipv6: add IPv6 NAT support").
+
+(I always thought IPv6 NAT was a bad idea ;-))
+
+I have applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 5 Sep 2012 15:34:58 +1000
+Subject: [PATCH] netfilter: ipv6: using csum_ipv6_magic requires
+ net/ip6_checksum.h
+
+Fixes this build error:
+
+net/ipv6/netfilter/nf_nat_l3proto_ipv6.c: In function 'nf_nat_ipv6_csum_rec=
+alc':
+net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:144:4: error: implicit declaration=
+ of function 'csum_ipv6_magic' [-Werror=3Dimplicit-function-declaration]
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/ipv6/netfilter/nf_nat_l3proto_ipv6.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c b/net/ipv6/netfilter/=
+nf_nat_l3proto_ipv6.c
+index 81a2d1c..abfe75a 100644
+--- a/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
++++ b/net/ipv6/netfilter/nf_nat_l3proto_ipv6.c
+@@ -15,6 +15,7 @@
+ #include <linux/netfilter_ipv6.h>
+ #include <net/secure_seq.h>
+ #include <net/checksum.h>
++#include <net/ip6_checksum.h>
+ #include <net/ip6_route.h>
+ #include <net/ipv6.h>
+=20
+--=20
+1.7.10.280.gaa39
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__5_Sep_2012_15_39_32_+1000_9N60VTutzsfX4tGD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQRuWUAAoJEECxmPOUX5FEA7QP/2RIMOVFb2d5GBPQ9B32E+Tt
+QR9je4HxVwxqQKbUnB99dRE1BWbmguCQjaOSdHeFESwnt2VpSXgAAeqYc9KiC1NC
+aQsLRoDAVQyAaflIcrX6O76nQrPOUhoYcepnu+A+WkBUuwCYw1xNcymnpHSnNxn5
+LGDOoPO/xkMXG3H5UMESvMIsNo6t2yvaiDHXlLcgBuQiU6sDM4/+dkbfxO8eYeVx
+2M7wA9Xh5WRcXBQhbCBKKgqN0BDqbcqB894miiT3hKmxVqxOLVIw04TCf1ftbTee
+qx7KgGIzOLAvL1UC+ZjllUS3iyTBRNxrlRYwu6bOpk+POYsfg0UsIleNA+p6Ezrf
+pexMNRhyG7NPDwMEjUxG89A5HxDNnC8KRnZWHXccUpoInC2W2rfqSzeT2yk7mdIb
+Tqd4MmG2JpIrhpQ73UX1+P+8RooqHGvGkS0Rn0Hvzw5gG75Xhw7e29P/7cOx5W+g
+nZwCt4wwkw00Yn2FGfSrWkS9ZpcTcTdBtF5Y0lKxw9oECl7oL4HDtLIQ1b1FEe5C
+TfDn5xSpwJpiaLy7yyQ/4Qp3aYM8d4JVG3Qh/iF3wOAyWn/aHV2cUc9652l4xDV9
+hbon5U8KFIfyBrj+2ZmGI69QqZWl9NB9DFNnJEQK4szxTTLBj7OOyz7S2x8P2N3n
+L2obNMSLwKg63hmKPqih
+=2EfU
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__5_Sep_2012_15_39_32_+1000_9N60VTutzsfX4tGD--
