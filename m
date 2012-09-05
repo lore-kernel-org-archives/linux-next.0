@@ -1,44 +1,77 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the rcu tree with the tip tree
-Date: Wed, 05 Sep 2012 19:11:05 +0200
-Message-ID: <1346865065.2600.34.camel@twins>
-References: <20120905135947.34ba1c8356cbfe374c6c4ea8@canb.auug.org.au>
-	 <20120905163959.GF3308@linux.vnet.ibm.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: arm64 branch for linux-next
+Date: Wed, 5 Sep 2012 18:17:43 +0100
+Message-ID: <20120905171743.GD19435@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:57798 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750841Ab2IERLT convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Sep 2012 13:11:19 -0400
-In-Reply-To: <20120905163959.GF3308@linux.vnet.ibm.com>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:48488 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753837Ab2IERSV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Sep 2012 13:18:21 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On Wed, 2012-09-05 at 09:39 -0700, Paul E. McKenney wrote:
-> On Wed, Sep 05, 2012 at 01:59:47PM +1000, Stephen Rothwell wrote:
-> > Hi Paul,
-> > 
-> > Today's linux-next merge of the rcu tree got a conflict in
-> > kernel/sched/core.c between commit f319da0c6894 ("sched: Fix load avg vs
-> > cpu-hotplug") from the tip tree and commit ead504e5600e ("sched: Fix load
-> > avg vs cpu-hotplug") from the rcu tree.
-> > 
-> > These are 2 slightly different versions of the same patch :-( Same author
-> > time, different commit times ...  The rcu tree version contains this
-> > extra bit in the commit message:
-> > 
-> > "    [ paulmck: Move call to calc_load_migration to CPU_DEAD to avoid
-> >      miscounting noted by Rakib. ]"
-> > 
-> > So I used it.  Let me know if this is not correct.
-> 
-> My guess is that Peter Zijlstra will replace my version at some point,
-> at which point I will drop mine.  But from what I can see, the version
-> currently  in -tip is the older version, so I will keep mine until
-> -tip updates.
+Hi Stephen,
 
-Yeah, that was a fail on my part. I'll go sort it after dinner.
+Could you please pull the arm64 kernel into linux-next? The details are
+below (I removed the diffstat).
+
+Thanks,
+
+Catalin
+
+
+The following changes since commit 4cbe5a555fa58a79b6ecbb6c531b8bab0650778d:
+
+  Linux 3.6-rc4 (2012-09-01 10:39:58 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/linux-aarch64.git upstream
+
+for you to fetch changes up to 5cc3bb3a288d66e92d885295b7058908f3429ce9:
+
+  fs: Build sys_stat64() and friends if __ARCH_WANT_COMPAT_STAT64 (2012-09-05 16:39:08 +0100)
+
+----------------------------------------------------------------
+Catalin Marinas (24):
+      arm64: Assembly macros and definitions
+      arm64: Kernel booting and initialisation
+      arm64: Exception handling
+      arm64: MMU definitions
+      arm64: MMU initialisation
+      arm64: MMU fault handling and page table management
+      arm64: Process management
+      arm64: CPU support
+      arm64: Cache maintenance routines
+      arm64: TLB maintenance functionality
+      arm64: Atomic operations
+      arm64: Device specific operations
+      arm64: DMA mapping API
+      arm64: SMP support
+      arm64: ELF definitions
+      arm64: System calls handling
+      arm64: Signal handling support
+      arm64: User access library functions
+      arm64: Floating point and SIMD
+      arm64: Add support for /proc/sys/debug/exception-trace
+      arm64: Miscellaneous header files
+      arm64: Build infrastructure
+      arm64: MAINTAINERS update
+      fs: Build sys_stat64() and friends if __ARCH_WANT_COMPAT_STAT64
+
+Marc Zyngier (3):
+      arm64: IRQ handling
+      arm64: Miscellaneous library functions
+      arm64: Generic timers support
+
+Will Deacon (5):
+      arm64: VDSO support
+      arm64: 32-bit (compat) applications support
+      arm64: Debugging support
+      arm64: Performance counters support
+      arm64: Loadable modules
