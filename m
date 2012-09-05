@@ -1,36 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-next tree related)
-Date: Wed, 05 Sep 2012 17:46:37 -0400 (EDT)
-Message-ID: <20120905.174637.1499279266416363296.davem@davemloft.net>
-References: <20120905153932.eebf343364800678aecc98f2@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] soc: fix wm0010.c printk format warning
+Date: Wed, 05 Sep 2012 16:24:57 -0700
+Message-ID: <5047DF49.6070502@xenotime.net>
+References: <20120905161230.3bab1de6d4c8c8e466c3b0df@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120905153932.eebf343364800678aecc98f2@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kaber@trash.net
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20120905161230.3bab1de6d4c8c8e466c3b0df@canb.auug.org.au>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: alsa-devel@alsa-project.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 5 Sep 2012 15:39:32 +1000
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-> (I always thought IPv6 NAT was a bad idea ;-))
+Fix printk format warning:
 
-ROFL :)
+sound/soc/codecs/wm0010.c:411:2: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 5 Sep 2012 15:34:58 +1000
-> Subject: [PATCH] netfilter: ipv6: using csum_ipv6_magic requires
->  net/ip6_checksum.h
-> 
-> Fixes this build error:
-> 
-> net/ipv6/netfilter/nf_nat_l3proto_ipv6.c: In function 'nf_nat_ipv6_csum_recalc':
-> net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:144:4: error: implicit declaration of function 'csum_ipv6_magic' [-Werror=implicit-function-declaration]
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: alsa-devel@alsa-project.org
+---
+ sound/soc/codecs/wm0010.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks Stephen.
+--- linux-next-20120905.orig/sound/soc/codecs/wm0010.c
++++ linux-next-20120905/sound/soc/codecs/wm0010.c
+@@ -408,7 +408,7 @@ static int wm0010_boot(struct snd_soc_co
+ 	wm0010->state = WM0010_BOOTROM;
+ 	spin_unlock_irqrestore(&wm0010->irq_lock, flags);
+ 
+-	dev_dbg(codec->dev, "Downloading %d byte stage 2 loader\n", fw->size);
++	dev_dbg(codec->dev, "Downloading %zu byte stage 2 loader\n", fw->size);
+ 
+ 	/* Copy to local buffer first as vmalloc causes problems for dma */
+ 	img = kzalloc(fw->size, GFP_KERNEL);
