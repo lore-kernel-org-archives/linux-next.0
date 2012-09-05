@@ -1,45 +1,36 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ASoC: omap-mcbsp: Fix compilation error
- due to leftover code
-Date: Thu, 6 Sep 2012 07:37:22 +0800
-Message-ID: <20120905233716.GE10580@opensource.wolfsonmicro.com>
-References: <1346335575-1592-1-git-send-email-peter.ujfalusi@ti.com>
- <20120830180219.GI4356@opensource.wolfsonmicro.com>
- <504470B5.20404@ti.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: Re: [PATCH -next] extcon: extcon-arizona depends on INPUT
+Date: Wed, 05 Sep 2012 23:47:33 +0000 (GMT)
+Message-ID: <6721797.222311346888851339.JavaMail.weblogic@epml19>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <504470B5.20404@ti.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, linux-next@vger.kernel.org, Liam Girdwood <lrg@ti.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:28088 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754774Ab2IEXrf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Sep 2012 19:47:35 -0400
+Received: from epcpsbge2.samsung.com (epcpsbge2 [203.254.230.12])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M9W001AAI2MO2F0@mailout4.samsung.com> for
+ linux-next@vger.kernel.org; Thu, 06 Sep 2012 08:47:33 +0900 (KST)
+MIME-version: 1.0
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, =?euc-kr?Q?=C3=D6=C2=F9=BF=EC?= <cw00.choi@samsung.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Sep 03, 2012 at 11:56:21AM +0300, Peter Ujfalusi wrote:
-
-> So how can we resolve this?
-> Are you going to rebase or update your 3.7, for-next topic/omap branches on
-> mainline so they will contain the mainline patch (d0db84e)?
-
-So, I think I figured out what you're talking about here.  Check -next.
-Please if you're going to do stuff like this in future:
-
- - Talk about the actual code we've got.  It's OK to explain the history
-   but it's very important to explain the concrete problem - that was
-   missing from your mails (the closest we got was "compilation problem").
-
- - Discuss changes to what's there, starting off with "let's throw
-   everything away" doesn't help with clarity especially with a missing
-   problem description.
-
-The problem description is especially critical.
+PiBPbiBXZWQsIFNlcCAwNSwgMjAxMiBhdCAxMToyODowM0FNICswODAwLCBNYXJrIEJyb3duIHdy
+b3RlOg0KPiA+IE9uIFR1ZSwgU2VwIDA0LCAyMDEyIGF0IDA0OjUxOjAwUE0gLTA3MDAsIFJhbmR5
+IER1bmxhcCB3cm90ZToNCj4gPiANCj4gPiA+IFRoaXMgYnVpbGQgZXJyb3Igc3RpbGwgaGFwcGVu
+cyBpbiBsaW51eC1uZXh0IG9mIDIwMTIwOTA0Lg0KPiA+IA0KPiA+ID4gQ2FuIHdlIGdldCB0aGUg
+cGF0Y2ggbWVyZ2VkIGZvciBsaW51eC1uZXh0Pw0KPiA+IA0KPiA+IEdyZWcncyB0aGUgb25lIG1h
+bmFnaW5nIGV4dGNvbiBpbiAtbmV4dC4NCj4gDQo+IFllYWgsIGNhbiBzb21lb25lIGZvcndhcmQg
+dGhpcyB0byBtZSBzbyBJIGNhbiBhcHBseSBpdD8gIEkgY2FuJ3Qgc2VlbSB0bw0KPiBmaW5kIGl0
+IGFueXdoZXJlLi4uDQo+IA0KPiBncmVnIGstaA0KDQpJJ3ZlIGJlZW4gY3JlYXRpbmcgImV4dGNv
+bi1mb3ItbmV4dCIgdHJlZSBhdCBnaXQuaW5mcmFkZWFkLm9yZw0KSSdsbCByZWJhc2UgdGhlIGJy
+YW5jaCBiYXNlIG9uIHlvdXIgZHJpdmVyLWNvcmUtbmV4dA0KDQpodHRwOi8vZ2l0LmluZnJhZGVh
+ZC5vcmcvdXNlcnMva21wYXJrL2xpbnV4LXNhbXN1bmcvc2hvcnRsb2cvcmVmcy9oZWFkcy9leHRj
+b24tZm9yLW5leHQNCg0KDQpDaGVlcnMhDQpNeXVuZ0pvbw==
