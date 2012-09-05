@@ -1,77 +1,38 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: arm64 branch for linux-next
-Date: Wed, 5 Sep 2012 18:17:43 +0100
-Message-ID: <20120905171743.GD19435@arm.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH -next] extcon: extcon-arizona depends on INPUT
+Date: Wed, 5 Sep 2012 12:16:57 -0700
+Message-ID: <20120905191657.GA5842@kroah.com>
+References: <20120824172820.ee0f412d2944b08789414207@canb.auug.org.au>
+ <5037B41C.6040703@xenotime.net>
+ <503AB70E.2000407@samsung.com>
+ <504693E4.8050808@xenotime.net>
+ <20120905032802.GB5076@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:48488 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753837Ab2IERSV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Sep 2012 13:18:21 -0400
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:64320 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753540Ab2IETTc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Sep 2012 15:19:32 -0400
+Received: by pbbrr13 with SMTP id rr13so1421855pbb.19
+        for <linux-next@vger.kernel.org>; Wed, 05 Sep 2012 12:19:32 -0700 (PDT)
 Content-Disposition: inline
+In-Reply-To: <20120905032802.GB5076@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Chanwoo Choi <cw00.choi@samsung.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
 
-Hi Stephen,
+On Wed, Sep 05, 2012 at 11:28:03AM +0800, Mark Brown wrote:
+> On Tue, Sep 04, 2012 at 04:51:00PM -0700, Randy Dunlap wrote:
+> 
+> > This build error still happens in linux-next of 20120904.
+> 
+> > Can we get the patch merged for linux-next?
+> 
+> Greg's the one managing extcon in -next.
 
-Could you please pull the arm64 kernel into linux-next? The details are
-below (I removed the diffstat).
+Yeah, can someone forward this to me so I can apply it?  I can't seem to
+find it anywhere...
 
-Thanks,
-
-Catalin
-
-
-The following changes since commit 4cbe5a555fa58a79b6ecbb6c531b8bab0650778d:
-
-  Linux 3.6-rc4 (2012-09-01 10:39:58 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/linux-aarch64.git upstream
-
-for you to fetch changes up to 5cc3bb3a288d66e92d885295b7058908f3429ce9:
-
-  fs: Build sys_stat64() and friends if __ARCH_WANT_COMPAT_STAT64 (2012-09-05 16:39:08 +0100)
-
-----------------------------------------------------------------
-Catalin Marinas (24):
-      arm64: Assembly macros and definitions
-      arm64: Kernel booting and initialisation
-      arm64: Exception handling
-      arm64: MMU definitions
-      arm64: MMU initialisation
-      arm64: MMU fault handling and page table management
-      arm64: Process management
-      arm64: CPU support
-      arm64: Cache maintenance routines
-      arm64: TLB maintenance functionality
-      arm64: Atomic operations
-      arm64: Device specific operations
-      arm64: DMA mapping API
-      arm64: SMP support
-      arm64: ELF definitions
-      arm64: System calls handling
-      arm64: Signal handling support
-      arm64: User access library functions
-      arm64: Floating point and SIMD
-      arm64: Add support for /proc/sys/debug/exception-trace
-      arm64: Miscellaneous header files
-      arm64: Build infrastructure
-      arm64: MAINTAINERS update
-      fs: Build sys_stat64() and friends if __ARCH_WANT_COMPAT_STAT64
-
-Marc Zyngier (3):
-      arm64: IRQ handling
-      arm64: Miscellaneous library functions
-      arm64: Generic timers support
-
-Will Deacon (5):
-      arm64: VDSO support
-      arm64: 32-bit (compat) applications support
-      arm64: Debugging support
-      arm64: Performance counters support
-      arm64: Loadable modules
+greg k-h
