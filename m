@@ -1,78 +1,27 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for Sept 6 (does not boot on AMD64)
-Date: Thu, 6 Sep 2012 22:08:34 +0200
-Message-ID: <201209062208.34545.rjw@sisk.pl>
-References: <CA+icZUWgPV=RnXGT4hDsk3xDm8iBu8ShvFFrs=t3+3D3=-bP2Q@mail.gmail.com> <CA+icZUUQiPv=iwwC43f6kuU_ikDDKeRC5=QYN4R9OzccmpAEeA@mail.gmail.com>
+From: Christoph Lameter <cl@linux.com>
+Subject: Re: ia64 dies in slab code on next-20120906
+Date: Thu, 6 Sep 2012 20:13:06 +0000
+Message-ID: <000001399d36edcb-6035fc93-73cf-43df-851e-c062a48db219-000000@email.amazonses.com>
+References: <CA+8MBbKmaaiEJ363E2PU-=6KJ4u+ZsQ1ywjb0nWMrp4xaSCeLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUUQiPv=iwwC43f6kuU_ikDDKeRC5=QYN4R9OzccmpAEeA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sedat.dilek@gmail.com, Andre Przywara <andre.przywara@amd.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Matthew Garrett <mjg@redhat.com>, Linux PM list <linux-pm@vger.kernel.org>, Thomas Renninger <trenn@suse.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from a194-183.smtp-out.amazonses.com ([199.255.194.183]:27902 "EHLO
+	a194-183.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1759791Ab2IFUNI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Sep 2012 16:13:08 -0400
+In-Reply-To: <CA+8MBbKmaaiEJ363E2PU-=6KJ4u+ZsQ1ywjb0nWMrp4xaSCeLw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tony Luck <tony.luck@intel.com>
+Cc: linux-next@vger.kernel.org, Pekka Enberg <penberg@kernel.org>
 
-On Thursday, September 06, 2012, Sedat Dilek wrote:
-> On Thu, Sep 6, 2012 at 1:48 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> > On Thu, Sep 6, 2012 at 9:23 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >> Hi all,
-> >>
-> >> Changes since 20120905:
-> >>
-> >> New tree: arm64
-> >>
-> >> The powerpc tree gained a build failure for which I reverted 3 commits.
-> >>
-> >> The net-next tree lost its build failure.
-> >>
-> >> The trivial tree gained a conflict against the powerpc tree.
-> >>
-> >> The spi-mb tree gained a build failure so I used the version from
-> >> next-20120905.
-> >>
-> >> The driver-core tree gained a build failure (form an interaction with the
-> >> workqueues tree) for which I applied a merge fix patch.
-> >>
-> >> The tty tree gained a build failure for which I applied a patch.
-> >>
-> >> The staging tree lost its build failure.
-> >>
-> >> The arm-soc tree gained a conflict against the usb tree.
-> >>
-> >> ----------------------------------------------------------------------------
-> >>
-> >
-> > Hi,
-> >
-> > Unfortunately, today's linux-next does not boot here on Ubuntu/precise AMD64.
-> > My yesterday's next-20120905 is fine.
-> >
-> > I throw out all my additional patches an rebuild again as "-2", but
-> > this linux-image does not boot.
-> > It's in very early stage.
-> > I removed "quiet" etc. from kernel-command-line, but this reveals not much more.
-> >
-> > From the attached kernel-config.diff:
-> > Dunno why the 2nd is disabled now and try to turn off the 1st one in a
-> > "-3" build.
-> >
-> > +CONFIG_X86_ACPI_CPUFREQ_CPB=y
-> > -CONFIG_USB_LIBUSUAL=y
-> >
-> 
-> [ CC Rafael (cpufreq sub-maintainer) ]
+On Thu, 6 Sep 2012, Tony Luck wrote:
 
-Well, this is related to the AMD cpufreq patchset I've just added to
-linux-next.  I'll drop it for now until the issue is resolved.
+> kernel unaligned access to 0xca2ffc55fb373e95, ip=0xa0000001001be550
 
-> I hacked to turn off CONFIG_X86_ACPI_CPUFREQ_CPB, but this is not the
-> root cause.
-> Not sure why this setting is default YES, Rafael?
-> 
-> To switch from upstart to systemd does not help.
+Huh? Is there any additional info available? Backtrace?
 
-Andre, care to have a look at this?
+> ip is at new_slab+0x90/0x680
 
-Rafael
+Any way to relate that to a line in the code?
