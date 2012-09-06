@@ -1,35 +1,44 @@
-From: Roland Stigge <stigge@antcom.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the usb tree
-Date: Thu, 06 Sep 2012 11:32:03 +0200
-Message-ID: <50486D93.4090009@antcom.de>
-References: <20120906154240.12f7e0c01686559dd43744fa@canb.auug.org.au>
+From: Alan Cox <alan@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Thu, 6 Sep 2012 12:47:52 +0100
+Message-ID: <20120906124752.13831179@bob.linux.org.uk>
+References: <20120906151014.c5b6be5dfbbcf3e516d7d70c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from antcom.de ([188.40.178.216]:38428 "EHLO chuck.antcom.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754875Ab2IFJcG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Sep 2012 05:32:06 -0400
-In-Reply-To: <20120906154240.12f7e0c01686559dd43744fa@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120906151014.c5b6be5dfbbcf3e516d7d70c@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>
+List-Id: linux-next.vger.kernel.org
 
-On 09/06/2012 07:42 AM, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm-soc tree got a conflict in 
-> drivers/usb/host/Kconfig between commit 952230d774bb ("usb: ohci:
-> Fix Kconfig dependency on USB_ISP1301") from the usb tree and
-> commit d684f05f2d55 ("ARM: mach-pnx4008: Remove architecture") from
-> the arm-soc tree.
+On Thu, 6 Sep 2012 15:10:14 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Greg,
 > 
-> I fixed it up (see below) and can carry the fix as necessary (no
-> action required).
+> After merging the tty tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> In file included from drivers/tty/serial/sccnxp.c:20:0:
+> include/linux/serial_core.h: In function 'uart_handle_break':
+> include/linux/serial_core.h:543:30: error: dereferencing pointer to
+> incomplete type
+> 
+> Caused by commit 1d65c0b12656 ("serial: New serial driver SCCNXP").
+> This seems to be just exposing a preexisting problem with
+> linux/serial_core.h: when SUPPORT_SYSRQ is defined, this header
+> depends on linux/console.h.  I can only imagein that every other use
+> of serial_core.h pre-includes (maybe indirectly) console.h (or
+> doesn't define SUPPORT_SYSRQ).
+> 
+> I have applied the following patch, but a better solution should be
+> figured out.
 
-Thanks - this little conflict was expected when merging pnx4008
-removal and the isp1301 deoendency fix.
 
-And the fixup is correct.
+I think thats actually probably the right patch. Better to keep the
+header explicit than try and build some tangled mess of recursive
+includes.
 
-Roland
+Acked-by: Alan Cox <alan@linux.intel.com>
