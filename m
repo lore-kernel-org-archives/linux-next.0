@@ -1,105 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tty tree
-Date: Thu, 6 Sep 2012 15:10:14 +1000
-Message-ID: <20120906151014.c5b6be5dfbbcf3e516d7d70c@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the usb tree
+Date: Thu, 6 Sep 2012 15:42:40 +1000
+Message-ID: <20120906154240.12f7e0c01686559dd43744fa@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Sep_2012_15_10_14_+1000_BxF_kqtC.N0OVgvT"
+ boundary="Signature=_Thu__6_Sep_2012_15_42_40_+1000_ZkN2pFZDkQHk4EIV"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38772 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58283 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751097Ab2IFFKW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Sep 2012 01:10:22 -0400
+	with ESMTP id S1751743Ab2IFFmv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Sep 2012 01:42:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Alan Cox <alan@linux.intel.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roland Stigge <stigge@antcom.de>, Greg KH <greg@kroah.com>
 
---Signature=_Thu__6_Sep_2012_15_10_14_+1000_BxF_kqtC.N0OVgvT
+--Signature=_Thu__6_Sep_2012_15_42_40_+1000_ZkN2pFZDkQHk4EIV
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/usb/host/Kconfig between commit 952230d774bb ("usb: ohci: Fix
+Kconfig dependency on USB_ISP1301") from the usb tree and commit
+d684f05f2d55 ("ARM: mach-pnx4008: Remove architecture") from the arm-soc
+tree.
 
-In file included from drivers/tty/serial/sccnxp.c:20:0:
-include/linux/serial_core.h: In function 'uart_handle_break':
-include/linux/serial_core.h:543:30: error: dereferencing pointer to incompl=
-ete type
-
-Caused by commit 1d65c0b12656 ("serial: New serial driver SCCNXP").  This
-seems to be just exposing a preexisting problem with linux/serial_core.h:
-when SUPPORT_SYSRQ is defined, this header depends on linux/console.h.  I
-can only imagein that every other use of serial_core.h pre-includes
-(maybe indirectly) console.h (or doesn't define SUPPORT_SYSRQ).
-
-I have applied the following patch, but a better solution should be
-figured out.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 6 Sep 2012 15:05:04 +1000
-Subject: [PATCH] serial: serial_core.h needs console.h included first
-
-Fixes these build errors:
-
-In file included from drivers/tty/serial/sccnxp.c:20:0:
-include/linux/serial_core.h: In function 'uart_handle_break':
-include/linux/serial_core.h:543:30: error: dereferencing pointer to incompl=
-ete type
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/tty/serial/sccnxp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/sccnxp.c b/drivers/tty/serial/sccnxp.c
-index 29dda9b..05d767c 100644
---- a/drivers/tty/serial/sccnxp.c
-+++ b/drivers/tty/serial/sccnxp.c
-@@ -17,12 +17,12 @@
-=20
- #include <linux/module.h>
- #include <linux/device.h>
-+#include <linux/console.h>
- #include <linux/serial_core.h>
- #include <linux/serial.h>
- #include <linux/io.h>
- #include <linux/tty.h>
- #include <linux/tty_flip.h>
--#include <linux/console.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/sccnxp.h>
-=20
---=20
-1.7.10.280.gaa39
-
+I fixed it up (see below) and can carry the fix as necessary (no action
+required).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__6_Sep_2012_15_10_14_+1000_BxF_kqtC.N0OVgvT
+diff --cc drivers/usb/host/Kconfig
+index 13cd6d5,276add2..0000000
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@@ -292,7 -292,7 +292,7 @@@ config USB_OHCI_HC
+  	depends on USB && USB_ARCH_HAS_OHCI
+  	select ISP1301_OMAP if MACH_OMAP_H2 || MACH_OMAP_H3
+  	select USB_OTG_UTILS if ARCH_OMAP
+- 	depends on USB_ISP1301 || !(ARCH_LPC32XX || ARCH_PNX4008)
+ -	select USB_ISP1301 if ARCH_LPC32XX
+++	depends on USB_ISP1301 || !ARCH_LPC32XX
+  	---help---
+  	  The Open Host Controller Interface (OHCI) is a standard for accessing
+  	  USB 1.1 host controller hardware.  It does more in hardware than Intel=
+'s
+
+--Signature=_Thu__6_Sep_2012_15_42_40_+1000_ZkN2pFZDkQHk4EIV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQSDA2AAoJEECxmPOUX5FE/4oP/3n+d3CRKmSXy+gw5aC/j7g3
-rwM9iXOP2Cp6Iyj6bvILeJQpojQNjcT81fL5x40w+OZ9Zec1EeRl/L3fh8awsl9a
-Q9tHm7xLFmrWb47kpKWFxCWmMtAF8Ve7u3RMa/cbTKaeosmbKSlDvfz21bcwvcZ0
-77k97XryOnUpNW0BSPkxBWiK7hzHbQommDoO7kyr71FJ2WXi5GCmVbJezsZxYdDY
-s/w/cw5wTtdtlTXoDnwJIp0ob+ud8tof7a5YaxMEom/HNgbzTp1+D4ofOTtUuUgs
-lwaFnrNbztmAsMd4oS2sSJks9/VxxWliLOc1Av7mFH2Sqjdt9YEpfDFOJlLcFWCJ
-KdAL/pK27rP7SBuBNeiL+DMNif3XxC76L/LJeWcVVhtDjZR3J2ELSOuFfBQrw6Ue
-qPNhQypPNX9hD/i3iv47p8yALN9RuZ3brzU9c/Cis1bdZoVus5Pwz1pmI39dYRqj
-AQUOkPLGu2e2SMFNTsZavxmVYm8Aok3SLGAzmaVPwCT3KgNTMXoP+HFek5MWslEZ
-7wX4hFGXoZrDrxookl2/Zu0VvXhUz1IrSfRabmH/IHwxGmg9jVhAXE7SAUTrjRmE
-Qa10aifCii2TrTYkmCw0tl/xoeiOWaK9JHNktiDLStJPdBjKprUdA7AhPUEfLIdN
-R4tVCSJizFZHR0sd1IW0
-=P4F4
+iQIcBAEBCAAGBQJQSDfQAAoJEECxmPOUX5FEwwMP/0sKFvQ4+E7qgtMyLw5A9hYD
+EVvRwXPmjI1hQgQjg8olomYbHsPfhzKnSXobsp1GQfZmdVLV73shJpk87GoLa7yG
+39gzmyho8lAFULPJjXQ3PR/9odZ5YXo8otKiQGwecle3YsUHhyGlUp4sbm3qj7oq
+lMD7vG6a5Qf2Oza+0ifa407fkQL6ix/xHuyuw7eA9AUd6ovra8De9oyhd50oz46O
+ICVYbF1e6czEopH4i7NWCSwu83NRy9sLEAZWvbNgGD8LFeHIAIZQLAOF3VVJ4HJQ
+VP1nrpDyENlJ7Ctdk4p7UeqmCW4hMVAqAbCuYi6h9KI4OetTw9lztSxvTOHtdsqB
+wxuzYAb+Ie5TE41OEE1FMb3ra1OABRTzqRWJluXrwipJNk7iAoWtGaURIuHNflWd
+gOTZCdsbMA5TmFNvMQO6blEMraryhX6gCOqOMl2BpZQ0UaxoxX9ybaGcZ0KUka5R
+foPwTJP4g+hQfftWr60xii4rS5NbRdON+7u6GyRx/FZTGV0OPI3XACnideFRD/+X
+2RxTBKBz867pXGbzFVRcKCOYwlnQSj/zGC+gVH+GRcstbJ/7HkRRRXQesyxt6qVa
+b2aN62XTLUhXJvxTHwnqYbCq1/pmFMdMgTJWyFVSLYL+bHguv03jUC2/jlAk7jbG
+YzbVegJlRwndV6jmhUyT
+=3NNF
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__6_Sep_2012_15_10_14_+1000_BxF_kqtC.N0OVgvT--
+--Signature=_Thu__6_Sep_2012_15_42_40_+1000_ZkN2pFZDkQHk4EIV--
