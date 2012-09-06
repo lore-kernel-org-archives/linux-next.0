@@ -1,67 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the spi-mb tree
-Date: Thu, 6 Sep 2012 13:50:13 +1000
-Message-ID: <20120906135013.8dd0421cf4afd6947aa4297c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+ (workqueues tree related)
+Date: Thu, 6 Sep 2012 14:53:54 +1000
+Message-ID: <20120906145354.b1ddab86fde4fd58e55eb163@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Sep_2012_13_50_13_+1000_3+suHdiaaik5n.qA"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55585 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751858Ab2IFDuV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Sep 2012 23:50:21 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <zonque@gmail.com>
+ boundary="Signature=_Thu__6_Sep_2012_14_53_54_+1000_RHNv0Fm+5BB4.2a1"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, anish kumar <anish198519851985@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__6_Sep_2012_13_50_13_+1000_3+suHdiaaik5n.qA
+--Signature=_Thu__6_Sep_2012_14_53_54_+1000_RHNv0Fm+5BB4.2a1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark, Daniel,
+Hi Greg, Tejun,
 
-After merging the spi-mb tree, today's linux-next build (x86_64
+After merging the driver-core tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-drivers/spi/spi-gpio.c: In function 'spi_gpio_setup':
-drivers/spi/spi-gpio.c:255:8: warning: cast from pointer to integer of diff=
-erent size [-Wpointer-to-int-cast]
-drivers/spi/spi-gpio.c: In function 'spi_probe_dt':
-drivers/spi/spi-gpio.c:389:39: error: parameter name omitted
-drivers/spi/spi-gpio.c: In function 'spi_gpio_probe':
-drivers/spi/spi-gpio.c:404:2: error: implicit declaration of function 'spi_=
-gpio_probe_dt' [-Werror=3Dimplicit-function-declaration]
+drivers/extcon/extcon-adc-jack.c: In function 'adc_jack_probe':
+drivers/extcon/extcon-adc-jack.c:146:2: error: implicit declaration of func=
+tion 'INIT_DELAYED_WORK_DEFERRABLE' [-Werror=3Dimplicit-function-declaratio=
+n]
 
-Caused by commit 38ab18caa0ad ("spi: spi-gpio: Add DT bindings").  Please
-build test these sort of patches with and without CONFIG_OF.
+Caused by commit 19939860dcae ("extcon: adc_jack: adc-jack driver to
+support 3.5 pi or simliar devices") from the driver-core tree interacting
+with commit 203b42f73174 ("workqueue: make deferrable delayed_work
+initializer names consistent") from the workqueues tree.
 
-I have used the spi-mb tree from next-20120905 for today.
+I have added this merge fix patch (no action is required):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 6 Sep 2012 14:45:26 +1000
+Subject: [PATCH] extcon: adc_jack: update for INIT_DELAYED_WORK_DEFERRABLE
+ name change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/extcon/extcon-adc-jack.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/extcon/extcon-adc-jack.c b/drivers/extcon/extcon-adc-j=
+ack.c
+index 60ac3fb..725eb5a 100644
+--- a/drivers/extcon/extcon-adc-jack.c
++++ b/drivers/extcon/extcon-adc-jack.c
+@@ -143,7 +143,7 @@ static int __devinit adc_jack_probe(struct platform_dev=
+ice *pdev)
+=20
+ 	data->handling_delay =3D msecs_to_jiffies(pdata->handling_delay_ms);
+=20
+-	INIT_DELAYED_WORK_DEFERRABLE(&data->handler, adc_jack_handler);
++	INIT_DEFERRABLE_WORK(&data->handler, adc_jack_handler);
+=20
+ 	platform_set_drvdata(pdev, data);
+=20
+--=20
+1.7.10.280.gaa39
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__6_Sep_2012_13_50_13_+1000_3+suHdiaaik5n.qA
+--Signature=_Thu__6_Sep_2012_14_53_54_+1000_RHNv0Fm+5BB4.2a1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQSB11AAoJEECxmPOUX5FEbXIP/RdujLENEMJG+RfbrxNLzKWX
-rbJcGdOHBIqy5wyRykazXnCmUv+nPqk0tLZSWfDfi/QD5esSWbDXEAZkD+JQAPk0
-CjSe80cU5Wr0zN1ZYz9DYzmLOFAcLuw6Fm2wUAE9mXx7nhC6wYdrH+VQyf2dFR87
-GSw2uchqLKsQANnkIL6uL73itOv9ps9jphYH07435jiT1qrdRwhIHz1TzARnSNX+
-NNJiD+sklXr7x3TqBuRFiv+f2K8MbwSTL2N9cmENNDl24vtLhz38NqFQtXlF5rwp
-AmSclMVLdDRKRh8+jilds/DLzcYSXB/5uE6vXpJpVEDntnq/KX1GuMQV3ruxBBU1
-RTFR88tm3jvyckEcOSqF1Nk2Xfhr5znu7BbbGOGnhV4dByjqJUZaERD/1Qn3O17k
-2D6aFID970mcHOfrIGer8RqGYnPbFUs1ZXNBx6Ki4hE4Wzwr3N/oCTYamC3kXMNd
-RMlJ2jIVekIh4kcKCdYQs0MeV47CWeObybQ0k6sP/Nj9D9uiDNmKVgeV5QUE1Z1C
-G39hlRB5l8mwNDqOGhu+wvbhmPKp5iNfWd/rXLgfoKaqGDWZk7m0zv8IQsCFcqDE
-Ey7Bdd0573HR5D9/i02J/sOA5UdL1M2UswhvHV/lx5+dPm6ULYzmtu9S6CHchi9g
-LGcYP+2xkqZHntIANRzU
-=yxfg
+iQIcBAEBCAAGBQJQSCxiAAoJEECxmPOUX5FENuUQAIrs7K2r6CbRtbHJeVsuoY/6
+NlLyWKabQnmOWaEroseWZtRZZyXGYYRN7reqApIG6NwsvudwLjON8KDr5iFiGt/+
+TBwhXk8DOKM8iMh7csE0j32KS4EopC5pXwrT4bXWhNQQdYPKNzRSXEqQd2Bgrlpn
+J+X5qEHDR6z3i0nAMmjwRkspODQSBTz/pEOf/fMUQESNYHOLMCO+EtYNtyRnI3pR
+3iAHmxL5bMPwiDYKxZ/h/UvHoeotl+sYkHbzs7xkmrn9BO03tfnFChrVuuvMctxO
+q6vJgjUgLyW0JGfYXTm9o42Ng6l7NViKPKxXzjiuM+5naHyyEZGl8O3jU4lrCJPd
+6kGDeO4li0/wJhIB1jnq7Wbcm7bwPsX+FfTWkiaEVy1Tynr+8id/b1ct/NcPVlkW
+M2+85Z0qzxLj6HPadYC0UzVdcPRB60znfrxU2z/UDkqYWFqt5ZowsijRUFE5YbsZ
+JWQYOqVkr6a/R1YV/Y2FgXpKV6fVOqGGUPrVFXTyf4zR2ufJOnTcrURZ1hcR5oIZ
+IsxaLU7/8zYrvRQYUcapwpAXMIv+SmQIou0GpD7jm+u/zf0U5m7VEDRwFY7wyc+f
+u62KOoGpVEjDSASmnNzS3ODqeSZV2YjP6qX9qnZWx/G5j++UIWWDDetxPzFtsY+o
+CNfm8AnFeF9bGd32OyFe
+=86LI
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__6_Sep_2012_13_50_13_+1000_3+suHdiaaik5n.qA--
+--Signature=_Thu__6_Sep_2012_14_53_54_+1000_RHNv0Fm+5BB4.2a1--
