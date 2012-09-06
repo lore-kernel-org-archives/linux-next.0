@@ -1,75 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the usb tree
-Date: Thu, 6 Sep 2012 15:42:40 +1000
-Message-ID: <20120906154240.12f7e0c01686559dd43744fa@canb.auug.org.au>
+From: Lauri Hintsala <lauri.hintsala@bluegiga.com>
+Subject: Re: linux-next: manual merge of the spi-mb tree with the mmc tree
+Date: Thu, 06 Sep 2012 09:26:39 +0300
+Message-ID: <5048421F.7080101@bluegiga.com>
+References: <20120905131539.95d7a613d49f741ab6f123a6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Sep_2012_15_42_40_+1000_ZkN2pFZDkQHk4EIV"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58283 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751743Ab2IFFmv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Sep 2012 01:42:51 -0400
+Received: from bluegiga.fi ([194.100.31.45]:41772 "EHLO darkblue.bluegiga.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751388Ab2IFG0l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Sep 2012 02:26:41 -0400
+In-Reply-To: <20120905131539.95d7a613d49f741ab6f123a6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roland Stigge <stigge@antcom.de>, Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Ball <cjb@laptop.org>, Marek Vasut <marex@denx.de>
 
---Signature=_Thu__6_Sep_2012_15_42_40_+1000_ZkN2pFZDkQHk4EIV
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/05/2012 06:15 AM, Stephen Rothwell wrote:
+> Hi Mark,
+>
+> Today's linux-next merge of the spi-mb tree got a conflict in
+> drivers/mmc/host/mxs-mmc.c between commit fc108d24d3a6 ("mmc: mxs-mmc:
+> fix deadlock caused by recursion loop") from the mmc tree and commit
+> 829c1bf40b92 ("mmc: spi: Pull out parts shared between MMC and SPI") from
+> the spi-mb tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hi all,
+Reviewed and tested. Looks good.
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/usb/host/Kconfig between commit 952230d774bb ("usb: ohci: Fix
-Kconfig dependency on USB_ISP1301") from the usb tree and commit
-d684f05f2d55 ("ARM: mach-pnx4008: Remove architecture") from the arm-soc
-tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-required).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/usb/host/Kconfig
-index 13cd6d5,276add2..0000000
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@@ -292,7 -292,7 +292,7 @@@ config USB_OHCI_HC
-  	depends on USB && USB_ARCH_HAS_OHCI
-  	select ISP1301_OMAP if MACH_OMAP_H2 || MACH_OMAP_H3
-  	select USB_OTG_UTILS if ARCH_OMAP
-- 	depends on USB_ISP1301 || !(ARCH_LPC32XX || ARCH_PNX4008)
- -	select USB_ISP1301 if ARCH_LPC32XX
-++	depends on USB_ISP1301 || !ARCH_LPC32XX
-  	---help---
-  	  The Open Host Controller Interface (OHCI) is a standard for accessing
-  	  USB 1.1 host controller hardware.  It does more in hardware than Intel=
-'s
-
---Signature=_Thu__6_Sep_2012_15_42_40_+1000_ZkN2pFZDkQHk4EIV
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQSDfQAAoJEECxmPOUX5FEwwMP/0sKFvQ4+E7qgtMyLw5A9hYD
-EVvRwXPmjI1hQgQjg8olomYbHsPfhzKnSXobsp1GQfZmdVLV73shJpk87GoLa7yG
-39gzmyho8lAFULPJjXQ3PR/9odZ5YXo8otKiQGwecle3YsUHhyGlUp4sbm3qj7oq
-lMD7vG6a5Qf2Oza+0ifa407fkQL6ix/xHuyuw7eA9AUd6ovra8De9oyhd50oz46O
-ICVYbF1e6czEopH4i7NWCSwu83NRy9sLEAZWvbNgGD8LFeHIAIZQLAOF3VVJ4HJQ
-VP1nrpDyENlJ7Ctdk4p7UeqmCW4hMVAqAbCuYi6h9KI4OetTw9lztSxvTOHtdsqB
-wxuzYAb+Ie5TE41OEE1FMb3ra1OABRTzqRWJluXrwipJNk7iAoWtGaURIuHNflWd
-gOTZCdsbMA5TmFNvMQO6blEMraryhX6gCOqOMl2BpZQ0UaxoxX9ybaGcZ0KUka5R
-foPwTJP4g+hQfftWr60xii4rS5NbRdON+7u6GyRx/FZTGV0OPI3XACnideFRD/+X
-2RxTBKBz867pXGbzFVRcKCOYwlnQSj/zGC+gVH+GRcstbJ/7HkRRRXQesyxt6qVa
-b2aN62XTLUhXJvxTHwnqYbCq1/pmFMdMgTJWyFVSLYL+bHguv03jUC2/jlAk7jbG
-YzbVegJlRwndV6jmhUyT
-=3NNF
------END PGP SIGNATURE-----
-
---Signature=_Thu__6_Sep_2012_15_42_40_+1000_ZkN2pFZDkQHk4EIV--
+Lauri
