@@ -1,86 +1,87 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- tree related)
-Date: Thu, 6 Sep 2012 20:06:11 +0200
-Message-ID: <CAMuHMdWN--hXYTPYNi07vNB0DrMdDoc+MwxgUkSBihPw+VKGHg@mail.gmail.com>
-References: <20120905154801.b21cf25d96767b69489aec29@canb.auug.org.au>
+From: Tony Luck <tony.luck@intel.com>
+Subject: ia64 dies in slab code on next-20120906
+Date: Thu, 6 Sep 2012 11:39:16 -0700
+Message-ID: <CA+8MBbKmaaiEJ363E2PU-=6KJ4u+ZsQ1ywjb0nWMrp4xaSCeLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:56099 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932196Ab2IFSGN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Sep 2012 14:06:13 -0400
-In-Reply-To: <20120905154801.b21cf25d96767b69489aec29@canb.auug.org.au>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:43993 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932373Ab2IFSjR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Sep 2012 14:39:17 -0400
+Received: by pbbrr13 with SMTP id rr13so2886831pbb.19
+        for <linux-next@vger.kernel.org>; Thu, 06 Sep 2012 11:39:17 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Taprogge <jens.taprogge@taprogge.org>, =?UTF-8?Q?=22Samuel_Iglesias_Gons=C3=A1lvez=22?= <siglesias@igalia.com>
+To: linux-next@vger.kernel.org
+Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>
 
-On Wed, Sep 5, 2012 at 7:48 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->
-> drivers/staging/ipack/ipack.c: In function 'ipack_device_read_id':
-> drivers/staging/ipack/ipack.c:291:2: error: implicit declaration of function 'ioread8' [-Werror=implicit-function-declaration]
-> drivers/staging/ipack/ipack.c:309:3: error: implicit declaration of function 'ioread16be' [-Werror=implicit-function-declaration]
->
-> Caused by commit 187e47824013 ("Staging: ipack: Read the ID space during
-> device registration").
->
-> I have added the following patch for today:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 5 Sep 2012 15:44:11 +1000
-> Subject: [PATCH] Staging: ipack: disable due to build error
->
-> The powerpc allyesconfig build gives this:
->
-> drivers/staging/ipack/ipack.c: In function 'ipack_device_read_id':
-> drivers/staging/ipack/ipack.c:291:2: error: implicit declaration of function 'ioread8' [-Werror=implicit-function-declaration]
-> drivers/staging/ipack/ipack.c:309:3: error: implicit declaration of function 'ioread16be' [-Werror=implicit-function-declaration]
+Worked fine yesterday on next-20120905, crashes today. First sign of trouble
+was an unaligned access, then a NULL dereference. SL*B related bits of
+my config:
 
-The ipack driver also fails on s390/allmodconfig:
+CONFIG_SLUB_DEBUG=y
+# CONFIG_SLAB is not set
+CONFIG_SLUB=y
+CONFIG_SLABINFO=y
+# CONFIG_SLUB_DEBUG_ON is not set
+# CONFIG_SLUB_STATS is not set
 
-drivers/staging/ipack/devices/ipoctal.c:59:2: error: implicit
-declaration of function 'iowrite8'
-[-Werror=implicit-function-declaration]
-drivers/staging/ipack/devices/ipoctal.c:72:2: error: implicit
-declaration of function 'ioread8'
-[-Werror=implicit-function-declaration]
+And he console log.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/7143741/
+PID hash table entries: 4096 (order: 1, 32768 bytes)
+Dentry cache hash table entries: 262144 (order: 7, 2097152 bytes)
+Inode-cache hash table entries: 131072 (order: 6, 1048576 bytes)
+Memory: 2047920k/2086064k available (13992k code, 38144k reserved,
+6012k data, 880k init)
+kernel unaligned access to 0xca2ffc55fb373e95, ip=0xa0000001001be550
+swapper[0]: error during unaligned kernel access
+ -1 [1]
+Modules linked in:
 
-Guess it has to depend on HAS_IOMEM, too.
+Pid: 0, CPU 0, comm:              swapper
+psr : 00001010084a2018 ifs : 800000000000060f ip  :
+[<a0000001001be550>]    Not tainted (3.6.0-rc4-zx1-smp-next-20120906)
+ip is at new_slab+0x90/0x680
+unat: 0000000000000000 pfs : 000000000000060f rsc : 0000000000000003
+rnat: 9666960159966a59 bsps: a0000001001441c0 pr  : 9666960159965a59
+ldrs: 0000000000000000 ccv : 0000000000000000 fpsr: 0009804c8a70433f
+csd : 0000000000000000 ssd : 0000000000000000
+b0  : a0000001001be500 b6  : a00000010112cb20 b7  : a0000001011660a0
+f6  : 0fff7f0f0f0f0e54f0000 f7  : 0ffe8c5c1000000000000
+f8  : 1000d8000000000000000 f9  : 100068800000000000000
+f10 : 10005f0f0f0f0e54f0000 f11 : 1003e0000000000000078
+r1  : a00000010155eef0 r2  : 0000000000000000 r3  : fffffffffffc1638
+r8  : e0000040600081b8 r9  : ca2ffc55fb373e95 r10 : 0000000000000000
+r11 : e000004040001646 r12 : a000000101287e20 r13 : a000000101280000
+r14 : 0000000000004000 r15 : 0000000000000078 r16 : ca2ffc55fb373e75
+r17 : e000004040040000 r18 : fffffffffffc1646 r19 : e000004040001646
+r20 : fffffffffffc15f8 r21 : 000000000000004d r22 : a00000010132fa68
+r23 : 00000000000000ed r24 : 0000000000000000 r25 : 0000000000000000
+r26 : 0000000000000001 r27 : a0000001012b8500 r28 : a00000010135f4a0
+r29 : 0000000000000000 r30 : 0000000000000000 r31 : 0000000000000001
+Unable to handle kernel NULL pointer dereference (address 0000000000000018)
+swapper[0]: Oops 11003706212352 [2]
+Modules linked in:
 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/staging/ipack/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/staging/ipack/Kconfig b/drivers/staging/ipack/Kconfig
-> index af32178..5c428d7 100644
-> --- a/drivers/staging/ipack/Kconfig
-> +++ b/drivers/staging/ipack/Kconfig
-> @@ -4,6 +4,7 @@
->
->  menuconfig IPACK_BUS
->         tristate "IndustryPack bus support"
-> +       depends on BROKEN
-
-Cool, can I do that for all build failures? ;-)
-
->         ---help---
->           If you say Y here you get support for the IndustryPack Framework
->           for drivers for many types of boards that support this industrial
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Pid: 0, CPU 0, comm:              swapper
+psr : 0000121008022018 ifs : 800000000000cc18 ip  :
+[<a0000001004dc8f1>]    Not tainted (3.6.0-rc4-zx1-smp-next-20120906)
+ip is at __copy_user+0x891/0x960
+unat: 0000000000000000 pfs : 0000000000000813 rsc : 0000000000000003
+rnat: 0000000000000000 bsps: 0000000000000000 pr  : 9666960159961765
+ldrs: 0000000000000000 ccv : 0000000000000000 fpsr: 0009804c0270033f
+csd : 0000000000000000 ssd : 0000000000000000
+b0  : a00000010004b550 b6  : a00000010004b740 b7  : a00000010000c750
+f6  : 000000000000000000000 f7  : 1003e9e3779b97f4a7c16
+f8  : 1003e0a00000010001550 f9  : 100068800000000000000
+f10 : 10005f0f0f0f0e54f0000 f11 : 1003e0000000000000078
+r1  : a00000010155eef0 r2  : a0000001012870b0 r3  : a0000001012870b8
+r8  : 0000000000000298 r9  : 0000000000000013 r10 : 0000000000000000
+r11 : 9666960159961a65 r12 : a000000101287010 r13 : a000000101280000
+r14 : a000000101287068 r15 : a000000101287080 r16 : 0000000000000298
+r17 : 0000000000000010 r18 : 0000000000000018 r19 : a000000101287310
+r20 : 0000000000000290 r21 : 0000000000000000 r22 : 0000000000000000
+r23 : a000000101386f58 r24 : 0000000000000000 r25 : 000000007fffffff
+r26 : a000000101287078 r27 : a0000001013c69b0 r28 : 0000000000000000
+r29 : 0000000000000014 r30 : 0000000000000000 r31 : 0000000000000813
