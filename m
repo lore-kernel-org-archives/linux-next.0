@@ -1,78 +1,47 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: [PATCH -next] soc: fix wm0010.c printk format warning
-Date: Thu, 6 Sep 2012 02:22:22 +0200
-Message-ID: <CA+icZUWKMrRoNL-vBpnAPPCdnJXRnOjJuQW9m7nJ3emjyOVOZQ@mail.gmail.com>
+Date: Thu, 6 Sep 2012 08:42:57 +0800
+Message-ID: <20120906004251.GV10580@opensource.wolfsonmicro.com>
 References: <20120905161230.3bab1de6d4c8c8e466c3b0df@canb.auug.org.au>
-	<5047DF49.6070502@xenotime.net>
-	<20120906000612.GO10580@opensource.wolfsonmicro.com>
-	<5047EA1C.7080608@xenotime.net>
-Reply-To: sedat.dilek@gmail.com
+ <5047DF49.6070502@xenotime.net>
+ <20120906000612.GO10580@opensource.wolfsonmicro.com>
+ <5047EA1C.7080608@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:59887 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754880Ab2IFAWY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Sep 2012 20:22:24 -0400
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:39532 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755275Ab2IFAnD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Sep 2012 20:43:03 -0400
+Content-Disposition: inline
 In-Reply-To: <5047EA1C.7080608@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, alsa-devel@alsa-project.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, alsa-devel@alsa-project.org
 
-On Thu, Sep 6, 2012 at 2:11 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
+On Wed, Sep 05, 2012 at 05:11:08PM -0700, Randy Dunlap wrote:
 > On 09/05/2012 05:06 PM, Mark Brown wrote:
->
->> On Wed, Sep 05, 2012 at 04:24:57PM -0700, Randy Dunlap wrote:
->>> From: Randy Dunlap <rdunlap@xenotime.net>
->>>
->>> Fix printk format warning:
->>
->> Somone already sent this.  As ever please try to use subject lines
->> appropriate for the subsystem.  Please also consider who you're CCing -
->
->
+
+> > Somone already sent this.  As ever please try to use subject lines
+> > appropriate for the subsystem.  Please also consider who you're CCing -
+
 > Unfortunately the MAINTAINERS file does not tell me what to include
 > in the $subject line for the subsystem.
 > What would you like to see there, please?  Maybe ASoC?
->
 
-git log --oneline sound/soc/codecs/wm0010.c
+As with every other subsystem in the kernel look at the log for the
+thing your changing and do something that visually resembles it.  If you
+want get_maintainers to do this for you you'll need to write the code
+(or convince someone else to do it).
 
-Label looks like "ASoC: wm0010:"... (ASoC kills my shift key, I would
-like to see all labels lower-case).
+> > there's no need to copy -next on things like this which aren't
 
->> there's no need to copy -next on things like this which aren't
->
->
 > I have always done a reply-to-all for linux-next patches, so after
 > a few years someone days Don't Do That (IYO).
->
 
-Then maintainers should check compiler-warnings in their area - regularly?
-
-$ grep warning: v3.6.0-rc4-next20120905-1-iniza-generic/deb-pkg.log |
-grep 'sound/soc' | wc -l
-10
-
-I agree that breakage and regressions should be dealt with higher
-priority... Such patches like this should be welcome, anyway.
-
->> integration issues for example, if we start doing that then it'd get
->> drowned in noise from all the development.
->
->
-> Agreed, many of us are already drowning from 1000+ emails per day.
-> (seriously)
->
-
-Spam will one day eliminate Email, it's perverted.
-
-- Sedat -
-
-> --
-> ~Randy
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I'm pretty sure I've mentioned this before...  actually, if you're
+relying on get_maintainers that's probably some of the false positives
+too.  If you've found an issue related to the -next integration that's
+one thing but if you've just noticed a random thing in the kernel that
+could be improved that's not really something about -next.
