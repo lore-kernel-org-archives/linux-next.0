@@ -1,34 +1,70 @@
-From: Lauri Hintsala <lauri.hintsala@bluegiga.com>
-Subject: Re: linux-next: manual merge of the spi-mb tree with the mmc tree
-Date: Thu, 06 Sep 2012 09:26:39 +0300
-Message-ID: <5048421F.7080101@bluegiga.com>
-References: <20120905131539.95d7a613d49f741ab6f123a6@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (powerpc
+ tree related)
+Date: Thu, 6 Sep 2012 17:11:53 +1000
+Message-ID: <20120906171153.c80e87ea8db3dd3f4ac87cf5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__6_Sep_2012_17_11_53_+1000_9qgwl6mOfInQ1Z19"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bluegiga.fi ([194.100.31.45]:41772 "EHLO darkblue.bluegiga.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751388Ab2IFG0l (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Sep 2012 02:26:41 -0400
-In-Reply-To: <20120905131539.95d7a613d49f741ab6f123a6@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53602 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751449Ab2IFHMF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Sep 2012 03:12:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Ball <cjb@laptop.org>, Marek Vasut <marex@denx.de>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ananth N Mavinakayanahalli <ananth@in.ibm.com>
 
-On 09/05/2012 06:15 AM, Stephen Rothwell wrote:
-> Hi Mark,
->
-> Today's linux-next merge of the spi-mb tree got a conflict in
-> drivers/mmc/host/mxs-mmc.c between commit fc108d24d3a6 ("mmc: mxs-mmc:
-> fix deadlock caused by recursion loop") from the mmc tree and commit
-> 829c1bf40b92 ("mmc: spi: Pull out parts shared between MMC and SPI") from
-> the spi-mb tree.
->
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Signature=_Thu__6_Sep_2012_17_11_53_+1000_9qgwl6mOfInQ1Z19
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed and tested. Looks good.
+Hi all,
 
-Lauri
+After merging the final tree, today's linux-next build (powerpc allyesconfi=
+g)
+failed like this:
+
+In file included from drivers/atm/fore200e.c:70:0:
+drivers/atm/fore200e.h:263:3: error: redefinition of typedef 'opcode_t' wit=
+h different type
+arch/powerpc/include/asm/probes.h:25:13: note: previous declaration of 'opc=
+ode_t' was here
+
+Caused by commit 7118e7e648e0 ("powerpc: Consolidate {k,u}probe
+definitions") from the powerpc tree.
+
+I have reverted that commit (and the two following:
+41ab5266c362	"powerpc: Add trap_nr to thread_struct"
+8b7b80b9ebb4	"powerpc: Uprobes port to powerpc")
+for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__6_Sep_2012_17_11_53_+1000_9qgwl6mOfInQ1Z19
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQSEy5AAoJEECxmPOUX5FEo0EQAIALijyHzcSPJTpOkXOC5al6
+1hc+LVqeBwRSwuLJyXObyXTIIU1C9kaDB3ziJ0Ji2WXG7M8FEHf8K8q1xbw6fQ8A
+whcIZjVlZ7gfj+l31iFGsLqMI2sZq1V1Pk2/zuZst7HrDS3AsDLxQY7xRSIW7W+u
+nSLrzrIFA1n9r0SVhtelVNSUE471g4kJ7ww4aI8rig72m08zD/AzfK9zFkHxhH00
+4LXIHqTYhWTsMIhk79UirBFWLyinKStS7uCIfBF2Cxxlqao0mrrPlEDTd3VBRiEk
+IgHVzu4lQ+pquI0Fk7IjbkmxGWyMsR3X1cyt6tl9EAuy95iW/HIB8H02heL2ka0U
+v55XAibbgn04WTlLROZFRSyWlsGXg7Fp/yL83x2lHpbysBlO+vNk9uFt1kugMcU6
+9nW75BpyDQWoHQbOZFoK+N5NChw0qEyZz4iCMBuj44BGY9XJgRaR0Se2nOh2D6co
+6tCDBsPM8r+tUEsnZ2/W1EmzLmw1xg+R/SnrxaYPIbJUZhS/B5FRIiZhadNJHFbF
+02GC63qd3S5GxbWRFY5QCM5XIBU0e2kKNBga8czTxNr619ehXnUiZ/C/4rdfRJyQ
+OVfAKCYmSctefKyKo4ITfW4+AbLJlBSCN7609lrpR/ykcMLJ67dky1oLaOCViEfc
+jTogHNotM+TNnccFAWrO
+=xExw
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__6_Sep_2012_17_11_53_+1000_9qgwl6mOfInQ1Z19--
