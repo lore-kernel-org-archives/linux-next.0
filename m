@@ -1,150 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the crypto tree with the sparc-next
- tree
-Date: Fri, 7 Sep 2012 12:51:04 +1000
-Message-ID: <20120907125104.f9adc5ba55907e802cc8329b@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap_dss2 tree with Linus' tree
+Date: Fri, 7 Sep 2012 13:29:12 +1000
+Message-ID: <20120907132912.dc29219f9ae62b7befbd7401@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__7_Sep_2012_12_51_04_+1000_tID0pQtN=WYVzHw9"
+ boundary="Signature=_Fri__7_Sep_2012_13_29_12_+1000_oa6UKWTBBrdevla5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56084 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43593 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758446Ab2IGCvO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Sep 2012 22:51:14 -0400
+	with ESMTP id S1759146Ab2IGD3V (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Sep 2012 23:29:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David McCullough <david_mccullough@mcafee.com>, "David S. Miller" <davem@davemloft.net>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Archit Taneja <archit@ti.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
 
---Signature=_Fri__7_Sep_2012_12_51_04_+1000_tID0pQtN=WYVzHw9
+--Signature=_Fri__7_Sep_2012_13_29_12_+1000_oa6UKWTBBrdevla5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi Tomi,
 
-Today's linux-next merge of the crypto tree got conflicts in
-crypto/Kconfig between commits 4ff28d4ca93b ("sparc64: Add SHA1 driver
-making use of the 'sha1' instruction") and 9bf4852d3d19 ("sparc64: Add
-AES driver making use of the new aes opcodes") from the sparc-next tree
-and commit f0be44f4fb1f ("arm/crypto: Add optimized AES and SHA1
-routines") from the crypto tree.
+Today's linux-next merge of the omap_dss2 tree got a conflict in drivers/vi=
+deo/omap2/dss/sdi.c between commit 35d678664873 ("OMAPDSS: Fix SDI PLL lock=
+ing") from Linus' tree and commit 889b4fd7eed2 ("OMAPDSS: SDI: Maintain cop=
+y of data pairs in driver data") from the omap_dss2 tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary (no action is required).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc crypto/Kconfig
-index 94f232f,2730798..0000000
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@@ -451,15 -433,15 +451,24 @@@ config CRYPTO_SHA1_SSSE
-  	  using Supplemental SSE3 (SSSE3) instructions or Advanced Vector
-  	  Extensions (AVX), when available.
+diff --cc drivers/video/omap2/dss/sdi.c
+index f43bfe1,3bf1bfe..0000000
+--- a/drivers/video/omap2/dss/sdi.c
++++ b/drivers/video/omap2/dss/sdi.c
+@@@ -105,21 -107,8 +107,22 @@@ int omapdss_sdi_display_enable(struct o
  =20
-+ config CRYPTO_SHA1_ARM
-+ 	tristate "SHA1 digest algorithm (ARM-asm)"
-+ 	depends on ARM
-+ 	select CRYPTO_SHA1
-+ 	select CRYPTO_HASH
-+ 	help
-+ 	  SHA-1 secure hash standard (FIPS 180-1/DFIPS 180-2) implemented
-+ 	  using optimized ARM assembler.
-+=20
- +config CRYPTO_SHA1_SPARC64
- +	tristate "SHA1 digest algorithm (SPARC64)"
- +	depends on SPARC64
- +	select CRYPTO_SHA1
- +	select CRYPTO_HASH
- +	help
- +	  SHA-1 secure hash standard (FIPS 180-1/DFIPS 180-2) implemented
- +	  using sparc64 crypto instructions, when available.
- +
-  config CRYPTO_SHA256
-  	tristate "SHA224 and SHA256 digest algorithm"
-  	select CRYPTO_HASH
-@@@ -633,34 -599,30 +644,58 @@@ config CRYPTO_AES_NI_INTE
-  	  ECB, CBC, LRW, PCBC, XTS. The 64 bit version has additional
-  	  acceleration for CTR.
+  	sdi_config_lcd_manager(dssdev);
  =20
-+ config CRYPTO_AES_ARM
-+ 	tristate "AES cipher algorithms (ARM-asm)"
-+ 	depends on ARM
-+ 	select CRYPTO_ALGAPI
-+ 	select CRYPTO_AES
-+ 	help
-+ 	  Use optimized AES assembler routines for ARM platforms.
+ +	/*
+ +	 * LCLK and PCLK divisors are located in shadow registers, and we
+ +	 * normally write them to DISPC registers when enabling the output.
+ +	 * However, SDI uses pck-free as source clock for its PLL, and pck-free
+ +	 * is affected by the divisors. And as we need the PLL before enabling
+ +	 * the output, we need to write the divisors early.
+ +	 *
+ +	 * It seems just writing to the DISPC register is enough, and we don't
+ +	 * need to care about the shadow register mechanism for pck-free. The
+ +	 * exact reason for this is unknown.
+ +	 */
+ +	dispc_mgr_set_clock_div(dssdev->manager->id,
+ +			&sdi.mgr_config.clock_info);
+ +
+- 	dss_sdi_init(dssdev->phy.sdi.datapairs);
++ 	dss_sdi_init(sdi.datapairs);
 +=20
-+ 	  AES cipher algorithms (FIPS-197). AES uses the Rijndael
-+ 	  algorithm.
-+=20
-+ 	  Rijndael appears to be consistently a very good performer in
-+ 	  both hardware and software across a wide range of computing
-+ 	  environments regardless of its use in feedback or non-feedback
-+ 	  modes. Its key setup time is excellent, and its key agility is
-+ 	  good. Rijndael's very low memory requirements make it very well
-+ 	  suited for restricted-space environments, in which it also
-+ 	  demonstrates excellent performance. Rijndael's operations are
-+ 	  among the easiest to defend against power and timing attacks.
-+=20
-+ 	  The AES specifies three key sizes: 128, 192 and 256 bits
-+=20
-+ 	  See <http://csrc.nist.gov/encryption/aes/> for more information.
-+=20
- +config CRYPTO_AES_SPARC64
- +	tristate "AES cipher algorithms (SPARC64)"
- +	depends on SPARC64
- +	select CRYPTO_CRYPTD
- +	select CRYPTO_ALGAPI
- +	help
- +	  Use SPARC64 crypto opcodes for AES algorithm.
- +
- +	  AES cipher algorithms (FIPS-197). AES uses the Rijndael
- +	  algorithm.
- +
- +	  Rijndael appears to be consistently a very good performer in
- +	  both hardware and software across a wide range of computing
- +	  environments regardless of its use in feedback or non-feedback
- +	  modes. Its key setup time is excellent, and its key agility is
- +	  good. Rijndael's very low memory requirements make it very well
- +	  suited for restricted-space environments, in which it also
- +	  demonstrates excellent performance. Rijndael's operations are
- +	  among the easiest to defend against power and timing attacks.
- +
- +	  The AES specifies three key sizes: 128, 192 and 256 bits
- +
- +	  See <http://csrc.nist.gov/encryption/aes/> for more information.
- +
- +	  In addition to AES cipher algorithm support, the acceleration
- +	  for some popular block cipher mode is supported too, including
- +	  ECB and CBC.
- +
-  config CRYPTO_ANUBIS
-  	tristate "Anubis cipher algorithm"
-  	select CRYPTO_ALGAPI
+  	r =3D dss_sdi_enable();
+  	if (r)
+  		goto err_sdi_enable;
 
---Signature=_Fri__7_Sep_2012_12_51_04_+1000_tID0pQtN=WYVzHw9
+--Signature=_Fri__7_Sep_2012_13_29_12_+1000_oa6UKWTBBrdevla5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQSWEYAAoJEECxmPOUX5FEUXsP/jnVApPfve2sZ2mmvp+d2cXR
-D3PG1vaQhYulziY+PC9YZ+y4783/vid34sGvXyZeG1Hdmm91cPj1lK/vUSnqbTzy
-/iOmiSa/UTAGyS6J9II44BWNkXdQVLiHt9RrzG6/jmlKBZVy4bQhf9dc2NECSEvO
-j1QwyqzThpHQ2zYtw95WMCax2NkflhUDrzZ+V8L0qBhe7YOy0KSDVv/fRR//StUO
-M+aMrZJBSew+NAyjMh6lkDwt/OwrrSAZ8MUedDEECVWHmTk6GfkZQuVJrEfmsZpI
-Tm5rCNZhFn8xQg1V/CKm96a96enKf8mdg9ju7nZRnNYOQXD9m4+24ifD6E8qTdgt
-eKb3H3X0lHJv04/wsiGSEQ+U0etgSP9lg6e0Yk87mwZAvrizrHzPYE+kKN9IFtsa
-1X0Iif995XVSs0RJxT98gusfF8vR1JTEKRLsYmZY8VRf1WCUnOPUnntlyGSXFcqK
-ZPbpF6gIm77xVoglHcetqXL3Qqd+7svsj36DegwWxArLDOdaCaUZzaC42u05UMxX
-3l1mOugevgVKyxoKHfj1s2winVXd9BaA9nP+OnAaSz8QYZssfexJpeJvgmSw4b/w
-KtI+dc4mWDjXPZvzJS0ANAlAd7I46+zI2E0ijH6++pbkgeMKb57e4BDFOATKW0Fz
-7NJtc5ysnSWGWD+drIE/
-=QANv
+iQIcBAEBCAAGBQJQSWoIAAoJEECxmPOUX5FEENkP/33U0Ru1p2obYwdDmFvadOIU
+7A78NDAtug0HdoK7cMb1kKeO3DBeAHvP81/kKhPRvv41C3GQXxrB+mER6c4sUWSI
+e/rTgtsaGzoaLyIVxVAq3m48M7F8wmTKQibNxXG+S98PMYH8Tac76gga4IpNaGDV
+LYnRZiT75Unt2kv+wIZRcM+0nN7ZmAgn+hx4M8RS6OdVL5Edy8Cnl00nxfGCoPkq
+pDceyNYIbYFpgrTFhw1ibtqBVxtAVcrKTZfRfoDgRy7MalYTpwUwWO208d6H5aNH
+D4SPUI/qmefcP24lgakF6CJBgKvW/iOezGaugrlPzpKlrAzJnjPuvgw+X8djCM7e
+7Oiqa7VwaR2SD/iB6t9ihxNTNVqWyUwou5BjyFAhxr19/UjNblo4xoI0OkocdL3q
+oAO1otuYqcKjAMk7969Xqbq7jCsQ34a9TxeO7xJ33vZR5w6lx7IS/SikS4GL+v+i
+OW5kT41CAG/faSgU0WxcIA+tJVL5K8ThtMpS9S2ST2rZNY2Yw2+Z1ntNFTA8CJzG
+DbC7gVvpCExfY/CN8IAXjGrmE4DqHQi1TJu/YpcjhrufS/Tpvpc0YqAFWE28bMiU
+KWJ4zYsoA7E0qz0V+V0Zk21QhrateKVkIzrttzrJlv6AffOjVOeib9hCdAZamDE7
+3FiwBVFV5VvHAqOweISk
+=HqHe
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__7_Sep_2012_12_51_04_+1000_tID0pQtN=WYVzHw9--
+--Signature=_Fri__7_Sep_2012_13_29_12_+1000_oa6UKWTBBrdevla5--
