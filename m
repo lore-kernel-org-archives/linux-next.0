@@ -1,87 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap_dss2 tree with Linus' tree
-Date: Fri, 7 Sep 2012 13:29:12 +1000
-Message-ID: <20120907132912.dc29219f9ae62b7befbd7401@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: manual merge of the crypto tree with the
+ sparc-next tree
+Date: Thu, 6 Sep 2012 20:33:58 -0700
+Message-ID: <20120907033358.GB26360@gondor.apana.org.au>
+References: <20120907125104.f9adc5ba55907e802cc8329b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__7_Sep_2012_13_29_12_+1000_oa6UKWTBBrdevla5"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43593 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759146Ab2IGD3V (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Sep 2012 23:29:21 -0400
+Received: from sting.hengli.com.au ([178.18.18.71]:59524 "EHLO
+	fornost.hengli.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1759305Ab2IGDeC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Sep 2012 23:34:02 -0400
+Content-Disposition: inline
+In-Reply-To: <20120907125104.f9adc5ba55907e802cc8329b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Archit Taneja <archit@ti.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David McCullough <david_mccullough@mcafee.com>, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Fri__7_Sep_2012_13_29_12_+1000_oa6UKWTBBrdevla5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Sep 07, 2012 at 12:51:04PM +1000, Stephen Rothwell wrote:
+> Hi Herbert,
+> 
+> Today's linux-next merge of the crypto tree got conflicts in
+> crypto/Kconfig between commits 4ff28d4ca93b ("sparc64: Add SHA1 driver
+> making use of the 'sha1' instruction") and 9bf4852d3d19 ("sparc64: Add
+> AES driver making use of the new aes opcodes") from the sparc-next tree
+> and commit f0be44f4fb1f ("arm/crypto: Add optimized AES and SHA1
+> routines") from the crypto tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hi Tomi,
-
-Today's linux-next merge of the omap_dss2 tree got a conflict in drivers/vi=
-deo/omap2/dss/sdi.c between commit 35d678664873 ("OMAPDSS: Fix SDI PLL lock=
-ing") from Linus' tree and commit 889b4fd7eed2 ("OMAPDSS: SDI: Maintain cop=
-y of data pairs in driver data") from the omap_dss2 tree.
-
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary (no action is required).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/video/omap2/dss/sdi.c
-index f43bfe1,3bf1bfe..0000000
---- a/drivers/video/omap2/dss/sdi.c
-+++ b/drivers/video/omap2/dss/sdi.c
-@@@ -105,21 -107,8 +107,22 @@@ int omapdss_sdi_display_enable(struct o
- =20
-  	sdi_config_lcd_manager(dssdev);
- =20
- +	/*
- +	 * LCLK and PCLK divisors are located in shadow registers, and we
- +	 * normally write them to DISPC registers when enabling the output.
- +	 * However, SDI uses pck-free as source clock for its PLL, and pck-free
- +	 * is affected by the divisors. And as we need the PLL before enabling
- +	 * the output, we need to write the divisors early.
- +	 *
- +	 * It seems just writing to the DISPC register is enough, and we don't
- +	 * need to care about the shadow register mechanism for pck-free. The
- +	 * exact reason for this is unknown.
- +	 */
- +	dispc_mgr_set_clock_div(dssdev->manager->id,
- +			&sdi.mgr_config.clock_info);
- +
-- 	dss_sdi_init(dssdev->phy.sdi.datapairs);
-+ 	dss_sdi_init(sdi.datapairs);
-+=20
-  	r =3D dss_sdi_enable();
-  	if (r)
-  		goto err_sdi_enable;
-
---Signature=_Fri__7_Sep_2012_13_29_12_+1000_oa6UKWTBBrdevla5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQSWoIAAoJEECxmPOUX5FEENkP/33U0Ru1p2obYwdDmFvadOIU
-7A78NDAtug0HdoK7cMb1kKeO3DBeAHvP81/kKhPRvv41C3GQXxrB+mER6c4sUWSI
-e/rTgtsaGzoaLyIVxVAq3m48M7F8wmTKQibNxXG+S98PMYH8Tac76gga4IpNaGDV
-LYnRZiT75Unt2kv+wIZRcM+0nN7ZmAgn+hx4M8RS6OdVL5Edy8Cnl00nxfGCoPkq
-pDceyNYIbYFpgrTFhw1ibtqBVxtAVcrKTZfRfoDgRy7MalYTpwUwWO208d6H5aNH
-D4SPUI/qmefcP24lgakF6CJBgKvW/iOezGaugrlPzpKlrAzJnjPuvgw+X8djCM7e
-7Oiqa7VwaR2SD/iB6t9ihxNTNVqWyUwou5BjyFAhxr19/UjNblo4xoI0OkocdL3q
-oAO1otuYqcKjAMk7969Xqbq7jCsQ34a9TxeO7xJ33vZR5w6lx7IS/SikS4GL+v+i
-OW5kT41CAG/faSgU0WxcIA+tJVL5K8ThtMpS9S2ST2rZNY2Yw2+Z1ntNFTA8CJzG
-DbC7gVvpCExfY/CN8IAXjGrmE4DqHQi1TJu/YpcjhrufS/Tpvpc0YqAFWE28bMiU
-KWJ4zYsoA7E0qz0V+V0Zk21QhrateKVkIzrttzrJlv6AffOjVOeib9hCdAZamDE7
-3FiwBVFV5VvHAqOweISk
-=HqHe
------END PGP SIGNATURE-----
-
---Signature=_Fri__7_Sep_2012_13_29_12_+1000_oa6UKWTBBrdevla5--
+Looks good.  Thanks Stephen!
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
