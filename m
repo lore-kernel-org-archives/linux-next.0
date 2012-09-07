@@ -1,36 +1,26 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: Re: mmotm 2012-09-06-16-46 uploaded
-Date: Fri, 7 Sep 2012 17:23:52 +0200
-Message-ID: <20120907152352.GC3688@dhcp22.suse.cz>
-References: <20120906234735.1B54B20004E@hpza10.eem.corp.google.com>
- <20120907151246.GB3688@dhcp22.suse.cz>
- <20120907152251.GA14728@localhost>
+From: Timur Tabi <timur@freescale.com>
+Subject: Re: linux-next: Tree for Sept 4 (drivers/net/phy/mdio-mux-mmioreg.c)
+Date: Fri, 7 Sep 2012 14:37:38 -0500
+Message-ID: <504A4D02.8050709@freescale.com>
+References: <20120904171330.f6b0a922a754ba0f3acc123b@canb.auug.org.au> <5046933A.6080400@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20120907152251.GA14728@localhost>
-Sender: owner-linux-mm@kvack.org
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <5046933A.6080400@xenotime.net>
+Sender: netdev-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri 07-09-12 23:22:51, Wu Fengguang wrote:
-> On Fri, Sep 07, 2012 at 05:12:47PM +0200, Michal Hocko wrote:
-> > [CCing Wu Fengguang so that he can update the link to the new tree
-> > location]
-> 
-> > $ git remote add mm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-> 
-> Thanks! I've updated to the new link and it works fine.
+Randy Dunlap wrote:
+> drivers/net/phy/mdio-mux-mmioreg.c: In function 'mdio_mux_mmioreg_probe':
+> drivers/net/phy/mdio-mux-mmioreg.c:83:2: error: implicit declaration of function 'of_address_to_resource'
 
-Thanks a lot!
+I can't reproduce the problem, but I think I have a fix.  I'll post a
+patch in a minute.  Can you test it and let me know (e.g. via an ACK)
+whether it works?
+
 -- 
-Michal Hocko
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Timur Tabi
+Linux kernel developer at Freescale
