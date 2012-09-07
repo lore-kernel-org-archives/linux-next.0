@@ -1,25 +1,58 @@
-From: David Brown <davidb@codeaurora.org>
-Subject: Adding 'msm' tree to linux-next.
-Date: Fri, 7 Sep 2012 15:04:04 -0700
-Message-ID: <20120907220404.GA5904@codeaurora.org>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: [PATCH][v2] netdev/phy: mdio-mux-mmioreg.c should include of_address.h
+Date: Fri, 07 Sep 2012 16:42:26 -0700
+Message-ID: <504A8662.9050907@xenotime.net>
+References: <1347053457-24935-1-git-send-email-timur@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=GB2312
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:39038 "HELO
+	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755191Ab2IGXmu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Sep 2012 19:42:50 -0400
+In-Reply-To: <1347053457-24935-1-git-send-email-timur@freescale.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Timur Tabi <timur@freescale.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au
 
-Stephen,
+On 09/07/2012 02:30 PM, Timur Tabi wrote:
 
-I'd like to add the msm soc tree to Linux next.
+> mdio-mux-mmioreg.c uses function of_address_to_resource(), which is defined
+> in linux/of_address.h.  This fixes a compilation error:
+> 
+> drivers/net/phy/mdio-mux-mmioreg.c: In function 'mdio_mux_mmioreg_probe':
+> drivers/net/phy/mdio-mux-mmioreg.c:83:2: error: implicit declaration of
+> 	function 'of_address_to_resource'
+> 
+> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+> Signed-off-by: Timur Tabi <timur@freescale.com>
+> 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/davidb/linux-msm.git for-next
 
-I had removed it when the creation of the ARM SoC tree, but now that
-msm is getting a bit more active, I'd like to get it included in next
-to get it in a bit earlier.
+Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
-Thanks,
-David Brown
+Thanks.
+
+> ---
+>  drivers/net/phy/mdio-mux-mmioreg.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/net/phy/mdio-mux-mmioreg.c b/drivers/net/phy/mdio-mux-mmioreg.c
+> index 098239a..9061ba6 100644
+> --- a/drivers/net/phy/mdio-mux-mmioreg.c
+> +++ b/drivers/net/phy/mdio-mux-mmioreg.c
+> @@ -12,6 +12,7 @@
+>  
+>  #include <linux/platform_device.h>
+>  #include <linux/device.h>
+> +#include <linux/of_address.h>
+>  #include <linux/of_mdio.h>
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+
+
+
+-- 
+~Randy
