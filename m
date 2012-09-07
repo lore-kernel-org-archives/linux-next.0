@@ -1,68 +1,104 @@
-From: Samuel Iglesias =?ISO-8859-1?Q?Gons=E1lvez?=
-	<siglesias@igalia.com>
-Subject: Re: [PATCH] staging: ipack: only build on platforms that provide
- ioread/iowrite.
-Date: Fri, 07 Sep 2012 09:01:32 +0200
-Message-ID: <1347001292.5957.43.camel@fourier.local.igalia.com>
-References: <CAMuHMdWN--hXYTPYNi07vNB0DrMdDoc+MwxgUkSBihPw+VKGHg@mail.gmail.com>
-	 <1346960719-9184-1-git-send-email-jens.taprogge@taprogge.org>
-	 <1346960719-9184-2-git-send-email-jens.taprogge@taprogge.org>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: ia64 dies in slab code on next-20120906
+Date: Fri, 7 Sep 2012 10:13:29 +0200
+Message-ID: <CA+icZUXudJCYYUpEs7C2VncQLWPZ2V0m4DK1p8Kfvbe=9O_-bw@mail.gmail.com>
+References: <CA+8MBbKmaaiEJ363E2PU-=6KJ4u+ZsQ1ywjb0nWMrp4xaSCeLw@mail.gmail.com>
+	<000001399d36edcb-6035fc93-73cf-43df-851e-c062a48db219-000000@email.amazonses.com>
+	<3908561D78D1C84285E8C5FCA982C28F1939A917@ORSMSX104.amr.corp.intel.com>
+	<000001399d4a0397-2e613f0b-2648-47dc-b105-9d7c789ed651-000000@email.amazonses.com>
+	<CA+icZUVM0xMMKxdY8iWXkykKKwS=ixJ8GiUKgSpHeVXJKtuqFw@mail.gmail.com>
+	<CA+icZUVboExbZAF1xGOGp1MPTDTPDEhhcab8dM3WYQc==sY8rQ@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-vkEIv9jKvBZ45LcOlhlg"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1346960719-9184-2-git-send-email-jens.taprogge@taprogge.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Taprogge <jens.taprogge@taprogge.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, industrypack-devel@lists.sourceforge.net, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:36155 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751736Ab2IGINa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Sep 2012 04:13:30 -0400
+Received: by lagy9 with SMTP id y9so1674661lag.19
+        for <linux-next@vger.kernel.org>; Fri, 07 Sep 2012 01:13:29 -0700 (PDT)
+In-Reply-To: <CA+icZUVboExbZAF1xGOGp1MPTDTPDEhhcab8dM3WYQc==sY8rQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christoph Lameter <cl@linux.com>
+Cc: "Luck, Tony" <tony.luck@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>
 
+On Thu, Sep 6, 2012 at 11:00 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> On Thu, Sep 6, 2012 at 10:45 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> On Thu, Sep 6, 2012 at 10:33 PM, Christoph Lameter <cl@linux.com> wrote:
+>>> On Thu, 6 Sep 2012, Luck, Tony wrote:
+>>>
+>>>> r9 was computed as 32 + return value from a call to allocate_slab()
+>>>>
+>>>> So I think we are inside the inlined "inc_slabs_node()" call on line 1357 of mm/slub.c
+>>>
+>>> Ok that would mean its not related to object arrangement within the page
+>>> done by the allocator. How can a atomic_long value become misaligned?
+>>>
+>>
+>> Did the items in slab_err() got mixed (see below hunk from my revert-patch)?
+>>
+>> @@ -3133,7 +3139,7 @@ static void list_slab_objects(struct kmem_cache
+>> *s, struct page *page,
+>>                                      sizeof(long), GFP_ATOMIC);
+>>         if (!map)
+>>                 return;
+>> -       slab_err(s, page, text, s->name);
+>> +       slab_err(s, page, "%s", text);
+>>         slab_lock(page);
+>>
+>>         get_map(s, page, map);
+>>
+>
+> I am not a mm/slab expert, but checking [1]:
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 24aa362..724adea 100644 (file)
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -624,7 +624,7 @@ static void object_err(struct kmem_cache *s,
+> struct page *page,
+>         print_trailer(s, page, object);
+>  }
+>
+> -static void slab_err(struct kmem_cache *s, struct page *page, char *fmt, ...)
+> +static void slab_err(struct kmem_cache *s, struct page *page, const
+> char *fmt, ...)
+>  {
+>         va_list args;
+>         char buf[100];
+> @@ -3146,7 +3146,7 @@ static void list_slab_objects(struct kmem_cache
+> *s, struct page *page,
+>                                      sizeof(long), GFP_ATOMIC);
+>         if (!map)
+>                 return;
+> -       slab_err(s, page, "%s", text);
+> +       slab_err(s, page, text, s->name);
+>         slab_lock(page);
+>
+>         get_map(s, page, map);
+>
+> So, in slab_err() 4th item is "const char *fmt", so it should be instead...?
+>
+> -       slab_err(s, page, "%s", text);
+> +       slab_err(s, page, s->name, text);
+>
+> ( Untested )
+>
 
---=-vkEIv9jKvBZ45LcOlhlg
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Forget that, wrong view on the parameter list of slab_err().
 
-On Thu, 2012-09-06 at 21:45 +0200, Jens Taprogge wrote:
-> Do so by depending on HAS_IOMEM.
->=20
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
->=20
-> Signed-off-by: Jens Taprogge <jens.taprogge@taprogge.org>
-> ---
->  drivers/staging/ipack/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/staging/ipack/Kconfig b/drivers/staging/ipack/Kconfi=
-g
-> index af32178..4cf4706 100644
-> --- a/drivers/staging/ipack/Kconfig
-> +++ b/drivers/staging/ipack/Kconfig
-> @@ -4,6 +4,7 @@
-> =20
->  menuconfig IPACK_BUS
->  	tristate "IndustryPack bus support"
-> +	depends on HAS_IOMEM
->  	---help---
->  	  If you say Y here you get support for the IndustryPack Framework
->  	  for drivers for many types of boards that support this industrial
+- Sedat -
 
-Acked-by: Samuel Iglesias Gons=C3=A1lvez <siglesias@igalia.com>
-
-Thanks,
-
-Sam
-
---=-vkEIv9jKvBZ45LcOlhlg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iEYEABECAAYFAlBJm8wACgkQWrfbyfmd9eJ6GwCfZOLdUytNutk8hUmUOglq3t40
-QdYAn0ATyyZGMMt19NZupjUE+ClyYcRS
-=t4a0
------END PGP SIGNATURE-----
-
---=-vkEIv9jKvBZ45LcOlhlg--
+> - Sedat -
+>
+> [1] http://git.kernel.org/?p=linux/kernel/git/penberg/linux.git;a=commitdiff;h=945cf2b6199be70ff03102b9e642c3bb05d01de9
+>
+>> - Sedat -
+>>
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
