@@ -1,88 +1,49 @@
-From: Daniel Mack <zonque@gmail.com>
-Subject: Re: mmotm 2012-09-06-16-46 uploaded (drivers/misc/lis3lv02d/lis3lv02d_spi.c)
-Date: Sat, 08 Sep 2012 12:44:51 +0200
-Message-ID: <504B21A3.3070401@gmail.com>
-References: <20120906234735.1B54B20004E@hpza10.eem.corp.google.com> <504A9644.4070303@xenotime.net>
+From: Christoph Lameter <cl@linux.com>
+Subject: Re: ia64 dies in slab code on next-20120906
+Date: Sat, 8 Sep 2012 18:27:10 +0000
+Message-ID: <00000139a722a761-bafedf19-81a0-4922-a522-a2bb0fbb951a-000000@email.amazonses.com>
+References: <CA+8MBbKmaaiEJ363E2PU-=6KJ4u+ZsQ1ywjb0nWMrp4xaSCeLw@mail.gmail.com> <20120907112606.7d09e84c4782b748a95e1946@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------070801020902000604080303"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:52494 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753572Ab2IHKo7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 8 Sep 2012 06:44:59 -0400
-In-Reply-To: <504A9644.4070303@xenotime.net>
+Received: from a194-183.smtp-out.amazonses.com ([199.255.194.183]:64770 "EHLO
+	a194-183.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752151Ab2IHS1M (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 8 Sep 2012 14:27:12 -0400
+In-Reply-To: <20120907112606.7d09e84c4782b748a95e1946@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-next@vger.kernel.org, Daniel Mack <daniel@caiaq.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tony Luck <tony.luck@intel.com>, linux-next@vger.kernel.org, Pekka Enberg <penberg@kernel.org>
 
-This is a multi-part message in MIME format.
---------------070801020902000604080303
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Thanks Tony for the additional information regarding the pointer. That got
+me thinking about something different.
 
-On 08.09.2012 02:50, Randy Dunlap wrote:
-> On 09/06/2012 04:47 PM, akpm@linux-foundation.org wrote:
-> 
->> The mm-of-the-moment snapshot 2012-09-06-16-46 has been uploaded to
->>
->>    http://www.ozlabs.org/~akpm/mmotm/
->>
-> 
-> 
-> 
-> on x86_64:
-> 
-> CONFIG_OF and CONFIG_DTC are not enabled.
-> 
-> 
-> drivers/misc/lis3lv02d/lis3lv02d_spi.c:137:3: error: implicit declaration of function 'of_match_ptr'
-> drivers/misc/lis3lv02d/lis3lv02d_spi.c:137:3: error: initializer element is not constant
-> drivers/misc/lis3lv02d/lis3lv02d_spi.c:137:3: error: (near initialization for 'lis302dl_spi_driver.driver.of_match_table')
-> 
-> 
+Try the following fix:
 
-Thanks - the attached patch fixes it.
+Subject: slub: Zero initial memory segment for kmem_cache and kmem_cache_node
 
-Daniel
+Earlier patches in the common set moved the zeroing of the kmem_cache structure
+into common code. See "Move allocation of kmem_cache into common code".
 
+The allocation for the two special structures is still done
+from slub specific code but no zeroing is done since the cache creation functions
+used to zero. This now needs to be updated so that the structures
+are zeroed during allocation in kmem_cache_init().
+Otherwise random pointer values may be followed.
 
---------------070801020902000604080303
-Content-Type: text/x-patch;
- name="0001-lis3-lis3lv02d_spi.c-include-linux-of.h.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="0001-lis3-lis3lv02d_spi.c-include-linux-of.h.patch"
+Signed-off-by: Christoph Lameter <cl@linux.com>
 
->From 3c415511cb825d5b5d015b716e14d720a3d56bf6 Mon Sep 17 00:00:00 2001
-From: Daniel Mack <zonque@gmail.com>
-Date: Sat, 8 Sep 2012 12:41:33 +0200
-Subject: [PATCH] lis3: lis3lv02d_spi.c: include linux/of.h
+Index: linux/mm/slub.c
+===================================================================
+--- linux.orig/mm/slub.c	2012-09-08 13:21:33.523056357 -0500
++++ linux/mm/slub.c	2012-09-08 13:22:12.483056947 -0500
+@@ -3705,7 +3705,7 @@
+ 	/* Allocate two kmem_caches from the page allocator */
+ 	kmalloc_size = ALIGN(kmem_size, cache_line_size());
+ 	order = get_order(2 * kmalloc_size);
+-	kmem_cache = (void *)__get_free_pages(GFP_NOWAIT, order);
++	kmem_cache = (void *)__get_free_pages(GFP_NOWAIT|__GFP_ZERO, order);
 
-This include is needed to define of_match:ptr() for !CONFIG_OF &&
-1CONFIG_DTC.
-
-Signed-off-by: Daniel Mack <zonque@gmail.com>
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
----
- drivers/misc/lis3lv02d/lis3lv02d_spi.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/misc/lis3lv02d/lis3lv02d_spi.c b/drivers/misc/lis3lv02d/lis3lv02d_spi.c
-index 8616054..23f3986 100644
---- a/drivers/misc/lis3lv02d/lis3lv02d_spi.c
-+++ b/drivers/misc/lis3lv02d/lis3lv02d_spi.c
-@@ -17,6 +17,7 @@
- #include <linux/workqueue.h>
- #include <linux/spi/spi.h>
- #include <linux/pm.h>
-+#include <linux/of.h>
- #include <linux/of_platform.h>
- 
- #include "lis3lv02d.h"
--- 
-1.7.11.4
-
-
---------------070801020902000604080303--
+ 	/*
+ 	 * Must first have the slab cache available for the allocations of the
