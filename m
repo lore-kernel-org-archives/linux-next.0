@@ -1,45 +1,72 @@
-From: Mike Turquette <mturquette@ti.com>
-Subject: Re: linux-next: manual merge of the clk tree with the arm-soc tree
-Date: Mon, 10 Sep 2012 09:51:45 -0700
-Message-ID: <20120910165145.20289.71159@nucleus>
-References: <20120910161428.879618aea62e5be6340ed93c@canb.auug.org.au>
- <CACRpkdbf94QG59pvqcN_grCG_tcpri7JyypZ9ZMu3R=LwvSoXw@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Mon, 10 Sep 2012 10:31:53 -0700
+Message-ID: <20120910173153.GA25033@kroah.com>
+References: <20120910170409.59b71819008bc527130d3987@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog116.obsmtp.com ([74.125.149.240]:35119 "EHLO
-	na3sys009aog116.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756870Ab2IJQvx convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Sep 2012 12:51:53 -0400
-Received: by pbbrr13 with SMTP id rr13so2721488pbb.19
-        for <linux-next@vger.kernel.org>; Mon, 10 Sep 2012 09:51:52 -0700 (PDT)
-In-Reply-To: <CACRpkdbf94QG59pvqcN_grCG_tcpri7JyypZ9ZMu3R=LwvSoXw@mail.gmail.com>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35761 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752001Ab2IJRb5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Sep 2012 13:31:57 -0400
+Content-Disposition: inline
+In-Reply-To: <20120910170409.59b71819008bc527130d3987@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Loic PALLARDY <loic.pallardy@st.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Cotey <puff65537@bansheeslibrary.com>
 
-Quoting Linus Walleij (2012-09-10 08:24:49)
-> On Mon, Sep 10, 2012 at 8:14 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, Sep 10, 2012 at 05:04:09PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> > Today's linux-next merge of the clk tree got a conflict in
-> > arch/arm/mach-ux500/clock.c between commit 79964bcd792f ("ARM: ux500:
-> > Correct Ux500 family names usage") from the arm-soc tree and commit
-> > ebc96db7632f ("ARM: ux500: Switch to use common clock framework") from
-> > the clk tree.
-> >
-> > The latter removed the file so I did that - there may be more fixup
-> > required.
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 > 
-> This is the correct solution, thanks!
+> drivers/staging/silicom/bypasslib/built-in.o: In function `.is_bypass':
+> (.text+0x3254): multiple definition of `.is_bypass'
+> drivers/staging/silicom/bpctl_mod.o:(.text+0x1d938): first defined here
+> drivers/staging/silicom/bypasslib/built-in.o: In function `is_bypass':
+> (.opd+0x480): multiple definition of `is_bypass'
+> drivers/staging/silicom/bpctl_mod.o:(.opd+0x15f0): first defined here
 > 
+> Caused by commit 7040e556c90a ("staging: add Silicom Bypass driver").
+> 
+> I added this patch to disable the driver:
+> 
+> From 884437b30775214e9f34696adb2be2f24f1e6df7 Mon Sep 17 00:00:00 2001
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 10 Sep 2012 17:01:05 +1000
+> Subject: [PATCH] staging: disable Silicom Bypass driver
+> 
+> due to build breakage:
+> 
+> rivers/staging/silicom/bypasslib/built-in.o: In function `.is_bypass':
+> (.text+0x3254): multiple definition of `.is_bypass'
+> drivers/staging/silicom/bpctl_mod.o:(.text+0x1d938): first defined here
+> drivers/staging/silicom/bypasslib/built-in.o: In function `is_bypass':
+> (.opd+0x480): multiple definition of `is_bypass'
+> drivers/staging/silicom/bpctl_mod.o:(.opd+0x15f0): first defined here
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/staging/silicom/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/staging/silicom/Kconfig b/drivers/staging/silicom/Kconfig
+> index 3493ee8..1914844 100644
+> --- a/drivers/staging/silicom/Kconfig
+> +++ b/drivers/staging/silicom/Kconfig
+> @@ -6,6 +6,7 @@ config NET_VENDOR_SILICOM
+>  	bool "Silicom devices"
+>  	default y
+>  	depends on (SSB_POSSIBLE && HAS_DMA) || PCI 
+> +	depends on BROKEN
 
-Yes.  Removal of the file is the only fixup required.
+I think forcing this driver to be a module will resolve this issue.
+It seems to be quite a common problem for most staging drivers when they
+first land in the tree, sorry for not catching this one.
 
-Regards,
-Mike
-
-> Yours,
-> Linus Walleij
+greg k-h
