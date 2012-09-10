@@ -1,41 +1,46 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: RE: ia64 dies in slab code on next-20120906
-Date: Mon, 10 Sep 2012 17:52:18 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F19D3C056@ORSMSX108.amr.corp.intel.com>
-References: <CA+8MBbKmaaiEJ363E2PU-=6KJ4u+ZsQ1ywjb0nWMrp4xaSCeLw@mail.gmail.com>
- <20120907112606.7d09e84c4782b748a95e1946@canb.auug.org.au>
- <00000139a722a761-bafedf19-81a0-4922-a522-a2bb0fbb951a-000000@email.amazonses.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH 3.6rc5.linux-next 1/1] Force module
+Date: Mon, 10 Sep 2012 11:04:13 -0700
+Message-ID: <20120910180413.GA31046@kroah.com>
+References: <20120910170409.59b71819008bc527130d3987@canb.auug.org.au>
+ <20120910173153.GA25033@kroah.com>
+ <20120911014330.GA15327@elbert.example.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:5915 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754070Ab2IJRwU convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Sep 2012 13:52:20 -0400
-In-Reply-To: <00000139a722a761-bafedf19-81a0-4922-a522-a2bb0fbb951a-000000@email.amazonses.com>
-Content-Language: en-US
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:33065 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751774Ab2IJSGw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Sep 2012 14:06:52 -0400
+Content-Disposition: inline
+In-Reply-To: <20120911014330.GA15327@elbert.example.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>
+To: DanielC <puff65537@bansheeslibrary.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
--	kmem_cache = (void *)__get_free_pages(GFP_NOWAIT, order);
-+	kmem_cache = (void *)__get_free_pages(GFP_NOWAIT|__GFP_ZERO, order);
+On Mon, Sep 10, 2012 at 06:43:30PM -0700, DanielC wrote:
+> Sorry about breaking the build, this should fix.
 
-This patch is in next-20120910 ... which boots just fine on ia64. Thanks.
+This doesn't make sense in a changelog entry.
 
-> Thanks for testing. My daughter has been in the ICU since Thursday and I
-> had to guess that this was the right solution based on what I was able
-> to glean on from experiences of others with the issue. Never was able to
-> truly test the fix or even do a kernel build while the crisis was going
-> on here. She just was moved out of the ICU an hour ago so I will be
-> able to do more next week.
+> 
+> Staging: silicom: Depend on module until monolithic build fixed
 
-If only medical science worked like computer science. A couple of people
-around the world see some symptoms and do some superficial diagnosis
-and within hours you have a one line patch to make it all better.
+This needs to be in the Subject: line of the patch, don't make me edit
+it by hand to add it in.
 
-Best wishes for a speedy recovery for your daughter.
+> 
+> Signed-off-by: Daniel Cotey <puff65537@bansheeslibrary.com>
 
--Tony
+You forgot to add:
+	Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+to this list, as he is the one that found the problem.
+
+Care to fix this up and resend the patch so I can apply it without
+needing to edit it at all?
+
+thanks,
+
+greg k-h
