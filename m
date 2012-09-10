@@ -1,75 +1,33 @@
-From: DanielC <puff65537@bansheeslibrary.com>
-Subject: [PATCH 3.6rc5.linux-next 1/1] Force module
-Date: Mon, 10 Sep 2012 18:43:30 -0700
-Message-ID: <20120911014330.GA15327@elbert.example.com>
-References: <20120910170409.59b71819008bc527130d3987@canb.auug.org.au>
- <20120910173153.GA25033@kroah.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -next] net: fix net/core/sock.c build error
+Date: Mon, 10 Sep 2012 16:45:13 -0400 (EDT)
+Message-ID: <20120910.164513.400687476300645876.davem@davemloft.net>
+References: <20120910172407.c5ad953c008165fcd862bd3c@canb.auug.org.au>
+	<504E1193.4060809@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:57168 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932155Ab2IJUTq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Sep 2012 16:19:46 -0400
-Received: by pbbrr13 with SMTP id rr13so2988968pbb.19
-        for <linux-next@vger.kernel.org>; Mon, 10 Sep 2012 13:19:46 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20120910173153.GA25033@kroah.com>
+Received: from shards.monkeyblade.net ([149.20.54.216]:33724 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932152Ab2IJUpP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Sep 2012 16:45:15 -0400
+In-Reply-To: <504E1193.4060809@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: rdunlap@xenotime.net
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
-Sorry about breaking the build, this should fix.
+From: Randy Dunlap <rdunlap@xenotime.net>
+Date: Mon, 10 Sep 2012 09:13:07 -0700
 
-Staging: silicom: Depend on module until monolithic build fixed
+> From: Randy Dunlap <rdunlap@xenotime.net>
+> 
+> Fix net/core/sock.c build error when CONFIG_INET is not enabled:
+> 
+> net/built-in.o: In function `sock_edemux':
+> (.text+0xd396): undefined reference to `inet_twsk_put'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 
-Signed-off-by: Daniel Cotey <puff65537@bansheeslibrary.com>
----
- drivers/staging/silicom/Kconfig | 5 ++++-
- drivers/staging/silicom/TODO    | 1 +
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/silicom/Kconfig b/drivers/staging/silicom/Kconfig
-index 1914844..045ab08 100644
---- a/drivers/staging/silicom/Kconfig
-+++ b/drivers/staging/silicom/Kconfig
-@@ -5,7 +5,7 @@
- config NET_VENDOR_SILICOM
- 	bool "Silicom devices"
- 	default y
--	depends on (SSB_POSSIBLE && HAS_DMA) || PCI 
-+	depends on PCI 
- 	depends on BROKEN
- 	---help---
- 	  If you have a network card (Ethernet) belonging to this class,
-@@ -20,6 +20,8 @@ if NET_VENDOR_SILICOM
- 
- config SBYPASS
- 	tristate "Silicom BypassCTL library support"
-+	depends on PCI
-+	depends on m
- 	---help---
- 	  If you have a network (Ethernet) controller of this type, say Y
- 
-@@ -29,6 +31,7 @@ config SBYPASS
- config BPCTL
- 	tristate "Silicom BypassCTL net support"
- 	depends on PCI
-+	depends on m
- 	select SBYPASS
- 	select NET_CORE
- 	select MII
-diff --git a/drivers/staging/silicom/TODO b/drivers/staging/silicom/TODO
-index bf60714..a39821f 100644
---- a/drivers/staging/silicom/TODO
-+++ b/drivers/staging/silicom/TODO
-@@ -3,5 +3,6 @@ TODO:
- 	- locking audit
- 	- single module with all functionality
- 	- userland 
-+        - fix monolithic build.
- 
- 
--- 
-1.7.11.4
+Applied to 'net', thanks Randy.
