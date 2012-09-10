@@ -1,77 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the hid tree with Linus' tree
-Date: Mon, 10 Sep 2012 11:33:59 +1000
-Message-ID: <20120910113359.ddc30b010fcd73f00c993d23@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the regulator tree
+Date: Mon, 10 Sep 2012 13:20:58 +1000
+Message-ID: <20120910132058.81db87c7fb4b524072207220@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__10_Sep_2012_11_33_59_+1000_RFpO_H/YSS5okRWU"
+ boundary="Signature=_Mon__10_Sep_2012_13_20_58_+1000_ceROa31n=bz_1Qiw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59040 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41639 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753313Ab2IJBeL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 9 Sep 2012 21:34:11 -0400
+	with ESMTP id S1755074Ab2IJDVI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 9 Sep 2012 23:21:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@jikos.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Marek Vasut <marex@denx.de>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__10_Sep_2012_11_33_59_+1000_RFpO_H/YSS5okRWU
+--Signature=_Mon__10_Sep_2012_13_20_58_+1000_ceROa31n=bz_1Qiw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi all,
 
-Today's linux-next merge of the hid tree got a conflict in
-drivers/hid/usbhid/hid-quirks.c between commit 67ddbb3e6568 ("HID: add
-NOGET quirk for Eaton Ellipse MAX UPS") from Linus' tree and commit
-2843b673d034 ("HID: add quirk for Freescale i.MX28 ROM recovery") from
-the hid tree.
+After merging the regulator tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary (no action is required).
+ERROR: "regulator_allow_bypass" [drivers/extcon/extcon-arizona.ko] undefine=
+d!
+
+Caused by commit e6647c416e4f ("extcon: arizona: Use bypass mode for MICVDD=
+").
+
+I have used the regulator tree from next-20120907 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/hid/usbhid/hid-quirks.c
-index 991e85c,9af530e..0000000
---- a/drivers/hid/usbhid/hid-quirks.c
-+++ b/drivers/hid/usbhid/hid-quirks.c
-@@@ -70,7 -70,7 +70,8 @@@ static const struct hid_blacklist=20
-  	{ USB_VENDOR_ID_CH, USB_DEVICE_ID_CH_AXIS_295, HID_QUIRK_NOGET },
-  	{ USB_VENDOR_ID_DMI, USB_DEVICE_ID_DMI_ENC, HID_QUIRK_NOGET },
-  	{ USB_VENDOR_ID_ELO, USB_DEVICE_ID_ELO_TS2700, HID_QUIRK_NOGET },
-+ 	{ USB_VENDOR_ID_FREESCALE, USB_DEVICE_ID_FREESCALE_MX28, HID_QUIRK_NOGET=
- },
- +	{ USB_VENDOR_ID_MGE, USB_DEVICE_ID_MGE_UPS, HID_QUIRK_NOGET },
-  	{ USB_VENDOR_ID_PIXART, USB_DEVICE_ID_PIXART_OPTICAL_TOUCH_SCREEN, HID_Q=
-UIRK_NO_INIT_REPORTS },
-  	{ USB_VENDOR_ID_PIXART, USB_DEVICE_ID_PIXART_OPTICAL_TOUCH_SCREEN1, HID_=
-QUIRK_NO_INIT_REPORTS },
-  	{ USB_VENDOR_ID_PIXART, USB_DEVICE_ID_PIXART_OPTICAL_TOUCH_SCREEN2, HID_=
-QUIRK_NO_INIT_REPORTS },
-
---Signature=_Mon__10_Sep_2012_11_33_59_+1000_RFpO_H/YSS5okRWU
+--Signature=_Mon__10_Sep_2012_13_20_58_+1000_ceROa31n=bz_1Qiw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQTUOHAAoJEECxmPOUX5FEdK8QAKgAXkVeG5sdXTyudMnU45ew
-zJDaWuoUdOKML4+M5D1vkA24pC17/nSNFEl3OtnBOQudPBA/rhOjZdQdEfIkTC5o
-mp6X5N7hjTPoBLTnUnBUg1sCKJ7K5st4kFNtqNkIiZF2g4giJL5oJm+Oqh4JUngf
-sFOkt/IvwA8FywU6IeSRP3DdD+r+p1WdQSM2zhA5VViLYz08EPVzM8u4pqdowWrA
-CtDVinU63l5g/YmrMQ0oNTVOv/O8oRKK+ES3Z35QQOH6R5PTnrmAUAKseDEDsSVg
-QHqRVOUeuWqIPigF0fHK9m+vUMuug8/6rk+1GU4Tx99pJQUzsfJNug7DS4A1hEuN
-ldGIf/xQ17G0nQ2VVndkTe9xpXxKp1PNN7PvmJ5ChZa71ytIothL5I7mwbIqAL9p
-XJb0NHlr51Dp3PDNk6IwwmlmhYH1prjYSnyrlkBm7cZUGt56aGd0YamQ5QrVXh7H
-vLgq1u5sW9TAe32cJzWCPZT7tP0rBnee0xlSWd0QjFrAuPRahzh/MbBD+0wIGGVo
-LFbaZGnMS6JFnkmJ2ze10jYVcvGbT198tsApbSy2//0KbJcLnFxoIquRM2piQza0
-Su/P3nL/a4qiFwLpQPMMvlX/hPdPR7QaYkc5CEzZTva2XKKXdCqrix8QgurhWwKa
-RAO1MV6IfuGIs12COBGq
-=dEl1
+iQIcBAEBCAAGBQJQTVyaAAoJEECxmPOUX5FECOAP/ApTVfwx1QMAWwATytbiIzsh
+3MvYxc3LPIAVy0Rwl1nwm2Hi1JT6Nhq13f5RFXtZWCWuPHA1GkG2o441jNhyLiPn
+HAFvnztvbClGuBdTbQvP7JKXOKfevVZEPbl067enV/vH+rSJfbFn+5Yy13rL607Q
+cUMLqkqTlUTsRMxvmWfWuNEXVuIl9U7JJOt9hhHNpe7pMu6j55B6IZFhPNwkBh5o
+QiI6CFtn44durtSvXVqEH6F3kl5xxAI6kOqLjwYdzY8UJ2CNiF6oXgPe6qAvB9ax
+ExG/xpq3MMadZNQI30msaa3jz2+gC4LokHZ0xdMyxM6pYaC0jfXg8hwegYTS+GQG
+TmsEBMdgdn3MCdIX9PTL6qr+wyot0yHNH773fXKeW6v65hhtUgX3Il7xqjSHTVI9
+kvTR1/kaK0XNIreL329xXtyPmzLaIJXS59Mrstzoz+KzLjba/lm9MC8caNUNp/m1
+3B1lovi0FJtonJEAGwnqbcGNWXcBfJy3oOAHHkUlWlPEQh4usEqRnvsmfrOwYkdx
+7O/aYjeQMycZJbHYCbEuBdGl6a4S1zHUejVhPIMPahLl47X7zm21GlnOW6pKzUkt
+a6CIuUyHz7jONP6FAyh2rs+VS5ryKoclmwJ7pmKZnF2ZOVGE58QFavgqqousOVjK
+p2IqmCrG8lpC/31wgPPe
+=iXNn
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__10_Sep_2012_11_33_59_+1000_RFpO_H/YSS5okRWU--
+--Signature=_Mon__10_Sep_2012_13_20_58_+1000_ceROa31n=bz_1Qiw--
