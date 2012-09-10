@@ -1,33 +1,60 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: linux-next: manual merge of the hid tree with Linus' tree
-Date: Mon, 10 Sep 2012 07:49:26 +0200
-Message-ID: <201209100749.27199.marex@denx.de>
-References: <20120910113359.ddc30b010fcd73f00c993d23@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the clk tree with the arm-soc tree
+Date: Mon, 10 Sep 2012 16:14:28 +1000
+Message-ID: <20120910161428.879618aea62e5be6340ed93c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120910113359.ddc30b010fcd73f00c993d23@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jikos@jikos.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__10_Sep_2012_16_14_28_+1000_h=pcJN5oisagaknX"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56766 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750718Ab2IJGOi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Sep 2012 02:14:38 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mike Turquette <mturquette@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Loic PALLARDY <loic.pallardy@st.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
 
-Dear Stephen Rothwell,
+--Signature=_Mon__10_Sep_2012_16_14_28_+1000_h=pcJN5oisagaknX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Jiri,
-> 
-> Today's linux-next merge of the hid tree got a conflict in
-> drivers/hid/usbhid/hid-quirks.c between commit 67ddbb3e6568 ("HID: add
-> NOGET quirk for Eaton Ellipse MAX UPS") from Linus' tree and commit
-> 2843b673d034 ("HID: add quirk for Freescale i.MX28 ROM recovery") from
-> the hid tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary (no action is required).
+Hi Mike,
 
-Looks obviously correct, thank you Stephen!
+Today's linux-next merge of the clk tree got a conflict in
+arch/arm/mach-ux500/clock.c between commit 79964bcd792f ("ARM: ux500:
+Correct Ux500 family names usage") from the arm-soc tree and commit
+ebc96db7632f ("ARM: ux500: Switch to use common clock framework") from
+the clk tree.
 
-Best regards,
-Marek Vasut
+The latter removed the file so I did that - there may be more fixup
+required.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__10_Sep_2012_16_14_28_+1000_h=pcJN5oisagaknX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQTYVEAAoJEECxmPOUX5FEsIwP/2hFaRn8Vi6kJNA1+GeinZFV
+xYwsiwuwhZ2iP+h68GVm6GZBIXDigKXMH9CW2GqlCNXoLErbpnx8SnRdVbZbQ7Qi
+RDJT/b9pJOEDtYN8tIcc1LQW6NG9FS32zhkTgGyu0abWMlSlIbqFqhRpcdLzNhY8
+UNIXTfOZGsReQ+O6QEg2cdUPzpqU4JpR4yApbyjiSDQ6YbvIp3K4IeSgPIhtrpHo
+G06mioMtJPZdha9B9DD8J43dabCiu0KZClnk+kSZ25yVb9arqp1vvYvSod7xFr3r
+ts9r5fY94Xbwwc7XvPy37KXjaBu2C8UNxS/z0F+O0PHvi2FOdRSBH5CrYqFSWeqe
+Nuw3ZJIvtUa1RnZcC3sXZ6UOqrPyRjW9wTcQjcwwQgCYDeB7mjtHVMSt8DWx74hB
+gRjUPLEmjmuvxODmxziP8k6LgvzPPOqDU0bhFNzxI4wcz+94kBDw2mPzeJb2vfFP
+i98GgTAUHxDEXVXmpqNeqtlZgjIVrq/yCdLkIs/HWDndBHTzXqIjlUgxEWyjSnQh
+zDla7npif7j1kShnAWpw3BtX+2XOXV+jqghzAQxe/5T5UhioHuIoh98wetRBMA5N
+km7s5STxtYtSEvNq5Sz9UPxEK1wI9rR6VYz2WcbHUhfXl5r7Pwk0gB3ggcMNLCf/
+FtUxuyeu9RaD4jRNjyiH
+=xp1O
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__10_Sep_2012_16_14_28_+1000_h=pcJN5oisagaknX--
