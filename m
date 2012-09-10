@@ -1,60 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the clk tree with the arm-soc tree
-Date: Mon, 10 Sep 2012 16:14:28 +1000
-Message-ID: <20120910161428.879618aea62e5be6340ed93c@canb.auug.org.au>
+From: Pekka Enberg <penberg@kernel.org>
+Subject: Re: ia64 dies in slab code on next-20120906
+Date: Mon, 10 Sep 2012 09:59:26 +0300 (EEST)
+Message-ID: <alpine.LFD.2.02.1209100958340.2979@tux.localdomain>
+References: <CA+8MBbKmaaiEJ363E2PU-=6KJ4u+ZsQ1ywjb0nWMrp4xaSCeLw@mail.gmail.com> <20120907112606.7d09e84c4782b748a95e1946@canb.auug.org.au> <00000139a722a761-bafedf19-81a0-4922-a522-a2bb0fbb951a-000000@email.amazonses.com>
+ <20120910132416.cf70afde92399a420b74bd32@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__10_Sep_2012_16_14_28_+1000_h=pcJN5oisagaknX"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56766 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750718Ab2IJGOi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Sep 2012 02:14:38 -0400
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:45971 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751420Ab2IJG7c (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Sep 2012 02:59:32 -0400
+Received: by lagy9 with SMTP id y9so882907lag.19
+        for <linux-next@vger.kernel.org>; Sun, 09 Sep 2012 23:59:30 -0700 (PDT)
+In-Reply-To: <20120910132416.cf70afde92399a420b74bd32@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Turquette <mturquette@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Loic PALLARDY <loic.pallardy@st.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Lameter <cl@linux.com>, Tony Luck <tony.luck@intel.com>, linux-next@vger.kernel.org, Sedat Dilek <sedat.dilek@gmail.com>, Hugh Dickins <hughd@google.com>
 
---Signature=_Mon__10_Sep_2012_16_14_28_+1000_h=pcJN5oisagaknX
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 10 Sep 2012, Stephen Rothwell wrote:
 
-Hi Mike,
+> Hi Christoph,
+> 
+> On Sat, 8 Sep 2012 18:27:10 +0000 Christoph Lameter <cl@linux.com> wrote:
+> >
+> > Thanks Tony for the additional information regarding the pointer. That got
+> > me thinking about something different.
+> > 
+> > Try the following fix:
+> > 
+> > Subject: slub: Zero initial memory segment for kmem_cache and kmem_cache_node
+> > 
+> > Earlier patches in the common set moved the zeroing of the kmem_cache structure
+> > into common code. See "Move allocation of kmem_cache into common code".
+> > 
+> > The allocation for the two special structures is still done
+> > from slub specific code but no zeroing is done since the cache creation functions
+> > used to zero. This now needs to be updated so that the structures
+> > are zeroed during allocation in kmem_cache_init().
+> > Otherwise random pointer values may be followed.
+> > 
+> > Signed-off-by: Christoph Lameter <cl@linux.com>
+> > 
+> > Index: linux/mm/slub.c
+> > ===================================================================
+> > --- linux.orig/mm/slub.c	2012-09-08 13:21:33.523056357 -0500
+> > +++ linux/mm/slub.c	2012-09-08 13:22:12.483056947 -0500
+> > @@ -3705,7 +3705,7 @@
+> >  	/* Allocate two kmem_caches from the page allocator */
+> >  	kmalloc_size = ALIGN(kmem_size, cache_line_size());
+> >  	order = get_order(2 * kmalloc_size);
+> > -	kmem_cache = (void *)__get_free_pages(GFP_NOWAIT, order);
+> > +	kmem_cache = (void *)__get_free_pages(GFP_NOWAIT|__GFP_ZERO, order);
+> > 
+> >  	/*
+> >  	 * Must first have the slab cache available for the allocations of the
+> > 
+> 
+> I have added this as a merge fix patch to linux-next today in the
+> anticipation that it will be added to the slab tree ASAP.
 
-Today's linux-next merge of the clk tree got a conflict in
-arch/arm/mach-ux500/clock.c between commit 79964bcd792f ("ARM: ux500:
-Correct Ux500 family names usage") from the arm-soc tree and commit
-ebc96db7632f ("ARM: ux500: Switch to use common clock framework") from
-the clk tree.
-
-The latter removed the file so I did that - there may be more fixup
-required.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__10_Sep_2012_16_14_28_+1000_h=pcJN5oisagaknX
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQTYVEAAoJEECxmPOUX5FEsIwP/2hFaRn8Vi6kJNA1+GeinZFV
-xYwsiwuwhZ2iP+h68GVm6GZBIXDigKXMH9CW2GqlCNXoLErbpnx8SnRdVbZbQ7Qi
-RDJT/b9pJOEDtYN8tIcc1LQW6NG9FS32zhkTgGyu0abWMlSlIbqFqhRpcdLzNhY8
-UNIXTfOZGsReQ+O6QEg2cdUPzpqU4JpR4yApbyjiSDQ6YbvIp3K4IeSgPIhtrpHo
-G06mioMtJPZdha9B9DD8J43dabCiu0KZClnk+kSZ25yVb9arqp1vvYvSod7xFr3r
-ts9r5fY94Xbwwc7XvPy37KXjaBu2C8UNxS/z0F+O0PHvi2FOdRSBH5CrYqFSWeqe
-Nuw3ZJIvtUa1RnZcC3sXZ6UOqrPyRjW9wTcQjcwwQgCYDeB7mjtHVMSt8DWx74hB
-gRjUPLEmjmuvxODmxziP8k6LgvzPPOqDU0bhFNzxI4wcz+94kBDw2mPzeJb2vfFP
-i98GgTAUHxDEXVXmpqNeqtlZgjIVrq/yCdLkIs/HWDndBHTzXqIjlUgxEWyjSnQh
-zDla7npif7j1kShnAWpw3BtX+2XOXV+jqghzAQxe/5T5UhioHuIoh98wetRBMA5N
-km7s5STxtYtSEvNq5Sz9UPxEK1wI9rR6VYz2WcbHUhfXl5r7Pwk0gB3ggcMNLCf/
-FtUxuyeu9RaD4jRNjyiH
-=xp1O
------END PGP SIGNATURE-----
-
---Signature=_Mon__10_Sep_2012_16_14_28_+1000_h=pcJN5oisagaknX--
+I've applied the patch. Thanks everyone!
