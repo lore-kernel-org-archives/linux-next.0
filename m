@@ -1,51 +1,108 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: linux-next: build warning after merge of the final tree (slab
- tree related)
-Date: Tue, 11 Sep 2012 19:49:38 +0000
-Message-ID: <00000139b6e13c92-97adf129-be2c-4b74-9559-0a92c10b9eda-000000@email.amazonses.com>
-References: <20120911161923.10299045655dd4c84f96f4b3@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Sept 11 (drm related: boot problems on amd64)
+Date: Wed, 12 Sep 2012 00:04:45 +0200
+Message-ID: <CA+icZUVSWBLrRu_vOcGurp=x-Bb1dBv1Tfdf8P8LiPNM1SuR8Q@mail.gmail.com>
+References: <CA+icZUUj1u6YwpkzXOsUVJ4p5t-qrCWVDoaFoDbAbMT2EbEwWw@mail.gmail.com>
+	<CA+icZUXh1Vh=ojJKd34Cnm+sO+U1OqrcSk=5-EwXd22oB5Jw9Q@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120911161923.10299045655dd4c84f96f4b3@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:55407 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750870Ab2IKWEq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Sep 2012 18:04:46 -0400
+In-Reply-To: <CA+icZUXh1Vh=ojJKd34Cnm+sO+U1OqrcSk=5-EwXd22oB5Jw9Q@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>
 
-On Tue, 11 Sep 2012, Stephen Rothwell wrote:
-
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> produced this warning:
+On Tue, Sep 11, 2012 at 8:29 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> On Tue, Sep 11, 2012 at 8:12 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> On Tue, Sep 11, 2012 at 8:31 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> Hi all,
+>>>
+>>> Changes since 201209010:
+>>>
+>>> New tree: ixp4xx
+>>>
+>>> The pci tree gained a build failure so I used the version from
+>>> next-20120910.
+>>>
+>>> The regulator tree lost its build failure.
+>>>
+>>> The staging tree lost its build failure.
+>>>
+>>> The akpm tree lost a few patches that turned up elsewhere.
+>>>
+>>> ----------------------------------------------------------------------------
+>>>
+>>
+>> Hi,
+>>
+>> today's and yesterday's Linux-Next is broken for me again.
+>> I tried with systemd and upstart on Ubuntu/precise, with nomodeset and
+>> rescue boot-option.
+>>
+>> With rescue boot-option I see this in my logs (Intel sandy-bridge
+>> ultrabook here):
+>>
+>> Sep 11 18:43:36 fambox kernel: [    9.654972] [drm:drm_pci_agp_init]
+>> *ERROR* Cannot initialize the agpgart module.
+>> Sep 11 18:43:36 fambox kernel: [    9.654980] DRM: Fill_in_dev failed.
+>>
+>> I have not checked any MLs... coming from hospital right now.
+>>
 >
-> mm/slab.c:808:13: warning: '__slab_error' defined but not used [-Wunused-function]
+> More ERRORs:
 >
-> Introduced by commit 945cf2b6199b ("mm/sl[aou]b: Extract a common function for kmem_cache_destroy").  All uses of slab_error() are now guarded by DEBUG.
+> # grep -A1 "ERROR" /var/log/kern.log
+> Sep 10 17:51:29 fambox kernel: [   10.205818]
+> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
+> Sep 10 17:51:29 fambox kernel: [   10.206055] i915: probe of
+> 0000:00:02.0 failed with error -5
+> --
+> Sep 10 15:53:00 fambox kernel: [   10.500387]
+> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
+> Sep 10 15:53:00 fambox kernel: [   10.500602] i915: probe of
+> 0000:00:02.0 failed with error -5
+> --
+> Sep 11 20:41:01 fambox kernel: [    9.636010]
+> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
+> Sep 11 20:41:01 fambox kernel: [    9.636202] i915: probe of
+> 0000:00:02.0 failed with error -5
+> --
+> Sep 11 18:42:18 fambox kernel: [   10.132229]
+> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
+> Sep 11 18:42:18 fambox kernel: [   10.132433] i915: probe of
+> 0000:00:02.0 failed with error -5
+> --
+> Sep 11 18:43:36 fambox kernel: [    9.654972] [drm:drm_pci_agp_init]
+> *ERROR* Cannot initialize the agpgart module.
+> Sep 11 18:43:36 fambox kernel: [    9.654980] DRM: Fill_in_dev failed.
+> --
+> Sep 11 19:52:10 fambox kernel: [    9.545562]
+> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
+> Sep 11 19:52:10 fambox kernel: [    9.545798] i915: probe of
+> 0000:00:02.0 failed with error -5
+> --
+> Sep 11 20:04:09 fambox kernel: [    9.798233]
+> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
+> Sep 11 20:04:09 fambox kernel: [    9.798557] i915: probe of
+> 0000:00:02.0 failed with error -5
+>
 
+[ CC Bjorn (pci maintainer) ]
 
-Subject: Slab: Only define slab_error for DEBUG
+I pulled in pci.git#next up to commit
+9c33332178e6ba49fe48c468edc08ad94b53e1b1 ("Merge branch
+'pci/gavin-window-alignment' into next") on top of next-20120911.
+This lets my machine boot, but freezes somewhere else.
 
-There is no use case left for slab builds without DEBUG.
+- Sedat -
 
-Signed-off-by: Christoph Lameter <cl@linux.com>
-
-Index: linux/mm/slab.c
-===================================================================
---- linux.orig/mm/slab.c	2012-09-11 14:44:56.304015235 -0500
-+++ linux/mm/slab.c	2012-09-11 14:48:46.988948440 -0500
-@@ -803,6 +803,7 @@ static void cache_estimate(unsigned long
- 	*left_over = slab_size - nr_objs*buffer_size - mgmt_size;
- }
-
-+#if DEBUG
- #define slab_error(cachep, msg) __slab_error(__func__, cachep, msg)
-
- static void __slab_error(const char *function, struct kmem_cache *cachep,
-@@ -812,6 +813,7 @@ static void __slab_error(const char *fun
- 	       function, cachep->name, msg);
- 	dump_stack();
- }
-+#endif
-
- /*
-  * By default on NUMA we use alien caches to stage the freeing of
+> - Sedat -
+>
+>> Regards,
+>> - Sedat -
