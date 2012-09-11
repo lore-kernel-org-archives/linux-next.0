@@ -1,45 +1,53 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Tue, 11 Sep 2012 08:28:39 -0600
-Message-ID: <CAErSpo5Qoq6J7gB3o7Oc_YwfBXkXy8vHvbBXHkvb93CHYGHb4g@mail.gmail.com>
-References: <20120911112924.c2206bc738a2c29259f6e2d8@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Sept 11 (drm related: boot problems on amd64)
+Date: Tue, 11 Sep 2012 20:12:13 +0200
+Message-ID: <CA+icZUUj1u6YwpkzXOsUVJ4p5t-qrCWVDoaFoDbAbMT2EbEwWw@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:48851 "EHLO
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:42312 "EHLO
 	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755251Ab2IKO3B (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Sep 2012 10:29:01 -0400
-Received: by lbbgj3 with SMTP id gj3so407280lbb.19
-        for <linux-next@vger.kernel.org>; Tue, 11 Sep 2012 07:28:59 -0700 (PDT)
-In-Reply-To: <20120911112924.c2206bc738a2c29259f6e2d8@canb.auug.org.au>
+	with ESMTP id S1757796Ab2IKSMP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Sep 2012 14:12:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gavin Shan <shangw@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Yijing Wang <wangyijing@huawei.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
 
-On Mon, Sep 10, 2012 at 7:29 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Bjorn,
+On Tue, Sep 11, 2012 at 8:31 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> After merging the pci tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> Changes since 201209010:
 >
-> arch/powerpc/platforms/powernv/pci-ioda.c: In function 'pnv_pci_window_alignment':
-> arch/powerpc/platforms/powernv/pci-ioda.c:1163:13: error: 'struct pci_dev' has no member named 'pcie_type'
+> New tree: ixp4xx
 >
-> Caused by commit ac161fbfdaa2 ("powerpc/powernv: I/O and memory alignment
-> for P2P bridges").  pcie_type was removed in commit b2ef39be5744 ("PCI:
-> Remove unused field pcie_type from struct pci_dev") (also in the pci
-> tree).
+> The pci tree gained a build failure so I used the version from
+> next-20120910.
 >
-> I have used the pci tree from next-20120910 for today.
+> The regulator tree lost its build failure.
+>
+> The staging tree lost its build failure.
+>
+> The akpm tree lost a few patches that turned up elsewhere.
+>
+> ----------------------------------------------------------------------------
+>
 
-Thanks.
+Hi,
 
-Gavin, Ben, I folded in the trivial fix and updated both my
-pci/gavin-window-alignment and next branches.
+today's and yesterday's Linux-Next is broken for me again.
+I tried with systemd and upstart on Ubuntu/precise, with nomodeset and
+rescue boot-option.
 
-Ben, I think you'll need to pull in pci/jiang-pcie-cap before
-pci/gavin-window-alignment to get both pieces.
+With rescue boot-option I see this in my logs (Intel sandy-bridge
+ultrabook here):
 
-Bjorn
+Sep 11 18:43:36 fambox kernel: [    9.654972] [drm:drm_pci_agp_init]
+*ERROR* Cannot initialize the agpgart module.
+Sep 11 18:43:36 fambox kernel: [    9.654980] DRM: Fill_in_dev failed.
+
+I have not checked any MLs... coming from hospital right now.
+
+Regards,
+- Sedat -
