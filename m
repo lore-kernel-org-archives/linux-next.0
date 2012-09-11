@@ -1,108 +1,112 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Sept 11 (drm related: boot problems on amd64)
-Date: Wed, 12 Sep 2012 00:04:45 +0200
-Message-ID: <CA+icZUVSWBLrRu_vOcGurp=x-Bb1dBv1Tfdf8P8LiPNM1SuR8Q@mail.gmail.com>
-References: <CA+icZUUj1u6YwpkzXOsUVJ4p5t-qrCWVDoaFoDbAbMT2EbEwWw@mail.gmail.com>
-	<CA+icZUXh1Vh=ojJKd34Cnm+sO+U1OqrcSk=5-EwXd22oB5Jw9Q@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: mmotm 2012-09-06-16-46 uploaded (fs/binfmt_aout)
+Date: Tue, 11 Sep 2012 15:17:39 -0700
+Message-ID: <20120911151739.cb5f2f4b.akpm@linux-foundation.org>
+References: <20120906234735.1B54B20004E@hpza10.eem.corp.google.com>
+	<504A8707.8080507@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:55407 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750870Ab2IKWEq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Sep 2012 18:04:46 -0400
-In-Reply-To: <CA+icZUXh1Vh=ojJKd34Cnm+sO+U1OqrcSk=5-EwXd22oB5Jw9Q@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <504A8707.8080507@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Alex Kelly <alex.page.kelly@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 11, 2012 at 8:29 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Tue, Sep 11, 2012 at 8:12 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> On Tue, Sep 11, 2012 at 8:31 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> Hi all,
->>>
->>> Changes since 201209010:
->>>
->>> New tree: ixp4xx
->>>
->>> The pci tree gained a build failure so I used the version from
->>> next-20120910.
->>>
->>> The regulator tree lost its build failure.
->>>
->>> The staging tree lost its build failure.
->>>
->>> The akpm tree lost a few patches that turned up elsewhere.
->>>
->>> ----------------------------------------------------------------------------
->>>
->>
->> Hi,
->>
->> today's and yesterday's Linux-Next is broken for me again.
->> I tried with systemd and upstart on Ubuntu/precise, with nomodeset and
->> rescue boot-option.
->>
->> With rescue boot-option I see this in my logs (Intel sandy-bridge
->> ultrabook here):
->>
->> Sep 11 18:43:36 fambox kernel: [    9.654972] [drm:drm_pci_agp_init]
->> *ERROR* Cannot initialize the agpgart module.
->> Sep 11 18:43:36 fambox kernel: [    9.654980] DRM: Fill_in_dev failed.
->>
->> I have not checked any MLs... coming from hospital right now.
->>
->
-> More ERRORs:
->
-> # grep -A1 "ERROR" /var/log/kern.log
-> Sep 10 17:51:29 fambox kernel: [   10.205818]
-> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
-> Sep 10 17:51:29 fambox kernel: [   10.206055] i915: probe of
-> 0000:00:02.0 failed with error -5
-> --
-> Sep 10 15:53:00 fambox kernel: [   10.500387]
-> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
-> Sep 10 15:53:00 fambox kernel: [   10.500602] i915: probe of
-> 0000:00:02.0 failed with error -5
-> --
-> Sep 11 20:41:01 fambox kernel: [    9.636010]
-> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
-> Sep 11 20:41:01 fambox kernel: [    9.636202] i915: probe of
-> 0000:00:02.0 failed with error -5
-> --
-> Sep 11 18:42:18 fambox kernel: [   10.132229]
-> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
-> Sep 11 18:42:18 fambox kernel: [   10.132433] i915: probe of
-> 0000:00:02.0 failed with error -5
-> --
-> Sep 11 18:43:36 fambox kernel: [    9.654972] [drm:drm_pci_agp_init]
-> *ERROR* Cannot initialize the agpgart module.
-> Sep 11 18:43:36 fambox kernel: [    9.654980] DRM: Fill_in_dev failed.
-> --
-> Sep 11 19:52:10 fambox kernel: [    9.545562]
-> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
-> Sep 11 19:52:10 fambox kernel: [    9.545798] i915: probe of
-> 0000:00:02.0 failed with error -5
-> --
-> Sep 11 20:04:09 fambox kernel: [    9.798233]
-> [drm:i915_get_bridge_dev] *ERROR* bridge device not found
-> Sep 11 20:04:09 fambox kernel: [    9.798557] i915: probe of
-> 0000:00:02.0 failed with error -5
->
+On Fri, 07 Sep 2012 16:45:11 -0700
+Randy Dunlap <rdunlap@xenotime.net> wrote:
 
-[ CC Bjorn (pci maintainer) ]
+> On 09/06/2012 04:47 PM, akpm@linux-foundation.org wrote:
+> 
+> > The mm-of-the-moment snapshot 2012-09-06-16-46 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> 
+> 
+> when CONFIG_COREDUMP is not enabled:
+> 
+> ERROR: "dump_seek" [fs/binfmt_aout.ko] undefined!
+> ERROR: "dump_write" [fs/binfmt_aout.ko] undefined!
 
-I pulled in pci.git#next up to commit
-9c33332178e6ba49fe48c468edc08ad94b53e1b1 ("Merge branch
-'pci/gavin-window-alignment' into next") on top of next-20120911.
-This lets my machine boot, but freezes somewhere else.
+Thanks.  I guess we make aout_core_dump() disappear if
+CONFIG_COREDUMP=n.
 
-- Sedat -
-
-> - Sedat -
->
->> Regards,
->> - Sedat -
+--- a/fs/binfmt_aout.c~coredump-make-core-dump-functionality-optional-fix-fix
++++ a/fs/binfmt_aout.c
+@@ -32,31 +32,8 @@
+ 
+ static int load_aout_binary(struct linux_binprm *, struct pt_regs * regs);
+ static int load_aout_library(struct file*);
+-static int aout_core_dump(struct coredump_params *cprm);
+-
+-static struct linux_binfmt aout_format = {
+-	.module		= THIS_MODULE,
+-	.load_binary	= load_aout_binary,
+-	.load_shlib	= load_aout_library,
+-	.core_dump	= aout_core_dump,
+-	.min_coredump	= PAGE_SIZE
+-};
+-
+-#define BAD_ADDR(x)	((unsigned long)(x) >= TASK_SIZE)
+-
+-static int set_brk(unsigned long start, unsigned long end)
+-{
+-	start = PAGE_ALIGN(start);
+-	end = PAGE_ALIGN(end);
+-	if (end > start) {
+-		unsigned long addr;
+-		addr = vm_brk(start, end - start);
+-		if (BAD_ADDR(addr))
+-			return addr;
+-	}
+-	return 0;
+-}
+ 
++#ifdef CONFIG_COREDUMP
+ /*
+  * Routine writes a core dump image in the current directory.
+  * Currently only a stub-function.
+@@ -66,7 +43,6 @@ static int set_brk(unsigned long start, 
+  * field, which also makes sure the core-dumps won't be recursive if the
+  * dumping of the process results in another error..
+  */
+-
+ static int aout_core_dump(struct coredump_params *cprm)
+ {
+ 	struct file *file = cprm->file;
+@@ -135,6 +111,32 @@ end_coredump:
+ 	set_fs(fs);
+ 	return has_dumped;
+ }
++#else
++#define aout_core_dump NULL
++#endif
++
++static struct linux_binfmt aout_format = {
++	.module		= THIS_MODULE,
++	.load_binary	= load_aout_binary,
++	.load_shlib	= load_aout_library,
++	.core_dump	= aout_core_dump,
++	.min_coredump	= PAGE_SIZE
++};
++
++#define BAD_ADDR(x)	((unsigned long)(x) >= TASK_SIZE)
++
++static int set_brk(unsigned long start, unsigned long end)
++{
++	start = PAGE_ALIGN(start);
++	end = PAGE_ALIGN(end);
++	if (end > start) {
++		unsigned long addr;
++		addr = vm_brk(start, end - start);
++		if (BAD_ADDR(addr))
++			return addr;
++	}
++	return 0;
++}
+ 
+ /*
+  * create_aout_tables() parses the env- and arg-strings in new user
+_
