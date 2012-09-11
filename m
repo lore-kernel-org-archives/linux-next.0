@@ -1,66 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pci tree
-Date: Tue, 11 Sep 2012 11:29:24 +1000
-Message-ID: <20120911112924.c2206bc738a2c29259f6e2d8@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (slab tree
+ related)
+Date: Tue, 11 Sep 2012 16:19:23 +1000
+Message-ID: <20120911161923.10299045655dd4c84f96f4b3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__11_Sep_2012_11_29_24_+1000_iNe+q0uYS_AENYPQ"
+ boundary="Signature=_Tue__11_Sep_2012_16_19_23_+1000_5FL/aH.V5069RRMU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60826 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55381 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754374Ab2IKB3f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Sep 2012 21:29:35 -0400
+	with ESMTP id S1756615Ab2IKGTe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Sep 2012 02:19:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gavin Shan <shangw@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Yijing Wang <wangyijing@huawei.com>
+To: Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__11_Sep_2012_11_29_24_+1000_iNe+q0uYS_AENYPQ
+--Signature=_Tue__11_Sep_2012_16_19_23_+1000_5FL/aH.V5069RRMU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bjorn,
+Hi all,
 
-After merging the pci tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+produced this warning:
 
-arch/powerpc/platforms/powernv/pci-ioda.c: In function 'pnv_pci_window_alig=
-nment':
-arch/powerpc/platforms/powernv/pci-ioda.c:1163:13: error: 'struct pci_dev' =
-has no member named 'pcie_type'
+mm/slab.c:808:13: warning: '__slab_error' defined but not used [-Wunused-fu=
+nction]
 
-Caused by commit ac161fbfdaa2 ("powerpc/powernv: I/O and memory alignment
-for P2P bridges").  pcie_type was removed in commit b2ef39be5744 ("PCI:
-Remove unused field pcie_type from struct pci_dev") (also in the pci
-tree).
-
-I have used the pci tree from next-20120910 for today.
+Introduced by commit 945cf2b6199b ("mm/sl[aou]b: Extract a common function =
+for kmem_cache_destroy").  All uses of slab_error() are now guarded by DEBU=
+G.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__11_Sep_2012_11_29_24_+1000_iNe+q0uYS_AENYPQ
+--Signature=_Tue__11_Sep_2012_16_19_23_+1000_5FL/aH.V5069RRMU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQTpP0AAoJEECxmPOUX5FEr4MP/2W9SM+iSjubcg3/8vXMIA8f
-VR0r04cBnh11Lmj1Z9ucYJ52awAZgRwlKDBUfmjLUauCFugtB//qnoyP+ewtkadZ
-4tMd698uyqXrihJLeSHgle8rAMMA/txaPm9fxOyj1y7RZ6YIBErssbuEDry3ejhH
-sNHn/lDmuzZrwoR/O6ad+XCmibPJOb09AW87xn1srpGB9CPtt/LTjMDP/jXyHFvG
-/UzBMARpzShs1Vso/s6ANK5u2Yg5cYBZ9J5QaRUwpnGCt1zaW+WfrQyXMr/04z0/
-jhQGXutGug44PZ/wwqhhOEznSnHJFoRP07uOjTyfoNjla16qnepGqLt6oy6ykgdb
-QXx1+bgiNxrKCjkGuCCVaNIPEqv3cNS+4SdfPeVzRL2qTt2LV6ogIWBxT3y2/kfO
-bnhQE7ln1j14C0BpJRe3/U4e8q0xIFoahWeZcmQ3776wC7w/GVMKkRwhO7LRt08N
-pX+is/IxTbL4tMJBTqza3v1VqIsJFZKa0Nm1dbuO3RuhlpGxe5BBD6jYkcbPZVz5
-SWTUU67yjiZTx0yUDxsYfNLracmWQYUu/8T5lqBT+wGQ6KEhCDEllnX492HwoBq2
-tQsU9Gck9SY3vqWQXSbM/hvWWoMoQV88GS5kH5+m9Dsk0kUE8dSw8ZWTyn2M1YmY
-sPMWVZKx0255vrxvsVma
-=IMl4
+iQIcBAEBCAAGBQJQTtfrAAoJEECxmPOUX5FEl+IP/0EHZETnbzQO1tjv6QXMKStC
+o4gZJUP8/ifZbczsGSTfrZN2MQ6AbH8g+4gRorTv/PVjq0S3xtys78Uzt9FgkI9b
+km+/oGiSkpxVfnPN4pFTfQUg6zy/RG5ITksZQEfW1D9MA5bj+e+KRl0KId4Gfgyo
+Y1hfYhhuACc6K1+pMtPXniJs2REFGOYa8NpmrIrE02PSYqipIclg4azU1wWWrPFM
+cUBB0ue0eE57X49LiXyKthaOFlFIPtAaMRNDbbYx2SH9gOCBQE/I044hrFrBxxG/
+/kpXvyMl7JC15Ih/e87ec4UyV6cF3v/Bx5zbq7ttS5RHdW9j/MLVDpuFBywYqngl
+kIvBLh0We4VykqeHV1EX/IalISmvvOUP+EnyMJhtXCEBlOkvENRQwhr625WWPlE8
+EJfirss09+NKagiuH8BDvuvs8GNizy9zM2nkqp3t+/jRXZC6wmIKu0Cb4UMa6Kva
+8sAAN90rZyjY081uewQf6RFJDSZUGSkFxtiTaQqxDGj27pjN4YRtITr8a9+8p6Wn
+Jtfu0EAK3QeBON6600+NLiqPQChCCHSvfwcuBEXHpRKpPStSKw2B0hVEx8wSeRQi
+2eEhJ674BfM0oQndY70oFkCbSe06MMAKGFFIDy4mUN1T47xeD1BrAeFwKKJCo+RJ
+lpgNtKqnK6RMSRcHcsp1
+=nFUJ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__11_Sep_2012_11_29_24_+1000_iNe+q0uYS_AENYPQ--
+--Signature=_Tue__11_Sep_2012_16_19_23_+1000_5FL/aH.V5069RRMU--
