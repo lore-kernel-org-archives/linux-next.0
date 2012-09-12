@@ -1,90 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the staging tree
-Date: Wed, 12 Sep 2012 16:07:19 +1000
-Message-ID: <20120912160719.4377f041ac76ddfa13be7df1@canb.auug.org.au>
+Subject: linux-next: manual merge of the tegra tree with the usb tree
+Date: Wed, 12 Sep 2012 16:38:09 +1000
+Message-ID: <20120912163809.bc39832f08b77a0c85dd4289@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__12_Sep_2012_16_07_19_+1000_OheyccgV3SavDqX7"
+ boundary="Signature=_Wed__12_Sep_2012_16_38_09_+1000_P3o3/i7st8mDg=Ac"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47521 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40404 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751302Ab2ILGHb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Sep 2012 02:07:31 -0400
+	with ESMTP id S1750726Ab2ILGiT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Sep 2012 02:38:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, srinivas pandruvada <srinivas.pandruvada@intel.com>, Jiri Kosina <jkosina@suse.cz>, Jonathan Cameron <jic23@kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Venu Byravarasu <vbyravarasu@nvidia.com>, Greg KH <greg@kroah.com>, Felipe Balbi <balbi@ti.com>
 
---Signature=_Wed__12_Sep_2012_16_07_19_+1000_OheyccgV3SavDqX7
+--Signature=_Wed__12_Sep_2012_16_38_09_+1000_P3o3/i7st8mDg=Ac
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the tegra tree got a conflict in
+drivers/usb/phy/tegra_usb_phy.c between commit 1ba8216f0bc0 ("usb: move
+phy driver from mach-tegra to drivers/usb") from the usb tree and commit
+b0e51927b1e5 ("ARM: tegra: remove useless includes of <mach/*.h>") from
+the tegra tree.
 
-drivers/hid/hid-sensor-hub.c: In function 'sensor_hub_probe':
-drivers/hid/hid-sensor-hub.c:599:3: error: too few arguments to function 'm=
-fd_add_devices'
-
-Caused by commit 401ca24fb34a ("HID: sensors: introduce sensor
-framework") interacting with commit 6607bad3d763 ("mfd: core: Push
-irqdomain mapping out into devices") from the mfd tree.
-
-I have added the following merge fix patch and can carry it as necessary
-(no action is required).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 12 Sep 2012 16:03:55 +1000
-Subject: [PATCH] HID: sensors: fix up for mfd_add_devices() API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/hid/hid-sensor-hub.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c
-index 34a35ba..4ac759c 100644
---- a/drivers/hid/hid-sensor-hub.c
-+++ b/drivers/hid/hid-sensor-hub.c
-@@ -596,7 +596,7 @@ static int sensor_hub_probe(struct hid_device *hdev,
- 		}
- 	}
- 	ret =3D mfd_add_devices(&hdev->dev, 0, sd->hid_sensor_hub_client_devs,
--		sd->hid_sensor_client_cnt, NULL, 0);
-+		sd->hid_sensor_client_cnt, NULL, 0, NULL);
- 	if (ret < 0)
- 		goto err_free_names;
-=20
---=20
-1.7.10.280.gaa39
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__12_Sep_2012_16_07_19_+1000_OheyccgV3SavDqX7
+diff --cc drivers/usb/phy/tegra_usb_phy.c
+index 4739903,34ffebb..0000000
+--- a/drivers/usb/phy/tegra_usb_phy.c
++++ b/drivers/usb/phy/tegra_usb_phy.c
+@@@ -28,8 -30,7 +28,7 @@@
+  #include <linux/usb/otg.h>
+  #include <linux/usb/ulpi.h>
+  #include <asm/mach-types.h>
+- #include <mach/gpio-tegra.h>
+ -#include <mach/usb_phy.h>
+ +#include <linux/usb/tegra_usb_phy.h>
+  #include <mach/iomap.h>
+ =20
+  #define ULPI_VIEWPORT		0x170
+
+--Signature=_Wed__12_Sep_2012_16_38_09_+1000_P3o3/i7st8mDg=Ac
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQUCaXAAoJEECxmPOUX5FE5jgP/iPMS+Ej/mzCSEyLlOlQ9e88
-RghKzNoXVLpzOCj8NrrdPlwOEAYk1aqY45a1p6XGVRfgQh+fjCpMz+bnQESkKnhV
-kew06t6Drxtpp0w9dJc8VVqehb+NbQVqpQvXZ36L7AL7Z8A8P4SjMzrjFf0K2qJY
-3sgjRD+MrTkkT1pYyHP2P2fElmvMDNYBkbZXOGpPOYXmbCSiRGTSsvtZpLcl9ZCj
-oEdjzulit65SjbsSrKWdaBx/puFHo7haLc5sgfhjBtVvsC/7DS/LReELmPWdFTaV
-eYLH6HFv7evMtdS7gaCGFQnvVXRetkwqAarbNyI+ath9rV5kSJity/nwyJ8RpGqh
-UFhFTDm9uaZ9rF4d8Jj4Q5RTzWIAJ4iYKDnKAz2dxH+D2Nod9V7+w/lP693PGIzi
-R6I7MEy+LO3STG0nuXbWtI6VTSWXrXSyXJdM7UnG8t4vpRjv96Vdnfe7jpBJK2hH
-WzYgAwhMbSgvTBG9fKzDXyFI3yApys5edPCw4472/NC+GdCNnTKHg+5dqe0IohHB
-5gE9va3jklz0mD11VfLSDcyHrxbcPqvrVzHKMTN2Sc3Al2l09FZxx6pFMR7XYAiu
-oYqAUb/tKy5ZQ1uUxxWYZ3FC5FMXx9IuiFiuONGU2Ufrt0QtGyi/IdTGUM6OiP5M
-AfFEQPLwvgz2kEqdJDry
-=QV+m
+iQIcBAEBCAAGBQJQUC3RAAoJEECxmPOUX5FEYGMP/jTx5SmWyQJ7M6XHeV1r2WEn
+AJHvMOScf1G5CdjgzXtBjvurKifvCVwi+IpoI0Dx6rF6C9MK8MIjo2QnLMOOUqaG
+UtY3n58jLoPFF4Vac097Pwp7jLfBKxH8HjtOwjA8iRB4C/tI179tNSx7iLDIGquF
+sQb1Ki5yqXjZFV5pg6fmSAJRAkwFDu2TuZWpcF6im/AAv1ylVvlJVYzYf1QMKANp
+p7XMeLwF9pDX7g+CuhT4mlk/i0UJ12FwOYruO9DCrfXWI05Kq8v5DMy/LmpZ7qf/
+qMlu1MKufPlL7BsCkhxlQ21eU/DBjct8+pGtQwMqO/arDdocJJuGaqyHKzjGe6cI
+odULnsdOVXiZXGdw7Pn/OxbmycFQMf+irgIvKaYNP4cY43AgM65dfv8HLrUGz+Dp
+ELWB/2NdLVCeVKGhwr/qIqkM+zrA99/RktfiKeEXgxEOKUMY4YH1yURTGCHot6aH
+lD01LrAyike7bCc1xLwJFeHGFxQxMOKikV06xXUV/6/zAzbNFiY7iFCBlxXL2Irm
+ps545YBVHLSwyJ1ifFiFBUJu7QdInPWWPEPLUE5ff7b9rwdlYgFFRelLA96ZwNQX
+iN9ZliExLZpPaOzwWi0+B6M+rg2JoXXfySK0IMZO0ygSv/sDwL1EwZ9/KVqG+Jkn
+7sWx4rZ7r0S7TGsBMJyp
+=4BUu
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__12_Sep_2012_16_07_19_+1000_OheyccgV3SavDqX7--
+--Signature=_Wed__12_Sep_2012_16_38_09_+1000_P3o3/i7st8mDg=Ac--
