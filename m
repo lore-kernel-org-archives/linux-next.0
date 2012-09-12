@@ -1,76 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the thermal tree
-Date: Wed, 12 Sep 2012 15:52:31 +1000
-Message-ID: <20120912155231.716530c364bb20bd43efec0d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging tree
+Date: Wed, 12 Sep 2012 16:07:19 +1000
+Message-ID: <20120912160719.4377f041ac76ddfa13be7df1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__12_Sep_2012_15_52_31_+1000_f3N/thIT8Oj_jdDb"
+ boundary="Signature=_Wed__12_Sep_2012_16_07_19_+1000_OheyccgV3SavDqX7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42506 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:47521 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752125Ab2ILFwk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Sep 2012 01:52:40 -0400
+	with ESMTP id S1751302Ab2ILGHb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Sep 2012 02:07:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, srinivas pandruvada <srinivas.pandruvada@intel.com>, Jiri Kosina <jkosina@suse.cz>, Jonathan Cameron <jic23@kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Samuel Ortiz <sameo@linux.intel.com>
 
---Signature=_Wed__12_Sep_2012_15_52_31_+1000_f3N/thIT8Oj_jdDb
+--Signature=_Wed__12_Sep_2012_16_07_19_+1000_OheyccgV3SavDqX7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/omap-thermal/omap-thermal-common.c between commit
-76f726fb24bd ("Thermal: Remove tc1/tc2 in generic thermal layer") from
-the thermal tree and commit 765a1939a364 ("staging: omap-thermal: fix
-polling period settings") from the staging tree.
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (I think - see below) and can carry the fix as necessary
+drivers/hid/hid-sensor-hub.c: In function 'sensor_hub_probe':
+drivers/hid/hid-sensor-hub.c:599:3: error: too few arguments to function 'm=
+fd_add_devices'
+
+Caused by commit 401ca24fb34a ("HID: sensors: introduce sensor
+framework") interacting with commit 6607bad3d763 ("mfd: core: Push
+irqdomain mapping out into devices") from the mfd tree.
+
+I have added the following merge fix patch and can carry it as necessary
 (no action is required).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 12 Sep 2012 16:03:55 +1000
+Subject: [PATCH] HID: sensors: fix up for mfd_add_devices() API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/hid/hid-sensor-hub.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c
+index 34a35ba..4ac759c 100644
+--- a/drivers/hid/hid-sensor-hub.c
++++ b/drivers/hid/hid-sensor-hub.c
+@@ -596,7 +596,7 @@ static int sensor_hub_probe(struct hid_device *hdev,
+ 		}
+ 	}
+ 	ret =3D mfd_add_devices(&hdev->dev, 0, sd->hid_sensor_hub_client_devs,
+-		sd->hid_sensor_client_cnt, NULL, 0);
++		sd->hid_sensor_client_cnt, NULL, 0, NULL);
+ 	if (ret < 0)
+ 		goto err_free_names;
+=20
+--=20
+1.7.10.280.gaa39
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/omap-thermal/omap-thermal-common.c
-index b4cd6cc,46ee0a9..0000000
---- a/drivers/staging/omap-thermal/omap-thermal-common.c
-+++ b/drivers/staging/omap-thermal/omap-thermal-common.c
-@@@ -248,7 -268,9 +270,8 @@@ int omap_thermal_expose_sensor(struct o
-  	/* Create thermal zone */
-  	data->omap_thermal =3D thermal_zone_device_register(domain,
-  				OMAP_TRIP_NUMBER, 0, data, &omap_thermal_ops,
-- 				0, FAST_TEMP_MONITORING_RATE);
- -				1, 2, /*TODO: remove this when FW allows */
-+ 				FAST_TEMP_MONITORING_RATE,
-+ 				FAST_TEMP_MONITORING_RATE);
-  	if (IS_ERR_OR_NULL(data->omap_thermal)) {
-  		dev_err(bg_ptr->dev, "thermal zone device is NULL\n");
-  		return PTR_ERR(data->omap_thermal);
-
---Signature=_Wed__12_Sep_2012_15_52_31_+1000_f3N/thIT8Oj_jdDb
+--Signature=_Wed__12_Sep_2012_16_07_19_+1000_OheyccgV3SavDqX7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQUCMfAAoJEECxmPOUX5FE1SUP/RrlYm39+7uJD5rdCdpMUHhG
-PfMwbWeETJo889WP9r1XHt4DWUO5g0RaxFQ985O4TsPfxTZRe24dgF8zNHchXExQ
-V82Pe//3jEM+R8VaY/BXb/ycczGnom1VyFBpgo4y1f5qg09kljnwrOFCMT7ozhYW
-6XghhGkuET7vwo+/8G6bzVrKa4jlDC6k/VrfWeIPplIjRzEUxRrwJwB9Pg4xihsz
-DFDXnhbNmYSMvYd7wHQw8NPYtz2LCa4Ca+A7k2uvtQOMTWEtCok86MHkjRAa8pGI
-yQwFP4ISqwzoS5aBwoEhbdeBk80Gmk0jPA7dpisoV0NVc95dGC5bvCHIXO9i+nad
-1IgWGpxki2O1NKUGwZPVd5vNNxMdEuzHf5FlDZyR7TpT44QVaxPUGrhzddd38cGZ
-e/yDT8xwIUdlZX5tmze/1+KwAg6E+5cj/QORwBePcENmuttE7ST5jv+3aqq1wvVU
-pKLKYXtez653/gkoHi9ZM3PvkWw2njz4naJupCOwadIvrB1zuU3Sog+t0sOL9Kxa
-0GOPgPwReMqiZ2f0PWZ/OtXun16wk0EeGwjDYhTHZ7kerH6uN4zumIZqLDSU1wmH
-5vKu9OL+MTC1Q9au7ekviniv9cBiboI4EMdooQBojBGIM+h9mfLKRVkbkqGvlNQ0
-uGTHDKjp1zWLIjTA0sHa
-=8JIB
+iQIcBAEBCAAGBQJQUCaXAAoJEECxmPOUX5FE5jgP/iPMS+Ej/mzCSEyLlOlQ9e88
+RghKzNoXVLpzOCj8NrrdPlwOEAYk1aqY45a1p6XGVRfgQh+fjCpMz+bnQESkKnhV
+kew06t6Drxtpp0w9dJc8VVqehb+NbQVqpQvXZ36L7AL7Z8A8P4SjMzrjFf0K2qJY
+3sgjRD+MrTkkT1pYyHP2P2fElmvMDNYBkbZXOGpPOYXmbCSiRGTSsvtZpLcl9ZCj
+oEdjzulit65SjbsSrKWdaBx/puFHo7haLc5sgfhjBtVvsC/7DS/LReELmPWdFTaV
+eYLH6HFv7evMtdS7gaCGFQnvVXRetkwqAarbNyI+ath9rV5kSJity/nwyJ8RpGqh
+UFhFTDm9uaZ9rF4d8Jj4Q5RTzWIAJ4iYKDnKAz2dxH+D2Nod9V7+w/lP693PGIzi
+R6I7MEy+LO3STG0nuXbWtI6VTSWXrXSyXJdM7UnG8t4vpRjv96Vdnfe7jpBJK2hH
+WzYgAwhMbSgvTBG9fKzDXyFI3yApys5edPCw4472/NC+GdCNnTKHg+5dqe0IohHB
+5gE9va3jklz0mD11VfLSDcyHrxbcPqvrVzHKMTN2Sc3Al2l09FZxx6pFMR7XYAiu
+oYqAUb/tKy5ZQ1uUxxWYZ3FC5FMXx9IuiFiuONGU2Ufrt0QtGyi/IdTGUM6OiP5M
+AfFEQPLwvgz2kEqdJDry
+=QV+m
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__12_Sep_2012_15_52_31_+1000_f3N/thIT8Oj_jdDb--
+--Signature=_Wed__12_Sep_2012_16_07_19_+1000_OheyccgV3SavDqX7--
