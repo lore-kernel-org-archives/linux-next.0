@@ -1,60 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tegra tree with the  tree
-Date: Wed, 12 Sep 2012 16:43:53 +1000
-Message-ID: <20120912164353.6fb8b35ff534088a79792acd@canb.auug.org.au>
+From: "Valentin, Eduardo" <eduardo.valentin@ti.com>
+Subject: Re: linux-next: manual merge of the staging tree with the thermal tree
+Date: Wed, 12 Sep 2012 11:11:55 +0300
+Message-ID: <CAGF5oy9yPedug0=N5W=47qaN6D1vOr9xje98jm3NBv6qDxof5w@mail.gmail.com>
+References: <20120912155231.716530c364bb20bd43efec0d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__12_Sep_2012_16_43_53_+1000_wr_Wy+9NET0Zp+jW"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49749 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757372Ab2ILGn4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Sep 2012 02:43:56 -0400
+Received: from na3sys009aog109.obsmtp.com ([74.125.149.201]:34672 "EHLO
+	na3sys009aog109.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754165Ab2ILIL4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Sep 2012 04:11:56 -0400
+Received: by vbbff1 with SMTP id ff1so1719300vbb.19
+        for <linux-next@vger.kernel.org>; Wed, 12 Sep 2012 01:11:55 -0700 (PDT)
+In-Reply-To: <20120912155231.716530c364bb20bd43efec0d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Venu Byravarasu <vbyravarasu@nvidia.com>, Greg KH <greg@kroah.com>, Felipe Balbi <balbi@ti.com>, Sudeep KarkadaNagesha <Sudeep.KarkadaNagesha@arm.com>, Will Deacon <will.deacon@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
 
---Signature=_Wed__12_Sep_2012_16_43_53_+1000_wr_Wy+9NET0Zp+jW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Stephen,
 
-Hi all,
 
-Today's linux-next merge of the tegra tree got a conflict in
-arch/arm/mach-tegra/devices.c arch/arm/mach-tegra/devices.h between
-commits 2db4ddfe6e23 ("ARM: pmu: remove arm_pmu_type enumeration") from
-the arm-perf tree and 1ba8216f0bc0 ("usb: move phy driver from mach-tegra
-to drivers/usb") from the usb tree and commit ba07ee57d4bc ("ARM: tegra:
-remove dead code") from the tegra tree.
+On Wed, Sep 12, 2012 at 8:52 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Greg,
+>
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/omap-thermal/omap-thermal-common.c between commit
+> 76f726fb24bd ("Thermal: Remove tc1/tc2 in generic thermal layer") from
+> the thermal tree and commit 765a1939a364 ("staging: omap-thermal: fix
+> polling period settings") from the staging tree.
+>
+> I fixed it up (I think - see below) and can carry the fix as necessary
+> (no action is required).
 
-The latter removed the files, so I did that (no action is required).
+Just to confirm that the fix is correct.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>
+> diff --cc drivers/staging/omap-thermal/omap-thermal-common.c
+> index b4cd6cc,46ee0a9..0000000
+> --- a/drivers/staging/omap-thermal/omap-thermal-common.c
+> +++ b/drivers/staging/omap-thermal/omap-thermal-common.c
+> @@@ -248,7 -268,9 +270,8 @@@ int omap_thermal_expose_sensor(struct o
+>         /* Create thermal zone */
+>         data->omap_thermal = thermal_zone_device_register(domain,
+>                                 OMAP_TRIP_NUMBER, 0, data, &omap_thermal_ops,
+> -                               0, FAST_TEMP_MONITORING_RATE);
+>  -                              1, 2, /*TODO: remove this when FW allows */
+> +                               FAST_TEMP_MONITORING_RATE,
+> +                               FAST_TEMP_MONITORING_RATE);
+>         if (IS_ERR_OR_NULL(data->omap_thermal)) {
+>                 dev_err(bg_ptr->dev, "thermal zone device is NULL\n");
+>                 return PTR_ERR(data->omap_thermal);
 
---Signature=_Wed__12_Sep_2012_16_43_53_+1000_wr_Wy+9NET0Zp+jW
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQUC8pAAoJEECxmPOUX5FElxkP/jnZRIx75PNZEQ6HmZ9OrPdq
-CIntP85QBbYVO3VbpBRGpIPntPSb/vpn6xsZ7NtB3khPpkQ6LsFTl5zZJlq4AAiU
-CPxi43706eB3txY1QGeFXY1UT4oHA45tdwWZj8teBZdzcApcPXBQJbe2152+KwiE
-+1bUY+aEk1Geg+9rcrGdQANbecNXNHKypTuMYfFY6MQmmW0dtSjuYN4NQBwW/bpa
-5Mml7+pgyYsDcjX9HzO5vvvDXdtmuPzPkTMALK4wTHa7SyJc8cupZenF3o+QZp5e
-EmFOh3iS9VAwlxAP/iIY4qdyJpYOAypZ1AOMs3BvHORxv5nXWd7foI4XfsT+jqkD
-tikyNId/UqFXCa6ttEO4aFmkLuYzqATOxfx+RQQNRWG5IiL/+dsm8zuOrJZR4CGL
-RyMDJjq0MCtbmERWBDjErW1siLk5fqCpoH36PtsBQcOJM+QfSttTHokVcWFZ/Ah4
-NtsgT4EfEv7ERsracqcpDk77upLd9Eiykx7Xa4JoLtgyDxbYwfR0k6Tj8AmSqj1L
-Bwu0cG2Vn6uo7YOmJGH44WX/A5p5/Jf88Y6tymxXxtJyVZFCvZgrXbFUiUl2B8bW
-bJqyoeqWV1fP4T6As4A4CQbUm/LE9Mv8+0Wx7iX9G/GLAUL7tDsIYSmECZfhZd/O
-Rx5BFXspwsleKuTliTk4
-=vb6Y
------END PGP SIGNATURE-----
+-- 
 
---Signature=_Wed__12_Sep_2012_16_43_53_+1000_wr_Wy+9NET0Zp+jW--
+Eduardo Valentin
