@@ -1,60 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the mfd tree
-Date: Wed, 12 Sep 2012 13:43:49 +1000
-Message-ID: <20120912134349.f1dd0f4d050dd4834623e57b@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Wed, 12 Sep 2012 14:33:31 +1000
+Message-ID: <20120912143331.beed6ad11cfc753f3c33f5a3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__12_Sep_2012_13_43_49_+1000_5x.8th+EQw57xQ5n"
+ boundary="Signature=_Wed__12_Sep_2012_14_33_31_+1000_NGsW.6Ccl1KcBvsD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35257 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40158 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751535Ab2ILDn6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Sep 2012 23:43:58 -0400
+	with ESMTP id S1751039Ab2ILEdl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Sep 2012 00:33:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jamie Iles <jamie@jamieiles.com>, Gleb Natapov <gleb@redhat.com>
 
---Signature=_Wed__12_Sep_2012_13_43_49_+1000_5x.8th+EQw57xQ5n
+--Signature=_Wed__12_Sep_2012_14_33_31_+1000_NGsW.6Ccl1KcBvsD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi all,
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/video/backlight/88pm860x_bl.c between commit a6ccdcd98c39 ("mfd:
-88pm860x: Use REG resource for backlight") from the mfd tree and commit
-e1c9ac420ef1 ("Revert "backlight: fix memory leak on obscure error
-path"") from the trivial tree.
+Today's linux-next merge of the kvm tree got a conflict in
+arch/x86/kvm/i8259.c between commit 749c59fd15b2 ("KVM: PIC: fix use of
+uninitialised variable") from Linus' tree and commit ec798660cf72 ("KVM:
+cleanup pic reset") from the kvm tree.
 
-I just used the version from the mfd tree and can carry the fix as
-necessary (no action is required).
+The latter removed the code fixed by the former, so I just did that (no
+action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__12_Sep_2012_13_43_49_+1000_5x.8th+EQw57xQ5n
+--Signature=_Wed__12_Sep_2012_14_33_31_+1000_NGsW.6Ccl1KcBvsD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQUAT1AAoJEECxmPOUX5FETQUP/03Qtr3w6f+vX8sEMtDu/woa
-6mjYgOmk5tODbYiaw1Vc0ORtefv9MlQkjHFx2qqHoXqaUgcZqI7sg9VlWpWeo2RQ
-WwbSFj4LIiRSNkAlcCLjKDQiI9R88l9Eq21BKbLyzU8F1re0YF82pj1REWnKjcIx
-2Lzn0TBJfC36Ec/IqyT1DLL+FvsDRIJAQIG5YAxPC0MILB3wiiRYrwlqcPOFlpFF
-oR7Xq48bBPjIVQ45LiXEOtcbiz1DbDhGNFzdmBBGNnJPHRgw9sCAveEKK+Wz0dLM
-V14ncFe4jH1SGF7NfrQoqDzGFZcDK7qMLCcYb4haBFW/3HqLtYVdnZ39Dd3SBxge
-yHR9D1gd0nESq3tTP/8VYwIJAd5VjF66bJScqTd16M+Q61XjhdrC6NtVlI/Wp3rE
-yz2IDNJJZoktViYeVmaXnwkEtWZFqev+M8kCNwgUWkc51B5DTsQ++lEyr4JLqW9A
-EFGP/Aa5AEmVS/0/PqXmZF84ZVaCDZLlgJRBGPrIyE2/zPdmIKg/ftXp1E83J53I
-YOqwxp+GFcfrE3ThUODIE8+Vxp25On85KvN3JBybXSU/dHgvUt1TndY+m6ZTidZ+
-iqzRcPh/jcr9HhyMEt3Q4FyKc+ZjGUJ7prva9SqugkMp22yvYeUCa6luKOwB00wD
-YCVpAab4C0Bagk8xcEbL
-=2hXX
+iQIcBAEBCAAGBQJQUBCbAAoJEECxmPOUX5FEPx0P/ihX48AKb/J1m5Ka9Clv0OS7
+cNF6yYZR17XoejSwyevjaWTMe7KKyTUvQA/hED7iVcc071VScN5P3CLhhj5fIP4o
++NQCkgFIUhIm9q9s/vqWEyQnQFtUy8I8Pct1Zv60vtAkdfYEcrpXUqhOTZPf4B7n
++EJ/FV7sDSereZRjWlvurraznb0n2linipNbm8B8a/UDP9UKCjhX6vvWfyQtwTYJ
+IgdY3KP7u7cKnHEiXLDazhV1zuFF5Jw9GyQjQ7u60YeV3oNBvHuUutCNJOZ9E6L2
+b4sWRVhq8A4Cj2Z/v2hOXTfWMkZThTEUCnzNDu0KpTYI8zYSSW4IZF33Ps8W0Hh4
+7jvlJL9R0PXDIbKWZuZYYAhW/zTqrfNEDNWtd2JoVuAejHVqjS/kXfAkt2bFjIho
+PHkfXMAxxZDEpBBq0s3+pqi0NKz6i77I8MGn8riPkcYj7BnnqbiXUWe8wf5siW6N
+GXDse/UrlksHjCtHdr//fw+Kh/v5CgxFI2YKQCjLezF55EHcBEib/Wf3upOOE+M1
+K8zvY5yXINUcjRp6MMNZ7yO9u5DaNCXVFxaBGA372meqTGujvFlyEAVhDy2DNB48
+2vIIr0iYUzU6V/hq6XUdJyfaNprdlomG05rCadDMTJxfngpoOxnz7vjXeBfmZWpR
+H3VwT9Muf6Um3VWalGYB
+=EpOU
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__12_Sep_2012_13_43_49_+1000_5x.8th+EQw57xQ5n--
+--Signature=_Wed__12_Sep_2012_14_33_31_+1000_NGsW.6Ccl1KcBvsD--
