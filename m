@@ -1,80 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mfd tree with Linus' tree
-Date: Wed, 12 Sep 2012 12:49:34 +1000
-Message-ID: <20120912124934.8cdbf432ad630e200b0b7300@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the mfd tree
+Date: Wed, 12 Sep 2012 13:43:49 +1000
+Message-ID: <20120912134349.f1dd0f4d050dd4834623e57b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__12_Sep_2012_12_49_34_+1000_D/7nihVkY0MVQPiq"
+ boundary="Signature=_Wed__12_Sep_2012_13_43_49_+1000_5x.8th+EQw57xQ5n"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48687 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35257 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757178Ab2ILCtt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Sep 2012 22:49:49 -0400
+	with ESMTP id S1751535Ab2ILDn6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Sep 2012 23:43:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Bill Huang <bilhuang@nvidia.com>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>
 
---Signature=_Wed__12_Sep_2012_12_49_34_+1000_D/7nihVkY0MVQPiq
+--Signature=_Wed__12_Sep_2012_13_43_49_+1000_5x.8th+EQw57xQ5n
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi Jiri,
 
-Today's linux-next merge of the mfd tree got a conflict in
-Documentation/devicetree/bindings/regulator/tps6586x.txt between commit
-7f852e0584f6 ("regulator: tps6586x: correct vin pin for sm0/sm1/sm2")
-from Linus' tree and commit 566a725dff0d ("mfd: dt: tps6586x: Add power
-off control") from the mfd tree.
+Today's linux-next merge of the trivial tree got a conflict in
+drivers/video/backlight/88pm860x_bl.c between commit a6ccdcd98c39 ("mfd:
+88pm860x: Use REG resource for backlight") from the mfd tree and commit
+e1c9ac420ef1 ("Revert "backlight: fix memory leak on obscure error
+path"") from the trivial tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
+I just used the version from the mfd tree and can carry the fix as
 necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/devicetree/bindings/regulator/tps6586x.txt
-index da80c2a,03dfa4e..0000000
---- a/Documentation/devicetree/bindings/regulator/tps6586x.txt
-+++ b/Documentation/devicetree/bindings/regulator/tps6586x.txt
-@@@ -30,9 -34,11 +34,11 @@@ Example
-  		#gpio-cells =3D <2>;
-  		gpio-controller;
- =20
-+ 		ti,system-power-controller;
-+=20
- -		sm0-supply =3D <&some_reg>;
- -		sm1-supply =3D <&some_reg>;
- -		sm2-supply =3D <&some_reg>;
- +		vin-sm0-supply =3D <&some_reg>;
- +		vin-sm1-supply =3D <&some_reg>;
- +		vin-sm2-supply =3D <&some_reg>;
-  		vinldo01-supply =3D <...>;
-  		vinldo23-supply =3D <...>;
-  		vinldo4-supply =3D <...>;
-
---Signature=_Wed__12_Sep_2012_12_49_34_+1000_D/7nihVkY0MVQPiq
+--Signature=_Wed__12_Sep_2012_13_43_49_+1000_5x.8th+EQw57xQ5n
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQT/g+AAoJEECxmPOUX5FEzvQQAJc2Yhrz/JbTGOR06fs0g9nS
-aVZuemuiMYSVVW5QfUyykyxFSnoeHEV/8zRZsRiwi240jY3Y2/OZ1giGcsozilvw
-SFSlNy69nlr9ZY7Y3Fdxz4gCaxL5CPWBQWP1VdoqVG6qSiNvvgUgnJw/Iwa8xRDU
-ZQ+0Xtk803iQlMXWupbqBfuow9L+lN3CmI83rXZLryyKh6t+9x0HhQZ/62QZL5HT
-4OHmt6s4LIsvrzB7cmQqy0qWcuPpG7mRjCNaFzs6I0qrjSueyVisSUVICrS/w8nr
-M1zzcvv7ztQ7Lc74GbStHkvKTdjrQ0ZZakw76rPrjUPs+vbSUVGxIW5mN6ttQMeA
-uRKINMiec/qqfG9Vc0KnScq1em4a8L0mqIcZ8xsl6lT2+aYZt9An8t30Kv64vdkN
-RodowVsQ7ygSG9ezFQt7alRgGhAROOoMyMSyMDfgQUBpIB+cHwIS9p0JezlrCQx2
-nPaqxFQChpK8YtWHWQOhAJLRBDGkw/9wiP9S5qr9waul5JrywbHy14+qmFa/mmZK
-dnCJ5FaFtGwF5/DHrSMb/nvDejkQCxQa1n+P7em9VVKlVEvSDAHiS023qW1MJ7dd
-PxzmMBa2jAKUFnPjMlGcyGVM5/2du050upGA0VBppWk9W1sJpy1iPNKPAallRJr0
-Q4815x3IjoprxKdYVRXD
-=g8ZU
+iQIcBAEBCAAGBQJQUAT1AAoJEECxmPOUX5FETQUP/03Qtr3w6f+vX8sEMtDu/woa
+6mjYgOmk5tODbYiaw1Vc0ORtefv9MlQkjHFx2qqHoXqaUgcZqI7sg9VlWpWeo2RQ
+WwbSFj4LIiRSNkAlcCLjKDQiI9R88l9Eq21BKbLyzU8F1re0YF82pj1REWnKjcIx
+2Lzn0TBJfC36Ec/IqyT1DLL+FvsDRIJAQIG5YAxPC0MILB3wiiRYrwlqcPOFlpFF
+oR7Xq48bBPjIVQ45LiXEOtcbiz1DbDhGNFzdmBBGNnJPHRgw9sCAveEKK+Wz0dLM
+V14ncFe4jH1SGF7NfrQoqDzGFZcDK7qMLCcYb4haBFW/3HqLtYVdnZ39Dd3SBxge
+yHR9D1gd0nESq3tTP/8VYwIJAd5VjF66bJScqTd16M+Q61XjhdrC6NtVlI/Wp3rE
+yz2IDNJJZoktViYeVmaXnwkEtWZFqev+M8kCNwgUWkc51B5DTsQ++lEyr4JLqW9A
+EFGP/Aa5AEmVS/0/PqXmZF84ZVaCDZLlgJRBGPrIyE2/zPdmIKg/ftXp1E83J53I
+YOqwxp+GFcfrE3ThUODIE8+Vxp25On85KvN3JBybXSU/dHgvUt1TndY+m6ZTidZ+
+iqzRcPh/jcr9HhyMEt3Q4FyKc+ZjGUJ7prva9SqugkMp22yvYeUCa6luKOwB00wD
+YCVpAab4C0Bagk8xcEbL
+=2hXX
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__12_Sep_2012_12_49_34_+1000_D/7nihVkY0MVQPiq--
+--Signature=_Wed__12_Sep_2012_13_43_49_+1000_5x.8th+EQw57xQ5n--
