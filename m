@@ -1,83 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (akpm
- tree related)
-Date: Thu, 13 Sep 2012 23:34:29 +1000
-Message-ID: <20120913233429.27668296c459915dc11222f5@canb.auug.org.au>
-References: <20120913181127.862265ddb9a08758ada8405c@canb.auug.org.au>
-	<20120913132408.GZ2608@spacedout.fries.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] mm: cma: Discard clean pages during contiguous allocation
+ instead of migration
+Date: Thu, 13 Sep 2012 21:17:19 +0200
+Message-ID: <CAMuHMdXWZ=Jeggd7cT_LXK0MTnmFAf+cWEhC75B1gCcSd3eWeg@mail.gmail.com>
+References: <1347324112-14134-1-git-send-email-minchan@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__13_Sep_2012_23_34_29_+1000_0KbffCb5YVP5aF/M"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48190 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751331Ab2IMNel (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 09:34:41 -0400
-In-Reply-To: <20120913132408.GZ2608@spacedout.fries.net>
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:44366 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750783Ab2IMTRV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 15:17:21 -0400
+In-Reply-To: <1347324112-14134-1-git-send-email-minchan@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Fries <david@fries.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Minchan Kim <minchan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, Kyungmin Park <kmpark@infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Michal Nazarewicz <mina86@mina86.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Linux-Next <linux-next@vger.kernel.org>
 
---Signature=_Thu__13_Sep_2012_23_34_29_+1000_0KbffCb5YVP5aF/M
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 11, 2012 at 2:41 AM, Minchan Kim <minchan@kernel.org> wrote:
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -674,8 +674,10 @@ static enum page_references page_check_references(struct page *page,
+>  static unsigned long shrink_page_list(struct list_head *page_list,
+>                                       struct zone *zone,
+>                                       struct scan_control *sc,
+> +                                     enum ttu_flags ttu_flags,
 
-Hi David,
+"enum ttu_flags" is defined on CONFIG_MMU=y only, causing on nommu:
 
-On Thu, 13 Sep 2012 08:24:08 -0500 David Fries <david@fries.net> wrote:
->
-> On Thu, Sep 13, 2012 at 06:11:27PM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > After merging the final tree, today's linux-next build (sparc64 defconf=
-ig)
-> > failed like this:
-> >=20
-> > drivers/built-in.o: In function `rtc_hctosys':
-> > hctosys.c:(.init.text+0x4a98): undefined reference to `rtc_hctosys_ret'
-> > hctosys.c:(.init.text+0x4b54): undefined reference to `rtc_hctosys_ret'
-> > hctosys.c:(.init.text+0x4b58): undefined reference to `rtc_hctosys_ret'
->=20
-> Can you post your .config?  `grep RTC .config`
-> It would seem to me that drivers/rtc/hctosys.c is being compiled
-> without drivers/rtc/class.c which now holds the global variable, but
-> Kconfig says that RTC_HCTOSYS 'depends on RTC_CLASS =3D y'.
+mm/vmscan.c:677:26: error: parameter 4 ('ttu_flags') has incomplete type
+mm/vmscan.c:987:5: error: 'TTU_UNMAP' undeclared (first use in this function)
+mm/vmscan.c:987:15: error: 'TTU_IGNORE_ACCESS' undeclared (first use
+in this function)
+mm/vmscan.c:1312:56: error: 'TTU_UNMAP' undeclared (first use in this function)
 
-Did you read the bit you quoted below?  CONFIG_PM is not set, so that the
-part of class.c that contains the definition of rtc_hctosys_ret is not
-compiled ...
+E.g.
+http://kisskb.ellerman.id.au/kisskb/buildresult/7191694/ (h8300-defconfig)
+http://kisskb.ellerman.id.au/kisskb/buildresult/7191858/ (sh-allnoconfig)
 
-> > Caused by commit "rtc_sysfs_show_hctosys(): display 0 if resume failed"
-> > from the akpm tree.  rtc_hctosys_ret was moved into class.c but protect=
-ed
-> > by defined(CONFIG_PM) && defined(CONFIG_RTC_HCTOSYS_DEVICE) and this
-> > build does not have CONFIG_PM set.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Gr{oetje,eeting}s,
 
---Signature=_Thu__13_Sep_2012_23_34_29_+1000_0KbffCb5YVP5aF/M
-Content-Type: application/pgp-signature
+                        Geert
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIcBAEBCAAGBQJQUeDlAAoJEECxmPOUX5FEpxwQAIYJrXGaFHyVRQ/dpXEBHqPD
-yODjgNN+0O5FTGhTJM2FdC8zE3xgqA/YUV9cG07cjrlXFoU0W63kSCWJYkwXnq6c
-/gx4j9t6jpLPqq/ua9K7yMeuf403f9GBux6TJDXaqArv1yiZVqGD7xo8zTIRAFfi
-mPKe9SfeVuVkHC+VHgy4bvxgCHCyVtz1a3ksIxw/jFBuxp94tKQpCOi8H9OJoV0S
-wg62hGLpjDtFPLC3VU/5/eMtMbchZUfZyZ3Sz0j7nNfkkjEZ6usk5UUHfRfYMWQe
-Q6T6PMotfSyF+eKPiSJR3Spg2D3Sor8qjzFKvAD0mjpWdvPNeypTIsWkIv41GHST
-I3lPuHA11+3YVtfwKuZyTJi9niOg+zh9BvcbZdj4ng0+GCxC+FxzaFN4wL/GQ37l
-u0wS2rkMQ8l9iSDxt5HLY8JbkZETnlChN5hvqj9MwN2pefpME/aupeoCR557mtR+
-M9DcQVRq1qU3BvpiLZ6H9G86eFR5Nk+XuMlcKOsLL59vM6hPhF0QwA9HCAqahsgj
-iuLBIte4snAtivT3kfdcu+E9P8FwPj0boliB6Uke+XDDsDsOlq22ftcl0a4opgo6
-+zhE8cJzMt9TWeiAj7z9vp4R33+ba0D82UbiFchNOil2VJ4cmkeT4HDcz5VK4aqh
-MEn3QP+ziLMFv/PCv1w0
-=SwjT
------END PGP SIGNATURE-----
-
---Signature=_Thu__13_Sep_2012_23_34_29_+1000_0KbffCb5YVP5aF/M--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
