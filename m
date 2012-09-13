@@ -1,58 +1,99 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RE-RESEND][PATCH] audit: replace defines with C stubs
-Date: Thu, 13 Sep 2012 21:43:16 +0200
-Message-ID: <CAMuHMdXxXW5pPHF+6r+qcobjtTNaXP1cmkrrtdDeWcLfGop4gA@mail.gmail.com>
-References: <20120807004041.GA27896@www.outflux.net>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm: cma: Discard clean pages during contiguous
+ allocation instead of migration
+Date: Thu, 13 Sep 2012 15:19:22 -0700
+Message-ID: <20120913151922.b8893088.akpm@linux-foundation.org>
+References: <1347324112-14134-1-git-send-email-minchan@kernel.org>
+	<CAMuHMdXWZ=Jeggd7cT_LXK0MTnmFAf+cWEhC75B1gCcSd3eWeg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:56916 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753386Ab2IMTnT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 15:43:19 -0400
-In-Reply-To: <20120807004041.GA27896@www.outflux.net>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50838 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752023Ab2IMWTX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 18:19:23 -0400
+In-Reply-To: <CAMuHMdXWZ=Jeggd7cT_LXK0MTnmFAf+cWEhC75B1gCcSd3eWeg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@chromium.org>, Jonas Bonn <jonas@southpole.se>
-Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Eric Paris <eparis@redhat.com>, linux@lists.openrisc.net, Linux-Next <linux-next@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, Kyungmin Park <kmpark@infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Michal Nazarewicz <mina86@mina86.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Linux-Next <linux-next@vger.kernel.org>
 
-On Tue, Aug 7, 2012 at 2:40 AM, Kees Cook <keescook@chromium.org> wrote:
-> This replaces the #defines used when CONFIG_AUDIT or CONFIG_AUDIT_SYSCALLS
-> are disabled so we get type checking during those builds.
->
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On Thu, 13 Sep 2012 21:17:19 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-JFYI, the change
+> On Tue, Sep 11, 2012 at 2:41 AM, Minchan Kim <minchan@kernel.org> wrote:
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -674,8 +674,10 @@ static enum page_references page_check_references(struct page *page,
+> >  static unsigned long shrink_page_list(struct list_head *page_list,
+> >                                       struct zone *zone,
+> >                                       struct scan_control *sc,
+> > +                                     enum ttu_flags ttu_flags,
+> 
+> "enum ttu_flags" is defined on CONFIG_MMU=y only, causing on nommu:
+> 
+> mm/vmscan.c:677:26: error: parameter 4 ('ttu_flags') has incomplete type
+> mm/vmscan.c:987:5: error: 'TTU_UNMAP' undeclared (first use in this function)
+> mm/vmscan.c:987:15: error: 'TTU_IGNORE_ACCESS' undeclared (first use
+> in this function)
+> mm/vmscan.c:1312:56: error: 'TTU_UNMAP' undeclared (first use in this function)
+> 
+> E.g.
+> http://kisskb.ellerman.id.au/kisskb/buildresult/7191694/ (h8300-defconfig)
+> http://kisskb.ellerman.id.au/kisskb/buildresult/7191858/ (sh-allnoconfig)
 
--#define audit_syscall_entry(ta,a,b,c,d,e) do { ; } while (0)
-+static inline void audit_syscall_entry(int arch, int major, unsigned long a0,
-+                                      unsigned long a1, unsigned long a2,
-+                                      unsigned long a3)
-+{ }
+hm, OK, the means by which current mainline avoids build errors is
+either clever or lucky.
 
-uncovers a bug on OpenRISC.
+			switch (try_to_unmap(page, TTU_UNMAP)) {
 
-Before,
+gets preprocessed into
 
-        audit_syscall_entry(audit_arch(), regs->gpr[11],
-                            regs->gpr[3], regs->gpr[4],
-                            regs->gpr[5], regs->gpr[6]);
+			switch (2) {
 
-just expanded to nothing if CONFIG_AUDITSYSCALL was not set.
-Now, it fails to compile with:
+so the cmopiler never gets to see the TTU_ symbol at all.  Because it
+happens to be inside the try_to_unmap() call.
 
-arch/openrisc/kernel/ptrace.c:190:2: error: implicit declaration of
-function 'audit_arch'
-http://kisskb.ellerman.id.au/kisskb/buildresult/7191698/
 
-Gr{oetje,eeting}s,
+I guess we can just make ttu_flags visible to NOMMU:
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--- a/include/linux/rmap.h~mm-cma-discard-clean-pages-during-contiguous-allocation-instead-of-migration-fix-fix
++++ a/include/linux/rmap.h
+@@ -71,6 +71,17 @@ struct anon_vma_chain {
+ #endif
+ };
+ 
++enum ttu_flags {
++	TTU_UNMAP = 0,			/* unmap mode */
++	TTU_MIGRATION = 1,		/* migration mode */
++	TTU_MUNLOCK = 2,		/* munlock mode */
++	TTU_ACTION_MASK = 0xff,
++
++	TTU_IGNORE_MLOCK = (1 << 8),	/* ignore mlock */
++	TTU_IGNORE_ACCESS = (1 << 9),	/* don't age */
++	TTU_IGNORE_HWPOISON = (1 << 10),/* corrupted page is recoverable */
++};
++
+ #ifdef CONFIG_MMU
+ static inline void get_anon_vma(struct anon_vma *anon_vma)
+ {
+@@ -164,16 +175,6 @@ int page_referenced(struct page *, int i
+ int page_referenced_one(struct page *, struct vm_area_struct *,
+ 	unsigned long address, unsigned int *mapcount, unsigned long *vm_flags);
+ 
+-enum ttu_flags {
+-	TTU_UNMAP = 0,			/* unmap mode */
+-	TTU_MIGRATION = 1,		/* migration mode */
+-	TTU_MUNLOCK = 2,		/* munlock mode */
+-	TTU_ACTION_MASK = 0xff,
+-
+-	TTU_IGNORE_MLOCK = (1 << 8),	/* ignore mlock */
+-	TTU_IGNORE_ACCESS = (1 << 9),	/* don't age */
+-	TTU_IGNORE_HWPOISON = (1 << 10),/* corrupted page is recoverable */
+-};
+ #define TTU_ACTION(x) ((x) & TTU_ACTION_MASK)
+ 
+ int try_to_unmap(struct page *, enum ttu_flags flags);
+_
