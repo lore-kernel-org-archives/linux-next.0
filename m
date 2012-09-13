@@ -1,152 +1,138 @@
-From: Minchan Kim <minchan@kernel.org>
-Subject: Re: linux-next: Tree for Sept 12 (kernel-panic after pressing any
- key at X login)
-Date: Thu, 13 Sep 2012 15:04:12 +0900
-Message-ID: <20120913060412.GB5085@bbox>
-References: <CA+icZUVEQNPGL7_BbLA-urgP6rFvdOh0SUtYESUv6ZJc+w78Nw@mail.gmail.com>
- <CA+icZUXqzV=YFjHT=5QxUf1_WHwS1-DhuXkhN8QAhn1t9+-PYA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the tty tree
+Date: Thu, 13 Sep 2012 16:14:17 +1000
+Message-ID: <20120913161417.e863926832ccf8a2e1ca1f2a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__13_Sep_2012_16_14_17_+1000_j5_nkXyj3Ap11UcZ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60790 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751011Ab2IMGOb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 02:14:31 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Jens Taprogge <jens.taprogge@taprogge.org>, Samuel Iglesias Gonsalvez <siglesias@igalia.com>
+
+--Signature=_Thu__13_Sep_2012_16_14_17_+1000_j5_nkXyj3Ap11UcZ
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <CA+icZUXqzV=YFjHT=5QxUf1_WHwS1-DhuXkhN8QAhn1t9+-PYA@mail.gmail.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 13, 2012 at 07:29:32AM +0200, Sedat Dilek wrote:
-> On Thu, Sep 13, 2012 at 5:18 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> > On Wed, Sep 12, 2012 at 10:46 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >> Hi all,
-> >>
-> >> Changes since 201209011:
-> >>
-> >> The pci tree lost its build failure.
-> >>
-> >> The mfd tree gained a conflict against Linus' tree.
-> >>
-> >> The omap_dss2 tree lost its conflict.
-> >>
-> >> The trivial tree gained a conflict against the mfd tree.
-> >>
-> >> The kvm tree gained a conflict against Linus' tree.
-> >>
-> >> The workqueues tree gained a conflict against the omap_dss2 tree.
-> >>
-> >> The usb tree gained conflicts against the usb.current tree.
-> >>
-> >> The staging tree gained a conflict against the thermal tree and a build
-> >> failure for which I applied a merge fix patch.
-> >>
-> >> The tegra tree gained conflicts against the usb and arm-perf trees.
-> >>
-> >> ----------------------------------------------------------------------------
-> >>
-> >
-> > Hi,
-> >
-> > this weeks linux-next seems to bring new and new issues, yay :-)!
-> >
-> > I have taken a photo, but can't say what can have caused.
-> > The issue is reproducible...
-> > Immediately, after pressing any key (when X-display-manager (lightdm)
-> > and X-greeter are up) my machine panics and is no more usable (cold
-> > rough brutal killer restart).
-> > Note: Using upstart or systemd does not matter.
-> >
-> > Any pointer to an area where to dig into or any feedback in general is welcome!
-> >
-> > Kind Regards,
-> > - Sedat -
-> 
-> [ CC Dmitry Torokhov (linux-input maintainer) plus linux-input ML ]
-> 
-> By looking at my screenshot, someone could imagine that there is a
-> problem coming from the input GIT branch(es) merges:
-> 
-> input_to_handler()
-> input_pass_values()
-> input_handle_event()
-> input_event()
-> 
-> Unfortunately, with those 3 revert-patches I see the same kernel-panic.
-> 
-> Dimitry, any idea what can cause this kernel-panic?
+Hi Greg,
 
-Today, I met similar problem in mmotm-2012-09-12-17-36 on my KVM.
-It's hard to reproduce in my mahcine but I confirmed following as
-Hoping it helps you.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/ipack/devices/ipoctal.c between commit 734cc1783816
+("TTY: use tty_port_register_device") from the tty tree and commit
+2afb41d9d30d ("Staging: ipack/devices/ipoctal: Check tty_register_device
+return value") from the staging tree.
 
-static unsigned int input_to_handler(struct input_handle *handle,
-                        struct input_value *vals, unsigned int count)
-{
-        ...
-        ...
-        if (handler->events)
-                handler->events(handle, vals, count);
-        else 
-                for (v = vals; v != end; v++) 
-                        handler->event(...); <-- handler->event is *ZERO*.
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
-        return count;
-}
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+diff --cc drivers/staging/ipack/devices/ipoctal.c
+index a68d981,0292364..0000000
+--- a/drivers/staging/ipack/devices/ipoctal.c
++++ b/drivers/staging/ipack/devices/ipoctal.c
+@@@ -490,19 -417,27 +417,27 @@@ static int ipoctal_inst_slot(struct ipo
+  	ipoctal->tty_drv =3D tty;
+ =20
+  	for (i =3D 0; i < NR_CHANNELS; i++) {
+- 		tty_port_init(&ipoctal->tty_port[i]);
+- 		tty_port_alloc_xmit_buf(&ipoctal->tty_port[i]);
+- 		ipoctal->tty_port[i].ops =3D &ipoctal_tty_port_ops;
+-=20
+- 		ipoctal_reset_stats(&ipoctal->chan_stats[i]);
+- 		ipoctal->nb_bytes[i] =3D 0;
+- 		init_waitqueue_head(&ipoctal->queue[i]);
+-=20
+- 		spin_lock_init(&ipoctal->lock[i]);
+- 		ipoctal->pointer_read[i] =3D 0;
+- 		ipoctal->pointer_write[i] =3D 0;
+- 		ipoctal->nb_bytes[i] =3D 0;
+- 		tty_port_register_device(&ipoctal->tty_port[i], tty, i, NULL);
++ 		struct device *tty_dev;
++=20
++ 		channel =3D &ipoctal->channel[i];
++ 		tty_port_init(&channel->tty_port);
++ 		tty_port_alloc_xmit_buf(&channel->tty_port);
++ 		channel->tty_port.ops =3D &ipoctal_tty_port_ops;
++=20
++ 		ipoctal_reset_stats(&channel->stats);
++ 		channel->nb_bytes =3D 0;
++ 		init_waitqueue_head(&channel->queue);
++=20
++ 		spin_lock_init(&channel->lock);
++ 		channel->pointer_read =3D 0;
++ 		channel->pointer_write =3D 0;
++ 		channel->nb_bytes =3D 0;
+ -		tty_dev =3D tty_register_device(tty, i, NULL);
+++		tty_dev =3D tty_port_register_device(&channel->tty_port, tty, i, NULL);
++ 		if (IS_ERR(tty_dev)) {
++ 			dev_err(&ipoctal->dev->dev, "Failed to register tty device.\n");
++ 			continue;
++ 		}
++ 		dev_set_drvdata(tty_dev, channel);
+ =20
+  		/*
+  		 * Enable again the RX. TX will be enabled when
+@@@ -613,23 -529,17 +529,17 @@@ static void ipoctal_set_termios(struct=20
+  	unsigned char mr1 =3D 0;
+  	unsigned char mr2 =3D 0;
+  	unsigned char csr =3D 0;
+- 	unsigned int channel =3D tty->index;
+- 	struct ipoctal *ipoctal =3D tty->driver_data;
++ 	struct ipoctal_channel *channel =3D tty->driver_data;
+  	speed_t baud;
+ =20
+ -	cflag =3D tty->termios->c_cflag;
+ +	cflag =3D tty->termios.c_cflag;
+ =20
+  	/* Disable and reset everything before change the setup */
+- 	ipoctal_write_io_reg(ipoctal, &ipoctal->chan_regs[channel].u.w.cr,
+- 			     CR_DISABLE_RX | CR_DISABLE_TX);
+- 	ipoctal_write_cr_cmd(ipoctal, &ipoctal->chan_regs[channel].u.w.cr,
+- 			     CR_CMD_RESET_RX);
+- 	ipoctal_write_cr_cmd(ipoctal, &ipoctal->chan_regs[channel].u.w.cr,
+- 			     CR_CMD_RESET_TX);
+- 	ipoctal_write_cr_cmd(ipoctal, &ipoctal->chan_regs[channel].u.w.cr,
+- 			     CR_CMD_RESET_ERR_STATUS);
+- 	ipoctal_write_cr_cmd(ipoctal, &ipoctal->chan_regs[channel].u.w.cr,
+- 			     CR_CMD_RESET_MR);
++ 	iowrite8(CR_DISABLE_RX | CR_DISABLE_TX, &channel->regs->w.cr);
++ 	iowrite8(CR_CMD_RESET_RX, &channel->regs->w.cr);
++ 	iowrite8(CR_CMD_RESET_TX, &channel->regs->w.cr);
++ 	iowrite8(CR_CMD_RESET_ERR_STATUS, &channel->regs->w.cr);
++ 	iowrite8(CR_CMD_RESET_MR, &channel->regs->w.cr);
+ =20
+  	/* Set Bits per chars */
+  	switch (cflag & CSIZE) {
 
-[   34.667212] BUG: unable to handle kernel NULL pointer dereference at           (null)
-[   34.668320] IP: [<          (null)>]           (null)
-[   34.669095] PGD 1fe47c067 PUD 1fe47b067 PMD 0 
-[   34.669808] Oops: 0010 [#1] SMP 
-[   34.670316] Modules linked in: i2c_piix4
-[   34.670618] CPU 6 
-[   34.670618] Pid: 0, comm: swapper/6 Not tainted 3.6.0-rc5-mm1-alloc-enhance+ #60 Bochs Bochs[   34.670618] RIP: 0010:[<0000000000000000>]  [<          (null)>]           (null)
-[   34.670618] RSP: 0018:ffff88021fd83c20  EFLAGS: 00010082    
-[   34.670618] RAX: 0000000000000010 RBX: 0000000000000002 RCX: 000000000000000f
-[   34.670618] RDX: 0000000000000004 RSI: 0000000000000004 RDI: ffff8802145b4c00
-[   34.670618] RBP: ffff88021fd83c68 R08: 0000000000000000 R09: 0000000000000000
-[   34.670618] R10: 0000000000000000 R11: 0000000000000001 R12: ffff880215c21070
-[   34.670618] R13: ffff880215c21068 R14: ffffffff81a8bfe0 R15: ffff8802145b4c00
-[   34.670618] FS:  0000000000000000(0000) GS:ffff88021fd80000(0000) knlGS:0000000000000000
-[   34.670618] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-[   34.670618] CR2: 0000000000000000 CR3: 00000001fe46f000 CR4: 00000000000006e0
-[   34.670618] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   34.670618] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-[   34.670618] Process swapper/6 (pid: 0, threadinfo ffff88021611e000, task ffff880216128000)
-[   34.670618] Stack:
-[   34.670618]  ffffffff81480a5d 0000000000000000 ffff880215c21060 0000000000000000
-[   34.670618]  ffff880215c21060 0000000000000002 ffff8802161ca800 ffff8802145b4c00
-[   34.670618]  ffff8802161cadb0 ffff88021fd83cc8 ffffffff81482caf ffffffff81482b28
-[   34.670618] Call Trace:
-[   34.670618]  <IRQ> 
-[   34.670618]  [<ffffffff81480a5d>] ? input_to_handler+0xdd/0xf0
-[   34.670618]  [<ffffffff81482caf>] input_pass_values+0x1cf/0x1e0
-[   34.670618]  [<ffffffff81482b28>] ? input_pass_values+0x48/0x1e0
-[   34.670618]  [<ffffffff8148320e>] input_handle_event+0xce/0x540
-[   34.670618]  [<ffffffff8148380c>] input_event+0x6c/0x80
-[   34.670618]  [<ffffffff8148acf6>] atkbd_interrupt+0x4f6/0x660
-[   34.670618]  [<ffffffff812e6b94>] ? do_raw_spin_lock+0x54/0x120
-[   34.670618]  [<ffffffff8147dd52>] serio_interrupt+0x52/0xa0
-[   34.670618]  [<ffffffff8147ece3>] i8042_interrupt+0x193/0x3b0
-[   34.670618]  [<ffffffff810e4de5>] handle_irq_event_percpu+0x75/0x270
-[   34.670618]  [<ffffffff812e6cfd>] ? do_raw_spin_unlock+0x5d/0xb0
-[   34.670618]  [<ffffffff810e5028>] handle_irq_event+0x48/0x70
-[   34.670618]  [<ffffffff810e79d7>] handle_edge_irq+0x77/0x110
-[   34.670618]  [<ffffffff81016192>] handle_irq+0x22/0x40
-[   34.670618]  [<ffffffff81591c3a>] do_IRQ+0x5a/0xe0
-[   34.670618]  [<ffffffff8158786f>] common_interrupt+0x6f/0x6f
-[   34.670618]  <EOI> 
-[   34.670618]  [<ffffffff810422e6>] ? native_safe_halt+0x6/0x10
-[   34.670618]  [<ffffffff810b027d>] ? trace_hardirqs_on+0xd/0x10
-[   34.670618]  [<ffffffff8101c5d8>] default_idle+0x58/0x270
-[   34.670618]  [<ffffffff8101d669>] cpu_idle+0xe9/0x130
-[   34.670618]  [<ffffffff815734fc>] start_secondary+0x200/0x207
-[   34.670618] Code:  Bad RIP value.
-[   34.670618] RIP  [<          (null)>]           (null)
-[   34.670618]  RSP <ffff88021fd83c20>
-[   34.670618] CR2: 0000000000000000
-[   34.670618] ---[ end trace 11a3b8aa65519925 ]---
-[   34.670618] Kernel panic - not syncing: Fatal exception in interrupt
+--Signature=_Thu__13_Sep_2012_16_14_17_+1000_j5_nkXyj3Ap11UcZ
+Content-Type: application/pgp-signature
 
--- 
-Kind regards,
-Minchan Kim
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQUXm5AAoJEECxmPOUX5FElxIP/i5YbA70l4y/PlJnBI0NpusX
+7cQOd9Q+Xltr4WIrImJH2ej9UBH03XTFbRbjoxbYVjv8w5QyNgtnGcQ9dJmxdWTs
+KYH0KhdNu34BhzOuitydbTIwLg1AymCsQFFbkzazaKL9aME3ZrtwN2wBdQ4sJD2B
+7t92C3p+zcuXhVLHAoglXFj+2AGg0CCyscF/hMaGkSQNayd77dJt8oyP7UuayVfh
+/9rUMudOCjwoHMCxUDMK4DwbaqIjTvLXg3Hy80H8O4mE35acJDXxb3VB2I96bAmC
+AQ/zwj0OgZkC+v4q7X8NGlk9sceqINd/rNDyR40H+9w+TNTAKIZSpNpHn/OYtQ8z
+SbW6FPVK26Sc17NqttgwuC66fbmTir9ZP71oKayxvN8fcaymClxtDliPlHKwmewB
+qbildXB6KviCUHKn0sHHg+IrnYs0eMfdjP87BwO9eyNxLWZrhsHeJ7vNWJFyjS7d
+R441jVbtxKWnFff4hNIvdGybVpyQkzHwYPPXfN8n0aNMQwE/MW0Lps+gmEf4o/Ws
+BmVusCPxkMq4FIk8xXy9vyojL0Wc2R0ITjTEyvDdh0oaSI5uuNC2mMqNh6ZQCxWJ
+5wnfmvDCexsA2ehegySUShWP9DQkvmgcaBDjmgb5BkfZ2YF8TFmwcBrud8/KbSS9
+7cuJ2hJW2RjGsowbjT+m
+=2Yhd
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__13_Sep_2012_16_14_17_+1000_j5_nkXyj3Ap11UcZ--
