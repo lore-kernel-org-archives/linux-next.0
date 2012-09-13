@@ -1,160 +1,67 @@
-From: Shaohua Li <shli@kernel.org>
-Subject: Re: linux-next: build failure after merge of the final tree (akpm
- tree related)
-Date: Thu, 13 Sep 2012 18:01:36 +0800
-Message-ID: <20120913100136.GA12929@kernel.org>
-References: <20120913180121.7ef388cab4e6af2b8c52c93e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Sept 12 (kernel-panic after pressing any
+ key at X login)
+Date: Thu, 13 Sep 2012 22:24:42 +1000
+Message-ID: <20120913222442.a29eac00eb44b27dd1a86a1e@canb.auug.org.au>
+References: <CA+icZUVEQNPGL7_BbLA-urgP6rFvdOh0SUtYESUv6ZJc+w78Nw@mail.gmail.com>
+	<CA+icZUXqzV=YFjHT=5QxUf1_WHwS1-DhuXkhN8QAhn1t9+-PYA@mail.gmail.com>
+	<20120913060412.GB5085@bbox>
+	<CA+icZUUF=vTwSoNrs-+F08H7LAO0RUwztJ3M1_iyNR28TsrFMw@mail.gmail.com>
+	<20120913064909.GF17105@core.coreip.homeip.net>
+	<20120913070410.GA309@polaris.bitmath.org>
+	<CA+icZUVH7Nm6WDau+dSgf9kQGaE5-06tPEOpukSJPc2z7gjR=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__13_Sep_2012_22_24_42_+1000_+3MJ.41Ud2SwDTD8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:35995 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751619Ab2IMKBp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 06:01:45 -0400
-Content-Disposition: inline
-In-Reply-To: <20120913180121.7ef388cab4e6af2b8c52c93e@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46910 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755004Ab2IMMZA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 08:25:00 -0400
+In-Reply-To: <CA+icZUVH7Nm6WDau+dSgf9kQGaE5-06tPEOpukSJPc2z7gjR=A@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Rik van Riel <riel@redhat.com>
+To: sedat.dilek@gmail.com
+Cc: Henrik Rydberg <rydberg@bitmath.se>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Minchan Kim <minchan@kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org, Daniel Kurtz <djkurtz@chromium.org>, Benjamin Tissoires <benjamin.tissoires@enac.fr>, Ping Cheng <pingc@wacom.com>
 
-On Thu, Sep 13, 2012 at 06:01:21PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
-> 
-> mm/internal.h: In function 'swap_cache_hit':
-> mm/internal.h:377:3: error: implicit declaration of function 'atomic_dec_if_positive' [-Werror=implicit-function-declaration]
-> 
-> Caused by commit "swap: add a simple detector for inappropriate swapin
-> readahead" from the akmp tree.  atomic_dec_if_positive() appears to only
-> exist on avr32, microblaze, mips, powerpc and x86 ...
-> 
-> I have reverted that commit (and the following trivial fix commit) for
-> today.
+--Signature=_Thu__13_Sep_2012_22_24_42_+1000_+3MJ.41Ud2SwDTD8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The x86 implementation of atomic_dec_if_positive is quite generic, how about
-add this one?
+Hi Sedat,
 
+On Thu, 13 Sep 2012 10:18:28 +0200 Sedat Dilek <sedat.dilek@gmail.com> wrot=
+e:
+>
+> Stephen, can you apply this to today's linux-next (next-20120913), please?
 
-Signed-off-by: Shaohua Li <shli@fusionio.com>
----
- arch/microblaze/include/asm/atomic.h |    3 ++-
- arch/powerpc/include/asm/atomic.h    |    3 ++-
- arch/x86/include/asm/atomic.h        |   24 ------------------------
- include/linux/atomic.h               |   25 +++++++++++++++++++++++++
- 4 files changed, 29 insertions(+), 26 deletions(-)
+Sorry, it was just a little too late.
 
-Index: linux/arch/microblaze/include/asm/atomic.h
-===================================================================
---- linux.orig/arch/microblaze/include/asm/atomic.h	2012-09-13 17:56:54.206807900 +0800
-+++ linux/arch/microblaze/include/asm/atomic.h	2012-09-13 17:57:18.202506238 +0800
-@@ -9,7 +9,7 @@
-  * Atomically test *v and decrement if it is greater than 0.
-  * The function returns the old value of *v minus 1.
-  */
--static inline int atomic_dec_if_positive(atomic_t *v)
-+static inline int __atomic_dec_if_positive(atomic_t *v)
- {
- 	unsigned long flags;
- 	int res;
-@@ -22,5 +22,6 @@ static inline int atomic_dec_if_positive
- 
- 	return res;
- }
-+#define atomic_dec_if_positive __atomic_dec_if_positive
- 
- #endif /* _ASM_MICROBLAZE_ATOMIC_H */
-Index: linux/arch/powerpc/include/asm/atomic.h
-===================================================================
---- linux.orig/arch/powerpc/include/asm/atomic.h	2012-09-13 17:56:54.210807849 +0800
-+++ linux/arch/powerpc/include/asm/atomic.h	2012-09-13 17:57:18.202506238 +0800
-@@ -247,7 +247,7 @@ static __inline__ int atomic_inc_not_zer
-  * The function returns the old value of *v minus 1, even if
-  * the atomic variable, v, was not decremented.
-  */
--static __inline__ int atomic_dec_if_positive(atomic_t *v)
-+static __inline__ int __atomic_dec_if_positive(atomic_t *v)
- {
- 	int t;
- 
-@@ -268,6 +268,7 @@ static __inline__ int atomic_dec_if_posi
- 
- 	return t;
- }
-+#define atomic_dec_if_positive __atomic_dec_if_positive
- 
- #define smp_mb__before_atomic_dec()     smp_mb()
- #define smp_mb__after_atomic_dec()      smp_mb()
-Index: linux/arch/x86/include/asm/atomic.h
-===================================================================
---- linux.orig/arch/x86/include/asm/atomic.h	2012-09-13 17:56:54.210807849 +0800
-+++ linux/arch/x86/include/asm/atomic.h	2012-09-13 17:57:18.202506238 +0800
-@@ -240,30 +240,6 @@ static inline int __atomic_add_unless(at
- 	return c;
- }
- 
--
--/*
-- * atomic_dec_if_positive - decrement by 1 if old value positive
-- * @v: pointer of type atomic_t
-- *
-- * The function returns the old value of *v minus 1, even if
-- * the atomic variable, v, was not decremented.
-- */
--static inline int atomic_dec_if_positive(atomic_t *v)
--{
--	int c, old, dec;
--	c = atomic_read(v);
--	for (;;) {
--		dec = c - 1;
--		if (unlikely(dec < 0))
--			break;
--		old = atomic_cmpxchg((v), c, dec);
--		if (likely(old == c))
--			break;
--		c = old;
--	}
--	return dec;
--}
--
- /**
-  * atomic_inc_short - increment of a short integer
-  * @v: pointer to type int
-Index: linux/include/linux/atomic.h
-===================================================================
---- linux.orig/include/linux/atomic.h	2012-09-13 17:56:54.210807849 +0800
-+++ linux/include/linux/atomic.h	2012-09-13 17:57:18.202506238 +0800
-@@ -86,6 +86,31 @@ static inline int atomic_dec_unless_posi
- }
- #endif
- 
-+/*
-+ * atomic_dec_if_positive - decrement by 1 if old value positive
-+ * @v: pointer of type atomic_t
-+ *
-+ * The function returns the old value of *v minus 1, even if
-+ * the atomic variable, v, was not decremented.
-+ */
-+#ifndef atomic_dec_if_positive
-+static inline int atomic_dec_if_positive(atomic_t *v)
-+{
-+	int c, old, dec;
-+	c = atomic_read(v);
-+	for (;;) {
-+		dec = c - 1;
-+		if (unlikely(dec < 0))
-+			break;
-+		old = atomic_cmpxchg((v), c, dec);
-+		if (likely(old == c))
-+			break;
-+		c = old;
-+	}
-+	return dec;
-+}
-+#endif
-+
- #ifndef CONFIG_ARCH_HAS_ATOMIC_OR
- static inline void atomic_or(int i, atomic_t *v)
- {
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__13_Sep_2012_22_24_42_+1000_+3MJ.41Ud2SwDTD8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQUdCKAAoJEECxmPOUX5FE4OoP/Rbu8F2t5O/pZoM9fBZDR1p5
+KEvscXX/Q1hzzA6It8cN4/us2uQ3B5LQzg0ryHMgEwNxwz/glby9uN6/XFtTu7Xj
+WcHJMqycJpKzrWg7xps2SDYIwVtUBAsUVhN90VL6F2zy0FxlB7PzcDq19hu/Avqr
+nSCvEnS2anAWSrWoukE+Oi+qgmadadtPt7Z3FsiQ292sn+XHhM8/4T01zJ+5y6+V
+F2W+o8de1+IWbxJXN2kt/m9kk7LHZoay9TwgCnFLXw9AVDwWWPAuqUMR6Wgq8kbB
+npbrYimY3AxfP59COGoyLAsb6QoJeMC/PAaI8EFIMOpgq1cTlutg30NmA5D1cM2G
+TqyJ5RA9yZGKtS+H8CVO6GhbF3SGdK8/ZuKHcZwUSBQI21VI+7LlnnWbidyQKUKv
+BgvDE9Yn7d13WBn3QcVBJ5rGqdjlPj1WaRVCXRlDGyEXOwIELklqph1Jc1DZysvI
+Qpd6gHjA/qfNohlajixbfc/Xe0GKoKkgQOetDoICt9Vq+Qi+KHnU5Yxb+hag3dq4
+7CsLiMhZg5JSva433ulvgatYt833BP11UFt6K75jKksoWRLdvxLgu2lWgpTvzATV
+O43ZQbNhWIJDIseZk5sxb6rWW5klBoUvNAG8hmRWd2sbm4nH9jFwMsPP9ZJkdLay
+WTW6I4yJ9jWLHUxvctEc
+=873h
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__13_Sep_2012_22_24_42_+1000_+3MJ.41Ud2SwDTD8--
