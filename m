@@ -1,82 +1,64 @@
-From: "Henrik Rydberg" <rydberg@bitmath.se>
-Subject: Re: linux-next: Tree for Sept 12 (kernel-panic after pressing any
- key at X login)
-Date: Thu, 13 Sep 2012 09:04:10 +0200
-Message-ID: <20120913070410.GA309@polaris.bitmath.org>
-References: <CA+icZUVEQNPGL7_BbLA-urgP6rFvdOh0SUtYESUv6ZJc+w78Nw@mail.gmail.com>
- <CA+icZUXqzV=YFjHT=5QxUf1_WHwS1-DhuXkhN8QAhn1t9+-PYA@mail.gmail.com>
- <20120913060412.GB5085@bbox>
- <CA+icZUUF=vTwSoNrs-+F08H7LAO0RUwztJ3M1_iyNR28TsrFMw@mail.gmail.com>
- <20120913064909.GF17105@core.coreip.homeip.net>
+From: Samuel Iglesias =?ISO-8859-1?Q?Gons=E1lvez?=
+	<siglesias@igalia.com>
+Subject: Re: linux-next: manual merge of the staging tree with the tty tree
+Date: Thu, 13 Sep 2012 08:59:25 +0200
+Message-ID: <1347519565.4539.204.camel@fourier.local.igalia.com>
+References: <20120913161417.e863926832ccf8a2e1ca1f2a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120913064909.GF17105@core.coreip.homeip.net>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>, Minchan Kim <minchan@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org, Daniel Kurtz <djkurtz@chromium.org>, Benjamin Tissoires <benjamin.tissoires@enac.fr>, Ping Cheng <pingc@wacom.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-eHl5SjLDu0NzvaWtd2qW"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp4.mundo-r.com ([212.51.32.151]:53354 "EHLO
+	smtp4.mundo-r.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751436Ab2IMG6U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 02:58:20 -0400
+In-Reply-To: <20120913161417.e863926832ccf8a2e1ca1f2a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Jens Taprogge <jens.taprogge@taprogge.org>
 
-> > >> > this weeks linux-next seems to bring new and new issues, yay :-)!
-> > >> >
-> > >> > I have taken a photo, but can't say what can have caused.
-> > >> > The issue is reproducible...
-> > >> > Immediately, after pressing any key (when X-display-manager (lightdm)
-> > >> > and X-greeter are up) my machine panics and is no more usable (cold
-> > >> > rough brutal killer restart).
-> > >> > Note: Using upstart or systemd does not matter.
-> > >> >
-> > >> > Any pointer to an area where to dig into or any feedback in general is welcome!
-> > >> >
-> > >> > Kind Regards,
-> > >> > - Sedat -
-> > 
-> > Hey, cool. Thanks for the pointer in the source-code and the call-trace!
-> > I had reverted [1], but anyway input folks should look at this.
-> > 
-> > Kind Regards,
-> > - Sedat -
-> > 
-> > [1] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=commitdiff;h=b276fc1e875a51e4a9dc3322ed008bf4ae481baf
-> 
-> Henrik,
-> 
-> It looks like your changes are causing the panic.
 
-Indeed, I have pushed the fix below to next already. Thanks for Sedat,
-and sorry for not catching this earlier. :-(
+--=-eHl5SjLDu0NzvaWtd2qW
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Henrik
+On Thu, 2012-09-13 at 16:14 +1000, Stephen Rothwell wrote:
+> Hi Greg,
+>=20
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/ipack/devices/ipoctal.c between commit 734cc1783816
+> ("TTY: use tty_port_register_device") from the tty tree and commit
+> 2afb41d9d30d ("Staging: ipack/devices/ipoctal: Check tty_register_device
+> return value") from the staging tree.
+>=20
+> I fixed it up (I think - see below) and can carry the fix as necessary
+> (no action is required).
+>=20
 
---
+Thanks Stephen.
 
->From ccc6557bfd02efdca4d9dfda6cfdfe5a08d0193b Mon Sep 17 00:00:00 2001
-From: Henrik Rydberg <rydberg@euromail.se>
-Date: Thu, 13 Sep 2012 08:59:40 +0200
-Subject: [PATCH] Input: Fix oops caused by missing null test
+I don't see tty_port_register_device in any header file in staging.
 
-Found in linux-next on September 12, thanks Sedat.
+Is it defined in tty tree and it is not merged into staging tree?
 
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Henrik Rydberg <rydberg@euromail.se>
----
- drivers/input/input.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Best regards,
 
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 5b66b2f..2dff71b 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -114,7 +114,7 @@ static unsigned int input_to_handler(struct input_handle *handle,
- 
- 	if (handler->events)
- 		handler->events(handle, vals, count);
--	else
-+	else if (handler->event)
- 		for (v = vals; v != end; v++)
- 			handler->event(handle, v->type, v->code, v->value);
- 
--- 
-1.7.12
+Sam
 
+
+
+--=-eHl5SjLDu0NzvaWtd2qW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEABECAAYFAlBRhE0ACgkQWrfbyfmd9eJnagCbBjiZFwVBJlm2CP3O/oOdBoFu
+izIAniZbwm892Djx6prAfJyObVNh5lKl
+=wora
+-----END PGP SIGNATURE-----
+
+--=-eHl5SjLDu0NzvaWtd2qW--
