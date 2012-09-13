@@ -1,42 +1,50 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] mm: cma: Discard clean pages during contiguous allocation
- instead of migration
-Date: Thu, 13 Sep 2012 21:17:19 +0200
-Message-ID: <CAMuHMdXWZ=Jeggd7cT_LXK0MTnmFAf+cWEhC75B1gCcSd3eWeg@mail.gmail.com>
-References: <1347324112-14134-1-git-send-email-minchan@kernel.org>
+Subject: Re: [RE-RESEND][PATCH] audit: replace defines with C stubs
+Date: Thu, 13 Sep 2012 21:43:16 +0200
+Message-ID: <CAMuHMdXxXW5pPHF+6r+qcobjtTNaXP1cmkrrtdDeWcLfGop4gA@mail.gmail.com>
+References: <20120807004041.GA27896@www.outflux.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:44366 "EHLO
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:56916 "EHLO
 	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750783Ab2IMTRV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 15:17:21 -0400
-In-Reply-To: <1347324112-14134-1-git-send-email-minchan@kernel.org>
+	with ESMTP id S1753386Ab2IMTnT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 15:43:19 -0400
+In-Reply-To: <20120807004041.GA27896@www.outflux.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, Kyungmin Park <kmpark@infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Michal Nazarewicz <mina86@mina86.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Linux-Next <linux-next@vger.kernel.org>
+To: Kees Cook <keescook@chromium.org>, Jonas Bonn <jonas@southpole.se>
+Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Eric Paris <eparis@redhat.com>, linux@lists.openrisc.net, Linux-Next <linux-next@vger.kernel.org>
 
-On Tue, Sep 11, 2012 at 2:41 AM, Minchan Kim <minchan@kernel.org> wrote:
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -674,8 +674,10 @@ static enum page_references page_check_references(struct page *page,
->  static unsigned long shrink_page_list(struct list_head *page_list,
->                                       struct zone *zone,
->                                       struct scan_control *sc,
-> +                                     enum ttu_flags ttu_flags,
+On Tue, Aug 7, 2012 at 2:40 AM, Kees Cook <keescook@chromium.org> wrote:
+> This replaces the #defines used when CONFIG_AUDIT or CONFIG_AUDIT_SYSCALLS
+> are disabled so we get type checking during those builds.
+>
+> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-"enum ttu_flags" is defined on CONFIG_MMU=y only, causing on nommu:
+JFYI, the change
 
-mm/vmscan.c:677:26: error: parameter 4 ('ttu_flags') has incomplete type
-mm/vmscan.c:987:5: error: 'TTU_UNMAP' undeclared (first use in this function)
-mm/vmscan.c:987:15: error: 'TTU_IGNORE_ACCESS' undeclared (first use
-in this function)
-mm/vmscan.c:1312:56: error: 'TTU_UNMAP' undeclared (first use in this function)
+-#define audit_syscall_entry(ta,a,b,c,d,e) do { ; } while (0)
++static inline void audit_syscall_entry(int arch, int major, unsigned long a0,
++                                      unsigned long a1, unsigned long a2,
++                                      unsigned long a3)
++{ }
 
-E.g.
-http://kisskb.ellerman.id.au/kisskb/buildresult/7191694/ (h8300-defconfig)
-http://kisskb.ellerman.id.au/kisskb/buildresult/7191858/ (sh-allnoconfig)
+uncovers a bug on OpenRISC.
+
+Before,
+
+        audit_syscall_entry(audit_arch(), regs->gpr[11],
+                            regs->gpr[3], regs->gpr[4],
+                            regs->gpr[5], regs->gpr[6]);
+
+just expanded to nothing if CONFIG_AUDITSYSCALL was not set.
+Now, it fails to compile with:
+
+arch/openrisc/kernel/ptrace.c:190:2: error: implicit declaration of
+function 'audit_arch'
+http://kisskb.ellerman.id.au/kisskb/buildresult/7191698/
 
 Gr{oetje,eeting}s,
 
