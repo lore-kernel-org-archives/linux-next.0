@@ -1,81 +1,103 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the i2c-embedded
- tree
-Date: Thu, 13 Sep 2012 16:41:20 +1000
-Message-ID: <20120913164120.cde08ac1517e641386b147d8@canb.auug.org.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: Tree for Sept 12 (kernel-panic after pressing any
+ key at X login)
+Date: Wed, 12 Sep 2012 23:49:09 -0700
+Message-ID: <20120913064909.GF17105@core.coreip.homeip.net>
+References: <CA+icZUVEQNPGL7_BbLA-urgP6rFvdOh0SUtYESUv6ZJc+w78Nw@mail.gmail.com>
+ <CA+icZUXqzV=YFjHT=5QxUf1_WHwS1-DhuXkhN8QAhn1t9+-PYA@mail.gmail.com>
+ <20120913060412.GB5085@bbox>
+ <CA+icZUUF=vTwSoNrs-+F08H7LAO0RUwztJ3M1_iyNR28TsrFMw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__13_Sep_2012_16_41_20_+1000_VMrHnCLIEgtYeVlB"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42595 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751558Ab2IMGlc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 02:41:32 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Felipe Balbi <balbi@ti.com>, Wolfram Sang <w.sang@pengutronix.de>, Shubhrajyoti D <shubhrajyoti@ti.com>
-
---Signature=_Thu__13_Sep_2012_16_41_20_+1000_VMrHnCLIEgtYeVlB
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CA+icZUUF=vTwSoNrs-+F08H7LAO0RUwztJ3M1_iyNR28TsrFMw@mail.gmail.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Minchan Kim <minchan@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org, Henrik Rydberg <rydberg@euromail.se>, Daniel Kurtz <djkurtz@chromium.org>, Benjamin Tissoires <benjamin.tissoires@enac.fr>, Ping Cheng <pingc@wacom.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Thu, Sep 13, 2012 at 08:36:36AM +0200, Sedat Dilek wrote:
+> On Thu, Sep 13, 2012 at 8:04 AM, Minchan Kim <minchan@kernel.org> wrote:
+> > On Thu, Sep 13, 2012 at 07:29:32AM +0200, Sedat Dilek wrote:
+> >> On Thu, Sep 13, 2012 at 5:18 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> >> > On Wed, Sep 12, 2012 at 10:46 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >> >> Hi all,
+> >> >>
+> >> >> Changes since 201209011:
+> >> >>
+> >> >> The pci tree lost its build failure.
+> >> >>
+> >> >> The mfd tree gained a conflict against Linus' tree.
+> >> >>
+> >> >> The omap_dss2 tree lost its conflict.
+> >> >>
+> >> >> The trivial tree gained a conflict against the mfd tree.
+> >> >>
+> >> >> The kvm tree gained a conflict against Linus' tree.
+> >> >>
+> >> >> The workqueues tree gained a conflict against the omap_dss2 tree.
+> >> >>
+> >> >> The usb tree gained conflicts against the usb.current tree.
+> >> >>
+> >> >> The staging tree gained a conflict against the thermal tree and a build
+> >> >> failure for which I applied a merge fix patch.
+> >> >>
+> >> >> The tegra tree gained conflicts against the usb and arm-perf trees.
+> >> >>
+> >> >> ----------------------------------------------------------------------------
+> >> >>
+> >> >
+> >> > Hi,
+> >> >
+> >> > this weeks linux-next seems to bring new and new issues, yay :-)!
+> >> >
+> >> > I have taken a photo, but can't say what can have caused.
+> >> > The issue is reproducible...
+> >> > Immediately, after pressing any key (when X-display-manager (lightdm)
+> >> > and X-greeter are up) my machine panics and is no more usable (cold
+> >> > rough brutal killer restart).
+> >> > Note: Using upstart or systemd does not matter.
+> >> >
+> >> > Any pointer to an area where to dig into or any feedback in general is welcome!
+> >> >
+> >> > Kind Regards,
+> >> > - Sedat -
+> >>
+> >> [ CC Dmitry Torokhov (linux-input maintainer) plus linux-input ML ]
+> >>
+> >> By looking at my screenshot, someone could imagine that there is a
+> >> problem coming from the input GIT branch(es) merges:
+> >>
+> >> input_to_handler()
+> >> input_pass_values()
+> >> input_handle_event()
+> >> input_event()
+> >>
+> >> Unfortunately, with those 3 revert-patches I see the same kernel-panic.
+> >>
+> >> Dimitry, any idea what can cause this kernel-panic?
+> >
+> > Today, I met similar problem in mmotm-2012-09-12-17-36 on my KVM.
+> > It's hard to reproduce in my mahcine but I confirmed following as
+> > Hoping it helps you.
+> >
+> 
+> [ CC more input developers/testers ]
+> 
+> Hi Minchan,
+> 
+> Hey, cool. Thanks for the pointer in the source-code and the call-trace!
+> I had reverted [1], but anyway input folks should look at this.
+> 
+> Kind Regards,
+> - Sedat -
+> 
+> [1] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=commitdiff;h=b276fc1e875a51e4a9dc3322ed008bf4ae481baf
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/i2c/busses/i2c-omap.c between commit d9ebd04d3476 ("i2c: omap:
-switch to devm_* API") from the i2c-embedded tree and commit 07baca6f8fc2
-("i2c/i2c-omap: add a const qualifier") from the arm-soc tree.
+Henrik,
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+It looks like your changes are causing the panic.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/i2c/busses/i2c-omap.c
-index c78431a,a0e49f6..0000000
---- a/drivers/i2c/busses/i2c-omap.c
-+++ b/drivers/i2c/busses/i2c-omap.c
-@@@ -1051,11 -943,12 +1051,12 @@@ omap_i2c_probe(struct platform_device *
-  {
-  	struct omap_i2c_dev	*dev;
-  	struct i2c_adapter	*adap;
- -	struct resource		*mem, *irq, *ioarea;
- +	struct resource		*mem;
-- 	struct omap_i2c_bus_platform_data *pdata =3D pdev->dev.platform_data;
-+ 	const struct omap_i2c_bus_platform_data *pdata =3D
-+ 		pdev->dev.platform_data;
-  	struct device_node	*node =3D pdev->dev.of_node;
-  	const struct of_device_id *match;
- -	irq_handler_t isr;
- +	int irq;
-  	int r;
- =20
-  	/* NOTE: driver uses the static register mapping */
-
---Signature=_Thu__13_Sep_2012_16_41_20_+1000_VMrHnCLIEgtYeVlB
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQUYAQAAoJEECxmPOUX5FEo8oQAJg6Ps4H7J80Hs1xQBZrsqcf
-xM6JpyIwoMHMMo1I7xog2feqUZE7T6xZ726lKLkbQi6VEvmeSJavSQKCiBme3MWY
-hccPPzs1kQyciFXbgpJCdSlc+5xZ+LnYqa0Uk+MQeCzwe4TqoB3qOIWsXKZO5SfN
-PwydmtM0oek+XXCFABE79kSngDCht1R5IhspzpODPSdKScXaT5kGHGxy+9wgAmX9
-aO9ciIihf4GqzsI2QvgDHEjHJLCWKXOIRgIOdfM2Ew++gXF8zIWG2mx3KzKO3JEn
-Ic+cp35KfyZ69BFL1XDLp4W7BuUOfcY03AShiefKAyJUkGsA3Cbp+5vY7syiV5tT
-Sq6naVmhyOu4M5ikjVIzAuH/QyCqxolzmJdur/Ixri6Nom4ZgikUKEhdjOtiJBPj
-Xiv4FMEH+OoF/MwltnH4kupn+c2cVcxP4YXTyzyj89pqBIwbjkFW2UMzT5UJtAHo
-20wAmyV+8cMEkrz7R45exZDten92uarokVBsgTz0uSIbYtF9ibqUZLb3P/t+sOPf
-6Og4s99jQ7SG+UtrxvQJORmtybQRxzbt1wYpLacVnWLAsbprCU5a8TPsPHjuRUTS
-OIrKCHFZRcXmoqQHzeM04RwN24KMaLNaRuieF18mzFLXqMjTv9VI1g9VsCPtUFSR
-qoLxRrmda/JuvLYLhpJ1
-=7ZGf
------END PGP SIGNATURE-----
-
---Signature=_Thu__13_Sep_2012_16_41_20_+1000_VMrHnCLIEgtYeVlB--
+-- 
+Dmitry
