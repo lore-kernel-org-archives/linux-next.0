@@ -1,66 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Zhang Rui <rui.zhang@intel.com>
 Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Thu, 13 Sep 2012 18:31:54 +1000
-Message-ID: <20120913183154.5a638d274ae5bae800890ee0@canb.auug.org.au>
+Date: Thu, 13 Sep 2012 16:46:27 +0800
+Message-ID: <1347525987.1682.1194.camel@rui.sh.intel.com>
 References: <20120913174441.f5fbf5cc38713425331f4d86@canb.auug.org.au>
-	<CAK9yfHwceAmikpPCYGCnDwzY9igvwkOj7j314+sC4_kD8Egzmg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__13_Sep_2012_18_31_54_+1000_kYyZwpK=oGMBTx/N"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54464 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751651Ab2IMIb4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 04:31:56 -0400
-In-Reply-To: <CAK9yfHwceAmikpPCYGCnDwzY9igvwkOj7j314+sC4_kD8Egzmg@mail.gmail.com>
+Received: from mga02.intel.com ([134.134.136.20]:28910 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752068Ab2IMIpj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Sep 2012 04:45:39 -0400
+In-Reply-To: <20120913174441.f5fbf5cc38713425331f4d86@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, Zhang Rui <rui.zhang@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>, Amit Daniel Kachhap <amit.kachhap@linaro.org>
 
---Signature=_Thu__13_Sep_2012_18_31_54_+1000_kYyZwpK=oGMBTx/N
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi, all,
 
-Hi Sachin,
-
-On Thu, 13 Sep 2012 13:19:48 +0530 Sachin Kamat <sachin.kamat@linaro.org> w=
-rote:
->
-> > - *  This program is distributed in the hope that it will be useful, but
-> > + *  This program is distributed in the hope that it will be useful, bu=
-tX_ID_MASK
+On =E5=9B=9B, 2012-09-13 at 17:44 +1000, Stephen Rothwell wrote:
+> Hi Andrew,
 >=20
->                             ^^^^^^^^^^^^^
-> Looks like a stray paste..
+> After merging the akpm tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/thermal/cpu_cooling.c: In function 'get_idr':
+> drivers/thermal/cpu_cooling.c:89:14: error: 'MAX_ID_MASK' undeclared =
+(first use in this function)
+>=20
+> Caused by commit "idr: rename MAX_LEVEL to MAX_IDR_LEVEL" from the ak=
+pm
+> tree interacting with commit 78edc7cdcf5e ("thermal: add generic cpuf=
+req
+> cooling implementation") from the thermal tree.
+>=20
+> I have applied the following merge fix patch and can carry it as
+> necessary.
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 13 Sep 2012 17:42:11 +1000
+> Subject: [PATCH] thermal: fix up for MAX_ID_MASK rename
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Yeah, thanks.  I will sort it out tomorrow.
+thanks for the fix.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I'm new as a git owner, so a stupid question here,
+in this case, who should keep this fix? Do I need to do something when
+sending pull request?
 
---Signature=_Thu__13_Sep_2012_18_31_54_+1000_kYyZwpK=oGMBTx/N
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQUZn6AAoJEECxmPOUX5FE75YQAIesbM/5+W9jYwjMM272mmqF
-iMic17K0lSkdNtKJA+luHxrTOS8pu4G6xKylzZK854pI4QJaVtN9rjK2uTk3xQ2l
-LicClKh8CySzmLbf4ZLwkxCouID8OgzEIVkbl3dzzY7Jqb54pKSbZMwcpuwme5S+
-5X/in3epGqX6q3A7NqnQkEr/dybSm9X54I5zOsQFwxGxZQn2K6Is+0CQ4mTb1N3U
-rkw6cBohK+MvrkMcOqBsgRTgjwOFs4XHoIpq8DyF+RpXjeRTKmXyFLsEqdSKr0es
-ExjhDEe09kNPR7f/ZY50JWodAXI236ln4uUft8TH0ZQs4spe5bucq8yyXuXWzTne
-SWQLiY86uJUtfQt5FSmzoa/Hsnk8OKKQBr1uOZc7VyXVLIBeo43+5bhoDrO7wTTH
-UxTnRTmLc0GqW+ufAWT0A34fbKqGTCAZ+/G9LOIQ3oDYiiP7bufQgi81t7Y2cpaQ
-qtf4LSoW8nJw3L2gZrbgZPbPVBSYnaOcd2Tj/4n4jjvexRLWupIQzecZnp5nkeRE
-n4OW6eOmhxkUp6QlokmftIPxO6vkw8AvjJIAtUTHP9MA8jcol9Z1fsuDkak8rlG/
-jQ4vWJ3luUE22axaouXqoRiDBuMAQzeLwv/acmuOj22kErQGUuG0bi0JOFKuWSoJ
-uXIi7qS05y7xGx6XcbfJ
-=C8eU
------END PGP SIGNATURE-----
-
---Signature=_Thu__13_Sep_2012_18_31_54_+1000_kYyZwpK=oGMBTx/N--
+thanks,
+rui
+> ---
+>  drivers/thermal/cpu_cooling.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cool=
+ing.c
+> index 99a5d75..f6ce617 100644
+> --- a/drivers/thermal/cpu_cooling.c
+> +++ b/drivers/thermal/cpu_cooling.c
+> @@ -9,7 +9,7 @@
+>   *  it under the terms of the GNU General Public License as publishe=
+d by
+>   *  the Free Software Foundation; version 2 of the License.
+>   *
+> - *  This program is distributed in the hope that it will be useful, =
+but
+> + *  This program is distributed in the hope that it will be useful, =
+butX_ID_MASK
+>   *  WITHOUT ANY WARRANTY; without even the implied warranty of
+>   *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GN=
+U
+>   *  General Public License for more details.
+> @@ -86,7 +86,7 @@ again:
+>  	else if (unlikely(err))
+>  		return err;
+> =20
+> -	*id =3D *id & MAX_ID_MASK;
+> +	*id =3D *id & MAX_IDR_MASK;
+>  	return 0;
+>  }
+> =20
+> --=20
+> 1.7.10.280.gaa39
+>=20
