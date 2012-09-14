@@ -1,70 +1,89 @@
-From: Minchan Kim <minchan@kernel.org>
-Subject: Re: [PATCH] mm: cma: Discard clean pages during contiguous
- allocation instead of migration
-Date: Fri, 14 Sep 2012 09:10:32 +0900
-Message-ID: <20120914001032.GD5085@bbox>
-References: <1347324112-14134-1-git-send-email-minchan@kernel.org>
- <CAMuHMdXWZ=Jeggd7cT_LXK0MTnmFAf+cWEhC75B1gCcSd3eWeg@mail.gmail.com>
- <20120913151922.b8893088.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 14 Sep 2012 11:17:57 +1000
+Message-ID: <20120914111757.83aee928b17b60bbbc09f4d7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__14_Sep_2012_11_17_57_+1000_xSdNcQbr+ugS0EU3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from LGEMRELSE1Q.lge.com ([156.147.1.111]:48364 "EHLO
-	LGEMRELSE1Q.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751333Ab2INAIW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 20:08:22 -0400
-Content-Disposition: inline
-In-Reply-To: <20120913151922.b8893088.akpm@linux-foundation.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:49283 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751919Ab2INBSJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 21:18:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, Kyungmin Park <kmpark@infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Michal Nazarewicz <mina86@mina86.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Linux-Next <linux-next@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Eric Dumazet <edumazet@google.com>
 
-On Thu, Sep 13, 2012 at 03:19:22PM -0700, Andrew Morton wrote:
-> On Thu, 13 Sep 2012 21:17:19 +0200
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> 
-> > On Tue, Sep 11, 2012 at 2:41 AM, Minchan Kim <minchan@kernel.org> wrote:
-> > > --- a/mm/vmscan.c
-> > > +++ b/mm/vmscan.c
-> > > @@ -674,8 +674,10 @@ static enum page_references page_check_references(struct page *page,
-> > >  static unsigned long shrink_page_list(struct list_head *page_list,
-> > >                                       struct zone *zone,
-> > >                                       struct scan_control *sc,
-> > > +                                     enum ttu_flags ttu_flags,
-> > 
-> > "enum ttu_flags" is defined on CONFIG_MMU=y only, causing on nommu:
-> > 
-> > mm/vmscan.c:677:26: error: parameter 4 ('ttu_flags') has incomplete type
-> > mm/vmscan.c:987:5: error: 'TTU_UNMAP' undeclared (first use in this function)
-> > mm/vmscan.c:987:15: error: 'TTU_IGNORE_ACCESS' undeclared (first use
-> > in this function)
-> > mm/vmscan.c:1312:56: error: 'TTU_UNMAP' undeclared (first use in this function)
-> > 
-> > E.g.
-> > http://kisskb.ellerman.id.au/kisskb/buildresult/7191694/ (h8300-defconfig)
-> > http://kisskb.ellerman.id.au/kisskb/buildresult/7191858/ (sh-allnoconfig)
-> 
-> hm, OK, the means by which current mainline avoids build errors is
-> either clever or lucky.
-> 
-> 			switch (try_to_unmap(page, TTU_UNMAP)) {
-> 
-> gets preprocessed into
-> 
-> 			switch (2) {
-> 
-> so the cmopiler never gets to see the TTU_ symbol at all.  Because it
-> happens to be inside the try_to_unmap() call.
-> 
-> 
-> I guess we can just make ttu_flags visible to NOMMU:
+--Signature=_Fri__14_Sep_2012_11_17_57_+1000_xSdNcQbr+ugS0EU3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I agree.
+Hi all,
 
-Geert, Andrew
-Thanks for the reporting and quick fix!
+Today's linux-next merge of the net-next tree got a conflict in
+net/netfilter/xt_LOG.c between commit 0626af313957 ("netfilter: take care
+of timewait sockets") from the net tree and commit 8c6e2a941ae7 ("userns:
+Convert xt_LOG to print socket kuids and kgids as uids and gids") from
+the net-next tree.
 
--- 
-Kind regards,
-Minchan Kim
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc net/netfilter/xt_LOG.c
+index 91e9af4,02a2bf4..0000000
+--- a/net/netfilter/xt_LOG.c
++++ b/net/netfilter/xt_LOG.c
+@@@ -145,19 -145,6 +145,21 @@@ static int dump_tcp_header(struct sbuf
+  	return 0;
+  }
+ =20
+ +static void dump_sk_uid_gid(struct sbuff *m, struct sock *sk)
+ +{
+ +	if (!sk || sk->sk_state =3D=3D TCP_TIME_WAIT)
+ +		return;
+ +
+ +	read_lock_bh(&sk->sk_callback_lock);
+ +	if (sk->sk_socket && sk->sk_socket->file) {
+++		const struct cred *cred =3D sk->sk_socket->file->f_cred;
+ +		sb_add(m, "UID=3D%u GID=3D%u ",
+- 			sk->sk_socket->file->f_cred->fsuid,
+- 			sk->sk_socket->file->f_cred->fsgid);
+++			from_kuid_munged(&init_user_ns, cred->fsuid),
+++			from_kgid_munged(&init_user_ns, cred->fsgid));
+++	}
+ +	read_unlock_bh(&sk->sk_callback_lock);
+ +}
+ +
+  /* One level of recursion won't kill us */
+  static void dump_ipv4_packet(struct sbuff *m,
+  			const struct nf_loginfo *info,
+
+--Signature=_Fri__14_Sep_2012_11_17_57_+1000_xSdNcQbr+ugS0EU3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQUoXFAAoJEECxmPOUX5FE/SUQAJn3bmHOSOWg/4w57bS8toxv
+njVa6n9BW+vugSA0f+AloczncYGw7UOBVTNJb/UR/STKO3Q9nSTw0TLAVpsltDOu
+eDEyqJzc8JIIJOz9DNSMg8QOKMGy1Rif0XOiz+pds2EUKa1O+JaXVZby4bTB+mae
+/fDbNLyzDxVZPSYYihbhSmwhtdWSyvA5lDg2MCilA/CznXgyu0UQ01bEVVRXVAly
+Yft3hki6qBKxSoYFYCFNd4NAhyh9NhfA7yYV/qFhEB4kUq/OPW3CqLr2GEgnEfYt
+A8qeaDJZUCi5d8nzH3Mnx0vM8o4+7iqDRxd5iyOSTlgUruP/FactzmAv91DqwueQ
+kQrneQ9/qX5T1g67oCcOAfdmOLg0uzkR/AQYNHux5CIf8gukV7wobrxI8sqh95kW
+gwld3SLnZhYsPgrjfcKL7NGDLG1nfTEKd5iej3hYHfZnqCsD5nsPqkuSZDOi5aYG
+ynHRBQBSdcSSg/yxL3197nwnSl5Kc3/+SQLWYrIavXDMT8bLquDWZEZGoMaqbvwJ
+SqjRaIXPPdqHRNnGnsvRBukaIz+U4aQGMeR10Hm/OAOcXarsKPSTW5t0CusKLtan
+Xq0MM6IeGwcZnC6R8P01/SvJuKFkuQV9n0OOQJtgq0nM4z8HGVJRLCXcwCYrZ4Cc
+SxYquPR3GciyJCV/Wk/3
+=4M74
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__14_Sep_2012_11_17_57_+1000_xSdNcQbr+ugS0EU3--
