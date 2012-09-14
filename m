@@ -1,27 +1,27 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build failure after merge of the cgroup tree
-Date: Fri, 14 Sep 2012 11:34:10 -0700
-Message-ID: <20120914183410.GH17747@google.com>
-References: <20120914131700.dd3d01a7d17b78082a9bcd55@canb.auug.org.au>
- <5052D51D.3060106@bmw-carit.de>
- <20120914170019.GA17747@google.com>
- <CA+icZUWrK10WmS1252kCPMKxfjihz3z5xqvXPGB1Oi13MuOJfw@mail.gmail.com>
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+Subject: the return of jfs-next
+Date: Fri, 14 Sep 2012 16:57:14 -0500
+Message-ID: <5053A83A.9000802@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+icZUWrK10WmS1252kCPMKxfjihz3z5xqvXPGB1Oi13MuOJfw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Daniel Wagner <daniel.wagner@bmw-carit.de>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Li Zefan <lizefan@huawei.com>, Neil Horman <nhorman@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet15.oracle.com ([148.87.113.117]:20971 "EHLO
+	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754423Ab2INV5Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Sep 2012 17:57:24 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next <linux-next@vger.kernel.org>
 
-On Fri, Sep 14, 2012 at 08:32:28PM +0200, Sedat Dilek wrote:
-> Did you pushed this to [1] already?
+Stephen,
+It's been a while, and I've never recovered my kernel.org account, but
+I've got some jfs patches for linux-next at github:
 
-Was still building.  Pushed out now.
+git://github.com/kleikamp/linux-shaggy.git jfs-next
 
-Thanks.
+Can you please add this branch back into linux-next?
 
--- 
-tejun
+Thanks,
+Shaggy
