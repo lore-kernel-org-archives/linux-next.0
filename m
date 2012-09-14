@@ -1,46 +1,60 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Sept 14 (sata_highhbank)
-Date: Fri, 14 Sep 2012 10:04:58 -0700
-Message-ID: <505363BA.1010604@xenotime.net>
-References: <20120914173813.fa65528e5236bd0a20c29b92@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: build failure after merge of the cgroup tree
+Date: Fri, 14 Sep 2012 20:32:28 +0200
+Message-ID: <CA+icZUWrK10WmS1252kCPMKxfjihz3z5xqvXPGB1Oi13MuOJfw@mail.gmail.com>
+References: <20120914131700.dd3d01a7d17b78082a9bcd55@canb.auug.org.au>
+	<5052D51D.3060106@bmw-carit.de>
+	<20120914170019.GA17747@google.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <20120914173813.fa65528e5236bd0a20c29b92@canb.auug.org.au>
-Sender: linux-ide-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Mark Langsdorf <mark.langsdorf@calxeda.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:53833 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753453Ab2INSca (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Sep 2012 14:32:30 -0400
+In-Reply-To: <20120914170019.GA17747@google.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Daniel Wagner <daniel.wagner@bmw-carit.de>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Li Zefan <lizefan@huawei.com>, Neil Horman <nhorman@tuxdriver.com>
 
-On 09/14/2012 12:38 AM, Stephen Rothwell wrote:
+On Fri, Sep 14, 2012 at 7:00 PM, Tejun Heo <tj@kernel.org> wrote:
+> Hello,
+>
+> On Fri, Sep 14, 2012 at 08:56:29AM +0200, Daniel Wagner wrote:
+>> On 14.09.2012 05:17, Stephen Rothwell wrote:
+>> >After merging the cgroup tree, today's linux-next build (powerpc
+>> >ppc64_defconfig) failed like this:
+>> >
+>> >drivers/net/tun.c: In function 'tun_alloc_skb':
+>> >drivers/net/tun.c:589:2: error: implicit declaration of function 'sock_update_classid' [-Werror=implicit-function-declaration]
+>> >
+>> >Caused by commit 1f66c0a8833c ("cgroup: net_cls: Move sock_update_classid()
+>> >declaration to cls_cgroup.h").  Grep is your friend ...
+>
+> My apologies.  Forgot allmod build.
+>
+>> >I have used the cgroup tree from next-20120913 for today.
+>>
+>> Obviously, it is straight forward to fix this but I do not know what
+>> is the preferred solution. Shall I spin an updated version of this
+>> patch or add a patch on top of the series?
+>
+> I fixed the commit in tree.
+>
+> Thanks.
+>
 
-> Hi all,
-> 
-> Changes since 201209013:
-> 
+Did you pushed this to [1] already?
 
+- Sedat -
 
+[1] http://git.kernel.org/?p=linux/kernel/git/tj/cgroup.git;a=shortlog;h=refs/heads/for-next
 
-on i386:
-
-CONFIG_SATA_HIGHBANK=m
-# CONFIG_SATA_AHCI_PLATFORM is not set
-
-ERROR: "ahci_sdev_attrs" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_shost_attrs" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_ops" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_dev_classify" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_start_engine" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_stop_engine" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_interrupt" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_print_info" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_reset_em" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_ignore_sss" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_set_em_messages" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_save_initial_config" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_init_controller" [drivers/ata/sata_highbank.ko] undefined!
-ERROR: "ahci_reset_controller" [drivers/ata/sata_highbank.ko] undefined!
-
--- 
-~Randy
+> --
+> tejun
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
