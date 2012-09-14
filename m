@@ -1,52 +1,39 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Sept 14
-Date: Fri, 14 Sep 2012 13:56:01 +0200
-Message-ID: <CA+icZUUWwaysVRHFWKfw6Renj2rAW8VZHrQhHy78-cpBQ+07fQ@mail.gmail.com>
-References: <20120914173813.fa65528e5236bd0a20c29b92@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Daniel Wagner <wagi@monom.org>
+Subject: [PATCH] Fix for "cgroup: Assign subsystem IDs during compile time"
+Date: Fri, 14 Sep 2012 16:33:02 +0200
+Message-ID: <1347633184-26837-1-git-send-email-wagi@monom.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:38198 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757575Ab2INL4C (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Sep 2012 07:56:02 -0400
-In-Reply-To: <20120914173813.fa65528e5236bd0a20c29b92@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: Daniel Wagner <daniel.wagner@bmw-carit.de>, "David S. Miller" <davem@davemloft.net>, "Michael S. Tsirkin" <mst@redhat.com>, Gao feng <gaofeng@cn.fujitsu.com>, Jamal Hadi Salim <jhs@mojatatu.com>, Joe Perches <joe@perches.com>, John Fastabend <john.r.fastabend@intel.com>, Li Zefan <lizefan@huawei.com>, Neil Horman <nhorman@tuxdriver.com>, Rick Jones <rick.jones2@hp.com>, Stanislav Kinsbursky <skinsbursky@parallels.com>, Tejun Heo <tj@kernel.org>, netdev@vger.kernel.org, cgroups@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Sep 14, 2012 at 9:38 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Changes since 201209013:
->
-> The pci tree lost its conflicts.
->
-> The i2c tree lost its conflict.
->
-> The net-next tree gained conflicts against the net tree.
->
-> The cgroup tree gained a build failure so I used the version from
-> next-20120913.
->
-> The workqueues tree gained a conflict against the net tree.
->
-> The dma-mapping tree gained conflicts against the libata tree.
->
-> The clk tree lost its conflicts.
->
-> The akpm tree lost 2 build failures, I have still reverted 1 commit.
->
-> ----------------------------------------------------------------------------
->
+From: Daniel Wagner <daniel.wagner@bmw-carit.de>
 
-This is a good release (for me), thanks :-).
-Wonderful, wonderful, wonderful life... [1].
-( If linux-next folks would get all (severe) issues tracked down
-within a week till Fridays (which is a challenge)... )
+Hi, 
 
-- Sedat -
+Sorry for breaking Tejun's cgroup for-3.7 branch. Here are two patches
+which fix this problem. Either of them will do. 
 
-[1] http://www.youtube.com/watch?v=pj_qIwQ3V5c
+cheers,
+daniel
+
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Gao feng <gaofeng@cn.fujitsu.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: John Fastabend <john.r.fastabend@intel.com>
+Cc: Li Zefan <lizefan@huawei.com>
+Cc: Neil Horman <nhorman@tuxdriver.com>
+Cc: Rick Jones <rick.jones2@hp.com>
+Cc: Stanislav Kinsbursky <skinsbursky@parallels.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: netdev@vger.kernel.org
+Cc: cgroups@vger.kernel.org
+
+-- 
+1.7.12.315.g682ce8b
