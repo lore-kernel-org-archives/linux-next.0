@@ -1,80 +1,70 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Fri, 14 Sep 2012 09:07:23 +1000
-Message-ID: <20120914090723.6e0528a45a69233f5ea4fcf8@canb.auug.org.au>
-References: <20120913174441.f5fbf5cc38713425331f4d86@canb.auug.org.au>
-	<20120913005657.1ae79a95.akpm@linux-foundation.org>
-	<20120913183106.a154a63a75cef8efa03317ad@canb.auug.org.au>
+From: Minchan Kim <minchan@kernel.org>
+Subject: Re: [PATCH] mm: cma: Discard clean pages during contiguous
+ allocation instead of migration
+Date: Fri, 14 Sep 2012 09:10:32 +0900
+Message-ID: <20120914001032.GD5085@bbox>
+References: <1347324112-14134-1-git-send-email-minchan@kernel.org>
+ <CAMuHMdXWZ=Jeggd7cT_LXK0MTnmFAf+cWEhC75B1gCcSd3eWeg@mail.gmail.com>
+ <20120913151922.b8893088.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__14_Sep_2012_09_07_23_+1000_sD/Uq=6uPNmTeFFk"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49718 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750708Ab2IMXHd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 19:07:33 -0400
-In-Reply-To: <20120913183106.a154a63a75cef8efa03317ad@canb.auug.org.au>
+Received: from LGEMRELSE1Q.lge.com ([156.147.1.111]:48364 "EHLO
+	LGEMRELSE1Q.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751333Ab2INAIW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Sep 2012 20:08:22 -0400
+Content-Disposition: inline
+In-Reply-To: <20120913151922.b8893088.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, Zhang Rui <rui.zhang@intel.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, Kyungmin Park <kmpark@infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Michal Nazarewicz <mina86@mina86.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Linux-Next <linux-next@vger.kernel.org>
 
---Signature=_Fri__14_Sep_2012_09_07_23_+1000_sD/Uq=6uPNmTeFFk
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 13, 2012 at 03:19:22PM -0700, Andrew Morton wrote:
+> On Thu, 13 Sep 2012 21:17:19 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> 
+> > On Tue, Sep 11, 2012 at 2:41 AM, Minchan Kim <minchan@kernel.org> wrote:
+> > > --- a/mm/vmscan.c
+> > > +++ b/mm/vmscan.c
+> > > @@ -674,8 +674,10 @@ static enum page_references page_check_references(struct page *page,
+> > >  static unsigned long shrink_page_list(struct list_head *page_list,
+> > >                                       struct zone *zone,
+> > >                                       struct scan_control *sc,
+> > > +                                     enum ttu_flags ttu_flags,
+> > 
+> > "enum ttu_flags" is defined on CONFIG_MMU=y only, causing on nommu:
+> > 
+> > mm/vmscan.c:677:26: error: parameter 4 ('ttu_flags') has incomplete type
+> > mm/vmscan.c:987:5: error: 'TTU_UNMAP' undeclared (first use in this function)
+> > mm/vmscan.c:987:15: error: 'TTU_IGNORE_ACCESS' undeclared (first use
+> > in this function)
+> > mm/vmscan.c:1312:56: error: 'TTU_UNMAP' undeclared (first use in this function)
+> > 
+> > E.g.
+> > http://kisskb.ellerman.id.au/kisskb/buildresult/7191694/ (h8300-defconfig)
+> > http://kisskb.ellerman.id.au/kisskb/buildresult/7191858/ (sh-allnoconfig)
+> 
+> hm, OK, the means by which current mainline avoids build errors is
+> either clever or lucky.
+> 
+> 			switch (try_to_unmap(page, TTU_UNMAP)) {
+> 
+> gets preprocessed into
+> 
+> 			switch (2) {
+> 
+> so the cmopiler never gets to see the TTU_ symbol at all.  Because it
+> happens to be inside the try_to_unmap() call.
+> 
+> 
+> I guess we can just make ttu_flags visible to NOMMU:
 
-Hi Andrew,
+I agree.
 
-On Thu, 13 Sep 2012 18:31:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Here is the chunk of the series file I have:
->=20
-> idr-rename-max_level-to-max_idr_level.patch
-> idr-rename-max_level-to-max_idr_level-fix.patch
-> idr-rename-max_level-to-max_idr_level-fix-fix-2.patch
-> #NEXT_PATCHES_END
-> #
-> linux-next.patch
-> i-need-old-gcc.patch
-> idr-rename-max_level-to-max_idr_level-fix-3.patch
-> arch-alpha-kernel-systblss-remove-debug-check.patch
-> #
-> #NEXT_PATCHES_START linux-next-urgent
->=20
-> So idr-rename-max_level-to-max_idr_level-fix-3.patch is excluded form
-> linux-next :-( I guess I need to just move that further down in the
-> series file?  Though when you send the preceding three patches to Linus,
-> that fix-3 patch will be needed when I merge the thermal tree.
+Geert, Andrew
+Thanks for the reporting and quick fix!
 
-I put idr-rename-max_level-to-max_idr_level-fix-3.patch into the akpm
-tree in linux-next (just after the -fix-2 patch).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__14_Sep_2012_09_07_23_+1000_sD/Uq=6uPNmTeFFk
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQUmcrAAoJEECxmPOUX5FE6fkP+QG6gejBHcfmiafsvO4Yn3L/
-21n0I5Q5bsXLTABkZOWi+72Y5PFjerb6vKQEC3vpR0naQacSKkCo6MWrzNPJFLu0
-xA4RjkoYvJWdxGv6ipS0kg6ulhuwh+bt98S/ker4J2+0v6PJdWYBe7Pmkgi3AJNx
-wLZVEYbeAUkept52GtmBG+sXyWS7cdVk/lfExCcqi0M1PSB04IF93/U+Dsa+F36U
-Nc/yR6aEV84jZDiZtrFgAUMOmt86l7cIx3v8lH9HFVk/m7+Z3H6Mbo0b0DxYuL4r
-f7okPvyug1VLkn8sknMOifjk7C5mxlCkZFpSexTy/r/kVFKRPJJxnek+QAQWtu4R
-mJ+Z1dK1r4RKv5JgPRB1WQhR31ctIefbMDHvLBv8odTF18wK9wiw6DSYepAi7qvG
-usyyryyAhnCCOVgN+8V56WcyErDVZA7OSOnFbRyNbY7+AWx2P86Yfs+jxoXn0EI8
-LSHTl5HA7FtryE9YW7tg4jO1QOx5EEaxOmzt3hM2Rr0b8PDS/JKN1otcHg72EVs2
-qfR930gT1pAW5CQDaIz5njYMvYLU8hwrePKmQEfWpqXFfqUstHzmOHugaHT0L73+
-Ci/0IkwqMXTt77gqFdqWHhDo6tVvAgb4IBTwCU9LBvE7p9nWLCjlshY/2UiFU0dC
-cCkf2r1CsrZEwhw/taH5
-=8Zkf
------END PGP SIGNATURE-----
-
---Signature=_Fri__14_Sep_2012_09_07_23_+1000_sD/Uq=6uPNmTeFFk--
+-- 
+Kind regards,
+Minchan Kim
