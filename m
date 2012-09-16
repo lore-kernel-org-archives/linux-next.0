@@ -1,58 +1,50 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: build failure after merge of the cgroup tree
-Date: Sat, 15 Sep 2012 09:55:36 +0200
-Message-ID: <CA+icZUWs5efbRzPKE0HU4+boRkAgXnpsd_PDB=k-Q4aOZ1jWLA@mail.gmail.com>
-References: <20120914131700.dd3d01a7d17b78082a9bcd55@canb.auug.org.au>
-	<5052D51D.3060106@bmw-carit.de>
-	<20120914170019.GA17747@google.com>
-	<CA+icZUWrK10WmS1252kCPMKxfjihz3z5xqvXPGB1Oi13MuOJfw@mail.gmail.com>
-	<20120914183410.GH17747@google.com>
-Reply-To: sedat.dilek@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH -next] [media] altera-stapl should depend on HAS_IOPORT
+Date: Sun, 16 Sep 2012 11:21:23 +0200
+Message-ID: <1347787283-11994-1-git-send-email-geert@linux-m68k.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:32868 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750887Ab2IOHzi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 15 Sep 2012 03:55:38 -0400
-In-Reply-To: <20120914183410.GH17747@google.com>
+Received: from georges.telenet-ops.be ([195.130.137.68]:38807 "EHLO
+	georges.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751615Ab2IPJVc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Sep 2012 05:21:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Daniel Wagner <daniel.wagner@bmw-carit.de>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Li Zefan <lizefan@huawei.com>, Neil Horman <nhorman@tuxdriver.com>
+To: "Igor M. Liplianin" <liplianin@netup.ru>, Peter Huewe <peterhuewe@gmx.de>, Jean Delvare <khali@linux-fr.org>, Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-i2c@vger.kernel.org, user-mode-linux-devel@lists.sourceforge.net, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Fri, Sep 14, 2012 at 8:34 PM, Tejun Heo <tj@kernel.org> wrote:
-> On Fri, Sep 14, 2012 at 08:32:28PM +0200, Sedat Dilek wrote:
->> Did you pushed this to [1] already?
->
-> Was still building.  Pushed out now.
->
+On s390:
 
-Pulled and works fine here!
-Thanks to you.
+drivers/misc/altera-stapl/altera-lpt.c: In function 'byteblaster_write':
+drivers/misc/altera-stapl/altera-lpt.c:34:2: error: implicit declaration of function 'outb' [-Werror=implicit-function-declaration]
+drivers/misc/altera-stapl/altera-lpt.c: In function 'byteblaster_read':
+drivers/misc/altera-stapl/altera-lpt.c:40:2: error: implicit declaration of function 'inb' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+make[6]: *** [drivers/misc/altera-stapl/altera-lpt.o] Error 1
 
-- Sedat -
+Before commit 3969d54acd70be70e1b2a72184cba5415bf326c2 ("i2c: Make I2C
+available on UML"), this was hidden because I2C depended on HAS_IOMEM, which
+is a superset of HAS_IOPORT.
 
-P.S.: dmesg checks
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+--
+http://kisskb.ellerman.id.au/kisskb/buildresult/7194502/
+http://kisskb.ellerman.id.au/kisskb/buildresult/7194476/
+---
+ drivers/misc/altera-stapl/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-$ dmesg | egrep 'cgroup|systemd'
-[    0.000000] Initializing cgroup subsys cpuset
-[    0.000000] Initializing cgroup subsys cpu
-[    0.000000] Command line:
-BOOT_IMAGE=/boot/vmlinuz-3.6.0-rc5-next20120914-3-iniza-generic
-root=UUID=001AADA61AAD9964 loop=/ubuntu/disks/root.disk ro
-init=/lib/systemd/systemd
-[    0.000000] Kernel command line:
-BOOT_IMAGE=/boot/vmlinuz-3.6.0-rc5-next20120914-3-iniza-generic
-root=UUID=001AADA61AAD9964 loop=/ubuntu/disks/root.disk ro
-init=/lib/systemd/systemd
-[    0.002082] Initializing cgroup subsys cpuacct
-[    0.002087] Initializing cgroup subsys devices
-[    0.002089] Initializing cgroup subsys freezer
-[    0.002092] Initializing cgroup subsys blkio
-[    0.002095] Initializing cgroup subsys perf_event
-
-> Thanks.
->
-> --
-> tejun
+diff --git a/drivers/misc/altera-stapl/Kconfig b/drivers/misc/altera-stapl/Kconfig
+index 7f01d8e..c7e4c77 100644
+--- a/drivers/misc/altera-stapl/Kconfig
++++ b/drivers/misc/altera-stapl/Kconfig
+@@ -2,7 +2,7 @@ comment "Altera FPGA firmware download module"
+ 
+ config ALTERA_STAPL
+ 	tristate "Altera FPGA firmware download module"
+-	depends on I2C
++	depends on I2C && HAS_IOPORT
+ 	default n
+ 	help
+ 	  An Altera FPGA module. Say Y when you want to support this tool.
+-- 
+1.7.0.4
