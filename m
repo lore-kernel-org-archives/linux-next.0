@@ -1,64 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the arm64 tree
-Date: Mon, 17 Sep 2012 11:24:05 +1000
-Message-ID: <20120917112405.4f7b7555209ad024e0531b21@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi tree with the pci tree
+Date: Mon, 17 Sep 2012 13:17:44 +1000
+Message-ID: <20120917131744.2f646ebfca9806ee5850fe03@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Sep_2012_11_24_05_+1000_jaVoA9cDuJm_G6+g"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__17_Sep_2012_13_17_44_+1000_VVyLVhEysXjtrb_."
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53255 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753318Ab2IQDRv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Sep 2012 23:17:51 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiang Liu <jiang.liu@huawei.com>, Bjorn Helgaas <bhelgaas@google.com>, Atul Deshmukh <atul.deshmukh@qlogic.com>, Chad Dupuis <chad.dupuis@qlogic.com>
 
---Signature=_Mon__17_Sep_2012_11_24_05_+1000_jaVoA9cDuJm_G6+g
+--Signature=_Mon__17_Sep_2012_13_17_44_+1000_VVyLVhEysXjtrb_.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Catalin,
+Hi James,
 
-After merging the arm64 tree, today's linux-next build ()
-failed like this:
+Today's linux-next merge of the scsi tree got a conflict in
+drivers/scsi/qla2xxx/qla_nx.c between commit 100924388407 ("[SCSI]
+qla4xxx: Use PCI Express Capability accessors") from the pci tree and
+commit 8fbb85e5f4c0 ("[SCSI] qla2xxx: Wrong PCIe(2.5Gb/s x8) speed in the
+kerenel message for ISP82xx") from the scsi tree.
 
-arch/powerpc/kernel/sys_ppc32.c:146:17: error: conflicting types for 'compa=
-t_sys_sendfile'
-include/linux/compat.h:593:16: note: previous declaration of 'compat_sys_se=
-ndfile' was here
-arch/powerpc/kernel/sys_ppc32.c:231:17: error: conflicting types for 'compa=
-t_sys_sched_rr_get_interval'
-include/linux/compat.h:596:16: note: previous declaration of 'compat_sys_sc=
-hed_rr_get_interval' was here
+The latter removes one of the functions updated by the former.  So I
+removed it and can carry the fix as necessary (no action is required).
 
-Caused by commits 2a23f0dba0c6 ("fs: Add generic compat_sys_sendfile
-implementation") and a0c6fc489bf6 ("compat: Add generic
-compat_sys_sched_rr_get_interval implementation").  Grep is your friend.
-
-I have used the arm64 tree from next-20120914 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__17_Sep_2012_11_24_05_+1000_jaVoA9cDuJm_G6+g
+--Signature=_Mon__17_Sep_2012_13_17_44_+1000_VVyLVhEysXjtrb_.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQVnu1AAoJEECxmPOUX5FElD0P/262i1yPK6caz4lxmzLEULfe
-fqtjKTrlFj2+Xk2r2ZbHTmB0S1kK6Sh41TSFmdweYUWsDjzjtBsc6tgbyEGyPNMT
-fayn1dw5cT9kyQpDvDtYEI+EwgT7ZrcwQtEJ1kukSqoF+3Eq8sic/z8JvCv6Rs8M
-RBxVEXNTPNOc6Hj0jpk/VNPJgguqaQGiaVF3+pvrSy1hPF0IWthxcSb0EVKoCKoW
-OHNL1ZN7Y1MAo5E1DaMaUF/0PrY8EURdqO6EWwyyf0EMndleD4zn414jVC5W0eH0
-nDdGf8zdc635AEnOo69UI/57e11pzyac26G5tGPlGiW4rHx5YwRPuk/hPydohSHj
-f3ln/hqY6u8xYX3cQgvvE207L9PBDgTLfSFnrOZRzX4of597i54Ihqrt9ZjQkhVg
-+74rOBWlPQPUePQQlraIp4/j5Jq2TG6cPw2ucIf3N8z3bPQs5oynD0UZwfkQia0q
-OuIqJvsfuPVdaD+GSloFu/ktBfExiEDSn129NmHCAWWI1f8z94Wk57ETvI5LN8uT
-PRM7ekPJwYYZNQKdzef6Us8n2rg7vJl/HHV9qcG4ZzYuut3zs7E9HrnJ4BQ1GgvE
-JV9OemQX04Og01tAFtpuLCdne2yYwbgo9x+FivooaAgFYMxFp8E2O9d9rHMCNPCW
-4QWwXrRBWYOJoo1/qBBb
-=RFHk
+iQIcBAEBCAAGBQJQVpZYAAoJEECxmPOUX5FEf1kQAKFXJYMDuDEsVUNhd7roUjTE
+Wr141pwxzCGhGNbhOcgar/Wq/xxKlRdHgHQhlnQX9vUn/Nspwo9ms+jr427MNu23
+KVC/J+66dhv5eZrBUEbY7fFXZ+pNJlT4B55lfKEFgtFII8OEe/7WhbCzXw/s4yWB
+OaJC2JPT5HdpEywRkoKHF5wiaLcxymJMkHC7/su6Pz7d2Bt/UIsuiHewiCWZePfL
+mfqHE4xSHRu3gCyRFMrzF1OK65+jaIspQOgxVL0p3rmoW2qwefe9R4IPE843Rlnn
+4QeZPbdJoHfFT7+GGhCapjhmkduJl0eaXXJvio4g/bH9vPDQqCoWIfaFrAedeXRY
+DSdjRybdgxNgazBq+EXEKB78dqrFCxTjb67DPOPCGKmGPxtlWjX91sKZgqRFMn1A
+FPHY1zwMe0XAVLInououQpsHx0ql/HQJwWh7Afp1SVVXRJm2Rv7gE2fO2K62nF9w
+tgJQfIa902B+Lc9trfsxyWV7tw2nLw8mL4U5A0XtZoW0CQjcXxRn+3Uy2VYppdRU
+rvIHHJnofxRDjxB9+F+ZA/0yJGQGh0KhWtssg9/xX7jbrbjzLCtNvLs9gu5vxGm1
+v5u+eyoXnBAVhB+94/6p0K5tmWumVxzB7pQC5SXA+MMxm+N0bSQS7zV5r66Ry6Ly
+omanr0NNSJoXI/MA0oas
+=xpXv
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Sep_2012_11_24_05_+1000_jaVoA9cDuJm_G6+g--
+--Signature=_Mon__17_Sep_2012_13_17_44_+1000_VVyLVhEysXjtrb_.--
