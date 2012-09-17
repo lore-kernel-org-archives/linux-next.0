@@ -1,28 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the tty tree
-Date: Mon, 17 Sep 2012 17:30:58 +1000
-Message-ID: <20120917173058.e4d3f65bdc3751283766295c@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the tty tree
+Date: Mon, 17 Sep 2012 17:37:06 +1000
+Message-ID: <20120917173706.44575edebd95adaebe557b67@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Sep_2012_17_30_58_+1000_69.pOhoOXKU2aRBi"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Mon__17_Sep_2012_17_37_06_+1000_y8eEsHjPxA10PMxv"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47869 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751912Ab2IQHhL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 03:37:11 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Samuel Iglesias Gonsalvez <siglesias@igalia.com>
 
---Signature=_Mon__17_Sep_2012_17_30_58_+1000_69.pOhoOXKU2aRBi
+--Signature=_Mon__17_Sep_2012_17_37_06_+1000_y8eEsHjPxA10PMxv
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/serial/mos7720.c between commit adc8d746caa6 ("tty: move the
-termios object into the tty") from the tty tree and commit 9eecf8085473
-("USB: serial: mos7720.c: remove dbg() usage") from the usb tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/ipack/devices/ipoctal.c between commit 734cc1783816
+("TTY: use tty_port_register_device") from the tty tree and commit
+d04600679ba0 ("Staging: ipack/devices/ipoctal: simplify ipoctal_write_tty
+()") from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -31,57 +36,102 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/usb/serial/mos7720.c
-index 012f67b,192191c..0000000
---- a/drivers/usb/serial/mos7720.c
-+++ b/drivers/usb/serial/mos7720.c
-@@@ -1751,19 -1708,15 +1708,15 @@@ static void mos7720_set_termios(struct=20
-  		return;
-  	}
+diff --cc drivers/staging/ipack/devices/ipoctal.c
+index a68d981,2cdbf28..0000000
+--- a/drivers/staging/ipack/devices/ipoctal.c
++++ b/drivers/staging/ipack/devices/ipoctal.c
+@@@ -490,19 -429,26 +429,26 @@@ static int ipoctal_inst_slot(struct ipo
+  	ipoctal->tty_drv =3D tty;
  =20
-- 	dbg("%s\n", "setting termios - ASPIRE");
-+ 	dev_dbg(&port->dev, "setting termios - ASPIRE\n");
+  	for (i =3D 0; i < NR_CHANNELS; i++) {
+- 		tty_port_init(&ipoctal->tty_port[i]);
+- 		tty_port_alloc_xmit_buf(&ipoctal->tty_port[i]);
+- 		ipoctal->tty_port[i].ops =3D &ipoctal_tty_port_ops;
+-=20
+- 		ipoctal_reset_stats(&ipoctal->chan_stats[i]);
+- 		ipoctal->nb_bytes[i] =3D 0;
+- 		init_waitqueue_head(&ipoctal->queue[i]);
+-=20
+- 		spin_lock_init(&ipoctal->lock[i]);
+- 		ipoctal->pointer_read[i] =3D 0;
+- 		ipoctal->pointer_write[i] =3D 0;
+- 		ipoctal->nb_bytes[i] =3D 0;
+- 		tty_port_register_device(&ipoctal->tty_port[i], tty, i, NULL);
++ 		struct device *tty_dev;
++=20
++ 		channel =3D &ipoctal->channel[i];
++ 		tty_port_init(&channel->tty_port);
++ 		tty_port_alloc_xmit_buf(&channel->tty_port);
++ 		channel->tty_port.ops =3D &ipoctal_tty_port_ops;
++=20
++ 		ipoctal_reset_stats(&channel->stats);
++ 		channel->nb_bytes =3D 0;
++ 		init_waitqueue_head(&channel->queue);
++=20
++ 		spin_lock_init(&channel->lock);
++ 		channel->pointer_read =3D 0;
++ 		channel->pointer_write =3D 0;
+ -		tty_dev =3D tty_register_device(tty, i, NULL);
+++		tty_dev =3D tty_port_register_device(&channel->tty_port, tty, i, NULL);
++ 		if (IS_ERR(tty_dev)) {
++ 			dev_err(&ipoctal->dev->dev, "Failed to register tty device.\n");
++ 			continue;
++ 		}
++ 		dev_set_drvdata(tty_dev, channel);
+ =20
+  		/*
+  		 * Enable again the RX. TX will be enabled when
+@@@ -613,23 -540,17 +540,17 @@@ static void ipoctal_set_termios(struct=20
+  	unsigned char mr1 =3D 0;
+  	unsigned char mr2 =3D 0;
+  	unsigned char csr =3D 0;
+- 	unsigned int channel =3D tty->index;
+- 	struct ipoctal *ipoctal =3D tty->driver_data;
++ 	struct ipoctal_channel *channel =3D tty->driver_data;
+  	speed_t baud;
  =20
  -	cflag =3D tty->termios->c_cflag;
  +	cflag =3D tty->termios.c_cflag;
  =20
-- 	dbg("%s - cflag %08x iflag %08x", __func__,
-- 	    tty->termios.c_cflag,
-- 	    RELEVANT_IFLAG(tty->termios.c_iflag));
-+ 	dev_dbg(&port->dev, "%s - cflag %08x iflag %08x\n", __func__,
- -		tty->termios->c_cflag, RELEVANT_IFLAG(tty->termios->c_iflag));
-++		tty->termios.c_cflag, RELEVANT_IFLAG(tty->termios.c_iflag));
+  	/* Disable and reset everything before change the setup */
+- 	ipoctal_write_io_reg(ipoctal, &ipoctal->chan_regs[channel].u.w.cr,
+- 			     CR_DISABLE_RX | CR_DISABLE_TX);
+- 	ipoctal_write_cr_cmd(ipoctal, &ipoctal->chan_regs[channel].u.w.cr,
+- 			     CR_CMD_RESET_RX);
+- 	ipoctal_write_cr_cmd(ipoctal, &ipoctal->chan_regs[channel].u.w.cr,
+- 			     CR_CMD_RESET_TX);
+- 	ipoctal_write_cr_cmd(ipoctal, &ipoctal->chan_regs[channel].u.w.cr,
+- 			     CR_CMD_RESET_ERR_STATUS);
+- 	ipoctal_write_cr_cmd(ipoctal, &ipoctal->chan_regs[channel].u.w.cr,
+- 			     CR_CMD_RESET_MR);
++ 	iowrite8(CR_DISABLE_RX | CR_DISABLE_TX, &channel->regs->w.cr);
++ 	iowrite8(CR_CMD_RESET_RX, &channel->regs->w.cr);
++ 	iowrite8(CR_CMD_RESET_TX, &channel->regs->w.cr);
++ 	iowrite8(CR_CMD_RESET_ERR_STATUS, &channel->regs->w.cr);
++ 	iowrite8(CR_CMD_RESET_MR, &channel->regs->w.cr);
  =20
-- 	dbg("%s - old cflag %08x old iflag %08x", __func__,
-- 	    old_termios->c_cflag,
-- 	    RELEVANT_IFLAG(old_termios->c_iflag));
--=20
-- 	dbg("%s - port %d", __func__, port->number);
-+ 	dev_dbg(&port->dev, "%s - old cflag %08x old iflag %08x\n", __func__,
-+ 		old_termios->c_cflag, RELEVANT_IFLAG(old_termios->c_iflag));
- =20
-  	/* change the port settings to the new ones specified */
-  	change_port_settings(tty, mos7720_port, old_termios);
+  	/* Set Bits per chars */
+  	switch (cflag & CSIZE) {
 
---Signature=_Mon__17_Sep_2012_17_30_58_+1000_69.pOhoOXKU2aRBi
+--Signature=_Mon__17_Sep_2012_17_37_06_+1000_y8eEsHjPxA10PMxv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQVtGyAAoJEECxmPOUX5FEkL4P/3rMOnZnWZpJt4FSWOaqwYjH
-ETNmGMrnoi1bpoEfHbYdtoEDk9q2NqIKINRqjJyDfpUC05mtK0awM9lLBwJYBdGG
-DWkB7zwJ41LM/uN5Ho/TqUHvQMNOO0CGaLeBYz3INO98x0C7XLwGUmAbZei0NiXn
-183GKDwyLxphLJW/cGXhPJGXYfTZ+mGmuVALzVCAUS4/nfmDiOXyxD7h/xa2gYZM
-CXkLrliO69VBakPdv3BDgWmkNm67S1JJzBtgAJu5jklR2HbtKkiN/k6J9+kpV1d9
-NZSD1unnqNvmil/R620+z1RGULb49KO3UDI8WVjtqJMfmCi/PrMTa53wDlZPrfSt
-cJzKAG7H2UI0Xvyrum2H2EtJHf63MytaX4W0LO/+Rd3aTZyxaR959ag96ecG1LmY
-EX2RWp3zIal4hWioZ0EjfkGCel1fG4EQACvLYL+yVIgANotnGA7pWqJ85zUPlnsn
-t1B2mK6QSA59hw/cKsRC9/UsSLHtlETqrbpOut4WebB88u6VsS/EeXl38I9IerxO
-QXa73meTrrnQ+XwLpApnxcblU/KrzINcuk8nqYRaOTVhXwjpiSDKNjcQz2I+4OUG
-ISbB96cOrrpGOnploQU+kZItlYwwTxnvqW+k+8AuPdj2By0KsFhPSuW1viHO/fzQ
-ohZSkHCB33jxwgSzs93a
-=NvpF
+iQIcBAEBCAAGBQJQVtMiAAoJEECxmPOUX5FEd38QAI9D0Wi94yPDgrA4Fl2NHPA2
+kFnso9WisDM8tHw3HZXfWrtmCRD6uQvjLgNAyxKSDIcsM6/PjduvybpBLOBOjPYO
+P9Xmn7AI+HDFW2ubScbczYL6PQ7l0eGDS0at2VpZ+f/txZVNhM45zXMMQSMImJuN
+NZA35//fbXaOEzf4IWdLqIGpy10HbqYAxmH8H8O4grcc3grBtXjg/cduBVxvtgTj
+C4G6a5ERQekPfI6nueIBzLa5WwfdALeKFx3tbs9/UyTtB85mQ7bPPW03wsgqgZXS
+OF09tFRtGYl2PDC/5zWYlSsJY60RxaApBRqQZat09wtJ5umiUrHcw7ose52fxqcd
+LCfFF6eLiEYmVOYRwm//sQGx6vSjMJyr2gfX7y43dYlcZKqu9zdWMgjNsNNeBIp6
+uF4g7oi4OSBkY7AcZ1uS5r9EWpskTHkiU1bib5vGdFQFs+F0fHKiG4a0B1uKrGDy
+bgnzUSPEMxcfbQ7BY7h1WuPipVkFbRTM69Z62LIlBG4MkBp/i9gPA8CnQMokUrGw
+abKLmYMiVT/uAwAvjUijKdWLZqTot0OZ/U255VCX36EqKZKGQ7AJ8Lct+bZ92uSg
+efgqTmZJMwea2ZacQhafLpuVtY3T5jlAsyAzTUIdf7MdzfC6KjZTqHU7FXhc6FbU
+By599gpFrOWShqQp6lyb
+=CuQy
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Sep_2012_17_30_58_+1000_69.pOhoOXKU2aRBi--
+--Signature=_Mon__17_Sep_2012_17_37_06_+1000_y8eEsHjPxA10PMxv--
