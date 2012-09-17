@@ -1,52 +1,44 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for Sept 17 (jfs)
-Date: Mon, 17 Sep 2012 22:10:27 +0200
-Message-ID: <CAMuHMdWSTNb+YAyHR5F0kkHjDM8iVgRV352OcZ-epvNTcx+pBA@mail.gmail.com>
-References: <20120917215938.11c456c113ac3b015cb2d5ae@canb.auug.org.au>
-	<505745CF.8040202@xenotime.net>
-	<505754EB.8060907@oracle.com>
+Subject: [PATCH -next] MIPS: ptrace: Add missing #include <asm/syscall.h>
+Date: Mon, 17 Sep 2012 22:20:16 +0200
+Message-ID: <1347913216-11140-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:46748 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755759Ab2IQUK2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 16:10:28 -0400
-In-Reply-To: <505754EB.8060907@oracle.com>
+Received: from juliette.telenet-ops.be ([195.130.137.74]:53242 "EHLO
+	juliette.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755707Ab2IQUUY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 16:20:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tino Reichardt <list-jfs@mcmilk.de>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-Hi Dave.
+arch/mips/kernel/ptrace.c: In function =E2=80=98syscall_trace_enter=E2=80=
+=99:
+arch/mips/kernel/ptrace.c:664: error: implicit declaration of function =
+=E2=80=98__syscall_get_arch=E2=80=99
+make[2]: *** [arch/mips/kernel/ptrace.o] Error 1
 
-On Mon, Sep 17, 2012 at 6:50 PM, Dave Kleikamp <dave.kleikamp@oracle.com> wrote:
->> modular build:
->> ERROR: "__divdi3" [fs/jfs/jfs.ko] undefined!
->>
->> or builtin:
->> fs/built-in.o: In function `dbDiscardAG':
->> (.text+0x12988b): undefined reference to `__divdi3'
->
-> Thanks Randy.
->
-> This should fix it. I'll integrate it back into the proper patch in the
-> jfs tree for the next pull.
->
-> jfs: fix i386 build error. Replace 64-bit division with do_div()
->
-> Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+E.g. http://kisskb.ellerman.id.au/kisskb/buildresult/7223557/
 
-Thx, same issue on m68k, and your patch fixed it, so
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+ arch/mips/kernel/ptrace.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/mips/kernel/ptrace.c b/arch/mips/kernel/ptrace.c
+index 94fd0f4..cc7c44f 100644
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -40,6 +40,7 @@
+ #include <asm/uaccess.h>
+ #include <asm/bootinfo.h>
+ #include <asm/reg.h>
++#include <asm/syscall.h>
+=20
+ /*
+  * Called by kernel/ptrace.c when detaching..
+--=20
+1.7.0.4
