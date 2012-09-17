@@ -1,73 +1,60 @@
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
-Subject: Re: linux-next: Tree for Sept 17 (jfs)
-Date: Mon, 17 Sep 2012 11:50:51 -0500
-Message-ID: <505754EB.8060907@oracle.com>
-References: <20120917215938.11c456c113ac3b015cb2d5ae@canb.auug.org.au> <505745CF.8040202@xenotime.net>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (arm-soc tree related)
+Date: Mon, 17 Sep 2012 10:22:09 -0700
+Message-ID: <20120917172208.GN4521@atomide.com>
+References: <20120917212615.91bc134d237dcd5968f9f549@canb.auug.org.au>
+ <201209171429.31794.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet15.oracle.com ([141.146.126.227]:28184 "EHLO
-	acsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753356Ab2IQQvE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 12:51:04 -0400
-In-Reply-To: <505745CF.8040202@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tino Reichardt <list-jfs@mcmilk.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <201209171429.31794.arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 09/17/2012 10:46 AM, Randy Dunlap wrote:
-> On 09/17/2012 04:59 AM, Stephen Rothwell wrote:
-> 
->> Hi all,
->>
->> OK, so this was a bad one :-(
->>
->> Changes since 201209014:
->>
->> New tree: jfs
->>
-> 
-> 
-> 
-> on i386:
-> 
-> modular build:
-> ERROR: "__divdi3" [fs/jfs/jfs.ko] undefined!
-> 
-> or builtin:
-> fs/built-in.o: In function `dbDiscardAG':
-> (.text+0x12988b): undefined reference to `__divdi3'
+* Arnd Bergmann <arnd@arndb.de> [120917 07:30]:
+> On Monday 17 September 2012, Stephen Rothwell wrote:
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > drivers/mfd/twl-core.c:49:22: fatal error: plat/cpu.h: No such file or directory
+> > 
+> > Caused by commit 7d7e1eba7e92 ("ARM: OMAP2+: Prepare for irqs.h removal").
 
-Thanks Randy.
-
-This should fix it. I'll integrate it back into the proper patch in the
-jfs tree for the next pull.
-
-jfs: fix i386 build error. Replace 64-bit division with do_div()
-
-Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
-
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index eb988a9..174feb6 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -1640,13 +1640,15 @@ s64 dbDiscardAG(struct inode *ip, int agno, s64 minlen)
- 	} *totrim, *tt;
+Oops, sorry I screwed up there. That used to get included indirectly
+earlier if SPARSE_IRQ was not set.
  
- 	/* max blkno / nblocks pairs to trim */
--	int count = 0, range_cnt = 32 * 1024;
-+	int count = 0, range_cnt;
- 
- 	/* prevent others from writing new stuff here, while trimming */
- 	IWRITE_LOCK(ipbmap, RDWRLOCK_DMAP);
- 
- 	nblocks = bmp->db_agfree[agno];
--	range_cnt = min_t(int, range_cnt, nblocks / minlen + 1);
-+	range_cnt = nblocks;
-+	do_div(range_cnt, (int)minlen);
-+	range_cnt = min(range_cnt + 1, 32 * 1024);
- 	totrim = kmalloc(sizeof(struct range2trim) * range_cnt, GFP_NOFS);
- 	if (totrim == NULL) {
- 		jfs_error(bmp->db_ipbmap->i_sb,
+> > I have added the following patch to restrict this driver to ARM until it
+> > is fixed:
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 17 Sep 2012 21:18:21 +1000
+> > Subject: [PATCH] ARM: retrict TWL4030_CORE to ARM while it is broken
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> 
+> Thanks!
+> 
+> If it requires plat/cpu.h, it should actually be limited to CONFIG_ARCH_OMAP,
+> otherwise we will get the same problem on non-OMAP ARM builds. From what
+> I can tell, the problem is the clocks_init function, which is the only
+> part that is not completely generic.
+> 
+> The trivial workaround would be to enclose the "#include <plat/cpu.h>"
+> statement in #ifdef CONFIG_ARCH_OMAP, but with the common clock code
+> in place, we should probably be able to come up with a better solution
+> that works independent of the omap platform.
+
+There are patches coming to remove cpu_is_omap usage from drivers,
+and until then we should just ifdef the plat/cpu.h include.
+
+It is possible to use these kind of external PM chips with other
+SoCs, they're just not omap related and that's why there drivers
+have not had the Kconfig dependency. I'll post a patch for that.
+
+Regards,
+
+Tony
