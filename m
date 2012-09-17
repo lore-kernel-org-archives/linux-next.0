@@ -1,64 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the target-updates tree
-Date: Mon, 17 Sep 2012 13:41:42 +1000
-Message-ID: <20120917134142.c7948ae04bdeabe1a863e464@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 17 Sep 2012 14:53:32 +1000
+Message-ID: <20120917145332.82a0a723c73904943190d493@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Sep_2012_13_41_42_+1000_mEB.XR++DIlGUmy6"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38129 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753387Ab2IQDlu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Sep 2012 23:41:50 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Mon__17_Sep_2012_14_53_32_+1000_zxGvq9D/YucF4O4B"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__17_Sep_2012_13_41_42_+1000_mEB.XR++DIlGUmy6
+--Signature=_Mon__17_Sep_2012_14_53_32_+1000_zxGvq9D/YucF4O4B
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Nicholas,
+Hi Dave,
 
-After merging the target-updates tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/i915_dma.c between commit 99d0b1db6ccd ("drm/i915:
+initialize dpio_lock spin lock") from Linus' tree and commit c6a828d3269a
+("drm/i915: move all rps state into dev_priv->rps") from the drm tree.
 
-drivers/target/target_core_transport.c: In function 'transport_get_sense_bu=
-ffer':
-drivers/target/target_core_transport.c:582:22: error: 'struct target_core_f=
-abric_ops' has no member named 'set_fabric_sense_len'
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-I can only assume that this has been caused by the (largish) changes that
-went into Linus' tree recently conflicting with changes in the
-target-updates tree.
-
-I have dropped the target-updates tree for today.  Please sort the mess out.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__17_Sep_2012_13_41_42_+1000_mEB.XR++DIlGUmy6
+diff --cc drivers/gpu/drm/i915/i915_dma.c
+index 914c0df,2c09900..0000000
+--- a/drivers/gpu/drm/i915/i915_dma.c
++++ b/drivers/gpu/drm/i915/i915_dma.c
+@@@ -1586,8 -1606,7 +1606,8 @@@ int i915_driver_load(struct drm_device=20
+ =20
+  	spin_lock_init(&dev_priv->irq_lock);
+  	spin_lock_init(&dev_priv->error_lock);
+- 	spin_lock_init(&dev_priv->rps_lock);
++ 	spin_lock_init(&dev_priv->rps.lock);
+ +	spin_lock_init(&dev_priv->dpio_lock);
+ =20
+  	if (IS_IVYBRIDGE(dev) || IS_HASWELL(dev))
+  		dev_priv->num_pipe =3D 3;
+
+--Signature=_Mon__17_Sep_2012_14_53_32_+1000_zxGvq9D/YucF4O4B
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQVpv2AAoJEECxmPOUX5FEoAUQAIR7A1MTTrtKc2nqRry/XGz7
-NWZnWIZ4+UVTZ41+npLyBCSg1SKq2GNU/33AD3cz2W9fm2G4ZiubeuZyyvXOQ0DK
-dBTYqNtvBV4z8zRmaO8yPAB7sJNOsaBbzdWvLeiwQLKw0OXpYh3iYyMFlC/DXM8E
-H73EbmR6ZtxrFAIr39MzS+xgoQ2p+Hr2DJypWNCpggmJBMcq/Qt6LgP47d8jll0V
-eAdrmURNBZR0KIIBj4iUa4GWijl66wEixgyxvqDxbVTMeYi/+J4XtoRYQ8+VTGpP
-hzZ8pAq4BdIWmbeDj9K1ecbTgoO1WxDH06ZhUXzfxWIX6HSoYIrJTPyxxucsG652
-0sAKRHMH+5GsEZT5GnYo9MGk8KxOzOyqIA6UTj76JZ21zQS0M63qS7C2UaQbEvRH
-y8MOiCHFkD+D+PC2V0E4rEoR7A3RgcvFVI3F+6xQQ+0PfZAxTLveHrD0A/COtrQ8
-1MD+8P6nr2RqozlEONNWCA50gk1Lh5CKFmDMcWlkBoptjNDGj5mY5+YDQLcREJI0
-P7l9+SPIbvpIpk7XOKdYcC9hfHG4EpTOSPiRWQn5DuBO40CimkxsgAAhkxPZ03HE
-x1F71rn6QWxNs9e7/rl12SkHPysIPyHVrYT96re3mLN6xztzJ6egwbSWfKsfhaPf
-GGK4JG86n5buwfvO0/zS
-=ulPg
+iQIcBAEBCAAGBQJQVqzMAAoJEECxmPOUX5FE39QP/iYph/SR1EWKqe0WgeBL/itp
+g0Jol7EL1pVlWQsW72cJyRK+JFiYpHhoIBQ7+mh5Ia7cn3OrQ+lhJdHI5O0fPdsY
+bdygdDPlohgAJHl/vg3wkKOmE2n2gjoERsnX8ry9xZMmjfHw3y0ndPe40o56k1G9
+oVnIzkwjaLShX+qxLBY7Vdcq9QswE/HqDehuNffJOHnosHdS55Z8smSRIRnlvzPE
+DyRk6+OTcxf6KEMUZotQsTXtQgzFsh1bGSciK6RypSqz0sIGIcG0dhEDZo5LtYQx
+vSBFaiAg45gpYy7CDx32nD/QhkhCnBuKdDF4MsS/C0PIsfFKV5Dwp7pPpq5fGBVG
+R3WlI0PiRcxN2M8u/OcykcVOHbVOvXRGr8dtEIWjX1fr57y4XZKDy/1HLT6LxyzK
+VlXZDdeyFMw7jYZJsQ3Prx4UqO9WCa2yPfWJroiOjD2p0LAm92hpYVLMmFRRSfbA
+nZ4+fKu4W03kQihjF/fUCFTUKTztFJRUt7py/Kgurdv8em27x3SlxE+oNxtRpdMN
+gSboDlXf2lc3oeQ4GYvjpjzH5Jb0gSuzXap+2NAMN6B9trzcNQaBo0mGaGOfc83L
+qq4wmd8Ns3EL42io4F1CY0d75SXtMrY8SXm5UgbFvszJGmQqcjOd27Zss/avN8oa
+a15WKF7gGY7dzWVERXS7
+=eM50
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Sep_2012_13_41_42_+1000_mEB.XR++DIlGUmy6--
+--Signature=_Mon__17_Sep_2012_14_53_32_+1000_zxGvq9D/YucF4O4B--
