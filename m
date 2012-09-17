@@ -1,44 +1,50 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH -next] MIPS: ptrace: Add missing #include <asm/syscall.h>
-Date: Mon, 17 Sep 2012 22:20:16 +0200
-Message-ID: <1347913216-11140-1-git-send-email-geert@linux-m68k.org>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (arm-soc tree related)
+Date: Mon, 17 Sep 2012 13:32:33 -0700
+Message-ID: <20120917203233.GW4521@atomide.com>
+References: <20120917212615.91bc134d237dcd5968f9f549@canb.auug.org.au>
+ <201209171429.31794.arnd@arndb.de>
+ <20120917172208.GN4521@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from juliette.telenet-ops.be ([195.130.137.74]:53242 "EHLO
-	juliette.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755707Ab2IQUUY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 16:20:24 -0400
+Received: from mho-04-ewr.mailhop.org ([204.13.248.74]:54939 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752490Ab2IQUck (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 16:32:40 -0400
+Content-Disposition: inline
+In-Reply-To: <20120917172208.GN4521@atomide.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-arch/mips/kernel/ptrace.c: In function =E2=80=98syscall_trace_enter=E2=80=
-=99:
-arch/mips/kernel/ptrace.c:664: error: implicit declaration of function =
-=E2=80=98__syscall_get_arch=E2=80=99
-make[2]: *** [arch/mips/kernel/ptrace.o] Error 1
+* Tony Lindgren <tony@atomide.com> [120917 10:25]:
+> * Arnd Bergmann <arnd@arndb.de> [120917 07:30]:
+> > 
+> > If it requires plat/cpu.h, it should actually be limited to CONFIG_ARCH_OMAP,
+> > otherwise we will get the same problem on non-OMAP ARM builds. From what
+> > I can tell, the problem is the clocks_init function, which is the only
+> > part that is not completely generic.
+> > 
+> > The trivial workaround would be to enclose the "#include <plat/cpu.h>"
+> > statement in #ifdef CONFIG_ARCH_OMAP, but with the common clock code
+> > in place, we should probably be able to come up with a better solution
+> > that works independent of the omap platform.
+> 
+> There are patches coming to remove cpu_is_omap usage from drivers,
+> and until then we should just ifdef the plat/cpu.h include.
+> 
+> It is possible to use these kind of external PM chips with other
+> SoCs, they're just not omap related and that's why there drivers
+> have not had the Kconfig dependency. I'll post a patch for that.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-E.g. http://kisskb.ellerman.id.au/kisskb/buildresult/7223557/
+Looks like we can just remove the cpu_is_omap code with clock
+aliases, patch posted with Subject:
 
- arch/mips/kernel/ptrace.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+[PATCH] mfd: Fix compile for twl-core.c by removing cpu_is_omap usage
 
-diff --git a/arch/mips/kernel/ptrace.c b/arch/mips/kernel/ptrace.c
-index 94fd0f4..cc7c44f 100644
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -40,6 +40,7 @@
- #include <asm/uaccess.h>
- #include <asm/bootinfo.h>
- #include <asm/reg.h>
-+#include <asm/syscall.h>
-=20
- /*
-  * Called by kernel/ptrace.c when detaching..
---=20
-1.7.0.4
+Regards,
+
+Tony
