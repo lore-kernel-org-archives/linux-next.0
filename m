@@ -1,50 +1,57 @@
 From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: build failure after merge of the final tree
- (arm-soc tree related)
-Date: Mon, 17 Sep 2012 13:32:33 -0700
-Message-ID: <20120917203233.GW4521@atomide.com>
-References: <20120917212615.91bc134d237dcd5968f9f549@canb.auug.org.au>
- <201209171429.31794.arnd@arndb.de>
- <20120917172208.GN4521@atomide.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the staging
+ tree
+Date: Mon, 17 Sep 2012 13:53:38 -0700
+Message-ID: <20120917205338.GA11762@atomide.com>
+References: <20120917192005.ab08c24f98010107fa855edf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-04-ewr.mailhop.org ([204.13.248.74]:54939 "EHLO
+Received: from mho-04-ewr.mailhop.org ([204.13.248.74]:44139 "EHLO
 	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752490Ab2IQUck (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 16:32:40 -0400
+	with ESMTP id S1754924Ab2IQUxq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 16:53:46 -0400
 Content-Disposition: inline
-In-Reply-To: <20120917172208.GN4521@atomide.com>
+In-Reply-To: <20120917192005.ab08c24f98010107fa855edf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
 
-* Tony Lindgren <tony@atomide.com> [120917 10:25]:
-> * Arnd Bergmann <arnd@arndb.de> [120917 07:30]:
-> > 
-> > If it requires plat/cpu.h, it should actually be limited to CONFIG_ARCH_OMAP,
-> > otherwise we will get the same problem on non-OMAP ARM builds. From what
-> > I can tell, the problem is the clocks_init function, which is the only
-> > part that is not completely generic.
-> > 
-> > The trivial workaround would be to enclose the "#include <plat/cpu.h>"
-> > statement in #ifdef CONFIG_ARCH_OMAP, but with the common clock code
-> > in place, we should probably be able to come up with a better solution
-> > that works independent of the omap platform.
+* Stephen Rothwell <sfr@canb.auug.org.au> [120917 02:21]:
+> Hi all,
 > 
-> There are patches coming to remove cpu_is_omap usage from drivers,
-> and until then we should just ifdef the plat/cpu.h include.
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> drivers/staging/tidspbridge/core/wdt.c between commit c37a1747acbf
+> ("staging: tidspbridge: Prepare for irqs.h removal") from the  tree and
+> commit ec2c0825ca31 ("ARM: OMAP2+: Remove hardcoded IRQs and enable
+> SPARSE_IRQ") from the arm-soc tree.
 > 
-> It is possible to use these kind of external PM chips with other
-> SoCs, they're just not omap related and that's why there drivers
-> have not had the Kconfig dependency. I'll post a patch for that.
+> I fixed it up (I guess - see below) and can carry the fix as necessary
+> (no action is required).
 
-Looks like we can just remove the cpu_is_omap code with clock
-aliases, patch posted with Subject:
-
-[PATCH] mfd: Fix compile for twl-core.c by removing cpu_is_omap usage
+Yes thanks again. This is the right fix for now, eventually
+the numbers should come from platform data or device tree..
 
 Regards,
 
 Tony
+ 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/staging/tidspbridge/core/wdt.c
+> index 1ed1474,453ef74..0000000
+> --- a/drivers/staging/tidspbridge/core/wdt.c
+> +++ b/drivers/staging/tidspbridge/core/wdt.c
+> @@@ -25,8 -25,7 +25,8 @@@
+>   #include <dspbridge/host_os.h>
+>   
+>   
+>  +#define OMAP34XX_WDT3_BASE 		(0x49000000 + 0x30000)
+> - #define INT_34XX_WDT3_IRQ 		36
+> + #define INT_34XX_WDT3_IRQ 		(36 + NR_IRQS)
+>   
+>   static struct dsp_wdt_setting dsp_wdt;
+>   
