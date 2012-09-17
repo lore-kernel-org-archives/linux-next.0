@@ -1,72 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the mtd tree
-Date: Mon, 17 Sep 2012 18:02:43 +1000
-Message-ID: <20120917180243.ba626fb72dced777cd4e057e@canb.auug.org.au>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: linux-next: build failure after merge of the arm64 tree
+Date: Mon, 17 Sep 2012 09:41:08 +0100
+Message-ID: <20120917084108.GA23549@arm.com>
+References: <20120917112405.4f7b7555209ad024e0531b21@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Sep_2012_18_02_43_+1000_TZtudnuFXDg9nuh8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, David Woodhouse <dwmw2@infradead.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__17_Sep_2012_18_02_43_+1000_TZtudnuFXDg9nuh8
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:62435 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755016Ab2IQIlx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Sep 2012 04:41:53 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20120917112405.4f7b7555209ad024e0531b21@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi all,
+Hi Stephen,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-imx/clk-imx51-imx53.c between commit 75453a08e365 ("ARM:
-i.MX5: Add nand oftree support") from the mtd tree and commit
-a745f039b901 ("ARM i.MX53: register CAN clocks") from the arm-soc tree.
+On Mon, Sep 17, 2012 at 02:24:05AM +0100, Stephen Rothwell wrote:
+> After merging the arm64 tree, today's linux-next build ()
+> failed like this:
+> 
+> arch/powerpc/kernel/sys_ppc32.c:146:17: error: conflicting types for 'compat_sys_sendfile'
+> include/linux/compat.h:593:16: note: previous declaration of 'compat_sys_sendfile' was here
+> arch/powerpc/kernel/sys_ppc32.c:231:17: error: conflicting types for 'compat_sys_sched_rr_get_interval'
+> include/linux/compat.h:596:16: note: previous declaration of 'compat_sys_sched_rr_get_interval' was here
+> 
+> Caused by commits 2a23f0dba0c6 ("fs: Add generic compat_sys_sendfile
+> implementation") and a0c6fc489bf6 ("compat: Add generic
+> compat_sys_sched_rr_get_interval implementation").  Grep is your friend.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Thanks for this. It was an attempt to add generic compat_sys_sendfile()
+and compat_sys_sched_rr_get_interval() implementations to be shared by
+other architectures (patches for the other architectures to be pushed
+separately). I'll drop them for now as PowerPC has different prototypes
+and push the patches separately.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-imx/clk-imx51-imx53.c
-index e81f17a,e5165a8..0000000
---- a/arch/arm/mach-imx/clk-imx51-imx53.c
-+++ b/arch/arm/mach-imx/clk-imx51-imx53.c
-@@@ -456,7 -461,10 +462,11 @@@ int __init mx53_clocks_init(unsigned lo
-  	clk_register_clkdev(clk[ssi1_ipg_gate], NULL, "63fcc000.ssi");
-  	clk_register_clkdev(clk[ssi2_ipg_gate], NULL, "50014000.ssi");
-  	clk_register_clkdev(clk[ssi3_ipg_gate], NULL, "63fd0000.ssi");
- +	clk_register_clkdev(clk[nfc_gate], NULL, "63fdb000.nand");
-+ 	clk_register_clkdev(clk[can1_ipg_gate], "ipg", "53fc8000.can");
-+ 	clk_register_clkdev(clk[can1_serial_gate], "per", "53fc8000.can");
-+ 	clk_register_clkdev(clk[can2_ipg_gate], "ipg", "53fcc000.can");
-+ 	clk_register_clkdev(clk[can2_serial_gate], "per", "53fcc000.can");
- =20
-  	/* set SDHC root clock to 200MHZ*/
-  	clk_set_rate(clk[esdhc_a_podf], 200000000);
-
---Signature=_Mon__17_Sep_2012_18_02_43_+1000_TZtudnuFXDg9nuh8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQVtkjAAoJEECxmPOUX5FEcTcP/iGCtwVUZQdFgmm2+c/vw4sl
-lu1hEz/gXdVvkVaYxTBJYOpKSAx2OXtcIiNXlvY0heQKOs46zOCKVoDx4MLVC5ea
-wtU8cKIkWkR0HCDyTVHFlXiZi7yOkb+tgGShvDX18KNIaRyqx2ap4HBSGwPPWuIP
-lOnOMao/kvD53AyOAuHArdiAsCAdff29+zeNDBrIG4A4AnjRlijJtL+R+amNJDvn
-ww1PVZjIJ0895BkoQn+LmEN9Ok5nvYAx9Im0207UYKneYrHdcL/DoO1Eu1ZQJE4V
-kFi+Y/YkGkumprPw7XAiN0EpXGL4+dlaHQ37OSDD3BhGnGQBXS5WappObzwwSkIO
-LYwVWuqvqJTtgO/FTuLSXtgd4ANRzZCUUUuE0tBopRLCP6/6qdFuMRfB251NB9pL
-XLGqdrLbFyj38wxiZC5+odrzmSed86D//YhL4DMC111yJHWcFMZISzoJDk51AfCe
-CTCVITxgY242lzvs7KOsmVV6VCEmZ3dD/Zt7tV9OKBmWhl9vZzYVN9OkxB9OEUxs
-rN0wmk2RI7+zgrbBx2Jd0E/jw5F4uvtskHQzgvYHuZiNL6+lJ2/zKIN530ugW8P3
-iuieMutMLFImy5i/U+q419MeAdP5fPBjDYTYxaxPExediP+gr9av5cQjL9Yu3RRg
-g6tcJgzWi2Mr5ad3v2Tg
-=ZVCx
------END PGP SIGNATURE-----
-
---Signature=_Mon__17_Sep_2012_18_02_43_+1000_TZtudnuFXDg9nuh8--
+-- 
+Catalin
