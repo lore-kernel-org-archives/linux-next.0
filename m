@@ -1,66 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (mfd tree
+Subject: linux-next: build failure after merge of the final tree (akpm tree
  related)
-Date: Mon, 17 Sep 2012 21:38:33 +1000
-Message-ID: <20120917213833.2b3ac86e097d131065a0541d@canb.auug.org.au>
+Date: Mon, 17 Sep 2012 21:49:29 +1000
+Message-ID: <20120917214929.c41984a57b061048b857e876@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Sep_2012_21_38_33_+1000_sfel/zOer5OHO1wO"
+ boundary="Signature=_Mon__17_Sep_2012_21_49_29_+1000_zBg7eDwY30C0m=2t"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59430 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40642 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755973Ab2IQLiz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 07:38:55 -0400
+	with ESMTP id S1755887Ab2IQLti (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 07:49:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gyungoh Yoo <jack.yoo@maxim-ic.com>, Stephen Warren <swarren@nvidia.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Fries <david@fries.net>
 
---Signature=_Mon__17_Sep_2012_21_38_33_+1000_sfel/zOer5OHO1wO
+--Signature=_Mon__17_Sep_2012_21_49_29_+1000_zBg7eDwY30C0m=2t
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+After merging the final tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-drivers/mfd/max8907.c: In function 'max8907_i2c_probe':
-drivers/mfd/max8907.c:248:10: error: too few arguments to function 'mfd_add=
-_devices'
-include/linux/mfd/core.h:100:12: note: declared here
+drivers/rtc/class.c: In function 'rtc_init':
+drivers/rtc/class.c:261:23: error: 'rtc_suspend' undeclared (first use in t=
+his function)
+drivers/rtc/class.c:261:23: note: each undeclared identifier is reported on=
+ly once for each function it appears in
+drivers/rtc/class.c:262:22: error: 'rtc_resume' undeclared (first use in th=
+is function)
 
-Caused by commit 6c2591532a6f ("mfd: Add MAX8907 core driver") from the
-mfd tree interacting with commit 0848c94fb4a5 ("mfd: core: Push irqdomain
-mapping out into devices") from Linus' tree.
+Caused by commit "rtc_sysfs_show_hctosys-return-0-if-resume-failed-fix"
+from the akpm tree.
 
-I have added the following patch and will carry it as a merge fix:
+I have added the following patch for today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 17 Sep 2012 21:31:20 +1000
-Subject: [PATCH] mfd: fix up for mfd_add_devices() API change
+Date: Mon, 17 Sep 2012 21:43:56 +1000
+Subject: [PATCH] rtc_sysfs_show_hctosys-return-0-if-resume-failed-fix-2
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/mfd/max8907.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/class.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/max8907.c b/drivers/mfd/max8907.c
-index 5295276..6497c98 100644
---- a/drivers/mfd/max8907.c
-+++ b/drivers/mfd/max8907.c
-@@ -245,7 +245,7 @@ static __devinit int max8907_i2c_probe(struct i2c_clien=
-t *i2c,
- 	enable_irq(max8907->i2c_gen->irq);
+diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
+index ca58ea9..f8a0aab 100644
+--- a/drivers/rtc/class.c
++++ b/drivers/rtc/class.c
+@@ -34,8 +34,9 @@ static void rtc_device_release(struct device *dev)
+ #ifdef CONFIG_RTC_HCTOSYS_DEVICE
+ /* Result of the last RTC to system clock attempt. */
+ int rtc_hctosys_ret =3D -ENODEV;
++#endif
 =20
- 	ret =3D mfd_add_devices(max8907->dev, -1, max8907_cells,
--			      ARRAY_SIZE(max8907_cells), NULL, 0);
-+			      ARRAY_SIZE(max8907_cells), NULL, 0, NULL);
- 	if (ret !=3D 0) {
- 		dev_err(&i2c->dev, "failed to add MFD devices %d\n", ret);
- 		goto err_add_devices;
+-#ifdef CONFIG_PM
++#if defined(CONFIG_PM) && defined(CONFIG_RTC_HCTOSYS_DEVICE)
+ /*
+  * On suspend(), measure the delta between one RTC and the
+  * system's wall clock; restore it on resume().
+@@ -129,7 +130,6 @@ static int rtc_resume(struct device *dev)
+ #define rtc_suspend	NULL
+ #define rtc_resume	NULL
+ #endif
+-#endif
+=20
+=20
+ /**
 --=20
 1.7.10.280.gaa39
 
@@ -68,25 +79,25 @@ t *i2c,
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__17_Sep_2012_21_38_33_+1000_sfel/zOer5OHO1wO
+--Signature=_Mon__17_Sep_2012_21_49_29_+1000_zBg7eDwY30C0m=2t
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQVwu5AAoJEECxmPOUX5FE7bEP/0zCbVtzGxQHwYOG7VVWgs1Y
-H4BYzWNM2tzV0e4Vdi/KnULyOyQFcDc4iEGlDyHRqfupM+4ecRaCKwFUxgNcHqOj
-53vk9kIYu8gQHyifnL0GcURLzC7aAW57jLnZCUr3dpb1WYaG6nmjIwRYIOPuXJGW
-K4Dj/ZFl2IvTAQ+TxHIWe5a6hQmLYIiYjQi+DPK5idVg8NGFtx3mFJu83WcvLiRN
-cIOMUabej8jjVOAwB0YvX5WTwC+tuekuiJoS4cwPkJvvUxqqRLobXhQ/an6ou4N2
-0wYOqOUmCMllC/low+57EUqRTaeOBZDLsQIuPAoCQbrPpjLIKMzyVmEmSe43mPja
-wh7kEN+yorePcKd3iPr4nkuY/L8ba4Hvz5gmmhePfvaeqN9fEkSkb54UdWe82QVh
-WHH3+2lk3nWkZL9tsox5oYGuehKt0q9jy90qZ9Ge5kmocDivoFX/JIIvKpbm5nWB
-KIOJ111UivewkSgT+tE2ZBM1cxkFutsvv+LgxDhrSKAwzTb9NubpFNH89Y1MP/Bg
-M+JX1e+BtTGovR/bHlAfna51Jc3aCsjaOy9njUThdDz3Nw/R+hbdETmyQy2xoBJB
-yZzB0CRu3yY/bSvzK8yp2hUlgK8gHdxt+oYUHb7vioy8DhlHY1Atk8R3OmSXPrp2
-NDc+uofD7Gw7j25UQkZT
-=E3T3
+iQIcBAEBCAAGBQJQVw5JAAoJEECxmPOUX5FEwMYP/3ShBW3bnOoFH7PAry5fCcEC
+xDRWVYlFB6cGdbN6a40Y50HWc8DUS/w4BekKQOL9WdfpIWg6evsSXvUr1m4DSA0j
+VTgHI7FcP0zc/XMOpFPvvBkKkFBiBcGzWAlTkHmXarHFpzjcHUtGtLhTrLbqSI0X
+Gv12sWyi64B1dmc/oz5EfnZ4E5MJpCuZmxeHQDzXTsywHFopBoQKfCtQVb3GQsJb
+ZxaZ50QTnnC9nVzToTYtUMCfEYdkC7L55NK3Ge6rOcKIEFevJoc4derisNhWKOhf
+T0z5UHA2+unjpsHb6pB0UB9iOsjx5WYNo/To2LJ86gKItHuT9Pxa8wdVwwN5fx23
+6z3gTTKASRyLJuL0mAirsEzeHK7mqsKTGm65u79CZqZ9ulSm1vzROYfLe1nJ2EOb
+L0bq19JVQ9TMYLS0FYiEl6rU4+k55Ph+FdyVlDkYK/cb7G2P4puUaNefQLJ4WCQt
+sYrG2IOAgsQSgux2vT5RQMFsAFPkfX+gGXKyx5mgqVteiOvM2ONu0XXIUh6KIXwI
+cd9vtSf+dTjj65k4Cf6osx/6v12sdWrSOSy32fisHr7AOUN795rtc8EoV/ML8xS0
+CtGWtMIw6Faa7Tg/jIDfVeMa45646rg5ZpVgJ3JJET0Bdrpyk4yTn80o6CihiQwU
++8SwYawElN+kDry804dF
+=yF26
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Sep_2012_21_38_33_+1000_sfel/zOer5OHO1wO--
+--Signature=_Mon__17_Sep_2012_21_49_29_+1000_zBg7eDwY30C0m=2t--
