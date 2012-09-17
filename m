@@ -1,28 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Mon, 17 Sep 2012 14:53:32 +1000
-Message-ID: <20120917145332.82a0a723c73904943190d493@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the tty tree
+Date: Mon, 17 Sep 2012 17:30:50 +1000
+Message-ID: <20120917173050.37b0c68a7a371017d0ed73ea@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Sep_2012_14_53_32_+1000_zxGvq9D/YucF4O4B"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@intel.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__17_Sep_2012_17_30_50_+1000_3aQB.5YGLX6UAZ8m"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35711 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751367Ab2IQHa7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 03:30:59 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
---Signature=_Mon__17_Sep_2012_14_53_32_+1000_zxGvq9D/YucF4O4B
+--Signature=_Mon__17_Sep_2012_17_30_50_+1000_3aQB.5YGLX6UAZ8m
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Greg,
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/i915/i915_dma.c between commit 99d0b1db6ccd ("drm/i915:
-initialize dpio_lock spin lock") from Linus' tree and commit c6a828d3269a
-("drm/i915: move all rps state into dev_priv->rps") from the drm tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/serial/mos7840.c between commit adc8d746caa6 ("tty: move the
+termios object into the tty") from the tty tree and commit 9c134a14f2da
+("USB: serial: mos7840.c: remove dbg() usage") from the usb tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -31,40 +35,54 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/i915_dma.c
-index 914c0df,2c09900..0000000
---- a/drivers/gpu/drm/i915/i915_dma.c
-+++ b/drivers/gpu/drm/i915/i915_dma.c
-@@@ -1586,8 -1606,7 +1606,8 @@@ int i915_driver_load(struct drm_device=20
+diff --cc drivers/usb/serial/mos7840.c
+index 402c32d,ffbe4ee..0000000
+--- a/drivers/usb/serial/mos7840.c
++++ b/drivers/usb/serial/mos7840.c
+@@@ -2159,15 -2086,15 +2086,15 @@@ static void mos7840_set_termios(struct=20
+  		return;
+  	}
  =20
-  	spin_lock_init(&dev_priv->irq_lock);
-  	spin_lock_init(&dev_priv->error_lock);
-- 	spin_lock_init(&dev_priv->rps_lock);
-+ 	spin_lock_init(&dev_priv->rps.lock);
- +	spin_lock_init(&dev_priv->dpio_lock);
+- 	dbg("%s", "setting termios - ");
++ 	dev_dbg(&port->dev, "%s", "setting termios - \n");
  =20
-  	if (IS_IVYBRIDGE(dev) || IS_HASWELL(dev))
-  		dev_priv->num_pipe =3D 3;
+ -	cflag =3D tty->termios->c_cflag;
+ +	cflag =3D tty->termios.c_cflag;
+ =20
+- 	dbg("%s - clfag %08x iflag %08x", __func__,
+- 	    tty->termios.c_cflag, RELEVANT_IFLAG(tty->termios.c_iflag));
+- 	dbg("%s - old clfag %08x old iflag %08x", __func__,
+- 	    old_termios->c_cflag, RELEVANT_IFLAG(old_termios->c_iflag));
+- 	dbg("%s - port %d", __func__, port->number);
++ 	dev_dbg(&port->dev, "%s - clfag %08x iflag %08x\n", __func__,
+ -		tty->termios->c_cflag, RELEVANT_IFLAG(tty->termios->c_iflag));
+++		tty->termios.c_cflag, RELEVANT_IFLAG(tty->termios.c_iflag));
++ 	dev_dbg(&port->dev, "%s - old clfag %08x old iflag %08x\n", __func__,
++ 		old_termios->c_cflag, RELEVANT_IFLAG(old_termios->c_iflag));
++ 	dev_dbg(&port->dev, "%s - port %d\n", __func__, port->number);
+ =20
+  	/* change the port settings to the new ones specified */
+ =20
 
---Signature=_Mon__17_Sep_2012_14_53_32_+1000_zxGvq9D/YucF4O4B
+--Signature=_Mon__17_Sep_2012_17_30_50_+1000_3aQB.5YGLX6UAZ8m
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQVqzMAAoJEECxmPOUX5FE39QP/iYph/SR1EWKqe0WgeBL/itp
-g0Jol7EL1pVlWQsW72cJyRK+JFiYpHhoIBQ7+mh5Ia7cn3OrQ+lhJdHI5O0fPdsY
-bdygdDPlohgAJHl/vg3wkKOmE2n2gjoERsnX8ry9xZMmjfHw3y0ndPe40o56k1G9
-oVnIzkwjaLShX+qxLBY7Vdcq9QswE/HqDehuNffJOHnosHdS55Z8smSRIRnlvzPE
-DyRk6+OTcxf6KEMUZotQsTXtQgzFsh1bGSciK6RypSqz0sIGIcG0dhEDZo5LtYQx
-vSBFaiAg45gpYy7CDx32nD/QhkhCnBuKdDF4MsS/C0PIsfFKV5Dwp7pPpq5fGBVG
-R3WlI0PiRcxN2M8u/OcykcVOHbVOvXRGr8dtEIWjX1fr57y4XZKDy/1HLT6LxyzK
-VlXZDdeyFMw7jYZJsQ3Prx4UqO9WCa2yPfWJroiOjD2p0LAm92hpYVLMmFRRSfbA
-nZ4+fKu4W03kQihjF/fUCFTUKTztFJRUt7py/Kgurdv8em27x3SlxE+oNxtRpdMN
-gSboDlXf2lc3oeQ4GYvjpjzH5Jb0gSuzXap+2NAMN6B9trzcNQaBo0mGaGOfc83L
-qq4wmd8Ns3EL42io4F1CY0d75SXtMrY8SXm5UgbFvszJGmQqcjOd27Zss/avN8oa
-a15WKF7gGY7dzWVERXS7
-=eM50
+iQIcBAEBCAAGBQJQVtGqAAoJEECxmPOUX5FEOskP/i+4gefK3iaqns5jpDZTN/qr
+vrQXExg9cRpoXb4xczF09QNYhl3KDIld16xiR8SE87m4shao81oAQes5PAKTBO6n
++Y34sayDA42FtmqAKLOEATJmE1GbJ5LoTN8sPehqguZnzdoTfWIDn9f2XO+yAoG6
+NSi8cN5P/XrBcOE/ypgLblT8XHWGcgJqs4GS1dq+ruJgUinRI9+Jxj7oLVgSII+j
++lYg2jfz7q6ARlzPr6J3EY1WLVrK8FSFKqionHB74o7me+ijFXRyarNv06RrktHU
+JKoHgm13lnHkP4uObiS8tziZodmjSxBX5a4mrdz3oRdCHhjoaqvPRcWJon1qGqKB
+PYPfiqx7iUnZoDGTWozOlu5NGaHXOp4eoNnIRgrQI90prAyRKjkoZdQw97QT7lGW
+arRpp/FFHwqEfFS70lz/RrcCCPSFvempHD4ZVTnbk54Ll5mB3sfz/GNrbCB+nK98
+SCWGulc4qq2ZGfTDd1O9gPs4Q9IxKRiusL52cL/YSzJYTRjNfUoI9lulgx+JXrmm
+kZFYFMfWXQhD8mya9aDZPXrhqypGXFjx6x7neYWMIRwZ/C6Z/8u4CHxnTMPSmCsE
+vSJsb0JLZP58H+DKfZiq71qsS9AUB5wKDQJlN5V7n/QzfsHe1JMp5J74eOrOulWr
+K2fV0Dj7/i15cjp/mCcX
+=uyMO
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Sep_2012_14_53_32_+1000_zxGvq9D/YucF4O4B--
+--Signature=_Mon__17_Sep_2012_17_30_50_+1000_3aQB.5YGLX6UAZ8m--
