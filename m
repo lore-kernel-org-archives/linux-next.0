@@ -1,44 +1,90 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the final tree (mfd
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: build failure after merge of the final tree (arm-soc
  tree related)
-Date: Mon, 17 Sep 2012 15:28:36 +0200
-Message-ID: <20120917132836.GS3647@sortiz-mobl>
-References: <20120917213833.2b3ac86e097d131065a0541d@canb.auug.org.au>
+Date: Mon, 17 Sep 2012 07:11:19 -0700
+Message-ID: <20120917141119.GA18715@quad.lixom.net>
+References: <20120917212615.91bc134d237dcd5968f9f549@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:31007 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751153Ab2IQN2j (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Sep 2012 09:28:39 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20120917213833.2b3ac86e097d131065a0541d@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20120917212615.91bc134d237dcd5968f9f549@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gyungoh Yoo <jack.yoo@maxim-ic.com>, Stephen Warren <swarren@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Samuel Ortiz <sameo@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Hi,
 
-On Mon, Sep 17, 2012 at 09:38:33PM +1000, Stephen Rothwell wrote:
+On Mon, Sep 17, 2012 at 09:26:15PM +1000, Stephen Rothwell wrote:
 > Hi all,
 > 
 > After merging the final tree, today's linux-next build (powerpc
 > allyesconfig) failed like this:
 > 
-> drivers/mfd/max8907.c: In function 'max8907_i2c_probe':
-> drivers/mfd/max8907.c:248:10: error: too few arguments to function 'mfd_add_devices'
-> include/linux/mfd/core.h:100:12: note: declared here
+> drivers/mfd/twl-core.c:49:22: fatal error: plat/cpu.h: No such file or directory
 > 
-> Caused by commit 6c2591532a6f ("mfd: Add MAX8907 core driver") from the
-> mfd tree interacting with commit 0848c94fb4a5 ("mfd: core: Push irqdomain
-> mapping out into devices") from Linus' tree.
-My bad. And Stephen even warned me about it...
-It should be all fixed now, sorry about that.
+> Caused by commit 7d7e1eba7e92 ("ARM: OMAP2+: Prepare for irqs.h removal").
+> 
+> I have added the following patch to restrict this driver to ARM until it
+> is fixed:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 17 Sep 2012 21:18:21 +1000
+> Subject: [PATCH] ARM: retrict TWL4030_CORE to ARM while it is broken
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/mfd/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index df850c4..af5e5b7 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -257,6 +257,7 @@ config MENELAUS
+>  config TWL4030_CORE
+>  	bool "Texas Instruments TWL4030/TWL5030/TWL6030/TPS659x0 Support"
+>  	depends on I2C=y && GENERIC_HARDIRQS
+> +	depends on ARM
+>  	select IRQ_DOMAIN
+>  	help
+>  	  Say yes here if you have TWL4030 / TWL6030 family chip on your board.
 
-Cheers,
-Samuel.
+Gack. This will break on non-OMAP ARM platforms now too, so it needs to be
+depends on ARCH_OMAP instead of ARM.
 
+Tony, can I get an Acked-by so I can apply this to next/cleanup? Sam, if
+you prefer to apply it yourself, let me know.
+
+
+-Olof
+
+>From 571a231c7f38b720001e1c7c3d5fb08fe265d03b Mon Sep 17 00:00:00 2001
+From: Olof Johansson <olof@lixom.net>
+Date: Mon, 17 Sep 2012 07:05:04 -0700
+Subject: [PATCH] MFD: make TWL4030_CORE depend on ARCH_OMAP
+
+It uses OMAP-only header files, and since it's an OMAP companion chip
+it doesn't really make sense to enable on other platforms.
+
+Signed-off-by: Olof Johansson <olof@lixom.net>
+---
+ drivers/mfd/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index b1a1462..d48083b 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -256,7 +256,7 @@ config MENELAUS
+ 
+ config TWL4030_CORE
+ 	bool "Texas Instruments TWL4030/TWL5030/TWL6030/TPS659x0 Support"
+-	depends on I2C=y && GENERIC_HARDIRQS
++	depends on I2C=y && GENERIC_HARDIRQS && ARCH_OMAP
+ 	select IRQ_DOMAIN
+ 	help
+ 	  Say yes here if you have TWL4030 / TWL6030 family chip on your board.
 -- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+1.7.10.1.488.g05fbf7a
