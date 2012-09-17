@@ -1,43 +1,75 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: build failure after merge of the arm64 tree
-Date: Mon, 17 Sep 2012 09:41:08 +0100
-Message-ID: <20120917084108.GA23549@arm.com>
-References: <20120917112405.4f7b7555209ad024e0531b21@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the staging tree
+Date: Mon, 17 Sep 2012 19:20:05 +1000
+Message-ID: <20120917192005.ab08c24f98010107fa855edf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__17_Sep_2012_19_20_05_+1000_S5mXClr=.F4ef9tE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:62435 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755016Ab2IQIlx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Sep 2012 04:41:53 -0400
-Content-Disposition: inline
-In-Reply-To: <20120917112405.4f7b7555209ad024e0531b21@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54237 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754096Ab2IQJUP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 05:20:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Greg KH <greg@kroah.com>
 
-Hi Stephen,
+--Signature=_Mon__17_Sep_2012_19_20_05_+1000_S5mXClr=.F4ef9tE
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 17, 2012 at 02:24:05AM +0100, Stephen Rothwell wrote:
-> After merging the arm64 tree, today's linux-next build ()
-> failed like this:
-> 
-> arch/powerpc/kernel/sys_ppc32.c:146:17: error: conflicting types for 'compat_sys_sendfile'
-> include/linux/compat.h:593:16: note: previous declaration of 'compat_sys_sendfile' was here
-> arch/powerpc/kernel/sys_ppc32.c:231:17: error: conflicting types for 'compat_sys_sched_rr_get_interval'
-> include/linux/compat.h:596:16: note: previous declaration of 'compat_sys_sched_rr_get_interval' was here
-> 
-> Caused by commits 2a23f0dba0c6 ("fs: Add generic compat_sys_sendfile
-> implementation") and a0c6fc489bf6 ("compat: Add generic
-> compat_sys_sched_rr_get_interval implementation").  Grep is your friend.
+Hi all,
 
-Thanks for this. It was an attempt to add generic compat_sys_sendfile()
-and compat_sys_sched_rr_get_interval() implementations to be shared by
-other architectures (patches for the other architectures to be pushed
-separately). I'll drop them for now as PowerPC has different prototypes
-and push the patches separately.
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/staging/tidspbridge/core/wdt.c between commit c37a1747acbf
+("staging: tidspbridge: Prepare for irqs.h removal") from the  tree and
+commit ec2c0825ca31 ("ARM: OMAP2+: Remove hardcoded IRQs and enable
+SPARSE_IRQ") from the arm-soc tree.
 
--- 
-Catalin
+I fixed it up (I guess - see below) and can carry the fix as necessary
+(no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/staging/tidspbridge/core/wdt.c
+index 1ed1474,453ef74..0000000
+--- a/drivers/staging/tidspbridge/core/wdt.c
++++ b/drivers/staging/tidspbridge/core/wdt.c
+@@@ -25,8 -25,7 +25,8 @@@
+  #include <dspbridge/host_os.h>
+ =20
+ =20
+ +#define OMAP34XX_WDT3_BASE 		(0x49000000 + 0x30000)
+- #define INT_34XX_WDT3_IRQ 		36
++ #define INT_34XX_WDT3_IRQ 		(36 + NR_IRQS)
+ =20
+  static struct dsp_wdt_setting dsp_wdt;
+ =20
+
+--Signature=_Mon__17_Sep_2012_19_20_05_+1000_S5mXClr=.F4ef9tE
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQVutFAAoJEECxmPOUX5FENCcP/2p3IV/aTfk6pCihRC4Zzp/V
+UEg6dO58h9zxYlkdJH344S6DJHXV1j+klwPd9dyhrMDz5mt3vT/aMXbyfm20PEyo
+enqlo10Wn9s+Zxk5LHwG2aX8lUpfab5t/K/AV9Hbjj2IBp+JnJJHcdj4ofSlrb/V
+/ogOE7U2tC1kd9UEzJ3DIXUY2gCu3GEeV0EN3SrvkNPw4jnMzCisyUjvYLHAD0NM
+m9wfTznirIW0EPVHBS67R/nHjOvRo9++KFus/ymVtXRYqubruMtv67/1MQYakYuG
+/TkrOcMjvNefkDuXF7BHjUkMqGtYeL9pjBd1RjVSzCjMylcHsmO0IiKNiSyRxpTB
+CY99v8cUPXgyYYOvBpU9/ibSrRoEdiJxULlIMmKbUczPe20jip+NzordkTwQElV+
+S7kllJsnMw5ptdNj34a1KyAF1kgkiL5jNcck6I9uRE8BuJAbNIWMm43eXdrQUMYm
+hfrp2QkUNcNPUGPk9OT98KBvKuyHrLHgV1O4rEbKMKtbLTS/cXdzzFI4V2x4B3uZ
+QOSjqCqZdOdY9rLNSHuCYCjuavdy+QsvjpRdFOVgUblEVRtI4f7QgjWD0CvAOtjE
+aV+5/NRnoQytjMnE85+2odp4SaAAShV0xQsnKvIsm6qJsNF7wHPKiQ0reHd8y4GJ
+JTxUF/W8qkGZ2Yk33zTW
+=fyaY
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__17_Sep_2012_19_20_05_+1000_S5mXClr=.F4ef9tE--
