@@ -1,43 +1,52 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] staging: fix csr printk format warning
-Date: Mon, 17 Sep 2012 10:33:18 -0700
-Message-ID: <50575EDE.5040207@xenotime.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for Sept 17 (jfs)
+Date: Mon, 17 Sep 2012 22:10:27 +0200
+Message-ID: <CAMuHMdWSTNb+YAyHR5F0kkHjDM8iVgRV352OcZ-epvNTcx+pBA@mail.gmail.com>
 References: <20120917215938.11c456c113ac3b015cb2d5ae@canb.auug.org.au>
+	<505745CF.8040202@xenotime.net>
+	<505754EB.8060907@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy12-pub.bluehost.com ([50.87.16.10]:45879 "HELO
-	oproxy12-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1756383Ab2IQReD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 13:34:03 -0400
-In-Reply-To: <20120917215938.11c456c113ac3b015cb2d5ae@canb.auug.org.au>
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:46748 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755759Ab2IQUK2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 16:10:28 -0400
+In-Reply-To: <505754EB.8060907@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tino Reichardt <list-jfs@mcmilk.de>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+Hi Dave.
 
-Fix printk format warning on i386/X86_32 by using 't' for ptrdiff_t.
-Also builds cleanly on x86_64.
+On Mon, Sep 17, 2012 at 6:50 PM, Dave Kleikamp <dave.kleikamp@oracle.com> wrote:
+>> modular build:
+>> ERROR: "__divdi3" [fs/jfs/jfs.ko] undefined!
+>>
+>> or builtin:
+>> fs/built-in.o: In function `dbDiscardAG':
+>> (.text+0x12988b): undefined reference to `__divdi3'
+>
+> Thanks Randy.
+>
+> This should fix it. I'll integrate it back into the proper patch in the
+> jfs tree for the next pull.
+>
+> jfs: fix i386 build error. Replace 64-bit division with do_div()
+>
+> Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
 
-drivers/staging/csr/csr_wifi_hip_udi.c: In function 'unifi_print_status':
-drivers/staging/csr/csr_wifi_hip_udi.c:151:27: warning: format '%ld' expects type 'long int', but argument 5 has type 'int'
+Thx, same issue on m68k, and your patch fixed it, so
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
- drivers/staging/csr/csr_wifi_hip_udi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
---- linux-next-20120917.orig/drivers/staging/csr/csr_wifi_hip_udi.c
-+++ linux-next-20120917/drivers/staging/csr/csr_wifi_hip_udi.c
-@@ -146,7 +146,7 @@ s32 unifi_print_status(card_t *card, cha
-                           (u16)card->to_host_signals_w);
-     UNIFI_SNPRINTF_RET(p, remaining, written);
-     written = scnprintf(p, remaining,
--                          "fh buffer contains: %d signals, %ld bytes\n",
-+                          "fh buffer contains: %d signals, %td bytes\n",
-                           card->fh_buffer.count,
-                           card->fh_buffer.ptr - card->fh_buffer.buf);
-     UNIFI_SNPRINTF_RET(p, remaining, written);
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
