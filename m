@@ -1,63 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the target-updates tree with Linus'
- tree
-Date: Mon, 17 Sep 2012 13:28:55 +1000
-Message-ID: <20120917132855.097d98caed7d0ec3642a6302@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the target-updates tree
+Date: Mon, 17 Sep 2012 13:41:42 +1000
+Message-ID: <20120917134142.c7948ae04bdeabe1a863e464@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Sep_2012_13_28_55_+1000_R+E=Th+e9.zbYQ5C"
+ boundary="Signature=_Mon__17_Sep_2012_13_41_42_+1000_mEB.XR++DIlGUmy6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39254 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:38129 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753189Ab2IQD3F (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Sep 2012 23:29:05 -0400
+	with ESMTP id S1753387Ab2IQDlu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Sep 2012 23:41:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Roland Dreier <roland@purestorage.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__17_Sep_2012_13_28_55_+1000_R+E=Th+e9.zbYQ5C
+--Signature=_Mon__17_Sep_2012_13_41_42_+1000_mEB.XR++DIlGUmy6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Nicholas,
 
-Today's linux-next merge of the target-updates tree got a conflict in
-drivers/target/target_core_transport.c between commit 6138ed2ab879
-("target: move transport_get_sense_data") from Linus' tree and commit
-867c8e7dae31 ("target: Simplify fabric sense data length handling") from
-the target-updates tree.
+After merging the target-updates tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I just removed the latter version of transport_get_sense_data() (which
-has been renamed to transport_get_sense_buffer() and changed in Linus'
-tree) and can carry the fix as necessary - someone should really look at
-the result when it is available.
+drivers/target/target_core_transport.c: In function 'transport_get_sense_bu=
+ffer':
+drivers/target/target_core_transport.c:582:22: error: 'struct target_core_f=
+abric_ops' has no member named 'set_fabric_sense_len'
 
+I can only assume that this has been caused by the (largish) changes that
+went into Linus' tree recently conflicting with changes in the
+target-updates tree.
+
+I have dropped the target-updates tree for today.  Please sort the mess out.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__17_Sep_2012_13_28_55_+1000_R+E=Th+e9.zbYQ5C
+--Signature=_Mon__17_Sep_2012_13_41_42_+1000_mEB.XR++DIlGUmy6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQVpj3AAoJEECxmPOUX5FEEEsQAIQq57bYwKgmkomsTGQ9OEOB
-A2i1jO08GENDFXjGNC/VHembXdzkZyc5PdKwT/8RL8LdjEpI0LV/7xFJ81MTVlcc
-8RGdm/Sdmk9t/5CFlD/rGqPU9N40usDlsUWSh/2moUmh3e7w6yKS5hhW0m9OGG6n
-sKm563KeyU1l0jqOLKkPcq8uhm4mqiooXEa/IUWitMVK1F2UBhVYUdutf2Q3bSR2
-6N38/ntnqTOMeThDJM+AeZYymkc8mcAH1yPa62cszEPbuSEie4OvGgUYXk8VYYFt
-TrUws/PUmv7Pb63zUsJO4qN7bL2o7R63EI0OsJ8YALLkunlQkkizCYwuc6vGDAGY
-j3Pwl2AnWAJ0CnRGISB9OtKi47lwDfZYRlqtMSFbZbuNK51SMwER0T0Dt1jIrBXI
-UVdj2Du0weMR+qZkZdbh8GVGWnQatu4pv3S14sjz1OPuUKPEi3p0c9cr8ySLmL3Q
-2ljqsHdyItXAxWq41rSAA1wkUTwu4w2CpatpPncbCvsbH515r0WNAmq+JtR9lrAU
-bNbP68DpK5laj/0EU8Z5OikrIlJQq6cgby7BejDuGYkTuz6YWGW1ZBEnMYupRhhu
-n/BLxi797b3EuAS5zWbltFY/9J+AWq+SeIUOfR4WFqAPaRQoLg21dcsljgW0k5Aq
-UQ4pnIN1J6BlWF0cLRDQ
-=hqPP
+iQIcBAEBCAAGBQJQVpv2AAoJEECxmPOUX5FEoAUQAIR7A1MTTrtKc2nqRry/XGz7
+NWZnWIZ4+UVTZ41+npLyBCSg1SKq2GNU/33AD3cz2W9fm2G4ZiubeuZyyvXOQ0DK
+dBTYqNtvBV4z8zRmaO8yPAB7sJNOsaBbzdWvLeiwQLKw0OXpYh3iYyMFlC/DXM8E
+H73EbmR6ZtxrFAIr39MzS+xgoQ2p+Hr2DJypWNCpggmJBMcq/Qt6LgP47d8jll0V
+eAdrmURNBZR0KIIBj4iUa4GWijl66wEixgyxvqDxbVTMeYi/+J4XtoRYQ8+VTGpP
+hzZ8pAq4BdIWmbeDj9K1ecbTgoO1WxDH06ZhUXzfxWIX6HSoYIrJTPyxxucsG652
+0sAKRHMH+5GsEZT5GnYo9MGk8KxOzOyqIA6UTj76JZ21zQS0M63qS7C2UaQbEvRH
+y8MOiCHFkD+D+PC2V0E4rEoR7A3RgcvFVI3F+6xQQ+0PfZAxTLveHrD0A/COtrQ8
+1MD+8P6nr2RqozlEONNWCA50gk1Lh5CKFmDMcWlkBoptjNDGj5mY5+YDQLcREJI0
+P7l9+SPIbvpIpk7XOKdYcC9hfHG4EpTOSPiRWQn5DuBO40CimkxsgAAhkxPZ03HE
+x1F71rn6QWxNs9e7/rl12SkHPysIPyHVrYT96re3mLN6xztzJ6egwbSWfKsfhaPf
+GGK4JG86n5buwfvO0/zS
+=ulPg
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Sep_2012_13_28_55_+1000_R+E=Th+e9.zbYQ5C--
+--Signature=_Mon__17_Sep_2012_13_41_42_+1000_mEB.XR++DIlGUmy6--
