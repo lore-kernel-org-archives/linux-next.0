@@ -1,205 +1,74 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: linux-next: Tree for Sept 18 (netfilter)
-Date: Tue, 18 Sep 2012 21:13:55 +0200
-Message-ID: <20120918191355.GA661@1984>
-References: <20120918163755.0a5e6757d3ae75ecb43373a0@canb.auug.org.au>
- <5058A8A7.7000604@xenotime.net>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Tue, 18 Sep 2012 21:40:52 +0100
+Message-ID: <5058DC54.1030700@kernel.org>
+References: <20120912160719.4377f041ac76ddfa13be7df1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="SLDf9lqlvOQaIe6s"
-Return-path: <netfilter-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5058A8A7.7000604@xenotime.net>
-Sender: netfilter-devel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netfilter-devel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:41911 "EHLO
+	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754216Ab2IRUk4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Sep 2012 16:40:56 -0400
+In-Reply-To: <20120912160719.4377f041ac76ddfa13be7df1@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, srinivas pandruvada <srinivas.pandruvada@intel.com>, Jiri Kosina <jkosina@suse.cz>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Samuel Ortiz <sameo@linux.intel.com>
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
---SLDf9lqlvOQaIe6s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Sep 18, 2012 at 10:00:23AM -0700, Randy Dunlap wrote:
-> On 09/17/2012 11:37 PM, Stephen Rothwell wrote:
+On 09/12/2012 07:07 AM, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> > Hi all,
-> > 
-> > Changes since 201209017:
-> > 
+> After merging the staging tree, today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> on x86_64:
+> drivers/hid/hid-sensor-hub.c: In function 'sensor_hub_probe': drivers/hid/hid-sensor-hub.c:599:3: error: too few
+> arguments to function 'mfd_add_devices'
 > 
-> ERROR: "ip6t_do_table" [net/ipv6/netfilter/ip6table_nat.ko] undefined!
-> ERROR: "ip6t_register_table" [net/ipv6/netfilter/ip6table_nat.ko] undefined!
-> ERROR: "ip6t_alloc_initial_table" [net/ipv6/netfilter/ip6table_nat.ko] undefined!
-> ERROR: "ip6t_unregister_table" [net/ipv6/netfilter/ip6table_nat.ko] undefined!
+> Caused by commit 401ca24fb34a ("HID: sensors: introduce sensor framework") interacting with commit 6607bad3d763
+> ("mfd: core: Push irqdomain mapping out into devices") from the mfd tree.
+> 
+> I have added the following merge fix patch and can carry it as necessary (no action is required).
+
+Just as a heads up, this issue has now bitten us directly in the staging-next
+tree as the mfd change is now in Linus' tree and that was merged into
+staging-next at rc6.
+
+I'll queue up Stephen's patch but might be a few days before I send the pull
+containing it to Greg.
+
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au> Date: Wed, 12 Sep 2012 16:03:55 +1000 Subject: [PATCH] HID: sensors:
+> fix up for mfd_add_devices() API change
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au> --- drivers/hid/hid-sensor-hub.c |    2 +- 1 file changed, 1
+> insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c index 34a35ba..4ac759c 100644 ---
+> a/drivers/hid/hid-sensor-hub.c +++ b/drivers/hid/hid-sensor-hub.c @@ -596,7 +596,7 @@ static int
+> sensor_hub_probe(struct hid_device *hdev, } } ret = mfd_add_devices(&hdev->dev, 0, sd->hid_sensor_hub_client_devs, 
+> -		sd->hid_sensor_client_cnt, NULL, 0); +		sd->hid_sensor_client_cnt, NULL, 0, NULL); if (ret < 0) goto
+> err_free_names;
 > 
 > 
-> Full randconfig file is attached.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
 
-This should fix it. Thanks for the report.
-
---SLDf9lqlvOQaIe6s
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="0001-netfilter-fix-IPv6-NAT-dependencies-in-Kconfig.patch"
-
->From 78c2b7d8b8978e77fde5b11b3f27a0cd1031fe94 Mon Sep 17 00:00:00 2001
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Tue, 18 Sep 2012 21:03:39 +0200
-Subject: [PATCH] netfilter: fix IPv6 NAT dependencies in Kconfig
-
-* NF_NAT_IPV6 requires IP6_NF_IPTABLES
-
-* IP6_NF_TARGET_MASQUERADE, IP6_NF_TARGET_NETMAP, IP6_NF_TARGET_REDIRECT
-  and IP6_NF_TARGET_NPT require NF_NAT_IPV6.
-
-This change just mirrors what IPv4 does in Kconfig, for consistency.
-
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
----
- net/ipv6/netfilter/Kconfig |  110 ++++++++++++++++++++++----------------------
- 1 file changed, 55 insertions(+), 55 deletions(-)
-
-diff --git a/net/ipv6/netfilter/Kconfig b/net/ipv6/netfilter/Kconfig
-index 3b73254..d8f276b 100644
---- a/net/ipv6/netfilter/Kconfig
-+++ b/net/ipv6/netfilter/Kconfig
-@@ -25,18 +25,6 @@ config NF_CONNTRACK_IPV6
- 
- 	  To compile it as a module, choose M here.  If unsure, say N.
- 
--config NF_NAT_IPV6
--	tristate "IPv6 NAT"
--	depends on NF_CONNTRACK_IPV6
--	depends on NETFILTER_ADVANCED
--	select NF_NAT
--	help
--	  The IPv6 NAT option allows masquerading, port forwarding and other
--	  forms of full Network Address Port Translation. It is controlled by
--	  the `nat' table in ip6tables, see the man page for ip6tables(8).
--
--	  To compile it as a module, choose M here.  If unsure, say N.
--
- config IP6_NF_IPTABLES
- 	tristate "IP6 tables support (required for filtering)"
- 	depends on INET && IPV6
-@@ -144,48 +132,6 @@ config IP6_NF_TARGET_HL
- 	(e.g. when running oldconfig). It selects
- 	CONFIG_NETFILTER_XT_TARGET_HL.
- 
--config IP6_NF_TARGET_MASQUERADE
--	tristate "MASQUERADE target support"
--	depends on NF_NAT_IPV6
--	help
--	  Masquerading is a special case of NAT: all outgoing connections are
--	  changed to seem to come from a particular interface's address, and
--	  if the interface goes down, those connections are lost.  This is
--	  only useful for dialup accounts with dynamic IP address (ie. your IP
--	  address will be different on next dialup).
--
--	  To compile it as a module, choose M here.  If unsure, say N.
--
--config IP6_NF_TARGET_NETMAP
--	tristate "NETMAP target support"
--	depends on NF_NAT_IPV6
--	help
--	  NETMAP is an implementation of static 1:1 NAT mapping of network
--	  addresses. It maps the network address part, while keeping the host
--	  address part intact.
--
--	  To compile it as a module, choose M here.  If unsure, say N.
--
--config IP6_NF_TARGET_REDIRECT
--	tristate "REDIRECT target support"
--	depends on NF_NAT_IPV6
--	help
--	  REDIRECT is a special case of NAT: all incoming connections are
--	  mapped onto the incoming interface's address, causing the packets to
--	  come to the local machine instead of passing through.  This is
--	  useful for transparent proxies.
--
--	  To compile it as a module, choose M here.  If unsure, say N.
--
--config IP6_NF_TARGET_NPT
--	tristate "NPT (Network Prefix translation) target support"
--	depends on NETFILTER_ADVANCED
--	help
--	  This option adds the `SNPT' and `DNPT' target, which perform
--	  stateless IPv6-to-IPv6 Network Prefix Translation per RFC 6296.
--
--	  To compile it as a module, choose M here.  If unsure, say N.
--
- config IP6_NF_FILTER
- 	tristate "Packet filtering"
- 	default m if NETFILTER_ADVANCED=n
-@@ -235,9 +181,63 @@ config IP6_NF_SECURITY
-        help
-          This option adds a `security' table to iptables, for use
-          with Mandatory Access Control (MAC) policy.
--        
-+
-          If unsure, say N.
- 
-+config NF_NAT_IPV6
-+	tristate "IPv6 NAT"
-+	depends on NF_CONNTRACK_IPV6
-+	depends on NETFILTER_ADVANCED
-+	select NF_NAT
-+	help
-+	  The IPv6 NAT option allows masquerading, port forwarding and other
-+	  forms of full Network Address Port Translation. It is controlled by
-+	  the `nat' table in ip6tables, see the man page for ip6tables(8).
-+
-+	  To compile it as a module, choose M here.  If unsure, say N.
-+
-+if NF_NAT_IPV6
-+
-+config IP6_NF_TARGET_MASQUERADE
-+	tristate "MASQUERADE target support"
-+	help
-+	  Masquerading is a special case of NAT: all outgoing connections are
-+	  changed to seem to come from a particular interface's address, and
-+	  if the interface goes down, those connections are lost.  This is
-+	  only useful for dialup accounts with dynamic IP address (ie. your IP
-+	  address will be different on next dialup).
-+
-+	  To compile it as a module, choose M here.  If unsure, say N.
-+
-+config IP6_NF_TARGET_NETMAP
-+	tristate "NETMAP target support"
-+	help
-+	  NETMAP is an implementation of static 1:1 NAT mapping of network
-+	  addresses. It maps the network address part, while keeping the host
-+	  address part intact.
-+
-+	  To compile it as a module, choose M here.  If unsure, say N.
-+
-+config IP6_NF_TARGET_REDIRECT
-+	tristate "REDIRECT target support"
-+	help
-+	  REDIRECT is a special case of NAT: all incoming connections are
-+	  mapped onto the incoming interface's address, causing the packets to
-+	  come to the local machine instead of passing through.  This is
-+	  useful for transparent proxies.
-+
-+	  To compile it as a module, choose M here.  If unsure, say N.
-+
-+config IP6_NF_TARGET_NPT
-+	tristate "NPT (Network Prefix translation) target support"
-+	help
-+	  This option adds the `SNPT' and `DNPT' target, which perform
-+	  stateless IPv6-to-IPv6 Network Prefix Translation per RFC 6296.
-+
-+	  To compile it as a module, choose M here.  If unsure, say N.
-+
-+endif # NF_NAT_IPV6
-+
- endif # IP6_NF_IPTABLES
- 
- endmenu
--- 
-1.7.10.4
-
-
---SLDf9lqlvOQaIe6s--
+iQIcBAEBAgAGBQJQWNxTAAoJEFSFNJnE9BaInz4QALIn+9yuYA/I+W7dl8miwb6T
+QN+tEpTO7gdgBkLt6AWC4apjmN1Lk4FXu2qS0U8evKwtCGN+v0IdDjjWq3qloAF+
+I7zdthLnjstOqFIv0wr3dmf2ZiURv7oERdiBtp8h92j6NZHDPAHnoF7xRvn08Tsc
+EWOsUKURIr245hd0ApTfuZdor696SXx8HVCYjDDIPXpP/7yY/yE07ID+QESRwhxh
+znFiGyLvPw3zTQYE2IqRPAMdKQrJbX7wOLY7bAMKniwI43jEU6HHcZRCGSDOHaPq
+4Nxc6WrqqAyWD3zDqurQvM3OgIgL/QC4b88WuUhcyWGZhumK4ivW0evCq8BM10jn
+gJqJnAu/JX8Q/JLMl0z0sPFjmSdfkWmywz0zOQEOPvwoXNENdT5kalYA51sP9vqe
+bCOnGMATrDb+76o4RxkOnwp2CAMoDrDqeSqtH1FM2UJPFZhB9ly0eQvmh1zmeJlV
+FD4iB8tjJnHIUX3ZW12/ylP6vpYSZnoWDH0kSVSfNNJXWYqoaWKXODxsiaMJRwX3
+tFGzR/KrRKkKwowV4VAWyVmO+U7jne0cV3VvWX4CHQRSsrzjAmX3mVm915rCLTkT
+zAed3Svr/LjBeXY5IGU2gY4o4TPvyJwhBh9rRfmIYuLM6qE15itT5q7CQjFu/jrs
+Apz5hKLeGuMepT1EokNb
+=/JJX
+-----END PGP SIGNATURE-----
