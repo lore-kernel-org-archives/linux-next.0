@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound-asoc tree with the v4l-dvb
- tree
-Date: Tue, 18 Sep 2012 12:26:04 +1000
-Message-ID: <20120918122604.be2d46aa6616f308f756ef4d@canb.auug.org.au>
+Subject: linux-next: manual merge of the mfd tree with Linus' tree
+Date: Tue, 18 Sep 2012 13:19:04 +1000
+Message-ID: <20120918131904.ded0551cb03d079dc08cecbb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__18_Sep_2012_12_26_04_+1000_KW6bjVagwGAobpUN"
+ boundary="Signature=_Tue__18_Sep_2012_13_19_04_+1000_+h0.2NNegDREBO3S"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43209 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:45938 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932106Ab2IRC0Q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 22:26:16 -0400
+	with ESMTP id S932283Ab2IRDTL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 23:19:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Javier Martin <javier.martin@vista-silicon.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dong Aisheng <dong.aisheng@linaro.org>
 
---Signature=_Tue__18_Sep_2012_12_26_04_+1000_KW6bjVagwGAobpUN
+--Signature=_Tue__18_Sep_2012_13_19_04_+1000_+h0.2NNegDREBO3S
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Samuel,
 
-Today's linux-next merge of the sound-asoc tree got a conflict in
-arch/arm/mach-imx/mach-imx27_visstrim_m10.c between commit b6c14dc29757
-("[media] Visstrim M10: Add support for Coda") from the v4l-dvb tree and
-commit d41789b2660e ("ASoC: mx27vis: retrieve gpio numbers from
-platform_data") from the sound-asoc tree.
+Today's linux-next merge of the mfd tree got a conflict in
+drivers/regulator/anatop-regulator.c between commit 3e2a928472da
+("regulator: anatop: Fix wrong mask used in anatop_get_voltage_sel") from
+Linus' tree and commit baa64151aecc ("regulator: anatop-regulator:
+Convert to use syscon to access anatop register") from the mfd tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,96 +36,53 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-imx/mach-imx27_visstrim_m10.c
-index 821d6aa,5627229..0000000
---- a/arch/arm/mach-imx/mach-imx27_visstrim_m10.c
-+++ b/arch/arm/mach-imx/mach-imx27_visstrim_m10.c
-@@@ -32,6 -32,8 +32,7 @@@
-  #include <linux/delay.h>
-  #include <linux/dma-mapping.h>
-  #include <linux/leds.h>
- -#include <linux/memblock.h>
-+ #include <linux/platform_data/asoc-mx27vis.h>
-  #include <media/soc_camera.h>
-  #include <sound/tlv320aic32x4.h>
-  #include <asm/mach-types.h>
-@@@ -403,47 -436,14 +434,55 @@@ static const struct imx_ssi_platform_da
-  	.flags			=3D IMX_SSI_DMA | IMX_SSI_SYN,
-  };
+diff --cc drivers/regulator/anatop-regulator.c
+index ce0fe72,596535d..0000000
+--- a/drivers/regulator/anatop-regulator.c
++++ b/drivers/regulator/anatop-regulator.c
+@@@ -61,18 -64,17 +64,18 @@@ static int anatop_regmap_set_voltage_se
+  	return 0;
+  }
  =20
- +/* coda */
- +
- +static void __init visstrim_coda_init(void)
- +{
- +	struct platform_device *pdev;
- +	int dma;
- +
- +	pdev =3D imx27_add_coda();
- +	dma =3D dma_declare_coherent_memory(&pdev->dev,
- +					  mx2_camera_base + MX2_CAMERA_BUF_SIZE,
- +					  mx2_camera_base + MX2_CAMERA_BUF_SIZE,
- +					  MX2_CAMERA_BUF_SIZE,
- +					  DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE);
- +	if (!(dma & DMA_MEMORY_MAP))
- +		return;
- +}
- +
- +/* DMA deinterlace */
- +static struct platform_device visstrim_deinterlace =3D {
- +	.name =3D "m2m-deinterlace",
- +	.id =3D 0,
- +};
- +
- +static void __init visstrim_deinterlace_init(void)
- +{
- +	int ret =3D -ENOMEM;
- +	struct platform_device *pdev =3D &visstrim_deinterlace;
- +	int dma;
- +
- +	ret =3D platform_device_register(pdev);
- +
- +	dma =3D dma_declare_coherent_memory(&pdev->dev,
- +					  mx2_camera_base + 2 * MX2_CAMERA_BUF_SIZE,
- +					  mx2_camera_base + 2 * MX2_CAMERA_BUF_SIZE,
- +					  MX2_CAMERA_BUF_SIZE,
- +					  DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE);
- +	if (!(dma & DMA_MEMORY_MAP))
- +		return;
- +}
- +
- +
-+ /* Audio */
-+ static const struct snd_mx27vis_platform_data snd_mx27vis_pdata __initcon=
-st =3D {
-+ 	.amp_gain0_gpio =3D AMP_GAIN_0,
-+ 	.amp_gain1_gpio =3D AMP_GAIN_1,
-+ 	.amp_mutel_gpio =3D AMP_MUTE_SDL,
-+ 	.amp_muter_gpio =3D AMP_MUTE_SDR,
-+ };
-+=20
-  static void __init visstrim_m10_revision(void)
+- static int anatop_get_voltage_sel(struct regulator_dev *reg)
++ static int anatop_regmap_get_voltage_sel(struct regulator_dev *reg)
   {
-  	int exp_version =3D 0;
+  	struct anatop_regulator *anatop_reg =3D rdev_get_drvdata(reg);
+ -	u32 val;
+ +	u32 val, mask;
+ =20
+  	if (!anatop_reg->control_reg)
+  		return -ENOTSUPP;
+ =20
+- 	val =3D anatop_read_reg(anatop_reg->mfd, anatop_reg->control_reg);
++ 	regmap_read(anatop_reg->anatop, anatop_reg->control_reg, &val);
+ -	val =3D (val & ((1 << anatop_reg->vol_bit_width) - 1)) >>
+ +	mask =3D ((1 << anatop_reg->vol_bit_width) - 1) <<
+  		anatop_reg->vol_bit_shift;
+ +	val =3D (val & mask) >> anatop_reg->vol_bit_shift;
+ =20
+  	return val - anatop_reg->min_bit_val;
+  }
 
---Signature=_Tue__18_Sep_2012_12_26_04_+1000_KW6bjVagwGAobpUN
+--Signature=_Tue__18_Sep_2012_13_19_04_+1000_+h0.2NNegDREBO3S
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQV9u8AAoJEECxmPOUX5FEceQP/0l3OZzf6MJT2Y0Pv2vKELuQ
-bvic1nIU5zhnDeFs9TzENIsXHQZ0gpJ8AOPKhflJSDSCoJF10lMclUuTn/fNuROG
-r4eYEmeUHW61tPkT05guyCxXcWjE9yfZBFcK4/BZlN8h3LXYhV/XWqhFitxV+byn
-k+40SU8pfgwzC8nNgP2kvmtwE7N2aGVLmQE3vmJasrdc3kKguAhDnASq1naSL+Ak
-NHoTSPpIdZMpv8gozfMp05k4I9sHIqNeJBjYGzkT7YNI1Msfkve3s9cTkHGQKpC7
-E/LaP8rRLlshqhy8VfNg+SzqejviJQzT9G1GEOZ2Hgk3vya0P27fUf+32Lp6gS2f
-FChX5NXJQ3Lhc0sGa71unIhhOaaU293K+IeROH+YFRFhSZiuPIwkTmQUxdHIMEe9
-1l9gBVM5YuklvD+2gB/gKnWk1zHhSuZHuk/ZVA2WaaRt8t/bngtgFZoalpYHY//a
-POezaZyBk2kZI+ZTY5HzZ0ERPb+K4NqiMvel+ZSItpvJFWGyxXxewLzKHTSuP5xn
-ETDCYmUHW+zhV19J4SBcBIamFqMFIO2J5wX53M20RYADqENxJ9nbNltMYrB/DG61
-UlpFTLS4iGDMgv7c9iTBmgTEuPBob1pdjv7wSSnQBUHIFBwpQfRkmLSsFJ1uwgPG
-S0flfsTvhZ8kvEb/ikN/
-=c0Yq
+iQIcBAEBCAAGBQJQV+goAAoJEECxmPOUX5FElowP/Rrv6s/Di9YmqxVjPPA1Q6ej
+L2AYPnAW3GXwBOilhpJ0spliTMh1WLcciIA6kF6IXmVnv3RTKS96rDpvWuJn1+nq
+bEl0UlndOo4ZAIS3pUjdlECBAXLKJWzL0jZcGxl8Do/K8RW1kq2XhMtBOZ/EK3Mv
+6A6mkr3+3ZGYLsy6P7IoLOPC/ulkwP8t8Kgp7ckzloMUtLgdQUALZOYy1OHJn82M
+Zve663oYkKLBRWHEBGRNboRZQ7a7+RtSV9Z0IriZvRZyETW8FW74iYG+14nTHFZO
+gJ+OXjt7UZlMK8WnKArbUnmkPh9ChYLgLo13FRNWZEdkwnKZhJDMmQEpx5I+8udt
+4cCqZCSt0VEHbzkIwwq2EcEf5stLCDLqa3RcenLCd6SufjOJTOLDflRcnZ1f27Mx
+74o7juvAwkxir+LrXAjxaCdW857OZtLqCUvQSMqm451daL3YFrbyi6Ymi1f4uEYP
+N2G/vhUOE89Qe4DHZOl+bYtzXCq5BmMoLn6rG15gXgOgfpVqSXtx8/ZGFbIdgtnl
+SSnhegZ26Qgp2nHSbC9jBcnsALm2C4o/1+36dP/d+7wWL+k/1MLJ2LYmp9/cOO4q
+iDFwQGP31aZ+bNryKtnU3sb0yjBt6HmQ9+8P2ClFSqzwknpHHnq9CrQaQ7IzSMyx
+OQqG5y/OvEDmqD/W0ozU
+=FtrC
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__18_Sep_2012_12_26_04_+1000_KW6bjVagwGAobpUN--
+--Signature=_Tue__18_Sep_2012_13_19_04_+1000_+h0.2NNegDREBO3S--
