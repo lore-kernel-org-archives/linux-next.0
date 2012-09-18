@@ -1,57 +1,78 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the staging
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: linux-next: build failure after merge of the target-updates
  tree
-Date: Mon, 17 Sep 2012 13:53:38 -0700
-Message-ID: <20120917205338.GA11762@atomide.com>
-References: <20120917192005.ab08c24f98010107fa855edf@canb.auug.org.au>
+Date: Mon, 17 Sep 2012 17:57:24 -0700
+Message-ID: <1347929844.10711.136.camel@haakon2.linux-iscsi.org>
+References: <20120917134142.c7948ae04bdeabe1a863e464@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-04-ewr.mailhop.org ([204.13.248.74]:44139 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754924Ab2IQUxq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Sep 2012 16:53:46 -0400
-Content-Disposition: inline
-In-Reply-To: <20120917192005.ab08c24f98010107fa855edf@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <target-devel-owner@vger.kernel.org>
+In-Reply-To: <20120917134142.c7948ae04bdeabe1a863e464@canb.auug.org.au>
+Sender: target-devel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roland Dreier <roland@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, target-devel <target-devel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [120917 02:21]:
-> Hi all,
+On Mon, 2012-09-17 at 13:41 +1000, Stephen Rothwell wrote:
+> Hi Nicholas,
 > 
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> drivers/staging/tidspbridge/core/wdt.c between commit c37a1747acbf
-> ("staging: tidspbridge: Prepare for irqs.h removal") from the  tree and
-> commit ec2c0825ca31 ("ARM: OMAP2+: Remove hardcoded IRQs and enable
-> SPARSE_IRQ") from the arm-soc tree.
+> After merging the target-updates tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> I fixed it up (I guess - see below) and can carry the fix as necessary
-> (no action is required).
+> drivers/target/target_core_transport.c: In function 'transport_get_sense_buffer':
+> drivers/target/target_core_transport.c:582:22: error: 'struct target_core_fabric_ops' has no member named 'set_fabric_sense_len'
+> 
+> I can only assume that this has been caused by the (largish) changes that
+> went into Linus' tree recently conflicting with changes in the
+> target-updates tree.
+> 
+> I have dropped the target-updates tree for today.  Please sort the mess out.
 
-Yes thanks again. This is the right fix for now, eventually
-the numbers should come from platform data or device tree..
+Hi Stephen,
 
-Regards,
+Whoops, sorry about that..
 
-Tony
+So target-pending/for-next has been rebased + now includes the following
+change to Roland's original patch that drops TFO->set_fabric_sense_len
+core+fabric usage for v3.7-rc1.  As reported, this ended up conflicting
+with Paolo's recent pSCSI backend sense data handling bug-fixes that
+went in for v3.6-rc6.
+
+So with the following, for-next should be looking as expected now.
+
+Thanks!
+
+--nab
+
+diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
+index fd0d0f0..d6d4844 100644
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -567,9 +567,7 @@ static void target_complete_failure_work(struct work_struct *work)
+  */
+ static unsigned char *transport_get_sense_buffer(struct se_cmd *cmd)
+ {
+-       unsigned char *buffer = cmd->sense_buffer;
+        struct se_device *dev = cmd->se_dev;
+-       u32 offset = 0;
  
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc drivers/staging/tidspbridge/core/wdt.c
-> index 1ed1474,453ef74..0000000
-> --- a/drivers/staging/tidspbridge/core/wdt.c
-> +++ b/drivers/staging/tidspbridge/core/wdt.c
-> @@@ -25,8 -25,7 +25,8 @@@
->   #include <dspbridge/host_os.h>
->   
->   
->  +#define OMAP34XX_WDT3_BASE 		(0x49000000 + 0x30000)
-> - #define INT_34XX_WDT3_IRQ 		36
-> + #define INT_34XX_WDT3_IRQ 		(36 + NR_IRQS)
->   
->   static struct dsp_wdt_setting dsp_wdt;
->   
+        WARN_ON(!cmd->se_lun);
+ 
+@@ -579,14 +577,11 @@ static unsigned char *transport_get_sense_buffer(struct se_cmd *cmd)
+        if (cmd->se_cmd_flags & SCF_SENT_CHECK_CONDITION)
+                return NULL;
+ 
+-       offset = cmd->se_tfo->set_fabric_sense_len(cmd, TRANSPORT_SENSE_BUFFER);
+-
+-       /* Automatically padded */
+-       cmd->scsi_sense_length = TRANSPORT_SENSE_BUFFER + offset;
++       cmd->scsi_sense_length = TRANSPORT_SENSE_BUFFER;
+ 
+        pr_debug("HBA_[%u]_PLUG[%s]: Requesting sense for SAM STATUS: 0x%02x\n",
+                dev->se_hba->hba_id, dev->transport->name, cmd->scsi_status);
+-       return &buffer[offset];
++       return cmd->sense_buffer;
+ }
+ 
+ void target_complete_cmd(struct se_cmd *cmd, u8 scsi_status)
