@@ -1,64 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the final tree (slab
- tree related)
-Date: Wed, 19 Sep 2012 17:22:54 +1000
-Message-ID: <20120919172254.ffc05a2c401f64143f930c67@canb.auug.org.au>
-References: <20120911161923.10299045655dd4c84f96f4b3@canb.auug.org.au>
-	<00000139b6e13c92-97adf129-be2c-4b74-9559-0a92c10b9eda-000000@email.amazonses.com>
-	<alpine.LFD.2.02.1209190957330.2390@tux.localdomain>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: build failure after merge of the usb tree
+Date: Wed, 19 Sep 2012 14:59:25 +0100
+Message-ID: <20120919145925.35e95b5a@pyramind.ukuu.org.uk>
+References: <20120919143136.46dd2318963c0d8524492041@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Sep_2012_17_22_54_+1000_eW9mfCH5mTHzYBua"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54251 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754239Ab2ISHXD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Sep 2012 03:23:03 -0400
-In-Reply-To: <alpine.LFD.2.02.1209190957330.2390@tux.localdomain>
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:36202 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754106Ab2ISNyu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Sep 2012 09:54:50 -0400
+In-Reply-To: <20120919143136.46dd2318963c0d8524492041@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@kernel.org>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
---Signature=_Wed__19_Sep_2012_17_22_54_+1000_eW9mfCH5mTHzYBua
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 19 Sep 2012 14:31:36 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Pekka,
+> Hi Greg,
+> 
+> After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/usb/serial/vizzini.c: In function 'vizzini_set_termios':
+> drivers/usb/serial/vizzini.c:454:22: error: invalid type argument of '->' (have 'struct ktermios')
+> 
+> Caused by commit c05fecb1d57e ("USB: serial: add vizzini driver")
+> interacting with commit adc8d746caa6 ("tty: move the termios object into
+> the tty") from the tty tree.
+> 
+> I added the following merge fix patch and can carry it as necessary:
 
-On Wed, 19 Sep 2012 09:57:58 +0300 (EEST) Pekka Enberg <penberg@kernel.org>=
- wrote:
->
-> P.S. Guys, please use penberg@kernel.org email address. I missed this=20
-> patch because I don't read this mailbox.
+Vizzini seems to have teleported into Greg's tree. Greg - it's got a pile
+of other bugs in it plus complete bogus comments and the like. You don't
+seem to have every posted it to the lists for comment or if you did it
+didn't turn up here ?
 
-I have now changed the contact address I have listed for you.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__19_Sep_2012_17_22_54_+1000_eW9mfCH5mTHzYBua
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQWXLOAAoJEECxmPOUX5FE2+EP/RJSkFbFdOfAKBKyHzb/U3Sg
-WLo2uj474Ycuv6jc9axtya8d2u1m+cSGKAYnrck0W3i68XoX/6teXrsZWpEOwTx1
-pMGre8MjGp4V9agU/y0wcB0PnRnqzfmss9F09eTfKBEJ1gfKVncv+RFYIIyc5qjq
-JHdAnQUcg4nYUnNm/78e+tFGlo8JdbzUeKquzQ2bh5MauLbHLSgHCp+MnhE6VsFm
-0z44MGUoJXFnwJNBGza+aEa/+ywG+q4Bujiw44GQRuR0OxcEPKX1XtrAb65ngFg5
-oqJ88umzx0WRjSBu+x18P5jg7MAbZypPpP2kon5xXJ+z+WwKGZ/bIMYIRoJpNtnO
-C+QhKz3q8umuB9gsDOmYi+pHd8fDkL9yN5v+aRKBNHyFpX+EAzJNOKfCyAuEZfyo
-GbSX7Qx9ewevNu2CsCl5RB7hHzbgNYH6tgImlwBRHTWtzTcYgCZLWZufGrsfPAcv
-Kf7Jm3guVVFBoVA9LZ28Q7hl6OB1Plm25kyUz6fOeaafhJ8EVwLWVRfN1QqTd+Co
-stqzOk+ZJie8NiLfISnZ4Aib6in+ZVDFGCJN329E35zx/clfdyHRcK+90ewR7NZ/
-URtRQqwDhddSpdFztL+HmNoXp9REaA0rrtzToYZ3aN4clnRhE6+/I3xSc2Zk8jlD
-fvk7CIcegebyERyIhTii
-=w77V
------END PGP SIGNATURE-----
-
---Signature=_Wed__19_Sep_2012_17_22_54_+1000_eW9mfCH5mTHzYBua--
+Alan
