@@ -1,59 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the usb tree
-Date: Wed, 19 Sep 2012 14:35:05 +1000
-Message-ID: <20120919143505.76e9d77d320ed278f7ce4798@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with the sh tree
+Date: Wed, 19 Sep 2012 15:21:30 +1000
+Message-ID: <20120919152130.dc856a602341c98b6ec93778@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Sep_2012_14_35_05_+1000_m2e_oT7qMrt_lL0O"
+ boundary="Signature=_Wed__19_Sep_2012_15_21_30_+1000_N8BTj.=KeHKA_Ttd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42757 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43690 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751399Ab2ISEfH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Sep 2012 00:35:07 -0400
+	with ESMTP id S1750862Ab2ISFVj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Sep 2012 01:21:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Devendra Naga <devendra.aaru@gmail.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>
 
---Signature=_Wed__19_Sep_2012_14_35_05_+1000_m2e_oT7qMrt_lL0O
+--Signature=_Wed__19_Sep_2012_15_21_30_+1000_N8BTj.=KeHKA_Ttd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Al,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/serqt_usb2/serqt_usb2.c between commit e8656b02ef35
-("USB: serial: serqt_usb2: remove dbg() usage") from the usb tree and
-commit 623c2bb2c59a ("staging: serqt_usb2: fix dbg print when kzalloc
-failed to allocate qt_port") from the staging tree.
+Today's linux-next merge of the signal tree got a conflict in
+arch/sh/kernel/cpu/sh5/entry.S arch/sh/kernel/entry-common.S between
+commit 5e071e2b4b82 ("sh: Fix up TIF_NOTIFY_RESUME sans TIF_SIGPENDING
+handling") from the sh tree and commit 52b8a6e18bfd ("sh: missing tests
+for NOTIFY_RESUME") from the signal tree.
 
-The former removes the line changed by the latter, so I just did that (no
+These appear to be the same patches (apart from some trivial bits), so I
+used the one from the sh tree and can carry the fix as necessary (no
 action is required).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__19_Sep_2012_14_35_05_+1000_m2e_oT7qMrt_lL0O
+--Signature=_Wed__19_Sep_2012_15_21_30_+1000_N8BTj.=KeHKA_Ttd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQWUt5AAoJEECxmPOUX5FE40AQAI1Zo5wnKWiHv3C8JRf1xFtc
-ejOekieAnb61N8+NbIV6oGIPF1UihLaaiJqqV1y7tP0PFjkfWOOnyJt9+nZO3q2c
-C4H94XrniS7qPuAZ/i2AlDXl+NgGuxjRX2+kh1zFtJnYKG3xy0S/coMVbESBDIHD
-9kXv053upMaowMYN4xaD9YbSrr98/smF24PlkUEjojlQNR6WBTNpADiB5M01tfR3
-fGpVXGHDsxiUDuCqFNAwrAKq4RnRbq9C26QxRKljOXlaDmRO4BbYALH3K/o6LUvO
-ikL6PcPSgbKeQlT7d01QFnOWe3X6zXXyvVSdFF8ShDuVoU3a4H4XwxF2M33qlhiQ
-fcXNXnaOcGQfpor2JqSCjU9/WG1DhxD+2Pci2P6K3edNSZKTAfLRcd0aiXWuZIpN
-Z/fp0Sq4NhJfiiDy/5BkGEQEdaV8YqYlgtqKTWZtxFV66/RAFQb8MYiUFU0lI9UR
-RrGa46K+6Y6S7GXhXrY4Zss+teTL620FqYBdQnLwEc63Z3OSir58kOSB0axgq9+T
-W08JHd+9cWcIKTEW0n1hvcAfPms+sI56K4AztcM8UXJPPgZpSzuUToxrdORHx1IQ
-IJVevzPLAc5bf9GyumrvUXnlyqPfJFft0RwqjcBL1VB8JkRLhkG7rF96na8ud4Nj
-+NN/u9C57LHSN79svxuX
-=snvO
+iQIcBAEBCAAGBQJQWVZaAAoJEECxmPOUX5FED/kQAIeK5yeWEFDV0xD7H20+1+aU
+cOEyoCmihj8aBmLfWyqMwx9AWVL/2ojfQaRQSRCHjpiMfzMv/daqXRMlz+cbHW4L
+eC7yQcrdLszz2r8w74HeV9a8hvi/XVtA2A6a7sIsOu0z3puaaa+9M55wjzEKqbnP
+All/nnSyeVyIDHaJgEXS0F0OkK/tuGl1WV/80PzUspBZx1TQqW80m2+ICqwQH5bG
+wfsNQ4mT5NH0TJtSEnKZleD1TKS3dc8t/+P6+bNB7m9NCFb2Q2sa9nZjEwchIYSb
+Br2aR6yrXHHv8MB0TFTkzK5DeJYKTWn+UWhX8z3dfSB6R8GEnWGeyMcEZEgOHtt5
+3pX32Oph89ZG93XGxnWN22Rwo9WWwNNsDVW6TBKpGH94WR+FgOd5lXpAd/yxT3PB
+hXRSVp079MtIPFdnLu1/1Vmyv2sDtkePRdaqaDHL7MB9AH9w/Z6l89OkEhPs0sCX
+0ymX75pkD6Mxnb2v5a2KsBKfb1ckJ/3vwd0hOnYxK1i02dfRuLSmqpDTM3XapPkB
+UTxo0S6U6Coraqw3rtx/RsRBX4p2huL992RW9kD1PVTTDWEogCt+sOdZA/cTzSEH
+eFVYltAAM3vkqcDLrb8CGML62HrWK4dXjNsyyYRsaavN7HdpDwq5lAugcdWnL6m5
+sqEgYkBKKMxrXz7nffBs
+=NRqr
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__19_Sep_2012_14_35_05_+1000_m2e_oT7qMrt_lL0O--
+--Signature=_Wed__19_Sep_2012_15_21_30_+1000_N8BTj.=KeHKA_Ttd--
