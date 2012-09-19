@@ -1,62 +1,21 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the bluetooth tree
-Date: Wed, 19 Sep 2012 11:45:20 +1000
-Message-ID: <20120919114520.458f75082ccf2a664547d386@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH -next, RESEND] av32: Make sure _TIF_BREAKPOINT is defined
+Date: Wed, 19 Sep 2012 03:48:38 +0100
+Message-ID: <20120919024838.GX13973@ZenIV.linux.org.uk>
+References: <1347992361-11510-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Sep_2012_11_45_20_+1000_cpbpIlM4lHRRoJeU"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51409 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752646Ab2ISBp0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Sep 2012 21:45:26 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jaroslav Resler <resler@cs.cas.cz>, "Cho, Yu-Chen" <acho@suse.com>
-
---Signature=_Wed__19_Sep_2012_11_45_20_+1000_cpbpIlM4lHRRoJeU
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1347992361-11510-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Gustavo,
+On Tue, Sep 18, 2012 at 08:19:21PM +0200, Geert Uytterhoeven wrote:
 
-After merging the bluetooth tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> Still not fixed after almost 4 months...
 
-drivers/bluetooth/btusb.c:100:2: error: expected '}' before '{' token
-
-Caused by commit 493969cf4728 ("Bluetooth: Add support for BCM20702A0
-[04ca, 2003]").  That wasn't really well tested, now was it? :-(
-
-I have used the bluetooth tree from next-20120918 for today.
-
-BTW, why is that commit not signed off by its author?
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__19_Sep_2012_11_45_20_+1000_cpbpIlM4lHRRoJeU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQWSOwAAoJEECxmPOUX5FECIkP/0a6u5TrEUxRD+EtIKjnlScB
-/mVQWuiyzbqTfIiUBNDO2D9bdELIGCEXH5LDh9iPW3FZAh5MjfRhoW54djhAQWac
-IyXikyAaQQ5gJxfaX+E+zkAfAzS4wm85wIJeS1chi5UnBiycmmBiWCbs+NajV9M3
-LPsOkaQI8pW+2LiPsN0WCGOt2JMe3IpixN+LbMgfDEXmT/qw/TMFzUEbuLxcjA7h
-jkc5KZj65f7bhs50CH53tvvz9BBGOxJZHMDNdtsL4GHMr6g5xonzGvg+EWnciG8y
-xHJ7PpE7sUmEAsh8ldbER4jdEzsnywCpKBftzRjGezDgAaPDU+8QKkU53EneOyeu
-Q0tqrRR7TvLzkSHo/tGdFYA92xqTPjRdA3S1D/KYwJ3WnsNh1u0qiQt3Wldc+NyC
-BVBL62owV4JYQsxV96CZAA2qiNBXsAVHk0cTvRrM3IJVZ524qpXIbA48CpEg7r+b
-i9SQImYbTd3HSGosyavsaJsXeNPu+CReZdaYTjGxNDcv6X/hHXcXJyvnQF0alqRR
-+WoDOV78zJ+3BIteFgI6caVfsIa5zZIsQGf4qNz35Ich4tSvqI9mfMYN2g1CMO9r
-z8XBIUSEBSMxz40Iey3nC9yfEAQ0NKGxQB5N6Ahfux26g6GXM3+mQpDKRUlBx0GD
-huBSdErRtAtDUcx8KM94
-=sct5
------END PGP SIGNATURE-----
-
---Signature=_Wed__19_Sep_2012_11_45_20_+1000_cpbpIlM4lHRRoJeU--
+Gyah...  I really need to trim that pile of internal branches; the fixed
+commit had not been cherry-picked into for-next.  My apologies ;-/
