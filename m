@@ -1,56 +1,57 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] staging: fix silicom dependencies and build errors
-Date: Wed, 19 Sep 2012 10:58:28 -0700
-Message-ID: <505A07C4.7080601@xenotime.net>
+Subject: [PATCH -next] ata: fix sata_highbank.c build errors
+Date: Wed, 19 Sep 2012 11:15:43 -0700
+Message-ID: <505A0BCF.5040905@xenotime.net>
 References: <20120919162643.907ddda75e198f060e4e83fe@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy11-pub.bluehost.com ([173.254.64.10]:47245 "HELO
-	oproxy11-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S932821Ab2ISR7J (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Sep 2012 13:59:09 -0400
+Return-path: <linux-ide-owner@vger.kernel.org>
 In-Reply-To: <20120919162643.907ddda75e198f060e4e83fe@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-ide-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Jeff Garzik <jgarzik@pobox.com>, Mark Langsdorf <mark.langsdorf@calxeda.com>
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <rdunlap@xenotime.net>
 
-Fix kconfig dependencies in silicom.  Fixes these build errors:
+Fix build errors in sata_highbank.c by also building libahci.o.
+Fixes these build errors:
 
-ERROR: "init_net" [drivers/staging/silicom/bypasslib/bypass.ko] undefined!
-ERROR: "register_netdevice_notifier" [drivers/staging/silicom/bpctl_mod.ko] undefined!
-ERROR: "unregister_netdevice_notifier" [drivers/staging/silicom/bpctl_mod.ko] undefined!
-ERROR: "init_net" [drivers/staging/silicom/bpctl_mod.ko] undefined!
-ERROR: "netdev_info" [drivers/net/mii.ko] undefined!
-ERROR: "netif_carrier_on" [drivers/net/mii.ko] undefined!
-ERROR: "netif_carrier_off" [drivers/net/mii.ko] undefined!
+drivers/built-in.o: In function `ahci_highbank_hardreset':
+sata_highbank.c:(.text+0x1edc9a): undefined reference to `ahci_stop_engine'
+sata_highbank.c:(.text+0x1edfab): undefined reference to `ahci_start_engine'
+sata_highbank.c:(.text+0x1edfd5): undefined reference to `ahci_dev_classify'
+drivers/built-in.o: In function `ahci_highbank_resume':
+sata_highbank.c:(.text+0x1ee0af): undefined reference to `ahci_reset_controller'
+sata_highbank.c:(.text+0x1ee0e1): undefined reference to `ahci_init_controller'
+drivers/built-in.o: In function `ahci_highbank_probe':
+sata_highbank.c:(.init.text+0xc577): undefined reference to `ahci_save_initial_config'
+sata_highbank.c:(.init.text+0xc5ca): undefined reference to `ahci_set_em_messages'
+sata_highbank.c:(.init.text+0xc630): undefined reference to `ahci_ignore_sss'
+sata_highbank.c:(.init.text+0xc660): undefined reference to `ahci_reset_em'
+sata_highbank.c:(.init.text+0xc72f): undefined reference to `ahci_reset_controller'
+sata_highbank.c:(.init.text+0xc75a): undefined reference to `ahci_init_controller'
+sata_highbank.c:(.init.text+0xc774): undefined reference to `ahci_print_info'
+sata_highbank.c:(.init.text+0xc77c): undefined reference to `ahci_interrupt'
+drivers/built-in.o:(.data+0x1d5ec): undefined reference to `ahci_ops'
+drivers/built-in.o:(.data+0x1d690): undefined reference to `ahci_shost_attrs'
+drivers/built-in.o:(.data+0x1d694): undefined reference to `ahci_sdev_attrs'
 
 Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Mark Langsdorf <mark.langsdorf@calxeda.com>
 ---
- drivers/staging/silicom/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/ata/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20120919.orig/drivers/staging/silicom/Kconfig
-+++ linux-next-20120919/drivers/staging/silicom/Kconfig
-@@ -19,7 +19,7 @@ if NET_VENDOR_SILICOM
+--- linux-next-20120919.orig/drivers/ata/Makefile
++++ linux-next-20120919/drivers/ata/Makefile
+@@ -9,7 +9,7 @@ obj-$(CONFIG_SATA_FSL)		+= sata_fsl.o
+ obj-$(CONFIG_SATA_INIC162X)	+= sata_inic162x.o
+ obj-$(CONFIG_SATA_SIL24)	+= sata_sil24.o
+ obj-$(CONFIG_SATA_DWC)		+= sata_dwc_460ex.o
+-obj-$(CONFIG_SATA_HIGHBANK)	+= sata_highbank.o
++obj-$(CONFIG_SATA_HIGHBANK)	+= sata_highbank.o libahci.o
  
- config SBYPASS
- 	tristate "Silicom BypassCTL library support"
--	depends on PCI
-+	depends on PCI && NET
- 	depends on m
- 	---help---
- 	  If you have a network (Ethernet) controller of this type, say Y
-@@ -29,7 +29,7 @@ config SBYPASS
- 
- config BPCTL
- 	tristate "Silicom BypassCTL net support"
--	depends on PCI
-+	depends on PCI && NET
- 	depends on m
- 	select SBYPASS
- 	select NET_CORE
+ # SFF w/ custom DMA
+ obj-$(CONFIG_PDC_ADMA)		+= pdc_adma.o
