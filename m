@@ -1,57 +1,39 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] ata: fix sata_highbank.c build errors
-Date: Wed, 19 Sep 2012 11:15:43 -0700
-Message-ID: <505A0BCF.5040905@xenotime.net>
-References: <20120919162643.907ddda75e198f060e4e83fe@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: manual merge of the workqueues tree with the pm
+ tree
+Date: Wed, 19 Sep 2012 11:38:53 -0700
+Message-ID: <20120919183853.GM8474@google.com>
+References: <20120919135625.875ebc4d68279b26f2375150@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <20120919162643.907ddda75e198f060e4e83fe@canb.auug.org.au>
-Sender: linux-ide-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:57449 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754744Ab2ISSi6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Sep 2012 14:38:58 -0400
+Content-Disposition: inline
+In-Reply-To: <20120919135625.875ebc4d68279b26f2375150@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Jeff Garzik <jgarzik@pobox.com>, Mark Langsdorf <mark.langsdorf@calxeda.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Andre Przywara <andre.przywara@amd.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Wed, Sep 19, 2012 at 01:56:25PM +1000, Stephen Rothwell wrote:
+> Hi Tejun,
+> 
+> Today's linux-next merge of the workqueues tree got a conflict in
+> drivers/cpufreq/powernow-k8.c between commit e1f0b8e9b04a ("cpufreq:
+> Remove support for hardware P-state chips from powernow-k8") from the pm
+> tree and commit 5d7efe7bf90f ("cpufreq/powernow-k8: workqueue user
+> shouldn't migrate the kworker to another CPU") from the workqueues tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary
+> (no action is required).
 
-Fix build errors in sata_highbank.c by also building libahci.o.
-Fixes these build errors:
+Yeap, looks correct to me.  FYI, the change is likely to be pulled
+into 3.6-rc6 soonish.
 
-drivers/built-in.o: In function `ahci_highbank_hardreset':
-sata_highbank.c:(.text+0x1edc9a): undefined reference to `ahci_stop_engine'
-sata_highbank.c:(.text+0x1edfab): undefined reference to `ahci_start_engine'
-sata_highbank.c:(.text+0x1edfd5): undefined reference to `ahci_dev_classify'
-drivers/built-in.o: In function `ahci_highbank_resume':
-sata_highbank.c:(.text+0x1ee0af): undefined reference to `ahci_reset_controller'
-sata_highbank.c:(.text+0x1ee0e1): undefined reference to `ahci_init_controller'
-drivers/built-in.o: In function `ahci_highbank_probe':
-sata_highbank.c:(.init.text+0xc577): undefined reference to `ahci_save_initial_config'
-sata_highbank.c:(.init.text+0xc5ca): undefined reference to `ahci_set_em_messages'
-sata_highbank.c:(.init.text+0xc630): undefined reference to `ahci_ignore_sss'
-sata_highbank.c:(.init.text+0xc660): undefined reference to `ahci_reset_em'
-sata_highbank.c:(.init.text+0xc72f): undefined reference to `ahci_reset_controller'
-sata_highbank.c:(.init.text+0xc75a): undefined reference to `ahci_init_controller'
-sata_highbank.c:(.init.text+0xc774): undefined reference to `ahci_print_info'
-sata_highbank.c:(.init.text+0xc77c): undefined reference to `ahci_interrupt'
-drivers/built-in.o:(.data+0x1d5ec): undefined reference to `ahci_ops'
-drivers/built-in.o:(.data+0x1d690): undefined reference to `ahci_shost_attrs'
-drivers/built-in.o:(.data+0x1d694): undefined reference to `ahci_sdev_attrs'
+Thanks.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Mark Langsdorf <mark.langsdorf@calxeda.com>
----
- drivers/ata/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20120919.orig/drivers/ata/Makefile
-+++ linux-next-20120919/drivers/ata/Makefile
-@@ -9,7 +9,7 @@ obj-$(CONFIG_SATA_FSL)		+= sata_fsl.o
- obj-$(CONFIG_SATA_INIC162X)	+= sata_inic162x.o
- obj-$(CONFIG_SATA_SIL24)	+= sata_sil24.o
- obj-$(CONFIG_SATA_DWC)		+= sata_dwc_460ex.o
--obj-$(CONFIG_SATA_HIGHBANK)	+= sata_highbank.o
-+obj-$(CONFIG_SATA_HIGHBANK)	+= sata_highbank.o libahci.o
- 
- # SFF w/ custom DMA
- obj-$(CONFIG_PDC_ADMA)		+= pdc_adma.o
+-- 
+tejun
