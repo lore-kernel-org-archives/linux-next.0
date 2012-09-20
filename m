@@ -1,37 +1,45 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the ixp4xx tree with the arm-soc tree
-Date: Thu, 20 Sep 2012 15:31:49 +0000
-Message-ID: <201209201531.50167.arnd@arndb.de>
-References: <20120920163227.c6d8f1559b9cde971a376abf@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (net-next tree related)
+Date: Thu, 20 Sep 2012 16:45:58 -0400 (EDT)
+Message-ID: <20120920.164558.2281417114805373564.davem@davemloft.net>
+References: <20120920173622.2aa7209cd241a3945f4384d4@canb.auug.org.au>
+	<20120920091013.GV15548@intel.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:64648 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755826Ab2ITPbx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 11:31:53 -0400
-In-Reply-To: <20120920163227.c6d8f1559b9cde971a376abf@canb.auug.org.au>
+Received: from shards.monkeyblade.net ([149.20.54.216]:39268 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753894Ab2ITUqA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 16:46:00 -0400
+In-Reply-To: <20120920091013.GV15548@intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Krzysztof =?utf-8?q?Ha=C5=82asa?= <khc@pm.waw.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+To: mika.westerberg@linux.intel.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thursday 20 September 2012, Stephen Rothwell wrote:
-> Today's linux-next merge of the ixp4xx tree got conflicts in
-> arch/arm/mach-ixp4xx/common.c and
-> arch/arm/mach-ixp4xx/include/mach/ixp4xx-regs.h between commit
-> 13ec32f47cb4 ("ARM: ixp4xx: use __iomem pointers for MMIO") from the
-> arm-soc tree and commits 43690ab7543a ("IXP4xx: Always ioremap() Queue
-> Manager MMIO region at boot") and f62736b567ff ("IXP4xx: map CPU config
-> registers within VMALLOC region") from the ixp4xx tree.
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Date: Thu, 20 Sep 2012 12:10:14 +0300
+
+> On Thu, Sep 20, 2012 at 05:36:22PM +1000, Stephen Rothwell wrote:
+>> Hi all,
+>> 
+>> After merging the final tree, today's linux-next build (powerpc
+>> allyesconfig) failed like this:
+>> 
+>> drivers/net/ethernet/i825xx/znet.c: In function 'hardware_init':
+>> drivers/net/ethernet/i825xx/znet.c:868:2: error: implicit declaration of function 'isa_virt_to_bus' [-Werror=implicit-function-declaration]
+>> 
+>> Caused by commit 1d3ff76759b7 ("i825xx: znet: fix compiler warnings when
+>> building a 64-bit kernel").  Is there some Kconfig dependency missing (CONFIG_ISA)?
 > 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> If we make it dependent on CONFIG_ISA then the driver cannot be built with
+> 64-bit kernel. Then again is there someone running 64-bit kernel on Zenith
+> Z-note notebook? From the pictures it looks like very ancient "laptop".
+> 
+> An alternative is to make it depend on X86 like this:
 
-Ok, thanks!
+I think the powerpc port is at fault here.
 
-This conflict will go away once Krzysztof's patches make it into arm-soc.
-
-	Arnd
+Part of being able to advertise ISA_DMA_API is providing isa_virt_to_bus().
