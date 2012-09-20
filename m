@@ -1,35 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ixp4xx tree with the arm-soc tree
-Date: Thu, 20 Sep 2012 16:32:27 +1000
-Message-ID: <20120920163227.c6d8f1559b9cde971a376abf@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with the tip tree
+Date: Thu, 20 Sep 2012 17:03:30 +1000
+Message-ID: <20120920170330.30feaeed3399ecc22551add4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__20_Sep_2012_16_32_27_+1000_9hTQdOshvu/RPS_w"
+ boundary="Signature=_Thu__20_Sep_2012_17_03_30_+1000_0hHYvfdmkveO4L.7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39300 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:45119 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751006Ab2ITGcg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 02:32:36 -0400
+	with ESMTP id S1751378Ab2ITHDl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 03:03:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?IktyenlzenRvZiBIYcWCYXNhIg==?= <khc@pm.waw.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suresh Siddha <suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Thu__20_Sep_2012_16_32_27_+1000_9hTQdOshvu/RPS_w
+--Signature=_Thu__20_Sep_2012_17_03_30_+1000_0hHYvfdmkveO4L.7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+Hi Al,
 
-Today's linux-next merge of the ixp4xx tree got conflicts in
-arch/arm/mach-ixp4xx/common.c and
-arch/arm/mach-ixp4xx/include/mach/ixp4xx-regs.h between commit
-13ec32f47cb4 ("ARM: ixp4xx: use __iomem pointers for MMIO") from the
-arm-soc tree and commits 43690ab7543a ("IXP4xx: Always ioremap() Queue
-Manager MMIO region at boot") and f62736b567ff ("IXP4xx: map CPU config
-registers within VMALLOC region") from the ixp4xx tree.
+Today's linux-next merge of the signal tree got a conflict in
+arch/x86/kernel/process_32.c between commit 304bceda6a18 ("x86, fpu: use
+non-lazy fpu restore for processors supporting xsave") from the tip tree
+and commits 450ca1f882ab ("x86: get rid of TIF_IRET hackery") and
+5daca7153d68 ("x86, um/x86: switch to generic sys_execve and
+kernel_execve") from the signal tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -38,115 +37,47 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-ixp4xx/common.c
-index fdf91a1,8f75b25..0000000
---- a/arch/arm/mach-ixp4xx/common.c
-+++ b/arch/arm/mach-ixp4xx/common.c
-@@@ -67,15 -67,12 +67,12 @@@ static struct map_desc ixp4xx_io_desc[
-  		.pfn		=3D __phys_to_pfn(IXP4XX_PCI_CFG_BASE_PHYS),
-  		.length		=3D IXP4XX_PCI_CFG_REGION_SIZE,
-  		.type		=3D MT_DEVICE
-- 	},
-- #ifdef CONFIG_DEBUG_LL
-- 	{	/* Debug UART mapping */
-- 		.virtual	=3D (unsigned long)IXP4XX_DEBUG_UART_BASE_VIRT,
-- 		.pfn		=3D __phys_to_pfn(IXP4XX_DEBUG_UART_BASE_PHYS),
-- 		.length		=3D IXP4XX_DEBUG_UART_REGION_SIZE,
-+ 	}, {	/* Queue Manager */
- -		.virtual	=3D IXP4XX_QMGR_BASE_VIRT,
-++		.virtual	=3D (unsigned long)IXP4XX_QMGR_BASE_VIRT,
-+ 		.pfn		=3D __phys_to_pfn(IXP4XX_QMGR_BASE_PHYS),
-+ 		.length		=3D IXP4XX_QMGR_REGION_SIZE,
-  		.type		=3D MT_DEVICE
-- 	}
-- #endif
-+ 	},
-  };
+diff --cc arch/x86/kernel/process_32.c
+index b9ff83c,9e84b4f..0000000
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@@ -190,6 -190,16 +190,12 @@@ start_thread(struct pt_regs *regs, unsi
+  	regs->cs		=3D __USER_CS;
+  	regs->ip		=3D new_ip;
+  	regs->sp		=3D new_sp;
++ 	regs->flags		=3D X86_EFLAGS_IF;
++ 	/*
+ -	 * Free the old FP and other extended state
+ -	 */
+ -	free_thread_xstate(current);
+ -	/*
++ 	 * force it to the iret return path by making it look as if there was
++ 	 * some work pending.
++ 	 */
++ 	set_thread_flag(TIF_NOTIFY_RESUME);
+  }
+  EXPORT_SYMBOL_GPL(start_thread);
  =20
-  void __init ixp4xx_map_io(void)
-diff --cc arch/arm/mach-ixp4xx/include/mach/ixp4xx-regs.h
-index eb68b61,d7f6032..0000000
---- a/arch/arm/mach-ixp4xx/include/mach/ixp4xx-regs.h
-+++ b/arch/arm/mach-ixp4xx/include/mach/ixp4xx-regs.h
-@@@ -42,39 -42,31 +42,31 @@@
-  /*
-   * Queue Manager
-   */
-- #define IXP4XX_QMGR_BASE_PHYS		(0x60000000)
-- #define IXP4XX_QMGR_REGION_SIZE		(0x00004000)
-+ #define IXP4XX_QMGR_BASE_PHYS		0x60000000
- -#define IXP4XX_QMGR_BASE_VIRT		0xFEF15000
-++#define IXP4XX_QMGR_BASE_VIRT		IOMEM(0xFEF15000)
-+ #define IXP4XX_QMGR_REGION_SIZE		0x00004000
- =20
-  /*
--  * Expansion BUS Configuration registers
-+  * Peripheral space, including debug UART. Must be section-aligned so that
-+  * it can be used with the low-level debug code.
-   */
-- #define IXP4XX_EXP_CFG_BASE_PHYS	(0xC4000000)
-- #define IXP4XX_EXP_CFG_BASE_VIRT	IOMEM(0xFFBFE000)
-- #define IXP4XX_EXP_CFG_REGION_SIZE	(0x00001000)
-+ #define IXP4XX_PERIPHERAL_BASE_PHYS	0xC8000000
- -#define IXP4XX_PERIPHERAL_BASE_VIRT	0xFEF00000
-++#define IXP4XX_PERIPHERAL_BASE_VIRT	IOMEM(0xFEF00000)
-+ #define IXP4XX_PERIPHERAL_REGION_SIZE	0x00013000
- =20
-  /*
-   * PCI Config registers
-   */
-- #define IXP4XX_PCI_CFG_BASE_PHYS	(0xC0000000)
-- #define	IXP4XX_PCI_CFG_BASE_VIRT	IOMEM(0xFFBFF000)
-- #define IXP4XX_PCI_CFG_REGION_SIZE	(0x00001000)
--=20
-- /*
--  * Peripheral space
--  */
-- #define IXP4XX_PERIPHERAL_BASE_PHYS	(0xC8000000)
-- #define IXP4XX_PERIPHERAL_BASE_VIRT	IOMEM(0xFFBEB000)
-- #define IXP4XX_PERIPHERAL_REGION_SIZE	(0x00013000)
-+ #define IXP4XX_PCI_CFG_BASE_PHYS	0xC0000000
- -#define IXP4XX_PCI_CFG_BASE_VIRT	0xFEF13000
-++#define IXP4XX_PCI_CFG_BASE_VIRT	IOMEM(0xFEF13000)
-+ #define IXP4XX_PCI_CFG_REGION_SIZE	0x00001000
- =20
-  /*
--  * Debug UART
--  *
--  * This is basically a remap of UART1 into a region that is section
--  * aligned so that it * can be used with the low-level debug code.
-+  * Expansion BUS Configuration registers
-   */
-- #define	IXP4XX_DEBUG_UART_BASE_PHYS	(0xC8000000)
-- #define	IXP4XX_DEBUG_UART_BASE_VIRT	IOMEM(0xffb00000)
-- #define	IXP4XX_DEBUG_UART_REGION_SIZE	(0x00001000)
-+ #define IXP4XX_EXP_CFG_BASE_PHYS	0xC4000000
- -#define IXP4XX_EXP_CFG_BASE_VIRT	0xFEF14000
-++#define IXP4XX_EXP_CFG_BASE_VIRT	IOMEM(0xFEF14000)
-+ #define IXP4XX_EXP_CFG_REGION_SIZE	0x00001000
- =20
-  #define IXP4XX_EXP_CS0_OFFSET	0x00
-  #define IXP4XX_EXP_CS1_OFFSET   0x04
 
---Signature=_Thu__20_Sep_2012_16_32_27_+1000_9hTQdOshvu/RPS_w
+--Signature=_Thu__20_Sep_2012_17_03_30_+1000_0hHYvfdmkveO4L.7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQWrh7AAoJEECxmPOUX5FEV+oP/RBgEw+w+fwCXYza0lqlHo4W
-2IHDjxgFChSFhJ+in9YfZ/p6FUdiPAn//ATEbqubHmNnaL5o4kLZ1VMvkXcI+47S
-apZm21A28hPvSEVzCdWQCSk6R06H549Uefw5qG8EhZrpd7vw7DGAjc1jxcvAyDpy
-bXnnab6UB63enHLGBo4ahDaQSWHsOjWPN2hLKeVFH1Sab+OWAfinnZW53O0KLFVc
-9e3IN62NItkQnM2+rKmRpWDyyzjE+uZA75zTUQkEBzJ91ej/oMc60SBMd0R7ekg/
-vXQZMD9S74hx79UbLEqoqdTPRCs3cU00L7HPqdyglL2CdbNyLtx69y8w6SZ51iD8
-mYKyX8upKIQAkKBlfH/xRL2vfBrI9oPYYiLDBUiwpdhHtP9zpUR0asTwtN2wVo4A
-2B/ea5iXeoy1+XZlvFkjXZbY4SgzaULkxHuEr++9Iv5XUEQCI/4Mp7SOORdr95r2
-S2MLbD6jmCUl+r21PbtZ2gVYl2Rjh+XTw87X00Ajg48hQl78QeJTXZ34+mTRqCeW
-poPKSEVtOCCBbh+Q78y8mfpKtulyohOHFbxNF1TXENENS+YNoeE8ZL9kuajfXtHa
-9XBvKq0FPMMCYWbL1b6bB5tkKYRvcNtXnDGbeHoDRI+61j5Fny3ZDi0la7LEtOno
-uwI+b7jbVxNrRuYSkQU9
-=dN/9
+iQIcBAEBCAAGBQJQWr/CAAoJEECxmPOUX5FEsTAP+gMXFny1LBwWnO5eqiGi1kKx
+egt4aVQJvdVQ4xfvC1bseQpAEJ/CEIPkpAE4KpVloFY92JKaT+IXgVIkV3huLZxI
+n/BW227U/w3hbsW0R+EWTKXPGqdRFfy3TmIIAAsEemFycJskbCBEFKE+Ni/4fIQI
+sZ8S66aNLHz7Rj8C2R6zqyVZwYV9eC5EkSR/vsglR5SRFUFjGV6tv2yggeIqrLAJ
+II3VHLmIlqgluSHFMRrAX+GGfZPx8rkOesv+FUWShi+zJLg4ot7dkHLm4KNyLB6t
+Na8sKJv23z50g/JvnnzQeYL36JG/jQWzo3hMqEZ/SaiZO3PEROmCPDa5SPD/laLX
+cnGH80YHNeMquEqtLr3jJlC0eoPK1JsCBSR/TPt3DtNFbC2GQKFt6ZoPeLtVgqVs
+f7TjxNl8UyaM07ubs+PkMdi5pVHb7IlCgGNScN4RWTIIFTB0bYWD7qpQntC82OQe
+ifPDsn0ZWc1Hedtr4pIlAwEID00yMXhQ4x5ANJ1zIYRlmsWDwoXHstiEtP5irmWf
+7hVnkbPetleQrBuUZ9RfI1IcuOFNjwVfqI9bPKPRNk05ieFsGnCJxt0yxRnmaVFx
+JywdkQ0m2TB40izIQWc9JTyqQiYtcYwm+s2D5SoLiM26LYNXggB8QKIng/roQw1m
+Wl9OsEEjkTLK60db1cc2
+=9N5j
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__20_Sep_2012_16_32_27_+1000_9hTQdOshvu/RPS_w--
+--Signature=_Thu__20_Sep_2012_17_03_30_+1000_0hHYvfdmkveO4L.7--
