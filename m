@@ -1,66 +1,44 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [RE-RESEND][PATCH] audit: replace defines with C stubs
-Date: Thu, 20 Sep 2012 15:40:08 -0700
-Message-ID: <CAGXu5jLitrZTef9uJ69Vp-jFTfDgpYipb3p1ACj6cogC3vqxMQ@mail.gmail.com>
-References: <20120807004041.GA27896@www.outflux.net>
-	<CAMuHMdXxXW5pPHF+6r+qcobjtTNaXP1cmkrrtdDeWcLfGop4gA@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (net-next tree related)
+Date: Thu, 20 Sep 2012 18:53:15 -0400 (EDT)
+Message-ID: <20120920.185315.576326460331670020.davem@davemloft.net>
+References: <20120920.164558.2281417114805373564.davem@davemloft.net>
+	<20120921081531.67db8a7d0ac1b35426b22c45@canb.auug.org.au>
+	<1348179764.1132.35.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:63706 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755210Ab2ITWkK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 18:40:10 -0400
-Received: by ieak13 with SMTP id k13so4299652iea.19
-        for <linux-next@vger.kernel.org>; Thu, 20 Sep 2012 15:40:09 -0700 (PDT)
-In-Reply-To: <CAMuHMdXxXW5pPHF+6r+qcobjtTNaXP1cmkrrtdDeWcLfGop4gA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jonas Bonn <jonas@southpole.se>, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Eric Paris <eparis@redhat.com>, linux@lists.openrisc.net, Linux-Next <linux-next@vger.kernel.org>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1348179764.1132.35.camel@pasglop>
+Sender: linux-kernel-owner@vger.kernel.org
+To: benh@kernel.crashing.org
+Cc: sfr@canb.auug.org.au, paulus@samba.org, linuxppc-dev@lists.ozlabs.org, mika.westerberg@linux.intel.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Sep 13, 2012 at 12:43 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Tue, Aug 7, 2012 at 2:40 AM, Kees Cook <keescook@chromium.org> wrote:
->> This replaces the #defines used when CONFIG_AUDIT or CONFIG_AUDIT_SYSCALLS
->> are disabled so we get type checking during those builds.
->>
->> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->
-> JFYI, the change
->
-> -#define audit_syscall_entry(ta,a,b,c,d,e) do { ; } while (0)
-> +static inline void audit_syscall_entry(int arch, int major, unsigned long a0,
-> +                                      unsigned long a1, unsigned long a2,
-> +                                      unsigned long a3)
-> +{ }
->
-> uncovers a bug on OpenRISC.
->
-> Before,
->
->         audit_syscall_entry(audit_arch(), regs->gpr[11],
->                             regs->gpr[3], regs->gpr[4],
->                             regs->gpr[5], regs->gpr[6]);
->
-> just expanded to nothing if CONFIG_AUDITSYSCALL was not set.
-> Now, it fails to compile with:
->
-> arch/openrisc/kernel/ptrace.c:190:2: error: implicit declaration of
-> function 'audit_arch'
-> http://kisskb.ellerman.id.au/kisskb/buildresult/7191698/
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Date: Fri, 21 Sep 2012 08:22:44 +1000
 
-Thanks for catching this! It looks like audit.h is missing
-AUDIT_ARCH_OPENRISC entirely, and that openrisc doesn't need an
-audit_arch() function at all. It could use AUDIT_ARCH_OPENRISC once
-that existed, which would just be EM_OPENRISC. (It looks like little
-endian mode isn't used.)
+> Hrm, that's ancient gunk, I'll have to dig. We potentially can support
+> ISA devices DMA'ing from an ISA bridge... but via the iommu, which means
+> isa_virt_to_bus is a non-starter.
+> 
+> But then, do we really care ? IE. Is there single device that actually
+> requires ISA_DMA_API and that is expected to work on any currently
+> supported powerpc hw ? :-)
+> 
+> We don't even support PReP anymore, so that leaves us with what ?
 
-I'll send a patch...
+ISA_DMA_API implies a fixed window of addresses which are <= 32-bits
+on the bus, which is a hardware requirement of these devices.
 
--Kees
+isa_virt_to_bus() goes to that physical address, and the expection is
+that you use GFP_DMA and thus the physical addresses fit inside of
+an unsigned int.
 
--- 
-Kees Cook
-Chrome OS Security
+isa_virt_to_bus() basically amounts to a virt-->phys plus a cast.
+
+> Anybody has an objection to turning ISA_DMA_API off ?
+
+Then you can remove all of the DMA api stuff in powerpc's asm/dma.h
+but some of it looks like it might be in use.
