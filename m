@@ -1,58 +1,152 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the sound-asoc
- tree
-Date: Thu, 20 Sep 2012 16:06:37 +1000
-Message-ID: <20120920160637.7f9065225982468c25fa1952@canb.auug.org.au>
+Subject: linux-next: manual merge of the ixp4xx tree with the arm-soc tree
+Date: Thu, 20 Sep 2012 16:32:27 +1000
+Message-ID: <20120920163227.c6d8f1559b9cde971a376abf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__20_Sep_2012_16_06_37_+1000_He47OKBIxQ2LnUqG"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__20_Sep_2012_16_32_27_+1000_9hTQdOshvu/RPS_w"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39300 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751006Ab2ITGcg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 02:32:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: =?UTF-8?B?IktyenlzenRvZiBIYcWCYXNhIg==?= <khc@pm.waw.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
---Signature=_Thu__20_Sep_2012_16_06_37_+1000_He47OKBIxQ2LnUqG
+--Signature=_Thu__20_Sep_2012_16_32_27_+1000_9hTQdOshvu/RPS_w
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Krzysztof,
 
-Today's linux-next merge of the arm-soc tree got conflicts in
-sound/soc/omap/igep0020.c, sound/soc/omap/omap3beagle.c,
-sound/soc/omap/omap3evm.c and sound/soc/omap/overo.c between commit
-152c6e56f6a8 ("ASoC: Remove obsolete OMAP3 machine drivers") from the
-sound-asoc tree and commit 2203747c9771 ("ARM: omap: move platform_data
-definitions") from the arm-soc tree.
+Today's linux-next merge of the ixp4xx tree got conflicts in
+arch/arm/mach-ixp4xx/common.c and
+arch/arm/mach-ixp4xx/include/mach/ixp4xx-regs.h between commit
+13ec32f47cb4 ("ARM: ixp4xx: use __iomem pointers for MMIO") from the
+arm-soc tree and commits 43690ab7543a ("IXP4xx: Always ioremap() Queue
+Manager MMIO region at boot") and f62736b567ff ("IXP4xx: map CPU config
+registers within VMALLOC region") from the ixp4xx tree.
 
-The former removed the files, so I did that and can carry the fix as
-necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__20_Sep_2012_16_06_37_+1000_He47OKBIxQ2LnUqG
+diff --cc arch/arm/mach-ixp4xx/common.c
+index fdf91a1,8f75b25..0000000
+--- a/arch/arm/mach-ixp4xx/common.c
++++ b/arch/arm/mach-ixp4xx/common.c
+@@@ -67,15 -67,12 +67,12 @@@ static struct map_desc ixp4xx_io_desc[
+  		.pfn		=3D __phys_to_pfn(IXP4XX_PCI_CFG_BASE_PHYS),
+  		.length		=3D IXP4XX_PCI_CFG_REGION_SIZE,
+  		.type		=3D MT_DEVICE
+- 	},
+- #ifdef CONFIG_DEBUG_LL
+- 	{	/* Debug UART mapping */
+- 		.virtual	=3D (unsigned long)IXP4XX_DEBUG_UART_BASE_VIRT,
+- 		.pfn		=3D __phys_to_pfn(IXP4XX_DEBUG_UART_BASE_PHYS),
+- 		.length		=3D IXP4XX_DEBUG_UART_REGION_SIZE,
++ 	}, {	/* Queue Manager */
+ -		.virtual	=3D IXP4XX_QMGR_BASE_VIRT,
+++		.virtual	=3D (unsigned long)IXP4XX_QMGR_BASE_VIRT,
++ 		.pfn		=3D __phys_to_pfn(IXP4XX_QMGR_BASE_PHYS),
++ 		.length		=3D IXP4XX_QMGR_REGION_SIZE,
+  		.type		=3D MT_DEVICE
+- 	}
+- #endif
++ 	},
+  };
+ =20
+  void __init ixp4xx_map_io(void)
+diff --cc arch/arm/mach-ixp4xx/include/mach/ixp4xx-regs.h
+index eb68b61,d7f6032..0000000
+--- a/arch/arm/mach-ixp4xx/include/mach/ixp4xx-regs.h
++++ b/arch/arm/mach-ixp4xx/include/mach/ixp4xx-regs.h
+@@@ -42,39 -42,31 +42,31 @@@
+  /*
+   * Queue Manager
+   */
+- #define IXP4XX_QMGR_BASE_PHYS		(0x60000000)
+- #define IXP4XX_QMGR_REGION_SIZE		(0x00004000)
++ #define IXP4XX_QMGR_BASE_PHYS		0x60000000
+ -#define IXP4XX_QMGR_BASE_VIRT		0xFEF15000
+++#define IXP4XX_QMGR_BASE_VIRT		IOMEM(0xFEF15000)
++ #define IXP4XX_QMGR_REGION_SIZE		0x00004000
+ =20
+  /*
+-  * Expansion BUS Configuration registers
++  * Peripheral space, including debug UART. Must be section-aligned so that
++  * it can be used with the low-level debug code.
+   */
+- #define IXP4XX_EXP_CFG_BASE_PHYS	(0xC4000000)
+- #define IXP4XX_EXP_CFG_BASE_VIRT	IOMEM(0xFFBFE000)
+- #define IXP4XX_EXP_CFG_REGION_SIZE	(0x00001000)
++ #define IXP4XX_PERIPHERAL_BASE_PHYS	0xC8000000
+ -#define IXP4XX_PERIPHERAL_BASE_VIRT	0xFEF00000
+++#define IXP4XX_PERIPHERAL_BASE_VIRT	IOMEM(0xFEF00000)
++ #define IXP4XX_PERIPHERAL_REGION_SIZE	0x00013000
+ =20
+  /*
+   * PCI Config registers
+   */
+- #define IXP4XX_PCI_CFG_BASE_PHYS	(0xC0000000)
+- #define	IXP4XX_PCI_CFG_BASE_VIRT	IOMEM(0xFFBFF000)
+- #define IXP4XX_PCI_CFG_REGION_SIZE	(0x00001000)
+-=20
+- /*
+-  * Peripheral space
+-  */
+- #define IXP4XX_PERIPHERAL_BASE_PHYS	(0xC8000000)
+- #define IXP4XX_PERIPHERAL_BASE_VIRT	IOMEM(0xFFBEB000)
+- #define IXP4XX_PERIPHERAL_REGION_SIZE	(0x00013000)
++ #define IXP4XX_PCI_CFG_BASE_PHYS	0xC0000000
+ -#define IXP4XX_PCI_CFG_BASE_VIRT	0xFEF13000
+++#define IXP4XX_PCI_CFG_BASE_VIRT	IOMEM(0xFEF13000)
++ #define IXP4XX_PCI_CFG_REGION_SIZE	0x00001000
+ =20
+  /*
+-  * Debug UART
+-  *
+-  * This is basically a remap of UART1 into a region that is section
+-  * aligned so that it * can be used with the low-level debug code.
++  * Expansion BUS Configuration registers
+   */
+- #define	IXP4XX_DEBUG_UART_BASE_PHYS	(0xC8000000)
+- #define	IXP4XX_DEBUG_UART_BASE_VIRT	IOMEM(0xffb00000)
+- #define	IXP4XX_DEBUG_UART_REGION_SIZE	(0x00001000)
++ #define IXP4XX_EXP_CFG_BASE_PHYS	0xC4000000
+ -#define IXP4XX_EXP_CFG_BASE_VIRT	0xFEF14000
+++#define IXP4XX_EXP_CFG_BASE_VIRT	IOMEM(0xFEF14000)
++ #define IXP4XX_EXP_CFG_REGION_SIZE	0x00001000
+ =20
+  #define IXP4XX_EXP_CS0_OFFSET	0x00
+  #define IXP4XX_EXP_CS1_OFFSET   0x04
+
+--Signature=_Thu__20_Sep_2012_16_32_27_+1000_9hTQdOshvu/RPS_w
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQWrJtAAoJEECxmPOUX5FEYXQP/Ah872dKM23CMBJQrAwjFQoY
-eA7nPisC5XbbogWd1ZrZT6FicirYCilM5lrb5wEb3X6zGTsH6owUYT6X+XrAkYi+
-K9A+hN6uuiB8bpaK9cSu5Ic6z7HTi6PQvCIkNDZmsOx2Y3L5KdfK695sz4Ul+PHb
-LzUb/Jsj9kmRBZJzfJoZnCN2yjnvSha+4FuutjewDLlcsBGV/9wPnMoPPg1L95MP
-JhXSikeFfYMRHK+vtupkZgezqSlp4d1U1hu0nawF0clBGes85BVW6Glxj9Sl/dG7
-tVVNZUsWRwOHMWj8YDeUwvr5pGjSCdg4KhwhqNLS7tdkin/jJrDTBz1uF/LMT0/i
-kDFb4V2Qut1XinlV2Bl63EL6HFcTkMsCdULuDSNH8Te8Gb/J/EHJwj+OxIQU5Mt/
-B1NOA86FACFkEmGaSXFzxQc0tHiIPqCIq3m+YblHMGU4jEyZKe/ewcBMBYlyaoYJ
-tbjt+mYteCcUM8FbuoDr8wanSMk3Z3Ixpf/e70mmMbrSxNQ07YAEFnyNysJykMws
-JnRZeHcXhq+nrJhfLidzoYQP3UOPsRPrD4CSoiaIr2YYwcnHKA+tMIs3d8ccCMjj
-s8OUbUBJVN5SnZJ9zalK7dhRtslCZ/UStdlbuhW6KsZ5Wx9w76GtxAHjfxbL9WM4
-DuDZo0n0ugoLjSB+BIk9
-=ZZu2
+iQIcBAEBCAAGBQJQWrh7AAoJEECxmPOUX5FEV+oP/RBgEw+w+fwCXYza0lqlHo4W
+2IHDjxgFChSFhJ+in9YfZ/p6FUdiPAn//ATEbqubHmNnaL5o4kLZ1VMvkXcI+47S
+apZm21A28hPvSEVzCdWQCSk6R06H549Uefw5qG8EhZrpd7vw7DGAjc1jxcvAyDpy
+bXnnab6UB63enHLGBo4ahDaQSWHsOjWPN2hLKeVFH1Sab+OWAfinnZW53O0KLFVc
+9e3IN62NItkQnM2+rKmRpWDyyzjE+uZA75zTUQkEBzJ91ej/oMc60SBMd0R7ekg/
+vXQZMD9S74hx79UbLEqoqdTPRCs3cU00L7HPqdyglL2CdbNyLtx69y8w6SZ51iD8
+mYKyX8upKIQAkKBlfH/xRL2vfBrI9oPYYiLDBUiwpdhHtP9zpUR0asTwtN2wVo4A
+2B/ea5iXeoy1+XZlvFkjXZbY4SgzaULkxHuEr++9Iv5XUEQCI/4Mp7SOORdr95r2
+S2MLbD6jmCUl+r21PbtZ2gVYl2Rjh+XTw87X00Ajg48hQl78QeJTXZ34+mTRqCeW
+poPKSEVtOCCBbh+Q78y8mfpKtulyohOHFbxNF1TXENENS+YNoeE8ZL9kuajfXtHa
+9XBvKq0FPMMCYWbL1b6bB5tkKYRvcNtXnDGbeHoDRI+61j5Fny3ZDi0la7LEtOno
+uwI+b7jbVxNrRuYSkQU9
+=dN/9
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__20_Sep_2012_16_06_37_+1000_He47OKBIxQ2LnUqG--
+--Signature=_Thu__20_Sep_2012_16_32_27_+1000_9hTQdOshvu/RPS_w--
