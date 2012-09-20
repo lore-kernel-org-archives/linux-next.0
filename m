@@ -1,45 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-next tree related)
-Date: Thu, 20 Sep 2012 16:45:58 -0400 (EDT)
-Message-ID: <20120920.164558.2281417114805373564.davem@davemloft.net>
-References: <20120920173622.2aa7209cd241a3945f4384d4@canb.auug.org.au>
-	<20120920091013.GV15548@intel.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the
+ sound-asoc tree
+Date: Thu, 20 Sep 2012 15:01:44 -0700
+Message-ID: <20120920220143.GI28835@atomide.com>
+References: <20120920160637.7f9065225982468c25fa1952@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:39268 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753894Ab2ITUqA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 16:46:00 -0400
-In-Reply-To: <20120920091013.GV15548@intel.com>
+Received: from mho-04-ewr.mailhop.org ([204.13.248.74]:31810 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752293Ab2ITWBx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 18:01:53 -0400
+Content-Disposition: inline
+In-Reply-To: <20120920160637.7f9065225982468c25fa1952@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: mika.westerberg@linux.intel.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Date: Thu, 20 Sep 2012 12:10:14 +0300
-
-> On Thu, Sep 20, 2012 at 05:36:22PM +1000, Stephen Rothwell wrote:
->> Hi all,
->> 
->> After merging the final tree, today's linux-next build (powerpc
->> allyesconfig) failed like this:
->> 
->> drivers/net/ethernet/i825xx/znet.c: In function 'hardware_init':
->> drivers/net/ethernet/i825xx/znet.c:868:2: error: implicit declaration of function 'isa_virt_to_bus' [-Werror=implicit-function-declaration]
->> 
->> Caused by commit 1d3ff76759b7 ("i825xx: znet: fix compiler warnings when
->> building a 64-bit kernel").  Is there some Kconfig dependency missing (CONFIG_ISA)?
+* Stephen Rothwell <sfr@canb.auug.org.au> [120919 23:07]:
+> Hi all,
 > 
-> If we make it dependent on CONFIG_ISA then the driver cannot be built with
-> 64-bit kernel. Then again is there someone running 64-bit kernel on Zenith
-> Z-note notebook? From the pictures it looks like very ancient "laptop".
+> Today's linux-next merge of the arm-soc tree got conflicts in
+> sound/soc/omap/igep0020.c, sound/soc/omap/omap3beagle.c,
+> sound/soc/omap/omap3evm.c and sound/soc/omap/overo.c between commit
+> 152c6e56f6a8 ("ASoC: Remove obsolete OMAP3 machine drivers") from the
+> sound-asoc tree and commit 2203747c9771 ("ARM: omap: move platform_data
+> definitions") from the arm-soc tree.
 > 
-> An alternative is to make it depend on X86 like this:
+> The former removed the files, so I did that and can carry the fix as
+> necessary (no action is required).
 
-I think the powerpc port is at fault here.
+OK thanks again.
 
-Part of being able to advertise ISA_DMA_API is providing isa_virt_to_bus().
+Tony
