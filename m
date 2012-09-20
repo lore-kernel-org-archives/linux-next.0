@@ -1,69 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-next tree related)
-Date: Fri, 21 Sep 2012 08:28:49 +1000
-Message-ID: <20120921082849.693919e9a04431aed9e2461b@canb.auug.org.au>
-References: <20120920173622.2aa7209cd241a3945f4384d4@canb.auug.org.au>
-	<20120920091013.GV15548@intel.com>
-	<20120920.164558.2281417114805373564.davem@davemloft.net>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: [RE-RESEND][PATCH] audit: replace defines with C stubs
+Date: Thu, 20 Sep 2012 15:40:08 -0700
+Message-ID: <CAGXu5jLitrZTef9uJ69Vp-jFTfDgpYipb3p1ACj6cogC3vqxMQ@mail.gmail.com>
+References: <20120807004041.GA27896@www.outflux.net>
+	<CAMuHMdXxXW5pPHF+6r+qcobjtTNaXP1cmkrrtdDeWcLfGop4gA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__21_Sep_2012_08_28_49_+1000_I41RF1v=v_nKmmYs"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47624 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755656Ab2ITW25 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 18:28:57 -0400
-In-Reply-To: <20120920.164558.2281417114805373564.davem@davemloft.net>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:63706 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755210Ab2ITWkK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 18:40:10 -0400
+Received: by ieak13 with SMTP id k13so4299652iea.19
+        for <linux-next@vger.kernel.org>; Thu, 20 Sep 2012 15:40:09 -0700 (PDT)
+In-Reply-To: <CAMuHMdXxXW5pPHF+6r+qcobjtTNaXP1cmkrrtdDeWcLfGop4gA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: mika.westerberg@linux.intel.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jonas Bonn <jonas@southpole.se>, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Eric Paris <eparis@redhat.com>, linux@lists.openrisc.net, Linux-Next <linux-next@vger.kernel.org>
 
---Signature=_Fri__21_Sep_2012_08_28_49_+1000_I41RF1v=v_nKmmYs
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Dave,
-
-On Thu, 20 Sep 2012 16:45:58 -0400 (EDT) David Miller <davem@davemloft.net>=
- wrote:
+On Thu, Sep 13, 2012 at 12:43 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Aug 7, 2012 at 2:40 AM, Kees Cook <keescook@chromium.org> wrote:
+>> This replaces the #defines used when CONFIG_AUDIT or CONFIG_AUDIT_SYSCALLS
+>> are disabled so we get type checking during those builds.
+>>
+>> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
 >
-> I think the powerpc port is at fault here.
->=20
-> Part of being able to advertise ISA_DMA_API is providing isa_virt_to_bus(=
-).
+> JFYI, the change
+>
+> -#define audit_syscall_entry(ta,a,b,c,d,e) do { ; } while (0)
+> +static inline void audit_syscall_entry(int arch, int major, unsigned long a0,
+> +                                      unsigned long a1, unsigned long a2,
+> +                                      unsigned long a3)
+> +{ }
+>
+> uncovers a bug on OpenRISC.
+>
+> Before,
+>
+>         audit_syscall_entry(audit_arch(), regs->gpr[11],
+>                             regs->gpr[3], regs->gpr[4],
+>                             regs->gpr[5], regs->gpr[6]);
+>
+> just expanded to nothing if CONFIG_AUDITSYSCALL was not set.
+> Now, it fails to compile with:
+>
+> arch/openrisc/kernel/ptrace.c:190:2: error: implicit declaration of
+> function 'audit_arch'
+> http://kisskb.ellerman.id.au/kisskb/buildresult/7191698/
 
-Not disagreeing, but it would be nice if this was documented somewhere
-(maybe in Documentation/DMA-ISA-LPC.txt).  We have not had this problem
-before because all the other uses of isa_virt_to_bus() are in drivers
-that depend on X86 or ARM or ISA or EISA.
+Thanks for catching this! It looks like audit.h is missing
+AUDIT_ARCH_OPENRISC entirely, and that openrisc doesn't need an
+audit_arch() function at all. It could use AUDIT_ARCH_OPENRISC once
+that existed, which would just be EM_OPENRISC. (It looks like little
+endian mode isn't used.)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I'll send a patch...
 
---Signature=_Fri__21_Sep_2012_08_28_49_+1000_I41RF1v=v_nKmmYs
-Content-Type: application/pgp-signature
+-Kees
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQW5ihAAoJEECxmPOUX5FEdHsQAKA/SCls+zDBV1Q3Pw8KTo5U
-gawnFuCNNo5hQIfhXoY/o50OqbEp2An4CMAgTb8Ox/KoAq1Wk31Zn5thk7zdDT45
-kGKOdVnlrDzqNd8zDwG8Jfbkvf+fZ3knpjblm1ySxBu48hQDbHI+ZEHjgyFKguRa
-LP1vCs9zKN4kil4f1V2CPMpzehoFoHEz1LHLRocStIKeMQjm5w3ZlEolzn/MUOtT
-7nBDSFpsWNwXlYcZh6P+ln7hMW5402ddu93A5hWzhzdddplXulD8K10DZBIP85zB
-fO7kmcy01TZ5v83vy4E2hlX++EhrBPtGN08N3r6fMxT1Yf9fCxz0Ar+bI/vhOGpO
-v0juToNesc/QTxm5sWUdSxUP6qrZFUtM426TUsslLbDsuYvX/gY+I/J38dxly8Nu
-jr1I0FLY1ERvBFt0qfWn7w+ZNF2dIFQY3dSf0cC7jFXa+2ql+XNY7T1uziZWBj2X
-n0B2eUkSsvmB06logXlyI9opR0tJfT4udgVquhv1YmtWCZOiAbbbJgRdwEgU/2BO
-0AegZam+50jksHtIAjBqHV8sRKQSQjyJI9isNGd7i7Asp6vN7mCYqDfwtNSBCa5A
-IAM3jyIkB1uP23nmFXXNlh2jwO015XJtO+T6ahBIuxTGz4oRo39x8AbSgCySYT9x
-QQ+1keznyzq2iOLkDfGo
-=9Gc5
------END PGP SIGNATURE-----
-
---Signature=_Fri__21_Sep_2012_08_28_49_+1000_I41RF1v=v_nKmmYs--
+-- 
+Kees Cook
+Chrome OS Security
