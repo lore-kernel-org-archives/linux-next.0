@@ -1,86 +1,65 @@
-From: Daniel Mack <zonque@gmail.com>
-Subject: Re: linux-next: Tree for Sept 21 (misc/lis3lv02d DT code)
-Date: Fri, 21 Sep 2012 23:17:58 +0200
-Message-ID: <505CD986.1050502@gmail.com>
-References: <20120921170139.4f0d85b1b733b37757a1f75b@canb.auug.org.au> <505CA874.3050803@xenotime.net>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (net-next tree related)
+Date: Sat, 22 Sep 2012 07:46:40 +1000
+Message-ID: <1348264000.1132.63.camel@pasglop>
+References: <20120920.164558.2281417114805373564.davem@davemloft.net>
+	 <20120921081531.67db8a7d0ac1b35426b22c45@canb.auug.org.au>
+	 <1348179764.1132.35.camel@pasglop>
+	 <20120920.185315.576326460331670020.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------010907040800010701030900"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <505CA874.3050803@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
-List-Id: linux-next.vger.kernel.org
-
-This is a multi-part message in MIME format.
---------------010907040800010701030900
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:57044 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753077Ab2IUVrD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 21 Sep 2012 17:47:03 -0400
+In-Reply-To: <20120920.185315.576326460331670020.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, paulus@samba.org, linuxppc-dev@lists.ozlabs.org, mika.westerberg@linux.intel.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 21.09.2012 19:48, Randy Dunlap wrote:
-> On 09/21/2012 12:01 AM, Stephen Rothwell wrote:
+On Thu, 2012-09-20 at 18:53 -0400, David Miller wrote:
+> From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Date: Fri, 21 Sep 2012 08:22:44 +1000
 > 
->> Hi all,
->>
->> Changes since 201209020:
->>
+> > Hrm, that's ancient gunk, I'll have to dig. We potentially can support
+> > ISA devices DMA'ing from an ISA bridge... but via the iommu, which means
+> > isa_virt_to_bus is a non-starter.
+> > 
+> > But then, do we really care ? IE. Is there single device that actually
+> > requires ISA_DMA_API and that is expected to work on any currently
+> > supported powerpc hw ? :-)
+> > 
+> > We don't even support PReP anymore, so that leaves us with what ?
 > 
+> ISA_DMA_API implies a fixed window of addresses which are <= 32-bits
+> on the bus, which is a hardware requirement of these devices.
+>
+> isa_virt_to_bus() goes to that physical address, and the expection is
+> that you use GFP_DMA and thus the physical addresses fit inside of
+> an unsigned int.
+
+Right, but on ppc, GFP_DMA is a nop (no separate ZONE_DMA, or rather all
+of memory is ZONE_DMA). It's always been like that afaik.
+
+We could support ISA device limited addressability using the iommu but
+that would involve a map/unmap type API (which I remember we did support
+in the old days by passing NULL to pci_map_*, but we dropped that along
+the way).
+
+> isa_virt_to_bus() basically amounts to a virt-->phys plus a cast.
 > 
+> > Anybody has an objection to turning ISA_DMA_API off ?
 > 
-> on i386:
-> 
-> ERROR: "lis3lv02d_init_dt" [drivers/misc/lis3lv02d/lis3lv02d_i2c.ko] undefined!
-> 
-> Full randconfig file is attached.
-> 
+> Then you can remove all of the DMA api stuff in powerpc's asm/dma.h
+> but some of it looks like it might be in use.
 
-Hmm, I cannot reproduce that on my machine with your config, but the
-attached patch should fix it.
+I will dig a bit. I think there might be some users of the ISA DMA
+engine for legacy floppies and parport on some early pSeries and CHRP
+machines (including Pegasos).
 
-Andrew, you already have a patch queued up for this driver - could you
-fold that one maybe after Randy signals success?
-
-
-Thanks,
-Daniel
-
-
---------------010907040800010701030900
-Content-Type: text/x-patch;
- name="0001-misc-lis3-fix-undefined-reference-to-lis3lv02d_init_.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-misc-lis3-fix-undefined-reference-to-lis3lv02d_init_.pa";
- filename*1="tch"
-
->From 7b3210ec41a40f2b667f57eb4478eb5a149199c8 Mon Sep 17 00:00:00 2001
-From: Daniel Mack <zonque@gmail.com>
-Date: Fri, 21 Sep 2012 23:14:29 +0200
-Subject: [PATCH] misc: lis3: fix undefined reference to lis3lv02d_init_dt
-
-Export the symbol to fix linker errors.
-
-Signed-off-by: Daniel Mack <zonque@gmail.com>
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
----
- drivers/misc/lis3lv02d/lis3lv02d.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/misc/lis3lv02d/lis3lv02d.c b/drivers/misc/lis3lv02d/lis3lv02d.c
-index 026021e..f9c24ab 100644
---- a/drivers/misc/lis3lv02d/lis3lv02d.c
-+++ b/drivers/misc/lis3lv02d/lis3lv02d.c
-@@ -1089,6 +1089,7 @@ int lis3lv02d_init_dt(struct lis3lv02d *lis3)
- 	return 0;
- }
- #endif
-+EXPORT_SYMBOL_GPL(lis3lv02d_init_dt);
- 
- /*
-  * Initialise the accelerometer and the various subsystems.
--- 
-1.7.11.4
-
-
---------------010907040800010701030900--
+Cheers,
+Ben.
