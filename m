@@ -1,40 +1,45 @@
-From: Denys Vlasenko <vda.linux@googlemail.com>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Fri, 21 Sep 2012 11:02:28 +0200
-Message-ID: <CAK1hOcM2-9Ret6am2+EGUC_5FE9x3c4eaPH-vgTjUujMd6LUiA@mail.gmail.com>
-References: <20120921162612.8e65fef4f07680d41717981c@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: mmotm 2012-09-20-17-25 uploaded (fs/bimfmt_elf on uml)
+Date: Fri, 21 Sep 2012 08:23:09 -0700
+Message-ID: <505C865D.5090802@xenotime.net>
+References: <20120921002638.7859F100047@wpzn3.hot.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:35471 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932127Ab2IUJCt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Sep 2012 05:02:49 -0400
-In-Reply-To: <20120921162612.8e65fef4f07680d41717981c@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20120921002638.7859F100047@wpzn3.hot.corp.google.com>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Richard Weinberger <richard@nod.at>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On 09/20/2012 05:26 PM, akpm@linux-foundation.org wrote:
 
-On Fri, Sep 21, 2012 at 8:26 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Andrew,
->
-> After merging the akpm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> fs/compat_binfmt_elf.c:22:53: fatal error: asm/sigframe.h: No such file or directory
->
-> Caused by commit "coredump: add a new elf note with siginfo of the
-> signal".  That include file only exists on the x86 and tile architectures.
->
-> I have reverted that commit (and "coredump: extend core dump note section
-> to contain file names of mapped files" and
-> "coredump-extend-core-dump-note-section-to-contain-file-names-of-mapped-files-checkpatch-fixes"
-> that follow it) for today.
+> The mm-of-the-moment snapshot 2012-09-20-17-25 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
 
-Sorry about this. I will take a look at it.
+
+on uml for x86_64 defconfig:
+
+fs/binfmt_elf.c: In function 'fill_files_note':
+fs/binfmt_elf.c:1419:2: error: implicit declaration of function 'vmalloc'
+fs/binfmt_elf.c:1419:7: warning: assignment makes pointer from integer without a cast
+fs/binfmt_elf.c:1437:5: error: implicit declaration of function 'vfree'
+
 
 -- 
-vda
+~Randy
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
