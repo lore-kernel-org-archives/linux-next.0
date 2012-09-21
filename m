@@ -1,101 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the md tree with the  tree
-Date: Fri, 21 Sep 2012 12:49:55 +1000
-Message-ID: <20120921124955.643dcd503be6cc67f5d1738c@canb.auug.org.au>
+Subject: linux-next: manual merge of the battery tree with the mfd tree
+Date: Fri, 21 Sep 2012 13:15:46 +1000
+Message-ID: <20120921131546.032757ac5bc270ed280282ea@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__21_Sep_2012_12_49_55_+1000_8fFBJvoYfvIhz9ue"
+ boundary="Signature=_Fri__21_Sep_2012_13_15_46_+1000_Dppj5gDQF1KmFtON"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37927 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:46193 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932641Ab2IUCt5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 22:49:57 -0400
+	with ESMTP id S1752979Ab2IUDP5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 23:15:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shaohua Li <shli@fusionio.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Jens Axboe <axboe@kernel.dk>
+To: Anton Vorontsov <avorontsov@ru.mvista.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Jett.Zhou" <jtzhou@marvell.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>
 
---Signature=_Fri__21_Sep_2012_12_49_55_+1000_8fFBJvoYfvIhz9ue
+--Signature=_Fri__21_Sep_2012_13_15_46_+1000_Dppj5gDQF1KmFtON
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Neil,
+Hi Anton,
 
-Today's linux-next merge of the md tree got a conflict in fs/bio.c
-between commit 4363ac7c13a9 ("block: Implement support for WRITE SAME")
-from the block tree and commit 368e564836d3 ("block: makes bio_split
-support bio without data") from the md tree.
+Today's linux-next merge of the battery tree got a conflict in
+include/linux/mfd/88pm860x.h between commit a70abacb06b8 ("mfd: 88pm860x:
+Use REG resource in regulator") from the mfd tree and commit a830d28b48bf
+("power_supply: Enable battery-charger for 88pm860x") from the battery
+tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/bio.c
-index f855e0e,dbb7a6c..0000000
---- a/fs/bio.c
-+++ b/fs/bio.c
-@@@ -1485,20 -1511,19 +1485,21 @@@ struct bio_pair *bio_split(struct bio *
-  	bp->bio2.bi_size -=3D first_sectors << 9;
-  	bp->bio1.bi_size =3D first_sectors << 9;
+diff --cc include/linux/mfd/88pm860x.h
+index d515e5c,b7c5a3c..0000000
+--- a/include/linux/mfd/88pm860x.h
++++ b/include/linux/mfd/88pm860x.h
+@@@ -359,22 -460,8 +440,23 @@@ struct pm860x_platform_data=20
+  	struct pm860x_rtc_pdata		*rtc;
+  	struct pm860x_touch_pdata	*touch;
+  	struct pm860x_power_pdata	*power;
++ 	struct charger_desc		*chg_desc;
+ -	struct regulator_init_data	*regulator;
+ +	struct regulator_init_data	*buck1;
+ +	struct regulator_init_data	*buck2;
+ +	struct regulator_init_data	*buck3;
+ +	struct regulator_init_data	*ldo1;
+ +	struct regulator_init_data	*ldo2;
+ +	struct regulator_init_data	*ldo3;
+ +	struct regulator_init_data	*ldo4;
+ +	struct regulator_init_data	*ldo5;
+ +	struct regulator_init_data	*ldo6;
+ +	struct regulator_init_data	*ldo7;
+ +	struct regulator_init_data	*ldo8;
+ +	struct regulator_init_data	*ldo9;
+ +	struct regulator_init_data	*ldo10;
+ +	struct regulator_init_data	*ldo12;
+ +	struct regulator_init_data	*ldo_vibrator;
+ +	struct regulator_init_data	*ldo14;
  =20
-- 	bp->bv1 =3D bi->bi_io_vec[0];
-- 	bp->bv2 =3D bi->bi_io_vec[0];
--=20
-- 	if (bio_is_rw(bi)) {
-- 		bp->bv2.bv_offset +=3D first_sectors << 9;
-- 		bp->bv2.bv_len -=3D first_sectors << 9;
-- 		bp->bv1.bv_len =3D first_sectors << 9;
-- 	}
-+ 	if (bi->bi_vcnt !=3D 0) {
-+ 		bp->bv1 =3D bi->bi_io_vec[0];
-+ 		bp->bv2 =3D bi->bi_io_vec[0];
- -		bp->bv2.bv_offset +=3D first_sectors << 9;
- -		bp->bv2.bv_len -=3D first_sectors << 9;
- -		bp->bv1.bv_len =3D first_sectors << 9;
-++		if (bio_is_rw(bi)) {
-++			bp->bv2.bv_offset +=3D first_sectors << 9;
-++			bp->bv2.bv_len -=3D first_sectors << 9;
-++			bp->bv1.bv_len =3D first_sectors << 9;
-++		}
- =20
-- 	bp->bio1.bi_io_vec =3D &bp->bv1;
-- 	bp->bio2.bi_io_vec =3D &bp->bv2;
-+ 		bp->bio1.bi_io_vec =3D &bp->bv1;
-+ 		bp->bio2.bi_io_vec =3D &bp->bv2;
- =20
-- 	bp->bio1.bi_max_vecs =3D 1;
-- 	bp->bio2.bi_max_vecs =3D 1;
-+ 		bp->bio1.bi_max_vecs =3D 1;
-+ 		bp->bio2.bi_max_vecs =3D 1;
-+ 	}
- =20
-  	bp->bio1.bi_end_io =3D bio_pair_end_1;
-  	bp->bio2.bi_end_io =3D bio_pair_end_2;
+  	unsigned short	companion_addr;	/* I2C address of companion chip */
+  	int		i2c_port;	/* Controlled by GI2C or PI2C */
 
---Signature=_Fri__21_Sep_2012_12_49_55_+1000_8fFBJvoYfvIhz9ue
+--Signature=_Fri__21_Sep_2012_13_15_46_+1000_Dppj5gDQF1KmFtON
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQW9XTAAoJEECxmPOUX5FEWp8P/RUmasv7Qs3n0UWlrzyPwRlo
-BKXidlrRKiauR+i4McaZb/P5Fe9sOP8Lrv7igB172Z0rLHZ6hBLQUTN3Rfw/5aGW
-SkzIGMfx2Ul+ia4FFOU9aFoN4NxDt4TUwz03diF7y0uDgetJ5o8mM1iHScRarS95
-HE6Terb9renhlXUyAmmM9NDBWgwTxhE2MqQ+LiwsJznpdV3Hl3WhHye3sUgu4jj3
-J8O2wfrcLNnP8p8V5aGLhjkM6vkTdAlx7HBnJMb4GBhVIu22SeGS/GNfRNzoOHfE
-JfGEWhSFQ2/RXrcTiTLyyeXMEqunwu5CF5BtiLMDM501vYXjL+TJeBqYfdDWMNPl
-lJ4EnSQycRIrTx/BKEqoZH/BXUwbOgIvtjS0vr9e6Db4fgC0z4bE0ISDOBtscNZa
-3xlHeVuQYylAoTNcghJvBiE6OMmeyulfaq2kLmdHaJ5ToJ9/Uo32o9j5wSZ8KK1g
-sroUyzgqmZEqAeBKviZhx6yZHNGqBthghK+M4X6/3xzaLsW521lNfrYc5XtYdXz7
-fUkWNfAuhlRZZLs5PBrXfbdVPwzgk8uSEV13NYby68uYYDvr0tZ5MFseOdVbRSzS
-cARPYfCNxVzzJldHvXPJY+RcbAohexZzfn5yshr3kuMkBWxdMgYcaQVgRMRF95Dh
-GiCR03GJbVhvLij1UgAU
-=C2D+
+iQIcBAEBCAAGBQJQW9viAAoJEECxmPOUX5FEPnoP/A+Xa+uzXEjjOQksWHFtUF5R
+AP2Cfq4CKIzblDWedcBzkawhpYDPTUipC8RwkTn0ZzLePXr868TOLdZ5TC/ueCUH
+/Y1LD3Gn/R/LIxCHxOJ1Zl7KONiKYaGFuG1dlOIQbjpBX+ps/A3ZEzY2WHUvAo3t
+L5xUJikbmEtamq6WwMw73YZSwiWrswPqi+FNRnO/Y+DkN36dtp8r3C0XpLKPFhX8
+HLKDViChFJDmd4YG1wnQ/pAyV9ofZxhug/iGuf9bXshVaZilrViA0xoQF9nSZTp2
+eVzYQBUZA66Yd57nylRr62ZFHTIXAU0OnSXXuDvwGT3CKv2SXoCs9lz/J85KkQhw
+etvMIW/rzWAuwUwYgNrB++4wWKP7Y7tGeuvlP9E/TMnE+xmU5NGNCeitKN8ailVK
+Jb4dLDiwkt+OSmDgKsB9KGJInutnEGdXQAGEbgBnLj2zOwdKQcf1LxYEHsG42cNK
+l1/Briv46iqHzoD384DnMgN4DnBGD3OOG6rYRTl6FVdkVicW1YfYUsmFozbvOL9N
+eMAqSqg4Ma5Nh7glXZENXBzEf2IJlN7kDxKrPjxbAVAGIpV6muoHaHZiP5eWaHlW
+zev1qA2X8SZdciVmXpm9UcdY+DCDhxPi0weMizpsYei4I5GeOmfdL4Ynlof8FpwF
+MFZOyEACWTpRp2IWqB1b
+=sriF
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__21_Sep_2012_12_49_55_+1000_8fFBJvoYfvIhz9ue--
+--Signature=_Fri__21_Sep_2012_13_15_46_+1000_Dppj5gDQF1KmFtON--
