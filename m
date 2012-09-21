@@ -1,93 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (mfd and
- battery trees related)
-Date: Fri, 21 Sep 2012 16:48:19 +1000
-Message-ID: <20120921164819.37906a76dc948e86f79cd875@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (mfd
+ and battery trees related)
+Date: Fri, 21 Sep 2012 16:59:34 +1000
+Message-ID: <20120921165934.acbb39b1e4fcce7cc5e1513f@canb.auug.org.au>
+References: <20120921164819.37906a76dc948e86f79cd875@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__21_Sep_2012_16_48_19_+1000_bEdFHynE3+fZj0F6"
+ boundary="Signature=_Fri__21_Sep_2012_16_59_34_+1000_7BfyaTVFkBFIYF2p"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35305 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:37193 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751529Ab2IUGs1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Sep 2012 02:48:27 -0400
+	with ESMTP id S1751418Ab2IUG7u (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Sep 2012 02:59:50 -0400
+In-Reply-To: <20120921164819.37906a76dc948e86f79cd875@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Anton Vorontsov <avorontsov@ru.mvista.com>, Samuel Ortiz <sameo@linux.intel.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Jett.Zhou" <jtzhou@marvell.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Fri__21_Sep_2012_16_48_19_+1000_bEdFHynE3+fZj0F6
+--Signature=_Fri__21_Sep_2012_16_59_34_+1000_7BfyaTVFkBFIYF2p
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+On Fri, 21 Sep 2012 16:48:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+>=20
+> drivers/mfd/88pm860x-core.c: In function 'device_power_init':
+> drivers/mfd/88pm860x-core.c:982:11: error: too few arguments to function =
+'mfd_add_devices'
+> include/linux/mfd/core.h:100:12: note: declared here
+>=20
+> Caused by commit a830d28b48bf ("power_supply: Enable battery-charger for
+> 88pm860x") from the battery tree interacting with commit 55692af5eb58
+> ("mfd: core: Push irqdomain mapping out into devices") from the mfd tree.
 
-drivers/mfd/88pm860x-core.c: In function 'device_power_init':
-drivers/mfd/88pm860x-core.c:982:11: error: too few arguments to function 'm=
-fd_add_devices'
-include/linux/mfd/core.h:100:12: note: declared here
-
-Caused by commit a830d28b48bf ("power_supply: Enable battery-charger for
-88pm860x") from the battery tree interacting with commit 55692af5eb58
-("mfd: core: Push irqdomain mapping out into devices") from the mfd tree.
-
-I added the following merge-fix patch and can carry it as necessary.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 21 Sep 2012 16:41:09 +1000
-Subject: [PATCH] power_supply: 88pm860x: fix up for mfd_add_devices() API
- change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/mfd/88pm860x-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/88pm860x-core.c b/drivers/mfd/88pm860x-core.c
-index 62311ad..a4dba31 100644
---- a/drivers/mfd/88pm860x-core.c
-+++ b/drivers/mfd/88pm860x-core.c
-@@ -979,7 +979,7 @@ static void __devinit device_power_init(struct pm860x_c=
-hip *chip,
- 		power_devs[3].platform_data =3D pdata->chg_desc;
- 		power_devs[3].pdata_size =3D sizeof(*pdata->chg_desc);
- 		ret =3D mfd_add_devices(chip->dev, 0, &power_devs[3], 1,
--				      NULL, chip->irq_base);
-+				      NULL, chip->irq_base, NULL);
- 		if (ret < 0)
- 			dev_err(chip->dev, "Failed to add chg-manager subdev\n");
- 	}
---=20
-1.7.10.280.gaa39
+This second patch is also in Linus' tree as of v3.6-rc6.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__21_Sep_2012_16_48_19_+1000_bEdFHynE3+fZj0F6
+--Signature=_Fri__21_Sep_2012_16_59_34_+1000_7BfyaTVFkBFIYF2p
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQXA2zAAoJEECxmPOUX5FEoDQP/2G/3b2KjC9VCPugLrHftCRY
-oqj1hUGS3ISAyW/sOjgOJAd2sfjgkn+Aj764AnQjGznC2MQWvDECDXpgSAe5poRs
-FxB5gJHtLg8PITbzczcrq4HcWQJyfZgAEiUrZPtkMr6PvbAbhJU1m9DA6TSJMv9k
-reDHb0l8I+E7hXSC3+MX+AbT5753XUYtZJhIgVorJQyv4I7NZ16Y27ocLXPxsk9C
-y6nqfTq+qKJ9R9PbBY0nhzlyczDvmcEPvaH3J80eSwn/dPdbugilNWebWob/fih1
-tpj7m5jqXqT4MXxGajH+VNpsNDnQXvveySYQ3RY/kuO5UiKmxyd8UiSQgTxdN3xq
-1OuHWci0hWg0YlT/9XSCzfIwhr5vLrXJfdEr0R0oG5OAigkfh7dyhYOUYmCyeIyo
-1p0nbPRVIgOFS4e/nN4F2DAEu1pBIGjhjYSVW+AtIzWxRHcvDEolSnedVEmpVrZm
-/TupComw3K+hQK9pw+sVYVUz7E/3nGfoZq3AoGQRej6ya5O64+AKmzAcoye058+n
-A0i1icbCbMl2yPVICQgVY/En23afobsyEsMzF9In9eWqnQJouLic7TcjB+Y7bZo/
-RMPtZmsU6As9NDGnIxMcS+0Sbtu2nOs7CSCIPJf2mIIbK1wGU2MQrS5l09O5xuvY
-nY/l/YNQ3B3ki7gja/kx
-=VI2+
+iQIcBAEBCAAGBQJQXBBWAAoJEECxmPOUX5FEki8QAINcu/jDalyKgdrqv+9YK9lz
+fEMvDMBybYxQe9a4DkKwjmVn37YvLQMwZackxjz6eCh0YwoF0oKJa2KV7RYneicV
+eFTKnh8QQsmCHbE9YrEy03w0A1l8j8RCyfRn6mVnM7QOQvE8Yb7fjCuu/l8rzZxX
+Ne6jx6I7JtoQpk1NL7uOht9SYyEVxI3sp3B3fCjxnkgWaacVkAPe0dtn/HsOyEII
+b9YNRMY+fD+czvOf2uZ226vj38o5zn+w32A8evpM4s4kH9pHo8egioT6huik6ttQ
+yOZvOL7x//pdxS/hcFe7b/Q0WB7nciZMfAfjYb7ZRVu6LWMgdr9PniS34t+XP9Yi
+0HixwmIJq4E/p+KT+ygmWxYdS0h7g8koLGYyFatTBMtTj+YlDjLNXLsUJWqn3hIA
+OCVVX2Gij+EfOJDU2AWJExaDMOlc3HtZzjWVmxiKzlqwtb5e9aaNmEaP0dz0tu8P
++X+wy9ILiuFgCNZzDXbYOtjmAzhlx+0aia5SA8cPrUswkm8GQ3r83qFr42S1+Wwo
+ooP6Gg3oiUXGK4ZZkMM7KZaLcK+zdr2QHFzlMJj32uXPpO1aDnRna1rXpKZgZKF6
+/zdJUGwprX5MrXAqo+6YTyW3GS1hXVJqQ5T8sGegi8x3aAC/JCdFRxkB1NmV7gGr
+HZzYEojF++iWFmlgDXsJ
+=WXSF
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__21_Sep_2012_16_48_19_+1000_bEdFHynE3+fZj0F6--
+--Signature=_Fri__21_Sep_2012_16_59_34_+1000_7BfyaTVFkBFIYF2p--
