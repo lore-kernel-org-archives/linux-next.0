@@ -1,66 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm tree
-Date: Fri, 21 Sep 2012 16:26:12 +1000
-Message-ID: <20120921162612.8e65fef4f07680d41717981c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (mfd and
+ battery trees related)
+Date: Fri, 21 Sep 2012 16:48:19 +1000
+Message-ID: <20120921164819.37906a76dc948e86f79cd875@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__21_Sep_2012_16_26_12_+1000_YDqsx3SM1GacIeo/"
+ boundary="Signature=_Fri__21_Sep_2012_16_48_19_+1000_bEdFHynE3+fZj0F6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36601 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35305 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752440Ab2IUG0X (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Sep 2012 02:26:23 -0400
+	with ESMTP id S1751529Ab2IUGs1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Sep 2012 02:48:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Denys Vlasenko <vda.linux@googlemail.com>
+To: Anton Vorontsov <avorontsov@ru.mvista.com>, Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Jett.Zhou" <jtzhou@marvell.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Fri__21_Sep_2012_16_26_12_+1000_YDqsx3SM1GacIeo/
+--Signature=_Fri__21_Sep_2012_16_48_19_+1000_bEdFHynE3+fZj0F6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-After merging the akpm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-fs/compat_binfmt_elf.c:22:53: fatal error: asm/sigframe.h: No such file or =
-directory
+drivers/mfd/88pm860x-core.c: In function 'device_power_init':
+drivers/mfd/88pm860x-core.c:982:11: error: too few arguments to function 'm=
+fd_add_devices'
+include/linux/mfd/core.h:100:12: note: declared here
 
-Caused by commit "coredump: add a new elf note with siginfo of the
-signal".  That include file only exists on the x86 and tile architectures.
+Caused by commit a830d28b48bf ("power_supply: Enable battery-charger for
+88pm860x") from the battery tree interacting with commit 55692af5eb58
+("mfd: core: Push irqdomain mapping out into devices") from the mfd tree.
 
-I have reverted that commit (and "coredump: extend core dump note section
-to contain file names of mapped files" and
-"coredump-extend-core-dump-note-section-to-contain-file-names-of-mapped-fil=
-es-checkpatch-fixes"
-that follow it) for today.
+I added the following merge-fix patch and can carry it as necessary.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 21 Sep 2012 16:41:09 +1000
+Subject: [PATCH] power_supply: 88pm860x: fix up for mfd_add_devices() API
+ change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/mfd/88pm860x-core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/88pm860x-core.c b/drivers/mfd/88pm860x-core.c
+index 62311ad..a4dba31 100644
+--- a/drivers/mfd/88pm860x-core.c
++++ b/drivers/mfd/88pm860x-core.c
+@@ -979,7 +979,7 @@ static void __devinit device_power_init(struct pm860x_c=
+hip *chip,
+ 		power_devs[3].platform_data =3D pdata->chg_desc;
+ 		power_devs[3].pdata_size =3D sizeof(*pdata->chg_desc);
+ 		ret =3D mfd_add_devices(chip->dev, 0, &power_devs[3], 1,
+-				      NULL, chip->irq_base);
++				      NULL, chip->irq_base, NULL);
+ 		if (ret < 0)
+ 			dev_err(chip->dev, "Failed to add chg-manager subdev\n");
+ 	}
+--=20
+1.7.10.280.gaa39
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__21_Sep_2012_16_26_12_+1000_YDqsx3SM1GacIeo/
+--Signature=_Fri__21_Sep_2012_16_48_19_+1000_bEdFHynE3+fZj0F6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQXAiEAAoJEECxmPOUX5FEtykP/3ltch8HwjAz26PeFb3hCdJP
-RcoRR1PGN2YPbnml6FUuCSSeeCZC0FAmQeKU05WUhmlZbghpIflSM/QvfwvVxkUW
-10peWTlHni9IE2WFBCjzSLPBc5xkRwpqkNmyrFmVdLTBO3AvW7r9MVtUL0k89e9R
-rA2TaC6u4D0qB6y0cM+ORWtcJKPgEDQE8UakjvgprYWqzGhO6ASzNZHwJHNe7h8L
-ZszdSCzDjeQbGXzEpUPOIzUcLNTwqO5Opg15DJnr8AFgPvrH4yRoq8uxJofFSOnj
-h6wCXcK3O6tjJWU9R5k6H+EtshQib6IK4Bs17rSpVRIOTJuYcDn4AA9Yw1n2EiFY
-booOV+mVXOsskWoBzH57C1AuKpZoGNUuUwtMLV1hN6YTmKizofNj2xgZigcM3/sR
-ZPkmWAWvv4wxCEOyBNwHwiEK/vbOZGyaqxsqpUObacLmt0K6KcD/TZvPAdkgGNi3
-pDPes/05FhYv+BRCPIs4X1lJlUv08EHpSN3DquCVUe7xVDDCRULphI0EBjHo7wJP
-Mp961klEL6KEKFT/lGmyr6X8+E9hGF+Dmix4RGoGi6/Oxwar5LV7NufGuKPO145P
-l77z/Kjhy057jLOIBOKL4DPNU8DxwLNADs69psYhUDesvmOzmEFQh0IbIYWuwduk
-o1G2gF17L/RnEjV0uR1+
-=DfAi
+iQIcBAEBCAAGBQJQXA2zAAoJEECxmPOUX5FEoDQP/2G/3b2KjC9VCPugLrHftCRY
+oqj1hUGS3ISAyW/sOjgOJAd2sfjgkn+Aj764AnQjGznC2MQWvDECDXpgSAe5poRs
+FxB5gJHtLg8PITbzczcrq4HcWQJyfZgAEiUrZPtkMr6PvbAbhJU1m9DA6TSJMv9k
+reDHb0l8I+E7hXSC3+MX+AbT5753XUYtZJhIgVorJQyv4I7NZ16Y27ocLXPxsk9C
+y6nqfTq+qKJ9R9PbBY0nhzlyczDvmcEPvaH3J80eSwn/dPdbugilNWebWob/fih1
+tpj7m5jqXqT4MXxGajH+VNpsNDnQXvveySYQ3RY/kuO5UiKmxyd8UiSQgTxdN3xq
+1OuHWci0hWg0YlT/9XSCzfIwhr5vLrXJfdEr0R0oG5OAigkfh7dyhYOUYmCyeIyo
+1p0nbPRVIgOFS4e/nN4F2DAEu1pBIGjhjYSVW+AtIzWxRHcvDEolSnedVEmpVrZm
+/TupComw3K+hQK9pw+sVYVUz7E/3nGfoZq3AoGQRej6ya5O64+AKmzAcoye058+n
+A0i1icbCbMl2yPVICQgVY/En23afobsyEsMzF9In9eWqnQJouLic7TcjB+Y7bZo/
+RMPtZmsU6As9NDGnIxMcS+0Sbtu2nOs7CSCIPJf2mIIbK1wGU2MQrS5l09O5xuvY
+nY/l/YNQ3B3ki7gja/kx
+=VI2+
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__21_Sep_2012_16_26_12_+1000_YDqsx3SM1GacIeo/--
+--Signature=_Fri__21_Sep_2012_16_48_19_+1000_bEdFHynE3+fZj0F6--
