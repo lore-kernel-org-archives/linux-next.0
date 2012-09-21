@@ -1,102 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-next tree related)
-Date: Fri, 21 Sep 2012 11:37:49 +1000
-Message-ID: <20120921113749.146a7b501463d70cda3dc268@canb.auug.org.au>
-References: <20120920173622.2aa7209cd241a3945f4384d4@canb.auug.org.au>
+Subject: linux-next: manual merge of the md tree with the block tree
+Date: Fri, 21 Sep 2012 12:49:27 +1000
+Message-ID: <20120921124927.2008f0556cf6c0069c1d94c8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__21_Sep_2012_11_37_49_+1000_wNJqj3MwOJCMRZws"
+ boundary="Signature=_Fri__21_Sep_2012_12_49_27_+1000_OZMIBoIcVItl4nO3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39646 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:47209 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750755Ab2IUBhv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 21:37:51 -0400
-In-Reply-To: <20120920173622.2aa7209cd241a3945f4384d4@canb.auug.org.au>
+	with ESMTP id S1756854Ab2IUCtl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Sep 2012 22:49:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Neil Brown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K. Petersen" <martin.petersen@oracle.com>, Jens Axboe <axboe@kernel.dk>, Shaohua Li <shli@fusionio.com>
 
---Signature=_Fri__21_Sep_2012_11_37_49_+1000_wNJqj3MwOJCMRZws
+--Signature=_Fri__21_Sep_2012_12_49_27_+1000_OZMIBoIcVItl4nO3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Neil,
 
-On Thu, 20 Sep 2012 17:36:22 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->=20
-> drivers/net/ethernet/i825xx/znet.c: In function 'hardware_init':
-> drivers/net/ethernet/i825xx/znet.c:868:2: error: implicit declaration of =
-function 'isa_virt_to_bus' [-Werror=3Dimplicit-function-declaration]
->=20
-> Caused by commit 1d3ff76759b7 ("i825xx: znet: fix compiler warnings when
-> building a 64-bit kernel").  Is there some Kconfig dependency missing (CO=
-NFIG_ISA)?
->=20
-> I have reverted that commit for today.
+Today's linux-next merge of the md tree got a conflict in
+drivers/md/raid0.c between commit 4363ac7c13a9 ("block: Implement support
+for WRITE SAME") from the block tree and commit c9264cda8f11 ("md: raid 0
+supports TRIM") from the md tree.
 
-Today, I have added the following merge fix patch instead of reverting the
-above (just until PowerPC can be fixed one way or the other).  I don't
-know if you want to put this into the net-next tree, but it may be a
-reasonable temporary measure.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 21 Sep 2012 11:32:09 +1000
-Subject: [PATCH] i825xx: znet: temporarily disable on PPC
-
-due to build problems
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/ethernet/i825xx/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/ethernet/i825xx/Kconfig b/drivers/net/ethernet/i82=
-5xx/Kconfig
-index fed5080..9fce38b 100644
---- a/drivers/net/ethernet/i825xx/Kconfig
-+++ b/drivers/net/ethernet/i825xx/Kconfig
-@@ -151,6 +151,7 @@ config SUN3_82586
- config ZNET
- 	tristate "Zenith Z-Note support (EXPERIMENTAL)"
- 	depends on EXPERIMENTAL && ISA_DMA_API
-+	depends on !PPC
- 	---help---
- 	  The Zenith Z-Note notebook computer has a built-in network
- 	  (Ethernet) card, and this is the Linux driver for it. Note that the
---=20
-1.7.10.280.gaa39
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__21_Sep_2012_11_37_49_+1000_wNJqj3MwOJCMRZws
+diff --cc drivers/md/raid0.c
+index a9e4fa9,1a8e5e3..0000000
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@@ -422,7 -431,7 +431,8 @@@ static int raid0_run(struct mddev *mdde
+  	if (md_check_no_bitmap(mddev))
+  		return -EINVAL;
+  	blk_queue_max_hw_sectors(mddev->queue, mddev->chunk_sectors);
+ +	blk_queue_max_write_same_sectors(mddev->queue, mddev->chunk_sectors);
++ 	blk_queue_max_discard_sectors(mddev->queue, mddev->chunk_sectors);
+ =20
+  	/* if private is not null, we are here after takeover */
+  	if (mddev->private =3D=3D NULL) {
+
+--Signature=_Fri__21_Sep_2012_12_49_27_+1000_OZMIBoIcVItl4nO3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQW8TtAAoJEECxmPOUX5FE3msP/AmFP2NEVyZevD2rXmr8XBi0
-02VMs4hFBR9uvQr3St+pG6rv22juutYn9m0Sd35x3LihYiiGVKgbHmPB6ckbnsF6
-MtigP5KUclF6E3o0FVOS18N9WNof6Sd/PAqoYZoimMOqIeE95PTnXY3eLnQfXRBq
-YXtLkEVRPPQUwLs3lIiCfFViSs+1aUb0oMobSUQiVVLwAaWVavhp/DUfi10YI862
-uKuIhLLvvdDkFUfhwR2t5kGE3cO0OCRcK7sED6W2rB2OZj8Efv6o1PeWXu3M6BFv
-e4Y96Nnlf5bLUELB5R321MyZmqGSGGxfjeNDAF32FgYrIDaXzRubQBSvtm5CGfYK
-iMhSQ6s8yiy7OLoyjm/Svs4fj8QDrfSZmUAL+k93XvAN5SrERqjYnlPe5xZFKdzu
-UYnvjsQ4GXc5q0A6KAxex/64NKgzz9BJ0ww8sfUl4ZcDC2UeBHxLoY7rCPg4dxx2
-22Z/c14jsi1xizL+dSqaSENwcCYunTYzy42MD88/JW5XowSKgg0FNvkzhkfhmBd3
-moLdhsouxU7YwbQlvHZXLUSbEtlCXzOaxJUprzuV4LRhYnqE9FmnhstC0nWN5VJB
-r3JdcTXnj957V7UdHP8bMPiJ7maG43PJdAXCcUHnflpwcQlN8KEO6/YXWUSv1Hwa
-sg00fVXrYKJf4JqW3DUE
-=wLOi
+iQIcBAEBCAAGBQJQW9W3AAoJEECxmPOUX5FE4awP/jzIyru4QdkPduSxEegAfvgR
+pv9TMOh14Ly+1s/kcs4fYthvnQ+DRrnZn3cm9aHVoZJWwMHYc5V6J6BWk27iNsBv
+ZbS9SBaoQq5SaFYf47dIDDbYGRi0Cc/tvcyXKmiEHc91OgV9lSgoANBhFwDHJRPF
+gaE/EF2Rkg2GptZmJ0ylVUqoWvambJ6Wy/ltKu6i1lsc2s9Ch1+ElITmpgFfylB/
+31oXjU/Kdp5vRFgAtzQHPzpMmQmQdUn4ZZpENNUA0MAI5oYZCKXISBQNUkbXDoI3
+yrzeGlapamS9LAacG/b2a5t/6W0hzmuCX2O2D1bBJqDBLlv1gq8sxPCM8mNsczlI
+UJPzviVcHQvX/wBRnnVwt9nTA9B/R6SRUTM9ewyV3LXJihS4g66kHligkZwJTSek
+VHmmiDitFL5I3WLcqC6QL5eKfRxrzqHkdW7FLrfsDb27Mk7+WSE/RFA2yfl9k23w
+UqaYCVxS5mCUETFqLmG8LxYjUh2I+sWo5UXd/o4wNw6iKMawG8hkFL+0ve5nW873
+d94whhsuiL9/8SmiS80ORnyBf+QHxsCq6oaGVt7Sph0U4njl/zN8vrS/fksDw913
+5Xbe8D//ft3dSXAIn9S4b4lcL2IXEY2tZBiPpa43YE8dOm1ZoB5do2mFbnpPvtJE
+oi337wMIhBqJlwACqVoP
+=eKqD
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__21_Sep_2012_11_37_49_+1000_wNJqj3MwOJCMRZws--
+--Signature=_Fri__21_Sep_2012_12_49_27_+1000_OZMIBoIcVItl4nO3--
