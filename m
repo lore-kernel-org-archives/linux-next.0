@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the akpm tree
-Date: Fri, 21 Sep 2012 16:08:38 +1000
-Message-ID: <20120921160838.8982586c26d1153a6763d7be@canb.auug.org.au>
+Date: Fri, 21 Sep 2012 16:26:12 +1000
+Message-ID: <20120921162612.8e65fef4f07680d41717981c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__21_Sep_2012_16_08_38_+1000_cDriZDAK6uk6frli"
+ boundary="Signature=_Fri__21_Sep_2012_16_26_12_+1000_YDqsx3SM1GacIeo/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46523 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:36601 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753456Ab2IUGIt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Sep 2012 02:08:49 -0400
+	with ESMTP id S1752440Ab2IUG0X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Sep 2012 02:26:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Denys Vlasenko <vda.linux@googlemail.com>
 
---Signature=_Fri__21_Sep_2012_16_08_38_+1000_cDriZDAK6uk6frli
+--Signature=_Fri__21_Sep_2012_16_26_12_+1000_YDqsx3SM1GacIeo/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -26,66 +26,41 @@ Hi Andrew,
 After merging the akpm tree, today's linux-next build (powerpc
 ppc64_defconfig) failed like this:
 
-fs/binfmt_elf.c: In function 'fill_files_note':
-fs/binfmt_elf.c:1419:2: error: implicit declaration of function 'vmalloc' [=
--Werror=3Dimplicit-function-declaration]
-fs/binfmt_elf.c:1419:7: warning: assignment makes pointer from integer with=
-out a cast [enabled by default]
-fs/binfmt_elf.c:1437:5: error: implicit declaration of function 'vfree' [-W=
-error=3Dimplicit-function-declaration]
+fs/compat_binfmt_elf.c:22:53: fatal error: asm/sigframe.h: No such file or =
+directory
 
-Caused by commit "coredump: extend core dump note section to contain file
-names of mapped files".  Forgot to include vmalloc.h :-(
+Caused by commit "coredump: add a new elf note with siginfo of the
+signal".  That include file only exists on the x86 and tile architectures.
 
-I added this patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 21 Sep 2012 16:06:18 +1000
-Subject: [PATCH] coredump: using vmalloc requires the inclusion of vmalloc.h
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/binfmt_elf.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 0973943..5ac905f 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -32,6 +32,7 @@
- #include <linux/elf.h>
- #include <linux/utsname.h>
- #include <linux/coredump.h>
-+#include <linux/vmalloc.h>
- #include <asm/uaccess.h>
- #include <asm/param.h>
- #include <asm/page.h>
---=20
-1.7.10.280.gaa39
+I have reverted that commit (and "coredump: extend core dump note section
+to contain file names of mapped files" and
+"coredump-extend-core-dump-note-section-to-contain-file-names-of-mapped-fil=
+es-checkpatch-fixes"
+that follow it) for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__21_Sep_2012_16_08_38_+1000_cDriZDAK6uk6frli
+--Signature=_Fri__21_Sep_2012_16_26_12_+1000_YDqsx3SM1GacIeo/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQXARmAAoJEECxmPOUX5FE4joP/0hA9PavuhMQNc425MZ64IPD
-oab9C5YP7RZlM0APbJSwlcPZnKwLWd+r1ORTlyXYO7ydYz78TkMgsq431RyqHZUN
-2l5tcrOJpQH7Vl/OiUd4oiLBVqXANgcyNc/BtGJjEVr0WweCo1u524Ya8UEJ58mr
-gMVZ7zEZ/Yjws0p0s81NUXqEFKGxU2U6lvkMwZJ2PnD7nsLvvNmXF8Mr8brfmnXd
-jpD9kHPu/izzVoybmAQHGqE37YxZsQMHJLtzUz2tm3g4aUGMoEVaPTqAuQ/lKStB
-s9UWZZDjypGBZo55nzZBpSBpKEfx0L0D5v1tXLrrcye02E52Y7s0VHgAo/73gtDi
-E67nxDYSQJVH/O4JEiBnkdkJXCcFkOngLYiYAKe5yklFFsK9FdVbe3S9UF4stR7p
-qfHbGkisFBYxb9TFHxy6cqPSSnh0b6z1PEpYE7I9xyyCcl289y1XCkwboDaiKBVF
-xT0qK31pTdFeqTAR3hIiBm4+ePrcptpFO7yTtMLW5qRtNOEkIEmspd65W9gghV73
-QqwXDU7VuJ5csVDed1K9lOUcjxdVsqGwPoVTnUwXmmLuRUrfqKiOBS6eem+ofXAv
-4r/0Y/2mLcNEU54VoH5dFAXZQNf7fhQzfWgxUCnAJqdoNfRQlC0Ho6TnrXzpwLqI
-ETVdQYfRjVXLb4e/lHoT
-=VHdq
+iQIcBAEBCAAGBQJQXAiEAAoJEECxmPOUX5FEtykP/3ltch8HwjAz26PeFb3hCdJP
+RcoRR1PGN2YPbnml6FUuCSSeeCZC0FAmQeKU05WUhmlZbghpIflSM/QvfwvVxkUW
+10peWTlHni9IE2WFBCjzSLPBc5xkRwpqkNmyrFmVdLTBO3AvW7r9MVtUL0k89e9R
+rA2TaC6u4D0qB6y0cM+ORWtcJKPgEDQE8UakjvgprYWqzGhO6ASzNZHwJHNe7h8L
+ZszdSCzDjeQbGXzEpUPOIzUcLNTwqO5Opg15DJnr8AFgPvrH4yRoq8uxJofFSOnj
+h6wCXcK3O6tjJWU9R5k6H+EtshQib6IK4Bs17rSpVRIOTJuYcDn4AA9Yw1n2EiFY
+booOV+mVXOsskWoBzH57C1AuKpZoGNUuUwtMLV1hN6YTmKizofNj2xgZigcM3/sR
+ZPkmWAWvv4wxCEOyBNwHwiEK/vbOZGyaqxsqpUObacLmt0K6KcD/TZvPAdkgGNi3
+pDPes/05FhYv+BRCPIs4X1lJlUv08EHpSN3DquCVUe7xVDDCRULphI0EBjHo7wJP
+Mp961klEL6KEKFT/lGmyr6X8+E9hGF+Dmix4RGoGi6/Oxwar5LV7NufGuKPO145P
+l77z/Kjhy057jLOIBOKL4DPNU8DxwLNADs69psYhUDesvmOzmEFQh0IbIYWuwduk
+o1G2gF17L/RnEjV0uR1+
+=DfAi
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__21_Sep_2012_16_08_38_+1000_cDriZDAK6uk6frli--
+--Signature=_Fri__21_Sep_2012_16_26_12_+1000_YDqsx3SM1GacIeo/--
