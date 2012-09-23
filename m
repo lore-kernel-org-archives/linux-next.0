@@ -1,40 +1,36 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-next tree related)
-Date: Sun, 23 Sep 2012 07:20:07 +1000
-Message-ID: <1348348807.1132.76.camel@pasglop>
-References: <1348179764.1132.35.camel@pasglop>
-	 <20120920.185315.576326460331670020.davem@davemloft.net>
-	 <1348264000.1132.63.camel@pasglop>
-	 <20120922.160027.1528491047223302539.davem@davemloft.net>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH -next] MIPS: ptrace: Add missing #include <asm/syscall.h>
+Date: Sun, 23 Sep 2012 19:36:09 +0200
+Message-ID: <20120923173609.GE13842@linux-mips.org>
+References: <1347913216-11140-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:56433 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753246Ab2IVVV3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 22 Sep 2012 17:21:29 -0400
-In-Reply-To: <20120922.160027.1528491047223302539.davem@davemloft.net>
+Received: from eddie.linux-mips.org ([78.24.191.182]:52890 "EHLO
+	cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754119Ab2IWRgP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Sep 2012 13:36:15 -0400
+Received: from localhost.localdomain ([127.0.0.1]:34084 "EHLO linux-mips.org"
+        rhost-flags-OK-OK-OK-FAIL) by eddie.linux-mips.org with ESMTP
+        id S1903364Ab2IWRgM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 23 Sep 2012 19:36:12 +0200
+Content-Disposition: inline
+In-Reply-To: <1347913216-11140-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, paulus@samba.org, linuxppc-dev@lists.ozlabs.org, mika.westerberg@linux.intel.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-mips@linux-mips.org, linux-next@vger.kernel.org
 
-On Sat, 2012-09-22 at 16:00 -0400, David Miller wrote:
-> 
-> I think I'm going to just end up restricting this driver to X86
-> as was originally suggested.
+On Mon, Sep 17, 2012 at 10:20:16PM +0200, Geert Uytterhoeven wrote:
 
-Probably the easiest fix indeed.
+> arch/mips/kernel/ptrace.c: In function =E2=80=98syscall_trace_enter=E2=
+=80=99:
+> arch/mips/kernel/ptrace.c:664: error: implicit declaration of functio=
+n =E2=80=98__syscall_get_arch=E2=80=99
+> make[2]: *** [arch/mips/kernel/ptrace.o] Error 1
 
-> There seems to be no real consistent Kconfig protection for users
-> of isa_virt_to_bus() and friends.
-> 
-> We know that ISA_DMA_API doesn't do it, and ISA doesn't do it either
-> as powerpc also allows that to bet set for CHRP and friends.
+Thanks, I already had fixed that in the linux-trace tree; the latest
+version just had not yet propagated yet to the other trees.
 
-It's a old mess :-( And not an easy one to untangle...
-
-Cheers,
-Ben.
+  Ralf
