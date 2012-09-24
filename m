@@ -1,79 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the workqueues tree
-Date: Mon, 24 Sep 2012 16:36:09 +1000
-Message-ID: <20120924163609.4f274e6340b92cea66eceb40@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the acpi tree
+Date: Mon, 24 Sep 2012 16:49:16 +1000
+Message-ID: <20120924164916.faeb0225ef2b0732762d8aac@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_16_36_09_+1000_R7FEWjtx0jNh/26L"
+ boundary="Signature=_Mon__24_Sep_2012_16_49_16_+1000_rq22=mJCDKfLwJ7n"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54326 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40201 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751368Ab2IXGgS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 02:36:18 -0400
+	with ESMTP id S1753044Ab2IXGtY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 02:49:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Sourav Poddar <sourav.poddar@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Feng Tang <feng.tang@intel.com>, Len Brown <lenb@kernel.org>, Lan Tianyu <tianyu.lan@intel.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>
 
---Signature=_Mon__24_Sep_2012_16_36_09_+1000_R7FEWjtx0jNh/26L
+--Signature=_Mon__24_Sep_2012_16_49_16_+1000_rq22=mJCDKfLwJ7n
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/tty/serial/omap-serial.c between commit 43829731dd37 ("workqueue:
-deprecate flush[_delayed]_work_sync()") from the workqueues tree and
-commit ac57e7f38ea6 ("serial: omap: Remove unnecessary checks from
-suspend/resume") from the tty tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/core/usb-acpi.c between commit 59e6423ba8aa ("usb-acpi:
+Comply with the ACPI API change") from the acpi tree and commit
+05f916894a69 ("usb/acpi: Store info on device removability") from the usb
+tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+The latter removed the function changed by the former, so I just did that
+and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/tty/serial/omap-serial.c
-index 0952d71,3c05c5e..0000000
---- a/drivers/tty/serial/omap-serial.c
-+++ b/drivers/tty/serial/omap-serial.c
-@@@ -1203,10 -1222,8 +1222,8 @@@ static int serial_omap_suspend(struct d
-  {
-  	struct uart_omap_port *up =3D dev_get_drvdata(dev);
- =20
-- 	if (up) {
-- 		uart_suspend_port(&serial_omap_reg, &up->port);
-- 		flush_work(&up->qos_work);
-- 	}
-+ 	uart_suspend_port(&serial_omap_reg, &up->port);
- -	flush_work_sync(&up->qos_work);
-++	flush_work(&up->qos_work);
- =20
-  	return 0;
-  }
-
---Signature=_Mon__24_Sep_2012_16_36_09_+1000_R7FEWjtx0jNh/26L
+--Signature=_Mon__24_Sep_2012_16_49_16_+1000_rq22=mJCDKfLwJ7n
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQX/9ZAAoJEECxmPOUX5FEYKsQAJaXXkvFVrle/yllu8Cm6BCp
-10A2nurIlQAKwWs/lgJMs6/mhmjoF2f4ia+Eaxa0YuuMptwZM0u1qPErrHYMbLrc
-YkgetlZ+3P3PDFAIBA/Rw7VPtoj5s83+p7g40fuDXKJsqlLH/9130Gbner3Kxcpo
-fjTMskiLo5Ph0tTlU4004MkUdaRtsdJXr/kCiZPVBWjtGbj7BqBCm3AFJapxFGZn
-8n7sOkU9NJamk31fI8GVmCNZDAxcNzP+13Uo4fPS2wlYP6LjPZC0XkAyFgzs/YBr
-QNgoKv+3ZoovXii8SNOv3WRWyOrIxOm5SeXaSJQ/a6KQNDDnmd9jxs0kBP0N3ywe
-sXbEn/0cpdp04rA9S0qUEjIMi+OmGpKyXhNRW/p2mihU1lRAXZyeIlfYUENe7ZON
-X65/qsIXaXqsj+GAm376e/TnDeDBMKNEg/V58Ag1A+La7uzhSLytb1Fnq3ihk1bo
-jhJjb8THLSDfdBeXTugZOnNotISdOep9+5LZXMSYGVOYfetRFdec4P8mslgwMjX1
-ih6BjAlWTB+HIYTXDaNKmo52f+NbVY4ZnDuKAIUD+4nLD7iIgAOejgs0x6kPrHyY
-sna5K6mFnmGEk/pshNQQ+2nO/ScMRoS/O1k4aJdRhlbU7davop25j5IGtsLTucP9
-SmBs5/uxihsUgPv9eQDW
-=41Lk
+iQIcBAEBCAAGBQJQYAJsAAoJEECxmPOUX5FEvgYQAKJD8yYyRxtLlHZHhGpjWyjy
+ns33pkpQ/mne0nQux/h7mh9874rY9KmTv+6uqofWfroYTYzc3xRE8aJ/2HJ1bIDx
+FBzmcga2q0ysxzoDLpUiuKVhGLfJytI839KRmRodHLX/iKdqtmheuUpU5pqKpG/f
+iyuyU2xBA0AzXwcPrsqqIh5aE489N+gm8hqP4h8QyHeOv65u6dMPmQ/D7i2OY4+E
+isBoRzpAgnba2kWe80i7g8e/9LobB22fVj484v0NLJj3HNY0RCXUCqnj9/bNu6a/
+mX3pbzilJ6FWbQR/64eJtjpIfRPxFcWNGT7/Y2GRDXUZk6BlU3jiz2VOtlEP1nm9
+l+FDnd+5Vnhb+SscRfcQJpu3F0ejSBRM8M8vSGJXpsC2d9VfhV9XY1DCoxeEfcnr
+BWq8taVsRUwTDRRkSL3BKFavK0CcKEgpqdJi/7II99suGL1M1WldR2pftAtqJB00
+JaWWP1yoChprqdUpHEWV3z89JqgV1RioAam8gqBRJzWLmsm6gKpEUM9s0bxnlIL3
+DIKOlrMm16HStBaXLYXCJf8wQkWmGYV/QgpZs+Sl342XPxAhch4go5wM/YgkTd/z
+K7hsSBuDtX2CRtiLOzKuAaI+qPXuSb3Xxt840+ZH3tq/XjBdYuRnl2jRCw3YzDM8
+e5X4/ttCGJMd4R+44JkS
+=UoYj
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Sep_2012_16_36_09_+1000_R7FEWjtx0jNh/26L--
+--Signature=_Mon__24_Sep_2012_16_49_16_+1000_rq22=mJCDKfLwJ7n--
