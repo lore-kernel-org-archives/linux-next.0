@@ -1,93 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (staging
- tree related)
-Date: Tue, 25 Sep 2012 00:29:20 +1000
-Message-ID: <20120925002920.318f3eb84f8727ab97b57c91@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (tty tree
+ related)
+Date: Tue, 25 Sep 2012 00:36:44 +1000
+Message-ID: <20120925003644.aa90318c8f407539b08db48e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_00_29_20_+1000_iQGE.1BTumZGcapw"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51495 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753888Ab2IXO33 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 10:29:29 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Tue__25_Sep_2012_00_36_44_+1000_wkf+ysHMo.9yi7=P"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jaeden Amero <jaeden.amero@ni.com>, Alan Cox <alan@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__25_Sep_2012_00_29_20_+1000_iQGE.1BTumZGcapw
+--Signature=_Tue__25_Sep_2012_00_36_44_+1000_wkf+ysHMo.9yi7=P
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-drivers/staging/dgrp/dgrp_specproc.c: In function 'config_proc_write':
-drivers/staging/dgrp/dgrp_specproc.c:465:2: error: implicit declaration of =
-function 'vzalloc' [-Werror=3Dimplicit-function-declaration]
-drivers/staging/dgrp/dgrp_specproc.c:465:13: warning: assignment makes poin=
-ter from integer without a cast [enabled by default]
-drivers/staging/dgrp/dgrp_specproc.c:491:2: error: implicit declaration of =
-function 'vfree' [-Werror=3Dimplicit-function-declaration]
+fs/compat_ioctl.c:868:1: error: 'TIOCSRS485' undeclared here (not in a func=
+tion)
+fs/compat_ioctl.c:869:1: error: 'TIOCGRS485' undeclared here (not in a func=
+tion)
 
-Caused by commit 0b52b7497271 ("staging: Add dgrp driver for Digi
-Realport devices").
+Caused by commit 84c3b8486044 ("compat_ioctl: Add RS-485 IOCTLs to the
+list") from the tty tree.
 
-I have added this fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 25 Sep 2012 00:27:11 +1000
-Subject: [PATCH] staging: dgrp: using vmalloc needs to include vmalloc.h
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/dgrp/dgrp_specproc.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/dgrp/dgrp_specproc.c b/drivers/staging/dgrp/dg=
-rp_specproc.c
-index 259d23a..28f5c9a 100644
---- a/drivers/staging/dgrp/dgrp_specproc.c
-+++ b/drivers/staging/dgrp/dgrp_specproc.c
-@@ -39,6 +39,7 @@
- #include <linux/proc_fs.h>
- #include <linux/ctype.h>
- #include <linux/seq_file.h>
-+#include <linux/vmalloc.h>
-=20
- #include "dgrp_common.h"
-=20
---=20
-1.7.10.280.gaa39
-
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__25_Sep_2012_00_29_20_+1000_iQGE.1BTumZGcapw
+--Signature=_Tue__25_Sep_2012_00_36_44_+1000_wkf+ysHMo.9yi7=P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYG5AAAoJEECxmPOUX5FEq4MP/iwOWTZ7OQUD3rjmpdJHZhr5
-bBruLuOtvtnLp1nFxp3TIZxL7c64tt0u2BcaLyO0cTwFGxckFSI6vDmclWpIrBjN
-3ghxYHkIS5ckp1LHUcswDUFu3djQU8dmY8UnhJulKeIVo31FujC0o60n99+Tbrol
-1FaKiYpEAeeFctCMYR+cfahDiO1L8tgf7i1r//mM1skrAX9gYlha3RwnPl/W8UoF
-w35qVi29Lp8/5DgY8/Xfm7Ln9XtetU1AN2QVCiJCLbLKJ7+SGq2xt24w1AEiZhyN
-E59Vsd6qRG0cqlRRMgLqweE/jPjXB2kXBLOQSCk41bL2iXM61ajDymntU6yr8RYr
-eKb8sQedXzRy4hGBBhn1RT4+l0KcZlWNdlOamZ6ZMh3dlza3CmSxLzFI6SI0mDvU
-mXLhLl6xdT2AokPYfOz70iRNTSuLtgnp8n6DzgPATKum0Pow5lJNB1Q1kM4FdUgP
-CX7RJ7JYOti1bWTCd9DNAbR67aQa/6j3zZn5dA5rPJ6dPkaMIO1nflHjIoIekXp1
-+T0Fljw1TwHP6GRqlh81WVbCZPC/a3boupE2dUx5gRWhV7JCpl6KjSkdjfaR0WMS
-veBTaiylGxqOh46YG7FAWTRxitPH/ku7rSwA7udbxdsb75V36KYSJNCJGAG/F3Jo
-OOD+coG2YDzrxrBDoGsA
-=A43N
+iQIbBAEBCAAGBQJQYG/8AAoJEECxmPOUX5FEEtQP+Nae7xUPEsQgxshnUErdlBnj
+ulthyGxbluAzy7D3Vn4IZO1FboaBkzCQI9cZDvbQF1Fz10Uxg+1qtcOjvAgAQkRr
+qSVtYGoPq0p9TI1zf9x1sB+F8IEnUCU8IiwBZReYVaybNXUBhRpB4Ms+L6mmLxIM
+Vlp59xxtS9MjhQ6x7JV45TJ/N8uo7wr23fc+D/Q7npTd7+IC9nZ6D3XW2uWT9cvi
+r4LdjnEol77hWlSaRicmWgrvK0f8Rud2v9kOo/Ung/XHAXtbS5zpjsQuKO1JDycp
+rCDwiOYIsmztxqhLNrnk1yJ6ywf0eiSPgL0m0g7bRKZeX7HpxCuOxVDJkqvBb6Gd
+9/fquNGwt3cCPu+mVO+OgiDcmOvs4lYgHlbszDESy9DvmqdIKtKFh60S1+EtfPkm
+AkW28C8Dls5SA6KHpe994XnEkg7qxrAY/mqGiGXCSKnv9Lp57hD1Jug2XWkjySAx
+Jt0AW84grfMWbdMupfHay+DJmrbbg0zTO0dpuANx8Oam65UMA+hmIe+n0cjmS0Bg
+H0a3JtIS5xIZHfZEIgOz4TUb4g1JQx/CP1XLklrHIO4CPwVJ3nzPEhCMj6KQNx3T
+4rzvBUtBSBLQmu55JKpYk/VNjQoRNocFqGd0Ag7RYctuw/GYuwSzEQ8EuzpNo0i3
+nXbzeUh8NBxUvwTt5es=
+=WyWy
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Sep_2012_00_29_20_+1000_iQGE.1BTumZGcapw--
+--Signature=_Tue__25_Sep_2012_00_36_44_+1000_wkf+ysHMo.9yi7=P--
