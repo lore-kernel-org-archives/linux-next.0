@@ -1,92 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm tree
-Date: Tue, 25 Sep 2012 00:02:17 +1000
-Message-ID: <20120925000217.947b8cd8dca6979bfedee2ca@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Tue, 25 Sep 2012 00:29:20 +1000
+Message-ID: <20120925002920.318f3eb84f8727ab97b57c91@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_00_02_17_+1000_VCVFN4dVBEP/WxHy"
+ boundary="Signature=_Tue__25_Sep_2012_00_29_20_+1000_iQGE.1BTumZGcapw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59952 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:51495 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755453Ab2IXOC3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 10:02:29 -0400
+	with ESMTP id S1753888Ab2IXO33 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 10:29:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>, Amir Vadai <amirv@mellanox.co.il>, Jack Morgenstein <jackm@dev.mellanox.co.il>, Roland Dreier <roland@purestorage.com>, Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>
 
---Signature=_Tue__25_Sep_2012_00_02_17_+1000_VCVFN4dVBEP/WxHy
+--Signature=_Tue__25_Sep_2012_00_29_20_+1000_iQGE.1BTumZGcapw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-After merging the akpm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-drivers/infiniband/hw/mlx4/cm.c: In function 'id_map_alloc':
-drivers/infiniband/hw/mlx4/cm.c:228:36: error: 'MAX_ID_MASK' undeclared (fi=
-rst use in this function)
+drivers/staging/dgrp/dgrp_specproc.c: In function 'config_proc_write':
+drivers/staging/dgrp/dgrp_specproc.c:465:2: error: implicit declaration of =
+function 'vzalloc' [-Werror=3Dimplicit-function-declaration]
+drivers/staging/dgrp/dgrp_specproc.c:465:13: warning: assignment makes poin=
+ter from integer without a cast [enabled by default]
+drivers/staging/dgrp/dgrp_specproc.c:491:2: error: implicit declaration of =
+function 'vfree' [-Werror=3Dimplicit-function-declaration]
 
-Caused by commit d7a4e9b679e9 ("IB/mlx4: Add CM paravirtualization") from
-the infiniband tree interacting with commit "idr: rename MAX_LEVEL to
-MAX_IDR_LEVEL" from the akpm tree.
+Caused by commit 0b52b7497271 ("staging: Add dgrp driver for Digi
+Realport devices").
 
-I have added the following merge fix patch for today:
+I have added this fix patch for today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 24 Sep 2012 23:57:53 +1000
-Subject: [PATCH] IB/mlx4: fix for MAX_ID_MASK to MAX_IDR_MASK name change
+Date: Tue, 25 Sep 2012 00:27:11 +1000
+Subject: [PATCH] staging: dgrp: using vmalloc needs to include vmalloc.h
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/infiniband/hw/mlx4/cm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/dgrp/dgrp_specproc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/infiniband/hw/mlx4/cm.c b/drivers/infiniband/hw/mlx4/c=
-m.c
-index e25e4da..80079e5 100644
---- a/drivers/infiniband/hw/mlx4/cm.c
-+++ b/drivers/infiniband/hw/mlx4/cm.c
-@@ -225,7 +225,7 @@ id_map_alloc(struct ib_device *ibdev, int slave_id, u32=
- sl_cm_id)
- 		ret =3D idr_get_new_above(&sriov->pv_id_table, ent,
- 					next_id, &id);
- 		if (!ret) {
--			next_id =3D ((unsigned) id + 1) & MAX_ID_MASK;
-+			next_id =3D ((unsigned) id + 1) & MAX_IDR_MASK;
- 			ent->pv_cm_id =3D (u32)id;
- 			sl_id_map_add(ibdev, ent);
- 		}
+diff --git a/drivers/staging/dgrp/dgrp_specproc.c b/drivers/staging/dgrp/dg=
+rp_specproc.c
+index 259d23a..28f5c9a 100644
+--- a/drivers/staging/dgrp/dgrp_specproc.c
++++ b/drivers/staging/dgrp/dgrp_specproc.c
+@@ -39,6 +39,7 @@
+ #include <linux/proc_fs.h>
+ #include <linux/ctype.h>
+ #include <linux/seq_file.h>
++#include <linux/vmalloc.h>
+=20
+ #include "dgrp_common.h"
+=20
 --=20
 1.7.10.280.gaa39
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__25_Sep_2012_00_02_17_+1000_VCVFN4dVBEP/WxHy
+--Signature=_Tue__25_Sep_2012_00_29_20_+1000_iQGE.1BTumZGcapw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYGfpAAoJEECxmPOUX5FEkooQAIJ+MYKXHy558X4YkgGGgLCl
-EYkurYQGsCR0cwLJ3BC2LbqiCWs9godb6E/tuA6MbgtV8cu4nueNU61OlsCbJlL9
-eG/dMuP30i3FpCIzf7SDwFoPOhtrVddap+yv+9gFBcpp5sGMmSuaWyMLCTgzAfAf
-wrimQ7KsQ+GMhNYLlkXDdLJxmH46aTQsNas/JkrB/vsIXSo5tvo1iNvTOxcB5wp3
-2Nh31imYGwln+mzgTmnBnLirEKXHLGCHV+i/MpWRlafb1Ff2DFViOPuIo0WAQ7Na
-vuRyisBaHXoIqw/A7ufs2smloP+c3uii6w3mV+y43rg6la5vV0PW/1JXwrplNE2t
-YRnKG5+XhXhVLt3V19+a5Z2m40ZnEfvBG2/UFyoCyOh50HKw2Z5dbuy4IQMqbpDa
-Y1RiDFwtV1BBnLWNagRL+Sa6e/OpP3Rapux6Lk/oGz9kQ8C0Q0o17vFTlRQIkCou
-RAX90L5bVRA5at9iAeffZz6YxO2b0RZYkkksdEJpYqDo1PP2nK+EdpPldtx55XfV
-2fZyL8Wyzj/zqwayE0g/UTNxy86U6jSqnvOai7sIh7HbuaNmbuvIPNzZXVGOz2o0
-7l93kmpSzEXVsf+hrA0Pxc+qLRD4pX9Q9FzEG3ZNSBGiw0exAqN5abXSq4LDAzzZ
-yiqiG9eYXlWDAbIPnZPk
-=Puf3
+iQIcBAEBCAAGBQJQYG5AAAoJEECxmPOUX5FEq4MP/iwOWTZ7OQUD3rjmpdJHZhr5
+bBruLuOtvtnLp1nFxp3TIZxL7c64tt0u2BcaLyO0cTwFGxckFSI6vDmclWpIrBjN
+3ghxYHkIS5ckp1LHUcswDUFu3djQU8dmY8UnhJulKeIVo31FujC0o60n99+Tbrol
+1FaKiYpEAeeFctCMYR+cfahDiO1L8tgf7i1r//mM1skrAX9gYlha3RwnPl/W8UoF
+w35qVi29Lp8/5DgY8/Xfm7Ln9XtetU1AN2QVCiJCLbLKJ7+SGq2xt24w1AEiZhyN
+E59Vsd6qRG0cqlRRMgLqweE/jPjXB2kXBLOQSCk41bL2iXM61ajDymntU6yr8RYr
+eKb8sQedXzRy4hGBBhn1RT4+l0KcZlWNdlOamZ6ZMh3dlza3CmSxLzFI6SI0mDvU
+mXLhLl6xdT2AokPYfOz70iRNTSuLtgnp8n6DzgPATKum0Pow5lJNB1Q1kM4FdUgP
+CX7RJ7JYOti1bWTCd9DNAbR67aQa/6j3zZn5dA5rPJ6dPkaMIO1nflHjIoIekXp1
++T0Fljw1TwHP6GRqlh81WVbCZPC/a3boupE2dUx5gRWhV7JCpl6KjSkdjfaR0WMS
+veBTaiylGxqOh46YG7FAWTRxitPH/ku7rSwA7udbxdsb75V36KYSJNCJGAG/F3Jo
+OOD+coG2YDzrxrBDoGsA
+=A43N
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Sep_2012_00_02_17_+1000_VCVFN4dVBEP/WxHy--
+--Signature=_Tue__25_Sep_2012_00_29_20_+1000_iQGE.1BTumZGcapw--
