@@ -1,39 +1,93 @@
-From: David Daney <ddaney.cavm@gmail.com>
-Subject: Re: [PATCH -next] MIPS: ptrace: Add missing #include <asm/syscall.h>
-Date: Mon, 24 Sep 2012 11:23:40 -0700
-Message-ID: <5060A52C.1050504@gmail.com>
-References: <1347913216-11140-1-git-send-email-geert@linux-m68k.org> <20120923173609.GE13842@linux-mips.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/4] task_work: make task_work_add() lockless
+Date: Mon, 24 Sep 2012 21:27:05 +0200
+Message-ID: <CAMuHMdU7D+SM=xCN9Yp0KuGwiod=RojWjkpdYT-Hw=v9iry66A@mail.gmail.com>
+References: <20120826191132.GA3743@redhat.com>
+	<20120826191209.GA4221@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:33657 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755537Ab2IXSXo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 14:23:44 -0400
-Received: by pbbrr4 with SMTP id rr4so7613845pbb.19
-        for <linux-next@vger.kernel.org>; Mon, 24 Sep 2012 11:23:43 -0700 (PDT)
-In-Reply-To: <20120923173609.GE13842@linux-mips.org>
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:50090 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757850Ab2IXT1H (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 15:27:07 -0400
+In-Reply-To: <20120826191209.GA4221@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-mips@linux-mips.org, linux-next@vger.kernel.org
+To: Oleg Nesterov <oleg@redhat.com>, Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Peter Zijlstra <peterz@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>, Dave Jones <davej@redhat.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, rostedt <rostedt@goodmis.org>, dhowells <dhowells@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, Linux-Next <linux-next@vger.kernel.org>
 
-On 09/23/2012 10:36 AM, Ralf Baechle wrote:
-> On Mon, Sep 17, 2012 at 10:20:16PM +0200, Geert Uytterhoeven wrote:
+On Sun, Aug 26, 2012 at 9:12 PM, Oleg Nesterov <oleg@redhat.com> wrote:
+> Change task_works to use llist-like code to avoid pi_lock
+> in task_work_add(), this makes it useable under rq->lock.
 >
->> arch/mips/kernel/ptrace.c: In function =E2=80=98syscall_trace_enter=E2=
-=80=99:
->> arch/mips/kernel/ptrace.c:664: error: implicit declaration of functi=
-on =E2=80=98__syscall_get_arch=E2=80=99
->> make[2]: *** [arch/mips/kernel/ptrace.o] Error 1
+> task_work_cancel() and task_work_run() still use pi_lock
+> to synchronize with each other.
 >
-> Thanks, I already had fixed that in the linux-trace tree; the latest
-> version just had not yet propagated yet to the other trees.
->
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 
-It is still not on mips-for-linux-next.  Perhaps we should arrange for=20
-it to be there, so that the actual propagation may commence.
+> --- a/kernel/task_work.c
+> +++ b/kernel/task_work.c
 
-David Daney
+> @@ -30,52 +23,60 @@ task_work_add(struct task_struct *task, struct callback_head *twork, bool notify
+>  struct callback_head *
+>  task_work_cancel(struct task_struct *task, task_work_func_t func)
+>  {
+> +       struct callback_head **pprev = &task->task_works;
+> +       struct callback_head *work = NULL;
+>         unsigned long flags;
+> -       struct callback_head *last, *res = NULL;
+> -
+> +       /*
+> +        * If cmpxchg() fails we continue without updating pprev.
+> +        * Either we raced with task_work_add() which added the
+> +        * new entry before this work, we will find it again. Or
+> +        * we raced with task_work_run(), *pprev == NULL.
+> +        */
+>         raw_spin_lock_irqsave(&task->pi_lock, flags);
+> -       last = task->task_works;
+> -       if (last) {
+> -               struct callback_head *q = last, *p = q->next;
+> -               while (1) {
+> -                       if (p->func == func) {
+> -                               q->next = p->next;
+> -                               if (p == last)
+> -                                       task->task_works = q == p ? NULL : q;
+> -                               res = p;
+> -                               break;
+> -                       }
+> -                       if (p == last)
+> -                               break;
+> -                       q = p;
+> -                       p = q->next;
+> -               }
+> +       while ((work = ACCESS_ONCE(*pprev))) {
+> +               read_barrier_depends();
+
+Woops, h8300 doesn't have read_barrier_depends():
+kernel/task_work.c:38:3: error: implicit declaration of function
+'read_barrier_depends' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+make[2]: *** [kernel/task_work.o] Error 1
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/7238385/
+
+Perhaps an empty definition is fine? Most architectures have:
+
+#define read_barrier_depends() do { } while(0)
+
+The same issue on c6x just got fixed in -next in commit
+2c8c2366077da5645bf9063b3cf5c94ecb16f691 ("c6x: use
+asm-generic/barrier.h")
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
