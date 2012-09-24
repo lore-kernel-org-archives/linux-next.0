@@ -1,68 +1,103 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Date: Mon, 24 Sep 2012 21:58:34 +1000
-Message-ID: <20120924215834.0aca4ea8d04dee8e86abf446@canb.auug.org.au>
-References: <20120924131834.348fa5e6ecfa48521391ea62@canb.auug.org.au>
-	<20120924113137.GA3824@bremse>
+Subject: Re: linux-next: manual merge of the userns tree with the security
+ tree
+Date: Mon, 24 Sep 2012 22:17:52 +1000
+Message-ID: <20120924221752.6537996620e5e8ef5a4965a7@canb.auug.org.au>
+References: <20120924214116.211935861448f95b82f7f722@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_21_58_34_+1000_ZA3fZQkCze7hySyS"
+ boundary="Signature=_Mon__24_Sep_2012_22_17_52_+1000_tnzs97c3bd13EZkx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48498 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:42937 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754473Ab2IXL6h (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 07:58:37 -0400
-In-Reply-To: <20120924113137.GA3824@bremse>
+	with ESMTP id S1754612Ab2IXMSB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 08:18:01 -0400
+In-Reply-To: <20120924214116.211935861448f95b82f7f722@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Wang Xingchao <xingchao.wang@intel.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Moody <pmoody@google.com>
 
---Signature=_Mon__24_Sep_2012_21_58_34_+1000_ZA3fZQkCze7hySyS
+--Signature=_Mon__24_Sep_2012_22_17_52_+1000_tnzs97c3bd13EZkx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi,
 
-On Mon, 24 Sep 2012 13:31:54 +0200 Daniel Vetter <daniel@ffwll.ch> wrote:
+On Mon, 24 Sep 2012 21:41:16 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> Looks good. I've known about this issue and tried to improve matters by
-> applying the patch to both trees (to at least force a conflict), but not
-> even with that patch applied in my drm-intel-next queue I get a proper
-> conflict. I guess I need to do a proper backmerge.
->=20
-> Fixup patch looks good for now.
+> diff --cc kernel/auditsc.c
+> index 37f52f2,ff4798f..0000000
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@@ -1160,32 -1151,8 +1152,38 @@@ void audit_log_task_info(struct audit_b
+>   	char name[sizeof(tsk->comm)];
+>   	struct mm_struct *mm =3D tsk->mm;
+>   	struct vm_area_struct *vma;
+>  +	char *tty;
+>  +
+>  +	if (!ab)
+>  +		return;
+>  =20
+>   	/* tsk =3D=3D current */
+>  +	cred =3D current_cred();
+>  +
+>  +	spin_lock_irq(&tsk->sighand->siglock);
+>  +	if (tsk->signal && tsk->signal->tty && tsk->signal->tty->name)
+>  +		tty =3D tsk->signal->tty->name;
+>  +	else
+>  +		tty =3D "(none)";
+>  +	spin_unlock_irq(&tsk->sighand->siglock);
+>  +
+>  +
+>  +	audit_log_format(ab,
+>  +			 " ppid=3D%ld pid=3D%d auid=3D%u uid=3D%u gid=3D%u"
+>  +			 " euid=3D%u suid=3D%u fsuid=3D%u"
+>  +			 " egid=3D%u sgid=3D%u fsgid=3D%u ses=3D%u tty=3D%s",
+>  +			 sys_getppid(),
+>  +			 tsk->pid,
+> - 			 tsk->loginuid, cred->uid, cred->gid,
+> - 			 cred->euid, cred->suid, cred->fsuid,
+> - 			 cred->egid, cred->sgid, cred->fsgid,
+> ++			 from_kuid(&init_user_ns, tsk->loginuid),
+> ++			 from_kuid(&init_user_ns, context->uid),
+> ++			 from_kgid(&init_user_ns, context->gid),
+> ++			 from_kuid(&init_user_ns, context->euid),
+> ++			 from_kuid(&init_user_ns, context->suid),
+> ++			 from_kuid(&init_user_ns, context->fsuid),
+> ++			 from_kgid(&init_user_ns, context->egid),
+> ++			 from_kgid(&init_user_ns, context->sgid),
+> ++			 from_kgid(&init_user_ns, context->fsgid),
 
-If that is all that is needed, just make sure Linus is informed of the
-merge conflict fix when he merged the drm tree.  If there is more, it is
-up to you and Dave.  If you do a back merge, make sure that it is
-properly commented.
+These should all be "cred" not "context", of course.  I fixed this in my
+tree.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__24_Sep_2012_21_58_34_+1000_ZA3fZQkCze7hySyS
+--Signature=_Mon__24_Sep_2012_22_17_52_+1000_tnzs97c3bd13EZkx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYErqAAoJEECxmPOUX5FEcuAQAImgK29KPuXH62FvEoGj9OlQ
-ylnLTqYMfYCxlZg+asYfdKRNvbbooVqC9pkgeZrZrzPosjh//ra8mPjZXczv8Gu7
-wItuc6vYCqtkWovKl6mFIR34jsshezvpg/1g9pzKAPsJClPJAN4zpPRCE9MxKkQ9
-mL1HpmsepUw2U361F1LsbD58pNuI5pA5oiBxt4fvw1ccepC2lnMJpEnxm4QUGmiL
-tbAfQSpKq6nrvmb7skdygGvtziEwPKt5DhQs2QxJa5iGTk8Tn1VpAPU7c/yRmP4B
-onNzugPace9hVQp/YeFnMXgnceD2RNpe/8lfAZsvxIUjzCZtfGbmCOFdYwqmaE3u
-O0IEKvo20/C51tubzUua7vo9py4lUISpHdJ+RRtVtmgZQyqnLbtceWwsNW6ZGIGr
-aZUNiic3UxClfIAuoXdXiUyN7BPvaMciMrgEyYFWnUg+z2gVk1GaCbwfvfV6lNBl
-hWFbAr16KKt95cwOGK8A+P57GW5WW1tKfbTxuO6dHC9FZUtRLREw2Oa3uJsx1tWv
-zNQFPxRWncw2XLSqWI4ybPgN2BzzUGGylXYwEKpYbhDvwF8WkOByJ837wTk9V/C1
-fQGb/CRzOdhTtwUzcjkkL1n85E2yuvGy91HlKRNATAXdTpjoPhUETH6mRQaketk9
-8XvZkTBUGaOWbL/suaBD
-=hYUF
+iQIcBAEBCAAGBQJQYE9wAAoJEECxmPOUX5FEpmkP/R4Qv0gMtFo4LDPbOvwcrG25
+H6uy+h9aSpyQ8bsBseuj9QgahLmtltU2KZqZHsSdq4n+UXkXsdiIsFmPyX82Ynr/
+92DBQKZ4oTn6T7VBnsS06FyTe/uHGYgUcdTxLyBV3aky1X51UZk2Dwv4CRXF02rN
+zZtrpX5W0HousKYU3XAh2ydfqr7j7ooa4p88lAEUN3u03l6XWqnHaOAeRLMF2C+O
+UXN6TAPG/vkPsJOozPBZMk3HDbEbNY8m11dlMayKSFGlY6R/u3mSdMKIVamGS/+a
+GM3TZ9rEaYLaXVX0kGYPEfyEy3+gLuyTCkUMeoZ35HuuF8uRXix93YKZUOX/pGeh
+buYvR/I6wbEXRy+QVev0GHDYj1zFwHUnhXr/jL1NOJyv3fJEWQneYzC4lpXnACSj
+IZlMQLCY1nnzr4kZo+deG2+HMaaxdXsa5Q0IYpXgQD5S9JSG2DAvFQ+ts1Vdstk/
+d68zUpkgaPxUv9yrLzcPsg7EoKO1/bQYJKxYEgPnx03lwC/zivOsnx1wDhdzCJN+
+ng9ImVNtr4KoFds0+rlpubuWpTB4Rm5887eokauxb+77FjXHUwUcQQcFLW2AlWpn
+3mYjmsWUaQBXl7VSgBt3h7GSzsA1tfU+EoIzYJUNJbm9VGNCoOzxU5Bk5hbL119z
+WrgVtLbZiXp8S+hRd/o+
+=nvWW
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Sep_2012_21_58_34_+1000_ZA3fZQkCze7hySyS--
+--Signature=_Mon__24_Sep_2012_22_17_52_+1000_tnzs97c3bd13EZkx--
