@@ -1,33 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the slave-dma
- tree
-Date: Mon, 24 Sep 2012 19:44:13 +1000
-Message-ID: <20120924194413.87981dcbe729777af104d2c5@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the fbdev tree
+Date: Mon, 24 Sep 2012 19:49:21 +1000
+Message-ID: <20120924194921.9c277f5048627c74708ba1ce@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_19_44_13_+1000_TrRU=8J1h_aeCzUD"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34753 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751982Ab2IXJoP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 05:44:15 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Mon__24_Sep_2012_19_49_21_+1000_D0+e9B/YY82nMG0m"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Porter <mporter@ti.com>, Vinod Koul <vinod.koul@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__24_Sep_2012_19_44_13_+1000_TrRU=8J1h_aeCzUD
+--Signature=_Mon__24_Sep_2012_19_49_21_+1000_D0+e9B/YY82nMG0m
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/spi/spi-davinci.c between commit 048177ce3b39 ("spi: spi-davinci:
-convert to DMA engine API") from the slave-dma tree and commit
-ec2a0833e515 ("ARM: davinci: move platform_data definitions") from the
+Today's linux-next merge of the arm-soc tree got conflicts in
+drivers/video/msm/mddi.c, drivers/video/msm/mdp.c and
+drivers/video/msm/mdp_hw.h between commit 8abf0b31e161 ("video: msm:
+Remove useless mach/* includes") from the fbdev tree and commit
+1ef21f6343ff ("ARM: msm: move platform_data definitions") from the
 arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
@@ -37,40 +33,70 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/spi/spi-davinci.c
-index c1ec52d,3afe2f4..0000000
---- a/drivers/spi/spi-davinci.c
-+++ b/drivers/spi/spi-davinci.c
-@@@ -32,7 -30,8 +32,7 @@@
-  #include <linux/spi/spi_bitbang.h>
+diff --cc drivers/video/msm/mddi.c
+index d43e178,bf73f04..0000000
+--- a/drivers/video/msm/mddi.c
++++ b/drivers/video/msm/mddi.c
+@@@ -26,7 -26,10 +26,7 @@@
+  #include <linux/clk.h>
+  #include <linux/io.h>
+  #include <linux/sched.h>
+- #include <mach/msm_fb.h>
+ -#include <mach/msm_iomap.h>
+ -#include <mach/irqs.h>
+ -#include <mach/board.h>
++ #include <linux/platform_data/video-msm_fb.h>
+  #include "mddi_hw.h"
+ =20
+  #define FLAG_DISABLE_HIBERNATION 0x0001
+diff --cc drivers/video/msm/mdp.c
+index 7570908,d1f881e..0000000
+--- a/drivers/video/msm/mdp.c
++++ b/drivers/video/msm/mdp.c
+@@@ -25,7 -25,8 +25,7 @@@
+  #include <linux/major.h>
   #include <linux/slab.h>
  =20
-- #include <mach/spi.h>
-+ #include <linux/platform_data/spi-davinci.h>
- -#include <mach/edma.h>
+- #include <mach/msm_fb.h>
+ -#include <mach/msm_iomap.h>
++ #include <linux/platform_data/video-msm_fb.h>
+  #include <linux/platform_device.h>
+  #include <linux/export.h>
  =20
-  #define SPI_NO_RESOURCE		((resource_size_t)-1)
+diff --cc drivers/video/msm/mdp_hw.h
+index 2a84137,a0bacf5..0000000
+--- a/drivers/video/msm/mdp_hw.h
++++ b/drivers/video/msm/mdp_hw.h
+@@@ -15,7 -15,8 +15,7 @@@
+  #ifndef _MDP_HW_H_
+  #define _MDP_HW_H_
  =20
+- #include <mach/msm_fb.h>
+ -#include <mach/msm_iomap.h>
++ #include <linux/platform_data/video-msm_fb.h>
+ =20
+  struct mdp_info {
+  	struct mdp_device mdp_dev;
 
---Signature=_Mon__24_Sep_2012_19_44_13_+1000_TrRU=8J1h_aeCzUD
+--Signature=_Mon__24_Sep_2012_19_49_21_+1000_D0+e9B/YY82nMG0m
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYCttAAoJEECxmPOUX5FEuEEP/R2tAqIEj9iUULxWQsV+5Yla
-20uS1sInRtTZLIjm7CO39I2PLxvYZtA0F0M4xU08AJVB5mxUUjsZkQNH56WpjGPz
-oDBILTCirTTlz7uHoXUqIBphmSaQ7qhUv5w53RyHGIdXrIUmgRKXkZ+YNfcRIoUq
-TedIxJTpUF/ahvLT4MaVerZlaAmQXF7L7VUXEoGpH3Os307nyGHdA4pImfhQA4qU
-xOsfswmYdyVRVxivSfpsGYROyjlKG7NQrIRTYZ5sQo44ZU1uudvOypG6T1+yK86r
-oh/HbTXfOtT4mI0Kb68Q3RFZ/z9n7kP/GA+HT/87if6EbxT7/cQ38kGy7VRbltPN
-NIggASomYOnO3RK0j7BdtxRVYnwsLSNS4a4Dj/sARUrwqdcJvN9stetyCPEfP2Vi
-t6G0DXrdQ0/FqBlbL4fY3C2khtF2JiW72/BOvXC/ypaYWnScbvrO49rrc1S+Un2g
-6XqcSrazCo/5SMNFC0fVGTNbR4lxPlFIZlm44vfnuk7PJZCiI290QRv92sE9ty1i
-SrNqvlatsz0DDHb0El+z/O5vp0HyzOdxVAtVwWRg9oJY1l1/ZUn1ow26Xs7VMRR7
-bQU4TcRmUw65zM3LtfxKqm/6rJrSXchpdIVcbzqJOnnJ5OBXq1bdgKFtWgyPmE9L
-OjpSmj4LTtmQmMOSNUcS
-=UztF
+iQIcBAEBCAAGBQJQYCyhAAoJEECxmPOUX5FEG4AP/3fXpnjfZPYJInMuXtW7Hend
+XAcECeGiVFodCgFpmf+fNne5oA9kCFE93bSJOwb/b1PxbZJ74aQIFYX4FYlf6pN0
+undrK9Qhkw0kdauiEl5Mx4br+xgktKmGX3pJn4ibwiOE5UqLszIErNAAhsFkehbO
+LZY3e517zZ1Hcp1uznH34bKeQdnNHc2RMOMt9mVRe/PxeRKCLDEP8bAMiV9G9qVp
+/qXYO5G9URNa4lS5Hd9uwIEnLYaTKK2k9HHoPPnwfrKTiIAn1AgLRVjMzp2+gdou
+abH1aeVB8lq8mjdwELgyLz0yi8bQAHZUt6Rlux/F7LoohWEN+H6DBvrZRPR/L862
+z6YRtQ7sNOm2bG9khTGiVFPedh/axLVJoHlljRN2S+VFKwesQKo3D3AqQ3GseNG1
+IADpXCmmOZl3b3JhC7hfxef5GMHysKU06sirTnNyGf9EC1hJ4DWfCevUouN3EHcc
+BksKNylbHZ8Bd9/5bC+Gd8WOEg4hh2SpHIiW0Ucnmn1qFUNRzCBgKOWZQQZl5Yk/
+M4pYdRk64btq1qUM2654MviOpMCDvwvGiW/Ztb9p1x6cLixuyO8tWsrgFp1KCMsM
+rs2jkJ3Sj6eFELsOXN0hddVIRpI6noJCY/qru7h6Os2JRdqriQQhSAd9ZQu3hXau
+eIPA4UJp8jfMRjq9X/qb
+=MFAK
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Sep_2012_19_44_13_+1000_TrRU=8J1h_aeCzUD--
+--Signature=_Mon__24_Sep_2012_19_49_21_+1000_D0+e9B/YY82nMG0m--
