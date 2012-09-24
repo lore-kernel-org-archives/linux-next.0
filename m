@@ -1,62 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: bluetooth tree rewritten after being merged
-Date: Tue, 25 Sep 2012 08:51:13 +1000
-Message-ID: <20120925085113.cd17b8e633f38b3f7deefd5c@canb.auug.org.au>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: linux-next: bluetooth tree rewritten after being merged
+Date: Mon, 24 Sep 2012 20:49:04 -0300
+Message-ID: <20120924234904.GC7922@joana>
+References: <20120925085113.cd17b8e633f38b3f7deefd5c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_08_51_13_+1000_lwWJSTcqid3KkFCK"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41721 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751546Ab2IXWvW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 18:51:22 -0400
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:62898 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750778Ab2IXXtP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 19:49:15 -0400
+Content-Disposition: inline
+In-Reply-To: <20120925085113.cd17b8e633f38b3f7deefd5c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gustavo Padovan <gustavo@padovan.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__25_Sep_2012_08_51_13_+1000_lwWJSTcqid3KkFCK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Gustavo, John,
+* Stephen Rothwell <sfr@canb.auug.org.au> [2012-09-25 08:51:13 +1000]:
 
-The bluetooth tree has been merged into the wireless tree (which is its
-normal path to Linus), but since that merge, the top four commits in the
-bluetooth tree have been rewritten.   So now there will be two version of
-those commits in linux-next (and eventually Linus' tree, if nothing
-changes) and this will cause conflicts if there are further changes in
-either tree affecting the files in those four commits.
+> Hi Gustavo, John,
+> 
+> The bluetooth tree has been merged into the wireless tree (which is its
+> normal path to Linus), but since that merge, the top four commits in the
+> bluetooth tree have been rewritten.   So now there will be two version of
+> those commits in linux-next (and eventually Linus' tree, if nothing
+> changes) and this will cause conflicts if there are further changes in
+> either tree affecting the files in those four commits.
+> 
+> Do *not* rewrite/rebase a tree once it has been merged "upstream".
+> Preferably do *not* rewrite/rebase a tree once it has been published
+> (unless it is specifically a tree that is never meant to be stable).
 
-Do *not* rewrite/rebase a tree once it has been merged "upstream".
-Preferably do *not* rewrite/rebase a tree once it has been published
-(unless it is specifically a tree that is never meant to be stable).
+Yes, I was planning to redo the pull request but in the meantime John pulled
+my tree. I'm fixing my tree right now to get rid of this issue. Thanks for
+reporting.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__25_Sep_2012_08_51_13_+1000_lwWJSTcqid3KkFCK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQYOPhAAoJEECxmPOUX5FEIFMP/j8uApVxAmniXLyM2tYtXGRi
-ifR61Wawy92HDXe3EkqYFKWM+U81PwQgUszkcOP+2kyiK087EzhquTOOLLOf6F4A
-7i3kCTljEuxbC1jjSi0m4T5fQt4pRDa3BwHlzsz2Zhu+9tu4l0lr1vz43tUDB3FP
-FiNrElbqx/iM8XDZW5sXjyHQNv6DsCNn7X3mzxP2THDC+WCApXIj0TEJbAwbAQoB
-i1/rNXUwrllo9OtUG74UN+NZjUxYOyGZvpuB4kUpLg+PLDE0j60q/9Hyx1TTHF3U
-+DHrYZb/nKV6ecwMC7sVknVWsUF10lMMwfWmIj5Lw8hziQfzOKy6lLjfhZQk6Wd/
-bSjLTVa4wvtGpEC2ItYlsq9Q+XSHacEpGV/k0yRHMWSKyb4xZG1SZvYuyg+gd6np
-vQBYseiDzbDsYuR/JYZ1/82UQRUxnXOPlzuhuP4UYBVMU+QXDrpFjQ6ki7UTIa/p
-KzIW+8GX0/D4l7gwKWvz/xJsHtmewyTIkF4Qo4QLjevxJ4kwxKrLld5FodDAWmga
-Sys3/yOh7X/0+ojujdfbiKMdMDZGBQv5gTlnpm/cOpFRLMdII1/zo8rAlWNcq80L
-9mNDxHUiKlF5aQ2/Ksj+6H2qQK3HR576AcU93BMMnYXklWMhrFSjZMzqOctFpdKo
-qlMe4zWlNr0XWiXAvCTt
-=BGG9
------END PGP SIGNATURE-----
-
---Signature=_Tue__25_Sep_2012_08_51_13_+1000_lwWJSTcqid3KkFCK--
+	Gustavo
