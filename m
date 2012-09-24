@@ -1,23 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the slave-dma
- tree
-Date: Mon, 24 Sep 2012 19:31:08 +1000
-Message-ID: <20120924193108.f399195b821a835e0d3db08a@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the mmc tree
+Date: Mon, 24 Sep 2012 19:36:44 +1000
+Message-ID: <20120924193644.c62d7e91dc2a3f206af9fb65@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_19_31_08_+1000_59XR_D6=0fTI2e1Y"
+ boundary="Signature=_Mon__24_Sep_2012_19_36_44_+1000__l0qcyOK8l/qX/7b"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40041 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:37892 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751582Ab2IXJbL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 05:31:11 -0400
+	with ESMTP id S1752040Ab2IXJgu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 05:36:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Porter <mporter@ti.com>, Vinod Koul <vinod.koul@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Venkatraman S <svenkatr@ti.com>, Chris Ball <cjb@laptop.org>, Igor Grinberg <grinberg@compulab.co.il>, Tony Lindgren <tony@atomide.com>
 
---Signature=_Mon__24_Sep_2012_19_31_08_+1000_59XR_D6=0fTI2e1Y
+--Signature=_Mon__24_Sep_2012_19_36_44_+1000__l0qcyOK8l/qX/7b
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -25,57 +24,37 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/mmc/host/davinci_mmc.c between commit b5daabbd3d18 ("mmc:
-davinci_mmc: convert to DMA engine API") from the slave-dma tree and
-commit ec2a0833e515 ("ARM: davinci: move platform_data definitions") from
-the arm-soc tree.
+drivers/mmc/host/omap.c between commit 2976837c6ea8 ("mmc: omap: remove
+unused variables and includes") from the mmc tree and commits
+cf3a6ec2c0a4 ("ARM: OMAP: remove plat/board.h file") and 70c494c3122f
+("ARM: OMAP1: Make plat/mux.h omap1 only") from the arm-soc tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+The former removed a superset of include files, so I did that and can
+carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/mmc/host/davinci_mmc.c
-index c5e1eeb,3dfd347..0000000
---- a/drivers/mmc/host/davinci_mmc.c
-+++ b/drivers/mmc/host/davinci_mmc.c
-@@@ -30,12 -30,11 +30,12 @@@
-  #include <linux/io.h>
-  #include <linux/irq.h>
-  #include <linux/delay.h>
- +#include <linux/dmaengine.h>
-  #include <linux/dma-mapping.h>
- +#include <linux/edma.h>
-  #include <linux/mmc/mmc.h>
- =20
-- #include <mach/mmc.h>
-+ #include <linux/platform_data/mmc-davinci.h>
- -#include <mach/edma.h>
- =20
-  /*
-   * Register Definitions
-
---Signature=_Mon__24_Sep_2012_19_31_08_+1000_59XR_D6=0fTI2e1Y
+--Signature=_Mon__24_Sep_2012_19_36_44_+1000__l0qcyOK8l/qX/7b
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYChcAAoJEECxmPOUX5FE31gP/ipG/Z2g4QvYT359l5mpM28B
-s7w/Q/jDNkMuE+WMBXsKoJBMTrFaI9TmBg8xcSBwzUlOBl+sA6yuzg09KSWkFRF9
-Ge1VMtr1OFQPO4+eEVb6xdaoYD+IwqgJWmLwOIV309Dju9Y3qf4F453+8Ebovsx6
-e+UrFl7IBE1K0HD70hcrKnzBNvS1QbcSjRF5EuDefZp5xFwKnfzBXf/4+j7e/gqO
-qZEy13rK1HU1oCfcjNvsjjAm5C9La39NVltyE/zdJGAlAF1ZNtA4pz/s8ibsHgwG
-tj037rRsndvEV2pYjE7yKrdkFvznO7Jk0a7f48KdU8k5KBobY2IBNBuWPsmGmdOx
-rYIVo5a+X1K8jR1v4tEbdYbG74Szz2f4s3j36jiiQYi2rylJGeYLVN7jZHPYDBTP
-C6IAworY0kwQ787Rl1tkAMKRwgCsLSGcHojsa4XEZhqfTP9CKeGDa/e6D2UncV/h
-v2fNptAepbdxtW/CSLXjqQ+sQhLzeP/erAig3KjAdiTldtqcGme+GbMKlIvie/nn
-QDfjYwOdl0MPdGAtB03mlkMRUN2vErZnrqi9UUtsujEqTPu5oCtrqy74gNsrBHk9
-68r4bY41DOxtOZzxp7LgpyP2vc8l43Je7DJz2whgCPHr9JUAFnW0/QkzzSIsA5Ux
-gu1xAGWhDldbCV8hUoYG
-=zBOU
+iQIcBAEBCAAGBQJQYCmsAAoJEECxmPOUX5FE7Q4QAKhmb3GXHCj50oq2+n3u7yLs
+VhIq3MZwYZELYighXHJcVTizGAAwe8U4jpjfKN2TCspubbWSy5fwqlnR1q0BcGzf
+lL6JsFgg1ycXQiDKoeqh7B3EZqArL3n5wK21b1AUOUsAc9mFa1EWJTD5MCrr4lFb
+127M6cVuRSbmfO9PJwbZqKQBvp9rVmFyT0Of5QcitZCTrfZiiYCDPupazVxNYS21
+1z/b3+OARZRz31hHESu+g6on2vMYkApYbXdqh5dzewVSg8solox0jrPllw1xch0U
+wEQrgKtAvwFDsRZWKHfD5MRZolXY7uGmZ284bCUjv78mPFPPOh7TX9oN8smZyNqT
+ZfsD+nK10VTNNv7Y8LHjoNowHs8C9rb3suNBOwtVfOjYkgvxmFoaXd6wkdJZk2A3
+XqEJSoEERnKGyJVit9MTXcf4+yA97Eg2gwfO0V9GDKtXBvgPGmsYRv1J/dKLcc7C
+MzjKvCR4JK0lNJb4tHCo9cU95c/V3nGQGFe+Ju8sVKc2k/lLliYXppNo8YkQqEBe
+I2UHSvpJwLs/C1VwQOhkIWH7L0SUbcGdL8nauUNSii1HW2J/RIT4ttV7uFcd7RSX
+o72dImyg5oMxbXh35j/HDJrq7AR8B41qce0A8mrinMiesIHsLc7oyq1Rm+L5+fgs
+f0VkaQSuAwFjY1ZSORrU
+=P+FS
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Sep_2012_19_31_08_+1000_59XR_D6=0fTI2e1Y--
+--Signature=_Mon__24_Sep_2012_19_36_44_+1000__l0qcyOK8l/qX/7b--
