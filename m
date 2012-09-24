@@ -1,60 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the edac tree with Linus' tree
-Date: Mon, 24 Sep 2012 15:27:57 +1000
-Message-ID: <20120924152757.eee2b749725e6bc08f7e7d4f@canb.auug.org.au>
+From: Tarkan Erimer <tarkan.erimer@f-secure.com>
+Subject: Re: Linux 3.6-rc7
+Date: Mon, 24 Sep 2012 09:21:00 +0300
+Message-ID: <505FFBCC.9090906@f-secure.com>
+References: <CA+55aFxjQPenH=90y2CzQQB_7qV8gj53AJxbhupPrB5X8hs7+w@mail.gmail.com> <20120924120154.df874afe3c1fc17360695738@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_15_27_57_+1000_dOywbGvd8WosKXs7"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50500 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754150Ab2IXF2I (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 01:28:08 -0400
+Received: from fsmail-out.f-secure.com ([193.110.108.171]:50836 "EHLO
+	fsmail-out.f-secure.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754869Ab2IXGaY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 02:30:24 -0400
+In-Reply-To: <20120924120154.df874afe3c1fc17360695738@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shaun Ruffell <sruffell@digium.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Signature=_Mon__24_Sep_2012_15_27_57_+1000_dOywbGvd8WosKXs7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/24/2012 05:01 AM, Stephen Rothwell wrote:
+>  And pigs might fly :-) 
 
-Hi Mauro,
+Perhaps; pigs cannot fly, but penguins can fly! :-P Unless, you didn't 
+see this already :
 
-Today's linux-next merge of the edac tree got a conflict in drivers/edac/ed=
-ac_mc.c between commit faa2ad09c01c ("edac_mc: edac_mc_free() cannot assume=
- mem_ctl_info is registered in sysfs") from Linus' tree and commit 12c3ab94=
-22cc ("edac: edac_mc_free() cannot assume mem_ctl_info is registered in sys=
-fs") from the edac tree.
+http://laughingsquid.com/flying-penguins-documentary-prank-on-bbc/
 
-Two versions of the same patch. I just used the version from the edac
-tree and can carry the fix as necessary (no action is required).
+http://en.wikipedia.org/wiki/Flying_penguins
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Have fun! ;-)
 
---Signature=_Mon__24_Sep_2012_15_27_57_+1000_dOywbGvd8WosKXs7
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQX+9dAAoJEECxmPOUX5FEte4P+gKYTsrjBg7MenncZNDzJcCB
-pyX3lQrcZhkAvxKvb6d0w8SQGNT19xKb673oiUY3dYIyz5Ln9g/0CPAoOxydHex0
-QW/o8WLtrsbstQHBuN8JQAQh7E1MVUCnETI9BfDnKmrhFHAdD25rQeWHJDuKSdBd
-B101G7pTpuFHNTYYTT3TRqyP544xzMCbpiGsHJPLb90D+SjyN66Hn+J7h+PrR6f4
-mp97RrYK58oEh73n+m0Vo7bbxIAHaW+o+NwSJwr82XfV+iN52Tfi5c6jcHO2Zq6R
-xoviLkq8XgSqdUraezzm/YEq7qbfh1GQLUnaZJmGSxpk5XilECN/4wJdYbWHGIcq
-aqiOKXS8N1SexC3OFTzu8HBCyH3pI5sojgGagOPiafKnkwnIzP0Q6E6/XcAuc3z0
-vUolHR/JMN8TAvo1j70wbjyQ5OBRxnarBnwAoKjwxP6whzqM1oqV1ponM/h5D/ji
-hNh6fS0VJsHOZ1m9dkz18rVjREcE3sJ7JZeJcGybHIual+jadIhPqFkJVRgCecmG
-5qwl4wKYmh+jwqIhjavBdtF1V7DNMayFTP6Gp5Cx1CijNw6g6W/ooaQDW4ye27L3
-ePy+PogF4lsHcdCIJrUmyIsp8vX+Gl2tqsRYzTlDFlH7Cui1BA7UbZiqJTmlHsQt
-XYyRLXR3aF4a99zQz81q
-=GPYe
------END PGP SIGNATURE-----
-
---Signature=_Mon__24_Sep_2012_15_27_57_+1000_dOywbGvd8WosKXs7--
+Tarkan
