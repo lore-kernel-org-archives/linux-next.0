@@ -1,81 +1,92 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the vfs tree
-Date: Mon, 24 Sep 2012 23:06:22 +1000
-Message-ID: <20120924230622.1ce14dfa53b01355b1898589@canb.auug.org.au>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the omap_dss2
+ tree
+Date: Mon, 24 Sep 2012 16:11:46 +0300
+Message-ID: <1348492306.2361.48.camel@deskari>
+References: <20120924195305.588277e94ce701abc5e5a6c5@canb.auug.org.au>
+	 <201209241243.39462.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_23_06_22_+1000_K3xBDc1zoop47FDW"
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-M+Hqa9IPoUqJ2P+CGqU6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36277 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753804Ab2IXNGa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 09:06:30 -0400
+Received: from na3sys009aog126.obsmtp.com ([74.125.149.155]:44245 "EHLO
+	na3sys009aog126.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752854Ab2IXNLw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Sep 2012 09:11:52 -0400
+Received: by lbbgj3 with SMTP id gj3so6673888lbb.19
+        for <linux-next@vger.kernel.org>; Mon, 24 Sep 2012 06:11:49 -0700 (PDT)
+In-Reply-To: <201209241243.39462.arnd@arndb.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>
 
---Signature=_Mon__24_Sep_2012_23_06_22_+1000_K3xBDc1zoop47FDW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+
+--=-M+Hqa9IPoUqJ2P+CGqU6
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Arnd,
 
-Today's linux-next merge of the akpm tree got a conflict in mm/nommu.c
-between commit f9bd4f3ed24d ("make get_file() return its argument") from
-the vfs tree and commit "mm: kill vma flag VM_EXECUTABLE and
-mm->num_exe_file_vmas" from the akpm tree.
+On Mon, 2012-09-24 at 12:43 +0000, Arnd Bergmann wrote:
+> On Monday 24 September 2012, Stephen Rothwell wrote:
+> > Today's linux-next merge of the arm-soc tree got a conflict in
+> > drivers/video/omap/lcd_ams_delta.c between commit 9586778de558 ("OMAPFB=
+1:
+> > remove unnecessary includes") from the  tree and commit e27e35ec735f
+> > ("ARM: OMAP1: Move board-ams-delta.h from plat to mach") from the arm-s=
+oc
+> > tree.
+> >=20
+> > The latter removed a superset of the former (as far as include files is
+> > concerned), so I used that and can carry the fix as necessary (no actio=
+n
+> > is required).
+> >=20
+>=20
+> Hi Stephen,
+>=20
+> I looked at all your reports and your fixes are looking good to me.
+>=20
+> I'm already building all ARM defconfigs now and have fixup patches for th=
+e
+> instances that went wrong or introduced new warnings, I'll do that again
+> on top of today's linux-next tree.
+>=20
+> The merge window is going to be fun with all those conflicts, but I don't
+> have a better idea either.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+If there's a stable branch for the OMAP platform changes, I could merge
+it to omapdss tree and fix the conflicts. But if I've understood right,
+Linus doesn't really like merges just for the sake of fixing conflicts.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+So far all the omapdss conflicts seem trivial, though.
 
-diff --cc mm/nommu.c
-index 98318dc,5583325..0000000
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@@ -1282,12 -1279,10 +1279,8 @@@ unsigned long do_mmap_pgoff(struct fil
-  	vma->vm_pgoff =3D pgoff;
- =20
-  	if (file) {
- -		region->vm_file =3D file;
- -		get_file(file);
- -		vma->vm_file =3D file;
- -		get_file(file);
- +		region->vm_file =3D get_file(file);
- +		vma->vm_file =3D get_file(file);
-- 		if (vm_flags & VM_EXECUTABLE) {
-- 			added_exe_file_vma(current->mm);
-- 			vma->vm_mm =3D current->mm;
-- 		}
-  	}
- =20
-  	down_write(&nommu_region_sem);
+ Tomi
 
---Signature=_Mon__24_Sep_2012_23_06_22_+1000_K3xBDc1zoop47FDW
-Content-Type: application/pgp-signature
+
+--=-M+Hqa9IPoUqJ2P+CGqU6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYFrOAAoJEECxmPOUX5FE7O8P/jzM7Uhat9o6cvAGBE9rLUfH
-b2NC26J4N1AO2NeEdbRX+QrKe6HizOcRfQtqeTFKuVFrqnqPP7t83Uhb+XdpYrSt
-hhYZvI6hX+gyKtXwyLSVxuejQxlYTI+apiru9W79kFjRXwzhzCewnDTqoFS1W9/z
-Y8BtNNEM78dcRDmYxC6NLWpx9qIE2QlPi80qUldxH1n7RFwwbnHxMdgN5cmlWDnC
-6KdycoXPSjAETKyCsT/+lq2mbEOr33dtfM9pQSztFe+mpOUo3B5m0P/Yz4MvOj2F
-qs75nTwyLNmrmpbUFHmsQPHvgtVn8+oihNSGq49Dsew1E4ifIuzAiY7v+ZUG0CzO
-wxfgE2i0PaM0KUPUfWNA8k3so+hK0R8x1dyIOxHfW8jy7VNMlDkhOvuTFvUNeKY/
-1wDUqQAuse0Mk1bjnYmoKFUy+yKjhMyCv7WDSsFiburTkOIl4E/u6tZ2HoRWrpYZ
-yd7JGuxzteOWCbSrkTa2jBHAkZz1nrhGTuYRcmV4gc9uIIYBqNWRkZZ+a9O2wMYg
-YRAiya1lKVwqYvanYycdn3Fpk6Kfyy9PiXkcdAhXFWrlab7AfZ8yH5BEwqW4R0Zb
-mmMtCbHR9SyxNd4ZVE3cnKUiwQQ5mfQUIagjKC4e5BSxEEosJaGZDdujmafhAABq
-MmxfboeumL9eZnAX9qpD
-=/3qW
+iQIcBAABAgAGBQJQYFwSAAoJEPo9qoy8lh71EJIQAKtPQwbbQhXVyqxv2aT3j0V+
+CJnIpJ2Ohh3DEtq+xfVMg4Q74m4Ux/o0AP8KuYLqoOd9baS6h68iEmq7qHROziH/
+TE/E5sk7RyMDLCgGZQv2f0+xSdcG37Uw6941jHd4d1Yeox7JchOOTWzgSZf6K9sj
+Fq/geFm5Sru9yWkyOfQK8+ber+3mA2LzlHhBlCCTV4aQiWim+19D+xLCiqsuu7Uw
+dGqR6F+QtALklNVzxJHe6RTOm7iUpPyJSRCqcrikzQk0G4jq29kezXiUUvSyoCwb
+Bo61T5zwkTc/W4DAGSsYFydSznmwK23JD6oAQSvb0JKuGrjp1POrfHYwTOiVlO9N
+SoH7Pa1txrVxmIKSui4v4wTy9NIBFjq62JZ8+uriQvmDbLOFHZQ8F+sQFgTBwMvX
+SCheZHtEqbyNEfXiIMXxGYuUcU+UtygSGVnPHl/zGzwb9+WOKyS6Pg1C2eTXAy/6
+HfF9iFGwNyeup22NtZ6jAaiiy/jZd6s4XY+QI69yfHJvgRTBmlGknXY+CprmoDWE
+yGsD4GCkyBtq43AOrHwc4ufy7q83aL4JQZX4jbRbs4DdYCbw09oA0UhzqS3cShdR
+GbG6Iprj9rHWHzsZuA93FVRlEGTxrdpNhzoQ8xeNuDWwfcCOV2iZJ4q8CFYS4Xgv
+fijtLwYSCZlgSy+BwFyF
+=5H6r
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Sep_2012_23_06_22_+1000_K3xBDc1zoop47FDW--
+--=-M+Hqa9IPoUqJ2P+CGqU6--
