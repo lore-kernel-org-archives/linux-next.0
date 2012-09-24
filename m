@@ -1,91 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the userns tree
-Date: Mon, 24 Sep 2012 22:18:59 +1000
-Message-ID: <20120924221859.b3f8fbc112ed7ff305b93512@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with the arm tree
+Date: Mon, 24 Sep 2012 22:24:15 +1000
+Message-ID: <20120924222415.80bb88f62c547dfc09e6ddc7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_22_18_59_+1000_mG7M/WibNbRQUYBd"
+ boundary="Signature=_Mon__24_Sep_2012_22_24_15_+1000_sRqI.UrvdN=88EoO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44848 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53380 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753726Ab2IXMTB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 08:19:01 -0400
+	with ESMTP id S1754593Ab2IXMYX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 08:24:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wade Farnsworth <wade_farnsworth@mentor.com>, Steven Walter <stevenrwalter@gmail.com>, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Mon__24_Sep_2012_22_18_59_+1000_mG7M/WibNbRQUYBd
+--Signature=_Mon__24_Sep_2012_22_24_15_+1000_sRqI.UrvdN=88EoO
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Al,
 
-After merging the userns tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the signal tree got a conflict in
+arch/arm/include/asm/thread_info.h between commit 1f66e06fb641 ("ARM:
+7524/1: support syscall tracing") from the arm tree and commit
+8ecd548d5fff ("sanitize tsk_is_polling()") from the signal tree.
 
-kernel/audit.c: In function 'audit_receive_msg':
-kernel/audit.c:753:37: error: 'struct netlink_skb_parms' has no member name=
-d 'pid'
-
-I missed the conflict between commit 35ce9888ad2a ("audit: Properly set
-the origin port id of audit messages") from the userns tree and commit
-15e473046cb6 ("netlink: Rename pid to portid to avoid confusion") from
-the net-next tree.  I have added the following merge fix patch and can
-carry it as necessary.
-
-=46rom 55a9ee70146f37c559333b1f35154618c708203f Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 24 Sep 2012 22:05:38 +1000
-Subject: [PATCH] audit: fix up for pid to portid change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- kernel/audit.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/audit.c b/kernel/audit.c
-index ea9b67a..4d0ceed 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -750,7 +750,7 @@ static int audit_receive_msg(struct sk_buff *skb, struc=
-t nlmsghdr *nlh)
- 					size--;
- 				audit_log_n_untrustedstring(ab, data, size);
- 			}
--			audit_set_pid(ab, NETLINK_CB(skb).pid);
-+			audit_set_pid(ab, NETLINK_CB(skb).portid);
- 			audit_log_end(ab);
- 		}
- 		break;
---=20
-1.7.10.280.gaa39
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__24_Sep_2012_22_18_59_+1000_mG7M/WibNbRQUYBd
+diff --cc arch/arm/include/asm/thread_info.h
+index f71cdab,b2d6b41..0000000
+--- a/arch/arm/include/asm/thread_info.h
++++ b/arch/arm/include/asm/thread_info.h
+@@@ -150,8 -148,6 +150,7 @@@ extern int vfp_restore_user_hwstate(str
+  #define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
+  #define TIF_SYSCALL_TRACE	8
+  #define TIF_SYSCALL_AUDIT	9
+ +#define TIF_SYSCALL_TRACEPOINT	10
+- #define TIF_POLLING_NRFLAG	16
+  #define TIF_USING_IWMMXT	17
+  #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
+  #define TIF_RESTORE_SIGMASK	20
+@@@ -163,8 -159,6 +162,7 @@@
+  #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+  #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+  #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ +#define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
+- #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
+  #define _TIF_USING_IWMMXT	(1 << TIF_USING_IWMMXT)
+  #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ =20
+
+--Signature=_Mon__24_Sep_2012_22_24_15_+1000_sRqI.UrvdN=88EoO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYE+zAAoJEECxmPOUX5FE5rcQAINEUOeO0+eykO5QGURPqWlV
-1+ClzSUyrxinrXNJw3N95HdDhRDXGJvQF6yKj9P/BqJ2W6D87VNEZj/eLXVvLHUg
-Dtkwo9Qvd/BzAx7wsr4CWgl4gzVWL+yBnubw2yUNU4AO3jRlWIiJUgDTd4/zWot5
-TiT1Lmr3jdWM3H5KflISieEjh5mrlu/meYMpkE6BKRjwq3p6eAotOV+zHa59b3G7
-zdCoWz0ydALDREClJFGJy7ypANdveoWlGYgpXz82h8J4fepIAUlpDjnex9XqaTPN
-mV43j3N3QwW9PmSp6mZ6Cxr5E+s5m2fdL8sN+NB8XnFgEkTx3v4VhJ9W5mm5d+51
-B34Gjt1r814PoOyWDC/plGBKwJkQxiO+G5TSLvrFXruK+xZWw/OXtzpS0iGM+Dr2
-ybqkG5um2nLUsF9PYlen63RUSEHI7YultEu6GS0d3dCnEQq9mfLzXVPlQWHcPKZS
-6iJAqCGZRFDyLhdcNN6h/Y6KVWwx2S8qVjMni0Q4Nl7Kez42hxPtCA0eLsCPORKg
-9zLcp89xx9XUjQZ4L5SedJNlEe/7CPHw3r5u16ffc3IZXNGqIPDp2pqdgiZBDN91
-UBXO9ucGgUdgohoaH6+pqdaFIo3Hz326WJncHYc5SAqbZnC89Durgv1bgGf/ZgeJ
-gsino7V7oWKywIh42kPF
-=xlif
+iQIcBAEBCAAGBQJQYFDvAAoJEECxmPOUX5FE3BEP/iDpsTZy6D21GotIvOkDHcYb
+QehOxWV+AmhEqxoTMl0ulJNJan/AfHt6UQ+pz7NlmGZXmTW6lBNloNnC2D3/QeZH
+dykugyNT8dx5N2bNMFExRu9j3cE3q3yx1sG+62e0dinXJfZUkLab02pFLVxjErOt
+q8FZJy++rF7PmQquFk0NcovHTfiRuWittSd1WzQqchp1FSbMDAoNRAlLXia2Q19o
+qM/TNr1T+t6959ILgzKoGX1+fM/o12liOc747xUohrY2ItuEKmzxeLx9UHiDTpMT
+DsvCkDoqpM2G5paRDluBLn145n0w+lQHGVfIljEbqkaz6XJn76WOZqJ7CXaQ/WzC
+IDtvnOoBYVI1UsAhXdnzR0d97MwbIq3LvFdcB6c552enMvoUzIpAOGfYGG9gzvZC
+vbhTLGxZNlohCSoXQuxCOe4iDLRE/0CF1leW54sNXBUO3/yG/gds3fSyTE7+2pNj
+uhwWv1X+fMv+ZWDvA/U5eEN+0CRvEWC6DJqYVFgwSAOJxmUkw/Ha/bpG0TZPiv8m
+PYHUEegxSRFb9zwKL5E8zPUDXGcf4USC5yZ1uLCNquW+UuYmWzgPYaWvXcKpQ6nw
+nMqmIC9PcLA2bBiXGaBrbMi9b2nIlU1GDA5rAEDDnLjxudZ4qWyLB0MewwHhun7S
+Jz/XL+zfJsDuc1s/19zJ
+=VU3u
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Sep_2012_22_18_59_+1000_mG7M/WibNbRQUYBd--
+--Signature=_Mon__24_Sep_2012_22_24_15_+1000_sRqI.UrvdN=88EoO--
