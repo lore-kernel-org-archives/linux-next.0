@@ -1,137 +1,83 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
+From: Peter Moody <pmoody@google.com>
 Subject: Re: linux-next: manual merge of the userns tree with the security tree
-Date: Mon, 24 Sep 2012 08:31:07 -0700
-Message-ID: <87txunwi84.fsf@xmission.com>
-References: <20120924215222.8933c5557b17239552f0b1d1@canb.auug.org.au>
+Date: Mon, 24 Sep 2012 08:36:08 -0700
+Message-ID: <CALnj_=7AJCsuabWAz9s4OtM=dbqKyrJXFWUYOjR5Pdwh16CkPA@mail.gmail.com>
+References: <20120924214116.211935861448f95b82f7f722@canb.auug.org.au> <20120924221752.6537996620e5e8ef5a4965a7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120924215222.8933c5557b17239552f0b1d1@canb.auug.org.au>
-	(Stephen Rothwell's message of "Mon, 24 Sep 2012 21:52:22 +1000")
+In-Reply-To: <20120924221752.6537996620e5e8ef5a4965a7@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, James Morris <jmorris@namei.org>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hey Eric (Paris),
 
-> Hi Eric,
+this is the second time I've been notified of a merge issue with this
+audit patch; Is there something I need to do (or should have done
+earlier) to keep this from continuing to be an issue?
+
+Cheers,
+peter
+
+On Mon, Sep 24, 2012 at 5:17 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi,
 >
-> Today's linux-next merge of the userns tree got a conflict in
-> security/integrity/ima/ima_policy.c between commit 07f6a79415d7 ("ima:
-> add appraise action keywords and default rules") from the security tree
-> and commit 8b94eea4bfb8 ("userns: Add user namespace support to IMA") from
-> the userns tree.
+> On Mon, 24 Sep 2012 21:41:16 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> diff --cc kernel/auditsc.c
+>> index 37f52f2,ff4798f..0000000
+>> --- a/kernel/auditsc.c
+>> +++ b/kernel/auditsc.c
+>> @@@ -1160,32 -1151,8 +1152,38 @@@ void audit_log_task_info(struct audit_b
+>>       char name[sizeof(tsk->comm)];
+>>       struct mm_struct *mm = tsk->mm;
+>>       struct vm_area_struct *vma;
+>>  +    char *tty;
+>>  +
+>>  +    if (!ab)
+>>  +            return;
+>>
+>>       /* tsk == current */
+>>  +    cred = current_cred();
+>>  +
+>>  +    spin_lock_irq(&tsk->sighand->siglock);
+>>  +    if (tsk->signal && tsk->signal->tty && tsk->signal->tty->name)
+>>  +            tty = tsk->signal->tty->name;
+>>  +    else
+>>  +            tty = "(none)";
+>>  +    spin_unlock_irq(&tsk->sighand->siglock);
+>>  +
+>>  +
+>>  +    audit_log_format(ab,
+>>  +                     " ppid=%ld pid=%d auid=%u uid=%u gid=%u"
+>>  +                     " euid=%u suid=%u fsuid=%u"
+>>  +                     " egid=%u sgid=%u fsgid=%u ses=%u tty=%s",
+>>  +                     sys_getppid(),
+>>  +                     tsk->pid,
+>> -                      tsk->loginuid, cred->uid, cred->gid,
+>> -                      cred->euid, cred->suid, cred->fsuid,
+>> -                      cred->egid, cred->sgid, cred->fsgid,
+>> ++                     from_kuid(&init_user_ns, tsk->loginuid),
+>> ++                     from_kuid(&init_user_ns, context->uid),
+>> ++                     from_kgid(&init_user_ns, context->gid),
+>> ++                     from_kuid(&init_user_ns, context->euid),
+>> ++                     from_kuid(&init_user_ns, context->suid),
+>> ++                     from_kuid(&init_user_ns, context->fsuid),
+>> ++                     from_kgid(&init_user_ns, context->egid),
+>> ++                     from_kgid(&init_user_ns, context->sgid),
+>> ++                     from_kgid(&init_user_ns, context->fsgid),
 >
-> I fixed it up (see below) but it probably needs more and can carry the
-> fix as necessary (no action is required).
+> These should all be "cred" not "context", of course.  I fixed this in my
+> tree.
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-Right.  To work when user namespace support is enabled fowner needs be
-converted to a kuid_t as well.
 
-When I did a trial earlier this is what I wound up with.  As long as
-user namespaces are not enabled what you wound up with should be fine.
 
-Eric
-
-diff --cc security/integrity/ima/ima_policy.c
-index c84df05,cda9031..346fe8f
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@@ -39,7 -45,8 +45,8 @@@ struct ima_rule_entry 
-  	enum ima_hooks func;
-  	int mask;
-  	unsigned long fsmagic;
- -	uid_t uid;
- -	uid_t fowner;
- +	kuid_t uid;
-++	kuid_t fowner;
-  	struct {
-  		void *rule;	/* LSM file metadata specific */
-  		int type;	/* audit type */
-@@@ -75,14 -82,28 +82,28 @@@ static struct ima_rule_entry default_ru
-  	 .flags = IMA_FUNC | IMA_MASK | IMA_UID},
-  };
-  
-- static LIST_HEAD(measure_default_rules);
-- static LIST_HEAD(measure_policy_rules);
-- static struct list_head *ima_measure;
-+ static struct ima_rule_entry default_appraise_rules[] = {
-+ 	{.action = DONT_APPRAISE,.fsmagic = PROC_SUPER_MAGIC,.flags = IMA_FSMAGIC},
-+ 	{.action = DONT_APPRAISE,.fsmagic = SYSFS_MAGIC,.flags = IMA_FSMAGIC},
-+ 	{.action = DONT_APPRAISE,.fsmagic = DEBUGFS_MAGIC,.flags = IMA_FSMAGIC},
-+ 	{.action = DONT_APPRAISE,.fsmagic = TMPFS_MAGIC,.flags = IMA_FSMAGIC},
-+ 	{.action = DONT_APPRAISE,.fsmagic = RAMFS_MAGIC,.flags = IMA_FSMAGIC},
-+ 	{.action = DONT_APPRAISE,.fsmagic = DEVPTS_SUPER_MAGIC,.flags = IMA_FSMAGIC},
-+ 	{.action = DONT_APPRAISE,.fsmagic = BINFMTFS_MAGIC,.flags = IMA_FSMAGIC},
-+ 	{.action = DONT_APPRAISE,.fsmagic = SECURITYFS_MAGIC,.flags = IMA_FSMAGIC},
-+ 	{.action = DONT_APPRAISE,.fsmagic = SELINUX_MAGIC,.flags = IMA_FSMAGIC},
-+ 	{.action = DONT_APPRAISE,.fsmagic = CGROUP_SUPER_MAGIC,.flags = IMA_FSMAGIC},
- -	{.action = APPRAISE,.fowner = 0,.flags = IMA_FOWNER},
-++	{.action = APPRAISE,.fowner = GLOBAL_ROOT_UID,.flags = IMA_FOWNER},
-+ };
-+ 
-+ static LIST_HEAD(ima_default_rules);
-+ static LIST_HEAD(ima_policy_rules);
-+ static struct list_head *ima_rules;
-  
-- static DEFINE_MUTEX(ima_measure_mutex);
-+ static DEFINE_MUTEX(ima_rules_mutex);
-  
-  static bool ima_use_tcb __initdata;
-- static int __init default_policy_setup(char *str)
-+ static int __init default_measure_policy_setup(char *str)
-  {
-  	ima_use_tcb = 1;
-  	return 1;
-@@@ -112,8 -141,10 +141,10 @@@ static bool ima_match_rules(struct ima_
-  	if ((rule->flags & IMA_FSMAGIC)
-  	    && rule->fsmagic != inode->i_sb->s_magic)
-  		return false;
- -	if ((rule->flags & IMA_UID) && rule->uid != cred->uid)
- +	if ((rule->flags & IMA_UID) && !uid_eq(rule->uid, cred->uid))
-  		return false;
- -	if ((rule->flags & IMA_FOWNER) && rule->fowner != inode->i_uid)
-++	if ((rule->flags & IMA_FOWNER) && !uid_eq(rule->fowner, inode->i_uid))
-+ 		return false;
-  	for (i = 0; i < MAX_LSM_RULES; i++) {
-  		int rc = 0;
-  		u32 osid, sid;
-@@@ -277,7 -336,8 +336,8 @@@ static int ima_parse_rule(char *rule, s
-  
-  	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_RULE);
-  
- -	entry->uid = -1;
- -	entry->fowner = -1;
- +	entry->uid = INVALID_UID;
-++	entry->fowner = INVALID_UID;
-  	entry->action = UNKNOWN;
-  	while ((p = strsep(&rule, " \t")) != NULL) {
-  		substring_t args[MAX_OPT_ARGS];
-@@@ -375,6 -459,23 +459,23 @@@
-  					entry->flags |= IMA_UID;
-  			}
-  			break;
-+ 		case Opt_fowner:
-+ 			ima_log_string(ab, "fowner", args[0].from);
-+ 
- -			if (entry->fowner != -1) {
-++			if (uid_valid(entry->fowner)) {
-+ 				result = -EINVAL;
-+ 				break;
-+ 			}
-+ 
-+ 			result = strict_strtoul(args[0].from, 10, &lnum);
-+ 			if (!result) {
- -				entry->fowner = (uid_t) lnum;
- -				if (entry->fowner != lnum)
-++				entry->fowner = make_kuid(current_user_ns(), (uid_t) lnum);
-++				if (!uid_valid(entry->fowner) || ((uid_t)lnum != lnum))
-+ 					result = -EINVAL;
-+ 				else
-+ 					entry->flags |= IMA_FOWNER;
-+ 			}
-+ 			break;
-  		case Opt_obj_user:
-  			ima_log_string(ab, "obj_user", args[0].from);
-  			result = ima_lsm_rule_init(entry, args[0].from,
+-- 
+Peter Moody      Google    1.650.253.7306
+Security Engineer  pgp:0xC3410038
