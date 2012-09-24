@@ -1,93 +1,62 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/4] task_work: make task_work_add() lockless
-Date: Mon, 24 Sep 2012 21:27:05 +0200
-Message-ID: <CAMuHMdU7D+SM=xCN9Yp0KuGwiod=RojWjkpdYT-Hw=v9iry66A@mail.gmail.com>
-References: <20120826191132.GA3743@redhat.com>
-	<20120826191209.GA4221@redhat.com>
+From: Roland Dreier <roland-BHEL68pLQRGGvPXPguhicg@public.gmane.org>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Mon, 24 Sep 2012 12:36:43 -0700
+Message-ID: <CAL1RGDUCThiu+vxy4d5QXvqfDCDUnHOBfZT97XB+Qy_bQrxCRg@mail.gmail.com>
+References: <20120925000217.947b8cd8dca6979bfedee2ca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:50090 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757850Ab2IXT1H (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 15:27:07 -0400
-In-Reply-To: <20120826191209.GA4221@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>, Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Peter Zijlstra <peterz@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>, Dave Jones <davej@redhat.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, rostedt <rostedt@goodmis.org>, dhowells <dhowells@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, Linux-Next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120925000217.947b8cd8dca6979bfedee2ca-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Fengguang Wu <fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Amir Vadai <amirv-VPRAkNaXOzVS1MOuV/RT9w@public.gmane.org>, Jack Morgenstein <jackm-LDSdmyG8hGV8YrgS2mwiifqBs+8SCbDb@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Aug 26, 2012 at 9:12 PM, Oleg Nesterov <oleg@redhat.com> wrote:
-> Change task_works to use llist-like code to avoid pi_lock
-> in task_work_add(), this makes it useable under rq->lock.
+On Mon, Sep 24, 2012 at 7:02 AM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
+> After merging the akpm tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 >
-> task_work_cancel() and task_work_run() still use pi_lock
-> to synchronize with each other.
+> drivers/infiniband/hw/mlx4/cm.c: In function 'id_map_alloc':
+> drivers/infiniband/hw/mlx4/cm.c:228:36: error: 'MAX_ID_MASK' undeclared (first use in this function)
 >
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> Caused by commit d7a4e9b679e9 ("IB/mlx4: Add CM paravirtualization") from
+> the infiniband tree interacting with commit "idr: rename MAX_LEVEL to
+> MAX_IDR_LEVEL" from the akpm tree.
+>
+> I have added the following merge fix patch for today:
+>
+> From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+> Date: Mon, 24 Sep 2012 23:57:53 +1000
+> Subject: [PATCH] IB/mlx4: fix for MAX_ID_MASK to MAX_IDR_MASK name change
+>
+> Signed-off-by: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+> ---
+>  drivers/infiniband/hw/mlx4/cm.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/infiniband/hw/mlx4/cm.c b/drivers/infiniband/hw/mlx4/cm.c
+> index e25e4da..80079e5 100644
+> --- a/drivers/infiniband/hw/mlx4/cm.c
+> +++ b/drivers/infiniband/hw/mlx4/cm.c
+> @@ -225,7 +225,7 @@ id_map_alloc(struct ib_device *ibdev, int slave_id, u32 sl_cm_id)
+>                 ret = idr_get_new_above(&sriov->pv_id_table, ent,
+>                                         next_id, &id);
+>                 if (!ret) {
+> -                       next_id = ((unsigned) id + 1) & MAX_ID_MASK;
+> +                       next_id = ((unsigned) id + 1) & MAX_IDR_MASK;
+>                         ent->pv_cm_id = (u32)id;
+>                         sl_id_map_add(ibdev, ent);
+>                 }
 
-> --- a/kernel/task_work.c
-> +++ b/kernel/task_work.c
+Andrew, any preference on how to handle this merge?
 
-> @@ -30,52 +23,60 @@ task_work_add(struct task_struct *task, struct callback_head *twork, bool notify
->  struct callback_head *
->  task_work_cancel(struct task_struct *task, task_work_func_t func)
->  {
-> +       struct callback_head **pprev = &task->task_works;
-> +       struct callback_head *work = NULL;
->         unsigned long flags;
-> -       struct callback_head *last, *res = NULL;
-> -
-> +       /*
-> +        * If cmpxchg() fails we continue without updating pprev.
-> +        * Either we raced with task_work_add() which added the
-> +        * new entry before this work, we will find it again. Or
-> +        * we raced with task_work_run(), *pprev == NULL.
-> +        */
->         raw_spin_lock_irqsave(&task->pi_lock, flags);
-> -       last = task->task_works;
-> -       if (last) {
-> -               struct callback_head *q = last, *p = q->next;
-> -               while (1) {
-> -                       if (p->func == func) {
-> -                               q->next = p->next;
-> -                               if (p == last)
-> -                                       task->task_works = q == p ? NULL : q;
-> -                               res = p;
-> -                               break;
-> -                       }
-> -                       if (p == last)
-> -                               break;
-> -                       q = p;
-> -                       p = q->next;
-> -               }
-> +       while ((work = ACCESS_ONCE(*pprev))) {
-> +               read_barrier_depends();
+Jack/Amir, I wonder if there's some way we can avoid this code
+entirely?  Is an IDR the right structure to use here, or would we
+be better off with a radix tree maybe (where we can assign our
+own ID)?
 
-Woops, h8300 doesn't have read_barrier_depends():
-kernel/task_work.c:38:3: error: implicit declaration of function
-'read_barrier_depends' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
-make[2]: *** [kernel/task_work.o] Error 1
-
-http://kisskb.ellerman.id.au/kisskb/buildresult/7238385/
-
-Perhaps an empty definition is fine? Most architectures have:
-
-#define read_barrier_depends() do { } while(0)
-
-The same issue on c6x just got fixed in -next in commit
-2c8c2366077da5645bf9063b3cf5c94ecb16f691 ("c6x: use
-asm-generic/barrier.h")
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+ - R.
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
