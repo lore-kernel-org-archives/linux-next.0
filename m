@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the vfs tree
-Date: Mon, 24 Sep 2012 17:07:41 +1000
-Message-ID: <20120924170741.34abbc462d1c405b0b447b72@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the sound tree
+Date: Mon, 24 Sep 2012 17:30:24 +1000
+Message-ID: <20120924173024.f102e9efb9b24d2b275509be@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_17_07_41_+1000_iZL0nXGuwyz1JiOT"
+ boundary="Signature=_Mon__24_Sep_2012_17_30_24_+1000_zuZTd9kjn8VnFYnq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48673 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44167 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754923Ab2IXHHv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 03:07:51 -0400
+	with ESMTP id S1753045Ab2IXHaj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 03:30:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, Al Viro <viro@zeniv.linux.org.uk>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Hebbar, Gururaja" <gururaja.hebbar@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Takashi Iwai <tiwai@suse.de>
 
---Signature=_Mon__24_Sep_2012_17_07_41_+1000_iZL0nXGuwyz1JiOT
+--Signature=_Mon__24_Sep_2012_17_30_24_+1000_zuZTd9kjn8VnFYnq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/android/binder.c between commit 004223461eee ("new
-helper: __alloc_fd()") from the vfs tree and commits efde99cd281a
-("Staging: android: binder: Make task_get_unused_fd_flags function
-static") and bf2023614201 ("Staging: android: binder: Remove an
-inconsequential conditional macro") from the staging tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-davinci/davinci.h between commit 896f66b7de29 ("ASoC/ARM:
+Davinci: McASP: split asp header into platform and audio specific") from
+the sound tree and commit ec2a0833e515 ("ARM: davinci: move platform_data
+definitions") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,47 +36,44 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/android/binder.c
-index f71d624,a807129..0000000
---- a/drivers/staging/android/binder.c
-+++ b/drivers/staging/android/binder.c
-@@@ -362,9 -362,14 +362,9 @@@ struct binder_transaction=20
-  static void
-  binder_defer_work(struct binder_proc *proc, enum binder_deferred_state de=
-fer);
+diff --cc arch/arm/mach-davinci/davinci.h
+index 8661b20,a37fc44..0000000
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@@ -22,11 -22,10 +22,11 @@@
+  #include <linux/davinci_emac.h>
+  #include <linux/platform_device.h>
+  #include <linux/spi/spi.h>
+ +#include <linux/platform_data/davinci_asp.h>
  =20
-- int task_get_unused_fd_flags(struct binder_proc *proc, int flags)
- -/*
- - * copied from get_unused_fd_flags
- - */
-+ static int task_get_unused_fd_flags(struct binder_proc *proc, int flags)
-  {
-  	struct files_struct *files =3D proc->files;
- -	int fd, error;
- -	struct fdtable *fdt;
-  	unsigned long rlim_cur;
-  	unsigned long irqs;
+- #include <mach/keyscan.h>
+ -#include <mach/asp.h>
++ #include <linux/platform_data/keyscan-davinci.h>
+  #include <mach/hardware.h>
+ +#include <mach/edma.h>
  =20
+  #include <media/davinci/vpfe_capture.h>
+  #include <media/davinci/vpif_types.h>
 
---Signature=_Mon__24_Sep_2012_17_07_41_+1000_iZL0nXGuwyz1JiOT
+--Signature=_Mon__24_Sep_2012_17_30_24_+1000_zuZTd9kjn8VnFYnq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYAa9AAoJEECxmPOUX5FE5vAQAJMBr6cjaNzEK+M3AREnKBNG
-qGhKGVe+B8F+mx02C8/+WrslMub+BH9+1s8D+/spEwLJxtH6FfP5sTnV+UBoPwSF
-pnnVu6jUv+VtNJ2Dkcfa5ym4INztPT2g1z1bq5o0PZgyPl3CUdS0OQiyCd1SQtLR
-bine+cd8X1pSzEb1cLnZzKcncqupC39jbsqH0+hCTHv2wzu4psks1n5FRCKaf8d/
-9u7hpVXS0W+7/xQiefH6611ty5l6lK7GLamwmm9enfGj55HAHsXSfhNO/F0an19H
-0UHxYDENJpF8IACxi+ckGdWucas91fJdNrAqya9VJCRWR0yQ5oGnUe4ZM0mk1DFY
-GN8mHGQ6FYbGy2JL45cgBkqXD99lh4/W3bGUu9FXg7L0NKrDs0gBjKUl1paOx9Eb
-4aQiY1nTNFcv0Urp8mQzw5rwvZMuOdpJ7jV77oXx6zMbAmUUErwJDNyLc4ulCfli
-aW170qIC/r1ztDREvewAZE+Bl2wbi2ypp7tlAZsaqWZmadw/gQhE/e7KhHNlLo4J
-XMlC/vx/qlm0EKcCIqzN6d5Xkf7WsiT7Xxf7DIYdwzBfBXpWgjwf7DpmXOptRHhi
-Btk/lsDg8ssc9Wstv168fA7eX8sjfZKNuMymH21OkMSjGhUdOtaKTFk1IbYiEOjE
-kDSE9PTfEaJcz70DPyID
-=SybL
+iQIcBAEBCAAGBQJQYAwQAAoJEECxmPOUX5FEZHgP/R1uYvA2QQwoqdmTH+34Oo0j
+WMarzBDC2FzW5zD0j+Hfxo94/zPNWvj6paw7Zk+WI8/TmvgFNYRS86r3Bqv5RNfe
+AwYk1gxqAoG7lIYecnZUNSTbMQ38Kg57XoXsoA4v0+tXc4hC0FJbxoG9ynRYFrKs
+FkSUzjYCtovwCn4UnczP/q/uGiICZDBzJf6Wfs6dPB4UTmThwAd1maTB3I5PmudV
+8MtVTuvWaLNV2MFVq2lLXOGSzqZwIYH6/ahI2YeCrscB4WZuqyXwv1z3ztRPA3G4
+AtsVtvOrZvg1quq5Gyx4PWQ77fsKO++XIZE3kWjQy1TaoEcgF/96yqiIcLX55J9z
+UU4xs0f/2ZDBDX2HfgPSgXVN76mmMoV7jzH/oWWmWZ0p1WRl+pk7hqmzjYhF8zXi
+MWtzvNVv796BJqE3qwHQeWVpmktJxspyvHg6yoluYx4aEh3hC1y2u2UkO0QilNLu
+sMYA6xwF+ZKYwN3517IX6Y5ymy7NM6J95Fc69aqAccQ0T6cAtQ6Ka+OBLdP0HYSW
++kFFvN3cw4cXy4m9Fhd1l5XcuI9mwXUYO7s6IK1f9X26Nb0Qf7eebx1LhQFw2g+W
+xUlDUXG4yZWwrJ44aoaD413MJNWcWoAi8KCRCKM0zbr3GPCv52l/OLxUkh2NlinD
+Ji9iZIzEfxV5Oyav8Kqf
+=EMm4
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Sep_2012_17_07_41_+1000_iZL0nXGuwyz1JiOT--
+--Signature=_Mon__24_Sep_2012_17_30_24_+1000_zuZTd9kjn8VnFYnq--
