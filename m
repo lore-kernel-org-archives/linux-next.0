@@ -1,32 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the vfs tree
-Date: Mon, 24 Sep 2012 23:12:29 +1000
-Message-ID: <20120924231229.766863ea8c36d3a4760f2b4a@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the  tree
+Date: Mon, 24 Sep 2012 23:29:26 +1000
+Message-ID: <20120924232926.fb112c6db45baba74a6224b5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_23_12_29_+1000_fG1nhFozhUV7D+k."
+ boundary="Signature=_Mon__24_Sep_2012_23_29_26_+1000_fLC/xTfCYvdb.1uN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36058 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58516 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754286Ab2IXNMc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 09:12:32 -0400
+	with ESMTP id S1754569Ab2IXN3e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 09:29:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Konstantin Khlebnikov <khlebnikov@openvz.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Alex Kelly <alex.page.kelly@gmail.com>
 
---Signature=_Mon__24_Sep_2012_23_12_29_+1000_fG1nhFozhUV7D+k.
+--Signature=_Mon__24_Sep_2012_23_29_26_+1000_fLC/xTfCYvdb.1uN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in
-arch/ia64/kernel/perfmon.c between commit f9bd4f3ed24d ("make get_file()
-return its argument") from the vfs tree and commit "mm: kill vma flag
-VM_RESERVED and mm->reserved_vm counter" from the akpm tree.
+Today's linux-next merge of the akpm tree got a conflict in fs/exec.c
+between commits b40b89c2da16 ("new helper: replace_fd()") and
+be28f112a5e5 ("do_coredump(): make sure that descriptor table isn't
+shared") from the vfs tree and commit "coredump: move core dump
+functionality into its own file" from the akpm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,42 +36,82 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/ia64/kernel/perfmon.c
-index f388b4e,2eae90e..0000000
---- a/arch/ia64/kernel/perfmon.c
-+++ b/arch/ia64/kernel/perfmon.c
-@@@ -2306,8 -2306,8 +2306,8 @@@ pfm_smpl_buffer_alloc(struct task_struc
-  	 * partially initialize the vma for the sampling buffer
-  	 */
-  	vma->vm_mm	     =3D mm;
- -	vma->vm_file	     =3D filp;
- +	vma->vm_file	     =3D get_file(filp);
-- 	vma->vm_flags	     =3D VM_READ| VM_MAYREAD |VM_RESERVED;
-+ 	vma->vm_flags	     =3D VM_READ | VM_MAYREAD | VM_DONTEXPAND | VM_DONTDUM=
-P;
-  	vma->vm_page_prot    =3D PAGE_READONLY; /* XXX may need to change */
- =20
-  	/*
+diff --cc fs/exec.c
+index 6b2e20b,d9bd87b..0000000
+--- a/fs/exec.c
++++ b/fs/exec.c
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 9692329..6ef9888 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -438,23 +438,14 @@ static void wait_for_dump_helpers(struct file *file)
+ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
+ {
+ 	struct file *files[2];
+-	struct fdtable *fdt;
+ 	struct coredump_params *cp =3D (struct coredump_params *)info->data;
+-	struct files_struct *cf =3D current->files;
+ 	int err =3D create_pipe_files(files, 0);
+ 	if (err)
+ 		return err;
+=20
+ 	cp->file =3D files[1];
+=20
+-	sys_close(0);
+-	fd_install(0, files[0]);
+-	spin_lock(&cf->file_lock);
+-	fdt =3D files_fdtable(cf);
+-	__set_open_fd(0, fdt);
+-	__clear_close_on_exec(0, fdt);
+-	spin_unlock(&cf->file_lock);
+-
++	replace_fd(0, files[0], 0);
+ 	/* and disallow core files too */
+ 	current->signal->rlim[RLIMIT_CORE] =3D (struct rlimit){1, 1};
+=20
+@@ -472,6 +463,7 @@ void do_coredump(long signr, int exit_code, struct pt_r=
+egs *regs)
+ 	int retval =3D 0;
+ 	int flag =3D 0;
+ 	int ispipe;
++	struct files_struct *displaced;
+ 	bool need_nonrelative =3D false;
+ 	static atomic_t core_dump_count =3D ATOMIC_INIT(0);
+ 	struct coredump_params cprm =3D {
+@@ -625,6 +617,12 @@ void do_coredump(long signr, int exit_code, struct pt_=
+regs *regs)
+ 			goto close_fail;
+ 	}
+=20
++	/* get us an unshared descriptor table; almost always a no-op */
++	retval =3D unshare_files(&displaced);
++	if (retval)
++		goto close_fail;
++	if (displaced)
++		put_files_struct(displaced);
+ 	retval =3D binfmt->core_dump(&cprm);
+ 	if (retval)
+ 		current->signal->group_exit_code |=3D 0x80;
 
---Signature=_Mon__24_Sep_2012_23_12_29_+1000_fG1nhFozhUV7D+k.
+--Signature=_Mon__24_Sep_2012_23_29_26_+1000_fLC/xTfCYvdb.1uN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYFw9AAoJEECxmPOUX5FE1QQP/2mX3TDzai5a8dwgAg0qqFHd
-LAn7koWbHQjC4l3tMEOfAgbHOB5pfbd06H/BOldJmhkQc+UfmspOkIqDOnQewaf1
-R4+vlHfhbRTrodsWtpMDfJKQmWtMwMz6jhPMDI1GTwtuJtCJGJn4sWDGkviac1sU
-fbphpdMklWyRKyo/A/vCPRVx2Ksa1LxKSwDlEpI8LG5cWL0i3apW0/keooMHx3sm
-WFFWWKy1Kjyl+p/iP0Tv61NVGgDVfoGEhxxWyDfqjr06AEUyIvHL3xkhZkZE4c/R
-n/Uc0gNZLP1c/lXkJ6J7we7ncYsWTKDc+AKoNKQwt4YZixBOZPupTg18SwImmpbH
-r8WT2ZFm5koGM7vUyFb+R4qUL3scn8LQJHJb4TStUWK80CCDvyU/PPNQGSDznd7p
-0rJhQjMqN6rEMwi45/iifzHEpBw68Ujxxo1AnvVjwogao5l3/QcAl9uHADKhDvFY
-S8/+u7JQvSk9EFKjHOu5vGoX7bgVBD/X4/6QQ7MAkY9laaxVmlSSJK4O+cbGK5NB
-i0Dl29fp/kb4s7myh8ecSZiAvwYck4cMLC6AH3uwDRp85Kuen+E9EHc9pcGZ7N37
-uoNI8lqUmeE/xlqiT4pnOAMR13k3C612VV7vBclGrT2qg5P/5YENBDoCu8u2tKt7
-OocM6CznfpKbuPvk6HvJ
-=VpZD
+iQIcBAEBCAAGBQJQYGA2AAoJEECxmPOUX5FEGhkP/jTK+pXANaXNjdLFbrHBfTiF
+5/KPV2Kc+j8tldNQuQ99XpatHyRo2s0EjR/K6UfnywpqaH1Rjc9WZN0HeLTvlznK
+dOfbTlbmtUhrZECd/5hVkujTwKLBZG5DC/NqHZIODkrXSw/WILqWSRR69PbWe8DU
+k7z//yiOMo2PuV1kn1O495UlfpLtKcfJQYfgXr7SHpSLDXhq2fFiGGP5FPEtkYiK
+TSgocbyxLkZvB/FNUJHwEzb+Uv6UmhKtsfJgbM+2z/323fdlyLgkZkwaPAn8yipH
+4l/rC1vCf/58tjaU1AlhSEqYMaItbwCE6C4oAZLccv8OqsHIammY297IxwrO7ZSp
+/o2t9fGxN+zbrs4TS19T6hM2HvcMDzvq6sY8s2/oUAFyIOiVSLkJOP1Mh26GjFKu
+NXc3oxe10fVyEQzDvj1nNGsmAqYXU2cnBxfwOJVpzX5y6U1H2nu5uHd2Zm6/3LXl
+RoBlRPKf93FLlCvRJkQT0e5dnIJjGwlZCSPfSaXXP6rA4gc2K6aZHdmLehXaw52v
+47VRUYx4Hq95oAAyjNykw4UO1SdMiSMWaFhsaeHfs+Gjxj/lHkCCtQwcg89O7uS2
+LfvBsmVQp6aj450mvMgOwjZVmqmh44qEr1juEqgYxoiQIK02Dtu5zMzGNbnRazHE
+HgQxRFnU1LMc1Ty7DPTN
+=inex
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Sep_2012_23_12_29_+1000_fG1nhFozhUV7D+k.--
+--Signature=_Mon__24_Sep_2012_23_29_26_+1000_fLC/xTfCYvdb.1uN--
