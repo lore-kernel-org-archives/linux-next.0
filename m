@@ -1,82 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with the arm tree
-Date: Mon, 24 Sep 2012 22:24:15 +1000
-Message-ID: <20120924222415.80bb88f62c547dfc09e6ddc7@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the omap_dss2 tree
+Date: Mon, 24 Sep 2012 12:43:39 +0000
+Message-ID: <201209241243.39462.arnd@arndb.de>
+References: <20120924195305.588277e94ce701abc5e5a6c5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_22_24_15_+1000_sRqI.UrvdN=88EoO"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53380 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754593Ab2IXMYX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 08:24:23 -0400
+Received: from moutng.kundenserver.de ([212.227.17.10]:55580 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754612Ab2IXMnu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 08:43:50 -0400
+In-Reply-To: <20120924195305.588277e94ce701abc5e5a6c5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wade Farnsworth <wade_farnsworth@mentor.com>, Steven Walter <stevenrwalter@gmail.com>, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>
 
---Signature=_Mon__24_Sep_2012_22_24_15_+1000_sRqI.UrvdN=88EoO
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Monday 24 September 2012, Stephen Rothwell wrote:
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> drivers/video/omap/lcd_ams_delta.c between commit 9586778de558 ("OMAPFB1:
+> remove unnecessary includes") from the  tree and commit e27e35ec735f
+> ("ARM: OMAP1: Move board-ams-delta.h from plat to mach") from the arm-soc
+> tree.
+> 
+> The latter removed a superset of the former (as far as include files is
+> concerned), so I used that and can carry the fix as necessary (no action
+> is required).
+> 
 
-Hi Al,
+Hi Stephen,
 
-Today's linux-next merge of the signal tree got a conflict in
-arch/arm/include/asm/thread_info.h between commit 1f66e06fb641 ("ARM:
-7524/1: support syscall tracing") from the arm tree and commit
-8ecd548d5fff ("sanitize tsk_is_polling()") from the signal tree.
+I looked at all your reports and your fixes are looking good to me.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I'm already building all ARM defconfigs now and have fixup patches for the
+instances that went wrong or introduced new warnings, I'll do that again
+on top of today's linux-next tree.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+The merge window is going to be fun with all those conflicts, but I don't
+have a better idea either.
 
-diff --cc arch/arm/include/asm/thread_info.h
-index f71cdab,b2d6b41..0000000
---- a/arch/arm/include/asm/thread_info.h
-+++ b/arch/arm/include/asm/thread_info.h
-@@@ -150,8 -148,6 +150,7 @@@ extern int vfp_restore_user_hwstate(str
-  #define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
-  #define TIF_SYSCALL_TRACE	8
-  #define TIF_SYSCALL_AUDIT	9
- +#define TIF_SYSCALL_TRACEPOINT	10
-- #define TIF_POLLING_NRFLAG	16
-  #define TIF_USING_IWMMXT	17
-  #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
-  #define TIF_RESTORE_SIGMASK	20
-@@@ -163,8 -159,6 +162,7 @@@
-  #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
-  #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
-  #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
- +#define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
-- #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
-  #define _TIF_USING_IWMMXT	(1 << TIF_USING_IWMMXT)
-  #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
- =20
-
---Signature=_Mon__24_Sep_2012_22_24_15_+1000_sRqI.UrvdN=88EoO
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQYFDvAAoJEECxmPOUX5FE3BEP/iDpsTZy6D21GotIvOkDHcYb
-QehOxWV+AmhEqxoTMl0ulJNJan/AfHt6UQ+pz7NlmGZXmTW6lBNloNnC2D3/QeZH
-dykugyNT8dx5N2bNMFExRu9j3cE3q3yx1sG+62e0dinXJfZUkLab02pFLVxjErOt
-q8FZJy++rF7PmQquFk0NcovHTfiRuWittSd1WzQqchp1FSbMDAoNRAlLXia2Q19o
-qM/TNr1T+t6959ILgzKoGX1+fM/o12liOc747xUohrY2ItuEKmzxeLx9UHiDTpMT
-DsvCkDoqpM2G5paRDluBLn145n0w+lQHGVfIljEbqkaz6XJn76WOZqJ7CXaQ/WzC
-IDtvnOoBYVI1UsAhXdnzR0d97MwbIq3LvFdcB6c552enMvoUzIpAOGfYGG9gzvZC
-vbhTLGxZNlohCSoXQuxCOe4iDLRE/0CF1leW54sNXBUO3/yG/gds3fSyTE7+2pNj
-uhwWv1X+fMv+ZWDvA/U5eEN+0CRvEWC6DJqYVFgwSAOJxmUkw/Ha/bpG0TZPiv8m
-PYHUEegxSRFb9zwKL5E8zPUDXGcf4USC5yZ1uLCNquW+UuYmWzgPYaWvXcKpQ6nw
-nMqmIC9PcLA2bBiXGaBrbMi9b2nIlU1GDA5rAEDDnLjxudZ4qWyLB0MewwHhun7S
-Jz/XL+zfJsDuc1s/19zJ
-=VU3u
------END PGP SIGNATURE-----
-
---Signature=_Mon__24_Sep_2012_22_24_15_+1000_sRqI.UrvdN=88EoO--
+	Arnd
