@@ -1,64 +1,74 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the
- omap_dss2 tree
-Date: Mon, 24 Sep 2012 09:19:45 -0700
-Message-ID: <20120924161944.GC28835@atomide.com>
-References: <20120924195305.588277e94ce701abc5e5a6c5@canb.auug.org.au>
- <201209241243.39462.arnd@arndb.de>
- <1348492306.2361.48.camel@deskari>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Jaeden Amero <jaeden.amero@ni.com>
+Subject: [PATCH] compat_ioctl: Avoid using undefined RS-485 IOCTLs
+Date: Mon, 24 Sep 2012 10:39:45 -0500
+Message-ID: <1348501185-23657-2-git-send-email-jaeden.amero@ni.com>
+References: <20120922005021.GM5959@localhost>
+ <1348501185-23657-1-git-send-email-jaeden.amero@ni.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:52797 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756658Ab2IXQTz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 12:19:55 -0400
-Content-Disposition: inline
-In-Reply-To: <1348492306.2361.48.camel@deskari>
+Received: from mailserver5.natinst.com ([130.164.80.5]:47742 "EHLO
+	spamkiller05.natinst.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756931Ab2IXQk4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 12:40:56 -0400
+In-Reply-To: <1348501185-23657-1-git-send-email-jaeden.amero@ni.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: fengguang.wu@intel.com
+Cc: linux-next@vger.kernel.org, sfr@canb.auug.org.au, gregkh@linuxfoundation.org, alan@linux.intel.com, kernel-janitors@vger.kernel.org, linux-serial@vger.kernel.org, Jaeden Amero <jaeden.amero@ni.com>
 
-* Tomi Valkeinen <tomi.valkeinen@ti.com> [120924 06:12]:
-> Hi Arnd,
-> 
-> On Mon, 2012-09-24 at 12:43 +0000, Arnd Bergmann wrote:
-> > On Monday 24 September 2012, Stephen Rothwell wrote:
-> > > Today's linux-next merge of the arm-soc tree got a conflict in
-> > > drivers/video/omap/lcd_ams_delta.c between commit 9586778de558 ("OMAPFB1:
-> > > remove unnecessary includes") from the  tree and commit e27e35ec735f
-> > > ("ARM: OMAP1: Move board-ams-delta.h from plat to mach") from the arm-soc
-> > > tree.
-> > > 
-> > > The latter removed a superset of the former (as far as include files is
-> > > concerned), so I used that and can carry the fix as necessary (no action
-> > > is required).
-> > > 
-> > 
-> > Hi Stephen,
-> > 
-> > I looked at all your reports and your fixes are looking good to me.
-> > 
-> > I'm already building all ARM defconfigs now and have fixup patches for the
-> > instances that went wrong or introduced new warnings, I'll do that again
-> > on top of today's linux-next tree.
-> > 
-> > The merge window is going to be fun with all those conflicts, but I don't
-> > have a better idea either.
-> 
-> If there's a stable branch for the OMAP platform changes, I could merge
-> it to omapdss tree and fix the conflicts. But if I've understood right,
-> Linus doesn't really like merges just for the sake of fixing conflicts.
-> 
-> So far all the omapdss conflicts seem trivial, though.
+Wrap the use of TIOCSRS485 and TIOCGRS485 in #ifdef so that we avoid
+adding undefined IOCTLs to the ioctl pointer list as compatible
+ioctls.
 
-Trivial ones should be OK, but maybe you find something
-minimal with the following to find tags that you can pull
-into your branch make things easier:
+This change was motivated by a build error on a MIPS build.
 
-$ git log --pretty=oneline --merges v3.6-rc7..arm-soc/for-next arch/arm/*omap*/* | grep "Merge tag" | grep omap
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
+tty-next
+head:   ac57e7f38ea6fe7358cd0b7a2f2d21aef5ab70cd
+commit: 84c3b84860440a9e3a3666c14112f41311b8f623 [10/16] compat_ioctl:
+  Add RS-485 IOCTLs to the list
+config: mips-fuloong2e_defconfig
 
-Regards,
+All related error/warning messages:
 
-Tony
+fs/compat_ioctl.c:869:1: error: 'TIOCSRS485' undeclared here (not in a
+  function)
+fs/compat_ioctl.c:870:1: error: 'TIOCGRS485' undeclared here (not in a
+  function)
+
+vim +869 fs/compat_ioctl.c
+863 COMPATIBLE_IOCTL(TIOCSPGRP)
+864 COMPATIBLE_IOCTL(TIOCGPGRP)
+865 COMPATIBLE_IOCTL(TIOCGPTN)
+866 COMPATIBLE_IOCTL(TIOCSPTLCK)
+867 COMPATIBLE_IOCTL(TIOCSERGETLSR)
+868 COMPATIBLE_IOCTL(TIOCSIG)
+> 869 COMPATIBLE_IOCTL(TIOCSRS485)
+870 COMPATIBLE_IOCTL(TIOCGRS485)
+871 #ifdef TCGETS2
+872 COMPATIBLE_IOCTL(TCGETS2)
+
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Jaeden Amero <jaeden.amero@ni.com>
+---
+ fs/compat_ioctl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index 85dfebfe6820856dc3154dfd178acb6fca63bbe9..59f8db4a39a78338b2c7a148122a04e11e026caf 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -866,8 +866,12 @@ COMPATIBLE_IOCTL(TIOCGPTN)
+ COMPATIBLE_IOCTL(TIOCSPTLCK)
+ COMPATIBLE_IOCTL(TIOCSERGETLSR)
+ COMPATIBLE_IOCTL(TIOCSIG)
++#ifdef TIOCSRS485
+ COMPATIBLE_IOCTL(TIOCSRS485)
++#endif
++#ifdef TIOCGRS485
+ COMPATIBLE_IOCTL(TIOCGRS485)
++#endif
+ #ifdef TCGETS2
+ COMPATIBLE_IOCTL(TCGETS2)
+ COMPATIBLE_IOCTL(TCSETS2)
+-- 
+1.7.12
