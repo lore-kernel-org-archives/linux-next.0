@@ -1,71 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Sept 24 (irqchip)
-Date: Tue, 25 Sep 2012 02:07:44 +1000
-Message-ID: <20120925020744.cc5beb9e65473605e5ca2240@canb.auug.org.au>
-References: <20120925005328.f748dfa3d077cebb345a4291@canb.auug.org.au>
-	<50607E99.6040303@xenotime.net>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_02_07_44_+1000_/L4OzoaAEfqd_q2p"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50607E99.6040303@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Simon Arlott <simon@fire.lp0.eu>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Chris Boot <bootc@bootc.net>, Dom Cobley <popcornmix@gmail.com>, Dom Cobley <dc4@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>
-List-Id: linux-next.vger.kernel.org
+From: Jaeden Amero <jaeden.amero@ni.com>
+Subject: Re: [tty:tty-next 10/16] fs/compat_ioctl.c:869:1: error: 'TIOCSRS485' undeclared here (not in a function)
+Date: Mon, 24 Sep 2012 10:39:44 -0500
+Message-ID: <1348501185-23657-1-git-send-email-jaeden.amero@ni.com>
+References: <20120922005021.GM5959@localhost>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailserver6.natinst.com ([130.164.80.6]:54383 "EHLO
+	spamkiller06.natinst.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755650Ab2IXQKI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 12:10:08 -0400
+In-Reply-To: <20120922005021.GM5959@localhost>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: fengguang.wu@intel.com
+Cc: linux-next@vger.kernel.org, sfr@canb.auug.org.au, gregkh@linuxfoundation.org, alan@linux.intel.com, kernel-janitors@vger.kernel.org, linux-serial@vger.kernel.org, Jaeden Amero <jaeden.amero@ni.com>
 
---Signature=_Tue__25_Sep_2012_02_07_44_+1000_/L4OzoaAEfqd_q2p
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Randy,
-
-On Mon, 24 Sep 2012 08:39:05 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
-e:
+On Sat, 22 Sep 2012 08:50:21 +0800, Fengguang Wu wrote:
+> FYI, kernel build failed on
 >
-> On 09/24/2012 07:53 AM, Stephen Rothwell wrote:
->=20
-> > Today was a train wreck, with lots of new conflicts across several trees
-> > and a few build failures as well.
->=20
-> I agree.  I mostly get this:
->=20
-> drivers/Kconfig:157: can't open file "drivers/irqchip/Kconfig"
->=20
-> i.e., no such file.
->=20
-> How does this happen?  :(
->=20
-> who handles irqchip?
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
+> tty-next
+> head:   ac57e7f38ea6fe7358cd0b7a2f2d21aef5ab70cd
+> commit: 84c3b84860440a9e3a3666c14112f41311b8f623 [10/16]
+>   compat_ioctl: Add RS-485 IOCTLs to the list
+> config: mips-fuloong2e_defconfig
+>
+> All related error/warning messages:
+>
+> fs/compat_ioctl.c:869:1: error: 'TIOCSRS485' undeclared here (not in
+>   a function)
+> fs/compat_ioctl.c:870:1: error: 'TIOCGRS485' undeclared here (not in
+>   a function)
 
-Hmm, commit 89214f009c1d ("ARM: bcm2835: add interrupt controller
-driver") from the arm-soc tree adds that file as an empty file (I have
-the empty file in my tree).  Nothing adds anything to it.
---=20
+I could fix this by defining these IOCTLs for all architectures that
+don't have them yet, but I'm unsure of what values to give them or why
+MIPS isn't using 'include/asm-generic/ioctls.h'.
+
+Perhaps it is better to leave adding those IOCTLs up to those who add
+the first RS-485 capable driver for that platform and to wrap the use
+of these defines in compat_ioctl.c with #ifdefs, as I've done in this
+patch. What do you think is best?
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Jaeden Amero
 
---Signature=_Tue__25_Sep_2012_02_07_44_+1000_/L4OzoaAEfqd_q2p
-Content-Type: application/pgp-signature
+Jaeden Amero (1):
+  compat_ioctl: Avoid using undefined RS-485 IOCTLs
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+ fs/compat_ioctl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-iQIcBAEBCAAGBQJQYIVQAAoJEECxmPOUX5FEGQ0P+gJfLMfVtc3UpCbO0ILXwx4v
-vU8dXZhNkcxnY3x5keeOmGUuW+UywazKbh4wrtjkCOI0thyMLfCvR/QALp9WG/yv
-SmEFUVYOdWNKjimYFxQh8jlwmkNXFem+L6jD5GRSjYodQ1Q/WxX83gIodfxpCNe0
-ZPI8puLUVZlPagdlGz0beHfdC3RBGDCmDk6D2FR7YHEamDx2A8cstEKVV7Na4WBW
-0M+rwsREdKgKsTfN0LwpqQAiAMJj98DlIx7msgnF9/IHlfVjSNXdwyPF+umYh7fX
-92Zy+z6TSw5BKJJ8c6Lqdxuq01prnfvUT9yQy5vKO6TbSgaK1QWcxzuwpVkwArJj
-m+oxePxYo3PGROPGU1E3IWtd0H2si/OJqeAcGVSHjHwUoT31zGE6TEFMV6ts0WfX
-e9RyHcwjqDy0Fd32XhQwnBnWAjnHTXGPlVxU83nvQdrgLxQvUpnzLenHf/Fx08cj
-UC7HNbuBMGteQTZ/D8UX9cyAhQyeOf1j9qGt6GUMvK6c3WuVyaDkzw9yp0Rn8X38
-kDxd95wKOdgGBq6+jGHv9THdZ7d3sEMpixqqBI2K6rJil9nvw2tUZ+ttLSmZB89Q
-0o1PjK3Sc6boUgtMgHZaNRNYHz17i8OOMTYEl3LvEwy6e0vp2/4v0S5KrD3y0WaA
-OIV3hIppaeGSs/23hv3u
-=fNY+
------END PGP SIGNATURE-----
-
---Signature=_Tue__25_Sep_2012_02_07_44_+1000_/L4OzoaAEfqd_q2p--
+-- 
+1.7.12
