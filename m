@@ -1,83 +1,36 @@
-From: Peter Moody <pmoody@google.com>
-Subject: Re: linux-next: manual merge of the userns tree with the security tree
-Date: Mon, 24 Sep 2012 08:36:08 -0700
-Message-ID: <CALnj_=7AJCsuabWAz9s4OtM=dbqKyrJXFWUYOjR5Pdwh16CkPA@mail.gmail.com>
-References: <20120924214116.211935861448f95b82f7f722@canb.auug.org.au> <20120924221752.6537996620e5e8ef5a4965a7@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Sept 24 (irqchip)
+Date: Mon, 24 Sep 2012 08:39:05 -0700
+Message-ID: <50607E99.6040303@xenotime.net>
+References: <20120925005328.f748dfa3d077cebb345a4291@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120924221752.6537996620e5e8ef5a4965a7@canb.auug.org.au>
+In-Reply-To: <20120925005328.f748dfa3d077cebb345a4291@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hey Eric (Paris),
+On 09/24/2012 07:53 AM, Stephen Rothwell wrote:
 
-this is the second time I've been notified of a merge issue with this
-audit patch; Is there something I need to do (or should have done
-earlier) to keep this from continuing to be an issue?
-
-Cheers,
-peter
-
-On Mon, Sep 24, 2012 at 5:17 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi,
->
-> On Mon, 24 Sep 2012 21:41:16 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> diff --cc kernel/auditsc.c
->> index 37f52f2,ff4798f..0000000
->> --- a/kernel/auditsc.c
->> +++ b/kernel/auditsc.c
->> @@@ -1160,32 -1151,8 +1152,38 @@@ void audit_log_task_info(struct audit_b
->>       char name[sizeof(tsk->comm)];
->>       struct mm_struct *mm = tsk->mm;
->>       struct vm_area_struct *vma;
->>  +    char *tty;
->>  +
->>  +    if (!ab)
->>  +            return;
->>
->>       /* tsk == current */
->>  +    cred = current_cred();
->>  +
->>  +    spin_lock_irq(&tsk->sighand->siglock);
->>  +    if (tsk->signal && tsk->signal->tty && tsk->signal->tty->name)
->>  +            tty = tsk->signal->tty->name;
->>  +    else
->>  +            tty = "(none)";
->>  +    spin_unlock_irq(&tsk->sighand->siglock);
->>  +
->>  +
->>  +    audit_log_format(ab,
->>  +                     " ppid=%ld pid=%d auid=%u uid=%u gid=%u"
->>  +                     " euid=%u suid=%u fsuid=%u"
->>  +                     " egid=%u sgid=%u fsgid=%u ses=%u tty=%s",
->>  +                     sys_getppid(),
->>  +                     tsk->pid,
->> -                      tsk->loginuid, cred->uid, cred->gid,
->> -                      cred->euid, cred->suid, cred->fsuid,
->> -                      cred->egid, cred->sgid, cred->fsgid,
->> ++                     from_kuid(&init_user_ns, tsk->loginuid),
->> ++                     from_kuid(&init_user_ns, context->uid),
->> ++                     from_kgid(&init_user_ns, context->gid),
->> ++                     from_kuid(&init_user_ns, context->euid),
->> ++                     from_kuid(&init_user_ns, context->suid),
->> ++                     from_kuid(&init_user_ns, context->fsuid),
->> ++                     from_kgid(&init_user_ns, context->egid),
->> ++                     from_kgid(&init_user_ns, context->sgid),
->> ++                     from_kgid(&init_user_ns, context->fsgid),
->
-> These should all be "cred" not "context", of course.  I fixed this in my
-> tree.
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> Hi all,
+> 
+> Today was a train wreck, with lots of new conflicts across several trees
+> and a few build failures as well.
 
 
+I agree.  I mostly get this:
 
--- 
-Peter Moody      Google    1.650.253.7306
-Security Engineer  pgp:0xC3410038
+drivers/Kconfig:157: can't open file "drivers/irqchip/Kconfig"
+
+i.e., no such file.
+
+How does this happen?  :(
+
+who handles irqchip?
+
+> -- 
+
+~Randy
