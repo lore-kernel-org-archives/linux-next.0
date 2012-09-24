@@ -1,82 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the sound tree
-Date: Mon, 24 Sep 2012 18:30:49 +1000
-Message-ID: <20120924183049.44bc374d9dc8b8504e504d99@canb.auug.org.au>
+From: Vinod Koul <vinod.koul@linux.intel.com>
+Subject: Re: [PATCH 0/2] dmaengine: Fix compillation issues in
+ device_prep_dma_cyclic()
+Date: Mon, 24 Sep 2012 14:10:09 +0530
+Message-ID: <1348476009.1943.187.camel@vkoul-udesk3>
+References: <20120924133923.130c4db72aa8105cb5647d7a@canb.auug.org.au>
+	 <1348473485-5081-1-git-send-email-peter.ujfalusi@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_18_30_49_+1000_JvnT5wJkvFnfMlw2"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51519 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755213Ab2IXIav (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 04:30:51 -0400
+Received: from mga02.intel.com ([134.134.136.20]:57818 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755255Ab2IXIpb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Sep 2012 04:45:31 -0400
+In-Reply-To: <1348473485-5081-1-git-send-email-peter.ujfalusi@ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Hebbar, Gururaja" <gururaja.hebbar@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Takashi Iwai <tiwai@suse.de>
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
---Signature=_Mon__24_Sep_2012_18_30_49_+1000_JvnT5wJkvFnfMlw2
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2012-09-24 at 10:58 +0300, Peter Ujfalusi wrote:
+> Hello,
+> 
+> The reason for the breakage is the patch 1 got lost somewhere in the process.
+> I also greped the whole tree for device_prep_dma_cyclic() and the second patch
+> is the result of that.
+> 
+> PS: I did build tested the series on ARM (OMAP), x86_32, x86_64 but not for ppc
+> for sure.
+I though patch 1 was part of the series Mark was supposed to apply.
 
-Hi all,
+Anyway both look fine to me so:
+Both Acked-By: Vinod Koul <vinod.koul@linux.intel.com>
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-davinci/include/mach/da8xx.h between commit 896f66b7de29
-(ASoC/ARM: Davinci: McASP: split asp header into platform and audio
-specific"") from the sound tree and commit ec2a0833e515 ("ARM: davinci:
-move platform_data definitions") from the arm-soc tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-davinci/include/mach/da8xx.h
-index c74a6ab,33e78ae..0000000
---- a/arch/arm/mach-davinci/include/mach/da8xx.h
-+++ b/arch/arm/mach-davinci/include/mach/da8xx.h
-@@@ -20,11 -19,12 +20,11 @@@
- =20
-  #include <mach/serial.h>
-  #include <mach/edma.h>
-- #include <mach/i2c.h>
-- #include <mach/mmc.h>
-- #include <mach/usb.h>
- -#include <mach/asp.h>
-  #include <mach/pm.h>
-- #include <mach/spi.h>
-+ #include <linux/platform_data/i2c-davinci.h>
-+ #include <linux/platform_data/mmc-davinci.h>
-+ #include <linux/platform_data/usb-davinci.h>
-+ #include <linux/platform_data/spi-davinci.h>
- =20
-  extern void __iomem *da8xx_syscfg0_base;
-  extern void __iomem *da8xx_syscfg1_base;
-
---Signature=_Mon__24_Sep_2012_18_30_49_+1000_JvnT5wJkvFnfMlw2
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQYBo5AAoJEECxmPOUX5FEzIYP/3OVLTwrgQjeJZqDUXo1uoAH
-/4AYQH8b/aex/VavyeFZU+piyVCg/w8hp/7aAw5EuqL3SLGV/up+XHKJR4+w96+I
-J2H6FWart7/kptXP2lmZcxJpYk3DiadA8T32Vpktz5LWNAwjoV7VMWbyALRh3qhR
-oHVRqERu6VGy99Y+RaLJnRsuZQ9I9EhaDXNEfAeHEPT8hweGY1Qk3l7AwAiBf7ES
-/Y2KU8/qNJn9AyuKZeSXL3SjbgSmCeYCP+6/J88bgkM50+AcR2xTnD0JH4Em5L17
-RgQfh8U8eKh7HTNe8cFk19THNenVUdE0bnzWZRQf7xLOdblN835KlxuOhRsZ/L63
-6oCcJd1oJngE74IrK1YOvCsarZAuKSratQoLC8vE1XYf4y7qPUPYAR/IDOTnfAni
-nXLigBlaEHuQocDqenuI+LfMIizaupvnDiq2EFNxti8AKuGNMq5QROO6lEXLxFJt
-5xM1r6GOU4OYRIiNa4giCzkkuZpq10eHPrhZ1lVKEBx/Q00gSyc2JpIALZJVvAGA
-Y+Vlp3oKUOOHpCEoZYyPBUW0JP+3EOljhpQmMZaV8OCZ1bAbn3NixNZ42Wd84eCu
-Y0Jsd4sOo97CNB7Lv7Dx9mx7bgH96b1wkcU0pcoTu59nrc2GN3QBSxdtEgZDBMbk
-QmXG9gcX8Xnd1sGwyCE7
-=1jMQ
------END PGP SIGNATURE-----
-
---Signature=_Mon__24_Sep_2012_18_30_49_+1000_JvnT5wJkvFnfMlw2--
+-- 
+~Vinod
