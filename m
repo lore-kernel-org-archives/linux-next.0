@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the v4l-dvb tree
-Date: Mon, 24 Sep 2012 19:10:53 +1000
-Message-ID: <20120924191053.e0fbf9e8d43a7a83115f2bcc@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the fbdev tree
+Date: Mon, 24 Sep 2012 19:15:08 +1000
+Message-ID: <20120924191508.6100b0603d2642c1e7a36679@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_19_10_53_+1000_DC/UYrzRo=dvmf+Z"
+ boundary="Signature=_Mon__24_Sep_2012_19_15_08_+1000_3grHwFrw7HYV=6AS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56826 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56047 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750970Ab2IXJLG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 05:11:06 -0400
+	with ESMTP id S1751645Ab2IXJPM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 05:15:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Timo Kokkonen <timo.t.kokkonen@iki.fi>, Mauro Carvalho Chehab <mchehab@infradead.org>, Tony Lindgren <tony@atomide.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Leela Krishna Amudala <l.krishna@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
 
---Signature=_Mon__24_Sep_2012_19_10_53_+1000_DC/UYrzRo=dvmf+Z
+--Signature=_Mon__24_Sep_2012_19_15_08_+1000_3grHwFrw7HYV=6AS
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-omap2/board-rx51-peripherals.c between commit 322c183cdc5f
-("[media] ARM: mach-omap2: board-rx51-peripherals: Add lirc-rx51 data")
-from the v4l-dvb tree and commits 2203747c9771 ("ARM: omap: move
-platform_data definitions") and 606281525fb7 ("ARM: OMAP2+: Make
-gpmc-smc91x.h local") from the arm-soc tree.
+Today's linux-next merge of the arm-soc tree got a conflict in arch/arm/mac=
+h-s3c64xx/mach-mini6410.c between commit 5a213a55c6d3 ("include/video: move=
+ fimd register headers from platform to include/video") from the fbdev tree=
+ and commit 436d42c61c3e ("ARM: samsung: move platform_data definitions") f=
+rom the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,44 +36,46 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-omap2/board-rx51-peripherals.c
-index ca07264,3945c50..0000000
---- a/arch/arm/mach-omap2/board-rx51-peripherals.c
-+++ b/arch/arm/mach-omap2/board-rx51-peripherals.c
-@@@ -30,13 -33,9 +33,10 @@@
+diff --cc arch/arm/mach-s3c64xx/mach-mini6410.c
+index 96ebcc5,09311cc..0000000
+--- a/arch/arm/mach-s3c64xx/mach-mini6410.c
++++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
+@@@ -38,12 -38,12 +38,12 @@@
+  #include <plat/cpu.h>
+  #include <plat/devs.h>
+  #include <plat/fb.h>
+- #include <plat/nand.h>
++ #include <linux/platform_data/mtd-nand-s3c2410.h>
+  #include <plat/regs-serial.h>
+- #include <plat/ts.h>
++ #include <linux/platform_data/touchscreen-s3c2410.h>
+ -#include <plat/regs-fb-v4.h>
+ =20
+  #include <video/platform_lcd.h>
+ +#include <video/samsung_fimd.h>
+ =20
   #include "common.h"
-  #include <plat/dma.h>
-  #include <plat/gpmc.h>
-- #include <plat/onenand.h>
-- #include <plat/gpmc-smc91x.h>
- +#include <plat/omap-pm.h>
-+ #include "gpmc-smc91x.h"
  =20
-- #include <mach/board-rx51.h>
-+ #include "board-rx51.h"
- =20
-  #include <sound/tlv320aic3x.h>
-  #include <sound/tpa6130a2-plat.h>
 
---Signature=_Mon__24_Sep_2012_19_10_53_+1000_DC/UYrzRo=dvmf+Z
+--Signature=_Mon__24_Sep_2012_19_15_08_+1000_3grHwFrw7HYV=6AS
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYCOdAAoJEECxmPOUX5FElZIP/32cnfYzaxKS/EPN/fpMgKxd
-NCj3s5R8x8e5qZYEjxJKpWywAozKVjngdYIEDgeihcywhhnDB9S73RKCOfl+KydX
-DBvwYtnDVdPcvRSOOJZ/UCSCDV+jrCBPrkOBwTQGnvFnazXmu9wUhTwTc815VVOa
-p9FpEkbM47l9yiu7jd1+dtj8rb7mztkUMM2Mmfk8wOOoUWnh+g9OJ4ej5u7Ym8uh
-4TM9rvREfanVWk8xjs6tPRjQm4NOA3Eaghp0lRceEKCfzn5uatCstsjXUc1EQVP1
-rqM6lvOIh31c1Sg+rxi45tHTnZ5Trhj17joCebv0C3oWEo9gtz8kTvIZrcwF+Vbr
-aFAKqhLvAj+rgbIdo1ekpKR0gcaq8xVM84Ppa0NUUZUsKRFhv80e96xo6PZzp4gu
-R6U+FxxvRYfJBuH9ZOO+ej/E8p9hGp1kNBX8agfDFwsmP5p1MhpOinVyTyTHZX9X
-hrUsSCI51WqguAO8vjoqYcuL/qcNU1tDPJh6n1H9qeX2SWYn2Blw3MAFAmplalsL
-5oEkKc+OszIj36waAyBb+dkC1mjozDI8vXeadvblPXHfN20ky9C6LMRKSQWXleHv
-3I1zRZUa33IzWgP5Nh04idQV4/BaCdROGswt/YzDBXI/VdQe8Bo8ykIW82jOp5Wq
-wEUJEqKuq+FL3S2LHM81
-=a7C1
+iQIcBAEBCAAGBQJQYCScAAoJEECxmPOUX5FEOFoP/3PWBwFkMKXOOQ5eZk5BtKVS
+eR4yeDichFtUFVFTKmjo31wPr6h6qkB5b+mpIQCgg+aLpTp/zgkBt9jlU/G3YIHa
+pHgYEiSeb3R3L56G0WlIh9xfLQm4GjkTtxZH34TbJ5ghO4Bh++wgcegufD8DEH8y
+jdwDg68Ugu0FU2N0rB+gCy+xYHSGYYY4IU+LyBw7O/fwPh61zKMBOR36rtpLVjqS
+7ULBRzflWMcKec40g4b/up7QFBcSetBeZd3n+0Fr+8Heruy1veNRUmaRMbo/UGP4
+187W4XLpcoYg7jgSZGe6yQhQdv7Ams700heWsoNhtR/U6pF5Q21NRQxpXFAFYlyG
+mEhibkPMRCJyVtnv6cfMREuTNVzBB+fdX4F77q6tQq73m6AK5+khNAQcv5UMVswb
+TypAMigNFNAAurnvSjIS9FnRq5GWq03rmKLJq0z1J1wz6lqZlqWlQvVk6zsvF20r
+CGbphS927/7X68VOPze0+K51oqGYJ15P4AGFtVNI1r/00cZVNtOGCg+KEG7faRFN
+8dVlRkDN4VLks6MbuLud2I93Cl9dbfm1renDX4KFdDI6awC9rT3kQ4HmvCDj0cSE
+siUvHAuGnHsamMbTyNEJA/nIat3pLdEg0qZgpZP5YxnBjR1/srjj4SqUr+/AOHP2
+cMrIDIfk2F+JtcRl7FzT
+=L4mg
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Sep_2012_19_10_53_+1000_DC/UYrzRo=dvmf+Z--
+--Signature=_Mon__24_Sep_2012_19_15_08_+1000_3grHwFrw7HYV=6AS--
