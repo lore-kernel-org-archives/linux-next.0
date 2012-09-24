@@ -1,70 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound and sound-asoc
- trees
-Date: Mon, 24 Sep 2012 13:39:23 +1000
-Message-ID: <20120924133923.130c4db72aa8105cb5647d7a@canb.auug.org.au>
+Subject: linux-next: manual merge of the edac tree with Linus' tree
+Date: Mon, 24 Sep 2012 15:27:57 +1000
+Message-ID: <20120924152757.eee2b749725e6bc08f7e7d4f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Sep_2012_13_39_23_+1000_AlwBkNuiICzS1f86"
+ boundary="Signature=_Mon__24_Sep_2012_15_27_57_+1000_dOywbGvd8WosKXs7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34625 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50500 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751326Ab2IXDjc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Sep 2012 23:39:32 -0400
+	with ESMTP id S1754150Ab2IXF2I (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 01:28:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shaun Ruffell <sruffell@digium.com>
 
---Signature=_Mon__24_Sep_2012_13_39_23_+1000_AlwBkNuiICzS1f86
+--Signature=_Mon__24_Sep_2012_15_27_57_+1000_dOywbGvd8WosKXs7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mauro,
 
-After merging the sound tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the edac tree got a conflict in drivers/edac/ed=
+ac_mc.c between commit faa2ad09c01c ("edac_mc: edac_mc_free() cannot assume=
+ mem_ctl_info is registered in sysfs") from Linus' tree and commit 12c3ab94=
+22cc ("edac: edac_mc_free() cannot assume mem_ctl_info is registered in sys=
+fs") from the edac tree.
 
-In file included from include/linux/skbuff.h:31:0,
-                 from include/linux/if_ether.h:135,
-                 from include/linux/netdevice.h:29,
-                 from arch/powerpc/net/bpf_jit_comp.c:14:
-include/linux/dmaengine.h: In function 'dmaengine_prep_dma_cyclic':
-include/linux/dmaengine.h:659:24: error: 'flags' undeclared (first use in t=
-his function)
+Two versions of the same patch. I just used the version from the edac
+tree and can carry the fix as necessary (no action is required).
 
-and lots more similar.
-
-Caused by commit ec8b5e48c037 ("dmaengine: Pass flags via
-device_prep_dma_cyclic() callback").  Was this version of this patch
-build tested at all?
-
-I have used the sound and sound-asoc trees from next-20120921 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__24_Sep_2012_13_39_23_+1000_AlwBkNuiICzS1f86
+--Signature=_Mon__24_Sep_2012_15_27_57_+1000_dOywbGvd8WosKXs7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQX9XrAAoJEECxmPOUX5FEomYP/3ugmM8ymdx/mX9QmLFv4+o7
-ElD48nWimg1oh9CaD+qJv0eAbKp/wGL625RVnQhxxwUMkh+eJs0uuU4k5Gdw8nmE
-yStNzFvOpozJbEtyHjbL8l5u6Ws8YxgpuGuFfDGe3yxHVuGd1l2mwWRklW8ep+AN
-hxAndC7Ka1f9n3I0yAxcI78dS+hDK2v5hNk/sZHmo5YJjBUssZH3ajzh4lKmy+OS
-EHZdnLmvtjVe6ZURC1inL0ERU+cCWMjmbiXvROC1ph6OwbtUJPLwYfN+q1qvWEXo
-GNE888EuiwpcV6BZxE+cUz8cisDje4GrYHT0wQF1cHhsuc/rSTmsvVh+eZkEqV0q
-ALHt5fJj9EXKKNhMxLGGkhHQ8utnWdWkT5aq7P+3jC+3p12aBiB4XlcSpEAzifdL
-1JgkhYh1X0xa8RSVE21vE4Dx9c1qkGCc7zV7NMI7mUZnPkXOt3b8xxnIzMBh3IkI
-A3XTNFmL4DcUynLUrZzNvcGlmLglwjU5rHeYJ1WHfTG0ZbGnaODdEtPxrYBPrymC
-yJdH6/TbVuL3wpN+Ng4s7Pmqfx7TmL8nLeYdUdidaBfZ0hJ31w3937AcUPN3GGhK
-HyRk39CIxBid+T3eam45dmvGNABz2CIwLCpp2nSONsT2xROEmeOD4+zbsBP/NNZd
-/1gNlb4BKsaCEHy6iZx4
-=nKjm
+iQIcBAEBCAAGBQJQX+9dAAoJEECxmPOUX5FEte4P+gKYTsrjBg7MenncZNDzJcCB
+pyX3lQrcZhkAvxKvb6d0w8SQGNT19xKb673oiUY3dYIyz5Ln9g/0CPAoOxydHex0
+QW/o8WLtrsbstQHBuN8JQAQh7E1MVUCnETI9BfDnKmrhFHAdD25rQeWHJDuKSdBd
+B101G7pTpuFHNTYYTT3TRqyP544xzMCbpiGsHJPLb90D+SjyN66Hn+J7h+PrR6f4
+mp97RrYK58oEh73n+m0Vo7bbxIAHaW+o+NwSJwr82XfV+iN52Tfi5c6jcHO2Zq6R
+xoviLkq8XgSqdUraezzm/YEq7qbfh1GQLUnaZJmGSxpk5XilECN/4wJdYbWHGIcq
+aqiOKXS8N1SexC3OFTzu8HBCyH3pI5sojgGagOPiafKnkwnIzP0Q6E6/XcAuc3z0
+vUolHR/JMN8TAvo1j70wbjyQ5OBRxnarBnwAoKjwxP6whzqM1oqV1ponM/h5D/ji
+hNh6fS0VJsHOZ1m9dkz18rVjREcE3sJ7JZeJcGybHIual+jadIhPqFkJVRgCecmG
+5qwl4wKYmh+jwqIhjavBdtF1V7DNMayFTP6Gp5Cx1CijNw6g6W/ooaQDW4ye27L3
+ePy+PogF4lsHcdCIJrUmyIsp8vX+Gl2tqsRYzTlDFlH7Cui1BA7UbZiqJTmlHsQt
+XYyRLXR3aF4a99zQz81q
+=GPYe
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Sep_2012_13_39_23_+1000_AlwBkNuiICzS1f86--
+--Signature=_Mon__24_Sep_2012_15_27_57_+1000_dOywbGvd8WosKXs7--
