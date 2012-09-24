@@ -1,74 +1,55 @@
-From: Jaeden Amero <jaeden.amero@ni.com>
-Subject: [PATCH] compat_ioctl: Avoid using undefined RS-485 IOCTLs
-Date: Mon, 24 Sep 2012 10:39:45 -0500
-Message-ID: <1348501185-23657-2-git-send-email-jaeden.amero@ni.com>
-References: <20120922005021.GM5959@localhost>
- <1348501185-23657-1-git-send-email-jaeden.amero@ni.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: linux-next: Tree for Sept 24 (irqchip)
+Date: Mon, 24 Sep 2012 10:42:53 -0600
+Message-ID: <50608D8D.4060506@wwwdotorg.org>
+References: <20120925005328.f748dfa3d077cebb345a4291@canb.auug.org.au> <50607E99.6040303@xenotime.net> <20120925020744.cc5beb9e65473605e5ca2240@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailserver5.natinst.com ([130.164.80.5]:47742 "EHLO
-	spamkiller05.natinst.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756931Ab2IXQk4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 12:40:56 -0400
-In-Reply-To: <1348501185-23657-1-git-send-email-jaeden.amero@ni.com>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:45899 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756952Ab2IXQm5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 12:42:57 -0400
+In-Reply-To: <20120925020744.cc5beb9e65473605e5ca2240@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: fengguang.wu@intel.com
-Cc: linux-next@vger.kernel.org, sfr@canb.auug.org.au, gregkh@linuxfoundation.org, alan@linux.intel.com, kernel-janitors@vger.kernel.org, linux-serial@vger.kernel.org, Jaeden Amero <jaeden.amero@ni.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Simon Arlott <simon@fire.lp0.eu>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Chris Boot <bootc@bootc.net>, Dom Cobley <popcornmix@gmail.com>, Dom Cobley <dc4@broadcom.com>
 
-Wrap the use of TIOCSRS485 and TIOCGRS485 in #ifdef so that we avoid
-adding undefined IOCTLs to the ioctl pointer list as compatible
-ioctls.
+On 09/24/2012 10:07 AM, Stephen Rothwell wrote:
+> Hi Randy,
+> 
+> On Mon, 24 Sep 2012 08:39:05 -0700 Randy Dunlap
+> <rdunlap@xenotime.net> wrote:
+>> 
+>> On 09/24/2012 07:53 AM, Stephen Rothwell wrote:
+>> 
+>>> Today was a train wreck, with lots of new conflicts across
+>>> several trees and a few build failures as well.
+>> 
+>> I agree.  I mostly get this:
+>> 
+>> drivers/Kconfig:157: can't open file "drivers/irqchip/Kconfig"
+>> 
+>> i.e., no such file.
+>> 
+>> How does this happen?  :(
+>> 
+>> who handles irqchip?
+> 
+> Hmm, commit 89214f009c1d ("ARM: bcm2835: add interrupt controller 
+> driver") from the arm-soc tree adds that file as an empty file (I
+> have the empty file in my tree).  Nothing adds anything to it.
 
-This change was motivated by a build error on a MIPS build.
+That's odd. I just checked out next-20120924, and that (empty) file
+does appear on my disk as expected. Do some versions of git not handle
+creating empty files?
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
-tty-next
-head:   ac57e7f38ea6fe7358cd0b7a2f2d21aef5ab70cd
-commit: 84c3b84860440a9e3a3666c14112f41311b8f623 [10/16] compat_ioctl:
-  Add RS-485 IOCTLs to the list
-config: mips-fuloong2e_defconfig
+Note that IIRC the Kconfig file is required, because otherwise the
+build process won't recurse into drivers/irqchip/ and hence code won't
+be linked into the kernel image.
 
-All related error/warning messages:
-
-fs/compat_ioctl.c:869:1: error: 'TIOCSRS485' undeclared here (not in a
-  function)
-fs/compat_ioctl.c:870:1: error: 'TIOCGRS485' undeclared here (not in a
-  function)
-
-vim +869 fs/compat_ioctl.c
-863 COMPATIBLE_IOCTL(TIOCSPGRP)
-864 COMPATIBLE_IOCTL(TIOCGPGRP)
-865 COMPATIBLE_IOCTL(TIOCGPTN)
-866 COMPATIBLE_IOCTL(TIOCSPTLCK)
-867 COMPATIBLE_IOCTL(TIOCSERGETLSR)
-868 COMPATIBLE_IOCTL(TIOCSIG)
-> 869 COMPATIBLE_IOCTL(TIOCSRS485)
-870 COMPATIBLE_IOCTL(TIOCGRS485)
-871 #ifdef TCGETS2
-872 COMPATIBLE_IOCTL(TCGETS2)
-
-Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Jaeden Amero <jaeden.amero@ni.com>
----
- fs/compat_ioctl.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 85dfebfe6820856dc3154dfd178acb6fca63bbe9..59f8db4a39a78338b2c7a148122a04e11e026caf 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -866,8 +866,12 @@ COMPATIBLE_IOCTL(TIOCGPTN)
- COMPATIBLE_IOCTL(TIOCSPTLCK)
- COMPATIBLE_IOCTL(TIOCSERGETLSR)
- COMPATIBLE_IOCTL(TIOCSIG)
-+#ifdef TIOCSRS485
- COMPATIBLE_IOCTL(TIOCSRS485)
-+#endif
-+#ifdef TIOCGRS485
- COMPATIBLE_IOCTL(TIOCGRS485)
-+#endif
- #ifdef TCGETS2
- COMPATIBLE_IOCTL(TCGETS2)
- COMPATIBLE_IOCTL(TCSETS2)
--- 
-1.7.12
+The file is empty because the Makefile there keys of
+CONFIG_ARCH_BCM2835 and hence doesn't need drivers/irqchip/Kconfig to
+define any new Kconfig variables.
