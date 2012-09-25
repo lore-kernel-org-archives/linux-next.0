@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the fbdev tree
-Date: Tue, 25 Sep 2012 16:40:20 +1000
-Message-ID: <20120925164020.8c83339ae70d5eed5fc4b05c@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the sound tree
+Date: Tue, 25 Sep 2012 16:44:58 +1000
+Message-ID: <20120925164458.8c856b4b20f77879a0173e71@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_16_40_20_+1000_TAAx0Ds7zh/TpTr/"
+ boundary="Signature=_Tue__25_Sep_2012_16_44_58_+1000_Or6Thghi9Cu0nPfI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59086 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49640 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751270Ab2IYGkX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 02:40:23 -0400
+	with ESMTP id S1752508Ab2IYGpB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 02:45:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Takashi Iwai <tiwai@suse.de>, Tony Lindgren <tony@atomide.com>
 
---Signature=_Tue__25_Sep_2012_16_40_20_+1000_TAAx0Ds7zh/TpTr/
+--Signature=_Tue__25_Sep_2012_16_44_58_+1000_Or6Thghi9Cu0nPfI
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,9 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/video/msm/mdp_hw.h between commit 8abf0b31e161 ("video: msm:
-Remove useless mach/* includes") from the fbdev tree and commit
-1ef21f6343ff ("ARM: msm: move platform_data definitions") from the
+sound/soc/omap/omap-mcbsp.c between commit 04564e325830 ("ASoC: OMAP:
+mcbsp, mcpdm, dmic: Let omap-pcm to pick the dma_type") from the sound
+tree and commits 7d7e1eba7e92 ("ARM: OMAP2+: Prepare for irqs.h removal")
+and 2203747c9771 ("ARM: omap: move platform_data definitions") from the
 arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
@@ -36,40 +37,41 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/video/msm/mdp_hw.h
-index 2a84137,a0bacf5..0000000
---- a/drivers/video/msm/mdp_hw.h
-+++ b/drivers/video/msm/mdp_hw.h
-@@@ -15,7 -15,8 +15,7 @@@
-  #ifndef _MDP_HW_H_
-  #define _MDP_HW_H_
+diff --cc sound/soc/omap/omap-mcbsp.c
+index fef2f59,1b186277..0000000
+--- a/sound/soc/omap/omap-mcbsp.c
++++ b/sound/soc/omap/omap-mcbsp.c
+@@@ -34,7 -32,9 +34,8 @@@
+  #include <sound/initval.h>
+  #include <sound/soc.h>
  =20
-- #include <mach/msm_fb.h>
- -#include <mach/msm_iomap.h>
-+ #include <linux/platform_data/video-msm_fb.h>
- =20
-  struct mdp_info {
-  	struct mdp_device mdp_dev;
+- #include <plat/mcbsp.h>
++ #include <plat/cpu.h>
+ -#include <plat/dma.h>
++ #include <linux/platform_data/asoc-ti-mcbsp.h>
+  #include "mcbsp.h"
+  #include "omap-mcbsp.h"
+  #include "omap-pcm.h"
 
---Signature=_Tue__25_Sep_2012_16_40_20_+1000_TAAx0Ds7zh/TpTr/
+--Signature=_Tue__25_Sep_2012_16_44_58_+1000_Or6Thghi9Cu0nPfI
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYVHUAAoJEECxmPOUX5FEGfEQAI6yEp4Hsc8ABR+YG92XH5aQ
-I7/MrR+NJ0nevrNwTcW1nq9l1Y5TJvlDmcrIpPhkTVMz8LlUt2nr2SOzUxpWIO06
-dKf/0bHOkkoYxSPKielu8AcexSJDoOzx7/ChgUOp5MNS2D45osy9jC0luCDBYhQo
-8xkCTREecPbNKJtAfpfGNwKrPVWf/6vXeEQC+BnrNfzO4q7GWe1+UVScz0Nqawmg
-sHvqwA/jjZ6d03BxA7WXq67kVilrjMSjoMsP4hdnAENSxkgNtIDQIfl15xtNRMnf
-G3bI2e0sgRH5bjyBq4yxqs8lFaAAmw9vvfdtom6TodZRK43MnvsNCtJyupIHWY4r
-83xsobLHUkFZA7qJ2Cu7+iVOYMit6eclFmerAbPq9UfSeOeDYDrE572a8EoEfTxE
-+rUWh8EVasU6UgtmCgqYPFyGizK22gxr2d9aCMbX1gqQbkGLRNxaxAMLQv1sPx7j
-p/zzjeAWxSgu1j1EEed7pVGQFqKkYZH2K0rvawIlv0FAfhklPtdiVI1Hb++2zF4b
-XAyRSOTNeZz4iYEKL+OkaSlYkFQxbQO5HbpBOo5Yqc+bzQMsasJfu0kimChzGuAD
-Mgrhawa5B+lJtlT2xuD0+xPVjO0EnfGEBO1w9k570jervA7QCtyy5p3IJXMMRbAZ
-VhmDXY1SDX3Oj7+GHjVr
-=vJ68
+iQIcBAEBCAAGBQJQYVLqAAoJEECxmPOUX5FEMUUP/jq68FFXb9y2Mw8rB2PXNtVD
+9PLCOkGrHsARPifCjl16Hp3fiNYzt0QOSeSSKZtoKCWnu0XzYuusau6WvelnUIgB
+lviV4OSOSJ9sSfKvmrS1ipAFx/WDViQKQw6Vipr1wHFNa1elTCRabPFHfnXbLqaF
+NwtRQyfDobCHFW5jHUCJH2ac+UycbYHQu5VNwQZMrQqn3Lj6ngRkFHvqbumvq+t1
+qNmiyUC+JFs+BUPR9+Exso5O2trrzDrLFvC2Ft1Kd4n5YwERGs45ENpfQ0JyftQN
+K0iaZovkYokTbVPIabVeLvQgd12DdlQqUwjk67IujLbbdYqlFg+XI60rbvZ4fVVk
+0byxQA/3Lm6vAS8qe23RbzGcPU+KbjOzzhGzfhCpnOsnvEt0xLRDEB9objI3W800
+XrJg31M8uT6RyzYRSE8vFndytg2ljCD5ewD3F+BcnEzG03lfvccEojcGFgZuu9oe
+ta2+YOhmrOjnL32i4RISGRnBG5pFQocHFgvD8ZwmWmokXrzxnPyR+NM7ut9boCrQ
+kianKuWJygVbl8VIoshzDM/IoOBk58ePvjam4h+6pbsO8IqzsmVcy6xoifpgJ3JF
+7izckGb1e+C6/lAbWflUxVOko/7BvZGuIriFoIne3R+f5xDVKQ7lFr3AlF+jJbMs
+eqrVvAlJZqt1TRy8MJqV
+=QWKo
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Sep_2012_16_40_20_+1000_TAAx0Ds7zh/TpTr/--
+--Signature=_Tue__25_Sep_2012_16_44_58_+1000_Or6Thghi9Cu0nPfI--
