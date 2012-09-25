@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the arm-soc tree with the sound tree
-Date: Tue, 25 Sep 2012 16:44:58 +1000
-Message-ID: <20120925164458.8c856b4b20f77879a0173e71@canb.auug.org.au>
+Date: Tue, 25 Sep 2012 16:47:05 +1000
+Message-ID: <20120925164705.602503e31a0c29e88bbc9066@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_16_44_58_+1000_Or6Thghi9Cu0nPfI"
+ boundary="Signature=_Tue__25_Sep_2012_16_47_05_+1000_bgwABrL4WGm/vy2k"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49640 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:60204 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752508Ab2IYGpB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 02:45:01 -0400
+	with ESMTP id S1751773Ab2IYGrI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 02:47:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Takashi Iwai <tiwai@suse.de>, Tony Lindgren <tony@atomide.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Takashi Iwai <tiwai@suse.de>
 
---Signature=_Tue__25_Sep_2012_16_44_58_+1000_Or6Thghi9Cu0nPfI
+--Signature=_Tue__25_Sep_2012_16_47_05_+1000_bgwABrL4WGm/vy2k
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,11 +24,9 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-sound/soc/omap/omap-mcbsp.c between commit 04564e325830 ("ASoC: OMAP:
-mcbsp, mcpdm, dmic: Let omap-pcm to pick the dma_type") from the sound
-tree and commits 7d7e1eba7e92 ("ARM: OMAP2+: Prepare for irqs.h removal")
-and 2203747c9771 ("ARM: omap: move platform_data definitions") from the
-arm-soc tree.
+sound/soc/omap/omap-pcm.c between commit 946cc36ae550 ("ASoC: omap-pcm:
+Convert to use dmaengine") from the sound tree and commit 7d7e1eba7e92
+("ARM: OMAP2+: Prepare for irqs.h removal") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,41 +35,42 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc sound/soc/omap/omap-mcbsp.c
-index fef2f59,1b186277..0000000
---- a/sound/soc/omap/omap-mcbsp.c
-+++ b/sound/soc/omap/omap-mcbsp.c
-@@@ -34,7 -32,9 +34,8 @@@
-  #include <sound/initval.h>
+diff --cc sound/soc/omap/omap-pcm.c
+index a2636f6,b309941..0000000
+--- a/sound/soc/omap/omap-pcm.c
++++ b/sound/soc/omap/omap-pcm.c
+@@@ -29,9 -28,10 +29,10 @@@
+  #include <sound/core.h>
+  #include <sound/pcm.h>
+  #include <sound/pcm_params.h>
+ +#include <sound/dmaengine_pcm.h>
   #include <sound/soc.h>
  =20
-- #include <plat/mcbsp.h>
 + #include <plat/cpu.h>
  -#include <plat/dma.h>
-+ #include <linux/platform_data/asoc-ti-mcbsp.h>
-  #include "mcbsp.h"
-  #include "omap-mcbsp.h"
   #include "omap-pcm.h"
+ =20
+  static const struct snd_pcm_hardware omap_pcm_hardware =3D {
 
---Signature=_Tue__25_Sep_2012_16_44_58_+1000_Or6Thghi9Cu0nPfI
+--Signature=_Tue__25_Sep_2012_16_47_05_+1000_bgwABrL4WGm/vy2k
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYVLqAAoJEECxmPOUX5FEMUUP/jq68FFXb9y2Mw8rB2PXNtVD
-9PLCOkGrHsARPifCjl16Hp3fiNYzt0QOSeSSKZtoKCWnu0XzYuusau6WvelnUIgB
-lviV4OSOSJ9sSfKvmrS1ipAFx/WDViQKQw6Vipr1wHFNa1elTCRabPFHfnXbLqaF
-NwtRQyfDobCHFW5jHUCJH2ac+UycbYHQu5VNwQZMrQqn3Lj6ngRkFHvqbumvq+t1
-qNmiyUC+JFs+BUPR9+Exso5O2trrzDrLFvC2Ft1Kd4n5YwERGs45ENpfQ0JyftQN
-K0iaZovkYokTbVPIabVeLvQgd12DdlQqUwjk67IujLbbdYqlFg+XI60rbvZ4fVVk
-0byxQA/3Lm6vAS8qe23RbzGcPU+KbjOzzhGzfhCpnOsnvEt0xLRDEB9objI3W800
-XrJg31M8uT6RyzYRSE8vFndytg2ljCD5ewD3F+BcnEzG03lfvccEojcGFgZuu9oe
-ta2+YOhmrOjnL32i4RISGRnBG5pFQocHFgvD8ZwmWmokXrzxnPyR+NM7ut9boCrQ
-kianKuWJygVbl8VIoshzDM/IoOBk58ePvjam4h+6pbsO8IqzsmVcy6xoifpgJ3JF
-7izckGb1e+C6/lAbWflUxVOko/7BvZGuIriFoIne3R+f5xDVKQ7lFr3AlF+jJbMs
-eqrVvAlJZqt1TRy8MJqV
-=QWKo
+iQIcBAEBCAAGBQJQYVNpAAoJEECxmPOUX5FEhrsP/AxsIZ6AAbnfu5oa19vMzU8V
+GVHd3O88nshIpSCD9t/nVsDg1u8od+6n6j65n0g2CVGXGypm1il3QOEU3+kP+RY9
+bL+Soj6qyRJLgRenMukvuX8O6JYrnrrTXsdPQjgJymUh7QunGeb7SWkyF/RM7sNK
+ypfk44oHxs8xVPs3848G+0qsJXW8ufiE4Mf8c6LFzVcyJAxc1jpLixxn/XH05bMA
+P8gV3mHvdU+I/Vc+3hMRmddDUkRQff2MS/zmSQ4g/OcLI0iKymejDyAJDoFWT2TZ
+OLQajpGucv5i92+s1AjtlFA0p0Qm73G+c6ugd+dzVDwHfkNVlFd6QfNA7Y0luMnG
+1f7oHfcrFeFblSK3jUqCYZ1Xmkz9ktVREY/rIcoI58cj9TLZEOSKklJkSoQHNn78
+OASZJ34iYSYHk5dkjhB1ToaapfjZMrS1HCk5h0rB51kRSIdKV4I40SMCb1e7d55S
+U4wVKXDizrF3r/QMmbgvajirEjbt8r3gfv7vSDzKVF7pm+bahQDUO7uCENZanBGp
+v20CusmJAKJ/KBzwXp1QyQkF3grfNyHQM1xnN6MHCrD7bCqJFJKfdPQAA/HJ/Wp5
+97LJ2S2ANiMbVActJhZC9KKT42qDNZnJ3r/7M238gbomjGQ/WxR5LAlNQGila+NT
+yozFdkFrhu2K80k8WV93
+=JR0T
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Sep_2012_16_44_58_+1000_Or6Thghi9Cu0nPfI--
+--Signature=_Tue__25_Sep_2012_16_47_05_+1000_bgwABrL4WGm/vy2k--
