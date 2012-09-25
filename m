@@ -1,57 +1,156 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 25 Sep 2012 12:34:38 +1000
-Message-ID: <20120925123438.bbf3126889513ee5cc195e5c@canb.auug.org.au>
+From: Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: linux-next: Tree for Sept 24 (iommu)
+Date: Mon, 24 Sep 2012 21:23:25 -0600
+Message-ID: <1348543405.2320.146.camel@ul30vt.home>
+References: <20120925005328.f748dfa3d077cebb345a4291@canb.auug.org.au>
+	 <5060D876.5030209@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_12_34_38_+1000_hl2iGq5KLdJwKIz0"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:5590 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751827Ab2IYDXd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Sep 2012 23:23:33 -0400
+In-Reply-To: <5060D876.5030209@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>, "Roedel, Joerg" <Joerg.Roedel@amd.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, iommu@lists.linux-foundation.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__25_Sep_2012_12_34_38_+1000_hl2iGq5KLdJwKIz0
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2012-09-24 at 15:02 -0700, Randy Dunlap wrote:
+> On 09/24/2012 07:53 AM, Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > Today was a train wreck, with lots of new conflicts across several trees
+> > and a few build failures as well.
+> > 
+> > Changes since 201209021:
+> > 
+> 
+> 
+> 
+> on i386:
+> 
+> drivers/built-in.o: In function `iommu_group_remove_device':
+> (.text+0x74cb10): multiple definition of `iommu_group_remove_device'
+> arch/x86/built-in.o:(.text+0x140d0): first defined here
+...
 
-Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/ipv4/raw.c between commit ab43ed8b7490 ("ipv4: raw: fix icmp_filter
-()") from the net tree and commit 5640f7685831 ("net: use a per task frag
-allocator") from the net-next tree.
+Here's a patch to get it past this.  It still doesn't fully build, but
+the rest isn't iommu related.  Thanks,
 
-They are basically the same patch (for this file) except the net-next
-version adds two pr_err() calls. I used the net-next version and can carry
-the fix as necessary (no action is required).
+Alex
 
-I do wonder if this change belongs in the net-next patch?
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__25_Sep_2012_12_34_38_+1000_hl2iGq5KLdJwKIz0
-Content-Type: application/pgp-signature
+commit 6955e1f06cb20ddd25665984c330b945443cce36
+Author: Alex Williamson <alex.williamson@redhat.com>
+Date:   Mon Sep 24 21:13:52 2012 -0600
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+    iommu: inline iommu group stub functions
+    
+    Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 
-iQIcBAEBCAAGBQJQYRg+AAoJEECxmPOUX5FEvBQQAJYJ29JrZtYr7fD13ud+KoK8
-cvvC8gAsU4JcZgEuH2JzrHoMUuzFrAQH0o/7/+bUZcSKxqVPJnTsdWOEh4K4Vkuc
-rfWSYvm8qB6TfOKQhMTtGb8C3GNa0LNjixivjuaVOdGRjXOUK5xsToMXQF0o9Phu
-vV8l7RaXWc8R0D41JV+kzS9wSg3HcY77nK5rv/BHGXLfBchRlS++EWAUuWFwGyKD
-gJl6RFAfwKJ+SJf+QpZ9x1JpeEdgIkiTVuZ47SjgHYlvjWl7l8qUeR5gZfMqyLmC
-n3wipR+z1wwy23LCYkPWo/YJtvMHK8SS5pZIusMCrHzJLW88aDrW0/6yXfHg4O/h
-q9vcDKBv1a+O6c8WAfvHWLnFhzNdDJdLGp3dQYse/tenF4y796KlB8beyK1i16pH
-sqp8zgndOwlVtJ5Vxg/sC6Po2fhpcGBQlTa7z0Sw3kRef4BhCSnPTQlsEg7Qs5lJ
-aPWxY/Ek1ilEK7lcMyT1vhBjOmsYyn02JV4h8t97hld/vOF5jHglXDWP+0hcUWzW
-NqsKGIUYTNH2tXksh+irOfc7Uww4qqWkc2UilaoS7fUfxAFB8K3L4dm9S7H3Txtf
-6qFJJca+n2PLEO1XzwJ82YqkAH43tH6mAtI01SWDmjjaBw/dPgGsnwz6ji0KhNBv
-1IOTrbMlUTqbIEGzVrxY
-=NSXf
------END PGP SIGNATURE-----
-
---Signature=_Tue__25_Sep_2012_12_34_38_+1000_hl2iGq5KLdJwKIz0--
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 7e83370..f3b99e1 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -256,72 +256,78 @@ static inline void iommu_set_fault_handler(struct iommu_domain *domain,
+ {
+ }
+ 
+-int iommu_attach_group(struct iommu_domain *domain, struct iommu_group *group)
++static inline int iommu_attach_group(struct iommu_domain *domain,
++				     struct iommu_group *group)
+ {
+ 	return -ENODEV;
+ }
+ 
+-void iommu_detach_group(struct iommu_domain *domain, struct iommu_group *group)
++static inline void iommu_detach_group(struct iommu_domain *domain,
++				      struct iommu_group *group)
+ {
+ }
+ 
+-struct iommu_group *iommu_group_alloc(void)
++static inline struct iommu_group *iommu_group_alloc(void)
+ {
+ 	return ERR_PTR(-ENODEV);
+ }
+ 
+-void *iommu_group_get_iommudata(struct iommu_group *group)
++static inline void *iommu_group_get_iommudata(struct iommu_group *group)
+ {
+ 	return NULL;
+ }
+ 
+-void iommu_group_set_iommudata(struct iommu_group *group, void *iommu_data,
+-			       void (*release)(void *iommu_data))
++static inline void iommu_group_set_iommudata(struct iommu_group *group,
++					     void *iommu_data,
++					     void (*release)(void *iommu_data))
+ {
+ }
+ 
+-int iommu_group_set_name(struct iommu_group *group, const char *name)
++static inline int iommu_group_set_name(struct iommu_group *group,
++				       const char *name)
+ {
+ 	return -ENODEV;
+ }
+ 
+-int iommu_group_add_device(struct iommu_group *group, struct device *dev)
++static inline int iommu_group_add_device(struct iommu_group *group,
++					 struct device *dev)
+ {
+ 	return -ENODEV;
+ }
+ 
+-void iommu_group_remove_device(struct device *dev)
++static inline void iommu_group_remove_device(struct device *dev)
+ {
+ }
+ 
+-int iommu_group_for_each_dev(struct iommu_group *group, void *data,
+-			     int (*fn)(struct device *, void *))
++static inline int iommu_group_for_each_dev(struct iommu_group *group,
++					   void *data,
++					   int (*fn)(struct device *, void *))
+ {
+ 	return -ENODEV;
+ }
+ 
+-struct iommu_group *iommu_group_get(struct device *dev)
++static inline struct iommu_group *iommu_group_get(struct device *dev)
+ {
+ 	return NULL;
+ }
+ 
+-void iommu_group_put(struct iommu_group *group)
++static inline void iommu_group_put(struct iommu_group *group)
+ {
+ }
+ 
+-int iommu_group_register_notifier(struct iommu_group *group,
+-				  struct notifier_block *nb)
++static inline int iommu_group_register_notifier(struct iommu_group *group,
++						struct notifier_block *nb)
+ {
+ 	return -ENODEV;
+ }
+ 
+-int iommu_group_unregister_notifier(struct iommu_group *group,
+-				    struct notifier_block *nb)
++static inline int iommu_group_unregister_notifier(struct iommu_group *group,
++						  struct notifier_block *nb)
+ {
+ 	return 0;
+ }
+ 
+-int iommu_group_id(struct iommu_group *group)
++static inline int iommu_group_id(struct iommu_group *group)
+ {
+ 	return -ENODEV;
+ }
