@@ -1,39 +1,48 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 0/2] dmaengine: Fix compillation issues in
- device_prep_dma_cyclic()
-Date: Tue, 25 Sep 2012 12:19:37 +0100
-Message-ID: <20120925111937.GA32685@sirena.org.uk>
-References: <20120924133923.130c4db72aa8105cb5647d7a@canb.auug.org.au>
- <1348473485-5081-1-git-send-email-peter.ujfalusi@ti.com>
- <s5hmx0fomwk.wl%tiwai@suse.de> <s5h8vbz8fa7.wl%tiwai@suse.de>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Tue, 25 Sep 2012 13:51:34 +0200
+Message-ID: <201209251351.35007.rjw@sisk.pl>
+References: <20120925143034.f7bda6d8a5a11e87f2e60ef3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <s5h8vbz8fa7.wl%tiwai@suse.de>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-next@vger.kernel.org, Liam Girdwood <lrg@ti.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ogre.sisk.pl ([193.178.161.156]:43447 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755818Ab2IYLpB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Sep 2012 07:45:01 -0400
+In-Reply-To: <20120925143034.f7bda6d8a5a11e87f2e60ef3@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Andre Przywara <andre.przywara@amd.com>
 
-On Mon, Sep 24, 2012 at 08:08:32PM +0200, Takashi Iwai wrote:
-> At Mon, 24 Sep 2012 10:17:15 +0200,
+On Tuesday, September 25, 2012, Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/cpufreq/powernow-k8.c: In function 'transition_frequency_pstate':
+> drivers/cpufreq/powernow-k8.c:991:19: error: 'HW_PSTATE_MASK' undeclared (first use in this function)
+> drivers/cpufreq/powernow-k8.c:991:19: note: each undeclared identifier is reported only once for each function it appears in
+> drivers/cpufreq/powernow-k8.c:992:19: error: 'struct powernow_k8_data' has no member named 'max_hw_pstate'
+> drivers/cpufreq/powernow-k8.c:995:2: error: implicit declaration of function 'find_khz_freq_from_pstate' [-Werror=implicit-function-declaration]
+> drivers/cpufreq/powernow-k8.c:996:8: error: 'struct powernow_k8_data' has no member named 'currpstate'
+> drivers/cpufreq/powernow-k8.c:1004:2: error: implicit declaration of function 'transition_pstate' [-Werror=implicit-function-declaration]
+> drivers/cpufreq/powernow-k8.c: At top level:
+> drivers/cpufreq/powernow-k8.c:981:12: warning: 'transition_frequency_pstate' defined but not used [-Wunused-function]
+> 
+> The code causing this was removed by commit e1f0b8e9b04a ("cpufreq:
+> Remove support for hardware P-state chips from powernow-k8") but
+> reintroduced (presumably incorrectly) by commit d20801be3c11 ("Merge
+> branch 'master' into linux-next").
+> 
+> I have used the pm tree from next-20120924 for today.
 
-> > Mark, could you tell me when it's ready?  Since I'll be off from
-> > tomorrow, I'd like to resolve sooner.
+It looks like I got the merge wrong.  Sorry about that, I'll fix it up later
+today.
 
-> My time is up, so I merged Peter's two patches on the top of for-next
-> branch of sound git tree now.  Mark, please pull them to your tree if
-> needed.
-
-Oh, well.  I was travelling for the entire time between Peter posting
-the patches and you applying them :/
+Thanks,
+Rafael
