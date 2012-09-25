@@ -1,68 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the userns tree with the security
- tree
-Date: Tue, 25 Sep 2012 10:46:05 +1000
-Message-ID: <20120925104605.46288817480e6a6ced31f5fc@canb.auug.org.au>
-References: <20120924215222.8933c5557b17239552f0b1d1@canb.auug.org.au>
-	<87txunwi84.fsf@xmission.com>
+Subject: linux-next: build warning after merge of the vfs tree
+Date: Tue, 25 Sep 2012 11:52:04 +1000
+Message-ID: <20120925115204.f504d9841eb3aca34a1f0b8c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_10_46_05_+1000_pc3q2fm=h3xCNgwN"
+ boundary="Signature=_Tue__25_Sep_2012_11_52_04_+1000_gLsVtO=9AkSs1pAQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34445 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56480 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750861Ab2IYAqP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 20:46:15 -0400
-In-Reply-To: <87txunwi84.fsf@xmission.com>
+	with ESMTP id S1751094Ab2IYBwO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 21:52:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, James Morris <jmorris@namei.org>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__25_Sep_2012_10_46_05_+1000_pc3q2fm=h3xCNgwN
+--Signature=_Tue__25_Sep_2012_11_52_04_+1000_gLsVtO=9AkSs1pAQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Al,
 
-On Mon, 24 Sep 2012 08:31:07 -0700 ebiederm@xmission.com (Eric W. Biederman=
-) wrote:
->
-> Right.  To work when user namespace support is enabled fowner needs be
-> converted to a kuid_t as well.
->=20
-> When I did a trial earlier this is what I wound up with.  As long as
-> user namespaces are not enabled what you wound up with should be fine.
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-I will use your resolution today.
+kernel/events/core.c: In function 'perf_ioctl':
+kernel/events/core.c:3285:17: warning: 'output.file' may be used uninitiali=
+zed in this function [-Wuninitialized]
+include/linux/file.h:36:5: warning: '*((void *)&output+8)' may be used unin=
+itialized in this function [-Wuninitialized]
+kernel/events/core.c:3281:14: note: '*((void *)&output+8)' was declared here
 
-Thanks.
+Introduced by commit 19ba95358327 ("switch simple cases of fget_light to
+fdget").  perf_fget_light() takes the address of a struct fd * but does
+not do anything with it ...
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__25_Sep_2012_10_46_05_+1000_pc3q2fm=h3xCNgwN
+--Signature=_Tue__25_Sep_2012_11_52_04_+1000_gLsVtO=9AkSs1pAQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYP7NAAoJEECxmPOUX5FE0lwP/Rs5F+49G7rWrgqhy7ud5gSz
-ABzrI7Ax4V9mXs91pvUbr7PHt9qksIFx1r6LrUys163kYkLb5i2O1vT2cAXsIfRk
-mmSJWUFgUMKzAdX3vYmMDOt3tr5BivirLj7wmNhmrKw+kEsVHdrz3okbjIoysZHx
-tPJi2oCwYuI16l08KBlSKgyk1QS4gHMTKinrc6xiHxX+hCOSRoy0JBFE4JtpBnRt
-RcUHJvhAhmIEJ7Iz2rjA/xaO8L6gm32hXxaPjRABFJcMI1XEySJBCROWCfrj6ebP
-mf2SyXv9AV+Y5BB0L4hm0nsnVJi1zpNFlPe2YspYiR67MAJ2xoiNhwOfduKqvQn6
-RsvfPHMZb5xX99kzV3D6ZSCUF8OFSTVN8pgD7aahltfbVxTzqBi16WTBojB1XYsz
-t6uE4COK21fkds/1E9CnO2vICGvlfbcgwqGhVtDGejx9KORUUuJrV1EXzV6EDNBy
-ke3wgclQucrcxqxzLWIKqVESdkhDWBBnVdqJD1Fs6cddU5ffBddqN60ivDGJ1DQy
-qLJrBwT8eEQkxO5NiSwMgIWuiebfIybrOU1Focyqj5oYr6WcU6jRhOmcwYJP7Onh
-ZuwdXacIPFMwzxLa4L8/AvdZ0QRxfhgQA8o/fcl69KatZIrtM/A5Az65gazLAmwV
-dqcnB1U/skNJTHKkb4U5
-=C/lu
+iQIcBAEBCAAGBQJQYQ5EAAoJEECxmPOUX5FE6LQP/3YpHbO1az+Ne1h+lONkxlAo
+nc9ZtvWJId729qBID1tyRWHfk3UM1Wq3lZ24zdzTPDB+lCywdSfcueoHjrDRaHiJ
++G+63VDSowQcSPL9NAPc9E+NnqLESA7tVJwUaxkvu15/gBA7wS226l9rysUSz2I3
+NPGsT1EKhr9XoWAUidhvfGJG2sHzKLWcL/BPK6QiSxTEDz3VK3PeQzFjSNZ1lPA0
+nRoSaVfg6Ze2YJTKg78J8oPXQhR5FMHi++T0R98J9PoxuO7SA84rE1w/wBp3nsYM
+sN+vC+H1Ot0dMa0q48yqG7V8RVnUzPFK0UiT1bpYzQLc6XvjQveOyEmaNafSaRRx
+3cOKSnZLsMsgcWG4i/NrfBQTuGvw2Ewwfxpky+rPHU6QDm1lER1cbEACzQJx6iKK
+cbSQ9CG7zNpcZctfK+kAwPHPtSATEW6sEEia9sO3jfn7H/8zmKewiwxtML9NfCHg
+3670rHTwaH8ZNhlH12eB53vIYNycXfumT3y0lde/1ahw7ItexqfpJxENFF35oprj
+QUu2MEyvD3aiOOs4UhNtGPm/Cp+oOkArjQsOYV3LMfFjCRL69egGwU97WBdhMC2N
+bRV36sSQjRtGNC8hjkQOUsCuK6y/gbgyhutjBfYamd3lfCIUdfa24JK3vUAEycYj
+VOdjIhzm200ELzY4JKzN
+=0o2d
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Sep_2012_10_46_05_+1000_pc3q2fm=h3xCNgwN--
+--Signature=_Tue__25_Sep_2012_11_52_04_+1000_gLsVtO=9AkSs1pAQ--
