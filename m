@@ -1,37 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH net-next] net: raw: revert unrelated change
-Date: Tue, 25 Sep 2012 03:11:53 -0400 (EDT)
-Message-ID: <20120925.031153.2084805663532004378.davem@davemloft.net>
-References: <20120925.011343.1495275645575636949.davem@davemloft.net>
-	<1348550602.26828.1918.camel@edumazet-glaptop>
-	<1348554076.26828.1990.camel@edumazet-glaptop>
+From: Tony Prisk <linux@prisktech.co.nz>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the  tree
+Date: Tue, 25 Sep 2012 07:14:15 +0000
+Message-ID: <1348557420.18425.0.camel@gitbox>
+References: <20120925163724.703a41b9438fbaef84b7480e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:58664 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751270Ab2IYHL5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 03:11:57 -0400
-In-Reply-To: <1348554076.26828.1990.camel@edumazet-glaptop>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: eric.dumazet@gmail.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120925163724.703a41b9438fbaef84b7480e@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
+Cc: "olof@lixom.net" <olof@lixom.net>, "arnd@arndb.de" <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "greg@kroah.com" <greg@kroah.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Date: Tue, 25 Sep 2012 08:21:16 +0200
-
-> From: Eric Dumazet <edumazet@google.com>
-> 
-> Commit 5640f7685831 ("net: use a per task frag allocator")
-> accidentally contained an unrelated change to net/ipv4/raw.c,
-> later committed (without the pr_err() debugging bits) in
-> net tree as commit ab43ed8b749 (ipv4: raw: fix icmp_filter())
-> 
-> This patch reverts this glitch, noticed by Stephen Rothwell.
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-
-Applied, thanks Eric.
+T24gVHVlLCAyMDEyLTA5LTI1IGF0IDE2OjM3ICsxMDAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
+Ogo+IEhpIGFsbCwKPiAKPiBUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhlIGFybS1zb2Mg
+dHJlZSBnb3QgYSBjb25mbGljdCBpbgo+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
+cy91c2IvcGxhdGZvcm0tdWhjaS50eHQgYmV0d2VlbiBjb21taXQKPiAxMDBkNDU5NzAzMjcgKCJB
+Uk06IHZ0ODUwMDogQWRkIHN1cHBvcnQgZm9yIFVIQ0kgY29tcGFuaW9uIGNvbnRyb2xsZXIiKQo+
+IGZyb20gdGhlIHVzYiB0cmVlIGFuZCBjb21taXQgOTVlOWZkMTBmMDZjICgiYXJtOiB2dDg1MDA6
+IGRvYzogQWRkIGRldmljZQo+IHRyZWUgYmluZGluZ3MgZm9yIGFyY2gtdnQ4NTAwIGRldmljZXMi
+KSBmcm9tIHRoZSBhcm0tc29jIHRyZWUuCj4gCj4gSSB1c2VkIHRoZSB2ZXJzaW9uIGZyb20gdGhl
+IGFybS1zb2MgdHJlZSBhbmQgY2FuIGNhcnJ5IHRoZSBmaXggYXMKPiBuZWNlc3NhcnkgKG5vIGFj
+dGlvbiBpcyByZXF1aXJlZCkuCj4gCgpCb3RoIHZlcnNpb25zIHdlcmUgdGhlIHNhbWUgKG15IGJh
+ZCBmb3Igbm90IHJlbW92aW5nIGl0IGZyb20gdGhlIGFybS1zb2MKcGF0Y2gpLgpUaGFua3MgU3Rl
+cGhlbgoKUmVnYXJkcwoKVG9ueSBQCg==
