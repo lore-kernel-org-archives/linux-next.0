@@ -1,68 +1,77 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH] DMA: PL330: Fix build error (on linux-next-20120924)
-Date: Tue, 25 Sep 2012 09:55:12 +0530
-Message-ID: <CAK9yfHzCCXm4+pWX+Eiv+VGEeZrkSSzshF_LQbsREkK3SbP02g@mail.gmail.com>
-References: <1348546800-15857-1-git-send-email-sachin.kamat@linaro.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pm tree
+Date: Tue, 25 Sep 2012 14:30:34 +1000
+Message-ID: <20120925143034.f7bda6d8a5a11e87f2e60ef3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__25_Sep_2012_14_30_34_+1000_tD1HtubfqF/.Ls24"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:34003 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751024Ab2IYEZN convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 00:25:13 -0400
-Received: by vcbfo13 with SMTP id fo13so7167862vcb.19
-        for <linux-next@vger.kernel.org>; Mon, 24 Sep 2012 21:25:12 -0700 (PDT)
-In-Reply-To: <1348546800-15857-1-git-send-email-sachin.kamat@linaro.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43537 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751024Ab2IYEaq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 00:30:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: sachin.kamat@linaro.org, patches@linaro.org, Inderpal Singh <inderpal.singh@linaro.org>, Vinod Koul <vinod.koul@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Andre Przywara <andre.przywara@amd.com>
 
-Compile tested using exynos4_defconfig.
+--Signature=_Tue__25_Sep_2012_14_30_34_+1000_tD1HtubfqF/.Ls24
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 25 September 2012 09:50, Sachin Kamat <sachin.kamat@linaro.org> wrot=
-e:
-> Auto resolution of merge conflict between commits 61c6e753 (DMA: PL33=
-0:
-> Check the pointer returned by kzalloc) from Linus tree and 7c71b8eb
-> (DMA: PL330: Remove redundant runtime_suspend/resume functions) from =
-slave-dma
-> tree probably led to this build error.
->
-> drivers/dma/pl330.c: In function =91pl330_probe=92:
-> drivers/dma/pl330.c:2921:3: error: label =91probe_err5=92 used but no=
-t defined
->
-> Cc: Inderpal Singh <inderpal.singh@linaro.org>
-> Cc: Vinod Koul <vinod.koul@linux.intel.com>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  drivers/dma/pl330.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index dcb88b0..13cc576 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -2918,7 +2918,7 @@ pl330_probe(struct amba_device *adev, const str=
-uct amba_id *id)
->         if (!pdmac->peripherals) {
->                 ret =3D -ENOMEM;
->                 dev_err(&adev->dev, "unable to allocate pdmac->periph=
-erals\n");
-> -               goto probe_err5;
-> +               goto probe_err4;
->         }
->
->         for (i =3D 0; i < num_chan; i++) {
-> --
-> 1.7.4.1
->
+Hi Rafael,
 
+After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
+drivers/cpufreq/powernow-k8.c: In function 'transition_frequency_pstate':
+drivers/cpufreq/powernow-k8.c:991:19: error: 'HW_PSTATE_MASK' undeclared (f=
+irst use in this function)
+drivers/cpufreq/powernow-k8.c:991:19: note: each undeclared identifier is r=
+eported only once for each function it appears in
+drivers/cpufreq/powernow-k8.c:992:19: error: 'struct powernow_k8_data' has =
+no member named 'max_hw_pstate'
+drivers/cpufreq/powernow-k8.c:995:2: error: implicit declaration of functio=
+n 'find_khz_freq_from_pstate' [-Werror=3Dimplicit-function-declaration]
+drivers/cpufreq/powernow-k8.c:996:8: error: 'struct powernow_k8_data' has n=
+o member named 'currpstate'
+drivers/cpufreq/powernow-k8.c:1004:2: error: implicit declaration of functi=
+on 'transition_pstate' [-Werror=3Dimplicit-function-declaration]
+drivers/cpufreq/powernow-k8.c: At top level:
+drivers/cpufreq/powernow-k8.c:981:12: warning: 'transition_frequency_pstate=
+' defined but not used [-Wunused-function]
 
+The code causing this was removed by commit e1f0b8e9b04a ("cpufreq:
+Remove support for hardware P-state chips from powernow-k8") but
+reintroduced (presumably incorrectly) by commit d20801be3c11 ("Merge
+branch 'master' into linux-next").
+
+I have used the pm tree from next-20120924 for today.
 --=20
-With warm regards,
-Sachin
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__25_Sep_2012_14_30_34_+1000_tD1HtubfqF/.Ls24
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQYTNqAAoJEECxmPOUX5FE4CIP/iPrkqSn8ssFF5dcT/+Vn33s
+q0J9hXf4/5E/MmyYTxDB4EA8m+onL1tjOEWEAPFfFh/GqDQ3ji7KlVd8kxIIGtJz
+eNe2aR0Vrx9QRkQHp/HRJW4r9VQBqEQjgGxNVgl8DohktFUunTRdS9JEShKedGRq
+v+YenBDFjZIqMJuZ0WlTedbM3uAHOT3AJdqK4kVAvf4bPMMFILOrcbpJYvcbXwDF
+Ka6kiQJ00Bn8+0qZ+kZlc03wCrsg3UdxDBX6qK/up5a98Bqqnn3p1f10AgzDs06O
+9tOJz90mSto8p5uUmCFydhnbPR+IbUh4VD04MvQzbS3in0fg3T3bakxugEbMnh93
+yKVqKLjhzzRm7WWrO4Wb2jca4EFQn42p/TePJDWBoTWFglORZqbRP71PZKt3p0oN
+6Lh9BFMus/fakeMXvKgneRyjSwbI94VUHascu+yf34hRcpwlHQb7BUVYucwtL+v3
+g2K3MQG79Zqi7QybiaNrt56P/DDzxHtktgUA+5RykexUAyd1sbQaCO4d5m6FF3ZO
+EDBQ1qC7cW6gxm0Pr33MO5aH6I/LT6amxg6vhL4WPApbxjYSpv1Q/ik7advf5MvA
+CdAyyQNJ5ZhodKoIWQEKtm+pcHlAFGK9CgVMJT84fqZ4rN4+UY59kKFZ1Gz9OIzR
+ZFA856ZDGBI6de9nky+C
+=+Ia3
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Sep_2012_14_30_34_+1000_tD1HtubfqF/.Ls24--
