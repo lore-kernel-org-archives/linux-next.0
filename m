@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the l2-mtd tree
-Date: Tue, 25 Sep 2012 16:50:57 +1000
-Message-ID: <20120925165057.3a48eb9c4e3e4d70818e2791@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the usb tree
+Date: Tue, 25 Sep 2012 16:56:03 +1000
+Message-ID: <20120925165603.7676aa78ed5cfbf8a21fb734@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_16_50_57_+1000_JPSbyJsUJaaHK48Q"
+ boundary="Signature=_Tue__25_Sep_2012_16_56_03_+1000_L3nJ4gmufoNL9jLI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41569 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56047 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750884Ab2IYGvC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 02:51:02 -0400
+	with ESMTP id S1751601Ab2IYG4F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 02:56:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Daudt <csd@broadcom.com>, Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Prisk <linux@prisktech.co.nz>, Greg KH <greg@kroah.com>
 
---Signature=_Tue__25_Sep_2012_16_50_57_+1000_JPSbyJsUJaaHK48Q
+--Signature=_Tue__25_Sep_2012_16_56_03_+1000_L3nJ4gmufoNL9jLI
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,37 +24,39 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got conflicts in
-drivers/mtd/nand/bcm_umi_nand.c and drivers/mtd/nand/nand_bcm_umi.h
-between commit 07f4c69caf01 ("mtd: remove bcmring NAND driver") from the
-l2-mtd tree and commit 878040ef831a ("ARM: bcmring: use proper MMIO
-accessors") from the arm-soc tree.
+arch/arm/mach-vt8500/bv07.c, arch/arm/mach-vt8500/devices-vt8500.c,
+arch/arm/mach-vt8500/devices-wm8505.c, arch/arm/mach-vt8500/devices.c,
+arch/arm/mach-vt8500/devices.h and arch/arm/mach-vt8500/wm8505_7in.c
+between commit 100d45970327 ("ARM: vt8500: Add support for UHCI companion
+controller") from the usb tree and commit e9a91de7602a ("arm: vt8500: Update
+arch-vt8500 to devicetree support") from the arm-soc tree.
 
-I just removed the files and can carry the fix as necessary (no action
-is required).
+I just removed the files and can carry the fix as necessary (there may be
+more work required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__25_Sep_2012_16_50_57_+1000_JPSbyJsUJaaHK48Q
+--Signature=_Tue__25_Sep_2012_16_56_03_+1000_L3nJ4gmufoNL9jLI
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYVRRAAoJEECxmPOUX5FEC0EP/3tKu1LTnGwzwNTg0ggD4esi
-owq9TCfdErNxTQUfjgbYoQjedw3IZFCwLbAhS4IdUz/zU/an3vY6SxBenkSloEVR
-YRY4WFIijTvcOoiXF19I47GqUSrylBIchs4QaeZ5lKCMAdawkinlMAY3tBu/6UKl
-5pFOzwihjSzWL4DGLT+Y8dHHHgaZAnGOdllqKdDOhk/IgGGTbtbI9n9xykscLubZ
-ZA/kJmqunTxbbNKCjjjQ+QrJKt8wwPqgVLbPUpZnPRupYa5KbLmTDJI3m9XA1+fm
-xFgs8mhbKlQNH5/HTpkMty68KHsH+yKy6qy2K/URtpotnq19JoQEbuwcnZEQ6Nng
-xoaSaxkp6ZYGXtSCJpLRveeglZXsCeDny5WzCKYhQPtjhP4ttFHqxc5A/cmlNobY
-bvO0SWwXls0ZG0FcMPTn9MGv7zQ5mGf2akPjnTDgctMSQsrZR9xx8tH5qHOwz3Hp
-nfhdvIIfiES2WJGpotZlvZJhgLzGZj+fuA2sOTrnbNzpSEK1KJrUCvQH4d/0TwE2
-cOtDH+5R5lWSn86p4uTTSt900NY9GYv//GYAXTXw5m1w+vtuTedESZF2JRB1XU6t
-JzhcOktrubIsUYOED7E3qbcJRJGuOSUPCoAR5MRKe67a28SaeUb1vzUlo12pgEVP
-gQZd+qJsPKXi2V1AEzmX
-=oEr1
+iQIcBAEBCAAGBQJQYVWDAAoJEECxmPOUX5FEcA8P/iLMiga6JWuYDHzKzvCSQhPA
+CUEsc7qTY2iOXajSJ482+ZTYMN9zgXQmMhC2CQUKiQZwIyCltmmZcKTM5I+FFhbS
+6fkOFHwdUpEkfnArRmP/k7cbtGSPbKLlxVtVuo4CVyvN+XwLYQEA2JY+QuYOqsjf
+xbd6+0vxvJzhbWDOZ++QJIyVoF3hGliLitO9Q7OwEs00dVx8HS6QzSOkLZ37cZ6g
+6qvEWALD2nNobCL1P5v7Dx4tv+FydZVN5VHzNq+lZ6e8AM7sbCgz+/3jhjRd4Rse
+8vZCQZcY1r7Fvfmr0DMKMdOU9RHo67NKhyPqIUB5pl/v1WmFWiKLvIl0nHBi4XWF
+e0sA2O5rF//Jdt+PA+hkYjQi70HaWAtJ1iQodQCP4Ecslh3rD+u8ni7CmakoOnXp
+8gNe0uIOWgpaqEGH9uySRONbEv/7HzQIribXDDGmOKEqFrzsiBUpc9YLWw0Eh27t
+aOQTGiMmUhxFs36xnWSUfVltZVsDmjBIRWA0DQaT98vuaOpDROPRZWolpzykntVO
+iX/8MPP11yy0NXuP1X1BUps2IxH0yvUpYAeNszzT5hIPLy5zJnFUrpoF9GyzIFH8
+rJ/I2eSmbzcvQr9Cl8GD4PkYRLYvj0qhneMt/GojAmuN56ot35oyUxU1/2quQPJ1
+d4xBniDbFw49GEPKjY+x
+=XYEY
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Sep_2012_16_50_57_+1000_JPSbyJsUJaaHK48Q--
+--Signature=_Tue__25_Sep_2012_16_56_03_+1000_L3nJ4gmufoNL9jLI--
