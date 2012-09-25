@@ -1,60 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the thermal tree
-Date: Tue, 25 Sep 2012 16:13:55 +1000
-Message-ID: <20120925161355.06cfe875c78bc163b050ed8c@canb.auug.org.au>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Subject: [PATCH net-next] net: raw: revert unrelated change
+Date: Tue, 25 Sep 2012 08:21:16 +0200
+Message-ID: <1348554076.26828.1990.camel@edumazet-glaptop>
+References: <20120925123438.bbf3126889513ee5cc195e5c@canb.auug.org.au>
+	 <1348549842.26828.1897.camel@edumazet-glaptop>
+	 <20120925.011343.1495275645575636949.davem@davemloft.net>
+	 <1348550602.26828.1918.camel@edumazet-glaptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_16_13_55_+1000_uzzgsfx6ymwvDcjX"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52798 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751604Ab2IYGOF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 02:14:05 -0400
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:37678 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753259Ab2IYGVW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 02:21:22 -0400
+In-Reply-To: <1348550602.26828.1918.camel@edumazet-glaptop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eduardo Valentin <eduardo.valentin@ti.com>, Durgadoss R <durgadoss.r@intel.com>, Zhang Rui <rui.zhang@intel.com>
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__25_Sep_2012_16_13_55_+1000_uzzgsfx6ymwvDcjX
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Eric Dumazet <edumazet@google.com>
 
-Hi Greg,
+Commit 5640f7685831 ("net: use a per task frag allocator")
+accidentally contained an unrelated change to net/ipv4/raw.c,
+later committed (without the pr_err() debugging bits) in
+net tree as commit ab43ed8b749 (ipv4: raw: fix icmp_filter())
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/omap-thermal/omap-thermal-common.c between commit
-82d3a76a88cd ("Thermal: Pass zone parameters as argument to
-tzd_register") from the thermal tree and commit 765a1939a364 ("staging:
-omap-thermal: fix polling period settings") from the staging tree.
+This patch reverts this glitch, noticed by Stephen Rothwell.
 
-I just used the thermal tree version and can carry the fix as necessary
-(no action is required).
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+---
+ net/ipv4/raw.c |   19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__25_Sep_2012_16_13_55_+1000_uzzgsfx6ymwvDcjX
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQYUujAAoJEECxmPOUX5FEJlUP/A/srLjaEftIO0TvlYCPyaNU
-S4Mn7+uIvWrBMp28CqfkTnRfs8JBBvC0wh3enVteFydCbTbeIXqHy24Abm/4vI3C
-erkASL0RpMalbn2ondZceJxU0VQ7aycLDkZE+IAc/lzCqsA5Xucs+VJjYeiY5Emw
-J6pPiaDXvdb1uVocq+q2tiKCBisSlBIyp4rhIY+M1SizqipAfx/W7PcuSc5Xkaym
-+OtmgZlpvkufLUmTnCVwChsqkYAiME8lIBomrEdyem5R44TxaBLHtV5vZNdDFCKe
-p1IgoBCjsevUhtqrdfhGefCQWh5vb++0RPU226Xr4fZy2vxOgjTZNkmjOIskVRyu
-5JDolGzk6C3EahuTV9pdcu8XKNA5LwwcRmvsSb/YI+Ft8hS9erLF90CzVMJta/KA
-mjohTmKozv9XKfgicH4634GSmfzY94nTAIk2iFsXCg6HzU4vkyzZwpWhPWHgzEg4
-+o/YIz8idwIVS0ud92US4xJUUI+NCSBKLvOvovpDeppuwXHx5JR23mgt5Aq/mo10
-mrj41Bwq9vHwAYM5eweUeMAw7VfybgEOWxdHt8KYuioQrXKQUgCxWxjyxH9ykN1F
-1zqIwkhvXZydef4FzkEzCXkXfnSX/nVKlmqS/fcQQJE9KcVVBAeIUHRyTs34Ow54
-B1GO017cgz2iNbs0T8FU
-=FQsp
------END PGP SIGNATURE-----
-
---Signature=_Tue__25_Sep_2012_16_13_55_+1000_uzzgsfx6ymwvDcjX--
+diff --git a/net/ipv4/raw.c b/net/ipv4/raw.c
+index a80740b..f242578 100644
+--- a/net/ipv4/raw.c
++++ b/net/ipv4/raw.c
+@@ -131,23 +131,18 @@ found:
+  *	0 - deliver
+  *	1 - block
+  */
+-static int icmp_filter(const struct sock *sk, const struct sk_buff *skb)
++static __inline__ int icmp_filter(struct sock *sk, struct sk_buff *skb)
+ {
+-	struct icmphdr _hdr;
+-	const struct icmphdr *hdr;
+-
+-	pr_err("icmp_filter skb_transport_offset %d data-head %ld len %d/%d\n",
+-		skb_transport_offset(skb), skb->data - skb->head, skb->len, skb->data_len);
+-	hdr = skb_header_pointer(skb, skb_transport_offset(skb),
+-				 sizeof(_hdr), &_hdr);
+-	pr_err("head %p data %p hdr %p type %d\n", skb->head, skb->data, hdr, hdr ? hdr->type : -1);
+-	if (!hdr)
++	int type;
++
++	if (!pskb_may_pull(skb, sizeof(struct icmphdr)))
+ 		return 1;
+ 
+-	if (hdr->type < 32) {
++	type = icmp_hdr(skb)->type;
++	if (type < 32) {
+ 		__u32 data = raw_sk(sk)->filter.data;
+ 
+-		return ((1U << hdr->type) & data) != 0;
++		return ((1 << type) & data) != 0;
+ 	}
+ 
+ 	/* Do not block unknown ICMP types */
