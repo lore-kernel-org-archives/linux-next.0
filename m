@@ -1,55 +1,39 @@
-From: "Roedel, Joerg" <Joerg.Roedel@amd.com>
-Subject: Re: linux-next: Tree for Sept 24 (iommu)
-Date: Tue, 25 Sep 2012 12:16:28 +0200
-Message-ID: <20120925101628.GX2505@amd.com>
-References: <20120925005328.f748dfa3d077cebb345a4291@canb.auug.org.au>
- <5060D876.5030209@xenotime.net>
- <1348543405.2320.146.camel@ul30vt.home>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 0/2] dmaengine: Fix compillation issues in
+ device_prep_dma_cyclic()
+Date: Tue, 25 Sep 2012 12:19:37 +0100
+Message-ID: <20120925111937.GA32685@sirena.org.uk>
+References: <20120924133923.130c4db72aa8105cb5647d7a@canb.auug.org.au>
+ <1348473485-5081-1-git-send-email-peter.ujfalusi@ti.com>
+ <s5hmx0fomwk.wl%tiwai@suse.de> <s5h8vbz8fa7.wl%tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from am1ehsobe004.messaging.microsoft.com ([213.199.154.207]:7790
-	"EHLO am1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753105Ab2IYKQr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Sep 2012 06:16:47 -0400
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
 Content-Disposition: inline
-In-Reply-To: <1348543405.2320.146.camel@ul30vt.home>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, iommu@lists.linux-foundation.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <s5h8vbz8fa7.wl%tiwai@suse.de>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-next@vger.kernel.org, Liam Girdwood <lrg@ti.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Sep 24, 2012 at 09:23:25PM -0600, Alex Williamson wrote:
-> On Mon, 2012-09-24 at 15:02 -0700, Randy Dunlap wrote:
-> > On 09/24/2012 07:53 AM, Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > Today was a train wreck, with lots of new conflicts across several trees
-> > > and a few build failures as well.
-> > > 
-> > > Changes since 201209021:
-> > > 
-> > 
-> > 
-> > 
-> > on i386:
-> > 
-> > drivers/built-in.o: In function `iommu_group_remove_device':
-> > (.text+0x74cb10): multiple definition of `iommu_group_remove_device'
-> > arch/x86/built-in.o:(.text+0x140d0): first defined here
-> ...
-> 
-> 
-> Here's a patch to get it past this.  It still doesn't fully build, but
-> the rest isn't iommu related.  Thanks,
+On Mon, Sep 24, 2012 at 08:08:32PM +0200, Takashi Iwai wrote:
+> At Mon, 24 Sep 2012 10:17:15 +0200,
 
-Applied, thanks.
+> > Mark, could you tell me when it's ready?  Since I'll be off from
+> > tomorrow, I'd like to resolve sooner.
 
--- 
-AMD Operating System Research Center
+> My time is up, so I merged Peter's two patches on the top of for-next
+> branch of sound git tree now.  Mark, please pull them to your tree if
+> needed.
 
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+Oh, well.  I was travelling for the entire time between Peter posting
+the patches and you applying them :/
