@@ -1,41 +1,68 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: linux-next: bluetooth tree rewritten after being merged
-Date: Mon, 24 Sep 2012 20:49:04 -0300
-Message-ID: <20120924234904.GC7922@joana>
-References: <20120925085113.cd17b8e633f38b3f7deefd5c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the userns tree with the security
+ tree
+Date: Tue, 25 Sep 2012 10:46:05 +1000
+Message-ID: <20120925104605.46288817480e6a6ced31f5fc@canb.auug.org.au>
+References: <20120924215222.8933c5557b17239552f0b1d1@canb.auug.org.au>
+	<87txunwi84.fsf@xmission.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__25_Sep_2012_10_46_05_+1000_pc3q2fm=h3xCNgwN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:62898 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750778Ab2IXXtP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 19:49:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20120925085113.cd17b8e633f38b3f7deefd5c@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34445 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750861Ab2IYAqP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 20:46:15 -0400
+In-Reply-To: <87txunwi84.fsf@xmission.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, James Morris <jmorris@namei.org>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>
 
-Hi Stephen,
+--Signature=_Tue__25_Sep_2012_10_46_05_+1000_pc3q2fm=h3xCNgwN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [2012-09-25 08:51:13 +1000]:
+Hi Eric,
 
-> Hi Gustavo, John,
-> 
-> The bluetooth tree has been merged into the wireless tree (which is its
-> normal path to Linus), but since that merge, the top four commits in the
-> bluetooth tree have been rewritten.   So now there will be two version of
-> those commits in linux-next (and eventually Linus' tree, if nothing
-> changes) and this will cause conflicts if there are further changes in
-> either tree affecting the files in those four commits.
-> 
-> Do *not* rewrite/rebase a tree once it has been merged "upstream".
-> Preferably do *not* rewrite/rebase a tree once it has been published
-> (unless it is specifically a tree that is never meant to be stable).
+On Mon, 24 Sep 2012 08:31:07 -0700 ebiederm@xmission.com (Eric W. Biederman=
+) wrote:
+>
+> Right.  To work when user namespace support is enabled fowner needs be
+> converted to a kuid_t as well.
+>=20
+> When I did a trial earlier this is what I wound up with.  As long as
+> user namespaces are not enabled what you wound up with should be fine.
 
-Yes, I was planning to redo the pull request but in the meantime John pulled
-my tree. I'm fixing my tree right now to get rid of this issue. Thanks for
-reporting.
+I will use your resolution today.
 
-	Gustavo
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__25_Sep_2012_10_46_05_+1000_pc3q2fm=h3xCNgwN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQYP7NAAoJEECxmPOUX5FE0lwP/Rs5F+49G7rWrgqhy7ud5gSz
+ABzrI7Ax4V9mXs91pvUbr7PHt9qksIFx1r6LrUys163kYkLb5i2O1vT2cAXsIfRk
+mmSJWUFgUMKzAdX3vYmMDOt3tr5BivirLj7wmNhmrKw+kEsVHdrz3okbjIoysZHx
+tPJi2oCwYuI16l08KBlSKgyk1QS4gHMTKinrc6xiHxX+hCOSRoy0JBFE4JtpBnRt
+RcUHJvhAhmIEJ7Iz2rjA/xaO8L6gm32hXxaPjRABFJcMI1XEySJBCROWCfrj6ebP
+mf2SyXv9AV+Y5BB0L4hm0nsnVJi1zpNFlPe2YspYiR67MAJ2xoiNhwOfduKqvQn6
+RsvfPHMZb5xX99kzV3D6ZSCUF8OFSTVN8pgD7aahltfbVxTzqBi16WTBojB1XYsz
+t6uE4COK21fkds/1E9CnO2vICGvlfbcgwqGhVtDGejx9KORUUuJrV1EXzV6EDNBy
+ke3wgclQucrcxqxzLWIKqVESdkhDWBBnVdqJD1Fs6cddU5ffBddqN60ivDGJ1DQy
+qLJrBwT8eEQkxO5NiSwMgIWuiebfIybrOU1Focyqj5oYr6WcU6jRhOmcwYJP7Onh
+ZuwdXacIPFMwzxLa4L8/AvdZ0QRxfhgQA8o/fcl69KatZIrtM/A5Az65gazLAmwV
+dqcnB1U/skNJTHKkb4U5
+=C/lu
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Sep_2012_10_46_05_+1000_pc3q2fm=h3xCNgwN--
