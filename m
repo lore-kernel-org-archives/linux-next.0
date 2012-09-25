@@ -1,77 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pm tree
-Date: Tue, 25 Sep 2012 14:30:34 +1000
-Message-ID: <20120925143034.f7bda6d8a5a11e87f2e60ef3@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the md tree
+Date: Tue, 25 Sep 2012 14:50:10 +1000
+Message-ID: <20120925145010.621ed466daec9e5e4f1d9ddd@canb.auug.org.au>
+References: <20120925133146.36615871cf4ccbcbd422ed87@canb.auug.org.au>
+	<20120925141005.2a83593e@notabene.brown>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_14_30_34_+1000_tD1HtubfqF/.Ls24"
+ boundary="Signature=_Tue__25_Sep_2012_14_50_10_+1000_Tq0dminTPGoXw+_o"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43537 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:54484 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751024Ab2IYEaq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 00:30:46 -0400
+	with ESMTP id S1750777Ab2IYEuT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 00:50:19 -0400
+In-Reply-To: <20120925141005.2a83593e@notabene.brown>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Andre Przywara <andre.przywara@amd.com>
+To: NeilBrown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__25_Sep_2012_14_30_34_+1000_tD1HtubfqF/.Ls24
+--Signature=_Tue__25_Sep_2012_14_50_10_+1000_Tq0dminTPGoXw+_o
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Neil,
 
-After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+On Tue, 25 Sep 2012 14:10:05 +1000 NeilBrown <neilb@suse.de> wrote:
+>
+> I requires the following which I have already sent to Jens Axboe.
+> I might pull my patch until this fix-up is resolve.
 
-drivers/cpufreq/powernow-k8.c: In function 'transition_frequency_pstate':
-drivers/cpufreq/powernow-k8.c:991:19: error: 'HW_PSTATE_MASK' undeclared (f=
-irst use in this function)
-drivers/cpufreq/powernow-k8.c:991:19: note: each undeclared identifier is r=
-eported only once for each function it appears in
-drivers/cpufreq/powernow-k8.c:992:19: error: 'struct powernow_k8_data' has =
-no member named 'max_hw_pstate'
-drivers/cpufreq/powernow-k8.c:995:2: error: implicit declaration of functio=
-n 'find_khz_freq_from_pstate' [-Werror=3Dimplicit-function-declaration]
-drivers/cpufreq/powernow-k8.c:996:8: error: 'struct powernow_k8_data' has n=
-o member named 'currpstate'
-drivers/cpufreq/powernow-k8.c:1004:2: error: implicit declaration of functi=
-on 'transition_pstate' [-Werror=3Dimplicit-function-declaration]
-drivers/cpufreq/powernow-k8.c: At top level:
-drivers/cpufreq/powernow-k8.c:981:12: warning: 'transition_frequency_pstate=
-' defined but not used [-Wunused-function]
+Or just ask Jens if you can submit that patch through your tree (with his
+Ack) since you are the one who needs it?
 
-The code causing this was removed by commit e1f0b8e9b04a ("cpufreq:
-Remove support for hardware P-state chips from powernow-k8") but
-reintroduced (presumably incorrectly) by commit d20801be3c11 ("Merge
-branch 'master' into linux-next").
-
-I have used the pm tree from next-20120924 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__25_Sep_2012_14_30_34_+1000_tD1HtubfqF/.Ls24
+--Signature=_Tue__25_Sep_2012_14_50_10_+1000_Tq0dminTPGoXw+_o
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYTNqAAoJEECxmPOUX5FE4CIP/iPrkqSn8ssFF5dcT/+Vn33s
-q0J9hXf4/5E/MmyYTxDB4EA8m+onL1tjOEWEAPFfFh/GqDQ3ji7KlVd8kxIIGtJz
-eNe2aR0Vrx9QRkQHp/HRJW4r9VQBqEQjgGxNVgl8DohktFUunTRdS9JEShKedGRq
-v+YenBDFjZIqMJuZ0WlTedbM3uAHOT3AJdqK4kVAvf4bPMMFILOrcbpJYvcbXwDF
-Ka6kiQJ00Bn8+0qZ+kZlc03wCrsg3UdxDBX6qK/up5a98Bqqnn3p1f10AgzDs06O
-9tOJz90mSto8p5uUmCFydhnbPR+IbUh4VD04MvQzbS3in0fg3T3bakxugEbMnh93
-yKVqKLjhzzRm7WWrO4Wb2jca4EFQn42p/TePJDWBoTWFglORZqbRP71PZKt3p0oN
-6Lh9BFMus/fakeMXvKgneRyjSwbI94VUHascu+yf34hRcpwlHQb7BUVYucwtL+v3
-g2K3MQG79Zqi7QybiaNrt56P/DDzxHtktgUA+5RykexUAyd1sbQaCO4d5m6FF3ZO
-EDBQ1qC7cW6gxm0Pr33MO5aH6I/LT6amxg6vhL4WPApbxjYSpv1Q/ik7advf5MvA
-CdAyyQNJ5ZhodKoIWQEKtm+pcHlAFGK9CgVMJT84fqZ4rN4+UY59kKFZ1Gz9OIzR
-ZFA856ZDGBI6de9nky+C
-=+Ia3
+iQIcBAEBCAAGBQJQYTgCAAoJEECxmPOUX5FEv1gP/RmTURhDWQ+aNntQNbgzfwg9
+4zCbLF1GaVcxeuRDJ5di+H4mqTsz0rOMmiXld9d97fS1oxoZNzReXrLBC/AYECi0
+I6+l5jlkMOm301PX7MEdbuL+cIT767jEqYGAeBuEXsUkEwKoGOccCgbH9G/ppT5v
+VzZzo2OLQDomaM6co0QxpY0vmcIfMagkNtyk1/FAuGAJQFZhf2pRdBYFEZC1QyEu
+HchwBedZjH0aNYnvGWg9jku0KVzGu3YY6v6P8TVtZo8Eq6igCeCUfJD1Ir7NUg/f
+pwXS+NTYo59yZmB/uDPMtke1YdeDD6/hLE5RR6TtdPV63aJW6xb/AapdPd9Hmm/o
+C8+Z3kalQzjQ8EBmJzsQ/Mpjs1rr1LfMDMpSqT7mEkNOKMZOguloKa27rl8WVkxZ
+OX7flCXkOY4KZCfjhnPEfFHrRkzi/CmHV1sTMY+J7RWs6WFA1dIbPz+R49ohGzvb
+TyAShdj4XIzpFWzQnU4f21aKrfBssaDQ6JUHiamP636kFmunaeLXeqZ8xiF0gIX9
+jCAuwDqMTgOXzDMHlfit2HaT0FBzBK+6pa8tvjbSgnrTKo9lRtnMsnvfPnhocEEu
+Fww+luxHCagQtQBF6Otk2QDM0F3IEv3LHWOR0wWVcr6lPuAtaPihzU8EFhxUY1xI
+0kcs/LkF5+17HpPNCbfX
+=+oCX
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Sep_2012_14_30_34_+1000_tD1HtubfqF/.Ls24--
+--Signature=_Tue__25_Sep_2012_14_50_10_+1000_Tq0dminTPGoXw+_o--
