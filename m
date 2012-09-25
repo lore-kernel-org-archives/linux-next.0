@@ -1,40 +1,84 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Recent frv breakage
-Date: Tue, 25 Sep 2012 23:10:25 +0200
-Message-ID: <CAMuHMdXcAF+QERx6gzniUfhS=vhfnSMC5cnZWEo89xVeABb8sQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: mmotm 2012-09-20-17-25 uploaded (fs/bimfmt_elf on uml)
+Date: Wed, 26 Sep 2012 07:48:27 +1000
+Message-ID: <20120926074827.32c7187adef6327c74c75564@canb.auug.org.au>
+References: <20120921002638.7859F100047@wpzn3.hot.corp.google.com>
+	<505C865D.5090802@xenotime.net>
+	<20120922115606.5ca9f599cd88514ddda4831d@canb.auug.org.au>
+	<alpine.DEB.2.00.1209251243320.31518@chino.kir.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:38077 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757997Ab2IYVK0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 17:10:26 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>
-Cc: Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__26_Sep_2012_07_48_27_+1000_k8PpY51A+D9WqnR5"
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <alpine.DEB.2.00.1209251243320.31518@chino.kir.corp.google.com>
+Sender: owner-linux-mm@kvack.org
+To: David Rientjes <rientjes@google.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Richard Weinberger <richard@nod.at>
+List-Id: linux-next.vger.kernel.org
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/7270498/
+--Signature=_Wed__26_Sep_2012_07_48_27_+1000_k8PpY51A+D9WqnR5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> arch/frv/kernel/entry.S:871: Error: VLIW packing constraint violation
+Hi David,
 
-What's wrong there? Introduced by "frv: split ret_from_fork, simplify
-kernel_thread() a lot"
+On Tue, 25 Sep 2012 12:43:53 -0700 (PDT) David Rientjes <rientjes@google.co=
+m> wrote:
+>
+> On Sat, 22 Sep 2012, Stephen Rothwell wrote:
+>=20
+> > > on uml for x86_64 defconfig:
+> > >=20
+> > > fs/binfmt_elf.c: In function 'fill_files_note':
+> > > fs/binfmt_elf.c:1419:2: error: implicit declaration of function 'vmal=
+loc'
+> > > fs/binfmt_elf.c:1419:7: warning: assignment makes pointer from intege=
+r without a cast
+> > > fs/binfmt_elf.c:1437:5: error: implicit declaration of function 'vfre=
+e'
+> >=20
+> > reported in linux-next (offending patch reverted for other
+> > problems).
+>=20
+> This still happens on x86_64 for linux-next as of today's tree.
 
-> make[2]: *** [arch/frv/kernel/entry.o] Error 1
-> arch/frv/kernel/process.c:197:3: error: 'chilregs' undeclared (first use in this function)
+Are you sure?  next-20120925?
 
-typo in "frv: switch to generic kernel_thread()", should be "childregs"
+$ grep -n vmalloc fs/binfmt_elf.c
+30:#include <linux/vmalloc.h>
+1421:	data =3D vmalloc(size);
 
-> make[2]: *** [arch/frv/kernel/process.o] Error 1
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Gr{oetje,eeting}s,
+--Signature=_Wed__26_Sep_2012_07_48_27_+1000_k8PpY51A+D9WqnR5
+Content-Type: application/pgp-signature
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQYiarAAoJEECxmPOUX5FEAGcP/2gldFfvcS8osFzNRf+P3SW5
+3yyN9+KAgpCwNFW1oHxFfhsvmhNrlRwzzCVVbFWcjqMjTNci28LvqmStQHeLnGJY
+3A1iu3onLiJUBxxsXxZWBLf5nvFTajtJyeXX7I6gI5cKHcHls/aclrdvn2mxWliW
+dvB34yZg0CCMCQLJKkUrYIAwtVTlGmZ3AynreAbbVWYywWtslILIDov5VQBKsCcE
+3z9yec49sEzBYq16VGqfbDPqhqx9OFq8vXrw4PIlLt3AFwtNRl69RLRndKVC6jYh
+LNOcQPfCL/yg55cBafn799eeiyFq5pvvYkcbT7q0qNBMaZku87sQNO7TIepWpirS
+R7TtY+SCIm08zIE+FGhq8Wl4aHJGG2hMpMZuE6Qg9whn/LhBlK39qnpMocIsyU/s
+v9RQXFEH5UybeDy2ukm8QUzgG21gMMFaLV7ctbVkLXoomUR6w968rTYW0gFpk+mh
+C5shch4CBW3lnVtKf+gve2ZWl0TdmsiZR1oLqIzzYlZF5dybJDrjRD6kwrdbCAEH
+qfcJCJFEgUMGEZj50jILD9dFHfZgOR3XAw3aAz+hWQxFRQ8ldGIJxl5AEzNy2/SH
+2VmpzTMDPu4vouMnzjgAwGCBQGHXrbjQ2d3HcGz3D3jiPxhOddr2aaavuJ/Uznez
+uRpN/ej1nOB4UGt6drjw
+=gQpN
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__26_Sep_2012_07_48_27_+1000_k8PpY51A+D9WqnR5--
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
