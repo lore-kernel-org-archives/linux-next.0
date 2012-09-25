@@ -1,72 +1,60 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Subject: [PATCH net-next] net: raw: revert unrelated change
-Date: Tue, 25 Sep 2012 08:21:16 +0200
-Message-ID: <1348554076.26828.1990.camel@edumazet-glaptop>
-References: <20120925123438.bbf3126889513ee5cc195e5c@canb.auug.org.au>
-	 <1348549842.26828.1897.camel@edumazet-glaptop>
-	 <20120925.011343.1495275645575636949.davem@davemloft.net>
-	 <1348550602.26828.1918.camel@edumazet-glaptop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the  tree
+Date: Tue, 25 Sep 2012 16:37:24 +1000
+Message-ID: <20120925163724.703a41b9438fbaef84b7480e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__25_Sep_2012_16_37_24_+1000_DC1eBlFzb4_aH+lK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:37678 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753259Ab2IYGVW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 02:21:22 -0400
-In-Reply-To: <1348550602.26828.1918.camel@edumazet-glaptop>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38492 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750854Ab2IYGhc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 02:37:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Prisk <linux@prisktech.co.nz>, Greg KH <greg@kroah.com>
 
-From: Eric Dumazet <edumazet@google.com>
+--Signature=_Tue__25_Sep_2012_16_37_24_+1000_DC1eBlFzb4_aH+lK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Commit 5640f7685831 ("net: use a per task frag allocator")
-accidentally contained an unrelated change to net/ipv4/raw.c,
-later committed (without the pr_err() debugging bits) in
-net tree as commit ab43ed8b749 (ipv4: raw: fix icmp_filter())
+Hi all,
 
-This patch reverts this glitch, noticed by Stephen Rothwell.
+Today's linux-next merge of the arm-soc tree got a conflict in
+Documentation/devicetree/bindings/usb/platform-uhci.txt between commit
+100d45970327 ("ARM: vt8500: Add support for UHCI companion controller")
+from the usb tree and commit 95e9fd10f06c ("arm: vt8500: doc: Add device
+tree bindings for arch-vt8500 devices") from the arm-soc tree.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
----
- net/ipv4/raw.c |   19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+I used the version from the arm-soc tree and can carry the fix as
+necessary (no action is required).
 
-diff --git a/net/ipv4/raw.c b/net/ipv4/raw.c
-index a80740b..f242578 100644
---- a/net/ipv4/raw.c
-+++ b/net/ipv4/raw.c
-@@ -131,23 +131,18 @@ found:
-  *	0 - deliver
-  *	1 - block
-  */
--static int icmp_filter(const struct sock *sk, const struct sk_buff *skb)
-+static __inline__ int icmp_filter(struct sock *sk, struct sk_buff *skb)
- {
--	struct icmphdr _hdr;
--	const struct icmphdr *hdr;
--
--	pr_err("icmp_filter skb_transport_offset %d data-head %ld len %d/%d\n",
--		skb_transport_offset(skb), skb->data - skb->head, skb->len, skb->data_len);
--	hdr = skb_header_pointer(skb, skb_transport_offset(skb),
--				 sizeof(_hdr), &_hdr);
--	pr_err("head %p data %p hdr %p type %d\n", skb->head, skb->data, hdr, hdr ? hdr->type : -1);
--	if (!hdr)
-+	int type;
-+
-+	if (!pskb_may_pull(skb, sizeof(struct icmphdr)))
- 		return 1;
- 
--	if (hdr->type < 32) {
-+	type = icmp_hdr(skb)->type;
-+	if (type < 32) {
- 		__u32 data = raw_sk(sk)->filter.data;
- 
--		return ((1U << hdr->type) & data) != 0;
-+		return ((1 << type) & data) != 0;
- 	}
- 
- 	/* Do not block unknown ICMP types */
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__25_Sep_2012_16_37_24_+1000_DC1eBlFzb4_aH+lK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQYVEkAAoJEECxmPOUX5FEcz8P/0AK9b1KWvoYKYvD+H6MY5rm
+nYv/W5ocXCAI5H7L0gOIjtUVMg8Ov7jy3JZk9shCCCAWkdufR45AL+5toWEPc8yu
+C46CTH5TkQ3KaZQZdekYZ5qyLqdPpGJEWx3wDN7+VfMD6sAZIUuAx0TDfHqHqPFV
+MI4NOoIPPxCylTeEBuCBOWNYGTczXXOyw2q5yI3+K9KQPWPYRtziH4IIRdgoGZFs
+aczYUqBZd4ZlTejy5zCMH/IsrZ/7WxJ1MKKt8E66QFC3breb19/0qlGe9XKjamA7
+GvUJ4irpzzhNqPcmN2xVYa80CXxXZanWKrOF+mxeBGiGcAC/+j8dhxrX84wKMm5W
+ekH/KmWBkT/89c7J12BaVFWNUSFXrTQAWW3tOBzgdlozYgvOBdwiQLVuF1aXHgU+
+AfiWYboSkxgZD+8n/4cF3a5Mq2DQdPJXo6q6KJaA5tTFW/V0zl0QleC1K5LsD7QA
+kvH7Iko6PIsPpBv6UbDz0jXM+1N/O0AzX8Kbdk5nDRJi19jf47o+IU82iMCG7/fi
+lAz4ExpK+ECkyFlUU2elXPtVusPF5eR21lvnEyRgQgyX8pw3nuQKf5vau8Ukq++y
+4CZ0zB121HnhaHRw/rswYi9inWdQ8gejMacmzdj36FZUQ3uAm1/C5d/RDPV+YjAq
+ywPRukQvM2hAO8rLC50A
+=vysZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Sep_2012_16_37_24_+1000_DC1eBlFzb4_aH+lK--
