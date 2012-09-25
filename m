@@ -1,65 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH -next v2] Shorten constant names for EFI variable
- attributes
-Date: Wed, 26 Sep 2012 07:55:28 +1000
-Message-ID: <20120926075528.e497436227403ecaf1b845d3@canb.auug.org.au>
-References: <20120720220841.GA32642@hp.com>
-	<5009D770.1050905@zytor.com>
-	<20120723132656.GC21495@srcf.ucam.org>
-	<50117E40.8090904@hp.com>
-	<20120726173332.GA19851@srcf.ucam.org>
-	<20120925154100.GA13412@ldl.usa.hp.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the vfs tree
+Date: Tue, 25 Sep 2012 15:38:44 -0700
+Message-ID: <20120925223844.GA6282@kroah.com>
+References: <20120924170741.34abbc462d1c405b0b447b72@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Sep_2012_07_55_28_+1000_l.x8XiSImdyIr9BF"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120925154100.GA13412@ldl.usa.hp.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Khalid Aziz <khalid.aziz@hp.com>
-Cc: Matthew Garrett <mjg@redhat.com>, hpa@zytor.com, keescook@chromium.org, tony.luck@intel.com, Greg KH <gregkh@linuxfoundation.org>, cbouatmailru@gmail.com, ccross@android.com, paul.gortmaker@windriver.com, maxin.john@gmail.com, matt.fleming@intel.com, olof@lixom.net, dhowells@redhat.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, khalid@gonehiking.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Wed__26_Sep_2012_07_55_28_+1000_l.x8XiSImdyIr9BF
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:56737 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751342Ab2IYWiq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Sep 2012 18:38:46 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20120924170741.34abbc462d1c405b0b447b72@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, Al Viro <viro@zeniv.linux.org.uk>
 
-Hi,
+On Mon, Sep 24, 2012 at 05:07:41PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/android/binder.c between commit 004223461eee ("new
+> helper: __alloc_fd()") from the vfs tree and commits efde99cd281a
+> ("Staging: android: binder: Make task_get_unused_fd_flags function
+> static") and bf2023614201 ("Staging: android: binder: Remove an
+> inconsequential conditional macro") from the staging tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-On Tue, 25 Sep 2012 09:41:00 -0600 Khalid Aziz <khalid.aziz@hp.com> wrote:
->
-> Replace very long constants for EFI variable attributes with
-> shorter and more convenient names. Also create an alias for
-> the current longer names so as to not break compatibility
-> with current API since these constants are used by
-> userspace programs.
+Looks good to me, thanks.
 
-Why do this?  It just looks like churn for no real gain.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__26_Sep_2012_07_55_28_+1000_l.x8XiSImdyIr9BF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQYihQAAoJEECxmPOUX5FEjZ0P/1aRRnx5Ii4AVWZOTefjp7Xv
-20xSVJEBhGE8na7kfAoGZHUH8yYxjk4y/XXMEU2vTwV8odB3q/zrIvSn7Hg3UtT+
-AJbzUO4r5qv1leu6sHwb4pNzdK5h/yK8WwhVAMUGCajMunyot8xFJV6TX6h1VLfb
-ce9h6kFfm/SDzgHMZL0RHbFAQNNm1uZztoty90eIzCJel29KFG0409XWFCU53Vz8
-kixL7OwynjkQnnlnucnepsvUoBse2ZfulyE/l5JoL7urMEd5ZuwbQaWg21StlvfL
-2Cs/OdDP24WxApgnQnRKJht4dixMB6BQG5gljZLd6gUAyC0+4Z98tYDq+KdAeu8p
-93H8P9RG6PoSL0k2QpumD6Ayik68u1Vxsr4ectCIb3xZ0nrTtaumB9/mOua0WhQ0
-//WfaLmlOvFx6DVs4m5S0ah8znlfgbqngAuVPj+BWgaXI5qiZw0EY4np6xmJ3MWZ
-bbl6v3LBfxwfcrDZeMMFWqQlWtQrV+8gkV13eDliOt/UjGgfaIFTMfCq4ymryf81
-9v8snzENGWMQ7tuTI9b2x5T7a+f2o0PeMHrH0oYdu14xaKLQn6hLRZmNyUnZRnZU
-KE5Va+L0tgkaQw1Z8rBZfmkQGsGOtjzjqcKtsZ9ZoXwCsBCALblcUP2DLYJE3uGh
-Mtbe+Fh//aL37Yzqby4a
-=ymgV
------END PGP SIGNATURE-----
-
---Signature=_Wed__26_Sep_2012_07_55_28_+1000_l.x8XiSImdyIr9BF--
+greg k-h
