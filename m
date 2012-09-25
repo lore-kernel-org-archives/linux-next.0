@@ -1,61 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the md tree
-Date: Tue, 25 Sep 2012 13:31:46 +1000
-Message-ID: <20120925133146.36615871cf4ccbcbd422ed87@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Tue, 25 Sep 2012 13:47:35 +1000
+Message-ID: <20120925134735.067e4f119bd71099df30724f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_13_31_46_+1000_wQ/NgOEPwdznYcNW"
+ boundary="Signature=_Tue__25_Sep_2012_13_47_35_+1000_rR0FVyPzKtNn5Z_O"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51020 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40645 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752206Ab2IYDb4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 23:31:56 -0400
+	with ESMTP id S1752518Ab2IYDrp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 23:47:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthias Kaehlcke <matthias@kaehlcke.net>
 
---Signature=_Tue__25_Sep_2012_13_31_46_+1000_wQ/NgOEPwdznYcNW
+--Signature=_Tue__25_Sep_2012_13_47_35_+1000_rR0FVyPzKtNn5Z_O
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Neil,
+Hi Samuel,
 
-After merging the md tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-ERROR: "__tracepoint_block_unplug" [drivers/md/raid456.ko] undefined!
+FATAL: modpost: GPL-incompatible module tps65217_bl.ko uses GPL-only symbol=
+ 'platform_driver_unregister'
 
-Presumably caused by commit 14817e9a6dab ("md/raid5: add blktrace calls").
+Caused by commit dbc14ec43af2 ("backlight: Add TPS65217 WLED driver").
 
-CONFIG_MD_RAID456=3Dm
-
-I have used the md tree from next-20120924 for today.
+I have used the mfd tree from next-20120924 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__25_Sep_2012_13_31_46_+1000_wQ/NgOEPwdznYcNW
+--Signature=_Tue__25_Sep_2012_13_47_35_+1000_rR0FVyPzKtNn5Z_O
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYSWiAAoJEECxmPOUX5FEba0P/0t4lSgv5/tlRHO41yKIfHuj
-FhlK2E05/2o0quHo/jvGC1+2gViJHQMbpkAXHXZK78epxXUD4ZGb7o+IBWcrAxFt
-6VN2icaMqDvQrYQMCxYmRooM/0L6sQrvRWcdz4vVHNdRoqmou7AZvq+FBv3md2wQ
-HujG3PgbQCQKc9LCNvc00FrOegQPLQwyk/TTjULQcPukhrCnvKCC8RTRRlJQEhff
-26zdauGpthbBF3LeA9kaEtbOSHG1ALb41WCU1QBh8Edyd4lzvAsufzqJ3aKYpKc1
-1VlatnS+LpAK6n4d2YJcso8l5FnvzEjxkmh4tOW/KDM48yYVsCcvipiSQEJo5cbz
-wOgSTuYNS+K1HDqgluiDwzD8Y42fMILf9h1mdi77QiQxowQ47FfKc4Aej3s8gNx6
-8yVrY0wyc7lcqAR4wr0+/b5w3ERKzHoIO9WTPXElbupm6oJQMjx8ps68hymRJTBA
-P1VqvHBgf1lu7P2NK/yaMy04Nhz3Pi3blI+wxoaM84qXmGyMFB9xJS350G5i36Ml
-AUFsXoqxb0GV8127ifrc6mzSVw7SVWcu+/L3dZKIk1RiKXbvGf7kBriHLOnMoQMc
-xfDb4t9LeFq5Ruvz75ch6lldfOPYrLoWsNSQsQF7Fq5SxyrNWU0DY5RZvZ4WOPJm
-6k2JC5JBSDA3CrpE0sA0
-=mx+W
+iQIcBAEBCAAGBQJQYSlXAAoJEECxmPOUX5FE8YAP+wQ5DXuDH9R6uNvsy4yVxnEY
+bHMcDp+zV45rSJiG91UFn2HbHEQHqAU/ZSuGTNV+LMoaUPXOY7c8mE3eUYUNpuie
+NdUL6MIXqC2VzY2+xquOGerZCW4wUGE/tNAtrKMwH1bZ9FjcMOsl8seMProDzREs
+2flTxjLxf/3yGSwjXyOAy+GPG+cbqmD1JxW/7po3DhqW5bjGwDSwN8BWfzdBull2
+TyjH/txWkSY3ehFOVESjNn+KSjv1gTAdMTZwZAXDxbibAjjQbdjftlP6+sagftct
+i/Ni5tu2D27uFDGnn4fcieqOy0PQ2ivAb7JGIDheJc6yQZnQhcJmTcfKkLiM5UCW
+CkP12DHVgogMp+JDmQ34+BF+SC5nfZdaumySDJ8DvDck35/jMdXnXTGz50u6Il3j
+Po6dBEs9QlQpRdyRMQOeKV1nYL1Lpe84T7y0uA4QwJ7bfV0x6jntgYtcknsW1rfE
+HuiXPogDvxV40jVGDojK6Iqa0SNdYA95NZ+ORd5q9O+UzLhf5uxsh3eX/yJwoNzr
+KfXX3noJs+dNKNV63AkHcG9J67QoLC07KssxNMJXkL4V5AWL3Br1uE679jGk8YCS
+AexMH8rv0C3gIKEaFMSRpqOBP60PWNfgeM/5LBGPABu074SVVSHmTjlCJPVU0pf7
+Le7YugGibX7Q5ejFJbji
+=Ld+F
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Sep_2012_13_31_46_+1000_wQ/NgOEPwdznYcNW--
+--Signature=_Tue__25_Sep_2012_13_47_35_+1000_rR0FVyPzKtNn5Z_O--
