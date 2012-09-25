@@ -1,36 +1,46 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Tue, 25 Sep 2012 15:41:36 -0700
-Message-ID: <20120925224136.GA6366@kroah.com>
-References: <20120925003644.aa90318c8f407539b08db48e@canb.auug.org.au>
+From: Khalid Aziz <khalid.aziz@hp.com>
+Subject: Re: [PATCH -next v2] Shorten constant names for EFI variable
+ attributes
+Date: Tue, 25 Sep 2012 17:06:32 -0600
+Message-ID: <1348614392.17507.5.camel@concerto.americas.hpqcorp.net>
+References: <20120720220841.GA32642@hp.com> <5009D770.1050905@zytor.com>
+	 <20120723132656.GC21495@srcf.ucam.org> <50117E40.8090904@hp.com>
+	 <20120726173332.GA19851@srcf.ucam.org>
+	 <20120925154100.GA13412@ldl.usa.hp.com>
+	 <20120926075528.e497436227403ecaf1b845d3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:57573 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751309Ab2IYWli (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Sep 2012 18:41:38 -0400
-Content-Disposition: inline
-In-Reply-To: <20120925003644.aa90318c8f407539b08db48e@canb.auug.org.au>
+Received: from g5t0006.atlanta.hp.com ([15.192.0.43]:34449 "EHLO
+	g5t0006.atlanta.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751309Ab2IYXGh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 19:06:37 -0400
+In-Reply-To: <20120926075528.e497436227403ecaf1b845d3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jaeden Amero <jaeden.amero@ni.com>, Alan Cox <alan@linux.intel.com>
+Cc: Matthew Garrett <mjg@redhat.com>, hpa@zytor.com, keescook@chromium.org, tony.luck@intel.com, Greg KH <gregkh@linuxfoundation.org>, cbouatmailru@gmail.com, ccross@android.com, paul.gortmaker@windriver.com, maxin.john@gmail.com, matt.fleming@intel.com, olof@lixom.net, dhowells@redhat.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, khalid@gonehiking.org
 
-On Tue, Sep 25, 2012 at 12:36:44AM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Wed, 2012-09-26 at 07:55 +1000, Stephen Rothwell wrote:
+> Hi,
 > 
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
+> On Tue, 25 Sep 2012 09:41:00 -0600 Khalid Aziz <khalid.aziz@hp.com> wrote:
+> >
+> > Replace very long constants for EFI variable attributes with
+> > shorter and more convenient names. Also create an alias for
+> > the current longer names so as to not break compatibility
+> > with current API since these constants are used by
+> > userspace programs.
 > 
-> fs/compat_ioctl.c:868:1: error: 'TIOCSRS485' undeclared here (not in a function)
-> fs/compat_ioctl.c:869:1: error: 'TIOCGRS485' undeclared here (not in a function)
+> Why do this?  It just looks like churn for no real gain.
 > 
-> Caused by commit 84c3b8486044 ("compat_ioctl: Add RS-485 IOCTLs to the
-> list") from the tty tree.
 
-Thanks, Jaeden just sent me a fix for this, I'll go apply it.
+This is for code cleanup and does not impact functionality. This is
+based upon an earlier discussion -
+<https://lkml.org/lkml/2012/7/13/320>. The goal is to make the code more
+readable. V1 of this patch was discussed at
+<https://lkml.org/lkml/2012/7/20/414>.
 
-greg k-h
+-- 
+Khalid Aziz <khalid.aziz@hp.com>
