@@ -1,70 +1,69 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH] ipconfig: fix trivial build error
-Date: Tue, 25 Sep 2012 11:09:58 +0300
-Message-ID: <1348560598-21233-1-git-send-email-andriy.shevchenko@linux.intel.com>
-References: <1348255713.12456.43.camel@mars>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:46628 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753542Ab2IYIKG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Sep 2012 04:10:06 -0400
-In-Reply-To: <1348255713.12456.43.camel@mars>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: netdev@vger.kernel.org, linux-next@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Christoph Fritz <chf.fritz@googlemail.com>, "David S. Miller" <davem@davemloft.net>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Tue, 25 Sep 2012 10:27:23 +0200
+Message-ID: <201209251027.23840.jackm@dev.mellanox.co.il>
+References: <20120925000217.947b8cd8dca6979bfedee2ca@canb.auug.org.au> <CAL1RGDUCThiu+vxy4d5QXvqfDCDUnHOBfZT97XB+Qy_bQrxCRg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL1RGDUCThiu+vxy4d5QXvqfDCDUnHOBfZT97XB+Qy_bQrxCRg@mail.gmail.com>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Roland Dreier <roland@purestorage.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>, Amir Vadai <amirv@mellanox.co.il>, linux-rdma@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-The commit 5e953778a2aab04929a5e7b69f53dc26e39b079e ("ipconfig: add nameserver
-IPs to kernel-parameter ip=") introduces ic_nameservers_predef() that defined
-only for BOOTP. However it is used by ip_auto_config_setup() as well. This
-patch moves it outside of #ifdef BOOTP.
+Hi Roland,
+I am on vacation until next Tuesday -- I'll look at this then.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Christoph Fritz <chf.fritz@googlemail.com>
-Cc: David S. Miller <davem@davemloft.net>
----
- net/ipv4/ipconfig.c |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+-Jack
 
-diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
-index 1c0e7e0..798358b 100644
---- a/net/ipv4/ipconfig.c
-+++ b/net/ipv4/ipconfig.c
-@@ -583,6 +583,17 @@ static void __init ic_rarp_send_if(struct ic_device *d)
- #endif
- 
- /*
-+ *  Predefine Nameservers
-+ */
-+static inline void __init ic_nameservers_predef(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < CONF_NAMESERVERS_MAX; i++)
-+		ic_nameservers[i] = NONE;
-+}
-+
-+/*
-  *	DHCP/BOOTP support.
-  */
- 
-@@ -743,17 +754,6 @@ static void __init ic_bootp_init_ext(u8 *e)
- 
- 
- /*
-- *  Predefine Nameservers
-- */
--static inline void __init ic_nameservers_predef(void)
--{
--	int i;
--
--	for (i = 0; i < CONF_NAMESERVERS_MAX; i++)
--		ic_nameservers[i] = NONE;
--}
--
--/*
-  *  Initialize the DHCP/BOOTP mechanism.
-  */
- static inline void __init ic_bootp_init(void)
--- 
-1.7.10.4
+
+On Monday 24 September 2012 21:36, Roland Dreier wrote:
+> On Mon, Sep 24, 2012 at 7:02 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > After merging the akpm tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >
+> > drivers/infiniband/hw/mlx4/cm.c: In function 'id_map_alloc':
+> > drivers/infiniband/hw/mlx4/cm.c:228:36: error: 'MAX_ID_MASK' undeclared (first use in this function)
+> >
+> > Caused by commit d7a4e9b679e9 ("IB/mlx4: Add CM paravirtualization") from
+> > the infiniband tree interacting with commit "idr: rename MAX_LEVEL to
+> > MAX_IDR_LEVEL" from the akpm tree.
+> >
+> > I have added the following merge fix patch for today:
+> >
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 24 Sep 2012 23:57:53 +1000
+> > Subject: [PATCH] IB/mlx4: fix for MAX_ID_MASK to MAX_IDR_MASK name change
+> >
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  drivers/infiniband/hw/mlx4/cm.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/infiniband/hw/mlx4/cm.c b/drivers/infiniband/hw/mlx4/cm.c
+> > index e25e4da..80079e5 100644
+> > --- a/drivers/infiniband/hw/mlx4/cm.c
+> > +++ b/drivers/infiniband/hw/mlx4/cm.c
+> > @@ -225,7 +225,7 @@ id_map_alloc(struct ib_device *ibdev, int slave_id, u32 sl_cm_id)
+> >                 ret = idr_get_new_above(&sriov->pv_id_table, ent,
+> >                                         next_id, &id);
+> >                 if (!ret) {
+> > -                       next_id = ((unsigned) id + 1) & MAX_ID_MASK;
+> > +                       next_id = ((unsigned) id + 1) & MAX_IDR_MASK;
+> >                         ent->pv_cm_id = (u32)id;
+> >                         sl_id_map_add(ibdev, ent);
+> >                 }
+> 
+> Andrew, any preference on how to handle this merge?
+> 
+> Jack/Amir, I wonder if there's some way we can avoid this code
+> entirely?  Is an IDR the right structure to use here, or would we
+> be better off with a radix tree maybe (where we can assign our
+> own ID)?
+> 
+>  - R.
+> 
