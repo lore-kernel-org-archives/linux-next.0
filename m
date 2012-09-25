@@ -1,51 +1,35 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the acpi tree
-Date: Tue, 25 Sep 2012 15:39:21 -0700
-Message-ID: <20120925223921.GB6282@kroah.com>
-References: <20120924164916.faeb0225ef2b0732762d8aac@canb.auug.org.au>
- <20120924165449.58e81fb0c925ecc580ec502e@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tty tree with the workqueues tree
+Date: Tue, 25 Sep 2012 15:39:34 -0700
+Message-ID: <20120925223934.GC6282@kroah.com>
+References: <20120924163609.4f274e6340b92cea66eceb40@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:47191 "EHLO
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:41959 "EHLO
 	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751836Ab2IYWjX (ORCPT
+	by vger.kernel.org with ESMTP id S1750911Ab2IYWjg (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Sep 2012 18:39:23 -0400
+	Tue, 25 Sep 2012 18:39:36 -0400
 Content-Disposition: inline
-In-Reply-To: <20120924165449.58e81fb0c925ecc580ec502e@canb.auug.org.au>
+In-Reply-To: <20120924163609.4f274e6340b92cea66eceb40@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Feng Tang <feng.tang@intel.com>, Len Brown <lenb@kernel.org>, Lan Tianyu <tianyu.lan@intel.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Sourav Poddar <sourav.poddar@ti.com>
 
-On Mon, Sep 24, 2012 at 04:54:49PM +1000, Stephen Rothwell wrote:
+On Mon, Sep 24, 2012 at 04:36:09PM +1000, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> On Mon, 24 Sep 2012 16:49:16 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the usb tree got a conflict in
-> > drivers/usb/core/usb-acpi.c between commit 59e6423ba8aa ("usb-acpi:
-> > Comply with the ACPI API change") from the acpi tree and commit
-> > 05f916894a69 ("usb/acpi: Store info on device removability") from the usb
-> > tree.
-> > 
-> > The latter removed the function changed by the former, so I just did that
-> > and can carry the fix as necessary (no action is required).
+> Today's linux-next merge of the tty tree got a conflict in
+> drivers/tty/serial/omap-serial.c between commit 43829731dd37 ("workqueue:
+> deprecate flush[_delayed]_work_sync()") from the workqueues tree and
+> commit ac57e7f38ea6 ("serial: omap: Remove unnecessary checks from
+> suspend/resume") from the tty tree.
 > 
-> It also needed this merge fix patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 24 Sep 2012 16:51:38 +1000
-> Subject: [PATCH] usb-acpi: Comply with the ACPI API change after usb tree
->  merge
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/usb/core/usb-acpi.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Ick, thanks for this, hopefully Len handles this properly during the
-merge window :)
+Looks fine to me, thanks.
 
 greg k-h
