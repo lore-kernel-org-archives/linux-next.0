@@ -1,31 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] ipconfig: fix trivial build error
-Date: Tue, 25 Sep 2012 13:23:17 -0400 (EDT)
-Message-ID: <20120925.132317.2132522444026609326.davem@davemloft.net>
-References: <1348255713.12456.43.camel@mars>
-	<1348560598-21233-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: mmotm 2012-09-20-17-25 uploaded (fs/bimfmt_elf on uml)
+Date: Tue, 25 Sep 2012 12:43:53 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1209251243320.31518@chino.kir.corp.google.com>
+References: <20120921002638.7859F100047@wpzn3.hot.corp.google.com> <505C865D.5090802@xenotime.net> <20120922115606.5ca9f599cd88514ddda4831d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:35483 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757247Ab2IYRXT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 13:23:19 -0400
-In-Reply-To: <1348560598-21233-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:41926 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754184Ab2IYTnz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 15:43:55 -0400
+Received: by pbbrr4 with SMTP id rr4so638690pbb.19
+        for <linux-next@vger.kernel.org>; Tue, 25 Sep 2012 12:43:55 -0700 (PDT)
+In-Reply-To: <20120922115606.5ca9f599cd88514ddda4831d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: andriy.shevchenko@linux.intel.com
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, chf.fritz@googlemail.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Richard Weinberger <richard@nod.at>
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Tue, 25 Sep 2012 11:09:58 +0300
+On Sat, 22 Sep 2012, Stephen Rothwell wrote:
 
-> The commit 5e953778a2aab04929a5e7b69f53dc26e39b079e ("ipconfig: add nameserver
-> IPs to kernel-parameter ip=") introduces ic_nameservers_predef() that defined
-> only for BOOTP. However it is used by ip_auto_config_setup() as well. This
-> patch moves it outside of #ifdef BOOTP.
+> > on uml for x86_64 defconfig:
+> > 
+> > fs/binfmt_elf.c: In function 'fill_files_note':
+> > fs/binfmt_elf.c:1419:2: error: implicit declaration of function 'vmalloc'
+> > fs/binfmt_elf.c:1419:7: warning: assignment makes pointer from integer without a cast
+> > fs/binfmt_elf.c:1437:5: error: implicit declaration of function 'vfree'
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> reported in linux-next (offending patch reverted for other
+> problems).
+> 
 
-Applied, thanks.
+This still happens on x86_64 for linux-next as of today's tree.
