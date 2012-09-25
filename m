@@ -1,60 +1,94 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd tree
-Date: Tue, 25 Sep 2012 13:47:35 +1000
-Message-ID: <20120925134735.067e4f119bd71099df30724f@canb.auug.org.au>
+From: NeilBrown <neilb@suse.de>
+Subject: Re: linux-next: build failure after merge of the md tree
+Date: Tue, 25 Sep 2012 14:10:05 +1000
+Message-ID: <20120925141005.2a83593e@notabene.brown>
+References: <20120925133146.36615871cf4ccbcbd422ed87@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_13_47_35_+1000_rR0FVyPzKtNn5Z_O"
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/AVb3x23g=xwDjDgAYF6cLAA"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40645 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752518Ab2IYDrp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Sep 2012 23:47:45 -0400
+Received: from cantor2.suse.de ([195.135.220.15]:32847 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750774Ab2IYEKR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Sep 2012 00:10:17 -0400
+In-Reply-To: <20120925133146.36615871cf4ccbcbd422ed87@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthias Kaehlcke <matthias@kaehlcke.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__25_Sep_2012_13_47_35_+1000_rR0FVyPzKtNn5Z_O
+--Sig_/AVb3x23g=xwDjDgAYF6cLAA
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+On Tue, 25 Sep 2012 13:31:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au>
+wrote:
 
-After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+> Hi Neil,
+>=20
+> After merging the md tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>=20
+> ERROR: "__tracepoint_block_unplug" [drivers/md/raid456.ko] undefined!
+>=20
+> Presumably caused by commit 14817e9a6dab ("md/raid5: add blktrace calls").
+>=20
+> CONFIG_MD_RAID456=3Dm
+>=20
+> I have used the md tree from next-20120924 for today.
 
-FATAL: modpost: GPL-incompatible module tps65217_bl.ko uses GPL-only symbol=
- 'platform_driver_unregister'
+Thanks.
+I requires the following which I have already sent to Jens Axboe.
+I might pull my patch until this fix-up is resolve.
 
-Caused by commit dbc14ec43af2 ("backlight: Add TPS65217 WLED driver").
+Thanks,
+NeilBrown
 
-I have used the mfd tree from next-20120924 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__25_Sep_2012_13_47_35_+1000_rR0FVyPzKtNn5Z_O
-Content-Type: application/pgp-signature
+=46rom 0ef9cbd6e5c6f6c9f303c8a7c905afb3fb55c28d Mon Sep 17 00:00:00 2001
+From: NeilBrown <neilb@suse.de>
+Date: Tue, 25 Sep 2012 09:56:31 +1000
+Subject: [PATCH] block: export trace_block_unplug
+
+This allows stacked devices (like md/raid5) to provide blktrace
+tracing, including unplug events.
+
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: NeilBrown <neilb@suse.de>
+
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 4b4dbdf..ef55ae0 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -40,6 +40,7 @@
+ EXPORT_TRACEPOINT_SYMBOL_GPL(block_bio_remap);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(block_rq_remap);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(block_bio_complete);
++EXPORT_TRACEPOINT_SYMBOL_GPL(block_unplug);
+=20
+ DEFINE_IDA(blk_queue_ida);
+=20
+
+--Sig_/AVb3x23g=xwDjDgAYF6cLAA
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v2.0.18 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYSlXAAoJEECxmPOUX5FE8YAP+wQ5DXuDH9R6uNvsy4yVxnEY
-bHMcDp+zV45rSJiG91UFn2HbHEQHqAU/ZSuGTNV+LMoaUPXOY7c8mE3eUYUNpuie
-NdUL6MIXqC2VzY2+xquOGerZCW4wUGE/tNAtrKMwH1bZ9FjcMOsl8seMProDzREs
-2flTxjLxf/3yGSwjXyOAy+GPG+cbqmD1JxW/7po3DhqW5bjGwDSwN8BWfzdBull2
-TyjH/txWkSY3ehFOVESjNn+KSjv1gTAdMTZwZAXDxbibAjjQbdjftlP6+sagftct
-i/Ni5tu2D27uFDGnn4fcieqOy0PQ2ivAb7JGIDheJc6yQZnQhcJmTcfKkLiM5UCW
-CkP12DHVgogMp+JDmQ34+BF+SC5nfZdaumySDJ8DvDck35/jMdXnXTGz50u6Il3j
-Po6dBEs9QlQpRdyRMQOeKV1nYL1Lpe84T7y0uA4QwJ7bfV0x6jntgYtcknsW1rfE
-HuiXPogDvxV40jVGDojK6Iqa0SNdYA95NZ+ORd5q9O+UzLhf5uxsh3eX/yJwoNzr
-KfXX3noJs+dNKNV63AkHcG9J67QoLC07KssxNMJXkL4V5AWL3Br1uE679jGk8YCS
-AexMH8rv0C3gIKEaFMSRpqOBP60PWNfgeM/5LBGPABu074SVVSHmTjlCJPVU0pf7
-Le7YugGibX7Q5ejFJbji
-=Ld+F
+iQIVAwUBUGEunjnsnt1WYoG5AQK8yhAAi1qYovddDfRCggqvw2nGS8jFAMCuylHy
+Wm2Hh0jR5BL9Fu76o0SVOsUw7ADDUll5ZQG3FuPgViV026+R48vddoJN/Nu3jMZT
+KNDr4evIQRVQk7XhSHQLKuLJ1fxV896vnNhckeGUmiC8E33Dr6/+wp4n93pQb3Z8
+w8pMQtXsUE10iXI9TN6dpyMIvOpyhPJBANQfw1Qc3xpOe2wxPyhIbDTxm5Two5+i
+6bVNTaumH84IOQYgk20JpkmeaScRu8EBPCInby/2a/E1EIueqsUPPaEAVxj5uw2g
+3cbczhvDF7eaTNHYByhJSKDLytp0wP8V5r410bWkpi1WLbDG8Daf5xMyBkjvngUY
+Z1WouxeU11T2+qVVhQovASk9B6D1pZrrjq//jX5eoEY6Iq/cKfZsulvSwnHkOJDt
+gusODXYY8V5q0AyGuSXb4/Mfh7XqpkApti/3LA3KyehhhCiPjjgjFLiyuIX86Ux1
+wu0tInRYWx3HAWx2JDJGgWmepiAPP6N98oRHiXhOt26HUFHtqP89Qc0VojbDC2Zc
+FUFlLU1PR+edIhIB/9jLkrzcEh+3j0RWLNSBzo87OWmxw8g0SAMOX+XHCcPPyn/x
+qq/LxRpDAe/MEOUzEOAK2c2svMVbpH5GJr4b5LoJjPHEXjb8dWVPRKseV98ZZavu
+DPrPR0qvSRA=
+=mxjf
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Sep_2012_13_47_35_+1000_rR0FVyPzKtNn5Z_O--
+--Sig_/AVb3x23g=xwDjDgAYF6cLAA--
