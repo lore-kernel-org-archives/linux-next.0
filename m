@@ -1,40 +1,35 @@
-From: Matthew Garrett <mjg@redhat.com>
-Subject: Re: [PATCH -next v2] Shorten constant names for EFI variable
- attributes
-Date: Wed, 26 Sep 2012 00:12:46 +0100
-Message-ID: <20120925231246.GA30343@srcf.ucam.org>
-References: <20120720220841.GA32642@hp.com>
- <5009D770.1050905@zytor.com>
- <20120723132656.GC21495@srcf.ucam.org>
- <50117E40.8090904@hp.com>
- <20120726173332.GA19851@srcf.ucam.org>
- <20120925154100.GA13412@ldl.usa.hp.com>
- <20120926075528.e497436227403ecaf1b845d3@canb.auug.org.au>
- <1348614392.17507.5.camel@concerto.americas.hpqcorp.net>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: mmotm 2012-09-20-17-25 uploaded (fs/bimfmt_elf on uml)
+Date: Tue, 25 Sep 2012 16:28:14 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1209251627220.6503@chino.kir.corp.google.com>
+References: <20120921002638.7859F100047@wpzn3.hot.corp.google.com> <505C865D.5090802@xenotime.net> <20120922115606.5ca9f599cd88514ddda4831d@canb.auug.org.au> <alpine.DEB.2.00.1209251243320.31518@chino.kir.corp.google.com>
+ <20120926074827.32c7187adef6327c74c75564@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:42142 "EHLO
-	cavan.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751804Ab2IYXNX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 19:13:23 -0400
-Content-Disposition: inline
-In-Reply-To: <1348614392.17507.5.camel@concerto.americas.hpqcorp.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Khalid Aziz <khalid.aziz@hp.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, hpa@zytor.com, keescook@chromium.org, tony.luck@intel.com, Greg KH <gregkh@linuxfoundation.org>, cbouatmailru@gmail.com, ccross@android.com, paul.gortmaker@windriver.com, maxin.john@gmail.com, matt.fleming@intel.com, olof@lixom.net, dhowells@redhat.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, khalid@gonehiking.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20120926074827.32c7187adef6327c74c75564@canb.auug.org.au>
+Sender: owner-linux-mm@kvack.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Richard Weinberger <richard@nod.at>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 25, 2012 at 05:06:32PM -0600, Khalid Aziz wrote:
+On Wed, 26 Sep 2012, Stephen Rothwell wrote:
 
-> This is for code cleanup and does not impact functionality. This is
-> based upon an earlier discussion -
-> <https://lkml.org/lkml/2012/7/13/320>. The goal is to make the code more
-> readable. V1 of this patch was discussed at
-> <https://lkml.org/lkml/2012/7/20/414>.
+> > This still happens on x86_64 for linux-next as of today's tree.
+> 
+> Are you sure?  next-20120925?
+> 
+> $ grep -n vmalloc fs/binfmt_elf.c
+> 30:#include <linux/vmalloc.h>
+> 1421:	data = vmalloc(size);
+> 
 
-Right. Keeping the spec names makes it difficult to write code in a 
-readable way.
+Ok, it looks like it's fixed by 1bb6a4c9514e in today's linux-next tree; 
+that wasn't present when I pulled it at 2am PDT, so it must be a time zone 
+difference.  Thanks.
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
