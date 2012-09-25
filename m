@@ -1,62 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the md tree
-Date: Tue, 25 Sep 2012 14:50:10 +1000
-Message-ID: <20120925145010.621ed466daec9e5e4f1d9ddd@canb.auug.org.au>
-References: <20120925133146.36615871cf4ccbcbd422ed87@canb.auug.org.au>
-	<20120925141005.2a83593e@notabene.brown>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 25 Sep 2012 07:10:42 +0200
+Message-ID: <1348549842.26828.1897.camel@edumazet-glaptop>
+References: <20120925123438.bbf3126889513ee5cc195e5c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Sep_2012_14_50_10_+1000_Tq0dminTPGoXw+_o"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54484 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750777Ab2IYEuT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 00:50:19 -0400
-In-Reply-To: <20120925141005.2a83593e@notabene.brown>
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:63047 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750785Ab2IYFKq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Sep 2012 01:10:46 -0400
+In-Reply-To: <20120925123438.bbf3126889513ee5cc195e5c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
 
---Signature=_Tue__25_Sep_2012_14_50_10_+1000_Tq0dminTPGoXw+_o
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2012-09-25 at 12:34 +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net-next tree got a conflict in
+> net/ipv4/raw.c between commit ab43ed8b7490 ("ipv4: raw: fix icmp_filter
+> ()") from the net tree and commit 5640f7685831 ("net: use a per task frag
+> allocator") from the net-next tree.
+> 
+> They are basically the same patch (for this file) except the net-next
+> version adds two pr_err() calls. I used the net-next version and can carry
+> the fix as necessary (no action is required).
+> 
+> I do wonder if this change belongs in the net-next patch?
 
-Hi Neil,
+Oops, my bad, net/ipv4/raw.c changes in 5640f7685831 ("net: use a per
+task frag allocator") should not be there :
 
-On Tue, 25 Sep 2012 14:10:05 +1000 NeilBrown <neilb@suse.de> wrote:
->
-> I requires the following which I have already sent to Jens Axboe.
-> I might pull my patch until this fix-up is resolve.
+I accidentally left a debugging version of the patch I sent to fix the
+icmp bug.
 
-Or just ask Jens if you can submit that patch through your tree (with his
-Ack) since you are the one who needs it?
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__25_Sep_2012_14_50_10_+1000_Tq0dminTPGoXw+_o
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQYTgCAAoJEECxmPOUX5FEv1gP/RmTURhDWQ+aNntQNbgzfwg9
-4zCbLF1GaVcxeuRDJ5di+H4mqTsz0rOMmiXld9d97fS1oxoZNzReXrLBC/AYECi0
-I6+l5jlkMOm301PX7MEdbuL+cIT767jEqYGAeBuEXsUkEwKoGOccCgbH9G/ppT5v
-VzZzo2OLQDomaM6co0QxpY0vmcIfMagkNtyk1/FAuGAJQFZhf2pRdBYFEZC1QyEu
-HchwBedZjH0aNYnvGWg9jku0KVzGu3YY6v6P8TVtZo8Eq6igCeCUfJD1Ir7NUg/f
-pwXS+NTYo59yZmB/uDPMtke1YdeDD6/hLE5RR6TtdPV63aJW6xb/AapdPd9Hmm/o
-C8+Z3kalQzjQ8EBmJzsQ/Mpjs1rr1LfMDMpSqT7mEkNOKMZOguloKa27rl8WVkxZ
-OX7flCXkOY4KZCfjhnPEfFHrRkzi/CmHV1sTMY+J7RWs6WFA1dIbPz+R49ohGzvb
-TyAShdj4XIzpFWzQnU4f21aKrfBssaDQ6JUHiamP636kFmunaeLXeqZ8xiF0gIX9
-jCAuwDqMTgOXzDMHlfit2HaT0FBzBK+6pa8tvjbSgnrTKo9lRtnMsnvfPnhocEEu
-Fww+luxHCagQtQBF6Otk2QDM0F3IEv3LHWOR0wWVcr6lPuAtaPihzU8EFhxUY1xI
-0kcs/LkF5+17HpPNCbfX
-=+oCX
------END PGP SIGNATURE-----
-
---Signature=_Tue__25_Sep_2012_14_50_10_+1000_Tq0dminTPGoXw+_o--
+Sorry David for this, I am not sure how I can help on this ?
