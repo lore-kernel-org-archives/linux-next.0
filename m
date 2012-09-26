@@ -1,53 +1,39 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Wed, 26 Sep 2012 13:47:55 -0700
-Message-ID: <20120926134755.37b3db32.akpm@linux-foundation.org>
-References: <20120926160127.c34cb6d3e5dcc9ab32e8b573@canb.auug.org.au>
-	<CAGXu5jJJPLXP1cjtWAwHNmYQ6ZxtVu=Oo6vh=NkowzT+26RWPg@mail.gmail.com>
-	<20120926133335.b012417e.akpm@linux-foundation.org>
-	<CAGXu5jK1i_0t+qGpC0XfE=G1r5qWJDfx2A64T1Yb=w2LDiLW1g@mail.gmail.com>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH -next] MIPS: ptrace: Add missing #include <asm/syscall.h>
+Date: Wed, 26 Sep 2012 23:09:43 +0200
+Message-ID: <20120926210943.GA4745@linux-mips.org>
+References: <1347913216-11140-1-git-send-email-geert@linux-m68k.org>
+ <20120923173609.GE13842@linux-mips.org>
+ <5060A52C.1050504@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56245 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751033Ab2IZUr4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Sep 2012 16:47:56 -0400
-In-Reply-To: <CAGXu5jK1i_0t+qGpC0XfE=G1r5qWJDfx2A64T1Yb=w2LDiLW1g@mail.gmail.com>
+Received: from eddie.linux-mips.org ([78.24.191.182]:48190 "EHLO
+	cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751648Ab2IZVJv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Sep 2012 17:09:51 -0400
+Received: from localhost.localdomain ([127.0.0.1]:58262 "EHLO linux-mips.org"
+        rhost-flags-OK-OK-OK-FAIL) by eddie.linux-mips.org with ESMTP
+        id S1903848Ab2IZVJt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 26 Sep 2012 23:09:49 +0200
+Content-Disposition: inline
+In-Reply-To: <5060A52C.1050504@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>
+To: David Daney <ddaney.cavm@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-mips@linux-mips.org, linux-next@vger.kernel.org
 
-On Wed, 26 Sep 2012 13:42:05 -0700
-Kees Cook <keescook@chromium.org> wrote:
+On Mon, Sep 24, 2012 at 11:23:40AM -0700, David Daney wrote:
 
-> > +static inline int audit_get_loginuid(struct task_struct *tsk)
+> >Thanks, I already had fixed that in the linux-trace tree; the latest
+> >version just had not yet propagated yet to the other trees.
+> >
 > 
-> Shouldn't this return kuid_t, due to "userns: Convert the audit
-> loginuid  to be a kuid"?
+> It is still not on mips-for-linux-next.  Perhaps we should arrange
+> for it to be there, so that the actual propagation may commence.
 
-yup, thanks.
+Seems my fix one branch, push the other strategy didn't work so well ;-)
 
---- a/include/linux/audit.h~audith-replace-defines-with-c-stubs-fix
-+++ a/include/linux/audit.h
-@@ -530,7 +530,7 @@ extern int auditsc_get_stamp(struct audi
- 			      struct timespec *t, unsigned int *serial);
- extern int audit_set_loginuid(kuid_t loginuid);
- 
--static inline int audit_get_loginuid(struct task_struct *tsk)
-+static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
- {
- 	return tsk->loginuid
- }
-@@ -677,7 +677,7 @@ static inline int auditsc_get_stamp(stru
- {
- 	return 0;
- }
--static inline int audit_get_loginuid(struct task_struct *tsk)
-+static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
- {
- 	return INVALID_UID;
- }
-_
+Fixed, sorry.
+
+  Ralf
