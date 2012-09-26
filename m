@@ -1,75 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the fbdev tree
-Date: Wed, 26 Sep 2012 14:57:56 +1000
-Message-ID: <20120926145756.e00474c7d2f1a4734c10fb0e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Wed, 26 Sep 2012 16:01:27 +1000
+Message-ID: <20120926160127.c34cb6d3e5dcc9ab32e8b573@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Sep_2012_14_57_56_+1000_eqvLJw9Sh+yzJ6f_"
+ boundary="Signature=_Wed__26_Sep_2012_16_01_27_+1000_M8LjVwyiXBMI+2kR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57963 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48165 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751918Ab2IZE6H (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Sep 2012 00:58:07 -0400
+	with ESMTP id S1751918Ab2IZGBi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Sep 2012 02:01:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
 
---Signature=_Wed__26_Sep_2012_14_57_56_+1000_eqvLJw9Sh+yzJ6f_
+--Signature=_Wed__26_Sep_2012_16_01_27_+1000_M8LjVwyiXBMI+2kR
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/video/msm/mdp_hw.h between commit 8abf0b31e161 ("video: msm:
-Remove useless mach/* includes") from the fbdev tree and commit
-1ef21f6343ff ("ARM: msm: move platform_data definitions") from the
-arm-soc tree.
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+net/key/af_key.c: In function 'pfkey_add':
+net/key/af_key.c:1476:9: error: implicit declaration of function 'audit_get=
+_sessionid' [-Werror=3Dimplicit-function-declaration]
+net/core/dev.c: In function '__dev_set_promiscuity':
+net/core/dev.c:4573:5: error: implicit declaration of function 'audit_get_s=
+essionid' [-Werror=3Dimplicit-function-declaration]
 
+Caused by commit "audit.h: replace defines with C stubs".
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/video/msm/mdp_hw.h
-index 2a84137,a0bacf5..0000000
---- a/drivers/video/msm/mdp_hw.h
-+++ b/drivers/video/msm/mdp_hw.h
-@@@ -15,7 -15,8 +15,7 @@@
-  #ifndef _MDP_HW_H_
-  #define _MDP_HW_H_
- =20
-- #include <mach/msm_fb.h>
- -#include <mach/msm_iomap.h>
-+ #include <linux/platform_data/video-msm_fb.h>
- =20
-  struct mdp_info {
-  	struct mdp_device mdp_dev;
-
---Signature=_Wed__26_Sep_2012_14_57_56_+1000_eqvLJw9Sh+yzJ6f_
+--Signature=_Wed__26_Sep_2012_16_01_27_+1000_M8LjVwyiXBMI+2kR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQYotUAAoJEECxmPOUX5FEnj0QAKb7X78h9TgtTwUscGo7wufc
-lYvRKiaPEiUMmWxyHivnb40rx0NtDMW90YJd8RfZ4Bk3eOLQLwiMZjFNEKf6rQa6
-wj6BfblzSEPimuF1kxfS4t9FksjFuUId30kcz/ZiQR35Tecd9GgzV1eigOg7+5rA
-rAhMKVe51XpIESzqZgnyL7MZBe0mQDpIVAccvBc5/S2b76TFG+wBq/fYzE2QslNc
-UsHYr+dI7k8DXPqt3ttbFfNBJlwsAZem+FyuVlFJt4FL+VPPKpVsW1YSoKzAHarD
-m7kOAf5CJs0zO6zoovx3SecCJk8Ei9iQFUv+5/VjOjVA9DhaEne3XI6jQzYqIYUB
-dv2W8d2TJeY79Z2aBA56icexnXGQ9bI9M8pNQouDkDfZHlNqTnUtnWGubw2KAYia
-iclxOJ02Kf8DV43FLrbD0dXD2FGyJJNbRo3SVZo+gWv7XB47c7rPZqcMZmNYZKRB
-mbs3edBmXVGOFFtNRo0cKiro5BdOxMNmf0Cdfyq/woDO/y8xYfzl8wKmywzcDOyQ
-9+dDsQ03mbWaVgGuDfJvk8q/wKe+s6vm9cp7q8C/BChwiTNk/WM05kN6eN686Jev
-qH16afg/uVd25M7AgueWA0V9Ymbj3F6ycBU0UrzuuhTD9UqrfsyqX4iDodKwG86P
-Ve4uA/uS6ZwD9r6QjfzJ
-=6b9S
+iQIcBAEBCAAGBQJQYpo3AAoJEECxmPOUX5FEvZQP/1shf6QORAUryr+0j2HMuAtv
+cxpkKm/l7PRrR27+Iq5Sy/RB1XNwCjiQoJeJ/lpYw+hNMhLsDe4doRQku9WO+O14
+YVVd+PgmvLG+pAvyIIGDj+4futJuczOkqCO2QbONrbate5MgA5VU9jKIPSeEHJY7
+W/+BPRlOFCALTuMi4srkPEpLx+0mA06McOhINC93Ci1PFHmJmDI0Xblb/yr5T4O1
+9xqldWQZdhglW4H4H1eO2q8YPJQA0tA+hLsRKEWvA3V/GAcDOghRRp0BOZ3IZvQ5
+VFqtF25ucmdFq/dlfYLjdTBqH2SFPcU1EgvEyxnv6XcTW5AKc9Uwlm44GxjUhP2u
+5Zg7XuIOcifzYmflQWYfZXqxsTaK5SWIpx1L6KCS4CY66URS/kqhm/z57c3Pc0Vo
+QMlds+3yFOvINkBtpUtgKrl3nuEu0KHpm0wjdTDs7x+aMovJMENykcgIxk3NQOI7
+lcF/xcBTUfYUzmG8j6uPVd91a/AmJloEn76dkO+msVoT6Pt/boKDKpv1wsg6IJjx
+zSZ1kgMBsLKzlyZbgUEm56vSFUCc+JlTkobIRI/N+01cWUOnJRiOVrg78lV/+dWS
+crIctOZPU7IF2z/GNtfyerk5CyhVvNuovI7UOgTTJZvQt0vZJvZ5IICgeTRYSDCK
+EgKDgjhDhDfuCUZjPvYR
+=DgOC
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__26_Sep_2012_14_57_56_+1000_eqvLJw9Sh+yzJ6f_--
+--Signature=_Wed__26_Sep_2012_16_01_27_+1000_M8LjVwyiXBMI+2kR--
