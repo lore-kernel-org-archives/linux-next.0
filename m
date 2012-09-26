@@ -1,37 +1,48 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
+From: Gianluca Gennari <gennarone@gmail.com>
 Subject: Re: mmotm 2012-09-25-17-06 uploaded (media/tuners/fc2580)
-Date: Wed, 26 Sep 2012 10:26:57 -0700
-Message-ID: <50633AE1.6020600@xenotime.net>
-References: <20120926000747.BE7B2100047@wpzn3.hot.corp.google.com>
+Date: Wed, 26 Sep 2012 19:36:26 +0200
+Message-ID: <50633D1A.4060300@gmail.com>
+References: <20120926000747.BE7B2100047@wpzn3.hot.corp.google.com> <50633AE1.6020600@xenotime.net>
+Reply-To: gennarone@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20120926000747.BE7B2100047@wpzn3.hot.corp.google.com>
-Sender: linux-media-owner@vger.kernel.org
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, linux-next@vger.kernel.org, Antti Palosaari <crope@iki.fi>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:50920 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757319Ab2IZRgc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Sep 2012 13:36:32 -0400
+In-Reply-To: <50633AE1.6020600@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, linux-next@vger.kernel.org, Antti Palosaari <crope@iki.fi>
 
-On 09/25/2012 05:07 PM, akpm@linux-foundation.org wrote:
-
-> The mm-of-the-moment snapshot 2012-09-25-17-06 has been uploaded to
+Il 26/09/2012 19:26, Randy Dunlap ha scritto:
+> On 09/25/2012 05:07 PM, akpm@linux-foundation.org wrote:
 > 
->    http://www.ozlabs.org/~akpm/mmotm/
+>> The mm-of-the-moment snapshot 2012-09-25-17-06 has been uploaded to
+>>
+>>    http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> mmotm-readme.txt says
+>>
+>> README for mm-of-the-moment:
+>>
+>> http://www.ozlabs.org/~akpm/mmotm/
 > 
-> mmotm-readme.txt says
 > 
-> README for mm-of-the-moment:
 > 
-> http://www.ozlabs.org/~akpm/mmotm/
+> on i386:
+> 
+> ERROR: "__udivdi3" [drivers/media/tuners/fc2580.ko] undefined!
+> ERROR: "__umoddi3" [drivers/media/tuners/fc2580.ko] undefined!
+> 
+> 
 
+Fixed here:
 
+http://patchwork.linuxtv.org/patch/14619/
 
-on i386:
-
-ERROR: "__udivdi3" [drivers/media/tuners/fc2580.ko] undefined!
-ERROR: "__umoddi3" [drivers/media/tuners/fc2580.ko] undefined!
-
-
--- 
-~Randy
+Regards,
+Gianluca
