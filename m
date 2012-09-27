@@ -1,63 +1,54 @@
-From: Durgadoss R <durgadoss.r@intel.com>
-Subject: [PATCH] Thermal: Fix synchronization issues in thermal_sys.c
-Date: Thu, 27 Sep 2012 11:38:03 +0530
-Message-ID: <1348726083-8540-1-git-send-email-durgadoss.r@intel.com>
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: lenb@kernel.org, rui.zhang@intel.com
-Cc: linux-acpi@vger.kernel.org, dan.carpenter@oracle.com, hughd@google.com, linux-next@vger.kernel.org, Durgadoss R <durgadoss.r@intel.com>
-List-Id: linux-next.vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: please clean up the msm tree
+Date: Thu, 27 Sep 2012 16:09:55 +1000
+Message-ID: <20120927160955.2b26954a0daf42af6d3f7cd3@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__27_Sep_2012_16_09_55_+1000_Y0wStl.Ekee7FX4J"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47584 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755454Ab2I0GKF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Sep 2012 02:10:05 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Brown <davidb@codeaurora.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
-This patch fixes the following mutex and NULL pointer
-problems in thermal_sys.c:
- * mutex_unlock fix in update_temperature function
- * mutex_unlock/NULL check fix in bind_cdev function
- * NULL check fix in bind_tz function
+--Signature=_Thu__27_Sep_2012_16_09_55_+1000_Y0wStl.Ekee7FX4J
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Durgadoss R <durgadoss.r@intel.com>
----
- drivers/thermal/thermal_sys.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Hi David,
 
-diff --git a/drivers/thermal/thermal_sys.c b/drivers/thermal/thermal_sys.c
-index 4f77d89..848553d 100644
---- a/drivers/thermal/thermal_sys.c
-+++ b/drivers/thermal/thermal_sys.c
-@@ -252,8 +252,8 @@ static void bind_cdev(struct thermal_cooling_device *cdev)
- 		}
- 
- 		tzp = pos->tzp;
--		if (!tzp->tbp)
--			return;
-+		if (!tzp || !tzp->tbp)
-+			continue;
- 
- 		for (i = 0; i < tzp->num_tbps; i++) {
- 			if (tzp->tbp[i].cdev || !tzp->tbp[i].match)
-@@ -289,7 +289,7 @@ static void bind_tz(struct thermal_zone_device *tz)
- 		goto exit;
- 	}
- 
--	if (!tzp->tbp)
-+	if (!tzp || !tzp->tbp)
- 		goto exit;
- 
- 	list_for_each_entry(pos, &thermal_cdev_list, node) {
-@@ -390,12 +390,13 @@ static void update_temperature(struct thermal_zone_device *tz)
- 	ret = tz->ops->get_temp(tz, &temp);
- 	if (ret) {
- 		pr_warn("failed to read out thermal zone %d\n", tz->id);
--		return;
-+		goto exit;
- 	}
- 
- 	tz->last_temperature = tz->temperature;
- 	tz->temperature = temp;
- 
-+exit:
- 	mutex_unlock(&tz->lock);
- }
- 
--- 
-1.7.9.5
+Since all of the patches in the msm tree have been merged into the
+arm-soc tree (but as different commits :-(), can you please clean up the
+msm tree.  It is causing unneeded conflicts in linux-next.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Signature=_Thu__27_Sep_2012_16_09_55_+1000_Y0wStl.Ekee7FX4J
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQY+2zAAoJEECxmPOUX5FERvwP/iC0CsFC7FZ2hNEvrzf5s/iA
+arqIZP3AUAIkMr7T9eYBR4fkvGVJ7LNs+uTXWEUo9eYRju1LCNJszKcAGlXADInf
+MSoPAA2SecAyjGrlU6XZgyQWoVQZ4pkK4hVL8IczaHji+4szeN16NDGL8NN9J+Zy
+VInh1gtzt7pj3Ilw1YxOzLE19rZkmRS8AZmNPF00dWrIp8MkGGHqGTb8CrQlhIR2
+rmtu+sMOaBK42qNZR/rt7a/fXX/1nCuia7PCEWbUXrREwy3wy94WqwOv5p9Lf8Ol
+IfEF/RVepUPeGzzxEqxoIy2jbv1kwdHIH4Tc7nWjuRxsJQta24cYD/WgBXc7Rryb
+Y7XlG3fIk3XqEGgSIb4yGEPRTe0L4Zds5/fLXKAm+Cp1NfGIiIWHPE915LN/kuto
+92xyNSSOjf7CFCaHtIhSGpNUjBMQp6HFrHF8eD89U+Mj1zK5mBt7xrjHSnTGfYsC
+6/MBk0ZGjWmJWRz3OtTIIeu7Z0QifPdzHePUF7Ks7i02QJxup3fwx/FbpHaXV/L9
+aF3NmbJWpmVDWmC+gmvqiXFlcux/kajECq1BhFbTdfftZf4GJ1chhMMh+nXq0y6c
+XwEKPOtYfsxz8Kwp0ULZmdl7FTRhVlHdnPvP2Jx75d4xEc8Q4kezb74ojYy8qNNp
+uVP5lOW5hfQ8hzj0ein6
+=EnQF
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__27_Sep_2012_16_09_55_+1000_Y0wStl.Ekee7FX4J--
