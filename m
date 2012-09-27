@@ -1,69 +1,106 @@
-From: Durgadoss R <durgadoss.r@intel.com>
-Subject: [PATCHv2] Thermal: Fix synchronization issues in thermal_sys.c
-Date: Thu, 27 Sep 2012 12:08:08 +0530
-Message-ID: <1348727888-11196-1-git-send-email-durgadoss.r@intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Thu, 27 Sep 2012 16:49:27 +1000
+Message-ID: <20120927164927.03f9dafeb014f11738daa2af@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__27_Sep_2012_16_49_27_+1000_gxoyf51dLhmolkLq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:49574 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751095Ab2I0GjO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 Sep 2012 02:39:14 -0400
+Received: from haggis.pcug.org.au ([203.10.76.10]:34882 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752915Ab2I0Gth (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Sep 2012 02:49:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: lenb@kernel.org, rui.zhang@intel.com
-Cc: linux-acpi@vger.kernel.org, dan.carpenter@oracle.com, hughd@google.com, linux-next@vger.kernel.org, Durgadoss R <durgadoss.r@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-This patch fixes the following mutex and NULL pointer
-problems in thermal_sys.c:
- * mutex_unlock fix in update_temperature function
- * mutex_unlock fix in bind_cdev function
- * NULL check fix in bind_tz function
+--Signature=_Thu__27_Sep_2012_16_49_27_+1000_gxoyf51dLhmolkLq
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Reported-by: Hugh Dickins <hughd@google.com>
-Signed-off-by: Durgadoss R <durgadoss.r@intel.com>
----
-v2:
- * Removed unnecessary NULL check in bind_cdev
- * Added 'Reported-by' tags for Sedat and Hugh
- drivers/thermal/thermal_sys.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Hi Andrew,
 
-diff --git a/drivers/thermal/thermal_sys.c b/drivers/thermal/thermal_sys.c
-index 4f77d89..e1179d3 100644
---- a/drivers/thermal/thermal_sys.c
-+++ b/drivers/thermal/thermal_sys.c
-@@ -253,7 +253,7 @@ static void bind_cdev(struct thermal_cooling_device *cdev)
- 
- 		tzp = pos->tzp;
- 		if (!tzp->tbp)
--			return;
-+			continue;
- 
- 		for (i = 0; i < tzp->num_tbps; i++) {
- 			if (tzp->tbp[i].cdev || !tzp->tbp[i].match)
-@@ -289,7 +289,7 @@ static void bind_tz(struct thermal_zone_device *tz)
- 		goto exit;
- 	}
- 
--	if (!tzp->tbp)
-+	if (!tzp || !tzp->tbp)
- 		goto exit;
- 
- 	list_for_each_entry(pos, &thermal_cdev_list, node) {
-@@ -390,12 +390,13 @@ static void update_temperature(struct thermal_zone_device *tz)
- 	ret = tz->ops->get_temp(tz, &temp);
- 	if (ret) {
- 		pr_warn("failed to read out thermal zone %d\n", tz->id);
--		return;
-+		goto exit;
- 	}
- 
- 	tz->last_temperature = tz->temperature;
- 	tz->temperature = temp;
- 
-+exit:
- 	mutex_unlock(&tz->lock);
- }
- 
--- 
-1.7.9.5
+Today's linux-next merge of the akpm tree got a conflict in
+include/linux/mm.h between commit 1dbd3d35fe64 ("mm/pgprot: Move the
+pgprot_modify() fallback definition to mm.h") from the tip tree and
+commit "mm, x86, pat: rework linear pfn-mmap tracking" from the akpm tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/linux/mm.h
+index 4adea2c,a66f646..0000000
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@@ -160,37 -160,6 +160,19 @@@ extern pgprot_t protection_map[16]
+  #define FAULT_FLAG_TRIED	0x40	/* second try */
+ =20
+  /*
+-  * This interface is used by x86 PAT code to identify a pfn mapping that =
+is
+-  * linear over entire vma. This is to optimize PAT code that deals with
+-  * marking the physical region with a particular prot. This is not for ge=
+neric
+-  * mm use. Note also that this check will not work if the pfn mapping is
+-  * linear for a vma starting at physical address 0. In which case PAT code
+-  * falls back to slow path of reserving physical range page by page.
+-  */
+- static inline int is_linear_pfn_mapping(struct vm_area_struct *vma)
+- {
+- 	return !!(vma->vm_flags & VM_PFN_AT_MMAP);
+- }
+-=20
+- static inline int is_pfn_mapping(struct vm_area_struct *vma)
+- {
+- 	return !!(vma->vm_flags & VM_PFNMAP);
+- }
+-=20
+- /*
+ + * Some architectures (such as x86) may need to preserve certain pgprot
+ + * bits, without complicating generic pgprot code.
+ + *
+ + * Most architectures don't care:
+ + */
+ +#ifndef pgprot_modify
+ +static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
+ +{
+ +	return newprot;
+ +}
+ +#endif
+ +
+ +/*
+   * vm_fault is filled by the the pagefault handler and passed to the vma's
+   * ->fault function. The vma's ->fault is responsible for returning a bit=
+mask
+   * of VM_FAULT_xxx flags that give details about how the fault was handle=
+d.
+
+--Signature=_Thu__27_Sep_2012_16_49_27_+1000_gxoyf51dLhmolkLq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQY/b3AAoJEECxmPOUX5FExoQP/Av4nyX+H+lRb/y1p9WQbZrB
+9zl6WQlgSesgeqUfVQ+22VAyuLRkZWGjVsWLj4dH1ayVgCSV/VmsnawM1SRIkqRl
+VccxWzFWqlpiZ01KiBadtRUNlTKZZVGBxpNK+Y/mIfUOEYu8xcZyII4/hV1mEdTy
+cqhC9ZGW1LIkpi9mcqY/sE99tcyJyyJ50lhFBSUflBXGac6GbkRb3zVKKknsHhOp
+roym/cRSERF//TAZ3OaTwWu5oggOt4TtY4kpSAI2HZMh1S8IxmQtin+a8nSkYR7y
+fU5qLAr4117CuDAQngHCwP6cTUBB/pafvYz3VYdNWEBmsrrsZ5U9qEnXHh016iok
+47d2XyYYVwA772mZGTdzDQ3Sz+5BQ7TS2VL7ofeibCDjWKCLpXjlTaE0/ijXNpbg
+K4cX4+/+phQVvjWSYheDx02ilxvQz3OdbarrvPR6xIgniWAi3vFxlO+587lONMMK
+Qx0sV6pjU88Ypku3nVi9uitFPuMRl/ItLiN3/ZlCpevnWmGXzU9iloJg/q8KtkKZ
+xluckH46DgpNkDRcB/urvUqJtP5vzzzMnqhfSqHrMYezs+0vaNZBRBJJwueo6/fn
+Ilrr7AV5I0cpHRoYpaSugjrnDs2zEe+z0eeNfiSu9B1tJQ5HdJ8tuFKxh7q5UTen
+vdM3Zz2L7Wi3ITMa0sbx
+=8if8
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__27_Sep_2012_16_49_27_+1000_gxoyf51dLhmolkLq--
