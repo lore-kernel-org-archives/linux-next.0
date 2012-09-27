@@ -1,106 +1,111 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH -next] staging: dgrp: Add missing #include <linux/uaccess.h>
-Date: Thu, 27 Sep 2012 20:38:26 +0200
-Message-ID: <1348771106-14105-1-git-send-email-geert@linux-m68k.org>
+From: Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCHv2] Thermal: Fix synchronization issues in thermal_sys.c
+Date: Thu, 27 Sep 2012 16:48:28 -0700 (PDT)
+Message-ID: <alpine.LSU.2.00.1209271626460.1314@eggly.anvils>
+References: <1348727888-11196-1-git-send-email-durgadoss.r@intel.com> <CA+icZUXV21BqzAHwPy5gY_VHEws8hXZ8B=vESuPazpmOSQVHvA@mail.gmail.com> <CA+icZUWd0s4bo4ASnfryUvSNSk82d5f3-so1RghbOhqHH5UOaw@mail.gmail.com>
+ <CA+icZUXo+w8G1ugG+m3YBE-LT7Qb6_Mbo2ijRqRXP1HXLTohGQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gerard.telenet-ops.be ([195.130.132.48]:37694 "EHLO
-	gerard.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752220Ab2I0Sia (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Sep 2012 14:38:30 -0400
+Received: from mail-ia0-f174.google.com ([209.85.210.174]:40868 "EHLO
+	mail-ia0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755803Ab2I0XtH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Sep 2012 19:49:07 -0400
+Received: by iagy32 with SMTP id y32so8393iag.19
+        for <linux-next@vger.kernel.org>; Thu, 27 Sep 2012 16:49:06 -0700 (PDT)
+In-Reply-To: <CA+icZUXo+w8G1ugG+m3YBE-LT7Qb6_Mbo2ijRqRXP1HXLTohGQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bill Pemberton <wfp5p@virginia.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: lenb@kernel.org, rui.zhang@intel.com
+Cc: Durgadoss R <durgadoss.r@intel.com>, Sedat Dilek <sedat.dilek@gmail.com>, linux-acpi@vger.kernel.org, dan.carpenter@oracle.com, linux-next@vger.kernel.org
 
-On m68k:
+On Thu, 27 Sep 2012, Sedat Dilek wrote:
+> >>
+> >> The v2 patch does *not* fix the issue here!
+> >>
+> >> [1] https://patchwork.kernel.org/patch/1511961/
+> >>
+> >
+> > I have re-tested with Linux-Next (next-20120927) plus thermal-next [1]
+> > pulled in and see still the same call-trace!
 
-drivers/staging/dgrp/dgrp_mon_ops.c: In function =E2=80=98dgrp_mon_read=
-=E2=80=99:
-drivers/staging/dgrp/dgrp_mon_ops.c:304: error: implicit declaration of=
- function =E2=80=98copy_to_user=E2=80=99
-drivers/staging/dgrp/dgrp_specproc.c: In function =E2=80=98config_proc_=
-write=E2=80=99:
-drivers/staging/dgrp/dgrp_specproc.c:470: error: implicit declaration o=
-f function =E2=80=98copy_from_user=E2=80=99
-drivers/staging/dgrp/dgrp_tty.c: In function =E2=80=98drp_wmove=E2=80=99=
-:
-drivers/staging/dgrp/dgrp_tty.c:1284: error: implicit declaration of fu=
-nction =E2=80=98copy_from_user=E2=80=99
-drivers/staging/dgrp/dgrp_tty.c: In function =E2=80=98get_modem_info=E2=
-=80=99:
-drivers/staging/dgrp/dgrp_tty.c:2267: error: implicit declaration of fu=
-nction =E2=80=98put_user=E2=80=99
-drivers/staging/dgrp/dgrp_tty.c: In function =E2=80=98set_modem_info=E2=
-=80=99:
-drivers/staging/dgrp/dgrp_tty.c:2283: error: implicit declaration of fu=
-nction =E2=80=98access_ok=E2=80=99
-drivers/staging/dgrp/dgrp_tty.c:2283: error: =E2=80=98VERIFY_READ=E2=80=
-=99 undeclared (first use in this function)
-drivers/staging/dgrp/dgrp_tty.c:2283: error: (Each undeclared identifie=
-r is reported only once
-drivers/staging/dgrp/dgrp_tty.c:2283: error: for each function it appea=
-rs in.)
-drivers/staging/dgrp/dgrp_tty.c:2287: error: implicit declaration of fu=
-nction =E2=80=98get_user=E2=80=99
-drivers/staging/dgrp/dgrp_tty.c: In function =E2=80=98dgrp_tty_digigete=
-delay=E2=80=99:
-drivers/staging/dgrp/dgrp_tty.c:2474: error: implicit declaration of fu=
-nction =E2=80=98copy_to_user=E2=80=99
-drivers/staging/dgrp/dgrp_tty.c: In function =E2=80=98dgrp_tty_ioctl=E2=
-=80=99:
-drivers/staging/dgrp/dgrp_tty.c:2618: error: =E2=80=98VERIFY_WRITE=E2=80=
-=99 undeclared (first use in this function)
+Same here on mmotm, yes.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> >
+> > Hugh or Dan can you confirm this works for you or not?
+> > Thanks in advance.
+> >
+> > [1] http://git.kernel.org/?p=linux/kernel/git/rzhang/linux.git;a=shortlog;h=refs/heads/next
+> > [2] http://git.kernel.org/?p=linux/kernel/git/rzhang/linux.git;a=commitdiff;h=404b134156bd9d9bc506c0974a1254806e13db2c
+> >
+> 
+> With the attached fixup/followup patch, I can boot into my system!
+> But, as said yesterday... working within X, Firefox is a pain in the a**.
+
+Indeed, this works for me too, thanks.
+Let's get your addition out of the attachment and fold it into a v3.
+Mind if we change "synchronization issues" to "oops and unlocking"?
+
+
+[PATCHv3] Thermal: Fix oops and unlocking in thermal_sys.c
+
+This patch fixes the following mutex and NULL pointer
+problems in thermal_sys.c:
+
+ * mutex_unlock fix in update_temperature function
+ * mutex_unlock fix in bind_cdev function
+ * Correct early return to continue in bind_cdev function
+ * NULL check fix in bind_cdev function
+ * NULL check fix in bind_tz function
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+Reported-by: Hugh Dickins <hughd@google.com>
+Signed-off-by: Durgadoss R <durgadoss.r@intel.com>
+Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
+Signed-off-by: Hugh Dickins <hughd@google.com>
 ---
-See also http://kisskb.ellerman.id.au/kisskb/buildresult/7277002/
+v3:
+ * Sedat restored necessary NULL check in bind_cdev and his signoff.
+ * Hugh added two more comments above, his signoff, and Dan's 'Reported-by'.
 
- drivers/staging/dgrp/dgrp_mon_ops.c  |    1 +
- drivers/staging/dgrp/dgrp_specproc.c |    1 +
- drivers/staging/dgrp/dgrp_tty.c      |    1 +
- 3 files changed, 3 insertions(+), 0 deletions(-)
+ drivers/thermal/thermal_sys.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/dgrp/dgrp_mon_ops.c b/drivers/staging/dgrp=
-/dgrp_mon_ops.c
-index 268dcb9..4792d05 100644
---- a/drivers/staging/dgrp/dgrp_mon_ops.c
-+++ b/drivers/staging/dgrp/dgrp_mon_ops.c
-@@ -38,6 +38,7 @@
- #include <linux/sched.h>
- #include <asm/unaligned.h>
- #include <linux/proc_fs.h>
-+#include <linux/uaccess.h>
-=20
- #include "dgrp_common.h"
-=20
-diff --git a/drivers/staging/dgrp/dgrp_specproc.c b/drivers/staging/dgr=
-p/dgrp_specproc.c
-index 28f5c9a..a5840e7 100644
---- a/drivers/staging/dgrp/dgrp_specproc.c
-+++ b/drivers/staging/dgrp/dgrp_specproc.c
-@@ -39,6 +39,7 @@
- #include <linux/proc_fs.h>
- #include <linux/ctype.h>
- #include <linux/seq_file.h>
-+#include <linux/uaccess.h>
- #include <linux/vmalloc.h>
-=20
- #include "dgrp_common.h"
-diff --git a/drivers/staging/dgrp/dgrp_tty.c b/drivers/staging/dgrp/dgr=
-p_tty.c
-index 7d7de87..72f6fcf 100644
---- a/drivers/staging/dgrp/dgrp_tty.c
-+++ b/drivers/staging/dgrp/dgrp_tty.c
-@@ -40,6 +40,7 @@
- #include <linux/tty.h>
- #include <linux/tty_flip.h>
- #include <linux/sched.h>
-+#include <linux/uaccess.h>
-=20
- #include "dgrp_common.h"
-=20
---=20
-1.7.0.4
+--- mmotm/drivers/thermal/thermal_sys.c	2012-09-26 10:15:28.652071362 -0700
++++ linux/drivers/thermal/thermal_sys.c	2012-09-27 16:19:14.427515890 -0700
+@@ -252,8 +252,8 @@ static void bind_cdev(struct thermal_coo
+ 		}
+ 
+ 		tzp = pos->tzp;
+-		if (!tzp->tbp)
+-			return;
++		if (!tzp || !tzp->tbp)
++			continue;
+ 
+ 		for (i = 0; i < tzp->num_tbps; i++) {
+ 			if (tzp->tbp[i].cdev || !tzp->tbp[i].match)
+@@ -289,7 +289,7 @@ static void bind_tz(struct thermal_zone_
+ 		goto exit;
+ 	}
+ 
+-	if (!tzp->tbp)
++	if (!tzp || !tzp->tbp)
+ 		goto exit;
+ 
+ 	list_for_each_entry(pos, &thermal_cdev_list, node) {
+@@ -387,12 +387,13 @@ static void update_temperature(struct th
+ 	ret = tz->ops->get_temp(tz, &temp);
+ 	if (ret) {
+ 		pr_warn("failed to read out thermal zone %d\n", tz->id);
+-		return;
++		goto exit;
+ 	}
+ 
+ 	tz->last_temperature = tz->temperature;
+ 	tz->temperature = temp;
+ 
++exit:
+ 	mutex_unlock(&tz->lock);
+ }
+ 
