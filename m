@@ -1,74 +1,70 @@
-From: Mikulas Patocka <mpatocka@redhat.com>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Fri, 28 Sep 2012 11:19:29 -0400 (EDT)
-Message-ID: <Pine.LNX.4.64.1209281117580.21946@file.rdu.redhat.com>
-References: <20120928163029.19d304240b796e2c7a7d633b@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: [PATCH -next] ata: fix sata_highbank.c build errors
+Date: Fri, 28 Sep 2012 10:13:30 -0700
+Message-ID: <5065DABA.7060404@xenotime.net>
+References: <20120919162643.907ddda75e198f060e4e83fe@canb.auug.org.au> <505A0BCF.5040905@xenotime.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120928163029.19d304240b796e2c7a7d633b@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>, Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <505A0BCF.5040905@xenotime.net>
+Sender: linux-ide-owner@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Jeff Garzik <jgarzik@pobox.com>, Mark Langsdorf <mark.langsdorf@calxeda.com>
 List-Id: linux-next.vger.kernel.org
 
+On 09/19/2012 11:15 AM, Randy Dunlap wrote:
+
+> From: Randy Dunlap <rdunlap@xenotime.net>
+> 
 
 
-On Fri, 28 Sep 2012, Stephen Rothwell wrote:
+ping.
+This build error is still present in linux-next of 20120928.
 
-> Hi Andrew,
+> Fix build errors in sata_highbank.c by also building libahci.o.
+> Fixes these build errors:
 > 
-> After merging the akpm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> drivers/built-in.o: In function `ahci_highbank_hardreset':
+> sata_highbank.c:(.text+0x1edc9a): undefined reference to `ahci_stop_engine'
+> sata_highbank.c:(.text+0x1edfab): undefined reference to `ahci_start_engine'
+> sata_highbank.c:(.text+0x1edfd5): undefined reference to `ahci_dev_classify'
+> drivers/built-in.o: In function `ahci_highbank_resume':
+> sata_highbank.c:(.text+0x1ee0af): undefined reference to `ahci_reset_controller'
+> sata_highbank.c:(.text+0x1ee0e1): undefined reference to `ahci_init_controller'
+> drivers/built-in.o: In function `ahci_highbank_probe':
+> sata_highbank.c:(.init.text+0xc577): undefined reference to `ahci_save_initial_config'
+> sata_highbank.c:(.init.text+0xc5ca): undefined reference to `ahci_set_em_messages'
+> sata_highbank.c:(.init.text+0xc630): undefined reference to `ahci_ignore_sss'
+> sata_highbank.c:(.init.text+0xc660): undefined reference to `ahci_reset_em'
+> sata_highbank.c:(.init.text+0xc72f): undefined reference to `ahci_reset_controller'
+> sata_highbank.c:(.init.text+0xc75a): undefined reference to `ahci_init_controller'
+> sata_highbank.c:(.init.text+0xc774): undefined reference to `ahci_print_info'
+> sata_highbank.c:(.init.text+0xc77c): undefined reference to `ahci_interrupt'
+> drivers/built-in.o:(.data+0x1d5ec): undefined reference to `ahci_ops'
+> drivers/built-in.o:(.data+0x1d690): undefined reference to `ahci_shost_attrs'
+> drivers/built-in.o:(.data+0x1d694): undefined reference to `ahci_sdev_attrs'
 > 
-> fs/block_dev.c: In function 'set_blocksize':
-> fs/block_dev.c:135:2: error: implicit declaration of function 'prio_tree_empty' [-Werror=implicit-function-declaration]
-> 
-> Caused by commit b87570f5d349 ("Fix a crash when block device is read and
-> block size is changed at the same time") from the block tree interacting
-> with commit "prio_tree: remove" from the akpm tree.
-> 
-> I added the following merge fix patch for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 28 Sep 2012 16:21:10 +1000
-> Subject: [PATCH] prio_tree: fix fs/block_dev.c for removal of prio_tree
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> Cc: Mark Langsdorf <mark.langsdorf@calxeda.com>
 > ---
->  fs/block_dev.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/ata/Makefile |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index 246a81e..165b01f 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -27,6 +27,7 @@
->  #include <linux/namei.h>
->  #include <linux/log2.h>
->  #include <linux/cleancache.h>
-> +#include <linux/rbtree.h>
->  #include <asm/uaccess.h>
->  #include "internal.h"
+> --- linux-next-20120919.orig/drivers/ata/Makefile
+> +++ linux-next-20120919/drivers/ata/Makefile
+> @@ -9,7 +9,7 @@ obj-$(CONFIG_SATA_FSL)		+= sata_fsl.o
+>  obj-$(CONFIG_SATA_INIC162X)	+= sata_inic162x.o
+>  obj-$(CONFIG_SATA_SIL24)	+= sata_sil24.o
+>  obj-$(CONFIG_SATA_DWC)		+= sata_dwc_460ex.o
+> -obj-$(CONFIG_SATA_HIGHBANK)	+= sata_highbank.o
+> +obj-$(CONFIG_SATA_HIGHBANK)	+= sata_highbank.o libahci.o
 >  
-> @@ -132,7 +133,7 @@ int set_blocksize(struct block_device *bdev, int size)
->  	/* Check that the block device is not memory mapped */
->  	mapping = bdev->bd_inode->i_mapping;
->  	mutex_lock(&mapping->i_mmap_mutex);
-> -	if (!prio_tree_empty(&mapping->i_mmap) ||
-> +	if (!RB_EMPTY_ROOT(&mapping->i_mmap) ||
->  	    !list_empty(&mapping->i_mmap_nonlinear)) {
->  		mutex_unlock(&mapping->i_mmap_mutex);
->  		percpu_up_write(&bdev->bd_block_size_semaphore);
-> -- 
-> 1.7.10.280.gaa39
+>  # SFF w/ custom DMA
+>  obj-$(CONFIG_PDC_ADMA)		+= pdc_adma.o
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
 
-... or replace it with
 
-if (mapping_mapped(&mapping)) { ...
 
-Mikulas
+-- 
+~Randy
