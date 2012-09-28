@@ -1,33 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the infiniband tree with Linus' tree
-Date: Fri, 28 Sep 2012 11:13:03 +1000
-Message-ID: <20120928111303.2963979b43b08a07138a6b29@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 28 Sep 2012 11:35:16 +1000
+Message-ID: <20120928113516.165a26a1fc6974931d2425c2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__28_Sep_2012_11_13_03_+1000_7+BZhSEYlwZo6MUI"
+ boundary="Signature=_Fri__28_Sep_2012_11_35_16_+1000_STtnfsH1kxyAkPH5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50799 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58962 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754936Ab2I1BNM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Sep 2012 21:13:12 -0400
+	with ESMTP id S1754543Ab2I1Bf2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Sep 2012 21:35:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hadar Hen Zion <hadarh@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, "David S. Miller" <davem@davemloft.net>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, "Eric W. Biederman" <ebiederm@xmission.com>
 
---Signature=_Fri__28_Sep_2012_11_13_03_+1000_7+BZhSEYlwZo6MUI
+--Signature=_Fri__28_Sep_2012_11_35_16_+1000_STtnfsH1kxyAkPH5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the infiniband tree got a conflict in
-drivers/net/ethernet/mellanox/mlx4/mlx4.h between commit a8edc3bf05a3
-("net/mlx4_core: Put Firmware flow steering structures in common header
-files") from Linus' tree and commit 6b6f29c687ce ("mlx4_core: Stash PCI
-ID driver_data in mlx4_priv structure") from the infiniband tree.
+Today's linux-next merge of the net-next tree got a conflict in
+net/l2tp/l2tp_netlink.c between commit 7f8436a1269e ("l2tp: fix return
+value check") from the net tree and commit 15e473046cb6 ("netlink: Rename
+pid to portid to avoid confusion") from the net-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,118 +35,73 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/ethernet/mellanox/mlx4/mlx4.h
-index dba69d9,f7156b7..0000000
---- a/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-@@@ -690,82 -692,11 +692,87 @@@ struct mlx4_steer=20
-  	struct list_head steer_entries[MLX4_NUM_STEERS];
-  };
+diff --cc net/l2tp/l2tp_netlink.c
+index 6f93635,6ec3f67..0000000
+--- a/net/l2tp/l2tp_netlink.c
++++ b/net/l2tp/l2tp_netlink.c
+@@@ -78,10 -78,10 +78,10 @@@ static int l2tp_nl_cmd_noop(struct sk_b
+  		goto out;
+  	}
  =20
- +struct mlx4_net_trans_rule_hw_ctrl {
- +	__be32 ctrl;
- +	__be32 vf_vep_port;
- +	__be32 qpn;
- +	__be32 reserved;
- +};
- +
- +struct mlx4_net_trans_rule_hw_ib {
- +	u8 size;
- +	u8 rsvd1;
- +	__be16 id;
- +	u32 rsvd2;
- +	__be32 qpn;
- +	__be32 qpn_mask;
- +	u8 dst_gid[16];
- +	u8 dst_gid_msk[16];
- +} __packed;
- +
- +struct mlx4_net_trans_rule_hw_eth {
- +	u8	size;
- +	u8	rsvd;
- +	__be16	id;
- +	u8	rsvd1[6];
- +	u8	dst_mac[6];
- +	u16	rsvd2;
- +	u8	dst_mac_msk[6];
- +	u16	rsvd3;
- +	u8	src_mac[6];
- +	u16	rsvd4;
- +	u8	src_mac_msk[6];
- +	u8      rsvd5;
- +	u8      ether_type_enable;
- +	__be16  ether_type;
- +	__be16  vlan_id_msk;
- +	__be16  vlan_id;
- +} __packed;
- +
- +struct mlx4_net_trans_rule_hw_tcp_udp {
- +	u8	size;
- +	u8	rsvd;
- +	__be16	id;
- +	__be16	rsvd1[3];
- +	__be16	dst_port;
- +	__be16	rsvd2;
- +	__be16	dst_port_msk;
- +	__be16	rsvd3;
- +	__be16	src_port;
- +	__be16	rsvd4;
- +	__be16	src_port_msk;
- +} __packed;
- +
- +struct mlx4_net_trans_rule_hw_ipv4 {
- +	u8	size;
- +	u8	rsvd;
- +	__be16	id;
- +	__be32	rsvd1;
- +	__be32	dst_ip;
- +	__be32	dst_ip_msk;
- +	__be32	src_ip;
- +	__be32	src_ip_msk;
- +} __packed;
- +
- +struct _rule_hw {
- +	union {
- +		struct {
- +			u8 size;
- +			u8 rsvd;
- +			__be16 id;
- +		};
- +		struct mlx4_net_trans_rule_hw_eth eth;
- +		struct mlx4_net_trans_rule_hw_ib ib;
- +		struct mlx4_net_trans_rule_hw_ipv4 ipv4;
- +		struct mlx4_net_trans_rule_hw_tcp_udp tcp_udp;
- +	};
- +};
- +
-+ enum {
-+ 	MLX4_PCI_DEV_IS_VF		=3D 1 << 0,
-+ 	MLX4_PCI_DEV_FORCE_SENSE_PORT	=3D 1 << 1,
-+ };
-+=20
-  struct mlx4_priv {
-  	struct mlx4_dev		dev;
+- 	hdr =3D genlmsg_put(msg, info->snd_pid, info->snd_seq,
++ 	hdr =3D genlmsg_put(msg, info->snd_portid, info->snd_seq,
+  			  &l2tp_nl_family, 0, L2TP_CMD_NOOP);
+ -	if (IS_ERR(hdr)) {
+ -		ret =3D PTR_ERR(hdr);
+ +	if (!hdr) {
+ +		ret =3D -EMSGSIZE;
+  		goto err_out;
+  	}
  =20
+@@@ -248,10 -248,10 +248,10 @@@ static int l2tp_nl_tunnel_send(struct s
+  	struct l2tp_stats stats;
+  	unsigned int start;
+ =20
+- 	hdr =3D genlmsg_put(skb, pid, seq, &l2tp_nl_family, flags,
++ 	hdr =3D genlmsg_put(skb, portid, seq, &l2tp_nl_family, flags,
+  			  L2TP_CMD_TUNNEL_GET);
+ -	if (IS_ERR(hdr))
+ -		return PTR_ERR(hdr);
+ +	if (!hdr)
+ +		return -EMSGSIZE;
+ =20
+  	if (nla_put_u8(skb, L2TP_ATTR_PROTO_VERSION, tunnel->version) ||
+  	    nla_put_u32(skb, L2TP_ATTR_CONN_ID, tunnel->tunnel_id) ||
+@@@ -616,9 -616,9 +616,9 @@@ static int l2tp_nl_session_send(struct=20
+ =20
+  	sk =3D tunnel->sock;
+ =20
+- 	hdr =3D genlmsg_put(skb, pid, seq, &l2tp_nl_family, flags, L2TP_CMD_SESS=
+ION_GET);
++ 	hdr =3D genlmsg_put(skb, portid, seq, &l2tp_nl_family, flags, L2TP_CMD_S=
+ESSION_GET);
+ -	if (IS_ERR(hdr))
+ -		return PTR_ERR(hdr);
+ +	if (!hdr)
+ +		return -EMSGSIZE;
+ =20
+  	if (nla_put_u32(skb, L2TP_ATTR_CONN_ID, tunnel->tunnel_id) ||
+  	    nla_put_u32(skb, L2TP_ATTR_SESSION_ID, session->session_id) ||
 
---Signature=_Fri__28_Sep_2012_11_13_03_+1000_7+BZhSEYlwZo6MUI
+--Signature=_Fri__28_Sep_2012_11_35_16_+1000_STtnfsH1kxyAkPH5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQZPmfAAoJEECxmPOUX5FEKOoQAJekwG6EweGvIJe+qU+0EOUc
-yScWS6rWnAml3PIf2rrWsLWV8G0H62sNrOiInrXhucW7QDDgLcbw6Sk1WNyEDo0f
-oAx4+wqSrTWxPpa38CvNedRUfPXaJb74/UinCIBTK6eb9RwBmFfKmUXp0fVVuIPO
-AQuRoJDFMYa3zlztIGI2Y1oIYaSu2sS9v91Q2OHUFxmfRVYDnoLrWf1zzHrvXcwD
-CilVv3D2IP1aD915j9rJQj1peRUlDyL/7LSMxUpKOJPSnx7hfHuIOA+q4uqstVJr
-SLS2d8oPCCHhXw6xQNuqdxKcwLIY+3+XFGzvcWJKziRPXpzXcq3N+LwheSjozW1a
-UXLI2booXq55zMMkWkA1KJlW7ovY8R1g2MCQdez9bRLUgl1C5D4vy53OVyso14Zd
-tPhtW1wJsfC4lP1Cd6zayeJ1HfPHseIe0J+llBRNleBveL80G3j4Mkm8HFZ24xXz
-5fplQTVh8DHrYVlTaVj0YF6Wm/NP4OYqKWk3Hw1m2bWS6G30qM3Ly+H3aDl3yamJ
-MngWcqWmxnup/S9qfzQOvxWeAMSAGuHtLDbV8FQlNnJeAIbqokGCRWUmChwHaGip
-FuY0OqcB704kg6hi6I3aWw7VpgdBNPkFHpgEShognZNrMz7jlP0If//0Jfg9TKvV
-Jl0NJOlwxs+0OUrZKje/
-=ZxUx
+iQIcBAEBCAAGBQJQZP7UAAoJEECxmPOUX5FEMWcP/iwmWma/VHeQ8bSIvvcDxDNN
+7P0na1YpU/aHDFhLjaHWs75I1ILhJSF2KiU0p+d9/rpUh/i3KTqDUAALLqSnLC4B
+ntvy24NA+zQ2nMEPyH/v7glzwihBEV+7u5yDsjq1LmPqvO9lMM0nESn6xkSG71SB
+3X8GYpTXlWI4YuIcRpxPYVQ41fJTLB7iOvzmcuhLU+cqBLUUWpl3c9ofmuBfqcop
+tZuTUWL1ydqbIQlGfGlO66O7CD0Uxc/jL//BJNwDS1nj6j62sX7hU/Sbbwkc0Vny
+XfOE97tTtwj9a88B1CbwqcISkvGkHx4tp/9ueVEft7eVGdorxaqo6OuRp3LWMGs5
+7QHKnAzQWucr5Hd2OgnBJGDcrb8uySxMrPOrhw0uerBQG7Lt8l0S+yCszJ0OsfNn
+TuDpVw2C58fjyu/AuqK+YtEC9bOV/CthyYIvt1B50RhOUEQHDYiSX2kPliwLBjBT
+a7BcGadjF5T4Xk9jMVx4bOdZjTANnNIE3tHbiTSfqaO5KkDzMn/tZH3m8pWHJCB7
+iYe/gTcWELYnvj/hgGDSvg9rUYX+kfIHQ6ocVC6lsVpubZxa4fDxNzZYYPH5NBP6
+QIrBvk96jxAW/bSD0urcOkEZqYLIvC5TLDHRcwzCMPYs+0Q5aLmu55xUJxJiYFCT
+Ku6LYdRBpttCuVxfGkiR
+=c8Ps
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__28_Sep_2012_11_13_03_+1000_7+BZhSEYlwZo6MUI--
+--Signature=_Fri__28_Sep_2012_11_35_16_+1000_STtnfsH1kxyAkPH5--
