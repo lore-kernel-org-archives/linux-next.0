@@ -1,34 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the tip tree with the rr tree
-Date: Fri, 28 Sep 2012 13:33:41 +1000
-Message-ID: <20120928133341.5697fbecc1674b2143101f52@canb.auug.org.au>
+Date: Fri, 28 Sep 2012 13:38:16 +1000
+Message-ID: <20120928133816.85dd67a7276558b9a7e574d5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__28_Sep_2012_13_33_41_+1000_tjy2c38w=8GLtZRr"
+ boundary="Signature=_Fri__28_Sep_2012_13_38_16_+1000_ydTYTSOJhJiFdlqR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50783 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:37778 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755352Ab2I1DeJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Sep 2012 23:34:09 -0400
+	with ESMTP id S1755352Ab2I1DiS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Sep 2012 23:38:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Frederic Weisbecker <fweisbec@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Fri__28_Sep_2012_13_33_41_+1000_tjy2c38w=8GLtZRr
+--Signature=_Fri__28_Sep_2012_13_38_16_+1000_ydTYTSOJhJiFdlqR
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in arch/Kconfig
-between commit 9a9d5786a5e7 ("Make most arch asm/module.h files use
-asm-generic/module.h") from the rr tree and commits fdf9c356502a
-("cputime: Make finegrained irqtime accounting generally available") and
-2b1d5024e17b ("rcu: Settle config for userspace extended quiescent
-state") from the tip tree.
+Today's linux-next merge of the tip tree got a conflict in
+arch/x86/Kconfig between commit 9a9d5786a5e7 ("Make most arch
+asm/module.h files use asm-generic/module.h") from the rr tree and
+commits fdf9c356502a ("cputime: Make finegrained irqtime accounting
+generally available") and edf55fda35c7 ("x86: Exit RCU extended QS on
+notify resume") from the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,73 +37,46 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/Kconfig
-index 3450115,a62965d..0000000
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@@ -281,23 -294,23 +294,42 @@@ config SECCOMP_FILTE
+diff --cc arch/x86/Kconfig
+index ede3e92,56e7a25..0000000
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@@ -97,11 -102,12 +102,14 @@@ config X8
+  	select KTIME_SCALAR if X86_32
+  	select GENERIC_STRNCPY_FROM_USER
+  	select GENERIC_STRNLEN_USER
+ +	select MODULES_USE_ELF_REL if X86_32
+ +	select MODULES_USE_ELF_RELA if X86_64
++ 	select HAVE_RCU_USER_QS if X86_64
++ 	select HAVE_IRQ_TIME_ACCOUNTING
  =20
-  	  See Documentation/prctl/seccomp_filter.txt for details.
+  config INSTRUCTION_DECODER
+- 	def_bool (KPROBES || PERF_EVENTS || UPROBES)
++ 	def_bool y
++ 	depends on KPROBES || PERF_EVENTS || UPROBES
  =20
- +config HAVE_MOD_ARCH_SPECIFIC
- +	bool
- +	help
- +	  The arch uses struct mod_arch_specific to store data.  Many arches
- +	  just need a simple module loader without arch specific data - those
- +	  should not enable this.
- +
- +config MODULES_USE_ELF_RELA
- +	bool
- +	help
- +	  Modules only use ELF RELA relocations.  Modules with ELF REL
- +	  relocations will give an error.
- +
- +config MODULES_USE_ELF_REL
- +	bool
- +	help
- +	  Modules only use ELF REL relocations.  Modules with ELF RELA
- +	  relocations will give an error.
- +
-+ config HAVE_RCU_USER_QS
-+ 	bool
-+ 	help
-+ 	  Provide kernel entry/exit hooks necessary for userspace
-+ 	  RCU extended quiescent state. Syscalls need to be wrapped inside
-+ 	  rcu_user_exit()-rcu_user_enter() through the slow path using
-+ 	  TIF_NOHZ flag. Exceptions handlers must be wrapped as well. Irqs
-+ 	  are already protected inside rcu_irq_enter/rcu_irq_exit() but
-+ 	  preemption or signal handling on irq exit still need to be protected.
-+=20
-+ config HAVE_VIRT_CPU_ACCOUNTING
-+ 	bool
-+=20
-+ config HAVE_IRQ_TIME_ACCOUNTING
-+ 	bool
-+ 	help
-+ 	  Archs need to ensure they use a high enough resolution clock to
-+ 	  support irq time accounting and then call enable_sched_clock_irqtime().
-+=20
-  source "kernel/gcov/Kconfig"
+  config OUTPUT_FORMAT
+  	string
 
---Signature=_Fri__28_Sep_2012_13_33_41_+1000_tjy2c38w=8GLtZRr
+--Signature=_Fri__28_Sep_2012_13_38_16_+1000_ydTYTSOJhJiFdlqR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQZRqVAAoJEECxmPOUX5FEWOQP/3O5F7yVqjKKKEEGdMU/Q6Fr
-Fe9WJm07yw7OvgldY4ELJ1C656iE7jE+hC45mh9fttVGVNULeBJfetHyrAon89oh
-ZXSMEgwUFRn5T02DUMFYLeKRN3rPkleADai7UUR9opsNViAUKtdqO626n3Z7L6Wh
-GxmNpy1H8jJpc1YND0S8KLNMCeAt7FPhaZYpjUckWqCsufVT0Xv3aA3GGX+w0IlD
-setJhcFDhPIFNRMJSIrnrUdE5aKs8e7SGVGMHdd2DRwuYxn/eS8Xb49m5NnzshIa
-cgaYzpSq2k6hptG2jUd9Uo3VsdquPVJMJY5zILH9u6oqiuW7e91svZtvyESMMCdq
-ca0O7F5PXoyq++QT3W18/oDTN3sgWE/Mwj4ol2jFASZsAgS8OJkw33CgBXFNIE0i
-pC2t6FsgBk7CC9whh1NvJguFVv0VJzMUMEembOT9lPAApFgK/XwPrF5bM+ZaXqzQ
-Q8UaQgcATqGSY7FI6ySCc7M82b6Pau+K6ae+O9gacOcfHPVqzknXvkMhofMQoa0Q
-uYLLzKTAeUXGLIGTW9VHe4h/txHBbHuvac7FCFX8fznv10FcUpU6j9wf2w4NSvyH
-ZkVCeIoYjoUUbpLun4GI7Kk6RdP5apBYa6Y1vKEFMU5Qgz3Z5OveFoPA7jz2LwhX
-V4u183nhYNkpf3BjaU2w
-=Wmq7
+iQIcBAEBCAAGBQJQZRuoAAoJEECxmPOUX5FEj+gQAI0Fmkp3l3oPiF3myEB3I688
+m73sKJB9vY6R+q9oUxiPmnwkB2plO7elIQx8tR/WMj1aXYHSeRiV9VO8uEFG1Rrr
+FIO8nWUcJInYcIiFwbxYnIsMo3RMIOrUj+xDryc1tprxbmkzXr1H69AqXA7/T6zg
+YHH/VUnvFdOxal00nxBKn0HzlbtVafjKwXEJsjbb7e8LYrUvnMvUOU4r3ZY4mFiS
+gPrJiWzb5C2vXWJwW2drTdEyiFG8zPooe/fmUrwKka+Z+Hx0p7xyNjswEQJVaTGN
+yqO6NUIp8ozyQx7l72lS1py7Iz3L6ep1mFsFDZ3ADPir5Bk5DUNs2wlBypALhXaR
+JYWm2l4qsSr8FFPCqOZ1r7s/cYMRroCSGFd1gvB2zcoe2tR1rvITWNZIlnqqCdAp
+tVhuJfvasyWRocafjaxucZ4qpW9hR8dKCogGBmIQpLyIo7KVItRNuIpFnTUeWoaT
+THr46bbwTn7mcyKNDZdIVFW7NSW89tgUsqR//EHLOFSSJjXM+RWUDtO2/Ovyadnw
+mpw9vycUrKRbGxDAXe2Qn7sHM9wBzRJMzwXRrkiTCpkzF5ACAlilSeCDEpFCbRNs
+VW1QFN7CyYrw+dR/zrglMazcbqcR0P+jl8UAz8RSiEXWKSURuMBPXvZseLa1cp1r
+POyvtuHnyr7zRxyrY/yp
+=/CjF
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__28_Sep_2012_13_33_41_+1000_tjy2c38w=8GLtZRr--
+--Signature=_Fri__28_Sep_2012_13_38_16_+1000_ydTYTSOJhJiFdlqR--
