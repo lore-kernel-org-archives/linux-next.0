@@ -1,32 +1,109 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Thu, 27 Sep 2012 22:19:43 -0400 (EDT)
-Message-ID: <20120927.221943.19056434713380159.davem@davemloft.net>
-References: <20120928114335.e05b34a5cfe716df86364ccf@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120928114335.e05b34a5cfe716df86364ccf@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ivecera@redhat.com
-List-Id: linux-next.vger.kernel.org
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 28 Sep 2012 11:43:35 +1000
+Subject: linux-next: manual merge of the tip tree with the rr tree
+Date: Fri, 28 Sep 2012 13:33:41 +1000
+Message-ID: <20120928133341.5697fbecc1674b2143101f52@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__28_Sep_2012_13_33_41_+1000_tjy2c38w=8GLtZRr"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50783 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755352Ab2I1DeJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Sep 2012 23:34:09 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Frederic Weisbecker <fweisbec@gmail.com>
 
-> Hi all,
-> 
-> After merging the net-next tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/net/ethernet/emulex/benet/be_main.c: In function 'be_find_vfs':
-> drivers/net/ethernet/emulex/benet/be_main.c:1090:28: error: 'struct pci_dev' has no member named 'physfn'
-> 
-> Caused by commit 51af6d7c1f31 ("be2net: fix vfs enumeration").  physfn is
-> only defined if CONFIG_PCI_ATS is set.
-> 
-> I have reverted that commit for today.
+--Signature=_Fri__28_Sep_2012_13_33_41_+1000_tjy2c38w=8GLtZRr
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm reverting it too, thanks for reporting Stephen.
+Hi all,
+
+Today's linux-next merge of the tip tree got a conflict in arch/Kconfig
+between commit 9a9d5786a5e7 ("Make most arch asm/module.h files use
+asm-generic/module.h") from the rr tree and commits fdf9c356502a
+("cputime: Make finegrained irqtime accounting generally available") and
+2b1d5024e17b ("rcu: Settle config for userspace extended quiescent
+state") from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/Kconfig
+index 3450115,a62965d..0000000
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@@ -281,23 -294,23 +294,42 @@@ config SECCOMP_FILTE
+ =20
+  	  See Documentation/prctl/seccomp_filter.txt for details.
+ =20
+ +config HAVE_MOD_ARCH_SPECIFIC
+ +	bool
+ +	help
+ +	  The arch uses struct mod_arch_specific to store data.  Many arches
+ +	  just need a simple module loader without arch specific data - those
+ +	  should not enable this.
+ +
+ +config MODULES_USE_ELF_RELA
+ +	bool
+ +	help
+ +	  Modules only use ELF RELA relocations.  Modules with ELF REL
+ +	  relocations will give an error.
+ +
+ +config MODULES_USE_ELF_REL
+ +	bool
+ +	help
+ +	  Modules only use ELF REL relocations.  Modules with ELF RELA
+ +	  relocations will give an error.
+ +
++ config HAVE_RCU_USER_QS
++ 	bool
++ 	help
++ 	  Provide kernel entry/exit hooks necessary for userspace
++ 	  RCU extended quiescent state. Syscalls need to be wrapped inside
++ 	  rcu_user_exit()-rcu_user_enter() through the slow path using
++ 	  TIF_NOHZ flag. Exceptions handlers must be wrapped as well. Irqs
++ 	  are already protected inside rcu_irq_enter/rcu_irq_exit() but
++ 	  preemption or signal handling on irq exit still need to be protected.
++=20
++ config HAVE_VIRT_CPU_ACCOUNTING
++ 	bool
++=20
++ config HAVE_IRQ_TIME_ACCOUNTING
++ 	bool
++ 	help
++ 	  Archs need to ensure they use a high enough resolution clock to
++ 	  support irq time accounting and then call enable_sched_clock_irqtime().
++=20
+  source "kernel/gcov/Kconfig"
+
+--Signature=_Fri__28_Sep_2012_13_33_41_+1000_tjy2c38w=8GLtZRr
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQZRqVAAoJEECxmPOUX5FEWOQP/3O5F7yVqjKKKEEGdMU/Q6Fr
+Fe9WJm07yw7OvgldY4ELJ1C656iE7jE+hC45mh9fttVGVNULeBJfetHyrAon89oh
+ZXSMEgwUFRn5T02DUMFYLeKRN3rPkleADai7UUR9opsNViAUKtdqO626n3Z7L6Wh
+GxmNpy1H8jJpc1YND0S8KLNMCeAt7FPhaZYpjUckWqCsufVT0Xv3aA3GGX+w0IlD
+setJhcFDhPIFNRMJSIrnrUdE5aKs8e7SGVGMHdd2DRwuYxn/eS8Xb49m5NnzshIa
+cgaYzpSq2k6hptG2jUd9Uo3VsdquPVJMJY5zILH9u6oqiuW7e91svZtvyESMMCdq
+ca0O7F5PXoyq++QT3W18/oDTN3sgWE/Mwj4ol2jFASZsAgS8OJkw33CgBXFNIE0i
+pC2t6FsgBk7CC9whh1NvJguFVv0VJzMUMEembOT9lPAApFgK/XwPrF5bM+ZaXqzQ
+Q8UaQgcATqGSY7FI6ySCc7M82b6Pau+K6ae+O9gacOcfHPVqzknXvkMhofMQoa0Q
+uYLLzKTAeUXGLIGTW9VHe4h/txHBbHuvac7FCFX8fznv10FcUpU6j9wf2w4NSvyH
+ZkVCeIoYjoUUbpLun4GI7Kk6RdP5apBYa6Y1vKEFMU5Qgz3Z5OveFoPA7jz2LwhX
+V4u183nhYNkpf3BjaU2w
+=Wmq7
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__28_Sep_2012_13_33_41_+1000_tjy2c38w=8GLtZRr--
