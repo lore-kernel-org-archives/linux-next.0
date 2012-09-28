@@ -1,85 +1,74 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Sept 28 (ext4|vfs related issues?)
-Date: Fri, 28 Sep 2012 15:11:26 +0200
-Message-ID: <CA+icZUW8STfNrYQ_gDRZA6wWoznF28J=NAn6Gjq0RyeGBKxdQg@mail.gmail.com>
-References: <CA+icZUVcwAXBYjafnzARN-xkGKGsPC_2Yry-SscaZ_-js-sTiw@mail.gmail.com>
-	<CA+icZUWNWnKu9YiR8Vs6J26LFi=u2VL14_ZYh_pEYONaEPddxg@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Fri, 28 Sep 2012 11:19:29 -0400 (EDT)
+Message-ID: <Pine.LNX.4.64.1209281117580.21946@file.rdu.redhat.com>
+References: <20120928163029.19d304240b796e2c7a7d633b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:52549 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757240Ab2I1NL2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Sep 2012 09:11:28 -0400
-In-Reply-To: <CA+icZUWNWnKu9YiR8Vs6J26LFi=u2VL14_ZYh_pEYONaEPddxg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120928163029.19d304240b796e2c7a7d633b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>, Jens Axboe <axboe@kernel.dk>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Sep 28, 2012 at 1:51 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Fri, Sep 28, 2012 at 1:22 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> On Fri, Sep 28, 2012 at 8:51 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> Hi all,
->>>
->>> Changes since 201209027:
->>>
->>> The vfs tree lost its conflicts.
->>>
->>> The infiniband tree gained a conflict against Linus' tree.
->>>
->>> The net-next tree gained a conflict against the net tree and a build
->>> failure for which I reverted a commit.
->>>
->>> The block tree lost its build failure.
->>>
->>> The tip tree gained conflicts against the rr tree.
->>>
->>> The signal tree gained a conflict against the vfs tree.
->>>
->>> The akpm tree lost several patches that turned up elsewhere and lost its
->>> build failure but gained another for which I applied a merge fix patch.
->>>
->>> ----------------------------------------------------------------------------
->>>
->>
->> [ Added some more maintainers of ext4|vfs|block ]
->>
->> Hi,
->>
->> after solving the thermal-next problem (patch still pending in thermal
->> tree) today's Linux-Next is still not running fine here (I reported
->> that already).
->>
->> After switching from SLUB to SLAB I could take finally a screenshot of
->> a call-trace (sorry, it's 600KiB).
->> It seems to be a problem of Ext4-FS or in combination with VFS (can't
->> say as I am not an FS-expert).
->> Symptoms:
->> Harddisk I/O is fu**ing slow, apps like firefox start slowly as used
->> to and stall often, a dmesg-output in a console takes sometimes ages,
->> etc.
->> IOW, you cannot work on such a system :-)!
->>
->> Hope the screenshot helps to dig down the problem.
->>
->
-> I pulled in latest ext4.git#dev [0] and [1] seems to be the pending fix.
-> Still compiling... (will report later on).
->
 
-Unfortunately, this did not help!
-Any hints/help appreciated.
 
-- Sedat -
+On Fri, 28 Sep 2012, Stephen Rothwell wrote:
 
-> - Sedat -
->
-> [0] http://git.kernel.org/?p=linux/kernel/git/tytso/ext4.git;a=shortlog;h=refs/heads/dev
-> [1] http://git.kernel.org/?p=linux/kernel/git/tytso/ext4.git;a=commitdiff;h=9bebbf9b6266e63a68845ade39e368f2d162ea1c
->
->> Regards,
->> - Sedat -
->>
->> P.S.: I also attached the latest kernel-config.
+> Hi Andrew,
+> 
+> After merging the akpm tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> fs/block_dev.c: In function 'set_blocksize':
+> fs/block_dev.c:135:2: error: implicit declaration of function 'prio_tree_empty' [-Werror=implicit-function-declaration]
+> 
+> Caused by commit b87570f5d349 ("Fix a crash when block device is read and
+> block size is changed at the same time") from the block tree interacting
+> with commit "prio_tree: remove" from the akpm tree.
+> 
+> I added the following merge fix patch for today.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 28 Sep 2012 16:21:10 +1000
+> Subject: [PATCH] prio_tree: fix fs/block_dev.c for removal of prio_tree
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  fs/block_dev.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 246a81e..165b01f 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/namei.h>
+>  #include <linux/log2.h>
+>  #include <linux/cleancache.h>
+> +#include <linux/rbtree.h>
+>  #include <asm/uaccess.h>
+>  #include "internal.h"
+>  
+> @@ -132,7 +133,7 @@ int set_blocksize(struct block_device *bdev, int size)
+>  	/* Check that the block device is not memory mapped */
+>  	mapping = bdev->bd_inode->i_mapping;
+>  	mutex_lock(&mapping->i_mmap_mutex);
+> -	if (!prio_tree_empty(&mapping->i_mmap) ||
+> +	if (!RB_EMPTY_ROOT(&mapping->i_mmap) ||
+>  	    !list_empty(&mapping->i_mmap_nonlinear)) {
+>  		mutex_unlock(&mapping->i_mmap_mutex);
+>  		percpu_up_write(&bdev->bd_block_size_semaphore);
+> -- 
+> 1.7.10.280.gaa39
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
+... or replace it with
+
+if (mapping_mapped(&mapping)) { ...
+
+Mikulas
