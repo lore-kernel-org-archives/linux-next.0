@@ -1,42 +1,31 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: [PATCH] ata: Fix build error in sata_highbank
-Date: Fri, 28 Sep 2012 19:37:12 +0200
-Message-ID: <CA+icZUXTNyhO-Y7kFw7xtf8DEgb-5KZCfPxHb7miRZ4Qyov+Hw@mail.gmail.com>
-References: <1348853017-9205-1-git-send-email-mark.langsdorf@calxeda.com>
-	<5065DEB0.7000702@computer.org>
-Reply-To: sedat.dilek@gmail.com
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: linux-next: Tree for Sept 28 (ext4|vfs related issues?)
+Date: Fri, 28 Sep 2012 13:38:20 -0400
+Message-ID: <20120928173820.GA887@thunk.org>
+References: <CA+icZUVcwAXBYjafnzARN-xkGKGsPC_2Yry-SscaZ_-js-sTiw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:47400 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753355Ab2I1RhO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Sep 2012 13:37:14 -0400
-In-Reply-To: <5065DEB0.7000702@computer.org>
+Received: from li9-11.members.linode.com ([67.18.176.11]:52877 "EHLO
+	imap.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754952Ab2I1Ri3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 28 Sep 2012 13:38:29 -0400
+Content-Disposition: inline
+In-Reply-To: <CA+icZUVcwAXBYjafnzARN-xkGKGsPC_2Yry-SscaZ_-js-sTiw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jan Ceuleers <jan.ceuleers@computer.org>
-Cc: Mark Langsdorf <mark.langsdorf@calxeda.com>, linux-next@vger.kernel.org, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, jgarzik@pobox.com, Randy Dunlap <rdunlap@xenotime.net>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-On Fri, Sep 28, 2012 at 7:30 PM, Jan Ceuleers <jan.ceuleers@computer.org> wrote:
-> On 09/28/2012 07:23 PM, Mark Langsdorf wrote:
->> From: Mark Langsdorf <Mark Langsdorf>
->
-> Mark,
->
-> This From: line is malformed: the bit between the angle brackets should
-> contain an email address.
->
+On Fri, Sep 28, 2012 at 01:22:45PM +0200, Sedat Dilek wrote:
+> 
+> After switching from SLUB to SLAB I could take finally a screenshot of
+> a call-trace (sorry, it's 600KiB).
+> It seems to be a problem of Ext4-FS or in combination with VFS (can't
+> say as I am not an FS-expert).
 
-Randy sent a patch to linux-next ML and pinged again on this (see [1]).
-I see no Reported-by... no S-o-b :-(.
+This is strictly speaking an ext4 bug, and it's a known problem.  It
+will be fixed in the next linux-next release; my apologies for letting
+this slip through....
 
-- Sedat -
-
-[1] http://marc.info/?t=134807860300006&r=1&w=2
-
-> HTH, Jan
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	   	       		     	     	       - Ted
