@@ -1,33 +1,85 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: linux-next: manual merge of the tip tree with the rr tree
-Date: Fri, 28 Sep 2012 14:39:40 +0200
-Message-ID: <20120928123931.GA12843@somewhere.redhat.com>
-References: <20120928133341.5697fbecc1674b2143101f52@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Sept 28 (ext4|vfs related issues?)
+Date: Fri, 28 Sep 2012 15:11:26 +0200
+Message-ID: <CA+icZUW8STfNrYQ_gDRZA6wWoznF28J=NAn6Gjq0RyeGBKxdQg@mail.gmail.com>
+References: <CA+icZUVcwAXBYjafnzARN-xkGKGsPC_2Yry-SscaZ_-js-sTiw@mail.gmail.com>
+	<CA+icZUWNWnKu9YiR8Vs6J26LFi=u2VL14_ZYh_pEYONaEPddxg@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:43127 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754836Ab2I1Mjo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Sep 2012 08:39:44 -0400
-Content-Disposition: inline
-In-Reply-To: <20120928133341.5697fbecc1674b2143101f52@canb.auug.org.au>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:52549 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757240Ab2I1NL2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Sep 2012 09:11:28 -0400
+In-Reply-To: <CA+icZUWNWnKu9YiR8Vs6J26LFi=u2VL14_ZYh_pEYONaEPddxg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-On Fri, Sep 28, 2012 at 01:33:41PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in arch/Kconfig
-> between commit 9a9d5786a5e7 ("Make most arch asm/module.h files use
-> asm-generic/module.h") from the rr tree and commits fdf9c356502a
-> ("cputime: Make finegrained irqtime accounting generally available") and
-> 2b1d5024e17b ("rcu: Settle config for userspace extended quiescent
-> state") from the tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+On Fri, Sep 28, 2012 at 1:51 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> On Fri, Sep 28, 2012 at 1:22 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> On Fri, Sep 28, 2012 at 8:51 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> Hi all,
+>>>
+>>> Changes since 201209027:
+>>>
+>>> The vfs tree lost its conflicts.
+>>>
+>>> The infiniband tree gained a conflict against Linus' tree.
+>>>
+>>> The net-next tree gained a conflict against the net tree and a build
+>>> failure for which I reverted a commit.
+>>>
+>>> The block tree lost its build failure.
+>>>
+>>> The tip tree gained conflicts against the rr tree.
+>>>
+>>> The signal tree gained a conflict against the vfs tree.
+>>>
+>>> The akpm tree lost several patches that turned up elsewhere and lost its
+>>> build failure but gained another for which I applied a merge fix patch.
+>>>
+>>> ----------------------------------------------------------------------------
+>>>
+>>
+>> [ Added some more maintainers of ext4|vfs|block ]
+>>
+>> Hi,
+>>
+>> after solving the thermal-next problem (patch still pending in thermal
+>> tree) today's Linux-Next is still not running fine here (I reported
+>> that already).
+>>
+>> After switching from SLUB to SLAB I could take finally a screenshot of
+>> a call-trace (sorry, it's 600KiB).
+>> It seems to be a problem of Ext4-FS or in combination with VFS (can't
+>> say as I am not an FS-expert).
+>> Symptoms:
+>> Harddisk I/O is fu**ing slow, apps like firefox start slowly as used
+>> to and stall often, a dmesg-output in a console takes sometimes ages,
+>> etc.
+>> IOW, you cannot work on such a system :-)!
+>>
+>> Hope the screenshot helps to dig down the problem.
+>>
+>
+> I pulled in latest ext4.git#dev [0] and [1] seems to be the pending fix.
+> Still compiling... (will report later on).
+>
 
-Looks good. Thanks.
+Unfortunately, this did not help!
+Any hints/help appreciated.
+
+- Sedat -
+
+> - Sedat -
+>
+> [0] http://git.kernel.org/?p=linux/kernel/git/tytso/ext4.git;a=shortlog;h=refs/heads/dev
+> [1] http://git.kernel.org/?p=linux/kernel/git/tytso/ext4.git;a=commitdiff;h=9bebbf9b6266e63a68845ade39e368f2d162ea1c
+>
+>> Regards,
+>> - Sedat -
+>>
+>> P.S.: I also attached the latest kernel-config.
