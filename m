@@ -1,73 +1,35 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Sept 28 (ext4|vfs related issues?)
-Date: Fri, 28 Sep 2012 13:51:00 +0200
-Message-ID: <CA+icZUWNWnKu9YiR8Vs6J26LFi=u2VL14_ZYh_pEYONaEPddxg@mail.gmail.com>
-References: <CA+icZUVcwAXBYjafnzARN-xkGKGsPC_2Yry-SscaZ_-js-sTiw@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: manual merge of the signal tree with the vfs tree
+Date: Fri, 28 Sep 2012 12:56:35 +0100
+Message-ID: <20120928115635.GE13973@ZenIV.linux.org.uk>
+References: <20120928155639.aadab0554080381b4c38a847@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUVcwAXBYjafnzARN-xkGKGsPC_2Yry-SscaZ_-js-sTiw@mail.gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53977 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753720Ab2I1L4g (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Sep 2012 07:56:36 -0400
+Content-Disposition: inline
+In-Reply-To: <20120928155639.aadab0554080381b4c38a847@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Kelly <alex.page.kelly@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, Sep 28, 2012 at 1:22 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Fri, Sep 28, 2012 at 8:51 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
->>
->> Changes since 201209027:
->>
->> The vfs tree lost its conflicts.
->>
->> The infiniband tree gained a conflict against Linus' tree.
->>
->> The net-next tree gained a conflict against the net tree and a build
->> failure for which I reverted a commit.
->>
->> The block tree lost its build failure.
->>
->> The tip tree gained conflicts against the rr tree.
->>
->> The signal tree gained a conflict against the vfs tree.
->>
->> The akpm tree lost several patches that turned up elsewhere and lost its
->> build failure but gained another for which I applied a merge fix patch.
->>
->> ----------------------------------------------------------------------------
->>
->
-> [ Added some more maintainers of ext4|vfs|block ]
->
-> Hi,
->
-> after solving the thermal-next problem (patch still pending in thermal
-> tree) today's Linux-Next is still not running fine here (I reported
-> that already).
->
-> After switching from SLUB to SLAB I could take finally a screenshot of
-> a call-trace (sorry, it's 600KiB).
-> It seems to be a problem of Ext4-FS or in combination with VFS (can't
-> say as I am not an FS-expert).
-> Symptoms:
-> Harddisk I/O is fu**ing slow, apps like firefox start slowly as used
-> to and stall often, a dmesg-output in a console takes sometimes ages,
-> etc.
-> IOW, you cannot work on such a system :-)!
->
-> Hope the screenshot helps to dig down the problem.
->
+On Fri, Sep 28, 2012 at 03:56:39PM +1000, Stephen Rothwell wrote:
+> Hi Al,
+> 
+> Today's linux-next merge of the signal tree got a conflict in fs/exec.c
+> between commit 5b8a94d461a7 ("coredump: move core dump functionality into
+> its own file") from the vfs tree and commits 70446600fa12 ("arm:
+> introduce ret_from_kernel_execve(), switch to generic kernel_execve()")
+> and 5e41814a7d8b ("arm: get rid of execve wrapper, switch to generic
+> execve() implementation") from the signal tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
+> BTW, Al, you have that vfs tree commit (and others) authored by you ...
 
-I pulled in latest ext4.git#dev [0] and [1] seems to be the pending fix.
-Still compiling... (will report later on).
-
-- Sedat -
-
-[0] http://git.kernel.org/?p=linux/kernel/git/tytso/ext4.git;a=shortlog;h=refs/heads/dev
-[1] http://git.kernel.org/?p=linux/kernel/git/tytso/ext4.git;a=commitdiff;h=9bebbf9b6266e63a68845ade39e368f2d162ea1c
-
-> Regards,
-> - Sedat -
->
-> P.S.: I also attached the latest kernel-config.
+Gyah...  Will fix ASAP; sorry, guys.
