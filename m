@@ -1,82 +1,122 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the rr tree
-Date: Fri, 28 Sep 2012 13:38:16 +1000
-Message-ID: <20120928133816.85dd67a7276558b9a7e574d5@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: [PATCHv2] Thermal: Fix synchronization issues in thermal_sys.c
+Date: Fri, 28 Sep 2012 06:57:45 +0200
+Message-ID: <CA+icZUWbbAj16rG5pLo3RUjJ0DKS=Tkzt6p3Wa7xnMDiAs8pWg@mail.gmail.com>
+References: <1348727888-11196-1-git-send-email-durgadoss.r@intel.com>
+	<CA+icZUXV21BqzAHwPy5gY_VHEws8hXZ8B=vESuPazpmOSQVHvA@mail.gmail.com>
+	<CA+icZUWd0s4bo4ASnfryUvSNSk82d5f3-so1RghbOhqHH5UOaw@mail.gmail.com>
+	<CA+icZUXo+w8G1ugG+m3YBE-LT7Qb6_Mbo2ijRqRXP1HXLTohGQ@mail.gmail.com>
+	<alpine.LSU.2.00.1209271626460.1314@eggly.anvils>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__28_Sep_2012_13_38_16_+1000_ydTYTSOJhJiFdlqR"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37778 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755352Ab2I1DiS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Sep 2012 23:38:18 -0400
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:51401 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753410Ab2I1E5r (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Sep 2012 00:57:47 -0400
+In-Reply-To: <alpine.LSU.2.00.1209271626460.1314@eggly.anvils>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+To: Hugh Dickins <hughd@google.com>
+Cc: lenb@kernel.org, rui.zhang@intel.com, Durgadoss R <durgadoss.r@intel.com>, linux-acpi@vger.kernel.org, dan.carpenter@oracle.com, linux-next@vger.kernel.org
 
---Signature=_Fri__28_Sep_2012_13_38_16_+1000_ydTYTSOJhJiFdlqR
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Sep 28, 2012 at 1:48 AM, Hugh Dickins <hughd@google.com> wrote:
+> On Thu, 27 Sep 2012, Sedat Dilek wrote:
+>> >>
+>> >> The v2 patch does *not* fix the issue here!
+>> >>
+>> >> [1] https://patchwork.kernel.org/patch/1511961/
+>> >>
+>> >
+>> > I have re-tested with Linux-Next (next-20120927) plus thermal-next [1]
+>> > pulled in and see still the same call-trace!
+>
+> Same here on mmotm, yes.
+>
+>> >
+>> > Hugh or Dan can you confirm this works for you or not?
+>> > Thanks in advance.
+>> >
+>> > [1] http://git.kernel.org/?p=linux/kernel/git/rzhang/linux.git;a=shortlog;h=refs/heads/next
+>> > [2] http://git.kernel.org/?p=linux/kernel/git/rzhang/linux.git;a=commitdiff;h=404b134156bd9d9bc506c0974a1254806e13db2c
+>> >
+>>
+>> With the attached fixup/followup patch, I can boot into my system!
+>> But, as said yesterday... working within X, Firefox is a pain in the a**.
+>
+> Indeed, this works for me too, thanks.
+> Let's get your addition out of the attachment and fold it into a v3.
+> Mind if we change "synchronization issues" to "oops and unlocking"?
+>
+>
 
-Hi all,
+Cool, I see this new patch now in [1].
+Thanks to all involved people!
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/Kconfig between commit 9a9d5786a5e7 ("Make most arch
-asm/module.h files use asm-generic/module.h") from the rr tree and
-commits fdf9c356502a ("cputime: Make finegrained irqtime accounting
-generally available") and edf55fda35c7 ("x86: Exit RCU extended QS on
-notify resume") from the tip tree.
+- Sedat -
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+[1] http://git.kernel.org/?p=linux/kernel/git/rzhang/linux.git;a=commitdiff;h=6b02e5bd25fea17b3271d275d5700e22d7195a68
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/x86/Kconfig
-index ede3e92,56e7a25..0000000
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@@ -97,11 -102,12 +102,14 @@@ config X8
-  	select KTIME_SCALAR if X86_32
-  	select GENERIC_STRNCPY_FROM_USER
-  	select GENERIC_STRNLEN_USER
- +	select MODULES_USE_ELF_REL if X86_32
- +	select MODULES_USE_ELF_RELA if X86_64
-+ 	select HAVE_RCU_USER_QS if X86_64
-+ 	select HAVE_IRQ_TIME_ACCOUNTING
- =20
-  config INSTRUCTION_DECODER
-- 	def_bool (KPROBES || PERF_EVENTS || UPROBES)
-+ 	def_bool y
-+ 	depends on KPROBES || PERF_EVENTS || UPROBES
- =20
-  config OUTPUT_FORMAT
-  	string
-
---Signature=_Fri__28_Sep_2012_13_38_16_+1000_ydTYTSOJhJiFdlqR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQZRuoAAoJEECxmPOUX5FEj+gQAI0Fmkp3l3oPiF3myEB3I688
-m73sKJB9vY6R+q9oUxiPmnwkB2plO7elIQx8tR/WMj1aXYHSeRiV9VO8uEFG1Rrr
-FIO8nWUcJInYcIiFwbxYnIsMo3RMIOrUj+xDryc1tprxbmkzXr1H69AqXA7/T6zg
-YHH/VUnvFdOxal00nxBKn0HzlbtVafjKwXEJsjbb7e8LYrUvnMvUOU4r3ZY4mFiS
-gPrJiWzb5C2vXWJwW2drTdEyiFG8zPooe/fmUrwKka+Z+Hx0p7xyNjswEQJVaTGN
-yqO6NUIp8ozyQx7l72lS1py7Iz3L6ep1mFsFDZ3ADPir5Bk5DUNs2wlBypALhXaR
-JYWm2l4qsSr8FFPCqOZ1r7s/cYMRroCSGFd1gvB2zcoe2tR1rvITWNZIlnqqCdAp
-tVhuJfvasyWRocafjaxucZ4qpW9hR8dKCogGBmIQpLyIo7KVItRNuIpFnTUeWoaT
-THr46bbwTn7mcyKNDZdIVFW7NSW89tgUsqR//EHLOFSSJjXM+RWUDtO2/Ovyadnw
-mpw9vycUrKRbGxDAXe2Qn7sHM9wBzRJMzwXRrkiTCpkzF5ACAlilSeCDEpFCbRNs
-VW1QFN7CyYrw+dR/zrglMazcbqcR0P+jl8UAz8RSiEXWKSURuMBPXvZseLa1cp1r
-POyvtuHnyr7zRxyrY/yp
-=/CjF
------END PGP SIGNATURE-----
-
---Signature=_Fri__28_Sep_2012_13_38_16_+1000_ydTYTSOJhJiFdlqR--
+> [PATCHv3] Thermal: Fix oops and unlocking in thermal_sys.c
+>
+> This patch fixes the following mutex and NULL pointer
+> problems in thermal_sys.c:
+>
+>  * mutex_unlock fix in update_temperature function
+>  * mutex_unlock fix in bind_cdev function
+>  * Correct early return to continue in bind_cdev function
+>  * NULL check fix in bind_cdev function
+>  * NULL check fix in bind_tz function
+>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Reported-by: Hugh Dickins <hughd@google.com>
+> Signed-off-by: Durgadoss R <durgadoss.r@intel.com>
+> Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Signed-off-by: Hugh Dickins <hughd@google.com>
+> ---
+> v3:
+>  * Sedat restored necessary NULL check in bind_cdev and his signoff.
+>  * Hugh added two more comments above, his signoff, and Dan's 'Reported-by'.
+>
+>  drivers/thermal/thermal_sys.c |    9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> --- mmotm/drivers/thermal/thermal_sys.c 2012-09-26 10:15:28.652071362 -0700
+> +++ linux/drivers/thermal/thermal_sys.c 2012-09-27 16:19:14.427515890 -0700
+> @@ -252,8 +252,8 @@ static void bind_cdev(struct thermal_coo
+>                 }
+>
+>                 tzp = pos->tzp;
+> -               if (!tzp->tbp)
+> -                       return;
+> +               if (!tzp || !tzp->tbp)
+> +                       continue;
+>
+>                 for (i = 0; i < tzp->num_tbps; i++) {
+>                         if (tzp->tbp[i].cdev || !tzp->tbp[i].match)
+> @@ -289,7 +289,7 @@ static void bind_tz(struct thermal_zone_
+>                 goto exit;
+>         }
+>
+> -       if (!tzp->tbp)
+> +       if (!tzp || !tzp->tbp)
+>                 goto exit;
+>
+>         list_for_each_entry(pos, &thermal_cdev_list, node) {
+> @@ -387,12 +387,13 @@ static void update_temperature(struct th
+>         ret = tz->ops->get_temp(tz, &temp);
+>         if (ret) {
+>                 pr_warn("failed to read out thermal zone %d\n", tz->id);
+> -               return;
+> +               goto exit;
+>         }
+>
+>         tz->last_temperature = tz->temperature;
+>         tz->temperature = temp;
+>
+> +exit:
+>         mutex_unlock(&tz->lock);
+>  }
+>
