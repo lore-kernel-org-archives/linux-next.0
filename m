@@ -1,71 +1,135 @@
-From: Mark Langsdorf <mark.langsdorf@calxeda.com>
-Subject: Re: [PATCH -next] ata: fix sata_highbank.c build errors
-Date: Fri, 28 Sep 2012 12:56:53 -0500
-Message-ID: <5065E4E5.30004@calxeda.com>
-References: <20120919162643.907ddda75e198f060e4e83fe@canb.auug.org.au> <505A0BCF.5040905@xenotime.net> <5065DABA.7060404@xenotime.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [-next]: s390 *_irq() link errors
+Date: Sat, 29 Sep 2012 18:39:13 +0200
+Message-ID: <CAMuHMdUqXnY5ZNgjYN0YMpLkPw0j41MXM18H9qiLoEk-BzKYMg@mail.gmail.com>
+References: <CAMuHMdXqsPgfToNyjbxJ-WM=-kEEvAweE03wb3vtkwVO+-RR3A@mail.gmail.com>
+	<20120927115134.GA5654@osiris.de.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp188.dfw.emailsrvr.com ([67.192.241.188]:54932 "EHLO
-	smtp188.dfw.emailsrvr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758648Ab2I1R4t (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Sep 2012 13:56:49 -0400
-In-Reply-To: <5065DABA.7060404@xenotime.net>
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:50509 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756096Ab2I2QjO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 29 Sep 2012 12:39:14 -0400
+In-Reply-To: <20120927115134.GA5654@osiris.de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Jeff Garzik <jgarzik@pobox.com>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jean Delvare <khali@linux-fr.org>, linux-s390@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
 
-On 09/28/2012 12:13 PM, Randy Dunlap wrote:
-> On 09/19/2012 11:15 AM, Randy Dunlap wrote:
-> 
->> From: Randy Dunlap <rdunlap@xenotime.net>
->>
-> 
-> 
-> ping.
-> This build error is still present in linux-next of 20120928.
-> 
->> Fix build errors in sata_highbank.c by also building libahci.o.
->> Fixes these build errors:
->>
->> drivers/built-in.o: In function `ahci_highbank_hardreset':
->> sata_highbank.c:(.text+0x1edc9a): undefined reference to `ahci_stop_engine'
->> sata_highbank.c:(.text+0x1edfab): undefined reference to `ahci_start_engine'
->> sata_highbank.c:(.text+0x1edfd5): undefined reference to `ahci_dev_classify'
->> drivers/built-in.o: In function `ahci_highbank_resume':
->> sata_highbank.c:(.text+0x1ee0af): undefined reference to `ahci_reset_controller'
->> sata_highbank.c:(.text+0x1ee0e1): undefined reference to `ahci_init_controller'
->> drivers/built-in.o: In function `ahci_highbank_probe':
->> sata_highbank.c:(.init.text+0xc577): undefined reference to `ahci_save_initial_config'
->> sata_highbank.c:(.init.text+0xc5ca): undefined reference to `ahci_set_em_messages'
->> sata_highbank.c:(.init.text+0xc630): undefined reference to `ahci_ignore_sss'
->> sata_highbank.c:(.init.text+0xc660): undefined reference to `ahci_reset_em'
->> sata_highbank.c:(.init.text+0xc72f): undefined reference to `ahci_reset_controller'
->> sata_highbank.c:(.init.text+0xc75a): undefined reference to `ahci_init_controller'
->> sata_highbank.c:(.init.text+0xc774): undefined reference to `ahci_print_info'
->> sata_highbank.c:(.init.text+0xc77c): undefined reference to `ahci_interrupt'
->> drivers/built-in.o:(.data+0x1d5ec): undefined reference to `ahci_ops'
->> drivers/built-in.o:(.data+0x1d690): undefined reference to `ahci_shost_attrs'
->> drivers/built-in.o:(.data+0x1d694): undefined reference to `ahci_sdev_attrs'
->>
->> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
->> Cc: Mark Langsdorf <mark.langsdorf@calxeda.com>
->> ---
->>  drivers/ata/Makefile |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> --- linux-next-20120919.orig/drivers/ata/Makefile
->> +++ linux-next-20120919/drivers/ata/Makefile
->> @@ -9,7 +9,7 @@ obj-$(CONFIG_SATA_FSL)		+= sata_fsl.o
->>  obj-$(CONFIG_SATA_INIC162X)	+= sata_inic162x.o
->>  obj-$(CONFIG_SATA_SIL24)	+= sata_sil24.o
->>  obj-$(CONFIG_SATA_DWC)		+= sata_dwc_460ex.o
->> -obj-$(CONFIG_SATA_HIGHBANK)	+= sata_highbank.o
->> +obj-$(CONFIG_SATA_HIGHBANK)	+= sata_highbank.o libahci.o
->>  
->>  # SFF w/ custom DMA
->>  obj-$(CONFIG_PDC_ADMA)		+= pdc_adma.o
+Hi Heiko,
 
-Signed-off-by: Mark Langsdorf <mark.langsdorf@calxeda.com>
+On Thu, Sep 27, 2012 at 1:51 PM, Heiko Carstens
+<heiko.carstens@de.ibm.com> wrote:
+> On Sun, Sep 16, 2012 at 09:07:54PM +0200, Geert Uytterhoeven wrote:
+>> After applying http://www.spinics.net/lists/linux-next/msg21973.html,
+>> the s390 allmodconfig build in linux-next fails in the linking stage with:
+>>
+>> ERROR: "free_irq" [drivers/power/smb347-charger.ko] undefined!
+>> ERROR: "free_irq" [drivers/power/sbs-battery.ko] undefined!
+>> ERROR: "enable_irq" [drivers/power/max17042_battery.ko] undefined!
+>> ERROR: "request_irq" [drivers/power/max17042_battery.ko] undefined!
+>> ERROR: "free_irq" [drivers/power/max17042_battery.ko] undefined!
+>> ERROR: "disable_irq" [drivers/power/max17042_battery.ko] undefined!
+>> ERROR: "request_irq" [drivers/power/lp8727_charger.ko] undefined!
+>> ERROR: "free_irq" [drivers/power/lp8727_charger.ko] undefined!
+>> ERROR: "request_irq" [drivers/nfc/pn544_hci.ko] undefined!
+>> ERROR: "free_irq" [drivers/nfc/pn544_hci.ko] undefined!
+>> ERROR: "request_irq" [drivers/nfc/pn544.ko] undefined!
+>> ERROR: "free_irq" [drivers/nfc/pn544.ko] undefined!
+>> ERROR: "request_irq" [drivers/misc/fsa9480.ko] undefined!
+>> ERROR: "free_irq" [drivers/misc/fsa9480.ko] undefined!
+>> ERROR: "request_irq" [drivers/misc/bh1770glc.ko] undefined!
+>> ERROR: "free_irq" [drivers/misc/bh1770glc.ko] undefined!
+>> ERROR: "request_irq" [drivers/misc/apds990x.ko] undefined!
+>> ERROR: "free_irq" [drivers/misc/apds990x.ko] undefined!
+>>
+>> What should these drivers depend on? GENERIC_HARDIRQS?
+>
+> Probably, but...
+>
+>> S390 is the only non-GENERIC_HARDIRQS architecture left, but all
+>> other former non-GENERIC_HARDIRQS architectures did provide e.g. request_irq()
+>> and free_irq().
+>
+> All of this started because I2C lost its HAS_IOMEM dependency. Can't
+> we simply add an !S390 dependency instead and all is well? :)
+>
+> Something like below?
+>
+> From 24c68e72b6198b8412a8605fac7d9c90796502ac Mon Sep 17 00:00:00 2001
+> From: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Date: Thu, 27 Sep 2012 13:37:14 +0200
+> Subject: [PATCH] i2c: Make I2C unavailable on s390 again
+>
+> "i2c: Make I2C available on UML" removed the IOMEM dependency from I2C which
+> resulted in I2C being avaible on s390 and causing allmodconfig and allyesconfig
+> builds to fail:
+>
+> drivers/misc/altera-stapl/altera-lpt.c: In function 'byteblaster_write':
+> drivers/misc/altera-stapl/altera-lpt.c:34:2: error: implicit declaration of function 'outb' [-Werror=implicit-function-declaration]
+>
+> Adding a HAS_PORT dependency to that driver reveals that there are lots
+> of other build errors waiting for discovery because of this change since
+> s390 does not support generic hardirqs:
+>
+> ERROR: "free_irq" [drivers/power/smb347-charger.ko] undefined!
+> ERROR: "free_irq" [drivers/power/sbs-battery.ko] undefined!
+> ERROR: "enable_irq" [drivers/power/max17042_battery.ko] undefined!
+> ERROR: "request_irq" [drivers/power/max17042_battery.ko] undefined!
+> ERROR: "free_irq" [drivers/power/max17042_battery.ko] undefined!
+> ERROR: "disable_irq" [drivers/power/max17042_battery.ko] undefined!
+> ERROR: "request_irq" [drivers/power/lp8727_charger.ko] undefined!
+> ERROR: "free_irq" [drivers/power/lp8727_charger.ko] undefined!
+> ERROR: "request_irq" [drivers/nfc/pn544_hci.ko] undefined!
+> ERROR: "free_irq" [drivers/nfc/pn544_hci.ko] undefined!
+> ERROR: "request_irq" [drivers/nfc/pn544.ko] undefined!
+> ERROR: "free_irq" [drivers/nfc/pn544.ko] undefined!
+> ERROR: "request_irq" [drivers/misc/fsa9480.ko] undefined!
+> ERROR: "free_irq" [drivers/misc/fsa9480.ko] undefined!
+> ERROR: "request_irq" [drivers/misc/bh1770glc.ko] undefined!
+> ERROR: "free_irq" [drivers/misc/bh1770glc.ko] undefined!
+> ERROR: "request_irq" [drivers/misc/apds990x.ko] undefined!
+> ERROR: "free_irq" [drivers/misc/apds990x.ko] undefined!
+>
+> Since UML seems to need generic I2C support, but lot's of now available
+> drivers fail to compile on s390, just add a !S390 dependency.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Peter Huewe <peterhuewe@gmx.de>
+> Cc: Jean Delvare <khali@linux-fr.org>
+> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+
+Yeah, s390 is so special that it's the only architecture that can be used
+in depends on !, so
+
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>  drivers/i2c/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/i2c/Kconfig b/drivers/i2c/Kconfig
+> index 17b35c1..2f8c76b 100644
+> --- a/drivers/i2c/Kconfig
+> +++ b/drivers/i2c/Kconfig
+> @@ -4,6 +4,7 @@
+>
+>  menuconfig I2C
+>         tristate "I2C support"
+> +       depends on !S390
+>         select RT_MUTEXES
+>         ---help---
+>           I2C (pronounce: I-squared-C) is a slow serial bus protocol used in
+> --
+> 1.7.11.7
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
