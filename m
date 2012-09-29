@@ -1,127 +1,53 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [-next]: s390 *_irq() link errors
-Date: Sat, 29 Sep 2012 18:39:13 +0200
-Message-ID: <CAMuHMdUqXnY5ZNgjYN0YMpLkPw0j41MXM18H9qiLoEk-BzKYMg@mail.gmail.com>
-References: <CAMuHMdXqsPgfToNyjbxJ-WM=-kEEvAweE03wb3vtkwVO+-RR3A@mail.gmail.com>
-	<20120927115134.GA5654@osiris.de.ibm.com>
+Subject: Re: [PATCH 2/2] memstick: add support for legacy memorysticks
+Date: Sat, 29 Sep 2012 19:20:41 +0200
+Message-ID: <CAMuHMdW7zfM1CxkXTCq2=ErkaAAxGVFyQSZdH3jwvUXr_8oOsg@mail.gmail.com>
+References: <1348652941-31899-1-git-send-email-maximlevitsky@gmail.com>
+	<1348652941-31899-3-git-send-email-maximlevitsky@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:50509 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756096Ab2I2QjO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 29 Sep 2012 12:39:14 -0400
-In-Reply-To: <20120927115134.GA5654@osiris.de.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jean Delvare <khali@linux-fr.org>, linux-s390@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1348652941-31899-3-git-send-email-maximlevitsky@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maxim Levitsky <maximlevitsky@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Alex Dubov <oakad@yahoo.com>, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Heiko,
+On Wed, Sep 26, 2012 at 11:49 AM, Maxim Levitsky
+<maximlevitsky@gmail.com> wrote:
+> --- /dev/null
+> +++ b/drivers/memstick/core/ms_block.c
 
-On Thu, Sep 27, 2012 at 1:51 PM, Heiko Carstens
-<heiko.carstens@de.ibm.com> wrote:
-> On Sun, Sep 16, 2012 at 09:07:54PM +0200, Geert Uytterhoeven wrote:
->> After applying http://www.spinics.net/lists/linux-next/msg21973.html,
->> the s390 allmodconfig build in linux-next fails in the linking stage with:
->>
->> ERROR: "free_irq" [drivers/power/smb347-charger.ko] undefined!
->> ERROR: "free_irq" [drivers/power/sbs-battery.ko] undefined!
->> ERROR: "enable_irq" [drivers/power/max17042_battery.ko] undefined!
->> ERROR: "request_irq" [drivers/power/max17042_battery.ko] undefined!
->> ERROR: "free_irq" [drivers/power/max17042_battery.ko] undefined!
->> ERROR: "disable_irq" [drivers/power/max17042_battery.ko] undefined!
->> ERROR: "request_irq" [drivers/power/lp8727_charger.ko] undefined!
->> ERROR: "free_irq" [drivers/power/lp8727_charger.ko] undefined!
->> ERROR: "request_irq" [drivers/nfc/pn544_hci.ko] undefined!
->> ERROR: "free_irq" [drivers/nfc/pn544_hci.ko] undefined!
->> ERROR: "request_irq" [drivers/nfc/pn544.ko] undefined!
->> ERROR: "free_irq" [drivers/nfc/pn544.ko] undefined!
->> ERROR: "request_irq" [drivers/misc/fsa9480.ko] undefined!
->> ERROR: "free_irq" [drivers/misc/fsa9480.ko] undefined!
->> ERROR: "request_irq" [drivers/misc/bh1770glc.ko] undefined!
->> ERROR: "free_irq" [drivers/misc/bh1770glc.ko] undefined!
->> ERROR: "request_irq" [drivers/misc/apds990x.ko] undefined!
->> ERROR: "free_irq" [drivers/misc/apds990x.ko] undefined!
->>
->> What should these drivers depend on? GENERIC_HARDIRQS?
->
-> Probably, but...
->
->> S390 is the only non-GENERIC_HARDIRQS architecture left, but all
->> other former non-GENERIC_HARDIRQS architectures did provide e.g. request_irq()
->> and free_irq().
->
-> All of this started because I2C lost its HAS_IOMEM dependency. Can't
-> we simply add an !S390 dependency instead and all is well? :)
->
-> Something like below?
->
-> From 24c68e72b6198b8412a8605fac7d9c90796502ac Mon Sep 17 00:00:00 2001
-> From: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Date: Thu, 27 Sep 2012 13:37:14 +0200
-> Subject: [PATCH] i2c: Make I2C unavailable on s390 again
->
-> "i2c: Make I2C available on UML" removed the IOMEM dependency from I2C which
-> resulted in I2C being avaible on s390 and causing allmodconfig and allyesconfig
-> builds to fail:
->
-> drivers/misc/altera-stapl/altera-lpt.c: In function 'byteblaster_write':
-> drivers/misc/altera-stapl/altera-lpt.c:34:2: error: implicit declaration of function 'outb' [-Werror=implicit-function-declaration]
->
-> Adding a HAS_PORT dependency to that driver reveals that there are lots
-> of other build errors waiting for discovery because of this change since
-> s390 does not support generic hardirqs:
->
-> ERROR: "free_irq" [drivers/power/smb347-charger.ko] undefined!
-> ERROR: "free_irq" [drivers/power/sbs-battery.ko] undefined!
-> ERROR: "enable_irq" [drivers/power/max17042_battery.ko] undefined!
-> ERROR: "request_irq" [drivers/power/max17042_battery.ko] undefined!
-> ERROR: "free_irq" [drivers/power/max17042_battery.ko] undefined!
-> ERROR: "disable_irq" [drivers/power/max17042_battery.ko] undefined!
-> ERROR: "request_irq" [drivers/power/lp8727_charger.ko] undefined!
-> ERROR: "free_irq" [drivers/power/lp8727_charger.ko] undefined!
-> ERROR: "request_irq" [drivers/nfc/pn544_hci.ko] undefined!
-> ERROR: "free_irq" [drivers/nfc/pn544_hci.ko] undefined!
-> ERROR: "request_irq" [drivers/nfc/pn544.ko] undefined!
-> ERROR: "free_irq" [drivers/nfc/pn544.ko] undefined!
-> ERROR: "request_irq" [drivers/misc/fsa9480.ko] undefined!
-> ERROR: "free_irq" [drivers/misc/fsa9480.ko] undefined!
-> ERROR: "request_irq" [drivers/misc/bh1770glc.ko] undefined!
-> ERROR: "free_irq" [drivers/misc/bh1770glc.ko] undefined!
-> ERROR: "request_irq" [drivers/misc/apds990x.ko] undefined!
-> ERROR: "free_irq" [drivers/misc/apds990x.ko] undefined!
->
-> Since UML seems to need generic I2C support, but lot's of now available
-> drivers fail to compile on s390, just add a !S390 dependency.
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Peter Huewe <peterhuewe@gmx.de>
-> Cc: Jean Delvare <khali@linux-fr.org>
-> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+> +#define pr_fmt(fmt) DRIVER_NAME ": " fmt
+> +
+> +#include <linux/module.h>
+> +#include <linux/blkdev.h>
+> +#include <linux/memstick.h>
+> +#include <linux/idr.h>
+> +#include <linux/hdreg.h>
+> +#include <linux/delay.h>
+> +#include <linux/slab.h>
+> +#include <linux/random.h>
+> +#include <linux/bitmap.h>
+> +#include <linux/scatterlist.h>
+> +#include <linux/jiffies.h>
+> +#include <linux/workqueue.h>
+> +#include <linux/mutex.h>
+> +#include "ms_block.h"
 
-Yeah, s390 is so special that it's the only architecture that can be used
-in depends on !, so
+http://kisskb.ellerman.id.au/kisskb/buildresult/7280352/
+arch/m68k/include/asm/hardirq.h:23:20: error: expected ')' before 'DRIVER_NAME'
+make[4]: *** [drivers/memstick/core/ms_block.o] Error 1
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
->  drivers/i2c/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/i2c/Kconfig b/drivers/i2c/Kconfig
-> index 17b35c1..2f8c76b 100644
-> --- a/drivers/i2c/Kconfig
-> +++ b/drivers/i2c/Kconfig
-> @@ -4,6 +4,7 @@
->
->  menuconfig I2C
->         tristate "I2C support"
-> +       depends on !S390
->         select RT_MUTEXES
->         ---help---
->           I2C (pronounce: I-squared-C) is a slow serial bus protocol used in
-> --
-> 1.7.11.7
+The reason for this is that pr_fmt() references DRIVER_NAME and is defined
+before the first include, while DRIVER_NAME is only defined in ms_block.h,
+which is the last included file. If any subsequent include file uses pr_fmt()
+(e.g. the call to pr_crit() in arch/m68k/include/asm/hardirq.h), this
+causes a build
+failure.
+
+I suggest moving the DRIVER_NAME define to ms_block.c.
+Cfr. memstick.c and mspro_block.c, who already have their own definition.
 
 Gr{oetje,eeting}s,
 
