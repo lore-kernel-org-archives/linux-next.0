@@ -1,61 +1,74 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/2] memstick: add support for legacy memorysticks
-Date: Sat, 29 Sep 2012 19:20:41 +0200
-Message-ID: <CAMuHMdW7zfM1CxkXTCq2=ErkaAAxGVFyQSZdH3jwvUXr_8oOsg@mail.gmail.com>
-References: <1348652941-31899-1-git-send-email-maximlevitsky@gmail.com>
-	<1348652941-31899-3-git-send-email-maximlevitsky@gmail.com>
+From: Ohad Ben-Cohen <ohad@wizery.com>
+Subject: Re: linux-next: Tree for Sept 24 (remoteproc)
+Date: Sun, 30 Sep 2012 10:33:52 +0200
+Message-ID: <CAK=WgbZTQX9rbH-rrC+st6OXSpfYjJqqN6Rj4YJosJTPdPnjHg@mail.gmail.com>
+References: <20120925005328.f748dfa3d077cebb345a4291@canb.auug.org.au> <5060DA6B.3030806@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1348652941-31899-3-git-send-email-maximlevitsky@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxim Levitsky <maximlevitsky@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Alex Dubov <oakad@yahoo.com>, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:35507 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753099Ab2I3IeO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Sep 2012 04:34:14 -0400
+Received: by vcbfo13 with SMTP id fo13so4697159vcb.19
+        for <linux-next@vger.kernel.org>; Sun, 30 Sep 2012 01:34:13 -0700 (PDT)
+In-Reply-To: <5060DA6B.3030806@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Sep 26, 2012 at 11:49 AM, Maxim Levitsky
-<maximlevitsky@gmail.com> wrote:
-> --- /dev/null
-> +++ b/drivers/memstick/core/ms_block.c
+On Tue, Sep 25, 2012 at 12:10 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
+> on x86_64:
+>
+> drivers/built-in.o: In function `rproc_virtio_finalize_features':
+> remoteproc_virtio.c:(.text+0x2f9a02): undefined reference to `vring_transport_features'
+> drivers/built-in.o: In function `rproc_virtio_del_vqs':
+> remoteproc_virtio.c:(.text+0x2f9a74): undefined reference to `vring_del_virtqueue'
+> drivers/built-in.o: In function `rproc_virtio_find_vqs':
+> remoteproc_virtio.c:(.text+0x2f9c44): undefined reference to `vring_new_virtqueue'
+> drivers/built-in.o: In function `rproc_add_virtio_dev':
+> (.text+0x2f9e2c): undefined reference to `register_virtio_device'
+> drivers/built-in.o: In function `rproc_vq_interrupt':
+> (.text+0x2f9db7): undefined reference to `vring_interrupt'
+> drivers/built-in.o: In function `rproc_remove_virtio_dev':
+> (.text+0x2f9e9f): undefined reference to `unregister_virtio_device'
 
-> +#define pr_fmt(fmt) DRIVER_NAME ": " fmt
-> +
-> +#include <linux/module.h>
-> +#include <linux/blkdev.h>
-> +#include <linux/memstick.h>
-> +#include <linux/idr.h>
-> +#include <linux/hdreg.h>
-> +#include <linux/delay.h>
-> +#include <linux/slab.h>
-> +#include <linux/random.h>
-> +#include <linux/bitmap.h>
-> +#include <linux/scatterlist.h>
-> +#include <linux/jiffies.h>
-> +#include <linux/workqueue.h>
-> +#include <linux/mutex.h>
-> +#include "ms_block.h"
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/7280352/
-arch/m68k/include/asm/hardirq.h:23:20: error: expected ')' before 'DRIVER_NAME'
-make[4]: *** [drivers/memstick/core/ms_block.o] Error 1
+Thanks, Randy, I'm applying this:
 
-The reason for this is that pr_fmt() references DRIVER_NAME and is defined
-before the first include, while DRIVER_NAME is only defined in ms_block.h,
-which is the last included file. If any subsequent include file uses pr_fmt()
-(e.g. the call to pr_crit() in arch/m68k/include/asm/hardirq.h), this
-causes a build
-failure.
 
-I suggest moving the DRIVER_NAME define to ms_block.c.
-Cfr. memstick.c and mspro_block.c, who already have their own definition.
+commit 8676079c6d31605268a7903a09fdf616e2ef5551
+Author: Ohad Ben-Cohen <ohad@wizery.com>
+Date:   Sun Sep 30 10:25:34 2012 +0200
 
-Gr{oetje,eeting}s,
+    remoteproc: select VIRTIO to avoid build breakage
 
-                        Geert
+    drivers/built-in.o: In function `rproc_virtio_finalize_features':
+    remoteproc_virtio.c:(.text+0x2f9a02): undefined reference to `vring_transpor
+    drivers/built-in.o: In function `rproc_virtio_del_vqs':
+    remoteproc_virtio.c:(.text+0x2f9a74): undefined reference to `vring_del_virt
+    drivers/built-in.o: In function `rproc_virtio_find_vqs':
+    remoteproc_virtio.c:(.text+0x2f9c44): undefined reference to `vring_new_virt
+    drivers/built-in.o: In function `rproc_add_virtio_dev':
+    (.text+0x2f9e2c): undefined reference to `register_virtio_device'
+    drivers/built-in.o: In function `rproc_vq_interrupt':
+    (.text+0x2f9db7): undefined reference to `vring_interrupt'
+    drivers/built-in.o: In function `rproc_remove_virtio_dev':
+    (.text+0x2f9e9f): undefined reference to `unregister_virtio_device'
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+    Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+    Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index a1024d9..96ce101 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -6,6 +6,7 @@ config REMOTEPROC
+        depends on EXPERIMENTAL
+        depends on HAS_DMA
+        select FW_CONFIG
++       select VIRTIO
+
+ config OMAP_REMOTEPROC
+        tristate "OMAP remoteproc support"
