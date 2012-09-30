@@ -1,74 +1,97 @@
-From: Ohad Ben-Cohen <ohad@wizery.com>
-Subject: Re: linux-next: Tree for Sept 24 (remoteproc)
-Date: Sun, 30 Sep 2012 10:33:52 +0200
-Message-ID: <CAK=WgbZTQX9rbH-rrC+st6OXSpfYjJqqN6Rj4YJosJTPdPnjHg@mail.gmail.com>
-References: <20120925005328.f748dfa3d077cebb345a4291@canb.auug.org.au> <5060DA6B.3030806@xenotime.net>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: [-next]: s390 *_irq() link errors
+Date: Sun, 30 Sep 2012 10:53:50 +0200
+Message-ID: <20120930105350.16e54037@endymion.delvare>
+References: <CAMuHMdXqsPgfToNyjbxJ-WM=-kEEvAweE03wb3vtkwVO+-RR3A@mail.gmail.com>
+	<20120927115134.GA5654@osiris.de.ibm.com>
+	<CAMuHMdUqXnY5ZNgjYN0YMpLkPw0j41MXM18H9qiLoEk-BzKYMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:35507 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753099Ab2I3IeO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Sep 2012 04:34:14 -0400
-Received: by vcbfo13 with SMTP id fo13so4697159vcb.19
-        for <linux-next@vger.kernel.org>; Sun, 30 Sep 2012 01:34:13 -0700 (PDT)
-In-Reply-To: <5060DA6B.3030806@xenotime.net>
+Received: from zoneX.GCU-Squad.org ([194.213.125.0]:2149 "EHLO
+	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751197Ab2I3IyI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Sep 2012 04:54:08 -0400
+In-Reply-To: <CAMuHMdUqXnY5ZNgjYN0YMpLkPw0j41MXM18H9qiLoEk-BzKYMg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Peter Huewe <peterhuewe@gmx.de>, linux-s390@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2012 at 12:10 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> on x86_64:
->
-> drivers/built-in.o: In function `rproc_virtio_finalize_features':
-> remoteproc_virtio.c:(.text+0x2f9a02): undefined reference to `vring_transport_features'
-> drivers/built-in.o: In function `rproc_virtio_del_vqs':
-> remoteproc_virtio.c:(.text+0x2f9a74): undefined reference to `vring_del_virtqueue'
-> drivers/built-in.o: In function `rproc_virtio_find_vqs':
-> remoteproc_virtio.c:(.text+0x2f9c44): undefined reference to `vring_new_virtqueue'
-> drivers/built-in.o: In function `rproc_add_virtio_dev':
-> (.text+0x2f9e2c): undefined reference to `register_virtio_device'
-> drivers/built-in.o: In function `rproc_vq_interrupt':
-> (.text+0x2f9db7): undefined reference to `vring_interrupt'
-> drivers/built-in.o: In function `rproc_remove_virtio_dev':
-> (.text+0x2f9e9f): undefined reference to `unregister_virtio_device'
+On Sat, 29 Sep 2012 18:39:13 +0200, Geert Uytterhoeven wrote:
+> On Thu, Sep 27, 2012 at 1:51 PM, Heiko Carstens
+> > From 24c68e72b6198b8412a8605fac7d9c90796502ac Mon Sep 17 00:00:00 2001
+> > From: Heiko Carstens <heiko.carstens@de.ibm.com>
+> > Date: Thu, 27 Sep 2012 13:37:14 +0200
+> > Subject: [PATCH] i2c: Make I2C unavailable on s390 again
+> >
+> > "i2c: Make I2C available on UML" removed the IOMEM dependency from I2C which
+> > resulted in I2C being avaible on s390 and causing allmodconfig and allyesconfig
+> > builds to fail:
+> >
+> > drivers/misc/altera-stapl/altera-lpt.c: In function 'byteblaster_write':
+> > drivers/misc/altera-stapl/altera-lpt.c:34:2: error: implicit declaration of function 'outb' [-Werror=implicit-function-declaration]
+> >
+> > Adding a HAS_PORT dependency to that driver reveals that there are lots
+> > of other build errors waiting for discovery because of this change since
+> > s390 does not support generic hardirqs:
+> >
+> > ERROR: "free_irq" [drivers/power/smb347-charger.ko] undefined!
+> > ERROR: "free_irq" [drivers/power/sbs-battery.ko] undefined!
+> > ERROR: "enable_irq" [drivers/power/max17042_battery.ko] undefined!
+> > ERROR: "request_irq" [drivers/power/max17042_battery.ko] undefined!
+> > ERROR: "free_irq" [drivers/power/max17042_battery.ko] undefined!
+> > ERROR: "disable_irq" [drivers/power/max17042_battery.ko] undefined!
+> > ERROR: "request_irq" [drivers/power/lp8727_charger.ko] undefined!
+> > ERROR: "free_irq" [drivers/power/lp8727_charger.ko] undefined!
+> > ERROR: "request_irq" [drivers/nfc/pn544_hci.ko] undefined!
+> > ERROR: "free_irq" [drivers/nfc/pn544_hci.ko] undefined!
+> > ERROR: "request_irq" [drivers/nfc/pn544.ko] undefined!
+> > ERROR: "free_irq" [drivers/nfc/pn544.ko] undefined!
+> > ERROR: "request_irq" [drivers/misc/fsa9480.ko] undefined!
+> > ERROR: "free_irq" [drivers/misc/fsa9480.ko] undefined!
+> > ERROR: "request_irq" [drivers/misc/bh1770glc.ko] undefined!
+> > ERROR: "free_irq" [drivers/misc/bh1770glc.ko] undefined!
+> > ERROR: "request_irq" [drivers/misc/apds990x.ko] undefined!
+> > ERROR: "free_irq" [drivers/misc/apds990x.ko] undefined!
+> >
+> > Since UML seems to need generic I2C support, but lot's of now available
+> > drivers fail to compile on s390, just add a !S390 dependency.
+> >
+> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Cc: Peter Huewe <peterhuewe@gmx.de>
+> > Cc: Jean Delvare <khali@linux-fr.org>
+> > Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+> 
+> Yeah, s390 is so special that it's the only architecture that can be used
+> in depends on !, so
+> 
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > ---
+> >  drivers/i2c/Kconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/i2c/Kconfig b/drivers/i2c/Kconfig
+> > index 17b35c1..2f8c76b 100644
+> > --- a/drivers/i2c/Kconfig
+> > +++ b/drivers/i2c/Kconfig
+> > @@ -4,6 +4,7 @@
+> >
+> >  menuconfig I2C
+> >         tristate "I2C support"
+> > +       depends on !S390
+> >         select RT_MUTEXES
+> >         ---help---
+> >           I2C (pronounce: I-squared-C) is a slow serial bus protocol used in
 
+I thought we were trying to move away from explicit arch exclusions,
+but if S390 is special then fine with me. I've folded Heiko's fix into
+Peter's patch, as it is not committed yet. Result is at:
 
-Thanks, Randy, I'm applying this:
+http://khali.linux-fr.org/devel/linux-3/jdelvare-i2c/i2c-make-I2C-available-on-UML.patch
 
+That's what will be in the next linux-next.
 
-commit 8676079c6d31605268a7903a09fdf616e2ef5551
-Author: Ohad Ben-Cohen <ohad@wizery.com>
-Date:   Sun Sep 30 10:25:34 2012 +0200
-
-    remoteproc: select VIRTIO to avoid build breakage
-
-    drivers/built-in.o: In function `rproc_virtio_finalize_features':
-    remoteproc_virtio.c:(.text+0x2f9a02): undefined reference to `vring_transpor
-    drivers/built-in.o: In function `rproc_virtio_del_vqs':
-    remoteproc_virtio.c:(.text+0x2f9a74): undefined reference to `vring_del_virt
-    drivers/built-in.o: In function `rproc_virtio_find_vqs':
-    remoteproc_virtio.c:(.text+0x2f9c44): undefined reference to `vring_new_virt
-    drivers/built-in.o: In function `rproc_add_virtio_dev':
-    (.text+0x2f9e2c): undefined reference to `register_virtio_device'
-    drivers/built-in.o: In function `rproc_vq_interrupt':
-    (.text+0x2f9db7): undefined reference to `vring_interrupt'
-    drivers/built-in.o: In function `rproc_remove_virtio_dev':
-    (.text+0x2f9e9f): undefined reference to `unregister_virtio_device'
-
-    Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-    Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index a1024d9..96ce101 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -6,6 +6,7 @@ config REMOTEPROC
-        depends on EXPERIMENTAL
-        depends on HAS_DMA
-        select FW_CONFIG
-+       select VIRTIO
-
- config OMAP_REMOTEPROC
-        tristate "OMAP remoteproc support"
+-- 
+Jean Delvare
