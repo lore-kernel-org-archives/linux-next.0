@@ -1,74 +1,42 @@
-From: Maxim Levitsky <maximlevitsky@gmail.com>
-Subject: Re: [PATCH 2/2] memstick: add support for legacy memorysticks
-Date: Mon, 01 Oct 2012 22:24:24 +0200
-Message-ID: <1349123064.29081.0.camel@maxim-laptop>
-References: <1348652941-31899-1-git-send-email-maximlevitsky@gmail.com>
-	 <1348652941-31899-3-git-send-email-maximlevitsky@gmail.com>
-	 <CAMuHMdW7zfM1CxkXTCq2=ErkaAAxGVFyQSZdH3jwvUXr_8oOsg@mail.gmail.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with the mfd tree
+Date: Tue, 2 Oct 2012 00:21:16 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1210020018340.23544@pobox.suse.cz>
+References: <20120912134349.f1dd0f4d050dd4834623e57b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:47883 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751281Ab2JAUY3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Oct 2012 16:24:29 -0400
-In-Reply-To: <CAMuHMdW7zfM1CxkXTCq2=ErkaAAxGVFyQSZdH3jwvUXr_8oOsg@mail.gmail.com>
+Received: from cantor2.suse.de ([195.135.220.15]:55693 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752875Ab2JAWVY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Oct 2012 18:21:24 -0400
+In-Reply-To: <20120912134349.f1dd0f4d050dd4834623e57b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Alex Dubov <oakad@yahoo.com>, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-On Sat, 2012-09-29 at 19:20 +0200, Geert Uytterhoeven wrote: 
-> On Wed, Sep 26, 2012 at 11:49 AM, Maxim Levitsky
-> <maximlevitsky@gmail.com> wrote:
-> > --- /dev/null
-> > +++ b/drivers/memstick/core/ms_block.c
-> 
-> > +#define pr_fmt(fmt) DRIVER_NAME ": " fmt
-> > +
-> > +#include <linux/module.h>
-> > +#include <linux/blkdev.h>
-> > +#include <linux/memstick.h>
-> > +#include <linux/idr.h>
-> > +#include <linux/hdreg.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/random.h>
-> > +#include <linux/bitmap.h>
-> > +#include <linux/scatterlist.h>
-> > +#include <linux/jiffies.h>
-> > +#include <linux/workqueue.h>
-> > +#include <linux/mutex.h>
-> > +#include "ms_block.h"
-> 
-> http://kisskb.ellerman.id.au/kisskb/buildresult/7280352/
-> arch/m68k/include/asm/hardirq.h:23:20: error: expected ')' before 'DRIVER_NAME'
-> make[4]: *** [drivers/memstick/core/ms_block.o] Error 1
-> 
-> The reason for this is that pr_fmt() references DRIVER_NAME and is defined
-> before the first include, while DRIVER_NAME is only defined in ms_block.h,
-> which is the last included file. If any subsequent include file uses pr_fmt()
-> (e.g. the call to pr_crit() in arch/m68k/include/asm/hardirq.h), this
-> causes a build
-> failure.
-> 
-> I suggest moving the DRIVER_NAME define to ms_block.c.
-> Cfr. memstick.c and mspro_block.c, who already have their own definition.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-Completely agree!
-I was somewhat busy lately, so I didn't address this yet.
-I'll send a patch tomorrow.
+On Wed, 12 Sep 2012, Stephen Rothwell wrote:
 
-Best regards,
-Maxim Levitsky
+> Hi Jiri,
+> 
+> Today's linux-next merge of the trivial tree got a conflict in
+> drivers/video/backlight/88pm860x_bl.c between commit a6ccdcd98c39 ("mfd:
+> 88pm860x: Use REG resource for backlight") from the mfd tree and commit
+> e1c9ac420ef1 ("Revert "backlight: fix memory leak on obscure error
+> path"") from the trivial tree.
+> 
+> I just used the version from the mfd tree and can carry the fix as
+> necessary (no action is required).
+
+Samuel,
+
+Linus has just pulled from trivial.git, so could you please make sure this 
+is taken care of (*) in your next pull request? Thanks a lot!
+
+(*) either by resolving the conflict in your tree first, or mentioning it 
+explicitly in your pull request to Linus.
+
+-- 
+Jiri Kosina
+SUSE Labs
