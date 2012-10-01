@@ -1,41 +1,36 @@
 From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the mfd tree
-Date: Tue, 2 Oct 2012 00:21:16 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1210020018340.23544@pobox.suse.cz>
-References: <20120912134349.f1dd0f4d050dd4834623e57b@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the workqueues tree with the hid
+ tree
+Date: Tue, 2 Oct 2012 00:23:47 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1210020021570.23544@pobox.suse.cz>
+References: <20120821135832.4788b9d64fea34502cca895a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:55693 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752875Ab2JAWVY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Oct 2012 18:21:24 -0400
-In-Reply-To: <20120912134349.f1dd0f4d050dd4834623e57b@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120821135832.4788b9d64fea34502cca895a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-15?Q?Bruno_Pr=E9mont?= <bonbons@linux-vserver.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 12 Sep 2012, Stephen Rothwell wrote:
+On Tue, 21 Aug 2012, Stephen Rothwell wrote:
 
-> Hi Jiri,
+> Hi Tejun,
 > 
-> Today's linux-next merge of the trivial tree got a conflict in
-> drivers/video/backlight/88pm860x_bl.c between commit a6ccdcd98c39 ("mfd:
-> 88pm860x: Use REG resource for backlight") from the mfd tree and commit
-> e1c9ac420ef1 ("Revert "backlight: fix memory leak on obscure error
-> path"") from the trivial tree.
+> Today's linux-next merge of the workqueues tree got a conflict in
+> drivers/hid/hid-picolcd.c between commit fabdbf2fd22f ("HID: picoLCD:
+> split driver code") from the hid tree and commit 43829731dd37
+> ("workqueue: deprecate flush[_delayed]_work_sync()") from the workqueues
+> tree.
 > 
-> I just used the version from the mfd tree and can carry the fix as
-> necessary (no action is required).
+> The former commit moved the code changed by the latter into a new file
+> (and removed the old file) and then a later commit removed the call to
+> flush_work_sync().  I just removed the file.
 
-Samuel,
+The same here. My part is now in Linus' tree -- Tejun, could you please 
+sort this out on your side?
 
-Linus has just pulled from trivial.git, so could you please make sure this 
-is taken care of (*) in your next pull request? Thanks a lot!
-
-(*) either by resolving the conflict in your tree first, or mentioning it 
-explicitly in your pull request to Linus.
+Thanks a lot,
 
 -- 
 Jiri Kosina
