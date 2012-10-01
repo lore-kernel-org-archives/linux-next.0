@@ -1,37 +1,62 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the workqueues tree with the hid
- tree
-Date: Tue, 2 Oct 2012 00:23:47 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1210020021570.23544@pobox.suse.cz>
-References: <20120821135832.4788b9d64fea34502cca895a@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Sept 24 (remoteproc)
+Date: Mon, 01 Oct 2012 16:16:09 -0700
+Message-ID: <506A2439.2050408@xenotime.net>
+References: <20120925005328.f748dfa3d077cebb345a4291@canb.auug.org.au> <5060DA6B.3030806@xenotime.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120821135832.4788b9d64fea34502cca895a@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-15?Q?Bruno_Pr=E9mont?= <bonbons@linux-vserver.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy11-pub.bluehost.com ([173.254.64.10]:38174 "HELO
+	oproxy11-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1758232Ab2JAXQT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Oct 2012 19:16:19 -0400
+In-Reply-To: <5060DA6B.3030806@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 21 Aug 2012, Stephen Rothwell wrote:
+On 09/24/2012 03:10 PM, Randy Dunlap wrote:
 
-> Hi Tejun,
+> On 09/24/2012 07:53 AM, Stephen Rothwell wrote:
 > 
-> Today's linux-next merge of the workqueues tree got a conflict in
-> drivers/hid/hid-picolcd.c between commit fabdbf2fd22f ("HID: picoLCD:
-> split driver code") from the hid tree and commit 43829731dd37
-> ("workqueue: deprecate flush[_delayed]_work_sync()") from the workqueues
-> tree.
+>> Hi all,
+>>
+>> Today was a train wreck, with lots of new conflicts across several trees
+>> and a few build failures as well.
+>>
+>> Changes since 201209021:
+>>
 > 
-> The former commit moved the code changed by the latter into a new file
-> (and removed the old file) and then a later commit removed the call to
-> flush_work_sync().  I just removed the file.
 
-The same here. My part is now in Linus' tree -- Tejun, could you please 
-sort this out on your side?
 
-Thanks a lot,
+This build still fails on linux-next of 20121001 when
+VIRTIO is not enabled.
+
+> 
+> on x86_64:
+> 
+> drivers/built-in.o: In function `rproc_virtio_finalize_features':
+> remoteproc_virtio.c:(.text+0x2f9a02): undefined reference to `vring_transport_features'
+> drivers/built-in.o: In function `rproc_virtio_del_vqs':
+> remoteproc_virtio.c:(.text+0x2f9a74): undefined reference to `vring_del_virtqueue'
+> drivers/built-in.o: In function `rproc_virtio_find_vqs':
+> remoteproc_virtio.c:(.text+0x2f9c44): undefined reference to `vring_new_virtqueue'
+> drivers/built-in.o: In function `rproc_add_virtio_dev':
+> (.text+0x2f9e2c): undefined reference to `register_virtio_device'
+> drivers/built-in.o: In function `rproc_vq_interrupt':
+> (.text+0x2f9db7): undefined reference to `vring_interrupt'
+> drivers/built-in.o: In function `rproc_remove_virtio_dev':
+> (.text+0x2f9e9f): undefined reference to `unregister_virtio_device'
+> 
+> 
+> Full randconfig file is attached.
+> 
+> 
+> 
+
+
 
 -- 
-Jiri Kosina
-SUSE Labs
+~Randy
