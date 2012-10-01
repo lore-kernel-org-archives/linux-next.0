@@ -1,45 +1,32 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH -next] bluetooth: fix printk format warnings
-Date: Mon, 1 Oct 2012 12:04:15 -0300
-Message-ID: <20121001150415.GK15463@joana>
-References: <20120928165112.6b0f5328b72428799c3f995d@canb.auug.org.au>
- <5068F597.9020403@xenotime.net>
+From: Josh Triplett <josh@joshtriplett.org>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Date: Mon, 1 Oct 2012 09:10:29 -0700
+Message-ID: <20121001161029.GA21121@leaf>
+References: <20121002005423.7530890bfcfaca06666dfc72@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gh0-f174.google.com ([209.85.160.174]:52098 "EHLO
-	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752051Ab2JAPEX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Oct 2012 11:04:23 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <5068F597.9020403@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org
+In-Reply-To: <20121002005423.7530890bfcfaca06666dfc72@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Randy,
-
-* Randy Dunlap <rdunlap@xenotime.net> [2012-09-30 18:44:55 -0700]:
-
-> From: Randy Dunlap <rdunlap@xenotime.net>
+On Tue, Oct 02, 2012 at 12:54:23AM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Fix printk format warnings in net/bluetooth/:
+> After merging the tip tree, today's linux-next build (sparc64 defconfig)
+> produced this warning:
 > 
-> net/bluetooth/hci_event.c:886:3: warning: format '%ld' expects type 'long int', but argument 2 has type 'size_t'
-> net/bluetooth/hci_event.c:886:3: warning: format '%ld' expects type 'long int', but argument 3 has type 'size_t'
-> net/bluetooth/a2mp.c:386:2: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
+> include/linux/efi.h:503:13: warning: 'efi_enter_virtual_mode' defined but not used [-Wunused-function]
+> include/linux/efi.h:504:13: warning: 'efi_late_init' defined but not used [-Wunused-function]
+> include/linux/efi.h:505:13: warning: 'efi_free_boot_services' defined but not used [-Wunused-function]
 > 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> M:	Marcel Holtmann <marcel@holtmann.org>
-> M:	Gustavo Padovan <gustavo@padovan.org>
-> M:	Johan Hedberg <johan.hedberg@gmail.com>
-> L:	linux-bluetooth@vger.kernel.org
-> ---
->  net/bluetooth/a2mp.c      |    2 +-
->  net/bluetooth/hci_event.c |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> Introduced by commit f383a1e37bc3 ("efi: Add a stub for
+> efi_enter_virtual_mode on non-x86") and following patches.  These
+> function definitions should be "static inline".
 
-This is fixed on bluetooth-next already, thanks for the patch anyway.
+Already fixed in the current version of those patches in tip.
 
-	Gustavo
+- Josh Triplett
