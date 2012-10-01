@@ -1,50 +1,55 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [-next]: s390 *_irq() link errors
-Date: Sun, 30 Sep 2012 13:08:30 +0200
-Message-ID: <CAMuHMdVciRLg3GCcetXMxuXJjC_ur2_=DpgijOTSoO=LvLA1_g@mail.gmail.com>
-References: <CAMuHMdXqsPgfToNyjbxJ-WM=-kEEvAweE03wb3vtkwVO+-RR3A@mail.gmail.com>
-	<20120927115134.GA5654@osiris.de.ibm.com>
-	<CAMuHMdUqXnY5ZNgjYN0YMpLkPw0j41MXM18H9qiLoEk-BzKYMg@mail.gmail.com>
-	<20120930105350.16e54037@endymion.delvare>
-	<CAMuHMdV=mcVuVuJaWrVjwxLz0+gkBoC=NUq6=C176B3W7j8Yag@mail.gmail.com>
-	<20120930112052.733ce361@endymion.delvare>
-	<CAMuHMdVV5F148RrqyGgD7q9y_C5tTnGi8S9hC4tus6wu-mLPxw@mail.gmail.com>
-	<20120930120516.29be3022@endymion.delvare>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] bluetooth: fix printk format warnings
+Date: Sun, 30 Sep 2012 18:44:55 -0700
+Message-ID: <5068F597.9020403@xenotime.net>
+References: <20120928165112.6b0f5328b72428799c3f995d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120930120516.29be3022@endymion.delvare>
+In-Reply-To: <20120928165112.6b0f5328b72428799c3f995d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Peter Huewe <peterhuewe@gmx.de>, linux-s390@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marcel Holtmann <marcel@holtmann.org>, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Sep 30, 2012 at 12:05 PM, Jean Delvare <khali@linux-fr.org> wrote:
-> On Sun, 30 Sep 2012 11:35:41 +0200, Geert Uytterhoeven wrote:
->> On Sun, Sep 30, 2012 at 11:20 AM, Jean Delvare <khali@linux-fr.org> wrote:
->> > On Sun, 30 Sep 2012 11:08:41 +0200, Geert Uytterhoeven wrote:
->> >> On Sun, Sep 30, 2012 at 10:53 AM, Jean Delvare <khali@linux-fr.org> wrote:
->> >> > I thought we were trying to move away from explicit arch exclusions,
->> >> > but if S390 is special then fine with me. I've folded Heiko's fix into
->> >>
->> >> "depends on GENERIC_HARDIRQS" is the alternative...
->> >
->> > That would make even less sense to me, I2C can work just fine without
->> > IRQs.
->>
->> For the individual drivers that need it...
->
-> Oh, of course. Sorry I was probably not completely awaken ;)
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Me neither ;-)
+Fix printk format warnings in net/bluetooth/:
 
-Gr{oetje,eeting}s,
+net/bluetooth/hci_event.c:886:3: warning: format '%ld' expects type 'long int', but argument 2 has type 'size_t'
+net/bluetooth/hci_event.c:886:3: warning: format '%ld' expects type 'long int', but argument 3 has type 'size_t'
+net/bluetooth/a2mp.c:386:2: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
 
-                        Geert
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+M:	Marcel Holtmann <marcel@holtmann.org>
+M:	Gustavo Padovan <gustavo@padovan.org>
+M:	Johan Hedberg <johan.hedberg@gmail.com>
+L:	linux-bluetooth@vger.kernel.org
+---
+ net/bluetooth/a2mp.c      |    2 +-
+ net/bluetooth/hci_event.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--- linux-next-20120928.orig/net/bluetooth/a2mp.c
++++ linux-next-20120928/net/bluetooth/a2mp.c
+@@ -383,7 +383,7 @@ static int a2mp_getampassoc_rsp(struct a
+ 	if (len < sizeof(*rsp))
+ 		return -EINVAL;
+ 
+-	BT_DBG("id %d status 0x%2.2x assoc len %lu", rsp->id, rsp->status,
++	BT_DBG("id %d status 0x%2.2x assoc len %zu", rsp->id, rsp->status,
+ 	       len - sizeof(*rsp));
+ 
+ 	if (rsp->status)
+--- linux-next-20120928.orig/net/bluetooth/hci_event.c
++++ linux-next-20120928/net/bluetooth/hci_event.c
+@@ -883,7 +883,7 @@ static void hci_cc_read_local_amp_assoc(
+ 	rem_len = __le16_to_cpu(rp->rem_len);
+ 
+ 	if (rem_len > frag_len) {
+-		BT_DBG("frag_len %ld rem_len %ld", frag_len, rem_len);
++		BT_DBG("frag_len %zu rem_len %zu", frag_len, rem_len);
+ 
+ 		memcpy(assoc->data + assoc->offset, rp->frag, frag_len);
+ 		assoc->offset += frag_len;
