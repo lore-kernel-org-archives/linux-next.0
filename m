@@ -1,76 +1,74 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Mon, 1 Oct 2012 12:56:19 -0700
-Message-ID: <20121001125619.97649131.akpm@linux-foundation.org>
-References: <20120928163029.19d304240b796e2c7a7d633b@canb.auug.org.au>
-	<Pine.LNX.4.64.1209281117580.21946@file.rdu.redhat.com>
+From: Maxim Levitsky <maximlevitsky@gmail.com>
+Subject: Re: [PATCH 2/2] memstick: add support for legacy memorysticks
+Date: Mon, 01 Oct 2012 22:24:24 +0200
+Message-ID: <1349123064.29081.0.camel@maxim-laptop>
+References: <1348652941-31899-1-git-send-email-maximlevitsky@gmail.com>
+	 <1348652941-31899-3-git-send-email-maximlevitsky@gmail.com>
+	 <CAMuHMdW7zfM1CxkXTCq2=ErkaAAxGVFyQSZdH3jwvUXr_8oOsg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42662 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751843Ab2JAT4U (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Oct 2012 15:56:20 -0400
-In-Reply-To: <Pine.LNX.4.64.1209281117580.21946@file.rdu.redhat.com>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:47883 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751281Ab2JAUY3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Oct 2012 16:24:29 -0400
+In-Reply-To: <CAMuHMdW7zfM1CxkXTCq2=ErkaAAxGVFyQSZdH3jwvUXr_8oOsg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>, Jens Axboe <axboe@kernel.dk>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Alex Dubov <oakad@yahoo.com>, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Linux-Next <linux-next@vger.kernel.org>
 
-On Fri, 28 Sep 2012 11:19:29 -0400 (EDT)
-Mikulas Patocka <mpatocka@redhat.com> wrote:
-
-> > -	if (!prio_tree_empty(&mapping->i_mmap) ||
-> > +	if (!RB_EMPTY_ROOT(&mapping->i_mmap) ||
-> >  	    !list_empty(&mapping->i_mmap_nonlinear)) {
-> >  		mutex_unlock(&mapping->i_mmap_mutex);
-> >  		percpu_up_write(&bdev->bd_block_size_semaphore);
-> > -- 
-> > 1.7.10.280.gaa39
-> > 
-> > -- 
-> > Cheers,
-> > Stephen Rothwell                    sfr@canb.auug.org.au
+On Sat, 2012-09-29 at 19:20 +0200, Geert Uytterhoeven wrote: 
+> On Wed, Sep 26, 2012 at 11:49 AM, Maxim Levitsky
+> <maximlevitsky@gmail.com> wrote:
+> > --- /dev/null
+> > +++ b/drivers/memstick/core/ms_block.c
 > 
-> ... or replace it with
+> > +#define pr_fmt(fmt) DRIVER_NAME ": " fmt
+> > +
+> > +#include <linux/module.h>
+> > +#include <linux/blkdev.h>
+> > +#include <linux/memstick.h>
+> > +#include <linux/idr.h>
+> > +#include <linux/hdreg.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/random.h>
+> > +#include <linux/bitmap.h>
+> > +#include <linux/scatterlist.h>
+> > +#include <linux/jiffies.h>
+> > +#include <linux/workqueue.h>
+> > +#include <linux/mutex.h>
+> > +#include "ms_block.h"
 > 
-> if (mapping_mapped(&mapping)) { ...
+> http://kisskb.ellerman.id.au/kisskb/buildresult/7280352/
+> arch/m68k/include/asm/hardirq.h:23:20: error: expected ')' before 'DRIVER_NAME'
+> make[4]: *** [drivers/memstick/core/ms_block.o] Error 1
+> 
+> The reason for this is that pr_fmt() references DRIVER_NAME and is defined
+> before the first include, while DRIVER_NAME is only defined in ms_block.h,
+> which is the last included file. If any subsequent include file uses pr_fmt()
+> (e.g. the call to pr_crit() in arch/m68k/include/asm/hardirq.h), this
+> causes a build
+> failure.
+> 
+> I suggest moving the DRIVER_NAME define to ms_block.c.
+> Cfr. memstick.c and mspro_block.c, who already have their own definition.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+Completely agree!
+I was somewhat busy lately, so I didn't address this yet.
+I'll send a patch tomorrow.
 
-yup..
-
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: fs/block_dev.c:set_blocksize(): use mapping_mapped()
-
-... instead of open-coding it.
-
-Suggested-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- fs/block_dev.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff -puN fs/block_dev.c~fs-block_devc-set_blocksize-use-mapping_mapped fs/block_dev.c
---- a/fs/block_dev.c~fs-block_devc-set_blocksize-use-mapping_mapped
-+++ a/fs/block_dev.c
-@@ -27,7 +27,6 @@
- #include <linux/namei.h>
- #include <linux/log2.h>
- #include <linux/cleancache.h>
--#include <linux/rbtree.h>
- #include <asm/uaccess.h>
- #include "internal.h"
- 
-@@ -133,8 +132,7 @@ int set_blocksize(struct block_device *b
- 	/* Check that the block device is not memory mapped */
- 	mapping = bdev->bd_inode->i_mapping;
- 	mutex_lock(&mapping->i_mmap_mutex);
--	if (!RB_EMPTY_ROOT(&mapping->i_mmap) ||
--	    !list_empty(&mapping->i_mmap_nonlinear)) {
-+	if (mapping_mapped(mapping)) {
- 		mutex_unlock(&mapping->i_mmap_mutex);
- 		percpu_up_write(&bdev->bd_block_size_semaphore);
- 		return -EBUSY;
-_
+Best regards,
+Maxim Levitsky
