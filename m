@@ -1,70 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the tip tree
-Date: Tue, 2 Oct 2012 00:22:46 +1000
-Message-ID: <20121002002246.4005fd43bb055ad32fd1d660@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Tue, 2 Oct 2012 00:54:23 +1000
+Message-ID: <20121002005423.7530890bfcfaca06666dfc72@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Oct_2012_00_22_46_+1000_rLw7nbs6aqp2emJM"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__2_Oct_2012_00_54_23_+1000_zwowgVAWCZlC=_Mt"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56043 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751701Ab2JAOyc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Oct 2012 10:54:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>
 
---Signature=_Tue__2_Oct_2012_00_22_46_+1000_rLw7nbs6aqp2emJM
+--Signature=_Tue__2_Oct_2012_00_54_23_+1000_zwowgVAWCZlC=_Mt
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-Today's linux-next merge of the akpm tree got a conflict in
-mm/mempolicy.c between commit e9d5bc24d665 ("mm/mpol: Make mempolicy
-home-node aware") from the tip tree and commit "mempolicy: fix a memory
-corruption by refcount imbalance in alloc_pages_vma()" from the akpm tree.
+After merging the tip tree, today's linux-next build (sparc64 defconfig)
+produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+include/linux/efi.h:503:13: warning: 'efi_enter_virtual_mode' defined but n=
+ot used [-Wunused-function]
+include/linux/efi.h:504:13: warning: 'efi_late_init' defined but not used [=
+-Wunused-function]
+include/linux/efi.h:505:13: warning: 'efi_free_boot_services' defined but n=
+ot used [-Wunused-function]
 
+Introduced by commit f383a1e37bc3 ("efi: Add a stub for
+efi_enter_virtual_mode on non-x86") and following patches.  These
+function definitions should be "static inline".
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc mm/mempolicy.c
-index 6e2cd87,3c23d89..0000000
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@@ -1603,7 -1587,8 +1603,8 @@@ asmlinkage long compat_sys_mbind(compat
-  struct mempolicy *get_vma_policy(struct task_struct *task,
-  		struct vm_area_struct *vma, unsigned long addr)
-  {
- -	struct mempolicy *pol =3D task->mempolicy;
- +	struct mempolicy *pol =3D get_task_policy(task);
-+ 	int got_ref;
- =20
-  	if (vma) {
-  		if (vma->vm_ops && vma->vm_ops->get_policy) {
-
---Signature=_Tue__2_Oct_2012_00_22_46_+1000_rLw7nbs6aqp2emJM
+--Signature=_Tue__2_Oct_2012_00_54_23_+1000_zwowgVAWCZlC=_Mt
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQaac2AAoJEECxmPOUX5FE7wgP/1PSMfULT6llp1Pa4zp7sim0
-/znWVOx+K+/9mzjc7EDQe262GFmxPpm4xta5f2eKoQS30gZVUqTJ4HZtTeb+6yMH
-aHubU+7KdaDdjdMYF7I+AJ+Iuo+KwOyb+qWOCxB9cXuuaY1tYsCMy45VY3Ud6/xQ
-31eBhUcyoli3GOTMyFUvbWH4IQnjusaiCFEtod7UYvXesMwa/RmFdk90YGUfxlXp
-BojssnETJo0SARj5NESSeK+bZeU565k8TCSMsUjJo2ZpSDGjN5qIosXZuLx5JxST
-qNQUs8fuGCgN5XHEvalnkUvp8Ent0moKsfHopo+N82ITXMXJXgWXRZlDJ9QcnSaq
-EYvE5x65DTrrfya2QYASpjjs/0XfW1Jjpi73ATX1xcVQO6Zvy4UaTVnxf7+eXBVp
-tyXZO/yTX7HLEMNp9gR3zLgbu65ahzP4wQrOPDINR8L8xtjrkn4pBSQzTzfUvsZm
-5KhvKlnkAk4xJbnCos/0BjHQE6zB37OzILmtdTnnNxzUWoMv18lJZTJdEDOI3TdN
-UMZ75hXCS1DAoHYGaz2+wbQd2L+lEN8P3y/QYr6NZtY6+ej/BgVkP1xTydoVx1vk
-eX5pWJcC7jtTjrMHRqgf3z/JIESjtAEOHZ67iLQT46FPRCbPKzxtAzXlMDGhf4Lm
-e4HlqhAxfzp7ERg3ZOd5
-=TltM
+iQIcBAEBCAAGBQJQaa6fAAoJEECxmPOUX5FE2AQQAIbCDSl2we04JkCwgZS4p8bg
+FvGiGghuk7J/ApxBWUgknkESKRDezJfcyo/hk2bQpm76AN4LMaZYQWi3rTEefr7D
+UJX32wKoL5x0/wScWMji1OX6Gg2FjWjN8sL/PE2IPxT0IRg/kPeF38kj/oEBb3uP
+6oI8MxzGzvyShpqpI59cjhqBnJVDE6ARfUPvpRsvYbICI02OuU8WQaQKCOZfmqZW
+1WZVfnB4LkD8oxa1sI9aAw6ZsyVXi7eBKOHK1Ds9t6EyK/GbP10uT40UlD0n8K6n
+fI0Z5L+FfmMVEtUcEt6d/hTA9OSPTY3VG5scJ76SXiwynoNgoChHeuvatiC6UJJv
+q8YquFO/8JfD9XR1I4Z3rIbrCez0u5PYUm4y9ktV3HAqC1LCuTWS3ExopiPtJRaV
+eZs5tACImLYXmcQuMYd3ZuASKl8/jUH6aA7RPhrinifC2yyxZpY1Dov5xmDuIWX6
+h/WIm6u7JXWIijEgDsGcwxMfNF+fZ7e2m4abTWL7YBdLoSA+qUbzoihx9hwFekS/
+DtEf2U0blC+xfu3dXt4V13Yck3imRT1r/x8xq8WH3E1eggzPm8lkmhb1LmuYXCiN
+KXmtoUV3TyWl5IgiBw+VzNnKIctEVTNzBbD/IE+NzWRKEx9MAF6rwILcBtwmAU3a
+v4VBiT6Hy6zEBR3eQfIY
+=rAKK
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__2_Oct_2012_00_22_46_+1000_rLw7nbs6aqp2emJM--
+--Signature=_Tue__2_Oct_2012_00_54_23_+1000_zwowgVAWCZlC=_Mt--
