@@ -1,38 +1,32 @@
-From: Ivan Vecera <ivecera@redhat.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Mon, 01 Oct 2012 13:53:56 +0200
-Message-ID: <50698454.6000601@redhat.com>
-References: <20120928114335.e05b34a5cfe716df86364ccf@canb.auug.org.au> <20120927.221943.19056434713380159.davem@davemloft.net>
+From: Alasdair G Kergon <agk@redhat.com>
+Subject: Re: linux-next: import of the device-mapper series failed
+Date: Mon, 1 Oct 2012 13:45:08 +0100
+Message-ID: <20121001124508.GA5014@agk-dp.fab.redhat.com>
+References: <20121001132246.85b1943b16ec7a671fdd1ff6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20120927.221943.19056434713380159.davem@davemloft.net>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:64360 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750929Ab2JAMpN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Oct 2012 08:45:13 -0400
+Content-Disposition: inline
+In-Reply-To: <20121001132246.85b1943b16ec7a671fdd1ff6@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alasdair G Kergon <agk@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/28/2012 04:19 AM, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 28 Sep 2012 11:43:35 +1000
-> 
->> Hi all,
->>
->> After merging the net-next tree, today's linux-next build (powerpc
->> ppc64_defconfig) failed like this:
->>
->> drivers/net/ethernet/emulex/benet/be_main.c: In function 'be_find_vfs':
->> drivers/net/ethernet/emulex/benet/be_main.c:1090:28: error: 'struct pci_dev' has no member named 'physfn'
->>
->> Caused by commit 51af6d7c1f31 ("be2net: fix vfs enumeration").  physfn is
->> only defined if CONFIG_PCI_ATS is set.
->>
->> I have reverted that commit for today.
-> 
-> I'm reverting it too, thanks for reporting Stephen.
-> 
-Sorry for that, it will be better to use pci_physfn to access this
-member. I'll repost the patch.
+On Mon, Oct 01, 2012 at 01:22:46PM +1000, Stephen Rothwell wrote:
+> Trying to import the device-mapper series produce this error:
+> $ git am ../quilt/device-mapper/dm-thin-support-discard-with-non-power-of-two-block-size.patch
+> Applying: Support discards when the pool's block size is not a power of 2.
+> error: patch failed: drivers/md/dm-thin.c:2762
+> error: drivers/md/dm-thin.c: patch does not apply
+> and indeed the code in question is very different from what the patch
+> expects.  Is there a missing patch?
 
-Ivan
+NEXT_BASE is lagging behind BASE: I removed the fixes that already went
+upstream - but should probably have waited until NEXT_BASE had picked them up.
+
+Alasdair
