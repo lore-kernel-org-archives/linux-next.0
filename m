@@ -1,32 +1,76 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Mon, 1 Oct 2012 09:10:29 -0700
-Message-ID: <20121001161029.GA21121@leaf>
-References: <20121002005423.7530890bfcfaca06666dfc72@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Mon, 1 Oct 2012 12:56:19 -0700
+Message-ID: <20121001125619.97649131.akpm@linux-foundation.org>
+References: <20120928163029.19d304240b796e2c7a7d633b@canb.auug.org.au>
+	<Pine.LNX.4.64.1209281117580.21946@file.rdu.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20121002005423.7530890bfcfaca06666dfc72@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42662 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751843Ab2JAT4U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Oct 2012 15:56:20 -0400
+In-Reply-To: <Pine.LNX.4.64.1209281117580.21946@file.rdu.redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>, Jens Axboe <axboe@kernel.dk>
 
-On Tue, Oct 02, 2012 at 12:54:23AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (sparc64 defconfig)
-> produced this warning:
-> 
-> include/linux/efi.h:503:13: warning: 'efi_enter_virtual_mode' defined but not used [-Wunused-function]
-> include/linux/efi.h:504:13: warning: 'efi_late_init' defined but not used [-Wunused-function]
-> include/linux/efi.h:505:13: warning: 'efi_free_boot_services' defined but not used [-Wunused-function]
-> 
-> Introduced by commit f383a1e37bc3 ("efi: Add a stub for
-> efi_enter_virtual_mode on non-x86") and following patches.  These
-> function definitions should be "static inline".
+On Fri, 28 Sep 2012 11:19:29 -0400 (EDT)
+Mikulas Patocka <mpatocka@redhat.com> wrote:
 
-Already fixed in the current version of those patches in tip.
+> > -	if (!prio_tree_empty(&mapping->i_mmap) ||
+> > +	if (!RB_EMPTY_ROOT(&mapping->i_mmap) ||
+> >  	    !list_empty(&mapping->i_mmap_nonlinear)) {
+> >  		mutex_unlock(&mapping->i_mmap_mutex);
+> >  		percpu_up_write(&bdev->bd_block_size_semaphore);
+> > -- 
+> > 1.7.10.280.gaa39
+> > 
+> > -- 
+> > Cheers,
+> > Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> ... or replace it with
+> 
+> if (mapping_mapped(&mapping)) { ...
 
-- Josh Triplett
+yup..
+
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: fs/block_dev.c:set_blocksize(): use mapping_mapped()
+
+... instead of open-coding it.
+
+Suggested-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ fs/block_dev.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff -puN fs/block_dev.c~fs-block_devc-set_blocksize-use-mapping_mapped fs/block_dev.c
+--- a/fs/block_dev.c~fs-block_devc-set_blocksize-use-mapping_mapped
++++ a/fs/block_dev.c
+@@ -27,7 +27,6 @@
+ #include <linux/namei.h>
+ #include <linux/log2.h>
+ #include <linux/cleancache.h>
+-#include <linux/rbtree.h>
+ #include <asm/uaccess.h>
+ #include "internal.h"
+ 
+@@ -133,8 +132,7 @@ int set_blocksize(struct block_device *b
+ 	/* Check that the block device is not memory mapped */
+ 	mapping = bdev->bd_inode->i_mapping;
+ 	mutex_lock(&mapping->i_mmap_mutex);
+-	if (!RB_EMPTY_ROOT(&mapping->i_mmap) ||
+-	    !list_empty(&mapping->i_mmap_nonlinear)) {
++	if (mapping_mapped(mapping)) {
+ 		mutex_unlock(&mapping->i_mmap_mutex);
+ 		percpu_up_write(&bdev->bd_block_size_semaphore);
+ 		return -EBUSY;
+_
