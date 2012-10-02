@@ -1,59 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the xen-two tree
-Date: Tue, 2 Oct 2012 14:33:50 +1000
-Message-ID: <20121002143350.0fc9812c8ace3bd986ee7d34@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the spi-mb tree
+Date: Tue, 2 Oct 2012 15:13:27 +1000
+Message-ID: <20121002151327.bff0573c41ce8d983c392820@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Oct_2012_14_33_50_+1000_micA0leKeScAbAre"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__2_Oct_2012_15_13_27_+1000_/.Ctad6Cfgxg2jLS"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54573 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751295Ab2JBFNi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Oct 2012 01:13:38 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Tue__2_Oct_2012_14_33_50_+1000_micA0leKeScAbAre
+--Signature=_Tue__2_Oct_2012_15_13_27_+1000_/.Ctad6Cfgxg2jLS
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Konrad,
+Hi all,
 
-After merging the xen-two tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/spi/Kconfig between commit 536a53a300d0 ("spi: remove completely
+broken Tegra driver") from the spi-mb tree and commit 5bd276118189 ("spi:
+tegra: remove support of legacy DMA driver based access") from the
+arm-soc tree.
 
-arch/x86/built-in.o: In function `xen_start_kernel':
-(.init.text+0xa88): undefined reference to `xen_acpi_notify_hypervisor_stat=
-e'
-drivers/built-in.o: In function `dbgp_reset_prep':
-(.text+0x12ddeb): undefined reference to `xen_dbgp_reset_prep'
-drivers/built-in.o: In function `dbgp_external_startup':
-(.text+0x12e6a9): undefined reference to `xen_dbgp_external_startup'
+I fixed it up (by removing the SPI_TEGRA section) and can carry the fix
+as necessary (no action is required).
 
-I have used the xen-two tree from next-20121001 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__2_Oct_2012_14_33_50_+1000_micA0leKeScAbAre
+--Signature=_Tue__2_Oct_2012_15_13_27_+1000_/.Ctad6Cfgxg2jLS
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQam6uAAoJEECxmPOUX5FEAQsP/1ucAy3YMQCb6yYkbVKChhOk
-5fEkHtcS/hnmf5Chv4lrKstgdE9mxk8d4Qo+0GsclBTV6vzZlPnq9ScXePQiAa/4
-nEJYlLN3gGbXxJw/ljNRSFJIZ9rpiBMSmjnDNzQAZ0AjAs8c7aGFc2ImhtfjehkY
-tc46MyjDvslcyMklGEEx5+6MaeKzgmUF0Ci3sJRYu5iBfDEGgvWqW5HMLazrtqET
-WBLUyBDht80UGhW8c7BUjPrRT4AuxSyoTpnsFlzjQtPkkhimocRL9qk40BiJu0rI
-OhVow0H9WZ63Kfc7Wxc7CmcOhjvky7htGBEh9qUjSuaw4x5XQWdpoAMHuETv26T5
-Ftycd7R7tPLzwQzjb68r81exIXLnM8qj6t2tStDq8/clDbrhehhHL1+KYKvoWul9
-jPDO1L3M3n4uwtQGsTVhXk+2vWipQRGmCQER06c+YDd71OF1QyIuOeaigyABeL2j
-Eht8zdwCeWSMyheQEKl/iYDomaI3e7knT3YTfrZyztuDFHPD+KscapGd4EEoxjmP
-D9if1YURnBqsvzj6TWXBUWiYSEeDGxoXvuZt0+l13vdnn5cws6l2GQ5tOurdW4tO
-d4ljx2uDogIynfQAyxlzBxgV5a/ASx3apiX3rE2xugCWkgzpBgiNPCgm/lndCyqi
-IM5febp1LdKPhYMqznj+
-=VO1T
+iQIcBAEBCAAGBQJQanf3AAoJEECxmPOUX5FE/b0P/2O6naknbkjZYwJE7TgfEIbv
+VWO2ewMxTojA6q74M5YmGrpuu8HseJH/hAKhgVek8BYB0qvEWAWcf8F8I+W/mhr0
+eQQeK5S5Jb5SsGGn/Y/eu4dc30GH0Fjtfwo5aZqOxIiAOVFZGVkjwoY7/NdgbHZB
+C+buoL/E7LQzueiJZegUU6SIVOBUHUfLXFwlseNlI0cyk0I0y191CVxg7KlpWfJw
+I2wOOFp34rn8kFgGOTsj6TAIhyYYB+FBEHpo8Z3MMyrGLxWs6UvgG2QX3Z4d9fuM
+OTVVgUtY3rL0rzRGiyOe9iE6Fu2DrEA6QU9oExWPV5F2VwRHBHH+XHLdeAeBBMpD
+K4LS3RWMpvVx+KCMibozSeONPSnt2Gfei0QF//5h4ZQic/WZjhhJDGguTDfOxDFL
+L+F6ZrXzb+Z5DION3tMSDYXyUIVNw7v+QqkT06i56I28x+T6xfGmQF1yAEX7Kjq1
+QVPHvQeafdt/XJWyC3i/mHDy2J5zEPhWHPWL9ELVrDvSoEIJbYehWQoCpjlcD2r5
+qZJ2hIPGMTf+8xYpriDn0Y3QfIT/lkwMlodZJCfPXDRPwpMtdrFru5H0XE7xmSJl
++y1Oh7sTRy+jDzNNDU51Iy7sTsN3iYxOX4ormLFhkL6SKBL7vMLH/kaafKJw6A/0
+OjFCO6tO3n6jlzJSd1zX
+=N0Jj
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__2_Oct_2012_14_33_50_+1000_micA0leKeScAbAre--
+--Signature=_Tue__2_Oct_2012_15_13_27_+1000_/.Ctad6Cfgxg2jLS--
