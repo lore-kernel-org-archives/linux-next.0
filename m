@@ -1,75 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen-two tree with Linus' tree
-Date: Tue, 2 Oct 2012 14:19:49 +1000
-Message-ID: <20121002141949.f6e61437bdce0d56d9d4321e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the xen-two tree
+Date: Tue, 2 Oct 2012 14:33:50 +1000
+Message-ID: <20121002143350.0fc9812c8ace3bd986ee7d34@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Oct_2012_14_19_49_+1000_JIGO8hj8TisqS859"
+ boundary="Signature=_Tue__2_Oct_2012_14_33_50_+1000_micA0leKeScAbAre"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@suse.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__2_Oct_2012_14_19_49_+1000_JIGO8hj8TisqS859
+--Signature=_Tue__2_Oct_2012_14_33_50_+1000_micA0leKeScAbAre
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Konrad,
 
-Today's linux-next merge of the xen-two tree got a conflict in
-drivers/xen/Makefile between commit 9fa5780beea1 ("USB EHCI/Xen:
-propagate controller reset information to hypervisor") from Linus' tree
-and commit 13febc84849d ("xen: do not compile manage, balloon, pci, acpi,
-pcpu and cpu_hotplug on ARM") from the xen-two tree.
+After merging the xen-two tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (I am not sure exactly what it should depend on - see
-below) and can carry the fix as necessary (no action is required).
+arch/x86/built-in.o: In function `xen_start_kernel':
+(.init.text+0xa88): undefined reference to `xen_acpi_notify_hypervisor_stat=
+e'
+drivers/built-in.o: In function `dbgp_reset_prep':
+(.text+0x12ddeb): undefined reference to `xen_dbgp_reset_prep'
+drivers/built-in.o: In function `dbgp_external_startup':
+(.text+0x12e6a9): undefined reference to `xen_dbgp_external_startup'
 
+I have used the xen-two tree from next-20121001 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/xen/Makefile
-index a4a3cab,cd28aae..0000000
---- a/drivers/xen/Makefile
-+++ b/drivers/xen/Makefile
-@@@ -4,8 -8,11 +8,12 @@@ obj-y	+=3D xenbus
-  nostackp :=3D $(call cc-option, -fno-stack-protector)
-  CFLAGS_features.o			:=3D $(nostackp)
- =20
-+ obj-$(CONFIG_XEN_DOM0)			+=3D $(dom0-y)
-+ dom0-$(CONFIG_PCI) +=3D pci.o
-++dom0-$(CONFIG_X86) +=3D dbgp.o
-+ dom0-$(CONFIG_ACPI) +=3D acpi.o
-+ dom0-$(CONFIG_X86) +=3D pcpu.o
-  obj-$(CONFIG_BLOCK)			+=3D biomerge.o
-- obj-$(CONFIG_HOTPLUG_CPU)		+=3D cpu_hotplug.o
-  obj-$(CONFIG_XEN_XENCOMM)		+=3D xencomm.o
-  obj-$(CONFIG_XEN_BALLOON)		+=3D xen-balloon.o
-  obj-$(CONFIG_XEN_SELFBALLOONING)	+=3D xen-selfballoon.o
-
---Signature=_Tue__2_Oct_2012_14_19_49_+1000_JIGO8hj8TisqS859
+--Signature=_Tue__2_Oct_2012_14_33_50_+1000_micA0leKeScAbAre
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQamtlAAoJEECxmPOUX5FEGskP/2TNkrb1IoRLKl4jpeYUxWWL
-HKarVz3pfRrRKoYQd927YcWdPI9SOGJ7LEHE92jXyqBT4zCdBhDmtaFIoMGsoTpj
-B5gemmFUEeq41RFOSgrpEJSP5KJBA521XWvb3hPa3Vi/29zWh+ggE9RCs4yY1XFr
-mBcIPSBBiwCxzqAOHuUbVBY+jybTZohf2qBYz95PbPk6LoFxqu6YbK9Ew+l+6lro
-ms01glqegLOhJUlF4uWyDF6YBz+fMzot6mWHpn0LS89flK1d0akms3vSx8t02pvV
-f1K2kOU4FpLFVquU17Gjz5Gv6qYIHV7xAwslekZl4d+L41LlTmd+jANXRaWRxnxh
-6shkN60Knechjfxc22FPj0up6tDYbucdkzYiNqm6uDpwksZjItXpGIleU4Mk9f1q
-1vU4lrDiG7P6qG2NGnGXstqC7Me36v9bzn1sIctnhPihgTALKv9dHZfaVr6f+oda
-nhxtsNj864PxHGPAG8sLwU8SOlBRwbeev6hElns5w8Pp+HEVFnUtGJSepxzEu/Sh
-Ng3KU+PIQCz6UUkhlltqMU35N5nDteMDF6tRtt5A1o2IjhkyYNYSbC1Bdb7d5VDf
-InKsZ0MN9fDJb2GyuYMR18B9BiIyFbAbeRR3iUu3+CKf8MpmTPVdcpXffFoK1djT
-SSXQYjX98JChEE9e896v
-=3s2g
+iQIcBAEBCAAGBQJQam6uAAoJEECxmPOUX5FEAQsP/1ucAy3YMQCb6yYkbVKChhOk
+5fEkHtcS/hnmf5Chv4lrKstgdE9mxk8d4Qo+0GsclBTV6vzZlPnq9ScXePQiAa/4
+nEJYlLN3gGbXxJw/ljNRSFJIZ9rpiBMSmjnDNzQAZ0AjAs8c7aGFc2ImhtfjehkY
+tc46MyjDvslcyMklGEEx5+6MaeKzgmUF0Ci3sJRYu5iBfDEGgvWqW5HMLazrtqET
+WBLUyBDht80UGhW8c7BUjPrRT4AuxSyoTpnsFlzjQtPkkhimocRL9qk40BiJu0rI
+OhVow0H9WZ63Kfc7Wxc7CmcOhjvky7htGBEh9qUjSuaw4x5XQWdpoAMHuETv26T5
+Ftycd7R7tPLzwQzjb68r81exIXLnM8qj6t2tStDq8/clDbrhehhHL1+KYKvoWul9
+jPDO1L3M3n4uwtQGsTVhXk+2vWipQRGmCQER06c+YDd71OF1QyIuOeaigyABeL2j
+Eht8zdwCeWSMyheQEKl/iYDomaI3e7knT3YTfrZyztuDFHPD+KscapGd4EEoxjmP
+D9if1YURnBqsvzj6TWXBUWiYSEeDGxoXvuZt0+l13vdnn5cws6l2GQ5tOurdW4tO
+d4ljx2uDogIynfQAyxlzBxgV5a/ASx3apiX3rE2xugCWkgzpBgiNPCgm/lndCyqi
+IM5febp1LdKPhYMqznj+
+=VO1T
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__2_Oct_2012_14_19_49_+1000_JIGO8hj8TisqS859--
+--Signature=_Tue__2_Oct_2012_14_33_50_+1000_micA0leKeScAbAre--
