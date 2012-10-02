@@ -1,62 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfs tree
-Date: Tue, 2 Oct 2012 10:39:07 +1000
-Message-ID: <20121002103907.e43f5bb1cc9e6b85b3a51ef8@canb.auug.org.au>
+From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Subject: RE: linux-next: build failure after merge of the nfs tree
+Date: Tue, 2 Oct 2012 01:08:09 +0000
+Message-ID: <4FA345DA4F4AE44899BD2B03EEEC2FA908FFCB41@SACEXCMBX04-PRD.hq.netapp.com>
+References: <20121002103907.e43f5bb1cc9e6b85b3a51ef8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Oct_2012_10_39_07_+1000_FF/8XDs85xzEqtpr"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45438 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753350Ab2JBAjP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Oct 2012 20:39:15 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121002103907.e43f5bb1cc9e6b85b3a51ef8@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__2_Oct_2012_10_39_07_+1000_FF/8XDs85xzEqtpr
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> -----Original Message-----
+> From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
+> owner@vger.kernel.org] On Behalf Of Stephen Rothwell
+> Sent: Monday, October 01, 2012 8:39 PM
+> To: Trond Myklebust
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: linux-next: build failure after merge of the nfs tree
+> 
+> Hi Trond,
+> 
+> After merging the nfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> fs/nfs/callback.c: In function 'nfs_minorversion_callback_svc_setup':
+> fs/nfs/callback.c:206:21: error: 'ENOTSUP' undeclared (first use in this
+> function)
+> 
+> Caused by commit 141e1f553b6e ("NFSv4: Fix the minor version callback
+> channel startup").
+> 
 
-Hi Trond,
+Hi Stephen,
 
-After merging the nfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Thanks! We've already fixed this issue and pushed out a new tree...
 
-fs/nfs/callback.c: In function 'nfs_minorversion_callback_svc_setup':
-fs/nfs/callback.c:206:21: error: 'ENOTSUP' undeclared (first use in this fu=
-nction)
-
-Caused by commit 141e1f553b6e ("NFSv4: Fix the minor version callback
-channel startup").
-
-I have used the nfs tree from next-20121001 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__2_Oct_2012_10_39_07_+1000_FF/8XDs85xzEqtpr
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQajerAAoJEECxmPOUX5FEXKsP/RJTQ2qSVHap+AiQddDLnm1U
-kxvkD748u5T2A0wRzxfFBJ0rsVEPyT4eBZL9LCeJKJcoGdv6cHgkP+JWkwRwhv40
-gDsatVFw6ORqHizbOaAk2o510MthcvI5pMI5ogkikGYkjusJfBPIBNTh3drtDST4
-WLbvkxaanV0oL/cLE6woxC1rBHiYn55xzv3kWEAaIQXWo+MU7axDIy0m8+WpHYYV
-e/c2U39ZOkxyZssJS+i6N0dxYBBqNVtazdxo1QCSmzJZvkDKKFNzy6rp0CyYVz/3
-2SCJZTnLdyFsxXXFKr3GLY8WyIwlf0tMzzgpCvuNr4Sx2b4GsptBwNVwmYAduSYB
-33ygm1NGCAnRxzZT1kenc2+YD+r0HhSxWAgqleZIU0Lyke3/2wbViJAHcisqDNwZ
-018TlsxQABiPlctvy7Pf4BpYlL9y+QoswERJQP9CEJgYl1uGoiM/s3icpW8CISiJ
-glbBRCNFGsNjZKu2+HeEJWBcKaqk3y5t4a6r95rDNNizDCqmOO9ZxqayX5FUtdik
-tCR3YP132hEgzY9ukNHFFvS7g775VmP/EAUF+A/vZI65leA+npGwaq798S+4YQA2
-O88tAW6/kSOz7m/vJY3hkuRnTwZQxBg1lwtzuB/t5XE+YKgj2OGv4qKp0E3NQaok
-TpnEDhbp8h0zzlHmB09v
-=Tbp+
------END PGP SIGNATURE-----
-
---Signature=_Tue__2_Oct_2012_10_39_07_+1000_FF/8XDs85xzEqtpr--
+Cheers
+  Trond
