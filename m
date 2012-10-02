@@ -1,43 +1,56 @@
-From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Subject: RE: linux-next: build failure after merge of the nfs tree
-Date: Tue, 2 Oct 2012 01:08:09 +0000
-Message-ID: <4FA345DA4F4AE44899BD2B03EEEC2FA908FFCB41@SACEXCMBX04-PRD.hq.netapp.com>
-References: <20121002103907.e43f5bb1cc9e6b85b3a51ef8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
+Date: Tue, 2 Oct 2012 11:13:08 +1000
+Message-ID: <20121002111308.e46f7017cb8bdd5fef826914@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__2_Oct_2012_11_13_08_+1000_Lyg9BuuTf1FTqqVK"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121002103907.e43f5bb1cc9e6b85b3a51ef8@canb.auug.org.au>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Javier Martin <javier.martin@vista-silicon.com>
 List-Id: linux-next.vger.kernel.org
 
-> -----Original Message-----
-> From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
-> owner@vger.kernel.org] On Behalf Of Stephen Rothwell
-> Sent: Monday, October 01, 2012 8:39 PM
-> To: Trond Myklebust
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: linux-next: build failure after merge of the nfs tree
-> 
-> Hi Trond,
-> 
-> After merging the nfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/nfs/callback.c: In function 'nfs_minorversion_callback_svc_setup':
-> fs/nfs/callback.c:206:21: error: 'ENOTSUP' undeclared (first use in this
-> function)
-> 
-> Caused by commit 141e1f553b6e ("NFSv4: Fix the minor version callback
-> channel startup").
-> 
+--Signature=_Tue__2_Oct_2012_11_13_08_+1000_Lyg9BuuTf1FTqqVK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi Mauro,
 
-Thanks! We've already fixed this issue and pushed out a new tree...
+Today's linux-next merge of the v4l-dvb tree got a conflict in
+Documentation/feature-removal-schedule.txt between commit 9c0ece069b32
+("Get rid of Documentation/feature-removal.txt") from Linus' tree and
+commit 251658e5185e ("[media] Schedule removal of i.MX25 support in
+mx2_camera.c") from the v4l-dvb tree.
 
-Cheers
-  Trond
+I just removed the file and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__2_Oct_2012_11_13_08_+1000_Lyg9BuuTf1FTqqVK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQaj+kAAoJEECxmPOUX5FExcsP/jz0IzscQROXTjPQVU21keAN
+AIBlDuCZ9KLeD8vp/xT6+onqNX98iNnK5c861Bz9Hdz4rEWlJMn7Uue1CSzrOIxa
+1p067qBLM2HNife/+CB6QIgSsVG48pYp02at6YIhjws868qMh23NvQYFNMJiSkcc
+dsD2P5cJncC5qtc4aex7oxhXvywkSzCeZCxS03Zeu81ohvbhsL8vOBV2UsqfX91x
+uF7E0dbFiyc1gMA9IK3Py/S4sWRDFtri8qEGmHHR+TUuBZCNqhKQ6xts7xWbLunv
+nCjBYqtmm69hkP8Fpnb6K1EQoy+v40RxByaBkFJhVrzQTC4AwHaWsyOJBQw4Li8K
+Z2y2hVrHTepdZufV0Heum5RmYgHmNmKAaoXkiC0dO3igmK476lU9+oSepnFb4/RB
+U8HljvyiRB8APoxAfmupN9P/4e/5AbT7Z0IvKn9foHSBWfqtp5G6bJA9MdLcquaI
+ZplCdypNZoyM9FuHt+VZpUqjeeOzssEFCcK9tlNwCccmrnIwXQGkMmnzijHNU3U+
+vasYl1s1BnM0ticlHiteNXS2mhXmj6oPV10PAkyWIr5kJqAf13KW9WZqTLeOwz/c
+vCW99YWZ2jHl/jqCXgfYWnk8uBEgr+stU4dx6pxBesDzGqaTSzU4434SH7SVdZxy
+Mr2yrZj6BW/gjB/nf1uZ
+=m/Nc
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Oct_2012_11_13_08_+1000_Lyg9BuuTf1FTqqVK--
