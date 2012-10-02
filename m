@@ -1,22 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen-two tree with the arm tree
-Date: Tue, 2 Oct 2012 14:11:41 +1000
-Message-ID: <20121002141141.827ca565a2722b72b1c2157e@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen-two tree with Linus' tree
+Date: Tue, 2 Oct 2012 14:19:49 +1000
+Message-ID: <20121002141949.f6e61437bdce0d56d9d4321e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Oct_2012_14_11_41_+1000_3WD_5/YnnZoeEFDo"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60829 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750737Ab2JBELs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Oct 2012 00:11:48 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Tue__2_Oct_2012_14_19_49_+1000_JIGO8hj8TisqS859"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@suse.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__2_Oct_2012_14_11_41_+1000_3WD_5/YnnZoeEFDo
+--Signature=_Tue__2_Oct_2012_14_19_49_+1000_JIGO8hj8TisqS859
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,65 +20,56 @@ Content-Transfer-Encoding: quoted-printable
 Hi Konrad,
 
 Today's linux-next merge of the xen-two tree got a conflict in
-arch/arm/Kconfig between commit bd51e2f59558 ("ARM: 7506/1: allow for
-ATAGS to be configured out when DT support is selected") from the arm
-tree and commit eff8d6447d5f ("xen/arm: introduce CONFIG_XEN on ARM")
-from the xen-two tree.
+drivers/xen/Makefile between commit 9fa5780beea1 ("USB EHCI/Xen:
+propagate controller reset information to hypervisor") from Linus' tree
+and commit 13febc84849d ("xen: do not compile manage, balloon, pci, acpi,
+pcpu and cpu_hotplug on ARM") from the xen-two tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I am not sure exactly what it should depend on - see
+below) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/Kconfig
-index 7df4acc,3361466..0000000
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@@ -1897,6 -1891,22 +1897,16 @@@ config CC_STACKPROTECTO
-  	  neutralized via a kernel panic.
-  	  This feature requires gcc version 4.2 or above.
+diff --cc drivers/xen/Makefile
+index a4a3cab,cd28aae..0000000
+--- a/drivers/xen/Makefile
++++ b/drivers/xen/Makefile
+@@@ -4,8 -8,11 +8,12 @@@ obj-y	+=3D xenbus
+  nostackp :=3D $(call cc-option, -fno-stack-protector)
+  CFLAGS_features.o			:=3D $(nostackp)
  =20
- -config DEPRECATED_PARAM_STRUCT
- -	bool "Provide old way to pass kernel parameters"
- -	help
- -	  This was deprecated in 2001 and announced to live on for 5 years.
- -	  Some old boot loaders still use this way.
- -
-+ config XEN_DOM0
-+ 	def_bool y
-+ 	depends on XEN
-+=20
-+ config XEN
-+ 	bool "Xen guest support on ARM (EXPERIMENTAL)"
-+ 	depends on EXPERIMENTAL && ARM && OF
-+ 	help
-+ 	  Say Y if you want to run Linux in a Virtual Machine on Xen on ARM.
-+=20
-  endmenu
- =20
-  menu "Boot options"
++ obj-$(CONFIG_XEN_DOM0)			+=3D $(dom0-y)
++ dom0-$(CONFIG_PCI) +=3D pci.o
+++dom0-$(CONFIG_X86) +=3D dbgp.o
++ dom0-$(CONFIG_ACPI) +=3D acpi.o
++ dom0-$(CONFIG_X86) +=3D pcpu.o
+  obj-$(CONFIG_BLOCK)			+=3D biomerge.o
+- obj-$(CONFIG_HOTPLUG_CPU)		+=3D cpu_hotplug.o
+  obj-$(CONFIG_XEN_XENCOMM)		+=3D xencomm.o
+  obj-$(CONFIG_XEN_BALLOON)		+=3D xen-balloon.o
+  obj-$(CONFIG_XEN_SELFBALLOONING)	+=3D xen-selfballoon.o
 
---Signature=_Tue__2_Oct_2012_14_11_41_+1000_3WD_5/YnnZoeEFDo
+--Signature=_Tue__2_Oct_2012_14_19_49_+1000_JIGO8hj8TisqS859
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQaml9AAoJEECxmPOUX5FEks4P/RiH1SchJrbarjnNB1mfpA1D
-0rvPENeuUCOMp5Dad9rCnUvlb2QJQRlxmpfVuqG59+foc5IH4JUGbNfJAUDOFWF/
-ekBOklWJ+BheU6hsjrcJwP8p1F4AgFr7GuC3kEpSCcKoZ3CSI3qp+Ro0FFCzzxDv
-Z+L30yzvXC40KE9j3DCruM/8fu/33ncxh/ccwAAIAMjEXPtSbc4X8P2ySF9NyEvY
-y6p/JsqzD9dkCq9/w/7vd5bWYOz6ZeMvTy/ecrtDkcVFNySOWWi3ngnER9vWxkvc
-VtLawvT/XUJsbP5qCASV1xnqojUJOFcZj1hNDzG3T5s9P9CYYLVeu36wmv+e88eC
-P2KRFW7S1nAN+N1/dkKTNMkZAuwzuRySg5TRysWjtgSUVdjjqNaUjbcYa36e5vem
-1mZehD8ESqCAn0dVJDVYekl3c00PcYg7i/bGe92FsJ480zU3qLUY0YDMoWiqkGOj
-B+ayAB2fIxgkVI0yUoTErlYHWJVYSDlrZv//ZUYKdizZR6gtC7DZI4Gp0aFJQGD7
-SwO6ttHM1b32VoRYi6DzlVfNhND1+6Ofh/ouSFOy32K5b3OsUEtQK4HNZ9RTky1d
-lfgGPHL4GzGc3xAZqp8nNxIEI9ZLu2+ua2lci3O1/XEs3b1U5xiyPTFOqRXKqZkq
-jWC7Z+7EpgeNa3vy+Ziv
-=EbJa
+iQIcBAEBCAAGBQJQamtlAAoJEECxmPOUX5FEGskP/2TNkrb1IoRLKl4jpeYUxWWL
+HKarVz3pfRrRKoYQd927YcWdPI9SOGJ7LEHE92jXyqBT4zCdBhDmtaFIoMGsoTpj
+B5gemmFUEeq41RFOSgrpEJSP5KJBA521XWvb3hPa3Vi/29zWh+ggE9RCs4yY1XFr
+mBcIPSBBiwCxzqAOHuUbVBY+jybTZohf2qBYz95PbPk6LoFxqu6YbK9Ew+l+6lro
+ms01glqegLOhJUlF4uWyDF6YBz+fMzot6mWHpn0LS89flK1d0akms3vSx8t02pvV
+f1K2kOU4FpLFVquU17Gjz5Gv6qYIHV7xAwslekZl4d+L41LlTmd+jANXRaWRxnxh
+6shkN60Knechjfxc22FPj0up6tDYbucdkzYiNqm6uDpwksZjItXpGIleU4Mk9f1q
+1vU4lrDiG7P6qG2NGnGXstqC7Me36v9bzn1sIctnhPihgTALKv9dHZfaVr6f+oda
+nhxtsNj864PxHGPAG8sLwU8SOlBRwbeev6hElns5w8Pp+HEVFnUtGJSepxzEu/Sh
+Ng3KU+PIQCz6UUkhlltqMU35N5nDteMDF6tRtt5A1o2IjhkyYNYSbC1Bdb7d5VDf
+InKsZ0MN9fDJb2GyuYMR18B9BiIyFbAbeRR3iUu3+CKf8MpmTPVdcpXffFoK1djT
+SSXQYjX98JChEE9e896v
+=3s2g
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__2_Oct_2012_14_11_41_+1000_3WD_5/YnnZoeEFDo--
+--Signature=_Tue__2_Oct_2012_14_19_49_+1000_JIGO8hj8TisqS859--
