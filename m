@@ -1,77 +1,140 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Linux-next changes for module and virtio trees.
-Date: Wed, 3 Oct 2012 01:12:39 +1000
-Message-ID: <20121003011239.3445171ec17e422a289d2997@canb.auug.org.au>
-References: <871uhh4cen.fsf@rustcorp.com.au>
+From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Subject: [PATCH] xen: resolve merge conflict with
+ 617276307cd4cdb9a95c77efaa3063695af63aa7
+Date: Tue, 2 Oct 2012 18:29:32 +0100
+Message-ID: <alpine.DEB.2.02.1210021724300.29232@kaball.uk.xensource.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__3_Oct_2012_01_12_39_+1000_MhqrEcKkTYqu8wEQ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37902 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754222Ab2JBPMx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Oct 2012 11:12:53 -0400
-In-Reply-To: <871uhh4cen.fsf@rustcorp.com.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, kvm-devel <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="US-ASCII"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xensource.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__3_Oct_2012_01_12_39_+1000_MhqrEcKkTYqu8wEQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The Xen tree tries to add a line to
+arch/arm/mach-vexpress/Makefile.boot that has been removed by the
+following commit in Linus' master:
 
-Hi Rusty,
+commit 617276307cd4cdb9a95c77efaa3063695af63aa7
+Author: Rob Herring <rob.herring@calxeda.com>
+Date:   Thu Sep 6 13:43:04 2012 -0500
 
-On Tue, 02 Oct 2012 15:56:56 +0930 Rusty Russell <rusty@rustcorp.com.au> wr=
-ote:
->
->         Please remove my quilt tree
-> http://ozlabs.org/~rusty/kernel/rr-latest/ from linux-next, and use my
-> git trees from now on:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/rusty/linux.git
-> Branches:
->         modules-next
->         virtio-next
+    ARM: vexpress: convert to multi-platform
 
-Done.
+In fact the dts Makefile is now arch/arm/boot/dts/Makefile, as per
+commit 9cd11c0c47b8690b47e7573311ce5c483cb344ed.
 
-> For others: beware that these will rebase, usually once after the merge
-> window closes (so I can work on a more modern tree), and again just
-> before it opens (where I squash in fixup patches).
 
-The first should not be necessary since everything in these trees should
-have been merged by Linus during the merge window, so a merge of -rc1 or
-later should be a fast forward (though merging with the tag itself may
-produce a real merge).  The second can be tricky to pick the right
-moment :-)
+This is the merge resolution patch.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Signed-off-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
 
---Signature=_Wed__3_Oct_2012_01_12_39_+1000_MhqrEcKkTYqu8wEQ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQawRnAAoJEECxmPOUX5FE6SoP+wctU7Y01f/eNenOQ5Jl1q62
-zFQyqq+3gLnunQmnUN9Eo3qgtJSFKHRoUxjVPPfrRV5+gl0p4/zX/iQHx4BjrvMe
-Dpx8iSBO/UWA1UE5mLi16ZnH63yO/dkvL9KtWmGifggDYnxGjjjpFtinm0LDJB7r
-3HBjRGXJdMZu4ESWjnnF3ufBI/MvI4IYgvcbrR/JARKtDobBNAQ0WaxRUWriS0fD
-whC28kGg+qrLDY7k4XsmC479oAl5l0K4mz8UaKlkp3HUQ0bKAOfOTDmRBLWWF1tL
-afKQ1/BAoSFaQ1mf9IhgdT5Ubrbm5N3jst/E2Qg6FuL7vFV5tN7f5a40AumOXdry
-GmPewFI6h6OQd1TFmbSa0LlcBEN3d8jG0j71PcVsi2BRCMUovzitUUuEYZoP54+F
-CFnyzfXB1sanHhxmFSzhzC++5fqnQWX9y9v4UAXLlb4AuNI5GUyI3Dw9RPf4jRLI
-1P3FjZnsNiPme7ZOLIjS8askQH1s7Zs3gfgCJAD0KDvl7ZFT1NhL1osUAqC/kdGi
-ixkUW6PAlJ+WAHubXgrUeEoDAildk739hNclB7zZq9Fl2HQq7kSYmX3nUKDSiEcX
-ud+h0f08hbIktWBvFaCzLQUQVJNsKRfwbnUI4ftikpdqzV2DlRHpXHW+uZEnwT6g
-1Brv8erQB660Qi0+aIXo
-=wFpj
------END PGP SIGNATURE-----
-
---Signature=_Wed__3_Oct_2012_01_12_39_+1000_MhqrEcKkTYqu8wEQ--
+diff --cc arch/arm/boot/dts/Makefile
+index 43c084c,0000000..4745c1f
+mode 100644,000000..100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@@ -1,101 -1,0 +1,102 @@@
+ +ifeq ($(CONFIG_OF),y)
+ +
+ +dtb-$(CONFIG_ARCH_AT91) += aks-cdu.dtb \
+ +	at91sam9263ek.dtb \
+ +	at91sam9g20ek_2mmc.dtb \
+ +	at91sam9g20ek.dtb \
+ +	at91sam9g25ek.dtb \
+ +	at91sam9m10g45ek.dtb \
+ +	at91sam9n12ek.dtb \
+ +	ethernut5.dtb \
+ +	evk-pro3.dtb \
+ +	kizbox.dtb \
+ +	tny_a9260.dtb \
+ +	tny_a9263.dtb \
+ +	tny_a9g20.dtb \
+ +	usb_a9260.dtb \
+ +	usb_a9263.dtb \
+ +	usb_a9g20.dtb
+ +dtb-$(CONFIG_ARCH_BCM2835) += bcm2835-rpi-b.dtb
+ +dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ +	exynos4210-smdkv310.dtb \
+ +	exynos4210-trats.dtb \
+ +	exynos5250-smdk5250.dtb
+ +dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb
+ +dtb-$(CONFIG_ARCH_IMX5) += imx51-babbage.dtb \
+ +	imx53-ard.dtb \
+ +	imx53-evk.dtb \
+ +	imx53-qsb.dtb \
+ +	imx53-smd.dtb
+ +dtb-$(CONFIG_SOC_IMX6Q) += imx6q-arm2.dtb \
+ +	imx6q-sabrelite.dtb \
+ +	imx6q-sabresd.dtb
+ +dtb-$(CONFIG_ARCH_LPC32XX) += ea3250.dtb phy3250.dtb
+ +dtb-$(CONFIG_ARCH_KIRKWOOD) += kirkwood-dns320.dtb \
+ +	kirkwood-dns325.dtb \
+ +	kirkwood-dreamplug.dtb \
+ +	kirkwood-goflexnet.dtb \
+ +	kirkwood-ib62x0.dtb \
+ +	kirkwood-iconnect.dtb \
+ +	kirkwood-lschlv2.dtb \
+ +	kirkwood-lsxhl.dtb \
+ +	kirkwood-ts219-6281.dtb \
+ +	kirkwood-ts219-6282.dtb
+ +dtb-$(CONFIG_ARCH_MSM) += msm8660-surf.dtb \
+ +	msm8960-cdp.dtb
+ +dtb-$(CONFIG_ARCH_MVEBU) += armada-370-db.dtb \
+ +	armada-xp-db.dtb
+ +dtb-$(CONFIG_ARCH_MXC) += imx51-babbage.dtb \
+ +	imx53-ard.dtb \
+ +	imx53-evk.dtb \
+ +	imx53-qsb.dtb \
+ +	imx53-smd.dtb \
+ +	imx6q-arm2.dtb \
+ +	imx6q-sabrelite.dtb \
+ +	imx6q-sabresd.dtb
+ +dtb-$(CONFIG_ARCH_MXS) += imx23-evk.dtb \
+ +	imx23-olinuxino.dtb \
+ +	imx23-stmp378x_devb.dtb \
+ +	imx28-apx4devkit.dtb \
+ +	imx28-cfa10036.dtb \
+ +	imx28-cfa10049.dtb \
+ +	imx28-evk.dtb \
+ +	imx28-m28evk.dtb \
+ +	imx28-tx28.dtb
+ +dtb-$(CONFIG_ARCH_OMAP2PLUS) += omap2420-h4.dtb \
+ +	omap3-beagle-xm.dtb \
+ +	omap3-evm.dtb \
+ +	omap3-tobi.dtb \
+ +	omap4-panda.dtb \
+ +	omap4-pandaES.dtb \
+ +	omap4-var_som.dtb \
+ +	omap4-sdp.dtb \
+ +	omap5-evm.dtb
+ +dtb-$(CONFIG_ARCH_PRIMA2) += prima2-evb.dtb
+ +dtb-$(CONFIG_ARCH_U8500) += snowball.dtb
+ +dtb-$(CONFIG_ARCH_SHMOBILE) += emev2-kzm9d.dtb \
+ +	r8a7740-armadillo800eva.dtb \
+ +	sh73a0-kzm9g.dtb
+ +dtb-$(CONFIG_ARCH_SPEAR13XX) += spear1310-evb.dtb \
+ +	spear1340-evb.dtb
+ +dtb-$(CONFIG_ARCH_SPEAR3XX)+= spear300-evb.dtb \
+ +	spear310-evb.dtb \
+ +	spear320-evb.dtb
+ +dtb-$(CONFIG_ARCH_SPEAR6XX)+= spear600-evb.dtb
+ +dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
+ +	tegra20-medcom-wide.dtb \
+ +	tegra20-paz00.dtb \
+ +	tegra20-plutux.dtb \
+ +	tegra20-seaboard.dtb \
+ +	tegra20-tec.dtb \
+ +	tegra20-trimslice.dtb \
+ +	tegra20-ventana.dtb \
+ +	tegra20-whistler.dtb \
+ +	tegra30-cardhu-a02.dtb \
+ +	tegra30-cardhu-a04.dtb
+ +dtb-$(CONFIG_ARCH_VEXPRESS) += vexpress-v2p-ca5s.dtb \
+ +	vexpress-v2p-ca9.dtb \
+ +	vexpress-v2p-ca15-tc1.dtb \
+- 	vexpress-v2p-ca15_a7.dtb
+++	vexpress-v2p-ca15_a7.dtb \
+++	xenvm-4.2.dtb
+ +
+ +endif
