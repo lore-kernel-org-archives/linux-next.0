@@ -1,64 +1,60 @@
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: manual merge of the xen-two tree with the arm tree
-Date: Tue, 2 Oct 2012 08:44:20 -0400
-Message-ID: <20121002124420.GA9009@phenom.dumpdata.com>
-References: <20121002141141.827ca565a2722b72b1c2157e@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the xen-two tree with Linus' tree
+Date: Tue, 2 Oct 2012 08:55:20 -0400
+Message-ID: <20121002125519.GB9009@phenom.dumpdata.com>
+References: <20121002141949.f6e61437bdce0d56d9d4321e@canb.auug.org.au>
+ <alpine.DEB.2.02.1210021141370.29232@kaball.uk.xensource.com>
+ <506AEE0C020000780009F0A1@nat28.tlf.novell.com>
+ <alpine.DEB.2.02.1210021240020.29232@kaball.uk.xensource.com>
+ <506AF20C020000780009F0B5@nat28.tlf.novell.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet15.oracle.com ([148.87.113.117]:25967 "EHLO
+Received: from rcsinet15.oracle.com ([148.87.113.117]:18702 "EHLO
 	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753176Ab2JBM4E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Oct 2012 08:56:04 -0400
+	with ESMTP id S1753174Ab2JBNG5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Oct 2012 09:06:57 -0400
 Content-Disposition: inline
-In-Reply-To: <20121002141141.827ca565a2722b72b1c2157e@canb.auug.org.au>
+In-Reply-To: <506AF20C020000780009F0B5@nat28.tlf.novell.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Russell King <rmk@arm.linux.org.uk>
+To: Jan Beulich <JBeulich@suse.com>
+Cc: Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Tue, Oct 02, 2012 at 02:11:41PM +1000, Stephen Rothwell wrote:
-> Hi Konrad,
+On Tue, Oct 02, 2012 at 12:54:20PM +0100, Jan Beulich wrote:
+> >>> On 02.10.12 at 13:45, Stefano Stabellini <stefano.stabellini@eu.citrix.com> wrote:
+> >> > Considering that dbgp doesn't seem to be very useful without PCI at the
+> >> > moment, could we just turn it into:
+> >> > 
+> >> > dom0-$(CONFIG_PCI) += dbgp.o
+> >> > 
+> >> > ?
+> >> 
+> >> Better not - the code is specifically not PCI-only. And I can't see
+> >> how it would be harmful to be compiled on e.g. ARM (so the
+> >> merge perhaps really should use XEN_DOM0 alone, without
+> >> X86. If anything (and that may indeed be a minor oversight of
+> >> the original patch) one might want it to depend on USB_SUPPORT,
+> >> as without that no in-tree debug port capable driver would be
+> >> able to load (and hence interfere with Xen's use of the debug
+> >> port). However, as long as it builds fine with USB_SUPPORT
+> >> undefined (which I believe it does), having it in the shape it
+> >> is allows for out-of-tree drivers as well (as long as they make
+> >> use of the designated interface).
+> > 
+> > OK for PCI.
+> > Regarding USB_SUPPORT, considering that gbgp.c calls hcd_to_bus, I think
+> > it would make sense to make it depend on it.
 > 
-> Today's linux-next merge of the xen-two tree got a conflict in
-> arch/arm/Kconfig between commit bd51e2f59558 ("ARM: 7506/1: allow for
-> ATAGS to be configured out when DT support is selected") from the arm
-> tree and commit eff8d6447d5f ("xen/arm: introduce CONFIG_XEN on ARM")
-> from the xen-two tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> As said - I'd prefer to do that only if indeed needed to get things
+> to build without that option. Since include/usb/* doesn't reference
+> CONFIG_USB_SUPPORT, I'm in favor of supporting at least those
+> eventual out-of-tree drivers that do use the pre-existing data
+> structures (and others shouldn't be calling pre-existing APIs
+> anyway). But I wouldn't NAK a patch doing what you suggest
+> either.
 
-Thank you!
+Could it depend on EARLY_PRINTK_DBGP ?
+
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/arm/Kconfig
-> index 7df4acc,3361466..0000000
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@@ -1897,6 -1891,22 +1897,16 @@@ config CC_STACKPROTECTO
->   	  neutralized via a kernel panic.
->   	  This feature requires gcc version 4.2 or above.
->   
->  -config DEPRECATED_PARAM_STRUCT
->  -	bool "Provide old way to pass kernel parameters"
->  -	help
->  -	  This was deprecated in 2001 and announced to live on for 5 years.
->  -	  Some old boot loaders still use this way.
->  -
-> + config XEN_DOM0
-> + 	def_bool y
-> + 	depends on XEN
-> + 
-> + config XEN
-> + 	bool "Xen guest support on ARM (EXPERIMENTAL)"
-> + 	depends on EXPERIMENTAL && ARM && OF
-> + 	help
-> + 	  Say Y if you want to run Linux in a Virtual Machine on Xen on ARM.
-> + 
->   endmenu
->   
->   menu "Boot options"
+> Jan
