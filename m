@@ -1,49 +1,60 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: manual merge of the trivial tree with the mfd tree
-Date: Tue, 2 Oct 2012 11:35:19 +0200
-Message-ID: <20121002093519.GI12231@sortiz-mobl>
-References: <20120912134349.f1dd0f4d050dd4834623e57b@canb.auug.org.au>
- <alpine.LNX.2.00.1210020018340.23544@pobox.suse.cz>
+From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Subject: Re: linux-next: manual merge of the xen-two tree with Linus' tree
+Date: Tue, 2 Oct 2012 11:44:14 +0100
+Message-ID: <alpine.DEB.2.02.1210021141370.29232@kaball.uk.xensource.com>
+References: <20121002141949.f6e61437bdce0d56d9d4321e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.LNX.2.00.1210020018340.23544@pobox.suse.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="US-ASCII"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.eu.citrix.com ([62.200.22.115]:29068 "EHLO
+	SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750708Ab2JBKpP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Oct 2012 06:45:15 -0400
+In-Reply-To: <20121002141949.f6e61437bdce0d56d9d4321e@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jan Beulich <JBeulich@suse.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>
 
-Hi Jiri,
+On Tue, 2 Oct 2012, Stephen Rothwell wrote:
+> Hi Konrad,
+> 
+> Today's linux-next merge of the xen-two tree got a conflict in
+> drivers/xen/Makefile between commit 9fa5780beea1 ("USB EHCI/Xen:
+> propagate controller reset information to hypervisor") from Linus' tree
+> and commit 13febc84849d ("xen: do not compile manage, balloon, pci, acpi,
+> pcpu and cpu_hotplug on ARM") from the xen-two tree.
+> 
+> I fixed it up (I am not sure exactly what it should depend on - see
+> below) and can carry the fix as necessary (no action is required).
+>
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/xen/Makefile
+> index a4a3cab,cd28aae..0000000
+> --- a/drivers/xen/Makefile
+> +++ b/drivers/xen/Makefile
+> @@@ -4,8 -8,11 +8,12 @@@ obj-y	+= xenbus
+>   nostackp := $(call cc-option, -fno-stack-protector)
+>   CFLAGS_features.o			:= $(nostackp)
+>   
+> + obj-$(CONFIG_XEN_DOM0)			+= $(dom0-y)
+> + dom0-$(CONFIG_PCI) += pci.o
+> ++dom0-$(CONFIG_X86) += dbgp.o
+> + dom0-$(CONFIG_ACPI) += acpi.o
+> + dom0-$(CONFIG_X86) += pcpu.o
+>   obj-$(CONFIG_BLOCK)			+= biomerge.o
+> - obj-$(CONFIG_HOTPLUG_CPU)		+= cpu_hotplug.o
+>   obj-$(CONFIG_XEN_XENCOMM)		+= xencomm.o
+>   obj-$(CONFIG_XEN_BALLOON)		+= xen-balloon.o
+>   obj-$(CONFIG_XEN_SELFBALLOONING)	+= xen-selfballoon.o
+ 
 
-On Tue, Oct 02, 2012 at 12:21:16AM +0200, Jiri Kosina wrote:
-> On Wed, 12 Sep 2012, Stephen Rothwell wrote:
-> 
-> > Hi Jiri,
-> > 
-> > Today's linux-next merge of the trivial tree got a conflict in
-> > drivers/video/backlight/88pm860x_bl.c between commit a6ccdcd98c39 ("mfd:
-> > 88pm860x: Use REG resource for backlight") from the mfd tree and commit
-> > e1c9ac420ef1 ("Revert "backlight: fix memory leak on obscure error
-> > path"") from the trivial tree.
-> > 
-> > I just used the version from the mfd tree and can carry the fix as
-> > necessary (no action is required).
-> 
-> Samuel,
-> 
-> Linus has just pulled from trivial.git, so could you please make sure this 
-> is taken care of (*) in your next pull request? Thanks a lot!
-> 
-> (*) either by resolving the conflict in your tree first, or mentioning it 
-> explicitly in your pull request to Linus.
-Thanks for the heads up.
-I usually fix the merge conflicts in a specific branch for-next-merge and
-give the URL to Linus, in case he needs it.
+Considering that dbgp doesn't seem to be very useful without PCI at the
+moment, could we just turn it into:
 
-Cheers,
-Samuel.
+dom0-$(CONFIG_PCI) += dbgp.o
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+?
