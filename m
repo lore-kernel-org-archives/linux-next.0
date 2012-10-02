@@ -1,69 +1,77 @@
-From: "Jan Beulich" <JBeulich@suse.com>
-Subject: Re: linux-next: manual merge of the xen-two tree with Linus'
- tree
-Date: Tue, 02 Oct 2012 14:33:43 +0100
-Message-ID: <506B0957020000780009F107@nat28.tlf.novell.com>
-References: <20121002141949.f6e61437bdce0d56d9d4321e@canb.auug.org.au>
- <alpine.DEB.2.02.1210021141370.29232@kaball.uk.xensource.com>
- <506AEE0C020000780009F0A1@nat28.tlf.novell.com>
- <alpine.DEB.2.02.1210021240020.29232@kaball.uk.xensource.com>
- <506AF20C020000780009F0B5@nat28.tlf.novell.com>
- <20121002125519.GB9009@phenom.dumpdata.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Linux-next changes for module and virtio trees.
+Date: Wed, 3 Oct 2012 01:12:39 +1000
+Message-ID: <20121003011239.3445171ec17e422a289d2997@canb.auug.org.au>
+References: <871uhh4cen.fsf@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__3_Oct_2012_01_12_39_+1000_MhqrEcKkTYqu8wEQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nat28.tlf.novell.com ([130.57.49.28]:45168 "EHLO
-	nat28.tlf.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751692Ab2JBNdt convert rfc822-to-8bit (ORCPT
-	<rfc822;groupwise-linux-next@vger.kernel.org:5:2>);
-	Tue, 2 Oct 2012 09:33:49 -0400
-In-Reply-To: <20121002125519.GB9009@phenom.dumpdata.com>
-Content-Disposition: inline
+Received: from haggis.pcug.org.au ([203.10.76.10]:37902 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754222Ab2JBPMx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Oct 2012 11:12:53 -0400
+In-Reply-To: <871uhh4cen.fsf@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, kvm-devel <kvm@vger.kernel.org>
 
->>> On 02.10.12 at 14:55, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com> wrote:
-> On Tue, Oct 02, 2012 at 12:54:20PM +0100, Jan Beulich wrote:
->> >>> On 02.10.12 at 13:45, Stefano Stabellini <stefano.stabellini@eu.citrix.com> 
-> wrote:
->> >> > Considering that dbgp doesn't seem to be very useful without PCI at the
->> >> > moment, could we just turn it into:
->> >> > 
->> >> > dom0-$(CONFIG_PCI) += dbgp.o
->> >> > 
->> >> > ?
->> >> 
->> >> Better not - the code is specifically not PCI-only. And I can't see
->> >> how it would be harmful to be compiled on e.g. ARM (so the
->> >> merge perhaps really should use XEN_DOM0 alone, without
->> >> X86. If anything (and that may indeed be a minor oversight of
->> >> the original patch) one might want it to depend on USB_SUPPORT,
->> >> as without that no in-tree debug port capable driver would be
->> >> able to load (and hence interfere with Xen's use of the debug
->> >> port). However, as long as it builds fine with USB_SUPPORT
->> >> undefined (which I believe it does), having it in the shape it
->> >> is allows for out-of-tree drivers as well (as long as they make
->> >> use of the designated interface).
->> > 
->> > OK for PCI.
->> > Regarding USB_SUPPORT, considering that gbgp.c calls hcd_to_bus, I think
->> > it would make sense to make it depend on it.
->> 
->> As said - I'd prefer to do that only if indeed needed to get things
->> to build without that option. Since include/usb/* doesn't reference
->> CONFIG_USB_SUPPORT, I'm in favor of supporting at least those
->> eventual out-of-tree drivers that do use the pre-existing data
->> structures (and others shouldn't be calling pre-existing APIs
->> anyway). But I wouldn't NAK a patch doing what you suggest
->> either.
-> 
-> Could it depend on EARLY_PRINTK_DBGP ?
+--Signature=_Wed__3_Oct_2012_01_12_39_+1000_MhqrEcKkTYqu8wEQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No, that one would definitely be wrong (because we need the
-EHCI driver to propagate reset information no matter whether
-the kernel uses an early console).
+Hi Rusty,
 
-Jan
+On Tue, 02 Oct 2012 15:56:56 +0930 Rusty Russell <rusty@rustcorp.com.au> wr=
+ote:
+>
+>         Please remove my quilt tree
+> http://ozlabs.org/~rusty/kernel/rr-latest/ from linux-next, and use my
+> git trees from now on:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/rusty/linux.git
+> Branches:
+>         modules-next
+>         virtio-next
+
+Done.
+
+> For others: beware that these will rebase, usually once after the merge
+> window closes (so I can work on a more modern tree), and again just
+> before it opens (where I squash in fixup patches).
+
+The first should not be necessary since everything in these trees should
+have been merged by Linus during the merge window, so a merge of -rc1 or
+later should be a fast forward (though merging with the tag itself may
+produce a real merge).  The second can be tricky to pick the right
+moment :-)
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__3_Oct_2012_01_12_39_+1000_MhqrEcKkTYqu8wEQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQawRnAAoJEECxmPOUX5FE6SoP+wctU7Y01f/eNenOQ5Jl1q62
+zFQyqq+3gLnunQmnUN9Eo3qgtJSFKHRoUxjVPPfrRV5+gl0p4/zX/iQHx4BjrvMe
+Dpx8iSBO/UWA1UE5mLi16ZnH63yO/dkvL9KtWmGifggDYnxGjjjpFtinm0LDJB7r
+3HBjRGXJdMZu4ESWjnnF3ufBI/MvI4IYgvcbrR/JARKtDobBNAQ0WaxRUWriS0fD
+whC28kGg+qrLDY7k4XsmC479oAl5l0K4mz8UaKlkp3HUQ0bKAOfOTDmRBLWWF1tL
+afKQ1/BAoSFaQ1mf9IhgdT5Ubrbm5N3jst/E2Qg6FuL7vFV5tN7f5a40AumOXdry
+GmPewFI6h6OQd1TFmbSa0LlcBEN3d8jG0j71PcVsi2BRCMUovzitUUuEYZoP54+F
+CFnyzfXB1sanHhxmFSzhzC++5fqnQWX9y9v4UAXLlb4AuNI5GUyI3Dw9RPf4jRLI
+1P3FjZnsNiPme7ZOLIjS8askQH1s7Zs3gfgCJAD0KDvl7ZFT1NhL1osUAqC/kdGi
+ixkUW6PAlJ+WAHubXgrUeEoDAildk739hNclB7zZq9Fl2HQq7kSYmX3nUKDSiEcX
+ud+h0f08hbIktWBvFaCzLQUQVJNsKRfwbnUI4ftikpdqzV2DlRHpXHW+uZEnwT6g
+1Brv8erQB660Qi0+aIXo
+=wFpj
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Oct_2012_01_12_39_+1000_MhqrEcKkTYqu8wEQ--
