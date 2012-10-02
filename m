@@ -1,41 +1,64 @@
-From: Chris Mason <chris.mason@fusionio.com>
-Subject: Re: [GIT PULL] Btrfs for linux-next
-Date: Tue, 2 Oct 2012 08:26:53 -0400
-Message-ID: <20121002122653.GB1140@shiny>
-References: <20120930115258.GA13506@shiny>
- <20121001181549.817cc2d7d0d660eb593922fd@canb.auug.org.au>
- <20121002013618.GA1140@shiny>
- <20121002125436.a39101ab6f87d4e8596c1031@canb.auug.org.au>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: manual merge of the xen-two tree with the arm tree
+Date: Tue, 2 Oct 2012 08:44:20 -0400
+Message-ID: <20121002124420.GA9009@phenom.dumpdata.com>
+References: <20121002141141.827ca565a2722b72b1c2157e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.fusionio.com ([66.114.96.30]:37670 "EHLO mx1.fusionio.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752342Ab2JBM04 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Oct 2012 08:26:56 -0400
+Received: from rcsinet15.oracle.com ([148.87.113.117]:25967 "EHLO
+	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753176Ab2JBM4E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Oct 2012 08:56:04 -0400
 Content-Disposition: inline
-In-Reply-To: <20121002125436.a39101ab6f87d4e8596c1031@canb.auug.org.au>
+In-Reply-To: <20121002141141.827ca565a2722b72b1c2157e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Chris Mason <clmason@fusionio.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Russell King <rmk@arm.linux.org.uk>
 
-On Mon, Oct 01, 2012 at 08:54:36PM -0600, Stephen Rothwell wrote:
-> Hi Chris,
+On Tue, Oct 02, 2012 at 02:11:41PM +1000, Stephen Rothwell wrote:
+> Hi Konrad,
 > 
-> On Mon, 1 Oct 2012 21:36:18 -0400 Chris Mason <chris.mason@fusionio.com> wrote:
-> >
-> > Sorry for the hassle, we've updated that patch and rebased the tree:
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/mason/linux-btrfs.git next
+> Today's linux-next merge of the xen-two tree got a conflict in
+> arch/arm/Kconfig between commit bd51e2f59558 ("ARM: 7506/1: allow for
+> ATAGS to be configured out when DT support is selected") from the arm
+> tree and commit eff8d6447d5f ("xen/arm: introduce CONFIG_XEN on ARM")
+> from the xen-two tree.
 > 
-> Looks good today.
-> 
-> I am not sure if you are aware of exactly how linux-next works:  I will
-> fetch that branch of your tree every morning, so any changes will be
-> automatically incorporated into linux-next.
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Thanks! I knew you'd pull again but wanted to send an explicit ack that
-we had fixed up the first pull.
-
--chris
+Thank you!
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/Kconfig
+> index 7df4acc,3361466..0000000
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@@ -1897,6 -1891,22 +1897,16 @@@ config CC_STACKPROTECTO
+>   	  neutralized via a kernel panic.
+>   	  This feature requires gcc version 4.2 or above.
+>   
+>  -config DEPRECATED_PARAM_STRUCT
+>  -	bool "Provide old way to pass kernel parameters"
+>  -	help
+>  -	  This was deprecated in 2001 and announced to live on for 5 years.
+>  -	  Some old boot loaders still use this way.
+>  -
+> + config XEN_DOM0
+> + 	def_bool y
+> + 	depends on XEN
+> + 
+> + config XEN
+> + 	bool "Xen guest support on ARM (EXPERIMENTAL)"
+> + 	depends on EXPERIMENTAL && ARM && OF
+> + 	help
+> + 	  Say Y if you want to run Linux in a Virtual Machine on Xen on ARM.
+> + 
+>   endmenu
+>   
+>   menu "Boot options"
