@@ -1,26 +1,49 @@
-From: Ohad Ben-Cohen <ohad@wizery.com>
-Subject: Re: linux-next: Tree for Sept 24 (remoteproc)
-Date: Tue, 2 Oct 2012 10:04:38 +0200
-Message-ID: <CAK=Wgbaj0=2Q9+NT=TJoTe-41HPo-AJwP-RLN1-dRcPygL2ozg@mail.gmail.com>
-References: <20120925005328.f748dfa3d077cebb345a4291@canb.auug.org.au>
- <5060DA6B.3030806@xenotime.net> <506A2439.2050408@xenotime.net>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: manual merge of the trivial tree with the mfd tree
+Date: Tue, 2 Oct 2012 11:35:19 +0200
+Message-ID: <20121002093519.GI12231@sortiz-mobl>
+References: <20120912134349.f1dd0f4d050dd4834623e57b@canb.auug.org.au>
+ <alpine.LNX.2.00.1210020018340.23544@pobox.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <506A2439.2050408@xenotime.net>
+Content-Disposition: inline
+In-Reply-To: <alpine.LNX.2.00.1210020018340.23544@pobox.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Oct 2, 2012 at 1:16 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> This build still fails on linux-next of 20121001 when
-> VIRTIO is not enabled.
+Hi Jiri,
 
-I meant to send this to 3.6-rc, but now that 3.6 is out, I've pushed
-it on remoteproc's for-next branch and will send it to 3.7.
+On Tue, Oct 02, 2012 at 12:21:16AM +0200, Jiri Kosina wrote:
+> On Wed, 12 Sep 2012, Stephen Rothwell wrote:
+> 
+> > Hi Jiri,
+> > 
+> > Today's linux-next merge of the trivial tree got a conflict in
+> > drivers/video/backlight/88pm860x_bl.c between commit a6ccdcd98c39 ("mfd:
+> > 88pm860x: Use REG resource for backlight") from the mfd tree and commit
+> > e1c9ac420ef1 ("Revert "backlight: fix memory leak on obscure error
+> > path"") from the trivial tree.
+> > 
+> > I just used the version from the mfd tree and can carry the fix as
+> > necessary (no action is required).
+> 
+> Samuel,
+> 
+> Linus has just pulled from trivial.git, so could you please make sure this 
+> is taken care of (*) in your next pull request? Thanks a lot!
+> 
+> (*) either by resolving the conflict in your tree first, or mentioning it 
+> explicitly in your pull request to Linus.
+Thanks for the heads up.
+I usually fix the merge conflicts in a specific branch for-next-merge and
+give the URL to Linus, in case he needs it.
 
-It will show up on linux-next the next time Stephen pulls the for-next branches.
+Cheers,
+Samuel.
 
-Thanks,
-Ohad.
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
