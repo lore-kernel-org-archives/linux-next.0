@@ -1,39 +1,30 @@
-From: Stephen Hemminger <shemminger@vyatta.com>
-Subject: Re: linux-next: Tree for Oct 2 (vxlan.c)
-Date: Tue, 2 Oct 2012 14:21:28 -0700
-Message-ID: <20121002142128.1d2fde14@nehalam.linuxnetplumber.net>
-References: <20121002163229.d377074dc8f6c029428faeaa@canb.auug.org.au>
-	<506B3317.5090006@xenotime.net>
-	<20121002.143627.1565408497543880722.davem@davemloft.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Michael Neuling <mikey@neuling.org>
+Subject: Re: linux-next: Tree for Oct 2 (ipoib_netlink.c)
+Date: Wed, 03 Oct 2012 09:50:31 +1000
+Message-ID: <10635.1349221831@neuling.org>
+References: <20121002163229.d377074dc8f6c029428faeaa@canb.auug.org.au> <506B3FE4.9040407@xenotime.net>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.vyatta.com ([76.74.103.46]:36892 "EHLO mail.vyatta.com"
+Received: from ozlabs.org ([203.10.76.45]:52744 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932181Ab2JBVWE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Oct 2012 17:22:04 -0400
-In-Reply-To: <20121002.143627.1565408497543880722.davem@davemloft.net>
+	id S1757017Ab2JBXud (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Oct 2012 19:50:33 -0400
+In-reply-to: <506B3FE4.9040407@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: rdunlap@xenotime.net, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>, "David S. Miller" <davem@davemloft.net>
 
-On Tue, 02 Oct 2012 14:36:27 -0400 (EDT)
-David Miller <davem@davemloft.net> wrote:
-
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> Date: Tue, 02 Oct 2012 11:31:51 -0700
+> on x86_64:
 > 
-> > on x86_64:
-> > 
-> > drivers/net/vxlan.c: In function 'vxlan_xmit':
-> > drivers/net/vxlan.c:725:2: error: implicit declaration of function 'ip_select_ident'
-> > 
-> > That function is only defined when CONFIG_INET is enabled,
-> > but it is disabled in this config.
-> 
-> This definitely depends upon INET, I'll add the Kconfig change
-> to net-next, thanks.
+> drivers/built-in.o: In function `ipoib_changelink':
+> ipoib_netlink.c:(.text+0x6a5fc9): undefined reference to `ipoib_set_mode'
+> ipoib_netlink.c:(.text+0x6a5fe3): undefined reference to `ipoib_set_mode'
 
-Yup, thanks Dave.
+Happens on powerpc too with ppc64e_defconfig compiling modules.
+
+Reverting this fixes it:
+  862096a IB/ipoib: Add more rtnl_link_ops callbacks
+
+Adding patch owners and committer to CC.
+
+Mikey
