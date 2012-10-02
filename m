@@ -1,58 +1,41 @@
-From: "Jan Beulich" <JBeulich@suse.com>
-Subject: Re: linux-next: manual merge of the xen-two tree with Linus'
- tree
-Date: Tue, 02 Oct 2012 12:54:20 +0100
-Message-ID: <506AF20C020000780009F0B5@nat28.tlf.novell.com>
-References: <20121002141949.f6e61437bdce0d56d9d4321e@canb.auug.org.au>
- <alpine.DEB.2.02.1210021141370.29232@kaball.uk.xensource.com>
- <506AEE0C020000780009F0A1@nat28.tlf.novell.com>
- <alpine.DEB.2.02.1210021240020.29232@kaball.uk.xensource.com>
+From: Chris Mason <chris.mason@fusionio.com>
+Subject: Re: [GIT PULL] Btrfs for linux-next
+Date: Tue, 2 Oct 2012 08:26:53 -0400
+Message-ID: <20121002122653.GB1140@shiny>
+References: <20120930115258.GA13506@shiny>
+ <20121001181549.817cc2d7d0d660eb593922fd@canb.auug.org.au>
+ <20121002013618.GA1140@shiny>
+ <20121002125436.a39101ab6f87d4e8596c1031@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nat28.tlf.novell.com ([130.57.49.28]:48264 "EHLO
-	nat28.tlf.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751593Ab2JBLyY convert rfc822-to-8bit (ORCPT
-	<rfc822;groupwise-linux-next@vger.kernel.org:5:2>);
-	Tue, 2 Oct 2012 07:54:24 -0400
-In-Reply-To: <alpine.DEB.2.02.1210021240020.29232@kaball.uk.xensource.com>
+Received: from mx1.fusionio.com ([66.114.96.30]:37670 "EHLO mx1.fusionio.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752342Ab2JBM04 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Oct 2012 08:26:56 -0400
 Content-Disposition: inline
+In-Reply-To: <20121002125436.a39101ab6f87d4e8596c1031@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Chris Mason <clmason@fusionio.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
->>> On 02.10.12 at 13:45, Stefano Stabellini <stefano.stabellini@eu.citrix.com> wrote:
->> > Considering that dbgp doesn't seem to be very useful without PCI at the
->> > moment, could we just turn it into:
->> > 
->> > dom0-$(CONFIG_PCI) += dbgp.o
->> > 
->> > ?
->> 
->> Better not - the code is specifically not PCI-only. And I can't see
->> how it would be harmful to be compiled on e.g. ARM (so the
->> merge perhaps really should use XEN_DOM0 alone, without
->> X86. If anything (and that may indeed be a minor oversight of
->> the original patch) one might want it to depend on USB_SUPPORT,
->> as without that no in-tree debug port capable driver would be
->> able to load (and hence interfere with Xen's use of the debug
->> port). However, as long as it builds fine with USB_SUPPORT
->> undefined (which I believe it does), having it in the shape it
->> is allows for out-of-tree drivers as well (as long as they make
->> use of the designated interface).
+On Mon, Oct 01, 2012 at 08:54:36PM -0600, Stephen Rothwell wrote:
+> Hi Chris,
 > 
-> OK for PCI.
-> Regarding USB_SUPPORT, considering that gbgp.c calls hcd_to_bus, I think
-> it would make sense to make it depend on it.
+> On Mon, 1 Oct 2012 21:36:18 -0400 Chris Mason <chris.mason@fusionio.com> wrote:
+> >
+> > Sorry for the hassle, we've updated that patch and rebased the tree:
+> > 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/mason/linux-btrfs.git next
+> 
+> Looks good today.
+> 
+> I am not sure if you are aware of exactly how linux-next works:  I will
+> fetch that branch of your tree every morning, so any changes will be
+> automatically incorporated into linux-next.
 
-As said - I'd prefer to do that only if indeed needed to get things
-to build without that option. Since include/usb/* doesn't reference
-CONFIG_USB_SUPPORT, I'm in favor of supporting at least those
-eventual out-of-tree drivers that do use the pre-existing data
-structures (and others shouldn't be calling pre-existing APIs
-anyway). But I wouldn't NAK a patch doing what you suggest
-either.
+Thanks! I knew you'd pull again but wanted to send an explicit ack that
+we had fixed up the first pull.
 
-Jan
+-chris
