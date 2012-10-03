@@ -1,30 +1,59 @@
-From: Michael Neuling <mikey@neuling.org>
-Subject: Re: linux-next: Tree for Oct 2 (ipoib_netlink.c)
-Date: Wed, 03 Oct 2012 09:50:31 +1000
-Message-ID: <10635.1349221831@neuling.org>
-References: <20121002163229.d377074dc8f6c029428faeaa@canb.auug.org.au> <506B3FE4.9040407@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ubi tree
+Date: Wed, 3 Oct 2012 12:27:35 +1000
+Message-ID: <20121003122735.692388e2f68dd85e43052c70@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__3_Oct_2012_12_27_35_+1000_K9LNcQfAeb+ZiuV2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:52744 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757017Ab2JBXud (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Oct 2012 19:50:33 -0400
-In-reply-to: <506B3FE4.9040407@xenotime.net>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35629 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751031Ab2JCC1o (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Oct 2012 22:27:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>, "David S. Miller" <davem@davemloft.net>
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>
 
-> on x86_64:
-> 
-> drivers/built-in.o: In function `ipoib_changelink':
-> ipoib_netlink.c:(.text+0x6a5fc9): undefined reference to `ipoib_set_mode'
-> ipoib_netlink.c:(.text+0x6a5fe3): undefined reference to `ipoib_set_mode'
+--Signature=_Wed__3_Oct_2012_12_27_35_+1000_K9LNcQfAeb+ZiuV2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Happens on powerpc too with ppc64e_defconfig compiling modules.
+Hi Artem,
 
-Reverting this fixes it:
-  862096a IB/ipoib: Add more rtnl_link_ops callbacks
+After merging the ubi tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Adding patch owners and committer to CC.
+ERROR: "ubi_update_fastmap" [drivers/mtd/ubi/ubi.ko] undefined!
+ERROR: "ubi_scan_fastmap" [drivers/mtd/ubi/ubi.ko] undefined!
+ERROR: "ubi_calc_fm_size" [drivers/mtd/ubi/ubi.ko] undefined!
 
-Mikey
+I have used the ubi tree form next-20121002 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__3_Oct_2012_12_27_35_+1000_K9LNcQfAeb+ZiuV2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQa6KXAAoJEECxmPOUX5FEWNMP/2cq7OLQsIMU9+mzPm1S4KRX
+KnpvFqVkWEJGCpN3zafgKZPICANAAmibJmWXziF0M8BI9ayq0OgJmK33AKk4EKVF
+pb3gldKQ6n4M9MLJsrQPdVh7sLbWXsqfYcgrvXhjhzDxpstRV1d73m13VssDOmzy
+63YhQnJksS/xM+GoSfIGCqROs/tDEqnhZ4VWfOjj6WQJp2g6rmmMQV9B707SuNtY
++vYzJW0MUG5lD72gbYlD9bt7ZqyGHDWTOkYdCVo5QD6mhi4CL6SDC2SRMAicyoHE
++qKzl2Sp3Vo+SQLC+m6afy/yv0XR/SDUOg2Q9x1FRFKhfcVH82QPUPzgk37+B7cc
+hd+Q6El4tIq11/rmLmkNyRDS1/Abm69DdsiJq97Tj+yLKq37g7PJfolcuD998bUB
+GZqqD6cmQNq7A0w7SPizX4RFexxSvNhvlYF0HcBHXErcaJEt4FF/zIWxqP+kHnDU
+pPHmn4gCDGasKcxaY+V5zX7kq0qVcFdFzMVFaOZ36Wcn8sHxjooRsZxoE3eiaiYA
++4hbuJhvQMjhtDMuUe5jMh7U2UWmUvvAc1tTLC7iMURm27TCXqJGR8ZtOMlmoa3P
+kzvklZAIsnzUN4MeR6pmlOAckajHcqSFZSRI0bkYlRLsVtM0+A72zNFREGv+yFET
+Fv0m0M1zOVBE5Z25KKqC
+=EZjM
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Oct_2012_12_27_35_+1000_K9LNcQfAeb+ZiuV2--
