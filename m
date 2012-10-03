@@ -1,57 +1,59 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: linux-next: build failure after merge of the ubi tree
-Date: Wed, 3 Oct 2012 10:30:45 +0200
-Message-ID: <20121003103045.140f3a7a@spider.haslach.nod.at>
-References: <20121003122735.692388e2f68dd85e43052c70@canb.auug.org.au>
-	<1349248843.2017.108.camel@sauron.fi.intel.com>
+From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Subject: [PATCH -next] infiniband: fix ipoib build error when IPOIB_CM is
+ not enabled
+Date: Wed, 03 Oct 2012 14:50:41 -0700
+Message-ID: <506CB331.8000101@xenotime.net>
+References: <20121003173007.c322d79c31676b9494a6bfd5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1349248843.2017.108.camel@sauron.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: dedekind1@gmail.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20121003173007.c322d79c31676b9494a6bfd5-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-Artem, Stephen,
+From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
 
-Am Wed, 03 Oct 2012 10:20:43 +0300
-schrieb Artem Bityutskiy <dedekind1@gmail.com>:
+Fix build error when INFINIBAND_IPOIB_CM is not enabled:
 
-> On Wed, 2012-10-03 at 12:27 +1000, Stephen Rothwell wrote:
-> > Hi Artem,
-> > 
-> > After merging the ubi tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > ERROR: "ubi_update_fastmap" [drivers/mtd/ubi/ubi.ko] undefined!
-> > ERROR: "ubi_scan_fastmap" [drivers/mtd/ubi/ubi.ko] undefined!
-> > ERROR: "ubi_calc_fm_size" [drivers/mtd/ubi/ubi.ko] undefined!
-> 
-> I've added Richard's fastmap work there. I'll look at these failures.
+ERROR: "ipoib_set_mode" [drivers/infiniband/ulp/ipoib/ib_ipoib.ko] undefined!
 
-Thanks for reporting this.
-I'm not sure why this happens with allmodconfig.
-If I set CONFIG_MTD=m and CONFIG_MTD_UBI=m it builds fine,
-that's how I did most build tests.
-
-The following patch fixes the issue for me.
-Artem, are you fine with it?
-
-Thanks,
-//richard
-
+Signed-off-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Cc:	Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc:	Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc:	Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc:	linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 ---
-diff --git a/drivers/mtd/ubi/Makefile b/drivers/mtd/ubi/Makefile
-index 7ab19ac..b46b0c97 100644
---- a/drivers/mtd/ubi/Makefile
-+++ b/drivers/mtd/ubi/Makefile
-@@ -2,6 +2,6 @@ obj-$(CONFIG_MTD_UBI) += ubi.o
+ drivers/infiniband/ulp/ipoib/ipoib_netlink.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- linux-next-20121003.orig/drivers/infiniband/ulp/ipoib/ipoib_netlink.c
++++ linux-next-20121003/drivers/infiniband/ulp/ipoib/ipoib_netlink.c
+@@ -30,6 +30,7 @@
+  * SOFTWARE.
+  */
  
- ubi-y += vtbl.o vmt.o upd.o build.o cdev.o kapi.o eba.o io.o wl.o
-attach.o ubi-y += misc.o debug.o
-+ubi-$(CONFIG_MTD_UBI_FASTMAP) += fastmap.o
++#include <linux/kconfig.h>
+ #include <linux/netdevice.h>
+ #include <linux/module.h>
+ #include <net/rtnetlink.h>
+@@ -71,11 +72,13 @@ static int ipoib_changelink(struct net_d
  
- obj-$(CONFIG_MTD_UBI_GLUEBI) += gluebi.o
--obj-$(CONFIG_MTD_UBI_FASTMAP) += fastmap.o
+ 	if (data[IFLA_IPOIB_MODE]) {
+ 		mode  = nla_get_u16(data[IFLA_IPOIB_MODE]);
++#if IS_ENABLED(CONFIG_INFINIBAND_IPOIB_CM)
+ 		if (mode == IPOIB_MODE_DATAGRAM)
+ 			ret = ipoib_set_mode(dev, "datagram\n");
+ 		else if (mode == IPOIB_MODE_CONNECTED)
+ 			ret = ipoib_set_mode(dev, "connected\n");
+ 		else
++#endif
+ 			ret = -EINVAL;
+ 
+ 		if (ret < 0)
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
