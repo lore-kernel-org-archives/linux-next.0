@@ -1,35 +1,64 @@
-From: Pekka Enberg <penberg@kernel.org>
-Subject: Re: linux-next: fate of the kvmtool tree
-Date: Wed, 3 Oct 2012 09:47:34 +0300
-Message-ID: <CAOJsxLFeVa6WCpr25t3hA3xGJb6rUgFqOLDrc5_3iLnUb-xTHw@mail.gmail.com>
-References: <20121003152921.c08e7019d2ada843888a2570@canb.auug.org.au>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: linux-next: build failure after merge of the ubi tree
+Date: Wed, 03 Oct 2012 10:20:43 +0300
+Message-ID: <1349248843.2017.108.camel@sauron.fi.intel.com>
+References: <20121003122735.692388e2f68dd85e43052c70@canb.auug.org.au>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:34297 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753033Ab2JCGrg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Oct 2012 02:47:36 -0400
-In-Reply-To: <20121003152921.c08e7019d2ada843888a2570@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-CZWmydX3VkSKW6OazrId"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121003122735.692388e2f68dd85e43052c70@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sasha Levin <levinsasha928@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
 
-On Wed, Oct 3, 2012 at 8:29 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Well, here we are at another merge window and the kvmtool tree is still
-> not merged.  So, is it likely that it will be merged in this merge
-> window?  or the next?  If not, can I please remove it from linux-next
-> (and have it removed from the auto-latest branch of the tip tree) as it
-> just adds weight to the patches and the tree that people have to fetch to
-> work with.
+--=-CZWmydX3VkSKW6OazrId
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I have no idea how likely it is that it will be merged but I'm
-planning to send a pull request for this merge cycle. ;-)
+On Wed, 2012-10-03 at 12:27 +1000, Stephen Rothwell wrote:
+> Hi Artem,
+>=20
+> After merging the ubi tree, today's linux-next build (x86_64 allmodconfig=
+)
+> failed like this:
+>=20
+> ERROR: "ubi_update_fastmap" [drivers/mtd/ubi/ubi.ko] undefined!
+> ERROR: "ubi_scan_fastmap" [drivers/mtd/ubi/ubi.ko] undefined!
+> ERROR: "ubi_calc_fm_size" [drivers/mtd/ubi/ubi.ko] undefined!
 
-Btw, IIRC the KVM tool also ends up in linux-next via Ingo's tree so
-dropping my tree might not be enough.
+I've added Richard's fastmap work there. I'll look at these failures.
 
-                        Pekka
+And yes, using the previous ubi tree is a good decision, thanks!
+
+--=20
+Best Regards,
+Artem Bityutskiy
+
+--=-CZWmydX3VkSKW6OazrId
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAABAgAGBQJQa+dLAAoJECmIfjd9wqK0avQP/iczdYXdI7PEuMczynpwYJGA
+sdYeCz9I3bB9qd/sKUP2NKpeY82dFuZeM7FXDnsfrN+ElH0RG2zYg3eFC6H1YNeU
+Njffqtxla33R8qXl89fuHp1XDMcw+Ue3A2cdxabSbBAmkxibx0VPQm64sR+0qxUg
+JMueEig+mWBrCCc96UEGb7DvpccWIcIZZQaGt8bta86jjKgddmVQK6dx0w4ZXbIJ
+hX7n8X4bR/lAwviMn0wxSZhRtRb7INAeTmBLbTaarxQjF7icViqNp4WbubChaqbH
+VlouSTGwx4NZwth3o4/0Yo6UNVyP0WsFCSQBHXTohhkaFbp5Mvny7jHNrn3G6PKW
+el+BwVgW3QMltbQL3GFRVfhx2GwlUQNREUH5SBuTweU2fnHo5IU78GaDtAJdXor3
+X3ry+nIzGVxb7zuHr3V/q/RmMLgDtfUykjjTjrgAHlUhr+lay5hAqMmkxV5067OC
+Qn4h4dyT/JxqWUHI/qN2AOy+T106KKSH5gkmGSfmcUZochqqZOZUtjcYyfQxYn1Y
+YBldVqALUQ6kDFX59pPGdHpbTJIZYhWpGPV7bTppf9stfHLy/E4L0qujw3XIA/4h
+ddTxHamXYup9SQdq9aq+aITA/s/0lg+Z7OjyCnBINMOSxnsTKHVYho8Pw+5dRMkW
+DgVmCO1lPQpOKSDCiA61
+=lau1
+-----END PGP SIGNATURE-----
+
+--=-CZWmydX3VkSKW6OazrId--
