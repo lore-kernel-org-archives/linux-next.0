@@ -1,35 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with the modules and
- arm-soc trees
-Date: Thu, 4 Oct 2012 14:52:41 +1000
-Message-ID: <20121004145241.fac039e78a15bb614cbd6da0@canb.auug.org.au>
+Subject: linux-next: manual merge of the acpi tree with Linus' tree
+Date: Thu, 4 Oct 2012 11:40:30 +1000
+Message-ID: <20121004114030.f865899893be54df3105a872@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__4_Oct_2012_14_52_41_+1000_EfaZ_XutxHVkkbku"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, David Howells <dhowells@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__4_Oct_2012_11_40_30_+1000_GJZTsB9WMD8j77Wl"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36831 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754115Ab2JDBkl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Oct 2012 21:40:41 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Bob Moore <robert.moore@intel.com>, Feng Tang <feng.tang@intel.com>
 
---Signature=_Thu__4_Oct_2012_14_52_41_+1000_EfaZ_XutxHVkkbku
+--Signature=_Thu__4_Oct_2012_11_40_30_+1000_GJZTsB9WMD8j77Wl
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Len,
 
-Today's linux-next merge of the signal tree got conflicts in
-arch/avr32/include/asm/Kbuild, arch/cris/include/asm/Kbuild,
-arch/frv/include/asm/Kbuild, arch/h8300/include/asm/Kbuild,
-arch/ia64/include/asm/Kbuild, arch/m32r/include/asm/Kbuild,
-arch/microblaze/include/asm/Kbuild, arch/mn10300/include/asm/Kbuild and
-arch/xtensa/include/asm/Kbuild between commit e7a570ff7dff ("asm-generic:
-Add default clkdev.h") from the arm-soc tree, commit 786d35d45cc4 ("Make
-most arch asm/module.h files use asm-generic/module.h") from the modules
-tree and commit ddd03a1f7591 ("get rid of generic instances of
-asm/exec.h") from the signal tree.
+Today's linux-next merge of the acpi tree got a conflict in
+include/acpi/acpixf.h between commit a1ce39288e6f ("UAPI: (Scripted)
+Convert #include "..." to #include <path/...> in kernel system headers")
+from Linus' tree and commit be030a576854 ("ACPICA: Add support for
+complex _PLD buffers") from the acpi tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -38,119 +36,48 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/avr32/include/asm/Kbuild
-index e3ba7bc,aa47fff..0000000
---- a/arch/avr32/include/asm/Kbuild
-+++ b/arch/avr32/include/asm/Kbuild
-@@@ -1,5 -1,4 +1,6 @@@
-  include include/asm-generic/Kbuild.asm
+diff --cc include/acpi/acpixf.h
+index 51405d3,267bfc4..0000000
+--- a/include/acpi/acpixf.h
++++ b/include/acpi/acpixf.h
+@@@ -47,11 -47,12 +47,12 @@@
  =20
- +generic-y	+=3D clkdev.h
-+ generic-y	+=3D exec.h
- +
-  header-y	+=3D cachectl.h
-diff --cc arch/cris/include/asm/Kbuild
-index 6900bbf,b68ad4b..0000000
---- a/arch/cris/include/asm/Kbuild
-+++ b/arch/cris/include/asm/Kbuild
-@@@ -8,5 -8,4 +8,6 @@@ header-y +=3D etraxgpio.
-  header-y +=3D rs485.h
-  header-y +=3D sync_serial.h
+  /* Current ACPICA subsystem version in YYYYMMDD format */
  =20
- +generic-y +=3D module.h
- +generic-y +=3D clkdev.h
-+ generic-y +=3D exec.h
-diff --cc arch/frv/include/asm/Kbuild
-index 13cd044,32c1646..0000000
---- a/arch/frv/include/asm/Kbuild
-+++ b/arch/frv/include/asm/Kbuild
-@@@ -2,4 -2,4 +2,6 @@@ include include/asm-generic/Kbuild.as
+- #define ACPI_CA_VERSION                 0x20120711
++ #define ACPI_CA_VERSION                 0x20120913
  =20
-  header-y +=3D registers.h
-  header-y +=3D termios.h
-++
- +generic-y +=3D clkdev.h
-+ generic-y +=3D exec.h
-diff --cc arch/h8300/include/asm/Kbuild
-index 98477e9,3a2af1a..0000000
---- a/arch/h8300/include/asm/Kbuild
-+++ b/arch/h8300/include/asm/Kbuild
-@@@ -1,4 -1,2 +1,5 @@@
-  include include/asm-generic/Kbuild.asm
- +
- +generic-y	+=3D module.h
- +generic-y	+=3D clkdev.h
-+ generic-y +=3D exec.h
-diff --cc arch/ia64/include/asm/Kbuild
-index 58f3d14,98efd48..0000000
---- a/arch/ia64/include/asm/Kbuild
-+++ b/arch/ia64/include/asm/Kbuild
-@@@ -13,4 -13,4 +13,6 @@@ header-y +=3D ptrace_offsets.
-  header-y +=3D rse.h
-  header-y +=3D ucontext.h
-  header-y +=3D ustack.h
-++
- +generic-y +=3D clkdev.h
-+ generic-y +=3D exec.h
-diff --cc arch/m32r/include/asm/Kbuild
-index 98477e9,7083403..0000000
---- a/arch/m32r/include/asm/Kbuild
-+++ b/arch/m32r/include/asm/Kbuild
-@@@ -1,4 -1,3 +1,5 @@@
-  include include/asm-generic/Kbuild.asm
+ -#include "acconfig.h"
+ -#include "actypes.h"
+ -#include "actbl.h"
+ -#include "acbuffer.h"
+ +#include <acpi/acconfig.h>
+ +#include <acpi/actypes.h>
+ +#include <acpi/actbl.h>
+++#include <acpi/acbuffer.h>
  =20
- +generic-y	+=3D module.h
- +generic-y	+=3D clkdev.h
-+ generic-y +=3D exec.h
-diff --cc arch/microblaze/include/asm/Kbuild
-index 48510f6,5a0e72b..0000000
---- a/arch/microblaze/include/asm/Kbuild
-+++ b/arch/microblaze/include/asm/Kbuild
-@@@ -1,4 -1,4 +1,6 @@@
-  include include/asm-generic/Kbuild.asm
+  extern u8 acpi_gbl_permanent_mmap;
  =20
-  header-y  +=3D elf.h
-++
- +generic-y +=3D clkdev.h
-+ generic-y +=3D exec.h
-diff --cc arch/mn10300/include/asm/Kbuild
-index 0d20f55,7083403..0000000
---- a/arch/mn10300/include/asm/Kbuild
-+++ b/arch/mn10300/include/asm/Kbuild
-@@@ -1,3 -1,3 +1,4 @@@
-  include include/asm-generic/Kbuild.asm
- =20
- +generic-y +=3D clkdev.h
-+ generic-y +=3D exec.h
-diff --cc arch/xtensa/include/asm/Kbuild
-index 0d20f55,7083403..0000000
---- a/arch/xtensa/include/asm/Kbuild
-+++ b/arch/xtensa/include/asm/Kbuild
-@@@ -1,3 -1,3 +1,4 @@@
-  include include/asm-generic/Kbuild.asm
- =20
- +generic-y +=3D clkdev.h
-+ generic-y +=3D exec.h
 
---Signature=_Thu__4_Oct_2012_14_52_41_+1000_EfaZ_XutxHVkkbku
+--Signature=_Thu__4_Oct_2012_11_40_30_+1000_GJZTsB9WMD8j77Wl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQbRYZAAoJEECxmPOUX5FElGMP/i2KDca+skxroUGPVu7+Rm0X
-QuGy288v5m7rwQM8RKGF5ZJcT4CNnFtrgjRqvrJUXRtXocssYjiJ0v4WhNnUTxAL
-R8nCXwXKmLN3MZrNtCc7Ze45f2i+sITGf19E+mtnfbpkk8E9rYpySqGlmvHuN5CG
-FYWXrys/GufeivGvYv2+2w+KmRKV3Ggj9WSN7YVMoLZlMtTy+7SBw2esKwQaLu95
-m5BXah0/VVisDXj2NJSznQPbYYedUZBD6Anpm67k2J1lI10h0t7iLiZz61TYo3QG
-+hROFCpaJGSWEftHJzSOKLdhvr7v7RKPhO8XgqrGhXSjE7h+hBa5Ow1evDyTCJt2
-Sb92ErHb2FjUHJuVf98+5+fePmuIuASJYTeL+x+xvGp8220UOjV4fRprLBB0QViW
-z5cQzZXGEr92Ybcx+M+3yaXOk/jENsYY4KYHSTCK6wchrTAbxLfK2X+tecG5jqq3
-iNwmiw0BPUO2PoUH7/o98/N83iPRlTLxQyBt6Y2PhZIhfGi8BZ7Gs6r378DU+Zro
-L5Ymf91uvCBqT5sBRBrinaeu+C3JxHxtfhxk1GlL59J9yU4+l9x6B3TthcmRvpMF
-B+bZYEgOgDk6LkPgC9lBArUNBmPA2S9b+O1OZUc1A3OVJrBcoAmHhNBEqWt3LLkx
-KFHdNIaiJN+JI+Fgs8mj
-=Jk50
+iQIcBAEBCAAGBQJQbOkOAAoJEECxmPOUX5FEhR4P/3gFmZRfivJUoYmNvgumGtRn
+97ZKtEjUe1wjrAPqKJc2lNpFkFFS8BT0dszli2FUjyqLES627cU9/ENe3duKDuZ1
+4Hbb/yTlH7+WlROpXYMVFH2ynYMXVcGDQwnHG3ZbTRUqu5LPhWxNR4sUJSeGmna4
+J10YC6FHRDkoJotJHSZMnH9lIXLnF4CKPCb/jBpDH71YFXqZ5AVQ58VEkBVBzMUM
+LIy0ATL8NrvyPhEkejHi7WjyTTR6GmP83MiwOz1uhyzjugfflTU7gN9UDKqlp5qD
++3RRURfHGeG4poL0QNzEaNCV0mZINT1Z1znag99plW2vMsZXSsZyX2fnee3wmkq1
+N9Ha0RBcZlWzyd3Ya9yOolRgpismgBHs4UXVYzkGZCPoQ7HLjz9vpUcNGseAwkyM
+lht42kMt3ERiMnt7xeeGlDfdYU3M5PVufUeO+26Cd3mjxvc1iNbyj+QzdIu+kXy8
+1hmrw+b1V0Dzpe+JEyiBllOGZpmO6PHG6kRj35YuZw+7Pi12XGR9xlZR/ZfrHmmI
+Xjya0hGAJey8XNBl+28mlNDLx1ilE5iAMHHRZzeNhX2/M+B21OEyHkoQ9MVFGe4J
+Xs2n3hlAxEg+VJtNuPNAPJv3a3NRa9nLMIcnW+a5mkymhlL0O2I/qN9Kd2EOz1M1
+MXeDISjLpFv546jAbY95
+=TKOY
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Oct_2012_14_52_41_+1000_EfaZ_XutxHVkkbku--
+--Signature=_Thu__4_Oct_2012_11_40_30_+1000_GJZTsB9WMD8j77Wl--
