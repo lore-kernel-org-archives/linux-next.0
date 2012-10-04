@@ -1,65 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the drm tree
-Date: Thu, 4 Oct 2012 12:21:15 +1000
-Message-ID: <20121004122115.2d59a5301715308bb9d53ffe@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net tree
+Date: Thu, 4 Oct 2012 10:18:33 +1000
+Message-ID: <20121004101833.019598b7e474c7b74e67ff20@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__4_Oct_2012_12_21_15_+1000_0wdQbs9EEbzx+Wxt"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55121 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752386Ab2JDCVZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Oct 2012 22:21:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Thu__4_Oct_2012_10_18_33_+1000_D+lzKzoQLdrrT6QI"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vipul Pandya <vipul@chelsio.com>, Jay Hernandez <jay@chelsio.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__4_Oct_2012_12_21_15_+1000_0wdQbs9EEbzx+Wxt
+--Signature=_Thu__4_Oct_2012_10_18_33_+1000_D+lzKzoQLdrrT6QI
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi all,
 
-After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-produced these warnings:
+After merging the net tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-drivers/gpu/drm/gma500/backlight.c:29:13: warning: 'do_gma_backlight_set' d=
-efined but not used [-Wunused-function]
-drivers/gpu/drm/nouveau/core/subdev/gpio/base.c: In function 'nouveau_gpio_=
-isr_del':
-drivers/gpu/drm/nouveau/core/subdev/gpio/base.c:219:4: warning: 'flush_work=
-_sync' is deprecated (declared at include/linux/workqueue.h:448) [-Wdepreca=
-ted-declarations]
-drivers/gpu/drm/nouveau/nouveau_drm.c: In function 'nouveau_drm_open':
-drivers/gpu/drm/nouveau/nouveau_drm.c:503:2: warning: format '%d' expects a=
-rgument of type 'int', but argument 4 has type 'struct pid *' [-Wformat]
+drivers/net/ethernet/chelsio/cxgb4/t4_hw.c: In function 't4_memory_rw':
+drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:420:2: error: implicit declarati=
+on of function 'vmalloc' [-Werror=3Dimplicit-function-declaration]
+drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:420:7: warning: assignment makes=
+ pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:487:2: error: implicit declarati=
+on of function 'vfree' [-Werror=3Dimplicit-function-declaration]
+drivers/net/ethernet/chelsio/cxgb4/t4_hw.c: In function 'get_vpd_params':
+drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:530:6: warning: assignment makes=
+ pointer from integer without a cast [enabled by default]
 
+Caused by commit 8c357ebd5693 ("cxgb4: Dynamically allocate memory in
+t4_memory_rw() and get_vpd_params()").  Missing include of
+linux/vmalloc.h.
+
+I have used the net tree from next-20121003 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__4_Oct_2012_12_21_15_+1000_0wdQbs9EEbzx+Wxt
+--Signature=_Thu__4_Oct_2012_10_18_33_+1000_D+lzKzoQLdrrT6QI
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQbPKbAAoJEECxmPOUX5FEKAAP/3FEz5VY6BsL4Z969pTX1E8y
-S45PJ+f8I7o8kG0U5tCzDtrNB4/YdpKhTCaBJCfe+YDJuPpj8ENbA9g9HVMLq5G/
-0If1Lz+svnS7dKjWmht8HixTqUg2cewyBUTBlA2fr0m5u3GooLPk0v30jz+12M9S
-x3cdjHGgKpGgtX5dOPg2sPoKLeqglcoSBOtA+Wk+VZSXKJccKuvOFA2HG4aaMeWY
-m8GjP84+/vz6z3hWiTbZNk1zewuV+6EVEdCzlo8a6CnsBvkssVQXr8ZYmenrn0HA
-ldpWxNjLDQu62B98ftrEz7x1xAEaieQzgkiV88KJM0pKCLc6LrmuudzAuhG24HRB
-CMrxEmz8cXFdrgmTSRoLqbNi0iGHDN+gNoEJ8tQSExBpL70LEIO4Yon48xjICo3X
-oZ8JJWxbxgdJq+ITMVAznGRpbt3lsrjUtjomBI+JCnNnshjFJr9p6weUrUwMSP2n
-1b/ntiflR1l4+5XM25kKrrvmhZ4V6atp6+XzqcsgrOEYOkdWyRFWPBQc2EnsUuTO
-NWpvkw3bEFBzuyYgvxTAfxZfH2zFVQUpCqK73IonnjgY9tsVAChrl5H5Zwn/g0CE
-vBtISGIyhkQmZZZQnhMC4pQ3ukRxJxpIvFQPW533F3/H67T9iSnpAEvOBumIW6cl
-wBcG3UACS5iBPW6785tH
-=Y4Q7
+iQIcBAEBCAAGBQJQbNXZAAoJEECxmPOUX5FEL1gQAIM7QsGAGZP4CwOnCDqxGZOX
+G+DKMU4RdlmvoK9QxLgs91V1CBQYUe8sZwSryA61pVB812LVfe9ojEsE1DvnRyR1
+Ts35KDoAdJxbymPYH7Cl0w2b/MlLzOIf7PHB5UhkZg7RPsFmxpZ635E31B023B20
+iUYHU6ycU8zp9QjQHuSRfauqtJbTkmR/7roq9ahq+5t8UGMmV334//SiNz4EDN+N
+TveGlrqzpz1V1suPFlw6kd9MTEp6PM0+Osln8C0Vu4GhyZx97Y5r0eHRJIxxVnKF
+A3SF1Nv3wnBWvNp/OYCCVbu3cgg9WqNHmRe9NJabki7S1gDisxWqZBSTSq8tJcMs
+Xww6o7X5DEY+MzkHliSbMRcASXpGf50SF6RstivK/wg0pBhxGHDm+u15Uv9WpP9M
+ETvE52vvuPqGhT+0itT98emsCcS8b2TNgWf3zzwGTKFetBzoPjvndW6daoackvKx
+c5rvd6I2KohaqT99yKFOuvXUaB4HnjaMiTEPyGgPvSJ37JTNlOQ7Qc+nvjrVQPxM
++znwswQ6FUD3seeEitrPQo8DDIz9mtMJeSiD0GlHEAYcFe8UwoA6cPf8/SsTrCTI
+zdwVVI37MjYApeOLaA2nlMfrr79Pme+Em4xb8EaT6hFAkaWc4LKXHbB69GUbQPKo
+buinWcCG3JthOMSxTNbN
+=Pmg2
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Oct_2012_12_21_15_+1000_0wdQbs9EEbzx+Wxt--
+--Signature=_Thu__4_Oct_2012_10_18_33_+1000_D+lzKzoQLdrrT6QI--
