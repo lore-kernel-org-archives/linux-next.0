@@ -1,30 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Wed, 03 Oct 2012 21:47:50 -0400 (EDT)
-Message-ID: <20121003.214750.2022020970468412510.davem@davemloft.net>
-References: <20121004101833.019598b7e474c7b74e67ff20@canb.auug.org.au>
-	<20121003.205053.1711360628623711137.davem@davemloft.net>
-	<20121004110615.3fda3c25735284c776106d7d@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH -next] asymmetric keys: fix printk format warning
+Date: Thu, 04 Oct 2012 12:48:27 +0930
+Message-ID: <874nma3oxo.fsf@rustcorp.com.au>
+References: <20121003173007.c322d79c31676b9494a6bfd5@canb.auug.org.au> <506CC48E.2020303@xenotime.net> <20121004090806.70274213735de74211f4334d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121004110615.3fda3c25735284c776106d7d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, vipul@chelsio.com, jay@chelsio.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:35056 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751126Ab2JDDU5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Oct 2012 23:20:57 -0400
+In-Reply-To: <20121004090806.70274213735de74211f4334d@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@xenotime.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 4 Oct 2012 11:06:15 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-> Actually, for me it is.  I have a script that does the "use yesterday's
-> version" for me.  To fix (even a one liner) means bringing up an editor,
-> commiting, creating the patch and then recommiting it (an implementation
-> detail) and recording that I need to keep (automatically) applying the
-> patch in case the maintainer doesn't react quickly.
+> [Lets also cc Rusty who committed the patch ...]
+>
+> On Wed, 03 Oct 2012 16:04:46 -0700 Randy Dunlap <rdunlap@xenotime.net> wrote:
+>>
+>> From: Randy Dunlap <rdunlap@xenotime.net>
+>> 
+>> Fix printk format warning in x509_cert_parser.c:
+>> 
+>> crypto/asymmetric_keys/x509_cert_parser.c: In function 'x509_note_OID':
+>> crypto/asymmetric_keys/x509_cert_parser.c:113:3: warning: format '%zu' expects type 'size_t', but argument 2 has type 'long unsigned int'
+>> 
+>> Builds cleanly on i386 and x86_64.
 
-Ok, fair enough.
+Thanks, applied.
 
-I'll try to look into making x86 barf when a vmalloc.h include is
-missing.
+Rusty.
