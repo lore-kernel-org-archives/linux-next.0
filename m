@@ -1,32 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the modules tree with Linus' tree
-Date: Thu, 4 Oct 2012 12:48:51 +1000
-Message-ID: <20121004124851.6704ba1ecb3d79c2a8ef5bf7@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the modules tree
+Date: Thu, 4 Oct 2012 14:29:44 +1000
+Message-ID: <20121004142944.70f5ebb6dbc197322b04bfea@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__4_Oct_2012_12_48_51_+1000_VNW1T4WsQCMQd6Kw"
+ boundary="Signature=_Thu__4_Oct_2012_14_29_44_+1000_=_+pwI4Pln5K4uCd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50571 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:34897 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753018Ab2JDCtA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Oct 2012 22:49:00 -0400
+	with ESMTP id S1751149Ab2JDE34 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Oct 2012 00:29:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Thu__4_Oct_2012_12_48_51_+1000_VNW1T4WsQCMQd6Kw
+--Signature=_Thu__4_Oct_2012_14_29_44_+1000_=_+pwI4Pln5K4uCd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi all,
 
-Today's linux-next merge of the modules tree got a conflict in Makefile
-between commit d183e6f570f3 ("UAPI: Move linux/version.h") from Linus'
-tree and commit 91657140708d ("MODSIGN: Make mrproper should remove
-generated files") from the modules tree.
+Today's linux-next merge of the arm-soc tree got conflicts in
+arch/cris/include/asm/Kbuild, arch/h8300/include/asm/Kbuild and
+arch/m32r/include/asm/Kbuild between commit 786d35d45cc4 ("Make most arch
+asm/module.h files use asm-generic/module.h") from the modules tree and
+commit e7a570ff7dff ("asm-generic: Add default clkdev.h") from the
+arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,48 +37,54 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Makefile
-index 5d8e7f2,e70ebfe..0000000
---- a/Makefile
-+++ b/Makefile
-@@@ -996,8 -993,12 +996,11 @@@ CLEAN_DIRS  +=3D $(MODVERDIR
-  # Directories & files removed with 'make mrproper'
-  MRPROPER_DIRS  +=3D include/config usr/include include/generated         =
- \
-                    arch/*/include/generated
- -MRPROPER_FILES +=3D .config .config.old .version .old_version            =
- \
- -                  include/linux/version.h                               \
- +MRPROPER_FILES +=3D .config .config.old .version .old_version $(version_h=
-) \
-- 		  Module.symvers tags TAGS cscope* GPATH GTAGS GRTAGS GSYMS
-+ 		  Module.symvers tags TAGS cscope* GPATH GTAGS GRTAGS GSYMS \
-+ 		  signing_key.priv signing_key.x509 x509.genkey		\
-+ 		  extra_certificates signing_key.x509.keyid		\
-+ 		  signing_key.x509.signer
+diff --cc arch/cris/include/asm/Kbuild
+index 28b690d,a8eab26..0000000
+--- a/arch/cris/include/asm/Kbuild
++++ b/arch/cris/include/asm/Kbuild
+@@@ -8,4 -8,4 +8,5 @@@ header-y +=3D etraxgpio.
+  header-y +=3D rs485.h
+  header-y +=3D sync_serial.h
  =20
-  # clean - Delete most, but leave enough to build external modules
-  #
+ +generic-y +=3D module.h
++ generic-y +=3D clkdev.h
+diff --cc arch/h8300/include/asm/Kbuild
+index 871382d,0e152a9..0000000
+--- a/arch/h8300/include/asm/Kbuild
++++ b/arch/h8300/include/asm/Kbuild
+@@@ -1,3 -1,3 +1,4 @@@
+  include include/asm-generic/Kbuild.asm
+ =20
+ +generic-y	+=3D module.h
++ generic-y	+=3D clkdev.h
+diff --cc arch/m32r/include/asm/Kbuild
+index 871382d,0e152a9..0000000
+--- a/arch/m32r/include/asm/Kbuild
++++ b/arch/m32r/include/asm/Kbuild
+@@@ -1,3 -1,3 +1,4 @@@
+  include include/asm-generic/Kbuild.asm
+ =20
+ +generic-y	+=3D module.h
++ generic-y	+=3D clkdev.h
 
---Signature=_Thu__4_Oct_2012_12_48_51_+1000_VNW1T4WsQCMQd6Kw
+--Signature=_Thu__4_Oct_2012_14_29_44_+1000_=_+pwI4Pln5K4uCd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQbPkTAAoJEECxmPOUX5FE+qsQAIuedn8ITMrGyHgtA2YSPbRO
-a6FjBFFxA291aoUWiAdhyQmvpa15Klhj0HjS4YrC48ByPBqgF3eEcNFqBrXWLjSP
-w+/pHeWq+3QFiOW5TeXzGRByZ6cGnXzXDPDrwIwr884jh6miZUkzawqZ4X8nMRkc
-eEw8m9uIKxQrn+at2TCnAPJIu5ZeD40Zs5VXMk37YIAYQ5N/s4F/ckdzcoxH037K
-HZXDkETlf7la9YjNtLwoLqWyYST7XUf9EcTyAxpOhTqyu67+OiXR0U6VjfzNSpfA
-YPIT2eViabHcxhwE3plKOQPcASPO6nuhDcMH2U7J2jb0G3uAmFUTayfOS8/Nqjfz
-y1VSP10vLj/7zkUb7/zHlTF3EXknQEhHL6iLpfZEhrme2STUnH/EfWMWRTgfgXlf
-MbWRUivql6xUU/9yr6ZRAfuvIuoccR0xZfZR/xRP19wRDyBEmLOwpiJMLXrzJFmJ
-SohPkR2+du0fSWX/KVo0I+5FJDYFB98nTvqb89G8kznRH5u2Gw/8XLR1FteCEFu5
-F4MeAwCt9lWqUojMOFQKhVjHxWA6nkhKsBKIq4Mpqw15uDZHrvKX4F5ykaBsoDBM
-+9y1WAKg4kSYocKC35H7tv0s4sJU87ezotTpmM0qTvbad1AhqLJk75QK46gh1IqE
-FKp+q7QaJR8OC65H0Bg+
-=ymSC
+iQIcBAEBCAAGBQJQbRC4AAoJEECxmPOUX5FEn2kP/RZxWPtZo1+pP4Dd2zaHELle
+5IVzMdKUG8AvN4qj8enEi21g4qwoTN8WOjhMwexzGh0WcpwW8Q50ppCGeELeQq7i
+sbP45sjRJqzYnw8Hahih6FpEJTXJk0CZ/9PJGPCteG9cBIv3Rs39ry7QtDMTodv3
+vB6+6VMD7WCPJZ6V+g7yb2YYQCPCk80nFM2CB7fT+9TMMyowOBm+rSePDbbRst8W
+Wl3txNSx8A6dFfY5EH9kdR/UhMAS1/oTJJsXqs/qhhd7t9YmwurGuUyxbD+l+jxr
+iTxYk+Ikv4tFkfFzQIMQKVcm8j2SMqCsds20vNnn48AajoqxMOn60UZ0W70K5RIa
+4hUwfVhEoWb9cdBnwjIppZXpiH9sZgdWNNqt/N9rYGjeD7osYeGpM85+RsTIIkRk
+0GJlPpi1Mr6y/fyN9C0tPswHllXFa/18mZdjSgN+tw0uJ1vPZRXD30viVjSyEZgR
+/IpU6cA+gAoPEuHAcyJZfl3Wcfln50lyOKS9uB1/+ZC9jkxmW/kWgS5Jbi3KLdod
+b8sEhYhGjImuTUkSDhHqY/ojfeTmv1jTizlaA9O1eB1JUB/jB3Q2G4Y8XK5QaNEN
+jX2z7q8FtxZrb3BH1199a3bw1BSOuvw5P2YmJi4WM/9MsFDdIfPr76NjeCXfBLRV
+t8/2JHkCACYpCT7A9xbh
+=dycg
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Oct_2012_12_48_51_+1000_VNW1T4WsQCMQd6Kw--
+--Signature=_Thu__4_Oct_2012_14_29_44_+1000_=_+pwI4Pln5K4uCd--
