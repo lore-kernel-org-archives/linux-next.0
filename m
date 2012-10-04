@@ -1,40 +1,65 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH 1/2] usb: gadget: Make webcam gadget select USB_LIBCOMPOSITE
-Date: Thu,  4 Oct 2012 02:32:41 +0200
-Message-ID: <1349310762-14209-2-git-send-email-laurent.pinchart@ideasonboard.com>
-References: <506B554A.70102@xenotime.net>
- <1349310762-14209-1-git-send-email-laurent.pinchart@ideasonboard.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:47533 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933013Ab2JDAcF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Oct 2012 20:32:05 -0400
-In-Reply-To: <1349310762-14209-1-git-send-email-laurent.pinchart@ideasonboard.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-usb@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Wed, 03 Oct 2012 20:50:53 -0400 (EDT)
+Message-ID: <20121003.205053.1711360628623711137.davem@davemloft.net>
+References: <20121004101833.019598b7e474c7b74e67ff20@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20121004101833.019598b7e474c7b74e67ff20@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, vipul@chelsio.com, jay@chelsio.com
+List-Id: linux-next.vger.kernel.org
 
-Composite gadget support is now available as a library instead of being
-built with each gadget. Composite drivers need to select
-USB_LIBCOMPOSITE.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 4 Oct 2012 10:18:33 +1000
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> After merging the net tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> drivers/net/ethernet/chelsio/cxgb4/t4_hw.c: In function 't4_memory_rw':
+> drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:420:2: error: implicit declaration of function 'vmalloc' [-Werror=implicit-function-declaration]
+> drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:420:7: warning: assignment makes pointer from integer without a cast [enabled by default]
+> drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:487:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
+> drivers/net/ethernet/chelsio/cxgb4/t4_hw.c: In function 'get_vpd_params':
+> drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:530:6: warning: assignment makes pointer from integer without a cast [enabled by default]
+> 
+> Caused by commit 8c357ebd5693 ("cxgb4: Dynamically allocate memory in
+> t4_memory_rw() and get_vpd_params()").  Missing include of
+> linux/vmalloc.h.
+> 
+> I have used the net tree from next-20121003 for today.
+
+Thanks, I'll fix this as is shown below.
+
+I do have a question though, it is honestly really that much easier to
+revert a whole days worth of changes (and therefore not get the code
+tested at all) than to simply add the obvious one liner?
+
+It seems to me to be absolutely the wrong tradeoff in these situations.
+
+====================
+[PATCH] cxgb4: Fix build error due to missing linux/vmalloc.h include.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 ---
- drivers/usb/gadget/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/gadget/Kconfig b/drivers/usb/gadget/Kconfig
-index dfb51a4..e0ff51b 100644
---- a/drivers/usb/gadget/Kconfig
-+++ b/drivers/usb/gadget/Kconfig
-@@ -952,6 +952,7 @@ endif
- config USB_G_WEBCAM
- 	tristate "USB Webcam Gadget"
- 	depends on VIDEO_DEV
-+	select USB_LIBCOMPOSITE
- 	help
- 	  The Webcam Gadget acts as a composite USB Audio and Video Class
- 	  device. It provides a userspace API to process UVC control requests
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
+index 745a1f5..31752b2 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
+@@ -43,6 +43,7 @@
+ #include <linux/pci.h>
+ #include <linux/spinlock.h>
+ #include <linux/timer.h>
++#include <linux/vmalloc.h>
+ #include <asm/io.h>
+ #include "cxgb4_uld.h"
+ #include "t4_hw.h"
 -- 
-1.7.8.6
+1.7.11.4
