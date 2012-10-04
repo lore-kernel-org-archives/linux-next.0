@@ -1,33 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the acpi tree with Linus' tree
-Date: Thu, 4 Oct 2012 11:40:30 +1000
-Message-ID: <20121004114030.f865899893be54df3105a872@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
+Date: Thu, 4 Oct 2012 14:33:11 +1000
+Message-ID: <20121004143311.e04a99036b0b6c519444d615@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__4_Oct_2012_11_40_30_+1000_GJZTsB9WMD8j77Wl"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36831 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754115Ab2JDBkl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Oct 2012 21:40:41 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Bob Moore <robert.moore@intel.com>, Feng Tang <feng.tang@intel.com>
+ boundary="Signature=_Thu__4_Oct_2012_14_33_11_+1000_s_+EgHFD5KoUBCvR"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__4_Oct_2012_11_40_30_+1000_GJZTsB9WMD8j77Wl
+--Signature=_Thu__4_Oct_2012_14_33_11_+1000_s_+EgHFD5KoUBCvR
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Len,
+Hi all,
 
-Today's linux-next merge of the acpi tree got a conflict in
-include/acpi/acpixf.h between commit a1ce39288e6f ("UAPI: (Scripted)
-Convert #include "..." to #include <path/...> in kernel system headers")
-from Linus' tree and commit be030a576854 ("ACPICA: Add support for
-complex _PLD buffers") from the acpi tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/x86/include/asm/Kbuild between commit 10b63956fce7 ("UAPI: Plumb the
+UAPI Kbuilds into the user header installation and checking") from Linus'
+tree and commit e7a570ff7dff ("asm-generic: Add default clkdev.h") from
+the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,48 +32,40 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/acpi/acpixf.h
-index 51405d3,267bfc4..0000000
---- a/include/acpi/acpixf.h
-+++ b/include/acpi/acpixf.h
-@@@ -47,11 -47,12 +47,12 @@@
- =20
-  /* Current ACPICA subsystem version in YYYYMMDD format */
- =20
-- #define ACPI_CA_VERSION                 0x20120711
-+ #define ACPI_CA_VERSION                 0x20120913
- =20
- -#include "acconfig.h"
- -#include "actypes.h"
- -#include "actbl.h"
- -#include "acbuffer.h"
- +#include <acpi/acconfig.h>
- +#include <acpi/actypes.h>
- +#include <acpi/actbl.h>
-++#include <acpi/acbuffer.h>
- =20
-  extern u8 acpi_gbl_permanent_mmap;
- =20
+diff --cc arch/x86/include/asm/Kbuild
+index 1595d68,66e5f0e..0000000
+--- a/arch/x86/include/asm/Kbuild
++++ b/arch/x86/include/asm/Kbuild
+@@@ -22,3 -22,9 +22,5 @@@ header-y +=3D sigcontext32.
+  header-y +=3D ucontext.h
+  header-y +=3D vm86.h
+  header-y +=3D vsyscall.h
++=20
+ -genhdr-y +=3D unistd_32.h
+ -genhdr-y +=3D unistd_64.h
+ -genhdr-y +=3D unistd_x32.h
+ -
++ generic-y +=3D clkdev.h
 
---Signature=_Thu__4_Oct_2012_11_40_30_+1000_GJZTsB9WMD8j77Wl
+--Signature=_Thu__4_Oct_2012_14_33_11_+1000_s_+EgHFD5KoUBCvR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQbOkOAAoJEECxmPOUX5FEhR4P/3gFmZRfivJUoYmNvgumGtRn
-97ZKtEjUe1wjrAPqKJc2lNpFkFFS8BT0dszli2FUjyqLES627cU9/ENe3duKDuZ1
-4Hbb/yTlH7+WlROpXYMVFH2ynYMXVcGDQwnHG3ZbTRUqu5LPhWxNR4sUJSeGmna4
-J10YC6FHRDkoJotJHSZMnH9lIXLnF4CKPCb/jBpDH71YFXqZ5AVQ58VEkBVBzMUM
-LIy0ATL8NrvyPhEkejHi7WjyTTR6GmP83MiwOz1uhyzjugfflTU7gN9UDKqlp5qD
-+3RRURfHGeG4poL0QNzEaNCV0mZINT1Z1znag99plW2vMsZXSsZyX2fnee3wmkq1
-N9Ha0RBcZlWzyd3Ya9yOolRgpismgBHs4UXVYzkGZCPoQ7HLjz9vpUcNGseAwkyM
-lht42kMt3ERiMnt7xeeGlDfdYU3M5PVufUeO+26Cd3mjxvc1iNbyj+QzdIu+kXy8
-1hmrw+b1V0Dzpe+JEyiBllOGZpmO6PHG6kRj35YuZw+7Pi12XGR9xlZR/ZfrHmmI
-Xjya0hGAJey8XNBl+28mlNDLx1ilE5iAMHHRZzeNhX2/M+B21OEyHkoQ9MVFGe4J
-Xs2n3hlAxEg+VJtNuPNAPJv3a3NRa9nLMIcnW+a5mkymhlL0O2I/qN9Kd2EOz1M1
-MXeDISjLpFv546jAbY95
-=TKOY
+iQIcBAEBCAAGBQJQbRGHAAoJEECxmPOUX5FE+24P/3b7YaNQ96EOb/FFAZ0Iamri
+nZ6yp+87VFbPL00B9cLGCN5od7jy1PwUSZ7/uc8H7SiTEUWYlGgc28b35Wh36Ow5
+8qLuEWhT71JGbJAAwxEkzFibE6LUNS5OU7W6LWu3r1kf9o7oNdSRJx0s+xfwUQmb
+CVbLvFWJ/6S5XpD/7IE/V2f/rhJCDYBdibhQAE6pIxIy5IFBY0Ibgp2y2mKyAlCa
+BAdlptFbgekmDxUeaHqaizpO07fL183E1ljjO4ljRBQrJ7m2K6PdybEFDA3vpyTk
+MOTHOH27BXfx/b+y0cG3pV0KqXlqo7ACobTJTcVmhR3aFs7nvwRGVjaNVKLmasp3
+TNDwt1vRPsoZVh8RIPBnE6I92S7SqLyWR4xOJaUzOWM5pExw18V83NI27XPQWbUd
+BALSEFc4DIEzufKAKPJ/fXfORwGBdPeE60WOf3jHkqL6v80AlZ6Ju3JqPkfcgIeb
+dARVBBSyNKxvMr1Hx1AqEAqrrabIl2S7ARPiU4QLcWavdVJLl2CDhbTr5W23bYEh
+KzGLQY1/srNhy7fKuZKSCghuzDNsqxn5Mq774JmihSVB4un+aDTHfUijb+jhx/Hn
+hbQBSv2t5XmEE4BuJ0Y4aQI+/GfJLFR2yQSPHJ97rgqzf/KwcHu4LMRkctW8jP93
+dZyrAOF4r4+MWBd4rlHI
+=ACo0
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Oct_2012_11_40_30_+1000_GJZTsB9WMD8j77Wl--
+--Signature=_Thu__4_Oct_2012_14_33_11_+1000_s_+EgHFD5KoUBCvR--
