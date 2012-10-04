@@ -1,66 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net tree
-Date: Thu, 4 Oct 2012 10:18:33 +1000
-Message-ID: <20121004101833.019598b7e474c7b74e67ff20@canb.auug.org.au>
+Subject: linux-next: manual merge of the modules tree with Linus' tree
+Date: Thu, 4 Oct 2012 12:48:51 +1000
+Message-ID: <20121004124851.6704ba1ecb3d79c2a8ef5bf7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__4_Oct_2012_10_18_33_+1000_D+lzKzoQLdrrT6QI"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vipul Pandya <vipul@chelsio.com>, Jay Hernandez <jay@chelsio.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__4_Oct_2012_12_48_51_+1000_VNW1T4WsQCMQd6Kw"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50571 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753018Ab2JDCtA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Oct 2012 22:49:00 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
 
---Signature=_Thu__4_Oct_2012_10_18_33_+1000_D+lzKzoQLdrrT6QI
+--Signature=_Thu__4_Oct_2012_12_48_51_+1000_VNW1T4WsQCMQd6Kw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Rusty,
 
-After merging the net tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the modules tree got a conflict in Makefile
+between commit d183e6f570f3 ("UAPI: Move linux/version.h") from Linus'
+tree and commit 91657140708d ("MODSIGN: Make mrproper should remove
+generated files") from the modules tree.
 
-drivers/net/ethernet/chelsio/cxgb4/t4_hw.c: In function 't4_memory_rw':
-drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:420:2: error: implicit declarati=
-on of function 'vmalloc' [-Werror=3Dimplicit-function-declaration]
-drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:420:7: warning: assignment makes=
- pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:487:2: error: implicit declarati=
-on of function 'vfree' [-Werror=3Dimplicit-function-declaration]
-drivers/net/ethernet/chelsio/cxgb4/t4_hw.c: In function 'get_vpd_params':
-drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:530:6: warning: assignment makes=
- pointer from integer without a cast [enabled by default]
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 8c357ebd5693 ("cxgb4: Dynamically allocate memory in
-t4_memory_rw() and get_vpd_params()").  Missing include of
-linux/vmalloc.h.
-
-I have used the net tree from next-20121003 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__4_Oct_2012_10_18_33_+1000_D+lzKzoQLdrrT6QI
+diff --cc Makefile
+index 5d8e7f2,e70ebfe..0000000
+--- a/Makefile
++++ b/Makefile
+@@@ -996,8 -993,12 +996,11 @@@ CLEAN_DIRS  +=3D $(MODVERDIR
+  # Directories & files removed with 'make mrproper'
+  MRPROPER_DIRS  +=3D include/config usr/include include/generated         =
+ \
+                    arch/*/include/generated
+ -MRPROPER_FILES +=3D .config .config.old .version .old_version            =
+ \
+ -                  include/linux/version.h                               \
+ +MRPROPER_FILES +=3D .config .config.old .version .old_version $(version_h=
+) \
+- 		  Module.symvers tags TAGS cscope* GPATH GTAGS GRTAGS GSYMS
++ 		  Module.symvers tags TAGS cscope* GPATH GTAGS GRTAGS GSYMS \
++ 		  signing_key.priv signing_key.x509 x509.genkey		\
++ 		  extra_certificates signing_key.x509.keyid		\
++ 		  signing_key.x509.signer
+ =20
+  # clean - Delete most, but leave enough to build external modules
+  #
+
+--Signature=_Thu__4_Oct_2012_12_48_51_+1000_VNW1T4WsQCMQd6Kw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQbNXZAAoJEECxmPOUX5FEL1gQAIM7QsGAGZP4CwOnCDqxGZOX
-G+DKMU4RdlmvoK9QxLgs91V1CBQYUe8sZwSryA61pVB812LVfe9ojEsE1DvnRyR1
-Ts35KDoAdJxbymPYH7Cl0w2b/MlLzOIf7PHB5UhkZg7RPsFmxpZ635E31B023B20
-iUYHU6ycU8zp9QjQHuSRfauqtJbTkmR/7roq9ahq+5t8UGMmV334//SiNz4EDN+N
-TveGlrqzpz1V1suPFlw6kd9MTEp6PM0+Osln8C0Vu4GhyZx97Y5r0eHRJIxxVnKF
-A3SF1Nv3wnBWvNp/OYCCVbu3cgg9WqNHmRe9NJabki7S1gDisxWqZBSTSq8tJcMs
-Xww6o7X5DEY+MzkHliSbMRcASXpGf50SF6RstivK/wg0pBhxGHDm+u15Uv9WpP9M
-ETvE52vvuPqGhT+0itT98emsCcS8b2TNgWf3zzwGTKFetBzoPjvndW6daoackvKx
-c5rvd6I2KohaqT99yKFOuvXUaB4HnjaMiTEPyGgPvSJ37JTNlOQ7Qc+nvjrVQPxM
-+znwswQ6FUD3seeEitrPQo8DDIz9mtMJeSiD0GlHEAYcFe8UwoA6cPf8/SsTrCTI
-zdwVVI37MjYApeOLaA2nlMfrr79Pme+Em4xb8EaT6hFAkaWc4LKXHbB69GUbQPKo
-buinWcCG3JthOMSxTNbN
-=Pmg2
+iQIcBAEBCAAGBQJQbPkTAAoJEECxmPOUX5FE+qsQAIuedn8ITMrGyHgtA2YSPbRO
+a6FjBFFxA291aoUWiAdhyQmvpa15Klhj0HjS4YrC48ByPBqgF3eEcNFqBrXWLjSP
+w+/pHeWq+3QFiOW5TeXzGRByZ6cGnXzXDPDrwIwr884jh6miZUkzawqZ4X8nMRkc
+eEw8m9uIKxQrn+at2TCnAPJIu5ZeD40Zs5VXMk37YIAYQ5N/s4F/ckdzcoxH037K
+HZXDkETlf7la9YjNtLwoLqWyYST7XUf9EcTyAxpOhTqyu67+OiXR0U6VjfzNSpfA
+YPIT2eViabHcxhwE3plKOQPcASPO6nuhDcMH2U7J2jb0G3uAmFUTayfOS8/Nqjfz
+y1VSP10vLj/7zkUb7/zHlTF3EXknQEhHL6iLpfZEhrme2STUnH/EfWMWRTgfgXlf
+MbWRUivql6xUU/9yr6ZRAfuvIuoccR0xZfZR/xRP19wRDyBEmLOwpiJMLXrzJFmJ
+SohPkR2+du0fSWX/KVo0I+5FJDYFB98nTvqb89G8kznRH5u2Gw/8XLR1FteCEFu5
+F4MeAwCt9lWqUojMOFQKhVjHxWA6nkhKsBKIq4Mpqw15uDZHrvKX4F5ykaBsoDBM
++9y1WAKg4kSYocKC35H7tv0s4sJU87ezotTpmM0qTvbad1AhqLJk75QK46gh1IqE
+FKp+q7QaJR8OC65H0Bg+
+=ymSC
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Oct_2012_10_18_33_+1000_D+lzKzoQLdrrT6QI--
+--Signature=_Thu__4_Oct_2012_12_48_51_+1000_VNW1T4WsQCMQd6Kw--
