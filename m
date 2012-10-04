@@ -1,88 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH -next] asymmetric keys: fix printk format warning
-Date: Thu, 4 Oct 2012 09:08:06 +1000
-Message-ID: <20121004090806.70274213735de74211f4334d@canb.auug.org.au>
-References: <20121003173007.c322d79c31676b9494a6bfd5@canb.auug.org.au>
-	<506CC48E.2020303@xenotime.net>
+Subject: linux-next: manual merge of the drm tree with the  tree
+Date: Thu, 4 Oct 2012 12:21:25 +1000
+Message-ID: <20121004122125.a501fc314016f967fd914c55@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__4_Oct_2012_09_08_06_+1000_HbjgVEvsKnic/mrA"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36958 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932413Ab2JCXIP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Oct 2012 19:08:15 -0400
-In-Reply-To: <506CC48E.2020303@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Rusty Russell <rusty@rustcorp.com.au>
+ boundary="Signature=_Thu__4_Oct_2012_12_21_25_+1000_brN3boo0ORNYiYdE"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Ben Skeggs <bskeggs@redhat.com>, Martin Peres <martin.peres@labri.fr>, Dmitry Eremin-Solenikov <dmitry_eremin@mentor.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__4_Oct_2012_09_08_06_+1000_HbjgVEvsKnic/mrA
+--Signature=_Thu__4_Oct_2012_12_21_25_+1000_brN3boo0ORNYiYdE
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-[Lets also cc Rusty who committed the patch ...]
+Hi Dave,
 
-On Wed, 03 Oct 2012 16:04:46 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
-e:
->
-> From: Randy Dunlap <rdunlap@xenotime.net>
->=20
-> Fix printk format warning in x509_cert_parser.c:
->=20
-> crypto/asymmetric_keys/x509_cert_parser.c: In function 'x509_note_OID':
-> crypto/asymmetric_keys/x509_cert_parser.c:113:3: warning: format '%zu' ex=
-pects type 'size_t', but argument 2 has type 'long unsigned int'
->=20
-> Builds cleanly on i386 and x86_64.
->=20
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: linux-crypto@vger.kernel.org
-> ---
->  crypto/asymmetric_keys/x509_cert_parser.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> --- linux-next-20121003.orig/crypto/asymmetric_keys/x509_cert_parser.c
-> +++ linux-next-20121003/crypto/asymmetric_keys/x509_cert_parser.c
-> @@ -110,7 +110,7 @@ int x509_note_OID(void *context, size_t
->  	if (ctx->last_oid =3D=3D OID__NR) {
->  		char buffer[50];
->  		sprint_oid(value, vlen, buffer, sizeof(buffer));
-> -		pr_debug("Unknown OID: [%zu] %s\n",
-> +		pr_debug("Unknown OID: [%lu] %s\n",
->  			 (unsigned long)value - ctx->data, buffer);
->  	}
->  	return 0;
->=20
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/nouveau (lots of files) between commit 760285e7e7ab
+("UAPI: (Scripted) Convert #include "..." to #include <path/...> in
+drivers/gpu/") from Linus' tree and various commits from the drm tree.
+
+There is a large reorganisation under drivers/gpu/nouveau in the drm
+tree (which only appeared in linux-next today :-().
+
+I used the drm tree versions of the files and but this needs to be done
+properly.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__4_Oct_2012_09_08_06_+1000_HbjgVEvsKnic/mrA
+--Signature=_Thu__4_Oct_2012_12_21_25_+1000_brN3boo0ORNYiYdE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQbMVWAAoJEECxmPOUX5FEfMYQAIOtycJymW1cUHVtns7qmTWe
-GTsQtKy3G/WiM0kjwC0bYTGj9RpSxEvj0+7K1y71soc3qrFbsuEWqcwC3hJ9iqQ4
-Mwh7BEpOzCnlKJ6KTYPWreEOK3X0yjgWaS8AzG0nGn60Luep2c78hba3ZOsGd9IP
-/go+U28LJM6FhnpSJZ6haMw1H2NRyXkThJehjMvNZNLSrT1QAMnDJjw6VS1eMgYf
-XDD1HP5GAMWrY5KzBRqwgk1yYJ682y+OWro8cq8E65D+E2tjgEs9iAAPTfJie46H
-Dcl6GmOEBElP68z1uQliEuSaDnuxOM6yoQJQKQF44gNdOW5hcIYLCOc/Un10Edhz
-NK3ruiFPWw5M/2rPcYVunsqD1HooUqzVpp87hFPdVCIJRKPXpzTXWbKvlvKiHjfk
-ymvVxObZpU/99xEvNK2PQMUvAVc1sFf7351SDYuI7kAZ4j/rsX/OHOnxYhDo5n0A
-uPUWv0AKgMO/azRWSSf/BkuuWti3MztFKE0ex6Ko4dDtrLBho/4WpaT18x9LekmQ
-nk08n8SSaQ9nNcxtjnbyx/tii9MpO1uTPEbFm4r9JI4MJqKAiVmi/qvKUe6O4iOE
-A0Qb7cedH353ylR85GCro9tkDf9/HUrH7c217WF023UzVWoRS5Pt+e8dCfQc/Y8t
-oTjROrdDkrc7u88C0eAJ
-=ggiV
+iQIcBAEBCAAGBQJQbPKlAAoJEECxmPOUX5FEhwwP/1xiKS+q3EDhaBCr1K4VyXpI
+vQ0stHrQS6wre3ilYBQKNmpSmder4TRqLqp+7YREzz6siPqcn5RUBhsA4k9oroTk
+NAY2CcJNHXj78m/M/gHcoe7CfrOt/UaL47yOPj5zN6YSyJvgxyrSkvQatf5ooGG9
+kYF5Fi8G7Nwc9qmSTPp5vACIP66cUy/hY9G2b9P68sUERFbTTx0WM4T1CPI3lSWe
+JYyzKwfvIi96ZRkfDRjKR3EHTAb9UoiPqOaEy/WPUfcI7q4f+QiYLr50iLCpx+WS
+YkMKf9ANcZEMrQIOxsWieT4dQW5vSsmA5A5IOyYh1IKAWyy/RPjCtZUEXQNy2gDy
+SslkLUvHYISCOiEbS+EuRf+tZ9LAmIO1Sfhyx8BHV9YzoZdpt7wnPVpetyaaDGjt
+SOji6kTZeZ8tL8++jjXWD+++Ck4O6fK2aX251UyQaVgkD//JOQP6XDBMPLUpH2Cr
+M+8KXGofnDa3M/l6mOWjQSfYA9kMIPDl24Pkl+RFCJDz3IKEIZRxGN2zlXckcme9
+Hkvj52U2Cvf/+VpkI4JE0b/lflHqWe/8R1bJ0eotAV8TVDI7w6SKamFnWDr9uNtx
+pgQjdLOcT9NdpqkxDyJftv6cvgAavtFFowrV38qDNKEyNdw/uhkTF1mk1iTGd2Y5
+3M9aFDvxNqRR1F0lnJ+i
+=2Ah0
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Oct_2012_09_08_06_+1000_HbjgVEvsKnic/mrA--
+--Signature=_Thu__4_Oct_2012_12_21_25_+1000_brN3boo0ORNYiYdE--
