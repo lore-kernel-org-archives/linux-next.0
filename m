@@ -1,72 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm64 tree
-Date: Fri, 5 Oct 2012 13:32:48 +1000
-Message-ID: <20121005133248.cca53b84a9dace0c1052a502@canb.auug.org.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: build failure after merge of the input tree
+Date: Thu, 4 Oct 2012 23:12:36 -0700
+Message-ID: <20121005061236.GA11112@core.coreip.homeip.net>
+References: <20121005114712.02361628ba297ef695d54876@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__5_Oct_2012_13_32_48_+1000_YYD8iuWrDwgiK_TR"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48232 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750970Ab2JEDdJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Oct 2012 23:33:09 -0400
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:42478 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751026Ab2JEGkl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Oct 2012 02:40:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20121005114712.02361628ba297ef695d54876@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Gerecke <killertofu@gmail.com>, Lan Tianyu <tianyu.lan@intel.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---Signature=_Fri__5_Oct_2012_13_32_48_+1000_YYD8iuWrDwgiK_TR
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+On Fri, Oct 05, 2012 at 11:47:12AM +1000, Stephen Rothwell wrote:
+> Hi Dmitry,
+> 
+> After merging the input tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/input/tablet/wacom_sys.c: In function 'wacom_get_sibling':
+> drivers/input/tablet/wacom_sys.c:643:23: error: 'struct usb_device' has no member named 'children'
+> 
+> Caused by commit 316f18bba311 ("Input: wacom - handle split-sensor
+> devices with internal hubs") interacting with commit ff823c79a5c3 ("usb:
+> move children to struct usb_port") that is now in Linus' tree.
+> 
+> I have used the input tree from next-20121004 for today.
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm64/include/asm/unistd32.h between commit cce72b4219ee ("arm64:
-Use the generic compat_sys_sendfile() implementation") from the arm64
-tree and commit 890139529d45 ("UAPI: Fix the guards on various
-asm/unistd.h files") from the arm-soc tree.
+Sorry about this. I pulled the offending patch and another one depending
+on it out of my next branch pending my next pull from mainline.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm64/include/asm/unistd32.h
-index ec61180,3ba1f1a..0000000
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@@ -754,6 -752,3 +752,4 @@@ __SYSCALL(__NR_syncfs, sys_syncfs
-  #define __ARCH_WANT_SYS_SIGPENDING
-  #define __ARCH_WANT_SYS_SIGPROCMASK
-  #define __ARCH_WANT_COMPAT_SYS_RT_SIGSUSPEND
- +#define __ARCH_WANT_COMPAT_SYS_SENDFILE
--=20
-- #endif /* __ASM_UNISTD32_H */
-
---Signature=_Fri__5_Oct_2012_13_32_48_+1000_YYD8iuWrDwgiK_TR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQblTgAAoJEECxmPOUX5FEUWAP+wbDbQ5Nb1qyMoaNp4LPf1qm
-02z9y8HRA8xBfPvjJD1Ih8q0kUgf3Y4V9zZ73QonQ+yjr+TTv/5mDhzly29R3v7L
-w2aW2avAPmd8MO+xV42vZt99WgVj/BAFecnrl3AJ3lbcF6dgcig+aPKrHSuTKStj
-mwIuTXLhWraZRDpY+fLaCAAd0+U571avxXMphO7SLXDYGA9Tg8yfr4KsU8pr+cbI
-ouze4FDI6v5bUy1iCb1WBLSj5225otc23N3m2bd81ymP5hRAgl1IEG7TIpKjD7y8
-uIDPRzG9w+xfmdm+ZMvB4Z5TweaUZKkAkhpRX1mavXcx8vV0YojaaMJnv0NXBu52
-8ao97CqllsF1+ePdk76TnB/1JidTAqNAciEPbq2pkOY0+s9gRlh/dIl2HU9RTQZG
-xfwW63eExI9tsuhdyF8ZhKXSxoE0qmi+3WKQ8y8XKa1elDtfuR4tQEXlBu4pRFbh
-OAZVqGFRAzOdlxzK2cFvhRGBMgqPRuiscDShqdfWAt45XZgVRnz6tIarD/2dKVdY
-w0hLFZQwpXsWsD0xo77IR4sD+b5ZDJHXC5i8I3/kvb7nZF9WvydiGq2rqP7OWRHl
-S7hAjhUMqIOOV+G5Dlpv7Ejx1ZTiAEyFpsC+1d9Cyqc8Tre8qjwDbXDOExrn4IWg
-M/0iWw97u9t4eQDOc/Pd
-=YjDV
------END PGP SIGNATURE-----
-
---Signature=_Fri__5_Oct_2012_13_32_48_+1000_YYD8iuWrDwgiK_TR--
+-- 
+Dmitry
