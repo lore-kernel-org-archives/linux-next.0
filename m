@@ -1,63 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the input tree
-Date: Fri, 5 Oct 2012 11:47:12 +1000
-Message-ID: <20121005114712.02361628ba297ef695d54876@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-ppc tree with Linus' tree
+Date: Fri, 5 Oct 2012 12:55:40 +1000
+Message-ID: <20121005125540.ff715548d17f663d784fc6fe@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__5_Oct_2012_11_47_12_+1000_+ESDHWxO/.EMJ6F."
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51121 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756122Ab2JEBrZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Oct 2012 21:47:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Gerecke <killertofu@gmail.com>, Lan Tianyu <tianyu.lan@intel.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ boundary="Signature=_Fri__5_Oct_2012_12_55_40_+1000_+aOSLusjW6EzD70O"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexander Graf <agraf@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>, Avi Kivity <avi@redhat.com>, Bharat Bhushan <r65777@freescale.com>, Scott Wood <scottwood@freescale.com>, Liu Yu <yu.liu@freescale.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__5_Oct_2012_11_47_12_+1000_+ESDHWxO/.EMJ6F.
+--Signature=_Fri__5_Oct_2012_12_55_40_+1000_+aOSLusjW6EzD70O
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+Hi Alexander,
 
-After merging the input tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the kvm-ppc tree got a conflict in
+include/linux/kvm.h between commit 7a84428af7ca ("KVM: Add resampling
+irqfds for level triggered interrupts") from Linus' tree and commit
+2b3ac3d5956c ("KVM: PPC: booke: Add watchdog emulation") from the kvm-ppc
+tree.
 
-drivers/input/tablet/wacom_sys.c: In function 'wacom_get_sibling':
-drivers/input/tablet/wacom_sys.c:643:23: error: 'struct usb_device' has no =
-member named 'children'
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 316f18bba311 ("Input: wacom - handle split-sensor
-devices with internal hubs") interacting with commit ff823c79a5c3 ("usb:
-move children to struct usb_port") that is now in Linus' tree.
-
-I have used the input tree from next-20121004 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__5_Oct_2012_11_47_12_+1000_+ESDHWxO/.EMJ6F.
+diff --cc include/linux/kvm.h
+index 0a6d6ba,99c3c50..0000000
+--- a/include/linux/kvm.h
++++ b/include/linux/kvm.h
+@@@ -625,7 -628,7 +628,8 @@@ struct kvm_ppc_smmu_info=20
+  #ifdef __KVM_HAVE_READONLY_MEM
+  #define KVM_CAP_READONLY_MEM 81
+  #endif
+ -#define KVM_CAP_PPC_BOOKE_WATCHDOG 82
+ +#define KVM_CAP_IRQFD_RESAMPLE 82
+++#define KVM_CAP_PPC_BOOKE_WATCHDOG 83
+ =20
+  #ifdef KVM_CAP_IRQ_ROUTING
+ =20
+
+--Signature=_Fri__5_Oct_2012_12_55_40_+1000_+aOSLusjW6EzD70O
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQbjwgAAoJEECxmPOUX5FE2FsP/1rjXj/ovGwjfKjyDfnXudKR
-/cMj8xhPh5KNSIOMEn7gRVMYA2qL6u9odiq9M13/Bx5Uhr4n89F10wA9SUJDihyc
-Gx0EEma2Y35b96lrbU/1KE3YfZ846jCM/JV4El/5oRLUd8HoBYUBfbaI6O6ZQ+Cd
-o8MGtf1ExunSCJLYlV7zYJPR70O1phSwHgTHGbai4/+0aYL/XUe9rkBP6c1srEa3
-Jkq0kuYqhTKOI7Ay7yEcakU0TRLp3xvZ/PVzq1Ydc75+dN4k6lgLhXE/80f2NhxS
-i4G7tgml8bb2iyNIWMSpyFWlq7qmzcXmjxpdSxrjopQAxIRcX49WjXIXbt9g95eg
-8WeG5NHMh6SyultX/m8p0+GOn5Xuisf8x4L4eeMubk9Z1XH3WYSRoobEotEPwdUl
-4iYT9KYe0gLsydhetzlKio3T610N2IHwXdw9Q19lxunxtZw7EKlhSXOejh43TsIn
-JikNR79DrWuee/YE9yunNP9oASC1AFNXWh5sWgfPYyEOUNPQWqST4iDSKj1kFswX
-gXKGF3arMBU/6qNs4zHVm+c6i07ZUFhbJoXKqNyUIjhBtocVFE5WZwsulnPKKtEn
-mllv2jx6JzkLzkeib3LLk0yZiH5FoSA6r0PV6e0YcgEapIa4bEPey8TmaDOVKP6S
-nVYTemcWZWr4KpvSL/7H
-=oN0q
+iQIcBAEBCAAGBQJQbkwsAAoJEECxmPOUX5FEdnYP/RG6Nz4R9lmmvVbZpmuiOGrj
+wFibloi8VA3fKyVlGmNAayVIk8ndHAA7RwHLw+4Y6Pyt1BhSABnZhGs4mCXPJMFV
+l6qdx49aOdNnPMzBPEvVsxGkDbiy0z/y14ULtxMlINx2vmeN1K+0AtxqMpMUjX3P
+jkejfAJbeHR8LTr6dX+GtL1+z4CqQh/DwPMRd1/t/Ju1C2lZpf63M+rPDYpicw7W
+XeyDNOx1T6+C02dbIcVsEL0RlgBexptPJtJT6rIqyEx/BpBtl8ynlaSgX6vq9taU
+3TrT0MG0XGI80UfBcCayXx42JaXLIVJI2spdINwMFqCTG+XlzgMx6DFeW90TNVBv
+MrTohpUawRCerbAJfnZrNJVxu2uY2fXdCZFSbJ41v76lEKlOP6kCRcfU2L/4gaxl
+pDDLj81CHyAgZuhv8O1f4hLAJE7OXant58zRpeK6iLt0PTnxq4/mA1FNBebgYXOT
+0ajh8YmHqfGML4iR2beY8aBk62sxnPd+OJSBxL0yE/vPIcwZHgFm19i8FmgJEg19
+DqfwZHurXIp8iaGagIsGB/8kSYhzX+lzFSkFin42gGH0lW9Em6trz6ajAEQ2q8pL
+CUYUw8vAzyijtww4iwCvhXE6pttb07YSjzM01eZOsrghaliMGi/FxVNGju7AM0nb
+nyBafjEtzitfcJ0kQxcG
+=hLmH
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__5_Oct_2012_11_47_12_+1000_+ESDHWxO/.EMJ6F.--
+--Signature=_Fri__5_Oct_2012_12_55_40_+1000_+aOSLusjW6EzD70O--
