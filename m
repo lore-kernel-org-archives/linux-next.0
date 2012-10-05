@@ -1,31 +1,63 @@
-From: "System Administrator" <admin@mailupgrade.tk>
-Subject: Email Deactivation Warning
-Date: Fri, 5 Oct 2012 00:05:22 +0800
-Message-ID: <auto-000018235627@server83.appriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the input tree
+Date: Fri, 5 Oct 2012 11:47:12 +1000
+Message-ID: <20121005114712.02361628ba297ef695d54876@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="_iso-2022-jp$ESC"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__5_Oct_2012_11_47_12_+1000_+ESDHWxO/.EMJ6F."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from server83h.appriver.com ([72.32.253.103]:2044 "EHLO
-	server83.appriver.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752273Ab2JDRJV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Oct 2012 13:09:21 -0400
+Received: from haggis.pcug.org.au ([203.10.76.10]:51121 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756122Ab2JEBrZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Oct 2012 21:47:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Gerecke <killertofu@gmail.com>, Lan Tianyu <tianyu.lan@intel.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Your Mail Quota Has Exceeded The Set Quota/Limit. You Are Currently
-Running On 23GB Due To Hidden Files And Folder On Your Mailbox,
-you may not be able to receive or send new mails until you re-validate.
+--Signature=_Fri__5_Oct_2012_11_47_12_+1000_+ESDHWxO/.EMJ6F.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please Click the Link Below To Validate Your Mailbox And Increase Your
-Quota.
+Hi Dmitry,
 
-http://mailupgrade.tk
+After merging the input tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Failure To Validate Your Quota May Result In Loss Of Important Information
-In Your Mailbox Or Cause Limited Access To It.
+drivers/input/tablet/wacom_sys.c: In function 'wacom_get_sibling':
+drivers/input/tablet/wacom_sys.c:643:23: error: 'struct usb_device' has no =
+member named 'children'
 
-Mail Quota alert -Error Code #1997142DPE
+Caused by commit 316f18bba311 ("Input: wacom - handle split-sensor
+devices with internal hubs") interacting with commit ff823c79a5c3 ("usb:
+move children to struct usb_port") that is now in Linus' tree.
 
-System Administrator
+I have used the input tree from next-20121004 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__5_Oct_2012_11_47_12_+1000_+ESDHWxO/.EMJ6F.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQbjwgAAoJEECxmPOUX5FE2FsP/1rjXj/ovGwjfKjyDfnXudKR
+/cMj8xhPh5KNSIOMEn7gRVMYA2qL6u9odiq9M13/Bx5Uhr4n89F10wA9SUJDihyc
+Gx0EEma2Y35b96lrbU/1KE3YfZ846jCM/JV4El/5oRLUd8HoBYUBfbaI6O6ZQ+Cd
+o8MGtf1ExunSCJLYlV7zYJPR70O1phSwHgTHGbai4/+0aYL/XUe9rkBP6c1srEa3
+Jkq0kuYqhTKOI7Ay7yEcakU0TRLp3xvZ/PVzq1Ydc75+dN4k6lgLhXE/80f2NhxS
+i4G7tgml8bb2iyNIWMSpyFWlq7qmzcXmjxpdSxrjopQAxIRcX49WjXIXbt9g95eg
+8WeG5NHMh6SyultX/m8p0+GOn5Xuisf8x4L4eeMubk9Z1XH3WYSRoobEotEPwdUl
+4iYT9KYe0gLsydhetzlKio3T610N2IHwXdw9Q19lxunxtZw7EKlhSXOejh43TsIn
+JikNR79DrWuee/YE9yunNP9oASC1AFNXWh5sWgfPYyEOUNPQWqST4iDSKj1kFswX
+gXKGF3arMBU/6qNs4zHVm+c6i07ZUFhbJoXKqNyUIjhBtocVFE5WZwsulnPKKtEn
+mllv2jx6JzkLzkeib3LLk0yZiH5FoSA6r0PV6e0YcgEapIa4bEPey8TmaDOVKP6S
+nVYTemcWZWr4KpvSL/7H
+=oN0q
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__5_Oct_2012_11_47_12_+1000_+ESDHWxO/.EMJ6F.--
