@@ -1,79 +1,39 @@
-From: "Zhang, Rui" <rui.zhang@intel.com>
-Subject: RE: linux-next: build failure after merge of the thermal tree
-Date: Mon, 8 Oct 2012 02:14:05 +0000
-Message-ID: <744357E9AAD1214791ACBA4B0B90926322F516@SHSMSX101.ccr.corp.intel.com>
-References: <20121008110205.1e0abbe228186fcf30afad74@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: manual merge of the modules tree with Linus' tree
+Date: Mon, 08 Oct 2012 13:11:18 +1030
+Message-ID: <87vcelptwx.fsf@rustcorp.com.au>
+References: <20121008114904.8c920933bfdf81a8e0c70647@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:11515 "EHLO mga11.intel.com"
+Received: from ozlabs.org ([203.10.76.45]:53301 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750820Ab2JHCOJ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Oct 2012 22:14:09 -0400
-In-Reply-To: <20121008110205.1e0abbe228186fcf30afad74@canb.auug.org.au>
-Content-Language: en-US
+	id S1750799Ab2JHFZg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Oct 2012 01:25:36 -0400
+In-Reply-To: <20121008114904.8c920933bfdf81a8e0c70647@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, "Wu, Fengguang" <fengguang.wu@intel.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, David Howells <dhowells@redhat.com>
 
-Hi,
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> Hi Rusty,
+>
+> Today's linux-next merge of the modules tree got a conflict in
+> init/Kconfig between commit 754b7b63d112 ("sections: disable const
+> sections for PA-RISC v2") from Linus' tree and commit 54ddd23d78ba
+> ("X.509: Add simple ASN.1 grammar compiler") from the modules tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+>
+> BTW, Rusty, that commit from the modules tree has no SOB from you even
+> though you committed it.
 
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Monday, October 08, 2012 8:02 AM
-> To: Zhang, Rui
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Amit
-> Daniel Kachhap; Wu, Fengguang; Andrew Morton
-> Subject: linux-next: build failure after merge of the thermal tree
-> Importance: High
-> 
-> Hi Zhang,
-> 
-> After merging the thermal tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/thermal/cpu_cooling.c: In function 'get_idr':
-> drivers/thermal/cpu_cooling.c:89:14: error: 'MAX_ID_MASK' undeclared
-> (first use in this function)
-> 
-> Caused by commit 023614183768 ("thermal: add generic cpufreq cooling
-> implementation") interacting with commit 125c4c706b68 ("idr: rename
-> MAX_LEVEL to MAX_IDR_LEVEL") which very recently entered Linus' tree.
-> 
-> I have applied the following fix patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 8 Oct 2012 10:56:56 +1100
-> Subject: [PATCH] thermal: fix for for MAX_ID_MASK to MAX_IDR_MASK
-> rename
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Well, I merged that whole branch actually.
 
-The patch looks good to me, thanks for the fix.
+>From now on I'll be cherry-picking instead (mainly because I want to
+fold in fixes anyway, and that's a bit messy).
 
--rui
-> ---
->  drivers/thermal/cpu_cooling.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/cpu_cooling.c
-> b/drivers/thermal/cpu_cooling.c index 9050c1b..cc1c930 100644
-> --- a/drivers/thermal/cpu_cooling.c
-> +++ b/drivers/thermal/cpu_cooling.c
-> @@ -86,7 +86,7 @@ again:
->  	else if (unlikely(err))
->  		return err;
-> 
-> -	*id = *id & MAX_ID_MASK;
-> +	*id = *id & MAX_IDR_MASK;
->  	return 0;
->  }
-> 
-> --
-> 1.7.10.280.gaa39
-> 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+Cheers,
+Rusty.
