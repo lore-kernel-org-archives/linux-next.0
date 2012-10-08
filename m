@@ -1,56 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: long standing commit in devicetree-current tree
-Date: Tue, 9 Oct 2012 10:17:53 +1100
-Message-ID: <20121009101753.8f0e0ae7293b76c1c3794c18@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__9_Oct_2012_10_17_53_+1100_3CNp7tWCi=dFsb0="
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44374 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751613Ab2JHXSD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Oct 2012 19:18:03 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dong Aisheng <dong.aisheng@linaro.org>
+From: Michael Neuling <mikey@neuling.org>
+Subject: net: fix typo in freescale/ucc_geth.c
+Date: Tue, 09 Oct 2012 10:52:25 +1100
+Message-ID: <23452.1349740345@neuling.org>
+References: <20121008173653.1d17895964980c98af59c8ea@canb.auug.org.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20121008173653.1d17895964980c98af59c8ea@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Dumazet <edumazet@google.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Maxime Bizon <mbizon@freebox.fr>, "David S. Miller" <davem@davemloft.net>, linuxppc-dev@ozlabs.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__9_Oct_2012_10_17_53_+1100_3CNp7tWCi=dFsb0=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following patch: 
+  acb600d net: remove skb recycling
+added dev_free_skb() to drivers/net/ethernet/freescale/ucc_geth.c
 
-Hi Grant,
+This is a typo and should be dev_kfree_skb().  This fixes this.
 
-The devicetree-current tree has one commit in it:
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+---
+This hit as a compile error in next-20121008 with mpc85xx_defconfig.
 
-4e8383b6b06b	of: release node fix for of_parse_phandle_with_args
-
-It has been there since May 26.  Just wondering if it is going anywhere?
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__9_Oct_2012_10_17_53_+1100_3CNp7tWCi=dFsb0=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQc18hAAoJEECxmPOUX5FEYFAP/AkWxHjPnRecrvldXXp6fJY8
-0IWlRSByT0SnI9c7aJSPMnyyyTG8jrOUfCep3tsIh8Tt4zGzJcW1VavTKPsyznLy
-VTcya9HkN2fORMBGbRImP7PfRJk/3RAONdfDUQZh8XxwzTysYijcio4Clht5Y8bE
-yYSjlaokVaINYbSFSTYbRgYoPPLn2V8M720bSfYtTQzo2C5UWxzAHzJ7HmSndbal
-Ff1D6xGqF8u+jT8n61VbVDRJwO43dIStUHTjNABJ+c9QMNQwy8mDoOm9JjYebdjJ
-DxN+DofSWvsC54TkHQghPrxdhCEJYRu7v1vZ0irWX918MjZH7dBdgi3lEpPPCG2D
-bvzfMMi7mHakmhzajig3z9gMi1W5NF0QpT7E67huvF6a29aGeo03+ECt6t5zpeOr
-H46sQ+CFP+SiY7G55aD3qBj/G3XfCd7uiII82QVnMqt5qii9FnFUpY0OkeUtXqeU
-aICFRylolrKWC0+NFiF/raqLeH7H1/epU22bdN6hy+7ImGqCWtT7lodd61gEaGs3
-WbnV/tPed1JTTrjNslijBfh2lqJHdt81Va5Ybxnq7XaP7gBXUH3H2cQL/pvOVLkp
-VQV07xxiO1eWUTsl9jPz/0JP7d/6XeYxbh/l/6c68vqkhur6vEZKnDmuU/VrxLCI
-/3t/4g1H9VrGOKfQArdD
-=1//9
------END PGP SIGNATURE-----
-
---Signature=_Tue__9_Oct_2012_10_17_53_+1100_3CNp7tWCi=dFsb0=--
+diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
+index dfa0aaa..0a70bb5 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth.c
++++ b/drivers/net/ethernet/freescale/ucc_geth.c
+@@ -3268,7 +3268,7 @@ static int ucc_geth_rx(struct ucc_geth_private *ugeth, u8 rxQ, int rx_work_limit
+ 			if (netif_msg_rx_err(ugeth))
+ 				ugeth_err("%s, %d: ERROR!!! skb - 0x%08x",
+ 					   __func__, __LINE__, (u32) skb);
+-			dev_free_skb(skb);
++			dev_kfree_skb(skb);
+ 
+ 			ugeth->rx_skbuff[rxQ][ugeth->skb_currx[rxQ]] = NULL;
+ 			dev->stats.rx_dropped++;
