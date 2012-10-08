@@ -1,78 +1,79 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ia64 tree with the asm-generic tree
-Date: Mon, 8 Oct 2012 10:11:31 +1100
-Message-ID: <20121008101131.a99cc80086482d0b1fc2c230@canb.auug.org.au>
+From: "Zhang, Rui" <rui.zhang@intel.com>
+Subject: RE: linux-next: build failure after merge of the thermal tree
+Date: Mon, 8 Oct 2012 02:14:05 +0000
+Message-ID: <744357E9AAD1214791ACBA4B0B90926322F516@SHSMSX101.ccr.corp.intel.com>
+References: <20121008110205.1e0abbe228186fcf30afad74@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__8_Oct_2012_10_11_31_+1100_GKxfQq+Mp5xvujJY"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Arnd Bergmann <arnd@arndb.de>, David Howells <dhowells@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:11515 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750820Ab2JHCOJ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Oct 2012 22:14:09 -0400
+In-Reply-To: <20121008110205.1e0abbe228186fcf30afad74@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, "Wu, Fengguang" <fengguang.wu@intel.com>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Mon__8_Oct_2012_10_11_31_+1100_GKxfQq+Mp5xvujJY
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+> -----Original Message-----
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Sent: Monday, October 08, 2012 8:02 AM
+> To: Zhang, Rui
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Amit
+> Daniel Kachhap; Wu, Fengguang; Andrew Morton
+> Subject: linux-next: build failure after merge of the thermal tree
+> Importance: High
+> 
+> Hi Zhang,
+> 
+> After merging the thermal tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/thermal/cpu_cooling.c: In function 'get_idr':
+> drivers/thermal/cpu_cooling.c:89:14: error: 'MAX_ID_MASK' undeclared
+> (first use in this function)
+> 
+> Caused by commit 023614183768 ("thermal: add generic cpufreq cooling
+> implementation") interacting with commit 125c4c706b68 ("idr: rename
+> MAX_LEVEL to MAX_IDR_LEVEL") which very recently entered Linus' tree.
+> 
+> I have applied the following fix patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 8 Oct 2012 10:56:56 +1100
+> Subject: [PATCH] thermal: fix for for MAX_ID_MASK to MAX_IDR_MASK
+> rename
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Today's linux-next merge of the ia64 tree got a conflict in
-arch/ia64/include/asm/Kbuild between commit e7a570ff7dff ("asm-generic:
-Add default clkdev.h") from the asm-generic tree and commit f68301fee715
-("UAPI: (Scripted) Disintegrate arch/ia64/include/asm") from the ia64
-tree.
+The patch looks good to me, thanks for the fix.
 
-I fixed it up (see below - I am not sure if this is the correct fix) and
-can carry the fix as necessary (no action is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/ia64/include/asm/Kbuild
-index 58f3d14,e69de29..0000000
---- a/arch/ia64/include/asm/Kbuild
-+++ b/arch/ia64/include/asm/Kbuild
-@@@ -1,16 -1,0 +1,1 @@@
-- include include/asm-generic/Kbuild.asm
--=20
-- header-y +=3D break.h
-- header-y +=3D cmpxchg.h
-- header-y +=3D fpu.h
-- header-y +=3D gcc_intrin.h
-- header-y +=3D ia64regs.h
-- header-y +=3D intel_intrin.h
-- header-y +=3D intrinsics.h
-- header-y +=3D perfmon.h
-- header-y +=3D perfmon_default_smpl.h
-- header-y +=3D ptrace_offsets.h
-- header-y +=3D rse.h
-- header-y +=3D ucontext.h
-- header-y +=3D ustack.h
- +generic-y +=3D clkdev.h
-
---Signature=_Mon__8_Oct_2012_10_11_31_+1100_GKxfQq+Mp5xvujJY
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQcgwjAAoJEECxmPOUX5FEj+UQAKa1RzvHgnAJdew0rikEgWjc
-lrvb3wy6TxgqdvnySJPrAN6z/wJOr4Hjw04c5JZNVcNzaq7dzsZ7pR4Mz6hdLPe9
-vnR2mvNDG4e9QsD5wNhbip9vLnrwnMCFxkzrO5MBCi61rSnQq78KFE3jWFS4Wx2q
-F7ab1Ny9Ej3l2bbKQNeoj2gyNXYOe19ugdtwWpPmDIivufEpqVULeapGFCjYW9gu
-LUg1XjWlJ7YuPINsB48ZKeGjJLtWyZkzV+2L0Zydzd321w4+d1BnRHuSLGSUETsT
-JatEA3F4c7zw9xfrriqkIbSIzYWL/Bjcu72S9WWvSYN/wlkPFffEYawi16bbiTTR
-9blLI7aUuwKR1powC9m6ipbNLsBmDebiRXGgE1DdyooolUUfLaEyEZaA8UKfx2bW
-3QRoPilZlHvNQ0x9O+fNVulVRPk8ACQHMBGFWAUw19Aj8qkcW6XboIESs76PBVfs
-Y1RbrU5tI6VynXylmpTSSqm7lG1tjTG5AKPrAIuI3GgBJS6zsj0aPMbOPm5Rxhd2
-c1hwNQeqti5WtaHWBu3lNV9ppUDiHVkSm2PeGJWoID1EYmlFZ+K/jrqtWShxZ0Dr
-afqQMbYkEeRC5NuwWdTilMbTZC0zHY0PvbBxiZLY+IsJUw8fUg5d6aK4NfXYMU5C
-s2N0w1aBB0lgB+oXNw3s
-=Rij1
------END PGP SIGNATURE-----
-
---Signature=_Mon__8_Oct_2012_10_11_31_+1100_GKxfQq+Mp5xvujJY--
+-rui
+> ---
+>  drivers/thermal/cpu_cooling.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/thermal/cpu_cooling.c
+> b/drivers/thermal/cpu_cooling.c index 9050c1b..cc1c930 100644
+> --- a/drivers/thermal/cpu_cooling.c
+> +++ b/drivers/thermal/cpu_cooling.c
+> @@ -86,7 +86,7 @@ again:
+>  	else if (unlikely(err))
+>  		return err;
+> 
+> -	*id = *id & MAX_ID_MASK;
+> +	*id = *id & MAX_IDR_MASK;
+>  	return 0;
+>  }
+> 
+> --
+> 1.7.10.280.gaa39
+> 
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
