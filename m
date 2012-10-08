@@ -1,89 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the thermal tree
-Date: Mon, 8 Oct 2012 11:02:05 +1100
-Message-ID: <20121008110205.1e0abbe228186fcf30afad74@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound tree with the v4l-dvb tree
+Date: Mon, 8 Oct 2012 11:26:57 +1100
+Message-ID: <20121008112657.d0c141b6f15c148c636a3a6a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__8_Oct_2012_11_02_05_+1100_1gWC8GIGM.CwzHLI"
+ boundary="Signature=_Mon__8_Oct_2012_11_26_57_+1100_oeq3bHSJRIWroa3J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38683 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33105 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752378Ab2JHACP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Oct 2012 20:02:15 -0400
+	with ESMTP id S1750875Ab2JHA1G (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Oct 2012 20:27:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amit Daniel Kachhap <amit.kachhap@linaro.org>, Fengguang Wu <fengguang.wu@intel.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Hebbar, Gururaja" <gururaja.hebbar@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Manjunath Hadli <manjunath.hadli@ti.com>, "Lad, Prabhakar" <prabhakar.lad@ti.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
 
---Signature=_Mon__8_Oct_2012_11_02_05_+1100_1gWC8GIGM.CwzHLI
+--Signature=_Mon__8_Oct_2012_11_26_57_+1100_oeq3bHSJRIWroa3J
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Zhang,
+Hi Takashi,
 
-After merging the thermal tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the sound tree got a conflict in
+arch/arm/mach-davinci/include/mach/da8xx.h between commit 154d54a8ce99
+("[media] ARM: davinci: da850: Add SoC related definitions for VPIF")
+from the v4l-dvb tree and commit 896f66b7de29 ("ASoC/ARM: Davinci: McASP:
+split asp header into platform and audio specific") from the sound tree.
 
-drivers/thermal/cpu_cooling.c: In function 'get_idr':
-drivers/thermal/cpu_cooling.c:89:14: error: 'MAX_ID_MASK' undeclared (first=
- use in this function)
-
-Caused by commit 023614183768 ("thermal: add generic cpufreq cooling
-implementation") interacting with commit 125c4c706b68 ("idr: rename
-MAX_LEVEL to MAX_IDR_LEVEL") which very recently entered Linus' tree.
-
-I have applied the following fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 8 Oct 2012 10:56:56 +1100
-Subject: [PATCH] thermal: fix for for MAX_ID_MASK to MAX_IDR_MASK rename
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/thermal/cpu_cooling.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-index 9050c1b..cc1c930 100644
---- a/drivers/thermal/cpu_cooling.c
-+++ b/drivers/thermal/cpu_cooling.c
-@@ -86,7 +86,7 @@ again:
- 	else if (unlikely(err))
- 		return err;
-=20
--	*id =3D *id & MAX_ID_MASK;
-+	*id =3D *id & MAX_IDR_MASK;
- 	return 0;
- }
-=20
---=20
-1.7.10.280.gaa39
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__8_Oct_2012_11_02_05_+1100_1gWC8GIGM.CwzHLI
+diff --cc arch/arm/mach-davinci/include/mach/da8xx.h
+index 13d2295,c74a6ab..0000000
+--- a/arch/arm/mach-davinci/include/mach/da8xx.h
++++ b/arch/arm/mach-davinci/include/mach/da8xx.h
+@@@ -16,18 -16,15 +16,18 @@@
+  #include <linux/platform_device.h>
+  #include <linux/davinci_emac.h>
+  #include <linux/spi/spi.h>
++ #include <linux/platform_data/davinci_asp.h>
+ +#include <linux/videodev2.h>
+ =20
+  #include <mach/serial.h>
+  #include <mach/edma.h>
+- #include <mach/asp.h>
+ -#include <mach/i2c.h>
+ -#include <mach/mmc.h>
+ -#include <mach/usb.h>
+  #include <mach/pm.h>
+ -#include <mach/spi.h>
+ +#include <linux/platform_data/i2c-davinci.h>
+ +#include <linux/platform_data/mmc-davinci.h>
+ +#include <linux/platform_data/usb-davinci.h>
+ +#include <linux/platform_data/spi-davinci.h>
+ +
+ +#include <media/davinci/vpif_types.h>
+ =20
+  extern void __iomem *da8xx_syscfg0_base;
+  extern void __iomem *da8xx_syscfg1_base;
+
+--Signature=_Mon__8_Oct_2012_11_26_57_+1100_oeq3bHSJRIWroa3J
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQchf9AAoJEECxmPOUX5FEXdwP/jZXOBu2jApcMptXGjYVotg5
-O2Ajj5RUZwI/3pura8Q9g707pXYvHipWXe3SZnN+NIrcutTX3xJ/XScT0E02z98U
-FfWXZ1/1vUFpgium5QlCAmnyINjEopzDKLTOX706+7CZRyOAsKETyRXvD0zvxo/1
-w3Jtdu7XTR/k0ZR3Kyfy45mZv82kvowrTj5UTBtmrjs0YYOuKM02e6GVZGAsLySm
-ChuJttXFNjuxZfJMWIDT0+d9iqF8buumc46gSwSZQxw/je1Uz59E1W1K8IJ/rD8H
-AuDQQQ/zZUimqQi4XGb8nHtwNn67qy3T/NrdnLB2oOjSsosz2aAdCYDjuN6v8a5J
-I3FVyuqnuDbJ5PHoYAjET79P3MkkdfS/+4h1kQ+sdoL9zwcugcCcV5Em2AdaZPu2
-spS+hSMfO9ndnZvchYK9KK5ynb/OdmSbDKvmpwRaqoHpW/6R+BJSPkGeg/jKwWkS
-zIWNaox7wfDXtDDlfrVLRj8bQN6gTKW1fkBD5iElx0xarVaDlwbLTmKoXCw/GK1q
-BY6xxpI8v0q1Ue9xdyEALhvNOlIVvB7OqlM+kvp68vw/nXU+5U7EFb7YjIy4KTn4
-1CYhlDK853e03jriC3tF49BBT58xO7x561P+U33ilGnjflO0Kx2cBBnN2HIv69je
-vA3chq8Dd2OzwBOY4ard
-=jeiF
+iQIcBAEBCAAGBQJQch3RAAoJEECxmPOUX5FEhVYP/2DQvw1gLlsPIJk8HMkhTadA
+Y55++73DRuHhF62/3W9MoSi7khY8+/TQt5d7p47QIbSHJhUPQW0mFwyIFLLU65zu
+s+6nag+HeblByMkInFp/iFGi/IXfjHuVPgigDmt/BtU2E9wZ5kMYtSJVx5u6dUTA
+BCfshfYaiGcN1a7FAoScyhYWMi+X2uNlIgScQ5No5x4CodH0wywyx0y+dYUw97Xg
+F0r2O92WHzPHmyzNice0SvB0d72uu0AcRqJb/U9mOUJ9z1LncClmhhFaabA3Exi9
+Rd2nrt6HeV1QrkMp9HtFUZsyE+up6TUKT1dKr7NoHgiBhIkFduF2m4A3CwP5ugON
+vReqcosxDtxIDFZgvb44P768wrZBRJ/grqXx3emKVJQRwP23Qa+HTekD48X7GtvG
+pPxEPua4ah/g3lg3cyMKwiH5ESs2KVPLdbyYzkiwO9cLFKmMI17i0zwy+4Mchjh5
+I+z3pB5Ql5Rnzaz1k5l4cWUVG23BuGGHd/PJoHJgevQZNidsucfwTQzVfgTjoHF3
+cBckgnnPh70oygxm/S8SiNw+nclcNOb5NVCvEgNP/pWu67itW08+N1QVuyHhZ7qa
+wOuNkP4TAEXrqpF7GLi9LlmAw2w2H0OsPlrVm4Ry/nQ+D60YDjbKf068UhVbbWwh
+zKGBjMHtAUFmtUuNoK9f
+=G3H7
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__8_Oct_2012_11_02_05_+1100_1gWC8GIGM.CwzHLI--
+--Signature=_Mon__8_Oct_2012_11_26_57_+1100_oeq3bHSJRIWroa3J--
