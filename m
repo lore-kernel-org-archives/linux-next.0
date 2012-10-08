@@ -1,66 +1,40 @@
-From: Maxim Levitsky <maximlevitsky@gmail.com>
-Subject: [PATCH 2/2] memstick: ms_block: fix complile issue.
-Date: Mon,  8 Oct 2012 17:36:22 +0200
-Message-ID: <1349710582-5410-3-git-send-email-maximlevitsky@gmail.com>
-References: <CAMuHMdW7zfM1CxkXTCq2=ErkaAAxGVFyQSZdH3jwvUXr_8oOsg@mail.gmail.com>
- <1349710582-5410-1-git-send-email-maximlevitsky@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1349710582-5410-1-git-send-email-maximlevitsky@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, Alex Dubov <oakad@yahoo.com>, Linux-Next <linux-next@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, Maxim Levitsky <maximlevitsky@gmail.com>
-List-Id: linux-next.vger.kernel.org
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: manual merge of the ia64 tree with the asm-generic tree
+Date: Mon, 08 Oct 2012 17:25:26 +0100
+Message-ID: <29959.1349713526@warthog.procyon.org.uk>
+References: <20121008101131.a99cc80086482d0b1fc2c230@canb.auug.org.au>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:46703 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751200Ab2JHQZk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Oct 2012 12:25:40 -0400
+In-Reply-To: <20121008101131.a99cc80086482d0b1fc2c230@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: dhowells@redhat.com, "Luck, Tony" <tony.luck@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Arnd Bergmann <arnd@arndb.de>
 
-As suggested by Geert Uytterhoeven
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/7280352/
-arch/m68k/include/asm/hardirq.h:23:20: error: expected ')' before 'DRIVER_NAME'
-make[4]: *** [drivers/memstick/core/ms_block.o] Error 1
+> Today's linux-next merge of the ia64 tree got a conflict in
+> arch/ia64/include/asm/Kbuild between commit e7a570ff7dff ("asm-generic:
+> Add default clkdev.h") from the asm-generic tree and commit f68301fee715
+> ("UAPI: (Scripted) Disintegrate arch/ia64/include/asm") from the ia64
+> tree.
+> 
+> I fixed it up (see below - I am not sure if this is the correct fix) and
+> can carry the fix as necessary (no action is required).
 
-The reason for this is that pr_fmt() references DRIVER_NAME and is defined
-before the first include, while DRIVER_NAME is only defined in ms_block.h,
-which is the last included file. If any subsequent include file uses pr_fmt()
-(e.g. the call to pr_crit() in arch/m68k/include/asm/hardirq.h), this
-causes a build
-failure.
+It is.
 
-I suggest moving the DRIVER_NAME define to ms_block.c.
-Cfr. memstick.c and mspro_block.c, who already have their own definition.
+"header +=" and "genhdr +=" belong in the UAPI Kbuild; "generic +=" belongs in
+the original Kbuild.
 
+In his pull request, Arnd said:
 
-CC: Geert Uytterhoeven <geert@linux-m68k.org>
+	There may be a few small merge conflicts between Mark's patch and the
+ 	following arch header file split patches. In each case the solution
+ 	will be to keep the new "generic-y += clkdev.h" line, even if it ends
+ 	up being the only line in the Kbuild file.
 
-Signed-off-by: Maxim Levitsky <maximlevitsky@gmail.com>
----
- drivers/memstick/core/ms_block.c |    2 +-
- drivers/memstick/core/ms_block.h |    2 --
- 2 files changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
-index c815fe5..71e5937 100644
---- a/drivers/memstick/core/ms_block.c
-+++ b/drivers/memstick/core/ms_block.c
-@@ -11,7 +11,7 @@
-  * Copyright (C) 2007 Alex Dubov <oakad@yahoo.com>
-  *
-  */
--
-+#define DRIVER_NAME "ms_block"
- #define pr_fmt(fmt) DRIVER_NAME ": " fmt
- 
- #include <linux/module.h>
-diff --git a/drivers/memstick/core/ms_block.h b/drivers/memstick/core/ms_block.h
-index a2b2765..546b55e 100644
---- a/drivers/memstick/core/ms_block.h
-+++ b/drivers/memstick/core/ms_block.h
-@@ -277,8 +277,6 @@ static int msb_reset(struct msb_data *msb, bool full);
- static int h_msb_default_bad(struct memstick_dev *card,
- 						struct memstick_request **mrq);
- 
--#define DRIVER_NAME "ms_block"
--
- #define __dbg(level, format, ...) \
- 	do { \
- 		if (debug >= level) \
--- 
-1.7.9.5
+David
