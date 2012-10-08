@@ -1,89 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound tree with the v4l-dvb tree
-Date: Mon, 8 Oct 2012 11:26:57 +1100
-Message-ID: <20121008112657.d0c141b6f15c148c636a3a6a@canb.auug.org.au>
+Subject: linux-next: manual merge of the modules tree with Linus' tree
+Date: Mon, 8 Oct 2012 11:49:04 +1100
+Message-ID: <20121008114904.8c920933bfdf81a8e0c70647@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__8_Oct_2012_11_26_57_+1100_oeq3bHSJRIWroa3J"
+ boundary="Signature=_Mon__8_Oct_2012_11_49_04_+1100_ai468y0OUqWp5qgX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33105 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53565 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750875Ab2JHA1G (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Oct 2012 20:27:06 -0400
+	with ESMTP id S1751355Ab2JHAtN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Oct 2012 20:49:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Hebbar, Gururaja" <gururaja.hebbar@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Manjunath Hadli <manjunath.hadli@ti.com>, "Lad, Prabhakar" <prabhakar.lad@ti.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, David Howells <dhowells@redhat.com>
 
---Signature=_Mon__8_Oct_2012_11_26_57_+1100_oeq3bHSJRIWroa3J
+--Signature=_Mon__8_Oct_2012_11_49_04_+1100_ai468y0OUqWp5qgX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Takashi,
+Hi Rusty,
 
-Today's linux-next merge of the sound tree got a conflict in
-arch/arm/mach-davinci/include/mach/da8xx.h between commit 154d54a8ce99
-("[media] ARM: davinci: da850: Add SoC related definitions for VPIF")
-from the v4l-dvb tree and commit 896f66b7de29 ("ASoC/ARM: Davinci: McASP:
-split asp header into platform and audio specific") from the sound tree.
+Today's linux-next merge of the modules tree got a conflict in
+init/Kconfig between commit 754b7b63d112 ("sections: disable const
+sections for PA-RISC v2") from Linus' tree and commit 54ddd23d78ba
+("X.509: Add simple ASN.1 grammar compiler") from the modules tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
 
+BTW, Rusty, that commit from the modules tree has no SOB from you even
+though you committed it.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-davinci/include/mach/da8xx.h
-index 13d2295,c74a6ab..0000000
---- a/arch/arm/mach-davinci/include/mach/da8xx.h
-+++ b/arch/arm/mach-davinci/include/mach/da8xx.h
-@@@ -16,18 -16,15 +16,18 @@@
-  #include <linux/platform_device.h>
-  #include <linux/davinci_emac.h>
-  #include <linux/spi/spi.h>
-+ #include <linux/platform_data/davinci_asp.h>
- +#include <linux/videodev2.h>
+diff --cc init/Kconfig
+index ed6334d,abc6e63..0000000
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@@ -1582,10 -1672,12 +1642,18 @@@ config PADAT
+  	depends on SMP
+  	bool
  =20
-  #include <mach/serial.h>
-  #include <mach/edma.h>
-- #include <mach/asp.h>
- -#include <mach/i2c.h>
- -#include <mach/mmc.h>
- -#include <mach/usb.h>
-  #include <mach/pm.h>
- -#include <mach/spi.h>
- +#include <linux/platform_data/i2c-davinci.h>
- +#include <linux/platform_data/mmc-davinci.h>
- +#include <linux/platform_data/usb-davinci.h>
- +#include <linux/platform_data/spi-davinci.h>
+ +# Can be selected by architectures with broken toolchains
+ +# that get confused by correct const<->read_only section
+ +# mappings
+ +config BROKEN_RODATA
+ +	bool
  +
- +#include <media/davinci/vpif_types.h>
- =20
-  extern void __iomem *da8xx_syscfg0_base;
-  extern void __iomem *da8xx_syscfg1_base;
++ config ASN1
++ 	tristate
++ 	help
++ 	  Build a simple ASN.1 grammar compiler that produces a bytecode output
++ 	  that can be interpreted by the ASN.1 stream decoder and used to
++ 	  inform it as to what tags are to be expected in a stream and what
++ 	  functions to call on what tags.
++=20
+  source "kernel/Kconfig.locks"
 
---Signature=_Mon__8_Oct_2012_11_26_57_+1100_oeq3bHSJRIWroa3J
+--Signature=_Mon__8_Oct_2012_11_49_04_+1100_ai468y0OUqWp5qgX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQch3RAAoJEECxmPOUX5FEhVYP/2DQvw1gLlsPIJk8HMkhTadA
-Y55++73DRuHhF62/3W9MoSi7khY8+/TQt5d7p47QIbSHJhUPQW0mFwyIFLLU65zu
-s+6nag+HeblByMkInFp/iFGi/IXfjHuVPgigDmt/BtU2E9wZ5kMYtSJVx5u6dUTA
-BCfshfYaiGcN1a7FAoScyhYWMi+X2uNlIgScQ5No5x4CodH0wywyx0y+dYUw97Xg
-F0r2O92WHzPHmyzNice0SvB0d72uu0AcRqJb/U9mOUJ9z1LncClmhhFaabA3Exi9
-Rd2nrt6HeV1QrkMp9HtFUZsyE+up6TUKT1dKr7NoHgiBhIkFduF2m4A3CwP5ugON
-vReqcosxDtxIDFZgvb44P768wrZBRJ/grqXx3emKVJQRwP23Qa+HTekD48X7GtvG
-pPxEPua4ah/g3lg3cyMKwiH5ESs2KVPLdbyYzkiwO9cLFKmMI17i0zwy+4Mchjh5
-I+z3pB5Ql5Rnzaz1k5l4cWUVG23BuGGHd/PJoHJgevQZNidsucfwTQzVfgTjoHF3
-cBckgnnPh70oygxm/S8SiNw+nclcNOb5NVCvEgNP/pWu67itW08+N1QVuyHhZ7qa
-wOuNkP4TAEXrqpF7GLi9LlmAw2w2H0OsPlrVm4Ry/nQ+D60YDjbKf068UhVbbWwh
-zKGBjMHtAUFmtUuNoK9f
-=G3H7
+iQIcBAEBCAAGBQJQciMAAAoJEECxmPOUX5FEamEP/jehudmz7wk13z8VLysNnE3I
+mZp/p3EsJnlU2vJXFWwXtxGtX6g8V9+q1dlKOyQOEIW7iqhF7AXb8S77pbXlPCZk
+KY09uUk2RwUyxs+v9WMSKVFlDzCpJ/ZNfbeW8+cH7AXqxDxDs+mdW0scrBikifdQ
+M6eB0uU8lAF6wbY+8/ZYJWG+iBLIPPI+KF3PnxIQ2v/XOBEXFlX8+DhA5r9olZX3
+Y4UzcCquoyhWW/QNmDLdRwr55ZPUWZoRRclXC4EtZgOGV5BK5SAjPM72rPYpEY+P
+Kmck0E7iHHZKxvHFJQU5XJ9w9ONSrzdwgrWNXACmC++1kH5J+VQRr0Mk6AASmPtu
+3hGvfdGoES+En562iGRGAlrHAb0tettueFWra7dA/KYzBRht6H8mDVdx5iO82qi7
+u5Fcx+M6Eyo3RX/IoLWjVm49jIfSE8CJ43C1mlHP6I9O+6Q7EhK7IaZ6NibbpHGg
+CH5EwVcWN/ddG2GX7kNacJlWrThr6saMV528uBx93q3qH+zO7wCgVhr9G3UP8C4I
+a5fJcIwGQI/oAYS3bBP0mTTHnZNmV1/cZFiP7xwZGJxBN4dqkbxSlxgMKX+IE66m
+q8zTlebar2w+h6vjexInDKEAtt60IIGrndaGSd0PbxJNFdwqLb9Tx3V19vD5o6kn
+9VwoKHVEelDLihO1j2yU
+=1dly
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__8_Oct_2012_11_26_57_+1100_oeq3bHSJRIWroa3J--
+--Signature=_Mon__8_Oct_2012_11_49_04_+1100_ai468y0OUqWp5qgX--
