@@ -1,40 +1,56 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: manual merge of the ia64 tree with the asm-generic tree
-Date: Mon, 08 Oct 2012 17:25:26 +0100
-Message-ID: <29959.1349713526@warthog.procyon.org.uk>
-References: <20121008101131.a99cc80086482d0b1fc2c230@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: long standing commit in devicetree-current tree
+Date: Tue, 9 Oct 2012 10:17:53 +1100
+Message-ID: <20121009101753.8f0e0ae7293b76c1c3794c18@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__9_Oct_2012_10_17_53_+1100_3CNp7tWCi=dFsb0="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:46703 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751200Ab2JHQZk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Oct 2012 12:25:40 -0400
-In-Reply-To: <20121008101131.a99cc80086482d0b1fc2c230@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44374 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751613Ab2JHXSD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Oct 2012 19:18:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, "Luck, Tony" <tony.luck@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Arnd Bergmann <arnd@arndb.de>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dong Aisheng <dong.aisheng@linaro.org>
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Tue__9_Oct_2012_10_17_53_+1100_3CNp7tWCi=dFsb0=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the ia64 tree got a conflict in
-> arch/ia64/include/asm/Kbuild between commit e7a570ff7dff ("asm-generic:
-> Add default clkdev.h") from the asm-generic tree and commit f68301fee715
-> ("UAPI: (Scripted) Disintegrate arch/ia64/include/asm") from the ia64
-> tree.
-> 
-> I fixed it up (see below - I am not sure if this is the correct fix) and
-> can carry the fix as necessary (no action is required).
+Hi Grant,
 
-It is.
+The devicetree-current tree has one commit in it:
 
-"header +=" and "genhdr +=" belong in the UAPI Kbuild; "generic +=" belongs in
-the original Kbuild.
+4e8383b6b06b	of: release node fix for of_parse_phandle_with_args
 
-In his pull request, Arnd said:
+It has been there since May 26.  Just wondering if it is going anywhere?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-	There may be a few small merge conflicts between Mark's patch and the
- 	following arch header file split patches. In each case the solution
- 	will be to keep the new "generic-y += clkdev.h" line, even if it ends
- 	up being the only line in the Kbuild file.
+--Signature=_Tue__9_Oct_2012_10_17_53_+1100_3CNp7tWCi=dFsb0=
+Content-Type: application/pgp-signature
 
-David
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQc18hAAoJEECxmPOUX5FEYFAP/AkWxHjPnRecrvldXXp6fJY8
+0IWlRSByT0SnI9c7aJSPMnyyyTG8jrOUfCep3tsIh8Tt4zGzJcW1VavTKPsyznLy
+VTcya9HkN2fORMBGbRImP7PfRJk/3RAONdfDUQZh8XxwzTysYijcio4Clht5Y8bE
+yYSjlaokVaINYbSFSTYbRgYoPPLn2V8M720bSfYtTQzo2C5UWxzAHzJ7HmSndbal
+Ff1D6xGqF8u+jT8n61VbVDRJwO43dIStUHTjNABJ+c9QMNQwy8mDoOm9JjYebdjJ
+DxN+DofSWvsC54TkHQghPrxdhCEJYRu7v1vZ0irWX918MjZH7dBdgi3lEpPPCG2D
+bvzfMMi7mHakmhzajig3z9gMi1W5NF0QpT7E67huvF6a29aGeo03+ECt6t5zpeOr
+H46sQ+CFP+SiY7G55aD3qBj/G3XfCd7uiII82QVnMqt5qii9FnFUpY0OkeUtXqeU
+aICFRylolrKWC0+NFiF/raqLeH7H1/epU22bdN6hy+7ImGqCWtT7lodd61gEaGs3
+WbnV/tPed1JTTrjNslijBfh2lqJHdt81Va5Ybxnq7XaP7gBXUH3H2cQL/pvOVLkp
+VQV07xxiO1eWUTsl9jPz/0JP7d/6XeYxbh/l/6c68vqkhur6vEZKnDmuU/VrxLCI
+/3t/4g1H9VrGOKfQArdD
+=1//9
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Oct_2012_10_17_53_+1100_3CNp7tWCi=dFsb0=--
