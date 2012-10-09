@@ -1,39 +1,74 @@
-From: Frank Seidel <frank@f-seidel.de>
-Subject: Re: Dead links to linux-next git
-Date: Tue, 09 Oct 2012 22:53:13 +0200
-Message-ID: <50748EB9.6030709@f-seidel.de>
-References: <CAN8TOE9Xo3mqMRfCJM1-7RUAFqxH2agAuT7oZC+5rWKYNjKw3w@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the origin tree
+Date: Wed, 10 Oct 2012 10:21:50 +1100
+Message-ID: <20121010102150.81c192c6fdf60689dc823b20@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__10_Oct_2012_10_21_50_+1100_dVUeUcEMgQzVSk.2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from uhweb15152.united-hoster.com ([85.88.15.152]:49749 "EHLO
-	uhweb15152.united-hoster.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752109Ab2JIU75 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Oct 2012 16:59:57 -0400
-In-Reply-To: <CAN8TOE9Xo3mqMRfCJM1-7RUAFqxH2agAuT7oZC+5rWKYNjKw3w@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39285 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754206Ab2JIXWB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Oct 2012 19:22:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>, Andrew Morton <akpm@linux-foundation.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
-Am 07.08.2012 01:38, schrieb Brian Norris:
-> Hi Stephen,
->...
-> Apparently, these pages don't get much traffic? Or at least, they are
-> only trafficked by lazy people :) I think these need to be redirected
-> to the new location:
-> http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=Next/Trees;hb=HEAD
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->
-> Are you able to edit these pages, or are these just dust-collecting?
-> I've contacted Frank privately but gotten no response.
+--Signature=_Wed__10_Oct_2012_10_21_50_+1100_dVUeUcEMgQzVSk.2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Linus,
 
-and really sorry for being absent here for such a long time.
-Hoping to come back here again and so of course started with
-this terrible wiki by at least updating it.
+In Linus' tree, today's linux-next build (powerpc ppc64_defconfig) failed
+like this:
 
-Thanks,
-Frank
+arch/powerpc/platforms/pseries/hotplug-memory.c: In function 'pseries_remov=
+e_memblock':
+arch/powerpc/platforms/pseries/hotplug-memory.c:103:17: error: unused varia=
+ble 'pfn' [-Werror=3Dunused-variable]
+
+Caused by commit d760afd4d257 ("memory-hotplug: suppress "Trying to free
+nonexistent resource <XXXXXXXXXXXXXXXX-YYYYYYYYYYYYYYYY>" warning").
+
+I can't see what the point of the "pfn" variable is and this patch never
+appeared in linux-next before being merged.  :-(
+
+I have reverted that commit for today.
+
+If this patch truly was authored yesterday (according the Author Date in
+git), why was it merged yesterday while still under discussion?  And the
+latest update to it still has this build problem ... did anyone even try
+to build this for powerpc (since that architecture was obviously
+affected)?  (Cross compilers available here
+http://www.kernel.org/pub/tools/crosstool/).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__10_Oct_2012_10_21_50_+1100_dVUeUcEMgQzVSk.2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQdLGOAAoJEECxmPOUX5FEswcP/01NYzXpn4Nom9jpiJNY9C4f
+8a4xRjXK/yd8XuRzMUJ3qtrjp3nV3hDROkpiRWwCGjDLxelBS7LonmJoNgGvBC+W
+pDbHRAGIN0asiVF2Kmvl2Fbj8qWJEwPCLO84uPY7iL8HS0f2+3tJHBZYn8AtIm+u
+M9UKGT/DlRB3yZkaE3XOgTRCSs8QT4Q77EgBTPlBVJ02RsO5tWYvK4f/JgPqCFJ7
+D0vBpww3U7iRH0V6gTrSsUIr4oOOHTEFxCEavdTyBHtidw2zZkV8Eu9sPw0e+hNG
+tBBKtoNrayu2Wty2ho+d8LWnc0YD6v1n6Uzp8mAW4ELpm1vsHziO7Q81h1CfimCs
+3qcdeYXImWBwMGwqmEAnXecMmt80HCrilgjSbO+FZM5CEPzdyyUqqVBvddagK4oh
+FvPFnhNKKvm1GUZQ/96Ch2JAR5K2mDvDwirVnqA8QJZAg1jD12apFZo0aCXDuPh+
+TzurycGCY5ajt55sq7RKB/sibf57oBL5WWmrfPlwt8ICJD7mo9vQi5uspwrt2TEj
+6tiVQjrTvlNes3Ts0Gs9Nwc/xPwGx0MhXCMYq1KkZFvkW1NEAzKU0vWip+zPIVrP
+UfRPkpDkc0ihFqEFJX2MBXRZUpMk40sk3fgN2G72QH2bdV5hOp+QDYHY5jIiWpS1
+GwmF8zuvcnF3a1mxYMsY
+=o7kK
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Oct_2012_10_21_50_+1100_dVUeUcEMgQzVSk.2--
