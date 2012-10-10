@@ -1,74 +1,99 @@
-From: Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the origin tree
-Date: Wed, 10 Oct 2012 08:52:21 +0900
-Message-ID: <5074B8B5.3010307@jp.fujitsu.com>
-References: <20121010102150.81c192c6fdf60689dc823b20@canb.auug.org.au> <20121009164514.b7a7e227.akpm@linux-foundation.org>
+Date: Wed, 10 Oct 2012 11:07:27 +1100
+Message-ID: <20121010110727.9cfd1d80a27e0f308131baed@canb.auug.org.au>
+References: <20121010102150.81c192c6fdf60689dc823b20@canb.auug.org.au>
+	<20121009164514.b7a7e227.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__10_Oct_2012_11_07_27_+1100_XoIO9eDzcvU5JeRh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fgwmail5.fujitsu.co.jp ([192.51.44.35]:36307 "EHLO
-	fgwmail5.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751075Ab2JIXxD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Oct 2012 19:53:03 -0400
+Received: from haggis.pcug.org.au ([203.10.76.10]:40507 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750762Ab2JJAHf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Oct 2012 20:07:35 -0400
 In-Reply-To: <20121009164514.b7a7e227.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
-Hi Stephen,
+--Signature=_Wed__10_Oct_2012_11_07_27_+1100_XoIO9eDzcvU5JeRh
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-2012/10/10 8:45, Andrew Morton wrote:
-> On Wed, 10 Oct 2012 10:21:50 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Andrew,
+
+On Tue, 9 Oct 2012 16:45:14 -0700 Andrew Morton <akpm@linux-foundation.org>=
+ wrote:
 >
->> Hi Linus,
->>
->> In Linus' tree, today's linux-next build (powerpc ppc64_defconfig) failed
->> like this:
->>
->> arch/powerpc/platforms/pseries/hotplug-memory.c: In function 'pseries_remove_memblock':
->> arch/powerpc/platforms/pseries/hotplug-memory.c:103:17: error: unused variable 'pfn' [-Werror=unused-variable]
->>
->> Caused by commit d760afd4d257 ("memory-hotplug: suppress "Trying to free
->> nonexistent resource <XXXXXXXXXXXXXXXX-YYYYYYYYYYYYYYYY>" warning").
->>
->> I can't see what the point of the "pfn" variable is
->
+> On Wed, 10 Oct 2012 10:21:50 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+>=20
+> > I can't see what the point of the "pfn" variable is
+>=20
 > This:
->
+>=20
 > --- a/arch/powerpc/platforms/pseries/hotplug-memory.c~a
 > +++ a/arch/powerpc/platforms/pseries/hotplug-memory.c
 > @@ -101,7 +101,7 @@ static int pseries_remove_memblock(unsig
->   	sections_to_remove = (memblock_size >> PAGE_SHIFT) / PAGES_PER_SECTION;
->   	for (i = 0; i < sections_to_remove; i++) {
->   		unsigned long pfn = start_pfn + i * PAGES_PER_SECTION;
-> -		ret = __remove_pages(zone, start_pfn,  PAGES_PER_SECTION);
-> +		ret = __remove_pages(zone, pfn, PAGES_PER_SECTION);
->   		if (ret)
->   			return ret;
->   	}
+>  	sections_to_remove =3D (memblock_size >> PAGE_SHIFT) / PAGES_PER_SECTIO=
+N;
+>  	for (i =3D 0; i < sections_to_remove; i++) {
+>  		unsigned long pfn =3D start_pfn + i * PAGES_PER_SECTION;
+> -		ret =3D __remove_pages(zone, start_pfn,  PAGES_PER_SECTION);
+> +		ret =3D __remove_pages(zone, pfn, PAGES_PER_SECTION);
+>  		if (ret)
+>  			return ret;
+>  	}
 
-I believe the error to be fixed with this patch.
-Could you try it?
+Can we get that fix to Linus ASAP, please?
 
-Thanks,
-Yasuaki Ishimatsu
-
->
->> and this patch never
->> appeared in linux-next before being merged.  :-(
->
+> > and this patch never
+> > appeared in linux-next before being merged.  :-(
+>=20
 > It was first sighted October 3.
->
->> I have reverted that commit for today.
->>
->> If this patch truly was authored yesterday (according the Author Date in
->> git), why was it merged yesterday while still under discussion?  And the
->> latest update to it still has this build problem ... did anyone even try
->> to build this for powerpc (since that architecture was obviously
->> affected)?
->
+
+Yeah, my mistake. But it never made it to linux-next.
+
+> > I have reverted that commit for today.
+> >=20
+> > If this patch truly was authored yesterday (according the Author Date in
+> > git), why was it merged yesterday while still under discussion?  And the
+> > latest update to it still has this build problem ... did anyone even try
+> > to build this for powerpc (since that architecture was obviously
+> > affected)?
+>=20
 > Apparently not - the ppc bit was a best-effort fixup for a patch which
 > addresses an x86 problem.
->
+
+Right, and that is one of the reasons we have linux-next - to test for
+cross architecture problems.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__10_Oct_2012_11_07_27_+1100_XoIO9eDzcvU5JeRh
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQdLw/AAoJEECxmPOUX5FEaI0P/j6AS0q7CqweKGTA23sGoQfh
+rGO36Dv98+dnOuAy81e0SSFWFnAdj9dqIzEPDXcE60W7mgMfAnrbDXXct/z9336A
+Nc3g19MU+J8IeEyz6iUhEa+cuhqZpFeYC6c0nyvrtzIHNYWz9tqtkpihtA5FycL2
+nJZxGIt+wThITKT7xq0ccbhbDXSOaS1fQb0XnvmEITLEMz1sqnvs3gop2euQYc87
+5Ni2ePWyqa/qWedon66VvROl/G5nK24s+q9pLigxEaF0QPkg5gorIHBrwuFBjjh1
+VnQFUZ1R5fJyIdTx2Rs472Hp+ff69aB1Izw/cLq5nrRMJ7qqtEOmMfDNtbT1xwhR
+kEMN8hBhPY8p665cGH9fUUzlUvOsFUv74AvtPQ9mbtd99Cl34k58SZUKpza3r/km
+DAR0kbTcrInc8EAA27fpohTuJUwYqgn32sNqnv1kPl9zQveLV+zkYQbTD/1LnFRC
+UxHvdciLcqt5MH4kc0HJDxTIEAt1ZyJNig1Ym5wJpm8C7Z9VZk03+ymtE5gQqEwf
+TRTC3EP1D8LckgkfEpi1hRy6LT0ysI+vLDuALY0skS97CADKPvcqBTHp+tpC86bc
+vjqSsB/Ey8lV5l/OsAdBQAHLSngozSFZepNo+cAAAgzbiZusiooQeMKExP+O58ZW
+88o4SSSnXwkRayDAjxB9
+=Q7Le
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Oct_2012_11_07_27_+1100_XoIO9eDzcvU5JeRh--
