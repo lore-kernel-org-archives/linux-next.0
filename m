@@ -1,99 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the origin tree
-Date: Wed, 10 Oct 2012 11:07:27 +1100
-Message-ID: <20121010110727.9cfd1d80a27e0f308131baed@canb.auug.org.au>
-References: <20121010102150.81c192c6fdf60689dc823b20@canb.auug.org.au>
-	<20121009164514.b7a7e227.akpm@linux-foundation.org>
+Subject: linux-next: build failure after merge of the block tree
+Date: Wed, 10 Oct 2012 12:14:37 +1100
+Message-ID: <20121010121437.4aa0979f4f680f16439e4955@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__10_Oct_2012_11_07_27_+1100_XoIO9eDzcvU5JeRh"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40507 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750762Ab2JJAHf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Oct 2012 20:07:35 -0400
-In-Reply-To: <20121009164514.b7a7e227.akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+ boundary="Signature=_Wed__10_Oct_2012_12_14_37_+1100_BdUHvRyLD.8UUAyE"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, Michel Lespinasse <walken@google.com>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__10_Oct_2012_11_07_27_+1100_XoIO9eDzcvU5JeRh
+--Signature=_Wed__10_Oct_2012_12_14_37_+1100_BdUHvRyLD.8UUAyE
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Jens,
 
-On Tue, 9 Oct 2012 16:45:14 -0700 Andrew Morton <akpm@linux-foundation.org>=
- wrote:
->
-> On Wed, 10 Oct 2012 10:21:50 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
->=20
-> > I can't see what the point of the "pfn" variable is
->=20
-> This:
->=20
-> --- a/arch/powerpc/platforms/pseries/hotplug-memory.c~a
-> +++ a/arch/powerpc/platforms/pseries/hotplug-memory.c
-> @@ -101,7 +101,7 @@ static int pseries_remove_memblock(unsig
->  	sections_to_remove =3D (memblock_size >> PAGE_SHIFT) / PAGES_PER_SECTIO=
-N;
->  	for (i =3D 0; i < sections_to_remove; i++) {
->  		unsigned long pfn =3D start_pfn + i * PAGES_PER_SECTION;
-> -		ret =3D __remove_pages(zone, start_pfn,  PAGES_PER_SECTION);
-> +		ret =3D __remove_pages(zone, pfn, PAGES_PER_SECTION);
->  		if (ret)
->  			return ret;
->  	}
+After merging the block tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Can we get that fix to Linus ASAP, please?
+fs/block_dev.c: In function 'set_blocksize':
+fs/block_dev.c:135:2: error: implicit declaration of function 'prio_tree_em=
+pty' [-Werror=3Dimplicit-function-declaration]
 
-> > and this patch never
-> > appeared in linux-next before being merged.  :-(
->=20
-> It was first sighted October 3.
+Caused by commit b87570f5d349 ("Fix a crash when block device is read and
+block size is changed at the same time") interacting with commit
+147e615f83c2 ("prio_tree: remove") which is now in Linus' tree.
 
-Yeah, my mistake. But it never made it to linux-next.
+I have added the following merge fix patch for today (this is a mash of
+tow fix patches that used to be in Andrew's tree):
 
-> > I have reverted that commit for today.
-> >=20
-> > If this patch truly was authored yesterday (according the Author Date in
-> > git), why was it merged yesterday while still under discussion?  And the
-> > latest update to it still has this build problem ... did anyone even try
-> > to build this for powerpc (since that architecture was obviously
-> > affected)?
->=20
-> Apparently not - the ppc bit was a best-effort fixup for a patch which
-> addresses an x86 problem.
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: fs/block_dev.c:set_blocksize(): use mapping_mapped()
 
-Right, and that is one of the reasons we have linux-next - to test for
-cross architecture problems.
+... instead of open-coding it.
+
+Suggested-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+diff -puN fs/block_dev.c~fs-block_devc-set_blocksize-use-mapping_mapped fs/=
+block_dev.c
+--- a/fs/block_dev.c~fs-block_devc-set_blocksize-use-mapping_mapped
++++ a/fs/block_dev.c
+@@ -132,8 +132,7 @@ int set_blocksize(struct block_device *b
+ 	/* Check that the block device is not memory mapped */
+ 	mapping =3D bdev->bd_inode->i_mapping;
+ 	mutex_lock(&mapping->i_mmap_mutex);
+-	if (!prio_tree_empty(&mapping->i_mmap) ||
+-	    !list_empty(&mapping->i_mmap_nonlinear)) {
++	if (mapping_mapped(mapping)) {
+ 		mutex_unlock(&mapping->i_mmap_mutex);
+ 		percpu_up_write(&bdev->bd_block_size_semaphore);
+ 		return -EBUSY;
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__10_Oct_2012_11_07_27_+1100_XoIO9eDzcvU5JeRh
+--Signature=_Wed__10_Oct_2012_12_14_37_+1100_BdUHvRyLD.8UUAyE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQdLw/AAoJEECxmPOUX5FEaI0P/j6AS0q7CqweKGTA23sGoQfh
-rGO36Dv98+dnOuAy81e0SSFWFnAdj9dqIzEPDXcE60W7mgMfAnrbDXXct/z9336A
-Nc3g19MU+J8IeEyz6iUhEa+cuhqZpFeYC6c0nyvrtzIHNYWz9tqtkpihtA5FycL2
-nJZxGIt+wThITKT7xq0ccbhbDXSOaS1fQb0XnvmEITLEMz1sqnvs3gop2euQYc87
-5Ni2ePWyqa/qWedon66VvROl/G5nK24s+q9pLigxEaF0QPkg5gorIHBrwuFBjjh1
-VnQFUZ1R5fJyIdTx2Rs472Hp+ff69aB1Izw/cLq5nrRMJ7qqtEOmMfDNtbT1xwhR
-kEMN8hBhPY8p665cGH9fUUzlUvOsFUv74AvtPQ9mbtd99Cl34k58SZUKpza3r/km
-DAR0kbTcrInc8EAA27fpohTuJUwYqgn32sNqnv1kPl9zQveLV+zkYQbTD/1LnFRC
-UxHvdciLcqt5MH4kc0HJDxTIEAt1ZyJNig1Ym5wJpm8C7Z9VZk03+ymtE5gQqEwf
-TRTC3EP1D8LckgkfEpi1hRy6LT0ysI+vLDuALY0skS97CADKPvcqBTHp+tpC86bc
-vjqSsB/Ey8lV5l/OsAdBQAHLSngozSFZepNo+cAAAgzbiZusiooQeMKExP+O58ZW
-88o4SSSnXwkRayDAjxB9
-=Q7Le
+iQIcBAEBCAAGBQJQdMv9AAoJEECxmPOUX5FEvLYQAINj7W7rjbJyiumZjrISu73x
+CreSTpfo+xZZpvdSlOiSy+5u1tmT7byQfalFynRG0kBVtn7CRxbzKDghRkscR+sM
+m1+Mlg7mB96gDFULoXZwbEO/XVpDbKrJcFAuA8sNDpqZ+3kY+41q8T+idJ++EvBI
+Yir1tIDQ6ZBbWMQ3n7nk408dIewjteEIFEE7NaE+cLah2Ew+TO7hiOR5WHM9GD5r
++siKa+u7Mv6xw5bj4ohtfNgYQKK85qpR6ZEIIdRhWuuE90Ou6sBjldf8LFw6L444
+gjVlR50Z+ZCtLN69bvl9P7H12DYkMtv+fhPAnZ6MgdaD7CFOLYjqCd4EO1Nyzri0
+5AYxc5O23PJxsjnOhv/qdmiwbOF4XTLqd6xm+ll7rRsqagecl0Znq/guRuJFoX1h
+idNiD4OIGRK36jFiR87yRGd/pz9TvSDUw1tWsC7oYsX1RyXz4cHbQfwX87tJz1LW
+Ab3seLQ6T0R0RuF6NMQYQykWr/qbGpP7vtzHc7KQZzmLiPUS8rzhfBIltLm+4T6t
+M9QIzk7n7zddY70BQdzLiwnYXRKXqZfmxX0RqOKo5geuNS4fYad+GBzESJksAahG
+OTUEBAcQd8Y7Xk7K3YoiP18K/H4axchKp3lyE6jsA24/Tns0tboFUEQEb4/N744o
+8eADdUdkPwmFAimSaLfZ
+=WaAV
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__10_Oct_2012_11_07_27_+1100_XoIO9eDzcvU5JeRh--
+--Signature=_Wed__10_Oct_2012_12_14_37_+1100_BdUHvRyLD.8UUAyE--
