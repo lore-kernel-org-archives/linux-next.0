@@ -1,15 +1,15 @@
 From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 Subject: Re: linux-next: manual merge of the kmemleak tree with Linus' tree
-Date: Tue, 9 Oct 2012 21:52:25 -0700
-Message-ID: <20121010045225.GA3975@swordfish>
+Date: Tue, 9 Oct 2012 21:55:53 -0700
+Message-ID: <20121010045553.GB3975@swordfish>
 References: <20121010140644.0235454126ca50b7f60d1f59@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:36197 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:49446 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751003Ab2JJEyf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Oct 2012 00:54:35 -0400
+	with ESMTP id S1751003Ab2JJE6C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Oct 2012 00:58:02 -0400
 Content-Disposition: inline
 In-Reply-To: <20121010140644.0235454126ca50b7f60d1f59@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
@@ -33,7 +33,8 @@ On (10/10/12 14:06), Stephen Rothwell wrote:
 > necessary (no action is required).
 > 
 
-Hello,
-I can re-base my patch (I thought it's already in Linus' tree).
+Oh, my bad! Just took a look on current create_object(). I guess we can
+drop my patch.
+
 
 	-ss
