@@ -1,62 +1,50 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] staging: ramster: depends on NET
-Date: Thu, 11 Oct 2012 09:34:11 -0700
-Message-ID: <5076F503.3070808@xenotime.net>
-References: <20121011140604.f5093233badade406c3d06f7@canb.auug.org.au>
+From: Scott Wood <scottwood@freescale.com>
+Subject: Re: linux-next: manual merge of the kvm-ppc tree with the
+ powerpc-merge tree
+Date: Thu, 11 Oct 2012 11:37:18 -0500
+Message-ID: <1349973438.6903.4@snotra>
+References: <20121011121841.1b946f996cba995d9a5a2be7@canb.auug.org.au>
+	<6AE080B68D46FC4BA2D2769E68D765B7080FA8F8@039-SN2MPN1-023.039d.mgd.msft.net>
+	<20121011134754.2e2cbb24842fa991e61cf97c@canb.auug.org.au>
+	<6AE080B68D46FC4BA2D2769E68D765B7080FA9F8@039-SN2MPN1-023.039d.mgd.msft.net>
+	<6201AAAD-F575-4D2C-9A97-3EB41DA3491C@suse.de>
+	<5076EBFE.5060208@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; delsp=Yes; format=Flowed
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:34272 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1758854Ab2JKQeX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Oct 2012 12:34:23 -0400
-In-Reply-To: <20121011140604.f5093233badade406c3d06f7@canb.auug.org.au>
+Received: from va3ehsobe001.messaging.microsoft.com ([216.32.180.11]:58864
+	"EHLO va3outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755298Ab2JKQhW convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Oct 2012 12:37:22 -0400
+In-Reply-To: <5076EBFE.5060208@freescale.com> (from B04825@freescale.com on
+	Thu Oct 11 10:55:42 2012)
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dan.magenheimer@oracle.com, konrad.wilk@oracle.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+To: Timur Tabi <B04825@freescale.com>
+Cc: Alexander Graf <agraf@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On 10/11/2012 10:55:42 AM, Timur Tabi wrote:
+> Alexander Graf wrote:
+> 
+> 
+> > This is about kvm_host.h, which is the part that is exported to user
+> > space. It usually contains constants and structs that are required  
+> for
+> > the API.
+> 
+> Which API?  I'm not familiar with KVM internals.
+> 
+> My concern is that when I think of a user-space header file, I think  
+> of a
+> user-space application that calls ioctls.  I know that KVM guest  
+> kernels
+> run as user-space processes, but that does not seem like a reason to
+> combine all of the header files that the KVM guest kernel needs with
+> "real" user-space header files.
 
-ramster uses network interfaces that are only present when
-CONFIG_NET is enabled, so it should depend on NET.
+So where should guest headers go?
 
-Fixes these build errors:
-
-drivers/built-in.o: In function `sc_kref_release':
-tcp.c:(.text+0x24b9af): undefined reference to `sock_release'
-drivers/built-in.o: In function `r2net_open_listening_sock':
-tcp.c:(.text+0x24ca2b): undefined reference to `sock_create'
-tcp.c:(.text+0x24cb91): undefined reference to `sock_release'
-drivers/built-in.o: In function `r2net_recv_tcp_msg':
-tcp.c:(.text+0x24cdbd): undefined reference to `sock_recvmsg'
-drivers/built-in.o: In function `r2net_send_tcp_msg':
-tcp.c:(.text+0x24d341): undefined reference to `sock_sendmsg'
-drivers/built-in.o: In function `r2net_start_connect':
-tcp.c:(.text+0x24d8fa): undefined reference to `sock_create'
-drivers/built-in.o: In function `r2net_shutdown_sc':
-tcp.c:(.text+0x24e30c): undefined reference to `kernel_sock_shutdown'
-drivers/built-in.o: In function `r2net_accept_one':
-tcp.c:(.text+0x24f392): undefined reference to `sock_create_lite'
-tcp.c:(.text+0x24f3c3): undefined reference to `sock_release'
-drivers/built-in.o: In function `r2net_stop_listening':
-(.text+0x250f63): undefined reference to `sock_release'
-
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: dan.magenheimer@oracle.com
-Cc: konrad.wilk@oracle.com
----
- drivers/staging/ramster/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
---- linux-next-20121011.orig/drivers/staging/ramster/Kconfig
-+++ linux-next-20121011/drivers/staging/ramster/Kconfig
-@@ -18,6 +18,7 @@ config ZCACHE2
- config RAMSTER
- 	bool "Cross-machine RAM capacity sharing, aka peer-to-peer tmem"
- 	depends on CONFIGFS_FS=y && SYSFS=y && !HIGHMEM && ZCACHE2=y
-+	depends on NET
- 	# must ensure struct page is 8-byte aligned
- 	select HAVE_ALIGNED_STRUCT_PAGE if !64_BIT
- 	default n
+-Scott
