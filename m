@@ -1,66 +1,61 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] drm: fix radeon printk format warnings
-Date: Wed, 10 Oct 2012 13:09:58 -0700
-Message-ID: <5075D616.4080403@xenotime.net>
-References: <20121010160904.e73f247f4c7034876bf5af30@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-ppc tree with the powerpc-merge
+ tree
+Date: Thu, 11 Oct 2012 12:05:02 +1100
+Message-ID: <20121011120502.0211f1267dedf3776e4cf85b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__11_Oct_2012_12_05_02_+1100_.g+TGX+A3MBhmGq+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:60725 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751733Ab2JJUKI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Oct 2012 16:10:08 -0400
-In-Reply-To: <20121010160904.e73f247f4c7034876bf5af30@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:55080 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932421Ab2JKBFO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Oct 2012 21:05:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+To: Alexander Graf <agraf@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liu Yu <yu.liu@freescale.com>, Stuart Yoder <stuart.yoder@freescale.com>, David Howells <dhowells@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Thu__11_Oct_2012_12_05_02_+1100_.g+TGX+A3MBhmGq+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix printk format warnings in gpu/drm/radeon/:
+Hi Alexander,
 
-drivers/gpu/drm/radeon/radeon_atpx_handler.c:151:3: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'size_t'
-drivers/gpu/drm/radeon/radeon_acpi.c:204:3: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'size_t'
-drivers/gpu/drm/radeon/radeon_acpi.c:488:3: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'size_t'
+Today's linux-next merge of the kvm-ppc tree got a conflict in
+arch/powerpc/include/asm/Kbuild between commit c3617f72036c ("UAPI:
+(Scripted) Disintegrate arch/powerpc/include/asm") from the powerpc-merge
+tree and commit 4c09029a5639 ("KVM: PPC: Add support for ePAPR idle hcall
+in host kernel") from the kvm-ppc tree.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc:	David Airlie <airlied@linux.ie>
-Cc:	dri-devel@lists.freedesktop.org
----
- drivers/gpu/drm/radeon/radeon_acpi.c         |    4 ++--
- drivers/gpu/drm/radeon/radeon_atpx_handler.c |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+I just removed epapr_hcalls.h from the Kbuild file as I am not sure how
+it should be broken up.  David, can you have a look at this, please?
 
---- linux-next-20121010.orig/drivers/gpu/drm/radeon/radeon_atpx_handler.c
-+++ linux-next-20121010/drivers/gpu/drm/radeon/radeon_atpx_handler.c
-@@ -148,7 +148,7 @@ static int radeon_atpx_verify_interface(
- 
- 	size = *(u16 *) info->buffer.pointer;
- 	if (size < 8) {
--		printk("ATPX buffer is too small: %lu\n", size);
-+		printk("ATPX buffer is too small: %zu\n", size);
- 		err = -EINVAL;
- 		goto out;
- 	}
---- linux-next-20121010.orig/drivers/gpu/drm/radeon/radeon_acpi.c
-+++ linux-next-20121010/drivers/gpu/drm/radeon/radeon_acpi.c
-@@ -201,7 +201,7 @@ static int radeon_atif_verify_interface(
- 
- 	size = *(u16 *) info->buffer.pointer;
- 	if (size < 12) {
--		DRM_INFO("ATIF buffer is too small: %lu\n", size);
-+		DRM_INFO("ATIF buffer is too small: %zu\n", size);
- 		err = -EINVAL;
- 		goto out;
- 	}
-@@ -485,7 +485,7 @@ static int radeon_atcs_verify_interface(
- 
- 	size = *(u16 *) info->buffer.pointer;
- 	if (size < 8) {
--		DRM_INFO("ATCS buffer is too small: %lu\n", size);
-+		DRM_INFO("ATCS buffer is too small: %zu\n", size);
- 		err = -EINVAL;
- 		goto out;
- 	}
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__11_Oct_2012_12_05_02_+1100_.g+TGX+A3MBhmGq+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQdhs+AAoJEECxmPOUX5FE9CMP/RifbCd1MZc2msyU/IPpKEPL
+SNhJg2edkuKAUVpbxDj1uwCqlj19M6hDNXH6I9cIb+P/obnIlHYdAxIc+W77MfDp
+aLyxnDkSB9Zwp73C1u7IzsHUs4EQeGb0AdKp0QbNm1j59zbD6U1QmAjm3zGzUFbp
+ZJD+WtHW6ZwvwuemKQSL2wUpwce/GFZLtlBcSNUOX4FtSdK6oB17FDpZjU9e7SVZ
+rpskzwWYvGld43mc9VpFAi/wC+gy+2qrlLOTYesLJwE6EJ6a0TLG1rCBm9cofv/u
+AQtGhR0WKpC84Q58ccXaFFRLVHS1HNorDr3wc0ttpHHBNATKW/aS7z5j4P9bIQE0
+j8IuoVttqSdQ3FIOJmVgEbIYVT8pMT5+DsDocFamxAwhlfU5OulThPrEC/PfPFnr
+xhoObhMkI0Y2LqM3zcRE3YP/zZyc/FEfkPKyO/ap6ePTrPee7mIjMYGjDFyJLl3P
+sUp+xq6ZLdATGr3oQp9cyLRF6/gcmUu+SecKy3z6o+bGg1hYN4ndBV1ZD9Z9Jvk3
+9P2yAqxA+A85emxAZRg+omi1ACOXW6cCmBPg7ut7zL3Lv8RisXb9emxBsNp2Ybb4
+ypzOqxmjBxr7EFp3b7l6c7XdC5MPQpp3Smy9n0SUkn76N+xRh3nSouVYC+wNUgfa
+RzR9WodpNV71nd3v5pPu
+=nW0A
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__11_Oct_2012_12_05_02_+1100_.g+TGX+A3MBhmGq+--
