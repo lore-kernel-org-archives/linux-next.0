@@ -1,41 +1,74 @@
-From: Timur Tabi <B04825@freescale.com>
-Subject: Re: linux-next: manual merge of the kvm-ppc tree with the
- powerpc-merge tree
-Date: Thu, 11 Oct 2012 12:30:50 -0500
-Message-ID: <5077024A.9010209@freescale.com>
-References: <20121011121841.1b946f996cba995d9a5a2be7@canb.auug.org.au>
- <6AE080B68D46FC4BA2D2769E68D765B7080FA8F8@039-SN2MPN1-023.039d.mgd.msft.net>
- <20121011134754.2e2cbb24842fa991e61cf97c@canb.auug.org.au>
- <6AE080B68D46FC4BA2D2769E68D765B7080FA9F8@039-SN2MPN1-023.039d.mgd.msft.net>
- <6201AAAD-F575-4D2C-9A97-3EB41DA3491C@suse.de>
- <5076EBFE.5060208@freescale.com> <1349973438.6903.4@snotra>
- <507700EB.5090307@freescale.com> <1349976536.6903.7@snotra>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: RE: [PATCH -next] staging: ramster: depends on NET
+Date: Thu, 11 Oct 2012 13:10:02 -0700 (PDT)
+Message-ID: <1a20296e-60c2-4b03-b322-5ac060b38b52@default>
+References: <20121011140604.f5093233badade406c3d06f7@canb.auug.org.au>
+ <5076F503.3070808@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1349976536.6903.7@snotra>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Scott Wood <scottwood@freescale.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Alexander Graf <agraf@suse.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet15.oracle.com ([148.87.113.117]:37973 "EHLO
+	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751668Ab2JKUKU convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Oct 2012 16:10:20 -0400
+In-Reply-To: <5076F503.3070808@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Wilk <konrad.wilk@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
 
-Scott Wood wrote:
-> For hypercalls and other paravirt.  That's the point -- they're not  
-> kernel headers.  They're guest API headers.
+> From: Randy Dunlap [mailto:rdunlap@xenotime.net]
+> Sent: Thursday, October 11, 2012 10:34 AM
+> To: Stephen Rothwell
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Dan Magenheimer; Konrad Wilk; Greg
+> Kroah-Hartman; devel@driverdev.osuosl.org
+> Subject: [PATCH -next] staging: ramster: depends on NET
+> 
+> From: Randy Dunlap <rdunlap@xenotime.net>
+> 
+> ramster uses network interfaces that are only present when
+> CONFIG_NET is enabled, so it should depend on NET.
 
-Well, IMHO, guest API != user-space.  Maybe we should have a parallel
-mechanism to uapi to make the kvm guest header files available.
+Yep, thanks for catching!
 
--- 
-Timur Tabi
-Linux kernel developer at Freescale
+Acked-by: Dan Magenheimer <dan.magenheimer@oracle.com>
+ 
+> Fixes these build errors:
+> 
+> drivers/built-in.o: In function `sc_kref_release':
+> tcp.c:(.text+0x24b9af): undefined reference to `sock_release'
+> drivers/built-in.o: In function `r2net_open_listening_sock':
+> tcp.c:(.text+0x24ca2b): undefined reference to `sock_create'
+> tcp.c:(.text+0x24cb91): undefined reference to `sock_release'
+> drivers/built-in.o: In function `r2net_recv_tcp_msg':
+> tcp.c:(.text+0x24cdbd): undefined reference to `sock_recvmsg'
+> drivers/built-in.o: In function `r2net_send_tcp_msg':
+> tcp.c:(.text+0x24d341): undefined reference to `sock_sendmsg'
+> drivers/built-in.o: In function `r2net_start_connect':
+> tcp.c:(.text+0x24d8fa): undefined reference to `sock_create'
+> drivers/built-in.o: In function `r2net_shutdown_sc':
+> tcp.c:(.text+0x24e30c): undefined reference to `kernel_sock_shutdown'
+> drivers/built-in.o: In function `r2net_accept_one':
+> tcp.c:(.text+0x24f392): undefined reference to `sock_create_lite'
+> tcp.c:(.text+0x24f3c3): undefined reference to `sock_release'
+> drivers/built-in.o: In function `r2net_stop_listening':
+> (.text+0x250f63): undefined reference to `sock_release'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> Cc: dan.magenheimer@oracle.com
+> Cc: konrad.wilk@oracle.com
+> ---
+>  drivers/staging/ramster/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20121011.orig/drivers/staging/ramster/Kconfig
+> +++ linux-next-20121011/drivers/staging/ramster/Kconfig
+> @@ -18,6 +18,7 @@ config ZCACHE2
+>  config RAMSTER
+>  	bool "Cross-machine RAM capacity sharing, aka peer-to-peer tmem"
+>  	depends on CONFIGFS_FS=y && SYSFS=y && !HIGHMEM && ZCACHE2=y
+> +	depends on NET
+>  	# must ensure struct page is 8-byte aligned
+>  	select HAVE_ALIGNED_STRUCT_PAGE if !64_BIT
+>  	default n
