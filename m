@@ -1,33 +1,28 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the pinctrl tree with Linus' tree
-Date: Fri, 12 Oct 2012 14:08:52 +1100
-Message-ID: <20121012140852.fad715123dc77f1d5c644825@canb.auug.org.au>
+Date: Fri, 12 Oct 2012 14:30:59 +1100
+Message-ID: <20121012143059.ed0399ec2598c495e175f876@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__12_Oct_2012_14_08_52_+1100_=FV/ODks.bhBnHsy"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38534 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752808Ab2JLDI4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Oct 2012 23:08:56 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Fri__12_Oct_2012_14_30_59_+1100_5E/bAY9xEmFiKArQ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nikolaus Voss <n.voss@weinmann.de>, Wolfram Sang <w.sang@pengutronix.de>, Nicolas Ferre <nicolas.ferre@atmel.com>, Ludovic Desroches <ludovic.desroches@atmel.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, David Woodhouse <David.Woodhouse@intel.com>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__12_Oct_2012_14_08_52_+1100_=FV/ODks.bhBnHsy
+--Signature=_Fri__12_Oct_2012_14_30_59_+1100_5E/bAY9xEmFiKArQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Linus,
 
-Today's linux-next merge of the pinctrl tree got a conflict in arch/arm/mac=
-h-at91/at91sam9x5.c between commits af2a5f09fb6d ("Replace clk_lookup.con_i=
-d with clk_lookup.dev_id entries for twi clk") and f7d19b906556 ("ARM: at91=
-: add clocks for I2C DT entries") from Linus' tree and commit 5c70cd3c7c69 =
-("arm: at91: dt: at91sam9 add pinctrl support") from the pinctrl tree.
+Today's linux-next merge of the pinctrl tree got a conflict in
+drivers/mtd/nand/atmel_nand.c between commit 28446acb1f82 ("mtd: atmel
+nand: fix gpio missing request") from Linus' tree and commit 08695153170c
+("MTD: atmel nand: fix gpio missing request") from the pinctrl tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,48 +31,83 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-at91/at91sam9x5.c
-index e503538,79b5c52..0000000
---- a/arch/arm/mach-at91/at91sam9x5.c
-+++ b/arch/arm/mach-at91/at91sam9x5.c
-@@@ -231,13 -231,10 +231,13 @@@ static struct clk_lookup periph_clocks_
-  	CLKDEV_CON_DEV_ID("t0_clk", "f800c000.timer", &tcb0_clk),
-  	CLKDEV_CON_DEV_ID("dma_clk", "ffffec00.dma-controller", &dma0_clk),
-  	CLKDEV_CON_DEV_ID("dma_clk", "ffffee00.dma-controller", &dma1_clk),
- +	CLKDEV_CON_DEV_ID(NULL, "f8010000.i2c", &twi0_clk),
- +	CLKDEV_CON_DEV_ID(NULL, "f8014000.i2c", &twi1_clk),
- +	CLKDEV_CON_DEV_ID(NULL, "f8018000.i2c", &twi2_clk),
-- 	CLKDEV_CON_ID("pioA", &pioAB_clk),
-- 	CLKDEV_CON_ID("pioB", &pioAB_clk),
-- 	CLKDEV_CON_ID("pioC", &pioCD_clk),
-- 	CLKDEV_CON_ID("pioD", &pioCD_clk),
-+ 	CLKDEV_CON_DEV_ID(NULL, "fffff400.gpio", &pioAB_clk),
-+ 	CLKDEV_CON_DEV_ID(NULL, "fffff600.gpio", &pioAB_clk),
-+ 	CLKDEV_CON_DEV_ID(NULL, "fffff800.gpio", &pioCD_clk),
-+ 	CLKDEV_CON_DEV_ID(NULL, "fffffa00.gpio", &pioCD_clk),
-  	/* additional fake clock for macb_hclk */
-  	CLKDEV_CON_DEV_ID("hclk", "f802c000.ethernet", &macb0_clk),
-  	CLKDEV_CON_DEV_ID("hclk", "f8030000.ethernet", &macb1_clk),
+diff --cc drivers/mtd/nand/atmel_nand.c
+index 9144557,f48587b..0000000
+--- a/drivers/mtd/nand/atmel_nand.c
++++ b/drivers/mtd/nand/atmel_nand.c
+@@@ -1414,12 -585,19 +1416,20 @@@ static int __init atmel_nand_probe(stru
+  	nand_chip->IO_ADDR_W =3D host->io_base;
+  	nand_chip->cmd_ctrl =3D atmel_nand_cmd_ctrl;
+ =20
++ 	pinctrl =3D devm_pinctrl_get_select_default(&pdev->dev);
++ 	if (IS_ERR(pinctrl)) {
++ 		dev_err(host->dev, "Failed to request pinctrl\n");
++ 		res =3D PTR_ERR(pinctrl);
++ 		goto err_ecc_ioremap;
++ 	}
++=20
+  	if (gpio_is_valid(host->board.rdy_pin)) {
+- 		res =3D gpio_request(host->board.rdy_pin, "nand_rdy");
++ 		res =3D devm_gpio_request(&pdev->dev,
++ 				host->board.rdy_pin, "nand_rdy");
+  		if (res < 0) {
+  			dev_err(&pdev->dev,
+ -				"can't request rdy gpio %d\n", host->board.rdy_pin);
+ +				"can't request rdy gpio %d\n",
+ +				host->board.rdy_pin);
+  			goto err_ecc_ioremap;
+  		}
+ =20
+@@@ -1435,11 -612,11 +1444,12 @@@
+  	}
+ =20
+  	if (gpio_is_valid(host->board.enable_pin)) {
+- 		res =3D gpio_request(host->board.enable_pin, "nand_enable");
++ 		res =3D devm_gpio_request(&pdev->dev,
++ 				host->board.enable_pin, "nand_enable");
+  		if (res < 0) {
+  			dev_err(&pdev->dev,
+ -				"can't request enable gpio %d\n", host->board.enable_pin);
+ +				"can't request enable gpio %d\n",
+ +				host->board.enable_pin);
+  			goto err_ecc_ioremap;
+  		}
+ =20
+@@@ -1465,11 -664,11 +1475,12 @@@
+  	atmel_nand_enable(host);
+ =20
+  	if (gpio_is_valid(host->board.det_pin)) {
+- 		res =3D gpio_request(host->board.det_pin, "nand_det");
++ 		res =3D devm_gpio_request(&pdev->dev,
++ 				host->board.det_pin, "nand_det");
+  		if (res < 0) {
+  			dev_err(&pdev->dev,
+ -				"can't request det gpio %d\n", host->board.det_pin);
+ +				"can't request det gpio %d\n",
+ +				host->board.det_pin);
+  			goto err_no_card;
+  		}
+ =20
 
---Signature=_Fri__12_Oct_2012_14_08_52_+1100_=FV/ODks.bhBnHsy
+--Signature=_Fri__12_Oct_2012_14_30_59_+1100_5E/bAY9xEmFiKArQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQd4nEAAoJEECxmPOUX5FEc/wP+wXp3CIu7a1I8BaTA8VjLjyi
-Aahtea2VqEBn3H+Gnu5KE6m9cw/GawWzwWEr4tfH6IoypGf8LQsv1TenHz65ogq/
-6qUeu8ZSfOfCQJgOPAFWpGqnlX+CCDts0IE/uWHjFc5kRyqGt43eKFoMvvcLs8FD
-zWM+DRdnL4IbhrmyI0UquryHvbeAiI8UsA2+8cuq8RcDZjO5qz0PZTmLfpNMPnH8
-N1iJafQsKbSo5ETTnYaqmrA5LXHsvj77pXxMTqHT4SGh+R6ENjI0KsbJfJaRQCSW
-sOF0e/GblDYdIU8noKccDPDfVenBO2gtcFMTc/korzhLPaF2DhkVOpU9jqpbVqus
-bSNYCYTAFDkN3VTgVzXwkqG+KXBOgi5Jd7ZCRuR3fX/XvfzhnikZ7j46sfgcRMyl
-QJdxJaVJfo1T9XcQYU5rR+pLVNUBolncqYRK6VlVd3zpixn4VT+xiZdhCDkj7sYw
-UNFLcSksMJKfjpMKs78TgGCz8wgP3BTThXdqpoN3fPerVGgMti7ZEYm3fv9E+fhY
-yPvJgOx2AsG8+6bkadeFR/wfyI6cEvuwOKHl9yITFOOeyqa2K/C9LQpL+DwiZ0ZQ
-RFjzILohzd3UCaKK1mo5wkTJZmPrnILevtBAtsxqniCfiTn9DiOHVbCJri+VfU56
-Gd59T4mZFmSddfYdgOfT
-=2kkZ
+iQIcBAEBCAAGBQJQd47zAAoJEECxmPOUX5FEfJAP/i6gB1/y8Jj1kcZcp7RGEiE1
+4vnR0PjYNY11kbDJXF0zLha7A7V12EPbzZ0qMfHAmSaWc9J/mkskAkmsgv4WigXJ
+CB5CcFPhzXiXN9Fz617NTbbp/YMSy5e9MickR0L4zDtA9PL1nTnqnqgevawnpQel
+3xC3yyo3FcFV3IopnOfnkjKLIkT29bIXfgWTllEyyEncP4uXGAc8Qg/ByWO9FGHp
+uEzDzma/ONgbXlb88ZPb6OxuZdDIAuU35fdM6j7nDdiapyOfox56oGMZPsAAxYQS
+Qs9xe+dL76TwBYD0S/uK6We16+8ryPtatLICByDeysRUnuvmT0b1p9dypc7Zflpb
+/wZ7MMtrW/CHIflhLmYhKUuhqjNkvmrmrD2t5UzeFes/NxS3SQEPvwzZMGIsAyN1
+vMaFdolCmm85bsq9gsuHzEz3pcg04ulFD5irRfVr/KmO0gbC46ei5/VNFoDQ6StJ
+4ceMker+LQ1IwSUBrGd9W7ISLZwUZxIAwYu76sJH3i4liQzKTOZM+1pgiVUwxPg2
+DGHW9VpRQR9nu24GHAnighK8K39TRkGWGhLIBlb4KC6LtxJ4C22WZsdhMOBFHold
+nUzgmx0ZchfFolmhF95biA99inbwqxXTWK+ft5vOS2WcSoKZEctfzk204kc8ZW3l
+41sncSh++qJRHstl6rHE
+=S1SM
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__12_Oct_2012_14_08_52_+1100_=FV/ODks.bhBnHsy--
+--Signature=_Fri__12_Oct_2012_14_30_59_+1100_5E/bAY9xEmFiKArQ--
