@@ -1,44 +1,48 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: mmotm 2012-10-11-16-14 uploaded (media/i2c/m5mols/m5mols_core)
-Date: Fri, 12 Oct 2012 14:22:31 +0200
-Message-ID: <50780B87.3020202@samsung.com>
-References: <20121011231551.641101E0048@wpzn4.hot.corp.google.com>
- <5077B8F3.3050105@xenotime.net>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: linux-next: manual merge of the kmemleak tree with Linus' tree
+Date: Fri, 12 Oct 2012 16:22:06 +0100
+Message-ID: <20121012152205.GA13957@arm.com>
+References: <20121010140644.0235454126ca50b7f60d1f59@canb.auug.org.au>
+ <20121010045553.GB3975@swordfish>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <5077B8F3.3050105@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-media <linux-media@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:47060 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758028Ab2JLPWO convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Oct 2012 11:22:14 -0400
+In-Reply-To: <20121010045553.GB3975@swordfish>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michel Lespinasse <walken@google.com>, Andrew Morton <akpm@linux-foundation.org>
 
-On 10/12/2012 08:30 AM, Randy Dunlap wrote:
-> On 10/11/2012 04:15 PM, akpm@linux-foundation.org wrote:
+On Wed, Oct 10, 2012 at 05:55:53AM +0100, Sergey Senozhatsky wrote:
+> On (10/10/12 14:06), Stephen Rothwell wrote:
+> > Today's linux-next merge of the kmemleak tree got a conflict in
+> > mm/kmemleak.c between commit 85d3a316c714 ("kmemleak: use rbtree instead
+> > of prio tree") from Linus' tree and commit 48786770bf3b ("kmemleak: do
+> > not leak object after tree insertion error") from the kmemleak tree.
+> > 
+> > The kmemleak tree commit has been there since April, should it have
+> > progressed by now?  Its fix is also included in the above commit from
+> > Linus' tree.
+> > 
+> > I just used the version from Linus' tree and can carry the fix as
+> > necessary (no action is required).
 > 
->> The mm-of-the-moment snapshot 2012-10-11-16-14 has been uploaded to
->>
->>    http://www.ozlabs.org/~akpm/mmotm/
->>
->> mmotm-readme.txt says
->>
->> README for mm-of-the-moment:
->>
->> http://www.ozlabs.org/~akpm/mmotm/
->>
->> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->> more than once a week.
-> 
-> on x86_64:
-> 
->   CC [M]  drivers/media/i2c/m5mols/m5mols_core.o
-> drivers/media/i2c/m5mols/m5mols_core.c: In function 'm5mols_set_frame_desc':
-> drivers/media/i2c/m5mols/m5mols_core.c:636:24: error: 'SZ_1M' undeclared (first use in this function)
-> drivers/media/i2c/m5mols/m5mols_core.c:636:24: note: each undeclared identifier is reported only once for each function it appears in
-> make[5]: *** [drivers/media/i2c/m5mols/m5mols_core.o] Error 1
+> Oh, my bad! Just took a look on current create_object(). I guess we can
+> drop my patch.
 
-This issue has been fixed with commit
-1fdead8ad31d3aa833bc37739273fcde89ace93c
-[media] m5mols: Add missing #include <linux/sizes.h>
-which is already in Linus' tree.
+Sorry, I haven't pushed it early enough and I've seen the rbtree
+conversion patch in the meantime which was fixing this as well.
+
+I've updated my kmemleak branch now. Stephen, I guess you can remove
+this branch since I don't have any outstanding kmemleak patches.
+
+Thanks.
+
+-- 
+Catalin
