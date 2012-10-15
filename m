@@ -1,56 +1,63 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Mon, 15 Oct 2012 23:14:06 +0100
-Message-ID: <20121015221406.GA19848@arm.com>
-References: <20121015130728.06a0da8ae06c362aed2871fa@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kmemleak tree with Linus' tree
+Date: Tue, 16 Oct 2012 10:09:56 +1100
+Message-ID: <20121016100956.01325e0782b6c0aa1a2c2683@canb.auug.org.au>
+References: <20121010140644.0235454126ca50b7f60d1f59@canb.auug.org.au>
+	<20121010045553.GB3975@swordfish>
+	<20121012152205.GA13957@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__16_Oct_2012_10_09_56_+1100_FOD1RZxjXvpcgAFA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:53631 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932079Ab2JOWOP convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Oct 2012 18:14:15 -0400
-In-Reply-To: <20121015130728.06a0da8ae06c362aed2871fa@canb.auug.org.au>
-Content-Disposition: inline
+Received: from haggis.pcug.org.au ([203.10.76.10]:40711 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754533Ab2JOXKB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Oct 2012 19:10:01 -0400
+In-Reply-To: <20121012152205.GA13957@arm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michel Lespinasse <walken@google.com>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Stephen,
+--Signature=_Tue__16_Oct_2012_10_09_56_+1100_FOD1RZxjXvpcgAFA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 15, 2012 at 03:07:28AM +0100, Stephen Rothwell wrote:
-> Today's linux-next merge of the akpm tree got a conflict in
-> arch/arm64/include/asm/unistd32.h between commit f3d447a97f24 ("arm64: Do
-> not include asm/unistd32.h in asm/unistd.h") from Linus' tree and commit
-> "compat: generic compat_sys_sched_rr_get_interval implementation" from
-> the akpm tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as necessary
-> (no action is required).
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-> index 63f853f..0f13ca8 100644
-> --- a/arch/arm64/include/asm/unistd.h
-> +++ b/arch/arm64/include/asm/unistd.h
-> @@ -25,5 +25,6 @@
->  #define __ARCH_WANT_SYS_SIGPROCMASK
->  #define __ARCH_WANT_COMPAT_SYS_RT_SIGSUSPEND
->  #define __ARCH_WANT_COMPAT_SYS_SENDFILE
-> +#define __ARCH_WANT_COMPAT_SYS_SCHED_RR_GET_INTERVAL
->  #endif
->  #include <uapi/asm/unistd.h>
+Hi Catalin,
 
-The fix is correct (I moved the __ARCH_WANT_* from unistd32.h to
-unistd.h) but I'll post another version of the patch tomorrow for Andrew
-to merge.
+On Fri, 12 Oct 2012 16:22:06 +0100 Catalin Marinas <catalin.marinas@arm.com=
+> wrote:
+>
+> I've updated my kmemleak branch now. Stephen, I guess you can remove
+> this branch since I don't have any outstanding kmemleak patches.
 
-Thanks.
+Done.  Let me know if you get enthused about it again :-)
 
--- 
-Catalin
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__16_Oct_2012_10_09_56_+1100_FOD1RZxjXvpcgAFA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQfJfEAAoJEECxmPOUX5FEC1kP+wQcClw+taGs29sYnM6Vzc5y
+thcSGis+eB/PR1MwpqBFDQQ36N6PXU7T8sP+bfvAkb1EyYsAa7mcdxV8ohrYfrdS
+xIiu/kDw6IXUbOQwy3i+2/gSo+lgumCTyhY2oe9N+EUAoRE++wcnIb+QSWMudO+j
+uTKY3qiktyXFY3S4DJvmIVaUkJDyO3OuwzBE22ko2RBZl4rGmZddL2hUqFa4kR3C
+VwwPEWMdCb3YyTFpkRkMTaUgR3zHE4rtgjCYIUbvm8jJNbI9jEzkuU+Ns7d9RUPp
+9ilbf6WK5Wafns1EUpuQHHMrcY4oeXw7hFNwrPyvMHXf+7zwtfdpT27KSL1GoML+
+2bKMiy6VwjUeWLJv/UJobvkFEXm217L7u0pZBlSRtYz6qvET3T0kvYhhfgSSeL64
+pY4FNVq5y/5XWFL/JIUEULSVgi/okO/j35KtDSxM0wWCMKRlNsESzOjUsNyp7qw5
+ZRQ/YTJKuv31ySMd4vnylw5TpSgeERLW5fQC5J6Zis79mFLCchJV5i/UY3my9Ijn
+Cv+fhkmp3+b7gEuDelOcHBzyxMwKxVE7CPQ4M5Y5hfrHt4DyvDiF8QUk63Z2pQcX
+ufV9xh9nYjJPwm2X5qky/njGiDi9rZ+H5hg00+SVfOUKoJxOgYk92hrd8OGUiSKa
+7Yw+KId5tOU5wiIfut1u
+=qZV7
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__16_Oct_2012_10_09_56_+1100_FOD1RZxjXvpcgAFA--
