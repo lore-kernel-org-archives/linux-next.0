@@ -1,63 +1,70 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the kvm-ppc tree
-Date: Mon, 15 Oct 2012 11:41:29 +1100
-Message-ID: <20121015114129.c5be2be04e44043682b6b661@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -mmotm] kernel: fix synchro-test.c printk format warrnings
+Date: Sun, 14 Oct 2012 18:24:09 -0700
+Message-ID: <507B65B9.4080603@xenotime.net>
+References: <20121011231551.641101E0048@wpzn4.hot.corp.google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__15_Oct_2012_11_41_29_+1100_wG8cmxry.uWZ6yeG"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34051 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752377Ab2JOAlb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 14 Oct 2012 20:41:31 -0400
+Received: from oproxy11-pub.bluehost.com ([173.254.64.10]:55330 "HELO
+	oproxy11-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752555Ab2JOBYR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 14 Oct 2012 21:24:17 -0400
+In-Reply-To: <20121011231551.641101E0048@wpzn4.hot.corp.google.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Graf <agraf@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>
 
---Signature=_Mon__15_Oct_2012_11_41_29_+1100_wG8cmxry.uWZ6yeG
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Hi Alexander,
+Fix printk format warnings in kernel/synchro-test.c.
+Fixes warnings on i386 and on x86_64.
 
-Take into account that I removed the top two WIP commits from the kvm-ppc
-tree before the following ...
+kernel/synchro-test.c:432:4: warning: format '%u' expects type 'unsigned int', but argument 5 has type 'long unsigned int'
+kernel/synchro-test.c:437:4: warning: format '%u' expects type 'unsigned int', but argument 5 has type 'long unsigned int'
+kernel/synchro-test.c:442:4: warning: format '%u' expects type 'unsigned int', but argument 5 has type 'long unsigned int'
+kernel/synchro-test.c:447:4: warning: format '%u' expects type 'unsigned int', but argument 5 has type 'long unsigned int'
+kernel/synchro-test.c:452:4: warning: format '%u' expects type 'unsigned int', but argument 5 has type 'long unsigned int'
 
-After merging the kvm-ppc tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
+ kernel/synchro-test.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-ERROR: ".kvm_irqfd" [arch/powerpc/kvm/kvm.ko] undefined!
-ERROR: ".kvm_irqfd_release" [arch/powerpc/kvm/kvm.ko] undefined!
-ERROR: ".kvm_eventfd_init" [arch/powerpc/kvm/kvm.ko] undefined!
-ERROR: ".kvm_ioeventfd" [arch/powerpc/kvm/kvm.ko] undefined!
-
-I have used the kvm-ppc tree from next-20121012 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__15_Oct_2012_11_41_29_+1100_wG8cmxry.uWZ6yeG
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQe1u5AAoJEECxmPOUX5FExTUP/1uMy+0ALyVkYETdwnLGoy3h
-A4myTrpR5oL1Ao/VZXG6vCYjTDOhlQLlq0/99lN6e4itiQGZEbNuu/Z/wjYTBAad
-Nl+ecjjZrMdQ/n3lXKseeXIU0Hzt3b5d2aUGX0bLMArpz9zYc02jrWTJ8Yi+dnyh
-eKT5wsqGPDgtwAHNL07yKNIeKleGQR7wNiZMw8OZS8v36oelIumrtmQpjZIIdLnV
-ZMaeJpzBlljyglPANIAyOVZduAdiE2+jjhujtT0inbifMDtVS3AEoGVqVH+3T4Pu
-wCP5bYy9TYsj02u2adwZR8tmg4946fZNH6I60sUiF31LA41tdS41IJXw+FR7pIos
-k3JiaP8oNygVsWBBNAt9ItsHu952SGESuEzOpVvpmgdCqcng07+6Jf+PlavYUksZ
-emAguM+mddRQ1oX+L9rXbFdpTXoS+EH+ECNk7d+1W08pbd0we6xptIIQUDNeISz7
-Z1z0ztngH56kecoBROypA9fx4mLUDGByol7NYVI/OS0OE/ouXxNmZM+dsQrDMOe1
-nt4+aRF3FRIf7k5z+RZYZu3Xk4aR2GgABlLf6GU1JJrLTnoF/I7PfZ1DnG2xChiY
-LU+rryeOmasodkki150qeg9Nf5cyAE2E+fZhBiTRJn6M0gmraXwDdmlZ6uqyJtrI
-1BVSrEcoGEjFCP1R2Uqp
-=JK+H
------END PGP SIGNATURE-----
-
---Signature=_Mon__15_Oct_2012_11_41_29_+1100_wG8cmxry.uWZ6yeG--
+--- mmotm-2012-1011-1614.orig/kernel/synchro-test.c
++++ mmotm-2012-1011-1614/kernel/synchro-test.c
+@@ -429,27 +429,27 @@ static int __init do_tests(void)
+ 	for (loop = 0; loop < MAX_THREADS; loop++) {
+ 		if (loop < nummx) {
+ 			init_completion(&mx_comp[loop]);
+-			kthread_run(mutexer, (void *) loop, "Mutex%u", loop);
++			kthread_run(mutexer, (void *) loop, "Mutex%lu", loop);
+ 		}
+ 
+ 		if (loop < numsm) {
+ 			init_completion(&sm_comp[loop]);
+-			kthread_run(semaphorer, (void *) loop, "Sem%u", loop);
++			kthread_run(semaphorer, (void *) loop, "Sem%lu", loop);
+ 		}
+ 
+ 		if (loop < numrd) {
+ 			init_completion(&rd_comp[loop]);
+-			kthread_run(reader, (void *) loop, "Read%u", loop);
++			kthread_run(reader, (void *) loop, "Read%lu", loop);
+ 		}
+ 
+ 		if (loop < numwr) {
+ 			init_completion(&wr_comp[loop]);
+-			kthread_run(writer, (void *) loop, "Write%u", loop);
++			kthread_run(writer, (void *) loop, "Write%lu", loop);
+ 		}
+ 
+ 		if (loop < numdg) {
+ 			init_completion(&dg_comp[loop]);
+-			kthread_run(downgrader, (void *) loop, "Down%u", loop);
++			kthread_run(downgrader, (void *) loop, "Down%lu", loop);
+ 		}
+ 	}
+ 
