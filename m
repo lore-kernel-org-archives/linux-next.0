@@ -1,61 +1,56 @@
-From: Dong Aisheng <dong.aisheng@linaro.org>
-Subject: Re: linux-next: Tree for Oct 3 (mfd/syscon)
-Date: Mon, 15 Oct 2012 16:32:53 +0800
-Message-ID: <CAP1dx+yw93nUPozq8kcmQKtmHm5K+qMvEPQatn6Km1pHOC5dbw@mail.gmail.com>
-References: <20121003173007.c322d79c31676b9494a6bfd5@canb.auug.org.au>
-	<506CCAB9.4070402@xenotime.net>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 15 Oct 2012 23:14:06 +0100
+Message-ID: <20121015221406.GA19848@arm.com>
+References: <20121015130728.06a0da8ae06c362aed2871fa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ia0-f174.google.com ([209.85.210.174]:37065 "EHLO
-	mail-ia0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751348Ab2JOIcx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Oct 2012 04:32:53 -0400
-Received: by mail-ia0-f174.google.com with SMTP id y32so3491802iag.19
-        for <linux-next@vger.kernel.org>; Mon, 15 Oct 2012 01:32:53 -0700 (PDT)
-In-Reply-To: <506CCAB9.4070402@xenotime.net>
+Received: from service87.mimecast.com ([91.220.42.44]:53631 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932079Ab2JOWOP convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Oct 2012 18:14:15 -0400
+In-Reply-To: <20121015130728.06a0da8ae06c362aed2871fa@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Randy,
+Hi Stephen,
 
-On 4 October 2012 07:31, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On 10/03/2012 12:30 AM, Stephen Rothwell wrote:
->
->> Hi all,
->>
->> Do not add stuff destined for v3.8 to your linux-next included branches
->> until after v3.7-rc1 is released.
->>
->> Changes since 201201002:
->>
->
->
-> on i386:
->
->   CC      drivers/mfd/syscon.o
-> drivers/mfd/syscon.c:94:15: error: variable 'syscon_regmap_config' has initializer but incomplete type
-> drivers/mfd/syscon.c:95:2: error: unknown field 'reg_bits' specified in initializer
-> drivers/mfd/syscon.c:95:2: warning: excess elements in struct initializer
-> drivers/mfd/syscon.c:95:2: warning: (near initialization for 'syscon_regmap_config')
-> drivers/mfd/syscon.c:96:2: error: unknown field 'val_bits' specified in initializer
-> drivers/mfd/syscon.c:96:2: warning: excess elements in struct initializer
-> drivers/mfd/syscon.c:96:2: warning: (near initialization for 'syscon_regmap_config')
-> drivers/mfd/syscon.c:97:2: error: unknown field 'reg_stride' specified in initializer
-> drivers/mfd/syscon.c:97:2: warning: excess elements in struct initializer
-> drivers/mfd/syscon.c:97:2: warning: (near initialization for 'syscon_regmap_config')
-> drivers/mfd/syscon.c: In function 'syscon_probe':
-> drivers/mfd/syscon.c:124:2: error: invalid use of undefined type 'struct regmap_config'
-> drivers/mfd/syscon.c:125:2: error: implicit declaration of function 'devm_regmap_init_mmio'
-> drivers/mfd/syscon.c:125:17: warning: assignment makes pointer from integer without a cast
-> make[3]: *** [drivers/mfd/syscon.o] Error 1
->
->
-> Full randconfig file is attached.
->
-I sent out the fix patch with you CC-ed.
+On Mon, Oct 15, 2012 at 03:07:28AM +0100, Stephen Rothwell wrote:
+> Today's linux-next merge of the akpm tree got a conflict in
+> arch/arm64/include/asm/unistd32.h between commit f3d447a97f24 ("arm64: Do
+> not include asm/unistd32.h in asm/unistd.h") from Linus' tree and commit
+> "compat: generic compat_sys_sched_rr_get_interval implementation" from
+> the akpm tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary
+> (no action is required).
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+> index 63f853f..0f13ca8 100644
+> --- a/arch/arm64/include/asm/unistd.h
+> +++ b/arch/arm64/include/asm/unistd.h
+> @@ -25,5 +25,6 @@
+>  #define __ARCH_WANT_SYS_SIGPROCMASK
+>  #define __ARCH_WANT_COMPAT_SYS_RT_SIGSUSPEND
+>  #define __ARCH_WANT_COMPAT_SYS_SENDFILE
+> +#define __ARCH_WANT_COMPAT_SYS_SCHED_RR_GET_INTERVAL
+>  #endif
+>  #include <uapi/asm/unistd.h>
 
-Regards
-Dong Aisheng
+The fix is correct (I moved the __ARCH_WANT_* from unistd32.h to
+unistd.h) but I'll post another version of the patch tomorrow for Andrew
+to merge.
+
+Thanks.
+
+-- 
+Catalin
