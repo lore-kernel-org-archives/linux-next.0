@@ -1,105 +1,116 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the signal tree
-Date: Tue, 16 Oct 2012 13:53:22 +1100
-Message-ID: <20121016135322.997c84c8e3128a8a1ab3ef7d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Tue, 16 Oct 2012 14:50:29 +1100
+Message-ID: <20121016145029.d726d08c7f18668e3cd64a0a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__16_Oct_2012_13_53_22_+1100_32I9w20g7hoW2Lni"
+ boundary="Signature=_Tue__16_Oct_2012_14_50_29_+1100_KAK1i2DfbLN6Dd_A"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59155 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41679 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753007Ab2JPCx3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Oct 2012 22:53:29 -0400
+	with ESMTP id S1755285Ab2JPDul (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Oct 2012 23:50:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Al Viro <viro@ZenIV.linux.org.uk>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Tue__16_Oct_2012_13_53_22_+1100_32I9w20g7hoW2Lni
+--Signature=_Tue__16_Oct_2012_14_50_29_+1100_KAK1i2DfbLN6Dd_A
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Al,
 
-Today's linux-next merge of the akpm tree got a conflict in
-arch/arm64/kernel/sys_compat.c between commit 0fe8f08036a2 ("arm64: Use
-generic sys_execve() implementation") from the signal tree and commit
-"compat: generic compat_sys_sched_rr_get_interval implementation" from
-the akpm tree.
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+arch/sparc/kernel/head_64.o: In function `sys64_execve':
+(.text+0x1f58): relocation truncated to fit: R_SPARC_WDISP19 against symbol=
+ `sys_execve' defined in .text section in fs/built-in.o
+arch/sparc/kernel/head_64.o: In function `sys32_execve':
+(.text+0x1f64): relocation truncated to fit: R_SPARC_WDISP19 against symbol=
+ `compat_sys_execve' defined in .text section in fs/built-in.o
+
+Probably caused by commit 3223f8aab885 ("sparc64: convert to generic
+execve") and following from the signal tree.
+
+I have added this patch you suggested on IRC:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 16 Oct 2012 14:43:51 +1100
+Subject: [PATCH] sparc: fixup for conversion to generic execve
+
+Fixes these errors:
+
+arch/sparc/kernel/head_64.o: In function `sys64_execve':
+(.text+0x1f58): relocation truncated to fit: R_SPARC_WDISP19 against symbol=
+ `sys_execve' defined in .text section in fs/built-in.o
+arch/sparc/kernel/head_64.o: In function `sys32_execve':
+(.text+0x1f64): relocation truncated to fit: R_SPARC_WDISP19 against symbol=
+ `compat_sys_execve' defined in .text section in fs/built-in.o
+
+Dictated-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/kernel/syscalls.S |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/arch/sparc/kernel/syscalls.S b/arch/sparc/kernel/syscalls.S
+index 4bae096..f667cdf 100644
+--- a/arch/sparc/kernel/syscalls.S
++++ b/arch/sparc/kernel/syscalls.S
+@@ -2,15 +2,19 @@
+ 	 * environment settings are the same as the calling processes.
+ 	 */
+ sys64_execve:
+-	ba,pt	%xcc,sys_execve
+-	 flushw
++	flushw
++	mov	%o7, %l5
++	call	sys_execve
++	 mov	%l5, %o7
+=20
+ #ifdef CONFIG_COMPAT
+ sunos_execv:
+ 	mov	%g0, %o2
+ sys32_execve:
+-	ba,pt	%xcc,compat_sys_execve
+-	 flushw
++	flushw
++	mov	%o7, %l5
++	call	compat_sys_execve
++	 mov	%l5, %o7
+ #endif
+=20
+ 	.align	32
+--=20
+1.7.10.280.gaa39
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm64/kernel/sys_compat.c
-index d140b73,fd8ae6e..0000000
---- a/arch/arm64/kernel/sys_compat.c
-+++ b/arch/arm64/kernel/sys_compat.c
-@@@ -49,21 -49,24 +49,6 @@@ asmlinkage int compat_sys_vfork(struct=20
-  		       regs, 0, NULL, NULL);
-  }
- =20
-- asmlinkage int compat_sys_sched_rr_get_interval(compat_pid_t pid,
-- 						struct compat_timespec __user *interval)
-- {
-- 	struct timespec t;
-- 	int ret;
-- 	mm_segment_t old_fs =3D get_fs();
--=20
-- 	set_fs(KERNEL_DS);
-- 	ret =3D sys_sched_rr_get_interval(pid, (struct timespec __user *)&t);
-- 	set_fs(old_fs);
-- 	if (put_compat_timespec(&t, interval))
-- 		return -EFAULT;
-- 	return ret;
-- }
--=20
- -asmlinkage int compat_sys_execve(const char __user *filenamei,
- -				 compat_uptr_t argv, compat_uptr_t envp,
- -				 struct pt_regs *regs)
- -{
- -	int error;
- -	struct filename *filename;
- -
- -	filename =3D getname(filenamei);
- -	error =3D PTR_ERR(filename);
- -	if (IS_ERR(filename))
- -		goto out;
- -	error =3D compat_do_execve(filename->name, compat_ptr(argv),
- -					compat_ptr(envp), regs);
- -	putname(filename);
- -out:
- -	return error;
- -}
- -
-  static inline void
-  do_compat_cache_op(unsigned long start, unsigned long end, int flags)
-  {
-
---Signature=_Tue__16_Oct_2012_13_53_22_+1100_32I9w20g7hoW2Lni
+--Signature=_Tue__16_Oct_2012_14_50_29_+1100_KAK1i2DfbLN6Dd_A
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQfMwiAAoJEECxmPOUX5FE5kQP/2roERhSTUIEnD7l/ohQPXXh
-5tQLrw3tcZHnvYziNWXv+tYGMd/oR6ImwVymypsoRDrj3DAQhi3Eo8HD2O9QDY2Y
-BLB/bw4Rz1ksd5K88o3/QHCyumQpMRM2sS4tCb6g5FbYXIgSpwAXSTnBuspPzCFl
-G9glz15DiVJxEXelynmOhVJASPdQJ0XnEa32IPl8jr4vpS6VoUDVgHcLBAeJgxOp
-SX1xrrzK9TY2+5xhQrK77NTM37v06fowPSelgieuK1FLvkH+A1ugm+0hBAc2/lbF
-WXG0Ih1BCYlUU6WXjeHdvR03qJeZt+0uh+0YJQXzFN2e9wyTlz5Tnea2pTbX2xEn
-EhOLZ/13JXtag9N9WAN4BCrHsmeXlLhjtVwwp0rD00jor0biIPZBUQnmRKr52SLf
-CLkAwYFkhm28SkDt4TM6cpfye3g2aE+FNku9tSYQALMVW9TFrio0aow1kOzhrG0A
-PvPgqL7tKa1XDGbtCVIW/+04UrFhRbvEneyP3VlbIBsC8JAgKLeis5z1P26v1Gtj
-usbh2+hziyvN1TGTEf2mPkHDWhfJTU9vZtavOiNX4oYFHLs+S9huVZCSIh+M6EbU
-BlFuck33qDpFyFuuHoKeFWOwRYJRNw7DFBVoloxgXldG69aQRUS11hBecoLjmq4C
-PRIcfteDc5ZajPl3SgIG
-=YxiE
+iQIcBAEBCAAGBQJQfNmFAAoJEECxmPOUX5FE2QMP/1tCLAxrzHwVA+u4g1JXcaTP
+giYKwSP1ZGxUD+ieY1+VPhIAO+lxNN1QiYPmaiDVSf4Kd+MP10VDOA5/Kqzw6ECf
+JNbpIBmS8VQ+5r0DcoO8d5ZBHzhk/MV6RZQ60lpJ4GsUTbYIdqinXj8QTHqVaDM6
+r3+GTt3hznsfx9pZWV2MTvLVKCwxWFlck4f+Ckp+gjJLTYyr7UalUmTGMhfSEGUy
+DH2KSkX7ke5G7CsI65IRU5g5oQqPO3ma+whcsKx8pP7q9xQmaQ3GRAu+Dv2qnWCy
+5IeWJq9C9+IXIjKW3he9DXGg6oCqVkk2kRDRs/Np0Ymf6aY0Sa5YC1PI4DyCqHUE
+VyWOyS+27f9GoYo9PD7xDj+1sfeBEN/QqJO9Z0ps4jVo3gpIxNpVbCSR3jcNxnup
++dLOHNg3fJmOcUy6wmjM5um98EJ/6op2Z+ICP4MwwcWzs5+Uap2miB6H8uCyYIpp
+HLmkQnj2sbRULNM+O7Y/q/2/iidI6pwy/Sb4jz+2gZ5R/5IheT3q8KH1yXNde75b
+jNW2V42O5JItv2723jIlBTUFSnWaXx5u0LVXU4Ic8kLCbQwJY73L66rtsbqMSnpl
+a8/xrth1gTk5njpv8p/SXAnOXHuCqd/9/952WnxzBPCDDYoaJ/XTUw3EVSJm0DKT
+y3Yrjl1SZGa4thzjHTHe
+=v0FS
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__16_Oct_2012_13_53_22_+1100_32I9w20g7hoW2Lni--
+--Signature=_Tue__16_Oct_2012_14_50_29_+1100_KAK1i2DfbLN6Dd_A--
