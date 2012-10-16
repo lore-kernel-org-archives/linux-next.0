@@ -1,98 +1,44 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Tue, 16 Oct 2012 05:21:19 +0100
-Message-ID: <20121016042119.GP2616@ZenIV.linux.org.uk>
-References: <20121016145029.d726d08c7f18668e3cd64a0a@canb.auug.org.au>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: linux-next: manual merge of the cortex tree with Linus' tree
+Date: Tue, 16 Oct 2012 08:51:49 +0200
+Message-ID: <20121016065149.GO639@pengutronix.de>
+References: <20121016132052.0ac9f1f6b3fcbe946503793c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50086 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753355Ab2JPEVW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Oct 2012 00:21:22 -0400
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:51912 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754319Ab2JPGvv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Oct 2012 02:51:51 -0400
 Content-Disposition: inline
-In-Reply-To: <20121016145029.d726d08c7f18668e3cd64a0a@canb.auug.org.au>
+In-Reply-To: <20121016132052.0ac9f1f6b3fcbe946503793c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Russell King <rmk@arm.linux.org.uk>
 
-On Tue, Oct 16, 2012 at 02:50:29PM +1100, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
-> 
-> arch/sparc/kernel/head_64.o: In function `sys64_execve':
-> (.text+0x1f58): relocation truncated to fit: R_SPARC_WDISP19 against symbol `sys_execve' defined in .text section in fs/built-in.o
-> arch/sparc/kernel/head_64.o: In function `sys32_execve':
-> (.text+0x1f64): relocation truncated to fit: R_SPARC_WDISP19 against symbol `compat_sys_execve' defined in .text section in fs/built-in.o
-> 
-> Probably caused by commit 3223f8aab885 ("sparc64: convert to generic
-> execve") and following from the signal tree.
-> 
-> I have added this patch you suggested on IRC:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 16 Oct 2012 14:43:51 +1100
-> Subject: [PATCH] sparc: fixup for conversion to generic execve
-> 
-> Fixes these errors:
-> 
-> arch/sparc/kernel/head_64.o: In function `sys64_execve':
-> (.text+0x1f58): relocation truncated to fit: R_SPARC_WDISP19 against symbol `sys_execve' defined in .text section in fs/built-in.o
-> arch/sparc/kernel/head_64.o: In function `sys32_execve':
-> (.text+0x1f64): relocation truncated to fit: R_SPARC_WDISP19 against symbol `compat_sys_execve' defined in .text section in fs/built-in.o
-> 
-> Dictated-by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/sparc/kernel/syscalls.S |   12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/sparc/kernel/syscalls.S b/arch/sparc/kernel/syscalls.S
-> index 4bae096..f667cdf 100644
-> --- a/arch/sparc/kernel/syscalls.S
-> +++ b/arch/sparc/kernel/syscalls.S
-> @@ -2,15 +2,19 @@
->  	 * environment settings are the same as the calling processes.
->  	 */
->  sys64_execve:
-> -	ba,pt	%xcc,sys_execve
-> -	 flushw
-> +	flushw
-> +	mov	%o7, %l5
-> +	call	sys_execve
-> +	 mov	%l5, %o7
->  
->  #ifdef CONFIG_COMPAT
->  sunos_execv:
->  	mov	%g0, %o2
->  sys32_execve:
-> -	ba,pt	%xcc,compat_sys_execve
-> -	 flushw
-> +	flushw
-> +	mov	%o7, %l5
-> +	call	compat_sys_execve
-> +	 mov	%l5, %o7
->  #endif
+On Tue, Oct 16, 2012 at 01:20:52PM +1100, Stephen Rothwell wrote:
+> Hi Uwe,
+>=20
+> Today's linux-next merge of the cortex tree got a conflict in
+> arch/arm/kernel/process.c between commit 9e14f828ee4a ("arm: split
+> ret_from_fork, simplify kernel_thread() [based on patch by rmk]") fro=
+m
+> Linus' tree and commit 2f3e7d3436cb ("Cortex-M3: Add support for
+> exception handling") from the cortex tree.
+>=20
+> I have no idea how to fix this up, so I have just dropped this tree f=
+or
+> today.
+I'll look into it and rebase accordingly.
 
-BTW, that's really quick and dirty; I'm not at all sure we need that
-flushw there, which could make things much simpler.  Namely, kill
-sys64_execve completely, making it equivalent to sys_execve(), do the
-same to sys32_execve() (== compat_sys_execve()) and as for sunos_execv(),
-I'd simply put it into sys_sparc32.c as
-SYSCALL_DEFINE2(sunos_execv,
-		char __user *, filename,
-		const char __user *const __user *, argv)
-{
-	return compat_sys_execve(filename, argv, NULL);
-}
-We definitely want flushw in fork and friends, but I'm not sure what we
-need it for in execve(2)...
+Thanks
+Uwe
 
-Anyway, the brute-force variant works.  I had been lucky to stay within the
-ba,pt target limit on the config I used (very heavily modular, so not much
-code in vmlinux in the first place, let alone before fs/exec.o), so I'd missed
-the problem until now.  I've booted that with fatter config that would blow the
-previous variant at link time and it works.
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
