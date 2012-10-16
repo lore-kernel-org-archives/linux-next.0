@@ -1,42 +1,63 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] regmap: fix regmap.c printk format warning
-Date: Tue, 16 Oct 2012 13:30:18 -0700
-Message-ID: <507DC3DA.3030403@xenotime.net>
+From: Alex Deucher <alexdeucher@gmail.com>
+Subject: Re: linux-next: Tree for Oct 16 (readeon_legacy)
+Date: Tue, 16 Oct 2012 18:44:15 -0400
+Message-ID: <CADnq5_MbMF6OLTYZADVKjrA857JmtHBkJb0xX6WXac4WMyLrvw@mail.gmail.com>
 References: <20121016145856.cfddc9c898c31b1c686804d7@canb.auug.org.au>
+	<507DBDFF.8030204@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy12-pub.bluehost.com ([50.87.16.10]:36421 "HELO
-	oproxy12-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753939Ab2JPUaY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Oct 2012 16:30:24 -0400
-In-Reply-To: <20121016145856.cfddc9c898c31b1c686804d7@canb.auug.org.au>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:47201 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754534Ab2JPWoR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Oct 2012 18:44:17 -0400
+In-Reply-To: <507DBDFF.8030204@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Tue, Oct 16, 2012 at 4:05 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
+> On 10/15/2012 08:58 PM, Stephen Rothwell wrote:
+>
+>> Hi all,
+>>
+>> The merge window has closed, feel free to add new stuff again.
+>>
+>> Changes since 201201015:
+>>
 
-Fix printk format warning (found on x86_64):
+patch already sent to Dave:
+http://cgit.freedesktop.org/~airlied/linux/commit/?h=drm-fixes&id=cd23492af3d4401c02c48a4bebe5995c9498eac5
 
-drivers/base/regmap/regmap.c:861:4: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
+Alex
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- drivers/base/regmap/regmap.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20121016.orig/drivers/base/regmap/regmap.c
-+++ linux-next-20121016/drivers/base/regmap/regmap.c
-@@ -858,7 +858,7 @@ static int _regmap_raw_write(struct regm
- 
- 		/* If the write goes beyond the end of the window split it */
- 		while (val_num > win_residue) {
--			dev_dbg(map->dev, "Writing window %d/%d\n",
-+			dev_dbg(map->dev, "Writing window %d/%zu\n",
- 				win_residue, val_len / map->format.val_bytes);
- 			ret = _regmap_raw_write(map, reg, val, win_residue *
- 						map->format.val_bytes);
+>
+>
+> on x86_64:
+>
+> drivers/built-in.o: In function `radeon_asic_init':
+> (.text+0xd3c71): undefined reference to `radeon_legacy_set_backlight_level'
+> drivers/built-in.o:(.data+0x20490): undefined reference to `radeon_legacy_set_backlight_level'
+> drivers/built-in.o:(.data+0x20498): undefined reference to `radeon_legacy_get_backlight_level'
+> drivers/built-in.o:(.data+0x20710): undefined reference to `radeon_legacy_set_backlight_level'
+> drivers/built-in.o:(.data+0x20718): undefined reference to `radeon_legacy_get_backlight_level'
+> drivers/built-in.o:(.data+0x20990): undefined reference to `radeon_legacy_set_backlight_level'
+> drivers/built-in.o:(.data+0x20998): undefined reference to `radeon_legacy_get_backlight_level'
+> drivers/built-in.o:(.data+0x20c10): undefined reference to `radeon_legacy_set_backlight_level'
+> drivers/built-in.o:(.data+0x20c18): undefined reference to `radeon_legacy_get_backlight_level'
+> drivers/built-in.o:(.data+0x21110): undefined reference to `radeon_legacy_set_backlight_level'
+> drivers/built-in.o:(.data+0x21118): undefined reference to `radeon_legacy_get_backlight_level'
+>
+>
+> Full randconfig file is attached.
+> CONFIG_BACKLIGHT_CLASS_DEVICE is not enabled.
+>
+> --
+> ~Randy
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
