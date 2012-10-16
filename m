@@ -1,56 +1,105 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cortex tree with Linus' tree
-Date: Tue, 16 Oct 2012 13:20:52 +1100
-Message-ID: <20121016132052.0ac9f1f6b3fcbe946503793c@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the signal tree
+Date: Tue, 16 Oct 2012 13:53:22 +1100
+Message-ID: <20121016135322.997c84c8e3128a8a1ab3ef7d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__16_Oct_2012_13_20_52_+1100_Ubruad2t83pJLwt."
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Russell King <rmk@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__16_Oct_2012_13_53_22_+1100_32I9w20g7hoW2Lni"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59155 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753007Ab2JPCx3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Oct 2012 22:53:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Al Viro <viro@ZenIV.linux.org.uk>
 
---Signature=_Tue__16_Oct_2012_13_20_52_+1100_Ubruad2t83pJLwt.
+--Signature=_Tue__16_Oct_2012_13_53_22_+1100_32I9w20g7hoW2Lni
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Uwe,
+Hi Andrew,
 
-Today's linux-next merge of the cortex tree got a conflict in
-arch/arm/kernel/process.c between commit 9e14f828ee4a ("arm: split
-ret_from_fork, simplify kernel_thread() [based on patch by rmk]") from
-Linus' tree and commit 2f3e7d3436cb ("Cortex-M3: Add support for
-exception handling") from the cortex tree.
+Today's linux-next merge of the akpm tree got a conflict in
+arch/arm64/kernel/sys_compat.c between commit 0fe8f08036a2 ("arm64: Use
+generic sys_execve() implementation") from the signal tree and commit
+"compat: generic compat_sys_sched_rr_get_interval implementation" from
+the akpm tree.
 
-I have no idea how to fix this up, so I have just dropped this tree for
-today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__16_Oct_2012_13_20_52_+1100_Ubruad2t83pJLwt.
+diff --cc arch/arm64/kernel/sys_compat.c
+index d140b73,fd8ae6e..0000000
+--- a/arch/arm64/kernel/sys_compat.c
++++ b/arch/arm64/kernel/sys_compat.c
+@@@ -49,21 -49,24 +49,6 @@@ asmlinkage int compat_sys_vfork(struct=20
+  		       regs, 0, NULL, NULL);
+  }
+ =20
+- asmlinkage int compat_sys_sched_rr_get_interval(compat_pid_t pid,
+- 						struct compat_timespec __user *interval)
+- {
+- 	struct timespec t;
+- 	int ret;
+- 	mm_segment_t old_fs =3D get_fs();
+-=20
+- 	set_fs(KERNEL_DS);
+- 	ret =3D sys_sched_rr_get_interval(pid, (struct timespec __user *)&t);
+- 	set_fs(old_fs);
+- 	if (put_compat_timespec(&t, interval))
+- 		return -EFAULT;
+- 	return ret;
+- }
+-=20
+ -asmlinkage int compat_sys_execve(const char __user *filenamei,
+ -				 compat_uptr_t argv, compat_uptr_t envp,
+ -				 struct pt_regs *regs)
+ -{
+ -	int error;
+ -	struct filename *filename;
+ -
+ -	filename =3D getname(filenamei);
+ -	error =3D PTR_ERR(filename);
+ -	if (IS_ERR(filename))
+ -		goto out;
+ -	error =3D compat_do_execve(filename->name, compat_ptr(argv),
+ -					compat_ptr(envp), regs);
+ -	putname(filename);
+ -out:
+ -	return error;
+ -}
+ -
+  static inline void
+  do_compat_cache_op(unsigned long start, unsigned long end, int flags)
+  {
+
+--Signature=_Tue__16_Oct_2012_13_53_22_+1100_32I9w20g7hoW2Lni
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQfMSEAAoJEECxmPOUX5FEsgYP/jIgnGKnikApuThIXRdmlbB5
-qSdJ/u7LwHzAYcEQoP1U6ajdMliAUxvtF+mFOeb/9LVbuh7Vzus4GKpVhrM8dW4c
-svP1X+v22sJrrYqFmMYqE1V1Ko5PFPD4xijIK6mUKODHTsi2lhLOeD0m492CwTQp
-m4rMVIQqqsFLqcjYh6ssFqJ9+4QHzIuKwc8aVa0b7CkjjdFAuDqsuyzM0QHZmNOv
-Dy1TH3yeV6S6ZHJBYT5J3KDgNK2Iol8Q8oA8BpDgSpbNM43WI5iLvnq3DBJAPypS
-XVcgIKFOu/M9+LKUCc7OM4uavlUwOavC85gUI9B1Q4aOBb9kYTmT3PfUG/zZsYXJ
-QylXBD9FacY3PkDhJvvUyyN1FlSiBPVffH0laj2LBuHlL7xAlL45IA/aGoO6qpb+
-RkaGFovLFNxqh/KPT6RzuJXCPSryFlY2CsXezEKFqJ5LHXJbdWOFYoEYRCFQE0Yp
-LnrVc424ri3fhEJLbOaIdtKbTq8CMG+JFltwHxVY+2Ytae9c+Xy3wu8gCox8NHHW
-rEZ0gj+XhYgV823PZLsT2Cl1LjAg6T9MANw/mGbxdjPdeNWiKOAkl6sG3Z+Bk2DE
-IyqCIFOHduNA4I7mDCGX5Dct3Ph3TWA16mZPJw0sJzteMOBiiY8BUyh3XOc+5Xyj
-cRjP3USZ/9lZ1G01r02i
-=X7qE
+iQIcBAEBCAAGBQJQfMwiAAoJEECxmPOUX5FE5kQP/2roERhSTUIEnD7l/ohQPXXh
+5tQLrw3tcZHnvYziNWXv+tYGMd/oR6ImwVymypsoRDrj3DAQhi3Eo8HD2O9QDY2Y
+BLB/bw4Rz1ksd5K88o3/QHCyumQpMRM2sS4tCb6g5FbYXIgSpwAXSTnBuspPzCFl
+G9glz15DiVJxEXelynmOhVJASPdQJ0XnEa32IPl8jr4vpS6VoUDVgHcLBAeJgxOp
+SX1xrrzK9TY2+5xhQrK77NTM37v06fowPSelgieuK1FLvkH+A1ugm+0hBAc2/lbF
+WXG0Ih1BCYlUU6WXjeHdvR03qJeZt+0uh+0YJQXzFN2e9wyTlz5Tnea2pTbX2xEn
+EhOLZ/13JXtag9N9WAN4BCrHsmeXlLhjtVwwp0rD00jor0biIPZBUQnmRKr52SLf
+CLkAwYFkhm28SkDt4TM6cpfye3g2aE+FNku9tSYQALMVW9TFrio0aow1kOzhrG0A
+PvPgqL7tKa1XDGbtCVIW/+04UrFhRbvEneyP3VlbIBsC8JAgKLeis5z1P26v1Gtj
+usbh2+hziyvN1TGTEf2mPkHDWhfJTU9vZtavOiNX4oYFHLs+S9huVZCSIh+M6EbU
+BlFuck33qDpFyFuuHoKeFWOwRYJRNw7DFBVoloxgXldG69aQRUS11hBecoLjmq4C
+PRIcfteDc5ZajPl3SgIG
+=YxiE
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__16_Oct_2012_13_20_52_+1100_Ubruad2t83pJLwt.--
+--Signature=_Tue__16_Oct_2012_13_53_22_+1100_32I9w20g7hoW2Lni--
