@@ -1,30 +1,25 @@
-From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+From: Ingo Molnar <mingo@kernel.org>
 Subject: Re: linux-next: build failure after merge of the final tree
  (tip/s390 trees related)
-Date: Thu, 18 Oct 2012 18:26:42 +0200
-Message-ID: <20121018182642.2a541275@thinkpad>
+Date: Thu, 18 Oct 2012 20:29:53 +0200
+Message-ID: <20121018182953.GA20658@gmail.com>
 References: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
-Reply-To: gerald.schaefer@de.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp10.uk.ibm.com ([195.75.94.106]:34483 "EHLO
-	e06smtp10.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756258Ab2JRQ0u (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Oct 2012 12:26:50 -0400
-Received: from /spool/local
-	by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <gerald.schaefer@de.ibm.com>;
-	Thu, 18 Oct 2012 17:26:48 +0100
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:62094 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751763Ab2JRSaA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Oct 2012 14:30:00 -0400
+Content-Disposition: inline
 In-Reply-To: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
 
-On Thu, 18 Oct 2012 17:22:01 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
 > Hi all,
 > 
@@ -47,41 +42,9 @@ Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
 > Anyone have suggested merge fix patches I can apply?
 
-Subject: [PATCH] s390/thp: implement pmd_pgprot() for s390
+Resolved it for now by excluding those changes, will put them 
+back in once they are fixed.
 
-git commit "mm/thp: Preserve pgprot across huge page split" in
-linux-next introduced a pmd_pgprot() function, which is missing on
-s390, resulting in a compile error when transparent huge pages are
-enabled. This patch adds an implementation of pmd_pgprot() for s390.
+Thanks,
 
-Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
----
- arch/s390/include/asm/pgtable.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
-index f8887ab..2846920 100644
---- a/arch/s390/include/asm/pgtable.h
-+++ b/arch/s390/include/asm/pgtable.h
-@@ -1250,6 +1250,19 @@ static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
- 	*pmdp = entry;
- }
- 
-+static inline pgprot_t pmd_pgprot(pmd_t pmd)
-+{
-+	pgprot_t prot = PAGE_RW;
-+
-+	if (pmd_val(pmd) & _SEGMENT_ENTRY_RO) {
-+		if (pmd_val(pmd) & _SEGMENT_ENTRY_INV)
-+			prot = PAGE_NONE;
-+		else
-+			prot = PAGE_RO;
-+	}
-+	return prot;
-+}
-+
- static inline unsigned long massage_pgprot_pmd(pgprot_t pgprot)
- {
- 	unsigned long pgprot_pmd = 0;
--- 
-1.7.11.7
+	Ingo
