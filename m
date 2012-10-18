@@ -1,72 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (tip/s390
- trees related)
-Date: Thu, 18 Oct 2012 17:22:01 +1100
-Message-ID: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: linux-next: build failure after merge of the l2-mtd tree
+Date: Thu, 18 Oct 2012 12:26:38 +0300
+Message-ID: <1350552398.5769.304.camel@sauron.fi.intel.com>
+References: <20121012111451.ad2a5db59d470cf24393226a@canb.auug.org.au>
+	 <20121018112830.7649de7fb703a63dee285254@canb.auug.org.au>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__18_Oct_2012_17_22_01_+1100_dyWMS8fv./DAH75Z"
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-yPUsoUkWFNJnR7B/lr55"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52415 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754352Ab2JRGWP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Oct 2012 02:22:15 -0400
+Received: from mga09.intel.com ([134.134.136.24]:52682 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753405Ab2JRJ0S (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Oct 2012 05:26:18 -0400
+In-Reply-To: <20121018112830.7649de7fb703a63dee285254@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dinh Nguyen <dinguyen@altera.com>
 
---Signature=_Thu__18_Oct_2012_17_22_01_+1100_dyWMS8fv./DAH75Z
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+
+--=-yPUsoUkWFNJnR7B/lr55
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, 2012-10-18 at 11:28 +1100, Stephen Rothwell wrote:
+> Hi Artem,
+>=20
+> On Fri, 12 Oct 2012 11:14:51 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > After merging the l2-mtd tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > ERROR: "denali_init" [drivers/mtd/nand/denali_pci.ko] undefined!
+> > ERROR: "denali_remove" [drivers/mtd/nand/denali_pci.ko] undefined!
+> >=20
+> > Probably caused by commit 305b1ee29c8e ("mtd: denali: split the generic
+> > driver and PCI layer").
+> >=20
+> > I have used the l2-mtd tree from next-20121011 for today.
+>=20
+> This is still broken today.
 
-After merging the final tree, today's linux-next build (s390 allyesconfig)
-failed like this:
+Sorry for slowness, now it should be fixed.
 
-mm/huge_memory.c:1424:2: error: implicit declaration of function 'pmd_pgpro=
-t' [-Werror=3Dimplicit-function-declaration]
-mm/huge_memory.c:1424:7: error: incompatible types when assigning to type '=
-pgprot_t' from type 'int'
-
-(see http://kisskb.ellerman.id.au/kisskb/buildresult/7383823/)
-
-Caused by commit 35d3d3427314 ("s390/thp: select
-HAVE_ARCH_TRANSPARENT_HUGEPAGE") from the s390 tree interacting with
-commit 93c9d633bd9e ("mm/thp: Preserve pgprot across huge page split")
-from the tip tree.
-
-N.B. Mips also selects HAVE_ARCH_TRANSPARENT_HUGEPAGE as of commit
-e21a828a1bba ("MIPS: Transparent Huge Pages support") from the mips tree
-and so will be broken in some configs now as well.
-
-Anyone have suggested merge fix patches I can apply?
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Best Regards,
+Artem Bityutskiy
 
---Signature=_Thu__18_Oct_2012_17_22_01_+1100_dyWMS8fv./DAH75Z
-Content-Type: application/pgp-signature
+--=-yPUsoUkWFNJnR7B/lr55
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQf6AJAAoJEECxmPOUX5FEJfYP/R1P5W8BdqzX/JJgvRraTF80
-+3TTMcj+fXREJeBEr3iKIH/L16bO6lIcYE5qhvo1ow3o9gCU3n3tzy+YP3Oe1+gw
-WW+oMej50aF7p2ejYWJiX//L6ZLu0oXu3A9mg7UtNtbUUAESrAEILs5/GyrSib4A
-ay4qWCqQxBLf0EQLh55I/Q/LZuLAuB/GYh5oZiX4y07ODFxma58lKnYrbqBFmXfb
-a1LhlCyWlKO0KJAHHrBPzToM+Vmbexh5P5VuH4hjSiSEaZxQ/Yo2tj8zchK3XnLr
-Qze/6aBIKkbnthvwoBhd6dWkFxSfiQkx7jSRmtJUg261WQN9idtCBlrfwhAf0RFL
-LTXHMnTQJlmlkm0T9z21xHm6rgQ8Vug0Ep34imhJ3YsTPmnr61pyzUCdrBBgeiaJ
-WEYD4in/OUOjcJ5MuVLhlfdqmH1wHfZ20X0ftmqH4XnYK1Y6+0Cyyn3knHaDSKaV
-FLwkPsynbPPlcIoVjE3EYha9epc/JI/gG7aDq2hAv81orzvcF8amuxFVoHCG8f78
-F3JY7155wdgbdvFUJq7U7UemINcLGqVQPvjpZfvNi019PddnQ0jK9YypUhaqLPD7
-qzpfVzO4cGOfLF3Fwt/kZ2Ik5F6k8KIgk5WsEeNRXPNhOHnhAIPSa4zhd7J/JGoC
-Tlmh1qkUUASi9Afhdjo8
-=4DdM
+iQIcBAABAgAGBQJQf8tOAAoJECmIfjd9wqK08xgQAJZ7LvLUo8qPiUccmWafJy7M
+fbv6BjATcuwoNDcycHDql/DQj8xg+FEnIsu32399wG80uUci3rIZDXvgcKzMQyAf
+PS6pR3o1QGR81aB4brGafWTTlwKniQwFFKvkx1YXApOWa49dlwrxxsSlYgXzd62F
+r1RqCetD847WNcxvdAQ6qkRxH1NyZsm2swnUpy0ap/R05gV1Jf0k4jp8oUO5BS1O
+Erk4l7ZunD8amF/FMPUDsrEHhZmPtwWK3KXggQbFsQaD0zFmd682cq6G3jprwK6X
+1qLkbqlIOSug2ZCpchwPpzT2BjZK5dKMNcfv/+6qjb30+7LlUtQ1SDctfsZYLOmM
+baFOlPSv/KqZcuXyZCmkZ5I1yd8yM9gPKWNxJ+SH478iDWU0putfCwLJilbCeB7p
+M6OWlYFqgO27pTTan/lfDY/m2d1zEyFY1YJY/KHVk+I5I45m7yfS1rcRdwc6/+C4
+vNlLwiXBNmQzAGSCnWGfTfa3xMpi6Md5DDovw/sBLqp0XKoDOf8r1i3x3nwOdApy
+Whcn+Ce/ypaAPAjWw+LhTCXd1OBDIhp6FYv4gNxjRlAtlIw9K/R+VRlvSv6Jccqf
+QyE9CC9lpdh+5PTGO47JnE5r62T5VEir9KhMc9xAI1mRpNJ9TTxeiLbGPaggRekb
+bQIyRXzLBEimGmBRipyi
+=QgMJ
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__18_Oct_2012_17_22_01_+1100_dyWMS8fv./DAH75Z--
+--=-yPUsoUkWFNJnR7B/lr55--
