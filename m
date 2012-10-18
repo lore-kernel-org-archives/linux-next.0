@@ -1,116 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the m68knommu tree with the  tree
-Date: Thu, 18 Oct 2012 10:38:26 +1100
-Message-ID: <20121018103826.c8e1312904747b31caa376f6@canb.auug.org.au>
-References: <20121018103713.0ccb63374964501c3d8d99a5@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the l2-mtd tree
+Date: Thu, 18 Oct 2012 11:28:30 +1100
+Message-ID: <20121018112830.7649de7fb703a63dee285254@canb.auug.org.au>
+References: <20121012111451.ad2a5db59d470cf24393226a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__18_Oct_2012_10_38_26_+1100_lte5KU8sS+xUIgr0"
+ boundary="Signature=_Thu__18_Oct_2012_11_28_30_+1100_mad=jOeVAU69I.Th"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35940 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:52283 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752701Ab2JQXi3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Oct 2012 19:38:29 -0400
-In-Reply-To: <20121018103713.0ccb63374964501c3d8d99a5@canb.auug.org.au>
+	with ESMTP id S1752926Ab2JRA2j (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Oct 2012 20:28:39 -0400
+In-Reply-To: <20121012111451.ad2a5db59d470cf24393226a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Ungerer <gerg@snapgear.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dinh Nguyen <dinguyen@altera.com>
 
---Signature=_Thu__18_Oct_2012_10_38_26_+1100_lte5KU8sS+xUIgr0
+--Signature=_Thu__18_Oct_2012_11_28_30_+1100_mad=jOeVAU69I.Th
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-[Just cc'ing Geert]
+Hi Artem,
 
-On Thu, 18 Oct 2012 10:37:13 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Fri, 12 Oct 2012 11:14:51 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
-> Hi Greg,
+> After merging the l2-mtd tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 >=20
-> Today's linux-next merge of the m68knommu tree got conflicts in
-> arch/m68k/include/asm/termios.h, arch/m68k/include/uapi/asm/auxvec.h,
-> arch/m68k/include/uapi/asm/msgbuf.h, arch/m68k/include/uapi/asm/sembuf.h,
-> arch/m68k/include/uapi/asm/shmbuf.h, arch/m68k/include/uapi/asm/socket.h,
-> arch/m68k/include/uapi/asm/sockios.h and
-> arch/m68k/include/uapi/asm/termbits.h between commit 10b3a979347d ("UAPI:
-> (Scripted) Disintegrate arch/m68k/include/asm") from the m68k-current
-> tree and various commits from the m68knommu tree that use the asm-generic
-> versions.
+> ERROR: "denali_init" [drivers/mtd/nand/denali_pci.ko] undefined!
+> ERROR: "denali_remove" [drivers/mtd/nand/denali_pci.ko] undefined!
 >=20
-> I just deleted all those files and added the following merge fix patch
-> and can carry the fix as necessary.
+> Probably caused by commit 305b1ee29c8e ("mtd: denali: split the generic
+> driver and PCI layer").
 >=20
-> I think that this is the correct thing to do ...
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 18 Oct 2012 10:32:20 +1100
-> Subject: [PATCH] m68k: fix up for UAPI changes
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/m68k/include/uapi/asm/Kbuild |    8 --------
->  1 file changed, 8 deletions(-)
->=20
-> diff --git a/arch/m68k/include/uapi/asm/Kbuild b/arch/m68k/include/uapi/a=
-sm/Kbuild
-> index 972bce1..aebdbf5 100644
-> --- a/arch/m68k/include/uapi/asm/Kbuild
-> +++ b/arch/m68k/include/uapi/asm/Kbuild
-> @@ -2,25 +2,17 @@
->  include include/uapi/asm-generic/Kbuild.asm
-> =20
->  header-y +=3D a.out.h
-> -header-y +=3D auxvec.h
->  header-y +=3D byteorder.h
->  header-y +=3D cachectl.h
->  header-y +=3D fcntl.h
->  header-y +=3D ioctls.h
-> -header-y +=3D msgbuf.h
->  header-y +=3D param.h
->  header-y +=3D poll.h
->  header-y +=3D posix_types.h
->  header-y +=3D ptrace.h
-> -header-y +=3D sembuf.h
->  header-y +=3D setup.h
-> -header-y +=3D shmbuf.h
->  header-y +=3D sigcontext.h
->  header-y +=3D signal.h
-> -header-y +=3D socket.h
-> -header-y +=3D sockios.h
->  header-y +=3D stat.h
->  header-y +=3D swab.h
-> -header-y +=3D termbits.h
-> -header-y +=3D termios.h
->  header-y +=3D unistd.h
-> --=20
-> 1.7.10.280.gaa39
+> I have used the l2-mtd tree from next-20121011 for today.
 
+This is still broken today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__18_Oct_2012_10_38_26_+1100_lte5KU8sS+xUIgr0
+--Signature=_Thu__18_Oct_2012_11_28_30_+1100_mad=jOeVAU69I.Th
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQf0FyAAoJEECxmPOUX5FE3qMP/00Q8feuStfBPM7Wd1kZnOwF
-ueRuENmG3lIgzcRECz1rzPSezTBi9/KRxDYFDxzINP5Hemf35j+g8LNt05BnejKi
-oL96eOcJkZUtbgczrd3o6/dviHH11IdPtER7XoWUzXuawXbalpTVEumDP/Y1fOdu
-VdT7I6K062VDJP9kRbIeYymP/0a9lRb3brlgI8UrbaB/hWN3aErvy4q28I29GBad
-7VSn3MIwS2MpkiWI/cxlRfBoL9JIQbDu5BMWu2d65Y7Ktx3+5V8Oy+Fw2K9Q6Ryw
-+37evG7+yF8LvzUR5WRjjOVFKFjSCB2zrtbHhNW1jzzQ8AI8Mqghhp7l+7u199to
-YSs6iiziML+vd467Mwrhot+Y1JKv8dmEchX91vKLt5w9k0wlLwxgBdKv67uprv06
-D9qbiXQ0AkA/Jxg7T4n/TVrMTzMorcObhw6bLAzS6GBPJ+hgv7b2OK1U1cZea2CK
-QUf1dFSGepZU1MJ9i13msNsusG0AmYhveHwn6wJrjPgdExnpNvrg/Lzy/5tOyrCu
-bvDTAZwYZJ/Ex9bYFh3uIaVELWb/qdIZRGQttb5witW1GENAIg5Qmyr078h/n3SM
-lBccUu5VFTGvYe2dprlQWB2TfYI381G5OU0rKgK68uUwYCi7ix7b7AlJMWo5wGqE
-DNtt/y8kN1sVuh4paqUM
-=uv0L
+iQIcBAEBCAAGBQJQf00uAAoJEECxmPOUX5FE2HwP/0SH2fNk8pDFlUCvSBFao373
+ArMgnAC1fw8KvKTiziqNwJ0o3Sc4XB0qDovEeu5bs2bP7lAyhU/LyOvmEbZG5myD
+69V5kLYBTy2WtZUhu38IrCEzNrcSoXIHazlgPrYAejl5or0azoQNwnRYkc9a/iXq
+oPLZAiHqAcYNYquuMKnGevwZRKcohip7Hgk9it8ryIqeDghZiRXS6fEj99z6tlsn
+UAyTBsLNN0puzHug2fLDqn0LvyMiaNxdrhv+kZeqtEnD9gJtgKRDMeSnOHeWlwUV
+tgIeGE2KB8u2N10GoHvD0wBRqQxrzBxc8ELiLoz23k/OHJqDrxRIZSGSc7NEAECb
+YJx4bQxE2V70xiyQN5p0Z8jEXHPHuRX2u8xSfCY46dP4eikOfBPbzfhxAxKm8htz
+xmozvj5xPNRGtTMoYMNAFkMkQkJ1heoPCUqs1JlkFg4A5KAunqT+dF+KSLwDbBik
+n9JExu2cJsz2gqY/bhyQp6oU0occfBsF705yvzDxm0ANf2YzotvAaRDK8HHHA65o
+YVbnC8tDErTuoXQXRdzqre6H4bnVkx+1yIjl7Q3dzKScuYEoZWYDNqfly9xrDgaR
+JMpcgapsL5N9KBg1dG7PCFs4Z+yAptL00479yftlwrA9iG94/BGF5M3q/AEwK0iJ
+dxVyBbOay/HDzk0MMCUc
+=U6O8
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__18_Oct_2012_10_38_26_+1100_lte5KU8sS+xUIgr0--
+--Signature=_Thu__18_Oct_2012_11_28_30_+1100_mad=jOeVAU69I.Th--
