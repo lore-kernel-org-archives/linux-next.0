@@ -1,65 +1,94 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: build failure after merge of the final tree
- (tip/s390 trees related)
-Date: Sat, 20 Oct 2012 00:43:45 +0200
-Message-ID: <20121019224345.GC12658@gmail.com>
-References: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
- <20121018182953.GA20658@gmail.com>
- <20121019140702.39b6e85901be2e39254b576a@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] ASoC: fix wm2200.c printk format warnings
+Date: Fri, 19 Oct 2012 16:13:07 -0700
+Message-ID: <5081DE83.2060402@xenotime.net>
+References: <20121019135419.f996aed8ed85ee50a782a649@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:46665 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755472Ab2JSWnw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Oct 2012 18:43:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20121019140702.39b6e85901be2e39254b576a@canb.auug.org.au>
+Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:47848 "HELO
+	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754309Ab2JSXNN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Oct 2012 19:13:13 -0400
+In-Reply-To: <20121019135419.f996aed8ed85ee50a782a649@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, moderated for non-subscribers <alsa-devel@alsa-project.org>
 
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Fix wm2200.c printk format warnings (seen on x86_64):
 
-> Hi Ingo,
-> 
-> On Thu, 18 Oct 2012 20:29:53 +0200 Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > 
-> > > After merging the final tree, today's linux-next build (s390 allyesconfig)
-> > > failed like this:
-> > > 
-> > > mm/huge_memory.c:1424:2: error: implicit declaration of function 'pmd_pgprot' [-Werror=implicit-function-declaration]
-> > > mm/huge_memory.c:1424:7: error: incompatible types when assigning to type 'pgprot_t' from type 'int'
-> > > 
-> > > (see http://kisskb.ellerman.id.au/kisskb/buildresult/7383823/)
-> > > 
-> > > Caused by commit 35d3d3427314 ("s390/thp: select
-> > > HAVE_ARCH_TRANSPARENT_HUGEPAGE") from the s390 tree interacting with
-> > > commit 93c9d633bd9e ("mm/thp: Preserve pgprot across huge page split")
-> > > from the tip tree.
-> > > 
-> > > N.B. Mips also selects HAVE_ARCH_TRANSPARENT_HUGEPAGE as of commit
-> > > e21a828a1bba ("MIPS: Transparent Huge Pages support") from the mips tree
-> > > and so will be broken in some configs now as well.
-> > > 
-> > > Anyone have suggested merge fix patches I can apply?
-> > 
-> > Resolved it for now by excluding those changes, will put them 
-> > back in once they are fixed.
-> 
-> It looks as though you have not gone back far enough - you 
-> removed a couple of merges of sched/numa, but there are more. 
-> I have two of the problems resolved with merge patches that 
-> supply pmd_pgprot() for s390 and mips, but there is another 
-> problem with mips (see Ralf's other email).
+sound/soc/codecs/wm2200.c:1027:4: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+sound/soc/codecs/wm2200.c:1139:5: warning: format '%d' expects type 'int', but argument 5 has type 'long unsigned int'
+sound/soc/codecs/wm2200.c:1181:2: warning: format '%d' expects type 'int', but argument 7 has type 'size_t'
+sound/soc/codecs/wm2200.c:1201:5: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'long unsigned int'
+sound/soc/codecs/wm2200.c:1264:4: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+sound/soc/codecs/wm2200.c:1328:5: warning: format '%d' expects type 'int', but argument 5 has type 'long unsigned int'
 
-Yeah. All of this should be resolved now in principle. Next time 
-you'll integrate linux-next is on Monday, right?
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc:	Liam Girdwood <lrg@ti.com>
+Cc:	Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+---
+ sound/soc/codecs/wm2200.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Thanks,
-
-	Ingo
+--- linux-next-20121019.orig/sound/soc/codecs/wm2200.c
++++ linux-next-20121019/sound/soc/codecs/wm2200.c
+@@ -1023,7 +1023,7 @@ static int wm2200_dsp_load(struct snd_so
+ 
+ 	pos = sizeof(*header) + sizeof(*adsp1_sizes) + sizeof(*footer);
+ 	if (pos >= firmware->size) {
+-		dev_err(codec->dev, "%s: file too short, %d bytes\n",
++		dev_err(codec->dev, "%s: file too short, %zu bytes\n",
+ 			file, firmware->size);
+ 		return -EINVAL;
+ 	}
+@@ -1135,7 +1135,7 @@ static int wm2200_dsp_load(struct snd_so
+ 	}
+ 
+ 	if (pos > firmware->size)
+-		dev_warn(codec->dev, "%s.%d: %d bytes at end of file\n",
++		dev_warn(codec->dev, "%s.%d: %zu bytes at end of file\n",
+ 			 file, regions, pos - firmware->size);
+ 
+ out:
+@@ -1178,7 +1178,7 @@ static int wm2200_setup_algs(struct snd_
+ 	}
+ 
+ 	algs = be32_to_cpu(id.algs);
+-	dev_info(codec->dev, "Firmware: %x v%d.%d.%d, %d algorithms\n",
++	dev_info(codec->dev, "Firmware: %x v%d.%d.%d, %zu algorithms\n",
+ 		 be32_to_cpu(id.fw.id),
+ 		 (be32_to_cpu(id.fw.ver) & 0xff000) >> 16,
+ 		 (be32_to_cpu(id.fw.ver) & 0xff00) >> 8,
+@@ -1196,7 +1196,7 @@ static int wm2200_setup_algs(struct snd_
+ 	}
+ 
+ 	if (be32_to_cpu(val) != 0xbedead)
+-		dev_warn(codec->dev, "Algorithm list end %x 0x%x != 0xbeadead\n",
++		dev_warn(codec->dev, "Algorithm list end %zx 0x%x != 0xbeadead\n",
+ 			 (sizeof(id) + (algs * sizeof(*alg))) / 2,
+ 			 be32_to_cpu(val));
+ 
+@@ -1260,7 +1260,7 @@ static int wm2200_load_coeff(struct snd_
+ 	}
+ 
+ 	if (sizeof(*hdr) >= firmware->size) {
+-		dev_err(codec->dev, "%s: file too short, %d bytes\n",
++		dev_err(codec->dev, "%s: file too short, %zu bytes\n",
+ 			file, firmware->size);
+ 		return -EINVAL;
+ 	}
+@@ -1324,7 +1324,7 @@ static int wm2200_load_coeff(struct snd_
+ 	}
+ 
+ 	if (pos > firmware->size)
+-		dev_warn(codec->dev, "%s.%d: %d bytes at end of file\n",
++		dev_warn(codec->dev, "%s.%d: %zu bytes at end of file\n",
+ 			 file, blocks, pos - firmware->size);
+ 
+ 	return 0;
