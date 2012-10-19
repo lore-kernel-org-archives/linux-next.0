@@ -1,18 +1,18 @@
 From: Ingo Molnar <mingo@kernel.org>
 Subject: Re: linux-next: build failure after merge of the final tree
  (tip/s390 trees related)
-Date: Sat, 20 Oct 2012 00:36:24 +0200
-Message-ID: <20121019223624.GA12658@gmail.com>
+Date: Sat, 20 Oct 2012 00:39:38 +0200
+Message-ID: <20121019223938.GB12658@gmail.com>
 References: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
  <20121018150209.GB17439@linux-mips.org>
  <1350683562.2768.78.camel@twins>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:44735 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753694Ab2JSWga (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Oct 2012 18:36:30 -0400
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:46599 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754727Ab2JSWjp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Oct 2012 18:39:45 -0400
 Content-Disposition: inline
 In-Reply-To: <1350683562.2768.78.camel@twins>
 Sender: linux-next-owner@vger.kernel.org
@@ -21,25 +21,14 @@ To: Peter Zijlstra <peterz@infradead.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Thu, 2012-10-18 at 17:02 +0200, Ralf Baechle wrote:
-> >   CC      mm/huge_memory.o
-> > mm/huge_memory.c: In function ???do_huge_pmd_prot_none???:
-> > mm/huge_memory.c:789:3: error: incompatible type for argument 3 of ???update_mmu_cache???
-> 
-> That appears to have become update_mmu_cache_pmd(), which 
-> makes sense given that there's now architectures that care 
-> about it.
-
-Ok, I fixed it as per below. Does everyone agree?
+Actually, there's two sites - find the updated patch below.
 
 Thanks,
 
 	Ingo
 
----------------->
->From 6e683978132907ff339e8a01a4d901c75709e62c Mon Sep 17 00:00:00 2001
+--------------->
+>From 7fc4d49214dba401f4b92ed62da60a5b257a653a Mon Sep 17 00:00:00 2001
 From: Ingo Molnar <mingo@kernel.org>
 Date: Sat, 20 Oct 2012 00:33:01 +0200
 Subject: [PATCH] MIPS/thp: Fix update_mmu_cache() cache call
@@ -59,11 +48,11 @@ Acked-by: Peter Zijlstra <peterz@infradead.org>
 Link: http://lkml.kernel.org/r/20121018145101.GA17439@linux-mips.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- mm/huge_memory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/huge_memory.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 8100c01..57c5018 100644
+index 8100c01..1068e78 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
 @@ -770,7 +770,7 @@ fixup:
@@ -75,3 +64,12 @@ index 8100c01..57c5018 100644
  
  unlock:
  	spin_unlock(&mm->page_table_lock);
+@@ -846,7 +846,7 @@ migrate:
+ 	page_add_new_anon_rmap(new_page, vma, haddr);
+ 
+ 	set_pmd_at(mm, haddr, pmd, entry);
+-	update_mmu_cache(vma, address, entry);
++	update_mmu_cache_pmd(vma, address, entry);
+ 	page_remove_rmap(page);
+ 	spin_unlock(&mm->page_table_lock);
+ 
