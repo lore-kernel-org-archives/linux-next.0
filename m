@@ -1,31 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the final tree
  (tip/s390 trees related)
-Date: Fri, 19 Oct 2012 13:56:31 +1100
-Message-ID: <20121019135631.3974b95cb4d8b40e6e8c4550@canb.auug.org.au>
+Date: Fri, 19 Oct 2012 13:57:26 +1100
+Message-ID: <20121019135726.289acddb5301586444724c6a@canb.auug.org.au>
 References: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
-	<20121018145101.GA17439@linux-mips.org>
+	<20121018182642.2a541275@thinkpad>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__19_Oct_2012_13_56_31_+1100_DstGz=asMZfayNs/"
+ boundary="Signature=_Fri__19_Oct_2012_13_57_26_+1100_CaJ+LBuINQ6_ARUI"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121018145101.GA17439@linux-mips.org>
+In-Reply-To: <20121018182642.2a541275@thinkpad>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gerald.schaefer@de.ibm.com
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__19_Oct_2012_13_56_31_+1100_DstGz=asMZfayNs/
+--Signature=_Fri__19_Oct_2012_13_57_26_+1100_CaJ+LBuINQ6_ARUI
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi Gerald,
 
-On Thu, 18 Oct 2012 16:51:01 +0200 Ralf Baechle <ralf@linux-mips.org> wrote:
+On Thu, 18 Oct 2012 18:26:42 +0200 Gerald Schaefer <gerald.schaefer@de.ibm.=
+com> wrote:
 >
-> On Thu, Oct 18, 2012 at 05:22:01PM +1100, Stephen Rothwell wrote:
+> On Thu, 18 Oct 2012 17:22:01 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >=20
 > > After merging the final tree, today's linux-next build (s390 allyesconf=
 ig)
@@ -49,34 +51,40 @@ pe 'pgprot_t' from type 'int'
 > >=20
 > > Anyone have suggested merge fix patches I can apply?
 >=20
-> See below.
+> Subject: [PATCH] s390/thp: implement pmd_pgprot() for s390
+>=20
+> git commit "mm/thp: Preserve pgprot across huge page split" in
+> linux-next introduced a pmd_pgprot() function, which is missing on
+> s390, resulting in a compile error when transparent huge pages are
+> enabled. This patch adds an implementation of pmd_pgprot() for s390.
+>=20
+> Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
 
 I have added that to linux-next today as a merge fix.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__19_Oct_2012_13_56_31_+1100_DstGz=asMZfayNs/
+--Signature=_Fri__19_Oct_2012_13_57_26_+1100_CaJ+LBuINQ6_ARUI
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQgMFfAAoJEECxmPOUX5FEL3kP/R5Ib9BWJFipGr2Gk4JaLSex
-l5BnWotzM78OgBFk2Qpb2kL20rFmTPIzoDfdUmt9Rb4K8gWlnt+DwL3bU4ePl+1Z
-DoR+uh7sgQ3S9n2dy/Vx81kFOIu9GmIfLF79sIYBSXiD0jDyzjcHjpEY0R6uAHp1
-icFpeJKyakNRf66elOU3Gty2R1daypFgQf60wWc+lNncHtrfSNDdbMVnRVLfHNyO
-hVCjv+ZzaWvDotHSBbWeWoganjavEqkBghDXvaziK6TZ2WalVLduAYlfM8zqVZF2
-0sleU+pNnlWnw1PHotFpiirYfr1hsB9/3h+oR44jKM73/147QDTOHQd262FaY/UJ
-1ocWpwSOhuw8rGgeGzbfw+eooOC/Vsh8YX8zT/2eBkznWtWrFY/wMtBSZtzTb+O0
-thtdjOXX1YeGRCmeKxER40fXVoTnL7ALbWXY9VbS92xjBFvQv+8PQz/Bt+zZXdI+
-PTuCJfeqlbFpe94mPGYAi1Uf9+a+ovJovtgokJdIylouhnGaP1dLDd+B3LGVYZKi
-pGGfCdnXHFcfmwgmKLTkpfnK28hPgEEMX6onTTQ90yOj8uadyjFI3pM0QuYDzx0r
-i349Z+AY0rz6XS6yfTssng4Xq2SaAJvKYq2FazdQOW46bhVBtd0wVhNgev1oPuAx
-dnqzEVysSjPIaI9xxub8
-=Z1eG
+iQIcBAEBCAAGBQJQgMGWAAoJEECxmPOUX5FE4PgQAKTrBYSVjas6b50MFxNz7t0M
+0H18+g708N17qZl61JIYFWgodNPxrPClyNMoOOplEb+xWAiOPzuk4Nk/FZ/CKu3d
+4Iqlmw+xQ77bJqeNjVxN7/0y3bYJvxSy/cMHxAnAlQkbPvaHc9dSH0x5Ro31MSme
+CUueNS3iKc3CaaztrPoU28+q/XwqVkm+AqQvO2JgtXet0clexNASCrziPbn9SOhG
+9IUB7HYnHzwHQD9tcbdYSdVZprsL/5e9h+S9h2/9RLMyd+VrE1nSjSEQzQ1coe+z
+BROu3KxbQL2CdMweRImyK3PsLAyOFRM+RxrdbhnnAB2WSr0+2KQVBaOEA+S4QVc7
+2PUXDfNhLyI6irzOwlZOjZq2q8QugyP74TMU2MwPahXWNBPYn3GLskfCrApZ/TRX
+FFd/TbDwwd8J4Zan8Wc1d6JD0krwQA4nC6ModydidDvkgETDUL3wyQW2o21iqDh8
+kvYWp39aLdMcql/hFAg73jFDb0h4AmcOhUtMseTqXVw9lRP5U4z3PpoB580rUpsj
+eJbtc8HnghDXxV9PEd0ctiTtHtW8D0BzpvJktsUmdQrs7+TMy1Ml0XWlso5Nlw+f
+/+UP0cD54VTOt3+t4NnibXfpvg56ta//nk3vFz3LVX6Q1XwOUE5aRTovY2r43Eqo
+2F0YEJx7e1CfHkBPHUmB
+=LuFi
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__19_Oct_2012_13_56_31_+1100_DstGz=asMZfayNs/--
+--Signature=_Fri__19_Oct_2012_13_57_26_+1100_CaJ+LBuINQ6_ARUI--
