@@ -1,32 +1,29 @@
 From: Ingo Molnar <mingo@kernel.org>
 Subject: Re: linux-next: build failure after merge of the final tree
  (tip/s390 trees related)
-Date: Fri, 19 Oct 2012 23:37:27 +0200
-Message-ID: <20121019213727.GA9630@gmail.com>
+Date: Fri, 19 Oct 2012 23:48:50 +0200
+Message-ID: <20121019214850.GB9630@gmail.com>
 References: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
- <20121018182642.2a541275@thinkpad>
+ <20121018145101.GA17439@linux-mips.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:37032 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751780Ab2JSVhg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Oct 2012 17:37:36 -0400
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:49435 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932148Ab2JSVs4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Oct 2012 17:48:56 -0400
 Content-Disposition: inline
-In-Reply-To: <20121018182642.2a541275@thinkpad>
+In-Reply-To: <20121018145101.GA17439@linux-mips.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
-* Gerald Schaefer <gerald.schaefer@de.ibm.com> wrote:
+* Ralf Baechle <ralf@linux-mips.org> wrote:
 
-> On Thu, 18 Oct 2012 17:22:01 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Thu, Oct 18, 2012 at 05:22:01PM +1100, Stephen Rothwell wrote:
 > 
-> > Hi all,
-> > 
 > > After merging the final tree, today's linux-next build (s390 allyesconfig)
 > > failed like this:
 > > 
@@ -46,11 +43,58 @@ Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.
 > > 
 > > Anyone have suggested merge fix patches I can apply?
 > 
-> Subject: [PATCH] s390/thp: implement pmd_pgprot() for s390
+> See below.  There's further MIPS breakage in -next; more on than in a
+> separate email.
+> 
+>   Ralf
+> 
+> Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 
-Thanks Gerald! I'll merge this as well so that the semantic 
-conflict disappears from linux-next.
+Thanks Ralf! I've applied it, with a changelog and a 
+Reported-by: Stephen Rothwell line - see the commit below.
+
+Note that I moved the definition slightly up, so that regardless 
+of the order merging the commits don't create a conflict in 
+linux-next. If that fine with you I'll push it out that way.
+
+(Looking at the other MIPS problem as well.)
 
 Thanks,
 
 	Ingo
+
+
+---------------->
+>From 8cd7680d8b7241941fd51d83302677d58b447223 Mon Sep 17 00:00:00 2001
+From: Ralf Baechle <ralf@linux-mips.org>
+Date: Thu, 18 Oct 2012 16:51:01 +0200
+Subject: [PATCH] MIPS/thp: Add pmd_pgprot() implementation
+
+Resolve the semantic conflict between the new THP code
+on MIPS and the new NUMA code, in linux-next, by adding
+the pmd_pgprot() method needed by the NUMA code.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20121018145101.GA17439@linux-mips.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/mips/include/asm/pgtable.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/mips/include/asm/pgtable.h b/arch/mips/include/asm/pgtable.h
+index c02158b..bbe4cda 100644
+--- a/arch/mips/include/asm/pgtable.h
++++ b/arch/mips/include/asm/pgtable.h
+@@ -89,6 +89,8 @@ static inline int is_zero_pfn(unsigned long pfn)
+ 
+ extern void paging_init(void);
+ 
++#define pmd_pgprot(x)		__pgprot(pmd_val(x) & ~_PAGE_CHG_MASK)
++
+ /*
+  * Conversion functions: convert a page and protection to a page entry,
+  * and a page entry and page directory to the page they refer to.
