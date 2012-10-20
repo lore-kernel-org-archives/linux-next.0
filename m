@@ -1,94 +1,81 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] ASoC: fix wm2200.c printk format warnings
-Date: Fri, 19 Oct 2012 16:13:07 -0700
-Message-ID: <5081DE83.2060402@xenotime.net>
-References: <20121019135419.f996aed8ed85ee50a782a649@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (tip/s390 trees related)
+Date: Sat, 20 Oct 2012 13:31:02 +1100
+Message-ID: <20121020133102.cdb946cbbb7b80902925760a@canb.auug.org.au>
+References: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
+	<20121018150209.GB17439@linux-mips.org>
+	<1350683562.2768.78.camel@twins>
+	<20121019223938.GB12658@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sat__20_Oct_2012_13_31_02_+1100_ArwEPBD+kR12B2wf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:47848 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754309Ab2JSXNN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Oct 2012 19:13:13 -0400
-In-Reply-To: <20121019135419.f996aed8ed85ee50a782a649@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47600 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757790Ab2JTCbc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Oct 2012 22:31:32 -0400
+In-Reply-To: <20121019223938.GB12658@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, moderated for non-subscribers <alsa-devel@alsa-project.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ralf Baechle <ralf@linux-mips.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Sat__20_Oct_2012_13_31_02_+1100_ArwEPBD+kR12B2wf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix wm2200.c printk format warnings (seen on x86_64):
+Hi Ingo,
 
-sound/soc/codecs/wm2200.c:1027:4: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
-sound/soc/codecs/wm2200.c:1139:5: warning: format '%d' expects type 'int', but argument 5 has type 'long unsigned int'
-sound/soc/codecs/wm2200.c:1181:2: warning: format '%d' expects type 'int', but argument 7 has type 'size_t'
-sound/soc/codecs/wm2200.c:1201:5: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'long unsigned int'
-sound/soc/codecs/wm2200.c:1264:4: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
-sound/soc/codecs/wm2200.c:1328:5: warning: format '%d' expects type 'int', but argument 5 has type 'long unsigned int'
+On Sat, 20 Oct 2012 00:39:38 +0200 Ingo Molnar <mingo@kernel.org> wrote:
+>
+> From 7fc4d49214dba401f4b92ed62da60a5b257a653a Mon Sep 17 00:00:00 2001
+> From: Ingo Molnar <mingo@kernel.org>
+> Date: Sat, 20 Oct 2012 00:33:01 +0200
+> Subject: [PATCH] MIPS/thp: Fix update_mmu_cache() cache call
+>=20
+> As per recent upstream commit:
+>=20
+>   b113da65785d mm: Add and use update_mmu_cache_pmd() in transparent huge=
+ page code.
+>=20
+> The call in do_huge_pmd_prot_none() needs to call update_mmu_cache_pmd()
+> as well.
+>=20
+> This resolves a MIPS build error triggered on linux-next.
+>=20
+> Reported-by: Ralf Baechle <ralf@linux-mips.org>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc:	Liam Girdwood <lrg@ti.com>
-Cc:	Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc:	alsa-devel@alsa-project.org (moderated for non-subscribers)
----
- sound/soc/codecs/wm2200.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Just a small nit - I didn't actually report this one, just Ralf did.
 
---- linux-next-20121019.orig/sound/soc/codecs/wm2200.c
-+++ linux-next-20121019/sound/soc/codecs/wm2200.c
-@@ -1023,7 +1023,7 @@ static int wm2200_dsp_load(struct snd_so
- 
- 	pos = sizeof(*header) + sizeof(*adsp1_sizes) + sizeof(*footer);
- 	if (pos >= firmware->size) {
--		dev_err(codec->dev, "%s: file too short, %d bytes\n",
-+		dev_err(codec->dev, "%s: file too short, %zu bytes\n",
- 			file, firmware->size);
- 		return -EINVAL;
- 	}
-@@ -1135,7 +1135,7 @@ static int wm2200_dsp_load(struct snd_so
- 	}
- 
- 	if (pos > firmware->size)
--		dev_warn(codec->dev, "%s.%d: %d bytes at end of file\n",
-+		dev_warn(codec->dev, "%s.%d: %zu bytes at end of file\n",
- 			 file, regions, pos - firmware->size);
- 
- out:
-@@ -1178,7 +1178,7 @@ static int wm2200_setup_algs(struct snd_
- 	}
- 
- 	algs = be32_to_cpu(id.algs);
--	dev_info(codec->dev, "Firmware: %x v%d.%d.%d, %d algorithms\n",
-+	dev_info(codec->dev, "Firmware: %x v%d.%d.%d, %zu algorithms\n",
- 		 be32_to_cpu(id.fw.id),
- 		 (be32_to_cpu(id.fw.ver) & 0xff000) >> 16,
- 		 (be32_to_cpu(id.fw.ver) & 0xff00) >> 8,
-@@ -1196,7 +1196,7 @@ static int wm2200_setup_algs(struct snd_
- 	}
- 
- 	if (be32_to_cpu(val) != 0xbedead)
--		dev_warn(codec->dev, "Algorithm list end %x 0x%x != 0xbeadead\n",
-+		dev_warn(codec->dev, "Algorithm list end %zx 0x%x != 0xbeadead\n",
- 			 (sizeof(id) + (algs * sizeof(*alg))) / 2,
- 			 be32_to_cpu(val));
- 
-@@ -1260,7 +1260,7 @@ static int wm2200_load_coeff(struct snd_
- 	}
- 
- 	if (sizeof(*hdr) >= firmware->size) {
--		dev_err(codec->dev, "%s: file too short, %d bytes\n",
-+		dev_err(codec->dev, "%s: file too short, %zu bytes\n",
- 			file, firmware->size);
- 		return -EINVAL;
- 	}
-@@ -1324,7 +1324,7 @@ static int wm2200_load_coeff(struct snd_
- 	}
- 
- 	if (pos > firmware->size)
--		dev_warn(codec->dev, "%s.%d: %d bytes at end of file\n",
-+		dev_warn(codec->dev, "%s.%d: %zu bytes at end of file\n",
- 			 file, blocks, pos - firmware->size);
- 
- 	return 0;
+Thanks for the fixes.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Sat__20_Oct_2012_13_31_02_+1100_ArwEPBD+kR12B2wf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQggzmAAoJEECxmPOUX5FEOqYP/0P2Onm/WOOz9WF1pajb94AT
+YDtyLGgnsXmtF1/vCfQWawJGgGDvL3w32oNL9zUI80uDB+2vntaq0c2c7yYI8Hqm
+oeDpd+oEK0ofYsk2qr6e23Idc16E0Np1mG6RW2A9H7wJDw4TT1tQcF1mcmVDXDBr
+Zv+culXDAUYl/xrMbZ8afQL/W+2ouyLrmg35r4oC1O6/o4O9wn+O/dLEDIrD7yxC
+nDHrTA9KXtlQHz0Fqqdqbp4UeeghLUyb3ho2C0s+o5i2yWPMujIefAW+AA2KHgXM
+OQG+QAC4e5UvEs0gig4PFg6cdlegQT8259tdFHSCP/Xzkj89+b2yZ89eehlH4GSg
+7eC0HM0j74zWTVMu2Ets4U7HtbHusU6UEfj3+XQnjsCCt/m7ahYxegMkwB1O/WQL
+aiaZTDqqD69VgDxi3oYwATf6OBAoyrxklQtkQoHx7/1oOvvI17cHhkgkarCP8P2j
+MlsJ5oS0MX8xpaPX6dPYtOLgM94I+eJqui1ZbQyLidF9PuF1SjZpItujaafSXGJh
+RlGBDDllTMD/4j3JoO7ZjnfVR4eldlQNOa68bMIdlqm4DvyjyBRu2ptjITEgWivT
+Jb+kwc2rCz/xIjhsBxCo/Ld93nA+dJ78BrRFT6bcnpTOGyeXPpJkXj6R/L/0DVH6
+1JZdSuu/G73HZ7BUsNLI
+=vf3r
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__20_Oct_2012_13_31_02_+1100_ArwEPBD+kR12B2wf--
