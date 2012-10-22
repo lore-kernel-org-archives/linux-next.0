@@ -1,47 +1,77 @@
-From: Chris Zankel <chris@zankel.net>
-Subject: Re: linux-next: manual merge of the xtensa tree with Linus' tree
-Date: Sun, 21 Oct 2012 16:57:00 -0700
-Message-ID: <50848BCC.9030208@zankel.net>
-References: <20121022104056.d157f09f9c71052ecc1f64a5@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+Date: Mon, 22 Oct 2012 11:13:37 +1100
+Message-ID: <20121022111337.596cad53ab4a77dfe0dd8965@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__22_Oct_2012_11_13_37_+1100_VWZt_zM3fN1Fmx.k"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:53121 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752930Ab2JUX5D (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 21 Oct 2012 19:57:03 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rr4so1580279pbb.19
-        for <linux-next@vger.kernel.org>; Sun, 21 Oct 2012 16:57:01 -0700 (PDT)
-In-Reply-To: <20121022104056.d157f09f9c71052ecc1f64a5@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38787 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752821Ab2JVANp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 21 Oct 2012 20:13:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Franky Lin <frankyl@broadcom.com>
 
-Hi Stephen,
+--Signature=_Mon__22_Oct_2012_11_13_37_+1100_VWZt_zM3fN1Fmx.k
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, I accidentally pushed this patch up; should be fixed the next 
-next time you pull.
+Hi John,
 
-Thanks,
--Chris
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c between commit
+3e4f319dacc6 ("brcmfmac: fix end of loop check (signedness bug)") from
+the wireless tree and commit 81118d165811 ("brcmfmac: Using zero instead
+of NULL") from the wireless-next tree.
 
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-On 10/21/2012 04:40 PM, Stephen Rothwell wrote:
-> Hi Chris,
->
-> Today's linux-next merge of the xtensa tree got a conflict in
-> arch/xtensa/include/uapi/asm/unistd.h between commit 7216cabfff51
-> ("xtensa: add missing system calls to the syscall table") from Linus'
-> tree and commit daff2ab722aa ("xtensa: add missing system calls to the
-> syscall table") from the xtensa tree.
->
-> These clearly were meant to be the same patch but the on in Linus' tree
-> has a later date, so I used it and can carry the fix as necessary (no
-> action is required).
->
-> Also, the top most commit in the xtensa tree has no signed-off-by line or
-> any real commit message.  Please fix that up.
->
+diff --cc drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
+index 411dfe7,b27e245..0000000
+--- a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
+@@@ -3972,8 -3972,8 +3972,8 @@@ brcmf_set_management_ie(struct brcmf_cf
+  	u8  *iovar_ie_buf;
+  	u8  *curr_ie_buf;
+  	u8  *mgmt_ie_buf =3D NULL;
+ -	u32 mgmt_ie_buf_len;
+ +	int mgmt_ie_buf_len;
+- 	u32 *mgmt_ie_len =3D 0;
++ 	u32 *mgmt_ie_len;
+  	u32 del_add_ie_buf_len =3D 0;
+  	u32 total_ie_buf_len =3D 0;
+  	u32 parsed_ie_buf_len =3D 0;
+
+--Signature=_Mon__22_Oct_2012_11_13_37_+1100_VWZt_zM3fN1Fmx.k
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQhI+xAAoJEECxmPOUX5FEk2kQAI/th7O0QlFcq3sRHxaWh6t3
+29O1HTPwutGHIl42CzVCYzzwPd4VJn98pNmJAeoBcXfIKRFlTVKSPQEvb+n+V5uo
+HuzHmBlGD152EQ/Mfrf3k5jqUJ72elntavBTJCKHugeDuRQ8qum4ujpmNys1rGwN
+9BAmJkhI6mqU7vFXENnNtM14c8fYl8HbQQCUep6N1Dboj1ZNlhXnPPMkmqohvqwn
+nEMzW4bHGchehcYuYdJ7ouAZ6kCXzYIisrQRScLfNtZRmE44AIgcehLoXvglq6Iw
+LQaD1/Zzwm4XlJrJotgvKBRuBUIcyGcFZ8e9e+GvL13JwbxyltHbk6HvJWjNyKBh
+A5sdCF2bzdW7qq3hTStGiY1Urykchr2aUIGUrsgyR3dWRnHTt66q55mHi5ePqZ85
+ot1GPlpQseV5DoQP2RyJ8p/+bkI3G5iV+szyyOGgPTtO9EkyM5tBhELDEO2wUZ0p
+ucORGCJPc49oV4oXs1xIgyVF7lZ8SkmnqejU3w7ohG8mzkEQBHox7BeeADXcVxd1
+WXcc6cYOWeer93LWLkZ3Zv9LGEuNg6sODBfQwIudGevykF41pFiZXeRbLNPALZlf
+Vx5CQqgwc5PTq6UUUMMhpCsXC5P3E831fEKIS3Eeh1BnO8x3Nff/Q73MKgdIldSR
+UQRFhMB/bvaKacio8n1U
+=7691
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__22_Oct_2012_11_13_37_+1100_VWZt_zM3fN1Fmx.k--
