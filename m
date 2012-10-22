@@ -1,23 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the wireless-next tree with the
  wireless tree
-Date: Mon, 22 Oct 2012 11:13:37 +1100
-Message-ID: <20121022111337.596cad53ab4a77dfe0dd8965@canb.auug.org.au>
+Date: Mon, 22 Oct 2012 11:46:37 +1100
+Message-ID: <20121022114637.708c241afa08f14c32635fb8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__22_Oct_2012_11_13_37_+1100_VWZt_zM3fN1Fmx.k"
+ boundary="Signature=_Mon__22_Oct_2012_11_46_37_+1100_5n7IUR0+FTtjWvAr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38787 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49439 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752821Ab2JVANp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 21 Oct 2012 20:13:45 -0400
+	with ESMTP id S1754692Ab2JVAqp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 21 Oct 2012 20:46:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Franky Lin <frankyl@broadcom.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
 
---Signature=_Mon__22_Oct_2012_11_13_37_+1100_VWZt_zM3fN1Fmx.k
+--Signature=_Mon__22_Oct_2012_11_46_37_+1100_5n7IUR0+FTtjWvAr
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -25,53 +25,116 @@ Content-Transfer-Encoding: quoted-printable
 Hi John,
 
 Today's linux-next merge of the wireless-next tree got a conflict in
-drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c between commit
-3e4f319dacc6 ("brcmfmac: fix end of loop check (signedness bug)") from
-the wireless tree and commit 81118d165811 ("brcmfmac: Using zero instead
-of NULL") from the wireless-next tree.
+net/mac80211/mlme.c between commit 3a40414f826a ("mac80211: connect with
+HT20 if HT40 is not permitted") from the wireless tree and commit
+04ecd2578e71 ("mac80211: track needed RX chains for channel contexts")
+from the wireless-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-index 411dfe7,b27e245..0000000
---- a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-+++ b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-@@@ -3972,8 -3972,8 +3972,8 @@@ brcmf_set_management_ie(struct brcmf_cf
-  	u8  *iovar_ie_buf;
-  	u8  *curr_ie_buf;
-  	u8  *mgmt_ie_buf =3D NULL;
- -	u32 mgmt_ie_buf_len;
- +	int mgmt_ie_buf_len;
-- 	u32 *mgmt_ie_len =3D 0;
-+ 	u32 *mgmt_ie_len;
-  	u32 del_add_ie_buf_len =3D 0;
-  	u32 total_ie_buf_len =3D 0;
-  	u32 parsed_ie_buf_len =3D 0;
+diff --cc net/mac80211/mlme.c
+index 1b7eed2,469d864..0000000
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@@ -3104,44 -3181,43 +3183,51 @@@ static int ieee80211_prep_channel(struc
+  		}
+  	}
+ =20
+ -	if (ht_oper) {
+ +	if (ht_oper && sband->ht_cap.cap & IEEE80211_HT_CAP_SUP_WIDTH_20_40) {
++ 		const u8 *ht_cap_ie;
++ 		const struct ieee80211_ht_cap *ht_cap;
++ 		u8 chains =3D 1;
++=20
+ -		channel_type =3D NL80211_CHAN_HT20;
+ +		/*
+ +		 * cfg80211 already verified that the channel itself can
+ +		 * be used, but it didn't check that we can do the right
+ +		 * HT type, so do that here as well. If HT40 isn't allowed
+ +		 * on this channel, disable 40 MHz operation.
+ +		 */
+ =20
+ -		if (sband->ht_cap.cap & IEEE80211_HT_CAP_SUP_WIDTH_20_40) {
+ -			switch (ht_oper->ht_param &
+ -					IEEE80211_HT_PARAM_CHA_SEC_OFFSET) {
+ -			case IEEE80211_HT_PARAM_CHA_SEC_ABOVE:
+ +		switch (ht_oper->ht_param & IEEE80211_HT_PARAM_CHA_SEC_OFFSET) {
+ +		case IEEE80211_HT_PARAM_CHA_SEC_ABOVE:
+ +			if (cbss->channel->flags & IEEE80211_CHAN_NO_HT40PLUS)
+ +				ifmgd->flags |=3D IEEE80211_STA_DISABLE_40MHZ;
+ +			else
+  				channel_type =3D NL80211_CHAN_HT40PLUS;
+ -				break;
+ -			case IEEE80211_HT_PARAM_CHA_SEC_BELOW:
+ +			break;
+ +		case IEEE80211_HT_PARAM_CHA_SEC_BELOW:
+ +			if (cbss->channel->flags & IEEE80211_CHAN_NO_HT40MINUS)
+ +				ifmgd->flags |=3D IEEE80211_STA_DISABLE_40MHZ;
+ +			else
+  				channel_type =3D NL80211_CHAN_HT40MINUS;
+ -				break;
+ -			}
+ +			break;
+  		}
+- 	}
+ =20
+- 	if (!ieee80211_set_channel_type(local, sdata, channel_type)) {
+- 		/* can only fail due to HT40+/- mismatch */
+- 		channel_type =3D NL80211_CHAN_HT20;
+- 		sdata_info(sdata,
+- 			   "disabling 40 MHz due to multi-vif mismatch\n");
+- 		ifmgd->flags |=3D IEEE80211_STA_DISABLE_40MHZ;
+- 		WARN_ON(!ieee80211_set_channel_type(local, sdata,
+- 						    channel_type));
++ 		ht_cap_ie =3D cfg80211_find_ie(WLAN_EID_HT_CAPABILITY,
++ 					     cbss->information_elements,
++ 					     cbss->len_information_elements);
++ 		if (ht_cap_ie && ht_cap_ie[1] >=3D sizeof(*ht_cap)) {
++ 			ht_cap =3D (void *)(ht_cap_ie + 2);
++ 			chains =3D ieee80211_mcs_to_chains(&ht_cap->mcs);
++ 		}
++ 		sdata->needed_rx_chains =3D min(chains, local->rx_chains);
++ 	} else {
++ 		sdata->needed_rx_chains =3D 1;
+  	}
+ =20
+- 	local->oper_channel =3D cbss->channel;
+- 	ieee80211_hw_config(local, IEEE80211_CONF_CHANGE_CHANNEL);
++ 	/* will change later if needed */
++ 	sdata->smps_mode =3D IEEE80211_SMPS_OFF;
+ =20
+- 	return 0;
++ 	ieee80211_vif_release_channel(sdata);
++ 	return ieee80211_vif_use_channel(sdata, cbss->channel, channel_type,
++ 					 IEEE80211_CHANCTX_SHARED);
+  }
+ =20
+  static int ieee80211_prep_connection(struct ieee80211_sub_if_data *sdata,
 
---Signature=_Mon__22_Oct_2012_11_13_37_+1100_VWZt_zM3fN1Fmx.k
+--Signature=_Mon__22_Oct_2012_11_46_37_+1100_5n7IUR0+FTtjWvAr
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQhI+xAAoJEECxmPOUX5FEk2kQAI/th7O0QlFcq3sRHxaWh6t3
-29O1HTPwutGHIl42CzVCYzzwPd4VJn98pNmJAeoBcXfIKRFlTVKSPQEvb+n+V5uo
-HuzHmBlGD152EQ/Mfrf3k5jqUJ72elntavBTJCKHugeDuRQ8qum4ujpmNys1rGwN
-9BAmJkhI6mqU7vFXENnNtM14c8fYl8HbQQCUep6N1Dboj1ZNlhXnPPMkmqohvqwn
-nEMzW4bHGchehcYuYdJ7ouAZ6kCXzYIisrQRScLfNtZRmE44AIgcehLoXvglq6Iw
-LQaD1/Zzwm4XlJrJotgvKBRuBUIcyGcFZ8e9e+GvL13JwbxyltHbk6HvJWjNyKBh
-A5sdCF2bzdW7qq3hTStGiY1Urykchr2aUIGUrsgyR3dWRnHTt66q55mHi5ePqZ85
-ot1GPlpQseV5DoQP2RyJ8p/+bkI3G5iV+szyyOGgPTtO9EkyM5tBhELDEO2wUZ0p
-ucORGCJPc49oV4oXs1xIgyVF7lZ8SkmnqejU3w7ohG8mzkEQBHox7BeeADXcVxd1
-WXcc6cYOWeer93LWLkZ3Zv9LGEuNg6sODBfQwIudGevykF41pFiZXeRbLNPALZlf
-Vx5CQqgwc5PTq6UUUMMhpCsXC5P3E831fEKIS3Eeh1BnO8x3Nff/Q73MKgdIldSR
-UQRFhMB/bvaKacio8n1U
-=7691
+iQIcBAEBCAAGBQJQhJdtAAoJEECxmPOUX5FEsmUP/19q0x2j4FOHi7wVYSloXIiZ
+WzwLt1Hj6YnVPZ6YEg5oMfUlw2nOvpDGRhgM7x7LBDbqC5I5w572oYI4/VIpuxXl
+kRy6RudK/sOwwPY6F9/Qf4/TEkM0pHbqlrtTMLqBc0NKABJTaOR531A5P6NkLQf1
+8VFiYNnK64mI5t/2Z5FwndMbP7MP7Y6xq3s5yKdRqMSVpJuNlerauGzGgTADJJ6C
+Wg0ST0U1foxZlo12ZSUFu5g9L3hSKinXIm7TpnyI6OgCEMUHXxOJ+jij3XDSaT4p
+u/CRfsHHwuaqhIDGuwJ2XEzyVHlD0Il7mrTHWRxTMBKuUJXOYOVmv3Ylklb18zKZ
+FzNSffHvsY/tfRj55HMA/oRHVCmFcmMefK/mnQBPxTJvWFD6c/tNQ148ycTyohQy
+SZNhZZ91aYaeb6SjYSoZ0TCyMXtiIQymFnUXJCvk6srZwrh7oK/T8fXYhn7hPJyO
+qTVUuG8mp0CsOblqP7eDDMypma6qXr6PnyaXnb31cPS3SWxhH1zHHocft4HU1wBM
+VCaQLvEnEDuHcjXZ8F30LxJdimGuYIERc7/3cmaI56cHLEcYSCPERfzn9IqFQs20
+SD+SzsFtRGQcuTJuHkAIEs7N+IG7Tk7VKP+ymLDcz8fkkpQhuRJzbTItLYcvG7QA
+QGQfNXWN2U0R88eqay+R
+=5wJb
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__22_Oct_2012_11_13_37_+1100_VWZt_zM3fN1Fmx.k--
+--Signature=_Mon__22_Oct_2012_11_46_37_+1100_5n7IUR0+FTtjWvAr--
