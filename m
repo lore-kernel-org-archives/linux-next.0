@@ -1,62 +1,93 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH -next] ASoC: fix wm2200.c printk format warnings
-Date: Mon, 22 Oct 2012 14:39:56 +0100
-Message-ID: <20121022133956.GH4477@opensource.wolfsonmicro.com>
-References: <20121019135419.f996aed8ed85ee50a782a649@canb.auug.org.au>
- <5081DE83.2060402@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Tree for linux-next
+Date: Tue, 23 Oct 2012 08:07:53 +1100
+Message-ID: <20121023080753.bc1fc8b0982d72594653ca69@canb.auug.org.au>
+References: <CAGXu5j+D+pFort3RPLnXsrX5MB6sn1NYnkbx6=nj3NgRkpRirQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WkfBGePaEyrk4zXB"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__23_Oct_2012_08_07_53_+1100_7oDEXA62s./aNV2Z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:51634 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754420Ab2JVNj7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Oct 2012 09:39:59 -0400
-Content-Disposition: inline
-In-Reply-To: <5081DE83.2060402@xenotime.net>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37913 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932105Ab2JVVIE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Oct 2012 17:08:04 -0400
+In-Reply-To: <CAGXu5j+D+pFort3RPLnXsrX5MB6sn1NYnkbx6=nj3NgRkpRirQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Liam Girdwood <lrg@ti.com>, moderated for non-subscribers <alsa-devel@alsa-project.org>
+To: Kees Cook <keescook@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-
---WkfBGePaEyrk4zXB
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Tue__23_Oct_2012_08_07_53_+1100_7oDEXA62s./aNV2Z
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 19, 2012 at 04:13:07PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
+Hi Kees,
+
+On Mon, 22 Oct 2012 08:44:26 -0700 Kees Cook <keescook@google.com> wrote:
+>
+> Now that we're past rc1, can you please add my tree to your linux-next pu=
+lls?
 >=20
-> Fix wm2200.c printk format warnings (seen on x86_64):
+> drop-experimental  git
+> git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git#linux-next
 
-Applied but it is very depressing that I need to *again* remind you to
-pay attention to where you're sending patches:
+Thanks for the reminder.  It will be included from today.
 
- - *ALWAYS* send patches to the maintainers.
- - Don't send patches to irrelevant people/lists.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
---WkfBGePaEyrk4zXB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Tue__23_Oct_2012_08_07_53_+1100_7oDEXA62s./aNV2Z
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQhUylAAoJELSic+t+oim9odwQAJ1EdTKTiJuViPwkktKeHfPJ
-39UBRemINNBg3lNjXO5/xaSUMsCuWjveVpjFVGu+QDIol/+T1/D5Y0oxjwnDh6H4
-L1J5P1DYv5wDyy/QkN/kvjzdEpKGhPzhktWjXHQfnsnxBtEr1IUjtz3OiPo5QXpF
-fWh1zWo6UWFlB+EBwZSOyacYjAytzvq+aNhSektyVlMAJSbTdFEsBrAcWaTZbZ37
-ExEPnufdYTzgEN01Qk5vlFH8eq/3tIQz+DCpQ+HrtmM7qMQAPPNLgjbeY+eVz8Jo
-tq7rIskkyjeilpFHvFFxzfxS9Lrs81CQOFbYQtCtcFJzKvtOmAPzHSdiytoLE0NS
-CYPWvrcE5nMYatPeVsoySQvq6FtydWPbB7TJ2WBHDtMTIAJ/ToBxdIJRhvqTYuAb
-OYqcP2EBa5kG6tSmvDxrKcH/TKUGV+eVKlDsDq56/1xVs5iMFQcc8e0IkXaFpksB
-En9dd5XhDQQWGq07lJW10bJDexQbODt+8vhoNbdNmBKSjzFAMIrf7DNiykC7tQPP
-JicFB/E/m4ZLCKx1Rjay3C2OD0qohG90z8UQp+8W+YHMrVbu58j42SoT132mCkeD
-aBejvk6YCd2qCEWP/NTIomxju8QcKOuxgVZcu2IJNiRV5dwGP97zcTv0SJQq0WyK
-d3B+KEYnbZA8NQyESA6/
-=czX/
+iQIcBAEBCAAGBQJQhbWpAAoJEECxmPOUX5FEPToP/jPW00UYmpVNorVKCW1kPBdg
+mH+nGyS8TPALDEUnE2Z6wxXrX2NrsaNvCE6DflirZXX45phHQ79AGVbjH+z6xZfR
+NoDtO33PvlAOyR996swLL6g9Soh0jePA4W1NSwA7tG6H596LONKJ0m7CR9Vp2xx3
+sxu3YzFuaSHR0Bd8Wtw2YcaDbJP2fOgaqU57+1nCUovopjvKLczmDj9129mwqB2y
+9TBwZLPURHU/ketf14eOTWW6dY/klmzRfaPpCVBZmJHXYgEWVK2MBilJbuWAGb4z
+h4wYR646O/C/k41UHmBWoOulOvCuDUfYmQzcgEz+10BojPZRY1oeR9PwnNZrEGlB
+hfxjTM0v+R6JJsUtPQX9vLJzkB/rLzFjGhs423oFfl1zlCiYSyLGxqRw84WJADk1
+XB5ZRWpDbZkYKcraCoVbfChV09yWq8nP+FDiZBM+XTNTGnvf+sTRJr7BO3hPgAKo
+YQtUHLdgeSTmuiS8/zH8X9O2N0mGyOthyJKC8mYIdqJVvDdOVgQFdcgKR4kdCSWq
+8ZzBkp2GvZAfRRB6/9Ihq6+2RTa0cxVkt38jIXhN9fgVC/DUXZMZzgwCwLBLDq42
+KgMUQ2aHtsFRn+nGhb7CxTpQHsfVbBCALZd1ERyLCoF5M+X2iDBNC6ky6iU1MnW+
+M+ZgnfyCPi//UELLrMEK
+=jgQ/
 -----END PGP SIGNATURE-----
 
---WkfBGePaEyrk4zXB--
+--Signature=_Tue__23_Oct_2012_08_07_53_+1100_7oDEXA62s./aNV2Z--
