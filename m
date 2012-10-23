@@ -1,109 +1,141 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: Re: mmotm 2012-10-22-17-08 uploaded (memory_hotplug.c)
-Date: Tue, 23 Oct 2012 12:26:26 +0200
-Message-ID: <20121023102625.GA24265@dhcp22.suse.cz>
-References: <20121023000924.C56EF5C0050@hpza9.eem.corp.google.com>
- <50861FA9.2030506@xenotime.net>
+From: "Zhang, Rui" <rui.zhang@intel.com>
+Subject: RE: [PATCHv2] Thermal: Fix synchronization issues in thermal_sys.c
+Date: Tue, 23 Oct 2012 10:30:16 +0000
+Message-ID: <744357E9AAD1214791ACBA4B0B90926324B177@SHSMSX101.ccr.corp.intel.com>
+References: <1348727888-11196-1-git-send-email-durgadoss.r@intel.com>
+ <CA+icZUXV21BqzAHwPy5gY_VHEws8hXZ8B=vESuPazpmOSQVHvA@mail.gmail.com>
+ <CA+icZUWd0s4bo4ASnfryUvSNSk82d5f3-so1RghbOhqHH5UOaw@mail.gmail.com>
+ <CA+icZUXo+w8G1ugG+m3YBE-LT7Qb6_Mbo2ijRqRXP1HXLTohGQ@mail.gmail.com>
+ <alpine.LSU.2.00.1209271626460.1314@eggly.anvils>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <50861FA9.2030506@xenotime.net>
-Sender: owner-linux-mm@kvack.org
-To: akpm@linux-foundation.org
-Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, David Rientjes <rientjes@google.com>, Jiang Liu <liuj97@gmail.com>, Len Brown <len.brown@intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Christoph Lameter <cl@linux.com>, Minchan Kim <minchan.kim@gmail.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>, Dave Hansen <dave@linux.vnet.ibm.com>, Mel Gorman <mel@csn.ul.ie>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:25078 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751753Ab2JWKkV convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Oct 2012 06:40:21 -0400
+In-Reply-To: <alpine.LSU.2.00.1209271626460.1314@eggly.anvils>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Hugh Dickins <hughd@google.com>, "lenb@kernel.org" <lenb@kernel.org>
+Cc: "R, Durgadoss" <durgadoss.r@intel.com>, Sedat Dilek <sedat.dilek@gmail.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Mon 22-10-12 21:40:09, Randy Dunlap wrote:
-> On 10/22/2012 05:09 PM, akpm@linux-foundation.org wrote:
+
+
+> -----Original Message-----
+> From: Hugh Dickins [mailto:hughd@google.com]
+> Sent: Friday, September 28, 2012 7:48 AM
+> To: lenb@kernel.org; Zhang, Rui
+> Cc: R, Durgadoss; Sedat Dilek; linux-acpi@vger.kernel.org;
+> dan.carpenter@oracle.com; linux-next@vger.kernel.org
+> Subject: Re: [PATCHv2] Thermal: Fix synchronization issues in
+> thermal_sys.c
+> Importance: High
 > 
-> > The mm-of-the-moment snapshot 2012-10-22-17-08 has been uploaded to
-> > 
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > mmotm-readme.txt says
-> > 
-> > README for mm-of-the-moment:
-> > 
-> > http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> > 
+> On Thu, 27 Sep 2012, Sedat Dilek wrote:
+> > >>
+> > >> The v2 patch does *not* fix the issue here!
+> > >>
+> > >> [1] https://patchwork.kernel.org/patch/1511961/
+> > >>
+> > >
+> > > I have re-tested with Linux-Next (next-20120927) plus thermal-next
+> > > [1] pulled in and see still the same call-trace!
+> 
+> Same here on mmotm, yes.
+> 
+> > >
+> > > Hugh or Dan can you confirm this works for you or not?
+> > > Thanks in advance.
+> > >
+> > > [1]
+> > >
+> http://git.kernel.org/?p=linux/kernel/git/rzhang/linux.git;a=shortlo
+> > > g;h=refs/heads/next [2]
+> > >
+> http://git.kernel.org/?p=linux/kernel/git/rzhang/linux.git;a=commitd
+> > > iff;h=404b134156bd9d9bc506c0974a1254806e13db2c
+> > >
+> >
+> > With the attached fixup/followup patch, I can boot into my system!
+> > But, as said yesterday... working within X, Firefox is a pain in the
+> a**.
+> 
+> Indeed, this works for me too, thanks.
+> Let's get your addition out of the attachment and fold it into a v3.
+> Mind if we change "synchronization issues" to "oops and unlocking"?
 > 
 > 
+> [PATCHv3] Thermal: Fix oops and unlocking in thermal_sys.c
 > 
-> on x86_64, when CONFIG_MEMORY_HOTREMOVE is not enabled:
+> This patch fixes the following mutex and NULL pointer problems in
+> thermal_sys.c:
 > 
-> mm/built-in.o: In function `online_pages':
-> (.ref.text+0x10e7): undefined reference to `zone_pcp_reset'
+>  * mutex_unlock fix in update_temperature function
+>  * mutex_unlock fix in bind_cdev function
+>  * Correct early return to continue in bind_cdev function
+>  * NULL check fix in bind_cdev function
+>  * NULL check fix in bind_tz function
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Reported-by: Hugh Dickins <hughd@google.com>
+> Signed-off-by: Durgadoss R <durgadoss.r@intel.com>
+> Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Signed-off-by: Hugh Dickins <hughd@google.com>
 
-Caused by memory-hotplug-allocate-zones-pcp-before-onlining-pages.patch.
-And fixed by. Andrew either fold this one in to the above one or keep it
-separate what works better with you.
----
->From e8d79e446b00e57c195c59570df0f2ec435ca39d Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.cz>
-Date: Tue, 23 Oct 2012 11:07:11 +0200
-Subject: [PATCH] mm: make zone_pcp_reset independ on MEMORY_HOTREMOVE
+Applied to thermal -next.
 
-340175b7 (mm/hotplug: free zone->pageset when a zone becomes empty)
-introduced zone_pcp_reset and hided it inside CONFIG_MEMORY_HOTREMOVE.
-Since "memory-hotplug: allocate zone's pcp before onlining pages" the
-function is also called from online_pages which is defined outside
-CONFIG_MEMORY_HOTREMOVE which causes a linkage error.
+Thanks,
+Rui
 
-The function, although not used outside of MEMORY_{HOTPLUT,HOTREMOVE},
-seems like universal enough so let's keep it at its current location
-and only remove the HOTREMOVE guard.
-
-Signed-off-by: Michal Hocko <mhocko@suse.cz>
-Reviewed-by: Wen Congyang <wency@cn.fujitsu.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Jiang Liu <liuj97@gmail.com>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Minchan Kim <minchan.kim@gmail.com>
-Cc: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Cc: Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>
-Cc: Dave Hansen <dave@linux.vnet.ibm.com>
-Cc: Mel Gorman <mel@csn.ul.ie>
----
- mm/page_alloc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index e29912e..30e359c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5981,7 +5981,6 @@ void __meminit zone_pcp_update(struct zone *zone)
- }
- #endif
- 
--#ifdef CONFIG_MEMORY_HOTREMOVE
- void zone_pcp_reset(struct zone *zone)
- {
- 	unsigned long flags;
-@@ -6001,6 +6000,7 @@ void zone_pcp_reset(struct zone *zone)
- 	local_irq_restore(flags);
- }
- 
-+#ifdef CONFIG_MEMORY_HOTREMOVE
- /*
-  * All pages in the range must be isolated before calling this.
-  */
--- 
-1.7.10.4
-
-
--- 
-Michal Hocko
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+> ---
+> v3:
+>  * Sedat restored necessary NULL check in bind_cdev and his signoff.
+>  * Hugh added two more comments above, his signoff, and Dan's
+> 'Reported-by'.
+> 
+>  drivers/thermal/thermal_sys.c |    9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> --- mmotm/drivers/thermal/thermal_sys.c	2012-09-26 10:15:28.652071362
+> -0700
+> +++ linux/drivers/thermal/thermal_sys.c	2012-09-27 16:19:14.427515890
+> -0700
+> @@ -252,8 +252,8 @@ static void bind_cdev(struct thermal_coo
+>  		}
+> 
+>  		tzp = pos->tzp;
+> -		if (!tzp->tbp)
+> -			return;
+> +		if (!tzp || !tzp->tbp)
+> +			continue;
+> 
+>  		for (i = 0; i < tzp->num_tbps; i++) {
+>  			if (tzp->tbp[i].cdev || !tzp->tbp[i].match) @@ -289,7
+> +289,7 @@ static void bind_tz(struct thermal_zone_
+>  		goto exit;
+>  	}
+> 
+> -	if (!tzp->tbp)
+> +	if (!tzp || !tzp->tbp)
+>  		goto exit;
+> 
+>  	list_for_each_entry(pos, &thermal_cdev_list, node) { @@ -387,12
+> +387,13 @@ static void update_temperature(struct th
+>  	ret = tz->ops->get_temp(tz, &temp);
+>  	if (ret) {
+>  		pr_warn("failed to read out thermal zone %d\n", tz->id);
+> -		return;
+> +		goto exit;
+>  	}
+> 
+>  	tz->last_temperature = tz->temperature;
+>  	tz->temperature = temp;
+> 
+> +exit:
+>  	mutex_unlock(&tz->lock);
+>  }
+> 
