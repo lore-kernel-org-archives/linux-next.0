@@ -1,40 +1,68 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: mmotm 2012-10-22-17-08 uploaded (printk build errors)
-Date: Mon, 22 Oct 2012 18:55:54 -0700
-Message-ID: <1350957354.7502.22.camel@joe-AO722>
-References: <20121023000924.C56EF5C0050@hpza9.eem.corp.google.com>
-	 <5085F14D.7060005@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Tue, 23 Oct 2012 14:35:42 +1100
+Message-ID: <20121023143542.2655ba712aff06de5685b6fb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from perches-mx.perches.com ([206.117.179.246]:34801 "EHLO
-	labridge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1756320Ab2JWBz4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Oct 2012 21:55:56 -0400
-In-Reply-To: <5085F14D.7060005@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__23_Oct_2012_14_35_42_+1100_xVEGwDXb8CIyawvF"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Leach <matthew@mattleach.net>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2012-10-22 at 18:22 -0700, Randy Dunlap wrote:
-> On 10/22/2012 05:09 PM, akpm@linux-foundation.org wrote:
+--Signature=_Tue__23_Oct_2012_14_35_42_+1100_xVEGwDXb8CIyawvF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Randy.
+Hi Andrew,
 
-> on i386, when CONFIG_PRINTK is not enabled:
-[]
-> case 1.  CONFIG_TTY_PRINTK=y, CONFIG_EARLY_PRINTK=y
-> 
-> see config-r8272
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-[]
+arch/powerpc/platforms/pasemi/idle.c:88:1: error: macro "__define_initcall"=
+ passed 3 arguments, but takes just 2
+arch/powerpc/platforms/pasemi/idle.c:88:1: error: data definition has no ty=
+pe or storage class [-Werror]
+arch/powerpc/platforms/pasemi/idle.c:88:1: error: type defaults to 'int' in=
+ declaration of '__define_initcall' [-Werror=3Dimplicit-int]
+arch/powerpc/platforms/pasemi/idle.c:88:1: error: '__machine_initcall_pasem=
+i_pasemi_idle_init' defined but not used [-Werror=3Dunused-function]
 
-> case 2.  CONFIG_TTY_PRINTK=n, CONFIG_EARLY_PRINTK=n
-> 
-> see config-r8274
+Caused by commit e509970f45d1 ("include/linux/init.h: use the stringify
+operator for the __define_initcall macro").
 
-Where do I see these configs?
+Please use grep, it is your friend.
 
-I've built it here defconfig and CONFIG_PRINTK=n without warning.
+I have reverted that commit for today (and the following commit
+("init-use-the-stringify-operator-for-the-__define_initcall-macro-checkpatc=
+h-fixes")
+that depends on it.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__23_Oct_2012_14_35_42_+1100_xVEGwDXb8CIyawvF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQhhCOAAoJEECxmPOUX5FEehIP/2DbXojhYU4Vs1wGhk2JFxww
+vIdZKw/oNPFrky4WQ8WGVPhIfZSaXDPO+aK90/41EZk70P0z+Qducl/rpB1eElEY
+uw0HYFdz3POj9BhWXHZQrekckdtcE+yoy6D7rjW8QWFm8mzJH39k7XKBThlYqY3U
+6q47Y5Ji4d4EIDR2rEo/NqUoOsRRL93moP5z4jF+q6PzWd2XpRk8wE0DdoDkiUEm
+6N+zYozJj/OhmWC6fqf+gHQ59XT3pz0pAarv3DQ4OpAu9SiyglbRUFQDnTkaNTk2
+PuruLVIyhF0HTOevZZjE58L0ZNPHsI9KHULTm7j6gM5yC68ltIw50kMX1iRAsrsE
+5Ctiy9ZZIy3qD4hAkCPvyKNFb8+Md7XclCyR6g8Ey7tk3sgsQkaGTCUAuVdJv01l
+qR+CfDkL64MlFvzCzfO9tsS26tVPLkgllIi01AMgEPzkSK9sPwLfbCR8Ut9kybnC
+cev9+wQQBNA31TdqAN7jJCHI4tZSnUH99jDgymvERGFVf8qFW2jVc5yRQzksJBPR
+Fz8J2EgmCWOAMileQVkrB97o2xzi1WcmsEO7MEclGHJzXG//Zx3QJAR3gIbXae8W
+95UU97vq/g/sa96TsTqcEzyh3iG+9wK4lgE7S3wXVxczYPIPIkq6CMMAdisryYr8
+A6XoYE2xsnsEaOd0S7LW
+=Te6t
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__23_Oct_2012_14_35_42_+1100_xVEGwDXb8CIyawvF--
