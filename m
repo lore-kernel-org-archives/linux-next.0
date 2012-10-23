@@ -1,141 +1,46 @@
-From: "Zhang, Rui" <rui.zhang@intel.com>
-Subject: RE: [PATCHv2] Thermal: Fix synchronization issues in thermal_sys.c
-Date: Tue, 23 Oct 2012 10:30:16 +0000
-Message-ID: <744357E9AAD1214791ACBA4B0B90926324B177@SHSMSX101.ccr.corp.intel.com>
-References: <1348727888-11196-1-git-send-email-durgadoss.r@intel.com>
- <CA+icZUXV21BqzAHwPy5gY_VHEws8hXZ8B=vESuPazpmOSQVHvA@mail.gmail.com>
- <CA+icZUWd0s4bo4ASnfryUvSNSk82d5f3-so1RghbOhqHH5UOaw@mail.gmail.com>
- <CA+icZUXo+w8G1ugG+m3YBE-LT7Qb6_Mbo2ijRqRXP1HXLTohGQ@mail.gmail.com>
- <alpine.LSU.2.00.1209271626460.1314@eggly.anvils>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] sound: ice1712 build errors
+Date: Tue, 23 Oct 2012 10:34:16 -0700
+Message-ID: <5086D518.7050606@xenotime.net>
+References: <20121023151951.d5573eb8990a372754f29bf3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:25078 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751753Ab2JWKkV convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Oct 2012 06:40:21 -0400
-In-Reply-To: <alpine.LSU.2.00.1209271626460.1314@eggly.anvils>
-Content-Language: en-US
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:53155 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754731Ab2JWReU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Oct 2012 13:34:20 -0400
+In-Reply-To: <20121023151951.d5573eb8990a372754f29bf3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hugh Dickins <hughd@google.com>, "lenb@kernel.org" <lenb@kernel.org>
-Cc: "R, Durgadoss" <durgadoss.r@intel.com>, Sedat Dilek <sedat.dilek@gmail.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
 
+From: Randy Dunlap <rdunlap@xenotime.net>
 
+Fix build errors by using correct kconfig symbol name:
 
-> -----Original Message-----
-> From: Hugh Dickins [mailto:hughd@google.com]
-> Sent: Friday, September 28, 2012 7:48 AM
-> To: lenb@kernel.org; Zhang, Rui
-> Cc: R, Durgadoss; Sedat Dilek; linux-acpi@vger.kernel.org;
-> dan.carpenter@oracle.com; linux-next@vger.kernel.org
-> Subject: Re: [PATCHv2] Thermal: Fix synchronization issues in
-> thermal_sys.c
-> Importance: High
-> 
-> On Thu, 27 Sep 2012, Sedat Dilek wrote:
-> > >>
-> > >> The v2 patch does *not* fix the issue here!
-> > >>
-> > >> [1] https://patchwork.kernel.org/patch/1511961/
-> > >>
-> > >
-> > > I have re-tested with Linux-Next (next-20120927) plus thermal-next
-> > > [1] pulled in and see still the same call-trace!
-> 
-> Same here on mmotm, yes.
-> 
-> > >
-> > > Hugh or Dan can you confirm this works for you or not?
-> > > Thanks in advance.
-> > >
-> > > [1]
-> > >
-> http://git.kernel.org/?p=linux/kernel/git/rzhang/linux.git;a=shortlo
-> > > g;h=refs/heads/next [2]
-> > >
-> http://git.kernel.org/?p=linux/kernel/git/rzhang/linux.git;a=commitd
-> > > iff;h=404b134156bd9d9bc506c0974a1254806e13db2c
-> > >
-> >
-> > With the attached fixup/followup patch, I can boot into my system!
-> > But, as said yesterday... working within X, Firefox is a pain in the
-> a**.
-> 
-> Indeed, this works for me too, thanks.
-> Let's get your addition out of the attachment and fold it into a v3.
-> Mind if we change "synchronization issues" to "oops and unlocking"?
-> 
-> 
-> [PATCHv3] Thermal: Fix oops and unlocking in thermal_sys.c
-> 
-> This patch fixes the following mutex and NULL pointer problems in
-> thermal_sys.c:
-> 
->  * mutex_unlock fix in update_temperature function
->  * mutex_unlock fix in bind_cdev function
->  * Correct early return to continue in bind_cdev function
->  * NULL check fix in bind_cdev function
->  * NULL check fix in bind_tz function
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> Reported-by: Hugh Dickins <hughd@google.com>
-> Signed-off-by: Durgadoss R <durgadoss.r@intel.com>
-> Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
-> Signed-off-by: Hugh Dickins <hughd@google.com>
+sound/pci/ice1712/psc724.c:417:5: error: 'struct snd_ice1712' has no member named 'pm_resume'
+sound/pci/ice1712/psc724.c:418:5: error: 'struct snd_ice1712' has no member named 'pm_suspend_enabled'
 
-Applied to thermal -next.
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Ondrej Zary <linux@rainbow-software.org>
+Cc:	Jaroslav Kysela <perex@perex.cz>
+Cc:	Takashi Iwai <tiwai@suse.de>
+Cc:	alsa-devel@alsa-project.org
+---
+ sound/pci/ice1712/psc724.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Rui
-
-> ---
-> v3:
->  * Sedat restored necessary NULL check in bind_cdev and his signoff.
->  * Hugh added two more comments above, his signoff, and Dan's
-> 'Reported-by'.
-> 
->  drivers/thermal/thermal_sys.c |    9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> --- mmotm/drivers/thermal/thermal_sys.c	2012-09-26 10:15:28.652071362
-> -0700
-> +++ linux/drivers/thermal/thermal_sys.c	2012-09-27 16:19:14.427515890
-> -0700
-> @@ -252,8 +252,8 @@ static void bind_cdev(struct thermal_coo
->  		}
-> 
->  		tzp = pos->tzp;
-> -		if (!tzp->tbp)
-> -			return;
-> +		if (!tzp || !tzp->tbp)
-> +			continue;
-> 
->  		for (i = 0; i < tzp->num_tbps; i++) {
->  			if (tzp->tbp[i].cdev || !tzp->tbp[i].match) @@ -289,7
-> +289,7 @@ static void bind_tz(struct thermal_zone_
->  		goto exit;
->  	}
-> 
-> -	if (!tzp->tbp)
-> +	if (!tzp || !tzp->tbp)
->  		goto exit;
-> 
->  	list_for_each_entry(pos, &thermal_cdev_list, node) { @@ -387,12
-> +387,13 @@ static void update_temperature(struct th
->  	ret = tz->ops->get_temp(tz, &temp);
->  	if (ret) {
->  		pr_warn("failed to read out thermal zone %d\n", tz->id);
-> -		return;
-> +		goto exit;
->  	}
-> 
->  	tz->last_temperature = tz->temperature;
->  	tz->temperature = temp;
-> 
-> +exit:
->  	mutex_unlock(&tz->lock);
->  }
-> 
+--- linux-next-20121023.orig/sound/pci/ice1712/psc724.c
++++ linux-next-20121023/sound/pci/ice1712/psc724.c
+@@ -413,7 +413,7 @@ static int __devinit psc724_init(struct
+ 	snd_wm8776_init(&spec->wm8776);
+ 	spec->wm8766.ops.write = psc724_wm8766_write;
+ 	spec->wm8766.card = ice->card;
+-#ifdef CONFIG_PM
++#ifdef CONFIG_PM_SLEEP
+ 	ice->pm_resume = psc724_resume;
+ 	ice->pm_suspend_enabled = 1;
+ #endif
