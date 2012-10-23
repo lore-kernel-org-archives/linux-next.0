@@ -1,39 +1,45 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Mon, 22 Oct 2012 21:21:45 -0700
-Message-ID: <1350966105.7502.25.camel@joe-AO722>
-References: <20121023144221.5ae3061a11766df8175b959d@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: mmotm 2012-10-22-17-08 uploaded (memory_hotplug.c)
+Date: Mon, 22 Oct 2012 21:40:09 -0700
+Message-ID: <50861FA9.2030506@xenotime.net>
+References: <20121023000924.C56EF5C0050@hpza9.eem.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121023144221.5ae3061a11766df8175b959d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay@vrfy.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:45841 "HELO
+	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750885Ab2JWEkO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Oct 2012 00:40:14 -0400
+In-Reply-To: <20121023000924.C56EF5C0050@hpza9.eem.corp.google.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org
 
-On Tue, 2012-10-23 at 14:42 +1100, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> After merging the akpm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> kernel/printk/printk_syslog.c: In function 'printk_syslog_print':
-> kernel/printk/printk_syslog.c:108:3: error: implicit declaration of function 'copy_to_user' [-Werror=implicit-function-declaration]
-> kernel/printk/printk_syslog.c: In function 'do_syslog':
-> kernel/printk/printk_syslog.c:245:3: error: implicit declaration of function 'access_ok' [-Werror=implicit-function-declaration]
-> kernel/printk/printk_syslog.c:245:18: error: 'VERIFY_WRITE' undeclared (first use in this function)
-> kernel/printk/printk_syslog.c:245:18: note: each undeclared identifier is reported only once for each function it appears in
-> 
-> Caused by commit 598815e5f25f ("printk: add printk_syslog.c and .h").
-> 
-> Presumably missing an (or some) include files - see Rule 1 in
-> Documentation/SubmitChecklist.
+On 10/22/2012 05:09 PM, akpm@linux-foundation.org wrote:
 
-Yup, missing at least <linux/uaccess.h> which x86 gets
-via an arch specific include.
+> The mm-of-the-moment snapshot 2012-10-22-17-08 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
 
-I compiled it only x86.
 
-I'll resubmit that one.
+
+on x86_64, when CONFIG_MEMORY_HOTREMOVE is not enabled:
+
+mm/built-in.o: In function `online_pages':
+(.ref.text+0x10e7): undefined reference to `zone_pcp_reset'
+
+
+-- 
+~Randy
