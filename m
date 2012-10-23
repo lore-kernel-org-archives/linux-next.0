@@ -1,18 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the akpm tree
-Date: Tue, 23 Oct 2012 14:35:42 +1100
-Message-ID: <20121023143542.2655ba712aff06de5685b6fb@canb.auug.org.au>
+Date: Tue, 23 Oct 2012 14:42:21 +1100
+Message-ID: <20121023144221.5ae3061a11766df8175b959d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__23_Oct_2012_14_35_42_+1100_xVEGwDXb8CIyawvF"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Tue__23_Oct_2012_14_42_21_+1100_Fa2mr9oPPI9+SRHy"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53664 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751321Ab2JWDmY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Oct 2012 23:42:24 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Leach <matthew@mattleach.net>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Kay Sievers <kay@vrfy.org>
 
---Signature=_Tue__23_Oct_2012_14_35_42_+1100_xVEGwDXb8CIyawvF
+--Signature=_Tue__23_Oct_2012_14_42_21_+1100_Fa2mr9oPPI9+SRHy
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -22,47 +26,47 @@ Hi Andrew,
 After merging the akpm tree, today's linux-next build (powerpc
 ppc64_defconfig) failed like this:
 
-arch/powerpc/platforms/pasemi/idle.c:88:1: error: macro "__define_initcall"=
- passed 3 arguments, but takes just 2
-arch/powerpc/platforms/pasemi/idle.c:88:1: error: data definition has no ty=
-pe or storage class [-Werror]
-arch/powerpc/platforms/pasemi/idle.c:88:1: error: type defaults to 'int' in=
- declaration of '__define_initcall' [-Werror=3Dimplicit-int]
-arch/powerpc/platforms/pasemi/idle.c:88:1: error: '__machine_initcall_pasem=
-i_pasemi_idle_init' defined but not used [-Werror=3Dunused-function]
+kernel/printk/printk_syslog.c: In function 'printk_syslog_print':
+kernel/printk/printk_syslog.c:108:3: error: implicit declaration of functio=
+n 'copy_to_user' [-Werror=3Dimplicit-function-declaration]
+kernel/printk/printk_syslog.c: In function 'do_syslog':
+kernel/printk/printk_syslog.c:245:3: error: implicit declaration of functio=
+n 'access_ok' [-Werror=3Dimplicit-function-declaration]
+kernel/printk/printk_syslog.c:245:18: error: 'VERIFY_WRITE' undeclared (fir=
+st use in this function)
+kernel/printk/printk_syslog.c:245:18: note: each undeclared identifier is r=
+eported only once for each function it appears in
 
-Caused by commit e509970f45d1 ("include/linux/init.h: use the stringify
-operator for the __define_initcall macro").
+Caused by commit 598815e5f25f ("printk: add printk_syslog.c and .h").
 
-Please use grep, it is your friend.
+Presumably missing an (or some) include files - see Rule 1 in
+Documentation/SubmitChecklist.
 
 I have reverted that commit for today (and the following commit
-("init-use-the-stringify-operator-for-the-__define_initcall-macro-checkpatc=
-h-fixes")
-that depends on it.
+2cf91e0e4b9f ("printk: move kmsg_dump functions to separate file")).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__23_Oct_2012_14_35_42_+1100_xVEGwDXb8CIyawvF
+--Signature=_Tue__23_Oct_2012_14_42_21_+1100_Fa2mr9oPPI9+SRHy
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQhhCOAAoJEECxmPOUX5FEehIP/2DbXojhYU4Vs1wGhk2JFxww
-vIdZKw/oNPFrky4WQ8WGVPhIfZSaXDPO+aK90/41EZk70P0z+Qducl/rpB1eElEY
-uw0HYFdz3POj9BhWXHZQrekckdtcE+yoy6D7rjW8QWFm8mzJH39k7XKBThlYqY3U
-6q47Y5Ji4d4EIDR2rEo/NqUoOsRRL93moP5z4jF+q6PzWd2XpRk8wE0DdoDkiUEm
-6N+zYozJj/OhmWC6fqf+gHQ59XT3pz0pAarv3DQ4OpAu9SiyglbRUFQDnTkaNTk2
-PuruLVIyhF0HTOevZZjE58L0ZNPHsI9KHULTm7j6gM5yC68ltIw50kMX1iRAsrsE
-5Ctiy9ZZIy3qD4hAkCPvyKNFb8+Md7XclCyR6g8Ey7tk3sgsQkaGTCUAuVdJv01l
-qR+CfDkL64MlFvzCzfO9tsS26tVPLkgllIi01AMgEPzkSK9sPwLfbCR8Ut9kybnC
-cev9+wQQBNA31TdqAN7jJCHI4tZSnUH99jDgymvERGFVf8qFW2jVc5yRQzksJBPR
-Fz8J2EgmCWOAMileQVkrB97o2xzi1WcmsEO7MEclGHJzXG//Zx3QJAR3gIbXae8W
-95UU97vq/g/sa96TsTqcEzyh3iG+9wK4lgE7S3wXVxczYPIPIkq6CMMAdisryYr8
-A6XoYE2xsnsEaOd0S7LW
-=Te6t
+iQIcBAEBCAAGBQJQhhIdAAoJEECxmPOUX5FEQ7gQAJ06t7YdftK5QqQ7IBYaDC6m
+IjLyV7pGHg3gMZOGrbwgdQjNwk7PIfuAxx5LkEPj6DrGMwc3MUiUaC/UqpwVbrov
+Rq5OFNNLr1LwruNFe423As9zfFeZPJT6j3FDPt8pyY5hJtgdwvOMe/EhfSuQWdH4
+FzXZ7zGbz38xbgAO3dgnUyUFG6gsnXd16WoCXCGufhca885AUA77pzvD+i/WvuK7
+QAnfw2ZlAQKSA5aypuNbYTFTPM72W4ucWtiYqU7l/o1I4rRdpHaK+q2zqLJpRRJL
+axve18PyNVg+IvDY0mHc90ah93JXt1PScio9wwdRXQdJzJAszShRaSXxZsWF84LS
+p4rOF4rBtncHq6hF7Hg9mySLMZA0NQI322WSn++qRF2DGEFrVxCKgockq/97iZGm
+PWFFGvFP9Yxz1TqXKI4WgreT69CSLX9bAaQNBVz4S5C03k+0RYq0zZppV4T2ALb8
+xDKJReexDF30cCf3VzuhYhqjJT4nlrENS/h2YkDHylAZOHWGPENbrnvF8l0+O0XN
+osVspkpNK42XgCcBc3sN/4lINfOuJEh7psbr7HM0j4AJLCwr8uMuBBjXcTjVeMSp
+baGQmIK8HBO2eeOKG8BtwNP+FcwCmYKMjgdUHia/nrWx1I0boL4GHtYCrRaKkKy8
+DIfkv4sAo3b+9yWU3ixb
+=Jv9P
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__23_Oct_2012_14_35_42_+1100_xVEGwDXb8CIyawvF--
+--Signature=_Tue__23_Oct_2012_14_42_21_+1100_Fa2mr9oPPI9+SRHy--
