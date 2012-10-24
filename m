@@ -1,73 +1,103 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Tue, 23 Oct 2012 19:51:12 -0700
-Message-ID: <20121024025112.GA7982@kroah.com>
-References: <20121024132827.b22e6f33031f785ff0189791@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (pm tree
+ related)
+Date: Wed, 24 Oct 2012 14:44:00 +1100
+Message-ID: <20121024144400.f5779e119f248256aa183ef5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__24_Oct_2012_14_44_00_+1100_CioZcgRm4DEC_4w4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:51134 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934056Ab2JXCuj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Oct 2012 22:50:39 -0400
-Received: by mail-pa0-f46.google.com with SMTP id hz1so42586pad.19
-        for <linux-next@vger.kernel.org>; Tue, 23 Oct 2012 19:50:38 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20121024132827.b22e6f33031f785ff0189791@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48310 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934056Ab2JXDoO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Oct 2012 23:44:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Alan Cox <alan@linux.intel.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Youquan Song <youquan.song@intel.com>, Rik van Riel <riel@redhat.com>
 
-On Wed, Oct 24, 2012 at 01:28:27PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> drivers/staging/dgrp/dgrp_net_ops.c: In function 'dgrp_input':
-> drivers/staging/dgrp/dgrp_net_ops.c:216:27: error: 'struct tty_struct' has no member named 'real_raw'
-> drivers/staging/dgrp/dgrp_net_ops.c:229:8: error: 'struct tty_struct' has no member named 'read_cnt'
-> drivers/staging/dgrp/dgrp_net_ops.c:229:8: error: 'struct tty_struct' has no member named 'read_cnt'
-> drivers/staging/dgrp/dgrp_net_ops.c:261:30: error: 'struct tty_struct' has no member named 'real_raw'
-> drivers/staging/dgrp/dgrp_net_ops.c:276:28: error: 'struct tty_struct' has no member named 'real_raw'
-> 
-> Caused by commits 53c5ee2cfb4d ("TTY: move ldisc data from tty_struct:
-> simple members") and ba2e68ac6157 ("TTY: move ldisc data from tty_struct:
-> read_* and echo_* and canon_* stuff") interacting with commit
-> 0b52b7497271 ("staging: Add dgrp driver for Digi Realport devices") now
-> in Linus' tree.
-> 
-> I disabled building of the dgrp driver for now using this merge fix patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 24 Oct 2012 13:25:29 +1100
-> Subject: [PATCH] staging: disable dgrp driver since it is broken by tty
->  changes
-> 
-> drivers/staging/dgrp/dgrp_net_ops.c: In function 'dgrp_input':
-> drivers/staging/dgrp/dgrp_net_ops.c:216:27: error: 'struct tty_struct' has no member named 'real_raw'
-> drivers/staging/dgrp/dgrp_net_ops.c:229:8: error: 'struct tty_struct' has no member named 'read_cnt'
-> drivers/staging/dgrp/dgrp_net_ops.c:229:8: error: 'struct tty_struct' has no member named 'read_cnt'
-> drivers/staging/dgrp/dgrp_net_ops.c:261:30: error: 'struct tty_struct' has no member named 'real_raw'
-> drivers/staging/dgrp/dgrp_net_ops.c:276:28: error: 'struct tty_struct' has no member named 'real_raw'
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/staging/dgrp/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/staging/dgrp/Kconfig b/drivers/staging/dgrp/Kconfig
-> index 39f4bb6..7d378c2 100644
-> --- a/drivers/staging/dgrp/Kconfig
-> +++ b/drivers/staging/dgrp/Kconfig
-> @@ -2,6 +2,7 @@ config DGRP
->         tristate "Digi Realport driver"
->         default n
->         depends on SYSFS
-> +	depends on BROKEN
+--Signature=_Wed__24_Oct_2012_14_44_00_+1100_CioZcgRm4DEC_4w4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, that makes sense for now, hopefully Jiri will return from his
-conference and fix this driver up.
+Hi all,
 
-greg k-h
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig) failed like this:
+
+In file included from arch/powerpc/kernel/idle.c:27:0:
+include/linux/tick.h: In function 'menu_hrtimer_cancel':
+include/linux/tick.h:148:48: error: 'return' with a value, in function retu=
+rning void [-Werror]
+
+Several of these :-(
+
+Caused by commit 25d77b76d7ae ("cpuidle: Quickly notice prediction
+failure for repeat mode") from the pm tree.  This build has
+CONFIG_CPU_IDLE_GOV_MENU turned off.  For changes that are obviously
+affected by CONFIG options, please test build with the CONFIG option on
+and off.
+
+I have applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 24 Oct 2012 14:40:47 +1100
+Subject: [PATCH] cpuidle: fix up but return type for inline function
+
+Fixes this error when CONFIG_CPU_IDLE_GOV_MENU is not enabled:
+
+In file included from arch/powerpc/kernel/idle.c:27:0:
+include/linux/tick.h: In function 'menu_hrtimer_cancel':
+include/linux/tick.h:148:48: error: 'return' with a value, in function retu=
+rning void [-Werror]
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/tick.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/tick.h b/include/linux/tick.h
+index 8867424..40d123e 100644
+--- a/include/linux/tick.h
++++ b/include/linux/tick.h
+@@ -145,7 +145,7 @@ static inline u64 get_cpu_iowait_time_us(int cpu, u64 *=
+unused) { return -1; }
+ # ifdef CONFIG_CPU_IDLE_GOV_MENU
+ extern void menu_hrtimer_cancel(void);
+ # else
+-static inline void menu_hrtimer_cancel(void) { return -1; }
++static inline void menu_hrtimer_cancel(void) { }
+ # endif /* CONFIG_CPU_IDLE_GOV_MENU */
+=20
+ #endif
+--=20
+1.7.10.280.gaa39
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__24_Oct_2012_14_44_00_+1100_CioZcgRm4DEC_4w4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQh2QAAAoJEECxmPOUX5FE9mkP/0k7OOyGRLlRiAbt5WHanRrN
+RBxwzLpiTBsW6VMRn/lGpTpgMUkts//KhdPhJCUG9/Kn6G6FcjFF7AoR82AqwhjP
+XYjlRaoKQSJcFkd+HNFls+5qIgIs2QLal9buq/g/Fj9dKzHSprTyHKQsH/hUnvNK
+OrXUd1EgNlVMJnnKKs7NXIHCVUvkyojbuFru87WKWrwg3iNYyeSSAA19H3W50Mgs
+k8u5uUjBc7Dy58xvMh4Rkt43r4SGgVYE/8lhDmvV2yEbZ1nx/XXb/eDZDMZJzeWg
+zGr7l6gpTBJHxISTQX3GiJR068sqrViByU56Q94+tgkzvaEwldSwLsHFx9af/egq
+CQtYENtWQf0GxX5YjQVZG+LPZMHwBAPUT6wIlJnRsfN2O3FdjH5Gec6o0WgNIwap
+/Jmi1bzd30r6pHcTLkxUIgtN5OflxzqM7wNjyzfipmgSg20daxGDuCGauEM/mAcU
+c0pAL4U42VvkPz/OVvlLUFnVulJmTuDlyJ5s0GfZl6KYaowDaqqXaS4S2tJjeeU2
+K6icRoyn19r9e/u0BWZSvL1zil1LEQql+8qDoISE2Nm6SaWJx25G9Lqq1dRCz7ED
+YsI9eePRlansqt7x7ggmomVa5coHr4/5Bd4MHqdcmI7JwgHbekw9f6QeHNMGv3sh
+m8mfjN/wSoiWE5YJAicZ
+=xCF4
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__24_Oct_2012_14_44_00_+1100_CioZcgRm4DEC_4w4--
