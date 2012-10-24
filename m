@@ -1,42 +1,56 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: manual merge of the modules tree with the  tree
-Date: Wed, 24 Oct 2012 10:51:49 +1030
-Message-ID: <87vce0oh2a.fsf@rustcorp.com.au>
-References: <20121022123553.240d9ddf05cd5e2c8fee0ab3@canb.auug.org.au>
+From: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Subject: [PATCH] usb/gadget: let file storage gadget select libcomposite
+Date: Wed, 24 Oct 2012 16:44:35 +0200
+Message-ID: <20121024144435.GF4368@breakpoint.cc>
+References: <20121018144614.b61961cfae2274d52d340882@canb.auug.org.au>
+ <50809624.30601@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:37042 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758234Ab2JXL3z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Oct 2012 07:29:55 -0400
-In-Reply-To: <20121022123553.240d9ddf05cd5e2c8fee0ab3@canb.auug.org.au>
+Received: from Chamillionaire.breakpoint.cc ([80.244.247.6]:43746 "EHLO
+	Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S934820Ab2JXOop (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Oct 2012 10:44:45 -0400
+Content-Disposition: inline
+In-Reply-To: <50809624.30601@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Linus <torvalds@linux-foundation.org>, Kees Cook <keescook@chromium.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Randy Dunlap <rdunlap@xenotime.net>, Felipe Balbi <balbi@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Date: Wed, 24 Oct 2012 16:40:10 +0200
 
-> Hi Rusty,
->
-> Today's linux-next merge of the modules tree got a conflict in
-> kernel/module.c between commit caabe240574a ("MODSIGN: Move the magic
-> string to the end of a module and eliminate the search") from Linus' tree
-> and commit 0250abdeec54 ("module: add syscall to load module from fd")
-> from the modules tree.
->
-> I fixed it up (I think - see below) and can carry the fix as necessary
-> (no action is required).
->
-> I do wonder why the above change in Linus' tree seems to have bypassed
-> the modules maintainer.
+found by randconfig, Randy Dunlap and Stephen Rothwell:
 
-Yes.  David tacked it on to a real bugfix which went straight to Linus;
-having fixed my mess I couldn't complain too much (though I had NAKed
-similar patches in the past).
+|drivers/built-in.o: In function `fsg_setup':
+|file_storage.c:(.text+0x24db7c): undefined reference to `usb_gadget_config_buf'
+|file_storage.c:(.text+0x24db98): undefined reference to `usb_gadget_get_string'
+|drivers/built-in.o: In function `fsg_bind':
+|file_storage.c:(.init.text+0xee42): undefined reference to `usb_ep_autoconfig_reset'
+|file_storage.c:(.init.text+0xee51): undefined reference to `usb_ep_autoconfig'
+|file_storage.c:(.init.text+0xee73): undefined reference to `usb_ep_autoconfig'
+|file_storage.c:(.init.text+0xee9e): undefined reference to `usb_ep_autoconfig'
 
-I will rebase my -next tree today.
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+for v3.7 please.
 
-Cheers,
-Rusty.
+ drivers/usb/gadget/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/gadget/Kconfig b/drivers/usb/gadget/Kconfig
+index bbcec83..66bc3ab 100644
+--- a/drivers/usb/gadget/Kconfig
++++ b/drivers/usb/gadget/Kconfig
+@@ -737,6 +737,7 @@ config USB_FUNCTIONFS_GENERIC
+ 
+ config USB_FILE_STORAGE
+ 	tristate "File-backed Storage Gadget (DEPRECATED)"
++	select USB_LIBCOMPOSITE
+ 	depends on BLOCK
+ 	help
+ 	  The File-backed Storage Gadget acts as a USB Mass Storage
+-- 
+1.7.10.4
