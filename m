@@ -1,77 +1,54 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the final tree (pm tree related)
-Date: Wed, 24 Oct 2012 23:40:48 +0200
-Message-ID: <8858946.fOHz3dP2jS@vostro.rjw.lan>
-References: <20121024144400.f5779e119f248256aa183ef5@canb.auug.org.au>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: mmotm 2012-10-22-17-08 uploaded (memory_hotplug.c)
+Date: Wed, 24 Oct 2012 15:32:28 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1210241531540.3524@chino.kir.corp.google.com>
+References: <20121023000924.C56EF5C0050@hpza9.eem.corp.google.com> <50861FA9.2030506@xenotime.net> <20121023102625.GA24265@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([193.178.161.156]:35513 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964877Ab2JXVgx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Oct 2012 17:36:53 -0400
-In-Reply-To: <20121024144400.f5779e119f248256aa183ef5@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Youquan Song <youquan.song@intel.com>, Rik van Riel <riel@redhat.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20121023102625.GA24265@dhcp22.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Michal Hocko <mhocko@suse.cz>
+Cc: akpm@linux-foundation.org, Randy Dunlap <rdunlap@xenotime.net>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, Jiang Liu <liuj97@gmail.com>, Len Brown <len.brown@intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Christoph Lameter <cl@linux.com>, Minchan Kim <minchan.kim@gmail.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>, Dave Hansen <dave@linux.vnet.ibm.com>, Mel Gorman <mel@csn.ul.ie>
+List-Id: linux-next.vger.kernel.org
 
-On Wednesday 24 of October 2012 14:44:00 Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
-> 
-> In file included from arch/powerpc/kernel/idle.c:27:0:
-> include/linux/tick.h: In function 'menu_hrtimer_cancel':
-> include/linux/tick.h:148:48: error: 'return' with a value, in function returning void [-Werror]
-> 
-> Several of these :-(
+On Tue, 23 Oct 2012, Michal Hocko wrote:
 
-Sorry for the breakage, it shoule be fixed now.
+> From e8d79e446b00e57c195c59570df0f2ec435ca39d Mon Sep 17 00:00:00 2001
+> From: Michal Hocko <mhocko@suse.cz>
+> Date: Tue, 23 Oct 2012 11:07:11 +0200
+> Subject: [PATCH] mm: make zone_pcp_reset independ on MEMORY_HOTREMOVE
+> 
+> 340175b7 (mm/hotplug: free zone->pageset when a zone becomes empty)
+> introduced zone_pcp_reset and hided it inside CONFIG_MEMORY_HOTREMOVE.
+> Since "memory-hotplug: allocate zone's pcp before onlining pages" the
+> function is also called from online_pages which is defined outside
+> CONFIG_MEMORY_HOTREMOVE which causes a linkage error.
+> 
+> The function, although not used outside of MEMORY_{HOTPLUT,HOTREMOVE},
+> seems like universal enough so let's keep it at its current location
+> and only remove the HOTREMOVE guard.
+> 
+> Signed-off-by: Michal Hocko <mhocko@suse.cz>
+> Reviewed-by: Wen Congyang <wency@cn.fujitsu.com>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Jiang Liu <liuj97@gmail.com>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Minchan Kim <minchan.kim@gmail.com>
+> Cc: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+> Cc: Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>
+> Cc: Dave Hansen <dave@linux.vnet.ibm.com>
+> Cc: Mel Gorman <mel@csn.ul.ie>
 
-Thanks,
-Rafael
+Acked-by: David Rientjes <rientjes@google.com>
 
+This fixes the build error on linux-next of this morning, thanks.
 
-> Caused by commit 25d77b76d7ae ("cpuidle: Quickly notice prediction
-> failure for repeat mode") from the pm tree.  This build has
-> CONFIG_CPU_IDLE_GOV_MENU turned off.  For changes that are obviously
-> affected by CONFIG options, please test build with the CONFIG option on
-> and off.
-> 
-> I have applied the following patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 24 Oct 2012 14:40:47 +1100
-> Subject: [PATCH] cpuidle: fix up but return type for inline function
-> 
-> Fixes this error when CONFIG_CPU_IDLE_GOV_MENU is not enabled:
-> 
-> In file included from arch/powerpc/kernel/idle.c:27:0:
-> include/linux/tick.h: In function 'menu_hrtimer_cancel':
-> include/linux/tick.h:148:48: error: 'return' with a value, in function returning void [-Werror]
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/linux/tick.h |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/tick.h b/include/linux/tick.h
-> index 8867424..40d123e 100644
-> --- a/include/linux/tick.h
-> +++ b/include/linux/tick.h
-> @@ -145,7 +145,7 @@ static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
->  # ifdef CONFIG_CPU_IDLE_GOV_MENU
->  extern void menu_hrtimer_cancel(void);
->  # else
-> -static inline void menu_hrtimer_cancel(void) { return -1; }
-> +static inline void menu_hrtimer_cancel(void) { }
->  # endif /* CONFIG_CPU_IDLE_GOV_MENU */
->  
->  #endif
-> 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
