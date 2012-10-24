@@ -1,41 +1,111 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Tue, 23 Oct 2012 13:02:34 -0700
-Message-ID: <20121023130234.827aa5df.akpm@linux-foundation.org>
-References: <20121023144221.5ae3061a11766df8175b959d@canb.auug.org.au>
-	<20121023124414.61568323.akpm@linux-foundation.org>
-	<1351021889.7502.55.camel@joe-AO722>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Wed, 24 Oct 2012 13:28:27 +1100
+Message-ID: <20121024132827.b22e6f33031f785ff0189791@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__24_Oct_2012_13_28_27_+1100_LTLElCZDY.J7yOhU"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54050 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755872Ab2JXC2h (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Oct 2012 22:28:37 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Alan Cox <alan@linux.intel.com>
+
+--Signature=_Wed__24_Oct_2012_13_28_27_+1100_LTLElCZDY.J7yOhU
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1351021889.7502.55.camel@joe-AO722>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay@vrfy.org>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 23 Oct 2012 12:51:29 -0700
-Joe Perches <joe@perches.com> wrote:
+Hi Greg,
 
-> > btw, what's up with printk_syslog.h?  It includes two header files which it
-> > doesn't need but fails to include the two it *does* need: printk_log.h
-> > and types.h.
-> > 
-> > 
-> 
-> printk_syslog.c includes kernel.h (it includes types.h)
-> and printk_log.h.
-> 
-> I think printk_syslog.h doesn't need printk_log.h
+After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-A general rule is that the header file shouldn't know or care what else
-it's includer has included.  Ideally it shouldn't know or care what
-else its includees have included, either.
+drivers/staging/dgrp/dgrp_net_ops.c: In function 'dgrp_input':
+drivers/staging/dgrp/dgrp_net_ops.c:216:27: error: 'struct tty_struct' has =
+no member named 'real_raw'
+drivers/staging/dgrp/dgrp_net_ops.c:229:8: error: 'struct tty_struct' has n=
+o member named 'read_cnt'
+drivers/staging/dgrp/dgrp_net_ops.c:229:8: error: 'struct tty_struct' has n=
+o member named 'read_cnt'
+drivers/staging/dgrp/dgrp_net_ops.c:261:30: error: 'struct tty_struct' has =
+no member named 'real_raw'
+drivers/staging/dgrp/dgrp_net_ops.c:276:28: error: 'struct tty_struct' has =
+no member named 'real_raw'
 
-A fun test would be
+Caused by commits 53c5ee2cfb4d ("TTY: move ldisc data from tty_struct:
+simple members") and ba2e68ac6157 ("TTY: move ldisc data from tty_struct:
+read_* and echo_* and canon_* stuff") interacting with commit
+0b52b7497271 ("staging: Add dgrp driver for Digi Realport devices") now
+in Linus' tree.
 
-for i in *.h
-	echo $i > foo.c
-	make foo.o
-done
+I disabled building of the dgrp driver for now using this merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 24 Oct 2012 13:25:29 +1100
+Subject: [PATCH] staging: disable dgrp driver since it is broken by tty
+ changes
+
+drivers/staging/dgrp/dgrp_net_ops.c: In function 'dgrp_input':
+drivers/staging/dgrp/dgrp_net_ops.c:216:27: error: 'struct tty_struct' has =
+no member named 'real_raw'
+drivers/staging/dgrp/dgrp_net_ops.c:229:8: error: 'struct tty_struct' has n=
+o member named 'read_cnt'
+drivers/staging/dgrp/dgrp_net_ops.c:229:8: error: 'struct tty_struct' has n=
+o member named 'read_cnt'
+drivers/staging/dgrp/dgrp_net_ops.c:261:30: error: 'struct tty_struct' has =
+no member named 'real_raw'
+drivers/staging/dgrp/dgrp_net_ops.c:276:28: error: 'struct tty_struct' has =
+no member named 'real_raw'
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/dgrp/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/dgrp/Kconfig b/drivers/staging/dgrp/Kconfig
+index 39f4bb6..7d378c2 100644
+--- a/drivers/staging/dgrp/Kconfig
++++ b/drivers/staging/dgrp/Kconfig
+@@ -2,6 +2,7 @@ config DGRP
+        tristate "Digi Realport driver"
+        default n
+        depends on SYSFS
++	depends on BROKEN
+        ---help---
+        Support for Digi Realport devices.  These devices allow you to
+        access remote serial ports as if they are local tty devices.  This
+--=20
+1.7.10.280.gaa39
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__24_Oct_2012_13_28_27_+1100_LTLElCZDY.J7yOhU
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQh1JLAAoJEECxmPOUX5FE9ZYP/0DoYci1W85FBEugHrfnD5N7
+OleRITv21pSjt+EDkgJTQI60+pgLkHTR6ukfwSDBOa5xQVkeCtnuL9etEY2YbbV1
+TBgdKfoOipUauSobqDWKiTCmds1g/W+ICUi3Bgk5zI3+V8SfLfVPhs6PoYaT0e6B
+m6sEMBHEd/IIkIxQXLhP3ewvymkq6taKr2GDs3HnRCQqxyjXvwSCJ0+KpMCy/BwQ
+V0+4umfcfUpzcBvIMTHap9KdcubHD2OZNVi1hIWyJ6+gcjdXYqubfnXTPHLNNgL/
+N7tOLbdRirv79IAeMMKYmqm5HS3JKcjk9o1Mf4yQrY/gQW6icM22S+/zj39q/L4c
+ocV/U9OTCEem4+0BRkgq0sa79JgBgT9uWzlITFntQ6AdyYOZJk0UPXThbMyZdxFz
+g+y73eC/JpzLGQU48vh/4dAaO9qZI61eMZ4LVcrT6kZP8e9bX5mZ3rBzMDDscU6F
+N0tqtYr0PekIjC/c1lKMQO4qwvZrTffxnb71DCK8EDjZXKsFmwxc3azY/6lDuZcN
+DGb3njM50ucPpSrtF8LyLNtSWTUFHpQGII3X/WuB+/soc+v9Fy4O1b7g4b+yU4A6
+TAYJDLHhem0BzqJlIslIMsRkunrR/I1P4xG02QhnY3Rb76JYizSR0pkmNn9pDLFn
+EF3GIlRjxweRnxfNtPE4
+=kRju
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__24_Oct_2012_13_28_27_+1100_LTLElCZDY.J7yOhU--
