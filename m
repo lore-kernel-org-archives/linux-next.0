@@ -1,87 +1,67 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build warnings after merge of the akpm tree
-Date: Thu, 25 Oct 2012 15:23:37 -0700
-Message-ID: <20121025152337.7f14919d.akpm@linux-foundation.org>
+Date: Fri, 26 Oct 2012 10:50:15 +1100
+Message-ID: <20121026105015.729a0762249b29bbed39dc65@canb.auug.org.au>
 References: <20121025142854.1924363d6a607004f918ac63@canb.auug.org.au>
 	<20121025143044.d21e2c29b16ee2005f93a371@canb.auug.org.au>
 	<508948de.01dc440a.58ed.ffffff17SMTPIN_ADDED@mx.google.com>
+	<20121025152337.7f14919d.akpm@linux-foundation.org>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__26_Oct_2012_10_50_15_+1100_dW=owF6sLjijBYa9"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54782 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750806Ab2JYXuT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Oct 2012 19:50:19 -0400
+In-Reply-To: <20121025152337.7f14919d.akpm@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Richard Yang <weiyang@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, richard -rw- weinberger <richard.weinberger@gmail.com>, Stefani Seibold <stefani@seibold.net>, Jiri Kosina <jkosina@suse.cz>
+
+--Signature=_Fri__26_Oct_2012_10_50_15_+1100_dW=owF6sLjijBYa9
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <508948de.01dc440a.58ed.ffffff17SMTPIN_ADDED@mx.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Yang <weiyang@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, richard -rw- weinberger <richard.weinberger@gmail.com>, Stefani Seibold <stefani@seibold.net>, Jiri Kosina <jkosina@suse.cz>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 25 Oct 2012 22:12:32 +0800
-Richard Yang <weiyang@linux.vnet.ibm.com> wrote:
+Hi Andrew,
 
-> >drivers/scsi/libiscsi.c: In function 'iscsi_free_task':
-> >drivers/scsi/libiscsi.c:507:2: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> >drivers/scsi/libiscsi.c: In function 'iscsi_pool_init':
-> >drivers/scsi/libiscsi.c:2510:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> >drivers/scsi/libiscsi.c: In function 'iscsi_conn_setup':
-> >drivers/scsi/libiscsi.c:2881:2: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> >drivers/scsi/libiscsi.c: In function 'iscsi_conn_teardown':
-> >drivers/scsi/libiscsi.c:2944:2: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> >drivers/scsi/libiscsi_tcp.c: In function 'iscsi_tcp_cleanup_task':
-> >drivers/scsi/libiscsi_tcp.c:462:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> >drivers/scsi/libiscsi_tcp.c:469:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> >drivers/scsi/libiscsi_tcp.c: In function 'iscsi_tcp_r2t_rsp':
-> >drivers/scsi/libiscsi_tcp.c:570:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> >drivers/scsi/libiscsi_tcp.c:586:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> >drivers/scsi/libiscsi_tcp.c:596:2: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> >drivers/scsi/libiscsi_tcp.c: In function 'iscsi_tcp_get_curr_r2t':
-> >drivers/scsi/libiscsi_tcp.c:998:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> >
-> 
-> ...
+On Thu, 25 Oct 2012 15:23:37 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
 >
-> I did a quick check. 
-> 
-> The root reason is, 
-> 1. kfifo_in() second parameter should be type "const void *"
-> 2. kfifo_out_locked() second parameter should be type "void *"
-> 3. kfifo_in_locked() second parameter should be type "const void *"
-> 
-> And I am curious about why the original code couldn't detect this type
-> mismatch.  
+> Anyway,
+> include-linux-kfifoh-replace-open-coded-type-check-code-with-typecheck.pa=
+tch
+> takes the kfifo typechecking from "too strict" to "far too strict", so
+> I'll drop that patch.
 
-Well, just looking at __cxio_init_resource_fifo():
+I have dropped it from the akpm tree in linux-next today.
 
-	u32 entry = 0;
-	
-	...
-	
-	kfifo_in(fifo, (unsigned char *) &entry, sizeof(u32));
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-This is silly - we shouldn't warn about this code.  There is no reason
-for the kfifo library code to require that the *caller*'s storage be
-const!
+--Signature=_Fri__26_Oct_2012_10_50_15_+1100_dW=owF6sLjijBYa9
+Content-Type: application/pgp-signature
 
-kfifo_in() is (or should be) simulating a C function with the interface:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-unsigned int kfifo_in(struct kfifo *fifo, const void *buf, size_t n);
+iQIcBAEBCAAGBQJQidA3AAoJEECxmPOUX5FE8WsP/3YTVM0bU1F+fQikI095frof
+OWA5AafbJKBhUWre0xeuBsOe9PVIDBC8MjQk3r296FejKCbbLZwPpMQg8vucixFT
+zk91eaKFfRU2KgAivot6KpxRC+PR2o+V9Ga9j7MiZgULeKNmke/Iq5YXxKL5AzcY
+SnE2RBejJrpycqKf5la3M1Qf7NCLdpYKIM2ExYgIWWaADFk9mXAyU1ih6IRa1Ffx
+gV6jKWFYBMyZYFJq01sd9N44WIm1VxnhPkCE+S2nIaEEWDYOe8ygFKtQLw3ae4dy
+j0e7dXi+H2RzQXCcjWOUvhNY3hFm6m+Fpd7Avv96K08fg3bqH621E5hdHLCOvVe5
+2KgQrDoHbzfWZsY8VKrXxqExFYLhhs14j4Vk2pfF0haMgrlC3OEv6ESov7A7I8eh
+AUlofFTUD23gvz2uQ7+BYeKbzDiN/iCEsPG2XqcPsFyGLv3ujYDIv4IvS4s01YN4
+RzOJOmJkcXzaVgZMwDhVcU0P51CAkotJmUEkliDIak6o4LoUVw1e9IGEuAA1HuA1
+s4ffTkBig6rYbU27pyTsgoYprk0wxRgqSOeR3Ov5yw7MjcxfELWCnRANf77O5ktJ
+oIwVppwUzBZ1DoBWOU1xErtheEWTB4/TxDdydiImVGDnrxAFg3F01/9WldFIL6fG
+Ji4pdUu25tHh1NdpZiBd
+=3ToN
+-----END PGP SIGNATURE-----
 
-This states "this function does not modify the memory at *buf" and it's
-perfectly OK for a caller to pass a non-const pointer into kfifo_in(). 
-We shouldn't warn about this.
-
-In fact, the __cxio_init_resource_fifo() shouldn't need to cast `buf'
-to uchar* either.  The need to add that cast is a shortcoming in the
-existing kfifo code.
-
-We should be able to pass *any* pointer, of any type, const or
-non-const into code which expects a const void *, without any warning.
-
-And holy cow that code is hard to read :( Why was kfifo_in()
-implemented as a macro, anyway?  AFAICT all its args have a known type,
-so we could have used a proper C interface, which would have fixed all
-this nicely.
-
-Anyway,
-include-linux-kfifoh-replace-open-coded-type-check-code-with-typecheck.patch
-takes the kfifo typechecking from "too strict" to "far too strict", so
-I'll drop that patch.
+--Signature=_Fri__26_Oct_2012_10_50_15_+1100_dW=owF6sLjijBYa9--
