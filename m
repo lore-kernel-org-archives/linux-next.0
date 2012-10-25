@@ -1,61 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the
- staging.current tree
-Date: Thu, 25 Oct 2012 13:19:07 +1100
-Message-ID: <20121025131907.cab4682e1792998d9cca2c19@canb.auug.org.au>
+Subject: Re: mmotm 2012-10-24-17-15 uploaded (uml)
+Date: Thu, 25 Oct 2012 13:48:50 +1100
+Message-ID: <20121025134850.76cdb390565dfe5117bdef7e@canb.auug.org.au>
+References: <20121025001628.1DEDE100047@wpzn3.hot.corp.google.com>
+	<50889347.4070801@xenotime.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__25_Oct_2012_13_19_07_+1100_LDcquVnCcXKhJEk2"
+ boundary="Signature=_Thu__25_Oct_2012_13_48_50_+1100_W0//dMTdMtFYQYl9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33075 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:57001 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759122Ab2JYCTQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Oct 2012 22:19:16 -0400
+	with ESMTP id S933068Ab2JYCtC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Oct 2012 22:49:02 -0400
+In-Reply-To: <50889347.4070801@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, linux-next@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Alan Cox <alan@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---Signature=_Thu__25_Oct_2012_13_19_07_+1100_LDcquVnCcXKhJEk2
+--Signature=_Thu__25_Oct_2012_13_48_50_+1100_W0//dMTdMtFYQYl9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Randy,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/comedi/drivers/amplc_dio200.c between commit dfb2540e91e1
-("staging: comedi: amplc_dio200: fix possible NULL deref during detach")
-from the staging.current tree and commit 71b3e9e8dc21 ("staging: comedi:
-amplc_dio200: support memory-mapped I/O") from the staging tree.
+On Wed, 24 Oct 2012 18:17:59 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
+>
+> uml on x86_64 defconfig:
+>=20
+> arch/um/drivers/chan_kern.c: In function 'tty_receive_char':
+> arch/um/drivers/chan_kern.c:89:42: error: 'struct tty_struct' has no memb=
+er named 'raw'
 
-I fixed it up (the latter is a superset of the former) and can carry the
-fix as necessary (no action is required).
+Caused by commit 53c5ee2cfb4d ("TTY: move ldisc data from tty_struct:
+simple members") from the tty tree in linux-next. cc's added.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__25_Oct_2012_13_19_07_+1100_LDcquVnCcXKhJEk2
+--Signature=_Thu__25_Oct_2012_13_48_50_+1100_W0//dMTdMtFYQYl9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQiKGbAAoJEECxmPOUX5FExagP/iqftt3idJgCRXDdVq4FPGyx
-+Am/e7kGM6/N7Nt+CmS7OxxevsIoq2khUqRxhtEIbtRXerLxMqBalVD/DGCLgiqV
-/j8wvVHOeXScwmwjIppmaiC/fcb/7ayeI7VoxvI+mxpNr6fCvhMzd2jsV1kyDION
-lE7uDFby5KPJS6gcx+9O2kLU1kT3eF0udetI4ZppPDa/O/cZz2+Rw+UUzQTvSbXh
-AHrwW/zhhEL8a5yxAIiy0aaKFEtBfSKQnMrHfBjZ5f7AA802/V2mLxhtvNgoxmjD
-FEDPzudyhOE9OHEdxapjofo4rdO4UxnBASutemC33WdgLTddQtKyRl8yX6HCNoqu
-/8iyS2KTmE599qMdOMfvhCVzufvbqk1k+yS+4dGCeB57qwkQcRBAq8r6FQTSrQa9
-r7j6XZWJ0fZA2nDNONNvlPMGNrkK/JohH+qKsrVSWASgZkLFd4x8Ozn8OTVOxXZQ
-7Et5T4qLnFv5WzAiPUsVjtC7BFczTq0gyUs6i+6AWBErlt1XYMgZCnosytQBfbXN
-ojsFtIvgm5hwC3ypibUMVWF133rGY20VywnUssTGhQrvu0i+tZwAB5AYiScUo/sq
-4NfeM7AgIRC1+NGjY5OUvlH694rB8kCly6wOmDuiLZ1r/AQDlJFDl80xs66ot1zD
-TATT7BsSQJ501eUGB90S
-=7WKW
+iQIcBAEBCAAGBQJQiKiSAAoJEECxmPOUX5FEPCoQAKQkPuWwOt42MUAXD6QfND04
+jZUPLUcZdZPA8ci34N/jH8+cszUO6XzIXU2igDdMe8Cg0O0I0HtnkpRG5QkZ1Cpw
+FD/HCePZq80n0aOpqpC0iFSDrfgmclR5j0PZassLgLrhiPShZRuoPhnN/cMydLTZ
+Yx2FTkOGuof1MRxw/7HdV3/3PrBvw/iul+CG+dSezfK4mSOoMRTd62psrdmMAbnx
+tSVPXi08TQQ+XXawYGnxswy51BiMpcsyeDkXccz3Z/pLu4BZWn3XQ4mtE+AdmJm0
+r8pKiFL6U4ybFyihQKKvEKnDoXN+GfO6qPfyrlXEnvYkFqZmZGP2nqNZspKqmfUH
+u0ET6LPp6cSOLLocZYa9cmwpVjpDbS2Yr688HMMOWrnbnGI+MjdnMe7JJi6Xu6xV
+/eEIm/oyez3dRYB4ulEk1rltgbJ7NF8wcfPSu1hzldElZ/XAVzlU3gqjEcpeXAlz
+DSxHJmTktQArGbPPU+93khGCYafYjcMmBudV/VPWFcjqrLdE+13+P9fj8HPd5MHR
+FR7YPFpCI98bA1z0KDRv2N4ghIXKM4T3LTC3stB6wnfvN6dAS73GkYXWDBKMH8H+
+ClzDgDkOxo5LPxCflBgxIgPBEhAN5ajX2ofcem6tmxJaQw9j4Yha5bNPVzMk6UUQ
+iplKnUg5tj4Yl11x3Yye
+=Gxus
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__25_Oct_2012_13_19_07_+1100_LDcquVnCcXKhJEk2--
+--Signature=_Thu__25_Oct_2012_13_48_50_+1100_W0//dMTdMtFYQYl9--
