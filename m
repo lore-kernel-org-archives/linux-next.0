@@ -1,40 +1,67 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Subject: Re: linux-next: manual merge of the staging tree with the staging.current
- tree
-Date: Thu, 25 Oct 2012 13:42:03 +0100
-Message-ID: <5089339B.4040502@mev.co.uk>
-References: <20121025131907.cab4682e1792998d9cca2c19@canb.auug.org.au>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [Xen-devel] linux-next: Tree for Oct 24 (xen)
+Date: Thu, 25 Oct 2012 09:46:30 -0400
+Message-ID: <20121025134628.GE26209@localhost.localdomain>
+References: <20121024151957.28a1626cd9a59c014e78c401@canb.auug.org.au>
+ <50885EA8.3050007@xenotime.net>
+ <508906CE02000078000A4553@nat28.tlf.novell.com>
+ <alpine.DEB.2.02.1210251118010.2689@kaball.uk.xensource.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121025131907.cab4682e1792998d9cca2c19@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.02.1210251118010.2689@kaball.uk.xensource.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ian Abbott <ian.abbott@mev.co.uk>
+To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Cc: Jan Beulich <JBeulich@suse.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Jeremy Fitzhardinge <jeremy@goop.org>, "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, xen-devel <xen-devel@lists.xen.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 2012-10-25 03:19, Stephen Rothwell wrote:
-> Hi Greg,
->
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/comedi/drivers/amplc_dio200.c between commit dfb2540e91e1
-> ("staging: comedi: amplc_dio200: fix possible NULL deref during detach")
-> from the staging.current tree and commit 71b3e9e8dc21 ("staging: comedi:
-> amplc_dio200: support memory-mapped I/O") from the staging tree.
->
-> I fixed it up (the latter is a superset of the former) and can carry the
-> fix as necessary (no action is required).
+On Thu, Oct 25, 2012 at 11:48:30AM +0100, Stefano Stabellini wrote:
+> On Thu, 25 Oct 2012, Jan Beulich wrote:
+> > >>> On 24.10.12 at 23:33, Randy Dunlap <rdunlap@xenotime.net> wrote:
+> > > On 10/23/2012 09:19 PM, Stephen Rothwell wrote:
+> > > 
+> > >> Hi all,
+> > >> 
+> > >> Changes since 201201023:
+> > >> 
+> > > 
+> > > on x86_64:
+> > > 
+> > > drivers/built-in.o: In function `dbgp_reset_prep':
+> > > (.text+0xb96b5): undefined reference to `xen_dbgp_reset_prep'
+> > > drivers/built-in.o: In function `dbgp_external_startup':
+> > > (.text+0xb9d95): undefined reference to `xen_dbgp_external_startup'
+> > > 
+> > > 
+> > > Full randconfig file is attached.
+> > 
+> > So this is because with !USB_SUPPORT but EARLY_PRINTK_DBGP
+> > dbgp_reset_prep() and dbgp_external_startup() get pointlessly
+> > defined and exported. This got broken by the merge
+> > recommendation for the ARM side changes (originally compilation
+> > of drivers/xen/dbgp.c depended on just CONFIG_XEN_DOM0).
+> > 
+> > >From my pov, fixing the USB side would be the clean solution (i.e.
+> > putting those function definitions inside a CONFIG_USB_SUPPORT
+> > conditional).
+> >
+> > The alternative of a smaller change would be to extend the
+> > conditional around the respective xen_dbgp_...() declarations
+> > in include/linux/usb/ehci_def.h to become
+> > 
+> > #if defined(CONFIG_XEN_DOM0) && defined(CONFIG_USB_SUPPORT)
+> > 
+> > Please advise towards your preference.
+> 
+> I think that your first suggestion is the right one.
 
-Sorry, I remember editing that while rebasing my patches.  I think I 
-must have assumed the NULL deref patch had already been applied to 
-Greg's "staging-next" branch, but it had in fact it had only been 
-applied to his "staging-linus" branch.  I was editing various other bits 
-while rebasing that patch series, so I never noticed that particular 
-edit as being a conflict.
-
-Apologies for the inconvenience it caused you.
-
--- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
--=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
+Can you guys spin up a patch pls and make sure it does not break
+compilation. Thx.
+> 
+> 
+> Otherwise we could also make drivers/xen/dbgp.c compile if
+> CONFIG_EARLY_PRINTK_DBGP rather than CONFIG_USB_SUPPORT.
+> I think that it would create fewer maintenance pains if dbgp_reset_prep
+> and dbgp_external_startup had the same compile requirements as their xen
+> counterparts (aside from Xen support of course).
