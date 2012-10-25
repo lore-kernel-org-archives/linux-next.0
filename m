@@ -1,59 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the akpm tree
-Date: Thu, 25 Oct 2012 14:35:54 +1100
-Message-ID: <20121025143554.5633fd6d70fe9320e29bac8e@canb.auug.org.au>
+Subject: Re: mmotm 2012-10-24-17-15 uploaded
+Date: Thu, 25 Oct 2012 14:42:58 +1100
+Message-ID: <20121025144258.60c751a4ec733f7a1dfec4cf@canb.auug.org.au>
+References: <20121025001628.1DEDE100047@wpzn3.hot.corp.google.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__25_Oct_2012_14_35_54_+1100_q_/v89cgco/9J5Bw"
+ boundary="Signature=_Thu__25_Oct_2012_14_42_58_+1100_51PLtnKt7_QU8KmN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33905 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35027 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756812Ab2JYDf4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Oct 2012 23:35:56 -0400
+	with ESMTP id S934502Ab2JYDnB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Oct 2012 23:43:01 -0400
+In-Reply-To: <20121025001628.1DEDE100047@wpzn3.hot.corp.google.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bob Liu <lliubbo@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
---Signature=_Thu__25_Oct_2012_14_35_54_+1100_q_/v89cgco/9J5Bw
+--Signature=_Thu__25_Oct_2012_14_42_58_+1100_51PLtnKt7_QU8KmN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-After merging the akpm tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+On Wed, 24 Oct 2012 17:16:27 -0700 akpm@linux-foundation.org wrote:
+>
+> The mm-of-the-moment snapshot 2012-10-24-17-15 has been uploaded to
+>=20
+>    http://www.ozlabs.org/~akpm/mmotm/
 
-mm/rmap.c: In function 'try_to_unmap_cluster':
-mm/rmap.c:1364:9: warning: unused variable 'pud' [-Wunused-variable]
-mm/rmap.c:1363:9: warning: unused variable 'pgd' [-Wunused-variable]
+I have split this series so that all the next tagged patches before
+linux-next.patch are in the akpm-current tree (based on Linus' tree) and
+all the rest are as before (rebased onto today's linux-next including
+the akpm-current tree).
 
-Introduced by commit "mm: introduce mm_find_pmd()".
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__25_Oct_2012_14_35_54_+1100_q_/v89cgco/9J5Bw
+--Signature=_Thu__25_Oct_2012_14_42_58_+1100_51PLtnKt7_QU8KmN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQiLOaAAoJEECxmPOUX5FE5dUP/03oTnUlbDR5r7tgQLn9Bbig
-i/TCFBBUz7vHeHDIJvavApgKWW3e3kRkrEoGYYU7tCN+o9JQ940LG7H58XsAR+AV
-ijwDpy3qvA6bCvsU1LJU9OYWTQTj/l81hhOE1V3/Cn24v6ffNXKImbUsqdBf4nRU
-QL1TBEquL2lEsvkAjz4gCoPynL3Iin1AP4Cl4m3mGn93SdwBVBI3a0T9le+qoWCO
-sImni7cO83qlKasKaFKnDZ2rf75Sqtr84f49x8/ziCB5Xd6Kryu0l5k2wUZQF9px
-WA3ybRb1huuob0qL9RPzwxNcN6aBDOvV55gebNSK82yyRx84vbCAQKm7clFVBSOn
-AjT0S+0yjdaWQkeHONjmlN2kpQo7S8tXBlIIutGd952nS4N6OyGM9wBGkC5H0Od7
-v2OPizjcLADKhs3ZRxlp6CKsxpYrm+jr2dOfbuGPeVkXgTWfyr+RtC+W+8Q5/PcQ
-DntOwmIcCsG4yDv5zrV4jyl6Nf3Jesg2FG7S3rn0AV0ICnHSaN6lB1SYZeb7j4Ua
-kCo8M8iBlXGmLFmRJVYLg+6n6GX97pknJ5I1RB8UjQvMHEFLfDl0NIHpzhog9m+u
-BgWK95qmHwiT+GjsRbTM8SPRdJUEQl0CLVWrmQvC5Bw3hoKlWHzmCHQFIq9F9QSa
-zki+FLYXZu1yVCh7pY01
-=AXaH
+iQIcBAEBCAAGBQJQiLVCAAoJEECxmPOUX5FERXcP/2aUDKWe5gqOp4EkgFuTdSRn
+GCYGZUXwxl8aynEa31jx6iBs5i1QiCYeBagwMJ0bagjDj0lElv4KW9vwl2rsmgpo
+B9g90rwWh99rAaMNBb9c+vopH5FsIuP5MvgQnKMccpY/oZsPCJ6d3XkGWTO5bbOr
+6ziUeVBrr6WOBWKaSYZM/U6Zq8R+dyhHdX4TZoCaX8+7Ts+eJnsTVhgu3WPFO4nJ
+aLWi9+yA6BAi14pOA9nYCEnXBjB5+eX7/01CBPGj2OK2HXBN6uA8FOsFyKCwEL8U
+1xts+gG4fXWateGd9Wx6PCllqTNuHNkt/uAJOrPMwWC9IEa8K+XZ26SssD2mKSkK
+R0bK4idC0ygXkjrBvOKO5wi/vFoymBuUZr7ntc1ipnIyIbQutlkGKW4uBEW2VwNt
+TRghRsr+fyRQfZWpPG01MwRQtkKaheb/z7+OfueUD6rE6kX8w2LRFkospA+655Fa
+qF6331bGibD9bHL4EbDZZSuw4bK0lbMN+TLJFxRZNTHuEScDTeWR2jHaq7eEPvBT
+nyKLPJ5MXW5ClRz8ev3U/SylF1udiAUFHjyMsoteOjsfMKRW/qowyGZKD1W6tUVY
+iqgxNe/GbTparVk8jgNx/+HG47M79FRPErWMs3AyRBt8POKUZeA9KM3K7nmWu6Bw
+U34xP/W3FU1UqtmlgMYP
+=eiZ8
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__25_Oct_2012_14_35_54_+1100_q_/v89cgco/9J5Bw--
+--Signature=_Thu__25_Oct_2012_14_42_58_+1100_51PLtnKt7_QU8KmN--
