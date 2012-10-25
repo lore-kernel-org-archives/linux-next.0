@@ -1,40 +1,72 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: mmotm 2012-10-24-17-15 uploaded (uml)
-Date: Wed, 24 Oct 2012 18:17:59 -0700
-Message-ID: <50889347.4070801@xenotime.net>
-References: <20121025001628.1DEDE100047@wpzn3.hot.corp.google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Date: Thu, 25 Oct 2012 13:05:45 +1100
+Message-ID: <20121025130545.5755af42c5573e2253866913@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__25_Oct_2012_13_05_45_+1100_/gMmx/M8vqRgys.S"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:57715 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1758890Ab2JYBSC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Oct 2012 21:18:02 -0400
-In-Reply-To: <20121025001628.1DEDE100047@wpzn3.hot.corp.google.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51152 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932993Ab2JYCFz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Oct 2012 22:05:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jones <davej@redhat.com>
 
-On 10/24/2012 05:16 PM, akpm@linux-foundation.org wrote:
+--Signature=_Thu__25_Oct_2012_13_05_45_+1100_/gMmx/M8vqRgys.S
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The mm-of-the-moment snapshot 2012-10-24-17-15 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
+Hi Greg,
 
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/misc/ezusb.c between commit 197ef5ef37d9 ("USB: Add missing
+license tag to ezusb driver") from the usb.current tree and commitc
+30186e51e53 ("USB: ezusb: unexport some functions that aren't being
+used") from the usb tree.
 
-uml on x86_64 defconfig:
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-arch/um/drivers/chan_kern.c: In function 'tty_receive_char':
-arch/um/drivers/chan_kern.c:89:42: error: 'struct tty_struct' has no member named 'raw'
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-~Randy
+diff --cc drivers/usb/misc/ezusb.c
+index 6589268,0a48de9..0000000
+--- a/drivers/usb/misc/ezusb.c
++++ b/drivers/usb/misc/ezusb.c
+@@@ -157,5 -162,4 +162,6 @@@ int ezusb_fx2_ihex_firmware_download(st
+  	return ezusb_ihex_firmware_download(dev, ezusb_fx2, firmware_path);
+  }
+  EXPORT_SYMBOL_GPL(ezusb_fx2_ihex_firmware_download);
++ #endif
+ +
+ +MODULE_LICENSE("GPL");
+
+--Signature=_Thu__25_Oct_2012_13_05_45_+1100_/gMmx/M8vqRgys.S
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQiJ55AAoJEECxmPOUX5FEjt8P/RRZjthtV/MKTiWTgceLOEwX
+8WCO7ioPf0x0GHK7IWa8APszLO3EJofpCFxlmxIbTnDbZBE3z6wx4CFc8mwc7wfR
+meXLGoQhbJ9xdAB6t+ludO64degrt3dpV6Ma/ku2KBi3ELhvsiwPV9cHfVBfAACh
+ncUTJfPD2BnR4sUpPt1F6M+twCofw4JMhxbP33V+Ql+iN0FmUqqvR+KEoEkDPU8M
+uP2aiA6u+Vpudup0WjcqMYX0wgCkDbtEmdeHxd/dQ3A3metuEmLJcmIQpgLbIN2p
+jd5Ir6ORX78+akPj59XbZRw4mx7O21SAOppkU6Fu33Bldm1hm1e25dXtobeqoODC
+Aa8slQViHZVQw+Kt0CDyrnvOKzz/5ytROSBHTejzfGF0EsE+k3Q13Cgnl12ntXqN
+wuZ5KAhETcmdZwsouqV0fhjOpKF/wXDL7pdA16vZZIaF4wZW4dcWtQpuYwBYuGed
+PPa8AcSRo2xiaN6t9WC6EbfGDkTY9nFNh8tVNnHys3SZmw2tRVIApx4qYb8u22GK
+3h6w7FhWI10+c8tmWIZvKBSNpcOoJi8i3aEI08sqaF7BWKu7MQb/6E1wk6ZPSzQJ
+gBhdtbdOU/urno9ET4osQtyH6eYgvHLazX3RguptKGAXASwoBVDMBrkhE+o6EPLe
+81mgXAcImLoUahoQJuxr
+=hiDT
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__25_Oct_2012_13_05_45_+1100_/gMmx/M8vqRgys.S--
