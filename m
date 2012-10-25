@@ -1,80 +1,83 @@
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: Re: [Xen-devel] linux-next: Tree for Oct 24 (xen)
-Date: Thu, 25 Oct 2012 07:15:35 -0700
-Message-ID: <20121025141535.GA29620@kroah.com>
-References: <20121024151957.28a1626cd9a59c014e78c401@canb.auug.org.au>
-	<50885EA8.3050007@xenotime.net>
-	<508906CE02000078000A4553@nat28.tlf.novell.com>
-	<alpine.DEB.2.02.1210251118010.2689@kaball.uk.xensource.com>
-	<20121025134628.GE26209@localhost.localdomain>
-	<5089635702000078000A48D7@nat28.tlf.novell.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the akpm tree
+Date: Fri, 26 Oct 2012 01:16:45 +1100
+Message-ID: <20121026011645.5a4e6adac51cf0bdc44e48bc@canb.auug.org.au>
+References: <20121025142854.1924363d6a607004f918ac63@canb.auug.org.au>
+	<20121025143044.d21e2c29b16ee2005f93a371@canb.auug.org.au>
+	<20121025141232.GB4730@richard.(null)>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <virtualization-bounces@lists.linux-foundation.org>
-Content-Disposition: inline
-In-Reply-To: <5089635702000078000A48D7@nat28.tlf.novell.com>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
-List-Post: <mailto:virtualization@lists.linux-foundation.org>
-List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
-Sender: virtualization-bounces@lists.linux-foundation.org
-Errors-To: virtualization-bounces@lists.linux-foundation.org
-To: Jan Beulich <JBeulich@suse.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, xen-devel <xen-devel@lists.xen.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__26_Oct_2012_01_16_45_+1100_G6oLNqw28EGPa3C8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121025141232.GB4730@richard.(null)>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Richard Yang <weiyang@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Oct 25, 2012 at 03:05:43PM +0100, Jan Beulich wrote:
-> >>> On 25.10.12 at 15:46, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com> wrote:
-> > On Thu, Oct 25, 2012 at 11:48:30AM +0100, Stefano Stabellini wrote:
-> >> On Thu, 25 Oct 2012, Jan Beulich wrote:
-> >> > >>> On 24.10.12 at 23:33, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> >> > > On 10/23/2012 09:19 PM, Stephen Rothwell wrote:
-> >> > > 
-> >> > >> Hi all,
-> >> > >> 
-> >> > >> Changes since 201201023:
-> >> > >> 
-> >> > > 
-> >> > > on x86_64:
-> >> > > 
-> >> > > drivers/built-in.o: In function `dbgp_reset_prep':
-> >> > > (.text+0xb96b5): undefined reference to `xen_dbgp_reset_prep'
-> >> > > drivers/built-in.o: In function `dbgp_external_startup':
-> >> > > (.text+0xb9d95): undefined reference to `xen_dbgp_external_startup'
-> >> > > 
-> >> > > 
-> >> > > Full randconfig file is attached.
-> >> > 
-> >> > So this is because with !USB_SUPPORT but EARLY_PRINTK_DBGP
-> >> > dbgp_reset_prep() and dbgp_external_startup() get pointlessly
-> >> > defined and exported. This got broken by the merge
-> >> > recommendation for the ARM side changes (originally compilation
-> >> > of drivers/xen/dbgp.c depended on just CONFIG_XEN_DOM0).
-> >> > 
-> >> > >From my pov, fixing the USB side would be the clean solution (i.e.
-> >> > putting those function definitions inside a CONFIG_USB_SUPPORT
-> >> > conditional).
-> >> >
-> >> > The alternative of a smaller change would be to extend the
-> >> > conditional around the respective xen_dbgp_...() declarations
-> >> > in include/linux/usb/ehci_def.h to become
-> >> > 
-> >> > #if defined(CONFIG_XEN_DOM0) && defined(CONFIG_USB_SUPPORT)
-> >> > 
-> >> > Please advise towards your preference.
-> >> 
-> >> I think that your first suggestion is the right one.
-> > 
-> > Can you guys spin up a patch pls and make sure it does not break
-> > compilation. Thx.
-> 
-> I'd really like to hear Greg's opinion on which route to take before
-> pointlessly trying the other one.
+--Signature=_Fri__26_Oct_2012_01_16_45_+1100_G6oLNqw28EGPa3C8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have no idea, please send patches.
+Hi Richard,
 
-greg k-h
+On Thu, 25 Oct 2012 22:12:32 +0800 Richard Yang <weiyang@linux.vnet.ibm.com=
+> wrote:
+>
+> I did a quick check.=20
+>=20
+> The root reason is,=20
+> 1. kfifo_in() second parameter should be type "const void *"
+> 2. kfifo_out_locked() second parameter should be type "void *"
+> 3. kfifo_in_locked() second parameter should be type "const void *"
+>=20
+> And I am curious about why the original code couldn't detect this type
+> mismatch. =20
+>=20
+> The reason is: the original code use =3D not =3D=3D.=20
+> so when a const void * is assigned another pointer type, there is no warn=
+ing.
+>=20
+> While I write this test code, there is still no warning.=20
+> int   main()
+> {
+> 	int *a;=20
+> 	void* b;
+> 	b =3D a;  // this should be ok.
+> 	a =3D b;  // this should need the type transfer, but still no warning.
+> 	return 0;
+> }=20
+>=20
+> Hmm... not understand. Any error in my test code?
+
+Yes, any pointer can be assigned to a void pointer and a void pointer can
+be assigned to any pointer, so neither of the above should complain.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__26_Oct_2012_01_16_45_+1100_G6oLNqw28EGPa3C8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQiUnNAAoJEECxmPOUX5FEVsAQAJnO4pBL40JIw00691UOPg93
+MJcWhNjtclBo92HfR4bafrkMuHby7YVzShkWZ5G0mJ3GRYDthFnf26uSWaTZ0DuE
+UuSTWfhWoIvJyzL9aAPLZYiOKgVi95b/dnhfFlrg8lRKHysMLarZErVlrMV7VXeq
+dWFow0ieIC5+tduUvaWUVDOvmsMiAfEMV8RK4Dyrn0yHuxhTZ/EvZa65iOrNL+g2
+9zlLcsvCDey0cYT52CxzxRGwc8kXc5ra2Ee1JxqMP4mfNwxkiXaomiXIsv8qN8HE
+Ecnba17OxWpvpty/ytKx/3lKppmDQnzSWObx2lOke10rzetosS9ocvRF6SVAzIit
+Oy3YfGZVZNbVKIiV9K4LL+UpvvwWEcr7hjlXrNCqYxGbbN/D1dYgvYsGCoMiWQK7
+BWVE43V/jU/kMMI55NJJIGtJ0ILZJnIsuZveh5olqn6XibaLSFGAUaj1s7zc0d9A
+KwqFiOkWFbh8KfDpeL6XGIg1xwY/DdmCCIUd5aAHxAYyhTELhlx+3XvW4/CvMeqH
+Y7JRu5/2EUDrGW8GSFBP+Vw3HDCCR2fSePWEUsKThRYhIy7LmNzMsE6qCIUO3OS4
+JTNWZVkjyr6TPwY4YY5jUaplP959Gwxl4E/goEft9/sGneoNJIMj5xilBQ6HKHtL
+oPRTKwERticdK7Lws9qR
+=wEuT
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__26_Oct_2012_01_16_45_+1100_G6oLNqw28EGPa3C8--
