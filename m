@@ -1,43 +1,87 @@
-From: Yuanhan Liu <yliu.null@gmail.com>
-Subject: Re: [PATCH] Fix the warning related to type check in kfifo.h
-Date: Fri, 26 Oct 2012 00:14:21 +0800
-Message-ID: <CAGZGoEejN6pxy8=w_-R2Z4hFMtimCuj-mZBeKBHHOsW4xA8u_g@mail.gmail.com>
-References: <1351178137-10760-1-git-send-email-weiyang@linux.vnet.ibm.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build warnings after merge of the akpm tree
+Date: Thu, 25 Oct 2012 15:23:37 -0700
+Message-ID: <20121025152337.7f14919d.akpm@linux-foundation.org>
+References: <20121025142854.1924363d6a607004f918ac63@canb.auug.org.au>
+	<20121025143044.d21e2c29b16ee2005f93a371@canb.auug.org.au>
+	<508948de.01dc440a.58ed.ffffff17SMTPIN_ADDED@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1351178137-10760-1-git-send-email-weiyang@linux.vnet.ibm.com>
+In-Reply-To: <508948de.01dc440a.58ed.ffffff17SMTPIN_ADDED@mx.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Yang <weiyang@linux.vnet.ibm.com>
-Cc: akpm@linux-foundation.org, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, fengguang.wu@intel.com, yuanhan.liu@linux.intel.com
+To: Richard Yang <weiyang@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, richard -rw- weinberger <richard.weinberger@gmail.com>, Stefani Seibold <stefani@seibold.net>, Jiri Kosina <jkosina@suse.cz>
 List-Id: linux-next.vger.kernel.org
 
-Hi Yang,
+On Thu, 25 Oct 2012 22:12:32 +0800
+Richard Yang <weiyang@linux.vnet.ibm.com> wrote:
 
-On Thu, Oct 25, 2012 at 11:15 PM, Wei Yang <weiyang@linux.vnet.ibm.com> wrote:
-> In d096f3b046, typecheck() replace the original code to check the type
-> mismatch for kfifo related macros.
+> >drivers/scsi/libiscsi.c: In function 'iscsi_free_task':
+> >drivers/scsi/libiscsi.c:507:2: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+> >drivers/scsi/libiscsi.c: In function 'iscsi_pool_init':
+> >drivers/scsi/libiscsi.c:2510:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+> >drivers/scsi/libiscsi.c: In function 'iscsi_conn_setup':
+> >drivers/scsi/libiscsi.c:2881:2: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+> >drivers/scsi/libiscsi.c: In function 'iscsi_conn_teardown':
+> >drivers/scsi/libiscsi.c:2944:2: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+> >drivers/scsi/libiscsi_tcp.c: In function 'iscsi_tcp_cleanup_task':
+> >drivers/scsi/libiscsi_tcp.c:462:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+> >drivers/scsi/libiscsi_tcp.c:469:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+> >drivers/scsi/libiscsi_tcp.c: In function 'iscsi_tcp_r2t_rsp':
+> >drivers/scsi/libiscsi_tcp.c:570:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+> >drivers/scsi/libiscsi_tcp.c:586:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+> >drivers/scsi/libiscsi_tcp.c:596:2: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+> >drivers/scsi/libiscsi_tcp.c: In function 'iscsi_tcp_get_curr_r2t':
+> >drivers/scsi/libiscsi_tcp.c:998:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+> >
+> 
+> ...
 >
-> After this patch, there shows several warnings.
+> I did a quick check. 
+> 
+> The root reason is, 
+> 1. kfifo_in() second parameter should be type "const void *"
+> 2. kfifo_out_locked() second parameter should be type "void *"
+> 3. kfifo_in_locked() second parameter should be type "const void *"
+> 
+> And I am curious about why the original code couldn't detect this type
+> mismatch.  
 
-Yes, we found those warnings with 0-DAY system. I checked this issue a
-little and found the root cause as you stated below.
+Well, just looking at __cxio_init_resource_fifo():
 
-But, I have one question: why we need do the type check? The prototype
-of __kfifo_type is:
-unsigned int __kfifo_out(struct __kfifo *fifo,  void *buf, unsigned int len).
+	u32 entry = 0;
+	
+	...
+	
+	kfifo_in(fifo, (unsigned char *) &entry, sizeof(u32));
 
-As you see, buf is defined as void * type. And I followed that
-function a bit and found it uses memcpy() to do the real _out_ things.
-So, why we need do check here? memcpy can handle it no matter what
-point type it is.
+This is silly - we shouldn't warn about this code.  There is no reason
+for the kfifo library code to require that the *caller*'s storage be
+const!
 
-And please feel free to correct me if I'm wrong.
+kfifo_in() is (or should be) simulating a C function with the interface:
 
-Thanks,
-Yuanhan Liu
+unsigned int kfifo_in(struct kfifo *fifo, const void *buf, size_t n);
 
-> This reason is the original
-> code use the assignment to check the type. When the left value is a type of
-> "void *", then there is no warning. This type of mismatch can be detected by
-> typecheck() macro.
+This states "this function does not modify the memory at *buf" and it's
+perfectly OK for a caller to pass a non-const pointer into kfifo_in(). 
+We shouldn't warn about this.
+
+In fact, the __cxio_init_resource_fifo() shouldn't need to cast `buf'
+to uchar* either.  The need to add that cast is a shortcoming in the
+existing kfifo code.
+
+We should be able to pass *any* pointer, of any type, const or
+non-const into code which expects a const void *, without any warning.
+
+And holy cow that code is hard to read :( Why was kfifo_in()
+implemented as a macro, anyway?  AFAICT all its args have a known type,
+so we could have used a proper C interface, which would have fixed all
+this nicely.
+
+Anyway,
+include-linux-kfifoh-replace-open-coded-type-check-code-with-typecheck.patch
+takes the kfifo typechecking from "too strict" to "far too strict", so
+I'll drop that patch.
