@@ -1,121 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the akpm tree
-Date: Thu, 25 Oct 2012 14:30:44 +1100
-Message-ID: <20121025143044.d21e2c29b16ee2005f93a371@canb.auug.org.au>
-References: <20121025142854.1924363d6a607004f918ac63@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the akpm tree
+Date: Thu, 25 Oct 2012 14:35:54 +1100
+Message-ID: <20121025143554.5633fd6d70fe9320e29bac8e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__25_Oct_2012_14_30_44_+1100_2K_CMV4dHD8ivxaB"
+ boundary="Signature=_Thu__25_Oct_2012_14_35_54_+1100_q_/v89cgco/9J5Bw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46407 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33905 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750980Ab2JYDaq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Oct 2012 23:30:46 -0400
-In-Reply-To: <20121025142854.1924363d6a607004f918ac63@canb.auug.org.au>
+	with ESMTP id S1756812Ab2JYDf4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Oct 2012 23:35:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Yang <weiyang@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bob Liu <lliubbo@gmail.com>
 
---Signature=_Thu__25_Oct_2012_14_30_44_+1100_2K_CMV4dHD8ivxaB
+--Signature=_Thu__25_Oct_2012_14_35_54_+1100_q_/v89cgco/9J5Bw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-On Thu, 25 Oct 2012 14:28:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the akpm tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced these warnings:
->=20
-> drivers/infiniband/hw/cxgb3/cxio_resource.c: In function '__cxio_init_res=
-ource_fifo':
-> drivers/infiniband/hw/cxgb3/cxio_resource.c:62:3: warning: comparison of =
-distinct pointer types lacks a cast [enabled by default]
-> drivers/infiniband/hw/cxgb3/cxio_resource.c:74:4: warning: comparison of =
-distinct pointer types lacks a cast [enabled by default]
-> drivers/infiniband/hw/cxgb3/cxio_resource.c:81:4: warning: comparison of =
-distinct pointer types lacks a cast [enabled by default]
-> drivers/infiniband/hw/cxgb3/cxio_resource.c:86:4: warning: comparison of =
-distinct pointer types lacks a cast [enabled by default]
-> drivers/infiniband/hw/cxgb3/cxio_resource.c:89:7: warning: comparison of =
-distinct pointer types lacks a cast [enabled by default]
-> drivers/infiniband/hw/cxgb3/cxio_resource.c: In function 'cxio_init_qpid_=
-fifo':
-> drivers/infiniband/hw/cxgb3/cxio_resource.c:123:4: warning: comparison of=
- distinct pointer types lacks a cast [enabled by default]
-> drivers/infiniband/hw/cxgb3/cxio_resource.c: In function 'cxio_hal_get_re=
-source':
-> drivers/infiniband/hw/cxgb3/cxio_resource.c:184:6: warning: comparison of=
- distinct pointer types lacks a cast [enabled by default]
-> drivers/infiniband/hw/cxgb3/cxio_resource.c: In function 'cxio_hal_put_re=
-source':
-> drivers/infiniband/hw/cxgb3/cxio_resource.c:193:2: warning: comparison of=
- distinct pointer types lacks a cast [enabled by default]
-> drivers/infiniband/hw/cxgb3/cxio_resource.c:193:2: warning: comparison of=
- distinct pointer types lacks a cast [enabled by default]
-> drivers/infiniband/hw/cxgb3/cxio_resource.c:193:2: warning: comparison of=
- distinct pointer types lacks a cast [enabled by default]
->=20
-> Probably introduced by commit "include/linux/kfifo.h: replace open-coded
-> type check code with typecheck()".
+After merging the akpm tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-Also:
+mm/rmap.c: In function 'try_to_unmap_cluster':
+mm/rmap.c:1364:9: warning: unused variable 'pud' [-Wunused-variable]
+mm/rmap.c:1363:9: warning: unused variable 'pgd' [-Wunused-variable]
 
-drivers/scsi/libiscsi.c: In function 'iscsi_free_task':
-drivers/scsi/libiscsi.c:507:2: warning: comparison of distinct pointer type=
-s lacks a cast [enabled by default]
-drivers/scsi/libiscsi.c: In function 'iscsi_pool_init':
-drivers/scsi/libiscsi.c:2510:3: warning: comparison of distinct pointer typ=
-es lacks a cast [enabled by default]
-drivers/scsi/libiscsi.c: In function 'iscsi_conn_setup':
-drivers/scsi/libiscsi.c:2881:2: warning: comparison of distinct pointer typ=
-es lacks a cast [enabled by default]
-drivers/scsi/libiscsi.c: In function 'iscsi_conn_teardown':
-drivers/scsi/libiscsi.c:2944:2: warning: comparison of distinct pointer typ=
-es lacks a cast [enabled by default]
-drivers/scsi/libiscsi_tcp.c: In function 'iscsi_tcp_cleanup_task':
-drivers/scsi/libiscsi_tcp.c:462:3: warning: comparison of distinct pointer =
-types lacks a cast [enabled by default]
-drivers/scsi/libiscsi_tcp.c:469:3: warning: comparison of distinct pointer =
-types lacks a cast [enabled by default]
-drivers/scsi/libiscsi_tcp.c: In function 'iscsi_tcp_r2t_rsp':
-drivers/scsi/libiscsi_tcp.c:570:3: warning: comparison of distinct pointer =
-types lacks a cast [enabled by default]
-drivers/scsi/libiscsi_tcp.c:586:3: warning: comparison of distinct pointer =
-types lacks a cast [enabled by default]
-drivers/scsi/libiscsi_tcp.c:596:2: warning: comparison of distinct pointer =
-types lacks a cast [enabled by default]
-drivers/scsi/libiscsi_tcp.c: In function 'iscsi_tcp_get_curr_r2t':
-drivers/scsi/libiscsi_tcp.c:998:5: warning: comparison of distinct pointer =
-types lacks a cast [enabled by default]
-
+Introduced by commit "mm: introduce mm_find_pmd()".
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__25_Oct_2012_14_30_44_+1100_2K_CMV4dHD8ivxaB
+--Signature=_Thu__25_Oct_2012_14_35_54_+1100_q_/v89cgco/9J5Bw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQiLJkAAoJEECxmPOUX5FEhVIP/1rx9cdjzOHRBSoq6AHuDdkq
-ik2gtr4ZqjO3blJFCHmzygbXUGbl7tT868OiBSPukXF5CqybW3RzvvaoSD3uAnrm
-2sQaiTwX1Xp0fz+CWzOAomVmb/t70BFY1Hra3rUqh8+j/0vCV8waDzveYgM3lsGk
-lSS1oTmLZ96EFFrgJCvwHkZbMQoAJ5IK2hZk3lPGF5ZPYYKmUPUcbok5iIoCrQds
-xPy7G4QjHjVRSHLA4WpnUhiqfGajVe8YxS81QtucS5D1RNdyrM+Ks23bTJdN21i1
-C7AVGGIAEsMrh+00XA/Ki9v06qRBRNFSz0eK04UGXVWboAyNOs9aHu2kyb2GBLCs
-A9P7KTkHU4DzJOIKixKMChP+a9SyinKdteCnG9YX8zgKb50YxfboaJ6Pq2tKutbn
-kx7c0Zn//UiSldSlTmqz7PpqS2HuPFrD5/XPDqgVu7NXTY71G+CJeEcTAszj2kZH
-MgrZEpKxLB0wPgONT0hA9bH2gf3m3S1LfYtIfZv/uXP1EjJfU4Rtgx8lT3Mlu+eW
-3o9g9hC4ijfY9sBA5vQjyG1zx+MHarUKOz+E57XwFbFe8auA1t8rtFZAw+gPkJ/v
-kLAbdwHQWrNZTiUYCU+iGB24EwblBsl66gD2I7VHDogSSdg0jokuMPm0yxboPQps
-TesR3Yqrrn5O+2prwiKP
-=e3Xc
+iQIcBAEBCAAGBQJQiLOaAAoJEECxmPOUX5FE5dUP/03oTnUlbDR5r7tgQLn9Bbig
+i/TCFBBUz7vHeHDIJvavApgKWW3e3kRkrEoGYYU7tCN+o9JQ940LG7H58XsAR+AV
+ijwDpy3qvA6bCvsU1LJU9OYWTQTj/l81hhOE1V3/Cn24v6ffNXKImbUsqdBf4nRU
+QL1TBEquL2lEsvkAjz4gCoPynL3Iin1AP4Cl4m3mGn93SdwBVBI3a0T9le+qoWCO
+sImni7cO83qlKasKaFKnDZ2rf75Sqtr84f49x8/ziCB5Xd6Kryu0l5k2wUZQF9px
+WA3ybRb1huuob0qL9RPzwxNcN6aBDOvV55gebNSK82yyRx84vbCAQKm7clFVBSOn
+AjT0S+0yjdaWQkeHONjmlN2kpQo7S8tXBlIIutGd952nS4N6OyGM9wBGkC5H0Od7
+v2OPizjcLADKhs3ZRxlp6CKsxpYrm+jr2dOfbuGPeVkXgTWfyr+RtC+W+8Q5/PcQ
+DntOwmIcCsG4yDv5zrV4jyl6Nf3Jesg2FG7S3rn0AV0ICnHSaN6lB1SYZeb7j4Ua
+kCo8M8iBlXGmLFmRJVYLg+6n6GX97pknJ5I1RB8UjQvMHEFLfDl0NIHpzhog9m+u
+BgWK95qmHwiT+GjsRbTM8SPRdJUEQl0CLVWrmQvC5Bw3hoKlWHzmCHQFIq9F9QSa
+zki+FLYXZu1yVCh7pY01
+=AXaH
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__25_Oct_2012_14_30_44_+1100_2K_CMV4dHD8ivxaB--
+--Signature=_Thu__25_Oct_2012_14_35_54_+1100_q_/v89cgco/9J5Bw--
