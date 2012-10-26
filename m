@@ -1,18 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the gpio-lw tree
-Date: Fri, 26 Oct 2012 14:24:34 +1100
-Message-ID: <20121026142434.00b97d865478dabafbeb2c52@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the pinctrl tree
+Date: Fri, 26 Oct 2012 14:27:08 +1100
+Message-ID: <20121026142708.394d5ef1e6e3b9ad19243cc6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__26_Oct_2012_14_24_34_+1100_eCA=scwuOz.hKVRp"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Fri__26_Oct_2012_14_27_08_+1100_tkVrAEZ6n_dkreV2"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59551 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755817Ab2JZD1K (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Oct 2012 23:27:10 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Linus Walleij <linus.walleij@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Fri__26_Oct_2012_14_24_34_+1100_eCA=scwuOz.hKVRp
+--Signature=_Fri__26_Oct_2012_14_27_08_+1100_tkVrAEZ6n_dkreV2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -20,10 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/Kconfig between commit a3b8d4a51357 ("GPIO: Add support for GPIO
-on CLPS711X-target platform") from the gpio-lw tree and commit
-4a8355c4c34f ("ARM: clps711x: convert to clockevents") from the arm-soc
-tree.
+arch/arm/mach-ux500/cpu-db8500.c between commit 63c53906312f
+("pinctrl/nomadik: move the platform data header") from the pinctrl tree
+and commit 4040d10a3d44 ("ARM: ux500: add DB serial number to entropy
+pool") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -32,39 +36,39 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/Kconfig
-index a7c541e,d9b7a84..0000000
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@@ -366,8 -364,6 +366,7 @@@ config ARCH_CNS3XX
+diff --cc arch/arm/mach-ux500/cpu-db8500.c
+index 87a8f9f,50202a1..0000000
+--- a/arch/arm/mach-ux500/cpu-db8500.c
++++ b/arch/arm/mach-ux500/cpu-db8500.c
+@@@ -18,7 -18,7 +18,8 @@@
+  #include <linux/io.h>
+  #include <linux/mfd/abx500/ab8500.h>
+  #include <linux/platform_data/usb-musb-ux500.h>
+ +#include <linux/platform_data/pinctrl-nomadik.h>
++ #include <linux/random.h>
  =20
-  config ARCH_CLPS711X
-  	bool "Cirrus Logic CLPS711x/EP721x/EP731x-based"
- +	select ARCH_REQUIRE_GPIOLIB
-- 	select ARCH_USES_GETTIMEOFFSET
-  	select CLKDEV_LOOKUP
-  	select COMMON_CLK
-  	select CPU_ARM720T
+  #include <asm/pmu.h>
+  #include <asm/mach/map.h>
 
---Signature=_Fri__26_Oct_2012_14_24_34_+1100_eCA=scwuOz.hKVRp
+--Signature=_Fri__26_Oct_2012_14_27_08_+1100_tkVrAEZ6n_dkreV2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQigJyAAoJEECxmPOUX5FEpE0QAIoMOAY6iIkNO8auCAU2Ts2z
-W/oC22jtFfs+reIg7cSgXdg8nAQE/b9eQXigxkre06OLJDA/syT7k0bkdseCj1+d
-/ptOc5AEOEbJboNp/86rHr4aOK+InJS8bMHx32c7lNH8l5LegVwaT6D/4hHid1Ae
-89y4iZ/uW04+PgLhweUDiQczdmjfFOmbxbhbrmhj3HH7nysXjHZ6Sa6rozrIIv99
-CuYcJgi+ysgo4n4WoF5pr9lpCp9n1wI0BIcT/0D/Dm7o03Tasa5/H104Z94u/U6a
-n4FnGp340e8q/Wj8GMJuD5vinolofT1kj8wxGstftxzwuR5ZurD9i1D7EMXjjv7W
-Y+GEX8w4MJ+WASKC7iu8Quam2zIdhCd5v/v5nqAXBYsiFUwKmtpItbHRoSS0uK0b
-4PoTaz76CUW8vooyxe7tcQfGLMuUjBWt3PMjGmCk6l51wXh2o/JMIS6JDwLlZAfr
-TYrMpiTMn9YsC0Ezzwj34xC+OJCFHkMdgYUlUmc3YQEb6pNq8uyTvN/c2ypwKdDO
-6rV2T9jkPJUAoIKOg4YSRVMkIsRQZ2Q54sHjwkDGdbtUnoK1wFtcTjv0vCLtzV44
-Qwr7TGh4xXPo5CpYwIJJ/w2yA7pczIYVTyDhW1zC1Ax6hU7rprVrWqrXceegARVV
-wO0Q9H28ttg7EkSuebiN
-=UoiV
+iQIcBAEBCAAGBQJQigMMAAoJEECxmPOUX5FEe50QAIJtMZQiI4/3R4tAtC49tgjX
+CdzySCZg0gNcA7IZRDy/IuzlEOdYby7xedHq0EKc3+uPyTQZT0PqIHv3829024ac
+3srlgeNo2RR57ANKzCgIWA0pemVf9FC+fl0pKR+9WCIm+GSidcBxOABI7EfygSq6
+cgK/gWtyCO8y2qPCj8hxwopFWVu5JEOx1NGgfjaeT174GMUFlUKfXLnWlSSqLoUB
+BtkiDbpVZEVcyeVFmWBA3P4j8C0iGwJljjLD6hNr5+rD4id2kEon33hGWANd6RQc
+LoXKaxIt71bSzCYOAMi0xjXGEJd3O/FDRZxowF02GPtuSp8HAo7optK5N7s01r+n
+B+E5P6dLoOLIjN4NUxQbj1W40HDlhownhAS09f6HEGT10zQJHvSGVhCptwMwgVWi
+Zhp3mAN9c2eEdNpqO2MrbvN+OlMe/Fr0QFfKn4f26FO8gXR2CezjKzh6Xo8VHb6U
+4gIEzsVdw6NSJQhUgVPlw5uGj3onyWT1ULEm0nO95Nc36TFMO+fjVVJwI9QhxZM3
+6+op5dDU3D0zNhlEciUTLtTkNH6Ieibk/L6cyJ6sy3VmLm6zEPssXkFqtOUh4Ve7
+hOt4avJPaJCsYp/MA2U0gUDAJyItALloR7dBJdCygtb5fCcOSoIc1EgLIy0Ugp9E
+qXWq0aEfSeCSbl0NvlRQ
+=ABmp
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__26_Oct_2012_14_24_34_+1100_eCA=scwuOz.hKVRp--
+--Signature=_Fri__26_Oct_2012_14_27_08_+1100_tkVrAEZ6n_dkreV2--
