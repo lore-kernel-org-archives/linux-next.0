@@ -1,31 +1,70 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Please add bcm2835 tree to linux-next
-Date: Thu, 25 Oct 2012 21:02:07 -0600
-Message-ID: <5089FD2F.9090507@wwwdotorg.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the gpio-lw tree
+Date: Fri, 26 Oct 2012 14:24:34 +1100
+Message-ID: <20121026142434.00b97d865478dabafbeb2c52@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:47063 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755319Ab2JZDCR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Oct 2012 23:02:17 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__26_Oct_2012_14_24_34_+1100_eCA=scwuOz.hKVRp"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Linus Walleij <linus.walleij@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-StephenR,
+--Signature=_Fri__26_Oct_2012_14_24_34_+1100_eCA=scwuOz.hKVRp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Could you please add the bcm2835 ARM SoC tree to linux-next. It's
-available at:
+Hi all,
 
-git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-rpi.git for-next
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/Kconfig between commit a3b8d4a51357 ("GPIO: Add support for GPIO
+on CLPS711X-target platform") from the gpio-lw tree and commit
+4a8355c4c34f ("ARM: clps711x: convert to clockevents") from the arm-soc
+tree.
 
-Its probably best to insert it into the list somewhere after the
-existing arm-soc tree. I also maintain the Tegra tree, so if you insert
-it right next to that, any issues related to me will be triggered at the
-same time:-)
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Right now, it's based on v3.7-rc2, plus 5 patches.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks.
+diff --cc arch/arm/Kconfig
+index a7c541e,d9b7a84..0000000
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@@ -366,8 -364,6 +366,7 @@@ config ARCH_CNS3XX
+ =20
+  config ARCH_CLPS711X
+  	bool "Cirrus Logic CLPS711x/EP721x/EP731x-based"
+ +	select ARCH_REQUIRE_GPIOLIB
+- 	select ARCH_USES_GETTIMEOFFSET
+  	select CLKDEV_LOOKUP
+  	select COMMON_CLK
+  	select CPU_ARM720T
+
+--Signature=_Fri__26_Oct_2012_14_24_34_+1100_eCA=scwuOz.hKVRp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQigJyAAoJEECxmPOUX5FEpE0QAIoMOAY6iIkNO8auCAU2Ts2z
+W/oC22jtFfs+reIg7cSgXdg8nAQE/b9eQXigxkre06OLJDA/syT7k0bkdseCj1+d
+/ptOc5AEOEbJboNp/86rHr4aOK+InJS8bMHx32c7lNH8l5LegVwaT6D/4hHid1Ae
+89y4iZ/uW04+PgLhweUDiQczdmjfFOmbxbhbrmhj3HH7nysXjHZ6Sa6rozrIIv99
+CuYcJgi+ysgo4n4WoF5pr9lpCp9n1wI0BIcT/0D/Dm7o03Tasa5/H104Z94u/U6a
+n4FnGp340e8q/Wj8GMJuD5vinolofT1kj8wxGstftxzwuR5ZurD9i1D7EMXjjv7W
+Y+GEX8w4MJ+WASKC7iu8Quam2zIdhCd5v/v5nqAXBYsiFUwKmtpItbHRoSS0uK0b
+4PoTaz76CUW8vooyxe7tcQfGLMuUjBWt3PMjGmCk6l51wXh2o/JMIS6JDwLlZAfr
+TYrMpiTMn9YsC0Ezzwj34xC+OJCFHkMdgYUlUmc3YQEb6pNq8uyTvN/c2ypwKdDO
+6rV2T9jkPJUAoIKOg4YSRVMkIsRQZ2Q54sHjwkDGdbtUnoK1wFtcTjv0vCLtzV44
+Qwr7TGh4xXPo5CpYwIJJ/w2yA7pczIYVTyDhW1zC1Ax6hU7rprVrWqrXceegARVV
+wO0Q9H28ttg7EkSuebiN
+=UoiV
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__26_Oct_2012_14_24_34_+1100_eCA=scwuOz.hKVRp--
