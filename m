@@ -1,67 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the akpm tree
-Date: Fri, 26 Oct 2012 10:50:15 +1100
-Message-ID: <20121026105015.729a0762249b29bbed39dc65@canb.auug.org.au>
-References: <20121025142854.1924363d6a607004f918ac63@canb.auug.org.au>
-	<20121025143044.d21e2c29b16ee2005f93a371@canb.auug.org.au>
-	<508948de.01dc440a.58ed.ffffff17SMTPIN_ADDED@mx.google.com>
-	<20121025152337.7f14919d.akpm@linux-foundation.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Please add bcm2835 tree to linux-next
+Date: Thu, 25 Oct 2012 21:02:07 -0600
+Message-ID: <5089FD2F.9090507@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__26_Oct_2012_10_50_15_+1100_dW=owF6sLjijBYa9"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54782 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750806Ab2JYXuT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Oct 2012 19:50:19 -0400
-In-Reply-To: <20121025152337.7f14919d.akpm@linux-foundation.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:47063 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755319Ab2JZDCR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Oct 2012 23:02:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Richard Yang <weiyang@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, richard -rw- weinberger <richard.weinberger@gmail.com>, Stefani Seibold <stefani@seibold.net>, Jiri Kosina <jkosina@suse.cz>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Signature=_Fri__26_Oct_2012_10_50_15_+1100_dW=owF6sLjijBYa9
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+StephenR,
 
-Hi Andrew,
+Could you please add the bcm2835 ARM SoC tree to linux-next. It's
+available at:
 
-On Thu, 25 Oct 2012 15:23:37 -0700 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> Anyway,
-> include-linux-kfifoh-replace-open-coded-type-check-code-with-typecheck.pa=
-tch
-> takes the kfifo typechecking from "too strict" to "far too strict", so
-> I'll drop that patch.
+git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-rpi.git for-next
 
-I have dropped it from the akpm tree in linux-next today.
+Its probably best to insert it into the list somewhere after the
+existing arm-soc tree. I also maintain the Tegra tree, so if you insert
+it right next to that, any issues related to me will be triggered at the
+same time:-)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Right now, it's based on v3.7-rc2, plus 5 patches.
 
---Signature=_Fri__26_Oct_2012_10_50_15_+1100_dW=owF6sLjijBYa9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQidA3AAoJEECxmPOUX5FE8WsP/3YTVM0bU1F+fQikI095frof
-OWA5AafbJKBhUWre0xeuBsOe9PVIDBC8MjQk3r296FejKCbbLZwPpMQg8vucixFT
-zk91eaKFfRU2KgAivot6KpxRC+PR2o+V9Ga9j7MiZgULeKNmke/Iq5YXxKL5AzcY
-SnE2RBejJrpycqKf5la3M1Qf7NCLdpYKIM2ExYgIWWaADFk9mXAyU1ih6IRa1Ffx
-gV6jKWFYBMyZYFJq01sd9N44WIm1VxnhPkCE+S2nIaEEWDYOe8ygFKtQLw3ae4dy
-j0e7dXi+H2RzQXCcjWOUvhNY3hFm6m+Fpd7Avv96K08fg3bqH621E5hdHLCOvVe5
-2KgQrDoHbzfWZsY8VKrXxqExFYLhhs14j4Vk2pfF0haMgrlC3OEv6ESov7A7I8eh
-AUlofFTUD23gvz2uQ7+BYeKbzDiN/iCEsPG2XqcPsFyGLv3ujYDIv4IvS4s01YN4
-RzOJOmJkcXzaVgZMwDhVcU0P51CAkotJmUEkliDIak6o4LoUVw1e9IGEuAA1HuA1
-s4ffTkBig6rYbU27pyTsgoYprk0wxRgqSOeR3Ov5yw7MjcxfELWCnRANf77O5ktJ
-oIwVppwUzBZ1DoBWOU1xErtheEWTB4/TxDdydiImVGDnrxAFg3F01/9WldFIL6fG
-Ji4pdUu25tHh1NdpZiBd
-=3ToN
------END PGP SIGNATURE-----
-
---Signature=_Fri__26_Oct_2012_10_50_15_+1100_dW=owF6sLjijBYa9--
+Thanks.
