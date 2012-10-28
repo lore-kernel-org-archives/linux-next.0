@@ -1,94 +1,54 @@
-From: Jiri Slaby <jslaby@suse.cz>
-Subject: Re: mmotm 2012-10-24-17-15 uploaded (uml)
-Date: Sat, 27 Oct 2012 14:13:03 +0200
-Message-ID: <508BCFCF.70101@suse.cz>
-References: <20121025001628.1DEDE100047@wpzn3.hot.corp.google.com> <50889347.4070801@xenotime.net> <20121025134850.76cdb390565dfe5117bdef7e@canb.auug.org.au>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] s390: Add pmd_mknotpresent()
+Date: Sun, 28 Oct 2012 14:10:14 +0100
+Message-ID: <20121028131014.GA10754@gmail.com>
+References: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
+ <20121018182642.2a541275@thinkpad>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------060203010301090301010206"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121025134850.76cdb390565dfe5117bdef7e@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, linux-next@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, user-mode-linux-devel@lists.sourceforge.net, Jiri Slaby <jirislaby@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:51994 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752094Ab2J1NKU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Oct 2012 09:10:20 -0400
+Content-Disposition: inline
+In-Reply-To: <20121018182642.2a541275@thinkpad>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
-This is a multi-part message in MIME format.
---------------060203010301090301010206
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 
-On 10/25/2012 04:48 AM, Stephen Rothwell wrote:
-> Hi Randy,
-> 
-> On Wed, 24 Oct 2012 18:17:59 -0700 Randy Dunlap <rdunlap@xenotime.net> wrote:
->>
->> uml on x86_64 defconfig:
->>
->> arch/um/drivers/chan_kern.c: In function 'tty_receive_char':
->> arch/um/drivers/chan_kern.c:89:42: error: 'struct tty_struct' has no member named 'raw'
+There's a related problem on s390: other THP implementations 
+have pmd_mknotpresent() while s390 not, resulting in:
 
-Hmm, that code looks doing weird stuff. This patch should fix it. But
-I'm not sure why it was there at all, as n_tty should take care of the
-raw case perfectly right away. I cannot find any clues in the git log as
-to why it was added at all. It's there like since ever.
+  mm/huge_memory.c:1543:2: error: implicit declaration of function 'pmd_mknotpresent'
 
-Could anybody with working UML (I'm unable to run UML ATM, it crashes
-heavily during the bootup -- after terminals are shown) check whether
-the patch actually works?
+The (untested!) patch below adds the s390 version of this 
+method.
 
-thanks,
--- 
-js
-suse labs
+Gerald, Martin, did I get the S390 details right?
 
---------------060203010301090301010206
-Content-Type: text/x-patch;
- name="0001-UM.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="0001-UM.patch"
+Thanks,
 
->From 3f60aa996467bf4a1bd4e62f80cb714ea6569fde Mon Sep 17 00:00:00 2001
-From: Jiri Slaby <jslaby@suse.cz>
-Date: Thu, 25 Oct 2012 16:40:59 +0200
-Subject: [PATCH] UM:
+	Ingo
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/um/drivers/chan_kern.c | 17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
-
-diff --git a/arch/um/drivers/chan_kern.c b/arch/um/drivers/chan_kern.c
-index c3bba73..e9a0abc 100644
---- a/arch/um/drivers/chan_kern.c
-+++ b/arch/um/drivers/chan_kern.c
-@@ -83,21 +83,8 @@ static const struct chan_ops not_configged_ops = {
- 
- static void tty_receive_char(struct tty_struct *tty, char ch)
- {
--	if (tty == NULL)
--		return;
--
--	if (I_IXON(tty) && !I_IXOFF(tty) && !tty->raw) {
--		if (ch == STOP_CHAR(tty)) {
--			stop_tty(tty);
--			return;
--		}
--		else if (ch == START_CHAR(tty)) {
--			start_tty(tty);
--			return;
--		}
--	}
--
--	tty_insert_flip_char(tty, ch, TTY_NORMAL);
-+	if (tty)
-+		tty_insert_flip_char(tty, ch, TTY_NORMAL);
+diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+index 098fc5a..b820ff1 100644
+--- a/arch/s390/include/asm/pgtable.h
++++ b/arch/s390/include/asm/pgtable.h
+@@ -1310,6 +1310,12 @@ static inline pmd_t pmd_mkyoung(pmd_t pmd)
+ 	return pmd;
  }
  
- static int open_one_chan(struct chan *chan)
--- 
-1.7.12.4
-
-
---------------060203010301090301010206--
++static inline pmd_t pmd_mknotpresent(pmd_t pmd)
++{
++	pmd_val(pmd) &= ~_SEGMENT_ENTRY_ORIGIN;
++	return pmd;
++}
++
+ #define __HAVE_ARCH_PMDP_TEST_AND_CLEAR_YOUNG
+ static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
+ 					    unsigned long address, pmd_t *pmdp)
