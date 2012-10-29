@@ -1,74 +1,44 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: [PATCH] s390: Add pmd_mknotpresent()
-Date: Mon, 29 Oct 2012 08:49:56 +0100
-Message-ID: <20121029084956.12b512e6@mschwide>
-References: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
-	<20121018182642.2a541275@thinkpad>
-	<20121028131014.GA10754@gmail.com>
+From: =?UTF-8?Q?David_H=C3=A4rdeman?= <david@hardeman.nu>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 29 Oct 2012 09:09:13 +0100
+Message-ID: <8d5c617feaaecfcf9e358a8b2cc35d20@hardeman.nu>
+References: <20121029111403.911c815a3c7d8d9572ff8e89@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp16.uk.ibm.com ([195.75.94.112]:60015 "EHLO
-	e06smtp16.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756401Ab2J2HuE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Oct 2012 03:50:04 -0400
-Received: from /spool/local
-	by e06smtp16.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-	Mon, 29 Oct 2012 07:50:02 -0000
-In-Reply-To: <20121028131014.GA10754@gmail.com>
+Received: from 1-1-12-13a.han.sth.bostream.se ([82.182.30.168]:37719 "EHLO
+	palpatine.hardeman.nu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754880Ab2J2IRD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Oct 2012 04:17:03 -0400
+In-Reply-To: <20121029111403.911c815a3c7d8d9572ff8e89@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?Q?Bruno_Pr=C3=A9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jkosina@suse.cz>
 
-On Sun, 28 Oct 2012 14:10:14 +0100
-Ingo Molnar <mingo@kernel.org> wrote:
-
+On Mon, 29 Oct 2012 11:14:03 +1100, Stephen Rothwell
+<sfr@canb.auug.org.au>
+wrote:
+> Hi Mauro,
 > 
-> There's a related problem on s390: other THP implementations 
-> have pmd_mknotpresent() while s390 not, resulting in:
+> After merging the v4l-dvb tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
->   mm/huge_memory.c:1543:2: error: implicit declaration of function 'pmd_mknotpresent'
+> drivers/hid/hid-picolcd_cir.c: In function 'picolcd_init_cir':
+> drivers/hid/hid-picolcd_cir.c:119:27: error: 'RC_TYPE_ALL' undeclared
+> (first use in this function)
+
+I can fix it, should be easy (rename RC_TYPE_ALL to RC_BIT_ALL).
+
+> Caused by commit c003ab1bedf0 ("[media] rc-core: add separate defines
+for
+> protocol bitmaps and numbers").  The new reference was introduced in
+> commit ae08e324146c ("HID: picoLCD: Add support for CIR") which was
+> merged by Linus on October 2 into v3.7-rc1 via the hid tree.
 > 
-> The (untested!) patch below adds the s390 version of this 
-> method.
-> 
-> Gerald, Martin, did I get the S390 details right?
+> I have used the v4l-dvb tree from next-20121026 for today.
 
-This won't work I'm afraid. S390 uses invalid bits which need to be set to
-make an entry not present. Just setting the _SEGMENT_ENTRY_INV bit is not
-good enough either, there is _HPAGE_TYPE_NONE to consider. The patch to fix
-this for pmd_none & pmd_present just got added to the s390 tree on kernel.org:
-https://git.kernel.org/?p=linux/kernel/git/s390/linux.git;a=shortlog;h=refs/heads/fixes
-
-Now, if pmd_mknotpresent is supposed to make the entry invalid so that
-pmd_present will return false the function needs to do two things,
-1) set the _SEGMENT_ENTRY_INV bit, and 2) clear the _SEGMENT_ENTRY_RO bit.
-
-> diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
-> index 098fc5a..b820ff1 100644
-> --- a/arch/s390/include/asm/pgtable.h
-> +++ b/arch/s390/include/asm/pgtable.h
-> @@ -1310,6 +1310,12 @@ static inline pmd_t pmd_mkyoung(pmd_t pmd)
->  	return pmd;
->  }
-> 
-> +static inline pmd_t pmd_mknotpresent(pmd_t pmd)
-> +{
-> +	pmd_val(pmd) &= ~_SEGMENT_ENTRY_ORIGIN;
-> +	return pmd;
-> +}
-> +
->  #define __HAVE_ARCH_PMDP_TEST_AND_CLEAR_YOUNG
->  static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
->  					    unsigned long address, pmd_t *pmdp)
-> 
-
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+The question is in which form you want the patch - as a separate patch or
+a new version of commit c003ab1bedf0 (i.e. the entire patch)? Also, against
+which tree should I create the patch?
