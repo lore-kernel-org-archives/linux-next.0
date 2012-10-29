@@ -1,104 +1,89 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
 Subject: Re: [PATCH] s390: Add pmd_mknotpresent()
-Date: Mon, 29 Oct 2012 12:30:06 +0100
-Message-ID: <20121029123006.5eae86ea@mschwide>
+Date: Mon, 29 Oct 2012 15:00:48 +0100
+Message-ID: <20121029150048.21c062cf@thinkpad>
 References: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
 	<20121018182642.2a541275@thinkpad>
 	<20121028131014.GA10754@gmail.com>
-	<20121029084956.12b512e6@mschwide>
-	<20121029110519.GA22569@gmail.com>
+Reply-To: gerald.schaefer@de.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp12.uk.ibm.com ([195.75.94.108]:50957 "EHLO
-	e06smtp12.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758744Ab2J2LaT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Oct 2012 07:30:19 -0400
+Received: from e06smtp17.uk.ibm.com ([195.75.94.113]:55567 "EHLO
+	e06smtp17.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755350Ab2J2OBD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Oct 2012 10:01:03 -0400
 Received: from /spool/local
-	by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-	Mon, 29 Oct 2012 11:30:17 -0000
-In-Reply-To: <20121029110519.GA22569@gmail.com>
+	by e06smtp17.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <gerald.schaefer@de.ibm.com>;
+	Mon, 29 Oct 2012 14:01:01 -0000
+In-Reply-To: <20121028131014.GA10754@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
-Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
-On Mon, 29 Oct 2012 12:05:19 +0100
+On Sun, 28 Oct 2012 14:10:14 +0100
 Ingo Molnar <mingo@kernel.org> wrote:
 
 > 
-> * Martin Schwidefsky <schwidefsky@de.ibm.com> wrote:
+> There's a related problem on s390: other THP implementations 
+> have pmd_mknotpresent() while s390 not, resulting in:
 > 
-> > On Sun, 28 Oct 2012 14:10:14 +0100
-> > Ingo Molnar <mingo@kernel.org> wrote:
-> > 
-> > > 
-> > > There's a related problem on s390: other THP implementations 
-> > > have pmd_mknotpresent() while s390 not, resulting in:
-> > > 
-> > >   mm/huge_memory.c:1543:2: error: implicit declaration of function 'pmd_mknotpresent'
-> > > 
-> > > The (untested!) patch below adds the s390 version of this 
-> > > method.
-> > > 
-> > > Gerald, Martin, did I get the S390 details right?
-> > 
-> > This won't work I'm afraid. S390 uses invalid bits which need 
-> > to be set to make an entry not present. Just setting the 
-> > _SEGMENT_ENTRY_INV bit is not good enough either, there is 
-> > _HPAGE_TYPE_NONE to consider. The patch to fix this for 
-> > pmd_none & pmd_present just got added to the s390 tree on 
-> > kernel.org:
-> >
-> > https://git.kernel.org/?p=linux/kernel/git/s390/linux.git;a=shortlog;h=refs/heads/fixes
-> > 
-> > Now, if pmd_mknotpresent is supposed to make the entry invalid 
-> > so that pmd_present will return false the function needs to do 
-> > two things, 1) set the _SEGMENT_ENTRY_INV bit, and 2) clear 
-> > the _SEGMENT_ENTRY_RO bit.
+>   mm/huge_memory.c:1543:2: error: implicit declaration of function 'pmd_mknotpresent'
 > 
-> Would be nice if you could send me your suggested 
-> pmd_mknotpresent().
+> The (untested!) patch below adds the s390 version of this 
+> method.
 > 
-> (Writing it into the email would be enough, I can turn it into a 
-> patch - but a patch would be welcome as well.)
+> Gerald, Martin, did I get the S390 details right?
 
-This would look like the following, the patch should apply to all recent
-kernel version.
---
-Subject: [PATCH] s390,mm: add pmd_mknotpresent
+The upstream thp patches for s390 fixed that by adding pmdp_invalidate() and
+replacing the pmd_mknotpresent() in mm/huge_memory.c, see git commit 46dcde73.
+The pmdp_invalidate() is already included linux-next, so it should be ok to
+just change mm/huge_memory.c similar to upstream:
 
-Fix the following build problem in huge_memory:
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index f1c2679..842b6df 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1537,8 +1537,7 @@ static int __split_huge_page_map(struct page *page,
+ 	 * complete. The ptl also protects against concurrent faults due to
+ 	 * making the pmd not-present.
+ 	 */
+-	set_pmd_at(mm, address, pmd, pmd_mknotpresent(*pmd));
+-	flush_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
++	pmdp_invalidate(vma, address, pmd);
+ 	pmd_populate(mm, pmd, pgtable);
+ 	ret = 1;
 
-mm/huge_memory.c:1543:2: error: implicit declaration of function 'pmd_mknotpresent'
+With this, s390 does not need a pmd_mknotpresent(), and using
+set_pmd_at(..., pmd_mknotpresent()) would be wrong on s390 anyway because
+we need a flushing operation to change a valid pmd.
 
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
----
- arch/s390/include/asm/pgtable.h | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
-index 335b601..4a84431 100644
---- a/arch/s390/include/asm/pgtable.h
-+++ b/arch/s390/include/asm/pgtable.h
-@@ -1326,6 +1326,13 @@ static inline pmd_t pmd_mkyoung(pmd_t pmd)
- 	return pmd;
- }
- 
-+static inline pmd_t pmd_mknotpresent(pmd_t pmd)
-+{
-+	pmd_val(pmd) |= _SEGMENT_ENTRY_INV;
-+	pmd_val(pmd) &= ~_SEGMENT_ENTRY_RO;
-+	return pmd;
-+}
-+
- #define __HAVE_ARCH_PMDP_TEST_AND_CLEAR_YOUNG
- static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
- 					    unsigned long address, pmd_t *pmdp)
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+> 
+> Thanks,
+> 
+> 	Ingo
+> 
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> ---
+> diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+> index 098fc5a..b820ff1 100644
+> --- a/arch/s390/include/asm/pgtable.h
+> +++ b/arch/s390/include/asm/pgtable.h
+> @@ -1310,6 +1310,12 @@ static inline pmd_t pmd_mkyoung(pmd_t pmd)
+>  	return pmd;
+>  }
+> 
+> +static inline pmd_t pmd_mknotpresent(pmd_t pmd)
+> +{
+> +	pmd_val(pmd) &= ~_SEGMENT_ENTRY_ORIGIN;
+> +	return pmd;
+> +}
+> +
+>  #define __HAVE_ARCH_PMDP_TEST_AND_CLEAR_YOUNG
+>  static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
+>  					    unsigned long address, pmd_t *pmdp)
+> 
