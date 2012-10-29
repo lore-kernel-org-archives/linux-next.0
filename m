@@ -1,61 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Mon, 29 Oct 2012 11:48:48 +1100
-Message-ID: <20121029114848.cf0297e997cbfc9c2198fa5d@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with the sparc tree
+Date: Mon, 29 Oct 2012 14:00:32 +1100
+Message-ID: <20121029140032.4019da59dbc50a9be8df9ebc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Oct_2012_11_48_48_+1100_Loe3G6Slgi1q7An6"
+ boundary="Signature=_Mon__29_Oct_2012_14_00_32_+1100_oAlS627FKtqZruV9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49252 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:52750 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754273Ab2J2As6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Oct 2012 20:48:58 -0400
+	with ESMTP id S1756308Ab2J2DAp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Oct 2012 23:00:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Mon__29_Oct_2012_11_48_48_+1100_Loe3G6Slgi1q7An6
+--Signature=_Mon__29_Oct_2012_14_00_32_+1100_oAlS627FKtqZruV9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Al,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the signal tree got a conflict in
+arch/sparc/kernel/sys_sparc_64.c between commit 517ffce4e1a0 ("sparc64:
+Make montmul/montsqr/mpmul usable in 32-bit threads") from the sparc tree
+and commit 2f12af35a988 ("sparc64: switch to generic kernel_execve()")
+from the signal tree.
 
-make[4]: *** No rule to make target `sound/soc/codecs/snd-soc-wm-adsp.c', n=
-eeded by `sound/soc/codecs/snd-soc-wm-adsp.o'.  Stop.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 2882fcb3cfe6 ("ASoC: adsp: Add ADSP base support").
-Please build test this stuff - there is a typo in the Makefile.  :-(
-
-I have used the sound-asoc tree from next-20121026 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__29_Oct_2012_11_48_48_+1100_Loe3G6Slgi1q7An6
+diff --cc arch/sparc/kernel/sys_sparc_64.c
+index 878ef3d,adfe60e..0000000
+--- a/arch/sparc/kernel/sys_sparc_64.c
++++ b/arch/sparc/kernel/sys_sparc_64.c
+@@@ -729,30 -729,3 +729,8 @@@ SYSCALL_DEFINE5(rt_sigaction, int, sig
+ =20
+  	return ret;
+  }
+ +
+- /*
+-  * Do a system call from kernel instead of calling sys_execve so we
+-  * end up with proper pt_regs.
+-  */
+- int kernel_execve(const char *filename,
+- 		  const char *const argv[],
+- 		  const char *const envp[])
+- {
+- 	long __res;
+- 	register long __g1 __asm__ ("g1") =3D __NR_execve;
+- 	register long __o0 __asm__ ("o0") =3D (long)(filename);
+- 	register long __o1 __asm__ ("o1") =3D (long)(argv);
+- 	register long __o2 __asm__ ("o2") =3D (long)(envp);
+- 	asm volatile ("t 0x6d\n\t"
+- 		      "sub %%g0, %%o0, %0\n\t"
+- 		      "movcc %%xcc, %%o0, %0\n\t"
+- 		      : "=3Dr" (__res), "=3D&r" (__o0)
+- 		      : "1" (__o0), "r" (__o1), "r" (__o2), "r" (__g1)
+- 		      : "cc");
+- 	return __res;
+- }
+-=20
+ +asmlinkage long sys_kern_features(void)
+ +{
+ +	return KERN_FEATURE_MIXED_MODE_STACK;
+ +}
+
+--Signature=_Mon__29_Oct_2012_14_00_32_+1100_oAlS627FKtqZruV9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQjdJwAAoJEECxmPOUX5FEPr4QAI7oqASQYRLUkTatIXUW3dDR
-AWslpZKwW9b8elOVdNMo5J2lPKb3c4hsRPg+dNsvv6VHFFaBJq19B5+9wQnZW1Ad
-ZZwOEv+ka217SdFleaNDEgJW51Ka+ESBAaFkCoynzaOfICmdSue3YlgEvl5NSoBM
-XhGN3eqFIIyaOFd/SxJh7wq5LwbtyxtZDoU7lzsHt37Ebki6a+mPk5gY/jYP9sts
-C4DKJVYk+yw4Yi72I+2Or9nPqXVJeysX4WogLgU5eiroVoE6e44sRfMZ5OVbg7cG
-ciULFG1jTCb2A8s5ThGoa+1VONzCZ/5xEh74C09tobQGUrtirEcXchHezTX570dF
-qRWUpiJF2pRoaO+W4X6eySRMW4XcDy/n+7OkBd61XQfpxAApxSnDtZH2JLCnr2RH
-u2eBkYx2uPCnPf/nRsifN5l6WRPdDjDX+SneYFhP5FO7a4xa/A8Sp/g7kohYc9Eo
-BvNAI1DuL+BD2kTUGiHWnXXBxw0Sy+F2cGXxz5UYE59MIffUIopy8qa6VgWQieF8
-g18ds/3Kg1wmnJPHjkB1pTsf3QPoxhJNRRlQBmJfg+EED9fFC3GgwTAvZ3FbdNfN
-KWSZBed0qrXs0WwWp6L5fmrq31Q1Sa4xCQ6g6loVSLMmEFK6/TlvHjY5UBDM6oFp
-4GVa9A7Ht0xQuP35vflO
-=+Xnc
+iQIcBAEBCAAGBQJQjfFQAAoJEECxmPOUX5FE0tcP/jdoZEGXlYP2jEfY48gltygc
+luwMR6pkHYE5+YrA0n8SH4p7liWlqS5wc8tB4nw/nAYXDVbawE2iYDL/JRR7KniA
+ns09UYZRpi8RBn5gHmtM8JLbfMVsgP1SizJPosHZXbAE6xMAanWBjm0c2uzFqOtx
+JI7/v97eEp4tG/MxweE8BNRjrcqCdEjl+nfMJuYK2VUT5K7cD0GF5Ro1Kuoy5Wte
+eQA6CHt/2w29pWIIvA0mkAj7XY2wTFiZwvyJFd4IbhPYnvztx5pzQzM8h1oUrtLb
+P4TM18UGIdDTdMJ98fXci0rIBHLRvxBG3cW5/67nsWp+StwRyb78ysaVYEiWMIwV
+ujwnGbYKz6YRsCPscCnghBHKf5+TpsbTMW1AUeQJ4oAI4Kg8JV1JP4ToiCTm5z+n
+YGLbQznVFP6btWdl2GG6lZK8qmZqXfD0X4WpoE2cX+lb6qf+OYUZYX1gVa9T6EVW
++8j2mtf7+HgZuyphcT2y8Gx7oFS+a/bP3viRJSD66IeIOPvanQPd+txBpjG7lftR
+FMNur7RTdeUBfSW+Cgc+1rzkCYx37DnRZH4JhBkiJPexPKxR1/WDHkjZD14Y7Ng4
+I+1X4rv8Pad4o/oiweDMmmatJsi9UT5nA5C47bVuofZRwaeBK+beQWDqpVpMzry+
+DnUTf8FxAdIRexR1HV85
+=O01t
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Oct_2012_11_48_48_+1100_Loe3G6Slgi1q7An6--
+--Signature=_Mon__29_Oct_2012_14_00_32_+1100_oAlS627FKtqZruV9--
