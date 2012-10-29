@@ -1,101 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please add bcm2835 tree to linux-next
-Date: Mon, 29 Oct 2012 10:07:04 +1100
-Message-ID: <20121029100704.37f017de8b0ed0173c5d68cc@canb.auug.org.au>
-References: <5089FD2F.9090507@wwwdotorg.org>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 29 Oct 2012 11:14:03 +1100
+Message-ID: <20121029111403.911c815a3c7d8d9572ff8e89@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Oct_2012_10_07_04_+1100_3t.fVIQmNjUTJFl3"
+ boundary="Signature=_Mon__29_Oct_2012_11_14_03_+1100_MJl4MOzS4h3t.S_z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59282 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40963 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754836Ab2J1XHQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Oct 2012 19:07:16 -0400
-In-Reply-To: <5089FD2F.9090507@wwwdotorg.org>
+	with ESMTP id S1754906Ab2J2AOP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Oct 2012 20:14:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkRhdmlkIEjDpHJkZW1hbiI=?= <david@hardeman.nu>, =?UTF-8?B?IkJy?= =?UTF-8?B?dW5vIFByw6ltb250Ig==?= <bonbons@linux-vserver.org>, Jiri Kosina <jkosina@suse.cz>
 
---Signature=_Mon__29_Oct_2012_10_07_04_+1100_3t.fVIQmNjUTJFl3
+--Signature=_Mon__29_Oct_2012_11_14_03_+1100_MJl4MOzS4h3t.S_z
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi Mauro,
 
-On Thu, 25 Oct 2012 21:02:07 -0600 Stephen Warren <swarren@wwwdotorg.org> w=
-rote:
->
-> Could you please add the bcm2835 ARM SoC tree to linux-next. It's
-> available at:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-rpi.git for-n=
-ext
->=20
-> Its probably best to insert it into the list somewhere after the
-> existing arm-soc tree. I also maintain the Tegra tree, so if you insert
-> it right next to that, any issues related to me will be triggered at the
-> same time:-)
->=20
-> Right now, it's based on v3.7-rc2, plus 5 patches.
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Added from today.
+drivers/hid/hid-picolcd_cir.c: In function 'picolcd_init_cir':
+drivers/hid/hid-picolcd_cir.c:119:27: error: 'RC_TYPE_ALL' undeclared (firs=
+t use in this function)
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+Caused by commit c003ab1bedf0 ("[media] rc-core: add separate defines for
+protocol bitmaps and numbers").  The new reference was introduced in
+commit ae08e324146c ("HID: picoLCD: Add support for CIR") which was
+merged by Linus on October 2 into v3.7-rc1 via the hid tree.
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
+I have used the v4l-dvb tree from next-20121026 for today.
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Mon__29_Oct_2012_10_07_04_+1100_3t.fVIQmNjUTJFl3
+--Signature=_Mon__29_Oct_2012_11_14_03_+1100_MJl4MOzS4h3t.S_z
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQjbqYAAoJEECxmPOUX5FEzr8P/0fOZ47o7sNM8wAbl1gLUeRx
-4ZqvkS2FCQoAnOUsG/mCEHd4JBmm044xjGwQvDoK74tmTdBt5FJ+J6wH2JpnKIYG
-ErPxopShE0YsFBjMGB5T6CzsMqJIMD5DaWWTYlXEtpcHslIKO1nV59cHO66lpMjG
-OQmohy6KHJv9j66Gm4zaoXxZJS+AY4IN+qcbwCOJq7hP+D75SfNgiK5zbKpwWYvP
-5bEMasNSkdWbsrgABRAFRe9Lr/FOJ5QqmjizcdJssJNvlsvp3eAnx7vkbMTiTOZY
-wm2I+EZssVWieMH/oDjioUFVN5cw1purawsAQW8SBFTnQ+HYSzAX7zGdwscQhZZR
-6jLuKIrFqpxes9xrZtMcRGBXXn99EDz9dFzI++NvLnVmaeutm77qyUNVgnxDwJF6
-YvI8uNT0HOEzBHExq/aXSt4Z+Fy+eXxS3FMd4LhOf+UmEQJ5ggP3oPecOd+wZ31o
-HUCWrQ+NWODVOxUS8pfnhCV+aEacnkEEydpNRxADSnFIg5Lx83dImK0kp2bXWdyj
-y/Of3hlEqQSYSPQgcrCpPBa8TXPUFVVCzgC9dafqvZIZVzs/z2G0pyF8iKBhlkUX
-OrkS28F5YmkrCNOUB0R0Z9rcxudbRB+RdefJZWtMNR/GsLVW94DNsFaTVchvxQ3D
-TPnF8DFZOrUXNGKcwONA
-=s4ge
+iQIcBAEBCAAGBQJQjcpLAAoJEECxmPOUX5FEHhoP/RprIPOvlq2BBIX0xIsfP7H4
+x80jF+VN46+7yj175II/8Ko25t7W1q7CojKo9xbKGPyXKywYoxcV0sAaWb46uowM
+fwZJJKMvS5XnXdOL2StHAqzSHD9Qx1Iwk0hOYRtllNBwGU1kgtvmoLS2TANZKSjI
+aCwO53g6YROT9Be11A/vxb64SRp2ECkfPVsSCQXu7ILkm6FC+MO1QEwpOfiooSZh
+0P+RyU+Dc+BS8Wl8O759LhspIBThA3Qa7QmLJAwn0CPe77PhGAQh7W/R++HUhJzZ
+8L7utwPlmoTdaxtLidilrdInvTPoo+uz4z7gbBj6LLYThxDaQe3Ju6t3BryEJOiz
+mRioF5Dl+wfrNP+YY3DfqNlBbTVZ3/3qAe5sCtyTuC5gS7DPXbjYZvR3Tza1S6+c
+S986Itcw++k77AfL0IZqkuC6iAPQz7WZ2JG5Ak/FY1FE+Mw706k3pg4tOwcOixVG
+pG9h6m84Kz2vjj1BjEyIia7t50J3V253CG8Bc4wz2vwZ/E61GGSpW7PGaVYncrOI
+rnUJae2C74XCKTd1A9riW2VTR70yBmqE/oFJYfmYgx0Bh670ZpY0bWsyZ8YBxaVt
+zsGaXE6dAZBh3QSAQyqMexRpAWintYeFg3W0rBXzF+DwOEVKwismU3+d3l7aehlH
+K7rAwrKxBt/DwbkSh7tX
+=ZCKF
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Oct_2012_10_07_04_+1100_3t.fVIQmNjUTJFl3--
+--Signature=_Mon__29_Oct_2012_11_14_03_+1100_MJl4MOzS4h3t.S_z--
