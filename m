@@ -1,34 +1,74 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Oct 29 (tty->raw)
-Date: Sun, 28 Oct 2012 21:17:09 -0700
-Message-ID: <508E0345.1010600@xenotime.net>
-References: <20121029144655.4a3d916780e0246f1f007c3e@canb.auug.org.au>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: [PATCH] s390: Add pmd_mknotpresent()
+Date: Mon, 29 Oct 2012 08:49:56 +0100
+Message-ID: <20121029084956.12b512e6@mschwide>
+References: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
+	<20121018182642.2a541275@thinkpad>
+	<20121028131014.GA10754@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121029144655.4a3d916780e0246f1f007c3e@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e06smtp16.uk.ibm.com ([195.75.94.112]:60015 "EHLO
+	e06smtp16.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756401Ab2J2HuE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Oct 2012 03:50:04 -0400
+Received: from /spool/local
+	by e06smtp16.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+	Mon, 29 Oct 2012 07:50:02 -0000
+In-Reply-To: <20121028131014.GA10754@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
-On 10/28/2012 08:46 PM, Stephen Rothwell wrote:
+On Sun, 28 Oct 2012 14:10:14 +0100
+Ingo Molnar <mingo@kernel.org> wrote:
 
-> Hi all,
 > 
-> Changes since 20121026:
+> There's a related problem on s390: other THP implementations 
+> have pmd_mknotpresent() while s390 not, resulting in:
 > 
+>   mm/huge_memory.c:1543:2: error: implicit declaration of function 'pmd_mknotpresent'
+> 
+> The (untested!) patch below adds the s390 version of this 
+> method.
+> 
+> Gerald, Martin, did I get the S390 details right?
 
+This won't work I'm afraid. S390 uses invalid bits which need to be set to
+make an entry not present. Just setting the _SEGMENT_ENTRY_INV bit is not
+good enough either, there is _HPAGE_TYPE_NONE to consider. The patch to fix
+this for pmd_none & pmd_present just got added to the s390 tree on kernel.org:
+https://git.kernel.org/?p=linux/kernel/git/s390/linux.git;a=shortlog;h=refs/heads/fixes
 
-Who made some changes that remove tty->raw ?
+Now, if pmd_mknotpresent is supposed to make the entry invalid so that
+pmd_present will return false the function needs to do two things,
+1) set the _SEGMENT_ENTRY_INV bit, and 2) clear the _SEGMENT_ENTRY_RO bit.
 
-There is still one occurrence in arch/um that is causing
-a build error (on x86_64 defconfig):
-
-arch/um/drivers/chan_kern.c: In function 'tty_receive_char':
-arch/um/drivers/chan_kern.c:89:42: error: 'struct tty_struct' has no member named 'raw'
+> diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+> index 098fc5a..b820ff1 100644
+> --- a/arch/s390/include/asm/pgtable.h
+> +++ b/arch/s390/include/asm/pgtable.h
+> @@ -1310,6 +1310,12 @@ static inline pmd_t pmd_mkyoung(pmd_t pmd)
+>  	return pmd;
+>  }
+> 
+> +static inline pmd_t pmd_mknotpresent(pmd_t pmd)
+> +{
+> +	pmd_val(pmd) &= ~_SEGMENT_ENTRY_ORIGIN;
+> +	return pmd;
+> +}
+> +
+>  #define __HAVE_ARCH_PMDP_TEST_AND_CLEAR_YOUNG
+>  static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
+>  					    unsigned long address, pmd_t *pmdp)
+> 
 
 
 -- 
-~Randy
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
