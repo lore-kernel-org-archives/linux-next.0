@@ -1,63 +1,72 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Mon, 29 Oct 2012 18:15:34 +0000
-Message-ID: <20121029181534.GH4511@opensource.wolfsonmicro.com>
+Date: Tue, 30 Oct 2012 07:46:31 +1100
+Message-ID: <20121030074631.9d148cb69a06a47d3dc78e65@canb.auug.org.au>
 References: <20121029114848.cf0297e997cbfc9c2198fa5d@canb.auug.org.au>
+	<20121029181534.GH4511@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OgApRN/oydYDdnYz"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__30_Oct_2012_07_46_31_+1100_ChHy=jKORUBt+wUP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:33031 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932181Ab2J2SPh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Oct 2012 14:15:37 -0400
-Content-Disposition: inline
-In-Reply-To: <20121029114848.cf0297e997cbfc9c2198fa5d@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58828 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756592Ab2J2Uqm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Oct 2012 16:46:42 -0400
+In-Reply-To: <20121029181534.GH4511@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Cc: Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
---OgApRN/oydYDdnYz
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Tue__30_Oct_2012_07_46_31_+1100_ChHy=jKORUBt+wUP
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 29, 2012 at 11:48:48AM +1100, Stephen Rothwell wrote:
+Hi Mark,
 
-> Caused by commit 2882fcb3cfe6 ("ASoC: adsp: Add ADSP base support").
-> Please build test this stuff - there is a typo in the Makefile.  :-(
+On Mon, 29 Oct 2012 18:15:34 +0000 Mark Brown <broonie@opensource.wolfsonmi=
+cro.com> wrote:
+>
+> Honestly when I'm travelling with the automated build testing Fenguang
+> and friends are doing it's actually faster to just push things up rather
+> than doing testing of branches like this locally, their build farm
+> usually kicks in very close to the time it takes me to do a single fresh
+> build.
 
-Actually already fixed, just forgot to push up. =20
+Then you need to have a different branch being tested by Fenguang and
+friends to what you have in linux-next.   The stuff that you put into
+linux-next has to be at least build tested, so you should delay pushing
+it up to your linux-next included branch until after that is done.
 
-Honestly when I'm travelling with the automated build testing Fenguang
-and friends are doing it's actually faster to just push things up rather
-than doing testing of branches like this locally, their build farm
-usually kicks in very close to the time it takes me to do a single fresh
-build.
+This case was particularly irritating because you were the developer of
+the patch that was broken which indicates that you are not even testing
+your own development work before pushing it out for others to work on top
+of.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---OgApRN/oydYDdnYz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Signature=_Tue__30_Oct_2012_07_46_31_+1100_ChHy=jKORUBt+wUP
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQjsc6AAoJELSic+t+oim9FjAP/RUaWubN2JelVxdAOdniW00r
-v/sRNJgPnUZFe2ZTM1/Ccm35mQIr+RvWeugG7TIeGGvXX7EsIPNdNvxq2za8XqJC
-mne3J3kVitOim6DFUG6KpuBI2zxVI4pOrky0O+vZDZNq3qqQPgiB1OqO9vRsvWd0
-9gLN4qb85zKo+IlpRb6xiNcPKwDeyg5W6yciqbCrdMkF3syRakaS/f4PzhzNtTHg
-i4jPaonIZDsGhKmH1x4my1fke2cFx2K1PXU0fIwG3MM1vrgEOX76Jusu08ep+R29
-xW1vSitFEo498IoPhbB4hOiq+R/80Ley95o7wPI8bEbAW9toEPHIxTmzOK9n/uXV
-Gd+3cbM/UYUdegnMgT/qzHta4sg/MDFR+xgZfeK28lsDSiOsb7Jnbneywg0SxYem
-U+gykq5we4f2PIwl9I1PABSKiJqYQZzjgO2hMZnx1ZCHN09Y5Z9Whq1OeIDzLZuH
-RO7E3CnePSfnr3p1x/QwtlgM5u+2yVaVll6Fcp3UFxgjjwn68m5Tww6uBKY7XOPU
-cvz1kHV3f0GlKdyVvpIL8caMhTFHlRu0EmQi28APJ51fk27G+vgPzshRnbQQxIRz
-KA83XmZce8MZOX5/UDq98zdW/CrHBwHV98DF4egbeTsJWppQHtoLwOP0Yh3c0cyp
-EETQRZsW13U9eWTFjgSL
-=qlaf
+iQIcBAEBCAAGBQJQjusnAAoJEECxmPOUX5FEoNgQAJdb1lb/dcG4xm/5lecKNZ/j
+QXQ9mNmuSbchuaO7K/Q3xJ5hjmVUiPjR0pdVS5gWzJtAji3J+Hu4+kkaX1t32wM0
+7NjHRo7pHQT/plC69unmifdnCYK9Fmx+3XwbdmOK6J+/q5zQrfjAJ2DUH/l0/pSe
+aDoUnNduCqsU1UDp9QsQDqFoVmY1+5LaC/7WvFNMRPh/TK43DgijjydCPTwyxj9u
+qRSuQd01rB0P+dvusPlN4glX2+D/lAl9xF42UJO0YISYGsLZwiyMgsvDJgJa82Gc
+FoBy2s7hupr0UnVUMI017wxgVH6AYTnZcLVYsMxLrLhghYamLVIxt4vxgFhM5PrX
+3PqVsuZNEVB9djStxj9FuyaHQF5WswcSpEZw6FOBTPKoWQZOpCbA6OFFEAPHb5tv
+FEAdzIXpFZwJmFzcx/HSdwuHhQD2LBu0czeMDkSV2XCSasG/w2nVDzau+3Y/ukUD
+vVdCc6nqnHZfS68Mp3qrs0pxTLMPoquASjk1Z8YP/U8vj1RFTzpTkx2knDcK4MeL
+tDTtGzRR2tI9cANAbzp+pNEBvej/Jv7pR1U6iYgZ8aWDeWaVGlPz0ip1ab7NBNDk
+cFM9FqNrk37ZW3VcJwU2bi6Z4hI+IatIKhiM1tn5qFVags0ufaKPzRcyxsiA099N
+SY1zya0+5fQZ/6A0MGgv
+=JgEe
 -----END PGP SIGNATURE-----
 
---OgApRN/oydYDdnYz--
+--Signature=_Tue__30_Oct_2012_07_46_31_+1100_ChHy=jKORUBt+wUP--
