@@ -1,70 +1,65 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] s390: Add pmd_mknotpresent()
-Date: Tue, 30 Oct 2012 08:25:58 +0100
-Message-ID: <20121030072558.GB4537@gmail.com>
-References: <20121018172201.b81dcc8fe40868256f532364@canb.auug.org.au>
- <20121018182642.2a541275@thinkpad>
- <20121028131014.GA10754@gmail.com>
- <20121029150048.21c062cf@thinkpad>
+From: Mike Turquette <mturquette@ti.com>
+Subject: Re: linux-next: manual merge of the clk tree with the arm-soc tree
+Date: Tue, 30 Oct 2012 03:11:40 -0700
+Message-ID: <20121030101140.18780.69840@nucleus>
+References: <20121030150627.ac1f6a3f75231ea49edf7b98@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:40282 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750870Ab2J3H0D (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Oct 2012 03:26:03 -0400
-Content-Disposition: inline
-In-Reply-To: <20121029150048.21c062cf@thinkpad>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20121030150627.ac1f6a3f75231ea49edf7b98@canb.auug.org.au>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Pawel Moll <pawel.moll@arm.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
+Quoting Stephen Rothwell (2012-10-29 21:06:27)
+> Hi Mike,
+> 
+> Today's linux-next merge of the clk tree got a conflict in
+> arch/arm/include/asm/hardware/sp810.h between commit 0891642cf117 ("ARM:
+> vexpress: Start using new Versatile Express infrastructure") from the
+> arm-soc tree and commit 05e3659135a4 ("clk: Common clocks implementation
+> for Versatile Express") from the clk tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/include/asm/hardware/sp810.h
+> index 2cdcf44,afd7e91..0000000
+> --- a/arch/arm/include/asm/hardware/sp810.h
+> +++ b/arch/arm/include/asm/hardware/sp810.h
+> @@@ -50,6 -50,14 +50,8 @@@
+>   #define SCPCELLID2            0xFF8
+>   #define SCPCELLID3            0xFFC
+>   
+>  -#define SCCTRL_TIMEREN0SEL_REFCLK     (0 << 15)
+>  -#define SCCTRL_TIMEREN0SEL_TIMCLK     (1 << 15)
+>  -
+>  -#define SCCTRL_TIMEREN1SEL_REFCLK     (0 << 17)
+>  -#define SCCTRL_TIMEREN1SEL_TIMCLK     (1 << 17)
+>  -
+> + #define SCCTRL_TIMERENnSEL_SHIFT(n)   (15 + ((n) * 2))
+> + 
+>   static inline void sysctl_soft_reset(void __iomem *base)
+>   {
+>         /* switch to slow mode */
 
-* Gerald Schaefer <gerald.schaefer@de.ibm.com> wrote:
+Pawel,
 
-> On Sun, 28 Oct 2012 14:10:14 +0100
-> Ingo Molnar <mingo@kernel.org> wrote:
-> 
-> > 
-> > There's a related problem on s390: other THP implementations 
-> > have pmd_mknotpresent() while s390 not, resulting in:
-> > 
-> >   mm/huge_memory.c:1543:2: error: implicit declaration of function 'pmd_mknotpresent'
-> > 
-> > The (untested!) patch below adds the s390 version of this 
-> > method.
-> > 
-> > Gerald, Martin, did I get the S390 details right?
-> 
-> The upstream thp patches for s390 fixed that by adding pmdp_invalidate() and
-> replacing the pmd_mknotpresent() in mm/huge_memory.c, see git commit 46dcde73.
-> The pmdp_invalidate() is already included linux-next, so it should be ok to
-> just change mm/huge_memory.c similar to upstream:
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index f1c2679..842b6df 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1537,8 +1537,7 @@ static int __split_huge_page_map(struct page *page,
->  	 * complete. The ptl also protects against concurrent faults due to
->  	 * making the pmd not-present.
->  	 */
-> -	set_pmd_at(mm, address, pmd, pmd_mknotpresent(*pmd));
-> -	flush_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
-> +	pmdp_invalidate(vma, address, pmd);
->  	pmd_populate(mm, pmd, pgtable);
->  	ret = 1;
-> 
-> With this, s390 does not need a pmd_mknotpresent(), and using 
-> set_pmd_at(..., pmd_mknotpresent()) would be wrong on s390 
-> anyway because we need a flushing operation to change a valid 
-> pmd.
-
-Ok, great - so to me it seems that once the two trees are merged 
-there's no extra change needed for s390 - so I dropped the 
-patch.
+Does this look OK for you?
 
 Thanks,
-
-	Ingo
+Mike
