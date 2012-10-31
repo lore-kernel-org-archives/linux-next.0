@@ -1,31 +1,70 @@
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Felipe Balbi <balbi@ti.com>
 Subject: Re: [PATCH] usb/gadget: let file storage gadget select libcomposite
-Date: Wed, 31 Oct 2012 11:07:44 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1210311106530.1954-100000@iolanthe.rowland.org>
+Date: Wed, 31 Oct 2012 17:07:17 +0200
+Message-ID: <20121031150717.GB26934@arwen.pp.htv.fi>
 References: <xa1tfw4ug5so.fsf@mina86.com>
+ <Pine.LNX.4.44L0.1210311106530.1954-100000@iolanthe.rowland.org>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:43446 "HELO
-	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1423027Ab2JaPHp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 31 Oct 2012 11:07:45 -0400
-In-Reply-To: <xa1tfw4ug5so.fsf@mina86.com>
+Received: from bear.ext.ti.com ([192.94.94.41]:38290 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1422889Ab2JaPNX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 31 Oct 2012 11:13:23 -0400
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1210311106530.1954-100000@iolanthe.rowland.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Nazarewicz <mina86@mina86.com>
-Cc: Felipe Balbi <balbi@ti.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Michal Nazarewicz <mina86@mina86.com>, Felipe Balbi <balbi@ti.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>
 
-On Wed, 31 Oct 2012, Michal Nazarewicz wrote:
+--eJnRUKwClWJh1Khz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, Oct 31 2012, Felipe Balbi <balbi@ti.com> wrote:
-> > nevertheless, I should be receiving a patch right about now removing
-> > that file. Alan, care to send a patch for that ?
-> 
-> I have some other stuff to remove as well, so I can take care of it, so
-> Alan can spend his time on something more important.
+Hi,
 
-I'm happy to have Michal remove g_file_storage.  That way, he gets to 
-deal with any complaints.  :-)
+On Wed, Oct 31, 2012 at 11:07:44AM -0400, Alan Stern wrote:
+> On Wed, 31 Oct 2012, Michal Nazarewicz wrote:
+>=20
+> > On Wed, Oct 31 2012, Felipe Balbi <balbi@ti.com> wrote:
+> > > nevertheless, I should be receiving a patch right about now removing
+> > > that file. Alan, care to send a patch for that ?
+> >=20
+> > I have some other stuff to remove as well, so I can take care of it, so
+> > Alan can spend his time on something more important.
+>=20
+> I'm happy to have Michal remove g_file_storage.  That way, he gets to=20
+> deal with any complaints.  :-)
 
-Alan Stern
+heh, good point :-)
+
+--=20
+balbi
+
+--eJnRUKwClWJh1Khz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQkT6lAAoJEIaOsuA1yqREyooP/3lKwhvvELi2XQX7UX1ph+tx
+RAGRPSO3Pc4R+C5Y+MlRS+bupjcMxbVvu/uVgEmFhB24TzJCzIqEC2sbQRqjcZ/W
+j/DHV5VluPOeclmbfZSQg3T4e51IhezRHVl0lAvvZsfxY5U3TkrzbFBm3egVfMzZ
+yqhb1bKGHQOXBzZBvbI0Fu/3zuDE3p2Tw7cSSzTOrBLVoIxvI/9mbyTyXt+7/5gH
+gLS7rS6A8Np+r/StJVFXpCgheyskxpTqMQSqS01t3waUrjVw72op5rTgd3VnGQv1
+HtZ41C5fjUnqbE72anpF0SggBrFiyG5ZL3rqgSvF0Qn0c5mmOwtN8tYs9qYxIV6m
+tykm8x7jNlE+11ohe8TwPHIQ4jDa9C+bMhbs9OyERgcSIKPsmtXI8EPlVAZ0C1X+
+33K9N8IZMl6iHabzDUlCyo6t1xWNMt3WhyxnEooYDEqCAe9ZxLA1rhViWIe7NNIp
+K4/c8kU1H4Sz6xEwEmye1aGZ2SQUx+6UcPfdJTbhyBUhrVPy/XlLY6I0miC3ewS3
+dnGUoWmLR2XFVGvwLitaQR+IicHYuoleQOl3a0QXKqmOrNH4gRSyFNDkzAtimzml
+SVJTHho0CePJ9qY4zogOZ2PZ58uTXmjKQ7b7gjrBc8o1HGFRzgq9mTBFAnnpmIau
+T41TwXzIxn7oQ6cRFYfm
+=cvy/
+-----END PGP SIGNATURE-----
+
+--eJnRUKwClWJh1Khz--
