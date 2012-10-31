@@ -1,70 +1,31 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] usb/gadget: let file storage gadget select libcomposite
-Date: Wed, 31 Oct 2012 17:07:17 +0200
-Message-ID: <20121031150717.GB26934@arwen.pp.htv.fi>
-References: <xa1tfw4ug5so.fsf@mina86.com>
- <Pine.LNX.4.44L0.1210311106530.1954-100000@iolanthe.rowland.org>
-Reply-To: <balbi@ti.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the staging
+ tree
+Date: Wed, 31 Oct 2012 09:16:14 -0700
+Message-ID: <20121031161614.GF31804@kroah.com>
+References: <20121031161921.3c9a46bd03f5864eed88fc87@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:38290 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1422889Ab2JaPNX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 31 Oct 2012 11:13:23 -0400
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1210311106530.1954-100000@iolanthe.rowland.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Michal Nazarewicz <mina86@mina86.com>, Felipe Balbi <balbi@ti.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>
-
---eJnRUKwClWJh1Khz
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20121031161921.3c9a46bd03f5864eed88fc87@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Clark <rob@ti.com>, Tony Lindgren <tony@atomide.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+On Wed, Oct 31, 2012 at 04:19:21PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/mach-omap2/drm.c between commit 5e3b08749951 ("staging:
+> drm/omap: add support for ARCH_MULTIPLATFORM") from the staging tree and
+> commit 2a296c8f89bc ("ARM: OMAP: Make plat/omap_hwmod.h local to
+> mach-omap2") from the arm-soc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-On Wed, Oct 31, 2012 at 11:07:44AM -0400, Alan Stern wrote:
-> On Wed, 31 Oct 2012, Michal Nazarewicz wrote:
->=20
-> > On Wed, Oct 31 2012, Felipe Balbi <balbi@ti.com> wrote:
-> > > nevertheless, I should be receiving a patch right about now removing
-> > > that file. Alan, care to send a patch for that ?
-> >=20
-> > I have some other stuff to remove as well, so I can take care of it, so
-> > Alan can spend his time on something more important.
->=20
-> I'm happy to have Michal remove g_file_storage.  That way, he gets to=20
-> deal with any complaints.  :-)
+Looks good to me, thanks for this.
 
-heh, good point :-)
-
---=20
-balbi
-
---eJnRUKwClWJh1Khz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQkT6lAAoJEIaOsuA1yqREyooP/3lKwhvvELi2XQX7UX1ph+tx
-RAGRPSO3Pc4R+C5Y+MlRS+bupjcMxbVvu/uVgEmFhB24TzJCzIqEC2sbQRqjcZ/W
-j/DHV5VluPOeclmbfZSQg3T4e51IhezRHVl0lAvvZsfxY5U3TkrzbFBm3egVfMzZ
-yqhb1bKGHQOXBzZBvbI0Fu/3zuDE3p2Tw7cSSzTOrBLVoIxvI/9mbyTyXt+7/5gH
-gLS7rS6A8Np+r/StJVFXpCgheyskxpTqMQSqS01t3waUrjVw72op5rTgd3VnGQv1
-HtZ41C5fjUnqbE72anpF0SggBrFiyG5ZL3rqgSvF0Qn0c5mmOwtN8tYs9qYxIV6m
-tykm8x7jNlE+11ohe8TwPHIQ4jDa9C+bMhbs9OyERgcSIKPsmtXI8EPlVAZ0C1X+
-33K9N8IZMl6iHabzDUlCyo6t1xWNMt3WhyxnEooYDEqCAe9ZxLA1rhViWIe7NNIp
-K4/c8kU1H4Sz6xEwEmye1aGZ2SQUx+6UcPfdJTbhyBUhrVPy/XlLY6I0miC3ewS3
-dnGUoWmLR2XFVGvwLitaQR+IicHYuoleQOl3a0QXKqmOrNH4gRSyFNDkzAtimzml
-SVJTHho0CePJ9qY4zogOZ2PZ58uTXmjKQ7b7gjrBc8o1HGFRzgq9mTBFAnnpmIau
-T41TwXzIxn7oQ6cRFYfm
-=cvy/
------END PGP SIGNATURE-----
-
---eJnRUKwClWJh1Khz--
+greg k-h
