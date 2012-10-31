@@ -1,39 +1,119 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the staging
- tree
-Date: Wed, 31 Oct 2012 09:23:15 -0700
-Message-ID: <20121031162314.GD12739@atomide.com>
-References: <20121031161921.3c9a46bd03f5864eed88fc87@canb.auug.org.au>
- <20121031161614.GF31804@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Please add swiotlb.git tree to linux-next
+Date: Thu, 1 Nov 2012 08:34:03 +1100
+Message-ID: <20121101083403.30dec16fa242e81f9761529f@canb.auug.org.au>
+References: <20121031125929.GA27144@phenom.dumpdata.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__1_Nov_2012_08_34_03_+1100_smMisBtzB07G1TQ6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-04-ewr.mailhop.org ([204.13.248.74]:55929 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S935728Ab2JaQXZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 31 Oct 2012 12:23:25 -0400
-Content-Disposition: inline
-In-Reply-To: <20121031161614.GF31804@kroah.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:41824 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759980Ab2JaVeN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 31 Oct 2012 17:34:13 -0400
+In-Reply-To: <20121031125929.GA27144@phenom.dumpdata.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Clark <rob@ti.com>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-* Greg KH <greg@kroah.com> [121031 09:17]:
-> On Wed, Oct 31, 2012 at 04:19:21PM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the arm-soc tree got a conflict in
-> > arch/arm/mach-omap2/drm.c between commit 5e3b08749951 ("staging:
-> > drm/omap: add support for ARCH_MULTIPLATFORM") from the staging tree and
-> > commit 2a296c8f89bc ("ARM: OMAP: Make plat/omap_hwmod.h local to
-> > mach-omap2") from the arm-soc tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary (no action
-> > is required).
-> 
-> Looks good to me, thanks for this.
+--Signature=_Thu__1_Nov_2012_08_34_03_+1100_smMisBtzB07G1TQ6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes thanks.
+Hi Konrad,
 
-Tony
+On Wed, 31 Oct 2012 08:59:29 -0400 Konrad Rzeszutek Wilk <konrad.wilk@oracl=
+e.com> wrote:
+>
+> Please add:
+>=20
+>  git://git.kernel.org/pub/scm/linux/kernel/git/konrad/swiotlb.git #linux-=
+next
+>=20
+> in the linux-next system. The branch is 'linux-next'. This would be the
+> tree and branch used for maintaining the swiotlb and its different users.
+>=20
+> The Ack's have already been given per this commit:
+>=20
+> commit 6e28b761c5020c4bc943c7e38da86bea8af77d5c
+> Author: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Date:   Mon Oct 8 16:28:05 2012 -0700
+>=20
+>     MAINTAINERS: add Konrad as the SWIOTLB maintainer
+>    =20
+>     Now that I've an IA64 box on top of the other boxes (IBM with Calgary=
+-X,
+>     Intel VT-d, AMD Vi, and AMD GART - that can use SWIOTLB as fallback) =
+I can
+>     reliably do regression testing.
+>    =20
+>     Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>     Cc: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+>     Cc: Ingo Molnar <mingo@elte.hu>
+>     Acked-by: "H. Peter Anvin" <hpa@zytor.com>
+>     Cc: Thomas Gleixner <tglx@linutronix.de>
+>     Acked-by: Tony Luck <tony.luck@intel.com>
+>     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+Added from today.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Thu__1_Nov_2012_08_34_03_+1100_smMisBtzB07G1TQ6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQkZlLAAoJEECxmPOUX5FEu/4P+wRIwr3eqAhuspdhOTlsjPUa
+3HTLkznDWhwgLdcNJnkSkPK8GSzhDMBW83rvfByt2GM67F4CgikAp2Q+GmfDIoxE
+9GMHqrHGf4owY4CMXqGFi36zVCnkLyaSMow3UBxeVKkNnQMZQK764Ftitcqf1fFU
+b4CS+xMcP5EjFYmroD5N1Odc/NRo/d+blg/LbHlofQcFte2PM5Dkv/pY7jMPVTjC
+jNMuv07j5hZTFYFGgCK7PH6euaULoYdd/2iMoIVH66/OayubntDWV/DVT+7J5x52
+XqfLtSPXQXHr0QH/H0ieCSGRCeKg6zvjdeemu+AiRdL7F6tw+eIiBijZwDWNnS0l
+U8brxqLEPE9rYWqGBxdGNfeQuaud3CYWhbrIudKoxlLNu4c0uN98huBIVErcOrLi
+ae/+kvy141yvwN4HlauZfjyS4ba6z7rbKaRhUCWNcBgTT/s+dqww6Hp4kRDAjvpF
+6Sc9uN31TR4bOB6HGBAGEjhSrFX9Bz4HijU7jKzMiJFhqFxhoj7iho/GsXFbhG/m
+Y7ZE8XvkVSv+97HGwMHaT+rhJ//bjABaTXcG0jrRmH3J26J2xhQVJxoc0dN7axt0
+Mbd8smMzYG7ed6/TNoGTaxc1VcNob41Hp+c7T8Ea9888S7AZePh5j355vK9Jh/M5
+8Glar1c9jAcqoOeiIDux
+=ANYG
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__1_Nov_2012_08_34_03_+1100_smMisBtzB07G1TQ6--
