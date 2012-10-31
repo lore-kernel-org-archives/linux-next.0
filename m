@@ -1,108 +1,74 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Linux-next changes for module and virtio trees.
-Date: Wed, 31 Oct 2012 22:53:04 +1100
-Message-ID: <20121031225304.5a1f3885dcb1cae725f77a81@canb.auug.org.au>
-References: <871uhh4cen.fsf@rustcorp.com.au>
-	<20121003011239.3445171ec17e422a289d2997@canb.auug.org.au>
-	<87pq3z5nhs.fsf@rustcorp.com.au>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH] usb/gadget: let file storage gadget select libcomposite
+Date: Wed, 31 Oct 2012 14:37:49 +0200
+Message-ID: <20121031123749.GE10998@arwen.pp.htv.fi>
+References: <20121018144614.b61961cfae2274d52d340882@canb.auug.org.au>
+ <50809624.30601@xenotime.net>
+ <20121024144435.GF4368@breakpoint.cc>
+ <xa1thapjlqv1.fsf@mina86.com>
+ <20121024174508.GA6014@breakpoint.cc>
+ <xa1tehknlnbr.fsf@mina86.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__31_Oct_2012_22_53_04_+1100_h=LAw3Q5AxjsGdIf"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ytoMbUMiTKPMT3hY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36668 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751199Ab2JaLxQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 31 Oct 2012 07:53:16 -0400
-In-Reply-To: <87pq3z5nhs.fsf@rustcorp.com.au>
+Received: from bear.ext.ti.com ([192.94.94.41]:56651 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751182Ab2JaMoB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 31 Oct 2012 08:44:01 -0400
+Content-Disposition: inline
+In-Reply-To: <xa1tehknlnbr.fsf@mina86.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, kvm-devel <kvm@vger.kernel.org>
+To: Michal Nazarewicz <mina86@mina86.com>
+Cc: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Randy Dunlap <rdunlap@xenotime.net>, Felipe Balbi <balbi@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>
 
---Signature=_Wed__31_Oct_2012_22_53_04_+1100_h=LAw3Q5AxjsGdIf
-Content-Type: text/plain; charset=US-ASCII
+--ytoMbUMiTKPMT3hY
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi,
 
-On Wed, 31 Oct 2012 13:58:15 +1030 Rusty Russell <rusty@rustcorp.com.au> wr=
-ote:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> >
-> > On Tue, 02 Oct 2012 15:56:56 +0930 Rusty Russell <rusty@rustcorp.com.au=
-> wrote:
-> >>
-> >>         Please remove my quilt tree
-> >> http://ozlabs.org/~rusty/kernel/rr-latest/ from linux-next, and use my
-> >> git trees from now on:
-> >>=20
-> >> git://git.kernel.org/pub/scm/linux/kernel/git/rusty/linux.git
-> >> Branches:
-> >>         modules-next
-> >>         virtio-next
-> >
-> > Done.
+On Wed, Oct 24, 2012 at 08:47:04PM +0200, Michal Nazarewicz wrote:
+> > On Wed, Oct 24, 2012 at 07:30:42PM +0200, Michal Nazarewicz wrote:
+> >> At first it looks strange as FSG does not use composite, but yeah:
 >=20
-> And please add my 'fixes' branch from the same tree.
+> On Wed, Oct 24 2012, Sebastian Andrzej Siewior wrote:
+> > Yeah. However, it should be removed in v3.8 anyway :)
+>=20
+> Yep, that's what feature-removal-schedule.txt says. :]
 
-Done.
+except that it was dropped by commit
+9c0ece069b32e8e122aea71aa47181c10eb85ba7
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+nevertheless, I should be receiving a patch right about now removing
+that file. Alan, care to send a patch for that ?
 
 --=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+balbi
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Wed__31_Oct_2012_22_53_04_+1100_h=LAw3Q5AxjsGdIf
-Content-Type: application/pgp-signature
+--ytoMbUMiTKPMT3hY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQkREgAAoJEECxmPOUX5FEOWwP/00/8OX7xHd8xHVgWMQU0cXm
-2WfLo+hT5wGyFNOPRemfOSrd407mRmP8SlMdcH/PrvNlBRHYlC+p0OyNyBBTvc8y
-1Inn6FKDMkp6sYcyEtfeIuiga+FuzY/kBtWm6VO1mQedSslJbh96WgJkustC5dz+
-lpHYrX6pnFWJtt4lg3Sng8hewcHrhutW6OtidIagZ8UN+pK21qT0jLIk/DW23ffK
-7PltalQUzB4F/2RUGLzy8q+HN+CpWeGxXBMLak0Q7au2ZnqUzE7PRajYqpMQcHhO
-vLPv6PjBvah0euR+D0h7cf0hhX8ba0wv16beANHF39QinDrWDLCxnm1uMuYFyfqi
-/8lAYd/SXh29Nh6lDaVaicZ5wajG1R2haDLmkmmrZD5cPMmQGdY7po6n/MOC9gkj
-jiFc0Qyg3agc9M3pDLYY4nMqE6L8mqP+a7T0s4zo/IpklAqOrBF7+0K71hAKojq6
-06i3EdUpZ4kgi3YxJQNngspiMFLS6INKSqllFef4klqoJz6DYT0bAJxFDFs1I9m6
-aguJkP/wFTVLKmjed2y+eowKA4MuN25q/BvygL0W+Gdb3OpftzbzFNkGr1uqMxMy
-hINOLWVcBBR57hFWB4g1sfLMAkQFGMh+O8AP7PJjIYItgzY0TXGsIDhJ6PQ6wAe3
-G3rRVHHzuOjfURdWirMi
-=n8gR
+iQIcBAEBAgAGBQJQkRudAAoJEIaOsuA1yqRE7tkP/jxzrPqT9823Luez6hFdmSzu
+Y6l/qoEKeZXs7PF0L0ffOllFaE0YR5DvKi02ZyfMq1hZkqIxtUTSKXbSt+EMltqL
+a9Z/oZ2kyCwlagykJLmXvGFCeN6la7MP0zB8UQkaXfGiBDoEnF1omkn2wF7F5Kt1
+BRpvCTdesZH8xndc9cXoXe7yEGZDxy9E8KCmR68GdFqqj2/WrpnhtWu7+QhALrzf
+msIrhQBp5HYUFaoqNQXVx1GkNUUAh0gBCto/EHNsL9zWkFaNlvtNqd4QidjZDRYI
+Eaz66q6yQTzz11dHoxEosz25nqD/gTos123U2Qccz2vwxMcbpBR2HeUWcURLepOd
+g8biwxSd7zptzI2r9OSd6e9+e54ajyVyEXV0QKS7e9y2IsycbEbCJJG0Xd/zvHwZ
+dDklAjiLZkJSd8q3cTjt9VB4y1eR4yKX7J9FsorNauMIOmOOV3rMnSxED52BM1x1
+2f+YHnah1sk+SPqdG/E4Ex6TmSmjd6YI8iNzR3Bqp+octle/LqUURlW0jykzlPns
+ROQgtwC2OJ6r9FHeCTF5043IBJ83LNPya9zCtY4viBDOolJDMuOk3bEY/muvSa4f
+1K02XCkXfuGf82ZGUesbqHti/+KbT+75qE5SuA8E+E80N1TEhfa/r4eP1qQuxgec
+0rcutgU/kYQ6zfIy/DvL
+=MIh9
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__31_Oct_2012_22_53_04_+1100_h=LAw3Q5AxjsGdIf--
+--ytoMbUMiTKPMT3hY--
