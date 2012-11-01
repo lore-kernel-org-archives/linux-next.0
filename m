@@ -1,73 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tmem tree with the xen-two tree
-Date: Fri, 2 Nov 2012 00:19:53 +1100
-Message-ID: <20121102001953.68aa28abcae897a809f417cd@canb.auug.org.au>
-References: <20121101144059.a8350c24499f1beffe59a64a@canb.auug.org.au>
-	<20121101130310.GA11029@localhost.localdomain>
-	<20121102001732.1c02f6a72c9cd2b894d9c6c4@canb.auug.org.au>
+From: Adil Mujeeb <mujeeb.adil@gmail.com>
+Subject: linux-next: Cloning error
+Date: Thu, 1 Nov 2012 19:11:28 +0530
+Message-ID: <CANBXnMm+b=cAFTg=S2rxnXLznudMLNm8FFPWCSzHhb_qUP=vPg@mail.gmail.com>
+References: <CANBXnM=3r=kkOP0uoZJuJcsZ56fZozxGziBedFLkDH-YT-MQZw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__2_Nov_2012_00_19_53_+1100_vNstmSjwLOvs5A9g"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60317 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753792Ab2KANTz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Nov 2012 09:19:55 -0400
-In-Reply-To: <20121102001732.1c02f6a72c9cd2b894d9c6c4@canb.auug.org.au>
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:38663 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761305Ab2KANl3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Nov 2012 09:41:29 -0400
+Received: by mail-ee0-f46.google.com with SMTP id b15so1278164eek.19
+        for <linux-next@vger.kernel.org>; Thu, 01 Nov 2012 06:41:28 -0700 (PDT)
+In-Reply-To: <CANBXnM=3r=kkOP0uoZJuJcsZ56fZozxGziBedFLkDH-YT-MQZw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mukesh Rathor <mukesh.rathor@oracle.com>
+To: linux-next@vger.kernel.org
 
---Signature=_Fri__2_Nov_2012_00_19_53_+1100_vNstmSjwLOvs5A9g
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi List,
 
-Hi Konrad,
+Yesterday I was trying to clone the linux-next tree and it gave me error.
 
-On Fri, 2 Nov 2012 00:17:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> On Thu, 1 Nov 2012 09:03:10 -0400 Konrad Rzeszutek Wilk <konrad.wilk@orac=
-le.com> wrote:
-> >
-> > I am not really sure how this happen - the 'tmem' tree should not have
-> > had 7282a68f5aea, and more interestingly, I cannot find it in the
-> > tmem tree! Either way, let me just reset the #linux-next to v3.7-rc3
-> > in tmem tree and see if this shows up.
->=20
-> The version of the tmem tree I have has commit a728d5ea1c20 as its head
-> and has the shortlog below.  I has not changed since Sept 24.
+---------------------------------------------------------8<-----------------------------------------------
+$ git clone git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Cloning into linux-next...
+remote: Counting objects: 2869337, done.
+remote: Compressing objects: 100% (458442/458442), done.
+Receiving objects: 100% (2869337/2869337), 575.53 MiB | 241 KiB/s, done.
+remote: Total 2869337 (delta 2414758), reused 2836387 (delta 2381920)
+Resolving deltas: 100% (2414758/2414758), done.
+error: unable to create file
+drivers/gpu/drm/nouveau/core/subdev/i2c/aux.c (No such file or
+directory)
+---------------------------------------------------------8<-----------------------------------------------
 
-Just to be sure, the tmem tree is
+Is there anything wrong?
 
-git://git.kernel.org/pub/scm/linux/kernel/git/konrad/mm.git#linux-next
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__2_Nov_2012_00_19_53_+1100_vNstmSjwLOvs5A9g
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQknb5AAoJEECxmPOUX5FE9ykQAKNIm2QN6aHd9WRqw2isv/bF
-c0gPITJ8tuppCC2mQB8eq/4H4SDF9uJGV5PsNBc833C9TZoNzifWovH1K/8RQ/L9
-Bf4JZyxmDDnpmHOSm+1rvRl6JoNolFV5EdoSMuz5AIOJ2o3mai1Z1VkDR2VcIzxE
-3ykPOmMy+hyR7gYjeoUqlCOC2BIxxP7ZJMG0vf1jjF+CnCpYu7IvRcG1lWdprPlg
-6zhc5p3skYOsF/VNeAOLeiI5SWBBggaxsrRP7OerlCmcA/+3ZTvdp/GQtKe+gx7l
-5kTbed2TlrMVSK+1mq0l15qzQnm/O3yV0LKNyPhmZxjhNCOKxtwuDZ13QTs8sncF
-k37YC1+2CbX2z3dTYj4GZvQGIGXohMgdJoCZFFsho+gYdVDSLmVrFFXfW/i5iKev
-sHOBqsPAtDsXCsopuyI4xmjYhzfWNWr/Vy1iZHkOuQOwDE1dCzTmnmr5BUluCJrw
-iQq3jiv3xrDVn3JIslKL7fNQk6CdwE7q6IggmX7xy50lw6qcVGGNDLG4xYhRh85b
-ljEE5G1bktI11rLMZaS5Gdw6FeyocmYLp9PsN8fK8lZoNO7WuI7/ifNHLbwDytC9
-Zg2ml3HIGZTOkzgbQk05fjy4VMKYRgcp3gQWeGBz7ZLwzQz1SNBjAnDlPNyWcHEI
-ZRSKPNWuxnYa6q/lwGit
-=Xa7G
------END PGP SIGNATURE-----
-
---Signature=_Fri__2_Nov_2012_00_19_53_+1100_vNstmSjwLOvs5A9g--
+Regards,
+Adil
