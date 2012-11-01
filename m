@@ -1,48 +1,68 @@
-From: Herton Ronaldo Krzesinski <herton.krzesinski@canonical.com>
-Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-Date: Thu, 1 Nov 2012 11:04:33 +0100
-Message-ID: <20121101100432.GA2702@herton-ThinkPad-T420>
-References: <20121031130439.7242d3f12fa7002624c3b1e6@canb.auug.org.au>
- <1351691714.13356.31.camel@deadeye.wl.decadent.org.uk>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: manual merge of the tmem tree with the xen-two tree
+Date: Thu, 1 Nov 2012 09:03:10 -0400
+Message-ID: <20121101130310.GA11029@localhost.localdomain>
+References: <20121101144059.a8350c24499f1beffe59a64a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from acsinet15.oracle.com ([141.146.126.227]:39469 "EHLO
+	acsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755662Ab2KANDa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Nov 2012 09:03:30 -0400
 Content-Disposition: inline
-In-Reply-To: <1351691714.13356.31.camel@deadeye.wl.decadent.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Hutchings <ben@decadent.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20121101144059.a8350c24499f1beffe59a64a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mukesh Rathor <mukesh.rathor@oracle.com>
 
-On Wed, Oct 31, 2012 at 01:55:14PM +0000, Ben Hutchings wrote:
-> On Wed, 2012-10-31 at 13:04 +1100, Stephen Rothwell wrote:
-> > Hi Jens,
-> > 
-> > Today's linux-next merge of the block tree got a conflict in
-> > drivers/block/floppy.c between a set of common patches from Linus' tree
-> > and commit b33d002f4b6b ("genhd: Make put_disk() safe for disks that have
-> > not been registered") from the block tree.
-> > 
-> > I fixed it up (by using the block tree version) and can carry the fix as
-> > necessary (no action is required).
+On Thu, Nov 01, 2012 at 02:40:59PM +1100, Stephen Rothwell wrote:
+> Hi Konrad,
 > 
-> commit b33d002f4b6b ("genhd: Make put_disk() safe for disks that have
-> not been registered") was supposed to be dropped or reverted; I don't
-> why it's hanging around.
-
-I also don't feel inclined to continue to fiddle too much with the
-floppy driver, but may be we should add to it a fix to not leak the
-reference to disks[]->queue in the error handling, checking if we really
-did the add_disk (the "disks[drive]->queue = NULL;" under out_put_disk).
-
+> Today's linux-next merge of the tmem tree got conflicts in
+> arch/x86/include/asm/xen/interface.h and drivers/xen/cpu_hotplug.c
+> between commit 6c6067f26388 ("xen/pvh: Extend vcpu_guest_context, p2m,
+> event, and XenBus") from the xen-two tree and commit 7282a68f5aea ("PVH:
+> Basic and preparatory changes") from the tmem tree.
 > 
-> Ben.
+> I fixed it up (see below and using the xen-two version for cpu_hotplug.c)
+> and can carry the fix as necessary (no action is required).
+
+Thank you.
+
+I am not really sure how this happen - the 'tmem' tree should not have
+had 7282a68f5aea, and more interestingly, I cannot find it in the
+tmem tree! Either way, let me just reset the #linux-next to v3.7-rc3
+in tmem tree and see if this shows up.
+
 > 
 > -- 
-> Ben Hutchings
-> I'm always amazed by the number of people who take up solipsism because
-> they heard someone else explain it. - E*Borg on alt.fan.pratchett
-
--- 
-[]'s
-Herton
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/x86/include/asm/xen/interface.h
+> index 20e738a,104fa50..0000000
+> --- a/arch/x86/include/asm/xen/interface.h
+> +++ b/arch/x86/include/asm/xen/interface.h
+> @@@ -145,16 -136,8 +145,17 @@@ struct vcpu_guest_context 
+>       struct cpu_user_regs user_regs;         /* User-level CPU registers     */
+>       struct trap_info trap_ctxt[256];        /* Virtual IDT                  */
+>       unsigned long ldt_base, ldt_ents;       /* LDT (linear address, # ents) */
+>  -    unsigned long gdt_frames[16], gdt_ents; /* GDT (machine frames, # ents).*
+>  -					     * PV in HVM: it's GDTR addr/sz */
+>  +    union {
+>  +	struct {
+> - 		/* PV: GDT (machine frames, # ents).*/
+> ++		/* PV: GDT (machine frames, # ents).
+> ++		 * PV in HVM: it's GDTR addr/sz */
+>  +		unsigned long gdt_frames[16], gdt_ents;
+>  +	} pv;
+>  +	struct {
+>  +		/* PVH: GDTR addr and size */
+>  +		unsigned long gdtaddr, gdtsz;
+>  +	} pvh;
+>  +    } u;
+>       unsigned long kernel_ss, kernel_sp;     /* Virtual TSS (only SS1/SP1)   */
+>       /* NB. User pagetable on x86/64 is placed in ctrlreg[1]. */
+>       unsigned long ctrlreg[8];               /* CR0-CR7 (control registers)  */
