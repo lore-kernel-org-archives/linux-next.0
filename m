@@ -1,54 +1,51 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH -next] wireless: brcmfmac: fix printk format warning
-Date: Thu, 01 Nov 2012 14:14:51 -0700
-Message-ID: <5092E64B.3030402@infradead.org>
-References: <20121101163622.129b59967d2ee76e6946874a@canb.auug.org.au> <5092B4BE.4080803@infradead.org> <5092B900.2090801@broadcom.com> ( sfid-20121101_190234_358746_9918835B) <1351798279.17469.0.camel@jlt4.sipsolutions.net> <5092E0B7.9040608@broadcom.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: manual merge of the tmem tree with the xen-two tree
+Date: Thu, 1 Nov 2012 17:52:27 -0400
+Message-ID: <20121101215227.GA18854@localhost.localdomain>
+References: <20121101144059.a8350c24499f1beffe59a64a@canb.auug.org.au>
+ <20121101130310.GA11029@localhost.localdomain>
+ <20121102001732.1c02f6a72c9cd2b894d9c6c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:41747 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751047Ab2KAVPC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Nov 2012 17:15:02 -0400
-In-Reply-To: <5092E0B7.9040608@broadcom.com>
+Received: from userp1040.oracle.com ([156.151.31.81]:26874 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1762363Ab2KAVwj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Nov 2012 17:52:39 -0400
+Content-Disposition: inline
+In-Reply-To: <20121102001732.1c02f6a72c9cd2b894d9c6c4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arend van Spriel <arend@broadcom.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, brcm80211-dev-list@broadcom.com, linux-wireless@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mukesh Rathor <mukesh.rathor@oracle.com>
 
-On 11/01/2012 01:51 PM, Arend van Spriel wrote:
-
-> On 11/01/2012 08:31 PM, Johannes Berg wrote:
->> On Thu, 2012-11-01 at 19:01 +0100, Arend van Spriel wrote:
->>> On 11/01/2012 06:43 PM, Randy Dunlap wrote:
->>>> From: Randy Dunlap <rdunlap@infradead.org>
->>>>
->>>> Fix printk format warning for ssid_len, which is a size_t:
->>>>
->>>> drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:3941:2: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
->>>>
->>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->>>> Cc:	brcm80211-dev-list@broadcom.com
->>>
->>>
->>> We actually have a patch ready for that with credit to people who
->>> reported it. We can add you to that list ;-)
->>
->> Which you've been sitting on for WAY too long already :)
->>
->> johannes
->>
->>
+On Fri, Nov 02, 2012 at 12:17:32AM +1100, Stephen Rothwell wrote:
+> Hi Konrad,
 > 
-> True. I was actually going to make Hante fix it, but failed my
-> management skills miserably. Fixed it myself in the end. There are quite
-> a number of patches queued up. Another flush() not working :-)
+> On Thu, 1 Nov 2012 09:03:10 -0400 Konrad Rzeszutek Wilk <konrad.wilk@oracle.com> wrote:
+> >
+> > I am not really sure how this happen - the 'tmem' tree should not have
+> > had 7282a68f5aea, and more interestingly, I cannot find it in the
+> > tmem tree! Either way, let me just reset the #linux-next to v3.7-rc3
+> > in tmem tree and see if this shows up.
+> 
+> The version of the tmem tree I have has commit a728d5ea1c20 as its head
+> and has the shortlog below.  I has not changed since Sept 24.
 
+Oh, my. That is a mistake. I've reseted the #linux-next to be 3.7-rc3
+in the tmem tree. It was not suppose to have that patch and I think
+I just did 'git am' on the wrong tree. Thanks for catching this!
 
-Please get them into your linux-next tree so that we don't waste
-time fixing things that are already fixed.
-
-thanks,
--- 
-~Randy
+> 
+> $ git shortlog origin/master..tmem/linux-next 
+> Konrad Rzeszutek Wilk (3):
+>       Merge commit 'v3.6-rc5' into linux-next
+>       Merge branch 'stable/for-linus-3.7' into linux-next
+>       Merge commit 'v3.6-rc6' into linux-next
+> 
+> Mukesh Rathor (1):
+>       PVH: Basic and preparatory changes
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
