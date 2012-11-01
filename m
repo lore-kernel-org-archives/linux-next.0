@@ -1,39 +1,46 @@
-From: "Jan Beulich" <jbeulich@suse.com>
-Subject: Re: linux-next: Tree for Oct 31 (ehci, dbgp)
-Date: Thu, 01 Nov 2012 20:49:28 +0000
-Message-ID: <5092E058020000780008EBA2@nat28.tlf.novell.com>
-References: <5092D1AC020000780008EB60@nat28.tlf.novell.com>
- <Pine.LNX.4.44L0.1211011636410.1762-100000@iolanthe.rowland.org>
+From: "Arend van Spriel" <arend@broadcom.com>
+Subject: Re: [PATCH -next] wireless: brcmfmac: fix printk format warning
+Date: Thu, 1 Nov 2012 21:51:03 +0100
+Message-ID: <5092E0B7.9040608@broadcom.com>
+References: <20121101163622.129b59967d2ee76e6946874a@canb.auug.org.au>
+ <5092B4BE.4080803@infradead.org> <5092B900.2090801@broadcom.com> (
+ sfid-20121101_190234_358746_9918835B)
+ <1351798279.17469.0.camel@jlt4.sipsolutions.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44L0.1211011636410.1762-100000@iolanthe.rowland.org>
-Content-Disposition: inline
+In-Reply-To: <1351798279.17469.0.camel@jlt4.sipsolutions.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, stern@rowland.harvard.edu
-Cc: sfr@canb.auug.org.au, rdunlap@infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-usb@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, brcm80211-dev-list@broadcom.com, linux-wireless@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
->>> Alan Stern <stern@rowland.harvard.edu> 11/01/12 9:39 PM >>>
->On Thu, 1 Nov 2012, Jan Beulich wrote:
->> >>> Alan Stern <stern@rowland.harvard.edu> 11/01/12 4:28 PM >>>
->> >Evidently we need to change your new test in
->> >drivers/usb/early/ehci-dbgp.c to:
->> >
->> >#if IS_ENABLED(CONFIG_USB_HCD_EHCI) || defined(CONFIG_USB_CHIPIDEA_HOST)
->> >
->> >Upcoming changes to ehci-hcd will make this unnecessary in 3.8, but for 
->> >now we need it.
->> 
->> Which tells me that the CONFIG_USB_SUPPORT version would have been
->> the better one  (and I would favor that over the ugly variant you suggest
->> above).
->
->I also suggested IS_ENABLED(CONFIG_USB), which is no uglier than what 
->you submitted and would also fix this build error.  How about using it 
->instead?
+On 11/01/2012 08:31 PM, Johannes Berg wrote:
+> On Thu, 2012-11-01 at 19:01 +0100, Arend van Spriel wrote:
+>> On 11/01/2012 06:43 PM, Randy Dunlap wrote:
+>>> From: Randy Dunlap <rdunlap@infradead.org>
+>>>
+>>> Fix printk format warning for ssid_len, which is a size_t:
+>>>
+>>> drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:3941:2: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+>>>
+>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>> Cc:	brcm80211-dev-list@broadcom.com
+>>
+>>
+>> We actually have a patch ready for that with credit to people who
+>> reported it. We can add you to that list ;-)
+> 
+> Which you've been sitting on for WAY too long already :)
+> 
+> johannes
+> 
+> 
 
-Yes, that's better. Question then is - updated original patch or incremental one?
+True. I was actually going to make Hante fix it, but failed my
+management skills miserably. Fixed it myself in the end. There are quite
+a number of patches queued up. Another flush() not working :-)
 
-Jan
+Gr. AvS
