@@ -1,57 +1,124 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drop-experimental tree with the
- net-next tree
-Date: Fri, 2 Nov 2012 15:55:14 +1100
-Message-ID: <20121102155514.939282b4682c521f07e7943c@canb.auug.org.au>
+Subject: linux-next: build failures after merge of the final tree (usb tree
+ related)
+Date: Fri, 2 Nov 2012 17:04:59 +1100
+Message-ID: <20121102170459.5e152727a2a38797ee493da0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__2_Nov_2012_15_55_14_+1100_ZesQDe77+ORwRkej"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: Kees Cook <keescook@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+ boundary="Signature=_Fri__2_Nov_2012_17_04_59_+1100_0AK3=k=8+0l/.lQB"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__2_Nov_2012_15_55_14_+1100_ZesQDe77+ORwRkej
+--Signature=_Fri__2_Nov_2012_17_04_59_+1100_0AK3=k=8+0l/.lQB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kees,
+Hi ,
 
-Today's linux-next merge of the drop-experimental tree got a conflict in
-drivers/net/ethernet/intel/Kconfig between commit a24006ed1261 ("ptp:
-Enable clock drivers along with associated net/PHY drivers") from the
-net-next tree and commit 70c5056f413d ("drivers/net/ethernet/intel:
-remove depends on CONFIG_EXPERIMENTAL") from the drop-experimental tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-The former removed some code that was changed by the latter, so I did
-that and can carry the fix as necessary (no action is required).
+In file included from drivers/usb/host/ehci-platform.c:28:0:
+drivers/usb/host/ehci.h: In function 'ehci_readl':
+drivers/usb/host/ehci.h:662:3: error: implicit declaration of function 'rea=
+dl_be' [-Werror=3Dimplicit-function-declaration]
+drivers/usb/host/ehci.h:663:3: error: implicit declaration of function 'rea=
+dl' [-Werror=3Dimplicit-function-declaration]
+drivers/usb/host/ehci.h: In function 'ehci_writel':
+drivers/usb/host/ehci.h:674:3: error: implicit declaration of function 'wri=
+tel_be' [-Werror=3Dimplicit-function-declaration]
+drivers/usb/host/ehci.h:675:3: error: implicit declaration of function 'wri=
+tel' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 99f91934a907 ("USB: EHCI: make ehci-platform a separate
+driver") from the usb tree.
+
+I have reverted that commit for today.
+
+I then got:
+
+drivers/usb/chipidea/built-in.o: In function `ehci_init_driver':
+(.opd+0x5a0): multiple definition of `ehci_init_driver'
+drivers/usb/host/built-in.o:(.opd+0xb58): first defined here
+drivers/usb/chipidea/built-in.o: In function `.ehci_init_driver':
+(.text+0x6528): multiple definition of `.ehci_init_driver'
+drivers/usb/host/built-in.o:(.text+0x9eb4): first defined here
+drivers/usb/chipidea/built-in.o: In function `ehci_suspend':
+(.opd+0xc18): multiple definition of `ehci_suspend'
+drivers/usb/host/built-in.o:(.opd+0x11d0): first defined here
+drivers/usb/chipidea/built-in.o: In function `ehci_resume':
+(.opd+0x1020): multiple definition of `ehci_resume'
+drivers/usb/host/built-in.o:(.opd+0x1680): first defined here
+drivers/usb/chipidea/built-in.o: In function `.ehci_suspend':
+(.text+0x100e4): multiple definition of `.ehci_suspend'
+drivers/usb/host/built-in.o:(.text+0x13b00): first defined here
+drivers/usb/chipidea/built-in.o: In function `.ehci_resume':
+(.text+0x17760): multiple definition of `.ehci_resume'
+drivers/usb/host/built-in.o:(.text+0x1b498): first defined here
+drivers/usb/chipidea/built-in.o: In function `ehci_setup':
+(.opd+0x1128): multiple definition of `ehci_setup'
+drivers/usb/host/built-in.o:(.opd+0x17a0): first defined here
+drivers/usb/chipidea/built-in.o: In function `.ehci_setup':
+(.text+0x228f0): multiple definition of `.ehci_setup'
+drivers/usb/host/built-in.o:(.text+0x266fc): first defined here
+
+Which is caused by commit 3e0232039967 ("USB: EHCI: prepare to make
+ehci-hcd a library module").
+
+I have added the following patch to disable the chipidea driver for now:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 2 Nov 2012 16:59:55 +1100
+Subject: [PATCH] usb: mark the chipidea broken for now
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/usb/chipidea/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
+index 1ea932a..26a239a 100644
+--- a/drivers/usb/chipidea/Kconfig
++++ b/drivers/usb/chipidea/Kconfig
+@@ -1,6 +1,7 @@
+ config USB_CHIPIDEA
+ 	tristate "ChipIdea Highspeed Dual Role Controller"
+ 	depends on USB || USB_GADGET
++	depends on BROKEN
+ 	help
+ 	  Say Y here if your system has a dual role high speed USB
+ 	  controller based on ChipIdea silicon IP. Currently, only the
+--=20
+1.7.10.280.gaa39
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__2_Nov_2012_15_55_14_+1100_ZesQDe77+ORwRkej
+--Signature=_Fri__2_Nov_2012_17_04_59_+1100_0AK3=k=8+0l/.lQB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQk1IyAAoJEECxmPOUX5FEChUP/1tZ0iPHeX3wRJGmLtqZajjR
-gGiCRv0lEKfPQwXhlYH9+vxS04Vmn9Q+YLwKsrrmhSllEgmUCFrK002ea9q3Surd
-ZwTvlkfXiySokO29t4sOdfG/iOo6+DjEWRB0CggJX5ffqeZz0WJJz/OkrExFiMPg
-jy7VK3bJerdOZ6eURGwJBixg7duYV1YguajCijQTDKOlYONS12qtse446q8lael5
-9h6VRu/4GSUvnaFu8P4n4G85Z4ZTbwydqNCci7cXLuX5lygwRJC9c4OxHcBc2CFA
-4SLS4/H4GskTmZrfnd7fmpqlnreH0LsQ6CpidT9RzJqpbVJYFMeidnmzyh9SvrFZ
-wzPfF7t4YgYuqFVyw9mDbTsCv51PD9cWMa+c7pMg/7h8XC6WjEjkTzbHJM0GXk7Z
-RVjaxfMdsSXJj4Tz5ZX1fQNmlNo4JZrUT+VXmclDQisBC1zahokx0F5PlsWDK/Q7
-EdMyyxV0jELsQJFbLLhnhUTa2AfyA4a+D3lwNVTt1gA/6pw3JrhRmNbjr4OzGxw1
-Vh5/peCRR41Kj+7fi+7GCIQPAQDlkqzptiXJi47ShizCgEBYeu4xC2RB2CqmPz0/
-ST3CtTCGbtFhgOA1QeVVlp1gUwTHZ0Tm/4j8WnrKdf4CNySigVzqzqd64ijf1SvJ
-UEKV3zli/rbe7AiF2e7d
-=eh0J
+iQIcBAEBCAAGBQJQk2KLAAoJEECxmPOUX5FE7NQP/2L6rHlVwaYA86hvvu7ZIqkm
+8tErXYmk0a73sVzeInfaXeS/vk42GIatyi1O3CFIPphextljqb1ts86QbhLLfnU5
+aHt6vlxkEjcqC4BicgqorfpruFvy4fPvZKPKKQMHNTJzj7oTGGKHpVP0JvLpkfP8
+WwYVPnZivHanBNcu0uX7iG16+h7PdQqaG4+i4MHVcB64HxFOwRI86FsgYVU95kZw
+DuS6Ec+Wp0nAvtcXcLzpC1JIPpcxYlw0qRJ8e0iQnrHWmismKuW78rQvn7m9VEBn
+XiV1kFSdNP8AABZn6AY20rM8Ww6hVipMwvyKWRrgBdHwY3FAkYbJQ402pcR6lzvR
+LExLnsU4hMTMXUvln0vrnBYtJB4S95SY4yDs45Hl13rpl7GFule1td85qiZtF+Kl
+0sF5gPCE29siPYlnztVHNY/c52tRC/9yAuaYtSRybjJ2TPFVEOgVntKO+MaWntBa
+sFlZsNaoKwuh8kdj2NNmBzqZ1q4i2FLd4c91XsWEp4FoiXwjyOCkiFuu47wGM0d0
+FiSbzkqm0TGL1YQ2fthbRaqLQotti+TTaGeLxZulXYl3dItNLYtsAqzMwSLnCBMB
+deaPpA6aQbFvahM5uZX1xS0zeWITYs7SP+dicgJlm+5BYcdwp0a2KRBaI1XYdkPi
+LoEVXRmwWg9ZpjCAr65M
+=8EOf
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__2_Nov_2012_15_55_14_+1100_ZesQDe77+ORwRkej--
+--Signature=_Fri__2_Nov_2012_17_04_59_+1100_0AK3=k=8+0l/.lQB--
