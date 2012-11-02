@@ -1,65 +1,28 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the usb tree
-Date: Fri, 2 Nov 2012 15:08:28 +1100
-Message-ID: <20121102150828.74ea49649b1601ecb5d0eaef@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: build failure after merge of the modules tree
+Date: Fri, 02 Nov 2012 13:46:04 +1030
+Message-ID: <87objg4ruy.fsf@rustcorp.com.au>
+References: <20121102125711.6cca854164da5372700db109@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__2_Nov_2012_15_08_28_+1100_g17bG9abxosQvRIw"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52909 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750754Ab2KBEIh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Nov 2012 00:08:37 -0400
+Received: from ozlabs.org ([203.10.76.45]:58485 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750997Ab2KBEZR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Nov 2012 00:25:17 -0400
+In-Reply-To: <20121102125711.6cca854164da5372700db109@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Felipe Balbi <balbi@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Matthew Leach <matthew@mattleach.net>
 
---Signature=_Fri__2_Nov_2012_15_08_28_+1100_g17bG9abxosQvRIw
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> Hi Rusty,
+>
+> After merging the modules tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 
-Hi Greg,
+As this is in Andrew's tree, I've reverted it from my modules-next tree.
 
-After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
-
-WARNING: drivers/usb/host/ehci-hcd: 'ehci_init_driver' exported twice. Prev=
-ious export was in drivers/usb/chipidea/ci_hdrc.ko
-WARNING: drivers/usb/host/ehci-hcd: 'ehci_resume' exported twice. Previous =
-export was in drivers/usb/chipidea/ci_hdrc.ko
-WARNING: drivers/usb/host/ehci-hcd: 'ehci_suspend' exported twice. Previous=
- export was in drivers/usb/chipidea/ci_hdrc.ko
-WARNING: drivers/usb/host/ehci-hcd: 'ehci_setup' exported twice. Previous e=
-xport was in drivers/usb/chipidea/ci_hdrc.ko
-
-Introduced by commit 3e0232039967 ("USB: EHCI: prepare to make ehci-hcd a
-library module").
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__2_Nov_2012_15_08_28_+1100_g17bG9abxosQvRIw
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQk0c8AAoJEECxmPOUX5FEr3wP/RpkxpTahyWhwZXO7AFSNIZH
-y5Pm01GJylmBvBh6m4kByQBeMiXYfEVKPDv0SelpkCKJiV5ba3II+9kxFZmQrEfE
-EqhMbJ2G11yYzyrWwlfn93mT119r1V6lowqsga98kYvkjoQZ1faWU0rAT0esnvJ2
-7vYCXmevFvqqBqutkoIZ6mZNSSVr49BrvFtAloowJlor3pP3BsTXqEh6Q/j9CN0F
-89Izq72LFAT2xOJXHCjWBj7qPT3bHV/KnpD569vkkP5TiTcGVXi1WZNalrbG6UeU
-VBaZijP0nM+iL5BK8/zm+jN2qOW1hVQAv0wvuIYC31viw+eAu77Ld0kSLu9fhVBi
-vLUyneKj28kg8SLDuOYJWSYfURPfqYPBhDBtukmlIR0wkhaiCEv7NiHK2KkTuZne
-nJv8qRchUFvwz0Izswk1KUUpQWpfYgGkSkXIs/cN7O25CajL2cmxZOrHuhfI1Oqd
-E03yDrweAjT6jWyT7w6ikyZvEs5BqISXjKy5D/s3OEGMFZRVnwmyGJPqdwIm0Cyw
-jtWRswSrTg8rgjCJt5HPEwZRYPfn7sTkSlmuzHxovGJkGL/v1e+hAshDCA0Y0/iN
-/G6obwLF4oXwz+I716H1L3XSzdI4ERkYVfgi9t5pNMtwhr7P/emCyFzlSzOOt4+q
-5gsyfvEmr4fWRupIkuHL
-=eVRH
------END PGP SIGNATURE-----
-
---Signature=_Fri__2_Nov_2012_15_08_28_+1100_g17bG9abxosQvRIw--
+Thanks,
+Rusty.
