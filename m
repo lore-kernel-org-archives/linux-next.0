@@ -1,41 +1,77 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: ccache: FATAL: Could not create /scratch/kisskb/ccache
-Date: Fri, 2 Nov 2012 19:44:48 +0100
-Message-ID: <CAMuHMdXhYNQ_7JOC3u7CS41mxgSKkuFYA7QdjZgeBawqMZQ9-g@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failures after merge of the final tree (usb
+ tree related)
+Date: Fri, 2 Nov 2012 12:05:48 -0700
+Message-ID: <20121102190548.GA1607@kroah.com>
+References: <20121102170459.5e152727a2a38797ee493da0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:63037 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932260Ab2KBSot (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Nov 2012 14:44:49 -0400
-Received: by mail-vc0-f174.google.com with SMTP id fk26so4043935vcb.19
-        for <linux-next@vger.kernel.org>; Fri, 02 Nov 2012 11:44:48 -0700 (PDT)
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:58125 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932260Ab2KBTFu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Nov 2012 15:05:50 -0400
+Content-Disposition: inline
+In-Reply-To: <20121102170459.5e152727a2a38797ee493da0@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linux-Next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/7458505/
+On Fri, Nov 02, 2012 at 05:04:59PM +1100, Stephen Rothwell wrote:
+> Hi ,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> In file included from drivers/usb/host/ehci-platform.c:28:0:
+> drivers/usb/host/ehci.h: In function 'ehci_readl':
+> drivers/usb/host/ehci.h:662:3: error: implicit declaration of function 'readl_be' [-Werror=implicit-function-declaration]
+> drivers/usb/host/ehci.h:663:3: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+> drivers/usb/host/ehci.h: In function 'ehci_writel':
+> drivers/usb/host/ehci.h:674:3: error: implicit declaration of function 'writel_be' [-Werror=implicit-function-declaration]
+> drivers/usb/host/ehci.h:675:3: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+> 
+> Caused by commit 99f91934a907 ("USB: EHCI: make ehci-platform a separate
+> driver") from the usb tree.
+> 
+> I have reverted that commit for today.
+> 
+> I then got:
+> 
+> drivers/usb/chipidea/built-in.o: In function `ehci_init_driver':
+> (.opd+0x5a0): multiple definition of `ehci_init_driver'
+> drivers/usb/host/built-in.o:(.opd+0xb58): first defined here
+> drivers/usb/chipidea/built-in.o: In function `.ehci_init_driver':
+> (.text+0x6528): multiple definition of `.ehci_init_driver'
+> drivers/usb/host/built-in.o:(.text+0x9eb4): first defined here
+> drivers/usb/chipidea/built-in.o: In function `ehci_suspend':
+> (.opd+0xc18): multiple definition of `ehci_suspend'
+> drivers/usb/host/built-in.o:(.opd+0x11d0): first defined here
+> drivers/usb/chipidea/built-in.o: In function `ehci_resume':
+> (.opd+0x1020): multiple definition of `ehci_resume'
+> drivers/usb/host/built-in.o:(.opd+0x1680): first defined here
+> drivers/usb/chipidea/built-in.o: In function `.ehci_suspend':
+> (.text+0x100e4): multiple definition of `.ehci_suspend'
+> drivers/usb/host/built-in.o:(.text+0x13b00): first defined here
+> drivers/usb/chipidea/built-in.o: In function `.ehci_resume':
+> (.text+0x17760): multiple definition of `.ehci_resume'
+> drivers/usb/host/built-in.o:(.text+0x1b498): first defined here
+> drivers/usb/chipidea/built-in.o: In function `ehci_setup':
+> (.opd+0x1128): multiple definition of `ehci_setup'
+> drivers/usb/host/built-in.o:(.opd+0x17a0): first defined here
+> drivers/usb/chipidea/built-in.o: In function `.ehci_setup':
+> (.text+0x228f0): multiple definition of `.ehci_setup'
+> drivers/usb/host/built-in.o:(.text+0x266fc): first defined here
+> 
+> Which is caused by commit 3e0232039967 ("USB: EHCI: prepare to make
+> ehci-hcd a library module").
+> 
+> I have added the following patch to disable the chipidea driver for now:
 
-ccache: FATAL: Could not create
-/scratch/kisskb/ccache/d/7/f9e308f728ef43aaa482aefb9a00a2-852386.o.tmp.stdout.Sprygo.5748
-(permission denied?)
-make[4]: *** [drivers/media/rc/ene_ir.o] Error 1
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/7461979/
+Both of these should now be fixed in my tree.
 
-ccache: FATAL: Could not create
-/scratch/kisskb/ccache/5/e/47d893acad42c07542edec1f826579-1842636.o.tmp.stdout.Sprygo.557
-(permission denied?)
-make[3]: *** [net/core/sock.o] Error 1
+thanks,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h
