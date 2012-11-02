@@ -1,66 +1,41 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: Tree for Oct 31 (ehci, dbgp)
-Date: Fri, 2 Nov 2012 08:39:31 -0700
-Message-ID: <20121102153931.GA3755@kroah.com>
-References: <5093E0DF02000078000A6102@nat28.tlf.novell.com>
- <Pine.LNX.4.44L0.1211021019450.1356-100000@iolanthe.rowland.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: ccache: FATAL: Could not create /scratch/kisskb/ccache
+Date: Fri, 2 Nov 2012 19:44:48 +0100
+Message-ID: <CAMuHMdXhYNQ_7JOC3u7CS41mxgSKkuFYA7QdjZgeBawqMZQ9-g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:44789 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751184Ab2KBPja (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Nov 2012 11:39:30 -0400
-Received: by mail-pa0-f46.google.com with SMTP id hz1so2535582pad.19
-        for <linux-next@vger.kernel.org>; Fri, 02 Nov 2012 08:39:30 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1211021019450.1356-100000@iolanthe.rowland.org>
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:63037 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932260Ab2KBSot (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Nov 2012 14:44:49 -0400
+Received: by mail-vc0-f174.google.com with SMTP id fk26so4043935vcb.19
+        for <linux-next@vger.kernel.org>; Fri, 02 Nov 2012 11:44:48 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Jan Beulich <JBeulich@suse.com>, sfr@canb.auug.org.au, rdunlap@infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-usb@vger.kernel.org
+To: Linux-Next <linux-next@vger.kernel.org>
 
-On Fri, Nov 02, 2012 at 10:20:27AM -0400, Alan Stern wrote:
-> On Fri, 2 Nov 2012, Jan Beulich wrote:
-> 
-> > >>> On 02.11.12 at 15:01, Alan Stern <stern@rowland.harvard.edu> wrote:
-> > > On Thu, 1 Nov 2012, Jan Beulich wrote:
-> > > 
-> > >> >>> Alan Stern <stern@rowland.harvard.edu> 11/01/12 9:39 PM >>>
-> > >> >On Thu, 1 Nov 2012, Jan Beulich wrote:
-> > >> >> >>> Alan Stern <stern@rowland.harvard.edu> 11/01/12 4:28 PM >>>
-> > >> >> >Evidently we need to change your new test in
-> > >> >> >drivers/usb/early/ehci-dbgp.c to:
-> > >> >> >
-> > >> >> >#if IS_ENABLED(CONFIG_USB_HCD_EHCI) || defined(CONFIG_USB_CHIPIDEA_HOST)
-> > >> >> >
-> > >> >> >Upcoming changes to ehci-hcd will make this unnecessary in 3.8, but for 
-> > >> >> >now we need it.
-> > >> >> 
-> > >> >> Which tells me that the CONFIG_USB_SUPPORT version would have been
-> > >> >> the better one  (and I would favor that over the ugly variant you suggest
-> > >> >> above).
-> > >> >
-> > >> >I also suggested IS_ENABLED(CONFIG_USB), which is no uglier than what 
-> > >> >you submitted and would also fix this build error.  How about using it 
-> > >> >instead?
-> > >> 
-> > >> Yes, that's better. Question then is - updated original patch or incremental 
-> > > one?
-> > > 
-> > > Greg will probably want an incremental patch, because the original has 
-> > > already been merged.
-> > 
-> > I actually sent both (the incremental as attachment - I hope that's
-> > going to be acceptable to him) in a submission earlier today.
-> 
-> Ah, okay, good.
-> 
-> Greg, whichever version you take, you can add:
-> 
-> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+http://kisskb.ellerman.id.au/kisskb/buildresult/7458505/
 
-Thanks for that, as you guessed, I have to take the incremental one as
-the first is already applied.
+ccache: FATAL: Could not create
+/scratch/kisskb/ccache/d/7/f9e308f728ef43aaa482aefb9a00a2-852386.o.tmp.stdout.Sprygo.5748
+(permission denied?)
+make[4]: *** [drivers/media/rc/ene_ir.o] Error 1
 
-greg k-h
+http://kisskb.ellerman.id.au/kisskb/buildresult/7461979/
+
+ccache: FATAL: Could not create
+/scratch/kisskb/ccache/5/e/47d893acad42c07542edec1f826579-1842636.o.tmp.stdout.Sprygo.557
+(permission denied?)
+make[3]: *** [net/core/sock.o] Error 1
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
