@@ -1,54 +1,53 @@
-From: "Jan Beulich" <JBeulich@suse.com>
-Subject: Re: linux-next: Tree for Oct 31 (ehci, dbgp)
-Date: Fri, 02 Nov 2012 14:03:59 +0000
-Message-ID: <5093E0DF02000078000A6102@nat28.tlf.novell.com>
-References: <5092E058020000780008EBA2@nat28.tlf.novell.com>
- <Pine.LNX.4.44L0.1211021001060.1356-100000@iolanthe.rowland.org>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: linux-next: build warning after merge of the usb tree
+Date: Fri, 2 Nov 2012 10:18:57 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1211021014180.1356-100000@iolanthe.rowland.org>
+References: <20121102090743.GB17938@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nat28.tlf.novell.com ([130.57.49.28]:55309 "EHLO
-	nat28.tlf.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762804Ab2KBODV convert rfc822-to-8bit (ORCPT
-	<rfc822;groupwise-linux-next@vger.kernel.org:5:2>);
-	Fri, 2 Nov 2012 10:03:21 -0400
-In-Reply-To: <Pine.LNX.4.44L0.1211021001060.1356-100000@iolanthe.rowland.org>
-Content-Disposition: inline
+Received: from iolanthe.rowland.org ([192.131.102.54]:38642 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1762889Ab2KBOS6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Nov 2012 10:18:58 -0400
+In-Reply-To: <20121102090743.GB17938@arwen.pp.htv.fi>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: sfr@canb.auug.org.au, rdunlap@infradead.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-usb@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
->>> On 02.11.12 at 15:01, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Thu, 1 Nov 2012, Jan Beulich wrote:
+On Fri, 2 Nov 2012, Felipe Balbi wrote:
+
+> Hi,
 > 
->> >>> Alan Stern <stern@rowland.harvard.edu> 11/01/12 9:39 PM >>>
->> >On Thu, 1 Nov 2012, Jan Beulich wrote:
->> >> >>> Alan Stern <stern@rowland.harvard.edu> 11/01/12 4:28 PM >>>
->> >> >Evidently we need to change your new test in
->> >> >drivers/usb/early/ehci-dbgp.c to:
->> >> >
->> >> >#if IS_ENABLED(CONFIG_USB_HCD_EHCI) || defined(CONFIG_USB_CHIPIDEA_HOST)
->> >> >
->> >> >Upcoming changes to ehci-hcd will make this unnecessary in 3.8, but for 
->> >> >now we need it.
->> >> 
->> >> Which tells me that the CONFIG_USB_SUPPORT version would have been
->> >> the better one  (and I would favor that over the ugly variant you suggest
->> >> above).
->> >
->> >I also suggested IS_ENABLED(CONFIG_USB), which is no uglier than what 
->> >you submitted and would also fix this build error.  How about using it 
->> >instead?
->> 
->> Yes, that's better. Question then is - updated original patch or incremental 
-> one?
+> On Fri, Nov 02, 2012 at 03:08:28PM +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
+> > produced this warning:
+> > 
+> > WARNING: drivers/usb/host/ehci-hcd: 'ehci_init_driver' exported twice. Previous export was in drivers/usb/chipidea/ci_hdrc.ko
+> > WARNING: drivers/usb/host/ehci-hcd: 'ehci_resume' exported twice. Previous export was in drivers/usb/chipidea/ci_hdrc.ko
+> > WARNING: drivers/usb/host/ehci-hcd: 'ehci_suspend' exported twice. Previous export was in drivers/usb/chipidea/ci_hdrc.ko
+> > WARNING: drivers/usb/host/ehci-hcd: 'ehci_setup' exported twice. Previous export was in drivers/usb/chipidea/ci_hdrc.ko
+> > 
+> > Introduced by commit 3e0232039967 ("USB: EHCI: prepare to make ehci-hcd a
+> > library module").
 > 
-> Greg will probably want an incremental patch, because the original has 
-> already been merged.
+> Alex, why on earth is chipidea exporting symbols it doesn't own ?
 
-I actually sent both (the incremental as attachment - I hope that's
-going to be acceptable to him) in a submission earlier today.
+That's at least partly my fault.  ehci-hcd.c now exports four symbols 
+that it didn't before.  Since the ChipIdea driver does
 
-Jan
+	#include "../host/ehci-hcd.c"
+
+it now exports them too, unintentionally.  A quick band-aid fix would 
+be to protect those functions with
+
+	#ifndef CHIPIDEA_EHCI
+
+but the real fix is the patch I posted yesterday -- assuming it works 
+right.  If we don't hear back from Alex soon, I will post the band-aid 
+fix as a temporary stop-gap.
+
+Alan Stern
