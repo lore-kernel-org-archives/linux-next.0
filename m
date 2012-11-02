@@ -1,70 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the modules tree
-Date: Fri, 2 Nov 2012 12:57:11 +1100
-Message-ID: <20121102125711.6cca854164da5372700db109@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the usb tree
+Date: Fri, 2 Nov 2012 15:08:28 +1100
+Message-ID: <20121102150828.74ea49649b1601ecb5d0eaef@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__2_Nov_2012_12_57_11_+1100_oA69JlYjEyegoC0G"
+ boundary="Signature=_Fri__2_Nov_2012_15_08_28_+1100_g17bG9abxosQvRIw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44760 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:52909 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762593Ab2KBB5Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Nov 2012 21:57:24 -0400
+	with ESMTP id S1750754Ab2KBEIh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Nov 2012 00:08:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Matthew Leach <matthew@mattleach.net>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Felipe Balbi <balbi@ti.com>
 
---Signature=_Fri__2_Nov_2012_12_57_11_+1100_oA69JlYjEyegoC0G
+--Signature=_Fri__2_Nov_2012_15_08_28_+1100_g17bG9abxosQvRIw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Greg,
 
-After merging the modules tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-arch/powerpc/platforms/pasemi/idle.c:88:1: error: macro "__define_initcall"=
- passed 3 arguments, but takes just 2
-arch/powerpc/platforms/pasemi/idle.c:88:1: error: data definition has no ty=
-pe or storage class [-Werror]
-arch/powerpc/platforms/pasemi/idle.c:88:1: error: type defaults to 'int' in=
- declaration of '__define_initcall' [-Werror=3Dimplicit-int]
-arch/powerpc/platforms/pasemi/idle.c:88:1: error: '__machine_initcall_pasem=
-i_pasemi_idle_init' defined but not used [-Werror=3Dunused-function]
+WARNING: drivers/usb/host/ehci-hcd: 'ehci_init_driver' exported twice. Prev=
+ious export was in drivers/usb/chipidea/ci_hdrc.ko
+WARNING: drivers/usb/host/ehci-hcd: 'ehci_resume' exported twice. Previous =
+export was in drivers/usb/chipidea/ci_hdrc.ko
+WARNING: drivers/usb/host/ehci-hcd: 'ehci_suspend' exported twice. Previous=
+ export was in drivers/usb/chipidea/ci_hdrc.ko
+WARNING: drivers/usb/host/ehci-hcd: 'ehci_setup' exported twice. Previous e=
+xport was in drivers/usb/chipidea/ci_hdrc.ko
 
-And several more similar.
-
-Caused (again - a fixed version of this patch is in the akpm tree) by
-commit 9f859bf82c1d ("init: Use the stringify operator for the
-__define_initcall macro").
-
-I have use the modules tree from next-20121101 for today.
+Introduced by commit 3e0232039967 ("USB: EHCI: prepare to make ehci-hcd a
+library module").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__2_Nov_2012_12_57_11_+1100_oA69JlYjEyegoC0G
+--Signature=_Fri__2_Nov_2012_15_08_28_+1100_g17bG9abxosQvRIw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQkyh3AAoJEECxmPOUX5FEoYIP/AsnuQREXzJVur98NiezkkRA
-QQ6R38doRm0CYl0wfrwiJd0vpzPWv+4OHL20QqUWPXn9RMy0Ptr7fs4Ifp9GZTju
-pCLRI7cBJG7nPYNl98zDOBZUp1O5olZidcjTBW3NwYLlmqqAZb/3RPqBPUp9Ah07
-9VwnowPo3r7wKeINYBpi5Ch3m4R63K7NOCaGx2ChSS+g+S2Anjn1QfiDU/B9PZnt
-GClQWlX/qu6zyRLUQtLdIe69xLkxaZcq0T4BZYK4bIxDKe5F3ICNMXl3sWmx7EKu
-P6+6jT3snhEN8BVEhNOGtNsdLGherQnWYDoD9QJgaPN0Xjiy2Q6VjEZF4TTFIZhL
-QLP4D7rVvZGrEeELx4+nuUxk5dGcrsAnpaO057a4ha7ElBYj2AtXdsRN0FusLlvF
-Be3ZellHbZ5g/Y57Uo2fpog5HYpEP6Ek8npVRuTtkalw0tq6YayKLiO/ql+RzAQA
-N9n87Tc62gJllqApVsZvv7IQpxB5ESH5Co6niuu1KFOJt8VY4Y2c/ZF2maRL1/pQ
-ye2hroDn7o4qe9osCZat8iNKP4z0BFK4PCtCVyw1buZC3jGXrxC7AjYbkL2LnsGW
-Fan7SkQKzb0+g3xSRoSnPE/2KjjGtXRPW1nbO9PHc7+XdQeMub7yk66cOmCVgwTz
-Qt2xGnu4npTfgOoPzBTt
-=Lmbi
+iQIcBAEBCAAGBQJQk0c8AAoJEECxmPOUX5FEr3wP/RpkxpTahyWhwZXO7AFSNIZH
+y5Pm01GJylmBvBh6m4kByQBeMiXYfEVKPDv0SelpkCKJiV5ba3II+9kxFZmQrEfE
+EqhMbJ2G11yYzyrWwlfn93mT119r1V6lowqsga98kYvkjoQZ1faWU0rAT0esnvJ2
+7vYCXmevFvqqBqutkoIZ6mZNSSVr49BrvFtAloowJlor3pP3BsTXqEh6Q/j9CN0F
+89Izq72LFAT2xOJXHCjWBj7qPT3bHV/KnpD569vkkP5TiTcGVXi1WZNalrbG6UeU
+VBaZijP0nM+iL5BK8/zm+jN2qOW1hVQAv0wvuIYC31viw+eAu77Ld0kSLu9fhVBi
+vLUyneKj28kg8SLDuOYJWSYfURPfqYPBhDBtukmlIR0wkhaiCEv7NiHK2KkTuZne
+nJv8qRchUFvwz0Izswk1KUUpQWpfYgGkSkXIs/cN7O25CajL2cmxZOrHuhfI1Oqd
+E03yDrweAjT6jWyT7w6ikyZvEs5BqISXjKy5D/s3OEGMFZRVnwmyGJPqdwIm0Cyw
+jtWRswSrTg8rgjCJt5HPEwZRYPfn7sTkSlmuzHxovGJkGL/v1e+hAshDCA0Y0/iN
+/G6obwLF4oXwz+I716H1L3XSzdI4ERkYVfgi9t5pNMtwhr7P/emCyFzlSzOOt4+q
+5gsyfvEmr4fWRupIkuHL
+=eVRH
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__2_Nov_2012_12_57_11_+1100_oA69JlYjEyegoC0G--
+--Signature=_Fri__2_Nov_2012_15_08_28_+1100_g17bG9abxosQvRIw--
