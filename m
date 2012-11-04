@@ -1,61 +1,64 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Sept 24 (irqchip)
-Date: Fri, 02 Nov 2012 18:47:08 -0700
-Message-ID: <5094779C.6030506@xenotime.net>
-References: <20120925005328.f748dfa3d077cebb345a4291@canb.auug.org.au>	<50607E99.6040303@xenotime.net>	<20120925020744.cc5beb9e65473605e5ca2240@canb.auug.org.au> <CAOesGMjYE0WgPr4ahPUdBVCZP=dkVPia-dmpDKgiOM_2HgsJgg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [v2 PATCH 1/2] Add new uio device for dynamic memory allocation
+Date: Sun, 4 Nov 2012 14:20:00 +0100
+Message-ID: <CAMuHMdWKByLXR-2wkiej=F1WPf7xePf3nMkUqwSf_hEJNNZbvg@mail.gmail.com>
+References: <1348553352-14334-1-git-send-email-dhobsong@igel.co.jp>
+	<1348553352-14334-2-git-send-email-dhobsong@igel.co.jp>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:60290 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754231Ab2KCBrM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Nov 2012 21:47:12 -0400
-In-Reply-To: <CAOesGMjYE0WgPr4ahPUdBVCZP=dkVPia-dmpDKgiOM_2HgsJgg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Simon Arlott <simon@fire.lp0.eu>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Chris Boot <bootc@bootc.net>, Dom Cobley <popcornmix@gmail.com>, Dom Cobley <dc4@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1348553352-14334-2-git-send-email-dhobsong@igel.co.jp>
+Sender: linux-sh-owner@vger.kernel.org
+To: Damian Hobson-Garcia <dhobsong@igel.co.jp>
+Cc: hjk@hansjkoch.de, gregkh@linuxfoundation.org, magnus.damm@gmail.com, horms@verge.net.au, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, hdk@igel.co.jp, Linux-Next <linux-next@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 09/24/2012 09:46 AM, Olof Johansson wrote:
+On Tue, Sep 25, 2012 at 8:09 AM, Damian Hobson-Garcia
+<dhobsong@igel.co.jp> wrote:
+> are holding the device file open, the address returned to userspace i=
+s
+> DMA_ERROR_CODE.
 
-> On Mon, Sep 24, 2012 at 9:07 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi Randy,
->>
->> On Mon, 24 Sep 2012 08:39:05 -0700 Randy Dunlap <rdunlap@xenotime.net> wrote:
->>>
->>> On 09/24/2012 07:53 AM, Stephen Rothwell wrote:
->>>
->>>> Today was a train wreck, with lots of new conflicts across several trees
->>>> and a few build failures as well.
->>>
->>> I agree.  I mostly get this:
->>>
->>> drivers/Kconfig:157: can't open file "drivers/irqchip/Kconfig"
->>>
->>> i.e., no such file.
->>>
->>> How does this happen?  :(
->>>
->>> who handles irqchip?
->>
->> Hmm, commit 89214f009c1d ("ARM: bcm2835: add interrupt controller
->> driver") from the arm-soc tree adds that file as an empty file (I have
->> the empty file in my tree).  Nothing adds anything to it.
-> 
-> Yeah, the directory came in through arm-soc for-next (since the
-> bcm2835 driver was added), but there is an empty Kconfig in arm-soc. I
-> can see it in linux-next as well.
-> 
-> I wonder why it doesn't show up in your tree, Randy. You just did a
-> regular git checkout?
+Only a small subset of the architectures
+(arm/ia64/microblaze/openrisc/powerpc/sparc/x86)
+seem to define DMA_ERROR_CODE, causing everywhere else:
 
+drivers/uio/uio_dmem_genirq.c: In function =E2=80=98uio_dmem_genirq_rel=
+ease=E2=80=99:
+drivers/uio/uio_dmem_genirq.c:95: error: =E2=80=98DMA_ERROR_CODE=E2=80=99=
+ undeclared
+(first use in this function)
+drivers/uio/uio_dmem_genirq.c:95: error: (Each undeclared identifier
+is reported only once
+drivers/uio/uio_dmem_genirq.c:95: error: for each function it appears i=
+n.)
+drivers/uio/uio_dmem_genirq.c: In function =E2=80=98uio_dmem_genirq_pro=
+be=E2=80=99:
+drivers/uio/uio_dmem_genirq.c:238: error: =E2=80=98DMA_ERROR_CODE=E2=80=
+=99 undeclared
+(first use in this function)
+make[1]: *** [drivers/uio/uio_dmem_genirq.o] Error 1
+make: *** [drivers/uio/] Error 2
 
-Sorry for the very delayed reply (and this is already fixed).
+(e.g. http://kisskb.ellerman.id.au/kisskb/buildresult/7462173/)
 
-It doesn't show up in my kernel tree because I use linux-v3.x tarballs
-and patch-3.x-rcY patches and linux-next patches, and
-'patch' does not keep empty files around.
+=46urthermore, none of them define it in <uapi/...>, so DMA_ERROR_CODE =
+is not
+part of the userspace API (yet), while it is architecture-specific (som=
+e use 0,
+others ~0).
 
--- 
-~Randy
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+                                -- Linus Torvalds
