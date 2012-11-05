@@ -1,33 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with the cortex tree
-Date: Mon, 5 Nov 2012 15:03:07 +1100
-Message-ID: <20121105150307.05dc233ef299ab73df5dbf89@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the pm tree
+Date: Mon, 5 Nov 2012 15:46:46 +1100
+Message-ID: <20121105154646.65ece287a8bd50e844085a9a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_Nov_2012_15_03_07_+1100_4k0_DeIE0Zk2J_R/"
+ boundary="Signature=_Mon__5_Nov_2012_15_46_46_+1100_+9EvfthoHz6VXmkc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39788 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:45710 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752136Ab2KEEDT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Nov 2012 23:03:19 -0500
+	with ESMTP id S1752969Ab2KEEq5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Nov 2012 23:46:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Catalin Marinas <catalin.marinas@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wen Congyang <wency@cn.fujitsu.com>, Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
---Signature=_Mon__5_Nov_2012_15_03_07_+1100_4k0_DeIE0Zk2J_R/
+--Signature=_Mon__5_Nov_2012_15_46_46_+1100_+9EvfthoHz6VXmkc
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Andrew,
 
-Today's linux-next merge of the signal tree got a conflict in
-arch/arm/kernel/process.c between commit 77a3018e38b9 ("Cortex-M3: Add
-support for exception handling") from the cortex tree and commit
-9e6479930021 ("arm: switch to generic fork/vfork/clone") from the signal
-tree.
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/acpi/acpi_memhotplug.c between commits 85fcb3758c10 ("ACPI /
+memory-hotplug: introduce a mutex lock to protect the list in
+acpi_memory_device") and d0fbb400b6f3 ("ACPI / memory-hotplug: add memory
+offline code to acpi_memory_device_remove()") from the pm tree and commit
+"acpi_memhotplug.c: fix memory leak when memory device is unbound from
+the module acpi_memhotplug" from the akpm tree.
 
 I fixed it up (I think - see below) and can carry the fix as necessary
 (no action is required).
@@ -36,49 +38,65 @@ I fixed it up (I think - see below) and can carry the fix as necessary
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/kernel/process.c
-index 585b9ab,4ab80bb..0000000
---- a/arch/arm/kernel/process.c
-+++ b/arch/arm/kernel/process.c
-@@@ -384,14 -383,11 +384,15 @@@ copy_thread(unsigned long clone_flags,=20
+diff --cc drivers/acpi/acpi_memhotplug.c
+index 92c973a,62c2c74..0000000
+--- a/drivers/acpi/acpi_memhotplug.c
++++ b/drivers/acpi/acpi_memhotplug.c
+@@@ -131,6 -125,16 +131,18 @@@ acpi_memory_get_resource(struct acpi_re
+  	return AE_OK;
+  }
  =20
-  	memset(&thread->cpu_context, 0, sizeof(struct cpu_context_save));
++ static void
++ acpi_memory_free_device_resources(struct acpi_memory_device *mem_device)
++ {
++ 	struct acpi_memory_info *info, *n;
++=20
+++	mutex_lock(&mem_device->list_lock);
++ 	list_for_each_entry_safe(info, n, &mem_device->res_list, list)
++ 		kfree(info);
++ 	INIT_LIST_HEAD(&mem_device->res_list);
+++	mutex_unlock(&mem_device->list_lock);
++ }
++=20
+  static int
+  acpi_memory_get_device_resources(struct acpi_memory_device *mem_device)
+  {
+@@@ -504,13 -490,7 +519,13 @@@ static int acpi_memory_device_remove(st
+  	if (!device || !acpi_driver_data(device))
+  		return -EINVAL;
  =20
-- 	if (likely(regs)) {
-- 		*childregs =3D *regs;
-+ 	if (likely(!(p->flags & PF_KTHREAD))) {
-+ 		*childregs =3D *current_pt_regs();
-  		childregs->ARM_r0 =3D 0;
-- 		childregs->ARM_sp =3D stack_start;
-+ 		if (stack_start)
-+ 			childregs->ARM_sp =3D stack_start;
- +#if defined CONFIG_CPU_V7M
- +		/* Return to Thread mode with Process stack */
- +		childregs->ARM_EXC_RET =3D 0xfffffffdUL;
- +#endif
-  	} else {
-  		memset(childregs, 0, sizeof(struct pt_regs));
-  		thread->cpu_context.r4 =3D stk_sz;
+ -	acpi_memory_device_free(acpi_driver_data(device));
+ +	mem_device =3D acpi_driver_data(device);
+ +
+ +	result =3D acpi_memory_remove_memory(mem_device);
+ +	if (result)
+ +		return result;
+ +
+- 	kfree(mem_device);
+++	acpi_memory_device_free(mem_device);
+ =20
+  	return 0;
+  }
 
---Signature=_Mon__5_Nov_2012_15_03_07_+1100_4k0_DeIE0Zk2J_R/
+--Signature=_Mon__5_Nov_2012_15_46_46_+1100_+9EvfthoHz6VXmkc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQlzp7AAoJEECxmPOUX5FEks8P/1/0l8k8SgkjS/k/kSGYUuOn
-aJWoD1fYBYq4PiY8wnkjq2UYwi1OaDDWTkPj/vqerc8gwGJKGBJB6d+Qy8vGoict
-zz9zC2Lx8k2LeSgDs7dIjYW+xP7pl12lkLp6GeotMPuLrs9mIQiHFw2AdKOG2BIb
-40zxQ8fKHqIWY6pY5Tv2Q5N8Gy7KjrUXQ4Wki+Vd0C70uiOLuerBzrJebLIif+XG
-EDGnV4RGTOY+yD9AXR0E2J52jwGxfy0QbxbZ3PpB6eC5cS7f07M5wYydrTs21YAA
-scgo1QB5eStt3dhrHj3kBDO3/VUQTTC0iZlzUkrf8g2ksaI29rogtti7LwIlZjPj
-XWzNcR9PspTLXW6XUHdGjg3wHzw8V7xIlliXYVQwGB4bsIpeDnT4THVmA8UL4aP6
-M2RRKnnB+56H+uG4EXKLR0V4hSDnGn/pWtREG6azYlTH2jgIB9o35a38itWFp6G0
-VNEUjiCOTB1xvEoSRQevmcmBYlxJOpnL2tiCze7gpP60toJx9jA/SIK2gqDsDmMU
-7grt5Q12AD9RKVI9stUUGEWEgqbI9Dwh3bzDJrak+G/XFf53a3VH4LfngKAzfLUD
-tk+sD0v8iCmMOvqZDm+FHWU0a+N+YWwxTedU54g+AqyzzW4jw/KIdo/8TrjG7D40
-Ri3IM9GRR/hq6oLVUIGx
-=KZwb
+iQIcBAEBCAAGBQJQl0S2AAoJEECxmPOUX5FEUo0P/3u05YlhxViXkBJX5xqd4GwU
+JjyN0juf7NQAUWYZqUYideMFhexiCqiVDtsYL/j+JEw9wFprhNd5dC1ZwEB6+Q9A
+OTvmQ3S3zD2ZVWI1WQrQC7ktzn5NVVEkO/g6nYfy57UfHVvK8kHUnfDOl0VrYQGT
+tCOloM2TL+IJ+8mDr1h2ILlsdhiIaini5J7G0jtfMIZC32wnMGhpX53gUIfqq/6v
+p/4TPXvGUprPSGX5D7HrtA95MRkLJj/LpfrjslqPBOqWrb8FmRp5lafVD1Ojwzk9
+twb+RJk6nPCuOYw7jAzgN8074OsEjJT55eEJ8zsmslZkcfM9WyfBFIZkc0ZpP/vl
+vIpVyEjY/WEGPv84fBgM1YbsegPfrL41IAJY5CZUffzjC2Gs8YAorxkww2M0zDr1
+ZLv5S7+2kx5gsI8fR8+AK13XCeYi5Prh+7JjxWpyL+L1LV8sleFSQdIS2JXMSrip
++wJBIYd7XpfxKmE3wFaiwW/2Mu8qfeGu8WBy7DcJ6pK9tmqoljnXh5AJu1US9xWf
+MI+tdXo/NcCLvj95fYJXNPHsHW9Uva1VZXDPTNOgBs1Lxa3qur3CUXNpqJlORIlu
+EzHgPl5KX2WkrOI5SlJxSTpYRqQrlfrN+S/pQRt4B4SxEPWOElZccX84FRm3HJjs
+MH0khDV8n9rEhejvqB4J
+=++aX
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__5_Nov_2012_15_03_07_+1100_4k0_DeIE0Zk2J_R/--
+--Signature=_Mon__5_Nov_2012_15_46_46_+1100_+9EvfthoHz6VXmkc--
