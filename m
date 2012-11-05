@@ -1,61 +1,64 @@
-From: Antti Palosaari <crope@iki.fi>
-Subject: Re: linux-next: build warning in Linus' tree
-Date: Tue, 06 Nov 2012 00:36:12 +0200
-Message-ID: <50983F5C.3000107@iki.fi>
-References: <20121024134333.baf0c90a323a831675ed7e79@canb.auug.org.au> <20121028174423.45b67cab@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the pci-current tree
+Date: Tue, 6 Nov 2012 10:05:08 +1100
+Message-ID: <20121106100508.e97458c690d9806f00ceb551@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kapsi.fi ([217.30.184.167]:60508 "EHLO mail.kapsi.fi"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932348Ab2KEWgq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Nov 2012 17:36:46 -0500
-In-Reply-To: <20121028174423.45b67cab@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__6_Nov_2012_10_05_08_+1100_fmoIBVR9sF=vyFxy"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Huang Ying <ying.huang@intel.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
+List-Id: linux-next.vger.kernel.org
 
-On 10/28/2012 09:44 PM, Mauro Carvalho Chehab wrote:
-> Em Wed, 24 Oct 2012 13:43:33 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
->
->> Hi Mauro,
->>
->> After merging the origin tree, today's linux-next build (x86_64
->> allmodconfig) produced this warning:
->>
->> drivers/media/usb/dvb-usb-v2/dvb_usb_core.c: In function 'dvb_usb_ctrl_feed':
->> drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:291:12: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]
->>
->> Which points out some badly formatted and blocked code ...
->>
->> Probably introduced by commit 62a5f449cab5 ("[media] dvb_usb_v2: refactor
->> dvb_usb_ctrl_feed() logic").
->
->
-> Hi Stephen,
->
-> Thanks for pointing it. It took me some time, but I applied today
-> a bunch of patches that are fixing all warnings on everything
-> at drivers/media and drivers/staging/media, with:
-> 	make ARCH=i386 W=1
-> (allyesconfig, gcc 4.7.2)
->
-> Maybe there are still a few ones with random configs and other
-> archs, but at least on my usual testing environment, we're
-> warnings-free on drivers/media for now, probably up to the
-> next gcc version.
+--Signature=_Tue__6_Nov_2012_10_05_08_+1100_fmoIBVR9sF=vyFxy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for the delay, I was on holiday trip.
+Hi Bjorn,
 
-hmmm, yes there seems to be something stupid, like missing block braces. 
-I will check that during this week and fix properly if Mauro didn't 
-already fixed it.
+After merging the pci-current tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-regards
-Antti
+drivers/acpi/pci_bind.c: In function 'acpi_pci_unbind':
+drivers/acpi/pci_bind.c:48:2: warning: passing argument 1 of 'acpi_power_re=
+source_unregister_device' from incompatible pointer type [enabled by defaul=
+t]
+include/acpi/acpi_bus.h:346:6: note: expected 'struct device *' but argumen=
+t is of type 'struct pci_dev *'
+drivers/acpi/pci_bind.c: In function 'acpi_pci_bind':
+drivers/acpi/pci_bind.c:75:2: warning: passing argument 1 of 'acpi_power_re=
+source_register_device' from incompatible pointer type [enabled by default]
+include/acpi/acpi_bus.h:345:5: note: expected 'struct device *' but argumen=
+t is of type 'struct pci_dev *'
 
--- 
-http://palosaari.fi/
+Introduced by commit 942dd0958697 ("ACPI/PCI: Notify PCI devices when
+their power resource is turned on").
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__6_Nov_2012_10_05_08_+1100_fmoIBVR9sF=vyFxy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQmEYkAAoJEECxmPOUX5FE99QQAJ04nN2VVpU9pMD8Bxm34M74
+amz5O8wiKJWv3HUntaWwaI89OTHVIF8JPlGj7QMuiaClZ/6cwdxuX1y7isa4m+pq
+m25ivWamJ/lnBP1fK3K0lgzxPL8SND3F2YsIVGD+NfQj3Si6n7g4BcqL2rnxm5aq
+btnRwqap866G8pTUsPY71jsGjM4EuxLFQnORXnjkDGWsEIX5JGf5z/oWm66mDNZT
+OuCdHe7zJfxQrgsgoi9mVlMjgz0gDxjS9MzcxiQTkzSNpwKKJHOIIat/Ar0/1yOP
+ME/JrbCLTfr9irnihg702Io91xPT/mdGSzf1iBtvUkwX/im3Iq7xy0AcHQo+eFDC
+ufRcLKzLzJVy9O5yqAF91KZxz3lqyoZw7hAbkRn5eRmxpVtXI0ka1JuVOJYhcOgF
+caDBmlBz2LhT/fsU06Dzp+Cd3/zNuf4ZPNgCdC31OC8wMMc8IqI5HQnSy+O4Ma5T
+d6KZ4y0FRVyvAHnmz6owK6Qa86AS15gfgsnELh/iWhQiBRArKvgEW6IYkakvAU8p
+kzur/FO5lkRY285N90eHtfvGoneAlUdKpBWXM313gtp3cK+khoiWtB9cLI41Y0+G
+Yh3iH6jLySNk0mOBLumP6iKOP1lL0iSVI/x6qJ4M3U04i3+Yhi/dR8/o1WB+SPWQ
+MvWFT+w5NwYjgfbWY1l/
+=i+vs
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__6_Nov_2012_10_05_08_+1100_fmoIBVR9sF=vyFxy--
