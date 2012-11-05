@@ -1,71 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Mon, 5 Nov 2012 11:34:09 +1100
-Message-ID: <20121105113409.d3f52085b5f7227b03df0ba4@canb.auug.org.au>
-References: <20121029111403.911c815a3c7d8d9572ff8e89@canb.auug.org.au>
+Subject: linux-next: manual merge of the thermal tree with Linus' tree
+Date: Mon, 5 Nov 2012 11:46:44 +1100
+Message-ID: <20121105114644.fe54cba816860bf12f1de9cf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_Nov_2012_11_34_09_+1100_J_YIqzu/20/5svPy"
+ boundary="Signature=_Mon__5_Nov_2012_11_46_44_+1100_ohL2doonBlVZerjq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60770 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33791 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750867Ab2KEAeY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Nov 2012 19:34:24 -0500
-In-Reply-To: <20121029111403.911c815a3c7d8d9572ff8e89@canb.auug.org.au>
+	with ESMTP id S1751035Ab2KEAqx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Nov 2012 19:46:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkRhdmlkIEjDpHJkZW1hbiI=?= <david@hardeman.nu>, =?UTF-8?B?IkJy?= =?UTF-8?B?dW5vIFByw6ltb250Ig==?= <bonbons@linux-vserver.org>, Jiri Kosina <jkosina@suse.cz>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Devendra Naga <develkernel412222@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Durgadoss R <durgadoss.r@intel.com>
 
---Signature=_Mon__5_Nov_2012_11_34_09_+1100_J_YIqzu/20/5svPy
+--Signature=_Mon__5_Nov_2012_11_46_44_+1100_ohL2doonBlVZerjq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi Zhang,
 
-On Mon, 29 Oct 2012 11:14:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the v4l-dvb tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> drivers/hid/hid-picolcd_cir.c: In function 'picolcd_init_cir':
-> drivers/hid/hid-picolcd_cir.c:119:27: error: 'RC_TYPE_ALL' undeclared (fi=
-rst use in this function)
->=20
-> Caused by commit c003ab1bedf0 ("[media] rc-core: add separate defines for
-> protocol bitmaps and numbers").  The new reference was introduced in
-> commit ae08e324146c ("HID: picoLCD: Add support for CIR") which was
-> merged by Linus on October 2 into v3.7-rc1 via the hid tree.
->=20
-> I have used the v4l-dvb tree from next-20121026 for today.
+Today's linux-next merge of the thermal tree got a conflict in
+drivers/thermal/rcar_thermal.c between commit 608f62b996c6 ("thermal:
+solve compilation errors in rcar_thermal") from Linus' tree and commit
+ebbf0f11e7b4 ("Thermal: Pass zone parameters as argument to
+tzd_register") from the thermal tree.
 
-I still get this today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__5_Nov_2012_11_34_09_+1100_J_YIqzu/20/5svPy
+diff --cc drivers/thermal/rcar_thermal.c
+index f7a1b57,b13fe5d..0000000
+--- a/drivers/thermal/rcar_thermal.c
++++ b/drivers/thermal/rcar_thermal.c
+@@@ -210,8 -210,8 +210,8 @@@ static int rcar_thermal_probe(struct pl
+  		goto error_free_priv;
+  	}
+ =20
+ -	zone =3D thermal_zone_device_register("rcar_thermal", 0, priv,
+ +	zone =3D thermal_zone_device_register("rcar_thermal", 0, 0, priv,
+- 					    &rcar_thermal_zone_ops, 0, 0);
++ 				    &rcar_thermal_zone_ops, NULL, 0, 0);
+  	if (IS_ERR(zone)) {
+  		dev_err(&pdev->dev, "thermal zone device is NULL\n");
+  		ret =3D PTR_ERR(zone);
+
+--Signature=_Mon__5_Nov_2012_11_46_44_+1100_ohL2doonBlVZerjq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQlwmBAAoJEECxmPOUX5FEfF0P/20lGCmJn/5J3XloVv2xURd2
-G2nHTW+7pNAhg6BqK7gdYFu/7yKJP9eQXznYpDtcgaTzKIrWrouzNLFw4GL5icjX
-7VV70nnY3QiamFG4zaKAZDw2S6QBYgOf1TEvJXQEncJdjDIGy3jMzwtWlzpFEymi
-ZRcilygvV+QvhMHFnsHv42VAIbcRvR1ZvC6zYe3yhRGDY/+i/VTwiDp4ThYDnUZg
-3Tljwk3+6FjDuMy4sbYHeVhKRC26/nUbVJ3HH39Z71LrmLMU3h/XiPXCorHsV3kT
-GGl8toQwHvQvEN3eN9jA6gXD5ubtxqdxrNU1vzx9F6g1+n1G2osYL4DDy6ART/Qs
-NrGP0s4yfFQSvdUdFMYAR+/lYLy7Xe7Qg793v20YHlGnJekJTqJiak8sVz/1KHGR
-6SXqqmjFCC54hI4BXpXoyt06/2+qyImcOblJ1XwtHPgmnEVtxhqIGhtLAcKDqxEr
-Fdcgh9P18bBMkMm5XP7+Dtl9cdLXP0kMXWLPwPad+rRuMjPuLcYsaeVjwA4+kQKN
-4HA1k2FGbEyzbNWC39HTwqkM2koYOSIQ5JQ+jzZsvkNJ3MIM132AkRlkuE6X+oWU
-oO/Fsz2bnXvplN6Vn6UldNC2c/VekkvHPyTfboh1RNZziLJfPrAI+Id/3dnIyvBb
-JODtr0qsDy5r8VxU4L/S
-=dXgh
+iQIcBAEBCAAGBQJQlwx0AAoJEECxmPOUX5FEfWUP/RDJG5d4OkyFQCGUka4p6Lp+
+i78sDe4CTkOxfMHdaUu/esPRoasbEWFIQaLxBeZIyG5hi5QeJIDl1CQXCa9H4PLv
+9IpRqF/X9OYff/SYGLS9RvTaKA70p03EaUrUSa2ItRlRizbKZ5mPLnPz/zfzDLHt
+R9nRtDVFCrQ70cAq2akR/AGK62iXhI2M/TyarQEK7jMsuXV8rPfvgWaAov9pzsvT
+7Fuc+8S1KKHer10g1fkB8aL3WsZjH68fJFJhKWw/tZyMp481qlMr9P+Uvd+dkfXZ
+xojOwRRai7+kXPVRXq37CaWNgFlD+Bqjc8fBjX/iBl6mNaE/0idSp+wJf0PgJwTp
+fFUEi6gJr3mfYdkLh8T/hmk3IsPc4S6F0Py+JLTEqiE2Bgrahxcn2W5tVZ4ygFbh
+RykcccpyLjQdUaCMm3QIVlbPQBpFckv5uyCIpYp2G9KiAxz0nJAoS19CsC0VTWDX
+O6OkG3LEDrm2ksJVvJASLHOiFiGC8WeLkt/tJ3uni/8YObrjdlZmYJ4YOm2WxZrD
+ozDh/AyEpnwyKvorG+bdnyYkZ6H8j2UNdaL64gR55vfdXTixK9EIiDJzrFp7OMpZ
+zkgjgnYPOSlWBry1iTfxnvKcZSThm0Q74gsNcW1TlMXp0JU6Dr7E9O/m2I/ROZlg
+CZtPbzLvGNiGtUxnmyoU
+=3FiQ
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__5_Nov_2012_11_34_09_+1100_J_YIqzu/20/5svPy--
+--Signature=_Mon__5_Nov_2012_11_46_44_+1100_ohL2doonBlVZerjq--
