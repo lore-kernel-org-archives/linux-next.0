@@ -1,34 +1,62 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: linux-next: manual merge of the thermal tree with Linus' tree
-Date: Mon, 05 Nov 2012 09:17:55 +0800
-Message-ID: <1352078275.2492.0.camel@rzhang1-mobl4>
-References: <20121105114644.fe54cba816860bf12f1de9cf@canb.auug.org.au>
+From: Damian Hobson-Garcia <dhobsong@igel.co.jp>
+Subject: Re: [v2 PATCH 1/2] Add new uio device for dynamic memory allocation
+Date: Mon, 05 Nov 2012 11:34:50 +0900
+Message-ID: <509725CA.4030809@igel.co.jp>
+References: <1348553352-14334-1-git-send-email-dhobsong@igel.co.jp> <1348553352-14334-2-git-send-email-dhobsong@igel.co.jp> <CAMuHMdWKByLXR-2wkiej=F1WPf7xePf3nMkUqwSf_hEJNNZbvg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:22969 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751035Ab2KEBSA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 4 Nov 2012 20:18:00 -0500
-In-Reply-To: <20121105114644.fe54cba816860bf12f1de9cf@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Devendra Naga <develkernel412222@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Durgadoss R <durgadoss.r@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdWKByLXR-2wkiej=F1WPf7xePf3nMkUqwSf_hEJNNZbvg@mail.gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: hjk@hansjkoch.de, gregkh@linuxfoundation.org, magnus.damm@gmail.com, horms@verge.net.au, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, hdk@igel.co.jp, Linux-Next <linux-next@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2012-11-05 at 11:46 +1100, Stephen Rothwell wrote:
-> Hi Zhang,
-> 
-> Today's linux-next merge of the thermal tree got a conflict in
-> drivers/thermal/rcar_thermal.c between commit 608f62b996c6 ("thermal:
-> solve compilation errors in rcar_thermal") from Linus' tree and commit
-> ebbf0f11e7b4 ("Thermal: Pass zone parameters as argument to
-> tzd_register") from the thermal tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
-the fix looks good to me, Thanks!
+Hi Geert,
 
--rui
+On 2012/11/04 22:20, Geert Uytterhoeven wrote:
+> On Tue, Sep 25, 2012 at 8:09 AM, Damian Hobson-Garcia
+> <dhobsong@igel.co.jp> wrote:
+>> are holding the device file open, the address returned to userspace =
+is
+>> DMA_ERROR_CODE.
+>=20
+> Only a small subset of the architectures
+> (arm/ia64/microblaze/openrisc/powerpc/sparc/x86)
+> seem to define DMA_ERROR_CODE, causing everywhere else:
+>=20
+> drivers/uio/uio_dmem_genirq.c: In function =E2=80=98uio_dmem_genirq_r=
+elease=E2=80=99:
+> drivers/uio/uio_dmem_genirq.c:95: error: =E2=80=98DMA_ERROR_CODE=E2=80=
+=99 undeclared
+> (first use in this function)
+> drivers/uio/uio_dmem_genirq.c:95: error: (Each undeclared identifier
+> is reported only once
+> drivers/uio/uio_dmem_genirq.c:95: error: for each function it appears=
+ in.)
+> drivers/uio/uio_dmem_genirq.c: In function =E2=80=98uio_dmem_genirq_p=
+robe=E2=80=99:
+> drivers/uio/uio_dmem_genirq.c:238: error: =E2=80=98DMA_ERROR_CODE=E2=80=
+=99 undeclared
+> (first use in this function)
+> make[1]: *** [drivers/uio/uio_dmem_genirq.o] Error 1
+> make: *** [drivers/uio/] Error 2
+>=20
+> (e.g. http://kisskb.ellerman.id.au/kisskb/buildresult/7462173/)
+>=20
+> Furthermore, none of them define it in <uapi/...>, so DMA_ERROR_CODE =
+is not
+> part of the userspace API (yet), while it is architecture-specific (s=
+ome use 0,
+> others ~0).
+>=20
+Good points, thank you.  In that case, does fixing the value to
+something like ~0 sound like a better (more portable) solution?
+
+Damian
+
+--=20
+Damian Hobson-Garcia
+IGEL Co.,Ltd
+http://www.igel.co.jp
