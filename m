@@ -1,64 +1,71 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [v2 PATCH 1/2] Add new uio device for dynamic memory allocation
-Date: Sun, 4 Nov 2012 14:20:00 +0100
-Message-ID: <CAMuHMdWKByLXR-2wkiej=F1WPf7xePf3nMkUqwSf_hEJNNZbvg@mail.gmail.com>
-References: <1348553352-14334-1-git-send-email-dhobsong@igel.co.jp>
-	<1348553352-14334-2-git-send-email-dhobsong@igel.co.jp>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 5 Nov 2012 11:34:09 +1100
+Message-ID: <20121105113409.d3f52085b5f7227b03df0ba4@canb.auug.org.au>
+References: <20121029111403.911c815a3c7d8d9572ff8e89@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1348553352-14334-2-git-send-email-dhobsong@igel.co.jp>
-Sender: linux-sh-owner@vger.kernel.org
-To: Damian Hobson-Garcia <dhobsong@igel.co.jp>
-Cc: hjk@hansjkoch.de, gregkh@linuxfoundation.org, magnus.damm@gmail.com, horms@verge.net.au, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, hdk@igel.co.jp, Linux-Next <linux-next@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__5_Nov_2012_11_34_09_+1100_J_YIqzu/20/5svPy"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60770 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750867Ab2KEAeY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Nov 2012 19:34:24 -0500
+In-Reply-To: <20121029111403.911c815a3c7d8d9572ff8e89@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkRhdmlkIEjDpHJkZW1hbiI=?= <david@hardeman.nu>, =?UTF-8?B?IkJy?= =?UTF-8?B?dW5vIFByw6ltb250Ig==?= <bonbons@linux-vserver.org>, Jiri Kosina <jkosina@suse.cz>
 
-On Tue, Sep 25, 2012 at 8:09 AM, Damian Hobson-Garcia
-<dhobsong@igel.co.jp> wrote:
-> are holding the device file open, the address returned to userspace i=
-s
-> DMA_ERROR_CODE.
+--Signature=_Mon__5_Nov_2012_11_34_09_+1100_J_YIqzu/20/5svPy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Only a small subset of the architectures
-(arm/ia64/microblaze/openrisc/powerpc/sparc/x86)
-seem to define DMA_ERROR_CODE, causing everywhere else:
+Hi Mauro,
 
-drivers/uio/uio_dmem_genirq.c: In function =E2=80=98uio_dmem_genirq_rel=
-ease=E2=80=99:
-drivers/uio/uio_dmem_genirq.c:95: error: =E2=80=98DMA_ERROR_CODE=E2=80=99=
- undeclared
-(first use in this function)
-drivers/uio/uio_dmem_genirq.c:95: error: (Each undeclared identifier
-is reported only once
-drivers/uio/uio_dmem_genirq.c:95: error: for each function it appears i=
-n.)
-drivers/uio/uio_dmem_genirq.c: In function =E2=80=98uio_dmem_genirq_pro=
-be=E2=80=99:
-drivers/uio/uio_dmem_genirq.c:238: error: =E2=80=98DMA_ERROR_CODE=E2=80=
-=99 undeclared
-(first use in this function)
-make[1]: *** [drivers/uio/uio_dmem_genirq.o] Error 1
-make: *** [drivers/uio/] Error 2
+On Mon, 29 Oct 2012 11:14:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the v4l-dvb tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/hid/hid-picolcd_cir.c: In function 'picolcd_init_cir':
+> drivers/hid/hid-picolcd_cir.c:119:27: error: 'RC_TYPE_ALL' undeclared (fi=
+rst use in this function)
+>=20
+> Caused by commit c003ab1bedf0 ("[media] rc-core: add separate defines for
+> protocol bitmaps and numbers").  The new reference was introduced in
+> commit ae08e324146c ("HID: picoLCD: Add support for CIR") which was
+> merged by Linus on October 2 into v3.7-rc1 via the hid tree.
+>=20
+> I have used the v4l-dvb tree from next-20121026 for today.
 
-(e.g. http://kisskb.ellerman.id.au/kisskb/buildresult/7462173/)
+I still get this today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-=46urthermore, none of them define it in <uapi/...>, so DMA_ERROR_CODE =
-is not
-part of the userspace API (yet), while it is architecture-specific (som=
-e use 0,
-others ~0).
+--Signature=_Mon__5_Nov_2012_11_34_09_+1100_J_YIqzu/20/5svPy
+Content-Type: application/pgp-signature
 
-Gr{oetje,eeting}s,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-                        Geert
+iQIcBAEBCAAGBQJQlwmBAAoJEECxmPOUX5FEfF0P/20lGCmJn/5J3XloVv2xURd2
+G2nHTW+7pNAhg6BqK7gdYFu/7yKJP9eQXznYpDtcgaTzKIrWrouzNLFw4GL5icjX
+7VV70nnY3QiamFG4zaKAZDw2S6QBYgOf1TEvJXQEncJdjDIGy3jMzwtWlzpFEymi
+ZRcilygvV+QvhMHFnsHv42VAIbcRvR1ZvC6zYe3yhRGDY/+i/VTwiDp4ThYDnUZg
+3Tljwk3+6FjDuMy4sbYHeVhKRC26/nUbVJ3HH39Z71LrmLMU3h/XiPXCorHsV3kT
+GGl8toQwHvQvEN3eN9jA6gXD5ubtxqdxrNU1vzx9F6g1+n1G2osYL4DDy6ART/Qs
+NrGP0s4yfFQSvdUdFMYAR+/lYLy7Xe7Qg793v20YHlGnJekJTqJiak8sVz/1KHGR
+6SXqqmjFCC54hI4BXpXoyt06/2+qyImcOblJ1XwtHPgmnEVtxhqIGhtLAcKDqxEr
+Fdcgh9P18bBMkMm5XP7+Dtl9cdLXP0kMXWLPwPad+rRuMjPuLcYsaeVjwA4+kQKN
+4HA1k2FGbEyzbNWC39HTwqkM2koYOSIQ5JQ+jzZsvkNJ3MIM132AkRlkuE6X+oWU
+oO/Fsz2bnXvplN6Vn6UldNC2c/VekkvHPyTfboh1RNZziLJfPrAI+Id/3dnIyvBb
+JODtr0qsDy5r8VxU4L/S
+=dXgh
+-----END PGP SIGNATURE-----
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-                                -- Linus Torvalds
+--Signature=_Mon__5_Nov_2012_11_34_09_+1100_J_YIqzu/20/5svPy--
