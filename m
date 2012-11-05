@@ -1,62 +1,84 @@
-From: Damian Hobson-Garcia <dhobsong@igel.co.jp>
-Subject: Re: [v2 PATCH 1/2] Add new uio device for dynamic memory allocation
-Date: Mon, 05 Nov 2012 11:34:50 +0900
-Message-ID: <509725CA.4030809@igel.co.jp>
-References: <1348553352-14334-1-git-send-email-dhobsong@igel.co.jp> <1348553352-14334-2-git-send-email-dhobsong@igel.co.jp> <CAMuHMdWKByLXR-2wkiej=F1WPf7xePf3nMkUqwSf_hEJNNZbvg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with the cortex tree
+Date: Mon, 5 Nov 2012 15:03:07 +1100
+Message-ID: <20121105150307.05dc233ef299ab73df5dbf89@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdWKByLXR-2wkiej=F1WPf7xePf3nMkUqwSf_hEJNNZbvg@mail.gmail.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: hjk@hansjkoch.de, gregkh@linuxfoundation.org, magnus.damm@gmail.com, horms@verge.net.au, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, hdk@igel.co.jp, Linux-Next <linux-next@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__5_Nov_2012_15_03_07_+1100_4k0_DeIE0Zk2J_R/"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39788 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752136Ab2KEEDT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Nov 2012 23:03:19 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Catalin Marinas <catalin.marinas@arm.com>
 
-Hi Geert,
+--Signature=_Mon__5_Nov_2012_15_03_07_+1100_4k0_DeIE0Zk2J_R/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2012/11/04 22:20, Geert Uytterhoeven wrote:
-> On Tue, Sep 25, 2012 at 8:09 AM, Damian Hobson-Garcia
-> <dhobsong@igel.co.jp> wrote:
->> are holding the device file open, the address returned to userspace =
-is
->> DMA_ERROR_CODE.
->=20
-> Only a small subset of the architectures
-> (arm/ia64/microblaze/openrisc/powerpc/sparc/x86)
-> seem to define DMA_ERROR_CODE, causing everywhere else:
->=20
-> drivers/uio/uio_dmem_genirq.c: In function =E2=80=98uio_dmem_genirq_r=
-elease=E2=80=99:
-> drivers/uio/uio_dmem_genirq.c:95: error: =E2=80=98DMA_ERROR_CODE=E2=80=
-=99 undeclared
-> (first use in this function)
-> drivers/uio/uio_dmem_genirq.c:95: error: (Each undeclared identifier
-> is reported only once
-> drivers/uio/uio_dmem_genirq.c:95: error: for each function it appears=
- in.)
-> drivers/uio/uio_dmem_genirq.c: In function =E2=80=98uio_dmem_genirq_p=
-robe=E2=80=99:
-> drivers/uio/uio_dmem_genirq.c:238: error: =E2=80=98DMA_ERROR_CODE=E2=80=
-=99 undeclared
-> (first use in this function)
-> make[1]: *** [drivers/uio/uio_dmem_genirq.o] Error 1
-> make: *** [drivers/uio/] Error 2
->=20
-> (e.g. http://kisskb.ellerman.id.au/kisskb/buildresult/7462173/)
->=20
-> Furthermore, none of them define it in <uapi/...>, so DMA_ERROR_CODE =
-is not
-> part of the userspace API (yet), while it is architecture-specific (s=
-ome use 0,
-> others ~0).
->=20
-Good points, thank you.  In that case, does fixing the value to
-something like ~0 sound like a better (more portable) solution?
+Hi Al,
 
-Damian
+Today's linux-next merge of the signal tree got a conflict in
+arch/arm/kernel/process.c between commit 77a3018e38b9 ("Cortex-M3: Add
+support for exception handling") from the cortex tree and commit
+9e6479930021 ("arm: switch to generic fork/vfork/clone") from the signal
+tree.
+
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
-Damian Hobson-Garcia
-IGEL Co.,Ltd
-http://www.igel.co.jp
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/kernel/process.c
+index 585b9ab,4ab80bb..0000000
+--- a/arch/arm/kernel/process.c
++++ b/arch/arm/kernel/process.c
+@@@ -384,14 -383,11 +384,15 @@@ copy_thread(unsigned long clone_flags,=20
+ =20
+  	memset(&thread->cpu_context, 0, sizeof(struct cpu_context_save));
+ =20
+- 	if (likely(regs)) {
+- 		*childregs =3D *regs;
++ 	if (likely(!(p->flags & PF_KTHREAD))) {
++ 		*childregs =3D *current_pt_regs();
+  		childregs->ARM_r0 =3D 0;
+- 		childregs->ARM_sp =3D stack_start;
++ 		if (stack_start)
++ 			childregs->ARM_sp =3D stack_start;
+ +#if defined CONFIG_CPU_V7M
+ +		/* Return to Thread mode with Process stack */
+ +		childregs->ARM_EXC_RET =3D 0xfffffffdUL;
+ +#endif
+  	} else {
+  		memset(childregs, 0, sizeof(struct pt_regs));
+  		thread->cpu_context.r4 =3D stk_sz;
+
+--Signature=_Mon__5_Nov_2012_15_03_07_+1100_4k0_DeIE0Zk2J_R/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQlzp7AAoJEECxmPOUX5FEks8P/1/0l8k8SgkjS/k/kSGYUuOn
+aJWoD1fYBYq4PiY8wnkjq2UYwi1OaDDWTkPj/vqerc8gwGJKGBJB6d+Qy8vGoict
+zz9zC2Lx8k2LeSgDs7dIjYW+xP7pl12lkLp6GeotMPuLrs9mIQiHFw2AdKOG2BIb
+40zxQ8fKHqIWY6pY5Tv2Q5N8Gy7KjrUXQ4Wki+Vd0C70uiOLuerBzrJebLIif+XG
+EDGnV4RGTOY+yD9AXR0E2J52jwGxfy0QbxbZ3PpB6eC5cS7f07M5wYydrTs21YAA
+scgo1QB5eStt3dhrHj3kBDO3/VUQTTC0iZlzUkrf8g2ksaI29rogtti7LwIlZjPj
+XWzNcR9PspTLXW6XUHdGjg3wHzw8V7xIlliXYVQwGB4bsIpeDnT4THVmA8UL4aP6
+M2RRKnnB+56H+uG4EXKLR0V4hSDnGn/pWtREG6azYlTH2jgIB9o35a38itWFp6G0
+VNEUjiCOTB1xvEoSRQevmcmBYlxJOpnL2tiCze7gpP60toJx9jA/SIK2gqDsDmMU
+7grt5Q12AD9RKVI9stUUGEWEgqbI9Dwh3bzDJrak+G/XFf53a3VH4LfngKAzfLUD
+tk+sD0v8iCmMOvqZDm+FHWU0a+N+YWwxTedU54g+AqyzzW4jw/KIdo/8TrjG7D40
+Ri3IM9GRR/hq6oLVUIGx
+=KZwb
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__5_Nov_2012_15_03_07_+1100_4k0_DeIE0Zk2J_R/--
