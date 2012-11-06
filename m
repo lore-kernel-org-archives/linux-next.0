@@ -1,60 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the arm tree
-Date: Tue, 6 Nov 2012 14:53:32 +1100
-Message-ID: <20121106145332.5fd40abf0d74f8239156f75e@canb.auug.org.au>
+From: Adil Mujeeb <mujeeb.adil@gmail.com>
+Subject: Re: linux-next: Cloning error
+Date: Tue, 6 Nov 2012 09:51:10 +0530
+Message-ID: <CANBXnMnBn1D0MqvRhOnQe=uRcXWFq-_8T4G1Zw5Y8ReE7SC1-Q@mail.gmail.com>
+References: <CANBXnM=3r=kkOP0uoZJuJcsZ56fZozxGziBedFLkDH-YT-MQZw@mail.gmail.com>
+	<CANBXnMm+b=cAFTg=S2rxnXLznudMLNm8FFPWCSzHhb_qUP=vPg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__6_Nov_2012_14_53_32_+1100_Oep47o41yMjZN0XV"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60805 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751558Ab2KFDxm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Nov 2012 22:53:42 -0500
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:47039 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753256Ab2KFEVN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Nov 2012 23:21:13 -0500
+Received: by mail-ee0-f46.google.com with SMTP id b15so6462eek.19
+        for <linux-next@vger.kernel.org>; Mon, 05 Nov 2012 20:21:10 -0800 (PST)
+In-Reply-To: <CANBXnMm+b=cAFTg=S2rxnXLznudMLNm8FFPWCSzHhb_qUP=vPg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shubhrajyoti D <shubhrajyoti@ti.com>, Russell King <rmk@arm.linux.org.uk>
+To: linux-next@vger.kernel.org
 
---Signature=_Tue__6_Nov_2012_14_53_32_+1100_Oep47o41yMjZN0XV
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi list,
 
-Hi Greg,
+On Thu, Nov 1, 2012 at 7:11 PM, Adil Mujeeb <mujeeb.adil@gmail.com> wrote:
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/tty/serial/omap-serial.c between commit d864c03bfce2 ("SERIAL:
-omap: remove setting of EFR SCD bit") from the arm tree and commit
-7ba897d77ce2 ("serial: omap: Remove the default setting of special
-character") from the tty tree.
+I tried again and getting same error:
 
-I fixed it up (using the version from the arm tree) and can carry the fix
-as necessary (no action is required).
+----------8<---------------------
+$ git clone git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Cloning into linux-next...
+remote: Counting objects: 2881327, done.
+remote: Compressing objects: 100% (457639/457639), done.
+remote: Total 2881327 (delta 2425431), reused 2850544 (delta 2394681)
+Receiving objects: 100% (2881327/2881327), 579.96 MiB | 175 KiB/s, done.
+Resolving deltas: 100% (2425431/2425431), done.
+error: unable to create file
+drivers/gpu/drm/nouveau/core/subdev/i2c/aux.c (No such file or
+directory)
+----------8<---------------------
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Appreciate if anyone help me in this.
 
---Signature=_Tue__6_Nov_2012_14_53_32_+1100_Oep47o41yMjZN0XV
-Content-Type: application/pgp-signature
+Regards,
+Adil
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQmIm8AAoJEECxmPOUX5FEISQQAI7s1XvuzobtO/R5Tmj+8+0u
-mQOOd8hBo+Rhue4Un2+R8G0MjBsYpmJxma56jdRS5UhrKPDFvsA2ZuWlSrZo4VoT
-h0bC7GlGy6IUEZgUynhLPDFTkAfZOPwaT1KCV+hqxEYouMD8FK39AOwU3IqZABrK
-MhupOgr4rt0Fx9uxzhGJBdXfqel6veWH8zX8ROPLMLpQhHbiMKokROS6O1oEK/c1
-C4M08v9UhaMHAd2pI1OYHJuxDJ4VvmbXadCUvXSqAGbsIi++l4KG7865hVayrbto
-55X4+2aZKPBX4JQa0OJDcMiSNWUHcg/nTZ1q9ukCap3CvPpyKlYkBNnbXjnY1eZK
-Z4AG7VQDxSopv1s6wZ9i/g5gqhzjblbDVNVZZpsbakNKqgeaCp/V9UaljibUT1zj
-Ti/CBJOLIJm6QSZ/SPxdEgnYkYWrWbSvJ8hIUWHYrYEX/LtsYBbVt1MqP36EuUVq
-KQdlBIDOVqMARucuaj4B5ZFouwwRwYc2UV2XTJTJyD3LhgQTRCHESCQPkcyfQa55
-5R5m4XMAUPttsXOuJt9yibLKOzGbQJDWoeSLeEMcVAkXN058LH7o3PmFgPSlEQ9d
-n4kSsP1vzw4GYAMeyc4ROWD/csrHJNzMC+OkQ+2fL8Ae83wnsmstfSI5W7CBXKl2
-zkHxE7jPxeGmyO6dMFMR
-=JEbs
------END PGP SIGNATURE-----
-
---Signature=_Tue__6_Nov_2012_14_53_32_+1100_Oep47o41yMjZN0XV--
+> Hi List,
+>
+> Yesterday I was trying to clone the linux-next tree and it gave me error.
+>
+> ---------------------------------------------------------8<-----------------------------------------------
+> $ git clone git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> Cloning into linux-next...
+> remote: Counting objects: 2869337, done.
+> remote: Compressing objects: 100% (458442/458442), done.
+> Receiving objects: 100% (2869337/2869337), 575.53 MiB | 241 KiB/s, done.
+> remote: Total 2869337 (delta 2414758), reused 2836387 (delta 2381920)
+> Resolving deltas: 100% (2414758/2414758), done.
+> error: unable to create file
+> drivers/gpu/drm/nouveau/core/subdev/i2c/aux.c (No such file or
+> directory)
+> ---------------------------------------------------------8<-----------------------------------------------
+>
+> Is there anything wrong?
+>
+> Regards,
+> Adil
