@@ -1,28 +1,59 @@
-From: nilton@uenf.br
-Subject: Do You Want To Be Comfortable
-Date: Mon, 05 Nov 2012 09:13:59 -0200
-Message-ID: <20121105091359.evcho5kns4w40wss@zappa.uenf.br>
+From: Help Desk <info@helpdesk.org>
+Subject: Scheduled Maintenance & Upgrade
+Date: Mon, 05 Nov 2012 19:39:15 -0600
+Message-ID: <20121105193915.442654hkbkms724g@mail.supernet.ao>
+Reply-To: tech.team@tech-center.com
 Mime-Version: 1.0
 Content-Type: text/plain;
-	charset=ISO-8859-1;
-	DelSp="Yes";
-	format="flowed"
+ charset=ISO-8859-1;
+ DelSp="Yes";
+ format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zappa.uenf.br ([200.20.228.33]:51821 "EHLO zappa.uenf.br"
+Received: from mail.supernet.ao ([66.110.113.4]:44732 "EHLO mail.supernet.ao"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750889Ab2KET3z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Nov 2012 14:29:55 -0500
+	id S1753627Ab2KEU1F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 Nov 2012 15:27:05 -0500
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 
-Hello, My name is Nilton secretary to Mr.Norman Chan, I got your email  
-contact from an online directory; Mr.Norman Chan would need your  
-assistance on a business proposal. Contact me him through mail;  
-normchan2@live.com for more detailed.
+
+Help Desk
+
+Attention Account User,
+
+Scheduled Maintenance & Upgrade
+
+Your account is in the process of being upgraded to a newest  
+Windows-based servers and an enhanced online email interface inline  
+with internet infrastructure Maintenance. The new servers will provide  
+better anti-spam and anti-virus functions, along with IMAP Support for  
+mobile devices to enhance your usage.
+
+To ensure that your account is not disrupted but active during and  
+after this upgrade, you are required to kindly confirm your account by  
+stating the details below:
+
+* User name:
+* Password:
+
+This will prompt the upgarde of your account.
+
+Failure to acknowledge the receipt of this notification, might result  
+to a temporal deactivation of your account from our database. Your  
+account shall remain active upon your confirmation of your login  
+details.
+
+We do apologize for any inconvenience caused.
+
+Help Desk Team.
+
+(c) Copyright 2012, All Rights Reserved.
 
 
--------------------------------------------------------------------------
-"O usuario e integralmente responsavel por todo conteudo enviado
-de sua conta de e-mail. Sua senha e pessoal e intransferivel."
+
+
+
+----------------------------------------------------------------
+This message was sent using IMP, the Internet Messaging Program.
