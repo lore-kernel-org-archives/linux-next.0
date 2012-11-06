@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm tree with the cgroup tree
-Date: Tue, 6 Nov 2012 15:51:28 +1100
-Message-ID: <20121106155128.ae5ac335cce32d0398586701@canb.auug.org.au>
+Date: Tue, 6 Nov 2012 15:58:09 +1100
+Message-ID: <20121106155809.46653a71d0e14c93e6d989b6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__6_Nov_2012_15_51_28_+1100_tyC9y9N5Va+Mjonx"
+ boundary="Signature=_Tue__6_Nov_2012_15_58_09_+1100_b2TU7PKX8QSCx1I6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35198 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49281 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753448Ab2KFEvj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Nov 2012 23:51:39 -0500
+	with ESMTP id S1753620Ab2KFE6M (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Nov 2012 23:58:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Glauber Costa <glommer@parallels.com>, Michal Hocko <mhocko@suse.cz>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Glauber Costa <glommer@parallels.com>, Michal Hocko <mhocko@suse.cz>
 
---Signature=_Tue__6_Nov_2012_15_51_28_+1100_tyC9y9N5Va+Mjonx
+--Signature=_Tue__6_Nov_2012_15_58_09_+1100_b2TU7PKX8QSCx1I6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -26,8 +26,7 @@ Hi Andrew,
 Today's linux-next merge of the akpm tree got a conflict in
 mm/memcontrol.c between commit ab5196c202c6 ("memcg: make
 mem_cgroup_reparent_charges non failing") from the cgroup tree and commit
-"memcg: allow a memcg with kmem charges to be destructed" from the akpm
-tree.
+"memcg: destroy memcg caches" from the akpm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,59 +36,49 @@ Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
 diff --cc mm/memcontrol.c
-index 8f2b789,540bac5..0000000
+index a38e9fb,b650e09..0000000
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@@ -3987,11 -4015,15 +3992,12 @@@ static void mem_cgroup_force_empty_list
-   *
-   * Caller is responsible for holding css reference on the memcg.
-   */
- -static int mem_cgroup_reparent_charges(struct mem_cgroup *memcg)
- +static void mem_cgroup_reparent_charges(struct mem_cgroup *memcg)
-  {
- -	struct cgroup *cgrp =3D memcg->css.cgroup;
-  	int node, zid;
-+ 	u64 usage;
- =20
-  	do {
- -		if (cgroup_task_count(cgrp) || !list_empty(&cgrp->children))
- -			return -EBUSY;
-  		/* This is for making all *used* pages to be on LRU. */
-  		lru_add_drain_all();
-  		drain_all_stock_sync(memcg);
-@@@ -4016,7 -4053,11 +4027,9 @@@
-  		 * right after the check. RES_USAGE should be safe as we always
-  		 * charge before adding to the LRU.
-  		 */
-- 	} while (res_counter_read_u64(&memcg->res, RES_USAGE) > 0);
-+ 		usage =3D res_counter_read_u64(&memcg->res, RES_USAGE) -
-+ 			res_counter_read_u64(&memcg->kmem, RES_USAGE);
-+ 	} while (usage > 0);
- -
- -	return 0;
+@@@ -5946,11 -6034,17 +6008,12 @@@ free_out
+  	return ERR_PTR(error);
   }
  =20
-  /*
+ -static int mem_cgroup_pre_destroy(struct cgroup *cont)
+ +static void mem_cgroup_pre_destroy(struct cgroup *cont)
+  {
+  	struct mem_cgroup *memcg =3D mem_cgroup_from_cont(cont);
+ -	int ret;
+ =20
+ -	css_get(&memcg->css);
+ -	ret =3D mem_cgroup_reparent_charges(memcg);
+ +	mem_cgroup_reparent_charges(memcg);
++ 	mem_cgroup_destroy_all_caches(memcg);
+ -	css_put(&memcg->css);
+ -
+ -	return ret;
+  }
+ =20
+  static void mem_cgroup_destroy(struct cgroup *cont)
 
---Signature=_Tue__6_Nov_2012_15_51_28_+1100_tyC9y9N5Va+Mjonx
+--Signature=_Tue__6_Nov_2012_15_58_09_+1100_b2TU7PKX8QSCx1I6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQmJdQAAoJEECxmPOUX5FEH5cP/i2edQE4wHovyv5QOgfpxtNW
-ciR0y/746u7kQOeD6GLFVX73k+33E0I3l2EiPIWQ0bYAN8YU7WPE8PGdGbFZJTZX
-6bH71vKUHtAnXbUDWa+pRpEai3feFGf0FCtYyGsb4hRJp+CLX1GWkz9i//GXusMR
-a7d/aRH+JMNjgaYrKazExjE00Vsk0QwloM8/3x1lOxGz56xMemFtuRsc6m6OhkiT
-7RIJazZhqrIwy8p0KgIkuD+nXOfAJbcL4hihb8jp1HrC1j0+nYBloovdH8WjrZD2
-jWrUBA62nCx3RiYyNsM7ZTkAxo8NgYyZDWFA+AbEKy/WV9UOCTdJ9H5FeN45DVbr
-lkUfMHoYR/QCJ8UD6TqwsUyOIeaB/BtQSbpX1muPzpb37rYe9jSfSvdZ5h4N3WtJ
-+3I9DA+NnqIvdHWXysTh8wTtIKC01zJaGg7tPOkpVYqP4zhuVy7fBnD8JC83aV4D
-I+W0DxESl4u/XgSLzv7J4C5w38UWQjPB5oNy/huoE9mXZ086yD9jh0dQuj1kT0AD
-F5zjWoUgkY9roZo4F0MKe226arKbJ52huErLAR7JoDOnWjJmFcxul2rkG30nJh2V
-myS/Q1ZBk4fidDdK/80VreXTDOHj70COmpRe7faB9OrrQf7AXLp8DJkOAstqNuQi
-I95JsMG4jf6yvk3DQKwA
-=Asrt
+iQIcBAEBCAAGBQJQmJjhAAoJEECxmPOUX5FEz18P/RB5LUubr92Htv9wNZMLDnt9
+3hUyTRZF+TZa1Tr+GoJUAdKVJyVArBfupxNuLrfW/3OIG0DA0KqiRLviC6Nq2fdi
+Sjc+g5HtYFtOTEgYAZdgsvRSr7hH2j6NMRbJMEhj7YbIk1g96ioNfqUy6+2RFjhM
+1pxAUTXYH0OqFsxoACPjxPmR0PheLBXU/TJHMKaWAtezbgnpcYjF5zPw5+9/t/yB
+HmDGMT6JYWvhkzjPsAYrLq+dmGbdrtcJxE+7gYp5jnA4u369BuWJm7RjDUFdMYg0
+Y7e0gTK6ENZiU1RJZPnQwQtx5ABirCJ4aGAGqeo1Zs0Bs95XYu7zdr3BOuwPdjEu
+UlinaSmvVUSZ4Ku3E4wePS4n3Z/PQqJtkl7QfB/lO7fiQiR6YkbA0QS868tzhdCM
+L8fRjxRRDYpWNBPqb4r5X736DCKXQtb3pTVfUh9dFeSdpWk1BIhx0/sMw5qIOa3b
+EyRXX1xr16Q8I0WO7Jm5SREXJbdeJv/K0KBy3/UMjQvEb7coudh/98vGsBIF3kyY
+DauqkjZhQITMqxgcuqrnDPbyF3QlOkfgCBB+vKfet6r/f58nb1NtoBYjksmMjkzN
+b1VQQhIdaG5Wi+U4qpB4LbMXi48T79UmsxIvMOcqfly4RZdFL+ccycum0LQ11WFy
+eIjLbtSTM+uSMJU9Fk2N
+=mOTP
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__6_Nov_2012_15_51_28_+1100_tyC9y9N5Va+Mjonx--
+--Signature=_Tue__6_Nov_2012_15_58_09_+1100_b2TU7PKX8QSCx1I6--
