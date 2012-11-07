@@ -1,42 +1,77 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the samsung tree with the pinctrl tree
-Date: Wed, 07 Nov 2012 11:26:36 +0900
-Message-ID: <0c4401cdbc8f$4ff0f8b0$efd2ea10$%kim@samsung.com>
-References: <20121030144412.4a4a60dc0dace86f1a91af8c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the l2-mtd and
+ pinctrl trees
+Date: Wed, 7 Nov 2012 14:29:16 +1100
+Message-ID: <20121107142916.824003a6c863320fbf379652@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:10869 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752619Ab2KGC0i (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Nov 2012 21:26:38 -0500
-In-reply-to: <20121030144412.4a4a60dc0dace86f1a91af8c@canb.auug.org.au>
-Content-language: ko
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Linus Walleij' <linus.walleij@linaro.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__7_Nov_2012_14_29_16_+1100_yuq29vtmzdtyTx5a"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Artem Bityutskiy <dedekind1@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell wrote:
-> 
-> Hi Kukjin,
-> 
-Hi,
+--Signature=_Wed__7_Nov_2012_14_29_16_+1100_yuq29vtmzdtyTx5a
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the samsung tree got a conflict in
-> arch/arm/boot/dts/exynos4210.dtsi between commit a7a8241540c3 ("ARM: dts:
-> exynos4210-pinctrl: Add nodes for pin banks") from the pinctrl tree and
-> commit 8d4155dbb184 ("ARM: EXYNOS: Add devicetree node for TMU driver for
-> exynos4") from the samsung tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
-Correct, thanks.
+Hi all,
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-nomadik/board-nhk8815.c between commit 1cd2fc449091 ("ARM:
+nomadik: fixup some FSMC merge problems") from the l2-mtd tree, commits
+bb16bd9b9da4 ("pinctrl/nomadik: move the platform data header") from the
+pinctrl and commit 44e47ccf8ab6 ("Merge branch 'next/multiplatform' into
+for-next") from the arm-soc tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-nomadik/board-nhk8815.c
+index ab7104f,5ccdf53..0000000
+--- a/arch/arm/mach-nomadik/board-nhk8815.c
++++ b/arch/arm/mach-nomadik/board-nhk8815.c
+@@@ -30,11 -31,10 +32,9 @@@
+  #include <asm/sizes.h>
+  #include <asm/mach-types.h>
+  #include <asm/mach/arch.h>
+- #include <asm/mach/irq.h>
+  #include <asm/mach/flash.h>
+  #include <asm/mach/time.h>
+-=20
+- #include <plat/mtu.h>
+ -#include <mach/fsmc.h>
++ #include <mach/irqs.h>
+ =20
+  #include "cpu-8815.h"
+ =20
+
+--Signature=_Wed__7_Nov_2012_14_29_16_+1100_yuq29vtmzdtyTx5a
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQmdWMAAoJEECxmPOUX5FEZoIQAKOyJnUTfEj6Dh3JblJypZyE
+sFlCoinpo9VgiPSK+ZU1+CEO8DllEyEnhIH+4D4qYdrvu2MHa5QdEzGy6mkHq6TU
+PIFAJ9yK/YJ0HPMRAP8reDLbCGoJ+3gQlQFbfQ62vhUNJmGISmI+SJt9sOQdd4LV
+G0c5Ba2dAnY9OQUM9ch3zCvIJjs5M15nOz0LcVOUkgmtOXTtnG4QvKWgQaLUhyPv
+iWqooO6Ih7kHo4ULKyUwxMkNd7tbgFQ24F0AHzt+njf9APspWctMh7TW74N4EL+g
+Kmj4CQJn3J2//vog5IRWVA+O7RvCnIVJ3yjzBHPcRqcUxCi8Y6FMXnq8408xTh1p
+UZWdvCav/vFV7I3fNjquLmVkytGts5zahqKaknZJcSz0d0+1DV7rf6RaNEWPC/0S
+W2usoGq66/eVVoYA2ngjFndp+3npO/NZVrmmOtD7CrrdzAEkmvGgmT3eMjOnBBzq
+0dsYhFyWwzXkn3w3rasjzI6Eap4khrgIBv+OQc854A0fpkWPNTTJCG8d5gKVexsr
+2p4D+6nH7+qvRuUAOAP4quUBN1+tGzveT5jZdSu5abodwtMUgSprdJquTxqTRs8V
+jJdhVxCLGg4j5LqDliSS+78j4qrAxxtXokc7x3k2tK2ybU5DvDxDwaoDbEVnDTT4
+Dg/t90WPPJvzK4FGNt2n
+=l8Jr
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__7_Nov_2012_14_29_16_+1100_yuq29vtmzdtyTx5a--
