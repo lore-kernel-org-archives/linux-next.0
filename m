@@ -1,121 +1,42 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Wed, 7 Nov 2012 02:12:03 +0100
-Message-ID: <20121107021203.1a5c52bc@gaivota.chehab>
-References: <20121107110559.862517a9ca96383d0ea8f308@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the samsung tree with the pinctrl tree
+Date: Wed, 07 Nov 2012 11:26:36 +0900
+Message-ID: <0c4401cdbc8f$4ff0f8b0$efd2ea10$%kim@samsung.com>
+References: <20121030144412.4a4a60dc0dace86f1a91af8c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:54256 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753693Ab2KGBMH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Nov 2012 20:12:07 -0500
-In-Reply-To: <20121107110559.862517a9ca96383d0ea8f308@canb.auug.org.au>
+Received: from mailout1.samsung.com ([203.254.224.24]:10869 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752619Ab2KGC0i (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Nov 2012 21:26:38 -0500
+In-reply-to: <20121030144412.4a4a60dc0dace86f1a91af8c@canb.auug.org.au>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antti Palosaari <crope@iki.fi>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Linus Walleij' <linus.walleij@linaro.org>
 
-Em Wed, 7 Nov 2012 11:05:59 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
-
-> Hi Mauro,
+Stephen Rothwell wrote:
 > 
-> After merging the v4l-dvb tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Hi Kukjin,
 > 
-> drivers/built-in.o: In function `sms_ir_event':
-> (.text+0x129b95): undefined reference to `ir_raw_event_store'
-> drivers/built-in.o: In function `sms_ir_event':
-> (.text+0x129bb4): undefined reference to `ir_raw_event_handle'
-> drivers/built-in.o: In function `sms_ir_init':
-> (.text+0x129bec): undefined reference to `smscore_get_board_id'
-> drivers/built-in.o: In function `sms_ir_init':
-> (.text+0x129c17): undefined reference to `rc_allocate_device'
-> drivers/built-in.o: In function `sms_ir_init':
-> (.text+0x129cac): undefined reference to `sms_get_board'
-> drivers/built-in.o: In function `sms_ir_init':
-> (.text+0x129d41): undefined reference to `sms_get_board'
-> drivers/built-in.o: In function `sms_ir_init':
-> (.text+0x129d8c): undefined reference to `rc_register_device'
-> drivers/built-in.o: In function `sms_ir_init':
-> (.text+0x129dc3): undefined reference to `rc_free_device'
-> drivers/built-in.o: In function `sms_ir_exit':
-> (.text+0x129e15): undefined reference to `rc_unregister_device'
+Hi,
+
+> Today's linux-next merge of the samsung tree got a conflict in
+> arch/arm/boot/dts/exynos4210.dtsi between commit a7a8241540c3 ("ARM: dts:
+> exynos4210-pinctrl: Add nodes for pin banks") from the pinctrl tree and
+> commit 8d4155dbb184 ("ARM: EXYNOS: Add devicetree node for TMU driver for
+> exynos4") from the samsung tree.
 > 
-> Caused (I think) by commit fdd1eeb49d36 ("[media] siano: allow compiling
-> it without RC support").  In this build, CONFIG_SMS_SIANO_RC=y and
-> CONFIG_RC_CORE=m .
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
+Correct, thanks.
 
-Gah, this is one of those things that will require to trick Kconfig.
-
-The thing is that the siano core driver needs to depend on RC_CORE, when
-RC is selected. 
-
-While I haven't tested yet, I suspect that the following patch will
-likely do the trick.
-
-It has one small drawback: if RC_CORE is a module, the siano driver
-can't be builtin, even if siano RC is not selected. 
-
--
-
-siano: make siano driver a module, when RC_CORE is selected as 'm'
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-
-diff --git a/drivers/media/common/siano/Kconfig b/drivers/media/common/siano/Kconfig
-index 3cb7823..68f0f60 100644
---- a/drivers/media/common/siano/Kconfig
-+++ b/drivers/media/common/siano/Kconfig
-@@ -5,6 +5,7 @@
- config SMS_SIANO_MDTV
- 	tristate
- 	depends on DVB_CORE && HAS_DMA
-+	depends on !RC_CORE || RC_CORE
- 	depends on SMS_USB_DRV || SMS_SDIO_DRV
- 	default y
- 
-diff --git a/drivers/media/common/siano/Makefile b/drivers/media/common/siano/Makefile
-index 0e6f5e9..9e7fdf2 100644
---- a/drivers/media/common/siano/Makefile
-+++ b/drivers/media/common/siano/Makefile
-@@ -1,7 +1,10 @@
- smsmdtv-objs := smscoreapi.o sms-cards.o smsendian.o
- 
- obj-$(CONFIG_SMS_SIANO_MDTV) += smsmdtv.o smsdvb.o
--obj-$(CONFIG_SMS_SIANO_RC) += smsir.o
-+
-+ifeq ($(CONFIG_SMS_SIANO_RC),y)
-+  obj-$(CONFIG_SMS_SIANO_MDTV) += smsir.o
-+endif
- 
- ccflags-y += -Idrivers/media/dvb-core
- ccflags-y += $(extra-cflags-y) $(extra-cflags-m)
-diff --git a/drivers/media/mmc/siano/Kconfig b/drivers/media/mmc/siano/Kconfig
-index 69f8061..aa05ad3 100644
---- a/drivers/media/mmc/siano/Kconfig
-+++ b/drivers/media/mmc/siano/Kconfig
-@@ -4,7 +4,7 @@
- 
- config SMS_SDIO_DRV
- 	tristate "Siano SMS1xxx based MDTV via SDIO interface"
--	depends on DVB_CORE && RC_CORE && HAS_DMA
-+	depends on DVB_CORE && HAS_DMA
- 	depends on MMC
- 	select MEDIA_COMMON_OPTIONS
- 	---help---
-diff --git a/drivers/media/usb/siano/Kconfig b/drivers/media/usb/siano/Kconfig
-index b2c229e..5afbd9a 100644
---- a/drivers/media/usb/siano/Kconfig
-+++ b/drivers/media/usb/siano/Kconfig
-@@ -4,7 +4,7 @@
- 
- config SMS_USB_DRV
- 	tristate "Siano SMS1xxx based MDTV receiver"
--	depends on DVB_CORE && RC_CORE && HAS_DMA
-+	depends on DVB_CORE && HAS_DMA
- 	select MEDIA_COMMON_OPTIONS
- 	---help---
- 	  Choose if you would like to have Siano's support for USB interface
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
