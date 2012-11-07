@@ -1,82 +1,78 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Tue, 6 Nov 2012 15:01:15 -0700
-Message-ID: <20121106220115.GA18812@google.com>
-References: <20121106112729.994c25ccce521ab5aaf1f060@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Wed, 7 Nov 2012 11:05:59 +1100
+Message-ID: <20121107110559.862517a9ca96383d0ea8f308@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-scsi-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__7_Nov_2012_11_05_59_+1100_Bq7qJ=eiT.5MqdzR"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60088 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752619Ab2KGAGI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Nov 2012 19:06:08 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Wed__7_Nov_2012_11_05_59_+1100_Bq7qJ=eiT.5MqdzR
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20121106112729.994c25ccce521ab5aaf1f060@canb.auug.org.au>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, Achim Leubner <achim_leubner@adaptec.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 06, 2012 at 11:27:29AM +1100, Stephen Rothwell wrote:
-> Hi Bjorn,
-> 
-> After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> ...
+Hi Mauro,
 
-> drivers/scsi/gdth.c: In function 'gdth_init_pci':
-> drivers/scsi/gdth.c:1111:34: error: lvalue required as left operand of assignment
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Here's what I think we should do about the GDT issue.  I'll send this
-via the usual channels.
+drivers/built-in.o: In function `sms_ir_event':
+(.text+0x129b95): undefined reference to `ir_raw_event_store'
+drivers/built-in.o: In function `sms_ir_event':
+(.text+0x129bb4): undefined reference to `ir_raw_event_handle'
+drivers/built-in.o: In function `sms_ir_init':
+(.text+0x129bec): undefined reference to `smscore_get_board_id'
+drivers/built-in.o: In function `sms_ir_init':
+(.text+0x129c17): undefined reference to `rc_allocate_device'
+drivers/built-in.o: In function `sms_ir_init':
+(.text+0x129cac): undefined reference to `sms_get_board'
+drivers/built-in.o: In function `sms_ir_init':
+(.text+0x129d41): undefined reference to `sms_get_board'
+drivers/built-in.o: In function `sms_ir_init':
+(.text+0x129d8c): undefined reference to `rc_register_device'
+drivers/built-in.o: In function `sms_ir_init':
+(.text+0x129dc3): undefined reference to `rc_free_device'
+drivers/built-in.o: In function `sms_ir_exit':
+(.text+0x129e15): undefined reference to `rc_unregister_device'
 
-commit c6156dd31228e608e0a820d2eed7403fd1fd620b
-Author: Bjorn Helgaas <bhelgaas@google.com>
-Date:   Tue Nov 6 14:19:03 2012 -0700
+Caused (I think) by commit fdd1eeb49d36 ("[media] siano: allow compiling
+it without RC support").  In this build, CONFIG_SMS_SIANO_RC=3Dy and
+CONFIG_RC_CORE=3Dm .
 
-    [SCSI] gdth: Remove buggy ROM handling
-    
-    The ROM address handling in gdth_init_pci() is useless and possibly
-    dangerous.  This patch removes it.
-    
-    "pci_resource_start(pdev, 8)" is not well-defined.  PCI resources 0-5 are
-    standard PCI BARs and 6 is the expansion ROM.  Resource 8 is either an
-    SR-IOV BAR (if CONFIG_PCI_IOV=y, resources 7-12 are SR-IOV BARs) or a
-    bridge window (resources 7-10).
-    
-    The GDT device is neither an SR-IOV device nor a bridge, so in either case
-    resource 8 should be zero since struct pci_dev is allocated with kzalloc().
-    
-    It is illegal for a driver to write an arbitrary address to the ROM BAR
-    because it has no way of knowing whether the ROM will conflict with another
-    device.
-    
-    I think the only effect of the code being removed was to:
-    
-      1) Enable the ROM at 0xFEFF0000 (possibly causing a conflict with
-         another device)
-      2) Delay one millisecond
-      3) Write zero to the ROM BAR, disabling it
-    
-    I doubt the delay is needed, but I left it since it seems innocuous.
-    
-    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+I have used the v4l-dvb tree from next-20121026 again today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
-index 5d72274..3efe4ef 100644
---- a/drivers/scsi/gdth.c
-+++ b/drivers/scsi/gdth.c
-@@ -1107,14 +1107,8 @@ static int __devinit gdth_init_pci(struct pci_dev *pdev, gdth_pci_str *pcistr,
- 	pci_read_config_word(pdev, PCI_COMMAND, &command);
-         command |= 6;
- 	pci_write_config_word(pdev, PCI_COMMAND, command);
--	if (pci_resource_start(pdev, 8) == 1UL)
--	    pci_resource_start(pdev, 8) = 0UL;
--        i = 0xFEFF0001UL;
--	pci_write_config_dword(pdev, PCI_ROM_ADDRESS, i);
--        gdth_delay(1);
--	pci_write_config_dword(pdev, PCI_ROM_ADDRESS,
--			       pci_resource_start(pdev, 8));
--        
-+	gdth_delay(1);
-+
-         dp6m_ptr = ha->brd;
- 
-         /* Ensure that it is safe to access the non HW portions of DPMEM.
+--Signature=_Wed__7_Nov_2012_11_05_59_+1100_Bq7qJ=eiT.5MqdzR
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQmaXnAAoJEECxmPOUX5FEo0IP/ijZdKJfHWqrPd/QMt5gamaF
+WE/UiqWdK6yqEbpZzXgH49is5EGN6U1obC99CoTVPhiQVECNZQaxvXMOUBvz3JrD
+tfl4AaqSrRQ0He/0AlscRovQN4JyEa4sUzZP30DQqRDp5G4CR+pbRqyH2L4Nf7ta
+84rXL91JY0A4tnfd5SaB1cOs7L7vuNNfG7F7fAiVMr+OmSADbctoeGRYs5pqzflV
+Ye6lG/Bf+VaiR3xMkt37S/rqmhFG6G/MGEUOPG6/ZxhrF+K6onO5qtA7sUY2Nl7r
+D44gW9IcOHvS36zMgm2ifYqauGY4rIQsCouYLsMbwsc1D//GjqNF/jPctyM+RfdQ
+FY98FFW4+6dETc6GVcxRkSvPnM80aELqRpdsOnodCdfIPj0gIATiqVpfxzdX6jI8
+YDqibFtjWexJ/ZjJgYGs8Nj6mRAfWNsa1xPwkIUEQwPjR4BQIP/Mn/WBKS9jos1x
+WFeemGUz8SFUrtUw1RybvQAUhVPwB768QH5ZuzLPAwNyDCaXYG6QCl69KWu9cwSG
+oz5iBbHwQwbfQpw4y+I8TW6kSS2zd5buSZXTqcBdJCG9dHysmId/mCUAJq9aYzPh
+3PSVG+KGEHQDNH8ZEqoJ1j514c6vOFEbN38krZRGEdPv/F22k22TvcL/VEHzDmmu
+624i5taH9wXAPBbnZj82
+=y9A4
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__7_Nov_2012_11_05_59_+1100_Bq7qJ=eiT.5MqdzR--
