@@ -1,77 +1,105 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the l2-mtd and
- pinctrl trees
-Date: Wed, 7 Nov 2012 14:29:16 +1100
-Message-ID: <20121107142916.824003a6c863320fbf379652@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (pinctrl
+ tree related)
+Date: Wed, 7 Nov 2012 15:48:37 +1100
+Message-ID: <20121107154837.05c74508452d69930b624280@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__7_Nov_2012_14_29_16_+1100_yuq29vtmzdtyTx5a"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Artem Bityutskiy <dedekind1@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__7_Nov_2012_15_48_37_+1100_aiEVqCqcJl.x+1zc"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52362 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753527Ab2KGEsq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Nov 2012 23:48:46 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shiraz Hashim <shiraz.hashim@st.com>
 
---Signature=_Wed__7_Nov_2012_14_29_16_+1100_yuq29vtmzdtyTx5a
+--Signature=_Wed__7_Nov_2012_15_48_37_+1100_aiEVqCqcJl.x+1zc
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-nomadik/board-nhk8815.c between commit 1cd2fc449091 ("ARM:
-nomadik: fixup some FSMC merge problems") from the l2-mtd tree, commits
-bb16bd9b9da4 ("pinctrl/nomadik: move the platform data header") from the
-pinctrl and commit 44e47ccf8ab6 ("Merge branch 'next/multiplatform' into
-for-next") from the arm-soc tree.
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from include/linux/gpio.h:48:0,
+                 from include/linux/of_gpio.h:20,
+                 from arch/powerpc/sysdev/ppc4xx_gpio.c:29:
+include/asm-generic/gpio.h:74:10: error: 'struct gpio_chip' declared inside=
+ parameter list [-Werror]
+include/asm-generic/gpio.h:74:10: error: its scope is only this definition =
+or declaration, which is probably not what you want [-Werror]
+include/asm-generic/gpio.h: In function 'gpiochip_add_pin_range':
+include/asm-generic/gpio.h:76:1: error: no return statement in function ret=
+urning non-void [-Werror=3Dreturn-type]
+include/asm-generic/gpio.h: At top level:
+include/asm-generic/gpio.h:79:35: error: 'struct gpio_chip' declared inside=
+ parameter list [-Werror]
+
+Caused by commit e8321df59155 ("gpiolib: iron out include ladder
+mistakes") (and some earlier ones) from the pinctrl tree.
+
+I added this patch for today (there may be a better return value from
+gpiochip_add_pin_range):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 7 Nov 2012 15:42:44 +1100
+Subject: [PATCH] gpiolib: fix non CONFIG_GPIOLIB functions
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/asm-generic/gpio.h |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/asm-generic/gpio.h b/include/asm-generic/gpio.h
+index 54e02e6..f9acd78 100644
+--- a/include/asm-generic/gpio.h
++++ b/include/asm-generic/gpio.h
+@@ -69,10 +69,13 @@ void gpiochip_remove_pin_ranges(struct gpio_chip *chip);
+=20
+ #else
+=20
++struct gpio_chip;
++
+ static inline int
+ gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+ 		       unsigned int pin_base, unsigned int npins)
+ {
++	return 0;
+ }
+=20
+ static inline void
+--=20
+1.7.10.280.gaa39
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-nomadik/board-nhk8815.c
-index ab7104f,5ccdf53..0000000
---- a/arch/arm/mach-nomadik/board-nhk8815.c
-+++ b/arch/arm/mach-nomadik/board-nhk8815.c
-@@@ -30,11 -31,10 +32,9 @@@
-  #include <asm/sizes.h>
-  #include <asm/mach-types.h>
-  #include <asm/mach/arch.h>
-- #include <asm/mach/irq.h>
-  #include <asm/mach/flash.h>
-  #include <asm/mach/time.h>
--=20
-- #include <plat/mtu.h>
- -#include <mach/fsmc.h>
-+ #include <mach/irqs.h>
- =20
-  #include "cpu-8815.h"
- =20
-
---Signature=_Wed__7_Nov_2012_14_29_16_+1100_yuq29vtmzdtyTx5a
+--Signature=_Wed__7_Nov_2012_15_48_37_+1100_aiEVqCqcJl.x+1zc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQmdWMAAoJEECxmPOUX5FEZoIQAKOyJnUTfEj6Dh3JblJypZyE
-sFlCoinpo9VgiPSK+ZU1+CEO8DllEyEnhIH+4D4qYdrvu2MHa5QdEzGy6mkHq6TU
-PIFAJ9yK/YJ0HPMRAP8reDLbCGoJ+3gQlQFbfQ62vhUNJmGISmI+SJt9sOQdd4LV
-G0c5Ba2dAnY9OQUM9ch3zCvIJjs5M15nOz0LcVOUkgmtOXTtnG4QvKWgQaLUhyPv
-iWqooO6Ih7kHo4ULKyUwxMkNd7tbgFQ24F0AHzt+njf9APspWctMh7TW74N4EL+g
-Kmj4CQJn3J2//vog5IRWVA+O7RvCnIVJ3yjzBHPcRqcUxCi8Y6FMXnq8408xTh1p
-UZWdvCav/vFV7I3fNjquLmVkytGts5zahqKaknZJcSz0d0+1DV7rf6RaNEWPC/0S
-W2usoGq66/eVVoYA2ngjFndp+3npO/NZVrmmOtD7CrrdzAEkmvGgmT3eMjOnBBzq
-0dsYhFyWwzXkn3w3rasjzI6Eap4khrgIBv+OQc854A0fpkWPNTTJCG8d5gKVexsr
-2p4D+6nH7+qvRuUAOAP4quUBN1+tGzveT5jZdSu5abodwtMUgSprdJquTxqTRs8V
-jJdhVxCLGg4j5LqDliSS+78j4qrAxxtXokc7x3k2tK2ybU5DvDxDwaoDbEVnDTT4
-Dg/t90WPPJvzK4FGNt2n
-=l8Jr
+iQIcBAEBCAAGBQJQmeglAAoJEECxmPOUX5FErF8QAIMzkVVraLKcrEsUVsLpSDr2
+iICTgXxn5kr2vAnIRwIocpx1Yx75gdeBy49jSJZGbBQrYNL05NITVYEsIR7r++Jk
+rQpQVn0tKb4NHMsTbyzxgZYZGutZgUqfBcr1A70qIQ31F/IjBFgawAxUSpGLHSPe
+Ddh1Egg3gtKrl58ukfT29ANV0nPOA9B8mNNK36GnouRHH5Xi/4KoobCQxcjt2L0N
+ddNeML2GV1FmimSPAydcwU01xWP7T3YobiRReWXOKOcGfampJYYK57J/TaqvzjhK
+qLsaPq9ot4o+exXDSFyQ8v6BbbZg2IhhKKR8yz4Ymrr1SWox7Xw2lYyoGB7CyLZ8
+WV60IpDmDH3Fw+xsiBo1EUGIqHEzacWg55WmP3xBSdyDEEdtoqb890qjPI7s++Ym
+lmEdI+0UzJoj1Xh/oCInwF5F4ib7yxII6S3aQ/xRkxPwlP7InMiv7Gw7I5vTkpws
+5tl1W0zMsF7tY7SBIxqfy6IH84wT5wSJTc5XKnQicjaPM0dvCNfWKjLiJ7lR80Pi
+wtwkpwjLjLCQAFT/GlwEVIx1R21QAAM5Mvc3mk1gq9o9j8xZUUBbNMT/BfhTrQ4b
+Y6wxujq5hYEtHmj0ri91n2qJXcWxXbzhrlskXe6FfSS5/YWFh1ubLHV0B9mB/4sJ
+elc66vszvySp5pXs+qIR
+=2FUv
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__7_Nov_2012_14_29_16_+1100_yuq29vtmzdtyTx5a--
+--Signature=_Wed__7_Nov_2012_15_48_37_+1100_aiEVqCqcJl.x+1zc--
