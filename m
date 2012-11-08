@@ -1,80 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the l2-mtd
- and pinctrl trees
-Date: Fri, 9 Nov 2012 07:27:39 +1100
-Message-ID: <20121109072739.bb0f97bb571e66add1810d18@canb.auug.org.au>
-References: <20121107142916.824003a6c863320fbf379652@canb.auug.org.au>
-	<201211081511.54467.arnd@arndb.de>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: linux-next: Tree for Nov 8
+Date: Thu, 8 Nov 2012 23:52:52 +0100
+Message-ID: <20121108235252.10aa2d4a@gaivota.chehab>
+References: <20121108154949.552d05430f0c46ed2e188667@canb.auug.org.au>
+	<CA+icZUVSZSXr+DiJmqfxjGmGn+DojXRH8MkdLjbgapGdi6gXdg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Nov_2012_07_27_39_+1100__z.p4pRZPBryz/2J"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45346 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756624Ab2KHU1w (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Nov 2012 15:27:52 -0500
-In-Reply-To: <201211081511.54467.arnd@arndb.de>
+Received: from mx1.redhat.com ([209.132.183.28]:48824 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757167Ab2KHWxL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Nov 2012 17:53:11 -0500
+In-Reply-To: <CA+icZUVSZSXr+DiJmqfxjGmGn+DojXRH8MkdLjbgapGdi6gXdg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Artem Bityutskiy <dedekind1@gmail.com>
+To: sedat.dilek@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__9_Nov_2012_07_27_39_+1100__z.p4pRZPBryz/2J
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Em Thu, 8 Nov 2012 10:10:29 +0100
+Sedat Dilek <sedat.dilek@gmail.com> escreveu:
 
-Hi Arnd,
+> On Thu, Nov 8, 2012 at 5:49 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > Changes since 20121107:
+> >
+> [...]
+> >
+> > The v4l-dvb tree still has its build failure so I used the version from
+> > next-20121026.
+> >
+> 
+> Hi,
+> 
+> I am just wondering why this v4l-dvb issues are still present...
+> ...since 26-Oct-2012...
+> ...Maintainer on holidays :-)?
 
-On Thu, 8 Nov 2012 15:11:54 +0000 Arnd Bergmann <arnd@arndb.de> wrote:
->
-> I think this one turned out wrong, and is missing this part:
->=20
-> diff --git a/arch/arm/mach-nomadik/board-nhk8815.c b/arch/arm/mach-nomadi=
-k/board-nhk8815.c
-> index 5ccdf53..69769b7 100644
-> --- a/arch/arm/mach-nomadik/board-nhk8815.c
-> +++ b/arch/arm/mach-nomadik/board-nhk8815.c
-> @@ -26,7 +26,6 @@
->  #include <linux/pinctrl/machine.h>
->  #include <linux/platform_data/pinctrl-nomadik.h>
->  #include <linux/platform_data/clocksource-nomadik-mtu.h>
-> -#include <linux/platform_data/mtd-nomadik-nand.h>
->  #include <asm/hardware/vic.h>
->  #include <asm/sizes.h>
->  #include <asm/mach-types.h>
->=20
->=20
-> The mtd-nomadik-nand.h inclusion was removed in the l2-mtd tree, but
-> moved to a different line in the arm-soc tree. It needs to be removed
-> because the header is gone now.
+I wish I had it ;)
 
-Thanks for that.  I have now fixed up my fix up :-)
+> I know most Linux kernel people are visting Barcelona this week.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Well, not visiting. Working from here... and the network at the hotel sucks. 
 
---Signature=_Fri__9_Nov_2012_07_27_39_+1100__z.p4pRZPBryz/2J
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQnBW7AAoJEECxmPOUX5FEfHsQAIza6hDljHrTrXlRIFZkBP2u
-r9pjSGomOpQYob9Tn/MfT2QRjgf5bGnQNpAPFi2YjhSQj0Jky+EwEeSvvOgTrLUw
-OotGxd3lC+JNPAJnxtTWfQx9t1TM7gmMl5F9twl5mzDQT/ElVmmf9xB1+HRmx/r0
-4K/GEwJzWMC5s7Ak44nVxsJ9JX/bMKgqaW+XvUs8/6byuX4Tk8rKM8gXyUlH1f5e
-umr5jg3jdm7H3yzDzOwV7Pinskwaa1YpaJyk4ZuqJgdVnhHWWAZCVQKEcjbLBpi6
-hIM97oassi7WyFOExXVkm5ho5DtG2ZI9aQcVqj+5e0Vm0UKOmcimka0kufLh6YRc
-dLMIXqyuBFM+ou0r+rnvRWbZbGQ8VC3pFdlZv1seG/z78OV2exGsAp77Q2BcG2U3
-3L9GNuohLfSLCv9M2Xo80csfOmHJZsVMnMgnVguBmArI4aMG4ohg8D5azmotgfbJ
-eubqMwKlfLD6aZ11f4+aTnVamIPMpHIAaMhyhS4Pte6QMuIJ/JDqB/u8dua264ym
-KsPik51RuIfGLqRHIG0OBfCW+Ea04UwWQHwkrFke5RlsCFZ/y1AZlbaT3Q3ukwNi
-IN4k4p/6po948yG48AUfPl+95hZG78cidAGh9dskRC01XFDc+ppUWPqh8N88Sb5y
-KdQxa3jM6HC1aaSJK4Z1
-=f6bN
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Nov_2012_07_27_39_+1100__z.p4pRZPBryz/2J--
+Regards,
+Mauro
