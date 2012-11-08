@@ -1,41 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for Nov 7
-Date: Wed, 7 Nov 2012 16:15:27 +1100
-Message-ID: <20121107161527.9fe7d5f306b45d4ceacd0ffa@canb.auug.org.au>
+Subject: linux-next: Tree for Nov 8
+Date: Thu, 8 Nov 2012 15:49:49 +1100
+Message-ID: <20121108154949.552d05430f0c46ed2e188667@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__7_Nov_2012_16_15_27_+1100_taUmG.LhOOw4rRa+"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44545 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751031Ab2KGFPg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Nov 2012 00:15:36 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Thu__8_Nov_2012_15_49_49_+1100_imEpjCPFLemhjdL+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-next@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__7_Nov_2012_16_15_27_+1100_taUmG.LhOOw4rRa+
+--Signature=_Thu__8_Nov_2012_15_49_49_+1100_imEpjCPFLemhjdL+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-/me resists commenting on recent political events
-
-Changes since 20121106:
+Changes since 20121107:
 
 The pci tree still has its build failure for which I applied a merge fix pa=
 tch.
 
-The v4l-dvb tree lost its build failure but gained another so I used the
-version from next-20121026.
+The v4l-dvb tree still has its build failure so I used the version from
+next-20121026.
 
-The pinctrl tree gained a build failure for which I applied a patch.
-
-The arm-soc tree gained a conflict against the l2-mtd and pinctrl trees.
+The pinctrl tree still has its build failure for which I applied a patch.
 
 ----------------------------------------------------------------------------
 
@@ -81,7 +73,8 @@ Stephen Rothwell                    sfr@canb.auug.org.au
 
 $ git checkout master
 $ git reset --hard stable
-Merging origin/master (3d70f8c Linux 3.7-rc4)
+Merging origin/master (0e4a43e Merge git://git.kernel.org/pub/scm/linux/ker=
+nel/git/steve/gfs2-3.0-fixes)
 Merging fixes/master (12250d8 Merge branch 'i2c-embedded/for-next' of git:/=
 /git.pengutronix.de/git/wsa/linux)
 Merging kbuild-current/rc-fixes (bad9955 menuconfig: Replace CIRCLEQ by lis=
@@ -91,11 +84,10 @@ orrections)
 Merging m68k-current/for-linus (8a745ee m68k: Wire up kcmp)
 Merging powerpc-merge/merge (8c23f40 Merge git://git.kernel.org/pub/scm/vir=
 t/kvm/kvm)
-Merging sparc/master (f7e8d9f qlogicpti: Fix build warning.)
-Merging net/master (cacb6ba net: inet_diag -- Return error code if protocol=
- handler is missed)
-Merging sound-current/for-linus (ae24c31 ALSA: hda - Force to reset IEC958 =
-status bits for AD codecs)
+Merging sparc/master (afe760e sparc: Allow OF_GPIO on sparc.)
+Merging net/master (a3d744e af-packet: fix oops when socket is not present)
+Merging sound-current/for-linus (d1a3c98 ALSA: hdspm - Fix sync check repor=
+ting on RME RayDAT)
 Merging pci-current/for-linus (ff8e59b PCI/portdrv: Don't create hotplug sl=
 ots unless port supports hotplug)
 Merging wireless/master (6fe7cc7 ath9k: Test for TID only in BlockAcks whil=
@@ -131,12 +123,13 @@ Merging rr-fixes/fixes (f6a79af modules: don't break modules_install on ext=
 ernal modules with no key.)
 Merging asm-generic/master (9b04ebd asm-generic/io.h: remove asm/cacheflush=
 .h include)
-Merging arm/for-next (31ccae2 Merge remote-tracking branch 'wildea/asids' i=
+Merging arm/for-next (ee05d61 Merge remote-tracking branch 'wildea/asids' i=
 nto for-next)
 Merging arm-perf/for-next/perf (85776d5 Merge branch 'hw-breakpoint' into f=
 or-next/perf)
 Merging davinci/davinci-next (fe0d422 Linux 3.0-rc6)
-Merging xilinx/arm-next (f580077 zynq: move static peripheral mappings)
+Merging xilinx/arm-next (aaf5e0b ARM: zynq: Allow UART1 to be used as DEBUG=
+_LL console.)
 Merging arm64/upstream (811a0c8 arm64: perf: use architected event for CPU =
 cycle counter)
 Merging blackfin/for-linus (9d84601 Blackfin: dpmc: use module_platform_dri=
@@ -189,8 +182,7 @@ ing handled in need_print_warning())
 Merging ext4/dev (ffb5387 ext4: fix unjournaled inode bitmap modification)
 Merging fuse/for-next (c7a3f5e fuse: Move CUSE Kconfig entry from fs/Kconfi=
 g into fs/fuse/Kconfig)
-Merging gfs2/master (76a8364 GFS2: Don't call file_accessed() with a shared=
- glock)
+Merging gfs2/master (9dbe961 GFS2: Add Orlov allocator)
 Merging jfs/jfs-next (4e7a4b0 jfs: Fix FITRIM argument handling)
 Merging logfs/master (ab2ec19 logfs: fix possible memory leak in logfs_mtd_=
 can_write_buf())
@@ -205,12 +197,12 @@ Merging v9fs/for-next (552aad0 9P: Fix race between p9_write_work() and p9_=
 fd_request())
 Merging ubifs/linux-next (a28ad42 UBIFS: fix mounting problems after power =
 cuts)
-Merging xfs/for-next (c99abb8 xfs: Update mount options documentation)
+Merging xfs/for-next (69a58a4 xfs: report projid32bit feature in geometry c=
+all)
 Merging vfs/for-next (a736427 missing const in alpha callers of do_mount())
-Merging pci/next (84a8fb6 Merge branch 'pci/yinghai-for-pci-root-bus-hotplu=
-g' into next)
+Merging pci/next (1800377 Merge branch 'pci/mike-x86-tra' into next)
 Applying: PCI: fixups for pci_resource_start conversion
-Merging hid/for-next (35c9a62 Merge branch 'for-3.8/roccat' into for-next)
+Merging hid/for-next (71bca10 Merge branch 'for-3.8/upstream' into for-next)
 Merging i2c/master (5e9c4fe i2c: Mention functionality flags in SMBus proto=
 col documentation)
 Merging i2c-embedded/i2c-embedded/for-next (60f0a25 i2c: tegra: set irq nam=
@@ -239,8 +231,7 @@ CONFLICT (content): Merge conflict in include/linux/cpuidle.h
 CONFLICT (add/add): Merge conflict in drivers/cpuidle/coupled.c
 Merging cpupowerutils/master (f166033 cpupower tools: add install target to=
  the debug tools' makefiles)
-Merging thermal/next (e15cb14 thermal: user_space: Add missing static stora=
-ge class specifiers)
+Merging thermal/next (160b7d8 Thermal: Remove the cooling_cpufreq_list.)
 Merging ieee1394/for-next (790198f firewire: cdev: fix user memory corrupti=
 on (i386 userland on amd64 kernel))
 Merging ubi/linux-next (6a059ab UBI: use list_move_tail instead of list_del=
@@ -250,16 +241,16 @@ Merging swiotlb/linux-next (af51a9f swiotlb: Do not export swiotlb_bounce s=
 ince there are no external consumers)
 Merging scsi/for-next (5c1b10a [SCSI] storvsc: Account for in-transit packe=
 ts in the RESET path)
-Merging target-updates/for-next (3a89b51 target: Fix incorrect starting off=
-set after MODE_SENSE refactoring)
+Merging target-updates/for-next (5f2e561 target: Change sbc_emulate_noop to=
+ return sense_reason_t)
 Merging target-merge/for-next-merge (6f0c058 Linux 3.7-rc2)
 Merging ibft/linux-next (935a9fe ibft: Fix finding IBFT ACPI table on UEFI)
 Merging isci/all (6734092 isci: add a couple __iomem annotations)
 Merging slave-dma/next (8007644 async_tx: use memchr_inv)
 Merging dmaengine/next (a2bd114 netdma: adding alignment check for NETDMA o=
 ps)
-Merging net-next/master (d64ec84 r8169: enable internal ASPM and clock requ=
-est settings)
+Merging net-next/master (50b5ca1 net/at91_ether: fix comment and style issu=
+es)
 Merging wireless-next/master (38141fc ar5523: make buffer size variable uns=
 igned)
 Merging bluetooth/master (0c0afed Bluetooth: Fix parameter order of hci_get=
@@ -270,10 +261,17 @@ Merging l2-mtd/master (2c5e1925 mtd: mtd_oobtest: printk -> pr_{info,err,cr=
 it})
 Merging crypto/master (3200da8 crypto: tegra - fix missing unlock on error =
 case)
-Merging drm/drm-next (1f31c69 Merge branch 'drm-intel-fixes' of git://peopl=
-e.freedesktop.org/~danvet/drm-intel into drm-next)
-Merging sound/for-next (4492363 ALSA: virtuoso: Xonar DSX support)
-Merging sound-asoc/for-next (eb00058 Merge tag 'v3.7-rc4' into asoc-next)
+Merging drm/drm-next (6380813 gma500: medfield: drop bogus NULL check in md=
+fld_dsi_output_init())
+Merging sound/for-next (c9adeef ALSA: hda - Keep power link on for PantherP=
+oint HDMI)
+Merging sound-asoc/for-next (7bbd3b8 Merge branches 'fix/cs42l52', 'fix/mxs=
+', 'fix/samsung', 'fix/wm8978', 'topic/ak4104', 'topic/atmel', 'topic/cs427=
+1', 'topic/da9055', 'topic/davinci', 'topic/fsi', 'topic/fsl', 'topic/jack'=
+, 'topic/jz4740', 'topic/samsung', 'topic/si476x', 'topic/tlv320aic32x4', '=
+topic/wm0010', 'topic/wm2200', 'topic/wm8750', 'topic/wm8770', 'topic/wm897=
+1' and 'topic/wm8994' of git://git.kernel.org/pub/scm/linux/kernel/git/broo=
+nie/sound into asoc-next)
 Merging modules/modules-next (56713a2 MODSIGN: Add modules_sign make target)
 Merging virtio/virtio-next (41395df virtio: Convert dev_printk(KERN_<LEVEL>=
  to dev_<level>()
@@ -292,8 +290,8 @@ Merging embedded/master (4744b43 embedded: fix vc_translate operator preced=
 ence)
 Merging firmware/master (6e03a20 firmware: speed up request_firmware(), v3)
 Merging pcmcia/master (80af9e6 pcmcia at91_cf: fix raw gpio number usage)
-Merging mmc/mmc-next (9c80e2e mmc: dw_mmc: constify dw_mci_idmac_ops in exy=
-nos back-end)
+Merging mmc/mmc-next (ae7195e mmc: rtsx_pci_sdmmc: add realtek pcie sdmmc h=
+ost driver)
 Merging kgdb/kgdb-next (58bcdf6 tty/console: fix warnings in drivers/tty/se=
 rial/kgdboc.c)
 Merging slab/for-next (31841eb Merge branch 'slab/next' into for-next)
@@ -309,10 +307,10 @@ Merging viafb/viafb-next (838ac78 viafb: avoid refresh and mode lookup in s=
 et_par)
 Merging omap_dss2/for-next (13b1ba7 OMAPDSS: add missing include for string=
 .h)
-Merging regulator/for-next (fe623ca Merge remote-tracking branches 'regulat=
-or/fix/gpio', 'regulator/fix/put', 'regulator/topic/gpio', 'regulator/topic=
-/lp8788', 'regulator/topic/max77686', 'regulator/topic/tps51632', 'regulato=
-r/topic/tps65910' and 'regulator/topic/vexpress' into regulator-next)
+Merging regulator/for-next (d4981af Merge remote-tracking branches 'regulat=
+or/fix/gpio', 'regulator/topic/gpio', 'regulator/topic/lp8788', 'regulator/=
+topic/max77686', 'regulator/topic/max8925', 'regulator/topic/tps51632', 're=
+gulator/topic/tps65910' and 'regulator/topic/vexpress' into regulator-next)
 Merging security/next (b566650 drivers/char/tpm: remove tasklet and cleanup)
 CONFLICT (content): Merge conflict in security/keys/process_keys.c
 CONFLICT (content): Merge conflict in security/keys/keyring.c
@@ -348,7 +346,8 @@ Merging dt-rh/for-next (2066306 arm: l2cc: doc: fix device tree example typ=
 o)
 Merging spi/spi/next (d8e328b spi: Add "spi:" prefix to modalias attribute =
 of spi devices)
-Merging spi-mb/spi-next (7032449 Merge branch 'spi-linus' into spi-next)
+Merging spi-mb/spi-next (fad8f9c Merge branch 'spi-fix-s3c64xx' into spi-ne=
+xt)
 Merging tip/auto-latest (8a1d31c Merge branch 'x86/urgent')
 Merging rcu/rcu/next (155f744 Merge branches 'doc.2012.10.30a', 'fixes.2012=
 .10.30a', 'srcu.2012.10.27a', 'stall.2012.10.24a', 'tracing.2012.10.30a' an=
@@ -410,6 +409,7 @@ Merging arm-dt/devicetree/arm-next (ede338f dt: add documentation of ARM dt=
  boot interface)
 Merging hwspinlock/linux-next (8b37fcf hwspinlock: add MAINTAINERS entries)
 Merging pinctrl/for-next (ed8d3e3 Merge branch 'samsung' into for-next)
+Applying: gpiolib: fix non CONFIG_GPIOLIB functions
 Merging vhost/linux-next (e0953c8 tun: experimental zero copy tx support)
 CONFLICT (content): Merge conflict in drivers/net/tun.c
 Merging memblock/memblock-kill-early_node_map (7bd0b0f memblock: Reimplemen=
@@ -437,7 +437,7 @@ Merging ep93xx/ep93xx-for-next (fab1f74 Merge branch 'ep93xx-fixes' into ep=
 93xx-for-next)
 Merging ixp4xx/next (b94740b IXP4xx: use __iomem for MMIO)
 Merging msm/for-next (a0d271c Linux 3.6)
-Merging renesas/next (de39c8b Merge branches 'heads/fixes', 'heads/defconfi=
+Merging renesas/next (3d54c93 Merge branches 'heads/fixes', 'heads/defconfi=
 g', 'heads/boards' and 'heads/soc' into next)
 Merging samsung/for-next (f789f1e Merge branch 'next/board-samsung' into fo=
 r-next)
@@ -739,29 +739,28 @@ Applying: documentation-dma-api-howtotxt-add-dma-mapping-error-check-usage-=
 examples-fix
 Applying: tools/testing/selftests/kcmp/kcmp_test.c: print reason for failur=
 e in kcmp_test
-Merging akpm/master (5c37733 tools/testing/selftests/kcmp/kcmp_test.c: prin=
+Merging akpm/master (db38463 tools/testing/selftests/kcmp/kcmp_test.c: prin=
 t reason for failure in kcmp_test)
-Applying: gpiolib: fix non CONFIG_GPIOLIB functions
 
---Signature=_Wed__7_Nov_2012_16_15_27_+1100_taUmG.LhOOw4rRa+
+--Signature=_Thu__8_Nov_2012_15_49_49_+1100_imEpjCPFLemhjdL+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQme5vAAoJEECxmPOUX5FE1dUQAIXg/Mo4Q0xU4RhmDP+Opxnp
-mFPu4v6D76WC330YdQOmXrthqeMXrqyqOjNQF+63WhK3LsMx61TZytboy2UZzISn
-TugfBL2SQ4uetgpTeD221Xm+WYGt4Ga6GlMofOo2AFPlN7JArI86ZmM+bBnZNGPa
-nuQoWkCMhrh+wfwiLoligj+ZgGQ7to4+9lopdxK1iCpWqkRfDlrYRkgSfXyEIqZh
-nH5juXbS1Jp/q4RbEumSWq7o9A95GlC+vzpmuDLnfP+tIjmH/T4hw2zypBBw/x/p
-DaieFwhFWb43ww63mnm+RysbMZWJdvAlHwE5cks/JvbEmGw0o1kbGBo0TqDD4jKU
-lmsBEK7myOl/CmEkZy9ADzAOLroJ7sUwn+lou4h0LCq+VcVfCvPPLmqoqjiU87s2
-TeeE8e8KsOES3fkPU/zT3YPHN2v+UnPlONVcGEJxnqORhbesE8DUY1V0w/V4uz4s
-lPoxsQ0inON0Jrv1q4gcM9DXiv4GwWln41MEu3u8rDgCrv+vmy2ozOABq+Ow2heP
-EUwj2mJ+Xk1iEramn7Kn2RcZMQARWeLtu5LWjJfWCyH6eBNE6vpo+JiiEIyB6GsJ
-NXwgFonH5HIwUP5RJyzGohFJ8EMs91bpFljmLx3pdyUSucEKHs7Ml+EXYvHqrJ9q
-0Oqxn2IrS7AiEkfvPG+h
-=575q
+iQIcBAEBCAAGBQJQmzntAAoJEECxmPOUX5FE+y8P/A3WpYvZVmD7+ITOYrDyY0S9
+SDfbrLrRLRSmdXLRKgf3qNN56O9HttHgMka6IXAfcI+Rj2Sndb+PdXAh8MBiPtXh
+bTPoFzjPGyw8H7Efdn88xg2QcJejSYCXgKyGt18w5TyY5TM/DenC/cgB+WYtZyqk
+gtLGGfdgbooISX7gTWofUk1aJ3ULs+BpYDo0vKAai8zlMsZVf1N6LOstXWG8StEL
+FPjzMpNpm4Q2iDjo5i3Ajr8Uf5bSrg/+hEIo/HtQVcfXrxMe19SVAchP78StLSxy
+BYEeLfyL2l8JwVPpqNpY/subm2tiEvZ8jukXs11DLYaPbvGLw67iWFv+5REA9FYU
+7MXLRmzWaaEx6uR9ZaAKrZsWwDAruwUgylue97voSfm2/LL+hxQ2Tma9VF3dXIn6
+OLivSN3CcSe8N6j/MLUJBCCTDLO9Gu62U70Le1YzhEuGVjlfuDBXm4QOZ91PIDQS
+2u+svCw2hSNT6h4o+YxfvLaJsW8VX4tkzyeaTiQynma9tOYZFN3DKYn/X12s9PSQ
+jYiQ/afB33kBkmc8dF6OanzkIMXg3sS0i1xLytxwclNOL6PYaMqWDKHIKWZ1ThxP
+N3OaVw/cLyl1tQifocti7jsxV7+yFWgNogy87WEPsPk14J72InilKJGoXD2cBM3Z
+qWjfeFdcPai/URXQLIpA
+=QA5m
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__7_Nov_2012_16_15_27_+1100_taUmG.LhOOw4rRa+--
+--Signature=_Thu__8_Nov_2012_15_49_49_+1100_imEpjCPFLemhjdL+--
