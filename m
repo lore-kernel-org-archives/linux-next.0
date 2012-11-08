@@ -1,35 +1,40 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Nov 8
-Date: Thu, 8 Nov 2012 10:10:29 +0100
-Message-ID: <CA+icZUVSZSXr+DiJmqfxjGmGn+DojXRH8MkdLjbgapGdi6gXdg@mail.gmail.com>
-References: <20121108154949.552d05430f0c46ed2e188667@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build failure after merge of the final tree (pinctrl
+ tree related)
+Date: Thu, 8 Nov 2012 14:06:37 +0100
+Message-ID: <CACRpkdb4LVG8TG58DmUMHRL3r0r4hn7wh-y47metBwth5c52-A@mail.gmail.com>
+References: <20121107154837.05c74508452d69930b624280@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121108154949.552d05430f0c46ed2e188667@canb.auug.org.au>
+In-Reply-To: <20121107154837.05c74508452d69930b624280@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shiraz Hashim <shiraz.hashim@st.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Nov 8, 2012 at 5:49 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Changes since 20121107:
->
-[...]
->
-> The v4l-dvb tree still has its build failure so I used the version from
-> next-20121026.
->
+On Wed, Nov 7, 2012 at 5:48 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi,
+> Caused by commit e8321df59155 ("gpiolib: iron out include ladder
+> mistakes") (and some earlier ones) from the pinctrl tree.
+>
+> I added this patch for today (there may be a better return value from
+> gpiochip_add_pin_range):
+(..)
+> +struct gpio_chip;
+> +
+>  static inline int
+>  gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+>                        unsigned int pin_base, unsigned int npins)
+>  {
+> +       return 0;
+>  }
 
-I am just wondering why this v4l-dvb issues are still present...
-...since 26-Oct-2012...
-...Maintainer on holidays :-)?
-I know most Linux kernel people are visting Barcelona this week.
+Bah, I happened to put these prototypes just above the actual definition
+of struct gpio_chip :-P
 
-Regards,
-- Sedat -
+Fixing up and respinning the patch, I've added the compulsory return
+value as well.
+
+Yours,
+Linus Walleij
