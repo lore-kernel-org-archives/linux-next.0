@@ -1,91 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Fri, 9 Nov 2012 10:53:18 +1100
-Message-ID: <20121109105318.e24e2fa2b899af6e4d444b30@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the pinctrl tree
+Date: Fri, 9 Nov 2012 13:31:11 +1100
+Message-ID: <20121109133111.1070c1062889461152713978@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Nov_2012_10_53_18_+1100_1.mq6L.2UhwDPvZR"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35351 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751425Ab2KHXxa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Nov 2012 18:53:30 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Merav Sicron <meravs@broadcom.com>, Dmitry Kravkov <dmitry@broadcom.com>, Eilon Greenstein <eilong@broadcom.com>
+ boundary="Signature=_Fri__9_Nov_2012_13_31_11_+1100_Y5tZ2doQtlq6sfWf"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonas Aaberg <jonas.aberg@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__9_Nov_2012_10_53_18_+1100_1.mq6L.2UhwDPvZR
+--Signature=_Fri__9_Nov_2012_13_31_11_+1100_Y5tZ2doQtlq6sfWf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c between commit
-477864ddd365 ("bnx2x: Disable FCoE for 57840 since not yet supported by
-FW") from Linus' tree and commit 55c11941e382 ("bnx2x: Support loading
-cnic resources at run-time") from the net-next tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/pinctrl/pinctrl-nomadik.c between commit 241e51ebd3b2
+("pinctrl/nomadik: make independent of prcmu driver") from the pinctrl
+tree and commit 44e47ccf8ab6 ("Merge branch 'next/multiplatform' into
+for-next") from the arm-soc tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index bd1fd3d,0546cf4..0000000
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@@ -11899,22 -12065,10 +12066,20 @@@ static int __devinit bnx2x_init_one(s=
-tr
-  	/* calc qm_cid_count */
-  	bp->qm_cid_count =3D bnx2x_set_qm_cid_count(bp);
- =20
-- #ifdef BCM_CNIC
-- 	/* disable FCOE L2 queue for E1x */
-+ 	/* disable FCOE L2 queue for E1x*/
-  	if (CHIP_IS_E1x(bp))
-  		bp->flags |=3D NO_FCOE_FLAG;
-+=20
- +	/* disable FCOE for 57840 device, until FW supports it */
- +	switch (ent->driver_data) {
- +	case BCM57840_O:
- +	case BCM57840_4_10:
- +	case BCM57840_2_20:
- +	case BCM57840_MFO:
- +	case BCM57840_MF:
- +		bp->flags |=3D NO_FCOE_FLAG;
- +	}
-- #endif
+diff --cc drivers/pinctrl/pinctrl-nomadik.c
+index 33c614e,3ad23fb..0000000
+--- a/drivers/pinctrl/pinctrl-nomadik.c
++++ b/drivers/pinctrl/pinctrl-nomadik.c
+@@@ -30,10 -30,23 +30,9 @@@
+  #include <linux/pinctrl/pinconf.h>
+  /* Since we request GPIOs from ourself */
+  #include <linux/pinctrl/consumer.h>
+ -/*
+ - * For the U8500 archs, use the PRCMU register interface, for the older
+ - * Nomadik, provide some stubs. The functions using these will only be
+ - * called on the U8500 series.
+ - */
+ -#ifdef CONFIG_ARCH_U8500
+ -#include <linux/mfd/dbx500-prcmu.h>
+ -#else
+ -static inline u32 prcmu_read(unsigned int reg) {
+ -	return 0;
+ -}
+ -static inline void prcmu_write(unsigned int reg, u32 value) {}
+ -static inline void prcmu_write_masked(unsigned int reg, u32 mask, u32 val=
+ue) {}
+ -#endif
+  #include <linux/platform_data/pinctrl-nomadik.h>
 -=20
- +
-  	/* Set bp->num_queues for MSI-X mode*/
-  	bnx2x_set_num_queues(bp);
+  #include <asm/mach/irq.h>
+-=20
++ #include <mach/irqs.h>
+  #include "pinctrl-nomadik.h"
  =20
+  /*
 
---Signature=_Fri__9_Nov_2012_10_53_18_+1100_1.mq6L.2UhwDPvZR
+--Signature=_Fri__9_Nov_2012_13_31_11_+1100_Y5tZ2doQtlq6sfWf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQnEXuAAoJEECxmPOUX5FEP00QAIrY1EAHh1MVpVIFwcijQ6Hj
-NZ+U01SQfLOXikbm98uLcHgHeAOrUZu+I4potFHCqwIAJZRegeTf7siPptvv0q+0
-Y2hW6F4qbvr6Pl8dbx71BIzl3zgh0jgfMx+9U2VgB18+6aOZeDcvut1w0bZBkl4z
-TMC0ONivXxPYgQUY7Y7IJw2ds95jdoe97eCUxtlwQzwk/CZw35FjbJenCMPv3vt8
-cRmD5JPBumztpPqRNYCbwLx3ZdRvLun0wO3Fvnx9XomK/kFa+LdYxKNsxEpk0rjK
-4j5FqBKYMNN7v+N59QrzWfkNqE1akZnGEzlH6JCagGx9L6z0wAM/VTfUiwc2DDBY
-a0m1cm8VdndaemQ8TcXQXHxcCa98KU38FCRQY5LJo0t5in/9rU0Fy5koBRqit0rA
-J6x+z74f8m+EwfarbqmKdbCfS8w66JE7XkdiTT9k257QB7FcWtbGXMS1N+JcMdVu
-sUFsbGx/JEbonsjDB9o/QGc/ElI0gGAjDCUyty2jg+N/l1xNlU3Qh/oRAWvk8pex
-R5od2rAS4eOWjBbYQ1wKU2RefEQkrgUW8QwoFDKoiGeUM4uCi4XrkIsJSroo8AwS
-EZfgALjxEPPdK6Dsr04naNH0wNxMp6SqEjF9gzSDm9RtHuRKWM+44KwTyQxp415D
-pzC//v6QxU3EW7pTgPCs
-=Fub3
+iQIcBAEBCAAGBQJQnGrvAAoJEECxmPOUX5FEvPAP/26bG2Cfnu9U1KB0AJnXbRT9
+jOGA1JcSUO7UKPFKOJDT3Y5A2WQmj3miwkYP3/jrHuz2sIg1jIDtzsmkh6SVsIIo
+fM9TqD4VeR53Z2vVllkXvX/GdtiS32Rn5YZP+DHL6JcJnCzf9lacUNBAqsxCVWwz
+V9nsw/M890SpJh1vbz9e/SNlQPJiG8a/1sa//3x2cSXCOznTkgAwsQu7WhRunK71
+lroxLTFbTGdITcPCefpkryMP26FwFdQHm9gxZy5wrlLhc/fLK2zV+QyXO948kU36
+96fqnQFmDIO3jJuleNWsm6toxarvbL7I0F8hQsEHsogWNvZeX2/kE1BJptxd/oKy
+37zxgWOVlurtWUHXYrpRoQ+cCkLcotE58p1YmdesplC87QvuI6N4baogaXP6DERA
+BFLrebY8kHrTySlbr1m6/zBtX1wM62uKb2nV8c2yIuhnYXRWM2zgLCPCABboHv8A
+1Imq35IWq1LxNt+kmkY/b/5iuh+ZZOHvYW/hxBKm7RKvJg6J9pVjgo9TWQFkzzKu
+l064Y3EtX3wSEoxN/AbT1cDFp7SXH17ncFZSZsR3sTBc6dkRvw+PyQzaLZ4yU+FA
+1ixG+lJZPHansgc4+zmTOx+jVSBlyaKQY4hf1tmkCSOKa011Ol37x+VeXU6wj7k8
+0xCXw+8SlmmaCvv3iAgU
+=tzOI
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__9_Nov_2012_10_53_18_+1100_1.mq6L.2UhwDPvZR--
+--Signature=_Fri__9_Nov_2012_13_31_11_+1100_Y5tZ2doQtlq6sfWf--
