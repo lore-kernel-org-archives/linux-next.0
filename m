@@ -1,60 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the akpm tree
-Date: Fri, 9 Nov 2012 14:43:07 +1100
-Message-ID: <20121109144307.a2a77fcdab8aaa262bf54cd9@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (akpm tree
+ related)
+Date: Fri, 9 Nov 2012 14:58:32 +1100
+Message-ID: <20121109145832.dfdc4985b490290f5e4f185c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Nov_2012_14_43_07_+1100_h2IJ8LbDnL0NJVsl"
+ boundary="Signature=_Fri__9_Nov_2012_14_58_32_+1100_gV4qBXsezaOX2H5+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45463 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58617 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757501Ab2KIDnJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Nov 2012 22:43:09 -0500
+	with ESMTP id S1751178Ab2KID6l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Nov 2012 22:58:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>, Rik van Riel <riel@redhat.com>
 
---Signature=_Fri__9_Nov_2012_14_43_07_+1100_h2IJ8LbDnL0NJVsl
+--Signature=_Fri__9_Nov_2012_14_58_32_+1100_gV4qBXsezaOX2H5+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-After merging the akpm tree, today's linux-next build (powerpc
-allnoconfig - among others) produced this warning:
+After merging the final tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-drivers/of/fdt.c: In function 'of_scan_flat_dt':
-drivers/of/fdt.c:490:10: warning: assignment discards 'const' qualifier fro=
-m pointer target type [enabled by default]
+arch/x86/mm/hugetlbpage.c: In function 'hugetlb_get_unmapped_area_topdown':
+arch/x86/mm/hugetlbpage.c:299:20: error: 'mm' undeclared (first use in this=
+ function)
+arch/x86/mm/hugetlbpage.c:299:20: note: each undeclared identifier is repor=
+ted only once for each function it appears in
 
-Introduced by commit "drivers/of/fdt.c: re-use kernel's kbasename()".
+Caused by commit "mm: use vm_unmapped_area() in hugetlbfs on i386
+architecture".
 
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__9_Nov_2012_14_43_07_+1100_h2IJ8LbDnL0NJVsl
+--Signature=_Fri__9_Nov_2012_14_58_32_+1100_gV4qBXsezaOX2H5+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQnHvLAAoJEECxmPOUX5FEcA8P/jwnQ0BPgRf6LFDncHqgXT4W
-AHP8hPBDBth8gDk94y0MeuWMqKsWtvsoI5ZUL0rMYFIKiwqN/Pu/D0SWoqHyvhS8
-qtR8PVTN+fpsjl85UE+Qr8IY39Wk7A5OVF7FJO2ovAevMEdF6qnwfsDZZWJPscty
-Dp6bCTa8lUblitX92XAWLXOQ5vTJfGdwmn3KIRPaTmbDTfVyz+GlsVJgtKL1LlB6
-5V5nNk7iC2M5IhR4R9FBANmNkSIGdcrJs/61BavQbnbDxciLmjgTHJyD/ZvEWtRV
-xrfuRIGfBBCxCN7zJiqfvkiFtF4flJ53EKvyhVXBpLXQgfIA0LVuMU+35oPPlP6T
-Mb/7GaTLab9gt/d80gSIN14NffuAiGd/XzZ7MH2lFi5+OPCAtJ+VQFq2uRvsc4Wp
-f/HjXob13O3V9nffPKdd6wTF1ab3WBOGxJrRiASLNmYsSpKs3FmS5fD4rwGhyegp
-vebYhNAMjLszHehu454pK3yUQj47I+ljV9cvTa4wdaBeB9jK1YIhw4I2LHeFjuxA
-pVnkEnm+H2Rqco2veApeAQEDlOtG1TKeRFuJB0yFHWqPU+yBPs9pEWjNb5mHGa3w
-GOBRQSCEK5b7tvhIDllW5vHL0ip5gkj1Nd0TKmrvWrJw67+zMEf8/CPNlZjQCHtM
-40TcLkL+9+RCNq+/9T8y
-=4AtW
+iQIcBAEBCAAGBQJQnH9oAAoJEECxmPOUX5FE5JkP/jgXXh9Goiv9HOFNoQkFTZru
+iIVZJPs/RHam5e4SmmSlm0UOgDaHAopdC2W0eCV5xbNhys6InUU4F+2rXWFi9paj
+Ae8LlWWOlDwpylEhR5fVvxAys85AXRx2ZvLomkf9LB9PVksH6y3JyMX78bckuE15
+QpqUC79EaPRDGqx6yNOaU6TLjOI9CbmdInV26UUWR8tdCwOzmCJQBLrtFD9x2op9
+Ym0aswzdc8tRAEFo6lPiNKsI5asTdqTyL/HvGd52iG+3U1oG4LPLusgFBkUD7Usa
+yNsbAAWZ8lzXPWYWLvjwIgvkqhWw2gRvKDgGcGo6GbqehiLxrf647UJmEX6hbJc6
+e9LUv+S6QeHSIv1ry0QwjlUZllh7SEcTZI7QsbgJThrauk477e+4nS2R49fjWexi
+qq99ZvT/+z85f1PT2VBWu5lAG7euxbmMzNnYMiDxtNRmq/DaH8KIloM0EKTN6sOt
+aleAWfTGNMUjcBcOJYXWYzF8f3lwFxm/K13LDiIaIESLe5uAA50ppb2J1XLilQ2P
+chtFAWGYSuhUy9xfv3R+1GZbUCyGBYTzNgVOBod8azd/dq6WENaUYS7EXG2eg+P7
+t7gB65cDamKGqCp64no0lOG8RZ5IKHqbsnSlmdK2h23fPQQc1SSFDwZLym4+pbKK
+8jWoPlm7llqm3VMpRuSV
+=E/fl
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__9_Nov_2012_14_43_07_+1100_h2IJ8LbDnL0NJVsl--
+--Signature=_Fri__9_Nov_2012_14_58_32_+1100_gV4qBXsezaOX2H5+--
