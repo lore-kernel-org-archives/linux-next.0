@@ -1,88 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the pinctrl tree
-Date: Fri, 9 Nov 2012 13:31:11 +1100
-Message-ID: <20121109133111.1070c1062889461152713978@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Fri, 9 Nov 2012 14:39:21 +1100
+Message-ID: <20121109143921.ba7a7d31e17b1db901b4df79@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Nov_2012_13_31_11_+1100_Y5tZ2doQtlq6sfWf"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonas Aaberg <jonas.aberg@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__9_Nov_2012_14_39_21_+1100_0v50tD2MGvcZG92N"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43546 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756648Ab2KIDjc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Nov 2012 22:39:32 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
 
---Signature=_Fri__9_Nov_2012_13_31_11_+1100_Y5tZ2doQtlq6sfWf
+--Signature=_Fri__9_Nov_2012_14_39_21_+1100_0v50tD2MGvcZG92N
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/pinctrl/pinctrl-nomadik.c between commit 241e51ebd3b2
-("pinctrl/nomadik: make independent of prcmu driver") from the pinctrl
-tree and commit 44e47ccf8ab6 ("Merge branch 'next/multiplatform' into
-for-next") from the arm-soc tree.
+After merging the akpm tree, today's linux-next build (powerpc_ppc64_defcon=
+fig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+mm/mmap.c: In function 'SYSC_mmap_pgoff':
+mm/mmap.c:1271:15: error: 'MAP_HUGE_SHIFT' undeclared (first use in this fu=
+nction)
+mm/mmap.c:1271:15: note: each undeclared identifier is reported only once f=
+or each function it appears in
+mm/mmap.c:1271:33: error: 'MAP_HUGE_MASK' undeclared (first use in this fun=
+ction)
+
+Caused by commit 160b36937ca2 ("mm: support more pagesizes for
+MAP_HUGETLB/SHM_HUGETLB").
+
+I have reverted that commit for today (along with the two fix patches).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pinctrl/pinctrl-nomadik.c
-index 33c614e,3ad23fb..0000000
---- a/drivers/pinctrl/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/pinctrl-nomadik.c
-@@@ -30,10 -30,23 +30,9 @@@
-  #include <linux/pinctrl/pinconf.h>
-  /* Since we request GPIOs from ourself */
-  #include <linux/pinctrl/consumer.h>
- -/*
- - * For the U8500 archs, use the PRCMU register interface, for the older
- - * Nomadik, provide some stubs. The functions using these will only be
- - * called on the U8500 series.
- - */
- -#ifdef CONFIG_ARCH_U8500
- -#include <linux/mfd/dbx500-prcmu.h>
- -#else
- -static inline u32 prcmu_read(unsigned int reg) {
- -	return 0;
- -}
- -static inline void prcmu_write(unsigned int reg, u32 value) {}
- -static inline void prcmu_write_masked(unsigned int reg, u32 mask, u32 val=
-ue) {}
- -#endif
-  #include <linux/platform_data/pinctrl-nomadik.h>
--=20
-  #include <asm/mach/irq.h>
--=20
-+ #include <mach/irqs.h>
-  #include "pinctrl-nomadik.h"
- =20
-  /*
-
---Signature=_Fri__9_Nov_2012_13_31_11_+1100_Y5tZ2doQtlq6sfWf
+--Signature=_Fri__9_Nov_2012_14_39_21_+1100_0v50tD2MGvcZG92N
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQnGrvAAoJEECxmPOUX5FEvPAP/26bG2Cfnu9U1KB0AJnXbRT9
-jOGA1JcSUO7UKPFKOJDT3Y5A2WQmj3miwkYP3/jrHuz2sIg1jIDtzsmkh6SVsIIo
-fM9TqD4VeR53Z2vVllkXvX/GdtiS32Rn5YZP+DHL6JcJnCzf9lacUNBAqsxCVWwz
-V9nsw/M890SpJh1vbz9e/SNlQPJiG8a/1sa//3x2cSXCOznTkgAwsQu7WhRunK71
-lroxLTFbTGdITcPCefpkryMP26FwFdQHm9gxZy5wrlLhc/fLK2zV+QyXO948kU36
-96fqnQFmDIO3jJuleNWsm6toxarvbL7I0F8hQsEHsogWNvZeX2/kE1BJptxd/oKy
-37zxgWOVlurtWUHXYrpRoQ+cCkLcotE58p1YmdesplC87QvuI6N4baogaXP6DERA
-BFLrebY8kHrTySlbr1m6/zBtX1wM62uKb2nV8c2yIuhnYXRWM2zgLCPCABboHv8A
-1Imq35IWq1LxNt+kmkY/b/5iuh+ZZOHvYW/hxBKm7RKvJg6J9pVjgo9TWQFkzzKu
-l064Y3EtX3wSEoxN/AbT1cDFp7SXH17ncFZSZsR3sTBc6dkRvw+PyQzaLZ4yU+FA
-1ixG+lJZPHansgc4+zmTOx+jVSBlyaKQY4hf1tmkCSOKa011Ol37x+VeXU6wj7k8
-0xCXw+8SlmmaCvv3iAgU
-=tzOI
+iQIcBAEBCAAGBQJQnHrpAAoJEECxmPOUX5FEN6oQAIxvD/4i95FkzSBA4OSDXfAW
+Xy0IwovnLj+lO4ZO9IvW5Jvs9YYzzIrDYgHzmC//S+YGQ3lZnWElnlaKyjRnoR3B
+691bvQPd2EzZ8gSGkmabs9UE5Kal6mnd8IfYVagrxlUjip9jV+X8mJPF0MHMVPvw
+vIvKBItYi4/SSjNJEHqShghxYZ/iM1/D6bBF+Nx/d2uYgWc6A4pIWB52CBM0JVjP
+Pjo5XdIBbItudy/j85dD8NAYj4NzdUcTOFI2M4Ukk3BmTtMZPcloHgu/JRNVLrWB
+wFTbTJ6c/DjTkaDselNKeeIi7Hs3OIz2Pv+zS/ZujKmMIyNQsp6ccEgNwoJV0DA3
+v8C7BgDSuu9JbbRrDoG+JzmK8IRLlRX/+zV1NhuJifa6B7qwE7FVo4XWNDnC3ezj
+e0LuOjdnpFY2y/FDBozvWIsxBm8FNwd9FvKVy0+zNC8UV3+e+V/klHPwt0JjkWXD
+Uf6hWmhOfNFr80tCEZZRXLuIRomdkSxtTk9P5ontsKaSEPkMeidmgFFqUFa2m7R1
+ClCh6kPa7yC0lxC2dOm1qmB26NQOItjB/Mo1D8SioWm4wgDAAQMhhK2XfKwAg3pX
+Gm/jnxq01JgmVqvBjbAFqlWsLLXy9ezK8YtsEtGEC9MInC6GQW8PydNkxJ3Jc7ca
++ddFpp/rKfqClo1WoxgV
+=1jER
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__9_Nov_2012_13_31_11_+1100_Y5tZ2doQtlq6sfWf--
+--Signature=_Fri__9_Nov_2012_14_39_21_+1100_0v50tD2MGvcZG92N--
