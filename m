@@ -1,60 +1,119 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the final tree (akpm tree
- related)
-Date: Fri, 9 Nov 2012 15:19:03 +1100
-Message-ID: <20121109151903.19728e9a7a8fe9e509bb523e@canb.auug.org.au>
+From: Michel Lespinasse <walken@google.com>
+Subject: Re: linux-next: build warning after merge of the final tree (akpm
+ tree related)
+Date: Thu, 8 Nov 2012 20:30:47 -0800
+Message-ID: <20121109043047.GA17999@google.com>
+References: <20121109151903.19728e9a7a8fe9e509bb523e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Nov_2012_15_19_03_+1100_Lu5a4.Ib7=xRhmj="
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39985 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751439Ab2KIETF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Nov 2012 23:19:05 -0500
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:56659 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751439Ab2KIEav (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Nov 2012 23:30:51 -0500
+Received: by mail-pa0-f46.google.com with SMTP id hz1so2491432pad.19
+        for <linux-next@vger.kernel.org>; Thu, 08 Nov 2012 20:30:51 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20121109151903.19728e9a7a8fe9e509bb523e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>, Rik van Riel <riel@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rik van Riel <riel@redhat.com>
 
---Signature=_Fri__9_Nov_2012_15_19_03_+1100_Lu5a4.Ib7=xRhmj=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Nov 09, 2012 at 03:19:03PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (arm defconfig)
+> produced this warning:
+> 
+> arch/arm/mm/mmap.c: In function 'arch_get_unmapped_area':
+> arch/arm/mm/mmap.c:60:16: warning: unused variable 'start_addr' [-Wunused-variable]
+> 
+> Introduced by commit "mm: use vm_unmapped_area() on arm architecture".
 
-Hi all,
+Sorry for the mistakes. The following changes should fix what's been reported so far.
 
-After merging the final tree, today's linux-next build (arm defconfig)
-produced this warning:
+commit 1c98949798ce7a1d4a910775623e1830cf88a92c
+Author: Michel Lespinasse <walken@google.com>
+Date:   Thu Nov 8 20:26:34 2012 -0800
 
-arch/arm/mm/mmap.c: In function 'arch_get_unmapped_area':
-arch/arm/mm/mmap.c:60:16: warning: unused variable 'start_addr' [-Wunused-v=
-ariable]
+    fix mm: use vm_unmapped_area() on sparc32 architecture
 
-Introduced by commit "mm: use vm_unmapped_area() on arm architecture".
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+diff --git a/arch/sparc/kernel/sys_sparc_32.c b/arch/sparc/kernel/sys_sparc_32.c
+index a59bc637f9af..a20b5ab4c701 100644
+--- a/arch/sparc/kernel/sys_sparc_32.c
++++ b/arch/sparc/kernel/sys_sparc_32.c
+@@ -38,7 +38,6 @@ asmlinkage unsigned long sys_getpagesize(void)
+ 
+ unsigned long arch_get_unmapped_area(struct file *filp, unsigned long addr, unsigned long len, unsigned long pgoff, unsigned long flags)
+ {
+-	struct vm_area_struct * vmm;
+ 	struct vm_unmapped_area_info info;
+ 
+ 	if (flags & MAP_FIXED) {
 
---Signature=_Fri__9_Nov_2012_15_19_03_+1100_Lu5a4.Ib7=xRhmj=
-Content-Type: application/pgp-signature
+commit aa96ebbc9ec664ddafc841f7631c4a092b10c0d8
+Author: Michel Lespinasse <walken@google.com>
+Date:   Thu Nov 8 20:25:48 2012 -0800
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+    fix mm: use vm_unmapped_area() in hugetlbfs on sparc64 architecture
 
-iQIcBAEBCAAGBQJQnIQ3AAoJEECxmPOUX5FEOOIP/16I0DWBS/t8NFnN6C/TPT3l
-CiDlfNej45s87xXA1jh5xx1EhQtCufoL6n1Yrsxea9HsHfa+PaswDsEExBazfA01
-rRXGEjl/FixLvfreyUjhdhB9jYJxwaU/yKPXqmH3SBnf132csWEu5blJAhT2Fmac
-3evEahgYQUiQtJ8DML8uwnznd3I2MtsB9Ibl/80fsx9vVnR8sIcntCRCuhHva1BS
-BSNK0mRcusdLX5WTvhd+mpPXno43qRyi3PlhK8uO2nrS10dFGzrBZiGP6cCs/sYS
-DrM74XgrMHl2RY/1MtgqDhSUo2YcavZOqsC2yhshU4DW+srGBZkkVTPHgKcrkjvp
-bfw/xGbE+kCuTi39RBrbQ7dFtpRrL9FjIvmu6x5Q7WJynsSeG6FRc8Px5hUaw31X
-oXygGgHSGhqo0k7t/JCy1z3eJiXWpO5da1lynL4wnKbNp6jj794pCyRrfPGB2lu/
-6gEmS6PSl+ednImvWUhSbndqAlVS0++GSgsi/Yd6os5/NO1TjRn1xB93V4DQaLWP
-vbY0plxhVuzPZs1aVI143lTbnOtwhxKcvRjsdNw0uKxX/mNocO4d3KvLOJEImThO
-XEdk1SdKYfqvxPNLO3NRHy5ovIfjqU8XDgnPfflQTjGrZ8Z6OXumgw4RSwq35Qtx
-NE9iXncOhXH6mQkX/Cly
-=0aGI
------END PGP SIGNATURE-----
+diff --git a/arch/sparc/mm/hugetlbpage.c b/arch/sparc/mm/hugetlbpage.c
+index 42e5dba6cb26..d2b59441ebdd 100644
+--- a/arch/sparc/mm/hugetlbpage.c
++++ b/arch/sparc/mm/hugetlbpage.c
+@@ -60,7 +60,6 @@ hugetlb_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
+ 				  const unsigned long pgoff,
+ 				  const unsigned long flags)
+ {
+-	struct vm_area_struct *vma;
+ 	struct mm_struct *mm = current->mm;
+ 	unsigned long addr = addr0;
+ 	struct vm_unmapped_area_info info;
 
---Signature=_Fri__9_Nov_2012_15_19_03_+1100_Lu5a4.Ib7=xRhmj=--
+commit ff4dd9742ce0a5f7c703013e70eeb84b845c8fa2
+Author: Michel Lespinasse <walken@google.com>
+Date:   Thu Nov 8 20:24:53 2012 -0800
+
+    mm-use-vm_unmapped_area-on-sparc64-architecture-fix2
+
+diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_sparc_64.c
+index 2a5d61587ca2..a836ee967ecb 100644
+--- a/arch/sparc/kernel/sys_sparc_64.c
++++ b/arch/sparc/kernel/sys_sparc_64.c
+@@ -89,7 +89,6 @@ unsigned long arch_get_unmapped_area(struct file *filp, unsigned long addr, unsi
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct * vma;
+ 	unsigned long task_size = TASK_SIZE;
+-	unsigned long start_addr;
+ 	int do_color_align;
+ 	struct vm_unmapped_area_info info;
+ 
+@@ -191,7 +190,7 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
+ 	info.length = len;
+ 	info.low_limit = PAGE_SIZE;
+ 	info.high_limit = mm->mmap_base;
+-	info.align_mask = do_colour_align ? (PAGE_MASK & shm_align_mask) : 0;
++	info.align_mask = do_color_align ? (PAGE_MASK & (SHMLBA - 1)) : 0;
+ 	info.align_offset = pgoff << PAGE_SHIFT;
+ 	addr = vm_unmapped_area(&info);
+ 
+
+commit ed558f3723a4ac2fb71d6c8fc70116994af6e61d
+Author: Michel Lespinasse <walken@google.com>
+Date:   Thu Nov 8 20:22:36 2012 -0800
+
+    mm-use-vm_unmapped_area-on-arm-architecture-fix2
+
+diff --git a/arch/arm/mm/mmap.c b/arch/arm/mm/mmap.c
+index f4fec6d43d50..10062ceadd1c 100644
+--- a/arch/arm/mm/mmap.c
++++ b/arch/arm/mm/mmap.c
+@@ -57,7 +57,6 @@ arch_get_unmapped_area(struct file *filp, unsigned long addr,
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma;
+-	unsigned long start_addr;
+ 	int do_align = 0;
+ 	int aliasing = cache_is_vipt_aliasing();
+ 	struct vm_unmapped_area_info info;
