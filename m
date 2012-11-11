@@ -1,69 +1,78 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: linux-next: manual merge of the pinctrl tree with the slave-dma tree
-Date: Mon, 12 Nov 2012 09:05:00 +0530
-Message-ID: <CAKohponChNTOw=h6V1wka9vO0n8QWObX4O9PjDfir8Fr8gidEA@mail.gmail.com>
-References: <20121112141503.6539e4170839e8f18910bb8d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [next:akpm 136/313] mm/mmap.c:1878:6: error: 'mm' undeclared
+Date: Mon, 12 Nov 2012 10:42:51 +1100
+Message-ID: <20121112104251.096430979a05e998f1947077@canb.auug.org.au>
+References: <509c9bb9.+RUyEEi+hJKJghoL%fengguang.wu@intel.com>
+	<20121109062150.GA7022@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121112141503.6539e4170839e8f18910bb8d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, spear-devel <spear-devel@list.st.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__12_Nov_2012_10_42_51_+1100_1/1uKHOcWBSy_apX"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43799 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751365Ab2KLD40 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Nov 2012 22:56:26 -0500
+In-Reply-To: <20121109062150.GA7022@google.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michel Lespinasse <walken@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 12 November 2012 08:45, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Linus,
->
-> Today's linux-next merge of the pinctrl tree got a conflict in
-> arch/arm/boot/dts/spear1340.dtsi between commit b47394911c26 ("ARM:
-> SPEAr13xx: Pass DW DMAC platform data from DT") from the slave-dma tree and commit
-> 4ddb1c295752 ("ARM: SPEAr: Add plgpio node in device tree dtsi files")
-> from the pinctrl tree.
->
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Signature=_Mon__12_Nov_2012_10_42_51_+1100_1/1uKHOcWBSy_apX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Stephen. It looks perfectly fine. Thanks for keeping ascending order
-of node names. :)
+On Thu, 8 Nov 2012 22:21:50 -0800 Michel Lespinasse <walken@google.com> wro=
+te:
+>
+> commit 34550b95185c1ecfa8882664744c14edda385868
+> Author: Michel Lespinasse <walken@google.com>
+> Date:   Thu Nov 8 22:14:34 2012 -0800
+>=20
+>     fix mm: augment vma rbtree with rb_subtree_gap
+>=20
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index d12c69eaf23f..0b8f9d83e2e2 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2032,7 +2032,7 @@ int expand_upwards(struct vm_area_struct *vma, unsi=
+gned long address)
+>  				if (vma->vm_next)
+>  					vma_gap_update(vma->vm_next);
+>  				else
+> -					mm->highest_vm_end =3D address;
+> +					vma->vm_mm->highest_vm_end =3D address;
+>  				perf_event_mmap(vma);
+>  			}
+>  		}
 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->
-> diff --cc arch/arm/boot/dts/spear1340.dtsi
-> index 8ea3f66,6c09eb0..0000000
-> --- a/arch/arm/boot/dts/spear1340.dtsi
-> +++ b/arch/arm/boot/dts/spear1340.dtsi
-> @@@ -24,25 -24,12 +24,31 @@@
->                         status = "disabled";
->                 };
->
->  +              dma@ea800000 {
->  +                      slave_info {
->  +                              uart1_tx {
->  +                                      bus_id = "uart1_tx";
->  +                                      cfg_hi = <0x6000>;      /* 0xC << 11 */
->  +                                      cfg_lo = <0>;
->  +                                      src_master = <0>;
->  +                                      dst_master = <1>;
->  +                              };
->  +                              uart1_tx {
->  +                                      bus_id = "uart1_tx";
->  +                                      cfg_hi = <0x680>;       /* 0xD << 7 */
->  +                                      cfg_lo = <0>;
->  +                                      src_master = <1>;
->  +                                      dst_master = <0>;
->  +                              };
->  +                      };
->  +              };
->  +
-> +               pinmux: pinmux@e0700000 {
-> +                       compatible = "st,spear1340-pinmux";
-> +                       reg = <0xe0700000 0x1000>;
-> +                       #gpio-range-cells = <2>;
-> +               };
-> +
->                 spi1: spi@5d400000 {
->                         compatible = "arm,pl022", "arm,primecell";
->                         reg = <0x5d400000 0x1000>;
+Added to the akpm tree today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__12_Nov_2012_10_42_51_+1100_1/1uKHOcWBSy_apX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQoDf7AAoJEECxmPOUX5FEAdQQAIYVxGU65e77v4WVRdPze1dR
+qXt3sCTwl1KE/FB7mNCaOS26umH3ItE/RHin0eb/iS+5vNaPUD6orXfYRNmXXr3m
+9xAHdIdLNogC6H7RHc1Vxm9sH7EDbR5KwV0gFbeBBflcm98fsVfPi5x6IEKmRhUx
+0Oj4n7mIWjBZ8QUf8jksMR+cVILix4ooeTbjW/MQ+SVyfaIf0M7gCpVo3YWWFpN7
+bUhujUzklMKfBj2FHut0JzUfq6HUA9LHe7rh5zIq7wPoSe13K9db/dGybwu6a20J
+XVY0xm6Bti3lXcOlrPpz59DpFCd9UJ1qcmlTJGXC2p0adZB2rSuITur2ZtIKCmCd
+fpjkirySmK/FE3vYH+4MHXxSxXbxYDpdbOkUTIBMyPHFbXFTtU4oxkvZ6Y4gjBY1
+GFZoUm3S+mTGhqot8GtA8fCMWsHDAEUKhYVKfeh5dBuf3WEaLN/GEB8LtUP6fj7R
+Aoih+We1OnQAFF9awFSDcIggekLs3kII5TR5eEKkUlIrnoLGB9seRO80Jqh76F0j
+hN7QdyURFj+WSYYJthjtU/8kVgMKFLr4slTxQ+wJp9lVAM45KLm3aEMnJI8UGMgh
+zX58esjpB28OlmBmnm41xtun2EhXQ429O8gpPLNX2iUExWrhdLtk87UMtPfCImm8
+l392FeOJ17xDduwJ5Z+L
+=XahQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__12_Nov_2012_10_42_51_+1100_1/1uKHOcWBSy_apX--
