@@ -1,85 +1,40 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH linux-next] ARM: OMAP2: Fix compillation error in
- cm_common
-Date: Mon, 12 Nov 2012 09:38:47 -0800
-Message-ID: <20121112173847.GJ6801@atomide.com>
-References: <1352733428-27889-1-git-send-email-peter.ujfalusi@ti.com>
- <alpine.DEB.2.00.1211121625150.6043@utopia.booyaka.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm tree with the block tree
+Date: Mon, 12 Nov 2012 13:07:27 -0800
+Message-ID: <20121112130727.e063fa37.akpm@linux-foundation.org>
+References: <20121112151540.16dd14cd1eef76432c098e8a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:37450 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753891Ab2KLRiw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Nov 2012 12:38:52 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.00.1211121625150.6043@utopia.booyaka.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44261 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752099Ab2KLVH3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Nov 2012 16:07:29 -0500
+In-Reply-To: <20121112151540.16dd14cd1eef76432c098e8a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Walmsley <paul@pwsan.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Maxim Levitsky <maximlevitsky@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-* Paul Walmsley <paul@pwsan.com> [121112 08:27]:
-> Hi
->=20
-> On Mon, 12 Nov 2012, Peter Ujfalusi wrote:
->=20
-> > Fixes the following error:
-> >   CC      arch/arm/mach-omap2/cm_common.o
-> > arch/arm/mach-omap2/cm_common.c: In function =E2=80=98cm_register=E2=
-=80=99:
-> > arch/arm/mach-omap2/cm_common.c:42:11: error: =E2=80=98EINVAL=E2=80=
-=99 undeclared (first use in this function)
-> > arch/arm/mach-omap2/cm_common.c:42:11: note: each undeclared identi=
-fier is reported only once for each function it appears in
-> > arch/arm/mach-omap2/cm_common.c:45:11: error: =E2=80=98EEXIST=E2=80=
-=99 undeclared (first use in this function)
-> > arch/arm/mach-omap2/cm_common.c: In function =E2=80=98cm_unregister=
-=E2=80=99:
-> > arch/arm/mach-omap2/cm_common.c:66:11: error: =E2=80=98EINVAL=E2=80=
-=99 undeclared (first use in this function)
-> > make[1]: *** [arch/arm/mach-omap2/cm_common.o] Error 1
-> > make: *** [arch/arm/mach-omap2] Error 2
-> >=20
-> > Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> > ---
-> >=20
-> > Hi,
-> >=20
-> > with today's linux-next the kernel build failed with the abive erro=
-r for OMAP.
-> >=20
-> > Regards,
-> > Peter
-> >=20
-> >  arch/arm/mach-omap2/cm_common.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/arch/arm/mach-omap2/cm_common.c b/arch/arm/mach-omap2/=
-cm_common.c
-> > index 3246cef..3fafc27 100644
-> > --- a/arch/arm/mach-omap2/cm_common.c
-> > +++ b/arch/arm/mach-omap2/cm_common.c
-> > @@ -13,6 +13,7 @@
-> > =20
-> >  #include <linux/kernel.h>
-> >  #include <linux/init.h>
-> > +#include <linux/errno.h>
-> > =20
-> >  #include "cm2xxx.h"
-> >  #include "cm3xxx.h"
-> > --=20
-> > 1.8.0
->=20
-> Acked-by: Paul Walmsley <paul@pwsan.com>
->=20
-> Thanks Peter.
->=20
-> Tony, how would you like to handle this one?
+On Mon, 12 Nov 2012 15:15:40 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-I can queue it.
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm tree got a conflict in
+> drivers/memstick/core/ms_block.h between commit 0604fa04ccc7 ("memstick:
+> add support for legacy memorysticks") that use to be in the block tree
+> and commits "memstick: remove unused field from state struct", "memstick:
+> ms_block: fix compile issue", "memstick: use after free in
+> msb_disk_release()" and "memstick: memory leak on error in msb_ftl_scan
+> ()" from the akpm tree.
+> 
+> The block tree commit has been dropped, so the 4 akpm tree patches no
+> longer have anything to apply to, so I have dropped them.
 
-Regards,
+Confused.  Who dropped "memstick: add support for legacy memorysticks"?
+You, or Jens?
 
-Tony
+Assuming the block-tree memstick patches will rematerialise, I'll send
+those patches at Jens.
