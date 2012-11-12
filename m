@@ -1,35 +1,73 @@
-From: Steven Rostedt <rostedt@goodmis.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: ftrace next tree request
-Date: Mon, 12 Nov 2012 16:52:56 -0500
-Message-ID: <1352757176.18025.11.camel@gandalf.local.home>
+Date: Tue, 13 Nov 2012 10:05:13 +1100
+Message-ID: <20121113100513.acb69c8be5a2e88ef1fe472d@canb.auug.org.au>
 References: <1352745934.18025.8.camel@gandalf.local.home>
-	 <20121113084749.a1c6f250556e28100f870e29@canb.auug.org.au>
+	<20121113084749.a1c6f250556e28100f870e29@canb.auug.org.au>
+	<1352757176.18025.11.camel@gandalf.local.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__13_Nov_2012_10_05_13_+1100_/yoaGs_deUSsFPVv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:8800 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751783Ab2KLVw6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Nov 2012 16:52:58 -0500
-In-Reply-To: <20121113084749.a1c6f250556e28100f870e29@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46367 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752157Ab2KLXFW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Nov 2012 18:05:22 -0500
+In-Reply-To: <1352757176.18025.11.camel@gandalf.local.home>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On Tue, 2012-11-13 at 08:47 +1100, Stephen Rothwell wrote:
+--Signature=_Tue__13_Nov_2012_10_05_13_+1100_/yoaGs_deUSsFPVv
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> As this seems to be based on things in the tip tree, I have positioned it
-> after that tree.
+Hi Steve,
 
-Yes it is. Sorry I should have reported that. But as Ingo hasn't been
-seen since Oct 30th (I think he's on vacation), and my code is just
-sitting in limbo on LKML, I figured I start getting it tested for 3.8, 
-and not wait for Ingo to pull it into tip.
+On Mon, 12 Nov 2012 16:52:56 -0500 Steven Rostedt <rostedt@goodmis.org> wro=
+te:
+>
+> On Tue, 2012-11-13 at 08:47 +1100, Stephen Rothwell wrote:
+>=20
+> > As this seems to be based on things in the tip tree, I have positioned =
+it
+> > after that tree.
+>=20
+> Yes it is. Sorry I should have reported that. But as Ingo hasn't been
+> seen since Oct 30th (I think he's on vacation), and my code is just
+> sitting in limbo on LKML, I figured I start getting it tested for 3.8,=20
+> and not wait for Ingo to pull it into tip.
+>=20
+> I plan on doing this for other releases too.
 
-I plan on doing this for other releases too.
+Not a problem.
 
-Thanks!
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- Steve
+--Signature=_Tue__13_Nov_2012_10_05_13_+1100_/yoaGs_deUSsFPVv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQoYCpAAoJEECxmPOUX5FE7IAP/RHJxj/2P2w0ix/lSM35rx/q
+dT/cOsKC1FTeXlJ/qVeceEdIB3iXYWRp9lNbh3unf/9vHLW7XZs3xewSwIbXB+aF
+9FvxElJri1dejpquExjq5zokFJ+0MyNdJZwjEf4ZSPH7Tv52uL6EJ9HpKVD8vKHd
+5Jz1y0ncNgvjkJbLU0ZPZampB17fHJmGH8fhV6rkGvWEqM5QZREEQzX15wPHjdnK
+xpM9OYLNpYnc7+Xj416FC3LGGBS0KRU+8eksKGmdh0Hq0kHqgGwLnvyV1xS0VA9B
+tDiMcvTPmfWqtjt+7HcGmnNvBW8OgNKNPRd8y/5yTOtm9wuR7qSzWaCi1LAgN/fs
+YzLRu6FYjJeDq1dv/4Slgh7qEsT/z2zH3AaAXo5Su/7xqIFHTpvKH5gcooRek97+
+sfuNissFWdp/otGo6AS7LX9HhE4j4cno9bkTk7boA56coYYcKsznbZPqp0XShAga
+zzQbAgfCA8l1IP+eiz6eBDdZTuS38AARjKfU29aVqDsomJsMz1nzDdDc3S0Hgky6
++pqTrvZV3VkRMtJ5ZtdCTPNIqW6I2/GlExNfMKaaaf2pJBYB6hbzocE7NRa4JCrc
+10l4D8gHUS0HTxIz9nc+NjMlW/ScMw3RKyzVRrVZCvlDQJYVZ+FfZ6G+2cfDtte8
+bQ/3TFmls/Nwa9NWXmk3
+=wOee
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__13_Nov_2012_10_05_13_+1100_/yoaGs_deUSsFPVv--
