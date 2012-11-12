@@ -1,40 +1,49 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Jens Axboe <axboe@kernel.dk>
 Subject: Re: linux-next: manual merge of the akpm tree with the block tree
-Date: Mon, 12 Nov 2012 13:07:27 -0800
-Message-ID: <20121112130727.e063fa37.akpm@linux-foundation.org>
-References: <20121112151540.16dd14cd1eef76432c098e8a@canb.auug.org.au>
+Date: Mon, 12 Nov 2012 14:20:17 -0700
+Message-ID: <50A16811.10503@kernel.dk>
+References: <20121112151540.16dd14cd1eef76432c098e8a@canb.auug.org.au> <20121112130727.e063fa37.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44261 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752099Ab2KLVH3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Nov 2012 16:07:29 -0500
-In-Reply-To: <20121112151540.16dd14cd1eef76432c098e8a@canb.auug.org.au>
+Received: from merlin.infradead.org ([205.233.59.134]:56778 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754124Ab2KLVUd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Nov 2012 16:20:33 -0500
+In-Reply-To: <20121112130727.e063fa37.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Maxim Levitsky <maximlevitsky@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-On Mon, 12 Nov 2012 15:15:40 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Andrew,
+On 2012-11-12 14:07, Andrew Morton wrote:
+> On Mon, 12 Nov 2012 15:15:40 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> Today's linux-next merge of the akpm tree got a conflict in
-> drivers/memstick/core/ms_block.h between commit 0604fa04ccc7 ("memstick:
-> add support for legacy memorysticks") that use to be in the block tree
-> and commits "memstick: remove unused field from state struct", "memstick:
-> ms_block: fix compile issue", "memstick: use after free in
-> msb_disk_release()" and "memstick: memory leak on error in msb_ftl_scan
-> ()" from the akpm tree.
+>> Hi Andrew,
+>>
+>> Today's linux-next merge of the akpm tree got a conflict in
+>> drivers/memstick/core/ms_block.h between commit 0604fa04ccc7 ("memstick:
+>> add support for legacy memorysticks") that use to be in the block tree
+>> and commits "memstick: remove unused field from state struct", "memstick:
+>> ms_block: fix compile issue", "memstick: use after free in
+>> msb_disk_release()" and "memstick: memory leak on error in msb_ftl_scan
+>> ()" from the akpm tree.
+>>
+>> The block tree commit has been dropped, so the 4 akpm tree patches no
+>> longer have anything to apply to, so I have dropped them.
 > 
-> The block tree commit has been dropped, so the 4 akpm tree patches no
-> longer have anything to apply to, so I have dropped them.
+> Confused.  Who dropped "memstick: add support for legacy memorysticks"?
+> You, or Jens?
 
-Confused.  Who dropped "memstick: add support for legacy memorysticks"?
-You, or Jens?
+I dropped it for 3.7 submission, that's why it disappeared from my
+for-next.
 
-Assuming the block-tree memstick patches will rematerialise, I'll send
-those patches at Jens.
+> Assuming the block-tree memstick patches will rematerialise, I'll send
+> those patches at Jens.
+
+Thanks, I'll queue them up.
+
+-- 
+Jens Axboe
