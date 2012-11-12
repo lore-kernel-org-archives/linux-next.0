@@ -1,61 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: comment on the mips tree
-Date: Mon, 12 Nov 2012 09:49:25 +1100
-Message-ID: <20121112094925.e374a7f7b51df1738c152026@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 12 Nov 2012 11:09:35 +1100
+Message-ID: <20121112110935.eee5f582f16ab07c9faeabb1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__12_Nov_2012_09_49_25_+1100_bf4n4U33mc2VkyF4"
+ boundary="Signature=_Mon__12_Nov_2012_11_09_35_+1100_r.XhkYmBkL.eNKL1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58764 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:39123 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751396Ab2KKWte (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Nov 2012 17:49:34 -0500
+	with ESMTP id S1751245Ab2KLAJi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Nov 2012 19:09:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__12_Nov_2012_09_49_25_+1100_bf4n4U33mc2VkyF4
+--Signature=_Mon__12_Nov_2012_11_09_35_+1100_r.XhkYmBkL.eNKL1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi Mauro,
 
-After fetching the mips tree today I had a look at the changes (as I
-often do when I fetch all trees) and noticed that today's changes are to
-add 6 new patches to your mips-for-linux-next branch and then to merge
-another branch (current/for-linus) that contains only those same six
-patches.  :-(
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-You really only needed to do one of those two things - and preferably the
-second (assuming that you intend to submit that second branch to Linus
-shortly).
+ERROR: "sms_ir_exit" [drivers/media/common/siano/smsmdtv.ko] undefined!
+ERROR: "sms_ir_event" [drivers/media/common/siano/smsmdtv.ko] undefined!
+ERROR: "sms_ir_init" [drivers/media/common/siano/smsmdtv.ko] undefined!
 
+This is better than Friday, but still not quite there. :-(
+
+I have used the v4l-dvb tree from next-20121026 again.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__12_Nov_2012_09_49_25_+1100_bf4n4U33mc2VkyF4
+--Signature=_Mon__12_Nov_2012_11_09_35_+1100_r.XhkYmBkL.eNKL1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQoCt1AAoJEECxmPOUX5FECyQP/RpcQT4vy3uP6urrX/M7VSAU
-AYR326Jent1SN9Bp1aOrkHtxt6pfpovtHY30piJ6C3D3tmAgCm9y+/ZNkZS5zNng
-yo0pbQIE67vCL4JThyvg7zo/SE5yDKpt+/wKXoIW+hCvO6I638GTmV0ArGvmZE/n
-lrC7wUrg+vjVkMMmRKaeRy59MEKhJHgY49C4iETNgqTNLtQWDJCcruiByq7/gdzJ
-yjA2YI7M0Nrx70ps0TxrNS8+V07NoUNhv2cmaJR3Y6ioGFQVjT1d0ld7iXMI6KkS
-EzliiqTPI17Sj3niwlBVyDH4AfWWqHStHfSH6vVEYBflgLmVvfm8CXF09X/WtJGL
-knW043fHvSJ4xer/97izRiSyGNbfr1a/lYfyf4NiruYbZZgQw11olbeZetasEZaB
-znHkc2WF/NAAmx1rJFeBSrWblSJCsggPvpkNaVPGAu+hrCAEKBrQSrKbQPcgSvNV
-NLPpsOmRK2E/TtT+cB1RnCBQ/5KL4h4NPcf4ZBk3IUL0Vn0rk5xSlL4IBmqGdtGs
-2PMCVbFpsbPhRRDZgmXcSx21br6wx6mV6aZi7a9tR0sJSPBH57rx0cQ1m22l5en6
-Ot2NI8pa5sLI0sxj+tgqHOe3r7srOtu6D/H9Y6bs0IONjqlOiYgSBd2ly6EHkQQ5
-uFsvrrjOpp6Ep3+7j3ta
-=xJop
+iQIcBAEBCAAGBQJQoD4/AAoJEECxmPOUX5FEvGgP/07RGSo63kAMbiw+MOV5mmYi
+WIueVbF3lNNC4XQvmO5oV3sjkzg6aURpPTtXBg1/TjI70jqCgao44AHBOw5DLhlm
+MxNkC+Gp3PtMGaTURnw3uWz2QiKMqMc3cOH6BQkfCWWoEoZsp3PRqxbEUGsUuqNJ
+IRo5ohaJAoBYF0Ub3VWgjAffRuS2wJRnNErc0EsEj+5bdcIwAzuiqWXYyavcdYs2
+MLOMRKEPoz7QmB8uYTYmMzr1A2AUDqP0VIfnBJIctWZSRbUBSHbQRX1b7u4+JbK4
+isP4P7UqhofaPVnOKVtLOYvPpQmQ7zXGgUUCUke79l3LhE7o2Dp41FVoPcpE45ZU
+dmc7LEpowufRuUQk0K0pU4Kz/LSAho4cVB3KE8xrLmWnOxRYoIHiWQmlKVZrMUsm
+sgAvg+ffq8vbCfufX/xagov7efXF0DL8IIOTl1Q1aVjKwOAcyPahZJdaJ74dXWTA
+Yl/TsqqybxypZXh23/DFR0rrkSiBrKKYOgHn2M1wLC67y8YeBsE/6uGXUS42TNui
+qEa26uUUyvR5jTLBeej2CPF7TqTl8LOPxjOjyaMfu+hGYTQROr6uljRGK8oelusH
+MdAP1rjaJ3PNqFy9+Lrwpy2Cp5EjQxJdEk9rTaLyhKsi8piec3Cn4pJF9a9LpfDb
+DQCw+zpW6bmfk6rf8lks
+=67qG
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__12_Nov_2012_09_49_25_+1100_bf4n4U33mc2VkyF4--
+--Signature=_Mon__12_Nov_2012_11_09_35_+1100_r.XhkYmBkL.eNKL1--
