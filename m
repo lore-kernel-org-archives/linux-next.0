@@ -1,148 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the final tree (akpm
- tree related)
-Date: Mon, 12 Nov 2012 10:49:46 +1100
-Message-ID: <20121112104946.7b32bfa5724398b6f0363567@canb.auug.org.au>
-References: <20121109151903.19728e9a7a8fe9e509bb523e@canb.auug.org.au>
-	<20121109043047.GA17999@google.com>
+Subject: linux-next: manual merge of the akpm tree with the block tree
+Date: Mon, 12 Nov 2012 15:15:40 +1100
+Message-ID: <20121112151540.16dd14cd1eef76432c098e8a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__12_Nov_2012_10_49_46_+1100_sL8o5H1fobsl2.ST"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121109043047.GA17999@google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michel Lespinasse <walken@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rik van Riel <riel@redhat.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__12_Nov_2012_15_15_40_+1100_JE7Vxkqc3QeBwZWq"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:55273 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751365Ab2KLEPu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Nov 2012 23:15:50 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Maxim Levitsky <maximlevitsky@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
---Signature=_Mon__12_Nov_2012_10_49_46_+1100_sL8o5H1fobsl2.ST
+--Signature=_Mon__12_Nov_2012_15_15_40_+1100_JE7Vxkqc3QeBwZWq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michel,
+Hi Andrew,
 
-On Thu, 8 Nov 2012 20:30:47 -0800 Michel Lespinasse <walken@google.com> wro=
-te:
->
-> commit 1c98949798ce7a1d4a910775623e1830cf88a92c
-> Author: Michel Lespinasse <walken@google.com>
-> Date:   Thu Nov 8 20:26:34 2012 -0800
->=20
->     fix mm: use vm_unmapped_area() on sparc32 architecture
->=20
-> diff --git a/arch/sparc/kernel/sys_sparc_32.c b/arch/sparc/kernel/sys_spa=
-rc_32.c
-> index a59bc637f9af..a20b5ab4c701 100644
-> --- a/arch/sparc/kernel/sys_sparc_32.c
-> +++ b/arch/sparc/kernel/sys_sparc_32.c
-> @@ -38,7 +38,6 @@ asmlinkage unsigned long sys_getpagesize(void)
-> =20
->  unsigned long arch_get_unmapped_area(struct file *filp, unsigned long ad=
-dr, unsigned long len, unsigned long pgoff, unsigned long flags)
->  {
-> -	struct vm_area_struct * vmm;
->  	struct vm_unmapped_area_info info;
-> =20
->  	if (flags & MAP_FIXED) {
->=20
-> commit aa96ebbc9ec664ddafc841f7631c4a092b10c0d8
-> Author: Michel Lespinasse <walken@google.com>
-> Date:   Thu Nov 8 20:25:48 2012 -0800
->=20
->     fix mm: use vm_unmapped_area() in hugetlbfs on sparc64 architecture
->=20
-> diff --git a/arch/sparc/mm/hugetlbpage.c b/arch/sparc/mm/hugetlbpage.c
-> index 42e5dba6cb26..d2b59441ebdd 100644
-> --- a/arch/sparc/mm/hugetlbpage.c
-> +++ b/arch/sparc/mm/hugetlbpage.c
-> @@ -60,7 +60,6 @@ hugetlb_get_unmapped_area_topdown(struct file *filp, co=
-nst unsigned long addr0,
->  				  const unsigned long pgoff,
->  				  const unsigned long flags)
->  {
-> -	struct vm_area_struct *vma;
->  	struct mm_struct *mm =3D current->mm;
->  	unsigned long addr =3D addr0;
->  	struct vm_unmapped_area_info info;
->=20
-> commit ff4dd9742ce0a5f7c703013e70eeb84b845c8fa2
-> Author: Michel Lespinasse <walken@google.com>
-> Date:   Thu Nov 8 20:24:53 2012 -0800
->=20
->     mm-use-vm_unmapped_area-on-sparc64-architecture-fix2
->=20
-> diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_spa=
-rc_64.c
-> index 2a5d61587ca2..a836ee967ecb 100644
-> --- a/arch/sparc/kernel/sys_sparc_64.c
-> +++ b/arch/sparc/kernel/sys_sparc_64.c
-> @@ -89,7 +89,6 @@ unsigned long arch_get_unmapped_area(struct file *filp,=
- unsigned long addr, unsi
->  	struct mm_struct *mm =3D current->mm;
->  	struct vm_area_struct * vma;
->  	unsigned long task_size =3D TASK_SIZE;
-> -	unsigned long start_addr;
->  	int do_color_align;
->  	struct vm_unmapped_area_info info;
-> =20
-> @@ -191,7 +190,7 @@ arch_get_unmapped_area_topdown(struct file *filp, con=
-st unsigned long addr0,
->  	info.length =3D len;
->  	info.low_limit =3D PAGE_SIZE;
->  	info.high_limit =3D mm->mmap_base;
-> -	info.align_mask =3D do_colour_align ? (PAGE_MASK & shm_align_mask) : 0;
-> +	info.align_mask =3D do_color_align ? (PAGE_MASK & (SHMLBA - 1)) : 0;
->  	info.align_offset =3D pgoff << PAGE_SHIFT;
->  	addr =3D vm_unmapped_area(&info);
-> =20
->=20
-> commit ed558f3723a4ac2fb71d6c8fc70116994af6e61d
-> Author: Michel Lespinasse <walken@google.com>
-> Date:   Thu Nov 8 20:22:36 2012 -0800
->=20
->     mm-use-vm_unmapped_area-on-arm-architecture-fix2
->=20
-> diff --git a/arch/arm/mm/mmap.c b/arch/arm/mm/mmap.c
-> index f4fec6d43d50..10062ceadd1c 100644
-> --- a/arch/arm/mm/mmap.c
-> +++ b/arch/arm/mm/mmap.c
-> @@ -57,7 +57,6 @@ arch_get_unmapped_area(struct file *filp, unsigned long=
- addr,
->  {
->  	struct mm_struct *mm =3D current->mm;
->  	struct vm_area_struct *vma;
-> -	unsigned long start_addr;
->  	int do_align =3D 0;
->  	int aliasing =3D cache_is_vipt_aliasing();
->  	struct vm_unmapped_area_info info;
->=20
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/memstick/core/ms_block.h between commit 0604fa04ccc7 ("memstick:
+add support for legacy memorysticks") that use to be in the block tree
+and commits "memstick: remove unused field from state struct", "memstick:
+ms_block: fix compile issue", "memstick: use after free in
+msb_disk_release()" and "memstick: memory leak on error in msb_ftl_scan
+()" from the akpm tree.
 
-All added to the akpm tree today.
+The block tree commit has been dropped, so the 4 akpm tree patches no
+longer have anything to apply to, so I have dropped them.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__12_Nov_2012_10_49_46_+1100_sL8o5H1fobsl2.ST
+--Signature=_Mon__12_Nov_2012_15_15_40_+1100_JE7Vxkqc3QeBwZWq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQoDmaAAoJEECxmPOUX5FEAzcP/3KBZrTHVaHOtlVDRw38tBYn
-8hp0jIJv5827yhmVt3WeXdhbng0lqUU7Glg0N5Y0ib+abxNsXVNp9KEjuNtTDFZB
-VEWULHBOzFKSx//VmMn2lv7DHWviNAcMvWvrxVuteA25bqzSjdsWdnGhYXj0l0WJ
-NcVsPG6QgCuCk8xdjk/3yXOvju4erZoA+wPjisaTrzGqq53mabdKzi50mSrJbmlh
-MFokXubatPM6O0WczBZJmUyfPnScRXElLQvC4PDKjdjMuUVIBf0wqaY4FNmxOVUL
-rFP9dmOQdpu08vCVwixZ2y7poIvmRkOUQVR1+ydz32PSBvI+OAFCO2Qyps4HPnwp
-fOgy1QRWmtifgdxjEeU+wnw5iJh7H7QaPCfKmOI9uoGdjSXAyELSJoqjwQmXQLvc
-sFq/Znch6I/m7ARvHtsp7SEpumaXEO5csC8FptGNT4EdAGjD+lp7otcLlGAjl92B
-HOg83fxyLZWljcP54pmj93cBUciIte070bcDU3ZsNg9la2inyIOtH6kjlolfitVy
-axIFpDLExEkB89w2kXvb77quofxI4dT0QWaaYyg3rWpDOn26EfQvdYehW97MVtjK
-Ri9PLBXlHsmQ8hzdSIw4MUIL6tWhuvZXnFGZdYYCe2AJ/P9qYFo2mJjA3BRiwg2w
-JQ8R4rLGA60RznJcYTtN
-=igC6
+iQIcBAEBCAAGBQJQoHfsAAoJEECxmPOUX5FETiEP/2xJwbadjM5ZSJ/RQil828gr
++FoTkw+CaG1nXQFBVEZV92RUt0ZbJbcC0hVOt+4aOPG7ZoxVsewHzwmNdogJLf7h
+pJT7psqEc+CXXSxzMjW6y/UWSUILT5XfdsMN4lwb2IqPFHG0Y8t4FgMffBoH2vcj
+tzRO8IcDt4qsUXc6lxN2v4S7R6yylqd/bST3VSD/wC17LywbRh13Qf8HWeTuEuAS
+Pu4PjaRL8loNLBv31QdQgMHYSl/A7TroUUUbS+UwrblDJMuoHIu88HS4LoxODtZj
+Ts6XAi6xpr0ONY387lhVNZm8sarak6aWmhAwEilCC65T4qwFd/8xVZ4jletq4b1V
+72o3nmS0YClK5Yj+2K0MS9IOqGfxsal8viV7oA40DuYLXcBJ5kJQzAq6b5UycWy+
+Uw06CiTQ3D6MIbPm1D396TNQgTZm+Em+xsNgbHiFiyEr7JLn1S+aryCZXqXdUh5l
+wKVFByDMKEH6g0bYUWI6fQ/DQpi8b+k5o5BIPEI+VhO/9ryXuqJJyugI6yjdREcD
+qtAt3wPnh6V5Le+J2NkSUemqjrlLCpXFm5KEy344ftdxo7o1IjTeUqgF0P0NGArr
+SzjzV+H4FPj2JV7wjh4AxRRLmkMn8JSUm3Ilqr0EfWFKo/HbAyNodRsvM58xHqgP
+/4KIfYFBSY6dpD8CBuaQ
+=iB4x
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__12_Nov_2012_10_49_46_+1100_sL8o5H1fobsl2.ST--
+--Signature=_Mon__12_Nov_2012_15_15_40_+1100_JE7Vxkqc3QeBwZWq--
