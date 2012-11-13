@@ -1,51 +1,160 @@
-From: Joachim Eastwood <manabian@gmail.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the net-next tree
-Date: Tue, 13 Nov 2012 08:21:26 +0100
-Message-ID: <CAGhQ9Vx3Y3j0qqkEif09HebFyR+1UYmSbp=3jwuXnoiuWBdymQ@mail.gmail.com>
-References: <20121113151536.50d0292e8cb88b10686b576e@canb.auug.org.au>
+From: David Rientjes <rientjes@google.com>
+Subject: [patch] MM: Support more pagesizes for MAP_HUGETLB/SHM_HUGETLB v7
+ fix fix fix fix
+Date: Mon, 12 Nov 2012 23:42:19 -0800 (PST)
+Message-ID: <alpine.DEB.2.00.1211122338500.29609@chino.kir.corp.google.com>
+References: <20121113170046.48e2c790d5c6c1e5f51c593d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121113151536.50d0292e8cb88b10686b576e@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:59282 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752666Ab2KMHm1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Nov 2012 02:42:27 -0500
+Received: by mail-pa0-f46.google.com with SMTP id hz1so4868434pad.19
+        for <linux-next@vger.kernel.org>; Mon, 12 Nov 2012 23:42:21 -0800 (PST)
+In-Reply-To: <20121113170046.48e2c790d5c6c1e5f51c593d@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Andi Kleen <ak@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On 13 November 2012 05:15, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> drivers/net/ethernet/cadence/at91_ether.c between various commits from
-> the net-next tree and commit bcd2360c1ff9 ("arm: at91: move platfarm_data
-> to include/linux/platform_data/atmel.h") from the arm-soc tree.
->
-> I fixed it up (I think - see below) and can carry the fix as necessary
-> (no action is required).
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->
-> diff --cc drivers/net/ethernet/cadence/at91_ether.c
-> index e7a476c,35fc6edb..0000000
-> --- a/drivers/net/ethernet/cadence/at91_ether.c
-> +++ b/drivers/net/ethernet/cadence/at91_ether.c
-> @@@ -25,53 -31,728 +25,54 @@@
->   #include <linux/clk.h>
->   #include <linux/gfp.h>
->   #include <linux/phy.h>
->  +#include <linux/io.h>
->  +#include <linux/of.h>
->  +#include <linux/of_device.h>
->  +#include <linux/of_net.h>
->  +#include <linux/pinctrl/consumer.h>
-> + #include <linux/platform_data/atmel.h>
+Move the definitions of MAP_HUGE_SHIFT and MAP_HUGE_MASK to mman-common.h 
+and fixup the architectures which do not use that file to fix the 
+following build failure:
 
-The platform_data/atmel.h include shouldn't be necessary since the
-driver already includes platform_data/macb.h.
+mm/mmap.c: In function 'SYSC_mmap_pgoff':
+mm/mmap.c:1271:15: error: 'MAP_HUGE_SHIFT' undeclared (first use in this function)
+mm/mmap.c:1271:15: note: each undeclared identifier is reported only once for each function it appears in
+mm/mmap.c:1271:33: error: 'MAP_HUGE_MASK' undeclared (first use in this function)
 
-Otherwise the fix up looks correct.
+Tested on alpha, hppa, ia64, mips, powerpc, sparc, and x86.
 
-regards
-Joachim Eastwood
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ arch/alpha/include/asm/mman.h          |   11 +++++++++++
+ arch/mips/include/uapi/asm/mman.h      |   11 +++++++++++
+ arch/parisc/include/uapi/asm/mman.h    |   11 +++++++++++
+ arch/xtensa/include/uapi/asm/mman.h    |   11 +++++++++++
+ include/uapi/asm-generic/mman-common.h |   11 +++++++++++
+ include/uapi/asm-generic/mman.h        |   13 +------------
+ 6 files changed, 56 insertions(+), 12 deletions(-)
+
+diff --git a/arch/alpha/include/asm/mman.h b/arch/alpha/include/asm/mman.h
+--- a/arch/alpha/include/asm/mman.h
++++ b/arch/alpha/include/asm/mman.h
+@@ -63,4 +63,15 @@
+ /* compatibility flags */
+ #define MAP_FILE	0
+ 
++/*
++ * When MAP_HUGETLB is set bits [26:31] encode the log2 of the huge page size.
++ * This gives us 6 bits, which is enough until someone invents 128 bit address
++ * spaces.
++ *
++ * Assume these are all power of twos.
++ * When 0 use the default page size.
++ */  
++#define MAP_HUGE_SHIFT	26
++#define MAP_HUGE_MASK	0x3f
++
+ #endif /* __ALPHA_MMAN_H__ */
+diff --git a/arch/mips/include/uapi/asm/mman.h b/arch/mips/include/uapi/asm/mman.h
+--- a/arch/mips/include/uapi/asm/mman.h
++++ b/arch/mips/include/uapi/asm/mman.h
+@@ -87,4 +87,15 @@
+ /* compatibility flags */
+ #define MAP_FILE	0
+ 
++/*
++ * When MAP_HUGETLB is set bits [26:31] encode the log2 of the huge page size.
++ * This gives us 6 bits, which is enough until someone invents 128 bit address
++ * spaces.
++ *
++ * Assume these are all power of twos.
++ * When 0 use the default page size.
++ */  
++#define MAP_HUGE_SHIFT	26
++#define MAP_HUGE_MASK	0x3f
++
+ #endif /* _ASM_MMAN_H */
+diff --git a/arch/parisc/include/uapi/asm/mman.h b/arch/parisc/include/uapi/asm/mman.h
+--- a/arch/parisc/include/uapi/asm/mman.h
++++ b/arch/parisc/include/uapi/asm/mman.h
+@@ -70,4 +70,15 @@
+ #define MAP_FILE	0
+ #define MAP_VARIABLE	0
+ 
++/*
++ * When MAP_HUGETLB is set bits [26:31] encode the log2 of the huge page size.
++ * This gives us 6 bits, which is enough until someone invents 128 bit address
++ * spaces.
++ *
++ * Assume these are all power of twos.
++ * When 0 use the default page size.
++ */  
++#define MAP_HUGE_SHIFT	26
++#define MAP_HUGE_MASK	0x3f
++
+ #endif /* __PARISC_MMAN_H__ */
+diff --git a/arch/xtensa/include/uapi/asm/mman.h b/arch/xtensa/include/uapi/asm/mman.h
+--- a/arch/xtensa/include/uapi/asm/mman.h
++++ b/arch/xtensa/include/uapi/asm/mman.h
+@@ -93,4 +93,15 @@
+ /* compatibility flags */
+ #define MAP_FILE	0
+ 
++/*
++ * When MAP_HUGETLB is set bits [26:31] encode the log2 of the huge page size.
++ * This gives us 6 bits, which is enough until someone invents 128 bit address
++ * spaces.
++ *
++ * Assume these are all power of twos.
++ * When 0 use the default page size.
++ */  
++#define MAP_HUGE_SHIFT	26
++#define MAP_HUGE_MASK	0x3f
++
+ #endif /* _XTENSA_MMAN_H */
+diff --git a/include/uapi/asm-generic/mman-common.h b/include/uapi/asm-generic/mman-common.h
+--- a/include/uapi/asm-generic/mman-common.h
++++ b/include/uapi/asm-generic/mman-common.h
+@@ -55,4 +55,15 @@
+ /* compatibility flags */
+ #define MAP_FILE	0
+ 
++/*
++ * When MAP_HUGETLB is set bits [26:31] encode the log2 of the huge page size.
++ * This gives us 6 bits, which is enough until someone invents 128 bit address
++ * spaces.
++ *
++ * Assume these are all power of twos.
++ * When 0 use the default page size.
++ */
++#define MAP_HUGE_SHIFT	26
++#define MAP_HUGE_MASK	0x3f
++
+ #endif /* __ASM_GENERIC_MMAN_COMMON_H */
+diff --git a/include/uapi/asm-generic/mman.h b/include/uapi/asm-generic/mman.h
+--- a/include/uapi/asm-generic/mman.h
++++ b/include/uapi/asm-generic/mman.h
+@@ -13,18 +13,7 @@
+ #define MAP_STACK	0x20000		/* give out an address that is best suited for process/thread stacks */
+ #define MAP_HUGETLB	0x40000		/* create a huge page mapping */
+ 
+-/* Bits [26:31] are reserved */
+-
+-/*
+- * When MAP_HUGETLB is set bits [26:31] encode the log2 of the huge page size.
+- * This gives us 6 bits, which is enough until someone invents 128 bit address
+- * spaces.
+- *
+- * Assume these are all power of twos.
+- * When 0 use the default page size.
+- */
+-#define MAP_HUGE_SHIFT  26
+-#define MAP_HUGE_MASK   0x3f
++/* Bits [26:31] are reserved, see mman-common.h for MAP_HUGETLB usage */
+ 
+ #define MCL_CURRENT	1		/* lock all current mappings */
+ #define MCL_FUTURE	2		/* lock all future mappings */
