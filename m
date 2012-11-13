@@ -1,59 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the usb tree
-Date: Tue, 13 Nov 2012 15:20:29 +1100
-Message-ID: <20121113152029.9bcfc18a4bca8dc53a033a86@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Tue, 13 Nov 2012 16:51:06 +1100
+Message-ID: <20121113165106.e592e23693663de49e9d78d0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Nov_2012_15_20_29_+1100_SW37Rv1PGQXipBDW"
+ boundary="Signature=_Tue__13_Nov_2012_16_51_06_+1100_t/csKYQpBI/yInMe"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53222 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35765 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751651Ab2KMEUj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Nov 2012 23:20:39 -0500
+	with ESMTP id S1752695Ab2KMFvS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Nov 2012 00:51:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Nazarewicz <mina86@mina86.com>, Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>
 
---Signature=_Tue__13_Nov_2012_15_20_29_+1100_SW37Rv1PGQXipBDW
+--Signature=_Tue__13_Nov_2012_16_51_06_+1100_t/csKYQpBI/yInMe
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got a conflict in arch/arm/con=
-figs/stamp9g20_defconfig between commit 77614e025061 ("arch: Change defconf=
-igs to point to g_mass_storage") from the usb tree and commit 2484575268e2 =
-("arm: at91: drop machine defconfig") from the arm-soc tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-The latter deleted the file so I did that and can carry the fix as
-necessary (no action is required).
+In file included from drivers/power/lp8788-charger.c:15:0:
+include/linux/iio/consumer.h:76:21: error: unknown type name 'u8'
+include/linux/iio/consumer.h:78:11: error: expected ';', ',' or ')' before =
+'void'
+
+Caused by commit 92d1079b281f ("staging:iio: add a callback buffer for in
+kernel push interface").  Presumably just a missing include.
+
+I have reverted that commit for today (it introduces a set of not yet
+used interfaces).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__13_Nov_2012_15_20_29_+1100_SW37Rv1PGQXipBDW
+--Signature=_Tue__13_Nov_2012_16_51_06_+1100_t/csKYQpBI/yInMe
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQocqNAAoJEECxmPOUX5FEM7AP/3tCMLUIAdfXpTiD++v5DutE
-4Tt6GMLSjISO28e1NTJVCw7U5vOAVv0+j4mp6CRtrZsaq5VBYIIdQbBvoeyKxzDd
-2zNi88vprMGyxbuMjCd+KFCtD8X5MSxO6yBVmA077uvfbwhUNkcZPaC9HTys9qYJ
-xgMNnxEjQu2QJkCM/MrmDH/ocnCuUO0SBOxHp1FJD0F5J2kZ6etnbMCQ16pyvf7H
-UR9m+0v6akLYWw5sjHjo9RyT9nUI+06uXOkIZUXHryhcLvVBY4APJ6eEK+zOqc3V
-PWv8Sh0ZYdCzxEReqsfb+mdrCydNnLW7m4Ni1grn0xRDTv2nW9qRsjeYe2sQlzuf
-Gdb7dymMq2vuFOlD9H2in9scoEDz3Tbx6/vfwH0GszfeXSePqUuLBZffARheyDt5
-rOpVLeN3GiButy3tfwif8OwLuImikwD0QXJMWydhORSkRcn/qFjVsLttHBL/lZ+R
-Nx7RsvCMVcpLafzBTXz1Php/ldScLBvDCgHwDPpe07w946hWrx8zrcQIYky6kbng
-IL+E6qPAgCINFom4Og0eLekASQfiaHG3UenZaoHPTtfiXV/HLzSTdfbJh6idKPuD
-MoF9uMFqPuMlNyCCsbaAhGbay44DsO5d75gwJlW5d4RbQA9fOIgdqN7PZNjJbCZ/
-NnJrmqPwlryy4ZYfFDII
-=PT/4
+iQIcBAEBCAAGBQJQod/KAAoJEECxmPOUX5FEQCkP/30/Jq8dfiEEN5MIR4GbleB5
+LkYHW9WODO5Q9ZXc/SBQa4p3ogYPVrMWZDq4A5tA5JGhLruZn1k90QisYknL4jDK
+lSqcEyW/utqKYjtn3FOx0VNbkNmENQok/EzzOT+ooLpDiBc+i9NvaomikGwV/WIa
+SjfxZSWa50uoWeHwesNfdELiEFhNcHBCTixuA6G7uVLVEeHFefcdOLCf9uPl6xUA
+7IjMD6ilSU8N8qlUUKw+EHVjWGS0b/NXrEFgAtblLihw1PgX1xb1rftKT+t7dkeV
+rTtHkkD88hKHDLUAyO7QWJJ5UZjLFeCMlA+EY5vRlSxvoDSdq+THo/J+oQCM5H9/
+tiBJK6xv8O/72HDF0wYAeNZg2TKIv1MQwVHsbvT+ALP41ZKdEaQhGoEONskfdO19
+7KP6nLE1pse572IIMDnqTAfi0GLIGjp0+2cQgWQ195NIp/sqMpjzUh+mM6Dc0SxZ
+scuy+M4b8EKf6guCJwcVBXvNGsdWY2p+8HadDIitgZtdOZ5cJGls3r/K1pgThoGI
+qpxmYZh75HaGE7LRzN4FOGWQhqZZPJt6o46le+SMcwUD3b/en1DttBrMxDivU9D7
+1QfOk/eNk6uQZXYukZa+35h33bnX0aJ1lJivbVyj7mUsObAhA0pdCXEVt0XXtP/g
+q3ZgMTZt5/aAYJ7lrOiM
+=lRnk
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Nov_2012_15_20_29_+1100_SW37Rv1PGQXipBDW--
+--Signature=_Tue__13_Nov_2012_16_51_06_+1100_t/csKYQpBI/yInMe--
