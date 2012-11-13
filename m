@@ -1,38 +1,41 @@
 From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the usb tree
-Date: Tue, 13 Nov 2012 09:48:29 +0100
-Message-ID: <50A2095D.3020306@atmel.com>
-References: <20121113152029.9bcfc18a4bca8dc53a033a86@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the pinctrl
+ tree
+Date: Tue, 13 Nov 2012 09:51:33 +0100
+Message-ID: <50A20A15.6090506@atmel.com>
+References: <20121113151754.98aa6471baaf062826c3b133@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:13738 "EHLO
+Received: from eusmtp01.atmel.com ([212.144.249.242]:40913 "EHLO
 	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753208Ab2KMIsc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Nov 2012 03:48:32 -0500
-In-Reply-To: <20121113152029.9bcfc18a4bca8dc53a033a86@canb.auug.org.au>
+	with ESMTP id S1753420Ab2KMIvf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Nov 2012 03:51:35 -0500
+In-Reply-To: <20121113151754.98aa6471baaf062826c3b133@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, Michal Nazarewicz <mina86@mina86.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-kernel@vger.kernel.org
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-On 11/13/2012 05:20 AM, Stephen Rothwell :
+On 11/13/2012 05:17 AM, Stephen Rothwell :
 > Hi all,
 > 
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/configs/stamp9g20_defconfig between commit 77614e025061
-> ("arch: Change defconfigs to point to g_mass_storage") from the usb
-> tree and commit 2484575268e2 ("arm: at91: drop machine defconfig")
-> from the arm-soc tree.
+> Today's linux-next merge of the arm-soc tree got a conflict in 
+> drivers/tty/serial/atmel_serial.c between commit 784557decc48
+> ("tty: atmel_serial: add pinctrl support") from the pinctrl tree
+> and commit bcd2360c1ff9 ("arm: at91: move platfarm_data to 
+> include/linux/platform_data/atmel.h") from the arm-soc tree.
 > 
-> The latter deleted the file so I did that and can carry the fix as 
-> necessary (no action is required).
+> I fixed it up (see below) and can carry the fix as necessary (no
+> action is required).
 
-Yes. Thanks a lot Stephen.
+Stephen, it is the proper merge.
+
+Thanks a lot.
 
 Best regards,
 - -- 
@@ -41,11 +44,11 @@ Nicolas Ferre
 Version: GnuPG v1.4.11 (GNU/Linux)
 Comment: Using GnuPG with Mozilla - http://www.enigmail.net/
 
-iQEcBAEBAgAGBQJQogldAAoJEAf03oE53VmQqTgIAKUtqhwnXt8Rm1x+ERPiPLno
-VhFc1ZPgiPUepSecHMFPCcWtgwLBg6HUFXg4muM7kpf1hvMtAB6CmpasjceV8g0N
-KMFC4GrRi6y0dp59DpBUa1gB87i4gpliqmroO3YGu8iGDHGowDBV8HsfmNpLmGTJ
-WmdjDzpWE3hfLjNl5F0qnkI1cqDAyWrQwE9cNIFpzY93GfKkVTjdxiKIf6PprJl8
-SIicUbeHV/lrNyusEZw0CcNa89qtKCovdBN7Yk64xwyyTnLprxq/Sr30WaFx4npf
-A6vdUeCsKL3glD67rD7MUYXZ5KS0pLOuxIVJvvlugbOCwrNDPrZd6NZhqFkgMh8=
-=Fpq2
+iQEcBAEBAgAGBQJQogoUAAoJEAf03oE53VmQAt0H/iThKsKe+ag10z9Q8xlO6sqR
+dvfFtRQxv7W1xVeRc/RJjnE/thKaa+FMiUfvFoj4Gls6UZD3vAvwatI+kkGY30yp
+FbflguygU8OvAQcr/dpVx2tBzsqCk7Xynk+D0+DjlJXukP+JzP+3/tl7Gd0/lct7
+nLccb1X0sNwTrvlLJO2WJuOGwFlTU3vO1wkehgic2ozfm3FzsaTLUjkUf6YXOG1N
+BoABfHJL0PyNk6iENu26j6ulDPaWrpJe5531hTcJm16X+h2gnmnnjpYw9dTTQ5qO
+La0UeqkqTxEUOFmo3cxbS0ryBeQBTmHss61JLVcqnlwApTscefmD4x8G310D7oA=
+=mEy6
 -----END PGP SIGNATURE-----
