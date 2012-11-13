@@ -1,99 +1,60 @@
-From: David Rientjes <rientjes@google.com>
-Subject: [patch] MM: Support more pagesizes for MAP_HUGETLB/SHM_HUGETLB v7
- fix fix fix
-Date: Mon, 12 Nov 2012 16:06:48 -0800 (PST)
-Message-ID: <alpine.DEB.2.00.1211121553300.3841@chino.kir.corp.google.com>
-References: <20121108231753.E6B7A100047@wpzn3.hot.corp.google.com> <509D88C6.8030700@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Date: Tue, 13 Nov 2012 14:37:32 +1100
+Message-ID: <20121113143732.624361eaf8ed2f4d0d64dd7d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__13_Nov_2012_14_37_32_+1100_SjYREEFple2e1T0f"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:46025 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752297Ab2KMAGu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Nov 2012 19:06:50 -0500
-Received: by mail-pa0-f46.google.com with SMTP id hz1so4646510pad.19
-        for <linux-next@vger.kernel.org>; Mon, 12 Nov 2012 16:06:50 -0800 (PST)
-In-Reply-To: <509D88C6.8030700@infradead.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34927 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751453Ab2KMDhn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Nov 2012 22:37:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Yongjun <weiyj.lk@gmail.com>, Felipe Balbi <balbi@ti.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-On Fri, 9 Nov 2012, Randy Dunlap wrote:
+--Signature=_Tue__13_Nov_2012_14_37_32_+1100_SjYREEFple2e1T0f
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> on x86_64:
-> 
-> In file included from mm/mprotect.c:13:0:
-> include/linux/shm.h:57:20: error: redefinition of 'do_shmat'
-> include/linux/shm.h:57:20: note: previous definition of 'do_shmat' was here
-> include/linux/shm.h:63:19: error: redefinition of 'is_file_shm_hugepages'
-> include/linux/shm.h:63:19: note: previous definition of 'is_file_shm_hugepages' was here
-> include/linux/shm.h:67:20: error: redefinition of 'exit_shm'
-> include/linux/shm.h:67:20: note: previous definition of 'exit_shm' was here
-> 
-> In file included from include/linux/hugetlb.h:16:0,
->                  from mm/mmap.c:23:
-> include/linux/shm.h:57:20: error: redefinition of 'do_shmat'
-> include/linux/shm.h:57:20: note: previous definition of 'do_shmat' was here
-> include/linux/shm.h:63:19: error: redefinition of 'is_file_shm_hugepages'
-> include/linux/shm.h:63:19: note: previous definition of 'is_file_shm_hugepages' was here
-> include/linux/shm.h:67:20: error: redefinition of 'exit_shm'
-> include/linux/shm.h:67:20: note: previous definition of 'exit_shm' was here
-> make[2]: *** [mm/mprotect.o] Error 1
-> 
+Hi Greg,
 
-This is an elusive one, I couldn't reproduce it with master.  This appears 
-to only happen on the akpm branch, correct?
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/musb/ux500.c between commit 9a65d162e449 ("usb: musb: ux500:
+fix 'musbid' undeclared error in ux500_remove()") from the usb.current
+tree and commit 2f7711642559 ("usb: musb: remove hand-crafted id
+handling") from the usb tree.
 
-It happens because of e37c64a9751a ("mm: support more pagesizes for 
-MAP_HUGETLB/SHM_HUGETLB") adds a spurious "#endif" to include/linux/shm.h 
-and gets reverted in master by 359078d82a20 ("Revert "mm: support more 
-pagesizes for MAP_HUGETLB/SHM_HUGETLB"") because of another build failure 
-that Stephen reports on November 8:
+The latter supercedes the former so I used that and can carry the fix as
+necessary (no action is required).
 
-mm/mmap.c: In function 'SYSC_mmap_pgoff':
-mm/mmap.c:1271:15: error: 'MAP_HUGE_SHIFT' undeclared (first use in this function)
-mm/mmap.c:1271:15: note: each undeclared identifier is reported only once for each function it appears in
-mm/mmap.c:1271:33: error: 'MAP_HUGE_MASK' undeclared (first use in this function)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-I think the best bet would be to merge the following in -mm and then let 
-Stephen revert it in master again if his build error persists for powerpc:
+--Signature=_Tue__13_Nov_2012_14_37_32_+1100_SjYREEFple2e1T0f
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-mm-support-more-pagesizes-for-map_hugetlb-shm_hugetlb-v7-fix-fix-fix
+iQIcBAEBCAAGBQJQocB8AAoJEECxmPOUX5FEonkP/3X64lhOSDNEnRa9f0DNm4Ow
+g78oC4u+Zf0OsG9AG+robFHc+uKwBAz8e81i0fdxoQgVq14HE5lVrOt8oOLG6t1z
+qWZmau/nyy1VFZ69sWxvGB69BgkphOznD9OKnhORmJNUxFq13MQvnFES2VxVgs3o
+3MtL9UnGiIFvrUHIGSLrCIjjDwVrHdnAqWQlIUMxQqsGXbgvoKCO4EbnEhtaOrLl
+YaZsSMtchTpr/ei9cur9HgDev08tlEfMhgcUh6qvzv3yKcNs7jdQ7QPjnBSeR04v
+IedsI8+vT7X7+k1ceEqzmCngN0/Vpx+iGJixvpFQBEMSxwtro3faRK7lPh5ckAis
+eRpAM3IoClvFGUS258tjH6qxiOvYHwmLaMqEP1afXO2nljpqw1/8b2rafdHbpnp3
+mGxBJ7EB4Hrrd3Cq86Xl0cp++Leclbr6wBdewkkp4GDcal6sdz3/5ybPesOEERAN
+Uk3d1S3zQrRZLeU9Nl6FzTX2Hyxdak2xHZEBHJWRIUyYS2XVPFojJCwdOH5i/4GP
+rg68SuF0adhkLomRfn764JogFG0XHgnEsYhNHoRlLIYxKXTrjgQkj8Z5gEFGWYto
+U+Cg9mN9FgxVg5AwC3Y+Q0B1MTX2ZnCOwYZJnXJP666W+urX8Y8Q0XRt7RSoBFde
+pJ7AfHeIpwsRTvVFhVAo
+=nNiR
+-----END PGP SIGNATURE-----
 
-Fix the build:
-
-include/linux/shm.h:57:20: error: redefinition of 'do_shmat'
-include/linux/shm.h:57:20: note: previous definition of 'do_shmat' was here
-include/linux/shm.h:63:19: error: redefinition of 'is_file_shm_hugepages'
-include/linux/shm.h:63:19: note: previous definition of 'is_file_shm_hugepages' was here
-include/linux/shm.h:67:20: error: redefinition of 'exit_shm'
-include/linux/shm.h:67:20: note: previous definition of 'exit_shm' was here
-
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- include/linux/shm.h |    4 ----
- 1 files changed, 0 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/shm.h b/include/linux/shm.h
---- a/include/linux/shm.h
-+++ b/include/linux/shm.h
-@@ -23,8 +23,6 @@ struct shmid_kernel /* private to the kernel */
- 	struct task_struct	*shm_creator;
- };
- 
--#endif
--
- /* shm_mode upper byte flags */
- #define	SHM_DEST	01000	/* segment will be destroyed on last detach */
- #define SHM_LOCKED      02000   /* segment will not be swapped */
-@@ -46,8 +44,6 @@ struct shmid_kernel /* private to the kernel */
- #define SHM_HUGE_2MB    (21 << SHM_HUGE_SHIFT)
- #define SHM_HUGE_1GB    (30 << SHM_HUGE_SHIFT)
- 
--#ifdef __KERNEL__
--
- #ifdef CONFIG_SYSVIPC
- long do_shmat(int shmid, char __user *shmaddr, int shmflg, unsigned long *addr,
- 	      unsigned long shmlba);
+--Signature=_Tue__13_Nov_2012_14_37_32_+1100_SjYREEFple2e1T0f--
