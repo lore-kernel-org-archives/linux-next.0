@@ -1,27 +1,43 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [patch] mips, arc: fix build failure
-Date: Tue, 13 Nov 2012 16:23:07 +0100
-Message-ID: <20121113152307.GB32038@linux-mips.org>
-References: <20121113170046.48e2c790d5c6c1e5f51c593d@canb.auug.org.au>
- <alpine.DEB.2.00.1211122342570.29609@chino.kir.corp.google.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH -next] wireless: brcmfmac: fix printk format warning
+Date: Tue, 13 Nov 2012 07:55:18 -0800
+Message-ID: <50A26D66.4060603@infradead.org>
+References: <20121101163622.129b59967d2ee76e6946874a@canb.auug.org.au>	 <5092B4BE.4080803@infradead.org> <5092B900.2090801@broadcom.com>	 (sfid-20121101_190234_358746_9918835B) <1351798279.17469.0.camel@jlt4.sipsolutions.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mips-bounce@linux-mips.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.00.1211122342570.29609@chino.kir.corp.google.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: David Rientjes <rientjes@google.com>
-Cc: David Howells <dhowells@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mips@linux-mips.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:49047 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751662Ab2KMP4J (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Nov 2012 10:56:09 -0500
+In-Reply-To: <1351798279.17469.0.camel@jlt4.sipsolutions.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Arend van Spriel <arend@broadcom.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, brcm80211-dev-list@broadcom.com, linux-wireless@vger.kernel.org
 
-Thanks, applied.
+On 11/01/2012 12:31 PM, Johannes Berg wrote:
 
-  Ralf
+> On Thu, 2012-11-01 at 19:01 +0100, Arend van Spriel wrote:
+>> On 11/01/2012 06:43 PM, Randy Dunlap wrote:
+>>> From: Randy Dunlap <rdunlap@infradead.org>
+>>>
+>>> Fix printk format warning for ssid_len, which is a size_t:
+>>>
+>>> drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:3941:2: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+>>>
+>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>> Cc:	brcm80211-dev-list@broadcom.com
+>>
+>>
+>> We actually have a patch ready for that with credit to people who
+>> reported it. We can add you to that list ;-)
+> 
+> Which you've been sitting on for WAY too long already :)
+
+ping Arend.
+Please have your patch included in linux-next builds.  thanks.
+
+-- 
+~Randy
