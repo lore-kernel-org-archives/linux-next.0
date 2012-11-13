@@ -1,73 +1,99 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: ftrace next tree request
-Date: Tue, 13 Nov 2012 10:05:13 +1100
-Message-ID: <20121113100513.acb69c8be5a2e88ef1fe472d@canb.auug.org.au>
-References: <1352745934.18025.8.camel@gandalf.local.home>
-	<20121113084749.a1c6f250556e28100f870e29@canb.auug.org.au>
-	<1352757176.18025.11.camel@gandalf.local.home>
+From: David Rientjes <rientjes@google.com>
+Subject: [patch] MM: Support more pagesizes for MAP_HUGETLB/SHM_HUGETLB v7
+ fix fix fix
+Date: Mon, 12 Nov 2012 16:06:48 -0800 (PST)
+Message-ID: <alpine.DEB.2.00.1211121553300.3841@chino.kir.corp.google.com>
+References: <20121108231753.E6B7A100047@wpzn3.hot.corp.google.com> <509D88C6.8030700@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Nov_2012_10_05_13_+1100_/yoaGs_deUSsFPVv"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46367 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752157Ab2KLXFW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Nov 2012 18:05:22 -0500
-In-Reply-To: <1352757176.18025.11.camel@gandalf.local.home>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:46025 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752297Ab2KMAGu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Nov 2012 19:06:50 -0500
+Received: by mail-pa0-f46.google.com with SMTP id hz1so4646510pad.19
+        for <linux-next@vger.kernel.org>; Mon, 12 Nov 2012 16:06:50 -0800 (PST)
+In-Reply-To: <509D88C6.8030700@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org
 
---Signature=_Tue__13_Nov_2012_10_05_13_+1100_/yoaGs_deUSsFPVv
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 9 Nov 2012, Randy Dunlap wrote:
 
-Hi Steve,
+> on x86_64:
+> 
+> In file included from mm/mprotect.c:13:0:
+> include/linux/shm.h:57:20: error: redefinition of 'do_shmat'
+> include/linux/shm.h:57:20: note: previous definition of 'do_shmat' was here
+> include/linux/shm.h:63:19: error: redefinition of 'is_file_shm_hugepages'
+> include/linux/shm.h:63:19: note: previous definition of 'is_file_shm_hugepages' was here
+> include/linux/shm.h:67:20: error: redefinition of 'exit_shm'
+> include/linux/shm.h:67:20: note: previous definition of 'exit_shm' was here
+> 
+> In file included from include/linux/hugetlb.h:16:0,
+>                  from mm/mmap.c:23:
+> include/linux/shm.h:57:20: error: redefinition of 'do_shmat'
+> include/linux/shm.h:57:20: note: previous definition of 'do_shmat' was here
+> include/linux/shm.h:63:19: error: redefinition of 'is_file_shm_hugepages'
+> include/linux/shm.h:63:19: note: previous definition of 'is_file_shm_hugepages' was here
+> include/linux/shm.h:67:20: error: redefinition of 'exit_shm'
+> include/linux/shm.h:67:20: note: previous definition of 'exit_shm' was here
+> make[2]: *** [mm/mprotect.o] Error 1
+> 
 
-On Mon, 12 Nov 2012 16:52:56 -0500 Steven Rostedt <rostedt@goodmis.org> wro=
-te:
->
-> On Tue, 2012-11-13 at 08:47 +1100, Stephen Rothwell wrote:
->=20
-> > As this seems to be based on things in the tip tree, I have positioned =
-it
-> > after that tree.
->=20
-> Yes it is. Sorry I should have reported that. But as Ingo hasn't been
-> seen since Oct 30th (I think he's on vacation), and my code is just
-> sitting in limbo on LKML, I figured I start getting it tested for 3.8,=20
-> and not wait for Ingo to pull it into tip.
->=20
-> I plan on doing this for other releases too.
+This is an elusive one, I couldn't reproduce it with master.  This appears 
+to only happen on the akpm branch, correct?
 
-Not a problem.
+It happens because of e37c64a9751a ("mm: support more pagesizes for 
+MAP_HUGETLB/SHM_HUGETLB") adds a spurious "#endif" to include/linux/shm.h 
+and gets reverted in master by 359078d82a20 ("Revert "mm: support more 
+pagesizes for MAP_HUGETLB/SHM_HUGETLB"") because of another build failure 
+that Stephen reports on November 8:
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+mm/mmap.c: In function 'SYSC_mmap_pgoff':
+mm/mmap.c:1271:15: error: 'MAP_HUGE_SHIFT' undeclared (first use in this function)
+mm/mmap.c:1271:15: note: each undeclared identifier is reported only once for each function it appears in
+mm/mmap.c:1271:33: error: 'MAP_HUGE_MASK' undeclared (first use in this function)
 
---Signature=_Tue__13_Nov_2012_10_05_13_+1100_/yoaGs_deUSsFPVv
-Content-Type: application/pgp-signature
+I think the best bet would be to merge the following in -mm and then let 
+Stephen revert it in master again if his build error persists for powerpc:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQoYCpAAoJEECxmPOUX5FE7IAP/RHJxj/2P2w0ix/lSM35rx/q
-dT/cOsKC1FTeXlJ/qVeceEdIB3iXYWRp9lNbh3unf/9vHLW7XZs3xewSwIbXB+aF
-9FvxElJri1dejpquExjq5zokFJ+0MyNdJZwjEf4ZSPH7Tv52uL6EJ9HpKVD8vKHd
-5Jz1y0ncNgvjkJbLU0ZPZampB17fHJmGH8fhV6rkGvWEqM5QZREEQzX15wPHjdnK
-xpM9OYLNpYnc7+Xj416FC3LGGBS0KRU+8eksKGmdh0Hq0kHqgGwLnvyV1xS0VA9B
-tDiMcvTPmfWqtjt+7HcGmnNvBW8OgNKNPRd8y/5yTOtm9wuR7qSzWaCi1LAgN/fs
-YzLRu6FYjJeDq1dv/4Slgh7qEsT/z2zH3AaAXo5Su/7xqIFHTpvKH5gcooRek97+
-sfuNissFWdp/otGo6AS7LX9HhE4j4cno9bkTk7boA56coYYcKsznbZPqp0XShAga
-zzQbAgfCA8l1IP+eiz6eBDdZTuS38AARjKfU29aVqDsomJsMz1nzDdDc3S0Hgky6
-+pqTrvZV3VkRMtJ5ZtdCTPNIqW6I2/GlExNfMKaaaf2pJBYB6hbzocE7NRa4JCrc
-10l4D8gHUS0HTxIz9nc+NjMlW/ScMw3RKyzVRrVZCvlDQJYVZ+FfZ6G+2cfDtte8
-bQ/3TFmls/Nwa9NWXmk3
-=wOee
------END PGP SIGNATURE-----
+mm-support-more-pagesizes-for-map_hugetlb-shm_hugetlb-v7-fix-fix-fix
 
---Signature=_Tue__13_Nov_2012_10_05_13_+1100_/yoaGs_deUSsFPVv--
+Fix the build:
+
+include/linux/shm.h:57:20: error: redefinition of 'do_shmat'
+include/linux/shm.h:57:20: note: previous definition of 'do_shmat' was here
+include/linux/shm.h:63:19: error: redefinition of 'is_file_shm_hugepages'
+include/linux/shm.h:63:19: note: previous definition of 'is_file_shm_hugepages' was here
+include/linux/shm.h:67:20: error: redefinition of 'exit_shm'
+include/linux/shm.h:67:20: note: previous definition of 'exit_shm' was here
+
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ include/linux/shm.h |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/shm.h b/include/linux/shm.h
+--- a/include/linux/shm.h
++++ b/include/linux/shm.h
+@@ -23,8 +23,6 @@ struct shmid_kernel /* private to the kernel */
+ 	struct task_struct	*shm_creator;
+ };
+ 
+-#endif
+-
+ /* shm_mode upper byte flags */
+ #define	SHM_DEST	01000	/* segment will be destroyed on last detach */
+ #define SHM_LOCKED      02000   /* segment will not be swapped */
+@@ -46,8 +44,6 @@ struct shmid_kernel /* private to the kernel */
+ #define SHM_HUGE_2MB    (21 << SHM_HUGE_SHIFT)
+ #define SHM_HUGE_1GB    (30 << SHM_HUGE_SHIFT)
+ 
+-#ifdef __KERNEL__
+-
+ #ifdef CONFIG_SYSVIPC
+ long do_shmat(int shmid, char __user *shmaddr, int shmflg, unsigned long *addr,
+ 	      unsigned long shmlba);
