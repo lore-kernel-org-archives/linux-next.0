@@ -1,73 +1,35 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Tue, 13 Nov 2012 11:14:40 -0200
-Message-ID: <20121113111440.4a3435b3@infradead.org>
-References: <20121112110935.eee5f582f16ab07c9faeabb1@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH -next] mfd: fix stmpe.c build when OF is not enabled
+Date: Tue, 13 Nov 2012 14:35:26 +0100
+Message-ID: <CACRpkdZj5iuyXAfynF-5r65dnakxxm2A1O602P4Lc6it8=fU9g@mail.gmail.com>
+References: <20121112164431.8bcfe78d2a2ec73271733db4@canb.auug.org.au>
+	<50A12FF1.4000800@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121112110935.eee5f582f16ab07c9faeabb1@canb.auug.org.au>
+In-Reply-To: <50A12FF1.4000800@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Rabin Vincent <rabin.vincent@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Em Mon, 12 Nov 2012 11:09:35 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+On Mon, Nov 12, 2012 at 6:20 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
 
-> Hi Mauro,
-> 
-> After merging the v4l-dvb tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> ERROR: "sms_ir_exit" [drivers/media/common/siano/smsmdtv.ko] undefined!
-> ERROR: "sms_ir_event" [drivers/media/common/siano/smsmdtv.ko] undefined!
-> ERROR: "sms_ir_init" [drivers/media/common/siano/smsmdtv.ko] undefined!
-> 
-> This is better than Friday, but still not quite there. :-(
-> 
-> I have used the v4l-dvb tree from next-20121026 again.
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix build errors when CONFIG_OF is not enabled by including
+> <linux/of.h> (needs to be added in any case).
+> An alternative fix could be to make the driver depend on OF.
+>
+> drivers/mfd/stmpe.c:1025:2: error: implicit declaration of function 'of_property_read_u32'
+> drivers/mfd/stmpe.c:1030:2: error: implicit declaration of function 'for_each_child_of_node'
+> drivers/mfd/stmpe.c:1030:36: error: expected ';' before '{' token
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Rabin Vincent <rabin.vincent@stericsson.com>
+> Cc: Samuel Ortiz <sameo@linux.intel.com>
 
-Sorry, I did one mistake on my last patch. Instead of adding RC to the
-siano core, it was added at the build as if it was an independent module.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-The fix is trivial. I'll add it on my tree for tomorrow's merge.
-
-Thanks for pointing it.
-
-Regards,
-Mauro
-
--
-
-[PATCH] [media] siano: fix build with allmodconfig
-
-As reported by Stephen:
-
-	After merging the v4l-dvb tree, today's linux-next build (x86_64
-	allmodconfig) failed like this:
-
-	ERROR: "sms_ir_exit" [drivers/media/common/siano/smsmdtv.ko] undefined!
-	ERROR: "sms_ir_event" [drivers/media/common/siano/smsmdtv.ko] undefined!
-	ERROR: "sms_ir_init" [drivers/media/common/siano/smsmdtv.ko] undefined!
-
-The smsir file should be part of the smsmdtv core, if RC is defined.
-Fix it.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-
-diff --git a/drivers/media/common/siano/Makefile b/drivers/media/common/siano/Makefile
-index 9e7fdf2..81b1e98 100644
---- a/drivers/media/common/siano/Makefile
-+++ b/drivers/media/common/siano/Makefile
-@@ -3,7 +3,7 @@ smsmdtv-objs := smscoreapi.o sms-cards.o smsendian.o
- obj-$(CONFIG_SMS_SIANO_MDTV) += smsmdtv.o smsdvb.o
- 
- ifeq ($(CONFIG_SMS_SIANO_RC),y)
--  obj-$(CONFIG_SMS_SIANO_MDTV) += smsir.o
-+  smsmdtv-objs += smsir.o
- endif
- 
- ccflags-y += -Idrivers/media/dvb-core
+Yours,
+Linus Walleij
