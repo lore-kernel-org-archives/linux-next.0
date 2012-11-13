@@ -1,43 +1,43 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH -next] wireless: brcmfmac: fix printk format warning
-Date: Tue, 13 Nov 2012 07:55:18 -0800
-Message-ID: <50A26D66.4060603@infradead.org>
-References: <20121101163622.129b59967d2ee76e6946874a@canb.auug.org.au>	 <5092B4BE.4080803@infradead.org> <5092B900.2090801@broadcom.com>	 (sfid-20121101_190234_358746_9918835B) <1351798279.17469.0.camel@jlt4.sipsolutions.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Tue, 13 Nov 2012 10:48:14 -0800
+Message-ID: <20121113184814.GA24793@kroah.com>
+References: <20121113165106.e592e23693663de49e9d78d0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:49047 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751662Ab2KMP4J (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Nov 2012 10:56:09 -0500
-In-Reply-To: <1351798279.17469.0.camel@jlt4.sipsolutions.net>
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:58031 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754821Ab2KMSsQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Nov 2012 13:48:16 -0500
+Content-Disposition: inline
+In-Reply-To: <20121113165106.e592e23693663de49e9d78d0@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Arend van Spriel <arend@broadcom.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, brcm80211-dev-list@broadcom.com, linux-wireless@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>
 
-On 11/01/2012 12:31 PM, Johannes Berg wrote:
-
-> On Thu, 2012-11-01 at 19:01 +0100, Arend van Spriel wrote:
->> On 11/01/2012 06:43 PM, Randy Dunlap wrote:
->>> From: Randy Dunlap <rdunlap@infradead.org>
->>>
->>> Fix printk format warning for ssid_len, which is a size_t:
->>>
->>> drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:3941:2: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
->>>
->>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->>> Cc:	brcm80211-dev-list@broadcom.com
->>
->>
->> We actually have a patch ready for that with credit to people who
->> reported it. We can add you to that list ;-)
+On Tue, Nov 13, 2012 at 04:51:06PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Which you've been sitting on for WAY too long already :)
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> In file included from drivers/power/lp8788-charger.c:15:0:
+> include/linux/iio/consumer.h:76:21: error: unknown type name 'u8'
+> include/linux/iio/consumer.h:78:11: error: expected ';', ',' or ')' before 'void'
+> 
+> Caused by commit 92d1079b281f ("staging:iio: add a callback buffer for in
+> kernel push interface").  Presumably just a missing include.
+> 
+> I have reverted that commit for today (it introduces a set of not yet
+> used interfaces).
 
-ping Arend.
-Please have your patch included in linux-next builds.  thanks.
+I've fixed this up in the tree now so you shouldn't have this problem
+with your next pull.
 
--- 
-~Randy
+thanks,
+
+greg k-h
