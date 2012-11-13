@@ -1,36 +1,56 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the usb.current
- tree
-Date: Tue, 13 Nov 2012 10:49:11 -0800
-Message-ID: <20121113184911.GC24793@kroah.com>
-References: <20121113143732.624361eaf8ed2f4d0d64dd7d@canb.auug.org.au>
+From: "Arend van Spriel" <arend@broadcom.com>
+Subject: Re: [PATCH -next] wireless: brcmfmac: fix printk format warning
+Date: Tue, 13 Nov 2012 22:52:25 +0100
+Message-ID: <50A2C119.3050503@broadcom.com>
+References: <20121101163622.129b59967d2ee76e6946874a@canb.auug.org.au>
+ <5092B4BE.4080803@infradead.org> <5092B900.2090801@broadcom.com> (
+ sfid-20121101_190234_358746_9918835B)
+ <1351798279.17469.0.camel@jlt4.sipsolutions.net>
+ <50A26D66.4060603@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+ charset=utf-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:49185 "EHLO
-	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755636Ab2KMStN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Nov 2012 13:49:13 -0500
-Content-Disposition: inline
-In-Reply-To: <20121113143732.624361eaf8ed2f4d0d64dd7d@canb.auug.org.au>
+Received: from mms2.broadcom.com ([216.31.210.18]:4325 "EHLO mms2.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751413Ab2KMVwl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Nov 2012 16:52:41 -0500
+In-Reply-To: <50A26D66.4060603@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Yongjun <weiyj.lk@gmail.com>, Felipe Balbi <balbi@ti.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, brcm80211-dev-list@broadcom.com, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 
-On Tue, Nov 13, 2012 at 02:37:32PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the usb tree got a conflict in
-> drivers/usb/musb/ux500.c between commit 9a65d162e449 ("usb: musb: ux500:
-> fix 'musbid' undeclared error in ux500_remove()") from the usb.current
-> tree and commit 2f7711642559 ("usb: musb: remove hand-crafted id
-> handling") from the usb tree.
-> 
-> The latter supercedes the former so I used that and can carry the fix as
-> necessary (no action is required).
+On 11/13/2012 04:55 PM, Randy Dunlap wrote:
+> On 11/01/2012 12:31 PM, Johannes Berg wrote:
+>
+>> On Thu, 2012-11-01 at 19:01 +0100, Arend van Spriel wrote:
+>>> On 11/01/2012 06:43 PM, Randy Dunlap wrote:
+>>>> From: Randy Dunlap <rdunlap@infradead.org>
+>>>>
+>>>> Fix printk format warning for ssid_len, which is a size_t:
+>>>>
+>>>> drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:3941:2: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+>>>>
+>>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>>> Cc:	brcm80211-dev-list@broadcom.com
+>>>
+>>>
+>>> We actually have a patch ready for that with credit to people who
+>>> reported it. We can add you to that list ;-)
+>>
+>> Which you've been sitting on for WAY too long already :)
+>
+> ping Arend.
+> Please have your patch included in linux-next builds.  thanks.
+>
 
-That is fine, thanks for doing this.
+It has been posted to John on November 6th. The wireless summit in 
+Barcelona probably gave some delay.
 
-greg k-h
+It is on the wireless list named "[PATCH 19/24] brcmfmac: fix build 
+regression".
+
+Gr. AvS
