@@ -1,56 +1,61 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Subject: Re: [PATCH -next] wireless: brcmfmac: fix printk format warning
-Date: Tue, 13 Nov 2012 22:52:25 +0100
-Message-ID: <50A2C119.3050503@broadcom.com>
-References: <20121101163622.129b59967d2ee76e6946874a@canb.auug.org.au>
- <5092B4BE.4080803@infradead.org> <5092B900.2090801@broadcom.com> (
- sfid-20121101_190234_358746_9918835B)
- <1351798279.17469.0.camel@jlt4.sipsolutions.net>
- <50A26D66.4060603@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Date: Wed, 14 Nov 2012 15:07:46 +1100
+Message-ID: <20121114150746.433de520ffbc71b4281f3c62@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__14_Nov_2012_15_07_46_+1100_RVFDQTh15FtgVMDX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms2.broadcom.com ([216.31.210.18]:4325 "EHLO mms2.broadcom.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751413Ab2KMVwl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Nov 2012 16:52:41 -0500
-In-Reply-To: <50A26D66.4060603@infradead.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46202 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932268Ab2KNEH5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Nov 2012 23:07:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, brcm80211-dev-list@broadcom.com, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Fainelli <florian@openwrt.org>
 
-On 11/13/2012 04:55 PM, Randy Dunlap wrote:
-> On 11/01/2012 12:31 PM, Johannes Berg wrote:
->
->> On Thu, 2012-11-01 at 19:01 +0100, Arend van Spriel wrote:
->>> On 11/01/2012 06:43 PM, Randy Dunlap wrote:
->>>> From: Randy Dunlap <rdunlap@infradead.org>
->>>>
->>>> Fix printk format warning for ssid_len, which is a size_t:
->>>>
->>>> drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:3941:2: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
->>>>
->>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->>>> Cc:	brcm80211-dev-list@broadcom.com
->>>
->>>
->>> We actually have a patch ready for that with credit to people who
->>> reported it. We can add you to that list ;-)
->>
->> Which you've been sitting on for WAY too long already :)
->
-> ping Arend.
-> Please have your patch included in linux-next builds.  thanks.
->
+--Signature=_Wed__14_Nov_2012_15_07_46_+1100_RVFDQTh15FtgVMDX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It has been posted to John on November 6th. The wireless summit in 
-Barcelona probably gave some delay.
+Hi Greg,
 
-It is on the wireless list named "[PATCH 19/24] brcmfmac: fix build 
-regression".
+Today's linux-next merge of the usb tree got conflicts in
+drivers/usb/host/ehci-ls1x.c and drivers/usb/host/ohci-xls.c between
+commit e592c5d0b7db ("Revert "USB/host: Cleanup unneccessary irq disable
+code"") from the usb.current tree and commits ead92fae1290 ("USB: EHCI:
+remove Loongson 1B EHCI driver") and c2e91e046df6 ("USB: OHCI: remove
+Netlogic XLS OHCI platform driver") from the usb tree.
 
-Gr. AvS
+The latter removed the files, so I just did that and can carry the fix as
+necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__14_Nov_2012_15_07_46_+1100_RVFDQTh15FtgVMDX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQoxkSAAoJEECxmPOUX5FELV0P/i1e1DvYFqOPwEsF3in6Eu//
+EutvAuS5jrBF+23G+pVPg8J3TJxM8QFMzWytsKrF4rPqaGr795OjIOj+s97I/fcR
+6qsa3RpQhChZrK+I7on7jbTjMKMCyGQ4Z8GWYcgthZZgBoKCWc57N4+yccLOQAUf
+A4utQMWCs3oYBGN8JaRcIhMMMbtg1+zyM4H05pJ58vv5+FpJgPeuPfgcLTGVFBmZ
+QweZvnhrhGW51bPty1DiKo1tHwaGpyn81Wgn7myN+BqXcg9J+b5ZtZFzmDuV5AGC
+JjyCYqsW9IrYFjm3t3OdeV4AWloi1xS/9OqB9Px8ssplN/vPEkVDsJLrN4ppdxbP
+6RIxVM0XrKPOomSnFdNxiksx2SqJFrKyikyp9hgUXAa6MY41/EGwEshPXihsAo8X
+u5QukYUQfJ9++/jbQgEEmR0VGtC2SjbT/AOvF1b1hyvXii9crX8P7ebFCL2QrZj3
+i9UdTvPq/NJ5nD88JIgXe+g+gxUW2wNVagqVCa7TAB9qrDvsliFhhkXQZ8Tmclox
+44scOGTQT9QYfVqV3KiRV35xkGZvTFSyc8+ZWCZScRE1Y6WliPg70sP/35/rfl43
+bG3MHaUYu7/537y/DA1V5YpXAChEZ7jbD414gaEPm4odHVuXxqGUiht4CF4Xx2J/
+jtGO7sOZM08cPLAMxj7q
+=UAuF
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__14_Nov_2012_15_07_46_+1100_RVFDQTh15FtgVMDX--
