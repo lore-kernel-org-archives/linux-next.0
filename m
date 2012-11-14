@@ -1,69 +1,68 @@
-From: Rik van Riel <riel@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: Tree for Nov 14
-Date: Wed, 14 Nov 2012 12:05:15 -0500
-Message-ID: <50A3CF4B.8020806@redhat.com>
-References: <20121114163042.64f0c0495663331b9c2d60d6@canb.auug.org.au> <20121113213742.292f3ace.akpm@linux-foundation.org> <20121114064726.GA2537@gmail.com> <20121113225635.a848fd6c.akpm@linux-foundation.org> <20121114073929.GA3130@gmail.com> <alpine.LNX.2.00.1211132346120.19216@eggly.anvils>
+Date: Wed, 14 Nov 2012 09:19:16 -0800
+Message-ID: <CA+55aFzY0+epP2Dxj=ghwVB3=JbM=qXC6a5V2kf9EzD_E-79tA@mail.gmail.com>
+References: <20121114163042.64f0c0495663331b9c2d60d6@canb.auug.org.au>
+ <20121113213742.292f3ace.akpm@linux-foundation.org> <20121114064726.GA2537@gmail.com>
+ <20121113225635.a848fd6c.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:33422 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932188Ab2KNRFc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 Nov 2012 12:05:32 -0500
-In-Reply-To: <alpine.LNX.2.00.1211132346120.19216@eggly.anvils>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:38876 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932188Ab2KNRTi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Nov 2012 12:19:38 -0500
+In-Reply-To: <20121113225635.a848fd6c.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrea Arcangeli <aarcange@redhat.com>, Mel Gorman <mgorman@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Hugh Dickins <hughd@google.com>
 
-On 11/14/2012 03:13 AM, Hugh Dickins wrote:
-
-> Please, Ingo, stop trying to force this in ahead of time, yet again.
+On Tue, Nov 13, 2012 at 10:56 PM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
 >
-> People are still reviewing and comparing competing solutions.
-> Maybe this latest will prove to be closest to the right answer,
-> maybe it will not.  It's, what, about two days old right now?
->
-> If we had wanted to push in a good solution a little prematurely,
-> we would surely have chosen Andrea's AutoNUMA months ago, despite
-> efforts to block it; and maybe we shall still want to go that way.
+> That solves one problem, but I still need to route around the numa
+> stuff when preparing the 3.8-rc1 merge.  Again!
 
-As much as I would like to see NUMA stuff going upstream
-the day before yesterday, I have to agree with Hugh that
-we need to do things right.
+Btw - and this is tangential/unrelated - I really think that your
+should strive to *not* base -mm on top of next, but instead put it on
+top of the release kernel.
 
-Having unreviewed (some of it NAKed) code sitting in
-tip.git and you trying to force it upstream is not the
-right way to go.
+The "on top of next" approach not only causes you continual problems
+like the above, it also causes the (related) problem that your email
+patch-bombs always tend to be fairly late in the merge window, because
+you need to wait for the big parts of linux-next to have hit my tree.
 
-> Please, forget about v3.8, cut this branch out of linux-next,
-> and seek consensus around getting it right for v3.9.
+So it's more work for you, and it actually causes merge problems for me too.
 
-I suspect that no matter how long we delay merging the
-NUMA placement code, we will always run into some kind
-of regression. I am not sure if a delay will buy us much.
+I realize that you want to test a "everything" kernel, but at the same
+time, that's actually counter-productive. It means that your tree ends
+up depending on others, and you have to fight bugs that aren't even
+necessarily yours at all.
 
-On the mm/ bits, there appears to be consensus already.
-Mel Gorman's patch series contains the nicest mm/ bits
-from autonuma and sched/numa, plus further improvements.
-Andrea has supported Mel's series, and Ingo is pulling
-code from it.
+And in this particular case, it would be easier for the NUMA people,
+since your patches would presumably contain Mel's work, so they could
+more easily rebase on top of your work, rather than the current
+situation which is ass-backwards and has fundamental odering problems:
+you want to base your stuff on linux-next, people want to put their
+numa stuff into linux-next, and you have a bad circle.
 
-That leads me to believe Mel's NUMA bits may be worth
-considering for 3.8.
+Of course, people who want to base their work on top of Mel's code
+often are git users already, so now they'd want a stable git tree
+(non-rebased) to work on top, so they'd have problems with -mm anyway.
+I don't know if Mel is a git user at all (there are no commits in the
+kernel tree that are done by Mel, but maybe Mel has used git
+elsewhere), but in this case maybe it would be a possibility that
+Mel's NUMA patches could be done as one single stable -git branch, and
+come into -mm (and linux-next) that way?
 
-On top of that, we could place the policy code by
-Peter and Ingo, but as a nice reviewable patch series,
-not hidden away through various tip.git branches.
+So I really think it would be much nicer if you just did your tree
+directly on top of mine, instead of on top of linux-next. It would
+make everything easier for everybody.
 
-Does a combination of Mel's NUMA mm/ bits and the
-policy code from Peter and Ingo sound reasonable?
+Of course, if you then want to test the combined thing, that's fine,
+but that merging is also something that git is pretty good at. You
+could just check the linux-next tree itself, since then Stephen would
+have done the merging for you.
 
-Mel, is that reasonable to you?
-
-Peter & Ingo, are you willing to rebase your policy
-code on top of Mel's mm/ patches?
-
--- 
-All rights reversed
+                  Linus
