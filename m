@@ -1,67 +1,59 @@
 From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for Nov 14 (gpu/drm/i915)
-Date: Wed, 14 Nov 2012 12:17:47 -0800
-Message-ID: <20121114121747.46ffe05f.akpm@linux-foundation.org>
-References: <20121114163042.64f0c0495663331b9c2d60d6@canb.auug.org.au>
-	<50A3F3FD.4070707@infradead.org>
+Subject: Re: linux-next: build failure after merge of the final tree (akpm
+ tree related)
+Date: Wed, 14 Nov 2012 14:18:47 -0800
+Message-ID: <20121114141847.fab752c2.akpm@linux-foundation.org>
+References: <20121109150957.4f274fa7b3a75c9baaa1b7ff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50A3F3FD.4070707@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38210 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933155Ab2KNWSt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Nov 2012 17:18:49 -0500
+In-Reply-To: <20121109150957.4f274fa7b3a75c9baaa1b7ff@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>, Rik van Riel <riel@redhat.com>, David Miller <davem@davemloft.net>
 
-On Wed, 14 Nov 2012 11:41:49 -0800
-Randy Dunlap <rdunlap@infradead.org> wrote:
+On Fri, 9 Nov 2012 15:09:57 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> On 11/13/2012 09:30 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> > Hi all,
-> > 
-> > News: next-20121115 (i.e. tomorrow) will be the last release until
-> > next-20121126 (which should be just be after -rc7, I guess - assuming
-> > that Linus does not release v3.7 before then), so if you want something
-> > in linux-next for a reasonable amount of testing, it should probably be
-> > committed tomorrow.
-> > 
-> > Changes since 20121113:
-> > 
+> After merging the final tree, today's linux-next build (sparc64 defconfig)
+> failed like this:
 > 
-> 
-> 
-> on i386:
-> 
-> ERROR: "__build_bug_on_failed" [drivers/gpu/drm/i915/i915.ko] undefined!
-> 
-> Reference to that symbol is found in
-> i915_gem_execbuffer.o.  Reference to BUILD_BUG_ON() is found in
-> i915_gem_execbuffer.c:
-> 
-> static struct eb_objects *
-> eb_create(int size)
-> {
-> 	struct eb_objects *eb;
-> 	int count = PAGE_SIZE / sizeof(struct hlist_head) / 2;
-> 	BUILD_BUG_ON(!is_power_of_2(PAGE_SIZE / sizeof(struct hlist_head)));
-> 
+> arch/sparc/kernel/sys_sparc_64.c: In function 'arch_get_unmapped_area':
+> arch/sparc/kernel/sys_sparc_64.c:92:16: error: unused variable 'start_addr' [-Werror=unused-variable]
+> arch/sparc/kernel/sys_sparc_64.c: In function 'arch_get_unmapped_area_topdown':
+> arch/sparc/kernel/sys_sparc_64.c:194:20: error: 'do_colour_align' undeclared (first use in this function)
 
-Where to start.
+s/colour/color/
 
-- eb_create() has no business assuming that the hlist_head has any
-  particular size.  We could easily add some conditionally-compiled
-  debug fields in there, and drm blows up.
+> arch/sparc/kernel/sys_sparc_64.c:194:20: note: each undeclared identifier is reported only once for each function it appears in
+> arch/sparc/kernel/sys_sparc_64.c:194:51: error: 'shm_align_mask' undeclared (first use in this function)
 
-- The assertion is obviously true at present, so I assume that gcc
-  screwed up and failed to reduce all that to a compile-time constant.
+This one has me puzzled.  I *think* we should be using
 
-- We have a BUILD_BUG_ON_NOT_POWER_OF_2().  Use it?
+info.align_mask = do_colour_align ? (PAGE_MASK & SHMLBA) : 0;
+info.align_offset = (pgoff << PAGE_SHIFT) & (SHMLBA-1);
 
-- This code is using PAGE_SIZE to scale a kernel data structure. 
-  PAGE_SIZE can vary by a factor of 16, depending on Kconfig.  This
-  can result in 64k PAGE_SIZE machines exhibiting different beahviour
-  from that which the testers saw.
+or similar.   It needs more work.
+		
+> Caused by commit "mm: use vm_unmapped_area() on sparc64 architecture".  I
+> have reverted that commit for today (and the following fix patch).
+> 
+> arch/sparc/mm/hugetlbpage.c: In function 'hugetlb_get_unmapped_area_topdown':
+> arch/sparc/mm/hugetlbpage.c:63:25: error: unused variable 'vma' [-Werror=unused-variable]
+> 
+> Caused by commit "mm: use vm_unmapped_area() in hugetlbfs on sparc64
+> architecture".  I have reverted that commit for today.
 
-  Don't do it.  It's better to hard-wire 4096.
+I'll drop
+
+mm-use-vm_unmapped_area-on-sparc64-architecture.patch
+mm-use-vm_unmapped_area-on-sparc64-architecture-fix.patch
+mm-use-vm_unmapped_area-in-hugetlbfs-on-sparc64-architecture.patch
