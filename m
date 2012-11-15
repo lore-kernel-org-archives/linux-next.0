@@ -1,34 +1,38 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Subject: Re: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-Date: Thu, 15 Nov 2012 09:06:40 +0100
-Message-ID: <50A4A290.3070707@broadcom.com>
-References: <20121115131707.25e7df1ab635c18e62f0712a@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: manual merge of the spi tree with Linus' tree
+Date: Thu, 15 Nov 2012 09:32:49 +0000
+Message-ID: <CACxGe6vM0yyjB4Bs-k=y+QD1VXuxZxqWxOLvU4FWQWoWFC1Z2g@mail.gmail.com>
+References: <20121115150139.178644970192d226e73e94e6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=iso-8859-1;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121115131707.25e7df1ab635c18e62f0712a@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:40691 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755946Ab2KOJdJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Nov 2012 04:33:09 -0500
+Received: by mail-pb0-f46.google.com with SMTP id wy7so1029005pbc.19
+        for <linux-next@vger.kernel.org>; Thu, 15 Nov 2012 01:33:09 -0800 (PST)
+In-Reply-To: <20121115150139.178644970192d226e73e94e6@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On 11/15/2012 03:17 AM, Stephen Rothwell wrote:
-> Hi John,
+On Thu, Nov 15, 2012 at 4:01 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Grant,
 >
-> Today's linux-next merge of the wireless-next tree got a conflict in
-> drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c between commit
-> d61f978b8f26 ("brcmfmac: fix typo in CONFIG_BRCMISCAN") from the  tree
-> and commit f07998959d57 ("brcmfmac: remove obsolete i-scan and clean up
-> related code") from the wireless-next tree.
+> Today's linux-next merge of the spi tree got a conflict in
+> drivers/spi/spi-xcomm.c between commit b31659004337 ("spi: Add
+> AD-FMCOMMS1-EBZ I2C-SPI bridge driver") from Linus' tree and commit
+> 0e312dcca718 ("spi/xcomm: Add AD-FMCOMMS1-EBZ I2C-SPI bridge driver")
+> from the spi tree.
 >
-> I used the latter (which removed the line that was fixed in the former)
-> and can carry the fix as necessary (no action is required).
+> OK, so the former commit added this driver back before v3.6-rc1 with an
+> author date of 2012-07-20, the latter is adding a slightly modified
+> version of the dirver with an author date of 2012-05-22.
 >
+> I used the former version , please sort this out.
 
-Agreed. The typo fix is only needed for v3.7.
+Sorry for the trouble. I've cleaned up my stale tree now.
 
-Gr. AvS
+g.
