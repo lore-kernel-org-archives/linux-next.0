@@ -1,114 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the  tree
-Date: Thu, 15 Nov 2012 17:25:35 +1100
-Message-ID: <20121115172535.45e27b63355827f9451c4b4b@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Thu, 15 Nov 2012 17:32:07 +1100
+Message-ID: <20121115173207.00a48446007cd99735d4e592@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Nov_2012_17_25_35_+1100_ppMMdqb+S4YJHlNM"
+ boundary="Signature=_Thu__15_Nov_2012_17_32_07_+1100_tEo9lo7S0wcWZH.a"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59769 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:45244 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751889Ab2KOGZp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Nov 2012 01:25:45 -0500
+	with ESMTP id S2992602Ab2KOGcM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Nov 2012 01:32:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, Michal Hocko <mhocko@suse.cz>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
---Signature=_Thu__15_Nov_2012_17_25_35_+1100_ppMMdqb+S4YJHlNM
+--Signature=_Thu__15_Nov_2012_17_32_07_+1100_tEo9lo7S0wcWZH.a
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm-current tree got a conflict in
-mm/memcontrol.c between commit 2ef37d3fe474 ("memcg: Simplify
-mem_cgroup_force_empty_list error handling") from the cgroup tree and
-commit 4bfe8322f427 ("memcg: fix hotplugged memory zone oops") from the
-akpm-current tree.
+Today's linux-next merge of the akpm tree got a conflict in mm/mprotect.c
+between commit a9463d90124a ("mm: Count the number of pages affected in
+change_protection()") from the tip tree and commit "thp: change
+split_huge_page_pmd() interface" from the akpm tree.
 
-I fixed it up (as suggested by Andrew - see below) and can carry the fix
-as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc mm/memcontrol.c
-index 08adaaa,dd39ba0..0000000
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@@ -3673,32 -3712,30 +3706,32 @@@ unsigned long mem_cgroup_soft_limit_rec
-  	return nr_reclaimed;
-  }
- =20
- -/*
- +/**
- + * mem_cgroup_force_empty_list - clears LRU of a group
- + * @memcg: group to clear
- + * @node: NUMA node
- + * @zid: zone id
- + * @lru: lru to to clear
- + *
-   * Traverse a specified page_cgroup list and try to drop them all.  This =
-doesn't
- - * reclaim the pages page themselves - it just removes the page_cgroups.
- - * Returns true if some page_cgroups were not freed, indicating that the =
-caller
- - * must retry this operation.
- + * reclaim the pages page themselves - pages are moved to the parent (or =
-root)
- + * group.
-   */
- -static bool mem_cgroup_force_empty_list(struct mem_cgroup *memcg,
- +static void mem_cgroup_force_empty_list(struct mem_cgroup *memcg,
-  				int node, int zid, enum lru_list lru)
-  {
-- 	struct mem_cgroup_per_zone *mz;
-+ 	struct lruvec *lruvec;
- -	unsigned long flags, loop;
- +	unsigned long flags;
-  	struct list_head *list;
-  	struct page *busy;
-  	struct zone *zone;
- =20
-  	zone =3D &NODE_DATA(node)->node_zones[zid];
-- 	mz =3D mem_cgroup_zoneinfo(memcg, node, zid);
-- 	list =3D &mz->lruvec.lists[lru];
-+ 	lruvec =3D mem_cgroup_zone_lruvec(zone, memcg);
-+ 	list =3D &lruvec->lists[lru];
- =20
- -	loop =3D mem_cgroup_get_lru_size(lruvec, lru);
- -	/* give some margin against EBUSY etc...*/
- -	loop +=3D 256;
-  	busy =3D NULL;
- -	while (loop--) {
- +	do {
-  		struct page_cgroup *pc;
-  		struct page *page;
- =20
+diff --cc mm/mprotect.c
+index 6ff2d5e,cbafe4b..0000000
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@@ -89,11 -83,9 +89,11 @@@ static inline unsigned long change_pmd_
+  		next =3D pmd_addr_end(addr, end);
+  		if (pmd_trans_huge(*pmd)) {
+  			if (next - addr !=3D HPAGE_PMD_SIZE)
+- 				split_huge_page_pmd(vma->vm_mm, pmd);
++ 				split_huge_page_pmd(vma, addr, pmd);
+ -			else if (change_huge_pmd(vma, pmd, addr, newprot))
+ +			else if (change_huge_pmd(vma, pmd, addr, newprot)) {
+ +				pages +=3D HPAGE_PMD_NR;
+  				continue;
+ +			}
+  			/* fall through */
+  		}
+  		if (pmd_none_or_clear_bad(pmd))
 
---Signature=_Thu__15_Nov_2012_17_25_35_+1100_ppMMdqb+S4YJHlNM
+--Signature=_Thu__15_Nov_2012_17_32_07_+1100_tEo9lo7S0wcWZH.a
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQpIrfAAoJEECxmPOUX5FETOkP/3PbiFMvtWym8v3Mtou/WHl9
-LsxgDFixS7DRgprheGYYjt02B/zWctfFlKlFMrJ4w547IMs87ojWj/9Ye+UVWLaF
-teaCP6pr1Shpni+IiWV+ljcnIOezcGFO7lSIK/bOIL6Ty/lXqmNLPosPdFqFfskE
-Lx7jC8zlwmdS0lOBZGyw4CqESkIvA3lw20VVHbI/XaI9nxYVoT5Q3P9/SLGBHNu2
-givgMiv7mZjB3TBaNYrcZcmr7BqOhgcBDYwzSSZNJpb9c/ZEZpX2+Hv28+ZJuH9K
-GN+qdQEzr2up3iPu/VF+mV6nxkIgqlKQFYLcqdf0qAFSen9beyxYcbsD1AqbHRxF
-tj/aN8uZRqjs9TeAASaNLRw1SxbGgUeezUjyPEZomMZgEmoi2dorDirWQUNDBb5b
-ca0+/kYvVoa3+02ISuPezUklZ2YFPLol5fAsbEmhQ3W0thYXi4488KhxA+8zw0XH
-keB5cNL74TvcWus4gOTimBiVl868kCLSgClMwpZVjqTS8ck855dXzUfOgWd1InB/
-o0cSD/cZoQJrlg7yvuNTqiMbcfUZV0oxwmmJvTNSwufooBX05eCq2233I6K093FD
-69/SzHdlnFNuP+wqmykeOHKl6eoTsRTflaz+iPxQbB/YOJggKbbuFgxlBkSd0geU
-xIXTFLSSkF/5TJ1alXkg
-=zU2x
+iQIcBAEBCAAGBQJQpIxnAAoJEECxmPOUX5FE2tIP/1K0Pic0N3Sn/uAbOoTQ8Paj
+jt9k77IqopclSMr0W9XjVm8AHIhWFwSMzXUmhhG8Ssxiul/MnJ//I2Q9feEkggNR
+Jb2M3wr2bvDCuortI4Tnvi+wCX3l6WaV9hrG8SEii7DgnG3Fzd8L7ntkOpIEicJa
+pWfuZnKSdYQwsC5Cowdr6wI+np3oD1ekBmIOlXystiEtXYr1uT8qV+8e2d9wvCnM
+u31zkr1Y/bO4AN3Z8z/UiQi/wwLx70Nef/TpR2FD3QadNgNDZQP1jH1i4D456dG7
+tU2Q6m+nH/dj7R3YXplc6JCu9Uk0wBwgDGHtItmdpsg2096Af9e/sxtEGLXzLy4g
+ZGhJVdogY7sEPXkCh9BS6gQTTONP87Kig5fabqeFbpZXRR+WuDzjzfXTUE6LlR4P
+w/DVTsUWBPf0Ydi1kSPDf+47ocjA5U6kOeYe6UI/A/9wgzxqPum58IvRoBT3qE84
+fgAZMB5sk3uiY1akjn0RrRVR9kZPfQEzH+D0iIhg8dfbwCyKll7thzwtpDD9JJqP
+HG9slhv+pxBvDU2dPGldyyX6Q+EruTvA8zuE90+f5ZpshTZunwShI5eeDkuPCzBP
+QcMhlmm1AIwCo0NsRnJDwmhj+n0pAdzBDJLgrQOSZYHIeoavfxM8DkegR5i8UCuR
+Me2ZOVhWXMdD9o5NdmU9
+=wlC1
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__15_Nov_2012_17_25_35_+1100_ppMMdqb+S4YJHlNM--
+--Signature=_Thu__15_Nov_2012_17_32_07_+1100_tEo9lo7S0wcWZH.a--
