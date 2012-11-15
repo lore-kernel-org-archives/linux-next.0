@@ -1,61 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-Date: Thu, 15 Nov 2012 13:17:07 +1100
-Message-ID: <20121115131707.25e7df1ab635c18e62f0712a@canb.auug.org.au>
+Subject: linux-next: manual merge of the spi tree with Linus' tree
+Date: Thu, 15 Nov 2012 15:01:39 +1100
+Message-ID: <20121115150139.178644970192d226e73e94e6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Nov_2012_13_17_07_+1100_HGnQWeNC5dbsE1Dz"
+ boundary="Signature=_Thu__15_Nov_2012_15_01_39_+1100__RZVL_p6POMT3Oeq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46772 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43260 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933149Ab2KOCRW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Nov 2012 21:17:22 -0500
+	with ESMTP id S1423543Ab2KOEBv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Nov 2012 23:01:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Thu__15_Nov_2012_13_17_07_+1100_HGnQWeNC5dbsE1Dz
+--Signature=_Thu__15_Nov_2012_15_01_39_+1100__RZVL_p6POMT3Oeq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Grant,
 
-Today's linux-next merge of the wireless-next tree got a conflict in
-drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c between commit
-d61f978b8f26 ("brcmfmac: fix typo in CONFIG_BRCMISCAN") from the  tree
-and commit f07998959d57 ("brcmfmac: remove obsolete i-scan and clean up
-related code") from the wireless-next tree.
+Today's linux-next merge of the spi tree got a conflict in
+drivers/spi/spi-xcomm.c between commit b31659004337 ("spi: Add
+AD-FMCOMMS1-EBZ I2C-SPI bridge driver") from Linus' tree and commit
+0e312dcca718 ("spi/xcomm: Add AD-FMCOMMS1-EBZ I2C-SPI bridge driver")
+from the spi tree.
 
-I used the latter (which removed the line that was fixed in the former)
-and can carry the fix as necessary (no action is required).
+OK, so the former commit added this driver back before v3.6-rc1 with an
+author date of 2012-07-20, the latter is adding a slightly modified
+version of the dirver with an author date of 2012-05-22.
+
+I used the former version , please sort this out.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__15_Nov_2012_13_17_07_+1100_HGnQWeNC5dbsE1Dz
+--Signature=_Thu__15_Nov_2012_15_01_39_+1100__RZVL_p6POMT3Oeq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQpFCjAAoJEECxmPOUX5FE+w8P/1zcGlIySSWkoAoKu9grYsAN
-BbA9dvqVPlOMEnEvvZG+Qd/iq9TTYBphdlL6DoM11IX42PC+8hhtAZl+fMM45hDU
-8Lhn9xrTFHKkQP9Ff+GJsU64BYYGUO5ril4QhGdA91UfQhWQoBFI1w0Jo60SxFXd
-8F7BpxfH9Voq0AiDVqNA9Plr2yGH5Qy18PJiGudi+WYQpMACkEkR+Aa8HeKpV7zY
-9kCPrIrSEMcpnpIDCkcemYfE5TqgLW4EtOfxl8sN3bGdiDOJoLLCbma50VL5MCvb
-rwpSGiTSP66Sjq4/mSVYM8MPozoibGDNeq6/iBmqXU0Ij9rcR9XwC8Uxy1ShDheD
-AixzEKh2/wpQYSDq7JI30Nowg9JnUfzOBn6aZdSA2RsuJh5zyT4D87oxThqj/iHi
-vRZwCX/N3UtWjKi7jWcM7wGWSKx68s0k7ZL8ZVHyrLSA1JYX6WP4MxOCiwpfzL+y
-OVTYqS2RNd8i0BqTP3Od2JuRBoZ0JRIsXp/hOjfvb8N3PVxlPHZfSXSJYqiZLNxq
-9pheViskyqNS3YQfIBWx3M8DX0TulO7fuhArnRhtNxLfDjjeprYz/SSjkYP+jo3n
-zQrWKpWHRO4OK5EEtEEFLN16oJYEzZm6g0F0k0WCU5QBrASz1AW7PjYPCBa0AljL
-SE0kLkozE2EGLCFceyBX
-=4mqQ
+iQIcBAEBCAAGBQJQpGkjAAoJEECxmPOUX5FEGuAP/1IfZVlwn2xqsDyAhn6Xxk4T
+BJ/LoMnNxet2CT5A+IZltNRwoQBV2ske/Ke9aoK1p8fZtULgopg6VN2o8hmvi9Hw
+v2gf9kk/ra5qIs3WAS8FbXa178Dcj1jWIlhY+j+o1pEXRnayDSUDuGzMX5/jPy6V
+/tCCG7vOsFEhpnRlJljXqXqhER7YCRRSYnk36fPRYiihrOY1OQX3+v1SGSYYY0n0
+/iNy1ARR8P/k9AxvjmFT9XoVCtzUAzI0YOEDyAUR++ZuzuHzaHHc+wmslrcsKE6+
+08MrQp04pu8dIe88QlmYJGNgx3yekydPcNLUtArUT8ew0ZqJjVUQOvjQS+ywSwsU
+eKL99Evyba+ThaNiThSxHf7LgCISFuHrW/yaR00wxa9GuAohK15gxEtG0HnI2qDx
+CZoC9UYd/VXxw97tGiH5H87nB5Fj9AkvsPGQbhdkfmCMsQoTtytdbQewtKEbKsVO
+107ocIbJNi5tUiGPshApgjo64DvSouMIC4KSruOVE5BdPA9bJ05VFK6EC8XqJdNc
+kMqVZr4dJh0E7mhrvnZQDUVP8xuODy4EkGPfKsqNfXHm47I/Vcde/HdfC/UQVets
+9HIlABjSLRVYrD2Svvc8WeE/u+YL/mxMcKxkJ9iCfCQeTosdNETojTfAME+Nzldb
+lYjm/0SNHsoSPODAqsyD
+=M2oX
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__15_Nov_2012_13_17_07_+1100_HGnQWeNC5dbsE1Dz--
+--Signature=_Thu__15_Nov_2012_15_01_39_+1100__RZVL_p6POMT3Oeq--
