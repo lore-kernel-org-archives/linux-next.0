@@ -1,30 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree (akpm
- tree related)
-Date: Wed, 14 Nov 2012 18:10:19 -0500 (EST)
-Message-ID: <20121114.181019.152264317780389205.davem@davemloft.net>
-References: <20121114141847.fab752c2.akpm@linux-foundation.org>
-	<20121114.173059.2152995770988231211.davem@davemloft.net>
-	<20121114150919.19c1633a.akpm@linux-foundation.org>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH 1/2] asm-generic: add __WARN() to bug.h
+Date: Wed, 14 Nov 2012 16:59:10 -0800
+Message-ID: <50A43E5E.9040905@xenotime.net>
+References: <20121114163042.64f0c0495663331b9c2d60d6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:36474 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1945923Ab2KNXKV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Nov 2012 18:10:21 -0500
-In-Reply-To: <20121114150919.19c1633a.akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: akpm@linux-foundation.org
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, walken@google.com, riel@redhat.com
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <20121114163042.64f0c0495663331b9c2d60d6@canb.auug.org.au>
+Sender: linux-arch-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-arch@vger.kernel.org, Rafael Aquini <aquini@redhat.com>, linux-mm@kvack.org
+List-Id: linux-next.vger.kernel.org
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Wed, 14 Nov 2012 15:09:19 -0800
+From: Randy Dunlap <rdunlap@infradead.org>
 
-> I suspect that most people expect "color".  And given that this
-> patchset removes COLOUR_ALIGN_DOWN (and should have removed
-> arch/sparc/kernel/sys_sparc_32.c:COLOR_ALIGN), we end up with
+Add __WARN() macro for the case of CONFIG_BUG is not enabled.
+This fixes a build error in mm/balloon_compaction.c.
 
-That's fine.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch@vger.kernel.org
+Cc: Rafael Aquini <aquini@redhat.com>
+Cc: linux-mm@kvack.org
+---
+ include/asm-generic/bug.h |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- linux-next-20121114.orig/include/asm-generic/bug.h
++++ linux-next-20121114/include/asm-generic/bug.h
+@@ -129,6 +129,10 @@ extern void warn_slowpath_null(const cha
+ })
+ #endif
+ 
++#ifndef __WARN
++#define __WARN()	do {} while (0)
++#endif
++
+ #define WARN_TAINT(condition, taint, format...) WARN_ON(condition)
+ 
+ #endif
