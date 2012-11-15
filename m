@@ -1,60 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the i2c-embedded
- tree
-Date: Thu, 15 Nov 2012 16:27:39 +1100
-Message-ID: <20121115162739.a114b22ad3a1e0b5a04c6aa9@canb.auug.org.au>
+Subject: linux-next: manual merge of the powerpc tree with the signal tree
+Date: Thu, 15 Nov 2012 17:03:36 +1100
+Message-ID: <20121115170336.acc55b1d7f4eb656518a8f98@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Nov_2012_16_27_39_+1100_L6mONvX8te8OeSov"
+ boundary="Signature=_Thu__15_Nov_2012_17_03_36_+1100_jBon2HdkiaH/BFob"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45967 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:59812 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750733Ab2KOF1v (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Nov 2012 00:27:51 -0500
+	with ESMTP id S1751105Ab2KOGDt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Nov 2012 01:03:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Walmsley <paul@pwsan.com>, Wolfram Sang <w.sang@pengutronix.de>, Tony Lindgren <tony@atomide.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zhong <zhong@linux.vnet.ibm.com>, Al Viro <viro@ZenIV.linux.org.uk>
 
---Signature=_Thu__15_Nov_2012_16_27_39_+1100_L6mONvX8te8OeSov
+--Signature=_Thu__15_Nov_2012_17_03_36_+1100_jBon2HdkiaH/BFob
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/plat-omap/i2c.c between commit 49839dc93970 ("Revert "ARM: OMAP:
-convert I2C driver to PM QoS for MPU latency constraints"") from the
-i2c-embedded tree and various commits from the arm-soc tree.
+Today's linux-next merge of the powerpc tree got a conflict in
+arch/powerpc/kernel/entry_64.S between commits 40792104b255 ("powerpc:
+don't mess with r2 in copy_thread() and friends") and 53b50f9483cc
+("powerpc: take dereferencing to ret_from_kernel_thread()") from the
+signal tree and commit 12660b170253 ("powerpc: Fix
+MAX_STACK_TRACE_ENTRIES too low warning !") from the powerpc tree.
 
-I used the version from the arm-soc tree (not sure if that is the correct
-choice) and can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__15_Nov_2012_16_27_39_+1100_L6mONvX8te8OeSov
+diff --cc arch/powerpc/kernel/entry_64.S
+index e9a906c,ad76666..0000000
+--- a/arch/powerpc/kernel/entry_64.S
++++ b/arch/powerpc/kernel/entry_64.S
+@@@ -373,7 -373,9 +373,9 @@@ _GLOBAL(ret_from_fork
+  _GLOBAL(ret_from_kernel_thread)
+  	bl	.schedule_tail
+  	REST_NVGPRS(r1)
+ -	REST_GPR(2,r1)
+ +	ld	r14, 0(r14)
++ 	li	r3,0
++ 	std	r3,0(r1)
+  	mtlr	r14
+  	mr	r3,r15
+  	blrl
+
+--Signature=_Thu__15_Nov_2012_17_03_36_+1100_jBon2HdkiaH/BFob
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQpH1LAAoJEECxmPOUX5FEfM0P/1OxUFHu0e+qH0NwjdkRgRqQ
-jW8ScDMP/HaYkRaIrXpMdVVWjJceUC3NTloEkpCCPx7wlfs1bohWfZtHL9p5ueHD
-RjSchwBpFN+aE+YeQ7yMgOjuKiJ0JQw46j0w9GOQFQsws3Py3Rp23dpsqlF2hdsA
-UAKnf+LEvq2m0dOoTsvJv+BYhJZCCzl1ADDZws89XyLpiDqlGCHtgiVW+ts3nNdp
-DhUc7byO6FNLPenfWp65yiKFOjWiq0ZpCnhQ9tDhkdh8VulC7sW5ijFrYPBnc64S
-FXNoaR3oW1Ig6JwtNuSYrILfHNo5r437GhmhStXNqbLQvv24mtvS/jNT2kCvpXGY
-iPxk655ROvECSranj9Wb4Lx/gdhXlq8ueAPZ5iPC6eb+dgZWcf834JJEE8PYdRlV
-GUejph8evvTvkYLhzs1H1QWHs6TyaOkvvZh8L3L7mje87mqRArcxtifIhGy2dKiy
-QMcIm6kYt2gSMsmzv1GGOky/qbg6kYikFzz5HhV1MC1P48aKzCBcXhcXCFHw8asK
-OekaETvFEK10Idf0Yoc5OSpWfGDw+dXhySV2y/kaXCy8xkczdwwri/o7SUxm9otQ
-nGg6A2UQJRPhGgRAmA7g/+I4D4TlXK1L9gTx+6941iUXuBAJfn4dOrWh3SLkmWPg
-ytKKAt0ELU90ClAlWw8D
-=vAdp
+iQIcBAEBCAAGBQJQpIW4AAoJEECxmPOUX5FEtPYP/jpkfS5XNJdEN3zr/GJcNC7O
+o69Dq6pi2uqIaX+ptNYZC2pP/KNEfovZTZH5uhw5jxvQKOGMb8z4wk3iy4NZFwak
+drmPSRcBc2r03UbUGgpJCHRfO+MMLMAkmidr15vn8KZMb7lz4ppaU7CdokeYaYrJ
+DkOFbIq0HjOu++hHK9K5x/lMY/VTis41Z6Adcwmm6J3QlLmdSWX5s+RwNv4JfXda
++QmTr65099xhfmDwAp9BmjtP4EhAOWwwNrJkEdLKY+koLKVIl4+Dka5+S2ptjFgR
+XqfnANSpbAGo9txrSLx+FzpLKKL1ZIqXlenIAukJe7nLjfFHerCgBeHnxadEDc6b
+8nNDTtABwobls0uV3o4coxzNU2/JCdEpdD4f+LGKAnlR6B2gXQZgL7hdBFWU+ILd
+7aNx5/nZV+24bH8avSLq1FOptPfL9AULP7bHvtCY1F3rUJWa/MskmhAgd8S/qUFe
+8f8wGoqBJdTDmgUqjIPgou72L6CRF7h4CIc4nzc9D6O+AL2iTfWu0LcJeSpCVx3W
+GTfnJhxATvV4TdPn/ohrR5P5NL7LpE53UAQP26VNGYdvaeqHa/uF3ZsC9mVmc+VO
+FMMtLznkRdpcpe7LB19iVV6vN4JEMC6h3yOQz9zm6vmxfEhpw0XgS49ysrtInoEZ
+G6NDUeLBEaqBD6xDoW9u
+=umAV
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__15_Nov_2012_16_27_39_+1100_L6mONvX8te8OeSov--
+--Signature=_Thu__15_Nov_2012_17_03_36_+1100_jBon2HdkiaH/BFob--
