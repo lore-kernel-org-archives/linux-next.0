@@ -1,41 +1,35 @@
 From: David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH 1/2] asm-generic: add __WARN() to bug.h
-Date: Wed, 14 Nov 2012 17:28:29 -0800 (PST)
-Message-ID: <alpine.DEB.2.00.1211141726380.4749@chino.kir.corp.google.com>
-References: <20121114163042.64f0c0495663331b9c2d60d6@canb.auug.org.au> <50A43E5E.9040905@xenotime.net>
+Subject: Re: [PATCH 2/2] mm: balloon_compaction.c needs asm-generic/bug.h
+Date: Wed, 14 Nov 2012 17:29:33 -0800 (PST)
+Message-ID: <alpine.DEB.2.00.1211141729050.4749@chino.kir.corp.google.com>
+References: <20121114163042.64f0c0495663331b9c2d60d6@canb.auug.org.au> <50A43E64.3040709@infradead.org>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <50A43E5E.9040905@xenotime.net>
-Sender: owner-linux-mm@kvack.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-arch@vger.kernel.org, Rafael Aquini <aquini@redhat.com>, linux-mm@kvack.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:52309 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932299Ab2KOB3f (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Nov 2012 20:29:35 -0500
+Received: by mail-pa0-f46.google.com with SMTP id hz1so715532pad.19
+        for <linux-next@vger.kernel.org>; Wed, 14 Nov 2012 17:29:35 -0800 (PST)
+In-Reply-To: <50A43E64.3040709@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Rafael Aquini <aquini@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
 On Wed, 14 Nov 2012, Randy Dunlap wrote:
 
-> --- linux-next-20121114.orig/include/asm-generic/bug.h
-> +++ linux-next-20121114/include/asm-generic/bug.h
-> @@ -129,6 +129,10 @@ extern void warn_slowpath_null(const cha
->  })
->  #endif
->  
-> +#ifndef __WARN
-> +#define __WARN()	do {} while (0)
-> +#endif
-> +
->  #define WARN_TAINT(condition, taint, format...) WARN_ON(condition)
->  
->  #endif
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix build when CONFIG_BUG is not enabled by adding header file
+> <asm-generic/bug.h>:
+> 
+> mm/balloon_compaction.c: In function 'balloon_page_putback':
+> mm/balloon_compaction.c:243:3: error: implicit declaration of function '__WARN'
+> 
 
-__WARN() isn't supposed to be used by generic code, though.  The 
-mm/balloon_compaction.c error should be resolved by 
+This is fixed by 
 mm-introduce-a-common-interface-for-balloon-pages-mobility-fix-fix-fix.patch 
-added to -mm today.  It converts the __WARN() there into WARN_ON(1) which 
-is defined appropriately for CONFIG_BUG=n.
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+in -mm which converts it to WARN_ON(1) which is the generic way to trigger 
+a warning.
