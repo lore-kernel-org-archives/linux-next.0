@@ -1,45 +1,53 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: manual merge of the pm tree with the pci tree
-Date: Fri, 16 Nov 2012 11:17:02 +0100
-Message-ID: <1551022.HZcUtXAPiN@vostro.rjw.lan>
-References: <20121106134826.32a117100825204d48150f0b@canb.auug.org.au> <CAErSpo7=wZUi4mB4N-pAWzRsyineRFh-W2NtZgAPJe5pNWUayA@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Nov 15 (pch_gbe)
+Date: Fri, 16 Nov 2012 13:48:41 -0800
+Message-ID: <50A6B4B9.4060804@xenotime.net>
+References: <20121115181740.4fb08780f0b92149a5ed2ca4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([193.178.161.156]:48316 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751297Ab2KPKMk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 16 Nov 2012 05:12:40 -0500
-In-Reply-To: <CAErSpo7=wZUi4mB4N-pAWzRsyineRFh-W2NtZgAPJe5pNWUayA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Feng Tang <feng.tang@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121115181740.4fb08780f0b92149a5ed2ca4@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, LAPIS SEMICONDUCTOR <tshimizu818@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tuesday, November 06, 2012 09:52:40 AM Bjorn Helgaas wrote:
-> On Mon, Nov 5, 2012 at 7:48 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi Rafael,
-> >
-> > Today's linux-next merge of the pm tree got a conflict in
-> > arch/x86/pci/acpi.c between commit 3f385fa9edce ("x86/PCI: Ignore _SEG on
-> > HP xw9300") from the pci tree and commit 97a7108a3c00 ("ACPI / x86: Add
-> > quirk for "CheckPoint P-20-00" to not use bridge _CRS_ info") from the pm
-> > tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary (no action
-> > is required).
+On 11/14/2012 11:17 PM, Stephen Rothwell wrote:
+
+> Hi all,
 > 
-> My opinion was that we should just drop the CheckPoint quirk.  See
-> https://bugzilla.kernel.org/show_bug.cgi?id=47981#c36 for my
-> rationale.
+> News: this one will be the last release until next-20121126 (which should
+> be just be after -rc7, I guess - assuming that Linus does not release
+> v3.7 before then).
+> 
+> Changes since 20121114:
+> 
 
-OK, I agree.  I'll revert that commit, then.
 
-Thanks,
-Rafael
+on x86_64:
 
+drivers/built-in.o: In function `pch_tx_timestamp':
+pch_gbe_main.c:(.text+0x5b9b08): undefined reference to `pch_ch_event_read'
+pch_gbe_main.c:(.text+0x5b9b39): undefined reference to `pch_tx_snap_read'
+pch_gbe_main.c:(.text+0x5b9b6c): undefined reference to `pch_ch_event_write'
+drivers/built-in.o: In function `pch_rx_timestamp':
+pch_gbe_main.c:(.text+0x5ba648): undefined reference to `pch_ch_event_read'
+pch_gbe_main.c:(.text+0x5ba658): undefined reference to `pch_src_uuid_lo_read'
+pch_gbe_main.c:(.text+0x5ba663): undefined reference to `pch_src_uuid_hi_read'
+pch_gbe_main.c:(.text+0x5ba709): undefined reference to `pch_ch_event_write'
+pch_gbe_main.c:(.text+0x5ba717): undefined reference to `pch_rx_snap_read'
+drivers/built-in.o: In function `hwtstamp_ioctl.clone.13':
+pch_gbe_main.c:(.text+0x5bb3b0): undefined reference to `pch_ch_control_write'
+pch_gbe_main.c:(.text+0x5bb3c9): undefined reference to `pch_ch_control_write'
+pch_gbe_main.c:(.text+0x5bb3e2): undefined reference to `pch_ch_control_write'
+pch_gbe_main.c:(.text+0x5bb406): undefined reference to `pch_ch_control_write'
+pch_gbe_main.c:(.text+0x5bb426): undefined reference to `pch_set_station_address'
+pch_gbe_main.c:(.text+0x5bb433): undefined reference to `pch_ch_event_write'
+
+when PTP_1588_CLOCK_PCH is not enabled.
+
+Want to select PTP_1588_CLOCK_PCH for PCH_GBE?
 
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+~Randy
