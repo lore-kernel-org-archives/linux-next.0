@@ -1,79 +1,37 @@
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Subject: [PATCH RESEND] leds-ot200: Fix error caused by shifted mask
-Date: Thu, 15 Nov 2012 23:01:22 +0100
-Message-ID: <CAH9NwWfPFnNxss0Ne4JRH4DQLZCPE3MAGGK7xfCvfz0+6_aO9w@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the usb.current
+ tree
+Date: Thu, 15 Nov 2012 18:14:23 -0800
+Message-ID: <20121116021423.GD492@kroah.com>
+References: <20121114150746.433de520ffbc71b4281f3c62@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:51713 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751142Ab2KOWBq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Nov 2012 17:01:46 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:36682 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751048Ab2KPCOZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Nov 2012 21:14:25 -0500
+Content-Disposition: inline
+In-Reply-To: <20121114150746.433de520ffbc71b4281f3c62@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Richard Purdie <rpurdie@rpsys.net>, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Fainelli <florian@openwrt.org>
 
-During the development of this driver an in-house register
-documentation was used. The last weeks some integration tests
-were done and this problem was found. It turned out that
-the released register documentation is wrong.
+On Wed, Nov 14, 2012 at 03:07:46PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the usb tree got conflicts in
+> drivers/usb/host/ehci-ls1x.c and drivers/usb/host/ohci-xls.c between
+> commit e592c5d0b7db ("Revert "USB/host: Cleanup unneccessary irq disable
+> code"") from the usb.current tree and commits ead92fae1290 ("USB: EHCI:
+> remove Loongson 1B EHCI driver") and c2e91e046df6 ("USB: OHCI: remove
+> Netlogic XLS OHCI platform driver") from the usb tree.
+> 
+> The latter removed the files, so I just did that and can carry the fix as
+> necessary (no action is required).
 
-The fix is very simple: shift all mask by one.
+Thanks, that sounds correct.
 
-Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
----
- drivers/leds/leds-ot200.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c
-index c464682..676e729 100644
---- a/drivers/leds/leds-ot200.c
-+++ b/drivers/leds/leds-ot200.c
-@@ -47,37 +47,37 @@ static struct ot200_led leds[] = {
-        {
-                .name = "led_1",
-                .port = 0x49,
--               .mask = BIT(7),
-+               .mask = BIT(6),
-        },
-        {
-                .name = "led_2",
-                .port = 0x49,
--               .mask = BIT(6),
-+               .mask = BIT(5),
-        },
-        {
-                .name = "led_3",
-                .port = 0x49,
--               .mask = BIT(5),
-+               .mask = BIT(4),
-        },
-        {
-                .name = "led_4",
-                .port = 0x49,
--               .mask = BIT(4),
-+               .mask = BIT(3),
-        },
-        {
-                .name = "led_5",
-                .port = 0x49,
--               .mask = BIT(3),
-+               .mask = BIT(2),
-        },
-        {
-                .name = "led_6",
-                .port = 0x49,
--               .mask = BIT(2),
-+               .mask = BIT(1),
-        },
-        {
-                .name = "led_7",
-                .port = 0x49,
--               .mask = BIT(1),
-+               .mask = BIT(0),
-        }
- };
-
-
---
-1.7.12.2.421.g261b511
+greg k-h
