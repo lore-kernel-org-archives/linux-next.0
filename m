@@ -1,37 +1,45 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the usb.current
- tree
-Date: Thu, 15 Nov 2012 18:14:23 -0800
-Message-ID: <20121116021423.GD492@kroah.com>
-References: <20121114150746.433de520ffbc71b4281f3c62@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: manual merge of the pm tree with the pci tree
+Date: Fri, 16 Nov 2012 11:17:02 +0100
+Message-ID: <1551022.HZcUtXAPiN@vostro.rjw.lan>
+References: <20121106134826.32a117100825204d48150f0b@canb.auug.org.au> <CAErSpo7=wZUi4mB4N-pAWzRsyineRFh-W2NtZgAPJe5pNWUayA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:36682 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751048Ab2KPCOZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Nov 2012 21:14:25 -0500
-Content-Disposition: inline
-In-Reply-To: <20121114150746.433de520ffbc71b4281f3c62@canb.auug.org.au>
+Received: from ogre.sisk.pl ([193.178.161.156]:48316 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751297Ab2KPKMk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 16 Nov 2012 05:12:40 -0500
+In-Reply-To: <CAErSpo7=wZUi4mB4N-pAWzRsyineRFh-W2NtZgAPJe5pNWUayA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Fainelli <florian@openwrt.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Feng Tang <feng.tang@intel.com>
 
-On Wed, Nov 14, 2012 at 03:07:46PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+On Tuesday, November 06, 2012 09:52:40 AM Bjorn Helgaas wrote:
+> On Mon, Nov 5, 2012 at 7:48 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi Rafael,
+> >
+> > Today's linux-next merge of the pm tree got a conflict in
+> > arch/x86/pci/acpi.c between commit 3f385fa9edce ("x86/PCI: Ignore _SEG on
+> > HP xw9300") from the pci tree and commit 97a7108a3c00 ("ACPI / x86: Add
+> > quirk for "CheckPoint P-20-00" to not use bridge _CRS_ info") from the pm
+> > tree.
+> >
+> > I fixed it up (see below) and can carry the fix as necessary (no action
+> > is required).
 > 
-> Today's linux-next merge of the usb tree got conflicts in
-> drivers/usb/host/ehci-ls1x.c and drivers/usb/host/ohci-xls.c between
-> commit e592c5d0b7db ("Revert "USB/host: Cleanup unneccessary irq disable
-> code"") from the usb.current tree and commits ead92fae1290 ("USB: EHCI:
-> remove Loongson 1B EHCI driver") and c2e91e046df6 ("USB: OHCI: remove
-> Netlogic XLS OHCI platform driver") from the usb tree.
-> 
-> The latter removed the files, so I just did that and can carry the fix as
-> necessary (no action is required).
+> My opinion was that we should just drop the CheckPoint quirk.  See
+> https://bugzilla.kernel.org/show_bug.cgi?id=47981#c36 for my
+> rationale.
 
-Thanks, that sounds correct.
+OK, I agree.  I'll revert that commit, then.
 
-greg k-h
+Thanks,
+Rafael
+
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
