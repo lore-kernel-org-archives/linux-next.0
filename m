@@ -1,86 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the userns tree
-Date: Tue, 27 Nov 2012 00:13:20 +1100
-Message-ID: <20121127001320.12439806f19c9b6ccce4e895@canb.auug.org.au>
+From: Xiaotian Feng <xtfeng@gmail.com>
+Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 26 Nov 2012 21:25:14 +0800
+Message-ID: <CAJn8CcFVOS-pR6O7AGTLKE-47qWOUCDaMXA9Xa-BsdJ7ks2stw@mail.gmail.com>
+References: <20121126234844.1952cdd84c3ba041cfe7a9af@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Nov_2012_00_13_20_+1100_e0fO5iWDlAi.gt=C"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53596 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752428Ab2KZNNY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 08:13:24 -0500
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:63247 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754653Ab2KZNZQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 08:25:16 -0500
+In-Reply-To: <20121126234844.1952cdd84c3ba041cfe7a9af@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Alan Cox <alan@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
---Signature=_Tue__27_Nov_2012_00_13_20_+1100_e0fO5iWDlAi.gt=C
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 26, 2012 at 8:48 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Andrew,
+>
+> Today's linux-next merge of the akpm tree got a conflict in
+> drivers/net/ethernet/jme.c between commit 71c6c837a0fe ("drivers/net: fix
+> tasklet misuse issue") from Linus' tree and commit  "tasklet: ignore
+> disabled tasklet in tasklet_action()" from the akpm tree.
+>
 
-Hi Andrew,
+You can simply remove the following part of the patch
 
-Today's linux-next merge of the akpm tree got a conflict in kernel/fork.c
-between commit b2e0d98705e6 ("userns: Implement unshare of the user
-namespace") from the userns tree and commit  ("fork: unshare: remove dead
-cod") from the akpm tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary (no =
-action
-is required).
+@@ -1862,8 +1862,8 @@ jme_open(struct net_device *netdev)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+         tasklet_enable(&jme->linkch_task);
+         tasklet_enable(&jme->txclean_task);
+-       tasklet_hi_enable(&jme->rxclean_task);
+-       tasklet_hi_enable(&jme->rxempty_task);
++       tasklet_enable(&jme->rxclean_task);
++       tasklet_enable(&jme->rxempty_task);
 
-diff --cc kernel/fork.c
-index 7e0dc2f,58088f9..0000000
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@@ -1867,20 -1858,8 +1865,17 @@@ SYSCALL_DEFINE1(unshare, unsigned long
-  		}
- =20
-  		task_unlock(current);
- +
- +		if (new_cred) {
- +			/* Install the new user namespace */
- +			commit_creds(new_cred);
- +			new_cred =3D NULL;
- +		}
-  	}
- =20
-- 	if (new_nsproxy)
-- 		put_nsproxy(new_nsproxy);
--=20
- +bad_unshare_cleanup_cred:
- +	if (new_cred)
- +		put_cred(new_cred);
-  bad_unshare_cleanup_fd:
-  	if (new_fd)
-  		put_files_struct(new_fd);
+         rc = jme_request_irq(jme);
+         if (rc)
 
---Signature=_Tue__27_Nov_2012_00_13_20_+1100_e0fO5iWDlAi.gt=C
-Content-Type: application/pgp-signature
+Do you want me to re-generate a patch for you?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQs2rwAAoJEECxmPOUX5FEZtMP/0Wc7Z6UFG66bnWhUiemnooO
-lX9CrfvWtyKmNchCTG+cXyIq5lkouj1ogrNX6OPnZOhX2SgjHSDkMJ0it9Sqq7BD
-Cly2Gvc7TjeMniVRlaag36OeY1KLMljFwfGvC9UKNVbnnokTn+jBcnwwyNThebFA
-wgv8MWZsOQPN2CcnzWAV1f3p78u4P7TVSc4dgnp9yHnITkkeVWBiEfzO5D4HoIIV
-3hB46ROlEURUQvw970Q9YFITtpmVmL3PIa1iYQpZfJXLmFtLwM/bngWRgIrfECOE
-+G6K/kbt+F6wNkpsjje0muC9UW01UGmzbnvCWboa8ZsMRH5hFDUo8tYj751zah6E
-Oi2tL1AQonjzFH2032uRKOT2huY4xJleNLfLndcbFvfG9voak/NkaJHPk0t5iXy3
-0mDD8Qn0frQQzNyGaXDlcFke2Pu0AH9LFuXogG/icpkh2ZkEWtHJziJi1z4bv6na
-mOXdYezfnGOiha4TBhroskKS6ksHB6YVFOP+Oep1FFkR+2Y6+NKj2cCxGXmxqCvR
-lE9royR7M+q6CdwHk708aCk9bRSwdwg5Kabsco1/866Ctla42rU4fgKFPL0hmxDa
-IxCqnHR20abFYD+cU3OxaSt3MPp1tzcouwJg7H+f1Pe/KXUX01brKiBhfuFvqltW
-DvEsYlAyrdJ3G0+YWcZ7
-=+8sj
------END PGP SIGNATURE-----
-
---Signature=_Tue__27_Nov_2012_00_13_20_+1100_e0fO5iWDlAi.gt=C--
+> I am not sure what to do here, so I have dropped the akpm patch.
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
