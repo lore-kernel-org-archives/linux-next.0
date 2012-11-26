@@ -1,113 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the signal tree
-Date: Tue, 27 Nov 2012 00:08:00 +1100
-Message-ID: <20121127000800.660793d8fa6a28b79a61110b@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the userns tree
+Date: Tue, 27 Nov 2012 00:13:20 +1100
+Message-ID: <20121127001320.12439806f19c9b6ccce4e895@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Nov_2012_00_08_00_+1100_Axq8tNEjiOzk/zIi"
+ boundary="Signature=_Tue__27_Nov_2012_00_13_20_+1100_e0fO5iWDlAi.gt=C"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46937 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53596 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752832Ab2KZNIC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 08:08:02 -0500
+	with ESMTP id S1752428Ab2KZNNY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 08:13:24 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Alan Cox <alan@linux.intel.com>
 
---Signature=_Tue__27_Nov_2012_00_08_00_+1100_Axq8tNEjiOzk/zIi
+--Signature=_Tue__27_Nov_2012_00_13_20_+1100_e0fO5iWDlAi.gt=C
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in
-arch/arm64/kernel/sys_compat.c arch/arm64/include/asm/unistd.h between
-commit 8709876911bd ("arm64: sanitize copy_thread(), switch to generic
-fork/vfork/clone") from the signal tree and commit "compat: generic
-compat_sys_sched_rr_get_interval() implementation" from the akpm tree.
+Today's linux-next merge of the akpm tree got a conflict in kernel/fork.c
+between commit b2e0d98705e6 ("userns: Implement unshare of the user
+namespace") from the userns tree and commit  ("fork: unshare: remove dead
+cod") from the akpm tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
+I fixed it up (I think - see below) and can carry the fix as necessary (no =
+action
 is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm64/include/asm/unistd.h
-index d69aeea,1a7c88c..0000000
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@@ -24,9 -24,7 +24,10 @@@
-  #define __ARCH_WANT_SYS_SIGPROCMASK
-  #define __ARCH_WANT_COMPAT_SYS_RT_SIGSUSPEND
-  #define __ARCH_WANT_COMPAT_SYS_SENDFILE
- +#define __ARCH_WANT_SYS_FORK
- +#define __ARCH_WANT_SYS_VFORK
-+ #define __ARCH_WANT_COMPAT_SYS_SCHED_RR_GET_INTERVAL
-  #endif
-  #define __ARCH_WANT_SYS_EXECVE
- +#define __ARCH_WANT_SYS_CLONE
-  #include <uapi/asm/unistd.h>
-diff --cc arch/arm64/kernel/sys_compat.c
-index f7b05ed,c34c81d..0000000
---- a/arch/arm64/kernel/sys_compat.c
-+++ b/arch/arm64/kernel/sys_compat.c
-@@@ -28,21 -28,17 +28,6 @@@
-  #include <asm/cacheflush.h>
-  #include <asm/unistd32.h>
+diff --cc kernel/fork.c
+index 7e0dc2f,58088f9..0000000
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@@ -1867,20 -1858,8 +1865,17 @@@ SYSCALL_DEFINE1(unshare, unsigned long
+  		}
  =20
-- asmlinkage int compat_sys_sched_rr_get_interval(compat_pid_t pid,
-- 						struct compat_timespec __user *interval)
-- {
-- 	struct timespec t;
-- 	int ret;
-- 	mm_segment_t old_fs =3D get_fs();
+  		task_unlock(current);
+ +
+ +		if (new_cred) {
+ +			/* Install the new user namespace */
+ +			commit_creds(new_cred);
+ +			new_cred =3D NULL;
+ +		}
+  	}
+ =20
+- 	if (new_nsproxy)
+- 		put_nsproxy(new_nsproxy);
 -=20
-- 	set_fs(KERNEL_DS);
-- 	ret =3D sys_sched_rr_get_interval(pid, (struct timespec __user *)&t);
-- 	set_fs(old_fs);
-- 	if (put_compat_timespec(&t, interval))
-- 		return -EFAULT;
-- 	return ret;
-- }
--=20
- -asmlinkage int compat_sys_fork(void)
- -{
- -	return do_fork(SIGCHLD, 0, current_pt_regs(), 0, NULL, NULL);
- -}
- -
- -asmlinkage int compat_sys_vfork(void)
- -{
- -	return do_fork(CLONE_VFORK | CLONE_VM | SIGCHLD, 0,
- -		       current_pt_regs(), 0, NULL, NULL);
- -}
- -
-  static inline void
-  do_compat_cache_op(unsigned long start, unsigned long end, int flags)
-  {
+ +bad_unshare_cleanup_cred:
+ +	if (new_cred)
+ +		put_cred(new_cred);
+  bad_unshare_cleanup_fd:
+  	if (new_fd)
+  		put_files_struct(new_fd);
 
---Signature=_Tue__27_Nov_2012_00_08_00_+1100_Axq8tNEjiOzk/zIi
+--Signature=_Tue__27_Nov_2012_00_13_20_+1100_e0fO5iWDlAi.gt=C
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQs2mwAAoJEECxmPOUX5FE21gP/RUUOr6+fm+jwe3cldJKCnjJ
-BALjE2Vws3WnthYkk+XJmtr0cmtqHDNXJTWuxX0NajSlBTOdIsQOZbVxnEgnUiZ3
-RZlRAoP7IfNyz4tP0eKrOm4cjUToGmfd+g7YJWM9pi8Vl5wrAfEWGAW73HpfMCQ2
-CQ44A71QZcTn4UJNOx6co2R2A5Pypdwx/8kYs6F4f5wjTPwLkaeYXLMC4Y/LInf4
-OOthMMawGFqvPPZVikaZmtbnD4aDgltzQltGzUj+qBudbvHYAyzX9lycSUU7Nxkc
-DIk/5mrxa+epON9WyNK6MigAaeQHuhKALCmTgevwRHvxhUEBukWwC0TqqkPI+w2j
-XvqEscm8jfyAhqtb6D4PW+XRjRVtpe2D0vz6j0KTu2cykkF0ToLVPa+P5L923Svo
-rbZ7ygQzx5P2OBLNBi3bOw9m7xou07qzi12hBea3F93QuJQOi3imbT8Ay9/Svq73
-91ejO7aBraJnNjdNFsq49bzi+aJSZNi31AjwzW+s8EZY0udVHi2nHLvhy/RFroxr
-NXtaBjKcv+G8nxWcpniQgl7APNybu1Yu15Z/M4eeMXkjZr4XRr0ja2jqJLIRYFZd
-TG6oge8orGOZB6KZSMA93rwPnUism+IXZ0XGSBfcwI4ePj0PcPHJG7Kr8slhaeNm
-hjyRdlACg45VPKfUDkfK
-=Y9AE
+iQIcBAEBCAAGBQJQs2rwAAoJEECxmPOUX5FEZtMP/0Wc7Z6UFG66bnWhUiemnooO
+lX9CrfvWtyKmNchCTG+cXyIq5lkouj1ogrNX6OPnZOhX2SgjHSDkMJ0it9Sqq7BD
+Cly2Gvc7TjeMniVRlaag36OeY1KLMljFwfGvC9UKNVbnnokTn+jBcnwwyNThebFA
+wgv8MWZsOQPN2CcnzWAV1f3p78u4P7TVSc4dgnp9yHnITkkeVWBiEfzO5D4HoIIV
+3hB46ROlEURUQvw970Q9YFITtpmVmL3PIa1iYQpZfJXLmFtLwM/bngWRgIrfECOE
++G6K/kbt+F6wNkpsjje0muC9UW01UGmzbnvCWboa8ZsMRH5hFDUo8tYj751zah6E
+Oi2tL1AQonjzFH2032uRKOT2huY4xJleNLfLndcbFvfG9voak/NkaJHPk0t5iXy3
+0mDD8Qn0frQQzNyGaXDlcFke2Pu0AH9LFuXogG/icpkh2ZkEWtHJziJi1z4bv6na
+mOXdYezfnGOiha4TBhroskKS6ksHB6YVFOP+Oep1FFkR+2Y6+NKj2cCxGXmxqCvR
+lE9royR7M+q6CdwHk708aCk9bRSwdwg5Kabsco1/866Ctla42rU4fgKFPL0hmxDa
+IxCqnHR20abFYD+cU3OxaSt3MPp1tzcouwJg7H+f1Pe/KXUX01brKiBhfuFvqltW
+DvEsYlAyrdJ3G0+YWcZ7
+=+8sj
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_Nov_2012_00_08_00_+1100_Axq8tNEjiOzk/zIi--
+--Signature=_Tue__27_Nov_2012_00_13_20_+1100_e0fO5iWDlAi.gt=C--
