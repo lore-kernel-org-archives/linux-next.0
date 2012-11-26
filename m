@@ -1,50 +1,51 @@
-From: Xiaotian Feng <xtfeng@gmail.com>
-Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Mon, 26 Nov 2012 21:25:14 +0800
-Message-ID: <CAJn8CcFVOS-pR6O7AGTLKE-47qWOUCDaMXA9Xa-BsdJ7ks2stw@mail.gmail.com>
-References: <20121126234844.1952cdd84c3ba041cfe7a9af@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:63247 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754653Ab2KZNZQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 08:25:16 -0500
-In-Reply-To: <20121126234844.1952cdd84c3ba041cfe7a9af@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] dma-mapping: fix dma_common_get_sgtable() conditional
+ compilation
+Date: Mon, 26 Nov 2012 14:41:48 +0100
+Message-ID: <1353937308-887-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <owner-linux-mm@kvack.org>
+Sender: owner-linux-mm@kvack.org
+To: linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Nov 26, 2012 at 8:48 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Andrew,
->
-> Today's linux-next merge of the akpm tree got a conflict in
-> drivers/net/ethernet/jme.c between commit 71c6c837a0fe ("drivers/net: fix
-> tasklet misuse issue") from Linus' tree and commit  "tasklet: ignore
-> disabled tasklet in tasklet_action()" from the akpm tree.
->
+dma_common_get_sgtable() function doesn't depend on
+ARCH_HAS_DMA_DECLARE_COHERENT_MEMORY, so it must not be compiled
+conditionally.
 
-You can simply remove the following part of the patch
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/base/dma-mapping.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
+index 3fbedc7..0ce39a3 100644
+--- a/drivers/base/dma-mapping.c
++++ b/drivers/base/dma-mapping.c
+@@ -218,6 +218,8 @@ void dmam_release_declared_memory(struct device *dev)
+ }
+ EXPORT_SYMBOL(dmam_release_declared_memory);
+ 
++#endif
++
+ /*
+  * Create scatter-list for the already allocated DMA buffer.
+  */
+@@ -236,8 +238,6 @@ int dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
+ }
+ EXPORT_SYMBOL(dma_common_get_sgtable);
+ 
+-#endif
+-
+ /*
+  * Create userspace mapping for the DMA-coherent memory.
+  */
+-- 
+1.7.9.5
 
-@@ -1862,8 +1862,8 @@ jme_open(struct net_device *netdev)
-
-         tasklet_enable(&jme->linkch_task);
-         tasklet_enable(&jme->txclean_task);
--       tasklet_hi_enable(&jme->rxclean_task);
--       tasklet_hi_enable(&jme->rxempty_task);
-+       tasklet_enable(&jme->rxclean_task);
-+       tasklet_enable(&jme->rxempty_task);
-
-         rc = jme_request_irq(jme);
-         if (rc)
-
-Do you want me to re-generate a patch for you?
-
-
-> I am not sure what to do here, so I have dropped the akpm patch.
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
