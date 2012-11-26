@@ -1,51 +1,95 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Mon, 26 Nov 2012 11:39:42 +0100
-Message-ID: <50B346EE.1050306@atmel.com>
-References: <20121126213152.60b52e19d7fc84ce94c356c3@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the omap_dss2
+ tree
+Date: Mon, 26 Nov 2012 21:56:00 +1100
+Message-ID: <20121126215600.236b2e44ffea1abbea26898b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__26_Nov_2012_21_56_00_+1100_q=Ep.QAitCunStOl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:53809 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754209Ab2KZKjn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 05:39:43 -0500
-In-Reply-To: <20121126213152.60b52e19d7fc84ce94c356c3@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53509 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754651Ab2KZK4K (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 05:56:10 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lokesh Vutla <lokeshvutla@ti.com>, Tony Lindgren <tony@atomide.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--Signature=_Mon__26_Nov_2012_21_56_00_+1100_q=Ep.QAitCunStOl
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 11/26/2012 11:31 AM, Stephen Rothwell :
-> Hi all,
-> 
-> Today's linux-next merge of the arm-soc tree got a conflict in 
-> drivers/tty/serial/atmel_serial.c between commit 95e629b761ce 
-> ("ARM/AVR32: get rid of serial_at91.h") from the arm tree and
-> commit bcd2360c1ff9 ("arm: at91: move platfarm_data to 
-> include/linux/platform_data/atmel.h") from the arm-soc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no
-> action is required).
+Hi all,
 
-Yes, good fix that has to be carried...
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/plat-omap/common.c between commit b022e17b1c7e ("OMAP: common.c:
+remove init call to vram") from the omap_dss2 tree and commit
+f583f0f2c720 ("ARM: OMAP2+: Move omap_reserve() locally to mach-omap2")
+from the arm-soc tree.
 
-Thanks, bye,
-- -- 
-Nicolas Ferre
+I fixed it up (by deleting the file and adding the following patch) and
+can carry the fix as necessary (no action is required).
+
+=46rom 523f2987a07f97c946c63e0be4558b8332b46e8f Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 26 Nov 2012 21:51:20 +1100
+Subject: [PATCH] OMAP: common.c: remove init call to vram fixup
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/mach-omap2/common.c |    3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/common.c b/arch/arm/mach-omap2/common.c
+index 5c2fd48..2dabb9e 100644
+--- a/arch/arm/mach-omap2/common.c
++++ b/arch/arm/mach-omap2/common.c
+@@ -16,8 +16,6 @@
+ #include <linux/init.h>
+ #include <linux/platform_data/dsp-omap.h>
+=20
+-#include <plat/vram.h>
+-
+ #include "common.h"
+ #include "omap-secure.h"
+=20
+@@ -32,7 +30,6 @@ int __weak omap_secure_ram_reserve_memblock(void)
+=20
+ void __init omap_reserve(void)
+ {
+-	omap_vram_reserve_sdram_memblock();
+ 	omap_dsp_reserve_sdram_memblock();
+ 	omap_secure_ram_reserve_memblock();
+ 	omap_barrier_reserve_memblock();
+--=20
+1.7.10.280.gaa39
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__26_Nov_2012_21_56_00_+1100_q=Ep.QAitCunStOl
+Content-Type: application/pgp-signature
+
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with undefined - http://www.enigmail.net/
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQEcBAEBAgAGBQJQs0buAAoJEAf03oE53VmQMPgH/0Gynlb5BBImnjSU75mh/dPC
-ob/lTJv3w/2gUKPqbOgyxTSmMc9ckFcDELAhFYt+df9hKfOMBzZAUPHLEclZolZ+
-AqpnIjGq88TYWMgaREUZ2bigTrzuWKqHiIWV/AoNcz2slhWC//CHK6z9SHE7hZOI
-zZFwf326v0dRkm4g785cqalg7pNxQDpE6iMZXuifb8zPWePgKBxqHyPRCbhP1dwu
-T4XQ3IgnrvzWcqz/V4mr8kppJXzHNfDEsVZ2XfndhUKVFY4qMGZhFBoTlI6LhNWO
-Nu2mD7TaENoKRijLYrdMfidJ65uwAGtEWA6UxEfV1VWVddSsi/D8OuniBta+Ewg=
-=zF93
+iQIcBAEBCAAGBQJQs0rAAAoJEECxmPOUX5FES2kP/isGKXOcaDo1t8dPoff2IxPr
+s80thxUjCa9DzOREDx89CIb2Nw1h6ed4HsMx6KYbIx0700Qs0K5S/8zzqeQKfKr4
+SGBDh1r0OWiBvfZdsRmrELKBwAFMUOSr5O8R0rTGKbR+4ZqFWR5+VOXiZ6NPMlmQ
+5jg1iVnc/Noj3Bart3Kz1SGTD3s51Zgjeo1556mpiDMvxX2tayWRy2+qD3HYwaAT
+YlMZx+6z6jTP74YVYDgaOg1PldpC1MfMQX4IdlSy5O7huDukTrHIricmQpyja7lL
+ixFRylqOgX6G0shfFJ3F5SquLThSfEtaiWCbR2JlFiVvTOlvAEkprx5R8wMxViBs
++F8W5wQcAdd0j1yKR2UinCIVtVb5KyQc3owTax5clCFhwF4i748ENL0vi7TFOVWK
+AW+AoNlasUqLeOy8uiQ3oSGtciNVYOsfws8ZxN21bqQ2aI5u0FhB/8Dn7oZr6qzf
+ukT2320XBqEMs10fqW7hV8iGXZ6Jd/niw3d8axN/FwOsnf4TJ/spx6HHpLFkAi45
+fTP4vrug8ZcmdnZlyUZ+wi2r2En6sHb/xtOGZIC3iflenqno9R1P1Q93NB/slQG2
+YEeMWaLb0QHMZK9qWPNuKvqgfmad0GqBIC8XUm2Zhr+iqB7kkfMHMhhP1gCQBdMA
+ijiowMntDR1dZ+s/CyJd
+=yIQ2
 -----END PGP SIGNATURE-----
+
+--Signature=_Mon__26_Nov_2012_21_56_00_+1100_q=Ep.QAitCunStOl--
