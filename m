@@ -1,52 +1,88 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Mon, 26 Nov 2012 14:44:02 +0100
-Message-ID: <50B37222.7010709@samsung.com>
-References: <20121126133153.50c5fa21cacd2858f30509e3@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (tty tree
+ related)
+Date: Tue, 27 Nov 2012 00:49:48 +1100
+Message-ID: <20121127004948.6e7973525843529de827ed0e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__27_Nov_2012_00_49_48_+1100_CClVwNa57Ge.v0TK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:45038 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753056Ab2KZNoG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 08:44:06 -0500
-In-reply-to: <20121126133153.50c5fa21cacd2858f30509e3@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54118 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754041Ab2KZNt6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 08:49:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>
 
-Hi Stephen,
+--Signature=_Tue__27_Nov_2012_00_49_48_+1100_CClVwNa57Ge.v0TK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 11/26/2012 3:31 AM, Stephen Rothwell wrote:
-> Hi Mauro,
->
-> After merging the v4l-dvb tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> ERROR: "dma_common_get_sgtable" [drivers/media/v4l2-core/videobuf2-dma-contig.ko] undefined!
->
-> Caused by commit 9ef2cbeb8192 ("[media] v4l: vb2-dma-contig: add support
-> for DMABUF exporting").  dma_common_get_sgtable() is called from the
-> inline dma_get_sgtable_attrs() and dma_get_sgtable_attrs() is "called
-> from" dma_get_sgtable().  dma_common_get_sgtable() is only defined if
-> ARCH_HAS_DMA_DECLARE_COHERENT_MEMORY is set which depends on
-> CONFIG_HAVE_GENERIC_DMA_COHERENT being set which it isn't for this build.
->
-> I have used the v4l-dvb tree form next-20121026 for today.
->
-> Please try testing your tree with an x86_64 allmodconfig build.
+Hi all,
 
-Thanks for spotting this issue. It's my fault, code for 
-dma_common_get_sgtable()
-function was incorrectly placed under ifdefs in drivrs/base/dma-mapping.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I've posted a fix, please refer to the "dma-mapping: fix 
-dma_common_get_sgtable()
-conditional compilation" patch, which I will push to Linus asap.
+In file included from drivers/staging/sb105x/sb_pci_mp.c:1:0:
+drivers/staging/sb105x/sb_pci_mp.h:22:25: fatal error: asm/segment.h: No su=
+ch file or directory
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+Caused by commit 68a81291ff66 ("staging: Add SystemBase Multi-2/PCI
+driver").
+
+I have disabled this driver with this patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 27 Nov 2012 00:45:07 +1100
+Subject: [PATCH] disable the SB105X driver
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/sb105x/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/sb105x/Kconfig b/drivers/staging/sb105x/Kconfig
+index ac87c5e..c957e32 100644
+--- a/drivers/staging/sb105x/Kconfig
++++ b/drivers/staging/sb105x/Kconfig
+@@ -2,6 +2,7 @@ config SB105X
+ 	tristate "SystemBase PCI Multiport UART"
+ 	select SERIAL_CORE
+ 	depends on PCI
++	depends on BROKEN
+ 	help
+ 	  A driver for the SystemBase Multi-2/PCI serial card
+=20
+--=20
+1.7.10.280.gaa39
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__27_Nov_2012_00_49_48_+1100_CClVwNa57Ge.v0TK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQs3N8AAoJEECxmPOUX5FEDCoP/2nFFfoyVTxxKjC9H7fOsmoI
+MSyq/JKVoIH5+VpSrtcUNJkuA0c2kcGaB0Q4iHMkM1Z3rqQPAiyFKfeqPWiVwjEV
+J6ymZrTqpvqVp1vXKtjqUZrDSNlvoFI22sy/H3vl9t4qCKQeY+SQvRD8ZyG1bjkq
+NbekruE2xkxXHBovbxWjnw4kNgN6czuzrgzUZkMnO2BLBnD05FSq2ILJyJWSQxjf
+vlop7WAHrYxwkc37iutz1Mcsegl4bquWGwqX+L42Ri+P9+DCL9bmRNEQ37blMJ8i
+pyJWV79HCxRLbKJidHvWnMxXOZiI1rfGK+RuZMZl0s/NcyeiKNz0lMUHuOm9P3Mg
+HfK6Tm3TYNGebEB+3Ng4uEABiV/RmFQi9zAe/SfKUneMixRXawVzJxpqZVB15+qt
+2fwFsCW+wtt5XA11lLKjdD11uSh9YLl0G+KH6wg5rYmNe8oNOHphmap0OsSP+wji
+xOiKrSt1T2wzgvExEj42+4spUjsWRNVxnp5I7+15MF2g+SSA86e5jEnfMYeFjIBr
+gbf+PDlLdVzgne5zVvk/BtzKaVdxOjXzJ5ZBPdIAJZZp25UQ9a428gs7A93bZe+J
+7k1DtfvNqVh0O09JifDWSBw7KSh8YLtu/PWUS7b8h7lVJbVVk7WV9fw2xub4+Rii
+OyfcKsL9q54QJmMQEYKZ
+=S2/X
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Nov_2012_00_49_48_+1100_CClVwNa57Ge.v0TK--
