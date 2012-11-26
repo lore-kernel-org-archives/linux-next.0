@@ -1,73 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ia64 tree with Linus' tree
-Date: Mon, 26 Nov 2012 11:31:41 +1100
-Message-ID: <20121126113141.3b624dc9e729039b54c51881@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 26 Nov 2012 13:31:53 +1100
+Message-ID: <20121126133153.50c5fa21cacd2858f30509e3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__26_Nov_2012_11_31_41_+1100_IwhEyeVJS/FUeK0u"
+ boundary="Signature=_Mon__26_Nov_2012_13_31_53_+1100_Dl+mc_8dA/ubxZDx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47614 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50694 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753634Ab2KZAbv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Nov 2012 19:31:51 -0500
+	with ESMTP id S1753344Ab2KZCcD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Nov 2012 21:32:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Anton Vorontsov <anton.vorontsov@linaro.org>, Seiji Aguchi <seiji.aguchi@hds.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 
---Signature=_Mon__26_Nov_2012_11_31_41_+1100_IwhEyeVJS/FUeK0u
+--Signature=_Mon__26_Nov_2012_13_31_53_+1100_Dl+mc_8dA/ubxZDx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mauro,
 
-Today's linux-next merge of the ia64 tree got a conflict in
-fs/pstore/platform.c between commit 70a6f46d7b0e ("pstore: Fix NULL
-pointer dereference in console writes") from Linus' tree and commit
-faa338315985 ("efi_pstore: Add a sequence counter to a variable name")
-from the ia64 tree.
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
+ERROR: "dma_common_get_sgtable" [drivers/media/v4l2-core/videobuf2-dma-cont=
+ig.ko] undefined!
+
+Caused by commit 9ef2cbeb8192 ("[media] v4l: vb2-dma-contig: add support
+for DMABUF exporting").  dma_common_get_sgtable() is called from the
+inline dma_get_sgtable_attrs() and dma_get_sgtable_attrs() is "called
+from" dma_get_sgtable().  dma_common_get_sgtable() is only defined if
+ARCH_HAS_DMA_DECLARE_COHERENT_MEMORY is set which depends on
+CONFIG_HAVE_GENERIC_DMA_COHERENT being set which it isn't for this build.
+
+I have used the v4l-dvb tree form next-20121026 for today.
+
+Please try testing your tree with an x86_64 allmodconfig build.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/pstore/platform.c
-index 947fbe0,e518f43..0000000
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@@ -173,7 -172,7 +173,7 @@@ static void pstore_console_write(struc
-  			spin_lock_irqsave(&psinfo->buf_lock, flags);
-  		}
-  		memcpy(psinfo->buf, s, c);
-- 		psinfo->write(PSTORE_TYPE_CONSOLE, 0, &id, 0, c, psinfo);
- -		psinfo->write(PSTORE_TYPE_CONSOLE, 0, NULL, 0, 0, c, psinfo);
-++		psinfo->write(PSTORE_TYPE_CONSOLE, 0, &id, 0, 0, c, psinfo);
-  		spin_unlock_irqrestore(&psinfo->buf_lock, flags);
-  		s +=3D c;
-  		c =3D e - s;
-
---Signature=_Mon__26_Nov_2012_11_31_41_+1100_IwhEyeVJS/FUeK0u
+--Signature=_Mon__26_Nov_2012_13_31_53_+1100_Dl+mc_8dA/ubxZDx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQsrhtAAoJEECxmPOUX5FEVdUP/AwaogrsvpcjVQL6ASE+oS7l
-5flKs1YZTQnJrJ0CusAyQ+c0S41U8HxRS4cNsP2e4MJRtHr3kmGivjgSw2TfzN38
-dQH5MRN5wS8O3Ug6ljj4a5ZR/oomFBqxMYOotdJ32gcZL7VYbtXsbZeSqnQBM2rC
-FyLfoqFqMI02uFfbfJcSwSF1Qsa4LNfsT0u3OvxNSt64k87LjtDxGpHz7JDVOqGN
-Bddhvdsl9gV5OMzVVhlljueW5NWxNmhKGgbG/dEU089gJfBD6XMa6hnN/bOR2zhQ
-XEC4CL5v9x5k2I7oPRJKyFBFIGyz08ubXYJV6KmU4fpU2ZC2kbv1OyDdTlHeOpYc
-yjQAXQ9pCt7kK2p39BBJQ1QndW8xVPpoqq4UhNqxF0a9AnOZRcXyMURIfJGggYdR
-1nX4D38ldBOxVk8YErjjSBtAqOxQ0pxdeDuwfygUhZB16DZv8oQ0F6Hg0x4Q/kG6
-oUA/oNFj7QqUb95fH9yZt66B/MYS4GdGfXFjMWzgEvM83EiJOjSIcuO0Eu9BltSr
-AooTAge1ckkWYoyxraQUQbdN77JI4gLRcBgIne03mt7inkLM19PYpRlDjIlfh+S8
-XYYRwJT9vYA4ceYatDd7jvGwjVJ0pJg2+m8RTUyFc9M+JO9oBXOIY/lj+JdEMG90
-7eNC8GVomoqvucbPnVEe
-=M9R4
+iQIcBAEBCAAGBQJQstSZAAoJEECxmPOUX5FEr64P/1S5sMjwiuJS3Stoi+hfcqs+
+T0iW/QpLfTFPisK+PJweov6wIwzP59+VE4M237iR6TF3eWOHsSJXEg8C9r+aCacK
+MfBiAAAaOXGGFVCrToBjgqkRAJ+Bgl8Fxlls6tXL4N73oWiSAsFwCN6MIrkFj+lU
+0/AUXAfj1xt7/u8/RIy8pgtsUMwfEAevy9pYJAuN6OHJXAc22LkEnjErjTzrIEfn
+mXv0td2+rotdCV02Sz+gPzf+ZzVPfc73YbFKUs6XjphXxOINTdE34i2RZhlDzvVu
+vszT25JmjOZ3SpPhzY09hZVVmvYlofWQHpqk4O4nFFqDNInsveYmt5c2GcKoGEnF
+9fnKIeCuI1BoZeyEbXnhn6MkvaQymWtTPmyKGliYzip9n6UpctraPPA8Bg+aj6jx
+y2gyVNaO3q97kiUy+Ur73Ur4KhcCRWeZ86UgBQxanP4rY+w+14eq+JmurPo8sqcw
+ETnc4irwPDIb052VPiwbqEIr91p0ZPvit1OmYGt3irUNbiD8/5QjE6BiZ3WJZjzE
+tM7efYV0D0t2Box+p2GtVzMCp2IpQdfHuTa539EbV5gmGZYBrzSqo/qiWElBhZRe
+AKFGPwZlCCqqy2m/bqvZMnAIvSm0iNzT46r+Mlebxm7cey3WkLQQdJ4yoAMuKWLq
+6Jsyy/RppwlQOb9BKPGy
+=Oxm3
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__26_Nov_2012_11_31_41_+1100_IwhEyeVJS/FUeK0u--
+--Signature=_Mon__26_Nov_2012_13_31_53_+1100_Dl+mc_8dA/ubxZDx--
