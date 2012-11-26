@@ -1,52 +1,73 @@
-From: Help Desk <info@helpdesk.org>
-Subject: Scheduled Maintenance & Upgrade
-Date: Tue, 20 Nov 2012 10:05:53 -0600
-Message-ID: <20121120100553.65391jb74ui57cyp__5175.50378940559$1353699326$gmane$org@webmail.prisonhealth.az>
-Reply-To: tech.team@tech-center.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ia64 tree with Linus' tree
+Date: Mon, 26 Nov 2012 11:31:41 +1100
+Message-ID: <20121126113141.3b624dc9e729039b54c51881@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=ISO-8859-1;
- DelSp="Yes";
- format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__26_Nov_2012_11_31_41_+1100_IwhEyeVJS/FUeK0u"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from aze.azerlotereya.com ([174.121.48.66]:59041 "EHLO
-	aze.azerlotereya.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752407Ab2KWTfE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Nov 2012 14:35:04 -0500
-Content-Disposition: inline
+Received: from haggis.pcug.org.au ([203.10.76.10]:47614 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753634Ab2KZAbv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Nov 2012 19:31:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, Anton Vorontsov <anton.vorontsov@linaro.org>, Seiji Aguchi <seiji.aguchi@hds.com>
 
+--Signature=_Mon__26_Nov_2012_11_31_41_+1100_IwhEyeVJS/FUeK0u
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Help Desk
+Hi all,
 
-Attention Account User,
+Today's linux-next merge of the ia64 tree got a conflict in
+fs/pstore/platform.c between commit 70a6f46d7b0e ("pstore: Fix NULL
+pointer dereference in console writes") from Linus' tree and commit
+faa338315985 ("efi_pstore: Add a sequence counter to a variable name")
+from the ia64 tree.
 
-Scheduled Maintenance & Upgrade
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Your account is in the process of being upgraded to a newest  
-Windows-based servers and an enhanced online email interface inline  
-with internet infrastructure Maintenance. The new servers will provide  
-better anti-spam and anti-virus functions, along with IMAP Support for  
-mobile devices to enhance your usage.
+diff --cc fs/pstore/platform.c
+index 947fbe0,e518f43..0000000
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@@ -173,7 -172,7 +173,7 @@@ static void pstore_console_write(struc
+  			spin_lock_irqsave(&psinfo->buf_lock, flags);
+  		}
+  		memcpy(psinfo->buf, s, c);
+- 		psinfo->write(PSTORE_TYPE_CONSOLE, 0, &id, 0, c, psinfo);
+ -		psinfo->write(PSTORE_TYPE_CONSOLE, 0, NULL, 0, 0, c, psinfo);
+++		psinfo->write(PSTORE_TYPE_CONSOLE, 0, &id, 0, 0, c, psinfo);
+  		spin_unlock_irqrestore(&psinfo->buf_lock, flags);
+  		s +=3D c;
+  		c =3D e - s;
 
-To ensure that your account is not disrupted but active during and  
-after this upgrade, you are required to kindly confirm your account by  
-stating the details below:
+--Signature=_Mon__26_Nov_2012_11_31_41_+1100_IwhEyeVJS/FUeK0u
+Content-Type: application/pgp-signature
 
-* User name:
-* Password:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-This will prompt the upgarde of your account.
+iQIcBAEBCAAGBQJQsrhtAAoJEECxmPOUX5FEVdUP/AwaogrsvpcjVQL6ASE+oS7l
+5flKs1YZTQnJrJ0CusAyQ+c0S41U8HxRS4cNsP2e4MJRtHr3kmGivjgSw2TfzN38
+dQH5MRN5wS8O3Ug6ljj4a5ZR/oomFBqxMYOotdJ32gcZL7VYbtXsbZeSqnQBM2rC
+FyLfoqFqMI02uFfbfJcSwSF1Qsa4LNfsT0u3OvxNSt64k87LjtDxGpHz7JDVOqGN
+Bddhvdsl9gV5OMzVVhlljueW5NWxNmhKGgbG/dEU089gJfBD6XMa6hnN/bOR2zhQ
+XEC4CL5v9x5k2I7oPRJKyFBFIGyz08ubXYJV6KmU4fpU2ZC2kbv1OyDdTlHeOpYc
+yjQAXQ9pCt7kK2p39BBJQ1QndW8xVPpoqq4UhNqxF0a9AnOZRcXyMURIfJGggYdR
+1nX4D38ldBOxVk8YErjjSBtAqOxQ0pxdeDuwfygUhZB16DZv8oQ0F6Hg0x4Q/kG6
+oUA/oNFj7QqUb95fH9yZt66B/MYS4GdGfXFjMWzgEvM83EiJOjSIcuO0Eu9BltSr
+AooTAge1ckkWYoyxraQUQbdN77JI4gLRcBgIne03mt7inkLM19PYpRlDjIlfh+S8
+XYYRwJT9vYA4ceYatDd7jvGwjVJ0pJg2+m8RTUyFc9M+JO9oBXOIY/lj+JdEMG90
+7eNC8GVomoqvucbPnVEe
+=M9R4
+-----END PGP SIGNATURE-----
 
-Failure to acknowledge the receipt of this notification, might result  
-to a temporal deactivation of your account from our database. Your  
-account shall remain active upon your confirmation of your login  
-details.
-
-We do apologize for any inconvenience caused.
-
-Help Desk Team.
-
-(c) Copyright 2012, All Rights Reserved.
+--Signature=_Mon__26_Nov_2012_11_31_41_+1100_IwhEyeVJS/FUeK0u--
