@@ -1,23 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the sound-asoc
- and pincrtl trees
-Date: Mon, 26 Nov 2012 20:53:12 +1100
-Message-ID: <20121126205312.46fb3f816e1e95ba8cbb5049@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm-soc and
+ pincrtl trees
+Date: Mon, 26 Nov 2012 20:56:15 +1100
+Message-ID: <20121126205615.cda9cfaa998ce6972937d4aa@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__26_Nov_2012_20_53_12_+1100_xXjUzm9a0H+k2YOd"
+ boundary="Signature=_Mon__26_Nov_2012_20_56_15_+1100_gXaN9v4t=OiVkhv+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56673 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33684 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753671Ab2KZJxO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 04:53:14 -0500
+	with ESMTP id S1753671Ab2KZJ4T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 04:56:19 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Porcedda <fabio.porcedda@gmail.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Porcedda <fabio.porcedda@gmail.com>
 
---Signature=_Mon__26_Nov_2012_20_53_12_+1100_xXjUzm9a0H+k2YOd
+--Signature=_Mon__26_Nov_2012_20_56_15_+1100_gXaN9v4t=OiVkhv+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -25,8 +25,8 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/boot/dts/at91sam9263.dtsi between various commits from the
-arm-soc and pinctrl trees and commit 7492e7ca0f95 ("ARM: at91/dts: add
+arch/arm/boot/dts/at91sam9g45.dtsi between various commits from the
+arm-soc and pincrtl trees and commit 7492e7ca0f95 ("ARM: at91/dts: add
 at91sam9_wdt driver to at91sam926x, at91sam9g45") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
@@ -36,60 +36,59 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/at91sam9263.dtsi
-index 18d9310,ff54612..0000000
---- a/arch/arm/boot/dts/at91sam9263.dtsi
-+++ b/arch/arm/boot/dts/at91sam9263.dtsi
-@@@ -403,23 -196,11 +403,29 @@@
-  				status =3D "disabled";
+diff --cc arch/arm/boot/dts/at91sam9g45.dtsi
+index 4212991,a98c00a..0000000
+--- a/arch/arm/boot/dts/at91sam9g45.dtsi
++++ b/arch/arm/boot/dts/at91sam9g45.dtsi
+@@@ -472,22 -263,10 +472,28 @@@
+  				};
   			};
  =20
  +			mmc0: mmc@fff80000 {
  +				compatible =3D "atmel,hsmci";
  +				reg =3D <0xfff80000 0x600>;
- +				interrupts =3D <10 4 0>;
- +				#address-cells =3D <1>;
- +				#size-cells =3D <0>;
- +				status =3D "disabled";
- +			};
- +
- +			mmc1: mmc@fff84000 {
- +				compatible =3D "atmel,hsmci";
- +				reg =3D <0xfff84000 0x600>;
  +				interrupts =3D <11 4 0>;
  +				#address-cells =3D <1>;
  +				#size-cells =3D <0>;
  +				status =3D "disabled";
  +			};
+ +
+ +			mmc1: mmc@fffd0000 {
+ +				compatible =3D "atmel,hsmci";
+ +				reg =3D <0xfffd0000 0x600>;
+ +				interrupts =3D <29 4 0>;
+ +				#address-cells =3D <1>;
+ +				#size-cells =3D <0>;
+ +				status =3D "disabled";
+++			};
 ++
 + 			watchdog@fffffd40 {
 + 				compatible =3D "atmel,at91sam9260-wdt";
 + 				reg =3D <0xfffffd40 0x10>;
 + 				status =3D "disabled";
-+ 			};
+  			};
   		};
  =20
-  		nand0: nand@40000000 {
 
---Signature=_Mon__26_Nov_2012_20_53_12_+1100_xXjUzm9a0H+k2YOd
+--Signature=_Mon__26_Nov_2012_20_56_15_+1100_gXaN9v4t=OiVkhv+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQszwIAAoJEECxmPOUX5FEVWMP/2XGRPEoEzJ0t3Jm2Zu4HcTe
-TMg7MsTn0vRPqNFi71iY8G57eabUq5N+ZPGcfxUudxVOsIM3KV3HXrxWeq3V5iej
-3Jt3bHdawfEivgTm/kogxw4ekEvmjA6HlTLRPklpb+hLY6ogjpZTnrHd8XMnxKyi
-tXb1nGACO5VRPAS3Wn+8L7FQ8FKjY//xCtJ73mPmjovLTEoRAxDaoPEVnLzLyte/
-p8rfcCTl1ahItYfxPz88itQ09thiesjCUOuh+ZuxWPKKFZhIlXqAw3j5i4Tshnxw
-G43smn44M5VT2ZKCO0a7Z+TIYraXBiz7GevuHOCrU9ZII2MJhpkyXTHrgTUuC7yy
-wYq6NE0s7kKEGFRFGLU+cNFg/3m5nqNUjho/5p8SjE0ZBGWcDG57CQfMoJ7wtuED
-G+n9QkOOZWO1tjcKKTZht6+Zc+m6J2wNmyIcoJNYix1hBue9jxbzFMscnl2AdwIv
-waTIX3qouZyAlCcTh6Pz3QSs4OOTeKYIiaUMcK9EVxs49foh/ZQsiT2b6kN/UFwe
-+YFoCVT7AExf+kP/A+glZqBc5xLh1zR8xgeRmyiBznITPzTtOC+fFkbLBJy/swyg
-V/V2+Eiqae/NhhbsqP5PPzivJeNK9+Kh+RNwUOh7FfYpdzQOxcwHO5CBc5qTPTwH
-SYkJO7CM5JAI1NhM0rPX
-=rebe
+iQIcBAEBCAAGBQJQszy/AAoJEECxmPOUX5FE1iAP/AuY711rfs79DQEMclp7/2gq
+2J4wNmPUxeTdZr2bC5/o9qc5KPnFB/NtJYFAscWirpLPCkOL+RpDJwC+W7dh7VB+
+HkgkeS+FJpR06B9GgqSzsr/OntyQJBbrnex3MMzWzVwYusKFpQxIIBlMhPLYnrrc
+YdOSf3XYDpdPjZrlBbirmHQQ2Kk48G5KdnITKR8F6CqJlZwJV3s5lCoyK1D2ydL1
+DOAF03QCUId9G49/rW9A/xS0rPKouRTqyRq0Cxs3tEqtvyEVqCVOplAjV0TN+gGO
+zmvR5EieZ8bY0jmsa+kLjMx5rJNsf9Vs5HE58jTmxOgi7GHrbN0OmIeS1CKvSknz
+lnZo3+TdYDO/PJ7m46PXVzl3VcTAhanNtty/FHXdWWVccspe2IVJt6dO21g29jw0
+MohE1Cwu6Yv3Yuw75NBR0XJTlt06gYkLazdpaQP4G5Yot9gyuQS13TG7dZZoZEOF
+20ixRDuXqwuunUFgFHuQzYjWqtzvkfiLvYvmCQiDKoHNbt4Lsqy0/Fl7EE9d6lwg
+p1zQb8W8R16Do019Y9yjjIgSx+ogkKotkglpp/ZcpA+3ynO/T1BlyV6sZNiPWDOE
+UxcndBJfmNKnz2DdA2xz0Be+gz2asS6IpfPnyG/7DgJ9HwSXi6nXccMs3P5NoX9U
+fM4hMAXJstKEf5flvMxP
+=ejoj
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__26_Nov_2012_20_53_12_+1100_xXjUzm9a0H+k2YOd--
+--Signature=_Mon__26_Nov_2012_20_56_15_+1100_gXaN9v4t=OiVkhv+--
