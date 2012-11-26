@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Mon, 26 Nov 2012 21:31:52 +1100
-Message-ID: <20121126213152.60b52e19d7fc84ce94c356c3@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the mmc tree
+Date: Mon, 26 Nov 2012 21:38:53 +1100
+Message-ID: <20121126213853.ccceb25dc3b3c5a24911abef@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__26_Nov_2012_21_31_52_+1100_gvha+WRsLlIg7w5k"
+ boundary="Signature=_Mon__26_Nov_2012_21_38_53_+1100_xbsxXPDkd2hePazM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53744 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:51540 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754266Ab2KZKcC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 05:32:02 -0500
+	with ESMTP id S1754209Ab2KZKi7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 05:38:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Hebbar, Gururaja" <gururaja.hebbar@ti.com>, Venkatraman S <svenkatr@ti.com>, Chris Ball <cjb@laptop.org>, Tony Lindgren <tony@atomide.com>
 
---Signature=_Mon__26_Nov_2012_21_31_52_+1100_gvha+WRsLlIg7w5k
+--Signature=_Mon__26_Nov_2012_21_38_53_+1100_xbsxXPDkd2hePazM
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,10 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/tty/serial/atmel_serial.c between commit 95e629b761ce
-("ARM/AVR32: get rid of serial_at91.h") from the arm tree and commit
-bcd2360c1ff9 ("arm: at91: move platfarm_data to
-include/linux/platform_data/atmel.h") from the arm-soc tree.
+include/linux/platform_data/mmc-omap.h between commit 69bc0b677e6c ("mmc:
+omap_hsmmc: Enable HSPE bit for high speed cards") from the  tree and
+commit 53db20d123f7 ("mmc: omap: Remove cpu_is_omap usage from the
+driver") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,47 +36,44 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/tty/serial/atmel_serial.c
-index 1a8a271,5660ec2..0000000
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@@ -39,13 -39,13 +39,12 @@@
-  #include <linux/atmel_pdc.h>
-  #include <linux/atmel_serial.h>
-  #include <linux/uaccess.h>
- +#include <linux/pinctrl/consumer.h>
-+ #include <linux/platform_data/atmel.h>
+diff --cc include/linux/platform_data/mmc-omap.h
+index 346af5b,2bf6ea8..0000000
+--- a/include/linux/platform_data/mmc-omap.h
++++ b/include/linux/platform_data/mmc-omap.h
+@@@ -126,7 -107,9 +107,10 @@@ struct omap_mmc_platform_data=20
+  		/* we can put the features above into this variable */
+  #define HSMMC_HAS_PBIAS		(1 << 0)
+  #define HSMMC_HAS_UPDATED_RESET	(1 << 1)
+ -#define MMC_OMAP7XX		(1 << 2)
+ -#define MMC_OMAP15XX		(1 << 3)
+ -#define MMC_OMAP16XX		(1 << 4)
+ +#define HSMMC_HAS_HSPE_SUPPORT	(1 << 2)
+++#define MMC_OMAP7XX		(1 << 3)
+++#define MMC_OMAP15XX		(1 << 4)
+++#define MMC_OMAP16XX		(1 << 5)
+  		unsigned features;
  =20
-  #include <asm/io.h>
-  #include <asm/ioctls.h>
- =20
-- #include <mach/board.h>
--=20
- -#include <asm/mach/serial_at91.h>
- -
-  #ifdef CONFIG_ARM
-  #include <mach/cpu.h>
-  #include <asm/gpio.h>
+  		int switch_pin;			/* gpio (card detect) */
 
---Signature=_Mon__26_Nov_2012_21_31_52_+1100_gvha+WRsLlIg7w5k
+--Signature=_Mon__26_Nov_2012_21_38_53_+1100_xbsxXPDkd2hePazM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQs0UYAAoJEECxmPOUX5FE/0QP/RzBU4spRgnkpzns0pYOUE+T
-2jWfHZIGkzjKcSKcbQSHKeDRqhxway1CUKQpoTKOuKQOFiVBufWj9vXG+Qt0ZAdk
-QImZ6TMT2tgQHO5K8HyaL4tVLXAhOgn2q+9vg2ywqJ/JTtQZ0msTAEV+lp9ujtpU
-tnhZbo7Iek/7XdKUJb0o84ZBtWGFQSG8ry9Rg4TExjkJauqSBN3d2ZCGTpQov3fA
-vvLfXNoecZSqeiVuzID8Sw+5+4dqAfaFvG21VSFE2ICycfJeXqsBB/S94+YRsC2z
-PpYDUFi0PwGS+WS7SKJ99TbW9E0Qi53n4Qts117Drs4MKBrRFpXaKlqAvuLYa9TK
-rEBzAlQs4qXH+EknHewYutk16gpbQwTBY6nSjqT5zB5J81xcyBy32yAiNLYuDUMn
-N4F2YuZIVxO5zhhoN9TtwqtPULCxPCyPCH2VJOpb/R42GM1qSNmKeAmYQ3yELEoB
-zvH2/VoHLOznd+wGJye5lzXNudT2+7Pa9CU+aTQpWu2Lyxr6dv3JB68TlhpyRkHX
-Me+zrGYKCMiovePEJRRfZbnJ9Pxd0prutaQLIKBUplDQTK02keEssfUji9X5c4CB
-bVLUk5CR2cM+qzHEqWguHLHdnckad3EqvMrcU1pqLxez4ntCuRG47joxvM3wHT5/
-1DuqSvfHb/xlwdeB1eNc
-=Udak
+iQIcBAEBCAAGBQJQs0a9AAoJEECxmPOUX5FE/YUP/2tfuS2NAz7/MivPC7y9ZO43
+j+8RSE46t4vNqqezzbsHBKPwv9Uw9yyo5p0C+ZB9PqM16DpFHvn7xc6xMeAcVIKi
+G7MX9EqeFHGTzIcNSMEE4bcgMVK18qn0d8xT6+826LC7k/kPvL98d9noxvRUZhKS
+t4tceUlLgZGUOqAIgh6c5EHNv6VqDrSC8K6zo+h9oE4kqnnP8iZIEntjJxSl9Rwm
+eOuccsf+UwbG0xNzpO799diUNHveswn4PLCj+wgNpbPgZqMm0B49C/2ut3843yk5
+gXuJ07pWVgT0ayuKXbhF3IKezjFrcYji7HvD1SZfpPLV+trhQC1F4ETGQV72Ee3L
+KSAzWIgbCY9PR5yQmBYABx41zQ3V856ruAJtGDk8qGv5b8RxRLuTfTge29HerLDi
+pJ0QleGx7VmYnXSOu8RzzTuy5V50zXTsV9QB9K5ZQFEs9QLs6T1rGte8/gdz01p0
+epqHw5fAgHcDTvUJGhqT6nUD1zJune0VUFOPAfSDEkADOmlk1JtqQpGNHfTyU9+c
+GQQbNezRF2jk+fx60U55umvHEMOpd3sdFCQZxt+aV+hxbgB/zm4AFgWjbws6b8FO
+U8UdwiN5oJKOkjtyM4+yhfWhMxHDzfSaELKSvysCa32/XjWxeVq7vp9Q/HXlC1xB
+3l+rttlKVfwEzGegHWiJ
+=eitm
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__26_Nov_2012_21_31_52_+1100_gvha+WRsLlIg7w5k--
+--Signature=_Mon__26_Nov_2012_21_38_53_+1100_xbsxXPDkd2hePazM--
