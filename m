@@ -1,70 +1,73 @@
-From: Steven Rostedt <srostedt@redhat.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Mon, 26 Nov 2012 09:35:12 -0500
-Message-ID: <1353940512.22512.38.camel@fedora>
-References: <20121127004948.6e7973525843529de827ed0e@canb.auug.org.au>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the
+ omap_dss2 tree
+Date: Mon, 26 Nov 2012 07:53:58 -0800
+Message-ID: <20121126155358.GH5279@atomide.com>
+References: <20121126215600.236b2e44ffea1abbea26898b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:33387 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752861Ab2KZOfU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Nov 2012 09:35:20 -0500
-In-Reply-To: <20121127004948.6e7973525843529de827ed0e@canb.auug.org.au>
+Received: from mho-04-ewr.mailhop.org ([204.13.248.74]:27682 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751589Ab2KZPyH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 10:54:07 -0500
+Content-Disposition: inline
+In-Reply-To: <20121126215600.236b2e44ffea1abbea26898b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lokesh Vutla <lokeshvutla@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-On Tue, 2012-11-27 at 00:49 +1100, Stephen Rothwell wrote:
+* Stephen Rothwell <sfr@canb.auug.org.au> [121126 02:58]:
 > Hi all,
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/plat-omap/common.c between commit b022e17b1c7e ("OMAP: common.c:
+> remove init call to vram") from the omap_dss2 tree and commit
+> f583f0f2c720 ("ARM: OMAP2+: Move omap_reserve() locally to mach-omap2")
+> from the arm-soc tree.
 > 
-> In file included from drivers/staging/sb105x/sb_pci_mp.c:1:0:
-> drivers/staging/sb105x/sb_pci_mp.h:22:25: fatal error: asm/segment.h: No such file or directory
+> I fixed it up (by deleting the file and adding the following patch) and
+> can carry the fix as necessary (no action is required).
 
-I haven't tested this with any other arch than x86. That said, what
-about this instead:
+Thanks this is the correct fix.
 
-
-> 
-> Caused by commit 68a81291ff66 ("staging: Add SystemBase Multi-2/PCI
-> driver").
-> 
-> I have disabled this driver with this patch:
-> 
+Tony
+ 
+> From 523f2987a07f97c946c63e0be4558b8332b46e8f Mon Sep 17 00:00:00 2001
 > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 27 Nov 2012 00:45:07 +1100
-> Subject: [PATCH] disable the SB105X driver
+> Date: Mon, 26 Nov 2012 21:51:20 +1100
+> Subject: [PATCH] OMAP: common.c: remove init call to vram fixup
 > 
 > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  drivers/staging/sb105x/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm/mach-omap2/common.c |    3 ---
+>  1 file changed, 3 deletions(-)
 > 
-> diff --git a/drivers/staging/sb105x/Kconfig b/drivers/staging/sb105x/Kconfig
-> index ac87c5e..c957e32 100644
-> --- a/drivers/staging/sb105x/Kconfig
-> +++ b/drivers/staging/sb105x/Kconfig
-> @@ -2,6 +2,7 @@ config SB105X
->  	tristate "SystemBase PCI Multiport UART"
->  	select SERIAL_CORE
->  	depends on PCI
-> +	depends on BROKEN
-
-	depends on X86
-
-You can add my SOB if you want. I don't care either way.
-
--- Steve
-
->  	help
->  	  A driver for the SystemBase Multi-2/PCI serial card
+> diff --git a/arch/arm/mach-omap2/common.c b/arch/arm/mach-omap2/common.c
+> index 5c2fd48..2dabb9e 100644
+> --- a/arch/arm/mach-omap2/common.c
+> +++ b/arch/arm/mach-omap2/common.c
+> @@ -16,8 +16,6 @@
+>  #include <linux/init.h>
+>  #include <linux/platform_data/dsp-omap.h>
 >  
+> -#include <plat/vram.h>
+> -
+>  #include "common.h"
+>  #include "omap-secure.h"
+>  
+> @@ -32,7 +30,6 @@ int __weak omap_secure_ram_reserve_memblock(void)
+>  
+>  void __init omap_reserve(void)
+>  {
+> -	omap_vram_reserve_sdram_memblock();
+>  	omap_dsp_reserve_sdram_memblock();
+>  	omap_secure_ram_reserve_memblock();
+>  	omap_barrier_reserve_memblock();
 > -- 
 > 1.7.10.280.gaa39
 > 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
