@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pinctrl tree with the sound-asoc
- tree
-Date: Mon, 26 Nov 2012 20:02:43 +1100
-Message-ID: <20121126200243.7ad73ab21990661a3f12a01c@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the pinctrl tree
+Date: Mon, 26 Nov 2012 20:34:49 +1100
+Message-ID: <20121126203449.10d0d757dcddab773b308ee2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__26_Nov_2012_20_02_43_+1100_pSTj6RPr=+IV/E=Q"
+ boundary="Signature=_Mon__26_Nov_2012_20_34_49_+1100_Aq/D+ZD5h.Jrp3Dx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56575 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:37563 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753713Ab2KZJCp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 04:02:45 -0500
+	with ESMTP id S1754485Ab2KZJe7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 04:34:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bo Shen <voice.shen@atmel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Ludovic Desroches <ludovic.desroches@atmel.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Mon__26_Nov_2012_20_02_43_+1100_pSTj6RPr=+IV/E=Q
+--Signature=_Mon__26_Nov_2012_20_34_49_+1100_Aq/D+ZD5h.Jrp3Dx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi all,
 
-Today's linux-next merge of the pinctrl tree got a conflict in
-arch/arm/boot/dts/at91sam9g20ek_common.dtsi between commit 531f67e41dcd
-("ASoC: at91sam9g20ek-wm8731: convert to dt support") from the sound-asoc
-tree and commit 4134a4552748 ("ARM: at91/dts: add nodes for atmel hsmci
-controllers for atmel boards") from the pinctrl tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/boot/dts/Makefile between commit ec6754a7b9e9 ("arm: at91: dt:
+at91sam9 add serial pinctrl support") from the pinctrl tree and commit
+e8d623986990 ("Merge branch 'next/soc' into for-next") from the arm-soc
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,64 +36,88 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/at91sam9g20ek_common.dtsi
-index 2dcec8d,32a500a..0000000
---- a/arch/arm/boot/dts/at91sam9g20ek_common.dtsi
-+++ b/arch/arm/boot/dts/at91sam9g20ek_common.dtsi
-@@@ -62,10 -59,28 +69,33 @@@
-  				status =3D "okay";
-  			};
+diff --cc arch/arm/boot/dts/Makefile
+index 204fd3c,cce80e2..0000000
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@@ -1,38 -1,25 +1,41 @@@
+  ifeq ($(CONFIG_OF),y)
  =20
-+ 			mmc0: mmc@fffa8000 {
-+ 				pinctrl-0 =3D <
-+ 					&pinctrl_board_mmc0_slot1
-+ 					&pinctrl_mmc0_clk
-+ 					&pinctrl_mmc0_slot1_cmd_dat0
-+ 					&pinctrl_mmc0_slot1_dat1_3>;
-+ 				status =3D "okay";
-+ 				slot@1 {
-+ 					reg =3D <1>;
-+ 					bus-width =3D <4>;
-+ 					cd-gpios =3D <&pioC 9 0>;
-+ 				};
-+ 			};
-+=20
- +			ssc0: ssc@fffbc000 {
- +				status =3D "okay";
- +				pinctrl-0 =3D <&pinctrl_ssc0_tx>;
- +			};
-++
-+ 			pinctrl@fffff400 {
-+ 				mmc0_slot1 {
-+ 					pinctrl_board_mmc0_slot1: mmc0_slot1-board {
-+ 						atmel,pins =3D
-+ 							<2 9 0x0 0x5>;	/* PC9 gpio CD pin pull up and deglitch */
-+ 					};
-+ 				};
-+ 			};
-  		};
- =20
-  		nand0: nand@40000000 {
+ -dtb-$(CONFIG_ARCH_AT91) +=3D aks-cdu.dtb \
+ -	at91sam9263ek.dtb \
+ -	at91sam9g20ek_2mmc.dtb \
+ -	at91sam9g20ek.dtb \
+ -	at91sam9g25ek.dtb \
+ -	at91sam9m10g45ek.dtb \
+ -	at91sam9n12ek.dtb \
+ -	ethernut5.dtb \
+ -	evk-pro3.dtb \
+ -	kizbox.dtb \
+ -	tny_a9260.dtb \
+ -	tny_a9263.dtb \
+ -	tny_a9g20.dtb \
+ -	usb_a9260.dtb \
+ -	usb_a9263.dtb \
+ -	usb_a9g20.dtb
+ +# Keep at91 dtb files sorted alphabetically for each SoC
+ +# rm9200
+ +dtb-$(CONFIG_ARCH_AT91) +=3D at91rm9200ek.dtb
+ +# sam9260
+ +dtb-$(CONFIG_ARCH_AT91) +=3D animeo_ip.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D aks-cdu.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D ethernut5.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D evk-pro3.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D tny_a9260.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D usb_a9260.dtb
+ +# sam9263
+ +dtb-$(CONFIG_ARCH_AT91) +=3D at91sam9263ek.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D tny_a9263.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D usb_a9263.dtb
+ +# sam9g20
+ +dtb-$(CONFIG_ARCH_AT91) +=3D at91sam9g20ek.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D at91sam9g20ek_2mmc.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D kizbox.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D tny_a9g20.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D usb_a9g20.dtb
+ +# sam9g45
+ +dtb-$(CONFIG_ARCH_AT91) +=3D at91sam9m10g45ek.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D pm9g45.dtb
+ +# sam9n12
+ +dtb-$(CONFIG_ARCH_AT91) +=3D at91sam9n12ek.dtb
+ +# sam9x5
+ +dtb-$(CONFIG_ARCH_AT91) +=3D at91sam9g15ek.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D at91sam9g25ek.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D at91sam9g35ek.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D at91sam9x25ek.dtb
+ +dtb-$(CONFIG_ARCH_AT91) +=3D at91sam9x35ek.dtb
+ +
++ dtb-$(CONFIG_ARCH_BCM) +=3D bcm11351-brt.dtb
+  dtb-$(CONFIG_ARCH_BCM2835) +=3D bcm2835-rpi-b.dtb
++ dtb-$(CONFIG_ARCH_DAVINCI) +=3D da850-enbw-cmc.dtb \
++ 	da850-evm.dtb
+  dtb-$(CONFIG_ARCH_DOVE) +=3D dove-cm-a510.dtb \
+  	dove-cubox.dtb \
+  	dove-dove-db.dtb
 
---Signature=_Mon__26_Nov_2012_20_02_43_+1100_pSTj6RPr=+IV/E=Q
+--Signature=_Mon__26_Nov_2012_20_34_49_+1100_Aq/D+ZD5h.Jrp3Dx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQszAzAAoJEECxmPOUX5FESxwP/2Z8SiTyFWuKx0Qs1iSXFflL
-mDup+X82UCCbx08BExLK89iZm0loyjtN17j19N+bxyW22E9NQm5Z7Qrxp3qlLdwX
-jy4WMh1CWKkNlnU7YGMPYLC6eFD+2tOZrS8EsmJ0F7TGBSAb+lf77zV9uKcouiO/
-l114DnNCorgbO9ilBhmc2DFKzTzSI+pzJGkiPvOQmvv2PEdTuZIzhsw9YkYIlZys
-6+5GL9SQ5IO45J5pxtP2NcjWWKt7mS/3YxVutlf6wr3/GNHjhHthJvPipflZ0xHY
-w3jaW9/Pjjdleoyw3kIHDKm2HOH+/ibWogsUXSbCLFu8/jJ5BX/eURTg3RfHntTr
-XGG/LD+ry8SpxsnOrl/Zhsa2RpVOO/xAxs9Da1NOEsZHQOWYo3acst48iEnXx1pY
-PiEdguiUAKDW54WVnSwRlqj/KUDr/vyO8h0EiTMjMRJswICIHteSym9zY2ZLVyAi
-IWqn4s4ZhReGe/RDgGlfLHUouzttYHhbQzn/XVGHOzBwJoiMhW/lC31gmGdHqKCI
-cOFdVXRStZzO7XZwSO2FGRQ+psJkq3Jmq4tlxq70I6VDwAq5OofMb0G682nFCUu1
-3tKOTFKazy6Qr1qkYzz15W6u315QD3rMXQVvzZCcjJD+jNyPfsoDu7xnArs7Q1BP
-Co1H/jvPOwI1zkPNonk2
-=Wphn
+iQIcBAEBCAAGBQJQsze5AAoJEECxmPOUX5FElu4P/i6aDpdNy1IBiGC16Jv8zpRU
+INvmkp/dK1xtZdQtnnXVbqQy/WmpIxMNTf/S0E7igRUeiZ2sco9BQkVCZySHGOBc
+grLx7AfZYsphnpcRTb7Q+Ikb1QF4tKZir4pQYwEZxSmSzdZqlJC24xs4sdXyjCtk
+O3gEiaV09+v6G+grC50dEazLeNUG4TqOdtEdvmzsSyL2fMkiUxMql4Jq9tw8voAd
+p6L9qc9FRp6cmqAO+WKxjOjmFz4tayKM5wCxq/ZrVmGyVDQlu2XV75fLw2EvtXsz
+wgI1GoA0UbtO7jjtz+b/ziKgt73VeQwqMW3oMIjNLEzmjiihF1CQs96WS3QzjHG+
+6oSNvveteAr0Lnht4blU9bc0S07b9e2NvvhPZGug5Xokz0TZdjTghNWLqBp1NBqM
+SU80p2l0SiHuoH60kwIpcyRXMNyP4b6fELwzBd4HRr7rMw4rQejnG/HHNNpA3nNg
+THPKzD1D5sv07tMaeAqCe6C30hYpN8aKR1WkI5tbMxh6khelXubLYr8GiCvl7MRp
+lwqqiOI/mJm5kmq7Ed185YRHDSzHUNmnoH8JTLncQbUw9wzRhOspXYtgenul+FQj
+ZUX7MbPvC+/2v7CVU6YbMDzynBAfRyDZ7B75qJFCeqPNQ0EEDmzVOIf64++DDJ8V
+9g/dfMrtcRzvfPFUSx+7
+=9cyh
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__26_Nov_2012_20_02_43_+1100_pSTj6RPr=+IV/E=Q--
+--Signature=_Mon__26_Nov_2012_20_34_49_+1100_Aq/D+ZD5h.Jrp3Dx--
