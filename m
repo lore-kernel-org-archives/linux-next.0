@@ -1,51 +1,52 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] dma-mapping: fix dma_common_get_sgtable() conditional
- compilation
-Date: Mon, 26 Nov 2012 14:41:48 +0100
-Message-ID: <1353937308-887-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <owner-linux-mm@kvack.org>
-Sender: owner-linux-mm@kvack.org
-To: linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 26 Nov 2012 14:44:02 +0100
+Message-ID: <50B37222.7010709@samsung.com>
+References: <20121126133153.50c5fa21cacd2858f30509e3@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45038 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753056Ab2KZNoG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 08:44:06 -0500
+In-reply-to: <20121126133153.50c5fa21cacd2858f30509e3@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 
-dma_common_get_sgtable() function doesn't depend on
-ARCH_HAS_DMA_DECLARE_COHERENT_MEMORY, so it must not be compiled
-conditionally.
+Hi Stephen,
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/base/dma-mapping.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 11/26/2012 3:31 AM, Stephen Rothwell wrote:
+> Hi Mauro,
+>
+> After merging the v4l-dvb tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> ERROR: "dma_common_get_sgtable" [drivers/media/v4l2-core/videobuf2-dma-contig.ko] undefined!
+>
+> Caused by commit 9ef2cbeb8192 ("[media] v4l: vb2-dma-contig: add support
+> for DMABUF exporting").  dma_common_get_sgtable() is called from the
+> inline dma_get_sgtable_attrs() and dma_get_sgtable_attrs() is "called
+> from" dma_get_sgtable().  dma_common_get_sgtable() is only defined if
+> ARCH_HAS_DMA_DECLARE_COHERENT_MEMORY is set which depends on
+> CONFIG_HAVE_GENERIC_DMA_COHERENT being set which it isn't for this build.
+>
+> I have used the v4l-dvb tree form next-20121026 for today.
+>
+> Please try testing your tree with an x86_64 allmodconfig build.
 
-diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
-index 3fbedc7..0ce39a3 100644
---- a/drivers/base/dma-mapping.c
-+++ b/drivers/base/dma-mapping.c
-@@ -218,6 +218,8 @@ void dmam_release_declared_memory(struct device *dev)
- }
- EXPORT_SYMBOL(dmam_release_declared_memory);
- 
-+#endif
-+
- /*
-  * Create scatter-list for the already allocated DMA buffer.
-  */
-@@ -236,8 +238,6 @@ int dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
- }
- EXPORT_SYMBOL(dma_common_get_sgtable);
- 
--#endif
--
- /*
-  * Create userspace mapping for the DMA-coherent memory.
-  */
+Thanks for spotting this issue. It's my fault, code for 
+dma_common_get_sgtable()
+function was incorrectly placed under ifdefs in drivrs/base/dma-mapping.
+
+I've posted a fix, please refer to the "dma-mapping: fix 
+dma_common_get_sgtable()
+conditional compilation" patch, which I will push to Linus asap.
+
+Best regards
 -- 
-1.7.9.5
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Marek Szyprowski
+Samsung Poland R&D Center
