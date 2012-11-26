@@ -1,55 +1,101 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: [PATCH -next] mfd: fix stmpe.c build when OF is not enabled
-Date: Mon, 26 Nov 2012 22:07:23 +0100
-Message-ID: <20121126210723.GX12685@sortiz-mobl>
-References: <20121112164431.8bcfe78d2a2ec73271733db4@canb.auug.org.au>
- <50A12FF1.4000800@infradead.org>
- <CACRpkdZj5iuyXAfynF-5r65dnakxxm2A1O602P4Lc6it8=fU9g@mail.gmail.com>
- <50B3C13D.1050704@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Tue, 27 Nov 2012 10:05:30 +1100
+Message-ID: <20121127100530.20174586b57ef55da58608d4@canb.auug.org.au>
+References: <20121127004948.6e7973525843529de827ed0e@canb.auug.org.au>
+	<1353940512.22512.38.camel@fedora>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__27_Nov_2012_10_05_30_+1100_45rKkn55DL6eKuGt"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38818 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755876Ab2KZXFj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 18:05:39 -0500
+In-Reply-To: <1353940512.22512.38.camel@fedora>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steven Rostedt <srostedt@redhat.com>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Tue__27_Nov_2012_10_05_30_+1100_45rKkn55DL6eKuGt
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <50B3C13D.1050704@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rabin Vincent <rabin.vincent@stericsson.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Hi Randy,
+Hi Steve,
 
-On Mon, Nov 26, 2012 at 11:21:33AM -0800, Randy Dunlap wrote:
-> On 11/13/2012 05:35 AM, Linus Walleij wrote:
-> 
-> > On Mon, Nov 12, 2012 at 6:20 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> > 
-> >> From: Randy Dunlap <rdunlap@infradead.org>
-> >>
-> >> Fix build errors when CONFIG_OF is not enabled by including
-> >> <linux/of.h> (needs to be added in any case).
-> >> An alternative fix could be to make the driver depend on OF.
-> >>
-> >> drivers/mfd/stmpe.c:1025:2: error: implicit declaration of function 'of_property_read_u32'
-> >> drivers/mfd/stmpe.c:1030:2: error: implicit declaration of function 'for_each_child_of_node'
-> >> drivers/mfd/stmpe.c:1030:36: error: expected ';' before '{' token
-> >>
-> >> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> >> Cc: Rabin Vincent <rabin.vincent@stericsson.com>
-> >> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> > 
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> 
-> 
-> 
-> ping?
-> 
-> This patch is still needed in linux-next.
-Applied and pushed, thanks a lot.
+On Mon, 26 Nov 2012 09:35:12 -0500 Steven Rostedt <srostedt@redhat.com> wro=
+te:
+>
+> On Tue, 2012-11-27 at 00:49 +1100, Stephen Rothwell wrote:
+> >=20
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >=20
+> > In file included from drivers/staging/sb105x/sb_pci_mp.c:1:0:
+> > drivers/staging/sb105x/sb_pci_mp.h:22:25: fatal error: asm/segment.h: N=
+o such file or directory
+>=20
+> I haven't tested this with any other arch than x86. That said, what
+> about this instead:
+>=20
+> > Caused by commit 68a81291ff66 ("staging: Add SystemBase Multi-2/PCI
+> > driver").
+> >=20
+> > I have disabled this driver with this patch:
+> >=20
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Tue, 27 Nov 2012 00:45:07 +1100
+> > Subject: [PATCH] disable the SB105X driver
+> >=20
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  drivers/staging/sb105x/Kconfig |    1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/drivers/staging/sb105x/Kconfig b/drivers/staging/sb105x/Kc=
+onfig
+> > index ac87c5e..c957e32 100644
+> > --- a/drivers/staging/sb105x/Kconfig
+> > +++ b/drivers/staging/sb105x/Kconfig
+> > @@ -2,6 +2,7 @@ config SB105X
+> >  	tristate "SystemBase PCI Multiport UART"
+> >  	select SERIAL_CORE
+> >  	depends on PCI
+> > +	depends on BROKEN
+>=20
+> 	depends on X86
+>=20
+> You can add my SOB if you want. I don't care either way.
 
+Please just send a (tested) patch to Greg.
+
+--=20
 Cheers,
-Samuel.
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+--Signature=_Tue__27_Nov_2012_10_05_30_+1100_45rKkn55DL6eKuGt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQs/W6AAoJEECxmPOUX5FEET8QAIKyUaS8WV4/1/Kw0LJHLFEZ
+PLKbq7AsXqOW7takY6NteGrZo5hNGlPhnHpdZEYehrj9fg6sT6NbW9OjFlfzO0ak
+NlbpLp8cZZcZOwiR+egVwL9T3m7kvfSxoTklLsHzz3ne+utF6ocyP8vySXd5EMXv
+9gJLpBeV/kL1JKII+JHvbAnlXlR8tz+lT2i1DkhZKCtDiTXtxvUa6vR+f9tebPyc
+4GtpiXexcnkTpzwx4ccfHfKL2f6MrDT/Y8ioGGK82/SzAXw73VMveu41mOf+uzia
+ti6vf++ULgFhWKaY5hjTz1O6v6McO7weI0jKh/aOI8SN4Aur+4/efEq4WKWeLtL9
+dkAkJ/Ow0p70p9bRML4B1aVBCxAsmpXxLUqsFCqIu7z1qxILn0ZE+qCxy+HRxc1y
+sGr9lw4Jw1U9KJIRkWD+H0A+Lh4fVMAj+rPopbGjnKOB9JIq0LHqOCSoBVWzMPKA
+IM7h27cOHl6kDvPn+JlorgDsWwLHBOTE6v037znnUVjgHahsu3TXQwKrwnecvipf
+KTxNJX/ktfj+TvpRLE2K7tvm22RQwyXMtiCXBoix2NMRcnxocdVrSZPxYrF2fy2e
+56A/BVIquvZcmy75tMJwdLmwEuG0D7zGur8IuTMQ7TUoroU45RIhky1bWqIg5Jsm
+mGZ5ZAkT/uPt7wgWkPud
+=6cpF
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Nov_2012_10_05_30_+1100_45rKkn55DL6eKuGt--
