@@ -1,100 +1,105 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with the cris tree
-Date: Mon, 26 Nov 2012 22:54:48 +1100
-Message-ID: <20121126225448.7589f3cb8f6fffe15a22a365@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 26 Nov 2012 10:10:24 -0200
+Message-ID: <20121126101024.1c5a7f13@infradead.org>
+References: <20121126133153.50c5fa21cacd2858f30509e3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__26_Nov_2012_22_54_48_+1100_2mIPsA/A5NR3_Yaz"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Jesper Nilsson <jesper.nilsson@axis.com>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__26_Nov_2012_22_54_48_+1100_2mIPsA/A5NR3_Yaz
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:56462 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752712Ab2KZMKd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 07:10:33 -0500
+In-Reply-To: <20121126133153.50c5fa21cacd2858f30509e3@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
 
-Hi Al,
+Hi Stephen,
 
-Today's linux-next merge of the signal tree got a conflict in
-arch/cris/include/asm/signal.h between commit e717abac8a9f ("UAPI:
-(Scripted) Disintegrate arch/cris/include/asm") from the cris tree and
-commit 7407ba05050c ("unify default ptrace_signal_deliver") from the
-signal tree.
+Em Mon, 26 Nov 2012 13:31:53 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+> Hi Mauro,
+> 
+> After merging the v4l-dvb tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> ERROR: "dma_common_get_sgtable" [drivers/media/v4l2-core/videobuf2-dma-contig.ko] undefined!
+> 
+> Caused by commit 9ef2cbeb8192 ("[media] v4l: vb2-dma-contig: add support
+> for DMABUF exporting").  dma_common_get_sgtable() is called from the
+> inline dma_get_sgtable_attrs() and dma_get_sgtable_attrs() is "called
+> from" dma_get_sgtable().  dma_common_get_sgtable() is only defined if
+> ARCH_HAS_DMA_DECLARE_COHERENT_MEMORY is set which depends on
+> CONFIG_HAVE_GENERIC_DMA_COHERENT being set which it isn't for this build.
+> 
+> I have used the v4l-dvb tree form next-20121026 for today.
+> 
+> Please try testing your tree with an x86_64 allmodconfig build.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+My tree does compile here with allmodconfig on x86_64.
 
-diff --cc arch/cris/include/asm/signal.h
-index b3c5ef0,72dbbf5..0000000
---- a/arch/cris/include/asm/signal.h
-+++ b/arch/cris/include/asm/signal.h
-@@@ -33,11 -126,32 +33,6 @@@ struct sigaction=20
-  struct k_sigaction {
-  	struct sigaction sa;
-  };
- -#else
- -/* Here we must cater to libcs that poke about in kernel headers.  */
- -
- -struct sigaction {
- -	union {
- -	  __sighandler_t _sa_handler;
- -	  void (*_sa_sigaction)(int, struct siginfo *, void *);
- -	} _u;
- -	sigset_t sa_mask;
- -	unsigned long sa_flags;
- -	void (*sa_restorer)(void);
- -};
- -
- -#define sa_handler	_u._sa_handler
- -#define sa_sigaction	_u._sa_sigaction
- -
- -#endif /* __KERNEL__ */
- -
- -typedef struct sigaltstack {
- -	void *ss_sp;
- -	int ss_flags;
- -	size_t ss_size;
- -} stack_t;
- -
- -#ifdef __KERNEL__
-  #include <asm/sigcontext.h>
- -#endif /* __KERNEL__ */
- =20
-- /* here we could define asm-optimized sigaddset, sigdelset etc. operation=
-s.=20
--  * if we don't, generic ones are used from linux/signal.h
--  */
-- #define ptrace_signal_deliver(regs, cookie) do { } while (0)
--=20
-  #endif
+A quick fix is to just disable support for DMABUF if !HAVE_GENERIC_DMA_COHERENT.
 
---Signature=_Mon__26_Nov_2012_22_54_48_+1100_2mIPsA/A5NR3_Yaz
-Content-Type: application/pgp-signature
+Regards,
+Mauro
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+-
 
-iQIcBAEBCAAGBQJQs1iIAAoJEECxmPOUX5FEUYAQAInTVZ4nl9Tl3mR3dpg4v50Z
-HMxM/5ayCrjY1mcOk7L8r1KELBk2fPFe+lN4lOhLk0OYtz7ZPLO7ZsCiCoobY8Yl
-X5EGr7+WIw2CEz9T4M5YFGi6aDKPICSysM6UonbnFyNjCD/Sw4FAPpGxoN7pBLe/
-eqk0ILd9etu7ldquaNV6B8SEJ8IiWjLv+0TTTfpUVbt+fXk9FWDbu0zSStjbDCLD
-Dm8DfsNlCVrLLNrj5Rv/zbFokiK5xFBJzzEuQnnsf4fcRuVQ6lsZ0ilu7pmP9VSP
-G3ldnEtbvHnmIlkbuFADhUq1OSGLz69UgXj0iqs1OmNNvqCk8i0bpbN9+JQdQ/Ja
-hsBzpMhJQSCJoFzQ9VbAtTRDJkPA2VvvKa6g9b77qOtD0ntHulmt4zmEAS3my1x8
-6/wno/8GaPm6Uc3ZEcqoyFgPspCR2VRXOtKjypHvqH1o9o0IMFfQ79aNKgOVo/a+
-GRP6vr0EL400w6Nx7uWJsQLEoRUElwVysz910AtrxyiHnE6lg5o2fYyEJRjQ2uZL
-FBn5TIZT0vwXEYIrIScrrj1oJSZVUo2r2cL9MNeYPCF/ItptIWUUZu0CzEtSQQcx
-WefigZOn8ibqVrkZpt5pqSEzbPi28LtcTxnuIrLM19ai2CbFP+u90InV13rf+9f5
-8w7P63Mn+AYhwBw/Rr0D
-=L+oG
------END PGP SIGNATURE-----
+videobuf2-dma-contig: Only support if  HAVE_GENERIC_DMA_COHERENT
 
---Signature=_Mon__26_Nov_2012_22_54_48_+1100_2mIPsA/A5NR3_Yaz--
+As reported by Stephen:
+
+> After merging the v4l-dvb tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> ERROR: "dma_common_get_sgtable" [drivers/media/v4l2-core/videobuf2-dma-contig.ko] undefined!
+>
+> Caused by commit 9ef2cbeb8192 ("[media] v4l: vb2-dma-contig: add support
+> for DMABUF exporting").  dma_common_get_sgtable() is called from the
+> inline dma_get_sgtable_attrs() and dma_get_sgtable_attrs() is "called
+> from" dma_get_sgtable().  dma_common_get_sgtable() is only defined if
+> ARCH_HAS_DMA_DECLARE_COHERENT_MEMORY is set which depends on
+> CONFIG_HAVE_GENERIC_DMA_COHERENT being set which it isn't for this build.
+
+The simplest fix is to just not support DMABUF with vb2-contig, on archs
+where this symbol doesn't exist. Some latter patch can rewrite it to
+support this outside -arm.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+index 10beaee..5729450 100644
+--- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
++++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+@@ -226,6 +226,8 @@ static int vb2_dc_mmap(void *buf_priv, struct vm_area_struct *vma)
+ /*         DMABUF ops for exporters          */
+ /*********************************************/
+ 
++#ifdef HAVE_GENERIC_DMA_COHERENT
++
+ struct vb2_dc_attachment {
+ 	struct sg_table sgt;
+ 	enum dma_data_direction dir;
+@@ -416,6 +418,8 @@ static struct dma_buf *vb2_dc_get_dmabuf(void *buf_priv)
+ 	return dbuf;
+ }
+ 
++#endif
++
+ /*********************************************/
+ /*       callbacks for USERPTR buffers       */
+ /*********************************************/
+@@ -735,7 +739,9 @@ static void *vb2_dc_attach_dmabuf(void *alloc_ctx, struct dma_buf *dbuf,
+ const struct vb2_mem_ops vb2_dma_contig_memops = {
+ 	.alloc		= vb2_dc_alloc,
+ 	.put		= vb2_dc_put,
++#ifdef CONFIG_HAVE_GENERIC_DMA_COHERENT
+ 	.get_dmabuf	= vb2_dc_get_dmabuf,
++#endif
+ 	.cookie		= vb2_dc_cookie,
+ 	.vaddr		= vb2_dc_vaddr,
+ 	.mmap		= vb2_dc_mmap,
