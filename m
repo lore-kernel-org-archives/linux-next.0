@@ -1,23 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm-soc and
- pincrtl trees
-Date: Mon, 26 Nov 2012 20:56:15 +1100
-Message-ID: <20121126205615.cda9cfaa998ce6972937d4aa@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the thermal tree
+Date: Mon, 26 Nov 2012 21:01:44 +1100
+Message-ID: <20121126210144.d753c9f29a94d0816e8d3709@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__26_Nov_2012_20_56_15_+1100_gXaN9v4t=OiVkhv+"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33684 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753671Ab2KZJ4T (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 04:56:19 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Mon__26_Nov_2012_21_01_44_+1100_CNgdeZJ9PjVJwra9"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Porcedda <fabio.porcedda@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, "hongbo.zhang" <hongbo.zhang@linaro.com>, Zhang Rui <rui.zhang@intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__26_Nov_2012_20_56_15_+1100_gXaN9v4t=OiVkhv+
+--Signature=_Mon__26_Nov_2012_21_01_44_+1100_CNgdeZJ9PjVJwra9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -25,9 +20,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/boot/dts/at91sam9g45.dtsi between various commits from the
-arm-soc and pincrtl trees and commit 7492e7ca0f95 ("ARM: at91/dts: add
-at91sam9_wdt driver to at91sam926x, at91sam9g45") from the arm-soc tree.
+arch/arm/boot/dts/dbx5x0.dtsi between commit dc1956b5f84d ("Thermal: Add
+ST-Ericsson DB8500 thermal properties and platform data") from the
+thermal tree and commit 0563f638f052 ("ARM: ux500: Add node for the MMC
+GPIO regulator") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,59 +32,54 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/at91sam9g45.dtsi
-index 4212991,a98c00a..0000000
---- a/arch/arm/boot/dts/at91sam9g45.dtsi
-+++ b/arch/arm/boot/dts/at91sam9g45.dtsi
-@@@ -472,22 -263,10 +472,28 @@@
-  				};
-  			};
- =20
- +			mmc0: mmc@fff80000 {
- +				compatible =3D "atmel,hsmci";
- +				reg =3D <0xfff80000 0x600>;
- +				interrupts =3D <11 4 0>;
- +				#address-cells =3D <1>;
- +				#size-cells =3D <0>;
- +				status =3D "disabled";
- +			};
- +
- +			mmc1: mmc@fffd0000 {
- +				compatible =3D "atmel,hsmci";
- +				reg =3D <0xfffd0000 0x600>;
- +				interrupts =3D <29 4 0>;
- +				#address-cells =3D <1>;
- +				#size-cells =3D <0>;
- +				status =3D "disabled";
-++			};
-++
-+ 			watchdog@fffffd40 {
-+ 				compatible =3D "atmel,at91sam9260-wdt";
-+ 				reg =3D <0xfffffd40 0x10>;
-+ 				status =3D "disabled";
-  			};
+diff --cc arch/arm/boot/dts/dbx5x0.dtsi
+index 487b705,7ce45fc..0000000
+--- a/arch/arm/boot/dts/dbx5x0.dtsi
++++ b/arch/arm/boot/dts/dbx5x0.dtsi
+@@@ -695,10 -630,18 +664,23 @@@
+  			status =3D "disabled";
   		};
  =20
+ +		cpufreq-cooling {
+ +			compatible =3D "stericsson,db8500-cpufreq-cooling";
+ +			status =3D "disabled";
+ +		 };
+ +
++ 		vmmci: regulator-gpio {
++ 			compatible =3D "regulator-gpio";
++=20
++ 			regulator-min-microvolt =3D <1800000>;
++ 			regulator-max-microvolt =3D <2600000>;
++ 			regulator-name =3D "mmci-reg";
++ 			regulator-type =3D "voltage";
++=20
++ 			gpios =3D <&tc3589x_gpio 18 0x4>;
++ 			gpio-enable =3D <&tc3589x_gpio 17 0x4>;
++ 			states =3D <1800000 0x1
++ 				  2900000 0x0>;
++ 		};
+  	};
+  };
 
---Signature=_Mon__26_Nov_2012_20_56_15_+1100_gXaN9v4t=OiVkhv+
+--Signature=_Mon__26_Nov_2012_21_01_44_+1100_CNgdeZJ9PjVJwra9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQszy/AAoJEECxmPOUX5FE1iAP/AuY711rfs79DQEMclp7/2gq
-2J4wNmPUxeTdZr2bC5/o9qc5KPnFB/NtJYFAscWirpLPCkOL+RpDJwC+W7dh7VB+
-HkgkeS+FJpR06B9GgqSzsr/OntyQJBbrnex3MMzWzVwYusKFpQxIIBlMhPLYnrrc
-YdOSf3XYDpdPjZrlBbirmHQQ2Kk48G5KdnITKR8F6CqJlZwJV3s5lCoyK1D2ydL1
-DOAF03QCUId9G49/rW9A/xS0rPKouRTqyRq0Cxs3tEqtvyEVqCVOplAjV0TN+gGO
-zmvR5EieZ8bY0jmsa+kLjMx5rJNsf9Vs5HE58jTmxOgi7GHrbN0OmIeS1CKvSknz
-lnZo3+TdYDO/PJ7m46PXVzl3VcTAhanNtty/FHXdWWVccspe2IVJt6dO21g29jw0
-MohE1Cwu6Yv3Yuw75NBR0XJTlt06gYkLazdpaQP4G5Yot9gyuQS13TG7dZZoZEOF
-20ixRDuXqwuunUFgFHuQzYjWqtzvkfiLvYvmCQiDKoHNbt4Lsqy0/Fl7EE9d6lwg
-p1zQb8W8R16Do019Y9yjjIgSx+ogkKotkglpp/ZcpA+3ynO/T1BlyV6sZNiPWDOE
-UxcndBJfmNKnz2DdA2xz0Be+gz2asS6IpfPnyG/7DgJ9HwSXi6nXccMs3P5NoX9U
-fM4hMAXJstKEf5flvMxP
-=ejoj
+iQIcBAEBCAAGBQJQsz4IAAoJEECxmPOUX5FEAs0QAJbN1GxSOEp5YbasvV9Wzy0k
+fk4+X+BVr6nXeLWdQKk6Fo2MBdZl5o+fEUsJ0/L/Dd4fV3ey8YsazebvFmqSVm+u
+5BDAIHkTPM+4Q1DVHLtfIGbudyx4nDmMkBnspW1sYOHtt1rfm512vrq0ACvtefG3
+bKYXqxQMHRkt+Y9900o5q+0IzMqMSUz1l/M3v17GetY0qpoUMAzwkRrR1wKGcauk
+PSRYdijBY0yMCbgdDHZMdcGi0RsOMRQFMg/JEu7QbqrdeFp+8jRghtooektCS4Mf
+XoSiaDbkfpZbaj5ac55O3n9MUhcvrzuII3WngXWeMjlgYbUxGJYKX9OQ1BL6w32E
+rDyG1hCg4p8O8geR+bA5nGTLe+kSZ3Y9q7YTysRTbx3GsDMTloDHo+h2Wafg6+IR
+tiPJnXMl6ZUEmL/pNruNbAgVgWsXBq2664hm3kXVJLoj103eGDMNniOkGjMs2m0V
+QbNxxonIJU0U/LyQ0ToNFV2KgBeTlQUcYn1/PNZ59CIj51JlDkvtZXAiFdXdh0H1
+bmo/VkqcJjhaaf0BHeZ5M+JWlOU0w4KPqofy8Y9sOlMSd4ALlAidlFcE+vmzmSE4
+g9ikCNy2ksUQ2GM6/njRgm0DQOEHF8bpZNW+EBMWOpwz5up1m5ybg/6c7CrcNu3S
+RpTf+26fP0gIKsg5D07Z
+=fPap
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__26_Nov_2012_20_56_15_+1100_gXaN9v4t=OiVkhv+--
+--Signature=_Mon__26_Nov_2012_21_01_44_+1100_CNgdeZJ9PjVJwra9--
