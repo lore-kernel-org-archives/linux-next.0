@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Mon, 26 Nov 2012 23:34:13 +1100
-Message-ID: <20121126233413.0da411302d1402d4423e6f7c@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the tty tree
+Date: Mon, 26 Nov 2012 23:42:27 +1100
+Message-ID: <20121126234227.b52fd36e85e561d50a44e2d9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__26_Nov_2012_23_34_13_+1100_fLrKu2tcBN+B27t6"
+ boundary="Signature=_Mon__26_Nov_2012_23_42_27_+1100_v8QI3HvUpjO9mv.Y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50850 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:57633 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755361Ab2KZMeW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 07:34:22 -0500
+	with ESMTP id S1752047Ab2KZMm3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 07:42:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiang Liu <jiang.liu@huawei.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Greg KH <greg@kroah.com>
 
---Signature=_Mon__26_Nov_2012_23_34_13_+1100_fLrKu2tcBN+B27t6
+--Signature=_Mon__26_Nov_2012_23_42_27_+1100_v8QI3HvUpjO9mv.Y
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,36 +24,37 @@ Content-Transfer-Encoding: quoted-printable
 Hi Andrew,
 
 Today's linux-next merge of the akpm tree got a conflict in
-mm/page_alloc.c between commit 5576646f3c1a ("revert "mm: fix-up zone
-present pages"") from Linus' tree and commit "mm: fix a regression with
-HIGHMEM" from the akpm tree.
+drivers/tty/serial/serial_core.c between commit 7a876b39b5bc ("serial:
+cast before shifting on port io") from the tty tree and commit
+"drivers/tty/serial/serial_core.c: fix uart_get_attr_port() shift" from
+the akpm tree.
 
-I fixed it up (by dropping the akpm tree patch) and can carry the fix as
-necessary (no action is required).
+I fixed it up (using the akpm tree version which included the fix from
+the tty tree) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__26_Nov_2012_23_34_13_+1100_fLrKu2tcBN+B27t6
+--Signature=_Mon__26_Nov_2012_23_42_27_+1100_v8QI3HvUpjO9mv.Y
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQs2HFAAoJEECxmPOUX5FEyhYP/A7RSTnDVFFhl8/gjt1+xJA6
-OFuEMwWa0bJi0GX4uoi3F/Of7uz4vUfiM84aOl/LDh6jGP4kk/Vq71ZOrWJzRz/Z
-ILawIm/t+7Lrn/dVTsIOGDXL7KizV2L0HNkqyFMcma/CS32RF6Fab8RJ/MZFr9gF
-s48nuCWjV6nDOIJ7a2/NfLcb1g6eMFRjfoP0zu2i/ylbblFGCjwWgqPbuhUPsxY4
-KNAdHrYJsdkAXvPBG2bwLtdq7RDb6zA3CiqbEQPl3a96VcxzTQo/xyCy7MyXWPfW
-R5shIec74W4K7OFfpFxspPpCqAXBeJygRvuxS3+MKU0S+2ERhWHOudfx5AFk8QPV
-vm/WpltK2BYb5fOqw5u4lxK+w0QqBJLMtb9BEcnBtaPSzgsAcaxENzqrXjWMc2Je
-cBMJIlXXxP/hqxjHmY1Xw4HP+XdiKLwu1a16Bd4jyGe1YJw55J7e1gtViilp3WG0
-twVkkQFp5VH81Sn/+1f18UOfhtNh0mXKedrT2BE8HuIWEXf/4oqYjJyZ9tZZVdyG
-v5n4WTxdRVZRmcct57cwTqWzdiqOda9TE+k3ThdY1nlG0fh8xVrDwlvuI51yjZ36
-2nY5k8ZKgqOkpfAv3oL5mUgUNI+uQAW7u7nQbezEkg1sIFs7XejQbPBbDHAwusbi
-A0UM6tjALfq8WMV9Z2ks
-=e7XS
+iQIcBAEBCAAGBQJQs2OzAAoJEECxmPOUX5FE+uMP/R86iAKiqgA4bI4ndKdjisRA
+cviQWyFnTz/6KrhPvyzX32wxBF8qJGZqsmdDkdsVujvxYJY1eQOlTMRq8gPpOTYR
+F5P/puM9p+1KzAYU4nymY5HfPJU0JpPkGgW/EZ97syyGfQfQhfET6pZuHxyKjkkx
+pJ2qBkgBxPgyu72VAKCU3/KNpBDc+4fxh7iYO6DIFpCvkhCwPMIW/M5gvPB6VIfq
+0W3sbg9Mj3qAqU8x8Dz1ThGztIFUvwUuchR8LBz0VQj7CaM9Q51p4o+64iQMeU4J
+riZ8XtRu4JKWe3wGj4vkYhrkTUw3cBBFB+dhQQfrA9FOuzI/FIT2kQwc0E//DWGK
+0LGpwvxnt2zg+fGXcxIcbiEZZf53PtDbPtoBJ59GlF9lDYbfFf3YaD5JeVTeVaaQ
+QmYX/SLPKnohKUwGWeK4L208Zsdg84PwljrCyEZ2s2pNVlqyMt6nixY38SyvLVUY
+ON/MHY3/0fVwLJDqzdcAtQWUmY58VaVAi5OZ7mSAlFrX7glqgQwSYBCg1iid0Y95
+ORjeLDNfce2IBYdzAlm2fggrIQnWup0IEg0JItRbvgp74xKyy7y+yVN4wecztRiF
+j3WV1P7JQOM520/mQ4tibF2IHf+IkM8iygIpnykgw6lNek+2FzCcRK/8MuXdl/rQ
+WmYqOpHLzqxGdppjDgbp
+=4w2f
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__26_Nov_2012_23_34_13_+1100_fLrKu2tcBN+B27t6--
+--Signature=_Mon__26_Nov_2012_23_42_27_+1100_v8QI3HvUpjO9mv.Y--
