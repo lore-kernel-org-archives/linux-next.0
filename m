@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the devicetree tree
-Date: Tue, 27 Nov 2012 00:01:17 +1100
-Message-ID: <20121127000117.7a1b1fa7824eb1594e90771d@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the signal tree
+Date: Tue, 27 Nov 2012 00:08:00 +1100
+Message-ID: <20121127000800.660793d8fa6a28b79a61110b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Nov_2012_00_01_17_+1100_._6cTImTwW2tIJdJ"
+ boundary="Signature=_Tue__27_Nov_2012_00_08_00_+1100_Axq8tNEjiOzk/zIi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54324 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:46937 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751136Ab2KZNBX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 08:01:23 -0500
+	with ESMTP id S1752832Ab2KZNIC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 08:08:02 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
---Signature=_Tue__27_Nov_2012_00_01_17_+1100_._6cTImTwW2tIJdJ
+--Signature=_Tue__27_Nov_2012_00_08_00_+1100_Axq8tNEjiOzk/zIi
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,36 +24,90 @@ Content-Transfer-Encoding: quoted-printable
 Hi Andrew,
 
 Today's linux-next merge of the akpm tree got a conflict in
-drivers/of/fdt.c between commit e55b0829cbac ("of: fdt: Constify
-'pathp'") from the devicetree tree and commit "drivers/of/fdt.c: re-use
-kernel's kbasename()" from the akpm tree.
+arch/arm64/kernel/sys_compat.c arch/arm64/include/asm/unistd.h between
+commit 8709876911bd ("arm64: sanitize copy_thread(), switch to generic
+fork/vfork/clone") from the signal tree and commit "compat: generic
+compat_sys_sched_rr_get_interval() implementation" from the akpm tree.
 
-I fixed it up (using the akpm tree patch) and can carry the fix as
-necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__27_Nov_2012_00_01_17_+1100_._6cTImTwW2tIJdJ
+diff --cc arch/arm64/include/asm/unistd.h
+index d69aeea,1a7c88c..0000000
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@@ -24,9 -24,7 +24,10 @@@
+  #define __ARCH_WANT_SYS_SIGPROCMASK
+  #define __ARCH_WANT_COMPAT_SYS_RT_SIGSUSPEND
+  #define __ARCH_WANT_COMPAT_SYS_SENDFILE
+ +#define __ARCH_WANT_SYS_FORK
+ +#define __ARCH_WANT_SYS_VFORK
++ #define __ARCH_WANT_COMPAT_SYS_SCHED_RR_GET_INTERVAL
+  #endif
+  #define __ARCH_WANT_SYS_EXECVE
+ +#define __ARCH_WANT_SYS_CLONE
+  #include <uapi/asm/unistd.h>
+diff --cc arch/arm64/kernel/sys_compat.c
+index f7b05ed,c34c81d..0000000
+--- a/arch/arm64/kernel/sys_compat.c
++++ b/arch/arm64/kernel/sys_compat.c
+@@@ -28,21 -28,17 +28,6 @@@
+  #include <asm/cacheflush.h>
+  #include <asm/unistd32.h>
+ =20
+- asmlinkage int compat_sys_sched_rr_get_interval(compat_pid_t pid,
+- 						struct compat_timespec __user *interval)
+- {
+- 	struct timespec t;
+- 	int ret;
+- 	mm_segment_t old_fs =3D get_fs();
+-=20
+- 	set_fs(KERNEL_DS);
+- 	ret =3D sys_sched_rr_get_interval(pid, (struct timespec __user *)&t);
+- 	set_fs(old_fs);
+- 	if (put_compat_timespec(&t, interval))
+- 		return -EFAULT;
+- 	return ret;
+- }
+-=20
+ -asmlinkage int compat_sys_fork(void)
+ -{
+ -	return do_fork(SIGCHLD, 0, current_pt_regs(), 0, NULL, NULL);
+ -}
+ -
+ -asmlinkage int compat_sys_vfork(void)
+ -{
+ -	return do_fork(CLONE_VFORK | CLONE_VM | SIGCHLD, 0,
+ -		       current_pt_regs(), 0, NULL, NULL);
+ -}
+ -
+  static inline void
+  do_compat_cache_op(unsigned long start, unsigned long end, int flags)
+  {
+
+--Signature=_Tue__27_Nov_2012_00_08_00_+1100_Axq8tNEjiOzk/zIi
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQs2gdAAoJEECxmPOUX5FEbDwP/0szxg74BqYAW59XH6fnA5lU
-zpAsr7mwPCa+CL3gjjTmlkuZSsXGOBuj4yx9MFfhOwojQ1ZuRIdgQWY5qei6cM9Z
-3wcuNZozTcWQXsMJ+gp5j9cqoGInSyoCMb3TbxkR/LxsNcY1l4nzZYVzIADB3mwT
-qYzOdf4koR2vv2/d7aqFOINLQVlD1/9TWAtyW9mro7RCjaRoEfKgJdmiekh62qJO
-W0ubNvfUmkIPTjUJqzL7yD39OHXjwEeJn7TvTA/eaA2oubR13iVuIX3v3lovnNET
-+F/1aNbRLTv99ElRB60C9R7o2KokS/2icyH1PAjPjzcFQf2IO78GhX9jEc3lmNwb
-v+JHGVGrsMuGsQ0c61OZnC5go91xo8Jt65zAQnzkycYqXn2wiv2NSMsMCyWPvLH5
-RS06iEBuyGj9ENc9n4U4S27MswXeFlD4HeC0K/Ymp2boNFKMshH7zoQPFIIyRmBK
-stCExxQxdc+0O2rrL1V+ovHk4Z6WWHZrG08EJo3/fuQIrTr20aJymBJKNLfu5DUO
-DBb1LA57ChW4qKI9lvtcXDqhEw72OJJlQOxJ1qgn5hOrVn7hOXUTapHGf6vi3UWJ
-6VQwcEeeU9aLiKQo6oZL2BuSpb7KHa2pqUtTGjysjUfaa8UMlVUxV9aW3QqpcAqt
-5x2O0j6XJ2t1wDV1FuoQ
-=LHzB
+iQIcBAEBCAAGBQJQs2mwAAoJEECxmPOUX5FE21gP/RUUOr6+fm+jwe3cldJKCnjJ
+BALjE2Vws3WnthYkk+XJmtr0cmtqHDNXJTWuxX0NajSlBTOdIsQOZbVxnEgnUiZ3
+RZlRAoP7IfNyz4tP0eKrOm4cjUToGmfd+g7YJWM9pi8Vl5wrAfEWGAW73HpfMCQ2
+CQ44A71QZcTn4UJNOx6co2R2A5Pypdwx/8kYs6F4f5wjTPwLkaeYXLMC4Y/LInf4
+OOthMMawGFqvPPZVikaZmtbnD4aDgltzQltGzUj+qBudbvHYAyzX9lycSUU7Nxkc
+DIk/5mrxa+epON9WyNK6MigAaeQHuhKALCmTgevwRHvxhUEBukWwC0TqqkPI+w2j
+XvqEscm8jfyAhqtb6D4PW+XRjRVtpe2D0vz6j0KTu2cykkF0ToLVPa+P5L923Svo
+rbZ7ygQzx5P2OBLNBi3bOw9m7xou07qzi12hBea3F93QuJQOi3imbT8Ay9/Svq73
+91ejO7aBraJnNjdNFsq49bzi+aJSZNi31AjwzW+s8EZY0udVHi2nHLvhy/RFroxr
+NXtaBjKcv+G8nxWcpniQgl7APNybu1Yu15Z/M4eeMXkjZr4XRr0ja2jqJLIRYFZd
+TG6oge8orGOZB6KZSMA93rwPnUism+IXZ0XGSBfcwI4ePj0PcPHJG7Kr8slhaeNm
+hjyRdlACg45VPKfUDkfK
+=Y9AE
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_Nov_2012_00_01_17_+1100_._6cTImTwW2tIJdJ--
+--Signature=_Tue__27_Nov_2012_00_08_00_+1100_Axq8tNEjiOzk/zIi--
