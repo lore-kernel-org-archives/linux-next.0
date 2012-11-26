@@ -1,23 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the pinctrl tree with the sound-asoc
  tree
-Date: Mon, 26 Nov 2012 19:56:58 +1100
-Message-ID: <20121126195658.064037771da7d25572848e2b@canb.auug.org.au>
+Date: Mon, 26 Nov 2012 20:02:43 +1100
+Message-ID: <20121126200243.7ad73ab21990661a3f12a01c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__26_Nov_2012_19_56_58_+1100_E76ybIBsNSgg70hL"
+ boundary="Signature=_Mon__26_Nov_2012_20_02_43_+1100_pSTj6RPr=+IV/E=Q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39915 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56575 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753338Ab2KZI5H (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 03:57:07 -0500
+	with ESMTP id S1753713Ab2KZJCp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 04:02:45 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bo Shen <voice.shen@atmel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Ludovic Desroches <ludovic.desroches@atmel.com>
 
---Signature=_Mon__26_Nov_2012_19_56_58_+1100_E76ybIBsNSgg70hL
+--Signature=_Mon__26_Nov_2012_20_02_43_+1100_pSTj6RPr=+IV/E=Q
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -25,10 +25,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi Linus,
 
 Today's linux-next merge of the pinctrl tree got a conflict in
-arch/arm/boot/dts/at91sam9260.dtsi between commit 099343c64e16 ("ARM:
-at91: atmel-ssc: add device tree support") from the sound-asoc tree and
-commit 9873137a7a22 ("ARM: at91/dts: add nodes for atmel hsmci
-controllers for atmel SOCs") from the pinctrl tree.
+arch/arm/boot/dts/at91sam9g20ek_common.dtsi between commit 531f67e41dcd
+("ASoC: at91sam9g20ek-wm8731: convert to dt support") from the sound-asoc
+tree and commit 4134a4552748 ("ARM: at91/dts: add nodes for atmel hsmci
+controllers for atmel boards") from the pinctrl tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,53 +37,64 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/at91sam9260.dtsi
-index aaa42d8,b1d3fab..0000000
---- a/arch/arm/boot/dts/at91sam9260.dtsi
-+++ b/arch/arm/boot/dts/at91sam9260.dtsi
-@@@ -213,13 -436,15 +437,22 @@@
-  				status =3D "disabled";
+diff --cc arch/arm/boot/dts/at91sam9g20ek_common.dtsi
+index 2dcec8d,32a500a..0000000
+--- a/arch/arm/boot/dts/at91sam9g20ek_common.dtsi
++++ b/arch/arm/boot/dts/at91sam9g20ek_common.dtsi
+@@@ -62,10 -59,28 +69,33 @@@
+  				status =3D "okay";
   			};
  =20
 + 			mmc0: mmc@fffa8000 {
-+ 				compatible =3D "atmel,hsmci";
-+ 				reg =3D <0xfffa8000 0x600>;
-+ 				interrupts =3D <9 4 0>;
-+ 				#address-cells =3D <1>;
-+ 				#size-cells =3D <0>;
-+ 				status =3D "disabled";
++ 				pinctrl-0 =3D <
++ 					&pinctrl_board_mmc0_slot1
++ 					&pinctrl_mmc0_clk
++ 					&pinctrl_mmc0_slot1_cmd_dat0
++ 					&pinctrl_mmc0_slot1_dat1_3>;
++ 				status =3D "okay";
++ 				slot@1 {
++ 					reg =3D <1>;
++ 					bus-width =3D <4>;
++ 					cd-gpios =3D <&pioC 9 0>;
++ 				};
 + 			};
 +=20
  +			ssc0: ssc@fffbc000 {
- +				compatible =3D "atmel,at91rm9200-ssc";
- +				reg =3D <0xfffbc000 0x4000>;
- +				interrupts =3D <14 4 5>;
- +				status =3D "disable";
+ +				status =3D "okay";
+ +				pinctrl-0 =3D <&pinctrl_ssc0_tx>;
  +			};
- +
-  			adc0: adc@fffe0000 {
-  				compatible =3D "atmel,at91sam9260-adc";
-  				reg =3D <0xfffe0000 0x100>;
+++
++ 			pinctrl@fffff400 {
++ 				mmc0_slot1 {
++ 					pinctrl_board_mmc0_slot1: mmc0_slot1-board {
++ 						atmel,pins =3D
++ 							<2 9 0x0 0x5>;	/* PC9 gpio CD pin pull up and deglitch */
++ 					};
++ 				};
++ 			};
+  		};
+ =20
+  		nand0: nand@40000000 {
 
---Signature=_Mon__26_Nov_2012_19_56_58_+1100_E76ybIBsNSgg70hL
+--Signature=_Mon__26_Nov_2012_20_02_43_+1100_pSTj6RPr=+IV/E=Q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQsy7aAAoJEECxmPOUX5FEXokP/2AN/DOt/n33U0epKAmDCT12
-MvWzMwYI5EIrjp/x/SBS2zqmqBpEjDY+TawIDOVz1viwk4atnp/s5ySNdoFRxTFi
-ve/rbBRDqbdC+RVsQmDNUoY+SWPlPw8Wk5OzAv9eeXCTRLy6OWiNTBtJkoXuKF72
-59GM8UFvkNwOtjxkfKCzZ09a1786ct5eLd0Mv9vZZTTUrU/z+tF/kXTvAG4QheEn
-VC67FA47DG49x0Wo1ARcEagTWpCweyWeo/whgAEbI83xMjwCBQJTC1wEZQzVQ3pN
-P7dC3p0PDjQo5xj4mJdPJ/vKMYNuC+K8RiAngBnU5zctj/0YzLIPS7J/2FF+E1Q4
-GeN3GMhDisfLFs3ALl9N6F1/BZ3bSDO7jNqdk08o2RQKJw5b1seY/dhrkyTCY9fl
-ADrcnf1SZfQ/FvA4fUFVg3+/yV0s1gs3EmZ7hupOSnii9axPdo7thfhdzCz5Jyqd
-X7uQ2HCf2OnRCPhckDdfCM1MPvYju7+rCPF1E9yLz5iUYLs4YhBabxL8+Fp1rvzv
-b9pdvcbtb1WncJb430Y671WGELa8a56UBqLOi2O/CChIRta/GKzVZ0jhrUVylsOy
-iNcukk7b6Il44uSjVCd+pT65eaiSPswUziqvutgbQZkEMXb7cv2zrepe7rKmSJJw
-06NnJJcGAVxjPHVo+hVm
-=vNlO
+iQIcBAEBCAAGBQJQszAzAAoJEECxmPOUX5FESxwP/2Z8SiTyFWuKx0Qs1iSXFflL
+mDup+X82UCCbx08BExLK89iZm0loyjtN17j19N+bxyW22E9NQm5Z7Qrxp3qlLdwX
+jy4WMh1CWKkNlnU7YGMPYLC6eFD+2tOZrS8EsmJ0F7TGBSAb+lf77zV9uKcouiO/
+l114DnNCorgbO9ilBhmc2DFKzTzSI+pzJGkiPvOQmvv2PEdTuZIzhsw9YkYIlZys
+6+5GL9SQ5IO45J5pxtP2NcjWWKt7mS/3YxVutlf6wr3/GNHjhHthJvPipflZ0xHY
+w3jaW9/Pjjdleoyw3kIHDKm2HOH+/ibWogsUXSbCLFu8/jJ5BX/eURTg3RfHntTr
+XGG/LD+ry8SpxsnOrl/Zhsa2RpVOO/xAxs9Da1NOEsZHQOWYo3acst48iEnXx1pY
+PiEdguiUAKDW54WVnSwRlqj/KUDr/vyO8h0EiTMjMRJswICIHteSym9zY2ZLVyAi
+IWqn4s4ZhReGe/RDgGlfLHUouzttYHhbQzn/XVGHOzBwJoiMhW/lC31gmGdHqKCI
+cOFdVXRStZzO7XZwSO2FGRQ+psJkq3Jmq4tlxq70I6VDwAq5OofMb0G682nFCUu1
+3tKOTFKazy6Qr1qkYzz15W6u315QD3rMXQVvzZCcjJD+jNyPfsoDu7xnArs7Q1BP
+Co1H/jvPOwI1zkPNonk2
+=Wphn
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__26_Nov_2012_19_56_58_+1100_E76ybIBsNSgg70hL--
+--Signature=_Mon__26_Nov_2012_20_02_43_+1100_pSTj6RPr=+IV/E=Q--
