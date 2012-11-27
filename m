@@ -1,41 +1,38 @@
 From: Peter Hurley <peter@hurleysoftware.com>
-Subject: [PATCH -next] staging/fwserial: Fix build breakage when !CONFIG_BUG
-Date: Tue, 27 Nov 2012 02:11:07 -0500
-Message-ID: <1354000267.3284.4.camel@thor>
+Subject: Re: linux-next: Tree for Nov 26 (staging/fwserial)
+Date: Tue, 27 Nov 2012 02:17:30 -0500
+Message-ID: <1354000650.3284.9.camel@thor>
 References: <20121127011738.9ecd7971a7ea2e3d09a9450d@canb.auug.org.au>
 	 <50B3D767.70604@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout39.mail01.mtsvc.net ([216.70.64.83]:53794 "EHLO
+	n12.mail01.mtsvc.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1758103Ab2K0HRh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 02:17:37 -0500
 In-Reply-To: <50B3D767.70604@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Use WARN() as intended.
+On Mon, 2012-11-26 at 12:56 -0800, Randy Dunlap wrote:
+> On 11/26/2012 06:17 AM, Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > Changes since 20121115:
+> > 
+> 
+> 
+> on i386:
+> 
+> drivers/staging/fwserial/dma_fifo.c: In function 'dma_fifo_in':
+> drivers/staging/fwserial/dma_fifo.c:174:2: error: implicit declaration of function '__WARN_printf'
 
-Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
----
- drivers/staging/fwserial/dma_fifo.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Apologies for the breakage. Not sure what possessed me to use an
+internal macro so I could duplicate existing functionality...
 
-diff --git a/drivers/staging/fwserial/dma_fifo.c b/drivers/staging/fwserial/dma_fifo.c
-index 72aa053..5e84634 100644
---- a/drivers/staging/fwserial/dma_fifo.c
-+++ b/drivers/staging/fwserial/dma_fifo.c
-@@ -33,10 +33,7 @@
- 
- #define FAIL(fifo, condition, format...) ({				\
- 	fifo->corrupt = !!(condition);					\
--	if (unlikely(fifo->corrupt)) {					\
--		__WARN_printf(format);					\
--	}								\
--	unlikely(fifo->corrupt);					\
-+	WARN(fifo->corrupt, format);					\
- })
- 
- /*
--- 
-1.8.0
+Thanks for catching this now.
