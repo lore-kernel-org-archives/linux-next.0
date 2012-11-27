@@ -1,52 +1,57 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [RFC PATCH] Fix abnormal rcu dynticks_nesting values related to
- async page fault
-Date: Tue, 27 Nov 2012 23:54:55 +0100
-Message-ID: <CAFTL4hzLF_V2AZsfyrT5epAkbc0b8YzOdT254rLxRJWakbKaOA@mail.gmail.com>
-References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
-	<CAFTL4hzzumANj7hF5hJPZ5pKPhz4YWC-Ukb3yUKdy_DO+vb3wg@mail.gmail.com>
-	<20121127154455.GK12969@redhat.com>
-	<CAFTL4hyfCt2imzBYW+Sn5QUAwham=ZQ2nNER5Np7Hq4yg1LzxA@mail.gmail.com>
-	<20121127163910.GL12969@redhat.com>
-	<CAFTL4hyzVLismy0ckx0Tu47EAgNn9WjAFEx=ptF5587-zp65hQ@mail.gmail.com>
-	<20121127170026.GM12969@redhat.com>
-	<CAFTL4hyb0qYYhy1OE9HDHymFkmHDb5jNyuLNSR2aQ3dKPpuZkw@mail.gmail.com>
-	<20121127174737.GN12969@redhat.com>
-	<CAFTL4hxh96wDMpBEid0EN8ir-9C=Z+pdy6viVVK5fyKkRbUOOw@mail.gmail.com>
-	<20121127192748.GB7695@redhat.com>
-	<CAFTL4hy1PB3u+i3xEXvz0Zt4kNQx9ioAHaM2BPMfXiNm7Koxmg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: unusual update of the security tree
+Date: Wed, 28 Nov 2012 10:16:35 +1100
+Message-ID: <20121128101635.d5e864dffc4252ef9d5e1664@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:44783 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750899Ab2K0Wy4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 17:54:56 -0500
-In-Reply-To: <CAFTL4hy1PB3u+i3xEXvz0Zt4kNQx9ioAHaM2BPMfXiNm7Koxmg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Gleb Natapov <gleb@redhat.com>
-Cc: Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__28_Nov_2012_10_16_35_+1100_x/CrMB83g6JqjlGD"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+List-Id: linux-next.vger.kernel.org
 
-2012/11/27 Frederic Weisbecker <fweisbec@gmail.com>:
-> 2012/11/27 Gleb Natapov <gleb@redhat.com>:
->> What is the semantics of enter_idle()/exit_idle(), what are they used for?
->
-> It's used by drivers/idle/i7300_idle.c for some tracking. I don't know much
-> the details.
->
-> enter_idle() is called right before the CPU is set to lower power mode: hlt()
->
-> exit_idle() is called anytime we exit this low power mode: irq,
-> polling on need_resched(), etc...
->
->> Not present fault happening in idle task does not mean we exit idle
->> task. If this happens exception handler will execute sti; hlt waiting
->> for missing page to be ready. Any interrupt happening during this hlt
->> will do exit_idle() by itself.
->
-> Well, the code executed by this fault should be considered as an exit
-> from idle mode. Now it's a small piece of code and we hlt() quickly so
-> I guess getting of idle_exit() there wouldn't hurt much.
-                        ^
-                 getting "rid"
+--Signature=_Wed__28_Nov_2012_10_16_35_+1100_x/CrMB83g6JqjlGD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi James,
+
+The security tree
+(git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git#n=
+ext)
+looks a bit strange today ... It appears to have been created by Casey
+Schaufler (cc'd) and contains some quite old commits and back merges of
+your tree.  I *guess* you have merged in Casey's tree after he merged in
+your tree from yesterday.
+
+Just for your consideration.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__28_Nov_2012_10_16_35_+1100_x/CrMB83g6JqjlGD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQtUnTAAoJEECxmPOUX5FEIzIP/Rfw6PZc3YZ8L7AIGc2MwHsB
+XZHeuEKNBtYjlJlcI79Vj7Or8sA90u7g0Sg5AfIt8pTTdK0ejakeUaoDT+bd2w2p
+AaRZQBboMUS9jPPAQ+Bk3NAisjwkCgF26nbEaf887Lg50Sbh9/33uyc9PQrxPe2a
+45OrvFixtJEobzWUx/cyoHWx+7TQDo0PBTKM432MDjtJJsQCypx2YYwEl/s3impI
+9XGAODFrCsdJzODoWYYxZFcpxD6yM68knVQMUIm7408wVHj2XuYEA1C5UC+Rfrxb
+l6+SIcv2T3UFOdRpMb2y81Pp885IP6RRoHZ+bfUB57r6KnfPcdrqIi8QZ5j0h9D5
+2Mw6a+EUfWArE+O34r4NrpCIMFV6Kf+bQhZkC+CLzJ4Q56/3kn/f4jM04jyJyxs7
+tsUQefckVg6C8fFearo71LTn7pvzyDeelf3NoddM+sqFNzL5fkcl00/n9xeAhSBK
+osUxZ/ufGUgJ9apR7HGgSqV7q77Hm8EDZurY0RhmRER81xV7ltwrSNbXJDQKg61q
+KVhZZ5tQxVInt6UewkdHkN+TGskvvaOAkUrby19QzKREYY9m09ObyMFLM2whfn5H
+Da7TSFE3eJ24ti/Wz+aToZ9WwMRgRjY15o+gdVJ5bBJNGIJbkKteQSgH75R8lScs
+2vnitH9fRgN6475kQOgB
+=sf22
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__28_Nov_2012_10_16_35_+1100_x/CrMB83g6JqjlGD--
