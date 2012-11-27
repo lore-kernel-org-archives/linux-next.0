@@ -1,62 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drop-experimental tree with the
- net-next tree
-Date: Tue, 27 Nov 2012 16:45:12 +1100
-Message-ID: <20121127164512.dd7265a6a41944eda37319a9@canb.auug.org.au>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Subject: Re: xtensa: switch to generic clone()
+Date: Tue, 27 Nov 2012 08:48:24 +0300
+Message-ID: <CAMo8BfLK4syxXEjwWXixdxMaPrVgec1u7pTHqTvWO4zfpYLEsw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Nov_2012_16_45_12_+1100_YQJTKLz_/qgOSuvg"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36233 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754512Ab2K0FpW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 00:45:22 -0500
+Received: from mail-qa0-f46.google.com ([209.85.216.46]:50372 "EHLO
+	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755608Ab2K0Fs0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 00:48:26 -0500
+Received: by mail-qa0-f46.google.com with SMTP id c11so3495419qad.19
+        for <linux-next@vger.kernel.org>; Mon, 26 Nov 2012 21:48:24 -0800 (PST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Chris Zankel <chris@zankel.net>
 
---Signature=_Tue__27_Nov_2012_16_45_12_+1100_YQJTKLz_/qgOSuvg
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Al,
 
-Hi Kees,
+looks like the following hunk is missing in the commit
+  a4bcde6 xtensa: switch to generic clone()
+found in the linux-next tree next-20121126, which breaks xtensa builds.
 
-Today's linux-next merge of the drop-experimental tree got a conflict in
-net/dsa/Kconfig between commit b3422a314c27 ("dsa: Hide core config
-options; make drivers select what they need") from the net-next tree and
-commit b8e8d99e4ee8 ("net/dsa: remove depends on CONFIG_EXPERIMENTAL")
-from the drop-experimental tree.
+---
+diff --git a/arch/xtensa/include/asm/syscall.h
+b/arch/xtensa/include/asm/syscall.h
+index b00c928..cd53ec2 100644
+--- a/arch/xtensa/include/asm/syscall.h
++++ b/arch/xtensa/include/asm/syscall.h
+@@ -8,6 +8,8 @@
+  * Copyright (C) 2001 - 2007 Tensilica Inc.
+  */
 
-I fixed it up (using the net-next version as that removed
-CONFIG_EXPERIMENTAL as well) and can carry the fix as necessary (no
-action is required).
++#include <asm-generic/syscalls.h>
++
+ struct pt_regs;
+ struct sigaction;
+ asmlinkage long xtensa_ptrace(long, long, long, long);
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__27_Nov_2012_16_45_12_+1100_YQJTKLz_/qgOSuvg
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQtFNoAAoJEECxmPOUX5FEpUMQAJeQ/kE7HEFyu8HR5WoxX0n8
-BfgEli7x8iVlKcXI+A5cwnelzc1pKUaPmD2LA162Yzuxzs3Gk8t5mEMehhmbPPMc
-lvEK5vPiyTrotxSY2zbQNIKRmbw8iMUrKkvUa64DoHGPx3i3t2UkcSrRGtZsy/xq
-QZLwozP+wgqf1z8TsstP/0WbEGmyJs/32+pg8LECmlLldCNU+imJXh6HN3Hf0BxX
-SK32HffpsWCp2HDv15Pp5OdQpHOIcKx2ZFmE/OMYEDFoJXMLsqTLdCQrrV5rmmoD
-Ek+2yoHNTLsdk3lox+5kkLi2z3dMFp5l07MFSO7pTaKAhSq/eTGIZJFjF8DeKiKr
-dSQbYe3lXVdCMimoxDXPimFiiaToyHtOxM2xmlUHoKj25kj4hmXdcV6SjBYtrjws
-qxk50h7kmzuPO52skxi9F2fwa5hDbBnFHkU3owDDAQ4ii6o7sdf40l9DLsBlGMpk
-Q31ygxPJnqWkPLC9I1qVQ8clJDZUdKLhxHWtV/tzn5LKtmPZTFzhqOh+TP7aWZvd
-2BppGaRUewhLMlHDk8BgA/QC14wbfFk7kbZEyA0k7EV4+qMP3brxCoepcyuwIa2K
-55NvR6UmobldNzhhck/x+GMIAcPUiFem9YXOvhXWZH2Iy+7I8+5mGpdaZYl1ySIx
-e8y4LadpRAEZAoOs1X/d
-=+HXm
------END PGP SIGNATURE-----
-
---Signature=_Tue__27_Nov_2012_16_45_12_+1100_YQJTKLz_/qgOSuvg--
+-- 
+Thanks.
+-- Max
