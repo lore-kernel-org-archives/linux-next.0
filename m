@@ -1,44 +1,40 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the battery tree
-Date: Tue, 27 Nov 2012 08:38:29 +0000
-Message-ID: <201211270838.29360.arnd@arndb.de>
-References: <20121127155223.849e73a08fc1b382d4622ff8@canb.auug.org.au>
+From: Mugunthan V N <mugunthanvnm@ti.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the net-next
+ tree
+Date: Tue, 27 Nov 2012 16:52:28 +0530
+Message-ID: <50B4A274.5070601@ti.com>
+References: <20121126204546.ef1f1b55e903eda38a61d5d1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20121127155223.849e73a08fc1b382d4622ff8@canb.auug.org.au>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:36520 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753533Ab2K0LXQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Nov 2012 06:23:16 -0500
+In-Reply-To: <20121126204546.ef1f1b55e903eda38a61d5d1@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Jamie Lentin <jm@lentin.co.uk>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, "Rajanikanth H.V" <rajanikanth.hv@stericsson.com>, Olof Johansson <olof@lixom.net>, Anton Vorontsov <avorontsov@ru.mvista.com>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vaibhav Hiremath <hvaibhav@ti.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, AnilKumar Ch <anilkumar@ti.com>, Benoit Cousson <b-cousson@ti.com>, Jon Hunter <jon-hunter@ti.com>, Afzal Mohammed <afzal@ti.com>, "Philip, Avinash" <avinashphilip@ti.com>
 
-On Tuesday 27 November 2012, Stephen Rothwell wrote:
+On 11/26/2012 3:15 PM, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/boot/dts/am33xx.dtsi between commit 1a39a65cba08 ("arm/dts:
+> am33xx: Add CPSW and MDIO module nodes for AM33XX") from the net-next
+> tree and commits 059b185d5345 ("ARM: dts: AM33XX: Add D_CAN device tree
+> data") and 4c94ac29b5c1 ("ARM: dts: OMAP: Move interrupt-parent to the
+> root node to avoid duplication") (and a few others that added more later
+> nodes) from the arm-soc tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+>
+Stephen Rothwell
 
->   
->  -config AB8500_BATTERY_THERM_ON_BATCTRL
->  -	bool "Thermistor connected on BATCTRL ADC"
->  -	depends on AB8500_BM
->  -	help
->  -	  Say Y to enable battery temperature measurements using
->  -	  thermistor connected on BATCTRL ADC.
->  -
-> + source "drivers/power/reset/Kconfig"
-> + 
->   endif # POWER_SUPPLY
->   
->   source "drivers/power/avs/Kconfig"
-> 
+The fix is correct and I have tested CPSW from linux-next.
 
-
-Looks good, thanks!
-
-	Arnd
+Regards
+Mugunthan V N
