@@ -1,25 +1,81 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: RE: linux-next: manual merge of the ia64 tree with Linus' tree
-Date: Tue, 27 Nov 2012 00:44:33 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F1C95C631@ORSMSX108.amr.corp.intel.com>
-References: <20121126113141.3b624dc9e729039b54c51881@canb.auug.org.au>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: manual merge of the net-next tree with the infiniband
+ tree
+Date: Tue, 27 Nov 2012 11:47:51 +1100
+Message-ID: <20121127114751.6961da02245ed6851190aca2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:20076 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751789Ab2K0Aoe convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 19:44:34 -0500
-In-Reply-To: <20121126113141.3b624dc9e729039b54c51881@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Colin Ian King <colin.king@canonical.com>, Anton Vorontsov <anton.vorontsov@linaro.org>, Seiji Aguchi <seiji.aguchi@hds.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__27_Nov_2012_11_47_51_+1100_Gy39B++J1yJCVRUm"
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Hutchings <bhutchings-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-> I fixed it up (see below) and can carry the fix as necessary.
+--Signature=_Tue__27_Nov_2012_11_47_51_+1100_Gy39B++J1yJCVRUm
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I rebased the series onto 3.7-rc7 (using the same merge fix that you did) ... so you shouldn't see the merge error next time.
+Hi all,
 
--Tony
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/mellanox/mlx4/en_rx.c between commit 08ff32352d6f
+("mlx4: 64-byte CQE/EQE support") from the infiniband tree and commit
+f1d29a3fa68b ("mlx4_en: Remove remnants of LRO support") from the
+net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+
+diff --cc drivers/net/ethernet/mellanox/mlx4/en_rx.c
+index 6fa106f,f76c967..0000000
+--- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+@@@ -710,12 -709,9 +710,9 @@@ next
+ =20
+  		++cq->mcq.cons_index;
+  		index =3D (cq->mcq.cons_index) & ring->size_mask;
+ -		cqe =3D &cq->buf[index];
+ +		cqe =3D &cq->buf[(index << factor) + factor];
+- 		if (++polled =3D=3D budget) {
+- 			/* We are here because we reached the NAPI budget -
+- 			 * flush only pending LRO sessions */
++ 		if (++polled =3D=3D budget)
+  			goto out;
+- 		}
+  	}
+ =20
+  out:
+
+--Signature=_Tue__27_Nov_2012_11_47_51_+1100_Gy39B++J1yJCVRUm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQtA23AAoJEECxmPOUX5FEJcMP/2uAYVgOIr10CkQFnoiWvveh
+cExGTI7BMFm3VfzrZsXPH2vAGTzZoRwVyBnhQzobRHcjTplJkthAnNDq1xb7eDxt
+4EMF+6wcnqlnKmG27osfE5Fnh4/mFXZdDxhgbyHuzc9aa1nXhVD1n/jW/tyLBgsn
+OSQcTVAEkDVvAN6WohATaeyEQ+HkwWLYWdBtmMrPDdnjeH2GA3NgEuD904lJT2IU
+Z93w73/ITIj+8f7MtpxeTGH1SDx8XtrUYk5sQ5vaADSIdcVCGeDj/AZrsg8ezk//
+/I9AeqAHQUHY/Pu5MTO6aLPqFY7TkExjk89Fbm4fXuptA9u1Jp1a1DVXxrqnghjG
+UEpX1+8yqTwZSJT6QbwgVddseBN9mdDrjE9SOLHR9VeEa92oTiWQA2Uaaw5DDres
+dfTjozkpHL6BpOGmwx9fdmzGvZLwXfkwdvncyxUtouMft7gnNkFu61o5Y6AgXBSw
+a0N8IXqIcX2sNtJ35mqVVb0K34MrjV/8EfN9V1D32KWdqUWkBi4iHEySvc49FWdy
+XsQygg6VUIIqYIDuV0kLUXwc651wCbVF1GtjvDgAcWuKgjWZdcMFxLuv3co+kx+Y
+7HTSbgKM82zeI2Cw0WRgnhuepKbPVN/MWfM2ujuwFf+el5P0PAUdARqKcvAbe/rC
+wgzW2pkCenm+Ltk+H3D/
+=E4sO
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Nov_2012_11_47_51_+1100_Gy39B++J1yJCVRUm--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
