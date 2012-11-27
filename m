@@ -1,54 +1,35 @@
 From: Frederic Weisbecker <fweisbec@gmail.com>
 Subject: Re: [RFC PATCH] Fix abnormal rcu dynticks_nesting values related to
  async page fault
-Date: Tue, 27 Nov 2012 17:29:09 +0100
-Message-ID: <CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
+Date: Tue, 27 Nov 2012 17:31:14 +0100
+Message-ID: <CAFTL4hw5fgZccTMhV81OxVVfitUtqWXQi9djTCPJz7-4ff35Pg@mail.gmail.com>
 References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
+	<CAFTL4hydk-FT_hqCbcSPFcNCKnqxtWGz0VjTu3nNnQYfbtTz6Q@mail.gmail.com>
+	<20121127161639.GF2474@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:46239 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755591Ab2K0Q3K (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 11:29:10 -0500
-In-Reply-To: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Li Zhong <zhong@linux.vnet.ibm.com>
-Cc: linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, gleb@redhat.com, avi@redhat.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121127161639.GF2474@linux.vnet.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: paulmck@linux.vnet.ibm.com
+Cc: Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, sasha.levin@oracle.com, gleb@redhat.com, avi@redhat.com
+List-Id: linux-next.vger.kernel.org
 
-2012/11/27 Li Zhong <zhong@linux.vnet.ibm.com>:
-> @@ -247,10 +247,17 @@ do_async_page_fault(struct pt_regs *regs, unsigned long error_code)
->                 break;
->         case KVM_PV_REASON_PAGE_NOT_PRESENT:
->                 /* page is swapped out by the host. */
-> -               rcu_irq_enter();
-> +               if (is_idle_task(current) && rcu_is_cpu_idle())
+2012/11/27 Paul E. McKenney <paulmck@linux.vnet.ibm.com>:
+> It is OK to call rcu_irq_exit() without a matching rcu_irq_enter() -only-
+> if you have also called rcu_idle_exit() since the last rcu_idle_enter().
+> There will be a similar rule for rcu_user_exit().
+>
+> More generally, it is OK to call rcu_irq_exit() without a matching
+> rcu_irq_enter() only if RCU believes that the CPU you are running on is
+> non-idle.
 
-If the task is idle we can't schedule so I guess we don't need to call
-rcu_idle_exit()
+Perfect!
 
-> +                       rcu_idle_exit();
-> +               else
-> +                       rcu_user_exit();
+>  On 32-bit systems, you are only allowed a few tens of million
+> such unmatched rcu_irq_enter() calls in a given RCU-non-idle region.
+>
+> All courtesy of RCU's need to tolerate architectures that enter
+> interrupt handlers without ever leaving them and vice versa.  ;-)
 
-rcu_user_exit() must be called in any case yeah.
-
-> +
->                 exit_idle();
->                 kvm_async_pf_task_wait((u32)read_cr2());
-> -               rcu_irq_exit();
-> +
-> +               if (is_idle_task(current) && rcu_is_cpu_idle())
-> +                       rcu_idle_enter();
-> +
-
-I think that only adding rcu_user_exit() in the beginning and let the
-rest as is (rcu_irq_enter() / rcu_irq_exit()) is enough. If we are
-idle we won't schedule out. If we are not idle then we exit rcu user
-mode if necessary and we can call rcu_irq_enter() in any case. If we
-schedule we can safely cal rcu_irq_exit() even if somebody called
-rcu_idle_enter() / rcu_idle_exit() since our matching rcu_irq_enter()
-called before we scheduled. This works because we are not in RCU idle
-mode and Paul says this is legal to have irq exit without matching irq
-entry (his famous "vice-versa" on his previous email ;-)
+RCU idle mode in a hostile environment ;-)
