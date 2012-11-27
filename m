@@ -1,33 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the battery tree
-Date: Tue, 27 Nov 2012 15:52:23 +1100
-Message-ID: <20121127155223.849e73a08fc1b382d4622ff8@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the usb tree
+Date: Tue, 27 Nov 2012 15:57:32 +1100
+Message-ID: <20121127155732.c3422fdbf62501ee134024d7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Nov_2012_15_52_23_+1100_NuwDuMEB4FVtFsP5"
+ boundary="Signature=_Tue__27_Nov_2012_15_57_32_+1100_l/Q1stWjHYHxzuAC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53164 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48380 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756939Ab2K0Ew3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 23:52:29 -0500
+	with ESMTP id S1756714Ab2K0E5h (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 23:57:37 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jamie Lentin <jm@lentin.co.uk>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, "Rajanikanth H.V" <rajanikanth.hv@stericsson.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Bill Pemberton <wfp5p@virginia.edu>, Greg KH <greg@kroah.com>
 
---Signature=_Tue__27_Nov_2012_15_52_23_+1100_NuwDuMEB4FVtFsP5
+--Signature=_Tue__27_Nov_2012_15_57_32_+1100_l/Q1stWjHYHxzuAC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/power/Kconfig between commit bd9e8ab2d58d ("ab8500: Add
-devicetree support for btemp") from the battery tree and commit
-96ff0f5c7efd ("power: Add simple poweroff-gpio driver") from the arm-soc
-tree.
+Today's linux-next merge of the arm-soc tree got a conflict in drivers/usb/=
+host/ehci-orion.c between commit 41ac7b3ab7fe ("usb: remove use of __devini=
+t") from the usb tree and commit 77dae54ab385 ("ARM: Kirkwood: ehci-orion: =
+Add device tree binding") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,46 +35,41 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/power/Kconfig
-index 263499f,b1d956d..0000000
---- a/drivers/power/Kconfig
-+++ b/drivers/power/Kconfig
-@@@ -346,6 -329,15 +346,8 @@@ config AB8500_B
-  	help
-  	  Say Y to include support for AB8500 battery management.
+diff --cc drivers/usb/host/ehci-orion.c
+index f74794c,e7e8275..0000000
+--- a/drivers/usb/host/ehci-orion.c
++++ b/drivers/usb/host/ehci-orion.c
+@@@ -167,7 -184,9 +170,9 @@@ ehci_orion_conf_mbus_windows(struct usb
+  	}
+  }
  =20
- -config AB8500_BATTERY_THERM_ON_BATCTRL
- -	bool "Thermistor connected on BATCTRL ADC"
- -	depends on AB8500_BM
- -	help
- -	  Say Y to enable battery temperature measurements using
- -	  thermistor connected on BATCTRL ADC.
- -
-+ source "drivers/power/reset/Kconfig"
++ static u64 ehci_orion_dma_mask =3D DMA_BIT_MASK(32);
 +=20
-  endif # POWER_SUPPLY
- =20
-  source "drivers/power/avs/Kconfig"
+ -static int __devinit ehci_orion_drv_probe(struct platform_device *pdev)
+ +static int ehci_orion_drv_probe(struct platform_device *pdev)
+  {
+  	struct orion_ehci_data *pd =3D pdev->dev.platform_data;
+  	const struct mbus_dram_target_info *dram;
 
---Signature=_Tue__27_Nov_2012_15_52_23_+1100_NuwDuMEB4FVtFsP5
+--Signature=_Tue__27_Nov_2012_15_57_32_+1100_l/Q1stWjHYHxzuAC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQtEcHAAoJEECxmPOUX5FEz8AP/jzx0PP6atB5NH9A8jTw74no
-tCy22x74z4jfmdhVp0f1tVUmIvdA8WDD/SdnNP9IwhsutkxNUJCQIAG8PyN40Xal
-yDH1No28KOeZ+ThMHJBVvMFYx/bGXzq14XdllbRGGvch+pWSK1zOcidtKt1sChJp
-zPL3bAd+n80QvB1ZCwV/5f4zN04lzSsaGkFHwp4God6MBLKzfE3KLyeV5UFdgGph
-VTiCOF82vDyPG3OzmdaN7QcLtOgpf6mA8E3zv6QCy4ZhFFKC/CVNxIi5Bs5gjBvp
-Vrl0Pcec0uonAD7dZloxnJVoU7ttabmHZTI7fT1r6LksMOYE8UmoMRbQQkuH4PwB
-whszZN80Ueu574mDr5YBwLzNfDcg0vmsWmFSgMnfYovI/9QkLWouEFVKbiYUPeY2
-TBRXsXZmnyRKZVmEsnKvlCXYxqZ6MX4GIgcoJ4tK9+YDudejebgsK6RkK527YNR/
-9K/J4Bw4Av5hnUMujbm1nrTFNxvKp2eL/55KozsLOI9Uqb3Ipbnpcn83jzixb46l
-q49GdKUe2yFatxjdJwjnF7YGa9KvdeWSoEZX5A099j1W+Cqc3l58XkKtkPzYZbvw
-+BLu/Pug0knMu1KPqzAhhgJUsGb6TmRnFrjAt7E3Ne5eAJCrtxTNK+hyTIjbzGmR
-pkV+nbANjYocdrIg2iDD
-=SIrV
+iQIcBAEBCAAGBQJQtEg8AAoJEECxmPOUX5FEqAkP/A4yxupm4CEHNZ+tblM6TinK
+nr40hua+35w+qP1AxMrxzv75p5vnwJKl6fJRHKohQjHmsIZIAQktP9IlWlmKrJnX
+OrdE0dM3x9nDs+j3DMh4PGdTlM9k/LgdWdU5DWkE6p0voOM3VOxmLJFtf1eCp8g5
+hIJZ998INvroRi7gFh8uUBk1N21xzMG9nd6dSyxnP9FjhVj5jS5ZrH47UYuxWI9p
+t6pA+heu5fNqglCIDjbztX5T0v1t3VFwX6I9siYCoSSujblPS9mIj/oaAfa2cPUW
+5ubi8rdyFGEz0rBYbQ+7WRzsM42cgGoAOkhJWjaB8iT+eRk51kDpf6UpmmsRz0rW
+L3CvekT2cpq5KRLk3W2YyhyLUxwtsWKN4HEby0lId+8S5vlPcH1/LbuJieEzj/Xg
+O5l5lvJynNaYUV7u8gcSfdvLxf2gRnDcIB1srt95EFnoal0XCMW9f0G0Czobbg3U
+sjEHht0jP90IowRIN++5x9xHYdhejt7b/GCJk+czswtkmMSeok7yUJJGp0ts5ROF
+IQu6Z8mxMzqaJU+Ne//0mdpzkbMcbUHRLOi0lrDQkmme92BR9/omz3NdFfFqiQOf
+GqtqJjamAolt4qixVNAQMgzurwFqVbGHnx8HIPKzja8OqhFxkCiwd2ACxYFJfzaJ
+gev2qvlW9tQJazKvorFV
+=3E1L
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_Nov_2012_15_52_23_+1100_NuwDuMEB4FVtFsP5--
+--Signature=_Tue__27_Nov_2012_15_57_32_+1100_l/Q1stWjHYHxzuAC--
