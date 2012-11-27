@@ -1,37 +1,25 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for Nov 26 (staging/fwserial)
-Date: Mon, 26 Nov 2012 15:20:01 -0800
-Message-ID: <20121126152001.bf346786.akpm@linux-foundation.org>
-References: <20121127011738.9ecd7971a7ea2e3d09a9450d@canb.auug.org.au>
-	<50B3D767.70604@infradead.org>
+From: "Luck, Tony" <tony.luck@intel.com>
+Subject: RE: linux-next: manual merge of the ia64 tree with Linus' tree
+Date: Tue, 27 Nov 2012 00:44:33 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F1C95C631@ORSMSX108.amr.corp.intel.com>
+References: <20121126113141.3b624dc9e729039b54c51881@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50B3D767.70604@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Peter Hurley <peter@hurleysoftware.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:20076 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751789Ab2K0Aoe convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 19:44:34 -0500
+In-Reply-To: <20121126113141.3b624dc9e729039b54c51881@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Colin Ian King <colin.king@canonical.com>, Anton Vorontsov <anton.vorontsov@linaro.org>, Seiji Aguchi <seiji.aguchi@hds.com>
 
-On Mon, 26 Nov 2012 12:56:07 -0800
-Randy Dunlap <rdunlap@infradead.org> wrote:
+> I fixed it up (see below) and can carry the fix as necessary.
 
-> On 11/26/2012 06:17 AM, Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20121115:
-> > 
-> 
-> 
-> on i386:
-> 
-> drivers/staging/fwserial/dma_fifo.c: In function 'dma_fifo_in':
-> drivers/staging/fwserial/dma_fifo.c:174:2: error: implicit declaration of function '__WARN_printf'
-> 
+I rebased the series onto 3.7-rc7 (using the same merge fix that you did) ... so you shouldn't see the merge error next time.
 
-That should be replaced with WARN(fifo->corrupt, format).
-
-drivers/staging/fwserial/dma_fifo.[ch] appear to be generic code and
-really should be proposed for mm/ or lib/.
+-Tony
