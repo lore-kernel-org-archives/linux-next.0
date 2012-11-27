@@ -1,27 +1,27 @@
 From: Frederic Weisbecker <fweisbec@gmail.com>
 Subject: Re: [RFC PATCH] Fix abnormal rcu dynticks_nesting values related to
  async page fault
-Date: Tue, 27 Nov 2012 17:48:18 +0100
-Message-ID: <CAFTL4hyjsyj+=g7Pe46M7hL2vqnUgzORGsydZ_X=QOHM7jb78g@mail.gmail.com>
+Date: Tue, 27 Nov 2012 17:51:12 +0100
+Message-ID: <CAFTL4hyzVLismy0ckx0Tu47EAgNn9WjAFEx=ptF5587-zp65hQ@mail.gmail.com>
 References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
 	<CAFTL4hzzumANj7hF5hJPZ5pKPhz4YWC-Ukb3yUKdy_DO+vb3wg@mail.gmail.com>
 	<20121127154455.GK12969@redhat.com>
 	<CAFTL4hyfCt2imzBYW+Sn5QUAwham=ZQ2nNER5Np7Hq4yg1LzxA@mail.gmail.com>
-	<20121127161925.GG2474@linux.vnet.ibm.com>
+	<20121127163910.GL12969@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:60137 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756123Ab2K0QsU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 11:48:20 -0500
-In-Reply-To: <20121127161925.GG2474@linux.vnet.ibm.com>
+Received: from mail-yh0-f46.google.com ([209.85.213.46]:39779 "EHLO
+	mail-yh0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756117Ab2K0QvN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 11:51:13 -0500
+In-Reply-To: <20121127163910.GL12969@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com
-Cc: Gleb Natapov <gleb@redhat.com>, Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, sasha.levin@oracle.com, avi@redhat.com
+To: Gleb Natapov <gleb@redhat.com>
+Cc: Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
 
-2012/11/27 Paul E. McKenney <paulmck@linux.vnet.ibm.com>:
+2012/11/27 Gleb Natapov <gleb@redhat.com>:
 > On Tue, Nov 27, 2012 at 04:56:30PM +0100, Frederic Weisbecker wrote:
 >> 2012/11/27 Gleb Natapov <gleb@redhat.com>:
 >> > For KVM_PV_REASON_PAGE_NOT_PRESENT it behaves like an exception.
@@ -34,18 +34,11 @@ Cc: Gleb Natapov <gleb@redhat.com>, Li Zhong <zhong@linux.vnet.ibm.com>, linux-n
 >> the fault is completed.
 >>
 >> The right way is to use is_idle_task(current)
->
-> Agreed.  But if you instead need to figure out whether or not RCU believes
-> that the CPU is idle, use rcu_is_cpu_idle().  You need to figure out
-> whether or not RCU believes that the CPU is idle if you are trying to
-> play fast and loose with rcu_irq_enter() and rcu_irq_exit().
+> But if there is pending wake up then scheduling to the waked up task is
+> exactly what we want.
 
-Right. I was referring to another problem though. They don't want to
-schedule on the following cases:
-
-1) preemption disabled, of course.
-3) we are in the idle task. Because if we want to sleep in order to
-wait for the page fault completion, we need to be able to schedule the
-idle task. But we are already the idle task.
-
-Now idle_cpu(cpu) is the wrong check for that.
+Ok, but what if that task goes to sleep soon after beeing scheduled
+and there is no other task on the runqueue and the page fault has not
+been handled yet? The only thing you can do is to schedule the idle
+task. But the idle task is waiting for the fault completion so you
+can't do that.
