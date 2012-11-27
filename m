@@ -1,78 +1,38 @@
-From: Gleb Natapov <gleb@redhat.com>
-Subject: Re: [RFC PATCH] Fix abnormal rcu dynticks_nesting values related to
- async page fault
-Date: Tue, 27 Nov 2012 21:27:48 +0200
-Message-ID: <20121127192748.GB7695@redhat.com>
-References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
- <CAFTL4hzzumANj7hF5hJPZ5pKPhz4YWC-Ukb3yUKdy_DO+vb3wg@mail.gmail.com>
- <20121127154455.GK12969@redhat.com>
- <CAFTL4hyfCt2imzBYW+Sn5QUAwham=ZQ2nNER5Np7Hq4yg1LzxA@mail.gmail.com>
- <20121127163910.GL12969@redhat.com>
- <CAFTL4hyzVLismy0ckx0Tu47EAgNn9WjAFEx=ptF5587-zp65hQ@mail.gmail.com>
- <20121127170026.GM12969@redhat.com>
- <CAFTL4hyb0qYYhy1OE9HDHymFkmHDb5jNyuLNSR2aQ3dKPpuZkw@mail.gmail.com>
- <20121127174737.GN12969@redhat.com>
- <CAFTL4hxh96wDMpBEid0EN8ir-9C=Z+pdy6viVVK5fyKkRbUOOw@mail.gmail.com>
+From: Eric Paris <eparis@redhat.com>
+Subject: Re: linux-next: Tree for Nov 27 (file notify)
+Date: Tue, 27 Nov 2012 16:09:01 -0500
+Message-ID: <1354050541.2849.8.camel@localhost>
+References: <20121127172548.cd502ebfb903face1dc98554@canb.auug.org.au>
+	 <50B4EDBF.8070304@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAFTL4hxh96wDMpBEid0EN8ir-9C=Z+pdy6viVVK5fyKkRbUOOw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:22752 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753711Ab2K0VJL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Nov 2012 16:09:11 -0500
+In-Reply-To: <50B4EDBF.8070304@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>
 
-On Tue, Nov 27, 2012 at 07:12:40PM +0100, Frederic Weisbecker wrote:
-> 2012/11/27 Gleb Natapov <gleb@redhat.com>:
-> > On Tue, Nov 27, 2012 at 06:30:32PM +0100, Frederic Weisbecker wrote:
-> >> 2012/11/27 Gleb Natapov <gleb@redhat.com>:
-> >> > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> >> > index 4180a87..636800d 100644
-> >> > --- a/arch/x86/kernel/kvm.c
-> >> > +++ b/arch/x86/kernel/kvm.c
-> >> > @@ -113,7 +113,7 @@ void kvm_async_pf_task_wait(u32 token)
-> >> >         int cpu, idle;
-> >> >
-> >> >         cpu = get_cpu();
-> >> > -       idle = idle_cpu(cpu);
-> >> > +       idle = is_idle_task(current);
-> >>
-> >> I suggest this part goes to a standalone patch.
-> >>
-> >> >         put_cpu();
-> >> >
-> >> >         spin_lock(&b->lock);
-> >> > @@ -247,10 +247,7 @@ do_async_page_fault(struct pt_regs *regs, unsigned long error_code)
-> >> >                 break;
-> >> >         case KVM_PV_REASON_PAGE_NOT_PRESENT:
-> >> >                 /* page is swapped out by the host. */
-> >> > -               rcu_irq_enter();
-> >> > -               exit_idle();
-> >> >                 kvm_async_pf_task_wait((u32)read_cr2());
-> >> > -               rcu_irq_exit();
-> >>
-> >> Hmm, we still need those above around. I believe we just need to add
-> >> rcu_user_exit() in the beginning of that case.
-> > The exception may happen in kernel space too. Is calling rcu_user_exit()
-> > still OK? Also why calling exit_idle() if we are not exiting idle?
+On Tue, 2012-11-27 at 08:43 -0800, Randy Dunlap wrote:
+> On 11/26/2012 10:25 PM, Stephen Rothwell wrote:
 > 
-> Yeah, rcu_user_exit() takes care of that. And exit_idle() also checks
-> we are really idle before firing the notifier.
+> > Hi all,
+> > 
+> > Changes since 20121126:
+> > 
 > 
-> Now we should probably call back enter_idle() before resuming idle if
-> needed. We disable irqs before calling enter_idle(). And exit_idle()
-> is called from irqs. This way we ensure it's either called before we
-> called local_irq_disable() or while the CPU is halt(). This provides
-> the guarantee that enter_idle() is always called before the CPU goes
-> to sleep. The fact we call exit_idle()  from an exception in idle
-> breaks this guarantee. But that's another issue.
+> 
+> when CONFIG_PROC_FS is not enabled (also seen in mmotm):
+> 
+> fs/notify/fanotify/fanotify_user.c:436:17: error: 'fanotify_show_fdinfo' undeclared here (not in a function)
+> fs/notify/inotify/inotify_user.c:333:17: error: 'inotify_show_fdinfo' undeclared here (not in a function
 
-What is the semantics of enter_idle()/exit_idle(), what are they used for?
-Not present fault happening in idle task does not mean we exit idle
-task. If this happens exception handler will execute sti; hlt waiting
-for missing page to be ready. Any interrupt happening during this hlt
-will do exit_idle() by itself.
+It is something coming in from Andrew's tree.  I believe they already
+have a patch.
 
---
-			Gleb.
+-Eric
