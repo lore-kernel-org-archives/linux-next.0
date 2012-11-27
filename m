@@ -1,50 +1,36 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: linux-next: Tree for Nov 26 (staging/fwserial)
-Date: Tue, 27 Nov 2012 02:39:10 -0500
-Message-ID: <1354001950.3284.23.camel@thor>
-References: <20121127011738.9ecd7971a7ea2e3d09a9450d@canb.auug.org.au>
-	 <50B3D767.70604@infradead.org>
-	 <20121126152001.bf346786.akpm@linux-foundation.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the usb tree
+Date: Tue, 27 Nov 2012 08:37:48 +0000
+Message-ID: <201211270837.48458.arnd@arndb.de>
+References: <20121127155732.c3422fdbf62501ee134024d7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout39.mail01.mtsvc.net ([216.70.64.83]:36459 "EHLO
-	n12.mail01.mtsvc.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1758047Ab2K0HjQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 02:39:16 -0500
-In-Reply-To: <20121126152001.bf346786.akpm@linux-foundation.org>
+Received: from moutng.kundenserver.de ([212.227.17.10]:62166 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753549Ab2K0IiB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 03:38:01 -0500
+In-Reply-To: <20121127155732.c3422fdbf62501ee134024d7@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Bill Pemberton <wfp5p@virginia.edu>, Greg KH <greg@kroah.com>
 
-On Mon, 2012-11-26 at 15:20 -0800, Andrew Morton wrote:
-> On Mon, 26 Nov 2012 12:56:07 -0800
-> Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
-> > On 11/26/2012 06:17 AM, Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > Changes since 20121115:
-> > > 
-> > 
-> > 
-> > on i386:
-> > 
-> > drivers/staging/fwserial/dma_fifo.c: In function 'dma_fifo_in':
-> > drivers/staging/fwserial/dma_fifo.c:174:2: error: implicit declaration of function '__WARN_printf'
-> > 
-> 
-> That should be replaced with WARN(fifo->corrupt, format).
+On Tuesday 27 November 2012, Stephen Rothwell wrote:
+> @@@ -167,7 -184,9 +170,9 @@@ ehci_orion_conf_mbus_windows(struct usb
+>         }
+>   }
+>   
+> + static u64 ehci_orion_dma_mask = DMA_BIT_MASK(32);
+> + 
+>  -static int __devinit ehci_orion_drv_probe(struct platform_device *pdev)
+>  +static int ehci_orion_drv_probe(struct platform_device *pdev)
+>   {
+>         struct orion_ehci_data *pd = pdev->dev.platform_data;
+>         const struct mbus_dram_target_info *dram;
 
-Yeah, not sure what I was thinking there. Or rather not thinking.
+Looks good, thanks!
 
-> drivers/staging/fwserial/dma_fifo.[ch] appear to be generic code and
-> really should be proposed for mm/ or lib/.
-
-If there are other users for which this would be useful, that's ok with
-me. I'd feel more comfortable with that after this driver gets some
-heavier usage (which shouldn't be a problem once I get a console and
-debugger running on top of it).
+	Arnd
