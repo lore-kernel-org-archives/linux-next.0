@@ -1,32 +1,51 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Nov 27 (file notify)
-Date: Tue, 27 Nov 2012 08:43:43 -0800
-Message-ID: <50B4EDBF.8070304@infradead.org>
-References: <20121127172548.cd502ebfb903face1dc98554@canb.auug.org.au>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [RFC PATCH] Fix abnormal rcu dynticks_nesting values related to
+ async page fault
+Date: Tue, 27 Nov 2012 17:48:18 +0100
+Message-ID: <CAFTL4hyjsyj+=g7Pe46M7hL2vqnUgzORGsydZ_X=QOHM7jb78g@mail.gmail.com>
+References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
+	<CAFTL4hzzumANj7hF5hJPZ5pKPhz4YWC-Ukb3yUKdy_DO+vb3wg@mail.gmail.com>
+	<20121127154455.GK12969@redhat.com>
+	<CAFTL4hyfCt2imzBYW+Sn5QUAwham=ZQ2nNER5Np7Hq4yg1LzxA@mail.gmail.com>
+	<20121127161925.GG2474@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121127172548.cd502ebfb903face1dc98554@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:60137 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756123Ab2K0QsU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 11:48:20 -0500
+In-Reply-To: <20121127161925.GG2474@linux.vnet.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: paulmck@linux.vnet.ibm.com
+Cc: Gleb Natapov <gleb@redhat.com>, Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, sasha.levin@oracle.com, avi@redhat.com
 
-On 11/26/2012 10:25 PM, Stephen Rothwell wrote:
+2012/11/27 Paul E. McKenney <paulmck@linux.vnet.ibm.com>:
+> On Tue, Nov 27, 2012 at 04:56:30PM +0100, Frederic Weisbecker wrote:
+>> 2012/11/27 Gleb Natapov <gleb@redhat.com>:
+>> > For KVM_PV_REASON_PAGE_NOT_PRESENT it behaves like an exception.
+>>
+>> Ok.
+>> There seem to be a bug in kvm_async_pf_task_wait(). Using
+>> idle_cpu(cpu) to find out if the current task is the idle task may not
+>> work if there is pending wake up. Me may schedule another task but
+>> when that other task sleeps later we can't schedule back to idle until
+>> the fault is completed.
+>>
+>> The right way is to use is_idle_task(current)
+>
+> Agreed.  But if you instead need to figure out whether or not RCU believes
+> that the CPU is idle, use rcu_is_cpu_idle().  You need to figure out
+> whether or not RCU believes that the CPU is idle if you are trying to
+> play fast and loose with rcu_irq_enter() and rcu_irq_exit().
 
-> Hi all,
-> 
-> Changes since 20121126:
-> 
+Right. I was referring to another problem though. They don't want to
+schedule on the following cases:
 
+1) preemption disabled, of course.
+3) we are in the idle task. Because if we want to sleep in order to
+wait for the page fault completion, we need to be able to schedule the
+idle task. But we are already the idle task.
 
-when CONFIG_PROC_FS is not enabled (also seen in mmotm):
-
-fs/notify/fanotify/fanotify_user.c:436:17: error: 'fanotify_show_fdinfo' undeclared here (not in a function)
-fs/notify/inotify/inotify_user.c:333:17: error: 'inotify_show_fdinfo' undeclared here (not in a function)
-
-
-
--- 
-~Randy
+Now idle_cpu(cpu) is the wrong check for that.
