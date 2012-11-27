@@ -1,40 +1,71 @@
-From: Mugunthan V N <mugunthanvnm@ti.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the net-next
- tree
-Date: Tue, 27 Nov 2012 16:52:28 +0530
-Message-ID: <50B4A274.5070601@ti.com>
-References: <20121126204546.ef1f1b55e903eda38a61d5d1@canb.auug.org.au>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: linux-next: manual merge of the omap_dss2 tree with Linus' tree
+Date: Tue, 27 Nov 2012 13:24:56 +0200
+Message-ID: <50B4A308.2090601@ti.com>
+References: <20121126162233.9e7d7a036f2cc4a168cd3b6c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="------------enig9C57C015F8ADA6897F96FF02"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:36520 "EHLO comal.ext.ti.com"
+Received: from arroyo.ext.ti.com ([192.94.94.40]:51897 "EHLO arroyo.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753533Ab2K0LXQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Nov 2012 06:23:16 -0500
-In-Reply-To: <20121126204546.ef1f1b55e903eda38a61d5d1@canb.auug.org.au>
+	id S1753636Ab2K0LZD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Nov 2012 06:25:03 -0500
+In-Reply-To: <20121126162233.9e7d7a036f2cc4a168cd3b6c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vaibhav Hiremath <hvaibhav@ti.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, AnilKumar Ch <anilkumar@ti.com>, Benoit Cousson <b-cousson@ti.com>, Jon Hunter <jon-hunter@ti.com>, Afzal Mohammed <afzal@ti.com>, "Philip, Avinash" <avinashphilip@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-On 11/26/2012 3:15 PM, Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/boot/dts/am33xx.dtsi between commit 1a39a65cba08 ("arm/dts:
-> am33xx: Add CPSW and MDIO module nodes for AM33XX") from the net-next
-> tree and commits 059b185d5345 ("ARM: dts: AM33XX: Add D_CAN device tree
-> data") and 4c94ac29b5c1 ("ARM: dts: OMAP: Move interrupt-parent to the
-> root node to avoid duplication") (and a few others that added more later
-> nodes) from the arm-soc tree.
->
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
->
-Stephen Rothwell
+--------------enig9C57C015F8ADA6897F96FF02
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-The fix is correct and I have tested CPSW from linux-next.
+Hi,
 
-Regards
-Mugunthan V N
+On 2012-11-26 07:22, Stephen Rothwell wrote:
+> Hi Tomi,
+>=20
+> Today's linux-next merge of the omap_dss2 tree got a conflict in
+> drivers/video/omap2/dss/dss.c between commit f65e384bec59 ("omapdss: ds=
+s:
+> Fix clocks on OMAP363x") from Linus' tree and commit bd81ed081887
+> ("OMAPDSS: DSS: use omapdss_version") from the omap_dss2 tree.
+>=20
+> I fixed it up (using the omap_dss2 tree version) and can carry the fix =
+as
+> necessary (no action is required).
+
+Thanks. I've now pulled the omapdss fixes that were merged in -rc7, and
+resolved the conflicts.
+
+ Tomi
+
+
+
+--------------enig9C57C015F8ADA6897F96FF02
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+Comment: Using GnuPG with undefined - http://www.enigmail.net/
+
+iQIcBAEBAgAGBQJQtKMIAAoJEPo9qoy8lh71aGEP/RsQSQcyu0kUeOmCT2kRgAAe
+KtAZIezgofE2QvVwmPBfEaUFCUZY85Pods0Vc5OQkjSX7xKrvXDV4HUdxh+RnvoU
+gzldCMMku2SQGsUhUhPVulVi0cqKFmFFe/LftyYNCVoahXdU1RMlQGTfNoGJfoZd
+GijJ9RALq0AZOXWMLOnSSl176UCFZ5mEWmmtz3NolA7sI1gD6DEsC0vrk9WsxvUa
+IId6eOShbiZcRoXiTl1d024xEKKlie2QD7PJlLRkD9nlJISDIPocUASw3+wYmO5v
+h+sXBjqKoswR4WdAkuOK2GRxa5tUFXVSVHgqAGP4/Jyio4Iln9J8LAD1qvroh1K3
+9fWnvc9icCD2Nxh7Awj8tG5RwjX8HNWe38pXvj1rZ8XR+qnf2b7Mpx96GF53io4q
+si/2Y6q/fHxHwj//7fXud8/ESZcLdRGkq8aXMd3BDCa2hpLqYOXpAt86Kv0eH19O
+x+PE4ti1GCMphbuyc5QUvFbqQtjlDB8X8gw10i/xg9DFgD6S0kKr+suQVBKWNsKo
+bM7Rb8vbCvPsVvwMjfDf6iTvtF7ERynBRZC5hJUBOMCNqID1CVjLmsC0kRaBKeNC
+LXPSlIA6P8K0C16xmyPBNaBwnr6wtgRzoJNTVslRwl0We2OmADt7A6aLfQoVl9pi
+WuGMDfukABeSLVRDBbCo
+=fibF
+-----END PGP SIGNATURE-----
+
+--------------enig9C57C015F8ADA6897F96FF02--
