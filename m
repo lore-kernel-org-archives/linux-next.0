@@ -1,22 +1,19 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the l2-mtd tree
-Date: Tue, 27 Nov 2012 15:37:14 +1100
-Message-ID: <20121127153714.2da0df11b77fc74601482ef4@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the slave-dma
+ tree
+Date: Tue, 27 Nov 2012 15:44:30 +1100
+Message-ID: <20121127154430.36e87542081a7cc50f80d0f6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Nov_2012_15_37_14_+1100_Wwcf=d/Ti0gAHWfF"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40401 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751413Ab2K0EhQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 23:37:16 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Tue__27_Nov_2012_15_44_30_+1100_AZl1=Uga=YzzjNlE"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Artem Bityutskiy <dedekind1@gmail.com>, Vipul Kumar Samar <vipulkumar.samar@st.com>, Bhavna Yadav <bhavna.yadav@st.com>, Deepak Sikri <deepak.sikri@st.com>, Rajeev Kumar <rajeev-dlh.kumar@st.com>, Shiraz Hashim <shiraz.hashim@st.com>, Vijay Kumar Mishra <vijay.kumar@st.com>, Vipin Kumar <vipin.kumar@st.com>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Vinod Koul <vinod.koul@intel.com>, Vipul Kumar Samar <vipulkumar.samar@st.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__27_Nov_2012_15_37_14_+1100_Wwcf=d/Ti0gAHWfF
+--Signature=_Tue__27_Nov_2012_15_44_30_+1100_AZl1=Uga=YzzjNlE
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,52 +21,37 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/boot/dts/spear13xx.dtsi between commit 6d7b42a447f9 ("mtd:
-fsmc_nand: pass the ale and cmd resource via resource") from the l2-mtd
-tree and commit f631b984ee10 ("ARM: SPEAr: DT: Fix existing DT support")
-from the arm-soc tree.
+arch/arm/mach-spear13xx/spear1310.c between commit b47394911c26 ("ARM:
+SPEAr13xx: Pass DW DMAC platform data from DT") from the slave-dma tree
+and commit 300a6856324a ("ARM: SPEAr1310: Fix AUXDATA for compact flash
+controller") from the arm-soc tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I have no idea how to fix this up, so I just effectively dropped the
+arm-doc tree patch.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/spear13xx.dtsi
-index 701b0d7,009096d..0000000
---- a/arch/arm/boot/dts/spear13xx.dtsi
-+++ b/arch/arm/boot/dts/spear13xx.dtsi
-@@@ -151,6 -125,9 +165,7 @@@
-  				      0 21 0x4
-  				      0 22 0x4
-  				      0 23 0x4>;
- -			st,ale-off =3D <0x20000>;
- -			st,cle-off =3D <0x10000>;
-+ 			st,mode =3D <2>;
-  			status =3D "disabled";
-  		};
- =20
-
---Signature=_Tue__27_Nov_2012_15_37_14_+1100_Wwcf=d/Ti0gAHWfF
+--Signature=_Tue__27_Nov_2012_15_44_30_+1100_AZl1=Uga=YzzjNlE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQtEN6AAoJEECxmPOUX5FEA38QAJmYd0G+ppLvQyLBavXygBm+
-3v3vZ0LOAot0Mn+32Lz9jT8JaAfsfToyN+iI0fj25bIKWLsrlxDOfleBNqtS1Dv2
-vwxRzuZzvmNRAcDo78cHBuOlPCMKnNtop4HImiGOv1ntIJiRkNOBeInvJac8OH01
-ahplxt1224v6saf308Xd2c3xIQO1mXljLwTl2Qro2kxjDWpvqfx0lHMgrW6zaxed
-oXGijrmeSdFjRAWWr/EVOTzK1qGtRs7UOld3p9MOhG2Bt7C5EPS3Rij9qFJSV62e
-tjUPXgYBS7NWfnrQuUWd+4hNayf04nDYIiV60wMb9eKwvRpLtrx+0eJdKQS7PwfU
-0JiuGok9cacV7DKu11A0WoA5NxGCr0S3CSzMmKtbd1gvMG1tvxbEGWIuj9baA0rW
-Ts6hNK6ScECeBzvbF9Hzys6xNkvYojp5FEbZzaJkIxpOPl2RD6QmrEU8b4qZzHdQ
-5TdMKD8rLAOGHYxKtHMUrzqV6996gq8O1QBssTkAIhGWa1rIJnefFvBZtQIbEIrp
-2uP+eqGG5thpzPpkQipgYq4oti9KdFznu6p05SWFbEUj/MxDEf09DMnAioGFsct5
-8yLfF0hTIDr4F/0RD36ZXNoj3KZewQCy9T4Zz6tGdVspqlv3dKuM9r2DDFslYDG/
-4jERWPUj+lfRA9Rp4/bo
-=JCVR
+iQIcBAEBCAAGBQJQtEUuAAoJEECxmPOUX5FEkqQQAJZVv6fyRMGLt3Eg7JmvRx8V
+3JjnmN5WvnHLRNJnQV1fK3Uyrk40H0qwqudvgu9D3B3zSof+s2JTlvVRJ0dxV2Z5
+IaspeK/KFHDJiGzwksv6jjaYrdZmh3k9L9AG7MUg0nb6WVGFKib9I9OKyIQy3P9N
+3fTILzxqaqunaJ21gCQabQWCp8MVW1+M4fh8P+JnNccnd8B4fvk+SgyHCRaq1Vjc
+RGmIrTL11J/xJ3NGxm6LPupCEJg9dj0W8SVAxwRzpvqUML5vSoEHCOeVqMjzfT5z
+54B3GAcYdPQFoE6umVOLdki+u+JA38t+NJauoBSxyhftH/1xHgVVO9rUru2j+s+x
+jxVK0M+a1+6439DUQzUycX8w+AKgFsX6jDGNWo7kPkNFVhaBfrNYtcUqZGng2jB0
+d2W2kGdqXDP4dgIiWzj2hBIlQuh6ktTqnfbnzi/AcAsCoI6sVgYlN3gfcfhSkSuQ
+1PfrTJ3LuLNr4qfkVjZqp8RGuvF+TtpD69DSXo9SUiykm23w05oOtJ6qEqhQq94J
+M33MBevN4sXDLviuffwVQUUYL0VQz8IE66n5YiANoGJx5xU8y8CfOdAmgW6duX4S
+jBAbq9Phg9TYDYaKWPN/ebK+WF8CrAXU+xPVBbkYbODDQni2SrVWG9mwKPJgF10o
+nqqVen+Bg8bgohesN20D
+=ETWA
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_Nov_2012_15_37_14_+1100_Wwcf=d/Ti0gAHWfF--
+--Signature=_Tue__27_Nov_2012_15_44_30_+1100_AZl1=Uga=YzzjNlE--
