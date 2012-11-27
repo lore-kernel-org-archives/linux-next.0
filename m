@@ -1,34 +1,59 @@
-From: Sasha Levin <sasha.levin@oracle.com>
-Subject: Re: [RFC PATCH] Fix abnormal rcu dynticks_nesting values related
- to async page fault
-Date: Tue, 27 Nov 2012 09:01:33 -0500
-Message-ID: <50B4C7BD.90807@oracle.com>
-References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com> <20121127130703.GW25516@redhat.com>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [RFC PATCH] Fix abnormal rcu dynticks_nesting values related to
+ async page fault
+Date: Tue, 27 Nov 2012 15:38:14 +0100
+Message-ID: <CAFTL4hzzumANj7hF5hJPZ5pKPhz4YWC-Ukb3yUKdy_DO+vb3wg@mail.gmail.com>
+References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:45818 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752561Ab2K0OCV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 09:02:21 -0500
-In-Reply-To: <20121127130703.GW25516@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Gleb Natapov <gleb@redhat.com>
-Cc: Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, avi@redhat.com, fweisbec@gmail.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Li Zhong <zhong@linux.vnet.ibm.com>
+Cc: linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, gleb@redhat.com, avi@redhat.com
+List-Id: linux-next.vger.kernel.org
 
-On 11/27/2012 08:07 AM, Gleb Natapov wrote:
-> Those rcu_irq_enter()/rcu_irq_exit() were introduced by commit
-> c5e015d4949aa665 "KVM guest: exit idleness when handling
-> KVM_PV_REASON_PAGE_NOT_PRESENT", but now I am starting to question this
-> commit. KVM_PV_REASON_PAGE_NOT_PRESENT should not kick cpu out of
-> idleness. kvm_async_pf_task_wait() checks that cpu is idle and calls
-> halt if it is. After that commit schedule() may be called between
-> rcu_irq_enter()/rcu_irq_exit() which is probably illegal. Paul?
+2012/11/27 Li Zhong <zhong@linux.vnet.ibm.com>:
+> I noticed some warnings complaining about dynticks_nesting value, like
+>
+> [  267.545032] ------------[ cut here ]------------
+> [  267.545032] WARNING: at kernel/rcutree.c:382 rcu_eqs_enter+0xab/0xc0()
+> [  267.545032] Hardware name: Bochs
+> [  267.545032] Modules linked in:
+> [  267.545032] Pid: 0, comm: swapper/2 Not tainted 3.7.0-rc5-next-20121115 #8
+> [  267.545032] Call Trace:
+> [  267.545032]  [<ffffffff8104714f>] warn_slowpath_common+0x7f/0xc0
+> [  267.545032]  [<ffffffff810471aa>] warn_slowpath_null+0x1a/0x20
+> [  267.545032]  [<ffffffff810e607b>] rcu_eqs_enter+0xab/0xc0
+> [  267.545032]  [<ffffffff810e60bb>] rcu_idle_enter+0x2b/0x70
+> [  267.545032]  [<ffffffff8100d44f>] cpu_idle+0x6f/0x100
+> [  267.545032]  [<ffffffff814bf055>] start_secondary+0x205/0x20c
+> [  267.545032] ---[ end trace 924ae80da035028d ]---
+>
+> After enabling rcu-dyntick tracing, I got following abnormal
+> dynticks_nesting values (13fffffffffffff, ff00000000000001,etc):
+>                         ...
+>  1      <idle>-0     [002] dN.2 18739.518567: rcu_dyntick: End 0 140000000000000                rcu_idle_exit
+>  2        sshd-696   [002] d..1 18739.518675: rcu_dyntick: ++= 140000000000000 140000000000001  rcu_irq_enter   - apf (not present)
 
-otoh, calling schedule() apparently kicks cpu out of idleness now.
+How did that happen? When I look at do_async_page_fault(),
+KVM_PV_REASON_PAGE_NOT_PRESENT doesn't do rcu_irq_enter().
 
+>
+>  3      <idle>-0     [002] d..2 18739.518705: rcu_dyntick: Start 140000000000001 0              rcu_idle_enter
+>  4      <idle>-0     [002] d..2 18739.521252: rcu_dyntick: End 0 1                              rcu_irq_enter   - apf (page ready)
+>  5      <idle>-0     [002] dN.2 18739.521261: rcu_dyntick: Start 1 0                            rcu_irq_exit    - apf (page ready)
+>  6      <idle>-0     [002] dN.2 18739.521263: rcu_dyntick: End 0 140000000000000                rcu_idle_exit
+>
+>  7        sshd-696   [002] d..1 18739.521299: rcu_dyntick: --= 140000000000000 13fffffffffffff  rcu_irq_exit    - apf (not present)
 
-Thanks,
-Sasha
+I'm confused for the same reason here.
+
+>  8        sshd-696   [002] d..1 18739.521302: rcu_dyntick: Start 13fffffffffffff 0              rcu_user_enter
+>  9        sshd-696   [002] d..1 18739.521330: rcu_dyntick: End 0 1                              rcu_irq_enter   - apf (not present)
+
+Same. Now we certainly need to add some rcu_user_exit() on
+do_async_page_fault(). Although I'm not quite sure when this function
+is called. Is it an exception or an irq?
+
+Thanks.
