@@ -1,73 +1,54 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+From: Frederic Weisbecker <fweisbec@gmail.com>
 Subject: Re: [RFC PATCH] Fix abnormal rcu dynticks_nesting values related to
  async page fault
-Date: Tue, 27 Nov 2012 08:16:39 -0800
-Message-ID: <20121127161639.GF2474@linux.vnet.ibm.com>
+Date: Tue, 27 Nov 2012 17:29:09 +0100
+Message-ID: <CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
 References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
- <CAFTL4hydk-FT_hqCbcSPFcNCKnqxtWGz0VjTu3nNnQYfbtTz6Q@mail.gmail.com>
-Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e34.co.us.ibm.com ([32.97.110.152]:42482 "EHLO
-	e34.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753645Ab2K0QTm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 11:19:42 -0500
-Received: from /spool/local
-	by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Tue, 27 Nov 2012 09:19:41 -0700
-Content-Disposition: inline
-In-Reply-To: <CAFTL4hydk-FT_hqCbcSPFcNCKnqxtWGz0VjTu3nNnQYfbtTz6Q@mail.gmail.com>
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:46239 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755591Ab2K0Q3K (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 11:29:10 -0500
+In-Reply-To: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, sasha.levin@oracle.com, gleb@redhat.com, avi@redhat.com
+To: Li Zhong <zhong@linux.vnet.ibm.com>
+Cc: linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, gleb@redhat.com, avi@redhat.com
 
-On Tue, Nov 27, 2012 at 04:39:59PM +0100, Frederic Weisbecker wrote:
-> 2012/11/27 Li Zhong <zhong@linux.vnet.ibm.com>:
-> > I noticed some warnings complaining about dynticks_nesting value, like
-> >
-> > [  267.545032] ------------[ cut here ]------------
-> > [  267.545032] WARNING: at kernel/rcutree.c:382 rcu_eqs_enter+0xab/0xc0()
-> > [  267.545032] Hardware name: Bochs
-> > [  267.545032] Modules linked in:
-> > [  267.545032] Pid: 0, comm: swapper/2 Not tainted 3.7.0-rc5-next-20121115 #8
-> > [  267.545032] Call Trace:
-> > [  267.545032]  [<ffffffff8104714f>] warn_slowpath_common+0x7f/0xc0
-> > [  267.545032]  [<ffffffff810471aa>] warn_slowpath_null+0x1a/0x20
-> > [  267.545032]  [<ffffffff810e607b>] rcu_eqs_enter+0xab/0xc0
-> > [  267.545032]  [<ffffffff810e60bb>] rcu_idle_enter+0x2b/0x70
-> > [  267.545032]  [<ffffffff8100d44f>] cpu_idle+0x6f/0x100
-> > [  267.545032]  [<ffffffff814bf055>] start_secondary+0x205/0x20c
-> > [  267.545032] ---[ end trace 924ae80da035028d ]---
-> >
-> > After enabling rcu-dyntick tracing, I got following abnormal
-> > dynticks_nesting values (13fffffffffffff, ff00000000000001,etc):
-> >                         ...
-> >  1      <idle>-0     [002] dN.2 18739.518567: rcu_dyntick: End 0 140000000000000                rcu_idle_exit
-> >  2        sshd-696   [002] d..1 18739.518675: rcu_dyntick: ++= 140000000000000 140000000000001  rcu_irq_enter   - apf (not present)
-> >
-> >  3      <idle>-0     [002] d..2 18739.518705: rcu_dyntick: Start 140000000000001 0              rcu_idle_enter
-> >  4      <idle>-0     [002] d..2 18739.521252: rcu_dyntick: End 0 1                              rcu_irq_enter   - apf (page ready)
-> >  5      <idle>-0     [002] dN.2 18739.521261: rcu_dyntick: Start 1 0                            rcu_irq_exit    - apf (page ready)
-> >  6      <idle>-0     [002] dN.2 18739.521263: rcu_dyntick: End 0 140000000000000                rcu_idle_exit
-> >
-> >  7        sshd-696   [002] d..1 18739.521299: rcu_dyntick: --= 140000000000000 13fffffffffffff  rcu_irq_exit    - apf (not present)
-> 
-> Calling rcu_irq_exit() without a matching rcu_irq_enter() after the
-> last rcu_idle_exit() is illegal, isn't it?
+2012/11/27 Li Zhong <zhong@linux.vnet.ibm.com>:
+> @@ -247,10 +247,17 @@ do_async_page_fault(struct pt_regs *regs, unsigned long error_code)
+>                 break;
+>         case KVM_PV_REASON_PAGE_NOT_PRESENT:
+>                 /* page is swapped out by the host. */
+> -               rcu_irq_enter();
+> +               if (is_idle_task(current) && rcu_is_cpu_idle())
 
-It is OK to call rcu_irq_exit() without a matching rcu_irq_enter() -only-
-if you have also called rcu_idle_exit() since the last rcu_idle_enter().
-There will be a similar rule for rcu_user_exit().
+If the task is idle we can't schedule so I guess we don't need to call
+rcu_idle_exit()
 
-More generally, it is OK to call rcu_irq_exit() without a matching
-rcu_irq_enter() only if RCU believes that the CPU you are running on is
-non-idle.  On 32-bit systems, you are only allowed a few tens of million
-such unmatched rcu_irq_enter() calls in a given RCU-non-idle region.
+> +                       rcu_idle_exit();
+> +               else
+> +                       rcu_user_exit();
 
-All courtesy of RCU's need to tolerate architectures that enter
-interrupt handlers without ever leaving them and vice versa.  ;-)
+rcu_user_exit() must be called in any case yeah.
 
-							Thanx, Paul
+> +
+>                 exit_idle();
+>                 kvm_async_pf_task_wait((u32)read_cr2());
+> -               rcu_irq_exit();
+> +
+> +               if (is_idle_task(current) && rcu_is_cpu_idle())
+> +                       rcu_idle_enter();
+> +
+
+I think that only adding rcu_user_exit() in the beginning and let the
+rest as is (rcu_irq_enter() / rcu_irq_exit()) is enough. If we are
+idle we won't schedule out. If we are not idle then we exit rcu user
+mode if necessary and we can call rcu_irq_enter() in any case. If we
+schedule we can safely cal rcu_irq_exit() even if somebody called
+rcu_idle_enter() / rcu_idle_exit() since our matching rcu_irq_enter()
+called before we scheduled. This works because we are not in RCU idle
+mode and Paul says this is legal to have irq exit without matching irq
+entry (his famous "vice-versa" on his previous email ;-)
