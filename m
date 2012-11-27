@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the  tree
-Date: Tue, 27 Nov 2012 15:48:01 +1100
-Message-ID: <20121127154801.42dea58ad974f4792bc85edf@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the battery tree
+Date: Tue, 27 Nov 2012 15:52:23 +1100
+Message-ID: <20121127155223.849e73a08fc1b382d4622ff8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Nov_2012_15_48_01_+1100_NAd9ea6z1hfrJ2Bj"
+ boundary="Signature=_Tue__27_Nov_2012_15_52_23_+1100_NuwDuMEB4FVtFsP5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59851 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53164 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756765Ab2K0EsE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 23:48:04 -0500
+	with ESMTP id S1756939Ab2K0Ew3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Nov 2012 23:52:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Vinod Koul <vinod.koul@intel.com>, Shiraz Hashim <shiraz.hashim@st.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jamie Lentin <jm@lentin.co.uk>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, "Rajanikanth H.V" <rajanikanth.hv@stericsson.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
 
---Signature=_Tue__27_Nov_2012_15_48_01_+1100_NAd9ea6z1hfrJ2Bj
+--Signature=_Tue__27_Nov_2012_15_52_23_+1100_NuwDuMEB4FVtFsP5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,10 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-spear13xx/spear13xx.c between commit b47394911c26 ("ARM:
-SPEAr13xx: Pass DW DMAC platform data from DT") from the slave-dma tree
-and commit 3e270ba6e915 ("ARM: SPEAr13xx: Remove fields not required for
-ssp controller") from the arm-soc tree.
+drivers/power/Kconfig between commit bd9e8ab2d58d ("ab8500: Add
+devicetree support for btemp") from the battery tree and commit
+96ff0f5c7efd ("power: Add simple poweroff-gpio driver") from the arm-soc
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,95 +36,46 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-spear13xx/spear13xx.c
-index 0e166fa,c4af775..0000000
---- a/arch/arm/mach-spear13xx/spear13xx.c
-+++ b/arch/arm/mach-spear13xx/spear13xx.c
-@@@ -25,14 -25,60 +25,12 @@@
-  #include <mach/generic.h>
-  #include <mach/spear.h>
+diff --cc drivers/power/Kconfig
+index 263499f,b1d956d..0000000
+--- a/drivers/power/Kconfig
++++ b/drivers/power/Kconfig
+@@@ -346,6 -329,15 +346,8 @@@ config AB8500_B
+  	help
+  	  Say Y to include support for AB8500 battery management.
  =20
- -/* common dw_dma filter routine to be used by peripherals */
- -bool dw_dma_filter(struct dma_chan *chan, void *slave)
- -{
- -	struct dw_dma_slave *dws =3D (struct dw_dma_slave *)slave;
+ -config AB8500_BATTERY_THERM_ON_BATCTRL
+ -	bool "Thermistor connected on BATCTRL ADC"
+ -	depends on AB8500_BM
+ -	help
+ -	  Say Y to enable battery temperature measurements using
+ -	  thermistor connected on BATCTRL ADC.
  -
- -	if (chan->device->dev =3D=3D dws->dma_dev) {
- -		chan->private =3D slave;
- -		return true;
- -	} else {
- -		return false;
- -	}
- -}
- -
-  /* ssp device registration */
- -static struct dw_dma_slave ssp_dma_param[] =3D {
- -	{
- -		/* Tx */
- -		.cfg_hi =3D DWC_CFGH_DST_PER(DMA_REQ_SSP0_TX),
- -		.cfg_lo =3D 0,
- -		.src_master =3D DMA_MASTER_MEMORY,
- -		.dst_master =3D DMA_MASTER_SSP0,
- -	}, {
- -		/* Rx */
- -		.cfg_hi =3D DWC_CFGH_SRC_PER(DMA_REQ_SSP0_RX),
- -		.cfg_lo =3D 0,
- -		.src_master =3D DMA_MASTER_SSP0,
- -		.dst_master =3D DMA_MASTER_MEMORY,
- -	}
- -};
- -
-  struct pl022_ssp_controller pl022_plat_data =3D {
-- 	.bus_id =3D 0,
-  	.enable_dma =3D 1,
- -	.dma_filter =3D dw_dma_filter,
- -	.dma_rx_param =3D &ssp_dma_param[1],
- -	.dma_tx_param =3D &ssp_dma_param[0],
- -};
- -
- -/* CF device registration */
- -struct dw_dma_slave cf_dma_priv =3D {
- -	.cfg_hi =3D 0,
- -	.cfg_lo =3D 0,
- -	.src_master =3D 0,
- -	.dst_master =3D 0,
- -};
- -
- -/* dmac device registeration */
- -struct dw_dma_platform_data dmac_plat_data =3D {
- -	.nr_channels =3D 8,
- -	.chan_allocation_order =3D CHAN_ALLOCATION_DESCENDING,
- -	.chan_priority =3D CHAN_PRIORITY_DESCENDING,
- -	.block_size =3D 4095U,
- -	.nr_masters =3D 2,
- -	.data_width =3D { 3, 3, 0, 0 },
- +	.dma_filter =3D dw_dma_generic_filter,
- +	.dma_rx_param =3D "ssp0_rx",
- +	.dma_tx_param =3D "ssp0_tx",
-- 	.num_chipselect =3D 3,
-  };
++ source "drivers/power/reset/Kconfig"
++=20
+  endif # POWER_SUPPLY
  =20
-  void __init spear13xx_l2x0_init(void)
+  source "drivers/power/avs/Kconfig"
 
---Signature=_Tue__27_Nov_2012_15_48_01_+1100_NAd9ea6z1hfrJ2Bj
+--Signature=_Tue__27_Nov_2012_15_52_23_+1100_NuwDuMEB4FVtFsP5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQtEYBAAoJEECxmPOUX5FEAdgQAIR21lIDzIwN4QV0daKinDs/
-zf+JjEYyMuJSiFjr8BFB2ymUsUiyeaFlAato4t3rZs6ZbbTLLZ0r+nEQfZa7EpIT
-Z5664/bJtPtlC1vMfkPCv67ogks2VhX2L7BJO/MRqROladSjevbxxtm/MzbZE8Pc
-aah5PjbDuAXdOX6D5F951cIa22eafFTMq1WIgOqYBRQm3GrkVv2lkZsfBnmJs0Vd
-DUZd+7c9l9VbjJK8xZgqeZ9ie404soFCQ2o3M0WRcFwwn+Iy20Cuu4y90W1RThDj
-9+SOWaht1LuAcuGSKpnqyCOSe8FSU43D0mkRL8xYmpoV0985wznJXAvo7evou5LH
-EXCjUXAuSRVeYGJxQEjzGrjZbr/0gW2Qbc6m2ILaoLvUbONA8Dbk8yZgF6+uuHTZ
-oqDwErtkfWcGWYbsMCDfErg0nTwwc7xfdxfyGfxTazr7OUQGXKW81fOBWvz+40J1
-jLld/oSZWJrypF268l2QIhRFl0upDDu53ZtxBKUc/OdANUVAOHDJGyhleu8ergNH
-UJHD7FzDZjQYGqiE1Ca+0dQ9mLnEB5MJXjGnUHmDhAvCvn4dqeSxePJotU0ht1Rl
-Il8OMhOlZdUWDX6BLvAOU8LrBdl4doT+P8HNzf+uOAJjKMR+xBEpj7yaEe13fn9t
-9HsTvTUlVdItHN7qM/T7
-=72s2
+iQIcBAEBCAAGBQJQtEcHAAoJEECxmPOUX5FEz8AP/jzx0PP6atB5NH9A8jTw74no
+tCy22x74z4jfmdhVp0f1tVUmIvdA8WDD/SdnNP9IwhsutkxNUJCQIAG8PyN40Xal
+yDH1No28KOeZ+ThMHJBVvMFYx/bGXzq14XdllbRGGvch+pWSK1zOcidtKt1sChJp
+zPL3bAd+n80QvB1ZCwV/5f4zN04lzSsaGkFHwp4God6MBLKzfE3KLyeV5UFdgGph
+VTiCOF82vDyPG3OzmdaN7QcLtOgpf6mA8E3zv6QCy4ZhFFKC/CVNxIi5Bs5gjBvp
+Vrl0Pcec0uonAD7dZloxnJVoU7ttabmHZTI7fT1r6LksMOYE8UmoMRbQQkuH4PwB
+whszZN80Ueu574mDr5YBwLzNfDcg0vmsWmFSgMnfYovI/9QkLWouEFVKbiYUPeY2
+TBRXsXZmnyRKZVmEsnKvlCXYxqZ6MX4GIgcoJ4tK9+YDudejebgsK6RkK527YNR/
+9K/J4Bw4Av5hnUMujbm1nrTFNxvKp2eL/55KozsLOI9Uqb3Ipbnpcn83jzixb46l
+q49GdKUe2yFatxjdJwjnF7YGa9KvdeWSoEZX5A099j1W+Cqc3l58XkKtkPzYZbvw
++BLu/Pug0knMu1KPqzAhhgJUsGb6TmRnFrjAt7E3Ne5eAJCrtxTNK+hyTIjbzGmR
+pkV+nbANjYocdrIg2iDD
+=SIrV
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_Nov_2012_15_48_01_+1100_NAd9ea6z1hfrJ2Bj--
+--Signature=_Tue__27_Nov_2012_15_52_23_+1100_NuwDuMEB4FVtFsP5--
