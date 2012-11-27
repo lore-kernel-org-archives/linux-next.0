@@ -1,44 +1,47 @@
-From: Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: xtensa: switch to generic clone()
-Date: Tue, 27 Nov 2012 08:48:24 +0300
-Message-ID: <CAMo8BfLK4syxXEjwWXixdxMaPrVgec1u7pTHqTvWO4zfpYLEsw@mail.gmail.com>
+From: Li Zhong <zhong@linux.vnet.ibm.com>
+Subject: [PATCH rcu] use new nesting value for rcu_dyntick trace in
+ rcu_eqs_enter_common
+Date: Tue, 27 Nov 2012 13:58:27 +0800
+Message-ID: <1353995907.14050.60.camel@ThinkPad-T5421.cn.ibm.com>
+References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:50372 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755608Ab2K0Fs0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 00:48:26 -0500
-Received: by mail-qa0-f46.google.com with SMTP id c11so3495419qad.19
-        for <linux-next@vger.kernel.org>; Mon, 26 Nov 2012 21:48:24 -0800 (PST)
+Received: from e23smtp02.au.ibm.com ([202.81.31.144]:57911 "EHLO
+	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753497Ab2K0F6g (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 00:58:36 -0500
+Received: from /spool/local
+	by e23smtp02.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <zhong@linux.vnet.ibm.com>;
+	Tue, 27 Nov 2012 15:54:52 +1000
+In-Reply-To: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-next@vger.kernel.org, Chris Zankel <chris@zankel.net>
+To: linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, dipankar@in.ibm.com
 
-Hi Al,
+This patch uses the real new value of dynticks_nesting instead of 0 in
+rcu_eqs_enter_common(). 
 
-looks like the following hunk is missing in the commit
-  a4bcde6 xtensa: switch to generic clone()
-found in the linux-next tree next-20121126, which breaks xtensa builds.
-
+Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
 ---
-diff --git a/arch/xtensa/include/asm/syscall.h
-b/arch/xtensa/include/asm/syscall.h
-index b00c928..cd53ec2 100644
---- a/arch/xtensa/include/asm/syscall.h
-+++ b/arch/xtensa/include/asm/syscall.h
-@@ -8,6 +8,8 @@
-  * Copyright (C) 2001 - 2007 Tensilica Inc.
-  */
+ kernel/rcutree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-+#include <asm-generic/syscalls.h>
-+
- struct pt_regs;
- struct sigaction;
- asmlinkage long xtensa_ptrace(long, long, long, long);
-
-
+diff --git a/kernel/rcutree.c b/kernel/rcutree.c
+index 7733eb5..6b7e314 100644
+--- a/kernel/rcutree.c
++++ b/kernel/rcutree.c
+@@ -339,7 +339,7 @@ static struct rcu_node *rcu_get_root(struct rcu_state *rsp)
+ static void rcu_eqs_enter_common(struct rcu_dynticks *rdtp, long long oldval,
+ 				bool user)
+ {
+-	trace_rcu_dyntick("Start", oldval, 0);
++	trace_rcu_dyntick("Start", oldval, rdtp->dynticks_nesting);
+ 	if (!user && !is_idle_task(current)) {
+ 		struct task_struct *idle = idle_task(smp_processor_id());
+ 
 -- 
-Thanks.
--- Max
+1.7.11.4
