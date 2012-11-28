@@ -1,55 +1,45 @@
-From: Li Zhong <zhong@linux.vnet.ibm.com>
-Subject: [PATCH linux-next]cgroup: move list add after list head
- initilization
-Date: Wed, 28 Nov 2012 17:15:21 +0800
-Message-ID: <1354094121.3054.28.camel@ThinkPad-T5421.cn.ibm.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Wed, 28 Nov 2012 10:32:15 +0100
+Message-ID: <2225929.p7BcZduhEL@vostro.rjw.lan>
+References: <20121128150218.5d30531231f7b24e3b398643@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp01.in.ibm.com ([122.248.162.1]:37946 "EHLO
-	e28smtp01.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752845Ab2K1JPf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Nov 2012 04:15:35 -0500
-Received: from /spool/local
-	by e28smtp01.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <zhong@linux.vnet.ibm.com>;
-	Wed, 28 Nov 2012 14:45:31 +0530
-Received: from d28av05.in.ibm.com (d28av05.in.ibm.com [9.184.220.67])
-	by d28relay02.in.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id qAS9FT1729556880
-	for <linux-next@vger.kernel.org>; Wed, 28 Nov 2012 14:45:29 +0530
-Received: from d28av05.in.ibm.com (loopback [127.0.0.1])
-	by d28av05.in.ibm.com (8.14.4/8.13.1/NCO v10.0 AVout) with ESMTP id qASEj8ds016426
-	for <linux-next@vger.kernel.org>; Thu, 29 Nov 2012 01:45:09 +1100
+Received: from hydra.sisk.pl ([212.160.235.94]:35018 "EHLO hydra.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752569Ab2K1J1b (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Nov 2012 04:27:31 -0500
+In-Reply-To: <20121128150218.5d30531231f7b24e3b398643@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next list <linux-next@vger.kernel.org>
-Cc: tj@kernel.org, lizefan@huawei.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rajagopal Venkat <rajagopal.venkat@linaro.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
 
-commit 2243076ad128d0cc196cf6597e6ddcf6bc907676 initialize
-cgrp->allcg_node in init_cgroup_housekeeping(). Then in
-init_cgroup_root(), we should call init_cgroup_housekeeping() before
-adding it to &root->allcg_list. Otherwise, we are initializing an entry
-already in a list. 
+On Wednesday, November 28, 2012 03:02:18 PM Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> ERROR: "devfreq_monitor_resume" [drivers/devfreq/governor_simpleondemand.ko] undefined!
+> ERROR: "devfreq_monitor_suspend" [drivers/devfreq/governor_simpleondemand.ko] undefined!
+> ERROR: "devfreq_interval_update" [drivers/devfreq/governor_simpleondemand.ko] undefined!
+> ERROR: "devfreq_monitor_stop" [drivers/devfreq/governor_simpleondemand.ko] undefined!
+> ERROR: "devfreq_monitor_start" [drivers/devfreq/governor_simpleondemand.ko] undefined!
+> 
+> Caused by commit 206c30cfeb7c ("PM / devfreq: Add suspend and resume apis").
+> 
+> I have used the pm tree from next-20121127 for today.
 
-Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
----
- kernel/cgroup.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry about this, I dropped the devfreq tree from my linux-next branch for now,
+but that was after you had pulled from it.
 
-diff --git a/kernel/cgroup.c b/kernel/cgroup.c
-index 01d5342..35133cf 100644
---- a/kernel/cgroup.c
-+++ b/kernel/cgroup.c
-@@ -1400,8 +1400,8 @@ static void init_cgroup_root(struct cgroupfs_root *root)
- 	root->number_of_cgroups = 1;
- 	cgrp->root = root;
- 	cgrp->top_cgroup = cgrp;
--	list_add_tail(&cgrp->allcg_node, &root->allcg_list);
- 	init_cgroup_housekeeping(cgrp);
-+	list_add_tail(&cgrp->allcg_node, &root->allcg_list);
- }
- 
- static bool init_root_id(struct cgroupfs_root *root)
+Thanks,
+Rafael
+
+
 -- 
-1.7.9.5
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
