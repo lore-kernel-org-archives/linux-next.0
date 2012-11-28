@@ -1,62 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the powerpc tree
-Date: Wed, 28 Nov 2012 14:03:08 +1100
-Message-ID: <20121128140308.abb21ec8f61553a2ed077fe3@canb.auug.org.au>
+Subject: linux-next: manual merge of the mfd tree with Linus' tree
+Date: Wed, 28 Nov 2012 14:20:32 +1100
+Message-ID: <20121128142032.2c9eebbceb93a3c2bf2d391f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Nov_2012_14_03_08_+1100_1GgkkmxpSg5YS496"
+ boundary="Signature=_Wed__28_Nov_2012_14_20_32_+1100_0sp1rbC6KJbb72M2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60171 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35159 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751645Ab2K1DDS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 22:03:18 -0500
+	with ESMTP id S1751468Ab2K1DUk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 22:20:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>
 
---Signature=_Wed__28_Nov_2012_14_03_08_+1100_1GgkkmxpSg5YS496
+--Signature=_Wed__28_Nov_2012_14_20_32_+1100_0sp1rbC6KJbb72M2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Samuel,
 
-After merging the powerpc tree, next-20121115's build (powerpc
-allmodconfig) failed like this:
+Today's linux-next merge of the mfd tree got a conflict in
+drivers/mfd/twl-core.c between commit 78a3c5ab1749 ("mfd: twl-core: Fix
+chip ID for the twl6030-pwm module") from Linus' tree and commit
+afc45898f62c ("mfd: twl-core: Support for proper PWM drivers") from the
+mfd tree.
 
-ERROR: ".of_reconfig_notifier_register" [drivers/crypto/nx/nx-compress.ko] =
-undefined!
-ERROR: ".of_reconfig_notifier_unregister" [drivers/crypto/nx/nx-compress.ko=
-] undefined!
-
-Caused by commit 1cf3d8b3d24c ("powerpc+of: Add of node/property
-notification chain for adds and removes").
+I fixed it up (using the version from the mfd tree) and can carry the fix
+as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__28_Nov_2012_14_03_08_+1100_1GgkkmxpSg5YS496
+--Signature=_Wed__28_Nov_2012_14_20_32_+1100_0sp1rbC6KJbb72M2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQtX7sAAoJEECxmPOUX5FEAY8P/R5anO5oaEyz/wut2Cv7W13Y
-IeKiNHSQiTMOg67qDL2OVxHh2PVCIhAFJ+T/Jo3RYuL99EYzW+qzYbZWjaIlzLE9
-Zm51BM5SiY4aiDsUiZSqUcNnKkD+2IQy4idnri635FVGnHfy0GjhMifYhPzmgiuP
-ncyUowEfsHs7IV38ObwUgBloEBImgzRg/kI0uffDBJ2cdHSEeIn4n1YVsaI1R1zK
-cO2Huz/Uo3hBCWjQamsCaWXt6C9J7nqP8Qgicu21xyMvebKh5vRwroffPY6Q2XOL
-Nz1U4bVak4/ARyZT2c3k6NkzqvtEDg8ccQF8l2zYDWk9strrH2Vpjvp94XOnzwY9
-SrbSQORTsi6h8lN+ARNP9lIZTvtvcT7MQpUjHJNnrxU4J1nrbZFHVEY9Zc6LY6Vo
-W7ZT4cBgnNt6SMhigk8ttjTopyFZd2bJoKQXrDYYHEbiD3Rmcj3zTQ0FpTRlJkp5
-yJw9sIr/Fc2BSWdoVGvz35Z6+4JwpjmPc8KPpz/HggiTAbDcIV4VOB4bVKNpkKu0
-POz/pc+8Wjb5uMVF4fBj6uq6s7//Mpp9GB+la8nKic3YW6Dyrca6KcPHHUu05Z72
-qvpK+LuGZNe+J6P99ckAhCsaIU8g9HPAkHdnpByCP39zUuMqL2jsHGTl91NMcsI/
-F78xkJoHXIPnixM9AkpN
-=zloH
+iQIcBAEBCAAGBQJQtYMAAAoJEECxmPOUX5FEfP8P/juodLjPRMEmmIi+kRAFq8Yi
+wZFxuix445L43nyIJLlqnQL9d0xF4CO0zR4mccSJyD1AdEqpyGYijYR99RB8jpAR
+zj+Hzq3YHG+pvFraJfFaogUHzlx7C0lwTRiJQQfTlmE2GrKRhymRBhK/6VK2tTby
+8LGAlNooTU6BRD+Fx0P8M701bBJPCpq3IawT0ipfdn+2FhQvzNcmDXniJOGZcPSa
+UOxTQ8bn7ZwY/lAVUi3TL3TlucUX9q4RcvSCS9ubE1L3ME77ygkRMdRSXLrl7YtW
+u1CaGdUqlPvg5lp9kzzf4hWCIBK+uv2+Me2gx6oWHn8+CWN7xIo2lrkNAB4t17wA
+69Bm4s5rzaV2XQ5CPvf8BxIU879wK3Jdds9iPlqj2mAbQfR+E3tsbHB0AYF2uNMY
+TRi1timLecNm4ohgA4GqrGN5bNXShx0Ox9GHxmUgtm5Mfpj2D7oUyOPrWrn7cJ07
+RD6sxZ8y+E1iofWcEa6mwPBBZIe0C750orRemILMrfh6pr1MMdVvw7DK6KCznz1+
+FuJMl2ld5mQSsGdWU4bWDVjqQRZCZI+wBiT/6a+dgInWGBTqMKIMdk5dBjXNau5Y
+wQEgt+dduIiZOS/h/mDB2WKRUIZOAKZzG5nK+28ZFOLQWaSv/Y4RmLidvO9IWo1u
+zkU9PD1dWIlh5Vg/OmhF
+=6xM8
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Nov_2012_14_03_08_+1100_1GgkkmxpSg5YS496--
+--Signature=_Wed__28_Nov_2012_14_20_32_+1100_0sp1rbC6KJbb72M2--
