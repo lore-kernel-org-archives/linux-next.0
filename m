@@ -1,45 +1,47 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Wed, 28 Nov 2012 10:32:15 +0100
-Message-ID: <2225929.p7BcZduhEL@vostro.rjw.lan>
-References: <20121128150218.5d30531231f7b24e3b398643@canb.auug.org.au>
+From: Stanislaw Gruszka <sgruszka@redhat.com>
+Subject: Re: linux-next: build failure after merge of the modules tree
+Date: Wed, 28 Nov 2012 12:02:00 +0100
+Message-ID: <20121128110145.GA3701@redhat.com>
+References: <20121126151046.1b5b09762b8361b1f202c6e2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hydra.sisk.pl ([212.160.235.94]:35018 "EHLO hydra.sisk.pl"
+Received: from mx1.redhat.com ([209.132.183.28]:40832 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752569Ab2K1J1b (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Nov 2012 04:27:31 -0500
-In-Reply-To: <20121128150218.5d30531231f7b24e3b398643@canb.auug.org.au>
+	id S1753591Ab2K1LCT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Nov 2012 06:02:19 -0500
+Content-Disposition: inline
+In-Reply-To: <20121126151046.1b5b09762b8361b1f202c6e2@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rajagopal Venkat <rajagopal.venkat@linaro.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, "John W. Linville" <linville@tuxdriver.com>
 
-On Wednesday, November 28, 2012 03:02:18 PM Stephen Rothwell wrote:
-> Hi Rafael,
+On Mon, Nov 26, 2012 at 03:10:46PM +1100, Stephen Rothwell wrote:
+> After merging the modules tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+> drivers/net/wireless/iwlwifi/iwl-drv.c:1196:1: error: invalid suffix "n_disabletype__8" on integer constant
+> drivers/net/wireless/iwlwifi/iwl-drv.c:1196:1: error: expected identifier or '(' before numeric constant
+> drivers/net/wireless/iwlwifi/iwl-drv.c:1198:1: error: invalid suffix "n_disable__9" on integer constant
+> drivers/net/wireless/iwlwifi/iwl-drv.c:1198:1: error: expected identifier or '(' before numeric constant
+> drivers/net/wireless/iwlwifi/iwl-drv.c:1263:1: error: invalid suffix "ghz_disabletype__32" on integer constant
+> drivers/net/wireless/iwlwifi/iwl-drv.c:1263:1: error: expected identifier or '(' before numeric constant
+> drivers/net/wireless/iwlwifi/iwl-drv.c:1264:1: error: invalid suffix "ghz_disable__33" on integer constant
+> drivers/net/wireless/iwlwifi/iwl-drv.c:1264:1: error: expected identifier or '(' before numeric constant
+> drivers/net/wireless/iwlegacy/4965-mac.c:6825:1: error: invalid suffix "n_disabletype__11" on integer constant
+> drivers/net/wireless/iwlegacy/4965-mac.c:6825:1: error: expected identifier or '(' before numeric constant
+> drivers/net/wireless/iwlegacy/4965-mac.c:6826:1: error: invalid suffix "n_disable__12" on integer constant
+> drivers/net/wireless/iwlegacy/4965-mac.c:6826:1: error: expected identifier or '(' before numeric constant
 > 
-> ERROR: "devfreq_monitor_resume" [drivers/devfreq/governor_simpleondemand.ko] undefined!
-> ERROR: "devfreq_monitor_suspend" [drivers/devfreq/governor_simpleondemand.ko] undefined!
-> ERROR: "devfreq_interval_update" [drivers/devfreq/governor_simpleondemand.ko] undefined!
-> ERROR: "devfreq_monitor_stop" [drivers/devfreq/governor_simpleondemand.ko] undefined!
-> ERROR: "devfreq_monitor_start" [drivers/devfreq/governor_simpleondemand.ko] undefined!
-> 
-> Caused by commit 206c30cfeb7c ("PM / devfreq: Add suspend and resume apis").
-> 
-> I have used the pm tree from next-20121127 for today.
+> Presumably caused by commit 58876af0436e ("moduleparam: use __UNIQUE_ID
+> ()").  This commit removed the "__mod_" prefix that used to be added to
+> the front of the "name" passed to module_param_named().  Admittedly, the
+> documentation says that "name" must be "a valid C identifier which is the
+> parameter name", but the (ab)usage here used to work (the name starts
+> with a number).
 
-Sorry about this, I dropped the devfreq tree from my linux-next branch for now,
-but that was after you had pulled from it.
+I prefer not to change module parameters name, since there are users
+who use current name in they modprobe config.
 
-Thanks,
-Rafael
-
-
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Stanislaw
