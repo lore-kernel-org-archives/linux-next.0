@@ -1,34 +1,61 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: build failure after merge of the powerpc tree
-Date: Wed, 28 Nov 2012 15:28:36 +1100
-Message-ID: <1354076916.2179.99.camel@pasglop>
-References: <20121128140308.abb21ec8f61553a2ed077fe3@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the tty tree
+Date: Wed, 28 Nov 2012 16:14:30 +1100
+Message-ID: <20121128161430.e6719a4c3f55f12074b6cfc4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121128140308.abb21ec8f61553a2ed077fe3@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Ashley Lai <adlai@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__28_Nov_2012_16_14_30_+1100_.W.wuFjhYPCg=p/u"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59285 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750699Ab2K1FOm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Nov 2012 00:14:42 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>, Kumar Amit Mehta <gmate.amit@gmail.com>
 
-On Wed, 2012-11-28 at 14:03 +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the powerpc tree, next-20121115's build (powerpc
-> allmodconfig) failed like this:
-> 
-> ERROR: ".of_reconfig_notifier_register" [drivers/crypto/nx/nx-compress.ko] undefined!
-> ERROR: ".of_reconfig_notifier_unregister" [drivers/crypto/nx/nx-compress.ko] undefined!
-> 
-> Caused by commit 1cf3d8b3d24c ("powerpc+of: Add of node/property
-> notification chain for adds and removes").
+--Signature=_Wed__28_Nov_2012_16_14_30_+1100_.W.wuFjhYPCg=p/u
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That nx stuff should just have gone through the powerpc tree... that's
-not the first time it trips on generic changes because we miss it
-being in the crypto tree...
+Hi Greg,
 
-Ashley, Nathan, who owns that ? Can you come up with a fixup patch ?
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/dgrp/dgrp_tty.c between commit 3ba89e96610b ("staging:
+dgrp: dgrp_tty.c: Remove the TIOCSSOFTCAR ioctl handler from dgrp
+driver") from the tty tree and commit 8fdefcb0ab74 ("staging: dgrp:
+remove TIOCGSOFTCAR and TIOCSSOFTCAR handling") from the staging tree.
 
-Ben.
+I fixed it up (using the staging tree version - since it is a superset of
+the tty tree version) and can carry the fix as necessary (no action is
+required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__28_Nov_2012_16_14_30_+1100_.W.wuFjhYPCg=p/u
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQtZ22AAoJEECxmPOUX5FEvckP/1QEtrGb0N3w7e2kCFkeO3nP
+IsG9AZtkysNglrW+oL8G0NX+brvMbtXvBQqhEyHGI4eiB5pwAc6vY5yyRgyt/DpZ
+/gnUXJl9a+AZgu/nVpjbWXCpExkLvTJ+dFWDPeDf/KZfFuy2ZwdNwyxPMOTI+g/G
+ZYGj2xthMQ/bPHfS++qv89SpyeKURb9IHwfS7F4kstLU58YiIhMNuHXyYTNIR1mC
+73+iFups3GIL6RSwt2KS2JHV7cMiFmyOMX12KPxj3kSXiFwBBik5o3QCricpNWwB
+FNB4kVhu7TSJqWV6yY4K23khRnYNABrVArFwHW/nPU++E8QaZaEZb1qgnmHCh3i+
+yahw3o2MdpuaymhWIkIA2fK5trZjoFWqhowbugZEwECXy8cp2GdL4VVMbrEdArg/
+b7WI7z+Xg7uHmcXgvRyE4e5OAnkVNl+k0akjJPRgPtankGsg4ixwn/Z8xeKqcBks
+YIB2JFXmZkKkqwhR9iqRpZz0l2E7ne5AZCNKhkg6EnZL3XN18lIeEnKobtLP9XGd
+kWcAOEcei6n6JlqK+DaLuenxJCyqmc5FgmFC498W9Z/boIgBI5srToV8NGHv/Ms0
+c+SVJjq6avdsnHNY3oXhPY8NM+/Abd/RbDhqKJeMv5tnTL2k9xcTmJEfbcp3jSUQ
+sciLAj8pMTx/DuCRghOn
+=Wnjt
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__28_Nov_2012_16_14_30_+1100_.W.wuFjhYPCg=p/u--
