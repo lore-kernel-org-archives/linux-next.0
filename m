@@ -1,46 +1,114 @@
-From: Nathan Fontenot <nfont@linux.vnet.ibm.com>
-Subject: [PATCH] export of_reconfig_notifier_[register,unregister]
-Date: Wed, 28 Nov 2012 13:42:26 -0600
-Message-ID: <50B66922.9090209@linux.vnet.ibm.com>
-References: <20121128140308.abb21ec8f61553a2ed077fe3@canb.auug.org.au>
+From: Peter Hurley <peter@hurleysoftware.com>
+Subject: Re: [BUG -next-20121127] kernel BUG at kernel/softirq.c:471!
+Date: Wed, 28 Nov 2012 17:12:35 -0500
+Message-ID: <1354140755.3588.27.camel@thor>
+References: <1351824534-2861-1-git-send-email-xtfeng@gmail.com>
+	 <20121105145207.6d2fae92.akpm@linux-foundation.org>
+	 <CAJn8CcF=2=XBV0T661LnAxHi8+fT8KAVapCFaiDZgS6TyieNOA@mail.gmail.com>
+	 <20121105173707.94602896.akpm@linux-foundation.org>
+	 <1354125623.2788.23.camel@thor>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e5.ny.us.ibm.com ([32.97.182.145]:43245 "EHLO e5.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755536Ab2K1Tmf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Nov 2012 14:42:35 -0500
-Received: from /spool/local
-	by e5.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <nfont@linux.vnet.ibm.com>;
-	Wed, 28 Nov 2012 14:42:31 -0500
-In-Reply-To: <20121128140308.abb21ec8f61553a2ed077fe3@canb.auug.org.au>
+Received: from mailout39.mail01.mtsvc.net ([216.70.64.83]:54100 "EHLO
+	n12.mail01.mtsvc.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1756065Ab2K1WMv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Nov 2012 17:12:51 -0500
+In-Reply-To: <1354125623.2788.23.camel@thor>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>
+To: Andrew Morton <akpm@linux-foundation.org>, Xiaotian Feng <dannyfeng@tencent.com>, Xiaotian Feng <xtfeng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
 
-The of reconfiguration notification chains should be exported for use
-by modules.
+[cc'ing linux-next]
 
-Signed-off-by:Nathan Fontenot <nfont@linux.vnet.ibm.com>
----
-Index: linux-next/drivers/of/base.c
-===================================================================
---- linux-next.orig/drivers/of/base.c	2012-11-28 09:18:02.000000000 -0600
-+++ linux-next/drivers/of/base.c	2012-11-28 11:05:00.000000000 -0600
-@@ -1282,11 +1282,13 @@
- {
- 	return blocking_notifier_chain_register(&of_reconfig_chain, nb);
- }
-+EXPORT_SYMBOL_GPL(of_reconfig_notifier_register);
- 
- int of_reconfig_notifier_unregister(struct notifier_block *nb)
- {
- 	return blocking_notifier_chain_unregister(&of_reconfig_chain, nb);
- }
-+EXPORT_SYMBOL_GPL(of_reconfig_notifier_unregister);
- 
- int of_reconfig_notify(unsigned long action, void *p)
- {
+On Wed, 2012-11-28 at 13:00 -0500, Peter Hurley wrote:
+> Hi all,
+> 
+> I couldn't find the v2 patch of this on linux-kernel but this commit
+> 
+>   4660e32 "tasklet: ignore disabled tasklet in tasklet_action()"
+> 
+> BUGS in -next-20121127.
+> 
+> -----------[cut here ]----------
+> kernel BUG at /home/peter/src/kernels/next/kernel/softirq.c:471!
+> invalid opcode: 0000 [#1] PREEMPT SMP
+> ....
+> 
+> The registers/stack dump isn't useful so I didn't include it here.
+> 
+> I'm still trying to track down the execution sequence that causes this,
+> but the high-level trigger is a firewire bus reset.
+> 
+> Hopefully I'll have more information soon.
+
+>From the original v1 of this patch [where is v2?] ...
+
+On Fri, 2012-11-02 at 10:48 +0800, Xiaotian Feng wrote:
+> We met a ksoftirqd 100% issue, the perf top shows kernel is busy
+> with tasklet_action(), but no actual action is shown. From dumped
+> kernel, there's only one disabled tasklet on the tasklet_vec.
+> 
+> tasklet_action might be handled after tasklet is disabled, this will
+> make disabled tasklet stayed on tasklet_vec. tasklet_action will not
+> handle disabled tasklet, but place it on the tail of tasklet_vec,
+> still raise softirq for this tasklet. Things will become worse if
+> device driver uses tasklet_disable on its device remove/close code.
+> The disabled tasklet will stay on the vec, frequently __raise_softirq_off()
+> and make ksoftirqd wakeup even if no tasklets need to be handled.
+> 
+> This patch introduced a new TASKLET_STATE_HI bit to indicate HI_SOFTIRQ,
+> in tasklet_action(), simply ignore the disabled tasklet and don't raise
+> the softirq nr. In my previous patch, I remove tasklet_hi_enable() since
+> it is the same as tasklet_enable(). So only tasklet_enable() needs to be
+> modified, if tasklet state is changed from disable to enable, use
+> __tasklet_schedule() to put it on the right vec.
+> 
+> Signed-off-by: Xiaotian Feng <dannyfeng@tencent.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  include/linux/interrupt.h |   12 ++++++++++--
+>  kernel/softirq.c          |   10 +++++-----
+>  2 files changed, 15 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+> index 5e4e617..7e5bb00 100644
+> --- a/include/linux/interrupt.h
+> +++ b/include/linux/interrupt.h
+> @@ -521,7 +521,8 @@ struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(1), func, data }
+>  enum
+>  {
+>  	TASKLET_STATE_SCHED,	/* Tasklet is scheduled for execution */
+> -	TASKLET_STATE_RUN	/* Tasklet is running (SMP only) */
+> +	TASKLET_STATE_RUN,	/* Tasklet is running (SMP only) */
+> +	TASKLET_STATE_HI	/* Tasklet is HI_SOFTIRQ */
+>  };
+>  
+>  #ifdef CONFIG_SMP
+> @@ -593,7 +594,14 @@ static inline void tasklet_disable(struct tasklet_struct *t)
+>  static inline void tasklet_enable(struct tasklet_struct *t)
+>  {
+>  	smp_mb__before_atomic_dec();
+> -	atomic_dec(&t->count);
+> +	if (atomic_dec_and_test(&t->count)) {
+> +		if (!test_bit(TASKLET_STATE_SCHED, &t->state))
+> +			return;
+> +		if (test_bit(TASKLET_STATE_HI, &t->state))
+> +			__tasklet_hi_schedule(t);
+> +		else
+> 
+
+Since this isn't protected by locks, all of the conditions that __were__
+met to arrive here (t->count == 0 && t->state & TASKLET_STATE_SCHED) may
+no longer be true now because another cpu may have run tasklet_action(),
+so now this tasklet will be scheduled when it should not be.
+
+Plus __tasklet_schedule() can't just be called from any cpu that happens
+to be calling tasklet_enable(). What you're doing here means that the
+tasklet could be scheduled on multiple cpus at the same time -- that's
+not going to work.
+
++			__tasklet_schedule(t);
+> 
