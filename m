@@ -1,47 +1,75 @@
-From: Stanislaw Gruszka <sgruszka@redhat.com>
-Subject: Re: linux-next: build failure after merge of the modules tree
-Date: Wed, 28 Nov 2012 12:02:00 +0100
-Message-ID: <20121128110145.GA3701@redhat.com>
-References: <20121126151046.1b5b09762b8361b1f202c6e2@canb.auug.org.au>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [RFC PATCH v2] Add rcu user eqs exception hooks for async page fault
+Date: Wed, 28 Nov 2012 13:55:42 +0100
+Message-ID: <CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
+References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
+	<CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
+	<1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:40832 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753591Ab2K1LCT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Nov 2012 06:02:19 -0500
-Content-Disposition: inline
-In-Reply-To: <20121126151046.1b5b09762b8361b1f202c6e2@canb.auug.org.au>
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:61096 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754232Ab2K1Mzn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Nov 2012 07:55:43 -0500
+In-Reply-To: <1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, "John W. Linville" <linville@tuxdriver.com>
+To: Li Zhong <zhong@linux.vnet.ibm.com>
+Cc: linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, gleb@redhat.com, avi@redhat.com
 
-On Mon, Nov 26, 2012 at 03:10:46PM +1100, Stephen Rothwell wrote:
-> After merging the modules tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/net/wireless/iwlwifi/iwl-drv.c:1196:1: error: invalid suffix "n_disabletype__8" on integer constant
-> drivers/net/wireless/iwlwifi/iwl-drv.c:1196:1: error: expected identifier or '(' before numeric constant
-> drivers/net/wireless/iwlwifi/iwl-drv.c:1198:1: error: invalid suffix "n_disable__9" on integer constant
-> drivers/net/wireless/iwlwifi/iwl-drv.c:1198:1: error: expected identifier or '(' before numeric constant
-> drivers/net/wireless/iwlwifi/iwl-drv.c:1263:1: error: invalid suffix "ghz_disabletype__32" on integer constant
-> drivers/net/wireless/iwlwifi/iwl-drv.c:1263:1: error: expected identifier or '(' before numeric constant
-> drivers/net/wireless/iwlwifi/iwl-drv.c:1264:1: error: invalid suffix "ghz_disable__33" on integer constant
-> drivers/net/wireless/iwlwifi/iwl-drv.c:1264:1: error: expected identifier or '(' before numeric constant
-> drivers/net/wireless/iwlegacy/4965-mac.c:6825:1: error: invalid suffix "n_disabletype__11" on integer constant
-> drivers/net/wireless/iwlegacy/4965-mac.c:6825:1: error: expected identifier or '(' before numeric constant
-> drivers/net/wireless/iwlegacy/4965-mac.c:6826:1: error: invalid suffix "n_disable__12" on integer constant
-> drivers/net/wireless/iwlegacy/4965-mac.c:6826:1: error: expected identifier or '(' before numeric constant
-> 
-> Presumably caused by commit 58876af0436e ("moduleparam: use __UNIQUE_ID
-> ()").  This commit removed the "__mod_" prefix that used to be added to
-> the front of the "name" passed to module_param_named().  Admittedly, the
-> documentation says that "name" must be "a valid C identifier which is the
-> parameter name", but the (ab)usage here used to work (the name starts
-> with a number).
+2012/11/28 Li Zhong <zhong@linux.vnet.ibm.com>:
+> Thank you all for the review and education.
+>
+> Below are my current understandings and an update version. Would you
+> please help to review it again and give your comments?
+>
+> Thanks, Zhong
+>
+> Now it seems to me that it is legal to call rcu_irq_exit/enter() without
+> a matching rcu_irq_enter/exit() if the cpu is in non rcu idle state.
+>
+> As opposite, it is illegal to call rcu_irq_exit() without a matching
+> rcu_irq_enter() if the cpu is in rcu idle state.
+>
+> But it seems legal to call rcu_irq_enter() without a matching
+> rcu_irq_exit() if the cpu is in rcu idle state, regarding the
+> dynticks_nesting value.   However, it seems not good to exit the rcu
+> idle state, if we are actually entering into idle mode, so maybe it's
+> better to call a matching rcu_irq_exit() before actually idle?
+>
+> As Frederic pointed out, we need a rcu_user_exit() to exit the user eqs
+> (if we are in this state) in the beginning. But after some more
+> thinking, I guess we might also need to call rcu_user_enter() after the
+> waiting, if we get this page fault from user space. So maybe it's better
+> to use rcu user eqs exception hooks here?
 
-I prefer not to change module parameters name, since there are users
-who use current name in they modprobe config.
+Makes sense.
 
-Stanislaw
+>
+> With rcu_user_exit() at the beginning, now rcu_irq_enter() only protects
+> the cpu idle eqs, but it's not good to call rcu_irq_exit() after the cpu
+> halt and the page ready.
+
+Hmm, why is it not good?
+
+>
+> So I still want to remove it. And later if it shows that we really needs
+> rcu somewhere in this code path, maybe we could use RCU_NONIDLE() to
+> protect it. ( The suspicious RCU usage reported in commit
+> c5e015d4949aa665 seems related to schedule(), which is not in the code
+> path if we are in cpu idle eqs )
+
+Yes but if rcu_irq_*() calls are fine to be called there, and I
+believe they are because exception_enter() exits the user mode, we
+should start to protect there right now instead of waiting for a
+potential future warning of illegal RCU use.
+
+>
+> I think we still need Gleb's patch about the idle check in
+> kvm_async_pf_task_wait(), and maybe another patch for the
+> exit_idle()/enter_idle() issue.
+
+Right.
+
+Thanks.
