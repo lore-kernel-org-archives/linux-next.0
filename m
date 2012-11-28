@@ -1,48 +1,35 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [RFC PATCH v2] Add rcu user eqs exception hooks for async page fault
-Date: Wed, 28 Nov 2012 15:25:07 +0100
-Message-ID: <CAFTL4hxoFBLNQCABBpJRBgV-r-Mg5GSq7HbPfWJRraSvtviz4A@mail.gmail.com>
-References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
-	<CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
-	<1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
-	<CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
-	<20121128135345.GG928@redhat.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the tty tree
+Date: Wed, 28 Nov 2012 08:47:26 -0800
+Message-ID: <20121128164726.GA15624@kroah.com>
+References: <20121128161430.e6719a4c3f55f12074b6cfc4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121128135345.GG928@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gleb Natapov <gleb@redhat.com>
-Cc: Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.19.201]:53524 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754037Ab2K1Qrg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Nov 2012 11:47:36 -0500
+Content-Disposition: inline
+In-Reply-To: <20121128161430.e6719a4c3f55f12074b6cfc4@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>, Kumar Amit Mehta <gmate.amit@gmail.com>
 
-2012/11/28 Gleb Natapov <gleb@redhat.com>:
-> On Wed, Nov 28, 2012 at 01:55:42PM +0100, Frederic Weisbecker wrote:
->> Yes but if rcu_irq_*() calls are fine to be called there, and I
->> believe they are because exception_enter() exits the user mode, we
->> should start to protect there right now instead of waiting for a
->> potential future warning of illegal RCU use.
->>
-> Async page not present is not much different from regular page fault
-> exception when it happens not on idle task (regular #PF cannot happen
-> on idle task), but code have a special handling for idle task. So why
-> do you think rcu_irq_*() is required here, but not in page fault
-> handler?
+On Wed, Nov 28, 2012 at 04:14:30PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/dgrp/dgrp_tty.c between commit 3ba89e96610b ("staging:
+> dgrp: dgrp_tty.c: Remove the TIOCSSOFTCAR ioctl handler from dgrp
+> driver") from the tty tree and commit 8fdefcb0ab74 ("staging: dgrp:
+> remove TIOCGSOFTCAR and TIOCSSOFTCAR handling") from the staging tree.
+> 
+> I fixed it up (using the staging tree version - since it is a superset of
+> the tty tree version) and can carry the fix as necessary (no action is
+> required).
 
-Because we are not supposed to fault in idle, at least I hope there
-are no case around. Except on cases like here with KVM I guess but we
-have that special async handler for that.
+That is correct, thanks for doing this.
 
-Note exception_enter() only takes cares of RCU user mode, not idle. If
-the need arise in the future we can extend it to handle idle.
-
->> >
->> > I think we still need Gleb's patch about the idle check in
->> > kvm_async_pf_task_wait(), and maybe another patch for the
->> > exit_idle()/enter_idle() issue.
->>
->> Right.
->>
-> Done.
-
- Thanks!
+greg k-h
