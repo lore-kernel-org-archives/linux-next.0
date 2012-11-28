@@ -1,54 +1,47 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: linux-next: Tree for Nov 27 (media/v4l2-core/videobuf2-dma-contig.c)
-Date: Wed, 28 Nov 2012 09:52:19 +0900
-Message-ID: <CAH9JG2WfpNttdthgZEAM+W5T8rrZwOULSBGaSB8XdVDVMhC1FA@mail.gmail.com>
-References: <20121127172548.cd502ebfb903face1dc98554@canb.auug.org.au>
-	<50B5072F.6090708@infradead.org>
-	<20121128081514.84c71b8eb965a7d11cb1ff07@canb.auug.org.au>
+From: Peter Hurley <peter@hurleysoftware.com>
+Subject: Re: [PATCH -next] staging/fwserial: Fix build breakage when
+ !CONFIG_BUG
+Date: Tue, 27 Nov 2012 19:56:32 -0500
+Message-ID: <1354064192.2703.10.camel@thor>
+References: <20121127011738.9ecd7971a7ea2e3d09a9450d@canb.auug.org.au>
+		 <50B3D767.70604@infradead.org> <1354000267.3284.4.camel@thor>
+	 <50B50985.1010700@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20121128081514.84c71b8eb965a7d11cb1ff07@canb.auug.org.au>
-Sender: linux-media-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout39.mail01.mtsvc.net ([216.70.64.83]:58991 "EHLO
+	n12.mail01.mtsvc.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754681Ab2K1A4p (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 19:56:45 -0500
+In-Reply-To: <50B50985.1010700@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi,
+On Tue, 2012-11-27 at 10:42 -0800, Randy Dunlap wrote:
+> On 11/26/2012 11:11 PM, Peter Hurley wrote:
+> 
+> > Use WARN() as intended.
+> > 
+> > Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
+> 
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Acked-by: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Thanks.
 
-It's fixed already and you will check it at Nov 28 tree
-http://www.spinics.net/lists/linux-media/msg56830.html
+Hi Randy,
 
-Thank you,
-Kyungmin Park
+I blew this, sorry.
 
-On 11/28/12, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> [Just adding some cc's]
->
-> On Tue, 27 Nov 2012 10:32:15 -0800 Randy Dunlap <rdunlap@infradead.org>
-> wrote:
->>
->> On 11/26/2012 10:25 PM, Stephen Rothwell wrote:
->>
->> > Hi all,
->> >
->> > Changes since 20121126:
->> >
->>
->>
->> on i386:
->>
->> drivers/media/v4l2-core/videobuf2-dma-contig.c:743:16: error:
->> 'vb2_dc_get_dmabuf' undeclared here (not in a function)
->>
->>
->> Full randconfig file is attached.
->>
->> --
->> ~Randy
->
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->
+First, I mistakenly sent the patch to Stephen rather than to Greg KH,
+who's carrying this submission in staging-next. So I forwarded Greg the
+patch when I realized my error. Which he committed. And Greg couldn't
+catch my mistake because he didn't see the original chain. Then I got
+your reminder email.
+
+I won't let it happen again.
+Peter
