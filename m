@@ -1,60 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mfd tree with Linus' tree
-Date: Wed, 28 Nov 2012 14:20:32 +1100
-Message-ID: <20121128142032.2c9eebbceb93a3c2bf2d391f@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the slave-dma
+ tree
+Date: Wed, 28 Nov 2012 14:26:10 +1100
+Message-ID: <20121128142610.9fdfaf75a98ef83a12c32d9b@canb.auug.org.au>
+References: <20121127154430.36e87542081a7cc50f80d0f6@canb.auug.org.au>
+	<CAKohpo=K2kX-M4NM9onrn-Rr4otJwcQ1HxN5cKPYvj+Tza_0Ug@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Nov_2012_14_20_32_+1100_0sp1rbC6KJbb72M2"
+ boundary="Signature=_Wed__28_Nov_2012_14_26_10_+1100_63N0AWW5OgRqPlPO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35159 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44075 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751468Ab2K1DUk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 22:20:40 -0500
+	with ESMTP id S1751308Ab2K1D0P (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 22:26:15 -0500
+In-Reply-To: <CAKohpo=K2kX-M4NM9onrn-Rr4otJwcQ1HxN5cKPYvj+Tza_0Ug@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Vipul Kumar Samar <vipulkumar.samar@st.com>
 
---Signature=_Wed__28_Nov_2012_14_20_32_+1100_0sp1rbC6KJbb72M2
+--Signature=_Wed__28_Nov_2012_14_26_10_+1100_63N0AWW5OgRqPlPO
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi,
 
-Today's linux-next merge of the mfd tree got a conflict in
-drivers/mfd/twl-core.c between commit 78a3c5ab1749 ("mfd: twl-core: Fix
-chip ID for the twl6030-pwm module") from Linus' tree and commit
-afc45898f62c ("mfd: twl-core: Support for proper PWM drivers") from the
-mfd tree.
+On Tue, 27 Nov 2012 11:08:36 +0530 Viresh Kumar <viresh.kumar@linaro.org> w=
+rote:
+>
+> On 27 November 2012 10:14, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Today's linux-next merge of the arm-soc tree got a conflict in
+> > arch/arm/mach-spear13xx/spear1310.c between commit b47394911c26 ("ARM:
+> > SPEAr13xx: Pass DW DMAC platform data from DT") from the slave-dma tree
+> > and commit 300a6856324a ("ARM: SPEAr1310: Fix AUXDATA for compact flash
+> > controller") from the arm-soc tree.
+> >
+> > I have no idea how to fix this up, so I just effectively dropped the
+> > arm-doc tree patch.
+>=20
+> So sorry for that, Can you please take arm-soc version here? Patch 300a68=
+56324a
+> is doing the correct thing. i.e. we need
+>=20
+> +       OF_DEV_AUXDATA("arasan,cf-spear1340", MCIF_CF_BASE, NULL, &cf_pda=
+ta),
+>=20
+> instead of
+>=20
+> +       OF_DEV_AUXDATA("arasan,cf-spear1340", MCIF_CF_BASE, NULL, "cf"),
 
-I fixed it up (using the version from the mfd tree) and can carry the fix
-as necessary (no action is required).
-
+Done, it should be correct on today's linux-next.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__28_Nov_2012_14_20_32_+1100_0sp1rbC6KJbb72M2
+--Signature=_Wed__28_Nov_2012_14_26_10_+1100_63N0AWW5OgRqPlPO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQtYMAAAoJEECxmPOUX5FEfP8P/juodLjPRMEmmIi+kRAFq8Yi
-wZFxuix445L43nyIJLlqnQL9d0xF4CO0zR4mccSJyD1AdEqpyGYijYR99RB8jpAR
-zj+Hzq3YHG+pvFraJfFaogUHzlx7C0lwTRiJQQfTlmE2GrKRhymRBhK/6VK2tTby
-8LGAlNooTU6BRD+Fx0P8M701bBJPCpq3IawT0ipfdn+2FhQvzNcmDXniJOGZcPSa
-UOxTQ8bn7ZwY/lAVUi3TL3TlucUX9q4RcvSCS9ubE1L3ME77ygkRMdRSXLrl7YtW
-u1CaGdUqlPvg5lp9kzzf4hWCIBK+uv2+Me2gx6oWHn8+CWN7xIo2lrkNAB4t17wA
-69Bm4s5rzaV2XQ5CPvf8BxIU879wK3Jdds9iPlqj2mAbQfR+E3tsbHB0AYF2uNMY
-TRi1timLecNm4ohgA4GqrGN5bNXShx0Ox9GHxmUgtm5Mfpj2D7oUyOPrWrn7cJ07
-RD6sxZ8y+E1iofWcEa6mwPBBZIe0C750orRemILMrfh6pr1MMdVvw7DK6KCznz1+
-FuJMl2ld5mQSsGdWU4bWDVjqQRZCZI+wBiT/6a+dgInWGBTqMKIMdk5dBjXNau5Y
-wQEgt+dduIiZOS/h/mDB2WKRUIZOAKZzG5nK+28ZFOLQWaSv/Y4RmLidvO9IWo1u
-zkU9PD1dWIlh5Vg/OmhF
-=6xM8
+iQIcBAEBCAAGBQJQtYRSAAoJEECxmPOUX5FEZT8P/12x7/C3h4ayWzgOmpiaY6l1
+iKkAfiw6t/8p1/lIO1sSLVgUqVVKiSb12l1xzMRUV1hGsN4/glS0lSf8JlIoYczj
+j283JHUOn7IThcskdykYl0xlhrs1FWkTLvfPKsml2zc0yb1Fmumqkazx7WPaWNfN
+Frp8xV8mbKbEa7W7xv471yKPCc2TfhlzT+TSD8WLH7KqRIg760fVsmzQfdh9yuJ5
+1GSqTbBE4eTqFFAAZXJPH2u8bwobFHHWQJs8itmz2uWNUnjkjO5PFbUu+kQr578R
+CkmzOVviOX/efTvkuDC8qcwZ9lKFvH17W/uZtTN+lAobgOpTy6wYvFhSTY5O2Bdu
+SyxmbEPHz2ahYLd3EpA4/kOdHl8Lj2VcCegsSRcotrJlxoaVaXGgres+He7LeLCl
+ak9IEaqwCuhH5y91avETO21r81OGt5bWbPlf5WY+7RDf3OFvuzu0GVwxrBy7H8Zm
+Mv/m1mUxv+W+9vs9/sExjkujcr4HYtCNX3c0MMlS8PHyYfdjf/m0gh/kka13pAOt
+B5p2X8vDWFbedg4pDrWkjPlUJLIl6SH9CdvUXsSORee30H+mopJpApL3hLgyM7mW
+SCT0n6j5bXKCPhFPTiehzvxNOV3i3ETLtJ9V/XV1UBHhmPLSr3LgXjYXBLcvs0rR
+xby4Qrp/npxXCw9MLlrH
+=e7QG
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Nov_2012_14_20_32_+1100_0sp1rbC6KJbb72M2--
+--Signature=_Wed__28_Nov_2012_14_26_10_+1100_63N0AWW5OgRqPlPO--
