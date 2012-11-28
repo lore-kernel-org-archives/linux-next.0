@@ -1,47 +1,62 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: [PATCH -next] staging/fwserial: Fix build breakage when
- !CONFIG_BUG
-Date: Tue, 27 Nov 2012 19:56:32 -0500
-Message-ID: <1354064192.2703.10.camel@thor>
-References: <20121127011738.9ecd7971a7ea2e3d09a9450d@canb.auug.org.au>
-		 <50B3D767.70604@infradead.org> <1354000267.3284.4.camel@thor>
-	 <50B50985.1010700@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the powerpc tree
+Date: Wed, 28 Nov 2012 14:03:08 +1100
+Message-ID: <20121128140308.abb21ec8f61553a2ed077fe3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__28_Nov_2012_14_03_08_+1100_1GgkkmxpSg5YS496"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout39.mail01.mtsvc.net ([216.70.64.83]:58991 "EHLO
-	n12.mail01.mtsvc.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754681Ab2K1A4p (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 19:56:45 -0500
-In-Reply-To: <50B50985.1010700@infradead.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60171 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751645Ab2K1DDS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 22:03:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>
 
-On Tue, 2012-11-27 at 10:42 -0800, Randy Dunlap wrote:
-> On 11/26/2012 11:11 PM, Peter Hurley wrote:
-> 
-> > Use WARN() as intended.
-> > 
-> > Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
-> 
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Thanks.
+--Signature=_Wed__28_Nov_2012_14_03_08_+1100_1GgkkmxpSg5YS496
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Randy,
+Hi all,
 
-I blew this, sorry.
+After merging the powerpc tree, next-20121115's build (powerpc
+allmodconfig) failed like this:
 
-First, I mistakenly sent the patch to Stephen rather than to Greg KH,
-who's carrying this submission in staging-next. So I forwarded Greg the
-patch when I realized my error. Which he committed. And Greg couldn't
-catch my mistake because he didn't see the original chain. Then I got
-your reminder email.
+ERROR: ".of_reconfig_notifier_register" [drivers/crypto/nx/nx-compress.ko] =
+undefined!
+ERROR: ".of_reconfig_notifier_unregister" [drivers/crypto/nx/nx-compress.ko=
+] undefined!
 
-I won't let it happen again.
-Peter
+Caused by commit 1cf3d8b3d24c ("powerpc+of: Add of node/property
+notification chain for adds and removes").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__28_Nov_2012_14_03_08_+1100_1GgkkmxpSg5YS496
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQtX7sAAoJEECxmPOUX5FEAY8P/R5anO5oaEyz/wut2Cv7W13Y
+IeKiNHSQiTMOg67qDL2OVxHh2PVCIhAFJ+T/Jo3RYuL99EYzW+qzYbZWjaIlzLE9
+Zm51BM5SiY4aiDsUiZSqUcNnKkD+2IQy4idnri635FVGnHfy0GjhMifYhPzmgiuP
+ncyUowEfsHs7IV38ObwUgBloEBImgzRg/kI0uffDBJ2cdHSEeIn4n1YVsaI1R1zK
+cO2Huz/Uo3hBCWjQamsCaWXt6C9J7nqP8Qgicu21xyMvebKh5vRwroffPY6Q2XOL
+Nz1U4bVak4/ARyZT2c3k6NkzqvtEDg8ccQF8l2zYDWk9strrH2Vpjvp94XOnzwY9
+SrbSQORTsi6h8lN+ARNP9lIZTvtvcT7MQpUjHJNnrxU4J1nrbZFHVEY9Zc6LY6Vo
+W7ZT4cBgnNt6SMhigk8ttjTopyFZd2bJoKQXrDYYHEbiD3Rmcj3zTQ0FpTRlJkp5
+yJw9sIr/Fc2BSWdoVGvz35Z6+4JwpjmPc8KPpz/HggiTAbDcIV4VOB4bVKNpkKu0
+POz/pc+8Wjb5uMVF4fBj6uq6s7//Mpp9GB+la8nKic3YW6Dyrca6KcPHHUu05Z72
+qvpK+LuGZNe+J6P99ckAhCsaIU8g9HPAkHdnpByCP39zUuMqL2jsHGTl91NMcsI/
+F78xkJoHXIPnixM9AkpN
+=zloH
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__28_Nov_2012_14_03_08_+1100_1GgkkmxpSg5YS496--
