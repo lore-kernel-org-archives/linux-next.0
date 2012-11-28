@@ -1,75 +1,124 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: unusual update of the security tree
-Date: Wed, 28 Nov 2012 10:57:58 +1100
-Message-ID: <20121128105758.1f6c6bba9cef4c780e4b3602@canb.auug.org.au>
+Date: Wed, 28 Nov 2012 11:01:32 +1100
+Message-ID: <20121128110132.0082c87680b9b714b8c0689c@canb.auug.org.au>
 References: <20121128101635.d5e864dffc4252ef9d5e1664@canb.auug.org.au>
-	<20121128102800.97a1a4d895f0bfaf72b80272@canb.auug.org.au>
-	<CA+55aFxxq9a8ZQfcMC1=cKO90zu6hqvfJipt1t0tJy1ypYw30w@mail.gmail.com>
+	<50B5508D.7050409@schaufler-ca.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Nov_2012_10_57_58_+1100_J.eqN0lAGg+7St.l"
+ boundary="Signature=_Wed__28_Nov_2012_11_01_32_+1100_3gUB+hYUPNg7oVEZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51767 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:45684 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750909Ab2K0X6H (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 18:58:07 -0500
-In-Reply-To: <CA+55aFxxq9a8ZQfcMC1=cKO90zu6hqvfJipt1t0tJy1ypYw30w@mail.gmail.com>
+	with ESMTP id S1752428Ab2K1ABg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Nov 2012 19:01:36 -0500
+In-Reply-To: <50B5508D.7050409@schaufler-ca.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Casey Schaufler <casey@schaufler-ca.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__28_Nov_2012_10_57_58_+1100_J.eqN0lAGg+7St.l
+--Signature=_Wed__28_Nov_2012_11_01_32_+1100_3gUB+hYUPNg7oVEZ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 27 Nov 2012 15:30:31 -0800 Linus Torvalds <torvalds@linux-foundatio=
-n.org> wrote:
+Hi Casey,
+
+On Tue, 27 Nov 2012 15:45:17 -0800 Casey Schaufler <casey@schaufler-ca.com>=
+ wrote:
 >
-> On Tue, Nov 27, 2012 at 3:28 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> >
-> > If that is what happened, it may be worth always using the --no-ff flag
-> > to git merge/pull to make sure that the top commit on your tree always
-> > has you as the committer (and maybe SOB).
-> >
-> > Linus, does that make sense in general for maintainers?
+> On 11/27/2012 3:16 PM, Stephen Rothwell wrote:
 >=20
-> No. That just hides the real problem - back-merges of random points in hi=
-story.
+> > The security tree
+> > (git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.g=
+it#next)
+> > looks a bit strange today ... It appears to have been created by Casey
+> > Schaufler (cc'd) and contains some quite old commits and back merges of
+> > your tree.  I *guess* you have merged in Casey's tree after he merged in
+> > your tree from yesterday.
 >=20
-> Don't do them, people. EVER.
+> I *thought* that I had used the same procedures that worked before.
+> In fact, I still do think that, but if it's a problem I can purge my
+> smack-next tree and start over.
+>=20
+> James, the two changes that came from smack-next are pretty minor. I
+> don't think you should hesitate to back them out if that helps.
 
-I was also thinking about the case where a developer does work based on
-the maintainer's published tree and then the maintainer pulls that work
-sometime later (when his published tree has not been updated in the mean
-time).
+This is the shortlog for the changes in the security tree between
+yesterday and today;
 
+Casey Schaufler (32):
+      Commit 272cd7a8c67dd40a31ecff76a503bbb84707f757 introduced     a chan=
+ge to the way rule lists are handled and reported in     the smackfs filesy=
+stem. One of the issues addressed had to     do with the termination of rea=
+d requests on /smack/load.     This change introduced a error in /smack/cip=
+so, which shares     some of the same list processing code.
+      Revert "Commit 272cd7a8c67dd40a31ecff76a503bbb84707f757 introduced"
+      Smack: smackfs cipso seq read repair
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Smack: recursive tramsmute
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Smack: allow for significantly longer Smack labels v4
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Smack: fix smack_new_inode bogosities
+      Smack: Maintainer Record
+      Smack: onlycap limits on CAP_MAC_ADMIN
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Smack: user access check bounds
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Smack: remove task_wait() hook.
+      Smack: setprocattr memory leak fix
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'for-1209'
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+      Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-securit=
+y into for-1211
+      Smack: use select not depends in Kconfig
+      Smack: create a sysfs mount point for smackfs
+
+Rafal Krypa (2):
+      Smack: don't show empty rules when /smack/load or /smack/load2 is read
+      Smack: implement revoking all rules for a subject label
+
+Tetsuo Handa (1):
+      gfp flags for security_inode_alloc()?
+
+It's a bit of a mess :-(
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__28_Nov_2012_10_57_58_+1100_J.eqN0lAGg+7St.l
+--Signature=_Wed__28_Nov_2012_11_01_32_+1100_3gUB+hYUPNg7oVEZ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQtVOGAAoJEECxmPOUX5FEN0AP/ic131sVE73qtpSOJwolvNIS
-vxEJ0KswMFHkBl2tGS0LYKO4wlNdaN64Bhxz04besoCtLmgsw0LHkVTdzS4c0syC
-QKbHVEYDHa2rprYxXP0MEzm3ULdvHp6mDZjGOpp5IQscXy5aQJfw6BzrZl4fBai8
-s1r6l1/bIhQHa3lfBq6oJsTHjvEco3WRG9/9IzccBBYBL8gQvgGtQrA1FfmRAUeZ
-PNASugq2ucG4yGDXZC7kMDm1oArQaR17hfuqzGrhBxcMQUFmgUrZ0jreD9Lk9/y1
-++scrW1GpeE8qS1CT0BRqc3zSwJmYxtIsHtcfCwH0WqS6tjDewwZg07ty3TdDLR8
-mElprEOFWvYifJzBgqio7qlPdS7ligNViCdYvMpHcT26/stscdxVtsIKht4cADfY
-JvvQYbrDeq0/PBk004kiabHi2FsJXGtHe1vBvrvv46E6KRaLuli+N/bmEDHbix7O
-mG90NynGKXnlz6anY2bxPgY2sD9YRn54SdPuuR8gvaJzdsmVrbA72iMnvoAYxVRp
-pgn/F6cn1Eglfyn2guwKOv/7mTryjseYXw47T6EOiQNw+vjTypyf9Dn04oILsThO
-juMotth4rvz/+XpCFOWllK9IS/ThUyBK88CrHrtD0ocI7HR4tX37hn/6ZDq97ER2
-7ivTkpuvNrFQMw0BmkFh
-=9IbN
+iQIcBAEBCAAGBQJQtVRcAAoJEECxmPOUX5FEPe8P/00LXOEL3+/c31GjrlZhLJPE
+aD1FNROONnp+K0h0WWiD4yXSGTSIU7TuP4Ik9Grg+zNiWpH9Ur3JvCFP7lHWhsb8
+6ktJnQFfAR+Jm4F4c/UXiRZL6sOoIpSY0j3nWrA74Yw3wnIbTC+RD8tbgHKAGiiW
+4l3ynH7yhCg2Le9xn2jyTX8c6D1dL6nKWJVUJtr/4aNJ4BTekVvRGKZye3eQK1Ft
+sDHe0qnM6zBCIIMiShEEumoHwpgFtSCfQaoKIUbihaFCxU9Nauu6XeJiPaXwg9nv
+zReUwDX9LxFA6K7HtqYAnHoRNDNxlHpRtwSvllr18BaOlQxN99Qqf9C/HeZePdtL
+mSqTYQswPYgJGGoSUE4D8sRHrfJUvb9up3ddGwKm4c/S/uUWXekG4GG1GVm0o/a4
+x7/lDrgaAAbaTTsS0kDBnZq35GRCCxmglTPkCW3gUW6oW2T/JQksOQe1dNHPdqyZ
+pz7pVaIi6yQMGUfADDXgBZd3BAI4s6I0W0nGRimi1ywd7IZ5dK3/nJZg8KdADSu7
+o9PPrg1LxKvZBzyj43IHoC4q9MSbd3rI/TYSDU/IP2QjbUBqvIxpu94qZOnUjc+9
+OVvGOO2x60PdNaFQ8b6MZ+WIN7iqk5ZERB48jcM8kZe8r7s/zvc1gUeJZAPrTXIb
+6f0tBgMgoTHGh1iBch1i
+=FmO/
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Nov_2012_10_57_58_+1100_J.eqN0lAGg+7St.l--
+--Signature=_Wed__28_Nov_2012_11_01_32_+1100_3gUB+hYUPNg7oVEZ--
