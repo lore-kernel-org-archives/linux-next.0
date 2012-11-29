@@ -1,63 +1,113 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the slave-dma tree
-Date: Thu, 29 Nov 2012 17:14:42 +1100
-Message-ID: <20121129171442.8b1c7eee80ce567cd9b8b15f@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the akpm tree
+Date: Thu, 29 Nov 2012 17:19:39 +1100
+Message-ID: <20121129171939.8539a56adf1f0f7ae518f4ce@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Nov_2012_17_14_42_+1100_yCfpNVkHjxsAW3KF"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__29_Nov_2012_17_19_39_+1100_vMvHEMfJNPi4yXY2"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:49580 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751392Ab2K2GTn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Nov 2012 01:19:43 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Reisner <philipp.reisner@linbit.com>, Lars Ellenberg <lars.ellenberg@linbit.com>, Jens Axboe <axboe@kernel.dk>, Lukas Czerner <lczerner@redhat.com>
 
---Signature=_Thu__29_Nov_2012_17_14_42_+1100_yCfpNVkHjxsAW3KF
+--Signature=_Thu__29_Nov_2012_17_19_39_+1100_vMvHEMfJNPi4yXY2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Vinod,
+Hi Andrew,
 
-After merging the slave-dma tree, today's linux-next build (x86_64
-allmodconfig) produced these warning:
+After merging the akpm tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-drivers/dma/dmaengine.c: At top level:
-include/linux/of_dma.h:47:12: warning: 'of_dma_controller_register' defined=
- but not used [-Wunused-function]
-include/linux/of_dma.h:55:12: warning: 'of_dma_controller_free' defined but=
- not used [-Wunused-function]
-include/linux/of_dma.h:65:25: warning: 'of_dma_simple_xlate' defined but no=
-t used [-Wunused-function]
+In file included from drivers/block/drbd/drbd_bitmap.c:32:0:
+drivers/block/drbd/drbd_int.h:2339:0: warning: "__wait_event_lock_irq" rede=
+fined [enabled by default]
+include/linux/wait.h:554:0: note: this is the location of the previous defi=
+nition
+drivers/block/drbd/drbd_int.h:2358:0: warning: "wait_event_lock_irq" redefi=
+ned [enabled by default]
+include/linux/wait.h:621:0: note: this is the location of the previous defi=
+nition
+In file included from drivers/block/drbd/drbd_receiver.c:46:0:
+drivers/block/drbd/drbd_int.h:2339:0: warning: "__wait_event_lock_irq" rede=
+fined [enabled by default]
+include/linux/wait.h:554:0: note: this is the location of the previous defi=
+nition
+drivers/block/drbd/drbd_int.h:2358:0: warning: "wait_event_lock_irq" redefi=
+ned [enabled by default]
+include/linux/wait.h:621:0: note: this is the location of the previous defi=
+nition
+In file included from drivers/block/drbd/drbd_proc.c:34:0:
+drivers/block/drbd/drbd_int.h:2339:0: warning: "__wait_event_lock_irq" rede=
+fined [enabled by default]
+include/linux/wait.h:554:0: note: this is the location of the previous defi=
+nition
+drivers/block/drbd/drbd_int.h:2358:0: warning: "wait_event_lock_irq" redefi=
+ned [enabled by default]
+include/linux/wait.h:621:0: note: this is the location of the previous defi=
+nition
+In file included from drivers/block/drbd/drbd_worker.c:38:0:
+drivers/block/drbd/drbd_int.h:2339:0: warning: "__wait_event_lock_irq" rede=
+fined [enabled by default]
+include/linux/wait.h:554:0: note: this is the location of the previous defi=
+nition
+drivers/block/drbd/drbd_int.h:2358:0: warning: "wait_event_lock_irq" redefi=
+ned [enabled by default]
+include/linux/wait.h:621:0: note: this is the location of the previous defi=
+nition
+In file included from drivers/block/drbd/drbd_actlog.c:31:0:
+drivers/block/drbd/drbd_int.h:2339:0: warning: "__wait_event_lock_irq" rede=
+fined [enabled by default]
+include/linux/wait.h:554:0: note: this is the location of the previous defi=
+nition
+drivers/block/drbd/drbd_int.h:2358:0: warning: "wait_event_lock_irq" redefi=
+ned [enabled by default]
+include/linux/wait.h:621:0: note: this is the location of the previous defi=
+nition
+In file included from drivers/block/drbd/drbd_req.c:30:0:
+drivers/block/drbd/drbd_int.h:2339:0: warning: "__wait_event_lock_irq" rede=
+fined [enabled by default]
+include/linux/wait.h:554:0: note: this is the location of the previous defi=
+nition
+drivers/block/drbd/drbd_int.h:2358:0: warning: "wait_event_lock_irq" redefi=
+ned [enabled by default]
+include/linux/wait.h:621:0: note: this is the location of the previous defi=
+nition
 
-These dummy functions need an inline keyword.
-
-Introduced by commit 7a74a3a0e055 ("of: dma- fix build break for
-!CONFIG_OF").
+Introduced by the interaction of commit c1fd29a11f43 ("drbd: Fix a race
+condition that can lead to a BUG()") from the block tree and commit
+"wait: add wait_event_lock_irq() interface" from the akpm tree.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__29_Nov_2012_17_14_42_+1100_yCfpNVkHjxsAW3KF
+--Signature=_Thu__29_Nov_2012_17_19_39_+1100_vMvHEMfJNPi4yXY2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQtv1SAAoJEECxmPOUX5FEGzcQAKXnBFzQivBwrn4zKPk0tNI+
-Ks34uXxN3kWLg96/Stn/dnpRTrXfqlgRrNz/PUnvMrbn2rELmT3t948ZYwy0Bcdh
-HeZ1pkix8bUyrz/wMb/1igBGlwP97+06Xj9u6LMWjnCQqG0Ltw0+jzaclIaAuXPG
-dyyPysbQjC2TRj6mGh9tiVlqFZ+8IZXdRbsPRmGLIVTBs0Ht5LYHY5NUJcIys8BN
-h350dSATCQl7U8d3+UDsRIVVY/6w0MbNnlpPZT/THuHinbiEofIKBm+UqpBCQ/Lh
-x3rncWGzGWB21POTWfJ8rG71RlJYYcT15V0ICv427Fg3tFbdlDwTFwiGYVLGg3Hf
-EhddmC8Jp6ic+TBEmOpfrOpxddJxxRz4jvu+DZ7IO2dvIZfhfkES8BssSVif3/eZ
-pNkPhz+GvI60b3u0qAFFcc4MHHGWtALBveZR4Fymwx0w2j7HjxoRnzeXo1EeIILs
-6ki6b9Bh3qUOXPXdqjdQXaSDDRh244JsHdgCAuGcQkj4RknZfLMhElTCXXkxOwdv
-N5TefymJAUFIUiUmswDrCJjG0IbhneG9Q+bn81iJ6bnELu/s8v6ylZa7E3mQqrxQ
-6NhCs3hraYyn0J522p0EFL7su4v7Kr9RhF+4TEC7Sbe1KjOvqdph/7iT4qk66JlB
-KHbNy5JBU+if5URry49x
-=I1g2
+iQIcBAEBCAAGBQJQtv57AAoJEECxmPOUX5FEw38QAJ+FcJys6W9LPpQQQYWiWOvb
+QEHYyFSlsddhc1cjPSo8AFtBpeM94H71vj+nOgNut9lw8DX0zYe2E+Hj2YLTYZ+v
+09uaEKnqfOaelEYhzOEhdLJ2uBupqk9lgjATpynoNiUUzPCl814H1LAEze0V8gxG
+orOASo7JEVxPby+KtqsVpaaJRRaxOVglrvPZQF3Vc4xT/DRbhOW9el5GZX/Jro5w
+1KvqBzk2a/Qzmaw+tlEj0VJUQEAaKk03S1EB9bC5VUqFfRwjeJwxgVH/uyZWKEC6
+wB+Sny1JwE1P+yhSlBz459s3FWqAKW33y3j12NSYDeHV3AVQ/DERs8ZEtKBtZ9jQ
+3HC9drvhKwpewVma3abZy/QpF0XudZ7AQuvd1dDrwVl8eWc0Wtm7a7YJkPktOheD
+GfixAf9vqvOMQE/IXHibUnxosg5jDHqaQo7V82PsZ9eNZFfe6TsvCdKRwnFA+Gu3
+Lt3hNpAhXvd5Qb/wyJN6kyaBs5PvnJ+CC5KLqReRIRKd0lO6ZbIEGrEbsoQB2Csl
+SGtmQBIT0WHZic2lMLdT/f33OFVut5l4qeyCJd6dfAtCDUuWyLTfXXXcjJZ4GLqs
++8hglZzZnAjWqsgZeuPsD4ZZAomdDNhq1R0+huVhKJApNWQgeA8UH3O8u/0HLRk9
+63PN53seWBkZvNk8Cnos
+=ivIK
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__29_Nov_2012_17_14_42_+1100_yCfpNVkHjxsAW3KF--
+--Signature=_Thu__29_Nov_2012_17_19_39_+1100_vMvHEMfJNPi4yXY2--
