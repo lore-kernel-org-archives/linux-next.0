@@ -1,22 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the mfd tree
-Date: Thu, 29 Nov 2012 15:18:04 +1100
-Message-ID: <20121129151804.a133338f9738b25d3ccf2e6f@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the battery
+ tree
+Date: Thu, 29 Nov 2012 15:20:08 +1100
+Message-ID: <20121129152008.5a74394e46746fa83e70b8ff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Nov_2012_15_18_04_+1100_2m.VOuEfK2j09xlC"
+ boundary="Signature=_Thu__29_Nov_2012_15_20_08_+1100_Fo1CjAd7Rr1WWsEf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41252 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:47409 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756196Ab2K2ESH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Nov 2012 23:18:07 -0500
+	with ESMTP id S1752435Ab2K2EUM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Nov 2012 23:20:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>, Fabio Estevam <fabio.estevam@freescale.com>, Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>, Qing Xu <qingx@marvell.com>, Anton Vorontsov <anton.vorontsov@linaro.org>
 
---Signature=_Thu__29_Nov_2012_15_18_04_+1100_2m.VOuEfK2j09xlC
+--Signature=_Thu__29_Nov_2012_15_20_08_+1100_Fo1CjAd7Rr1WWsEf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,10 +25,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the driver-core tree got a conflict in
-drivers/power/da9052-battery.c between commit 4b5edf7887c6 ("power:
-da9052-battery: Convert to the new da9052 interrupt functions") from the
-mfd tree and commit c8afa6406e60 ("power: remove use of __devinit") from
-the driver-core tree.
+drivers/power/max8925_power.c between commit eba3b670a916
+("max8925_power: Add support for device-tree initialization") from the
+battery tree and commit c8afa6406e60 ("power: remove use of __devinit")
+from the driver-core tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,69 +37,87 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/power/da9052-battery.c
-index 3972dc0,bb0df89..0000000
---- a/drivers/power/da9052-battery.c
-+++ b/drivers/power/da9052-battery.c
-@@@ -578,16 -576,7 +578,16 @@@ static char *da9052_bat_irqs[] =3D=20
-  	"CHG END",
-  };
- =20
- +static int da9052_bat_irq_bits[] =3D {
- +	DA9052_IRQ_TBAT,
- +	DA9052_IRQ_DCIN,
- +	DA9052_IRQ_DCINREM,
- +	DA9052_IRQ_VBUS,
- +	DA9052_IRQ_VBUSREM,
- +	DA9052_IRQ_CHGEND,
- +};
- +
-- static s32 __devinit da9052_bat_probe(struct platform_device *pdev)
-+ static s32 da9052_bat_probe(struct platform_device *pdev)
-  {
-  	struct da9052_pdata *pdata;
-  	struct da9052_battery *bat;
-@@@ -638,14 -630,16 +638,14 @@@ err
-  	kfree(bat);
-  	return ret;
+diff --cc drivers/power/max8925_power.c
+index b5a3ccb,1a075f1..0000000
+--- a/drivers/power/max8925_power.c
++++ b/drivers/power/max8925_power.c
+@@@ -427,55 -426,7 +427,55 @@@ static int max8925_deinit_charger(struc
+  	return 0;
   }
-- static int __devexit da9052_bat_remove(struct platform_device *pdev)
-+ static int da9052_bat_remove(struct platform_device *pdev)
-  {
-  	int i;
- -	int irq;
-  	struct da9052_battery *bat =3D platform_get_drvdata(pdev);
  =20
- -	for (i =3D 0; i < ARRAY_SIZE(da9052_bat_irqs); i++) {
- -		irq =3D platform_get_irq_byname(pdev, da9052_bat_irqs[i]);
- -		free_irq(bat->da9052->irq_base + irq, bat);
- -	}
- +	for (i =3D 0; i < ARRAY_SIZE(da9052_bat_irqs); i++)
- +		da9052_free_irq(bat->da9052, da9052_bat_irq_bits[i], bat);
+ +#ifdef CONFIG_OF
+ +static struct max8925_power_pdata *
+ +max8925_power_dt_init(struct platform_device *pdev)
+ +{
+ +	struct device_node *nproot =3D pdev->dev.parent->of_node;
+ +	struct device_node *np;
+ +	int batt_detect;
+ +	int topoff_threshold;
+ +	int fast_charge;
+ +	int no_temp_support;
+ +	int no_insert_detect;
+ +	struct max8925_power_pdata *pdata;
  +
-  	power_supply_unregister(&bat->psy);
-  	kfree(bat);
- =20
+ +	if (!nproot)
+ +		return pdev->dev.platform_data;
+ +
+ +	np =3D of_find_node_by_name(nproot, "charger");
+ +	if (!np) {
+ +		dev_err(&pdev->dev, "failed to find charger node\n");
+ +		return NULL;
+ +	}
+ +
+ +	pdata =3D devm_kzalloc(&pdev->dev,
+ +			sizeof(struct max8925_power_pdata),
+ +			GFP_KERNEL);
+ +
+ +	of_property_read_u32(np, "topoff-threshold", &topoff_threshold);
+ +	of_property_read_u32(np, "batt-detect", &batt_detect);
+ +	of_property_read_u32(np, "fast-charge", &fast_charge);
+ +	of_property_read_u32(np, "no-insert-detect", &no_insert_detect);
+ +	of_property_read_u32(np, "no-temp-support", &no_temp_support);
+ +
+ +	pdata->batt_detect =3D batt_detect;
+ +	pdata->fast_charge =3D fast_charge;
+ +	pdata->topoff_threshold =3D topoff_threshold;
+ +	pdata->no_insert_detect =3D no_insert_detect;
+ +	pdata->no_temp_support =3D no_temp_support;
+ +
+ +	return pdata;
+ +}
+ +#else
+ +static struct max8925_power_pdata *
+ +max8925_power_dt_init(struct platform_device *pdev)
+ +{
+ +	return pdev->dev.platform_data;
+ +}
+ +#endif
+ +
+- static __devinit int max8925_power_probe(struct platform_device *pdev)
++ static int max8925_power_probe(struct platform_device *pdev)
+  {
+  	struct max8925_chip *chip =3D dev_get_drvdata(pdev->dev.parent);
+  	struct max8925_power_pdata *pdata =3D NULL;
 
---Signature=_Thu__29_Nov_2012_15_18_04_+1100_2m.VOuEfK2j09xlC
+--Signature=_Thu__29_Nov_2012_15_20_08_+1100_Fo1CjAd7Rr1WWsEf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQtuH8AAoJEECxmPOUX5FEOaIQAJw3TCNnBDuxlU91KKJESpjN
-SU+CTDOu4kkwXLl3Xke+ALkQ2Q6IOLny8UF+CCdOQbNml4e1YhAC1Q1eW9TqAh0U
-c0lwqqqu7JkQNXUGjtHbNKugUY0OFqwdnPBgyLbQdXdzY4SlCqTi8A3YQrL5jLIJ
-0xwh0eP4pGbiTmD2Aaf9r51LpwVQmP7dtHNLqZ8WRFyGsFrRGVHq1bGs0oDgGmr6
-AfLrPqdETuXsrPoPvknWKcWgkhyzkFdGqen9c6sUFoxQoMRh/Tu2xt2VmMtUGgQk
-pLGyhRFU+fFypqjQLZI4OpEh71FoQ9tl3rEfAA8BhRNBQBf+nL1zaIxxw/44Cf4p
-4vK8RAvJc+5iaQeGyGe7k9iBsUyKrk6YhRWNBt4c03mVYaWYarys6W5GEgEra7sX
-PYsRcaozC5v8CGBSI0LfSeRoLx7MCCZ5Uh4DPore4VdbJYRcJqsguRadSDEku3lP
-2CsEPfb7nX4nWg85+tg3yScaCjnCdASerc10Mg5K/dTttz/2NiQzEjE5tma5ng9B
-S/GRigghAJF20kiZx37/EDdQqGpysAKrMDSU2gBHGU6n1E6k2mlZWjaGx0nigO/q
-OZylOrF/ULwo1NZGTKT3YtZJPlE8lQRGqdFvdNu/UfNIKETN2V5k/0BVlNIVuIWO
-NR3wcdHB6fS1eofXCP0N
-=B/CF
+iQIcBAEBCAAGBQJQtuJ4AAoJEECxmPOUX5FEBC8P/1s38Pofor6mgwk8NQiXg2/G
+vrQ+KYl3lK9fWxUVqSo7SVLVBWBWd1nCtBYXQqOBXl5vL7IPXQp6hyVtVKJ8OIY+
+/L6DZWZRzZK3BZLV0J5eOb2RlvLMFofPiZXSmFpkIL+h1CIE9lraa9awMlB0Ph1l
+IpsK15ODzSfpqruRo6IihxyFKyzVnIC+s21rCwhK6PQF1z6afx/1JoZtb4UGOM+K
+SMBLhmdEPb44k4AxuMHlMSdJLrMEZyurjYvEGYQP5UcJm6xKZ8vXJGeVPvxQrxk5
+A5lZcCzgAsjBvCobXsKgVqErDeZOBb0/c1JVyRggPvXANXZkt2bKR5+zELEVjou6
+i7Nqjis/Xkh0B/mP2aE5HYzzrQCMuSGFGdy1ocOc5BaZQQWmDZHHIl9EVqgVwoLF
+vw8K3vq9Rr0iA6ai0VUJIP4LjfSZRDZ5F2C0G8bOrpPIroUhcew8W0zLehgJt30k
+U0TwUabuiH75an6SMb9nuuulWXyrdlfkPtVZzzBfDiMzdSZsj/QSuHJ/LO7vcvUE
+AFlyf3r2wDrVgJjOfutjQcquJAu6K3oB4l8mjGpg0h9yBQSHIvJuj+m6SsHYPGxQ
+73mcD13REtk4AS+M9z73FSkH8GcLTwsKmJsFwc6DZ8TM29q99UcN2ZV+GzmSxcvW
+IvfKgs+grzckDW0TRhRS
+=aPxK
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__29_Nov_2012_15_18_04_+1100_2m.VOuEfK2j09xlC--
+--Signature=_Thu__29_Nov_2012_15_20_08_+1100_Fo1CjAd7Rr1WWsEf--
