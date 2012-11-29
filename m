@@ -1,55 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pwm tree with the driver-core tree
-Date: Thu, 29 Nov 2012 16:29:45 +1100
-Message-ID: <20121129162945.ee9cf8d7620477159e038ccf@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH] export of_reconfig_notifier_[register,unregister]
+Date: Thu, 29 Nov 2012 17:07:12 +1100
+Message-ID: <1354169232.2179.183.camel@pasglop>
+References: <20121128140308.abb21ec8f61553a2ed077fe3@canb.auug.org.au>
+	 <50B66922.9090209@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Nov_2012_16_29_45_+1100_a4TCTY0K+1VhHI1z"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>, Greg KH <greg@kroah.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:60532 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751066Ab2K2GHk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 29 Nov 2012 01:07:40 -0500
+In-Reply-To: <50B66922.9090209@linux.vnet.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>
 
---Signature=_Thu__29_Nov_2012_16_29_45_+1100_a4TCTY0K+1VhHI1z
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2012-11-28 at 13:42 -0600, Nathan Fontenot wrote:
+> The of reconfiguration notification chains should be exported for use
+> by modules.
+> 
+> Signed-off-by:Nathan Fontenot <nfont@linux.vnet.ibm.com>
 
-Hi Thierry,
+Grant, I'm applying that into the powerpc tree (with a slightly modified
+subject line). You don't need to add it to your tree at this stage I
+suspect.
 
-Today's linux-next merge of the pwm tree got a conflict in
-drivers/pwm/pwm-twl6030.c between commit fd1091125a1d ("pwm: remove use
-of __devexit_p") from the driver-core tree and commit 6179a58ec7e2 ("pwm:
-Remove pwm-twl6030 driver") from the pwm tree.
-
-I fixed it up (the latter removed the file) and can carry the fix as
-necessary (no action is required).
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Ben.
 
---Signature=_Thu__29_Nov_2012_16_29_45_+1100_a4TCTY0K+1VhHI1z
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQtvLJAAoJEECxmPOUX5FEmjQP/iR8A8ZQ8gJa1xG/pjeKzGQH
-o/3nH82FxApvzW9h5HiP8KdAz9bOSKu3mk+e9fgw8aYXp6DQuyLgSxwDTiOvANLL
-Y5ZK6QAYwUpzeeC9yf+Y4OZL/+UBVGnC0UOzYy4ZqIlEuJQHueazoCSfwRx2jDgU
-bXs6Hyo8TRiaFOmKy+cP8xs2Qm9gzkvb8o4X4zrsaLSpjbejCOhoO8vgmAxJHb8p
-lfMsXYxkr4jo1Ho0feGO3qOKLICZ/Vwu7cx423A1kusG4bjkpjoMnCLva/sP8C1D
-9qKDkoigA4ah1zpLfm36PBPWy7G5tTVLB87OMtQWppIM9a8jz1EGLSCUa6kvq7x7
-I1JiuspeXkVNcCGRTSci4Xh347t9M4opgr9z/TeWKEpU9G36Ooo0b2tQ66z+oMjQ
-+986G0NgQc04yxv6T/YbgGhYJLtlFF2h7e9MM66lnb5M2CI6iDktxGCR250ofR6Z
-E7sGiinU6cbg/d4uUKJcDRDuW0RXv9FnREfdLwut9YDC/CZ8y9cZdZmI9zM0ixFH
-OUFlTvGNEAEO56+bE3A5RfnfTN3BwkqJi7lQ/NrCbbQfH3YqKDZteMgAQfo7GLVH
-DK14svmOyhuXebiPJ9sPaInnIWzY1QXRy+YTcKYNKRL9MKr5YEfkKIew+mVE8mKd
-JzBuG1RESnwBIc/52GL5
-=nkZn
------END PGP SIGNATURE-----
-
---Signature=_Thu__29_Nov_2012_16_29_45_+1100_a4TCTY0K+1VhHI1z--
+> ---
+> Index: linux-next/drivers/of/base.c
+> ===================================================================
+> --- linux-next.orig/drivers/of/base.c	2012-11-28 09:18:02.000000000 -0600
+> +++ linux-next/drivers/of/base.c	2012-11-28 11:05:00.000000000 -0600
+> @@ -1282,11 +1282,13 @@
+>  {
+>  	return blocking_notifier_chain_register(&of_reconfig_chain, nb);
+>  }
+> +EXPORT_SYMBOL_GPL(of_reconfig_notifier_register);
+>  
+>  int of_reconfig_notifier_unregister(struct notifier_block *nb)
+>  {
+>  	return blocking_notifier_chain_unregister(&of_reconfig_chain, nb);
+>  }
+> +EXPORT_SYMBOL_GPL(of_reconfig_notifier_unregister);
+>  
+>  int of_reconfig_notify(unsigned long action, void *p)
+>  {
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
