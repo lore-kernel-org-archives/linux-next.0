@@ -1,46 +1,63 @@
-From: Olaf Hering <olaf@aepfle.de>
-Subject: [PATCH] xen PVonHVM: fix compile warning in init_hvm_pv_info
-Date: Thu, 29 Nov 2012 15:32:26 +0100
-Message-ID: <1354199546-25229-1-git-send-email-olaf@aepfle.de>
-References: <20121129142530.37630048cd37048f884b17e9@canb.auug.org.au>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [RFC PATCH v2] Add rcu user eqs exception hooks for async page fault
+Date: Thu, 29 Nov 2012 15:40:05 +0100
+Message-ID: <CAFTL4hzOsXWdZC-PZu4ONzunTyq6vJ8C3_=Tvx6Kt3bJDBRbkQ@mail.gmail.com>
+References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
+	<CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
+	<1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
+	<CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
+	<1354153788.2499.9.camel@ThinkPad-T5421.cn.ibm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mo-p00-ob.rzone.de ([81.169.146.160]:56879 "EHLO
-	mo-p00-ob.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751165Ab2K2Ocy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Nov 2012 09:32:54 -0500
-In-Reply-To: <20121129142530.37630048cd37048f884b17e9@canb.auug.org.au>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:39244 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754910Ab2K2OkH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Nov 2012 09:40:07 -0500
+In-Reply-To: <1354153788.2499.9.camel@ThinkPad-T5421.cn.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au, konrad.wilk@oracle.com
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olaf Hering <olaf@aepfle.de>
+To: Li Zhong <zhong@linux.vnet.ibm.com>
+Cc: linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, gleb@redhat.com, avi@redhat.com
 
-After merging the xen-two tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+2012/11/29 Li Zhong <zhong@linux.vnet.ibm.com>:
+> On Wed, 2012-11-28 at 13:55 +0100, Frederic Weisbecker wrote:
+>> > With rcu_user_exit() at the beginning, now rcu_irq_enter() only protects
+>> > the cpu idle eqs, but it's not good to call rcu_irq_exit() after the cpu
+>> > halt and the page ready.
+>>
+>> Hmm, why is it not good?
+>
+> I think in this case, as cpu halts and waits for page ready, it is
+> really in idle, and it's better for rcu to think it as rcu idle. But
+> with rcu_irq_enter(), the rcu would not think this cpu as idle. And the
+> rcu_irq_exit() is only called after this idle period to mark this cpu as
+> rcu idle again.
 
-arch/x86/xen/enlighten.c: In function 'init_hvm_pv_info':
-arch/x86/xen/enlighten.c:1617:16: warning: unused variable 'ebx' [-Wunused-variable]
-arch/x86/xen/enlighten.c:1617:11: warning: unused variable 'eax' [-Wunused-variable]
 
-Introduced by commit 9d02b43dee0d ("xen PVonHVM: use E820_Reserved area
-for shared_info").
+Indeed. How about calling rcu_irq_exit() before native_safe_halt() and
+rcu_irq_enter() right after?
 
-Signed-off-by: Olaf Hering <olaf@aepfle.de>
----
- arch/x86/xen/enlighten.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> > So I still want to remove it. And later if it shows that we really needs
+>> > rcu somewhere in this code path, maybe we could use RCU_NONIDLE() to
+>> > protect it. ( The suspicious RCU usage reported in commit
+>> > c5e015d4949aa665 seems related to schedule(), which is not in the code
+>> > path if we are in cpu idle eqs )
+>>
+>> Yes but if rcu_irq_*() calls are fine to be called there, and I
+>> believe they are because exception_enter() exits the user mode, we
+>> should start to protect there right now instead of waiting for a
+>> potential future warning of illegal RCU use.
+>
+> I agree, but I think by only protecting the necessary code avoids
+> marking the entire waiting period as rcu non idle.
 
-diff --git a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
-index a90c3bb..46156f5 100644
---- a/arch/x86/xen/enlighten.c
-+++ b/arch/x86/xen/enlighten.c
-@@ -1557,7 +1557,7 @@ static void __init xen_hvm_init_shared_info(void)
- 
- static void __init init_hvm_pv_info(void)
- {
--	uint32_t eax, ebx, ecx, edx, pages, msr, base;
-+	uint32_t ecx, edx, pages, msr, base;
- 	u64 pfn;
- 
- 	base = xen_cpuid_base();
--- 
-1.8.0
+If we use RCU_NONIDLE(), this assume we need to check all the code
+there deeply for potential RCU uses and ensure it will never be
+extended later to use RCU. We really don't scale enough for that.
+There are too much subsystems involved there: waitqueue, spinlocks,
+slab, per cpu, etc...
+
+So I strongly suggest we use rcu_irq_*() APIs, and relax them around
+native_safe_halt() like I suggested above. This seems to me the safest
+solution.
