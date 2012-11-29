@@ -1,114 +1,101 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: [BUG -next-20121127] kernel BUG at kernel/softirq.c:471!
-Date: Wed, 28 Nov 2012 17:12:35 -0500
-Message-ID: <1354140755.3588.27.camel@thor>
-References: <1351824534-2861-1-git-send-email-xtfeng@gmail.com>
-	 <20121105145207.6d2fae92.akpm@linux-foundation.org>
-	 <CAJn8CcF=2=XBV0T661LnAxHi8+fT8KAVapCFaiDZgS6TyieNOA@mail.gmail.com>
-	 <20121105173707.94602896.akpm@linux-foundation.org>
-	 <1354125623.2788.23.camel@thor>
+From: Li Zhong <zhong@linux.vnet.ibm.com>
+Subject: Re: [RFC PATCH v2] Add rcu user eqs exception hooks for async page
+ fault
+Date: Thu, 29 Nov 2012 09:49:48 +0800
+Message-ID: <1354153788.2499.9.camel@ThinkPad-T5421.cn.ibm.com>
+References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
+	 <CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
+	 <1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
+	 <CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout39.mail01.mtsvc.net ([216.70.64.83]:54100 "EHLO
-	n12.mail01.mtsvc.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756065Ab2K1WMv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Nov 2012 17:12:51 -0500
-In-Reply-To: <1354125623.2788.23.camel@thor>
+Received: from e23smtp09.au.ibm.com ([202.81.31.142]:49283 "EHLO
+	e23smtp09.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751120Ab2K2BuA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Nov 2012 20:50:00 -0500
+Received: from /spool/local
+	by e23smtp09.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <zhong@linux.vnet.ibm.com>;
+	Thu, 29 Nov 2012 11:45:33 +1000
+In-Reply-To: <CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Xiaotian Feng <dannyfeng@tencent.com>, Xiaotian Feng <xtfeng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, gleb@redhat.com, avi@redhat.com
 
-[cc'ing linux-next]
+On Wed, 2012-11-28 at 13:55 +0100, Frederic Weisbecker wrote:
+> 2012/11/28 Li Zhong <zhong@linux.vnet.ibm.com>:
+> > Thank you all for the review and education.
+> >
+> > Below are my current understandings and an update version. Would you
+> > please help to review it again and give your comments?
+> >
+> > Thanks, Zhong
+> >
+> > Now it seems to me that it is legal to call rcu_irq_exit/enter() without
+> > a matching rcu_irq_enter/exit() if the cpu is in non rcu idle state.
+> >
+> > As opposite, it is illegal to call rcu_irq_exit() without a matching
+> > rcu_irq_enter() if the cpu is in rcu idle state.
+> >
+> > But it seems legal to call rcu_irq_enter() without a matching
+> > rcu_irq_exit() if the cpu is in rcu idle state, regarding the
+> > dynticks_nesting value.   However, it seems not good to exit the rcu
+> > idle state, if we are actually entering into idle mode, so maybe it's
+> > better to call a matching rcu_irq_exit() before actually idle?
+> >
+> > As Frederic pointed out, we need a rcu_user_exit() to exit the user eqs
+> > (if we are in this state) in the beginning. But after some more
+> > thinking, I guess we might also need to call rcu_user_enter() after the
+> > waiting, if we get this page fault from user space. So maybe it's better
+> > to use rcu user eqs exception hooks here?
+> 
+> Makes sense.
+> 
+> >
+> > With rcu_user_exit() at the beginning, now rcu_irq_enter() only protects
+> > the cpu idle eqs, but it's not good to call rcu_irq_exit() after the cpu
+> > halt and the page ready.
+> 
+> Hmm, why is it not good?
 
-On Wed, 2012-11-28 at 13:00 -0500, Peter Hurley wrote:
-> Hi all,
+I think in this case, as cpu halts and waits for page ready, it is
+really in idle, and it's better for rcu to think it as rcu idle. But
+with rcu_irq_enter(), the rcu would not think this cpu as idle. And the
+rcu_irq_exit() is only called after this idle period to mark this cpu as
+rcu idle again. 
 > 
-> I couldn't find the v2 patch of this on linux-kernel but this commit
+> >
+> > So I still want to remove it. And later if it shows that we really needs
+> > rcu somewhere in this code path, maybe we could use RCU_NONIDLE() to
+> > protect it. ( The suspicious RCU usage reported in commit
+> > c5e015d4949aa665 seems related to schedule(), which is not in the code
+> > path if we are in cpu idle eqs )
 > 
->   4660e32 "tasklet: ignore disabled tasklet in tasklet_action()"
-> 
-> BUGS in -next-20121127.
-> 
-> -----------[cut here ]----------
-> kernel BUG at /home/peter/src/kernels/next/kernel/softirq.c:471!
-> invalid opcode: 0000 [#1] PREEMPT SMP
-> ....
-> 
-> The registers/stack dump isn't useful so I didn't include it here.
-> 
-> I'm still trying to track down the execution sequence that causes this,
-> but the high-level trigger is a firewire bus reset.
-> 
-> Hopefully I'll have more information soon.
+> Yes but if rcu_irq_*() calls are fine to be called there, and I
+> believe they are because exception_enter() exits the user mode, we
+> should start to protect there right now instead of waiting for a
+> potential future warning of illegal RCU use.
 
->From the original v1 of this patch [where is v2?] ...
+I agree, but I think by only protecting the necessary code avoids
+marking the entire waiting period as rcu non idle.
 
-On Fri, 2012-11-02 at 10:48 +0800, Xiaotian Feng wrote:
-> We met a ksoftirqd 100% issue, the perf top shows kernel is busy
-> with tasklet_action(), but no actual action is shown. From dumped
-> kernel, there's only one disabled tasklet on the tasklet_vec.
-> 
-> tasklet_action might be handled after tasklet is disabled, this will
-> make disabled tasklet stayed on tasklet_vec. tasklet_action will not
-> handle disabled tasklet, but place it on the tail of tasklet_vec,
-> still raise softirq for this tasklet. Things will become worse if
-> device driver uses tasklet_disable on its device remove/close code.
-> The disabled tasklet will stay on the vec, frequently __raise_softirq_off()
-> and make ksoftirqd wakeup even if no tasklets need to be handled.
-> 
-> This patch introduced a new TASKLET_STATE_HI bit to indicate HI_SOFTIRQ,
-> in tasklet_action(), simply ignore the disabled tasklet and don't raise
-> the softirq nr. In my previous patch, I remove tasklet_hi_enable() since
-> it is the same as tasklet_enable(). So only tasklet_enable() needs to be
-> modified, if tasklet state is changed from disable to enable, use
-> __tasklet_schedule() to put it on the right vec.
-> 
-> Signed-off-by: Xiaotian Feng <dannyfeng@tencent.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> ---
->  include/linux/interrupt.h |   12 ++++++++++--
->  kernel/softirq.c          |   10 +++++-----
->  2 files changed, 15 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> index 5e4e617..7e5bb00 100644
-> --- a/include/linux/interrupt.h
-> +++ b/include/linux/interrupt.h
-> @@ -521,7 +521,8 @@ struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(1), func, data }
->  enum
->  {
->  	TASKLET_STATE_SCHED,	/* Tasklet is scheduled for execution */
-> -	TASKLET_STATE_RUN	/* Tasklet is running (SMP only) */
-> +	TASKLET_STATE_RUN,	/* Tasklet is running (SMP only) */
-> +	TASKLET_STATE_HI	/* Tasklet is HI_SOFTIRQ */
->  };
->  
->  #ifdef CONFIG_SMP
-> @@ -593,7 +594,14 @@ static inline void tasklet_disable(struct tasklet_struct *t)
->  static inline void tasklet_enable(struct tasklet_struct *t)
->  {
->  	smp_mb__before_atomic_dec();
-> -	atomic_dec(&t->count);
-> +	if (atomic_dec_and_test(&t->count)) {
-> +		if (!test_bit(TASKLET_STATE_SCHED, &t->state))
-> +			return;
-> +		if (test_bit(TASKLET_STATE_HI, &t->state))
-> +			__tasklet_hi_schedule(t);
-> +		else
-> 
+Thanks, Zhong
 
-Since this isn't protected by locks, all of the conditions that __were__
-met to arrive here (t->count == 0 && t->state & TASKLET_STATE_SCHED) may
-no longer be true now because another cpu may have run tasklet_action(),
-so now this tasklet will be scheduled when it should not be.
-
-Plus __tasklet_schedule() can't just be called from any cpu that happens
-to be calling tasklet_enable(). What you're doing here means that the
-tasklet could be scheduled on multiple cpus at the same time -- that's
-not going to work.
-
-+			__tasklet_schedule(t);
+> 
+> >
+> > I think we still need Gleb's patch about the idle check in
+> > kvm_async_pf_task_wait(), and maybe another patch for the
+> > exit_idle()/enter_idle() issue.
+> 
+> Right.
+> 
+> Thanks.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 > 
