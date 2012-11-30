@@ -1,123 +1,186 @@
-From: Li Zhong <zhong@linux.vnet.ibm.com>
-Subject: [RFC PATCH v3] Add rcu user eqs exception hooks for async page fault
-Date: Fri, 30 Nov 2012 17:18:41 +0800
-Message-ID: <1354267121.2552.65.camel@ThinkPad-T5421.cn.ibm.com>
-References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
-	 <CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
-	 <1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
-	 <CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
-	 <20121128135345.GG928@redhat.com>
-	 <CAFTL4hxoFBLNQCABBpJRBgV-r-Mg5GSq7HbPfWJRraSvtviz4A@mail.gmail.com>
-	 <20121129110717.GA9711@redhat.com>
-	 <CAFTL4hyHW3uJHvzxz1o4agtGbicFAP1DuUsifbOrp1Q3ODRBMA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the omap_dss2 tree
+Date: Fri, 30 Nov 2012 16:18:56 +1100
+Message-ID: <20121130161856.985bdeb55e3a9be322e772ec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="===============3970374306269493682=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: Matt Porter <mporter@ti.com>, Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org, "Manjunathappa, Prakash" <prakash.pm@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--===============3970374306269493682==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__30_Nov_2012_16_18_56_+1100_wdwJQK8fGccNMkea"
+
+--Signature=_Fri__30_Nov_2012_16_18_56_+1100_wdwJQK8fGccNMkea
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-davinci/devices-da8xx.c between commit 3b43ad201dea
+("da8xx-fb: cleanup LCDC configurations") from the omap_dss2 tree and
+commit 8e0d72d2c7a6 ("ARM: davinci: da8xx: add DA850 PRUSS support") from
+the arm-soc tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-davinci/devices-da8xx.c
+index fcb30d3,46c9a0c..0000000
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@@ -518,9 -520,98 +520,78 @@@ void __init da8xx_register_mcasp(int id
+  	}
+  }
+ =20
++ static struct resource da8xx_pruss_resources[] =3D {
++ 	{
++ 		.start	=3D DA8XX_PRUSS_MEM_BASE,
++ 		.end	=3D DA8XX_PRUSS_MEM_BASE + 0xFFFF,
++ 		.flags	=3D IORESOURCE_MEM,
++ 	},
++ 	{
++ 		.start	=3D IRQ_DA8XX_EVTOUT0,
++ 		.end	=3D IRQ_DA8XX_EVTOUT0,
++ 		.flags	=3D IORESOURCE_IRQ,
++ 	},
++ 	{
++ 		.start	=3D IRQ_DA8XX_EVTOUT1,
++ 		.end	=3D IRQ_DA8XX_EVTOUT1,
++ 		.flags	=3D IORESOURCE_IRQ,
++ 	},
++ 	{
++ 		.start	=3D IRQ_DA8XX_EVTOUT2,
++ 		.end	=3D IRQ_DA8XX_EVTOUT2,
++ 		.flags	=3D IORESOURCE_IRQ,
++ 	},
++ 	{
++ 		.start	=3D IRQ_DA8XX_EVTOUT3,
++ 		.end	=3D IRQ_DA8XX_EVTOUT3,
++ 		.flags	=3D IORESOURCE_IRQ,
++ 	},
++ 	{
++ 		.start	=3D IRQ_DA8XX_EVTOUT4,
++ 		.end	=3D IRQ_DA8XX_EVTOUT4,
++ 		.flags	=3D IORESOURCE_IRQ,
++ 	},
++ 	{
++ 		.start	=3D IRQ_DA8XX_EVTOUT5,
++ 		.end	=3D IRQ_DA8XX_EVTOUT5,
++ 		.flags	=3D IORESOURCE_IRQ,
++ 	},
++ 	{
++ 		.start	=3D IRQ_DA8XX_EVTOUT6,
++ 		.end	=3D IRQ_DA8XX_EVTOUT6,
++ 		.flags	=3D IORESOURCE_IRQ,
++ 	},
++ 	{
++ 		.start	=3D IRQ_DA8XX_EVTOUT7,
++ 		.end	=3D IRQ_DA8XX_EVTOUT7,
++ 		.flags	=3D IORESOURCE_IRQ,
++ 	},
++ };
++=20
++ static struct uio_pruss_pdata da8xx_uio_pruss_pdata =3D {
++ 	.pintc_base	=3D 0x4000,
++ };
++=20
++ static struct platform_device da8xx_uio_pruss_dev =3D {
++ 	.name		=3D "pruss_uio",
++ 	.id		=3D -1,
++ 	.num_resources	=3D ARRAY_SIZE(da8xx_pruss_resources),
++ 	.resource	=3D da8xx_pruss_resources,
++ 	.dev		=3D {
++ 		.coherent_dma_mask	=3D DMA_BIT_MASK(32),
++ 		.platform_data		=3D &da8xx_uio_pruss_pdata,
++ 	}
++ };
++=20
++ int __init da8xx_register_uio_pruss(void)
++ {
++ 	da8xx_uio_pruss_pdata.sram_pool =3D sram_get_gen_pool();
++ 	return platform_device_register(&da8xx_uio_pruss_dev);
++ }
++=20
+ -static const struct display_panel disp_panel =3D {
+ -	QVGA,
+ -	16,
+ -	16,
+ -	COLOR_ACTIVE,
+ -};
+ -
+  static struct lcd_ctrl_config lcd_cfg =3D {
+ -	&disp_panel,
+ -	.ac_bias		=3D 255,
+ -	.ac_bias_intrpt		=3D 0,
+ -	.dma_burst_sz		=3D 16,
+ +	.panel_shade		=3D COLOR_ACTIVE,
+  	.bpp			=3D 16,
+ -	.fdd			=3D 255,
+ -	.tft_alt_mode		=3D 0,
+ -	.stn_565_mode		=3D 0,
+ -	.mono_8bit_mode		=3D 0,
+ -	.invert_line_clock	=3D 1,
+ -	.invert_frm_clock	=3D 1,
+ -	.sync_edge		=3D 0,
+ -	.sync_ctrl		=3D 1,
+ -	.raster_order		=3D 0,
+ -	.fifo_th		=3D 6,
+  };
+ =20
+  struct da8xx_lcdc_platform_data sharp_lcd035q3dg01_pdata =3D {
+
+--Signature=_Fri__30_Nov_2012_16_18_56_+1100_wdwJQK8fGccNMkea
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQuEHAAAoJEECxmPOUX5FEsgcP/2dE/zJgg9tQV1puXGIyQjCm
+VAzE7IO5CxuwYgeDjteuNWHRCBnCy98bxtERN/5o4jhCwyVc8WE0lrfLJYEhfb2A
+d5nq08f2vDg4wfmcExMZiKzWJD8e/tMaRo6nyifoAm3c9yS+uu2pM29wf5l64F2P
+DxaGIC63dsKh5hFjos5dCTr7lFaTENNfBgxGYMeDWx4lUBIOf5U0FeLmuIMi7oDW
+B8y1V+gt+Q9oBt2lAcDPV8OVr1QEYaBNz8EgNPQB6t7VvCLXZX1eXfj6/RXOgTo3
+1JM6Jww6AHYFKbyweMJSK4JDHVfZs3VdAdNWdnq5M04cxURaAbAU9gZHdjZzN4xl
+5AZY9P+ui//1XJf6//b3Y6v8wlxNYpZi9cM6E9kYwKFb+UbghF9TzqKzt5PzwH5v
+w0/Z4ZrjAz/9jsr+UEF2qoHjRDvrXQgwt9IPgI0aSIqBv8OELAyF3Uuprea3IqVs
++3Dj8m+9rS2zMoNPbzUE60ZZ00ew9X6Ov6bGyLP20ysp3BtVBSWXL6z/O4MYHFGI
+exHI9jIZ1caA/kmLRoyeQ2/q3q3JzGfpLL88vG414NywOau0qfW1h3+JARco1MgQ
+Ah8h0y3DPgfm2w3kINzXD8eGleCSg4t/dzmoJ/fTITLCsWex75Tse70tCmeO2mgU
+h8JXA8v2l/gnFXsQ279B
+=jP3+
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__30_Nov_2012_16_18_56_+1100_wdwJQK8fGccNMkea--
+
+
+--===============3970374306269493682==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp01.au.ibm.com ([202.81.31.143]:59465 "EHLO
-	e23smtp01.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932133Ab2K3JSv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Nov 2012 04:18:51 -0500
-Received: from /spool/local
-	by e23smtp01.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <zhong@linux.vnet.ibm.com>;
-	Fri, 30 Nov 2012 19:15:19 +1000
-In-Reply-To: <CAFTL4hyHW3uJHvzxz1o4agtGbicFAP1DuUsifbOrp1Q3ODRBMA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Gleb Natapov <gleb@redhat.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
+Content-Disposition: inline
 
-This patch adds user eqs exception hooks for async page fault page not
-present code path, to exit the user eqs and re-enter it as necessary. 
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-Async page fault is different from other exceptions that it may be
-triggered from idle process, so we still need rcu_irq_enter() and
-rcu_irq_exit() to exit cpu idle eqs when needed, to protect the code
-that needs use rcu.
-
-As Frederic pointed out it would be safest and simplest to protect the
-whole kvm_async_pf_task_wait(). Otherwise, "we need to check all the
-code there deeply for potential RCU uses and ensure it will never be
-extended later to use RCU.".
-
-However, We'd better re-enter the cpu idle eqs if we get the exception
-in cpu idle eqs, by calling rcu_irq_exit() before native_safe_halt(). 
-
-So the patch does what Frederic suggested for rcu_irq_*() API usage
-here, except that I moved the rcu_irq_*() pair originally in
-do_async_page_fault() into kvm_async_pf_task_wait(). 
-
-That's because, I think it's better to have rcu_irq_*() pairs to be in
-one function ( rcu_irq_exit() after rcu_irq_enter() ), especially here,
-kvm_async_pf_task_wait() has other callers, which might cause
-rcu_irq_exit() be called without a matching rcu_irq_enter() before it,
-which is illegal if the cpu happens to be in rcu idle state. 
-
-Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
----
- arch/x86/kernel/kvm.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 4180a87..342b00b 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -42,6 +42,7 @@
- #include <asm/apic.h>
- #include <asm/apicdef.h>
- #include <asm/hypervisor.h>
-+#include <asm/rcu.h>
- 
- static int kvmapf = 1;
- 
-@@ -112,6 +113,8 @@ void kvm_async_pf_task_wait(u32 token)
- 	DEFINE_WAIT(wait);
- 	int cpu, idle;
- 
-+	rcu_irq_enter();
-+
- 	cpu = get_cpu();
- 	idle = idle_cpu(cpu);
- 	put_cpu();
-@@ -123,6 +126,8 @@ void kvm_async_pf_task_wait(u32 token)
- 		hlist_del(&e->link);
- 		kfree(e);
- 		spin_unlock(&b->lock);
-+
-+		rcu_irq_exit();
- 		return;
- 	}
- 
-@@ -147,13 +152,16 @@ void kvm_async_pf_task_wait(u32 token)
- 			/*
- 			 * We cannot reschedule. So halt.
- 			 */
-+			rcu_irq_exit();
- 			native_safe_halt();
-+			rcu_irq_enter();
- 			local_irq_disable();
- 		}
- 	}
- 	if (!n.halted)
- 		finish_wait(&n.wq, &wait);
- 
-+	rcu_irq_exit();
- 	return;
- }
- EXPORT_SYMBOL_GPL(kvm_async_pf_task_wait);
-@@ -247,10 +255,10 @@ do_async_page_fault(struct pt_regs *regs, unsigned long error_code)
- 		break;
- 	case KVM_PV_REASON_PAGE_NOT_PRESENT:
- 		/* page is swapped out by the host. */
--		rcu_irq_enter();
-+		exception_enter(regs);
- 		exit_idle();
- 		kvm_async_pf_task_wait((u32)read_cr2());
--		rcu_irq_exit();
-+		exception_exit(regs);
- 		break;
- 	case KVM_PV_REASON_PAGE_READY:
- 		rcu_irq_enter();
--- 
-1.7.11.4
+--===============3970374306269493682==--
