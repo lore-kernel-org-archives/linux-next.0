@@ -1,84 +1,113 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the tip tree
-Date: Fri, 30 Nov 2012 15:26:04 +1100
-Message-ID: <20121130152604.251a14846d6f29c18d65ccae@canb.auug.org.au>
+From: Li Zhong <zhong@linux.vnet.ibm.com>
+Subject: Re: [RFC PATCH v2] Add rcu user eqs exception hooks for async page
+ fault
+Date: Fri, 30 Nov 2012 16:36:46 +0800
+Message-ID: <1354264606.2552.39.camel@ThinkPad-T5421.cn.ibm.com>
+References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
+	 <CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
+	 <1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
+	 <CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
+	 <1354153788.2499.9.camel@ThinkPad-T5421.cn.ibm.com>
+	 <CAFTL4hzOsXWdZC-PZu4ONzunTyq6vJ8C3_=Tvx6Kt3bJDBRbkQ@mail.gmail.com>
+	 <20121129172541.GA20873@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__30_Nov_2012_15_26_04_+1100_4m5EeboWINZRZxh1"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47635 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754199Ab2K3E0V (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Nov 2012 23:26:21 -0500
+Received: from e28smtp08.in.ibm.com ([122.248.162.8]:38478 "EHLO
+	e28smtp08.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755268Ab2K3Ig4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Nov 2012 03:36:56 -0500
+Received: from /spool/local
+	by e28smtp08.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <zhong@linux.vnet.ibm.com>;
+	Fri, 30 Nov 2012 14:06:53 +0530
+In-Reply-To: <20121129172541.GA20873@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Paul Turner <pjt@google.com>
+To: Gleb Natapov <gleb@redhat.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
 
---Signature=_Fri__30_Nov_2012_15_26_04_+1100_4m5EeboWINZRZxh1
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2012-11-29 at 19:25 +0200, Gleb Natapov wrote:
+> On Thu, Nov 29, 2012 at 03:40:05PM +0100, Frederic Weisbecker wrote:
+> > 2012/11/29 Li Zhong <zhong@linux.vnet.ibm.com>:
+> > > On Wed, 2012-11-28 at 13:55 +0100, Frederic Weisbecker wrote:
+> > >> > With rcu_user_exit() at the beginning, now rcu_irq_enter() only protects
+> > >> > the cpu idle eqs, but it's not good to call rcu_irq_exit() after the cpu
+> > >> > halt and the page ready.
+> > >>
+> > >> Hmm, why is it not good?
+> > >
+> > > I think in this case, as cpu halts and waits for page ready, it is
+> > > really in idle, and it's better for rcu to think it as rcu idle. But
+> > > with rcu_irq_enter(), the rcu would not think this cpu as idle. And the
+> > > rcu_irq_exit() is only called after this idle period to mark this cpu as
+> > > rcu idle again.
+> > 
+> > 
+> > Indeed. How about calling rcu_irq_exit() before native_safe_halt() and
+> > rcu_irq_enter() right after?
+> > 
+> We can't. If exception happens in the middle of rcu read section while
+> preemption is disabled then calling rcu_irq_exit() before halt is
+> incorrect. We can do that only if exception happen during idle and this
+> should be rare enough for us to not care.
 
-Hi all,
+If I understand correctly, maybe it doesn't cause problems.
 
-Today's linux-next merge of the kvm tree got a conflict in
-kernel/sched/core.c between commit 0a74bef8bed1 ("sched: Add an rq
-migration call-back to sched_class") from the tip tree and commit
-582b336ec2c0 ("sched: add notifier for cross-cpu migrations") from the
-kvm tree.
+I guess you mean in other(not idle) task's rcu read critical section, we
+get an async page fault? In this case the rcu_idle_exit() won't make
+this cpu to enter rcu idle state. As the task environment is rcu non
+idle. This is the case we use rcu_irq_enter()/rcu_irq_exit() in code
+path where it might be in rcu idle or rcu non idle, and they don't
+change the rcu non-idle state if used in rcu non-idle state.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+And it is also safe if it is rcu read critical section in idle, as it is
+most probably wrapped in an outer rcu_irq_enter/exit(), so we have 
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+rcu idle
+	rcu_irq_enter() - exit rcu idle, to protect the read section
+	  exception
+	  rcu_irq_enter() in the page not present path
+		rcu_irq_exit() before halt 
 
-diff --cc kernel/sched/core.c
-index 20fb760,c86b8b6..0000000
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@@ -953,10 -959,16 +960,18 @@@ void set_task_cpu(struct task_struct *p
-  	trace_sched_migrate_task(p, new_cpu);
- =20
-  	if (task_cpu(p) !=3D new_cpu) {
-+ 		struct task_migration_notifier tmn;
-+=20
- +		if (p->sched_class->migrate_task_rq)
- +			p->sched_class->migrate_task_rq(p, new_cpu);
-  		p->se.nr_migrations++;
-  		perf_sw_event(PERF_COUNT_SW_CPU_MIGRATIONS, 1, NULL, 0);
-+=20
-+ 		tmn.task =3D p;
-+ 		tmn.from_cpu =3D task_cpu(p);
-+ 		tmn.to_cpu =3D new_cpu;
-+=20
-+ 		atomic_notifier_call_chain(&task_migration_notifier, 0, &tmn);
-  	}
- =20
-  	__set_task_cpu(p, new_cpu);
+so the halt is also safe here, as we have two rcu_irq_enter() and one
+rcu_irq_exit().
 
---Signature=_Fri__30_Nov_2012_15_26_04_+1100_4m5EeboWINZRZxh1
-Content-Type: application/pgp-signature
+I agree with Frederic that this is the safest and simplest way now, and
+will try to update the code according to it.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Thanks, Zhong
 
-iQIcBAEBCAAGBQJQuDVcAAoJEECxmPOUX5FEoj4P/jrrRJmaCoESOQXVz5lZH/Cw
-9gu6oSHgprlogqWVQSNGAMcuRkA0DsBV/xUVo2QMBgJcMOQ2iFYzUA68cBOMju/u
-QiNc7fWVHjYkvsNgCDNCl0l0p2inVLaCsLa06oWVKn2boRfF6BGnDDvTClOkTu/S
-EfVgpZvAgsryYKOPbIhAXPMOgKp5FbuVl2IQCsp/skeQE1r4kzj2YT3G4AT0V1K3
-RfHkUGEOnkO9mYj+Zgv/6UDALDaIBgN/76rFCO8IZ5miWsklmoMbfuZt4OWpU7P+
-I7eHT6AZjDbBkW1gMFjp0Ci6++qgMIxn6cB5Jd1WDGpwUscvjWU6OelXIXViB9KS
-apfWzN3vwrdazW/RO5ygVqrG28a2VhDRoNhpNY/yJVEMlvaFybt8hgig2J4L9ae7
-wlm2vuCBf2tvDc2K5wXDbqF1N5Rf9SEMyBX1g47UH9O2i+yBeND2NpM4AuQ95XnF
-ukoYj1kKJqLqzZbrhhpW52l7UjJpk4ey6PIJJlGVbYZYmAn43/Zxh7ZTME1HcBeJ
-HtWAzS6CCcd48ZgXPHVIC86Quf1RqCOfGL5ZvvOVh6uK952znwfaNBnmKmPorSZd
-qWeZMOrg+kCAv3SDU1xA0CjZdhus3yV0xoa25A4AMXl+rC8uj7T3tFynFSfe2/BV
-DsaQNXY00gecYWUtzjCw
-=nC4N
------END PGP SIGNATURE-----
-
---Signature=_Fri__30_Nov_2012_15_26_04_+1100_4m5EeboWINZRZxh1--
+> > >> > So I still want to remove it. And later if it shows that we really needs
+> > >> > rcu somewhere in this code path, maybe we could use RCU_NONIDLE() to
+> > >> > protect it. ( The suspicious RCU usage reported in commit
+> > >> > c5e015d4949aa665 seems related to schedule(), which is not in the code
+> > >> > path if we are in cpu idle eqs )
+> > >>
+> > >> Yes but if rcu_irq_*() calls are fine to be called there, and I
+> > >> believe they are because exception_enter() exits the user mode, we
+> > >> should start to protect there right now instead of waiting for a
+> > >> potential future warning of illegal RCU use.
+> > >
+> > > I agree, but I think by only protecting the necessary code avoids
+> > > marking the entire waiting period as rcu non idle.
+> > 
+> > If we use RCU_NONIDLE(), this assume we need to check all the code
+> > there deeply for potential RCU uses and ensure it will never be
+> > extended later to use RCU. We really don't scale enough for that.
+> > There are too much subsystems involved there: waitqueue, spinlocks,
+> > slab, per cpu, etc...
+> > 
+> > So I strongly suggest we use rcu_irq_*() APIs, and relax them around
+> > native_safe_halt() like I suggested above. This seems to me the safest
+> > solution.
+> 
+> --
+> 			Gleb.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
