@@ -1,37 +1,73 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH -next] of: export "allnodes" to fixx w1-gpio.c modular build
-Date: Fri, 30 Nov 2012 09:54:33 +0000
-Message-ID: <20121130095433.9F4743E070C@localhost>
-References: <20121129174057.99da02b15426c76054d05592@canb.auug.org.au> <50B7F30C.1060105@infradead.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50B7F30C.1060105@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Rob Herring <rob.herring@calxeda.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Ville Syrjala <syrjala@sci.fi>
-List-Id: linux-next.vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with the ftrace tree
+Date: Fri, 30 Nov 2012 16:46:58 +1100
+Message-ID: <20121130164658.c9ceafc2eeba30ac6747285e@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__30_Nov_2012_16_46_58_+1100_WhssEJm.FpaN5u9v"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56319 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754179Ab2K3FrK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Nov 2012 00:47:10 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Sharp <dhsharp@google.com>, Steven Rostedt <rostedt@goodmis.org>
 
-On Thu, 29 Nov 2012 15:43:08 -0800, Randy Dunlap <rdunlap@infradead.org> wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix build when CONFIG_W1_MASTER_GPIO=m by exporting "allnodes".
-> 
-> ERROR: "allnodes" [drivers/w1/masters/w1-gpio.ko] undefined!
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Ville Syrjala <syrjala@sci.fi>
-> ---
->  drivers/of/base.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-next-20121129.orig/drivers/of/base.c
-> +++ linux-next-20121129/drivers/of/base.c
-> @@ -46,6 +46,7 @@ struct alias_prop {
->  static LIST_HEAD(aliases_lookup);
->  
->  struct device_node *allnodes;
-> +EXPORT_SYMBOL(allnodes);
+--Signature=_Fri__30_Nov_2012_16_46_58_+1100_WhssEJm.FpaN5u9v
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Makes sense, but I don't like exporting such a generic name. I'm picking
-up the patch but renaming s/allnodes/of_allnodes/ in the process.
+Hi Al,
 
-g.
+Today's linux-next merge of the signal tree got a conflict in
+arch/microblaze/include/asm/Kbuild between commit 8cbd9cc62540
+("tracing,x86: Add a TSC trace_clock") from the ftrace tree and commit
+24465a40ba45 ("take sys_fork/sys_vfork/sys_clone prototypes to
+linux/syscalls.h") from the signal tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/microblaze/include/asm/Kbuild
+index c5d7670,88a758a..0000000
+--- a/arch/microblaze/include/asm/Kbuild
++++ b/arch/microblaze/include/asm/Kbuild
+@@@ -1,4 -1,6 +1,5 @@@
+ -include include/asm-generic/Kbuild.asm
+ =20
+ -header-y  +=3D elf.h
+  generic-y +=3D clkdev.h
+  generic-y +=3D exec.h
+ +generic-y +=3D trace_clock.h
++ generic-y +=3D syscalls.h
+
+--Signature=_Fri__30_Nov_2012_16_46_58_+1100_WhssEJm.FpaN5u9v
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQuEhSAAoJEECxmPOUX5FEkW0P/R1ugmNeEo1GQAkYBYjIYTWV
+IDdMdJQJEYMDBHN7B589VYPOWBb6S9m0r7vsXVU9F+HMpAr4Ch9wmC3g9F4AaqKX
+NrzjWOH/fQo9SivmU7MLOB49NTZpfmSz5DKMqIn61r6gXYtGwsUDrSY8yN33rE5l
+ntw5Ez0INB4Zxikt2tbxxxchJ3lofEodCO3rmtWnbKALvaRbtSGdmqlnzmhQNygj
+m1bAg9hzDGLhmYDAOctF+OKajhyDY8pXVrfoHaephAnwflH0E/a11C/CdEvyNJXF
+L8+ft6UJXxLJwqmnnklNx1+yJdCTWsiZ8FKPYmnUkPE+m0vrxqT6Olj9PbKglI+v
+jf/i7trkT0JH3A0JhodYq0jjOGhYi6qapnvLjyQ1avlIYIRErO2N382P7F4ZJAKo
+qkeEx7L6N6WVl4oOl2ayOkH6+XI9GmG3wiq9fdvqT0cvLtoa7YrUwr3x3tvGb1t5
+qbWFIh24mcQc9mGgsE4q7nMu3wDTL33i3wHtWkE7IGY0zc5YKMwZQi/qRs+dIIvD
+p0tzf/tHjCgN/XEG9FCx4SepX2eNY15jpQLDNTATL+wclXAxqpiCMVlsbZo4zOrI
+CQRixv+QsMWTqYcWLvSYRXe5DinWaaotkBF4YzYQGoQthxPM+IdkCC4U7VeSDp7E
+u9H4kXF9VAWD2hDr0d7G
+=cMhs
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__30_Nov_2012_16_46_58_+1100_WhssEJm.FpaN5u9v--
