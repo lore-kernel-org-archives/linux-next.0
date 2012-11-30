@@ -1,41 +1,85 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] of: export "allnodes" to fixx w1-gpio.c modular build
-Date: Thu, 29 Nov 2012 15:43:08 -0800
-Message-ID: <50B7F30C.1060105@infradead.org>
-References: <20121129174057.99da02b15426c76054d05592@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:39974 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751303Ab2K2XnZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Nov 2012 18:43:25 -0500
-In-Reply-To: <20121129174057.99da02b15426c76054d05592@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Ville Syrjala <syrjala@sci.fi>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: manual merge of the gpio tree with the driver-core tree
+Date: Fri, 30 Nov 2012 00:01:18 +0000
+Message-ID: <20121130000118.A68313E05AD@localhost>
+References: <20121129155723.60035c6419fd9a00f46e4d69@canb.auug.org.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121129155723.60035c6419fd9a00f46e4d69@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>, Greg KH <greg@kroah.com>, Linus Walleij <linus.walleij@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Thu, 29 Nov 2012 15:57:23 +1100, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Grant,
+> 
+> Today's linux-next merge of the gpio tree got a conflict in
+> drivers/gpio/gpio-em.c between commit 3836309d9346 ("gpio: remove use of
+> __devinit") from the driver-core tree and commit 7385500a49b7 ("gpio/em:
+> convert to linear IRQ domain") from the gpio tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Fix build when CONFIG_W1_MASTER_GPIO=m by exporting "allnodes".
+Thanks Stephen.
 
-ERROR: "allnodes" [drivers/w1/masters/w1-gpio.ko] undefined!
+Yes, please carry the fix.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Ville Syrjala <syrjala@sci.fi>
----
- drivers/of/base.c |    1 +
- 1 file changed, 1 insertion(+)
+g.
 
---- linux-next-20121129.orig/drivers/of/base.c
-+++ linux-next-20121129/drivers/of/base.c
-@@ -46,6 +46,7 @@ struct alias_prop {
- static LIST_HEAD(aliases_lookup);
- 
- struct device_node *allnodes;
-+EXPORT_SYMBOL(allnodes);
- struct device_node *of_chosen;
- struct device_node *of_aliases;
- 
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/gpio/gpio-em.c
+> index 320a718,b007063..0000000
+> --- a/drivers/gpio/gpio-em.c
+> +++ b/drivers/gpio/gpio-em.c
+> @@@ -234,41 -233,7 +233,7 @@@ static struct irq_domain_ops em_gio_irq
+>   	.map	= em_gio_irq_domain_map,
+>   };
+>   
+> - static int __devinit em_gio_irq_domain_init(struct em_gio_priv *p)
+> - {
+> - 	struct platform_device *pdev = p->pdev;
+> - 	struct gpio_em_config *pdata = pdev->dev.platform_data;
+> - 
+> - 	p->irq_base = irq_alloc_descs(pdata->irq_base, 0,
+> - 				      pdata->number_of_pins, numa_node_id());
+> - 	if (p->irq_base < 0) {
+> - 		dev_err(&pdev->dev, "cannot get irq_desc\n");
+> - 		return p->irq_base;
+> - 	}
+> - 	pr_debug("gio: hw base = %d, nr = %d, sw base = %d\n",
+> - 		 pdata->gpio_base, pdata->number_of_pins, p->irq_base);
+> - 
+> - 	p->irq_domain = irq_domain_add_legacy(pdev->dev.of_node,
+> - 					      pdata->number_of_pins,
+> - 					      p->irq_base, 0,
+> - 					      &em_gio_irq_domain_ops, p);
+> - 	if (!p->irq_domain) {
+> - 		irq_free_descs(p->irq_base, pdata->number_of_pins);
+> - 		return -ENXIO;
+> - 	}
+> - 
+> - 	return 0;
+> - }
+> - 
+> - static void em_gio_irq_domain_cleanup(struct em_gio_priv *p)
+> - {
+> - 	struct gpio_em_config *pdata = p->pdev->dev.platform_data;
+> - 
+> - 	irq_free_descs(p->irq_base, pdata->number_of_pins);
+> - 	/* FIXME: irq domain wants to be freed! */
+> - }
+> - 
+>  -static int __devinit em_gio_probe(struct platform_device *pdev)
+>  +static int em_gio_probe(struct platform_device *pdev)
+>   {
+>   	struct gpio_em_config *pdata = pdev->dev.platform_data;
+>   	struct em_gio_priv *p;
+
+-- 
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies, Ltd.
