@@ -1,49 +1,55 @@
-From: Eric Paris <eparis@parisplace.org>
+From: Casey Schaufler <casey@schaufler-ca.com>
 Subject: Re: [PATCH] Smack: Add missing depends on INET in Kconfig
-Date: Fri, 30 Nov 2012 17:01:55 -0500
-Message-ID: <CACLa4ptazSZCpk5Ug0mZLZRS1PxZ7KnwYxEXsXFwn3zG90YzNg@mail.gmail.com>
-References: <20121129174057.99da02b15426c76054d05592@canb.auug.org.au>
-	<50B7F846.70202@infradead.org>
-	<3694027.VYznNcdp7C@sifl>
-	<2664553.2TRaVqlkGg@sifl>
-	<50B8E4E6.2040901@xenotime.net>
-	<50B8ECB3.2090801@schaufler-ca.com>
+Date: Fri, 30 Nov 2012 14:18:54 -0800
+Message-ID: <50B930CE.1080806@schaufler-ca.com>
+References: <20121129174057.99da02b15426c76054d05592@canb.auug.org.au> <50B7F846.70202@infradead.org> <3694027.VYznNcdp7C@sifl> <2664553.2TRaVqlkGg@sifl> <50B8E4E6.2040901@xenotime.net> <50B8ECB3.2090801@schaufler-ca.com> <CACLa4ptazSZCpk5Ug0mZLZRS1PxZ7KnwYxEXsXFwn3zG90YzNg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <50B8ECB3.2090801@schaufler-ca.com>
-Sender: linux-security-module-owner@vger.kernel.org
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Paul Moore <paul@paul-moore.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp105.biz.mail.bf1.yahoo.com ([98.139.221.43]:49103 "HELO
+	smtp105.biz.mail.bf1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1751702Ab2K3WSs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 30 Nov 2012 17:18:48 -0500
+In-Reply-To: <CACLa4ptazSZCpk5Ug0mZLZRS1PxZ7KnwYxEXsXFwn3zG90YzNg@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Eric Paris <eparis@parisplace.org>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Paul Moore <paul@paul-moore.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, Casey Schaufler <casey@schaufler-ca.com>
 
-Do other LSMs need this too Casey?  I remember we mentioned how select
-was dangerous  :-(
+On 11/30/2012 2:01 PM, Eric Paris wrote:
+> Do other LSMs need this too Casey?  I remember we mentioned how select
+> was dangerous  :-(
 
-On Fri, Nov 30, 2012 at 12:28 PM, Casey Schaufler
-<casey@schaufler-ca.com> wrote:
-> Because NETLABEL depends on INET SECURITY_SMACK
-> has to explicitly call out the dependency.
+I don't see any missing dependencies, but then, I missed INET.
+Yes, you mentioned that it was dangerous.
+
 >
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  security/smack/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/security/smack/Kconfig b/security/smack/Kconfig
-> index 9fb14ef..1be1088 100644
-> --- a/security/smack/Kconfig
-> +++ b/security/smack/Kconfig
-> @@ -1,5 +1,6 @@
->  config SECURITY_SMACK
->         bool "Simplified Mandatory Access Control Kernel Support"
-> +       depends on INET
->         depends on NET
->         depends on SECURITY
->         select NETLABEL
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> On Fri, Nov 30, 2012 at 12:28 PM, Casey Schaufler
+> <casey@schaufler-ca.com> wrote:
+>> Because NETLABEL depends on INET SECURITY_SMACK
+>> has to explicitly call out the dependency.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  security/smack/Kconfig |    1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/security/smack/Kconfig b/security/smack/Kconfig
+>> index 9fb14ef..1be1088 100644
+>> --- a/security/smack/Kconfig
+>> +++ b/security/smack/Kconfig
+>> @@ -1,5 +1,6 @@
+>>  config SECURITY_SMACK
+>>         bool "Simplified Mandatory Access Control Kernel Support"
+>> +       depends on INET
+>>         depends on NET
+>>         depends on SECURITY
+>>         select NETLABEL
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
