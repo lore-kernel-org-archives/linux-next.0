@@ -1,96 +1,78 @@
-From: Vinod Koul <vkoul@infradead.org>
-Subject: Re: [slave-dma:topic/dmaengine_dt 19/23]
- include/linux/of_dma.h:50: warning: 'of_dma_controller_register' defined
- but not used
-Date: Fri, 30 Nov 2012 05:17:11 +0530
-Message-ID: <1354232831.7077.73.camel@vkoul-udesk3>
-References: <50b654c2.iWq7vrrJ3J/NZyR/%fengguang.wu@intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Fri, 30 Nov 2012 12:22:09 +1100
+Message-ID: <20121130122209.2df445e05e638738a0739f25@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__30_Nov_2012_12_22_09_+1100_lPw6cKnKK1EIMc9q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:35437 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754996Ab2K3AGR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Nov 2012 19:06:17 -0500
-In-Reply-To: <50b654c2.iWq7vrrJ3J/NZyR/%fengguang.wu@intel.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34237 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752787Ab2K3BW0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Nov 2012 20:22:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: fengguang.wu@intel.com
-Cc: vinod.koul@intel.com, sfr <sfr@canb.auug.org.au>, Jon Hunter <jon-hunter@ti.com>, linux-next <linux-next@vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kelly Doran <kel.p.doran@gmail.com>, Ben Skeggs <bskeggs@redhat.com>
 
-On Thu, 2012-11-29 at 02:15 +0800, kbuild test robot wrote:
-> tree:   git://git.infradead.org/users/vkoul/slave-dma.git topic/dmaengine_dt
-> head:   d4397a4acc3b8c9c96a0be6faa5fb0db9259e4d1
-> commit: 7a74a3a0e055d28357c317947258bd005105bb10 [19/23] of: dma- fix build break for !CONFIG_OF
-> config: make ARCH=avr32 atngw100_defconfig
-> 
-> All warnings:
-> 
-> include/linux/of_dma.h:50: warning: 'of_dma_controller_register' defined but not used
-> include/linux/of_dma.h:55: warning: 'of_dma_controller_free' defined but not used
-> include/linux/of_dma.h:66: warning: 'of_dma_simple_xlate' defined but not used
-Thanks Feng, Stephan for reporting this.
-I committed below fix to tree last night.
+--Signature=_Fri__30_Nov_2012_12_22_09_+1100_lPw6cKnKK1EIMc9q
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->From 858e3fc0606123b9c959988c5c3fe56e8f680bfa Mon Sep 17 00:00:00 2001
-From: Vinod Koul <vinod.koul@linux.intel.com>
-Date: Thu, 29 Nov 2012 12:17:22 +0530
-Subject: [PATCH] dmaengine: fix !of_dma compilation warning
+Hi Dave,
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Vinod Koul <vinod.koul@linux.intel.com>
----
- include/linux/of_dma.h |    9 +++++----
- 1 files changed, 5 insertions(+), 4 deletions(-)
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/nouveau/core/engine/disp/nv50.c between commit
+11d92561c81b ("drm/nvc0/disp: fix regression in vblank semaphore
+release") from Linus' tree and commit 370c00f939c5 ("drm/nv50/disp:
+initial implementation of the various channel object classes") from the
+drm tree.
 
-diff --git a/include/linux/of_dma.h b/include/linux/of_dma.h
-index 84b64f8..d15073e 100644
---- a/include/linux/of_dma.h
-+++ b/include/linux/of_dma.h
-@@ -44,7 +44,7 @@ extern struct dma_chan
-*of_dma_request_slave_channel(struct device_node *np,
- extern struct dma_chan *of_dma_simple_xlate(struct of_phandle_args
-*dma_spec,
- 		struct of_dma *ofdma);
- #else
--static int of_dma_controller_register(struct device_node *np,
-+static inline int of_dma_controller_register(struct device_node *np,
- 		struct dma_chan *(*of_dma_xlate)
- 		(struct of_phandle_args *, struct of_dma *),
- 		void *data)
-@@ -52,17 +52,18 @@ static int of_dma_controller_register(struct
-device_node *np,
- 	return -ENODEV;
- }
- 
--static int of_dma_controller_free(struct device_node *np)
-+static inline int of_dma_controller_free(struct device_node *np)
- {
-+	return -ENODEV;
- }
- 
--static struct dma_chan *of_dma_request_slave_channel(struct device_node
-*np,
-+static inline struct dma_chan *of_dma_request_slave_channel(struct
-device_node *np,
- 						     char *name)
- {
- 	return NULL;
- }
- 
--static struct dma_chan *of_dma_simple_xlate(struct of_phandle_args
-*dma_spec,
-+static inline struct dma_chan *of_dma_simple_xlate(struct
-of_phandle_args *dma_spec,
- 		struct of_dma *ofdma)
- {
- 	return NULL;
--- 
-1.7.0.4
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Vinod Koul
-Intel Corp.
+diff --cc drivers/gpu/drm/nouveau/core/engine/disp/nv50.c
+index 15b182c,c6f8005..0000000
+--- a/drivers/gpu/drm/nouveau/core/engine/disp/nv50.c
++++ b/drivers/gpu/drm/nouveau/core/engine/disp/nv50.c
+@@@ -22,7 -22,10 +22,11 @@@
+   * Authors: Ben Skeggs
+   */
+ =20
++ #include <core/object.h>
++ #include <core/parent.h>
++ #include <core/handle.h>
++ #include <core/class.h>
+ +#include <subdev/bar.h>
+ =20
+  #include <engine/software.h>
+  #include <engine/disp.h>
+
+--Signature=_Fri__30_Nov_2012_12_22_09_+1100_lPw6cKnKK1EIMc9q
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQuApBAAoJEECxmPOUX5FEW3MP/0ZoK1G7dqMC4fdjAEBuEYiP
+ru4IsNdoGhrb/wRp52sP4UqPdYcptcOOkjQJs0lBx9VmXtL1tSWgLzGw2wNvoWTP
+EYd0sLgwx5Rgr2yUsxCG6SPs9MtIzlL4X1p94SfJB/dfr/JllSauw6ESjTKN3EJC
+cXB4CHSs0LqOvMtvUOVttMlXw43MfTocqQx2I0lWlUYPwMzzS/6TVBAqK8Ag9wxO
+SLCNMIZ688chNGa0wlXaVk//ch70/sp/XHpEwxrpKaWl9digbt5MRO/ag4/SXzLV
+iYrLzYCEK7p9vuVzV8KObisjiYiaGq1d8e5hCuQWkGp88KDVv3owgDgsRHV0XLZJ
+Ytga58i0L4rFuRRZWOqP+6GdSFfyegDqGEAwLT97gIHk3HXkXqNpmCYzYzRZWD7N
+6WX+hNgbr/GHevbqZKLUh9TNdXaj8y6zBYJHrokYDW0o7GRhPRVRJ3aeLXgPCetN
+Pwu1JOz0E6jmcTkTPfGnMfJyDRk8RuN4JgMHD8OxxkcCnlSL9/xDsaxmlqlPforH
+2krfqQUAuZVUBNHREIcgkHclJmes027aaD8M0KGpjEJp+6qsXt8I2Op12vR06NlM
+RTxElcsnYvO4x2H8ekt3OB1S5BRydU6JiUvMutOwe0VXo7RdmDERPYgFMpwBAVWn
+vGUM+eU+q1bLVO/QEaGx
+=+RCo
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__30_Nov_2012_12_22_09_+1100_lPw6cKnKK1EIMc9q--
