@@ -1,129 +1,115 @@
 From: Gleb Natapov <gleb@redhat.com>
-Subject: Re: [RFC PATCH v3] Add rcu user eqs exception hooks for async page
+Subject: Re: [RFC PATCH v2] Add rcu user eqs exception hooks for async page
  fault
-Date: Fri, 30 Nov 2012 12:26:52 +0200
-Message-ID: <20121130102652.GG20873@redhat.com>
+Date: Fri, 30 Nov 2012 12:08:18 +0200
+Message-ID: <20121130100818.GE20873@redhat.com>
 References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
  <CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
  <1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
  <CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
- <20121128135345.GG928@redhat.com>
- <CAFTL4hxoFBLNQCABBpJRBgV-r-Mg5GSq7HbPfWJRraSvtviz4A@mail.gmail.com>
- <20121129110717.GA9711@redhat.com>
- <CAFTL4hyHW3uJHvzxz1o4agtGbicFAP1DuUsifbOrp1Q3ODRBMA@mail.gmail.com>
- <1354267121.2552.65.camel@ThinkPad-T5421.cn.ibm.com>
+ <1354153788.2499.9.camel@ThinkPad-T5421.cn.ibm.com>
+ <CAFTL4hzOsXWdZC-PZu4ONzunTyq6vJ8C3_=Tvx6Kt3bJDBRbkQ@mail.gmail.com>
+ <20121129172541.GA20873@redhat.com>
+ <1354264606.2552.39.camel@ThinkPad-T5421.cn.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:56172 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932225Ab2K3K05 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Nov 2012 05:26:57 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1354267121.2552.65.camel@ThinkPad-T5421.cn.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <1354264606.2552.39.camel@ThinkPad-T5421.cn.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Li Zhong <zhong@linux.vnet.ibm.com>
 Cc: Frederic Weisbecker <fweisbec@gmail.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Nov 30, 2012 at 05:18:41PM +0800, Li Zhong wrote:
-> This patch adds user eqs exception hooks for async page fault page not
-> present code path, to exit the user eqs and re-enter it as necessary. 
+On Fri, Nov 30, 2012 at 04:36:46PM +0800, Li Zhong wrote:
+> On Thu, 2012-11-29 at 19:25 +0200, Gleb Natapov wrote:
+> > On Thu, Nov 29, 2012 at 03:40:05PM +0100, Frederic Weisbecker wrote:
+> > > 2012/11/29 Li Zhong <zhong@linux.vnet.ibm.com>:
+> > > > On Wed, 2012-11-28 at 13:55 +0100, Frederic Weisbecker wrote:
+> > > >> > With rcu_user_exit() at the beginning, now rcu_irq_enter() only protects
+> > > >> > the cpu idle eqs, but it's not good to call rcu_irq_exit() after the cpu
+> > > >> > halt and the page ready.
+> > > >>
+> > > >> Hmm, why is it not good?
+> > > >
+> > > > I think in this case, as cpu halts and waits for page ready, it is
+> > > > really in idle, and it's better for rcu to think it as rcu idle. But
+> > > > with rcu_irq_enter(), the rcu would not think this cpu as idle. And the
+> > > > rcu_irq_exit() is only called after this idle period to mark this cpu as
+> > > > rcu idle again.
+> > > 
+> > > 
+> > > Indeed. How about calling rcu_irq_exit() before native_safe_halt() and
+> > > rcu_irq_enter() right after?
+> > > 
+> > We can't. If exception happens in the middle of rcu read section while
+> > preemption is disabled then calling rcu_irq_exit() before halt is
+> > incorrect. We can do that only if exception happen during idle and this
+> > should be rare enough for us to not care.
 > 
-> Async page fault is different from other exceptions that it may be
-> triggered from idle process, so we still need rcu_irq_enter() and
-> rcu_irq_exit() to exit cpu idle eqs when needed, to protect the code
-> that needs use rcu.
+> If I understand correctly, maybe it doesn't cause problems.
 > 
-> As Frederic pointed out it would be safest and simplest to protect the
-> whole kvm_async_pf_task_wait(). Otherwise, "we need to check all the
-> code there deeply for potential RCU uses and ensure it will never be
-> extended later to use RCU.".
+> I guess you mean in other(not idle) task's rcu read critical section, we
+> get an async page fault? In this case the rcu_idle_exit() won't make
+> this cpu to enter rcu idle state. As the task environment is rcu non
+> idle. This is the case we use rcu_irq_enter()/rcu_irq_exit() in code
+> path where it might be in rcu idle or rcu non idle, and they don't
+> change the rcu non-idle state if used in rcu non-idle state.
 > 
-> However, We'd better re-enter the cpu idle eqs if we get the exception
-> in cpu idle eqs, by calling rcu_irq_exit() before native_safe_halt(). 
+> And it is also safe if it is rcu read critical section in idle, as it is
+> most probably wrapped in an outer rcu_irq_enter/exit(), so we have 
 > 
-> So the patch does what Frederic suggested for rcu_irq_*() API usage
-> here, except that I moved the rcu_irq_*() pair originally in
-> do_async_page_fault() into kvm_async_pf_task_wait(). 
+> rcu idle
+> 	rcu_irq_enter() - exit rcu idle, to protect the read section
+> 	  exception
+> 	  rcu_irq_enter() in the page not present path
+> 		rcu_irq_exit() before halt 
 > 
-> That's because, I think it's better to have rcu_irq_*() pairs to be in
-> one function ( rcu_irq_exit() after rcu_irq_enter() ), especially here,
-> kvm_async_pf_task_wait() has other callers, which might cause
-> rcu_irq_exit() be called without a matching rcu_irq_enter() before it,
-> which is illegal if the cpu happens to be in rcu idle state. 
-> 
-> Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
-> ---
->  arch/x86/kernel/kvm.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 4180a87..342b00b 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -42,6 +42,7 @@
->  #include <asm/apic.h>
->  #include <asm/apicdef.h>
->  #include <asm/hypervisor.h>
-> +#include <asm/rcu.h>
->  
->  static int kvmapf = 1;
->  
-> @@ -112,6 +113,8 @@ void kvm_async_pf_task_wait(u32 token)
->  	DEFINE_WAIT(wait);
->  	int cpu, idle;
->  
-> +	rcu_irq_enter();
-> +
-Why move rcu_irq_*() calls into kvm_async_pf_task_wait()?
+Yes, I was thinking about this scenario and you are right, since
+rcu_irq_enter() will be nested it should be safe to call rcu_irq_exit
+before halt.
 
->  	cpu = get_cpu();
->  	idle = idle_cpu(cpu);
->  	put_cpu();
-> @@ -123,6 +126,8 @@ void kvm_async_pf_task_wait(u32 token)
->  		hlist_del(&e->link);
->  		kfree(e);
->  		spin_unlock(&b->lock);
-> +
-> +		rcu_irq_exit();
-We can skip that if  rcu_irq_*() will stay outside.
-
->  		return;
->  	}
->  
-> @@ -147,13 +152,16 @@ void kvm_async_pf_task_wait(u32 token)
->  			/*
->  			 * We cannot reschedule. So halt.
->  			 */
-> +			rcu_irq_exit();
->  			native_safe_halt();
-> +			rcu_irq_enter();
->  			local_irq_disable();
->  		}
->  	}
->  	if (!n.halted)
->  		finish_wait(&n.wq, &wait);
->  
-> +	rcu_irq_exit();
->  	return;
->  }
->  EXPORT_SYMBOL_GPL(kvm_async_pf_task_wait);
-> @@ -247,10 +255,10 @@ do_async_page_fault(struct pt_regs *regs, unsigned long error_code)
->  		break;
->  	case KVM_PV_REASON_PAGE_NOT_PRESENT:
->  		/* page is swapped out by the host. */
-> -		rcu_irq_enter();
-> +		exception_enter(regs);
->  		exit_idle();
->  		kvm_async_pf_task_wait((u32)read_cr2());
-> -		rcu_irq_exit();
-> +		exception_exit(regs);
->  		break;
->  	case KVM_PV_REASON_PAGE_READY:
->  		rcu_irq_enter();
-> -- 
-> 1.7.11.4
+> so the halt is also safe here, as we have two rcu_irq_enter() and one
+> rcu_irq_exit().
+> 
+> I agree with Frederic that this is the safest and simplest way now, and
+> will try to update the code according to it.
+> 
+> Thanks, Zhong
+> 
+> > > >> > So I still want to remove it. And later if it shows that we really needs
+> > > >> > rcu somewhere in this code path, maybe we could use RCU_NONIDLE() to
+> > > >> > protect it. ( The suspicious RCU usage reported in commit
+> > > >> > c5e015d4949aa665 seems related to schedule(), which is not in the code
+> > > >> > path if we are in cpu idle eqs )
+> > > >>
+> > > >> Yes but if rcu_irq_*() calls are fine to be called there, and I
+> > > >> believe they are because exception_enter() exits the user mode, we
+> > > >> should start to protect there right now instead of waiting for a
+> > > >> potential future warning of illegal RCU use.
+> > > >
+> > > > I agree, but I think by only protecting the necessary code avoids
+> > > > marking the entire waiting period as rcu non idle.
+> > > 
+> > > If we use RCU_NONIDLE(), this assume we need to check all the code
+> > > there deeply for potential RCU uses and ensure it will never be
+> > > extended later to use RCU. We really don't scale enough for that.
+> > > There are too much subsystems involved there: waitqueue, spinlocks,
+> > > slab, per cpu, etc...
+> > > 
+> > > So I strongly suggest we use rcu_irq_*() APIs, and relax them around
+> > > native_safe_halt() like I suggested above. This seems to me the safest
+> > > solution.
+> > 
+> > --
+> > 			Gleb.
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > Please read the FAQ at  http://www.tux.org/lkml/
+> > 
+> 
 
 --
 			Gleb.
