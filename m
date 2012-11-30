@@ -1,48 +1,41 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
+From: David Miller <davem@davemloft.net>
 Subject: Re: [PATCH] Smack: Add missing depends on INET in Kconfig
-Date: Fri, 30 Nov 2012 09:40:09 -0800
-Message-ID: <50B8EF79.4080907@xenotime.net>
-References: <20121129174057.99da02b15426c76054d05592@canb.auug.org.au> <50B7F846.70202@infradead.org> <3694027.VYznNcdp7C@sifl> <2664553.2TRaVqlkGg@sifl> <50B8E4E6.2040901@xenotime.net> <50B8ECB3.2090801@schaufler-ca.com>
+Date: Fri, 30 Nov 2012 13:43:26 -0500 (EST)
+Message-ID: <20121130.134326.730429492162984746.davem@davemloft.net>
+References: <50B8E4E6.2040901@xenotime.net>
+	<50B8ECB3.2090801@schaufler-ca.com>
+	<50B8EF79.4080907@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <50B8ECB3.2090801@schaufler-ca.com>
-Sender: netdev-owner@vger.kernel.org
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Paul Moore <paul@paul-moore.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-security-module@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:45393 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031365Ab2K3Sn2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Nov 2012 13:43:28 -0500
+In-Reply-To: <50B8EF79.4080907@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: rdunlap@xenotime.net
+Cc: casey@schaufler-ca.com, paul@paul-moore.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-security-module@vger.kernel.org
 
-On 11/30/2012 09:28 AM, Casey Schaufler wrote:
+From: Randy Dunlap <rdunlap@xenotime.net>
+Date: Fri, 30 Nov 2012 09:40:09 -0800
 
-> Because NETLABEL depends on INET SECURITY_SMACK
-> has to explicitly call out the dependency.
+> On 11/30/2012 09:28 AM, Casey Schaufler wrote:
 > 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-
-
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-
-Thanks for the quick fix.
-
-> ---
->  security/smack/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
+>> Because NETLABEL depends on INET SECURITY_SMACK
+>> has to explicitly call out the dependency.
+>> 
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > 
-> diff --git a/security/smack/Kconfig b/security/smack/Kconfig
-> index 9fb14ef..1be1088 100644
-> --- a/security/smack/Kconfig
-> +++ b/security/smack/Kconfig
-> @@ -1,5 +1,6 @@
->  config SECURITY_SMACK
->  	bool "Simplified Mandatory Access Control Kernel Support"
-> +	depends on INET
->  	depends on NET
->  	depends on SECURITY
->  	select NETLABEL
 > 
-> --
+> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+> 
+> Thanks for the quick fix.
 
+In what tree does this Kconfig file look like this?
 
--- 
-~Randy
+In my net-next tree the current dependencies are expressed as:
+
+	depends on NETLABEL && SECURITY_NETWORK
