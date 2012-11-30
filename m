@@ -1,73 +1,129 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with the ftrace tree
-Date: Fri, 30 Nov 2012 16:46:58 +1100
-Message-ID: <20121130164658.c9ceafc2eeba30ac6747285e@canb.auug.org.au>
+From: Gleb Natapov <gleb@redhat.com>
+Subject: Re: [RFC PATCH v3] Add rcu user eqs exception hooks for async page
+ fault
+Date: Fri, 30 Nov 2012 12:26:52 +0200
+Message-ID: <20121130102652.GG20873@redhat.com>
+References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
+ <CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
+ <1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
+ <CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
+ <20121128135345.GG928@redhat.com>
+ <CAFTL4hxoFBLNQCABBpJRBgV-r-Mg5GSq7HbPfWJRraSvtviz4A@mail.gmail.com>
+ <20121129110717.GA9711@redhat.com>
+ <CAFTL4hyHW3uJHvzxz1o4agtGbicFAP1DuUsifbOrp1Q3ODRBMA@mail.gmail.com>
+ <1354267121.2552.65.camel@ThinkPad-T5421.cn.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__30_Nov_2012_16_46_58_+1100_WhssEJm.FpaN5u9v"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56319 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754179Ab2K3FrK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Nov 2012 00:47:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56172 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932225Ab2K3K05 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 30 Nov 2012 05:26:57 -0500
+Content-Disposition: inline
+In-Reply-To: <1354267121.2552.65.camel@ThinkPad-T5421.cn.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Sharp <dhsharp@google.com>, Steven Rostedt <rostedt@goodmis.org>
+To: Li Zhong <zhong@linux.vnet.ibm.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
 
---Signature=_Fri__30_Nov_2012_16_46_58_+1100_WhssEJm.FpaN5u9v
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Nov 30, 2012 at 05:18:41PM +0800, Li Zhong wrote:
+> This patch adds user eqs exception hooks for async page fault page not
+> present code path, to exit the user eqs and re-enter it as necessary. 
+> 
+> Async page fault is different from other exceptions that it may be
+> triggered from idle process, so we still need rcu_irq_enter() and
+> rcu_irq_exit() to exit cpu idle eqs when needed, to protect the code
+> that needs use rcu.
+> 
+> As Frederic pointed out it would be safest and simplest to protect the
+> whole kvm_async_pf_task_wait(). Otherwise, "we need to check all the
+> code there deeply for potential RCU uses and ensure it will never be
+> extended later to use RCU.".
+> 
+> However, We'd better re-enter the cpu idle eqs if we get the exception
+> in cpu idle eqs, by calling rcu_irq_exit() before native_safe_halt(). 
+> 
+> So the patch does what Frederic suggested for rcu_irq_*() API usage
+> here, except that I moved the rcu_irq_*() pair originally in
+> do_async_page_fault() into kvm_async_pf_task_wait(). 
+> 
+> That's because, I think it's better to have rcu_irq_*() pairs to be in
+> one function ( rcu_irq_exit() after rcu_irq_enter() ), especially here,
+> kvm_async_pf_task_wait() has other callers, which might cause
+> rcu_irq_exit() be called without a matching rcu_irq_enter() before it,
+> which is illegal if the cpu happens to be in rcu idle state. 
+> 
+> Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
+> ---
+>  arch/x86/kernel/kvm.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 4180a87..342b00b 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -42,6 +42,7 @@
+>  #include <asm/apic.h>
+>  #include <asm/apicdef.h>
+>  #include <asm/hypervisor.h>
+> +#include <asm/rcu.h>
+>  
+>  static int kvmapf = 1;
+>  
+> @@ -112,6 +113,8 @@ void kvm_async_pf_task_wait(u32 token)
+>  	DEFINE_WAIT(wait);
+>  	int cpu, idle;
+>  
+> +	rcu_irq_enter();
+> +
+Why move rcu_irq_*() calls into kvm_async_pf_task_wait()?
 
-Hi Al,
+>  	cpu = get_cpu();
+>  	idle = idle_cpu(cpu);
+>  	put_cpu();
+> @@ -123,6 +126,8 @@ void kvm_async_pf_task_wait(u32 token)
+>  		hlist_del(&e->link);
+>  		kfree(e);
+>  		spin_unlock(&b->lock);
+> +
+> +		rcu_irq_exit();
+We can skip that if  rcu_irq_*() will stay outside.
 
-Today's linux-next merge of the signal tree got a conflict in
-arch/microblaze/include/asm/Kbuild between commit 8cbd9cc62540
-("tracing,x86: Add a TSC trace_clock") from the ftrace tree and commit
-24465a40ba45 ("take sys_fork/sys_vfork/sys_clone prototypes to
-linux/syscalls.h") from the signal tree.
+>  		return;
+>  	}
+>  
+> @@ -147,13 +152,16 @@ void kvm_async_pf_task_wait(u32 token)
+>  			/*
+>  			 * We cannot reschedule. So halt.
+>  			 */
+> +			rcu_irq_exit();
+>  			native_safe_halt();
+> +			rcu_irq_enter();
+>  			local_irq_disable();
+>  		}
+>  	}
+>  	if (!n.halted)
+>  		finish_wait(&n.wq, &wait);
+>  
+> +	rcu_irq_exit();
+>  	return;
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_async_pf_task_wait);
+> @@ -247,10 +255,10 @@ do_async_page_fault(struct pt_regs *regs, unsigned long error_code)
+>  		break;
+>  	case KVM_PV_REASON_PAGE_NOT_PRESENT:
+>  		/* page is swapped out by the host. */
+> -		rcu_irq_enter();
+> +		exception_enter(regs);
+>  		exit_idle();
+>  		kvm_async_pf_task_wait((u32)read_cr2());
+> -		rcu_irq_exit();
+> +		exception_exit(regs);
+>  		break;
+>  	case KVM_PV_REASON_PAGE_READY:
+>  		rcu_irq_enter();
+> -- 
+> 1.7.11.4
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/microblaze/include/asm/Kbuild
-index c5d7670,88a758a..0000000
---- a/arch/microblaze/include/asm/Kbuild
-+++ b/arch/microblaze/include/asm/Kbuild
-@@@ -1,4 -1,6 +1,5 @@@
- -include include/asm-generic/Kbuild.asm
- =20
- -header-y  +=3D elf.h
-  generic-y +=3D clkdev.h
-  generic-y +=3D exec.h
- +generic-y +=3D trace_clock.h
-+ generic-y +=3D syscalls.h
-
---Signature=_Fri__30_Nov_2012_16_46_58_+1100_WhssEJm.FpaN5u9v
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQuEhSAAoJEECxmPOUX5FEkW0P/R1ugmNeEo1GQAkYBYjIYTWV
-IDdMdJQJEYMDBHN7B589VYPOWBb6S9m0r7vsXVU9F+HMpAr4Ch9wmC3g9F4AaqKX
-NrzjWOH/fQo9SivmU7MLOB49NTZpfmSz5DKMqIn61r6gXYtGwsUDrSY8yN33rE5l
-ntw5Ez0INB4Zxikt2tbxxxchJ3lofEodCO3rmtWnbKALvaRbtSGdmqlnzmhQNygj
-m1bAg9hzDGLhmYDAOctF+OKajhyDY8pXVrfoHaephAnwflH0E/a11C/CdEvyNJXF
-L8+ft6UJXxLJwqmnnklNx1+yJdCTWsiZ8FKPYmnUkPE+m0vrxqT6Olj9PbKglI+v
-jf/i7trkT0JH3A0JhodYq0jjOGhYi6qapnvLjyQ1avlIYIRErO2N382P7F4ZJAKo
-qkeEx7L6N6WVl4oOl2ayOkH6+XI9GmG3wiq9fdvqT0cvLtoa7YrUwr3x3tvGb1t5
-qbWFIh24mcQc9mGgsE4q7nMu3wDTL33i3wHtWkE7IGY0zc5YKMwZQi/qRs+dIIvD
-p0tzf/tHjCgN/XEG9FCx4SepX2eNY15jpQLDNTATL+wclXAxqpiCMVlsbZo4zOrI
-CQRixv+QsMWTqYcWLvSYRXe5DinWaaotkBF4YzYQGoQthxPM+IdkCC4U7VeSDp7E
-u9H4kXF9VAWD2hDr0d7G
-=cMhs
------END PGP SIGNATURE-----
-
---Signature=_Fri__30_Nov_2012_16_46_58_+1100_WhssEJm.FpaN5u9v--
+--
+			Gleb.
