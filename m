@@ -1,45 +1,61 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: Request for tree inclusion
-Date: Mon, 3 Dec 2012 00:59:07 +0100
-Message-ID: <CAFTL4hzqqQPA1cd4uPoCd73d5rBj8cGpv=VnB6CrCpdjjwr1xw@mail.gmail.com>
-References: <CAFTL4hxWdV96dO_KCOnvc4O1zutvnW6eGZ950d+qwnCSHb9NpQ@mail.gmail.com>
-	<20121203094906.4cbfcfc0ad3f0319895a162d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the target-updates tree with Linus'
+ tree
+Date: Mon, 3 Dec 2012 12:04:29 +1100
+Message-ID: <20121203120429.e988d904019ac7ebd609e25e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__3_Dec_2012_12_04_29_+1100_Nk19MFeqDeoNY5t_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:42592 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754063Ab2LBX7I (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 2 Dec 2012 18:59:08 -0500
-In-Reply-To: <20121203094906.4cbfcfc0ad3f0319895a162d@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52383 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754225Ab2LCBEl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 2 Dec 2012 20:04:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roland Dreier <roland@purestorage.com>, Christoph Hellwig <hch@infradead.org>
 
-2012/12/2 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Well, these are a bit late (I expected Linus to release v3.7 today), but
-> since Ingo has not piped in over the weekend, I have added them from today
-> after the tip tree merge.
+--Signature=_Mon__3_Dec_2012_12_04_29_+1100_Nk19MFeqDeoNY5t_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yeah sorry to submit that so late. Those branches are in pending pull
-requests to the -tip tree and I thought about relying on the
-propagation of -tip into -next as usual. But Ingo has been very busy
-with numa related work during this cycle. So until these branches get
-merged in -tip, I'm short-circuiting a bit the -next step before it
-becomes too late for the next merge window.
+Hi Nicholas,
 
->
-> I have called them fw-cputime, fs-sched and fw-nohz respectively and
-> listed you as the only contact in case of problems.
+Today's linux-next merge of the target-updates tree got a conflict in
+drivers/target/target_core_transport.c between commit 3ea160b3e8f0
+("target: Fix handling of aborted commands") from Linus' tree and commit
+019c4ca62148 ("target: kill dev->dev_task_attr_type") from the
+target-updates tree.
 
-Ok.
+I just use the target-updates tree version and can carry the fix as
+necessary (no action is required).
 
-> If these are to be
-> long term trees included in linux-next, I would prefer that you use
-> better branch names - otherwise, if they are just short term, please tell
-> me to remove them when they are finished with.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-They are definitely short term. I'll tell you once these can be dropped.
+--Signature=_Mon__3_Dec_2012_12_04_29_+1100_Nk19MFeqDeoNY5t_
+Content-Type: application/pgp-signature
 
-Thanks a lot!
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQu/qdAAoJEECxmPOUX5FEUS4P/1FU/6kilyuhQHzVb9aOZAAs
+LzvtNcEsZNCDK0N0s/Minrb/GvCAiAxqoDgHdsT6zEG29D3PYDJi6ejOT5BGhT9n
+/ZsPTFlZ5qaMJhYkoGKfN1k6LsBgnEs223ePkT1YdQ3L7T+5t0SQYz89gLMTOtjM
+nEsKkG21Vnycm8kNED6RxfONIoNl+myWBEoEPb62h43IaCIS/CBCvQnqQIOAzByE
+m9xLLNN2gXKyH3m1ICt8R+AlcttmkDUGagOCqpW3QzsGBg+HmpC/I463lnY4p+Ja
+tv7HeIuvtUHRUeSIzGYRJ8+oJZ8yFoHEsQDHvZGUgQNpJJ1/5TOufACvUS+o5gKH
+1TXjbg7TQ5FvD2kIuITCPSvg8QDb6tqRpy7YdaICAKpoJeSxPHdUfoKP2XB+EzIU
+bNb2TG3Z0/giTY5eg3BkGSB802/5Oh79acGF7q/4KpWRe0bZ/IiQdhQHqLA3nwrG
+KhebvRgQfqxNjbKZBHs5yJ0lSLqkDqSTdbqVPm0V59SZCq4ZhFx+fRyVqW0Q8rKx
+xx8qYUQeiQMIhWAbythV6eCXmVcp74PaDL5ixQu0cWG9oFUNm3S6qX+Un+uUC5yD
+JTWJ7Muy0YcZAZZt3yFwkFtMzFSbOii7yXpHDSU/zNXQ4iIjEB5eGcBjqLYiH07C
+KPqfGa3tHqPcTLwOj8Nm
+=3Qm6
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__3_Dec_2012_12_04_29_+1100_Nk19MFeqDeoNY5t_--
