@@ -1,32 +1,36 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: linux-next: unusual update of the security tree
-Date: Tue, 4 Dec 2012 02:26:40 +1100 (EST)
-Message-ID: <alpine.LRH.2.02.1212040226090.13071@tundra.namei.org>
-References: <20121128101635.d5e864dffc4252ef9d5e1664@canb.auug.org.au> <50B5508D.7050409@schaufler-ca.com> <20121128110132.0082c87680b9b714b8c0689c@canb.auug.org.au> <CA+55aFwdk9FiW4u_f-Dq6+jtuD9kY-zBqPpMVc2OHJFnzaAbzA@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the slave_dma
+ and tree
+Date: Mon, 3 Dec 2012 10:25:45 -0800
+Message-ID: <20121203182545.GA32702@kroah.com>
+References: <20121203171232.04772e84d18948bbbcafdeef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+55aFwdk9FiW4u_f-Dq6+jtuD9kY-zBqPpMVc2OHJFnzaAbzA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:54110 "EHLO
+	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750846Ab2LCSZr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Dec 2012 13:25:47 -0500
+Content-Disposition: inline
+In-Reply-To: <20121203171232.04772e84d18948bbbcafdeef@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Vinod Koul <vinod.koul@linux.intel.com>, Bill Pemberton <wfp5p@virginia.edu>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-On Tue, 27 Nov 2012, Linus Torvalds wrote:
-
-> On Nov 27, 2012 4:01 PM, "Stephen Rothwell" <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi
-> > This is the shortlog for the changes in the security tree between
-> > yesterday and today;
+On Mon, Dec 03, 2012 at 05:12:32PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> This is an excellent example of the kind of tree I will not pull from.
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> drivers/dma/mv_xor.c between commit d51e88b99533 ("dma: Convert dev_printk
+> (KERN_<LEVEL> to dev_<level>(") from the slave-dma tree, commits
+> a7d6e3ec28bb ("dma: remove use of __devexit_p") and 463a1f8b3cee ("dma:
+> remove use of __devinit") from the driver-core tree and various commits
+> from the arm-soc tree.
 > 
-> There are more merges than actual work. No way, Jose.
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Ugh, I somehow missed this thread last week.
+Looks good to me, thanks.
 
-
--- 
-James Morris
-<jmorris@namei.org>
+greg k-h
