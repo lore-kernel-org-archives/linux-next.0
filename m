@@ -1,151 +1,94 @@
-From: Li Zhong <zhong@linux.vnet.ibm.com>
-Subject: Re: [RFC PATCH v3] Add rcu user eqs exception hooks for async page
- fault
-Date: Mon, 03 Dec 2012 10:08:32 +0800
-Message-ID: <1354500512.3243.16.camel@ThinkPad-T5421.cn.ibm.com>
-References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
-	 <CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
-	 <1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
-	 <CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
-	 <20121128135345.GG928@redhat.com>
-	 <CAFTL4hxoFBLNQCABBpJRBgV-r-Mg5GSq7HbPfWJRraSvtviz4A@mail.gmail.com>
-	 <20121129110717.GA9711@redhat.com>
-	 <CAFTL4hyHW3uJHvzxz1o4agtGbicFAP1DuUsifbOrp1Q3ODRBMA@mail.gmail.com>
-	 <1354267121.2552.65.camel@ThinkPad-T5421.cn.ibm.com>
-	 <20121130102652.GG20873@redhat.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: build failure after merge of the modules tree
+Date: Mon, 03 Dec 2012 10:59:21 +1030
+Message-ID: <87d2ysj7vi.fsf@rustcorp.com.au>
+References: <20121126151046.1b5b09762b8361b1f202c6e2@canb.auug.org.au> <20121128110145.GA3701@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp09.in.ibm.com ([122.248.162.9]:48456 "EHLO
-	e28smtp09.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754332Ab2LCCIl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 2 Dec 2012 21:08:41 -0500
-Received: from /spool/local
-	by e28smtp09.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <zhong@linux.vnet.ibm.com>;
-	Mon, 3 Dec 2012 07:38:34 +0530
-In-Reply-To: <20121130102652.GG20873@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Gleb Natapov <gleb@redhat.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121128110145.GA3701@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stanislaw Gruszka <sgruszka@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, "John W. Linville" <linville@tuxdriver.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 2012-11-30 at 12:26 +0200, Gleb Natapov wrote:
-> On Fri, Nov 30, 2012 at 05:18:41PM +0800, Li Zhong wrote:
-> > This patch adds user eqs exception hooks for async page fault page not
-> > present code path, to exit the user eqs and re-enter it as necessary. 
-> > 
-> > Async page fault is different from other exceptions that it may be
-> > triggered from idle process, so we still need rcu_irq_enter() and
-> > rcu_irq_exit() to exit cpu idle eqs when needed, to protect the code
-> > that needs use rcu.
-> > 
-> > As Frederic pointed out it would be safest and simplest to protect the
-> > whole kvm_async_pf_task_wait(). Otherwise, "we need to check all the
-> > code there deeply for potential RCU uses and ensure it will never be
-> > extended later to use RCU.".
-> > 
-> > However, We'd better re-enter the cpu idle eqs if we get the exception
-> > in cpu idle eqs, by calling rcu_irq_exit() before native_safe_halt(). 
-> > 
-> > So the patch does what Frederic suggested for rcu_irq_*() API usage
-> > here, except that I moved the rcu_irq_*() pair originally in
-> > do_async_page_fault() into kvm_async_pf_task_wait(). 
-> > 
-> > That's because, I think it's better to have rcu_irq_*() pairs to be in
-> > one function ( rcu_irq_exit() after rcu_irq_enter() ), especially here,
-> > kvm_async_pf_task_wait() has other callers, which might cause
-> > rcu_irq_exit() be called without a matching rcu_irq_enter() before it,
-> > which is illegal if the cpu happens to be in rcu idle state. 
-> > 
-> > Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
-> > ---
-> >  arch/x86/kernel/kvm.c | 12 ++++++++++--
-> >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> > index 4180a87..342b00b 100644
-> > --- a/arch/x86/kernel/kvm.c
-> > +++ b/arch/x86/kernel/kvm.c
-> > @@ -42,6 +42,7 @@
-> >  #include <asm/apic.h>
-> >  #include <asm/apicdef.h>
-> >  #include <asm/hypervisor.h>
-> > +#include <asm/rcu.h>
-> >  
-> >  static int kvmapf = 1;
-> >  
-> > @@ -112,6 +113,8 @@ void kvm_async_pf_task_wait(u32 token)
-> >  	DEFINE_WAIT(wait);
-> >  	int cpu, idle;
-> >  
-> > +	rcu_irq_enter();
-> > +
-> Why move rcu_irq_*() calls into kvm_async_pf_task_wait()?
+Stanislaw Gruszka <sgruszka@redhat.com> writes:
 
-I think it is not good for a function to have a rcu_irq_exit(), which
-needs a matching rcu_irq_enter() in its caller. 
+> On Mon, Nov 26, 2012 at 03:10:46PM +1100, Stephen Rothwell wrote:
+>> After merging the modules tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>> 
+>> drivers/net/wireless/iwlwifi/iwl-drv.c:1196:1: error: invalid suffix "n_disabletype__8" on integer constant
+>> drivers/net/wireless/iwlwifi/iwl-drv.c:1196:1: error: expected identifier or '(' before numeric constant
+>> drivers/net/wireless/iwlwifi/iwl-drv.c:1198:1: error: invalid suffix "n_disable__9" on integer constant
+>> drivers/net/wireless/iwlwifi/iwl-drv.c:1198:1: error: expected identifier or '(' before numeric constant
+>> drivers/net/wireless/iwlwifi/iwl-drv.c:1263:1: error: invalid suffix "ghz_disabletype__32" on integer constant
+>> drivers/net/wireless/iwlwifi/iwl-drv.c:1263:1: error: expected identifier or '(' before numeric constant
+>> drivers/net/wireless/iwlwifi/iwl-drv.c:1264:1: error: invalid suffix "ghz_disable__33" on integer constant
+>> drivers/net/wireless/iwlwifi/iwl-drv.c:1264:1: error: expected identifier or '(' before numeric constant
+>> drivers/net/wireless/iwlegacy/4965-mac.c:6825:1: error: invalid suffix "n_disabletype__11" on integer constant
+>> drivers/net/wireless/iwlegacy/4965-mac.c:6825:1: error: expected identifier or '(' before numeric constant
+>> drivers/net/wireless/iwlegacy/4965-mac.c:6826:1: error: invalid suffix "n_disable__12" on integer constant
+>> drivers/net/wireless/iwlegacy/4965-mac.c:6826:1: error: expected identifier or '(' before numeric constant
+>> 
+>> Presumably caused by commit 58876af0436e ("moduleparam: use __UNIQUE_ID
+>> ()").  This commit removed the "__mod_" prefix that used to be added to
+>> the front of the "name" passed to module_param_named().  Admittedly, the
+>> documentation says that "name" must be "a valid C identifier which is the
+>> parameter name", but the (ab)usage here used to work (the name starts
+>> with a number).
+>
+> I prefer not to change module parameters name, since there are users
+> who use current name in they modprobe config.
+>
+> Stanislaw
 
-Here, if not move rcu_irq_* in, then the rcu_irq_exit() before
-native_safe_halt() in kvm_async_pf_task_wait() is the one that needs the
-matching rcu_irq_enter() in do_async_page_fault(). And, for this case,
-kvm_async_pf_task_wait() even has other caller - pf_interception().
-Maybe it will always be rcu non-idle for pf_interception (so a matching
-rcu_irq_enter() is not needed), or maybe we could (or need) add
-rcu_irq_*() in pf_interception().  But I still think it's good to have
-those function calls that need to be matched be contained in one
-function.
+Yes, the names can't be changed.
 
-Thanks, Zhong
+Here's the patch I've applied, which fixes it:
 
-> >  	cpu = get_cpu();
-> >  	idle = idle_cpu(cpu);
-> >  	put_cpu();
-> > @@ -123,6 +126,8 @@ void kvm_async_pf_task_wait(u32 token)
-> >  		hlist_del(&e->link);
-> >  		kfree(e);
-> >  		spin_unlock(&b->lock);
-> > +
-> > +		rcu_irq_exit();
-> We can skip that if  rcu_irq_*() will stay outside.
-> 
-> >  		return;
-> >  	}
-> >  
-> > @@ -147,13 +152,16 @@ void kvm_async_pf_task_wait(u32 token)
-> >  			/*
-> >  			 * We cannot reschedule. So halt.
-> >  			 */
-> > +			rcu_irq_exit();
-> >  			native_safe_halt();
-> > +			rcu_irq_enter();
-> >  			local_irq_disable();
-> >  		}
-> >  	}
-> >  	if (!n.halted)
-> >  		finish_wait(&n.wq, &wait);
-> >  
-> > +	rcu_irq_exit();
-> >  	return;
-> >  }
-> >  EXPORT_SYMBOL_GPL(kvm_async_pf_task_wait);
-> > @@ -247,10 +255,10 @@ do_async_page_fault(struct pt_regs *regs, unsigned long error_code)
-> >  		break;
-> >  	case KVM_PV_REASON_PAGE_NOT_PRESENT:
-> >  		/* page is swapped out by the host. */
-> > -		rcu_irq_enter();
-> > +		exception_enter(regs);
-> >  		exit_idle();
-> >  		kvm_async_pf_task_wait((u32)read_cr2());
-> > -		rcu_irq_exit();
-> > +		exception_exit(regs);
-> >  		break;
-> >  	case KVM_PV_REASON_PAGE_READY:
-> >  		rcu_irq_enter();
-> > -- 
-> > 1.7.11.4
-> 
-> --
-> 			Gleb.
-> 
+>From 7a918c7fb6499179e14a4e23a5ccff0ab920ffe0 Mon Sep 17 00:00:00 2001
+From: Rusty Russell <rusty@rustcorp.com.au>
+Date: Mon, 3 Dec 2012 10:49:29 +1030
+Subject: [PATCH] compiler: fix UNIQUE_ID() for non-identifier names.
+
+Some modules have parameters starting with digits, so always prepend UNIQUE_ID_
+which ensures we produce a valid identifier, plus leave a clue if you
+should encounter such a symbol.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Stanislaw Gruszka <sgruszka@redhat.com>
+Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+---
+ include/linux/compiler-gcc4.h |    2 +-
+ include/linux/compiler.h      |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/compiler-gcc4.h b/include/linux/compiler-gcc4.h
+index 8908821..56c802c 100644
+--- a/include/linux/compiler-gcc4.h
++++ b/include/linux/compiler-gcc4.h
+@@ -31,7 +31,7 @@
+ 
+ #define __linktime_error(message) __attribute__((__error__(message)))
+ 
+-#define __UNIQUE_ID(prefix) __PASTE(prefix, __PASTE(__, __COUNTER__))
++#define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+ 
+ #if __GNUC_MINOR__ >= 5
+ /*
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index c55ae87..5f45335 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -170,7 +170,7 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
+ 
+ /* Not-quite-unique ID. */
+ #ifndef __UNIQUE_ID
+-# define __UNIQUE_ID(prefix) __PASTE(__PASTE(prefix, __), __LINE__)
++# define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __LINE__)
+ #endif
+ 
+ #endif /* __KERNEL__ */
+-- 
+1.7.10.4
