@@ -1,94 +1,113 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: build failure after merge of the modules tree
-Date: Mon, 03 Dec 2012 10:59:21 +1030
-Message-ID: <87d2ysj7vi.fsf@rustcorp.com.au>
-References: <20121126151046.1b5b09762b8361b1f202c6e2@canb.auug.org.au> <20121128110145.GA3701@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Mon, 3 Dec 2012 15:19:48 +1100
+Message-ID: <20121203151948.4210a510fcedb5fe5b2ee150@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121128110145.GA3701@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stanislaw Gruszka <sgruszka@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, "John W. Linville" <linville@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__3_Dec_2012_15_19_48_+1100_mAa9/aT77uI2tQMw"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58422 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754956Ab2LCEUC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 2 Dec 2012 23:20:02 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Jiri Olsa <jolsa@redhat.com>
 
-Stanislaw Gruszka <sgruszka@redhat.com> writes:
+--Signature=_Mon__3_Dec_2012_15_19_48_+1100_mAa9/aT77uI2tQMw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, Nov 26, 2012 at 03:10:46PM +1100, Stephen Rothwell wrote:
->> After merging the modules tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->> 
->> drivers/net/wireless/iwlwifi/iwl-drv.c:1196:1: error: invalid suffix "n_disabletype__8" on integer constant
->> drivers/net/wireless/iwlwifi/iwl-drv.c:1196:1: error: expected identifier or '(' before numeric constant
->> drivers/net/wireless/iwlwifi/iwl-drv.c:1198:1: error: invalid suffix "n_disable__9" on integer constant
->> drivers/net/wireless/iwlwifi/iwl-drv.c:1198:1: error: expected identifier or '(' before numeric constant
->> drivers/net/wireless/iwlwifi/iwl-drv.c:1263:1: error: invalid suffix "ghz_disabletype__32" on integer constant
->> drivers/net/wireless/iwlwifi/iwl-drv.c:1263:1: error: expected identifier or '(' before numeric constant
->> drivers/net/wireless/iwlwifi/iwl-drv.c:1264:1: error: invalid suffix "ghz_disable__33" on integer constant
->> drivers/net/wireless/iwlwifi/iwl-drv.c:1264:1: error: expected identifier or '(' before numeric constant
->> drivers/net/wireless/iwlegacy/4965-mac.c:6825:1: error: invalid suffix "n_disabletype__11" on integer constant
->> drivers/net/wireless/iwlegacy/4965-mac.c:6825:1: error: expected identifier or '(' before numeric constant
->> drivers/net/wireless/iwlegacy/4965-mac.c:6826:1: error: invalid suffix "n_disable__12" on integer constant
->> drivers/net/wireless/iwlegacy/4965-mac.c:6826:1: error: expected identifier or '(' before numeric constant
->> 
->> Presumably caused by commit 58876af0436e ("moduleparam: use __UNIQUE_ID
->> ()").  This commit removed the "__mod_" prefix that used to be added to
->> the front of the "name" passed to module_param_named().  Admittedly, the
->> documentation says that "name" must be "a valid C identifier which is the
->> parameter name", but the (ab)usage here used to work (the name starts
->> with a number).
->
-> I prefer not to change module parameters name, since there are users
-> who use current name in they modprobe config.
->
-> Stanislaw
+Hi all,
 
-Yes, the names can't be changed.
+Today's linux-next merge of the tip tree got a conflict in
+tools/perf/Makefile between commit d2709c7ce4c5 ("perf: Make perf build
+for x86 with UAPI disintegration applied") from Linus' tree and commit
+945aea220bb8 ("perf tests: Move test objects into 'tests' directory")
+from the tip tree.
 
-Here's the patch I've applied, which fixes it:
+I just used the version from Linus' tree (since it seems to be a superset
+of the latter - see below) and can carry the fix as necessary (no action
+is required).
 
->From 7a918c7fb6499179e14a4e23a5ccff0ab920ffe0 Mon Sep 17 00:00:00 2001
-From: Rusty Russell <rusty@rustcorp.com.au>
-Date: Mon, 3 Dec 2012 10:49:29 +1030
-Subject: [PATCH] compiler: fix UNIQUE_ID() for non-identifier names.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Some modules have parameters starting with digits, so always prepend UNIQUE_ID_
-which ensures we produce a valid identifier, plus leave a clue if you
-should encounter such a symbol.
+diff --cc tools/perf/Makefile
+index 0a619af,cca5bb8..0000000
+--- a/tools/perf/Makefile
++++ b/tools/perf/Makefile
+@@@ -169,36 -169,16 +169,43 @@@ endi
+ =20
+  ### --- END CONFIGURATION SECTION ---
+ =20
+ -BASIC_CFLAGS =3D -Iutil/include -Iarch/$(ARCH)/include -I$(OUTPUT)util -I=
+util -I. -I$(TRACE_EVENT_DIR) -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=3D6=
+4 -D_GNU_SOURCE
+ +ifeq ($(srctree),)
+ +srctree :=3D $(patsubst %/,%,$(dir $(shell pwd)))
+ +srctree :=3D $(patsubst %/,%,$(dir $(srctree)))
+ +#$(info Determined 'srctree' to be $(srctree))
+ +endif
+ +
+ +ifneq ($(objtree),)
+ +#$(info Determined 'objtree' to be $(objtree))
+ +endif
+ +
+ +ifneq ($(OUTPUT),)
+ +#$(info Determined 'OUTPUT' to be $(OUTPUT))
+ +endif
+ +
+ +BASIC_CFLAGS =3D \
+ +	-Iutil/include \
+ +	-Iarch/$(ARCH)/include \
+ +	$(if $(objtree),-I$(objtree)/arch/$(ARCH)/include/generated/uapi) \
+ +	-I$(srctree)/arch/$(ARCH)/include/uapi \
+ +	-I$(srctree)/arch/$(ARCH)/include \
+ +	$(if $(objtree),-I$(objtree)/include/generated/uapi) \
+ +	-I$(srctree)/include/uapi \
+ +	-I$(srctree)/include \
+ +	-I$(OUTPUT)util \
+ +	-Iutil \
+ +	-I. \
+ +	-I$(TRACE_EVENT_DIR) \
+ +	-D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=3D64 -D_GNU_SOURCE
+  BASIC_LDFLAGS =3D
+ =20
++ ifeq ($(call try-cc,$(SOURCE_BIONIC),$(CFLAGS),bionic),y)
++ 	BIONIC :=3D 1
++ 	EXTLIBS :=3D $(filter-out -lrt,$(EXTLIBS))
++ 	EXTLIBS :=3D $(filter-out -lpthread,$(EXTLIBS))
++ 	BASIC_CFLAGS +=3D -I.
++ endif
++=20
+  # Guard against environment variables
+  BUILTIN_OBJS =3D
+  LIB_H =3D
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>
-Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
----
- include/linux/compiler-gcc4.h |    2 +-
- include/linux/compiler.h      |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+--Signature=_Mon__3_Dec_2012_15_19_48_+1100_mAa9/aT77uI2tQMw
+Content-Type: application/pgp-signature
 
-diff --git a/include/linux/compiler-gcc4.h b/include/linux/compiler-gcc4.h
-index 8908821..56c802c 100644
---- a/include/linux/compiler-gcc4.h
-+++ b/include/linux/compiler-gcc4.h
-@@ -31,7 +31,7 @@
- 
- #define __linktime_error(message) __attribute__((__error__(message)))
- 
--#define __UNIQUE_ID(prefix) __PASTE(prefix, __PASTE(__, __COUNTER__))
-+#define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
- 
- #if __GNUC_MINOR__ >= 5
- /*
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index c55ae87..5f45335 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -170,7 +170,7 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
- 
- /* Not-quite-unique ID. */
- #ifndef __UNIQUE_ID
--# define __UNIQUE_ID(prefix) __PASTE(__PASTE(prefix, __), __LINE__)
-+# define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __LINE__)
- #endif
- 
- #endif /* __KERNEL__ */
--- 
-1.7.10.4
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQvChkAAoJEECxmPOUX5FEay0P/jmUejCTH/P9vwxF0MUg9pgZ
+ZqE0tddeObOCoGl4omFpsPFX/dQ+VLA/hyQABENM8oMf4sheRXcKKpkaJ05ReV8C
+xnaCIu1rw74L36YCtvgC1mlQnQpVkUnzDxYjDITtOJk92L9OJVR7gDRTxnaPBG+v
+CE8ffDueAeHMSYLkzQPqODjUGhu7ZrQu5LvpWBSVsycbPA3dyqiCvJtuBLJyRmv4
+xeK0srRMrOyUXXSr0AE1TXKXsQEc87tocVJDBad6wUxW88L3OR7Zc6wcqHI/GcNz
+KXw0LjWWJLFz6uEVeJ7F0Bym1pUU8jDnTIh61LKvkm+21pdtDBMEjCpnIxUcAqrL
+duYzEM/KL/Oq01x1sWCRdwhyL6ZpZGGaa7UdK7wjcldV2nmcF+CWddboCQ0hCvqp
+1oSlJVVrjv2HNXKe/2z1/6YaY+6BwcYbbyvDlLn42A2EWI1rlARUmLMjWdiVxKNi
+cfJ6bowE5GOxa7Fnev5INc0caF3kqjxuOdXGGvihLWMBdIlJH/RmGThnyhqgUYjm
+XIl6fe5Bh9MNPKfZAMBj+PTzfGOVBJb9ewp50m6ZSHLRrHdSOjj07g1G8x+erua1
+bMKJ2zJAsiP5Ahf/8nbks37jgJkrjIZNT/0UnUxCKevszTsFRCPhzWFU474HRtom
+sZSWvZ4Bg0rVt3lq2CoN
+=XPeO
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__3_Dec_2012_15_19_48_+1100_mAa9/aT77uI2tQMw--
