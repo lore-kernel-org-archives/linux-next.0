@@ -1,61 +1,155 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the iommu tree
-Date: Tue, 4 Dec 2012 15:42:03 +1100
-Message-ID: <20121204154203.f0e7e87d1ae99e5c528434f8@canb.auug.org.au>
+From: Gleb Natapov <gleb@redhat.com>
+Subject: Re: [RFC PATCH v3] Add rcu user eqs exception hooks for async page
+ fault
+Date: Tue, 4 Dec 2012 07:11:24 +0200
+Message-ID: <20121204051124.GA27858@redhat.com>
+References: <CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
+ <1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
+ <CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
+ <20121128135345.GG928@redhat.com>
+ <CAFTL4hxoFBLNQCABBpJRBgV-r-Mg5GSq7HbPfWJRraSvtviz4A@mail.gmail.com>
+ <20121129110717.GA9711@redhat.com>
+ <CAFTL4hyHW3uJHvzxz1o4agtGbicFAP1DuUsifbOrp1Q3ODRBMA@mail.gmail.com>
+ <1354267121.2552.65.camel@ThinkPad-T5421.cn.ibm.com>
+ <20121203095708.GO8731@redhat.com>
+ <1354588562.2649.11.camel@ThinkPad-T5421.cn.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__4_Dec_2012_15_42_03_+1100_e_41q9GPMZD=WyT7"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49685 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751689Ab2LDEmT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Dec 2012 23:42:19 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34428 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750753Ab2LDFL3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Dec 2012 00:11:29 -0500
+Content-Disposition: inline
+In-Reply-To: <1354588562.2649.11.camel@ThinkPad-T5421.cn.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Omar Ramirez Luna <omar.luna@linaro.org>, Joerg Roedel <joro@8bytes.org>, Paul Walmsley <paul@pwsan.com>, Mike Turquette <mturquette@ti.com>
+To: Li Zhong <zhong@linux.vnet.ibm.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
 
---Signature=_Tue__4_Dec_2012_15_42_03_+1100_e_41q9GPMZD=WyT7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Dec 04, 2012 at 10:36:02AM +0800, Li Zhong wrote:
+> On Mon, 2012-12-03 at 11:57 +0200, Gleb Natapov wrote:
+> > Please regenerate the patch against
+> > git://git.kernel.org/pub/scm/virt/kvm/kvm.git queue.
+> 
+> Done.
+> 
+> By the way, the included file <asm/rcu.h> is replaced with
+> <asm/context_tracking.h> in latest next tree(91d1aa43 from rcu tree). 
+> 
+What is the url of the rcu tree?
 
-Hi all,
+> Seems if they are merged, there won't be conflicts, but we need change
+> the including file name after that. I don't know how to handle this kind
+> of thing... 
+> 
+> Thanks, Zhong
+> 
+> > 
+> > On Fri, Nov 30, 2012 at 05:18:41PM +0800, Li Zhong wrote:
+> > > This patch adds user eqs exception hooks for async page fault page not
+> > > present code path, to exit the user eqs and re-enter it as necessary. 
+> > > 
+> > > Async page fault is different from other exceptions that it may be
+> > > triggered from idle process, so we still need rcu_irq_enter() and
+> > > rcu_irq_exit() to exit cpu idle eqs when needed, to protect the code
+> > > that needs use rcu.
+> > > 
+> > > As Frederic pointed out it would be safest and simplest to protect the
+> > > whole kvm_async_pf_task_wait(). Otherwise, "we need to check all the
+> > > code there deeply for potential RCU uses and ensure it will never be
+> > > extended later to use RCU.".
+> > > 
+> > > However, We'd better re-enter the cpu idle eqs if we get the exception
+> > > in cpu idle eqs, by calling rcu_irq_exit() before native_safe_halt(). 
+> > > 
+> > > So the patch does what Frederic suggested for rcu_irq_*() API usage
+> > > here, except that I moved the rcu_irq_*() pair originally in
+> > > do_async_page_fault() into kvm_async_pf_task_wait(). 
+> > > 
+> > > That's because, I think it's better to have rcu_irq_*() pairs to be in
+> > > one function ( rcu_irq_exit() after rcu_irq_enter() ), especially here,
+> > > kvm_async_pf_task_wait() has other callers, which might cause
+> > > rcu_irq_exit() be called without a matching rcu_irq_enter() before it,
+> > > which is illegal if the cpu happens to be in rcu idle state. 
+> > > 
+> > > Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
+> > > ---
+> > >  arch/x86/kernel/kvm.c | 12 ++++++++++--
+> > >  1 file changed, 10 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> > > index 4180a87..342b00b 100644
+> > > --- a/arch/x86/kernel/kvm.c
+> > > +++ b/arch/x86/kernel/kvm.c
+> > > @@ -42,6 +42,7 @@
+> > >  #include <asm/apic.h>
+> > >  #include <asm/apicdef.h>
+> > >  #include <asm/hypervisor.h>
+> > > +#include <asm/rcu.h>
+> > >  
+> > >  static int kvmapf = 1;
+> > >  
+> > > @@ -112,6 +113,8 @@ void kvm_async_pf_task_wait(u32 token)
+> > >  	DEFINE_WAIT(wait);
+> > >  	int cpu, idle;
+> > >  
+> > > +	rcu_irq_enter();
+> > > +
+> > >  	cpu = get_cpu();
+> > >  	idle = idle_cpu(cpu);
+> > >  	put_cpu();
+> > > @@ -123,6 +126,8 @@ void kvm_async_pf_task_wait(u32 token)
+> > >  		hlist_del(&e->link);
+> > >  		kfree(e);
+> > >  		spin_unlock(&b->lock);
+> > > +
+> > > +		rcu_irq_exit();
+> > >  		return;
+> > >  	}
+> > >  
+> > > @@ -147,13 +152,16 @@ void kvm_async_pf_task_wait(u32 token)
+> > >  			/*
+> > >  			 * We cannot reschedule. So halt.
+> > >  			 */
+> > > +			rcu_irq_exit();
+> > >  			native_safe_halt();
+> > > +			rcu_irq_enter();
+> > >  			local_irq_disable();
+> > >  		}
+> > >  	}
+> > >  	if (!n.halted)
+> > >  		finish_wait(&n.wq, &wait);
+> > >  
+> > > +	rcu_irq_exit();
+> > >  	return;
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(kvm_async_pf_task_wait);
+> > > @@ -247,10 +255,10 @@ do_async_page_fault(struct pt_regs *regs, unsigned long error_code)
+> > >  		break;
+> > >  	case KVM_PV_REASON_PAGE_NOT_PRESENT:
+> > >  		/* page is swapped out by the host. */
+> > > -		rcu_irq_enter();
+> > > +		exception_enter(regs);
+> > >  		exit_idle();
+> > >  		kvm_async_pf_task_wait((u32)read_cr2());
+> > > -		rcu_irq_exit();
+> > > +		exception_exit(regs);
+> > >  		break;
+> > >  	case KVM_PV_REASON_PAGE_READY:
+> > >  		rcu_irq_enter();
+> > > -- 
+> > > 1.7.11.4
+> > 
+> > --
+> > 			Gleb.
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > Please read the FAQ at  http://www.tux.org/lkml/
+> > 
+> 
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-omap2/clock44xx_data.c between commit 298ea44f211d ("ARM:
-OMAP4: hwmod data: ipu and dsp to use parent clocks instead of leaf
-clocks") from the iommu tree and commit 13a5b6228679 ("ARM: OMAP44xx:
-clock: drop obsolete clock data") from the arm-soc tree.
-
-I just deleted the file as the latter did and can carry the fix as
-necessary (no action is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__4_Dec_2012_15_42_03_+1100_e_41q9GPMZD=WyT7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQvX8bAAoJEECxmPOUX5FEni8QAJZtImjQt3te8HGXhrztgrZI
-XyFORIL2pOvMowTq4qQoOIb9lDeac/08u6VFLGoueXkEE2j4P1MW2793Idk7UR04
-HzgJTGJDdSOkV2TDsXVC5tdYcIWsD5M4tIiG6Jqra12w1yefK0nhvruiP4r2nchU
-5yi23CQYRkDBzO3OqvbBfku6NOOBn8gOfiUMq8Tayx5ULHtkx0tWFyyxAyeSsg/f
-px7UzkgC1hQn49/8i944vPgvZgy5LkFQQiQHO+7KSbD7iXJamJ2If3fqWCTQwS67
-Rw2FrCfPkTeeMN10HEqy2QYSa216+25Qw0ftWxXqdXL+I17YbNGPzV9vLc6VqeOf
-hTELMWOJTLz6gFdC6niXCiMdEaWZjw75HocByby8Pjr8k27YKwU4gUhRl/LEiivv
-pczBdp4Ul+s9NCtbd2cwA67slBWCV4lW+4lkatcoWlx0q6ddHhj/LuqfuTkzxksM
-SeQ/pA0IyDBZ/6HaibumyvMgDFkmEDhA501WFWK8GqNZCvsc3wYIuVRQdLg0v3g7
-XKfDUJOi1s40SDHgy5MBK3d5fwuEU+zS6QMdeBL/3tWFNSB0uNDltYycb4wxN4PX
-uQLwGpAYK0U8FXo/w/Rw8x/ZHjXQk/jrTWlF8NaUuACbkF7wyK9wU/IiTYWMMIDG
-9cgOQhV4dJXySZ45Vp59
-=tbHy
------END PGP SIGNATURE-----
-
---Signature=_Tue__4_Dec_2012_15_42_03_+1100_e_41q9GPMZD=WyT7--
+--
+			Gleb.
