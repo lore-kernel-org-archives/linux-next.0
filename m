@@ -1,95 +1,117 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: omap2plus_defconfig fails to build
-Date: Tue, 4 Dec 2012 11:05:46 +1100
-Message-ID: <20121204110546.61973b83030490faa62848a0@canb.auug.org.au>
-References: <CAAfyv37BA4YMRFJsN5n7EeAD7iE3hzQ2PDqBAtqCju7JdxrvTA@mail.gmail.com>
-	<20121204102631.3d8d41e3e8a8c0eb71734e55@canb.auug.org.au>
-	<50BD37FA.2090501@ti.com>
+From: Li Zhong <zhong@linux.vnet.ibm.com>
+Subject: [ PATCH] Add rcu user eqs exception hooks for async page fault
+Date: Tue, 04 Dec 2012 10:35:13 +0800
+Message-ID: <1354588513.2649.10.camel@ThinkPad-T5421.cn.ibm.com>
+References: <1353993325.14050.49.camel@ThinkPad-T5421.cn.ibm.com>
+	 <CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
+	 <1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
+	 <CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
+	 <20121128135345.GG928@redhat.com>
+	 <CAFTL4hxoFBLNQCABBpJRBgV-r-Mg5GSq7HbPfWJRraSvtviz4A@mail.gmail.com>
+	 <20121129110717.GA9711@redhat.com>
+	 <CAFTL4hyHW3uJHvzxz1o4agtGbicFAP1DuUsifbOrp1Q3ODRBMA@mail.gmail.com>
+	 <1354267121.2552.65.camel@ThinkPad-T5421.cn.ibm.com>
+	 <20121203095708.GO8731@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__4_Dec_2012_11_05_46_+1100_0hMzYol8m8XgOm3p"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60877 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751179Ab2LDAF4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Dec 2012 19:05:56 -0500
-In-Reply-To: <50BD37FA.2090501@ti.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jon Hunter <jon-hunter@ti.com>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, Belisko Marek <marek.belisko@gmail.com>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121203095708.GO8731@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gleb Natapov <gleb@redhat.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__4_Dec_2012_11_05_46_+1100_0hMzYol8m8XgOm3p
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch adds user eqs exception hooks for async page fault page not
+present code path, to exit the user eqs and re-enter it as necessary.
 
-Hi all,
+Async page fault is different from other exceptions that it may be
+triggered from idle process, so we still need rcu_irq_enter() and
+rcu_irq_exit() to exit cpu idle eqs when needed, to protect the code
+that needs use rcu.
 
-On Mon, 3 Dec 2012 17:38:34 -0600 Jon Hunter <jon-hunter@ti.com> wrote:
->
-> On 12/03/2012 05:26 PM, Stephen Rothwell wrote:
-> >=20
-> > On Thu, 29 Nov 2012 11:40:18 +0100 Belisko Marek <marek.belisko@gmail.c=
-om> wrote:
-> >>
-> >> I've update linux-next to next-20121129 and omap2plus_defconfig fails =
-to build:
-> >> arch/arm/mach-omap2/timer.c: In function 'omap_get_timer_dt':
-> >> arch/arm/mach-omap2/timer.c:195: error: implicit declaration of
-> >> function 'prom_add_property'
-> >=20
-> > Caused by commit 9725f4451a9c ("ARM: OMAP: Add DT support for timer
-> > driver") from the arm-soc tree interacting with commit 79d1c712958f
-> > ("powerpc+of: Rename the drivers/of prom_* functions to of_*") from the
-> > powerpc tree.
-> >=20
-> > I will fix this up in today' linux-next (by changing prom_add_property =
-to
-> > of_add_property).  Someone will need to remember to tell Linus when the
-> > latter of those two commits gets merged.
->=20
-> Just to let you know there is a patch available for this problem [1].
->=20
-> Tony, Olof, Arnd, not sure how you guys wish to handle this one.
+As Frederic pointed out it would be safest and simplest to protect the
+whole kvm_async_pf_task_wait(). Otherwise, "we need to check all the
+code there deeply for potential RCU uses and ensure it will never be
+extended later to use RCU.".
 
-They just really need to send this to Linus along with the pull request,
-or Ben does, depending on who gets in first.
+However, We'd better re-enter the cpu idle eqs if we get the exception
+in cpu idle eqs, by calling rcu_irq_exit() before native_safe_halt().
 
->=20
-> Cheers
-> Jon
->=20
-> [1] http://www.spinics.net/lists/arm-kernel/msg210179.html
+So the patch does what Frederic suggested for rcu_irq_*() API usage
+here, except that I moved the rcu_irq_*() pair originally in
+do_async_page_fault() into kvm_async_pf_task_wait().
 
-I will apply this to the arm-soc merge in linux-next today.  The error
-will only happen the linux-next at the moment.  Thanks for the pointer -
-I actually fished it out of patchwork.
+That's because, I think it's better to have rcu_irq_*() pairs to be in
+one function ( rcu_irq_exit() after rcu_irq_enter() ), especially here,
+kvm_async_pf_task_wait() has other callers, which might cause
+rcu_irq_exit() be called without a matching rcu_irq_enter() before it,
+which is illegal if the cpu happens to be in rcu idle state.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
+---
+ arch/x86/kernel/kvm.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---Signature=_Tue__4_Dec_2012_11_05_46_+1100_0hMzYol8m8XgOm3p
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQvT5aAAoJEECxmPOUX5FEKJ4P/Rq21lNKmq2jXKOKMCLiDSli
-P6t7v7SfFlfTe7ZLKaSgWWTvvo5taOe4VNUHrWL1sw/RjVxqSKzLyQib13FYozVM
-tgpgvwf9vouBEbTpAms3/ANiDoD4k+li3rFA0doTLvQh4dj0opFLwX6WaFsO2Dz5
-Mc0vyxkniljkUC4zGofPAPNXq4eXhc+W7VSO890+vvA8a4zQFz4VxyPiQ0SViJFQ
-Wvqf2YnUbvaYf0Fs7Ql6+FE3+pWLXYd79FQsBXiVYNZeFT6Teh0NlKBDPvByzYXF
-wHuqFIAp2wkUldXtuY65DDb/Z/PrS4ctjBEPKcf27k/RMoIGnZ1cmxMJ9Xgo6MfK
-4u/PurYyPkMIrLcmvUECj0jxrOY2J/g3/oj/jr2qZxA5fcp+FBY5KggWh5bXntet
-dWMnBQ+oRae4OEmQJbz43inSDlIdBEeUC8ojN20aDIedtP1wd8tvlbxtwv7Sdk5V
-OeZAsT/h9wfm2G40sjGhKzYRkqaJEIAcKyIOdyjp+nijQSNR2gQezHeMZtoCVdYO
-huVxzvAP5CfDaaq6/ft/qkr05BwdvboyAhqhQxZ7ZxXTDRpcGW10y09jfN9+a8JJ
-6Nf9jvWx8lZwd7+QmCF0qeXhfpBXuKA6L726XnoN0yHlwbL/IzEHcZ260AHjGUnI
-kIm6+seJfRQEtIbxESLO
-=LFyp
------END PGP SIGNATURE-----
-
---Signature=_Tue__4_Dec_2012_11_05_46_+1100_0hMzYol8m8XgOm3p--
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 08b973f..e99af60 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -43,6 +43,7 @@
+ #include <asm/apicdef.h>
+ #include <asm/hypervisor.h>
+ #include <asm/kvm_guest.h>
++#include <asm/rcu.h>
+ 
+ static int kvmapf = 1;
+ 
+@@ -121,6 +122,8 @@ void kvm_async_pf_task_wait(u32 token)
+ 	struct kvm_task_sleep_node n, *e;
+ 	DEFINE_WAIT(wait);
+ 
++	rcu_irq_enter();
++
+ 	spin_lock(&b->lock);
+ 	e = _find_apf_task(b, token);
+ 	if (e) {
+@@ -128,6 +131,8 @@ void kvm_async_pf_task_wait(u32 token)
+ 		hlist_del(&e->link);
+ 		kfree(e);
+ 		spin_unlock(&b->lock);
++
++		rcu_irq_exit();
+ 		return;
+ 	}
+ 
+@@ -152,13 +157,16 @@ void kvm_async_pf_task_wait(u32 token)
+ 			/*
+ 			 * We cannot reschedule. So halt.
+ 			 */
++			rcu_irq_exit();
+ 			native_safe_halt();
++			rcu_irq_enter();
+ 			local_irq_disable();
+ 		}
+ 	}
+ 	if (!n.halted)
+ 		finish_wait(&n.wq, &wait);
+ 
++	rcu_irq_exit();
+ 	return;
+ }
+ EXPORT_SYMBOL_GPL(kvm_async_pf_task_wait);
+@@ -252,10 +260,10 @@ do_async_page_fault(struct pt_regs *regs, unsigned long error_code)
+ 		break;
+ 	case KVM_PV_REASON_PAGE_NOT_PRESENT:
+ 		/* page is swapped out by the host. */
+-		rcu_irq_enter();
++		exception_enter(regs);
+ 		exit_idle();
+ 		kvm_async_pf_task_wait((u32)read_cr2());
+-		rcu_irq_exit();
++		exception_exit(regs);
+ 		break;
+ 	case KVM_PV_REASON_PAGE_READY:
+ 		rcu_irq_enter();
+-- 
+1.7.11.4
