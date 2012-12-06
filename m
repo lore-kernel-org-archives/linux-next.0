@@ -1,39 +1,94 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: [patch] propagate name change to comments in kernel source
-Date: Thu, 6 Dec 2012 10:41:01 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1212061040350.28002@pobox.suse.cz>
-References: <1354754668.9720.198.camel@tisifone>  <20121206120148.99919a3512c72947c8baba67@canb.auug.org.au> <1354756634.9720.203.camel@tisifone>
+From: James Morris <jmorris@namei.org>
+Subject: Re: linux-next: unusual update of the security tree
+Date: Fri, 7 Dec 2012 00:25:48 +1100 (EST)
+Message-ID: <alpine.LRH.2.02.1212070024460.4693@tundra.namei.org>
+References: <20121128101635.d5e864dffc4252ef9d5e1664@canb.auug.org.au> <50B5508D.7050409@schaufler-ca.com> <20121128110132.0082c87680b9b714b8c0689c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:49276 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932232Ab2LFJlI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Dec 2012 04:41:08 -0500
-In-Reply-To: <1354756634.9720.203.camel@tisifone>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nadia Yvette Chambers <nyc@holomorphy.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121128110132.0082c87680b9b714b8c0689c@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 5 Dec 2012, Nadia Yvette Chambers wrote:
+Any suggestions on how to fix this?  That branch is public, and what 
+people use to develop against, so I can't rebase it.
 
-> > OK, that may be a problem.  Does this patch apply to Linus' tree
-> > currently?  I guess not.  So, either you need to split it up and send it
-> > to the various maintainers (most if it can probably go through the trivial
-> > tree (cc'd)).  Or wait until after v3.8-rc1 and fix it so it applies to
-> > Linus' tree and send it to him.
-> > Or Andrew (cc'd) may be able to take it (as his tree is based on
-> > linux-next currently).
-> > (I have attached the patch for Jiri's and Andrew's benefit)
+
+
+On Wed, 28 Nov 2012, Stephen Rothwell wrote:
+
+> Hi Casey,
 > 
-> It applies with offsets to Linus' current git, actually. I can provide a
-> diff applying with no offsets, but suspect it's unnecessary. The
-> affected comment blocks don't seem to have experienced much turnover
-> recently, if ever.
-
-Yup, it applies cleanly. I have taken it.
+> On Tue, 27 Nov 2012 15:45:17 -0800 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >
+> > On 11/27/2012 3:16 PM, Stephen Rothwell wrote:
+> > 
+> > > The security tree
+> > > (git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git#next)
+> > > looks a bit strange today ... It appears to have been created by Casey
+> > > Schaufler (cc'd) and contains some quite old commits and back merges of
+> > > your tree.  I *guess* you have merged in Casey's tree after he merged in
+> > > your tree from yesterday.
+> > 
+> > I *thought* that I had used the same procedures that worked before.
+> > In fact, I still do think that, but if it's a problem I can purge my
+> > smack-next tree and start over.
+> > 
+> > James, the two changes that came from smack-next are pretty minor. I
+> > don't think you should hesitate to back them out if that helps.
+> 
+> This is the shortlog for the changes in the security tree between
+> yesterday and today;
+> 
+> Casey Schaufler (32):
+>       Commit 272cd7a8c67dd40a31ecff76a503bbb84707f757 introduced     a change to the way rule lists are handled and reported in     the smackfs filesystem. One of the issues addressed had to     do with the termination of read requests on /smack/load.     This change introduced a error in /smack/cipso, which shares     some of the same list processing code.
+>       Revert "Commit 272cd7a8c67dd40a31ecff76a503bbb84707f757 introduced"
+>       Smack: smackfs cipso seq read repair
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Smack: recursive tramsmute
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Smack: allow for significantly longer Smack labels v4
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Smack: fix smack_new_inode bogosities
+>       Smack: Maintainer Record
+>       Smack: onlycap limits on CAP_MAC_ADMIN
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Smack: user access check bounds
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Smack: remove task_wait() hook.
+>       Smack: setprocattr memory leak fix
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'for-1209'
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security
+>       Merge branch 'next' of git://git.kernel.org/.../jmorris/linux-security into for-1211
+>       Smack: use select not depends in Kconfig
+>       Smack: create a sysfs mount point for smackfs
+> 
+> Rafal Krypa (2):
+>       Smack: don't show empty rules when /smack/load or /smack/load2 is read
+>       Smack: implement revoking all rules for a subject label
+> 
+> Tetsuo Handa (1):
+>       gfp flags for security_inode_alloc()?
+> 
+> It's a bit of a mess :-(
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
 
 -- 
-Jiri Kosina
-SUSE Labs
+James Morris
+<jmorris@namei.org>
