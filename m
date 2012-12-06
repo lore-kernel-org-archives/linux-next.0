@@ -1,66 +1,69 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: unusual update of the security tree
-Date: Thu, 6 Dec 2012 08:25:21 -0800
-Message-ID: <CA+55aFwJDtofV36R_ot8qj31BCGwBgDsGOKRkMRhRLamf5M+mw@mail.gmail.com>
+Date: Fri, 7 Dec 2012 08:27:30 +1100
+Message-ID: <20121207082730.bef9a35c7a75cc433a8a0faf@canb.auug.org.au>
 References: <20121128101635.d5e864dffc4252ef9d5e1664@canb.auug.org.au>
- <50B5508D.7050409@schaufler-ca.com> <20121128110132.0082c87680b9b714b8c0689c@canb.auug.org.au>
- <alpine.LRH.2.02.1212070024460.4693@tundra.namei.org>
+	<50B5508D.7050409@schaufler-ca.com>
+	<20121128110132.0082c87680b9b714b8c0689c@canb.auug.org.au>
+	<alpine.LRH.2.02.1212070024460.4693@tundra.namei.org>
+	<CA+55aFwJDtofV36R_ot8qj31BCGwBgDsGOKRkMRhRLamf5M+mw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:53838 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932820Ab2LFQZn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Dec 2012 11:25:43 -0500
-In-Reply-To: <alpine.LRH.2.02.1212070024460.4693@tundra.namei.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__7_Dec_2012_08_27_30_+1100_syqwy+wFdjunepzu"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+55aFwJDtofV36R_ot8qj31BCGwBgDsGOKRkMRhRLamf5M+mw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: James Morris <jmorris@namei.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Casey Schaufler <casey@schaufler-ca.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Casey Schaufler <casey@schaufler-ca.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Dec 6, 2012 at 5:25 AM, James Morris <jmorris@namei.org> wrote:
-> Any suggestions on how to fix this?  That branch is public, and what
-> people use to develop against, so I can't rebase it.
+--Signature=_Fri__7_Dec_2012_08_27_30_+1100_syqwy+wFdjunepzu
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Quite frankly, I really am not going to pull that. It has random crazy
-merges for no reason what-so-ever. This is *exactly* the kind of stuff
-I used to speak out against years ago, and I thought we had long since
-put behind us. Do
+Hi James,
 
-    git fetch git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security
-next
-    gitk ..FETCH_HEAD
+On Thu, 6 Dec 2012 08:25:21 -0800 Linus Torvalds <torvalds@linux-foundation=
+.org> wrote:
+>
+> Have people pulled that thing into anything else? Because quite
+> frankly, I think it's unsalvageable except with a rebase.
 
-from mainline to see what I'm talking about. It has all those random
-merges interspersed with random sporadic development. This is not how
-we make history make sense.
+So to be explicit, I think you need to do this:
 
-It looks like Casey has for the last year+ just had his own tree, done
-his own thing, and then pulled from the 'next' branch of security at
-random points to intermix his occasional commits with everything
-else.So now all his sporadic commits are randomly intermixed together
-with *everything* else that happened over the last year. It's kind of
-the epitome of not-a-feature-branch.
+	- tell as many people as possible that you are going to rebase
+	  your tree
+	- reset your tree back to the point just before you pulled Casey's
+	  tree (3f0cc6ae8662).
+	- Casey needs to rebase his tree on top of yours
+	- then after Casey has tested his tree again you can repull his
+	  new tree.
 
-There are 26 "normal" commits spread out over the year, coupled with
-22 merges that have been done bi-weekly or something, and have
-altogether brought in 13 *thousand* commits that have very little to
-do with the 26 commits that are new work. And with many of the merges
-done despite that development tree having *no* development in it of
-its own, so you have those repeated "let's merge upstream code" pulls
-that only add upstream code with no development in between.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-This is the kind of development that should be kept private, and maybe
-using a "git pull --rebase" to maintain the private commits on top of
-whatever upstream. NOT be used to say "ok, I now have more than a year
-of messy development history of 22 changes randomly interspersed with
-the thirteen thousand commits that went into mainline during that
-year+ time".
+--Signature=_Fri__7_Dec_2012_08_27_30_+1100_syqwy+wFdjunepzu
+Content-Type: application/pgp-signature
 
-Or it should just have been a development branch that only did its own
-development and never pulled from upstream.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Have people pulled that thing into anything else? Because quite
-frankly, I think it's unsalvageable except with a rebase.
+iQIcBAEBCAAGBQJQwQ3CAAoJEECxmPOUX5FEVwsP/3cBUSlyPdHmNLFR89uUCkbB
+KjxhJsBjlrQZPx/ARubrdrBlwaW1bVn4oSi6PQVTlaUEkyOtxKmuI9yIkakJm45I
+Fi23V7TgSBDNO8J2XSohszAhYYo5p4pBwWfRp3ubzh6ptdbBrJzvZJsJ1Th9fcJw
+lsc6zu9/rMG/L23sIlCfXYJt1K8rN4v7fVt69zL1xzzrFLju1B9cVetxrmJ55OUe
+a4L7B7hmGAh95TR138AslxM3MQZC6ZlOqnrVLEZmDUma/TEUs20BqspS0/11uMvQ
+719nsKHwR2HaCBF9Aq3B7/Ekn/5v2FeqnwTzllnzWcqUvwIdw021o7cy54VhdtyT
+DkziV+NHxxhM1e3ho9j2GEcaAgt24hDmg6/z/Fe79sYaVv846sHo092ZddBesrV5
+OQRarrsIiMPh0cJj1baKD+QFUjDvZPsX5Y1InvHGE0jz1KaEsRHesalim4YmuGnt
+utTKxn2GW7LasV1WBcUVVb9UMDaX86P10E/whCj5ffGeEaZ5CNDu3tpidgmWSJQM
+RTwc63MUFfk6gDRJ9+qQ4sIJxziPt3fYMBCL5CpBBN6M59SDg2vHZL0Dv7jEBEcr
+uVYhD9o9eExvgIf7XcyzrqOWLt6IJVJnt44YHagC0uE/99aQ+DxiqESxtr92xfag
+TCiu/rKEh/8eXfKnTPSk
+=Mw5l
+-----END PGP SIGNATURE-----
 
-                  Linus
+--Signature=_Fri__7_Dec_2012_08_27_30_+1100_syqwy+wFdjunepzu--
