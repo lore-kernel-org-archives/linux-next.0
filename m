@@ -1,69 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: unusual update of the security tree
-Date: Fri, 7 Dec 2012 08:27:30 +1100
-Message-ID: <20121207082730.bef9a35c7a75cc433a8a0faf@canb.auug.org.au>
-References: <20121128101635.d5e864dffc4252ef9d5e1664@canb.auug.org.au>
-	<50B5508D.7050409@schaufler-ca.com>
-	<20121128110132.0082c87680b9b714b8c0689c@canb.auug.org.au>
-	<alpine.LRH.2.02.1212070024460.4693@tundra.namei.org>
-	<CA+55aFwJDtofV36R_ot8qj31BCGwBgDsGOKRkMRhRLamf5M+mw@mail.gmail.com>
+From: Omar Ramirez Luna <omar.ramirez@copitl.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the iommu tree
+Date: Thu, 6 Dec 2012 16:54:04 -0600
+Message-ID: <CAJ6Av5OBhpsSRiZNOa1a65yMT04Evaja6j8qPBiSuVM1DPdB1Q@mail.gmail.com>
+References: <20121204154203.f0e7e87d1ae99e5c528434f8@canb.auug.org.au>
+ <20121204110655.GE18368@8bytes.org>
+ <CAK=WgbYDKN1deDTw3KvymvhoE1h_apX2E8zK=cDbu68+Gwcayw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__7_Dec_2012_08_27_30_+1100_syqwy+wFdjunepzu"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+55aFwJDtofV36R_ot8qj31BCGwBgDsGOKRkMRhRLamf5M+mw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: James Morris <jmorris@namei.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Casey Schaufler <casey@schaufler-ca.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAK=WgbYDKN1deDTw3KvymvhoE1h_apX2E8zK=cDbu68+Gwcayw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Walmsley <paul@pwsan.com>, Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>, Joerg Roedel <joro@8bytes.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@ti.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__7_Dec_2012_08_27_30_+1100_syqwy+wFdjunepzu
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi All,
 
-Hi James,
-
-On Thu, 6 Dec 2012 08:25:21 -0800 Linus Torvalds <torvalds@linux-foundation=
-.org> wrote:
+On Tue, Dec 4, 2012 at 5:10 AM, Ohad Ben-Cohen <ohad@wizery.com> wrote:
+> On Tue, Dec 4, 2012 at 1:06 PM, Joerg Roedel <joro@8bytes.org> wrote:
+>> On Tue, Dec 04, 2012 at 03:42:03PM +1100, Stephen Rothwell wrote:
+>>> Today's linux-next merge of the arm-soc tree got a conflict in
+>>> arch/arm/mach-omap2/clock44xx_data.c between commit 298ea44f211d ("ARM:
+>>> OMAP4: hwmod data: ipu and dsp to use parent clocks instead of leaf
+>>> clocks") from the iommu tree and commit 13a5b6228679 ("ARM: OMAP44xx:
+>>> clock: drop obsolete clock data") from the arm-soc tree.
+>>>
+>>> I just deleted the file as the latter did and can carry the fix as
+>>> necessary (no action is required).
+>>
+>> Ohad, Omar, any comment on this?
 >
-> Have people pulled that thing into anything else? Because quite
-> frankly, I think it's unsalvageable except with a rebase.
+> I'd prefer Omar or Paul to have a look here. Looping in Tony as well.
 
-So to be explicit, I think you need to do this:
+I have checked next-20121206, it's OK to delete that file as the patch
+from Paul is doing that for common clock framework migration; now the
+only missing hunk from my original patch should apply to
+arch/arm/mach-omap2/cclock44xx_data.c which is the file that now has
+ipu_fck and dsp_fck (unused) clocks, I can send a patch to remove them
+through linux-omap tree.
 
-	- tell as many people as possible that you are going to rebase
-	  your tree
-	- reset your tree back to the point just before you pulled Casey's
-	  tree (3f0cc6ae8662).
-	- Casey needs to rebase his tree on top of yours
-	- then after Casey has tested his tree again you can repull his
-	  new tree.
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__7_Dec_2012_08_27_30_+1100_syqwy+wFdjunepzu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQwQ3CAAoJEECxmPOUX5FEVwsP/3cBUSlyPdHmNLFR89uUCkbB
-KjxhJsBjlrQZPx/ARubrdrBlwaW1bVn4oSi6PQVTlaUEkyOtxKmuI9yIkakJm45I
-Fi23V7TgSBDNO8J2XSohszAhYYo5p4pBwWfRp3ubzh6ptdbBrJzvZJsJ1Th9fcJw
-lsc6zu9/rMG/L23sIlCfXYJt1K8rN4v7fVt69zL1xzzrFLju1B9cVetxrmJ55OUe
-a4L7B7hmGAh95TR138AslxM3MQZC6ZlOqnrVLEZmDUma/TEUs20BqspS0/11uMvQ
-719nsKHwR2HaCBF9Aq3B7/Ekn/5v2FeqnwTzllnzWcqUvwIdw021o7cy54VhdtyT
-DkziV+NHxxhM1e3ho9j2GEcaAgt24hDmg6/z/Fe79sYaVv846sHo092ZddBesrV5
-OQRarrsIiMPh0cJj1baKD+QFUjDvZPsX5Y1InvHGE0jz1KaEsRHesalim4YmuGnt
-utTKxn2GW7LasV1WBcUVVb9UMDaX86P10E/whCj5ffGeEaZ5CNDu3tpidgmWSJQM
-RTwc63MUFfk6gDRJ9+qQ4sIJxziPt3fYMBCL5CpBBN6M59SDg2vHZL0Dv7jEBEcr
-uVYhD9o9eExvgIf7XcyzrqOWLt6IJVJnt44YHagC0uE/99aQ+DxiqESxtr92xfag
-TCiu/rKEh/8eXfKnTPSk
-=Mw5l
------END PGP SIGNATURE-----
-
---Signature=_Fri__7_Dec_2012_08_27_30_+1100_syqwy+wFdjunepzu--
+Omar
