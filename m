@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Fri, 7 Dec 2012 13:44:52 +1100
-Message-ID: <20121207134452.386f14bc82d0373987e17e88@canb.auug.org.au>
+Subject: linux-next: manual merge of the mfd tree with the mmc tree
+Date: Fri, 7 Dec 2012 14:24:14 +1100
+Message-ID: <20121207142414.1a32366ca5390ea9aa323bfa@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__7_Dec_2012_13_44_52_+1100_QMPGO4mzCXWPFpMV"
+ boundary="Signature=_Fri__7_Dec_2012_14_24_14_+1100_RbCSfpErfrRpb.E8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36107 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58133 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752722Ab2LGCpB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Dec 2012 21:45:01 -0500
+	with ESMTP id S1423892Ab2LGDYY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Dec 2012 22:24:24 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roland Dreier <roland@purestorage.com>, Bart Van Assche <bvanassche@acm.org>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei WANG <wei_wang@realsil.com.cn>, Tony Prisk <linux@prisktech.co.nz>, Chris Ball <cjb@laptop.org>
 
---Signature=_Fri__7_Dec_2012_13_44_52_+1100_QMPGO4mzCXWPFpMV
+--Signature=_Fri__7_Dec_2012_14_24_14_+1100_RbCSfpErfrRpb.E8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Samuel,
 
-Today's linux-next merge of the block tree got a conflict in
-block/blk-exec.c between commit 893d290f1d74 ("block: Don't access
-request after it might be freed") from Linus' tree and commit
-c246e80d8673 ("block: Avoid that request_fn is invoked on a dead queue")
-from the block tree.
+Today's linux-next merge of the mfd tree got a conflict in
+drivers/mmc/host/Kconfig between commit 3a96dff0f828 ("mmc: SD/MMC Host
+Controller for Wondermedia WM8505/WM8650") from the mmc tree and commit
+ff984e57d36e ("mmc: Add realtek pcie sdmmc host driver") from the mfd
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,41 +36,51 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc block/blk-exec.c
-index f71eac3,1320e74..0000000
---- a/block/blk-exec.c
-+++ b/block/blk-exec.c
-@@@ -77,8 -71,8 +77,8 @@@ void blk_execute_rq_nowait(struct reque
-  	__elv_add_request(q, rq, where);
-  	__blk_run_queue(q);
-  	/* the queue is stopped so it won't be run */
- -	if (rq->cmd_type =3D=3D REQ_TYPE_PM_RESUME)
- +	if (is_pm_resume)
-- 		q->request_fn(q);
-+ 		__blk_run_queue_uncond(q);
-  	spin_unlock_irq(q->queue_lock);
-  }
-  EXPORT_SYMBOL_GPL(blk_execute_rq_nowait);
+diff --cc drivers/mmc/host/Kconfig
+index 83eb1e0,dfa6d56..0000000
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@@ -602,13 -622,9 +602,20 @@@ config MMC_USH
+  	  Note: These controllers only support SDIO cards and do not
+  	  support MMC or SD memory cards.
+ =20
+ +config MMC_WMT
+ +	tristate "Wondermedia SD/MMC Host Controller support"
+ +	depends on ARCH_VT8500
+ +	default y
+ +	help
+ +	  This selects support for the SD/MMC Host Controller on
+ +	  Wondermedia WM8505/WM8650 based SoCs.
+ +
+ +	  To compile this driver as a module, choose M here: the
+ +	  module will be called wmt-sdmmc.
+++
++ config MMC_REALTEK_PCI
++ 	tristate "Realtek PCI-E SD/MMC Card Interface Driver"
++ 	depends on MFD_RTSX_PCI
++ 	help
++ 	  Say Y here to include driver code to support SD/MMC card interface
++ 	  of Realtek PCI-E card reader
 
---Signature=_Fri__7_Dec_2012_13_44_52_+1100_QMPGO4mzCXWPFpMV
+--Signature=_Fri__7_Dec_2012_14_24_14_+1100_RbCSfpErfrRpb.E8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQwVgkAAoJEECxmPOUX5FE/wsQAIu8GtTNAzu+ihsWobX85vnj
-HwxxleghsRj8kT+KZnX5pkTW8DUy9tnsgmWgIfRRaQeW1XqpVW2FLvDWsWimZ9pH
-gC0ybauKGxgG3XiExr//EVVIEHkEtKyThi6rgu6yEpZxwC1lCJCb8xdjHH9ViEd9
-//c7M3GQXvOoWklIFDDlbCwcLOrtUqJDe5i1lkpj47FajraVe0Z/sIwwkT94Gamh
-Q2VFLAe/J8OoacFbTb2saoD+cErsh1Z2EzaT3JtT+OlLUXlO+QsdIVm1pfukYjiB
-VnbJ8htxmL20LQ5Xmp/SGXoKzN5QGoVk5WyMfDxsEdeYa2qoJRWakY+3WvlS5xb5
-0lOdc6sI5iI3PrcyilZMymPy2UcZRzIo0OJR78L9aUTxFeCc4yL8ZCLkwgdpqMqA
-JXn6skJPvKNPkW5s6tMjei1kWbCNgRq9K7NhCK0sLm4/wRf8MNLze/GIL9m4Hr7W
-vqpHWB7497G4jgUABOINv0GaGEgzP12VNGp6PXNOKNaxwxHZ1pJzmgtaYyEv8BQW
-zjOcn3VUA5XreoJPjlancmkJPWhZzFXbtlOCqLktbJdJDcoNg+bq245JTRY0XJV6
-Fzq8dVLIiDDnuUcSU4nwAybaOoX/rBkB6OaQeIwUXajE1zYaSbn27Sb5LrqQr3rd
-LESHWPFxRbSzHAJDSNwo
-=ATRW
+iQIcBAEBCAAGBQJQwWFeAAoJEECxmPOUX5FEracP/20j2BgwFPaWVYJmA2zx5Zha
+MMSqEAZ75MaQVce/6jB9ux6dB88p+L1v5ZQPgo6dQZV8m78DtjHk+sQMpZHzc67v
+oeJU5/91OxTfqXdQuIHWZHchsmzaipmgOFabyeSKcqGIqko2tdS5JlIhwGPQqW7M
+ZX6BVasW4bRr2OaC6bhhwkuo3P4R2nHIkHEfPropy5RG+WCIbecJhjXWFs9zgYl0
+Rgu226zKQl9FQBgcT3fXWS9I2Zp8/dThfGIjxhxDbzzm0HEcxTLW2MNT0oIoEqJf
+RsVufcIdGUsDvkTASELRfrpCSKmwCS8/gxMTBPCH74iJVpFC2+c411A/hvdv4E5G
+evM6C9cyLKsdNuppbLwiUIF3mmGLd2x/QofSb6mTtxwJ0aNfXEPV2jTL17mSeKx5
+YxJJo5h6M4ktYoy/qNWK+C3gffF2IXqMbkS2ObEDK7zQRp+YVcM79s1wovt8b+YM
+uW0mXk3sNn1cvglgsRdIcWG34Jz5o4nWqh4uyCZF/ZufNhB0aYv5VoBdxNCzXbE1
+znNK9anshrRtiButhPMfSv+Gw88O5VFC4y3HWKoLqMi6yoGBPyvtFRhggr6sBMGH
+zZT8i+KTYddSQ4gEemQvjOZnnLtgj13CvEiSL0+MzrK0XPJjym0+mHYoyfmaV0dE
+buH/nXg1/F8wT37ylmrS
+=MeZk
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__7_Dec_2012_13_44_52_+1100_QMPGO4mzCXWPFpMV--
+--Signature=_Fri__7_Dec_2012_14_24_14_+1100_RbCSfpErfrRpb.E8--
