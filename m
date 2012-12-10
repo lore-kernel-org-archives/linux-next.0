@@ -1,90 +1,35 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: build warning after merge of the pci tree
-Date: Mon, 10 Dec 2012 16:21:22 -0700
-Message-ID: <CAErSpo5NdruCvW7YwOSm3Yh=_muCjQk26iCL5hbp39nzcNegng@mail.gmail.com>
-References: <20121210200321.1343445856179c58d0d0cb16@canb.auug.org.au> <20121210212545.GA15884@google.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: build failure after merge of the virtio tree
+Date: Tue, 11 Dec 2012 09:11:46 +1030
+Message-ID: <874njtedhx.fsf@rustcorp.com.au>
+References: <20121210133725.cb4a76545691b099c73c40ea@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:45925 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751528Ab2LJXVo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Dec 2012 18:21:44 -0500
-Received: by mail-la0-f46.google.com with SMTP id p5so2422709lag.19
-        for <linux-next@vger.kernel.org>; Mon, 10 Dec 2012 15:21:43 -0800 (PST)
-In-Reply-To: <20121210212545.GA15884@google.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20121210133725.cb4a76545691b099c73c40ea@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Seth Forshee <seth.forshee@canonical.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 10, 2012 at 2:25 PM, Bjorn Helgaas <bhelgaas@google.com> wrote:
-> On Mon, Dec 10, 2012 at 08:03:21PM +1100, Stephen Rothwell wrote:
->> Hi Bjorn,
->>
->> After merging the pci tree, today's linux-next build (powerpc
->> ppc44x_defconfig) produced this warning:
->>
->> drivers/pci/rom.c: In function 'pci_map_rom':
->> drivers/pci/rom.c:125:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->>
->> Introduced by commit 84c1b80e3263 ("PCI: Add support for non-BAR ROMs").
->
-> I propose the following patch to fix this warning.  Any comments?  If
-> it looks OK, I'll add it this afternoon.
->
-> commit dbd3fc3345390a989a033427aa915a0dfb62149f
-> Author: Bjorn Helgaas <bhelgaas@google.com>
-> Date:   Mon Dec 10 11:24:42 2012 -0700
->
->     PCI: Use phys_addr_t for physical ROM address
->
->     Use phys_addr_t rather than "void *" for physical memory address.
->     This removes casts and fixes a "cast from pointer to integer of different
->     size" warning on ppc44x_defconfig.
->
->     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-I applied this and pushed my -next branch.
-
-> diff --git a/arch/x86/pci/common.c b/arch/x86/pci/common.c
-> index fddb9f6..d07f3bb 100644
-> --- a/arch/x86/pci/common.c
-> +++ b/arch/x86/pci/common.c
-> @@ -628,8 +628,8 @@ int pcibios_add_device(struct pci_dev *dev)
->                             (PCI_FUNC(dev->devfn) == rom->function) &&
->                             (dev->vendor == rom->vendor) &&
->                             (dev->device == rom->devid)) {
-> -                               dev->rom = (void *)(unsigned long)(pa_data +
-> -                                     offsetof(struct pci_setup_rom, romdata));
-> +                               dev->rom = pa_data +
-> +                                     offsetof(struct pci_setup_rom, romdata);
->                                 dev->romlen = rom->pcilen;
->                         }
->                 }
-> diff --git a/drivers/pci/rom.c b/drivers/pci/rom.c
-> index 3a3828f..ab886b7 100644
-> --- a/drivers/pci/rom.c
-> +++ b/drivers/pci/rom.c
-> @@ -122,7 +122,7 @@ void __iomem *pci_map_rom(struct pci_dev *pdev, size_t *size)
->          */
->         if (pdev->rom && pdev->romlen) {
->                 *size = pdev->romlen;
-> -               return phys_to_virt((phys_addr_t)pdev->rom);
-> +               return phys_to_virt(pdev->rom);
->         /*
->          * IORESOURCE_ROM_SHADOW set on x86, x86_64 and IA64 supports legacy
->          * memory map if the VGA enable bit of the Bridge Control register is
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index f116b2d..957563b 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -333,7 +333,7 @@ struct pci_dev {
->         };
->         struct pci_ats  *ats;   /* Address Translation Service */
->  #endif
-> -       void *rom; /* Physical pointer to ROM if it's not from the BAR */
-> +       phys_addr_t rom; /* Physical address of ROM if it's not from the BAR */
->         size_t romlen; /* Length of ROM if it's not from the BAR */
->  };
+> Hi Rusty,
 >
+> After merging the virtio tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/net/virtio_net.c: In function 'vq2txq':
+> drivers/net/virtio_net.c:150:2: error: implicit declaration of function 'virtqueue_get_queue_index' [-Werror=implicit-function-declaration]
+>
+> Caused by commit 986a4f4d452d ("virtio_net: multiqueue support") from the
+> net-next tree interacting with commit 105e892960e1 ("virtio: move
+> queue_index and num_free fields into core struct virtqueue") from the
+> virtio tree.
+>
+> I applied the patch below and can carry it as necessary.
+
+Thanks for this, your fix is correct.
+
+Cheers,
+Rusty.
