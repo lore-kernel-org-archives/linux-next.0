@@ -1,22 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm tree with the tip tree
-Date: Mon, 10 Dec 2012 19:20:05 +1100
-Message-ID: <20121210192005.9328216d5dbaacc1f0fe6217@canb.auug.org.au>
+Date: Mon, 10 Dec 2012 19:25:02 +1100
+Message-ID: <20121210192502.4063413a4026cb1009573b20@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__10_Dec_2012_19_20_05_+1100_IjzR965W4Mf/A+pW"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54351 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751046Ab2LJIUJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Dec 2012 03:20:09 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Mon__10_Dec_2012_19_25_02_+1100_LvppzccKW3/Y/6YT"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Rientjes <rientjes@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__10_Dec_2012_19_20_05_+1100_IjzR965W4Mf/A+pW
+--Signature=_Mon__10_Dec_2012_19_25_02_+1100_LvppzccKW3/Y/6YT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,35 +20,121 @@ Content-Transfer-Encoding: quoted-printable
 Hi Andrew,
 
 Today's linux-next merge of the akpm tree got a conflict in
-mm/mempolicy.c between commit d9f1eb872704 ("numa, mempolicy: Improve
-CONFIG_NUMA_BALANCING=3Dy OOM behavior") from the tip tree and commit "mm,
-mempolicy: remove duplicate code" from the akpm tree.
+mm/huge_memory.c between commit 2083d67027ad ("mm/mempolicy: Implement
+change_prot_numa() in terms of change_protection()") from the tip,  tree
+and commit "thp: change_huge_pmd(): make sure we don't try to make a page
+writable" from the akpm tree.
 
-I can't tell if the akpm tree patch is still relevant, so I dropped it.
+I fixed it up (I think - see below) and can carry the fix as necessary (no
+action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__10_Dec_2012_19_20_05_+1100_IjzR965W4Mf/A+pW
+diff --cc include/linux/migrate.h
+index bcb5ddc,50d2974..0000000
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@@ -7,16 -7,13 +7,23 @@@
+ =20
+  typedef struct page *new_page_t(struct page *, unsigned long private, int=
+ **);
+ =20
+ +enum migrate_reason {
+ +	MR_COMPACTION,
+ +	MR_MEMORY_FAILURE,
+ +	MR_MEMORY_HOTPLUG,
+ +	MR_SYSCALL,		/* also applies to cpusets */
+ +	MR_MEMPOLICY_MBIND,
+ +	MR_NUMA_MISPLACED,
+ +	MR_CMA
+ +};
+ +
++ /*
++  * Return values from addresss_space_operations.migratepage():
++  * - negative errno on page migration failure;
++  * - zero on page migration success;
++  */
++ #define MIGRATEPAGE_SUCCESS		0
++=20
+  #ifdef CONFIG_MIGRATION
+ =20
+  extern void putback_lru_pages(struct list_head *l);
+diff --cc mm/migrate.c
+index c0afe60,c3724b6..0000000
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@@ -981,8 -977,7 +981,8 @@@ int migrate_pages(struct list_head *fro
+  			case -EAGAIN:
+  				retry++;
+  				break;
+- 			case 0:
++ 			case MIGRATEPAGE_SUCCESS:
+ +				nr_succeeded++;
+  				break;
+  			default:
+  				/* Permanent failure */
+@@@ -991,14 -986,8 +991,14 @@@
+  			}
+  		}
+  	}
+- 	rc =3D 0;
++ 	rc =3D nr_failed + retry;
+  out:
+ +	if (nr_succeeded)
+ +		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
+ +	if (nr_failed)
+ +		count_vm_events(PGMIGRATE_FAIL, nr_failed);
+ +	trace_mm_migrate_pages(nr_succeeded, nr_failed, mode, reason);
+ +
+  	if (!swapwrite)
+  		current->flags &=3D ~PF_SWAPWRITE;
+ =20
+diff --cc mm/huge_memory.c
+index 2c4e4d4,28a368c..0000000
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@@ -1352,17 -1433,8 +1352,18 @@@ int change_huge_pmd(struct vm_area_stru
+  	if (__pmd_trans_huge_lock(pmd, vma) =3D=3D 1) {
+  		pmd_t entry;
+  		entry =3D pmdp_get_and_clear(mm, addr, pmd);
+ -		entry =3D pmd_modify(entry, newprot);
+ +		if (!prot_numa)
+ +			entry =3D pmd_modify(entry, newprot);
+ +		else {
+ +			struct page *page =3D pmd_page(*pmd);
+ +
+ +			/* only check non-shared pages */
+ +			if (page_mapcount(page) =3D=3D 1 &&
+ +			    !pmd_numa(*pmd)) {
+ +				entry =3D pmd_mknuma(entry);
+ +			}
+ +		}
++ 		BUG_ON(pmd_write(entry));
+  		set_pmd_at(mm, addr, pmd, entry);
+  		spin_unlock(&vma->vm_mm->page_table_lock);
+  		ret =3D 1;
+
+--Signature=_Mon__10_Dec_2012_19_25_02_+1100_LvppzccKW3/Y/6YT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQxZs1AAoJEECxmPOUX5FEohgQAI88AaA6dIljlWq2tYUVG3L2
-QaCsZYaw3xSh6CaLZmwwLrenrTZFplTKtv/oQWB0DvZ6gba+b0ZThwPCllESDO1C
-VFN1VzjaPWhknwjwpzHBb6d/bP+adrX8Qs5y6huMFJSzHgGVF6CnHgH/8QFNqEoq
-O9iewAtQiAwbhwDwDDGSyXGeooaP62Cz9fIKxOJ+5N6e+mbi3c03tccWnHX+DjjA
-j5IBrVOcdveBtkFc8TAq98boC8QOGgp0VKEhGyOiou+D5/bF+iMWQHZ9UWivNC9e
-Z23SHDGZpNI4iuN2oFWIaiphep+I0k8LfgHu8Z06+ds495sg/3WwDicKDvBNXHIH
-s0QVaniPXuz5w24Gaj4NswrU/VBf1Fr3pLT3OM05So8Gyz6cYOeNsHhoAHEMr+7x
-6pJDQZmMjVuzGJ4Jt7AUpM4SHv/tadlgV8liwA+phX8ZiutE6r+g85+jEO3NnYuJ
-IuqIYByqbG3c9KcTY8xfrwqdQLtx1dJvwWkTfFV02jrB4OJR/gB0iwOxUg30ByPX
-ShNWbJyQ2V6/Z2HC3PXP2+hXIA+2lEZJN0XOdpJTcjSeIuRqA0kFpGCdIPDoq+XZ
-3GTnn/RI+sIJX6nCepaQ8qzQqRvkhwP6UJdlzr3eBFAHEbbrUBnfjhbpcD/w2tBP
-w7d9w5I3dh7Dzu8n0E+8
-=w56o
+iQIcBAEBCAAGBQJQxZxeAAoJEECxmPOUX5FE9foP/RNZyhi0xnK1/U5qrbSZvKM/
+KX9crwVb9Az59etnaouE5nFnQ0tNsEkO4EyeBRx3nJOWofmKAzFOLh9PKU4Ql7WU
+ix2z37q7sp+gK9iTO0A5vyMJrimI+iteU8uLzwrN2xNyA4BMWTZUAz/5QcgofwVB
+ZNuHQW5roecksR8s1gq4lzjvIo3o+cWMTm+uKCrj7SGiSdxLvUk9N+GeUp/MAu9g
+mIupI6wS7tE0vhnV0SeNpAhDGqy4SlUo+zvobFKvqn8AVfanX3Cl1BrGXwWMuU5Z
+pdOlH1nlRuVQWXHOUKapjKT95P9z+YyML+RpMGAPsn/QIRreQZDxuZcCS3O0G8Xi
++WxyNhXjl/w4u4nZtj8yQYoeTyWlREBpkAXfsRZ0pBPbpP1QJhexjc08fSBxyziJ
+u5GacJUsIr/GxhteOPYwQJ6abDM6TnbEkjJYh77YujRTnBk5PT8/fSVdwhV7m0NO
+FE8fwUSlbRg+3S9hAMAFngD/qTOpwkTcOMdfuLHUn8nSTveA30AhMzEyWsj+w7nW
+WZocP27anGppUvSeVWnov/6J+kJn3Q/GnskTjSykGllYTLUJUOHDUjFhwR2XHNCn
+iphM5OQq/679vmN+adf0CwlWTK+mmXSNB8BTv1K6FCVMLaofQcNZb8Rna2xBUCt0
+Hqlf1YK+X1DK93XsvNno
+=5V5F
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__10_Dec_2012_19_20_05_+1100_IjzR965W4Mf/A+pW--
+--Signature=_Mon__10_Dec_2012_19_25_02_+1100_LvppzccKW3/Y/6YT--
