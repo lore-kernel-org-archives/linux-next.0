@@ -1,77 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the sound-asoc
- tree
-Date: Mon, 10 Dec 2012 17:40:57 +1100
-Message-ID: <20121210174057.9862b43ff7350ba20c048df3@canb.auug.org.au>
+From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+Subject: RE: linux-next: manual merge of the net-next tree with the pci tree
+Date: Mon, 10 Dec 2012 06:44:45 +0000
+Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB3018FADD5@HASMSX103.ger.corp.intel.com>
+References: <20121210120825.49096bafd378139e98becb8d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__10_Dec_2012_17_40_57_+1100_9I91pdmKQv01OuK."
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57078 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751115Ab2LJGlH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Dec 2012 01:41:07 -0500
+Received: from mga02.intel.com ([134.134.136.20]:2739 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751667Ab2LJGpE convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Dec 2012 01:45:04 -0500
+In-Reply-To: <20121210120825.49096bafd378139e98becb8d@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Rahul Sharma <rahul.sharma@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Berg, Johannes" <johannes.berg@intel.com>
 
---Signature=_Mon__10_Dec_2012_17_40_57_+1100_9I91pdmKQv01OuK.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Today's linux-next merge of the net-next tree got a conflict in
+> drivers/net/wireless/iwlwifi/pcie/trans.c between commit b9d146e30a2d
+> ("iwlwifi: collapse wrapper for pcie_capability_read_word()") from the pci
+> tree and commit 7afe3705cd4e ("iwlwifi: continue clean up -
+> pcie/trans.c") from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action is
+> required).
+> 
+Looks right - thanks Stephen!
+---------------------------------------------------------------------
+Intel Israel (74) Limited
 
-Hi all,
-
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/plat-samsung/include/plat/devs.h between commit a08485d8fdf6
-("ASoC: Samsung: Do not register samsung audio dma device as pdev") from
-the sound-asoc tree and commit 0a9d5ac307ae ("ARM: EXYNOS: removing
-exynos-drm device registration from non-dt platforms") from the arm-soc
-tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/plat-samsung/include/plat/devs.h
-index c45f70c,f53beba..0000000
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@@ -133,8 -132,7 +132,6 @@@ extern struct platform_device exynos4_d
-  extern struct platform_device exynos4_device_pcm2;
-  extern struct platform_device exynos4_device_spdif;
- =20
-- extern struct platform_device exynos_device_drm;
--=20
- -extern struct platform_device samsung_asoc_dma;
-  extern struct platform_device samsung_asoc_idma;
-  extern struct platform_device samsung_device_keypad;
- =20
-
---Signature=_Mon__10_Dec_2012_17_40_57_+1100_9I91pdmKQv01OuK.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQxYP5AAoJEECxmPOUX5FEom0QAKWluHAFavlKZOml1GojBsaA
-wiRmSZbz5cvedVfWxodWNAMRz0VVsO+JhhPKpBNa4Q71feBRQO9E+U4+GWZuzUL+
-mX6fETIKhyNHS2PLXtidX7WNUaJcIE+HCsiMPj49/jWfIhJYLGCyEI4PWuuZIkQ4
-9XubaWUW9HNsTfjOaFbJ3kp2cEW56tmFh+IsohWC1ZyZjq/ZcK8y27OFJ5479OkG
-SRB7MV3KD/2DcbVZxKN84703cxF9ts9SD/lIefq0E6d7Y0L0WDjwGycSIfawVjT/
-bESDVTl6pxVvNJYIszdSBemuq5I0oDOnkwNeTleGnVX3wsxB04bNdpwU0u/Yr6J4
-57UwaiWP5z54DDHBTE5IdzLUg30tVXI9sum/yRdin4p2LEWY++A1hyFku0JAOBRI
-YZZduVmLBZVyTrHa+IhC/zZsLLfKI70pLyBi0+gV3v/9v8MEfQn7zHD/uWs8tdz2
-bloot3s4hdLhjPe+x+T2+/fz+tYjl5ppC4R6lLfwzAfeO2N5ydWtgoRVVJR0qPSZ
-xij91eEDNYdobCvk2A8LVRJk8B47AQirKhPim0ixJlH9GKi2MfUSqxCuiLiCUyPB
-bRGmv/tFyyrxQjmHNWd7F5MVl9rx/V1xmhCqWOoGuBSzX0SaEY7+0B/jHIyM6NjM
-q4DjrBJtAggIwFvCscUS
-=PdMx
------END PGP SIGNATURE-----
-
---Signature=_Mon__10_Dec_2012_17_40_57_+1100_9I91pdmKQv01OuK.--
+This e-mail and any attachments may contain confidential material for
+the sole use of the intended recipient(s). Any review or distribution
+by others is strictly prohibited. If you are not the intended
+recipient, please contact the sender and delete all copies.
