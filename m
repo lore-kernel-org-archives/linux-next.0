@@ -1,85 +1,28 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: linux-next: manual merge of the akpm tree with the tip tree
-Date: Mon, 10 Dec 2012 11:13:46 +0000
-Message-ID: <20121210111346.GB6988@mudshark.cambridge.arm.com>
-References: <20121210190139.4ae77c7b70fa24daacf2c9cb@canb.auug.org.au>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: linux-next: fetch failure the xilinx tree
+Date: Mon, 10 Dec 2012 15:29:34 +0100
+Message-ID: <50C5F1CE.30402@metafoo.de>
+References: <20121209162442.15fbb8509569c193bfd88986@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:46079 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751106Ab2LJLOz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Dec 2012 06:14:55 -0500
-Content-Disposition: inline
-In-Reply-To: <20121210190139.4ae77c7b70fa24daacf2c9cb@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121209162442.15fbb8509569c193bfd88986@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mel Gorman <mgorman@suse.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: John Linn <John.Linn@xilinx.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi guys,
-
-On Mon, Dec 10, 2012 at 08:01:39AM +0000, Stephen Rothwell wrote:
-> Today's linux-next merge of the akpm tree got a conflict in mm/memory.c
-> between changes in commits from the tip tree and commit "mm: thp: set the
-> accessed flag for old pages on access fault" from the akpm tree.
+On 12/09/2012 06:24 AM, Stephen Rothwell wrote:
+> Hi John,
 > 
-> I fixed it up (I think - see below) and can carry the fix as necessary
-> (no action is required).
+> Attempting to fetch the xilinx tree produces this error (and has for some
+> days, now):
+> 
+> fatal: The remote end hung up unexpectedly
+> 
 
-[...]
+They renamed the repository from linux-2.6-xlnx to linux-xlnx. I stumbled
+over it as well.
 
-> diff --cc mm/memory.c
-> index 8022526,60201d5..0000000
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@@ -3812,15 -3620,18 +3812,17 @@@ retry
->   							  pmd, flags);
->   	} else {
->   		pmd_t orig_pmd = *pmd;
->  -		int ret = 0;
->  +		int ret;
->   
->   		barrier();
->  -		if (pmd_trans_huge(orig_pmd) && !pmd_trans_splitting(orig_pmd)) {
->  +		if (pmd_trans_huge(orig_pmd)) {
-
-This change worries me a bit wrt the huge_pmd_set_accessed function I
-introduce below. Unfortunately, current -next doesn't seem to include it, so
-I can't see whether do_huge_pmd_numa_page / do_huge_pmd_wp_page have been
-changed to deal with the splitting or whether the check has been moved
-earlier.
-
-Will
-
-> + 			unsigned int dirty = flags & FAULT_FLAG_WRITE;
-> + 
->  -			if (pmd_numa(vma, orig_pmd)) {
->  -				do_huge_pmd_numa_page(mm, vma, address, pmd,
->  -						      flags, orig_pmd);
->  -			}
->  +			if (pmd_numa(*pmd))
->  +				return do_huge_pmd_numa_page(mm, vma, address,
->  +							     orig_pmd, pmd);
->   
-> - 			if ((flags & FAULT_FLAG_WRITE) && !pmd_write(orig_pmd)) {
-> + 			if (dirty && !pmd_write(orig_pmd)) {
->   				ret = do_huge_pmd_wp_page(mm, vma, address, pmd,
->   							  orig_pmd);
->   				/*
-> @@@ -3830,10 -3641,12 +3832,13 @@@
->   				 */
->   				if (unlikely(ret & VM_FAULT_OOM))
->   					goto retry;
->  +				return ret;
-> + 			} else {
-> + 				huge_pmd_set_accessed(mm, vma, address, pmd,
-> + 						      orig_pmd, dirty);
->   			}
->   
->  -			return ret;
->  +			return 0;
->   		}
->   	}
->   
+- Lars
