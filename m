@@ -1,37 +1,31 @@
-From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Subject: RE: linux-next: manual merge of the net-next tree with the pci tree
-Date: Mon, 10 Dec 2012 06:44:45 +0000
-Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB3018FADD5@HASMSX103.ger.corp.intel.com>
-References: <20121210120825.49096bafd378139e98becb8d@canb.auug.org.au>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the sound-asoc tree
+Date: Sun, 9 Dec 2012 22:49:59 -0800
+Message-ID: <CAOesGMixeGKmie_dioz24O1MD+2KJEn2z-gvHtZojgjCnsdJXQ@mail.gmail.com>
+References: <20121210174057.9862b43ff7350ba20c048df3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:2739 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751667Ab2LJGpE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Dec 2012 01:45:04 -0500
-In-Reply-To: <20121210120825.49096bafd378139e98becb8d@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Berg, Johannes" <johannes.berg@intel.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121210174057.9862b43ff7350ba20c048df3@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Rahul Sharma <rahul.sharma@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-> Today's linux-next merge of the net-next tree got a conflict in
-> drivers/net/wireless/iwlwifi/pcie/trans.c between commit b9d146e30a2d
-> ("iwlwifi: collapse wrapper for pcie_capability_read_word()") from the pci
-> tree and commit 7afe3705cd4e ("iwlwifi: continue clean up -
-> pcie/trans.c") from the net-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action is
-> required).
-> 
-Looks right - thanks Stephen!
----------------------------------------------------------------------
-Intel Israel (74) Limited
+On Sun, Dec 9, 2012 at 10:40 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/plat-samsung/include/plat/devs.h between commit a08485d8fdf6
+> ("ASoC: Samsung: Do not register samsung audio dma device as pdev") from
+> the sound-asoc tree and commit 0a9d5ac307ae ("ARM: EXYNOS: removing
+> exynos-drm device registration from non-dt platforms") from the arm-soc
+> tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-This e-mail and any attachments may contain confidential material for
-the sole use of the intended recipient(s). Any review or distribution
-by others is strictly prohibited. If you are not the intended
-recipient, please contact the sender and delete all copies.
+Looks good, thanks.
+
+
+-Olof
