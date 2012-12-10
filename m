@@ -1,99 +1,121 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm tree with the tip tree
-Date: Mon, 10 Dec 2012 19:01:39 +1100
-Message-ID: <20121210190139.4ae77c7b70fa24daacf2c9cb@canb.auug.org.au>
+Date: Mon, 10 Dec 2012 19:11:20 +1100
+Message-ID: <20121210191120.d6984a1183c969ff2bb91d5a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__10_Dec_2012_19_01_39_+1100_lRryH29crv/r9B+h"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Mon__10_Dec_2012_19_11_20_+1100_5NegCEf1_o25svqS"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51746 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752203Ab2LJILW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Dec 2012 03:11:22 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Mel Gorman <mgorman@suse.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rafael Aquini <aquini@redhat.com>, Mel Gorman <mgorman@suse.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Mon__10_Dec_2012_19_01_39_+1100_lRryH29crv/r9B+h
+--Signature=_Mon__10_Dec_2012_19_11_20_+1100_5NegCEf1_o25svqS
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in mm/memory.c
-between changes in commits from the tip tree and commit "mm: thp: set the
-accessed flag for old pages on access fault" from the akpm tree.
+Today's linux-next merge of the akpm tree got conflicts in mm/migrate.c
+and include/linux/migrate.h between commits 070059b28578 ("mm/compaction:
+Move migration fail/success stats to migrate.c") and 2d85cca46951
+("mm/migrate: Add a tracepoint for migrate_pages") from the tip tree and
+commit "mm: adjust address_space_operations.migratepage() return code"
+from the akpm tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc mm/memory.c
-index 8022526,60201d5..0000000
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@@ -3812,15 -3620,18 +3812,17 @@@ retry
-  							  pmd, flags);
-  	} else {
-  		pmd_t orig_pmd =3D *pmd;
- -		int ret =3D 0;
- +		int ret;
+diff --cc include/linux/migrate.h
+index bcb5ddc,50d2974..0000000
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@@ -7,16 -7,13 +7,23 @@@
  =20
-  		barrier();
- -		if (pmd_trans_huge(orig_pmd) && !pmd_trans_splitting(orig_pmd)) {
- +		if (pmd_trans_huge(orig_pmd)) {
-+ 			unsigned int dirty =3D flags & FAULT_FLAG_WRITE;
+  typedef struct page *new_page_t(struct page *, unsigned long private, int=
+ **);
+ =20
+ +enum migrate_reason {
+ +	MR_COMPACTION,
+ +	MR_MEMORY_FAILURE,
+ +	MR_MEMORY_HOTPLUG,
+ +	MR_SYSCALL,		/* also applies to cpusets */
+ +	MR_MEMPOLICY_MBIND,
+ +	MR_NUMA_MISPLACED,
+ +	MR_CMA
+ +};
+ +
++ /*
++  * Return values from addresss_space_operations.migratepage():
++  * - negative errno on page migration failure;
++  * - zero on page migration success;
++  */
++ #define MIGRATEPAGE_SUCCESS		0
 +=20
- -			if (pmd_numa(vma, orig_pmd)) {
- -				do_huge_pmd_numa_page(mm, vma, address, pmd,
- -						      flags, orig_pmd);
- -			}
- +			if (pmd_numa(*pmd))
- +				return do_huge_pmd_numa_page(mm, vma, address,
- +							     orig_pmd, pmd);
+  #ifdef CONFIG_MIGRATION
  =20
-- 			if ((flags & FAULT_FLAG_WRITE) && !pmd_write(orig_pmd)) {
-+ 			if (dirty && !pmd_write(orig_pmd)) {
-  				ret =3D do_huge_pmd_wp_page(mm, vma, address, pmd,
-  							  orig_pmd);
-  				/*
-@@@ -3830,10 -3641,12 +3832,13 @@@
-  				 */
-  				if (unlikely(ret & VM_FAULT_OOM))
-  					goto retry;
- +				return ret;
-+ 			} else {
-+ 				huge_pmd_set_accessed(mm, vma, address, pmd,
-+ 						      orig_pmd, dirty);
+  extern void putback_lru_pages(struct list_head *l);
+diff --cc mm/migrate.c
+index c0afe60,c3724b6..0000000
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@@ -981,8 -977,7 +981,8 @@@ int migrate_pages(struct list_head *fro
+  			case -EAGAIN:
+  				retry++;
+  				break;
+- 			case 0:
++ 			case MIGRATEPAGE_SUCCESS:
+ +				nr_succeeded++;
+  				break;
+  			default:
+  				/* Permanent failure */
+@@@ -991,14 -986,8 +991,14 @@@
   			}
- =20
- -			return ret;
- +			return 0;
   		}
   	}
+- 	rc =3D 0;
++ 	rc =3D nr_failed + retry;
+  out:
+ +	if (nr_succeeded)
+ +		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
+ +	if (nr_failed)
+ +		count_vm_events(PGMIGRATE_FAIL, nr_failed);
+ +	trace_mm_migrate_pages(nr_succeeded, nr_failed, mode, reason);
+ +
+  	if (!swapwrite)
+  		current->flags &=3D ~PF_SWAPWRITE;
  =20
 
---Signature=_Mon__10_Dec_2012_19_01_39_+1100_lRryH29crv/r9B+h
+--Signature=_Mon__10_Dec_2012_19_11_20_+1100_5NegCEf1_o25svqS
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQxZbjAAoJEECxmPOUX5FE3O8QAJa1KnQX2S8X6/TGy3pv8Od/
-0eLCaI6GFXboDa4KPCo6cjn7XpEd578GBBDv6KAHfMt5G65SqDul6v4WkQmIoUP1
-BNzZYyy67ucpKaoGA9Nc0rs76TT+rcBZLDoO1ItTt3MGkY/twSumucN7IlZs3Y5i
-8eFH4YOYvRt6M7iKSeWVCEb5cvZtro89ofmXdrfC6Iuoks0FNzHFwslH0LIzPU8t
-yQahWB/0UD4L2EuQ/o8EIU8xP79qb/nnRQl1EVkXHm510WequEpdi16cOs+YyNDc
-f9+VxvBH8vLaj3CbFPhXIN0zP1AlA8kXRlseaSURhEZBSj09bScHptbfU8KZeXLl
-GCQsxextfpx/EwLlCgHvpu2yayfH1EKPJDjxjsZ+VHqVEasoDjV0zXllITtZzTYY
-woSNujpREZ9pNwv/lDw7oAzVP6fnFRR1D2aRsML5zClegUkuqNf5aelgtzrOxh1T
-RCxG/Be7Bhrwc3+ajrISC5I+mvKujJMDXrbn9cBEF1sHlidKrfvyPjGW0U+iSDLu
-wdSg4WsP6Mj+BT4tKvqQX8UG2JTuvqAEZyLcX2O+NyE9W4KaVbOkfNsCzBNvS7zl
-eNBXs5TAHbjAKpzgMyuKSLeEocjKuptEiF7q23JFRZ6dNfYeMna11Rl9y+vBE3rP
-/sZEHe5ItbaZQCzJSAtN
-=qoTp
+iQIcBAEBCAAGBQJQxZkoAAoJEECxmPOUX5FEx58P/iZgju8VMymp0bmYSF41eKeJ
+inUPm51wxmiw8vbDwGVQ9a39OwDdwLojyOsPPwz0fyTKp0+qmI3CI6LyGOIcGhGN
+jy08AdxmsIIfFhFFh91QfcpWGof9Tfc9pIjQIYDqHXouK7pWAUipiEJ+R6Nxw+9f
+SrQ+zxBOActB++SpOum5NZemFI0bKFjyhNkp7fPvPhKfxTzDNZ1qSz1UzQ+ZYdbr
+xtsFg279OcKhXfP+lXm+NFWs9VVLEm6sBiWjIbwQt2EiUsBga6toLMLBWwld5eEQ
+9q4ejOmaCnQh+HrQ/Q9lae+nnqRtwZEMSJkt9YaoT3INXA4vLarxbCbDr3p9XqvC
++7LxSSUMr87dvLaQrgXItFmsN/rUh5TfMKJNYOvo7ccE41xiws6VOQjzpHtv4mKZ
+ITdCIEr3gRGHutNVwDZZoCsy1LUwjsAy2qE4trzl2VOdROI92ChGS1RQFV/E0q0E
+T7VlJpIZi1qWRQU01LsRnrW+4ztFgCnKTkOlA9eRCl//9LMxV0pLvIC+26pdALji
+2bcxxRLXNs6grWYsOPnxubvDwJf3SY38EE0Fvhed1UBWGlvkVe3a7jzoEjFNEMuD
+tD47409ugNeSIk4AjLFXFSogycHLivzBDGESsds3G6CQ+5rubMiC1tG1h+0u/xcW
+JsHyJfGXFTnp1BMSto0G
+=r0rP
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__10_Dec_2012_19_01_39_+1100_lRryH29crv/r9B+h--
+--Signature=_Mon__10_Dec_2012_19_11_20_+1100_5NegCEf1_o25svqS--
