@@ -1,31 +1,62 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the sound-asoc tree
-Date: Sun, 9 Dec 2012 22:49:59 -0800
-Message-ID: <CAOesGMixeGKmie_dioz24O1MD+2KJEn2z-gvHtZojgjCnsdJXQ@mail.gmail.com>
-References: <20121210174057.9862b43ff7350ba20c048df3@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Mon, 10 Dec 2012 18:47:49 +1100
+Message-ID: <20121210184749.b1902056a8b20a543f5b54ca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121210174057.9862b43ff7350ba20c048df3@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Rahul Sharma <rahul.sharma@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__10_Dec_2012_18_47_49_+1100_7lGkDvsh5IDTnGSd"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36882 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752174Ab2LJHsB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Dec 2012 02:48:01 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>
 
-On Sun, Dec 9, 2012 at 10:40 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/plat-samsung/include/plat/devs.h between commit a08485d8fdf6
-> ("ASoC: Samsung: Do not register samsung audio dma device as pdev") from
-> the sound-asoc tree and commit 0a9d5ac307ae ("ARM: EXYNOS: removing
-> exynos-drm device registration from non-dt platforms") from the arm-soc
-> tree.
->
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Signature=_Mon__10_Dec_2012_18_47_49_+1100_7lGkDvsh5IDTnGSd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks good, thanks.
+Hi Andrew,
 
+Today's linux-next merge of the akpm tree got a conflict in
+mm/huge_memory.c between various commits from the tip tree and commit
+"thp: fix update_mmu_cache_pmd() calls" from the akpm tree.
 
--Olof
+It appears that the shed/numa patches in the tip tree have been changed
+in today's version of the tip tree and this akpm tree patch no longer
+applies.
+
+I dropped the akpm tree patch and can carry the fix as necessary (no
+action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__10_Dec_2012_18_47_49_+1100_7lGkDvsh5IDTnGSd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQxZOlAAoJEECxmPOUX5FEI3MP/3EJg/s0jf5nAoNvY77XMJ1q
+3VFpST9659mDqIGkVwC5tSVCaoreMcxho+S/xIUDWMp4CGcgQN1A/pSa0moYiMCU
+A8MB+VqxHLnRqZwE7+CcMAa6b68TDX1smERSJQcz3jNy+hS5IIwmfeweIub//Ki+
+X2L7e7/Qb7ESWL6ArGTYgKOdd4vaq1GBiqcgWtVkGFj9HwQRPol9eYan3bHhv0GT
+mh7pD6hSV+mqcZUq39bdYGr6twI3s4Bm2SqfNWufM1iQVYoi3ubyrP2d2w8kCwa2
+33aAEAJcQnyoLpuE3E4L/ytNfo8DkuDbLI/741v+cLgfjJxMNYyn9ajCVjCJKogJ
+MwpfJKZlH2Rnunk/EnGWFOO4uhnnFmZyS8C/qwe+Do+eqiyZXk2Rs3dOcNcfx/EZ
+ukmRhehYfvfAjoCmPBLt4EPCzJZUDbDYJj1BBpHwz1DGPJMH088nVNUlS01d58fS
+Jr/ZeV+9kFeapGbNFqcYCRgcosI/rZ+ZN6+7ukIbivobDGYgFDCQudIVviMjMtYK
+2VZjGgUZOU66dBZENtMeq8dhX/0+eiBjA2/JrAqGUaZjzX942jOf7/hFGpUm7sZ/
+M0p255r8TudKtHYFGh1pBMnRjRMWGTb8yoOewDVQ5UpTKdF1JFpf1jM4ncYI7NYm
+aNdTJk1kw7aCW75BE9B3
+=T9Eo
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__10_Dec_2012_18_47_49_+1100_7lGkDvsh5IDTnGSd--
