@@ -1,36 +1,68 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the gpio-lw tree with the
- driver-core tree
-Date: Tue, 11 Dec 2012 09:24:58 -0800
-Message-ID: <20121211172458.GA3309@kroah.com>
-References: <20121211151310.04fcd54a9412f5d60f08367f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: recent rebases
+Date: Wed, 12 Dec 2012 08:41:08 +1100
+Message-ID: <20121212084108.de14154ec0e365453617bfd7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__12_Dec_2012_08_41_08_+1100_yoT=d4CfmdSCJcS."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:52296 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753782Ab2LKRWb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Dec 2012 12:22:31 -0500
-Content-Disposition: inline
-In-Reply-To: <20121211151310.04fcd54a9412f5d60f08367f@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40022 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753634Ab2LKVlU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Dec 2012 16:41:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Bill Pemberton <wfp5p@virginia.edu>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>, Jaegeuk Kim <jaegeuk.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kees Cook <keescook@google.com>
 
-On Tue, Dec 11, 2012 at 03:13:10PM +1100, Stephen Rothwell wrote:
-> Hi Linus,
-> 
-> Today's linux-next merge of the gpio-lw tree got a conflict in
-> drivers/gpio/gpio-stmpe.c between commit 3836309d9346 ("gpio: remove use
-> of __devinit") from the driver-core tree and commit fc13d5a5b17c ("gpio:
-> Provide the STMPE GPIO driver with its own IRQ Domain") from the gpio-lw
-> tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Signature=_Wed__12_Dec_2012_08_41_08_+1100_yoT=d4CfmdSCJcS.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks good to me, thanks.
+Hi Linus,
 
-greg k-h
+I am not sure how much you care about this, but here is a list of the
+trees in linux-next that have been rebased in the last day (i.e. since I
+fetched the trees for next-20121211):
+
+fsnotify: rebased to v3.6(!) to resolve a conflict.
+	git://git.infradead.org/users/eparis/notify.git#for-next
+f2fs: rebased to v3.7
+	git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git#dev
+dma-mapping: rebased to v3.7 (you already merged this)
+	git://git.linaro.org/people/mszyprowski/linux-dma-mapping.git#dma-mapping-=
+next
+drop-experimental: rebased to commit caf491916b1c (this tree rebased many
+	times since it was added to linux-next - mostly with no change to the
+	patches involved - maybe it has had Acks added or something).
+	git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git#linux-next
+
+At least these trees have been rebased in linux-next as well.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__12_Dec_2012_08_41_08_+1100_yoT=d4CfmdSCJcS.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQx6h0AAoJEECxmPOUX5FEutcP/3WpBG+Ykv39IAZzDvjJI/Wr
+O3QDLcu23JGvoCgf64goln3UEM9Chc9uYDUlEH57yitnfEta8WeMNVhKxxAPtWer
+/Q3/GXur10h6BbFXs+opa5RSsOyl4QZ/sAXXh42R49bDdAmbatxIkXuAkoKmBCqw
+KE3746x0TvAWM/rgQuQA1YSIvpC4at5eiq56eMlSsf3UEZC4tFGgNTW34srQ7dYv
+0QmcuqMJs7ZXIGfGo+wdYPOlNvdBaT08EcY+YH6MtriVjutRxhrmsD2TKnWh2kKr
+W9s0x4FVAJla2UrIFBhE6X36buR/IdGlKcgPYY7ja2FAa4q3Z22JJPAY7ohHJtOL
+lCTeERpeVhpNhZfkr6pPQT1P+e742/V0ZpYYAHEuvDsxKJBo2st6X7rN0omXnkFs
+qwHJObZKTErwKj1WpFsU9WSQ/JkR7jQO5HkK/oDEVfNhudUD7W2zu9qbMqWkPzW6
+8zIREsrspYopC5H89njmOWTaDTXxtYffQyAo9/utnGBWvY3fQ7M11C8QFI0lXRCx
+wfhVVEz99Ty/IHUWO74oMy6Z3tk+4UNSDBxgk4geS2LxC0exgI3i1CAea2JcASiM
+XA6j/ZfbSjREdU09oYGzwccaVkNXib8HKj7KGTxdu8NYRhp0S6vnmyWMOjD6mwbF
+HsOYp0swoPNy+3CNuPnU
+=hGbS
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Dec_2012_08_41_08_+1100_yoT=d4CfmdSCJcS.--
