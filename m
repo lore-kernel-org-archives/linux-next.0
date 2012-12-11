@@ -1,67 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: recent rebases
-Date: Wed, 12 Dec 2012 09:19:45 +1100
-Message-ID: <20121212091945.5ae4dab6e6716fdb4239201e@canb.auug.org.au>
-References: <20121212084108.de14154ec0e365453617bfd7@canb.auug.org.au>
-	<1355263123.3527.27.camel@localhost>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: some merging notes
+Date: Wed, 12 Dec 2012 10:19:19 +1100
+Message-ID: <1355267959.19932.40.camel@pasglop>
+References: <20121212091552.02c72c8926f9f9147b080d68@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__12_Dec_2012_09_19_45_+1100_7nJRVQJJBvfcCY+."
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37545 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754185Ab2LKWUc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Dec 2012 17:20:32 -0500
-In-Reply-To: <1355263123.3527.27.camel@localhost>
+Received: from gate.crashing.org ([63.228.1.57]:44608 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754052Ab2LKXV4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Dec 2012 18:21:56 -0500
+In-Reply-To: <20121212091552.02c72c8926f9f9147b080d68@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jaegeuk Kim <jaegeuk.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kees Cook <keescook@google.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Greg KH <greg@kroah.com>, Steven Rostedt <srostedt@redhat.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, "N, Mugunthan V" <mugunthanvnm@ti.com>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Bill Pemberton <wfp5p@virginia.edu>
 
---Signature=_Wed__12_Dec_2012_09_19_45_+1100_7nJRVQJJBvfcCY+.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2012-12-12 at 09:15 +1100, Stephen Rothwell wrote:
+> The powerpc tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/benh/powerpc.git#next)
+> contains a commit that breaks the building of
+> lib/pSeries-reconfig-notifier-error-inject.c.  I applied a patch to
+> linux-next to disable CONFIG_PSERIES_RECONFIG_NOTIFIER_ERROR_INJECT.
 
-Hi Eric,
+I will put a fix in before I send the pull request.
 
-On Tue, 11 Dec 2012 16:58:43 -0500 Eric Paris <eparis@redhat.com> wrote:
->
-> On Wed, 2012-12-12 at 08:41 +1100, Stephen Rothwell wrote:
-> >=20
-> > fsnotify: rebased to v3.6(!) to resolve a conflict.
-> > 	git://git.infradead.org/users/eparis/notify.git#for-next
->=20
-> I planned to let it sit in -next until at least next thursday before I
-> sent a pull request.  Thought that fit within the rules...
-
-No worries, just noting.  Though you could have just done a merge against
-v3.6 with an explanation in the merge changelog of why it was done.
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__12_Dec_2012_09_19_45_+1100_7nJRVQJJBvfcCY+.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQx7GBAAoJEECxmPOUX5FEjnEP/0eNHq5Rd6URbpGNDY4I33B+
-Yqzz451VuZD+v2HW4cvE0EH8L5y7hkyPqc8PJg7/oZdtOcK2nVlD/HxYqntSi6+M
-5wm5yBhS/MpmD1gpaQAR8P/1BL8qOtZhraCMZHqxcwoKXrlmEIJ5lbzy6hrj6ZHk
-BMxsm4GxwZKJuQFGLvJGS0CKgWorH5FIkSLsqBCFvjVgbuAOMiohegBHNXqqryty
-yQiiCsWB3JpvzmU2TGMDnavlovv/4QRXmtpUfk2N4vwsVjqVejCqzOF7g0+IXjUk
-gbl+oqwL+TTRQbXapR4kIjyxUuqliIAipDJlWzpWh084egGk85mzSs+s+jdPZWRl
-PSZH625G4rL59bILBvBSsq5+0jD9OwKnL7VnSalQXxdZ4U2ohAGbhn8eW7i8vb4d
-Y4b/XtRKhrpbzKVfKOnMAUUykjqd88XxtOBLX/A5YqEuciOiR2KQvLfhJ02AySKV
-TQxKUx2c4HcJHpOz50UAVL8FPGGi813rT7icL0UppcpeiDOk2iJEviwNRotebObt
-uZpLrgUUac+Muu16LZ1uzBL6AzVz93eIo4c3LsFM0h4Asw+UDLcjM5CL67qAabr4
-8pU9MOYiAq5nlnvZyqWzNPUyJJdFup9VUjkZNzP4rKbQ7/iXg97bZisN1BVj+s1l
-IA2cmsQlPKm7A8Sv6FL/
-=WCGl
------END PGP SIGNATURE-----
-
---Signature=_Wed__12_Dec_2012_09_19_45_+1100_7nJRVQJJBvfcCY+.--
+Ben.
