@@ -1,30 +1,51 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: some merging notes
-Date: Wed, 12 Dec 2012 10:19:19 +1100
-Message-ID: <1355267959.19932.40.camel@pasglop>
-References: <20121212091552.02c72c8926f9f9147b080d68@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no release today (20121212)
+Date: Wed, 12 Dec 2012 20:59:56 +1100
+Message-ID: <20121212205956.c490b8869f428de18eafa96f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__12_Dec_2012_20_59_56_+1100_8.DNIvJ=JBnCWtDX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:44608 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754052Ab2LKXV4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Dec 2012 18:21:56 -0500
-In-Reply-To: <20121212091552.02c72c8926f9f9147b080d68@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45516 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750989Ab2LLKAH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Dec 2012 05:00:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Greg KH <greg@kroah.com>, Steven Rostedt <srostedt@redhat.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, "N, Mugunthan V" <mugunthanvnm@ti.com>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Bill Pemberton <wfp5p@virginia.edu>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Wed, 2012-12-12 at 09:15 +1100, Stephen Rothwell wrote:
-> The powerpc tree
-> (git://git.kernel.org/pub/scm/linux/kernel/git/benh/powerpc.git#next)
-> contains a commit that breaks the building of
-> lib/pSeries-reconfig-notifier-error-inject.c.  I applied a patch to
-> linux-next to disable CONFIG_PSERIES_RECONFIG_NOTIFIER_ERROR_INJECT.
+--Signature=_Wed__12_Dec_2012_20_59_56_+1100_8.DNIvJ=JBnCWtDX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I will put a fix in before I send the pull request.
+Normal releases will resume tomorrow.
 
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__12_Dec_2012_20_59_56_+1100_8.DNIvJ=JBnCWtDX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQyFWcAAoJEECxmPOUX5FEl3YP/1PbKVagufF+mgahm0GfpwaM
+V0v0nDj18WLFmAEVmA1dO2xGBiPEvYw5zGU64yIGgKUefQTPg4f6O2aq27CdqemL
+zgNkLxhyX9/V3JgNOUUWk/9T13FlWTgJB47kLyn18rEhvl/VqS1L5h8gK+okRbo2
+0O32aey+fcK40oaIoVcpAGPh04D/x2i0x4cYrIPIZK8hnhQ8jIaHCV9RAfJoM8A4
+GPkNqvy8XHuhOZ8MreHQpDD7TNANKB6dNvskZz6q69aUnMxEbN9/5btcMUP7/HcM
+klo3Li/B7vg3xgne9boYyvrxcYpdI9Jua8KW739dBoGJm5wg2p37WVmRKXhss3TK
+Yday5fE27d2/ZBGhzUccIZWztPjx0oEpfTyRPasCl83mjmY+tj+h3KBinl+ey4qz
+VmBox6VDuZn5PCqjVnheJcColFkZl8ZwxPpf8bNjsWyGo/DG+JTHMY262PL+Pgb5
+hhupxffQAFdS9H3tRK9Vzi9ItQUrdv2l38UyQV4Xj/pYGVXcM1QiSYI2ElJCurhi
+0oMROzXA6nWijP8DDONWYOwPWUgOkjvthIFENFDJEAKe47I8JW6YjeuUru1OhV4B
+kilGtZejyxSrOIwyFHQEqz/jN54HraDkj7MbCePRi/3Iao23s9Z+SfpBXL7a9VF5
++PpOcMTsGEH2sb2JIoQ/
+=qEtn
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Dec_2012_20_59_56_+1100_8.DNIvJ=JBnCWtDX--
