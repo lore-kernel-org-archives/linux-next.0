@@ -1,31 +1,54 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: no release today (20121212)
-Date: Wed, 12 Dec 2012 11:05:10 +0100
-Message-ID: <CA+icZUWpi+b7QKmyyP5JRX5FAVfdzyWKf8PzH1M9aC+C6O48FA@mail.gmail.com>
-References: <20121212205956.c490b8869f428de18eafa96f@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: reminder
+Date: Thu, 13 Dec 2012 07:46:29 +1100
+Message-ID: <20121213074629.0a462b6481105df7632bb016@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__13_Dec_2012_07_46_29_+1100_6ifxmy8Drk/+zpmH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:48961 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753528Ab2LLKFL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Dec 2012 05:05:11 -0500
-In-Reply-To: <20121212205956.c490b8869f428de18eafa96f@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51212 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754422Ab2LLUqi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Dec 2012 15:46:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org
 
-On Wed, Dec 12, 2012 at 10:59 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Normal releases will resume tomorrow.
->
+--Signature=_Thu__13_Dec_2012_07_46_29_+1100_6ifxmy8Drk/+zpmH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Good, no more ambitions to repair my Ubuntu/precise WUBI installation
-after Win7 updates or sth. else broke the wubi-loader...
+Hi all,
 
-- Sedat -
+Please do *not* add any code destined for v3.9 to your linux-next
+included trees until after Linus' releases v3.8-rc1.
 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__13_Dec_2012_07_46_29_+1100_6ifxmy8Drk/+zpmH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQyO0lAAoJEECxmPOUX5FEV+EQAJdrKv7Soxx6/yWPCTmLiGKX
+my1v3DoyhLHZlNYEPIk5VwVJYt0lD+2dgRPbMJkXMeIG4bDKomNTVOiE4oaw40jI
+IRewmsOhwccNhOeML2hJKI6+EQBz5Eq98UeaMNoulQf0v92nWQd38qbLRezQUo0o
+xwL3ulh7lWTAnucnKcHi1e9R+JEWeqyapo74DXmTLLjXUIcyGlnYiHbYhHVqdtcs
+hW/ii4acCU8qJMPO8JxVaCet0S5agvvA+PX0BO58wAL2eZvJp4/X/v+Tdb7nDHza
+T1AAEotgcyxpKjdr6thlHv/0j2yL98aZmcq/4lMhsN3+ViVy4CGYx5ew6zpWHuRR
+7Ai6h82lO+DNYNqd1R4neCL8ci87Zq6MEayFQ8C77iDxP0+pOSCmy9Kwrqeu8+YX
+GXuuozNnjqNZyg3YXhZ5/uMEiXk4bavgwAwlJAXgp6/2cGKLuWfq79zV01uAPpKl
+0CaVlJxSpd6KXvwkworLJetT+l5/tZe2dCiL9VAq6LwmsvcS82NY9BBWUeoRMxB/
+EHjEiF/ErW6nfnOkDB1Azm1YfeAUWbjnBKuQ9uWRUEHNC3aVJhHVjVBVr8MS1Q/f
+TQikdZqvyQVd4iXvnEqy361lltDXoMHUv53T2uz4TuH3fwC11WaI4N2zHTqp8elS
+hQZfy2ccx1eNg3wSpmon
+=ORsG
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__13_Dec_2012_07_46_29_+1100_6ifxmy8Drk/+zpmH--
