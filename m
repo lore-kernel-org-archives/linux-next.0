@@ -1,145 +1,118 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the cpuidle tree
-Date: Thu, 13 Dec 2012 11:54:44 +1100
-Message-ID: <20121213115444.c500ea3bdb566b5acdc7c5ff@canb.auug.org.au>
+Subject: linux-next: manual merge of the l2-mtd tree with Linus' tree
+Date: Thu, 13 Dec 2012 12:37:55 +1100
+Message-ID: <20121213123755.db3d38128e0593a372ccf17f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__13_Dec_2012_11_54_44_+1100_0b1Ca=q84RT4KBsq"
+ boundary="Signature=_Thu__13_Dec_2012_12_37_55_+1100_CZfapUg2lWfWOWy5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54495 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40594 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755231Ab2LMAyw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Dec 2012 19:54:52 -0500
+	with ESMTP id S1755076Ab2LMBiD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Dec 2012 20:38:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kumar, Anil" <anilkumar.v@ti.com>, Grant Likely <grant.likely@secretlab.ca>, Murali Karicheri <m-karicheri2@ti.com>
 
---Signature=_Thu__13_Dec_2012_11_54_44_+1100_0b1Ca=q84RT4KBsq
+--Signature=_Thu__13_Dec_2012_12_37_55_+1100_CZfapUg2lWfWOWy5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi Artem,
 
-After merging the cpuidle tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the l2-mtd tree got a conflict in
+Documentation/devicetree/bindings/arm/davinci/nand.txt between commit
+fed16bba8726 ("mtd: nand: davinci: fix the binding documentation") from
+Linus' tree and commit 192afdbfbc5c ("mtd: davinci: add support for
+parition binding nodes") from the l2-mtd tree.
 
-In file included from drivers/cpuidle/cpuidle.c:23:0:
-drivers/cpuidle/cpuidle.h:74:20: error: redefinition of 'cpuidle_state_is_c=
-oupled'
-drivers/cpuidle/cpuidle.h:44:20: note: previous definition of 'cpuidle_stat=
-e_is_coupled' was here
-drivers/cpuidle/cpuidle.h:80:19: error: redefinition of 'cpuidle_enter_stat=
-e_coupled'
-drivers/cpuidle/cpuidle.h:50:19: note: previous definition of 'cpuidle_ente=
-r_state_coupled' was here
-drivers/cpuidle/cpuidle.h:86:19: error: redefinition of 'cpuidle_coupled_re=
-gister_device'
-drivers/cpuidle/cpuidle.h:56:19: note: previous definition of 'cpuidle_coup=
-led_register_device' was here
-drivers/cpuidle/cpuidle.h:91:20: error: redefinition of 'cpuidle_coupled_un=
-register_device'
-drivers/cpuidle/cpuidle.h:61:20: note: previous definition of 'cpuidle_coup=
-led_unregister_device' was here
-In file included from drivers/cpuidle/governor.c:15:0:
-drivers/cpuidle/cpuidle.h:74:20: error: redefinition of 'cpuidle_state_is_c=
-oupled'
-drivers/cpuidle/cpuidle.h:44:20: note: previous definition of 'cpuidle_stat=
-e_is_coupled' was here
-drivers/cpuidle/cpuidle.h:80:19: error: redefinition of 'cpuidle_enter_stat=
-e_coupled'
-drivers/cpuidle/cpuidle.h:50:19: note: previous definition of 'cpuidle_ente=
-r_state_coupled' was here
-drivers/cpuidle/cpuidle.h:86:19: error: redefinition of 'cpuidle_coupled_re=
-gister_device'
-drivers/cpuidle/cpuidle.h:56:19: note: previous definition of 'cpuidle_coup=
-led_register_device' was here
-drivers/cpuidle/cpuidle.h:91:20: error: redefinition of 'cpuidle_coupled_un=
-register_device'
-drivers/cpuidle/cpuidle.h:61:20: note: previous definition of 'cpuidle_coup=
-led_unregister_device' was here
-
-Caused by a mismerge.  I applied the following merge fix:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 13 Dec 2012 11:52:10 +1100
-Subject: [PATCH] cpuidle: fix mismerge
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/cpuidle/cpuidle.h |   30 ------------------------------
- 1 file changed, 30 deletions(-)
-
-diff --git a/drivers/cpuidle/cpuidle.h b/drivers/cpuidle/cpuidle.h
-index f67517e..ee97e96 100644
---- a/drivers/cpuidle/cpuidle.h
-+++ b/drivers/cpuidle/cpuidle.h
-@@ -63,34 +63,4 @@ static inline void cpuidle_coupled_unregister_device(str=
-uct cpuidle_device *dev)
- }
- #endif
-=20
--#ifdef CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED
--bool cpuidle_state_is_coupled(struct cpuidle_device *dev,
--		struct cpuidle_driver *drv, int state);
--int cpuidle_enter_state_coupled(struct cpuidle_device *dev,
--		struct cpuidle_driver *drv, int next_state);
--int cpuidle_coupled_register_device(struct cpuidle_device *dev);
--void cpuidle_coupled_unregister_device(struct cpuidle_device *dev);
--#else
--static inline bool cpuidle_state_is_coupled(struct cpuidle_device *dev,
--		struct cpuidle_driver *drv, int state)
--{
--	return false;
--}
--
--static inline int cpuidle_enter_state_coupled(struct cpuidle_device *dev,
--		struct cpuidle_driver *drv, int next_state)
--{
--	return -1;
--}
--
--static inline int cpuidle_coupled_register_device(struct cpuidle_device *d=
-ev)
--{
--	return 0;
--}
--
--static inline void cpuidle_coupled_unregister_device(struct cpuidle_device=
- *dev)
--{
--}
--#endif
--
- #endif /* __DRIVER_CPUIDLE_H */
---=20
-1.7.10.280.gaa39
+I fixed it up (maybe- see below) and can carry the fix as necessary (no
+action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__13_Dec_2012_11_54_44_+1100_0b1Ca=q84RT4KBsq
+diff --cc Documentation/devicetree/bindings/arm/davinci/nand.txt
+index 49fc7ad,4746452..0000000
+--- a/Documentation/devicetree/bindings/arm/davinci/nand.txt
++++ b/Documentation/devicetree/bindings/arm/davinci/nand.txt
+@@@ -23,16 -23,37 +23,24 @@@ Recommended properties=20
+  - ti,davinci-nand-buswidth: buswidth 8 or 16
+  - ti,davinci-nand-use-bbt: use flash based bad block table support.
+ =20
++ nand device bindings may contain additional sub-nodes describing
++ partitions of the address space. See partition.txt for more detail.
++=20
+ -Example (enbw_cmc board):
+ -aemif@60000000 {
+ -	compatible =3D "ti,davinci-aemif";
+ -	#address-cells =3D <2>;
+ -	#size-cells =3D <1>;
+ -	reg =3D <0x68000000 0x80000>;
+ -	ranges =3D <2 0 0x60000000 0x02000000
+ -		  3 0 0x62000000 0x02000000
+ -		  4 0 0x64000000 0x02000000
+ -		  5 0 0x66000000 0x02000000
+ -		  6 0 0x68000000 0x02000000>;
+ -	nand@3,0 {
+ -		compatible =3D "ti,davinci-nand";
+ -		reg =3D <3 0x0 0x807ff
+ -			6 0x0 0x8000>;
+ -		#address-cells =3D <1>;
+ -		#size-cells =3D <1>;
+ -		ti,davinci-chipselect =3D <1>;
+ -		ti,davinci-mask-ale =3D <0>;
+ -		ti,davinci-mask-cle =3D <0>;
+ -		ti,davinci-mask-chipsel =3D <0>;
+ -		ti,davinci-ecc-mode =3D "hw";
+ -		ti,davinci-ecc-bits =3D <4>;
+ -		ti,davinci-nand-use-bbt;
+ +Example(da850 EVM ):
+ +nand_cs3@62000000 {
+ +	compatible =3D "ti,davinci-nand";
+ +	reg =3D <0x62000000 0x807ff
+ +		0x68000000 0x8000>;
+ +	ti,davinci-chipselect =3D <1>;
+ +	ti,davinci-mask-ale =3D <0>;
+ +	ti,davinci-mask-cle =3D <0>;
+ +	ti,davinci-mask-chipsel =3D <0>;
+ +	ti,davinci-ecc-mode =3D "hw";
+ +	ti,davinci-ecc-bits =3D <4>;
+ +	ti,davinci-nand-use-bbt;
++=20
+ -		partition@180000 {
+ -			label =3D "ubifs";
+ -			reg =3D <0x180000 0x7e80000>;
+ -		};
+++	partition@180000 {
+++		label =3D "ubifs";
+++		reg =3D <0x180000 0x7e80000>;
++ 	};
+  };
+
+--Signature=_Thu__13_Dec_2012_12_37_55_+1100_CZfapUg2lWfWOWy5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIbBAEBCAAGBQJQySdUAAoJEECxmPOUX5FEhTkP92D0ZQNpe3acyCAXhfaj3d2a
-4cVpeJ4d6qr8PXFiTlr0Sr3NI8tBzc+9sgwJZ3zu+5patJwbWFZdDYPLCBy9JbwH
-MeJf24ZibY157AgMtWZJee3SBLTW4e5Wpvr7PH5EfgcUdvVtul54pDHxuLY8AIp2
-wkPHb81NPtfaX4FGt9bEt03sgsbTFqapbVY/Bl4anK/8fgpykDjb59nPJeSy5fKG
-2KC7nL0v4cRNt8K0XecFqNll9AQOSo1YH55H+GK/93bYIdmHG3i/uyEA820hKHLH
-SgH6XyNJHIkIJ3/I9VdHMMj3tejv89wc+o8OHq7AAxl2NdvDWkcqEaGqYfAe44Ih
-37NnaEpWqx35Ul8lV21Sm/GWdRz7XHf8vU6NPs6+O1RAgVgbDjl+SVhAdyvohH/8
-cEnhpCJuq7P7N4trvcX8J8FfYnGlnbOw4/mw6ylFXudJpSw7vN5qFZasUh1Uu7mX
-a/3i7V6pS/4SGtdRvN+JwP+rnkAEuTWM4rUOOM3qWWTVlXv+6xSazMu6ybDFTfvt
-lH6Qj3L3Ur1W13LVC9JLQhId/hr/fwlKOX8oSNcv/iitw0YxfT5YfQ/I/PYbFEsQ
-jnMHZI4xE/4YvtWjcJYOxreoldS+cRWxlT0kW8ze3F7KOnXFSZz5CK/2+F70Yprs
-IMrn3KeVADrULcvTd7A=
-=phO5
+iQIcBAEBCAAGBQJQyTFzAAoJEECxmPOUX5FE7+IP/2+Ghpn6N8O9Dopp87EeqnMw
+Hx6Ec0t+GFFDGby349bOzEeJgOWUybncyk3kHT24NvXiMk33UKjPz7Dj/GUTuoam
+pJGTT2PjK/PzqopO/T8eBcU31YUjit/rcGpDYQAstjxhQDRD0GNLdXydLnc+0Hh6
+9PlvOBNTncB+0avv3mMTe4KL4JxuRebEytFdp/wgOyUF0uZVINeXxaY5+Vx7Ssnv
+xIgx2yoiqd5wzuMirQqSLYPmIr+cXs5kbCWuEUgEy0E0VlbOXfK7k1FIrY3/4tRq
+1MO4m3ZRTMayDQyoCLUBPDM+3wDZqHQNVfKDK5dltprFE4/86rFZAAuBhXZDt7Qp
+6/AR/ouYOKuoQsGdMFc02qsKCeXloSeLf3AD4OckUcZYJ5KEbioamMHloDU/ncPP
+T5dtq6YZtBnMkRNTBiJ8HtBm2HykdBjcPyzTSESpkYfEM1Cmo6fNikdt0ZHHM6LS
+K8JdFsUoQi4ohAFLH6e6A+axLtWDsEBArwWNJFZh43ZWggzOuN+B3lmq2RLzeLbL
+96DfMomgueTE+ysQi2y1HogIWPR/+R/Os4/B0c1VkOBHH5JkNlUkDJuuBx0EOm1s
+k3/035+HI744mFEApvmc4uHkbi5+qY0kOw3FWdi5td3iQtP7oRJhcS34bdOnvWwT
+qzrBEIDfJMWc5GnhJeQX
+=cdWg
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__13_Dec_2012_11_54_44_+1100_0b1Ca=q84RT4KBsq--
+--Signature=_Thu__13_Dec_2012_12_37_55_+1100_CZfapUg2lWfWOWy5--
