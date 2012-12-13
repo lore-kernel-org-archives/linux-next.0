@@ -1,89 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the virtio tree with Linus' tree
-Date: Thu, 13 Dec 2012 13:05:03 +1100
-Message-ID: <20121213130503.3432e2e1715439a49962873b@canb.auug.org.au>
+Subject: Re: linux-next: unusual update of the security tree
+Date: Thu, 13 Dec 2012 13:24:38 +1100
+Message-ID: <20121213132438.7a70a114233057ce22982b7b@canb.auug.org.au>
+References: <20121128101635.d5e864dffc4252ef9d5e1664@canb.auug.org.au>
+	<50B5508D.7050409@schaufler-ca.com>
+	<20121128110132.0082c87680b9b714b8c0689c@canb.auug.org.au>
+	<alpine.LRH.2.02.1212070024460.4693@tundra.namei.org>
+	<CA+55aFwJDtofV36R_ot8qj31BCGwBgDsGOKRkMRhRLamf5M+mw@mail.gmail.com>
+	<alpine.LRH.2.02.1212071020050.7590@tundra.namei.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__13_Dec_2012_13_05_03_+1100_iWyRJ+pFYZ9=yoX2"
+ boundary="Signature=_Thu__13_Dec_2012_13_24_38_+1100_tRUPIhmez8nqtt6C"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50623 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44915 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752903Ab2LMCFV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Dec 2012 21:05:21 -0500
+	with ESMTP id S932122Ab2LMCYr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Dec 2012 21:24:47 -0500
+In-Reply-To: <alpine.LRH.2.02.1212071020050.7590@tundra.namei.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rafael Aquini <aquini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+To: James Morris <jmorris@namei.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Casey Schaufler <casey@schaufler-ca.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__13_Dec_2012_13_05_03_+1100_iWyRJ+pFYZ9=yoX2
+--Signature=_Thu__13_Dec_2012_13_24_38_+1100_tRUPIhmez8nqtt6C
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi James,
 
-Today's linux-next merge of the virtio tree got a conflict in
-drivers/virtio/virtio_balloon.c between commit e22504296d4f
-("virtio_balloon: introduce migration primitives to balloon pages") from
-Linus' tree and commit 41395dfb3d35 ("virtio: Convert dev_printk
-(KERN_<LEVEL> to dev_<level>(") from the virtio tree.
+On Fri, 7 Dec 2012 10:21:31 +1100 (EST) James Morris <jmorris@namei.org> wr=
+ote:
+>
+> On Thu, 6 Dec 2012, Linus Torvalds wrote:
+>=20
+> > Have people pulled that thing into anything else? Because quite
+> > frankly, I think it's unsalvageable except with a rebase.
+>=20
+> AFAIK, only developers such as Casey will have pulled it for development=
+=20
+> purposes.
+>=20
+> And sorry, I should be checking the trees I pull from more carefully.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
+Are you going to fix this before asking Linus to pull?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/virtio/virtio_balloon.c
-index 2a70558,586395c..0000000
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@@ -133,16 -125,14 +133,15 @@@ static void fill_balloon(struct virtio_
-  	/* We can only do one array worth at a time. */
-  	num =3D min(num, ARRAY_SIZE(vb->pfns));
- =20
- +	mutex_lock(&vb->balloon_lock);
-  	for (vb->num_pfns =3D 0; vb->num_pfns < num;
-  	     vb->num_pfns +=3D VIRTIO_BALLOON_PAGES_PER_PAGE) {
- -		struct page *page =3D alloc_page(GFP_HIGHUSER | __GFP_NORETRY |
- -					__GFP_NOMEMALLOC | __GFP_NOWARN);
- +		struct page *page =3D balloon_page_enqueue(vb_dev_info);
- +
-  		if (!page) {
-- 			if (printk_ratelimit())
-- 				dev_printk(KERN_INFO, &vb->vdev->dev,
-- 					   "Out of puff! Can't get %u pages\n",
-- 					   VIRTIO_BALLOON_PAGES_PER_PAGE);
-+ 			dev_info_ratelimited(&vb->vdev->dev,
- -					     "Out of puff! Can't get %zu pages\n",
- -					     num);
-++					     "Out of puff! Can't get %u pages\n",
-++					     VIRTIO_BALLOON_PAGES_PER_PAGE);
-  			/* Sleep for at least 1/5 of a second before retry. */
-  			msleep(200);
-  			break;
-
---Signature=_Thu__13_Dec_2012_13_05_03_+1100_iWyRJ+pFYZ9=yoX2
+--Signature=_Thu__13_Dec_2012_13_24_38_+1100_tRUPIhmez8nqtt6C
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQyTfPAAoJEECxmPOUX5FEfg4P/R3sdKwXHaVoxIGQYLfukShp
-9LKAeFlf7xPwIbg7IntJsAQqtajlEddSVgt0A86PgaQuYehkiXdS8qFWHqOUZ7e2
-quCJ1f48F3YTP6ECBm/crIXM2uq8sCUbLSpfLRs9zIVTEChrrU9+mYQh4cXLnn1z
-YUEOAOOyNoDzYsHjLOaMhJ/guY31eZakr3JiiDgUyBSXWhco8zMOsBGB4eydi8M0
-C/v5JwHOM4g7ppexm2D+qC4QMEZSLJ3wU+eZ7UVF0KIJw23+oZUNpI4mhWZQ8tN0
-Lr0eHhn+9d6PPSGe+ORKkzCXthr1DyMdOBJLmYMmtMkmjVppZY2Cv08nYBSRuLuI
-bp2rXxAeTblhvKjTvxmxRfWwvknqFB2UETvlXa4uxCP1gznMMb+OWqdCOiUiZGOL
-Ks5mZrx/yxwEdHgfx70uF3N93Rqp2TKHIy/nsEji746ZCCGa/3yra+9Q1erORQb+
-qF/5+ND3RcTDfZ8MWKzJvYON+ufA+ysWtQFGoso+099cs6+7c5jmPBc0gT8nIHxl
-Lcbs1wXCT48IATLgmvrgc+wg/HQoWH6DX3iv9MALkAJhmRwJXxRvD+2t1XNrrMiW
-8eQUk60SEuUyhRY2Y07WQCMZjNHYffouI2o+fNWdsUHJ+MHGLHzBIo1uxObbCL7q
-pApomrCSPGEnC9TuD5pY
-=fVaz
+iQIcBAEBCAAGBQJQyTxmAAoJEECxmPOUX5FEF5UP/jwZRIVZPRXrxnVqvDTC3neM
+O+uxpXn6C/GUDmnNg9w1B94yQ3VEK5l6ELgeWipNNviXB8Xxp21IpG3S+8YIozqT
+419wZ0WLn9UI/aI8Dyg+KsQzGlDAoSf8Nv1R41brIT0j/nhnKTRR8dH6Qd1qShPG
+ARTo9cEKXnpHLf1TpAWsVlyUc5iFmgTaUpzgAtlK+TnbpQv43DOB8E8IpOUJjPoQ
+UkbBg3bZaTEDw/d7Xn/Mt8ODIuAnZ0G+VKfPzZkAzCn6v2b3L6sDA9rEfPLfctVo
+s0W7xgKNLAKaJYtlnFZwO5fZHGFH7QauD1PY5qXAYeQLWBzGdWtKIOcmG66pwjCR
+mLvcdZv3JkK/RpjiFO0g79L86JbvJaP092g66tCvoz0SnM88npwi1Bjd4cgCSqGE
+AgHBG+oPYmwipvmwGcjbfKaO0YGMO45Yl91T5xJgYUrpZOs2ausULfAvXUxs2qZv
+UmHw8Wit0ZL+J6z1e5KiQxqXWw7pW+N3nr7dpzBhtmPqwMwFnQMBXclzJ/N+s9pz
+EvmWQ3q8dDsoVjKvo4roG0hVpaWMtgl2AZ+KWM+k9PSbgzsiie6HqQa47sjw2w3H
+hX5gUAtoKCnqNZlBAyDB/W/N3yhgWnRszRPbnMBN9VpdfBSNZeVuJ9p/O+QODc38
+v6i6Qm5jkz+1S5MjVlGP
+=K8P0
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__13_Dec_2012_13_05_03_+1100_iWyRJ+pFYZ9=yoX2--
+--Signature=_Thu__13_Dec_2012_13_24_38_+1100_tRUPIhmez8nqtt6C--
