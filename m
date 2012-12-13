@@ -1,118 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the l2-mtd tree with Linus' tree
-Date: Thu, 13 Dec 2012 12:37:55 +1100
-Message-ID: <20121213123755.db3d38128e0593a372ccf17f@canb.auug.org.au>
+Subject: linux-next: manual merge of the virtio tree with Linus' tree
+Date: Thu, 13 Dec 2012 13:05:03 +1100
+Message-ID: <20121213130503.3432e2e1715439a49962873b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__13_Dec_2012_12_37_55_+1100_CZfapUg2lWfWOWy5"
+ boundary="Signature=_Thu__13_Dec_2012_13_05_03_+1100_iWyRJ+pFYZ9=yoX2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40594 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50623 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755076Ab2LMBiD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Dec 2012 20:38:03 -0500
+	with ESMTP id S1752903Ab2LMCFV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Dec 2012 21:05:21 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kumar, Anil" <anilkumar.v@ti.com>, Grant Likely <grant.likely@secretlab.ca>, Murali Karicheri <m-karicheri2@ti.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rafael Aquini <aquini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
---Signature=_Thu__13_Dec_2012_12_37_55_+1100_CZfapUg2lWfWOWy5
+--Signature=_Thu__13_Dec_2012_13_05_03_+1100_iWyRJ+pFYZ9=yoX2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Artem,
+Hi Rusty,
 
-Today's linux-next merge of the l2-mtd tree got a conflict in
-Documentation/devicetree/bindings/arm/davinci/nand.txt between commit
-fed16bba8726 ("mtd: nand: davinci: fix the binding documentation") from
-Linus' tree and commit 192afdbfbc5c ("mtd: davinci: add support for
-parition binding nodes") from the l2-mtd tree.
+Today's linux-next merge of the virtio tree got a conflict in
+drivers/virtio/virtio_balloon.c between commit e22504296d4f
+("virtio_balloon: introduce migration primitives to balloon pages") from
+Linus' tree and commit 41395dfb3d35 ("virtio: Convert dev_printk
+(KERN_<LEVEL> to dev_<level>(") from the virtio tree.
 
-I fixed it up (maybe- see below) and can carry the fix as necessary (no
-action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/devicetree/bindings/arm/davinci/nand.txt
-index 49fc7ad,4746452..0000000
---- a/Documentation/devicetree/bindings/arm/davinci/nand.txt
-+++ b/Documentation/devicetree/bindings/arm/davinci/nand.txt
-@@@ -23,16 -23,37 +23,24 @@@ Recommended properties=20
-  - ti,davinci-nand-buswidth: buswidth 8 or 16
-  - ti,davinci-nand-use-bbt: use flash based bad block table support.
+diff --cc drivers/virtio/virtio_balloon.c
+index 2a70558,586395c..0000000
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@@ -133,16 -125,14 +133,15 @@@ static void fill_balloon(struct virtio_
+  	/* We can only do one array worth at a time. */
+  	num =3D min(num, ARRAY_SIZE(vb->pfns));
  =20
-+ nand device bindings may contain additional sub-nodes describing
-+ partitions of the address space. See partition.txt for more detail.
-+=20
- -Example (enbw_cmc board):
- -aemif@60000000 {
- -	compatible =3D "ti,davinci-aemif";
- -	#address-cells =3D <2>;
- -	#size-cells =3D <1>;
- -	reg =3D <0x68000000 0x80000>;
- -	ranges =3D <2 0 0x60000000 0x02000000
- -		  3 0 0x62000000 0x02000000
- -		  4 0 0x64000000 0x02000000
- -		  5 0 0x66000000 0x02000000
- -		  6 0 0x68000000 0x02000000>;
- -	nand@3,0 {
- -		compatible =3D "ti,davinci-nand";
- -		reg =3D <3 0x0 0x807ff
- -			6 0x0 0x8000>;
- -		#address-cells =3D <1>;
- -		#size-cells =3D <1>;
- -		ti,davinci-chipselect =3D <1>;
- -		ti,davinci-mask-ale =3D <0>;
- -		ti,davinci-mask-cle =3D <0>;
- -		ti,davinci-mask-chipsel =3D <0>;
- -		ti,davinci-ecc-mode =3D "hw";
- -		ti,davinci-ecc-bits =3D <4>;
- -		ti,davinci-nand-use-bbt;
- +Example(da850 EVM ):
- +nand_cs3@62000000 {
- +	compatible =3D "ti,davinci-nand";
- +	reg =3D <0x62000000 0x807ff
- +		0x68000000 0x8000>;
- +	ti,davinci-chipselect =3D <1>;
- +	ti,davinci-mask-ale =3D <0>;
- +	ti,davinci-mask-cle =3D <0>;
- +	ti,davinci-mask-chipsel =3D <0>;
- +	ti,davinci-ecc-mode =3D "hw";
- +	ti,davinci-ecc-bits =3D <4>;
- +	ti,davinci-nand-use-bbt;
-+=20
- -		partition@180000 {
- -			label =3D "ubifs";
- -			reg =3D <0x180000 0x7e80000>;
- -		};
-++	partition@180000 {
-++		label =3D "ubifs";
-++		reg =3D <0x180000 0x7e80000>;
-+ 	};
-  };
+ +	mutex_lock(&vb->balloon_lock);
+  	for (vb->num_pfns =3D 0; vb->num_pfns < num;
+  	     vb->num_pfns +=3D VIRTIO_BALLOON_PAGES_PER_PAGE) {
+ -		struct page *page =3D alloc_page(GFP_HIGHUSER | __GFP_NORETRY |
+ -					__GFP_NOMEMALLOC | __GFP_NOWARN);
+ +		struct page *page =3D balloon_page_enqueue(vb_dev_info);
+ +
+  		if (!page) {
+- 			if (printk_ratelimit())
+- 				dev_printk(KERN_INFO, &vb->vdev->dev,
+- 					   "Out of puff! Can't get %u pages\n",
+- 					   VIRTIO_BALLOON_PAGES_PER_PAGE);
++ 			dev_info_ratelimited(&vb->vdev->dev,
+ -					     "Out of puff! Can't get %zu pages\n",
+ -					     num);
+++					     "Out of puff! Can't get %u pages\n",
+++					     VIRTIO_BALLOON_PAGES_PER_PAGE);
+  			/* Sleep for at least 1/5 of a second before retry. */
+  			msleep(200);
+  			break;
 
---Signature=_Thu__13_Dec_2012_12_37_55_+1100_CZfapUg2lWfWOWy5
+--Signature=_Thu__13_Dec_2012_13_05_03_+1100_iWyRJ+pFYZ9=yoX2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQyTFzAAoJEECxmPOUX5FE7+IP/2+Ghpn6N8O9Dopp87EeqnMw
-Hx6Ec0t+GFFDGby349bOzEeJgOWUybncyk3kHT24NvXiMk33UKjPz7Dj/GUTuoam
-pJGTT2PjK/PzqopO/T8eBcU31YUjit/rcGpDYQAstjxhQDRD0GNLdXydLnc+0Hh6
-9PlvOBNTncB+0avv3mMTe4KL4JxuRebEytFdp/wgOyUF0uZVINeXxaY5+Vx7Ssnv
-xIgx2yoiqd5wzuMirQqSLYPmIr+cXs5kbCWuEUgEy0E0VlbOXfK7k1FIrY3/4tRq
-1MO4m3ZRTMayDQyoCLUBPDM+3wDZqHQNVfKDK5dltprFE4/86rFZAAuBhXZDt7Qp
-6/AR/ouYOKuoQsGdMFc02qsKCeXloSeLf3AD4OckUcZYJ5KEbioamMHloDU/ncPP
-T5dtq6YZtBnMkRNTBiJ8HtBm2HykdBjcPyzTSESpkYfEM1Cmo6fNikdt0ZHHM6LS
-K8JdFsUoQi4ohAFLH6e6A+axLtWDsEBArwWNJFZh43ZWggzOuN+B3lmq2RLzeLbL
-96DfMomgueTE+ysQi2y1HogIWPR/+R/Os4/B0c1VkOBHH5JkNlUkDJuuBx0EOm1s
-k3/035+HI744mFEApvmc4uHkbi5+qY0kOw3FWdi5td3iQtP7oRJhcS34bdOnvWwT
-qzrBEIDfJMWc5GnhJeQX
-=cdWg
+iQIcBAEBCAAGBQJQyTfPAAoJEECxmPOUX5FEfg4P/R3sdKwXHaVoxIGQYLfukShp
+9LKAeFlf7xPwIbg7IntJsAQqtajlEddSVgt0A86PgaQuYehkiXdS8qFWHqOUZ7e2
+quCJ1f48F3YTP6ECBm/crIXM2uq8sCUbLSpfLRs9zIVTEChrrU9+mYQh4cXLnn1z
+YUEOAOOyNoDzYsHjLOaMhJ/guY31eZakr3JiiDgUyBSXWhco8zMOsBGB4eydi8M0
+C/v5JwHOM4g7ppexm2D+qC4QMEZSLJ3wU+eZ7UVF0KIJw23+oZUNpI4mhWZQ8tN0
+Lr0eHhn+9d6PPSGe+ORKkzCXthr1DyMdOBJLmYMmtMkmjVppZY2Cv08nYBSRuLuI
+bp2rXxAeTblhvKjTvxmxRfWwvknqFB2UETvlXa4uxCP1gznMMb+OWqdCOiUiZGOL
+Ks5mZrx/yxwEdHgfx70uF3N93Rqp2TKHIy/nsEji746ZCCGa/3yra+9Q1erORQb+
+qF/5+ND3RcTDfZ8MWKzJvYON+ufA+ysWtQFGoso+099cs6+7c5jmPBc0gT8nIHxl
+Lcbs1wXCT48IATLgmvrgc+wg/HQoWH6DX3iv9MALkAJhmRwJXxRvD+2t1XNrrMiW
+8eQUk60SEuUyhRY2Y07WQCMZjNHYffouI2o+fNWdsUHJ+MHGLHzBIo1uxObbCL7q
+pApomrCSPGEnC9TuD5pY
+=fVaz
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__13_Dec_2012_12_37_55_+1100_CZfapUg2lWfWOWy5--
+--Signature=_Thu__13_Dec_2012_13_05_03_+1100_iWyRJ+pFYZ9=yoX2--
