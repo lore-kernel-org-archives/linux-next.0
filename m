@@ -1,107 +1,106 @@
-From: Murali Karicheri <m-karicheri2@ti.com>
-Subject: Re: linux-next: manual merge of the l2-mtd tree with Linus' tree
-Date: Thu, 13 Dec 2012 10:15:32 -0500
-Message-ID: <50C9F114.4050502@ti.com>
-References: <20121213123755.db3d38128e0593a372ccf17f@canb.auug.org.au> <F3DBB1B3EF102E4994C89758CFCA32412A304D@DBDE01.ent.ti.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Fri, 14 Dec 2012 10:32:56 +1100
+Message-ID: <20121214103256.ce307015fd09961ad82346f9@canb.auug.org.au>
+References: <20121127004948.6e7973525843529de827ed0e@canb.auug.org.au>
+	<1353940512.22512.38.camel@fedora>
+	<20121127100530.20174586b57ef55da58608d4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__14_Dec_2012_10_32_56_+1100_TcmBkA6F/Nq6.NSi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:33480 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755587Ab2LMPPk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Dec 2012 10:15:40 -0500
-In-Reply-To: <F3DBB1B3EF102E4994C89758CFCA32412A304D@DBDE01.ent.ti.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37499 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750860Ab2LMXdF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Dec 2012 18:33:05 -0500
+In-Reply-To: <20121127100530.20174586b57ef55da58608d4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Kumar, Anil" <anilkumar.v@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Artem Bityutskiy <dedekind1@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>
+To: Steven Rostedt <srostedt@redhat.com>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 12/13/2012 12:38 AM, Kumar, Anil wrote:
-> On Thu, Dec 13, 2012 at 07:07:55, Stephen Rothwell wrote:
->> Hi Artem,
->>
->> Today's linux-next merge of the l2-mtd tree got a conflict in
->> Documentation/devicetree/bindings/arm/davinci/nand.txt between commit
->> fed16bba8726 ("mtd: nand: davinci: fix the binding documentation") from
->> Linus' tree and commit 192afdbfbc5c ("mtd: davinci: add support for
->> parition binding nodes") from the l2-mtd tree.
->>
->> I fixed it up (maybe- see below) and can carry the fix as necessary (no
->> action is required).
->>
->> -- 
->> Cheers,
->> Stephen Rothwell                    sfr@canb.auug.org.au
->>
->> diff --cc Documentation/devicetree/bindings/arm/davinci/nand.txt
->> index 49fc7ad,4746452..0000000
->> --- a/Documentation/devicetree/bindings/arm/davinci/nand.txt
->> +++ b/Documentation/devicetree/bindings/arm/davinci/nand.txt
->> @@@ -23,16 -23,37 +23,24 @@@ Recommended properties
->>    - ti,davinci-nand-buswidth: buswidth 8 or 16
->>    - ti,davinci-nand-use-bbt: use flash based bad block table support.
->>
->> + nand device bindings may contain additional sub-nodes describing
->> + partitions of the address space. See partition.txt for more detail.
->> +
->>   -Example (enbw_cmc board):
->>   -aemif@60000000 {
->>   -	compatible = "ti,davinci-aemif";
->>   -	#address-cells =<2>;
->>   -	#size-cells =<1>;
->>   -	reg =<0x68000000 0x80000>;
->>   -	ranges =<2 0 0x60000000 0x02000000
->>   -		  3 0 0x62000000 0x02000000
->>   -		  4 0 0x64000000 0x02000000
->>   -		  5 0 0x66000000 0x02000000
->>   -		  6 0 0x68000000 0x02000000>;
->>   -	nand@3,0 {
->>   -		compatible = "ti,davinci-nand";
->>   -		reg =<3 0x0 0x807ff
->>   -			6 0x0 0x8000>;
->>   -		#address-cells =<1>;
->>   -		#size-cells =<1>;
->>   -		ti,davinci-chipselect =<1>;
->>   -		ti,davinci-mask-ale =<0>;
->>   -		ti,davinci-mask-cle =<0>;
->>   -		ti,davinci-mask-chipsel =<0>;
->>   -		ti,davinci-ecc-mode = "hw";
->>   -		ti,davinci-ecc-bits =<4>;
->>   -		ti,davinci-nand-use-bbt;
->>   +Example(da850 EVM ):
->>   +nand_cs3@62000000 {
->>   +	compatible = "ti,davinci-nand";
->>   +	reg =<0x62000000 0x807ff
->>   +		0x68000000 0x8000>;
->>   +	ti,davinci-chipselect =<1>;
->>   +	ti,davinci-mask-ale =<0>;
->>   +	ti,davinci-mask-cle =<0>;
->>   +	ti,davinci-mask-chipsel =<0>;
->>   +	ti,davinci-ecc-mode = "hw";
->>   +	ti,davinci-ecc-bits =<4>;
->>   +	ti,davinci-nand-use-bbt;
->> +
->>   -		partition@180000 {
->>   -			label = "ubifs";
->>   -			reg =<0x180000 0x7e80000>;
->>   -		};
->> ++	partition@180000 {
->> ++		label = "ubifs";
->> ++		reg =<0x180000 0x7e80000>;
-> partition@180000 is sub-node of nand_cs3@62000000.
-> nand_cs3@62000000 needs to use below properties
->
-> #address-cells =<1>;
-> #size-cells =<1>;
->
-> Without these properties DT build will give reg format Warning.
->
->> + 	};
->>    };
->>
-Anul,
+--Signature=_Fri__14_Dec_2012_10_32_56_+1100_TcmBkA6F/Nq6.NSi
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Could you point me to a corresponding driver commit id?
+Hi Steve, Greg,
 
-Murali
+On Tue, 27 Nov 2012 10:05:30 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Mon, 26 Nov 2012 09:35:12 -0500 Steven Rostedt <srostedt@redhat.com> w=
+rote:
+> >
+> > On Tue, 2012-11-27 at 00:49 +1100, Stephen Rothwell wrote:
+> > >=20
+> > > After merging the final tree, today's linux-next build (powerpc
+> > > allyesconfig) failed like this:
+> > >=20
+> > > In file included from drivers/staging/sb105x/sb_pci_mp.c:1:0:
+> > > drivers/staging/sb105x/sb_pci_mp.h:22:25: fatal error: asm/segment.h:=
+ No such file or directory
+> >=20
+> > I haven't tested this with any other arch than x86. That said, what
+> > about this instead:
+> >=20
+> > > Caused by commit 68a81291ff66 ("staging: Add SystemBase Multi-2/PCI
+> > > driver").
+> > >=20
+> > > I have disabled this driver with this patch:
+> > >=20
+> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Date: Tue, 27 Nov 2012 00:45:07 +1100
+> > > Subject: [PATCH] disable the SB105X driver
+> > >=20
+> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > ---
+> > >  drivers/staging/sb105x/Kconfig |    1 +
+> > >  1 file changed, 1 insertion(+)
+> > >=20
+> > > diff --git a/drivers/staging/sb105x/Kconfig b/drivers/staging/sb105x/=
+Kconfig
+> > > index ac87c5e..c957e32 100644
+> > > --- a/drivers/staging/sb105x/Kconfig
+> > > +++ b/drivers/staging/sb105x/Kconfig
+> > > @@ -2,6 +2,7 @@ config SB105X
+> > >  	tristate "SystemBase PCI Multiport UART"
+> > >  	select SERIAL_CORE
+> > >  	depends on PCI
+> > > +	depends on BROKEN
+> >=20
+> > 	depends on X86
+> >=20
+> > You can add my SOB if you want. I don't care either way.
+>=20
+> Please just send a (tested) patch to Greg.
+
+This now breaks Linus' tree .....
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__14_Dec_2012_10_32_56_+1100_TcmBkA6F/Nq6.NSi
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQymWoAAoJEECxmPOUX5FEsuwQAJKo4xn+fwiYQIpCdUlviAIm
+q/UFwQH5D3sKtysnVBbR3cqRCmExyVZTpWU5N93Kcw01qXsQxcsSBzJHVfOR9Biy
+RKG6kBZuYwIu4FmWJCy0wKHY9lqVNpVBSdiEH5weZ7oFCupk3XNh9AxxgijijvKz
+G6JUgcCX3wUg5vZ/GsIy5boPYZmc7PnG5s0ypydNM5HzsrYeziz5wU0L5C/7b6CU
+JwrR6EFP4h7oDdW7g+Z0VyMtmwT7ZLbAWZ4LBwxInUIzGzmW9j21yKu4T0h+o1b7
+eWYvJ8gpQOzwFUd2qNDBIX2n2Sz2e0jOHd7Hq9KjinU2hK174RwLG0YVs/1NpQqj
+TXJ9U9XnQmT0JgiaIMsIySk121unn+8VpEU3OcmDDohDGozxwQTMMeRGRJzE6RUI
+pxexHWel47O6SgjEfJY2RuWVYTVrZWz6TrUJMT0a5A3v5kPBCwSCyqmYWBbmog6/
+MjWGSVPyn60Py96RN2OFSaX5ERlVxNaDWePoux+ExwaFL3DXLo1HZKMTVCNXzb/4
+hU+vOSoYe0VToD5zsn6/38RwwlnagSHdXxDaxKeMHOI0TJaLX9MkQvhma/afP0Em
+vWCawwpjMAA6YspVDmRo+fOLNSZ3Qh21qJGRZ2DKVNhG/Pm3s6XE8w2S/eDT3fQE
+FqhHmh43QcCcMSfzUekW
+=kar7
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__14_Dec_2012_10_32_56_+1100_TcmBkA6F/Nq6.NSi--
