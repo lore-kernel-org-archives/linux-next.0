@@ -1,79 +1,59 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Thu, 13 Dec 2012 15:38:35 -0800
-Message-ID: <20121213233835.GA515@kroah.com>
-References: <20121127004948.6e7973525843529de827ed0e@canb.auug.org.au>
- <1353940512.22512.38.camel@fedora>
- <20121127100530.20174586b57ef55da58608d4@canb.auug.org.au>
- <20121214103256.ce307015fd09961ad82346f9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the xtensa tree with Linus' tree
+Date: Fri, 14 Dec 2012 11:06:39 +1100
+Message-ID: <20121214110639.15cc0e084c3291527dfba13b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__14_Dec_2012_11_06_39_+1100_m3gmlEkIA/hxYxdq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:47176 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754757Ab2LMXii (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Dec 2012 18:38:38 -0500
-Content-Disposition: inline
-In-Reply-To: <20121214103256.ce307015fd09961ad82346f9@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:57465 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756361Ab2LNAGt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Dec 2012 19:06:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <srostedt@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chris Zankel <chris@zankel.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-On Fri, Dec 14, 2012 at 10:32:56AM +1100, Stephen Rothwell wrote:
-> Hi Steve, Greg,
-> 
-> On Tue, 27 Nov 2012 10:05:30 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Mon, 26 Nov 2012 09:35:12 -0500 Steven Rostedt <srostedt@redhat.com> wrote:
-> > >
-> > > On Tue, 2012-11-27 at 00:49 +1100, Stephen Rothwell wrote:
-> > > > 
-> > > > After merging the final tree, today's linux-next build (powerpc
-> > > > allyesconfig) failed like this:
-> > > > 
-> > > > In file included from drivers/staging/sb105x/sb_pci_mp.c:1:0:
-> > > > drivers/staging/sb105x/sb_pci_mp.h:22:25: fatal error: asm/segment.h: No such file or directory
-> > > 
-> > > I haven't tested this with any other arch than x86. That said, what
-> > > about this instead:
-> > > 
-> > > > Caused by commit 68a81291ff66 ("staging: Add SystemBase Multi-2/PCI
-> > > > driver").
-> > > > 
-> > > > I have disabled this driver with this patch:
-> > > > 
-> > > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > Date: Tue, 27 Nov 2012 00:45:07 +1100
-> > > > Subject: [PATCH] disable the SB105X driver
-> > > > 
-> > > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > ---
-> > > >  drivers/staging/sb105x/Kconfig |    1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/drivers/staging/sb105x/Kconfig b/drivers/staging/sb105x/Kconfig
-> > > > index ac87c5e..c957e32 100644
-> > > > --- a/drivers/staging/sb105x/Kconfig
-> > > > +++ b/drivers/staging/sb105x/Kconfig
-> > > > @@ -2,6 +2,7 @@ config SB105X
-> > > >  	tristate "SystemBase PCI Multiport UART"
-> > > >  	select SERIAL_CORE
-> > > >  	depends on PCI
-> > > > +	depends on BROKEN
-> > > 
-> > > 	depends on X86
-> > > 
-> > > You can add my SOB if you want. I don't care either way.
-> > 
-> > Please just send a (tested) patch to Greg.
-> 
-> This now breaks Linus' tree .....
+--Signature=_Fri__14_Dec_2012_11_06_39_+1100_m3gmlEkIA/hxYxdq
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ugh, can someone send me a patch to forward to Linus to fix this please?
-Steven, how about fixing the problem properly?
+Hi Chris,
 
-thanks,
+Today's linux-next merge of the xtensa tree got a conflict in
+arch/xtensa/kernel/process.c between commit 3e41f9ba611c ("xtensa: switch
+to generic clone()") from Linus' tree and commit 8daa277ae436 ("xtensa:
+clean up files to make them code-style compliant") from the xtensa tree.
 
-greg k-h
+The former removes the function that is fixed up by the latter, so I just
+removed it and can carry the fix as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__14_Dec_2012_11_06_39_+1100_m3gmlEkIA/hxYxdq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQym2PAAoJEECxmPOUX5FEOEoP/RtVGmo3IFGzw83dxWqRqT4E
+u5u459zqomduB8SxXnlmt0dNy2k+rdCE3SYjZ4Q2/4KReGCgJV8/r+wRcUyHhPd5
+8FBRHW8DHQHo9kxqxn0RA0CggBB72Cx5S+VBRraOPo6Ih3F63HjyUqRQtse8c0Cv
+s1sXkhatbcuRJGTU9XItKAw0Kt0gjlOyBxA5lH24VMjPOxB37qXXKGRLV1pP19SS
+u6QzgliVHmUAW3etXOPVI6etLdy7nH04CPKrLVHMdbBxDLIsZmnB8sQ1rM1py55D
+IU8qoWL3kczfRLQ5UvsoYxbeWv1OROaUON08F61L7PVCMnLYzgJ+snQ0G8DorJ7D
+C7s91iHc9/XZaVwT0ZARb8VNgS7i/GaS2qd9ey1U8zpeWS3ccNRPCLH8tojqbdtE
+FDZ/Z51yWmc3EFY2E7DswUqahTdLmW8E9qlyusBkhToc05Qz+2zLimPIhHXKm3fi
+EOL9u+ufY7pBNPw7chQOgUOQTzpZ5ZNPsUhmH1anGULUllBOUW5IGV9pVm/tSltW
+XH04jOAuthSvvyuaEg41aETA5RK79qHEkAtqYPE/6U4yjXwuMSZG/4FddLt+ICYA
+UwHHj+MBAriuIRaHTrVM2JeXAG99+d5iJUctDZJssp8lnXp9AvEScphqGYMi52Dq
++EpYP6Poju3AsNdBtNOw
+=wvHi
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__14_Dec_2012_11_06_39_+1100_m3gmlEkIA/hxYxdq--
