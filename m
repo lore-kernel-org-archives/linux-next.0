@@ -1,53 +1,40 @@
-From: John Linn <John.Linn@xilinx.com>
-Subject: RE: linux-next: fetch failure the xilinx tree
-Date: Fri, 14 Dec 2012 00:11:53 +0000
-Message-ID: <09cbc642-239b-4e0f-b863-66821b09954c@CH1EHSMHS012.ehs.local>
-References: <20121209162442.15fbb8509569c193bfd88986@canb.auug.org.au>
-	<50C5F1CE.30402@metafoo.de>
- <20121214111027.d191eaa1799c0ce194aacfa7@canb.auug.org.au>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH] staging: Make SystemBase PCI Multiport UART only for x86
+Date: Thu, 13 Dec 2012 19:57:55 -0500
+Message-ID: <1355446675.17101.388.camel@gandalf.local.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ch1ehsobe006.messaging.microsoft.com ([216.32.181.186]:21842
-	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751120Ab2LNAME convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Dec 2012 19:12:04 -0500
-In-Reply-To: <20121214111027.d191eaa1799c0ce194aacfa7@canb.auug.org.au>
-Content-Language: en-US
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:25310 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753753Ab2LNA54 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Dec 2012 19:57:56 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Michal Simek <michals@xilinx.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>
 
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Thursday, December 13, 2012 4:10 PM
-> To: John Linn
-> Cc: Lars-Peter Clausen; linux-kernel@vger.kernel.org; linux-next@vger.kernel.org
-> Subject: Re: linux-next: fetch failure the xilinx tree
-> 
-> Hi John,
-> 
-> On Mon, 10 Dec 2012 15:29:34 +0100 Lars-Peter Clausen <lars@metafoo.de> wrote:
-> >
-> > On 12/09/2012 06:24 AM, Stephen Rothwell wrote:
-> > >
-> > > Attempting to fetch the xilinx tree produces this error (and has for some
-> > > days, now):
-> > >
-> > > fatal: The remote end hung up unexpectedly
-> >
-> > They renamed the repository from linux-2.6-xlnx to linux-xlnx. I stumbled
-> > over it as well.
-> 
-> Is this the correct thing for me to do?
+The sb105x SystemBase PCI UART driver in staging has code specific for
+x86. This breaks allyesconfig builds for other archs. For now, the quick
+fix is simply to make this driver depend on x86.
 
-Yes that's right, thanks.
+When I get time, I'll swap this card out of my main machine and put it
+into my PowerPC64 box, and get it working there. Then it may become a
+good samaritan and play nice with other archs.
 
--- John
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+diff --git a/drivers/staging/sb105x/Kconfig b/drivers/staging/sb105x/Kconfig
+index ac87c5e..1facad6 100644
+--- a/drivers/staging/sb105x/Kconfig
++++ b/drivers/staging/sb105x/Kconfig
+@@ -2,6 +2,7 @@ config SB105X
+ 	tristate "SystemBase PCI Multiport UART"
+ 	select SERIAL_CORE
+ 	depends on PCI
++	depends on X86
+ 	help
+ 	  A driver for the SystemBase Multi-2/PCI serial card
+ 
