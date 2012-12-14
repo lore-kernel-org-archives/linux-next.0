@@ -1,42 +1,53 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: linux-next: unusual update of the security tree
-Date: Fri, 14 Dec 2012 14:11:10 +1100 (EST)
-Message-ID: <alpine.LRH.2.02.1212141411040.16084@tundra.namei.org>
-References: <20121128101635.d5e864dffc4252ef9d5e1664@canb.auug.org.au> <50B5508D.7050409@schaufler-ca.com> <20121128110132.0082c87680b9b714b8c0689c@canb.auug.org.au> <alpine.LRH.2.02.1212070024460.4693@tundra.namei.org> <CA+55aFwJDtofV36R_ot8qj31BCGwBgDsGOKRkMRhRLamf5M+mw@mail.gmail.com>
- <alpine.LRH.2.02.1212071020050.7590@tundra.namei.org> <20121213132438.7a70a114233057ce22982b7b@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: some merging notes
+Date: Fri, 14 Dec 2012 12:29:49 +1030
+Message-ID: <87zk1h2y22.fsf@rustcorp.com.au>
+References: <20121212091552.02c72c8926f9f9147b080d68@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:50261 "EHLO tundra.namei.org"
+Received: from ozlabs.org ([203.10.76.45]:59469 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754383Ab2LNDDu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Dec 2012 22:03:50 -0500
-In-Reply-To: <20121213132438.7a70a114233057ce22982b7b@canb.auug.org.au>
+	id S1755708Ab2LNDvq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Dec 2012 22:51:46 -0500
+In-Reply-To: <20121212091552.02c72c8926f9f9147b080d68@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Casey Schaufler <casey@schaufler-ca.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, 13 Dec 2012, Stephen Rothwell wrote:
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> The virtio tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/rusty/linux.git#virtio-next)
+> has a conflict with the net-next tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master)
+> that requires the following extra fix up patch:
+>
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 33d6f6f..8afe32d 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -147,7 +147,7 @@ struct padded_vnet_hdr {
+>   */
+>  static int vq2txq(struct virtqueue *vq)
+>  {
+> -	return (virtqueue_get_queue_index(vq) - 1) / 2;
+> +	return (vq->index - 1) / 2;
+>  }
+>  
+>  static int txq2vq(int txq)
+> @@ -157,7 +157,7 @@ static int txq2vq(int txq)
+>  
+>  static int vq2rxq(struct virtqueue *vq)
+>  {
+> -	return virtqueue_get_queue_index(vq) / 2;
+> +	return vq->index / 2;
+>  }
 
-> Hi James,
-> 
-> On Fri, 7 Dec 2012 10:21:31 +1100 (EST) James Morris <jmorris@namei.org> wrote:
-> >
-> > On Thu, 6 Dec 2012, Linus Torvalds wrote:
-> > 
-> > > Have people pulled that thing into anything else? Because quite
-> > > frankly, I think it's unsalvageable except with a rebase.
-> > 
-> > AFAIK, only developers such as Casey will have pulled it for development 
-> > purposes.
-> > 
-> > And sorry, I should be checking the trees I pull from more carefully.
-> 
-> Are you going to fix this before asking Linus to pull?
+I had to fold in a fix to another commit, so I also altered the commit
+which removed virtqueue_get_queue_index().  I'll remove it next time.
 
-Yes.
+I'll give it a couple of days in -next to be sure.
 
--- 
-James Morris
-<jmorris@namei.org>
+Thanks,
+Rusty.
