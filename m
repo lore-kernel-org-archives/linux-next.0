@@ -1,69 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: fetch failure the xilinx tree
-Date: Fri, 14 Dec 2012 11:10:27 +1100
-Message-ID: <20121214111027.d191eaa1799c0ce194aacfa7@canb.auug.org.au>
-References: <20121209162442.15fbb8509569c193bfd88986@canb.auug.org.au>
-	<50C5F1CE.30402@metafoo.de>
+From: Steven Rostedt <srostedt@redhat.com>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Thu, 13 Dec 2012 19:11:29 -0500
+Message-ID: <1355443890.22512.48.camel@fedora>
+References: <20121127004948.6e7973525843529de827ed0e@canb.auug.org.au>
+	 <1353940512.22512.38.camel@fedora>
+	 <20121127100530.20174586b57ef55da58608d4@canb.auug.org.au>
+	 <20121214103256.ce307015fd09961ad82346f9@canb.auug.org.au>
+	 <20121213233835.GA515@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__14_Dec_2012_11_10_27_+1100_FkFJu2dA5sgRNdHb"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48359 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750860Ab2LNAKb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Dec 2012 19:10:31 -0500
-In-Reply-To: <50C5F1CE.30402@metafoo.de>
+Received: from mx1.redhat.com ([209.132.183.28]:23841 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752872Ab2LNALh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Dec 2012 19:11:37 -0500
+In-Reply-To: <20121213233835.GA515@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: John Linn <John.Linn@xilinx.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__14_Dec_2012_11_10_27_+1100_FkFJu2dA5sgRNdHb
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2012-12-13 at 15:38 -0800, Greg KH wrote:
 
-Hi John,
+> Ugh, can someone send me a patch to forward to Linus to fix this please?
+> Steven, how about fixing the problem properly?
 
-On Mon, 10 Dec 2012 15:29:34 +0100 Lars-Peter Clausen <lars@metafoo.de> wro=
-te:
->
-> On 12/09/2012 06:24 AM, Stephen Rothwell wrote:
-> >=20
-> > Attempting to fetch the xilinx tree produces this error (and has for so=
-me
-> > days, now):
-> >=20
-> > fatal: The remote end hung up unexpectedly
->=20
-> They renamed the repository from linux-2.6-xlnx to linux-xlnx. I stumbled
-> over it as well.
+Yeah, ugh, I should have sent the fix earlier :-(
 
-Is this the correct thing for me to do?
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I've just been hammering at bugs for the people that pay me ;-)
 
---Signature=_Fri__14_Dec_2012_11_10_27_+1100_FkFJu2dA5sgRNdHb
-Content-Type: application/pgp-signature
+OK, I'll whip up a patch that should at least fix the issue for the time
+being.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQym5zAAoJEECxmPOUX5FERRAP/R+ePLKApoAX9+sYOXHVKp/l
-/a0DPsn2YLROCSF7K5/I/DUI3P7CvE+AiErKOyer3+7iFmZ8lM7RGZp77mnFmXhq
-8wD9/GBlPWExqXcad2ZKsYiYLYrsJsJUd24/WFjpAv2cKWXU1kWLNvXGX1VTLAz4
-Lc4Q/Vj8fqPzS8TTc6uueYS/IB51X4jizSVSi70tDlGrDOsQGQ9vG2aCm1LFRNHW
-rN8LoRdwpeFDL9LRtllz6Rg6HsDYlvJBMHp7ST5J9Vetv01VP/g6fSCBQU5Wc/Ew
-ZnjYoYhxfbFnB1Hb+C/mCLIEuD5rfrafZOLn7HM9XiJP9myFqVnystlUlgIF4bvL
-bCR79vUA/1BRBH8tB5b6pjO4WXgHj1jJHRMOkpOWIf4nbO7pJo7fdZUXQCtmupMH
-WtTUEwNhiIdwn0/JrF3t4IK8tJ49d/efUS8EOC8u/EyPtP1IPfJPLLQB/9tRDl7D
-zCTvDe4uScm/FZ3y7jBBS8E5i93KWvoOtGN1iGEYrO3XIpm7EOt84kZCoqrSsuX3
-8RBUIrCVfkRSQgtpkwAckofZy+FdquauwrCf99+i005tS//vJxcvfhLneQKrvzvz
-cn/bseusmaX+8zY6td5IOdcSVq8S8qBTolaSVYF5mCzAg1pqScTVkXs/x3eiQNss
-9HmlfKeG0uOOhLPvMHKh
-=J1cn
------END PGP SIGNATURE-----
-
---Signature=_Fri__14_Dec_2012_11_10_27_+1100_FkFJu2dA5sgRNdHb--
+-- Steve
