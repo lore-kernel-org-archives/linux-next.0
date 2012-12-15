@@ -1,92 +1,103 @@
 From: Arvind R <arvino55@gmail.com>
-Subject: [PATCH 3.7.0 5/9] i82975x_edac: optimise mode detection
-Date: Sun, 16 Dec 2012 02:12:51 +0530
-Message-ID: <CAA_L+UPvp8i6SaATD=uQmvYeEp6vbYGBFM=LRE1MWCMGff5JkA@mail.gmail.com>
+Subject: [PATCH 3.7.0 6/9] i82975x_edac: unmap pcibar after init
+Date: Sun, 16 Dec 2012 02:13:50 +0530
+Message-ID: <CAA_L+UNv8duQfoVjgReOmN3jmwV_icJGayFXB2BE55y8sYwjGQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:52930 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752066Ab2LOUmw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 15 Dec 2012 15:42:52 -0500
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:35103 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751885Ab2LOUnv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 15 Dec 2012 15:43:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-Subject: [PATCH 3.7.0 5/9] i82975x_edac: optimise mode detection
+Subject: [PATCH 3.7.0 6/9] i82975x_edac: unmap pcibar after init
 
-Minor optimisation of dual channel symmetric operation. Return
-value changed to bool.
+Remove the unnecessary mapped window in private data structure.
+Then the window can be unmapped right after driver initialisation
+is done.
 Signed-off-by: Arvind R. <arvino55@gmail.com>
 ---
- i82975x_edac.c |   45 ++++++++++++++++++++----------------------
- 1 file changed, 22 insertions(+), 23 deletions(-)
+ i82975x_edac.c |   24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
---- a/drivers/edac/i82975x_edac.c	2012-12-15 22:14:18.000000000 +0530
-+++ b/drivers/edac/i82975x_edac.c	2012-12-15 22:17:12.000000000 +0530
-@@ -31,6 +31,7 @@
+--- a/drivers/edac/i82975x_edac.c	2012-12-16 00:09:23.000000000 +0530
++++ b/drivers/edac/i82975x_edac.c	2012-12-16 00:08:52.000000000 +0530
+@@ -205,11 +205,11 @@ NOTE: Only ONE of the three must be enab
+ #define I82975X_DRC_CH1M1		0x1A4
 
- #define I82975X_NR_DIMMS		8
- #define I82975X_NR_CSROWS(nr_chans)	(I82975X_NR_DIMMS / (nr_chans))
-+#define	I82975X_NR_CSROWS_PER_CHANNEL	4
+ enum i82975x_chips {
+-	I82975X = 0,
++	I82975X_chip = 0,
+ };
 
- /* Intel 82975X register addresses - device 0 function 0 - DRAM Controller */
- #define I82975X_EAP		0x58	/* Dram Error Address Pointer (32b)
-@@ -337,29 +338,6 @@ static void i82975x_check(struct mem_ctl
- 	i82975x_process_error_info(mci, &info, 1);
+ struct i82975x_pvt {
+-	void __iomem *mch_window;
++	enum i82975x_chips chip;
+ };
+
+ struct i82975x_dev_info {
+@@ -227,7 +227,7 @@ struct i82975x_error_info {
+ };
+
+ static const struct i82975x_dev_info i82975x_devs[] = {
+-	[I82975X] = {
++	[I82975X_chip] = {
+ 		.ctl_name = "i82975x"
+ 	},
+ };
+@@ -588,7 +588,7 @@ static int i82975x_probe1(struct pci_dev
+ 	mci->edac_check = i82975x_check;
+ 	mci->ctl_page_to_phys = NULL;
+ 	pvt = (struct i82975x_pvt *) mci->pvt_info;
+-	pvt->mch_window = mch_window;
++	pvt->chip = dev_idx;
+ 	i82975x_init_csrows(mci, pdev, mch_window);
+ 	mci->scrub_mode = SCRUB_HW_SRC;
+ 	i82975x_get_error_info(mci, &discard);  /* clear counters */
+@@ -596,15 +596,13 @@ static int i82975x_probe1(struct pci_dev
+ 	/* finalize this instance of memory controller with edac core */
+ 	if (edac_mc_add_mc(mci)) {
+ 		edac_dbg(0, "MC%d failed add_mc()\n", dev_idx);
+-		goto fail2;
++		edac_mc_free(mci);
++		goto fail1;
+ 	}
+
+ 	/* get this far and it's successful */
+ 	edac_dbg(3, "MC%d success\n", dev_idx);
+-	return 0;
+-
+-fail2:
+-	edac_mc_free(mci);
++	rc = 0;
+
+ fail1:
+ 	iounmap(mch_window);
+@@ -632,23 +630,17 @@ static int __devinit i82975x_init_one(st
+ static void __devexit i82975x_remove_one(struct pci_dev *pdev)
+ {
+ 	struct mem_ctl_info *mci;
+-	struct i82975x_pvt *pvt;
+
+ 	mci = edac_mc_del_mc(&pdev->dev);
+ 	if (mci  == NULL)
+ 		return;
+-
+-	pvt = mci->pvt_info;
+-	if (pvt->mch_window)
+-		iounmap( pvt->mch_window );
+-
+ 	edac_mc_free(mci);
  }
 
--/* Return 1 if dual channel mode is active.  Else return 0. */
--static int dual_channel_active(void __iomem *mch_window)
--{
--	/*
--	 * We treat interleaved-symmetric configuration as dual-channel - EAP's
--	 * bit-0 giving the channel of the error location.
--	 *
--	 * All other configurations are treated as single channel - the EAP's
--	 * bit-0 will resolve ok in symmetric area of mixed
--	 * (symmetric/asymmetric) configurations
--	 */
--	u8	drb[4][2];
--	int	row;
--	int    dualch;
--
--	for (dualch = 1, row = 0; dualch && (row < 4); row++) {
--		drb[row][0] = readb(mch_window + I82975X_DRB + row);
--		drb[row][1] = readb(mch_window + I82975X_DRB + row + 0x80);
--		dualch = dualch && (drb[row][0] == drb[row][1]);
--	}
--	return dualch;
--}
--
- static void i82975x_init_csrows(struct mem_ctl_info *mci,
- 		struct pci_dev *pdev, void __iomem *mch_window)
- {
-@@ -527,6 +505,27 @@ static void i82975x_print_dram_timings(v
- }
- #endif
-
-+/* Return 1 if dual channel mode is active.  Else return 0. */
-+static bool dual_channel_active(void __iomem *mch_window)
-+{
-+	/*
-+	 * We treat interleaved-symmetric configuration as dual-channel.
-+	 * All other configurations are virtual single channel mode.
-+	 * bit-0 of EAP always provides the real channel in error.
-+	 */
-+	u8	drb[2];
-+	int	row;
-+	bool    dualch;
-+
-+	for (dualch = 1, row = 0; dualch &&
-+			(row < I82975X_NR_CSROWS_PER_CHANNEL); row++) {
-+		drb[0] = readb(mch_window + I82975X_DRB + row);
-+		drb[1] = readb(mch_window + I82975X_DRB + row + 0x80);
-+		dualch &= (drb[0] == drb[1]);
-+	}
-+	return dualch;
-+}
-+
- static int i82975x_probe1(struct pci_dev *pdev, int dev_idx)
- {
- 	int rc = -ENODEV;
+ static DEFINE_PCI_DEVICE_TABLE(i82975x_pci_tbl) = {
+ 	{
+ 		PCI_VEND_DEV(INTEL, 82975_0), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+-		I82975X
++		I82975X_chip
+ 	},
+ 	{
+ 		0,
