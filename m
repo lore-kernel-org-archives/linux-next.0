@@ -1,39 +1,69 @@
-From: Arvind R <arvino55@gmail.com>
-Subject: [PATCH 3.7.0 9/9] i82975x_edac: set sw-scrub mode, bump rev.
-Date: Sun, 16 Dec 2012 02:16:27 +0530
-Message-ID: <CAA_L+UN2E3SL90PMynba-qA1fifBeVvTEy5tBVt543Uq80c5ng@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH 3.7.0 1/9] i82975x_edac.c: fix style errors
+Date: Sun, 16 Dec 2012 09:10:03 +1100
+Message-ID: <20121216091003.e9d2e3503e246ac714ef3419@canb.auug.org.au>
+References: <CAA_L+UP_CtY4wTnOGASwqb9PJnb9XyGpGauTKk6=wssagg1GPw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sun__16_Dec_2012_09_10_03_+1100_prJs6CU.IplVPVzz"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38032 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752040Ab2LOWKM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 15 Dec 2012 17:10:12 -0500
+In-Reply-To: <CAA_L+UP_CtY4wTnOGASwqb9PJnb9XyGpGauTKk6=wssagg1GPw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arvind R <arvino55@gmail.com>
+Cc: linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-Subject: [PATCH 3.7.0 9/9] i82975x_edac: set sw-scrub mode, bump rev.
+--Signature=_Sun__16_Dec_2012_09_10_03_+1100_prJs6CU.IplVPVzz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-update revision number and enable software scrub mode.
-Signed-off-by: Arvind R. <arvino55@gmail.com>
----
- i82975x_edac.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Arvind,
 
---- a/drivers/edac/i82975x_edac.c	2012-12-15 23:08:28.000000000 +0530
-+++ b/drivers/edac/i82975x_edac.c	2012-12-15 23:09:29.000000000 +0530
-@@ -16,7 +16,7 @@
- #include <linux/edac.h>
- #include "edac_core.h"
+On Sun, 16 Dec 2012 02:08:50 +0530 Arvind R <arvino55@gmail.com> wrote:
+>
+> Subject: [PATCH 3.7.0 1/9] i82975x_edac.c: fix style errors
+>=20
+> splits or shortens extra long lines in source.
 
--#define I82975X_REVISION	" Ver: 1.0.0"
-+#define I82975X_REVISION	" Ver: 2.0.0"
- #define EDAC_MOD_STR		"i82975x_edac"
+Don't do this, except for the one marked below, these add no value.  The
+line length is a guide.
 
- #define i82975x_printk(level, fmt, arg...) \
-@@ -586,7 +586,7 @@ static int i82975x_probe1(struct pci_dev
- 	pvt = (struct i82975x_pvt *) mci->pvt_info;
- 	pvt->chip = dev_idx;
- 	i82975x_init_csrows(mci, mch_window);
--	mci->scrub_mode = SCRUB_HW_SRC;
-+	mci->scrub_mode = SCRUB_SW_SRC;
- 	i82975x_get_error_info(mci, &discard);  /* clear counters */
+> -			snprintf(csrow->channels[chan]->dimm->label, EDAC_MC_LABEL_LEN, "DIMM=
+ %c%d",
+> +			snprintf(csrow->channels[chan]->dimm->label,
+> +				 EDAC_MC_LABEL_LEN, "DIMM %c%d",
 
- 	/* finalize this instance of memory controller with edac core */
+Only keep this one.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Sun__16_Dec_2012_09_10_03_+1100_prJs6CU.IplVPVzz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQzPU7AAoJEECxmPOUX5FEkp8P/2yQLxvJF9rbZz2seIc4FPi1
+JYtIzkn/2cZDvIZmUi0yqnv6BME5p0sjElZkt4J2OlgVMaJseDL6V4N7+8lWi0dn
+MdG/78ILPdTw/FAY9vAL3ryXzmT5PuSS3qfWmE5RqrMZmm8ge+n6ED99yDv7y2H7
+wOPdqtkNE3bWrFV+sa3CucnTspW6HZ3U2V5PRb+6/KRQVwoqru3soNmDw6jk2aCJ
+4lVoviImj8ERBIh/irFsyZ3VGUtodtKAQV8rZyhEA6zJB0OSgirOfXhxrGR1vSk7
+1M1mcDU6UA7ru16c0v8bfcU+693Xgmv6l4oMggRLVUpEfyMxgVkMCf/TaXTm6gdI
+8Gs3ZBPiqRKIabMTVgH0zY33meNaCcAoJ2NHUTFIkm93TPTyWjABybEW4+aNVodp
+2Xj/AMXotoR77mzsn3dffVUF3PPHVPd8Hs7k7Eg9lpoL8Dkl6oxnBh2ZfFwMGO66
+iNB2ZW8UG5DzVVJnSeSdEbtUHHuusHolFkQmSLPmo95Nh21N6JvCa/zsBaCuwjkI
+Cf+Zu/n5MoYvfir1gk7bFLUUJVr9SvieB6E/gF0tKNqA5GLpektUyfTrv/ySnEpq
+0MC84MTy6oyDFRO35s2LPlwzJBaMWRVO1elqrWuv9FfGrQMA6LF1bZlXKG6VJpW1
+r6FlI6tMXsLitGuc3lK+
+=zYGM
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__16_Dec_2012_09_10_03_+1100_prJs6CU.IplVPVzz--
