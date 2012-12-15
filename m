@@ -1,46 +1,66 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: mmotm 2012-12-14-17-51 uploaded (staging/sb105x)
-Date: Sat, 15 Dec 2012 01:00:27 -0500
-Message-ID: <1355551227.17101.411.camel@gandalf.local.home>
-References: <20121215015227.144C820004E@hpza10.eem.corp.google.com>
-	 <50CC0AC4.3080206@infradead.org>
+From: Arvind R <arvino55@gmail.com>
+Subject: [PATCH 3.7.0 0/9] i82975x_edac: driver cleanup
+Date: Sun, 16 Dec 2012 02:07:51 +0530
+Message-ID: <CAA_L+UNJ_zSaCvtvWSa_BriU9UYYPomWNXdGKOsoLPG6hTN=QA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50CC0AC4.3080206@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org
+To: linux-edac@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 2012-12-14 at 21:29 -0800, Randy Dunlap wrote:
-> On 12/14/12 17:52, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2012-12-14-17-51 has been uploaded to
-> > 
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > mmotm-readme.txt says
-> > 
-> > README for mm-of-the-moment:
-> > 
-> > http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> > 
-> 
-> 
-> (not from mmotm patches)
-> 
-> When CONFIG_PARPORT is not enabled:
-> 
-> drivers/built-in.o: In function `multi_init':
-> sb_pci_mp.c:(.init.text+0x162ac): undefined reference to `parport_pc_probe_port'
-> 
+Subject: [PATCH 3.7.0 0/9] i82975x_edac: driver cleanup
 
-I sent out a fix today. Thanks,
+This patchset cleans up the accumulated mess the driver has become.
+Currently, it does not crash, but serves no other purpose. This patch-set
+gets it to print correct DIMM labels on errors, and sync with the core
+w.r.t memory layout.
 
-https://lkml.org/lkml/2012/12/14/250
+It consists of 9 patches as follows:
+	1. fix style errors:
+	    clean up the source w.r.t. long lines
 
--- Steve
+	2. fix layers initialisation:
+		the wrong initialisation caused the fatal 3.6 crash that has been
+		temporarily fixed. The csrow_init func did not handle rows
+		exceeding 8 in number.
+		This patch sets channels as 1 or 2 and chip_select accordingly, so
+		that there are always 8 ranks of memory.
+
+	3. cleanup debug code:
+		Remove / modify debug levels to sane values. Fixes log flooding when
+		CONFIG_EDAC_DEBUG set.
+		Move local ifdef debug code to print DRAM settings into
+		CONFIG_EDAC_DEBUG section.
+
+	4. remove unnecessary function:
+		function returning a constant DEV_X8 value and used only once, removed.
+	
+	5. optimise mode detection:
+		dual_channel_active now returns bool. With minor optimisations.
+
+	6. unmap pcibar after init:
+		remove the unused iomapped mch_window in private data structure; and
+		unmap the window after initialisation. Now that __devinit is deprecated,
+		this is needed.
+
+	7. correct dimm label initialisation:
+		fix dimm labels to correspond to mobo legends. Assumes 2 ranks per DIMM
+		and DIMMS not spanning channels - as it is on Asus P5WDG2 family at least.
+		Currently, the label bears no correspondance to mobo legends.
+
+	8. fix wrong offset reported:
+		fixes the sometimes greate than PAGESIZE offset reporting caused by mixup
+		of grain-size and grain-shift.
+
+	9. set SW-SCRUB mode and bump revision:
+		With the error address being correct in the core's view,
+		enable SCRUB_SW_SRC so CEs can be written back.
+		And update driver revision.
+
+Signed-off-by: Arvind R. <arvino55@gmail.com>
+---
+Total changes:
+ i82975x_edac.c |  349 +++++++++++++++++++++---------------------
+  1 file changed, 175 insertions(+), 174 deletions(-)
