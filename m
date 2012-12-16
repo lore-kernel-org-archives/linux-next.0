@@ -1,91 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 3.7.0 5/9] i82975x_edac: optimise mode detection
-Date: Sun, 16 Dec 2012 09:16:20 +1100
-Message-ID: <20121216091620.9a2cc610d18d848317eb9dad@canb.auug.org.au>
-References: <CAA_L+UPvp8i6SaATD=uQmvYeEp6vbYGBFM=LRE1MWCMGff5JkA@mail.gmail.com>
+Subject: linux-next: build failure after merge of the btrfs tree
+Date: Mon, 17 Dec 2012 10:00:22 +1100
+Message-ID: <20121217100022.7d751dc9075d60a33d636a23@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sun__16_Dec_2012_09_16_20_+1100_oYD0N.zmCjy0IZfe"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50210 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752066Ab2LOWQW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 15 Dec 2012 17:16:22 -0500
-In-Reply-To: <CAA_L+UPvp8i6SaATD=uQmvYeEp6vbYGBFM=LRE1MWCMGff5JkA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arvind R <arvino55@gmail.com>
-Cc: linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+ boundary="Signature=_Mon__17_Dec_2012_10_00_22_+1100_Z7=XO33jOK2Ef9.7"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chris Mason <chris.mason@fusionio.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Behrens <sbehrens@giantdisaster.de>, Josef Bacik <jbacik@fusionio.com>, Linus <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Sun__16_Dec_2012_09_16_20_+1100_oYD0N.zmCjy0IZfe
+--Signature=_Mon__17_Dec_2012_10_00_22_+1100_Z7=XO33jOK2Ef9.7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, 16 Dec 2012 02:12:51 +0530 Arvind R <arvino55@gmail.com> wrote:
->
-> Subject: [PATCH 3.7.0 5/9] i82975x_edac: optimise mode detection
->=20
-> Minor optimisation of dual channel symmetric operation. Return
-> value changed to bool.
+Hi Chris,
 
-And you moved the function for no reason that is obvious form the patch.
+After merging the btrfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-> +/* Return 1 if dual channel mode is active.  Else return 0. */
+fs/btrfs/ioctl.c: In function 'btrfs_ioctl':
+fs/btrfs/ioctl.c:3940:7: error: case label does not reduce to an integer co=
+nstant
 
-The comment is no longer correct i.e. you are no returning true/false not
-0/1.
+Caused by commit 0aa7cbc7585a ("Btrfs: add support for device replace ioctl=
+s").
 
-> +static bool dual_channel_active(void __iomem *mch_window)
-> +{
-> +	/*
-> +	 * We treat interleaved-symmetric configuration as dual-channel.
-> +	 * All other configurations are virtual single channel mode.
-> +	 * bit-0 of EAP always provides the real channel in error.
-> +	 */
-> +	u8	drb[2];
-> +	int	row;
-> +	bool    dualch;
-> +
-> +	for (dualch =3D 1, row =3D 0; dualch &&
+I have used the btrfs tree from next-20121214 for today (which was empty).
 
-um	dualch =3D true
-
-> +			(row < I82975X_NR_CSROWS_PER_CHANNEL); row++) {
-> +		drb[0] =3D readb(mch_window + I82975X_DRB + row);
-> +		drb[1] =3D readb(mch_window + I82975X_DRB + row + 0x80);
-> +		dualch &=3D (drb[0] =3D=3D drb[1]);
-
-Don't do bit operations on a bool.
-
-> +	}
-> +	return dualch;
-> +}
+I have to say that these btrfs commits have come to linux-next very late
+in the game (i.e. some of them have author dates back in September and
+October and yet they only appeared in linux-next today).  Also, the
+committer of this commits is Josef Bacik <jbacik@fusionio.com> but there
+is not Signed-off-by him.  There are other commits that are committed by
+you, Chris, that also do not have a Signed-off-by you.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Sun__16_Dec_2012_09_16_20_+1100_oYD0N.zmCjy0IZfe
+--Signature=_Mon__17_Dec_2012_10_00_22_+1100_Z7=XO33jOK2Ef9.7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQzPa0AAoJEECxmPOUX5FE8lkP/jLX48KzXduqHrui58PKuk5F
-OePMDt2/QV0T/LCY+QvUPKvnzGVYBSaq6TzRcQv0rgjcpiGDyd96VqdUEzzXOx7c
-gvyY++I1NQDKo+WVBtdQ05AorhDNuXD6TudkfOdJCTuSXWpyFmYDg7mVKfzB7lJp
-pZFqOC9S8uzGNX8xQKzb4egFJPc03dXkxNcR0GqY/ERcIXH38wWYlJatYzBiiIYN
-XSfTwtxDwkY3GugeE5RfsfciatvdW8onJ1dXPni9lSmy5+XOzpJYgbe9lKCdH6Jv
-URo+nPriA3bH1oiUG8zrnzT86kYy6BhQ4binkMdY+jL58WAjIseeBfu/P7mz3UBp
-pCad1JIJJGqqcxlBLLPBxO4dyH6SyzjtgiaIXab77ZoS/5nm02L8370qGaXnMzC9
-WmIWsNNgdjnB+zkJTkgMuQUgFeRz9boWT0ufeYhHscfniYD4GzveUMPMdyKjPBJy
-ep9OJDgpZqR7zvAd6wOR6j/TLbkAdP+lOsJNiba7JtlrTuwot+D6ooK9D8N9XA5O
-29YB6VrPZOfP/+g7A4Pf40w6a+H/UUkgFGsV/zmlHuY3pl+m2b54qiFnp4ollTa+
-6XO6SJ5bj7+rIK2Ajd0Vd7wbvRn2PJ38eJJFvnp/DLTsL7j3TJQz3M2o7BDGmCga
-s/lT04EGJ/dF8v9uwMoc
-=IkVq
+iQIcBAEBCAAGBQJQzlKGAAoJEECxmPOUX5FElLYQAIonBZBsXhJHf7tsCnQOAyPr
+ksgMyTgWcUTWujjWNYCtj3KToIX/1aYVyLYVEQsKTRO0fwh+wR4QQGR3G6QE0B6A
+UtRRCtwS9DEWz89UlpNXemAW0uPOjdDlDy7zeOB9yQQwNQmMORNDDHeuHWxI3eJ7
+KI4aM7vDMts8wC5Ce2jgpq8nRsLL7fwOwOUoze/MquvY2UzDXwmxrwediOn/6BVr
+5XPGs/92V85ln5pkdsEekY28poF1HWIZhvR60cIR/lXjcZU+LgmI+fsiu4otOB5G
+I5RJfF+PNlEzADXOeKTLsOTEEgnrWz+kxo21G/X1xo4fF7FxE1j4tJWxlRD/7+5r
+C9oS3jiBVJCQytSK86rxHnxjYvYt2NKn2/hQ6qmOuIx8tup2L2YQsm/7wCsaIP/d
+azbxLVmUHCUCy+rxSV05xmPyLOLyFcTuTOHMP8IU9SWE/g4K4NxjgFZi5g+H5Qgs
+TgqqXherAer51Ce/aCAnx1se7R2+alxEQkS8aGe63mKEvZ1tYbh9+1KMZ2I5MVWP
+JKC7jP6KG+LbmNpThtGP+x7yfvMHKAZzGAtuFjvD1sXB5T9G4St5XfyH4O8yCw1J
+lvD7li6uZGsWe1fLj4xkpYjxWNKw8bI1HS/vEFvDcds43EDUKDmVkHLI0dXtH6Kc
+FUyED5uqwJwEqoxta8C7
+=ZHdb
 -----END PGP SIGNATURE-----
 
---Signature=_Sun__16_Dec_2012_09_16_20_+1100_oYD0N.zmCjy0IZfe--
+--Signature=_Mon__17_Dec_2012_10_00_22_+1100_Z7=XO33jOK2Ef9.7--
