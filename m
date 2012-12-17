@@ -1,15 +1,15 @@
 From: Chris Mason <chris.mason@fusionio.com>
 Subject: Re: linux-next: build failure after merge of the btrfs tree
-Date: Sun, 16 Dec 2012 19:15:04 -0500
-Message-ID: <20121217001504.GA13828@shiny>
+Date: Sun, 16 Dec 2012 21:01:49 -0500
+Message-ID: <20121217020149.GB13828@shiny>
 References: <20121217100022.7d751dc9075d60a33d636a23@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.fusionio.com ([66.114.96.30]:48100 "EHLO mx1.fusionio.com"
+Received: from mx1.fusionio.com ([66.114.96.30]:34152 "EHLO mx1.fusionio.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751368Ab2LQAPH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Dec 2012 19:15:07 -0500
+	id S1750915Ab2LQCBw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Dec 2012 21:01:52 -0500
 Content-Disposition: inline
 In-Reply-To: <20121217100022.7d751dc9075d60a33d636a23@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
@@ -26,38 +26,15 @@ On Sun, Dec 16, 2012 at 04:00:22PM -0700, Stephen Rothwell wrote:
 > fs/btrfs/ioctl.c: In function 'btrfs_ioctl':
 > fs/btrfs/ioctl.c:3940:7: error: case label does not reduce to an integer constant
 
-Thanks Stephen.  In my sources, this line is:
+Many thanks Stephen for helping debug this.
 
-case BTRFS_IOC_DEV_REPLACE:
+It turned out to be the size of the ioctl arg was just too big.  Stefan,
+I lowered this by using BTRFS_DEVICE_PATH_NAME_MAX instead, and I also
+put the char arrays after the u64s.
 
-And the define is:
-
-#define BTRFS_IOC_DEV_REPLACE _IOWR(BTRFS_IOCTL_MAGIC, 53, \
-                                    struct btrfs_ioctl_dev_replace_args)
-
-Is there a way to see what ppc64 is doing with this macro?
-
-> 
-> Caused by commit 0aa7cbc7585a ("Btrfs: add support for device replace ioctls").
-> 
-> I have used the btrfs tree from next-20121214 for today (which was empty).
-> 
-> I have to say that these btrfs commits have come to linux-next very late
-> in the game (i.e. some of them have author dates back in September and
-> October and yet they only appeared in linux-next today).
-
-This is true, we've had these in testing for some time.  Especially when
-new interfaces come in, we tend to delay them.
-
-> Also, the
-> committer of this commits is Josef Bacik <jbacik@fusionio.com> but there
-> is not Signed-off-by him.  There are other commits that are committed by
-> you, Chris, that also do not have a Signed-off-by you.
-
-Josef and I have sob on all of our commits (at least all the ones not in
-3.7, I didn't go back farther).  In this case the Author was Stefan and
-it ended up rebased in either Josef's or my tree.  We usually try to
-preserve merges on rebase, but this time was a bigger set of changes
-than usual and it didn't work out.
+It works here with the progs patch you sent (and matching struct
+changes), including cancel and the btrfs replace -r mode.  I've pushed
+the result out to my next branch and my for-linus branch, please take a
+look and make sure I didn't miss anything.
 
 -chris
