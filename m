@@ -1,88 +1,71 @@
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Subject: Re: [PATCH] leds-ot200: Fix error caused by shifted mask
-Date: Mon, 17 Dec 2012 09:13:08 +0100
-Message-ID: <CAH9NwWfcKYexxDw4XVbdvyjkc=oPdsAGP7enusoMseqpM1aTiw@mail.gmail.com>
-References: <1354800098-4118-1-git-send-email-christian.gmeiner@gmail.com> <CAH9NwWeTO==SB4XiAuy-2Q3_MSMwn_Tzd_4uw6Fz0HZ=qskVMw@mail.gmail.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: [PATCH 3.7.0 2/9] i82975x_edac.c: fix layers initialisation
+Date: Mon, 17 Dec 2012 09:39:13 -0200
+Message-ID: <20121217093913.7c66fa5e@redhat.com>
+References: <CAA_L+UPsAGmRB_gEittUOag0Hu1565jbvfNGsROj9n0x41W21Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAH9NwWeTO==SB4XiAuy-2Q3_MSMwn_Tzd_4uw6Fz0HZ=qskVMw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Richard Purdie <rpurdie@rpsys.net>, LKML <linux-kernel@vger.kernel.org>
-Cc: Christian Gmeiner <christian.gmeiner@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:58934 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751935Ab2LQLjf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Dec 2012 06:39:35 -0500
+In-Reply-To: <CAA_L+UPsAGmRB_gEittUOag0Hu1565jbvfNGsROj9n0x41W21Q@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arvind R <arvino55@gmail.com>
+Cc: linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-2012/12/13 Christian Gmeiner <christian.gmeiner@gmail.com>:
->> During the development of this driver an in-house register
->> documentation was used. The last weeks some integration tests
->> were done and this problem was found. It turned out that
->> the released register documentation is wrong.
->>
->> The fix is very simple: shift all masks by one.
->>
->> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
->> ---
->>  drivers/leds/leds-ot200.c |   14 +++++++-------
->>  1 file changed, 7 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c
->> index c464682..676e729 100644
->> --- a/drivers/leds/leds-ot200.c
->> +++ b/drivers/leds/leds-ot200.c
->> @@ -47,37 +47,37 @@ static struct ot200_led leds[] = {
->>         {
->>                 .name = "led_1",
->>                 .port = 0x49,
->> -               .mask = BIT(7),
->> +               .mask = BIT(6),
->>         },
->>         {
->>                 .name = "led_2",
->>                 .port = 0x49,
->> -               .mask = BIT(6),
->> +               .mask = BIT(5),
->>         },
->>         {
->>                 .name = "led_3",
->>                 .port = 0x49,
->> -               .mask = BIT(5),
->> +               .mask = BIT(4),
->>         },
->>         {
->>                 .name = "led_4",
->>                 .port = 0x49,
->> -               .mask = BIT(4),
->> +               .mask = BIT(3),
->>         },
->>         {
->>                 .name = "led_5",
->>                 .port = 0x49,
->> -               .mask = BIT(3),
->> +               .mask = BIT(2),
->>         },
->>         {
->>                 .name = "led_6",
->>                 .port = 0x49,
->> -               .mask = BIT(2),
->> +               .mask = BIT(1),
->>         },
->>         {
->>                 .name = "led_7",
->>                 .port = 0x49,
->> -               .mask = BIT(1),
->> +               .mask = BIT(0),
->>         }
->>  };
->>
->> --
->> 1.7.10.4
->>
->
-> Is something missing to get this patch merged?
+Hi Arvin,
+
+Em Sun, 16 Dec 2012 02:09:46 +0530
+Arvind R <arvino55@gmail.com> escreveu:
+
+> Subject: [PATCH 3.7.0 2/9] i82975x_edac.c: fix layers initialisation
+> 
+> correct the absolutely wrong initialisation of memory layout.
+> Signed-off-by: Arvind R. <arvino55@gmail.com>
+
+This patch looks ok for me.
+
+I didn't have time yet to test this patch series. My plan is to test it
+after the merge window, likely in the beginning of January.
+
+If you prefer, I can then merge this changeset (after being fixed with
+the relevant comments that developers may point to you) on my linux-edac
+tree, with my tested-by.
+
+Regards,
+Mauro
+
+
+> ---
+>  i82975x_edac.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> --- a/drivers/edac/i82975x_edac.c	2012-12-15 16:17:28 +0530
+> +++ b/drivers/edac/i82975x_edac.c	2012-12-15 16:16:51 +0530
+> @@ -544,10 +544,10 @@ static int i82975x_probe1(struct pci_dev
+> 
+>  	/* assuming only one controller, index thus is 0 */
+>  	layers[0].type = EDAC_MC_LAYER_CHIP_SELECT;
+> -	layers[0].size = I82975X_NR_DIMMS;
+> +	layers[0].size = I82975X_NR_CSROWS(chans);
+>  	layers[0].is_virt_csrow = true;
+>  	layers[1].type = EDAC_MC_LAYER_CHANNEL;
+> -	layers[1].size = I82975X_NR_CSROWS(chans);
+> +	layers[1].size = chans;
+>  	layers[1].is_virt_csrow = false;
+>  	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers, sizeof(*pvt));
+>  	if (!mci) {
 > --
-> Christian Gmeiner, MSc
+> To unsubscribe from this list: send the line "unsubscribe linux-edac" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
-ping
---
-Christian Gmeiner, MSc
+-- 
+
+Cheers,
+Mauro
