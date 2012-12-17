@@ -1,55 +1,39 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH 3.7.0 3/9] i82975x_edac.c: cleanup debug code
-Date: Mon, 17 Dec 2012 18:08:39 +0100
-Message-ID: <20121217170839.GA5194@liondog.tnic>
-References: <CAA_L+UNa-C0XvzMbXMf9GchtfacfwJMYt2uuXkWVntWPWANLsA@mail.gmail.com>
- <20121217124511.66825216@redhat.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build warning after merge of the final tree
+Date: Mon, 17 Dec 2012 12:59:33 -0800
+Message-ID: <20121217125933.ec758888.akpm@linux-foundation.org>
+References: <20121217142238.a0840563304419bb345ac25f@canb.auug.org.au>
+	<20121217143415.252a2f60076d1ba03807df55@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.skyhub.de ([78.46.96.112]:50909 "EHLO mail.skyhub.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753238Ab2LQRIl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Dec 2012 12:08:41 -0500
-Content-Disposition: inline
-In-Reply-To: <20121217124511.66825216@redhat.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50053 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752759Ab2LQU7f (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Dec 2012 15:59:35 -0500
+In-Reply-To: <20121217143415.252a2f60076d1ba03807df55@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Arvind R <arvino55@gmail.com>, linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Thompson <set.mailinglist@gmail.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-On Mon, Dec 17, 2012 at 12:45:11PM -0200, Mauro Carvalho Chehab wrote:
-> Em Sun, 16 Dec 2012 02:10:39 +0530
-> Arvind R <arvino55@gmail.com> escreveu:
+On Mon, 17 Dec 2012 14:34:15 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi all,
 > 
-> > Subject: [PATCH 3.7.0 3/9] i82975x_edac.c: cleanup debug code
+> On Mon, 17 Dec 2012 14:22:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the final tree, today's linux-next build (powerpc allnoconfig)
+> > produced this warning:
 > > 
-> > modify debug levels to sane levels. Also move random debug code
-> > into CONFIG_EDAC_DEBUG sections.
-> > Signed-off-by: Arvind R. <arvino55@gmail.com>
-> > ---
-> >  i82975x_edac.c |  171 +++++++++++++++++++++++-------------------
-> >  1 file changed, 97 insertions(+), 74 deletions(-)
+> > warning: (PPC) selects SPARSE_IRQ which has unmet direct dependencies (HAVE_GENERIC_HARDIRQS && (IRQ_DOMAIN && DEBUG_FS || MAY_HAVE_SPARSE_IRQ))
 > > 
-> > --- a/drivers/edac/i82975x_edac.c	2012-12-15 20:18:24 +0530
-> > +++ b/drivers/edac/i82975x_edac.c	2012-12-15 20:17:58 +0530
-> ...
-> > @@ -551,11 +583,11 @@ static int i82975x_probe1(struct pci_dev
-> >  	layers[1].is_virt_csrow = false;
-> >  	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers, sizeof(*pvt));
-> >  	if (!mci) {
-> > +		edac_dbg(0, "MC%d failed mc_alloc\n", dev_idx);
-> >  		rc = -ENOMEM;
-> >  		goto fail1;
+> > I don't know what introduced that.
 > 
-> Please remove the two last lines. There's no reason why it a driver 
-> should bail out just because debug is enabled.
+> Actually probably caused by commit a1eaa3bc8247 ("Kconfig: fix Irq
+> Subsystem menu") from the akpm tree.
 
-Huh? He's adding a debug line to say that edac_mc_alloc() failed.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Sent from a fat crate under my desk. Formatting is fine.
---
+kconfig-fix-irq-subsystem-menu.patch was causing various problems so I
+have dropped it.
