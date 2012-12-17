@@ -1,182 +1,55 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: [PATCH 3.7.0 8/9] i82975x_edac: fix wrong offset reported
-Date: Mon, 17 Dec 2012 12:50:01 -0200
-Message-ID: <20121217125001.2a886526@redhat.com>
-References: <CAA_L+UPOe-2JQzXy7yCqnaoaQ3OQLSEDxV_6YgFGFkO_8SM3xg@mail.gmail.com>
+From: Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH 3.7.0 3/9] i82975x_edac.c: cleanup debug code
+Date: Mon, 17 Dec 2012 18:08:39 +0100
+Message-ID: <20121217170839.GA5194@liondog.tnic>
+References: <CAA_L+UNa-C0XvzMbXMf9GchtfacfwJMYt2uuXkWVntWPWANLsA@mail.gmail.com>
+ <20121217124511.66825216@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:39437 "EHLO mx1.redhat.com"
+Received: from mail.skyhub.de ([78.46.96.112]:50909 "EHLO mail.skyhub.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752384Ab2LQPix (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Dec 2012 10:38:53 -0500
-In-Reply-To: <CAA_L+UPOe-2JQzXy7yCqnaoaQ3OQLSEDxV_6YgFGFkO_8SM3xg@mail.gmail.com>
+	id S1753238Ab2LQRIl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Dec 2012 12:08:41 -0500
+Content-Disposition: inline
+In-Reply-To: <20121217124511.66825216@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arvind R <arvino55@gmail.com>
-Cc: linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Arvind R <arvino55@gmail.com>, linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-Em Sun, 16 Dec 2012 02:15:30 +0530
-Arvind R <arvino55@gmail.com> escreveu:
+On Mon, Dec 17, 2012 at 12:45:11PM -0200, Mauro Carvalho Chehab wrote:
+> Em Sun, 16 Dec 2012 02:10:39 +0530
+> Arvind R <arvino55@gmail.com> escreveu:
+> 
+> > Subject: [PATCH 3.7.0 3/9] i82975x_edac.c: cleanup debug code
+> > 
+> > modify debug levels to sane levels. Also move random debug code
+> > into CONFIG_EDAC_DEBUG sections.
+> > Signed-off-by: Arvind R. <arvino55@gmail.com>
+> > ---
+> >  i82975x_edac.c |  171 +++++++++++++++++++++++-------------------
+> >  1 file changed, 97 insertions(+), 74 deletions(-)
+> > 
+> > --- a/drivers/edac/i82975x_edac.c	2012-12-15 20:18:24 +0530
+> > +++ b/drivers/edac/i82975x_edac.c	2012-12-15 20:17:58 +0530
+> ...
+> > @@ -551,11 +583,11 @@ static int i82975x_probe1(struct pci_dev
+> >  	layers[1].is_virt_csrow = false;
+> >  	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers, sizeof(*pvt));
+> >  	if (!mci) {
+> > +		edac_dbg(0, "MC%d failed mc_alloc\n", dev_idx);
+> >  		rc = -ENOMEM;
+> >  		goto fail1;
+> 
+> Please remove the two last lines. There's no reason why it a driver 
+> should bail out just because debug is enabled.
 
-> Subject: [PATCH 3.7.0 8/9] i82975x_edac: fix wrong offset reported
-> 
-> Cleanup error reporting function. This also corrects the wrong
-> calculation of the offset mask.
-> Signed-off-by: Arvind R. <arvino55@gmail.com>
-> ---
->  i82975x_edac.c |   59 +++++++++++++++++-------------------------
->  1 file changed, 25 insertions(+), 34 deletions(-)
-> 
-> --- a/drivers/edac/i82975x_edac.c	2012-12-15 23:55:02.000000000 +0530
-> +++ b/drivers/edac/i82975x_edac.c	2012-12-15 23:54:00.000000000 +0530
-> @@ -34,6 +34,8 @@
->  #define	I82975X_NR_CSROWS_PER_CHANNEL	4
->  #define	I82975X_NR_CSROWS_PER_DIMM	2
-> 
-> +#define	I82975X_ECC_GRAIN	(1 << 7)
-> +
->  /* Intel 82975X register addresses - device 0 function 0 - DRAM Controller */
->  #define I82975X_EAP		0x58	/* Dram Error Address Pointer (32b)
->  					 *
-> @@ -205,6 +207,10 @@ NOTE: Only ONE of the three must be enab
->  #define I82975X_DRC_CH0M1		0x124
->  #define I82975X_DRC_CH1M1		0x1A4
-> 
-> +#define	I82975X_BIT_ERROR_CE	0x01
-> +#define	I82975X_BIT_ERROR_UE	0x02
-> +#define	I82975X_BITS_ERROR		0x03
-> +
->  enum i82975x_chips {
->  	I82975X_chip = 0,
->  };
-> @@ -239,7 +245,7 @@ static struct pci_dev *mci_pdev;	/* init
-> 
->  static int i82975x_registered = 1;
-> 
-> -static void i82975x_get_error_info(struct mem_ctl_info *mci,
-> +static bool i82975x_get_error_info(struct mem_ctl_info *mci,
->  		struct i82975x_error_info *info)
->  {
->  	struct pci_dev *pdev;
-> @@ -258,7 +264,8 @@ static void i82975x_get_error_info(struc
->  	pci_read_config_byte(pdev, I82975X_DERRSYN, &info->derrsyn);
->  	pci_read_config_word(pdev, I82975X_ERRSTS, &info->errsts2);
-> 
-> -	pci_write_bits16(pdev, I82975X_ERRSTS, 0x0003, 0x0003);
-> +	pci_write_bits16(pdev, I82975X_ERRSTS, I82975X_BITS_ERROR,
-> +				I82975X_BITS_ERROR);
-> 
->  	/*
->  	 * If the error is the same then we can for both reads then
-> @@ -266,31 +273,30 @@ static void i82975x_get_error_info(struc
->  	 * there is a CE no info and the second set of reads is valid
->  	 * and should be UE info.
->  	 */
-> -	if (!(info->errsts2 & 0x0003))
-> -		return;
-> +	if (!(info->errsts2 & I82975X_BITS_ERROR))
-> +		return false;
-> 
-> -	if ((info->errsts ^ info->errsts2) & 0x0003) {
-> +	if ((info->errsts ^ info->errsts2) & I82975X_BITS_ERROR) {
->  		pci_read_config_dword(pdev, I82975X_EAP, &info->eap);
->  		pci_read_config_byte(pdev, I82975X_XEAP, &info->xeap);
->  		pci_read_config_byte(pdev, I82975X_DES, &info->des);
->  		pci_read_config_byte(pdev, I82975X_DERRSYN,
->  				&info->derrsyn);
->  	}
-> +	return true;
->  }
-> 
->  static int i82975x_process_error_info(struct mem_ctl_info *mci,
->  		struct i82975x_error_info *info, int handle_errors)
->  {
-> +	enum hw_event_mc_err_type err_type;
->  	int row, chan;
->  	unsigned long offst, page;
-> 
-> -	if (!(info->errsts2 & 0x0003))
-> -		return 0;
-> -
->  	if (!handle_errors)
->  		return 1;
-> 
-> -	if ((info->errsts ^ info->errsts2) & 0x0003) {
-> +	if ((info->errsts ^ info->errsts2) & I82975X_BITS_ERROR) {
->  		edac_mc_handle_error(HW_EVENT_ERR_UNCORRECTED, mci, 1, 0, 0, 0,
->  				     -1, -1, -1, "UE overwrote CE", "");
->  		info->errsts = info->errsts2;
-> @@ -302,30 +308,15 @@ static int i82975x_process_error_info(st
->  		page |= 0x80000000;
->  	page >>= (PAGE_SHIFT - 1);
->  	row = edac_mc_find_csrow_by_page(mci, page);
-> +	chan = (mci->num_cschannel == 1) ? 0 : info->eap & 1;
-> +	offst = info->eap & ((1 << PAGE_SHIFT) - I82975X_ECC_GRAIN);
-> 
-> -	if (row == -1)	{
-> -		i82975x_mc_printk(mci, KERN_ERR, "error processing EAP:\n"
-> -			"\tXEAP=%u\n"
-> -			"\t EAP=0x%08x\n"
-> -			"\tPAGE=0x%08x\n",
-> -			(info->xeap & 1) ? 1 : 0, info->eap, (unsigned) page);
-> -		return 0;
-> -	}
-> -	chan = (mci->csrows[row]->nr_channels == 1) ? 0 : info->eap & 1;
-> -	offst = info->eap
-> -			& ((1 << PAGE_SHIFT) -
-> -			(1 << mci->csrows[row]->channels[chan]->dimm->grain));
-> -
-> -	if (info->errsts & 0x0002)
-> -		edac_mc_handle_error(HW_EVENT_ERR_UNCORRECTED, mci, 1,
-> -				     page, offst, 0,
-> -				     row, -1, -1,
-> -				     "i82975x UE", "");
-> -	else
-> -		edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, 1,
-> +	err_type = (info->errsts & I82975X_BIT_ERROR_UE) ?
-> +			HW_EVENT_ERR_UNCORRECTED : HW_EVENT_ERR_CORRECTED;
-> +	edac_mc_handle_error(err_type, mci, 1,
->  				     page, offst, info->derrsyn,
-> -				     row, chan ? chan : 0, -1,
-> -				     "i82975x CE", "");
-> +				     row, chan, -1,
-> +				     "i82975x", "");
-> 
->  	return 1;
->  }
-> @@ -335,8 +326,8 @@ static void i82975x_check(struct mem_ctl
->  	struct i82975x_error_info info;
-> 
->  	edac_dbg(4, "MC%d\n", mci->mc_idx);
-> -	i82975x_get_error_info(mci, &info);
-> -	i82975x_process_error_info(mci, &info, 1);
-> +	if (i82975x_get_error_info(mci, &info))
-> +		i82975x_process_error_info(mci, &info, 1);
->  }
-> 
->  static void i82975x_init_csrows(struct mem_ctl_info *mci,
-> @@ -398,7 +389,7 @@ static void i82975x_init_csrows(struct m
->  					chan) + 'A',
->  				 ((index % I82975X_NR_CSROWS_PER_CHANNEL) /
->  					I82975X_NR_CSROWS_PER_DIMM) + 1);
-> -			dimm->grain = 1 << 7;	/* always */
-> +			dimm->grain = I82975X_ECC_GRAIN;	/* always */
-
-Hmm... I might be wrong, but on single-channel/dual asymmetric mode, the
-grain is 64 instead of 128.
-
->  			dimm->dtype = DEV_X8;	/* only with ECC */
->  			dimm->mtype = MEM_DDR2; /* only supported */
->  			dimm->edac_mode = EDAC_SECDED; /* only supported */
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-edac" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+Huh? He's adding a debug line to say that edac_mc_alloc() failed.
 
 -- 
+Regards/Gruss,
+    Boris.
 
-Cheers,
-Mauro
+Sent from a fat crate under my desk. Formatting is fine.
+--
