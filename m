@@ -1,45 +1,127 @@
-From: Mel Gorman <mgorman@suse.de>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Tue, 18 Dec 2012 10:10:21 +0000
-Message-ID: <20121218101020.GL9887@suse.de>
-References: <20121218132907.099de7f8d94e73f189b01b21@canb.auug.org.au>
+From: Gleb Natapov <gleb@redhat.com>
+Subject: Re: [ PATCH] Add rcu user eqs exception hooks for async page fault
+Date: Tue, 18 Dec 2012 15:25:03 +0200
+Message-ID: <20121218132503.GK11016@redhat.com>
+References: <CAFTL4hx0fc_Jo8wkuRZedW4DVEeQceiHMrWVqTqB5k065Wsg8Q@mail.gmail.com>
+ <1354090704.3054.13.camel@ThinkPad-T5421.cn.ibm.com>
+ <CAFTL4hxPSp1fs4=2g0yFs0d5nFisfUsfDAA9bHWcu+-+tO_ySw@mail.gmail.com>
+ <20121128135345.GG928@redhat.com>
+ <CAFTL4hxoFBLNQCABBpJRBgV-r-Mg5GSq7HbPfWJRraSvtviz4A@mail.gmail.com>
+ <20121129110717.GA9711@redhat.com>
+ <CAFTL4hyHW3uJHvzxz1o4agtGbicFAP1DuUsifbOrp1Q3ODRBMA@mail.gmail.com>
+ <1354267121.2552.65.camel@ThinkPad-T5421.cn.ibm.com>
+ <20121203095708.GO8731@redhat.com>
+ <1354588513.2649.10.camel@ThinkPad-T5421.cn.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:37016 "EHLO mx2.suse.de"
+Received: from mx1.redhat.com ([209.132.183.28]:17979 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753924Ab2LRKK1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Dec 2012 05:10:27 -0500
+	id S1754123Ab2LRNZR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Dec 2012 08:25:17 -0500
 Content-Disposition: inline
-In-Reply-To: <20121218132907.099de7f8d94e73f189b01b21@canb.auug.org.au>
+In-Reply-To: <1354588513.2649.10.camel@ThinkPad-T5421.cn.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Linus <torvalds@linux-foundation.org>
+To: Li Zhong <zhong@linux.vnet.ibm.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, paulmck@linux.vnet.ibm.com, sasha.levin@oracle.com, avi@redhat.com
 
-On Tue, Dec 18, 2012 at 01:29:07PM +1100, Stephen Rothwell wrote:
-> Hi Andrew,
+On Tue, Dec 04, 2012 at 10:35:13AM +0800, Li Zhong wrote:
+> This patch adds user eqs exception hooks for async page fault page not
+> present code path, to exit the user eqs and re-enter it as necessary.
 > 
-> After merging the akpm tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Async page fault is different from other exceptions that it may be
+> triggered from idle process, so we still need rcu_irq_enter() and
+> rcu_irq_exit() to exit cpu idle eqs when needed, to protect the code
+> that needs use rcu.
 > 
-> mm/migrate.c: In function 'migrate_misplaced_transhuge_page':
-> mm/migrate.c:1738:2: error: incompatible type for argument 3 of 'update_mmu_cache_pmd'
-> arch/x86/include/asm/pgtable.h:792:20: note: expected 'struct pmd_t *' but argument is of type 'pmd_t'
+> As Frederic pointed out it would be safest and simplest to protect the
+> whole kvm_async_pf_task_wait(). Otherwise, "we need to check all the
+> code there deeply for potential RCU uses and ensure it will never be
+> extended later to use RCU.".
 > 
-> Caused by commit b32967ff101a ("mm: numa: Add THP migration for the NUMA
-> working set scanning fault case") from Linus' tree interacting with
-> commit "x86: convert update_mmu_cache() and update_mmu_cache_pmd() to
-> functions".
+> However, We'd better re-enter the cpu idle eqs if we get the exception
+> in cpu idle eqs, by calling rcu_irq_exit() before native_safe_halt().
 > 
-> This was previously reported as against the tip tree, but the fix patch
-> (which was applied to the tip tree) did not survive the rewrite that went
-> into Linus' tree.  Just a little annoyed :-(
+> So the patch does what Frederic suggested for rcu_irq_*() API usage
+> here, except that I moved the rcu_irq_*() pair originally in
+> do_async_page_fault() into kvm_async_pf_task_wait().
 > 
+> That's because, I think it's better to have rcu_irq_*() pairs to be in
+> one function ( rcu_irq_exit() after rcu_irq_enter() ), especially here,
+> kvm_async_pf_task_wait() has other callers, which might cause
+> rcu_irq_exit() be called without a matching rcu_irq_enter() before it,
+> which is illegal if the cpu happens to be in rcu idle state.
+> 
+> Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
+Applied, thanks. Will land in -rc hopefully.
 
-Sorry about that Stephen, I should have caught the fix in the tip tree
-and picked it up. Thanks for fixing it a second time.
+> ---
+>  arch/x86/kernel/kvm.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 08b973f..e99af60 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -43,6 +43,7 @@
+>  #include <asm/apicdef.h>
+>  #include <asm/hypervisor.h>
+>  #include <asm/kvm_guest.h>
+> +#include <asm/rcu.h>
+>  
+>  static int kvmapf = 1;
+>  
+> @@ -121,6 +122,8 @@ void kvm_async_pf_task_wait(u32 token)
+>  	struct kvm_task_sleep_node n, *e;
+>  	DEFINE_WAIT(wait);
+>  
+> +	rcu_irq_enter();
+> +
+>  	spin_lock(&b->lock);
+>  	e = _find_apf_task(b, token);
+>  	if (e) {
+> @@ -128,6 +131,8 @@ void kvm_async_pf_task_wait(u32 token)
+>  		hlist_del(&e->link);
+>  		kfree(e);
+>  		spin_unlock(&b->lock);
+> +
+> +		rcu_irq_exit();
+>  		return;
+>  	}
+>  
+> @@ -152,13 +157,16 @@ void kvm_async_pf_task_wait(u32 token)
+>  			/*
+>  			 * We cannot reschedule. So halt.
+>  			 */
+> +			rcu_irq_exit();
+>  			native_safe_halt();
+> +			rcu_irq_enter();
+>  			local_irq_disable();
+>  		}
+>  	}
+>  	if (!n.halted)
+>  		finish_wait(&n.wq, &wait);
+>  
+> +	rcu_irq_exit();
+>  	return;
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_async_pf_task_wait);
+> @@ -252,10 +260,10 @@ do_async_page_fault(struct pt_regs *regs, unsigned long error_code)
+>  		break;
+>  	case KVM_PV_REASON_PAGE_NOT_PRESENT:
+>  		/* page is swapped out by the host. */
+> -		rcu_irq_enter();
+> +		exception_enter(regs);
+>  		exit_idle();
+>  		kvm_async_pf_task_wait((u32)read_cr2());
+> -		rcu_irq_exit();
+> +		exception_exit(regs);
+>  		break;
+>  	case KVM_PV_REASON_PAGE_READY:
+>  		rcu_irq_enter();
+> -- 
+> 1.7.11.4
 
--- 
-Mel Gorman
-SUSE Labs
+--
+			Gleb.
