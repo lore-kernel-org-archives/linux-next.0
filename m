@@ -1,91 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the slave-dma tree with Linus' tree
-Date: Wed, 19 Dec 2012 10:44:46 +1100
-Message-ID: <20121219104446.fdc2f77dd8176f059de63d5e@canb.auug.org.au>
+Subject: linux-next: manual merge of the modules tree with Linus' tree
+Date: Wed, 19 Dec 2012 11:10:53 +1100
+Message-ID: <20121219111053.345900e0b35ee8f4def990a7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Dec_2012_10_44_46_+1100_zxid0oEAu6oN.ItZ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Akinobu Mita <akinobu.mita@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__19_Dec_2012_11_10_53_+1100_BCRepUOoIc.soa7u"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59952 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754834Ab2LSALD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Dec 2012 19:11:03 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Takashi Iwai <tiwai@suse.de>
 
---Signature=_Wed__19_Dec_2012_10_44_46_+1100_zxid0oEAu6oN.ItZ
+--Signature=_Wed__19_Dec_2012_11_10_53_+1100_BCRepUOoIc.soa7u
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Vinod,
+Hi Rusty,
 
-Today's linux-next merge of the slave-dma tree got a conflict in
-drivers/dma/dmatest.c between commit 632fd28326c0 ("dmatest: implement
-two helpers to unmap dma memory") from the  tree and commit f04f98e91bd8
-("dmatest: adjust invalid module parameters for number of source
-buffers") from the slave-dma tree.
+Today's linux-next merge of the modules tree got a conflict in
+kernel/modsign_pubkey.c between commit 84ecfd15f554 ("modsign: add symbol
+prefix to certificate list") from Linus' tree and commit bb8f5966421d
+("MODSIGN: Avoid using .incbin in C source") from the modules tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I just used the modules tree version as it removed the
+section of code modified by the former) and can carry the fix as
+necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/dma/dmatest.c
-index 64b048d,0e2deaa..0000000
---- a/drivers/dma/dmatest.c
-+++ b/drivers/dma/dmatest.c
-@@@ -228,20 -228,13 +228,27 @@@ static void dmatest_callback(void *arg
-  	wake_up_all(done->wait);
-  }
- =20
- +static inline void unmap_src(struct device *dev, dma_addr_t *addr, size_t=
- len,
- +			     unsigned int count)
- +{
- +	while (count--)
- +		dma_unmap_single(dev, addr[count], len, DMA_TO_DEVICE);
- +}
- +
- +static inline void unmap_dst(struct device *dev, dma_addr_t *addr, size_t=
- len,
- +			     unsigned int count)
- +{
- +	while (count--)
- +		dma_unmap_single(dev, addr[count], len, DMA_BIDIRECTIONAL);
- +}
- +
-+ static unsigned int min_odd(unsigned int x, unsigned int y)
-+ {
-+ 	unsigned int val =3D min(x, y);
-+=20
-+ 	return val % 2 ? val : val - 1;
-+ }
-+=20
-  /*
-   * This function repeatedly tests DMA transfers of various lengths and
-   * offsets for a given operation type until it is told to exit by
-
---Signature=_Wed__19_Dec_2012_10_44_46_+1100_zxid0oEAu6oN.ItZ
+--Signature=_Wed__19_Dec_2012_11_10_53_+1100_BCRepUOoIc.soa7u
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ0P/uAAoJEECxmPOUX5FEhn8P/2MxZNrImOO5KEuJNCQPD9ya
-L1+5NGmoOt4qAIN6OZ/a8Bgy9jzIAiLk0NwZ9Ul8SpsHYcGhOMgbgN7e+YdBz050
-mnxFSPCIj0ptCv9+TWyQVKICYgRCZozA0tO7HV8cV5rXF8T3/WiM0hSN7vjA794A
-be/FftA4BUSXmeIbm8aC/h3INCsv0LnMaNOxAdKCLdRk0IQMC2TniqY9Bun37fx9
-KkUnaD8nGVQJFLxisK8ZARjsGkNh/lxbMXTBpQveNsrzQe6RFXhs8wcrkT0FxP48
-5Eguf2zacougf5dbD3jcasd4t0J/Jv4P6Af9wBI15j73r6RIKmOguRxYo+/DEJw9
-+39+Vo4GN3w1R1D0zQupVM5e3/WBVWnuJEA/uqchco5NswSmpqE4fxbaRFGF6hoR
-MRc1T0Cw6YfBtjQ1vVq90/QjJQ60/7L2gKBYJkPb/iWUSKN4C9Qwvtd/GkbCsPx/
-8fJ+ytIx1xWV6lXoBqGti6Boov9SBqyEOubOnF4N+3rG9utcs2NjQi8iqFlu+tpG
-dJtTj6rnhPhinNrNDZsZUaevF+aJGyj5AJqkB7hE52j0xw1XOvcA0rO6fULAh2PB
-vi+N1XnRqWw4HyW9HkHIZCXfe1nU/M/KzhQTLptMAQvmDNJlyu8yDSrMbKiWYzvT
-OTt4abELUQas4CO+/qz+
-=bGPI
+iQIcBAEBCAAGBQJQ0QYNAAoJEECxmPOUX5FEyt8P/jZJxKDH8CwKakFUZG63XCPg
+5yMAXmSPiNG9wbfbEf61V13fJHApVb2FGtQ/gDzc2dHWtayPFGsxDP6/+VnkxcUO
+iqj1nfZzxzLQAgQ5HhyjYr5GmskA9HygetwTVHRpMEImfI+7P7ytrxFz0NI0/czE
+C6wqhX1+mc11XxFIGU5qtdquOYy8hJetE4z12u23rJZLXHnQYne6EQFKikYhBe21
+TFvWCxWZ24YxGeV5sjwi4qgtIsF6hvBUNdg52zzSRWbJlWuIiN2PWHkwbDP0Cf3m
+98SmSmO+7DNGjCLBLstvUpMJ2xFQSnuqSCJDSR7azdmZj53O/cdHdquWk6MTa9qM
+YLW3L2StsJVkZI6N+sf5IHdWNd/noZmQBxh8vRiS2DOZGSastGxkLHy64kbi9SCx
+JTgM2x0DMA7749y2cAB1BtDxMMCM+2OPKZJVhJKgG7rwBcOXSrzAr6k+NWpar04M
+WWRl+jjC50QOlF8sUhwy7PAyvR/Sbhym1kh9e54KHNYZ3gxkDlqh4JxscLLxTDHf
+w5rVqHBk1l0XeWDsoqUltR6CQDckGEaid5yUUQ4JPlXS0nZdY4qa2xvUiSX57dE8
+3iYBGWfcLt9HRC9qts2sWWYXXnB10ojcQNavuB6ZLFlE1kMS02PmqSl/9blIXWia
+hmwoy43+lViH2sfayrOb
+=5vxX
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__19_Dec_2012_10_44_46_+1100_zxid0oEAu6oN.ItZ--
+--Signature=_Wed__19_Dec_2012_11_10_53_+1100_BCRepUOoIc.soa7u--
