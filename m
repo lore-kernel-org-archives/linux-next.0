@@ -1,102 +1,46 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH -next] f2fs: add missing #include <linux/prefetch.h>
-Date: Thu, 20 Dec 2012 08:55:45 +0900
-Message-ID: <1355961345.16178.120.camel@kjgkr>
-References: <1355951970-19720-1-git-send-email-geert@linux-m68k.org>
-Reply-To: jaegeuk.kim@samsung.com
+From: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: linux-next: build failure after merge of the infiniband tree
+Date: Wed, 19 Dec 2012 16:22:54 -0800
+Message-ID: <CAG4TOxPVc0tNeLhi3FF=K_UJpizh2OZgviT5WqqLvZsg-QEoNw@mail.gmail.com>
+References: <20121220094433.791d70e55ae5e3325a6190fc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature"; boundary="=-EE+T3YcemShKFLCeiL6K"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:60026 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751726Ab2LSXzz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Dec 2012 18:55:55 -0500
-In-reply-to: <1355951970-19720-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20121220094433.791d70e55ae5e3325a6190fc-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vipul Pandya <vipul-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
+
+On Wed, Dec 19, 2012 at 2:44 PM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
+> Hi all,
+>
+> After merging the infiniband tree, today's linux-next build (x86_64_
+> allmodconfig) failed like this:
+>
+> In file included from drivers/scsi/csiostor/csio_wr.h:42:0,
+>                  from drivers/scsi/csiostor/csio_scsi.h:49,
+>                  from drivers/scsi/csiostor/csio_init.h:45,
+>                  from drivers/scsi/csiostor/csio_attr.c:45:
+> drivers/scsi/csiostor/t4fw_api_stor.h:43:6: error: nested redefinition of 'enum fw_retval'
+> drivers/scsi/csiostor/t4fw_api_stor.h:43:6: error: redeclaration of 'enum fw_retval'
+> drivers/net/ethernet/chelsio/cxgb4/t4fw_api.h:42:6: note: originally defined here
+> drivers/scsi/csiostor/t4fw_api_stor.h:48:2: error: redeclaration of enumerator 'FW_ENOEXEC'
+> drivers/net/ethernet/chelsio/cxgb4/t4fw_api.h:39:2: note: previous definition of 'FW_ENOEXEC' was here
+> drivers/scsi/csiostor/t4fw_api_stor.h:50:2: error: redeclaration of enumerator 'FW_ENOMEM'
+> drivers/net/ethernet/chelsio/cxgb4/t4fw_api.h:43:2: note: previous definition of 'FW_ENOMEM' was here
+> drivers/scsi/csiostor/t4fw_api_stor.h:58:2: error: redeclaration of enumerator 'FW_EADDRINUSE'
+> drivers/net/ethernet/chelsio/cxgb4/t4fw_api.h:44:2: note: previous definition of 'FW_EADDRINUSE' was here
+>
+> And several others similar.
+>
+> Caused by commit f65b56b15931 ("RDMA/cxgb4: Fix LE hash collision bug for
+> active open connection").
 
 
---=-EE+T3YcemShKFLCeiL6K
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Merged.
-Thank you very much.
-
---=20
-Jaegeuk Kim
-Samsung
-
-2012-12-19 (=EC=88=98), 22:19 +0100, Geert Uytterhoeven:
-> m68k allmodconfig:
->=20
-> fs/f2fs/data.c: In function =E2=80=98read_end_io=E2=80=99:
-> fs/f2fs/data.c:311: error: implicit declaration of function =E2=80=98pref=
-etchw=E2=80=99
->=20
-> fs/f2fs/segment.c: In function =E2=80=98f2fs_end_io_write=E2=80=99:
-> fs/f2fs/segment.c:628: error: implicit declaration of function =E2=80=98p=
-refetchw=E2=80=99
->=20
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> http://kisskb.ellerman.id.au/kisskb/buildresult/7787109/
->=20
->  fs/f2fs/data.c    |    1 +
->  fs/f2fs/segment.c |    1 +
->  2 files changed, 2 insertions(+), 0 deletions(-)
->=20
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 655aeab..3aa5ce7 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -16,6 +16,7 @@
->  #include <linux/backing-dev.h>
->  #include <linux/blkdev.h>
->  #include <linux/bio.h>
-> +#include <linux/prefetch.h>
-> =20
->  #include "f2fs.h"
->  #include "node.h"
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 8bc1b6f..ca7b5ff 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -12,6 +12,7 @@
->  #include <linux/f2fs_fs.h>
->  #include <linux/bio.h>
->  #include <linux/blkdev.h>
-> +#include <linux/prefetch.h>
->  #include <linux/vmalloc.h>
-> =20
->  #include "f2fs.h"
-
-
-
---=-EE+T3YcemShKFLCeiL6K
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAABAgAGBQJQ0lQBAAoJEEAUqH6CSFDSth4P/2Rvhp/bAk81JedEAAsqplxa
-YSSyjY5gjgZ2Du4aqU8vxtBxEr8z9e/pLqzyHbtg+PgJrSroFtcnATi5iryLhlOk
-XLKE599zd38heawUo2+xxvxQE9gjxgcdYyuTYX15M/TicG6DuxFpIW2Yfvjm6McV
-GDsaiDrnQCdQLSrJy2FbJlgBZz33Rv8zfE6yb5V81ByThel1diqYWR5QQoynIna9
-V2aPVlY4NOQWkXZqr27mCdZiHz+WahJYWYKCJU6tNTU1u687h6t+4tCjzigidv8J
-IOCLgeNsto0LUCf0oF33jnEtyK2xvmoQnsC17yDoO3ro3/T5IyEQUL95oYk8M7l+
-iirUaDuKSm4okEKF5Nj8qXqRgbYhS66e3xHJgiKdojlEAiv6EK70VdZR9Eh/kLIi
-LUtPmrX4PNU/XyyyDkktP4kTLfqz5IMG/W36XIHXx/rzfzH4qAFfB85Og240r3NU
-br+b0s6os2IBg7DtsIiPArpVGq+8bGLd1hH1kSKlbe1P7VvfwqQx8jpqtcY06K9O
-+L+ZBA2Be+vxCwiXhb9w65V+6uvlBpER6gXYJY809bctvYIPymzA5U9OkH0uzkvZ
-eJfTisxuGjSriayw8KfpS6QejjjvNol9mOwm2aKuDowkA0xDfxl/j/2e9Dou4Q8o
-NxU93Z9cRq+OqQ2KagGy
-=GSI0
------END PGP SIGNATURE-----
-
---=-EE+T3YcemShKFLCeiL6K--
+Vipul, is the right fix to pull the full list of FW return values from
+t4fw_api_stor.h into t4fw_api.h as part of this patch (f65b56b15931)?
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
