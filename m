@@ -1,46 +1,135 @@
-From: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: linux-next: build failure after merge of the infiniband tree
-Date: Wed, 19 Dec 2012 16:22:54 -0800
-Message-ID: <CAG4TOxPVc0tNeLhi3FF=K_UJpizh2OZgviT5WqqLvZsg-QEoNw@mail.gmail.com>
-References: <20121220094433.791d70e55ae5e3325a6190fc@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with Linus' tree and
+ the cris tree
+Date: Thu, 20 Dec 2012 12:36:12 +1100
+Message-ID: <20121220123612.a2118f0f156af2d951bcbca1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121220094433.791d70e55ae5e3325a6190fc-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vipul Pandya <vipul-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__20_Dec_2012_12_36_12_+1100_8jyj3=jowsoTv9Wn"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:55547 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751854Ab2LTBgX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Dec 2012 20:36:23 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
 
-On Wed, Dec 19, 2012 at 2:44 PM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
-> Hi all,
->
-> After merging the infiniband tree, today's linux-next build (x86_64_
-> allmodconfig) failed like this:
->
-> In file included from drivers/scsi/csiostor/csio_wr.h:42:0,
->                  from drivers/scsi/csiostor/csio_scsi.h:49,
->                  from drivers/scsi/csiostor/csio_init.h:45,
->                  from drivers/scsi/csiostor/csio_attr.c:45:
-> drivers/scsi/csiostor/t4fw_api_stor.h:43:6: error: nested redefinition of 'enum fw_retval'
-> drivers/scsi/csiostor/t4fw_api_stor.h:43:6: error: redeclaration of 'enum fw_retval'
-> drivers/net/ethernet/chelsio/cxgb4/t4fw_api.h:42:6: note: originally defined here
-> drivers/scsi/csiostor/t4fw_api_stor.h:48:2: error: redeclaration of enumerator 'FW_ENOEXEC'
-> drivers/net/ethernet/chelsio/cxgb4/t4fw_api.h:39:2: note: previous definition of 'FW_ENOEXEC' was here
-> drivers/scsi/csiostor/t4fw_api_stor.h:50:2: error: redeclaration of enumerator 'FW_ENOMEM'
-> drivers/net/ethernet/chelsio/cxgb4/t4fw_api.h:43:2: note: previous definition of 'FW_ENOMEM' was here
-> drivers/scsi/csiostor/t4fw_api_stor.h:58:2: error: redeclaration of enumerator 'FW_EADDRINUSE'
-> drivers/net/ethernet/chelsio/cxgb4/t4fw_api.h:44:2: note: previous definition of 'FW_EADDRINUSE' was here
->
-> And several others similar.
->
-> Caused by commit f65b56b15931 ("RDMA/cxgb4: Fix LE hash collision bug for
-> active open connection").
+--Signature=_Thu__20_Dec_2012_12_36_12_+1100_8jyj3=jowsoTv9Wn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Al,
 
-Vipul, is the right fix to pull the full list of FW return values from
-t4fw_api_stor.h into t4fw_api.h as part of this patch (f65b56b15931)?
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Today's linux-next merge of the signal tree got conflicts in
+arch/alpha/include/asm/signal.h, arch/x86/include/asm/signal.h and
+arch/cris/include/asm/signal.h between commits 96433f6ee490 ("UAPI:
+(Scripted) Disintegrate arch/alpha/include/asm"), af170c5061dd ("UAPI:
+(Scripted) Disintegrate arch/x86/include/asm") from Linus' tree,  commit
+e717abac8a9f ("UAPI: (Scripted) Disintegrate arch/cris/include/asm") from
+the cris treeand commit 031b6566983a ("unify SS_ONSTACK/SS_DISABLE
+definitions") from the signal tree.
+
+I fixed it up (the former moved the sections of the files modified by the
+latter to other files, so I just removed those sections and then applied
+the following patch) and can carry the fix as necessary (no action
+is required).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 20 Dec 2012 12:24:24 +1100
+Subject: [PATCH] fix up for unify SS_ONSTACK/SS_DISABLE definitions
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+---
+ arch/alpha/include/uapi/asm/signal.h |    6 ------
+ arch/cris/include/uapi/asm/signal.h  |    6 ------
+ arch/x86/include/uapi/asm/signal.h   |    6 ------
+ 3 files changed, 18 deletions(-)
+
+diff --git a/arch/alpha/include/uapi/asm/signal.h b/arch/alpha/include/uapi=
+/asm/signal.h
+index 965bbfa..dd4ca4b 100644
+--- a/arch/alpha/include/uapi/asm/signal.h
++++ b/arch/alpha/include/uapi/asm/signal.h
+@@ -84,12 +84,6 @@ typedef unsigned long sigset_t;
+ #define SA_ONESHOT	SA_RESETHAND
+ #define SA_NOMASK	SA_NODEFER
+=20
+-/*=20
+- * sigaltstack controls
+- */
+-#define SS_ONSTACK	1
+-#define SS_DISABLE	2
+-
+ #define MINSIGSTKSZ	4096
+ #define SIGSTKSZ	16384
+=20
+diff --git a/arch/cris/include/uapi/asm/signal.h b/arch/cris/include/uapi/a=
+sm/signal.h
+index 2162494..ce42fa7 100644
+--- a/arch/cris/include/uapi/asm/signal.h
++++ b/arch/cris/include/uapi/asm/signal.h
+@@ -83,12 +83,6 @@ typedef unsigned long sigset_t;
+=20
+ #define SA_RESTORER	0x04000000
+=20
+-/*=20
+- * sigaltstack controls
+- */
+-#define SS_ONSTACK	1
+-#define SS_DISABLE	2
+-
+ #define MINSIGSTKSZ	2048
+ #define SIGSTKSZ	8192
+=20
+diff --git a/arch/x86/include/uapi/asm/signal.h b/arch/x86/include/uapi/asm=
+/signal.h
+index 0818f9a..aa7d6ae 100644
+--- a/arch/x86/include/uapi/asm/signal.h
++++ b/arch/x86/include/uapi/asm/signal.h
+@@ -87,12 +87,6 @@ typedef unsigned long sigset_t;
+=20
+ #define SA_RESTORER	0x04000000
+=20
+-/*
+- * sigaltstack controls
+- */
+-#define SS_ONSTACK	1
+-#define SS_DISABLE	2
+-
+ #define MINSIGSTKSZ	2048
+ #define SIGSTKSZ	8192
+=20
+--=20
+1.7.10.280.gaa39
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__20_Dec_2012_12_36_12_+1100_8jyj3=jowsoTv9Wn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ0muMAAoJEECxmPOUX5FEphsP/00EtROb8B1jWBdkvjJ+RWGs
+bvsPJ7qLtqhnC+Gy7OkztDARihKpU795Cvc9Hcrzd9YPBANOiAXAyEYqMa3cCNKa
+A0qCZYQk86lFTpUdUKKumbQDAxlu4aAoQDrOEh33fOLHkzY9LXfwx4r1JPnec2qY
+NfHSpa6JsmhXMkUPkLjLsUEFP9735NMDeT5dXP90znWrBPsiN7d+NBqZUXKIfDo8
+MpIAxP2JNuzM22rLIXHH+WHS2RQYBVOj+p2QzsH+oMxot3fCkiZ+zMLiMKB8kyix
+umzsR0yBTqQSxa72hkMuCYYfLvgk1kG+TvaB98WyjveM8wVax4H05Bu2QNCnOeqU
+7p0EapZFQIaQFBj1NcUxxT6ZG8/ACSAwXEJ8V8jnvvQMnj2FEW+utPLwbVs/uxD2
+nWPjdE04cCujyYz0ph/5+Ke6auStxzv9BS7IZM57cOAWQYGaiCtqsvoLxWdqYYlT
+0VIg7kBPDhKdpSk9HT2S1uPhx+sTA0PqZQtzBczUBEdCpLAyqLOlPQaUWHvZhl7e
+zITLDxrJqaahrjKrRHpJEXMOpY9PE54hlNGODtDrdVeWzgJj1Fv6J/kYxs3zc4j2
+da3fz6lhgSmMHnAT4+ybEHo8lSiL2VL7C1dUdi+oqij0V6wvUKrL+hIW5B1MOqLL
+5bknTMNY8FDzU8utloTJ
+=nxMN
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__20_Dec_2012_12_36_12_+1100_8jyj3=jowsoTv9Wn--
