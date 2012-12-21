@@ -1,61 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the pinctrl tree
-Date: Fri, 21 Dec 2012 13:20:14 +1100
-Message-ID: <20121221132014.0bf8772fb3e48c51cec1548a@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with Linus' tree
+Date: Fri, 21 Dec 2012 13:33:14 +1100
+Message-ID: <20121221133314.38cb2860dbaff359a912e444@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__21_Dec_2012_13_20_14_+1100_HrPkzc4RivqqWAMo"
+ boundary="Signature=_Fri__21_Dec_2012_13_33_14_+1100_qm_vbMrUCelUI71/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39053 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:34741 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751069Ab2LUCUY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Dec 2012 21:20:24 -0500
+	with ESMTP id S1751307Ab2LUCdX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Dec 2012 21:33:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
 
---Signature=_Fri__21_Dec_2012_13_20_14_+1100_HrPkzc4RivqqWAMo
+--Signature=_Fri__21_Dec_2012_13_33_14_+1100_qm_vbMrUCelUI71/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Al,
 
-Today's linux-next merge of the arm-soc tree got conflicts in
-drivers/pinctrl/pinctrl-exynos5440.c and
-drivers/pinctrl/pinctrl-samsung.c between commit e5b4c9d4ab55 ("pinctrl:
-exynos5440: Fix compile error in pinctrl-exynos5440/samsung.c") from the
-pinctrl tree and commit d5fd5da290ce ("pinctrl: exynos5440/samsung:
-Staticize pcfgs") from the arm-soc tree.
+Today's linux-next merge of the signal tree got a conflict in
+arch/h8300/include/asm/ptrace.h between commit 1ec94e75def5 ("UAPI:
+(Scripted) Disintegrate arch/h8300/include/asm") from Linus' tree and
+commit 1ca97bb541a1 ("new helper: current_user_stack_pointer()") from the
+signal tree.
 
-The former is a superset of the latter, so I used that (no action
+I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__21_Dec_2012_13_20_14_+1100_HrPkzc4RivqqWAMo
+diff --cc arch/h8300/include/asm/ptrace.h
+index 79c9a91,6183371..0000000
+--- a/arch/h8300/include/asm/ptrace.h
++++ b/arch/h8300/include/asm/ptrace.h
+@@@ -28,5 -63,7 +28,6 @@@
+  #define current_pt_regs() ((struct pt_regs *) \
+  	(THREAD_SIZE + (unsigned long)current_thread_info()) - 1)
+  #define signal_pt_regs() ((struct pt_regs *)current->thread.esp0)
++ #define current_user_stack_pointer() rdusp()
+ -#endif /* __KERNEL__ */
+  #endif /* __ASSEMBLY__ */
+  #endif /* _H8300_PTRACE_H */
+
+--Signature=_Fri__21_Dec_2012_13_33_14_+1100_qm_vbMrUCelUI71/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ08deAAoJEECxmPOUX5FEZYUP/1OKa6F9BtTw7jcRkesP2wAW
-XWqsWPiZ8oowwHc3meA1qIydXIbPq/j6Pj7oB7GMWOR5MoTrEEv5ErvrfQnCe3f6
-LQ5gr97drPoAidL/4lLZ3th08K6HK0fHoLFZ6Z2pjFCRlDImAWkPHBrVnRHZ07t6
-nD6+iooK5TUZdf6WM+geOxDg9mlP1wBJeKrfghyDfMkS+7aIcNUzS20WS3HjAbct
-4u4cQZIUZQn2AAcr4f/XnJhy/rlYwvc6qRmO3QOQd9VGaTd8L6C4gGrwUB3YPTwL
-Cm7KlZ5NlRORA3FO05b44l/6ct6V5TAwe7zsxdwQxWm69TGMMXA1RNay8EATge1l
-or1uGYNbU1gVJQBUvjbeef8cZeKL0zuWdjJOMK526waRmFfkyTIHYELZURIcZsWW
-cMQ8KnlV7K2KewIXhtn7KdzyP+Lc9HwzFMJyu1rnRfU14hBnkvbb4Hy9/NtgFXYU
-/3X580If/sXKNF4gqJTZYAOkCPllvIetEeQW76yBepTkU+NBWQ0gBaPa8zMDIt37
-X28B4Vqfa4uGDXk8VdKUIKIf/bS+0ia6r5mTqQfhqQz0wP33sHY/4qfUhOJVt0l/
-WQ99UHW9hxWmcAi9CKwP/fAkYg+7tOS2hEKACcG9nXPs4pB2/h65Dx4pO8fj5tNL
-jQFrCtrm/Vtv6kuqsNHw
-=9I96
+iQIcBAEBCAAGBQJQ08pqAAoJEECxmPOUX5FEtUIP/1R18++PScuoldg5FapxFhp9
+KT5IgUtOndJYkE7mHXkHVbriEhwAFtgXPMQrwf+PwENhJx8X+3DriJ4XSP9AAOYp
+ellnbOR5ecygJK2MR1MXKIU1TySaUDpoNNgoC75qIGIGBiwZvbB+Nbbea3ByP8Rp
+U/ygDS5fAOQKQ5UgOYMcy+wGW4Jq68iLsPTiNVswjNzebKIl6rXj4xK/BqUY5kKD
+R4ER7OnCYwPbg/t8oN3K5s4AcHG4X1k/83CScGhWgyV9nxBealD0vaMXqf4phhWG
+judi0cICEmaAXmVnrxgggDJpJ2vfbOSL8kE6imk97WQnH/r08MuR6j+SFk6ZSCIt
+LJo6x2e/bnMQe4vgvW7xhnohb+s6YS+XzpMjZub4LGO9+2N6huw6N46M39f1iGih
+rj+gTxKI5FEWZ5sjYo+VSUebyzGTUNgBpSuatb/0BMQX3fkvNqJ8PxW0K5mvV4E5
+m41p/AuqKwe72bJaHUB4fDezlzUY7p4DrYudwIp16eO1TbyIpYKz1ZimhjlnCE/V
+jmCbKZvF/iHiN6TO4kY9ke7XMNpxybzGxOkkIKaZ7kHq9YlU06y6hpOltRnRWnh/
+WCh8GHyeynwN6EluVZ18JoD4JU2DZ8X4g2YyUhe2rqzX+GUVA/GOIq1x5edkRxg9
+p85teee4NnFC9JMw6Tfe
+=Qyzb
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__21_Dec_2012_13_20_14_+1100_HrPkzc4RivqqWAMo--
+--Signature=_Fri__21_Dec_2012_13_33_14_+1100_qm_vbMrUCelUI71/--
