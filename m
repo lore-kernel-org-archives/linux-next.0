@@ -1,94 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next stats (Was: Linux 3.8-rc1)
-Date: Mon, 24 Dec 2012 09:04:26 +1100
-Message-ID: <20121224090426.99ba9400c9097f5567dfae0d@canb.auug.org.au>
-References: <CA+55aFyd0Wk=hPqiRmk5MMnrwPhse5k1Aih9P-j-Badr7kwhbw@mail.gmail.com>
+Subject: linux-next: manual merge of the driver-core.current tree with
+ Linus' tree
+Date: Mon, 24 Dec 2012 09:52:00 +1100
+Message-ID: <20121224095200.a94a61d18925f30909964dfb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Dec_2012_09_04_26_+1100_1XZER.hy_ggNzuzL"
+ boundary="Signature=_Mon__24_Dec_2012_09_52_00_+1100_VK2anV_==tqPlPnn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42874 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:45444 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752268Ab2LWWEi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Dec 2012 17:04:38 -0500
-In-Reply-To: <CA+55aFyd0Wk=hPqiRmk5MMnrwPhse5k1Aih9P-j-Badr7kwhbw@mail.gmail.com>
+	with ESMTP id S1752016Ab2LWWwX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Dec 2012 17:52:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>, Wolfram Sang <w.sang@pengutronix.de>, Jean Delvare <khali@linux-fr.org>
 
---Signature=_Mon__24_Dec_2012_09_04_26_+1100_1XZER.hy_ggNzuzL
+--Signature=_Mon__24_Dec_2012_09_52_00_+1100_VK2anV_==tqPlPnn
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 21 Dec 2012 18:00:58 -0800 Linus Torvalds <torvalds@linux-foundatio=
-n.org> wrote:
->
-> The longest night of the year is upon us (*), and what better thing to
-> do than get yourself some nice mulled wine, sit back, relax, and play
-> with the most recent rc kernel?
->=20
-> This has been a big merge window: we've got more commits than any
-> other kernel in the v3.x kernel series (although v3.2-rc1 was *almost*
-> as big). It's been a rather busy merge window, in other words.
+Hi Greg,
 
-Well here are this merge windows' stats:
+Today's linux-next merge of the driver-core.current tree got conflicts
+in 21 files in drivers/i2c between commit 0b255e927d47 ("i2c: remove
+__dev* attributes from subsystem") from Linus' tree and commit
+eeb30d064414 ("Drivers: i2c: remove __dev* attributes") from the
+driver-core.current tree.
 
-(No merge commits counted, next-20121211 is the last linux-next before
-v3.7)
-
-Commits in v3.8-rc1 (relative to v3.7): 10901
-Commits in next-20121211:		11857
-Commits with the same SHA1:		 9322
-Commits with the same patch_id:		  492	(1)
-Commits with the same subject line:	   99	(1)
-
-(1) not counting those in the lines above.
-
-So commits in -rc1 that were "in" next-20121211:	9913	90.9%
-						(up from 83.5% last time)
-Commits in -rc1 that were not in next-20120722:		988	9.1%
-
-Pretty good, but it would be still nice to figure out where the last lot
-came from.  I have the "git log --oneline --no-walk" list if someone wants =
-them.
-
-Some break down of the onelines list:
-	grep for drm gives 100
-		 btrfs gives 117
-Quite a few of the rest appear to be bug fixes.
-
-As for the 1944 commits left in linux-next ... 1303 are in the kvmtool
-tree (most of these are in the tip tree as well - this has been pending a
-merge to Linus since before 3.2 ...).  There are another 254 commits in
-the tip tree (maybe pending fixes), 118 in the xen-two tree and 81 in the
-drop-experimental tree.
+I fixed it up (taking a mixture of both commits) and can carry the fix as
+necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__24_Dec_2012_09_04_26_+1100_1XZER.hy_ggNzuzL
+--Signature=_Mon__24_Dec_2012_09_52_00_+1100_VK2anV_==tqPlPnn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ13/qAAoJEECxmPOUX5FE3G8P/0+GH3eUcMS0ja2I9/FIGSrg
-5p46w20Bwsyq+LqQ+U4Jiupq8Do2yoPeJweTN4d7HIYohzE1+MsGzG72EC8DUkgD
-+Q1cf9/AnXWkvaNcorpB8I3k7H7tWNByAbHBaGHkfi7cHj70ucN5kiMViBdWfImF
-kPc7Fgh1Itwtl1eXhcBjSZhpVpJKOmf8Eg2+xvXBB2nC255o4SC7K7ZYyW08USou
-rvLqSPSnoZeWeKCF/kO7CSe+7SEjfXI4rTySCVozYIQHdXFdXP64m/HpSaF6nsP5
-gOs3fGkbEKHEMAQUXYyyyikfiVnTecfNYpacMwVgZKxe8+zMVsF5f2ISMEqbMSVU
-aSjGWqlPjV6ydKjzb/iPh3l+HS9cqbAKun0Z8TTh1rNnpvy3Z8N5Oxi3O3quAcJO
-gZFhvynq+yJTcinzw3KQk6efTYlDYxnohCNC4N7EoOTxfPKy3ycU5O7r9UvXBgAi
-Fx186Mzrl2wmlgKJJKOZgCfUXOjLoU3ozNPgBXOYXHZFaQE7sr9TGnQULWiK7LeH
-Q7iQXCmfFe1yGwhfgJ5zc1kHfzZCSJsIaPOQHAbgyEJWHB10qyo5vyWETCF4hMSx
-y3O6s9xFxaHSEE+d8a/b5Mq3PLBxvoYtMHt1gPRZAdoet8u8rPyU/ytGXXphkBbO
-/1KekHRnj3MCmdMTQtZZ
-=uupe
+iQIcBAEBCAAGBQJQ14sQAAoJEECxmPOUX5FEGRkQAJ4Noc6ZnwjoopDchpnd8IjS
+CeuQDMvvOxRnPNcGJUtdeNoOX+U3619pTX9rZW54bKCNM6XHAwIDXq82ZAw/Mb6Q
+qbwvejrbj3x28LA1N3TILE2DIsC9HBcEXjtSc3b1BlzqFTo+gjEUZ5nJiZNiLxdU
+qBmhY1RMFfmLDPw1kqsimd7JllCO19M6jev2kWgitH/nihlrimRPMKP9LfwMUXmB
+UBNCW9fwEcTWNvBPcAJjjjyBudBmS6DadC5f4MX5f6SjVOb7DzdIr+qQy8860NcL
+rl2xwFMWcXJmeh/Wr4FUYCJv32n8Ckqtvy/YhNvwRUw0a9QCCL7vo8nwJFuomlo5
+STqPbnNuNab9IpejAUw05TyxOwB3kxDr08NZAtAubJMF6ibBFMehyRhlG5JlNOzu
+o2UghrbSY/XTGGY5BMe2asac554WL6N84tJGmyxcJBZnUdZrrXORtPfvVE1tOU+d
+jRJwyjWqpha1fJt5a31ppUUTICAsm2H+wcwSG8oJSaKLl0GA6b56qvd/5kiweVme
+XXzt4BkThITR31eFCY8JJtIjBJGJn57K6bQWYuQIM7rMdxhhd4gHWNefexIzhrN/
+zCenji4VD7sT1GfAleGEX9Ie6XsxkmhIVLda6ScRZO35B24otZcKi0BIw2hvQ9Hc
+KdmZjmKT/3GPDLEkP5kD
+=+/fd
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Dec_2012_09_04_26_+1100_1XZER.hy_ggNzuzL--
+--Signature=_Mon__24_Dec_2012_09_52_00_+1100_VK2anV_==tqPlPnn--
