@@ -1,61 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core.current tree with
+Subject: Re: linux-next: manual merge of the driver-core.current tree with
  Linus' tree
-Date: Mon, 24 Dec 2012 09:52:00 +1100
-Message-ID: <20121224095200.a94a61d18925f30909964dfb@canb.auug.org.au>
+Date: Mon, 24 Dec 2012 09:56:14 +1100
+Message-ID: <20121224095614.3d1fc65e9ade946cc6a8a2e1@canb.auug.org.au>
+References: <20121224095200.a94a61d18925f30909964dfb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Dec_2012_09_52_00_+1100_VK2anV_==tqPlPnn"
+ boundary="Signature=_Mon__24_Dec_2012_09_56_14_+1100_4k80Ol.1NrBiLhC/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45444 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55250 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752016Ab2LWWwX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Dec 2012 17:52:23 -0500
+	with ESMTP id S1752171Ab2LWW4Q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Dec 2012 17:56:16 -0500
+In-Reply-To: <20121224095200.a94a61d18925f30909964dfb@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>, Wolfram Sang <w.sang@pengutronix.de>, Jean Delvare <khali@linux-fr.org>
 
---Signature=_Mon__24_Dec_2012_09_52_00_+1100_VK2anV_==tqPlPnn
+--Signature=_Mon__24_Dec_2012_09_56_14_+1100_4k80Ol.1NrBiLhC/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the driver-core.current tree got conflicts
-in 21 files in drivers/i2c between commit 0b255e927d47 ("i2c: remove
-__dev* attributes from subsystem") from Linus' tree and commit
-eeb30d064414 ("Drivers: i2c: remove __dev* attributes") from the
-driver-core.current tree.
+On Mon, 24 Dec 2012 09:52:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the driver-core.current tree got conflicts
+> in 21 files in drivers/i2c between commit 0b255e927d47 ("i2c: remove
+> __dev* attributes from subsystem") from Linus' tree and commit
+> eeb30d064414 ("Drivers: i2c: remove __dev* attributes") from the
+> driver-core.current tree.
+>=20
+> I fixed it up (taking a mixture of both commits) and can carry the fix as
+> necessary (no action is required).
 
-I fixed it up (taking a mixture of both commits) and can carry the fix as
-necessary (no action is required).
+BTW, Greg, the patch in your tree to drivers/i2c/busses/i2c-au1550.c is
+incorrect and would not build.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__24_Dec_2012_09_52_00_+1100_VK2anV_==tqPlPnn
+--Signature=_Mon__24_Dec_2012_09_56_14_+1100_4k80Ol.1NrBiLhC/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ14sQAAoJEECxmPOUX5FEGRkQAJ4Noc6ZnwjoopDchpnd8IjS
-CeuQDMvvOxRnPNcGJUtdeNoOX+U3619pTX9rZW54bKCNM6XHAwIDXq82ZAw/Mb6Q
-qbwvejrbj3x28LA1N3TILE2DIsC9HBcEXjtSc3b1BlzqFTo+gjEUZ5nJiZNiLxdU
-qBmhY1RMFfmLDPw1kqsimd7JllCO19M6jev2kWgitH/nihlrimRPMKP9LfwMUXmB
-UBNCW9fwEcTWNvBPcAJjjjyBudBmS6DadC5f4MX5f6SjVOb7DzdIr+qQy8860NcL
-rl2xwFMWcXJmeh/Wr4FUYCJv32n8Ckqtvy/YhNvwRUw0a9QCCL7vo8nwJFuomlo5
-STqPbnNuNab9IpejAUw05TyxOwB3kxDr08NZAtAubJMF6ibBFMehyRhlG5JlNOzu
-o2UghrbSY/XTGGY5BMe2asac554WL6N84tJGmyxcJBZnUdZrrXORtPfvVE1tOU+d
-jRJwyjWqpha1fJt5a31ppUUTICAsm2H+wcwSG8oJSaKLl0GA6b56qvd/5kiweVme
-XXzt4BkThITR31eFCY8JJtIjBJGJn57K6bQWYuQIM7rMdxhhd4gHWNefexIzhrN/
-zCenji4VD7sT1GfAleGEX9Ie6XsxkmhIVLda6ScRZO35B24otZcKi0BIw2hvQ9Hc
-KdmZjmKT/3GPDLEkP5kD
-=+/fd
+iQIcBAEBCAAGBQJQ14wOAAoJEECxmPOUX5FEovsQAIq0BCjv+HpqfQFiJecD7Wrx
+F/Rp1KQ997FKcydDVbYPx/F4WZmp+FbQrftlYyNARbK+HOgvkxAd5iPilJz1qjTn
+D/peas1w3xBdG3o3EY0gpdsFRR9Rq3+0H1vh7zvFR+z366eHRMeN3OHFI2welOj9
+LiWG+v/8sWoXl473ZKTWQ5TNh1Nt38GrKfvUksjj0LH6pk5g8HGPa4jsB3/UIIzw
+GAeU/fUpgORfchoIoO1Lw3J2ErLPPW3X3pDbfGKwItWW652HHh+2ZPBKx8Qx+YqQ
+2xbKsOaY8UQdb9cD8uuJ6bTTalGipQWlSRAyuDZDeXFOn0z1YDmdzmlMvosQvoi1
+B2JcThZy9j3LwhoA+c6Em2tBYRv5mK8IuJJhU4WroCKobciLv3xvQwhwcTJylAbA
+uP213hBl3icSSLFOT1tpaBXen+T8fDDDulY1YaUPQMpPvGJMjuVTJ6peA651oByM
+pkwkrGkGMFZd2eS9tXhh4q9GsfFR2PH3GRe3RepKd/YiQC0svX5NL98rtoAmVcom
+G/Js1nQkRfCRMSShw2CmvFERXsymJ17TYb+aG8rytLMnZdQBJij2lNuLuactdzlm
+44qrgMj7fzNYPjN2rSc+vQB+Es8PnImUi9y4U7x9YhLqvWbGNT6QrtZ/dOJaUVFp
+/FuUFI/C5Pc19XtmYyfC
+=J7/S
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Dec_2012_09_52_00_+1100_VK2anV_==tqPlPnn--
+--Signature=_Mon__24_Dec_2012_09_56_14_+1100_4k80Ol.1NrBiLhC/--
