@@ -1,34 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pinctrl tree with the
+Subject: linux-next: manual merge of the akpm tree with the
  driver-core.current tree
-Date: Mon, 24 Dec 2012 12:47:08 +1100
-Message-ID: <20121224124708.b0fb53a402f2a4bfdfece9c2@canb.auug.org.au>
+Date: Mon, 24 Dec 2012 13:10:23 +1100
+Message-ID: <20121224131023.e0433db6868d6234c7a8c195@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Dec_2012_12_47_08_+1100_AbTvj0S=KGKX_X0y"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58434 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752281Ab2LXBrV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Dec 2012 20:47:21 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Barry Song <Baohua.Song@csr.com>
+ boundary="Signature=_Mon__24_Dec_2012_13_10_23_+1100__nnl.Xej4.VjOp//"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bill Pemberton <wfp5p@virginia.edu>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__24_Dec_2012_12_47_08_+1100_AbTvj0S=KGKX_X0y
+--Signature=_Mon__24_Dec_2012_13_10_23_+1100__nnl.Xej4.VjOp//
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Andrew,
 
-Today's linux-next merge of the pinctrl tree got a conflict in
-drivers/pinctrl/pinctrl-sirf.c between commit c2c57b329c7b ("Drivers:
-pinctrl: remove __dev* attributes") from the driver-core.current tree and
-commit 19d601d8e0a7 ("pinctrl: sirf: enable GPIO pullup/down
-configuration from dts") from the pinctrl tree.
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/rtc/rtc-tegra.c between commit 9889589ba308 ("Drivers: rtc:
+remove __dev* attributes") from the driver-core.current tree and commit
+"drivers/rtc/rtc-tegra.c: convert to DT driver" from the akpm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,79 +31,46 @@ is required).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/pinctrl/pinctrl-sirf.c
-index c776046,30e1a38..0000000
---- a/drivers/pinctrl/pinctrl-sirf.c
-+++ b/drivers/pinctrl/pinctrl-sirf.c
-@@@ -1663,7 -1663,45 +1663,45 @@@ const struct irq_domain_ops sirfsoc_gpi
-  	.xlate =3D irq_domain_xlate_twocell,
+diff --cc drivers/rtc/rtc-tegra.c
+index 5ba2f75,fb62808..0000000
+--- a/drivers/rtc/rtc-tegra.c
++++ b/drivers/rtc/rtc-tegra.c
+@@@ -303,7 -303,13 +303,13 @@@ static struct rtc_class_ops tegra_rtc_o
+  	.alarm_irq_enable =3D tegra_rtc_alarm_irq_enable,
   };
  =20
-+ static void sirfsoc_gpio_set_pullup(const u32 *pullups)
-+ {
-+ 	int i, n;
-+ 	const unsigned long *p =3D (const unsigned long *)pullups;
++ static const struct of_device_id tegra_rtc_dt_match[] =3D {
++ 	{ .compatible =3D "nvidia,tegra20-rtc", },
++ 	{}
++ };
++ MODULE_DEVICE_TABLE(of, tegra_rtc_dt_match);
 +=20
-+ 	for (i =3D 0; i < SIRFSOC_GPIO_NO_OF_BANKS; i++) {
-+ 		n =3D find_first_bit(p + i, BITS_PER_LONG);
-+ 		while (n < BITS_PER_LONG) {
-+ 			u32 offset =3D SIRFSOC_GPIO_CTRL(i, n);
-+ 			u32 val =3D readl(sgpio_bank[i].chip.regs + offset);
-+ 			val |=3D SIRFSOC_GPIO_CTL_PULL_MASK;
-+ 			val |=3D SIRFSOC_GPIO_CTL_PULL_HIGH;
-+ 			writel(val, sgpio_bank[i].chip.regs + offset);
-+=20
-+ 			n =3D find_next_bit(p + i, BITS_PER_LONG, n + 1);
-+ 		}
-+ 	}
-+ }
-+=20
-+ static void sirfsoc_gpio_set_pulldown(const u32 *pulldowns)
-+ {
-+ 	int i, n;
-+ 	const unsigned long *p =3D (const unsigned long *)pulldowns;
-+=20
-+ 	for (i =3D 0; i < SIRFSOC_GPIO_NO_OF_BANKS; i++) {
-+ 		n =3D find_first_bit(p + i, BITS_PER_LONG);
-+ 		while (n < BITS_PER_LONG) {
-+ 			u32 offset =3D SIRFSOC_GPIO_CTRL(i, n);
-+ 			u32 val =3D readl(sgpio_bank[i].chip.regs + offset);
-+ 			val |=3D SIRFSOC_GPIO_CTL_PULL_MASK;
-+ 			val &=3D ~SIRFSOC_GPIO_CTL_PULL_HIGH;
-+ 			writel(val, sgpio_bank[i].chip.regs + offset);
-+=20
-+ 			n =3D find_next_bit(p + i, BITS_PER_LONG, n + 1);
-+ 		}
-+ 	}
-+ }
-+=20
- -static int __devinit sirfsoc_gpio_probe(struct device_node *np)
- +static int sirfsoc_gpio_probe(struct device_node *np)
+ -static int __devinit tegra_rtc_probe(struct platform_device *pdev)
+ +static int tegra_rtc_probe(struct platform_device *pdev)
   {
-  	int i, err =3D 0;
-  	struct sirfsoc_gpio_bank *bank;
+  	struct tegra_rtc_info *info;
+  	struct resource *res;
 
---Signature=_Mon__24_Dec_2012_12_47_08_+1100_AbTvj0S=KGKX_X0y
+--Signature=_Mon__24_Dec_2012_13_10_23_+1100__nnl.Xej4.VjOp//
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ17QcAAoJEECxmPOUX5FE6ugP/ifbTqpuBETuNFjPfLUveB46
-QiqiUbeakek6tzJWSYCBURt6V9pS2VKNV1xWjdQXN4ZCfpq7gZGJEe2nlWaVoqkP
-rs4rvsTnerLq+qvfq/0OfRUV8eUTNataIMmV9q/MQOIREaAdYJ0UrAs8DRR6X1bD
-SyUVOUb2zu2QF8gGGbU/k2ollv1tMyoaTS2oUBTDl7umUSi3bLT3GZA5eqM1DEia
-JVd1J5KJJQuLc3hOnh9TXLonDCHt1zh7fom9M85x4Pfp2Nl/KTtpnLFqaxYhiBi8
-hviyIOVS9xP/vx03Ha/WXJ71ZLHO8zTI1zHh8kjlPW5zpWwEcIeTE+WZTKLXtt4F
-Lg82am8YQG6eWlfrYpusz64odYwQE9QEAe/OGyGHoeISWNFpJWNwPpXtfHYxAIpu
-V+QSDm2AZSi2FK1NDn8vf/M9XYSHR6eatrA0Ew14yifTq5niWt244Z0NBWOiPsr3
-MdYdiBhnbk6fC32a5GDYeyoSt74LyiV4Aiu1cdiEirjChsRo4SdmfnKDvC6cQVRk
-Iq/EmRE6HZyQgT1tBDZ60lEu1bmBakfCOYcLUQoEVNiO7HtSbfjvV3r5wCM3zB5w
-gjHzl+cAznocCk+kEwrdk+mTVeW1aZZkjn4Uu3OPDaqB4tkzSkzulF+owvLPuq+f
-vOnXMh6qLmtKrp+9kziN
-=rgJi
+iQIcBAEBCAAGBQJQ17mPAAoJEECxmPOUX5FEy4IP/1iBKElYZCl0BWOReA2Jiyp5
+2PgEKjbgFSHN6YzQt1hPWe6gwJK1onIX9/bMO1A8aukjsoAfAa/3S9JIeGt6HXts
+ycl0ugYpJGFG/RcogFYuPgiY/xKrwocJD7Bc8e5RdHOVT8+w+7zKpmy2L+3l3gpY
+AmNC+JElCfOLXrBhhIP4KRlo7qBZq7n1TZ31pPdtdeYzE8Z7Mj+8Xpc3yc3q/sG+
+xvxShww2fEdx/cjH+JB/ZuofF04UBhKf6hEevFdhZGtG9REd2Sxqgwl+XQMrkj5/
+pnoPeiD0L+8qjYdGDQrevv6tTFPS52QkR1QOFPzjsIeaj5husdg2OhKWT9RWchnt
+RqftI5+o2wVaUepHBJgtbEBgSb+HQFJ1g/jR9pkXMrFiTAfy5FesVIc0ZEwO/fnQ
+a7BOCskcs1GIDMcE/IyCW9v1NWdX8Q27sR+zUeYvcdAvN4rP7l2/Xx+dMsMYO4fA
+K9nY5DxuMiTYbPnfNciP2vGJ/Oion0da/sXd0EDkjwoD16GVyym2hshuRN2CKB1n
+udM9yI6i6AUb+aCNHXtawqKchv8hHMrE8PprvC25nJFTBPZjBEQ1dSijjHoys6fc
+m+qnsz5FlxPQ18ePXn0jpHIUlAkuhNRzWCEo+g1k0uQpOZpxDGdV2S1VMLmbATG8
+m0Y9nMk+3/zNVGAYsfzH
+=zAes
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Dec_2012_12_47_08_+1100_AbTvj0S=KGKX_X0y--
+--Signature=_Mon__24_Dec_2012_13_10_23_+1100__nnl.Xej4.VjOp//--
