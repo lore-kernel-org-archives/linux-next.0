@@ -1,50 +1,95 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core.current tree with
- Linus' tree
-Date: Sun, 23 Dec 2012 15:30:10 -0800
-Message-ID: <20121223233010.GA23879@kroah.com>
-References: <20121224095200.a94a61d18925f30909964dfb@canb.auug.org.au>
- <20121224095614.3d1fc65e9ade946cc6a8a2e1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the slave-dma tree with the
+ driver-core.current tree
+Date: Mon, 24 Dec 2012 11:18:24 +1100
+Message-ID: <20121224111824.249481eabcf2543dc71f8932@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__24_Dec_2012_11_18_24_+1100_A0NaU8Rgrj8=Uva3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:54293 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752157Ab2LWX05 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 23 Dec 2012 18:26:57 -0500
-Content-Disposition: inline
-In-Reply-To: <20121224095614.3d1fc65e9ade946cc6a8a2e1@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38906 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752357Ab2LXASd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Dec 2012 19:18:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>, Wolfram Sang <w.sang@pengutronix.de>, Jean Delvare <khali@linux-fr.org>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>, Dan Williams <djbw@fb.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bill Pemberton <wfp5p@virginia.edu>
 
-On Mon, Dec 24, 2012 at 09:56:14AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Mon, 24 Dec 2012 09:52:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the driver-core.current tree got conflicts
-> > in 21 files in drivers/i2c between commit 0b255e927d47 ("i2c: remove
-> > __dev* attributes from subsystem") from Linus' tree and commit
-> > eeb30d064414 ("Drivers: i2c: remove __dev* attributes") from the
-> > driver-core.current tree.
-> > 
-> > I fixed it up (taking a mixture of both commits) and can carry the fix as
-> > necessary (no action is required).
-> 
-> BTW, Greg, the patch in your tree to drivers/i2c/busses/i2c-au1550.c is
-> incorrect and would not build.
+--Signature=_Mon__24_Dec_2012_11_18_24_+1100_A0NaU8Rgrj8=Uva3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ugh, that's a horrible merge error on my part, thanks for pointing it
-out.  My 'make allmodconfig' doesn't happen to build that module.
+Hi Vinod,
 
-And sorry about the merge issues, I wasn't aware that Wolfram was going
-to be sending these to Linus after 3.8-rc1 was out, sorry about that.
-The merge issues are due to me trying to get the coding style correct,
-which Bill's sed script didn't always do.
+Today's linux-next merge of the slave-dma tree got a conflict in
+drivers/dma/ioat/dma_v3.c between commit b9016739011f ("Drivers: dma:
+remove __dev* attributes") from the driver-core.current tree and commit
+370e97b07d80 ("ioat: Add alignment workaround for IVB platforms") from
+the slave-dma tree.
 
-thanks,
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-greg k-h
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/dma/ioat/dma_v3.c
+index e5fc944,e52cf1e..0000000
+--- a/drivers/dma/ioat/dma_v3.c
++++ b/drivers/dma/ioat/dma_v3.c
+@@@ -1187,7 -1224,27 +1224,27 @@@ static bool is_snb_ioat(struct pci_dev=20
+  	}
+  }
+ =20
++ static bool is_ivb_ioat(struct pci_dev *pdev)
++ {
++ 	switch (pdev->device) {
++ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB0:
++ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB1:
++ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB2:
++ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB3:
++ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB4:
++ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB5:
++ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB6:
++ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB7:
++ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB8:
++ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB9:
++ 		return true;
++ 	default:
++ 		return false;
++ 	}
++=20
++ }
++=20
+ -int __devinit ioat3_dma_probe(struct ioatdma_device *device, int dca)
+ +int ioat3_dma_probe(struct ioatdma_device *device, int dca)
+  {
+  	struct pci_dev *pdev =3D device->pdev;
+  	int dca_en =3D system_has_dca_enabled(pdev);
+
+--Signature=_Mon__24_Dec_2012_11_18_24_+1100_A0NaU8Rgrj8=Uva3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ159QAAoJEECxmPOUX5FELKIP/jIhnH+voQLSSyP0UoNhSkL9
+5KjVD1FEzt+fsDhSE7ZLFdMvL0faSVMKqiWQiHNoX0eBwsVVT0dTo2cW9a4/9rev
+qo801WCIJNTUFkrSZEJJ+bpBUoa5Q3oAvd5zKk6tqc2uM21Yw1QIj6N4VCao6cRn
+kWmlauW4t+yxiDHUCZ7/SwyGwlUeR6REJ4TXlwjy5o+kLPFKAVfY0tqLWcglBHBS
+uHsgZxBiXjCXV6YRcRM+DTNfqiVxgkNV6Ek6BlETpcH2cbENFTyWTdFbCBV9K/jP
+46YTEi3Eo55eBacCyhsQ6OpCCNUWjKApmHTfuPvt8uv2XIF+fdUj0vtteLk/5+eK
+qIOXsDH8pRzYBUp9ZR6DZr08INgRyYHfdui2oFLslROGd5WH1cY9KRKOrGTdLohz
+j3CvQBuRGegfM+XRR3EY1g+u0vFoi/4rx3QpG3W5t7X8w3HRzeXTSsNMP6z9xoC2
+7IYwQ430/OS4MErhG/ZJSqrraxK+U0ql0/fwtaSbJ1sZd1sJjj9ryhPZ/Qz3pSSB
+lPxBkcgivKlaId4xTeayPZvT83dpTvJj79S5i+M++bSYHMj/w5Z1ciOYXTB9t2wF
+qE/2sZgSNf5EmgOGr91Tt7fpYOtGUrUoO9pqgpcr0FuQSqK5fCJfG1cXOo4nCtMJ
+ao5Sjq0OfGHS5yOYq9WK
+=n/hA
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__24_Dec_2012_11_18_24_+1100_A0NaU8Rgrj8=Uva3--
