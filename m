@@ -1,34 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the slave-dma tree with the
+Subject: linux-next: manual merge of the pinctrl tree with the
  driver-core.current tree
-Date: Mon, 24 Dec 2012 11:18:24 +1100
-Message-ID: <20121224111824.249481eabcf2543dc71f8932@canb.auug.org.au>
+Date: Mon, 24 Dec 2012 12:47:08 +1100
+Message-ID: <20121224124708.b0fb53a402f2a4bfdfece9c2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Dec_2012_11_18_24_+1100_A0NaU8Rgrj8=Uva3"
+ boundary="Signature=_Mon__24_Dec_2012_12_47_08_+1100_AbTvj0S=KGKX_X0y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38906 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58434 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752357Ab2LXASd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Dec 2012 19:18:33 -0500
+	with ESMTP id S1752281Ab2LXBrV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Dec 2012 20:47:21 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>, Dan Williams <djbw@fb.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bill Pemberton <wfp5p@virginia.edu>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Barry Song <Baohua.Song@csr.com>
 
---Signature=_Mon__24_Dec_2012_11_18_24_+1100_A0NaU8Rgrj8=Uva3
+--Signature=_Mon__24_Dec_2012_12_47_08_+1100_AbTvj0S=KGKX_X0y
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Vinod,
+Hi Linus,
 
-Today's linux-next merge of the slave-dma tree got a conflict in
-drivers/dma/ioat/dma_v3.c between commit b9016739011f ("Drivers: dma:
-remove __dev* attributes") from the driver-core.current tree and commit
-370e97b07d80 ("ioat: Add alignment workaround for IVB platforms") from
-the slave-dma tree.
+Today's linux-next merge of the pinctrl tree got a conflict in
+drivers/pinctrl/pinctrl-sirf.c between commit c2c57b329c7b ("Drivers:
+pinctrl: remove __dev* attributes") from the driver-core.current tree and
+commit 19d601d8e0a7 ("pinctrl: sirf: enable GPIO pullup/down
+configuration from dts") from the pinctrl tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,60 +36,79 @@ is required).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/dma/ioat/dma_v3.c
-index e5fc944,e52cf1e..0000000
---- a/drivers/dma/ioat/dma_v3.c
-+++ b/drivers/dma/ioat/dma_v3.c
-@@@ -1187,7 -1224,27 +1224,27 @@@ static bool is_snb_ioat(struct pci_dev=20
-  	}
-  }
+diff --cc drivers/pinctrl/pinctrl-sirf.c
+index c776046,30e1a38..0000000
+--- a/drivers/pinctrl/pinctrl-sirf.c
++++ b/drivers/pinctrl/pinctrl-sirf.c
+@@@ -1663,7 -1663,45 +1663,45 @@@ const struct irq_domain_ops sirfsoc_gpi
+  	.xlate =3D irq_domain_xlate_twocell,
+  };
  =20
-+ static bool is_ivb_ioat(struct pci_dev *pdev)
++ static void sirfsoc_gpio_set_pullup(const u32 *pullups)
 + {
-+ 	switch (pdev->device) {
-+ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB0:
-+ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB1:
-+ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB2:
-+ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB3:
-+ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB4:
-+ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB5:
-+ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB6:
-+ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB7:
-+ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB8:
-+ 	case PCI_DEVICE_ID_INTEL_IOAT_IVB9:
-+ 		return true;
-+ 	default:
-+ 		return false;
-+ 	}
++ 	int i, n;
++ 	const unsigned long *p =3D (const unsigned long *)pullups;
 +=20
++ 	for (i =3D 0; i < SIRFSOC_GPIO_NO_OF_BANKS; i++) {
++ 		n =3D find_first_bit(p + i, BITS_PER_LONG);
++ 		while (n < BITS_PER_LONG) {
++ 			u32 offset =3D SIRFSOC_GPIO_CTRL(i, n);
++ 			u32 val =3D readl(sgpio_bank[i].chip.regs + offset);
++ 			val |=3D SIRFSOC_GPIO_CTL_PULL_MASK;
++ 			val |=3D SIRFSOC_GPIO_CTL_PULL_HIGH;
++ 			writel(val, sgpio_bank[i].chip.regs + offset);
++=20
++ 			n =3D find_next_bit(p + i, BITS_PER_LONG, n + 1);
++ 		}
++ 	}
 + }
 +=20
- -int __devinit ioat3_dma_probe(struct ioatdma_device *device, int dca)
- +int ioat3_dma_probe(struct ioatdma_device *device, int dca)
++ static void sirfsoc_gpio_set_pulldown(const u32 *pulldowns)
++ {
++ 	int i, n;
++ 	const unsigned long *p =3D (const unsigned long *)pulldowns;
++=20
++ 	for (i =3D 0; i < SIRFSOC_GPIO_NO_OF_BANKS; i++) {
++ 		n =3D find_first_bit(p + i, BITS_PER_LONG);
++ 		while (n < BITS_PER_LONG) {
++ 			u32 offset =3D SIRFSOC_GPIO_CTRL(i, n);
++ 			u32 val =3D readl(sgpio_bank[i].chip.regs + offset);
++ 			val |=3D SIRFSOC_GPIO_CTL_PULL_MASK;
++ 			val &=3D ~SIRFSOC_GPIO_CTL_PULL_HIGH;
++ 			writel(val, sgpio_bank[i].chip.regs + offset);
++=20
++ 			n =3D find_next_bit(p + i, BITS_PER_LONG, n + 1);
++ 		}
++ 	}
++ }
++=20
+ -static int __devinit sirfsoc_gpio_probe(struct device_node *np)
+ +static int sirfsoc_gpio_probe(struct device_node *np)
   {
-  	struct pci_dev *pdev =3D device->pdev;
-  	int dca_en =3D system_has_dca_enabled(pdev);
+  	int i, err =3D 0;
+  	struct sirfsoc_gpio_bank *bank;
 
---Signature=_Mon__24_Dec_2012_11_18_24_+1100_A0NaU8Rgrj8=Uva3
+--Signature=_Mon__24_Dec_2012_12_47_08_+1100_AbTvj0S=KGKX_X0y
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ159QAAoJEECxmPOUX5FELKIP/jIhnH+voQLSSyP0UoNhSkL9
-5KjVD1FEzt+fsDhSE7ZLFdMvL0faSVMKqiWQiHNoX0eBwsVVT0dTo2cW9a4/9rev
-qo801WCIJNTUFkrSZEJJ+bpBUoa5Q3oAvd5zKk6tqc2uM21Yw1QIj6N4VCao6cRn
-kWmlauW4t+yxiDHUCZ7/SwyGwlUeR6REJ4TXlwjy5o+kLPFKAVfY0tqLWcglBHBS
-uHsgZxBiXjCXV6YRcRM+DTNfqiVxgkNV6Ek6BlETpcH2cbENFTyWTdFbCBV9K/jP
-46YTEi3Eo55eBacCyhsQ6OpCCNUWjKApmHTfuPvt8uv2XIF+fdUj0vtteLk/5+eK
-qIOXsDH8pRzYBUp9ZR6DZr08INgRyYHfdui2oFLslROGd5WH1cY9KRKOrGTdLohz
-j3CvQBuRGegfM+XRR3EY1g+u0vFoi/4rx3QpG3W5t7X8w3HRzeXTSsNMP6z9xoC2
-7IYwQ430/OS4MErhG/ZJSqrraxK+U0ql0/fwtaSbJ1sZd1sJjj9ryhPZ/Qz3pSSB
-lPxBkcgivKlaId4xTeayPZvT83dpTvJj79S5i+M++bSYHMj/w5Z1ciOYXTB9t2wF
-qE/2sZgSNf5EmgOGr91Tt7fpYOtGUrUoO9pqgpcr0FuQSqK5fCJfG1cXOo4nCtMJ
-ao5Sjq0OfGHS5yOYq9WK
-=n/hA
+iQIcBAEBCAAGBQJQ17QcAAoJEECxmPOUX5FE6ugP/ifbTqpuBETuNFjPfLUveB46
+QiqiUbeakek6tzJWSYCBURt6V9pS2VKNV1xWjdQXN4ZCfpq7gZGJEe2nlWaVoqkP
+rs4rvsTnerLq+qvfq/0OfRUV8eUTNataIMmV9q/MQOIREaAdYJ0UrAs8DRR6X1bD
+SyUVOUb2zu2QF8gGGbU/k2ollv1tMyoaTS2oUBTDl7umUSi3bLT3GZA5eqM1DEia
+JVd1J5KJJQuLc3hOnh9TXLonDCHt1zh7fom9M85x4Pfp2Nl/KTtpnLFqaxYhiBi8
+hviyIOVS9xP/vx03Ha/WXJ71ZLHO8zTI1zHh8kjlPW5zpWwEcIeTE+WZTKLXtt4F
+Lg82am8YQG6eWlfrYpusz64odYwQE9QEAe/OGyGHoeISWNFpJWNwPpXtfHYxAIpu
+V+QSDm2AZSi2FK1NDn8vf/M9XYSHR6eatrA0Ew14yifTq5niWt244Z0NBWOiPsr3
+MdYdiBhnbk6fC32a5GDYeyoSt74LyiV4Aiu1cdiEirjChsRo4SdmfnKDvC6cQVRk
+Iq/EmRE6HZyQgT1tBDZ60lEu1bmBakfCOYcLUQoEVNiO7HtSbfjvV3r5wCM3zB5w
+gjHzl+cAznocCk+kEwrdk+mTVeW1aZZkjn4Uu3OPDaqB4tkzSkzulF+owvLPuq+f
+vOnXMh6qLmtKrp+9kziN
+=rgJi
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Dec_2012_11_18_24_+1100_A0NaU8Rgrj8=Uva3--
+--Signature=_Mon__24_Dec_2012_12_47_08_+1100_AbTvj0S=KGKX_X0y--
