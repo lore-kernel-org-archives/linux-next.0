@@ -1,43 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the pinctrl tree
-Date: Wed, 26 Dec 2012 01:34:29 +0100
-Message-ID: <CACRpkdb50D+PMNf9sPTGUs9fsE-QOP0aWB+_aQ6ZpqLuFkvjUg@mail.gmail.com>
-References: <20121221132014.0bf8772fb3e48c51cec1548a@canb.auug.org.au>
-	<027101cddf2c$b4f2f9b0$1ed8ed10$@samsung.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core.current tree with Linus
+ tree
+Date: Wed, 2 Jan 2013 10:37:26 +1100
+Message-ID: <20130102103726.edc15af3340bb990991ed0c1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ia0-f174.google.com ([209.85.210.174]:42193 "EHLO
-	mail-ia0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752618Ab2LZAea (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Dec 2012 19:34:30 -0500
-Received: by mail-ia0-f174.google.com with SMTP id y25so6650917iay.19
-        for <linux-next@vger.kernel.org>; Tue, 25 Dec 2012 16:34:29 -0800 (PST)
-In-Reply-To: <027101cddf2c$b4f2f9b0$1ed8ed10$@samsung.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__2_Jan_2013_10_37_26_+1100_viJN9a=_1zFiWlYm"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>, Wolfram Sang <w.sang@pengutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Dec 21, 2012 at 4:38 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Stephen Rothwell wrote:
->>
->> Hi all,
->>
->> Today's linux-next merge of the arm-soc tree got conflicts in
->> drivers/pinctrl/pinctrl-exynos5440.c and
->> drivers/pinctrl/pinctrl-samsung.c between commit e5b4c9d4ab55 ("pinctrl:
->> exynos5440: Fix compile error in pinctrl-exynos5440/samsung.c") from the
->> pinctrl tree and commit d5fd5da290ce ("pinctrl: exynos5440/samsung:
->> Staticize pcfgs") from the arm-soc tree.
->>
-> Oops, the commit d5fd5da290ce already sent to Linus Torvalds via arm-soc
-> tree today. In addition, I applied with Linus Walleij's ack ;-)
->
-> Linus Walleij, please drop the patch in your tree. Sorry I didn't notify
-> about that when I got the patch from Choi.
+--Signature=_Wed__2_Jan_2013_10_37_26_+1100_viJN9a=_1zFiWlYm
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK dropped it, sorry for the delay...
+Hi Greg,
 
-Yours,
-Linus Walleij
+Today's linux-next merge of the driver-core.current tree got a conflict
+in drivers/i2c/busses/i2c-au1550.c between commit 0b255e927d47 ("i2c:
+remove __dev* attributes from subsystem") from Linus' tree and commit
+eeb30d064414 ("Drivers: i2c: remove __dev* attributes") from the
+driver-core.current tree.
+
+I fixed it up (I used the driver-core.current version) and can carry the
+fix as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__2_Jan_2013_10_37_26_+1100_viJN9a=_1zFiWlYm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ43M2AAoJEECxmPOUX5FEJukP/2gvcMwKZhCpzNcKAiADE9TU
+nkhXq/bJ6Zgf5PUFJr2+S/l9CI/F879Amd3qmN64cS1JpDV7y16VXfftpvIawHOA
+Twro+xV61fUxqOBks03DRaTVtqDLKSZUNN7wpwhvZQjMaDXsmZ6CAo765Btjx38C
+ZjHN9APVtAKMJrYbDwd18eJm0dJF5GtVTNcS3HR8C9soI+NMt6U7qx9hmDwBsdyK
+oG/dIK5F4P+gsqE8r+b3N3s5SHakglf1hjDx5o9gNzMW3r9nFuaaocq2Or8aDzvW
+E+mH9ieN08OrmjbEZMBAtfRGcVwW9dI1HZQuQ4McgyL1UOKZOIXsTzvfuZxVyhxo
+QHTFg+wexYBVmEWcXFreq3lEnYTymCZF4bOCNkgkmYAWbhY7OJyS5/7NvJzX2FLS
+qv3QcNIclzoO/cF09BOPjlmrNpoguNt+zEkbVqLqkM9l6UFZoUuKTIQQtwCzSAnc
+kE3Nble/OyZugQrV3/SVBV3Kpc1LYuC/3aMAan/qMRPwWriagexb2C4KPLhPWSi6
+pU9griN+uIOBFrheVQqZoxDkrsI8WfL7B4P5URhrtPKdisIYI9lv/oYN2y7IBYsR
+1toXQtPRNBNVkWRiqFSIIyvD5pLXZT2UDIa11Pr5oO99hzmug4LILjJOLZMG/IM1
+A/dsD10goNyRbP/IwuuK
+=bLie
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__2_Jan_2013_10_37_26_+1100_viJN9a=_1zFiWlYm--
