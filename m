@@ -1,30 +1,65 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-next tree related)
-Date: Thu, 03 Jan 2013 01:51:16 -0800 (PST)
-Message-ID: <20130103.015116.1184440964345015073.davem@davemloft.net>
-References: <20130103142353.b4fee0ccd57730e4fbd63ba9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kvm tree with the s390 tree
+Date: Thu, 3 Jan 2013 21:56:42 +1100
+Message-ID: <20130103215642.b7f641ecc107fd65bdd5eefe@canb.auug.org.au>
+References: <20130103120650.a19cea9d14a664893c0a5e30@canb.auug.org.au>
+	<20130103083155.5cc97c31@mschwide>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__3_Jan_2013_21_56_42_+1100_3rX9KnasWlg6H1_c"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:50039 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753033Ab3ACJvU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jan 2013 04:51:20 -0500
-In-Reply-To: <20130103142353.b4fee0ccd57730e4fbd63ba9@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:55082 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751559Ab3ACK4w (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jan 2013 05:56:52 -0500
+In-Reply-To: <20130103083155.5cc97c31@mschwide>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sony.chacko@qlogic.com, sucheta.chakraborty@qlogic.com, sritej.velaga@qlogic.com
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cornelia Huck <cornelia.huck@de.ibm.com>, Gleb Natapov <gleb@redhat.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 3 Jan 2013 14:23:53 +1100
+--Signature=_Thu__3_Jan_2013_21_56_42_+1100_3rX9KnasWlg6H1_c
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 3 Jan 2013 14:19:16 +1100
-> Subject: [PATCH] qlcnic: do not duplicate infrastructure functions
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Hi Martin,
 
-Applied.
+On Thu, 3 Jan 2013 08:31:55 +0100 Martin Schwidefsky <schwidefsky@de.ibm.co=
+m> wrote:
+>
+> I surprises me a bit that there is only one hunk in the cleanup patch.
+> I expected three, the above for virtio_ccw.c, one for irq.c and another
+> for irq.h. I checked the resulting tree which is correct! The merge diff
+> has a '++' line for irq.c/irq.h:
+
+Those bits were further down in the mail I sent you (after my signature).
+
+Thanks for checking.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__3_Jan_2013_21_56_42_+1100_3rX9KnasWlg6H1_c
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ5WPqAAoJEECxmPOUX5FESTEP/0+bpw+M37ggKflO9qZj8yUf
+2DGfIVisEklAUiSDDyQ1WCQKn5V/gSnXCf2PaNi/519Iuox/nALgRW5GvVT+olg7
+pK+JA3ZNsSEv3C7VRPseorFvgPAhxBK9pYJUb6Wn3R3pea3/LQTuFLNvcsQz85hb
+j+R8weMLm8vrHXi0r5t/+ozY/xNDG1Zb3sEglXJZEmAWxB1EjZsOjgIHoC07zwD6
+VlmYaaM1FwVYFL9y3XzXXLw4cdTEdrcKp+2WCt9CZk9LuUrP1SJZ+8k568B0Puf1
+PTva/m7zVLxPSFBb8Y5x6+p/51v7X2H+mAfmhpLHOzlVQrS5sEScvCP+fMb6f1sn
+3lis1HWyp01j+bVvGI4kwaAw32D1nwV17YicE3XXitBleByeSCHPgbT/vyrip+uc
+NFdEqqQM1YjGha0zgeqRBIyNgvm10jxRBNlbNAHqg0IU7RyHKBwBseDQg5uCoE3K
+uG6YDezdq0FDHWzZGYVJ5hhy/8TpHv4lGzsc3yFvteAtR63PlI880WfOwaoCkZO9
+gS/O0UFZxLurjNafRyTJTd9bkfI8wUqXBAGyQ6ACwUwCD/ueO30PGiLm22AVAe/k
+i6esyw+MURnLT11d6JV/otVyTCKFb71V7V2tkkpPCJfMptkw7y8N/nlos41PlU0h
+03xhEOjtodg9IFcT0ceN
+=axhl
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Jan_2013_21_56_42_+1100_3rX9KnasWlg6H1_c--
