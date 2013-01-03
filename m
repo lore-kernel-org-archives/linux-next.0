@@ -1,98 +1,97 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pinctrl tree with the
- driver-core.current tree
-Date: Thu, 3 Jan 2013 12:35:57 +1100
-Message-ID: <20130103123557.7162f7108bb99dac57732e35@canb.auug.org.au>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: linux-next: Tree for Jan 2 (netfilter)
+Date: Thu, 3 Jan 2013 03:30:01 +0100
+Message-ID: <20130103023001.GA13254@1984>
+References: <20130102151216.b81cd4d4bf54fc8d1f5d9b27@canb.auug.org.au>
+ <50E47EEF.8090005@infradead.org>
+ <20130103013559.GA2323@1984>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__3_Jan_2013_12_35_57_+1100_eraoyP4+t044dg56"
+Content-Type: multipart/mixed; boundary="PEIAKu/WMn1b1Hv9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51482 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752762Ab3ACBgG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jan 2013 20:36:06 -0500
+Received: from mail.us.es ([193.147.175.20]:46831 "EHLO mail.us.es"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752853Ab3ACCaH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Jan 2013 21:30:07 -0500
+Content-Disposition: inline
+In-Reply-To: <20130103013559.GA2323@1984>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Julien Delacou <julien.delacou@stericsson.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, netfilter-devel@vger.kernel.org
 
---Signature=_Thu__3_Jan_2013_12_35_57_+1100_eraoyP4+t044dg56
-Content-Type: text/plain; charset=US-ASCII
+
+--PEIAKu/WMn1b1Hv9
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Thu, Jan 03, 2013 at 02:35:59AM +0100, Pablo Neira Ayuso wrote:
+> > when NF_CONNTRACK is not enabled (build was on i386):
+> > 
+> >   CC [M]  net/netfilter/xt_CT.o
+> > In file included from net/netfilter/xt_CT.c:16:0:
+> > include/net/netfilter/nf_conntrack.h:77:22: error: field 'ct_general' has incomplete type
+> > include/net/netfilter/nf_conntrack.h: In function 'nf_ct_get':
+> > include/net/netfilter/nf_conntrack.h:157:30: error: 'const struct sk_buff' has no member named 'nfct'
+> > include/net/netfilter/nf_conntrack.h: In function 'nf_ct_put':
+> > include/net/netfilter/nf_conntrack.h:164:2: error: implicit declaration of function 'nf_conntrack_put' [-Werror=implicit-function-declaration]
+> > net/netfilter/xt_CT.c: In function 'xt_ct_target_v0':
+> > net/netfilter/xt_CT.c:30:9: error: 'struct sk_buff' has no member named 'nfct'
+> > net/netfilter/xt_CT.c:34:5: error: 'struct sk_buff' has no member named 'nfct'
+> > net/netfilter/xt_CT.c: In function 'xt_ct_target_v1':
+> > net/netfilter/xt_CT.c:47:9: error: 'struct sk_buff' has no member named 'nfct'
+> > net/netfilter/xt_CT.c:51:5: error: 'struct sk_buff' has no member named 'nfct'
+> > net/netfilter/xt_CT.c: In function 'xt_ct_tg_check_v0':
+> > net/netfilter/xt_CT.c:155:15: error: 'struct net' has no member named 'ct'
+> > net/netfilter/xt_CT.c: In function 'xt_ct_tg_check_v1':
+> > net/netfilter/xt_CT.c:299:15: error: 'struct net' has no member named 'ct'
+> > net/netfilter/xt_CT.c: In function 'notrack_tg':
+> > net/netfilter/xt_CT.c:392:9: error: 'struct sk_buff' has no member named 'nfct'
+> > net/netfilter/xt_CT.c:395:5: error: 'struct sk_buff' has no member named 'nfct'
+> > net/netfilter/xt_CT.c:397:2: error: implicit declaration of function 'nf_conntrack_get' [-Werror=implicit-function-declaration]
+> > net/netfilter/xt_CT.c:397:22: error: 'struct sk_buff' has no member named 'nfct'
+> > cc1: some warnings being treated as errors
+> > make[3]: *** [net/netfilter/xt_CT.o] Error 1
+> 
+> Sorry, I cannot reproduce the selection ...
 
-Today's linux-next merge of the pinctrl tree got a conflict in
-drivers/pinctrl/pinctrl-nomadik.c between commit c2c57b329c7b ("Drivers:
-pinctrl: remove __dev* attributes") from the driver-core.current tree and
-commit f7ae849b80de ("pinctrl/nomadik: adopt pinctrl sleep mode
-management") from the pinctrl tree.
+Caught it. Patch attached, thanks for the report.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+--PEIAKu/WMn1b1Hv9
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0001-netfilter-fix-missing-dependencies-for-the-NOTRACK-t.patch"
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+>From b8198d1ee451c00c2fd660202ad68580c35e1dd8 Mon Sep 17 00:00:00 2001
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Date: Thu, 3 Jan 2013 03:22:36 +0100
+Subject: [PATCH] netfilter: fix missing dependencies for the NOTRACK target
 
-diff --cc drivers/pinctrl/pinctrl-nomadik.c
-index c68ec40,8e4720f..0000000
---- a/drivers/pinctrl/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/pinctrl-nomadik.c
-@@@ -1846,7 -2111,29 +2111,29 @@@ static const struct of_device_id nmk_pi
-  	{},
-  };
- =20
-+ static int nmk_pinctrl_suspend(struct platform_device *pdev, pm_message_t=
- state)
-+ {
-+ 	struct nmk_pinctrl *npct;
-+=20
-+ 	npct =3D platform_get_drvdata(pdev);
-+ 	if (!npct)
-+ 		return -EINVAL;
-+=20
-+ 	return pinctrl_force_sleep(npct->pctl);
-+ }
-+=20
-+ static int nmk_pinctrl_resume(struct platform_device *pdev)
-+ {
-+ 	struct nmk_pinctrl *npct;
-+=20
-+ 	npct =3D platform_get_drvdata(pdev);
-+ 	if (!npct)
-+ 		return -EINVAL;
-+=20
-+ 	return pinctrl_force_default(npct->pctl);
-+ }
-+=20
- -static int __devinit nmk_pinctrl_probe(struct platform_device *pdev)
- +static int nmk_pinctrl_probe(struct platform_device *pdev)
-  {
-  	const struct platform_device_id *platid =3D platform_get_device_id(pdev);
-  	struct device_node *np =3D pdev->dev.of_node;
+warning: (NETFILTER_XT_TARGET_NOTRACK) selects NETFILTER_XT_TARGET_CT which has unmet direct
++dependencies (NET && INET && NETFILTER && NETFILTER_XTABLES && NF_CONNTRACK && (IP_NF_RAW ||
++IP6_NF_RAW) && NETFILTER_ADVANCED)
 
---Signature=_Thu__3_Jan_2013_12_35_57_+1100_eraoyP4+t044dg56
-Content-Type: application/pgp-signature
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+---
+ net/netfilter/Kconfig |    3 +++
+ 1 file changed, 3 insertions(+)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
+index 390f96c..49e96df 100644
+--- a/net/netfilter/Kconfig
++++ b/net/netfilter/Kconfig
+@@ -682,6 +682,9 @@ config NETFILTER_XT_TARGET_NFQUEUE
+ 
+ config NETFILTER_XT_TARGET_NOTRACK
+ 	tristate  '"NOTRACK" target support (DEPRECATED)'
++	depends on NF_CONNTRACK
++	depends on IP_NF_RAW || IP6_NF_RAW
++	depends on NETFILTER_ADVANCED
+ 	select NETFILTER_XT_TARGET_CT
+ 
+ config NETFILTER_XT_TARGET_RATEEST
+-- 
+1.7.10.4
 
-iQIcBAEBCAAGBQJQ5OB9AAoJEECxmPOUX5FE6J8P/1TB04vse3M+1vKDmMGCvsVS
-0UGyKvZiG7Rgn6uy5i3mYfWODzOCjHn1794Ko6rCDqINrBln2Q5ODNi8SeVV+ao5
-XGjr8m/84crAfrSiD0G9Kp+s8R5YDSYxLFcmyFDrWfv+BhY02sce47gTEAO6U2Ec
-MY4018oqBY7RUf4G/TAofcgwd6nHEn5DUq1gw/2y/+in2njCu56upaGOOfk5Fy3d
-KF9So45QJ3nhio6npdW3TPRxnP/wg4QDpp+yUQelkBL6lW8n6tzn+hLOA1rV1SLE
-Me87Ixw2hzVKWzhnyqIuaQoOIClVyg34P4yyh19VNqTA31J3UnwelTVOz9Z24skK
-jVIoXM8pGEpUhkjszFk+a2xCeQaoKUV6dYExCDHfF9vfcofQY2zyjyiQxkqG+aga
-Sh6QS5J84m9Uf2wJIiQqQYyf+O35dnZgs5Yh0f4v82MtyuPcfgrx9o2J2yWGc0nQ
-ew8G2oXbN3XnXt5AOZBMol5ymED+0XxD+bzlSq4/tvsOdiSUlW3k5FBwzp3S0TGq
-7v9atWLBLdBaJFhFt0rPTZ2hoymCRT3E0D1sI1/Dj1xAqFsUKuYg6UapCYh92oEU
-rDIzDWXfmSvJFBXv1GkGwmtIoIXO7d8ruwGfexyE8fvOzGTGgiEmdFdLS8y7XHPX
-NbG8NMeobsiqjyzxZgv8
-=NX+j
------END PGP SIGNATURE-----
 
---Signature=_Thu__3_Jan_2013_12_35_57_+1100_eraoyP4+t044dg56--
+--PEIAKu/WMn1b1Hv9--
