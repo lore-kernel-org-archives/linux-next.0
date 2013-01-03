@@ -1,69 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jan 3 (qlcnic)
-Date: Fri, 4 Jan 2013 07:51:32 +1100
-Message-ID: <20130104075132.9d6ba2e7f9938b7be55d59cd@canb.auug.org.au>
-References: <20130103143741.8027cf717514309b98c5d35f@canb.auug.org.au>
-	<50E5D535.6080301@infradead.org>
+Subject: linux-next: bad merge in driver-core.current tree
+Date: Fri, 4 Jan 2013 10:05:40 +1100
+Message-ID: <20130104100540.3671b46eb7de73374db7f786@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__4_Jan_2013_07_51_32_+1100_qKNdvzFm4mQ660JA"
+ boundary="Signature=_Fri__4_Jan_2013_10_05_40_+1100_EMELcG8XNOLH0r9t"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40795 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58838 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753708Ab3ACUvm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jan 2013 15:51:42 -0500
-In-Reply-To: <50E5D535.6080301@infradead.org>
+	with ESMTP id S1753703Ab3ACXFt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jan 2013 18:05:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-driver@qlogic.com
+To: Greg KH <greg@kroah.com>
+Cc: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Bill Pemberton <wfp5p@virginia.edu>
 
---Signature=_Fri__4_Jan_2013_07_51_32_+1100_qKNdvzFm4mQ660JA
+--Signature=_Fri__4_Jan_2013_10_05_40_+1100_EMELcG8XNOLH0r9t
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Randy,
+Hi Greg,
 
-On Thu, 03 Jan 2013 11:00:05 -0800 Randy Dunlap <rdunlap@infradead.org> wro=
-te:
->
-> on i386:
->=20
->   CC      drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.o
-> drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c:3285:1: error: static de=
-claration of 'qlcnic_restore_indev_addr' follows non-static declaration
-> In file included from drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c:11=
-:0:
-> drivers/net/ethernet/qlogic/qlcnic/qlcnic.h:1488:6: note: previous declar=
-ation of 'qlcnic_restore_indev_addr' was here
+Happy New year!  ;-)
 
-Fixed in the net-next tree.
+Today you added a merge of v3.8-rc2 to the driver-core.current tree.  It
+added the file drivers/i2c/Module.symvers which is a generated file :-(
 
+Please consider rebuilding your tree to get rid of it.  Also, you might
+consider removing all the patches that remove the __dev* stuff as they
+are really not urgent, cause many conflicts (and will continue to do so)
+and most (if not all) are not acked by the maintainers of the subsystems
+that they should be applied to (did you send your revised versions of
+Bill's patches to those maintainers?).  You might consider sending
+separate patches to fix the coding style problems after Bill's patches
+rather than modifying Bill's patches as some of Bill's patches are
+turning up in other subsystems (as happened with i2c).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__4_Jan_2013_07_51_32_+1100_qKNdvzFm4mQ660JA
+--Signature=_Fri__4_Jan_2013_10_05_40_+1100_EMELcG8XNOLH0r9t
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ5e9UAAoJEECxmPOUX5FE0IAP/2AtHnuD8Cq/yiJqSh3Qqv1Z
-NtkgAthdppWRrAvyFvNbiYnimtLzjh0vrlVePSFXi4+CIeHZOh9PldZhTPGDEIUZ
-DnE+vaWsRZWbngOb/tsNv9raLPBIkN2bp67+a9dIz86Llbd1SldY7e0PigEHwmWF
-az/pYdXXNV4X7bdcWxgjRx9Z36DMD11nJUpVcy7IMSOTWPWiOhQmfhyT8b3VzLQ4
-bwAHvz9rHe9hbumHmy0MwvZ1Tqu7I6ePn2LaSnQedun2tTkRfnxGftzD3CYfC/5j
-IRcAB4cROuWP3UgbWzgyxsEUO27qFJ6lB9yz5XX5PmCAeWS7uV2kNrYDcP8oFPxC
-4krFSkGbMQKv0t6xeGZhjrNtDRcroVGHVfPrjdBwtMEJXMi+riOechl7l+8pth3Z
-u1Iva0/Pg52GNwjZR7Z8eby5QTjymYMLW08x2WRtyuk2fZL97yhVqL+c0BUcyVZ2
-KWRcT1nLeSTD4Y2EZq58Yp5yPTYxjZmEDlFmtcwOWq6u9htRQmOFEGxlfX8nJIEv
-uqCuxMUpuCGKl+L8ab9EMk4XHmC863VqO4u1qbuEqMvoMeJi5VCCE5e0I+FKHo1D
-6JWk1/qGcy6mylN4hjcsSvWK1XPWJvynaOcjObW3MApfAFcGlS3uCLf5tUYj25/9
-8g4Ki4R1Xc9L2QB6ZbMy
-=WqLP
+iQIcBAEBCAAGBQJQ5g7EAAoJEECxmPOUX5FEreUP/RPCWhrtmfiKy7R5hWaDe4uI
+uOWkJVsxEV0tJcBkLjqY2PhYbWyZ52AY4iq8djqmMrLhAypZ+fxM8LtIoHXdRib2
+ILw9SoSDiMNYj3ihEYKOfiuQQXIok8fP3K11yCOPlMmy9xd7bX0sJLXxmvA+3uPC
+oBfucBrh5sBq4IXE+8wAACFdi7KeM8u1s6JkqTjMLHRkSGO6tn1FpDJvVnrJv4nB
+9zQviaP2GcOrtIrjR7+YcoxzFXdFxUgzym2ipvovb3o8QQQ8sjM+PmumVQ/DM/Fe
+ZMiRg0YEIIao5JS9I+7QTJuwU+NTEVKEErjz011zUaMvhyrMsbioSJSsvlAWbAQr
+U0VybggbnR+79lonRPedlDKQgg2MhdVt/RLmy9qVnACmY88BupsWLSPq5WxZ+3gH
+DbRA/DXOSBCZM+1ZKM7D8LEnxIjhV3vmASlJWchcjBwXrAsbk+a0Mxw4mVwmvROv
+eEc/IH4Et4Kx0A5tkAa6lhy7NV8jNbgY1QD7fFB8lpucHPAsx0HxB/NaO6lFDg+E
+g29MXMJsXqrh03920iVcvfE4sBpBSLUo520GhaFWwBYNfXofLksYiag5FeQaYXgG
+1SN3prT8RTzhB4Ot727MESzr+C6LzDiDORMnxztOasa1sVp5rP8V/QCskL++o4FK
+KDiH+s5FUsDA1CLmQIFu
+=vnCW
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__4_Jan_2013_07_51_32_+1100_qKNdvzFm4mQ660JA--
+--Signature=_Fri__4_Jan_2013_10_05_40_+1100_EMELcG8XNOLH0r9t--
