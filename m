@@ -1,51 +1,61 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: bad merge in driver-core.current tree
-Date: Thu, 3 Jan 2013 16:08:45 -0800
-Message-ID: <20130104000845.GA27734@kroah.com>
-References: <20130104100540.3671b46eb7de73374db7f786@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pekey tree
+Date: Fri, 4 Jan 2013 12:08:23 +1100
+Message-ID: <20130104120823.6ac07043cfdaad89d9e5b006@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__4_Jan_2013_12_08_23_+1100_+_F=ednUEy/_nwVP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:58905 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753811Ab3ADAIr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jan 2013 19:08:47 -0500
-Content-Disposition: inline
-In-Reply-To: <20130104100540.3671b46eb7de73374db7f786@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43586 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754041Ab3ADBIf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jan 2013 20:08:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Bill Pemberton <wfp5p@virginia.edu>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2013 at 10:05:40AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Happy New year!  ;-)
-> 
-> Today you added a merge of v3.8-rc2 to the driver-core.current tree.  It
-> added the file drivers/i2c/Module.symvers which is a generated file :-(
+--Signature=_Fri__4_Jan_2013_12_08_23_+1100_+_F=ednUEy/_nwVP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, I realized that after sending it to Linus :(
+Hi David,
 
-> Please consider rebuilding your tree to get rid of it.
+After merging the pekey tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-It's now rebuilt.
+ERROR: "modsign_keyring" [crypto/asymmetric_keys/pefile_key_parser.ko] unde=
+fined!
+ERROR: "x509_key_preparse" [crypto/asymmetric_keys/pefile_key_parser.ko] un=
+defined!
 
-> Also, you might consider removing all the patches that remove the
-> __dev* stuff as they are really not urgent, cause many conflicts (and
-> will continue to do so) and most (if not all) are not acked by the
-> maintainers of the subsystems that they should be applied to (did you
-> send your revised versions of Bill's patches to those maintainers?).
-> You might consider sending separate patches to fix the coding style
-> problems after Bill's patches rather than modifying Bill's patches as
-> some of Bill's patches are turning up in other subsystems (as happened
-> with i2c).
+I have dropped the pekey tree for today.
 
-I'd really like to just be rid of these __dev* markings now, instead of
-dragging it out over two kernel releases.  The patches are now all fixed
-up properly, and I'll be sending a new merge request to Linus right
-after this after the git tree is mirrored properly.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-thanks,
+--Signature=_Fri__4_Jan_2013_12_08_23_+1100_+_F=ednUEy/_nwVP
+Content-Type: application/pgp-signature
 
-greg k-h
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ5iuHAAoJEECxmPOUX5FEW4UP/0EWDOREoarIBgqHc4jGQJPv
+9gaJ+ltkGD6jRUGWzn9k/verscBryupmFV+LtCT6EsoRTHN7TyVABtUxGpNUGo7F
+WJvIW5RUgspkoMkcf18HPAWhEbS10ghoHJ0r2vieMsChezynD1n27rAPnvziL8pS
+g2YBslx81LB+8zv1imvqWjv/ImA8XQFKNA/2AdKwdjdmRkkQIBkAplUf8ek1EqDr
+IxQSBsiwZEwAYj4c+bOCwg8XyB37kzmh/TDNYlNErYwT3Kud5m47r3dErBIj3meQ
+4VgN+m8TZMF304QH3bdziUvYl7Rwu2++pk5+07eYf2e3nJuHSTDhyH/jzRllOivu
+911SjOrceJG5xNS+cQathS0BrKAqgmzwt/LtNNptMBvL3mLie3Pk0NiXHGeZGMj1
+ZNQDWmo2nv+3+tSn3UDxR9VxJXFzHVPfqEOW7cY0xq7aOURoBpm90vAeWk/grX4R
+VGLgTuKiv9JLC2YacHMfwJQVxGL53SmFah+WM0ZbZ6iv7R/8/tm5eReo2hMWRvLy
+HwHoOlMYEc0JJMlBc1JJwTrW3jTdE1ik80JyDEKLd8eaWESfb3B1nzJG0t1HAoJR
+1dG2aF3UtubGa/kiWp2V5fwIC10jcCln6TFPZdoFnc1qZcydHhxkTSgkIbJiemBS
+R9zaezBK29giHGB1GKs5
+=Wd3M
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__4_Jan_2013_12_08_23_+1100_+_F=ednUEy/_nwVP--
