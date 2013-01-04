@@ -1,26 +1,54 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: build failure after merge of the pekey tree
-Date: Fri, 04 Jan 2013 09:48:11 +0000
-Message-ID: <19929.1357292891@warthog.procyon.org.uk>
-References: <20130104120823.6ac07043cfdaad89d9e5b006@canb.auug.org.au>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130104120823.6ac07043cfdaad89d9e5b006@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Michal Simek <monstr@monstr.eu>
+Subject: Re: Add #includes needed to permit the removal of asm/system.h - sha1 96f951edb1f1bdbbc99b0cd458f9808bb83d58ae
+Date: Fri, 4 Jan 2013 12:41:39 +0100
+Message-ID: <CAHTX3d+BhEaTW8=0=bKQZSVQbfHtAf_fa9WDe2gsCVEnA0uxkw@mail.gmail.com>
+References: <CAHTX3d+P_UQK8nPfN8BKLdTkVY2VMKhty1rkCKbfHCrQBa+Nyw@mail.gmail.com>
+	<14685.1357230917@warthog.procyon.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <14685.1357230917@warthog.procyon.org.uk>
+Sender: linux-arch-owner@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+2013/1/3 David Howells <dhowells@redhat.com>:
+> Michal Simek <monstr@monstr.eu> wrote:
+>
+>> It is because microblaze uses cmpxchg_local which is defined
+>> asm-generic/atomic.h file.
+>> Arnds patch has added it to atomic.h
+>> asm-generic: add generic atomic.h and io.h
+>> (sha1: 3f7e212df82ca0459d44c91d9e019efd1b5f936c)
+>>
+>> What about to move cmpxchg_local and cmpxchg64_local from atomic.h to
+>> cmpxchg-local.h?
+>
+> Hmmm...  cmpxchg_local() should be obtained through asm/cmpxchg.h, not
+> asm/atomic.h.  See:
+>
+>         grep -r define\\s*cmpxchg_local arch
 
-> After merging the pekey tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> ERROR: "modsign_keyring" [crypto/asymmetric_keys/pefile_key_parser.ko] undefined!
+But it is also here which Microblaze uses.
 
-Interesting.  That first one isn't due to a missing EXPORT_SYMBOL_GPL().  That
-is there.  The problem is that linux/export.h is not #included.  Why does the
-C file even build, I wonder?
+[linux-2.6.x]$ grep -r define\\s*cmpxchg_local include/asm-generic/
+include/asm-generic/atomic.h:#define cmpxchg_local(ptr, o, n)				  	       \
 
-Anyway, the revised version is pushed.
+(not checked on the latest but probably it is the same)
+m68k, arm contains the same copy for one case
+c6x, unicore, cris, blackfin, h8300, sparc32
 
-David
+Probably make sense to move these two macros
+cmpxchg64_local and cmpxchg_local to asm-generic/cmpxchg-local.h
+with #ifndef cmpxchg_local ...etc. and remove it from architectures above.
+
+Thanks,
+Michal
+
+-- 
+Michal Simek, Ing. (M.Eng)
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
+Maintainer of Linux kernel - Xilinx Zynq ARM architecture
+Microblaze U-BOOT custodian
