@@ -1,49 +1,64 @@
-From: Stephen Hemminger <shemminger@vyatta.com>
+From: Rami Rosen <roszenrami@gmail.com>
 Subject: Re: linux-next: Tree for Jan 4 (net/bridge)
-Date: Fri, 4 Jan 2013 11:27:16 -0800
-Message-ID: <20130104112716.596f9085@nehalam.linuxnetplumber.net>
+Date: Fri, 4 Jan 2013 21:54:52 +0200
+Message-ID: <CAKoUArn=6UMjcKC6rnUmpkXFxQvSWnc=1N44iZFPKn80aMBNvA@mail.gmail.com>
 References: <20130104152814.3a3cf74bdec76cea09d3e134@canb.auug.org.au>
 	<50E72977.7030605@infradead.org>
+	<20130104112716.596f9085@nehalam.linuxnetplumber.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <bridge-bounces@lists.linux-foundation.org>
-In-Reply-To: <50E72977.7030605@infradead.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/bridge>,
-	<mailto:bridge-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/bridge/>
-List-Post: <mailto:bridge@lists.linux-foundation.org>
-List-Help: <mailto:bridge-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/bridge>,
-	<mailto:bridge-request@lists.linux-foundation.org?subject=subscribe>
-Sender: bridge-bounces@lists.linux-foundation.org
-Errors-To: bridge-bounces@lists.linux-foundation.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: bridge@lists.linux-foundation.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20130104112716.596f9085@nehalam.linuxnetplumber.net>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Hemminger <shemminger@vyatta.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, bridge@lists.linux-foundation.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 04 Jan 2013 11:11:51 -0800
-Randy Dunlap <rdunlap@infradead.org> wrote:
+Hi,
 
-> On 01/03/13 20:28, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20130103:
-> > 
-> 
-> on i386 and x86_64:
-> 
->   CC      net/bridge/br_netlink.o
-> net/bridge/br_netlink.c: In function 'br_netlink_init':
-> net/bridge/br_netlink.c:307:2: error: implicit declaration of function 'br_mdb_init' [-Werror=implicit-function-declaration]
-> net/bridge/br_netlink.c:314:2: error: implicit declaration of function 'br_mdb_uninit' [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
-> make[3]: *** [net/bridge/br_netlink.o] Error 1
-> 
-> 
-> Full randconfig file is attached.
-> 
-> 
+The cause of the problem in net tree (but **not** net-next tree) is:
+commit 3ec8e9f085bcaef0de1077f555c2c5102c223390
+"bridge: Correctly unregister MDB rtnetlink handlers"
+and it is fixed by a patch from me, for the net tree, from yesterday.
 
-Problem not observed with current net-next and your configuration.
-Probably already fixed.
+see:
+http://www.spinics.net/lists/netdev/msg221168.html
+
+probably this patch, which was applied to net,  was not pulled yet.
+
+I believe that since the commit above was not to net-next, this
+problem is not observed in your tree.
+
+Rami Rosen
+http://ramirose.wix.com/ramirosen
+
+On Fri, Jan 4, 2013 at 9:27 PM, Stephen Hemminger <shemminger@vyatta.com> wrote:
+> On Fri, 04 Jan 2013 11:11:51 -0800
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+>> On 01/03/13 20:28, Stephen Rothwell wrote:
+>> > Hi all,
+>> >
+>> > Changes since 20130103:
+>> >
+>>
+>> on i386 and x86_64:
+>>
+>>   CC      net/bridge/br_netlink.o
+>> net/bridge/br_netlink.c: In function 'br_netlink_init':
+>> net/bridge/br_netlink.c:307:2: error: implicit declaration of function 'br_mdb_init' [-Werror=implicit-function-declaration]
+>> net/bridge/br_netlink.c:314:2: error: implicit declaration of function 'br_mdb_uninit' [-Werror=implicit-function-declaration]
+>> cc1: some warnings being treated as errors
+>> make[3]: *** [net/bridge/br_netlink.o] Error 1
+>>
+>>
+>> Full randconfig file is attached.
+>>
+>>
+>
+> Problem not observed with current net-next and your configuration.
+> Probably already fixed.
+> --
+> To unsubscribe from this list: send the line "unsubscribe netdev" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
