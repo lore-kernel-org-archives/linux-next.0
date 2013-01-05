@@ -1,40 +1,49 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core.current tree with
- Linus tree
-Date: Fri, 4 Jan 2013 18:33:20 -0800
-Message-ID: <20130105023320.GA9606@kroah.com>
-References: <20130102103726.edc15af3340bb990991ed0c1@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: mmotm 2013-01-04-15-43 uploaded (aio)
+Date: Sat, 05 Jan 2013 11:52:49 -0800
+Message-ID: <50E88491.4060703@infradead.org>
+References: <20130104234405.8750720004E@hpza10.eem.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:55341 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755561Ab3AECdH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jan 2013 21:33:07 -0500
-Content-Disposition: inline
-In-Reply-To: <20130102103726.edc15af3340bb990991ed0c1@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>, Wolfram Sang <w.sang@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20130104234405.8750720004E@hpza10.eem.corp.google.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Kent Overstreet <koverstreet@google.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 02, 2013 at 10:37:26AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+On 01/04/13 15:44, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2013-01-04-15-43 has been uploaded to
 > 
-> Today's linux-next merge of the driver-core.current tree got a conflict
-> in drivers/i2c/busses/i2c-au1550.c between commit 0b255e927d47 ("i2c:
-> remove __dev* attributes from subsystem") from Linus' tree and commit
-> eeb30d064414 ("Drivers: i2c: remove __dev* attributes") from the
-> driver-core.current tree.
+>    http://www.ozlabs.org/~akpm/mmotm/
 > 
-> I fixed it up (I used the driver-core.current version) and can carry the
-> fix as necessary (no action is required).
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
 
-All of these should no longer be an issue due to the driver-core.current
-tree getting merged into Linus's tree.
 
-Hopefully it should not be a merge issue for you anymore as well.
+A few hundred of these warnings:
 
-thanks,
+include/linux/aio.h:102:43: warning: 'return' with a value, in function returning void [enabled by default]
 
-greg k-h
+and these errors:
+
+fs/aio.c:697:2: error: dereferencing pointer to incomplete type
+fs/aio.c:697:2: error: dereferencing pointer to incomplete type
+fs/aio.c:697:2: error: dereferencing pointer to incomplete type
+fs/aio.c:707:21: error: dereferencing pointer to incomplete type
+fs/aio.c:808:30: error: dereferencing pointer to incomplete type
+fs/aio.c:824:40: error: dereferencing pointer to incomplete type
+fs/aio.c:826:25: error: storage size of 'batch_stack' isn't known
+
+when CONFIG_BLOCK is not enabled.
+
+-- 
+~Randy
