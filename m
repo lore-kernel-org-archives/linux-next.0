@@ -1,99 +1,49 @@
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Subject: Re: [PATCH] leds-ot200: Fix error caused by shifted mask
-Date: Sun, 6 Jan 2013 19:12:14 +0100
-Message-ID: <CAH9NwWfzY1+215jfr5XKEOfrpyJse_2sWOny=K3vQ3Z2VGxchg@mail.gmail.com>
-References: <1354800098-4118-1-git-send-email-christian.gmeiner@gmail.com>
- <CAH9NwWeTO==SB4XiAuy-2Q3_MSMwn_Tzd_4uw6Fz0HZ=qskVMw@mail.gmail.com> <CAH9NwWfcKYexxDw4XVbdvyjkc=oPdsAGP7enusoMseqpM1aTiw@mail.gmail.com>
+From: Kent Overstreet <koverstreet@google.com>
+Subject: Re: mmotm 2013-01-04-15-43 uploaded (aio)
+Date: Sun, 6 Jan 2013 11:27:40 -0800
+Message-ID: <CAH+dOxJ1aE-oaR1S6sZE4AJeiyLu-WHo3qEXRX+ucHXyLHEQxg@mail.gmail.com>
+References: <20130104234405.8750720004E@hpza10.eem.corp.google.com>
+	<50E88491.4060703@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f173.google.com ([209.85.220.173]:50743 "EHLO
-	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756047Ab3AFSMf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Jan 2013 13:12:35 -0500
-In-Reply-To: <CAH9NwWfcKYexxDw4XVbdvyjkc=oPdsAGP7enusoMseqpM1aTiw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Richard Purdie <rpurdie@rpsys.net>, LKML <linux-kernel@vger.kernel.org>
-Cc: Christian Gmeiner <christian.gmeiner@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <50E88491.4060703@infradead.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-ping
---
-Christian Gmeiner, MSc
-
-
-2012/12/17 Christian Gmeiner <christian.gmeiner@gmail.com>:
-> 2012/12/13 Christian Gmeiner <christian.gmeiner@gmail.com>:
->>> During the development of this driver an in-house register
->>> documentation was used. The last weeks some integration tests
->>> were done and this problem was found. It turned out that
->>> the released register documentation is wrong.
->>>
->>> The fix is very simple: shift all masks by one.
->>>
->>> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
->>> ---
->>>  drivers/leds/leds-ot200.c |   14 +++++++-------
->>>  1 file changed, 7 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c
->>> index c464682..676e729 100644
->>> --- a/drivers/leds/leds-ot200.c
->>> +++ b/drivers/leds/leds-ot200.c
->>> @@ -47,37 +47,37 @@ static struct ot200_led leds[] = {
->>>         {
->>>                 .name = "led_1",
->>>                 .port = 0x49,
->>> -               .mask = BIT(7),
->>> +               .mask = BIT(6),
->>>         },
->>>         {
->>>                 .name = "led_2",
->>>                 .port = 0x49,
->>> -               .mask = BIT(6),
->>> +               .mask = BIT(5),
->>>         },
->>>         {
->>>                 .name = "led_3",
->>>                 .port = 0x49,
->>> -               .mask = BIT(5),
->>> +               .mask = BIT(4),
->>>         },
->>>         {
->>>                 .name = "led_4",
->>>                 .port = 0x49,
->>> -               .mask = BIT(4),
->>> +               .mask = BIT(3),
->>>         },
->>>         {
->>>                 .name = "led_5",
->>>                 .port = 0x49,
->>> -               .mask = BIT(3),
->>> +               .mask = BIT(2),
->>>         },
->>>         {
->>>                 .name = "led_6",
->>>                 .port = 0x49,
->>> -               .mask = BIT(2),
->>> +               .mask = BIT(1),
->>>         },
->>>         {
->>>                 .name = "led_7",
->>>                 .port = 0x49,
->>> -               .mask = BIT(1),
->>> +               .mask = BIT(0),
->>>         }
->>>  };
->>>
->>> --
->>> 1.7.10.4
->>>
+On Sat, Jan 5, 2013 at 11:52 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 01/04/13 15:44, akpm@linux-foundation.org wrote:
+>> The mm-of-the-moment snapshot 2013-01-04-15-43 has been uploaded to
 >>
->> Is something missing to get this patch merged?
->> --
->> Christian Gmeiner, MSc
+>>    http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> mmotm-readme.txt says
+>>
+>> README for mm-of-the-moment:
+>>
+>> http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> more than once a week.
+>>
 >
 >
-> ping
-> --
-> Christian Gmeiner, MSc
+> A few hundred of these warnings:
+>
+> include/linux/aio.h:102:43: warning: 'return' with a value, in function returning void [enabled by default]
+>
+> and these errors:
+>
+> fs/aio.c:697:2: error: dereferencing pointer to incomplete type
+> fs/aio.c:697:2: error: dereferencing pointer to incomplete type
+> fs/aio.c:697:2: error: dereferencing pointer to incomplete type
+> fs/aio.c:707:21: error: dereferencing pointer to incomplete type
+> fs/aio.c:808:30: error: dereferencing pointer to incomplete type
+> fs/aio.c:824:40: error: dereferencing pointer to incomplete type
+> fs/aio.c:826:25: error: storage size of 'batch_stack' isn't known
+>
+> when CONFIG_BLOCK is not enabled.
+
+Whoops, thanks. I'm on it.
