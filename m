@@ -1,83 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jan 7 (rcutorture)
-Date: Tue, 8 Jan 2013 09:59:59 +1100
-Message-ID: <20130108095959.98d83d91dbd0e9e1ac023373@canb.auug.org.au>
-References: <20130107142649.c843e0b711532dc3a631e4cf@canb.auug.org.au>
-	<50EB252C.4010005@infradead.org>
-	<20130107221627.GZ2525@linux.vnet.ibm.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: linux-next: please cleanup the cpuidle tree
+Date: Tue, 08 Jan 2013 00:11:50 +0100
+Message-ID: <50EB5636.4080705@linaro.org>
+References: <20130108092751.4bd60a67280e284369553c18@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__8_Jan_2013_09_59_59_+1100_A/HjIeKRa=cWdy3X"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37101 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753002Ab3AGXAC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 18:00:02 -0500
-In-Reply-To: <20130107221627.GZ2525@linux.vnet.ibm.com>
+Received: from mail-we0-f176.google.com ([74.125.82.176]:41359 "EHLO
+	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751798Ab3AGXLv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 18:11:51 -0500
+Received: by mail-we0-f176.google.com with SMTP id r5so10824150wey.35
+        for <linux-next@vger.kernel.org>; Mon, 07 Jan 2013 15:11:50 -0800 (PST)
+In-Reply-To: <20130108092751.4bd60a67280e284369553c18@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__8_Jan_2013_09_59_59_+1100_A/HjIeKRa=cWdy3X
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 01/07/2013 11:27 PM, Stephen Rothwell wrote:
+> Hi Daniel,
+>=20
+> All the commits in the cpuidle tree have been included upstream befor=
+e
+> v3.6-rc1.  They were rewritten before being merged upstream and so ar=
+e
+> now causing merge conflicts in linux-next.  Could you please reset th=
+e
+> head of your tree
+> (git://git.linaro.org/people/dlezcano/cpuidle-next.git#cpuidle-next) =
+to
+> be somewhere in the tree that yours is merged into (pm or Linus').
 
-Hi Paul,
+Sure. I believe it is done now.
 
-On Mon, 7 Jan 2013 14:16:27 -0800 "Paul E. McKenney" <paulmck@linux.vnet.ib=
-m.com> wrote:
->
-> On Mon, Jan 07, 2013 at 11:42:36AM -0800, Randy Dunlap wrote:
-> >=20
-> > on i386 or x86_64:
-> >=20
-> > ERROR: "trace_clock_local" [kernel/rcutorture.ko] undefined!
->=20
-> Hello, Randy,
->=20
-> Did your build include the following, also pushed to -next in that same
-> batch from -rcu?  Including Steven Rostedt on CC for his take.
+> Alternatively, if you are not using it any more, let me know and I wi=
+ll
+> remove it from linux-next.
 
-That commit was certainly in next-20130107.
+I am planning to do some more cleanup in a very near future. So I prefe=
+r
+to keep it untouched for now.
 
-> ------------------------------------------------------------------------
->=20
-> tracing: Export trace_clock_local()
->=20
-> The rcutorture tests need to be able to trace the time of the
-> beginning of an RCU read-side critical section, and thus need access
-> to trace_clock_local().  This commit therefore adds a the needed
-> EXPORT_SYMBOL_GPL().
->=20
-> Signed-off-by: Paul E. McKenney <paul.mckenney@linaro.org>
-> Reviewed-by: Josh Triplett <josh@joshtriplett.org>
+Thanks
+  -- Daniel
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
 
---Signature=_Tue__8_Jan_2013_09_59_59_+1100_A/HjIeKRa=cWdy3X
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQ61NvAAoJEECxmPOUX5FEr6AP+QH1k/zXyRM/93SicoFMNpAF
-FK2v7eyFXCN9PZA8nMCw/xV3OUPySw37XAMhvqiXnWEmNDnePtw7FY5YT7Wuc+9T
-d4si4/ainSbVXTO5gigZdr96wN3Xt5IDN3O4J/0rg+ORfwTmwumupen22O7b3MVm
-n3fqj2gdVJnHtWvIlotIJg8Oexj6ilrgixuYd+zHujTYbG8rNojfc/IihUdYIOX+
-3nVHrRNx0grcILRCxOJnMpISoegX8axN4B82koS4ftRxyjwHwGNoHOVqUaLwjlOb
-7v4OpuKWph8AUg5EXzsO4u+4UVcUKJ0FL+uiT6c/LRaB48bJu9pTJdQzgLPptisu
-J302WLylvRQzvsv2C6F4Agl8HOTlSpFWeTDNoNlRyx0p/6V33Ah6RerrzdQkyH46
-SckZqvWvopDcYH9IvZgjhsnS4yuMKgT+i0QLhKOf1fmeCMu+trSaqzsqJnlEV/Mq
-S7Dd6dmLmw929jODWIrVna7aJBAjHc9otgYVvt1ICyWi72Wd1b4AfMWNg5xpplYR
-xWLadBMQdE8Nf3SDj+ex+3v9/CPOWY6ByVdRhWC3OYZ3Wi2YckkiWtJcpLXACmJx
-6rUwdT/rIX9mhbVqXK9/ipoyS8JFMy0EsB1cAkmQiddU3MlGOqnS9U2POTYPsTBK
-AhyB0Ia33jWyVzEMsmqG
-=FSFx
------END PGP SIGNATURE-----
-
---Signature=_Tue__8_Jan_2013_09_59_59_+1100_A/HjIeKRa=cWdy3X--
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
