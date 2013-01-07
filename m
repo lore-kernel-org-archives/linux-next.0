@@ -1,59 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: comment in commit in the slave-dma tree (dmaengine:
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: linux-next: comment in commit in the slave-dma tree (dmaengine:
  dw_dmac: Enhance device tree support)
-Date: Tue, 8 Jan 2013 09:35:57 +1100
-Message-ID: <20130108093557.8a29d4a04b95702fc59790ff@canb.auug.org.au>
+Date: Mon, 7 Jan 2013 14:43:08 -0800
+Message-ID: <20130107224308.GB27477@kroah.com>
+References: <20130108093557.8a29d4a04b95702fc59790ff@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__8_Jan_2013_09_35_57_+1100_3xlkmChovD0GUxxQ"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50760 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754593Ab3AGWgA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 17:36:00 -0500
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:48805 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753910Ab3AGWnM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 17:43:12 -0500
+Received: by mail-pb0-f43.google.com with SMTP id um15so10872545pbc.2
+        for <linux-next@vger.kernel.org>; Mon, 07 Jan 2013 14:43:11 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20130108093557.8a29d4a04b95702fc59790ff@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Vinod Koul <vinod.koul@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>
 
---Signature=_Tue__8_Jan_2013_09_35_57_+1100_3xlkmChovD0GUxxQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jan 08, 2013 at 09:35:57AM +1100, Stephen Rothwell wrote:
+> Hi Vinod,
+> 
+> In commit 548860697046 ("dmaengine: dw_dmac: Enhance device tree
+> support") (which was changed since yesterday :-(), an instance of
+> __devinit has been added.  We are in the process of making CONFIG_HOTPLUG
+> always true, and since commit 78d86c213f28 ("init.h: Remove __dev*
+> sections from the kernel") (included in v3.7), __devinit does nothing.
+> Please do not add any more.
 
-Hi Vinod,
+That brings up something I wanted to ask you.
 
-In commit 548860697046 ("dmaengine: dw_dmac: Enhance device tree
-support") (which was changed since yesterday :-(), an instance of
-__devinit has been added.  We are in the process of making CONFIG_HOTPLUG
-always true, and since commit 78d86c213f28 ("init.h: Remove __dev*
-sections from the kernel") (included in v3.7), __devinit does nothing.
-Please do not add any more.
+I'd like to send a patch to Linus to just delete __devinit and friends
+entirely from init.h, but that will break the linux-next tree from
+building in places (like this one, and in a few others.)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Is that ok?  That should finally get everyone's attention and keep them
+from the cargo-cult programming mode of using these attributes :)
 
---Signature=_Tue__8_Jan_2013_09_35_57_+1100_3xlkmChovD0GUxxQ
-Content-Type: application/pgp-signature
+thanks,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQ603NAAoJEECxmPOUX5FElGcQAJsbzOIduiL/A1JX7AmfyEGH
-V5//cWJwMtbRL19YbpemFBAa7KMGOGrYngNxUqwu1RnOHsTVmP7G1MQT+pKYt/+o
-LTfb8AEVGymAZ7j/Q6EQO63h0H9Siz0NDfxA7WYBGzA4bsCAMtvqu0Dv42ZkMqmE
-j0C2OwWVGoxkee9PnfS1LYAR8FqSzoOygqM9W9G3qamVyqxVV5ys1/xdrC+uwGL5
-1HEHp/wpraMx4YSYxl15AECko1fNCGYHfDb5Dqb/5MQ1Q9f4hY72r37LtfjRt3JQ
-hOV7EPRbWmnhVAxdoeUZWdChTBSjgvDUep7l5CwfNOf9EMUZWcEx0KmjQ+5WDKO/
-Ovn0SF9RaxM0vA268vXc274QXcP1G6hwKaR3lkBQZMMJumJzM8ezE1cQi66HmmM6
-PyWXxUJxbJxCXC9vdFigD550lEE7HYAHC50EDus0NaHzozdOS9WmnZdZ0Nxhn5lQ
-saTln8Yq7X80Cmd+y9eq2YKHRUjXX8zPlE6SDXgM5T7/QpPvgGIVdpBdzSKoGQPD
-J2MFADAdS9f2JtHR159fgefLxHSOYJivOC2MbWQWjGvbbHAmSOrFY4QY8DgPWzGU
-gWRUkRMVxpa3TsRAzBfxFtH2d4nl75PEDfnKlFPB3/p0t1350J7uh57CYA5vP9un
-M4xEK18aW3L+52A/S8g7
-=xp1d
------END PGP SIGNATURE-----
-
---Signature=_Tue__8_Jan_2013_09_35_57_+1100_3xlkmChovD0GUxxQ--
+greg k-h
