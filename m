@@ -1,61 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: please cleanup the cpuidle tree
-Date: Tue, 8 Jan 2013 09:27:51 +1100
-Message-ID: <20130108092751.4bd60a67280e284369553c18@canb.auug.org.au>
+Subject: linux-next: comment in commit in the slave-dma tree (dmaengine:
+ dw_dmac: Enhance device tree support)
+Date: Tue, 8 Jan 2013 09:35:57 +1100
+Message-ID: <20130108093557.8a29d4a04b95702fc59790ff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__8_Jan_2013_09_27_51_+1100_5AFCty_p_sS0GiKR"
+ boundary="Signature=_Tue__8_Jan_2013_09_35_57_+1100_3xlkmChovD0GUxxQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47711 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50760 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754587Ab3AGW17 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 17:27:59 -0500
+	with ESMTP id S1754593Ab3AGWgA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 17:36:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---Signature=_Tue__8_Jan_2013_09_27_51_+1100_5AFCty_p_sS0GiKR
+--Signature=_Tue__8_Jan_2013_09_35_57_+1100_3xlkmChovD0GUxxQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi Vinod,
 
-All the commits in the cpuidle tree have been included upstream before
-v3.6-rc1.  They were rewritten before being merged upstream and so are
-now causing merge conflicts in linux-next.  Could you please reset the
-head of your tree
-(git://git.linaro.org/people/dlezcano/cpuidle-next.git#cpuidle-next) to
-be somewhere in the tree that yours is merged into (pm or Linus').
-
-Alternatively, if you are not using it any more, let me know and I will
-remove it from linux-next.
+In commit 548860697046 ("dmaengine: dw_dmac: Enhance device tree
+support") (which was changed since yesterday :-(), an instance of
+__devinit has been added.  We are in the process of making CONFIG_HOTPLUG
+always true, and since commit 78d86c213f28 ("init.h: Remove __dev*
+sections from the kernel") (included in v3.7), __devinit does nothing.
+Please do not add any more.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__8_Jan_2013_09_27_51_+1100_5AFCty_p_sS0GiKR
+--Signature=_Tue__8_Jan_2013_09_35_57_+1100_3xlkmChovD0GUxxQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ60vnAAoJEECxmPOUX5FEX8sP/juY1hkPuOifPJWxk9Qu+Gfn
-bnSasaa1oqvlrWETxB5lLpsCZjRBcQWS1klHNPNAQYofJAwcss1GL5qdgsMxfUqN
-oe72yHbRw69gZeywcz+aXYAqkYzEfrz1vpSutiqJRxEwo1scFn6Xvk/5zkUfklcU
-9NVCNDAFHrmQpc1t03jcuXEPNl2Ffb6dm6vzqreNcq7iSbc1uzfvhzUgZfAJlM95
-TIry1jhtuMjWkZqg0AMincC2PcV+NHKsTUlcPPEshgA0TF3qsUrQAFxuGmT7EVb4
-bBB4g9mB90qUNIWjTsOUXSWFLSBF5Vx1r+dWmvvL8XTodOApWFZueUeHZGO14xU8
-/1kz269wdXWtBWFhxLRAkn04U/EbgOsXjnOQpZhlKr7f1dvRviWP/wRbrd/u/H1z
-nslHDEoMiJoIt0fLLOXX0RXeiPOUyLnYApO050DfTKyrVjYx9T4Y50Sb1AWW8Yx+
-o7pOl/cBxIGEE6RYePuId/fSONXfOL3Aq7SSJuWLfVGVSJRCAg5xrupiUz8VrkVL
-zJBG+HPlYe9wSXOE9aRn+DpEnaqjTX0VkquKsi+boPFsm/EF91Dp8qDI7PJMvqkT
-WmcefV5FaBjk/4GZSNJUbWOvfsVrpyNGWiVhHIeqTMmhdc0tLxATawzmrAKiczN3
-cLr9xYLvXT7jOqGg9ko4
-=ZfA6
+iQIcBAEBCAAGBQJQ603NAAoJEECxmPOUX5FElGcQAJsbzOIduiL/A1JX7AmfyEGH
+V5//cWJwMtbRL19YbpemFBAa7KMGOGrYngNxUqwu1RnOHsTVmP7G1MQT+pKYt/+o
+LTfb8AEVGymAZ7j/Q6EQO63h0H9Siz0NDfxA7WYBGzA4bsCAMtvqu0Dv42ZkMqmE
+j0C2OwWVGoxkee9PnfS1LYAR8FqSzoOygqM9W9G3qamVyqxVV5ys1/xdrC+uwGL5
+1HEHp/wpraMx4YSYxl15AECko1fNCGYHfDb5Dqb/5MQ1Q9f4hY72r37LtfjRt3JQ
+hOV7EPRbWmnhVAxdoeUZWdChTBSjgvDUep7l5CwfNOf9EMUZWcEx0KmjQ+5WDKO/
+Ovn0SF9RaxM0vA268vXc274QXcP1G6hwKaR3lkBQZMMJumJzM8ezE1cQi66HmmM6
+PyWXxUJxbJxCXC9vdFigD550lEE7HYAHC50EDus0NaHzozdOS9WmnZdZ0Nxhn5lQ
+saTln8Yq7X80Cmd+y9eq2YKHRUjXX8zPlE6SDXgM5T7/QpPvgGIVdpBdzSKoGQPD
+J2MFADAdS9f2JtHR159fgefLxHSOYJivOC2MbWQWjGvbbHAmSOrFY4QY8DgPWzGU
+gWRUkRMVxpa3TsRAzBfxFtH2d4nl75PEDfnKlFPB3/p0t1350J7uh57CYA5vP9un
+M4xEK18aW3L+52A/S8g7
+=xp1d
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__8_Jan_2013_09_27_51_+1100_5AFCty_p_sS0GiKR--
+--Signature=_Tue__8_Jan_2013_09_35_57_+1100_3xlkmChovD0GUxxQ--
