@@ -1,55 +1,47 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: linux-next: please cleanup the cpuidle tree
-Date: Tue, 08 Jan 2013 00:11:50 +0100
-Message-ID: <50EB5636.4080705@linaro.org>
-References: <20130108092751.4bd60a67280e284369553c18@canb.auug.org.au>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: Tree for Jan 7 (rcutorture)
+Date: Mon, 07 Jan 2013 18:12:07 -0500
+Message-ID: <1357600327.5190.13.camel@gandalf.local.home>
+References: <20130107142649.c843e0b711532dc3a631e4cf@canb.auug.org.au>
+	 <50EB252C.4010005@infradead.org> <20130107221627.GZ2525@linux.vnet.ibm.com>
+	 <20130108095959.98d83d91dbd0e9e1ac023373@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:41359 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751798Ab3AGXLv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 18:11:51 -0500
-Received: by mail-we0-f176.google.com with SMTP id r5so10824150wey.35
-        for <linux-next@vger.kernel.org>; Mon, 07 Jan 2013 15:11:50 -0800 (PST)
-In-Reply-To: <20130108092751.4bd60a67280e284369553c18@canb.auug.org.au>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:12908 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754009Ab3AGXMO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 18:12:14 -0500
+In-Reply-To: <20130108095959.98d83d91dbd0e9e1ac023373@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: paulmck@linux.vnet.ibm.com, Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 01/07/2013 11:27 PM, Stephen Rothwell wrote:
-> Hi Daniel,
->=20
-> All the commits in the cpuidle tree have been included upstream befor=
-e
-> v3.6-rc1.  They were rewritten before being merged upstream and so ar=
-e
-> now causing merge conflicts in linux-next.  Could you please reset th=
-e
-> head of your tree
-> (git://git.linaro.org/people/dlezcano/cpuidle-next.git#cpuidle-next) =
-to
-> be somewhere in the tree that yours is merged into (pm or Linus').
+On Tue, 2013-01-08 at 09:59 +1100, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> On Mon, 7 Jan 2013 14:16:27 -0800 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> >
+> > On Mon, Jan 07, 2013 at 11:42:36AM -0800, Randy Dunlap wrote:
+> > > 
+> > > on i386 or x86_64:
+> > > 
+> > > ERROR: "trace_clock_local" [kernel/rcutorture.ko] undefined!
+> > 
+> > Hello, Randy,
+> > 
+> > Did your build include the following, also pushed to -next in that same
+> > batch from -rcu?  Including Steven Rostedt on CC for his take.
+> 
+> That commit was certainly in next-20130107.
+> 
 
-Sure. I believe it is done now.
+Could be bad config dependencies.
 
-> Alternatively, if you are not using it any more, let me know and I wi=
-ll
-> remove it from linux-next.
+Stephen, can you send me the config that gave you that error.
 
-I am planning to do some more cleanup in a very near future. So I prefe=
-r
-to keep it untouched for now.
+Thanks,
 
-Thanks
-  -- Daniel
-
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+-- Steve
