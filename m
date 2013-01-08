@@ -1,80 +1,38 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jan 7 (rcutorture)
-Date: Mon, 07 Jan 2013 22:53:13 -0800
-Message-ID: <50EBC259.6080702@infradead.org>
-References: <20130107142649.c843e0b711532dc3a631e4cf@canb.auug.org.au> <50EB252C.4010005@infradead.org> <20130107221627.GZ2525@linux.vnet.ibm.com> <20130108095959.98d83d91dbd0e9e1ac023373@canb.auug.org.au> <1357600327.5190.13.camel@gandalf.local.home> <1357605379.5190.15.camel@gandalf.local.home> <20130108035348.GF2525@linux.vnet.ibm.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: linux-next: comment in commit in the slave-dma tree
+ (dmaengine: dw_dmac: Enhance device tree support)
+Date: Tue, 8 Jan 2013 00:17:35 -0800
+Message-ID: <20130108081735.GB19691@intel.com>
+References: <20130108093557.8a29d4a04b95702fc59790ff@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:36009 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751084Ab3AHGwK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jan 2013 01:52:10 -0500
-In-Reply-To: <20130108035348.GF2525@linux.vnet.ibm.com>
+Received: from mga03.intel.com ([143.182.124.21]:30486 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754784Ab3AHIlv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jan 2013 03:41:51 -0500
+Content-Disposition: inline
+In-Reply-To: <20130108093557.8a29d4a04b95702fc59790ff@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com
-Cc: Steven Rostedt <rostedt@goodmis.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On 01/07/13 19:53, Paul E. McKenney wrote:
-> On Mon, Jan 07, 2013 at 07:36:19PM -0500, Steven Rostedt wrote:
->> On Mon, 2013-01-07 at 18:12 -0500, Steven Rostedt wrote:
->>> On Tue, 2013-01-08 at 09:59 +1100, Stephen Rothwell wrote:
->>>> Hi Paul,
->>>>
->>>> On Mon, 7 Jan 2013 14:16:27 -0800 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
->>>>>
->>>>> On Mon, Jan 07, 2013 at 11:42:36AM -0800, Randy Dunlap wrote:
->>>>>>
->>>>>> on i386 or x86_64:
->>>>>>
->>>>>> ERROR: "trace_clock_local" [kernel/rcutorture.ko] undefined!
->>>>>
->>>>> Hello, Randy,
->>>>>
->>>>> Did your build include the following, also pushed to -next in that same
->>>>> batch from -rcu?  Including Steven Rostedt on CC for his take.
->>>>
->>>> That commit was certainly in next-20130107.
->>>
->>> Could be bad config dependencies.
->>
->> Paul,
->>
->> You need to also select TRACE_CLOCK if you are going to use it.
+On Tue, Jan 08, 2013 at 09:35:57AM +1100, Stephen Rothwell wrote:
+> Hi Vinod,
 > 
-> Thank you, Steve!
+> In commit 548860697046 ("dmaengine: dw_dmac: Enhance device tree
+> support") (which was changed since yesterday :-(),
+Yes due to build conflict I redid the rebase of my tree.
+
+> an instance of
+> __devinit has been added.  We are in the process of making CONFIG_HOTPLUG
+> always true, and since commit 78d86c213f28 ("init.h: Remove __dev*
+> sections from the kernel") (included in v3.7), __devinit does nothing.
+> Please do not add any more.
+I think I was trying to remove it. Anyway I have changed the commit to remove
+this and also another instance. So you should be happy about it :)
 > 
-> Randy, does the following patch help?
-
-Yes, that's good.
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index ce75d3b..b0fe7bd 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1010,6 +1010,7 @@ config RCU_CPU_STALL_INFO
->  config RCU_TRACE
->  	bool "Enable tracing for RCU"
->  	depends on DEBUG_KERNEL
-> +	select TRACE_CLOCK
->  	help
->  	  This option provides tracing in RCU which presents stats
->  	  in debugfs for debugging RCU implementation.
-> 
-> --
-
-
-
--- 
-~Randy
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
