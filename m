@@ -1,58 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drop-experimental tree with Linus'
- and the net-next  trees
-Date: Tue, 8 Jan 2013 14:19:27 +1100
-Message-ID: <20130108141927.5ad3a82b9758e75fc068f895@canb.auug.org.au>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for Jan 7 (rcutorture)
+Date: Mon, 7 Jan 2013 19:53:48 -0800
+Message-ID: <20130108035348.GF2525@linux.vnet.ibm.com>
+References: <20130107142649.c843e0b711532dc3a631e4cf@canb.auug.org.au>
+ <50EB252C.4010005@infradead.org>
+ <20130107221627.GZ2525@linux.vnet.ibm.com>
+ <20130108095959.98d83d91dbd0e9e1ac023373@canb.auug.org.au>
+ <1357600327.5190.13.camel@gandalf.local.home>
+ <1357605379.5190.15.camel@gandalf.local.home>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__8_Jan_2013_14_19_27_+1100_NXhqwB/22=SIexiQ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Tue__8_Jan_2013_14_19_27_+1100_NXhqwB/22=SIexiQ
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e36.co.us.ibm.com ([32.97.110.154]:40358 "EHLO
+	e36.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751523Ab3AHDxy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 22:53:54 -0500
+Received: from /spool/local
+	by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Mon, 7 Jan 2013 20:53:53 -0700
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1357605379.5190.15.camel@gandalf.local.home>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Kees,
+On Mon, Jan 07, 2013 at 07:36:19PM -0500, Steven Rostedt wrote:
+> On Mon, 2013-01-07 at 18:12 -0500, Steven Rostedt wrote:
+> > On Tue, 2013-01-08 at 09:59 +1100, Stephen Rothwell wrote:
+> > > Hi Paul,
+> > > 
+> > > On Mon, 7 Jan 2013 14:16:27 -0800 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> > > >
+> > > > On Mon, Jan 07, 2013 at 11:42:36AM -0800, Randy Dunlap wrote:
+> > > > > 
+> > > > > on i386 or x86_64:
+> > > > > 
+> > > > > ERROR: "trace_clock_local" [kernel/rcutorture.ko] undefined!
+> > > > 
+> > > > Hello, Randy,
+> > > > 
+> > > > Did your build include the following, also pushed to -next in that same
+> > > > batch from -rcu?  Including Steven Rostedt on CC for his take.
+> > > 
+> > > That commit was certainly in next-20130107.
+> > 
+> > Could be bad config dependencies.
+> 
+> Paul,
+> 
+> You need to also select TRACE_CLOCK if you are going to use it.
 
-Today's linux-next merge of the drop-experimental tree got a conflict in
-drivers/net/ethernet/intel/Kconfig between commit c56283034ce2 ("pps,
-ptp: Remove dependencies on EXPERIMENTAL") from Linus' tree, commit
-483f777266f5 ("drivers/net: remove orphaned references to micro channel")
-from the net-next tree and commit a9270b9a8436
-("drivers/net/ethernet/intel: remove depends on CONFIG_EXPERIMENTAL")
-from the drop-experimental tree.
+Thank you, Steve!
 
-I fixed it up and can carry the fix as necessary (no action is required).
+Randy, does the following patch help?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+							Thanx, Paul
 
---Signature=_Tue__8_Jan_2013_14_19_27_+1100_NXhqwB/22=SIexiQ
-Content-Type: application/pgp-signature
+------------------------------------------------------------------------
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQ65A/AAoJEECxmPOUX5FEmdoP/iKs+T9hrT9FJVHZutyfEHmH
-RbwE9RLC/qmw7lSgXFuOajfuFH/H407hT4dLIRDfQbdkThHPnNfUV1A0MKmVccdo
-dymKpzztVJD+AlOr35MgEppsQhs1nBS9yhh/prMApyGTV05uiwavNlWoBH2RqAsT
-n/9RkbQYm7k3Fcq+LNEqXDdyjimWk457Mj8mBRSJsCj+NPLrrFaJ35WbQACWwqKd
-ca+iCbAe8tGHPjwElif3dpm2np+vo3fhdOMclBMn8BxRhvb5A/uV0vGRFbPil+A8
-fLFLR8U/JcNeidCMGlFwUlkn0E9BHWr8sOXNHjacJU4zrxCu5GIWt56tylIxR8sa
-iLXOqWwV+o0auRzFC/CSgGqEGrA5ddzAYvl15+UHTCC7MgLARiZIHoiPd8+i775W
-lE4OFawKX94SNPuMDlOv3RdLy9cXQEZL2tpn5U9DN21ZhgTR+W2WEC5PRVkfHoj0
-81q2mVWxfunK9oKw67CV3p86b1mfSKJ52utJE1+k936PODwXW5Qu7hG16yagWsJW
-z2fihoIGNL3/gEuWy4stacsYhQSbmhyq1XyipR5a3KXaXNL8uHAK0ID9pelycSJF
-E2lpOyguMLxemXPgPNg3vecuKphQHAINuQHYR9nmY34y7qfYOS2Vc0R0hHPkMdXT
-gaTmAd6MH1U6SiahuowR
-=0eqo
------END PGP SIGNATURE-----
-
---Signature=_Tue__8_Jan_2013_14_19_27_+1100_NXhqwB/22=SIexiQ--
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index ce75d3b..b0fe7bd 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1010,6 +1010,7 @@ config RCU_CPU_STALL_INFO
+ config RCU_TRACE
+ 	bool "Enable tracing for RCU"
+ 	depends on DEBUG_KERNEL
++	select TRACE_CLOCK
+ 	help
+ 	  This option provides tracing in RCU which presents stats
+ 	  in debugfs for debugging RCU implementation.
