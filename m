@@ -1,50 +1,65 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: Tree for Jan 7 (rcutorture)
-Date: Mon, 07 Jan 2013 19:36:19 -0500
-Message-ID: <1357605379.5190.15.camel@gandalf.local.home>
-References: <20130107142649.c843e0b711532dc3a631e4cf@canb.auug.org.au>
-	 <50EB252C.4010005@infradead.org> <20130107221627.GZ2525@linux.vnet.ibm.com>
-	 <20130108095959.98d83d91dbd0e9e1ac023373@canb.auug.org.au>
-	 <1357600327.5190.13.camel@gandalf.local.home>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging tree
+Date: Tue, 8 Jan 2013 13:23:52 +1100
+Message-ID: <20130108132352.dbabdc281512cdaffbae5ae9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__8_Jan_2013_13_23_52_+1100_MnRboU6=AE=XD.rZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:19338 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754628Ab3AHAgV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 19:36:21 -0500
-In-Reply-To: <1357600327.5190.13.camel@gandalf.local.home>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58034 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751068Ab3AHCYO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 21:24:14 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: paulmck@linux.vnet.ibm.com, Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten <hsweeten@visionengravers.com>
 
-On Mon, 2013-01-07 at 18:12 -0500, Steven Rostedt wrote:
-> On Tue, 2013-01-08 at 09:59 +1100, Stephen Rothwell wrote:
-> > Hi Paul,
-> > 
-> > On Mon, 7 Jan 2013 14:16:27 -0800 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> > >
-> > > On Mon, Jan 07, 2013 at 11:42:36AM -0800, Randy Dunlap wrote:
-> > > > 
-> > > > on i386 or x86_64:
-> > > > 
-> > > > ERROR: "trace_clock_local" [kernel/rcutorture.ko] undefined!
-> > > 
-> > > Hello, Randy,
-> > > 
-> > > Did your build include the following, also pushed to -next in that same
-> > > batch from -rcu?  Including Steven Rostedt on CC for his take.
-> > 
-> > That commit was certainly in next-20130107.
-> > 
-> 
-> Could be bad config dependencies.
-> 
+--Signature=_Tue__8_Jan_2013_13_23_52_+1100_MnRboU6=AE=XD.rZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Paul,
+Hi Greg,
 
-You need to also select TRACE_CLOCK if you are going to use it.
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
--- Steve
+drivers/staging/comedi/comedi_fops.c: In function 'comedi_unlocked_ioctl':
+drivers/staging/comedi/comedi_fops.c:1665:4: error: 'dev_file_info' undecla=
+red (first use in this function)
+
+Caused by commit 4da5fa9a439f ("staging: comedi: use comedi_dev_from_minor
+()") interacting with commit 7d3135af399e ("staging: comedi: prevent
+auto-unconfig of manually configured devices") from the staging.current
+tree.
+
+I just reverted the latter commit in the hope that the bug is fixed in
+some other way in the staging tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__8_Jan_2013_13_23_52_+1100_MnRboU6=AE=XD.rZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ64M4AAoJEECxmPOUX5FE8asP/14OTLZsWDmLEhH1Eq/e2ofu
+kOA7xLRyg8Btu3AbfwQEJDjr9VGJnk1rQ+mdmX+zM+ngGjvcuLutnluWfuKSMH4a
+MFwneXVMhpKD1ZotJktZd6V5GkVDcxFpLK1VG4nmR1vPfc/Us9tXaRGJLFN+qxG/
+F87KyOtGKkHblG+8iv6PSQ6NVMsaUqQ8lkH9PglRi0+eEzePoEM6n2WCwg2lkK2L
+OfpsaevXIx8Ax2ib6dw06M4MxXjtSboBk9OvIm/LwX/qOeMjrljiA/x1UooPO945
+JmIgH+9eYuVii/ATSEuHPR7KqRjNAY0X8iueSZ45zJI9t3JyUMcBM7delwBcKGgY
+mgCza7o5HEIoHusCEgeO4zm6lBytoyFHS0FGLpvX7pNO+vwUJYFi7aYTJLma481N
+76DclRz8TlsBgK4hKTYoEetnsoChAP19x0XvMzwg1PE1n2qb45+xcBwL/ijikqAd
+1jhQt/8lkaz2RS4Bc5XJqIkndQWOBWkcWhLW7W4bocp/tFsjtaCf6SIh10uq+UaU
+lSkrgZJTpg4bguZmjivW+nyj7BJKZPcdznH5fwlHcyS+iPYyEk8YdX18uqfYUmz+
+ap8RzrnyvveVeMvswQJLIfmxRiCdouh3uyvMBh0axkqFaVN+bB77xpcM4eFsQJu3
+NWNABe/N82En3KOBpkBU
+=SPX2
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__8_Jan_2013_13_23_52_+1100_MnRboU6=AE=XD.rZ--
