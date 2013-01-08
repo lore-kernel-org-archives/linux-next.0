@@ -1,75 +1,85 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for Jan 7 (rcutorture)
-Date: Mon, 7 Jan 2013 19:53:48 -0800
-Message-ID: <20130108035348.GF2525@linux.vnet.ibm.com>
-References: <20130107142649.c843e0b711532dc3a631e4cf@canb.auug.org.au>
- <50EB252C.4010005@infradead.org>
- <20130107221627.GZ2525@linux.vnet.ibm.com>
- <20130108095959.98d83d91dbd0e9e1ac023373@canb.auug.org.au>
- <1357600327.5190.13.camel@gandalf.local.home>
- <1357605379.5190.15.camel@gandalf.local.home>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Tue, 8 Jan 2013 15:29:51 +1100
+Message-ID: <20130108152951.9fa6165c918e52ab5cfac435@canb.auug.org.au>
+References: <20130108132352.dbabdc281512cdaffbae5ae9@canb.auug.org.au>
+	<20130108042730.GA3936@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__8_Jan_2013_15_29_51_+1100_b0=_fJ.IjRA_idG="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e36.co.us.ibm.com ([32.97.110.154]:40358 "EHLO
-	e36.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751523Ab3AHDxy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 22:53:54 -0500
-Received: from /spool/local
-	by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Mon, 7 Jan 2013 20:53:53 -0700
-Content-Disposition: inline
-In-Reply-To: <1357605379.5190.15.camel@gandalf.local.home>
+Received: from haggis.pcug.org.au ([203.10.76.10]:41710 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751129Ab3AHEaA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jan 2013 23:30:00 -0500
+In-Reply-To: <20130108042730.GA3936@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten <hsweeten@visionengravers.com>
 
-On Mon, Jan 07, 2013 at 07:36:19PM -0500, Steven Rostedt wrote:
-> On Mon, 2013-01-07 at 18:12 -0500, Steven Rostedt wrote:
-> > On Tue, 2013-01-08 at 09:59 +1100, Stephen Rothwell wrote:
-> > > Hi Paul,
-> > > 
-> > > On Mon, 7 Jan 2013 14:16:27 -0800 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> > > >
-> > > > On Mon, Jan 07, 2013 at 11:42:36AM -0800, Randy Dunlap wrote:
-> > > > > 
-> > > > > on i386 or x86_64:
-> > > > > 
-> > > > > ERROR: "trace_clock_local" [kernel/rcutorture.ko] undefined!
-> > > > 
-> > > > Hello, Randy,
-> > > > 
-> > > > Did your build include the following, also pushed to -next in that same
-> > > > batch from -rcu?  Including Steven Rostedt on CC for his take.
-> > > 
-> > > That commit was certainly in next-20130107.
-> > 
-> > Could be bad config dependencies.
-> 
-> Paul,
-> 
-> You need to also select TRACE_CLOCK if you are going to use it.
+--Signature=_Tue__8_Jan_2013_15_29_51_+1100_b0=_fJ.IjRA_idG=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you, Steve!
+Hi Greg,
 
-Randy, does the following patch help?
+On Mon, 7 Jan 2013 20:27:30 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> On Tue, Jan 08, 2013 at 01:23:52PM +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> >=20
+> > After merging the staging tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > drivers/staging/comedi/comedi_fops.c: In function 'comedi_unlocked_ioct=
+l':
+> > drivers/staging/comedi/comedi_fops.c:1665:4: error: 'dev_file_info' und=
+eclared (first use in this function)
+> >=20
+> > Caused by commit 4da5fa9a439f ("staging: comedi: use comedi_dev_from_mi=
+nor
+> > ()") interacting with commit 7d3135af399e ("staging: comedi: prevent
+> > auto-unconfig of manually configured devices") from the staging.current
+> > tree.
+> >=20
+> > I just reverted the latter commit in the hope that the bug is fixed in
+> > some other way in the staging tree.
+>=20
+> Yes, I had to do some manual fixup when merging the branches together to
+> get it to work properly, which is what I did in my staging-next tree.
+> As the fixup was done in the merge commit, maybe you didn't get it when
+> you did the pull?
 
-							Thanx, Paul
+Presumably not (my top of staging-next is d7f9729f6e06) - it was changing
+pretty rapidly this morning as I was fetching trees ...
 
-------------------------------------------------------------------------
+At least it will be OK tomorrow.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index ce75d3b..b0fe7bd 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1010,6 +1010,7 @@ config RCU_CPU_STALL_INFO
- config RCU_TRACE
- 	bool "Enable tracing for RCU"
- 	depends on DEBUG_KERNEL
-+	select TRACE_CLOCK
- 	help
- 	  This option provides tracing in RCU which presents stats
- 	  in debugfs for debugging RCU implementation.
+--Signature=_Tue__8_Jan_2013_15_29_51_+1100_b0=_fJ.IjRA_idG=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ66C/AAoJEECxmPOUX5FEmyAP/29B5ttOdTo9M3lK1rxl2eiy
+IBrPPP8nzxvpMa5QQoABI5s5e5RFDrJ3/ZtbUPay3BTBWXm4p6tNPyh31lYePnX8
+c8v4EXi++q5nfivEXqkQFI7oSBPL9AItfmPB9xe33jlc0iBu3GJlN7ckOmKldGh6
+0pBzqEEzrqVKo/Etv9hmotlET4WgNELT1JJRjaa430loDhVxEj8ptxtiB20QGtyX
+mSxV+YsTQageveWqseHiD4KAXTAjR6jssiAoU5U4GS5vrXZLvmIci0wH4DQ2BvtX
+ZA2hmi2eN/4EinKOYGJbGFuJ/C4m6qRHKVCaDQ+IJbet6/Quzs3sDTy7KJilLSBk
+K07sYXsLxjMvcEdukp9RKRuvGEF1gpF1aHUN0hS4DncTEJG2GY4G0i1YjT9f3S73
+PSzwY+xksb6ZDGT02ciOQdCRH4v1Bhsc5ejRAdIM64v1t4PCYJFo+K7q5Le1o7W7
+CBJA0oHVJOvkr5KvwSRVNWuH7xpGcpuQ/F2wBXFHSzM+s2VIwOPy0pQfYipl1OY7
+ayWY6mfrVHdNpDaUp7W7johjvLhZWQzLbPXwxnzvgmCueNpMwCzkfZZwTXULgfJm
+JWgJ6lSKeVp3x0cy8Bk/Gan1X05WzdceHg487DtH+k86KN7gIzrcMgPzKo+t+FEs
+966R2v6weDoZ/JBpw0W8
+=VDrw
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__8_Jan_2013_15_29_51_+1100_b0=_fJ.IjRA_idG=--
