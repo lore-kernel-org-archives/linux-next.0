@@ -1,99 +1,101 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jan 10 (vmci)
-Date: Thu, 10 Jan 2013 11:28:13 -0800
-Message-ID: <50EF164D.9070208@infradead.org>
-References: <20130110143241.041ef77011ef7b1f68ae5c61@canb.auug.org.au> <50EF13B6.9000809@infradead.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2] drivers/pinctrl: grab default handles from device
+ core
+Date: Thu, 10 Jan 2013 13:42:28 -0700
+Message-ID: <50EF27B4.60608@wwwdotorg.org>
+References: <1355343907-11535-1-git-send-email-linus.walleij@stericsson.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:48035 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754492Ab3AJT1F (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 14:27:05 -0500
-In-Reply-To: <50EF13B6.9000809@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, georgezhang@vmware.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1355343907-11535-1-git-send-email-linus.walleij@stericsson.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@stericsson.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Kevin Hilman <khilman@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <linux@arm.linux.org.uk>, Benoit Cousson <b-cousson@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Felipe Balbi <balbi@ti.com>, Rickard Andersson <rickard.andersson@stericsson.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Mitch Bradley <wmb@firmworks.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 01/10/13 11:17, Randy Dunlap wrote:
-> On 01/09/13 19:32, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20130109:
->>
+On 12/12/2012 01:25 PM, Linus Walleij wrote:
+> From: Linus Walleij <linus.walleij@linaro.org>
 > 
-> 
-> on i386, when CONFIG_PCI is not enabled:
-> 
->   CC [M]  drivers/misc/vmw_vmci/vmci_guest.o
-> drivers/misc/vmw_vmci/vmci_guest.c:58:20: error: array type has incomplete element type
-> drivers/misc/vmw_vmci/vmci_guest.c: In function 'vmci_enable_msix':
-> drivers/misc/vmw_vmci/vmci_guest.c:384:2: error: implicit declaration of function 'pci_enable_msix' [-Werror=implicit-function-declaration]
-> drivers/misc/vmw_vmci/vmci_guest.c: In function 'vmci_guest_probe_device':
-> drivers/misc/vmw_vmci/vmci_guest.c:466:2: error: implicit declaration of function 'pcim_enable_device' [-Werror=implicit-function-declaration]
-> drivers/misc/vmw_vmci/vmci_guest.c:592:2: error: implicit declaration of function 'pci_enable_msi' [-Werror=implicit-function-declaration]
-> drivers/misc/vmw_vmci/vmci_guest.c:654:3: error: implicit declaration of function 'pci_disable_msix' [-Werror=implicit-function-declaration]
-> drivers/misc/vmw_vmci/vmci_guest.c:656:3: error: implicit declaration of function 'pci_disable_msi' [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
-> make[4]: *** [drivers/misc/vmw_vmci/vmci_guest.o] Error 1
-> 
-> 
-> Should all of vmci depend on PCI ??
-> 
-> 
+> This makes the device core auto-grab the pinctrl handle and set
+> the "default" (PINCTRL_STATE_DEFAULT) state for every device
+> that is present in the device model right before probe. This will
+> account for the lion's share of embedded silicon devcies.
 
+There are quite a few problems with this patch, and they end up
+completely breaking at least Tegra in next-20130110.
 
-Also on i386, when CONFIG_BLOCK is not enabled:
+> diff --git a/drivers/base/pinctrl.c b/drivers/base/pinctrl.c
 
-  CC [M]  drivers/misc/vmw_vmci/vmci_queue_pair.o
-In file included from drivers/misc/vmw_vmci/vmci_queue_pair.c:16:0:
-include/linux/device-mapper.h:48:56: warning: 'struct bio' declared inside parameter list [enabled by default]
-include/linux/device-mapper.h:48:56: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-include/linux/device-mapper.h:50:13: warning: 'struct request' declared inside parameter list [enabled by default]
-include/linux/device-mapper.h:61:15: warning: 'struct bio' declared inside parameter list [enabled by default]
-include/linux/device-mapper.h:64:15: warning: 'struct request' declared inside parameter list [enabled by default]
-include/linux/device-mapper.h:80:15: warning: 'struct bvec_merge_data' declared inside parameter list [enabled by default]
-include/linux/device-mapper.h:92:12: warning: 'struct queue_limits' declared inside parameter list [enabled by default]
-include/linux/device-mapper.h:265:13: error: field 'clone' has incomplete type
-include/linux/device-mapper.h: In function 'dm_bio_get_target_request_nr':
-include/linux/device-mapper.h:280:9: warning: initialization from incompatible pointer type [enabled by default]
-include/linux/device-mapper.h: At top level:
-include/linux/device-mapper.h:376:42: warning: 'struct request' declared inside parameter list [enabled by default]
-include/linux/device-mapper.h:563:33: warning: 'struct request' declared inside parameter list [enabled by default]
-include/linux/device-mapper.h:564:41: warning: 'struct request' declared inside parameter list [enabled by default]
-include/linux/device-mapper.h:565:38: warning: 'struct request' declared inside parameter list [enabled by default]
-drivers/misc/vmw_vmci/vmci_queue_pair.c: In function 'qp_alloc_ppn_set':
-drivers/misc/vmw_vmci/vmci_queue_pair.c:476:6: error: implicit declaration of function 'kmalloc' [-Werror=implicit-function-declaration]
-drivers/misc/vmw_vmci/vmci_queue_pair.c:475:15: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/misc/vmw_vmci/vmci_queue_pair.c:480:15: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/misc/vmw_vmci/vmci_queue_pair.c:483:3: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
-drivers/misc/vmw_vmci/vmci_queue_pair.c: In function 'qp_host_alloc_queue':
-drivers/misc/vmw_vmci/vmci_queue_pair.c:619:2: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
-drivers/misc/vmw_vmci/vmci_queue_pair.c:619:8: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/misc/vmw_vmci/vmci_queue_pair.c: In function 'qp_release_pages':
-drivers/misc/vmw_vmci/vmci_queue_pair.c:717:3: error: implicit declaration of function 'page_cache_release' [-Werror=implicit-function-declaration]
-drivers/misc/vmw_vmci/vmci_queue_pair.c: In function 'qp_guest_endpoint_create':
-drivers/misc/vmw_vmci/vmci_queue_pair.c:975:8: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/misc/vmw_vmci/vmci_queue_pair.c: In function 'qp_alloc_hypercall':
-drivers/misc/vmw_vmci/vmci_queue_pair.c:1033:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/misc/vmw_vmci/vmci_queue_pair.c: In function 'qp_broker_create':
-drivers/misc/vmw_vmci/vmci_queue_pair.c:1396:8: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/misc/vmw_vmci/vmci_queue_pair.c:1450:3: error: implicit declaration of function 'kcalloc' [-Werror=implicit-function-declaration]
-drivers/misc/vmw_vmci/vmci_queue_pair.c:1450:20: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/misc/vmw_vmci/vmci_queue_pair.c: In function 'vmci_qpair_alloc':
-drivers/misc/vmw_vmci/vmci_queue_pair.c:2866:11: warning: assignment makes pointer from integer without a cast [enabled by default]
-cc1: some warnings being treated as errors
-make[2]: *** [drivers/misc/vmw_vmci/vmci_queue_pair.o] Error 1
+> +int pinctrl_bind_pins(struct device *dev)
+> +{
+> +	struct dev_pin_info *dpi;
+> +	int ret;
+> +
+> +	/* Allocate a pin state container on-the-fly */
+> +	if (!dev->pins) {
+> +		dpi = devm_kzalloc(dev, sizeof(*dpi), GFP_KERNEL);
 
+This is allocated using a devm_ function. If -EPROBE_DEFER is returned
+below after the assignment to dev->pins or if the driver's own probe()
+returns -EPROBE_DEFER, this allocation will be freed by the driver core.
+This can leave dev->pins pointing to something non-NULL, yet invalid.
 
-Should all of vmci depend on BLOCK?
+I haven't fully verified this, but I believe this issue is causing
+crashes on Tegra. Certainly if I force this code to follow the path that
+always allocates new structs or performs new gets, then the crashes go away.
 
-Add this line to its Kconfig file?
-	depends on PCI && BLOCK
+> +		if (!dpi)
+> +			return -ENOMEM;
+> +	} else
+> +		dpi = dev->pins;
+> +
+> +	/*
+> +	 * Check if we already have a pinctrl handle, as we may arrive here
+> +	 * after a deferral in the state selection below
+> +	 */
+> +	if (!dpi->p) {
+> +		dpi->p = devm_pinctrl_get(dev);
 
-?
+That won't succeed for a pinctrl device that has a default state in
+order to implement hogs. This will then cause the pin controller device
+to always defer probe and never activate. This will leave HW
+unconfigured and/or prevent other devices from successfully calling
+pinctrl_get().
 
--- 
-~Randy
+This issue also happens on Tegra.
+
+> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+
+> @@ -734,9 +734,16 @@ static struct pinctrl *pinctrl_get_locked(struct device *dev)
+>  	if (WARN_ON(!dev))
+>  		return ERR_PTR(-EINVAL);
+>  
+> +	/*
+> +	 * See if somebody else (such as the device core) has already
+> +	 * obtained a handle to the pinctrl for this device. In that case,
+> +	 * return another pointer to it.
+> +	 */
+>  	p = find_pinctrl(dev);
+> -	if (p != NULL)
+> -		return ERR_PTR(-EBUSY);
+
+I deliberately returned an error here, because there's no reference
+counting on the struct pinctrl objects. If a driver calls pinctrl_get(),
+with the new code below, it will retrieve the same struct. If it later
+calls pinctrl_put(), the put will immediately free the structure. This
+will invalidate the pointers that reference it in struct device's pins
+field.
+
+This issue will probably trigger on Tegra, since we at least have a
+pinctrl-based I2C mux that calls pinctrl_get().
+
+> +	if (p != NULL) {
+> +		dev_dbg(dev, "obtain a copy of previously claimed pinctrl\n");
+> +		return p;
+> +	}
+>  
+>  	return create_pinctrl(dev);
+>  }
+
+Perhaps we could remove this patch from linux-next, and have a V3?
