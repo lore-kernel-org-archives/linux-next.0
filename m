@@ -1,101 +1,53 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2] drivers/pinctrl: grab default handles from device
- core
-Date: Thu, 10 Jan 2013 13:42:28 -0700
-Message-ID: <50EF27B4.60608@wwwdotorg.org>
-References: <1355343907-11535-1-git-send-email-linus.walleij@stericsson.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: Tree for Jan 10 (staging/sb105x)
+Date: Thu, 10 Jan 2013 15:50:57 -0500
+Message-ID: <1357851057.5141.16.camel@gandalf.local.home>
+References: <20130110143241.041ef77011ef7b1f68ae5c61@canb.auug.org.au>
+	 <50EF11B2.9090505@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1355343907-11535-1-git-send-email-linus.walleij@stericsson.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@stericsson.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Kevin Hilman <khilman@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <linux@arm.linux.org.uk>, Benoit Cousson <b-cousson@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Felipe Balbi <balbi@ti.com>, Rickard Andersson <rickard.andersson@stericsson.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Mitch Bradley <wmb@firmworks.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:22635 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753050Ab3AJUu7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 15:50:59 -0500
+In-Reply-To: <50EF11B2.9090505@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On 12/12/2012 01:25 PM, Linus Walleij wrote:
-> From: Linus Walleij <linus.walleij@linaro.org>
+On Thu, 2013-01-10 at 11:08 -0800, Randy Dunlap wrote:
+> On 01/09/13 19:32, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20130109:
+> > 
 > 
-> This makes the device core auto-grab the pinctrl handle and set
-> the "default" (PINCTRL_STATE_DEFAULT) state for every device
-> that is present in the device model right before probe. This will
-> account for the lion's share of embedded silicon devcies.
+> on x86_64, when CONFIG_PARPORT_PC is not enabled:
+> 
+> drivers/built-in.o: In function `multi_init':
+> sb_pci_mp.c:(.init.text+0x15684): undefined reference to `parport_pc_probe_port'
+> 
+> 
+> Full randconfig file is attached.
 
-There are quite a few problems with this patch, and they end up
-completely breaking at least Tegra in next-20130110.
+Ug, so https://lkml.org/lkml/2012/12/14/250 should have been
+CONFIG_PARPORT_PC and not just PARPORT :-P
 
-> diff --git a/drivers/base/pinctrl.c b/drivers/base/pinctrl.c
+Can you try this patch:
 
-> +int pinctrl_bind_pins(struct device *dev)
-> +{
-> +	struct dev_pin_info *dpi;
-> +	int ret;
-> +
-> +	/* Allocate a pin state container on-the-fly */
-> +	if (!dev->pins) {
-> +		dpi = devm_kzalloc(dev, sizeof(*dpi), GFP_KERNEL);
-
-This is allocated using a devm_ function. If -EPROBE_DEFER is returned
-below after the assignment to dev->pins or if the driver's own probe()
-returns -EPROBE_DEFER, this allocation will be freed by the driver core.
-This can leave dev->pins pointing to something non-NULL, yet invalid.
-
-I haven't fully verified this, but I believe this issue is causing
-crashes on Tegra. Certainly if I force this code to follow the path that
-always allocates new structs or performs new gets, then the crashes go away.
-
-> +		if (!dpi)
-> +			return -ENOMEM;
-> +	} else
-> +		dpi = dev->pins;
-> +
-> +	/*
-> +	 * Check if we already have a pinctrl handle, as we may arrive here
-> +	 * after a deferral in the state selection below
-> +	 */
-> +	if (!dpi->p) {
-> +		dpi->p = devm_pinctrl_get(dev);
-
-That won't succeed for a pinctrl device that has a default state in
-order to implement hogs. This will then cause the pin controller device
-to always defer probe and never activate. This will leave HW
-unconfigured and/or prevent other devices from successfully calling
-pinctrl_get().
-
-This issue also happens on Tegra.
-
-> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-
-> @@ -734,9 +734,16 @@ static struct pinctrl *pinctrl_get_locked(struct device *dev)
->  	if (WARN_ON(!dev))
->  		return ERR_PTR(-EINVAL);
->  
-> +	/*
-> +	 * See if somebody else (such as the device core) has already
-> +	 * obtained a handle to the pinctrl for this device. In that case,
-> +	 * return another pointer to it.
-> +	 */
->  	p = find_pinctrl(dev);
-> -	if (p != NULL)
-> -		return ERR_PTR(-EBUSY);
-
-I deliberately returned an error here, because there's no reference
-counting on the struct pinctrl objects. If a driver calls pinctrl_get(),
-with the new code below, it will retrieve the same struct. If it later
-calls pinctrl_put(), the put will immediately free the structure. This
-will invalidate the pointers that reference it in struct device's pins
-field.
-
-This issue will probably trigger on Tegra, since we at least have a
-pinctrl-based I2C mux that calls pinctrl_get().
-
-> +	if (p != NULL) {
-> +		dev_dbg(dev, "obtain a copy of previously claimed pinctrl\n");
-> +		return p;
-> +	}
->  
->  	return create_pinctrl(dev);
->  }
-
-Perhaps we could remove this patch from linux-next, and have a V3?
+diff --git a/drivers/staging/sb105x/sb_pci_mp.c b/drivers/staging/sb105x/sb_pci_mp.c
+index 131afd0c..9464f38 100644
+--- a/drivers/staging/sb105x/sb_pci_mp.c
++++ b/drivers/staging/sb105x/sb_pci_mp.c
+@@ -3054,7 +3054,7 @@ static int init_mp_dev(struct pci_dev *pcidev, mppcibrd_t brd)
+ 				sbdev->nr_ports = ((portnum_hex/16)*10) + (portnum_hex % 16);
+ 			}
+ 			break;
+-#ifdef CONFIG_PARPORT
++#ifdef CONFIG_PARPORT_PC
+ 		case PCI_DEVICE_ID_MP2S1P :
+ 			sbdev->nr_ports = 2;
+ 
