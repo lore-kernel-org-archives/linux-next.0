@@ -1,38 +1,95 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: linux-next: manual merge of the tegra tree with the  tree
-Date: Wed, 9 Jan 2013 11:48:57 +0000
-Message-ID: <20130109114856.GC1462@mudshark.cambridge.arm.com>
-References: <20130109135816.2d65e46e24391fb56a09fd76@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with the pci tree
+Date: Thu, 10 Jan 2013 11:28:36 +1100
+Message-ID: <20130110112836.19126ca740c8e13a15860dc0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__10_Jan_2013_11_28_36_+1100_eG9nmk3UcrCFyoRF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.21]:44713 "EHLO
-	cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1757182Ab3AILtQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Jan 2013 06:49:16 -0500
-Content-Disposition: inline
-In-Reply-To: <20130109135816.2d65e46e24391fb56a09fd76@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54959 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932224Ab3AJA2t (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Jan 2013 19:28:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dietmar Eggemann <Dietmar.Eggemann@arm.com>, Joseph Lo <josephl@nvidia.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
 
-On Wed, Jan 09, 2013 at 02:58:16AM +0000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the tegra tree got a conflict in
-> arch/arm/mach-tegra/headsmp.S between commit bc4f1bdabc89 ("ARM:
-> coresight: common definition for (OS) Lock Access Register key value")
-> from the arm-perf tree and commit 2a3eb5bc45bd ("ARM: tegra: make device
-> can run on UP") from the tegra tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Signature=_Thu__10_Jan_2013_11_28_36_+1100_eG9nmk3UcrCFyoRF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Argh, given that these two trees won't likely meet outside of next until
-they hit torvalds, I'll just drop my tegra change from hw-breakpoint as it's
-only cosmetic. I can requeue it via Stephen later on.
+Hi Rafael,
 
-Thanks,
+Today's linux-next merge of the pm tree got a conflict in
+drivers/acpi/pci_root.c between commit 3c449ed00759 ("PCI/ACPI: Reserve
+firmware-allocated resources for hot-added root buses") from the pci tree
+and commit 47525cda88f5 ("ACPI / PCI: Fold acpi_pci_root_start() into
+acpi_pci_root_add()") from the pm tree.
 
-Will
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/acpi/pci_root.c
+index dcbe966,22a8458..0000000
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@@ -632,28 -600,8 +600,10 @@@ static int acpi_pci_root_add(struct acp
+  	if (device->wakeup.flags.run_wake)
+  		device_set_run_wake(root->bus->bridge, true);
+ =20
+- 	return 0;
+-=20
+- out_del_root:
+- 	mutex_lock(&acpi_pci_root_lock);
+- 	list_del(&root->node);
+- 	mutex_unlock(&acpi_pci_root_lock);
+-=20
+- 	acpi_pci_irq_del_prt(root->segment, root->secondary.start);
+- end:
+- 	kfree(root);
+- 	return result;
+- }
+-=20
+- static int acpi_pci_root_start(struct acpi_device *device)
+- {
+- 	struct acpi_pci_root *root =3D acpi_driver_data(device);
+- 	struct acpi_pci_driver *driver;
+-=20
+ -	if (system_state !=3D SYSTEM_BOOTING)
+ +	if (system_state !=3D SYSTEM_BOOTING) {
+ +		pcibios_resource_survey_bus(root->bus);
+  		pci_assign_unassigned_bus_resources(root->bus);
+ +	}
+ =20
+  	mutex_lock(&acpi_pci_root_lock);
+  	list_for_each_entry(driver, &acpi_pci_drivers, node)
+
+--Signature=_Thu__10_Jan_2013_11_28_36_+1100_eG9nmk3UcrCFyoRF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ7gs0AAoJEECxmPOUX5FEG6QP/iDcR3i+vSTls+EhJ1BdG51T
+vYycGcJHu/t86pvkVbucg1S4ZumsUGmJdfwJXNHN86psb/CoH/SmQ6Ji7+n0QF8O
+PFD5ohmRqJlHn1roHSYFn/R5n9kFZH7YCj+ThnX0wAVpllsvBLUtTV23lJPq+E0C
+wiKlmvDMzrsvQPEnJxVpr0dbQr+y9GXk8w+j4K3K6BOlyPr614/3qrmtkEWc7O5j
+SKF3nJ5OpGpVCIzjzur0NZ9++A9EsXIvBw5VGtWuIWwtpYFpfmLHiGSB1iu2LcLZ
+4xAwzjCpODyhLya6klEop63OID9mDqWNdB2SWh6eFvT3YLrJse/XdTj59sILY1L8
+5myF85+Fqd+Gq6YICBv5Gmb0Nv6WOv52d4Eiu8QhkYy2NC4O6iufmROyW+coHvT/
+K42FB34gVAXm+W0LnaxbV1EkoagpBp0XhgxPD6V8ierDNlLDLA90AGfR5ZlRV7F4
+PZzZ/vqWxZEBlwH8Arq/glZD6j74BK0OkYNXCK+ks3XSdDZ3G651gDcU/Zi4X8d+
+2lMNElN7bbYYQVMlktTdF1WepQF/YRcWJpKn+ZMQsGksklEa1roO7dBiwqxphsS1
+AZSeQ+GMnFlNwzrrkXrZjykh/xwHsqR1VGNG7sKKqRcVse2IqtkakfbBFFMWfwQt
+LJBI/OoLepWMtn4Jp/7y
+=A8C5
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_Jan_2013_11_28_36_+1100_eG9nmk3UcrCFyoRF--
