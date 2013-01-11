@@ -1,67 +1,71 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: please cleanup the cpuidle tree
-Date: Fri, 11 Jan 2013 10:10:12 +0100
-Message-ID: <50EFD6F4.7030903@linaro.org>
-References: <20130108092751.4bd60a67280e284369553c18@canb.auug.org.au> <50EB5636.4080705@linaro.org> <20130108102227.19d4102cb1ddf516ad4082d1@canb.auug.org.au> <20130111115608.dffec30f37e42a8f15a3f117@canb.auug.org.au>
+Date: Fri, 11 Jan 2013 20:19:43 +1100
+Message-ID: <20130111201943.f928f64c870ee5d2cedbf410@canb.auug.org.au>
+References: <20130108092751.4bd60a67280e284369553c18@canb.auug.org.au>
+	<50EB5636.4080705@linaro.org>
+	<20130108102227.19d4102cb1ddf516ad4082d1@canb.auug.org.au>
+	<20130111115608.dffec30f37e42a8f15a3f117@canb.auug.org.au>
+	<50EFD6F4.7030903@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__11_Jan_2013_20_19_43_+1100_UjAbbOh_rKmmGYB5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f52.google.com ([209.85.214.52]:54681 "EHLO
-	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753552Ab3AKJKR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jan 2013 04:10:17 -0500
-Received: by mail-bk0-f52.google.com with SMTP id w5so773378bku.39
-        for <linux-next@vger.kernel.org>; Fri, 11 Jan 2013 01:10:15 -0800 (PST)
-In-Reply-To: <20130111115608.dffec30f37e42a8f15a3f117@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51908 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753920Ab3AKJTy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jan 2013 04:19:54 -0500
+In-Reply-To: <50EFD6F4.7030903@linaro.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-On 01/11/2013 01:56 AM, Stephen Rothwell wrote:
-> Hi Daniel,
+--Signature=_Fri__11_Jan_2013_20_19_43_+1100_UjAbbOh_rKmmGYB5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Daniel,
+
+On Fri, 11 Jan 2013 10:10:12 +0100 Daniel Lezcano <daniel.lezcano@linaro.or=
+g> wrote:
+>
+> On 01/11/2013 01:56 AM, Stephen Rothwell wrote:
+> >=20
+> > Unfortunately, you reset your tree to be a version of the pm tree that =
+has
+> > now been rebased :-(  This is now causing more conflicts in linux-next.
+> > Maybe you should reset your tree to be the same as one of Linus' -rc
+> > releases for now.
 >=20
-> On Tue, 8 Jan 2013 10:22:27 +1100 Stephen Rothwell <sfr@canb.auug.org=
-=2Eau> wrote:
->>
->> On Tue, 08 Jan 2013 00:11:50 +0100 Daniel Lezcano <daniel.lezcano@li=
-naro.org> wrote:
->>>
->>> On 01/07/2013 11:27 PM, Stephen Rothwell wrote:
->>>>
->>>> All the commits in the cpuidle tree have been included upstream be=
-fore
->>>> v3.6-rc1.  They were rewritten before being merged upstream and so=
- are
->>>> now causing merge conflicts in linux-next.  Could you please reset=
- the
->>>> head of your tree
->>>> (git://git.linaro.org/people/dlezcano/cpuidle-next.git#cpuidle-nex=
-t) to
->>>> be somewhere in the tree that yours is merged into (pm or Linus').
->>>
->>> Sure. I believe it is done now.
->>
->> Yep, thanks.
->=20
-> Unfortunately, you reset your tree to be a version of the pm tree tha=
-t has
-> now been rebased :-(  This is now causing more conflicts in linux-nex=
-t.
-> Maybe you should reset your tree to be the same as one of Linus' -rc
-> releases for now.
+> Ok, done.
 
-Ok, done.
-
-Thanks
-  -- Daniel
-
-
+Thanks.
 --=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--Signature=_Fri__11_Jan_2013_20_19_43_+1100_UjAbbOh_rKmmGYB5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ79kvAAoJEECxmPOUX5FEqdMP/RLIKUtgNWyAsMwuljlk/Qu6
+3zWgwNyzu/i9nSGLG4g01ER3+l7bOlryIUpHLheyZaRZnz90gVuPF6kG78QcADov
+PNoB+h9QvtCSVzR/zXxwb/rm58aNfdMsSkh+PmThno2U9QvT0yKNgK5Hytf8K3C9
+p9ypYSjUP8vH+k4VjJUP1whUSv4yx+X9+aNZb3ajUoU/PrQC1Uis5KuVxBHW1e+T
+1joz8gzDN28J3d8R8DUIpTIampTA/cCA6ZLoKZHiRTvqGk8GB2OxBl2qgirEgpqn
+8ZRQAnyXCP0wc//VWeVAgsosd+DDPiIrZoCPIKRvwi9z4rf1G4qvONRV2SVZF5Rl
+fFQ5juHyUHx7KTpU9ln7R6fuD50siXtLf/Sj2LONxgYAyMfd/3nUTjVujDHnZpVN
+gRbb2AzeInzbk9kcmPkmaep1g4Q1s5nTdbKmOw9DZTUIJU80qWBTNdvmbbGF4fFB
+pojFvM4JpFb4GVPmQGIIATSRBNklAfKp5fGDwGl0uDotvFxSzPtWmCf8axfsoNb5
+YP0cXPXcaFyHzY+VLfBeRpmPPUhohCi19ePhfNiyXgHNEVl9yduUrNgaJUbBUlhk
+rUCHJSib1trBi9ogZiVmIK7MiiDg5O548kMYWX1u16kINhzaaOSo5ZI+wwSNknsA
+2G6X/pcEQaoCHec/IWsR
+=Ef9s
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__11_Jan_2013_20_19_43_+1100_UjAbbOh_rKmmGYB5--
