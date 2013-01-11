@@ -1,70 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (powerpc
- tree related)
-Date: Fri, 11 Jan 2013 16:52:41 +1100
-Message-ID: <20130111165241.44a5ede6b24c997810be74e1@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__11_Jan_2013_16_52_41_+1100_HYpva/npX.Lrv51c"
+From: Michael Neuling <mikey@neuling.org>
+Subject: Re: linux-next: build failure after merge of the final tree (powerpc tree related)
+Date: Fri, 11 Jan 2013 17:04:06 +1100
+Message-ID: <28677.1357884246@ale.ozlabs.ibm.com>
+References: <20130111165241.44a5ede6b24c997810be74e1@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53647 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754888Ab3AKFww (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jan 2013 00:52:52 -0500
+Received: from ozlabs.org ([203.10.76.45]:56014 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755218Ab3AKGEJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Jan 2013 01:04:09 -0500
+In-reply-to: <20130111165241.44a5ede6b24c997810be74e1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Neuling <mikey@neuling.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__11_Jan_2013_16_52_41_+1100_HYpva/npX.Lrv51c
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi all,
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> arch/powerpc/kernel/kgdb.c: In function 'kgdb_arch_exit':
+> arch/powerpc/kernel/kgdb.c:492:2: error: '__debugger_breakx_match' undeclared (first use in this function)
+> 
+> Caused by commit 9422de3e953d ("powerpc: Hardware breakpoints rewrite to
+> handle non DABR breakpoint registers").  I applied "powerpc: Fix typo in
+> breakpoint kgdb code" from Mikey for this.
+> 
+> arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
+> arch/powerpc/kernel/exceptions-64s.S:1204: Error: attempt to move .org backwards
+> 
+> Not sure what caused that - probably a combination of patches adding code
+> low down.  I have just left this broken for today.
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+FWIW I posted this earlier
 
-arch/powerpc/kernel/kgdb.c: In function 'kgdb_arch_exit':
-arch/powerpc/kernel/kgdb.c:492:2: error: '__debugger_breakx_match' undeclar=
-ed (first use in this function)
+http://patchwork.ozlabs.org/patch/211184/
 
-Caused by commit 9422de3e953d ("powerpc: Hardware breakpoints rewrite to
-handle non DABR breakpoint registers").  I applied "powerpc: Fix typo in
-breakpoint kgdb code" from Mikey for this.
-
-arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
-arch/powerpc/kernel/exceptions-64s.S:1204: Error: attempt to move .org back=
-wards
-
-Not sure what caused that - probably a combination of patches adding code
-low down.  I have just left this broken for today.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__11_Jan_2013_16_52_41_+1100_HYpva/npX.Lrv51c
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQ76ipAAoJEECxmPOUX5FE7tQQAIFdZpJ78SNjcr9cc+ia823y
-7i+bezSWLUGToKHZJ87ajVtMCpImEVCsQa2Hq1GahBlj9vQJmpkGQ79GD1bxt6wW
-behryfUSf3ORzVKseUsrXQ53FI35jSk38hL4xNqGH5sbtarZb6fPlWN4iPiFwo6k
-5QIoYo5MabgvQEHOJBNiuX2XqEdFYgHM7qZ8SMSImnAJE1MHYt/dmx6AdVFoKNXq
-JXcPPBmmnjXnK1JKst5tnti+AmGimIaHPfsf3FSj1JGApPFIovQtU5kPH2HeNz1S
-v0QY6xski27Dy9CQNkWIa4vov0ok7DJ3vqbRxCfVZWCE0G4/EHRikUclmQE8gsQq
-5xplD+oOAS0pzKMnbFxi62gBv+9tWwoSFrgjneQjHkXpoFmpS/Khn152K0XX4IH+
-4C22CF5HJvLT4MfaU7AiaafBI8GIU53tVXMTecOlPYXZiuoOmBcDvunvyFW0le9k
-bLq3YRh3H4s/cSN/jEgtyuiQUXZxSo45uv0i/xEHpVz3DMe3+KfFCTe0dIiJihIJ
-DktVGtoi+wm2TJC01hV8XammK+OxYL1pkS1CwapD+bUJls1Xctu+UzQ2L+obOdkf
-rJpf/9I2Z5xvrPPeKf8+UVVO6zQvp//Y/pgJnmjLZMZ3dcQ+00rFbx73Fu/+BCwy
-GLOceTmxfvFMH4uLUrUh
-=k6Ic
------END PGP SIGNATURE-----
-
---Signature=_Fri__11_Jan_2013_16_52_41_+1100_HYpva/npX.Lrv51c--
+Mikey
