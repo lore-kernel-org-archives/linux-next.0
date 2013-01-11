@@ -1,130 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the v4l-dvb tree
-Date: Fri, 11 Jan 2013 11:39:04 +1100
-Message-ID: <20130111113904.251f5fb5587446dbb10694e3@canb.auug.org.au>
+Subject: Re: linux-next: please cleanup the cpuidle tree
+Date: Fri, 11 Jan 2013 11:56:08 +1100
+Message-ID: <20130111115608.dffec30f37e42a8f15a3f117@canb.auug.org.au>
+References: <20130108092751.4bd60a67280e284369553c18@canb.auug.org.au>
+	<50EB5636.4080705@linaro.org>
+	<20130108102227.19d4102cb1ddf516ad4082d1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__11_Jan_2013_11_39_04_+1100_6YWA1dO9UnwYL.+4"
+ boundary="Signature=_Fri__11_Jan_2013_11_56_08_+1100_eGTcyFv0JR9g9Sw."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60770 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58480 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751382Ab3AKAjP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 19:39:15 -0500
+	with ESMTP id S1753156Ab3AKA4S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 19:56:18 -0500
+In-Reply-To: <20130108102227.19d4102cb1ddf516ad4082d1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Greg KH <greg@kroah.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
 
---Signature=_Fri__11_Jan_2013_11_39_04_+1100_6YWA1dO9UnwYL.+4
+--Signature=_Fri__11_Jan_2013_11_56_08_+1100_eGTcyFv0JR9g9Sw.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi Daniel,
 
-After merging the v4l-dvb tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Tue, 8 Jan 2013 10:22:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> On Tue, 08 Jan 2013 00:11:50 +0100 Daniel Lezcano <daniel.lezcano@linaro.=
+org> wrote:
+> >
+> > On 01/07/2013 11:27 PM, Stephen Rothwell wrote:
+> > >=20
+> > > All the commits in the cpuidle tree have been included upstream before
+> > > v3.6-rc1.  They were rewritten before being merged upstream and so are
+> > > now causing merge conflicts in linux-next.  Could you please reset the
+> > > head of your tree
+> > > (git://git.linaro.org/people/dlezcano/cpuidle-next.git#cpuidle-next) =
+to
+> > > be somewhere in the tree that yours is merged into (pm or Linus').
+> >=20
+> > Sure. I believe it is done now.
+>=20
+> Yep, thanks.
 
-drivers/media/platform/sh_veu.c:1146:22: error: expected '=3D', ',', ';', '=
-asm' or '__attribute__' before 'sh_veu_probe'
-drivers/media/platform/sh_veu.c:1228:22: error: expected '=3D', ',', ';', '=
-asm' or '__attribute__' before 'sh_veu_remove'
-drivers/media/platform/sh_veu.c:1244:2: error: implicit declaration of func=
-tion '__devexit_p' [-Werror=3Dimplicit-function-declaration]
-drivers/media/platform/sh_veu.c:1244:25: error: 'sh_veu_remove' undeclared =
-here (not in a function)
-drivers/media/platform/sh_veu.c: In function 'sh_veu_init':
-drivers/media/platform/sh_veu.c:1253:45: error: 'sh_veu_probe' undeclared (=
-first use in this function)
-drivers/media/platform/sh_veu.c:1253:45: note: each undeclared identifier i=
-s reported only once for each function it appears in
-drivers/media/platform/sh_veu.c: At top level:
-drivers/media/platform/sh_veu.c:1095:20: warning: 'sh_veu_bh' defined but n=
-ot used [-Wunused-function]
-drivers/media/platform/sh_veu.c:1109:20: warning: 'sh_veu_isr' defined but =
-not used [-Wunused-function]
-drivers/media/platform/sh_veu.c: In function 'sh_veu_init':
-drivers/media/platform/sh_veu.c:1254:1: warning: control reaches end of non=
--void function [-Wreturn-type]
-
-Caused by commit 05efa71bdc0e ("[media] media: add a VEU MEM2MEM format
-conversion and scaling driver") interacting with commit 54b956b90360
-("Remove __dev* markings from init.h") from the driver-core.current tree.
-
-I have applied the following merge fix patch which could be applied
-directly to the v4l-dvb tree (please):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 11 Jan 2013 11:35:34 +1100
-Subject: [PATCH] [media] media: remove __dev* annotations
-
-CONFIG_HOTPLUG is always true now and the __dev* macros have meen removed.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/media/platform/sh_veu.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/platform/sh_veu.c b/drivers/media/platform/sh_ve=
-u.c
-index a018676..cb54c69 100644
---- a/drivers/media/platform/sh_veu.c
-+++ b/drivers/media/platform/sh_veu.c
-@@ -1143,7 +1143,7 @@ static irqreturn_t sh_veu_isr(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
-=20
--static int __devinit sh_veu_probe(struct platform_device *pdev)
-+static int sh_veu_probe(struct platform_device *pdev)
- {
- 	struct sh_veu_dev *veu;
- 	struct resource *reg_res;
-@@ -1225,7 +1225,7 @@ einitctx:
- 	return ret;
- }
-=20
--static int __devexit sh_veu_remove(struct platform_device *pdev)
-+static int sh_veu_remove(struct platform_device *pdev)
- {
- 	struct v4l2_device *v4l2_dev =3D platform_get_drvdata(pdev);
- 	struct sh_veu_dev *veu =3D container_of(v4l2_dev,
-@@ -1241,7 +1241,7 @@ static int __devexit sh_veu_remove(struct platform_de=
-vice *pdev)
- }
-=20
- static struct platform_driver __refdata sh_veu_pdrv =3D {
--	.remove		=3D __devexit_p(sh_veu_remove),
-+	.remove		=3D sh_veu_remove,
- 	.driver		=3D {
- 		.name	=3D "sh_veu",
- 		.owner	=3D THIS_MODULE,
---=20
-1.7.10.280.gaa39
+Unfortunately, you reset your tree to be a version of the pm tree that has
+now been rebased :-(  This is now causing more conflicts in linux-next.
+Maybe you should reset your tree to be the same as one of Linus' -rc
+releases for now.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__11_Jan_2013_11_39_04_+1100_6YWA1dO9UnwYL.+4
+--Signature=_Fri__11_Jan_2013_11_56_08_+1100_eGTcyFv0JR9g9Sw.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ718oAAoJEECxmPOUX5FEllgP/jtGzpYHnBm+ZGsmVsc9/adE
-ZT6XzhpIrtwnjZigFZdF9/oY7YP+bJCaeXV/5tMEzgspQ6hWw3D4qYqi3o06Cqwf
-q65I4B2vTvGRh4aKJdbT8DdAikNtPyYUAprNf+PExvl9fBd70bi0VAxNJOx0XUam
-jKkayYhd46ZwRHbRRn3HEZ6rPMyPmlWshHs4lbdVjaNtPNzl7eP03tXZ9Bk7vjQk
-6G/3TmWD42kmAzYXpwSmwKbe2FW7j05zVRz48ByYsS9NuMGln0gBN1Skke33Dz7b
-BDGI5h/ctdw8dVv949czsT5KvS5dJGJY5SGFuLihSWLolw6vYUxK+u8giulWK+yo
-l3UOxga65NM4LJkwTtA9eQXs6S78JpMt9gJaQwKEslGIAFIspJzqUMTebb+hfBxm
-mOqF1akfPPfw8rdJtdyGfXwB5opNxTCbXUOnNykk8ACBSQh1oBIWhJIHjDvm5zQk
-V67872V3j32oTlZSZ8sCDOLHt27LR4HpRsO+sy4f1/pq8RW7B25CagppFjgaMYx2
-j1KvbMMHULSr1cW5oNSV24Qc6YYNT99jEkFptuYkFlnKTrcyxJFUVT79ljKOMoUj
-0FIVaJh5Y+LK5bDmmK5piDHDXedEcUO5zsao/ZsZBuJfMkyTlMgwmPKPEbvd++8Z
-rXKIIa/Jtnq8A9g/g10A
-=3enB
+iQIcBAEBCAAGBQJQ72MoAAoJEECxmPOUX5FEKsIP/RWRjf+BORnS0pR/uRxTK4Z+
+G3qP0thizEjY9rIN+PCaOnOttYhLhoSu31x6r+djmUf3FxLpoSs7Ej33PX/R9IjJ
+cK52KCxE/mfUWFiTu8VRJEJ3RM/pPNvPZacWMK0ui8XlMOymQ86ssuFBGqBTkKsg
+EJrlJbFbS2hHh6kw4MhnEoB63iSsnmKhlZPRwRemhy7ZCiuVZagkQpSuSDefRS5X
+K9FtyzDlCpIE0ZL7R35BEnuhcP2Y3unBnv9BejcW6pigVFGw1gW5jCz1EwuT8sLn
+7Zwm7XRKwH2ZBbsS/4X3kpzfymJnVKzMI5787MBfq+rg6cEdlyOSSz+Epfmxo9oo
+yNx6DckeST6wGgVd3N3Lw+PyE/bcTvX/MU6DMFwshNa23cVD3peaHdZXM9x4Ih86
+eT1JY7fW5gzWXZofBgor7CGDg2PcbloSGTIVI6e3hthiyb5qG3ij8rPlIerWb+XN
+wSfTCMnF0zJKjzWJnP0RDgJfBgkp3T7RFCekwbe8Owrp9tFts9TY2wfqPB3vU7tB
+q9SCBXT/8ZrRk4ctryxAxuRSaUZVqy48nkzYGavYlRcbnOWpKUg094hfd+ESHgzp
+bOXTMg0ACyjBZNWhVMxChzkB3cFvjqnA8GKZNqVTGO7kwAODjIDVw5BoXGWpBHqV
+bo8PeyShFHL6yi7+FLvu
+=h8mv
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__11_Jan_2013_11_39_04_+1100_6YWA1dO9UnwYL.+4--
+--Signature=_Fri__11_Jan_2013_11_56_08_+1100_eGTcyFv0JR9g9Sw.--
