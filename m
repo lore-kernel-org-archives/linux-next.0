@@ -1,60 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with the arm64 tree
-Date: Fri, 11 Jan 2013 15:46:17 +1100
-Message-ID: <20130111154617.cab6a8d1ff13a4f200969b9d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (powerpc
+ tree related)
+Date: Fri, 11 Jan 2013 16:52:41 +1100
+Message-ID: <20130111165241.44a5ede6b24c997810be74e1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__11_Jan_2013_15_46_17_+1100_YsgaXwqVxz4zO5cR"
+ boundary="Signature=_Fri__11_Jan_2013_16_52_41_+1100_HYpva/npX.Lrv51c"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42259 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53647 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753733Ab3AKEq1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 23:46:27 -0500
+	with ESMTP id S1754888Ab3AKFww (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jan 2013 00:52:52 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Neuling <mikey@neuling.org>
 
---Signature=_Fri__11_Jan_2013_15_46_17_+1100_YsgaXwqVxz4zO5cR
+--Signature=_Fri__11_Jan_2013_16_52_41_+1100_HYpva/npX.Lrv51c
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi all,
 
-Today's linux-next merge of the signal tree got a conflict in
-arch/arm64/kernel/signal32.c between commits 068f1bb36cf1 ("arm64:
-compat: include sa_restorer in old action from rt_sigaction") and
-efed4d52e39f ("arm64: compat: ensure access_ok checks are performed on
-user structures") from the arm64 tree and various commits from the signal
-tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-The latter removes the code modified by the former, so I did that.
+arch/powerpc/kernel/kgdb.c: In function 'kgdb_arch_exit':
+arch/powerpc/kernel/kgdb.c:492:2: error: '__debugger_breakx_match' undeclar=
+ed (first use in this function)
+
+Caused by commit 9422de3e953d ("powerpc: Hardware breakpoints rewrite to
+handle non DABR breakpoint registers").  I applied "powerpc: Fix typo in
+breakpoint kgdb code" from Mikey for this.
+
+arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
+arch/powerpc/kernel/exceptions-64s.S:1204: Error: attempt to move .org back=
+wards
+
+Not sure what caused that - probably a combination of patches adding code
+low down.  I have just left this broken for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__11_Jan_2013_15_46_17_+1100_YsgaXwqVxz4zO5cR
+--Signature=_Fri__11_Jan_2013_16_52_41_+1100_HYpva/npX.Lrv51c
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ75kZAAoJEECxmPOUX5FENK4P/AgPCicn861IXyPtPUEF2lWw
-Js8OBupzhiy8wqGAteLU20OpSL8GfAYnlSHC+akIy6MTHCN53XlX2ozBT5JZNzQx
-3eEfXEtd7Fc+B4wsf27oKdJCVtTcPR6HAnR58Qb5btqkB348h7XWemMWM7M5dY2s
-MFZJP+vpXod+cL7nhjY1wAkE6157eMIW9DWZ1OF+U5i6GsRmpGZcP0aFG7saFk3z
-Z3TzUexaht/2cwD7ptNY6WOPJt920TyO5Hcn+EuwmzC4hRTQ9QKMs3RngH0uDCdw
-ywNYpipTd0UEk8ho3HIG3lmWTGgfDXyiLjha5z5EdpmvxJnU2xn/S3zaXMyIqC9+
-paNP5RHE028erUjAh5C/KlfuYRpM5nBs/rIm1orxxEo0hFm2kRm4uINUtfWoITsm
-Iw3lCJbKWyMttDV4xuEn3tQfeBtGCbDgaRfyErOUtWh7O5nQ00BIQ8b5TnybBvFr
-KiF88kbqrOzDTGf3x69Kmsmm4L9toYM23+tZ7M/bF5LRhBO8cbhljlx2FK1xieTL
-heWPULmzn/Jc99z4tsykNYFv74n34/SWLoANwwINZytua37+jlyo4A741Hu9ql7s
-K0YNcd/3p54K8IOD4Z1q7ixrRuY8JMa4n57CX2m0kPJCOQtDGDsVNfPO3JHZ007o
-BCce+hwsEE7mbYCKOszv
-=w7hE
+iQIcBAEBCAAGBQJQ76ipAAoJEECxmPOUX5FE7tQQAIFdZpJ78SNjcr9cc+ia823y
+7i+bezSWLUGToKHZJ87ajVtMCpImEVCsQa2Hq1GahBlj9vQJmpkGQ79GD1bxt6wW
+behryfUSf3ORzVKseUsrXQ53FI35jSk38hL4xNqGH5sbtarZb6fPlWN4iPiFwo6k
+5QIoYo5MabgvQEHOJBNiuX2XqEdFYgHM7qZ8SMSImnAJE1MHYt/dmx6AdVFoKNXq
+JXcPPBmmnjXnK1JKst5tnti+AmGimIaHPfsf3FSj1JGApPFIovQtU5kPH2HeNz1S
+v0QY6xski27Dy9CQNkWIa4vov0ok7DJ3vqbRxCfVZWCE0G4/EHRikUclmQE8gsQq
+5xplD+oOAS0pzKMnbFxi62gBv+9tWwoSFrgjneQjHkXpoFmpS/Khn152K0XX4IH+
+4C22CF5HJvLT4MfaU7AiaafBI8GIU53tVXMTecOlPYXZiuoOmBcDvunvyFW0le9k
+bLq3YRh3H4s/cSN/jEgtyuiQUXZxSo45uv0i/xEHpVz3DMe3+KfFCTe0dIiJihIJ
+DktVGtoi+wm2TJC01hV8XammK+OxYL1pkS1CwapD+bUJls1Xctu+UzQ2L+obOdkf
+rJpf/9I2Z5xvrPPeKf8+UVVO6zQvp//Y/pgJnmjLZMZ3dcQ+00rFbx73Fu/+BCwy
+GLOceTmxfvFMH4uLUrUh
+=k6Ic
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__11_Jan_2013_15_46_17_+1100_YsgaXwqVxz4zO5cR--
+--Signature=_Fri__11_Jan_2013_16_52_41_+1100_HYpva/npX.Lrv51c--
