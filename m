@@ -1,125 +1,105 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 11 Jan 2013 13:03:43 +1100
-Message-ID: <20130111130343.36787155f84ed84387c7286e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Fri, 11 Jan 2013 13:18:07 +1100
+Message-ID: <20130111131807.5d41574cda2c8d6a8b08ae1f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__11_Jan_2013_13_03_43_+1100_wa=J4NXvRnnCDN=3"
+ boundary="Signature=_Fri__11_Jan_2013_13_18_07_+1100_H3f8pzYHr7Dlwwaq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49292 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:57672 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753217Ab3AKCDx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 21:03:53 -0500
+	with ESMTP id S1753417Ab3AKCSQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 21:18:16 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yuval Mintz <yuvalmin@broadcom.com>, Ariel Elior <ariele@broadcom.com>, Eilon Greenstein <eilong@broadcom.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Sony Chacko <sony.chacko@qlogic.com>, Sritej Velaga <sritej.velaga@qlogic.com>, Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>, Anirban Chakraborty <anirban.chakraborty@qlogic.com>
 
---Signature=_Fri__11_Jan_2013_13_03_43_+1100_wa=J4NXvRnnCDN=3
+--Signature=_Fri__11_Jan_2013_13_18_07_+1100_H3f8pzYHr7Dlwwaq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c between commit
-4864a16ae69d ("bnx2x: Fix fastpath structures when memory allocation
-fails") from the net tree and commit 8ca5e17e58c9 ("bnx2x: Support of PF
-driver of a VF acquire request") from the net-next tree.
+After merging the net-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c:1721:1: error: expected '=
+=3D', ',', ';', 'asm' or '__attribute__' before 'qlcnic_probe'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c:1912:23: error: expected '=
+=3D', ',', ';', 'asm' or '__attribute__' before 'qlcnic_remove'
+
+Caused by commits 7e2cf4feba05 ("qlcnic: change driver hardware interface
+mechanism") and 13159183ec7a ("qlcnic: 83xx base driver") from the
+net-next tree interacting with commit 54b956b90360 ("Remove __dev*
+markings from init.h") from the drover-core.current tree.
+
+I have added the following merge fix patch for today which could be added
+directly to the scsi tree (please).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 11 Jan 2013 13:15:05 +1100
+Subject: [PATCH] qlcnic: remove new __dev* annotations
+
+CONFIG_HOTPLUG is always true now and the __dev* macros have been removed.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net=
+/ethernet/qlogic/qlcnic/qlcnic_main.c
+index d331313..fb7ac8e 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+@@ -1717,7 +1717,7 @@ int qlcnic_alloc_tx_rings(struct qlcnic_adapter *adap=
+ter,
+ 	return 0;
+ }
+=20
+-static int __devinit
++static int
+ qlcnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	struct net_device *netdev =3D NULL;
+@@ -1909,7 +1909,7 @@ err_out_disable_pdev:
+ 	return err;
+ }
+=20
+-static void __devexit qlcnic_remove(struct pci_dev *pdev)
++static void qlcnic_remove(struct pci_dev *pdev)
+ {
+ 	struct qlcnic_adapter *adapter;
+ 	struct net_device *netdev;
+--=20
+1.7.10.280.gaa39
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-index f771ddf,00706c4..0000000
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@@ -87,30 -85,33 +85,58 @@@ static inline void bnx2x_move_fp(struc
-  }
- =20
-  /**
- + * bnx2x_shrink_eth_fp - guarantees fastpath structures stay intact
- + *
- + * @bp:	driver handle
- + * @delta:	number of eth queues which were not allocated
- + */
- +static void bnx2x_shrink_eth_fp(struct bnx2x *bp, int delta)
- +{
- +	int i, cos, old_eth_num =3D BNX2X_NUM_ETH_QUEUES(bp);
- +
- +	/* Queue pointer cannot be re-set on an fp-basis, as moving pointer
- +	 * backward along the array could cause memory to be overriden
- +	 */
- +	for (cos =3D 1; cos < bp->max_cos; cos++) {
- +		for (i =3D 0; i < old_eth_num - delta; i++) {
- +			struct bnx2x_fastpath *fp =3D &bp->fp[i];
- +			int new_idx =3D cos * (old_eth_num - delta) + i;
- +
- +			memcpy(&bp->bnx2x_txq[new_idx], fp->txdata_ptr[cos],
- +			       sizeof(struct bnx2x_fp_txdata));
- +			fp->txdata_ptr[cos] =3D &bp->bnx2x_txq[new_idx];
- +		}
- +	}
- +}
- +
-++/**
-+  * bnx2x_fill_fw_str - Fill buffer with FW version string.
-+  *
-+  * @bp:        driver handle
-+  * @buf:       character buffer to fill with the fw name
-+  * @buf_len:   length of the above buffer
-+  *
-+  */
-+ void bnx2x_fill_fw_str(struct bnx2x *bp, char *buf, size_t buf_len)
-+ {
-+ 	if (IS_PF(bp)) {
-+ 		u8 phy_fw_ver[PHY_FW_VER_LEN];
-+=20
-+ 		phy_fw_ver[0] =3D '\0';
-+ 		bnx2x_get_ext_phy_fw_version(&bp->link_params,
-+ 					     phy_fw_ver, PHY_FW_VER_LEN);
-+ 		strlcpy(buf, bp->fw_ver, buf_len);
-+ 		snprintf(buf + strlen(bp->fw_ver), 32 - strlen(bp->fw_ver),
-+ 			 "bc %d.%d.%d%s%s",
-+ 			 (bp->common.bc_ver & 0xff0000) >> 16,
-+ 			 (bp->common.bc_ver & 0xff00) >> 8,
-+ 			 (bp->common.bc_ver & 0xff),
-+ 			 ((phy_fw_ver[0] !=3D '\0') ? " phy " : ""), phy_fw_ver);
-+ 	} else {
-+ 		bnx2x_vf_fill_fw_str(bp, buf, buf_len);
-+ 	}
-+ }
-+=20
-  int load_count[2][3] =3D { {0} }; /* per-path: 0-common, 1-port0, 2-port1=
- */
- =20
-  /* free skb in the packet ring at pos idx
-
---Signature=_Fri__11_Jan_2013_13_03_43_+1100_wa=J4NXvRnnCDN=3
+--Signature=_Fri__11_Jan_2013_13_18_07_+1100_H3f8pzYHr7Dlwwaq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ73L/AAoJEECxmPOUX5FE1ekP+wfCaEBgRA3qQmuFXv9/wDgD
-D4Fsv+bdz1OMi9SKe32XSm37CiGDTnxzxwjjDZDdVWcGulHsI7RLMIZPqwlB8rg2
-8sb310GIuZaY/RLnMi00q2pTwDT/kHv0DPZOJIU7Ct9712Z7LajMuIT2gS1SLh/F
-ZFcXvcD+6ghUzWStE6EvSfVcNQULMY4YBHrexRjqo7VU8z591uWEGGfQmOX0VeRg
-ofcoFt6pywKitWydYHz8wXWYTCthk61x70BKPm21z1xdkjgl76E41uoijVXJ/L07
-a0FjyXq8QTyaGOkuZwNQM5uN1IdkUHcmSs/saXy2DoeZhIEoqKgazWcElf+0nu1y
-wJs2FCewAzx9P6yZeMVem6uk6mWNCk6cXyjBHbOnezBu3yrCxD9Vb9H/PWlIwC7q
-ihUJwuf4FOtqQaw1vjcuI6JGmz4JYSc2k+6ND7UiacVAuCA8eJWzJAJTxUxEztSW
-VEbDvJgerHvq9W/e6WeorcT1vPUQQHeTaaHI4Bq/cDnwRvJlLuvOyJ5ESRtvILo1
-+Vz8Ym5MT+9qHdUDRiHKx4Y8nW5On8t+f4bz1oyDe8yxsCXj/6ZQKQC53y5/hfH4
-XvHG1tSqPd+014v1i2iucRMpbU/SDKS3bGSq4iZ9IAX1QKrk86xSM2rmzK1qIAba
-6akI3gdOY8yTkdphEycI
-=RxCy
+iQIcBAEBCAAGBQJQ73ZfAAoJEECxmPOUX5FEpXAQAJJYXe+e+bOS0/n2aPwgL8la
+oBUhO2quamBaxJb4/6emP7nCSFnGCs0Shgy1wDrYjGqcw+Uvfxdda4/vdpYhjyCn
+Y3bkhaqyru+dTJ6J4538lKNPvzQhVMnxLnCpNBJL7TRc63oWJFSaFEbGntbCmRkm
+F1zfwrDxOnsX/U+2yuNM9Czs3mXxOXGAE8gx9qB10jPeIPX5t4DS4Hfc6YSGSa42
+zenXaP0sZw/t48YvGxci8zCBdRRtjTZCXX/XUwyaaH4d/zPqVwIDkNX2OLFWBpV9
+khIf+fdC1KFwYyWmrM5sLtnieLXyS9YnLl28K8r1x3wqnYAPXpLk5/+z2d8Paxym
+0UPlHlAFxNb0a5t+a+PwR5CxEgnSrptA3MjuZuQQFZCKKXWnBPSGveKjDflNsMzq
+XuyuZRV6vPmrIj2XR+PrL6Fyi5puLoQwZ+SeZrcLQrs6gII7Xl9bYwv8o+2A8IuA
+5q3GR2FA7tuYrA/u8r5Od6lRzPA8XL3G9ZKQ2T3sth11gk1QX/89mLmQ2nW2qAzf
+znfBOUGAHz7tV86OExsKYMNnlTKd1c08OvmPQ9u+JeMR/tARknh+kNh/Cpp1VfUt
+7/oocaXecVmsd/aRTjLrEExTo6X1lOgDbsM4/cpGUKLMh4zD4GwiN9uXwMh35v85
+t+8dgVSYRbh4doH0YY+t
+=zQKj
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__11_Jan_2013_13_03_43_+1100_wa=J4NXvRnnCDN=3--
+--Signature=_Fri__11_Jan_2013_13_18_07_+1100_H3f8pzYHr7Dlwwaq--
