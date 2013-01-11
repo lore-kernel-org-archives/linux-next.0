@@ -1,65 +1,125 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: Request for tree inclusion
-Date: Fri, 11 Jan 2013 02:15:39 +0100
-Message-ID: <CAFTL4hw-WM5ur6Z-1DPMMvregEJr_CfcaeBOHV-nawh+NKi+VA@mail.gmail.com>
-References: <CAFTL4hxWdV96dO_KCOnvc4O1zutvnW6eGZ950d+qwnCSHb9NpQ@mail.gmail.com>
-	<20121203094906.4cbfcfc0ad3f0319895a162d@canb.auug.org.au>
-	<CAFTL4hzqqQPA1cd4uPoCd73d5rBj8cGpv=VnB6CrCpdjjwr1xw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 11 Jan 2013 13:03:43 +1100
+Message-ID: <20130111130343.36787155f84ed84387c7286e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__11_Jan_2013_13_03_43_+1100_wa=J4NXvRnnCDN=3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f44.google.com ([209.85.212.44]:57988 "EHLO
-	mail-vb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752133Ab3AKBPk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 20:15:40 -0500
-In-Reply-To: <CAFTL4hzqqQPA1cd4uPoCd73d5rBj8cGpv=VnB6CrCpdjjwr1xw@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:49292 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753217Ab3AKCDx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 21:03:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yuval Mintz <yuvalmin@broadcom.com>, Ariel Elior <ariele@broadcom.com>, Eilon Greenstein <eilong@broadcom.com>
 
-2012/12/3 Frederic Weisbecker <fweisbec@gmail.com>:
-> 2012/12/2 Stephen Rothwell <sfr@canb.auug.org.au>:
->> Well, these are a bit late (I expected Linus to release v3.7 today), but
->> since Ingo has not piped in over the weekend, I have added them from today
->> after the tip tree merge.
->
-> Yeah sorry to submit that so late. Those branches are in pending pull
-> requests to the -tip tree and I thought about relying on the
-> propagation of -tip into -next as usual. But Ingo has been very busy
-> with numa related work during this cycle. So until these branches get
-> merged in -tip, I'm short-circuiting a bit the -next step before it
-> becomes too late for the next merge window.
->
->>
->> I have called them fw-cputime, fs-sched and fw-nohz respectively and
->> listed you as the only contact in case of problems.
->
-> Ok.
->
->> If these are to be
->> long term trees included in linux-next, I would prefer that you use
->> better branch names - otherwise, if they are just short term, please tell
->> me to remove them when they are finished with.
->
-> They are definitely short term. I'll tell you once these can be dropped.
->
-> Thanks a lot!
+--Signature=_Fri__11_Jan_2013_13_03_43_+1100_wa=J4NXvRnnCDN=3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen!
+Hi all,
 
-fw-cputime and fs-sched have been merged so you can now remove these
-branches from next.
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c between commit
+4864a16ae69d ("bnx2x: Fix fastpath structures when memory allocation
+fails") from the net tree and commit 8ca5e17e58c9 ("bnx2x: Support of PF
+driver of a VF acquire request") from the net-next tree.
 
-But fw-nohz remains. In the meantime I have created a branch named nohz/next:
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
-        nohz/next
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-This branch currently refers to fw-nohz HEAD (aka nohz/printk-v8) and
-this is also the place where I'll gather -next materials in the future
-instead of the multiple branches you're currently pulling.
-So could you please remove fw-nohz (nohz/printk-v8) as well from -next
-but include nohz/next instead?
+diff --cc drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+index f771ddf,00706c4..0000000
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+@@@ -87,30 -85,33 +85,58 @@@ static inline void bnx2x_move_fp(struc
+  }
+ =20
+  /**
+ + * bnx2x_shrink_eth_fp - guarantees fastpath structures stay intact
+ + *
+ + * @bp:	driver handle
+ + * @delta:	number of eth queues which were not allocated
+ + */
+ +static void bnx2x_shrink_eth_fp(struct bnx2x *bp, int delta)
+ +{
+ +	int i, cos, old_eth_num =3D BNX2X_NUM_ETH_QUEUES(bp);
+ +
+ +	/* Queue pointer cannot be re-set on an fp-basis, as moving pointer
+ +	 * backward along the array could cause memory to be overriden
+ +	 */
+ +	for (cos =3D 1; cos < bp->max_cos; cos++) {
+ +		for (i =3D 0; i < old_eth_num - delta; i++) {
+ +			struct bnx2x_fastpath *fp =3D &bp->fp[i];
+ +			int new_idx =3D cos * (old_eth_num - delta) + i;
+ +
+ +			memcpy(&bp->bnx2x_txq[new_idx], fp->txdata_ptr[cos],
+ +			       sizeof(struct bnx2x_fp_txdata));
+ +			fp->txdata_ptr[cos] =3D &bp->bnx2x_txq[new_idx];
+ +		}
+ +	}
+ +}
+ +
+++/**
++  * bnx2x_fill_fw_str - Fill buffer with FW version string.
++  *
++  * @bp:        driver handle
++  * @buf:       character buffer to fill with the fw name
++  * @buf_len:   length of the above buffer
++  *
++  */
++ void bnx2x_fill_fw_str(struct bnx2x *bp, char *buf, size_t buf_len)
++ {
++ 	if (IS_PF(bp)) {
++ 		u8 phy_fw_ver[PHY_FW_VER_LEN];
++=20
++ 		phy_fw_ver[0] =3D '\0';
++ 		bnx2x_get_ext_phy_fw_version(&bp->link_params,
++ 					     phy_fw_ver, PHY_FW_VER_LEN);
++ 		strlcpy(buf, bp->fw_ver, buf_len);
++ 		snprintf(buf + strlen(bp->fw_ver), 32 - strlen(bp->fw_ver),
++ 			 "bc %d.%d.%d%s%s",
++ 			 (bp->common.bc_ver & 0xff0000) >> 16,
++ 			 (bp->common.bc_ver & 0xff00) >> 8,
++ 			 (bp->common.bc_ver & 0xff),
++ 			 ((phy_fw_ver[0] !=3D '\0') ? " phy " : ""), phy_fw_ver);
++ 	} else {
++ 		bnx2x_vf_fill_fw_str(bp, buf, buf_len);
++ 	}
++ }
++=20
+  int load_count[2][3] =3D { {0} }; /* per-path: 0-common, 1-port0, 2-port1=
+ */
+ =20
+  /* free skb in the packet ring at pos idx
 
-Thanks!
+--Signature=_Fri__11_Jan_2013_13_03_43_+1100_wa=J4NXvRnnCDN=3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ73L/AAoJEECxmPOUX5FE1ekP+wfCaEBgRA3qQmuFXv9/wDgD
+D4Fsv+bdz1OMi9SKe32XSm37CiGDTnxzxwjjDZDdVWcGulHsI7RLMIZPqwlB8rg2
+8sb310GIuZaY/RLnMi00q2pTwDT/kHv0DPZOJIU7Ct9712Z7LajMuIT2gS1SLh/F
+ZFcXvcD+6ghUzWStE6EvSfVcNQULMY4YBHrexRjqo7VU8z591uWEGGfQmOX0VeRg
+ofcoFt6pywKitWydYHz8wXWYTCthk61x70BKPm21z1xdkjgl76E41uoijVXJ/L07
+a0FjyXq8QTyaGOkuZwNQM5uN1IdkUHcmSs/saXy2DoeZhIEoqKgazWcElf+0nu1y
+wJs2FCewAzx9P6yZeMVem6uk6mWNCk6cXyjBHbOnezBu3yrCxD9Vb9H/PWlIwC7q
+ihUJwuf4FOtqQaw1vjcuI6JGmz4JYSc2k+6ND7UiacVAuCA8eJWzJAJTxUxEztSW
+VEbDvJgerHvq9W/e6WeorcT1vPUQQHeTaaHI4Bq/cDnwRvJlLuvOyJ5ESRtvILo1
++Vz8Ym5MT+9qHdUDRiHKx4Y8nW5On8t+f4bz1oyDe8yxsCXj/6ZQKQC53y5/hfH4
+XvHG1tSqPd+014v1i2iucRMpbU/SDKS3bGSq4iZ9IAX1QKrk86xSM2rmzK1qIAba
+6akI3gdOY8yTkdphEycI
+=RxCy
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__11_Jan_2013_13_03_43_+1100_wa=J4NXvRnnCDN=3--
