@@ -1,80 +1,137 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: please cleanup the cpuidle tree
-Date: Fri, 11 Jan 2013 11:56:08 +1100
-Message-ID: <20130111115608.dffec30f37e42a8f15a3f117@canb.auug.org.au>
-References: <20130108092751.4bd60a67280e284369553c18@canb.auug.org.au>
-	<50EB5636.4080705@linaro.org>
-	<20130108102227.19d4102cb1ddf516ad4082d1@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the scsi tree
+Date: Fri, 11 Jan 2013 12:03:23 +1100
+Message-ID: <20130111120323.cdc06081d0fb1c498c9f1779@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__11_Jan_2013_11_56_08_+1100_eGTcyFv0JR9g9Sw."
+ boundary="Signature=_Fri__11_Jan_2013_12_03_23_+1100_Fe+_lha2Y2ES2nhw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58480 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53079 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753156Ab3AKA4S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 19:56:18 -0500
-In-Reply-To: <20130108102227.19d4102cb1ddf516ad4082d1@canb.auug.org.au>
+	with ESMTP id S1752193Ab3AKBDb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 20:03:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wen Xiong <wenxiong@linux.vnet.ibm.com>, Greg KH <greg@kroah.com>
 
---Signature=_Fri__11_Jan_2013_11_56_08_+1100_eGTcyFv0JR9g9Sw.
+--Signature=_Fri__11_Jan_2013_12_03_23_+1100_Fe+_lha2Y2ES2nhw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi James,
 
-On Tue, 8 Jan 2013 10:22:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> On Tue, 08 Jan 2013 00:11:50 +0100 Daniel Lezcano <daniel.lezcano@linaro.=
-org> wrote:
-> >
-> > On 01/07/2013 11:27 PM, Stephen Rothwell wrote:
-> > >=20
-> > > All the commits in the cpuidle tree have been included upstream before
-> > > v3.6-rc1.  They were rewritten before being merged upstream and so are
-> > > now causing merge conflicts in linux-next.  Could you please reset the
-> > > head of your tree
-> > > (git://git.linaro.org/people/dlezcano/cpuidle-next.git#cpuidle-next) =
-to
-> > > be somewhere in the tree that yours is merged into (pm or Linus').
-> >=20
-> > Sure. I believe it is done now.
->=20
-> Yep, thanks.
+After merging the scsi tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Unfortunately, you reset your tree to be a version of the pm tree that has
-now been rebased :-(  This is now causing more conflicts in linux-next.
-Maybe you should reset your tree to be the same as one of Linus' -rc
-releases for now.
+drivers/scsi/ipr.c:9138:22: error: expected '=3D', ',', ';', 'asm' or '__at=
+tribute__' before 'ipr_enable_msix'
+drivers/scsi/ipr.c:9165:22: error: expected '=3D', ',', ';', 'asm' or '__at=
+tribute__' before 'ipr_enable_msi'
+drivers/scsi/ipr.c:9188:23: error: expected '=3D', ',', ';', 'asm' or '__at=
+tribute__' before 'name_msi_vectors'
+drivers/scsi/ipr.c:9200:22: error: expected '=3D', ',', ';', 'asm' or '__at=
+tribute__' before 'ipr_request_other_msi_irqs'
+drivers/scsi/ipr.c: In function 'ipr_probe_ioa':
+drivers/scsi/ipr.c:9422:4: error: implicit declaration of function 'ipr_ena=
+ble_msix' [-Werror=3Dimplicit-function-declaration]
+drivers/scsi/ipr.c:9425:4: error: implicit declaration of function 'ipr_ena=
+ble_msi' [-Werror=3Dimplicit-function-declaration]
+drivers/scsi/ipr.c:9517:3: error: implicit declaration of function 'name_ms=
+i_vectors' [-Werror=3Dimplicit-function-declaration]
+drivers/scsi/ipr.c:9523:4: error: implicit declaration of function 'ipr_req=
+uest_other_msi_irqs' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 7af0de314b73 ("[SCSI] ipr: Add support for MSI-X and
+distributed completion") interacting with commit 54b956b90360 ("Remove
+__dev* markings from init.h") from the drover-core.current tree.
+
+I have added the following merge fix patch for today which could be added
+directly to the scsi tree (please).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 11 Jan 2013 11:59:34 +1100
+Subject: [PATCH] [SCSI] ipr: remove new __dev* annotations
+
+CONFIG_HOTPLUG is always true now and the __dev* macros have been removed.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/scsi/ipr.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
+index e1ef0b1..8fe61da 100644
+--- a/drivers/scsi/ipr.c
++++ b/drivers/scsi/ipr.c
+@@ -9135,7 +9135,7 @@ ipr_get_chip_info(const struct pci_device_id *dev_id)
+ 	return NULL;
+ }
+=20
+-static int __devinit ipr_enable_msix(struct ipr_ioa_cfg *ioa_cfg)
++static int ipr_enable_msix(struct ipr_ioa_cfg *ioa_cfg)
+ {
+ 	struct msix_entry entries[IPR_MAX_MSIX_VECTORS];
+ 	int i, err, vectors;
+@@ -9162,7 +9162,7 @@ static int __devinit ipr_enable_msix(struct ipr_ioa_c=
+fg *ioa_cfg)
+ 	return err;
+ }
+=20
+-static int __devinit ipr_enable_msi(struct ipr_ioa_cfg *ioa_cfg)
++static int ipr_enable_msi(struct ipr_ioa_cfg *ioa_cfg)
+ {
+ 	int i, err, vectors;
+=20
+@@ -9185,7 +9185,7 @@ static int __devinit ipr_enable_msi(struct ipr_ioa_cf=
+g *ioa_cfg)
+ 	return err;
+ }
+=20
+-static void __devinit name_msi_vectors(struct ipr_ioa_cfg *ioa_cfg)
++static void name_msi_vectors(struct ipr_ioa_cfg *ioa_cfg)
+ {
+ 	int vec_idx, n =3D sizeof(ioa_cfg->vectors_info[0].desc) - 1;
+=20
+@@ -9197,7 +9197,7 @@ static void __devinit name_msi_vectors(struct ipr_ioa=
+_cfg *ioa_cfg)
+ 	}
+ }
+=20
+-static int __devinit ipr_request_other_msi_irqs(struct ipr_ioa_cfg *ioa_cf=
+g)
++static int ipr_request_other_msi_irqs(struct ipr_ioa_cfg *ioa_cfg)
+ {
+ 	int i, rc;
+=20
+--=20
+1.7.10.280.gaa39
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__11_Jan_2013_11_56_08_+1100_eGTcyFv0JR9g9Sw.
+--Signature=_Fri__11_Jan_2013_12_03_23_+1100_Fe+_lha2Y2ES2nhw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ72MoAAoJEECxmPOUX5FEKsIP/RWRjf+BORnS0pR/uRxTK4Z+
-G3qP0thizEjY9rIN+PCaOnOttYhLhoSu31x6r+djmUf3FxLpoSs7Ej33PX/R9IjJ
-cK52KCxE/mfUWFiTu8VRJEJ3RM/pPNvPZacWMK0ui8XlMOymQ86ssuFBGqBTkKsg
-EJrlJbFbS2hHh6kw4MhnEoB63iSsnmKhlZPRwRemhy7ZCiuVZagkQpSuSDefRS5X
-K9FtyzDlCpIE0ZL7R35BEnuhcP2Y3unBnv9BejcW6pigVFGw1gW5jCz1EwuT8sLn
-7Zwm7XRKwH2ZBbsS/4X3kpzfymJnVKzMI5787MBfq+rg6cEdlyOSSz+Epfmxo9oo
-yNx6DckeST6wGgVd3N3Lw+PyE/bcTvX/MU6DMFwshNa23cVD3peaHdZXM9x4Ih86
-eT1JY7fW5gzWXZofBgor7CGDg2PcbloSGTIVI6e3hthiyb5qG3ij8rPlIerWb+XN
-wSfTCMnF0zJKjzWJnP0RDgJfBgkp3T7RFCekwbe8Owrp9tFts9TY2wfqPB3vU7tB
-q9SCBXT/8ZrRk4ctryxAxuRSaUZVqy48nkzYGavYlRcbnOWpKUg094hfd+ESHgzp
-bOXTMg0ACyjBZNWhVMxChzkB3cFvjqnA8GKZNqVTGO7kwAODjIDVw5BoXGWpBHqV
-bo8PeyShFHL6yi7+FLvu
-=h8mv
+iQIcBAEBCAAGBQJQ72TbAAoJEECxmPOUX5FE24gP/2JZQfgl52dreBOwXjKdHAi2
+C3X9wTurRoUG1zsX2mGyXD1iGpyiW9UAJpl1bDYyECVPOf3HFJ3FLuB718gok2hw
+ozTRIabKBMyftcyWnf4P/KArK7Rrn21qHRYhcYYZ4W2wtiopvX63xKpCJbBikAPu
+pXeHhqHjRDgYPwnHXdrLs27pfUrqB4cyb1ahKeHPGMLib0VM/3zs8kLuBE8lb1Sn
+Eu5ntOffTX4tLbt7o3/GeXpkh6/VzK4dl/jVNKmb14QZ/7493itjqw96eetXkkpf
+uZ9953zzLh7HQ0cd/YgB8q3OwchWiiPnnuBlc3wA+OrGI5jOZ0wE2z2jwKr/w6sP
+YYxTs/rC2TS3LJtsgQDGK+0wNxffeC1rAf7ZjqxkLOda/3fMtij9QXSgcNWTNaKm
+E/4MTxFYxZouZl3l9QPmU4C6r5TA7TlDArnYoW98A8iRtSodiipappsNpM75KMB5
+Wp7INDYLBj2KwR/UFRpkYvFCce3w1PrYmSRw8mGPgRaTo6K4Fe4T59WqOIvDkPbV
+7WRw7rnMuPzDoPNR15e5MHevKWQ1cspg2Ucj1EoPe16S9IYYw6mz2GCX/29MQMpo
+/c+3lgaBaDJkPdGdY9H/GUmIUjafNg/v9BykvaZcCQ1ZvEdprC5XQfsEx+7dogGd
+5Ydkv/9UNw5LKOGUr4Se
+=jo6c
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__11_Jan_2013_11_56_08_+1100_eGTcyFv0JR9g9Sw.--
+--Signature=_Fri__11_Jan_2013_12_03_23_+1100_Fe+_lha2Y2ES2nhw--
