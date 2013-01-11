@@ -1,82 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the xilinx tree
-Date: Fri, 11 Jan 2013 14:51:59 +1100
-Message-ID: <20130111145159.dfc665289a312bf4b069eb16@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with the arm-soc tree
+Date: Fri, 11 Jan 2013 15:18:28 +1100
+Message-ID: <20130111151828.bd7069afb779f8d08900f165@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__11_Jan_2013_14_51_59_+1100_n.Q/.Qo4dlAMxP.A"
+ boundary="Signature=_Fri__11_Jan_2013_15_18_28_+1100_7MimW1b237+0z3vp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45516 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:57286 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753702Ab3AKDwK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 22:52:10 -0500
+	with ESMTP id S1754105Ab3AKESi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 23:18:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Soren Brinkmann <soren.brinkmann@xilinx.com>, John Linn <John.Linn@xilinx.com>, Stephen Warren <swarren@nvidia.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Romain Naour <romain.naour@openwide.fr>, Stephen Warren <swarren@nvidia.com>
 
---Signature=_Fri__11_Jan_2013_14_51_59_+1100_n.Q/.Qo4dlAMxP.A
+--Signature=_Fri__11_Jan_2013_15_18_28_+1100_7MimW1b237+0z3vp
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Kukjin,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-zynq/common.c between commit 453708c6da9b ("arm: zynq:
-timer: Replace PSS through PS") from the xilinx tree and commit
-6bb27d7349db ("ARM: delete struct sys_timer") from the arm-soc tree.
+Today's linux-next merge of the samsung tree got a conflict in
+arch/arm/plat-samsung/time.c between various commits from the arm-soc
+tree and commit 0e4a0a6e970e ("ARM: SAMSUNG: Remove unused
+plat-samsung/time.c") from the samsung tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+The latter removes the file, so I did that.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-zynq/common.c
-index 892f65e,2ae4bce..0000000
---- a/arch/arm/mach-zynq/common.c
-+++ b/arch/arm/mach-zynq/common.c
-@@@ -90,16 -90,9 +90,9 @@@ static void __init xilinx_zynq_timer_in
- =20
-  	xilinx_zynq_clocks_init(slcr);
- =20
- -	xttcpss_timer_init();
- +	xttcps_timer_init();
-  }
- =20
-- /*
--  * Instantiate and initialize the system timer structure
--  */
-- static struct sys_timer xttcps_sys_timer =3D {
-- 	.init		=3D xilinx_zynq_timer_init,
-- };
--=20
-  /**
-   * xilinx_map_io() - Create memory mappings needed for early I/O.
-   */
-
---Signature=_Fri__11_Jan_2013_14_51_59_+1100_n.Q/.Qo4dlAMxP.A
+--Signature=_Fri__11_Jan_2013_15_18_28_+1100_7MimW1b237+0z3vp
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ74xfAAoJEECxmPOUX5FEUUYQAIxo2bJyd6hFxDNUVopP67IY
-rhd6vb+5Ae9BQcbGkQ2rrOS8r7f2USNqvHy0nSO+7aNNgbUwl4o3JCNDvuJKi1KL
-dSqdfEhNAXXue2Nbb0aFDxGP1FXOIDvmiV/4qQLMYxf0edRuF5JCXJe1r3OJLZtj
-sZ8YHIJuO5MZ0icKw6S5hQsCZpL+9JNNscSU+Pj37pSfGTUIXZ4WNISDkHcxosbf
-wLO8XH2NouU5avfOeDYXa1nnnoeZOsFy1p1bfazav9NbFEZxTRpQQqDDxJ0Ocyml
-053NFZ1O76WJyLkYMxqHGGTEbvht9VP4F+kJwYaCG0dq+9gtGZR8dv7u+QMDn+hT
-125ItXkgcNmBngFi79llfHUWbvmlxo0yCCgjSFrYqthy1zCeW9N73oRxCApR6Sg4
-+yU7bvM4YnKz4Uqyw1eaD48hmaxWe+liGx7CAdIy2Z5k9lSppq/BbeqRRpxFRM26
-Oja7WbeakVA+cMT3mGUYgMmrfoGyYN8aTqurI0o4Sl6aiqCjrVnxWPdilEzZ1pMy
-aGeqFoVbvGw5XOO1DPEmNwOrx6+GxJQaOVV38Qg1K5lp46UBlVlULdMC5WCjt2MQ
-MgMNHr2G7LxOY4zL49jcH3J1IK4TP8NSBS7ovdbT2+Q0bRJo3C5i7N4TUxW62R/4
-ZpqOfsHShbu9aP4udosI
-=gINp
+iQIcBAEBCAAGBQJQ75KUAAoJEECxmPOUX5FEB18P/1//sJ4WTNGYNEJStQZf/r7G
+Grb3EBAEcpsSIo83Hzjv8P9iSRSk/cN0lWkc1D0wJ5cHdL/ZIUxH34RYiQaqYZdn
+0JdN7pl0leLQclWotrbY0d3p087OMTYAdhJ9DH9As7jhIrNtJLIGImSrA4zF7CD3
+pxiVZSwF0caZezSSKntZZcF6ASvQxLZ/iok8L7H0rfs0PLCBJTihk2AFkEyrPdHa
+UMfb/RpfaQivJ43KcAQLFyndDyH48ReKOHPTFf8RmzRVJKhSxy1sDjZa5p+E6z8a
+wNx5BFdC+epKHeOAr/5rk4gdTzaGhYc1itFC5lXDRU2hvmc9ac7xMWHlj8dB3UIC
+3R1Ht3fELoB3R6Vf/nd8IeWwcWITIwXsYBGvs3RkeQ+UQny4LetoJ15ubsi032u4
+Yb589A9wvO7MUarfxF9jBUG8G9jF9VkdsrSFvYJcCDDMFJWoYcgD9Ls0DZAAYCjz
+zMY8uBsS/n2G1Xf8GE3Vmrmvx9r3aDRQZ4+i0u+w3huzSEV4+7Mpt7bdrbWxTLc3
+boM7LlIsTvnRRo5tz8V8eZdT2Yz3PFpWbXfm+ujTmJm0HM+1j818KA7Ip1t8+O+6
+JRFToxSN5hT95Bg0Uf6JZZCy8UZdza3EU5jdMhSP0CbKy7k01Jorrjo8JHfa8GU4
+sC1HV+Jk21ZKnvWLe76w
+=IMD6
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__11_Jan_2013_14_51_59_+1100_n.Q/.Qo4dlAMxP.A--
+--Signature=_Fri__11_Jan_2013_15_18_28_+1100_7MimW1b237+0z3vp--
