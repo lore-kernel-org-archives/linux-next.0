@@ -1,105 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Fri, 11 Jan 2013 13:18:07 +1100
-Message-ID: <20130111131807.5d41574cda2c8d6a8b08ae1f@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the xilinx tree
+Date: Fri, 11 Jan 2013 14:51:59 +1100
+Message-ID: <20130111145159.dfc665289a312bf4b069eb16@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__11_Jan_2013_13_18_07_+1100_H3f8pzYHr7Dlwwaq"
+ boundary="Signature=_Fri__11_Jan_2013_14_51_59_+1100_n.Q/.Qo4dlAMxP.A"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57672 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:45516 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753417Ab3AKCSQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 21:18:16 -0500
+	with ESMTP id S1753702Ab3AKDwK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jan 2013 22:52:10 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Sony Chacko <sony.chacko@qlogic.com>, Sritej Velaga <sritej.velaga@qlogic.com>, Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>, Anirban Chakraborty <anirban.chakraborty@qlogic.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Soren Brinkmann <soren.brinkmann@xilinx.com>, John Linn <John.Linn@xilinx.com>, Stephen Warren <swarren@nvidia.com>
 
---Signature=_Fri__11_Jan_2013_13_18_07_+1100_H3f8pzYHr7Dlwwaq
+--Signature=_Fri__11_Jan_2013_14_51_59_+1100_n.Q/.Qo4dlAMxP.A
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the net-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-zynq/common.c between commit 453708c6da9b ("arm: zynq:
+timer: Replace PSS through PS") from the xilinx tree and commit
+6bb27d7349db ("ARM: delete struct sys_timer") from the arm-soc tree.
 
-drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c:1721:1: error: expected '=
-=3D', ',', ';', 'asm' or '__attribute__' before 'qlcnic_probe'
-drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c:1912:23: error: expected '=
-=3D', ',', ';', 'asm' or '__attribute__' before 'qlcnic_remove'
-
-Caused by commits 7e2cf4feba05 ("qlcnic: change driver hardware interface
-mechanism") and 13159183ec7a ("qlcnic: 83xx base driver") from the
-net-next tree interacting with commit 54b956b90360 ("Remove __dev*
-markings from init.h") from the drover-core.current tree.
-
-I have added the following merge fix patch for today which could be added
-directly to the scsi tree (please).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 11 Jan 2013 13:15:05 +1100
-Subject: [PATCH] qlcnic: remove new __dev* annotations
-
-CONFIG_HOTPLUG is always true now and the __dev* macros have been removed.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net=
-/ethernet/qlogic/qlcnic/qlcnic_main.c
-index d331313..fb7ac8e 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-@@ -1717,7 +1717,7 @@ int qlcnic_alloc_tx_rings(struct qlcnic_adapter *adap=
-ter,
- 	return 0;
- }
-=20
--static int __devinit
-+static int
- qlcnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	struct net_device *netdev =3D NULL;
-@@ -1909,7 +1909,7 @@ err_out_disable_pdev:
- 	return err;
- }
-=20
--static void __devexit qlcnic_remove(struct pci_dev *pdev)
-+static void qlcnic_remove(struct pci_dev *pdev)
- {
- 	struct qlcnic_adapter *adapter;
- 	struct net_device *netdev;
---=20
-1.7.10.280.gaa39
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__11_Jan_2013_13_18_07_+1100_H3f8pzYHr7Dlwwaq
+diff --cc arch/arm/mach-zynq/common.c
+index 892f65e,2ae4bce..0000000
+--- a/arch/arm/mach-zynq/common.c
++++ b/arch/arm/mach-zynq/common.c
+@@@ -90,16 -90,9 +90,9 @@@ static void __init xilinx_zynq_timer_in
+ =20
+  	xilinx_zynq_clocks_init(slcr);
+ =20
+ -	xttcpss_timer_init();
+ +	xttcps_timer_init();
+  }
+ =20
+- /*
+-  * Instantiate and initialize the system timer structure
+-  */
+- static struct sys_timer xttcps_sys_timer =3D {
+- 	.init		=3D xilinx_zynq_timer_init,
+- };
+-=20
+  /**
+   * xilinx_map_io() - Create memory mappings needed for early I/O.
+   */
+
+--Signature=_Fri__11_Jan_2013_14_51_59_+1100_n.Q/.Qo4dlAMxP.A
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ73ZfAAoJEECxmPOUX5FEpXAQAJJYXe+e+bOS0/n2aPwgL8la
-oBUhO2quamBaxJb4/6emP7nCSFnGCs0Shgy1wDrYjGqcw+Uvfxdda4/vdpYhjyCn
-Y3bkhaqyru+dTJ6J4538lKNPvzQhVMnxLnCpNBJL7TRc63oWJFSaFEbGntbCmRkm
-F1zfwrDxOnsX/U+2yuNM9Czs3mXxOXGAE8gx9qB10jPeIPX5t4DS4Hfc6YSGSa42
-zenXaP0sZw/t48YvGxci8zCBdRRtjTZCXX/XUwyaaH4d/zPqVwIDkNX2OLFWBpV9
-khIf+fdC1KFwYyWmrM5sLtnieLXyS9YnLl28K8r1x3wqnYAPXpLk5/+z2d8Paxym
-0UPlHlAFxNb0a5t+a+PwR5CxEgnSrptA3MjuZuQQFZCKKXWnBPSGveKjDflNsMzq
-XuyuZRV6vPmrIj2XR+PrL6Fyi5puLoQwZ+SeZrcLQrs6gII7Xl9bYwv8o+2A8IuA
-5q3GR2FA7tuYrA/u8r5Od6lRzPA8XL3G9ZKQ2T3sth11gk1QX/89mLmQ2nW2qAzf
-znfBOUGAHz7tV86OExsKYMNnlTKd1c08OvmPQ9u+JeMR/tARknh+kNh/Cpp1VfUt
-7/oocaXecVmsd/aRTjLrEExTo6X1lOgDbsM4/cpGUKLMh4zD4GwiN9uXwMh35v85
-t+8dgVSYRbh4doH0YY+t
-=zQKj
+iQIcBAEBCAAGBQJQ74xfAAoJEECxmPOUX5FEUUYQAIxo2bJyd6hFxDNUVopP67IY
+rhd6vb+5Ae9BQcbGkQ2rrOS8r7f2USNqvHy0nSO+7aNNgbUwl4o3JCNDvuJKi1KL
+dSqdfEhNAXXue2Nbb0aFDxGP1FXOIDvmiV/4qQLMYxf0edRuF5JCXJe1r3OJLZtj
+sZ8YHIJuO5MZ0icKw6S5hQsCZpL+9JNNscSU+Pj37pSfGTUIXZ4WNISDkHcxosbf
+wLO8XH2NouU5avfOeDYXa1nnnoeZOsFy1p1bfazav9NbFEZxTRpQQqDDxJ0Ocyml
+053NFZ1O76WJyLkYMxqHGGTEbvht9VP4F+kJwYaCG0dq+9gtGZR8dv7u+QMDn+hT
+125ItXkgcNmBngFi79llfHUWbvmlxo0yCCgjSFrYqthy1zCeW9N73oRxCApR6Sg4
++yU7bvM4YnKz4Uqyw1eaD48hmaxWe+liGx7CAdIy2Z5k9lSppq/BbeqRRpxFRM26
+Oja7WbeakVA+cMT3mGUYgMmrfoGyYN8aTqurI0o4Sl6aiqCjrVnxWPdilEzZ1pMy
+aGeqFoVbvGw5XOO1DPEmNwOrx6+GxJQaOVV38Qg1K5lp46UBlVlULdMC5WCjt2MQ
+MgMNHr2G7LxOY4zL49jcH3J1IK4TP8NSBS7ovdbT2+Q0bRJo3C5i7N4TUxW62R/4
+ZpqOfsHShbu9aP4udosI
+=gINp
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__11_Jan_2013_13_18_07_+1100_H3f8pzYHr7Dlwwaq--
+--Signature=_Fri__11_Jan_2013_14_51_59_+1100_n.Q/.Qo4dlAMxP.A--
