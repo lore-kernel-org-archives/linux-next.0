@@ -1,41 +1,139 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: linux-next: manual merge of the signal tree with the arm64 tree
-Date: Fri, 11 Jan 2013 10:03:57 +0000
-Message-ID: <20130111100357.GA12977@mudshark.cambridge.arm.com>
-References: <20130111154617.cab6a8d1ff13a4f200969b9d@canb.auug.org.au>
- <20130111093602.GB13405@arm.com>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Fri, 11 Jan 2013 13:12:13 -0200
+Message-ID: <20130111131213.4c1270b1@infradead.org>
+References: <20130111113904.251f5fb5587446dbb10694e3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/FjBe7D4ePsBges==yq0nD73"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.21]:43776 "EHLO
-	cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754014Ab3AKKEJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Jan 2013 05:04:09 -0500
-Content-Disposition: inline
-In-Reply-To: <20130111093602.GB13405@arm.com>
+Received: from casper.infradead.org ([85.118.1.10]:50998 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753129Ab3AKPM7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jan 2013 10:12:59 -0500
+In-Reply-To: <20130111113904.251f5fb5587446dbb10694e3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@ZenIV.linux.org.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Greg KH <greg@kroah.com>
 
-On Fri, Jan 11, 2013 at 09:36:02AM +0000, Catalin Marinas wrote:
-> Hi Stephen,
-> 
-> On Fri, Jan 11, 2013 at 04:46:17AM +0000, Stephen Rothwell wrote:
-> > Today's linux-next merge of the signal tree got a conflict in
-> > arch/arm64/kernel/signal32.c between commits 068f1bb36cf1 ("arm64:
-> > compat: include sa_restorer in old action from rt_sigaction") and
-> > efed4d52e39f ("arm64: compat: ensure access_ok checks are performed on
-> > user structures") from the arm64 tree and various commits from the signal
-> > tree.
-> > 
-> > The latter removes the code modified by the former, so I did that.
-> 
-> I think the fix is fine. I'll give Al's patches a test and I can
-> probably drop Will's patches.
+--Sig_/FjBe7D4ePsBges==yq0nD73
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yup, although it looks like we need to #define __ARCH_HAS_SA_RESTORER for
-compat_sys_rt_sigaction.
+Em Fri, 11 Jan 2013 11:39:04 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
 
-Will
+> Hi Mauro,
+>=20
+> After merging the v4l-dvb tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/media/platform/sh_veu.c:1146:22: error: expected '=3D', ',', ';',=
+ 'asm' or '__attribute__' before 'sh_veu_probe'
+> drivers/media/platform/sh_veu.c:1228:22: error: expected '=3D', ',', ';',=
+ 'asm' or '__attribute__' before 'sh_veu_remove'
+> drivers/media/platform/sh_veu.c:1244:2: error: implicit declaration of fu=
+nction '__devexit_p' [-Werror=3Dimplicit-function-declaration]
+> drivers/media/platform/sh_veu.c:1244:25: error: 'sh_veu_remove' undeclare=
+d here (not in a function)
+> drivers/media/platform/sh_veu.c: In function 'sh_veu_init':
+> drivers/media/platform/sh_veu.c:1253:45: error: 'sh_veu_probe' undeclared=
+ (first use in this function)
+> drivers/media/platform/sh_veu.c:1253:45: note: each undeclared identifier=
+ is reported only once for each function it appears in
+> drivers/media/platform/sh_veu.c: At top level:
+> drivers/media/platform/sh_veu.c:1095:20: warning: 'sh_veu_bh' defined but=
+ not used [-Wunused-function]
+> drivers/media/platform/sh_veu.c:1109:20: warning: 'sh_veu_isr' defined bu=
+t not used [-Wunused-function]
+> drivers/media/platform/sh_veu.c: In function 'sh_veu_init':
+> drivers/media/platform/sh_veu.c:1254:1: warning: control reaches end of n=
+on-void function [-Wreturn-type]
+>=20
+> Caused by commit 05efa71bdc0e ("[media] media: add a VEU MEM2MEM format
+> conversion and scaling driver") interacting with commit 54b956b90360
+> ("Remove __dev* markings from init.h") from the driver-core.current tree.
+>=20
+> I have applied the following merge fix patch which could be applied
+> directly to the v4l-dvb tree (please):
+
+Applied,
+
+Thanks!
+Mauro
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 11 Jan 2013 11:35:34 +1100
+> Subject: [PATCH] [media] media: remove __dev* annotations
+>=20
+> CONFIG_HOTPLUG is always true now and the __dev* macros have meen removed.
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/media/platform/sh_veu.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/sh_veu.c b/drivers/media/platform/sh_=
+veu.c
+> index a018676..cb54c69 100644
+> --- a/drivers/media/platform/sh_veu.c
+> +++ b/drivers/media/platform/sh_veu.c
+> @@ -1143,7 +1143,7 @@ static irqreturn_t sh_veu_isr(int irq, void *dev_id)
+>  	return IRQ_HANDLED;
+>  }
+> =20
+> -static int __devinit sh_veu_probe(struct platform_device *pdev)
+> +static int sh_veu_probe(struct platform_device *pdev)
+>  {
+>  	struct sh_veu_dev *veu;
+>  	struct resource *reg_res;
+> @@ -1225,7 +1225,7 @@ einitctx:
+>  	return ret;
+>  }
+> =20
+> -static int __devexit sh_veu_remove(struct platform_device *pdev)
+> +static int sh_veu_remove(struct platform_device *pdev)
+>  {
+>  	struct v4l2_device *v4l2_dev =3D platform_get_drvdata(pdev);
+>  	struct sh_veu_dev *veu =3D container_of(v4l2_dev,
+> @@ -1241,7 +1241,7 @@ static int __devexit sh_veu_remove(struct platform_=
+device *pdev)
+>  }
+> =20
+>  static struct platform_driver __refdata sh_veu_pdrv =3D {
+> -	.remove		=3D __devexit_p(sh_veu_remove),
+> +	.remove		=3D sh_veu_remove,
+>  	.driver		=3D {
+>  		.name	=3D "sh_veu",
+>  		.owner	=3D THIS_MODULE,
+
+
+
+
+Cheers,
+Mauro
+
+--Sig_/FjBe7D4ePsBges==yq0nD73
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ8CvUAAoJEGO08Bl/PELnNvQQALN8Zcs1UYjuKouSvHyavBIS
+rn0/XeGbphzj9Ht9EjQsFzO7KvB9ScEaG0+kR8FQY6HxG+vSa4+VtamW2chIxgYX
+SPViieZpKZ1p2kJinzpoa+BADEwqKudz72F/LT0rw3eEZInSmgj+BeHsDbqO5kRs
+iavdniyv3aGESDnbGIVWj0tm8KYDhT41Bqs/jc7sCKcOs3cdBv90Aktcwup6dNJI
+itONgFrpf3SNwvxR1AmSbQ9pNDtDyd2neCpAvm6Aa/vk0HEExWlyA0pLg4OQyelt
+8vBp62fU6x2MH5yQPdfRMU26ia9/xd1UsW8fz4HWr09Az7ZgctNFmWMfx1nByMHN
++7kTLgpKSa/1yw43QFdTvbWtTDWvT8zpmFIsnM2qFcSRM4lfwAIgHgKIf0w1QQfY
+nMCJfjTGRjlkwtyGuPAlVunqoJpdn9s+tI2WwtTGJj53DuSQmw6az0oIUeIn28BI
+LOuuQt6w8zEGeHROm3LDe2zx6YTuX1sQgc2aOb8H0Hafw3VxIiht8QM8BuJW1SgS
+k/FLzhhFfBD5vWjbbXgM5pSV+EvBMymxLnFHZQBCqgU2p08hviJSr3Pq/JPqmTDh
+JMVCF98HpGJW77hLnO4t5CIT5LNdUHopiTutAzZdpgXh+52JmHLBmHGyziM4tcX4
+TfLM6VxedO1C7H+DHhy6
+=rV1u
+-----END PGP SIGNATURE-----
+
+--Sig_/FjBe7D4ePsBges==yq0nD73--
