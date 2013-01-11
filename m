@@ -1,38 +1,67 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Fri, 11 Jan 2013 07:34:16 +0000
-Message-ID: <1357889656.3065.2.camel@dabdike.int.hansenpartnership.com>
-References: <20130111120323.cdc06081d0fb1c498c9f1779@canb.auug.org.au>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: linux-next: please cleanup the cpuidle tree
+Date: Fri, 11 Jan 2013 10:10:12 +0100
+Message-ID: <50EFD6F4.7030903@linaro.org>
+References: <20130108092751.4bd60a67280e284369553c18@canb.auug.org.au> <50EB5636.4080705@linaro.org> <20130108102227.19d4102cb1ddf516ad4082d1@canb.auug.org.au> <20130111115608.dffec30f37e42a8f15a3f117@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130111120323.cdc06081d0fb1c498c9f1779@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bk0-f52.google.com ([209.85.214.52]:54681 "EHLO
+	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753552Ab3AKJKR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jan 2013 04:10:17 -0500
+Received: by mail-bk0-f52.google.com with SMTP id w5so773378bku.39
+        for <linux-next@vger.kernel.org>; Fri, 11 Jan 2013 01:10:15 -0800 (PST)
+In-Reply-To: <20130111115608.dffec30f37e42a8f15a3f117@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wen Xiong <wenxiong@linux.vnet.ibm.com>, Greg KH <greg@kroah.com>, linux-scsi <linux-scsi@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-On Fri, 2013-01-11 at 12:03 +1100, Stephen Rothwell wrote:
-> Hi James,
-> 
-> After merging the scsi tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/scsi/ipr.c:9138:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'ipr_enable_msix'
-> drivers/scsi/ipr.c:9165:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'ipr_enable_msi'
-> drivers/scsi/ipr.c:9188:23: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'name_msi_vectors'
-> drivers/scsi/ipr.c:9200:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'ipr_request_other_msi_irqs'
-> drivers/scsi/ipr.c: In function 'ipr_probe_ioa':
-> drivers/scsi/ipr.c:9422:4: error: implicit declaration of function 'ipr_enable_msix' [-Werror=implicit-function-declaration]
-> drivers/scsi/ipr.c:9425:4: error: implicit declaration of function 'ipr_enable_msi' [-Werror=implicit-function-declaration]
-> drivers/scsi/ipr.c:9517:3: error: implicit declaration of function 'name_msi_vectors' [-Werror=implicit-function-declaration]
-> drivers/scsi/ipr.c:9523:4: error: implicit declaration of function 'ipr_request_other_msi_irqs' [-Werror=implicit-function-declaration]
+On 01/11/2013 01:56 AM, Stephen Rothwell wrote:
+> Hi Daniel,
+>=20
+> On Tue, 8 Jan 2013 10:22:27 +1100 Stephen Rothwell <sfr@canb.auug.org=
+=2Eau> wrote:
+>>
+>> On Tue, 08 Jan 2013 00:11:50 +0100 Daniel Lezcano <daniel.lezcano@li=
+naro.org> wrote:
+>>>
+>>> On 01/07/2013 11:27 PM, Stephen Rothwell wrote:
+>>>>
+>>>> All the commits in the cpuidle tree have been included upstream be=
+fore
+>>>> v3.6-rc1.  They were rewritten before being merged upstream and so=
+ are
+>>>> now causing merge conflicts in linux-next.  Could you please reset=
+ the
+>>>> head of your tree
+>>>> (git://git.linaro.org/people/dlezcano/cpuidle-next.git#cpuidle-nex=
+t) to
+>>>> be somewhere in the tree that yours is merged into (pm or Linus').
+>>>
+>>> Sure. I believe it is done now.
+>>
+>> Yep, thanks.
+>=20
+> Unfortunately, you reset your tree to be a version of the pm tree tha=
+t has
+> now been rebased :-(  This is now causing more conflicts in linux-nex=
+t.
+> Maybe you should reset your tree to be the same as one of Linus' -rc
+> releases for now.
 
-OK, fine, I'll drop all the ipr patches.  I've been waiting for a month
-for them to fix the smatch and sparse warnings.  Please resend the
-series with all the fixes.
+Ok, done.
 
-Thanks,
+Thanks
+  -- Daniel
 
-James
+
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
