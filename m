@@ -1,83 +1,30 @@
-From: wenxiong@linux.vnet.ibm.com
-Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Fri, 11 Jan 2013 21:23:08 -0500
-Message-ID: <20130111212308.Horde.EQ70Mpir309Q8MkMJXuEiEA@imap.linux.ibm.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: mmotm 2013-01-11-15-47 uploaded (x86 asm-offsets broken)
+Date: Fri, 11 Jan 2013 18:29:49 -0800
+Message-ID: <1357957789.2168.11.camel@joe-AO722>
+References: <20130111234813.170A620004E@hpza10.eem.corp.google.com>
+	 <50F0BFAA.10902@infradead.org>
+	 <20130112131713.749566c8d374cd77b1f2885e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed; DelSp=Yes
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e7.ny.us.ibm.com ([32.97.182.137]:37682 "EHLO e7.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754369Ab3ALCXN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Jan 2013 21:23:13 -0500
-Received: from /spool/local
-	by e7.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <wenxiong@linux.vnet.ibm.com>;
-	Fri, 11 Jan 2013 21:23:12 -0500
-Content-Disposition: inline
+Received: from perches-mx.perches.com ([206.117.179.246]:55006 "EHLO
+	labridge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754446Ab3ALC3u (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Jan 2013 21:29:50 -0500
+In-Reply-To: <20130112131713.749566c8d374cd77b1f2885e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Brian King <brking@linux.vnet.ibm.com>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 
+On Sat, 2013-01-12 at 13:17 +1100, Stephen Rothwell wrote:
+> On Fri, 11 Jan 2013 17:43:06 -0800 Randy Dunlap <rdunlap@infradead.org> wrote:
+> >
+> > b0rked.
+> > 
+> > Some (randconfig?) causes this set of errors:
 
-Quoting James Bottomley <James.Bottomley@hansenpartnership.com>:
-
-> On Fri, 2013-01-11 at 11:35 -0600, Brian King wrote:
->> On 01/11/2013 10:05 AM, Greg KH wrote:
->> > On Fri, Jan 11, 2013 at 03:37:17PM +0000, James Bottomley wrote:
->> >> On Fri, 2013-01-11 at 09:27 -0600, Brian King wrote:
->> >>> It looks like this was a due to the fact that the new patches
->> >>> added __devinit tags in the same merge window the __devinit tag
->> >>> itself was getting removed.
->> >>
->> >> Not exactly.  The patch which makes them nops went into 3.8.  Now
->> >> there's a patch queued in, Gregs tree I presume, to remove them all and
->> >> the #defines which causes the compile failure.
->> >>
->> >>> As to the sparse warnings, this patch fixed the ones that
->> >>> were actual bugs in the new code, although we could have
->> >>> made that more clear in the patch description.
->> >>>
->> >>> http://marc.info/?l=linux-scsi&m=135716576204083&w=2
->> >>
->> >> Ah, thanks ... I've been on holiday for a while, so I did miss that.
->> >>
->> >>> There is one outstanding issue I am aware of which was an
->> >>> array bounds compiler warning which looks to be a misdetection
->> >>> by the compiler. Wendy and I discussed adding a BUG_ON
->> >>> to stop the compiler from complaining.
->> >>>
->> >>> Wendy - lets queue these two changes up ASAP. They should both
->> >>> be very simple changes.
->> >>
->> >> If it's a simple gcc bug, just ignore it.
->> >>
->> >> I do need you to redo the patches to remove the __dev annotations,
->> >> though.  We can't risk introducing a bisect killing compile breakage if
->> >> Greg's tree merges before mine in the next merge window.
->> >
->> > This change should be pushed to Linus in time for 3.8-final, so there
->> > should not be any bisect issues.
->>
->> We can do this either way.
->>
->> James - what is your preference? Drop everything and do a resend of the
->> entire series or delta patches on top of what is currently in your tree?
->
-> Drop everything and resend still, I think.  There's still a rebase
-> problem, because the merge failure will happen if I rebase the misc tree
-> to beyond Greg's merge point and I'd rather not have to worry about it.
->
-> Thanks,
->
-> James
-
-Hi James, I just re-sent all patches which are against
-git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git.
-This kernel already have Greg's "Drivers: scsi: remove _dev*  
-attributes" patch.
-
-Let me know if you have any questions for these patches.
-
-Thanks for for your help!
-Wendy
+I guess that's when CONFIG_HZ is not an even divisor of 1000.
+I suppose this needs to be worked on a bit more.
