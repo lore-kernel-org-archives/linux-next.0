@@ -1,60 +1,63 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: mmotm 2013-01-11-15-47 uploaded (x86 asm-offsets broken)
-Date: Sat, 12 Jan 2013 08:52:14 -0800
-Message-ID: <1358009534.2168.22.camel@joe-AO722>
-References: <20130111234813.170A620004E@hpza10.eem.corp.google.com>
-	 <50F0BFAA.10902@infradead.org>
-	 <20130112131713.749566c8d374cd77b1f2885e@canb.auug.org.au>
-	 <1357957789.2168.11.camel@joe-AO722>
-	 <CA+icZUVMY76bRFgUumZy0G-FFM=80iwfSFSopHMwHRYfgKjLjA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: change contacts for the kvm tree
+Date: Mon, 14 Jan 2013 09:32:48 +1100
+Message-ID: <20130114093248.47f85c958481dc1e11f4133b@canb.auug.org.au>
+References: <20130110133618.f92174f5c966c19d8455c41d@canb.auug.org.au>
+	<20130110065559.GG700@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <CA+icZUVMY76bRFgUumZy0G-FFM=80iwfSFSopHMwHRYfgKjLjA@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: sedat.dilek@gmail.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__14_Jan_2013_09_32_48_+1100_EoSe8mowrE=fGtz4"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43521 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755998Ab3AMWc7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Jan 2013 17:32:59 -0500
+In-Reply-To: <20130110065559.GG700@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Gleb Natapov <gleb@redhat.com>
+Cc: Marcelo Tosatti <mtosatti@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 2013-01-12 at 11:13 +0100, Sedat Dilek wrote:
-> On Sat, Jan 12, 2013 at 3:29 AM, Joe Perches <joe@perches.com> wrote:
-> > On Sat, 2013-01-12 at 13:17 +1100, Stephen Rothwell wrote:
-> >> On Fri, 11 Jan 2013 17:43:06 -0800 Randy Dunlap <rdunlap@infradead.org> wrote:
-> >> >
-> >> > b0rked.
-> >> >
-> >> > Some (randconfig?) causes this set of errors:
-> >
-> > I guess that's when CONFIG_HZ is not an even divisor of 1000.
-> > I suppose this needs to be worked on a bit more.
-[]
-> I remember this patch from Joe come up with a pending patch in
-> net-next.git#master
-[]
-> As I see Randy has in his kernel-config:
-> CONFIG_HZ=300
-> So there is a problem for the value "300" (only)?
+--Signature=_Mon__14_Jan_2013_09_32_48_+1100_EoSe8mowrE=fGtz4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Basically, this problem exists whenever timeconst.h
-is necessary.
+Hi Gleb,
 
-kernel/Makefile has code to create it in kernel/
-and kernel/time.c is the only file that uses it.
+On Thu, 10 Jan 2013 08:56:00 +0200 Gleb Natapov <gleb@redhat.com> wrote:
+>
+> On Thu, Jan 10, 2013 at 01:36:18PM +1100, Stephen Rothwell wrote:
+> >=20
+> > I have removed Avi as a contact for the kvm tree as the address I have
+> > (Avi Kivity <avi@qumranet.com>) bounces.=20
+> Please add Gleb Natapov <gleb@redhat.com> instead.
 
-That code will need to be removed and newly written
-somewhere so that timeconst.h could be created as
-include/linux/timeconst.h before any other compilation
-so that jiffies.h can #include it.
+Done.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-I believe it should be akin to how version.h or
-elfconfig.h is created.
+--Signature=_Mon__14_Jan_2013_09_32_48_+1100_EoSe8mowrE=fGtz4
+Content-Type: application/pgp-signature
 
-Someone with stronger Makefile foo could probably do
-it quicker than I could.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+iQIcBAEBCAAGBQJQ8zYQAAoJEECxmPOUX5FEbCoP/3yIIXfUcU6HbZukg3I43q7B
+lbmC8Ap5jZvH5QlchH7zNrm4Fz/nxx5Syy9oYSWKGWZLMoffqc+gMxLmsIWxJa/I
+VDVaVz0XDsb/MIC9BCgBBEM8SKa5vZDa04YZXyCyBefZHs46HlMw18WHNI2ag70m
+0w4rwmtHHG5AlASgpQrP7cotxskwckD2EOm1CbYnvkWy91RpdC8qgRzcwQ6mjdIb
+TJARQOtTEOBMoRGoY3Bp9K0L0IICDBVO0pqHu6oNL7PD42bkYvYearadR4kuGvCO
+V4ApWNkt5fdebp66xPoDjcXnd62WrM8K3nuu18bLNIywWMco9b0YLFcSYRPQbaKo
+NiCYu3wPpRw0vipbo9nEFerfEfMUveGfp0KGEH5jsItWHkojfrecdjkXhfEEQzEI
+etke3zifST9/LjbJLCBV12qYf9C7XGNcIXDNyf6yLFN6d7tmSycJgLSrudE7M+RV
+QKJPOO0YwEv3Q6giESDNDT8IaCzwWoMiNAjZRsET3JtFrGW+o3hlkwZOqLX3OTkn
+syOcwKJJeWWshD+BO2JUz3hmxXnHQWmxPrsLiawmyRinxE/FPiPS2hPkpeQFyNCF
+Anu4N5zI6tybSuen+AzCuSJlq2qKvJjzEPEpvrslOp4zfvw2QJQHu/221a9qyEXG
+V8EiLR+2GTkMxKn/aJ3a
+=Ynxi
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__14_Jan_2013_09_32_48_+1100_EoSe8mowrE=fGtz4--
