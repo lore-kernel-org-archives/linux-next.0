@@ -1,100 +1,60 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jan 7 (rcutorture)
-Date: Mon, 14 Jan 2013 10:49:05 -0800
-Message-ID: <50F45321.50808@infradead.org>
-References: <20130107142649.c843e0b711532dc3a631e4cf@canb.auug.org.au> <50EB252C.4010005@infradead.org> <20130107221627.GZ2525@linux.vnet.ibm.com> <20130108095959.98d83d91dbd0e9e1ac023373@canb.auug.org.au> <1357600327.5190.13.camel@gandalf.local.home> <1357605379.5190.15.camel@gandalf.local.home> <20130108035348.GF2525@linux.vnet.ibm.com> <50F43612.8080600@infradead.org> <20130114173208.GY3384@linux.vnet.ibm.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Mon, 14 Jan 2013 19:54:53 +0100
+Message-ID: <1814895.KpbBrTDE8x@vostro.rjw.lan>
+References: <20130114110311.a399f92e5e4ec730b380eaf4@canb.auug.org.au> <CA+icZUX7O6bAzSL_ysSum2psQC0M3K2EE5QUYL68F62vSsKfrA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:59982 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756809Ab3ANSr6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Jan 2013 13:47:58 -0500
-In-Reply-To: <20130114173208.GY3384@linux.vnet.ibm.com>
+Received: from hydra.sisk.pl ([212.160.235.94]:40635 "EHLO hydra.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756527Ab3ANStC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Jan 2013 13:49:02 -0500
+In-Reply-To: <CA+icZUX7O6bAzSL_ysSum2psQC0M3K2EE5QUYL68F62vSsKfrA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com
-Cc: Steven Rostedt <rostedt@goodmis.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 01/14/13 09:32, Paul E. McKenney wrote:
-> On Mon, Jan 14, 2013 at 08:45:06AM -0800, Randy Dunlap wrote:
->> On 01/07/13 19:53, Paul E. McKenney wrote:
->>> On Mon, Jan 07, 2013 at 07:36:19PM -0500, Steven Rostedt wrote:
->>>> On Mon, 2013-01-07 at 18:12 -0500, Steven Rostedt wrote:
->>>>> On Tue, 2013-01-08 at 09:59 +1100, Stephen Rothwell wrote:
->>>>>> Hi Paul,
->>>>>>
->>>>>> On Mon, 7 Jan 2013 14:16:27 -0800 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
->>>>>>>
->>>>>>> On Mon, Jan 07, 2013 at 11:42:36AM -0800, Randy Dunlap wrote:
->>>>>>>>
->>>>>>>> on i386 or x86_64:
->>>>>>>>
->>>>>>>> ERROR: "trace_clock_local" [kernel/rcutorture.ko] undefined!
->>>>>>>
->>>>>>> Hello, Randy,
->>>>>>>
->>>>>>> Did your build include the following, also pushed to -next in that same
->>>>>>> batch from -rcu?  Including Steven Rostedt on CC for his take.
->>>>>>
->>>>>> That commit was certainly in next-20130107.
->>>>>
->>>>> Could be bad config dependencies.
->>>>
->>>> Paul,
->>>>
->>>> You need to also select TRACE_CLOCK if you are going to use it.
->>>
->>> Thank you, Steve!
->>>
->>> Randy, does the following patch help?
->>>
->>> 							Thanx, Paul
->>
->> Hi Paul,
->>
->> This patch fixed the Jan. 7 linux-next build errors, but there is
->> still some similar problem with current linux-next (0114 and late
->> last week as well).
->>
->> ERROR: "trace_clock_local" [kernel/rcutorture.ko] undefined!
+On Monday, January 14, 2013 02:22:20 PM Sedat Dilek wrote:
+> On Mon, Jan 14, 2013 at 1:03 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi Rafael,
+> >
+> > After merging the pm tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >
+> > In file included from init/main.c:25:0:
+> > include/linux/acpi.h:549:46: error: unknown type name 'acpi_handle'
+> > include/linux/acpi.h:551:49: error: unknown type name 'acpi_handle'
+> >
+> > and many more.
+> >
+> > Caused by commit c9b147cd9648 ("ACPI / PM: Rework the handling of devices
+> > depending on power resources").  Please check with and without CONFIG
+> > options that affect patches ...
+> >
+> > I have used the pm tree from next-20130111 for today.
 > 
-> Ah, my bad...
+> [ Please also CC linux-next ML ! ]
 > 
-> Does the following (rough and untested) patch help?
+> [ QUOTE ]
+> Thanks for the report and sorry for the breakage.  Should be fixed now.
+> 
+> Rafael
+> [ /QUOTE ]
+> 
+> What was the cause for this?
+> 
+> Did you refresh "ACPI / PM: Rework the handling of devices depending
+> on power resources" [1]?
 
-Yes, it helps, but there is still the same problem in
-rcu_torture_reader() -- after that it builds OK.
+I did.
 
-Thanks.
-
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> diff --git a/kernel/rcutorture.c b/kernel/rcutorture.c
-> index cd4c35d..36f0106 100644
-> --- a/kernel/rcutorture.c
-> +++ b/kernel/rcutorture.c
-> @@ -1047,11 +1047,13 @@ static void rcu_torture_timer(unsigned long unused)
->  	static DEFINE_SPINLOCK(rand_lock);
->  	struct rcu_torture *p;
->  	int pipe_count;
-> -	unsigned long long ts;
-> +	unsigned long long ts = 0;
->  
->  	idx = cur_ops->readlock();
->  	completed = cur_ops->completed();
-> +#ifdef CONFIG_RCU_TRACE
->  	ts = trace_clock_local();
-> +#endif /* #ifdef CONFIG_RCU_TRACE */
->  	p = rcu_dereference_check(rcu_torture_current,
->  				  rcu_read_lock_bh_held() ||
->  				  rcu_read_lock_sched_held() ||
-> 
-> --
+Thanks,
+Rafael
 
 
 -- 
-~Randy
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
