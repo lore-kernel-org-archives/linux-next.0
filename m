@@ -1,63 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: change contacts for the kvm tree
-Date: Mon, 14 Jan 2013 09:32:48 +1100
-Message-ID: <20130114093248.47f85c958481dc1e11f4133b@canb.auug.org.au>
-References: <20130110133618.f92174f5c966c19d8455c41d@canb.auug.org.au>
-	<20130110065559.GG700@redhat.com>
+Subject: linux-next: build failure after merge of the pm tree
+Date: Mon, 14 Jan 2013 11:03:11 +1100
+Message-ID: <20130114110311.a399f92e5e4ec730b380eaf4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__14_Jan_2013_09_32_48_+1100_EoSe8mowrE=fGtz4"
+ boundary="Signature=_Mon__14_Jan_2013_11_03_11_+1100_2GqNI1FC8YzbwKVi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43521 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56448 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755998Ab3AMWc7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Jan 2013 17:32:59 -0500
-In-Reply-To: <20130110065559.GG700@redhat.com>
+	with ESMTP id S1754207Ab3ANAD1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Jan 2013 19:03:27 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gleb Natapov <gleb@redhat.com>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__14_Jan_2013_09_32_48_+1100_EoSe8mowrE=fGtz4
+--Signature=_Mon__14_Jan_2013_11_03_11_+1100_2GqNI1FC8YzbwKVi
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Gleb,
+Hi Rafael,
 
-On Thu, 10 Jan 2013 08:56:00 +0200 Gleb Natapov <gleb@redhat.com> wrote:
->
-> On Thu, Jan 10, 2013 at 01:36:18PM +1100, Stephen Rothwell wrote:
-> >=20
-> > I have removed Avi as a contact for the kvm tree as the address I have
-> > (Avi Kivity <avi@qumranet.com>) bounces.=20
-> Please add Gleb Natapov <gleb@redhat.com> instead.
+After merging the pm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Done.
+In file included from init/main.c:25:0:
+include/linux/acpi.h:549:46: error: unknown type name 'acpi_handle'
+include/linux/acpi.h:551:49: error: unknown type name 'acpi_handle'
+
+and many more.
+
+Caused by commit c9b147cd9648 ("ACPI / PM: Rework the handling of devices
+depending on power resources").  Please check with and without CONFIG
+options that affect patches ...
+
+I have used the pm tree from next-20130111 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__14_Jan_2013_09_32_48_+1100_EoSe8mowrE=fGtz4
+--Signature=_Mon__14_Jan_2013_11_03_11_+1100_2GqNI1FC8YzbwKVi
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ8zYQAAoJEECxmPOUX5FEbCoP/3yIIXfUcU6HbZukg3I43q7B
-lbmC8Ap5jZvH5QlchH7zNrm4Fz/nxx5Syy9oYSWKGWZLMoffqc+gMxLmsIWxJa/I
-VDVaVz0XDsb/MIC9BCgBBEM8SKa5vZDa04YZXyCyBefZHs46HlMw18WHNI2ag70m
-0w4rwmtHHG5AlASgpQrP7cotxskwckD2EOm1CbYnvkWy91RpdC8qgRzcwQ6mjdIb
-TJARQOtTEOBMoRGoY3Bp9K0L0IICDBVO0pqHu6oNL7PD42bkYvYearadR4kuGvCO
-V4ApWNkt5fdebp66xPoDjcXnd62WrM8K3nuu18bLNIywWMco9b0YLFcSYRPQbaKo
-NiCYu3wPpRw0vipbo9nEFerfEfMUveGfp0KGEH5jsItWHkojfrecdjkXhfEEQzEI
-etke3zifST9/LjbJLCBV12qYf9C7XGNcIXDNyf6yLFN6d7tmSycJgLSrudE7M+RV
-QKJPOO0YwEv3Q6giESDNDT8IaCzwWoMiNAjZRsET3JtFrGW+o3hlkwZOqLX3OTkn
-syOcwKJJeWWshD+BO2JUz3hmxXnHQWmxPrsLiawmyRinxE/FPiPS2hPkpeQFyNCF
-Anu4N5zI6tybSuen+AzCuSJlq2qKvJjzEPEpvrslOp4zfvw2QJQHu/221a9qyEXG
-V8EiLR+2GTkMxKn/aJ3a
-=Ynxi
+iQIcBAEBCAAGBQJQ80s/AAoJEECxmPOUX5FETvQQAJdg1yNsZUVG9Gzm/20NBRX5
+56/PBozMn2gZmnD8VYy4Rgx6oH2xo+pzNaUrm/KJcbR5ZAiiWrLI8oxm5VAgF8Wj
+LCqAw1ft9HvQ9iJwsEeppc8Wwiq6h74pke87zk6BM0C6feOUzqC4cj2arH0N0dns
+r6rdFxtkrx0NhNZPD3tU+luTRUjdczC0dG7Sc5RuRcR6xkfhi3lLwR6ZsHwgHBel
+Vfwwktbja53wC04ldD3C+ttpYuWoodOUquIuPTD1WJYvKxcGYApKXDRk2wHITeD/
+BzqDhEJ0PnafzYl+UCzMQFeMEHSGjAzDGjTEsuXGseR2mjWzE7qjlCvZL4p1JfXl
+7ilOFNOfSuiIRK2syie1HmMwWyT4ddmDRa5Od7uCvlblw1L4nkzawJYQSHdqFSKb
+laZyuHJSNnP77qc5CPrZV/W+P6Zyp9SZLQpcfShz7lSLcbZg2OWRD+YRkAJAj56Q
+Xx9EwGBaed8Su1H6qq+7sbntQBT5Sm5li+9ZgzMTQln8h1v3mfSIuIbNWcDJQJb6
+ZK3fMuzj4HsQpDSEZNHm/n4oVDiSLZ7wC+9KPXWA+yytRPVoHeUE7oFk/IZzc2iz
+D3lbFI5aIRXnGTLpCO9oHeOlcmAomwVeo6onGNkJdiIIsJHc50kKN7VqitH5vCVq
+EE+V8t0yIoKMuMI84cfG
+=RFQO
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__14_Jan_2013_09_32_48_+1100_EoSe8mowrE=fGtz4--
+--Signature=_Mon__14_Jan_2013_11_03_11_+1100_2GqNI1FC8YzbwKVi--
