@@ -1,55 +1,100 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jan 14 (wireless/ath9k)
-Date: Mon, 14 Jan 2013 08:40:29 -0800
-Message-ID: <50F434FD.7080806@infradead.org>
-References: <20130114154649.cb077b499876da60463fb304@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jan 7 (rcutorture)
+Date: Mon, 14 Jan 2013 08:45:06 -0800
+Message-ID: <50F43612.8080600@infradead.org>
+References: <20130107142649.c843e0b711532dc3a631e4cf@canb.auug.org.au> <50EB252C.4010005@infradead.org> <20130107221627.GZ2525@linux.vnet.ibm.com> <20130108095959.98d83d91dbd0e9e1ac023373@canb.auug.org.au> <1357600327.5190.13.camel@gandalf.local.home> <1357605379.5190.15.camel@gandalf.local.home> <20130108035348.GF2525@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------020606080301050602090004"
+ boundary="------------080502050308060808070207"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:59500 "EHLO
+Received: from casper.infradead.org ([85.118.1.10]:59515 "EHLO
 	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756753Ab3ANQjT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Jan 2013 11:39:19 -0500
-In-Reply-To: <20130114154649.cb077b499876da60463fb304@canb.auug.org.au>
+	with ESMTP id S1756892Ab3ANQoB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Jan 2013 11:44:01 -0500
+In-Reply-To: <20130108035348.GF2525@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org
+To: paulmck@linux.vnet.ibm.com
+Cc: Steven Rostedt <rostedt@goodmis.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------020606080301050602090004
+--------------080502050308060808070207
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 
-On 01/13/13 20:46, Stephen Rothwell wrote:
-> Hi all,
+On 01/07/13 19:53, Paul E. McKenney wrote:
+> On Mon, Jan 07, 2013 at 07:36:19PM -0500, Steven Rostedt wrote:
+>> On Mon, 2013-01-07 at 18:12 -0500, Steven Rostedt wrote:
+>>> On Tue, 2013-01-08 at 09:59 +1100, Stephen Rothwell wrote:
+>>>> Hi Paul,
+>>>>
+>>>> On Mon, 7 Jan 2013 14:16:27 -0800 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+>>>>>
+>>>>> On Mon, Jan 07, 2013 at 11:42:36AM -0800, Randy Dunlap wrote:
+>>>>>>
+>>>>>> on i386 or x86_64:
+>>>>>>
+>>>>>> ERROR: "trace_clock_local" [kernel/rcutorture.ko] undefined!
+>>>>>
+>>>>> Hello, Randy,
+>>>>>
+>>>>> Did your build include the following, also pushed to -next in that same
+>>>>> batch from -rcu?  Including Steven Rostedt on CC for his take.
+>>>>
+>>>> That commit was certainly in next-20130107.
+>>>
+>>> Could be bad config dependencies.
+>>
+>> Paul,
+>>
+>> You need to also select TRACE_CLOCK if you are going to use it.
 > 
-> Changes since 20130111:
+> Thank you, Steve!
 > 
+> Randy, does the following patch help?
+> 
+> 							Thanx, Paul
+
+Hi Paul,
+
+This patch fixed the Jan. 7 linux-next build errors, but there is
+still some similar problem with current linux-next (0114 and late
+last week as well).
 
 
-on i386:
-
-  CC [M]  drivers/net/wireless/ath/ath9k/recv.o
-drivers/net/wireless/ath/ath9k/recv.c: In function 'ath_process_fft':
-drivers/net/wireless/ath/ath9k/recv.c:1127:2: error: implicit declaration of function 'ath_debug_send_fft_sample' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
-make[6]: *** [drivers/net/wireless/ath/ath9k/recv.o] Error 1
-
+ERROR: "trace_clock_local" [kernel/rcutorture.ko] undefined!
 
 Full randconfig file is attached.
+
+
+> ------------------------------------------------------------------------
+> 
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index ce75d3b..b0fe7bd 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1010,6 +1010,7 @@ config RCU_CPU_STALL_INFO
+>  config RCU_TRACE
+>  	bool "Enable tracing for RCU"
+>  	depends on DEBUG_KERNEL
+> +	select TRACE_CLOCK
+>  	help
+>  	  This option provides tracing in RCU which presents stats
+>  	  in debugfs for debugging RCU implementation.
+> 
+> --
+
 
 
 -- 
 ~Randy
 
---------------020606080301050602090004
+--------------080502050308060808070207
 Content-Type: text/plain; charset=us-ascii;
- name="config-r9477"
+ name="config-tort1"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment;
- filename="config-r9477"
+ filename="config-tort1"
 
 #
 # Automatically generated file; DO NOT EDIT.
@@ -1635,19 +1680,11 @@ CONFIG_PCMCIA_WL3501=m
 CONFIG_ADM8211=m
 # CONFIG_MAC80211_HWSIM is not set
 CONFIG_MWL8K=m
-CONFIG_ATH_COMMON=m
 CONFIG_ATH_CARDS=m
 CONFIG_ATH_DEBUG=y
 # CONFIG_ATH5K is not set
 # CONFIG_ATH5K_PCI is not set
-CONFIG_ATH9K_HW=m
-CONFIG_ATH9K_COMMON=m
-# CONFIG_ATH9K_BTCOEX_SUPPORT is not set
-CONFIG_ATH9K=m
-# CONFIG_ATH9K_PCI is not set
-CONFIG_ATH9K_AHB=y
-# CONFIG_ATH9K_DEBUGFS is not set
-CONFIG_ATH9K_RATE_CONTROL=y
+# CONFIG_ATH9K is not set
 CONFIG_ATH6KL=m
 # CONFIG_ATH6KL_SDIO is not set
 # CONFIG_ATH6KL_DEBUG is not set
@@ -3341,4 +3378,4 @@ CONFIG_DDR=y
 CONFIG_MPILIB=y
 CONFIG_SIGNATURE=y
 
---------------020606080301050602090004--
+--------------080502050308060808070207--
