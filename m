@@ -1,47 +1,57 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Mon, 14 Jan 2013 13:37:19 +0100
-Message-ID: <1519070.xb1StfSez8@vostro.rjw.lan>
-References: <20130114110311.a399f92e5e4ec730b380eaf4@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: -next: no resume from suspend
+Date: Mon, 14 Jan 2013 13:53:58 +0100
+Message-ID: <CA+icZUVYukvCX+08Yr1ggj6u2zmvuvoGE8noPiwnBdYWv0zjMA@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hydra.sisk.pl ([212.160.235.94]:40442 "EHLO hydra.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756388Ab3ANMb3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Jan 2013 07:31:29 -0500
-In-Reply-To: <20130114110311.a399f92e5e4ec730b380eaf4@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Linux PM List <linux-pm@lists.linux-foundation.org>, Linux ACPI <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Len Brown <lenb@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+Hi Jiri,
 
-On Monday, January 14, 2013 11:03:11 AM Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> After merging the pm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> In file included from init/main.c:25:0:
-> include/linux/acpi.h:549:46: error: unknown type name 'acpi_handle'
-> include/linux/acpi.h:551:49: error: unknown type name 'acpi_handle'
-> 
-> and many more.
-> 
-> Caused by commit c9b147cd9648 ("ACPI / PM: Rework the handling of devices
-> depending on power resources").  Please check with and without CONFIG
-> options that affect patches ...
-> 
-> I have used the pm tree from next-20130111 for today.
+[ QUOTE ]
+since friday's -next (the last known to be working is the last monday's)
+I cannot resume from suspend. The last thing I see with
+no_console_suspend is:
+i915: No ACPI video bus found
 
-Thanks for the report and sorry for the breakage.  Should be fixed now.
+But I used to see the message always, so this is no difference. Any idea
+before I start bisecting?
 
-Rafael
+It is x86_64, core 2 duo, intel g33 GPU, 6G RAM.
+[ /QUOTE ]
 
+Before starting any git-bisection I would try drm-intel-nightly GIT branch.
+It includes drm-intel-fixes + drm-intel-next + drm-intel-next-queued
+and applied here (mostly) cleanly against Linux (upstream) and/or
+Linux-Next.
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+$ cd linux-next/
+
+$ git pull git://people.freedesktop.org/~danvet/drm-intel drm-intel-nightly
+
+I remember I had no problems with i915 with next-20130109 (WED) and
+next-20130110 (THU), so I am curious if I will hit the problem as
+well.
+
+Kernel-config and some logs (dmesg) or hwinfos (lspci) might be helpful :-).
+
+If this does not help, I would recommend to create diffs between
+latest known (-rcX and next-X.good) and (-rcX and next-X.bad) and
+compare (i915||acpi||pm) the changes.
+But this also means you have to know which of the -next releases was
+good and bad.
+If you are building Linux-Next daily, this is good.
+NOTE: Helpful is in this strategy that your -rcX should be the same
+(here: v3.8-rc3).
+
+Hope this helps you (I know bisecting Linux-Next is a bit of a pain).
+
+Regards,
+- Sedat -
+
+[1] http://cgit.freedesktop.org/~danvet/drm-intel/log/?h=drm-intel-nightly
