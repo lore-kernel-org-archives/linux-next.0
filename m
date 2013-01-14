@@ -1,65 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pm tree
-Date: Mon, 14 Jan 2013 11:03:11 +1100
-Message-ID: <20130114110311.a399f92e5e4ec730b380eaf4@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 14 Jan 2013 12:04:00 +1100
+Message-ID: <20130114120400.e04269f927629773b0570ff2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__14_Jan_2013_11_03_11_+1100_2GqNI1FC8YzbwKVi"
+ boundary="Signature=_Mon__14_Jan_2013_12_04_00_+1100_Jm/LFSP_KDaaFzfR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56448 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56541 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754207Ab3ANAD1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Jan 2013 19:03:27 -0500
+	with ESMTP id S1755309Ab3ANBEK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Jan 2013 20:04:10 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Greg KH <greg@kroah.com>
 
---Signature=_Mon__14_Jan_2013_11_03_11_+1100_2GqNI1FC8YzbwKVi
+--Signature=_Mon__14_Jan_2013_12_04_00_+1100_Jm/LFSP_KDaaFzfR
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi all,
 
-After merging the pm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the sound-asoc tree, today's linux-next build
+(x86_64allmodconfig) failed like this:
 
-In file included from init/main.c:25:0:
-include/linux/acpi.h:549:46: error: unknown type name 'acpi_handle'
-include/linux/acpi.h:551:49: error: unknown type name 'acpi_handle'
+sound/soc/codecs/ak4642.c:550:46: error: expected '=3D', ',', ';', 'asm' or=
+ '__attribute__' before '__devinitconst'
+sound/soc/codecs/ak4642.c:556:1: error: '__mod_of_device_table' aliased to =
+undefined symbol 'ak4642_of_match'
+sound/soc/codecs/ak4642.c:556:1: error: '__mod_of_device_table' aliased to =
+external symbol 'ak4642_of_match'
 
-and many more.
+Caused by commit bbf1453e28e4 ("ASoC: ak4642: add Device Tree support")
+interacting with commit 54b956b90360 ("Remove __dev* markings from
+init.h") from the driver-core.current tree.
 
-Caused by commit c9b147cd9648 ("ACPI / PM: Rework the handling of devices
-depending on power resources").  Please check with and without CONFIG
-options that affect patches ...
+As an aside, should ak4642_of_match be marked "const"?
 
-I have used the pm tree from next-20130111 for today.
+I have added the following merge fix patch for today (which could be
+applied to the sound-asoc tree directly - please):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 14 Jan 2013 11:59:50 +1100
+Subject: [PATCH] ASoC: ak4642: remove __devinitconst annotation
+
+CONFIG_HOTPLUG is always true now and the __dev* macros have been removed.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/soc/codecs/ak4642.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/ak4642.c b/sound/soc/codecs/ak4642.c
+index c78794d..2d03787 100644
+--- a/sound/soc/codecs/ak4642.c
++++ b/sound/soc/codecs/ak4642.c
+@@ -547,7 +547,7 @@ static int ak4642_i2c_remove(struct i2c_client *client)
+ 	return 0;
+ }
+=20
+-static struct of_device_id ak4642_of_match[] __devinitconst =3D {
++static struct of_device_id ak4642_of_match[] =3D {
+ 	{ .compatible =3D "asahi-kasei,ak4642",	.data =3D &soc_codec_dev_ak4642},
+ 	{ .compatible =3D "asahi-kasei,ak4643",	.data =3D &soc_codec_dev_ak4642},
+ 	{ .compatible =3D "asahi-kasei,ak4648",	.data =3D &soc_codec_dev_ak4648},
+--=20
+1.7.10.280.gaa39
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__14_Jan_2013_11_03_11_+1100_2GqNI1FC8YzbwKVi
+--Signature=_Mon__14_Jan_2013_12_04_00_+1100_Jm/LFSP_KDaaFzfR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ80s/AAoJEECxmPOUX5FETvQQAJdg1yNsZUVG9Gzm/20NBRX5
-56/PBozMn2gZmnD8VYy4Rgx6oH2xo+pzNaUrm/KJcbR5ZAiiWrLI8oxm5VAgF8Wj
-LCqAw1ft9HvQ9iJwsEeppc8Wwiq6h74pke87zk6BM0C6feOUzqC4cj2arH0N0dns
-r6rdFxtkrx0NhNZPD3tU+luTRUjdczC0dG7Sc5RuRcR6xkfhi3lLwR6ZsHwgHBel
-Vfwwktbja53wC04ldD3C+ttpYuWoodOUquIuPTD1WJYvKxcGYApKXDRk2wHITeD/
-BzqDhEJ0PnafzYl+UCzMQFeMEHSGjAzDGjTEsuXGseR2mjWzE7qjlCvZL4p1JfXl
-7ilOFNOfSuiIRK2syie1HmMwWyT4ddmDRa5Od7uCvlblw1L4nkzawJYQSHdqFSKb
-laZyuHJSNnP77qc5CPrZV/W+P6Zyp9SZLQpcfShz7lSLcbZg2OWRD+YRkAJAj56Q
-Xx9EwGBaed8Su1H6qq+7sbntQBT5Sm5li+9ZgzMTQln8h1v3mfSIuIbNWcDJQJb6
-ZK3fMuzj4HsQpDSEZNHm/n4oVDiSLZ7wC+9KPXWA+yytRPVoHeUE7oFk/IZzc2iz
-D3lbFI5aIRXnGTLpCO9oHeOlcmAomwVeo6onGNkJdiIIsJHc50kKN7VqitH5vCVq
-EE+V8t0yIoKMuMI84cfG
-=RFQO
+iQIcBAEBCAAGBQJQ81mAAAoJEECxmPOUX5FEzkwP/REUWx3/0Q06vSWsN4qc09U3
+rzXy5bKvi/f+x6lF5XT9T6NhAyFnmgj0fUujwi5y8+aiXXEyU8n2x6upRkmxU/3V
+h/mgYXKyWutIvdjrg4sQ8uHryDCcS1M0lTO16E0jHFKGVbcOrqeksSn5XUugB6BP
+gKhpehDEfzHS0Xf+5ktZcmyIXlPq4QZkrggBanLTIG+1B87x4wpcFqR1qzWqxrhb
+EpBHe4XWLuK+jVg6a2ksVFtgymHHSTA7UVHmiOVgeAgOYtcBxV5p+6HD7AFE1/yO
+lWcCaUGcFcB6PEBdBaDzwoboe0vhGn90e/qfNu/FWCx4Mlxt3pio7Ody1NbQUvhU
+gz/EaHz3sJTZuO5D0wWnAxOTMHLoO7nCl52Kp4f5JoU4+DGPhszbhKlDRX1IPGhR
+SCk1kceqgtKv+XtlCwDod5ihJbmvy5s6RW59wJDtUXIQZ1Ns5UZ4IcZI4MJE26tA
+itwnD7XuQaSwRXIDd4bIDWisYO79AN6h63pEpY5duObT0cjIIMv8OcycljwkQ9JO
+ggse4r6nO138Brc6TFvsUU5pUuWLcYFCMgOVafX3bpK7UHIRjf4C39rAGGfeHxFm
+IVXCDdj1qOsmYKUzBLpo17NhxCWeItpr/2ARm3VOmiO72Utb7QYunCiwcsBCNzcP
+kOvIeIjekP/Yilm7Gyha
+=KEOz
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__14_Jan_2013_11_03_11_+1100_2GqNI1FC8YzbwKVi--
+--Signature=_Mon__14_Jan_2013_12_04_00_+1100_Jm/LFSP_KDaaFzfR--
