@@ -1,35 +1,66 @@
-From: Venu Byravarasu <vbyravarasu@nvidia.com>
-Subject: RE: linux-next: Why no Tree for Jan 15?
-Date: Tue, 15 Jan 2013 19:04:38 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6E1A6F0BED@BGMAIL02.nvidia.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Why no Tree for Jan 15?
+Date: Tue, 15 Jan 2013 14:40:01 +0100
+Message-ID: <CA+icZUUxURMi6Qc+FHCa_sP8LPH4pyOJwTZzv11MJZ9ZdEkxkA@mail.gmail.com>
 References: <CA+icZUV=-=DALJRpzrmKrC6oK-CwCyRbHE1VmjrLfmGcemx2JQ@mail.gmail.com>
+	<D958900912E20642BCBC71664EFECE3E6E1A6F0BED@BGMAIL02.nvidia.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUV=-=DALJRpzrmKrC6oK-CwCyRbHE1VmjrLfmGcemx2JQ@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qa0-f48.google.com ([209.85.216.48]:62809 "EHLO
+	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755259Ab3AONkC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jan 2013 08:40:02 -0500
+In-Reply-To: <D958900912E20642BCBC71664EFECE3E6E1A6F0BED@BGMAIL02.nvidia.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Venu Byravarasu <vbyravarasu@nvidia.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1rZXJuZWwtb3duZXJA
-dmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgta2VybmVsLQ0KPiBvd25lckB2Z2VyLmtlcm5l
-bC5vcmddIE9uIEJlaGFsZiBPZiBTZWRhdCBEaWxlaw0KPiBTZW50OiBUdWVzZGF5LCBKYW51YXJ5
-IDE1LCAyMDEzIDY6NTEgUE0NCj4gVG86IFN0ZXBoZW4gUm90aHdlbGwNCj4gQ2M6IGxpbnV4LW5l
-eHQ7IExLTUwNCj4gU3ViamVjdDogbGludXgtbmV4dDogV2h5IG5vIFRyZWUgZm9yIEphbiAxNT8N
-Cj4gDQo+IEhpIFN0ZXBoZW4sDQo+IA0KPiBhbnkgcmVhc29uIHdoeSB0aGVyZSBpcyBubyBMaW51
-eC1OZXh0IGZvciB0b2RheT8NCg0KU2VlbXMgU3RlcGhlbiBjcmVhdGVkIHRyZWUgYnV0IGRpZCBu
-b3QgYW5ub3VuY2UgaXQgdmlhIG1haWwsIGJlY2F1c2UNCndoZW4gSSBzeW5jZWQgdG8gbGludXgt
-bmV4dCB0b2RheSwgYW0gc2VlaW5nIGJlbG93IGNvbW1pdCBmcm9tIGhpbToNCg0KY29tbWl0IDM3
-MTQ1MGRiNDFmODZhNDA5ZmMwYjZkYTdiM2I4YWI5YjU1ZjYxN2MNCkF1dGhvcjogU3RlcGhlbiBS
-b3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQpEYXRlOiAgIFR1ZSBKYW4gMTUgMTQ6MjU6
-NTggMjAxMyArMTEwMA0KDQogICAgQWRkIGxpbnV4LW5leHQgc3BlY2lmaWMgZmlsZXMgZm9yIDIw
-MTMwMTE1DQogICAgDQogICAgU2lnbmVkLW9mZi1ieTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNh
-bmIuYXV1Zy5vcmcuYXU+DQoNCg0KVGhhbmtzLA0KVmVudQ0KIA0KDQo+IA0KPiBSZWdhcmRzLA0K
-PiAtIFNlZGF0IC0NCj4gLS0NCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQg
-dGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LWtlcm5lbCIgaW4NCj4gdGhlIGJvZHkgb2YgYSBt
-ZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcNCj4gTW9yZSBtYWpvcmRvbW8gaW5m
-byBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sDQo+IFBsZWFz
-ZSByZWFkIHRoZSBGQVEgYXQgIGh0dHA6Ly93d3cudHV4Lm9yZy9sa21sLw0K
+On Tue, Jan 15, 2013 at 2:34 PM, Venu Byravarasu <vbyravarasu@nvidia.com> wrote:
+>> -----Original Message-----
+>> From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
+>> owner@vger.kernel.org] On Behalf Of Sedat Dilek
+>> Sent: Tuesday, January 15, 2013 6:51 PM
+>> To: Stephen Rothwell
+>> Cc: linux-next; LKML
+>> Subject: linux-next: Why no Tree for Jan 15?
+>>
+>> Hi Stephen,
+>>
+>> any reason why there is no Linux-Next for today?
+>
+> Seems Stephen created tree but did not announce it via mail, because
+> when I synced to linux-next today, am seeing below commit from him:
+>
+> commit 371450db41f86a409fc0b6da7b3b8ab9b55f617c
+> Author: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date:   Tue Jan 15 14:25:58 2013 +1100
+>
+>     Add linux-next specific files for 20130115
+>
+>     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>
+
+OK, I see.
+This release has two important fixes for me in char-misc-next (mei
+driver) and "mm: fix BUG on madvise early failure".
+Thanks for the information!
+
+- Sedat -
+
+[1] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=commitdiff;h=12dd7dcc8e3159591dc8d63d75eefa6f049cf0b1
+
+> Thanks,
+> Venu
+>
+>
+>>
+>> Regards,
+>> - Sedat -
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
