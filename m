@@ -1,23 +1,35 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: linux-next: Why no Tree for Jan 15?
-Date: Tue, 15 Jan 2013 14:21:27 +0100
-Message-ID: <CA+icZUV=-=DALJRpzrmKrC6oK-CwCyRbHE1VmjrLfmGcemx2JQ@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Venu Byravarasu <vbyravarasu@nvidia.com>
+Subject: RE: linux-next: Why no Tree for Jan 15?
+Date: Tue, 15 Jan 2013 19:04:38 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6E1A6F0BED@BGMAIL02.nvidia.com>
+References: <CA+icZUV=-=DALJRpzrmKrC6oK-CwCyRbHE1VmjrLfmGcemx2JQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f171.google.com ([209.85.216.171]:58106 "EHLO
-	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755060Ab3AONV2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jan 2013 08:21:28 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+icZUV=-=DALJRpzrmKrC6oK-CwCyRbHE1VmjrLfmGcemx2JQ@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
-
-any reason why there is no Linux-Next for today?
-
-Regards,
-- Sedat -
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1rZXJuZWwtb3duZXJA
+dmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgta2VybmVsLQ0KPiBvd25lckB2Z2VyLmtlcm5l
+bC5vcmddIE9uIEJlaGFsZiBPZiBTZWRhdCBEaWxlaw0KPiBTZW50OiBUdWVzZGF5LCBKYW51YXJ5
+IDE1LCAyMDEzIDY6NTEgUE0NCj4gVG86IFN0ZXBoZW4gUm90aHdlbGwNCj4gQ2M6IGxpbnV4LW5l
+eHQ7IExLTUwNCj4gU3ViamVjdDogbGludXgtbmV4dDogV2h5IG5vIFRyZWUgZm9yIEphbiAxNT8N
+Cj4gDQo+IEhpIFN0ZXBoZW4sDQo+IA0KPiBhbnkgcmVhc29uIHdoeSB0aGVyZSBpcyBubyBMaW51
+eC1OZXh0IGZvciB0b2RheT8NCg0KU2VlbXMgU3RlcGhlbiBjcmVhdGVkIHRyZWUgYnV0IGRpZCBu
+b3QgYW5ub3VuY2UgaXQgdmlhIG1haWwsIGJlY2F1c2UNCndoZW4gSSBzeW5jZWQgdG8gbGludXgt
+bmV4dCB0b2RheSwgYW0gc2VlaW5nIGJlbG93IGNvbW1pdCBmcm9tIGhpbToNCg0KY29tbWl0IDM3
+MTQ1MGRiNDFmODZhNDA5ZmMwYjZkYTdiM2I4YWI5YjU1ZjYxN2MNCkF1dGhvcjogU3RlcGhlbiBS
+b3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQpEYXRlOiAgIFR1ZSBKYW4gMTUgMTQ6MjU6
+NTggMjAxMyArMTEwMA0KDQogICAgQWRkIGxpbnV4LW5leHQgc3BlY2lmaWMgZmlsZXMgZm9yIDIw
+MTMwMTE1DQogICAgDQogICAgU2lnbmVkLW9mZi1ieTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNh
+bmIuYXV1Zy5vcmcuYXU+DQoNCg0KVGhhbmtzLA0KVmVudQ0KIA0KDQo+IA0KPiBSZWdhcmRzLA0K
+PiAtIFNlZGF0IC0NCj4gLS0NCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQg
+dGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LWtlcm5lbCIgaW4NCj4gdGhlIGJvZHkgb2YgYSBt
+ZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcNCj4gTW9yZSBtYWpvcmRvbW8gaW5m
+byBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sDQo+IFBsZWFz
+ZSByZWFkIHRoZSBGQVEgYXQgIGh0dHA6Ly93d3cudHV4Lm9yZy9sa21sLw0K
