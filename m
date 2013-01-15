@@ -1,66 +1,37 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Why no Tree for Jan 15?
-Date: Tue, 15 Jan 2013 14:40:01 +0100
-Message-ID: <CA+icZUUxURMi6Qc+FHCa_sP8LPH4pyOJwTZzv11MJZ9ZdEkxkA@mail.gmail.com>
-References: <CA+icZUV=-=DALJRpzrmKrC6oK-CwCyRbHE1VmjrLfmGcemx2JQ@mail.gmail.com>
-	<D958900912E20642BCBC71664EFECE3E6E1A6F0BED@BGMAIL02.nvidia.com>
-Reply-To: sedat.dilek@gmail.com
+From: Asai Thambi S P <asamymuthupa@micron.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the block tree
+Date: Tue, 15 Jan 2013 20:03:07 +0530
+Message-ID: <50F568A3.3060602@micron.com>
+References: <20130114145816.397108bb0b1aec82e77d5a7a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f48.google.com ([209.85.216.48]:62809 "EHLO
-	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755259Ab3AONkC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jan 2013 08:40:02 -0500
-In-Reply-To: <D958900912E20642BCBC71664EFECE3E6E1A6F0BED@BGMAIL02.nvidia.com>
+Received: from masquerade.micron.com ([137.201.242.130]:5408 "EHLO
+	masquerade.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756345Ab3AOOgl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jan 2013 09:36:41 -0500
+In-Reply-To: <20130114145816.397108bb0b1aec82e77d5a7a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Venu Byravarasu <vbyravarasu@nvidia.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Bradshaw <sbradshaw@micron.com>, Jens Axboe <axboe@kernel.dk>, Kent Overstreet <koverstreet@google.com>
 
-On Tue, Jan 15, 2013 at 2:34 PM, Venu Byravarasu <vbyravarasu@nvidia.com> wrote:
->> -----Original Message-----
->> From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
->> owner@vger.kernel.org] On Behalf Of Sedat Dilek
->> Sent: Tuesday, January 15, 2013 6:51 PM
->> To: Stephen Rothwell
->> Cc: linux-next; LKML
->> Subject: linux-next: Why no Tree for Jan 15?
->>
->> Hi Stephen,
->>
->> any reason why there is no Linux-Next for today?
->
-> Seems Stephen created tree but did not announce it via mail, because
-> when I synced to linux-next today, am seeing below commit from him:
->
-> commit 371450db41f86a409fc0b6da7b3b8ab9b55f617c
-> Author: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date:   Tue Jan 15 14:25:58 2013 +1100
->
->     Add linux-next specific files for 20130115
->
->     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->
+On 1/14/2013 9:28 AM, Stephen Rothwell wrote:
 
-OK, I see.
-This release has two important fixes for me in char-misc-next (mei
-driver) and "mm: fix BUG on madvise early failure".
-Thanks for the information!
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm tree got a conflict in
+> drivers/block/mtip32xx/mtip32xx.c between commit 16c906e51c6f ("mtip32xx:
+> Add workqueue and NUMA support") from the  tree and commit "mtip32xx:
+> convert to batch completion" from the akpm tree.
+> 
+> I couldn't see how to fix up the conflicts, so I just dropped the akpm
+> tree patch.
+> 
 
-- Sedat -
+I will fix this and send out the patch.
 
-[1] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=commitdiff;h=12dd7dcc8e3159591dc8d63d75eefa6f049cf0b1
-
-> Thanks,
-> Venu
->
->
->>
->> Regards,
->> - Sedat -
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> Please read the FAQ at  http://www.tux.org/lkml/
+--
+Regards,
+Asai
