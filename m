@@ -1,74 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [next-20130114] Call-trace in LTP (lite) madvise02 test
- (block|mm|vfs related?)
-Date: Tue, 15 Jan 2013 14:11:02 +1100
-Message-ID: <20130115141102.9a7d93cf4ea74c759ff9e9d5@canb.auug.org.au>
-References: <CA+icZUW1+BzWCfGkbBiekKO8b6KiyAiyXWAHFmVUey2dHnSTzw@mail.gmail.com>
-	<50F454C2.6000509@kernel.dk>
-	<CA+icZUX_uKSzvdhd4tMtgb+vUxqC=fS7tfSHhs29+xD_XQQjBQ@mail.gmail.com>
-	<CA+icZUV_dz2Bvu6o=YRFu6324ccVr1MaOEpRcw0rguppR5rQQg@mail.gmail.com>
+Subject: linux-next: manual merge of the akpm tree with the block tree
+Date: Tue, 15 Jan 2013 14:10:18 +1100
+Message-ID: <20130115141018.5135198bda8b6c63f6b7d0ee@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__15_Jan_2013_14_11_02_+1100_w6gVzq1PqO4u0VtS"
+ boundary="Signature=_Tue__15_Jan_2013_14_10_18_+1100_iLkcnINP9eBo_JSo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36141 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33446 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756876Ab3AOU6M (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jan 2013 15:58:12 -0500
-In-Reply-To: <CA+icZUV_dz2Bvu6o=YRFu6324ccVr1MaOEpRcw0rguppR5rQQg@mail.gmail.com>
+	with ESMTP id S1753305Ab3AOU7s (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jan 2013 15:59:48 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Jens Axboe <axboe@kernel.dk>, linux-next <linux-next@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, Sasha Levin <sasha.levin@oracle.com>, Roland McGrath <roland@hack.frob.com>, Hugh Dickins <hughd@google.com>, Andy Lutomirski <luto@amacapital.net>, Shaohua Li <shli@fusionio.com>, Rik van Riel <riel@redhat.com>linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>, Kent Overstreet <koverstreet@google.com>
 
---Signature=_Tue__15_Jan_2013_14_11_02_+1100_w6gVzq1PqO4u0VtS
+--Signature=_Tue__15_Jan_2013_14_10_18_+1100_iLkcnINP9eBo_JSo
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-On Mon, 14 Jan 2013 22:09:18 +0100 Sedat Dilek <sedat.dilek@gmail.com> wrot=
-e:
->
-> Looks like this is the fix from Sasha [1].
-> Culprit commit is [2].
-> Testing...
->=20
-> - Sedat -
->=20
-> [1] https://patchwork.kernel.org/patch/1973481/
+Today's linux-next merge of the akpm tree got a conflict in fs/bio.c
+between commit 3a366e614d08 ("block: add missing block_bio_complete()
+tracepoint") from the block tree and commit "block, aio: batch completion
+for bios/kiocbs" from the akpm tree.
 
-OK, I added this patch ("mm: fix BUG on madvise early failure") to the
-copy of the akpm tree in linux-next today.
-
-> [2] http://git.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;a=3Dc=
-ommitdiff;h=3D0d18d770b9180ffc2c3f63b9eb8406ef80105e05
+I am not sure how to fix this up, so I just dropped the block tree
+additions of "trace_block_bio_complete(bio, error);" to this file.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__15_Jan_2013_14_11_02_+1100_w6gVzq1PqO4u0VtS
+--Signature=_Tue__15_Jan_2013_14_10_18_+1100_iLkcnINP9eBo_JSo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ9MjGAAoJEECxmPOUX5FEyiwP/iUPiDLhrB9odcNNNsEYQbp3
-Vvp6bLHI3OtapG0gEd87Nrfnp5ITIwN7MjSGeF6rcx7eS9Kxaz6ZgO/zzvqDdzim
-ND5jDlSUR7btkO5ygWJIjXLxTV1RhBA6j8hLElVoMfEc6V2lY7ZBP8H2ONegr+uJ
-TcJTj7Cw4yFXNpPL5RN8C1RkRG8CBIv/IoaZsp609Ylnf0s8gvPF0TkxojasEM0D
-qj68MURnOWSmI6DSI2B4UMonhA1Uz83ea0AKSXKt+mB/ii+7LWyFxWI8iG1VJYwa
-tt58xtCrpgk7nYwHg2SyfExbeUc3OZKDXKlr/CHSRqJRGl8t1gbPfYfGUEyKaZho
-AhUWGM5PTm/9Hsv+AcpKLEzFovM/Ne5xzIM6Ye6LXDesWI+Ys6IRlnPrZts5MKot
-fK8lbbrYZZPVLPyVogEOe/OPnBLBTH52CGhywbiNNrR7v1FLuNtIHI9sxsxGa597
-k1H52HWg/n/W3uzPbvHBtN4hzSa0dyBT1+ExqlNUT5hi6z79nxehPGdY+ZANhIy2
-zrvsyFAAkumUTjg/dJ/mDKIosaB7S9TLdD57op1Ycavvw/VPbjCJC4TnqRAJTzyY
-8LeCp1EA4iWcHXruxgf/qQHrrSCocnWNs5AxKooACjMo8PZQcheg7T37E3qvH8h5
-l+rKyyqdg4elUEZ1/Zle
-=d6nH
+iQIcBAEBCAAGBQJQ9MiaAAoJEECxmPOUX5FEkVoP/AvCYHSD/aelKKn8Uf6qtcfq
+iuerjJc5h8wYxwzf+aKDXpjRNBSr6vxgF1tQ11SsbN4ytFSbsDugDnG/IQa0Samg
+7k96zdYY2yvVllmeOgv9kl2ouwWvTKvy8MCjsc573d4L6YWlCdCQjIHt9yymbKXw
+KVPH04VZDxR+oOzxI43J7r2KCsIwDc4OZk4sq3ZgEwOXi1BLX/AfjU9zzG3m3XG7
+tHgKGP6MK+7df4B0Zv/iby5UvnNZhbznTopVyx4bPWv62iOls/VmdVteungKr/nj
+8Yw91F9FdS0WJGQvTNsKGXOtd5y+3oyE9PJA/kcb0V9n4iiPBqYfsZsDsZs9XCb1
+wtJyPovITW9zfF/FR3LxA2VoHr0WipFYV/TWNrFCWm0I9aq+iXw3P17iLZIBZKJ3
+nNemNn4omwv01PYSFwj2m9pEUuXCybMlKp74DoNBdwLrfG3otQVlsRJGRYi3Juv6
+QMgKPozcLudnF4ojhPEgDBDkqOCWXrM6tBxsw+tc0dWXWDxrvkNxRIDVWgTaXiM1
+AWphe1YRbgoxVdQx9gQnzV7Q40eZJaNbpDE8X8ldeYN0gCpZss7dYYMQ+oliavsg
+ogw+Tlbmbm1fhtD9bFw5HUmxJ9es90bybv0ho8gGzyOCa3hqPnQFG2qlXJwjNYqu
+GJJpBsjwvlRP8+3HBLkB
+=g2Dh
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__15_Jan_2013_14_11_02_+1100_w6gVzq1PqO4u0VtS--
+--Signature=_Tue__15_Jan_2013_14_10_18_+1100_iLkcnINP9eBo_JSo--
