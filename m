@@ -1,94 +1,74 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: mmotm 2013-01-11-15-47 (trouble starting kvm)
-Date: Tue, 15 Jan 2013 19:46:15 +0100 (CET)
-Message-ID: <alpine.LRH.2.00.1301151943390.32259@twin.jikos.cz>
-References: <20130111234813.170A620004E@hpza10.eem.corp.google.com> <50F18594.7070004@iskon.hr>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [next-20130114] Call-trace in LTP (lite) madvise02 test
+ (block|mm|vfs related?)
+Date: Tue, 15 Jan 2013 14:11:02 +1100
+Message-ID: <20130115141102.9a7d93cf4ea74c759ff9e9d5@canb.auug.org.au>
+References: <CA+icZUW1+BzWCfGkbBiekKO8b6KiyAiyXWAHFmVUey2dHnSTzw@mail.gmail.com>
+	<50F454C2.6000509@kernel.dk>
+	<CA+icZUX_uKSzvdhd4tMtgb+vUxqC=fS7tfSHhs29+xD_XQQjBQ@mail.gmail.com>
+	<CA+icZUV_dz2Bvu6o=YRFu6324ccVr1MaOEpRcw0rguppR5rQQg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <50F18594.7070004@iskon.hr>
-Sender: owner-linux-mm@kvack.org
-To: Zlatko Calusic <zlatko.calusic@iskon.hr>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__15_Jan_2013_14_11_02_+1100_w6gVzq1PqO4u0VtS"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36141 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756876Ab3AOU6M (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jan 2013 15:58:12 -0500
+In-Reply-To: <CA+icZUV_dz2Bvu6o=YRFu6324ccVr1MaOEpRcw0rguppR5rQQg@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: Jens Axboe <axboe@kernel.dk>, linux-next <linux-next@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, Sasha Levin <sasha.levin@oracle.com>, Roland McGrath <roland@hack.frob.com>, Hugh Dickins <hughd@google.com>, Andy Lutomirski <luto@amacapital.net>, Shaohua Li <shli@fusionio.com>, Rik van Riel <riel@redhat.com>linux-mm@kvack.org
 
-On Sat, 12 Jan 2013, Zlatko Calusic wrote:
+--Signature=_Tue__15_Jan_2013_14_11_02_+1100_w6gVzq1PqO4u0VtS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > A git tree which contains the memory management portion of this tree is
-> > maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-> > by Michal Hocko.  It contains the patches which are between the
-> 
-> The last commit I see in this tree is:
-> 
-> commit a0d271cbfed1dd50278c6b06bead3d00ba0a88f9
-> Author: Linus Torvalds <torvalds@linux-foundation.org>
-> Date:   Sun Sep 30 16:47:46 2012 -0700
-> 
->     Linux 3.6
-> 
-> Is it dead? Or am I doing something wrong?
-> 
-> > A full copy of the full kernel tree with the linux-next and mmotm patches
-> > already applied is available through git within an hour of the mmotm
-> > release.  Individual mmotm releases are tagged.  The master branch always
-> > points to the latest release, so it's constantly rebasing.
-> > 
-> > http://git.cmpxchg.org/?p=linux-mmotm.git;a=summary
-> > 
-> > This mmotm tree contains the following patches against 3.8-rc3:
-> > (patches marked "*" will be included in linux-next)
-> > 
-> > * lockdep-rwsem-provide-down_write_nest_lock.patch
-> > * mm-mmap-annotate-vm_lock_anon_vma-locking-properly-for-lockdep.patch
-> 
-> Had to revert the above two patches to start KVM (win7) successfully.
-> Otherwise it would livelock on some semaphore, it seems. Couldn't kill it, ps
-> output would stuck, even reboot didn't work (had to use SysRQ).
+Hi all,
 
-Copy/pasting from my response to the other thread at 
-https://lkml.org/lkml/2013/1/15/440
+On Mon, 14 Jan 2013 22:09:18 +0100 Sedat Dilek <sedat.dilek@gmail.com> wrot=
+e:
+>
+> Looks like this is the fix from Sasha [1].
+> Culprit commit is [2].
+> Testing...
+>=20
+> - Sedat -
+>=20
+> [1] https://patchwork.kernel.org/patch/1973481/
 
+OK, I added this patch ("mm: fix BUG on madvise early failure") to the
+copy of the akpm tree in linux-next today.
 
-====
-Thorough and careful review and analysis revealed that the rootcause very 
-likely is that I am a complete nitwit.
+> [2] http://git.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;a=3Dc=
+ommitdiff;h=3D0d18d770b9180ffc2c3f63b9eb8406ef80105e05
 
-Could you please try the patch below and report backt? Thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Signature=_Tue__15_Jan_2013_14_11_02_+1100_w6gVzq1PqO4u0VtS
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH] lockdep, rwsem: fix down_write_nest_lock() if !CONFIG_DEBUG_LOCK_ALLOC
+iQIcBAEBCAAGBQJQ9MjGAAoJEECxmPOUX5FEyiwP/iUPiDLhrB9odcNNNsEYQbp3
+Vvp6bLHI3OtapG0gEd87Nrfnp5ITIwN7MjSGeF6rcx7eS9Kxaz6ZgO/zzvqDdzim
+ND5jDlSUR7btkO5ygWJIjXLxTV1RhBA6j8hLElVoMfEc6V2lY7ZBP8H2ONegr+uJ
+TcJTj7Cw4yFXNpPL5RN8C1RkRG8CBIv/IoaZsp609Ylnf0s8gvPF0TkxojasEM0D
+qj68MURnOWSmI6DSI2B4UMonhA1Uz83ea0AKSXKt+mB/ii+7LWyFxWI8iG1VJYwa
+tt58xtCrpgk7nYwHg2SyfExbeUc3OZKDXKlr/CHSRqJRGl8t1gbPfYfGUEyKaZho
+AhUWGM5PTm/9Hsv+AcpKLEzFovM/Ne5xzIM6Ye6LXDesWI+Ys6IRlnPrZts5MKot
+fK8lbbrYZZPVLPyVogEOe/OPnBLBTH52CGhywbiNNrR7v1FLuNtIHI9sxsxGa597
+k1H52HWg/n/W3uzPbvHBtN4hzSa0dyBT1+ExqlNUT5hi6z79nxehPGdY+ZANhIy2
+zrvsyFAAkumUTjg/dJ/mDKIosaB7S9TLdD57op1Ycavvw/VPbjCJC4TnqRAJTzyY
+8LeCp1EA4iWcHXruxgf/qQHrrSCocnWNs5AxKooACjMo8PZQcheg7T37E3qvH8h5
+l+rKyyqdg4elUEZ1/Zle
+=d6nH
+-----END PGP SIGNATURE-----
 
-Commit 1b963c81b1 ("lockdep, rwsem: provide down_write_nest_lock()") 
-contains a bug in a codepath when CONFIG_DEBUG_LOCK_ALLOC is disabled, 
-which causes down_read() to be called instead of down_write() by mistake 
-on such configurations. Fix that.
-
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
----
- include/linux/rwsem.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index 413cc11..8da67d6 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -135,7 +135,7 @@ do {								\
- 
- #else
- # define down_read_nested(sem, subclass)		down_read(sem)
--# define down_write_nest_lock(sem, nest_lock)	down_read(sem)
-+# define down_write_nest_lock(sem, nest_lock)	down_write(sem)
- # define down_write_nested(sem, subclass)	down_write(sem)
- #endif
- 
--- 
-Jiri Kosina
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--Signature=_Tue__15_Jan_2013_14_11_02_+1100_w6gVzq1PqO4u0VtS--
