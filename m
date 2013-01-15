@@ -1,37 +1,94 @@
-From: Asai Thambi S P <asamymuthupa@micron.com>
-Subject: Re: linux-next: manual merge of the akpm tree with the block tree
-Date: Tue, 15 Jan 2013 20:03:07 +0530
-Message-ID: <50F568A3.3060602@micron.com>
-References: <20130114145816.397108bb0b1aec82e77d5a7a@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: mmotm 2013-01-11-15-47 (trouble starting kvm)
+Date: Tue, 15 Jan 2013 19:46:15 +0100 (CET)
+Message-ID: <alpine.LRH.2.00.1301151943390.32259@twin.jikos.cz>
+References: <20130111234813.170A620004E@hpza10.eem.corp.google.com> <50F18594.7070004@iskon.hr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from masquerade.micron.com ([137.201.242.130]:5408 "EHLO
-	masquerade.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756345Ab3AOOgl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jan 2013 09:36:41 -0500
-In-Reply-To: <20130114145816.397108bb0b1aec82e77d5a7a@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Bradshaw <sbradshaw@micron.com>, Jens Axboe <axboe@kernel.dk>, Kent Overstreet <koverstreet@google.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <50F18594.7070004@iskon.hr>
+Sender: owner-linux-mm@kvack.org
+To: Zlatko Calusic <zlatko.calusic@iskon.hr>
+Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 1/14/2013 9:28 AM, Stephen Rothwell wrote:
+On Sat, 12 Jan 2013, Zlatko Calusic wrote:
 
-> Hi Andrew,
+> > A git tree which contains the memory management portion of this tree is
+> > maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+> > by Michal Hocko.  It contains the patches which are between the
 > 
-> Today's linux-next merge of the akpm tree got a conflict in
-> drivers/block/mtip32xx/mtip32xx.c between commit 16c906e51c6f ("mtip32xx:
-> Add workqueue and NUMA support") from the  tree and commit "mtip32xx:
-> convert to batch completion" from the akpm tree.
+> The last commit I see in this tree is:
 > 
-> I couldn't see how to fix up the conflicts, so I just dropped the akpm
-> tree patch.
+> commit a0d271cbfed1dd50278c6b06bead3d00ba0a88f9
+> Author: Linus Torvalds <torvalds@linux-foundation.org>
+> Date:   Sun Sep 30 16:47:46 2012 -0700
 > 
+>     Linux 3.6
+> 
+> Is it dead? Or am I doing something wrong?
+> 
+> > A full copy of the full kernel tree with the linux-next and mmotm patches
+> > already applied is available through git within an hour of the mmotm
+> > release.  Individual mmotm releases are tagged.  The master branch always
+> > points to the latest release, so it's constantly rebasing.
+> > 
+> > http://git.cmpxchg.org/?p=linux-mmotm.git;a=summary
+> > 
+> > This mmotm tree contains the following patches against 3.8-rc3:
+> > (patches marked "*" will be included in linux-next)
+> > 
+> > * lockdep-rwsem-provide-down_write_nest_lock.patch
+> > * mm-mmap-annotate-vm_lock_anon_vma-locking-properly-for-lockdep.patch
+> 
+> Had to revert the above two patches to start KVM (win7) successfully.
+> Otherwise it would livelock on some semaphore, it seems. Couldn't kill it, ps
+> output would stuck, even reboot didn't work (had to use SysRQ).
 
-I will fix this and send out the patch.
+Copy/pasting from my response to the other thread at 
+https://lkml.org/lkml/2013/1/15/440
+
+
+====
+Thorough and careful review and analysis revealed that the rootcause very 
+likely is that I am a complete nitwit.
+
+Could you please try the patch below and report backt? Thanks.
+
+
+
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH] lockdep, rwsem: fix down_write_nest_lock() if !CONFIG_DEBUG_LOCK_ALLOC
+
+Commit 1b963c81b1 ("lockdep, rwsem: provide down_write_nest_lock()") 
+contains a bug in a codepath when CONFIG_DEBUG_LOCK_ALLOC is disabled, 
+which causes down_read() to be called instead of down_write() by mistake 
+on such configurations. Fix that.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+---
+ include/linux/rwsem.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+index 413cc11..8da67d6 100644
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -135,7 +135,7 @@ do {								\
+ 
+ #else
+ # define down_read_nested(sem, subclass)		down_read(sem)
+-# define down_write_nest_lock(sem, nest_lock)	down_read(sem)
++# define down_write_nest_lock(sem, nest_lock)	down_write(sem)
+ # define down_write_nested(sem, subclass)	down_write(sem)
+ #endif
+ 
+-- 
+Jiri Kosina
+SUSE Labs
 
 --
-Regards,
-Asai
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
