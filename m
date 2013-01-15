@@ -1,92 +1,60 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: [PATCH] mm: fix BUG on madvise early failure
-Date: Tue, 15 Jan 2013 01:18:44 +0100
-Message-ID: <CA+icZUW4TW9-VwAMVXXP38eWyVXZ7+9+G6=57cUsWSvN4sMw9g@mail.gmail.com>
-References: <CA+icZUXyTvW0P4Adbr2x+RP3X-b3Qj8E53uxWrnDe964MgZepg@mail.gmail.com>
-	<CA+icZUXHksmiZYVU+gTyi+j9q9e1b5R9ZJ2RxUTeWKiey2PRuA@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: Tree for Jan 7 (rcutorture)
+Date: Mon, 14 Jan 2013 22:08:41 -0500
+Message-ID: <1358219321.4068.9.camel@gandalf.local.home>
+References: <20130107142649.c843e0b711532dc3a631e4cf@canb.auug.org.au>
+	 <50EB252C.4010005@infradead.org> <20130107221627.GZ2525@linux.vnet.ibm.com>
+	 <20130108095959.98d83d91dbd0e9e1ac023373@canb.auug.org.au>
+	 <1357600327.5190.13.camel@gandalf.local.home>
+	 <1357605379.5190.15.camel@gandalf.local.home>
+	 <20130108035348.GF2525@linux.vnet.ibm.com> <50F43612.8080600@infradead.org>
+	 <20130114173208.GY3384@linux.vnet.ibm.com> <50F45321.50808@infradead.org>
+	 <20130114194956.GB3384@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f175.google.com ([209.85.216.175]:41031 "EHLO
-	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755594Ab3AOASp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Jan 2013 19:18:45 -0500
-In-Reply-To: <CA+icZUXHksmiZYVU+gTyi+j9q9e1b5R9ZJ2RxUTeWKiey2PRuA@mail.gmail.com>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:12780 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752567Ab3AODIo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Jan 2013 22:08:44 -0500
+In-Reply-To: <20130114194956.GB3384@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sasha Levin <sasha.levin@oracle.com>, Shaohua Li <shli@fusionio.com>
-Cc: linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+To: paulmck@linux.vnet.ibm.com
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2013 at 12:44 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Mon, Jan 14, 2013 at 10:29 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> Hi,
->>
->> this patch is for Linux-Next - more exactly next-20130114.
->> Can you please enhance the subject-line of your patch next time.
->>
->> Your patch fixes the issue I have reported a few hours ago in [1].
->>
->> [ TESTCASE ]
->>
->> "madvise02" from Linux Test Project (LTP) see [2]
->>
->> $ cd /opt/ltp/testcases/bin/
->>
->> $ sudo ./madvise02
->> [ OUTPUT ]
->> madvise02    1  TPASS  :  failed as expected: TEST_ERRNO=EINVAL(22):
->> Invalid argument
->> madvise02    2  TPASS  :  failed as expected: TEST_ERRNO=EINVAL(22):
->> Invalid argument
->> madvise02    3  TPASS  :  failed as expected: TEST_ERRNO=EINVAL(22):
->> Invalid argument
->> madvise02    4  TPASS  :  failed as expected: TEST_ERRNO=ENOMEM(12):
->> Cannot allocate memory
->> madvise02    5  TFAIL  :  madvise succeeded unexpectedly
->>
->> [ /TESTCASE ]
->>
->> Please feel free and add a...
->>
->>      Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
->>
->> Thanks!
->>
->> Regards,
->> - Sedat -
->>
->> [1] http://marc.info/?l=linux-mm&m=135818843710244&w=2
->> [2] http://sourceforge.net/projects/ltp/
->
-> You happen to know how I get more verbose-debug outputs?
->
-> You have...
->
-> [   57.320031] kernel BUG at block/blk-core.c:2981!
-> [   57.320031] invalid opcode: 0000 [#3] PREEMPT SMP DEBUG_PAGEALLOC
->
-> Me has...
->
-> [ 1263.965989] Kernel BUG at ffffffff81328b2b [verbose debug info unavailable]
-> [ 1263.966022] invalid opcode: 0000 [#1] SMP
->
-> CONFIG_DEBUG_PAGEALLOC=y ?
->
-> Block-specific debug settings?
->
-> $ egrep -i 'block|blk' .config | egrep -i 'debug|dbg'
-> # CONFIG_DEBUG_BLK_CGROUP is not set
-> # CONFIG_DEBUG_BLOCK_EXT_DEVT is not set
->
+On Mon, 2013-01-14 at 11:49 -0800, Paul E. McKenney wrote:
 
-Hmm, DEBUG_PAGEALLOC=y did not help.
+> diff --git a/kernel/rcu.h b/kernel/rcu.h
+> index 7f8e759..b5d30c3 100644
+> --- a/kernel/rcu.h
+> +++ b/kernel/rcu.h
+> @@ -24,6 +24,7 @@
+>  #define __LINUX_RCU_H
+>  
+>  #ifdef CONFIG_RCU_TRACE
+> +#include <linux/trace_clock.h>
+>  #define RCU_TRACE(stmt) stmt
+>  #else /* #ifdef CONFIG_RCU_TRACE */
+>  #define RCU_TRACE(stmt)
+> @@ -118,4 +119,13 @@ int rcu_jiffies_till_stall_check(void);
+>  
+>  #endif /* #ifdef CONFIG_RCU_STALL_COMMON */
+>  
+> +static inline u64 notrace rcu_trace_clock_local(void)
 
-Maybe this one...
+"inline" now implies notrace. That is, we define inline to include
+notrace in the headers. The 'notrace' now is redundant.
 
-$ grep DEBUG_BUGVERBOSE .config
-# CONFIG_DEBUG_BUGVERBOSE is not set
+-- Steve
 
-- Sedat -
-
-> - Sedat -
+> +{
+> +#ifdef CONFIG_RCU_TRACE
+> +	return trace_clock_local();
+> +#else /* #ifdef CONFIG_RCU_TRACE */
+> +	return 0;
+> +#endif /* #else #ifdef CONFIG_RCU_TRACE */
+> +}
+> +
+>  #endif /* __LINUX_RCU_H */
