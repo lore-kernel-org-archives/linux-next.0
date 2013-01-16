@@ -1,55 +1,62 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Subject: Re: [3.8-{rc1,rc2}] ata1.00: failed to get Identify Device Data,
- Emask 0x1
-Date: Wed, 16 Jan 2013 08:50:16 -0500
-Message-ID: <50F6B018.2020800@pobox.com>
-References: <CA+icZUUCB3K1=DuM6Nonu+Qc+qg3cM_ODk9TDZ-uYCfLVOhrdw@mail.gmail.com> <CA+icZUXrQ4aq+cKXj3qEwnhtTGPBfHcJ6q_zTm3xSBUUh9W8dQ@mail.gmail.com> <CA+icZUVBdsAa7ZA7e_UNpBsAOpVOXcawhUncbHNdkC-MGY4qLw@mail.gmail.com> <43EB3AB3EEFE8D43B525F4D2EAF507E107F4160E@SCYBEXDAG04.amd.com> <CA+icZUU7UmoYb5j7Pg57pMdgfw5GNA=M0aBuc5362o2t7Hqt3w@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: manual merge of the tegra tree with the arm-soc tree
+Date: Wed, 16 Jan 2013 08:27:54 -0800
+Message-ID: <CAOesGMgr_f-XGHOdMW3ugfXbVaUc4EALrbfJD=XeOKixxrY8PA@mail.gmail.com>
+References: <20130116141411.8fadedee54ed35dc0eddd288@canb.auug.org.au>
+	<1358308153.32106.8.camel@gitbox>
+	<50F62D69.8080100@nvidia.com>
+	<1358311923.537.3.camel@gitbox>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUU7UmoYb5j7Pg57pMdgfw5GNA=M0aBuc5362o2t7Hqt3w@mail.gmail.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: sedat.dilek@gmail.com
-Cc: "Huang, Shane" <Shane.Huang@amd.com>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Aaron Lu <aaron.lu@intel.com>, linux-next <linux-next@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1358311923.537.3.camel@gitbox>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tony Prisk <linux@prisktech.co.nz>
+Cc: Stephen Warren <swarren@nvidia.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Colin Cross <ccross@android.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-On 01/16/2013 05:10 AM, Sedat Dilek wrote:
-> On Sat, Jan 5, 2013 at 3:20 AM, Huang, Shane <Shane.Huang@amd.com> wrote:
->>> OK, I see the patch I mentioned to fix the problem was later reverted [1].
->>> The real fix is "libata: replace sata_settings with devslp_timing" [2].
+Hi,
+
+On Tue, Jan 15, 2013 at 8:52 PM, Tony Prisk <linux@prisktech.co.nz> wrote:
+> On Tue, 2013-01-15 at 21:32 -0700, Stephen Warren wrote:
+>> On 01/15/2013 08:49 PM, Tony Prisk wrote:
+>> > On Wed, 2013-01-16 at 14:14 +1100, Stephen Rothwell wrote:
+>> >> Hi all,
+>> >>
+>> >> Today's linux-next merge of the tegra tree got a conflict in
+>> >> drivers/clocksource/Makefile between commit ff7ec345f0ec ("timer: vt8500:
+>> >> Move timer code to drivers/clocksource") from the arm-soc tree and commit
+>> >> ac0fd9eca3ba ("ARM: tegra: move timer.c to drivers/clocksource/") from
+>> >> the tegra tree.
+>> >>
+>> >> I fixed it up (see below) and can carry the fix as necessary (no action
+>> >> is required).
+>> >>
+>> >
+>> > I don't know about everyone else, but I feel the preference should be to
+>> > keep things alphabetized where possible to help avoid with merge
+>> > conflicts later on. This is always a problem when we start tacking
+>> > things on the end of lists.
+>> >
+>> > I realise this Kconfig is not alphabetized anyway, but it's never too
+>> > early to start on the 'right' path.
 >>
->> Yes, please use [2] which can also be found in kernel bugzilla #51881
->> and is pending on Jeff's acceptance. Sorry for the trouble to you guys.
->>
+>> Sounds like a good idea, but the issue is: When to do the initial sort
+>> so it doesn't conflict with all the adds in a kernel cycle... Post and
+>> immediately commit a new patch near the end of the merge window?
 >
-> [ CCing Linus ]
+> Given that the maintainer can quite safely do the patch (sorry
+> maintainers), I don't see any reason why it couldn't be done at the
+> point where they stop accepting patches for the merge-window. Once the
+> patches are stopped, sort the list in one last patch.
 >
-> Thanks for taking care (my latest experiences on LKML/linux-next tell
-> me even this is no more the fact!)!
->
-> Your patch finally hit Linux-Next (next-20130116) and IIRC it is also
-> marked for previous Linux-kernel releases (CC -stable).
-> I have tested your patch as said also against Linux v3.8-rcX.
->
-> Unfortunately, the applied patch in Linux-Next does not contain any of
-> my desired Reported-by/Tested-by.
-> This makes me a bit unhappy, but I do NOT insist on it.
->
-> Mr. Torvalds himself pointed several times to all maintainers to
-> honour people - even they report and ideally report-and-test!
->
-> I am doing all my testings in my free-time and I am not paid for it.
-> I am raping my hardware here!
-> I can't do more than that!
+> It makes sense to get it done in this window if possible as the Kconfig
+> will only get bigger as time goes on, making sorting it more time
+> consuming.
 
-We definitely appreciate that.  The patch in question actually went into 
-the git repository before your report was received.  You did not see it 
-in linux-next until my local git repository was pushed out to kernel.org 
-(and thus automatically included in linux-next).
-
-	Jeff
+Actually, Russell wen through and reordered these not long ago, if I
+remember correctly. The current ordering is the same as in the
+structure definition, and should be kept that way.
 
 
-
-
+-Olof
