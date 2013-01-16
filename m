@@ -1,35 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the slave-dma
- tree
-Date: Wed, 16 Jan 2013 13:26:52 +1100
-Message-ID: <20130116132652.d740bb94b9aaf2a4b41aef6b@canb.auug.org.au>
+Subject: linux-next: manual merge of the tegra tree with the arm-soc tree
+Date: Wed, 16 Jan 2013 14:10:16 +1100
+Message-ID: <20130116141016.a831f6d246b0f038c4afab98@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_Jan_2013_13_26_52_+1100_pfzSthogS2Zr+T7U"
+ boundary="Signature=_Wed__16_Jan_2013_14_10_16_+1100_z4.wSPV9ar.GaI.h"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42624 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56459 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756760Ab3APC0y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jan 2013 21:26:54 -0500
+	with ESMTP id S1756113Ab3APDKZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jan 2013 22:10:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, Vinod Koul <vinod.koul@intel.com>, Rob Herring <rob.herring@calxeda.com>
+To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
---Signature=_Wed__16_Jan_2013_13_26_52_+1100_pfzSthogS2Zr+T7U
+--Signature=_Wed__16_Jan_2013_14_10_16_+1100_z4.wSPV9ar.GaI.h
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got conflicts in
-arch/arm/mach-spear3xx/spear3xx.c and arch/arm/mach-spear6xx/spear6xx.c
-between commit 3a95b9fbba89 ("pl080.h: moved from
-arm/include/asm/hardware to include/linux/amba/") from the slave-dma tree
-and commit e9c515589df7 ("ARM: spear: use common irqchip_init function")
-from the arm-soc tree.
+Today's linux-next merge of the tegra tree got a conflict in
+arch/arm/mach-tegra/board-dt-tegra20.c between commit 1d5cc604f42f ("ARM:
+remove mach .handle_irq for GIC users") from the arm-soc tree and commit
+ac0fd9eca3ba ("ARM: tegra: move timer.c to drivers/clocksource/") from
+the tegra tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -38,61 +36,40 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-spear3xx/spear3xx.c
-index 3d9b1b5,b2ba516..0000000
---- a/arch/arm/mach-spear3xx/spear3xx.c
-+++ b/arch/arm/mach-spear3xx/spear3xx.c
-@@@ -15,10 -15,8 +15,7 @@@
- =20
-  #include <linux/amba/pl022.h>
-  #include <linux/amba/pl08x.h>
-- #include <linux/irqchip/spear-shirq.h>
-- #include <linux/of_irq.h>
-  #include <linux/io.h>
-- #include <asm/hardware/vic.h>
- -#include <asm/hardware/pl080.h>
-  #include <plat/pl080.h>
-  #include <mach/generic.h>
-  #include <mach/spear.h>
-diff --cc arch/arm/mach-spear6xx/spear6xx.c
-index 8ce65a2,b8bd33c..0000000
---- a/arch/arm/mach-spear6xx/spear6xx.c
-+++ b/arch/arm/mach-spear6xx/spear6xx.c
-@@@ -16,12 -16,11 +16,11 @@@
-  #include <linux/amba/pl08x.h>
-  #include <linux/clk.h>
-  #include <linux/err.h>
-+ #include <linux/irqchip.h>
-  #include <linux/of.h>
-  #include <linux/of_address.h>
-- #include <linux/of_irq.h>
-  #include <linux/of_platform.h>
- -#include <asm/hardware/pl080.h>
- +#include <linux/amba/pl080.h>
-- #include <asm/hardware/vic.h>
-  #include <asm/mach/arch.h>
-  #include <asm/mach/time.h>
-  #include <asm/mach/map.h>
+diff --cc arch/arm/mach-tegra/board-dt-tegra20.c
+index 5ed81bab,171ba3c..0000000
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@@ -200,7 -203,8 +201,7 @@@ DT_MACHINE_START(TEGRA_DT, "nVidia Tegr
+  	.smp		=3D smp_ops(tegra_smp_ops),
+  	.init_early	=3D tegra20_init_early,
+  	.init_irq	=3D tegra_dt_init_irq,
+- 	.init_time	=3D tegra_init_timer,
+ -	.handle_irq	=3D gic_handle_irq,
++ 	.init_time	=3D clocksource_of_init,
+  	.init_machine	=3D tegra_dt_init,
+  	.init_late	=3D tegra_dt_init_late,
+  	.restart	=3D tegra_assert_system_reset,
 
---Signature=_Wed__16_Jan_2013_13_26_52_+1100_pfzSthogS2Zr+T7U
+--Signature=_Wed__16_Jan_2013_14_10_16_+1100_z4.wSPV9ar.GaI.h
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIbBAEBCAAGBQJQ9g/sAAoJEECxmPOUX5FE+nMP+LyHt0nxpPuPb2lRkvYCMyKV
-QM74zT15rR4plfCUsrnTjI3NWaesBuHvKUTGyhbEyWBRiEh4CFWMIPuXteHXQ+8r
-Lm+JMNO7McGKU1CkTvUdD2vaE9hcmxN4A0ZQb4WLpRxLVy/Xrvyr6+qZYMLD+iLn
-08hoQmU6UC+MiKM2/bJj2xnxWfYY1wopkVylWOGQjoFsSpr3I6OFS7Qe1tqBmq+g
-wer4WDoSP+syoCLp5rm1VLGYm3IS8uGUn7MArYRmob2jUBLGjgFIdlGsTjpzwrJk
-xlbAFS7LZKpIAJv4xyTdTFX5Hhd+2dtpgESp9iVm2jaQQUBbFYwS4MOxxnFyxPET
-2R7/mXt3PlJA5gBnYB9XvDtxH+aLQGcs95TRqPJ5CMB0FprlVPhEgwfjzTHjFY76
-WHSR7vL0wa9M0MnoDrXo7AdGanmrGT0Jtp5+ARR2wth3SxOedr1Y+58hRcYFbBEW
-Q1qlStlpxVZkzJe7u9ja0AWdx3mzqxPRQPbi7m83iCEe5Wte7OsSZf0a6zaL5qzO
-XyDTfLpxGc369GtuZEioEiuRuADWt2/8MwatAC4eZCqdkIn13t/cm+E8XgoJ7Lng
-jfhd+j8pPYy/YFwo3omFry5Z8VHW2ziZ4q58ibejeo+ymGdfWmaMdC8xwuG5L2zh
-/ti1CYLFMzTPDwAcsUY=
-=kzja
+iQIcBAEBCAAGBQJQ9hoYAAoJEECxmPOUX5FE1hIQAI6CkFd4LnGVyva8HaT5vqg9
+MupFMF5svUUPiK0NKXFPG/VW2IY3uNzNDTs+kwDeMIhMwLga2l/vvGa9VIrjnLR3
+1ugVcOLZhZLq4ZfeOvCFGtlEZEMHpCRNowf7A+c3w4ha+b0bIPrMpbrcVKYg4uEQ
+x57eq6NHz1JdhYkrKvZBt+7Zj78BSNkZmoXvWGor3lM8CNDgfn6sAUi+u4uVVZDB
+nutADn2PpMz8YWrHfaIx916BRC9dYP0Z+wGEi7Q3IgsHfWjkt8qkq/O1EjkWt6+1
+8QAcG8I2kQuqfyI+mzOhu6WTDZJzb7770gnoMcGo9z+uPtjiVk24N8TMkUdBhMPR
+CM5pASKt29QsceEmFOyQWX17MpbGvJzYzLNTKeLfI1f/yYxuxInvjxCia3FBNiTD
+z1nJZs8QqKDtBXttcCEDMjSgrqGMxL2A9gI94GdfVwpAEMHGmn5IqDSGuoCdTL/B
+SoPz0xkH4fUmXpJjHlkgIR64AVHoouFTNPY3VzvgRhpNmDeKN8pV5vpdbMdMejU+
+SVSc9uQwxYpsacKnnybQpBvL2BpVoDISpyFQar8Wu7ncYXW6b5eLYbSDgPQO39OA
+TXAXQxnfXFcu4bCkZ7bG/HHeeU6tiES0fQnGc4tMfW9TBmznAXZqciEdjhgKBsje
+s/YovzX1QhkXfV1yW699
+=9GC6
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__16_Jan_2013_13_26_52_+1100_pfzSthogS2Zr+T7U--
+--Signature=_Wed__16_Jan_2013_14_10_16_+1100_z4.wSPV9ar.GaI.h--
