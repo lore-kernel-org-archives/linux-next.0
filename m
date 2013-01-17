@@ -1,114 +1,64 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the samsung tree with the arm-soc tree
-Date: Wed, 16 Jan 2013 21:13:00 -0800
-Message-ID: <0c9401cdf471$53f7c140$fbe743c0$@samsung.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the samsung tree with the arm-soc
+ tree
+Date: Thu, 17 Jan 2013 16:59:51 +1100
+Message-ID: <20130117165951.2d02532eef149e33847cb9d8@canb.auug.org.au>
 References: <20130111153206.e075edb9b1e4a38d90f23ab6@canb.auug.org.au>
- <20130117145324.3f1f27fb5902b5a03135bf06@canb.auug.org.au>
+	<20130117145324.3f1f27fb5902b5a03135bf06@canb.auug.org.au>
+	<0c9401cdf471$53f7c140$fbe743c0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: 
-Content-language: en-us
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__17_Jan_2013_16_59_51_+1100_kAk4HHX0P.quaBsd"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45988 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750927Ab3AQF77 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jan 2013 00:59:59 -0500
+In-Reply-To: <0c9401cdf471$53f7c140$fbe743c0$@samsung.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Stephen Warren' <swarren@nvidia.com>, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, cpgs@samsung.com
-List-Id: linux-next.vger.kernel.org
 
-Kukjin Kim wrote:
+--Signature=_Thu__17_Jan_2013_16_59_51_+1100_kAk4HHX0P.quaBsd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+Hi Kukjin,
 
-> Hmm, updating timer patches in Samsung tree cause the merge conflicts with
-> arm-soc, so for now I dropped them in my tree just now.
-> And note that regarding topic branch which are including it will be
-re-worked
-> soon :-)
-> 
-> Now to merge Samsung tree for linux-next should be fine.
-> 
-> Thanks again.
-> 
-One more, following is my preferred resolution when merge conflict happens
-between Samsung tree and arm-soc tree:
+On Wed, 16 Jan 2013 21:13:00 -0800 Kukjin Kim <kgene.kim@samsung.com> wrote:
+>
+> One more, following is my preferred resolution when merge conflict happens
+> between Samsung tree and arm-soc tree:
 
-8<---------------------------------------------------
+Thanks, I will use this resolution tomorrow.  You will still get
+notification emails just to double check.
 
-diff --cc arch/arm/common/Makefile
-index 55d4182,dc8dd0d..7a5df8b
---- a/arch/arm/common/Makefile
-+++ b/arch/arm/common/Makefile
-@@@ -2,10 -2,6 +2,8 @@@
-  # Makefile for the linux kernel.
-  #
-  
- +obj-y += firmware.o
- +
-- obj-$(CONFIG_ARM_GIC)		+= gic.o
-- obj-$(CONFIG_ARM_VIC)		+= vic.o
-  obj-$(CONFIG_ICST)		+= icst.o
-  obj-$(CONFIG_SA1111)		+= sa1111.o
-  obj-$(CONFIG_PCI_HOST_VIA82C505) += via82c505.o
-diff --cc arch/arm/mach-exynos/mach-exynos4-dt.c
-index ab1dacc,112d10e..3ac73ed
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-@@@ -107,11 -106,9 +106,10 @@@ DT_MACHINE_START(EXYNOS4210_DT, "Samsun
-  	.smp		= smp_ops(exynos_smp_ops),
-  	.init_irq	= exynos4_init_irq,
-  	.map_io		= exynos4_dt_map_io,
-- 	.handle_irq	= gic_handle_irq,
- +	.init_early	= exynos_firmware_init,
-  	.init_machine	= exynos4_dt_machine_init,
-  	.init_late	= exynos_init_late,
-- 	.timer		= &exynos4_timer,
-+ 	.init_time	= exynos4_timer_init,
-  	.dt_compat	= exynos4_dt_compat,
-  	.restart        = exynos4_restart,
-  MACHINE_END
-diff --cc arch/arm/mach-exynos/platsmp.c
-index 3226893,60f7c5b..a083e05
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@@ -20,12 -20,11 +20,12 @@@
-  #include <linux/jiffies.h>
-  #include <linux/smp.h>
-  #include <linux/io.h>
-+ #include <linux/irqchip/arm-gic.h>
-  
-  #include <asm/cacheflush.h>
-- #include <asm/hardware/gic.h>
-  #include <asm/smp_plat.h>
-  #include <asm/smp_scu.h>
- +#include <asm/firmware.h>
-  
-  #include <mach/hardware.h>
-  #include <mach/regs-clock.h>
-@@@ -146,22 -145,11 +146,22 @@@ static int __cpuinit exynos_boot_second
-  
-  	timeout = jiffies + (1 * HZ);
-  	while (time_before(jiffies, timeout)) {
- +		unsigned long boot_addr;
- +
-  		smp_rmb();
-  
- -		__raw_writel(virt_to_phys(exynos4_secondary_startup),
- -
-cpu_boot_reg(phys_cpu));
- +		boot_addr = virt_to_phys(exynos4_secondary_startup);
- +
- +		/*
- +		 * Try to set boot address using firmware first
- +		 * and fall back to boot register if it fails.
- +		 */
- +		if (call_firmware_op(set_cpu_boot_addr, phys_cpu,
-boot_addr))
- +			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
- +
- +		call_firmware_op(cpu_boot, phys_cpu);
- +
-- 		gic_raise_softirq(cpumask_of(cpu), 0);
-+ 		arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-  
-  		if (pen_release == -1)
-  			break;
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__17_Jan_2013_16_59_51_+1100_kAk4HHX0P.quaBsd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ95NXAAoJEECxmPOUX5FE2tgP/RB9lEoUfu93veMWA1nNe8UI
+mK2cfcmpML7rykVB3Vb4emPFva1PpSTQbDroObIdAPyYbOMPIcHyBr1GdH2ccODu
+FXR0W9yHGlub21N2PlUkOcQsChFfU1I893ctmXSgqLzSkwjMqdkY/2Em3VJoHUxh
+MPQrPJ3aGadgwQl10HpdUc1OIzNRCafslB23j4Rh3B/BqoqbFaumDfLXgzvqTvGg
+iWoH7WVSIGZ4ie3B3DjG7zgRmF0FYXrFDbHZSG8bZCnCJVUVAikUht8Crc6ob7rv
+nBZZnIBHbvOwWv/AYyGiNOqTQBTW+uRykoMkwy/ZHzC9y9gcGj3pnkovraOA/ccS
+2vtOInRlTxfD2Ld2Kl4d13Mv7FVFvdpPtezH4tNJv9nbTsHPRF9rploYi7n9/poZ
+fmVWVfg3ZTNZAbHmXNcBx3yNyoEZq3tbhUYs8mXn8FYc9BdvB19W0ecb7zVMKmaL
+yoL2G7Ck+wxsYxy6+x6qzdLPqFo5MyctcFQcHYdFVmEkJeYRYjRqtd88FQoHgfFH
+aVzBsRBgxhb3UjAbfLnuIn7z2pIU/gLRJsf1rDfC+v0Qs6+sVooV84wFXTU97d7C
+LGU5oLJ58X8fapsZEqjubmew7GnIxprhn6SgVr5VjOcDO4w2G2mjPs3SKRu2E4/l
+iEhJBQ+h34kz2AdBAsOq
+=oHJ3
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__17_Jan_2013_16_59_51_+1100_kAk4HHX0P.quaBsd--
