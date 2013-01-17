@@ -1,69 +1,43 @@
-From: Samuel Iglesias Gonsalvez <siglesias@igalia.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the tty tree
-Date: Thu, 17 Jan 2013 10:40:36 +0100
-Message-ID: <20130117093958.GA10117@fourier.local.igalia.com>
-References: <20130117135420.8575233a25bdeb64c4b38d9d@canb.auug.org.au>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2] drivers/pinctrl: grab default handles from device
+ core
+Date: Thu, 17 Jan 2013 09:30:19 -0700
+Message-ID: <50F8271B.3020706@wwwdotorg.org>
+References: <1355343907-11535-1-git-send-email-linus.walleij@stericsson.com> <50EF27B4.60608@wwwdotorg.org> <CACRpkdZ0b=ZohgaBH3qPH_O5TiWmXJXs6872D+YPVA9g4BssYg@mail.gmail.com> <9702060.jEbHySsCv0@avalon> <CACRpkdbFH6RCEEnXO=A9FVa0B5rtE9RkjXz9Hhy+w7NvwcBCgg@mail.gmail.com> <50F6E811.2040606@wwwdotorg.org> <CACRpkdbnyzppd-iom4PL3N3-YkuK+BRNzR577qVc6cPoTKxhTw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="JYK4vJDZwFMowpUq"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp4.mundo-r.com ([212.51.32.151]:52432 "EHLO
-	smtp4.mundo-r.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757978Ab3AQJuA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jan 2013 04:50:00 -0500
-Content-Disposition: inline
-In-Reply-To: <20130117135420.8575233a25bdeb64c4b38d9d@canb.auug.org.au>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:59940 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757065Ab3AQQaZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jan 2013 11:30:25 -0500
+In-Reply-To: <CACRpkdbnyzppd-iom4PL3N3-YkuK+BRNzR577qVc6cPoTKxhTw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Simon Horman <horms@verge.net.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Greg KH <gregkh@linuxfoundation.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Kevin Hilman <khilman@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <linux@arm.linux.org.uk>, Benoit Cousson <b-cousson@ti.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Felipe Balbi <balbi@ti.com>, Rickard Andersson <rickard.andersson@stericsson.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Mitch Bradley <wmb@firmworks.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-next@vger.kernel.org
 
+On 01/16/2013 05:59 PM, Linus Walleij wrote:
+> On Wed, Jan 16, 2013 at 6:49 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> 
+>> Hmm. It's causing a lot of engineers here a lot of trouble, since they
+>> all see linux-next won't boot, and haven't been paying enough attention
+>> to know which commit to revert:-(. Lots of lost productivity:-(
+>>
+>> Simon, the offending commit:
+>>
+>> 6d3ef6b drivers/pinctrl: grab default handles from device core
+>>
+>> is still in next-20130116. Can you please remove it?
+> 
+> Not that this should be in the SH tree, but I have merged your fix
+> to the pinctrl tree and it should be in -next, does it fix the problem?
 
---JYK4vJDZwFMowpUq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There were two problems; one was the issues handling hogs during DT->map
+conversion, for which you applied a patch. The other was the crashes due
+to incorrect devm_* usage and interactions with -EPROBE_DEFER in the
+patch which Simon applied, which requires that patch to be revised.
 
-On Thu, Jan 17, 2013 at 01:54:20PM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the char-misc tree got a conflict in
-> drivers/ipack/devices/ipoctal.c between commit 2e124b4a390c ("TTY: switch
-> tty_flip_buffer_push") from the tty tree and commits 7e5730d7c222
-> ("ipack/devices/ipoctal: fix kernel bug when using pppd"),
-> e7e664fd688a ("ipack/devices/ipoctal: protect the channel data processing
-> with a spinlock") and b06073f963b7 ("ipack/devices/ipoctal: remove
-> redundant tty_flip_buffer_push()") from the char-misc tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-
-Looks good to me.
-
-Thanks!
-
-Sam
-
---JYK4vJDZwFMowpUq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQ98cUAAoJEH/0ujLxfcNDd+wP/iBb7EWtVoMojbjO6JoScdMb
-DW7Q3jVwnrQK2JJbKwDOIVowLIRuMAYbn9pOYm/QX+1ThcA2ro/w4hip+l8uDYxg
-irCuopzvu79xraoRFPlA4YHbOD5wZv23FINW8DJx/B7HZPzFkcvfHRhyRyZgpXJq
-9jOAjB66nlWGcCJ2vLexomY+D+RHMcS+Zu9rw5j78uZUVxFDt1f7ma5JDsMhLSDV
-yhbXj3HAbCmCu6cyKrdmnSF9uRzcG7jT9O6ZAVBdPuycKi2fd8dZW/lBcXYr6tZq
-WFuUjPG6rGj/9g+Y1VBiTavMtk6XNeIkXgMMbrPectGo7L8JR69I7HLJdPwD9IUq
-gJ7wk6+T9lXveBuItAIef6JsGI94q8TgpjlxjDILAhpU30aI75DZ2ebVMbYSZCYs
-broEHZ/Og8XVnM/pAE4+PteJHwNBFFGVQSP6Uo5s+rksEfP4NGJgBhrxqGM9zBHi
-3WDNXh0jgWZhzGV8t+STYm98k9aEjrtK6nSDG/HPaOIuym0nP/g7D/nQe4Y5Y+RL
-avMoXObIhXl4QscwgA6E5S1xYRL/ZmIhiRRkdWWzsTX+Tau1qpIPskPAF7f6fKen
-x+EvrouQFsQ66kHYVxvhMfQTxCIS6fbuglZ3YfUSPH84bxz0siibxMA76/6a3EDt
-GQgS1Cf0vYxa4/23HOeL
-=incG
------END PGP SIGNATURE-----
-
---JYK4vJDZwFMowpUq--
+> Mainly asking because once Greg ACKs that patch I want to
+> put it into the pinctrl tree...
