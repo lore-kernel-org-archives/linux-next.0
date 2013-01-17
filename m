@@ -1,33 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with Linus' tree
-Date: Thu, 17 Jan 2013 13:35:33 +1100
-Message-ID: <20130117133533.c005e3b2ee5c489e94902e3a@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the tty tree
+Date: Thu, 17 Jan 2013 13:54:20 +1100
+Message-ID: <20130117135420.8575233a25bdeb64c4b38d9d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__17_Jan_2013_13_35_33_+1100_4/UDtCo6YFn3gQW9"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59574 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758267Ab3AQCfn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jan 2013 21:35:43 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>, Davidlohr Bueso <davidlohr.bueso@hp.com>
+ boundary="Signature=_Thu__17_Jan_2013_13_54_20_+1100_Z0Ko0bH/uuRpWvx2"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Samuel Iglesias Gonsalvez <siglesias@igalia.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__17_Jan_2013_13_35_33_+1100_4/UDtCo6YFn3gQW9
+--Signature=_Thu__17_Jan_2013_13_54_20_+1100_Z0Ko0bH/uuRpWvx2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/zram/zram_drv.c between commit 397c60668aa5 ("staging:
-zram: fix invalid memory references during disk write") from Linus' tree
-and commit d178a07c4bd3 ("staging: zram: drop zram_stat_dec/inc
-functions") from the staging tree.
+Today's linux-next merge of the char-misc tree got a conflict in
+drivers/ipack/devices/ipoctal.c between commit 2e124b4a390c ("TTY: switch
+tty_flip_buffer_push") from the tty tree and commits 7e5730d7c222
+("ipack/devices/ipoctal: fix kernel bug when using pppd"),
+e7e664fd688a ("ipack/devices/ipoctal: protect the channel data processing
+with a spinlock") and b06073f963b7 ("ipack/devices/ipoctal: remove
+redundant tty_flip_buffer_push()") from the char-misc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,89 +34,73 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/zram/zram_drv.c
-index f2a73bd,6762b99..0000000
---- a/drivers/staging/zram/zram_drv.c
-+++ b/drivers/staging/zram/zram_drv.c
-@@@ -300,19 -291,17 +289,19 @@@ static int zram_bvec_write(struct zram=20
+diff --cc drivers/ipack/devices/ipoctal.c
+index ab20a08,0b3c4b8..0000000
+--- a/drivers/ipack/devices/ipoctal.c
++++ b/drivers/ipack/devices/ipoctal.c
+@@@ -133,11 -123,11 +123,11 @@@ static int ipoctal_get_icount(struct tt
+  	return 0;
+  }
  =20
-  	user_mem =3D kmap_atomic(page);
+ -static void ipoctal_irq_rx(struct ipoctal_channel *channel,
+ -			   struct tty_struct *tty, u8 sr)
+ +static void ipoctal_irq_rx(struct ipoctal_channel *channel, u8 sr)
+  {
+ +	struct tty_port *port =3D &channel->tty_port;
+  	unsigned char value;
+- 	unsigned char flag =3D TTY_NORMAL;
++ 	unsigned char flag;
+  	u8 isr;
  =20
- -	if (is_partial_io(bvec))
- +	if (is_partial_io(bvec)) {
-  		memcpy(uncmem + offset, user_mem + bvec->bv_offset,
-  		       bvec->bv_len);
- -	else
- +		kunmap_atomic(user_mem);
- +		user_mem =3D NULL;
- +	} else {
-  		uncmem =3D user_mem;
- +	}
- =20
-  	if (page_zero_filled(uncmem)) {
- -		kunmap_atomic(user_mem);
- -		if (is_partial_io(bvec))
- -			kfree(uncmem);
- +		if (!is_partial_io(bvec))
- +			kunmap_atomic(user_mem);
-- 		zram_stat_inc(&zram->stats.pages_zero);
-+ 		zram->stats.pages_zero++;
-  		zram_set_flag(zram, index, ZRAM_ZERO);
-  		ret =3D 0;
-  		goto out;
-@@@ -333,11 -320,9 +322,11 @@@
-  	}
- =20
-  	if (unlikely(clen > max_zpage_size)) {
-- 		zram_stat_inc(&zram->stats.bad_compress);
-+ 		zram->stats.bad_compress++;
- -		src =3D uncmem;
-  		clen =3D PAGE_SIZE;
- +		src =3D NULL;
- +		if (is_partial_io(bvec))
- +			src =3D uncmem;
-  	}
- =20
-  	handle =3D zs_malloc(zram->mem_pool, clen);
-@@@ -362,14 -343,13 +351,14 @@@
- =20
-  	/* Update stats */
-  	zram_stat64_add(zram, &zram->stats.compr_size, clen);
-- 	zram_stat_inc(&zram->stats.pages_stored);
-+ 	zram->stats.pages_stored++;
-  	if (clen <=3D PAGE_SIZE / 2)
-- 		zram_stat_inc(&zram->stats.good_compress);
-+ 		zram->stats.good_compress++;
- =20
- -	return 0;
+  	do {
+@@@ -208,11 -188,13 +188,8 @@@ static void ipoctal_irq_tx(struct ipoct
+  static void ipoctal_irq_channel(struct ipoctal_channel *channel)
+  {
+  	u8 isr, sr;
+ -	struct tty_struct *tty;
  -
-  out:
- +	if (is_partial_io(bvec))
- +		kfree(uncmem);
- +
-  	if (ret)
-  		zram_stat64_inc(zram, &zram->stats.failed_writes);
-  	return ret;
+ -	tty =3D tty_port_tty_get(&channel->tty_port);
+ -	if (!tty)
+ -		return;
+ =20
+- 	/* If there is no client, skip the check */
+- 	if (!atomic_read(&channel->open))
+- 		return;
+-=20
++ 	spin_lock(&channel->lock);
+  	/* The HW is organized in pair of channels.  See which register we need
+  	 * to read from */
+  	isr =3D ioread8(&channel->block_regs->r.isr);
+@@@ -237,7 -218,8 +213,7 @@@
+  	if ((isr & channel->isr_tx_rdy_mask) && (sr & SR_TX_READY))
+  		ipoctal_irq_tx(channel);
+ =20
+- 	tty_flip_buffer_push(&channel->tty_port);
+ -	tty_kref_put(tty);
++ 	spin_unlock(&channel->lock);
+  }
+ =20
+  static irqreturn_t ipoctal_irq_handler(void *arg)
 
---Signature=_Thu__17_Jan_2013_13_35_33_+1100_4/UDtCo6YFn3gQW9
+--Signature=_Thu__17_Jan_2013_13_54_20_+1100_Z0Ko0bH/uuRpWvx2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ92N1AAoJEECxmPOUX5FEEp0QAKV+K6Y4rsGOidycwypTYIM+
-MELF2fpsfdaOs19QlgC96riV8Dydl8w0Q+tX6gBhNhfXMDR0BMKQIwZLK1pXi8Pz
-uk7bqs7zIoYJn59r8Fnn2GUWPXMKV6xpzct57TkXbMPIfCr7DlLh65070Iu87EZ4
-mcxB7GnJiQo1oBdQfJ59W8lkjF4rqLXTIt+QJgL81kgUUcUWTGGp3g0rnfWBn96P
-ydznBjvkCDYUVWU9uDrBT6IEN/bm4c4Yi8YyxPHIhSf9YmhC9LAOAEC1OOkk4Ew5
-ypl0hHkDUfMCu/RN2QDZBJBsRFhp7u3ISx5GHHZpSV5r2r+TZzCusVWbEAI4vIHV
-DbaSb2zAuGX52JuPPRC/5YTLOEL8Z4pjLngFQH5rJ7XVL6eLAk8/Z0QQqepuD4MU
-tY01Xf/v3ry5mOhEvW6q9j6wv/YdIesXTJZoFx2g21fcT122f8blzc9CafFCVCsh
-XZIiX6zseyl3l7eVVHh4xIsNG3chC4+XFgC0Epd4p24M6B/EObjoBjE9qLOtq93k
-CKRsPLgKMJ7Jp2GGRTl0WeESFBJTJoUP94ABcpzdJ+TMj1rVysf3DgE4NER3ctoY
-lgFaAnZNerTjm7y917gGEwRTghmJvTdeVEtdB57ppfhSg3mC0D1gkJzyF//kNQjb
-Jg6akGNcPVUnpWKN7AaK
-=dHNg
+iQIcBAEBCAAGBQJQ92fcAAoJEECxmPOUX5FEoiwQAJFY1lR0a5Lki7Lg10uQnGSv
+zm0q8pWHFlSP7Y3UmYbl7XZuFSCwV6DY+bccLkgQ2aHATDRvIgKozNGC6d37N0Cv
+OfU0/S3pzr1Rsw3zJbLzSzeVEG15HaFeig5l6u+YitkpphE2o+FTEqq/9j0kpMuE
+1U4LvFKUneGPqlaIBDsvoXCqyi5rZmelSv91FeBeSHkefbzRt6Hfkb4Yh9jf1XtF
+Q1hnFBI9ON0r9RvP9va811CHWr08/cc3dsLVp2/8JuBPW3GCUQc/7jasmRb1K2Ik
+agmYJfwwgeFnXOBnVn8uX4XSEbtFcIFc3IgsZcGt2CWIntqnk4gfIP4hp8wQxg3G
+7Mk966YB0KIZFoDlRDx/xLLHqE1ODhj3xJdR+tsLx/JNEpCw9iPn/V1rlY70gpkB
+nPK48q1qmesAb3eA+cyWjj8OsBrFztq0l7Rm2Do7xh4rqBFipHGvyAAQwIjOHuZy
+K3MVALe50yjVCltdqVpcH116yh4IHwwpofDd9Q+uAzZIVzQe5nvCu1roILRtA1W3
+QcQdGB/9676v7e8O7eNzNQiHbHrcZa0ETDKC6ouSqkIhubZhi5rkf+wPYt+9mq9/
++s7iZB1BIvmvudBvOGhZkSdccoeyvPxAXBf4RrMA5792MNBV6hD+eaDe4zz2+rMm
+/KkF80x0sSk93xiNDuDu
+=RuU8
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__17_Jan_2013_13_35_33_+1100_4/UDtCo6YFn3gQW9--
+--Signature=_Thu__17_Jan_2013_13_54_20_+1100_Z0Ko0bH/uuRpWvx2--
