@@ -1,62 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: error when fething the git.secretlab.ca trees
-Date: Thu, 17 Jan 2013 11:32:46 +1100
-Message-ID: <20130117113246.9235400430d1387f91134d7e@canb.auug.org.au>
-References: <20130117092536.f1a4e0ed60610845cc919b15@canb.auug.org.au>
-	<CACxGe6udrYHtVwf50YsPCcrQ-3fCFEXP7pr2AGeVL=ja5VmZDA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] drivers/pinctrl: grab default handles from device core
+Date: Thu, 17 Jan 2013 01:59:52 +0100
+Message-ID: <CACRpkdbnyzppd-iom4PL3N3-YkuK+BRNzR577qVc6cPoTKxhTw@mail.gmail.com>
+References: <1355343907-11535-1-git-send-email-linus.walleij@stericsson.com>
+	<50EF27B4.60608@wwwdotorg.org>
+	<CACRpkdZ0b=ZohgaBH3qPH_O5TiWmXJXs6872D+YPVA9g4BssYg@mail.gmail.com>
+	<9702060.jEbHySsCv0@avalon>
+	<CACRpkdbFH6RCEEnXO=A9FVa0B5rtE9RkjXz9Hhy+w7NvwcBCgg@mail.gmail.com>
+	<50F6E811.2040606@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__17_Jan_2013_11_32_46_+1100_Lq1Iec/DHVQIY3KE"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51771 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757579Ab3AQAc4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jan 2013 19:32:56 -0500
-In-Reply-To: <CACxGe6udrYHtVwf50YsPCcrQ-3fCFEXP7pr2AGeVL=ja5VmZDA@mail.gmail.com>
+Received: from mail-ia0-f172.google.com ([209.85.210.172]:32795 "EHLO
+	mail-ia0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757485Ab3AQA7x (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jan 2013 19:59:53 -0500
+Received: by mail-ia0-f172.google.com with SMTP id u8so263311iag.3
+        for <linux-next@vger.kernel.org>; Wed, 16 Jan 2013 16:59:52 -0800 (PST)
+In-Reply-To: <50F6E811.2040606@wwwdotorg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Simon Horman <horms@verge.net.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Greg KH <gregkh@linuxfoundation.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Kevin Hilman <khilman@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <linux@arm.linux.org.uk>, Benoit Cousson <b-cousson@ti.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Felipe Balbi <balbi@ti.com>, Rickard Andersson <rickard.andersson@stericsson.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Mitch Bradley <wmb@firmworks.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-next@vger.kernel.org
 
---Signature=_Thu__17_Jan_2013_11_32_46_+1100_Lq1Iec/DHVQIY3KE
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 16, 2013 at 6:49 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 
-Hi Grant,
-
-On Thu, 17 Jan 2013 00:16:12 +0000 Grant Likely <grant.likely@secretlab.ca>=
- wrote:
+> Hmm. It's causing a lot of engineers here a lot of trouble, since they
+> all see linux-next won't boot, and haven't been paying enough attention
+> to know which commit to revert:-(. Lots of lost productivity:-(
 >
-> Thanks for letting me know. I was mucking about with my server to
-> enable gitolite. I probably messed it up. I've just tried to fix it.
-> Let me know if it is working now.
+> Simon, the offending commit:
+>
+> 6d3ef6b drivers/pinctrl: grab default handles from device core
+>
+> is still in next-20130116. Can you please remove it?
 
-Looks good, thanks.  I will start fetching your trees again tomorrow.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Not that this should be in the SH tree, but I have merged your fix
+to the pinctrl tree and it should be in -next, does it fix the problem?
 
---Signature=_Thu__17_Jan_2013_11_32_46_+1100_Lq1Iec/DHVQIY3KE
-Content-Type: application/pgp-signature
+Mainly asking because once Greg ACKs that patch I want to
+put it into the pinctrl tree...
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQ90auAAoJEECxmPOUX5FEaeEP/AwaV9I8ZABFm3W7Afmnn1Vp
-C7Iu4YtJPd0uEmRBDd6Pe0IBVBrRsBmq5Zd2OlQU6xtM8Q/hGtIjQUG+Yxm3zKJ0
-lsR7i0T55kOZySlQpNZ4rqRfMCAneXouI+ucd7seo2Rz2NMWqZlOXwZvIilGxAYz
-1UK4cpAVr8gF+7RLPDyPPr8FiB+JNnIMTTAkg/EzL2yBU7L+3yybalPw9sP9ptOK
-0S20vjv3gTts2RFFy3EV09x4B6syX1LLTOKk6S26C4B3zZeB/PySZ8lCQ50PhfEm
-nYwFB0NfM+1FbjxcdfFokrCmQ6O2hD5/2LtUM87432OiMnf25y62chhpZzq4veA8
-Psx1uEGnqoPv4zASaISVO+YBrzX9x86+Wwc4ZlVH76nR/d4/c8zR7NQcIf6A47Dx
-4sbvEY2XFv85EC7pYIl+PsbjVmIq5MQFCYuaU2bzVoPfV+RnfclsDwKiIpy4MA9x
-rlWla0Pa9doHsuP06iU8T0LU7JJT6WwmzpGZp6/sRlHI3YKEIHPb0RXfzteRmZhB
-3+Dhtj+V1FIrzX0vB8zvjGWqU8IDa81eLlMxJHOdefY0C6flGyB1BHINA+bTYk7o
-gsziSEeEtfUO0LNraKHcYyC3trbCHc0akAgVFuuGRpwqSGDNht2is54ZQMc3ILaY
-D+NBZY7P1KCsOWR46NU6
-=gEZt
------END PGP SIGNATURE-----
-
---Signature=_Thu__17_Jan_2013_11_32_46_+1100_Lq1Iec/DHVQIY3KE--
+Yours,
+Linus Walleij
