@@ -1,106 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the char-misc tree with the tty tree
-Date: Thu, 17 Jan 2013 13:54:20 +1100
-Message-ID: <20130117135420.8575233a25bdeb64c4b38d9d@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the samsung tree with the arm-soc
+ tree
+Date: Thu, 17 Jan 2013 14:53:24 +1100
+Message-ID: <20130117145324.3f1f27fb5902b5a03135bf06@canb.auug.org.au>
+References: <20130111153206.e075edb9b1e4a38d90f23ab6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__17_Jan_2013_13_54_20_+1100_Z0Ko0bH/uuRpWvx2"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Samuel Iglesias Gonsalvez <siglesias@igalia.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__17_Jan_2013_14_53_24_+1100_RwJPkbHzx+C8pNST"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37887 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757238Ab3AQDxf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jan 2013 22:53:35 -0500
+In-Reply-To: <20130111153206.e075edb9b1e4a38d90f23ab6@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
---Signature=_Thu__17_Jan_2013_13_54_20_+1100_Z0Ko0bH/uuRpWvx2
+--Signature=_Thu__17_Jan_2013_14_53_24_+1100_RwJPkbHzx+C8pNST
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Kukjin,
 
-Today's linux-next merge of the char-misc tree got a conflict in
-drivers/ipack/devices/ipoctal.c between commit 2e124b4a390c ("TTY: switch
-tty_flip_buffer_push") from the tty tree and commits 7e5730d7c222
-("ipack/devices/ipoctal: fix kernel bug when using pppd"),
-e7e664fd688a ("ipack/devices/ipoctal: protect the channel data processing
-with a spinlock") and b06073f963b7 ("ipack/devices/ipoctal: remove
-redundant tty_flip_buffer_push()") from the char-misc tree.
+On Fri, 11 Jan 2013 15:32:06 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the samsung tree got conflicts in
+> many files with the arm-soc tree.
+>=20
+> I just dropped the samsung tree for today.  Please have a look and try to
+> fix this mess up, thanks.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Ping?
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/ipack/devices/ipoctal.c
-index ab20a08,0b3c4b8..0000000
---- a/drivers/ipack/devices/ipoctal.c
-+++ b/drivers/ipack/devices/ipoctal.c
-@@@ -133,11 -123,11 +123,11 @@@ static int ipoctal_get_icount(struct tt
-  	return 0;
-  }
- =20
- -static void ipoctal_irq_rx(struct ipoctal_channel *channel,
- -			   struct tty_struct *tty, u8 sr)
- +static void ipoctal_irq_rx(struct ipoctal_channel *channel, u8 sr)
-  {
- +	struct tty_port *port =3D &channel->tty_port;
-  	unsigned char value;
-- 	unsigned char flag =3D TTY_NORMAL;
-+ 	unsigned char flag;
-  	u8 isr;
- =20
-  	do {
-@@@ -208,11 -188,13 +188,8 @@@ static void ipoctal_irq_tx(struct ipoct
-  static void ipoctal_irq_channel(struct ipoctal_channel *channel)
-  {
-  	u8 isr, sr;
- -	struct tty_struct *tty;
- -
- -	tty =3D tty_port_tty_get(&channel->tty_port);
- -	if (!tty)
- -		return;
- =20
-- 	/* If there is no client, skip the check */
-- 	if (!atomic_read(&channel->open))
-- 		return;
--=20
-+ 	spin_lock(&channel->lock);
-  	/* The HW is organized in pair of channels.  See which register we need
-  	 * to read from */
-  	isr =3D ioread8(&channel->block_regs->r.isr);
-@@@ -237,7 -218,8 +213,7 @@@
-  	if ((isr & channel->isr_tx_rdy_mask) && (sr & SR_TX_READY))
-  		ipoctal_irq_tx(channel);
- =20
-- 	tty_flip_buffer_push(&channel->tty_port);
- -	tty_kref_put(tty);
-+ 	spin_unlock(&channel->lock);
-  }
- =20
-  static irqreturn_t ipoctal_irq_handler(void *arg)
-
---Signature=_Thu__17_Jan_2013_13_54_20_+1100_Z0Ko0bH/uuRpWvx2
+--Signature=_Thu__17_Jan_2013_14_53_24_+1100_RwJPkbHzx+C8pNST
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ92fcAAoJEECxmPOUX5FEoiwQAJFY1lR0a5Lki7Lg10uQnGSv
-zm0q8pWHFlSP7Y3UmYbl7XZuFSCwV6DY+bccLkgQ2aHATDRvIgKozNGC6d37N0Cv
-OfU0/S3pzr1Rsw3zJbLzSzeVEG15HaFeig5l6u+YitkpphE2o+FTEqq/9j0kpMuE
-1U4LvFKUneGPqlaIBDsvoXCqyi5rZmelSv91FeBeSHkefbzRt6Hfkb4Yh9jf1XtF
-Q1hnFBI9ON0r9RvP9va811CHWr08/cc3dsLVp2/8JuBPW3GCUQc/7jasmRb1K2Ik
-agmYJfwwgeFnXOBnVn8uX4XSEbtFcIFc3IgsZcGt2CWIntqnk4gfIP4hp8wQxg3G
-7Mk966YB0KIZFoDlRDx/xLLHqE1ODhj3xJdR+tsLx/JNEpCw9iPn/V1rlY70gpkB
-nPK48q1qmesAb3eA+cyWjj8OsBrFztq0l7Rm2Do7xh4rqBFipHGvyAAQwIjOHuZy
-K3MVALe50yjVCltdqVpcH116yh4IHwwpofDd9Q+uAzZIVzQe5nvCu1roILRtA1W3
-QcQdGB/9676v7e8O7eNzNQiHbHrcZa0ETDKC6ouSqkIhubZhi5rkf+wPYt+9mq9/
-+s7iZB1BIvmvudBvOGhZkSdccoeyvPxAXBf4RrMA5792MNBV6hD+eaDe4zz2+rMm
-/KkF80x0sSk93xiNDuDu
-=RuU8
+iQIcBAEBCAAGBQJQ93W0AAoJEECxmPOUX5FEB2wP+wStb4dYDEKYuOwIRReGpq2Q
+yTBSt6xPjD0oBFZ0VM7C4/dWvfsAVLFzONRbFr9hQiHBDqmpGCeNgJ4I+KfFG7w6
+z5X3kGVSSUUER75/nwXHm7rUy/ClMm+tozXcLPa0BTOAMO7185fJJlsfij4DZ6e2
+02nNWMvDRO/ABVp44aubPiTcq3SK0/lJBszrMgcV7KsMxoszkUHlEiCX7Bl1aIJH
+fZJd+6h3Sv1QwuRZ4aZE0NjGm6eGT9NNybiYM+lT1flQ2qawCHnz55yyJe/xzIW/
+guoV9IvOHcOEXRs0a6svl4enyCqOoVrI/8HdQMU21se6+U1Kca/kOaFRGfJs3NFx
+5rkrlBNnXXu5iM4UUZhGwWDss0KHWCKPDYbg2pV0+2aWdZpXzUs1wZeMdGVXABim
+2Jc+jaF8xkeJP5zqZAs07fVOvY07scGpUUSZqp9dGHHxpTOLp8bYYuJKX9/JLghT
+NLPbFpa9/HNNGI3w8dxIs36EhLxghXMzx9OdfYbOHlr2DiuKQEx+Gl91PXqtvuJF
+PpZQKwK0OqICQQVwVtaiq3luHZESLoz5iEfEFH/JJ6Weyu8XRNWvL+PuVdWsuXIZ
+XHADcN+CefStuFDPHO397oFHjiu9oSGjRaDg8IlK107OUpyuZcTu2zeomZAgcmPk
+WR/5WyWMTqIKDyxKfswD
+=ftda
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__17_Jan_2013_13_54_20_+1100_Z0Ko0bH/uuRpWvx2--
+--Signature=_Thu__17_Jan_2013_14_53_24_+1100_RwJPkbHzx+C8pNST--
