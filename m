@@ -1,45 +1,74 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] drivers/pinctrl: grab default handles from device core
-Date: Thu, 17 Jan 2013 01:59:52 +0100
-Message-ID: <CACRpkdbnyzppd-iom4PL3N3-YkuK+BRNzR577qVc6cPoTKxhTw@mail.gmail.com>
-References: <1355343907-11535-1-git-send-email-linus.walleij@stericsson.com>
-	<50EF27B4.60608@wwwdotorg.org>
-	<CACRpkdZ0b=ZohgaBH3qPH_O5TiWmXJXs6872D+YPVA9g4BssYg@mail.gmail.com>
-	<9702060.jEbHySsCv0@avalon>
-	<CACRpkdbFH6RCEEnXO=A9FVa0B5rtE9RkjXz9Hhy+w7NvwcBCgg@mail.gmail.com>
-	<50F6E811.2040606@wwwdotorg.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with Linus' tree
+Date: Thu, 17 Jan 2013 13:04:23 +1100
+Message-ID: <20130117130423.63a5e1004942853bf6a49e56@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__17_Jan_2013_13_04_23_+1100_orS2AKMBsVDkVbHD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ia0-f172.google.com ([209.85.210.172]:32795 "EHLO
-	mail-ia0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757485Ab3AQA7x (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jan 2013 19:59:53 -0500
-Received: by mail-ia0-f172.google.com with SMTP id u8so263311iag.3
-        for <linux-next@vger.kernel.org>; Wed, 16 Jan 2013 16:59:52 -0800 (PST)
-In-Reply-To: <50F6E811.2040606@wwwdotorg.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51840 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755928Ab3AQCEc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jan 2013 21:04:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Simon Horman <horms@verge.net.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Greg KH <gregkh@linuxfoundation.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Kevin Hilman <khilman@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <linux@arm.linux.org.uk>, Benoit Cousson <b-cousson@ti.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Felipe Balbi <balbi@ti.com>, Rickard Andersson <rickard.andersson@stericsson.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Mitch Bradley <wmb@firmworks.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
 
-On Wed, Jan 16, 2013 at 6:49 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+--Signature=_Thu__17_Jan_2013_13_04_23_+1100_orS2AKMBsVDkVbHD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hmm. It's causing a lot of engineers here a lot of trouble, since they
-> all see linux-next won't boot, and haven't been paying enough attention
-> to know which commit to revert:-(. Lots of lost productivity:-(
->
-> Simon, the offending commit:
->
-> 6d3ef6b drivers/pinctrl: grab default handles from device core
->
-> is still in next-20130116. Can you please remove it?
+Hi Greg,
 
-Not that this should be in the SH tree, but I have merged your fix
-to the pinctrl tree and it should be in -next, does it fix the problem?
+Today's linux-next merge of the tty tree got a conflict in
+drivers/staging/sb105x/Kconfig between commit db210312f77b ("staging:
+Make SystemBase PCI Multiport UART only for x86") from the  tree and
+commit e27a7d7977b0 ("Staging: sb105x: mark it BROKEN") from the tty tree.
 
-Mainly asking because once Greg ACKs that patch I want to
-put it into the pinctrl tree...
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Yours,
-Linus Walleij
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/staging/sb105x/Kconfig
+index 1facad6,3d0d0eb..0000000
+--- a/drivers/staging/sb105x/Kconfig
++++ b/drivers/staging/sb105x/Kconfig
+@@@ -1,8 -1,7 +1,8 @@@
+  config SB105X
+  	tristate "SystemBase PCI Multiport UART"
+  	select SERIAL_CORE
+- 	depends on PCI
++ 	depends on PCI && BROKEN
+ +	depends on X86
+  	help
+  	  A driver for the SystemBase Multi-2/PCI serial card
+ =20
+
+--Signature=_Thu__17_Jan_2013_13_04_23_+1100_orS2AKMBsVDkVbHD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ91wnAAoJEECxmPOUX5FEVlEQAJSy/9HZqpQ7AjjwP57uBksS
+3AKQKF+gsS3JWuj96N0YYEFWEvyIxHz3XCAaV2X3nuznyv/OJK/LuIDb94QhqJiw
+0uNJW9OnoUtoThBmeTvsRwyWW6DKHvX6oAFNHE5nTm4aGhNrYgXRF+FObRRiW8CC
+ybLUKlaYzkIbW/brwPk1WTZnQ8cxAGo0UZq74pf42bERDrh1IrHW/BqTaYsQCWkV
+m2lNGZU66Q365lx0VF0P+FjbhfsNBlhyVTWcgEaQ3pk4pPuFoaXvjfCBMu56H8jD
+k/FzLHOg9Ar22eCF4OagWiuPNeSISN8vfs9Js7p4WIS9tQ36wtdFDXtJD8hZ1YZ4
+RTkz2Y5mDMGYkwief9brtbPDmjM0h2C8d3iuW7N3hTi7WqLBjfsHc02PUMXYe8yU
+cZCHY5q+IQ0nwui4sH5LCB8oHrmhfP02nDm2+10FP/B9mXMqsdKHtOfr45UrylYC
+8VpKXwAbWXtAVrAvan+9hrM9IPv0H8DmN12FLvA0xBL74i4nGFdrRI3UXBCoMBNH
+KxBNHCDuf4pkivKzo/sfOPfmo6IuEhNMtfJDUTw5ST5WVwqmO5g52daB7VuNnZCP
+2W+gZqbt5duQjPr0Lv06WbkZwrc2xmgWTuMMvP+PauokCooFa8c7CZ1lifpQs3Nc
+FxxY0kL3Eq3sdEGTAkSz
+=8puR
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__17_Jan_2013_13_04_23_+1100_orS2AKMBsVDkVbHD--
