@@ -1,48 +1,27 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v2] drivers/pinctrl: grab default handles from device core
-Date: Thu, 17 Jan 2013 15:02:14 +0900
-Message-ID: <20130117060214.GC1197@verge.net.au>
-References: <1355343907-11535-1-git-send-email-linus.walleij@stericsson.com>
- <50EF27B4.60608@wwwdotorg.org>
- <CACRpkdZ0b=ZohgaBH3qPH_O5TiWmXJXs6872D+YPVA9g4BssYg@mail.gmail.com>
- <9702060.jEbHySsCv0@avalon>
- <CACRpkdbFH6RCEEnXO=A9FVa0B5rtE9RkjXz9Hhy+w7NvwcBCgg@mail.gmail.com>
- <50F6E811.2040606@wwwdotorg.org>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: error when fething the git.secretlab.ca trees
+Date: Thu, 17 Jan 2013 09:35:53 +0000
+Message-ID: <CACxGe6viT0+f7Z0auWOZeBHun6nr3exJc65HYhqSauj=ehF84Q@mail.gmail.com>
+References: <20130117092536.f1a4e0ed60610845cc919b15@canb.auug.org.au>
+ <CACxGe6udrYHtVwf50YsPCcrQ-3fCFEXP7pr2AGeVL=ja5VmZDA@mail.gmail.com> <20130117113246.9235400430d1387f91134d7e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49338 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754659Ab3AQGCR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jan 2013 01:02:17 -0500
-Content-Disposition: inline
-In-Reply-To: <50F6E811.2040606@wwwdotorg.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Greg KH <gregkh@linuxfoundation.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Kevin Hilman <khilman@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <linux@arm.linux.org.uk>, Benoit Cousson <b-cousson@ti.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Felipe Balbi <balbi@ti.com>, Rickard Andersson <rickard.andersson@stericsson.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Mitch Bradley <wmb@firmworks.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-next@vger.kerne
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130117113246.9235400430d1387f91134d7e@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 16, 2013 at 10:49:05AM -0700, Stephen Warren wrote:
-> On 01/11/2013 01:45 PM, Linus Walleij wrote:
-> > On Fri, Jan 11, 2013 at 9:36 PM, Laurent Pinchart
-> > <laurent.pinchart@ideasonboard.com> wrote:
-> > 
-> >> I've sent several patch series for the SH PFC (Pin Function Controller) to the
-> >> linux-sh mailing list. One of the series included pinctrl core patches for
-> >> easier testing, but I made it clear that they should *not* be pushed to
-> >> mainline through the SH tree.
-> > 
-> > No big deal, what fun is linux-next if we don't break it ;-)
-> 
-> Hmm. It's causing a lot of engineers here a lot of trouble, since they
-> all see linux-next won't boot, and haven't been paying enough attention
-> to know which commit to revert:-(. Lots of lost productivity:-(
-> 
-> Simon, the offending commit:
-> 
-> 6d3ef6b drivers/pinctrl: grab default handles from device core
-> 
-> is still in next-20130116. Can you please remove it?
+On Thu, Jan 17, 2013 at 12:32 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Grant,
+>
+> On Thu, 17 Jan 2013 00:16:12 +0000 Grant Likely <grant.likely@secretlab.ca> wrote:
+>>
+>> Thanks for letting me know. I was mucking about with my server to
+>> enable gitolite. I probably messed it up. I've just tried to fix it.
+>> Let me know if it is working now.
+>
+> Looks good, thanks.  I will start fetching your trees again tomorrow.
 
-I removed the commit yesterday.
-Please let me know if it seems to be lingering.
+thanks.
