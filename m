@@ -1,42 +1,61 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: linux-next: build failure after merge of the gpio-lw tree
-Date: Fri, 18 Jan 2013 16:02:13 +0800
-Message-ID: <20130118080211.GA8706@S2101-09.ap.freescale.net>
-References: <20130118140346.3f9b182aa7daa175b4f136bf@canb.auug.org.au>
+From: "Kondratiev, Vladimir" <vkondrat@qti.qualcomm.com>
+Subject: RE: linux-next: build failure after merge of the driver-core tree
+Date: Fri, 18 Jan 2013 14:14:05 +0000
+Message-ID: <A5CA08B46412E243958C77F3825F439517BBDA3B@NASANEXD02E.na.qualcomm.com>
+References: <20130118132904.ec0677175f1191290f060776@canb.auug.org.au>,<20130118041322.GA25106@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tx2ehsobe002.messaging.microsoft.com ([65.55.88.12]:17268 "EHLO
-	tx2outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750898Ab3ARIBe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Jan 2013 03:01:34 -0500
-Content-Disposition: inline
-In-Reply-To: <20130118140346.3f9b182aa7daa175b4f136bf@canb.auug.org.au>
+Received: from sabertooth02.qualcomm.com ([65.197.215.38]:2134 "EHLO
+	sabertooth02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751507Ab3AROOH convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jan 2013 09:14:07 -0500
+In-Reply-To: <20130118041322.GA25106@kroah.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, qca_vkondrat <qca_vkondrat@qca.qualcomm.com>, Jason Baron <jbaron@redhat.com>, "John W. Linville" <linville@tuxdriver.com>
 
-On Fri, Jan 18, 2013 at 02:03:46PM +1100, Stephen Rothwell wrote:
-> Hi Linus,
-> 
-> After merging the gpio-lw tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-My bad, sorry for that.  I just sent a v2 in reply to this message
-for fixing the error.  I spent some time trying to install a ppc64
-toolchain for testing, but unfortunately with on luck.  So Stephen,
-I have to rely on linux-next to give it a test again.  Thanks.
 
-Shawn
+On Fri, Jan 18, 2013 at 01:29:04PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+>
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> In file included from drivers/net/wireless/ath/wil6210/wil6210.h:24:0,
+>                  from drivers/net/wireless/ath/wil6210/main.c:26:
+> drivers/net/wireless/ath/wil6210/dbg_hexdump.h:21:0: error: "print_hex_dump_bytes" redefined [-Werror]
+> include/linux/printk.h:322:0: note: this is the location of the previous definition
+>
+> Caused by commit 7a555613eb77 ("dynamic_debug: dynamic hex dump")
+> interacting with commit 2be7d22f0625 ("wireless: add new wil6210 802.11ad
+> 60GHz driver") that was added to Linus' tree in the last few days.
+>
+> I have applied the following merge fix patch for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 18 Jan 2013 13:24:32 +1100
+> Subject: [PATCH] wireless: remove conflicting version of print_hex_dump_bytes
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-> drivers/gpio/devres.c:51:5: error: redefinition of 'devm_gpio_request'
-> include/linux/gpio.h:97:19: note: previous definition of 'devm_gpio_request' was here
-> drivers/gpio/devres.c:80:5: error: redefinition of 'devm_gpio_request_one'
-> include/linux/gpio.h:109:19: note: previous definition of 'devm_gpio_request_one' was here
-> drivers/gpio/devres.c:113:6: error: redefinition of 'devm_gpio_free'
-> include/linux/gpio.h:128:20: note: previous definition of 'devm_gpio_free' was here
-> 
-> Presumably caused by commit d39cd0301255 ("gpio: devm_gpio_* support
-> should not depend on GPIOLIB").
+Thanks, I've merged 3.9-rc4 into my tree and applied this patch to fix
+the build breakage.
+
+greg k-h
+
+Sorry for the mess; this conflicting file should disappear after the other commit, 
+"dynamic_debug: dynamic hex dump", merged. It was intended as temporal replacement.
+
+Patch by Stephen Rothwell is just fine in the mean time.
+
+Unfortunately, this catches me on my way to the airport, going for 1 week ski vacation.
+
+I'll submit patch to remove 
+drivers/net/wireless/ath/wil6210/dbg_hexdump.h
+and s/wil_print_hex_dump_debug/print_hex_dump_debug/ for the rest of the wil6210 driver.
+
+Thanks, Vladimir.
