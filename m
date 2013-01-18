@@ -1,61 +1,75 @@
-From: "Kondratiev, Vladimir" <vkondrat@qti.qualcomm.com>
-Subject: RE: linux-next: build failure after merge of the driver-core tree
-Date: Fri, 18 Jan 2013 14:14:05 +0000
-Message-ID: <A5CA08B46412E243958C77F3825F439517BBDA3B@NASANEXD02E.na.qualcomm.com>
-References: <20130118132904.ec0677175f1191290f060776@canb.auug.org.au>,<20130118041322.GA25106@kroah.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] drivers/pinctrl: grab default handles from device core
+Date: Fri, 18 Jan 2013 16:05:27 +0100
+Message-ID: <CACRpkdYK9r9XvQ7t+WOpDOi+RnFb9DGJiFNx5VFGkuuJf=VmgA@mail.gmail.com>
+References: <1355343907-11535-1-git-send-email-linus.walleij@stericsson.com>
+	<50EF27B4.60608@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sabertooth02.qualcomm.com ([65.197.215.38]:2134 "EHLO
-	sabertooth02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751507Ab3AROOH convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jan 2013 09:14:07 -0500
-In-Reply-To: <20130118041322.GA25106@kroah.com>
-Content-Language: en-US
+Received: from mail-ie0-f178.google.com ([209.85.223.178]:64804 "EHLO
+	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756253Ab3ARPFa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jan 2013 10:05:30 -0500
+Received: by mail-ie0-f178.google.com with SMTP id c12so6305494ieb.37
+        for <linux-next@vger.kernel.org>; Fri, 18 Jan 2013 07:05:29 -0800 (PST)
+In-Reply-To: <50EF27B4.60608@wwwdotorg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, qca_vkondrat <qca_vkondrat@qca.qualcomm.com>, Jason Baron <jbaron@redhat.com>, "John W. Linville" <linville@tuxdriver.com>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Kevin Hilman <khilman@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <linux@arm.linux.org.uk>, Benoit Cousson <b-cousson@ti.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Felipe Balbi <balbi@ti.com>, Rickard Andersson <rickard.andersson@stericsson.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Mitch Bradley <wmb@firmworks.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-next@vger.kernel.org
 
+On Thu, Jan 10, 2013 at 9:42 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 
-On Fri, Jan 18, 2013 at 01:29:04PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+>> +     /* Allocate a pin state container on-the-fly */
+>> +     if (!dev->pins) {
+>> +             dpi = devm_kzalloc(dev, sizeof(*dpi), GFP_KERNEL);
 >
-> After merging the driver-core tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> This is allocated using a devm_ function. If -EPROBE_DEFER is returned
+> below after the assignment to dev->pins or if the driver's own probe()
+> returns -EPROBE_DEFER, this allocation will be freed by the driver core.
+> This can leave dev->pins pointing to something non-NULL, yet invalid.
+
+OK I (think I) fixed it like this:
+
+For the second deferral, set dev->pins to NULL.
+
+I did some other fixes here to explicitly devm_kfree() the container
+if no pinctrl handle was found. No point in keeping it around.
+
+>> +     if (!dpi->p) {
+>> +             dpi->p = devm_pinctrl_get(dev);
 >
-> In file included from drivers/net/wireless/ath/wil6210/wil6210.h:24:0,
->                  from drivers/net/wireless/ath/wil6210/main.c:26:
-> drivers/net/wireless/ath/wil6210/dbg_hexdump.h:21:0: error: "print_hex_dump_bytes" redefined [-Werror]
-> include/linux/printk.h:322:0: note: this is the location of the previous definition
+> That won't succeed for a pinctrl device that has a default state in
+> order to implement hogs. This will then cause the pin controller device
+> to always defer probe and never activate. This will leave HW
+> unconfigured and/or prevent other devices from successfully calling
+> pinctrl_get().
+
+Fixed by your suggested patch, thanks.
+
+>> +     /*
+>> +      * See if somebody else (such as the device core) has already
+>> +      * obtained a handle to the pinctrl for this device. In that case,
+>> +      * return another pointer to it.
+>> +      */
+>>       p = find_pinctrl(dev);
+>> -     if (p != NULL)
+>> -             return ERR_PTR(-EBUSY);
 >
-> Caused by commit 7a555613eb77 ("dynamic_debug: dynamic hex dump")
-> interacting with commit 2be7d22f0625 ("wireless: add new wil6210 802.11ad
-> 60GHz driver") that was added to Linus' tree in the last few days.
+> I deliberately returned an error here, because there's no reference
+> counting on the struct pinctrl objects. If a driver calls pinctrl_get(),
+> with the new code below, it will retrieve the same struct. If it later
+> calls pinctrl_put(), the put will immediately free the structure. This
+> will invalidate the pointers that reference it in struct device's pins
+> field.
 >
-> I have applied the following merge fix patch for today:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 18 Jan 2013 13:24:32 +1100
-> Subject: [PATCH] wireless: remove conflicting version of print_hex_dump_bytes
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> This issue will probably trigger on Tegra, since we at least have a
+> pinctrl-based I2C mux that calls pinctrl_get().
 
-Thanks, I've merged 3.9-rc4 into my tree and applied this patch to fix
-the build breakage.
+OK I just introduced a reference counter using <linux/kref.h>.
 
-greg k-h
+I've retested on U300 and U8500.
 
-Sorry for the mess; this conflicting file should disappear after the other commit, 
-"dynamic_debug: dynamic hex dump", merged. It was intended as temporal replacement.
-
-Patch by Stephen Rothwell is just fine in the mean time.
-
-Unfortunately, this catches me on my way to the airport, going for 1 week ski vacation.
-
-I'll submit patch to remove 
-drivers/net/wireless/ath/wil6210/dbg_hexdump.h
-and s/wil_print_hex_dump_debug/print_hex_dump_debug/ for the rest of the wil6210 driver.
-
-Thanks, Vladimir.
+Yours,
+Linus Walleij
