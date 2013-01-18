@@ -1,111 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the driver-core tree
-Date: Fri, 18 Jan 2013 13:29:04 +1100
-Message-ID: <20130118132904.ec0677175f1191290f060776@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio-lw tree
+Date: Fri, 18 Jan 2013 14:03:46 +1100
+Message-ID: <20130118140346.3f9b182aa7daa175b4f136bf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__18_Jan_2013_13_29_04_+1100_PTU7PN/uyATHqqCK"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Kondratiev <qca_vkondrat@qca.qualcomm.com>, Jason Baron <jbaron@redhat.com>, "John W. Linville" <linville@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__18_Jan_2013_14_03_46_+1100_Nh1QDhiVvRKpvb/i"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54813 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751869Ab3ARDDy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jan 2013 22:03:54 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
 
---Signature=_Fri__18_Jan_2013_13_29_04_+1100_PTU7PN/uyATHqqCK
+--Signature=_Fri__18_Jan_2013_14_03_46_+1100_Nh1QDhiVvRKpvb/i
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Linus,
 
-After merging the driver-core tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the gpio-lw tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-In file included from drivers/net/wireless/ath/wil6210/wil6210.h:24:0,
-                 from drivers/net/wireless/ath/wil6210/main.c:26:
-drivers/net/wireless/ath/wil6210/dbg_hexdump.h:21:0: error: "print_hex_dump=
-_bytes" redefined [-Werror]
-include/linux/printk.h:322:0: note: this is the location of the previous de=
-finition
+drivers/gpio/devres.c:51:5: error: redefinition of 'devm_gpio_request'
+include/linux/gpio.h:97:19: note: previous definition of 'devm_gpio_request=
+' was here
+drivers/gpio/devres.c:80:5: error: redefinition of 'devm_gpio_request_one'
+include/linux/gpio.h:109:19: note: previous definition of 'devm_gpio_reques=
+t_one' was here
+drivers/gpio/devres.c:113:6: error: redefinition of 'devm_gpio_free'
+include/linux/gpio.h:128:20: note: previous definition of 'devm_gpio_free' =
+was here
 
-Caused by commit 7a555613eb77 ("dynamic_debug: dynamic hex dump")
-interacting with commit 2be7d22f0625 ("wireless: add new wil6210 802.11ad
-60GHz driver") that was added to Linus' tree in the last few days.
+Presumably caused by commit d39cd0301255 ("gpio: devm_gpio_* support
+should not depend on GPIOLIB").
 
-I have applied the following merge fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 18 Jan 2013 13:24:32 +1100
-Subject: [PATCH] wireless: remove conflicting version of print_hex_dump_byt=
-es
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/wireless/ath/wil6210/dbg_hexdump.h |   18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/wil6210/dbg_hexdump.h b/drivers/net/w=
-ireless/ath/wil6210/dbg_hexdump.h
-index 6a315ba..e5712f0 100644
---- a/drivers/net/wireless/ath/wil6210/dbg_hexdump.h
-+++ b/drivers/net/wireless/ath/wil6210/dbg_hexdump.h
-@@ -1,25 +1,15 @@
- #ifndef WIL_DBG_HEXDUMP_H_
- #define WIL_DBG_HEXDUMP_H_
-=20
--#if defined(CONFIG_DYNAMIC_DEBUG)
--#define wil_dynamic_hex_dump(prefix_str, prefix_type, rowsize,	\
--			     groupsize, buf, len, ascii)	\
--do {								\
--	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor,		\
--		__builtin_constant_p(prefix_str) ? prefix_str : "hexdump");\
--	if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT))	\
--		print_hex_dump(KERN_DEBUG, prefix_str,		\
--			       prefix_type, rowsize, groupsize,	\
--			       buf, len, ascii);		\
--} while (0)
-+#include <linux/printk.h>
-+#include <linux/dynamic_debug.h>
-=20
-+#if defined(CONFIG_DYNAMIC_DEBUG)
- #define wil_print_hex_dump_debug(prefix_str, prefix_type, rowsize,	\
- 				 groupsize, buf, len, ascii)		\
--	wil_dynamic_hex_dump(prefix_str, prefix_type, rowsize,		\
-+	dynamic_hex_dump(prefix_str, prefix_type, rowsize,		\
- 			     groupsize, buf, len, ascii)
-=20
--#define print_hex_dump_bytes(prefix_str, prefix_type, buf, len)	\
--	wil_dynamic_hex_dump(prefix_str, prefix_type, 16, 1, buf, len, true)
- #else /* defined(CONFIG_DYNAMIC_DEBUG) */
- #define wil_print_hex_dump_debug(prefix_str, prefix_type, rowsize,	\
- 				 groupsize, buf, len, ascii)		\
---=20
-1.7.10.280.gaa39
-
+I have used the version of the gpio-lw tree from next-20130117 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__18_Jan_2013_13_29_04_+1100_PTU7PN/uyATHqqCK
+--Signature=_Fri__18_Jan_2013_14_03_46_+1100_Nh1QDhiVvRKpvb/i
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ+LNwAAoJEECxmPOUX5FEZAkP/j+9YSfFdwTCD5SZJFhgnPbt
-89RvqjZSxCEt0Q49eSI3IxjYlWxNLNI+hb0CBI3jf9JAeV2j0fWfg83HLnbQnR+E
-bEHYcPxFq+jR6hbOnVE4+N/ep1Xhztns0vRUwedS/taOsevNvs0YlBQY/Tf7LguZ
-BqFT+L3pZBYV2qatSK3xMhcvi8wqrEUW/VQh5yTNlEZEAZoKm1T0wqW9ArfOB9BO
-PXmXbGm8jtbr1eXVkf9jpDZR55KDseol209ga72KFfslUZagHcaE/E3pO97TMBri
-V0WKcNsfAnNvhcoZGCh9lRL3+SwQcZYfFEJmFeyvjzLfAArVCvDp92cdbCQXrsQj
-Ot3SqE6kn2iuM8OCWFfOf3kW+TqQH5FLs9bBgGrWKPq9EwQlWL954qE6Kyxn/UbV
-m+kro2A1hybiKGqhZsJxN1daGFoxyR87DZcl94ppzZEPGI9+kSc+8h0T76ltWb3m
-V2BuLhzVov42Z9VH48sQFfzJso6+COaswE6wxc21NgQAPI08bgKF42aG2KG4ZnNR
-WJR6TtWH7kB2SdOwz5+JP2EwuR/fJPhfXC2rP/rdP/7Crkt+DYXYkSfBx39iJH5h
-VkP/SsmuqagfB76pdCwcHaIH7IOOYGRwWiqadwCWE39c0mT4zbBFKO15lbTUjDaw
-eHeEtkUUNUbxdUnro2dB
-=VaAA
+iQIcBAEBCAAGBQJQ+LuSAAoJEECxmPOUX5FEtccP/iqqSHmwTbxmG6QLX+8NVawp
+NEARdX/wZ8FaBkvO36Sv1Y6FSNsQYBn4sw5KxI5Rq2JbZP9DTTewsOFGAX3aATdm
+gpvXCr3CWb13+CJ5N0b5nqnLYxtAi6RIrBjMgg3cQa8g7eQEeq9zQvMpy3+fjIrY
+TlcYij2pjUTmMXK0+sQoQxAjtdNpLtn+XnD5ZKEmGSQLgwliD9p1XfjreIgMLOon
+nJWXaNkgGlhcw2FRer1bfeKHAzHxyCictsuSwUwYnn0CeVBsSW+SM/w/2u4giWc0
+d5kd4HR3DDZJy2z6AhDzGV1ixnXp5GZX/bCRO2KZiKCZyMebaob3JVCGTwjZz8Qw
+5N4OTzTMQL5+ueHl6+CJkI13SctLyxi4HIJnr3a8ixzAljhQiMRM/D3ZQS57fprQ
+YexMF4VVIpu7CCZ3BMeEu07rSHdM18fI3vrVWWWAx84RzMsu5Jsp2iCBk/bADebc
+1l6xDvKeWxE5nbwy7LKYuxLOtthIosFmbvRp7nJabe+0wEcNjxHSPP1JGIiNhXr2
+Sy/uQYiD+3noOVjHWllJn5S9EcgYX2ZFmjLlSCxhZbnvXksP7LodaUvBR+m8CJch
+TXwYnL03WIvJG2ebOdSP72fUYWO4xSKjLoXERXzNY3qvE8cp18mwrFObzgo12FpE
+lF8mJMg4HnIQo48q6YKm
+=MeNP
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__18_Jan_2013_13_29_04_+1100_PTU7PN/uyATHqqCK--
+--Signature=_Fri__18_Jan_2013_14_03_46_+1100_Nh1QDhiVvRKpvb/i--
