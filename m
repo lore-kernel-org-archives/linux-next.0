@@ -1,113 +1,98 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for Jan 18 [ BROKEN suspend: jbd2|acpi|pm? ]
-Date: Sat, 19 Jan 2013 00:25:30 +0100
-Message-ID: <7232571.q75lsg8Tuc@vostro.rjw.lan>
-References: <CA+icZUW-mfMtNSY-d-=0WpX=fRBqoNx5jcX3S8x4tvGdvUc+8g@mail.gmail.com> <CA+icZUUTkr2wxu6qMJNxMNsWpJzubwCGFF80h0sc2B+qiATNNA@mail.gmail.com> <CA+icZUVSNm=-LWCTm-AV+rL67V6sG9k0c6sAv8=19BmWBimyxg@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Jan 18 [MODSIGN: KEYS:]
+Date: Sat, 19 Jan 2013 00:27:27 +0100
+Message-ID: <CA+icZUUjVdO9CBirU7j3kJbGGa6mRw2P46piZUpopqvPGzCU_A@mail.gmail.com>
+References: <CA+icZUV+ewSfwdGv+XjzVMF+V5d1t3r6MWGvoBgf08CN=KpBgQ@mail.gmail.com>
+	<CA+icZUXNbhX4a0ZG039O5dWiZHpuVM-mwOSD_4g+f==xWD=4Zw@mail.gmail.com>
+	<5156.1358549663@warthog.procyon.org.uk>
+	<CA+icZUW_-3Bg9PSBoht0mqikVb1wn+21BNFy8Fsm5thZfNunXw@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUVSNm=-LWCTm-AV+rL67V6sG9k0c6sAv8=19BmWBimyxg@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: sedat.dilek@gmail.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Linux PM List <linux-pm@lists.linux-foundation.org>, Linux ACPI <linux-acpi@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/mixed; boundary=0016e68eebaf667daf04d398748b
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qa0-f50.google.com ([209.85.216.50]:55685 "EHLO
+	mail-qa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752646Ab3ARX13 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jan 2013 18:27:29 -0500
+In-Reply-To: <CA+icZUW_-3Bg9PSBoht0mqikVb1wn+21BNFy8Fsm5thZfNunXw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
 
-On Friday, January 18, 2013 11:56:53 PM Sedat Dilek wrote:
-> On Fri, Jan 18, 2013 at 11:35 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> > On Fri, Jan 18, 2013 at 11:20 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> >> On Friday, January 18, 2013 11:11:07 PM Sedat Dilek wrote:
-> >>> On Fri, Jan 18, 2013 at 5:37 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >>> > Hi all,
-> >>> >
-> >>> > Changes since 20130117:
-> >>> >
-> >>> > Undropped tree: samung
-> >>> >
-> >>> > The powerpc tree still had a build failure.
-> >>> >
-> >>> > The driver-core tree gained a build failure for which I applied a merge
-> >>> > fix patch.
-> >>> >
-> >>> > The gpio-lw tree gained a build failure so I used the version from
-> >>> > next-20130117.
-> >>> >
-> >>> > The samsung tree lost the majority of its conflicts but gained more
-> >>> > against the arm-soc and slave-dma tree.
-> >>> >
-> >>> > ----------------------------------------------------------------------------
-> >>> >
-> >>>
-> >>> From my dmesg diff-file:
-> >>>
-> >>> +[  288.730849] PM: Syncing filesystems ... done.
-> >>> +[  294.050498] Freezing user space processes ... (elapsed 0.04 seconds) done.
-> >>> +[  294.097024] Freezing remaining freezable tasks ...
-> >>> +[  314.098849] Freezing of tasks failed after 20.01 seconds (1 tasks
-> >>> refusing to freeze, wq_busy=0):
-> >>> +[  314.098862] jbd2/loop0-8    D ffffffff8180d780     0   297      2 0x00000000
-> >>> +[  314.098865]  ffff880117ec5b68 0000000000000046 ffff880117ec5b08
-> >>> ffffffff81044c29
-> >>> +[  314.098868]  ffff88011829dc80 ffff880117ec5fd8 ffff880117ec5fd8
-> >>> ffff880117ec5fd8
-> >>> +[  314.098871]  ffff880119b34560 ffff88011829dc80 ffff880117ec5b68
-> >>> ffff88011fad4738
-> >>> +[  314.098873] Call Trace:
-> >>> +[  314.098881]  [<ffffffff81044c29>] ? default_spin_lock_flags+0x9/0x10
-> >>> +[  314.098885]  [<ffffffff811c63e0>] ? __wait_on_buffer+0x30/0x30
-> >>> +[  314.098888]  [<ffffffff816b4b59>] schedule+0x29/0x70
-> >>> +[  314.098890]  [<ffffffff816b4c2f>] io_schedule+0x8f/0xd0
-> >>> +[  314.098892]  [<ffffffff811c63ee>] sleep_on_buffer+0xe/0x20
-> >>> +[  314.098896]  [<ffffffff816b342f>] __wait_on_bit+0x5f/0x90
-> >>> +[  314.098898]  [<ffffffff811c5aa1>] ? submit_bh+0x121/0x1e0
-> >>> +[  314.098900]  [<ffffffff811c63e0>] ? __wait_on_buffer+0x30/0x30
-> >>> +[  314.098903]  [<ffffffff816b34dc>] out_of_line_wait_on_bit+0x7c/0x90
-> >>> +[  314.098906]  [<ffffffff8107eb00>] ? autoremove_wake_function+0x40/0x40
-> >>> +[  314.098909]  [<ffffffff811c63de>] __wait_on_buffer+0x2e/0x30
-> >>> +[  314.098913]  [<ffffffff8128a6a1>]
-> >>> jbd2_journal_commit_transaction+0x1791/0x1960
-> >>> +[  314.098917]  [<ffffffff8109269d>] ? sched_clock_cpu+0xbd/0x110
-> >>> +[  314.098920]  [<ffffffff8107eac0>] ? add_wait_queue+0x60/0x60
-> >>> +[  314.098923]  [<ffffffff81069fbf>] ? try_to_del_timer_sync+0x4f/0x70
-> >>> +[  314.098925]  [<ffffffff8128e4e8>] kjournald2+0xb8/0x240
-> >>> +[  314.098927]  [<ffffffff8107eac0>] ? add_wait_queue+0x60/0x60
-> >>> +[  314.098929]  [<ffffffff8128e430>] ? commit_timeout+0x10/0x10
-> >>> +[  314.098931]  [<ffffffff8107ded0>] kthread+0xc0/0xd0
-> >>> +[  314.098933]  [<ffffffff8107de10>] ? flush_kthread_worker+0xb0/0xb0
-> >>> +[  314.098936]  [<ffffffff816be52c>] ret_from_fork+0x7c/0xb0
-> >>> +[  314.098938]  [<ffffffff8107de10>] ? flush_kthread_worker+0xb0/0xb0
-> >>> +[  314.098969]
-> >>> +[  314.098970] Restarting kernel threads ... done.
-> >>> +[  314.099052] Restarting tasks ... done.
-> >>>
-> >>> Please, have a lot at it.
-> >>
-> >> This is a freezer failure while freezing kernel threads, so I don't think it's
-> >> related to ACPI or PM directly.
-> >>
-> >> Does it happen on every suspend?
-> >>
-> >
-> > No, I only did one S/R.
-> >
-> > I have built a 2nd new kernel where I pulled-in latest pm.git#linux-next.
-> > With this kernel two S/Rs were fine - but that says not much.
-> >
-> 
-> After several S/Rs on the "buggy" -1 kernel I know see in my syslogs:
-> 
-> Jan 18 23:50:02 fambox kernel: [  141.853828] Disabling non-boot CPUs ...
-> Jan 18 23:50:02 fambox kernel: [  141.956943] smpboot: CPU 1 is now offline
-> Jan 18 23:50:02 fambox kernel: [  141.957438] NOHZ: local_softirq_pending 02
-> Jan 18 23:50:02 fambox kernel: [  141.957454] NOHZ: local_softirq_pending 02
-> Jan 18 23:50:02 fambox kernel: [  142.060830] smpboot: CPU 2 is now offline
-> Jan 18 23:50:02 fambox kernel: [  142.164639] smpboot: CPU 3 is now offline
+--0016e68eebaf667daf04d398748b
+Content-Type: text/plain; charset=UTF-8
 
-Are you worried about the "local_softirq_pending" messages?
+On Sat, Jan 19, 2013 at 12:04 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> On Fri, Jan 18, 2013 at 11:54 PM, David Howells <dhowells@redhat.com> wrote:
+>> Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>>
+>>> Culprit seems to be...
+>>>
+>>> commit d6941c0c6bd42c725e45240a86c4add92e9bfb3e
+>>> "KEYS: Separate the kernel signature checking keyring from module signing"
+>>
+>> Try updating.  I pushed a new version out today.  This is now at commit ID
+>> c82af351e270e0d95059d09a1975b61494fbbcd7.
+>>
+>
+> Thanks for the information!
+>
+> OK, I see... s/select/depends on...
+>
+>  +config SYSTEM_TRUSTED_KEYRING
+>  +      bool "Provide system-wide ring of trusted keys"
+> -+      select KEYS
+> ++      depends on KEYS
+>
+> That should fix it :-).
+> I set SYSTEM_TRUSTED_KEYRING=y in kernel-config.
+>
+> BAD: http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=patch;h=d6941c0c6bd42c725e45240a86c4add92e9bfb3e
+>
+> GOOD: http://git.kernel.org/?p=linux/kernel/git/dhowells/linux-modsign.git;a=patch;h=c82af351e270e0d95059d09a1975b61494fbbcd7
+>
 
-Rafael
+I tried to revert the bad commit and replace it with the good one, but
+this seems to be more work.
+So, I fixed it up like in the attached patch.
 
+- Sedat -
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+> - Sedat -
+>
+>> David
+
+--0016e68eebaf667daf04d398748b
+Content-Type: application/octet-stream;
+	name="0001-KEYS-Fix-build-error-when-SYSTEM_TRUSTED_KEYRING-n.patch"
+Content-Disposition: attachment;
+	filename="0001-KEYS-Fix-build-error-when-SYSTEM_TRUSTED_KEYRING-n.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_hc3ykiez0
+
+RnJvbSAyZDc0NDU0OGVkMWNjNjhlOWVkM2YwOGFlZjE1MjllOTA0ZWIyODEwIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTZWRhdCBEaWxlayA8c2VkYXQuZGlsZWtAZ21haWwuY29tPgpE
+YXRlOiBTYXQsIDE5IEphbiAyMDEzIDAwOjExOjQwICswMTAwClN1YmplY3Q6IFtQQVRDSF0gS0VZ
+UzogRml4IGJ1aWxkLWVycm9yIHdoZW4gU1lTVEVNX1RSVVNURURfS0VZUklORz1uCgpXaGVuIFNZ
+U1RFTV9UUlVTVEVEX0tFWVJJTkc9biBteSBidWlsZCBmYWlscyBsaWtlIHRoaXM6CgprZXJuZWwv
+bW9kdWxlX3NpZ25pbmcuYzogSW4gZnVuY3Rpb24gJ3JlcXVlc3RfYXN5bW1ldHJpY19rZXknOgpr
+ZXJuZWwvbW9kdWxlX3NpZ25pbmcuYzoxNjE6MzY6IGVycm9yOiAnc3lzdGVtX3RydXN0ZWRfa2V5
+cmluZycgdW5kZWNsYXJlZCAoZmlyc3QgdXNlIGluIHRoaXMgZnVuY3Rpb24pCmtlcm5lbC9tb2R1
+bGVfc2lnbmluZy5jOjE2MTozNjogbm90ZTogZWFjaCB1bmRlY2xhcmVkIGlkZW50aWZpZXIgaXMg
+cmVwb3J0ZWQgb25seSBvbmNlIGZvciBlYWNoIGZ1bmN0aW9uIGl0IGFwcGVhcnMgaW4KCkZpeCB0
+aGlzIGJ5IHJlcGxhY2luZyAic2VsZWN0IiB3aXRoICJkZXBlbmRzIG9uIiBLRVlTIEtjb25maWcu
+CgpGb3IgbW9yZSBkZXRhaWxzIGZvbGxvdyB0aGUgdGhyZWFkIGluIFsxXS4KClsxXSBodHRwOi8v
+bWFyYy5pbmZvLz90PTEzNTg1NDU0NTAwMDAwMSZyPTEmdz0yCgpUZXN0ZWQgYWdhaW5zdCBMaW51
+eC1OZXh0IChuZXh0LTIwMTMwMTE4KS4KClNpZ25lZC1vZmYtYnk6IFNlZGF0IERpbGVrIDxzZWRh
+dC5kaWxla0BnbWFpbC5jb20+Ci0tLQogaW5pdC9LY29uZmlnIHwgMiArLQogMSBmaWxlIGNoYW5n
+ZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvaW5pdC9LY29u
+ZmlnIGIvaW5pdC9LY29uZmlnCmluZGV4IGZiMjk1OWQuLmY3ZTFiMzIgMTAwNjQ0Ci0tLSBhL2lu
+aXQvS2NvbmZpZworKysgYi9pbml0L0tjb25maWcKQEAgLTE2MDcsNyArMTYwNyw3IEBAIGNvbmZp
+ZyBCQVNFX1NNQUxMCiAKIGNvbmZpZyBTWVNURU1fVFJVU1RFRF9LRVlSSU5HCiAJYm9vbCAiUHJv
+dmlkZSBzeXN0ZW0td2lkZSByaW5nIG9mIHRydXN0ZWQga2V5cyIKLQlzZWxlY3QgS0VZUworCWRl
+cGVuZHMgb24gS0VZUwogCWhlbHAKIAkgIFByb3ZpZGUgYSBzeXN0ZW0ga2V5cmluZyB0byB3aGlj
+aCB0cnVzdGVkIGtleXMgY2FuIGJlIGFkZGVkLiAgS2V5cyBpbgogCSAgdGhlIGtleXJpbmcgYXJl
+IGNvbnNpZGVyZWQgdG8gYmUgdHJ1c3RlZC4gIEtleXMgbWF5IGJlIGFkZGVkIGF0IHdpbGwKLS0g
+CjEuOC4xLjEKCg==
+--0016e68eebaf667daf04d398748b--
