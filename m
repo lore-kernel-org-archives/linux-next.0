@@ -1,78 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with the slave-dma
- tree
-Date: Fri, 18 Jan 2013 14:31:10 +1100
-Message-ID: <20130118143110.8555b3708e3b7674c090f93e@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Thu, 17 Jan 2013 20:13:22 -0800
+Message-ID: <20130118041322.GA25106@kroah.com>
+References: <20130118132904.ec0677175f1191290f060776@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__18_Jan_2013_14_31_10_+1100_NjdGiaT5=BIcnIj9"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46361 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753930Ab3ARDbM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jan 2013 22:31:12 -0500
+Received: from mail.kernel.org ([198.145.19.201]:52833 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751869Ab3AREMP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Jan 2013 23:12:15 -0500
+Content-Disposition: inline
+In-Reply-To: <20130118132904.ec0677175f1191290f060776@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, Vinod Koul <vinod.koul@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Kondratiev <qca_vkondrat@qca.qualcomm.com>, Jason Baron <jbaron@redhat.com>, "John W. Linville" <linville@tuxdriver.com>
 
---Signature=_Fri__18_Jan_2013_14_31_10_+1100_NjdGiaT5=BIcnIj9
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jan 18, 2013 at 01:29:04PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> In file included from drivers/net/wireless/ath/wil6210/wil6210.h:24:0,
+>                  from drivers/net/wireless/ath/wil6210/main.c:26:
+> drivers/net/wireless/ath/wil6210/dbg_hexdump.h:21:0: error: "print_hex_dump_bytes" redefined [-Werror]
+> include/linux/printk.h:322:0: note: this is the location of the previous definition
+> 
+> Caused by commit 7a555613eb77 ("dynamic_debug: dynamic hex dump")
+> interacting with commit 2be7d22f0625 ("wireless: add new wil6210 802.11ad
+> 60GHz driver") that was added to Linus' tree in the last few days.
+> 
+> I have applied the following merge fix patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 18 Jan 2013 13:24:32 +1100
+> Subject: [PATCH] wireless: remove conflicting version of print_hex_dump_bytes
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Hi Kukjin,
+Thanks, I've merged 3.9-rc4 into my tree and applied this patch to fix
+the build breakage.
 
-Today's linux-next merge of the samsung tree got a conflict in
-arch/arm/mach-s3c64xx/dma.c between commit 3a95b9fbba89 ("pl080.h: moved
-from arm/include/asm/hardware to include/linux/amba/") from the slave-dma
-tree and commit f2bfd174bdc0 ("ARM: S3C64XX: make regs-sys.h local") from
-the samsung tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-s3c64xx/dma.c
-index a77f521,ec29b35..0000000
---- a/arch/arm/mach-s3c64xx/dma.c
-+++ b/arch/arm/mach-s3c64xx/dma.c
-@@@ -29,8 -28,9 +29,7 @@@
-  #include <mach/map.h>
-  #include <mach/irqs.h>
- =20
-- #include <mach/regs-sys.h>
--=20
- -#include <asm/hardware/pl080.h>
- -
-+ #include "regs-sys.h"
- =20
-  /* dma channel state information */
- =20
-
---Signature=_Fri__18_Jan_2013_14_31_10_+1100_NjdGiaT5=BIcnIj9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQ+MH+AAoJEECxmPOUX5FEyY8QAKFWjrdEqGg7luEK29C7RCU6
-oLmn/uVUBPWRU+S1c1SWBbHdTAACgnBtk3re5hcg87zMVSq5Gv0h8iroIrDzX86d
-OnuKghWBW5Hz4pJT/6NPeQdJIz8Q0ltMRgUN7wdHJmvZEyAyLka4yguDmrjK8vhe
-cW4xSI6ALn2eK3GNeEjRlxcZ3hhnGekoQLafCJ5MXs/4Yq/jqKHNRuQU8ZvG51f7
-KSNEnSxV8srMOtERVtGi2802DMl6235He1rSxZTfJmLWzhR3p1tXe24zuNR+NNK6
-Wf3hLxZ78PqRZrtKTyxZPQwgRKP4mB5CcHOboiz58/ve7/rvQSZM0eXES4W+0/VZ
-/UJsOOis7464u/OmSVIa49QozpoezuyPROewC0CfzqD8IOD03/s+Zi3P+/XYF61/
-zbQzIx897/gWJSTjaIfRlax5pUgbOlfCn7jutiHchaecPvMIz6qL4pNAIwOgm5xp
-j/RP5EPmFc8+1/aPKPbk9qDNU1qUyR4Dd5Z05/cnr7B6bnDvCbdtLLM/kblAVu1Y
-HPsrj8Bo1Zg1N53AR7fUh4jGAKjloRoOFDwY5siNpXtb9QtuvLLrp92iOf4VvOW2
-zFleHJdOFyA+SQokmsd26tlGUMveZCo8fG9oOug4s+bRXvODxSuIDx52eug2fZYV
-ruKP1zR4R/JOpktgrfxK
-=2klg
------END PGP SIGNATURE-----
-
---Signature=_Fri__18_Jan_2013_14_31_10_+1100_NjdGiaT5=BIcnIj9--
+greg k-h
