@@ -1,75 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] drivers/pinctrl: grab default handles from device core
-Date: Fri, 18 Jan 2013 16:05:27 +0100
-Message-ID: <CACRpkdYK9r9XvQ7t+WOpDOi+RnFb9DGJiFNx5VFGkuuJf=VmgA@mail.gmail.com>
-References: <1355343907-11535-1-git-send-email-linus.walleij@stericsson.com>
-	<50EF27B4.60608@wwwdotorg.org>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Jan 18 [MODSIGN: KEYS:]
+Date: Fri, 18 Jan 2013 22:43:03 +0100
+Message-ID: <CA+icZUV+ewSfwdGv+XjzVMF+V5d1t3r6MWGvoBgf08CN=KpBgQ@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f178.google.com ([209.85.223.178]:64804 "EHLO
-	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756253Ab3ARPFa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jan 2013 10:05:30 -0500
-Received: by mail-ie0-f178.google.com with SMTP id c12so6305494ieb.37
-        for <linux-next@vger.kernel.org>; Fri, 18 Jan 2013 07:05:29 -0800 (PST)
-In-Reply-To: <50EF27B4.60608@wwwdotorg.org>
+Received: from mail-qa0-f51.google.com ([209.85.216.51]:41231 "EHLO
+	mail-qa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752646Ab3ARVnF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jan 2013 16:43:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Kevin Hilman <khilman@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <linux@arm.linux.org.uk>, Benoit Cousson <b-cousson@ti.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Felipe Balbi <balbi@ti.com>, Rickard Andersson <rickard.andersson@stericsson.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Mitch Bradley <wmb@firmworks.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
 
-On Thu, Jan 10, 2013 at 9:42 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-
->> +     /* Allocate a pin state container on-the-fly */
->> +     if (!dev->pins) {
->> +             dpi = devm_kzalloc(dev, sizeof(*dpi), GFP_KERNEL);
+On Fri, Jan 18, 2013 at 5:37 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> This is allocated using a devm_ function. If -EPROBE_DEFER is returned
-> below after the assignment to dev->pins or if the driver's own probe()
-> returns -EPROBE_DEFER, this allocation will be freed by the driver core.
-> This can leave dev->pins pointing to something non-NULL, yet invalid.
-
-OK I (think I) fixed it like this:
-
-For the second deferral, set dev->pins to NULL.
-
-I did some other fixes here to explicitly devm_kfree() the container
-if no pinctrl handle was found. No point in keeping it around.
-
->> +     if (!dpi->p) {
->> +             dpi->p = devm_pinctrl_get(dev);
+> Changes since 20130117:
 >
-> That won't succeed for a pinctrl device that has a default state in
-> order to implement hogs. This will then cause the pin controller device
-> to always defer probe and never activate. This will leave HW
-> unconfigured and/or prevent other devices from successfully calling
-> pinctrl_get().
-
-Fixed by your suggested patch, thanks.
-
->> +     /*
->> +      * See if somebody else (such as the device core) has already
->> +      * obtained a handle to the pinctrl for this device. In that case,
->> +      * return another pointer to it.
->> +      */
->>       p = find_pinctrl(dev);
->> -     if (p != NULL)
->> -             return ERR_PTR(-EBUSY);
+> Undropped tree: samung
 >
-> I deliberately returned an error here, because there's no reference
-> counting on the struct pinctrl objects. If a driver calls pinctrl_get(),
-> with the new code below, it will retrieve the same struct. If it later
-> calls pinctrl_put(), the put will immediately free the structure. This
-> will invalidate the pointers that reference it in struct device's pins
-> field.
+> The powerpc tree still had a build failure.
 >
-> This issue will probably trigger on Tegra, since we at least have a
-> pinctrl-based I2C mux that calls pinctrl_get().
+> The driver-core tree gained a build failure for which I applied a merge
+> fix patch.
+>
+> The gpio-lw tree gained a build failure so I used the version from
+> next-20130117.
+>
+> The samsung tree lost the majority of its conflicts but gained more
+> against the arm-soc and slave-dma tree.
+>
+> ----------------------------------------------------------------------------
+>
 
-OK I just introduced a reference counter using <linux/kref.h>.
+I pulled Linux v3.8-rc4 (one commit) into next-20130118.
 
-I've retested on U300 and U8500.
+When CONFIG_SYSTEM_TRUSTED_KEYRING=n I see these error-messages on AMD64:
 
-Yours,
-Linus Walleij
+  CC      security/keys/keyring.o
+  CC      kernel/module_signing.o
+  CC [M]  arch/x86/kvm/i8259.o
+kernel/module_signing.c: In function 'request_asymmetric_key':
+kernel/module_signing.c:161:36: error: 'system_trusted_keyring'
+undeclared (first use in this function)
+kernel/module_signing.c:161:36: note: each undeclared identifier is
+reported only once for each function it appears in
+make[3]: *** [kernel/module_signing.o] Error 1
+make[2]: *** [kernel] Error 2
+make[2]: *** Waiting for unfinished jobs....
+
+- Sedat -
