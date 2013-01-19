@@ -1,25 +1,40 @@
-From: David Howells <dhowells@redhat.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
 Subject: Re: [PATCH next-20130118 1/2] KEYS: Fix build-error when SYSTEM_TRUSTED_KEYRING=n
-Date: Sat, 19 Jan 2013 01:07:45 +0000
-Message-ID: <8514.1358557665@warthog.procyon.org.uk>
+Date: Sat, 19 Jan 2013 02:13:30 +0100
+Message-ID: <CA+icZUWhw5TZuXgqX5=8EviKMto2SKGqHzL2Ac1CG-v-p_2kDw@mail.gmail.com>
 References: <1358556871-6651-1-git-send-email-sedat.dilek@gmail.com>
+	<8514.1358557665@warthog.procyon.org.uk>
+Reply-To: sedat.dilek@gmail.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:37630 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753850Ab3ASBHz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Jan 2013 20:07:55 -0500
-In-Reply-To: <1358556871-6651-1-git-send-email-sedat.dilek@gmail.com>
+Received: from mail-qc0-f178.google.com ([209.85.216.178]:60405 "EHLO
+	mail-qc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752459Ab3ASBNb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jan 2013 20:13:31 -0500
+In-Reply-To: <8514.1358557665@warthog.procyon.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: dhowells@redhat.com, Rusty Russell <rusty@rustcorp.com.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Howells <dhowells@redhat.com>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Sedat Dilek <sedat.dilek@gmail.com> wrote:
+On Sat, Jan 19, 2013 at 2:07 AM, David Howells <dhowells@redhat.com> wrote:
+> Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>
+>> -     select KEYS
+>> +     depends on KEYS
+>
+> This change was pushed upstream a few hours ago.  It may not have made it into
+> linux-next yet.
+>
 
-> -	select KEYS
-> +	depends on KEYS
+I know, but this patch is 1/2.
+OK, I could have done one single patch, but anyway :-).
+The series is for people testing Linux-Next (see my label in the
+subject-line) and trapping into the pitfall.
+Patches are cheap...
 
-This change was pushed upstream a few hours ago.  It may not have made it into
-linux-next yet.
+- Sedat -
 
-David
+
+> David
