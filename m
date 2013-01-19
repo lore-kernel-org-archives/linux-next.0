@@ -1,81 +1,104 @@
 From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: [next-20130118] Analyzing a call-trace reproducible with
- pm_test/freezer [ X86|RCU|TTY|EXT4FS|JBD2|PM related? ]
-Date: Sun, 20 Jan 2013 00:06:16 +0100
-Message-ID: <CA+icZUUY8tJEC-NgENnZHXzoSOTJ6BFqe2NeqPM_Pdh7Tk2W4w@mail.gmail.com>
-References: <CA+icZUWKCbaL=oAwBk0vcPtLrGmvsqPdpXdYAqPZVKzA9Y_iDw@mail.gmail.com>
-	<50FB2197.7010306@ilyx.ru>
-	<CA+icZUU-4WXXMTCjRWP6H7+JhytBSWuA55-JFyu3yowcT6Q4xw@mail.gmail.com>
-	<50FB249D.4050906@ilyx.ru>
-	<CA+icZUVqR9FCk4PcoXJJwa+zEkU3rf6cDwvYKkocfJpVhGo7xQ@mail.gmail.com>
+Subject: Re: jbd2: don't wake kjournald unnecessarily
+Date: Sun, 20 Jan 2013 00:44:31 +0100
+Message-ID: <CA+icZUWOvk5i+XY22xdZYuxu=Vy3fG2QxJStEgNFQVS4u55y-w@mail.gmail.com>
 Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=20cf3068447d6b134204d3ac46a7
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUVqR9FCk4PcoXJJwa+zEkU3rf6cDwvYKkocfJpVhGo7xQ@mail.gmail.com>
-Sender: linux-serial-owner@vger.kernel.org
-To: Ilya Zykov <ilya@ilyx.ru>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux PM List <linux-pm@lists.linux-foundation.org>, linux-serial@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, x86@kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Theodore Ts'o <tytso@mit.edu>, Thomas Gleixner <tglx@linutronix.de>, Paul McKenney <paul.mckenney@linaro.org>, Paul McKenney <paulmck@linux.vnet.ibm.com>, Jan Kara <jack@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/mixed; boundary=047d7b6777f239b54204d3accf13
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qa0-f41.google.com ([209.85.216.41]:47712 "EHLO
+	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751389Ab3ASXoc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 19 Jan 2013 18:44:32 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Ext4 Developers List <linux-ext4@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
---20cf3068447d6b134204d3ac46a7
+--047d7b6777f239b54204d3accf13
 Content-Type: text/plain; charset=UTF-8
 
-On Sat, Jan 19, 2013 at 11:59 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Sat, Jan 19, 2013 at 11:56 PM, Ilya Zykov <ilya@ilyx.ru> wrote:
->> On 20.01.2013 2:51, Sedat Dilek wrote:
->>> On Sat, Jan 19, 2013 at 11:43 PM, Ilya Zykov <ilya@ilyx.ru> wrote:
->>>> Hello!
->>>> I don't expert, but
->>>> maybe it can help.
->>>>
->>>> I test with:
->>>>   while echo mem > /sys/power/state; do sleep 2; done
->>>> in one X-terminal, in other I trying playing with keyboard.
->>>> (Without playing all right I use ext3.)
->>>
->>> Can you test with the patches listed in [1] (including two TTY patches
->>> from you!)?
->>> My base is Linux-Next (next-20130118).
->>> FYI: My Ubuntu/precise is EXT4FS-formatted.
->>>
->> Ok.
->> but not now I have 3.00 night.
->> I already use this in my 3.8.0-rc3-next-20130118-pm+.
->>  tty: Correct tty buffer flush.
->>
->
-> The TTY patches are not enough, you need in addition the JBD2 fix [1].
->
+Hi,
 
-Attached is a testcase script which helped here to hit the issue!
+I and some others hit a similiar problem in Linux-Next
+(next-20130118), please see [1] and [2].
 
+[3] has a interim analyze of my problems.
+
+After suspecting the problem was caused by TTY-NEXT, it turned out to
+be a JBD2 problem finally.
+The freezer/pm_test was helpful to hit the issue (Thanks Rafael for the hint!).
+
+So, the issue has two faces: TTY and JBD2.
+[4] gives a list and URLs of the patches I had to apply to have a
+clean system again.
+
+After applying the two TTY patches (without Eric's JBD2-fix!) the
+call-trace after freezer/pm_test looked like this;
+
+[  433.527986] PM: Syncing filesystems ... done.
+[  433.843761] PM: Preparing system for mem sleep
+[  436.306002] Freezing user space processes ...
+[  456.304956] Freezing of tasks failed after 20.01 seconds (1 tasks
+refusing to freeze, wq_busy=0):
+[  456.305060] Cache I/O       D ffffffff8180d780     0  2132      1 0x00000004
+[  456.305065]  ffff88007b9dfe18 0000000000000046 ffff88007b9dfdc8
+0000000300000001
+[  456.305069]  ffff880097e21720 ffff88007b9dffd8 ffff88007b9dffd8
+ffff88007b9dffd8
+[  456.305072]  ffff880119b32e40 ffff880097e21720 ffff88007b9dfe28
+ffff880118077800
+[  456.305076] Call Trace:
+[  456.305085]  [<ffffffff816b7469>] schedule+0x29/0x70
+[  456.305089]  [<ffffffff8129067d>] jbd2_log_wait_commit+0xcd/0x1a0
+[  456.305094]  [<ffffffff8107eac0>] ? add_wait_queue+0x60/0x60
+[  456.305098]  [<ffffffff812307a5>] ext4_sync_file+0x205/0x380
+[  456.305103]  [<ffffffff811c43ad>] do_fsync+0x5d/0x90
+[  456.305108]  [<ffffffff8119442b>] ? sys_write+0x6b/0xa0
+[  456.305111]  [<ffffffff811c4790>] sys_fsync+0x10/0x20
+[  456.305114]  [<ffffffff816c0edd>] system_call_fastpath+0x1a/0x1f
+[  456.305122]
+[  456.305124] Restarting tasks ... done.
+[  456.315056] video LNXVIDEO:00: Restoring backlight state
+
+After applying Eric's patch [5], I could not hit the call-trace again.
+NOTE: The patch is from December 2012 and is not shipped in latest Linux-Next.
+
+The attached testcase script was helpful to force the call-trace.
+I have run 50 loops of it w/o an issue!
+
+Feel free to add a Reported-by/Tested-by.
+( The issue kept me busy for the last days. )
+
+Regards,
 - Sedat -
 
-> - Sedat -
->
-> [1] http://patchwork.ozlabs.org/patch/207237/
->
->>
+[1] http://marc.info/?t=135283664600002&r=1&w=2
+[2] http://marc.info/?t=135862023700004&r=1&w=2
+[3] http://marc.info/?l=linux-kernel&m=135862010419101&w=2
+[4] http://marc.info/?l=linux-next&m=135863550923093&w=2
+[5] http://patchwork.ozlabs.org/patch/207237/
 
---20cf3068447d6b134204d3ac46a7
-Content-Type: application/x-sh; name="run_pm-test.sh"
-Content-Disposition: attachment; filename="run_pm-test.sh"
+--047d7b6777f239b54204d3accf13
+Content-Type: application/x-sh; name="run_pm-test_v2.sh"
+Content-Disposition: attachment; filename="run_pm-test_v2.sh"
 Content-Transfer-Encoding: base64
-X-Attachment-Id: f_hc5d8kgf0
+X-Attachment-Id: f_hc5e8oim0
 
 IyEvYmluL2Jhc2gKCiMgSEVMUAojIFsxXSBodHRwOi8vZ2l0Lmtlcm5lbC5vcmcvP3A9bGludXgv
 a2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQ7YT1ibG9iO2Y9RG9jdW1lbnRhdGlvbi9wb3dl
 ci9iYXNpYy1wbS1kZWJ1Z2dpbmcudHh0CiMgWzJdIGh0dHA6Ly9naXQua2VybmVsLm9yZy8/cD1s
 aW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdDthPWJsb2I7Zj1Eb2N1bWVudGF0aW9u
-L3Bvd2VyL2ZyZWV6aW5nLW9mLXRhc2tzLnR4dAoKZXhwb3J0IExBTkc9QwpleHBvcnQgTENfQUxM
-PUMKCiMgRGVmYXVsdCB2YWx1ZSBvZiBodW5nX3Rhc2tfdGltZW91dF9zZWNzIGlzIDEyMCBbc2Vj
-c10KU0VDUz0iMCIKCiMgUG9zc2libGUgdHlwZXM6IG5vbmUgY29yZSBwcm9jZXNzb3JzIHBsYXRm
-b3JtIGRldmljZXMgZnJlZXplcgpQTV9URVNUX1RZUEU9ImZyZWV6ZXIiCgojIENvdW50ZXIgYW5k
-IGxvb3BzCkNPVU5URVI9IjAiCkxPT1BTPSIxMCIKCmVjaG8gIiRTRUNTIiA+IC9wcm9jL3N5cy9r
-ZXJuZWwvaHVuZ190YXNrX3RpbWVvdXRfc2VjcwoKZWNobyAiJFBNX1RFU1RfVFlQRSIgPiAvc3lz
-L3Bvd2VyL3BtX3Rlc3QKCndoaWxlIFsgJENPVU5URVIgLWx0ICRMT09QUyBdOyBkbwogICAgZWNo
-byBbIHBtX3Rlc3QvZnJlZXplcjogUnVuICRDT1VOVEVSIF0KICAgIGVjaG8gbWVtID4gL3N5cy9w
-b3dlci9zdGF0ZSAmJiBzbGVlcCAxCiAgICBlY2hvIFsgcG1fdGVzdC9mcmVlemVyOiBPSyAkQ09V
-TlRFUiBdCiAgICBsZXQgQ09VTlRFUj1DT1VOVEVSKzEKZG9uZQo=
---20cf3068447d6b134204d3ac46a7--
+L3Bvd2VyL2ZyZWV6aW5nLW9mLXRhc2tzLnR4dAoKIyBQUkVSRVE6IEtlcm5lbCBERUJVRyBvcHRp
+b25zCiMgQ09ORklHX1BNX0RFQlVHPXkKIyBDT05GSUdfRVhUNF9ERUJVRz15CiMgQ09ORklHX0pC
+RDJfREVCVUc9eQoKZXhwb3J0IExBTkc9QwpleHBvcnQgTENfQUxMPUMKCiMgRGVmYXVsdCB2YWx1
+ZSBvZiBodW5nX3Rhc2tfdGltZW91dF9zZWNzIGlzIDEyMCBbc2Vjc10KU0VDUz0iMCIKCiMgUG9z
+c2libGUgdHlwZXM6IG5vbmUgY29yZSBwcm9jZXNzb3JzIHBsYXRmb3JtIGRldmljZXMgZnJlZXpl
+cgpQTV9URVNUX1RZUEU9ImZyZWV6ZXIiCgojIENvdW50ZXIgYW5kIGxvb3BzCkNPVU5URVI9IjAi
+CkxPT1BTPSIxMCIKCmVjaG8gIiRTRUNTIiA+IC9wcm9jL3N5cy9rZXJuZWwvaHVuZ190YXNrX3Rp
+bWVvdXRfc2VjcwoKZWNobyAiJFBNX1RFU1RfVFlQRSIgPiAvc3lzL3Bvd2VyL3BtX3Rlc3QKCndo
+aWxlIFsgJENPVU5URVIgLWx0ICRMT09QUyBdOyBkbwogICAgZWNobyBbIHBtX3Rlc3QvZnJlZXpl
+cjogUnVuICRDT1VOVEVSIF0KICAgIGVjaG8gbWVtID4gL3N5cy9wb3dlci9zdGF0ZSAmJiBzbGVl
+cCAxCiAgICBlY2hvIFsgcG1fdGVzdC9mcmVlemVyOiBPSyAkQ09VTlRFUiBdCiAgICBsZXQgQ09V
+TlRFUj1DT1VOVEVSKzEKZG9uZQo=
+--047d7b6777f239b54204d3accf13--
