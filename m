@@ -1,110 +1,45 @@
-From: Tang Chen <tangchen@cn.fujitsu.com>
-Subject: [PATCH v2 1/1] page_alloc: Bootmem limit with movablecore_map
-Date: Mon, 21 Jan 2013 15:25:33 +0800
-Message-ID: <1358753133-23355-1-git-send-email-tangchen@cn.fujitsu.com>
-References: <20130121170804.8b6eec010e00a6cbbcbad66f@canb.auug.org.au>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130121170804.8b6eec010e00a6cbbcbad66f@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au, tangchen@cn.fujitsu.com, akpm@linux-foundation.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: "Lan, Tianyu" <tianyu.lan@intel.com>
+Subject: RE: linux-next: build failure after merge of the usb tree
+Date: Mon, 21 Jan 2013 08:37:54 +0000
+Message-ID: <4CFBC02C07DA244CA19D6815A05BE6EE1B9746@SHSMSX101.ccr.corp.intel.com>
+References: <20130121152132.bbcc78f7d2b20741734d0fd2@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga03.intel.com ([143.182.124.21]:24729 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751509Ab3AUIh6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Jan 2013 03:37:58 -0500
+In-Reply-To: <20130121152132.bbcc78f7d2b20741734d0fd2@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-This patch make sure bootmem will not allocate memory from areas that
-may be ZONE_MOVABLE. The map info is from movablecore_map boot option.
-
-Signed-off-by: Tang Chen <tangchen@cn.fujitsu.com>
-Reviewed-by: Wen Congyang <wency@cn.fujitsu.com>
-Reviewed-by: Lai Jiangshan <laijs@cn.fujitsu.com>
-Tested-by: Lin Feng <linfeng@cn.fujitsu.com>
----
- include/linux/memblock.h |    2 +
- mm/memblock.c            |   50 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+), 0 deletions(-)
-
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index d452ee1..ac52bbc 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -60,6 +60,8 @@ int memblock_reserve(phys_addr_t base, phys_addr_t size);
- void memblock_trim_memory(phys_addr_t align);
- 
- #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
-+extern struct movablecore_map movablecore_map;
-+
- void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
- 			  unsigned long *out_end_pfn, int *out_nid);
- 
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 88adc8a..0218231 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -92,9 +92,58 @@ static long __init_memblock memblock_overlaps_region(struct memblock_type *type,
-  *
-  * Find @size free area aligned to @align in the specified range and node.
-  *
-+ * If we have CONFIG_HAVE_MEMBLOCK_NODE_MAP defined, we need to check if the
-+ * memory we found if not in hotpluggable ranges.
-+ *
-  * RETURNS:
-  * Found address on success, %0 on failure.
-  */
-+#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
-+phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t start,
-+					phys_addr_t end, phys_addr_t size,
-+					phys_addr_t align, int nid)
-+{
-+	phys_addr_t this_start, this_end, cand;
-+	u64 i;
-+	int curr = movablecore_map.nr_map - 1;
-+
-+	/* pump up @end */
-+	if (end == MEMBLOCK_ALLOC_ACCESSIBLE)
-+		end = memblock.current_limit;
-+
-+	/* avoid allocating the first page */
-+	start = max_t(phys_addr_t, start, PAGE_SIZE);
-+	end = max(start, end);
-+
-+	for_each_free_mem_range_reverse(i, nid, &this_start, &this_end, NULL) {
-+		this_start = clamp(this_start, start, end);
-+		this_end = clamp(this_end, start, end);
-+
-+restart:
-+		if (this_end <= this_start || this_end < size)
-+			continue;
-+
-+		for (; curr >= 0; curr--) {
-+			if ((movablecore_map.map[curr].start_pfn << PAGE_SHIFT)
-+			    < this_end)
-+				break;
-+		}
-+
-+		cand = round_down(this_end - size, align);
-+		if (curr >= 0 &&
-+		    cand < movablecore_map.map[curr].end_pfn << PAGE_SHIFT) {
-+			this_end = movablecore_map.map[curr].start_pfn
-+				   << PAGE_SHIFT;
-+			goto restart;
-+		}
-+
-+		if (cand >= this_start)
-+			return cand;
-+	}
-+
-+	return 0;
-+}
-+#else /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
- phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t start,
- 					phys_addr_t end, phys_addr_t size,
- 					phys_addr_t align, int nid)
-@@ -123,6 +172,7 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t start,
- 	}
- 	return 0;
- }
-+#endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
- 
- /**
-  * memblock_find_in_range - find free area in given range
--- 
-1.7.1
+SGkgU3RlcGhlbqO6DQoJU29ycnkgZm9yIHRoaXMuIEkgaGF2ZSBwcm9kdWNlZCBhIGZpeCBwYXRj
+aCB3aGljaCBoYXMgYmVlbiBtZXJnZWQgYnkgdXNiLW5leHQgdHJlZS4NCmh0dHA6Ly9naXQua2Vy
+bmVsLm9yZy8/cD1saW51eC9rZXJuZWwvZ2l0L2dyZWdraC91c2IuZ2l0O2E9Y29tbWl0O2g9OWY3
+MzQ0ZmJhZjE5MWRlNjNkZjMxNWM3ZTBmYTRjOTc2ZTJlYTQxOQ0KDQpCZXN0IFJlZ2FyZHMgDQpU
+aWFueXUgTGFuIA0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogU3RlcGhlbiBS
+b3Rod2VsbCBbbWFpbHRvOnNmckBjYW5iLmF1dWcub3JnLmF1XSANClNlbnQ6IE1vbmRheSwgSmFu
+dWFyeSAyMSwgMjAxMyAxMjoyMiBQTQ0KVG86IEdyZWcgS0gNCkNjOiBsaW51eC1uZXh0QHZnZXIu
+a2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgTGFuLCBUaWFueXUNClN1
+YmplY3Q6IGxpbnV4LW5leHQ6IGJ1aWxkIGZhaWx1cmUgYWZ0ZXIgbWVyZ2Ugb2YgdGhlIHVzYiB0
+cmVlDQoNCkhpIEdyZWcsDQoNCkFmdGVyIG1lcmdpbmcgdGhlIHVzYiB0cmVlLCB0b2RheSdzIGxp
+bnV4LW5leHQgYnVpbGQgKHBvd2VycGMNCnBwYzY0X2RlZmNvbmZpZykgZmFpbGVkIGxpa2UgdGhp
+czoNCg0KZHJpdmVycy91c2IvY29yZS9wb3J0LmM6IEluIGZ1bmN0aW9uICd1c2JfcG9ydF9kZXZp
+Y2VfcmVsZWFzZSc6DQpkcml2ZXJzL3VzYi9jb3JlL3BvcnQuYzoyNToyOiBlcnJvcjogaW1wbGlj
+aXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ2tmcmVlJyBbLVdlcnJvcj1pbXBsaWNpdC1mdW5j
+dGlvbi1kZWNsYXJhdGlvbl0NCmRyaXZlcnMvdXNiL2NvcmUvcG9ydC5jOiBJbiBmdW5jdGlvbiAn
+dXNiX2h1Yl9jcmVhdGVfcG9ydF9kZXZpY2UnOg0KZHJpdmVycy91c2IvY29yZS9wb3J0LmM6Mzg6
+MjogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdremFsbG9jJyBbLVdl
+cnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlvbl0NCmRyaXZlcnMvdXNiL2NvcmUvcG9y
+dC5jOjM4OjExOiB3YXJuaW5nOiBhc3NpZ25tZW50IG1ha2VzIHBvaW50ZXIgZnJvbSBpbnRlZ2Vy
+IHdpdGhvdXQgYSBjYXN0IFtlbmFibGVkIGJ5IGRlZmF1bHRdDQoNCkNhdXNlZCBieSBjb21taXQg
+NmUzMGQ3Y2JhOTkyICgidXNiOiBBZGQgZHJpdmVyL3VzYi9jb3JlLyhwb3J0LmMsaHViLmgpIGZp
+bGVzIikuICBTZWUgUnVsZSAxIGluIERvY3VtZW50YXRpb24vU3VibWl0Q2hlY2tsaXN0Lg0KDQpJ
+IGhhdmUgdXNlZCB0aGUgdXNiIHRyZWUgZnJvbSBuZXh0LTIwMTMwMTE4IGZvciB0b2RheS4NCi0t
+DQpDaGVlcnMsDQpTdGVwaGVuIFJvdGh3ZWxsICAgICAgICAgICAgICAgICAgICBzZnJAY2FuYi5h
+dXVnLm9yZy5hdQ0K
