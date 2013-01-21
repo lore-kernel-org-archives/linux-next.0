@@ -1,55 +1,60 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the security tree with Linus' tree
-Date: Sun, 20 Jan 2013 22:10:23 -0500
-Message-ID: <1358737823.2406.114.camel@falcor1.watson.ibm.com>
-References: <20130121131230.9f79cf5dcd8a8ac069594111@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with Linus' tree
+Date: Mon, 21 Jan 2013 14:46:04 +1100
+Message-ID: <20130121144604.3c2f94e93ce6252aa43d3d9e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__21_Jan_2013_14_46_04_+1100_Sr3YSJBcdFakWMeY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e36.co.us.ibm.com ([32.97.110.154]:43934 "EHLO
-	e36.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752638Ab3AUDK3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Jan 2013 22:10:29 -0500
-Received: from /spool/local
-	by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-	Sun, 20 Jan 2013 20:10:29 -0700
-In-Reply-To: <20130121131230.9f79cf5dcd8a8ac069594111@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48731 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752642Ab3AUDqP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Jan 2013 22:46:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Kasatkin <dmitry.kasatkin@intel.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Tony Prisk <linux@prisktech.co.nz>
 
-On Mon, 2013-01-21 at 13:12 +1100, Stephen Rothwell wrote:
-> Hi James,
-> 
-> Today's linux-next merge of the security tree got a conflict in
-> security/integrity/ima/ima_main.c between commit a7f2a366f623 ("ima:
-> fallback to MODULE_SIG_ENFORCE for existing kernel module syscall") from
-> Linus' tree and commit 750943a30714 ("ima: remove enforce checking
-> duplication") from the security tree.
-> 
-> I think I fixed it up (see below).
+--Signature=_Mon__21_Jan_2013_14_46_04_+1100_Sr3YSJBcdFakWMeY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry Stephen, the merged result should look like what's contained in
-linux-integrity/next-upstreamed-patches:
+Hi Greg,
 
-int ima_module_check(struct file *file)
-{
-        if (!file) {
-                if ((ima_appraise & IMA_APPRAISE_MODULES) &&
-                    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-#ifndef CONFIG_MODULE_SIG_FORCE
-                        return -EACCES; /* INTEGRITY_UNKNOWN */
-#endif
-                }
-                return 0;
-        }
-        return process_measurement(file, file->f_dentry->d_name.name,
-                                   MAY_EXEC, MODULE_CHECK);
-}
+Today's linux-next merge of the tty tree got a conflict in
+drivers/tty/serial/vt8500_serial.c between commit a6dd114e16cb ("tty:
+serial: vt8500: fix return value check in vt8500_serial_probe()") from
+Linus' tree and commit 12faa35ae5cb ("serial: vt8500: UART uses gated
+clock rather than 24Mhz reference") from the tty tree.
 
-thanks,
+I fixed it up (I just used the tty tree version - which included the
+former fix) and can carry the fix as necessary (no action is required).
 
-Mimi
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__21_Jan_2013_14_46_04_+1100_Sr3YSJBcdFakWMeY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ/Ln8AAoJEECxmPOUX5FE6sMP/0tiEJPx0XAAE1rfizLbYl5k
+5rZVHMvunt6LK3kwnaHpY2PSaje9Pq2zvOtBHRTnGU3IQvbw1Xg7FF8GsLYYHj8t
+LuFz1mVhRTL9RgMcu7E9qV5yB1GyudlIAbBaWkE7YjquTSqELrEWS2Q7fWNvPvkd
+RLyy8S4ot3umAZF4VaQcPn1CMdaZ2Q9lZrMTRKqsYhK8av6HRjQahyMsTl6AeJVt
+OY8lDP5PPjjop7IgNyUHhW7jdA2zDzMc0lpT+3o6h42+cQhy0F1LD/xL3tZC8thV
+m77Dqnv3BjxJurmFS36+EwzkZ78l95AiT5Z3E4wHZUWcpWjG8UHnSBXIfXyHWfY1
+pi5sWhXrwPSNtj/ImdVPxu7pGLfN3ler2rfmxp5FodPvWqQbUXSGG6jRyGuYIadU
+gUegJVGvAzXBhBX1VMd6z8Gd0uu02IGBPlQHv70EaYVfvli2dtn63/Ws5jeYFfCy
+MUbIky/jCuVm72koO+vQK6qB4YW/1D62z1CBnwjNkUq2QTatG5YRKPZL4HMeYu+r
+E4rAdbDeV0XIXyiUwFg1ac1R7BlihjW1XfybHDY2HuoCZU6zck/bpIFitbXoEarI
+dGh4LxqqAQ2henoYB877CGMaCaSZiRTrMO16E0XqkR2O36WMncsNDkdYEZunTAPb
+hHvsUK3hOgq69/PA+sA7
+=1p53
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__21_Jan_2013_14_46_04_+1100_Sr3YSJBcdFakWMeY--
