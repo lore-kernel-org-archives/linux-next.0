@@ -1,61 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with Linus' tree
-Date: Mon, 21 Jan 2013 15:07:11 +1100
-Message-ID: <20130121150711.c4673d930c2f00253c2e471a@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the usb tree
+Date: Mon, 21 Jan 2013 15:21:32 +1100
+Message-ID: <20130121152132.bbcc78f7d2b20741734d0fd2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_Jan_2013_15_07_11_+1100_uJZhOeWf8EiiHT.G"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56682 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752617Ab3AUEHU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Jan 2013 23:07:20 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Mon__21_Jan_2013_15_21_32_+1100_RuVv=NQFAQEoCE4k"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfgang Frisch <wfpub@roembden.net>, Johan Hovold <jhovold@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lan Tianyu <tianyu.lan@intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__21_Jan_2013_15_07_11_+1100_uJZhOeWf8EiiHT.G
+--Signature=_Mon__21_Jan_2013_15_21_32_+1100_RuVv=NQFAQEoCE4k
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/serial/io_ti.c between commit 1ee0a224bc9a ("USB: io_ti: Fix
-NULL dereference in chase_port()") from Linus' tree and commit
-f40d781554ef ("USB: io_ti: kill custom closing_wait implementation") from
-the usb tree.
+After merging the usb tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (the latter removed the code fixed by the former, so I just
-used thet) and can carry the fix as necessary (no action is required).
+drivers/usb/core/port.c: In function 'usb_port_device_release':
+drivers/usb/core/port.c:25:2: error: implicit declaration of function 'kfre=
+e' [-Werror=3Dimplicit-function-declaration]
+drivers/usb/core/port.c: In function 'usb_hub_create_port_device':
+drivers/usb/core/port.c:38:2: error: implicit declaration of function 'kzal=
+loc' [-Werror=3Dimplicit-function-declaration]
+drivers/usb/core/port.c:38:11: warning: assignment makes pointer from integ=
+er without a cast [enabled by default]
 
+Caused by commit 6e30d7cba992 ("usb: Add driver/usb/core/(port.c,hub.h)
+files").  See Rule 1 in Documentation/SubmitChecklist.
+
+I have used the usb tree from next-20130118 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__21_Jan_2013_15_07_11_+1100_uJZhOeWf8EiiHT.G
+--Signature=_Mon__21_Jan_2013_15_21_32_+1100_RuVv=NQFAQEoCE4k
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ/L7vAAoJEECxmPOUX5FE64wP/RVnQE2QY71bzVWCm9RAfzp0
-YUipy9+7NyRP43mdn+PrVwcVx3pfFxjseFxuyASQ4qBo52WxD6bMGE8ovzgVSvuF
-Zwx1+bTF2RF6InmMEcBPzYnMdj/fRk18BMp+9ye8hFL9LK2dTwFvHbdbGpaCfRfJ
-mUYzJQ4xDEcAHVIfQGW4g3P5wpISRsgdfMUkm1RG4266gaEJu9kPbZijFN3UR0RM
-up8JAwLbxmEWqepgiFTdfqZXG1iWQ25pXshISTSsk2rYQCVOgVfuCIBV1q4MqknL
-QfDjWyAQ7jAkPS7HVd7L5bxgw35/wGFPYA/uRJCiTQ1/XAs9RxOb60dUUHB+Cpub
-soumAEADJIIyik2ULO445cjG7waDsxXqbh2cKZRcp5QtuMycvLVEPCEFdEIf4YfB
-7Gs+myuoU68y1iG3YKCeuy1hQItdPrhA7wY/tUGef41JqOjADiS0BQx5VUsA5wMH
-cUr3CKkioYsGqSzsW6oHHePKAzEmRwe/CBZ4DtX2d+etGLAGG9CnKGnegTCSyEJh
-0icxx/KoahvRUkRjEk+QRPQiS0mMKhisaqx0BQ9OoEVaOQWBmsBkLNKLzBSF5Lm8
-1UeUxv/98U4ermpsr5+Z+H8SGcto+b4krta9kWJel4JatleSpuG3S1ld4WjYJ23j
-go5RnH/gSY9tRm7c1xKc
-=fkN6
+iQIcBAEBCAAGBQJQ/MJMAAoJEECxmPOUX5FEbiQP/04uWju9yOnFQFQdruUQIZdt
+8mjsuBCoj6v7Yv243P35cQzSLzQ1EM8mokE8LT6Zjhsc7zWNt8CjOD/kfBTMBHWv
+pjx5Ililk73EoU4XaqbyvEpqLr2UGMHHBBfTT5wMfkNEYdFgXr2faErz2o3cr/hA
+Ks0AU2jgEPXiU6469Wq2Ukz5glAwLtuJEwWdQHwXyziTeWhF+bu8PlnGqU7WqfL3
+CGNBswkTwXvdZIxOZ0oywD/zvCp52oL34veFptJWrINz6p5NbPMBaWGM4EVcdEno
+2AdnAAwWLYqaxqsUEzA7+n225+SyklWz8+TD+0p6/2wfqB8DmVwwGmUbaR/d4QkS
+jWtdrAanyrls7T8odO+tjihZoqbzPGr3Rd5G7zGjFu7l4qoqZlc/MZVi6b9J1Zmx
+5FG6fPkK0VU7ROmcZRilm9Qb4/P4z+9CmveoH0yup6QwphtFesyN3CYBbSqsCf3p
+/MxKW0fhhOo4FrL0hMRBk2wN00UtPMRdF8KKrzRRXJBxa/L7wse7ugy6Y9NttlyQ
+JR5dxTazwy1CUASEUlTeUlJrwS4ETI6FODhxt5TNhZBYTaxmUBEIni2VoFWGHSc9
+49pyeZkzW6nf5CzYvs5BpYnpuslOduPdkBLMnrB4RdqGc/PiZH09fDh2OIKxEBHU
+m2O0vTx36mLdcsMqDH2g
+=y8Dh
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__21_Jan_2013_15_07_11_+1100_uJZhOeWf8EiiHT.G--
+--Signature=_Mon__21_Jan_2013_15_21_32_+1100_RuVv=NQFAQEoCE4k--
