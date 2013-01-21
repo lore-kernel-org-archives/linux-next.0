@@ -1,74 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with the gpio-lw tree
-Date: Mon, 21 Jan 2013 15:50:04 +1100
-Message-ID: <20130121155004.45a5fc0b25b26ece0e954834@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the drm tree
+Date: Mon, 21 Jan 2013 16:43:36 +1100
+Message-ID: <20130121164336.9edf1179a8e5c91baea8571a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_Jan_2013_15_50_04_+1100_hXB9YX111xwwCpSK"
+ boundary="Signature=_Mon__21_Jan_2013_16_43_36_+1100_oWq4nSPXY2LvyxSy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49432 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:38023 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752617Ab3AUEuN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Jan 2013 23:50:13 -0500
+	with ESMTP id S1750699Ab3AUFnr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Jan 2013 00:43:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Dave Airlie <airlied@linux.ie>
 
---Signature=_Mon__21_Jan_2013_15_50_04_+1100_hXB9YX111xwwCpSK
+--Signature=_Mon__21_Jan_2013_16_43_36_+1100_oWq4nSPXY2LvyxSy
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+Hi Andrew,
 
-Today's linux-next merge of the samsung tree got a conflict in
-drivers/gpio/gpio-samsung.c between commit 6948ce588bd7 ("gpio: samsung:
-skip gpio lib registration for EXYNOS5440") from the gpio-lw tree and
-commit bda7f6d4e198 ("gpio: samsung: skip gpiolib registration if pinctrl
-support is enabled for exynos5250") from the samsung tree.
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/gpu/drm/drm_fb_helper.c between commit 848499032504 ("drm: add
+drm_modeset_lock|unlock_all") from the drm tree and commit
+"drivers/gpu/drm/drm_fb_helper.c: avoid sleeping in unblank_screen() if
+oops in progress" from the akpm tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I can't see an easy way to resolve these, so I just dropped the akpm tree
+patch.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpio/gpio-samsung.c
-index 76be7ee,0d46db6..0000000
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@@ -3025,7 -3025,7 +3024,8 @@@ static __init int samsung_gpiolib_init(
-  	static const struct of_device_id exynos_pinctrl_ids[] =3D {
-  		{ .compatible =3D "samsung,pinctrl-exynos4210", },
-  		{ .compatible =3D "samsung,pinctrl-exynos4x12", },
-+ 		{ .compatible =3D "samsung,pinctrl-exynos5250", },
- +		{ .compatible =3D "samsung,pinctrl-exynos5440", },
-  	};
-  	for_each_matching_node(pctrl_np, exynos_pinctrl_ids)
-  		if (pctrl_np && of_device_is_available(pctrl_np))
-
---Signature=_Mon__21_Jan_2013_15_50_04_+1100_hXB9YX111xwwCpSK
+--Signature=_Mon__21_Jan_2013_16_43_36_+1100_oWq4nSPXY2LvyxSy
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ/Mj8AAoJEECxmPOUX5FEytgP/iyxPW4n4Vc+MXuivWqbUty9
-bRlF/PVZT3jTIG1/MjAC+eovncl3AoQAz5ilq7rbU+2/cFVfkYUCT5mZ6IEI0Ef3
-7IRf1rz9c8cZySTOVw0TcSSxSfF7diRMFzjUngYBkbgyq78hIM7qSHfaBTRTiI8H
-z/PZuJZ5aYFAMK8gm66J5zstL6831iprPRK6U0WChRTfG1j0rnatzFpOABbEjK/2
-N7OYUnntk0sWjVm5+0YUgcD/hCoeB4adojJ9eHtk1d2j5eQZ0YKG0cWTGgi3+Pdm
-aQDEdZrrTtP/Kq02VNK+RhpRopG05owg8UrbxKi2BIIfZc3S8ZiLW7YW7ms3zDQQ
-SS8zb1yVfqb8ffrvgLQOUnrCgUOQt4gVCPGgrIaxwbRQXrvcvZlwF0uVuWMWCCPS
-MjSC14mgUc7mGQLDWvUSMAnpFV5XIYfjiTQIDvjHhVUzYE7lcRLUN9rn5P7ca8gS
-U7coBdgzxqvA+hETyI2Io37vozdJMeS13Z963vK64u9HC3w8sDRy7Frp7wDGvQs3
-j1fpyvGe2qQ0YH6iZwF9kHgQoy/6+UJ4MG+bC8iSThDlSUALl9GZzEbcEPYZ4j/R
-sEeo0OgYGkKzby3voaCgNDMDjEzLKOR329kW36kL2fvwFsZs5UD9rFRmbrHUoRmE
-yGFsipvvtsGgxr5skiKj
-=WBVj
+iQIcBAEBCAAGBQJQ/NWIAAoJEECxmPOUX5FESO4P/jOWQW1Rfm4vDN9GH9gGfy4p
+wLXyC+WPMbVLHIdb581Vg5fJA8h3pxukaUahWlCVcW1zh8RsW8DPYpH6LAUF/q9d
+7PRT3uXN+SbQcgfmU6cpi5IOv2/li3abV7fQ0d4L0+aYgv0oidutlY/qut8KQQtI
+inKDhV+jTP9zPNEAhKTEDq03cEIbcHRDwSeu6Che7SFjzWpaNsx8Wi1qnKvxVZl9
++RFih44eTQ3+WdVnjd5RHIVIYaQr57hocFVPiUHlbZA3FcEckRBk/zb1qK2JEhuG
+h3rdv98cYlkmjxZ9gW/70tGsmqlqhYw2SoP9BeYROVMFqqMFrK2CsL6r17wTKqxG
+WvOaUivx+e/5NQdQwbAt5GPwIEqbcTXd3wEG2BAXkXKHbBy31mCvaLCUUqvbMX1N
+TW4lMMvjK+KWuR16yapFA6+3KxU8WTBi+RYkx8SSc2poG1Q7WBFxGQgnPdqLqAfy
+DAAD/AmEfE0YwlR6Qq5t820OKhNlbbX0G7TyB8doflrW+SIXF0QkS0mqF2IGD03U
+VkLZBBXLkYJmpPyYfqKugvTyVLhm4/XF4VPwBo3q+2X0Ge1ae1Q4JlCk5xAqvlsS
+Mdc4Cs2ttFbWoqNh6hmYEbWHFZ+kpQ6orQ4gRsck7Wg6D1mHTYryT2bhF/Sws2xC
+VCslGmvZLr2fS0Mf0jYv
+=YtPi
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__21_Jan_2013_15_50_04_+1100_hXB9YX111xwwCpSK--
+--Signature=_Mon__21_Jan_2013_16_43_36_+1100_oWq4nSPXY2LvyxSy--
