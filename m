@@ -1,45 +1,56 @@
-From: "Lan, Tianyu" <tianyu.lan@intel.com>
-Subject: RE: linux-next: build failure after merge of the usb tree
-Date: Mon, 21 Jan 2013 08:37:54 +0000
-Message-ID: <4CFBC02C07DA244CA19D6815A05BE6EE1B9746@SHSMSX101.ccr.corp.intel.com>
-References: <20130121152132.bbcc78f7d2b20741734d0fd2@canb.auug.org.au>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: linux-next: manual merge of the akpm tree with the drm tree
+Date: Mon, 21 Jan 2013 09:43:40 +0100
+Message-ID: <CAKMK7uHJf6C99kNFybBhv3kXKze8x+YRDSHNycOfbY_QiSC7HA@mail.gmail.com>
+References: <20130121164336.9edf1179a8e5c91baea8571a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:24729 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751509Ab3AUIh6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Jan 2013 03:37:58 -0500
-In-Reply-To: <20130121152132.bbcc78f7d2b20741734d0fd2@canb.auug.org.au>
-Content-Language: en-US
+Received: from mail-bk0-f52.google.com ([209.85.214.52]:36559 "EHLO
+	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751404Ab3AUInm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Jan 2013 03:43:42 -0500
+Received: by mail-bk0-f52.google.com with SMTP id y7so108398bkt.11
+        for <linux-next@vger.kernel.org>; Mon, 21 Jan 2013 00:43:41 -0800 (PST)
+In-Reply-To: <20130121164336.9edf1179a8e5c91baea8571a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Airlie <airlied@linux.ie>
 
-SGkgU3RlcGhlbqO6DQoJU29ycnkgZm9yIHRoaXMuIEkgaGF2ZSBwcm9kdWNlZCBhIGZpeCBwYXRj
-aCB3aGljaCBoYXMgYmVlbiBtZXJnZWQgYnkgdXNiLW5leHQgdHJlZS4NCmh0dHA6Ly9naXQua2Vy
-bmVsLm9yZy8/cD1saW51eC9rZXJuZWwvZ2l0L2dyZWdraC91c2IuZ2l0O2E9Y29tbWl0O2g9OWY3
-MzQ0ZmJhZjE5MWRlNjNkZjMxNWM3ZTBmYTRjOTc2ZTJlYTQxOQ0KDQpCZXN0IFJlZ2FyZHMgDQpU
-aWFueXUgTGFuIA0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogU3RlcGhlbiBS
-b3Rod2VsbCBbbWFpbHRvOnNmckBjYW5iLmF1dWcub3JnLmF1XSANClNlbnQ6IE1vbmRheSwgSmFu
-dWFyeSAyMSwgMjAxMyAxMjoyMiBQTQ0KVG86IEdyZWcgS0gNCkNjOiBsaW51eC1uZXh0QHZnZXIu
-a2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgTGFuLCBUaWFueXUNClN1
-YmplY3Q6IGxpbnV4LW5leHQ6IGJ1aWxkIGZhaWx1cmUgYWZ0ZXIgbWVyZ2Ugb2YgdGhlIHVzYiB0
-cmVlDQoNCkhpIEdyZWcsDQoNCkFmdGVyIG1lcmdpbmcgdGhlIHVzYiB0cmVlLCB0b2RheSdzIGxp
-bnV4LW5leHQgYnVpbGQgKHBvd2VycGMNCnBwYzY0X2RlZmNvbmZpZykgZmFpbGVkIGxpa2UgdGhp
-czoNCg0KZHJpdmVycy91c2IvY29yZS9wb3J0LmM6IEluIGZ1bmN0aW9uICd1c2JfcG9ydF9kZXZp
-Y2VfcmVsZWFzZSc6DQpkcml2ZXJzL3VzYi9jb3JlL3BvcnQuYzoyNToyOiBlcnJvcjogaW1wbGlj
-aXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ2tmcmVlJyBbLVdlcnJvcj1pbXBsaWNpdC1mdW5j
-dGlvbi1kZWNsYXJhdGlvbl0NCmRyaXZlcnMvdXNiL2NvcmUvcG9ydC5jOiBJbiBmdW5jdGlvbiAn
-dXNiX2h1Yl9jcmVhdGVfcG9ydF9kZXZpY2UnOg0KZHJpdmVycy91c2IvY29yZS9wb3J0LmM6Mzg6
-MjogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdremFsbG9jJyBbLVdl
-cnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlvbl0NCmRyaXZlcnMvdXNiL2NvcmUvcG9y
-dC5jOjM4OjExOiB3YXJuaW5nOiBhc3NpZ25tZW50IG1ha2VzIHBvaW50ZXIgZnJvbSBpbnRlZ2Vy
-IHdpdGhvdXQgYSBjYXN0IFtlbmFibGVkIGJ5IGRlZmF1bHRdDQoNCkNhdXNlZCBieSBjb21taXQg
-NmUzMGQ3Y2JhOTkyICgidXNiOiBBZGQgZHJpdmVyL3VzYi9jb3JlLyhwb3J0LmMsaHViLmgpIGZp
-bGVzIikuICBTZWUgUnVsZSAxIGluIERvY3VtZW50YXRpb24vU3VibWl0Q2hlY2tsaXN0Lg0KDQpJ
-IGhhdmUgdXNlZCB0aGUgdXNiIHRyZWUgZnJvbSBuZXh0LTIwMTMwMTE4IGZvciB0b2RheS4NCi0t
-DQpDaGVlcnMsDQpTdGVwaGVuIFJvdGh3ZWxsICAgICAgICAgICAgICAgICAgICBzZnJAY2FuYi5h
-dXVnLm9yZy5hdQ0K
+Hi all,
+
+I'm working on some follow-up patches for the drm fb helper library
+already, and fixing up the panic handling is on the plan already. And
+since the fb helper has its own panic notifier anyway (simply
+unblanking is not good enough to display an oops on a kms device) I
+think we should simply return without doing anything from our
+->fb_blank if an oops is in progress.
+
+So please drop the patch from the akpm tree, I'll take care of this
+(and reply to the original patch submission with my plan).
+
+Thanks, Daniel
+
+On Mon, Jan 21, 2013 at 6:43 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Andrew,
+>
+> Today's linux-next merge of the akpm tree got a conflict in
+> drivers/gpu/drm/drm_fb_helper.c between commit 848499032504 ("drm: add
+> drm_modeset_lock|unlock_all") from the drm tree and commit
+> "drivers/gpu/drm/drm_fb_helper.c: avoid sleeping in unblank_screen() if
+> oops in progress" from the akpm tree.
+>
+> I can't see an easy way to resolve these, so I just dropped the akpm tree
+> patch.
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
+
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
