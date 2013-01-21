@@ -1,60 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with Linus' tree
-Date: Mon, 21 Jan 2013 14:46:04 +1100
-Message-ID: <20130121144604.3c2f94e93ce6252aa43d3d9e@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with Linus' tree
+Date: Mon, 21 Jan 2013 15:07:11 +1100
+Message-ID: <20130121150711.c4673d930c2f00253c2e471a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_Jan_2013_14_46_04_+1100_Sr3YSJBcdFakWMeY"
+ boundary="Signature=_Mon__21_Jan_2013_15_07_11_+1100_uJZhOeWf8EiiHT.G"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48731 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56682 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752642Ab3AUDqP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Jan 2013 22:46:15 -0500
+	with ESMTP id S1752617Ab3AUEHU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Jan 2013 23:07:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Tony Prisk <linux@prisktech.co.nz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfgang Frisch <wfpub@roembden.net>, Johan Hovold <jhovold@gmail.com>
 
---Signature=_Mon__21_Jan_2013_14_46_04_+1100_Sr3YSJBcdFakWMeY
+--Signature=_Mon__21_Jan_2013_15_07_11_+1100_uJZhOeWf8EiiHT.G
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/tty/serial/vt8500_serial.c between commit a6dd114e16cb ("tty:
-serial: vt8500: fix return value check in vt8500_serial_probe()") from
-Linus' tree and commit 12faa35ae5cb ("serial: vt8500: UART uses gated
-clock rather than 24Mhz reference") from the tty tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/serial/io_ti.c between commit 1ee0a224bc9a ("USB: io_ti: Fix
+NULL dereference in chase_port()") from Linus' tree and commit
+f40d781554ef ("USB: io_ti: kill custom closing_wait implementation") from
+the usb tree.
 
-I fixed it up (I just used the tty tree version - which included the
-former fix) and can carry the fix as necessary (no action is required).
+I fixed it up (the latter removed the code fixed by the former, so I just
+used thet) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__21_Jan_2013_14_46_04_+1100_Sr3YSJBcdFakWMeY
+--Signature=_Mon__21_Jan_2013_15_07_11_+1100_uJZhOeWf8EiiHT.G
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ/Ln8AAoJEECxmPOUX5FE6sMP/0tiEJPx0XAAE1rfizLbYl5k
-5rZVHMvunt6LK3kwnaHpY2PSaje9Pq2zvOtBHRTnGU3IQvbw1Xg7FF8GsLYYHj8t
-LuFz1mVhRTL9RgMcu7E9qV5yB1GyudlIAbBaWkE7YjquTSqELrEWS2Q7fWNvPvkd
-RLyy8S4ot3umAZF4VaQcPn1CMdaZ2Q9lZrMTRKqsYhK8av6HRjQahyMsTl6AeJVt
-OY8lDP5PPjjop7IgNyUHhW7jdA2zDzMc0lpT+3o6h42+cQhy0F1LD/xL3tZC8thV
-m77Dqnv3BjxJurmFS36+EwzkZ78l95AiT5Z3E4wHZUWcpWjG8UHnSBXIfXyHWfY1
-pi5sWhXrwPSNtj/ImdVPxu7pGLfN3ler2rfmxp5FodPvWqQbUXSGG6jRyGuYIadU
-gUegJVGvAzXBhBX1VMd6z8Gd0uu02IGBPlQHv70EaYVfvli2dtn63/Ws5jeYFfCy
-MUbIky/jCuVm72koO+vQK6qB4YW/1D62z1CBnwjNkUq2QTatG5YRKPZL4HMeYu+r
-E4rAdbDeV0XIXyiUwFg1ac1R7BlihjW1XfybHDY2HuoCZU6zck/bpIFitbXoEarI
-dGh4LxqqAQ2henoYB877CGMaCaSZiRTrMO16E0XqkR2O36WMncsNDkdYEZunTAPb
-hHvsUK3hOgq69/PA+sA7
-=1p53
+iQIcBAEBCAAGBQJQ/L7vAAoJEECxmPOUX5FE64wP/RVnQE2QY71bzVWCm9RAfzp0
+YUipy9+7NyRP43mdn+PrVwcVx3pfFxjseFxuyASQ4qBo52WxD6bMGE8ovzgVSvuF
+Zwx1+bTF2RF6InmMEcBPzYnMdj/fRk18BMp+9ye8hFL9LK2dTwFvHbdbGpaCfRfJ
+mUYzJQ4xDEcAHVIfQGW4g3P5wpISRsgdfMUkm1RG4266gaEJu9kPbZijFN3UR0RM
+up8JAwLbxmEWqepgiFTdfqZXG1iWQ25pXshISTSsk2rYQCVOgVfuCIBV1q4MqknL
+QfDjWyAQ7jAkPS7HVd7L5bxgw35/wGFPYA/uRJCiTQ1/XAs9RxOb60dUUHB+Cpub
+soumAEADJIIyik2ULO445cjG7waDsxXqbh2cKZRcp5QtuMycvLVEPCEFdEIf4YfB
+7Gs+myuoU68y1iG3YKCeuy1hQItdPrhA7wY/tUGef41JqOjADiS0BQx5VUsA5wMH
+cUr3CKkioYsGqSzsW6oHHePKAzEmRwe/CBZ4DtX2d+etGLAGG9CnKGnegTCSyEJh
+0icxx/KoahvRUkRjEk+QRPQiS0mMKhisaqx0BQ9OoEVaOQWBmsBkLNKLzBSF5Lm8
+1UeUxv/98U4ermpsr5+Z+H8SGcto+b4krta9kWJel4JatleSpuG3S1ld4WjYJ23j
+go5RnH/gSY9tRm7c1xKc
+=fkN6
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__21_Jan_2013_14_46_04_+1100_Sr3YSJBcdFakWMeY--
+--Signature=_Mon__21_Jan_2013_15_07_11_+1100_uJZhOeWf8EiiHT.G--
