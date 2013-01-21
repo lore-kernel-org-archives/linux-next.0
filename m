@@ -1,73 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the security tree with Linus' tree
-Date: Mon, 21 Jan 2013 15:30:02 +1100
-Message-ID: <20130121153002.1f7f9ff1b46532a44704c6c0@canb.auug.org.au>
-References: <20130121131230.9f79cf5dcd8a8ac069594111@canb.auug.org.au>
-	<1358737823.2406.114.camel@falcor1.watson.ibm.com>
+Subject: linux-next: manual merge of the samsung tree with the gpio-lw tree
+Date: Mon, 21 Jan 2013 15:50:04 +1100
+Message-ID: <20130121155004.45a5fc0b25b26ece0e954834@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_Jan_2013_15_30_02_+1100_AFUr0FgtZ6+bHhP5"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1358737823.2406.114.camel@falcor1.watson.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Kasatkin <dmitry.kasatkin@intel.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__21_Jan_2013_15_50_04_+1100_hXB9YX111xwwCpSK"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:49432 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752617Ab3AUEuN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Jan 2013 23:50:13 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Mon__21_Jan_2013_15_30_02_+1100_AFUr0FgtZ6+bHhP5
+--Signature=_Mon__21_Jan_2013_15_50_04_+1100_hXB9YX111xwwCpSK
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mimi,
+Hi Kukjin,
 
-On Sun, 20 Jan 2013 22:10:23 -0500 Mimi Zohar <zohar@linux.vnet.ibm.com> wr=
-ote:
->
-> Sorry Stephen, the merged result should look like what's contained in
-> linux-integrity/next-upstreamed-patches:
->=20
-> int ima_module_check(struct file *file)
-> {
->         if (!file) {
->                 if ((ima_appraise & IMA_APPRAISE_MODULES) &&
->                     (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-> #ifndef CONFIG_MODULE_SIG_FORCE
->                         return -EACCES; /* INTEGRITY_UNKNOWN */
-> #endif
->                 }
->                 return 0;
->         }
->         return process_measurement(file, file->f_dentry->d_name.name,
->                                    MAY_EXEC, MODULE_CHECK);
-> }
+Today's linux-next merge of the samsung tree got a conflict in
+drivers/gpio/gpio-samsung.c between commit 6948ce588bd7 ("gpio: samsung:
+skip gpio lib registration for EXYNOS5440") from the gpio-lw tree and
+commit bda7f6d4e198 ("gpio: samsung: skip gpiolib registration if pinctrl
+support is enabled for exynos5250") from the samsung tree.
 
-OK, I will use that version tomorrow.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__21_Jan_2013_15_30_02_+1100_AFUr0FgtZ6+bHhP5
+diff --cc drivers/gpio/gpio-samsung.c
+index 76be7ee,0d46db6..0000000
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@@ -3025,7 -3025,7 +3024,8 @@@ static __init int samsung_gpiolib_init(
+  	static const struct of_device_id exynos_pinctrl_ids[] =3D {
+  		{ .compatible =3D "samsung,pinctrl-exynos4210", },
+  		{ .compatible =3D "samsung,pinctrl-exynos4x12", },
++ 		{ .compatible =3D "samsung,pinctrl-exynos5250", },
+ +		{ .compatible =3D "samsung,pinctrl-exynos5440", },
+  	};
+  	for_each_matching_node(pctrl_np, exynos_pinctrl_ids)
+  		if (pctrl_np && of_device_is_available(pctrl_np))
+
+--Signature=_Mon__21_Jan_2013_15_50_04_+1100_hXB9YX111xwwCpSK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ/MRKAAoJEECxmPOUX5FEm5MP/06LXDCg/Wx5zkVC7boA2eNa
-AlJazRx0YEiE4WSFumrAkkUfKgxkZvHNhGVstdteIeYDc9X+8QSS3v73U5oWLoF4
-5Uc4OJF/2JiR/UBwjcu5OppF6lCYt8Z2qWjylYLZdJJdmrShro3kzFH20Te2L+PR
-5KJgfGLshX6GAC1MKIbx8c8nmeVHs8hj0O/PVM052RWupXqjRF7MPRSWhaXT5nnq
-AC6buaUJD0upvryFj9ovavVufmAa5KaoCwfXjvsCL9zwZRd3rJt7CYsZOL6lnnbB
-1N6FrEUOMLpKnz3c4sJ+3mrkuZ9JbuEetO2HoPwdRqoLODG31oQx5GwCT8J0ds5q
-k8+VStBMURP65o2SjjmFqjRs4T3C2K/Ht62Ylh0nPJHsOlmKBJ//EPEacCniHiLY
-AGtc2bGUqH+/MwF9ovZXtP+6MT4xTqVfmHrBHpzQE8dsIImJp7TSrFXE5/aoR6uv
-2z/2D0H/7wKd7zHyxGoX9JUaLDgxAx4aQkug6jKnwM7AdLj5FVfmf2fwf1rHIz6W
-arhVefaWvOqMyvyi1zcEMQWwFwUV/hXQOxkYXmBph/62ArsJ1qLbySJiT5Im8dR6
-af6zu1srBP9VF0NxHdFuF8Gp+2UuuqksejmVbUB2BDPtxspPU4nJLr1Wpb2BDd9y
-I66keKXx25mJihbgoUpT
-=fDbT
+iQIcBAEBCAAGBQJQ/Mj8AAoJEECxmPOUX5FEytgP/iyxPW4n4Vc+MXuivWqbUty9
+bRlF/PVZT3jTIG1/MjAC+eovncl3AoQAz5ilq7rbU+2/cFVfkYUCT5mZ6IEI0Ef3
+7IRf1rz9c8cZySTOVw0TcSSxSfF7diRMFzjUngYBkbgyq78hIM7qSHfaBTRTiI8H
+z/PZuJZ5aYFAMK8gm66J5zstL6831iprPRK6U0WChRTfG1j0rnatzFpOABbEjK/2
+N7OYUnntk0sWjVm5+0YUgcD/hCoeB4adojJ9eHtk1d2j5eQZ0YKG0cWTGgi3+Pdm
+aQDEdZrrTtP/Kq02VNK+RhpRopG05owg8UrbxKi2BIIfZc3S8ZiLW7YW7ms3zDQQ
+SS8zb1yVfqb8ffrvgLQOUnrCgUOQt4gVCPGgrIaxwbRQXrvcvZlwF0uVuWMWCCPS
+MjSC14mgUc7mGQLDWvUSMAnpFV5XIYfjiTQIDvjHhVUzYE7lcRLUN9rn5P7ca8gS
+U7coBdgzxqvA+hETyI2Io37vozdJMeS13Z963vK64u9HC3w8sDRy7Frp7wDGvQs3
+j1fpyvGe2qQ0YH6iZwF9kHgQoy/6+UJ4MG+bC8iSThDlSUALl9GZzEbcEPYZ4j/R
+sEeo0OgYGkKzby3voaCgNDMDjEzLKOR329kW36kL2fvwFsZs5UD9rFRmbrHUoRmE
+yGFsipvvtsGgxr5skiKj
+=WBVj
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__21_Jan_2013_15_30_02_+1100_AFUr0FgtZ6+bHhP5--
+--Signature=_Mon__21_Jan_2013_15_50_04_+1100_hXB9YX111xwwCpSK--
