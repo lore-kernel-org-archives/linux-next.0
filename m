@@ -1,58 +1,38 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: linux-next: build failure after merge of the final tree (gpio-lw
  tree related)
-Date: Tue, 22 Jan 2013 10:43:08 +0530
-Message-ID: <50FE1FE4.5080802@nvidia.com>
-References: <20130122151048.e47ecfe9432b747f79544c25@canb.auug.org.au> <50FE1F95.4050000@nvidia.com>
+Date: Tue, 22 Jan 2013 10:46:11 +0100
+Message-ID: <CACRpkdaiBd5iYj=dgaCtd2sy_pS=YHbEMQy7Gbk4J2mGmbm6=w@mail.gmail.com>
+References: <20130122151048.e47ecfe9432b747f79544c25@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hqemgate03.nvidia.com ([216.228.121.140]:17907 "EHLO
-	hqemgate03.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750942Ab3AVFNn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jan 2013 00:13:43 -0500
-In-Reply-To: <50FE1F95.4050000@nvidia.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "sameo@linux.intel.com" <sameo@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130122151048.e47ecfe9432b747f79544c25@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+List-Id: linux-next.vger.kernel.org
 
-To to Samuel.
+On Tue, Jan 22, 2013 at 5:10 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+>
+> drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_get':
+> drivers/gpio/gpio-palmas.c:46:2: error: implicit declaration of function 'palmas_read' [-Werror=implicit-function-declaration]
+> drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_set':
+> drivers/gpio/gpio-palmas.c:62:3: error: implicit declaration of function 'palmas_write' [-Werror=implicit-function-declaration]
+> drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_output':
+> drivers/gpio/gpio-palmas.c:83:2: error: implicit declaration of function 'palmas_update_bits' [-Werror=implicit-function-declaration]
+> drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_to_irq':
+> drivers/gpio/gpio-palmas.c:108:2: error: implicit declaration of function 'palmas_irq_get_virq' [-Werror=implicit-function-declaration]
+>
+> Caused by commit 4bb49f0dc999 ("gpio: palmas: Add support for Palams
+> GPIO").
 
-On Tuesday 22 January 2013 10:41 AM, Laxman Dewangan wrote:
-> On Tuesday 22 January 2013 09:40 AM, Stephen Rothwell wrote:
->> * PGP Signed by an unknown key
->>
->> Hi all,
->>
->> After merging the final tree, today's linux-next build (powerpc
->> allyesconfig) failed like this:
->>
->> drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_get':
->> drivers/gpio/gpio-palmas.c:46:2: error: implicit declaration of 
->> function 'palmas_read' [-Werror=implicit-function-declaration]
->> drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_set':
->> drivers/gpio/gpio-palmas.c:62:3: error: implicit declaration of 
->> function 'palmas_write' [-Werror=implicit-function-declaration]
->> drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_output':
->> drivers/gpio/gpio-palmas.c:83:2: error: implicit declaration of 
->> function 'palmas_update_bits' [-Werror=implicit-function-declaration]
->> drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_to_irq':
->> drivers/gpio/gpio-palmas.c:108:2: error: implicit declaration of 
->> function 'palmas_irq_get_virq' [-Werror=implicit-function-declaration]
->>
->> Caused by commit 4bb49f0dc999 ("gpio: palmas: Add support for Palams
->> GPIO").
->>
->> I have reverted that commit for today.
-> The changes from the series need to apply on mfd subsystem also. The 
-> changes are not yet merged and hence the issue.
->
-> Requesting Samuel for considering the patch series
-> [PATCH 0/4] mfd: palma: add RTC and GPIO support
->
-> and atleast apply
-> [PATCH 2/4] mfd: palmas: add apis to access the Palmas' registers
->
+I have dropped this commit from my tree for now.
+
+Thanks Stephen!
+
+Yours,
+Linus Walleij
