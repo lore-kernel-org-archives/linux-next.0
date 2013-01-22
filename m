@@ -1,83 +1,72 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: jbd2: don't wake kjournald unnecessarily
-Date: Tue, 22 Jan 2013 00:29:46 +0100
-Message-ID: <CA+icZUUA95x57CgLLtV6Z05aNv3FoTRDcmt71BwbqQLscrzwrw@mail.gmail.com>
-References: <CA+icZUWOvk5i+XY22xdZYuxu=Vy3fG2QxJStEgNFQVS4u55y-w@mail.gmail.com>
-	<CA+icZUUzNYE9QAh_p7=ZNuvZbxRPCb9zd4k7+aW-hv34mQWz=A@mail.gmail.com>
-	<20130121104733.GE5588@quack.suse.cz>
-	<CA+icZUVy-=jJkRsEKmX+ZGRjiGr4wwp3pqdxuLCRHeqW_H0x9Q@mail.gmail.com>
-	<CA+icZUVAP4ArN+j34GTUwMxte5DtLPJSrLmK9T6Na8Qy+aM0Rg@mail.gmail.com>
-	<20130121140738.GI5588@quack.suse.cz>
-	<CA+icZUXLcdnNPvA9o8d5msOQ0MkMci8mPXujLZ3zcYjYcVZ7JQ@mail.gmail.com>
-	<20130121231130.GB12410@thunk.org>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (gpio-lw
+ tree related)
+Date: Tue, 22 Jan 2013 15:10:48 +1100
+Message-ID: <20130122151048.e47ecfe9432b747f79544c25@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__22_Jan_2013_15_10_48_+1100_q0BpyIRh8nYK5.Y4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f54.google.com ([209.85.216.54]:64195 "EHLO
-	mail-qa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752351Ab3AUX3r (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Jan 2013 18:29:47 -0500
-In-Reply-To: <20130121231130.GB12410@thunk.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:49357 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751404Ab3AVEK7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Jan 2013 23:10:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>, Sedat Dilek <sedat.dilek@gmail.com>, Jan Kara <jack@suse.cz>, Eric Sandeen <sandeen@redhat.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Ext4 Developers List <linux-ext4@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, mszeredi@suse.cz
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-On Tue, Jan 22, 2013 at 12:11 AM, Theodore Ts'o <tytso@mit.edu> wrote:
-> On Tue, Jan 22, 2013 at 12:04:32AM +0100, Sedat Dilek wrote:
->>
->> Beyond the FUSE/LOOP fun, will you apply this patch to your linux-next GIT tree?
->>
->> Feel free to add...
->>
->>      Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
->>
->> A similiar patch for JBD went through your tree into mainline (see [1] and [2]).
->
-> I'm not at all convinced that this patch has anything to do with your
-> problem.  I don't see how it could affect things, and I believe you
-> mentioned that you saw the problem even with this patch applied?  (I'm
-> not sure; some of your messages which you sent were hard to
-> understand, and you mentioned something about trying to send messages
-> when low on sleep :-).
->
+--Signature=_Tue__22_Jan_2013_15_10_48_+1100_q0BpyIRh8nYK5.Y4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Even with little sleep I know what I have written.
-YES, it didn't fix my problem but it also did not hurt my system.
-I just run Linux Test Project w/o errors which also means nothing.
-( Hmmm, I checked-out xfstests... did I compile it :-)? )
+Hi all,
 
-> In any case, the reason why I haven't pulled this patch into the ext4
-> tree is because I was waiting for Eric and some of the performance
-> team folks at Red Hat to supply some additional information about why
-> this commit was making a difference in performance for a particular
-> proprietary, closed source benchmark.
->
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I am not following the linux-ext4/linux-fsdevel MLs so much, but IIRC
-this patch is from December 2012.
-An identical patch for JBD (approx. from same date) went upstream,
-that's why I asked.
-But now I know you care of JBD2 stuff :-).
-Of course, I leave it to the experts to decide.
-Come on Eric, open the pandora box and bomb Ted with logs and traces :-).
+drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_get':
+drivers/gpio/gpio-palmas.c:46:2: error: implicit declaration of function 'p=
+almas_read' [-Werror=3Dimplicit-function-declaration]
+drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_set':
+drivers/gpio/gpio-palmas.c:62:3: error: implicit declaration of function 'p=
+almas_write' [-Werror=3Dimplicit-function-declaration]
+drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_output':
+drivers/gpio/gpio-palmas.c:83:2: error: implicit declaration of function 'p=
+almas_update_bits' [-Werror=3Dimplicit-function-declaration]
+drivers/gpio/gpio-palmas.c: In function 'palmas_gpio_to_irq':
+drivers/gpio/gpio-palmas.c:108:2: error: implicit declaration of function '=
+palmas_irq_get_virq' [-Werror=3Dimplicit-function-declaration]
 
-> I'm very suspicious about applying patches under the "cargo cult"
-> school of programming.  ("We don't understand why it makes a
-> difference, but it seems to be good, so bombs away!" :-)
->
+Caused by commit 4bb49f0dc999 ("gpio: palmas: Add support for Palams
+GPIO").
 
-A good attitude - a man we can trust!
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-I would liked to see a more positive development on my issue.
-But I still see no real reason to throw this WUBI installation away
-hitting a "corner" case.
-It was done as a temporary installation and made me happy in my daily
-working life.
-If I will get unhappy I boot into Win7, oops.
+--Signature=_Tue__22_Jan_2013_15_10_48_+1100_q0BpyIRh8nYK5.Y4
+Content-Type: application/pgp-signature
 
-- Sedat -
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-> Regards,
->
->                                         - Ted
+iQIcBAEBCAAGBQJQ/hFIAAoJEECxmPOUX5FEZkgQAJbKucZL5oFkMP1nHoWIlpiF
+RogFR1+l0ngTGI+h81QzFEErweWU5KAMKz0aF2mFJ68xVLBfr5UcqTc54A2GSdP8
+F/MlkuIAqCbMbUAXn/4CkFe6wg5ndumiUAQCVpSB8zggGN0WT0BWtcYssyWqe0Ft
+ZvUSUFlX+U9Vg6vqDV2KXyBWoTQ59l8Bo4XDKFI1TO2StfRsYHdvNLdVTurh98P8
+7gP+0OHuQupo5q+lxDxC4dPu8P23SU72IE7QBlTvBUv94+hKNamzUt/4t0UEYOVV
+63j1ktVRU5aOxnZObwTsyGiYPI4LaEf9Z9vqC8bzEK2bF0q1wABnvfjLDwqeOdjh
+dFpqVvMXs7fIAKDIhdnz3Ddc2JI/v6WdF810Jyr3b6PUNntEjbBbPcxE6r7tnmvt
+wyb7NN+P49I6RozSP79tN5kWJaj86b/ziNsUO7O/9td+ojZ6vObldKWkInDXJHES
+XCcr10mWqHIQtYkuNp9a8bwUGJDmX/6JIPwcR5s1Sju9HDj+R+zsFsFWYAujezRm
+hMIuB4Mc04Z74GMjzWLgcFqqKdPJ0iteXXPuQw7sO86ryuB7FOB5ldWZ2zTrzlwu
+YoO2eSsInLHXHjWaVuFf6wPLspY8QRwqE8aLf4pG6eU9ZRgmMhiMl5t1jLkNB9UN
+8Gaec7FZGoos0iYGNvB8
+=DtOz
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__22_Jan_2013_15_10_48_+1100_q0BpyIRh8nYK5.Y4--
