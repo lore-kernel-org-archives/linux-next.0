@@ -1,67 +1,119 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: jbd2: don't wake kjournald unnecessarily
-Date: Wed, 23 Jan 2013 00:50:41 +0100
-Message-ID: <20130122235041.GA7497@quack.suse.cz>
-References: <CA+icZUWOvk5i+XY22xdZYuxu=Vy3fG2QxJStEgNFQVS4u55y-w@mail.gmail.com>
- <CA+icZUUzNYE9QAh_p7=ZNuvZbxRPCb9zd4k7+aW-hv34mQWz=A@mail.gmail.com>
- <20130121104733.GE5588@quack.suse.cz>
- <CA+icZUVy-=jJkRsEKmX+ZGRjiGr4wwp3pqdxuLCRHeqW_H0x9Q@mail.gmail.com>
- <CA+icZUVAP4ArN+j34GTUwMxte5DtLPJSrLmK9T6Na8Qy+aM0Rg@mail.gmail.com>
- <20130121140738.GI5588@quack.suse.cz>
- <CA+icZUXLcdnNPvA9o8d5msOQ0MkMci8mPXujLZ3zcYjYcVZ7JQ@mail.gmail.com>
- <20130121231130.GB12410@thunk.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the net
+ tree
+Date: Wed, 23 Jan 2013 12:12:38 +1100
+Message-ID: <20130123121238.bc4ba1fe89c20d41fb5752ae@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__23_Jan_2013_12_12_38_+1100_o5k/Wft/fQITXmpD"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39133 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750855Ab3AWBMr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jan 2013 20:12:47 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felix Fietkau <nbd@openwrt.org>
+
+--Signature=_Wed__23_Jan_2013_12_12_38_+1100_o5k/Wft/fQITXmpD
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20130121231130.GB12410@thunk.org>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>, Jan Kara <jack@suse.cz>, Eric Sandeen <sandeen@redhat.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Ext4 Developers List <linux-ext4@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, mszeredi@suse.cz
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 21-01-13 18:11:30, Ted Tso wrote:
-> On Tue, Jan 22, 2013 at 12:04:32AM +0100, Sedat Dilek wrote:
-> > 
-> > Beyond the FUSE/LOOP fun, will you apply this patch to your linux-next GIT tree?
-> > 
-> > Feel free to add...
-> > 
-> >      Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > 
-> > A similiar patch for JBD went through your tree into mainline (see [1] and [2]).
-> 
-> I'm not at all convinced that this patch has anything to do with your
-> problem.  I don't see how it could affect things, and I believe you
-> mentioned that you saw the problem even with this patch applied?  (I'm
-> not sure; some of your messages which you sent were hard to
-> understand, and you mentioned something about trying to send messages
-> when low on sleep :-).
-> 
-> In any case, the reason why I haven't pulled this patch into the ext4
-> tree is because I was waiting for Eric and some of the performance
-> team folks at Red Hat to supply some additional information about why
-> this commit was making a difference in performance for a particular
-> proprietary, closed source benchmark.
-  Just a small correction - it was aim7 AFAIK which isn't closed source
-(anymore). You can download it from SourceForge
-(http://sourceforge.net/projects/aimbench/files/aim-suite7/Initial%20release/).
-Now I have some reservations about what the benchmark does but historically
-it has found quite a few issues for us as well.
+Hi John,
 
-> I'm very suspicious about applying patches under the "cargo cult"
-> school of programming.  ("We don't understand why it makes a
-> difference, but it seems to be good, so bombs away!" :-)
-  Well, neither am I ;) But it is obvious the patch speeds up
-log_start_commit() by 'a bit' (taking spinlock, disabling irqs, ...). And
-apparently 'a bit' is noticeable for particular workload on a particular
-machine - commit statistics Eric provided showed that clearly. I'd still be
-happier if Eric also told us how much log_start_commit() calls there were
-so that one could verify that 'a bit' could indeed multiply to a measurable
-difference. But given how simple the patch is, I gave away after a while
-and just merged it...
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/wireless/ath/ath9k/main.c between commit 4b883f021b9c
+("ath9k: fix rx flush handling") from the net tree and commit
+1381559ba48a ("ath9k: clean up processing of pending tx frames on reset")
+from the wireless-next tree.
 
-								Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/wireless/ath/ath9k/main.c
+index dd91f8f,3e5082c..0000000
+--- a/drivers/net/wireless/ath/ath9k/main.c
++++ b/drivers/net/wireless/ath/ath9k/main.c
+@@@ -182,7 -182,7 +182,7 @@@ static void ath_restart_work(struct ath
+  	ath_start_ani(sc);
+  }
+ =20
+- static bool ath_prepare_reset(struct ath_softc *sc, bool retry_tx)
+ -static bool ath_prepare_reset(struct ath_softc *sc, bool flush)
+++static bool ath_prepare_reset(struct ath_softc *sc)
+  {
+  	struct ath_hw *ah =3D sc->sc_ah;
+  	bool ret =3D true;
+@@@ -196,12 -196,20 +196,12 @@@
+  	ath9k_debug_samp_bb_mac(sc);
+  	ath9k_hw_disable_interrupts(ah);
+ =20
+- 	if (!ath_stoprecv(sc))
++ 	if (!ath_drain_all_txq(sc))
+  		ret =3D false;
+ =20
+- 	if (!ath_drain_all_txq(sc, retry_tx))
++ 	if (!ath_stoprecv(sc))
+  		ret =3D false;
+ =20
+ -	if (!flush) {
+ -		if (ah->caps.hw_caps & ATH9K_HW_CAP_EDMA)
+ -			ath_rx_tasklet(sc, 1, true);
+ -		ath_rx_tasklet(sc, 1, false);
+ -	} else {
+ -		ath_flushrecv(sc);
+ -	}
+ -
+  	return ret;
+  }
+ =20
+@@@ -271,7 -278,8 +270,7 @@@ static int ath_reset_internal(struct at
+  		hchan =3D ah->curchan;
+  	}
+ =20
+- 	if (!ath_prepare_reset(sc, retry_tx))
+ -	if (!ath_prepare_reset(sc, flush))
+++	if (!ath_prepare_reset(sc))
+  		fastcc =3D false;
+ =20
+  	ath_dbg(common, CONFIG, "Reset to %u MHz, HT40: %d fastcc: %d\n",
+@@@ -797,7 -801,7 +794,7 @@@ static void ath9k_stop(struct ieee80211
+  		ath9k_hw_cfg_gpio_input(ah, ah->led_pin);
+  	}
+ =20
+- 	ath_prepare_reset(sc, false);
+ -	ath_prepare_reset(sc, true);
+++	ath_prepare_reset(sc);
+ =20
+  	if (sc->rx.frag) {
+  		dev_kfree_skb_any(sc->rx.frag);
+
+--Signature=_Wed__23_Jan_2013_12_12_38_+1100_o5k/Wft/fQITXmpD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ/zkGAAoJEECxmPOUX5FEEOgP/1xYZwc0w8GaMmP8egZa40xL
+PFU/rleOa6TcQfpHXwpfksl4GwSLlOqE3pPnY+cOj/4Oi97uMOd4CWykSrj/yVNd
+25HSjaJWDjLCGlkBlB+LCK6bmyzqRNKEMBmr0m08nHLmEw3gWt7q7zScCxDHCihh
+iWhDuKPPSznIj9o4wkIAueSsBmJyoRR8xjUNmqlrNzidxKUBBHJ0f+0heoryicog
+vdRtPhBdPa7yjBJaszBNGqfF0hd65joAMk7izlg3jv0AUzihpvTCfMU7EuPEvgXL
+3pzLQsx5FgbuCp3vXwi3F9nn9Ilqx9vHSfu6spLvCF2Vjo6v6A7sVmtLSoAsSLSw
+WUJDr5wOfkS9dtmi4YzyrDh28Tq+gzQX8onZSaPSD+IQi/88Vz0+j7WHCdkoIMEo
+NSvIDfnsY9cutgqRvksmAAkdj4S7yiQt1NNVgJXsxruOLF2IOE15LKw97bRcB0Xr
+vhYoYyT+Pwgt95vli/EhQZqplS2bVSP4GPMTbVpLBBRmuCrN9dh4aiSuYabuNdBh
+dhP8nsOeP5tgC7nLn6EvNiXRF4NdDApwv7y2VXfhz9awwfuxFIElmoyrIp+o2BJ0
+WqbAr8FoZdLOIZ4/RSL4NJRFDsYNy43tcq9spe/kHd/FADV2S4PWDDxnPkQkt9+g
+8rb3UAY+R/fB59j70cp4
+=f/8l
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_Jan_2013_12_12_38_+1100_o5k/Wft/fQITXmpD--
