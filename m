@@ -1,67 +1,102 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 23 Jan 2013 13:17:23 +1100
-Message-ID: <20130123131723.412ded13d2c6abcf4f0f66b0@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the mips tree
+Date: Wed, 23 Jan 2013 14:03:48 +1100
+Message-ID: <20130123140348.e80088cfd9f4eacc4134051c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__23_Jan_2013_13_17_23_+1100_if3XPdx/gsZ7ew3w"
+ boundary="Signature=_Wed__23_Jan_2013_14_03_48_+1100_HArZdOLYsj79p2.Q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45150 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53303 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013Ab3AWCRc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jan 2013 21:17:32 -0500
+	with ESMTP id S1752339Ab3AWDDz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jan 2013 22:03:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jorrit Schippers <jorrit@ncode.nl>, Ralf Baechle <ralf@linux-mips.org>
 
---Signature=_Wed__23_Jan_2013_13_17_23_+1100_if3XPdx/gsZ7ew3w
+--Signature=_Wed__23_Jan_2013_14_03_48_+1100_HArZdOLYsj79p2.Q
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jiri,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the trivial tree got a conflict in
+arch/mips/cavium-octeon/executive/cvmx-helper-util.c between commit
+baf783ede9dc ("MIPS: Whitespace cleanup") from the mips tree and commit
+d82603c6da75 ("treewide: Replace incomming with incoming in all comments
+and strings") from the trivial tree.
 
-sound/soc/codecs/jz4740.c: In function 'jz4740_codec_probe':
-sound/soc/codecs/jz4740.c:364:2: error: implicit declaration of function 'd=
-evm_ioremap_resource' [-Werror=3Dimplicit-function-declaration]
-sound/soc/codecs/jz4740.c:364:7: warning: assignment makes pointer from int=
-eger without a cast [enabled by default]
-
-Caused by commit bc96ea9b07ad ("ASoC: Convert to devm_ioremap_resource()").\
-I think that devm_ioremap_resource() must be being introduced via a=20
-different tree, since there is no mention of it in linux-next (besides
-what is done in this commit).  Please build test.
-
-I have used the sound-asoc tree from next-20130122 for today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__23_Jan_2013_13_17_23_+1100_if3XPdx/gsZ7ew3w
+diff --cc arch/mips/cavium-octeon/executive/cvmx-helper-util.c
+index b72d9fb,dfdfe8b..0000000
+--- a/arch/mips/cavium-octeon/executive/cvmx-helper-util.c
++++ b/arch/mips/cavium-octeon/executive/cvmx-helper-util.c
+@@@ -172,11 -172,11 +172,11 @@@ int cvmx_helper_dump_packet(cvmx_wqe_t=20
+   *
+   * @queue:  Input queue to setup RED on (0-7)
+   * @pass_thresh:
+ - *               Packets will begin slowly dropping when there are less t=
+han
+ - *               this many packet buffers free in FPA 0.
+ + *		 Packets will begin slowly dropping when there are less than
+ + *		 this many packet buffers free in FPA 0.
+   * @drop_thresh:
+-  *		 All incomming packets will be dropped when there are less
+ - *               All incoming packets will be dropped when there are less
+ - *               than this many free packet buffers in FPA 0.
+++ *		 All incoming packets will be dropped when there are less
+ + *		 than this many free packet buffers in FPA 0.
+   * Returns Zero on success. Negative on failure
+   */
+  int cvmx_helper_setup_red_queue(int queue, int pass_thresh, int drop_thre=
+sh)
+@@@ -207,11 -207,11 +207,11 @@@
+   * Setup Random Early Drop to automatically begin dropping packets.
+   *
+   * @pass_thresh:
+ - *               Packets will begin slowly dropping when there are less t=
+han
+ - *               this many packet buffers free in FPA 0.
+ + *		 Packets will begin slowly dropping when there are less than
+ + *		 this many packet buffers free in FPA 0.
+   * @drop_thresh:
+-  *		 All incomming packets will be dropped when there are less
+ - *               All incoming packets will be dropped when there are less
+ - *               than this many free packet buffers in FPA 0.
+++ *		 All incoming packets will be dropped when there are less
+ + *		 than this many free packet buffers in FPA 0.
+   * Returns Zero on success. Negative on failure
+   */
+  int cvmx_helper_setup_red(int pass_thresh, int drop_thresh)
+
+--Signature=_Wed__23_Jan_2013_14_03_48_+1100_HArZdOLYsj79p2.Q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ/0gzAAoJEECxmPOUX5FEXJcP/jmMbK7nvf/R11higsIz4rE9
-p+ETalBR4TXuSMStB44b1l3+IySPTnueZPKibsC2uoVx6MCQbKOYtlfd9NMpU+Bg
-sOsODmFxELwJGfFFMErC0JwDlet83OzAZIhTOlvefz/l97OIAkekgVj/eHqTwJMa
-l+hHxsO1Y1kNu3UzJDNULjlDUr9BEQoREGc4+/yzDqEZIsNYhDuxS3GGHEFXaOQJ
-qwVz3TWIIQEFLQNRXnVBcSQa12jEeKI/GZfsZZ7+6wTjffr1NE3ebUvnhxYCL2tm
-etvC3h+HkynU8se4ocKbvh1X9LEqNCHRhoOMvS9twC3po73Susl34JHG1ofoNlrO
-M/gDEaEDnKac9whqPNffxS5HuXIJSiYF9vFZdgwrP0Mw5T3wgVHAnX1d7bA+3E6e
-ZYOpBevv1O+OpDhl6BVC8tTtF0s14R1HNzlsGP0ZWj8KOITsnzOtRmmgZ7fGMK1g
-IIyc+1vftRw8lbvyryE9jRzNbLam9ouyhVgFMetvnNKphQI+V2sJltj9WQpxiIfc
-47dsvQC9HjGnCUBmscLxmCr2l764DKcAcZP6VarBGUVNGaEj1cXhlL4pWDanGUAK
-KHmbMhiW2ftdzRqysNtWv8v9TSMfil6W122KVr4zAjlIuai9pUGAwRdUSSNZsOuA
-hemzE23JkCOMhEq7nJda
-=/Pg9
+iQIcBAEBCAAGBQJQ/1MUAAoJEECxmPOUX5FEEoQQAKh0z4zTUygbQgDWUQV71Ztb
+0r/9KcZvsVwCaHplRfi4VE3YjuQdz4RzZgZ0s8lPYXSYAUnE4nG8h36XiD35Gkeh
+/FHWdWXAWkj1cq4NQiL7sayqEKd6S+bWQek+5B01PlulBatmxAFcwbJefW034bwm
+cWrHtdAk8UKIdMY2QUzJ9zv3jKNek1zeFV86J1Mqmaof87cF9S+a6Ici8B6kd9Eb
+D+v5pIxWqL4dFWaL6azCWAnWLLjgtTqQPgKeDkkqaw5AOTHlYmCIdd6lLm1Mth0D
+HCsPqL4vj5WVBjFUyHUoa4NnEDcZ0RvcTN/DV7P7VlZnrXJVYEzPZdLdlDLERsNU
+CkSD7KmjTcRRW3JeL1UWBl+JRY/bpXyI598hHvHCa0oXZCmctfm+ZUcpJwiOR8v7
+h7HB5rtICYchis+VtLII9EiPSKT6NkjnzcTKEP1cIq2qy3oOm2TjMnjeeXyvznwB
+OIbYjQEu6zSj87F0p6oZT7i/C8NWS42TaAG2aBoqMlNlXFiN9YwMfyPtQ/JqIatu
++X900t/eqI057EVB5vc7Stu3duRT1DRZuitMXpI0o7ZPVQ2qi3mdCjLCvx/7M0rS
+E4DoG5DV6MFeKlb74idZ+xeMMAoBA/tBsU1JjIJCEkPCqWHJmWS0bESUsrZGu6tN
+z2r5Aot6aOvolCZWfIDI
+=FT/I
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__23_Jan_2013_13_17_23_+1100_if3XPdx/gsZ7ew3w--
+--Signature=_Wed__23_Jan_2013_14_03_48_+1100_HArZdOLYsj79p2.Q--
