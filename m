@@ -1,73 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tegra tree with the pm tree
-Date: Wed, 23 Jan 2013 16:33:03 +1100
-Message-ID: <20130123163303.1a8de2f38e78a20d6cb1d0a6@canb.auug.org.au>
+From: "Kim, Milo" <Milo.Kim@ti.com>
+Subject: RE: linux-next: build failure after merge of the leds tree
+Date: Wed, 23 Jan 2013 06:05:17 +0000
+Message-ID: <A874F61F95741C4A9BA573A70FE3998F69E1C225@DQHE02.ent.ti.com>
+References: <20130123151223.01bb155bb06a2e30446900c2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__23_Jan_2013_16_33_03_+1100_WQ_qPiqdMxkdlICr"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50577 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750768Ab3AWFdF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jan 2013 00:33:05 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Prashant Gaikwad <pgaikwad@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130123151223.01bb155bb06a2e30446900c2@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__23_Jan_2013_16_33_03_+1100_WQ_qPiqdMxkdlICr
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> -----Original Message-----
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Sent: Wednesday, January 23, 2013 1:12 PM
+> To: Bryan Wu
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Kim, Milo
+> Subject: linux-next: build failure after merge of the leds tree
+> 
+> Hi Bryan,
+> 
+> After merging the leds tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/built-in.o: In function `lp55xx_unregister_leds':
+> (.text+0x161dab): undefined reference to `led_classdev_unregister'
+> 
+> Caused by commit 14732b162d34 ("leds-lp55xx: use
+> lp55xx_unregister_leds()").
+> 
+> drivers/built-in.o: In function `lp55xx_init_led':
+> leds-lp55xx-common.c:(.text+0x161f23): undefined reference to
+> `led_classdev_register'
+> leds-lp55xx-common.c:(.text+0x161f9f): undefined reference to
+> `led_classdev_unregister'
+> 
+> Caused by commit b5370ff365fa ("eds-lp55xx: use lp55xx_init_led()
+> common function").
+> 
+> drivers/built-in.o: In function `lp55xx_read':
+> (.text+0x1621b3): undefined reference to `i2c_smbus_read_byte_data'
+> drivers/built-in.o: In function `lp55xx_init_device':
+> (.text+0x1622f0): undefined reference to `i2c_smbus_write_byte_data'
+> drivers/built-in.o: In function `lp55xx_init_device':
+> (.text+0x162331): undefined reference to `i2c_smbus_write_byte_data'
+> drivers/built-in.o: In function `lp55xx_update_bits':
+> (.text+0x162492): undefined reference to `i2c_smbus_write_byte_data'
+> drivers/built-in.o: In function `lp55xx_write':
+> (.text+0x1624c5): undefined reference to `i2c_smbus_write_byte_data'
+> 
+> Caused by commit 597eb710be87 ("leds-lp55xx: add new common driver for
+> lp5521/5523").
+> 
+> I have used the leds tree from next-20130122 for today.
 
-Hi all,
+Bryan and Stephen,
 
-Today's linux-next merge of the tegra tree got a conflict in
-drivers/clk/Makefile between commit bd3bffb544b1 ("clk: x86: add support
-for Lynxpoint LPSS clocks") from the pm tree and commit 82f6b0926514
-("clk: tegra: add Tegra specific clocks") from the tegra tree.
+Sorry for this errors. A patch has been sent.
+https://lkml.org/lkml/2013/1/23/14
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+And I've got few warnings about leds-lp5521/5523 drivers, separate patchset will
+be submitted soon.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/clk/Makefile
-index ee11460,f0b269a..0000000
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@@ -22,7 -22,7 +22,8 @@@ obj-$(CONFIG_ARCH_U8500)	+=3D ux500
-  obj-$(CONFIG_ARCH_VT8500)	+=3D clk-vt8500.o
-  obj-$(CONFIG_ARCH_SUNXI)	+=3D clk-sunxi.o
-  obj-$(CONFIG_ARCH_ZYNQ)		+=3D clk-zynq.o
- +obj-$(CONFIG_X86)		+=3D x86/
-+ obj-$(CONFIG_ARCH_TEGRA)	+=3D tegra/
- =20
-  # Chip specific
-  obj-$(CONFIG_COMMON_CLK_WM831X) +=3D clk-wm831x.o
-
---Signature=_Wed__23_Jan_2013_16_33_03_+1100_WQ_qPiqdMxkdlICr
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJQ/3YPAAoJEECxmPOUX5FEhxgP/1R84RElHhRwSyHKvn3QrUqS
-jC2RqxNZEBdZ/Qvy5pHZ4iJtu+4OT4ttuYBC+8yz58gZnDYYssYYxz334YPxcmYh
-SjxItjGWgZ/ae6lTwxOncRMnHZHCCVgIIVqMAUg2LKufJ1+iKzAL7wJCYkSg5kV6
-ikvifIQwOVmIQe7LQ1jFc7/eAv4ux+PESqYTl0x8xeZ5BwLoPzOCQoSmgl3WwMRe
-+YgeIUJonRjfXGiyKHOphikfMkpSgFYBNKmGNezK4dKvnK2pHVFpsgc1Y1IHDrFa
-psnI1JcNw+xyQlgmsVH/TXHZXSkaaXL5bf10bXmRKOZHn72uo932JfexAeH0YcOB
-BKTWl9Xq8lHAxekQtaZZvmXM/EhaDRyPE2b/kaxK3lRcH1+4PFaT0zYqUrvo65DQ
-fEolrDs2Pkr6zqnS7IjXRaEa3BUu+GtSeFqkNwr9jaquSXHU4iFVxkS9Ky3+utUB
-zFS0YRKr58/zo+t2I029lNTzm2Owp5HoPfgpPNXpSQY411mgXlq1YbW1HdoWgHzG
-3nq2LW72bBM27lMr6/VyfVZZusBK26Mp/n/7ReZLbZ73nprknOIDgwZ+THH/UEm1
-qm1yjGJI5u5FEfLBpgeOz7f8zW96MdWYpgoPSgNkqSeoeg54Z8GMQrNjrVwHnMbY
-DGn1l2AJ5CSbmqeBq6mp
-=AG6p
------END PGP SIGNATURE-----
-
---Signature=_Wed__23_Jan_2013_16_33_03_+1100_WQ_qPiqdMxkdlICr--
+Best Regards,
+Milo
