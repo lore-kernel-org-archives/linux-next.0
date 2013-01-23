@@ -1,68 +1,67 @@
-From: Eric Sandeen <sandeen@redhat.com>
-Subject: Re: jbd2: don't wake kjournald unnecessarily
-Date: Tue, 22 Jan 2013 19:37:46 -0600
-Message-ID: <50FF3EEA.2030408@redhat.com>
-References: <CA+icZUWOvk5i+XY22xdZYuxu=Vy3fG2QxJStEgNFQVS4u55y-w@mail.gmail.com> <CA+icZUUzNYE9QAh_p7=ZNuvZbxRPCb9zd4k7+aW-hv34mQWz=A@mail.gmail.com> <20130121104733.GE5588@quack.suse.cz> <CA+icZUVy-=jJkRsEKmX+ZGRjiGr4wwp3pqdxuLCRHeqW_H0x9Q@mail.gmail.com> <CA+icZUVAP4ArN+j34GTUwMxte5DtLPJSrLmK9T6Na8Qy+aM0Rg@mail.gmail.com> <20130121140738.GI5588@quack.suse.cz> <CA+icZUXLcdnNPvA9o8d5msOQ0MkMci8mPXujLZ3zcYjYcVZ7JQ@mail.gmail.com> <20130121231130.GB12410@thunk.org> <20130122235041.GA7497@quack.suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 23 Jan 2013 13:17:23 +1100
+Message-ID: <20130123131723.412ded13d2c6abcf4f0f66b0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <20130122235041.GA7497@quack.suse.cz>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Jan Kara <jack@suse.cz>
-Cc: Theodore Ts'o <tytso@mit.edu>, Sedat Dilek <sedat.dilek@gmail.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Ext4 Developers List <linux-ext4@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, mszeredi@suse.cz
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__23_Jan_2013_13_17_23_+1100_if3XPdx/gsZ7ew3w"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45150 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751013Ab3AWCRc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jan 2013 21:17:32 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>
 
-On 1/22/13 5:50 PM, Jan Kara wrote:
-> On Mon 21-01-13 18:11:30, Ted Tso wrote:
->> On Tue, Jan 22, 2013 at 12:04:32AM +0100, Sedat Dilek wrote:
->>>
->>> Beyond the FUSE/LOOP fun, will you apply this patch to your linux-next GIT tree?
->>>
->>> Feel free to add...
->>>
->>>      Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
->>>
->>> A similiar patch for JBD went through your tree into mainline (see [1] and [2]).
->>
->> I'm not at all convinced that this patch has anything to do with your
->> problem.  I don't see how it could affect things, and I believe you
->> mentioned that you saw the problem even with this patch applied?  (I'm
->> not sure; some of your messages which you sent were hard to
->> understand, and you mentioned something about trying to send messages
->> when low on sleep :-).
->>
->> In any case, the reason why I haven't pulled this patch into the ext4
->> tree is because I was waiting for Eric and some of the performance
->> team folks at Red Hat to supply some additional information about why
->> this commit was making a difference in performance for a particular
->> proprietary, closed source benchmark.
->   Just a small correction - it was aim7 AFAIK which isn't closed source
-> (anymore). You can download it from SourceForge
-> (http://sourceforge.net/projects/aimbench/files/aim-suite7/Initial%20release/).
-> Now I have some reservations about what the benchmark does but historically
-> it has found quite a few issues for us as well.
-> 
->> I'm very suspicious about applying patches under the "cargo cult"
->> school of programming.  ("We don't understand why it makes a
->> difference, but it seems to be good, so bombs away!" :-)
->   Well, neither am I ;) But it is obvious the patch speeds up
-> log_start_commit() by 'a bit' (taking spinlock, disabling irqs, ...). And
-> apparently 'a bit' is noticeable for particular workload on a particular
-> machine - commit statistics Eric provided showed that clearly. I'd still be
-> happier if Eric also told us how much log_start_commit() calls there were
-> so that one could verify that 'a bit' could indeed multiply to a measurable
-> difference. But given how simple the patch is, I gave away after a while
-> and just merged it...
+--Signature=_Wed__23_Jan_2013_13_17_23_+1100_if3XPdx/gsZ7ew3w
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am still trying to get our perf guys to collect that data, FWIW...
-I will send it when I get it.  I bugged them again today.  :)
+Hi all,
 
-(Just to be sure: I was going to measure the wakeups the old way, and the
-avoided wakeups with the new change; sound ok?)
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
--Eric
+sound/soc/codecs/jz4740.c: In function 'jz4740_codec_probe':
+sound/soc/codecs/jz4740.c:364:2: error: implicit declaration of function 'd=
+evm_ioremap_resource' [-Werror=3Dimplicit-function-declaration]
+sound/soc/codecs/jz4740.c:364:7: warning: assignment makes pointer from int=
+eger without a cast [enabled by default]
 
-> 								Honza
-> 
+Caused by commit bc96ea9b07ad ("ASoC: Convert to devm_ioremap_resource()").\
+I think that devm_ioremap_resource() must be being introduced via a=20
+different tree, since there is no mention of it in linux-next (besides
+what is done in this commit).  Please build test.
 
+I have used the sound-asoc tree from next-20130122 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__23_Jan_2013_13_17_23_+1100_if3XPdx/gsZ7ew3w
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJQ/0gzAAoJEECxmPOUX5FEXJcP/jmMbK7nvf/R11higsIz4rE9
+p+ETalBR4TXuSMStB44b1l3+IySPTnueZPKibsC2uoVx6MCQbKOYtlfd9NMpU+Bg
+sOsODmFxELwJGfFFMErC0JwDlet83OzAZIhTOlvefz/l97OIAkekgVj/eHqTwJMa
+l+hHxsO1Y1kNu3UzJDNULjlDUr9BEQoREGc4+/yzDqEZIsNYhDuxS3GGHEFXaOQJ
+qwVz3TWIIQEFLQNRXnVBcSQa12jEeKI/GZfsZZ7+6wTjffr1NE3ebUvnhxYCL2tm
+etvC3h+HkynU8se4ocKbvh1X9LEqNCHRhoOMvS9twC3po73Susl34JHG1ofoNlrO
+M/gDEaEDnKac9whqPNffxS5HuXIJSiYF9vFZdgwrP0Mw5T3wgVHAnX1d7bA+3E6e
+ZYOpBevv1O+OpDhl6BVC8tTtF0s14R1HNzlsGP0ZWj8KOITsnzOtRmmgZ7fGMK1g
+IIyc+1vftRw8lbvyryE9jRzNbLam9ouyhVgFMetvnNKphQI+V2sJltj9WQpxiIfc
+47dsvQC9HjGnCUBmscLxmCr2l764DKcAcZP6VarBGUVNGaEj1cXhlL4pWDanGUAK
+KHmbMhiW2ftdzRqysNtWv8v9TSMfil6W122KVr4zAjlIuai9pUGAwRdUSSNZsOuA
+hemzE23JkCOMhEq7nJda
+=/Pg9
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_Jan_2013_13_17_23_+1100_if3XPdx/gsZ7ew3w--
