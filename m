@@ -1,83 +1,95 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the leds tree
-Date: Wed, 23 Jan 2013 15:12:23 +1100
-Message-ID: <20130123151223.01bb155bb06a2e30446900c2@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with Linus' tree
+Date: Wed, 23 Jan 2013 15:15:52 +1100
+Message-ID: <20130123151552.1b8723dfa9c9a5dd75f7fec2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__23_Jan_2013_15_12_23_+1100_F5XXZChprYLv6vsv"
+ boundary="Signature=_Wed__23_Jan_2013_15_15_52_+1100_28HuuR1g7Hc/GKWZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48557 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:39102 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753021Ab3AWEMd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jan 2013 23:12:33 -0500
+	with ESMTP id S1752926Ab3AWEPz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jan 2013 23:15:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bryan Wu <bryan.wu@canonical.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Milo(Woogyom) Kim" <milo.kim@ti.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Wed__23_Jan_2013_15_12_23_+1100_F5XXZChprYLv6vsv
+--Signature=_Wed__23_Jan_2013_15_15_52_+1100_28HuuR1g7Hc/GKWZ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bryan,
+Hi Greg,
 
-After merging the leds tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the driver-core tree got a conflict in
+drivers/gpio/gpio-mvebu.c between commit 11c0ceec073c ("gpio: mvebu:
+Don't free chip label memory") from Linus' tree and commit 641d03422a59
+("gpio: Convert to devm_ioremap_resource()") from the driver-core tree.
 
-drivers/built-in.o: In function `lp55xx_unregister_leds':
-(.text+0x161dab): undefined reference to `led_classdev_unregister'
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 14732b162d34 ("leds-lp55xx: use lp55xx_unregister_leds()").
-
-drivers/built-in.o: In function `lp55xx_init_led':
-leds-lp55xx-common.c:(.text+0x161f23): undefined reference to `led_classdev=
-_register'
-leds-lp55xx-common.c:(.text+0x161f9f): undefined reference to `led_classdev=
-_unregister'
-
-Caused by commit b5370ff365fa ("eds-lp55xx: use lp55xx_init_led() common fu=
-nction").
-
-drivers/built-in.o: In function `lp55xx_read':
-(.text+0x1621b3): undefined reference to `i2c_smbus_read_byte_data'
-drivers/built-in.o: In function `lp55xx_init_device':
-(.text+0x1622f0): undefined reference to `i2c_smbus_write_byte_data'
-drivers/built-in.o: In function `lp55xx_init_device':
-(.text+0x162331): undefined reference to `i2c_smbus_write_byte_data'
-drivers/built-in.o: In function `lp55xx_update_bits':
-(.text+0x162492): undefined reference to `i2c_smbus_write_byte_data'
-drivers/built-in.o: In function `lp55xx_write':
-(.text+0x1624c5): undefined reference to `i2c_smbus_write_byte_data'
-
-Caused by commit 597eb710be87 ("leds-lp55xx: add new common driver for
-lp5521/5523").
-
-I have used the leds tree from next-20130122 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__23_Jan_2013_15_12_23_+1100_F5XXZChprYLv6vsv
+diff --cc drivers/gpio/gpio-mvebu.c
+index 6819d63,bf6c7c9..0000000
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@@ -544,10 -545,10 +545,9 @@@ static int mvebu_gpio_probe(struct plat
+  	mvchip->chip.of_node =3D np;
+ =20
+  	spin_lock_init(&mvchip->lock);
+- 	mvchip->membase =3D devm_request_and_ioremap(&pdev->dev, res);
+- 	if (! mvchip->membase) {
+- 		dev_err(&pdev->dev, "Cannot ioremap\n");
+- 		return -ENOMEM;
++ 	mvchip->membase =3D devm_ioremap_resource(&pdev->dev, res);
++ 	if (IS_ERR(mvchip->membase)) {
+ -		kfree(mvchip->chip.label);
++ 		return PTR_ERR(mvchip->membase);
+  	}
+ =20
+  	/* The Armada XP has a second range of registers for the
+@@@ -559,10 -560,12 +559,10 @@@
+  			return -ENODEV;
+  		}
+ =20
+- 		mvchip->percpu_membase =3D devm_request_and_ioremap(&pdev->dev, res);
+- 		if (! mvchip->percpu_membase) {
+- 			dev_err(&pdev->dev, "Cannot ioremap\n");
+- 			return -ENOMEM;
++ 		mvchip->percpu_membase =3D devm_ioremap_resource(&pdev->dev,
++ 							       res);
++ 		if (IS_ERR(mvchip->percpu_membase)) {
+ -			kfree(mvchip->chip.label);
++ 			return PTR_ERR(mvchip->percpu_membase);
+  		}
+  	}
+ =20
+
+--Signature=_Wed__23_Jan_2013_15_15_52_+1100_28HuuR1g7Hc/GKWZ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJQ/2MnAAoJEECxmPOUX5FEC98P/0pNiYd4nn0d7wNi76fLNDj0
-TcB/Bc4FgNXkrbWcj+0Wty7F9QDhvuzj78We9AQ7JCjDoxYhYi6fISS78FD/o1rW
-uf51HkUl+ZX1U7aQTkQDDNP5mKxp/4D6miMA+HiR/n4nJazpNLbCaCAh1/j7BXz0
-FDuzQ1z5sDoJnNIqTiHerBeOeA3yYeV0Ys7NZAH5JQrlySBqCBKmJlggu9dmII1B
-REm2vmkd8SLdlkf0VlOnndlDtMX5U8lU4LFTqkTHRTDp7SjSguD72/aI9bzyeUwk
-biD5W8GXiF7YuTVqtxG9ZbM98yDXSTGKLBUc5y5+tfRX/R+CoxIh8Ek5ZzE3FTm8
-SyPPDfiNWq4AYQw6cgKSPiVz08c7jDRxRlrCwT4h1tD15OMikCFdMV1gRX6fh+Gd
-Z9gmMB/xc70YSeX77YSv/L6xXSD42p0t//Y0Ng2JVhKRx09ceU8gnTIXvk9i6xrx
-6asfZdT0UPG7CuJn94mnxlj1I7akmbBdiMaWYmSepZoAQJUee0Y9rELpUs0RLEsL
-QrEOpeWHNGUYkipReB5lUl1AZHUuvcuBEGTLcxYaaPFRG7cHKPFqz86XPnssvmjo
-xTer0nHmXfWglPqmOkX/vT9XMQZNwdfzefsTIfYkmWYJaGJeubhJNcqMCADHDdXZ
-hG10IrRv79SzB+mbs7XF
-=zNGl
+iQIcBAEBCAAGBQJQ/2P4AAoJEECxmPOUX5FEpIkP/245zgqFt34eIlzD/9E4ue7Q
+ilsWbs3JxdygT9egHfx3D4m8wyq7ZJe2M8RBtpCMRBYLkjgsnH6kSGgTgZ+6kNQB
+4Tmq4DXtlUAiELUKwC6iOkiqzUsQ+cTaxhHj3ILjql7fU9uB92EHMzjae33QToF5
+ivSCVkO8cFmpo45CHqIvl1pgL2uVhADZZrx7NgZpFS4mNq0PPJ7M53FCQwP7cIK2
+MlXajFLigAF5GuMQyqJqtMZshvL8jORO22IAlfMEUIAdwNPbr7B2nSqUoWZy+RnY
+7PppPA0nAoLBBhXFriJW+MJ3ECUl929SZ3T78mHPOWVrNoDF24fuN+Z+Z0W4+9tS
++2fibSgF1OrBckIE2471jtKF3PSHz7/1+TewQx6/xgKulxx9v0oI8YyKI/OAhAli
+aNO9FkAu7j2iRClR/CePOX14qVCx9vP9bMt1REtTgzwfSrW/sDOJ/m5tDmsIr+M9
+d0YTTgQCwCsZIMGBPDrHS4Nxwop6xzfd9Mu3cidIzIDBvLYlgUNWF0sFMLxvOIYQ
+NXuuNnBhTRMv51u0XwgIHnDxe3TKhh5llY0nzJSffKkB0Eax9WMspV0GYl7xbhVo
+EjCe7iQaHhAz+KSMsRYKsn1bubl6unsbpciSfg7Ox3afwKZM8377ehakv84LzMxQ
+4WyuHl5wc+x1c5swJlr9
+=Mw17
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__23_Jan_2013_15_12_23_+1100_F5XXZChprYLv6vsv--
+--Signature=_Wed__23_Jan_2013_15_15_52_+1100_28HuuR1g7Hc/GKWZ--
