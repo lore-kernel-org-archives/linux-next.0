@@ -1,78 +1,77 @@
-From: Tang Chen <tangchen@cn.fujitsu.com>
-Subject: Re: linux-next: build warning after merge of the akpm tree
-Date: Wed, 23 Jan 2013 14:43:01 +0800
-Message-ID: <50FF8675.8050308@cn.fujitsu.com>
-References: <20130123173358.64b7d2cd01fde200225d46ec@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Subject: [PATCH 3/3] leds-ot200: Fix error caused by shifted mask
+Date: Wed, 23 Jan 2013 09:10:00 +0100
+Message-ID: <1358928600-15458-1-git-send-email-christian.gmeiner@gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cn.fujitsu.com ([222.73.24.84]:18004 "EHLO song.cn.fujitsu.com"
-	rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
-	id S1753172Ab3AWGnv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Jan 2013 01:43:51 -0500
-In-Reply-To: <20130123173358.64b7d2cd01fde200225d46ec@canb.auug.org.au>
+Received: from mail-ea0-f169.google.com ([209.85.215.169]:49912 "EHLO
+	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753191Ab3AWHtH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jan 2013 02:49:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org, akpm@linux-foundation.org, rpurdie@rpsys.net, linux-kernel@vger.kernel.org, c.gmeiner@bachmann.info
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>
 
-On 01/23/2013 02:33 PM, Stephen Rothwell wrote:
-> Hi Andrew,
->
-> After merging the akpm tree, today's linux-next build (arm defconfig)
-> produced this warning:
->
-> mm/page_alloc.c:4477:23: warning: 'sanitize_zone_movable_limit' defined but not used [-Wunused-function]
->
-> Introduced by commit "page_alloc: introduce zone_movable_limit[] to keep
-> movable limit for nodes" from the akpm tree.  It is defined both when
-> CONFIG_HAVE_MEMBLOCK_NODE_MAP is defined and not, but only used if it is
-> defined.
->
+During the development of this driver an in-house register
+documentation was used. The last weeks some integration tests
+were done and this problem was found. It turned out that
+the released register documentation is wrong.
 
-Hi Stephen,
+The fix is very simple: shift all masks by one.
 
-Thank you for reporting this. :)
-
-I was aware of this problem by the kbuild rebot, and I think this 
-problem has been fixed
-by the following patch I sent yesterday, and merged into -mm tree this 
-morning.
-
-Since I could access the lkml web site today, I cannot get an url for you.
-Please tell me if your problem is not solved after applying this patch. :)
-
-Thanks. :)
-
-
-[PATCH Bug fix 3/4] Bug fix: Remove the unused 
-sanitize_zone_movable_limit() definition.
-
-When CONFIG_HAVE_MEMBLOCK_NODE_MAP is not defined, 
-sanitize_zone_movable_limit()
-is also not used. So remove it.
-
-Signed-off-by: Tang Chen <tangchen@cn.fujitsu.com>
+Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
 ---
-  mm/page_alloc.c |    5 -----
-  1 files changed, 0 insertions(+), 5 deletions(-)
+ drivers/leds/leds-ot200.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cd6f8a6..2bd529e 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4459,11 +4459,6 @@ static inline unsigned long __meminit 
-zone_absent_pages_in_node(int nid,
-
-  	return zholes_size[zone_type];
-  }
--
--static void __meminit sanitize_zone_movable_limit(void)
--{
--}
--
-  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
-
-  static void __meminit calculate_node_totalpages(struct pglist_data *pgdat,
--- 1.7.1
+diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c
+index ee14662..98cae52 100644
+--- a/drivers/leds/leds-ot200.c
++++ b/drivers/leds/leds-ot200.c
+@@ -47,37 +47,37 @@ static struct ot200_led leds[] = {
+ 	{
+ 		.name = "led_1",
+ 		.port = 0x49,
+-		.mask = BIT(7),
++		.mask = BIT(6),
+ 	},
+ 	{
+ 		.name = "led_2",
+ 		.port = 0x49,
+-		.mask = BIT(6),
++		.mask = BIT(5),
+ 	},
+ 	{
+ 		.name = "led_3",
+ 		.port = 0x49,
+-		.mask = BIT(5),
++		.mask = BIT(4),
+ 	},
+ 	{
+ 		.name = "led_4",
+ 		.port = 0x49,
+-		.mask = BIT(4),
++		.mask = BIT(3),
+ 	},
+ 	{
+ 		.name = "led_5",
+ 		.port = 0x49,
+-		.mask = BIT(3),
++		.mask = BIT(2),
+ 	},
+ 	{
+ 		.name = "led_6",
+ 		.port = 0x49,
+-		.mask = BIT(2),
++		.mask = BIT(1),
+ 	},
+ 	{
+ 		.name = "led_7",
+ 		.port = 0x49,
+-		.mask = BIT(1),
++		.mask = BIT(0),
+ 	}
+ };
+ 
+-- 
+1.7.12.2.421.g261b511
