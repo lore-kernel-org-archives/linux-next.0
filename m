@@ -1,56 +1,63 @@
-From: Liang Li <liang.li@windriver.com>
-Subject: [PATCH] serial: pch_uart: fix sysrq handling for pch_uart
-Date: Thu, 24 Jan 2013 12:31:27 +0800
-Message-ID: <1359001887-1016-1-git-send-email-liang.li@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (akpm tree
+ related)
+Date: Thu, 24 Jan 2013 16:54:48 +1100
+Message-ID: <20130124165448.a27de37fb29ecceac235a7e0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__24_Jan_2013_16_54_48_+1100_Kx65sv57V8WI0wo5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:59545 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752680Ab3AXEbj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jan 2013 23:31:39 -0500
+Received: from haggis.pcug.org.au ([203.10.76.10]:35422 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750881Ab3AXFy6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jan 2013 00:54:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: liang.li@windriver.com, sfr@canb.auug.org.au, rdunlap@infradead.org, linux-next@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shaohua Li <shli@kernel.org>, "David S. Miller" <davem@davemloft.net>
 
-When PCH_UART_CONSOLE and SERIAL_CORE_CONSOLE is not set neither, the
-uart_port will have no 'sysrq' member hence their will need a '#ifdef'
-in pch_uart.c to handle the case, otherwise we'll see compile error
-like this:
+--Signature=_Thu__24_Jan_2013_16_54_48_+1100_Kx65sv57V8WI0wo5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  CC [M]  drivers/tty/serial/pch_uart.o
-drivers/tty/serial/pch_uart.c: In function 'pch_uart_hal_read':
-drivers/tty/serial/pch_uart.c:572:11: error: 'struct uart_port' has no member named 'sysrq'
-make[4]: *** [drivers/tty/serial/pch_uart.o] Error 1
+Hi all,
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-CC: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Liang Li <liang.li@windriver.com>
----
-Hi Greg,
+After merging the final tree, today's linux-next build (sparc32 defconfig)
+failed like this:
 
-This is for 'tty-next' of your tty tree. Thanks.
+arch/sparc/mm/init_32.c: In function 'show_mem':
+arch/sparc/mm/init_32.c:60:23: error: invalid operands to binary << (have '=
+atomic_long_t' and 'int')
 
- drivers/tty/serial/pch_uart.c | 2 ++
- 1 file changed, 2 insertions(+)
+Caused by commit "swap: add per-partition lock for swapfile" from the
+akpm tree.
 
-diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
-index 1ddfc66..7a6c989 100644
---- a/drivers/tty/serial/pch_uart.c
-+++ b/drivers/tty/serial/pch_uart.c
-@@ -569,10 +569,12 @@ static int pch_uart_hal_read(struct eg20t_port *priv, unsigned char *buf,
- 			if (uart_handle_break(port))
- 				continue;
- 		}
-+#ifdef SUPPORT_SYSRQ
- 		if (port->sysrq) {
- 			if (uart_handle_sysrq_char(port, rbr))
- 				continue;
- 		}
-+#endif
- 
- 		buf[i++] = rbr;
- 	}
--- 
-1.7.11.4
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__24_Jan_2013_16_54_48_+1100_Kx65sv57V8WI0wo5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRAMyoAAoJEECxmPOUX5FEaLcQAKGlyPj5NzV5Qn4BImclqg42
+DC1dJfQHrLKkOmpB+YNwwVXRDUXpBNMSV+7s2/oOl8WV9mtt2jl+BDH9FPpo/VOg
+QHEzmZ2mXLYxKAcQKP8NlkqioeN67xfxDCVjlZ30DqUmAzyBHyfsxsLS3zYKqYgW
+Y460rymBy90MvLM6+5ge43D6epWHC8RqrG3ofByv0y6F647AdUWB8PHGJm3/VxpL
+2ioG7pZfR3jS540M7awlNgx50sHrm3ciMPWQtLNYzfm/eztLnNca9WhyvNu43FlG
+SU+tK6lhvVn+pMM+eVtnRw9Kk0XSC3he1/C/lgM4T+K2taMrjCMd1TJwGDZwOc0Q
+D8dBAACviH/9AjdiJTAadkgrMFyF8ZjQuveGxLKSGg98Ho1a+fUORYBnlsnX6dlZ
+lOMaw2R+ZF64mE/lqrpyIknqi2mj7+Hcvh/i8Fwd8Oq2ayzxABjU2COPH47tSwx0
+r722lSejJCCGRN9KiwdkzpTXqExVE688daDU2VgYAuWn0CeRIZJ+CBWLjbOYiFdb
+WohJmYBHaOLizSsundUwpuAk0TLisH+CLbeCOOYBCVsgpH4k4u4XAp8ALjBXRZlD
+Avtpde1J6OB0hocZYjKeiBi3z1oQOB6Mj7t9uQk2uWVjdl6EVSWz7bJui5nA68Nr
+jPcAoE794jdHxEfDpIlz
+=IzGd
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__24_Jan_2013_16_54_48_+1100_Kx65sv57V8WI0wo5--
