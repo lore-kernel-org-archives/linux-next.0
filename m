@@ -1,66 +1,82 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Liang Li <liang.li@windriver.com>
 Subject: Re: linux-next: Tree for Jan 23 (pch_uart.c)
-Date: Thu, 24 Jan 2013 13:06:16 +1100
-Message-ID: <20130124130616.ee95e032326b1afee6716419@canb.auug.org.au>
+Date: Thu, 24 Jan 2013 10:30:54 +0800
+Message-ID: <20130124023054.GA21851@localhost>
 References: <20130123174336.47c0113740a14da7f6a92187@canb.auug.org.au>
-	<51007226.1040604@infradead.org>
+ <51007226.1040604@infradead.org>
+ <20130124130616.ee95e032326b1afee6716419@canb.auug.org.au>
+Reply-To: Liang Li <liang.li@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__24_Jan_2013_13_06_16_+1100_lzefWPhmnFZe8ttf"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <51007226.1040604@infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20130124130616.ee95e032326b1afee6716419@canb.auug.org.au>
 Sender: linux-serial-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Greg KH <greg@kroah.com>, Liang Li <liang.li@windriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Greg KH <greg@kroah.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__24_Jan_2013_13_06_16_+1100_lzefWPhmnFZe8ttf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2013-01-24 10:06, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Wed, 23 Jan 2013 15:28:38 -0800 Randy Dunlap <rdunlap@infradead.org> wrote:
+> >
+> > on i386:
+> > 
+> >   CC [M]  drivers/tty/serial/pch_uart.o
+> > drivers/tty/serial/pch_uart.c: In function 'pch_uart_hal_read':
+> > drivers/tty/serial/pch_uart.c:572:11: error: 'struct uart_port' has no member named 'sysrq'
+> > make[4]: *** [drivers/tty/serial/pch_uart.o] Error 1
+> > 
+> > 
+> > 
+> > when SERIAL_PCH_UART_CONSOLE is not enabled.
+> 
 
-On Wed, 23 Jan 2013 15:28:38 -0800 Randy Dunlap <rdunlap@infradead.org> wro=
-te:
->
-> on i386:
->=20
->   CC [M]  drivers/tty/serial/pch_uart.o
-> drivers/tty/serial/pch_uart.c: In function 'pch_uart_hal_read':
-> drivers/tty/serial/pch_uart.c:572:11: error: 'struct uart_port' has no me=
-mber named 'sysrq'
-> make[4]: *** [drivers/tty/serial/pch_uart.o] Error 1
->=20
->=20
->=20
-> when SERIAL_PCH_UART_CONSOLE is not enabled.
+Seems so .. but I have SERIAL_PCH_UART_CONSOLE and MAGIC_SYSRQ off
+both .. then still has no issue on my side. So I guess that is because
+I have CONFIG_SERIAL_CORE_CONSOLE then it works here:
 
-Caused by commit 1f9db0921f21 ("pch_uart: add sysrq support") from the
-tty tree. (added cc's)
+#if defined(CONFIG_SERIAL_CORE_CONSOLE) || defined(SUPPORT_SYSRQ)
+	unsigned long		sysrq;			/* sysrq timeout */
+#endif
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+In serial_core.h.
 
---Signature=_Thu__24_Jan_2013_13_06_16_+1100_lzefWPhmnFZe8ttf
-Content-Type: application/pgp-signature
+> Caused by commit 1f9db0921f21 ("pch_uart: add sysrq support") from the
+> tty tree. (added cc's)
+> 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Sorry, I think we need the below fix to work with
+'CONFIG_SERIAL_CORE_CONSOLE is not set' && 'PCH_UART_CONSOLE is not
+set' case:
 
-iQIcBAEBCAAGBQJRAJcYAAoJEECxmPOUX5FEWPsP/jV0tMxWMa1LO2QHtGHK9wks
-N4IN5FCljAJrVlUN5lkxxjJP0mcGm9mMJiDm3ZK/uIgw1wNhVhefkv+U4cm1kAc8
-K16QU/hd60hWU+j/P705tPJvfGMQq2vhrlGWgV8AndgsKGjML3ZzkotHlvuNSEFZ
-JbBtRQ2aVS0CtonHisBPvaW5pqsGHbb+spYrSeg7Cp+Y9TSe36Rgl070YHlcOsiA
-FklLW87MOEvrPe5bVGtttNu3x0tKtHKRN83eGC3GdvKqwffG2VVYZaY4sV+ZSHXE
-bOhm0hLuHAFus9Dq3vRZUcykugZ8/klIDkld38i2PuGCNKQ+/LCHfxbXVmgXmoY9
-IPq+ZsHqs458ml3s8Ky59blF/T2cXd5L24SBwPfCFTtm1byIhS0qenzOLrIlBgsa
-X7Jpyf+BcY5pWdBZBXJZSVz2ASy7hIsj/OpmalDmbOToGWQTgW4jJHx5EQP84An4
-fxaBRUvfjFRjdssp6chKohsrIsygcDoEMM5BGSD+mPdTK707Qm74QtNTNEl7+Hle
-rvji/nmOnSvhTXWS/d9G/XI4K8Bd7LdWhIT+nR1aaRdAe+Mi+gzkO5L7oCYIIUQG
-+zxMqn6RY+xvDM/VI81qFwAQKOq52VjHN4RVl2u/CM4y7Xx86f0SMUprHlZUkQNE
-IiwWZPV39dNTJBqATko1
-=x012
------END PGP SIGNATURE-----
+diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
+index c5ee7d45..4771aac 100644
+--- a/drivers/tty/serial/pch_uart.c
++++ b/drivers/tty/serial/pch_uart.c
+@@ -573,10 +573,12 @@ static int pch_uart_hal_read(struct eg20t_port *priv, unsigned char *buf,
+ 			if (uart_handle_break(port))
+ 				continue;
+ 		}
++#ifdef SUPPORT_SYSRQ
+ 		if (port->sysrq) {
+ 			if (uart_handle_sysrq_char(port, rbr))
+ 				continue;
+ 		}
++#endif
+ 
+ 		buf[i++] = rbr;
+ 	}
 
---Signature=_Thu__24_Jan_2013_13_06_16_+1100_lzefWPhmnFZe8ttf--
+---
+
+Should I add a fix for the compile error .. or do squash then send out
+refreshed patch ?
+
+Best regards,
+Liang Li
+
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
+
