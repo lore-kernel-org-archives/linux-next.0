@@ -1,54 +1,91 @@
-From: Shaohua Li <shli@kernel.org>
-Subject: Re: linux-next: build failure after merge of the final tree (akpm
- tree related)
-Date: Thu, 24 Jan 2013 18:30:40 +0800
-Message-ID: <20130124103040.GB10025@kernel.org>
-References: <20130124165448.a27de37fb29ecceac235a7e0@canb.auug.org.au>
+From: Stratos Karafotis <stratosk@semaphore.gr>
+Subject: [PATCH next-20130124] Sound: pci: Fix unused variable warning in
+ patch_sigmatel.c
+Date: Fri, 25 Jan 2013 00:38:06 +0200
+Message-ID: <5101B7CE.4070102@semaphore.gr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-da0-f53.google.com ([209.85.210.53]:65412 "EHLO
-	mail-da0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752489Ab3AXKas (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jan 2013 05:30:48 -0500
-Content-Disposition: inline
-In-Reply-To: <20130124165448.a27de37fb29ecceac235a7e0@canb.auug.org.au>
+Received: from sema.semaphore.gr ([78.46.194.137]:50265 "EHLO
+	sema.semaphore.gr" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1756253Ab3AXWr2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jan 2013 17:47:28 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, David Henningsson <david.henningsson@canonical.com>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Thu, Jan 24, 2013 at 04:54:48PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (sparc32 defconfig)
-> failed like this:
-> 
-> arch/sparc/mm/init_32.c: In function 'show_mem':
-> arch/sparc/mm/init_32.c:60:23: error: invalid operands to binary << (have 'atomic_long_t' and 'int')
-> 
-> Caused by commit "swap: add per-partition lock for swapfile" from the
-> akpm tree.
-> 
-> I have reverted that commit for today.
+=46ix the following build warnings
 
-can you please apply this:
+sound/pci/hda/patch_sigmatel.c: In function =91stac92hd71bxx_fixup_hp=92=
+:
+sound/pci/hda/patch_sigmatel.c:2434:24: warning: unused variable =91spe=
+c=92 [-Wunused-variable]
 
-
+Signed-off-by: Stratos Karafotis <stratosk@semaphore.gr>
 ---
- arch/sparc/mm/init_32.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_sigmatel.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-Index: linux/arch/sparc/mm/init_32.c
-===================================================================
---- linux.orig/arch/sparc/mm/init_32.c	2012-08-06 16:00:44.133458270 +0800
-+++ linux/arch/sparc/mm/init_32.c	2013-01-24 18:28:23.242077473 +0800
-@@ -57,7 +57,7 @@ void show_mem(unsigned int filter)
- 	printk("Mem-info:\n");
- 	show_free_areas(filter);
- 	printk("Free swap:       %6ldkB\n",
--	       nr_swap_pages << (PAGE_SHIFT-10));
-+	       get_nr_swap_pages() << (PAGE_SHIFT-10));
- 	printk("%ld pages of RAM\n", totalram_pages);
- 	printk("%ld free pages\n", nr_free_pages());
+diff --git a/sound/pci/hda/patch_sigmatel.c b/sound/pci/hda/patch_sigma=
+tel.c
+index 0aa0ceb..f269d1f 100644
+--- a/sound/pci/hda/patch_sigmatel.c
++++ b/sound/pci/hda/patch_sigmatel.c
+@@ -2365,7 +2365,6 @@ static void stac92hd71bxx_fixup_ref(struct hda_co=
+dec *codec,
+ static void stac92hd71bxx_fixup_hp_m4(struct hda_codec *codec,
+ 				      const struct hda_fixup *fix, int action)
+ {
+-	struct sigmatel_spec *spec =3D codec->spec;
+ 	struct hda_jack_tbl *jack;
+=20
+ 	if (action !=3D HDA_FIXUP_ACT_PRE_PROBE)
+@@ -2381,7 +2380,7 @@ static void stac92hd71bxx_fixup_hp_m4(struct hda_=
+codec *codec,
+ 	if (jack)
+ 		jack->private_data =3D 0x02;
+=20
+-	spec->gpio_mask |=3D 0x02;
++	((struct sigmatel_spec *)codec->spec)->gpio_mask |=3D 0x02;
+=20
+ 	/* enable internal microphone */
+ 	snd_hda_codec_set_pincfg(codec, 0x0e, 0x01813040);
+@@ -2420,19 +2419,15 @@ static void stac92hd71bxx_fixup_hp_dv5(struct h=
+da_codec *codec,
+ static void stac92hd71bxx_fixup_hp_hdx(struct hda_codec *codec,
+ 				       const struct hda_fixup *fix, int action)
+ {
+-	struct sigmatel_spec *spec =3D codec->spec;
+-
+ 	if (action !=3D HDA_FIXUP_ACT_PRE_PROBE)
+ 		return;
+-	spec->gpio_led =3D 0x08;
++	((struct sigmatel_spec *)codec->spec)->gpio_led =3D 0x08;
  }
+=20
+=20
+ static void stac92hd71bxx_fixup_hp(struct hda_codec *codec,
+ 				   const struct hda_fixup *fix, int action)
+ {
+-	struct sigmatel_spec *spec =3D codec->spec;
+-
+ 	if (action !=3D HDA_FIXUP_ACT_PRE_PROBE)
+ 		return;
+=20
+@@ -2456,8 +2451,9 @@ static void stac92hd71bxx_fixup_hp(struct hda_cod=
+ec *codec,
+=20
+ 	if (find_mute_led_cfg(codec, 1))
+ 		snd_printd("mute LED gpio %d polarity %d\n",
+-				spec->gpio_led,
+-				spec->gpio_led_polarity);
++			((struct sigmatel_spec *)codec->spec)->gpio_led,
++			((struct sigmatel_spec *)codec->spec)->
++							gpio_led_polarity);
+=20
+ }
+=20
+--=20
+1.8.1
