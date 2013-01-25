@@ -1,68 +1,49 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] extcon: max77693: Fix bug of build error related to INPUT
- subsystem
-Date: Fri, 25 Jan 2013 08:59:06 -0800
-Message-ID: <5102B9DA.9080306@infradead.org>
-References: <1359078970-11088-1-git-send-email-cw00.choi@samsung.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: Crash with 9fdb04c "async: replace list of active domains with
+ global list of pending items"
+Date: Fri, 25 Jan 2013 09:19:20 -0800
+Message-ID: <20130125171920.GF3081@htj.dyndns.org>
+References: <510216ED.1090602@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:44362 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756454Ab3AYQ6H (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Jan 2013 11:58:07 -0500
-In-Reply-To: <1359078970-11088-1-git-send-email-cw00.choi@samsung.com>
+Received: from mail-da0-f42.google.com ([209.85.210.42]:53150 "EHLO
+	mail-da0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757138Ab3AYRTY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Jan 2013 12:19:24 -0500
+Content-Disposition: inline
+In-Reply-To: <510216ED.1090602@wwwdotorg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: sfr@canb.auug.org.au, gregkh@linuxfoundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Venu Byravarasu <vbyravarasu@nvidia.com>
 
-On 01/24/13 17:56, Chanwoo Choi wrote:
-> This patch fix build error of following log:
+Hello,
+
+On Thu, Jan 24, 2013 at 09:23:57PM -0800, Stephen Warren wrote:
+> In next-20130124, I see a crash during boot on my ARM system unless I
+> revert 9fdb04c "async: replace list of active domains with global list
+> of pending items". This was reported t me by Venu (CC'd). The kernel log
+> is below.
 > 
-> drivers/built-in.o: In function `max77693_muic_remove':
-> extcon-max77693.c:(.text+0x664853): undefined reference to `input_unregister_device'
-> drivers/built-in.o: In function `max77693_muic_probe':
-> extcon-max77693.c:(.text+0x664971): undefined reference to `input_allocate_device'
-> extcon-max77693.c:(.text+0x6649c1): undefined reference to `input_set_capability'
-> extcon-max77693.c:(.text+0x6649d6): undefined reference to `input_set_capability'
-> extcon-max77693.c:(.text+0x6649eb): undefined reference to `input_set_capability'
-> extcon-max77693.c:(.text+0x664a00): undefined reference to `input_set_capability'
-> extcon-max77693.c:(.text+0x664a15): undefined reference to `input_set_capability'
-> extcon-max77693.c:(.text+0x664a20): undefined reference to `input_register_device'
-> drivers/built-in.o: In function `max77693_muic_adc_handler':
-> extcon-max77693.c:(.text+0x665318): undefined reference to `input_event'
-> extcon-max77693.c:(.text+0x66532a): undefined reference to `input_event'
-> make[1]: *** [vmlinux] Error 1
+> Looking at that patch, I note that __async_schedule() does:
 > 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Myungjoo Ham <myungjoo.ham@samsung.com>
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  drivers/extcon/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 	list_add_tail(&entry->domain_list, &domain->pending);
+> > 	if (domain->registered)
+> > 		list_add_tail(&entry->global_list, &async_global_pending);
 > 
-> diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
-> index 07122a9..10df3fa 100644
-> --- a/drivers/extcon/Kconfig
-> +++ b/drivers/extcon/Kconfig
-> @@ -29,7 +29,7 @@ config EXTCON_ADC_JACK
->  
->  config EXTCON_MAX77693
->  	tristate "MAX77693 EXTCON Support"
-> -	depends on MFD_MAX77693
-> +	depends on MFD_MAX77693 && INPUT
->  	select IRQ_DOMAIN
->  	select REGMAP_I2C
->  	help
+> ... whereas async_run_entry_fn() unconditionally undoes both those
+> list_add_tail() calls, even if the second never executed and hence the
+> list entry was never initialized:
 > 
+> > 	list_del_init(&entry->domain_list);
+> > 	list_del_init(&entry->global_list);
 
+Was reported by James Hogan a bit earlier and fix has been applied.
+
+  http://thread.gmane.org/gmane.linux.kernel/1425387/focus=1429460
+
+Thanks!
 
 -- 
-~Randy
+tejun
