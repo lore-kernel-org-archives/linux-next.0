@@ -1,49 +1,41 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: Crash with 9fdb04c "async: replace list of active domains with
- global list of pending items"
-Date: Fri, 25 Jan 2013 09:19:20 -0800
-Message-ID: <20130125171920.GF3081@htj.dyndns.org>
-References: <510216ED.1090602@wwwdotorg.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with Linus' tree
+Date: Fri, 25 Jan 2013 12:52:09 -0800
+Message-ID: <20130125205209.GA8950@kroah.com>
+References: <20130121150711.c4673d930c2f00253c2e471a@canb.auug.org.au>
+ <20130121210219.GB9184@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-da0-f42.google.com ([209.85.210.42]:53150 "EHLO
-	mail-da0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757138Ab3AYRTY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Jan 2013 12:19:24 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:46450 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751448Ab3AYUwM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 25 Jan 2013 15:52:12 -0500
 Content-Disposition: inline
-In-Reply-To: <510216ED.1090602@wwwdotorg.org>
+In-Reply-To: <20130121210219.GB9184@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Venu Byravarasu <vbyravarasu@nvidia.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfgang Frisch <wfpub@roembden.net>, Johan Hovold <jhovold@gmail.com>
 
-Hello,
-
-On Thu, Jan 24, 2013 at 09:23:57PM -0800, Stephen Warren wrote:
-> In next-20130124, I see a crash during boot on my ARM system unless I
-> revert 9fdb04c "async: replace list of active domains with global list
-> of pending items". This was reported t me by Venu (CC'd). The kernel log
-> is below.
+On Mon, Jan 21, 2013 at 01:02:19PM -0800, Greg KH wrote:
+> On Mon, Jan 21, 2013 at 03:07:11PM +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > Today's linux-next merge of the usb tree got a conflict in
+> > drivers/usb/serial/io_ti.c between commit 1ee0a224bc9a ("USB: io_ti: Fix
+> > NULL dereference in chase_port()") from Linus' tree and commit
+> > f40d781554ef ("USB: io_ti: kill custom closing_wait implementation") from
+> > the usb tree.
+> > 
+> > I fixed it up (the latter removed the code fixed by the former, so I just
+> > used thet) and can carry the fix as necessary (no action is required).
 > 
-> Looking at that patch, I note that __async_schedule() does:
-> 
-> > 	list_add_tail(&entry->domain_list, &domain->pending);
-> > 	if (domain->registered)
-> > 		list_add_tail(&entry->global_list, &async_global_pending);
-> 
-> ... whereas async_run_entry_fn() unconditionally undoes both those
-> list_add_tail() calls, even if the second never executed and hence the
-> list entry was never initialized:
-> 
-> > 	list_del_init(&entry->domain_list);
-> > 	list_del_init(&entry->global_list);
+> Yes, that is the correct fix, thanks for this.
 
-Was reported by James Hogan a bit earlier and fix has been applied.
+This should now be resolved in my trees.
 
-  http://thread.gmane.org/gmane.linux.kernel/1425387/focus=1429460
+thanks,
 
-Thanks!
-
--- 
-tejun
+greg k-h
