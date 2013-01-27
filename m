@@ -1,31 +1,33 @@
 From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: [next-20130124][next-20130125] Fix available for broken PM-suspend
-Date: Sun, 27 Jan 2013 14:21:46 +0100
-Message-ID: <CA+icZUW1sLS5Z2XOT6=ay2Zq0GuPSFYhLWJuiJkAMt9FUmwKuw@mail.gmail.com>
+Subject: Re: Boot crashes due to global async pending list
+Date: Sun, 27 Jan 2013 17:23:55 +0100
+Message-ID: <CA+icZUWH2mGF+HrkHFxkTr_kc4Zc1xtO-9y0NqT2Ps++c7XdNQ@mail.gmail.com>
 Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f47.google.com ([209.85.216.47]:42975 "EHLO
-	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756740Ab3A0NVr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Jan 2013 08:21:47 -0500
+Received: from mail-qe0-f51.google.com ([209.85.128.51]:51812 "EHLO
+	mail-qe0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753139Ab3A0QX4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Jan 2013 11:23:56 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next <linux-next@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, James Hogan <james.hogan@imgtec.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Tejun Heo <tj@kernel.org>
 
 Hi,
 
-this is just an information for people might trapping into the same issue.
+I have hit the same problem on pm/suspend.
 
-You can get the patch from patchwork-service [1] or directly from
-wq.git# for-3.9-async GIT tree [2].
+The fix is pending in wq.git#for-next:
 
-Next Monday's Linux-Next (next-20130127) should be fine, again.
+commit a0327ff0eda915be623658babacef706099c11a8
+"async: initialise list heads to fix crash"
+
+Hope this helps you!
 
 Regards,
 - Sedat -
 
-[1] https://patchwork.kernel.org/patch/2042681/
-[2] http://git.kernel.org/?p=linux/kernel/git/tj/wq.git;a=commitdiff;h=a0327ff0eda915be623658babacef706099c11a8
+http://marc.info/?l=linux-kernel&m=135929291904642&w=2
+http://marc.info/?t=135919870600001&r=1&w=2
