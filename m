@@ -1,89 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the char-misc tree with the sound-asoc
- tree
-Date: Mon, 28 Jan 2013 21:54:44 +1100
-Message-ID: <20130128215444.98524bf94e5fcd2035833055@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ sound-asoc tree
+Date: Mon, 28 Jan 2013 19:23:11 +0800
+Message-ID: <20130128112309.GA8301@opensource.wolfsonmicro.com>
+References: <20130128215444.98524bf94e5fcd2035833055@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Jan_2013_21_54_44_+1100_nRVQZEZBL__E3VMD"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52420 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751035Ab3A1Kyt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jan 2013 05:54:49 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
-
---Signature=_Mon__28_Jan_2013_21_54_44_+1100_nRVQZEZBL__E3VMD
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20130128215444.98524bf94e5fcd2035833055@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
 
-Today's linux-next merge of the char-misc tree got a conflict in
-include/linux/mfd/arizona/pdata.h between commit c94aa30edac4 ("ASoC:
-arizona: Allow number of channels clocked to be restricted") from the
-sound-asoc tree and commit 92a49871b378 ("extcon: arizona: Support use of
-GPIO5 as an input to jack detection") from the char-misc tree.
+--a8Wt8u1KmwUX3Y2C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+On Mon, Jan 28, 2013 at 09:54:44PM +1100, Stephen Rothwell wrote:
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> Today's linux-next merge of the char-misc tree got a conflict in
+> include/linux/mfd/arizona/pdata.h between commit c94aa30edac4 ("ASoC:
+> arizona: Allow number of channels clocked to be restricted") from the
+> sound-asoc tree and commit 92a49871b378 ("extcon: arizona: Support use of
+> GPIO5 as an input to jack detection") from the char-misc tree.
 
-diff --cc include/linux/mfd/arizona/pdata.h
-index ec3e2a2,bcbe4fd..0000000
---- a/include/linux/mfd/arizona/pdata.h
-+++ b/include/linux/mfd/arizona/pdata.h
-@@@ -98,13 -96,15 +98,22 @@@ struct arizona_pdata=20
-  	/** Pin state for GPIO pins */
-  	int gpio_defaults[ARIZONA_MAX_GPIO];
- =20
- +	/**
- +	 * Maximum number of channels clocks will be generated for,
- +	 * useful for systems where and I2S bus with multiple data
- +	 * lines is mastered.
- +	 */
- +	int max_channels_clocked[ARIZONA_MAX_AIF];
- +
-+ 	/** GPIO5 is used for jack detection */
-+ 	bool jd_gpio5;
-+=20
-+ 	/** Use the headphone detect circuit to identify the accessory */
-+ 	bool hpdet_acc_id;
-+=20
-+ 	/** GPIO used for mic isolation with HPDET */
-+ 	int hpdet_id_gpio;
-+=20
-  	/** GPIO for mic detection polarity */
-  	int micd_pol_gpio;
- =20
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
---Signature=_Mon__28_Jan_2013_21_54_44_+1100_nRVQZEZBL__E3VMD
-Content-Type: application/pgp-signature
+Thanks.
+
+--a8Wt8u1KmwUX3Y2C
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRBlj0AAoJEECxmPOUX5FEbvYP/Axcj+/0gscaNZyFdBopzjVL
-vW48YudJ4f4bTIBnA3b3nl8X4Q9TPLXOfn6W2YBMZtTEY7vWFqJ7ig+zT9aXGOTJ
-uPrbbZ9jD/xMg6DfmnQpLMuy85Vs1nkkt3dU79V7JPJUIjeTuitPDFECj/ieLIQt
-1a2dnylc6h7dXxpvUJquHsHAqZhdxfBNhVab/FtTjjMlclvZmAUxE8uE25SexuHT
-fQhc1O4UMb+/IOnuLpeS1aeMn68BPv/lM8SX2qJ9IDmzfd1JvyV/lcpBziNM477L
-2gMqCkw18aF66rJ7muhQIBtbwHCgEnxL6l7efDW5r2PPEtaGsEdoAHEZ4fTboMd0
-hhJsQ05K75KFvg4M7pV0HsARnD5WRPPjFGg8EDyzwtQhyucNubpbJpAi6hQLMm2t
-QhkgE0mB90c1KsiQgIcbWMYrao4H95iOkUxApgFqlzhPQ818IQWN7kKPgqCUyeal
-XVYGnnmiGd4F5xEF4D9y0mw14sFO+BOXMEAYManbfXZ3yqjhtfeEN5CgenxA3aSp
-K2e2v/O9Bz2SfK1OXIS1wJqW7dc4+4bSqSFIJLTo8/EDKTV2GCOTap/PJCFFlInQ
-D2uba4esqHKOcwMXAeGlDPqt+Ov+5JWvV3OinoOrm/c6SMK2WPFuqoAe3UjqUrMT
-IMAckWh9ie/9ZmPKe1Mz
-=S4rE
+iQIcBAEBAgAGBQJRBl+XAAoJELSic+t+oim9nXwP/3QfIW5jHPA/gI8i2DVflUA1
+1ETsF53Q2aN/eEhOJHM0jnR/uBtSb0s1O8/YpCsF1bzS3PCypeCwT62Bv/nx8uSi
+MaIPyZ300ffjGSgzAF1fElHED751c1n5LPEJj0wAqdu9mKv7Y6TvITXomg5LXxKh
+2qThTmzAIZ8SUR1w2tCkJREEQUcr8sUWq6fGUAPg0Q/vfAiGDsrjkvRX9eo5Pkvr
+Cf+NqGkX66mcqxQxbBMV3aZ+l3wGux4RDGZazpvC6dK1gGlD6pHHLC6+NfPo8T6c
+6RTVAhEHgfY1ueURwqVOOGVsy7Sz3czS06782PP/v7LDl8HwEbQ/ueqTDjSTCa1A
+r9NowjI2wvmCP8WzEyfUPzQQIa8mLRFPAl8I6waguN0yReWNly5AZGkINLVH/GBw
+tlqfiAqnmpI29f3PFTbMD1LPhgQQkfFIzOQS7kQJ5DQL167UPd+d6jgVOieS6sP6
+cGcT5U1e1C2sS5GPwPjvUzzFnEkVvUptfM40nw2Z2wb5zmSsKtNz1cB6j4duO5ka
+DShtCwyld/4H2WniADbt6HEgfAg9jbj2QMF2WWM6Zs5aKMkRt78NZGQPbtC2bmMx
+9gxP2BO5wLGPwifBFV7ySR6O7j18X1LJVqtH9MHNylyS2WVnAfiDW2wwAFjJPvbb
+/qPzuQFLO3oLCMQoSU+D
+=10QC
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Jan_2013_21_54_44_+1100_nRVQZEZBL__E3VMD--
+--a8Wt8u1KmwUX3Y2C--
