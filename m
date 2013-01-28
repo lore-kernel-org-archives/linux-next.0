@@ -1,17 +1,21 @@
 From: Lan Tianyu <tianyu.lan@intel.com>
 Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Mon, 28 Jan 2013 22:50:14 +0800
-Message-ID: <51069026.5070703@intel.com>
+Date: Mon, 28 Jan 2013 23:28:27 +0800
+Message-ID: <5106991B.1090009@intel.com>
 References: <20130128214644.a3906eecaf9123b05216dcaf@canb.auug.org.au> <20130128144508.GA2997@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:4379 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751755Ab3A1P23 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jan 2013 10:28:29 -0500
 In-Reply-To: <20130128144508.GA2997@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 On 2013/1/28 22:45, Greg KH wrote:
 > On Mon, Jan 28, 2013 at 09:46:44PM +1100, Stephen Rothwell wrote:
@@ -31,12 +35,17 @@ On 2013/1/28 22:45, Greg KH wrote:
 >> I have used the usb tree from next-20130125 for today.
 >
 > Lan, please send me a patch to resolve this issue.
+Hi Greg:
+	The cause is that these two routines are replaced with two new routines:
+acpi_dev_pm_add_dependent() and acpi_dev_pm_remove_dependent() in the linux-next
+branch of linux-pm tree. So this error doesn't take place in the usb-next tree.
+	One solution I can think of is that bother you to revert the patch and
+I will send new patch with new routines after 3.9 merge window. This will not
+affect other functions. Does this make sense? Sorry again.
+
 >
 > Stephen, sorry for the breakage.
 >
-	Sorry for this, I am working on this. Stephen, Thanks for reminder.
-
-
 > thanks,
 >
 > greg k-h
