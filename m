@@ -1,59 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the driver-core tree
-Date: Mon, 28 Jan 2013 21:35:35 +1100
-Message-ID: <20130128213535.15bb937175de3ec3b4a09daa@canb.auug.org.au>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: linux-next: manual merge of the usb tree with the driver-core
+ tree
+Date: Mon, 28 Jan 2013 12:46:15 +0200
+Message-ID: <20130128104615.GA28698@arwen.pp.htv.fi>
+References: <20130128213535.15bb937175de3ec3b4a09daa@canb.auug.org.au>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Jan_2013_21_35_35_+1100_n=F=3=Um+vwV6ciP"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49967 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751009Ab3A1Kfn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jan 2013 05:35:43 -0500
+Received: from arroyo.ext.ti.com ([192.94.94.40]:41300 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751035Ab3A1Kqn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jan 2013 05:46:43 -0500
+Content-Disposition: inline
+In-Reply-To: <20130128213535.15bb937175de3ec3b4a09daa@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Kishon Vijay Abraham I <kishon@ti.com>, Felipe Balbi <balbi@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Kishon Vijay Abraham I <kishon@ti.com>, Felipe Balbi <balbi@ti.com>
 
---Signature=_Mon__28_Jan_2013_21_35_35_+1100_n=F=3=Um+vwV6ciP
-Content-Type: text/plain; charset=US-ASCII
+--FCuugMFkClbJLl1L
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+On Mon, Jan 28, 2013 at 09:35:35PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+>=20
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/usb/phy/omap-usb2.c between commit 148e11349b0c ("usb: Convert to
+> devm_ioremap_resource()") from the  tree and commit ca784be36cc7 ("usb:
+> start using the control module driver") from the usb tree.
+>=20
+> I fixed it up (I wasn't sure how, so I effectively dropped the former
+> change) and can carry the fix as necessary (no action is required).
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/phy/omap-usb2.c between commit 148e11349b0c ("usb: Convert to
-devm_ioremap_resource()") from the  tree and commit ca784be36cc7 ("usb:
-start using the control module driver") from the usb tree.
-
-I fixed it up (I wasn't sure how, so I effectively dropped the former
-change) and can carry the fix as necessary (no action is required).
+thank you ;-)
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+balbi
 
---Signature=_Mon__28_Jan_2013_21_35_35_+1100_n=F=3=Um+vwV6ciP
-Content-Type: application/pgp-signature
+--FCuugMFkClbJLl1L
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRBlR3AAoJEECxmPOUX5FEvqMP/3DI618Lxhin4Uu84HB0lfso
-0xwyESwmfWMjE2kcnhejpnbKn/68cjXP+phycrItKxNHOZDlg0IfPvdpsML0yqKP
-hJ8guD3KIKVmqBnNg3A1kqGK3TSrHQRkSEEBja5u0Dq3a9ZX5aplb12FOBqxaqfq
-mDLOGDY8IT828B3MrsYedRf3pLUeDI1yHjjEtayvno89w34vCxrsAX7JnrbjA1uz
-brdQjH+rIeWDO7SwZA6PKdx3LnLCO/Jw4DcS7yIEw2nXYCToZH7IqDdHrYUgLqRB
-b++1+yUR++raPB0KWq7laAJkJHQttjmnZFy9/b8qIo4K/vfW4wzJwB89HLLudk+I
-3VZJqrne0w1WcVstjQbx080cPpLHOk2KJx4HltCcB/ZNCj4xEtYzcCVCC7QFmiNG
-37XUJ+f93HdE1wCNJURUBgHt2ySWLB9XrvuR84MDkDoUyvolGtYHirQdgZUQjD2O
-FmkYzQDkgeiegsLPt23QIs5+dyzjygwecmdDFPraXzeNNtAUmYScdMQJiaZyzIsb
-gzkMS224mjvQ2clg2sVmFzAJf6H9IridxVr/Jnk2jirt9aOKPvYjAz/i8mLu3U7d
-WhaWcqf/IQ0bEFYFq62wEEtHUqS/Da5tPB0sUjCCYotY2OkItVqAJUwTAr04O2+V
-USLouuGNqotO5KZAqWB+
-=rgeS
+iQIcBAEBAgAGBQJRBlb3AAoJEIaOsuA1yqREDnEP/29Wcc/ajVzn7isKBGq0X3ej
+oxhUPUrrddp8vvKV/ExKnMOI2esBH/mLR76050kt4rgD2x3Q00k1/L6Kaq8MH/mA
+8WdefkO7CqOkWZbfO+gw4giULEs0yjKvAhBRQWmw7Ev75z5SJ4oHqfWzth5/Mwl9
+IwRlf89eUzsJbOJ0Rb95eRwKpaV0t00037oNPxapBqVN4WZUVNqon/dGaTLH3phY
+jF8jgcCC/v1lA41pl6sPaPE39BX3StkbaPqfARZLeMaIK1tNE9NwukcO0cv+03Pe
+A6JeVJf9usmJJ3xYpw2Nzo8FX2zarzh8BiCibugGOUHXcTjVM46CBiEsPgYCbn06
+QZdygRKKGifG28KlA4QWTK+hEhHAkwXER6iLv5VCr1KMbkq4iWj57UhJPTheJYEl
+i5pq3bshquk+Iw1o9mXyRgzvyadIrpzWZd9vUqqk2gBoEbId+dPfF+O6ZggGX81Z
+gLEsiYyuJ/+ApZcvlYAKTMtw6wFKTGDS4+8iUgIlSyrSQQNCl+D3QYxuyMRGOIpC
+KnyaHN1TotYyZOw5LLUqdzD3cZ6m5Lw73F2gNaFzZxVsvt8elVrrtPeHcICILmIG
+LdLya/U+YfSiIdIkf0WfO4ZAbjhFXL42ljUYAomlIWfEqohHEGzMEUj+/goVf3MB
+jnqqVrefsFeTYNXXwX9l
+=znbb
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Jan_2013_21_35_35_+1100_n=F=3=Um+vwV6ciP--
+--FCuugMFkClbJLl1L--
