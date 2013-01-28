@@ -1,65 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the usb tree
-Date: Mon, 28 Jan 2013 21:46:44 +1100
-Message-ID: <20130128214644.a3906eecaf9123b05216dcaf@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the sound-asoc
+ tree
+Date: Mon, 28 Jan 2013 21:54:44 +1100
+Message-ID: <20130128215444.98524bf94e5fcd2035833055@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Jan_2013_21_46_44_+1100_t8=fYUS2Ub9MwPvf"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lan Tianyu <tianyu.lan@intel.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__28_Jan_2013_21_54_44_+1100_nRVQZEZBL__E3VMD"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52420 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751035Ab3A1Kyt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jan 2013 05:54:49 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Mon__28_Jan_2013_21_46_44_+1100_t8=fYUS2Ub9MwPvf
+--Signature=_Mon__28_Jan_2013_21_54_44_+1100_nRVQZEZBL__E3VMD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the char-misc tree got a conflict in
+include/linux/mfd/arizona/pdata.h between commit c94aa30edac4 ("ASoC:
+arizona: Allow number of channels clocked to be restricted") from the
+sound-asoc tree and commit 92a49871b378 ("extcon: arizona: Support use of
+GPIO5 as an input to jack detection") from the char-misc tree.
 
-drivers/usb/core/usb-acpi.c: In function 'usb_acpi_register_power_resources=
-':
-drivers/usb/core/usb-acpi.c:226:2: error: implicit declaration of function =
-'acpi_power_resource_register_device' [-Werror=3Dimplicit-function-declarat=
-ion]
-drivers/usb/core/usb-acpi.c: In function 'usb_acpi_unregister_power_resourc=
-es':
-drivers/usb/core/usb-acpi.c:234:3: error: implicit declaration of function =
-'acpi_power_resource_unregister_device' [-Werror=3Dimplicit-function-declar=
-ation]
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 88bb965ed711 ("usb: Register usb port's acpi power
-resources").
-
-I have used the usb tree from next-20130125 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__28_Jan_2013_21_46_44_+1100_t8=fYUS2Ub9MwPvf
+diff --cc include/linux/mfd/arizona/pdata.h
+index ec3e2a2,bcbe4fd..0000000
+--- a/include/linux/mfd/arizona/pdata.h
++++ b/include/linux/mfd/arizona/pdata.h
+@@@ -98,13 -96,15 +98,22 @@@ struct arizona_pdata=20
+  	/** Pin state for GPIO pins */
+  	int gpio_defaults[ARIZONA_MAX_GPIO];
+ =20
+ +	/**
+ +	 * Maximum number of channels clocks will be generated for,
+ +	 * useful for systems where and I2S bus with multiple data
+ +	 * lines is mastered.
+ +	 */
+ +	int max_channels_clocked[ARIZONA_MAX_AIF];
+ +
++ 	/** GPIO5 is used for jack detection */
++ 	bool jd_gpio5;
++=20
++ 	/** Use the headphone detect circuit to identify the accessory */
++ 	bool hpdet_acc_id;
++=20
++ 	/** GPIO used for mic isolation with HPDET */
++ 	int hpdet_id_gpio;
++=20
+  	/** GPIO for mic detection polarity */
+  	int micd_pol_gpio;
+ =20
+
+--Signature=_Mon__28_Jan_2013_21_54_44_+1100_nRVQZEZBL__E3VMD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRBlcUAAoJEECxmPOUX5FEt7UP/2R7LLeoZ8uJLkLynwhnhMJC
-9DZCM3AfVjs/XB2+dsW2aGqNC7z2WhUCF3dld/LQnVWpaiCTj85nPdbYDTDDRXa7
-WIlUy/ZjgffcczDdaCxaboDdGew4ZDYzyNvfITKKB1t1lj+OhsyPZ73itTjIxdy8
-uUaI52jd35kEOKtK+5q38/PVSthUZLjPAyGe7A31Nw0D/bl/qCrSEEaZWo/IgpIm
-f/IISAxSjakxQFoKiCrumv6/y2it3S4mdN9mejJ2dLUc5dZkc2U9dj8gUww5sgiI
-aK5x9nRz+lcOhnzSKS4zNQ6CCHO9+AUm9EpNsFsk2O6EXqdHdLIid+lqOsCqvM+0
-g9ovf1hoojDnsG4dAHH+KX67DeNEVPvq6TIFHmPd2vV1i54d1QaWYz2xVTa4bMtc
-S182QPHM/DjrWuUE/zz5y6BVQ4vuXsy0Be/vG2N/jVNuOvB2eDJFAce3b3kntmvq
-5/PFIyYpuB62n/D7/qGGCnWQpWSADwrPPwlqiiy/Yu0L3NN2C8nibZ+oH1ZLGDys
-vhJd+/P6QCQd9RLP/7tN/be5x/ytPQV0N1pE5gcIxtkt9wCqRBBfa35k4zSjFuQF
-EcZgWcGowFOVXifB+omwpkTBdaXzfmlffXcQ/BlhonU/S8yrZ3C73YKlkNZ4U/Yd
-d3frR6Vvg8rBl+9A8LGp
-=XWUx
+iQIcBAEBCAAGBQJRBlj0AAoJEECxmPOUX5FEbvYP/Axcj+/0gscaNZyFdBopzjVL
+vW48YudJ4f4bTIBnA3b3nl8X4Q9TPLXOfn6W2YBMZtTEY7vWFqJ7ig+zT9aXGOTJ
+uPrbbZ9jD/xMg6DfmnQpLMuy85Vs1nkkt3dU79V7JPJUIjeTuitPDFECj/ieLIQt
+1a2dnylc6h7dXxpvUJquHsHAqZhdxfBNhVab/FtTjjMlclvZmAUxE8uE25SexuHT
+fQhc1O4UMb+/IOnuLpeS1aeMn68BPv/lM8SX2qJ9IDmzfd1JvyV/lcpBziNM477L
+2gMqCkw18aF66rJ7muhQIBtbwHCgEnxL6l7efDW5r2PPEtaGsEdoAHEZ4fTboMd0
+hhJsQ05K75KFvg4M7pV0HsARnD5WRPPjFGg8EDyzwtQhyucNubpbJpAi6hQLMm2t
+QhkgE0mB90c1KsiQgIcbWMYrao4H95iOkUxApgFqlzhPQ818IQWN7kKPgqCUyeal
+XVYGnnmiGd4F5xEF4D9y0mw14sFO+BOXMEAYManbfXZ3yqjhtfeEN5CgenxA3aSp
+K2e2v/O9Bz2SfK1OXIS1wJqW7dc4+4bSqSFIJLTo8/EDKTV2GCOTap/PJCFFlInQ
+D2uba4esqHKOcwMXAeGlDPqt+Ov+5JWvV3OinoOrm/c6SMK2WPFuqoAe3UjqUrMT
+IMAckWh9ie/9ZmPKe1Mz
+=S4rE
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Jan_2013_21_46_44_+1100_t8=fYUS2Ub9MwPvf--
+--Signature=_Mon__28_Jan_2013_21_54_44_+1100_nRVQZEZBL__E3VMD--
