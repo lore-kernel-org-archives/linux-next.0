@@ -1,84 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the input tree
-Date: Mon, 28 Jan 2013 20:44:24 +1100
-Message-ID: <20130128204424.a3eedfee954ba6cc7a620652@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the tty tree
+Date: Mon, 28 Jan 2013 21:13:07 +1100
+Message-ID: <20130128211307.a235b6793587fea5e1fc5074@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Jan_2013_20_44_24_+1100_oy2CEh2bUFU=nuwa"
+ boundary="Signature=_Mon__28_Jan_2013_21_13_07_+1100_72IxzQBzoR=eMnt8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33998 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55668 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751348Ab3A1Jof (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jan 2013 04:44:35 -0500
+	with ESMTP id S1755493Ab3A1KNS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jan 2013 05:13:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Millenbach <jmillenbach@gmail.com>, Brian Swetland <swetland@google.com>, "Mike A. Chan" <mikechan@google.com>, Sheng Yang <sheng@linux.intel.com>, Yunhong Jiang <yunhong.jiang@intel.com>, Xiaohui Xin <xiaohui.xin@intel.com>, Jun Nakajima <jun.nakajima@intel.com>, Bruce Beare <bruce.j.beare@intel.com>, Tom Keel <thomas.keel@intel.com>, Alan Cox <alan@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Millenbach <jmillenbach@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Felipe Balbi <balbi@ti.com>
 
---Signature=_Mon__28_Jan_2013_20_44_24_+1100_oy2CEh2bUFU=nuwa
+--Signature=_Mon__28_Jan_2013_21_13_07_+1100_72IxzQBzoR=eMnt8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/input/keyboard/Kconfig between commit 6f2ac009f29b ("Input:
-goldfish - virtual input event driver") from the input tree and commit
-4f73bc4dd3e8 ("tty: Added a CONFIG_TTY option to allow removal of TTY")
-from the tty tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/gadget/Kconfig between commit 4f73bc4dd3e8 ("tty: Added a
+CONFIG_TTY option to allow removal of TTY") from the tty tree and commit
+3249ca22c088 ("usb: gadget: u_serial: convert into a module") from the
+usb tree.
 
-I fixed it up (see below - I am not sure if GOLDFISH_EVENTS needs TTY or
-not) and can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/input/keyboard/Kconfig
-index 078305e,008f96a..0000000
---- a/drivers/input/keyboard/Kconfig
-+++ b/drivers/input/keyboard/Kconfig
-@@@ -479,16 -482,8 +482,18 @@@ config KEYBOARD_SAMSUN
-  	  To compile this driver as a module, choose M here: the
-  	  module will be called samsung-keypad.
+diff --cc drivers/usb/gadget/Kconfig
+index a1bd951,6665d25..0000000
+--- a/drivers/usb/gadget/Kconfig
++++ b/drivers/usb/gadget/Kconfig
+@@@ -750,7 -760,8 +760,9 @@@ config USB_GADGET_TARGE
  =20
-+ if TTY
-+=20
- +config KEYBOARD_GOLDFISH_EVENTS
- +	depends on GOLDFISH
- +	tristate "Generic Input Event device for Goldfish"
- +	help
- +	  Say Y here to get an input event device for the Goldfish virtual
- +	  device emulator.
- +
- +	  To compile this driver as a module, choose M here: the
- +	  module will be called goldfish-events.
- +
-  config KEYBOARD_STOWAWAY
-  	tristate "Stowaway keyboard"
-  	select SERIO
+  config USB_G_SERIAL
+  	tristate "Serial Gadget (with CDC ACM and CDC OBEX support)"
+ +	depends on TTY
++ 	select USB_U_SERIAL
++ 	select USB_F_ACM
+  	select USB_LIBCOMPOSITE
+  	help
+  	  The Serial Gadget talks to the Linux-USB generic serial driver.
 
---Signature=_Mon__28_Jan_2013_20_44_24_+1100_oy2CEh2bUFU=nuwa
+--Signature=_Mon__28_Jan_2013_21_13_07_+1100_72IxzQBzoR=eMnt8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRBkh4AAoJEECxmPOUX5FEuUgP/3uvpH02Oas5Up0yzaC39b5T
-8IQjkpoHap1sDm+JWdwm4gPEQuG4rgGloBb/AxQugKE0NueOFOzqrMkv1WoAamcP
-cLOVwsSpaHvCNvHdy2PS1Gs/iTIkdqUzeykrM4wGGKrsFvo5RazMc7Zeb4bd6vj+
-Q3EoEMFg4YRM+tzQYTRFHLak7b/yLnw23eTIljeY9/v87SJfIEkTISsH+VHTdclc
-dDUDAO5WtVTmLw0Z9mbxf/kbov5HOZbFWSc/93W7z5zXLIkWRaL6ehGRZ3uwbx+K
-HDNWygHLkKLkR3VKgNgRn634/pGSJn2Uu8FD17+JbRTdbE2zKaFDi8RnE/Z1bzh8
-pQZrTmXHH1WbPx+2fB98M1Ah6mVYCowEWQF6/LzG+Xwl7ktrCZ3WRoOdZsaGDy4v
-kM3ZEKJkPyEAInZl5fGLwMjF5PSJzblDMOzRrQ8788E6VPaUVpiaLfyEuHr1G0uj
-oi6bR0Z+C7tkIY7YxVk6alFE3BI/VuvCHyxQqOSfsbC5w1m6IyvLzNBsf8gVtjxF
-AterTEfzr6XQ0wvCItMh4zhXnGBEmFlpzcG9fyTASFnnmLFM/WcEcKxGud5YLQrV
-NbQD/hW4+8Li/O1/1cOeITw59VbL9WOvk4xouJitin/jySgwO1Rm1GzjPyYjJRQ6
-phj4L2PPOO5XA5Y4FqT2
-=3pft
+iQIcBAEBCAAGBQJRBk8zAAoJEECxmPOUX5FEfD4P/jBi6aYugcyauWmUcRBM4RAQ
+qmjyQ+Zj0XGfNYc4m1VIKBTIq090+NSsnARBYU9DgXoJgEK7vtoiL1iPWZcwNXrn
+LEsm+PHj5KDmVT9qeexKOBGKNWB7F8YNufUZ/rzSFy+lOf4X8LEOSouJkCwFXbT+
+76httP7VL+qIxEXGvnAfTv/PhTWAZ992DqsuKt+NaH7cRuVUptt/XSWvbTvGXwsg
+TktA+G/dnWe/StX0o3kmGqu9RwXvPCRVgC2DjQjzh5M2z/YI+MpI38syxMrRgF3+
+YFMRA+90N9/B7Lw683iRZwf9YRIdkkA1KEPBcGZuWNIdiyj3Y/4GiyAQjv3JmQXT
+r3xTHx4dHltxJCL0pbt8+QHFyXi6CvSF/Fd8zzI7RFaYemnUPknhyNkdySBXnp5b
+xkS71zFGFfPJIQLVi6Wy2/pK29RTnCqljv2uCgA30/coLl3jQZvccg0IWmvE/r4h
+/rdh3Hosmhz5sRtXUn2qn+TdFnWYGXxxEwlrW8qw21aeDMsePriaPG4ryb1yvZ9i
+7Ksnx4dXPjI7Hd71KJRF2u4Nc+4nNynfKSjTkmD2zGoq0bxAXjxxqhp3KJGVD+//
+Yt1I/YdannelebhovHGSeT8nIun6fDmT7SuvGy8kvMRLuJ44rwXN64DaW2i5IMMi
+jNm1FHDdngg8f8Pjyh0w
+=oOHc
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Jan_2013_20_44_24_+1100_oy2CEh2bUFU=nuwa--
+--Signature=_Mon__28_Jan_2013_21_13_07_+1100_72IxzQBzoR=eMnt8--
