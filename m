@@ -1,54 +1,48 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with the input tree
-Date: Mon, 28 Jan 2013 06:46:15 -0800
-Message-ID: <20130128144615.GC2997@kroah.com>
-References: <20130128204424.a3eedfee954ba6cc7a620652@canb.auug.org.au>
+From: Lan Tianyu <tianyu.lan@intel.com>
+Subject: Re: linux-next: build failure after merge of the usb tree
+Date: Mon, 28 Jan 2013 22:50:14 +0800
+Message-ID: <51069026.5070703@intel.com>
+References: <20130128214644.a3906eecaf9123b05216dcaf@canb.auug.org.au> <20130128144508.GA2997@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:58758 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756969Ab3A1Ooa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Jan 2013 09:44:30 -0500
-Content-Disposition: inline
-In-Reply-To: <20130128204424.a3eedfee954ba6cc7a620652@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Millenbach <jmillenbach@gmail.com>, Brian Swetland <swetland@google.com>, "Mike A. Chan" <mikechan@google.com>, Sheng Yang <sheng@linux.intel.com>, Yunhong Jiang <yunhong.jiang@intel.com>, Xiaohui Xin <xiaohui.xin@intel.com>, Jun Nakajima <jun.nakajima@intel.com>, Bruce Beare <bruce.j.beare@intel.com>, Tom Keel <thomas.keel@intel.com>, Alan Cox <alan@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130128144508.GA2997@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 28, 2013 at 08:44:24PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the tty tree got a conflict in
-> drivers/input/keyboard/Kconfig between commit 6f2ac009f29b ("Input:
-> goldfish - virtual input event driver") from the input tree and commit
-> 4f73bc4dd3e8 ("tty: Added a CONFIG_TTY option to allow removal of TTY")
-> from the tty tree.
-> 
-> I fixed it up (see below - I am not sure if GOLDFISH_EVENTS needs TTY or
-> not) and can carry the fix as necessary (no action is required).
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc drivers/input/keyboard/Kconfig
-> index 078305e,008f96a..0000000
-> --- a/drivers/input/keyboard/Kconfig
-> +++ b/drivers/input/keyboard/Kconfig
-> @@@ -479,16 -482,8 +482,18 @@@ config KEYBOARD_SAMSUN
->   	  To compile this driver as a module, choose M here: the
->   	  module will be called samsung-keypad.
->   
-> + if TTY
-> + 
->  +config KEYBOARD_GOLDFISH_EVENTS
->  +	depends on GOLDFISH
->  +	tristate "Generic Input Event device for Goldfish"
->  +	help
->  +	  Say Y here to get an input event device for the Goldfish virtual
+On 2013/1/28 22:45, Greg KH wrote:
+> On Mon, Jan 28, 2013 at 09:46:44PM +1100, Stephen Rothwell wrote:
+>> Hi Greg,
+>>
+>> After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
+>> failed like this:
+>>
+>> drivers/usb/core/usb-acpi.c: In function 'usb_acpi_register_power_resources':
+>> drivers/usb/core/usb-acpi.c:226:2: error: implicit declaration of function 'acpi_power_resource_register_device' [-Werror=implicit-function-declaration]
+>> drivers/usb/core/usb-acpi.c: In function 'usb_acpi_unregister_power_resources':
+>> drivers/usb/core/usb-acpi.c:234:3: error: implicit declaration of function 'acpi_power_resource_unregister_device' [-Werror=implicit-function-declaration]
+>>
+>> Caused by commit 88bb965ed711 ("usb: Register usb port's acpi power
+>> resources").
+>>
+>> I have used the usb tree from next-20130125 for today.
+>
+> Lan, please send me a patch to resolve this issue.
+>
+> Stephen, sorry for the breakage.
+>
+	Sorry for this, I am working on this. Stephen, Thanks for reminder.
 
-Looks good, thanks.
 
-greg k-h
+> thanks,
+>
+> greg k-h
+>
+
+-- 
+Best Regards
+Tianyu Lan
+linux kernel enabling team
