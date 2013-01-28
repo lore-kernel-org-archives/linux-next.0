@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the tty tree
-Date: Mon, 28 Jan 2013 21:13:07 +1100
-Message-ID: <20130128211307.a235b6793587fea5e1fc5074@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the driver-core tree
+Date: Mon, 28 Jan 2013 21:23:09 +1100
+Message-ID: <20130128212309.58732e2b08398c4ecf326dfb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Jan_2013_21_13_07_+1100_72IxzQBzoR=eMnt8"
+ boundary="Signature=_Mon__28_Jan_2013_21_23_09_+1100_NBcqoq8xZBDrPGXW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55668 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49919 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755493Ab3A1KNS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jan 2013 05:13:18 -0500
+	with ESMTP id S1753750Ab3A1KXL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jan 2013 05:23:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Millenbach <jmillenbach@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Kishon Vijay Abraham I <kishon@ti.com>, Felipe Balbi <balbi@ti.com>
 
---Signature=_Mon__28_Jan_2013_21_13_07_+1100_72IxzQBzoR=eMnt8
+--Signature=_Mon__28_Jan_2013_21_23_09_+1100_NBcqoq8xZBDrPGXW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,52 +24,37 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/gadget/Kconfig between commit 4f73bc4dd3e8 ("tty: Added a
-CONFIG_TTY option to allow removal of TTY") from the tty tree and commit
-3249ca22c088 ("usb: gadget: u_serial: convert into a module") from the
-usb tree.
+drivers/usb/musb/omap2430.c between commit 148e11349b0c ("usb: Convert to
+devm_ioremap_resource()") from the driver-core tree and commit
+ca784be36cc7 ("usb: start using the control module driver") from the usb
+tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the latter removed the code modified by the former, so I
+did that) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/usb/gadget/Kconfig
-index a1bd951,6665d25..0000000
---- a/drivers/usb/gadget/Kconfig
-+++ b/drivers/usb/gadget/Kconfig
-@@@ -750,7 -760,8 +760,9 @@@ config USB_GADGET_TARGE
- =20
-  config USB_G_SERIAL
-  	tristate "Serial Gadget (with CDC ACM and CDC OBEX support)"
- +	depends on TTY
-+ 	select USB_U_SERIAL
-+ 	select USB_F_ACM
-  	select USB_LIBCOMPOSITE
-  	help
-  	  The Serial Gadget talks to the Linux-USB generic serial driver.
-
---Signature=_Mon__28_Jan_2013_21_13_07_+1100_72IxzQBzoR=eMnt8
+--Signature=_Mon__28_Jan_2013_21_23_09_+1100_NBcqoq8xZBDrPGXW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRBk8zAAoJEECxmPOUX5FEfD4P/jBi6aYugcyauWmUcRBM4RAQ
-qmjyQ+Zj0XGfNYc4m1VIKBTIq090+NSsnARBYU9DgXoJgEK7vtoiL1iPWZcwNXrn
-LEsm+PHj5KDmVT9qeexKOBGKNWB7F8YNufUZ/rzSFy+lOf4X8LEOSouJkCwFXbT+
-76httP7VL+qIxEXGvnAfTv/PhTWAZ992DqsuKt+NaH7cRuVUptt/XSWvbTvGXwsg
-TktA+G/dnWe/StX0o3kmGqu9RwXvPCRVgC2DjQjzh5M2z/YI+MpI38syxMrRgF3+
-YFMRA+90N9/B7Lw683iRZwf9YRIdkkA1KEPBcGZuWNIdiyj3Y/4GiyAQjv3JmQXT
-r3xTHx4dHltxJCL0pbt8+QHFyXi6CvSF/Fd8zzI7RFaYemnUPknhyNkdySBXnp5b
-xkS71zFGFfPJIQLVi6Wy2/pK29RTnCqljv2uCgA30/coLl3jQZvccg0IWmvE/r4h
-/rdh3Hosmhz5sRtXUn2qn+TdFnWYGXxxEwlrW8qw21aeDMsePriaPG4ryb1yvZ9i
-7Ksnx4dXPjI7Hd71KJRF2u4Nc+4nNynfKSjTkmD2zGoq0bxAXjxxqhp3KJGVD+//
-Yt1I/YdannelebhovHGSeT8nIun6fDmT7SuvGy8kvMRLuJ44rwXN64DaW2i5IMMi
-jNm1FHDdngg8f8Pjyh0w
-=oOHc
+iQIcBAEBCAAGBQJRBlGNAAoJEECxmPOUX5FEotgP/0VMfemRu/ZkJA7/qaX6Z5GY
+jqPKCtg8xjI3ZeTNYe3/7t30AHrwv3/vc4xcrwSqrUW8d16sLFHT4x6VUdFkyqek
+e1zSSdV13BwMwgOGl4kJig9HjTNZI+d5AkFJcKdQGgSvAXeM+jOjmv07t0E/l/hE
+KD5HmEwW3RXgvuorOmAAFbvxqAuhbNhjSM+9+4ZV8GdYsnI6IDXjCZ1yJ0rjATuP
+4zeK3YhkEK7LGKe+vKZ4miZ+ivgVc4mMRAbi/mEuYQVHm2+EzeuGmWkn4Q+UYS3c
+qxS39GTiAVxdzer/7kxrSXLKUpi5hbXC0Xspjlumj9d0NwpgOiGoG6w43qvChbrm
+EJn8D4gZt22M86O81oWnQbftHq1mL47M9gndqKPM+T25P9+XLcLlSkf7BTSkzkgF
+fzcWzlONSbwnuFQIz7MNkYkV2O/OWHsklTMyZPKxe/CdABS4u0M0v9rUrt7XuOsW
+Kpk8MfY1h0HBRPQ+KIrVLkZxkK4Q8teHZGDu0w0h7tQAg3f1j3mtedoJzIpz/mEO
+ywl/ApYGhOSqY4mlYKnduJ2R3wobKu8UBEi4eSIrjNXvGhG4ooMAOuFm3YiTuWFb
+WEemwj1XRo7RPTNGwidrMreawHKR+a3E05bsfNZDyBCd7XAsiLlN//bruGTWpC9z
+cgFU78FczGqYb7AJ2YhR
+=LCOF
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Jan_2013_21_13_07_+1100_72IxzQBzoR=eMnt8--
+--Signature=_Mon__28_Jan_2013_21_23_09_+1100_NBcqoq8xZBDrPGXW--
