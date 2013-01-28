@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the usb tree with the driver-core tree
-Date: Mon, 28 Jan 2013 21:23:09 +1100
-Message-ID: <20130128212309.58732e2b08398c4ecf326dfb@canb.auug.org.au>
+Date: Mon, 28 Jan 2013 21:35:35 +1100
+Message-ID: <20130128213535.15bb937175de3ec3b4a09daa@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Jan_2013_21_23_09_+1100_NBcqoq8xZBDrPGXW"
+ boundary="Signature=_Mon__28_Jan_2013_21_35_35_+1100_n=F=3=Um+vwV6ciP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49919 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49967 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753750Ab3A1KXL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jan 2013 05:23:11 -0500
+	with ESMTP id S1751009Ab3A1Kfn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jan 2013 05:35:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Kishon Vijay Abraham I <kishon@ti.com>, Felipe Balbi <balbi@ti.com>
 
---Signature=_Mon__28_Jan_2013_21_23_09_+1100_NBcqoq8xZBDrPGXW
+--Signature=_Mon__28_Jan_2013_21_35_35_+1100_n=F=3=Um+vwV6ciP
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,37 +24,36 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/musb/omap2430.c between commit 148e11349b0c ("usb: Convert to
-devm_ioremap_resource()") from the driver-core tree and commit
-ca784be36cc7 ("usb: start using the control module driver") from the usb
-tree.
+drivers/usb/phy/omap-usb2.c between commit 148e11349b0c ("usb: Convert to
+devm_ioremap_resource()") from the  tree and commit ca784be36cc7 ("usb:
+start using the control module driver") from the usb tree.
 
-I fixed it up (the latter removed the code modified by the former, so I
-did that) and can carry the fix as necessary (no action is required).
+I fixed it up (I wasn't sure how, so I effectively dropped the former
+change) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__28_Jan_2013_21_23_09_+1100_NBcqoq8xZBDrPGXW
+--Signature=_Mon__28_Jan_2013_21_35_35_+1100_n=F=3=Um+vwV6ciP
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRBlGNAAoJEECxmPOUX5FEotgP/0VMfemRu/ZkJA7/qaX6Z5GY
-jqPKCtg8xjI3ZeTNYe3/7t30AHrwv3/vc4xcrwSqrUW8d16sLFHT4x6VUdFkyqek
-e1zSSdV13BwMwgOGl4kJig9HjTNZI+d5AkFJcKdQGgSvAXeM+jOjmv07t0E/l/hE
-KD5HmEwW3RXgvuorOmAAFbvxqAuhbNhjSM+9+4ZV8GdYsnI6IDXjCZ1yJ0rjATuP
-4zeK3YhkEK7LGKe+vKZ4miZ+ivgVc4mMRAbi/mEuYQVHm2+EzeuGmWkn4Q+UYS3c
-qxS39GTiAVxdzer/7kxrSXLKUpi5hbXC0Xspjlumj9d0NwpgOiGoG6w43qvChbrm
-EJn8D4gZt22M86O81oWnQbftHq1mL47M9gndqKPM+T25P9+XLcLlSkf7BTSkzkgF
-fzcWzlONSbwnuFQIz7MNkYkV2O/OWHsklTMyZPKxe/CdABS4u0M0v9rUrt7XuOsW
-Kpk8MfY1h0HBRPQ+KIrVLkZxkK4Q8teHZGDu0w0h7tQAg3f1j3mtedoJzIpz/mEO
-ywl/ApYGhOSqY4mlYKnduJ2R3wobKu8UBEi4eSIrjNXvGhG4ooMAOuFm3YiTuWFb
-WEemwj1XRo7RPTNGwidrMreawHKR+a3E05bsfNZDyBCd7XAsiLlN//bruGTWpC9z
-cgFU78FczGqYb7AJ2YhR
-=LCOF
+iQIcBAEBCAAGBQJRBlR3AAoJEECxmPOUX5FEvqMP/3DI618Lxhin4Uu84HB0lfso
+0xwyESwmfWMjE2kcnhejpnbKn/68cjXP+phycrItKxNHOZDlg0IfPvdpsML0yqKP
+hJ8guD3KIKVmqBnNg3A1kqGK3TSrHQRkSEEBja5u0Dq3a9ZX5aplb12FOBqxaqfq
+mDLOGDY8IT828B3MrsYedRf3pLUeDI1yHjjEtayvno89w34vCxrsAX7JnrbjA1uz
+brdQjH+rIeWDO7SwZA6PKdx3LnLCO/Jw4DcS7yIEw2nXYCToZH7IqDdHrYUgLqRB
+b++1+yUR++raPB0KWq7laAJkJHQttjmnZFy9/b8qIo4K/vfW4wzJwB89HLLudk+I
+3VZJqrne0w1WcVstjQbx080cPpLHOk2KJx4HltCcB/ZNCj4xEtYzcCVCC7QFmiNG
+37XUJ+f93HdE1wCNJURUBgHt2ySWLB9XrvuR84MDkDoUyvolGtYHirQdgZUQjD2O
+FmkYzQDkgeiegsLPt23QIs5+dyzjygwecmdDFPraXzeNNtAUmYScdMQJiaZyzIsb
+gzkMS224mjvQ2clg2sVmFzAJf6H9IridxVr/Jnk2jirt9aOKPvYjAz/i8mLu3U7d
+WhaWcqf/IQ0bEFYFq62wEEtHUqS/Da5tPB0sUjCCYotY2OkItVqAJUwTAr04O2+V
+USLouuGNqotO5KZAqWB+
+=rgeS
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Jan_2013_21_23_09_+1100_NBcqoq8xZBDrPGXW--
+--Signature=_Mon__28_Jan_2013_21_35_35_+1100_n=F=3=Um+vwV6ciP--
