@@ -1,127 +1,155 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Josh Triplett <josh@joshtriplett.org>
 Subject: Re: linux-next: manual merge of the tty tree with the input tree
-Date: Mon, 28 Jan 2013 16:23:57 -0800
-Message-ID: <20130129002357.GA4420@core.coreip.homeip.net>
+Date: Tue, 29 Jan 2013 16:13:21 +1100
+Message-ID: <20130129051321.GB3283@leaf>
 References: <20130128204424.a3eedfee954ba6cc7a620652@canb.auug.org.au>
  <20130128144615.GC2997@kroah.com>
  <20130128173330.GA11769@core.coreip.homeip.net>
  <CADwDc1AVOaA0N9evbR7A14udx+TRRQo6t_X_Nn15BdEEByupkg@mail.gmail.com>
  <20130128224443.GA1083@core.coreip.homeip.net>
  <20130128235916.GA3124@leaf>
+ <20130129002357.GA4420@core.coreip.homeip.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-da0-f48.google.com ([209.85.210.48]:61748 "EHLO
-	mail-da0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750792Ab3A2AYC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jan 2013 19:24:02 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20130128235916.GA3124@leaf>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Josh Triplett <josh@joshtriplett.org>
+In-Reply-To: <20130129002357.GA4420@core.coreip.homeip.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: Joe Millenbach <jmillenbach@gmail.com>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Brian Swetland <swetland@google.com>, "Mike A. Chan" <mikechan@google.com>, Sheng Yang <sheng@linux.intel.com>, Yunhong Jiang <yunhong.jiang@intel.com>, Xiaohui Xin <xiaohui.xin@intel.com>, Jun Nakajima <jun.nakajima@intel.com>, Bruce Beare <bruce.j.beare@intel.com>, Tom Keel <thomas.keel@intel.com>, Alan Cox <alan@linux.intel.com>, Jamey Sharp <jamey@minilop.net>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 29, 2013 at 10:59:17AM +1100, Josh Triplett wrote:
-> On Mon, Jan 28, 2013 at 02:44:43PM -0800, Dmitry Torokhov wrote:
-> > On Mon, Jan 28, 2013 at 02:09:31PM -0800, Joe Millenbach wrote:
-> > > On Mon, Jan 28, 2013 at 9:33 AM, Dmitry Torokhov
-> > > <dmitry.torokhov@gmail.com> wrote:
-> > > > On Mon, Jan 28, 2013 at 06:46:15AM -0800, Greg KH wrote:
-> > > >> On Mon, Jan 28, 2013 at 08:44:24PM +1100, Stephen Rothwell wrote:
-> > > >> > Hi Greg,
-> > > >> >
-> > > >> > Today's linux-next merge of the tty tree got a conflict in
-> > > >> > drivers/input/keyboard/Kconfig between commit 6f2ac009f29b ("Input:
-> > > >> > goldfish - virtual input event driver") from the input tree and commit
-> > > >> > 4f73bc4dd3e8 ("tty: Added a CONFIG_TTY option to allow removal of TTY")
-> > > >> > from the tty tree.
-> > > >> >
-> > > >> > I fixed it up (see below - I am not sure if GOLDFISH_EVENTS needs TTY or
-> > > >> > not) and can carry the fix as necessary (no action is required).
-> > > >> >
-> > > >> > --
-> > > >> > Cheers,
-> > > >> > Stephen Rothwell                    sfr@canb.auug.org.au
-> > > >> >
-> > > >> > diff --cc drivers/input/keyboard/Kconfig
-> > > >> > index 078305e,008f96a..0000000
-> > > >> > --- a/drivers/input/keyboard/Kconfig
-> > > >> > +++ b/drivers/input/keyboard/Kconfig
-> > > >> > @@@ -479,16 -482,8 +482,18 @@@ config KEYBOARD_SAMSUN
-> > > >> >       To compile this driver as a module, choose M here: the
-> > > >> >       module will be called samsung-keypad.
-> > > >> >
-> > > >> > + if TTY
-> > > >> > +
-> > > >> >  +config KEYBOARD_GOLDFISH_EVENTS
-> > > >> >  +  depends on GOLDFISH
-> > > >> >  +  tristate "Generic Input Event device for Goldfish"
-> > > >> >  +  help
-> > > >> >  +    Say Y here to get an input event device for the Goldfish virtual
-> > > >>
-> > > >> Looks good, thanks.
-> > > >
-> > > > Greg,
-> > > >
-> > > > Please drop 4f73bc4dd3e8563ef4109f293a092820dff66d92, at least the parts
-> > > > related to input. As far as I know nothing except serport driver
-> > > > depends on tty and we do not need to introduce this kind of
-> > > > dependencie. Anyone needing slim config can simply try disabling
-> > > > input (or parts of it) without needing an artificial dependencies.
-> > > >
-> > > > Thanks.
-> > > >
-> > > > --
-> > > > Dmitry
+On Mon, Jan 28, 2013 at 04:23:57PM -0800, Dmitry Torokhov wrote:
+> On Tue, Jan 29, 2013 at 10:59:17AM +1100, Josh Triplett wrote:
+> > On Mon, Jan 28, 2013 at 02:44:43PM -0800, Dmitry Torokhov wrote:
+> > > On Mon, Jan 28, 2013 at 02:09:31PM -0800, Joe Millenbach wrote:
+> > > > On Mon, Jan 28, 2013 at 9:33 AM, Dmitry Torokhov
+> > > > <dmitry.torokhov@gmail.com> wrote:
+> > > > > On Mon, Jan 28, 2013 at 06:46:15AM -0800, Greg KH wrote:
+> > > > >> On Mon, Jan 28, 2013 at 08:44:24PM +1100, Stephen Rothwell wrote:
+> > > > >> > Hi Greg,
+> > > > >> >
+> > > > >> > Today's linux-next merge of the tty tree got a conflict in
+> > > > >> > drivers/input/keyboard/Kconfig between commit 6f2ac009f29b ("Input:
+> > > > >> > goldfish - virtual input event driver") from the input tree and commit
+> > > > >> > 4f73bc4dd3e8 ("tty: Added a CONFIG_TTY option to allow removal of TTY")
+> > > > >> > from the tty tree.
+> > > > >> >
+> > > > >> > I fixed it up (see below - I am not sure if GOLDFISH_EVENTS needs TTY or
+> > > > >> > not) and can carry the fix as necessary (no action is required).
+> > > > >> >
+> > > > >> > --
+> > > > >> > Cheers,
+> > > > >> > Stephen Rothwell                    sfr@canb.auug.org.au
+> > > > >> >
+> > > > >> > diff --cc drivers/input/keyboard/Kconfig
+> > > > >> > index 078305e,008f96a..0000000
+> > > > >> > --- a/drivers/input/keyboard/Kconfig
+> > > > >> > +++ b/drivers/input/keyboard/Kconfig
+> > > > >> > @@@ -479,16 -482,8 +482,18 @@@ config KEYBOARD_SAMSUN
+> > > > >> >       To compile this driver as a module, choose M here: the
+> > > > >> >       module will be called samsung-keypad.
+> > > > >> >
+> > > > >> > + if TTY
+> > > > >> > +
+> > > > >> >  +config KEYBOARD_GOLDFISH_EVENTS
+> > > > >> >  +  depends on GOLDFISH
+> > > > >> >  +  tristate "Generic Input Event device for Goldfish"
+> > > > >> >  +  help
+> > > > >> >  +    Say Y here to get an input event device for the Goldfish virtual
+> > > > >>
+> > > > >> Looks good, thanks.
+> > > > >
+> > > > > Greg,
+> > > > >
+> > > > > Please drop 4f73bc4dd3e8563ef4109f293a092820dff66d92, at least the parts
+> > > > > related to input. As far as I know nothing except serport driver
+> > > > > depends on tty and we do not need to introduce this kind of
+> > > > > dependencie. Anyone needing slim config can simply try disabling
+> > > > > input (or parts of it) without needing an artificial dependencies.
+> > > > >
+> > > > > Thanks.
+> > > > >
+> > > > > --
+> > > > > Dmitry
+> > > > 
+> > > > Dmitry and Greg,
+> > > > 
+> > > > SERIO needs TTY, 
 > > > 
-> > > Dmitry and Greg,
+> > > No it does not. There is only one (1) serio driver that needs the tty
+> > > layer and that is serport.
 > > > 
-> > > SERIO needs TTY, 
+> > > > and the majority of the input changes are adding "depends on TTY" to
+> > > > things that "select SERIO" as they break the dependency chain.  In
+> > > > other words, enabling a component that selects SERIO will turn SERIO
+> > > > on even when SERIO depends on TTY and TTY is disabled.
+> > > 
+> > > Except that it does not. Are you confusing SERIO with SERIAL by any
+> > > chance?
 > > 
-> > No it does not. There is only one (1) serio driver that needs the tty
-> > layer and that is serport.
+> > A few serial drivers don't actually need the TTY layer.  However, most
+> 
+> Can you please tell me why you are talking about serial layer here?
+
+Probably terminology sloppiness.  Insert noun for "things that depend on
+SERIO" here.
+
+> > do, including many that don't obviously appear to at first glance.  For
+> > instance, MOUSE_PS2 doesn't *appear* to need TTY, but without the
+> > dependency, having MOUSE_PS2 enabled and TTY disabled produces a kernel
+> > that doesn't build.
+> 
+> Compile log please.
+
+http://marc.info/?l=linux-kernel&m=134555498507747&w=1
+
+IIRC, produced by dropping the "depends on TTY" from MOUSE_PS2, enabling
+MOUSE_PS2, leaving TTY disabled, and changing nothing else.  (In
+particular, not changing anything related to serport directly.)
+
+> >  (Also keep in mind that many other headers include
+> > <linux/tty.h>.)  Many of the drivers that don't actually need TTY
+> > nonetheless won't typically appear on systems small enough to want to
+> > compile out TTY.
 > > 
-> > > and the majority of the input changes are adding "depends on TTY" to
-> > > things that "select SERIO" as they break the dependency chain.  In
-> > > other words, enabling a component that selects SERIO will turn SERIO
-> > > on even when SERIO depends on TTY and TTY is disabled.
+> > In any case, it seems simple enough to whittle down dependencies on TTY
+> > later on, but for a first pass, the conserative approach seems
+> > preferable.
+> 
+> However my approach would be not to touch anything except serport
+> driver (which indeed depends on TTY layer).
+
+Quite a bit more than that depends on the TTY layer.
+
+> > > In the future it would be nice if you CCed people involved in the
+> > > subsystem you are changing.
 > > 
-> > Except that it does not. Are you confusing SERIO with SERIAL by any
-> > chance?
+> > Such as the maintainers of the TTY and serial layers?  Alan Cox OKed
+> > this conservative addition of dependencies in the original version of
+> > this change, and Greg had no complaints at the time.
 > 
-> A few serial drivers don't actually need the TTY layer.  However, most
+> Maintainer of _SERIO_ (not SERIAL, SERIO) layer, yours truly.
 
-Can you please tell me why you are talking about serial layer here?
+This change affected the dependencies of several hundred drivers, and
+the output of get_maintainer.pl included hundreds of email addresses.
+Spamming *all* of them for a one-line change to the dependencies of a
+Kconfig option, when that change acts as a no-op except on systems
+trying to use CONFIG_TTY=n, seemed imprudent.  Given that this was a
+change to the TTY layer, and not to the SERIO subsystem other than its
+dependencies (along with the dependencies of hundreds of other drivers),
+SERIO didn't particularly seem to stand out here as one to keep the CC
+for.  In any case, sorry you didn't hear about this sooner.
 
-> do, including many that don't obviously appear to at first glance.  For
-> instance, MOUSE_PS2 doesn't *appear* to need TTY, but without the
-> dependency, having MOUSE_PS2 enabled and TTY disabled produces a kernel
-> that doesn't build.
+Given that the kernel without this patch effectively has CONFIG_TTY=y
+hardcoded, and that CONFIG_TTY=y remains the common case, it seems
+fairly reasonable to bias in favor of making sure that all
+Kconfig-supported configurations will actually build rather than trying
+to maximize the number of drivers buildable with CONFIG_TTY=n.  It seems
+easy enough to drop dependencies on TTY later, but at the moment all the
+dependencies on TTY came from either observed build failures without it
+or fairly clear dependencies on TTY (such as the use of tty_* functions,
+inclusion of linux/tty.h, or selection of a driver that does one of
+those).
 
-Compile log please.
-
->  (Also keep in mind that many other headers include
-> <linux/tty.h>.)  Many of the drivers that don't actually need TTY
-> nonetheless won't typically appear on systems small enough to want to
-> compile out TTY.
-> 
-> In any case, it seems simple enough to whittle down dependencies on TTY
-> later on, but for a first pass, the conserative approach seems
-> preferable.
-
-However my approach would be not to touch anything except serport
-driver (which indeed depends on TTY layer).
-
-> 
-> > In the future it would be nice if you CCed people involved in the
-> > subsystem you are changing.
-> 
-> Such as the maintainers of the TTY and serial layers?  Alan Cox OKed
-> this conservative addition of dependencies in the original version of
-> this change, and Greg had no complaints at the time.
-
-Maintainer of _SERIO_ (not SERIAL, SERIO) layer, yours truly.
-
--- 
-Dmitry
+- Josh Triplett
