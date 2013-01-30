@@ -1,62 +1,106 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pm tree
-Date: Wed, 30 Jan 2013 19:48:41 +1100
-Message-ID: <20130130194841.abd832c601b21c3e67aae4f6@canb.auug.org.au>
+Subject: linux-next: manual merge of the battery tree with Linus' tree
+Date: Wed, 30 Jan 2013 22:13:57 +1100
+Message-ID: <20130130221357.bf022183e79305f38613b524@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__30_Jan_2013_19_48_41_+1100_=c5eQQ0eH1lo0t2B"
+ boundary="Signature=_Wed__30_Jan_2013_22_13_57_+1100_qdzJ.Ow/K7fAq2E8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44152 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35059 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753129Ab3A3Ist (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Jan 2013 03:48:49 -0500
+	with ESMTP id S1754149Ab3A3LO3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Jan 2013 06:14:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Anton Vorontsov <avorontsov@ru.mvista.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Johan Bjornstedt <johan.bjornstedt@stericsson.com>, Henrik Solver <henrik.solver@stericsson.com>
 
---Signature=_Wed__30_Jan_2013_19_48_41_+1100_=c5eQQ0eH1lo0t2B
+--Signature=_Wed__30_Jan_2013_22_13_57_+1100_qdzJ.Ow/K7fAq2E8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Anton,
 
-After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the battery tree got a conflict in
+include/linux/mfd/abx500/ab8500-bm.h between commit 00441b5e6b98 ("mfd:
+Fix compile errors and warnings when !CONFIG_AB8500_BM") from Linus' tree
+and commit 3988a4df3499 ("ab8500_bm: Skip first CCEOC irq for instant
+current") from the battery tree.
 
-drivers/built-in.o: In function `ipc_init':
-pl320-ipc.c:(.init.text+0xf96b): undefined reference to `amba_driver_regist=
-er'
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 970066f5b269 ("ARM / highbank: add support for pl320 IPC").
-
-I have used the pm tree from next-20130128 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__30_Jan_2013_19_48_41_+1100_=c5eQQ0eH1lo0t2B
+diff --cc include/linux/mfd/abx500/ab8500-bm.h
+index 9bd037d,e2a1e6d..0000000
+--- a/include/linux/mfd/abx500/ab8500-bm.h
++++ b/include/linux/mfd/abx500/ab8500-bm.h
+@@@ -437,8 -438,38 +441,13 @@@ int ab8500_fg_inst_curr_started(struct=20
+  int ab8500_fg_inst_curr_done(struct ab8500_fg *di);
+ =20
+  #else
+ -int ab8500_fg_inst_curr_started(struct ab8500_fg *di)
+ -{
+ -	return 0;
+ -}
+ +static struct abx500_bm_data ab8500_bm_data;
+ =20
+ -int ab8500_fg_inst_curr_done(struct ab8500_fg *di)
+ -{
+ -	return 0;
+ -}
+ -static void ab8500_fg_reinit(void)
+ -{
+ -}
+ -static void ab8500_charger_usb_state_changed(u8 bm_usb_state, u16 mA)
+ -{
+ -}
+ -static struct ab8500_btemp *ab8500_btemp_get(void)
+ -{
+ -	return NULL;
+ -}
+ -static int ab8500_btemp_get_batctrl_temp(struct ab8500_btemp *btemp)
+++int ab8500_fg_inst_curr_started(struct ab8500_fg *di)
++ {
++ 	return 0;
++ }
+ -struct ab8500_fg *ab8500_fg_get(void)
+ -{
+ -	return NULL;
+ -}
+ -static int ab8500_fg_inst_curr_blocking(struct ab8500_fg *dev)
+ -{
+ -	return -ENODEV;
+ -}
++=20
+  static inline int ab8500_fg_inst_curr_start(struct ab8500_fg *di)
+  {
+  	return -ENODEV;
+
+--Signature=_Wed__30_Jan_2013_22_13_57_+1100_qdzJ.Ow/K7fAq2E8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRCN5pAAoJEECxmPOUX5FEbzQP/i2UY056uXn+iI1vZZfxLKMl
-Us25z739Q3RYt0uliAzTXYwMfX8yv9iZ3o1lcbVdcYRqisjZ+4Xm80QSvTWotmDR
-vPHLm4J5XFm1RaIPcZ1WMi2NA7255klgR148o0IzDHQGw3FdG4lFw+x0gaQjpdY8
-x3Fu01oFzdRgmnqbRxslENtZi3Sk61Wd1+LnBIvOG7XXTbWN/NCKeaEJcXJH9JhQ
-yWXxQOqIrW0dCOeWiCe6d8V8ai3gQ+8U6ESa2VnUqHg7syGhj1mjuQkoMwwcPE+r
-r62ZFSh0+dAbspf4WH47t/coRHkou9qCcmLgm9jupa3qVpqs2ZKX4MabkwfT2EbU
-V5CcQDvGalTlnp3EgDkwtXsXOVWRUIP9iYJybvTkaHFWxgktmWs93NsIbpSTR8z4
-ixhIILEMWqTihdGPb4KC+4Sh8lKqaDIQdhIooshPqxmcN4ePJ6EE3pWVb+32x8WA
-TBlfX5WfBTNxkLwOgNc4K66yHdFguNZkaFf/0CWKxzu0K+qsjJ3nUynv9bA08i9g
-pgKSwDuUoTSRIXobZ4Hjs4bWCWhSVA7io4rdtjLEMDY4DF1miQT6GVz1soy7jvuc
-n/HodM92KOlvPfo8h4Bvi/mpyY5Z/26wFUi4yyzpv19bAai52Gequ74aQ9QJY2yc
-w92asj/i5hcedVTMy2GX
-=D/p7
+iQIcBAEBCAAGBQJRCQB1AAoJEECxmPOUX5FEZJoQAIyTmMg/H/N87PB99tJqYlD2
+2h5G2dIHPAMc2XW7yOwitOJNy3EfgwK9UZjcPY9hC0b1ePvQEDBMI1Ol323zmKny
+V3IgiNaSpgbVTNvkU2INGdBYj0m7QbC15oRXSd9aHPx+vDOrhHD8uZgYu0BEWs7V
+woFPdaS4fYL4Q4h8tZ62vMz5eciZDnK+Xg8sf2l2a0ayQEQosutilRSrjHN1W8UR
+v3GtnY+uHQWEhcgnx0CI/p1HzeMxS9nd16JKxKWa64c4Tz96L3f3+HkTT8J7KEup
+gcFN0hsGggtqzwjrDSYcahWd0RlJd5H67xsdLDSdEw9zejCUeHfQzxbaAaLmzep/
+1DxLP3tLO7dZKZM+h2rjedJYS9Ax9sWMT6JconZ0/B0V1oj0wUYNkVzwF3mLV+cu
+qcHUNVY1OGTPjZwZreuk2df+BgYIEeSgltmVnoXaS37vVMnA0au+X5rXLUlwRITh
+kIbsMNU2fyi+xalVtFRjWUEKyWOsbyBuw++4UHA/h0ky6qabX6oBngR+SWRfL8sa
+2EvTjuBAFXNqbQsueBxO5qWaxrCRvssRoP2C0UNYIAZ0eSuRa0uvsEE7EgCD6amV
+EYKJLs3PPkqfytcPProq6Lp5uCd7oAtbROJZ1BcHXl83ji6DJy/ktmwIzlWZvwg1
+ESbVReZ7Ya0/D+389FP+
+=gIYP
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__30_Jan_2013_19_48_41_+1100_=c5eQQ0eH1lo0t2B--
+--Signature=_Wed__30_Jan_2013_22_13_57_+1100_qdzJ.Ow/K7fAq2E8--
