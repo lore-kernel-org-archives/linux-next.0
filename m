@@ -1,106 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the battery tree with Linus' tree
-Date: Wed, 30 Jan 2013 22:13:57 +1100
-Message-ID: <20130130221357.bf022183e79305f38613b524@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Wed, 30 Jan 2013 22:41:24 +1100
+Message-ID: <20130130224124.7b1d992c648c86c4af61d58d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__30_Jan_2013_22_13_57_+1100_qdzJ.Ow/K7fAq2E8"
+ boundary="Signature=_Wed__30_Jan_2013_22_41_24_+1100_pdJj90kj0VXQo.8m"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35059 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:52292 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754149Ab3A3LO3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Jan 2013 06:14:29 -0500
+	with ESMTP id S1754213Ab3A3Llk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Jan 2013 06:41:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <avorontsov@ru.mvista.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Johan Bjornstedt <johan.bjornstedt@stericsson.com>, Henrik Solver <henrik.solver@stericsson.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Hansen <dave@linux.vnet.ibm.com>
 
---Signature=_Wed__30_Jan_2013_22_13_57_+1100_qdzJ.Ow/K7fAq2E8
+--Signature=_Wed__30_Jan_2013_22_41_24_+1100_pdJj90kj0VXQo.8m
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Anton,
+Hi all,
 
-Today's linux-next merge of the battery tree got a conflict in
-include/linux/mfd/abx500/ab8500-bm.h between commit 00441b5e6b98 ("mfd:
-Fix compile errors and warnings when !CONFIG_AB8500_BM") from Linus' tree
-and commit 3988a4df3499 ("ab8500_bm: Skip first CCEOC irq for instant
-current") from the battery tree.
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+arch/x86/mm/numa.c: In function 'setup_node_data':
+arch/x86/mm/numa.c:222:3: warning: passing argument 1 of '__phys_addr_nodeb=
+ug' makes integer from pointer without a cast [enabled by default]
+arch/x86/include/asm/page_64.h:12:29: note: expected 'long unsigned int' bu=
+t argument is of type 'void *'
 
+Introduced by commit a25b9316841c ("x86, mm: Make DEBUG_VIRTUAL work
+earlier in boot").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/mfd/abx500/ab8500-bm.h
-index 9bd037d,e2a1e6d..0000000
---- a/include/linux/mfd/abx500/ab8500-bm.h
-+++ b/include/linux/mfd/abx500/ab8500-bm.h
-@@@ -437,8 -438,38 +441,13 @@@ int ab8500_fg_inst_curr_started(struct=20
-  int ab8500_fg_inst_curr_done(struct ab8500_fg *di);
- =20
-  #else
- -int ab8500_fg_inst_curr_started(struct ab8500_fg *di)
- -{
- -	return 0;
- -}
- +static struct abx500_bm_data ab8500_bm_data;
- =20
- -int ab8500_fg_inst_curr_done(struct ab8500_fg *di)
- -{
- -	return 0;
- -}
- -static void ab8500_fg_reinit(void)
- -{
- -}
- -static void ab8500_charger_usb_state_changed(u8 bm_usb_state, u16 mA)
- -{
- -}
- -static struct ab8500_btemp *ab8500_btemp_get(void)
- -{
- -	return NULL;
- -}
- -static int ab8500_btemp_get_batctrl_temp(struct ab8500_btemp *btemp)
-++int ab8500_fg_inst_curr_started(struct ab8500_fg *di)
-+ {
-+ 	return 0;
-+ }
- -struct ab8500_fg *ab8500_fg_get(void)
- -{
- -	return NULL;
- -}
- -static int ab8500_fg_inst_curr_blocking(struct ab8500_fg *dev)
- -{
- -	return -ENODEV;
- -}
-+=20
-  static inline int ab8500_fg_inst_curr_start(struct ab8500_fg *di)
-  {
-  	return -ENODEV;
-
---Signature=_Wed__30_Jan_2013_22_13_57_+1100_qdzJ.Ow/K7fAq2E8
+--Signature=_Wed__30_Jan_2013_22_41_24_+1100_pdJj90kj0VXQo.8m
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRCQB1AAoJEECxmPOUX5FEZJoQAIyTmMg/H/N87PB99tJqYlD2
-2h5G2dIHPAMc2XW7yOwitOJNy3EfgwK9UZjcPY9hC0b1ePvQEDBMI1Ol323zmKny
-V3IgiNaSpgbVTNvkU2INGdBYj0m7QbC15oRXSd9aHPx+vDOrhHD8uZgYu0BEWs7V
-woFPdaS4fYL4Q4h8tZ62vMz5eciZDnK+Xg8sf2l2a0ayQEQosutilRSrjHN1W8UR
-v3GtnY+uHQWEhcgnx0CI/p1HzeMxS9nd16JKxKWa64c4Tz96L3f3+HkTT8J7KEup
-gcFN0hsGggtqzwjrDSYcahWd0RlJd5H67xsdLDSdEw9zejCUeHfQzxbaAaLmzep/
-1DxLP3tLO7dZKZM+h2rjedJYS9Ax9sWMT6JconZ0/B0V1oj0wUYNkVzwF3mLV+cu
-qcHUNVY1OGTPjZwZreuk2df+BgYIEeSgltmVnoXaS37vVMnA0au+X5rXLUlwRITh
-kIbsMNU2fyi+xalVtFRjWUEKyWOsbyBuw++4UHA/h0ky6qabX6oBngR+SWRfL8sa
-2EvTjuBAFXNqbQsueBxO5qWaxrCRvssRoP2C0UNYIAZ0eSuRa0uvsEE7EgCD6amV
-EYKJLs3PPkqfytcPProq6Lp5uCd7oAtbROJZ1BcHXl83ji6DJy/ktmwIzlWZvwg1
-ESbVReZ7Ya0/D+389FP+
-=gIYP
+iQIcBAEBCAAGBQJRCQbkAAoJEECxmPOUX5FEOEEP/08A6lu60ELPYooHGCNq9txG
+tU5/zpc93rxdMWsJd3arathOjG0MyXEO93aF5FF+8FiU07VC2MEkqNFVqHVCQIcI
+QEtyzZ20ZY4We1FhDh5ieb0444IZccotbX6VeTBxLW4kqjxwHpLhdKsJaGi20mOt
+N9ZBlEFL5TBSgDlxRXLeV77EI9OJ9Ajb9lkAYIvzY4DpdPlHNwcX9KiM+t8y8W1W
+XUvnIKW4Rs+i3qtgzQ6Sh46KNV/E1nVVZnLePjn1Qo4QuN8agIqpq1poRdjwAg8O
+QfWVClsnjCSRei9z1fscCBkvkCrnzbJ3WTmrac87Zw0myfPbMhoiLD5Dc7X2D90E
+gN/VCmB6kbPNyTTpVZJjN6HZ/DLGEVKXpSGR3TG6cpD7F/yKSobW5cuc2yRKoIZw
+ocXBpQg18Y+B5p/TrfIXTOz257gwyKhWF5NMX7qj9wwftrq1oqSoVNhc6BDUFujZ
+XJ/VRsloUeaCiRDlRI/8vf/PbVSjjn5A2TXlI6eA7ROoVrgmMVE7vn+Y7Cz6k/PU
+UOzCKv435jKRojoxuQhPSgWEOK7F1i5aR1BujqnxTU1Nsso8ygtWGQQquA03sRgv
+kGcA+MiZ2u0lHHGx7nIVqIFLhr31cr0Kuv5UhYif+lLNqkHtday3hyRkopbsje6r
++u/t8zWXx6wqO43OJbMI
+=SUl1
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__30_Jan_2013_22_13_57_+1100_qdzJ.Ow/K7fAq2E8--
+--Signature=_Wed__30_Jan_2013_22_41_24_+1100_pdJj90kj0VXQo.8m--
