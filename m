@@ -1,74 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with the pci tree
-Date: Wed, 30 Jan 2013 19:35:51 +1100
-Message-ID: <20130130193551.075bfa10acd39aec315a7787@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pm tree
+Date: Wed, 30 Jan 2013 19:48:41 +1100
+Message-ID: <20130130194841.abd832c601b21c3e67aae4f6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__30_Jan_2013_19_35_51_+1100_1xNgv2TVye5Q/n_g"
+ boundary="Signature=_Wed__30_Jan_2013_19_48_41_+1100_=c5eQQ0eH1lo0t2B"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48850 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44152 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753168Ab3A3IgD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Jan 2013 03:36:03 -0500
+	with ESMTP id S1753129Ab3A3Ist (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Jan 2013 03:48:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__30_Jan_2013_19_35_51_+1100_1xNgv2TVye5Q/n_g
+--Signature=_Wed__30_Jan_2013_19_48_41_+1100_=c5eQQ0eH1lo0t2B
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Rafael,
 
-Today's linux-next merge of the pm tree got a conflict in
-drivers/acpi/internal.h between commit 668192b67820 ("PCI: acpiphp: Move
-host bridge hotplug to pci_root.c") from the pci tree and commit
-2c545601d933 ("ACPI / PCI: Make PCI root driver use struct
-acpi_scan_handler") from the pm tree.
+After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/built-in.o: In function `ipc_init':
+pl320-ipc.c:(.init.text+0xf96b): undefined reference to `amba_driver_regist=
+er'
 
+Caused by commit 970066f5b269 ("ARM / highbank: add support for pl320 IPC").
+
+I have used the pm tree from next-20130128 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/acpi/internal.h
-index 0f24148,0d1397d..0000000
---- a/drivers/acpi/internal.h
-+++ b/drivers/acpi/internal.h
-@@@ -67,8 -89,6 +89,7 @@@ struct acpi_ec=20
- =20
-  extern struct acpi_ec *first_ec;
- =20
-- int acpi_pci_root_init(void);
- +void acpi_pci_root_hp_init(void);
-  int acpi_ec_init(void);
-  int acpi_ec_ecdt_probe(void);
-  int acpi_boot_ec_enable(void);
-
---Signature=_Wed__30_Jan_2013_19_35_51_+1100_1xNgv2TVye5Q/n_g
+--Signature=_Wed__30_Jan_2013_19_48_41_+1100_=c5eQQ0eH1lo0t2B
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRCNtnAAoJEECxmPOUX5FE0ZIP/A8qzGfsG+KzuzWVKGB0o+7w
-aTTdLdmyzTAauJ3Jsu7b7QSUTbOcVpbB6YMvdwZ3nbyCNpLujs3oipKm9VHr5g6J
-7em4abSmJyzdtYRvFb1cxfHjWmnu7EMBAF6l8sco8TtFSoPBHeZpBT5VsR7INvPm
-bqmQ0SOmoN3tEXqYrs3xHY2wprDigE7PYvNbatroMi+A0y7ypi7zTObp7+UoDCr1
-BNUCJKnuLPRi94E83ZVASheAQvyYrgxx8XkAuEk6cRtCASrzba6BoeHU7JvIaepb
-Pv/BdX/WwUYVuPFrMKvkouVrwT5V/y6U0EKJ489wfs3gkmN0n7ypmlv3YvZVbC9m
-MB/1j6COujZHQpWz9eVnQ04JRdId3FldZHpWTVcEQfERHmtihq3ONbVDix+f5fLb
-gPSUNappzrFlKDhD4k3mJZDqxc97GRpR1GeTxmZdfjkFG8QLEjCyGev1g2xnvAYh
-DWZqJc/Cw5o3KtQ46BrO4hvz8/08kf6xnaM9rrzw2qi87pj+tvZheBN8W3549HRB
-oEZlqHtvyiDkCA07SfGU0mNWkUtFwVaZD9g2uR69wwKDW0LtCY2q0R/E4v2hpeD6
-ssL9bDAiHB6hLEtzUxt9gjmf1OwQOOWToESm85cQg/D5jI6hkiRot1M4F3rak0Vl
-cRdpeGWqpM4KaJu9Wvg2
-=Jq1e
+iQIcBAEBCAAGBQJRCN5pAAoJEECxmPOUX5FEbzQP/i2UY056uXn+iI1vZZfxLKMl
+Us25z739Q3RYt0uliAzTXYwMfX8yv9iZ3o1lcbVdcYRqisjZ+4Xm80QSvTWotmDR
+vPHLm4J5XFm1RaIPcZ1WMi2NA7255klgR148o0IzDHQGw3FdG4lFw+x0gaQjpdY8
+x3Fu01oFzdRgmnqbRxslENtZi3Sk61Wd1+LnBIvOG7XXTbWN/NCKeaEJcXJH9JhQ
+yWXxQOqIrW0dCOeWiCe6d8V8ai3gQ+8U6ESa2VnUqHg7syGhj1mjuQkoMwwcPE+r
+r62ZFSh0+dAbspf4WH47t/coRHkou9qCcmLgm9jupa3qVpqs2ZKX4MabkwfT2EbU
+V5CcQDvGalTlnp3EgDkwtXsXOVWRUIP9iYJybvTkaHFWxgktmWs93NsIbpSTR8z4
+ixhIILEMWqTihdGPb4KC+4Sh8lKqaDIQdhIooshPqxmcN4ePJ6EE3pWVb+32x8WA
+TBlfX5WfBTNxkLwOgNc4K66yHdFguNZkaFf/0CWKxzu0K+qsjJ3nUynv9bA08i9g
+pgKSwDuUoTSRIXobZ4Hjs4bWCWhSVA7io4rdtjLEMDY4DF1miQT6GVz1soy7jvuc
+n/HodM92KOlvPfo8h4Bvi/mpyY5Z/26wFUi4yyzpv19bAai52Gequ74aQ9QJY2yc
+w92asj/i5hcedVTMy2GX
+=D/p7
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__30_Jan_2013_19_35_51_+1100_1xNgv2TVye5Q/n_g--
+--Signature=_Wed__30_Jan_2013_19_48_41_+1100_=c5eQQ0eH1lo0t2B--
