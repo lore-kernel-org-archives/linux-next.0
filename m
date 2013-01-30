@@ -1,33 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the pinctrl tree
-Date: Thu, 31 Jan 2013 00:36:47 +1100
-Message-ID: <20130131003647.daebd2aed733d0304c2c7aa0@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with the arm-soc tree
+Date: Thu, 31 Jan 2013 01:48:01 +1100
+Message-ID: <20130131014801.09c81e1826a2fb234de85550@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============5126921959378123459=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
+
+--===============5126921959378123459==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__31_Jan_2013_00_36_47_+1100_JRoLncUhc/Vs+Vyn"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52343 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753908Ab3A3NhA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Jan 2013 08:37:00 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Gabriel Fernandez <gabriel.fernandez@stericsson.com>
+ boundary="Signature=_Thu__31_Jan_2013_01_48_01_+1100_N7=F5Od0N6S7fxsV"
 
---Signature=_Thu__31_Jan_2013_00_36_47_+1100_JRoLncUhc/Vs+Vyn
+--Signature=_Thu__31_Jan_2013_01_48_01_+1100_N7=F5Od0N6S7fxsV
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Kukjin,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/pinctrl/pinctrl-nomadik.c between commit e32af8894588
-("pinctrl/nomadik: add device tree support") from the pinctrl tree and
-commit 6010d40320f8 ("ARM: nomadik: move GPIO and pinctrl to device
-tree") from the arm-soc tree.
+Today's linux-next merge of the samsung tree got a conflict in
+drivers/gpio/gpio-samsung.c between commits f69254328793 ("ARM: dts: Fix
+compatible value of pinctrl module on EXYNOS5440") and b533c8685b16
+("ARM: dts: fix compatible value for exynos pinctrl") from the arm-soc
+tree and commit bda7f6d4e198 ("gpio: samsung: skip gpiolib registration
+if pinctrl support is enabled for exynos5250") from the samsung tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,43 +44,58 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pinctrl/pinctrl-nomadik.c
-index 39c1651,ef21a66..0000000
---- a/drivers/pinctrl/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/pinctrl-nomadik.c
-@@@ -2104,7 -1846,11 +2104,11 @@@ static struct pinctrl_desc nmk_pinctrl_
- =20
-  static const struct of_device_id nmk_pinctrl_match[] =3D {
-  	{
-+ 		.compatible =3D "stericsson,nmk-pinctrl-stn8815",
-+ 		.data =3D (void *)PINCTRL_NMK_STN8815,
-+ 	},
-+ 	{
- -		.compatible =3D "stericsson,nmk_pinctrl",
- +		.compatible =3D "stericsson,nmk-pinctrl",
-  		.data =3D (void *)PINCTRL_NMK_DB8500,
-  	},
-  	{},
+diff --cc drivers/gpio/gpio-samsung.c
+index b2016ed,0d46db6..0000000
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@@ -3023,9 -3023,9 +3022,10 @@@ static __init int samsung_gpiolib_init(
+  	*/
+  	struct device_node *pctrl_np;
+  	static const struct of_device_id exynos_pinctrl_ids[] =3D {
+ -		{ .compatible =3D "samsung,pinctrl-exynos4210", },
+ -		{ .compatible =3D "samsung,pinctrl-exynos4x12", },
+ -		{ .compatible =3D "samsung,pinctrl-exynos5250", },
+ +		{ .compatible =3D "samsung,exynos4210-pinctrl", },
+ +		{ .compatible =3D "samsung,exynos4x12-pinctrl", },
+++		{ .compatible =3D "samsung,exynos5250-pinctrl", },
+ +		{ .compatible =3D "samsung,exynos5440-pinctrl", },
+  	};
+  	for_each_matching_node(pctrl_np, exynos_pinctrl_ids)
+  		if (pctrl_np && of_device_is_available(pctrl_np))
 
---Signature=_Thu__31_Jan_2013_00_36_47_+1100_JRoLncUhc/Vs+Vyn
+--Signature=_Thu__31_Jan_2013_01_48_01_+1100_N7=F5Od0N6S7fxsV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRCSHvAAoJEECxmPOUX5FEhBsQAJUpJpaVhm5GggzZuSmvBBHo
-k9OhTqFb/Jf3Aat3+GZU8vpMKjPpO/pjkMw52xspEp15npBzsn5T4RZHW8jLEtc7
-S6pRxTVmsfg5XDCH1u6jX1SRz40KfQaIrWLrdWBLiEAivw7TpS1y+Du2xrrc01k0
-goII0cznz1AgRuh3SwQ+q2YXL7dYOqicSdIU9ggyTrMukv9nkBJU55Y2a8KcgMVK
-K4ZuJ/C+2xYairBreINqpjk3G1xK4y0lKkEl3rYNPQ+cJgvokOYSVVxuoscBUKew
-fm3XHk91rNUqq9x4BmmOqtLPxsRKpm8kvFEs9IlXs8LTToM09jTqXm0ciZ+YPcaB
-788SQV/dBDS7+tF+72m4xMBOA2/gDSEG/LVLJpf+PosDF9codB/HHVfskBz3DUY2
-nykcmoCaARocEoUicxxagWhXVIreqpdq+FIw78htQ8+xjl+6WdSgliNpz5Tng/Mt
-ohPmTQ90JPCicSVAZPenj77lmgBEEMrhmmPXF0wM27ySHwmM5se1WFb577PCZxo8
-2W4GJ3VKvRBYCwCX/XrT+n5J9iBd5U8cQa23KfHmqALl6cdeDFrP0sWjOrIu4eFy
-ZSY7NNyRyzvduvFfW7LL8NzvUIAf3TQ1saXtiOqrQow+13lrjwEcVSt95n27HqG0
-kshnQGqad/JW+MSEEA7S
-=n65n
+iQIcBAEBCAAGBQJRCTKhAAoJEECxmPOUX5FEF4kP/Rxq6WCtEf7StTEzbLJtm62o
+qN4tsmjKIqhb2G+DsS7QY3DwR1qRo0/fmKCOu6td2gkX1iiTeKSeu2LN1a5aA3NM
+7CjFU/TGkIWiryurn9bdq2KP27AzLw61KbqZjeYzLdpzvdQTtPJKXid2nZtWK2bh
+IBWSEhUfCnG+iz0A87V7DDkVu8oXgTNSa+QJ8qcfKlrN+ZcNNTiz8Pu26l2Jn8Jc
+VtoPHEtRTqzjCixxjyrsyqeWGXEg7nkjxgj2mSvmcN555c1i0r5SJwqgOzae/bJW
+56RHVSo3XPA88/UE2DfiQUrGWFjfLJenMeLKiSKsMxq48CHUlthQ4/M53P+AFdvs
+2anCoAc1snkcxHpJ3+1Ud82a1laK1YtCCjS2MG+4AqevxVmOjuiSpwdmliWu7UP6
+1I7JccxtGkXoIm0ZwHy3OTq75j8Q3XsJH3ZTXV7RJXLewJ1ZqM4IVAotgynkl1W9
+iAdms2oHyi/R/sjOWapyWiNalUXEehpeAgNazQfNlzwwoU6VsNpJK9LvSPJoFrfx
+ya+KV3aXvy746/miUIlvXU31S9pnNKE0Tr18h/0o3JAtVzZ7o0s7sHQiyLYUMqEJ
+00Rn1EFllJ6TJc0IBVHnw0tiqPcc5DDqLIycNsV2t6w/+fN9OsJb9e7Es3RIo0CF
+bICxYmOAYYa5PwoTTIpH
+=8CTF
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__31_Jan_2013_00_36_47_+1100_JRoLncUhc/Vs+Vyn--
+--Signature=_Thu__31_Jan_2013_01_48_01_+1100_N7=F5Od0N6S7fxsV--
+
+
+--===============5126921959378123459==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============5126921959378123459==--
