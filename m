@@ -1,30 +1,52 @@
-From: H Hartley Sweeten <hartleys@visionengravers.com>
-Subject: RE: [PATCH -next] staging: comedi: ISA DMA drivers should depend on
- ISA_DMA_API
-Date: Wed, 30 Jan 2013 10:24:26 -0600
-Message-ID: <ADE657CA350FB648AAC2C43247A983F00207A707B4BE@AUSP01VMBX24.collaborationhost.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH -next] staging: comedi: ISA DMA drivers should depend on ISA_DMA_API
+Date: Wed, 30 Jan 2013 17:27:45 +0100
+Message-ID: <CAMuHMdVzvAcYMk9AqsYZXupVud7PksR5O+eXPw4UTiF0jBdQYQ@mail.gmail.com>
 References: <1359547209-15712-1-git-send-email-geert@linux-m68k.org>
+	<ADE657CA350FB648AAC2C43247A983F00207A707B4BE@AUSP01VMBX24.collaborationhost.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.bemta8.messagelabs.com ([216.82.243.50]:34010 "EHLO
-	mail1.bemta8.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753146Ab3A3QYl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Jan 2013 11:24:41 -0500
-In-Reply-To: <1359547209-15712-1-git-send-email-geert@linux-m68k.org>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mori Hess <fmhess@users.sourceforge.net>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <ADE657CA350FB648AAC2C43247A983F00207A707B4BE@AUSP01VMBX24.collaborationhost.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: H Hartley Sweeten <hartleys@visionengravers.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mori Hess <fmhess@users.sourceforge.net>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-T24gV2VkbmVzZGF5LCBKYW51YXJ5IDMwLCAyMDEzIDU6MDAgQU0sIEdlZXJ0IFV5dHRlcmhvZXZl
-biB3cm90ZToNCg0KPiBtNjhrIGFsbG1vZGNvbmZpZzoNCg0KPHNuaXA+DQoNCj4gTWFrZSBQQ0w4
-MTYsIFBDTDgxOCwgREFTMTYsIERBUzE4MDAsIERUMjgyWCwgYW5kIE5JX0FUX0EyMTUwIGRlcGVu
-ZCBvbg0KPiBJU0FfRE1BX0FQSSB0byBmaXggdGhpcy4NCj4NCj4gU2lnbmVkLW9mZi1ieTogR2Vl
-cnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCg0KTG9va3MgbGlrZSB3ZSBo
-YXZlIHRoZSBmaXJzdCBmYWxsb3V0IGZyb20gR3JlZydzIHBhdGNoIHRvIGVuYWJsZSBjb21lZGkg
-Zm9yDQphbGwgYXJjaGl0ZWN0dXJlcy4uLiA6LSkNCg0KUmV2aWV3ZWQtYnk6IEggSGFydGxleSBT
-d2VldGVuIDxoc3dlZXRlbkB2aXNpb25lbmdyYXZlcnMuY29tPg0KDQo=
+On Wed, Jan 30, 2013 at 5:24 PM, H Hartley Sweeten
+<hartleys@visionengravers.com> wrote:
+> On Wednesday, January 30, 2013 5:00 AM, Geert Uytterhoeven wrote:
+>
+>> m68k allmodconfig:
+>
+> <snip>
+>
+>> Make PCL816, PCL818, DAS16, DAS1800, DT282X, and NI_AT_A2150 depend on
+>> ISA_DMA_API to fix this.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>
+> Looks like we have the first fallout from Greg's patch to enable comedi for
+> all architectures... :-)
+
+Yep.
+
+BTW, I was actually surprised to see the old
+
+       depends on BROKEN || FRV || M32R || MN10300 || SUPERH || TILE || \
+                  X86 || ARM
+
+as none of FRV, M32R, MN10300, SUPERH, TILE implement the ISA DMA API...
+
+> Reviewed-by: H Hartley Sweeten <hsweeten@visionengravers.com>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
