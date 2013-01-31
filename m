@@ -1,50 +1,68 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH] watchdog: da9055_wdt needs to select WATCHDOG_CORE
-Date: Wed, 30 Jan 2013 20:23:30 +0100
-Message-ID: <20130130192330.GD20100@spo001.leaseweb.com>
-References: <20130129000610.22f0ebd13431c59c5dc8cf3d@canb.auug.org.au> <5106A77C.2050400@infradead.org>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: BUG: circular locking dependency detected
+Date: Thu, 31 Jan 2013 11:12:05 +0100
+Message-ID: <CA+icZUVHrGcGnRcBQF1HLsR4HKOjLsOi6MppPnZCuh8K=wMHmA@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5106A77C.2050400@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Dajun Chen <dchen@diasemi.com>, linux-watchdog@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <owner-linux-mm@kvack.org>
+Sender: owner-linux-mm@kvack.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Dave Airlie <airlied@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Greg KH <gregkh@suse.de>, DRI <dri-devel@lists.freedesktop.org>, linux-fbdev@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Takashi Iwai <tiwai@suse.de>
 List-Id: linux-next.vger.kernel.org
 
-Hi Randy,
+[ CCing Linux-Next and MMOTM folks ]
 
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> DA9055_WATCHDOG needs to select WATCHDOG_CORE so that it will
-> build cleanly.  Fixes these build errors:
-> 
-> da9055_wdt.c:(.text+0xe9bc7): undefined reference to `watchdog_unregister_device'
-> da9055_wdt.c:(.text+0xe9f4b): undefined reference to `watchdog_register_device'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: David Dajun Chen <dchen@diasemi.com>
-> Cc: Wim Van Sebroeck <wim@iguana.be>
-> Cc: linux-watchdog@vger.kernel.org
-> ---
->  drivers/watchdog/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> Found in linux-next, but also applies to mainline.
-> 
-> --- linux-next-20130128.orig/drivers/watchdog/Kconfig
-> +++ linux-next-20130128/drivers/watchdog/Kconfig
-> @@ -79,6 +79,7 @@ config DA9052_WATCHDOG
->  config DA9055_WATCHDOG
->  	tristate "Dialog Semiconductor DA9055 Watchdog"
->  	depends on MFD_DA9055
-> +	select WATCHDOG_CORE
->  	help
->  	  If you say yes here you get support for watchdog on the Dialog
->  	  Semiconductor DA9055 PMIC.
+Original posting from Daniel see [0]
 
-Added to linux-watchdog-next.
+[ QUOTE ]
+On Thu, Jan 31, 2013 at 6:40 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Thu, Jan 31, 2013 at 11:26:53AM +1100, Linus Torvalds wrote:
+>> On Thu, Jan 31, 2013 at 11:13 AM, Russell King <rmk@arm.linux.org.uk> wrote:
+>> >
+>> > Which may or may not be a good thing depending how you look at it; it
+>> > means that once your kernel blanks, you get a lockdep dump.  At that
+>> > point you lose lockdep checking for everything else because lockdep
+>> > disables itself after the first dump.
+>>
+>> Fair enough, we may want to revert the lockdep checking for
+>> console_lock, and make re-enabling it part of the patch-series that
+>> fixes the locking.
+>>
+>> Daniel/Dave? Does that sound reasonable?
 
-Kind regards,
-Wim.
+Yeah, sounds good.
+
+> Reverting the patch is fine with me.  Just let me know so I can queue it
+> up again for 3.9.
+
+Can you please also pick up the (currently) three locking fixups
+around fbcon? Just so that we don't repeat the same fun where people
+complain about lockdep splats, but the fixes are stuck somewhere. And
+I guess Dave would be happy to not end up as fbcon maintainer ;-) He
+has a git branch with them at
+http://cgit.freedesktop.org/~airlied/linux/log/?h=fbcon-locking-fixes
+though I have a small bikeshed on his last patch pending.
+-Daniel
+[ /QUOTE ]
+
+Did the 3rd patch go also to mmotm tree and got marked for Linux-Next inclusion?
+Best would be to have it in mainline, finally.
+Please, fix that for-3.8!
+
+Thanks to all volunteers (Alan, Andrew, Takashi Iwai (Sorry, dunno
+which is 1st and last name), Daniel and finally Dave) trying to get
+this incredible pain-in-the-a** upstream :-).
+
+- Sedat -
+
+[0] http://marc.info/?l=dri-devel&m=135962051326601&w=2
+[1] http://cgit.freedesktop.org/~airlied/linux/log/?h=fbcon-locking-fixes
+[2] http://cgit.freedesktop.org/~airlied/linux/commit/?h=fbcon-locking-fixes&id=98dfe36b5532576dedf41408d5bbd45fa31ec62d
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
