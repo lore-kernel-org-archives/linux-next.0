@@ -1,70 +1,105 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Linux-Next releases this week?
-Date: Fri, 1 Feb 2013 22:41:43 +1100
-Message-ID: <20130201224143.d623d2e3fccd9747c642aa7a@canb.auug.org.au>
-References: <CA+icZUUETpH2_k64odEoNQK12sbWC_KT1tpEpK-V_CAZgq_6Yg@mail.gmail.com>
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Subject: Re: [PATCH] leds-ot200: Fix error caused by shifted mask
+Date: Fri, 1 Feb 2013 16:08:15 +0100
+Message-ID: <CAH9NwWdciqHSkkMSk4CW4XX+d6JSZBnvw52Svu8M4o-PGMQsDA@mail.gmail.com>
+References: <1358928657-15781-1-git-send-email-christian.gmeiner@gmail.com> <7AFBFD79B857054D97821A9BD3FBFA9744D05BD2@ATFKEX06.bachmann.at>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__1_Feb_2013_22_41_43_+1100_eRKjy2rkHeIHXXIo"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36945 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751688Ab3BALlx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Feb 2013 06:41:53 -0500
-In-Reply-To: <CA+icZUUETpH2_k64odEoNQK12sbWC_KT1tpEpK-V_CAZgq_6Yg@mail.gmail.com>
+Received: from mail-qc0-f178.google.com ([209.85.216.178]:50418 "EHLO
+	mail-qc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753942Ab3BAPOz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Feb 2013 10:14:55 -0500
+In-Reply-To: <7AFBFD79B857054D97821A9BD3FBFA9744D05BD2@ATFKEX06.bachmann.at>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: "GMEINER.Christian" <C.GMEINER@bachmann.info>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__1_Feb_2013_22_41_43_+1100_eRKjy2rkHeIHXXIo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ping
+--
+Christian Gmeiner, MSc
 
-Hi Sedat,
 
-On Fri, 1 Feb 2013 09:12:10 +0100 Sedat Dilek <sedat.dilek@gmail.com> wrote:
+2013/1/23 GMEINER.Christian <C.GMEINER@bachmann.info>:
+>> -----Urspr=C3=BCngliche Nachricht-----
+>> Von: Christian Gmeiner [mailto:christian.gmeiner@gmail.com]
+>> Gesendet: Mittwoch, 23. Januar 2013 09:11
+>> An: linux-next@vger.kernel.org; akpm@linux-foundation.org;
+>> rpurdie@rpsys.net; linux-kernel@vger.kernel.org; GMEINER.Christian
+>> Cc: Christian Gmeiner
+>> Betreff: [PATCH] leds-ot200: Fix error caused by shifted mask
+>>
+>> During the development of this driver an in-house register documenta=
+tion
+>> was used. The last weeks some integration tests were done and this p=
+roblem
+>> was found. It turned out that the released register documentation is=
+ wrong.
+>>
+>> The fix is very simple: shift all masks by one.
+>>
+>> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
 >
-> any reason why there is only next-20130128 the last and only release
-> for this week?
-
-In the release note for next-20130128, I said:
-
-"The linux-next release may be a bit sporadic over the next few days as I
-attend linux.conf.au."
-
-Turns out that the conference was a bit more tiring than I thought even
-though it was in my home town :-)
-
-> Interesting stuff around for-3.9 :-).
-
-Yes.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__1_Feb_2013_22_41_43_+1100_eRKjy2rkHeIHXXIo
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRC6n3AAoJEECxmPOUX5FEY54P/ArPHQ/Gg8+Z4t+L/gDJvAN1
-wr5aoAz8Zt/GZeefV26c+BpTB7Zf7hFgpYU10xFqN4q5rkpC8Osq4Wtbdtbv7Il0
-IDmgAGza3GKZf7o152S9WNQFtFdhilpZfXNBYMI6qNpi5a/FzaFl8rrg5NIDamWq
-ywD3g7lxQ2T0KlCc1xC8OxpHOE0lIBdZGcERoAdh7CTx5aOK09JYOZVun5ocqvAa
-OTKsxeWJAbuqTdo6VoBMSlsc/zYxwy+UZ0Z4Bo6q62lDtPrYb21D0viHo6Ed7Q82
-eqi45TKywSAlwjbPmaHwDP5rc9TdkTuW0g8WBto5Y994op8YOsnB+2lZPwtRCn1V
-RSl26px/M+I6b8+vMk4WaxnFCYWHdcWgVPa+zGgojsqkEJR/x50wEFvnjpofgZq0
-8HxiQVUMKifxMAnllNyXv4TtUE1PGOAOnBI1weHF8hHlqCPD4E0+O7toc5ICdiQT
-a3Dp9nLmcMdW9PCs/QOeVuesos8ZxczQIRQ7K8anFG0Y0IAtucZ/4rCcwjdCwi3F
-N9va8AsKmqlaavFGXV4ZfqnhI4BzmCWg5k3Nz7OLTKWcBH9botNqKKCcrOlJh/4T
-rgEXOMe40WMJSL87ZEFtVfaLbX70Kj8IkofxxP1lnZEPHb1kKDH8a4VRTplLBqkJ
-93aI8OEAI4G0Kqo6cF33
-=9Fqi
------END PGP SIGNATURE-----
-
---Signature=_Fri__1_Feb_2013_22_41_43_+1100_eRKjy2rkHeIHXXIo--
+>
+> Acked-by: Christian Gmeiner <c.gmeiner@bachmann.info>
+> Tested-by: Christian Gmeiner <c.gmeiner@bachmann.info>
+>
+>> ---
+>>  drivers/leds/leds-ot200.c | 14 +++++++-------
+>>  1 file changed, 7 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c i=
+ndex
+>> ee14662..98cae52 100644
+>> --- a/drivers/leds/leds-ot200.c
+>> +++ b/drivers/leds/leds-ot200.c
+>> @@ -47,37 +47,37 @@ static struct ot200_led leds[] =3D {
+>>       {
+>>               .name =3D "led_1",
+>>               .port =3D 0x49,
+>> -             .mask =3D BIT(7),
+>> +             .mask =3D BIT(6),
+>>       },
+>>       {
+>>               .name =3D "led_2",
+>>               .port =3D 0x49,
+>> -             .mask =3D BIT(6),
+>> +             .mask =3D BIT(5),
+>>       },
+>>       {
+>>               .name =3D "led_3",
+>>               .port =3D 0x49,
+>> -             .mask =3D BIT(5),
+>> +             .mask =3D BIT(4),
+>>       },
+>>       {
+>>               .name =3D "led_4",
+>>               .port =3D 0x49,
+>> -             .mask =3D BIT(4),
+>> +             .mask =3D BIT(3),
+>>       },
+>>       {
+>>               .name =3D "led_5",
+>>               .port =3D 0x49,
+>> -             .mask =3D BIT(3),
+>> +             .mask =3D BIT(2),
+>>       },
+>>       {
+>>               .name =3D "led_6",
+>>               .port =3D 0x49,
+>> -             .mask =3D BIT(2),
+>> +             .mask =3D BIT(1),
+>>       },
+>>       {
+>>               .name =3D "led_7",
+>>               .port =3D 0x49,
+>> -             .mask =3D BIT(1),
+>> +             .mask =3D BIT(0),
+>>       }
+>>  };
+>>
+>> --
+>> 1.7.12.2.421.g261b511
+>
