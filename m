@@ -1,44 +1,53 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 Subject: Re: Revert "console: implement lockdep support for console_lock"
-Date: Fri, 1 Feb 2013 09:21:43 +0100
-Message-ID: <CA+icZUW5tBotrZT9QtNPao-3rEccohBW8a4diS2nJ+ONgTWLaQ@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+Date: Fri, 1 Feb 2013 09:42:30 +0100
+Message-ID: <CAKMK7uEFCm5JPD9bg4uO9K_q-w0=9GWzRLoB9H-_=ZR7NxA9=A@mail.gmail.com>
+References: <CA+icZUW5tBotrZT9QtNPao-3rEccohBW8a4diS2nJ+ONgTWLaQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f170.google.com ([209.85.216.170]:47642 "EHLO
-	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751601Ab3BAIVo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Feb 2013 03:21:44 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Linus Torvalds <torvalds@linux-foundation.org>, linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+icZUW5tBotrZT9QtNPao-3rEccohBW8a4diS2nJ+ONgTWLaQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: Dave Airlie <airlied@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
+On Fri, Feb 1, 2013 at 9:21 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> people having the fbcon-locking-fixes [1] in their local GIT tree can
+> revert this change?
 
-people having the fbcon-locking-fixes [1] in their local GIT tree can
-revert this change?
+Yeah, if you have all the fixes reverting this is fine and appreciated
+to increase testing. Dave will probably push the revert himself to
+drm-next soon.
+-Daniel
 
-commit ff0d05bf73620eb7dc8aee7423e992ef87870bdf
-Refs: v3.8-rc5-194-gff0d05b
-Author:     Dave Airlie <airlied@gmail.com>
-AuthorDate: Thu Jan 31 14:27:03 2013 +1100
-Commit:     Dave Airlie <airlied@gmail.com>
-CommitDate: Thu Jan 31 15:46:56 2013 +1100
+>
+> commit ff0d05bf73620eb7dc8aee7423e992ef87870bdf
+> Refs: v3.8-rc5-194-gff0d05b
+> Author:     Dave Airlie <airlied@gmail.com>
+> AuthorDate: Thu Jan 31 14:27:03 2013 +1100
+> Commit:     Dave Airlie <airlied@gmail.com>
+> CommitDate: Thu Jan 31 15:46:56 2013 +1100
+>
+>     Revert "console: implement lockdep support for console_lock"
+>
+>     This reverts commit daee779718a319ff9f83e1ba3339334ac650bb22.
+>
+>     I'll requeue this after the console locking fixes, so lockdep
+>     is useful again for people until fbcon is fixed.
+>
+>     Signed-off-by: Dave Airlie <airlied@redhat.com>
+>
+> Thanks!
+>
+> Regards,
+> - Sedat
+>
+> [1] http://cgit.freedesktop.org/~airlied/linux/log/?h=fbcon-locking-fixes
 
-    Revert "console: implement lockdep support for console_lock"
 
-    This reverts commit daee779718a319ff9f83e1ba3339334ac650bb22.
 
-    I'll requeue this after the console locking fixes, so lockdep
-    is useful again for people until fbcon is fixed.
-
-    Signed-off-by: Dave Airlie <airlied@redhat.com>
-
-Thanks!
-
-Regards,
-- Sedat
-
-[1] http://cgit.freedesktop.org/~airlied/linux/log/?h=fbcon-locking-fixes
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
