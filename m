@@ -1,110 +1,70 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: Revert "console: implement lockdep support for console_lock"
-Date: Fri, 1 Feb 2013 10:09:05 +0100
-Message-ID: <CA+icZUVDGmbozG4mrvJm2gKKQvddhsZ_hym=DpzhX1t-dKxExg@mail.gmail.com>
-References: <CA+icZUW5tBotrZT9QtNPao-3rEccohBW8a4diS2nJ+ONgTWLaQ@mail.gmail.com>
-	<CAKMK7uEFCm5JPD9bg4uO9K_q-w0=9GWzRLoB9H-_=ZR7NxA9=A@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Linux-Next releases this week?
+Date: Fri, 1 Feb 2013 22:41:43 +1100
+Message-ID: <20130201224143.d623d2e3fccd9747c642aa7a@canb.auug.org.au>
+References: <CA+icZUUETpH2_k64odEoNQK12sbWC_KT1tpEpK-V_CAZgq_6Yg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__1_Feb_2013_22_41_43_+1100_eRKjy2rkHeIHXXIo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f180.google.com ([209.85.216.180]:33693 "EHLO
-	mail-qc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752905Ab3BAJJH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Feb 2013 04:09:07 -0500
-In-Reply-To: <CAKMK7uEFCm5JPD9bg4uO9K_q-w0=9GWzRLoB9H-_=ZR7NxA9=A@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36945 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751688Ab3BALlx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Feb 2013 06:41:53 -0500
+In-Reply-To: <CA+icZUUETpH2_k64odEoNQK12sbWC_KT1tpEpK-V_CAZgq_6Yg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Dave Airlie <airlied@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Ingo Molnar <mingo@redhat.com>
+To: sedat.dilek@gmail.com
+Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Feb 1, 2013 at 9:42 AM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> On Fri, Feb 1, 2013 at 9:21 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> people having the fbcon-locking-fixes [1] in their local GIT tree can
->> revert this change?
+--Signature=_Fri__1_Feb_2013_22_41_43_+1100_eRKjy2rkHeIHXXIo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Sedat,
+
+On Fri, 1 Feb 2013 09:12:10 +0100 Sedat Dilek <sedat.dilek@gmail.com> wrote:
 >
-> Yeah, if you have all the fixes reverting this is fine and appreciated
-> to increase testing. Dave will probably push the revert himself to
-> drm-next soon.
+> any reason why there is only next-20130128 the last and only release
+> for this week?
 
-[ CCing Ingo ]
+In the release note for next-20130128, I said:
 
-The revert is now in -rc6.
+"The linux-next release may be a bit sporadic over the next few days as I
+attend linux.conf.au."
 
-Hmmm, I have here...
+Turns out that the conference was a bit more tiring than I thought even
+though it was in my home town :-)
 
-     CONFIG_LOCKDEP_SUPPORT=y
+> Interesting stuff around for-3.9 :-).
 
-Excerpts from the revert [1]:
-[...]
--#ifdef CONFIG_LOCKDEP
--static struct lockdep_map console_lock_dep_map = {
--       .name = "console_lock"
--};
--#endif
-[...]
+Yes.
 
-Checking for CONFIG_LOCKDEP ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-[ lib/Kconfig.debug ]
-...
-config LOCKDEP
-        bool
-        depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT &&
-STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-        select STACKTRACE
-        select FRAME_POINTER if !MIPS && !PPC && !ARM_UNWIND && !S390
-&& !MICROBLAZE
-        select KALLSYMS
-        select KALLSYMS_ALL
-...
+--Signature=_Fri__1_Feb_2013_22_41_43_+1100_eRKjy2rkHeIHXXIo
+Content-Type: application/pgp-signature
 
----> No help text.
----> Missing pointer to <file:Documentation/lockdep-design.txt>.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-[ arch/x86/Kconfig ]
-...
-config LOCKDEP_SUPPORT
-        def_bool y
-...
+iQIcBAEBCAAGBQJRC6n3AAoJEECxmPOUX5FEY54P/ArPHQ/Gg8+Z4t+L/gDJvAN1
+wr5aoAz8Zt/GZeefV26c+BpTB7Zf7hFgpYU10xFqN4q5rkpC8Osq4Wtbdtbv7Il0
+IDmgAGza3GKZf7o152S9WNQFtFdhilpZfXNBYMI6qNpi5a/FzaFl8rrg5NIDamWq
+ywD3g7lxQ2T0KlCc1xC8OxpHOE0lIBdZGcERoAdh7CTx5aOK09JYOZVun5ocqvAa
+OTKsxeWJAbuqTdo6VoBMSlsc/zYxwy+UZ0Z4Bo6q62lDtPrYb21D0viHo6Ed7Q82
+eqi45TKywSAlwjbPmaHwDP5rc9TdkTuW0g8WBto5Y994op8YOsnB+2lZPwtRCn1V
+RSl26px/M+I6b8+vMk4WaxnFCYWHdcWgVPa+zGgojsqkEJR/x50wEFvnjpofgZq0
+8HxiQVUMKifxMAnllNyXv4TtUE1PGOAOnBI1weHF8hHlqCPD4E0+O7toc5ICdiQT
+a3Dp9nLmcMdW9PCs/QOeVuesos8ZxczQIRQ7K8anFG0Y0IAtucZ/4rCcwjdCwi3F
+N9va8AsKmqlaavFGXV4ZfqnhI4BzmCWg5k3Nz7OLTKWcBH9botNqKKCcrOlJh/4T
+rgEXOMe40WMJSL87ZEFtVfaLbX70Kj8IkofxxP1lnZEPHb1kKDH8a4VRTplLBqkJ
+93aI8OEAI4G0Kqo6cF33
+=9Fqi
+-----END PGP SIGNATURE-----
 
-I would have expected a check for CONFIG_LOCKDEP_SUPPORT.
-This is BTW with Linux v3.8-rc5!
-
-- Sedat -
-
-[1] http://git.kernel.org/?p=linux/kernel/git/torvalds/linux.git;a=commitdiff;h=ff0d05bf73620eb7dc8aee7423e992ef87870bdf
-[2] http://git.kernel.org/?p=linux/kernel/git/torvalds/linux.git;a=blob;f=Documentation/lockdep-design.txt
-
-> -Daniel
->
->>
->> commit ff0d05bf73620eb7dc8aee7423e992ef87870bdf
->> Refs: v3.8-rc5-194-gff0d05b
->> Author:     Dave Airlie <airlied@gmail.com>
->> AuthorDate: Thu Jan 31 14:27:03 2013 +1100
->> Commit:     Dave Airlie <airlied@gmail.com>
->> CommitDate: Thu Jan 31 15:46:56 2013 +1100
->>
->>     Revert "console: implement lockdep support for console_lock"
->>
->>     This reverts commit daee779718a319ff9f83e1ba3339334ac650bb22.
->>
->>     I'll requeue this after the console locking fixes, so lockdep
->>     is useful again for people until fbcon is fixed.
->>
->>     Signed-off-by: Dave Airlie <airlied@redhat.com>
->>
->> Thanks!
->>
->> Regards,
->> - Sedat
->>
->> [1] http://cgit.freedesktop.org/~airlied/linux/log/?h=fbcon-locking-fixes
->
->
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+--Signature=_Fri__1_Feb_2013_22_41_43_+1100_eRKjy2rkHeIHXXIo--
