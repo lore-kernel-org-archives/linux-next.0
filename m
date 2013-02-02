@@ -1,71 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Sat, 2 Feb 2013 14:22:53 +1100
-Message-ID: <20130202142253.e31167bf695f000c0c78f4cc@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the l2-mtd tree
+Date: Sat, 2 Feb 2013 14:38:17 +1100
+Message-ID: <20130202143817.a2d9246dcb11cfa08128f588@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sat__2_Feb_2013_14_22_53_+1100_iAj=Jt9rSdQWnb0v"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marcelo Ricardo Leitner <mleitner@redhat.com>, Jiri Pirko <jiri@resnulli.us>, =?UTF-8?B?IllPU0hJRlVKSSBIaWRlYWtpIC8g5ZCJ6Jek6Iux5piOIg==?= <yoshfuji@linux-ipv6.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Sat__2_Feb_2013_14_38_17_+1100_Z+o/S98PAn/ilVn3"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46904 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757429Ab3BBDiZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Feb 2013 22:38:25 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Roese <sr@denx.de>
 
---Signature=_Sat__2_Feb_2013_14_22_53_+1100_iAj=Jt9rSdQWnb0v
+--Signature=_Sat__2_Feb_2013_14_38_17_+1100_Z+o/S98PAn/ilVn3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Artem,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/ipv6/route.c between commit bd30e947207e ("ipv6: do not create
-neighbor entries for local delivery") from the net tree and commit
-c440f1609b65 ("ipv6: Do not depend on rt->n in ip6_pol_route()") from the
-net-next tree.
+After merging the l2-mtd tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+In file included from drivers/mtd/chips/cfi_cmdset_0002.c:36:0:
+include/linux/of_platform.h:107:13: warning: 'struct of_device_id' declared=
+ inside parameter list [enabled by default]
+include/linux/of_platform.h:107:13: warning: its scope is only this definit=
+ion or declaration, which is probably not what you want [enabled by default]
+include/linux/of_platform.h:107:13: warning: 'struct device_node' declared =
+inside parameter list [enabled by default]
+drivers/mtd/chips/cfi_cmdset_0002.c: In function 'cfi_cmdset_0002':
+drivers/mtd/chips/cfi_cmdset_0002.c:504:22: warning: unused variable 'np' [=
+-Wunused-variable]
+drivers/mtd/chips/cfi_cmdset_0002.c: At top level:
+drivers/mtd/chips/cfi_cmdset_0002.c:2279:12: warning: 'cfi_ppb_lock' define=
+d but not used [-Wunused-function]
+drivers/mtd/chips/cfi_cmdset_0002.c:2285:12: warning: 'cfi_ppb_unlock' defi=
+ned but not used [-Wunused-function]
+drivers/mtd/chips/cfi_cmdset_0002.c:2382:12: warning: 'cfi_ppb_is_locked' d=
+efined but not used [-Wunused-function]
 
+Introduced by commit c3a02f171365 ("mtd: cfi_cmdset_0002: Support
+Persistent Protection Bits (PPB) locking").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/ipv6/route.c
-index 363d8b7,f3328bc..0000000
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@@ -928,7 -884,7 +884,7 @@@ restart
-  	dst_hold(&rt->dst);
-  	read_unlock_bh(&table->tb6_lock);
- =20
-- 	if (!rt->n && !(rt->rt6i_flags & (RTF_NONEXTHOP | RTF_LOCAL)))
- -	if (!(rt->rt6i_flags & (RTF_NONEXTHOP | RTF_GATEWAY)))
-++	if (!(rt->rt6i_flags & (RTF_NONEXTHOP | RTF_LOCAL | RTF_GATEWAY)))
-  		nrt =3D rt6_alloc_cow(rt, &fl6->daddr, &fl6->saddr);
-  	else if (!(rt->dst.flags & DST_HOST))
-  		nrt =3D rt6_alloc_clone(rt, &fl6->daddr);
-
---Signature=_Sat__2_Feb_2013_14_22_53_+1100_iAj=Jt9rSdQWnb0v
+--Signature=_Sat__2_Feb_2013_14_38_17_+1100_Z+o/S98PAn/ilVn3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRDIaNAAoJEECxmPOUX5FEkQkP/igox+vuoIvcKiwo9HyG7XJU
-Vbeh1nVIrJmtOBREE3Ngnj/dXa/Dhvyi/rY5DQdJ11uGOPyWRCf3oWrrlZNl3JLH
-BvURxweh+bbHqRnOzpZvUwXjBYk3mB7/ycnj01Riywe4yR5tq4SH3pFRebctjMt2
-WDVg/eW8PDYlotvHwphaCvnjpnmIs225/YWXbUNO5Un4epjeYnxnRA2if2627VTB
-ugSQEzoFv3HNklN5ZP5xCgQKqlAxbAoE9iw8BwEoc5BWzsVqFWFkkeVw6NSP3e/x
-GlQLgdcOo2BC/Mg24f25HoGfebRKF+oqfFt3RynvcOJKOFCelAKjezOYKWBqoydl
-BaoAaXlhY7vnL746b+kk7jguEnwpbBsEvfIhn4W4PHV8X282PtqWJ1GHfhH/x/XR
-HszfIIJjybT+x2Tg8dn7Y99lgzlais9eXc6llYoiq11fwYBApKj9rzgnUakRPJOP
-SowNfYGTznbDhQN5TksH0N8xMv2rSGg2z1FG7r2/O4yBcgjr+cIs5pzTkOmAsHec
-44BgvkyMsRYLRWWDPguyyVCp/hqnozjN9e7p4lQPS/JXMBrI17b2nwtUQc8I1LXE
-57io3S7yvM6rpSJKw8PNfBqH7yd0xX8YMv5wtCLuRzCcN9uXFIEFejOiT8ZS2RzW
-WnYdi9lIY/61FLmYyuxo
-=g7Qb
+iQIcBAEBCAAGBQJRDIopAAoJEECxmPOUX5FEEbwP/1mT/UMVhAf3oZ3ypakI94Y9
+7pVx9IEdub+3l+VXMVTkvGYXg4c/U3xrGTn/zaGYDB1VqKeq4kFJEyovJbDBJPLs
+w+Z31DcCN3sY+szXGzeusk7n8or5pcWfFNa0oAT8kaBiEZUjVUlGNoSeeumzxq9N
+uvgKwBkrxAa/gqNpwSTjXborn0N2AKmJX+njN2UKKhUBB2gY5kTMH0LsgYztALqE
+aOoZjOJDX9R6QVlHPVkCO0DE2XpwLVUDJHt4PsAybmwuX8ZVWCNqPz9Qtjl7MKrt
+kgApBRmMF6xsZAAOit50HohOhGqom1ISrqlbCxKLpEiiMQM4w0JlVPpwQVbQvKM4
+ADMA7GN2HpF7ksxsjIe7dybr8YL0uTicDY+cTdoqaUZ6hqACdZFdk0siUWM9S5Nz
+1UeGK6M1ZfC9EzMFH7gOr83aZxvBdoNOxyPXeCM0wjB7pa33s8eErzep5dmsd5kW
+gE7CuISyZBcN/WgYMQsWeZHuu4U0vaJVfhrHw6ij2cK8H/9hQDF1p0qbXbSR1V98
+jzGrDpsSHjCJlMSfj2XW7gyEPdA38/d/dgyIJxV5RjskQnYiEoobhAx1rwHjspfD
+wHjEf4ffGoM2zRlxcrgfgjhqC3E0PdNMa+cQ5UPKs27q0kEv6D7a0XuFtce8ukjD
+21p9Qdno3VPngR+OhOvh
+=ScwY
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__2_Feb_2013_14_22_53_+1100_iAj=Jt9rSdQWnb0v--
+--Signature=_Sat__2_Feb_2013_14_38_17_+1100_Z+o/S98PAn/ilVn3--
