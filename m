@@ -1,50 +1,45 @@
-From: Jiri Pirko <jiri@resnulli.us>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Sat, 2 Feb 2013 11:05:06 +0100
-Message-ID: <20130202100506.GB1864@minipsycho.orion>
-References: <20130202142253.e31167bf695f000c0c78f4cc@canb.auug.org.au>
+From: Stefan Roese <sr@denx.de>
+Subject: Re: linux-next: build warnings after merge of the l2-mtd tree
+Date: Sat, 02 Feb 2013 11:20:00 +0100
+Message-ID: <510CE850.1050805@denx.de>
+References: <20130202143817.a2d9246dcb11cfa08128f588@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130202142253.e31167bf695f000c0c78f4cc@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mo-p05-ob.rzone.de ([81.169.146.180]:60220 "EHLO
+	mo-p05-ob.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755475Ab3BBK0R (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Feb 2013 05:26:17 -0500
+In-Reply-To: <20130202143817.a2d9246dcb11cfa08128f588@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marcelo Ricardo Leitner <mleitner@redhat.com>, =?utf-8?B?IllPU0hJRlVKSSBIaWRlYWtpIC8g5ZCJ6Jek6Iux5piOIg==?= <yoshfuji@linux-ipv6.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Artem Bityutskiy <dedekind1@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Sat, Feb 02, 2013 at 04:22:53AM CET, sfr@canb.auug.org.au wrote:
->Hi all,
->
->Today's linux-next merge of the net-next tree got a conflict in
->net/ipv6/route.c between commit bd30e947207e ("ipv6: do not create
->neighbor entries for local delivery") from the net tree and commit
->c440f1609b65 ("ipv6: Do not depend on rt->n in ip6_pol_route()") from the
->net-next tree.
->
->I fixed it up (I think - see below) and can carry the fix as necessary
->(no action is required).
->
->-- 
->Cheers,
->Stephen Rothwell                    sfr@canb.auug.org.au
->
->diff --cc net/ipv6/route.c
->index 363d8b7,f3328bc..0000000
->--- a/net/ipv6/route.c
->+++ b/net/ipv6/route.c
->@@@ -928,7 -884,7 +884,7 @@@ restart
->  	dst_hold(&rt->dst);
->  	read_unlock_bh(&table->tb6_lock);
->  
->- 	if (!rt->n && !(rt->rt6i_flags & (RTF_NONEXTHOP | RTF_LOCAL)))
-> -	if (!(rt->rt6i_flags & (RTF_NONEXTHOP | RTF_GATEWAY)))
->++	if (!(rt->rt6i_flags & (RTF_NONEXTHOP | RTF_LOCAL | RTF_GATEWAY)))
+Hi,
 
-I believe that no change here is correct to do. RTF_LOCAL here is needed
-only before Yoshifuji's "IPv6 rt->n removal"
-	
-	
->  		nrt = rt6_alloc_cow(rt, &fl6->daddr, &fl6->saddr);
->  	else if (!(rt->dst.flags & DST_HOST))
->  		nrt = rt6_alloc_clone(rt, &fl6->daddr);
+On 02/02/2013 04:38 AM, Stephen Rothwell wrote:
+> Hi Artem,
+> 
+> After merging the l2-mtd tree, today's linux-next build (x86_64
+> allmodconfig) produced these warnings:
+> 
+> In file included from drivers/mtd/chips/cfi_cmdset_0002.c:36:0:
+> include/linux/of_platform.h:107:13: warning: 'struct of_device_id' declared inside parameter list [enabled by default]
+> include/linux/of_platform.h:107:13: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+> include/linux/of_platform.h:107:13: warning: 'struct device_node' declared inside parameter list [enabled by default]
+> drivers/mtd/chips/cfi_cmdset_0002.c: In function 'cfi_cmdset_0002':
+> drivers/mtd/chips/cfi_cmdset_0002.c:504:22: warning: unused variable 'np' [-Wunused-variable]
+> drivers/mtd/chips/cfi_cmdset_0002.c: At top level:
+> drivers/mtd/chips/cfi_cmdset_0002.c:2279:12: warning: 'cfi_ppb_lock' defined but not used [-Wunused-function]
+> drivers/mtd/chips/cfi_cmdset_0002.c:2285:12: warning: 'cfi_ppb_unlock' defined but not used [-Wunused-function]
+> drivers/mtd/chips/cfi_cmdset_0002.c:2382:12: warning: 'cfi_ppb_is_locked' defined but not used [-Wunused-function]
+> 
+> Introduced by commit c3a02f171365 ("mtd: cfi_cmdset_0002: Support
+> Persistent Protection Bits (PPB) locking").
+
+Sorry about that. I'll send a fixup patch shortly.
+
+Thanks,
+Stefan
