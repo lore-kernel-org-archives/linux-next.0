@@ -1,108 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the clk tree with the arm-soc tree
-Date: Sat, 2 Feb 2013 23:27:40 +1100
-Message-ID: <20130202232740.f337dc3a00741a224a4a0e4f@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with Linus' tree
+Date: Sat, 2 Feb 2013 23:55:52 +1100
+Message-ID: <20130202235552.ec4d7df1a82b91934fbbd84c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sat__2_Feb_2013_23_27_40_+1100_sW65nj_ZkFSB1xIs"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Prashant Gaikwad <pgaikwad@nvidia.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Sat__2_Feb_2013_23_55_52_+1100_GzbhVhPJ.A23Zn2T"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60381 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754197Ab3BBM4C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Feb 2013 07:56:02 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shaohua Li <shli@kernel.org>, Wang YanQing <udknight@gmail.com>, Ingo Molnar <mingo@kernel.org>
 
---Signature=_Sat__2_Feb_2013_23_27_40_+1100_sW65nj_ZkFSB1xIs
+--Signature=_Sat__2_Feb_2013_23_55_52_+1100_GzbhVhPJ.A23Zn2T
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
+Hi Andrew,
 
-Today's linux-next merge of the clk tree got a conflict in
-include/asm-generic/vmlinux.lds.h between commit ae278a935f08
-("clocksource: add common of_clksrc_init() function") from the arm-soc
-tree and commit f2f6c2556dcc ("clk: add common of_clk_init() function")
-from the clk tree.
+Today's linux-next merge of the akpm-current tree got a conflict in
+kernel/smp.c between commit f44310b98ddb ("smp: Fix SMP function call
+empty cpu mask race") from Linus' tree and commit "smp: make
+smp_call_function_many() use logic similar to smp_call_function_single()"
+from the akpm-current tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/asm-generic/vmlinux.lds.h
-index fc62ac5,c1fe60a..0000000
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@@ -149,25 -149,16 +149,34 @@@
-  #define TRACE_SYSCALLS()
+diff --cc kernel/smp.c
+index 69f38bd,bb92c52..0000000
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@@ -57,9 -47,11 +47,15 @@@ hotplug_cfd(struct notifier_block *nfb
+  		if (!zalloc_cpumask_var_node(&cfd->cpumask, GFP_KERNEL,
+  				cpu_to_node(cpu)))
+  			return notifier_from_errno(-ENOMEM);
+ +		if (!zalloc_cpumask_var_node(&cfd->cpumask_ipi, GFP_KERNEL,
+ +				cpu_to_node(cpu)))
+ +			return notifier_from_errno(-ENOMEM);
++ 		cfd->csd =3D alloc_percpu(struct call_single_data);
++ 		if (!cfd->csd) {
+++			free_cpumask_var(cfd->cpumask_ipi);
++ 			free_cpumask_var(cfd->cpumask);
++ 			return notifier_from_errno(-ENOMEM);
++ 		}
+  		break;
+ =20
+  #ifdef CONFIG_HOTPLUG_CPU
+@@@ -69,7 -61,7 +65,8 @@@
+  	case CPU_DEAD:
+  	case CPU_DEAD_FROZEN:
+  		free_cpumask_var(cfd->cpumask);
+ +		free_cpumask_var(cfd->cpumask_ipi);
++ 		free_percpu(cfd->csd);
+  		break;
   #endif
- =20
- +#ifdef CONFIG_CLKSRC_OF
- +#define CLKSRC_OF_TABLES() . =3D ALIGN(8);				\
- +			   VMLINUX_SYMBOL(__clksrc_of_table) =3D .;	\
- +			   *(__clksrc_of_table)				\
- +			   *(__clksrc_of_table_end)
- +#else
- +#define CLKSRC_OF_TABLES()
- +#endif
- +
- +#ifdef CONFIG_IRQCHIP
- +#define IRQCHIP_OF_MATCH_TABLE()					\
- +	. =3D ALIGN(8);							\
- +	VMLINUX_SYMBOL(__irqchip_begin) =3D .;				\
- +	*(__irqchip_of_table)		  				\
- +	*(__irqchip_of_end)
- +#else
- +#define IRQCHIP_OF_MATCH_TABLE()
- +#endif
- =20
-+ #ifdef CONFIG_COMMON_CLK
-+ #define CLK_OF_TABLES() . =3D ALIGN(8);				\
-+ 			VMLINUX_SYMBOL(__clk_of_table) =3D .;	\
-+ 			*(__clk_of_table)			\
-+ 			*(__clk_of_table_end)
-+ #else
-+ #define CLK_OF_TABLES()
-+ #endif
-+=20
-  #define KERNEL_DTB()							\
-  	STRUCT_ALIGN();							\
-  	VMLINUX_SYMBOL(__dtb_start) =3D .;				\
-@@@ -511,9 -502,8 +520,10 @@@
-  	DEV_DISCARD(init.rodata)					\
-  	CPU_DISCARD(init.rodata)					\
-  	MEM_DISCARD(init.rodata)					\
- +	CLKSRC_OF_TABLES()						\
-+ 	CLK_OF_TABLES()							\
- -	KERNEL_DTB()
- +	KERNEL_DTB()							\
- +	IRQCHIP_OF_MATCH_TABLE()
- =20
-  #define INIT_TEXT							\
-  	*(.init.text)							\
+  	};
 
---Signature=_Sat__2_Feb_2013_23_27_40_+1100_sW65nj_ZkFSB1xIs
+--Signature=_Sat__2_Feb_2013_23_55_52_+1100_GzbhVhPJ.A23Zn2T
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRDQY8AAoJEECxmPOUX5FEplQP+QGl2rg61nwHAhUwa8t41mjI
-1EXG/T/GqNLPM8tSnChdnyjk99Hywt2MZD1tYIvFzPMd8dHi4av8tCBtpMzaPqvi
-wY5by4vYK7aCb6wM2ghmO2kIPhetvD/7lOCAkSrdvE2J+6i3o2iRQ0ecKfkjJjVq
-pQQaClpH8gO/OF1V0knL4RVTB3crHn+AyzhvdwTV725KkGyawf+vj+b2QPRWrPeM
-TF2rb093CkYkogEBbJGPCXWwbE5M1wAVqr3o4GkUDEN2BYEZWW1gxaqs4r2LIIri
-rzYe0pg6LYeePaGTuDENT8YN8zI1i8mIsELO+BfVA2wHTuaLm58d+fvOSaEXFAJC
-w1yzQFy34cQcq6ReZedDrV/oP5lo4BNDo1maUBlGqQOP4tXP4pNyn/+7STY8NNwZ
-zS5FEaUVswYTj4TdzNKtiV4VXczMRsm8YCwzbSKIOLxd1DMZvkTzI0YTirTWZqqM
-jEEMizIfMX2/TcfV+ID6saAb7q9tztARvfnZ6VA5S5VYb9WIvMtLaR1at5yqF/Po
-W9hEEOb0/+Izsjm7JKeflz/xgyb5u2lXCDmAmIMJQr5H88TsXqpQJm4b8SNN1kF1
-ST5bQ9/jyNaH6oKSQxGbntLcOmnzNQPNSEA3cdipaPgSOmQiVNndDfN/0z7aEc8A
-tUw/nfU4638Fa7MpNrXk
-=RpfZ
+iQIcBAEBCAAGBQJRDQzYAAoJEECxmPOUX5FEC18P/iB1TLi4iYbPjs342MA1Cj6f
+sJvGbm8kTX1I/BI4jELzsKUMNF6WEJN3h6q3LTNK1asxM3tmdKz/j8fEpfYoGjNa
+L+WJH8sorEZlWbQKfjhTHgYJpqPsJbN0ZUc5M8nGk27XxzrVGzaT5syhnwZPiY+X
+NiamnmyiDHEypGsqxFQluEq0UScsw0SREXAZQIq0NYaqBaDiUeFiG5cIdswQLfxK
+srn/5I8lRMZX/gFHAR1gxMgnnFqiLZ5BMFjxPblPsZa5XouQwMPyZQewFlnKdyAE
+2lnaDeaqz41Z0Fb9a9tm68WRMWRQc8HanI+ZUDtcqE6ltp3cG/kwPJjaHhM/FHtn
+4t52X5aTRujwj1AeDFKtp2inlAvghrXDCUY6lAuB4tG91411H5vIcYLIEo2NIWKV
+X4OA9pxZ2IlvLg8uqwsz89s43DBozMviDEmp8IHiQtHOy72p9Qrka40EcMdAxN+x
+Fk0osMr/bueIIzqT7MWBZiEJyEwtONUYNn6x4YvJzxZoaU6tjgfb9Nt6XVz+k9/o
+25pqspCV5g9pHIR54dt5iG78X0Od+D1QcCMncCznA3+QkMMy1fKxhlvkIL2ap27/
+iezbl+rDhN6odfctcbqeQ3nk+di0s++XDZLPvYDgIykpy3WHL9Y8KcTxyx3VG4qL
+N5yirsvrNNYQ5ggIMM3a
+=SCYj
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__2_Feb_2013_23_27_40_+1100_sW65nj_ZkFSB1xIs--
+--Signature=_Sat__2_Feb_2013_23_55_52_+1100_GzbhVhPJ.A23Zn2T--
