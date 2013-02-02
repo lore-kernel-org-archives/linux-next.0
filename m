@@ -1,62 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the tip tree
-Date: Sat, 2 Feb 2013 16:58:53 +1100
-Message-ID: <20130202165853.399001fb288754a9af6ffa13@canb.auug.org.au>
+From: Jiri Pirko <jiri@resnulli.us>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Sat, 2 Feb 2013 11:05:06 +0100
+Message-ID: <20130202100506.GB1864@minipsycho.orion>
+References: <20130202142253.e31167bf695f000c0c78f4cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__2_Feb_2013_16_58_53_+1100_CZ2z_0VokBn6/hsU"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54507 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750863Ab3BBF6z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Feb 2013 00:58:55 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Hansen <dave@linux.vnet.ibm.com>
-
---Signature=_Sat__2_Feb_2013_16_58_53_+1100_CZ2z_0VokBn6/hsU
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20130202142253.e31167bf695f000c0c78f4cc@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marcelo Ricardo Leitner <mleitner@redhat.com>, =?utf-8?B?IllPU0hJRlVKSSBIaWRlYWtpIC8g5ZCJ6Jek6Iux5piOIg==?= <yoshfuji@linux-ipv6.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Sat, Feb 02, 2013 at 04:22:53AM CET, sfr@canb.auug.org.au wrote:
+>Hi all,
+>
+>Today's linux-next merge of the net-next tree got a conflict in
+>net/ipv6/route.c between commit bd30e947207e ("ipv6: do not create
+>neighbor entries for local delivery") from the net tree and commit
+>c440f1609b65 ("ipv6: Do not depend on rt->n in ip6_pol_route()") from the
+>net-next tree.
+>
+>I fixed it up (I think - see below) and can carry the fix as necessary
+>(no action is required).
+>
+>-- 
+>Cheers,
+>Stephen Rothwell                    sfr@canb.auug.org.au
+>
+>diff --cc net/ipv6/route.c
+>index 363d8b7,f3328bc..0000000
+>--- a/net/ipv6/route.c
+>+++ b/net/ipv6/route.c
+>@@@ -928,7 -884,7 +884,7 @@@ restart
+>  	dst_hold(&rt->dst);
+>  	read_unlock_bh(&table->tb6_lock);
+>  
+>- 	if (!rt->n && !(rt->rt6i_flags & (RTF_NONEXTHOP | RTF_LOCAL)))
+> -	if (!(rt->rt6i_flags & (RTF_NONEXTHOP | RTF_GATEWAY)))
+>++	if (!(rt->rt6i_flags & (RTF_NONEXTHOP | RTF_LOCAL | RTF_GATEWAY)))
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
-
-arch/x86/mm/numa.c: In function 'setup_node_data':
-arch/x86/mm/numa.c:222:3: warning: passing argument 1 of '__phys_addr_nodeb=
-ug' makes integer from pointer without a cast [enabled by default]
-arch/x86/include/asm/page_64.h:12:29: note: expected 'long unsigned int' bu=
-t argument is of type 'void *'
-
-Introduced by commit a25b9316841c ("x86, mm: Make DEBUG_VIRTUAL work
-earlier in boot").
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Sat__2_Feb_2013_16_58_53_+1100_CZ2z_0VokBn6/hsU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRDKsdAAoJEECxmPOUX5FEjT0P/3qDkEYGJaKutX4a20BIyDsB
-AfPnK76MiIIvneDb+wGCAAnNJ6DRBio1u89udMMwP6kVaV+N2Vw0mzhQJBZIyfKr
-rTwRg2LLlX+R98Ln/noEIbbM5qW9NEHcXLp+i/Gf7B/ZaqF86WCi96HFAXpuJlTj
-3EOixZ8i97kgjVit0Sx8kapfYYJ2SAWU8VW3Wywh2gKkRBGqfBJDXMqwYJ4tAmVY
-AvoeqE2frThroOeUAEdG9YWSq/ymZ3AmWjgNn7DzlsBG7bpa/k56n5PtLII5xGK6
-iKwwY+pPuF38Ppd9wRuS6UxH4l8laTaZQNbBol/5HhtqeQ95PdWNgDmRPSDCMv+C
-3AN+5S5OAjkfwwLQcuek2jEuxfCxIt7aGqDcKlyiq3lFUFe2eI9QZKuDFCsbbU8m
-1xbxGa/u1ozZgX9tFOeIIIOzlYCe9KKgP4vbfMneh3gP2IduDKani0rZuXokMfG9
-/XjP18hQlRc/VbLFQDhLHZxLZmqbaaGo0txV8h0N/eMc5/eW3UiQw8xEW4aZTedY
-c32LLN/E1h5n321Ooo+TaA0HL9qUMAIkvMgkZglMiLCu8QVoCdFJpNxcXZvml7g0
-bNlgnrG1O93WtS5gAXr0OrVxA47hQYpNIqyU5NFspW0jUsZHIxAVv9d//J21/GGe
-WWqoSHezBRaam4SIM45s
-=MS5c
------END PGP SIGNATURE-----
-
---Signature=_Sat__2_Feb_2013_16_58_53_+1100_CZ2z_0VokBn6/hsU--
+I believe that no change here is correct to do. RTF_LOCAL here is needed
+only before Yoshifuji's "IPv6 rt->n removal"
+	
+	
+>  		nrt = rt6_alloc_cow(rt, &fl6->daddr, &fl6->saddr);
+>  	else if (!(rt->dst.flags & DST_HOST))
+>  		nrt = rt6_alloc_clone(rt, &fl6->daddr);
