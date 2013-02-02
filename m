@@ -1,106 +1,74 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tegra tree with the arm-soc tree
-Date: Sat, 2 Feb 2013 22:52:33 +1100
-Message-ID: <20130202225233.ee33af6d25a42239ae542ebd@canb.auug.org.au>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the cortex tree with the arm tree
+Date: Sat, 2 Feb 2013 12:21:22 +0000
+Message-ID: <20130202122122.GA26330@flint.arm.linux.org.uk>
+References: <20130202222036.0db6c1d208843975be1f8dba@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__2_Feb_2013_22_52_33_+1100_R3=5qBbsJyQ6NTty"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46235 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756700Ab3BBLwf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Feb 2013 06:52:35 -0500
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:33696 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756811Ab3BBMVj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Feb 2013 07:21:39 -0500
+Content-Disposition: inline
+In-Reply-To: <20130202222036.0db6c1d208843975be1f8dba@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Hiroshi Doyu <hdoyu@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: =?iso-8859-1?Q?=22Uwe_Kleine-K=F6nig=22?= <u.kleine-koenig@pengutronix.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoffer Dall <c.dall@virtualopensystems.com>, Will Deacon <will.deacon@arm.com>
 
---Signature=_Sat__2_Feb_2013_22_52_33_+1100_R3=5qBbsJyQ6NTty
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, Feb 02, 2013 at 10:20:36PM +1100, Stephen Rothwell wrote:
+> Hi Uwe,
+> 
+> Today's linux-next merge of the cortex tree got a conflict in
+> arch/arm/include/asm/cputype.h between commit 59530adc3f1b ("ARM: Define
+> CPU part numbers and implementors") from the arm tree and commit
+> 6ebd4d038dbb ("ARM: stub out read_cpuid and read_cpuid_ext for
+> CPU_CP15=n") from the cortex tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hi all,
+It doesn't look right to me.
 
-Today's linux-next merge of the tegra tree got a conflict in
-arch/arm/mach-tegra/platsmp.c between commits b1cffebf1029 ("ARM: GIC:
-remove direct use of gic_raise_softirq") and 520f7bd73354 ("irqchip: Move
-ARM gic.h to include/linux/irqchip/arm-gic.h") from the arm-soc tree and
-commits 89572c77cdff ("ARM: tegra: move tegra_cpu_car.h to
-linux/clk/tegra.h") and a8a6930157e0 ("ARM: tegra: Use DT /cpu node to
-detect number of CPU core") from the tegra tree.
+> diff --cc arch/arm/include/asm/cputype.h
+> index ad41ec2,574269e..0000000
+> --- a/arch/arm/include/asm/cputype.h
+> +++ b/arch/arm/include/asm/cputype.h
+> @@@ -59,30 -60,25 +60,43 @@@ extern unsigned int processor_id
+>   		    : "cc");						\
+>   		__val;							\
+>   	})
+> - #else
+> - #define read_cpuid(reg) (processor_id)
+> - #define read_cpuid_ext(reg) 0
+> - #endif
+> + 
+> + #else /* ifdef CONFIG_CPU_CP15 */
+>   
+>  +#define ARM_CPU_IMP_ARM			0x41
+>  +#define ARM_CPU_IMP_INTEL		0x69
+>  +
+>  +#define ARM_CPU_PART_ARM1136		0xB360
+>  +#define ARM_CPU_PART_ARM1156		0xB560
+>  +#define ARM_CPU_PART_ARM1176		0xB760
+>  +#define ARM_CPU_PART_ARM11MPCORE	0xB020
+>  +#define ARM_CPU_PART_CORTEX_A8		0xC080
+>  +#define ARM_CPU_PART_CORTEX_A9		0xC090
+>  +#define ARM_CPU_PART_CORTEX_A5		0xC050
+>  +#define ARM_CPU_PART_CORTEX_A15		0xC0F0
+>  +#define ARM_CPU_PART_CORTEX_A7		0xC070
+>  +
+>  +#define ARM_CPU_XSCALE_ARCH_MASK	0xe000
+>  +#define ARM_CPU_XSCALE_ARCH_V1		0x2000
+>  +#define ARM_CPU_XSCALE_ARCH_V2		0x4000
+>  +#define ARM_CPU_XSCALE_ARCH_V3		0x6000
+>  +
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+This stuff shouldn't be in the #else section - it's needed when
+CONFIG_CPU_CP15 is enabled and this resolution hides it in that case.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-tegra/platsmp.c
-index 18d7290,2ff68a4..0000000
---- a/arch/arm/mach-tegra/platsmp.c
-+++ b/arch/arm/mach-tegra/platsmp.c
-@@@ -18,11 -18,13 +18,13 @@@
-  #include <linux/jiffies.h>
-  #include <linux/smp.h>
-  #include <linux/io.h>
- +#include <linux/irqchip/arm-gic.h>
-+ #include <linux/clk/tegra.h>
- =20
-  #include <asm/cacheflush.h>
- -#include <asm/hardware/gic.h>
-  #include <asm/mach-types.h>
-  #include <asm/smp_scu.h>
-+ #include <asm/smp_plat.h>
- =20
-  #include <mach/powergate.h>
- =20
-@@@ -143,22 -176,9 +176,8 @@@ done
-  	return status;
-  }
- =20
-- /*
--  * Initialise the CPU possible map early - this describes the CPUs
--  * which may be present or become present in the system.
--  */
-  static void __init tegra_smp_init_cpus(void)
-  {
-- 	unsigned int i, ncores =3D scu_get_core_count(scu_base);
--=20
-- 	if (ncores > nr_cpu_ids) {
-- 		pr_warn("SMP: %u cores greater than maximum (%u), clipping\n",
-- 			ncores, nr_cpu_ids);
-- 		ncores =3D nr_cpu_ids;
-- 	}
--=20
-- 	for (i =3D 0; i < ncores; i++)
-- 		set_cpu_possible(i, true);
- -	set_smp_cross_call(gic_raise_softirq);
-  }
- =20
-  static void __init tegra_smp_prepare_cpus(unsigned int max_cpus)
-
---Signature=_Sat__2_Feb_2013_22_52_33_+1100_R3=5qBbsJyQ6NTty
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRDP4BAAoJEECxmPOUX5FEANwQAIDqL31FIUSkOVfJ5DgiykNw
-FotspmVV1RnadYIYv5a6MxdCdfbfYoXWnfBG7ICtD3lGPDCkIr3usivfi/PcbPLv
-j7m7BaxQUSMzdt+ZX6v1V8on4C/X4MTNpY+xiZn9kHWNDu1E5KokjVseAWnWsaOk
-Q/hgJlIlnieMZcPB6szlYMeh4K2cVxCquotjQw4P5elTzeLkRIl9Lzv9JZLtAnec
-8gv7Aglf1a0ZGIdfdct+j0anou5PM0osMfUPWRTC29unnzTfE4wjsInMvrSJASzI
-jF6lKS2Yxi854VWA3JsJ1ezFqSswG4dTm7EuwK3U8g3rv7IJ6XA2gonK7MeuFzRd
-mtPluA4xTIdkMI1kmCk6AZer8ei7RB4kcpUCmWwbWyj5WzxrGQWg4hnzP8UVh4aL
-L9nQnlYU3oP/b6VfH2+36tXPWi8iVk88WIQ7SMd0Ucqx+gZ10Bh9L8v5A6HH/pbW
-rHwW16k3ZmT7k8PblQe3zPLjyAw1ROTHuPUaywpLGfyEBT8zbM2U3its9Zu7CCC5
-GyAzVd+KwnesgKABnTYFcpziwFFUKfkFX4qXYskAChfmxlLGjqvBQ7foRtkvxO8D
-WiULih0WLAHYKxSjztDFVx/2n/ejxMThqVtaq47Ve1MFPcgUS8JGhGBqvLBqIY5c
-lGiZaIWk0yHucjtQsi3+
-=dSVc
------END PGP SIGNATURE-----
-
---Signature=_Sat__2_Feb_2013_22_52_33_+1100_R3=5qBbsJyQ6NTty--
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
