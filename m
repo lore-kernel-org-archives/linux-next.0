@@ -1,91 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with Linus' tree
-Date: Sat, 2 Feb 2013 16:52:01 +1100
-Message-ID: <20130202165201.4b6930c2b0022354c8f12063@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Sat, 2 Feb 2013 16:55:40 +1100
+Message-ID: <20130202165540.497b18a36832f2113541e938@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sat__2_Feb_2013_16_52_01_+1100_m.QOZ=fRnCqNfjby"
+ boundary="Signature=_Sat__2_Feb_2013_16_55_40_+1100_ihfuo2O9hVnwX3Zt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44523 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:45627 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750739Ab3BBFwE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Feb 2013 00:52:04 -0500
+	with ESMTP id S1750758Ab3BBFzm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Feb 2013 00:55:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Yang Zhang <yang.z.zhang@intel.com>, Kevin Tian <kevin.tian@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alok N Kataria <akataria@vmware.com>
 
---Signature=_Sat__2_Feb_2013_16_52_01_+1100_m.QOZ=fRnCqNfjby
+--Signature=_Sat__2_Feb_2013_16_55_40_+1100_ihfuo2O9hVnwX3Zt
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvm tree got a conflict in
-arch/x86/include/asm/vmx.h between commit af170c5061dd ("UAPI: (Scripted)
-Disintegrate arch/x86/include/asm") from Linus' tree and commits
-83d4c286931c ("x86, apicv: add APICv register virtualization support")
-and c7c9c56ca26f ("x86, apicv: add virtual interrupt delivery support")
-from the kvm tree.
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-I fixed it up (by applying the merge fix patch below) and can carry the
-fix as necessary (no action is required).
+arch/x86/kernel/kvm.c: At top level:
+arch/x86/kernel/kvm.c:509:2: warning: initialization from incompatible poin=
+ter type [enabled by default]
+arch/x86/kernel/kvm.c:509:2: warning: (near initialization for 'x86_hyper_k=
+vm.x2apic_available') [enabled by default]
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Sat, 2 Feb 2013 16:43:02 +1100
-Subject: [PATCH] x86, apicv: merge fixup for uapi include file split
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/include/uapi/asm/vmx.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vm=
-x.h
-index 979d03b..9a74505 100644
---- a/arch/x86/include/uapi/asm/vmx.h
-+++ b/arch/x86/include/uapi/asm/vmx.h
-@@ -62,10 +62,12 @@
- #define EXIT_REASON_MCE_DURING_VMENTRY  41
- #define EXIT_REASON_TPR_BELOW_THRESHOLD 43
- #define EXIT_REASON_APIC_ACCESS         44
-+#define EXIT_REASON_EOI_INDUCED         45
- #define EXIT_REASON_EPT_VIOLATION       48
- #define EXIT_REASON_EPT_MISCONFIG       49
- #define EXIT_REASON_WBINVD              54
- #define EXIT_REASON_XSETBV              55
-+#define EXIT_REASON_APIC_WRITE          56
- #define EXIT_REASON_INVPCID             58
-=20
- #define VMX_EXIT_REASONS \
---=20
-1.8.1
-
+Introduced by commit 4cca6ea04d31 ("x86/apic: Allow x2apic without IR on
+VMware platform").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Sat__2_Feb_2013_16_52_01_+1100_m.QOZ=fRnCqNfjby
+--Signature=_Sat__2_Feb_2013_16_55_40_+1100_ihfuo2O9hVnwX3Zt
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRDKmBAAoJEECxmPOUX5FEAIwP/3E94t37spkrLZjpKpX1rDfe
-SCTXxojqXfMWCkYrHQ1TLG9Ac65jcDVdYHuvzxLPZ3SWP7QtxQxPjm6Q0INyX7/O
-g/V12ig4nIETYznrCT0L9fgmjHuohIkx1QzrUOQaS9z3XjJIQQkJBXRmRu/uTKKq
-PCznLk1g3UlvdcMqwcmnt0GW4CVWY1gmwOcHBL7kdfr8uA3hQc9mu58EktvF/K6m
-kwTmZ5hU/lpg9VC4HaRY1NUwHH9W5dzO5tp0JZGginl3EFanwTk+FpkrJh2bPDBH
-6yrL+O2Xjnw0sUxZmdVFP8RXGos/+OUGNIgMvwRj+C4W3JHwYWL75+8UH15k0PAd
-+mkmgGzDe7YXYfYj4Mw95uO/a844otM3e+UCWFyTYdwLW4yIKFQ8WGQIAiBjny4e
-o089zFTQ9jEAYtfn9xn/hJRKXK6alLi+/hQCe2sveYb+YIMXKdrWnxzAwCjqi8RD
-dJ7Pzn0WjmMqViUJ3LuzFtPcXyJgWQ7jLx+gvwWwoAp/P8QYRCY4fVwvEiIf8+wE
-4vPv0YXXd4wvjDiMYlKIwGHTGHBJqNsOPLilhD34zn9dIb1cWmXeelbtv/iX6RI/
-k6XJsorDcPEkZENlayBXNEncD278VPe5v44DmgkmWR/9b+A2ggYV4MtNj37ckDkN
-Fd+jQ3Ml65oqaWKYsA+2
-=xdMn
+iQIcBAEBCAAGBQJRDKpcAAoJEECxmPOUX5FErBEP/3q4sINhJxFdUfvZvJ3sJTLr
+J/K87TIOoBqg4TKD6gEN3791jf7Mz1sRiYplXzBhANBfTkUTjEgnstcGgQXGvqmG
+NNwPHLTioYvzd8cOTZ24k+MekpZSlSAH/0Bsskba6aiZ3ifxaGEOf4kfv4wk1l2A
+xvS1PPoueMJJLr37ywmx7aizrqnLF8zFFHfPJ2H3x+yCyELPC34/GT0ZhigzX1y6
+AqhV9KEaPhrgXwgCH9NlNbmYBZVh//RlTBXYcCjhbYeL2PIPP1J8qT5mzMq052zF
+o1k0+YtXLBoiwfzqIOVTje84GMT9WVnIm8Vy1Pk1O0frD+aFwnC/kxjddAW8OXPp
+adclTnElRfJGegHJGdQJ34+NAE9DDR6GxkTjDsjoZZTfDnXD1UiGRTawSTRarNSc
+M8HgviBd9yyUcArKM3Z7Hn4V9cNtbdR1QP8BkMVk+Lz4OV6eY0fBIpwgpouu0YBr
+SKDrvX5ro4YKBvcmi+bWnUSlGsjguUiqEKtdfCjJyAJAx7Nf14+I6Ye0mD/fxoho
+6tRrCL67PigQsrfwbO2UnZuKQj14PaX81WCe0OeS/lIJYVO2ZGfB0a5ZF+qZn/ht
+60w046XaLZ9+Pt0pJyHddSGkxAB3ojOWAb998pJl+qTG9+2x5/0MCUsdtKM6VYJb
+3gfOBDOsdvBvsuDHzZmy
+=uDdz
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__2_Feb_2013_16_52_01_+1100_m.QOZ=fRnCqNfjby--
+--Signature=_Sat__2_Feb_2013_16_55_40_+1100_ihfuo2O9hVnwX3Zt--
