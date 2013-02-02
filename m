@@ -1,74 +1,108 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the cortex tree with the arm tree
-Date: Sat, 2 Feb 2013 12:21:22 +0000
-Message-ID: <20130202122122.GA26330@flint.arm.linux.org.uk>
-References: <20130202222036.0db6c1d208843975be1f8dba@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the clk tree with the arm-soc tree
+Date: Sat, 2 Feb 2013 23:27:40 +1100
+Message-ID: <20130202232740.f337dc3a00741a224a4a0e4f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:33696 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756811Ab3BBMVj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Feb 2013 07:21:39 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sat__2_Feb_2013_23_27_40_+1100_sW65nj_ZkFSB1xIs"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Prashant Gaikwad <pgaikwad@nvidia.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Sat__2_Feb_2013_23_27_40_+1100_sW65nj_ZkFSB1xIs
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20130202222036.0db6c1d208843975be1f8dba@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: =?iso-8859-1?Q?=22Uwe_Kleine-K=F6nig=22?= <u.kleine-koenig@pengutronix.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoffer Dall <c.dall@virtualopensystems.com>, Will Deacon <will.deacon@arm.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 02, 2013 at 10:20:36PM +1100, Stephen Rothwell wrote:
-> Hi Uwe,
-> 
-> Today's linux-next merge of the cortex tree got a conflict in
-> arch/arm/include/asm/cputype.h between commit 59530adc3f1b ("ARM: Define
-> CPU part numbers and implementors") from the arm tree and commit
-> 6ebd4d038dbb ("ARM: stub out read_cpuid and read_cpuid_ext for
-> CPU_CP15=n") from the cortex tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Hi Mike,
 
-It doesn't look right to me.
+Today's linux-next merge of the clk tree got a conflict in
+include/asm-generic/vmlinux.lds.h between commit ae278a935f08
+("clocksource: add common of_clksrc_init() function") from the arm-soc
+tree and commit f2f6c2556dcc ("clk: add common of_clk_init() function")
+from the clk tree.
 
-> diff --cc arch/arm/include/asm/cputype.h
-> index ad41ec2,574269e..0000000
-> --- a/arch/arm/include/asm/cputype.h
-> +++ b/arch/arm/include/asm/cputype.h
-> @@@ -59,30 -60,25 +60,43 @@@ extern unsigned int processor_id
->   		    : "cc");						\
->   		__val;							\
->   	})
-> - #else
-> - #define read_cpuid(reg) (processor_id)
-> - #define read_cpuid_ext(reg) 0
-> - #endif
-> + 
-> + #else /* ifdef CONFIG_CPU_CP15 */
->   
->  +#define ARM_CPU_IMP_ARM			0x41
->  +#define ARM_CPU_IMP_INTEL		0x69
->  +
->  +#define ARM_CPU_PART_ARM1136		0xB360
->  +#define ARM_CPU_PART_ARM1156		0xB560
->  +#define ARM_CPU_PART_ARM1176		0xB760
->  +#define ARM_CPU_PART_ARM11MPCORE	0xB020
->  +#define ARM_CPU_PART_CORTEX_A8		0xC080
->  +#define ARM_CPU_PART_CORTEX_A9		0xC090
->  +#define ARM_CPU_PART_CORTEX_A5		0xC050
->  +#define ARM_CPU_PART_CORTEX_A15		0xC0F0
->  +#define ARM_CPU_PART_CORTEX_A7		0xC070
->  +
->  +#define ARM_CPU_XSCALE_ARCH_MASK	0xe000
->  +#define ARM_CPU_XSCALE_ARCH_V1		0x2000
->  +#define ARM_CPU_XSCALE_ARCH_V2		0x4000
->  +#define ARM_CPU_XSCALE_ARCH_V3		0x6000
->  +
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-This stuff shouldn't be in the #else section - it's needed when
-CONFIG_CPU_CP15 is enabled and this resolution hides it in that case.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+diff --cc include/asm-generic/vmlinux.lds.h
+index fc62ac5,c1fe60a..0000000
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@@ -149,25 -149,16 +149,34 @@@
+  #define TRACE_SYSCALLS()
+  #endif
+ =20
+ +#ifdef CONFIG_CLKSRC_OF
+ +#define CLKSRC_OF_TABLES() . =3D ALIGN(8);				\
+ +			   VMLINUX_SYMBOL(__clksrc_of_table) =3D .;	\
+ +			   *(__clksrc_of_table)				\
+ +			   *(__clksrc_of_table_end)
+ +#else
+ +#define CLKSRC_OF_TABLES()
+ +#endif
+ +
+ +#ifdef CONFIG_IRQCHIP
+ +#define IRQCHIP_OF_MATCH_TABLE()					\
+ +	. =3D ALIGN(8);							\
+ +	VMLINUX_SYMBOL(__irqchip_begin) =3D .;				\
+ +	*(__irqchip_of_table)		  				\
+ +	*(__irqchip_of_end)
+ +#else
+ +#define IRQCHIP_OF_MATCH_TABLE()
+ +#endif
+ =20
++ #ifdef CONFIG_COMMON_CLK
++ #define CLK_OF_TABLES() . =3D ALIGN(8);				\
++ 			VMLINUX_SYMBOL(__clk_of_table) =3D .;	\
++ 			*(__clk_of_table)			\
++ 			*(__clk_of_table_end)
++ #else
++ #define CLK_OF_TABLES()
++ #endif
++=20
+  #define KERNEL_DTB()							\
+  	STRUCT_ALIGN();							\
+  	VMLINUX_SYMBOL(__dtb_start) =3D .;				\
+@@@ -511,9 -502,8 +520,10 @@@
+  	DEV_DISCARD(init.rodata)					\
+  	CPU_DISCARD(init.rodata)					\
+  	MEM_DISCARD(init.rodata)					\
+ +	CLKSRC_OF_TABLES()						\
++ 	CLK_OF_TABLES()							\
+ -	KERNEL_DTB()
+ +	KERNEL_DTB()							\
+ +	IRQCHIP_OF_MATCH_TABLE()
+ =20
+  #define INIT_TEXT							\
+  	*(.init.text)							\
+
+--Signature=_Sat__2_Feb_2013_23_27_40_+1100_sW65nj_ZkFSB1xIs
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRDQY8AAoJEECxmPOUX5FEplQP+QGl2rg61nwHAhUwa8t41mjI
+1EXG/T/GqNLPM8tSnChdnyjk99Hywt2MZD1tYIvFzPMd8dHi4av8tCBtpMzaPqvi
+wY5by4vYK7aCb6wM2ghmO2kIPhetvD/7lOCAkSrdvE2J+6i3o2iRQ0ecKfkjJjVq
+pQQaClpH8gO/OF1V0knL4RVTB3crHn+AyzhvdwTV725KkGyawf+vj+b2QPRWrPeM
+TF2rb093CkYkogEBbJGPCXWwbE5M1wAVqr3o4GkUDEN2BYEZWW1gxaqs4r2LIIri
+rzYe0pg6LYeePaGTuDENT8YN8zI1i8mIsELO+BfVA2wHTuaLm58d+fvOSaEXFAJC
+w1yzQFy34cQcq6ReZedDrV/oP5lo4BNDo1maUBlGqQOP4tXP4pNyn/+7STY8NNwZ
+zS5FEaUVswYTj4TdzNKtiV4VXczMRsm8YCwzbSKIOLxd1DMZvkTzI0YTirTWZqqM
+jEEMizIfMX2/TcfV+ID6saAb7q9tztARvfnZ6VA5S5VYb9WIvMtLaR1at5yqF/Po
+W9hEEOb0/+Izsjm7JKeflz/xgyb5u2lXCDmAmIMJQr5H88TsXqpQJm4b8SNN1kF1
+ST5bQ9/jyNaH6oKSQxGbntLcOmnzNQPNSEA3cdipaPgSOmQiVNndDfN/0z7aEc8A
+tUw/nfU4638Fa7MpNrXk
+=RpfZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__2_Feb_2013_23_27_40_+1100_sW65nj_ZkFSB1xIs--
