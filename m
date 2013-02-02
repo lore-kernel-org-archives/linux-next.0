@@ -1,52 +1,72 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] leds-ot200: Fix error caused by shifted mask
-Date: Fri, 1 Feb 2013 14:12:11 -0800
-Message-ID: <20130201141211.1adadfe5.akpm@linux-foundation.org>
-References: <1358928657-15781-1-git-send-email-christian.gmeiner@gmail.com>
-	<7AFBFD79B857054D97821A9BD3FBFA9744D05BD2@ATFKEX06.bachmann.at>
-	<CAH9NwWdciqHSkkMSk4CW4XX+d6JSZBnvw52Svu8M4o-PGMQsDA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the nfsd tree
+Date: Sat, 2 Feb 2013 13:04:03 +1100
+Message-ID: <20130202130403.a29346b583a802ed6ce6880b@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sat__2_Feb_2013_13_04_03_+1100_u.JT3Mq/XF5yQ=Zj"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stanislav Kinsbursky <skinsbursky@parallels.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Sat__2_Feb_2013_13_04_03_+1100_u.JT3Mq/XF5yQ=Zj
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53116 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757380Ab3BAWMN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Feb 2013 17:12:13 -0500
-In-Reply-To: <CAH9NwWdciqHSkkMSk4CW4XX+d6JSZBnvw52Svu8M4o-PGMQsDA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christian Gmeiner <christian.gmeiner@gmail.com>
-Cc: "GMEINER.Christian" <C.GMEINER@bachmann.info>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 1 Feb 2013 16:08:15 +0100
-Christian Gmeiner <christian.gmeiner@gmail.com> wrote:
+Hi,
 
-> ping
+After merging the nfsd tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Bryan is handling LEDs patches (see ./MAINTAINERS).  Without a cc he
-presumably missed this in the lkml flood.
+fs/nfs/dns_resolve.c: In function 'nfs_dns_resolver_cache_init':
+fs/nfs/dns_resolve.c:375:4: error: 'struct cache_detail' has no member name=
+d 'cache_upcall'
+fs/nfs/dns_resolve.c:375:35: warning: left-hand operand of comma expression=
+ has no effect [-Wunused-value]
+fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-Wunused-=
+value]
+fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-Wunused-=
+value]
+fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-Wunused-=
+value]
+fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-Wunused-=
+value]
+fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-Wunused-=
+value]
+fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-Wunused-=
+value]
 
-> 2013/1/23 GMEINER.Christian <C.GMEINER@bachmann.info>:
-> >> -----Urspr__ngliche Nachricht-----
-> >> Von: Christian Gmeiner [mailto:christian.gmeiner@gmail.com]
-> >> Gesendet: Mittwoch, 23. Januar 2013 09:11
-> >> An: linux-next@vger.kernel.org; akpm@linux-foundation.org;
-> >> rpurdie@rpsys.net; linux-kernel@vger.kernel.org; GMEINER.Christian
-> >> Cc: Christian Gmeiner
-> >> Betreff: [PATCH] leds-ot200: Fix error caused by shifted mask
-> >>
-> >> During the development of this driver an in-house register documentation
-> >> was used. The last weeks some integration tests were done and this problem
-> >> was found. It turned out that the released register documentation is wrong.
-> >>
-> >> The fix is very simple: shift all masks by one.
-> >>
+Caused by commit aab982cb5dfb ("SUNRPC: remove cache_detail->cache_upcall
+callback").  Also, why don't those statements end in semicolons?
 
-The changelog failed to describe the effects of the bug it fixes.  This
-is a grave (and all too common) omission; it makes it difficult for
-others to determine whether the patch should be backported into earlier
-kernels.
+I have used the nsfd tree from next-20130128 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-So, please tell us.  And feel free to explain whether you believe the
-fix should be backported.
+--Signature=_Sat__2_Feb_2013_13_04_03_+1100_u.JT3Mq/XF5yQ=Zj
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRDHQTAAoJEECxmPOUX5FEH/0P/AmAF4HaZ0zcckho12GTw6yO
+IIRHUo0PPB29jBGrchEkMacuf/7PMjz390D8ApmDJ8tU0QcqY2yTtpcmhnQyV9I3
+ydixxkdJv/OMLDwPC7Sb/bEDLhL9Y0k+RT1SmlKBMP3TXMkKLm4QzkaT9VXH4Ri/
+BIdKxaoZFIXW+NQo9q+eH3LwEQJ05ZL0px830s9Z+PFe281kKESjN1t2ixrxMtkX
+AD0cfxDMEo2w5oJl5b1iovHwGxajhx9Df7M0FzwLG1kPyfzTA7MsT9lSVAU6ceRE
+mmzBr5gFi3k6IX+xMcddbQ9XIdIPCzI4fk4bLDKaEFUE9wQruWrKRC8CbWuCG1Uy
+zFnK4srMVlD1XIy3cQS+PgWAjDRcvG1JDMxufrMJ4oBHwl0tyPjyX9c+1I1E9M9M
+d0Rdvvzyb1kVT+rABrNHlkQcd1LBq51w77svYwSrdaLfQYjX7gy9T2z0xFIOFezA
+Ttd01lILlTJepJkdTgD5/RGOBsr9DXbD2wXBElPZmXzJa+676T3TBbB7i8NRqg02
+NQttzo1WbuWuV1ACQTRI98hqNteVWYKoiXdnRBG4KVLeJsI/94IJYCafQ02FAJKZ
+/zLKGFuoDOfSlgotZsyitw61PIzWj0l2+pM4wZ+f7ZWbdO8rky/T9ZARAXumTHou
+99eZmNVjLzUcabuAa7So
+=1laO
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__2_Feb_2013_13_04_03_+1100_u.JT3Mq/XF5yQ=Zj--
