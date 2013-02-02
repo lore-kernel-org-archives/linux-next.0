@@ -1,123 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tip tree
-Date: Sat, 2 Feb 2013 16:04:41 +1100
-Message-ID: <20130202160441.456a233e3c992d91ff3336ca@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Sat, 2 Feb 2013 16:51:35 +1100
+Message-ID: <20130202165135.af88ff640ef6a2ee84b02986@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sat__2_Feb_2013_16_04_41_+1100_k54kw2P82i1Ng3cq"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44405 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750696Ab3BBFFC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Feb 2013 00:05:02 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Sat__2_Feb_2013_16_51_35_+1100_lc/J+E+6/7fi.f2F"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>, linuxppc-dev@ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Hansen <dave@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Sat__2_Feb_2013_16_04_41_+1100_k54kw2P82i1Ng3cq
+--Signature=_Sat__2_Feb_2013_16_51_35_+1100_lc/J+E+6/7fi.f2F
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the tip tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-arch/powerpc/perf/power7-pmu.c:397:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:397:2: error: (near initialization for 'powe=
-r7_events_attr[0]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:398:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:398:2: error: (near initialization for 'powe=
-r7_events_attr[1]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:399:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:399:2: error: (near initialization for 'powe=
-r7_events_attr[2]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:400:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:400:2: error: (near initialization for 'powe=
-r7_events_attr[3]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:401:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:401:2: error: (near initialization for 'powe=
-r7_events_attr[4]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:402:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:402:2: error: (near initialization for 'powe=
-r7_events_attr[5]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:403:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:403:2: error: (near initialization for 'powe=
-r7_events_attr[6]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:404:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:404:2: error: (near initialization for 'powe=
-r7_events_attr[7]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:406:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:406:2: error: (near initialization for 'powe=
-r7_events_attr[8]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:407:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:407:2: error: (near initialization for 'powe=
-r7_events_attr[9]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:408:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:408:2: error: (near initialization for 'powe=
-r7_events_attr[10]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:409:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:409:2: error: (near initialization for 'powe=
-r7_events_attr[11]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:410:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:410:2: error: (near initialization for 'powe=
-r7_events_attr[12]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:411:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:411:2: error: (near initialization for 'powe=
-r7_events_attr[13]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:412:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:412:2: error: (near initialization for 'powe=
-r7_events_attr[14]') [-Werror]
-arch/powerpc/perf/power7-pmu.c:413:2: error: initialization from incompatib=
-le pointer type [-Werror]
-arch/powerpc/perf/power7-pmu.c:413:2: error: (near initialization for 'powe=
-r7_events_attr[15]') [-Werror]
+arch/x86/kernel/kvm.c: In function 'kvm_register_steal_time':
+arch/x86/kernel/kvm.c:302:3: warning: format '%lx' expects argument of type=
+ 'long unsigned int', but argument 3 has type 'phys_addr_t' [-Wformat]
 
-Caused by commit 1c53a270724d ("perf/POWER7: Make generic event
-translations available in sysfs").
+Introduced by commit 5dfd486c4750 ("x86, kvm: Fix kvm's use of __pa() on
+percpu areas").
 
-I have used the tip tree from 20130128 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Sat__2_Feb_2013_16_04_41_+1100_k54kw2P82i1Ng3cq
+--Signature=_Sat__2_Feb_2013_16_51_35_+1100_lc/J+E+6/7fi.f2F
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRDJ5pAAoJEECxmPOUX5FEMssP/i3pnYGfgpkd47FVvKRlGsep
-ZD/UpkwI4iGkUoOVMUa+CyH7+XDVz0BNP2NlXmAdLjmk/ozsaBvlGKUuH+e/u+NS
-ZQgsjsgct/7RvQMSTEP0T6hTI9crePRc/uyWiIcrPTabmyUN0e7tddqwFrAaUzrk
-WsA+f1vlirOWZY/IufFUSO/GNO3OCSYYHfM3JwW9QjWnoQIgyg+LkqTWIBSGDf4+
-VvjKX2BKdwidWrUCiFaI86hwtlAcm1BlEb+Z92u2etImN5nC2lXPIU+77vQiZEKe
-bJUAP4FIJoz8DUzCtRCF8g4kB0Ar1raszcWtr+JuS/7CF6FuxfiA+D+37VBZGQwo
-N4x3xRuAbB5qaSMqhahZbCT/LPPEbTLT+Xz/FXC6M72D0XU+K36xLQzbnHTzAyBS
-cQija6Omss+keDM1rJHCCXJ2TfsVBBks2gpHbkebsObiIV4iov9Cx1vFJomNU2Z1
-3LXxDpHbd8CE4rKXHPkhOYx+jlotjsMANvX0AIZHe7epSah9wfG74Emoehv0vfZ/
-wbAO6CRKwOeMHsbgQ+8fYs6KScJhvxWNZ33IsbH0j+EqOmcXL393Wa7WD83rgJ23
-BGjcgSLSQ9sovW0OY9YekqvLMLPqOwgh+5s2vtGQ4LWoGYAKlmWMbL3FUpX/y0Ek
-lMYzj3iciOkFoFrvJbAn
-=jwwA
+iQIcBAEBCAAGBQJRDKlnAAoJEECxmPOUX5FEBwYP/0GADz8H69iBeWiQ7mfmjMGx
+8z6y+L272ueNzIwOMuqA3K1TDEswxeQQCC86pd3LS9AS8jtlsljMTqtC0AN+h95q
+akjeER8HPCThaw281uHKe8EVk3PcsfC/uPDNJf58HxhtJ8adw0xYDYTLzjjAihCP
+MF8JydJlakU6QZxG6YeA81egilXPJs/Pdcy+jzGrfm+wM9dTVC9YZYqmMsjECWK5
+NZWW1UblwKzpDWuX9FTTMMYwsbzhn/d5AikcKvD64Hp7SUOZ7kRaxndyrecBBRUw
+WQzAlavV7OlozD0LHGZFyLU3GMlaDfaq8V/DJuzj/eWNZED+NLo/l+1HSf67AkNP
+Lq2gjiL8tmr/KPnt0qpx2Qxbv0G4eNd4A/n0+OdOWnFF4C8wXoIcPiFYhMMWqGyX
+bblollHLlPq8GcKjp5duYxcTGNwrUFyqiYwL2z/oYS5pWKvPbdERTTxxuC0cL7UA
+1H3Bot5Fd0zlaeTwkdkvfm6S1As9Z5VHYIpNOZIG+eBbWV76t4BgJwsj/YSpSm4+
+6kpjDKR0QX0I3wrlOf0g6J1+kXFnRCzhLwmMSL2krYwSlflB02gQcxyHmxl/3XlC
+kHH3FzOeOa1n/Y+4Lkpee3iwcN7PKMDy0awPs8vm1BoP7XEwFTkbrRo0b1pSv1vo
+bLHfqaS4Sbrt6IKTgDE4
+=GHwd
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__2_Feb_2013_16_04_41_+1100_k54kw2P82i1Ng3cq--
+--Signature=_Sat__2_Feb_2013_16_51_35_+1100_lc/J+E+6/7fi.f2F--
