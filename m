@@ -1,29 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cortex tree with the arm tree
-Date: Sat, 2 Feb 2013 22:20:36 +1100
-Message-ID: <20130202222036.0db6c1d208843975be1f8dba@canb.auug.org.au>
+Subject: linux-next: manual merge of the tegra tree with the arm-soc tree
+Date: Sat, 2 Feb 2013 22:45:24 +1100
+Message-ID: <20130202224524.d7c224291a52d6cede31f6b1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sat__2_Feb_2013_22_20_36_+1100_WR4bBAlW8CqK=M36"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoffer Dall <c.dall@virtualopensystems.com>, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Sat__2_Feb_2013_22_45_24_+1100_S6jrWk2/5SKh3Atx"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40894 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756521Ab3BBLpe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Feb 2013 06:45:34 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hiroshi Doyu <hdoyu@nvidia.com>, Rob Herring <rob.herring@calxeda.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
 
---Signature=_Sat__2_Feb_2013_22_20_36_+1100_WR4bBAlW8CqK=M36
+--Signature=_Sat__2_Feb_2013_22_45_24_+1100_S6jrWk2/5SKh3Atx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Uwe,
+Hi all,
 
-Today's linux-next merge of the cortex tree got a conflict in
-arch/arm/include/asm/cputype.h between commit 59530adc3f1b ("ARM: Define
-CPU part numbers and implementors") from the arm tree and commit
-6ebd4d038dbb ("ARM: stub out read_cpuid and read_cpuid_ext for
-CPU_CP15=3Dn") from the cortex tree.
+Today's linux-next merge of the tegra tree got a conflict in
+arch/arm/mach-tegra/common.c between commit 0529e315bbda ("ARM: use
+common irqchip_init for GIC init") from the arm-soc tree and commits
+61fd290d213e ("ARM: tegra: migrate to new clock code") and 5c541b884c09
+("ARM: tegra: Add initial support for Tegra114 SoC") from the tegra tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -32,113 +36,62 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/include/asm/cputype.h
-index ad41ec2,574269e..0000000
---- a/arch/arm/include/asm/cputype.h
-+++ b/arch/arm/include/asm/cputype.h
-@@@ -59,30 -60,25 +60,43 @@@ extern unsigned int processor_id
-  		    : "cc");						\
-  		__val;							\
-  	})
-- #else
-- #define read_cpuid(reg) (processor_id)
-- #define read_cpuid_ext(reg) 0
-- #endif
-+=20
-+ #else /* ifdef CONFIG_CPU_CP15 */
+diff --cc arch/arm/mach-tegra/common.c
+index 3599959,2f13513..0000000
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@@ -21,9 -21,11 +21,10 @@@
+  #include <linux/io.h>
+  #include <linux/clk.h>
+  #include <linux/delay.h>
+ -#include <linux/of_irq.h>
+ +#include <linux/irqchip.h>
++ #include <linux/clk/tegra.h>
  =20
- +#define ARM_CPU_IMP_ARM			0x41
- +#define ARM_CPU_IMP_INTEL		0x69
- +
- +#define ARM_CPU_PART_ARM1136		0xB360
- +#define ARM_CPU_PART_ARM1156		0xB560
- +#define ARM_CPU_PART_ARM1176		0xB760
- +#define ARM_CPU_PART_ARM11MPCORE	0xB020
- +#define ARM_CPU_PART_CORTEX_A8		0xC080
- +#define ARM_CPU_PART_CORTEX_A9		0xC090
- +#define ARM_CPU_PART_CORTEX_A5		0xC050
- +#define ARM_CPU_PART_CORTEX_A15		0xC0F0
- +#define ARM_CPU_PART_CORTEX_A7		0xC070
- +
- +#define ARM_CPU_XSCALE_ARCH_MASK	0xe000
- +#define ARM_CPU_XSCALE_ARCH_V1		0x2000
- +#define ARM_CPU_XSCALE_ARCH_V2		0x4000
- +#define ARM_CPU_XSCALE_ARCH_V3		0x6000
- +
-  /*
-+  * read_cpuid and read_cpuid_ext should only ever be called on machines t=
-hat
-+  * have cp15 so warn on other usages.
-+  */
-+ #define read_cpuid(reg)							\
-+ 	({								\
-+ 		WARN_ON_ONCE(1);					\
-+ 		0;							\
-+ 	})
-+=20
-+ #define read_cpuid_ext(reg) read_cpuid(reg)
-+=20
-+ #endif /* ifdef CONFIG_CPU_CP15 / else */
-+=20
-+ #ifdef CONFIG_CPU_CP15
-+ /*
-   * The CPU ID never changes at run time, so we might as well tell the
-   * compiler that it's constant.  Use this function to read the CPU ID
-   * rather than directly reading processor_id or read_cpuid() directly.
-@@@ -92,21 -88,15 +106,30 @@@ static inline unsigned int __attribute_
-  	return read_cpuid(CPUID_ID);
-  }
+  #include <asm/hardware/cache-l2x0.h>
+ -#include <asm/hardware/gic.h>
  =20
-+ #else /* ifdef CONFIG_CPU_CP15 */
-+=20
-+ static inline unsigned int __attribute_const__ read_cpuid_id(void)
-+ {
-+ 	return processor_id;
-+ }
-+=20
-+ #endif /* ifdef CONFIG_CPU_CP15 / else */
-+=20
- +static inline unsigned int __attribute_const__ read_cpuid_implementor(voi=
-d)
- +{
- +	return (read_cpuid_id() & 0xFF000000) >> 24;
- +}
- +
- +static inline unsigned int __attribute_const__ read_cpuid_part_number(voi=
-d)
- +{
- +	return read_cpuid_id() & 0xFFF0;
- +}
- +
- +static inline unsigned int __attribute_const__ xscale_cpu_arch_version(vo=
-id)
- +{
- +	return read_cpuid_part_number() & ARM_CPU_XSCALE_ARCH_MASK;
- +}
- +
-  static inline unsigned int __attribute_const__ read_cpuid_cachetype(void)
+  #include <mach/powergate.h>
+ =20
+@@@ -56,10 -58,17 +57,11 @@@ u32 tegra_uart_config[4] =3D=20
+  };
+ =20
+  #ifdef CONFIG_OF
+ -static const struct of_device_id tegra_dt_irq_match[] __initconst =3D {
+ -	{ .compatible =3D "arm,cortex-a15-gic", .data =3D gic_of_init },
+ -	{ .compatible =3D "arm,cortex-a9-gic", .data =3D gic_of_init },
+ -	{ }
+ -};
+ -
+  void __init tegra_dt_init_irq(void)
   {
-  	return read_cpuid(CPUID_CACHETYPE);
++ 	tegra_clocks_init();
+  	tegra_init_irq();
+ -	of_irq_init(tegra_dt_irq_match);
+ +	irqchip_init();
+  }
+  #endif
+ =20
 
---Signature=_Sat__2_Feb_2013_22_20_36_+1100_WR4bBAlW8CqK=M36
+--Signature=_Sat__2_Feb_2013_22_45_24_+1100_S6jrWk2/5SKh3Atx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRDPaEAAoJEECxmPOUX5FEd7gP/1itwJgcaVl19mhLj27sCsgX
-cDmBkhlhFml525IrRJ1wj3Tlf1uCkWueP48zgKfam1Wo8nvpfB6GpN7+gNtWGF7V
-beZULR4x2nsDPNlG0BQ5B0BJGSkKxn18kbJODIHRR4czic+H1TPDEExxVifWpxzL
-aIzg+HlQHMOiujmPVWhK3f0GhqeKWqhEsanK/QpL4ARxA5hZ5Eqe9v6Yimei/Cc8
-3g8FuOc1trIBrhFqluCr61V9cR7Q0X0m4gfpWkY1AQsgVbqHEcuC4J6SW+wMX5Md
-vJ2GLI+FDlwr3dBV67XGaOJPmdw/AHXwk21FJbnKC1CuNSx6Up3/6SFagwxTUL7e
-7GVngpk1Cc1gvAN4d82qXVscN0Jgl9lysgzAerG/e99k1iL+KiGZ7/ZprjEN0oMG
-ipsDtu06pLenT58HcKQONZvhtjVAZvVEEy7Sm57G2EPhXHcMX/uzbgO4PfM78Ykd
-CRpQ+2V19ayDNsAVA7t5E+WSUNaDxMRCBzf8oiFMl0ShZhryrUm3urm91FPr0vGI
-5I2pP4sjLQBlBLEmpc4c3zgNYNc3+0C1U5SxaFnbUO4/NO3B7cxD6hpUFjYkRMg9
-9e8x1AIOhu+WkvRPNstKkmN90qVlVHFYXwpXySURhYX3hJZo1M5P1pNmIBgjpvw7
-u/C1rmab9uirJBohbFIS
-=f1if
+iQIcBAEBCAAGBQJRDPxUAAoJEECxmPOUX5FEXGgQAIMuSQnGhI+i7nfX9jo1My8b
+3wcQA6xR2g+YQ6ml9ygZAHBPbHc47V60AZXD7ih9WK29x25sadABeuhpjciGM3W7
+6IED2nkfEPfj/p303+BsBQro1+MI1CWDbzc24GU2jHi61jmLnx4PP9VFIPAsVHRA
+Cdq7LNNfR6B+8hVLYxK2yMYyVNEimUuThrYN44VtJCplPTFjUQ8Zi1LAOc5eGa2O
+J2mNzeo3YWlLDJroi8XuhzzGQIWA7ZZdKkMpgTf4D4FvducTVg7XOOTbCBIavSND
+9HE+NTnnPSdGphIpAorgQavsWRyFAizfnhYr4pU/DNuirqLrtu0C70jUPc9oSQNC
+UROH0mikfsEC2Tjv8vJ2UKmdQmrBs208/68g4kJOGD0yIkyH7Z2HIwJtMgOerj0G
+zh3NSkSNJ5KpvqqdK/4WF3x/13tcUd8zLw0n0QE1A8xNr5TTRzyGEz1kJfd9d/wG
+Z69ipCxEuebUeH7yE9N0OquyZsdoa+Mfnqon+//WL0jl73OUAIJuVZzk5nabs5OB
+X11BKNPkrk9mbXUcVOAOQdDq354U680KuSI9jnpeSogwfIS8JzeQxFAZ8/SPqhz8
+yc2aYFRuCyW+TJxE2uZ6VSTEwc1aqCnEZHWqNq7Bm+uOt2ozzGaCgc2cOE6bT8TD
+2wsLTkfzZ0ytrj4691bx
+=VjXY
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__2_Feb_2013_22_20_36_+1100_WR4bBAlW8CqK=M36--
+--Signature=_Sat__2_Feb_2013_22_45_24_+1100_S6jrWk2/5SKh3Atx--
