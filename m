@@ -1,48 +1,42 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] regmap: include linux/sched.h to fix build
-Date: Sat,  2 Feb 2013 22:50:14 -0700
-Message-ID: <1359870614-23691-1-git-send-email-swarren@wwwdotorg.org>
+From: Florian Westphal <fw@strlen.de>
+Subject: [PATCH] netfilter: fix missing dependencies for NETFILTER_XT_MATCH_CONNLABEL
+Date: Sun,  3 Feb 2013 12:24:07 +0100
+Message-ID: <1359890647-25846-1-git-send-email-fw@strlen.de>
+References: <510DC976.7000008@infradead.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:47457 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751002Ab3BCFua (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Feb 2013 00:50:30 -0500
+Received: from Chamillionaire.breakpoint.cc ([80.244.247.6]:38165 "EHLO
+	Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753070Ab3BCL2x (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Feb 2013 06:28:53 -0500
+In-Reply-To: <510DC976.7000008@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+To: netfilter-devel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Westphal <fw@strlen.de>
 
-From: Stephen Warren <swarren@nvidia.com>
+It was possible to set
+NF_CONNTRACK=n
+NF_CONNTRACK_LABELS=y
 
-This fixes:
+via NETFILTER_XT_MATCH_CONNLABEL=y:
 
-drivers/base/regmap/regmap.c: In function 'regmap_async_complete_cb':
-drivers/base/regmap/regmap.c:1656:3: error: 'TASK_NORMAL' undeclared (first use in this function)
-drivers/base/regmap/regmap.c:1656:3: note: each undeclared identifier is reported only once for each function it appears in
-drivers/base/regmap/regmap.c: In function 'regmap_async_complete':
-drivers/base/regmap/regmap.c:1688:2: error: 'TASK_UNINTERRUPTIBLE' undeclared (first use in this function)
-drivers/base/regmap/regmap.c:1688:2: error: implicit declaration of function 'schedule'
+warning: (NETFILTER_XT_MATCH_CONNLABEL) selects NF_CONNTRACK_LABELS which has
+unmet direct dependencies (NET && INET && NETFILTER && NF_CONNTRACK)
 
-An alternative might be to adjust linux/wait.h to include linux/sched.h,
-but since that hasn't been done before, I assume we're consciously
-avoiding doing that.
-
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Florian Westphal <fw@strlen.de>
 ---
- drivers/base/regmap/regmap.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index bee8560..ebd1f22 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -16,6 +16,7 @@
- #include <linux/mutex.h>
- #include <linux/err.h>
- #include <linux/rbtree.h>
-+#include <linux/sched.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/regmap.h>
+diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
+index eb2c8eb..d4dd702 100644
+--- a/net/netfilter/Kconfig
++++ b/net/netfilter/Kconfig
+@@ -860,6 +860,7 @@ config NETFILTER_XT_MATCH_CONNBYTES
+ config NETFILTER_XT_MATCH_CONNLABEL
+ 	tristate '"connlabel" match support'
+ 	select NF_CONNTRACK_LABELS
++	depends on NF_CONNTRACK
+ 	depends on NETFILTER_ADVANCED
+ 	---help---
+ 	  This match allows you to test and assign userspace-defined labels names
 -- 
-1.7.10.4
+1.7.8.6
