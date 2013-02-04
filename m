@@ -1,79 +1,33 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds-ot200: Fix error caused by shifted mask
-Date: Mon, 4 Feb 2013 10:27:57 -0800
-Message-ID: <CAK5ve-KEM1xOxRyWsDQMNps-3r-V3Vaiu7SMW8=nuQcz2-2ozg@mail.gmail.com>
-References: <1358928657-15781-1-git-send-email-christian.gmeiner@gmail.com>
- <7AFBFD79B857054D97821A9BD3FBFA9744D05BD2@ATFKEX06.bachmann.at>
- <CAH9NwWdciqHSkkMSk4CW4XX+d6JSZBnvw52Svu8M4o-PGMQsDA@mail.gmail.com>
- <20130201141211.1adadfe5.akpm@linux-foundation.org> <CAH9NwWfRL3HpfhLW5FqmWJC+NYHagoQXMoavAzMYciHRDg6mdQ@mail.gmail.com>
+From: Christoph Lameter <cl@linux.com>
+Subject: Re: next-20130204 - bisected slab problem to "slab: Common constants
+ for kmalloc boundaries"
+Date: Mon, 4 Feb 2013 19:22:03 +0000
+Message-ID: <0000013ca6a87485-3f013e82-046c-4374-86d5-67fb85a085f9-000000@email.amazonses.com>
+References: <510FE051.7080107@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:59195 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750773Ab3BDS2S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 13:28:18 -0500
-In-Reply-To: <CAH9NwWfRL3HpfhLW5FqmWJC+NYHagoQXMoavAzMYciHRDg6mdQ@mail.gmail.com>
+Received: from a193-30.smtp-out.amazonses.com ([199.255.193.30]:9533 "EHLO
+	a193-30.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754652Ab3BDTWF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 14:22:05 -0500
+In-Reply-To: <510FE051.7080107@imgtec.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christian Gmeiner <christian.gmeiner@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "GMEINER.Christian" <C.GMEINER@bachmann.info>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: James Hogan <james.hogan@imgtec.com>
+Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org
 
-On Mon, Feb 4, 2013 at 6:46 AM, Christian Gmeiner
-<christian.gmeiner@gmail.com> wrote:
-> 2013/2/1 Andrew Morton <akpm@linux-foundation.org>:
->> On Fri, 1 Feb 2013 16:08:15 +0100
->> Christian Gmeiner <christian.gmeiner@gmail.com> wrote:
->>
->>> ping
->>
->> Bryan is handling LEDs patches (see ./MAINTAINERS).  Without a cc he
->> presumably missed this in the lkml flood.
->
-> You are right...
->
-> ~/kernel/linux-3.7.6$ ./scripts/get_maintainer.pl -f drivers/leds/leds-ot200.c
-> Bryan Wu <cooloney@gmail.com> (maintainer:LED SUBSYSTEM)
-> Richard Purdie <rpurdie@rpsys.net> (maintainer:LED SUBSYSTEM)
-> linux-leds@vger.kernel.org (open list:LED SUBSYSTEM)
-> linux-kernel@vger.kernel.org (open list)
->
-> Next time I will add Bryan to CC
->
->>
->>> 2013/1/23 GMEINER.Christian <C.GMEINER@bachmann.info>:
->>> >> -----Urspr__ngliche Nachricht-----
->>> >> Von: Christian Gmeiner [mailto:christian.gmeiner@gmail.com]
->>> >> Gesendet: Mittwoch, 23. Januar 2013 09:11
->>> >> An: linux-next@vger.kernel.org; akpm@linux-foundation.org;
->>> >> rpurdie@rpsys.net; linux-kernel@vger.kernel.org; GMEINER.Christian
->>> >> Cc: Christian Gmeiner
->>> >> Betreff: [PATCH] leds-ot200: Fix error caused by shifted mask
->>> >>
->>> >> During the development of this driver an in-house register documentation
->>> >> was used. The last weeks some integration tests were done and this problem
->>> >> was found. It turned out that the released register documentation is wrong.
->>> >>
->>> >> The fix is very simple: shift all masks by one.
->>> >>
->>
->> The changelog failed to describe the effects of the bug it fixes.  This
->> is a grave (and all too common) omission; it makes it difficult for
->> others to determine whether the patch should be backported into earlier
->> kernels.
->>
->> So, please tell us.  And feel free to explain whether you believe the
->> fix should be backported.
->
-> Our customers can control LEDs from userspace via Java, C++ or what every. They
-> have running/working applications where they want to control led_3 but
-> led_2 get's
-> used. I got a bug report in our in-house bug tracker so it would be
-> great if this patch can make it into 3.7.x series.
->
+On Mon, 4 Feb 2013, James Hogan wrote:
 
-OK, could you please update the commit message of this patch and
-resubmit it? It's better to submit to -stable tree as well.
+> I've hit boot problems in next-20130204 on Meta:
 
-Thanks,
--Bryan
+Meta is an arch that is not in the tree yet? How would I build for meta?
+
+What are the values of
+
+MAX_ORDER
+PAGE_SHIFT
+ARCH_DMA_MINALIGN
+CONFIG_ZONE_DMA
+
+?
