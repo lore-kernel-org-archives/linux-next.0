@@ -1,59 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pinctrl tree with the battery tree
-Date: Mon, 4 Feb 2013 16:45:06 +1100
-Message-ID: <20130204164506.b1bdf19083adab5e94b0534c@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the mfd tree
+Date: Mon, 4 Feb 2013 17:04:21 +1100
+Message-ID: <20130204170421.1dd829d596474b12c12190df@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Feb_2013_16_45_06_+1100_p5=lUNntm1_IRH6e"
+ boundary="Signature=_Mon__4_Feb_2013_17_04_21_+1100_1iX_kiPsqLu_9deu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37057 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56467 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750714Ab3BDFpP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 00:45:15 -0500
+	with ESMTP id S1752285Ab3BDGEb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 01:04:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonas Aaberg <jonas.aberg@stericsson.com>, Anton Vorontsov <avorontsov@ru.mvista.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Baltieri <fabio.baltieri@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Rob Herring <rob.herring@calxeda.com>
 
---Signature=_Mon__4_Feb_2013_16_45_06_+1100_p5=lUNntm1_IRH6e
+--Signature=_Mon__4_Feb_2013_17_04_21_+1100_1iX_kiPsqLu_9deu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi all,
 
-Today's linux-next merge of the pinctrl tree got a conflict in
-include/linux/mfd/abx500/ab8500.h between commit 0ed5107fa860
-("ab8500-charger: Do not touch VBUSOVV bits") from the battery tree and
-commit 56813f798e8c ("mfd: ab8500: update header file and version
-detection") from the pinctrl tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/mfd/db8500-prcmu.c between commit 5073e7b57041 ("mfd:
+db8500-prcmu: Add ux500_wdt mfd_cell") from the mfd tree and commit
+520f7bd73354 ("irqchip: Move ARM gic.h to
+include/linux/irqchip/arm-gic.h") from the arm-soc tree.
 
-I fixed it up (the former is a subset of the latter) and can carry the
-fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__4_Feb_2013_16_45_06_+1100_p5=lUNntm1_IRH6e
+diff --cc drivers/mfd/db8500-prcmu.c
+index e42a417,42f3afc..0000000
+--- a/drivers/mfd/db8500-prcmu.c
++++ b/drivers/mfd/db8500-prcmu.c
+@@@ -32,8 -33,6 +33,7 @@@
+  #include <linux/regulator/db8500-prcmu.h>
+  #include <linux/regulator/machine.h>
+  #include <linux/cpufreq.h>
+ +#include <linux/platform_data/ux500_wdt.h>
+- #include <asm/hardware/gic.h>
+  #include <mach/hardware.h>
+  #include <mach/irqs.h>
+  #include <mach/db8500-regs.h>
+
+--Signature=_Mon__4_Feb_2013_17_04_21_+1100_1iX_kiPsqLu_9deu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRD0riAAoJEECxmPOUX5FEqlcP/10IYTaXeAGVQCTXfPGfMLmZ
-9/KLi4hSYbsN9oUiY+ue3TAi2H4xZP+HoVvljc9nJ+VY0bTE8t83tX1x59MPwClH
-UI6nRDGiYl+P0O6DMQGzgHq6SKf6sAe9KXZn/2vLfsZ1BLOGB/vDGAHXuPujZbva
-BjAvbCuqDW9fIVPhLUad5oisiYSZg1DZPlVNsCV3berC4OWq++c55b67zaw257Ft
-R+WVX/g7J7l0apbZHEU873hiDmQxlhxw9SlQ+4ljLQiDeAZb3jYpv/I0jCD4HCFw
-CXSNt0eL3J38EC9f/FSrEpNtudy1KWsxXF/OQUESaoMwy0cw1As7/QE5dBqVvzWe
-ab7+6A0bL+lE1qWfTWt9LzJ2dmAKEtMKbSP36p1WZbzZXEi9DUryMDZqG5wl3J7c
-JqhxPj5L+DGHlA35iEm1Glq5ydYTwyDplHXUOBwjNywrPBMAjgso7ze8UpcXRtsw
-BKChJA6gX5HigKS8gjIQK7VUOYOl1bCR8Bte6ZrlRAu9xwmxccysnfx/L7p2MAnB
-nPmD4FkS18fxBTQ/B5EtotH6WEZL7It3S41XXrvXYWOoOgFHLzk6uurw27cNxmGn
-splye8/MuNJipLtYLdTMQBNZzULyk1THMhhHicQwpcrd5PXYSwmniAR94V5dHi+i
-q9c+d/IloK0SAoezrbRR
-=YFet
+iQIcBAEBCAAGBQJRD09lAAoJEECxmPOUX5FEgqAQAISAw7QFLsE0lpxuxWJeXXvz
+RTPu0yZysg0thk/ExJSrhct9MvBU2L2MM3oB1g75lB6R5Q5x5dzEhyX2WClh36sx
+pK0liSlTNnvEcKS44Q9eL1lZ2zHm9Hc3S/y7bZf49vTjacSBDc9+A0Ut8sYRv36O
+wDkjtcftF7Djsqh5ApkMCxEv9UnRCPSwHFpXrYl2n8iVAUiq4AeDUn2VuthiL6T5
+8PcJwRddcRk6e8PUDzrl+zSC4wZ8YeOv91SsyfjHTqHIlXNIh6DQahEyBwyym2mu
+297EJ14rRPNdoGTB2fry2Gkset9RaTxwsXLvAZz2lcOU666FvjrVhnaTOee2QzD3
+JPtaNzRxhV43I/Vyg5D/kksq0Aru1cTg+yYjNKf1sXpAm9oLptEBdi+yp4tg/tF3
+dvzUSDWIGVT0C/mrxLpPz2GNvKb9/X1bgQrpIcHB2q7ODXStv/M49gnaR1HN8wDC
+dV9UWotN+U3PicKQIMVa2fBlkNbLdcNkNSbaUJn4SHVPKCIvUXx3zfTDsAcLXFdz
+d9jXFIm0QzUKPokb+rWz71hkQVEatPMwEhgacX+k0VzQ9JT8fUbYxcWK1JIpgiso
+fUqEBfnwH0R7Fmg0YiTjqmDiqrkNcllbyZq4TDSgctMZs/8qEPbxuEMkrQFE4oPL
+svXrL/LI6EIqs7ZIvOFV
+=/SrF
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Feb_2013_16_45_06_+1100_p5=lUNntm1_IRH6e--
+--Signature=_Mon__4_Feb_2013_17_04_21_+1100_1iX_kiPsqLu_9deu--
