@@ -1,99 +1,105 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with the mips tree
-Date: Mon, 4 Feb 2013 17:36:07 +1100
-Message-ID: <20130204173607.d593102dfc20079ec9392fb4@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Mon, 4 Feb 2013 18:00:26 +1100
+Message-ID: <20130204180026.c878e03aae769eac187944b3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Feb_2013_17_36_07_+1100_uzpZN0N7/q1YPkH7"
+ boundary="Signature=_Mon__4_Feb_2013_18_00_26_+1100_EtH=YFol4i_aFzK."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39637 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55407 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751632Ab3BDGgU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 01:36:20 -0500
+	with ESMTP id S1751699Ab3BDHAj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 02:00:39 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>
 
---Signature=_Mon__4_Feb_2013_17_36_07_+1100_uzpZN0N7/q1YPkH7
+--Signature=_Mon__4_Feb_2013_18_00_26_+1100_EtH=YFol4i_aFzK.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Andrew,
 
-Today's linux-next merge of the signal tree got a conflict in
-arch/mips/kernel/syscall.c between commit 7034228792cc ("MIPS: Whitespace
-cleanup") from the mips tree and commit 50150d2bb903 ("mips: switch to
-generic sys_fork() and sys_clone()") from the signal tree.
+Today's linux-next merge of the akpm tree got a conflict in
+arch/x86/mm/numa.c between commit 07f4207a305c ("x86-32, mm: Remove
+reference to alloc_remap()") from the tip tree and commit "x86: get
+pg_data_t's memory from other node" from the akpm tree.
 
-I fixed it up (the sys_clone stuff was removed by the latter - see below)
-and can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/mips/kernel/syscall.c
-index d7feee0,b32466a..0000000
---- a/arch/mips/kernel/syscall.c
-+++ b/arch/mips/kernel/syscall.c
-@@@ -41,25 -41,19 +41,19 @@@
+diff --cc arch/x86/mm/numa.c
+index a8483df,245a4ba..0000000
+--- a/arch/x86/mm/numa.c
++++ b/arch/x86/mm/numa.c
+@@@ -209,22 -213,27 +209,21 @@@ static void __init setup_node_data(int=20
+  	       nid, start, end - 1);
  =20
-  /*
-   * For historic reasons the pipe(2) syscall on MIPS has an unusual calling
- - * convention.  It returns results in registers $v0 / $v1 which means the=
-re
- + * convention.	It returns results in registers $v0 / $v1 which means there
-   * is no need for it to do verify the validity of a userspace pointer
- - * argument.  Historically that used to be expensive in Linux.  These days
- + * argument.  Historically that used to be expensive in Linux.	These days
-   * the performance advantage is negligible.
-   */
-- asmlinkage int sysm_pipe(nabi_no_regargs volatile struct pt_regs regs)
-+ asmlinkage int sysm_pipe(void)
-  {
-  	int fd[2];
-- 	int error, res;
--=20
-- 	error =3D do_pipe_flags(fd, 0);
-- 	if (error) {
-- 		res =3D error;
-- 		goto out;
-- 	}
-- 	regs.regs[3] =3D fd[1];
-- 	res =3D fd[0];
-- out:
-- 	return res;
-+ 	int error =3D do_pipe_flags(fd, 0);
-+ 	if (error)
-+ 		return error;
-+ 	current_pt_regs()->regs[3] =3D fd[1];
-+ 	return fd[0];
-  }
+  	/*
+ -	 * Allocate node data.  Try remap allocator first, node-local
+ -	 * memory and then any node.  Never allocate in DMA zone.
+ +	 * Allocate node data.  Try node-local memory and then any node.
+ +	 * Never allocate in DMA zone.
+  	 */
+- 	nd_pa =3D memblock_alloc_nid(nd_size, SMP_CACHE_BYTES, nid);
+ -	nd =3D alloc_remap(nid, nd_size);
+ -	if (nd) {
+ -		nd_pa =3D __phys_addr_nodebug(nd);
+ -		remapped =3D true;
+ -	} else {
+ -		nd_pa =3D memblock_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
+ -		if (!nd_pa) {
+ -			pr_err("Cannot find %zu bytes in any node\n", nd_size);
+ -			return;
+ -		}
+ -		nd =3D __va(nd_pa);
+++	nd_pa =3D memblock_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
+ +	if (!nd_pa) {
+- 		pr_err("Cannot find %zu bytes in node %d\n",
+- 		       nd_size, nid);
+++		pr_err("Cannot find %zu bytes in any node\n", nd_size);
+ +		return;
+  	}
+ +	nd =3D __va(nd_pa);
  =20
-  SYSCALL_DEFINE6(mips_mmap, unsigned long, addr, unsigned long, len,
+  	/* report and initialize */
+ -	printk(KERN_INFO "  NODE_DATA [mem %#010Lx-%#010Lx]%s\n",
+ -	       nd_pa, nd_pa + nd_size - 1, remapped ? " (remapped)" : "");
+ +	printk(KERN_INFO "  NODE_DATA [mem %#010Lx-%#010Lx]\n",
+ +	       nd_pa, nd_pa + nd_size - 1);
+  	tnid =3D early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
+ -	if (!remapped && tnid !=3D nid)
+ +	if (tnid !=3D nid)
+  		printk(KERN_INFO "    NODE_DATA(%d) on node %d\n", nid, tnid);
+ =20
+  	node_data[nid] =3D nd;
 
---Signature=_Mon__4_Feb_2013_17_36_07_+1100_uzpZN0N7/q1YPkH7
+--Signature=_Mon__4_Feb_2013_18_00_26_+1100_EtH=YFol4i_aFzK.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRD1bXAAoJEECxmPOUX5FEF2YP/2TLG8LuKDkAEnP9e8s01eXQ
-ODsDv5nT3UNbQ4ZljAAqbSDr/VnhVZfurhzvIlZofHATc4q99o9LK9K/M61gktUx
-SiPbzTxaV/41InssrsznDJi3YPs5YfOwZnBb9qP7aE2c+JgORgqFHqTBLLpIfjqt
-sKsan6/2tefaNxF9zRD1mN7pSWQ6jbAn+7gTR03hPdknCn/T2/cL6byqVH21YYhZ
-kAlAGuXPIopZUnl9wgAf5dQZ8hpdpb8kVdrz37l64C02Gb23jV/3v6ftbyBbI7n3
-3KvTp7z8qr5K4xFWEjlGtIeB2zCgZKDlqoYyfUlxUGrc28uJ3jAvyMvNSrOOi7iy
-hPs+m+MPRdU5c1gYo0jbgGcKG1MN8IkS3/R2DtpHTS07csGKwYGClfp+YhynskV9
-ZnOYHT4hk8gh7xICzdCwhG5G1A9u3f7M1MfZWDNOAbFX84CgGvmxYh6i/QKqiiWl
-68UGAfs4xDZUg2yyrbKORZXYXtCpCGM7spK2nTKkTiiYXCuWRkSJ7LReejOcnhCy
-1NUPgA64mAmCRechUloCDyt+0jiSg6D53A2XsBf29B6fyj+7EzV3+oKcWIwQW8KU
-9zkmPiMsPiRfAlbj37+ePrRfQboDkhoAbX1eZ5XzRf0lZotKxALraBR5apx5LxpO
-C50tRWTz5Vb0aNHi8F2u
-=TTrb
+iQIcBAEBCAAGBQJRD1yKAAoJEECxmPOUX5FEgh8P/RytA+/Ru4UYvKfigxihyn8h
+GBpuElGscS8JRMLYPNZ8CSh2shiGqnV0dmENrMIQfxZV5Zx9OOw9JGpyOOhGS717
+Ny88q5RfDD7DfvSZu/ATRrb1ZtptGvKVPlX1OiN6lwkeWne6awEYjqnSyI9DrDjV
+VUXHb9HikYJWE9I430unSxcWcuGs9AtPSKK9Ez91s5SA3WrueNUaw3+eyUyLL8U5
+t/bPlmimcjQwNbtsCyf84NyD1DXoR9uSOnKh5flIJQ9T86dKQ0/cs9v55DinmSc7
+hhUkq6vjJ1QCggJLIeRWG3WcYgI8+VoL0IzDE6kXqqaiFt3OERAJzizoO0ThQCOl
+KdBX+yq50+uqCoRLU1ZRTlbw5gHvNp8xYXbHiykjO0jSiqRW8ghb+FUCC6FXzr4t
+UQNwWfVGZMTMfmAHkNjKPl/NsqGWddSgy3Ao1nanKwIqUY53mo7dIT8qKwHwgs0a
+89V2Mr4JWWQjM5KeBWuClE8fPVd87VwhfKgWlrRmdLxd5uWqYj4qf8KQClBRW572
+YGBgq8GuaQMpd2YenJ4ZxQ28AA6pqRUvDWTZ2J5KgfATf+Re/vRIzCiv0gT2FVeO
+7V2WWeNLD1rSihR5ds8E9cwRgZJ8VAIuu38/1lookElCnVRZcSQX3mGWscq/XUE0
+a6zRrk+qey6cfyAR5723
+=QpRF
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Feb_2013_17_36_07_+1100_uzpZN0N7/q1YPkH7--
+--Signature=_Mon__4_Feb_2013_18_00_26_+1100_EtH=YFol4i_aFzK.--
