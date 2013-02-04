@@ -1,120 +1,70 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: next-20130204 - bisected slab problem to "slab: Common constants
- for kmalloc boundaries"
-Date: Mon, 04 Feb 2013 12:39:37 -0700
-Message-ID: <51100E79.9080101@wwwdotorg.org>
-References: <510FE051.7080107@imgtec.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Feb 4
+Date: Tue, 5 Feb 2013 07:33:12 +1100
+Message-ID: <20130205073312.e534dda4b9b6b1bc95b3d25c@canb.auug.org.au>
+References: <20130204183926.f5d5ab14b0ae4d22cb253202@canb.auug.org.au>
+	<CAAG0J99hxOOGh74wQ2R47o0noRxQhNS8T_DNnbX2FX-rJ2wMzQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <510FE051.7080107@imgtec.com>
-Sender: owner-linux-mm@kvack.org
-To: Christoph Lameter <cl@linux.com>
-Cc: James Hogan <james.hogan@imgtec.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__5_Feb_2013_07_33_12_+1100_pDybNxLzgssb3F.O"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44353 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754368Ab3BDUd0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 15:33:26 -0500
+In-Reply-To: <CAAG0J99hxOOGh74wQ2R47o0noRxQhNS8T_DNnbX2FX-rJ2wMzQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Hogan <james.hogan@imgtec.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
 
-On 02/04/2013 09:22 AM, James Hogan wrote:
-> Hi,
-> 
-> I've hit boot problems in next-20130204 on Meta:
-> 
-> META213-Thread0 DSP [LogF] kobject (4fc03980): tried to init an initialized object, something is seriously wrong.
-> META213-Thread0 DSP [LogF] 
-> META213-Thread0 DSP [LogF] Call trace: 
-> META213-Thread0 DSP [LogF] [<4000888c>] _show_stack+0x68/0x7c
-> META213-Thread0 DSP [LogF] [<400088b4>] _dump_stack+0x14/0x28
-> META213-Thread0 DSP [LogF] [<40103794>] _kobject_init+0x58/0x9c
-> META213-Thread0 DSP [LogF] [<40103810>] _kobject_create+0x38/0x64
-> META213-Thread0 DSP [LogF] [<40103eac>] _kobject_create_and_add+0x14/0x8c
-> META213-Thread0 DSP [LogF] [<40190ac4>] _mnt_init+0xd8/0x220
-> META213-Thread0 DSP [LogF] [<40190508>] _vfs_caches_init+0xb0/0x160
-...
-> I've bisected it to the following commit:
-> 
-> commit 95a05b428cc675694321c8f762591984f3fd2b1e
-> Author: Christoph Lameter <cl@linux.com>
-> Date:   Thu Jan 10 19:14:19 2013 +0000
-> 
->     slab: Common constants for kmalloc boundaries
->     
->     Standardize the constants that describe the smallest and largest
->     object kept in the kmalloc arrays for SLAB and SLUB.
->     
->     Differentiate between the maximum size for which a slab cache is used
->     (KMALLOC_MAX_CACHE_SIZE) and the maximum allocatable size
->     (KMALLOC_MAX_SIZE, KMALLOC_MAX_ORDER).
->     
->     Signed-off-by: Christoph Lameter <cl@linux.com>
->     Signed-off-by: Pekka Enberg <penberg@kernel.org>
+--Signature=_Tue__5_Feb_2013_07_33_12_+1100_pDybNxLzgssb3F.O
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I see the same problem on ARM. I believe it's because of the changes to
-the calculation of MALLOC_SHIFT_LOW.
+Hi James,
 
-The old code was:
+On Mon, 4 Feb 2013 13:56:32 +0000 James Hogan <james.hogan@imgtec.com> wrot=
+e:
+>
+> On 4 February 2013 07:39, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Merging signal/for-next (9005965 x86: convert to ksignal)
+> > CONFLICT (content): Merge conflict in arch/x86/Kconfig
+>=20
+> I think this conflict has been resolved incorrectly.
+>=20
+> Al's commit 1820f96 "burying unused conditionals" removed
+> GENERIC_SIGALTSTACK from config X86, but the merge
+> (c5395e2affed5c42200cb6e21e3380995ef22ae3) left GENERIC_SIGALTSTACK
+> in:
 
-#if defined(ARCH_DMA_MINALIGN) && ARCH_DMA_MINALIGN > 8
-#define KMALLOC_MIN_SIZE ARCH_DMA_MINALIGN
-#else
-#ifdef CONFIG_SLAB
-#define KMALLOC_MIN_SIZE 32
-#else
-#define KMALLOC_MIN_SIZE 8
-#endif
-#endif
+Thanks, I will fix that today.
 
-#define KMALLOC_SHIFT_LOW ilog2(KMALLOC_MIN_SIZE)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Here, KMALLOC_SHIFT_LOW and KMALLOC_MIN_SIZE are always consistent/related.
+--Signature=_Tue__5_Feb_2013_07_33_12_+1100_pDybNxLzgssb3F.O
+Content-Type: application/pgp-signature
 
-The new code is:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-#define KMALLOC_SHIFT_LOW	5
-...
-#if defined(ARCH_DMA_MINALIGN) && ARCH_DMA_MINALIGN > 8
-#define KMALLOC_MIN_SIZE ARCH_DMA_MINALIGN
-#else
-#define KMALLOC_MIN_SIZE (1 << KMALLOC_SHIFT_LOW)
-#endif
+iQIcBAEBCAAGBQJREBsIAAoJEECxmPOUX5FER1gQAJ/YGosBXKkOysluwCPolEFM
+ItMq+W3sI4k8dPEdLVK2CnfhMuUGZyy2DHoA7y4lnAtLFHMKFECYBiBm4jGAEy2L
+pU92R8iV8NG+URIaU2EY8Qv5BQvwTnkHMBdK29i87hRXEcPfo8jikpHWeLAD8UIi
+qppZPM2U1vk63F13sfeJhYoSZar8/nXuV+RV/rUxqNwVVYAD3jS5BFuy6fVFy0T3
+tFqHzSLfebtkhTQ03KpCijTlYsoiXleuQW9Phutnak+9JURTFmKFBB6e2Nhs4fb3
+ThjTDSINqfXMJEj3896gSd3S62ZObr83/qC+kLliQrEtHOptJlPcZxp7Fsi4zMOy
+g+rZeNn+qPjQO/NYWr9RCUmddmAtocasWposO/0ayIR6S6lKu8j8bBGZoZpzESeN
+0TF9BmqfOhSVNSX6uxMSTF3VOUkxsjTysQSfLIJhdyjHcb0t/zKM/5JGj/Hqohzq
+bJpNkXxHxwtmC5EfsE4Q7m404Ilm1fg+Tt99EDrSMtqZN4xlpvtq5HE6lvzS1ePq
+wEqaz4TyKFRV5uLFrrSobZNNaifjL2tmPPMnbYuF5CM1aHrHI1VQ8TgegFPqE0Of
+tUxqIyI12NaLNTq4XQEyqNeJ2XYW4BDPDPlpAi6iy7hsFriekXuz7VJ37AnOLsEf
+GjVQfuxSqcKalr4+zepv
+=UOKm
+-----END PGP SIGNATURE-----
 
-Here, if defined(ARCH_DMA_MINALIGN), then KMALLOC_MIN_SIZE isn't
-relative-to/derived-from KMALLOC_SHIFT_LOW, so the two may become
-inconsistent.
-
-On my ARM system at least, CONFIG_ARM_L1_CACHE_SHIFT_6 is set since I
-have an ARMv7 CPU (see arch/arm/mm/Kconfig), which causes
-CONFIG_ARM_L1_CACHE_SHIFT=6, then:
-
-> arch/arm/include/asm/cache.h:7:#define L1_CACHE_SHIFT		CONFIG_ARM_L1_CACHE_SHIFT
-> arch/arm/include/asm/cache.h:8:#define L1_CACHE_BYTES		(1 << L1_CACHE_SHIFT)
-> arch/arm/include/asm/cache.h:17:#define ARCH_DMA_MINALIGN	L1_CACHE_BYTES
-
-... hence that case triggers.
-
-I also see that in most parts of the patch, SLUB_PAGE_SHIFT was replaced
-with (KMALLOC_SHIFT_HIGH + 1), or equivalently tests were changed from <
-to <=:
-
-> -		size <= SLUB_MAX_SIZE && !(flags & SLUB_DMA)) {
-> +		size <= KMALLOC_MAX_CACHE_SIZE && !(flags & SLUB_DMA)) {
-
-However, the following doesn't seem to have that adjustment:
-
-> diff --git a/mm/slub.c b/mm/slub.c
-> index ba2ca53..d0f72ee 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2775,7 +2775,7 @@ init_kmem_cache_node(struct kmem_cache_node *n)
->  static inline int alloc_kmem_cache_cpus(struct kmem_cache *s)
->  {
->  	BUILD_BUG_ON(PERCPU_DYNAMIC_EARLY_SIZE <
-> -			SLUB_PAGE_SHIFT * sizeof(struct kmem_cache_cpu));
-> +			KMALLOC_SHIFT_HIGH * sizeof(struct kmem_cache_cpu));
-
-Should that also be (KMALLOC_SHIFT_HIGH + 1)?
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--Signature=_Tue__5_Feb_2013_07_33_12_+1100_pDybNxLzgssb3F.O--
