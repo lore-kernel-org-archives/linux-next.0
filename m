@@ -1,80 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the security tree with Linus' tree
-Date: Mon, 4 Feb 2013 14:06:41 +1100
-Message-ID: <20130204140641.076d7621651d346448fc58f7@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the xen-two tree
+Date: Mon, 4 Feb 2013 15:14:56 +1100
+Message-ID: <20130204151456.ea053895a487a19013e4991f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Feb_2013_14_06_41_+1100_N9+k/iDxKIEb.chS"
+ boundary="Signature=_Mon__4_Feb_2013_15_14_56_+1100_6MiWI.E5ZwRPTJcU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40318 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:34975 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753826Ab3BDDGu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Feb 2013 22:06:50 -0500
+	with ESMTP id S1753822Ab3BDEPI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Feb 2013 23:15:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Mukesh Rathor <mukesh.rathor@oracle.com>
 
---Signature=_Mon__4_Feb_2013_14_06_41_+1100_N9+k/iDxKIEb.chS
+--Signature=_Mon__4_Feb_2013_15_14_56_+1100_6MiWI.E5ZwRPTJcU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi Konrad,
 
-Today's linux-next merge of the security tree got a conflict in
-lib/digsig.c between commit 7810cc1e7721 ("digsig: Fix memory leakage in
-digsig_verify_rsa()") from Linus' tree and commit 26d438457ed1 ("digsig:
-remove unnecessary memory allocation and copying") from the security tree.
+After merging the xen-two tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+arch/x86/xen/mmu.c: In function 'xen_init_mmu_ops':
+arch/x86/xen/mmu.c:2213:10: error: 'struct x86_init_ops' has no member name=
+d 'mapping'
+arch/x86/xen/mmu.c:2213:39: error: 'xen_mapping_pagetable_reserve' undeclar=
+ed (first use in this function)
+
+Caused by commit 8154d7a6b9b9 ("xen/pvh: Implement MMU changes for PVH")
+from the xen-two tree interacting with commit 6f80b68e9e51 ("x86, mm,
+Xen: Remove mapping_pagetable_reserve()") from the tip tree.  The
+automatic merge left the moved version of the above line intact while it
+should have been removed (I assume).
+
+I have added the following merge fix patch and can carry the fix as
+necessary.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 4 Feb 2013 15:08:33 +1100
+Subject: [PATCH] xen: fix bad merge of arch/x86/xen/mmu.c
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/xen/mmu.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
+index 824706a..3228600 100644
+--- a/arch/x86/xen/mmu.c
++++ b/arch/x86/xen/mmu.c
+@@ -2210,7 +2210,6 @@ void __init xen_init_mmu_ops(void)
+ 		pv_mmu_ops.flush_tlb_others =3D xen_flush_tlb_others;
+ 		return;
+ 	}
+-	x86_init.mapping.pagetable_reserve =3D xen_mapping_pagetable_reserve;
+ 	pv_mmu_ops =3D xen_mmu_ops;
+=20
+ 	memset(dummy_mapping, 0xff, PAGE_SIZE);
+--=20
+1.8.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc lib/digsig.c
-index dc2be7e,0103c5b..0000000
---- a/lib/digsig.c
-+++ b/lib/digsig.c
-@@@ -162,13 -152,9 +152,11 @@@ static int digsig_verify_rsa(struct ke
-  	memset(out1, 0, head);
-  	memcpy(out1 + head, p, l);
- =20
- +	kfree(p);
- +
-- 	err =3D pkcs_1_v1_5_decode_emsa(out1, len, mblen, out2, &len);
-- 	if (err)
-- 		goto err;
-+ 	m =3D pkcs_1_v1_5_decode_emsa(out1, len, mblen, &len);
- =20
-- 	if (len !=3D hlen || memcmp(out2, h, hlen))
-+ 	if (!m || len !=3D hlen || memcmp(m, h, hlen))
-  		err =3D -EINVAL;
- =20
-  err:
-
---Signature=_Mon__4_Feb_2013_14_06_41_+1100_N9+k/iDxKIEb.chS
+--Signature=_Mon__4_Feb_2013_15_14_56_+1100_6MiWI.E5ZwRPTJcU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRDyXBAAoJEECxmPOUX5FESBgQAJ8SRDnb2sCO62ZgwIUIMGGl
-C7h+x2w5hpwkJCr4yg20gf1rqe//F+uEU1b2/SuFBQ6Yy5LrfIER17Xtv0erqUzS
-wW3SdtmAMYN4EEb3atZMRI/Me9CGqTghuHJf20DXF53UAXrJ4osCBUKXPGEijH9D
-iXSxGjCGDH72kPSeHwNwqwDejXCz1Og25HcCR3ciFRgIBeSzxGFHWTnQteb4GRxJ
-VI4ymjAy5KaGd2d9xGOjArJeCS9skpEAu+VBSl7Enuo+DFB+buTKWMmKQ8ct9cSS
-Hvpj2ZqdxR5fYLXlsw5quMwhhtIaMCrX6CB2OT4dPJmEu7XPlxKbvH1QAh4F7fZD
-Wtz2sOURfAjcaXSF82j91bNgN8+RGtYzXmRAEA7L6m4d6iZrGWxwWT5j7+ZW0e82
-zmBPpVJ2Z9PQES6E3R8asDz/gnRpNH/pw7JLXSjYL3G4+m85dtzMT4vo15aBw/8B
-1VJexiYIB0qNkTdcOv8VzGzWrjCS0yrF87ptglRhwhmMB1qVHBvkOzbuYz3M5jgI
-ao6a7lD9fdrOHtK5iu1//ASngehYXxDjbyDxDggAYq+k32eXNB/eDJZ4I/pHFOkB
-hmerO88GDOk5Shzp90lU7lv6WeGOlyct+cKxcxwwZJDuMFZS7EhkOl0U0hRIrYIp
-yji5rUXsjZJKNuQH4xrE
-=qjoU
+iQIcBAEBCAAGBQJRDzXAAAoJEECxmPOUX5FEsqkQAKeja+gLS4+FC3qpSdbAQBnT
+Uw2+AnfWQwLPJqXMJP255Oc9qj9LtMpOAd3bgH6a7MDBqQAYcx8s6H4UIFyS5Llx
+UDDoJf7LOvX+ilCN5MbvReEeepv58Kb+cIATXn2nm/KgABfdhiyLYp2aDEnt2hF6
+JQsjID5jduOOo7lyUJm2uUQhBxGWonhthgY1ILVEvdm0sgOH4IinkrIkiKaoafIC
+/B6wOThQXWjW1b/bYSN1NSfNCjzV/uFIoLgKMxahW9p9anmoZbtaTlmPouWECp5i
+wzfryw03LsLtsxwbFSWDNwkXHh8mJnypfCTIALW1b5Pk1dUG4ey22Wpr0grP0fN6
+A2bjT8npSZYCYrZx+rRqsK7gwPffnCTx116MxpE22BHYIQtRi4GJ8AXfhyAa9Pn/
+UkJXarWXJB7mvtwSuOePGAmA2q7iDZmLx8QGVuc+gzzd5xHMSY6W7hCgmXsWWiIJ
+YwtlQi9vLVr8y+7larfOY3QoFYliEnrXBuSdEEMFtx/whjUbpQteB3zmvq/cIM6V
+qf2EJQaE/1rBQMZBjVlHD9iLajJgPJfP5XNX2m7iKqBUlHRkkbuqZDGxem8u+Dig
+4gK1CrfXHZCOLmtd8snSOet+BZc6bO7PuW2RIWS/LUSGtcDx5vycDWTb8mZzOWr/
+Ng0JuFIMD6+5NMMsPyJL
+=B/sW
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Feb_2013_14_06_41_+1100_N9+k/iDxKIEb.chS--
+--Signature=_Mon__4_Feb_2013_15_14_56_+1100_6MiWI.E5ZwRPTJcU--
