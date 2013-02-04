@@ -1,105 +1,128 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the tip tree
-Date: Mon, 4 Feb 2013 18:00:26 +1100
-Message-ID: <20130204180026.c878e03aae769eac187944b3@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Mon, 4 Feb 2013 18:17:24 +1100
+Message-ID: <20130204181724.4f55ae04b00b458ebb5abba4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Feb_2013_18_00_26_+1100_EtH=YFol4i_aFzK."
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55407 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751699Ab3BDHAj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 02:00:39 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Mon__4_Feb_2013_18_17_24_+1100_FGorheZfVQeoij.w"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Wen Congyang <wency@cn.fujitsu.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__4_Feb_2013_18_00_26_+1100_EtH=YFol4i_aFzK.
+--Signature=_Mon__4_Feb_2013_18_17_24_+1100_FGorheZfVQeoij.w
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in
-arch/x86/mm/numa.c between commit 07f4207a305c ("x86-32, mm: Remove
-reference to alloc_remap()") from the tip tree and commit "x86: get
-pg_data_t's memory from other node" from the akpm tree.
+After merging the akpm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+arch/x86/mm/init_64.c: In function 'remove_pmd_table':
+arch/x86/mm/init_64.c:921:3: error: implicit declaration of function 'map_l=
+ow_page' [-Werror=3Dimplicit-function-declaration]
+arch/x86/mm/init_64.c:921:14: warning: cast to pointer from integer of diff=
+erent size [-Wint-to-pointer-cast]
+arch/x86/mm/init_64.c:924:3: error: implicit declaration of function 'unmap=
+_low_page' [-Werror=3Dimplicit-function-declaration]
+arch/x86/mm/init_64.c: In function 'remove_pud_table':
+arch/x86/mm/init_64.c:978:14: warning: cast to pointer from integer of diff=
+erent size [-Wint-to-pointer-cast]
+arch/x86/mm/init_64.c: In function 'remove_pagetable':
+arch/x86/mm/init_64.c:1004:9: warning: cast to pointer from integer of diff=
+erent size [-Wint-to-pointer-cast]
+
+Caused by commit "memory-hotplug: common APIs to support page tables
+hot-remove" from the akpm tree interacting with commit 973dc4f3fad5
+("x86, mm: Remove early_memremap workaround for page table accessing on
+64bit") from the tip tree.
+
+I applied the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 4 Feb 2013 18:12:17 +1100
+Subject: [PATCH] memory-hotplug: common APIs to support page tables hot-rem=
+ove fix fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/mm/init_64.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 951cc1e..67bad4b 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -918,10 +918,9 @@ remove_pmd_table(pmd_t *pmd_start, unsigned long addr,=
+ unsigned long end,
+ 			continue;
+ 		}
+=20
+-		pte_base =3D (pte_t *)map_low_page((pte_t *)pmd_page_vaddr(*pmd));
++		pte_base =3D (pte_t *)pmd_page_vaddr(*pmd);
+ 		remove_pte_table(pte_base, addr, next, direct);
+ 		free_pte_table(pte_base, pmd);
+-		unmap_low_page(pte_base);
+ 	}
+=20
+ 	/* Call free_pmd_table() in remove_pud_table(). */
+@@ -975,10 +974,9 @@ remove_pud_table(pud_t *pud_start, unsigned long addr,=
+ unsigned long end,
+ 			continue;
+ 		}
+=20
+-		pmd_base =3D (pmd_t *)map_low_page((pmd_t *)pud_page_vaddr(*pud));
++		pmd_base =3D (pmd_t *)pud_page_vaddr(*pud);
+ 		remove_pmd_table(pmd_base, addr, next, direct);
+ 		free_pmd_table(pmd_base, pud);
+-		unmap_low_page(pmd_base);
+ 	}
+=20
+ 	if (direct)
+@@ -1001,11 +999,10 @@ remove_pagetable(unsigned long start, unsigned long =
+end, bool direct)
+=20
+ 		next =3D pgd_addr_end(start, end);
+=20
+-		pud =3D (pud_t *)map_low_page((pud_t *)pgd_page_vaddr(*pgd));
++		pud =3D (pud_t *)pgd_page_vaddr(*pgd);
+ 		remove_pud_table(pud, start, next, direct);
+ 		if (free_pud_table(pud, pgd))
+ 			pgd_changed =3D true;
+-		unmap_low_page(pud);
+ 	}
+=20
+ 	if (pgd_changed)
+--=20
+1.8.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/mm/numa.c
-index a8483df,245a4ba..0000000
---- a/arch/x86/mm/numa.c
-+++ b/arch/x86/mm/numa.c
-@@@ -209,22 -213,27 +209,21 @@@ static void __init setup_node_data(int=20
-  	       nid, start, end - 1);
- =20
-  	/*
- -	 * Allocate node data.  Try remap allocator first, node-local
- -	 * memory and then any node.  Never allocate in DMA zone.
- +	 * Allocate node data.  Try node-local memory and then any node.
- +	 * Never allocate in DMA zone.
-  	 */
-- 	nd_pa =3D memblock_alloc_nid(nd_size, SMP_CACHE_BYTES, nid);
- -	nd =3D alloc_remap(nid, nd_size);
- -	if (nd) {
- -		nd_pa =3D __phys_addr_nodebug(nd);
- -		remapped =3D true;
- -	} else {
- -		nd_pa =3D memblock_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
- -		if (!nd_pa) {
- -			pr_err("Cannot find %zu bytes in any node\n", nd_size);
- -			return;
- -		}
- -		nd =3D __va(nd_pa);
-++	nd_pa =3D memblock_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
- +	if (!nd_pa) {
-- 		pr_err("Cannot find %zu bytes in node %d\n",
-- 		       nd_size, nid);
-++		pr_err("Cannot find %zu bytes in any node\n", nd_size);
- +		return;
-  	}
- +	nd =3D __va(nd_pa);
- =20
-  	/* report and initialize */
- -	printk(KERN_INFO "  NODE_DATA [mem %#010Lx-%#010Lx]%s\n",
- -	       nd_pa, nd_pa + nd_size - 1, remapped ? " (remapped)" : "");
- +	printk(KERN_INFO "  NODE_DATA [mem %#010Lx-%#010Lx]\n",
- +	       nd_pa, nd_pa + nd_size - 1);
-  	tnid =3D early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
- -	if (!remapped && tnid !=3D nid)
- +	if (tnid !=3D nid)
-  		printk(KERN_INFO "    NODE_DATA(%d) on node %d\n", nid, tnid);
- =20
-  	node_data[nid] =3D nd;
-
---Signature=_Mon__4_Feb_2013_18_00_26_+1100_EtH=YFol4i_aFzK.
+--Signature=_Mon__4_Feb_2013_18_17_24_+1100_FGorheZfVQeoij.w
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRD1yKAAoJEECxmPOUX5FEgh8P/RytA+/Ru4UYvKfigxihyn8h
-GBpuElGscS8JRMLYPNZ8CSh2shiGqnV0dmENrMIQfxZV5Zx9OOw9JGpyOOhGS717
-Ny88q5RfDD7DfvSZu/ATRrb1ZtptGvKVPlX1OiN6lwkeWne6awEYjqnSyI9DrDjV
-VUXHb9HikYJWE9I430unSxcWcuGs9AtPSKK9Ez91s5SA3WrueNUaw3+eyUyLL8U5
-t/bPlmimcjQwNbtsCyf84NyD1DXoR9uSOnKh5flIJQ9T86dKQ0/cs9v55DinmSc7
-hhUkq6vjJ1QCggJLIeRWG3WcYgI8+VoL0IzDE6kXqqaiFt3OERAJzizoO0ThQCOl
-KdBX+yq50+uqCoRLU1ZRTlbw5gHvNp8xYXbHiykjO0jSiqRW8ghb+FUCC6FXzr4t
-UQNwWfVGZMTMfmAHkNjKPl/NsqGWddSgy3Ao1nanKwIqUY53mo7dIT8qKwHwgs0a
-89V2Mr4JWWQjM5KeBWuClE8fPVd87VwhfKgWlrRmdLxd5uWqYj4qf8KQClBRW572
-YGBgq8GuaQMpd2YenJ4ZxQ28AA6pqRUvDWTZ2J5KgfATf+Re/vRIzCiv0gT2FVeO
-7V2WWeNLD1rSihR5ds8E9cwRgZJ8VAIuu38/1lookElCnVRZcSQX3mGWscq/XUE0
-a6zRrk+qey6cfyAR5723
-=QpRF
+iQIcBAEBCAAGBQJRD2CEAAoJEECxmPOUX5FE06oP/3gyYb/Lx/ZdqnNU4cmfCyUK
+hlNucU7sk4QKNqH1SlhSrLhD28TWh1i1ZcRnYEqtvg3ucFX5IIS7rfXaS0wnC6Rm
+rRq9nh2gBHk9z2ts2Ai7WGW6+YCnVT7WABCHxZN/zMnQHiky6q54+LxaixL+X8PD
+1aEu5PPfh/dqm34qTRQtnPmWuzIQGJbZ6cb+K+t3Sos5kSwMEUQ00nuK+4fE4DZC
+B73318XvwZbF9vf3JXMu1KRfjrPqiYm7dj/EjJwabLSAjiV1mH42J6IOvv9uwmNU
+JSQyb88d1eGdh2pvw35+wtAK3BW9siwnkZiP9Mx0GLpji3cI0g3E+VsOEwUb7xcm
+Gk9tsghWqCzTIrwVC1hqILzFDFe5BLyc7y3J15kiMkceROEbyahXTFJFnKryINsC
+JGOFdiZrFuwRJtVW4DgKARoRGgB4LSma/7MLokkKNXY+pmVit9y9nFRLy1rRYOgr
+eAFEsJmDEiSApmiz2TTWveyTZjb/7ch+q4YxuC/UpLdgorlIZKILwFQeGszdkNnD
+3RHGmw28r+BXqxMlim9C32SuXAVcyabZCry42+NL/XQkfO7p5exEs5p0kjDJP5qv
+d0MwcKEQFfKlqQHdVXfjC0tPskw0FTeAil+rT+aps4wFg65/Cnr9xuK8iwYFa89x
+zsX4GPlqIW9058Ga3IPP
+=QIBg
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Feb_2013_18_00_26_+1100_EtH=YFol4i_aFzK.--
+--Signature=_Mon__4_Feb_2013_18_17_24_+1100_FGorheZfVQeoij.w--
