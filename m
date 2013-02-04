@@ -1,33 +1,93 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: CPU hotplug hang due to "swap: make each swap partition have
- one address_space"
-Date: Mon, 04 Feb 2013 09:57:10 -0700
-Message-ID: <510FE866.9090600@wwwdotorg.org>
-References: <510C9DE9.9040207@wwwdotorg.org> <20130204023646.GA321@kernel.org>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: linux-next: manual merge of the clk tree with the arm-soc tree
+Date: Mon, 04 Feb 2013 09:54:50 -0800
+Message-ID: <20130204175450.6375.8494@quantum>
+References: <20130202232740.f337dc3a00741a224a4a0e4f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:55102 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750773Ab3BDQ5O (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 11:57:14 -0500
-In-Reply-To: <20130204023646.GA321@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Shaohua Li <shli@kernel.org>
-Cc: Shaohua Li <shli@fusionio.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Rik van Riel <riel@redhat.com>, Minchan Kim <minchan@kernel.org>, Joseph Lo <josephl@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130202232740.f337dc3a00741a224a4a0e4f@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mike Turquette <mturquette@ti.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
-On 02/03/2013 07:36 PM, Shaohua Li wrote:
-> On Fri, Feb 01, 2013 at 10:02:33PM -0700, Stephen Warren wrote:
->> Shaohua,
->>
->> In next-20130128, commit 174f064 "swap: make each swap partition have
->> one address_space" (from the mm/akpm tree) appears causes a hang/RCU
->> stall for me when hot-unplugging a CPU.
+Quoting Stephen Rothwell (2013-02-02 04:27:40)
+> Hi Mike,
 > 
-> does this one work for you?
-> http://marc.info/?l=linux-mm&m=135929599505624&w=2
-> Or try a more recent linux-next. The patch is in akpm's tree.
+> Today's linux-next merge of the clk tree got a conflict in
+> include/asm-generic/vmlinux.lds.h between commit ae278a935f08
+> ("clocksource: add common of_clksrc_init() function") from the arm-soc
+> tree and commit f2f6c2556dcc ("clk: add common of_clk_init() function")
+> from the clk tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
 
-Yes, that patch fixes the issue for me, thanks.
+Looks correct to me.  Thanks Stephen.
+
+Regards,
+Mike
+
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc include/asm-generic/vmlinux.lds.h
+> index fc62ac5,c1fe60a..0000000
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@@ -149,25 -149,16 +149,34 @@@
+>   #define TRACE_SYSCALLS()
+>   #endif
+>   
+>  +#ifdef CONFIG_CLKSRC_OF
+>  +#define CLKSRC_OF_TABLES() . = ALIGN(8);                              \
+>  +                         VMLINUX_SYMBOL(__clksrc_of_table) = .;       \
+>  +                         *(__clksrc_of_table)                         \
+>  +                         *(__clksrc_of_table_end)
+>  +#else
+>  +#define CLKSRC_OF_TABLES()
+>  +#endif
+>  +
+>  +#ifdef CONFIG_IRQCHIP
+>  +#define IRQCHIP_OF_MATCH_TABLE()                                      \
+>  +      . = ALIGN(8);                                                   \
+>  +      VMLINUX_SYMBOL(__irqchip_begin) = .;                            \
+>  +      *(__irqchip_of_table)                                           \
+>  +      *(__irqchip_of_end)
+>  +#else
+>  +#define IRQCHIP_OF_MATCH_TABLE()
+>  +#endif
+>   
+> + #ifdef CONFIG_COMMON_CLK
+> + #define CLK_OF_TABLES() . = ALIGN(8);                         \
+> +                       VMLINUX_SYMBOL(__clk_of_table) = .;     \
+> +                       *(__clk_of_table)                       \
+> +                       *(__clk_of_table_end)
+> + #else
+> + #define CLK_OF_TABLES()
+> + #endif
+> + 
+>   #define KERNEL_DTB()                                                  \
+>         STRUCT_ALIGN();                                                 \
+>         VMLINUX_SYMBOL(__dtb_start) = .;                                \
+> @@@ -511,9 -502,8 +520,10 @@@
+>         DEV_DISCARD(init.rodata)                                        \
+>         CPU_DISCARD(init.rodata)                                        \
+>         MEM_DISCARD(init.rodata)                                        \
+>  +      CLKSRC_OF_TABLES()                                              \
+> +       CLK_OF_TABLES()                                                 \
+>  -      KERNEL_DTB()
+>  +      KERNEL_DTB()                                                    \
+>  +      IRQCHIP_OF_MATCH_TABLE()
+>   
+>   #define INIT_TEXT                                                     \
+>         *(.init.text)                                                   \
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
