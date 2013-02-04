@@ -1,105 +1,80 @@
-From: Shaohua Li <shli@kernel.org>
-Subject: Re: CPU hotplug hang due to "swap: make each swap partition have one
- address_space"
-Date: Mon, 4 Feb 2013 10:36:46 +0800
-Message-ID: <20130204023646.GA321@kernel.org>
-References: <510C9DE9.9040207@wwwdotorg.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the security tree with Linus' tree
+Date: Mon, 4 Feb 2013 14:06:41 +1100
+Message-ID: <20130204140641.076d7621651d346448fc58f7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__4_Feb_2013_14_06_41_+1100_N9+k/iDxKIEb.chS"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40318 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753826Ab3BDDGu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Feb 2013 22:06:50 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>
+
+--Signature=_Mon__4_Feb_2013_14_06_41_+1100_N9+k/iDxKIEb.chS
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <510C9DE9.9040207@wwwdotorg.org>
-Sender: owner-linux-mm@kvack.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Shaohua Li <shli@fusionio.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Rik van Riel <riel@redhat.com>, Minchan Kim <minchan@kernel.org>, Joseph Lo <josephl@nvidia.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 01, 2013 at 10:02:33PM -0700, Stephen Warren wrote:
-> Shaohua,
-> 
-> In next-20130128, commit 174f064 "swap: make each swap partition have
-> one address_space" (from the mm/akpm tree) appears causes a hang/RCU
-> stall for me when hot-unplugging a CPU.
+Hi James,
 
-does this one work for you?
-http://marc.info/?l=linux-mm&m=135929599505624&w=2
-Or try a more recent linux-next. The patch is in akpm's tree.
+Today's linux-next merge of the security tree got a conflict in
+lib/digsig.c between commit 7810cc1e7721 ("digsig: Fix memory leakage in
+digsig_verify_rsa()") from Linus' tree and commit 26d438457ed1 ("digsig:
+remove unnecessary memory allocation and copying") from the security tree.
 
-Thanks,
-Shaohua 
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-> I'm running on a quad-core ARM system, and hot-unplugging a CPU using:
-> 
-> echo 0 > /sys/devices/system/cpu/cpu2/online
-> 
-> CONFIG_SWAP is enabled, but I don't have any swap devices activated.
-> 
-> If I either disable CONFIG_SWAP, or revert commit 174f064, then CPU
-> hotplug works fine for me.
-> 
-> I read through the patch and didn't see anything obvious, but I'm not
-> remotely familiar with the code in question.
-> 
-> Do you have any idea what might be wrong? Thanks.
-> 
-> The RCU stall kernel log is:
-> 
-> > [   36.152471] CPU2: shutdown
-> > [   57.151682] INFO: rcu_sched self-detected stall on CPU { 1}  (t=2100 jiffies g=4294966997 c=4294966996 q=1)
-> > [   57.164730] [<c0014658>] (unwind_backtrace+0x0/0xf8) from [<c0080c4c>] (rcu_check_callbacks+0x360/0x81c)
-> > [   57.177468] [<c0080c4c>] (rcu_check_callbacks+0x360/0x81c) from [<c002f4b0>] (update_process_times+0x38/0x64)
-> > [   57.182152] INFO: rcu_sched detected stalls on CPUs/tasks: { 1} (detected by 3, t=2103 jiffies, g=4294966997, c=4294966996, q=1)
-> > [   57.182154] Task dump for CPU 1:
-> > [   57.182162] sh              R running      0   569    568 0x00000002
-> > [   57.182200] [<c04d9bdc>] (__schedule+0x33c/0x6ac) from [<c000df40>] (__irq_svc+0x40/0x70)
-> > [   57.182211] [<c000df40>] (__irq_svc+0x40/0x70) from [<c04dae04>] (_raw_spin_unlock_irqrestore+0x28/0x50)
-> > [   57.182221] [<c04dae04>] (_raw_spin_unlock_irqrestore+0x28/0x50) from [<c04d4660>] (percpu_counter_hotcpu_callback+0x68/0x9c)
-> > [   57.182235] [<c04d4660>] (percpu_counter_hotcpu_callback+0x68/0x9c) from [<c00430f8>] (notifier_call_chain+0x44/0x84)
-> > [   57.182246] [<c00430f8>] (notifier_call_chain+0x44/0x84) from [<c0025fa8>] (__cpu_notify+0x28/0x44)
-> > [   57.182255] [<c0025fa8>] (__cpu_notify+0x28/0x44) from [<c0026104>] (cpu_notify_nofail+0x8/0x14)
-> > [   57.182276] [<c0026104>] (cpu_notify_nofail+0x8/0x14) from [<c04cf134>] (_cpu_down+0xf8/0x25c)
-> > [   57.182286] [<c04cf134>] (_cpu_down+0xf8/0x25c) from [<c04cf2bc>] (cpu_down+0x24/0x40)
-> > [   57.182296] [<c04cf2bc>] (cpu_down+0x24/0x40) from [<c04d0958>] (store_online+0x30/0x78)
-> > [   57.182317] [<c04d0958>] (store_online+0x30/0x78) from [<c027367c>] (dev_attr_store+0x18/0x24)
-> > [   57.182332] [<c027367c>] (dev_attr_store+0x18/0x24) from [<c0115770>] (sysfs_write_file+0x168/0x198)
-> > [   57.182354] [<c0115770>] (sysfs_write_file+0x168/0x198) from [<c00c4414>] (vfs_write+0x9c/0x140)
-> > [   57.182364] [<c00c4414>] (vfs_write+0x9c/0x140) from [<c00c46a0>] (sys_write+0x3c/0x70)
-> > [   57.182374] [<c00c46a0>] (sys_write+0x3c/0x70) from [<c000e2c0>] (ret_fast_syscall+0x0/0x30)
-> > [   57.404633] [<c002f4b0>] (update_process_times+0x38/0x64) from [<c0064798>] (tick_sched_timer+0x44/0x74)
-> > [   57.418340] [<c0064798>] (tick_sched_timer+0x44/0x74) from [<c0041440>] (__run_hrtimer.isra.15+0x58/0x114)
-> > [   57.432362] [<c0041440>] (__run_hrtimer.isra.15+0x58/0x114) from [<c0041d94>] (hrtimer_interrupt+0x100/0x290)
-> > [   57.446620] [<c0041d94>] (hrtimer_interrupt+0x100/0x290) from [<c0013bfc>] (twd_handler+0x2c/0x40)
-> > [   57.459981] [<c0013bfc>] (twd_handler+0x2c/0x40) from [<c007bdb4>] (handle_percpu_devid_irq+0x64/0x80)
-> > [   57.473749] [<c007bdb4>] (handle_percpu_devid_irq+0x64/0x80) from [<c007887c>] (generic_handle_irq+0x20/0x30)
-> > [   57.488197] [<c007887c>] (generic_handle_irq+0x20/0x30) from [<c000eb74>] (handle_IRQ+0x38/0x94)
-> > [   57.501559] [<c000eb74>] (handle_IRQ+0x38/0x94) from [<c00086d8>] (gic_handle_irq+0x28/0x5c)
-> > [   57.514610] [<c00086d8>] (gic_handle_irq+0x28/0x5c) from [<c000df40>] (__irq_svc+0x40/0x70)
-> > [   57.527606] Exception stack(0xed57be58 to 0xed57bea0)
-> > [   57.537292] be40:                                                       c06e5c50 20000113
-> > [   57.550216] be60: 00000000 55ec55ec 00000000 00000000 00000002 c06ea074 c06daf08 c06e5c50
-> > [   57.563134] be80: 00000000 00015ef8 00000000 ed57bea0 c04d4660 c04dae04 40000113 ffffffff
-> > [   57.576119] [<c000df40>] (__irq_svc+0x40/0x70) from [<c04dae04>] (_raw_spin_unlock_irqrestore+0x28/0x50)
-> > [   57.590515] [<c04dae04>] (_raw_spin_unlock_irqrestore+0x28/0x50) from [<c04d4660>] (percpu_counter_hotcpu_callback+0x68/0x9c)
-> > [   57.606765] [<c04d4660>] (percpu_counter_hotcpu_callback+0x68/0x9c) from [<c00430f8>] (notifier_call_chain+0x44/0x84)
-> > [   57.622320] [<c00430f8>] (notifier_call_chain+0x44/0x84) from [<c0025fa8>] (__cpu_notify+0x28/0x44)
-> > [   57.636338] [<c0025fa8>] (__cpu_notify+0x28/0x44) from [<c0026104>] (cpu_notify_nofail+0x8/0x14)
-> > [   57.650161] [<c0026104>] (cpu_notify_nofail+0x8/0x14) from [<c04cf134>] (_cpu_down+0xf8/0x25c)
-> > [   57.663859] [<c04cf134>] (_cpu_down+0xf8/0x25c) from [<c04cf2bc>] (cpu_down+0x24/0x40)
-> > [   57.676850] [<c04cf2bc>] (cpu_down+0x24/0x40) from [<c04d0958>] (store_online+0x30/0x78)
-> > [   57.690010] [<c04d0958>] (store_online+0x30/0x78) from [<c027367c>] (dev_attr_store+0x18/0x24)
-> > [   57.703767] [<c027367c>] (dev_attr_store+0x18/0x24) from [<c0115770>] (sysfs_write_file+0x168/0x198)
-> > [   57.717948] [<c0115770>] (sysfs_write_file+0x168/0x198) from [<c00c4414>] (vfs_write+0x9c/0x140)
-> > [   57.731866] [<c00c4414>] (vfs_write+0x9c/0x140) from [<c00c46a0>] (sys_write+0x3c/0x70)
-> > [   57.744841] [<c00c46a0>] (sys_write+0x3c/0x70) from [<c000e2c0>] (ret_fast_syscall+0x0/0x30)
-> 
-> --
-> To unsubscribe, send a message with 'unsubscribe linux-mm' in
-> the body to majordomo@kvack.org.  For more info on Linux MM,
-> see: http://www.linux-mm.org/ .
-> Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+diff --cc lib/digsig.c
+index dc2be7e,0103c5b..0000000
+--- a/lib/digsig.c
++++ b/lib/digsig.c
+@@@ -162,13 -152,9 +152,11 @@@ static int digsig_verify_rsa(struct ke
+  	memset(out1, 0, head);
+  	memcpy(out1 + head, p, l);
+ =20
+ +	kfree(p);
+ +
+- 	err =3D pkcs_1_v1_5_decode_emsa(out1, len, mblen, out2, &len);
+- 	if (err)
+- 		goto err;
++ 	m =3D pkcs_1_v1_5_decode_emsa(out1, len, mblen, &len);
+ =20
+- 	if (len !=3D hlen || memcmp(out2, h, hlen))
++ 	if (!m || len !=3D hlen || memcmp(m, h, hlen))
+  		err =3D -EINVAL;
+ =20
+  err:
+
+--Signature=_Mon__4_Feb_2013_14_06_41_+1100_N9+k/iDxKIEb.chS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRDyXBAAoJEECxmPOUX5FESBgQAJ8SRDnb2sCO62ZgwIUIMGGl
+C7h+x2w5hpwkJCr4yg20gf1rqe//F+uEU1b2/SuFBQ6Yy5LrfIER17Xtv0erqUzS
+wW3SdtmAMYN4EEb3atZMRI/Me9CGqTghuHJf20DXF53UAXrJ4osCBUKXPGEijH9D
+iXSxGjCGDH72kPSeHwNwqwDejXCz1Og25HcCR3ciFRgIBeSzxGFHWTnQteb4GRxJ
+VI4ymjAy5KaGd2d9xGOjArJeCS9skpEAu+VBSl7Enuo+DFB+buTKWMmKQ8ct9cSS
+Hvpj2ZqdxR5fYLXlsw5quMwhhtIaMCrX6CB2OT4dPJmEu7XPlxKbvH1QAh4F7fZD
+Wtz2sOURfAjcaXSF82j91bNgN8+RGtYzXmRAEA7L6m4d6iZrGWxwWT5j7+ZW0e82
+zmBPpVJ2Z9PQES6E3R8asDz/gnRpNH/pw7JLXSjYL3G4+m85dtzMT4vo15aBw/8B
+1VJexiYIB0qNkTdcOv8VzGzWrjCS0yrF87ptglRhwhmMB1qVHBvkOzbuYz3M5jgI
+ao6a7lD9fdrOHtK5iu1//ASngehYXxDjbyDxDggAYq+k32eXNB/eDJZ4I/pHFOkB
+hmerO88GDOk5Shzp90lU7lv6WeGOlyct+cKxcxwwZJDuMFZS7EhkOl0U0hRIrYIp
+yji5rUXsjZJKNuQH4xrE
+=qjoU
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__4_Feb_2013_14_06_41_+1100_N9+k/iDxKIEb.chS--
