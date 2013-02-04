@@ -1,56 +1,53 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] regmap: include linux/sched.h to fix build
-Date: Mon, 4 Feb 2013 10:22:05 +0000
-Message-ID: <20130204102204.GE4720@opensource.wolfsonmicro.com>
-References: <1359870614-23691-1-git-send-email-swarren@wwwdotorg.org>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: linux-next: Tree for Feb 4
+Date: Mon, 4 Feb 2013 13:56:32 +0000
+Message-ID: <CAAG0J99hxOOGh74wQ2R47o0noRxQhNS8T_DNnbX2FX-rJ2wMzQ@mail.gmail.com>
+References: <20130204183926.f5d5ab14b0ae4d22cb253202@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7LkOrbQMr4cezO2T"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:36882 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753077Ab3BDKWH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 05:22:07 -0500
-Content-Disposition: inline
-In-Reply-To: <1359870614-23691-1-git-send-email-swarren@wwwdotorg.org>
+Received: from mail-bk0-f47.google.com ([209.85.214.47]:44460 "EHLO
+	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754220Ab3BDN4e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 08:56:34 -0500
+Received: by mail-bk0-f47.google.com with SMTP id jc3so2744952bkc.34
+        for <linux-next@vger.kernel.org>; Mon, 04 Feb 2013 05:56:32 -0800 (PST)
+In-Reply-To: <20130204183926.f5d5ab14b0ae4d22cb253202@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Alexander Viro <viro@zeniv.linux.org.uk>
 
+Hi Stephen,
 
---7LkOrbQMr4cezO2T
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 4 February 2013 07:39, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Merging signal/for-next (9005965 x86: convert to ksignal)
+> CONFLICT (content): Merge conflict in arch/x86/Kconfig
 
-On Sat, Feb 02, 2013 at 10:50:14PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
->=20
-> This fixes:
+I think this conflict has been resolved incorrectly.
 
-Applied, thanks.
+Al's commit 1820f96 "burying unused conditionals" removed
+GENERIC_SIGALTSTACK from config X86, but the merge
+(c5395e2affed5c42200cb6e21e3380995ef22ae3) left GENERIC_SIGALTSTACK
+in:
 
---7LkOrbQMr4cezO2T
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --cc arch/x86/Kconfig
+index 32d4ff1,49fb44e..6979498
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@@ -114,9 -113,9 +114,12 @@@ config X8
+  	select MODULES_USE_ELF_REL if X86_32
+  	select MODULES_USE_ELF_RELA if X86_64
+  	select CLONE_BACKWARDS if X86_32
+ +	select ARCH_USE_BUILTIN_BSWAP
+ +	select GENERIC_SIGALTSTACK
+ +	select ARCH_USE_BUILTIN_BSWAP
++ 	select OLD_SIGSUSPEND3 if X86_32 || IA32_EMULATION
++ 	select OLD_SIGACTION if X86_32
++ 	select COMPAT_OLD_SIGACTION if IA32_EMULATION
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+  config INSTRUCTION_DECODER
+  	def_bool y
 
-iQIcBAEBAgAGBQJRD4vGAAoJELSic+t+oim96CkP/3IeMv556/sRoeLQhHHp0zsg
-gqS4jyF1N/8bGdWjl11pm30PCxBkjB21WuRdb0NKrjQrEucCQiFzVtFCW/1umQVs
-GzW2M3OJYVAf//cx4hAKsz/gQqbVv+lTtx0l4LgOoWXiBH5XM//yyJNatRCbozMk
-uvFfO88fXU0SdL7W9D9PzytHExO2Z8cnyne3ubGB5g4FAHLBhdxKB6YLYLiNRGQB
-udHCg7pJ4wmDkqDFP+68tIGw5mkqnbGnxVLJafvTKCT6GHMoGK8SsyD10RG/2KXA
-1eOpwHaZ5SBQOqgjGidsODIbLxBC3sCOdxEMO4AlQWaD2UPxLXB5UwsSZhGRCSHV
-QV4eAMYvXWNF21fSsLL74vfZxTyp8ZvTKLWshvbbRSQ7GRSk4+qUKLRpjmLVCf4P
-I3dROjG9//V1iZCMIKpOmIGijqOYzULKYpusrYs8nxqFHNhFObB3H7/Q+KmCyunh
-wpqcraE+9Q3ESTqnSx79B0kVmWA5TkJryEWMT4oqN0H0RnPGXknTSViUsOP1yK7K
-Pos6qVK7Z3usScQv+9wGMDC4WcJlLwRN4kAv309f4XM6UWSYokKlJ5TeBWr1B79/
-0jSwlhhp7c+rQTTB8h8CywJNwOtc/sGk07jBjuH8jUNiopu2TTGnY4gdMf8Spj52
-/IKxrRhST4mLT1XfFAie
-=SWzv
------END PGP SIGNATURE-----
-
---7LkOrbQMr4cezO2T--
+Cheers
+James
