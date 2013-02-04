@@ -1,73 +1,118 @@
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Subject: Re: [PATCH] leds-ot200: Fix error caused by shifted mask
-Date: Mon, 4 Feb 2013 15:46:34 +0100
-Message-ID: <CAH9NwWfRL3HpfhLW5FqmWJC+NYHagoQXMoavAzMYciHRDg6mdQ@mail.gmail.com>
-References: <1358928657-15781-1-git-send-email-christian.gmeiner@gmail.com>
- <7AFBFD79B857054D97821A9BD3FBFA9744D05BD2@ATFKEX06.bachmann.at>
- <CAH9NwWdciqHSkkMSk4CW4XX+d6JSZBnvw52Svu8M4o-PGMQsDA@mail.gmail.com> <20130201141211.1adadfe5.akpm@linux-foundation.org>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: next-20130204 - bisected slab problem to "slab: Common constants
+ for kmalloc boundaries"
+Date: Mon, 4 Feb 2013 16:22:41 +0000
+Message-ID: <510FE051.7080107@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f182.google.com ([209.85.216.182]:37870 "EHLO
-	mail-qc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753188Ab3BDOws (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 09:52:48 -0500
-In-Reply-To: <20130201141211.1adadfe5.akpm@linux-foundation.org>
+Received: from multi.imgtec.com ([194.200.65.239]:38960 "EHLO multi.imgtec.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756480Ab3BDQWq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Feb 2013 11:22:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "GMEINER.Christian" <C.GMEINER@bachmann.info>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>
+To: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org
 
-2013/2/1 Andrew Morton <akpm@linux-foundation.org>:
-> On Fri, 1 Feb 2013 16:08:15 +0100
-> Christian Gmeiner <christian.gmeiner@gmail.com> wrote:
->
->> ping
->
-> Bryan is handling LEDs patches (see ./MAINTAINERS).  Without a cc he
-> presumably missed this in the lkml flood.
+Hi,
 
-You are right...
+I've hit boot problems in next-20130204 on Meta:
 
-~/kernel/linux-3.7.6$ ./scripts/get_maintainer.pl -f drivers/leds/leds-ot200.c
-Bryan Wu <cooloney@gmail.com> (maintainer:LED SUBSYSTEM)
-Richard Purdie <rpurdie@rpsys.net> (maintainer:LED SUBSYSTEM)
-linux-leds@vger.kernel.org (open list:LED SUBSYSTEM)
-linux-kernel@vger.kernel.org (open list)
+META213-Thread0 DSP [LogF] kobject (4fc03980): tried to init an initialized object, something is seriously wrong.
+META213-Thread0 DSP [LogF] 
+META213-Thread0 DSP [LogF] Call trace: 
+META213-Thread0 DSP [LogF] [<4000888c>] _show_stack+0x68/0x7c
+META213-Thread0 DSP [LogF] [<400088b4>] _dump_stack+0x14/0x28
+META213-Thread0 DSP [LogF] [<40103794>] _kobject_init+0x58/0x9c
+META213-Thread0 DSP [LogF] [<40103810>] _kobject_create+0x38/0x64
+META213-Thread0 DSP [LogF] [<40103eac>] _kobject_create_and_add+0x14/0x8c
+META213-Thread0 DSP [LogF] [<40190ac4>] _mnt_init+0xd8/0x220
+META213-Thread0 DSP [LogF] [<40190508>] _vfs_caches_init+0xb0/0x160
+META213-Thread0 DSP [LogF] [<401851f4>] _start_kernel+0x274/0x340
+META213-Thread0 DSP [LogF] [<40188424>] _metag_start_kernel+0x58/0x6c
+META213-Thread0 DSP [LogF] [<40000044>] __start+0x44/0x48
+META213-Thread0 DSP [LogF] 
+META213-Thread0 DSP [LogF] devtmpfs: initialized
+META213-Thread0 DSP [LogF] L2 Cache: Not present
+META213-Thread0 DSP [LogF] BUG: failure at fs/sysfs/dir.c:736/sysfs_read_ns_type()!
+META213-Thread0 DSP [LogF] Kernel panic - not syncing: BUG!
+META213-Thread0 DSP [Thread Exit] Thread has exited - return code = 4294967295
 
-Next time I will add Bryan to CC
+I've bisected it to the following commit:
 
->
->> 2013/1/23 GMEINER.Christian <C.GMEINER@bachmann.info>:
->> >> -----Urspr__ngliche Nachricht-----
->> >> Von: Christian Gmeiner [mailto:christian.gmeiner@gmail.com]
->> >> Gesendet: Mittwoch, 23. Januar 2013 09:11
->> >> An: linux-next@vger.kernel.org; akpm@linux-foundation.org;
->> >> rpurdie@rpsys.net; linux-kernel@vger.kernel.org; GMEINER.Christian
->> >> Cc: Christian Gmeiner
->> >> Betreff: [PATCH] leds-ot200: Fix error caused by shifted mask
->> >>
->> >> During the development of this driver an in-house register documentation
->> >> was used. The last weeks some integration tests were done and this problem
->> >> was found. It turned out that the released register documentation is wrong.
->> >>
->> >> The fix is very simple: shift all masks by one.
->> >>
->
-> The changelog failed to describe the effects of the bug it fixes.  This
-> is a grave (and all too common) omission; it makes it difficult for
-> others to determine whether the patch should be backported into earlier
-> kernels.
->
-> So, please tell us.  And feel free to explain whether you believe the
-> fix should be backported.
+commit 95a05b428cc675694321c8f762591984f3fd2b1e
+Author: Christoph Lameter <cl@linux.com>
+Date:   Thu Jan 10 19:14:19 2013 +0000
 
-Our customers can control LEDs from userspace via Java, C++ or what every. They
-have running/working applications where they want to control led_3 but
-led_2 get's
-used. I got a bug report in our in-house bug tracker so it would be
-great if this patch can make it into 3.7.x series.
+    slab: Common constants for kmalloc boundaries
+    
+    Standardize the constants that describe the smallest and largest
+    object kept in the kmalloc arrays for SLAB and SLUB.
+    
+    Differentiate between the maximum size for which a slab cache is used
+    (KMALLOC_MAX_CACHE_SIZE) and the maximum allocatable size
+    (KMALLOC_MAX_SIZE, KMALLOC_MAX_ORDER).
+    
+    Signed-off-by: Christoph Lameter <cl@linux.com>
+    Signed-off-by: Pekka Enberg <penberg@kernel.org>
 
-thanks
---
-Christian Gmeiner, MSc
+
+Any ideas what could be going on here?
+
+This commit merged with the metag for-next branch fails, but
+the previous commit merged with the metag for-next branch
+doesn't fail.
+
+make savedefconfig output:
+
+CONFIG_EXPERIMENTAL=y
+# CONFIG_LOCALVERSION_AUTO is not set
+# CONFIG_SWAP is not set
+CONFIG_SYSVIPC=y
+CONFIG_LOG_BUF_SHIFT=13
+CONFIG_SYSFS_DEPRECATED=y
+CONFIG_SYSFS_DEPRECATED_V2=y
+CONFIG_BLK_DEV_INITRD=y
+CONFIG_INITRAMFS_SOURCE="arch/metag/boot/ramdisk.cpio"
+CONFIG_INITRAMFS_COMPRESSION_GZIP=y
+CONFIG_KALLSYMS_ALL=y
+# CONFIG_ELF_CORE is not set
+CONFIG_SLAB=y
+# CONFIG_BLK_DEV_BSG is not set
+CONFIG_PARTITION_ADVANCED=y
+# CONFIG_MSDOS_PARTITION is not set
+# CONFIG_IOSCHED_DEADLINE is not set
+# CONFIG_IOSCHED_CFQ is not set
+CONFIG_METAG_L2C=y
+CONFIG_FLATMEM_MANUAL=y
+CONFIG_METAG_HALT_ON_PANIC=y
+CONFIG_METAG_ATOMICITY_IRQSOFF=y
+CONFIG_METAG_DA=y
+CONFIG_HZ_100=y
+CONFIG_DEVTMPFS=y
+# CONFIG_STANDALONE is not set
+# CONFIG_PREVENT_FIRMWARE_BUILD is not set
+# CONFIG_FW_LOADER is not set
+CONFIG_BLK_DEV_RAM=y
+CONFIG_BLK_DEV_RAM_COUNT=1
+CONFIG_BLK_DEV_RAM_SIZE=16384
+# CONFIG_INPUT is not set
+# CONFIG_SERIO is not set
+# CONFIG_VT is not set
+# CONFIG_LEGACY_PTYS is not set
+CONFIG_DA_TTY=y
+CONFIG_DA_CONSOLE=y
+# CONFIG_DEVKMEM is not set
+# CONFIG_HW_RANDOM is not set
+# CONFIG_HWMON is not set
+# CONFIG_USB_SUPPORT is not set
+# CONFIG_DNOTIFY is not set
+CONFIG_TMPFS=y
+# CONFIG_MISC_FILESYSTEMS is not set
+# CONFIG_SCHED_DEBUG is not set
+CONFIG_DEBUG_INFO=y
+CONFIG_FRAME_POINTER=y
+
+Thanks
+James
