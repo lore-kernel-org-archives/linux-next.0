@@ -1,53 +1,73 @@
-From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: linux-next: Tree for Feb 4
-Date: Mon, 4 Feb 2013 13:56:32 +0000
-Message-ID: <CAAG0J99hxOOGh74wQ2R47o0noRxQhNS8T_DNnbX2FX-rJ2wMzQ@mail.gmail.com>
-References: <20130204183926.f5d5ab14b0ae4d22cb253202@canb.auug.org.au>
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Subject: Re: [PATCH] leds-ot200: Fix error caused by shifted mask
+Date: Mon, 4 Feb 2013 15:46:34 +0100
+Message-ID: <CAH9NwWfRL3HpfhLW5FqmWJC+NYHagoQXMoavAzMYciHRDg6mdQ@mail.gmail.com>
+References: <1358928657-15781-1-git-send-email-christian.gmeiner@gmail.com>
+ <7AFBFD79B857054D97821A9BD3FBFA9744D05BD2@ATFKEX06.bachmann.at>
+ <CAH9NwWdciqHSkkMSk4CW4XX+d6JSZBnvw52Svu8M4o-PGMQsDA@mail.gmail.com> <20130201141211.1adadfe5.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:44460 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754220Ab3BDN4e (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 08:56:34 -0500
-Received: by mail-bk0-f47.google.com with SMTP id jc3so2744952bkc.34
-        for <linux-next@vger.kernel.org>; Mon, 04 Feb 2013 05:56:32 -0800 (PST)
-In-Reply-To: <20130204183926.f5d5ab14b0ae4d22cb253202@canb.auug.org.au>
+Received: from mail-qc0-f182.google.com ([209.85.216.182]:37870 "EHLO
+	mail-qc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753188Ab3BDOws (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 09:52:48 -0500
+In-Reply-To: <20130201141211.1adadfe5.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Alexander Viro <viro@zeniv.linux.org.uk>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "GMEINER.Christian" <C.GMEINER@bachmann.info>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>
 
-Hi Stephen,
+2013/2/1 Andrew Morton <akpm@linux-foundation.org>:
+> On Fri, 1 Feb 2013 16:08:15 +0100
+> Christian Gmeiner <christian.gmeiner@gmail.com> wrote:
+>
+>> ping
+>
+> Bryan is handling LEDs patches (see ./MAINTAINERS).  Without a cc he
+> presumably missed this in the lkml flood.
 
-On 4 February 2013 07:39, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Merging signal/for-next (9005965 x86: convert to ksignal)
-> CONFLICT (content): Merge conflict in arch/x86/Kconfig
+You are right...
 
-I think this conflict has been resolved incorrectly.
+~/kernel/linux-3.7.6$ ./scripts/get_maintainer.pl -f drivers/leds/leds-ot200.c
+Bryan Wu <cooloney@gmail.com> (maintainer:LED SUBSYSTEM)
+Richard Purdie <rpurdie@rpsys.net> (maintainer:LED SUBSYSTEM)
+linux-leds@vger.kernel.org (open list:LED SUBSYSTEM)
+linux-kernel@vger.kernel.org (open list)
 
-Al's commit 1820f96 "burying unused conditionals" removed
-GENERIC_SIGALTSTACK from config X86, but the merge
-(c5395e2affed5c42200cb6e21e3380995ef22ae3) left GENERIC_SIGALTSTACK
-in:
+Next time I will add Bryan to CC
 
-diff --cc arch/x86/Kconfig
-index 32d4ff1,49fb44e..6979498
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@@ -114,9 -113,9 +114,12 @@@ config X8
-  	select MODULES_USE_ELF_REL if X86_32
-  	select MODULES_USE_ELF_RELA if X86_64
-  	select CLONE_BACKWARDS if X86_32
- +	select ARCH_USE_BUILTIN_BSWAP
- +	select GENERIC_SIGALTSTACK
- +	select ARCH_USE_BUILTIN_BSWAP
-+ 	select OLD_SIGSUSPEND3 if X86_32 || IA32_EMULATION
-+ 	select OLD_SIGACTION if X86_32
-+ 	select COMPAT_OLD_SIGACTION if IA32_EMULATION
+>
+>> 2013/1/23 GMEINER.Christian <C.GMEINER@bachmann.info>:
+>> >> -----Urspr__ngliche Nachricht-----
+>> >> Von: Christian Gmeiner [mailto:christian.gmeiner@gmail.com]
+>> >> Gesendet: Mittwoch, 23. Januar 2013 09:11
+>> >> An: linux-next@vger.kernel.org; akpm@linux-foundation.org;
+>> >> rpurdie@rpsys.net; linux-kernel@vger.kernel.org; GMEINER.Christian
+>> >> Cc: Christian Gmeiner
+>> >> Betreff: [PATCH] leds-ot200: Fix error caused by shifted mask
+>> >>
+>> >> During the development of this driver an in-house register documentation
+>> >> was used. The last weeks some integration tests were done and this problem
+>> >> was found. It turned out that the released register documentation is wrong.
+>> >>
+>> >> The fix is very simple: shift all masks by one.
+>> >>
+>
+> The changelog failed to describe the effects of the bug it fixes.  This
+> is a grave (and all too common) omission; it makes it difficult for
+> others to determine whether the patch should be backported into earlier
+> kernels.
+>
+> So, please tell us.  And feel free to explain whether you believe the
+> fix should be backported.
 
-  config INSTRUCTION_DECODER
-  	def_bool y
+Our customers can control LEDs from userspace via Java, C++ or what every. They
+have running/working applications where they want to control led_3 but
+led_2 get's
+used. I got a bug report in our in-house bug tracker so it would be
+great if this patch can make it into 3.7.x series.
 
-Cheers
-James
+thanks
+--
+Christian Gmeiner, MSc
