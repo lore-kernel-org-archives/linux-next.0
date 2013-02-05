@@ -1,45 +1,45 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Feb 5
-Date: Tue, 5 Feb 2013 10:18:17 +0100
-Message-ID: <CA+icZUWzRaBAOgA4oQ11TJz+5oDTQW0VzhPVCNn1k9MK8RFmhQ@mail.gmail.com>
-References: <20130205163454.83875fee3a8724fbec4d0987@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: next-20130204 - bisected slab problem to "slab: Common constants
+ for kmalloc boundaries"
+Date: Tue, 5 Feb 2013 10:08:06 +0000
+Message-ID: <5110DA06.1000804@imgtec.com>
+References: <510FE051.7080107@imgtec.com> <0000013ca6a87485-3f013e82-046c-4374-86d5-67fb85a085f9-000000@email.amazonses.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f43.google.com ([209.85.212.43]:39276 "EHLO
-	mail-vb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754033Ab3BEJSS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 04:18:18 -0500
-In-Reply-To: <20130205163454.83875fee3a8724fbec4d0987@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <0000013ca6a87485-3f013e82-046c-4374-86d5-67fb85a085f9-000000@email.amazonses.com>
+Sender: owner-linux-mm@kvack.org
+To: Christoph Lameter <cl@linux.com>
+Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Matt
+ Mackall <mpm@selenic.com>, linux-mm@kvack.org, Stephen Warren <swarren@wwwdotorg.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Feb 5, 2013 at 6:34 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Changes since 20130204:
->
-> The powerpc tree still had a build failure.
->
-> The nfsd tree lost its build.
->
-> The sound-asoc tree gained a build failure so I used the version from
-> next-20130204.
->
+On 04/02/13 19:22, Christoph Lameter wrote:
+> On Mon, 4 Feb 2013, James Hogan wrote:
+> 
+>> I've hit boot problems in next-20130204 on Meta:
+> 
+> Meta is an arch that is not in the tree yet? How would I build for meta?
 
-Several people ask for inclusion of [1] after having confirmed it
-fixes their issue.
-One guy pointed to the fact the fix [2] is pending in mmot*s* tree.
-When will it go to Linux-Next?
-Read the thread in [3] for more details.
+Yes (well, it's in -next now, so merging the for-next branch of
+git://github.com/jahogan/metag-linux.git would add Meta support, which
+at the point of your commit produces no conflicts).
 
-Thanks.
+It sounds like Stephen Warren has hit the same problem (in the
+configuration I'm using ARCH_DMA_MINALIGN was also 64, but in another
+configuration that worked, ARCH_DMA_MINALIGN was 8 (see
+arch/metag/include/asm/cache.h).
 
-- Sedat -
+For the record though, to cross compile, you'd need to build a
+meta2_defconfig of the buildroot at
+git://github.com/img-meta/metag-buildroot.git.
 
-[1] http://marc.info/?l=linux-mm&m=135929599505624&w=2
-[2] http://ozlabs.org/~akpm/mmots/broken-out/swap-make-each-swap-partition-have-one-address_space-fix-fix.patch
-[3] http://marc.info/?t=135978145900001&r=1&w=2
+Cheers
+James
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
