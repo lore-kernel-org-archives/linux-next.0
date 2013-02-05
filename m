@@ -1,83 +1,63 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [-next-20130204] usb/hcd:  irq 18: nobody cared
-Date: Tue, 5 Feb 2013 15:26:08 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1302051520220.2245-100000@iolanthe.rowland.org>
-References: <1360086665.3298.16.camel@thor.lan>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] init: fix name of root device in /proc/mounts
+Date: Wed, 6 Feb 2013 08:45:46 +1100
+Message-ID: <20130206084546.9a7adb093c14330a8e96147e@canb.auug.org.au>
+References: <1360094867-28009-1-git-send-email-w.d.hubbs@gmail.com>
+	<20130205201035.GA28045@linux1>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1360086665.3298.16.camel@thor.lan>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Hurley <peter@hurleysoftware.com>
-Cc: Lan Tianyu <tianyu.lan@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Kosina <jkosina@suse.cz>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__6_Feb_2013_08_45_46_+1100_vY3BFPdgAQMiArmK"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34926 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756690Ab3BEVpz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 16:45:55 -0500
+In-Reply-To: <20130205201035.GA28045@linux1>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: William Hubbs <w.d.hubbs@gmail.com>
+Cc: linux-next@vger.kernel.org, mpagano@gentoo.org
 
-On Tue, 5 Feb 2013, Peter Hurley wrote:
+--Signature=_Wed__6_Feb_2013_08_45_46_+1100_vY3BFPdgAQMiArmK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> With -next-20130204:
-> 
-> [   33.855570] irq 18: nobody cared (try booting with the "irqpoll" option)
-> [   33.855580] Pid: 0, comm: swapper/4 Not tainted 3.8.0-next-20130204-xeon #20130204
-> [   33.855582] Call Trace:
-> [   33.855585]  <IRQ>  [<ffffffff810f1076>] __report_bad_irq+0x36/0xe0
-> [   33.855600]  [<ffffffff810f152a>] note_interrupt+0x1aa/0x200
-> [   33.855606]  [<ffffffff8101edf2>] ? mwait_idle+0x82/0x1b0
-> [   33.855610]  [<ffffffff810eed89>] handle_irq_event_percpu+0xc9/0x260
-> [   33.855614]  [<ffffffff810eef68>] handle_irq_event+0x48/0x70
-> [   33.855618]  [<ffffffff810f20ba>] handle_fasteoi_irq+0x5a/0x100
-> [   33.855624]  [<ffffffff810182f2>] handle_irq+0x22/0x40
-> [   33.855630]  [<ffffffff816e2a9a>] do_IRQ+0x5a/0xd0
-> [   33.855636]  [<ffffffff816d97ad>] common_interrupt+0x6d/0x6d
-> [   33.855638]  <EOI>  [<ffffffff810f8e2a>] ? rcu_eqs_enter_common+0x4a/0x320
-> [   33.855646]  [<ffffffff8101edf2>] ? mwait_idle+0x82/0x1b0
-> [   33.855649]  [<ffffffff8101ed99>] ? mwait_idle+0x29/0x1b0
-> [   33.855653]  [<ffffffff8101f8a6>] cpu_idle+0x116/0x130
-> [   33.855658]  [<ffffffff816c0c0f>] start_secondary+0x251/0x258
-> [   33.855660] handlers:
-> [   33.855664] [<ffffffff814f98a0>] usb_hcd_irq
-> [   33.855667] Disabling IRQ #18
-> 
-> From earlier in the boot log:
-> [    1.297020] uhci_hcd 0000:00:1d.2: setting latency timer to 64
-> [    1.297032] uhci_hcd 0000:00:1d.2: UHCI Host Controller
-> [    1.297040] uhci_hcd 0000:00:1d.2: new USB bus registered, assigned bus number 4
-> [    1.297076] uhci_hcd 0000:00:1d.2: irq 18, io base 0x0000ff40
-> [    1.297213] hub 4-0:1.0: USB hub found
-> [    1.297221] hub 4-0:1.0: 2 ports detected
-> 
-> lsusb:
-> ...
-> Bus 004 Device 002: ID 0764:0501 Cyber Power System, Inc. CP1500 AVR UPS
-> Bus 004 Device 003: ID 046d:c52b Logitech, Inc. Unifying Receiver
-> ...
-> 
-> Didn't have this problem with -next-20120125. One of these commits, maybe?
-> next/drivers/usb/core$ git log --oneline next-20130125..next-20130204 -- *
-> 2c2e865 usb: forbid memory allocation with I/O during bus reset
-> e9121a8 Merge remote-tracking branch 'usb/usb-next'
-> 3b2ab2b Revert "usb: Register usb port's acpi power resources"
-> da0aa71 USB: add usb_hcd_{start,end}_port_resume
-> 192fef1 usb: enable usb port device's async suspend.
-> f6cced1 usb: expose usb port's pm qos flags to user space
-> ad493e5 usb: add usb port auto power off mechanism
-> 971fcd4 usb: add runtime pm support for usb port device
-> 88bb965 usb: Register usb port's acpi power resources
-> 54a3ac0 usb: Using correct way to clear usb3.0 device's remote wakeup feature.
+Hi William,
 
-None of those commits seems likely to have caused the problem.  The 
-most likely is da0aa71, combined with one you didn't mention:
+On Tue, 5 Feb 2013 14:10:35 -0600 William Hubbs <w.d.hubbs@gmail.com> wrote:
+>
+> this patch was originally sent to linux-kernel, but I was told it might
+> be better to send it to this list since this section of the kernel does
+> not have a specific maintainer.
 
-840008bb USB: UHCI: notify usbcore about port resumes
+You were misinformed.  The linux-next list is for discussion of things
+about the linux-next releases and not for general development.
+linux-kernel was the right place.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-If you revert these two commits, does that make any difference?  What
-if you revert all of these commits?
+--Signature=_Wed__6_Feb_2013_08_45_46_+1100_vY3BFPdgAQMiArmK
+Content-Type: application/pgp-signature
 
-> I didn't see any changes in the drivers/hid/hid-logitech-dj.c or usbhid
-> but maybe it's doing something wrong anyway?
-> 
-> I'll open a bugzilla if a bunch more info is necessary.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-If the suggestion above doesn't work out, bisection may be the best way
-to find the answer.
+iQIcBAEBCAAGBQJREX2KAAoJEECxmPOUX5FEsp0P/2d2WSqeO1iuLMeVTHwlKxFR
+tkPRNueLeYUofTn2IXtobN2OGPHai7r7zWXBFFT3/a1Xl028deNZPqTdpenOmDWC
+yOIAmAmmGysoJyRehM+BF+sLkyCz4UrhnYcf2o+PVVcZYAlACO4U1QYAs7kI7Wfi
+XJAGm4XHXL840auQ4dTLIJOPpUa53POIOMp/JNbBajCDfA0IiAWSLFXuKlrZdHpy
+E83NUZ4Ejrt1tzNQ4jdVegkxduGrEyxJ3gr2+Aq6PqgHf6zxcEYQk/7Eo37Pt7wx
+HrtYiJ9o03sa978jBcWieE+k99KIA/a7uKMkcLP2FKltciEAzqknkgSkK16CMLtl
+AlGnWc4RvVQAj5LzkKE/zaImtT4+2au6S94SaDoCzDcdHf/FewHFZLNyS6mZ3MaK
+jzTFo4t/e8gpsTBD7Vac/6MMgk6M5USY/RAclLSSiE8bu6HuwaOswF0+SnyKRQV9
+kTTmnyNE0DwZIQ5SLXozxjGvVkllkCWq4PwwdgH4oWPtZ1S5eWPNhKHa92ZcykcZ
+CMC0d1ZK5VEsKzU8O0poAr/CxLHzpxSG8ukvGNjsZI8j3/bTVbcEzmZSdvw8FtMu
+fdFIOc9qzlIGyf3nzKfotsh6hQ/Q/4l/WrIlR1fZBOVCE2J0qiE64p5Vj4rTXj96
+/6pvn8Kp7yjN0ZkG6Vww
+=SABX
+-----END PGP SIGNATURE-----
 
-Alan Stern
+--Signature=_Wed__6_Feb_2013_08_45_46_+1100_vY3BFPdgAQMiArmK--
