@@ -1,60 +1,69 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: next-20130204 - bisected slab problem to "slab: Common constants
- for kmalloc boundaries"
-Date: Tue, 05 Feb 2013 11:28:35 -0700
-Message-ID: <51114F53.4030603@wwwdotorg.org>
-References: <510FE051.7080107@imgtec.com> <51100E79.9080101@wwwdotorg.org> <alpine.DEB.2.02.1302042019170.32396@gentwo.org> <0000013cab3780f7-5e49ef46-e41a-4ff2-88f8-46bf216d677e-000000@email.amazonses.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: build failure after merge of the xen-two tree
+Date: Tue, 5 Feb 2013 13:30:08 -0500
+Message-ID: <20130205183007.GA5652@konrad-lan.dumpdata.com>
+References: <20130204151456.ea053895a487a19013e4991f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:60454 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754317Ab3BES2k (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 13:28:40 -0500
-In-Reply-To: <0000013cab3780f7-5e49ef46-e41a-4ff2-88f8-46bf216d677e-000000@email.amazonses.com>
+Received: from userp1040.oracle.com ([156.151.31.81]:49083 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755621Ab3BESar (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 13:30:47 -0500
+Content-Disposition: inline
+In-Reply-To: <20130204151456.ea053895a487a19013e4991f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: James Hogan <james.hogan@imgtec.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Mukesh Rathor <mukesh.rathor@oracle.com>
 
-On 02/05/2013 09:36 AM, Christoph Lameter wrote:
-> OK I was able to reproduce it by setting ARCH_DMA_MINALIGN in slab.h. This
-> patch fixes it here:
+On Mon, Feb 04, 2013 at 03:14:56PM +1100, Stephen Rothwell wrote:
+> Hi Konrad,
 > 
+> After merging the xen-two tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> Subject: slab: Handle ARCH_DMA_MINALIGN correctly
+> arch/x86/xen/mmu.c: In function 'xen_init_mmu_ops':
+> arch/x86/xen/mmu.c:2213:10: error: 'struct x86_init_ops' has no member named 'mapping'
+> arch/x86/xen/mmu.c:2213:39: error: 'xen_mapping_pagetable_reserve' undeclared (first use in this function)
 > 
-> A fixed KMALLOC_SHIFT_LOW does not work for arches with higher alignment
-> requirements.
+> Caused by commit 8154d7a6b9b9 ("xen/pvh: Implement MMU changes for PVH")
+> from the xen-two tree interacting with commit 6f80b68e9e51 ("x86, mm,
+> Xen: Remove mapping_pagetable_reserve()") from the tip tree.  The
+> automatic merge left the moved version of the above line intact while it
+> should have been removed (I assume).
 > 
-> Determine KMALLOC_SHIFT_LOW from ARCH_DMA_MINALIGN instead.
+> I have added the following merge fix patch and can carry the fix as
+> necessary.
 
-Tested-by: Stephen Warren <swarren@nvidia.com>
+Ah yes. Please do. I will fix it up once I am back on the box that has
+access to the kernel.org. Thanks again!
 
-> +/*
-> + * Some archs want to perform DMA into kmalloc caches and need a guaranteed
-> + * alignment larger than the alignment of a 64-bit integer.
-> + * Setting ARCH_KMALLOC_MINALIGN in arch headers allows that.
-> + */
-> +#if defined(ARCH_DMA_MINALIGN) && ARCH_DMA_MINALIGN > 8
-> +#define ARCH_KMALLOC_MINALIGN ARCH_DMA_MINALIGN
-> +#define KMALLOC_MIN_SIZE ARCH_DMA_MINALIGN
-
-I might be tempted to drop that #define of KMALLOC_MIN_SIZE ...
-
-> +#define KMALLOC_SHIFT_LOW ilog2(ARCH_DMA_MINALIGN)
-> +#else
-> +#define ARCH_KMALLOC_MINALIGN __alignof__(unsigned long long)
-> +#endif
-
-> +#ifndef KMALLOC_MIN_SIZE
->  #define KMALLOC_MIN_SIZE (1 << KMALLOC_SHIFT_LOW)
->  #endif
-
-... and simply drop the ifdef around that #define instead.
-
-That way, KMALLOC_MIN_SIZE is always defined in one place, and derived
-from KMALLOC_SHIFT_LOW; the logic will just set KMALLOC_SHIFT_LOW based
-on the various conditions. This seems a little safer to me; fewer
-conditions and less code to update if anything changes.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 4 Feb 2013 15:08:33 +1100
+> Subject: [PATCH] xen: fix bad merge of arch/x86/xen/mmu.c
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/x86/xen/mmu.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
+> index 824706a..3228600 100644
+> --- a/arch/x86/xen/mmu.c
+> +++ b/arch/x86/xen/mmu.c
+> @@ -2210,7 +2210,6 @@ void __init xen_init_mmu_ops(void)
+>  		pv_mmu_ops.flush_tlb_others = xen_flush_tlb_others;
+>  		return;
+>  	}
+> -	x86_init.mapping.pagetable_reserve = xen_mapping_pagetable_reserve;
+>  	pv_mmu_ops = xen_mmu_ops;
+>  
+>  	memset(dummy_mapping, 0xff, PAGE_SIZE);
+> -- 
+> 1.8.1
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
