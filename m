@@ -1,45 +1,76 @@
-From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: next-20130204 - bisected slab problem to "slab: Common constants
- for kmalloc boundaries"
-Date: Tue, 5 Feb 2013 10:08:06 +0000
-Message-ID: <5110DA06.1000804@imgtec.com>
-References: <510FE051.7080107@imgtec.com> <0000013ca6a87485-3f013e82-046c-4374-86d5-67fb85a085f9-000000@email.amazonses.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: Revert "console: implement lockdep support for console_lock"
+Date: Tue, 5 Feb 2013 11:47:25 +0100
+Message-ID: <CA+icZUU4JMfws_jFpoCaXnSNJeigONSEik_oGSa_ZQ=uJ_GJOA@mail.gmail.com>
+References: <CA+icZUW5tBotrZT9QtNPao-3rEccohBW8a4diS2nJ+ONgTWLaQ@mail.gmail.com>
+	<CAKMK7uEFCm5JPD9bg4uO9K_q-w0=9GWzRLoB9H-_=ZR7NxA9=A@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <0000013ca6a87485-3f013e82-046c-4374-86d5-67fb85a085f9-000000@email.amazonses.com>
-Sender: owner-linux-mm@kvack.org
-To: Christoph Lameter <cl@linux.com>
-Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Matt
- Mackall <mpm@selenic.com>, linux-mm@kvack.org, Stephen Warren <swarren@wwwdotorg.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qc0-f181.google.com ([209.85.216.181]:46599 "EHLO
+	mail-qc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751179Ab3BEKr0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 05:47:26 -0500
+In-Reply-To: <CAKMK7uEFCm5JPD9bg4uO9K_q-w0=9GWzRLoB9H-_=ZR7NxA9=A@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Dave Airlie <airlied@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On 04/02/13 19:22, Christoph Lameter wrote:
-> On Mon, 4 Feb 2013, James Hogan wrote:
-> 
->> I've hit boot problems in next-20130204 on Meta:
-> 
-> Meta is an arch that is not in the tree yet? How would I build for meta?
+On Fri, Feb 1, 2013 at 9:42 AM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> On Fri, Feb 1, 2013 at 9:21 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> people having the fbcon-locking-fixes [1] in their local GIT tree can
+>> revert this change?
+>
+> Yeah, if you have all the fixes reverting this is fine and appreciated
+> to increase testing. Dave will probably push the revert himself to
+> drm-next soon.
 
-Yes (well, it's in -next now, so merging the for-next branch of
-git://github.com/jahogan/metag-linux.git would add Meta support, which
-at the point of your commit produces no conflicts).
+When will that happen: drm-next inclusion?
 
-It sounds like Stephen Warren has hit the same problem (in the
-configuration I'm using ARCH_DMA_MINALIGN was also 64, but in another
-configuration that worked, ARCH_DMA_MINALIGN was 8 (see
-arch/metag/include/asm/cache.h).
+Just FYI:
+Pulling fbcon-locking-fixes into Linux-Next (next-20130205) shows some
+ugly UTF-8 mismatch, means "fb: rework locking to fix lock ordering on
+takeover" is not the same patch as in -next.
+Just wanna let you know.
 
-For the record though, to cross compile, you'd need to build a
-meta2_defconfig of the buildroot at
-git://github.com/img-meta/metag-buildroot.git.
+It would be good to inform Andrew and Stephen when this happened, so
+Andrew can drop the two fb-fixes from his mmotm-tree.
 
-Cheers
-James
+Thanks!
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+- Sedat -
+
+> -Daniel
+>
+>>
+>> commit ff0d05bf73620eb7dc8aee7423e992ef87870bdf
+>> Refs: v3.8-rc5-194-gff0d05b
+>> Author:     Dave Airlie <airlied@gmail.com>
+>> AuthorDate: Thu Jan 31 14:27:03 2013 +1100
+>> Commit:     Dave Airlie <airlied@gmail.com>
+>> CommitDate: Thu Jan 31 15:46:56 2013 +1100
+>>
+>>     Revert "console: implement lockdep support for console_lock"
+>>
+>>     This reverts commit daee779718a319ff9f83e1ba3339334ac650bb22.
+>>
+>>     I'll requeue this after the console locking fixes, so lockdep
+>>     is useful again for people until fbcon is fixed.
+>>
+>>     Signed-off-by: Dave Airlie <airlied@redhat.com>
+>>
+>> Thanks!
+>>
+>> Regards,
+>> - Sedat
+>>
+>> [1] http://cgit.freedesktop.org/~airlied/linux/log/?h=fbcon-locking-fixes
+>
+>
+>
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
