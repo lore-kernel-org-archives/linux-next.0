@@ -1,70 +1,60 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: [-next-20130204] usb/hcd:  irq 18: nobody cared
-Date: Tue, 05 Feb 2013 12:51:05 -0500
-Message-ID: <1360086665.3298.16.camel@thor.lan>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: next-20130204 - bisected slab problem to "slab: Common constants
+ for kmalloc boundaries"
+Date: Tue, 05 Feb 2013 11:28:35 -0700
+Message-ID: <51114F53.4030603@wwwdotorg.org>
+References: <510FE051.7080107@imgtec.com> <51100E79.9080101@wwwdotorg.org> <alpine.DEB.2.02.1302042019170.32396@gentwo.org> <0000013cab3780f7-5e49ef46-e41a-4ff2-88f8-46bf216d677e-000000@email.amazonses.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>, Lan Tianyu <tianyu.lan@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Kosina <jkosina@suse.cz>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:60454 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754317Ab3BES2k (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 13:28:40 -0500
+In-Reply-To: <0000013cab3780f7-5e49ef46-e41a-4ff2-88f8-46bf216d677e-000000@email.amazonses.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christoph Lameter <cl@linux.com>
+Cc: James Hogan <james.hogan@imgtec.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org
 
-With -next-20130204:
+On 02/05/2013 09:36 AM, Christoph Lameter wrote:
+> OK I was able to reproduce it by setting ARCH_DMA_MINALIGN in slab.h. This
+> patch fixes it here:
+> 
+> 
+> Subject: slab: Handle ARCH_DMA_MINALIGN correctly
+> 
+> A fixed KMALLOC_SHIFT_LOW does not work for arches with higher alignment
+> requirements.
+> 
+> Determine KMALLOC_SHIFT_LOW from ARCH_DMA_MINALIGN instead.
 
-[   33.855570] irq 18: nobody cared (try booting with the "irqpoll" option)
-[   33.855580] Pid: 0, comm: swapper/4 Not tainted 3.8.0-next-20130204-xeon #20130204
-[   33.855582] Call Trace:
-[   33.855585]  <IRQ>  [<ffffffff810f1076>] __report_bad_irq+0x36/0xe0
-[   33.855600]  [<ffffffff810f152a>] note_interrupt+0x1aa/0x200
-[   33.855606]  [<ffffffff8101edf2>] ? mwait_idle+0x82/0x1b0
-[   33.855610]  [<ffffffff810eed89>] handle_irq_event_percpu+0xc9/0x260
-[   33.855614]  [<ffffffff810eef68>] handle_irq_event+0x48/0x70
-[   33.855618]  [<ffffffff810f20ba>] handle_fasteoi_irq+0x5a/0x100
-[   33.855624]  [<ffffffff810182f2>] handle_irq+0x22/0x40
-[   33.855630]  [<ffffffff816e2a9a>] do_IRQ+0x5a/0xd0
-[   33.855636]  [<ffffffff816d97ad>] common_interrupt+0x6d/0x6d
-[   33.855638]  <EOI>  [<ffffffff810f8e2a>] ? rcu_eqs_enter_common+0x4a/0x320
-[   33.855646]  [<ffffffff8101edf2>] ? mwait_idle+0x82/0x1b0
-[   33.855649]  [<ffffffff8101ed99>] ? mwait_idle+0x29/0x1b0
-[   33.855653]  [<ffffffff8101f8a6>] cpu_idle+0x116/0x130
-[   33.855658]  [<ffffffff816c0c0f>] start_secondary+0x251/0x258
-[   33.855660] handlers:
-[   33.855664] [<ffffffff814f98a0>] usb_hcd_irq
-[   33.855667] Disabling IRQ #18
+Tested-by: Stephen Warren <swarren@nvidia.com>
 
->From earlier in the boot log:
-[    1.297020] uhci_hcd 0000:00:1d.2: setting latency timer to 64
-[    1.297032] uhci_hcd 0000:00:1d.2: UHCI Host Controller
-[    1.297040] uhci_hcd 0000:00:1d.2: new USB bus registered, assigned bus number 4
-[    1.297076] uhci_hcd 0000:00:1d.2: irq 18, io base 0x0000ff40
-[    1.297213] hub 4-0:1.0: USB hub found
-[    1.297221] hub 4-0:1.0: 2 ports detected
+> +/*
+> + * Some archs want to perform DMA into kmalloc caches and need a guaranteed
+> + * alignment larger than the alignment of a 64-bit integer.
+> + * Setting ARCH_KMALLOC_MINALIGN in arch headers allows that.
+> + */
+> +#if defined(ARCH_DMA_MINALIGN) && ARCH_DMA_MINALIGN > 8
+> +#define ARCH_KMALLOC_MINALIGN ARCH_DMA_MINALIGN
+> +#define KMALLOC_MIN_SIZE ARCH_DMA_MINALIGN
 
-lsusb:
-...
-Bus 004 Device 002: ID 0764:0501 Cyber Power System, Inc. CP1500 AVR UPS
-Bus 004 Device 003: ID 046d:c52b Logitech, Inc. Unifying Receiver
-...
+I might be tempted to drop that #define of KMALLOC_MIN_SIZE ...
 
-Didn't have this problem with -next-20120125. One of these commits, maybe?
-next/drivers/usb/core$ git log --oneline next-20130125..next-20130204 -- *
-2c2e865 usb: forbid memory allocation with I/O during bus reset
-e9121a8 Merge remote-tracking branch 'usb/usb-next'
-3b2ab2b Revert "usb: Register usb port's acpi power resources"
-da0aa71 USB: add usb_hcd_{start,end}_port_resume
-192fef1 usb: enable usb port device's async suspend.
-f6cced1 usb: expose usb port's pm qos flags to user space
-ad493e5 usb: add usb port auto power off mechanism
-971fcd4 usb: add runtime pm support for usb port device
-88bb965 usb: Register usb port's acpi power resources
-54a3ac0 usb: Using correct way to clear usb3.0 device's remote wakeup feature.
+> +#define KMALLOC_SHIFT_LOW ilog2(ARCH_DMA_MINALIGN)
+> +#else
+> +#define ARCH_KMALLOC_MINALIGN __alignof__(unsigned long long)
+> +#endif
 
-I didn't see any changes in the drivers/hid/hid-logitech-dj.c or usbhid
-but maybe it's doing something wrong anyway?
+> +#ifndef KMALLOC_MIN_SIZE
+>  #define KMALLOC_MIN_SIZE (1 << KMALLOC_SHIFT_LOW)
+>  #endif
 
-I'll open a bugzilla if a bunch more info is necessary.
+... and simply drop the ifdef around that #define instead.
 
-Regards,
-Peter Hurley
+That way, KMALLOC_MIN_SIZE is always defined in one place, and derived
+from KMALLOC_SHIFT_LOW; the logic will just set KMALLOC_SHIFT_LOW based
+on the various conditions. This seems a little safer to me; fewer
+conditions and less code to update if anything changes.
