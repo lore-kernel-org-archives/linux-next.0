@@ -1,59 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 5 Feb 2013 12:46:10 +1100
-Message-ID: <20130205124610.2e725fbc5a08983bf94932a0@canb.auug.org.au>
+From: Christoph Lameter <cl@linux.com>
+Subject: Re: next-20130204 - bisected slab problem to "slab: Common constants
+ for kmalloc boundaries"
+Date: Tue, 5 Feb 2013 02:29:03 +0000
+Message-ID: <0000013ca82f61e2-592bc561-c5ae-4193-8007-bef820f2734d-000000@email.amazonses.com>
+References: <510FE051.7080107@imgtec.com> <51100E79.9080101@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__5_Feb_2013_12_46_10_+1100_vQRfxRN6DjZlHajO"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52355 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754410Ab3BEBqO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Feb 2013 20:46:14 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <51100E79.9080101@wwwdotorg.org>
+Sender: owner-linux-mm@kvack.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: James Hogan <james.hogan@imgtec.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__5_Feb_2013_12_46_10_+1100_vQRfxRN6DjZlHajO
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 4 Feb 2013, Stephen Warren wrote:
 
-Hi all,
+> Here, if defined(ARCH_DMA_MINALIGN), then KMALLOC_MIN_SIZE isn't
+> relative-to/derived-from KMALLOC_SHIFT_LOW, so the two may become
+> inconsistent.
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Right. And kmalloc_index() will therefore return KMALLOC_SHIFT_LOW which
+will dereference a NULL pointer since only the later cache pointers are
+populated. KMALLOC_SHIFT_LOW needs to be set correctly.
 
-ERROR: "regmap_async_complete" [sound/soc/codecs/snd-soc-wm-adsp.ko] undefi=
-ned!
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index ba2ca53..d0f72ee 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -2775,7 +2775,7 @@ init_kmem_cache_node(struct kmem_cache_node *n)
+> >  static inline int alloc_kmem_cache_cpus(struct kmem_cache *s)
+> >  {
+> >  	BUILD_BUG_ON(PERCPU_DYNAMIC_EARLY_SIZE <
+> > -			SLUB_PAGE_SHIFT * sizeof(struct kmem_cache_cpu));
+> > +			KMALLOC_SHIFT_HIGH * sizeof(struct kmem_cache_cpu));
+>
+> Should that also be (KMALLOC_SHIFT_HIGH + 1)?
 
-I have used the version of the sound-asoc tree from next-20130204 for
-today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+That is already a pretty fuzzy test. The nr of kmem_cache_cpu allocated is
+lower than KMALLOC_SHIFT_HIGH since several index positions will not be
+occupied.
 
---Signature=_Tue__5_Feb_2013_12_46_10_+1100_vQRfxRN6DjZlHajO
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJREGRiAAoJEECxmPOUX5FEW9YP/2L1t222b8oopwABJRmMKpLz
-8d9aiqPeAgyAf5/xKyfN6XRlqErxNJzBt5sI0cDD0bVSa/WYIz8qyXwTQ+ydC/FB
-BGInbzm+bJbqySruQ68Nwmpkv2OEr11fMMsD37nzRoEQCDXyfB0nocwbUn7+PTqO
-VyRv/1tpDEMgCU2wiSX0RNZvoQNXSckQ7SUiE4DVRH+qbKeIPogYDqairvoBmhIH
-9ukdHufTmnCdEMin30dUzq+KTI0mlBlZ3jupxaKnOFoBVImURx5IpFJrU5kMAdI/
-uH0IDlYqY17ff6H9g1opbuPNYmq/9ABnbcTfDWM2Fh/AV+quLVIJndHeX20XJYuh
-hCRk2WGsSjrav/+HKcU1d6AsGkFiWpiPv5F4ms5vzw2N2zsEPGHep/DtHWJ0o8Ip
-A9mFW6jlsM3GxCgenpyID/e2nM+gVuWejAQVVBBZOZQ3M/oqOokk/5wuJk2JBWDt
-iltVRk4NEDUyZJfF1TsuwCp6N8586OkiDbMAe2mI2fpX4KYnpfNEa316Q4vjCXR6
-1GPgg+iKYmOPbnE7WFcf27IEgfeNrhazjPHDBi0p+CaQDomvk94XmUIUpgVS2Yfq
-aKkaq4X7Lv+ruTIyQ/Ez5VdbOqJyef60RwDGJg1IjFqEv6iBIVSJZ5EXIFelFazM
-3Cips2hAgy0oxj93gb/J
-=EpKF
------END PGP SIGNATURE-----
-
---Signature=_Tue__5_Feb_2013_12_46_10_+1100_vQRfxRN6DjZlHajO--
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
