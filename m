@@ -1,53 +1,67 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: next-20130204 - bisected slab problem to "slab: Common constants
- for kmalloc boundaries"
-Date: Tue, 5 Feb 2013 18:52:27 +0000
-Message-ID: <0000013cabb3b91e-d00eb224-6ced-43b8-aa10-d7afeab8c037-000000@email.amazonses.com>
-References: <510FE051.7080107@imgtec.com> <51100E79.9080101@wwwdotorg.org> <alpine.DEB.2.02.1302042019170.32396@gentwo.org> <0000013cab3780f7-5e49ef46-e41a-4ff2-88f8-46bf216d677e-000000@email.amazonses.com> <51114F53.4030603@wwwdotorg.org>
+From: Tony Luck <tony.luck@intel.com>
+Subject: EXPORT_SYMBOL(min_low_pfn);
+Date: Tue, 5 Feb 2013 11:31:22 -0800
+Message-ID: <CA+8MBbLW333z1Subx=fLu46u2RQXkNB1iTbORuKbq7YpZi1X_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from a194-210.smtp-out.amazonses.com ([199.255.194.210]:15600 "EHLO
-	a194-210.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754575Ab3BESw3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 13:52:29 -0500
-In-Reply-To: <51114F53.4030603@wwwdotorg.org>
+Received: from mail-vc0-f180.google.com ([209.85.220.180]:35164 "EHLO
+	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754880Ab3BETjo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 14:39:44 -0500
+Received: by mail-vc0-f180.google.com with SMTP id fo13so307290vcb.39
+        for <linux-next@vger.kernel.org>; Tue, 05 Feb 2013 11:39:42 -0800 (PST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: James Hogan <james.hogan@imgtec.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org
+To: Sanjay Lal <sanjayl@kymasys.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-next@vger.kernel.org
 
-On Tue, 5 Feb 2013, Stephen Warren wrote:
+Today i noticed in linux-next this commit:
 
-> > +/*
-> > + * Some archs want to perform DMA into kmalloc caches and need a guaranteed
-> > + * alignment larger than the alignment of a 64-bit integer.
-> > + * Setting ARCH_KMALLOC_MINALIGN in arch headers allows that.
-> > + */
-> > +#if defined(ARCH_DMA_MINALIGN) && ARCH_DMA_MINALIGN > 8
-> > +#define ARCH_KMALLOC_MINALIGN ARCH_DMA_MINALIGN
-> > +#define KMALLOC_MIN_SIZE ARCH_DMA_MINALIGN
->
-> I might be tempted to drop that #define of KMALLOC_MIN_SIZE ...
+commit b0d9c17503444c2df8cb8e93ccfa4877edd71933
+Author: Sanjay Lal <sanjayl@kymasys.com>
+Date:   Wed Nov 21 18:34:14 2012 -0800
 
-Initially I thought so too.
->
-> > +#define KMALLOC_SHIFT_LOW ilog2(ARCH_DMA_MINALIGN)
-> > +#else
-> > +#define ARCH_KMALLOC_MINALIGN __alignof__(unsigned long long)
-> > +#endif
->
-> > +#ifndef KMALLOC_MIN_SIZE
-> >  #define KMALLOC_MIN_SIZE (1 << KMALLOC_SHIFT_LOW)
-> >  #endif
->
-> ... and simply drop the ifdef around that #define instead.
+    MIPS: Export symbols used by KVM/MIPS module
 
-That is going to be one hell of a macro expansion.
+which causes this kernel build warning on ia64:
 
-> That way, KMALLOC_MIN_SIZE is always defined in one place, and derived
-> from KMALLOC_SHIFT_LOW; the logic will just set KMALLOC_SHIFT_LOW based
-> on the various conditions. This seems a little safer to me; fewer
-> conditions and less code to update if anything changes.
+WARNING: vmlinux: 'min_low_pfn' exported twice. Previous export was in vmlinux
 
-Yeah but we do an ilog2 and then reverse this back to the original number.
+
+We just need to delete the arch/ia64 specific export (and grep says
+for arch/metag too):
+
+$ git grep min_low_pfn | grep EXPORT
+arch/ia64/kernel/ia64_ksyms.c:EXPORT_SYMBOL(min_low_pfn);	/* defined
+by bootmem.c, but not exported by generic code */
+arch/metag/kernel/metag_ksyms.c:EXPORT_SYMBOL(min_low_pfn);
+mm/bootmem.c:EXPORT_SYMBOL(min_low_pfn);
+
+
+Can you do this in the same branch as the mips change so the bits
+will flow to Linus together in the next window?
+
+ia64 change (which gmail will no doubt mangle)
+
+From: "Luck, Tony" <tony.luck@intel.com>
+
+min_low_pfn is now exported by generic code
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+
+---
+
+diff --git a/arch/ia64/kernel/ia64_ksyms.c b/arch/ia64/kernel/ia64_ksyms.c
+index 5b7791d..ca95c8b 100644
+--- a/arch/ia64/kernel/ia64_ksyms.c
++++ b/arch/ia64/kernel/ia64_ksyms.c
+@@ -25,7 +25,6 @@ EXPORT_SYMBOL(copy_page);
+
+ #ifdef CONFIG_VIRTUAL_MEM_MAP
+ #include <linux/bootmem.h>
+-EXPORT_SYMBOL(min_low_pfn);    /* defined by bootmem.c, but not
+exported by generic code */
+ EXPORT_SYMBOL(max_low_pfn);    /* defined by bootmem.c, but not
+exported by generic code */
+ #endif
