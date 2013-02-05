@@ -1,47 +1,35 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: next-20130204 - bisected slab problem to "slab: Common constants
- for kmalloc boundaries"
-Date: Tue, 5 Feb 2013 02:29:03 +0000
-Message-ID: <0000013ca82f61e2-592bc561-c5ae-4193-8007-bef820f2734d-000000@email.amazonses.com>
-References: <510FE051.7080107@imgtec.com> <51100E79.9080101@wwwdotorg.org>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: [PATCH] netfilter: fix missing dependencies for
+ NETFILTER_XT_MATCH_CONNLABEL
+Date: Tue, 5 Feb 2013 04:00:33 +0100
+Message-ID: <20130205030032.GA12794@localhost>
+References: <510DC976.7000008@infradead.org>
+ <1359890647-25846-1-git-send-email-fw@strlen.de>
+ <510E8A93.6050300@infradead.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <51100E79.9080101@wwwdotorg.org>
-Sender: owner-linux-mm@kvack.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: James Hogan <james.hogan@imgtec.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netfilter-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <510E8A93.6050300@infradead.org>
+Sender: netfilter-devel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Florian Westphal <fw@strlen.de>, netfilter-devel@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 4 Feb 2013, Stephen Warren wrote:
+On Sun, Feb 03, 2013 at 08:04:35AM -0800, Randy Dunlap wrote:
+> On 02/03/13 03:24, Florian Westphal wrote:
+> > It was possible to set
+> > NF_CONNTRACK=n
+> > NF_CONNTRACK_LABELS=y
+> > 
+> > via NETFILTER_XT_MATCH_CONNLABEL=y:
+> > 
+> > warning: (NETFILTER_XT_MATCH_CONNLABEL) selects NF_CONNTRACK_LABELS which has
+> > unmet direct dependencies (NET && INET && NETFILTER && NF_CONNTRACK)
+> > 
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Florian Westphal <fw@strlen.de>
+> 
+> Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-> Here, if defined(ARCH_DMA_MINALIGN), then KMALLOC_MIN_SIZE isn't
-> relative-to/derived-from KMALLOC_SHIFT_LOW, so the two may become
-> inconsistent.
-
-Right. And kmalloc_index() will therefore return KMALLOC_SHIFT_LOW which
-will dereference a NULL pointer since only the later cache pointers are
-populated. KMALLOC_SHIFT_LOW needs to be set correctly.
-
-> > diff --git a/mm/slub.c b/mm/slub.c
-> > index ba2ca53..d0f72ee 100644
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -2775,7 +2775,7 @@ init_kmem_cache_node(struct kmem_cache_node *n)
-> >  static inline int alloc_kmem_cache_cpus(struct kmem_cache *s)
-> >  {
-> >  	BUILD_BUG_ON(PERCPU_DYNAMIC_EARLY_SIZE <
-> > -			SLUB_PAGE_SHIFT * sizeof(struct kmem_cache_cpu));
-> > +			KMALLOC_SHIFT_HIGH * sizeof(struct kmem_cache_cpu));
->
-> Should that also be (KMALLOC_SHIFT_HIGH + 1)?
-
-That is already a pretty fuzzy test. The nr of kmem_cache_cpu allocated is
-lower than KMALLOC_SHIFT_HIGH since several index positions will not be
-occupied.
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Applied, thanks.
