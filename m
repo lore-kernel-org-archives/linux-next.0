@@ -1,98 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the battery tree with the mfd tree
-Date: Wed, 6 Feb 2013 14:31:20 +1100
-Message-ID: <20130206143120.73c66ac3eadced968f9dd2d5@canb.auug.org.au>
+Subject: linux-next: manual merge of the spi tree with the sound-asoc tree
+Date: Wed, 6 Feb 2013 15:08:18 +1100
+Message-ID: <20130206150818.26d50907120110d160e0e236@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__6_Feb_2013_14_31_20_+1100_GqgnwCrUi5DaqXOx"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58494 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754562Ab3BFDba (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 22:31:30 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <avorontsov@ru.mvista.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonas Aaberg <jonas.aberg@stericsson.com>, Mian Yousaf Kaukab <mian.yousaf.kaukab@stericsson.com>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>
+ boundary="Signature=_Wed__6_Feb_2013_15_08_18_+1100_qz6XEgoTyekzeU/N"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lgirdwood@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__6_Feb_2013_14_31_20_+1100_GqgnwCrUi5DaqXOx
+--Signature=_Wed__6_Feb_2013_15_08_18_+1100_qz6XEgoTyekzeU/N
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Anton,
+Hi Grant,
 
-Today's linux-next merge of the battery tree got a conflict in
-include/linux/mfd/abx500/ab8500.h between commit 1d843a6c8c20 ("mfd:
-ab8500-core: Allow the possibility to dump all AB8500 registers") from
-the mfd tree and commit 0ed5107fa860 ("ab8500-charger: Do not touch
-VBUSOVV bits") from the battery tree.
+Today's linux-next merge of the spi tree got a conflict in
+drivers/spi/spi-s3c64xx.c between commit b5be04d35dbb ("spi: s3c64xx:
+Modify SPI driver to use generic DMA DT support") from the sound-asoc tree =
+and
+commit 75bf33611041 ("spi/s3c64xx: fix checkpatch warnings and error")
+from the spi tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the former removed a function modified by the latter) and
+can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/mfd/abx500/ab8500.h
-index fa7173d,b9a6a84..0000000
---- a/include/linux/mfd/abx500/ab8500.h
-+++ b/include/linux/mfd/abx500/ab8500.h
-@@@ -345,12 -346,23 +350,32 @@@ static inline int is_ab8500_2p0(struct=20
-  	return (is_ab8500(ab) && (ab->chip_id =3D=3D AB8500_CUT2P0));
-  }
- =20
-+ static inline int is_ab8505_1p0_or_earlier(struct ab8500 *ab)
-+ {
-+ 	return (is_ab8505(ab) && (ab->chip_id <=3D AB8500_CUT1P0));
-+ }
-+=20
-+ static inline int is_ab8505_2p0(struct ab8500 *ab)
-+ {
-+ 	return (is_ab8505(ab) && (ab->chip_id =3D=3D AB8500_CUT2P0));
-+ }
-+=20
-+ static inline int is_ab9540_1p0_or_earlier(struct ab8500 *ab)
-+ {
-+ 	return (is_ab9540(ab) && (ab->chip_id <=3D AB8500_CUT1P0));
-+ }
-+=20
-+ static inline int is_ab9540_2p0(struct ab8500 *ab)
-+ {
-+ 	return (is_ab9540(ab) && (ab->chip_id =3D=3D AB8500_CUT2P0));
-+ }
-++
- +#ifdef CONFIG_AB8500_DEBUG
- +void ab8500_dump_all_banks(struct device *dev);
- +void ab8500_debug_register_interrupt(int line);
- +#else
- +static inline void ab8500_dump_all_banks(struct device *dev) {}
- +static inline void ab8500_debug_register_interrupt(int line) {}
- +#endif
- +
-  #endif /* MFD_AB8500_H */
-
---Signature=_Wed__6_Feb_2013_14_31_20_+1100_GqgnwCrUi5DaqXOx
+--Signature=_Wed__6_Feb_2013_15_08_18_+1100_qz6XEgoTyekzeU/N
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJREc6IAAoJEECxmPOUX5FE0wQP/iUBeEhj1tLRPNA5Q7Wi31XG
-E+YJHI5REQJaWnmX/LrMOXB1utbtwkG3HdKB+3tl3hf2kqvLjq6sDVormw4n2UUW
-Q465Fatdh87SsUHGGLoo0fdSCxnLR/9FgV1gEWZi/Asp5845GxtrLkOUg3eXoGZO
-lWLKNoKldgzAk0PxQjVPxK5Gy4fYBKB2wX0XSDxknoaUYl5yQwt4Jqm54JEWmycC
-qBv16zJqNmIlQJagIPs8c+ETV2zPrwAsvE9mX764ywcBeuFMqqc3+sUCfBOqwRF2
-ry1mU2GuddDn2lIalXS2qceq4hdLb7z5UixmQi757lR8kNtNGcHMetRrNfColfwn
-qNRXzdJjqFY2LdmsA8FHqzz2uYoHVlnrSUwJm+//68Vqv10UVsI9CzKYhGk3xuRP
-vsHkyr1ruWgC2vbu2gupYhRwPX4QPb42vdl0df8ri7wOzJp4bKOrjMoGByPh45l4
-lf8D1QKtN/Z7EMf5Ur9HTx3inyVks/rbjcJ64QUXpRr4WfWJApeFI+Bex9LJ1Jke
-uh4uGbW2bS8CFULLtubK+d5K0ygyEY0yWtqA71/8MZYcS5CVkDbWkfBIdePU2el2
-LxA0Ij0V2RX9AhAyj5YmG0fqDIanXRYNnXtKeuVmaGXqvojM8zR647Q6sd5jWfgS
-poCd48+9XdtpwJwTzhEZ
-=Xtdn
+iQIcBAEBCAAGBQJREdcyAAoJEECxmPOUX5FEfmkQAJSDsGfF1+0v7erlk80DOxHV
+BfsMJPXool1ns5868vFZkQEwHU5qL2Ni5PMzpYvuUQqASJoqT+wyHeFKFiiiArGs
+tp44VZkXmfGbZet17TnY0Ie6mLKQ3zhjNWMZGvWKlOoldTInoE/eGTmjer2GE1+o
+fx31c13xBrVdVoa2xFnA0xSSKPo/5NAT0NeDyj2M5rNY6z7YC83xkPauo7TYr36a
+NMY7DNzxcjW2hhzpiFz3vQshvOX/LSJdPZneN7hBS9zAahKanIE8Xam/cBVUWs0M
+tFzcV0a3GPwRRm6m14q789S3dUw+h1vBNOus/EMgFvczkk03Si/RXrHHBxyGqUnE
+zX6jy6N/SXdNmtaKRS2ajElhQCMEwAP19zAme3vFILRo4JC8bxSDQMnY7p/F9N11
+EOw6Z5CqbjDLCIHEwQLFm6XSapExsEeB28gfee+Pm/1/qs38leJ5HO6KjkkJ2J8a
+HXpkwVMIwLBQ0/0x8pPCAPCmNPDDP/8S+9LMJb+Q8SQscEnpjv6EbaqIyBjZZxWX
+MmjMiWzNzaq6iPXZbqsllU2hvX3xFgRpUzwfQ/cdBKiDquxaCX8PNHZikNL6b7x5
+TgDoEbqXVhDDFaXI3GjyopigvY14JLsQ9IyNAFb4/GwpqBGgiBn7RvnUC+reSfzj
+Jo3oN589hIM0tMzYtEBc
+=/96E
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__6_Feb_2013_14_31_20_+1100_GqgnwCrUi5DaqXOx--
+--Signature=_Wed__6_Feb_2013_15_08_18_+1100_qz6XEgoTyekzeU/N--
