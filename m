@@ -1,113 +1,123 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the crypto tree with the net-next tree
-Date: Wed, 6 Feb 2013 13:20:11 +1100
-Message-ID: <20130206132011.9084f982f783cd9d298f187d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Wed, 6 Feb 2013 14:06:23 +1100
+Message-ID: <20130206140623.04297c3ac2f0fa3437369ffe@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__6_Feb_2013_13_20_11_+1100_hG_/3vx8/=7B5y+1"
+ boundary="Signature=_Wed__6_Feb_2013_14_06_23_+1100_CyaHjbJ=8D9xycG2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45989 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50299 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756778Ab3BFCUY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 21:20:24 -0500
+	with ESMTP id S1753785Ab3BFDGd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 22:06:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, Steffen Klassert <steffen.klassert@secunet.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, josh.h.morris@us.ibm.com, Philip J Kelleher <pjk1939@linux.vnet.ibm.com>
 
---Signature=_Wed__6_Feb_2013_13_20_11_+1100_hG_/3vx8/=7B5y+1
+--Signature=_Wed__6_Feb_2013_14_06_23_+1100_CyaHjbJ=8D9xycG2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi Jens,
 
-Today's linux-next merge of the crypto tree got a conflict in
-crypto/ctr.c between commit 69d3150cfc20 ("crypto: ctr - make rfc3686
-asynchronous block cipher") from the net-next tree and commit
-3e8afe35c36f ("crypto: use ERR_CAST") from the crypto tree.
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/block/rsxx/core.c:322:22: error: expected '=3D', ',', ';', 'asm' or=
+ '__attribute__' before 'rsxx_pci_probe'
+drivers/block/rsxx/core.c:513:23: error: expected '=3D', ',', ';', 'asm' or=
+ '__attribute__' before 'rsxx_pci_remove'
+drivers/block/rsxx/core.c:610:12: error: 'rsxx_pci_probe' undeclared here (=
+not in a function)
+drivers/block/rsxx/core.c:611:2: error: implicit declaration of function '_=
+_devexit_p' [-Werror=3Dimplicit-function-declaration]
+drivers/block/rsxx/core.c:611:25: error: 'rsxx_pci_remove' undeclared here =
+(not in a function)
+drivers/block/rsxx/core.c:51:8: warning: 'rsxx_disk_ida' defined but not us=
+ed [-Wunused-variable]
+drivers/block/rsxx/core.c:52:8: warning: 'rsxx_ida_lock' defined but not us=
+ed [-Wunused-variable]
+drivers/block/rsxx/core.c:219:13: warning: 'card_event_handler' defined but=
+ not used [-Wunused-function]
+drivers/block/rsxx/core.c:311:12: warning: 'rsxx_compatibility_check' defin=
+ed but not used [-Wunused-function]
+
+Caused by commit 8722ff8cdbfa ("block: IBM RamSan 70/80 device driver")
+interacting with commit 54b956b90360 ("Remove __dev* markings from
+init.h") from Linus' tree (as of v3.8-rc4).
+
+I added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 6 Feb 2013 14:03:13 +1100
+Subject: [PATCH] block: remove new __devinit/exit annotations
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/block/rsxx/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
+index f752191..83dadbe 100644
+--- a/drivers/block/rsxx/core.c
++++ b/drivers/block/rsxx/core.c
+@@ -319,7 +319,7 @@ static int rsxx_compatibility_check(struct rsxx_cardinf=
+o *card)
+ 	return 0;
+ }
+=20
+-static int __devinit rsxx_pci_probe(struct pci_dev *dev,
++static int rsxx_pci_probe(struct pci_dev *dev,
+ 					const struct pci_device_id *id)
+ {
+ 	struct rsxx_cardinfo *card;
+@@ -510,7 +510,7 @@ failed_ida_get:
+ 	return st;
+ }
+=20
+-static void __devexit rsxx_pci_remove(struct pci_dev *dev)
++static void rsxx_pci_remove(struct pci_dev *dev)
+ {
+ 	struct rsxx_cardinfo *card =3D pci_get_drvdata(dev);
+ 	unsigned long flags;
+@@ -608,7 +608,7 @@ static struct pci_driver rsxx_pci_driver =3D {
+ 	.name		=3D DRIVER_NAME,
+ 	.id_table	=3D rsxx_pci_ids,
+ 	.probe		=3D rsxx_pci_probe,
+-	.remove		=3D __devexit_p(rsxx_pci_remove),
++	.remove		=3D rsxx_pci_remove,
+ 	.suspend	=3D rsxx_pci_suspend,
+ 	.shutdown	=3D rsxx_pci_shutdown,
+ };
+--=20
+1.8.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc crypto/ctr.c
-index 1f2997c,095dcb6..0000000
---- a/crypto/ctr.c
-+++ b/crypto/ctr.c
-@@@ -335,40 -324,18 +335,38 @@@ static void crypto_rfc3686_exit_tfm(str
- =20
-  static struct crypto_instance *crypto_rfc3686_alloc(struct rtattr **tb)
-  {
- +	struct crypto_attr_type *algt;
-  	struct crypto_instance *inst;
-  	struct crypto_alg *alg;
- +	struct crypto_skcipher_spawn *spawn;
- +	const char *cipher_name;
-  	int err;
- =20
- -	err =3D crypto_check_attr_type(tb, CRYPTO_ALG_TYPE_BLKCIPHER);
- +	algt =3D crypto_get_attr_type(tb);
-- 	err =3D PTR_ERR(algt);
- +	if (IS_ERR(algt))
-- 		return ERR_PTR(err);
-++		return ERR_CAST(algt);
- +
- +	if ((algt->type ^ CRYPTO_ALG_TYPE_BLKCIPHER) & algt->mask)
- +		return ERR_PTR(-EINVAL);
- +
- +	cipher_name =3D crypto_attr_alg_name(tb[1]);
-- 	err =3D PTR_ERR(cipher_name);
- +	if (IS_ERR(cipher_name))
-- 		return ERR_PTR(err);
-++		return ERR_CAST(cipher_name);
- +
- +	inst =3D kzalloc(sizeof(*inst) + sizeof(*spawn), GFP_KERNEL);
- +	if (!inst)
- +		return ERR_PTR(-ENOMEM);
- +
- +	spawn =3D crypto_instance_ctx(inst);
- +
- +	crypto_set_skcipher_spawn(spawn, inst);
- +	err =3D crypto_grab_skcipher(spawn, cipher_name, 0,
- +				   crypto_requires_sync(algt->type,
- +							algt->mask));
-  	if (err)
- -		return ERR_PTR(err);
- +		goto err_free_inst;
- =20
- -	alg =3D crypto_attr_alg(tb[1], CRYPTO_ALG_TYPE_BLKCIPHER,
- -				  CRYPTO_ALG_TYPE_MASK);
- -	if (IS_ERR(alg))
- -		return ERR_CAST(alg);
- +	alg =3D crypto_skcipher_spawn_alg(spawn);
- =20
-  	/* We only support 16-byte blocks. */
-  	err =3D -EINVAL;
-
---Signature=_Wed__6_Feb_2013_13_20_11_+1100_hG_/3vx8/=7B5y+1
+--Signature=_Wed__6_Feb_2013_14_06_23_+1100_CyaHjbJ=8D9xycG2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJREb3bAAoJEECxmPOUX5FExwAP/1+AsMQON4aljhGUNCwC/HEZ
-gg90Bl9WRM6x7rMlVEdUZvFUHFDv/9cEyufR/ZaawdXaH6bg1gbuIHbkc+vigHev
-g5J8rjJSCSMX6N4CtTlPZQI4Uo6rlis4xw5vBnmlz7d+VOFb5sPENykRCy52//wc
-sfAZ9FWv9bcyPOJO5kk0WhRC7gnlJLjuPzMIrhibqwd01wtwjRNFxx2e9pk9paUp
-2r9nB27c66lU9X8FH5Q/8uUGJ4I8MdGHus/Uf/SeT8JOdfEi2tePmeV+UCYIM7MK
-EveqGAzl6HGri0D2BJrU4TiqB7ATUPnHNfc+bcFsYzrO4N/SLwat3+koowVYVk01
-1og8V1FzLZYYV3cOkQNiA3VMUnsT3Z8JPAn9mKwWm1kY8Jz4exeLOwoeUrz3K+v5
-qzoCDE/qZStYeJpeh1aHp8M3AH4iaoJWbmubsrnIGYtEIOi+0dOduoJsFcY1Dhjz
-Mw7P8bYwermzkqg98BjwCDnMC1Kx47rRJtSMKUguReWVuTfRzA0kaY5PxMu5DuvQ
-+GebmDrlXD5911Qgsu3Jb9OmGkfkzNI+CUInwCpNKyHtN5UJ/EhorcVkqGQuRSIJ
-a+4ZijOZegdk0w2iT+d7clPjKs3u0cFvNRp2m0nSvtFJiBCgSEv95SeVUiLluKBl
-Y+A5MWLK0xWQELGVBVr4
-=WK/T
+iQIcBAEBCAAGBQJREcivAAoJEECxmPOUX5FErmcQAI5nPcNbfeCl0CC1mN+4Hd50
+DISmjnNYvhHtPFVpDh6vF+OgZQ+8OPnA2sJ2XCUroVU5AtVUJWx6K3VtLOuI3xZF
+VfRz13u2vJx7/GtuUkxuslpHB8s2P9W6Ar+D4jvXQiK2v8UOFF551h+IWzKBeGH/
+qW/0lw5fDRkwPU56e9BlACDs3Pa44XSiG8TR9m9vTBi7Q+xbmte3baKmLf4GBZzm
+VD7uuzxRWT6JGQ/Iuu1vuVrhkLq9YjfUICDO4jSJJymPob9QRBkrn2RRQIQCvCsO
+RVgGMIMkac8+E0YecDY1nhf5bIk9O/9F4qJwPVb/ZBagbxcQW8tWZGU+OidpHxxv
+x6UdPyYj3Kl67NVoPYhCdOXkzMVhRf1JA0YGxiE6H8FwLB4WMAMz62OQL+GEu4QG
+1c3+zb9kuZPL1u7J0JO4kwRN2105RyEIrhz3qPi38hwCOez8tTd9YZWLMVIA24eP
+JpZkgg6g7Pds8kl3be0kdbL6Bxyh/EOFicpFOsBMqrdJIgNRlOxOqyS2eO+hzDEN
+23qUruXipgKzW+9DwSd6qSY8cxWrn769tlnZECjZBpoPk1GglXPHW6kw7u7vnnpg
+MqXl/t4EUpQ0ngLRnNjnhzolAqNf3sjd9jKMFoh4bG/j93UfkI4v37DtLlS1syW/
+bYVJDZE0JjoNA+LkzSqB
+=IprU
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__6_Feb_2013_13_20_11_+1100_hG_/3vx8/=7B5y+1--
+--Signature=_Wed__6_Feb_2013_14_06_23_+1100_CyaHjbJ=8D9xycG2--
