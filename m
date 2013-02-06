@@ -1,34 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the arm tree
-Date: Wed, 6 Feb 2013 15:43:40 +1100
-Message-ID: <20130206154340.18fc2dc41e4278ea1edbbba6@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the spi tree
+Date: Wed, 6 Feb 2013 16:21:51 +1100
+Message-ID: <20130206162151.73f40e71f5103e33c19c4c49@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__6_Feb_2013_15_43_40_+1100_COZuW8vyyrQw4aCG"
+ boundary="Signature=_Wed__6_Feb_2013_16_21_51_+1100_hbzL/UC5UNOtpNzK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44060 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43580 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755163Ab3BFEnw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 23:43:52 -0500
+	with ESMTP id S1750986Ab3BFFWB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Feb 2013 00:22:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Christoffer Dall <c.dall@virtualopensystems.com>, Russell King <rmk@arm.linux.org.uk>, Cornelia Huck <cornelia.huck@de.ibm.com>, Alexander Graf <agraf@suse.de>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Jingoo Han <jg1.han@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
 
---Signature=_Wed__6_Feb_2013_15_43_40_+1100_COZuW8vyyrQw4aCG
+--Signature=_Wed__6_Feb_2013_16_21_51_+1100_hbzL/UC5UNOtpNzK
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the kvm tree got a conflict in
-include/uapi/linux/kvm.h between commit aa024c2f35a0 ("KVM: ARM: Power
-State Coordination Interface implementation") from the arm tree and
-commits fa6b7fe9928d ("KVM: s390: Add support for channel I/O
-instructions") and 1c810636556c ("KVM: PPC: BookE: Implement EPR exit")
-from the kvm tree.
+Today's linux-next merge of the driver-core tree got a conflict in drivers/=
+spi/spi-s3c64xx.c between commit 4eb770067f3a ("spi/s3c64xx: Use devm_clk_g=
+et() and devm_request_irq()") from the  tree and commit b0ee5605234a ("spi:=
+ Convert to devm_ioremap_resource()") from the driver-core tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,40 +35,46 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/uapi/linux/kvm.h
-index 7f2360a,9a2db57..0000000
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@@ -636,7 -660,8 +661,9 @@@ struct kvm_ppc_smmu_info=20
-  #define KVM_CAP_IRQFD_RESAMPLE 82
-  #define KVM_CAP_PPC_BOOKE_WATCHDOG 83
-  #define KVM_CAP_PPC_HTAB_FD 84
-+ #define KVM_CAP_S390_CSS_SUPPORT 85
-+ #define KVM_CAP_PPC_EPR 86
- +#define KVM_CAP_ARM_PSCI 87
+diff --cc drivers/spi/spi-s3c64xx.c
+index 7cfbe9d,3d4a7c4..0000000
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@@ -1241,11 -1276,10 +1241,10 @@@ static int s3c64xx_spi_probe(struct pla
+  	/* the spi->mode bits understood by this driver: */
+  	master->mode_bits =3D SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
  =20
-  #ifdef KVM_CAP_IRQ_ROUTING
+- 	sdd->regs =3D devm_request_and_ioremap(&pdev->dev, mem_res);
+- 	if (sdd->regs =3D=3D NULL) {
+- 		dev_err(&pdev->dev, "Unable to remap IO\n");
+- 		ret =3D -ENXIO;
++ 	sdd->regs =3D devm_ioremap_resource(&pdev->dev, mem_res);
++ 	if (IS_ERR(sdd->regs)) {
++ 		ret =3D PTR_ERR(sdd->regs);
+ -		goto err1;
+ +		goto err0;
+  	}
  =20
+  	if (!sci->cfg_gpio && pdev->dev.of_node) {
 
---Signature=_Wed__6_Feb_2013_15_43_40_+1100_COZuW8vyyrQw4aCG
+--Signature=_Wed__6_Feb_2013_16_21_51_+1100_hbzL/UC5UNOtpNzK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJREd98AAoJEECxmPOUX5FEZhsP/25RF4ykAZt4xyhRXPUDfxGF
-9MOfWl70WuXYLcqbu7c9eBFOFDVMRcYvht11IEUku1MZ+XN5kTdFd1OUNaYkwWEa
-h0DawutISpdOHDQ5rnhwsoT0NocZlEiX2IE418iZwd8ABAIy58PnR3UfzYESuEt2
-vzQUYcyvRBWhlJwRlHaNXRC0VJvGKUwuymw/OhHb8IClwMjckkdZ5ejbP1fSWNpC
-0ZGQ6uzK74tnIUS1VH+B89SOUy26DMlG4q/g56dsN8w+Xyn5pDgeGXHK40wouX+7
-8v52TE8V2r+xUzgntfL1BrcQtnlTFnnXXUsO3YHIwdBo10qdElWg/MUyKrYnAbu2
-v16MKDMsInd//nQK1VaEMLpsTYxekunlo7c7NyHzefuLenyxR3UcrH+WP+MZq+fJ
-QO6B0RV4cjjdLCK3yy+TPW9Ap8oIptVtGHU3AvvRXB02N0laagQWbqb+HV/Tqpf0
-w/HzAdORHF4+x+KONrZLmwcjsQu07PG9O2dZJip5ixfxuDLo3R4MUvanKFAwak4P
-iaV/iFEZ/5FE+HgH2yNAtnetfWCAYT8VoZmybR5NOjJd5qGWDd0JcLzvZiONm3Tu
-bA6//F2aMBoLMWeMiabdi5piYgryfKpB7q6BKrnFPJIkhx954UmFa4alOyjc/Wea
-qANKNUEm92wgpRB42eUk
-=7Ad/
+iQIcBAEBCAAGBQJREehvAAoJEECxmPOUX5FEj/AP/AwawM/47FpaCWqW6F6DWsXz
+fBoRvyV9BXUy1OXagZCxvHSjyqXogFvW46k55ZuRc/awB+01mUpxTOZaGK1tpDCh
+nkwphXSSw+x/1TY9bXb7B0MRSiF6gOYjcbIN1DnKnzIxe92G0ZJE4upJj/qr1UDH
+gZNTgNvLMr8bSGaIC33UEY9XU3mrrl/42DgUDWVQt6WpMqCTDWiD5m5w4/z+OObU
+6rityi30mOauLKhih4RCZJp1Ko2HNla8Zc4OWklOQjEL+7dKKLIVwUDtubd8AJrO
+ohm1FyAFaU2V/OWt7k1olHPsBnbD5Tbk5kqhDOzZUVg79q7jQ6pr/G2ukk6Bmx13
+PQSdJJUhPmX7e7eNJTv0hcIwOjyOAFtZUWue+cLGoyvV8+fewuAWzlVs+xVA6czJ
+AL4mYNEec3LxzN8vyXeQHdV3W0QdGlZjKMRHvUmFWA+KTsRebk6bGVCXg7QnOnJZ
+FNPh0fkG1kcj5ubtOobwemCy35AuUhAOUk6xf3VUvrWQfL7NmDcpVnRf+U03d81J
+MBSaEBy9XExrfiE5sjlzn/P4br5zvRok43b1mfDbHW5IBrKjEYTmklklxsZQsMh/
+ysm3w30+kvmZupAZvIDTeK3CuxbsiL1f/fOMG8uD1FZofQKS4VRel3vr+o0DkN0x
+hBSCSGDv8FWAZr+CVRa7
+=7lH8
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__6_Feb_2013_15_43_40_+1100_COZuW8vyyrQw4aCG--
+--Signature=_Wed__6_Feb_2013_16_21_51_+1100_hbzL/UC5UNOtpNzK--
