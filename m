@@ -1,57 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the spi tree with the sound-asoc tree
-Date: Wed, 6 Feb 2013 15:08:18 +1100
-Message-ID: <20130206150818.26d50907120110d160e0e236@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the arm tree
+Date: Wed, 6 Feb 2013 15:43:40 +1100
+Message-ID: <20130206154340.18fc2dc41e4278ea1edbbba6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__6_Feb_2013_15_08_18_+1100_qz6XEgoTyekzeU/N"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lgirdwood@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__6_Feb_2013_15_43_40_+1100_COZuW8vyyrQw4aCG"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44060 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755163Ab3BFEnw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 23:43:52 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Christoffer Dall <c.dall@virtualopensystems.com>, Russell King <rmk@arm.linux.org.uk>, Cornelia Huck <cornelia.huck@de.ibm.com>, Alexander Graf <agraf@suse.de>
 
---Signature=_Wed__6_Feb_2013_15_08_18_+1100_qz6XEgoTyekzeU/N
+--Signature=_Wed__6_Feb_2013_15_43_40_+1100_COZuW8vyyrQw4aCG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
+Hi all,
 
-Today's linux-next merge of the spi tree got a conflict in
-drivers/spi/spi-s3c64xx.c between commit b5be04d35dbb ("spi: s3c64xx:
-Modify SPI driver to use generic DMA DT support") from the sound-asoc tree =
-and
-commit 75bf33611041 ("spi/s3c64xx: fix checkpatch warnings and error")
-from the spi tree.
+Today's linux-next merge of the kvm tree got a conflict in
+include/uapi/linux/kvm.h between commit aa024c2f35a0 ("KVM: ARM: Power
+State Coordination Interface implementation") from the arm tree and
+commits fa6b7fe9928d ("KVM: s390: Add support for channel I/O
+instructions") and 1c810636556c ("KVM: PPC: BookE: Implement EPR exit")
+from the kvm tree.
 
-I fixed it up (the former removed a function modified by the latter) and
-can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__6_Feb_2013_15_08_18_+1100_qz6XEgoTyekzeU/N
+diff --cc include/uapi/linux/kvm.h
+index 7f2360a,9a2db57..0000000
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@@ -636,7 -660,8 +661,9 @@@ struct kvm_ppc_smmu_info=20
+  #define KVM_CAP_IRQFD_RESAMPLE 82
+  #define KVM_CAP_PPC_BOOKE_WATCHDOG 83
+  #define KVM_CAP_PPC_HTAB_FD 84
++ #define KVM_CAP_S390_CSS_SUPPORT 85
++ #define KVM_CAP_PPC_EPR 86
+ +#define KVM_CAP_ARM_PSCI 87
+ =20
+  #ifdef KVM_CAP_IRQ_ROUTING
+ =20
+
+--Signature=_Wed__6_Feb_2013_15_43_40_+1100_COZuW8vyyrQw4aCG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJREdcyAAoJEECxmPOUX5FEfmkQAJSDsGfF1+0v7erlk80DOxHV
-BfsMJPXool1ns5868vFZkQEwHU5qL2Ni5PMzpYvuUQqASJoqT+wyHeFKFiiiArGs
-tp44VZkXmfGbZet17TnY0Ie6mLKQ3zhjNWMZGvWKlOoldTInoE/eGTmjer2GE1+o
-fx31c13xBrVdVoa2xFnA0xSSKPo/5NAT0NeDyj2M5rNY6z7YC83xkPauo7TYr36a
-NMY7DNzxcjW2hhzpiFz3vQshvOX/LSJdPZneN7hBS9zAahKanIE8Xam/cBVUWs0M
-tFzcV0a3GPwRRm6m14q789S3dUw+h1vBNOus/EMgFvczkk03Si/RXrHHBxyGqUnE
-zX6jy6N/SXdNmtaKRS2ajElhQCMEwAP19zAme3vFILRo4JC8bxSDQMnY7p/F9N11
-EOw6Z5CqbjDLCIHEwQLFm6XSapExsEeB28gfee+Pm/1/qs38leJ5HO6KjkkJ2J8a
-HXpkwVMIwLBQ0/0x8pPCAPCmNPDDP/8S+9LMJb+Q8SQscEnpjv6EbaqIyBjZZxWX
-MmjMiWzNzaq6iPXZbqsllU2hvX3xFgRpUzwfQ/cdBKiDquxaCX8PNHZikNL6b7x5
-TgDoEbqXVhDDFaXI3GjyopigvY14JLsQ9IyNAFb4/GwpqBGgiBn7RvnUC+reSfzj
-Jo3oN589hIM0tMzYtEBc
-=/96E
+iQIcBAEBCAAGBQJREd98AAoJEECxmPOUX5FEZhsP/25RF4ykAZt4xyhRXPUDfxGF
+9MOfWl70WuXYLcqbu7c9eBFOFDVMRcYvht11IEUku1MZ+XN5kTdFd1OUNaYkwWEa
+h0DawutISpdOHDQ5rnhwsoT0NocZlEiX2IE418iZwd8ABAIy58PnR3UfzYESuEt2
+vzQUYcyvRBWhlJwRlHaNXRC0VJvGKUwuymw/OhHb8IClwMjckkdZ5ejbP1fSWNpC
+0ZGQ6uzK74tnIUS1VH+B89SOUy26DMlG4q/g56dsN8w+Xyn5pDgeGXHK40wouX+7
+8v52TE8V2r+xUzgntfL1BrcQtnlTFnnXXUsO3YHIwdBo10qdElWg/MUyKrYnAbu2
+v16MKDMsInd//nQK1VaEMLpsTYxekunlo7c7NyHzefuLenyxR3UcrH+WP+MZq+fJ
+QO6B0RV4cjjdLCK3yy+TPW9Ap8oIptVtGHU3AvvRXB02N0laagQWbqb+HV/Tqpf0
+w/HzAdORHF4+x+KONrZLmwcjsQu07PG9O2dZJip5ixfxuDLo3R4MUvanKFAwak4P
+iaV/iFEZ/5FE+HgH2yNAtnetfWCAYT8VoZmybR5NOjJd5qGWDd0JcLzvZiONm3Tu
+bA6//F2aMBoLMWeMiabdi5piYgryfKpB7q6BKrnFPJIkhx954UmFa4alOyjc/Wea
+qANKNUEm92wgpRB42eUk
+=7Ad/
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__6_Feb_2013_15_08_18_+1100_qz6XEgoTyekzeU/N--
+--Signature=_Wed__6_Feb_2013_15_43_40_+1100_COZuW8vyyrQw4aCG--
