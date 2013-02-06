@@ -1,68 +1,44 @@
-From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: linux-next: manual merge of the metag tree with the arc tree
-Date: Wed, 6 Feb 2013 13:01:37 +0000
-Message-ID: <51125431.2090300@imgtec.com>
-References: <20130206110346.edff1db373e5badee7df04c4@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Heads up on a device tree change
+Date: Wed, 6 Feb 2013 13:11:56 +0000
+Message-ID: <CACxGe6sCBCGfLDAGVRgP3cnmE+oyXBDdPeVXVCqrsvCh13yPiw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="------------enig6B81146F0C8EC5CA914ACBA3"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from multi.imgtec.com ([194.200.65.239]:20362 "EHLO multi.imgtec.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751075Ab3BFNCG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Feb 2013 08:02:06 -0500
-In-Reply-To: <20130206110346.edff1db373e5badee7df04c4@canb.auug.org.au>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:37752 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753067Ab3BFNMQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Feb 2013 08:12:16 -0500
+Received: by mail-ie0-f174.google.com with SMTP id k10so1873845iea.33
+        for <linux-next@vger.kernel.org>; Wed, 06 Feb 2013 05:12:16 -0800 (PST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>
+To: linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, Rob Herring <rob.herring@calxeda.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
---------------enig6B81146F0C8EC5CA914ACBA3
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-On 06/02/13 00:03, Stephen Rothwell wrote:
-> Hi James,
->=20
-> Today's linux-next merge of the metag tree got a conflict in
-> tools/perf/perf.h between commit 12bf48ef6194 ("perf, ARC: Enable
-> building perf tools for ARC") from the arc tree and commit 6c4a2bebec36=
+I've just pushed out a change which cleans up platform device
+registration to use the same path whether or not the device tree is
+used. It should be safe, but there is a risk of breakage on powerpc
+platforms.
 
-> ("perf: Enable building perf tools for Meta") from the metag tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no action=
+The patch has two effects of note:
+- DT generated platform devices move from /sys/devices to under
+/sys/devices/platform. Userspace *should* be okay with this, but if
+there are any problems then I can post a workaround patch that keeps
+DT generiated platform_devices in the current location.
+- Resources on platform_devices get registered so they appear in
+/proc/iomem and /proc/ioports and so that device drivers get the added
+protection of request_region. This will cause breakage on device trees
+nodes with partially overlapping memory regions. (ie. 0x100..0x1ff and
+0x180..0x27f). I also have a workaround for this, but I doubt that it
+will be necessary.
 
-> is required).
->=20
+I'm not worried about it, but it is a sufficiently visible change that
+I want you to be aware that it is there.
 
-Thanks, looks good to me
+g.
 
-Cheers
-James
-
-
---------------enig6B81146F0C8EC5CA914ACBA3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.13 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRElQ9AAoJEKHZs+irPybfYUsP+wXQPHJeNIw9riM2ZEYUs2gL
-GK1eWMUTMVbJrhtMTfgeYiuw1gM6HjAP6Vby2bSRCtrusqLsR4VoQV2YFhCDVYLl
-u+G1vEjM17ukiOpF3kPqKCIysGuf58p85tNbvrKkZT0NoaGZeZDr0T7Wi8a7Q8Da
-zV7RqW45jthrTxayky7vyB3M/aG//DRP1NiJsp0v+1dxckCnNT6Wk/HHhwS34mDu
-37NKGisCPeE/An39BjlLuRcC+nPnc/5a+Z8dJOBo4qWmJQkwS/hXqNhJCQbPYl/q
-BWfY+BSjEffRN0/BVfdVUDRzbpRAX5Irq3tl/cIvUydsxL4ig55iUC7hF6lrNRUy
-eX32wpMZInXxIVJgqsdkB0q1NwBEX2Bti35QneoGP0U/LMrk3I7ONlbRDUAjPGDn
-bwujW+Af6+d2hNbsNh2k6xM4/DFTBUwCqIz13Kd6TW3fbRtLSrLdzjvMIG8s4YTl
-4xrxyLMbmHDrAv2UoD1QZK2OgJzRfo5AlsDkQp/44UXttif6IBtCaEyvxdyc3aoG
-9LuLHuLrGw+ZrVC9ffyvqFK2ueJMcA5r6A4lbeJnSjGU3G00aqmtlTdvJOIsx+UZ
-hcMoEzD+rs1IWiU8jfj75ASRs76F/gNzSnUBgkIn1VOfUzzUxBILN4aLeKiYTqVC
-pr0UMhdLSIWF2ROr3c5i
-=fWCw
------END PGP SIGNATURE-----
-
---------------enig6B81146F0C8EC5CA914ACBA3--
+--
+Grant Likely, B.Sc., P.Eng.
+Secret Lab Technologies Ltd.
