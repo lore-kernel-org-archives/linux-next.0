@@ -1,49 +1,68 @@
 From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: next-20130204 - bisected slab problem to "slab: Common constants
- for kmalloc boundaries"
-Date: Wed, 6 Feb 2013 09:44:34 +0000
-Message-ID: <51122602.7060307@imgtec.com>
-References: <510FE051.7080107@imgtec.com> <51100E79.9080101@wwwdotorg.org> <alpine.DEB.2.02.1302042019170.32396@gentwo.org> <0000013cab3780f7-5e49ef46-e41a-4ff2-88f8-46bf216d677e-000000@email.amazonses.com> <51113C8A.2060908@imgtec.com> <0000013caba3a2e8-b80a1426-33b5-44ae-9b2a-85c3ee20dd62-000000@email.amazonses.com>
+Subject: Re: linux-next: manual merge of the metag tree with the arc tree
+Date: Wed, 6 Feb 2013 13:01:37 +0000
+Message-ID: <51125431.2090300@imgtec.com>
+References: <20130206110346.edff1db373e5badee7df04c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <0000013caba3a2e8-b80a1426-33b5-44ae-9b2a-85c3ee20dd62-000000@email.amazonses.com>
-Sender: owner-linux-mm@kvack.org
-To: Christoph Lameter <cl@linux.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="------------enig6B81146F0C8EC5CA914ACBA3"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from multi.imgtec.com ([194.200.65.239]:20362 "EHLO multi.imgtec.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751075Ab3BFNCG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Feb 2013 08:02:06 -0500
+In-Reply-To: <20130206110346.edff1db373e5badee7df04c4@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>
 
-On 05/02/13 18:34, Christoph Lameter wrote:
-> On Tue, 5 Feb 2013, James Hogan wrote:
-> 
->> On 05/02/13 16:36, Christoph Lameter wrote:
->>> OK I was able to reproduce it by setting ARCH_DMA_MINALIGN in slab.h. This
->>> patch fixes it here:
->>>
->>>
->>> Subject: slab: Handle ARCH_DMA_MINALIGN correctly
->>>
->>> A fixed KMALLOC_SHIFT_LOW does not work for arches with higher alignment
->>> requirements.
->>>
->>> Determine KMALLOC_SHIFT_LOW from ARCH_DMA_MINALIGN instead.
->>>
->>> Signed-off-by: Christoph Lameter <cl@linux.com>
->>
->> Thanks, your patch fixes it for me.
-> 
-> Ok I guess that implies a Tested-by:
-> 
+--------------enig6B81146F0C8EC5CA914ACBA3
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Yep sorry, feel free to add my Tested-by: if you roll this as a separate
-patch.
+On 06/02/13 00:03, Stephen Rothwell wrote:
+> Hi James,
+>=20
+> Today's linux-next merge of the metag tree got a conflict in
+> tools/perf/perf.h between commit 12bf48ef6194 ("perf, ARC: Enable
+> building perf tools for ARC") from the arc tree and commit 6c4a2bebec36=
+
+> ("perf: Enable building perf tools for Meta") from the metag tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no action=
+
+> is required).
+>=20
+
+Thanks, looks good to me
 
 Cheers
 James
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+--------------enig6B81146F0C8EC5CA914ACBA3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.13 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRElQ9AAoJEKHZs+irPybfYUsP+wXQPHJeNIw9riM2ZEYUs2gL
+GK1eWMUTMVbJrhtMTfgeYiuw1gM6HjAP6Vby2bSRCtrusqLsR4VoQV2YFhCDVYLl
+u+G1vEjM17ukiOpF3kPqKCIysGuf58p85tNbvrKkZT0NoaGZeZDr0T7Wi8a7Q8Da
+zV7RqW45jthrTxayky7vyB3M/aG//DRP1NiJsp0v+1dxckCnNT6Wk/HHhwS34mDu
+37NKGisCPeE/An39BjlLuRcC+nPnc/5a+Z8dJOBo4qWmJQkwS/hXqNhJCQbPYl/q
+BWfY+BSjEffRN0/BVfdVUDRzbpRAX5Irq3tl/cIvUydsxL4ig55iUC7hF6lrNRUy
+eX32wpMZInXxIVJgqsdkB0q1NwBEX2Bti35QneoGP0U/LMrk3I7ONlbRDUAjPGDn
+bwujW+Af6+d2hNbsNh2k6xM4/DFTBUwCqIz13Kd6TW3fbRtLSrLdzjvMIG8s4YTl
+4xrxyLMbmHDrAv2UoD1QZK2OgJzRfo5AlsDkQp/44UXttif6IBtCaEyvxdyc3aoG
+9LuLHuLrGw+ZrVC9ffyvqFK2ueJMcA5r6A4lbeJnSjGU3G00aqmtlTdvJOIsx+UZ
+hcMoEzD+rs1IWiU8jfj75ASRs76F/gNzSnUBgkIn1VOfUzzUxBILN4aLeKiYTqVC
+pr0UMhdLSIWF2ROr3c5i
+=fWCw
+-----END PGP SIGNATURE-----
+
+--------------enig6B81146F0C8EC5CA914ACBA3--
