@@ -1,48 +1,49 @@
 From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: EXPORT_SYMBOL(min_low_pfn);
-Date: Wed, 6 Feb 2013 09:40:01 +0000
-Message-ID: <511224F1.7020806@imgtec.com>
-References: <CA+8MBbLW333z1Subx=fLu46u2RQXkNB1iTbORuKbq7YpZi1X_w@mail.gmail.com>
+Subject: Re: next-20130204 - bisected slab problem to "slab: Common constants
+ for kmalloc boundaries"
+Date: Wed, 6 Feb 2013 09:44:34 +0000
+Message-ID: <51122602.7060307@imgtec.com>
+References: <510FE051.7080107@imgtec.com> <51100E79.9080101@wwwdotorg.org> <alpine.DEB.2.02.1302042019170.32396@gentwo.org> <0000013cab3780f7-5e49ef46-e41a-4ff2-88f8-46bf216d677e-000000@email.amazonses.com> <51113C8A.2060908@imgtec.com> <0000013caba3a2e8-b80a1426-33b5-44ae-9b2a-85c3ee20dd62-000000@email.amazonses.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from multi.imgtec.com ([194.200.65.239]:60999 "EHLO multi.imgtec.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751276Ab3BFJkF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Feb 2013 04:40:05 -0500
-In-Reply-To: <CA+8MBbLW333z1Subx=fLu46u2RQXkNB1iTbORuKbq7YpZi1X_w@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Sanjay Lal <sanjayl@kymasys.com>, Ralf Baechle <ralf@linux-mips.org>, linux-next@vger.kernel.org
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <0000013caba3a2e8-b80a1426-33b5-44ae-9b2a-85c3ee20dd62-000000@email.amazonses.com>
+Sender: owner-linux-mm@kvack.org
+To: Christoph Lameter <cl@linux.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org
+List-Id: linux-next.vger.kernel.org
 
-On 05/02/13 19:31, Tony Luck wrote:
-> Today i noticed in linux-next this commit:
+On 05/02/13 18:34, Christoph Lameter wrote:
+> On Tue, 5 Feb 2013, James Hogan wrote:
 > 
-> commit b0d9c17503444c2df8cb8e93ccfa4877edd71933
-> Author: Sanjay Lal <sanjayl@kymasys.com>
-> Date:   Wed Nov 21 18:34:14 2012 -0800
+>> On 05/02/13 16:36, Christoph Lameter wrote:
+>>> OK I was able to reproduce it by setting ARCH_DMA_MINALIGN in slab.h. This
+>>> patch fixes it here:
+>>>
+>>>
+>>> Subject: slab: Handle ARCH_DMA_MINALIGN correctly
+>>>
+>>> A fixed KMALLOC_SHIFT_LOW does not work for arches with higher alignment
+>>> requirements.
+>>>
+>>> Determine KMALLOC_SHIFT_LOW from ARCH_DMA_MINALIGN instead.
+>>>
+>>> Signed-off-by: Christoph Lameter <cl@linux.com>
+>>
+>> Thanks, your patch fixes it for me.
 > 
->     MIPS: Export symbols used by KVM/MIPS module
+> Ok I guess that implies a Tested-by:
 > 
-> which causes this kernel build warning on ia64:
-> 
-> WARNING: vmlinux: 'min_low_pfn' exported twice. Previous export was in vmlinux
-> 
-> 
-> We just need to delete the arch/ia64 specific export (and grep says
-> for arch/metag too):
-> 
-> $ git grep min_low_pfn | grep EXPORT
-> arch/ia64/kernel/ia64_ksyms.c:EXPORT_SYMBOL(min_low_pfn);	/* defined
-> by bootmem.c, but not exported by generic code */
-> arch/metag/kernel/metag_ksyms.c:EXPORT_SYMBOL(min_low_pfn);
-> mm/bootmem.c:EXPORT_SYMBOL(min_low_pfn);
 
-Yes, I had noticed this the other day too. I'll probably roll the
-equivalent metag patch into the metag tree since on metag it does no
-real harm not exporting it at this stage.
+Yep sorry, feel free to add my Tested-by: if you roll this as a separate
+patch.
 
 Cheers
 James
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
