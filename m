@@ -1,62 +1,83 @@
-From: William Hubbs <w.d.hubbs@gmail.com>
-Subject: Re: [PATCH] init: fix name of root device in /proc/mounts
-Date: Tue, 5 Feb 2013 17:36:46 -0600
-Message-ID: <20130205233646.GA28417@linux1>
-References: <1360094867-28009-1-git-send-email-w.d.hubbs@gmail.com>
- <20130205201035.GA28045@linux1>
- <20130206084546.9a7adb093c14330a8e96147e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the metag tree with the arc tree
+Date: Wed, 6 Feb 2013 11:03:46 +1100
+Message-ID: <20130206110346.edff1db373e5badee7df04c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__6_Feb_2013_11_03_46_+1100_jhUXbvvQJVA2HfxB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:45505 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754285Ab3BEXgv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 18:36:51 -0500
-Received: by mail-oa0-f53.google.com with SMTP id m1so858963oag.40
-        for <linux-next@vger.kernel.org>; Tue, 05 Feb 2013 15:36:51 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <20130206084546.9a7adb093c14330a8e96147e@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48438 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753302Ab3BFADy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Feb 2013 19:03:54 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, mpagano@gentoo.org
+To: James Hogan <james.hogan@imgtec.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>
 
-
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Wed__6_Feb_2013_11_03_46_+1100_jhUXbvvQJVA2HfxB
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 06, 2013 at 08:45:46AM +1100, Stephen Rothwell wrote:
-> Hi William,
->=20
-> On Tue, 5 Feb 2013 14:10:35 -0600 William Hubbs <w.d.hubbs@gmail.com> wro=
-te:
-> >
-> > this patch was originally sent to linux-kernel, but I was told it might
-> > be better to send it to this list since this section of the kernel does
-> > not have a specific maintainer.
->=20
-> You were misinformed.  The linux-next list is for discussion of things
-> about the linux-next releases and not for general development.
-> linux-kernel was the right place.
+Hi James,
 
-Ok, no problem, I'll just wait for responses from there. Sorry about the
-noise on this list.
+Today's linux-next merge of the metag tree got a conflict in
+tools/perf/perf.h between commit 12bf48ef6194 ("perf, ARC: Enable
+building perf tools for ARC") from the arc tree and commit 6c4a2bebec36
+("perf: Enable building perf tools for Meta") from the metag tree.
 
-William
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---a8Wt8u1KmwUX3Y2C
+diff --cc tools/perf/perf.h
+index 8a68ad3,768507e..0000000
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@@ -98,12 -98,12 +98,18 @@@ void get_term_dimensions(struct winsiz
+  #define CPUINFO_PROC	"cpu model"
+  #endif
+ =20
+ +#ifdef __arc__
+ +#define rmb()		asm volatile("" ::: "memory")
+ +#define cpu_relax()	rmb()
+ +#define CPUINFO_PROC	"Processor"
+ +#endif
+ +
++ #ifdef __metag__
++ #define rmb()		asm volatile("" ::: "memory")
++ #define cpu_relax()	asm volatile("" ::: "memory")
++ #define CPUINFO_PROC	"CPU"
++ #endif
++=20
+  #include <time.h>
+  #include <unistd.h>
+  #include <sys/types.h>
+
+--Signature=_Wed__6_Feb_2013_11_03_46_+1100_jhUXbvvQJVA2HfxB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iEYEARECAAYFAlERl44ACgkQblQW9DDEZThkAwCfY+OyOTmCijwSudXpZZrJjECT
-29wAoI8IYnwobWn/9euEc7AxqejM/xTY
-=ltDS
+iQIcBAEBCAAGBQJREZ3iAAoJEECxmPOUX5FE19MQAKIJAhE3qql0vAYyqRkWAf19
+E0ZLR7knKQOfvbcqR71X2wjDx669VaJkdS7BEtlcPmtMH7ex4ePfPTrT73xoR2Od
+wVcG4LrCm3hI64JWJmeP061KRuhSXstVK4y555Tu56h0E+setJZ/TDW++ZTWnKC0
+osQlMgODlki0GA/5/UER3cYrSC9pE9f2jOQcMAWxyiNtzJz04uQ/wBVkX98yHsQ9
+WPo2RVVg/FmcVK96ZLqR5LJvyjdubip3jBNN7lrvG3k4PQgRla/kyHfouGsMx89b
+unP/BEogpwKfZSMXSGJ2aeJGhmPhqfUMsR8nOmWmRej4guAFFyj1wCSXMG6iMRIs
+CwG4+yzZidlA4HEShbIw6L6QS6mxQC/xummgBUE13wIulXq0z0jkguSHoUJ2vJ8G
+O2/2K/JG5ukmRkrpqimbCaQuI+Qoqryw9x3Xf4alVrtDlw0sdRp02w5nDiO6ah1R
+s16Is2p6Mhj6QM63O6WLZLaj29jvpJH8sKvDGEGVO9vqYir/DU6wSRb9LJRy84Oq
+beVnhwipiP0Lvk2q2ob5g3EBNUzg16QXdQCFHXW1EuvKdgxSxwzY6oZJ+tbcWjJ6
+2iNGQ7tinh3H1HMEmACCIG4sqsFzCvkxhwtg+SUWJdFTyBaMmMl96AgS3I5+5ClI
+beCi9IUp/RaiKPMIKjL7
+=EJm+
 -----END PGP SIGNATURE-----
 
---a8Wt8u1KmwUX3Y2C--
+--Signature=_Wed__6_Feb_2013_11_03_46_+1100_jhUXbvvQJVA2HfxB--
