@@ -1,122 +1,105 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the s390 tree
-Date: Thu, 7 Feb 2013 13:50:45 +1100
-Message-ID: <20130207135045.bf4dac00c7f359b70fab7374@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Thu, 7 Feb 2013 14:20:05 +1100
+Message-ID: <20130207142005.2cc57245bec91614a8ae0a55@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__7_Feb_2013_13_50_45_+1100_VyG3s=Cd4B.6iYFM"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Frederic Weisbecker <fweisbec@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__7_Feb_2013_14_20_05_+1100_CqRJbs+DW27mFyKL"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46624 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751869Ab3BGDUO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Feb 2013 22:20:14 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
 
---Signature=_Thu__7_Feb_2013_13_50_45_+1100_VyG3s=Cd4B.6iYFM
+--Signature=_Thu__7_Feb_2013_14_20_05_+1100_CqRJbs+DW27mFyKL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/s390/Kconfig between commit ad2c429560fc ("s390/Kconfig: sort list
-of arch selected config options") from the s390 tree and commit
-6147a9d8070e ("irq_work: Remove CONFIG_HAVE_IRQ_WORK") from the tip tree.
+Today's linux-next merge of the kvm tree got a conflict in
+arch/x86/include/asm/vmx.h between commit af170c5061dd ("UAPI: (Scripted)
+Disintegrate arch/x86/include/asm") from Linus' tree (v3.8-rc1) and commit
+b0da5bec30ec ("KVM: VMX: add missing exit names to VMX_EXIT_REASONS
+array") from the kvm tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+The section modified by the latter has been moved to
+arch/x86/include/uapi/asm/vmx.h, so my fix up patch for that file now is
+below and can carry the fix as necessary (no action is required).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 7 Feb 2013 14:15:07 +1100
+Subject: [PATCH] x86, apicv: merge fixup for uapi include file split
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/include/uapi/asm/vmx.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vm=
+x.h
+index 979d03b..2871fcc 100644
+--- a/arch/x86/include/uapi/asm/vmx.h
++++ b/arch/x86/include/uapi/asm/vmx.h
+@@ -62,10 +62,12 @@
+ #define EXIT_REASON_MCE_DURING_VMENTRY  41
+ #define EXIT_REASON_TPR_BELOW_THRESHOLD 43
+ #define EXIT_REASON_APIC_ACCESS         44
++#define EXIT_REASON_EOI_INDUCED         45
+ #define EXIT_REASON_EPT_VIOLATION       48
+ #define EXIT_REASON_EPT_MISCONFIG       49
+ #define EXIT_REASON_WBINVD              54
+ #define EXIT_REASON_XSETBV              55
++#define EXIT_REASON_APIC_WRITE          56
+ #define EXIT_REASON_INVPCID             58
+=20
+ #define VMX_EXIT_REASONS \
+@@ -103,7 +105,12 @@
+ 	{ EXIT_REASON_APIC_ACCESS,           "APIC_ACCESS" }, \
+ 	{ EXIT_REASON_EPT_VIOLATION,         "EPT_VIOLATION" }, \
+ 	{ EXIT_REASON_EPT_MISCONFIG,         "EPT_MISCONFIG" }, \
+-	{ EXIT_REASON_WBINVD,                "WBINVD" }
++	{ EXIT_REASON_WBINVD,                "WBINVD" }, \
++	{ EXIT_REASON_APIC_WRITE,            "APIC_WRITE" }, \
++	{ EXIT_REASON_EOI_INDUCED,           "EOI_INDUCED" }, \
++	{ EXIT_REASON_INVALID_STATE,         "INVALID_STATE" }, \
++	{ EXIT_REASON_INVD,                  "INVD" }, \
++	{ EXIT_REASON_INVPCID,               "INVPCID" }
+=20
+=20
+ #endif /* _UAPIVMX_H */
+--=20
+1.8.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/s390/Kconfig
-index 17775cf,c15ba7d..0000000
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@@ -91,56 -128,17 +91,55 @@@ config S39
-  	select ARCH_INLINE_WRITE_UNLOCK_BH
-  	select ARCH_INLINE_WRITE_UNLOCK_IRQ
-  	select ARCH_INLINE_WRITE_UNLOCK_IRQRESTORE
- -	select HAVE_UID16 if 32BIT
- +	select ARCH_SAVE_PAGE_KEYS if HIBERNATION
-  	select ARCH_WANT_IPC_PARSE_VERSION
- -	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT
- +	select BUILDTIME_EXTABLE_SORT
- +	select CLONE_BACKWARDS2
- +	select GENERIC_CLOCKEVENTS
- +	select GENERIC_CPU_DEVICES if !SMP
- +	select GENERIC_KERNEL_THREAD
-  	select GENERIC_SMP_IDLE_THREAD
-  	select GENERIC_TIME_VSYSCALL_OLD
- -	select GENERIC_CLOCKEVENTS
- -	select KTIME_SCALAR if 32BIT
- +	select HAVE_ALIGNED_STRUCT_PAGE if SLUB
- +	select HAVE_ARCH_JUMP_LABEL if !MARCH_G5
- +	select HAVE_ARCH_MUTEX_CPU_RELAX
-  	select HAVE_ARCH_SECCOMP_FILTER
- +	select HAVE_ARCH_TRACEHOOK
- +	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT
- +	select HAVE_BPF_JIT if 64BIT && PACK_STACK
- +	select HAVE_CMPXCHG_DOUBLE
- +	select HAVE_CMPXCHG_LOCAL
- +	select HAVE_C_RECORDMCOUNT
- +	select HAVE_DEBUG_KMEMLEAK
- +	select HAVE_DYNAMIC_FTRACE
- +	select HAVE_FTRACE_MCOUNT_RECORD
- +	select HAVE_FUNCTION_GRAPH_TRACER
- +	select HAVE_FUNCTION_TRACER
- +	select HAVE_FUNCTION_TRACE_MCOUNT_TEST
-- 	select HAVE_IRQ_WORK
- +	select HAVE_KERNEL_BZIP2
- +	select HAVE_KERNEL_GZIP
- +	select HAVE_KERNEL_LZMA
- +	select HAVE_KERNEL_LZO
- +	select HAVE_KERNEL_XZ
- +	select HAVE_KPROBES
- +	select HAVE_KRETPROBES
- +	select HAVE_KVM if 64BIT
- +	select HAVE_MEMBLOCK
- +	select HAVE_MEMBLOCK_NODE_MAP
-  	select HAVE_MOD_ARCH_SPECIFIC
- +	select HAVE_OPROFILE
- +	select HAVE_PERF_EVENTS
- +	select HAVE_REGS_AND_STACK_ACCESS_API
- +	select HAVE_SYSCALL_TRACEPOINTS
- +	select HAVE_SYSCALL_WRAPPERS
- +	select HAVE_UID16 if 32BIT
- +	select HAVE_VIRT_CPU_ACCOUNTING
- +	select INIT_ALL_POSSIBLE
- +	select KTIME_SCALAR if 32BIT
-  	select MODULES_USE_ELF_RELA
- -	select CLONE_BACKWARDS2
- +	select SYSCTL_EXCEPTION_TRACE
- +	select USE_GENERIC_SMP_HELPERS if SMP
- +	select VIRT_CPU_ACCOUNTING
- =20
-  config SCHED_OMIT_FRAME_POINTER
-  	def_bool y
-
---Signature=_Thu__7_Feb_2013_13_50_45_+1100_VyG3s=Cd4B.6iYFM
+--Signature=_Thu__7_Feb_2013_14_20_05_+1100_CqRJbs+DW27mFyKL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRExaFAAoJEECxmPOUX5FEq2YP/0e1v+P2UppspNsUdEev24ve
-8Ngdrd+dLOFoQSEcmk/2yf6Wr1F/Q14ylmose9AGwACtTn4/uMKZkecYXXU/+U/b
-BSrUskfn9WJVJsZgFAsZ9X3ROEimV/I2DoKEbY7WydEBf38EvvUF2gXV9LFobPGv
-VXPbeq9f/qCq3tYQmlj5GPuDev0Q7zU6obxGb+Iv/kdXgQFbO9Q5O7Ndgya+L+jq
-0o1vUhbUct1WaaGOUiD5IhQeL3zwsCCXEPoHu8KdSFQ7Ncen2Z2z4LY7KJxkL7IG
-7AdYz0CqnifEBvIcV+fKMrA4b4H9Ut/ae4NxxylppADQA9W/dh7+8Nc/Wks/qBKe
-lXDkf1fsVC0RKANeLRyV+YwKXdFEWHcxHLTq0GvGKpqln5LVEMJUmSQetbxewnXS
-xUamTAfyy8U1q+tIe7vDV4pH81WEfVY+s8nY6cfFTAMcIsIjVfY5+bxNYveUa3ja
-ANtVbWRVicOu+fQA7udlSI5nWSFIg20RRX7ZNjfmrQyYWjD+4ypzonSThfjKIfNH
-8TPUugZyeSsSs+0m4uHpYtUSJ0J4TZrBwlxOVAlL295oMrh+V0eATUBWdT87C8EO
-dcuv/U3l7h2P2J2dYPiZr5PsaYLd7NL+FVyukfDiXBZ5029JFp2UpOf/nhIBzUKo
-oFkedSRItikg1wk6IDw/
-=nJJ1
+iQIcBAEBCAAGBQJREx1lAAoJEECxmPOUX5FEblUP/3rqCUWmfxKeW1pav/N0BBXd
+9f862wptd5AzR58LjQB6AvJ4+rMBP+kcM7l1Qt2/1O4q7OGHMMqAp2ZkrBqqEiX5
+2Z8VADHtNsZGszY0WSY9cNzG7biTA+S5inQ27SqR3pQXnfKlL+UKXXuKWHVYVWao
+Wk/ztgoVJVSp7uUGeOnzkD3fMJizWDVtT1Mk/aAgVYVxh6rEW2LhmhMEG7Fle5sI
+GxSS8HibqvxT1JjdAR/HVJPj0hE+s4rSXOR7rqt2h9bKOHpQmponBbIrJUIxrZq8
+Dbb3j4F0cYH7HLSCB0POXwZ3VqZKY4TZQlT1vh/SRO00LQ02tAIuWREYOycsykh/
+JcAUN8HVQ5MM45X5dL+GtdOxsrTAnT3wESBZ78x0Xwin6hCyI+8Ll7w5Ft8HbB3p
+BDvaBQObIhsE3EZPxLsbR6aYJkWWJC7aYB15GrGryJWHq2vuo4U445fqb83CEWBh
+hJxSSjDvWcbC785YvP/2EbpLwZze0FN9vAwGXUk7I819Nsiqxybj4JhjIPBgGESM
+2tMLa+r6xjfL28KBe6wDKhFIoIZtglf6sl8C9MAPJVwaKZ26/+kUto8n+Elf6i5+
+2WVO/U5dZrl2o+Rve3jZz7XPyQHbsKH4adRmjmEf4jUfLfPHO4hIrLefak3/WnRk
+6o7TdtTPsHY0B+DicAHR
+=4PFO
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__7_Feb_2013_13_50_45_+1100_VyG3s=Cd4B.6iYFM--
+--Signature=_Thu__7_Feb_2013_14_20_05_+1100_CqRJbs+DW27mFyKL--
