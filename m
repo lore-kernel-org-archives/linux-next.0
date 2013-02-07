@@ -1,92 +1,37 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: Tree for Feb 7 (fakeroot BROKEN due to SYSV IPC support?)
-Date: Thu, 07 Feb 2013 03:14:30 -0800
-Message-ID: <87ip644bqh.fsf@xmission.com>
-References: <CA+icZUXzh1S2+ZQ8vvPFSN8jXS62kijbAP+83F0hG9emLQzpQw@mail.gmail.com>
-	<CA+icZUWQuLe1banpd9qzuvUtSep0GiyQWpu=yjhSao_9qAgaUA@mail.gmail.com>
-	<CA+icZUWNXpta6PhVCMvEjZVTgi0H0AC4Ou+ysG+b5PMEF6kxXQ@mail.gmail.com>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: linux-next build conflict between modules and metag trees (LOCKDEP_NOW_UNRELIABLE)
+Date: Thu, 7 Feb 2013 11:16:12 +0000
+Message-ID: <51138CFC.9000508@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out01.mta.xmission.com ([166.70.13.231]:45299 "EHLO
-	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751261Ab3BGLOq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Feb 2013 06:14:46 -0500
-In-Reply-To: <CA+icZUWNXpta6PhVCMvEjZVTgi0H0AC4Ou+ysG+b5PMEF6kxXQ@mail.gmail.com>
-	(Sedat Dilek's message of "Thu, 7 Feb 2013 11:42:40 +0100")
+Received: from multi.imgtec.com ([194.200.65.239]:38718 "EHLO multi.imgtec.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751261Ab3BGLQU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Feb 2013 06:16:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Sedat Dilek <sedat.dilek@gmail.com> writes:
+Hi Rusty,
 
-> On Thu, Feb 7, 2013 at 11:20 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> On Thu, Feb 7, 2013 at 10:38 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>> On Thu, Feb 7, 2013 at 7:37 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>> Hi all,
->>>>
->>>> Changes since 20130206:
->>>>
->>>> Removed tree: kvmtool (still present via the tip tree)
->>>>
->>>> The block tree lost its build failure.
->>>>
->>>> The tip tree gained a conflict against the s390 tree.
->>>>
->>>> The kvm tree gained a conflict against Linus' tree.
->>>>
->>>> The tty tree lost its build failure.
->>>>
->>>> The arm-soc tree gained conflicts against the iommu tree.
->>>>
->>>> The signal tree gained a conflict against the s390 tree.
->>>>
->>>> The akpm tree gained a conflict against the kvm tree and lost its build
->>>> failure.
->>>>
->>>> ----------------------------------------------------------------------------
->>>>
->>>
->>> My build-script uses fakeroot and does no more start:
->>>
->>> $ ./scripts/build_linux-next.sh
->>> make options ...... CC=gcc-4.6 -j4
->>> KBUILD_BUILD_USER=sedat.dilek@gmail.com
->>> LOCALVERSION=-next20130207-2-iniza-small
->>> dep-pkg options ... KDEB_PKGVERSION=3.8.0~rc6~next20130207-2~iniza+dileks1
->>> fakeroot, while creating message channels: Invalid argument
->>> This may be due to a lack of SYSV IPC support.
->>> fakeroot: error while starting the `faked' daemon.
->>> kill: usage: kill [-s sigspec | -n signum | -sigspec] pid | jobspec
->>> ... or kill -l [sigspec]
->>>
->>>
->>> Any hints?
->>> ( I could run strace... )
->>>
->>> - Sedat -
->>
->> Attached strace outputs within yesterday's (GOOD) and today's (BAD) Linux-Next.
->>
->> - Sedat -
->
-> [ CCing Al and Eric ]
->
-> I compared quickly the diff between the -next versions and saw changes
-> coming from signal and userns trees.
-> ( Sorry for re-attaching the strace outputs. )
+The metag architecture tree adds an add_taint(TAINT_DIE) like other
+architectures do, and the modules-next tree adds the
+LOCKDEP_NOW_UNRELIABLE flag to all uses of add_taint (but obviously
+misses arch/metag since it doesn't exist yet), causing a compile error
+on metag in -next when the two are merged together.
 
-It has been about a week and a half since I have pushed anything into
-the userns tree, and I don't have anything ipc related in my tree.
-So the reason for the suspicion seems odd.
+Is it okay for me to merge your commit 373d4d0 ("taint: add explicit
+flag to show whether lock dep is still OK.") in modules-next into the
+base of the metag tree and expect it not to be rebased, so that I can
+then squash the fix into the metag tree?
 
-The straces are useless because all they show is that fakeroot was
-forked, but there is not a trace of fakeroot itself.
+The only commits this would include are:
+$ git log --oneline linus/master..373d4d0
+373d4d0 taint: add explicit flag to show whether lock dep is still OK.
+64748a2 module: printk message when module signature fail taints kernel.
 
-Given the timing my initial suspect would be the idr_preload patches
-from Tejun that were merged via Andrew's akpm tree.  I didn't see
-anything in there that would kill ipc but that is likely the most recent
-touch to the ipc code.
-
-Eric
+Thanks
+James
