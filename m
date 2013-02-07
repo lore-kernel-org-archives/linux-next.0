@@ -1,105 +1,54 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Feb 6 [WARNING: at kernel/sched/clock.c:219 sched_clock_cpu+0xf9/0x110()]
-Date: Thu, 7 Feb 2013 21:17:14 +0100
-Message-ID: <CA+icZUU7+hWhiaOdyFNoghJZVqnOvbPABy=m0KLuiQcsKih--g@mail.gmail.com>
-References: <CA+icZUUu2-tg+980e0yOMhGq_igkj=FZahy96fh0dcwXdM3+tg@mail.gmail.com>
-	<CA+icZUWf+pNodRBHY0ZKF_XwRnCEEQa1s0an0fanizaFQ6c1Kw@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Peter Huewe <peterhuewe@gmx.de>
+Subject: [PATCH] staging/goldfish: Add MTD dependency to KCONFIG
+Date: Thu,  7 Feb 2013 23:46:38 +0100
+Message-ID: <1360277198-18246-1-git-send-email-peterhuewe@gmx.de>
+References: <5113FAAE.4070501@infradead.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qe0-f44.google.com ([209.85.128.44]:64729 "EHLO
-	mail-qe0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759234Ab3BGURQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Feb 2013 15:17:16 -0500
-In-Reply-To: <CA+icZUWf+pNodRBHY0ZKF_XwRnCEEQa1s0an0fanizaFQ6c1Kw@mail.gmail.com>
+Received: from mout.gmx.net ([212.227.17.20]:52191 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1422729Ab3BGWmi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Feb 2013 17:42:38 -0500
+Received: from mailout-de.gmx.net ([10.1.76.2]) by mrigmx.server.lan
+ (mrigmx001) with ESMTP (Nemesis) id 0LgbkJ-1UgTAP2rav-00o2UK for
+ <linux-next@vger.kernel.org>; Thu, 07 Feb 2013 23:42:36 +0100
+In-Reply-To: <5113FAAE.4070501@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>
+To: Randy Dunlap <rdunlap@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Yunhong Jiang <yunhong.jiang@intel.com>, Sheng Yang <sheng@linux.intel.com>, "Mike A. Chan" <mikechan@google.com>, Xiaohui Xin <xiaohui.xin@intel.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>
 
-On Wed, Feb 6, 2013 at 9:49 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Wed, Feb 6, 2013 at 9:23 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> On Wed, Feb 6, 2013 at 8:43 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> Hi all,
->>>
->>> Changes since 20130204:
->>>
->>> The metag tree gained a conflict against the arc tree.
->>>
->>> I added a couple of merge fix patches to the mips tree for breakage in
->>> other architectures.
->>>
->>> The powerpc tree still had a build failure.
->>>
->>> The crypto tree gained a conflict against the net-next tree.
->>>
->>> The sound-asoc tree lost its build failure.
->>>
->>> The block tree gained a build failure for which I applied a merge fix
->>> patch.
->>>
->>> The battery tree gained a conflict against the mfd tree.
->>>
->>> The spi tree gained a conflict against the sound-asoc tree.
->>>
->>> The kvm tree gained a conflict against the arm tree.
->>>
->>> The driver-core tree gained conflicts against the spi and iommu trees.
->>>
->>> The tty tree gained a build failure on sparc32 for which I applied a
->>> patch.
->>>
->>> The akpm tree gained a conflict against the nfsd tree and a build failure
->>> for which I reverted a commit.
->>>
->>> ----------------------------------------------------------------------------
->>>
->>
->> [ CC x86 folks ]
->>
->> With today's Linux-Next I get this warning:
->>
->> [    0.000000] Console: colour dummy device 80x25
->> [    0.000000] ------------[ cut here ]------------
->> [    0.000000] WARNING: at kernel/sched/clock.c:219 sched_clock_cpu+0xf9/0x110()
->> [    0.000000] Hardware name: 530U3BI/530U4BI/530U4BH
->> [    0.000000] Modules linked in:
->> [    0.000000] Pid: 0, comm: swapper/0 Not tainted
->> 3.8.0-rc6-next20130206-1-iniza-small #1
->> [    0.000000] Call Trace:
->> [    0.000000]  [<ffffffff8105a5cf>] warn_slowpath_common+0x7f/0xc0
->> [    0.000000]  [<ffffffff8105a62a>] warn_slowpath_null+0x1a/0x20
->> [    0.000000]  [<ffffffff81093319>] sched_clock_cpu+0xf9/0x110
->> [    0.000000]  [<ffffffff8105c611>] __console_unlock.part.9+0x31/0x440
->> [    0.000000]  [<ffffffff816b327b>] ? printk+0x61/0x63
->> [    0.000000]  [<ffffffff8105ca4d>] console_unlock+0x2d/0x40
->> [    0.000000]  [<ffffffff81d3ecce>] con_init+0x218/0x22b
->> [    0.000000]  [<ffffffff81d3e259>] console_init+0x16/0x27
->> [    0.000000]  [<ffffffff81d06d7a>] start_kernel+0x28b/0x3fc
->> [    0.000000]  [<ffffffff81d068ef>] ? repair_env_string+0x5a/0x5a
->> [    0.000000]  [<ffffffff81d06120>] ? early_idt_handlers+0x120/0x120
->> [    0.000000]  [<ffffffff81d065ec>] x86_64_start_reservations+0x2a/0x2c
->> [    0.000000]  [<ffffffff81d066e1>] x86_64_start_kernel+0xf3/0x102
->> [    0.000000] ---[ end trace 79eb6cf41ffc867b ]---
->> [    0.000000] console [tty0] enabled
->>
->> Not sure, if this related to the known console/fbcon locking issue.
->> I will try later to merge [1] and check again.
->>
->> - Sedat -
->>
->> [1] http://cgit.freedesktop.org/~airlied/linux/log/?h=fbcon-locking-fixes
->
-> Unrelated to known console/fbcon locking issue (see new dmesg).
->
-> - Sedat -
+If CONFIG_MTD is not set goldfish_nand fails to compile with the
+following linker warnings:
 
-That issue disappeared with next-20130207, but with
-CONFIG_VIRT_CPU_ACCOUNTING=y.
-( Did not test CONFIG_TICK_CPU_ACCOUNTING=y. )
+drivers/built-in.o: In function `goldfish_nand_remove':
+goldfish_nand.c:(.text+0x6e7d0e): undefined reference to
+`mtd_device_unregister'
+drivers/built-in.o: In function `goldfish_nand_erase':
+goldfish_nand.c:(.text+0x6e8ba2): undefined reference to
+`mtd_erase_callback'
+drivers/built-in.o: In function `goldfish_nand_init_device':
+goldfish_nand.c:(.text+0x6e8eba): undefined reference to
+`mtd_device_parse_register'
 
-/boot/config-3.8.0-rc6-next20130206-1-iniza-small:CONFIG_TICK_CPU_ACCOUNTING=y
-/boot/config-3.8.0-rc6-next20130207-1-iniza-small:CONFIG_VIRT_CPU_ACCOUNTING=y
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+@Randy: The contact info you're looking for is in CC of this mail.
 
-- Sedat -
+ drivers/staging/goldfish/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/staging/goldfish/Kconfig b/drivers/staging/goldfish/Kconfig
+index d6c98d0..4e09460 100644
+--- a/drivers/staging/goldfish/Kconfig
++++ b/drivers/staging/goldfish/Kconfig
+@@ -7,6 +7,7 @@ config GOLDFISH_AUDIO
+ config MTD_GOLDFISH_NAND
+ 	tristate "Goldfish NAND device"
+ 	depends on GOLDFISH
++	depends on MTD
+ 	help
+ 	  Drives the emulated NAND flash device on the Google Goldfish
+ 	  Android virtual device.
+-- 
+1.7.8.6
