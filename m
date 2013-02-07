@@ -1,56 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the kvm tree
-Date: Thu, 7 Feb 2013 17:03:19 +1100
-Message-ID: <20130207170319.5b5c471398b134c676f9dc6c@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the kvm
+ tree
+Date: Wed, 6 Feb 2013 22:23:57 -0800
+Message-ID: <20130206222357.02d049e6.akpm@linux-foundation.org>
+References: <20130207170319.5b5c471398b134c676f9dc6c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__7_Feb_2013_17_03_19_+1100_Q=fp.B81gENh+MHt"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@redhat.com>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Thu__7_Feb_2013_17_03_19_+1100_Q=fp.B81gENh+MHt
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58144 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750821Ab3BGGU7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Feb 2013 01:20:59 -0500
+In-Reply-To: <20130207170319.5b5c471398b134c676f9dc6c@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@redhat.com>, Sasha Levin <sasha.levin@oracle.com>
 
-Hi Andrew,
+On Thu, 7 Feb 2013 17:03:19 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the akpm-current tree got a conflict in
-arch/x86/kvm/mmu.c between commit 9bb4f6b15ec0 ("KVM: MMU: drop unneeded
-checks") from the kvm tree and commit "hlist: drop the node parameter
-from iterators" from the akpm-current tree.
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm-current tree got a conflict in
+> arch/x86/kvm/mmu.c between commit 9bb4f6b15ec0 ("KVM: MMU: drop unneeded
+> checks") from the kvm tree and commit "hlist: drop the node parameter
+> from iterators" from the akpm-current tree.
+> 
+> I fixed it up (the conflicts were caused by bad white space changes in
+> the akpm tree patch) and can carry the fix as necessary (no action is
+> required).
 
-I fixed it up (the conflicts were caused by bad white space changes in
-the akpm tree patch) and can carry the fix as necessary (no action is
-required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__7_Feb_2013_17_03_19_+1100_Q=fp.B81gENh+MHt
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRE0OnAAoJEECxmPOUX5FEUs0P/AuFBdd8wvBYHgAF46BbEkOd
-YA/SsTIkUHbruwuXPmJbl11ELmTG73PDQ5TzBn/t6Erxct3sScq8rGNSzNWx8sPk
-lhN5Hf86q3/IEFnRqdqg+SGe/Tq5CVG+bgRs6yIK2X6cfCOfZhbTsXXkBhij2XCm
-2i8G9O6sEnIlhJUu+jG64iqX28J8aDcFKX8vYYERowvNEFUSmRfkcVcU24jcrg5Q
-VVZu3gi3kotpSbcM3LgRE3bRtgRC1UUFPQ6BAWb7+Yqlh/mX/tFuIXtaGcw5kHk3
-ZNBx3krUu3f6L3eQJ8N7mZ/lT5bq6ghyUumK6+JidiXr0ZRkr8WQxxbnCzDvXAIX
-OMBrCafAyftI4sGS6rlS3cR1dpYSjvNJFYzRiinZkv9OStnzeMlo9bJr75kuTACU
-0RD83M8yPMxk/wQqPGbdr5Rx+dh20fFxj4HFGDFN37GD1//UxLVQqhLZJxP0wcck
-tIiQY+bNw2rm+BCV+J4hTJs0d5gwhJiQbygXRlA7ZouE8jQvLvd9Yl+P3LAiAucY
-oDl4aLOx6QJHSTYnP0X6YzTtEpkPkbFD8UsO2YmoW8AzHDe/hpVjB0SMhKKESdNC
-mWwFDSKy//Au9oJo35IWGea9EfBczQmXDZ5RVqQuaR1LaiVo6yLtRYfKeOQHrbgB
-JGIc9SKPCi+BCpNWz/J1
-=pVTi
------END PGP SIGNATURE-----
-
---Signature=_Thu__7_Feb_2013_17_03_19_+1100_Q=fp.B81gENh+MHt--
+hm, not sure what you meant by "bad" but that patch went and took the
+nice fits-in-80-cols kvm code and mucked it all up.  Shall unmuck
+tomorrow.
