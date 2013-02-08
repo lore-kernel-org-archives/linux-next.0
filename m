@@ -1,54 +1,65 @@
-From: Peter Huewe <peterhuewe@gmx.de>
-Subject: [PATCH] staging/goldfish: Add MTD dependency to KCONFIG
-Date: Thu,  7 Feb 2013 23:46:38 +0100
-Message-ID: <1360277198-18246-1-git-send-email-peterhuewe@gmx.de>
-References: <5113FAAE.4070501@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Fri, 8 Feb 2013 11:57:08 +1100
+Message-ID: <20130208115708.33af567496b8aeb8ca6b30c6@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__8_Feb_2013_11_57_08_+1100_c_YhssDQnANd5Z0L"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.20]:52191 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1422729Ab3BGWmi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Feb 2013 17:42:38 -0500
-Received: from mailout-de.gmx.net ([10.1.76.2]) by mrigmx.server.lan
- (mrigmx001) with ESMTP (Nemesis) id 0LgbkJ-1UgTAP2rav-00o2UK for
- <linux-next@vger.kernel.org>; Thu, 07 Feb 2013 23:42:36 +0100
-In-Reply-To: <5113FAAE.4070501@infradead.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:33502 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757005Ab3BHA5S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Feb 2013 19:57:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Yunhong Jiang <yunhong.jiang@intel.com>, Sheng Yang <sheng@linux.intel.com>, "Mike A. Chan" <mikechan@google.com>, Xiaohui Xin <xiaohui.xin@intel.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If CONFIG_MTD is not set goldfish_nand fails to compile with the
-following linker warnings:
+--Signature=_Fri__8_Feb_2013_11_57_08_+1100_c_YhssDQnANd5Z0L
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-drivers/built-in.o: In function `goldfish_nand_remove':
-goldfish_nand.c:(.text+0x6e7d0e): undefined reference to
-`mtd_device_unregister'
-drivers/built-in.o: In function `goldfish_nand_erase':
-goldfish_nand.c:(.text+0x6e8ba2): undefined reference to
-`mtd_erase_callback'
-drivers/built-in.o: In function `goldfish_nand_init_device':
-goldfish_nand.c:(.text+0x6e8eba): undefined reference to
-`mtd_device_parse_register'
+Hi all,
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
-@Randy: The contact info you're looking for is in CC of this mail.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
- drivers/staging/goldfish/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+sound/soc/soc-core.c: In function 'snd_soc_dai_digital_mute':
+sound/soc/soc-core.c:3555:22: error: 'const struct snd_soc_dai_ops' has no =
+member named 'mute_stream'
+sound/soc/soc-core.c:3556:26: error: 'const struct snd_soc_dai_ops' has no =
+member named 'mute_stream'
 
-diff --git a/drivers/staging/goldfish/Kconfig b/drivers/staging/goldfish/Kconfig
-index d6c98d0..4e09460 100644
---- a/drivers/staging/goldfish/Kconfig
-+++ b/drivers/staging/goldfish/Kconfig
-@@ -7,6 +7,7 @@ config GOLDFISH_AUDIO
- config MTD_GOLDFISH_NAND
- 	tristate "Goldfish NAND device"
- 	depends on GOLDFISH
-+	depends on MTD
- 	help
- 	  Drives the emulated NAND flash device on the Google Goldfish
- 	  Android virtual device.
--- 
-1.7.8.6
+Caused by commit df6dc7a26e7d ("ASoC: core: Allow digital mute for
+capture").
+
+I have used the sound-asoc tree from next-20130207 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__8_Feb_2013_11_57_08_+1100_c_YhssDQnANd5Z0L
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRFE1kAAoJEECxmPOUX5FEaI4QAKLn/zUXMpIp2PZ12HM1VJkg
+NXQGUFR2u5xq4NfW6Snz38+RCoYLQKqe9LFsous5ZH8XvM5YmurdjGc5yvYoB82I
+dmnJjxj2JH3kgj42ICnrQbtDDgTVhCF3WyaPuRFYvcepRdu62/9E+G9WpQgLZVLv
+SHsi3RRpF3MpDuLGOMaj4zDy17FGN975FD6RZ39yZQ1g2OLPUVWEkt1ty7nDGeXy
+C8DMANjWrcnbfFB/hZfImsoj6PGP/eXNkOSlEAb+HQP9POqnYeYwKptCMt5YFn2/
+JsaapLqY5wuDT/BXrQreyStWR3avEjmOssSpA/pHpDuIjhzP5Eam0FMeZsE0K5/M
+ysU05po64VdmpAyTpVh8LE2T3XdY1wU7yUohvqMEYxYdb/7oOyUknD7fac2wLUXZ
+svudfbe+HggMTgNi+AKIooi/1M7TWwv9dNWNgd1bjubol3g8tpl91YRd+D/UdKuM
+RuqYs5Vz3y6iLvxbzzApDJdynjPc0NUBVGecq5vWDEkyjg+unzKCExOVEslyaU7M
+MIbtZaROuNgN4ABo8jrhvuvhwjFfMUtxuXTsH3Fm3YRs7DCiG25STqRHey25XrbF
+CqODpi5DGpdLKgW5sywYpm0v2a2z+uEVvAToc1R9nKGG7GviYxhU+9OzAGt1o3mX
+dPsyAFFQD9d6YZeerfhi
+=RNvT
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__8_Feb_2013_11_57_08_+1100_c_YhssDQnANd5Z0L--
