@@ -1,88 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next build conflict between modules and metag trees
- (LOCKDEP_NOW_UNRELIABLE)
-Date: Fri, 8 Feb 2013 16:45:15 +1100
-Message-ID: <20130208164515.c10e1bb039801c5894e674cb@canb.auug.org.au>
-References: <51138CFC.9000508@imgtec.com>
-	<51148A28.4030307@synopsys.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Feb 8 [ idr fixes from akpm-tree ]
+Date: Fri, 8 Feb 2013 09:07:29 +0100
+Message-ID: <CA+icZUVG_3-daoHOwuSLcaB4t987L23DeX0Q4cq=OGkO-3j5Ag@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Feb_2013_16_45_15_+1100_WnH1cVof5iSgxhnA"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34019 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751813Ab3BHFpY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Feb 2013 00:45:24 -0500
-In-Reply-To: <51148A28.4030307@synopsys.com>
+Received: from mail-qc0-f181.google.com ([209.85.216.181]:55110 "EHLO
+	mail-qc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751317Ab3BHIHa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Feb 2013 03:07:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: James Hogan <james.hogan@imgtec.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Fri__8_Feb_2013_16_45_15_+1100_WnH1cVof5iSgxhnA
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Vineet,
-
-On Fri, 8 Feb 2013 10:46:24 +0530 Vineet Gupta <Vineet.Gupta1@synopsys.com>=
- wrote:
+On Fri, Feb 8, 2013 at 5:31 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> On Thursday 07 February 2013 04:46 PM, James Hogan wrote:
-> >=20
-> > The metag architecture tree adds an add_taint(TAINT_DIE) like other
-> > architectures do, and the modules-next tree adds the
-> > LOCKDEP_NOW_UNRELIABLE flag to all uses of add_taint (but obviously
-> > misses arch/metag since it doesn't exist yet), causing a compile error
-> > on metag in -next when the two are merged together.
-> >=20
-> > Is it okay for me to merge your commit 373d4d0 ("taint: add explicit
-> > flag to show whether lock dep is still OK.") in modules-next into the
-> > base of the metag tree and expect it not to be rebased, so that I can
-> > then squash the fix into the metag tree?
-> >=20
-> > The only commits this would include are:
-> > $ git log --oneline linus/master..373d4d0
-> > 373d4d0 taint: add explicit flag to show whether lock dep is still OK.
-> > 64748a2 module: printk message when module signature fail taints kernel.
->=20
-> Being in the same situation as metag (ARC Port), what's the recommended p=
-ractice
-> here - do we simply cherry-pick these changes into our tree - or do we me=
-rge the
-> "other" tree on top - ofcourse with premise that "other" tree will not re=
-base.
+> Changes since 20130207:
+>
+> The sound-asoc tree gained a build failure so I used the version from
+> next-20130207.
+>
+> The watchdog tree gained a conflict against the mfd tree.
+>
+> I applied a patch to restore some config defaults on PPC64.
+>
+> ----------------------------------------------------------------------------
+>
 
-Merging is better, as then the commits only exist once when your tree
-gets merged back into Linus' tree.  However, such a merge should explain
-why it is being done.  Assuming that the thing you merge does not get
-rebased - which in this case, Rusty has said it won;t be.
+Just FYI:
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I know of thwo idr patches in akpm-tree which are broken, means revert
+the one in Linux-Next and apply v2 from patchwork-service!
+The idr-ipc patch for example breaks fakeroot usage.
 
---Signature=_Fri__8_Feb_2013_16_45_15_+1100_WnH1cVof5iSgxhnA
-Content-Type: application/pgp-signature
+- Sedat -
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+[ Revert these ones ]
+http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=commitdiff;h=2b24826129aab0352de55e44a99726aed47526a3
+http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=commitdiff;h=5c72f8a116ad9e57b688e03ae9b44bf831100af9
 
-iQIcBAEBCAAGBQJRFJDrAAoJEECxmPOUX5FEvuYP/1oCVA+7Q+Qy80p4h46BRaui
-xyxJU714sQsfmAAXKgOf0ipqbdEXaafvCNs7KGs3pPl2FHkOgMSRASC5oWT6USPQ
-uEdWMc7pxxjsVDlbdfUZsoz0qgUfq379c+5ozW+QvNSwMzpwtfE7aCuWRzV9GKJD
-s+xVQ35cIcjixdbyxp5HHvt++MeYAFBUTgvYXQp3qlz9o7J0PvEdtVRWmZHyBxMD
-zyhzQOtYrV+6al+t0GHSlC9NeEMvfb//e6CgY2qbxS4nXZ0Qr8YG1fq9ydzW7rMC
-LBG8ALJ7QERc9Zca1w9hjIuKzHNdPGL+Ut3VcGkO+54QC97eC7ec/thDeTavho7i
-/QCbIQ0fcNP9S+SOlNPazTAE9n3mwhy9OvdrZ+H+79hxhN5r3qUmKw9fumD/a4qr
-JVRPLCZ4MoRwRDzxTJNRRDUtZ/IwVCF6IWkwdGKBrOs8XpM2FydO+JWHtk57hno/
-xVdre6lykpRuy0DkeLPoAC5oVKjiyRMCvhUA6dk2AJ8lWgCgLWD0AjgTYfeDU1bL
-uwJ+ApLQKjM9znIsXnD4RjMBka25OULDnsVTDzzQbfDWhBiwNb6kHi9jid/3yXdQ
-A7Lw0i+03lHcLuz+TaKpgtapFvGiO2pIq2jbIveJpCqWybzlDa2W3JoBap6Lledh
-85+lRJOyhI/g+585a0db
-=TlGe
------END PGP SIGNATURE-----
-
---Signature=_Fri__8_Feb_2013_16_45_15_+1100_WnH1cVof5iSgxhnA--
+[ Apply v2 ]
+https://patchwork.kernel.org/patch/2111991/
+https://patchwork.kernel.org/patch/2112111/
