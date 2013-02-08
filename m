@@ -1,69 +1,44 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Feb 8 [ smp|cpufreq: WARNING: at
- kernel/smp.c:245 smp_call_function_single ]
-Date: Fri, 8 Feb 2013 09:46:07 +0100
-Message-ID: <CA+icZUX-hh+RjEOrKABBtecmb4C-5azSmdTx6D7SLuSpcQE+kQ@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: linux-next build conflict between modules and metag trees (LOCKDEP_NOW_UNRELIABLE)
+Date: Fri, 8 Feb 2013 09:32:02 +0000
+Message-ID: <5114C612.1060506@imgtec.com>
+References: <51138CFC.9000508@imgtec.com> <876223ijdu.fsf@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Linux ACPI <linux-acpi@vger.kernel.org>, Linux PM List <linux-pm@lists.linux-foundation.org>, x86@kernel.org, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from multi.imgtec.com ([194.200.65.239]:61199 "EHLO multi.imgtec.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1946102Ab3BHJdQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 Feb 2013 04:33:16 -0500
+In-Reply-To: <876223ijdu.fsf@rustcorp.com.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Fri, Feb 8, 2013 at 5:31 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Changes since 20130207:
->
-> The sound-asoc tree gained a build failure so I used the version from
-> next-20130207.
->
-> The watchdog tree gained a conflict against the mfd tree.
->
-> I applied a patch to restore some config defaults on PPC64.
->
-> ----------------------------------------------------------------------------
->
+On 08/02/13 03:17, Rusty Russell wrote:
+> James Hogan <james.hogan@imgtec.com> writes:
+>> Hi Rusty,
+>>
+>> The metag architecture tree adds an add_taint(TAINT_DIE) like other
+>> architectures do, and the modules-next tree adds the
+>> LOCKDEP_NOW_UNRELIABLE flag to all uses of add_taint (but obviously
+>> misses arch/metag since it doesn't exist yet), causing a compile error
+>> on metag in -next when the two are merged together.
+>>
+>> Is it okay for me to merge your commit 373d4d0 ("taint: add explicit
+>> flag to show whether lock dep is still OK.") in modules-next into the
+>> base of the metag tree and expect it not to be rebased, so that I can
+>> then squash the fix into the metag tree?
+> 
+> This was my fault for taking a shortcut.  I should have changed the name
+> so the old add_taint worked still (set_taint?), then remove add_taint
+> after the merge.
+> 
+> But I won't be rebasing, so you should be fine to merge it.
 
-With today's Linux-Next I see this warning:
+No worries.
 
-[    0.377442] ------------[ cut here ]------------
-[    0.377452] WARNING: at kernel/smp.c:245
-smp_call_function_single+0x146/0x190()
-[    0.377455] Hardware name: 530U3BI/530U4BI/530U4BH
-[    0.377458] Modules linked in:
-[    0.377463] Pid: 1, comm: swapper/0 Not tainted
-3.8.0-rc6-next20130208-1-iniza-small #1
-[    0.377467] Call Trace:
-[    0.377473]  [<ffffffff8105a5ef>] warn_slowpath_common+0x7f/0xc0
-[    0.377479]  [<ffffffff81579130>] ? acpi_cpufreq_target+0x2c0/0x2c0
-[    0.377483]  [<ffffffff8105a64a>] warn_slowpath_null+0x1a/0x20
-[    0.377487]  [<ffffffff810bb7e6>] smp_call_function_single+0x146/0x190
-[    0.377492]  [<ffffffff81579130>] ? acpi_cpufreq_target+0x2c0/0x2c0
-[    0.377496]  [<ffffffff810bb881>] smp_call_function_any+0x51/0x100
-[    0.377500]  [<ffffffff815788c9>] get_cur_val+0x99/0x130
-[    0.377504]  [<ffffffff81579444>] ? acpi_cpufreq_cpu_init+0x2b4/0x6a0
-[    0.377508]  [<ffffffff81578db0>] get_cur_freq_on_cpu+0x60/0x80
-[    0.377512]  [<ffffffff815795a2>] acpi_cpufreq_cpu_init+0x412/0x6a0
-[    0.377517]  [<ffffffff81575bb9>] cpufreq_add_dev+0x2d9/0x4f0
-[    0.377523]  [<ffffffff81d44b22>] ? cpufreq_gov_dbs_init+0x2c/0x2c
-[    0.377528]  [<ffffffff8145d379>] subsys_interface_register+0x89/0xd0
-[    0.377533]  [<ffffffff81573dee>] cpufreq_register_driver+0x8e/0x180
-[    0.377537]  [<ffffffff81d44c18>] acpi_cpufreq_init+0xf6/0x1f8
-[    0.377542]  [<ffffffff814608e6>] ? platform_driver_register+0x46/0x50
-[    0.377547]  [<ffffffff8100206f>] do_one_initcall+0x3f/0x170
-[    0.377553]  [<ffffffff81d07029>] kernel_init_freeable+0x13e/0x1cd
-[    0.377560]  [<ffffffff81d06895>] ? do_early_param+0x86/0x86
-[    0.377565]  [<ffffffff8169cf20>] ? rest_init+0x80/0x80
-[    0.377569]  [<ffffffff8169cf2e>] kernel_init+0xe/0xf0
-[    0.377575]  [<ffffffff816c722c>] ret_from_fork+0x7c/0xb0
-[    0.377578]  [<ffffffff8169cf20>] ? rest_init+0x80/0x80
-[    0.377581] ---[ end trace c6ec8280ce20313a ]---
-
-kernel/smp.c: Line #245 see [1].
-
-- Sedat -
-
-[1] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=kernel/smp.c;hb=refs/tags/next-20130208#l245
+Thanks
+James
