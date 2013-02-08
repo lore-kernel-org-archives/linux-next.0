@@ -1,82 +1,88 @@
-From: Stanislav Kinsbursky <skinsbursky@parallels.com>
-Subject: Re: linux-next: build failure after merge of the nfsd tree
-Date: Fri, 8 Feb 2013 09:41:05 +0400
-Message-ID: <51148FF1.4040108@parallels.com>
-References: <20130202130403.a29346b583a802ed6ce6880b@canb.auug.org.au> <20130202125719.GF30668@fieldses.org> <20130203144123.GA22854@fieldses.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next build conflict between modules and metag trees
+ (LOCKDEP_NOW_UNRELIABLE)
+Date: Fri, 8 Feb 2013 16:45:15 +1100
+Message-ID: <20130208164515.c10e1bb039801c5894e674cb@canb.auug.org.au>
+References: <51138CFC.9000508@imgtec.com>
+	<51148A28.4030307@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__8_Feb_2013_16_45_15_+1100_WnH1cVof5iSgxhnA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay.parallels.com ([195.214.232.42]:58500 "EHLO
-	relay.parallels.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751541Ab3BHFlf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Feb 2013 00:41:35 -0500
-In-Reply-To: <20130203144123.GA22854@fieldses.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34019 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751813Ab3BHFpY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Feb 2013 00:45:24 -0500
+In-Reply-To: <51148A28.4030307@synopsys.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: James Hogan <james.hogan@imgtec.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
-03.02.2013 18:41, J. Bruce Fields =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> On Sat, Feb 02, 2013 at 07:57:19AM -0500, J. Bruce Fields wrote:
->> On Sat, Feb 02, 2013 at 01:04:03PM +1100, Stephen Rothwell wrote:
->>> Hi,
->>>
->>> After merging the nfsd tree, today's linux-next build (x86_64
->>> allmodconfig) failed like this:
->>>
->>> fs/nfs/dns_resolve.c: In function 'nfs_dns_resolver_cache_init':
->>> fs/nfs/dns_resolve.c:375:4: error: 'struct cache_detail' has no mem=
-ber named 'cache_upcall'
->>> fs/nfs/dns_resolve.c:375:35: warning: left-hand operand of comma ex=
-pression has no effect [-Wunused-value]
->>> fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-=
-Wunused-value]
->>> fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-=
-Wunused-value]
->>> fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-=
-Wunused-value]
->>> fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-=
-Wunused-value]
->>> fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-=
-Wunused-value]
->>> fs/nfs/dns_resolve.c:375:35: warning: value computed is not used [-=
-Wunused-value]
->>>
->>> Caused by commit aab982cb5dfb ("SUNRPC: remove cache_detail->cache_=
-upcall
->>> callback").
->>
->> Yes, I knew why we'd introduced cache_upcall, so I'm not sure how I
->> overlooked that.  It must have slipped through testing because I did=
-n't
->> set CONFIG_NFS_USE_KERNEL_DNS.
->>
->> We may just be able to revert that patch....  I can take care of tha=
-t by
->> tomorrow.
+--Signature=_Fri__8_Feb_2013_16_45_15_+1100_WnH1cVof5iSgxhnA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Vineet,
+
+On Fri, 8 Feb 2013 10:46:24 +0530 Vineet Gupta <Vineet.Gupta1@synopsys.com>=
+ wrote:
 >
-> Stanislav, any objections to this?
->
+> On Thursday 07 February 2013 04:46 PM, James Hogan wrote:
+> >=20
+> > The metag architecture tree adds an add_taint(TAINT_DIE) like other
+> > architectures do, and the modules-next tree adds the
+> > LOCKDEP_NOW_UNRELIABLE flag to all uses of add_taint (but obviously
+> > misses arch/metag since it doesn't exist yet), causing a compile error
+> > on metag in -next when the two are merged together.
+> >=20
+> > Is it okay for me to merge your commit 373d4d0 ("taint: add explicit
+> > flag to show whether lock dep is still OK.") in modules-next into the
+> > base of the metag tree and expect it not to be rebased, so that I can
+> > then squash the fix into the metag tree?
+> >=20
+> > The only commits this would include are:
+> > $ git log --oneline linus/master..373d4d0
+> > 373d4d0 taint: add explicit flag to show whether lock dep is still OK.
+> > 64748a2 module: printk message when module signature fail taints kernel.
+>=20
+> Being in the same situation as metag (ARC Port), what's the recommended p=
+ractice
+> here - do we simply cherry-pick these changes into our tree - or do we me=
+rge the
+> "other" tree on top - ofcourse with premise that "other" tree will not re=
+base.
 
-The only objection is that I've sent you the patch set witch fixes all =
-these problems already:
-
-"[PATCH v2 0/6] SUNRPC: rework cache upcall to avoid NFSd root". :)
-
-The only reason why I removed cache_upcall at all was that all it's use=
-rs (except NFS DNS cache - my mistake) just call sunrpc_cache_pipe_upca=
-ll and thus these=20
-wrapper looked redundant to me.
-Second patch set leaves cache_upcall only for NFS DNS cache (since this=
- upcall is not just a wrapper around sunrpc_cache_pipe_upcall).
-And second patch set implies the first one will be dropped.
-I can, actually, send one more (incremental  this time) patch set to fi=
-x the problem, if you wish.
-
-But it's up to you, what to commit, Bruce.
+Merging is better, as then the commits only exist once when your tree
+gets merged back into Linus' tree.  However, such a merge should explain
+why it is being done.  Assuming that the thing you merge does not get
+rebased - which in this case, Rusty has said it won;t be.
 
 --=20
-Best regards,
-Stanislav Kinsbursky
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__8_Feb_2013_16_45_15_+1100_WnH1cVof5iSgxhnA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRFJDrAAoJEECxmPOUX5FEvuYP/1oCVA+7Q+Qy80p4h46BRaui
+xyxJU714sQsfmAAXKgOf0ipqbdEXaafvCNs7KGs3pPl2FHkOgMSRASC5oWT6USPQ
+uEdWMc7pxxjsVDlbdfUZsoz0qgUfq379c+5ozW+QvNSwMzpwtfE7aCuWRzV9GKJD
+s+xVQ35cIcjixdbyxp5HHvt++MeYAFBUTgvYXQp3qlz9o7J0PvEdtVRWmZHyBxMD
+zyhzQOtYrV+6al+t0GHSlC9NeEMvfb//e6CgY2qbxS4nXZ0Qr8YG1fq9ydzW7rMC
+LBG8ALJ7QERc9Zca1w9hjIuKzHNdPGL+Ut3VcGkO+54QC97eC7ec/thDeTavho7i
+/QCbIQ0fcNP9S+SOlNPazTAE9n3mwhy9OvdrZ+H+79hxhN5r3qUmKw9fumD/a4qr
+JVRPLCZ4MoRwRDzxTJNRRDUtZ/IwVCF6IWkwdGKBrOs8XpM2FydO+JWHtk57hno/
+xVdre6lykpRuy0DkeLPoAC5oVKjiyRMCvhUA6dk2AJ8lWgCgLWD0AjgTYfeDU1bL
+uwJ+ApLQKjM9znIsXnD4RjMBka25OULDnsVTDzzQbfDWhBiwNb6kHi9jid/3yXdQ
+A7Lw0i+03lHcLuz+TaKpgtapFvGiO2pIq2jbIveJpCqWybzlDa2W3JoBap6Lledh
+85+lRJOyhI/g+585a0db
+=TlGe
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__8_Feb_2013_16_45_15_+1100_WnH1cVof5iSgxhnA--
