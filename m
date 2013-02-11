@@ -1,35 +1,65 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Feb 11 (intel_pstate.c)
-Date: Mon, 11 Feb 2013 08:18:15 -0800
-Message-ID: <511919C7.5080502@infradead.org>
-References: <20130211184749.565d8e47788f8be8aec1591f@canb.auug.org.au>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Subject: Re: [PATCH v2] gpio: devm_gpio_* support should not depend on GPIOLIB
+Date: Mon, 11 Feb 2013 19:50:25 +0300
+Message-ID: <CAMo8BfKo=N_O=O0y74zy+orAn3nNb-OuS9fC92ebbN7bN_CQPg@mail.gmail.com>
+References: <20130118140346.3f9b182aa7daa175b4f136bf@canb.auug.org.au>
+	<1358495866-9329-1-git-send-email-shawn.guo@linaro.org>
+	<CACRpkdZA9O6N7hmtU-6R1Ff6hW5vjD_ar9RLG1dbkd+MWyoKiw@mail.gmail.com>
+	<CAMo8BfJ=6WbAHoCpftRHW1iMtG8robyYUEqqCG2SecixDTgC+g@mail.gmail.com>
+	<CACRpkdbT2eAZR2Ud5f9h0TFsA5M0RpysE9SqMgoL-hcB8fS+Ew@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:34522 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754987Ab3BKQRW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Feb 2013 11:17:22 -0500
-In-Reply-To: <20130211184749.565d8e47788f8be8aec1591f@canb.auug.org.au>
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:34859 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757887Ab3BKQu1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Feb 2013 11:50:27 -0500
+In-Reply-To: <CACRpkdbT2eAZR2Ud5f9h0TFsA5M0RpysE9SqMgoL-hcB8fS+Ew@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dirk Brandewie <dirk.j.brandewie@intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Shawn Guo <shawn.guo@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 02/10/13 23:47, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20130208:
-> 
+On Mon, Feb 11, 2013 at 6:13 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Sun, Feb 10, 2013 at 5:46 AM, Max Filippov <jcmvbkbc@gmail.com> wrote:
+>> On Sat, Jan 19, 2013 at 2:33 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> On Fri, Jan 18, 2013 at 8:57 AM, Shawn Guo <shawn.guo@linaro.org> wrote:
+>>>
+>>>> Some architectures (e.g. blackfin) provide gpio API without requiring
+>>>> GPIOLIB support (ARCH_WANT_OPTIONAL_GPIOLIB).  devm_gpio_* functions
+>>>> should also work for these architectures, since they do not really
+>>>> depend on GPIOLIB.
+>>>>
+>>>> Add a new option GPIO_DEVRES (enabled by default) to control the build
+>>>> of devres.c.  It also removes the empty version of devm_gpio_*
+>>>> functions for !GENERIC_GPIO build from linux/gpio.h, and moves the
+>>>> function declarations from asm-generic/gpio.h into linux/gpio.h.
+>>>>
+>>>> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+>>>
+>>> OK I removed the old version of the patch and pushed this instead.
+>>
+>> Hi,
+>>
+>> this patch causes the following errors for xtensa defconfig build:
+>
+> Max, can you point us to an xtensa cross-compiler so we can
+> figure out where the problem is?
 
-on i386:
+Hi Linus,
 
-drivers/built-in.o: In function `intel_pstate_timer_func':
-intel_pstate.c:(.text+0x4ce97e): undefined reference to `__udivdi3'
-drivers/built-in.o: In function `intel_pstate_cpu_init':
-intel_pstate.c:(.cpuinit.text+0x974): undefined reference to `__udivdi3'
+I use the following scripts to build cross-compiler for xtensa:
+https://github.com/jcmvbkbc/xtensa-toolchain-build
 
+You'd need to download binutils/gcc/gdb source tarballs with versions
+specified in config and then run
+
+$ ./prepare.sh fsf && ./fixup-gdb.sh && ./build.sh fsf
+
+
+FWIW I see that the issue is caused by building drivers/gpio/devres.c
+with CONFIG_GPIOLIB=n. Should I just turn GPIO_DEVRES off too?
 
 -- 
-~Randy
+Thanks.
+-- Max
