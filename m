@@ -1,109 +1,63 @@
-From: Yinghai Lu <yinghai@kernel.org>
-Subject: Re: [Bisected] [-next-20130204] usb/hcd: irq 18: nobody cared
-Date: Mon, 11 Feb 2013 11:57:13 -0800
-Message-ID: <CAE9FiQXcgxY_vW6gjqU7Jtxc71J=sKt_2SPsN8x1O9EfDRN_0g@mail.gmail.com>
-References: <Pine.LNX.4.44L0.1302051520220.2245-100000@iolanthe.rowland.org>
-	<1360466060.3703.15.camel@thor.lan>
-	<1360506199.3461.5.camel@thor.lan>
-	<CAE9FiQX0Jzqi=Dy=r3MoU9vK7HgAf+919LvbgLygW7VH3O4=bg@mail.gmail.com>
-	<CAE9FiQX5wQ8zFzPfgmvm0BESyLVxzDRQ33XPgj+QjBZ0kxuHXg@mail.gmail.com>
-	<1360587768.3454.2.camel@thor.lan>
-	<CAE9FiQWUZ3BgLOtcGePppLzWBv-uR8L+7abditH2MNA7zZW-WA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v2] gpio: devm_gpio_* support should not depend on
+ GPIOLIB
+Date: Tue, 12 Feb 2013 07:23:14 +1100
+Message-ID: <20130212072314.e956c3ea4d51405ad561418f@canb.auug.org.au>
+References: <20130118140346.3f9b182aa7daa175b4f136bf@canb.auug.org.au>
+	<1358495866-9329-1-git-send-email-shawn.guo@linaro.org>
+	<CACRpkdZA9O6N7hmtU-6R1Ff6hW5vjD_ar9RLG1dbkd+MWyoKiw@mail.gmail.com>
+	<CAMo8BfJ=6WbAHoCpftRHW1iMtG8robyYUEqqCG2SecixDTgC+g@mail.gmail.com>
+	<CACRpkdbT2eAZR2Ud5f9h0TFsA5M0RpysE9SqMgoL-hcB8fS+Ew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ia0-f179.google.com ([209.85.210.179]:43545 "EHLO
-	mail-ia0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759908Ab3BKT5O (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Feb 2013 14:57:14 -0500
-In-Reply-To: <CAE9FiQWUZ3BgLOtcGePppLzWBv-uR8L+7abditH2MNA7zZW-WA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Peter Hurley <peter@hurleysoftware.com>, Alan Stern <stern@rowland.harvard.edu>, Lan Tianyu <tianyu.lan@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Kosina <jkosina@suse.cz>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__12_Feb_2013_07_23_14_+1100_coy9dIYRfR4b0nf7"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbT2eAZR2Ud5f9h0TFsA5M0RpysE9SqMgoL-hcB8fS+Ew@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Max Filippov <jcmvbkbc@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Feb 11, 2013 at 11:19 AM, Yinghai Lu <yinghai@kernel.org> wrote:
-> On Mon, Feb 11, 2013 at 5:02 AM, Peter Hurley <peter@hurleysoftware.com> wrote:
->> On Sun, 2013-02-10 at 22:40 -0800, Yinghai Lu wrote:
->>> On Sun, Feb 10, 2013 at 12:33 PM, Yinghai Lu <yinghai@kernel.org> wrote:
->>> > On Sun, Feb 10, 2013 at 6:23 AM, Peter Hurley <peter@hurleysoftware.com> wrote:
->>> >> On Sat, 2013-02-09 at 22:14 -0500, Peter Hurley wrote:
->>> >>> On Tue, 2013-02-05 at 15:26 -0500, Alan Stern wrote:
->>> >>> > On Tue, 5 Feb 2013, Peter Hurley wrote:
->>> >>> >
->>> >>> > > With -next-20130204:
->>> >>> > >
->>> >>> > > [   33.855570] irq 18: nobody cared (try booting with the "irqpoll" option)
->>> >>> > > [   33.855580] Pid: 0, comm: swapper/4 Not tainted 3.8.0-next-20130204-xeon #20130204
->>> >>> > > [   33.855582] Call Trace:
->>> >>> > > [   33.855585]  <IRQ>  [<ffffffff810f1076>] __report_bad_irq+0x36/0xe0
->>> >>> > > [   33.855600]  [<ffffffff810f152a>] note_interrupt+0x1aa/0x200
->>> >>> > > [   33.855606]  [<ffffffff8101edf2>] ? mwait_idle+0x82/0x1b0
->>> >>> > > [   33.855610]  [<ffffffff810eed89>] handle_irq_event_percpu+0xc9/0x260
->>> >>> > > [   33.855614]  [<ffffffff810eef68>] handle_irq_event+0x48/0x70
->>> >>> > > [   33.855618]  [<ffffffff810f20ba>] handle_fasteoi_irq+0x5a/0x100
->>> >>> > > [   33.855624]  [<ffffffff810182f2>] handle_irq+0x22/0x40
->>> >>> > > [   33.855630]  [<ffffffff816e2a9a>] do_IRQ+0x5a/0xd0
->>> >>> > > [   33.855636]  [<ffffffff816d97ad>] common_interrupt+0x6d/0x6d
->>> >>> > > [   33.855638]  <EOI>  [<ffffffff810f8e2a>] ? rcu_eqs_enter_common+0x4a/0x320
->>> >>> > > [   33.855646]  [<ffffffff8101edf2>] ? mwait_idle+0x82/0x1b0
->>> >>> > > [   33.855649]  [<ffffffff8101ed99>] ? mwait_idle+0x29/0x1b0
->>> >>> > > [   33.855653]  [<ffffffff8101f8a6>] cpu_idle+0x116/0x130
->>> >>> > > [   33.855658]  [<ffffffff816c0c0f>] start_secondary+0x251/0x258
->>> >>> > > [   33.855660] handlers:
->>> >>> > > [   33.855664] [<ffffffff814f98a0>] usb_hcd_irq
->>> >>> > > [   33.855667] Disabling IRQ #18
->>> >>> > >
->>> >> https://bugzilla.kernel.org/show_bug.cgi?id=53561
->>> >>
->>> >> Maybe this is some interaction with all the new ACPI code and fixes
->>> >> written in those 8 days.
->>> >
->>> > interrupt routing seems get changed:
->>> > next:
->>> >    5:          0          0          0          0          0
->>> > 0          0          0   IO-APIC-fasteoi   snd_ctxfi
->>> >   18:      99970         13         16         20      99940
->>> > 13         13         16   IO-APIC-fasteoi   uhci_hcd:usb4
->>> > v3.8-rc7:
->>> >   18:        424         15         11        112        420
->>> > 16         18        105   IO-APIC-fasteoi   uhci_hcd:usb4, snd_ctxfi
->>> >
->>> > These messages in the bad dmesg log are interesting since PCI INT A is routed
->>> > on
->>> > irq 18 with the kernels that work.
->>> > [    8.983246] pci 0000:00:1e.0: can't derive routing for PCI INT A
->>> > [    8.983600] snd_ctxfi 0000:09:02.0: PCI INT A: no GSI - using ISA IRQ 5
->>> > ...
->>> >
->>> > acpi_pci_irq_add_prt() add wrong bus for that bridge, because that
->>> > that bridge is not scanned.
->>> >
->>> > Will check if I can produce one patch for it.
->>>
->>> Hi Peter,
->>>
->>> Can you try attached debug patch?
->>
->> Fixed, thanks.
->
-> Bjorn, Rafael,
->
-> acpi_pci_irq_add_prt need to be called after pci bridge get scanned,
-> so we can not call it from pci_acpi_setup, after we move dev_register
-> for pci_dev early.
->
-> The attached debug patch move down that calling into
-> pci_bus_add_devices and that will make prt works again.
->
-> Can acpi provide another hook after bridge get scanned?
->
+--Signature=_Tue__12_Feb_2013_07_23_14_+1100_coy9dIYRfR4b0nf7
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can we extend platform_notify to be
-platform_notify(struct device *dev, event) ?
+Hi Linus,
 
-and event could be _ADD, _SCAN, _REMOVE
+On Mon, 11 Feb 2013 15:13:20 +0100 Linus Walleij <linus.walleij@linaro.org>=
+ wrote:
+>
+> Max, can you point us to an xtensa cross-compiler so we can
+> figure out where the problem is?
 
-Thanks
+Prebuilt toolchains suitable for building the kernel can be found at
+http://www.kernel.org/pub/tools/crosstool/ .
 
-Yinghai
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__12_Feb_2013_07_23_14_+1100_coy9dIYRfR4b0nf7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRGVMyAAoJEECxmPOUX5FEqPsP/j1zddaAhdAuLI3IbNXIPEna
+T9s6JrzSbo3atFl+z2HcNBEXBAlJDu/lqIEMoKHC1097/eqz+pQVWKc6ikH4a79z
+48Z63BoIGV8i+zefvsMM8T/gegrwH47Xn68yeNWFxmkSgP4rVvzq46UprA1RBuiC
+VHRq6VgCuYSZBtK9+zLJOQxXOj9MibuylaycGsYF8WBwmQ7SCIv+ETYiZiyC4KuU
+gsLSs5Y01W6mhFqwOoF6sra+4ZY7El711f1b2d39AgK8pVbOiEJE53sjtFs9eSY5
+MMefGePD09wYpw8Ncq2/XE2tP6oTyIS7emGM8dBgz2ohnZ4VwgH/+EpzNmNiGbYq
+XPry+dZjpGu3T+9hWPvPbNCqPI/QI7MQDHNviLo8eRDdOrCRHMz52/rUOZiHWfL1
+BGpP8wwzh7rqj2bbocxKo7EwaGexKt+SPr06t0W1kEWohqiNyx9Zf9PLBb6oPfvI
+pQsSPpPKxFk3xu9NFo3W2Mer08y03+YG2ahmRDIs5I9ELpReuDNEqcAaXEpkbMHI
++rFHRT2S1vy8t4hHSikLwbOy8PxUNQEQDt0cqvngvxPi+ZBUzyqQ+E5FQJs+JEgJ
+TGZgM2uhOt/vbhZabiKugxo3gk+RxBOM0vcvi2NCl0Z6x8fpMjAik76ENE+tBIRv
+LIePONJJcTWR9BcRbXX3
+=jtLd
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__12_Feb_2013_07_23_14_+1100_coy9dIYRfR4b0nf7--
