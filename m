@@ -1,44 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: devm_gpio_* support should not depend on GPIOLIB
-Date: Mon, 11 Feb 2013 15:13:20 +0100
-Message-ID: <CACRpkdbT2eAZR2Ud5f9h0TFsA5M0RpysE9SqMgoL-hcB8fS+Ew@mail.gmail.com>
-References: <20130118140346.3f9b182aa7daa175b4f136bf@canb.auug.org.au>
-	<1358495866-9329-1-git-send-email-shawn.guo@linaro.org>
-	<CACRpkdZA9O6N7hmtU-6R1Ff6hW5vjD_ar9RLG1dbkd+MWyoKiw@mail.gmail.com>
-	<CAMo8BfJ=6WbAHoCpftRHW1iMtG8robyYUEqqCG2SecixDTgC+g@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the tty tree
+Date: Mon, 11 Feb 2013 06:37:00 -0800
+Message-ID: <20130211143700.GB1017@kroah.com>
+References: <20130211163714.289cb3288ed5098c7b493af3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMo8BfJ=6WbAHoCpftRHW1iMtG8robyYUEqqCG2SecixDTgC+g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Shawn Guo <shawn.guo@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:40173 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757365Ab3BKOgw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Feb 2013 09:36:52 -0500
+Content-Disposition: inline
+In-Reply-To: <20130211163714.289cb3288ed5098c7b493af3@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Jiri Slaby <jslaby@suse.cz>, Joe Perches <joe@perches.com>
 
-On Sun, Feb 10, 2013 at 5:46 AM, Max Filippov <jcmvbkbc@gmail.com> wrote:
-> On Sat, Jan 19, 2013 at 2:33 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Fri, Jan 18, 2013 at 8:57 AM, Shawn Guo <shawn.guo@linaro.org> wrote:
->>
->>> Some architectures (e.g. blackfin) provide gpio API without requiring
->>> GPIOLIB support (ARCH_WANT_OPTIONAL_GPIOLIB).  devm_gpio_* functions
->>> should also work for these architectures, since they do not really
->>> depend on GPIOLIB.
->>>
->>> Add a new option GPIO_DEVRES (enabled by default) to control the build
->>> of devres.c.  It also removes the empty version of devm_gpio_*
->>> functions for !GENERIC_GPIO build from linux/gpio.h, and moves the
->>> function declarations from asm-generic/gpio.h into linux/gpio.h.
->>>
->>> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
->>
->> OK I removed the old version of the patch and pushed this instead.
->
-> Hi,
->
-> this patch causes the following errors for xtensa defconfig build:
+On Mon, Feb 11, 2013 at 04:37:14PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the char-misc tree got a conflict in
+> drivers/char/pcmcia/synclink_cs.c between commits 2e124b4a390c ("TTY:
+> switch tty_flip_buffer_push") and 9fe8074b82ed ("TTY: synclink: Convert + to
+> | for bit operations") from the tty tree and commit 3d55399391c8 ("pcmcia: synclink_cs: cleanup checkpatch warnings") from the char-misc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Max, can you point us to an xtensa cross-compiler so we can
-figure out where the problem is?
+Fix looks good, thanks.
 
-Yours,
-Linus Walleij
+greg k-h
