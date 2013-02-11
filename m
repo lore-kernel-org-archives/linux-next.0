@@ -1,71 +1,87 @@
-From: Amir Vadai <amirv@mellanox.com>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Mon, 11 Feb 2013 14:04:18 +0200
-Message-ID: <5118DE42.7040902@mellanox.com>
-References: <20130211181332.ecf1cad33b04b3872b685620@canb.auug.org.au>
+From: Peter Hurley <peter@hurleysoftware.com>
+Subject: Re: [Bisected] [-next-20130204] usb/hcd: irq 18: nobody cared
+Date: Mon, 11 Feb 2013 08:02:48 -0500
+Message-ID: <1360587768.3454.2.camel@thor.lan>
+References: <Pine.LNX.4.44L0.1302051520220.2245-100000@iolanthe.rowland.org>
+	 <1360466060.3703.15.camel@thor.lan> <1360506199.3461.5.camel@thor.lan>
+	 <CAE9FiQX0Jzqi=Dy=r3MoU9vK7HgAf+919LvbgLygW7VH3O4=bg@mail.gmail.com>
+	 <CAE9FiQX5wQ8zFzPfgmvm0BESyLVxzDRQ33XPgj+QjBZ0kxuHXg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eu1sys200aog105.obsmtp.com ([207.126.144.119]:40127 "HELO
-	eu1sys200aog105.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1756609Ab3BKMEc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Feb 2013 07:04:32 -0500
-In-Reply-To: <20130211181332.ecf1cad33b04b3872b685620@canb.auug.org.au>
+Received: from mailout01.c08.mtsvc.net ([205.186.168.189]:49979 "EHLO
+	mailout01.c08.mtsvc.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757080Ab3BKNC6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Feb 2013 08:02:58 -0500
+In-Reply-To: <CAE9FiQX5wQ8zFzPfgmvm0BESyLVxzDRQ33XPgj+QjBZ0kxuHXg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yan Burman <yanb@mellanox.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Sasha Levin <sasha.levin@oracle.com>
+To: Yinghai Lu <yinghai@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Lan Tianyu <tianyu.lan@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Kosina <jkosina@suse.cz>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On 11/02/2013 09:13, Stephen Rothwell wrote:
-> Hi Andrew,
+On Sun, 2013-02-10 at 22:40 -0800, Yinghai Lu wrote:
+> On Sun, Feb 10, 2013 at 12:33 PM, Yinghai Lu <yinghai@kernel.org> wrote:
+> > On Sun, Feb 10, 2013 at 6:23 AM, Peter Hurley <peter@hurleysoftware.com> wrote:
+> >> On Sat, 2013-02-09 at 22:14 -0500, Peter Hurley wrote:
+> >>> On Tue, 2013-02-05 at 15:26 -0500, Alan Stern wrote:
+> >>> > On Tue, 5 Feb 2013, Peter Hurley wrote:
+> >>> >
+> >>> > > With -next-20130204:
+> >>> > >
+> >>> > > [   33.855570] irq 18: nobody cared (try booting with the "irqpoll" option)
+> >>> > > [   33.855580] Pid: 0, comm: swapper/4 Not tainted 3.8.0-next-20130204-xeon #20130204
+> >>> > > [   33.855582] Call Trace:
+> >>> > > [   33.855585]  <IRQ>  [<ffffffff810f1076>] __report_bad_irq+0x36/0xe0
+> >>> > > [   33.855600]  [<ffffffff810f152a>] note_interrupt+0x1aa/0x200
+> >>> > > [   33.855606]  [<ffffffff8101edf2>] ? mwait_idle+0x82/0x1b0
+> >>> > > [   33.855610]  [<ffffffff810eed89>] handle_irq_event_percpu+0xc9/0x260
+> >>> > > [   33.855614]  [<ffffffff810eef68>] handle_irq_event+0x48/0x70
+> >>> > > [   33.855618]  [<ffffffff810f20ba>] handle_fasteoi_irq+0x5a/0x100
+> >>> > > [   33.855624]  [<ffffffff810182f2>] handle_irq+0x22/0x40
+> >>> > > [   33.855630]  [<ffffffff816e2a9a>] do_IRQ+0x5a/0xd0
+> >>> > > [   33.855636]  [<ffffffff816d97ad>] common_interrupt+0x6d/0x6d
+> >>> > > [   33.855638]  <EOI>  [<ffffffff810f8e2a>] ? rcu_eqs_enter_common+0x4a/0x320
+> >>> > > [   33.855646]  [<ffffffff8101edf2>] ? mwait_idle+0x82/0x1b0
+> >>> > > [   33.855649]  [<ffffffff8101ed99>] ? mwait_idle+0x29/0x1b0
+> >>> > > [   33.855653]  [<ffffffff8101f8a6>] cpu_idle+0x116/0x130
+> >>> > > [   33.855658]  [<ffffffff816c0c0f>] start_secondary+0x251/0x258
+> >>> > > [   33.855660] handlers:
+> >>> > > [   33.855664] [<ffffffff814f98a0>] usb_hcd_irq
+> >>> > > [   33.855667] Disabling IRQ #18
+> >>> > >
+> >> https://bugzilla.kernel.org/show_bug.cgi?id=53561
+> >>
+> >> Maybe this is some interaction with all the new ACPI code and fixes
+> >> written in those 8 days.
+> >
+> > interrupt routing seems get changed:
+> > next:
+> >    5:          0          0          0          0          0
+> > 0          0          0   IO-APIC-fasteoi   snd_ctxfi
+> >   18:      99970         13         16         20      99940
+> > 13         13         16   IO-APIC-fasteoi   uhci_hcd:usb4
+> > v3.8-rc7:
+> >   18:        424         15         11        112        420
+> > 16         18        105   IO-APIC-fasteoi   uhci_hcd:usb4, snd_ctxfi
+> >
+> > These messages in the bad dmesg log are interesting since PCI INT A is routed
+> > on
+> > irq 18 with the kernels that work.
+> > [    8.983246] pci 0000:00:1e.0: can't derive routing for PCI INT A
+> > [    8.983600] snd_ctxfi 0000:09:02.0: PCI INT A: no GSI - using ISA IRQ 5
+> > ...
+> >
+> > acpi_pci_irq_add_prt() add wrong bus for that bridge, because that
+> > that bridge is not scanned.
+> >
+> > Will check if I can produce one patch for it.
 > 
-> After merging the akpm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> Hi Peter,
 > 
-> drivers/net/ethernet/mellanox/mlx4/en_rx.c: In function 'mlx4_en_process_rx_cq':
-> drivers/net/ethernet/mellanox/mlx4/en_rx.c:628:53: error: macro "hlist_for_each_entry_rcu" passed 4 arguments, but takes just 3
-> drivers/net/ethernet/mellanox/mlx4/en_rx.c:628:5: error: 'hlist_for_each_entry_rcu' undeclared (first use in this function)
-> drivers/net/ethernet/mellanox/mlx4/en_rx.c:628:55: error: expected ';' before '{' token
-> 
-> Caused by commit c07cb4b0ab78 ("net/mlx4_en: Manage hash of MAC addresses
-> per port") from the net-next tree interacting with commit "hlist: drop
-> the node parameter from iterators" from the akpm tree.
-> 
-> I applied the following merge fix patch for today:
-> 
-> From 7a10f5e7e8d1232d618307d568ea9a78dc4680bb Mon Sep 17 00:00:00 2001
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 11 Feb 2013 18:01:23 +1100
-> Subject: [PATCH] net/mlx4_en: fix up for hlist_for_each_entry_rcu API change
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/net/ethernet/mellanox/mlx4/en_rx.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx4/en_rx.c b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> index ce38654..19a9c05 100644
-> --- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> +++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> @@ -617,7 +617,6 @@ int mlx4_en_process_rx_cq(struct net_device *dev, struct mlx4_en_cq *cq, int bud
->  
->  			if (is_multicast_ether_addr(ethh->h_dest)) {
->  				struct mlx4_mac_entry *entry;
-> -				struct hlist_node *n;
->  				struct hlist_head *bucket;
->  				unsigned int mac_hash;
->  
-> @@ -625,7 +624,7 @@ int mlx4_en_process_rx_cq(struct net_device *dev, struct mlx4_en_cq *cq, int bud
->  				mac_hash = ethh->h_source[MLX4_EN_MAC_HASH_IDX];
->  				bucket = &priv->mac_hash[mac_hash];
->  				rcu_read_lock();
-> -				hlist_for_each_entry_rcu(entry, n, bucket, hlist) {
-> +				hlist_for_each_entry_rcu(entry, bucket, hlist) {
->  					if (ether_addr_equal_64bits(entry->mac,
->  								    ethh->h_source)) {
->  						rcu_read_unlock();
-> 
+> Can you try attached debug patch?
 
-Acked-By: Amir Vadai <amirv@mellanox.com>
+Fixed, thanks.
+
+Regards,
+Peter Hurley
