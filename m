@@ -1,24 +1,38 @@
-From: Jiri Slaby <jslaby@suse.cz>
-Subject: Re: [Bisected] [-next-20130204] usb/hcd: irq 18: nobody cared
-Date: Mon, 11 Feb 2013 11:25:48 +0100
-Message-ID: <5118C72C.9060606@suse.cz>
-References: <Pine.LNX.4.44L0.1302051520220.2245-100000@iolanthe.rowland.org> <1360466060.3703.15.camel@thor.lan> <1360506199.3461.5.camel@thor.lan> <CAE9FiQX0Jzqi=Dy=r3MoU9vK7HgAf+919LvbgLygW7VH3O4=bg@mail.gmail.com> <CAE9FiQX5wQ8zFzPfgmvm0BESyLVxzDRQ33XPgj+QjBZ0kxuHXg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: manual merge of the driver-core tree with the pm tree
+Date: Mon, 11 Feb 2013 13:10:29 +0100
+Message-ID: <2288610.IGA9461Y6F@vostro.rjw.lan>
+References: <20130211154255.62c1326a5f4a52b4cc057713@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAE9FiQX5wQ8zFzPfgmvm0BESyLVxzDRQ33XPgj+QjBZ0kxuHXg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yinghai Lu <yinghai@kernel.org>, Peter Hurley <peter@hurleysoftware.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Lan Tianyu <tianyu.lan@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Kosina <jkosina@suse.cz>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hydra.sisk.pl ([212.160.235.94]:37125 "EHLO hydra.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756148Ab3BKMEF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Feb 2013 07:04:05 -0500
+In-Reply-To: <20130211154255.62c1326a5f4a52b4cc057713@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
 
-On 02/11/2013 07:40 AM, Yinghai Lu wrote:
-> Can you try attached debug patch?
+On Monday, February 11, 2013 03:42:55 PM Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in
+> drivers/acpi/Kconfig between commit cb2b212bc7ff ("ACPI / scan: Make
+> container driver use struct acpi_scan_handler") from the pm tree and
+> commit f756f28b84af ("drivers/acpi: remove depends on CONFIG_EXPERIMENTAL")
+> from the driver-core tree.
+> 
+> I fixed it up and can carry the fix as necessary (no action is required).
 
-FWIW this fixes it for me. No more 'derived' or 'nobody' in dmesg.
+Thanks for the notice and for fixing this!
 
-thanks,
+Rafael
+
+
 -- 
-js
-suse labs
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
