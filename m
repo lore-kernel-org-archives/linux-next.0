@@ -1,66 +1,44 @@
 From: Len Brown <lenb@kernel.org>
-Subject: Re: linux-next: build failure after merge of the final tree (acpi
- tree related)
-Date: Mon, 11 Feb 2013 18:23:55 -0500
-Message-ID: <51197D8B.6010407@kernel.org>
-References: <20130211183409.7519b73ca320baeac5ec886f@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the acpi tree with the pm tree
+Date: Mon, 11 Feb 2013 18:34:06 -0500
+Message-ID: <51197FEE.9070606@kernel.org>
+References: <20130211125856.64b216a03dd18218c4627635@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f48.google.com ([209.85.212.48]:53003 "EHLO
-	mail-vb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760000Ab3BKXX6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Feb 2013 18:23:58 -0500
-In-Reply-To: <20130211183409.7519b73ca320baeac5ec886f@canb.auug.org.au>
+Received: from mail-vb0-f41.google.com ([209.85.212.41]:54942 "EHLO
+	mail-vb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760203Ab3BKXeJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Feb 2013 18:34:09 -0500
+In-Reply-To: <20130211125856.64b216a03dd18218c4627635@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lv Zheng <lv.zheng@intel.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Daniel Lezcano <daniel.lezcano@linaro.org>
 
-On 02/11/2013 02:34 AM, Stephen Rothwell wrote:
-> Hi all,
+On 02/10/2013 08:58 PM, Stephen Rothwell wrote:
+> Hi Len,
 > 
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
+> Today's linux-next merge of the acpi tree got a conflict in
+> drivers/acpi/processor_idle.c between commit 4f8429166818 ("ACPICA:
+> Cleanup PM_TIMER_FREQUENCY definition") from the pm tree and commit
+> 41cdb0efc42e ("ACPI / idle: remove unused definition") from the acpi tree.
 > 
-> arch/sparc/include/asm/processor.h: Assembler messages:
-> arch/sparc/include/asm/processor.h:10: Error: Unknown opcode: `extern'
-> 
-> Caused by commit 3a242f58a5f4 ("sparc idle: rename pm_idle to
-> sparc_idle") from the acpi tree.
-> 
-> I have applied this patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 11 Feb 2013 18:30:19 +1100
-> Subject: [PATCH] sparc idle: protect variable declarations against the assembler
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/sparc/include/asm/processor.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/sparc/include/asm/processor.h b/arch/sparc/include/asm/processor.h
-> index 34baa35..622cfa5 100644
-> --- a/arch/sparc/include/asm/processor.h
-> +++ b/arch/sparc/include/asm/processor.h
-> @@ -7,6 +7,8 @@
->  #endif
->  
->  #define nop() 		__asm__ __volatile__ ("nop")
-> +#ifndef __ASSEMBLY__
->  extern void (*sparc_idle)(void);
-> +#endif
->  
->  #endif
+> I fixed it up (The latter removed the lines modified by the former, so I
+> did that) and can carry the fix as necessary (no action is required).
 > 
 
-Thank you Stephen!
+Thank you Stephen,
+Go ahead and keep these two merge fix-ups.
 
-The last time I compiled a sparc kernel was in 1993:-)
+We'll either merge the rjw and the lenb trees before
+sending to Linus, or let him repeat your merge
+fix-ups as he likes to do.
 
-I've added your fix and Dave's Ack to this patch,
-and updated it in my next branch.
+BTW. Rafael's "pm" tree now carries the ACPI patch stream,
+so it is probably a mis-representation to call my tree the "acpi" tree.
+My tree is primarily focused on the "idle" part of pm these days.
 
+thanks,
 Len Brown, Intel Open Source Technology Center
