@@ -1,44 +1,47 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: linux-next: manual merge of the acpi tree with the pm tree
-Date: Mon, 11 Feb 2013 18:34:06 -0500
-Message-ID: <51197FEE.9070606@kernel.org>
-References: <20130211125856.64b216a03dd18218c4627635@canb.auug.org.au>
+From: Yinghai Lu <yinghai@kernel.org>
+Subject: Re: [Bisected] [-next-20130204] usb/hcd: irq 18: nobody cared
+Date: Mon, 11 Feb 2013 16:08:38 -0800
+Message-ID: <CAE9FiQUnrc1NxL-X9Ddj-Y6jv_+EdDLKaLzY_eo3VNsSq5XpDA@mail.gmail.com>
+References: <Pine.LNX.4.44L0.1302051520220.2245-100000@iolanthe.rowland.org>
+	<1360466060.3703.15.camel@thor.lan>
+	<1360506199.3461.5.camel@thor.lan>
+	<CAE9FiQX0Jzqi=Dy=r3MoU9vK7HgAf+919LvbgLygW7VH3O4=bg@mail.gmail.com>
+	<CAE9FiQX5wQ8zFzPfgmvm0BESyLVxzDRQ33XPgj+QjBZ0kxuHXg@mail.gmail.com>
+	<1360587768.3454.2.camel@thor.lan>
+	<CAE9FiQWUZ3BgLOtcGePppLzWBv-uR8L+7abditH2MNA7zZW-WA@mail.gmail.com>
+	<CAE9FiQXcgxY_vW6gjqU7Jtxc71J=sKt_2SPsN8x1O9EfDRN_0g@mail.gmail.com>
+	<CAE9FiQXnb-op9vsQJroMisDQt_-X2UpBB1R_WJ1Lifnk5pPpGg@mail.gmail.com>
+	<20130211224142.GA9782@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f41.google.com ([209.85.212.41]:54942 "EHLO
-	mail-vb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760203Ab3BKXeJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Feb 2013 18:34:09 -0500
-In-Reply-To: <20130211125856.64b216a03dd18218c4627635@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lv Zheng <lv.zheng@intel.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20130211224142.GA9782@google.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Peter Hurley <peter@hurleysoftware.com>, Alan Stern <stern@rowland.harvard.edu>, Lan Tianyu <tianyu.lan@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Kosina <jkosina@suse.cz>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 02/10/2013 08:58 PM, Stephen Rothwell wrote:
-> Hi Len,
-> 
-> Today's linux-next merge of the acpi tree got a conflict in
-> drivers/acpi/processor_idle.c between commit 4f8429166818 ("ACPICA:
-> Cleanup PM_TIMER_FREQUENCY definition") from the pm tree and commit
-> 41cdb0efc42e ("ACPI / idle: remove unused definition") from the acpi tree.
-> 
-> I fixed it up (The latter removed the lines modified by the former, so I
-> did that) and can carry the fix as necessary (no action is required).
-> 
+On Mon, Feb 11, 2013 at 2:41 PM, Bjorn Helgaas <bhelgaas@google.com> wrote:
+> [+cc linux-acpi, linux-pci]
+>
+> The _PRT describes motherboard interrupt wiring, which has nothing to
+> do with PCI bus numbers.  Our current drivers/acpi/pci_irq.c caches
+> the PCI bus number along with the _PRT, and I think that's a mistake.
+>
+> The bus number binding means acpi_pci_irq_add_prt() has to happen
+> after enumerating everything below a bridge, and it will prevent us
+> from doing any bus number reassignment for hotplug.
+>
+> I think we should remove the bus numbers from the cached _PRT (or
+> maybe even remove the _PRT caching completely).  When we enable a PCI
+> device's IRQ, we should search up the PCI device tree looking for a
+> _PRT associated with each node, and applying normal PCI bridge
+> swizzling when we don't find a _PRT.  I think this can be done without
+> using PCI bus numbers at all.
+>
 
-Thank you Stephen,
-Go ahead and keep these two merge fix-ups.
+Agreed, will give it try to remove the _PRT caching completely.
 
-We'll either merge the rjw and the lenb trees before
-sending to Linus, or let him repeat your merge
-fix-ups as he likes to do.
+Thanks
 
-BTW. Rafael's "pm" tree now carries the ACPI patch stream,
-so it is probably a mis-representation to call my tree the "acpi" tree.
-My tree is primarily focused on the "idle" part of pm these days.
-
-thanks,
-Len Brown, Intel Open Source Technology Center
+Yinghai
