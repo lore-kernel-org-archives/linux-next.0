@@ -1,39 +1,56 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Feb 12 (drm_pci.c)
-Date: Tue, 12 Feb 2013 08:06:00 -0800
-Message-ID: <511A6868.5010605@infradead.org>
-References: <20130212160953.b80a57fec99e4bd9afb4b601@canb.auug.org.au>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: build failure after merge of the final tree (acpi
+	tree related)
+Date: Tue, 12 Feb 2013 18:35:06 +0100
+Message-ID: <20130212173505.GA2155@merkur.ravnborg.org>
+References: <20130211183409.7519b73ca320baeac5ec886f@canb.auug.org.au> <51197D8B.6010407@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 173-166-109-252-newengland.hfc.comcastbusiness.net ([173.166.109.252]:35790
-	"EHLO bombadil.infradead.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1758579Ab3BLQFK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Feb 2013 11:05:10 -0500
-In-Reply-To: <20130212160953.b80a57fec99e4bd9afb4b601@canb.auug.org.au>
+Received: from smtp.snhosting.dk ([87.238.248.203]:34998 "EHLO
+	smtp.domainteam.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933329Ab3BLRfI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Feb 2013 12:35:08 -0500
+Content-Disposition: inline
+In-Reply-To: <51197D8B.6010407@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Len Brown <lenb@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
 
-On 02/11/13 21:09, Stephen Rothwell wrote:
-> Hi all,
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  arch/sparc/include/asm/processor.h | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/arch/sparc/include/asm/processor.h b/arch/sparc/include/asm/processor.h
+> > index 34baa35..622cfa5 100644
+> > --- a/arch/sparc/include/asm/processor.h
+> > +++ b/arch/sparc/include/asm/processor.h
+> > @@ -7,6 +7,8 @@
+> >  #endif
+> >  
+> >  #define nop() 		__asm__ __volatile__ ("nop")
+> > +#ifndef __ASSEMBLY__
+> >  extern void (*sparc_idle)(void);
+> > +#endif
+> >  
+> >  #endif
+> > 
 > 
-> Changes since 20130211:
+> Thank you Stephen!
 > 
+> The last time I compiled a sparc kernel was in 1993:-)
+> 
+> I've added your fix and Dave's Ack to this patch,
+> and updated it in my next branch.
 
+Hi Len.
 
-when CONFIG_PCI is not enabled (on x86_64):
+Can you please move the definition of sparc_idle to processor_32.h
+It is sparc32 specific - and then we do not need the __ASSEMBLY__ guards
+as the sparc32 variant are not used from assembler.
 
-  CC [M]  drivers/gpu/drm/drm_pci.o
-drivers/gpu/drm/drm_pci.c: In function 'drm_pcie_get_speed_cap_mask':
-drivers/gpu/drm/drm_pci.c:485:2: error: implicit declaration of function 'pcie_capability_read_dword' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
-make[4]: *** [drivers/gpu/drm/drm_pci.o] Error 1
+Do you btw. have any hints how I can convert to the cpu_idle thing you hinted?
 
-
-
--- 
-~Randy
+	Sam
