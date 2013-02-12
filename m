@@ -1,120 +1,62 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: Tree for Feb 12 (drm_pci.c)
-Date: Tue, 12 Feb 2013 14:43:45 -0700
-Message-ID: <20130212214345.GB27624@google.com>
-References: <20130212160953.b80a57fec99e4bd9afb4b601@canb.auug.org.au>
- <511A6868.5010605@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the acpi tree with the pm tree
+Date: Wed, 13 Feb 2013 09:30:14 +1100
+Message-ID: <20130213093014.b6d0a21e1299823763ba3113@canb.auug.org.au>
+References: <20130211125856.64b216a03dd18218c4627635@canb.auug.org.au>
+	<51197FEE.9070606@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__13_Feb_2013_09_30_14_+1100_aqI+iN_U5V6UZwfP"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40212 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753073Ab3BLWa0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Feb 2013 17:30:26 -0500
+In-Reply-To: <51197FEE.9070606@kernel.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lv Zheng <lv.zheng@intel.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Daniel Lezcano <daniel.lezcano@linaro.org>
+
+--Signature=_Wed__13_Feb_2013_09_30_14_+1100_aqI+iN_U5V6UZwfP
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <511A6868.5010605@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 12, 2013 at 08:06:00AM -0800, Randy Dunlap wrote:
-> On 02/11/13 21:09, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20130211:
-> > 
-> 
-> 
-> when CONFIG_PCI is not enabled (on x86_64):
-> 
->   CC [M]  drivers/gpu/drm/drm_pci.o
-> drivers/gpu/drm/drm_pci.c: In function 'drm_pcie_get_speed_cap_mask':
-> drivers/gpu/drm/drm_pci.c:485:2: error: implicit declaration of function 'pcie_capability_read_dword' [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
-> make[4]: *** [drivers/gpu/drm/drm_pci.o] Error 1
+Hi Len,
 
-This one is my fault.  I sent the following patch to Dave to fix it up.
+On Mon, 11 Feb 2013 18:34:06 -0500 Len Brown <lenb@kernel.org> wrote:
+>
+> BTW. Rafael's "pm" tree now carries the ACPI patch stream,
+> so it is probably a mis-representation to call my tree the "acpi" tree.
+> My tree is primarily focused on the "idle" part of pm these days.
 
+OK, I have renamed your tree to "idle".
 
-commit ed0708e69f71fab656afc1c891f3c54c9b105664
-Author: Bjorn Helgaas <bhelgaas@google.com>
-Date:   Fri Feb 8 15:18:35 2013 -0700
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-    drm/pci: define drm_pcie_get_speed_cap_mask() only when CONFIG_PCI=y
-    
-    Move drm_pcie_get_speed_cap_mask() under #ifdef CONFIG_PCI because it
-    it used only for PCI devices (evergreen, r600, r770), and it uses
-    PCI interfaces that only exist when CONFIG_PCI=y.
-    
-    Previously, we tried to compile drm_pcie_get_speed_cap_mask() even when
-    CONFIG_PCI=n, which fails.
-    
-    Tested-by: Fengguang Wu <fengguang.wu@intel.com>
-    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+--Signature=_Wed__13_Feb_2013_09_30_14_+1100_aqI+iN_U5V6UZwfP
+Content-Type: application/pgp-signature
 
-diff --git a/drivers/gpu/drm/drm_pci.c b/drivers/gpu/drm/drm_pci.c
-index 754bc96..2b818c7 100644
---- a/drivers/gpu/drm/drm_pci.c
-+++ b/drivers/gpu/drm/drm_pci.c
-@@ -439,33 +439,6 @@ int drm_pci_init(struct drm_driver *driver, struct pci_driver *pdriver)
- 	return 0;
- }
- 
--#else
--
--int drm_pci_init(struct drm_driver *driver, struct pci_driver *pdriver)
--{
--	return -1;
--}
--
--#endif
--
--EXPORT_SYMBOL(drm_pci_init);
--
--/*@}*/
--void drm_pci_exit(struct drm_driver *driver, struct pci_driver *pdriver)
--{
--	struct drm_device *dev, *tmp;
--	DRM_DEBUG("\n");
--
--	if (driver->driver_features & DRIVER_MODESET) {
--		pci_unregister_driver(pdriver);
--	} else {
--		list_for_each_entry_safe(dev, tmp, &driver->device_list, driver_item)
--			drm_put_dev(dev);
--	}
--	DRM_INFO("Module unloaded\n");
--}
--EXPORT_SYMBOL(drm_pci_exit);
--
- int drm_pcie_get_speed_cap_mask(struct drm_device *dev, u32 *mask)
- {
- 	struct pci_dev *root;
-@@ -514,3 +487,30 @@ int drm_pcie_get_speed_cap_mask(struct drm_device *dev, u32 *mask)
- 	return 0;
- }
- EXPORT_SYMBOL(drm_pcie_get_speed_cap_mask);
-+
-+#else
-+
-+int drm_pci_init(struct drm_driver *driver, struct pci_driver *pdriver)
-+{
-+	return -1;
-+}
-+
-+#endif
-+
-+EXPORT_SYMBOL(drm_pci_init);
-+
-+/*@}*/
-+void drm_pci_exit(struct drm_driver *driver, struct pci_driver *pdriver)
-+{
-+	struct drm_device *dev, *tmp;
-+	DRM_DEBUG("\n");
-+
-+	if (driver->driver_features & DRIVER_MODESET) {
-+		pci_unregister_driver(pdriver);
-+	} else {
-+		list_for_each_entry_safe(dev, tmp, &driver->device_list, driver_item)
-+			drm_put_dev(dev);
-+	}
-+	DRM_INFO("Module unloaded\n");
-+}
-+EXPORT_SYMBOL(drm_pci_exit);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRGsJ2AAoJEECxmPOUX5FE3J4P/RJ980Qg07leJjdupnYX2W4K
+QxD84nlM3zkFPQB36Jm0C23ApnpLqo9mWIuk6rGaRrA3+Zn5LQRa2KTlTsGyydNa
+Fv49QWhJwMt/2K1JeZ9XK3ty05kfXASJaDNFULb7TSIAw0gPXOZNUTkCmt0fDoCt
+lMRo+aCRb4lTC0vrkt0hxmyX+v9sdyIWLiw5y38MPZDQW4lwY32zt5jgByUZhpdr
+goiZtAEQHFixLgV+xsxkazt80GwUYHWmiopJoCwgvi5CvyhNJQLvkLQcC4jU1GxJ
+cNQaVUZm4Htn2UUOkPiu3Fw4iOjVkp0ABWwTOHto1sO0QU89KvLdHY8TAELMysY2
+SMa5awtd5hH1AyDvvhzAHiMOjQvOBnVGqxtfOW/6QDZxljtwxhMal3rr5nmU/rYA
+kWbaFJzilFRMAcWcU7KffCLvXwZhLqu9QJgVk5U0vrPbGFMsyol0H+sKkbjmnRM+
+70pKATAQcOL4l61GXB54Wm3dEr7bspjoRbclIBcai+XO/pmgQPzGAvgnT8w6PSWr
+tHzK0sONlQN5A+H2jTLGQg86jOmntK2u/sgIdt+gT8wReUAUS6mFLbz54eA8yybN
+zOwUfEqPRH66fo68Qqte47LqyiRidrElRYzyH7Q8010DdbNf/TOa34rFblrSWFRd
+l9xz0MvaPrfgmXsD1K4U
+=uqZT
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__13_Feb_2013_09_30_14_+1100_aqI+iN_U5V6UZwfP--
