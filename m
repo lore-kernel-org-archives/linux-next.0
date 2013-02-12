@@ -1,36 +1,67 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: Should SPARC use cpuidle? (was: linux-next: build failure
-	after merge of the final tree (acpi tree related))
-Date: Tue, 12 Feb 2013 20:42:32 +0100
-Message-ID: <20130212194232.GA15705@merkur.ravnborg.org>
-References: <20130211183409.7519b73ca320baeac5ec886f@canb.auug.org.au> <51197D8B.6010407@kernel.org> <20130212173505.GA2155@merkur.ravnborg.org> <511A837B.8020804@kernel.org>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Feb 12 [ WARNING: at drivers/tty/tty_buffer.c:427
+ flush_to_ldisc | tty is NULL ]
+Date: Tue, 12 Feb 2013 22:38:21 +0100
+Message-ID: <CA+icZUUcCMVutJ6N5xi-YWA2xGcmaf8X6Mv1wHWOQpxkrco8cg@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.snhosting.dk ([87.238.248.203]:55234 "EHLO
-	smtp.domainteam.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933161Ab3BLTmd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Feb 2013 14:42:33 -0500
-Content-Disposition: inline
-In-Reply-To: <511A837B.8020804@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-serial-owner@vger.kernel.org>
+Sender: linux-serial-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, Linux PM List <linux-pm@lists.linux-foundation.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
+List-Id: linux-next.vger.kernel.org
 
-> 
-> > Do you btw. have any hints how I can convert to the cpu_idle thing you hinted?
-> 
-> If you have exactly 1 idle state, then cpuidle isn't that interesting,
-> except, perhaps the standard residency counters.  If you have multiple
-> states to choose from, cpuidle becomes more valuable.
-> 
-> There are lots of cpuidle users now, including x86's intel_idle,
-> processor_idle, and the entire ARM tree.
+On Tue, Feb 12, 2013 at 6:09 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Changes since 20130211:
+>
+> The acpi tree lost its build failure.
+>
+> The net-next tree gained a conflict against the net tree.
+>
+> The arm-soc tree gained conflicts against the usb and metag trees.
+>
+> ----------------------------------------------------------------------------
+>
 
-I think LEON has only a single power-down state.
-The APC stuff I know nothing about :-(
+[ CCing linux-serial and linux-pm folks ]
 
-So for now I think I will let it be as it is then.
+When starting suspend (seen once, 2nd suspend was OK)...
 
-	Sam
+[  706.950122] PM: Syncing filesystems ... done.
+[  706.953773] PM: Preparing system for mem sleep
+[  726.174449] ------------[ cut here ]------------
+[  726.174469] WARNING: at drivers/tty/tty_buffer.c:427
+flush_to_ldisc+0x1ac/0x1c0()
+[  726.174473] Hardware name: 530U3BI/530U4BI/530U4BH
+[  726.174476] tty is NULL
+[  707.034695] Freezing user space processes ...
+[  726.174479] Modules linked in: btrfs zlib_deflate xfs libcrc32c
+bnep rfcomm parport_pc ppdev snd_hda_codec_hdmi snd_hda_codec_realtek
+coretemp kvm_intel arc4 kvm iwldvm mac80211 snd_hda_intel
+ghash_clmulni_intel aesni_intel snd_hda_codec xts uvcvideo aes_x86_64
+snd_hwdep snd_pcm lrw gf128mul videobuf2_vmalloc ablk_helper
+snd_page_alloc joydev videobuf2_memops i915 cryptd snd_seq_midi
+videobuf2_core snd_seq_midi_event videodev iwlwifi snd_rawmidi snd_seq
+snd_timer snd_seq_device i2c_algo_bit drm_kms_helper cfg80211 btusb
+snd psmouse drm soundcore microcode bluetooth samsung_laptop serio_raw
+wmi lpc_ich mei mac_hid video lp parport hid_generic usbhid hid r8169
+[  726.174529] Pid: 2507, comm: kworker/0:0 Not tainted
+3.8.0-rc7-next20130212-3-iniza-small #1
+[  726.174530] Call Trace:
+[  726.174535]  [<ffffffff8105a5ef>] warn_slowpath_common+0x7f/0xc0
+[  726.174538]  [<ffffffff8105a6e6>] warn_slowpath_fmt+0x46/0x50
+[  726.174541]  [<ffffffff8142415c>] flush_to_ldisc+0x1ac/0x1c0
+[  726.174544]  [<ffffffff8107993b>] process_one_work+0x16b/0x400
+[  726.174547]  [<ffffffff8107a5b8>] worker_thread+0x118/0x360
+[  726.174549]  [<ffffffff8107a4a0>] ? manage_workers+0x350/0x350
+[  726.174552]  [<ffffffff8107fab0>] kthread+0xc0/0xd0
+[  726.174554]  [<ffffffff8107f9f0>] ? flush_kthread_worker+0xb0/0xb0
+[  726.174557]  [<ffffffff816cabac>] ret_from_fork+0x7c/0xb0
+[  726.174559]  [<ffffffff8107f9f0>] ? flush_kthread_worker+0xb0/0xb0
+[  726.174560] ---[ end trace bf493695d326ce7b ]---
+[  726.379024] ------------[ cut here ]------------
+
+ - Sedat -
