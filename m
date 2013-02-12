@@ -1,47 +1,60 @@
-From: Yinghai Lu <yinghai@kernel.org>
-Subject: Re: [Bisected] [-next-20130204] usb/hcd: irq 18: nobody cared
-Date: Mon, 11 Feb 2013 16:08:38 -0800
-Message-ID: <CAE9FiQUnrc1NxL-X9Ddj-Y6jv_+EdDLKaLzY_eo3VNsSq5XpDA@mail.gmail.com>
-References: <Pine.LNX.4.44L0.1302051520220.2245-100000@iolanthe.rowland.org>
-	<1360466060.3703.15.camel@thor.lan>
-	<1360506199.3461.5.camel@thor.lan>
-	<CAE9FiQX0Jzqi=Dy=r3MoU9vK7HgAf+919LvbgLygW7VH3O4=bg@mail.gmail.com>
-	<CAE9FiQX5wQ8zFzPfgmvm0BESyLVxzDRQ33XPgj+QjBZ0kxuHXg@mail.gmail.com>
-	<1360587768.3454.2.camel@thor.lan>
-	<CAE9FiQWUZ3BgLOtcGePppLzWBv-uR8L+7abditH2MNA7zZW-WA@mail.gmail.com>
-	<CAE9FiQXcgxY_vW6gjqU7Jtxc71J=sKt_2SPsN8x1O9EfDRN_0g@mail.gmail.com>
-	<CAE9FiQXnb-op9vsQJroMisDQt_-X2UpBB1R_WJ1Lifnk5pPpGg@mail.gmail.com>
-	<20130211224142.GA9782@google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 12 Feb 2013 11:57:33 +1100
+Message-ID: <20130212115733.1205c57d893aa3f16fc83526@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20130211224142.GA9782@google.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Peter Hurley <peter@hurleysoftware.com>, Alan Stern <stern@rowland.harvard.edu>, Lan Tianyu <tianyu.lan@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Kosina <jkosina@suse.cz>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__12_Feb_2013_11_57_33_+1100_BWEO+_NF9FRce+D8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48665 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932674Ab3BLA5r (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Feb 2013 19:57:47 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yuval Mintz <yuvalmin@broadcom.com>, "Michael S. Tsirkin" <mst@redhat.com>, Eric Dumazet <edumazet@google.com>
 
-On Mon, Feb 11, 2013 at 2:41 PM, Bjorn Helgaas <bhelgaas@google.com> wrote:
-> [+cc linux-acpi, linux-pci]
->
-> The _PRT describes motherboard interrupt wiring, which has nothing to
-> do with PCI bus numbers.  Our current drivers/acpi/pci_irq.c caches
-> the PCI bus number along with the _PRT, and I think that's a mistake.
->
-> The bus number binding means acpi_pci_irq_add_prt() has to happen
-> after enumerating everything below a bridge, and it will prevent us
-> from doing any bus number reassignment for hotplug.
->
-> I think we should remove the bus numbers from the cached _PRT (or
-> maybe even remove the _PRT caching completely).  When we enable a PCI
-> device's IRQ, we should search up the PCI device tree looking for a
-> _PRT associated with each node, and applying normal PCI bridge
-> swizzling when we don't find a _PRT.  I think this can be done without
-> using PCI bus numbers at all.
->
+--Signature=_Tue__12_Feb_2013_11_57_33_+1100_BWEO+_NF9FRce+D8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Agreed, will give it try to remove the _PRT caching completely.
+Hi all,
 
-Thanks
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c between commit
+0aba93e2b9fb ("bnx2x: set gso_type") from the net tree and commit
+cbf1de72324a ("bnx2x: fix GRO parameters") from the net-next tree.
 
-Yinghai
+I fixed it up (since the former commit says that the latter is the more
+complex fix, I just used that) and can carry the fix as necessary (no
+action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__12_Feb_2013_11_57_33_+1100_BWEO+_NF9FRce+D8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRGZN9AAoJEECxmPOUX5FELpoQAKdiylGo4xgYSVFWa2aEi2mX
+MYFezta7OCJA1XGrbR3Wy/bH3QDI1k9bZVR10o9Hm9oNYj8x1ks3y8iGQNlQYiHw
+sQCPm/GVDEfy4pKHjoaNYZvGWBTUokj+ZME/0dXjlqcpav4Ew8O7E8B2bQIJiAL5
+0B/jsk6DbQ5bKn9a6L2IZj2rV1g7V2UJX8TGISmzkm0XcbOqElgkfpzj4M3zE3rU
+1OzK4HWe+PIQzfeCCNBkM1jRy8niZZTghSXFqJv3sOantR6xEBruifq+lfdDhEUa
+naNg6vSgDrjp8ovElOcI86jev/ba3WcjKWyOZSdcMzy7yPXGO+n3ucW0vnlhw/uX
+4ZD3Wkeu0MyIeHijg7OgQ6+D7uiBYcoTo57jgdl48vXPbDSD5mxXJMKsvFsnhhZF
+9SxtcLUyM+jiPTvuF4Bt5Nf/tKHz2MuyampR+36l/22My207l9BMnMc/+A7ttdPo
+H+bvmH1/kO7/OhNItiSNwft1z5aJODCCVDnrMb88qieu529Htc1z065lodo4g01g
+Fgjn3hWrKYJVmHgWnhT5lL8612cu9N7gIAXpwpJiSpWyXKEQHKmYMacJAboE9Jp/
+zFXLuWt3Sq3cOzCkrbFkAUrNyoqkIuQTw3QmMT+mgeGlVLIt4fv7daBMWH222J6m
+Mf+7yeKbXwUfkegP5Nf+
+=ODnF
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__12_Feb_2013_11_57_33_+1100_BWEO+_NF9FRce+D8--
