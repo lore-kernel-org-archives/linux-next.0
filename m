@@ -1,46 +1,36 @@
 From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: Should SPARC use cpuidle?
-Date: Tue, 12 Feb 2013 20:36:09 +0100
-Message-ID: <20130212193609.GA15694@merkur.ravnborg.org>
-References: <20130211183409.7519b73ca320baeac5ec886f@canb.auug.org.au> <51197D8B.6010407@kernel.org> <20130212173505.GA2155@merkur.ravnborg.org> <511A837B.8020804@kernel.org> <511A83D8.7020202@kernel.org>
+Subject: Re: Should SPARC use cpuidle? (was: linux-next: build failure
+	after merge of the final tree (acpi tree related))
+Date: Tue, 12 Feb 2013 20:42:32 +0100
+Message-ID: <20130212194232.GA15705@merkur.ravnborg.org>
+References: <20130211183409.7519b73ca320baeac5ec886f@canb.auug.org.au> <51197D8B.6010407@kernel.org> <20130212173505.GA2155@merkur.ravnborg.org> <511A837B.8020804@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.snhosting.dk ([87.238.248.203]:55234 "EHLO
+	smtp.domainteam.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933161Ab3BLTmd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Feb 2013 14:42:33 -0500
 Content-Disposition: inline
-In-Reply-To: <511A83D8.7020202@kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
+In-Reply-To: <511A837B.8020804@kernel.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Len Brown <lenb@kernel.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
-On Tue, Feb 12, 2013 at 01:03:04PM -0500, Len Brown wrote:
 > 
-> >> Can you please move the definition of sparc_idle to processor_32.h
-> >> It is sparc32 specific - and then we do not need the __ASSEMBLY__ guards
-> >> as the sparc32 variant are not used from assembler.
-> > 
-> > sure, let me know if attached works.
+> > Do you btw. have any hints how I can convert to the cpu_idle thing you hinted?
 > 
-> ugh, not accustomed to sending patches via thunderbird.
-> hopefully this attachment works...
+> If you have exactly 1 idle state, then cpuidle isn't that interesting,
+> except, perhaps the standard residency counters.  If you have multiple
+> states to choose from, cpuidle becomes more valuable.
 > 
+> There are lots of cpuidle users now, including x86's intel_idle,
+> processor_idle, and the entire ARM tree.
 
-> >From 358ca5d7e02c4559ad3fbf8135421e4a3753e979 Mon Sep 17 00:00:00 2001
-> From: Len Brown <len.brown@intel.com>
-> Date: Sat, 9 Feb 2013 23:27:26 -0500
-> Subject: [PATCH] sparc idle: rename pm_idle to sparc_idle
-> Reply-To: Len Brown <lenb@kernel.org>
-> Organization: Intel Open Source Technology Center
-> 
-> (pm_idle)() is being removed from linux/pm.h
-> because Linux does not have such a cross-architecture concept.
-> 
-> sparc uses an idle function pointer in its architecture
-> specific code.  So we re-name sparc use of pm_idle to sparc_idle.
-> 
-> Maybe some day, SPARC will cut over to cpuidle...
-> 
-> Signed-off-by: Len Brown <len.brown@intel.com>
-> Acked-by: David S. Miller <davem@davemloft.net>
-Build tested - OK.
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
+I think LEON has only a single power-down state.
+The APC stuff I know nothing about :-(
+
+So for now I think I will let it be as it is then.
+
+	Sam
