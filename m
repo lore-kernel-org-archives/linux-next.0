@@ -1,48 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: devm_gpio_* support should not depend on GPIOLIB
-Date: Tue, 12 Feb 2013 13:35:29 +0100
-Message-ID: <CACRpkdYpAqXQY-K9euyiBaEei2+=2VbNeCaD0-ThJWbWX3MN-Q@mail.gmail.com>
-References: <20130118140346.3f9b182aa7daa175b4f136bf@canb.auug.org.au>
-	<1358495866-9329-1-git-send-email-shawn.guo@linaro.org>
-	<CACRpkdZA9O6N7hmtU-6R1Ff6hW5vjD_ar9RLG1dbkd+MWyoKiw@mail.gmail.com>
-	<CAMo8BfJ=6WbAHoCpftRHW1iMtG8robyYUEqqCG2SecixDTgC+g@mail.gmail.com>
-	<CACRpkdbT2eAZR2Ud5f9h0TFsA5M0RpysE9SqMgoL-hcB8fS+Ew@mail.gmail.com>
-	<CAMo8BfKo=N_O=O0y74zy+orAn3nNb-OuS9fC92ebbN7bN_CQPg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the metag tree
+Date: Tue, 12 Feb 2013 13:31:10 +0000
+Message-ID: <201302121331.10646.arnd@arndb.de>
+References: <20130212145601.09b536bef18ae4f3c8d3b3cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:51658 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932957Ab3BLMfa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Feb 2013 07:35:30 -0500
-Received: by mail-ie0-f179.google.com with SMTP id k11so19657iea.38
-        for <linux-next@vger.kernel.org>; Tue, 12 Feb 2013 04:35:30 -0800 (PST)
-In-Reply-To: <CAMo8BfKo=N_O=O0y74zy+orAn3nNb-OuS9fC92ebbN7bN_CQPg@mail.gmail.com>
+Received: from moutng.kundenserver.de ([212.227.17.10]:63420 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933044Ab3BLNbO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Feb 2013 08:31:14 -0500
+In-Reply-To: <20130212145601.09b536bef18ae4f3c8d3b3cc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Shawn Guo <shawn.guo@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Mark Rutland <mark.rutland@arm.com>
 
-On Mon, Feb 11, 2013 at 5:50 PM, Max Filippov <jcmvbkbc@gmail.com> wrote:
+On Tuesday 12 February 2013, Stephen Rothwell wrote:
+> Today's linux-next merge of the arm-soc tree got conflicts in
+> drivers/clocksource/Makefile and drivers/clocksource/Kconfig between
+> commit 3fedb0674fbc ("metag: Time keeping") from the metag tree and
+> commits 8a4da6e36c58 ("arm: arch_timer: move core to
+> drivers/clocksource") and  ("arm64: move from arm_generic to
+> arm_arch_timer") from the arm-soc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
 
-> FWIW I see that the issue is caused by building drivers/gpio/devres.c
-> with CONFIG_GPIOLIB=n. Should I just turn GPIO_DEVRES off too?
+Thanks, looks good.
 
-Hm. Shawn just added:
-
-+config GPIO_DEVRES
-+       def_bool y
-+       depends on HAS_IOMEM
-
-Can you please patch the last line like so:
-
-        depends on (HAS_IOMEM && GPIOLIB)
-
-I think that's the actual problem... Maybe also move this
-config option below the GPIOLIB entry. Or move it under
-the #if GPIOLIB even.
-
-Can you send a patch that works for you?
-
-Yours,
-Linus Walleij
+	Arnd
