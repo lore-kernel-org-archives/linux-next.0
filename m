@@ -1,78 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the metag tree
-Date: Wed, 13 Feb 2013 18:18:29 +1100
-Message-ID: <20130213181829.d8b9244c04b2eeb0e09ee5df@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with the arm-soc tree
+Date: Wed, 13 Feb 2013 18:39:47 +1100
+Message-ID: <20130213183947.8f2a946f84d156272db38e8b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__13_Feb_2013_18_18_29_+1100_F+=376YKs2iol0an"
+ boundary="Signature=_Wed__13_Feb_2013_18_39_47_+1100_d54X5hpZtwrB5Vsd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33415 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58615 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753811Ab3BMHSk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Feb 2013 02:18:40 -0500
+	with ESMTP id S1754588Ab3BMHjy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Feb 2013 02:39:54 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Rob Herring <rob.herring@calxeda.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Rob Herring <rob.herring@calxeda.com>
 
---Signature=_Wed__13_Feb_2013_18_18_29_+1100_F+=376YKs2iol0an
+--Signature=_Wed__13_Feb_2013_18_39_47_+1100_d54X5hpZtwrB5Vsd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Kukjin,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/irqchip/Makefile between commit 270de53f851b ("metag: Internal
-and external irqchips") from the metag tree and commit a900e5d99718
-("ARM: exynos: move exynos4210-combiner to drivers/irqchip") from the
-arm-soc tree.
+Today's linux-next merge of the samsung tree got conflicts in quite a few
+files between commits from the arm-soc tree and commits from the samsung
+tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I took Olof's advice and just dropped the samsung tree for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/irqchip/Makefile
-index ff02f6b,e65fbf2..0000000
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@@ -1,6 -1,9 +1,11 @@@
-+ obj-$(CONFIG_IRQCHIP)			+=3D irqchip.o
-+=20
-  obj-$(CONFIG_ARCH_BCM2835)		+=3D irq-bcm2835.o
- +obj-$(CONFIG_METAG)			+=3D irq-metag-ext.o
- +obj-$(CONFIG_METAG_PERFCOUNTER_IRQS)	+=3D irq-metag.o
-+ obj-$(CONFIG_ARCH_EXYNOS)		+=3D exynos-combiner.o
-  obj-$(CONFIG_ARCH_SUNXI)		+=3D irq-sunxi.o
-- obj-$(CONFIG_VERSATILE_FPGA_IRQ)	+=3D irq-versatile-fpga.o
-  obj-$(CONFIG_ARCH_SPEAR3XX)		+=3D spear-shirq.o
-+ obj-$(CONFIG_ARM_GIC)			+=3D irq-gic.o
-+ obj-$(CONFIG_ARM_VIC)			+=3D irq-vic.o
-+ obj-$(CONFIG_VERSATILE_FPGA_IRQ)	+=3D irq-versatile-fpga.o
-
---Signature=_Wed__13_Feb_2013_18_18_29_+1100_F+=376YKs2iol0an
+--Signature=_Wed__13_Feb_2013_18_39_47_+1100_d54X5hpZtwrB5Vsd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRGz5FAAoJEECxmPOUX5FEI2YP/jJh4KdRABXCRI0bAybIqNNB
-b66SmQkte9JY3AbPxadoWvouQ6KZE2If05pN7HxKHm5Y6TxyusIoZC/yL+dumAxY
-PkMLEJHr5AEewt7iQlTShunbVXsleF7ls1L9vQ1qnfUrxm7MhwWYridlX+yaLccm
-OKPtintt529w4sSBnJFjQFoO97nVAD1oceLcGmVWo3nkG1u0W+UiN/CiJaGCoHiY
-6W6LahDuf2DHucA/oD14tnMkYRR3BborJWRL0k+DD5hxgJCEuwYCiXn8XteZjoiF
-XzZ5e6Cep/xAs7LJ5qeX5upRvMFlpvve08mZLUULwjTAS+nawWC67uwq9Ct6anwb
-g6FM08NLFwl5VZ49TglYHOduISVCiHRxtYxcl+05oRhQysJasItdYfTw77yln+ec
-17k8DLjWLf16POFByoTppKxYVfri9itgQtsXZWrM7Edx7Qno1cLR0WSdcxRgaWhz
-fCXOoJ6+zrPN479nzUv/wkgr8F+iUT36EJxBTMwV/KnrYgP0RVxwc9zT4SgrnDKl
-yIilgmLe+1ueV7AVftwLulZ0DDOUpUg+5X4ay1jKxweuM9kTIwinf0YpCKm5aLIA
-bOWPyXJvnYmT0r0Z+3y/ZQ5iGGv/mJrRQH2xR/92Z3of5MhSmQyBJWoheqHZ7X5K
-kvjYfifB0kAB3LHlESe9
-=I2j4
+iQIcBAEBCAAGBQJRG0NDAAoJEECxmPOUX5FE2HMP/i/p4qQFjJ3dswHTlytghxfZ
+7svjT4QBIFNPz0yMn3DQGXe9lRL10ytNPBXPy1ICcUn2/uFFqwuLWSJoVcEfWtWT
+5xdoWkgFzV/xIm6OoTzxIXWqijFo77Eys34SvtlzGOv9e4L6HEWwWgkow+oaneqf
+Wu2YdUOKP/v8pRL0nTj5vZnTi6bnz9BzNdfXlJ0dp5JZsBpqcJGTG59DM52+4W7G
+0h3VgwFOqcXi0k2cIbpobS7ry2BwBoxCz4UKvuEc65QvBb/dWgAfOVqQqLK9yEjw
+AGsN+BoRdMW3iT6qg0YpM8AyeNfo/aRzbJdLAOs6hqhdjnKNcyyVarlkXuGRi/sN
+SJZo2lYGBKpWHm0ByLVFKTYMsdoD10sAS/TUSNfeP0Oi+U1lY1azo8Qzk0QrFcF+
+QjkAePfDbupQkkXrzXuVEe1+rVv5rcGDYop87DEWVUqw+vyeLAzH0xRUzeF21aVq
+cZ5UodNPv4Kko5JoiA45Kw5hsPUwlKeGuB0BFVc6EdF5FB9zAyGcyNMRM0C26jbE
+EgTcpKsBaX6G6cJFECOftM0a2XbjvfH6PYyvhnRHMFe58uS2sYdncERe3BXnqMIe
+EorOV3f3wcsIrIQ02rVfpkVOrN18PFth8JSQVn828RALyHFgaxowszN1dU1orqzy
+AjlSIzlLqxkiro4PcZuK
+=lenK
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__13_Feb_2013_18_18_29_+1100_F+=376YKs2iol0an--
+--Signature=_Wed__13_Feb_2013_18_39_47_+1100_d54X5hpZtwrB5Vsd--
