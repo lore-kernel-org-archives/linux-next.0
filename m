@@ -1,41 +1,45 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] leds-ot200: Fix misbehavior caused by wrong bit masks
-Date: Wed, 13 Feb 2013 07:54:05 -0800
-Message-ID: <20130213155405.GA2869@kroah.com>
-References: <1360771110-9490-1-git-send-email-christian.gmeiner@gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -next 1/1] net: skbuff: fix compile error in skb_panic()
+Date: Wed, 13 Feb 2013 11:52:21 -0500 (EST)
+Message-ID: <20130213.115221.343418412847173849.davem@davemloft.net>
+References: <1360754427-9051-1-git-send-email-james.hogan@imgtec.com>
+	<CA+icZUVB9QaZfnKGSz_Dr=EADBtYULOHqEHDDocdXO5-Dy=uYA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1360771110-9490-1-git-send-email-christian.gmeiner@gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: Christian Gmeiner <christian.gmeiner@gmail.com>
-Cc: cooloney@gmail.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, akpm@linux-foundation.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:41616 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759719Ab3BMQwZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Feb 2013 11:52:25 -0500
+In-Reply-To: <CA+icZUVB9QaZfnKGSz_Dr=EADBtYULOHqEHDDocdXO5-Dy=uYA@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: james.hogan@imgtec.com, sakiwit@gmail.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, jiri@resnulli.us, netdev@vger.kernel.org
 
-On Wed, Feb 13, 2013 at 04:58:30PM +0100, Christian Gmeiner wrote:
-> During the development of this driver an in-house register
-> documentation was used. The last weeks some integration tests
-> were done and this problem was found. It turned out that
-> the released register documentation is wrong.
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Wed, 13 Feb 2013 13:41:21 +0100
+
+> On Wed, Feb 13, 2013 at 12:20 PM, James Hogan <james.hogan@imgtec.com> wrote:
+>> I get the following build error on next-20130213 due to the following
+>> commit:
+>>
+>> commit f05de73bf82fbbc00265c06d12efb7273f7dc54a ("skbuff: create
+>> skb_panic() function and its wrappers").
+>>
+>> It adds an argument called panic to a function that uses the BUG() macro
+>> which tries to call panic, but the argument masks the panic() function
+>> declaration, resulting in the following error (gcc 4.2.4):
+>>
+>> net/core/skbuff.c In function 'skb_panic':
+>> net/core/skbuff.c +126 : error: called object 'panic' is not a function
+>>
 > 
-> The fix is very simple: shift all masks by one.
+> [ CC linux-netdev ]
 > 
-> Our customers can control LEDs from userspace via Java,
-> C++ or what every. They have running/working applications where
-> they want to control led_3 but led_2 get's used.
-> I got a bug report in our in-house bug tracker so it would be
-> great to fix this upstream.
-> 
-> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
-> ---
->  drivers/leds/leds-ot200.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> Hmm, with gcc-4.6.3 on Ubuntu/precise I don't see this... compiler-specific?
 
-<formletter>
+Kconfig option specific.
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
-for how to do this properly.
-
-</formletter>
+Applied, thanks James.
