@@ -1,88 +1,34 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: [PATCH -next 1/1] net: skbuff: fix compile error in skb_panic()
-Date: Wed, 13 Feb 2013 13:41:21 +0100
-Message-ID: <CA+icZUVB9QaZfnKGSz_Dr=EADBtYULOHqEHDDocdXO5-Dy=uYA@mail.gmail.com>
-References: <1360754427-9051-1-git-send-email-james.hogan@imgtec.com>
-Reply-To: sedat.dilek@gmail.com
+From: Matt Fleming <matt.fleming@intel.com>
+Subject: Re: linux-next: manual merge of the ia64 tree with Linus' tree
+Date: Wed, 13 Feb 2013 12:55:52 +0000
+Message-ID: <1360760152.24917.33.camel@mfleming-mobl1.ger.corp.intel.com>
+References: <20130213130559.dd6b2ac2c59093cc1794f41b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <1360754427-9051-1-git-send-email-james.hogan@imgtec.com>
-Sender: netdev-owner@vger.kernel.org
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Jean Sacren <sakiwit@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-we0-f174.google.com ([74.125.82.174]:49180 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932508Ab3BMMz4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Feb 2013 07:55:56 -0500
+Received: by mail-we0-f174.google.com with SMTP id r6so970612wey.19
+        for <linux-next@vger.kernel.org>; Wed, 13 Feb 2013 04:55:54 -0800 (PST)
+In-Reply-To: <20130213130559.dd6b2ac2c59093cc1794f41b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Luck, Tony" <tony.luck@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@linux.intel.com>, Seiji Aguchi <seiji.aguchi@hds.com>
 
-On Wed, Feb 13, 2013 at 12:20 PM, James Hogan <james.hogan@imgtec.com> wrote:
-> I get the following build error on next-20130213 due to the following
-> commit:
->
-> commit f05de73bf82fbbc00265c06d12efb7273f7dc54a ("skbuff: create
-> skb_panic() function and its wrappers").
->
-> It adds an argument called panic to a function that uses the BUG() macro
-> which tries to call panic, but the argument masks the panic() function
-> declaration, resulting in the following error (gcc 4.2.4):
->
-> net/core/skbuff.c In function 'skb_panic':
-> net/core/skbuff.c +126 : error: called object 'panic' is not a function
->
+On Wed, 2013-02-13 at 13:05 +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the ia64 tree got a conflict in
+> drivers/firmware/efivars.c between commit 83e68189745a ("efi: Make
+> 'efi_enabled' a function to query EFI facilities") from the  tree and
+> commit a93bc0c6e07e ("efi_pstore: Introducing workqueue updating sysfs")
+> from the ia64 tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-[ CC linux-netdev ]
-
-Hmm, with gcc-4.6.3 on Ubuntu/precise I don't see this... compiler-specific?
-
-$ grep skbuff build-log_3.8.0-rc7-next20130213-2-iniza-small.txt
-  CC      net/core/skbuff.o
-
-- Sedat -
-
-
-> This is fixed by renaming the argument to msg.
->
-> Signed-off-by: James Hogan <james.hogan@imgtec.com>
-> Cc: Jean Sacren <sakiwit@gmail.com>
-> Cc: Jiri Pirko <jiri@resnulli.us>
-> Cc: David S. Miller <davem@davemloft.net>
-> ---
->
-> Feel free to rename panic to something else or squash this into the
-> offending commit.
->
->  net/core/skbuff.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> index 8731c39..21a22cc 100644
-> --- a/net/core/skbuff.c
-> +++ b/net/core/skbuff.c
-> @@ -109,7 +109,7 @@ static const struct pipe_buf_operations sock_pipe_buf_ops = {
->   *     @skb:   buffer
->   *     @sz:    size
->   *     @addr:  address
-> - *     @panic: skb_over_panic or skb_under_panic
-> + *     @msg:   skb_over_panic or skb_under_panic
->   *
->   *     Out-of-line support for skb_put() and skb_push().
->   *     Called via the wrapper skb_over_panic() or skb_under_panic().
-> @@ -117,10 +117,10 @@ static const struct pipe_buf_operations sock_pipe_buf_ops = {
->   *     __builtin_return_address is not used because it is not always reliable.
->   */
->  static void skb_panic(struct sk_buff *skb, unsigned int sz, void *addr,
-> -                     const char panic[])
-> +                     const char msg[])
->  {
->         pr_emerg("%s: text:%p len:%d put:%d head:%p data:%p tail:%#lx end:%#lx dev:%s\n",
-> -                panic, addr, skb->len, sz, skb->head, skb->data,
-> +                msg, addr, skb->len, sz, skb->head, skb->data,
->                  (unsigned long)skb->tail, (unsigned long)skb->end,
->                  skb->dev ? skb->dev->name : "<NULL>");
->         BUG();
-> --
-> 1.8.1.2
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks Stephen, this is all correct.
