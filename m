@@ -1,34 +1,85 @@
-From: Matt Fleming <matt.fleming@intel.com>
-Subject: Re: linux-next: manual merge of the ia64 tree with Linus' tree
-Date: Wed, 13 Feb 2013 12:55:52 +0000
-Message-ID: <1360760152.24917.33.camel@mfleming-mobl1.ger.corp.intel.com>
-References: <20130213130559.dd6b2ac2c59093cc1794f41b@canb.auug.org.au>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH v2] gpio: devm_gpio_* support should not depend on GPIOLIB
+Date: Wed, 13 Feb 2013 21:37:52 +0800
+Message-ID: <20130213133749.GA13464@r65073-Latitude-E6420>
+References: <20130118140346.3f9b182aa7daa175b4f136bf@canb.auug.org.au>
+ <1358495866-9329-1-git-send-email-shawn.guo@linaro.org>
+ <CACRpkdZA9O6N7hmtU-6R1Ff6hW5vjD_ar9RLG1dbkd+MWyoKiw@mail.gmail.com>
+ <CAMo8BfJ=6WbAHoCpftRHW1iMtG8robyYUEqqCG2SecixDTgC+g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:49180 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932508Ab3BMMz4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Feb 2013 07:55:56 -0500
-Received: by mail-we0-f174.google.com with SMTP id r6so970612wey.19
-        for <linux-next@vger.kernel.org>; Wed, 13 Feb 2013 04:55:54 -0800 (PST)
-In-Reply-To: <20130213130559.dd6b2ac2c59093cc1794f41b@canb.auug.org.au>
+Received: from co9ehsobe004.messaging.microsoft.com ([207.46.163.27]:29750
+	"EHLO co9outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755759Ab3BMNiH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Feb 2013 08:38:07 -0500
+Content-Disposition: inline
+In-Reply-To: <CAMo8BfJ=6WbAHoCpftRHW1iMtG8robyYUEqqCG2SecixDTgC+g@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Luck, Tony" <tony.luck@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@linux.intel.com>, Seiji Aguchi <seiji.aguchi@hds.com>
+To: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2013-02-13 at 13:05 +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the ia64 tree got a conflict in
-> drivers/firmware/efivars.c between commit 83e68189745a ("efi: Make
-> 'efi_enabled' a function to query EFI facilities") from the  tree and
-> commit a93bc0c6e07e ("efi_pstore: Introducing workqueue updating sysfs")
-> from the ia64 tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Sorry for the late response due to Chinese New Year Holidays here.
 
-Thanks Stephen, this is all correct.
+On Sun, Feb 10, 2013 at 07:46:30AM +0300, Max Filippov wrote:
+> On Sat, Jan 19, 2013 at 2:33 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Fri, Jan 18, 2013 at 8:57 AM, Shawn Guo <shawn.guo@linaro.org> wrote:
+> >
+> >> Some architectures (e.g. blackfin) provide gpio API without requiring
+> >> GPIOLIB support (ARCH_WANT_OPTIONAL_GPIOLIB).  devm_gpio_* functions
+> >> should also work for these architectures, since they do not really
+> >> depend on GPIOLIB.
+> >>
+> >> Add a new option GPIO_DEVRES (enabled by default) to control the build
+> >> of devres.c.  It also removes the empty version of devm_gpio_*
+> >> functions for !GENERIC_GPIO build from linux/gpio.h, and moves the
+> >> function declarations from asm-generic/gpio.h into linux/gpio.h.
+> >>
+> >> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> >
+> > OK I removed the old version of the patch and pushed this instead.
+> 
+> Hi,
+> 
+> this patch causes the following errors for xtensa defconfig build:
+> 
+I assume this is a build of arch/xtensa/common_defconfig.
+
+> include/asm-generic/gpio.h:265:2: error: implicit declaration of
+> function '__gpio_get_value' [-Werror=implicit-function-declaration]
+> include/asm-generic/gpio.h:271:2: error: implicit declaration of
+> function '__gpio_set_value' [-Werror=implicit-function-declaration]
+> include/linux/gpio.h:60:90: error: redefinition of 'gpio_cansleep'
+> include/linux/gpio.h:62:2: error: implicit declaration of function
+> '__gpio_cansleep' [-Werror=implicit-function-declaration]
+> include/linux/gpio.h:67:2: error: implicit declaration of function
+> '__gpio_to_irq' [-Werror=implicit-function-declaration]
+> drivers/gpio/devres.c:26:2: error: implicit declaration of function
+> 'gpio_free' [-Werror=implicit-function-declaration]
+> drivers/gpio/devres.c:60:2: error: implicit declaration of function
+> 'gpio_request' [-Werror=implicit-function-declaration]
+> drivers/gpio/devres.c:90:2: error: implicit declaration of function
+> 'gpio_request_one' [-Werror=implicit-function-declaration]
+> 
+I'm not sure why GENERIC_GPIO is needed for this build at all.  At
+least, with the change below, everything seems building fine with
+common_defconfig.
+
+Shawn
+
+diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
+index 13358e1..cfc41f3 100644
+--- a/arch/xtensa/Kconfig
++++ b/arch/xtensa/Kconfig
+@@ -31,9 +31,6 @@ config RWSEM_XCHGADD_ALGORITHM
+ config GENERIC_HWEIGHT
+        def_bool y
+ 
+-config GENERIC_GPIO
+-       def_bool y
+-
+ config ARCH_HAS_ILOG2_U32
+        def_bool n
+ 
