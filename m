@@ -1,127 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the xen-two tree
-Date: Fri, 15 Feb 2013 15:45:51 +1100
-Message-ID: <20130215154551.d11e9d376d30d32b9673e6cc@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the  tree
+Date: Fri, 15 Feb 2013 16:01:24 +1100
+Message-ID: <20130215160124.52d9bfb269ad1ffd390d4851@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__15_Feb_2013_15_45_51_+1100_0y09pfsRKLtK7dNw"
+ boundary="Signature=_Fri__15_Feb_2013_16_01_24_+1100_pVqz.AwYj1hIErXB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43131 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58791 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932766Ab3BOEqD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Feb 2013 23:46:03 -0500
+	with ESMTP id S1750718Ab3BOFBg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Feb 2013 00:01:36 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liu Jinsong <jinsong.liu@intel.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, Larry Finger <Larry.Finger@lwfinger.net>, "John W. Linville" <linville@tuxdriver.com>
 
---Signature=_Fri__15_Feb_2013_15_45_51_+1100_0y09pfsRKLtK7dNw
+--Signature=_Fri__15_Feb_2013_16_01_24_+1100_pVqz.AwYj1hIErXB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Konrad,
+Hi Greg,
 
-After merging the xen-two tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the driver-core tree got a conflict in
+drivers/net/wireless/rtlwifi/Kconfig between commit 06e7cda3ce30
+("rtlwifi: Rework Kconfig") from the wireless-next tree and commit
+6cba014857f4 ("drivers/net/wireless/rtlwifi: remove depends on
+CONFIG_EXPERIMENTAL") from the driver-core tree.
 
-drivers/xen/xen-acpi-memhotplug.c: In function 'acpi_memory_get_device':
-drivers/xen/xen-acpi-memhotplug.c:191:2: error: implicit declaration of fun=
-ction 'acpi_bus_add' [-Werror=3Dimplicit-function-declaration]
-drivers/xen/xen-acpi-memhotplug.c: At top level:
-drivers/xen/xen-acpi-memhotplug.c:417:3: warning: initialization from incom=
-patible pointer type [enabled by default]
-drivers/xen/xen-acpi-memhotplug.c:417:3: warning: (near initialization for =
-'xen_acpi_memory_device_driver.ops.remove') [enabled by default]
-
-Caused by commit 259f201cb7ea ("xen/acpi: ACPI memory hotplug").
-
-drivers/xen/xen-acpi-cpuhotplug.c: In function 'acpi_processor_device_add':
-drivers/xen/xen-acpi-cpuhotplug.c:254:2: error: implicit declaration of fun=
-ction 'acpi_bus_add' [-Werror=3Dimplicit-function-declaration]
-drivers/xen/xen-acpi-cpuhotplug.c: At top level:
-drivers/xen/xen-acpi-cpuhotplug.c:425:3: warning: initialization from incom=
-patible pointer type [enabled by default]
-drivers/xen/xen-acpi-cpuhotplug.c:425:3: warning: (near initialization for =
-'xen_acpi_processor_driver.ops.remove') [enabled by default]
-
-Caused by commit 181232c249f0 ("xen/acpi: ACPI cpu hotplug").
-
-These commits interacted with commits 636458de36f1 ("ACPI: Remove the
-arguments of acpi_bus_add() that are not used"), 0cd6ac52b333 ("ACPI:
-Make acpi_bus_scan() and acpi_bus_add() take only one argument") and
-b8bd759acd05 ("ACPI / scan: Drop acpi_bus_add() and use acpi_bus_scan()
-instead") from the pm tree.
-
-I have added this merge fix patch and can carry it as necessary (I did
-*not* fix the warnings above):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 15 Feb 2013 15:37:27 +1100
-Subject: [PATCH] xen/acpi: fix up for apci_bus_add api change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/xen/xen-acpi-cpuhotplug.c | 2 +-
- drivers/xen/xen-acpi-memhotplug.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/xen/xen-acpi-cpuhotplug.c b/drivers/xen/xen-acpi-cpuho=
-tplug.c
-index 9eefbb0..0db4722 100644
---- a/drivers/xen/xen-acpi-cpuhotplug.c
-+++ b/drivers/xen/xen-acpi-cpuhotplug.c
-@@ -251,7 +251,7 @@ int acpi_processor_device_add(acpi_handle handle, struc=
-t acpi_device **device)
- 	if (acpi_bus_get_device(phandle, &pdev))
- 		return -ENODEV;
-=20
--	if (acpi_bus_add(device, pdev, handle, ACPI_BUS_TYPE_PROCESSOR))
-+	if (acpi_bus_scan(handle))
- 		return -ENODEV;
-=20
- 	return 0;
-diff --git a/drivers/xen/xen-acpi-memhotplug.c b/drivers/xen/xen-acpi-memho=
-tplug.c
-index 678680c..164287b 100644
---- a/drivers/xen/xen-acpi-memhotplug.c
-+++ b/drivers/xen/xen-acpi-memhotplug.c
-@@ -188,7 +188,7 @@ acpi_memory_get_device(acpi_handle handle,
- 	 * Now add the notified device.  This creates the acpi_device
- 	 * and invokes .add function
- 	 */
--	result =3D acpi_bus_add(&device, pdevice, handle, ACPI_BUS_TYPE_DEVICE);
-+	result =3D acpi_bus_scan(handle);
- 	if (result) {
- 		pr_warn(PREFIX "Cannot add acpi bus\n");
- 		return -EINVAL;
---=20
-1.8.1
+I fixed it up (the former is a superset of the latter, so I used that)
+and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__15_Feb_2013_15_45_51_+1100_0y09pfsRKLtK7dNw
+--Signature=_Fri__15_Feb_2013_16_01_24_+1100_pVqz.AwYj1hIErXB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRHb1/AAoJEECxmPOUX5FEiesP/0yV+u+ydQ1Eq0nLa9WE+jo3
-3SPy/zsyF2KrYX1Hj7xLyoknVc8Ciy+wbCPOGHLXhb994C9iEzlbLaMkh/+ovg/5
-s5AKOO5WFgJ90flOo6qGDGoT1pz5z7lMtpMoT3pyXyPZRdl1QRNipFEtsrl8jDEy
-LEACPswsxODexoi7ucK1kuoHpc+wW1zPQLGgynOqc7aOZyVrAOOkXis3AadBWKw+
-daOOHl8YaCfY4BRLzMfvTB0vJoWK1O02qwhx/OltlVGGFKw2ApgA7aZX5rGEgX6x
-4TsTTxJQkWNCcgCKC6d3RTwQxtJ/t6SMMP9PHRB2PP+rfy6Tz/1uw5XDG9f081Su
-qKSxb9XCTVSZn+yn2RDdXdq1Q3dN7IY2/eVZ312rUNsH/R0+TTAkQ5HKi/oBzgfT
-qsex90flE1oChV9ZuNptaiTxmYKcHzS6FOuOijAfRU2zq8JV0inCt/9GAcQw+pw3
-T5/iohi2XQr/ceKxzMos1CYgWxC5K0nc8n7oVUPSL/TeYFPD7APRh0JJLmaSCvzw
-g9a7bOgtE0Ll5YhJ9cZphmrWEvci/c5VB1MFPYTIjwzOF1+bMo9ctME/w9QfBycb
-voYepaf5Mq//sZs/dZ4k0cOPSCMjFxcJMKwyCtB/1C3hhrspaWJ6vRjuH5LwGs5A
-JH7he6Y7zk3OUU9u9mHQ
-=GdNC
+iQIcBAEBCAAGBQJRHcEkAAoJEECxmPOUX5FEpzsP/Rvn8Ig+Dx9bzi5nVUmJ+xCA
+IdC8FhP1rSZvvD6Mt3JwBPCQpamPoJq+Wlbclvnx/vvPV26kQeffhcZCeDeJiMHG
+pjx0h4Sq2mZsCMsSUu3YnUXyZ1G9m5yW4pg+lnyvCYH1kuoSIDub2d/OyZykkYq/
+CU29xMCUBklgoFUZa5f2k8G/HTVbRvtURQfz5itvY5VS0Qnk3g9e3NmaLZ5HKq75
+KOPVt0NWHthFZa1YJIJFefBSN8G+tBNS2KLp5FBld31WZpg34q4CJHHvufpMHBDP
+s3rD1js+ydknOu8SLOS2Z8/URV9RAiCBBa+iljfXW/sldbT8fJoCDV8yyiZjSgVF
+Hut4ygTtw6hguaivjDCOu8ugas5q41kg9Zy1A7ktU5d32HPRisMZoOZPKZHdA6o5
+FhTswLJaYThrmt6QJ8vvqesKzQ1oG/75cdlLfE5yZN7mj7l//u2Ab3vJbB97rRRq
+KbkYN/4tf8Va/XYB22wi80F8aqbjySmh/o0Oh4toTgFyLab7R/CiXM/QeBPQOPjN
+Wiwu0xnGkkAJR4HKjGaEVlf8VkHpW9vwhmn6V6IJJS2fthp+BBnpnGgHAvVPblKM
+ybPiDxYcR9nnptOGW41m3I/zlGYm6Obhf+GvYRhySzC3nUKhQk1kocdlasD2F/qH
+cr7ZXixMd7HHgWzSt0oa
+=IXop
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__15_Feb_2013_15_45_51_+1100_0y09pfsRKLtK7dNw--
+--Signature=_Fri__15_Feb_2013_16_01_24_+1100_pVqz.AwYj1hIErXB--
