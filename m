@@ -1,64 +1,97 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build warning after merge of the char-misc tree
-Date: Fri, 15 Feb 2013 20:05:51 +0000
-Message-ID: <201302152005.51575.arnd@arndb.de>
-References: <20130215162657.6dd03d27e8cfed0c134b5dd3@canb.auug.org.au> <20130215173429.GA27707@kroah.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH] leds-ot200: Fix misbehavior caused by wrong bit masks
+Date: Fri, 15 Feb 2013 14:47:08 -0800
+Message-ID: <CAK5ve-K43n=4n1GyRW+2PgMTe2bU6ROHAa-_dK_0LgzM7JCRcw@mail.gmail.com>
+References: <1360771110-9490-1-git-send-email-christian.gmeiner@gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:54177 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750911Ab3BOUGA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Feb 2013 15:06:00 -0500
-In-Reply-To: <20130215173429.GA27707@kroah.com>
+Received: from mail-la0-f53.google.com ([209.85.215.53]:34476 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751815Ab3BOWrb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Feb 2013 17:47:31 -0500
+In-Reply-To: <1360771110-9490-1-git-send-email-christian.gmeiner@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Stevenson <david@avoncliff.com>
+To: Christian Gmeiner <christian.gmeiner@gmail.com>, akpm <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 
-On Friday 15 February 2013, Greg KH wrote:
-> On Fri, Feb 15, 2013 at 04:26:57PM +1100, Stephen Rothwell wrote:
-> > 
-> > After merging the char-misc tree, today's linux-next build (x86_64
-> > allmodconfig) produced this warning:
-> > 
-> > drivers/w1/slaves/w1_therm.c: In function 'w1_therm_read':
-> > drivers/w1/slaves/w1_therm.c:245:15: warning: 'crc' may be used uninitialized in this function [-Wuninitialized]
-> > 
-> > Its a false positive, but it was introduced by commit 867ff9880d5d
-> > ("w1_therm: Retries: remove old code add CRC")
-> 
-> I don't see that here with gcc 4.7.1, perhaps you need to upgrade your
-> version of gcc to not show these false positives?
+On Wed, Feb 13, 2013 at 7:58 AM, Christian Gmeiner
+<christian.gmeiner@gmail.com> wrote:
+> During the development of this driver an in-house register
+> documentation was used. The last weeks some integration tests
+> were done and this problem was found. It turned out that
+> the released register documentation is wrong.
+>
+> The fix is very simple: shift all masks by one.
+>
+> Our customers can control LEDs from userspace via Java,
+> C++ or what every. They have running/working applications where
+> they want to control led_3 but led_2 get's used.
+> I got a bug report in our in-house bug tracker so it would be
+> great to fix this upstream.
+>
+> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
 
-I have finally put the pieces of the puzzle together. I already knew
-that some of these warnings only happen when building with -Os (even
-in gcc-4.8), since gcc turns off the inlining at a point after it
-determines that the variable might be used uninitialized but before
-determining that it's actually isn't.
+Thanks, Christian.
 
-I think the best way forward is to disable this particular warning
-when building with -Os (which is enabled in allyesconfig). A false
-positive seems more harmful than a false negative here, because it
-prompts people to add broken initializations. This patch indeed
-makes the majority of the allyesconfig warnings on ARM go away.
-For the regular defconfig builds, we are already mostly clean,
-and those are built with -O2.
+And Andrew, are you going to take care of this patch? Or I will merge this.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+-Bryan
 
-diff --git a/Makefile b/Makefile
-index 0b4bf62..4d60d97 100644
---- a/Makefile
-+++ b/Makefile
-@@ -570,7 +570,7 @@ endif # $(dot-config)
- all: vmlinux
- 
- ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
--KBUILD_CFLAGS	+= -Os
-+KBUILD_CFLAGS	+= -Os $(call cc-option,-Wno-maybe-uninitialized,)
- else
- KBUILD_CFLAGS	+= -O2
- endif
+> ---
+>  drivers/leds/leds-ot200.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c
+> index ee14662..98cae52 100644
+> --- a/drivers/leds/leds-ot200.c
+> +++ b/drivers/leds/leds-ot200.c
+> @@ -47,37 +47,37 @@ static struct ot200_led leds[] = {
+>         {
+>                 .name = "led_1",
+>                 .port = 0x49,
+> -               .mask = BIT(7),
+> +               .mask = BIT(6),
+>         },
+>         {
+>                 .name = "led_2",
+>                 .port = 0x49,
+> -               .mask = BIT(6),
+> +               .mask = BIT(5),
+>         },
+>         {
+>                 .name = "led_3",
+>                 .port = 0x49,
+> -               .mask = BIT(5),
+> +               .mask = BIT(4),
+>         },
+>         {
+>                 .name = "led_4",
+>                 .port = 0x49,
+> -               .mask = BIT(4),
+> +               .mask = BIT(3),
+>         },
+>         {
+>                 .name = "led_5",
+>                 .port = 0x49,
+> -               .mask = BIT(3),
+> +               .mask = BIT(2),
+>         },
+>         {
+>                 .name = "led_6",
+>                 .port = 0x49,
+> -               .mask = BIT(2),
+> +               .mask = BIT(1),
+>         },
+>         {
+>                 .name = "led_7",
+>                 .port = 0x49,
+> -               .mask = BIT(1),
+> +               .mask = BIT(0),
+>         }
+>  };
+>
+> --
+> 1.7.12.2.421.g261b511
+>
