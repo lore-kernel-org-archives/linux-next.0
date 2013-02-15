@@ -1,38 +1,66 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning after merge of the char-misc tree
-Date: Fri, 15 Feb 2013 09:34:29 -0800
-Message-ID: <20130215173429.GA27707@kroah.com>
-References: <20130215162657.6dd03d27e8cfed0c134b5dd3@canb.auug.org.au>
+From: "Liu, Jinsong" <jinsong.liu@intel.com>
+Subject: RE: linux-next: build failure after merge of the xen-two tree
+Date: Fri, 15 Feb 2013 17:46:48 +0000
+Message-ID: <DE8DF0795D48FD4CA783C40EC82923353FC036@SHSMSX101.ccr.corp.intel.com>
+References: <20130215154551.d11e9d376d30d32b9673e6cc@canb.auug.org.au>
+	<20130215132624.GB11777@phenom.dumpdata.com>
+	<20130216005014.c8ce70e041f655d4c195c9fb@canb.auug.org.au>
+	<2185970.g9YrD945My@vostro.rjw.lan>
+ <20130216015200.1e58bec1aff05592ac2ae98f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39513 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754378Ab3BOReb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 15 Feb 2013 12:34:31 -0500
-Content-Disposition: inline
-In-Reply-To: <20130215162657.6dd03d27e8cfed0c134b5dd3@canb.auug.org.au>
+Received: from mga02.intel.com ([134.134.136.20]:15737 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752714Ab3BORqw convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Feb 2013 12:46:52 -0500
+In-Reply-To: <20130216015200.1e58bec1aff05592ac2ae98f@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Stevenson <david@avoncliff.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Rafael J. Wysocki" <rjw@sisk.pl>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: "Wu, Fengguang" <fengguang.wu@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>
 
-On Fri, Feb 15, 2013 at 04:26:57PM +1100, Stephen Rothwell wrote:
-> Hi all,
+Stephen Rothwell wrote:
+> Hi Rafael,
 > 
-> After merging the char-misc tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
+> On Fri, 15 Feb 2013 15:53:34 +0100 "Rafael J. Wysocki" <rjw@sisk.pl>
+> wrote: 
+>> 
+>> On Saturday, February 16, 2013 12:50:14 AM Stephen Rothwell wrote:
+>>> 
+>>> On Fri, 15 Feb 2013 08:26:24 -0500 Konrad Rzeszutek Wilk
+>>> <konrad.wilk@oracle.com> wrote: 
+>>>> 
+>>>> Thank you. I keep on forgetting - but would it be OK for me to
+>>>> take this patch in my tree? Or should I not since this is a new
+>>>> functionality that Rafael is going to introduce in v3.9?
+>>> 
+>>> It is an API change in the pm tree that is not yet in Linus' tree.
+>>> 
+>>>> And if so, perhaps I should tack it on in my tree, once Rafael
+>>>> does a git pull to Linus? Or just point Linus to this git commit?
+>>> 
+>>> You should point Linus at this patch if the pm tree is merged
+>>> first, or 
+>>> Rafael should do the same if the reverse happens.
+>> 
+>> Alternatively, Konrad can pull the acpi-scan branch containing the
+>> changes in question from my tree into his tree and rebase the new
+>> material on top of that.
 > 
-> drivers/w1/slaves/w1_therm.c: In function 'w1_therm_read':
-> drivers/w1/slaves/w1_therm.c:245:15: warning: 'crc' may be used uninitialized in this function [-Wuninitialized]
-> 
-> Its a false positive, but it was introduced by commit 867ff9880d5d
-> ("w1_therm: Retries: remove old code add CRC")
+> Or pull the acpi-scan branch into his tree and use my conflict
+> resolution in the resulting merge thus requiring no rebasing. 
+> However, Linus likes to see such interactions, so it can be left up
+> to when the latter of the two tress is merged by Linus.
 
-I don't see that here with gcc 4.7.1, perhaps you need to upgrade your
-version of gcc to not show these false positives?
+Per my understanding, currently in git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git, it has included
+1). 636458de36f1, 0cd6ac52b333, b8bd759acd05: 	from pm tree (Rafael), drop acpi_bus_add, update argument of acpi_bus_scan
+2). 259f201cb7ea, 181232c249f0:			from xen tree (Jinsong), use acpi_bus_add
+3). 36bd3c64bfe2					Stephen fix confliction of 1) and 2)
+Currently these are only some compiling warning left, so the only thing need to do is to add my patch to fix compile warning (just sent out minutes ago) to the top of git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git ?
 
-thanks,
 
-greg k-h
+Thanks,
+Jinsong
