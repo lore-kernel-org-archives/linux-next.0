@@ -1,60 +1,38 @@
-From: "Liu, Jinsong" <jinsong.liu@intel.com>
-Subject: RE: linux-next: build failure after merge of the xen-two tree
-Date: Fri, 15 Feb 2013 17:20:07 +0000
-Message-ID: <DE8DF0795D48FD4CA783C40EC82923353FBF85@SHSMSX101.ccr.corp.intel.com>
-References: <20130215154551.d11e9d376d30d32b9673e6cc@canb.auug.org.au>
- <20130215132624.GB11777@phenom.dumpdata.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build warning after merge of the char-misc tree
+Date: Fri, 15 Feb 2013 09:34:29 -0800
+Message-ID: <20130215173429.GA27707@kroah.com>
+References: <20130215162657.6dd03d27e8cfed0c134b5dd3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130215132624.GB11777@phenom.dumpdata.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, "Wu, Fengguang" <fengguang.wu@intel.com>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39513 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754378Ab3BOReb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 15 Feb 2013 12:34:31 -0500
+Content-Disposition: inline
+In-Reply-To: <20130215162657.6dd03d27e8cfed0c134b5dd3@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Stevenson <david@avoncliff.com>
 
-Konrad Rzeszutek Wilk wrote:
-> On Fri, Feb 15, 2013 at 03:45:51PM +1100, Stephen Rothwell wrote:
->> Hi Konrad,
->> 
->> After merging the xen-two tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
+On Fri, Feb 15, 2013 at 04:26:57PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Good morning!
->> 
->> drivers/xen/xen-acpi-memhotplug.c: In function
->> 'acpi_memory_get_device': 
->> drivers/xen/xen-acpi-memhotplug.c:191:2: error: implicit declaration
->> of function 'acpi_bus_add' [-Werror=implicit-function-declaration]
->> drivers/xen/xen-acpi-memhotplug.c: At top level: 
->> drivers/xen/xen-acpi-memhotplug.c:417:3: warning: initialization
->> from incompatible pointer type [enabled by default]
->> drivers/xen/xen-acpi-memhotplug.c:417:3: warning: (near
->> initialization for 'xen_acpi_memory_device_driver.ops.remove')
->> [enabled by default]   
->> 
->> Caused by commit 259f201cb7ea ("xen/acpi: ACPI memory hotplug").
->> 
->> drivers/xen/xen-acpi-cpuhotplug.c: In function
->> 'acpi_processor_device_add': 
->> drivers/xen/xen-acpi-cpuhotplug.c:254:2: error: implicit declaration
->> of function 'acpi_bus_add' [-Werror=implicit-function-declaration]
->> drivers/xen/xen-acpi-cpuhotplug.c: At top level: 
->> drivers/xen/xen-acpi-cpuhotplug.c:425:3: warning: initialization
->> from incompatible pointer type [enabled by default]
->> drivers/xen/xen-acpi-cpuhotplug.c:425:3: warning: (near
->> initialization for 'xen_acpi_processor_driver.ops.remove') [enabled
->> by default]   
->> 
->> Caused by commit 181232c249f0 ("xen/acpi: ACPI cpu hotplug").
+> After merging the char-misc tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 > 
-> Grrrreat! Jinsong, can you please fix that ? A patch on top of the
-> #linux-next
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git 
+> drivers/w1/slaves/w1_therm.c: In function 'w1_therm_read':
+> drivers/w1/slaves/w1_therm.c:245:15: warning: 'crc' may be used uninitialized in this function [-Wuninitialized]
+> 
+> Its a false positive, but it was introduced by commit 867ff9880d5d
+> ("w1_therm: Retries: remove old code add CRC")
 
-Done, warning fixed.
+I don't see that here with gcc 4.7.1, perhaps you need to upgrade your
+version of gcc to not show these false positives?
 
-Thanks,
-Jinsong
+thanks,
+
+greg k-h
