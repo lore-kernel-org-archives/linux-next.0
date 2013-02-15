@@ -1,87 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the xen-two tree
-Date: Sat, 16 Feb 2013 01:52:00 +1100
-Message-ID: <20130216015200.1e58bec1aff05592ac2ae98f@canb.auug.org.au>
-References: <20130215154551.d11e9d376d30d32b9673e6cc@canb.auug.org.au>
-	<20130215132624.GB11777@phenom.dumpdata.com>
-	<20130216005014.c8ce70e041f655d4c195c9fb@canb.auug.org.au>
-	<2185970.g9YrD945My@vostro.rjw.lan>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: build failure after merge of the drm-intel tree
+Date: Fri, 15 Feb 2013 08:16:26 -0800
+Message-ID: <20130215081626.6cbb2e74@jbarnes-desktop>
+References: <20130215133714.6f55139ad1a037b7b9fa1b70@canb.auug.org.au>
+	<CAKMK7uGG4R68ED4M1uYRUZAhxRMzao0vk9oFg_vxZ8ofhx1=yw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__16_Feb_2013_01_52_00_+1100_tOuoldo=vwq43dZD"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44033 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932635Ab3BOOwK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Feb 2013 09:52:10 -0500
-In-Reply-To: <2185970.g9YrD945My@vostro.rjw.lan>
+Received: from oproxy9.bluehost.com ([69.89.24.6]:35552 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932625Ab3BOQQD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Feb 2013 11:16:03 -0500
+In-Reply-To: <CAKMK7uGG4R68ED4M1uYRUZAhxRMzao0vk9oFg_vxZ8ofhx1=yw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liu Jinsong <jinsong.liu@intel.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Sat__16_Feb_2013_01_52_00_+1100_tOuoldo=vwq43dZD
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 15 Feb 2013 10:30:16 +0100
+Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
 
-Hi Rafael,
+> On Fri, Feb 15, 2013 at 3:37 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > After merging the drm-intel tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >
+> > ERROR: "pm_vt_switch_unregister" [drivers/video/fb.ko] undefined!
+> >
+> > I have dropped the tree for today.
+> 
+> Meh, that fail was already reported from Wu's kernel builder a few
+> days ago, but no patch yet showed up to fix things. Since the i915
+> side of that work isn't ready yet either I've dropped the offending
+> patches.
 
-On Fri, 15 Feb 2013 15:53:34 +0100 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
->
-> On Saturday, February 16, 2013 12:50:14 AM Stephen Rothwell wrote:
-> >=20
-> > On Fri, 15 Feb 2013 08:26:24 -0500 Konrad Rzeszutek Wilk <konrad.wilk@o=
-racle.com> wrote:
-> > >
-> > > Thank you. I keep on forgetting - but would it be OK for me to take t=
-his
-> > > patch in my tree? Or should I not since this is a new functionality t=
-hat
-> > > Rafael is going to introduce in v3.9?
-> >=20
-> > It is an API change in the pm tree that is not yet in Linus' tree.
-> >=20
-> > > And if so, perhaps I should tack it on in my tree, once Rafael does a=
- git
-> > > pull to Linus? Or just point Linus to this git commit?
-> >=20
-> > You should point Linus at this patch if the pm tree is merged first, or
-> > Rafael should do the same if the reverse happens.
->=20
-> Alternatively, Konrad can pull the acpi-scan branch containing the changes
-> in question from my tree into his tree and rebase the new material on top
-> of that.
+I sent a patch yesterday for this.  I'll bounce it over again.
 
-Or pull the acpi-scan branch into his tree and use my conflict resolution
-in the resulting merge thus requiring no rebasing.  However, Linus likes
-to see such interactions, so it can be left up to when the latter of the
-two tress is merged by Linus.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Sat__16_Feb_2013_01_52_00_+1100_tOuoldo=vwq43dZD
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRHkuQAAoJEECxmPOUX5FEN+QP/2HZo5F7cxoYEpdryG6K4H+r
-WCxGdjZr9Aiozn8HMzrDOxmRAdhMG4gVteuyZg2uU2ThkYEz8Msk7QNX93E81b77
-gXj1odcKU3ODmC5orgw3fwCcj52hK558T1ULTiZtxaPw1IqVQ0jEvyHQCWJYMT2l
-c19281rjaaQscssakXlo7R2AwvxZ3L9vnZiJQ25kPaAUBw6HV83P/w0i1lHvBsSq
-Mn7rM9y4nVCdX/b9DYrLu/KBEjeIT8KdZRH+cC5VrSXWA7ulMWOcoERIDR3tm7pk
-YMwTUOWW/1fubBB1eX6VgDD5eVbZZNI02Fp8MCOW3Esl5YypuVQpWU4c6qfomcyh
-DfpERSdnZDjr9qkfSHiqTd/vbZNwi5IxCWJwqgQdKaUnGuYNtiH0NX/uOc2G7SQI
-tyXnnEYocLQriXx65JRpxCn3sWs3nO4JsgqOgMvqv9mrIhg+f8A4yRtld9gwnbMP
-178lGo6hIvCbH2sOz4u3ToCTvIoLvyMNij/RRjuzwgMdvuU4yL11zoHob68hEFbG
-ztGVXbAkQ820FDvGUIpCKU5kaT+YLIWb9b3AA9qk5sPDp94EwR0k7oZxfWL3oyrd
-xkm6Y/Av0f4FXFCqvmEmQB1vPGfQCUJwsDoPslXfmI2iqbZHY1J9JOEXxq8FJTcn
-+9p968UnxRUEsfAWble4
-=2CfF
------END PGP SIGNATURE-----
-
---Signature=_Sat__16_Feb_2013_01_52_00_+1100_tOuoldo=vwq43dZD--
+-- 
+Jesse Barnes, Intel Open Source Technology Center
