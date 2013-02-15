@@ -1,53 +1,34 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Feb 15
-Date: Fri, 15 Feb 2013 11:58:28 +0100
-Message-ID: <CA+icZUWUnnE6=DRuAodY=DS1tK7VZLnFd503rfHgng6CQUMjcw@mail.gmail.com>
-References: <20130215184255.5ba8a085004f4aadb9faf82c@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: manual merge of the pm tree with the pci tree
+Date: Fri, 15 Feb 2013 13:51:46 +0100
+Message-ID: <1673630.BcVjZeif4m@vostro.rjw.lan>
+References: <20130215122313.19a651c33ef3bb60c0f3d827@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:49019 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750728Ab3BOK63 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Feb 2013 05:58:29 -0500
-In-Reply-To: <20130215184255.5ba8a085004f4aadb9faf82c@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130215122313.19a651c33ef3bb60c0f3d827@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Jiang Liu <jiang.liu@huawei.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Feb 15, 2013 at 8:42 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> News: Yesterday was the 5th anniversary of linux-next!  I can't believe I
-> am still doing this :-)
->
+On Friday, February 15, 2013 12:23:13 PM Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> Today's linux-next merge of the pm tree got conflicts in
+> drivers/acpi/scan.c and drivers/pci/hotplug/acpiphp_glue.c between
+> commits 668192b67820 ("PCI: acpiphp: Move host bridge hotplug to
+> pci_root.c") and be6d2867b4f6 ("PCI: acpiphp: Remove dead code for PCI
+> host bridge hotplug") from the pci tree and commit 3757b94802fb ("ACPI /
+> hotplug: Fix concurrency issues and memory leaks") from the pm tree.
+> 
+> I fixed it up (thanks to Yinghai Lu for the resolution - see below) and
+> can carry the fix as necessary (no action is required).
 
-So 5-times a happy Quentin Valentino day!
+Thanks Stephen!
 
-> Changes since 20130214:
->
-> New tree: drm-intel
->
 
-More black roses for integrating drm-intel (/me is pulling
-drm-intel-nightly after -1 (first "naked") linux-next kernel-build).
-
-- Sedat -
-
-> Dropped tree: drm-intel (build failure)
->
-> The pm tree gained a conflict against the pci tree.
->
-> The drm-intel tree gained a build failure so I dropped it for today.
->
-> The xen-two tree gained a build failure for which I applied a merge fix
-> patch.
->
-> The driver-core tree gained a conflict against the wireless-next tree.
->
-> The akpm tree gained conflicts against the workqueues and net-next trees.
->
-> ----------------------------------------------------------------------------
->
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
