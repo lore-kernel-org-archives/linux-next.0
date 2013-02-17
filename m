@@ -1,81 +1,61 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the xen-two tree
-Date: Sun, 17 Feb 2013 15:08:02 +0100
-Message-ID: <4696812.SKkpQQd9iW@vostro.rjw.lan>
-References: <20130215154551.d11e9d376d30d32b9673e6cc@canb.auug.org.au> <11850955.SHqxVBsJqI@vostro.rjw.lan> <DE8DF0795D48FD4CA783C40EC82923353FCCAC@SHSMSX101.ccr.corp.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mips tree
+Date: Mon, 18 Feb 2013 10:43:40 +1100
+Message-ID: <20130218104340.eb5e20da05dffe89ac4da693@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__18_Feb_2013_10_43_40_+1100_F5xhtAWh7SMSnpfZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hydra.sisk.pl ([212.160.235.94]:38993 "EHLO hydra.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756129Ab3BQOBa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Feb 2013 09:01:30 -0500
-In-Reply-To: <DE8DF0795D48FD4CA783C40EC82923353FCCAC@SHSMSX101.ccr.corp.intel.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51157 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754494Ab3BQXnw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Feb 2013 18:43:52 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Liu, Jinsong" <jinsong.liu@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>, John Crispin <blogic@openwrt.org>
 
-On Sunday, February 17, 2013 07:31:37 AM Liu, Jinsong wrote:
-> Rafael J. Wysocki wrote:
-> > On Saturday, February 16, 2013 01:52:00 AM Stephen Rothwell wrote:
-> >> Hi Rafael,
-> > 
-> > Hi,
-> > 
-> >> On Fri, 15 Feb 2013 15:53:34 +0100 "Rafael J. Wysocki" <rjw@sisk.pl>
-> >> wrote: 
-> >>> 
-> >>> On Saturday, February 16, 2013 12:50:14 AM Stephen Rothwell wrote:
-> >>>> 
-> >>>> On Fri, 15 Feb 2013 08:26:24 -0500 Konrad Rzeszutek Wilk
-> >>>> <konrad.wilk@oracle.com> wrote: 
-> >>>>> 
-> >>>>> Thank you. I keep on forgetting - but would it be OK for me to
-> >>>>> take this patch in my tree? Or should I not since this is a new
-> >>>>> functionality that Rafael is going to introduce in v3.9?
-> >>>> 
-> >>>> It is an API change in the pm tree that is not yet in Linus' tree.
-> >>>> 
-> >>>>> And if so, perhaps I should tack it on in my tree, once Rafael
-> >>>>> does a git pull to Linus? Or just point Linus to this git commit?
-> >>>> 
-> >>>> You should point Linus at this patch if the pm tree is merged
-> >>>> first, or 
-> >>>> Rafael should do the same if the reverse happens.
-> >>> 
-> >>> Alternatively, Konrad can pull the acpi-scan branch containing the
-> >>> changes in question from my tree into his tree and rebase the new
-> >>> material on top of that.
-> >> 
-> >> Or pull the acpi-scan branch into his tree and use my conflict
-> >> resolution in the resulting merge thus requiring no rebasing. 
-> >> However, Linus likes to see such interactions, so it can be left up
-> >> to when the latter of the two tress is merged by Linus.
-> > 
-> > Well, I'm afraid this won't be sufficient this time, because of this
-> > commit in my tree (which is not on the acpi-scan branch):
-> > 
-> > commit 3757b94802fb65d8f696597a74053cf21738da0b
-> > Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Date:   Wed Feb 13 14:36:47 2013 +0100
-> > 
-> >     ACPI / hotplug: Fix concurrency issues and memory leaks
-> > 
-> > after which acpi_bus_scan() and acpi_bus_trim() have to be run under
-> > acpi_scan_lock (new in my tree as well).
-> 
-> Yes, we noticed that and only need minor updates at xen side, will send out
-> 2 xen patches later accordingly, for cleanup and adding lock.
+--Signature=_Mon__18_Feb_2013_10_43_40_+1100_F5xhtAWh7SMSnpfZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, but those new changes will only make sense after merging the Xen tree
-with the PM tree.  Why don't we queue them up for merging later after both
-the Xen and PM trees have been pulled from?
+Hi Ralf,
 
-Rafael
+After merging the mips tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
+drivers/ssb/driver_gpio.c: In function 'ssb_gpio_chipco_to_irq':
+drivers/ssb/driver_gpio.c:82:3: error: implicit declaration of function 'ss=
+b_mips_irq' [-Werror=3Dimplicit-function-declaration]
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Caused by commit d630dd4ef20f ("ssb: add gpio_to_irq again").
+
+I have used the mips tree from next-20130215 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__18_Feb_2013_10_43_40_+1100_F5xhtAWh7SMSnpfZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRIWssAAoJEECxmPOUX5FERqAP/i4Fao5EqncczW3yO81oDB/l
+srwOXcOoAQHHHz/iwu2K45Y79NnlBDDhipIW61jnYZmQNMtFb4aJJZcGhb2QFAEB
+n1frsYuDvjq1RF5ZOTmbWbaUxAGGRqdDiABm4cw9Dc4HclxMvzcRZspeNVkyB55R
+MXUQdiy8e0BYR31xRTK518wbsPx06IVVcsR/lyXffrcxG8H4OBYDJh+TpxVhvQdO
+uS5nSlZ0PnJ7BKiWhwsA8n/oPKoWsZtpV9uQU+W1Hf373vnrP5lHLUn30urz4FDz
+G8NHBJVCBGIZu0GneU2SGyWwJo/s1dgSvqexVct3aCJdZg2zcXdZXc4mfMltXcnY
+TTcqlUMeL11oYR+Vxtv6ZJ+5bd63qqo8EQ0f5+F0xIsEjt0OA/6Ctu7LVu4KvbjK
+lZht8JfJpvQNNvjVcMoT5Z5NKGfiRjq2AX9A15YwwnfawtEh5o8Olv2lr/fBhPpa
+p317gDIJuMgddthTodb3JvcrnsAGERut0+epPvAExrNxCvbcy3RBCfWrAQTiDe/O
+Gx2s6j0lH0RxD+HiIAMQlMg0vO2Rk9uPDMUDTSVDnSvZAzERPXs5oKrWKt5QNukL
+0pE8b2LDFfbqh9FVWdAmty79Qatjm9zXZeQqk9k6ztdYk2u+IhHSe2BSDnwy24jB
+ily+yn7QZj6YasYJe/HU
+=rqMP
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Feb_2013_10_43_40_+1100_F5xhtAWh7SMSnpfZ--
