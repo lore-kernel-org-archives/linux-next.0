@@ -1,76 +1,59 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the xen-two tree
-Date: Sat, 16 Feb 2013 21:11:12 +0100
-Message-ID: <11850955.SHqxVBsJqI@vostro.rjw.lan>
-References: <20130215154551.d11e9d376d30d32b9673e6cc@canb.auug.org.au> <2185970.g9YrD945My@vostro.rjw.lan> <20130216015200.1e58bec1aff05592ac2ae98f@canb.auug.org.au>
+From: Li Zhong <zhong@linux.vnet.ibm.com>
+Subject: [PATCH linux-next]cputime: fix compiler warning caused by
+ timeval_to_cputime()
+Date: Sun, 17 Feb 2013 14:53:26 +0800
+Message-ID: <1361084006.2580.16.camel@ThinkPad-T5421.cn.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hydra.sisk.pl ([212.160.235.94]:38733 "EHLO hydra.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754188Ab3BPUEm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 16 Feb 2013 15:04:42 -0500
-In-Reply-To: <20130216015200.1e58bec1aff05592ac2ae98f@canb.auug.org.au>
+Received: from e23smtp04.au.ibm.com ([202.81.31.146]:36098 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752522Ab3BQGxf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Feb 2013 01:53:35 -0500
+Received: from /spool/local
+	by e23smtp04.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <zhong@linux.vnet.ibm.com>;
+	Sun, 17 Feb 2013 16:44:29 +1000
+Received: from d23relay03.au.ibm.com (d23relay03.au.ibm.com [9.190.235.21])
+	by d23dlp01.au.ibm.com (Postfix) with ESMTP id 51C8B2CE804A
+	for <linux-next@vger.kernel.org>; Sun, 17 Feb 2013 17:53:31 +1100 (EST)
+Received: from d23av03.au.ibm.com (d23av03.au.ibm.com [9.190.234.97])
+	by d23relay03.au.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id r1H6rSnC44892248
+	for <linux-next@vger.kernel.org>; Sun, 17 Feb 2013 17:53:29 +1100
+Received: from d23av03.au.ibm.com (loopback [127.0.0.1])
+	by d23av03.au.ibm.com (8.14.4/8.13.1/NCO v10.0 AVout) with ESMTP id r1H6rTPl030647
+	for <linux-next@vger.kernel.org>; Sun, 17 Feb 2013 17:53:29 +1100
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liu Jinsong <jinsong.liu@intel.com>
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: linux-next list <linux-next@vger.kernel.org>
 
-On Saturday, February 16, 2013 01:52:00 AM Stephen Rothwell wrote:
-> Hi Rafael,
+Saw the following compiler warning on next tree:
 
-Hi,
+kernel/itimer.c: In function 'set_cpu_itimer':
+kernel/itimer.c:152:2: warning: passing argument 1 of
+'timeval_to_cputime' discards 'const' qualifier from pointer target type
+[enabled by default]
+...
 
-> On Fri, 15 Feb 2013 15:53:34 +0100 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
-> >
-> > On Saturday, February 16, 2013 12:50:14 AM Stephen Rothwell wrote:
-> > > 
-> > > On Fri, 15 Feb 2013 08:26:24 -0500 Konrad Rzeszutek Wilk <konrad.wilk@oracle.com> wrote:
-> > > >
-> > > > Thank you. I keep on forgetting - but would it be OK for me to take this
-> > > > patch in my tree? Or should I not since this is a new functionality that
-> > > > Rafael is going to introduce in v3.9?
-> > > 
-> > > It is an API change in the pm tree that is not yet in Linus' tree.
-> > > 
-> > > > And if so, perhaps I should tack it on in my tree, once Rafael does a git
-> > > > pull to Linus? Or just point Linus to this git commit?
-> > > 
-> > > You should point Linus at this patch if the pm tree is merged first, or
-> > > Rafael should do the same if the reverse happens.
-> > 
-> > Alternatively, Konrad can pull the acpi-scan branch containing the changes
-> > in question from my tree into his tree and rebase the new material on top
-> > of that.
-> 
-> Or pull the acpi-scan branch into his tree and use my conflict resolution
-> in the resulting merge thus requiring no rebasing.  However, Linus likes
-> to see such interactions, so it can be left up to when the latter of the
-> two tress is merged by Linus.
+Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
+---
+ include/asm-generic/cputime_nsecs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Well, I'm afraid this won't be sufficient this time, because of this commit in
-my tree (which is not on the acpi-scan branch):
-
-commit 3757b94802fb65d8f696597a74053cf21738da0b
-Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Date:   Wed Feb 13 14:36:47 2013 +0100
-
-    ACPI / hotplug: Fix concurrency issues and memory leaks
-
-after which acpi_bus_scan() and acpi_bus_trim() have to be run under
-acpi_scan_lock (new in my tree as well).
-
-Moreover, I think that the introduction of ACPI-based CPU hotplug into Xen
-and this point would be premature, because we need to rework the original
-ACPI-based CPU hotplug and quite frankly it shouldn't call acpi_bus_scan()
-directly at all.
-
-Konrad?
-
-Thanks,
-Rafael
-
+diff --git a/include/asm-generic/cputime_nsecs.h b/include/asm-generic/cputime_nsecs.h
+index b6485ca..a8ece9a 100644
+--- a/include/asm-generic/cputime_nsecs.h
++++ b/include/asm-generic/cputime_nsecs.h
+@@ -76,7 +76,7 @@ static inline void cputime_to_timespec(const cputime_t ct, struct timespec *val)
+ /*
+  * Convert cputime <-> timeval (msec)
+  */
+-static inline cputime_t timeval_to_cputime(struct timeval *val)
++static inline cputime_t timeval_to_cputime(const struct timeval *val)
+ {
+ 	u64 ret = val->tv_sec * NSEC_PER_SEC + val->tv_usec * NSEC_PER_USEC;
+ 	return (__force cputime_t) ret;
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+1.8.1.2
