@@ -1,55 +1,86 @@
-From: Li Zhong <zhong@linux.vnet.ibm.com>
-Subject: [PATCH linux-next] Remove unused variable in mwait_play_dead()
-Date: Sun, 17 Feb 2013 15:05:55 +0800
-Message-ID: <1361084755.2580.21.camel@ThinkPad-T5421.cn.ibm.com>
+From: "Liu, Jinsong" <jinsong.liu@intel.com>
+Subject: RE: linux-next: build failure after merge of the xen-two tree
+Date: Sun, 17 Feb 2013 07:31:37 +0000
+Message-ID: <DE8DF0795D48FD4CA783C40EC82923353FCCAC@SHSMSX101.ccr.corp.intel.com>
+References: <20130215154551.d11e9d376d30d32b9673e6cc@canb.auug.org.au>
+ <2185970.g9YrD945My@vostro.rjw.lan>
+ <20130216015200.1e58bec1aff05592ac2ae98f@canb.auug.org.au>
+ <11850955.SHqxVBsJqI@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp06.au.ibm.com ([202.81.31.148]:59157 "EHLO
-	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753009Ab3BQHGC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Feb 2013 02:06:02 -0500
-Received: from /spool/local
-	by e23smtp06.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <zhong@linux.vnet.ibm.com>;
-	Sun, 17 Feb 2013 17:01:28 +1000
-Received: from d23relay03.au.ibm.com (d23relay03.au.ibm.com [9.190.235.21])
-	by d23dlp03.au.ibm.com (Postfix) with ESMTP id CA1D73578050
-	for <linux-next@vger.kernel.org>; Sun, 17 Feb 2013 18:05:58 +1100 (EST)
-Received: from d23av01.au.ibm.com (d23av01.au.ibm.com [9.190.234.96])
-	by d23relay03.au.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id r1H75u9P38338774
-	for <linux-next@vger.kernel.org>; Sun, 17 Feb 2013 18:05:57 +1100
-Received: from d23av01.au.ibm.com (loopback [127.0.0.1])
-	by d23av01.au.ibm.com (8.14.4/8.13.1/NCO v10.0 AVout) with ESMTP id r1H75w8T014092
-	for <linux-next@vger.kernel.org>; Sun, 17 Feb 2013 18:05:58 +1100
+Received: from mga09.intel.com ([134.134.136.24]:12779 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752522Ab3BQHbr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Feb 2013 02:31:47 -0500
+In-Reply-To: <11850955.SHqxVBsJqI@vostro.rjw.lan>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: len.brown@intel.com
-Cc: linux-next list <linux-next@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>
 
-to avoid following compiler warning:
-arch/x86/kernel/smpboot.c: In function =E2=80=98mwait_play_dead=E2=80=99=
-:
-arch/x86/kernel/smpboot.c:1370:22: warning: unused variable
-=E2=80=98c=E2=80=99 [-Wunused-variable]
+Rafael J. Wysocki wrote:
+> On Saturday, February 16, 2013 01:52:00 AM Stephen Rothwell wrote:
+>> Hi Rafael,
+> 
+> Hi,
+> 
+>> On Fri, 15 Feb 2013 15:53:34 +0100 "Rafael J. Wysocki" <rjw@sisk.pl>
+>> wrote: 
+>>> 
+>>> On Saturday, February 16, 2013 12:50:14 AM Stephen Rothwell wrote:
+>>>> 
+>>>> On Fri, 15 Feb 2013 08:26:24 -0500 Konrad Rzeszutek Wilk
+>>>> <konrad.wilk@oracle.com> wrote: 
+>>>>> 
+>>>>> Thank you. I keep on forgetting - but would it be OK for me to
+>>>>> take this patch in my tree? Or should I not since this is a new
+>>>>> functionality that Rafael is going to introduce in v3.9?
+>>>> 
+>>>> It is an API change in the pm tree that is not yet in Linus' tree.
+>>>> 
+>>>>> And if so, perhaps I should tack it on in my tree, once Rafael
+>>>>> does a git pull to Linus? Or just point Linus to this git commit?
+>>>> 
+>>>> You should point Linus at this patch if the pm tree is merged
+>>>> first, or 
+>>>> Rafael should do the same if the reverse happens.
+>>> 
+>>> Alternatively, Konrad can pull the acpi-scan branch containing the
+>>> changes in question from my tree into his tree and rebase the new
+>>> material on top of that.
+>> 
+>> Or pull the acpi-scan branch into his tree and use my conflict
+>> resolution in the resulting merge thus requiring no rebasing. 
+>> However, Linus likes to see such interactions, so it can be left up
+>> to when the latter of the two tress is merged by Linus.
+> 
+> Well, I'm afraid this won't be sufficient this time, because of this
+> commit in my tree (which is not on the acpi-scan branch):
+> 
+> commit 3757b94802fb65d8f696597a74053cf21738da0b
+> Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Date:   Wed Feb 13 14:36:47 2013 +0100
+> 
+>     ACPI / hotplug: Fix concurrency issues and memory leaks
+> 
+> after which acpi_bus_scan() and acpi_bus_trim() have to be run under
+> acpi_scan_lock (new in my tree as well).
 
-Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
----
- arch/x86/kernel/smpboot.c | 1 -
- 1 file changed, 1 deletion(-)
+Yes, we noticed that and only need minor updates at xen side, will send out 2 xen patches later accordingly, for cleanup and adding lock.
 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index a6ceaed..7bc998a 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1367,7 +1367,6 @@ static inline void mwait_play_dead(void)
- 	unsigned int highest_subcstate =3D 0;
- 	int i;
- 	void *mwait_ptr;
--	struct cpuinfo_x86 *c =3D __this_cpu_ptr(&cpu_info);
-=20
- 	if (!this_cpu_has(X86_FEATURE_MWAIT))
- 		return;
---=20
-1.8.1.2
+Thanks,
+Jinsong
+
+> 
+> Moreover, I think that the introduction of ACPI-based CPU hotplug
+> into Xen and this point would be premature, because we need to rework
+> the original ACPI-based CPU hotplug and quite frankly it shouldn't
+> call acpi_bus_scan() directly at all.
+> 
+> Konrad?
+> 
+> Thanks,
+> Rafael
