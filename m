@@ -1,55 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the kbuild tree
-Date: Mon, 18 Feb 2013 14:35:28 +1100
-Message-ID: <20130218143528.451b9e1e19d79693c5673414@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the driver-core tree
+Date: Mon, 18 Feb 2013 15:32:42 +1100
+Message-ID: <20130218153242.747962940bbed03bfdb2623b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__18_Feb_2013_14_35_28_+1100_XBTzKu0EdQw=EKMG"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Marek <mmarek@suse.cz>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__18_Feb_2013_15_32_42_+1100_ixNjl.R/xAQm+ZWC"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:42213 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755757Ab3BREc5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Feb 2013 23:32:57 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Manjunath Goudar <manjunath.goudar@linaro.org>
 
---Signature=_Mon__18_Feb_2013_14_35_28_+1100_XBTzKu0EdQw=EKMG
+--Signature=_Mon__18_Feb_2013_15_32_42_+1100_ixNjl.R/xAQm+ZWC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the tip tree got a conflict in
-kernel/timeconst.pl between commit 70730bca1331 ("kernel: Replace
-timeconst.pl with a bc script") from the kbuild tree and commit
-63a3f603413f ("timeconst.pl: Eliminate Perl warning") from the tip tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/host/ehci-vt8500.c between commit 148e11349b0c ("usb: Convert
+to devm_ioremap_resource()") from the driver-core tree and commit
+d57ada0c37ec ("USB: EHCI: make ehci-vt8500 a separate driver") from the
+usb tree.
 
-I just droppped the tip tree version (I deleted the file) and can carry
-the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__18_Feb_2013_14_35_28_+1100_XBTzKu0EdQw=EKMG
+diff --cc drivers/usb/host/ehci-vt8500.c
+index 7ecf709,98d65bd..0000000
+--- a/drivers/usb/host/ehci-vt8500.c
++++ b/drivers/usb/host/ehci-vt8500.c
+@@@ -16,7 -16,12 +16,13 @@@
+   *
+   */
+ =20
+ +#include <linux/err.h>
++ #include <linux/kernel.h>
++ #include <linux/module.h>
++ #include <linux/usb.h>
++ #include <linux/usb/hcd.h>
++ #include <linux/io.h>
++ #include <linux/dma-mapping.h>
+  #include <linux/of.h>
+  #include <linux/platform_device.h>
+ =20
+
+--Signature=_Mon__18_Feb_2013_15_32_42_+1100_ixNjl.R/xAQm+ZWC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRIaGAAAoJEECxmPOUX5FEKu0P/0XPqDX+zVic+fCFqPdlCdNd
-uFlGzYy7iE4G4j+WAzxIflGYSce0rfaLLl3OUo8VdlbVa7PnRoJljW1USAiy1V/K
-W2Y+LnUf0dI3GIr2u/2wNeve51l6kn5sAn84XIhRNsWGzPJ7BD4OZN2iRoSSmfmF
-g5BjZb3C/ag4oWtv3+6lUV6evmiv8ZXl6gC/1LlA03BpT+L2buzhOcGg7FQhHrH7
-6GVVilHUFAH69FyYLKQNM74/BRSvAW3HkEG7AphCvrtBiBGbdEGEX8PArkKpXPPG
-G9bNRP+LnfFgMSQz9V1kdeNlqTYka63gp5S2LeK+ZuShpmRO6J+fvuEJAq1US9CX
-8n0tgigRPs1OgBmyqVtjkCsBdfYDZ7yhA5YdUXr4WlZkMcx8K5JdjX5T4xGe/egW
-o6uy7ludS5cWMkrvSBUc/Cl9N/wpjnVFRotX8Sh4Y5OPlALQNTQvf+hTMXAi4Irj
-OTIAkpumAwUxQv5M9K8i5gFD3NdhjGPwcmF/tbWkfqn0E9r0sgUsok0zM5iOFZcy
-lgQe6jHl/L8j1K8d4RTPWCO2iKFUQ4b+TVr3iI7rfdNteaYlU/+a57yRH80vgpqj
-ysBod3uC7gk6FhyYfk+UicCuMZnA/FOmILdbwW0kE20R+O8gxMV1SCVfjYY8txTJ
-mY4lOqM2TmXl1awV9uMQ
-=7f0O
+iQIcBAEBCAAGBQJRIa7qAAoJEECxmPOUX5FEZbwP/3XX6l4bVyw+ehgQJW2HC+Wd
+49MNWUcf5tQ3UBizMuVR0DOj1PrI0Ti+D1XLXHRhykiI+qf4fJT9XmNIyI2f6A8b
+NNocERyGpqzbpjoJDIW6X7mGqS8gGRq78r90SpBbk9bxWo1dPJW3ViaSq0MUWgrB
+9T2Z3AitL6j7fZJL0nLW03FZcXPYwmh2Ae+jB71B+tXIjFMls5jvRUZbV1ad+yid
+GomeNcRAKmP64zhE2HJdsCCko6Fk78OTVcpQRpEdrv5+68PDwRAnVGUB2hylxHmd
+eI/+glyn/ojGoUJbKV5a1SL5VwMnxTZvF0rtF082/MyLL8y3Gqdu3aZ8MR4fMe5V
+DHljDhExzG0VoPnujThYAEIsbXjHoO37gx6EQgYnP1DVoqlqFPMXFD0I9njT6koA
+vz6Ph62WQcFpNMDe3GQz6IzxTcsHldZQH2+Szf8o9fmW6guyEPzfDaWPv9B7o9r+
+3TB0bLeB5YRD3JzH6TCiiE7qIRzgfXCufQak/MFnkM5t0K+7gK9mu8izcNd3zjGb
+KodDcAQzHMxS5UhAZ2C5LisbG0IMUutWQkU0h6hYyU9qJ4XYULwthqRweSnP59SZ
+KaUaA6T1ZrSRWMI22CzCbn284KmXzIIqZjT5YXlJfJQdM43kVjkYjjLgsc9hvsrd
++DxZv4WYFZHgLlbwrrro
+=APUB
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__18_Feb_2013_14_35_28_+1100_XBTzKu0EdQw=EKMG--
+--Signature=_Mon__18_Feb_2013_15_32_42_+1100_ixNjl.R/xAQm+ZWC--
