@@ -1,60 +1,80 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: Re: linux-next: build failure after merge of the mips tree
-Date: Mon, 18 Feb 2013 00:59:20 +0100
-Message-ID: <51216ED8.5040906@hauke-m.de>
-References: <20130218104340.eb5e20da05dffe89ac4da693@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with the pci tree
+Date: Mon, 18 Feb 2013 12:11:05 +1100
+Message-ID: <20130218121105.e728f240b75b73821ff8058d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130218104340.eb5e20da05dffe89ac4da693@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__18_Feb_2013_12_11_05_+1100_JtfQKZsgFDvRwowz"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36628 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754985Ab3BRBLT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Feb 2013 20:11:19 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Jiang Liu <liuj97@gmail.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--Signature=_Mon__18_Feb_2013_12_11_05_+1100_JtfQKZsgFDvRwowz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 02/18/2013 12:43 AM, Stephen Rothwell wrote:
-> Hi Ralf,
-> 
-> After merging the mips tree, today's linux-next build (x86_64 
-> allmodconfig) failed like this:
-> 
-> drivers/ssb/driver_gpio.c: In function 'ssb_gpio_chipco_to_irq': 
-> drivers/ssb/driver_gpio.c:82:3: error: implicit declaration of
-> function 'ssb_mips_irq' [-Werror=implicit-function-declaration]
-> 
-> Caused by commit d630dd4ef20f ("ssb: add gpio_to_irq again").
-> 
-> I have used the mips tree from next-20130215 for today.
-> 
-Hi Ralf and blogic,
+Hi Rafael,
 
-Could you drop this patch [0] and this one [1].
+Today's linux-next merge of the pm tree got a conflict in
+drivers/acpi/internal.h between commits 668192b67820 ("PCI: acpiphp: Move
+host bridge hotplug to pci_root.c") and ab1a2e038ff2 ("ACPI / PCI: Make
+pci_slot built-in only, not a module") from the pci tree and commit
+00c43b968250 ("ACPI / PCI: Make PCI root driver use struct
+acpi_scan_handler") from the pm tree.
 
-I saw that they are not any more in blogic tree.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Hauke
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-[0]: https://patchwork.linux-mips.org/patch/4719/
-[1]: https://patchwork.linux-mips.org/patch/4720/
+diff --cc drivers/acpi/internal.h
+index e09ce03,7909232..0000000
+--- a/drivers/acpi/internal.h
++++ b/drivers/acpi/internal.h
+@@@ -67,13 -94,6 +94,12 @@@ struct acpi_ec=20
+ =20
+  extern struct acpi_ec *first_ec;
+ =20
+ +#ifdef	CONFIG_ACPI_PCI_SLOT
+ +void acpi_pci_slot_init(void);
+ +#else
+ +static inline void acpi_pci_slot_init(void) { }
+ +#endif
+- int acpi_pci_root_init(void);
+ +void acpi_pci_root_hp_init(void);
+  int acpi_ec_init(void);
+  int acpi_ec_ecdt_probe(void);
+  int acpi_boot_ec_enable(void);
+
+--Signature=_Mon__18_Feb_2013_12_11_05_+1100_JtfQKZsgFDvRwowz
+Content-Type: application/pgp-signature
+
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with undefined - http://www.enigmail.net/
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRIW7SAAoJEIZ0px9YPRMySfMQAII6ZFgh+dDS/gEhxCmZ5EJZ
-dmz5AjafHmmqAKuw5j5erKvRzocxaxwLscvEjv6WXD/dGD7DoUkixSkoHD0G5ptE
-gba3OL8qqBQGzuqhUsfKCnYS3b7UGYC95G9qS03jcikm46Rl3ufpEnOswkIwyssw
-Qd0yVqvsmXDaTz6LljwSYGT6BxLo63QmoaxH64yCXwYtOh+vGanif8U+QZcg61Hm
-jL1CRlbzjJg5VrtTOak9SVsRFRp4TOvJe7TI5P/Nm20mkt6q+1sWcoOXa1egG0k7
-68Y2hTzlERTK6LCpmHRZcQxXPbMl/KP03+mgtqcN5xQtkGq4NfcnfG0HIANo9fpf
-BlnCX//gDaLRVcwlQnAShVYRcLd+tjb6l+2ObYLShJVFPdD5YJ3sTiySKW7xVW04
-iFlzxDWKYA2NILHldHHa+MX7r86IBPLrZhG+IqgdjLcw4zQZiGn2heVSQipzmPGm
-eBWqJuSUtVYNrEFVd/+CcqHo5jvmqmybh7+DLi6fVBvNb1vh9ApmltVuD37T00CB
-d3bOF5VEFQR+zoNloxriI84SCZPRu/in8f/Bqy9x+iGnkgW+FxnJnDi4kEaerNB7
-jjZow64JwE5f/pYHle/ffLUvsCRLV7GpvJ33n4OxFQyVMYHrPEdbF2r+YkytA5zJ
-KzZDEk6WfzVItcPcjSTg
-=EwXd
+iQIcBAEBCAAGBQJRIX+pAAoJEECxmPOUX5FEE2wQAKQ7yqNCPNPpLiN69e4vkYkE
+fx8Vk9u3vNS8mDSc8jQbgeV00OJUcgTU80gtKNW9YfsvFrOxMFlTXD7SjfDnbqTO
+H5hxDYajgmGFhwKad9LS5HjkKxpZJ0W9RQhT6VORC65B1QTUpS5BTzffsX9tJoaa
+ACoqlq2l50DfJ41oKcgTCPE6XxYfWkLoFHwpWhEI4jFslcpVJzIz+EXqAVQCn6hy
+qVXHySI6I/hooCPOQgTRlo3MAvmmcf03E754YGCND9Zz+i8CJSp8/kPgcVLGH+54
+kmsDbnJY9qARG7CyXUC3o6TBnGTUtXDsjuMH2KKcI2/5QrJ7VjLI/+N33nY63nFN
+8EYU54mBRviP/S+o+qwYDMdlD1nUhQwtz2GZdJnB1Y+16a3KlDaftWlvCFCNrRHc
+iP9Z3X3JAwJbQEUJ+gLVaULII8uK7PImbiqtM1u4dwk90/X8NWVT1kGjI4YRDU9m
+IlubVRmd62xz9vgJtKQmx1J+fX3Or/NR6VBrBOKjGqXbi90UkfRn99bwth+NPNzi
+IRhJ/s7e4KEUpvhet0Y4cCAy7LEBEN9kbB808wz4msEKa7lx+SSTFf9qi9Z6NLo9
+34KQwRAJ2oO//5w85A7hKJ/M+fA7FnKJjGpSvpZPfqt3uD+7C8owB9j2APWVBVjj
+0qKg4brK+PYvHqmQxU+w
+=NgRS
 -----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Feb_2013_12_11_05_+1100_JtfQKZsgFDvRwowz--
