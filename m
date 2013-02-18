@@ -1,36 +1,84 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the driver-core
- tree
-Date: Sun, 17 Feb 2013 20:45:35 -0800
-Message-ID: <20130218044535.GA28277@kroah.com>
-References: <20130218153242.747962940bbed03bfdb2623b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the input tree
+Date: Mon, 18 Feb 2013 16:01:25 +1100
+Message-ID: <20130218160125.0afc414767b236bdfc6ee8df@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__18_Feb_2013_16_01_25_+1100_Qt5lwnLLkg7+E71Q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:48634 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756725Ab3BREpR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Feb 2013 23:45:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20130218153242.747962940bbed03bfdb2623b@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45657 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751217Ab3BRFBi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Feb 2013 00:01:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Manjunath Goudar <manjunath.goudar@linaro.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-On Mon, Feb 18, 2013 at 03:32:42PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the usb tree got a conflict in
-> drivers/usb/host/ehci-vt8500.c between commit 148e11349b0c ("usb: Convert
-> to devm_ioremap_resource()") from the driver-core tree and commit
-> d57ada0c37ec ("USB: EHCI: make ehci-vt8500 a separate driver") from the
-> usb tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Signature=_Mon__18_Feb_2013_16_01_25_+1100_Qt5lwnLLkg7+E71Q
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks good to me, thanks.
+Hi all,
 
-greg k-h
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/input/keyboard/tegra-kbc.c between commit 9eee07d39fa6 ("Input:
+tegra-kbc - require CONFIG_OF, remove platform data") from the input tree
+and commit 61fd290d213e ("ARM: tegra: migrate to new clock code") from
+the arm-soc tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/input/keyboard/tegra-kbc.c
+index d89e7d39,54ac1dc..0000000
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@@ -29,16 -29,9 +29,16 @@@
+  #include <linux/of.h>
+  #include <linux/clk.h>
+  #include <linux/slab.h>
+ -#include <linux/input/tegra_kbc.h>
+ +#include <linux/input/matrix_keypad.h>
+- #include <mach/clk.h>
++ #include <linux/clk/tegra.h>
+ =20
+ +#define KBC_MAX_GPIO	24
+ +#define KBC_MAX_KPENT	8
+ +
+ +#define KBC_MAX_ROW	16
+ +#define KBC_MAX_COL	8
+ +#define KBC_MAX_KEY	(KBC_MAX_ROW * KBC_MAX_COL)
+ +
+  #define KBC_MAX_DEBOUNCE_CNT	0x3ffu
+ =20
+  /* KBC row scan time and delay for beginning the row scan. */
+
+--Signature=_Mon__18_Feb_2013_16_01_25_+1100_Qt5lwnLLkg7+E71Q
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRIbWlAAoJEECxmPOUX5FEfYAP/0O5XGJ/gI98NIA90H8ENBNK
+YlKd3vNumrmmhSn60plSqyobgkj5C8nMXt/+xhjJ9nxF3f810ul6v6Tn9yDlj6GJ
+oaSm82PHorfgEn1uYQc10fR4W20mHRHhBjxHRJe2ivVoGel4uRkCKWE86I8fhWrX
+hufgv59Xk2d0yVXqn8HFganTZmcxbUOFO4vKaBMmBeTPypAsgkoD/Y0a1iVZrGgQ
+2K08YI18+h5C3Y4LeiqWY3AglyqkfqEUsNKvERSyvGZHLByPurJ9iapuqaFmXCRv
+4jMGLrLqvhI2KpA9df58iUBYhRTzXOrXNr9JmH5Pig5tdeAKaMh57k2Mx+WaGbKP
+l/eY0BEQ7WZwe46MmMXlI0woQxUC07a0rqgfxxEycAqLqNsxjgg9C5y+SxsNoP8Z
+3bfm8yhuWPLVM5eOSPu5uN5tIJp6HN4rodqG99DL1kSZ2+klVcP4+eocoOtb46Ng
+ahqpEQL6pODesdKJEU5wkJXWyIrrp6tVTJ8zbbUtyEWq0YvDZhFmnP9+309O0/XG
+hJ8z6jcPbSNHswM+1IWZN3e9XBJ5XYRJ7QzYrez0Ukz8YwranC5gMU/Ewx6U1HNu
+AyXDlmov5ySI8MVi2ZpF4+oKSK7yxYoU+NIssYeuNcBQpS8ppWAObqyrC+BplbnL
+1xdZRSDuKO40H4Mgjf5G
+=BdAx
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Feb_2013_16_01_25_+1100_Qt5lwnLLkg7+E71Q--
