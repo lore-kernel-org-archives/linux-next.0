@@ -1,94 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with the pci tree
-Date: Mon, 18 Feb 2013 12:17:07 +1100
-Message-ID: <20130218121707.221f3f24673d92066b6603ad@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the kbuild tree
+Date: Mon, 18 Feb 2013 14:35:28 +1100
+Message-ID: <20130218143528.451b9e1e19d79693c5673414@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__18_Feb_2013_12_17_07_+1100_wjG/1MsW4xrGGFhU"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56080 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754729Ab3BRBRJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Feb 2013 20:17:09 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiang Liu <liuj97@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Yinghai Lu <yinghai@kernel.org>
+ boundary="Signature=_Mon__18_Feb_2013_14_35_28_+1100_XBTzKu0EdQw=EKMG"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Marek <mmarek@suse.cz>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__18_Feb_2013_12_17_07_+1100_wjG/1MsW4xrGGFhU
+--Signature=_Mon__18_Feb_2013_14_35_28_+1100_XBTzKu0EdQw=EKMG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi all,
 
-Today's linux-next merge of the pm tree got a conflict in
-drivers/acpi/scan.c between commits 668192b67820 ("PCI: acpiphp: Move
-host bridge hotplug to pci_root.c") and ab1a2e038ff2 ("ACPI / PCI: Make
-pci_slot built-in only, not a module") from the pci tree and commits
-4daeaf68379f ("ACPI / PCI: Make PCI IRQ link driver use struct
-acpi_scan_handler") and  3757b94802fb ("ACPI / hotplug: Fix concurrency
-issues and memory leaks") from the pm tree.
+Today's linux-next merge of the tip tree got a conflict in
+kernel/timeconst.pl between commit 70730bca1331 ("kernel: Replace
+timeconst.pl with a bc script") from the kbuild tree and commit
+63a3f603413f ("timeconst.pl: Eliminate Perl warning") from the tip tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I just droppped the tip tree version (I deleted the file) and can carry
+the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/acpi/scan.c
-index d9ee41e,daee749..0000000
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@@ -1685,10 -1778,13 +1778,14 @@@ int __init acpi_scan_init(void
-  		printk(KERN_ERR PREFIX "Could not register bus type\n");
-  	}
- =20
-- 	acpi_power_init();
-  	acpi_pci_root_init();
- +	acpi_pci_slot_init();
-+ 	acpi_pci_link_init();
-+ 	acpi_platform_init();
-+ 	acpi_csrt_init();
-+ 	acpi_container_init();
- =20
-+ 	mutex_lock(&acpi_scan_lock);
-  	/*
-  	 * Enumerate devices in the ACPI namespace.
-  	 */
-@@@ -1708,7 -1804,7 +1805,9 @@@
- =20
-  	acpi_update_all_gpes();
- =20
- +	acpi_pci_root_hp_init();
- +
-- 	return 0;
-+  out:
-+ 	mutex_unlock(&acpi_scan_lock);
-+ 	return result;
-  }
-
---Signature=_Mon__18_Feb_2013_12_17_07_+1100_wjG/1MsW4xrGGFhU
+--Signature=_Mon__18_Feb_2013_14_35_28_+1100_XBTzKu0EdQw=EKMG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRIYETAAoJEECxmPOUX5FE7w4P/i8rt7hPbmoxkbhdPxmqlMf6
-M2few1k/qwV/04fw6fNU1xpuFba9GGGxxdY31MmdaHUyiOjr/cC9tD+ZhisuAz+f
-tQK+DAjK4TlKwP0Q4qT4haBAqNHM/VahUeZt1zX3kA+VmjreMyvRr86QAXhfJHRt
-x8FguyoQMMDwIx5OFvmeegla14XicIRQuDknqrZ48BhcauU9q4VycxZlV7ty+8mK
-p8LBK4cOrp6jxTcBJMsAKopCabLAzURz4/waRB1ewEEjTw/QfcXXVRvkUn+J3W+N
-CFo4sYwRlXZOlME8HDbCJEExG+7LHqTNUA2T5Lo++8aMEY+PGTFsBonl/hjCprOo
-QhM7I6k0ten2xXXKrnHLlgkuvIBPvsB2PCSrWv4XeIsbdwCgfXDL/zAjiiQo3TlZ
-tK2eEFYEzljn43hQFAyrZm1erjfwK0sBmhljeTNBG8gr4KwNEEdNYkv9NMOsRZGf
-mHsgDlF+2xaEzi7IvaJt9rP76uR+/xRr7SvHPUYhUZG5howvy0AQe0x5wRJt7b0E
-gw9Z+1rY8pmk7OTqSt1Gz21JE4ktgOe/RfbEwR4eEAY60EcE+tnyHXLfcmvV9KZA
-/yMVhbJYdjFdWqAcLZ9jQ/h3L+5BsNlGV/apyHxSqjdfFCBOX0T0vwcCMSbICLC6
-lR7b19oMw9JgItsAftQh
-=MAwK
+iQIcBAEBCAAGBQJRIaGAAAoJEECxmPOUX5FEKu0P/0XPqDX+zVic+fCFqPdlCdNd
+uFlGzYy7iE4G4j+WAzxIflGYSce0rfaLLl3OUo8VdlbVa7PnRoJljW1USAiy1V/K
+W2Y+LnUf0dI3GIr2u/2wNeve51l6kn5sAn84XIhRNsWGzPJ7BD4OZN2iRoSSmfmF
+g5BjZb3C/ag4oWtv3+6lUV6evmiv8ZXl6gC/1LlA03BpT+L2buzhOcGg7FQhHrH7
+6GVVilHUFAH69FyYLKQNM74/BRSvAW3HkEG7AphCvrtBiBGbdEGEX8PArkKpXPPG
+G9bNRP+LnfFgMSQz9V1kdeNlqTYka63gp5S2LeK+ZuShpmRO6J+fvuEJAq1US9CX
+8n0tgigRPs1OgBmyqVtjkCsBdfYDZ7yhA5YdUXr4WlZkMcx8K5JdjX5T4xGe/egW
+o6uy7ludS5cWMkrvSBUc/Cl9N/wpjnVFRotX8Sh4Y5OPlALQNTQvf+hTMXAi4Irj
+OTIAkpumAwUxQv5M9K8i5gFD3NdhjGPwcmF/tbWkfqn0E9r0sgUsok0zM5iOFZcy
+lgQe6jHl/L8j1K8d4RTPWCO2iKFUQ4b+TVr3iI7rfdNteaYlU/+a57yRH80vgpqj
+ysBod3uC7gk6FhyYfk+UicCuMZnA/FOmILdbwW0kE20R+O8gxMV1SCVfjYY8txTJ
+mY4lOqM2TmXl1awV9uMQ
+=7f0O
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__18_Feb_2013_12_17_07_+1100_wjG/1MsW4xrGGFhU--
+--Signature=_Mon__18_Feb_2013_14_35_28_+1100_XBTzKu0EdQw=EKMG--
