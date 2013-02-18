@@ -1,80 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the userns tree with the nfsd tree
-Date: Mon, 18 Feb 2013 16:27:58 +1100
-Message-ID: <20130218162758.2e71a4fe0676ed701d44e85e@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the kbuild tree
+Date: Mon, 18 Feb 2013 16:52:32 +1100
+Message-ID: <20130218165232.92004590a089f22f67127db9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__18_Feb_2013_16_27_58_+1100_llrxzoTygRPtep9b"
+ boundary="Signature=_Mon__18_Feb_2013_16_52_32_+1100_d5AnoGEzRiPoDQDD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46137 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:59710 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754264Ab3BRF2I (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Feb 2013 00:28:08 -0500
+	with ESMTP id S1751888Ab3BRFwf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Feb 2013 00:52:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stanislav Kinsbursky <skinsbursky@parallels.com>, "J. Bruce Fields" <bfields@fieldses.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Michal Marek <mmarek@suse.cz>, =?UTF-8?B?IkRhZ2Zpbm4gSWxtYXJpIE1hbm5zw6VrZXIi?= <ilmari@ilmari.org>
 
---Signature=_Mon__18_Feb_2013_16_27_58_+1100_llrxzoTygRPtep9b
+--Signature=_Mon__18_Feb_2013_16_52_32_+1100_d5AnoGEzRiPoDQDD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Andrew,
 
-Today's linux-next merge of the userns tree got a conflict in
-net/sunrpc/svcauth_unix.c between commit 2d4383383b0b ("SUNRPC: rework
-cache upcall logic") from the nfsd tree and commit 7eaf040b720b ("sunrpc:
-Use kuid_t and kgid_t where appropriate") from the userns tree.
+Today's linux-next merge of the akpm tree got a conflict in
+kernel/timeconst.pl between commit 70730bca1331 ("kernel: Replace
+timeconst.pl with a bc script") from the kbuild tree and commit
+"timeconst.pl: remove deprecated defined(@array)" from the akpm tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I just dropped the akpm tree patch since the file had been deleted by the
+kbuild tree commit.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/sunrpc/svcauth_unix.c
-index 5085804,a1852e1..0000000
---- a/net/sunrpc/svcauth_unix.c
-+++ b/net/sunrpc/svcauth_unix.c
-@@@ -465,7 -475,12 +470,7 @@@ static void unix_gid_request(struct cac
-  	(*bpp)[-1] =3D '\n';
-  }
- =20
-- static struct unix_gid *unix_gid_lookup(struct cache_detail *cd, uid_t ui=
-d);
- -static int unix_gid_upcall(struct cache_detail *cd, struct cache_head *h)
- -{
- -	return sunrpc_cache_pipe_upcall(cd, h, unix_gid_request);
- -}
- -
-+ static struct unix_gid *unix_gid_lookup(struct cache_detail *cd, kuid_t u=
-id);
- =20
-  static int unix_gid_parse(struct cache_detail *cd,
-  			char *mesg, int mlen)
-
---Signature=_Mon__18_Feb_2013_16_27_58_+1100_llrxzoTygRPtep9b
+--Signature=_Mon__18_Feb_2013_16_52_32_+1100_d5AnoGEzRiPoDQDD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRIbveAAoJEECxmPOUX5FE+H0QAJh4HeHujPhcXp9Dt4BmXGpC
-5onp9xggnUHmAIEpFTkl+1Yqs9aXOw0fwHm7tXMSjXEp+U+35tFEZELYOEGJM5jt
-OeSfJAP+O9RoqTIfCVxRpecNIuxq4CdnxJ1bT6ovAR2lbdOAAdL993AGvycNAE2A
-j5I2SdPEfOevAtRwWEz/ePMSeQoyvrAB4fdbx2sUYkurZbc/l3li+d0LqAeU6jvB
-Phw08NeQuJgNgxyefmv86tAIuwyIYep/WHegMwxTzSDSHpsCv6+Aq9xdjJEU2YbG
-hD0xHbb9Ee5dF2K+4W+xuZuDKNtSLkyc6bBL5BpAuRJPV1ZwmivTGU6VV3Tt6M2R
-xzVWiP5Jy+fxdjwZ2qB6YHPuepnbTV1QTtfsE5AXZd4Pt8BnBS9Ith5cTvZiy5Ug
-KlwyBWXg4EdgZylulq0gnl0jEE0knEblbf0vvkyrOgZnVsRn3NhBdqkyzMseOYTH
-5pWXUvZPLl2KAPxvSnGfdtdmBkBsAgvny2jnkPJN4X7AXGkzFifUdrKL8sBI5M0P
-UAPYtDa8o3UTqTzC/oPO3cqunXdyu+eYSYeFJfn2WUmiPYoAZfdD3thxmre6sGPz
-IbQRvcO4RljcL2BEf9iDHYsTJIM+73/eptXG7HFCyTEgLhxn7kfhXy+42IRL3vGP
-QKlVDXQ/dSaRpQLendXR
-=fFaR
+iQIcBAEBCAAGBQJRIcGgAAoJEECxmPOUX5FEl60P/iCdzTRtXx/UKTZ0XG54iOuF
+gm/i5FnrPQLk42gklUYclWPRDUC4aoYmVTOI7faAwNvP7fhKjK89GBhR25hfac0p
+w76eEN/KMPHE9+dEnupWS3rmP11cpzCwP3GDJPBgTaRPinrhtkXVYghepQtOiry8
+KMv5x8v91v9tAF3LndIWff1Gxd6qngiu71/l6GL8o9EnVpLC9yEApZX73tmDOMV0
++frdGS8SR2S+zEVxZGNgQfP9Kl3S8OzVJaZOO5wVK8PcQUhYIYWLOHEXdxUFyO/Z
+4LxbxV4ShBJVVtnP/1wlC8aV5ZZq/YhIRQwBfQq5tn32XAysG8WeWj5/wIAEU0jz
+mvNd5n1MjSOep2UbOwIdSShxAFOMKtIdPDrMxAeF5WcTBqP+AzI9d/d1ANe/7+U7
+FFy0NAJG0a2NgYw8KmY/WZWw4FEcLVdUfLTyv+TUws+UB9nVjzgNLHb5A5Q4E5XG
+v+06GMEg7EMGPr0oaU06NCKx3xPORRSNPMh7+Ej3rzuWoe7pzgIE9EbOcs8yeLQZ
+iRiJ2kos3v2aOkKcbiQLHIHYSvHCy5NSzqWmboP+CfwoyH5eem7nnA9j+PBX/7iX
+4uOSu9LxBf3XcexBIZ69DKjXi382m8d04RgXVamSnNTydNRb4fQpIRuHTCuvu/yt
+CRP8MbVwsM81fkH03yAu
+=xTHX
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__18_Feb_2013_16_27_58_+1100_llrxzoTygRPtep9b--
+--Signature=_Mon__18_Feb_2013_16_52_32_+1100_d5AnoGEzRiPoDQDD--
