@@ -1,59 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the kbuild tree
-Date: Mon, 18 Feb 2013 16:52:32 +1100
-Message-ID: <20130218165232.92004590a089f22f67127db9@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the net-next tree
+Date: Mon, 18 Feb 2013 17:00:22 +1100
+Message-ID: <20130218170022.88661ff2f442490a21f79145@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__18_Feb_2013_16_52_32_+1100_d5AnoGEzRiPoDQDD"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59710 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751888Ab3BRFwf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Feb 2013 00:52:35 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Michal Marek <mmarek@suse.cz>, =?UTF-8?B?IkRhZ2Zpbm4gSWxtYXJpIE1hbm5zw6VrZXIi?= <ilmari@ilmari.org>
+ boundary="Signature=_Mon__18_Feb_2013_17_00_22_+1100_xCUT.7Pv3yrr/gkz"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pravin B Shelar <pshelar@nicira.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__18_Feb_2013_16_52_32_+1100_d5AnoGEzRiPoDQDD
+--Signature=_Mon__18_Feb_2013_17_00_22_+1100_xCUT.7Pv3yrr/gkz
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-Today's linux-next merge of the akpm tree got a conflict in
-kernel/timeconst.pl between commit 70730bca1331 ("kernel: Replace
-timeconst.pl with a bc script") from the kbuild tree and commit
-"timeconst.pl: remove deprecated defined(@array)" from the akpm tree.
+After merging the net-next tree, today's linux-next build (powerpc
+ppc44x_defconfig) produced this warning:
 
-I just dropped the akpm tree patch since the file had been deleted by the
-kbuild tree commit.
+net/ipv6/xfrm6_mode_tunnel.c: In function 'xfrm6_mode_tunnel_input':
+net/ipv6/xfrm6_mode_tunnel.c:72:2: warning: suggest parentheses around assi=
+gnment used as truth value [-Wparentheses]
+
+Introduced by commit 14bbd6a565e1 ("net: Add skb_unclone() helper
+function").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__18_Feb_2013_16_52_32_+1100_d5AnoGEzRiPoDQDD
+--Signature=_Mon__18_Feb_2013_17_00_22_+1100_xCUT.7Pv3yrr/gkz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRIcGgAAoJEECxmPOUX5FEl60P/iCdzTRtXx/UKTZ0XG54iOuF
-gm/i5FnrPQLk42gklUYclWPRDUC4aoYmVTOI7faAwNvP7fhKjK89GBhR25hfac0p
-w76eEN/KMPHE9+dEnupWS3rmP11cpzCwP3GDJPBgTaRPinrhtkXVYghepQtOiry8
-KMv5x8v91v9tAF3LndIWff1Gxd6qngiu71/l6GL8o9EnVpLC9yEApZX73tmDOMV0
-+frdGS8SR2S+zEVxZGNgQfP9Kl3S8OzVJaZOO5wVK8PcQUhYIYWLOHEXdxUFyO/Z
-4LxbxV4ShBJVVtnP/1wlC8aV5ZZq/YhIRQwBfQq5tn32XAysG8WeWj5/wIAEU0jz
-mvNd5n1MjSOep2UbOwIdSShxAFOMKtIdPDrMxAeF5WcTBqP+AzI9d/d1ANe/7+U7
-FFy0NAJG0a2NgYw8KmY/WZWw4FEcLVdUfLTyv+TUws+UB9nVjzgNLHb5A5Q4E5XG
-v+06GMEg7EMGPr0oaU06NCKx3xPORRSNPMh7+Ej3rzuWoe7pzgIE9EbOcs8yeLQZ
-iRiJ2kos3v2aOkKcbiQLHIHYSvHCy5NSzqWmboP+CfwoyH5eem7nnA9j+PBX/7iX
-4uOSu9LxBf3XcexBIZ69DKjXi382m8d04RgXVamSnNTydNRb4fQpIRuHTCuvu/yt
-CRP8MbVwsM81fkH03yAu
-=xTHX
+iQIcBAEBCAAGBQJRIcN2AAoJEECxmPOUX5FEmEsQAIYpx8Wb/Xaq/+npEXHZxTuE
+9GxVV0S1LkVOfh3I2L2jN2LGtALi9cMdItX1p7oblRxD/1OaUVNoVQiZrHgqXVMk
+SLOOIcFCjPLfu9cMFMoxSfkBsx+Rpt9JWU2fCc05bC3Ba5tsOtPCjDQLLluOwATb
+eB4Gdij1PQZgvJsEXWDNMzZIqnVNtWf+jtE4fLsmPttPjmkCc1BlTOZ+R05AMfOS
+E7czHN9TyEhMalCvSDJ3/6DJeR8eJ/6T0jQh/wUusY5K/8+zQacCl8mbTZV7Cbhm
+Y2BGVt3gLP4S3QAx8Bh6KIouF2FNBd0vAdXmPpa50l/6wIn4xf5ochjyMBYSuZzE
+dpyb/HyBB/qs02INpooyfKddWmUIwjH46PVS9wx4FjRd+KBzNvBu+sn+7YCDkhy9
+6SxkBkqCwGkLKkz98Z+ZPfM1OcoOb6vhP3BvrXnJRCGThMSisotwJsZkgp3ZjVFR
+/oa/N7cWDb6Ub/eykJR/b0+ExNHKqQz8ueCMRQqTTaA4AmxINWKi/ynL9WuSMg7d
+adSkF8SOqFYIFhtGOi51ekxThQvedOOGXkL1dc7JyGv76PC7/fTFQQzfykxKAXyf
+g07w6bOSjNiXI7BHXwpWZw96Mq8oc7Jqpz0FHOm1bA/sccmdveI9c1wDtvlrHf1g
+TPF79qCOnwdjW1EvB4HP
+=8o3g
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__18_Feb_2013_16_52_32_+1100_d5AnoGEzRiPoDQDD--
+--Signature=_Mon__18_Feb_2013_17_00_22_+1100_xCUT.7Pv3yrr/gkz--
