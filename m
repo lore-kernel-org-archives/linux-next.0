@@ -1,80 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the drm-intel tree
-Date: Tue, 19 Feb 2013 13:01:49 +1100
-Message-ID: <20130219130149.a3762b8a2f38879d3e0e6243@canb.auug.org.au>
-References: <20130215133714.6f55139ad1a037b7b9fa1b70@canb.auug.org.au>
-	<CAKMK7uGG4R68ED4M1uYRUZAhxRMzao0vk9oFg_vxZ8ofhx1=yw@mail.gmail.com>
-	<20130215081626.6cbb2e74@jbarnes-desktop>
+Subject: Re: Linux 3.8
+Date: Tue, 19 Feb 2013 13:15:15 +1100
+Message-ID: <20130219131515.8d59aeeb8023ed5d0bfc620b@canb.auug.org.au>
+References: <CA+55aFwdyYa0ajqgzUoAQmUD2frBe2-gvxgny_9gD6PCoOYrqw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__19_Feb_2013_13_01_49_+1100_MrUVldn9EGF7b8Jk"
+ boundary="Signature=_Tue__19_Feb_2013_13_15_15_+1100_F4sS9_2j3RXvh2o4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47877 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41207 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758027Ab3BSCB7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Feb 2013 21:01:59 -0500
-In-Reply-To: <20130215081626.6cbb2e74@jbarnes-desktop>
+	with ESMTP id S1752354Ab3BSCPY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Feb 2013 21:15:24 -0500
+In-Reply-To: <CA+55aFwdyYa0ajqgzUoAQmUD2frBe2-gvxgny_9gD6PCoOYrqw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org
 
---Signature=_Tue__19_Feb_2013_13_01_49_+1100_MrUVldn9EGF7b8Jk
+--Signature=_Tue__19_Feb_2013_13_15_15_+1100_F4sS9_2j3RXvh2o4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi all,
 
-On Fri, 15 Feb 2013 08:16:26 -0800 Jesse Barnes <jbarnes@virtuousgeek.org> =
-wrote:
+On Mon, 18 Feb 2013 16:28:03 -0800 Linus Torvalds <torvalds@linux-foundatio=
+n.org> wrote:
 >
-> On Fri, 15 Feb 2013 10:30:16 +0100
-> Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->=20
-> > On Fri, Feb 15, 2013 at 3:37 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> > >
-> > > After merging the drm-intel tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > >
-> > > ERROR: "pm_vt_switch_unregister" [drivers/video/fb.ko] undefined!
-> > >
-> > > I have dropped the tree for today.
-> >=20
-> > Meh, that fail was already reported from Wu's kernel builder a few
-> > days ago, but no patch yet showed up to fix things. Since the i915
-> > side of that work isn't ready yet either I've dropped the offending
-> > patches.
->=20
-> I sent a patch yesterday for this.  I'll bounce it over again.
+> The release got delayed a couple of days because I was waiting for
+> confirmation of a small patch, but hey, we could also say that it was
+> all intentional, and that this is the special "Presidents' Day
+> Release". It sounds more planned that way, no?
 
-I am still getting that build failure.
+So, presumably the merge window is open and Linus will start pulling
+trees shortly.  So, here I go again:
+
+Please do *not* rebase your tree before asking Linus to pull it.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__19_Feb_2013_13_01_49_+1100_MrUVldn9EGF7b8Jk
+--Signature=_Tue__19_Feb_2013_13_15_15_+1100_F4sS9_2j3RXvh2o4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRIt0NAAoJEECxmPOUX5FEV8cP/02gjDo1iZ2sDfzxWCdSSKgy
-klRFZf0Y6/8ipsDSdLeRN2MSu9JmsrthHvH+dlqPxlWmsAGV+bAUDTxL2Kd5Mq/z
-WQN73qtiVNaiWSSQKA5dgv1Z1awrOu/5hXYyqdMPto/HP8N7AaKhvqJlO1t9/YB2
-2z3BAY/9EUY4jMHcj9LrIgQ7OmED+qZz3HpOBNQAF7ptvrvkzOV8V6v6ifPUqvmI
-WaZ55VtnxGnh6V8ndCV/IwQRiuNIkTZkYa17HYxt0kRtDt7FQd31Xbz+rcTHmHD7
-Mh0DGQeqWIYo8KWJpYS3lh64z0aSNZj4rUtUC/sMBeM8aPxPE54d4YT9ND1cIWyD
-tgkWTUeM1UssVZUZCWrXtt4r4EsFQhMGlnzQP2IGq1T+M3/6DIjBKHDqFIxC8Loz
-wsWwapuohLvfm/zuvBrnIPaKRj4jbDf6yCrtAi3+x7JxSvHBmI/aqwtypwdW8XVn
-OzamX04FEFkHeH6oNyXn13ZvjeR4rTDakrz+OvrhXq1pCC6aPekFf3rM5NM2mlVM
-QushcSQlm2XUsmvttYRXvaPGxm+CIi8WIaQnJYkXYKzfZlb1Zjfp/E9Igj6W5ni3
-2UUqi9gw2+U3GrOTX6LVyWqhFvTomAuuVC8UnpnDO6WG6odgyTH6IDOPa+nbJ6xv
-yEplGlechG545bNqAvkX
-=w4Yt
+iQIcBAEBCAAGBQJRIuAzAAoJEECxmPOUX5FEAaoP/j9Ax4gEGaQyZdj0R5v/SEhs
+k8dUDZAgkmOEuAD58ampKBWUqTclOjCfJrn24K20pEb9ku3zr0C+BNn7uGrHapsC
+hXS5M6OoiZrPcn2Py6PAcue2ZjmN0Qne3xLhLfY/5IGhr9uXe3dsntmBBzZ+yI6d
+sSE4xHaobWQmtCTEOZpdm2aK16mdIz5LcX4bnkpYRhwtwwJdvHWTt/dGdjGr3UAL
+If2f4xnnoBUx5JYAv4jHrGU/uBUKHOswsCGsYGbtwxUHrbVjNo1FTF66ugFjmviQ
+WKuZH2h9gTLgufgE/JeWqYQV4Rcvaz5V9mBqXqudvXQKuql1XGG7hnlQEdGR60vu
+I0eBovMrkZOy7Oa/sBINNiBLkg36pZLpao7yxFSSAHhW71szWdLQrzK5jeRxlL6N
+Nmj5ZRG2afnrBY8WWj2DCh6fIXvTrLjVh5C+25e5Ra0JXN+OLPvFTwpGRrtWFnvd
+gW7M7NpWwGgOlnQ4oWnaYO2j6l6eEm3ZwiYzi7aMleLIBokT2/zwOoeyK++X+QNj
+PO4zaNWIxSOlglEfpPAciowAnw4fN1DNuYNBNj+N1xjZ/P8Nb8KS+JRP5980r1jb
+v//4oT09lQ+3VOOHqKlWevbc/s28ffyau1PDyYyd5JNa81worI39vGY3fUpTU4/J
+UVVVNQWRwgz/26dMlF2r
+=IB0+
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__19_Feb_2013_13_01_49_+1100_MrUVldn9EGF7b8Jk--
+--Signature=_Tue__19_Feb_2013_13_15_15_+1100_F4sS9_2j3RXvh2o4--
