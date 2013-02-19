@@ -1,53 +1,38 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: linux-next: build failure after merge of the drm-intel tree
-Date: Tue, 19 Feb 2013 11:28:17 +0100
-Message-ID: <CAKMK7uEYv+u0DxgbpbTg4ySK+9+PmYu-5MfFTid-PARHd_PcjQ@mail.gmail.com>
-References: <20130215133714.6f55139ad1a037b7b9fa1b70@canb.auug.org.au>
-	<CAKMK7uGG4R68ED4M1uYRUZAhxRMzao0vk9oFg_vxZ8ofhx1=yw@mail.gmail.com>
-	<20130215081626.6cbb2e74@jbarnes-desktop>
-	<20130219130149.a3762b8a2f38879d3e0e6243@canb.auug.org.au>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: Linux 3.8
+Date: Tue, 19 Feb 2013 07:14:50 -0500
+Message-ID: <20130219121450.GC9161@home.goodmis.org>
+References: <CA+55aFwdyYa0ajqgzUoAQmUD2frBe2-gvxgny_9gD6PCoOYrqw@mail.gmail.com>
+ <20130219131515.8d59aeeb8023ed5d0bfc620b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:48616 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932342Ab3BSK2S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Feb 2013 05:28:18 -0500
-Received: by mail-ie0-f180.google.com with SMTP id bn7so8388902ieb.11
-        for <linux-next@vger.kernel.org>; Tue, 19 Feb 2013 02:28:17 -0800 (PST)
-In-Reply-To: <20130219130149.a3762b8a2f38879d3e0e6243@canb.auug.org.au>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:6255 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932530Ab3BSMOx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Feb 2013 07:14:53 -0500
+Content-Disposition: inline
+In-Reply-To: <20130219131515.8d59aeeb8023ed5d0bfc620b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org
 
-On Tue, Feb 19, 2013 at 3:01 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Fri, 15 Feb 2013 08:16:26 -0800 Jesse Barnes <jbarnes@virtuousgeek.org> wrote:
->>
->> On Fri, 15 Feb 2013 10:30:16 +0100
->> Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->>
->> > On Fri, Feb 15, 2013 at 3:37 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> > >
->> > > After merging the drm-intel tree, today's linux-next build (x86_64
->> > > allmodconfig) failed like this:
->> > >
->> > > ERROR: "pm_vt_switch_unregister" [drivers/video/fb.ko] undefined!
->> > >
->> > > I have dropped the tree for today.
->> >
->> > Meh, that fail was already reported from Wu's kernel builder a few
->> > days ago, but no patch yet showed up to fix things. Since the i915
->> > side of that work isn't ready yet either I've dropped the offending
->> > patches.
->>
->> I sent a patch yesterday for this.  I'll bounce it over again.
->
-> I am still getting that build failure.
+On Tue, Feb 19, 2013 at 01:15:15PM +1100, Stephen Rothwell wrote:
+> 
+> So, presumably the merge window is open and Linus will start pulling
+> trees shortly.  So, here I go again:
+> 
+> Please do *not* rebase your tree before asking Linus to pull it.
 
-Ok, should be really fixed now, my apologies for the mess.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Grumble, I did a small rebase after the window opened but before I knew
+it did. The rebase was just to add an "Acked-by" to the change log and
+no code change what so ever. I put it into linux-next to get testing
+while waiting on the ack, and after the ack, I pushed it to Ingo.
+
+Original commit: 5ec8d0104fd81d86cb7386c228e73ae635f1d74d
+After Ack added: 8c189ea64eea01ca20d102ddb74d6936dd16c579
+
+Feel free to do the diff.
+
+-- Steve
