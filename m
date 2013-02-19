@@ -1,52 +1,80 @@
-From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: interesting commits in the cifs tree
-Date: Mon, 18 Feb 2013 19:41:23 -0600
-Message-ID: <CAH2r5mvt5Oo-M1EZR6PeEEFaudXB2+sAT1AhAG=Ybj57U2qmYg@mail.gmail.com>
-References: <20130219094716.530b3d75b4fc850fe1629456@canb.auug.org.au>
-	<CAH2r5mvKwYtmzDV+8sb32Qw5SdrsFYg11-O6R-ZwAOTxPOb2VA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the drm-intel tree
+Date: Tue, 19 Feb 2013 13:01:49 +1100
+Message-ID: <20130219130149.a3762b8a2f38879d3e0e6243@canb.auug.org.au>
+References: <20130215133714.6f55139ad1a037b7b9fa1b70@canb.auug.org.au>
+	<CAKMK7uGG4R68ED4M1uYRUZAhxRMzao0vk9oFg_vxZ8ofhx1=yw@mail.gmail.com>
+	<20130215081626.6cbb2e74@jbarnes-desktop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAH2r5mvKwYtmzDV+8sb32Qw5SdrsFYg11-O6R-ZwAOTxPOb2VA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ouyang Maochun <ouyang.maochun-Th6q7B73Y6EnDS1+zs4M5A@public.gmane.org>, Jiang Yong <jian.yong5-Th6q7B73Y6EnDS1+zs4M5A@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__19_Feb_2013_13_01_49_+1100_MrUVldn9EGF7b8Jk"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47877 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758027Ab3BSCB7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Feb 2013 21:01:59 -0500
+In-Reply-To: <20130215081626.6cbb2e74@jbarnes-desktop>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2013 at 5:09 PM, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> I will fix it - the patch had to be hand edited due to formatting
-> issues, and obviously screwed up the subject line.
+--Signature=_Tue__19_Feb_2013_13_01_49_+1100_MrUVldn9EGF7b8Jk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I fixed the patch title, and repopulated the pending patches in
-cifs-2.6.git for-next
+Hi Daniel,
 
-> On Mon, Feb 18, 2013 at 4:47 PM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
->>
->> Hi Steve,
->>
->> I noticed this commit in the cifs tree today:
->>
->> cc67d17bffd7 "This patch applies to the kernel version of linux-3.8-rc6."
->>
->> That really is not a good summary line for the commit and this commit
->> appears to be authored by you and committed by you, but has no
->> Signed-off-by line from you.
->>
->> --
->> Cheers,
->> Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+On Fri, 15 Feb 2013 08:16:26 -0800 Jesse Barnes <jbarnes@virtuousgeek.org> =
+wrote:
 >
->
->
->
-> --
-> Thanks,
->
-> Steve
+> On Fri, 15 Feb 2013 10:30:16 +0100
+> Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>=20
+> > On Fri, Feb 15, 2013 at 3:37 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> > >
+> > > After merging the drm-intel tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > >
+> > > ERROR: "pm_vt_switch_unregister" [drivers/video/fb.ko] undefined!
+> > >
+> > > I have dropped the tree for today.
+> >=20
+> > Meh, that fail was already reported from Wu's kernel builder a few
+> > days ago, but no patch yet showed up to fix things. Since the i915
+> > side of that work isn't ready yet either I've dropped the offending
+> > patches.
+>=20
+> I sent a patch yesterday for this.  I'll bounce it over again.
 
+I am still getting that build failure.
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Thanks,
+--Signature=_Tue__19_Feb_2013_13_01_49_+1100_MrUVldn9EGF7b8Jk
+Content-Type: application/pgp-signature
 
-Steve
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRIt0NAAoJEECxmPOUX5FEV8cP/02gjDo1iZ2sDfzxWCdSSKgy
+klRFZf0Y6/8ipsDSdLeRN2MSu9JmsrthHvH+dlqPxlWmsAGV+bAUDTxL2Kd5Mq/z
+WQN73qtiVNaiWSSQKA5dgv1Z1awrOu/5hXYyqdMPto/HP8N7AaKhvqJlO1t9/YB2
+2z3BAY/9EUY4jMHcj9LrIgQ7OmED+qZz3HpOBNQAF7ptvrvkzOV8V6v6ifPUqvmI
+WaZ55VtnxGnh6V8ndCV/IwQRiuNIkTZkYa17HYxt0kRtDt7FQd31Xbz+rcTHmHD7
+Mh0DGQeqWIYo8KWJpYS3lh64z0aSNZj4rUtUC/sMBeM8aPxPE54d4YT9ND1cIWyD
+tgkWTUeM1UssVZUZCWrXtt4r4EsFQhMGlnzQP2IGq1T+M3/6DIjBKHDqFIxC8Loz
+wsWwapuohLvfm/zuvBrnIPaKRj4jbDf6yCrtAi3+x7JxSvHBmI/aqwtypwdW8XVn
+OzamX04FEFkHeH6oNyXn13ZvjeR4rTDakrz+OvrhXq1pCC6aPekFf3rM5NM2mlVM
+QushcSQlm2XUsmvttYRXvaPGxm+CIi8WIaQnJYkXYKzfZlb1Zjfp/E9Igj6W5ni3
+2UUqi9gw2+U3GrOTX6LVyWqhFvTomAuuVC8UnpnDO6WG6odgyTH6IDOPa+nbJ6xv
+yEplGlechG545bNqAvkX
+=w4Yt
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_Feb_2013_13_01_49_+1100_MrUVldn9EGF7b8Jk--
