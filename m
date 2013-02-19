@@ -1,66 +1,113 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Linux 3.8
-Date: Tue, 19 Feb 2013 13:15:15 +1100
-Message-ID: <20130219131515.8d59aeeb8023ed5d0bfc620b@canb.auug.org.au>
-References: <CA+55aFwdyYa0ajqgzUoAQmUD2frBe2-gvxgny_9gD6PCoOYrqw@mail.gmail.com>
+Subject: linux-next: manual merge of the akpm tree with the wireless-next
+ tree
+Date: Tue, 19 Feb 2013 16:28:22 +1100
+Message-ID: <20130219162822.dcf6f5bf65252d2b25420051@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__19_Feb_2013_13_15_15_+1100_F4sS9_2j3RXvh2o4"
+ boundary="Signature=_Tue__19_Feb_2013_16_28_22_+1100_v4onkqf7zX7Qj8dD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41207 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:42531 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752354Ab3BSCPY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Feb 2013 21:15:24 -0500
-In-Reply-To: <CA+55aFwdyYa0ajqgzUoAQmUD2frBe2-gvxgny_9gD6PCoOYrqw@mail.gmail.com>
+	with ESMTP id S1750870Ab3BSF2b (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Feb 2013 00:28:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sasha Levin <sasha.levin@oracle.com>, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
 
---Signature=_Tue__19_Feb_2013_13_15_15_+1100_F4sS9_2j3RXvh2o4
+--Signature=_Tue__19_Feb_2013_16_28_22_+1100_v4onkqf7zX7Qj8dD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-On Mon, 18 Feb 2013 16:28:03 -0800 Linus Torvalds <torvalds@linux-foundatio=
-n.org> wrote:
->
-> The release got delayed a couple of days because I was waiting for
-> confirmation of a small patch, but hey, we could also say that it was
-> all intentional, and that this is the special "Presidents' Day
-> Release". It sounds more planned that way, no?
+Today's linux-next merge of the akpm tree got a conflict in
+net/mac80211/mesh_pathtbl.c between commit bf7cd94dcc71 ("mac80211: clean
+up mesh code") from the wireless-next tree and commit "hlist: drop the
+node parameter from iterators" from the akpm tree.
 
-So, presumably the merge window is open and Linus will start pulling
-trees shortly.  So, here I go again:
-
-Please do *not* rebase your tree before asking Linus to pull it.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__19_Feb_2013_13_15_15_+1100_F4sS9_2j3RXvh2o4
+diff --cc net/mac80211/mesh_pathtbl.c
+index 6b3c4e1,ddf48f6..0000000
+--- a/net/mac80211/mesh_pathtbl.c
++++ b/net/mac80211/mesh_pathtbl.c
+@@@ -455,27 -448,30 +452,27 @@@ err_rcu
+   * @tbl: table which holds our list of known gates
+   * @mpath: gate mpath
+   *
+ - * Returns: 0 on success
+ - *
+   * Locking: must be called inside rcu_read_lock() section
+   */
+ -static int mesh_gate_del(struct mesh_table *tbl, struct mesh_path *mpath)
+ +static void mesh_gate_del(struct mesh_table *tbl, struct mesh_path *mpath)
+  {
+  	struct mpath_node *gate;
+- 	struct hlist_node *p, *q;
++ 	struct hlist_node *q;
+ =20
+- 	hlist_for_each_entry_safe(gate, p, q, tbl->known_gates, list) {
+ -	hlist_for_each_entry_safe(gate, q, tbl->known_gates, list)
+ -		if (gate->mpath =3D=3D mpath) {
+ -			spin_lock_bh(&tbl->gates_lock);
+ -			hlist_del_rcu(&gate->list);
+ -			kfree_rcu(gate, rcu);
+ -			spin_unlock_bh(&tbl->gates_lock);
+ -			mpath->sdata->u.mesh.num_gates--;
+ -			mpath->is_gate =3D false;
+ -			mpath_dbg(mpath->sdata,
+ -				  "Mesh path: Deleted gate: %pM. %d known gates\n",
+ -				  mpath->dst, mpath->sdata->u.mesh.num_gates);
+ -			break;
+ -		}
+ -
+ -	return 0;
+++	hlist_for_each_entry_safe(gate, q, tbl->known_gates, list) {
+ +		if (gate->mpath !=3D mpath)
+ +			continue;
+ +		spin_lock_bh(&tbl->gates_lock);
+ +		hlist_del_rcu(&gate->list);
+ +		kfree_rcu(gate, rcu);
+ +		spin_unlock_bh(&tbl->gates_lock);
+ +		mpath->sdata->u.mesh.num_gates--;
+ +		mpath->is_gate =3D false;
+ +		mpath_dbg(mpath->sdata,
+ +			  "Mesh path: Deleted gate: %pM. %d known gates\n",
+ +			  mpath->dst, mpath->sdata->u.mesh.num_gates);
+ +		break;
+ +	}
+  }
+ =20
+  /**
+
+--Signature=_Tue__19_Feb_2013_16_28_22_+1100_v4onkqf7zX7Qj8dD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRIuAzAAoJEECxmPOUX5FEAaoP/j9Ax4gEGaQyZdj0R5v/SEhs
-k8dUDZAgkmOEuAD58ampKBWUqTclOjCfJrn24K20pEb9ku3zr0C+BNn7uGrHapsC
-hXS5M6OoiZrPcn2Py6PAcue2ZjmN0Qne3xLhLfY/5IGhr9uXe3dsntmBBzZ+yI6d
-sSE4xHaobWQmtCTEOZpdm2aK16mdIz5LcX4bnkpYRhwtwwJdvHWTt/dGdjGr3UAL
-If2f4xnnoBUx5JYAv4jHrGU/uBUKHOswsCGsYGbtwxUHrbVjNo1FTF66ugFjmviQ
-WKuZH2h9gTLgufgE/JeWqYQV4Rcvaz5V9mBqXqudvXQKuql1XGG7hnlQEdGR60vu
-I0eBovMrkZOy7Oa/sBINNiBLkg36pZLpao7yxFSSAHhW71szWdLQrzK5jeRxlL6N
-Nmj5ZRG2afnrBY8WWj2DCh6fIXvTrLjVh5C+25e5Ra0JXN+OLPvFTwpGRrtWFnvd
-gW7M7NpWwGgOlnQ4oWnaYO2j6l6eEm3ZwiYzi7aMleLIBokT2/zwOoeyK++X+QNj
-PO4zaNWIxSOlglEfpPAciowAnw4fN1DNuYNBNj+N1xjZ/P8Nb8KS+JRP5980r1jb
-v//4oT09lQ+3VOOHqKlWevbc/s28ffyau1PDyYyd5JNa81worI39vGY3fUpTU4/J
-UVVVNQWRwgz/26dMlF2r
-=IB0+
+iQIcBAEBCAAGBQJRIw12AAoJEECxmPOUX5FE4xsP/ip3D6rxwTa7NhdFjUX9G5G7
+xucSMomzkAOd4tYQuYa5ecL5Tjj7AkNLgofYKp5B7n9mlzX2F85aUd4TE2WMt7sE
+DRnp9oBZG+TmitS/L+JlOykgdxg2AO45jwwz/vU+jztbKOLwMbCsHy24RpBkiqWm
+FV630aS7x4GWxm+S9kmEX2Yhp0tBxHM3ySwj6jSaAXsIRC2vEtBygHR6AsfO8+Tv
+72HHUoSD7INxWAZRxn8qJM8qs3H8oW5l5X265SrGoubUWcoU8E2qCRm3iOl3mhd+
+ryAgr3Yot1Lv9IvWaWmBkj4ad3NC2+oK3LUB6mKvQi+68cdYlDFjUsV96kjBMw/m
+ixup+dTk+AS6PlwRgJyUFlR/5j+wBddoe0w4no++bWEn1riWSwB/SgToki/ISaDO
+NVAnrpDXSTSHaeUyReKEekkf86xCq/UdNg/r7ePbzRfIh36bjtl6WR4D2PylZvYC
+UP8wX5rZbxFLrLygDNHMpTb7DuzE4Oer6gIE1KuhnpIEUEH52zvgNnWiD3Yg1p7c
+lmtzvPz8/XwLb6+RhSTx4DA4dgaL0BohQuX8Svt5jAPm7MGmfnFeXOxJpkb1p9M1
+CJe9YyxL/zqojfdqHTHdGHNq+IXsD3KserBP7aEqCyHBTW4hGT3D9kjaIGjticuv
+HiDDyTYAuIppL4EKLGGO
+=D7j9
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__19_Feb_2013_13_15_15_+1100_F4sS9_2j3RXvh2o4--
+--Signature=_Tue__19_Feb_2013_16_28_22_+1100_v4onkqf7zX7Qj8dD--
