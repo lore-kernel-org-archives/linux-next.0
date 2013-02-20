@@ -1,63 +1,72 @@
-From: Peter Jones <pjones@redhat.com>
-Subject: [PATCH] block/partitions/efi.c: ensure that the GPT header is at least the size of the structure.
-Date: Wed, 20 Feb 2013 09:37:01 -0500
-Message-ID: <1361371021-583-2-git-send-email-pjones@redhat.com>
-References: <20130220173414.fa4886355efd8f85d0d349f4@canb.auug.org.au>
- <1361371021-583-1-git-send-email-pjones@redhat.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1361371021-583-1-git-send-email-pjones@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Matt Fleming <matt.fleming@intel.com>, Jens Axboe <axboe@kernel.dk>, Stephen Warren <swarren@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Peter Jones <pjones@redhat.com>
-List-Id: linux-next.vger.kernel.org
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: [PATCH 01/11] ARM: disable virt_to_bus/virt_to_bus almost everywhere
+Date: Wed, 20 Feb 2013 15:14:47 +0000
+Message-ID: <CAAG0J9_VqCGJJJZjSWGfFggALHU=vdWsSBeS39-DtxV=VXcJwQ@mail.gmail.com>
+References: <1360849767-1463135-1-git-send-email-arnd@arndb.de>
+	<1360849767-1463135-2-git-send-email-arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bk0-f41.google.com ([209.85.214.41]:35533 "EHLO
+	mail-bk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933505Ab3BTPOt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Feb 2013 10:14:49 -0500
+Received: by mail-bk0-f41.google.com with SMTP id q16so3694694bkw.0
+        for <linux-next@vger.kernel.org>; Wed, 20 Feb 2013 07:14:47 -0800 (PST)
+In-Reply-To: <1360849767-1463135-2-git-send-email-arnd@arndb.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-UEFI 2.3.1D will include a change to the spec language mandating that a
-GPT header must be greater than *or equal to* the size of the defined
-structure.  While verifying that this would work on Linux, I discovered
-that we're not actually checking the minimum bound at all.
+On 14 February 2013 13:49, Arnd Bergmann <arnd@arndb.de> wrote:
+> We are getting a number of warnings about the use of the deprecated
+> bus_to_virt function in drivers using the ARM ISA DMA API:
+>
+> drivers/parport/parport_pc.c: In function 'parport_pc_fifo_write_block_dma':
+> drivers/parport/parport_pc.c:622:3: warning: 'bus_to_virt' is deprecated
+> (declared at arch/arm/include/asm/memory.h:253) [-Wdeprecated-declarations]
+>
+> This is only because that function gets used by the inline
+> set_dma_addr() helper. We know that any driver for the ISA DMA API
+> is correctly using the DMA addresses, so we can change this
+> to use the __bus_to_virt() function instead, which does not warn.
+>
+> After this, there are no remaining drivers that are used on
+> any defconfigs on ARM using virt_to_bus or bus_to_virt, with
+> the exception of the OSS sound driver. That driver is only used
+> on RiscPC, NetWinder and Shark, so we can set ARCH_NO_VIRT_TO_BUS
+> on all other platforms and hide the deprecated functions, which
+> is far more effective than marking them as deprecated, in order
+> to avoid any new users of that code.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> ---
+>  arch/arm/Kconfig                 | 4 ++++
+>  arch/arm/configs/shark_defconfig | 1 -
+>  arch/arm/include/asm/dma.h       | 2 +-
+>  arch/arm/include/asm/memory.h    | 2 ++
+>  4 files changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 67874b8..91d4aea 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1450,6 +1450,10 @@ config ISA_DMA
+>         bool
+>         select ISA_DMA_API
+>
+> +config ARCH_NO_VIRT_TO_BUS
+> +       def_bool y
+> +       depends on !ARCH_RPC && !ARCH_NETWINDER && !ARCH_SHARK
 
-The result of this is that when we verify the checksum, it's possible that
-on a malformed header (with header_size of 0), we won't actually verify
-any data.
+Hi Arnd,
 
-Signed-off-by: Peter Jones <pjones@redhat.com>
-Cc: Matt Fleming <matt.fleming@intel.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Stephen Warren <swarren@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- block/partitions/efi.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+There's a patch in linux-next by Stephen Rothwell "Centralise
+CONFIG_ARCH_NO_VIRT_TO_BUS" that removes this Kconfig symbol,
+inverting/replacing it with "select HAVE_VIRT_TO_BUS" (including for
+arch/arm) which will undo the effects of this.
 
-diff --git a/block/partitions/efi.c b/block/partitions/efi.c
-index b62fb88..62e05cf 100644
---- a/block/partitions/efi.c
-+++ b/block/partitions/efi.c
-@@ -310,15 +310,23 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
- 		goto fail;
- 	}
- 
--	/* Check the GUID Partition Table header size */
-+	/* Check the GUID Partition Table header size is too big */
- 	if (le32_to_cpu((*gpt)->header_size) >
- 			bdev_logical_block_size(state->bdev)) {
--		pr_debug("GUID Partition Table Header size is wrong: %u > %u\n",
-+		pr_debug("GUID Partition Table Header size is too large: %u > %u\n",
- 			le32_to_cpu((*gpt)->header_size),
- 			bdev_logical_block_size(state->bdev));
- 		goto fail;
- 	}
- 
-+	/* Check the GUID Partition Table header size is too small */
-+	if (le32_to_cpu((*gpt)->header_size) < sizeof(gpt_header)) {
-+		pr_debug("GUID Partition Table Header size is too small: %u < %lu\n",
-+			le32_to_cpu((*gpt)->header_size),
-+			(unsigned long)sizeof(gpt_header));
-+		goto fail;
-+	}
-+
- 	/* Check the GUID Partition Table CRC */
- 	origcrc = le32_to_cpu((*gpt)->header_crc32);
- 	(*gpt)->header_crc32 = 0;
--- 
-1.8.1.2
+Cheers
+James
