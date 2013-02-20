@@ -1,72 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vhost tree with the virtio tree
-Date: Wed, 20 Feb 2013 16:00:28 +1100
-Message-ID: <20130220160028.42f2b3b94f5eea4b3f6d4779@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the modem_shm tree
+Date: Wed, 20 Feb 2013 16:51:09 +1100
+Message-ID: <20130220165109.6263fb39deb8d761d0c63e5e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__20_Feb_2013_16_00_28_+1100_r6PwDteDNtXqlT=_"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60162 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750698Ab3BTFAj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Feb 2013 00:00:39 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Asias He <asias@redhat.com>
+ boundary="Signature=_Wed__20_Feb_2013_16_51_09_+1100_Qm3AAUMDo3foTC_B"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?B?IlNqdXIgQnLDpm5kZWxhbmQi?= <sjurbren@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, =?UTF-8?B?IlNqdXIgQnLDpm5kZWxhbmQi?= <sjur.brandeland@stericsson.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__20_Feb_2013_16_00_28_+1100_r6PwDteDNtXqlT=_
+--Signature=_Wed__20_Feb_2013_16_51_09_+1100_Qm3AAUMDo3foTC_B
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+Hi Sjur,
 
-Today's linux-next merge of the vhost tree got a conflict in
-drivers/vhost/Makefile between commit 4d8dc8b44748 ("vringh: host-side
-implementation of virtio rings") from the virtio tree and commit
-0b87bfefde9a ("vhost-blk: Add vhost-blk support v6") from the vhost tree.
+After merging the modem_shm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/remoteproc/remoteproc_virtio.c: In function 'rproc_virtio_new_vring=
+h':
+drivers/remoteproc/remoteproc_virtio.c:234:16: error: 'struct rproc_vdev' h=
+as no member named 'dfeatures'
+
+Caused by commit 624f8ef43b6c ("remoteproc: Support virtio config space")
+from the modem_shm tree interacting with commit 414a13c3d236
+("remoteproc: Add support for vringh (Host vrings)") from the virtio tree.
+
+I applied the following merge fix patch and can carry it as necessary:
+
+=46rom 66e8d9a9dc648db6abc27b7e9b6d99840b25642f Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 20 Feb 2013 16:47:58 +1100
+Subject: [PATCH] remoteproc: fix for dfeatures change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/remoteproc/remoteproc_virtio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/re=
+moteproc_virtio.c
+index 33ca91f..dba33ff 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -231,7 +231,7 @@ rproc_virtio_new_vringh(struct virtio_device *vdev, uns=
+igned index,
+ 	rvring->vringh =3D vrh;
+=20
+ 	err =3D vringh_init_kern(vrh,
+-			       rvdev->dfeatures,
++			       rvdev->rsc->dfeatures,
+ 			       rvring->len,
+ 			       false,
+ 			       vrh->vring.desc,
+--=20
+1.8.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/vhost/Makefile
-index 1d37f5e,1a8a4a5..0000000
---- a/drivers/vhost/Makefile
-+++ b/drivers/vhost/Makefile
-@@@ -2,5 -2,5 +2,7 @@@ obj-$(CONFIG_VHOST_NET) +=3D vhost_net.
-  vhost_net-y :=3D vhost.o net.o
- =20
-  obj-$(CONFIG_TCM_VHOST) +=3D tcm_vhost.o
- +
- +obj-$(CONFIG_VHOST_RING) +=3D vringh.o
-+ obj-$(CONFIG_VHOST_BLK) +=3D vhost_blk.o
-+ vhost_blk-y :=3D blk.o
-
---Signature=_Wed__20_Feb_2013_16_00_28_+1100_r6PwDteDNtXqlT=_
+--Signature=_Wed__20_Feb_2013_16_51_09_+1100_Qm3AAUMDo3foTC_B
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRJFhsAAoJEECxmPOUX5FEyqkQAKRNf61wXhtn8RYI+dFlwHIr
-KQmMmY9MS/v5WbCmzYG7MHMaJxExSnFrcIE31PnN+LxJSwG+58PwBgzl1MiuD1Bv
-YIfwAqqmsYENGmnIRJLXfeRaq/iViOPqgW52OfRdmq8a2Tj2E3H9um1j5ATaeaCQ
-wyYLv94MG0CeiHLOrnnWiUMkuo8SmAwqIhKbzy3swCdr7QIin9Gs6I71vgcLBjDf
-HywIrigtYQdx40WAiLlVZ1cFkh4p7Ir3fCGaGgrp3dUahBDeW5gQzPbegZW54qMr
-eceNR87yfBf1+w1NY7KrK29AeBrLUWngU8daHJHXAoIWW+/atljiM/RGOI+hFD7A
-em1edabdONcGXTyzP32rTDb0kyv0N99eCgS7rAAXyQgV2ubHFCdTR2JtRLJOwcVH
-YJNemonZRoT0a2HXDQVDn1MyDWdfSlqavZWkX6PIhTBbOryKDNCYUwd/YdR8Voed
-3/SLQyan2HyZ7I0Y0wksPIlj1lWg72lUpJLpdBGuk+Yg4C9K+m+H8gPZwJXcwpvS
-rjc6NUa/7PKaZyLLNLSFA6i5mDdikcLtLEGfYtXlJmv6+mMHFsBlGOVGATFBLWAV
-fFxHZX0MDxIxu7AzzSdWf0oJTrhC+ZM6JzoVpuKr9LsNDi/3QvlWN1aqekU0U9LX
-qDvKICxzuj35m2kSQPJ7
-=buXj
+iQIcBAEBCAAGBQJRJGRNAAoJEECxmPOUX5FEQnwP/2TXV0C3zDSkeY8NC4rzqa+Q
+lW0CNueIWsBZEC0Ey+tMr9gxLuqQINJbfd4wqhe5ARdohWegHyvw7S1tVxzgZaEZ
+rt9Al3BDT9kOU5BV0pglLrb3QP5EWkL4OPfHR8Ga2bMGf9lkFyxnHtw+Gz3wfk4v
+uD2+b5HM+9Zm41jEDtd8dq0AmMaglXTUmDc4DU8Xoo8w7lzBy0b76CoDTX/PX+Sx
+tshwBQ1oZyBoO3GyfmxKXh5PXJ0xHJb/S2jA0z89rLVeZk+WN+FE8ByPQ36UXgTS
+2Rry9PCdBwXn6mzF6eeHWyDSKJri0UGE2TubXKxx089pgqKDh0dqyLiPcp1JZ3EU
+IKeeFp+RgDSVv5APEYSPTOHPBkfhc3XnXFNyw8xHvvNsUpqG3/5UQpraaWu+UNf2
+X6YnqIB/4kEfRByzumlkGgv0Kibp1pnp4EgEAbiai7CN13jixfazajZs8UYNkcOk
+1LEvUDwuYMTM9RLb4uOBYyquxdqZVeAY7AjuaO6ym1OFedgRsLAN4C4Aq6AzWjmR
+gRqPOxWEwY/kBwiDc8HkewxyO5fuPee4rEZ3JZSsE9wc7Haw+aVc4WUENAikn6hX
+t1P30jkwXQRAwCYQoBZWpb2Wp0/+tTkdeSOT6FxttjPXBkrHyiDiQUr1qD04zNUc
+bwcvqp08/kZ++KWkbzxK
+=KWUB
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__20_Feb_2013_16_00_28_+1100_r6PwDteDNtXqlT=_--
+--Signature=_Wed__20_Feb_2013_16_51_09_+1100_Qm3AAUMDo3foTC_B--
