@@ -1,115 +1,130 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] security/integrity/ima: make part_pack_uuid() always
- visible
-Date: Wed, 20 Feb 2013 11:30:28 -0800
-Message-ID: <51252454.1050609@infradead.org>
-References: <20130219170309.efb90173fcd879bf32a7e89b@canb.auug.org.au>  <512418A5.9010006@infradead.org> <1361379050.29360.12.camel@falcor1>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: [PATCH -next] security/integrity/ima: make part_pack_uuid()
+ always visible
+Date: Wed, 20 Feb 2013 14:46:21 -0500
+Message-ID: <1361389581.29360.14.camel@falcor1>
+References: <20130219170309.efb90173fcd879bf32a7e89b@canb.auug.org.au>
+	 <512418A5.9010006@infradead.org> <1361379050.29360.12.camel@falcor1>
+	 <51252454.1050609@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:43330 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933536Ab3BTT34 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Feb 2013 14:29:56 -0500
-In-Reply-To: <1361379050.29360.12.camel@falcor1>
+Received: from e9.ny.us.ibm.com ([32.97.182.139]:35827 "EHLO e9.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S934896Ab3BTUjR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Feb 2013 15:39:17 -0500
+Received: from /spool/local
+	by e9.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+	Wed, 20 Feb 2013 15:37:54 -0500
+In-Reply-To: <51252454.1050609@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Randy Dunlap <rdunlap@infradead.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@us.ibm.com>, axboe@kernel.dk
 
-On 02/20/13 08:50, Mimi Zohar wrote:
-> On Tue, 2013-02-19 at 16:28 -0800, Randy Dunlap wrote:
->> On 02/18/13 22:03, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20130218:
->>>
->>
->> on x86_64:
->>
->>   CC      security/integrity/ima/ima_policy.o
->> security/integrity/ima/ima_policy.c: In function 'ima_parse_rule':
->> security/integrity/ima/ima_policy.c:538:4: error: implicit declaration of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
->> cc1: some warnings being treated as errors
->> make[4]: *** [security/integrity/ima/ima_policy.o] Error 1
->>
->>
->> Full randconfig file is attached.
+On Wed, 2013-02-20 at 11:30 -0800, Randy Dunlap wrote:
+> On 02/20/13 08:50, Mimi Zohar wrote:
+> > On Tue, 2013-02-19 at 16:28 -0800, Randy Dunlap wrote:
+> >> On 02/18/13 22:03, Stephen Rothwell wrote:
+> >>> Hi all,
+> >>>
+> >>> Changes since 20130218:
+> >>>
+> >>
+> >> on x86_64:
+> >>
+> >>   CC      security/integrity/ima/ima_policy.o
+> >> security/integrity/ima/ima_policy.c: In function 'ima_parse_rule':
+> >> security/integrity/ima/ima_policy.c:538:4: error: implicit declaration of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
+> >> cc1: some warnings being treated as errors
+> >> make[4]: *** [security/integrity/ima/ima_policy.o] Error 1
+> >>
+> >>
+> >> Full randconfig file is attached.
+> > 
+> > part_pack_uuid() is only defined for CONFIG_BLOCK in
+> > include/linux/genhd.h.  One solution would be to add a stub function
+> > definition in include/linux/genhd.h, the other option would be to ifndef
+> > CONFIG_BLOCK in C code.
 > 
-> part_pack_uuid() is only defined for CONFIG_BLOCK in
-> include/linux/genhd.h.  One solution would be to add a stub function
-> definition in include/linux/genhd.h, the other option would be to ifndef
-> CONFIG_BLOCK in C code.
+> ITYM #ifdef CONFIG_BLOCK to call part_pack_uuid().
+> Yes, either of those would work.
+> How about a third option -- just make part_pack_uuid() always visible
+> and not just a stub?  Patch is below.
 
-ITYM #ifdef CONFIG_BLOCK to call part_pack_uuid().
-Yes, either of those would work.
-How about a third option -- just make part_pack_uuid() always visible
-and not just a stub?  Patch is below.
+That works too.
 
+Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
----
-From: Randy Dunlap <rdunlap@infradead.org>
+thanks,
 
-Fix build error when CONFIG_BLOCK is not enabled
-by making the static inline function part_pack_uuid()
-visible independent of CONFIG_BLOCK's setting.
+Mimi
 
-security/integrity/ima/ima_policy.c:538:4: error: implicit declaration of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mimi Zohar <zohar@us.ibm.com>
----
- include/linux/genhd.h |   36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
-
---- linux-next-20130220.orig/include/linux/genhd.h
-+++ linux-next-20130220/include/linux/genhd.h
-@@ -213,24 +213,6 @@ static inline struct gendisk *part_to_di
- 	return NULL;
- }
- 
--static inline void part_pack_uuid(const u8 *uuid_str, u8 *to)
--{
--	int i;
--	for (i = 0; i < 16; ++i) {
--		*to++ = (hex_to_bin(*uuid_str) << 4) |
--			(hex_to_bin(*(uuid_str + 1)));
--		uuid_str += 2;
--		switch (i) {
--		case 3:
--		case 5:
--		case 7:
--		case 9:
--			uuid_str++;
--			continue;
--		}
--	}
--}
--
- static inline int disk_max_parts(struct gendisk *disk)
- {
- 	if (disk->flags & GENHD_FL_EXT_DEVT)
-@@ -720,4 +702,22 @@ static inline dev_t blk_lookup_devt(cons
- 
- #endif /* CONFIG_BLOCK */
- 
-+static inline void part_pack_uuid(const u8 *uuid_str, u8 *to)
-+{
-+	int i;
-+	for (i = 0; i < 16; ++i) {
-+		*to++ = (hex_to_bin(*uuid_str) << 4) |
-+			(hex_to_bin(*(uuid_str + 1)));
-+		uuid_str += 2;
-+		switch (i) {
-+		case 3:
-+		case 5:
-+		case 7:
-+		case 9:
-+			uuid_str++;
-+			continue;
-+		}
-+	}
-+}
-+
- #endif /* _LINUX_GENHD_H */
+> ---
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix build error when CONFIG_BLOCK is not enabled
+> by making the static inline function part_pack_uuid()
+> visible independent of CONFIG_BLOCK's setting.
+> 
+> security/integrity/ima/ima_policy.c:538:4: error: implicit declaration of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Mimi Zohar <zohar@us.ibm.com>
+> ---
+>  include/linux/genhd.h |   36 ++++++++++++++++++------------------
+>  1 file changed, 18 insertions(+), 18 deletions(-)
+> 
+> --- linux-next-20130220.orig/include/linux/genhd.h
+> +++ linux-next-20130220/include/linux/genhd.h
+> @@ -213,24 +213,6 @@ static inline struct gendisk *part_to_di
+>  	return NULL;
+>  }
+> 
+> -static inline void part_pack_uuid(const u8 *uuid_str, u8 *to)
+> -{
+> -	int i;
+> -	for (i = 0; i < 16; ++i) {
+> -		*to++ = (hex_to_bin(*uuid_str) << 4) |
+> -			(hex_to_bin(*(uuid_str + 1)));
+> -		uuid_str += 2;
+> -		switch (i) {
+> -		case 3:
+> -		case 5:
+> -		case 7:
+> -		case 9:
+> -			uuid_str++;
+> -			continue;
+> -		}
+> -	}
+> -}
+> -
+>  static inline int disk_max_parts(struct gendisk *disk)
+>  {
+>  	if (disk->flags & GENHD_FL_EXT_DEVT)
+> @@ -720,4 +702,22 @@ static inline dev_t blk_lookup_devt(cons
+> 
+>  #endif /* CONFIG_BLOCK */
+> 
+> +static inline void part_pack_uuid(const u8 *uuid_str, u8 *to)
+> +{
+> +	int i;
+> +	for (i = 0; i < 16; ++i) {
+> +		*to++ = (hex_to_bin(*uuid_str) << 4) |
+> +			(hex_to_bin(*(uuid_str + 1)));
+> +		uuid_str += 2;
+> +		switch (i) {
+> +		case 3:
+> +		case 5:
+> +		case 7:
+> +		case 9:
+> +			uuid_str++;
+> +			continue;
+> +		}
+> +	}
+> +}
+> +
+>  #endif /* _LINUX_GENHD_H */
+> 
