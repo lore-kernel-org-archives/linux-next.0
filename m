@@ -1,63 +1,115 @@
-From: Imre Deak <imre.deak@intel.com>
-Subject: Re: dw_mmc build broken in next-20130220 (was Re: [PATCH v3 2/2]
- lib/scatterlist: use page iterator in the mapping iterator)
-Date: Wed, 20 Feb 2013 20:41:57 +0200
-Message-ID: <1361385717.18593.12.camel@ideak-mobl>
-References: <CAAG0J99wUgcOt09_XxuK+ennnuj7OzxcJndYYGXbAqpj59E7PQ@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] security/integrity/ima: make part_pack_uuid() always
+ visible
+Date: Wed, 20 Feb 2013 11:30:28 -0800
+Message-ID: <51252454.1050609@infradead.org>
+References: <20130219170309.efb90173fcd879bf32a7e89b@canb.auug.org.au>  <512418A5.9010006@infradead.org> <1361379050.29360.12.camel@falcor1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAAG0J99wUgcOt09_XxuK+ennnuj7OzxcJndYYGXbAqpj59E7PQ@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: James Hogan <james.hogan@imgtec.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Maxim Levitsky <maximlevitsky@gmail.com>, Tejun Heo <tj@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linaro-mm-sig@lists.linaro.org, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:43330 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933536Ab3BTT34 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Feb 2013 14:29:56 -0500
+In-Reply-To: <1361379050.29360.12.camel@falcor1>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@us.ibm.com>, axboe@kernel.dk
 
-On Wed, 2013-02-20 at 16:42 +0000, James Hogan wrote:
-> On 13 February 2013 15:10, Imre Deak <imre.deak@intel.com> wrote:
-> > For better code reuse use the newly added page iterator to iterate
-> > through the pages. The offset, length within the page is still
-> > calculated by the mapping iterator as well as the actual mapping.
-> > Idea from Tejun Heo <tj@kernel.org>.
-> >
-> > Signed-off-by: Imre Deak <imre.deak@intel.com>
-> > ---
-> >  include/linux/scatterlist.h |    6 +++---
-> >  lib/scatterlist.c           |   46 ++++++++++++++++++++-----------------------
-> >  2 files changed, 24 insertions(+), 28 deletions(-)
-> >
-> > diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
-> > index 788a853..a6cd692 100644
-> > --- a/include/linux/scatterlist.h
-> > +++ b/include/linux/scatterlist.h
-> > @@ -295,9 +295,9 @@ struct sg_mapping_iter {
-> >         size_t                  consumed;       /* number of consumed bytes */
-> >
-> >         /* these are internal states, keep away */
-> > -       struct scatterlist      *__sg;          /* current entry */
-> > -       unsigned int            __nents;        /* nr of remaining entries */
-> > -       unsigned int            __offset;       /* offset within sg */
-> > +       unsigned int            __offset;       /* offset within page */
-> > +       struct sg_page_iter     __piter;        /* page iterator */
-> > +       unsigned int            __remaining;    /* remaining bytes on page */
-> >         unsigned int            __flags;
-> >  };
+On 02/20/13 08:50, Mimi Zohar wrote:
+> On Tue, 2013-02-19 at 16:28 -0800, Randy Dunlap wrote:
+>> On 02/18/13 22:03, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20130218:
+>>>
+>>
+>> on x86_64:
+>>
+>>   CC      security/integrity/ima/ima_policy.o
+>> security/integrity/ima/ima_policy.c: In function 'ima_parse_rule':
+>> security/integrity/ima/ima_policy.c:538:4: error: implicit declaration of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
+>> cc1: some warnings being treated as errors
+>> make[4]: *** [security/integrity/ima/ima_policy.o] Error 1
+>>
+>>
+>> Full randconfig file is attached.
 > 
-> Hi,
-> 
-> FYI, in next-20130220 this appears to break the build of the dw_mmc driver:
-> drivers/mmc/host/dw_mmc.c In function 'dw_mci_read_data_pio':
-> drivers/mmc/host/dw_mmc.c +1457 : error: 'struct sg_mapping_iter' has
-> no member named '__sg'
-> drivers/mmc/host/dw_mmc.c In function 'dw_mci_write_data_pio':
-> drivers/mmc/host/dw_mmc.c +1512 : error: 'struct sg_mapping_iter' has
-> no member named '__sg'
+> part_pack_uuid() is only defined for CONFIG_BLOCK in
+> include/linux/genhd.h.  One solution would be to add a stub function
+> definition in include/linux/genhd.h, the other option would be to ifndef
+> CONFIG_BLOCK in C code.
 
-My fault, I haven't noticed this user of the field. It could be fixed by
-using __piter.sg instead of __sg. I will follow up with v4 of this patch
-including this change.
-
---Imre
+ITYM #ifdef CONFIG_BLOCK to call part_pack_uuid().
+Yes, either of those would work.
+How about a third option -- just make part_pack_uuid() always visible
+and not just a stub?  Patch is below.
 
 
+---
+From: Randy Dunlap <rdunlap@infradead.org>
+
+Fix build error when CONFIG_BLOCK is not enabled
+by making the static inline function part_pack_uuid()
+visible independent of CONFIG_BLOCK's setting.
+
+security/integrity/ima/ima_policy.c:538:4: error: implicit declaration of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Mimi Zohar <zohar@us.ibm.com>
+---
+ include/linux/genhd.h |   36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
+
+--- linux-next-20130220.orig/include/linux/genhd.h
++++ linux-next-20130220/include/linux/genhd.h
+@@ -213,24 +213,6 @@ static inline struct gendisk *part_to_di
+ 	return NULL;
+ }
+ 
+-static inline void part_pack_uuid(const u8 *uuid_str, u8 *to)
+-{
+-	int i;
+-	for (i = 0; i < 16; ++i) {
+-		*to++ = (hex_to_bin(*uuid_str) << 4) |
+-			(hex_to_bin(*(uuid_str + 1)));
+-		uuid_str += 2;
+-		switch (i) {
+-		case 3:
+-		case 5:
+-		case 7:
+-		case 9:
+-			uuid_str++;
+-			continue;
+-		}
+-	}
+-}
+-
+ static inline int disk_max_parts(struct gendisk *disk)
+ {
+ 	if (disk->flags & GENHD_FL_EXT_DEVT)
+@@ -720,4 +702,22 @@ static inline dev_t blk_lookup_devt(cons
+ 
+ #endif /* CONFIG_BLOCK */
+ 
++static inline void part_pack_uuid(const u8 *uuid_str, u8 *to)
++{
++	int i;
++	for (i = 0; i < 16; ++i) {
++		*to++ = (hex_to_bin(*uuid_str) << 4) |
++			(hex_to_bin(*(uuid_str + 1)));
++		uuid_str += 2;
++		switch (i) {
++		case 3:
++		case 5:
++		case 7:
++		case 9:
++			uuid_str++;
++			continue;
++		}
++	}
++}
++
+ #endif /* _LINUX_GENHD_H */
