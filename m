@@ -1,59 +1,50 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCHv2] idr: always do slow path when hint is uninitialized
-Date: Wed, 20 Feb 2013 09:32:56 -0800
-Message-ID: <20130220173256.GC3570@htj.dyndns.org>
-References: <1361381015-446-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for Feb 19 (security/integrity/ima)
+Date: Wed, 20 Feb 2013 11:50:50 -0500
+Message-ID: <1361379050.29360.12.camel@falcor1>
+References: <20130219170309.efb90173fcd879bf32a7e89b@canb.auug.org.au>
+	 <512418A5.9010006@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f51.google.com ([209.85.160.51]:63884 "EHLO
-	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751462Ab3BTRdI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Feb 2013 12:33:08 -0500
-Received: by mail-pb0-f51.google.com with SMTP id un15so2972219pbc.38
-        for <linux-next@vger.kernel.org>; Wed, 20 Feb 2013 09:33:08 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1361381015-446-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Received: from e9.ny.us.ibm.com ([32.97.182.139]:43238 "EHLO e9.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933769Ab3BTRy7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Feb 2013 12:54:59 -0500
+Received: from /spool/local
+	by e9.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+	Wed, 20 Feb 2013 12:54:46 -0500
+In-Reply-To: <512418A5.9010006@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-next@vger.kernel.org, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@us.ibm.com>
 
-Hello,
-
-On Wed, Feb 20, 2013 at 07:23:35PM +0200, Andy Shevchenko wrote:
-> The guilty commit is cc5b5f6 "events: convert to idr_alloc()" together with
-> f49318a "idr: implement lookup hint". In our case the idr_alloc is never
-> called, but idr_find is. The hint field is never initialized and therefore
-> should not be dereferenced.
+On Tue, 2013-02-19 at 16:28 -0800, Randy Dunlap wrote:
+> On 02/18/13 22:03, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20130218:
+> > 
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reported-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  include/linux/idr.h | 2 +-
->  lib/idr.c           | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> on x86_64:
 > 
-> diff --git a/include/linux/idr.h b/include/linux/idr.h
-> index aed2a0c..a6f38b5 100644
-> --- a/include/linux/idr.h
-> +++ b/include/linux/idr.h
-> @@ -113,7 +113,7 @@ static inline void *idr_find(struct idr *idr, int id)
->  {
->  	struct idr_layer *hint = rcu_dereference_raw(idr->hint);
->  
-> -	if ((id & ~IDR_MASK) == hint->prefix)
-> +	if (hint && (id & ~IDR_MASK) == hint->prefix)
->  		return rcu_dereference_raw(hint->ary[id & IDR_MASK]);
+>   CC      security/integrity/ima/ima_policy.o
+> security/integrity/ima/ima_policy.c: In function 'ima_parse_rule':
+> security/integrity/ima/ima_policy.c:538:4: error: implicit declaration of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
+> cc1: some warnings being treated as errors
+> make[4]: *** [security/integrity/ima/ima_policy.o] Error 1
+> 
+> 
+> Full randconfig file is attached.
 
-I was thinking more along the line of creating a shared empty layer w/
-bogus prefix and then updating free_layer to fallback to it so that we
-can avoid the extra if but, yeah, let's do that later.  We're already
-in merge window.
+part_pack_uuid() is only defined for CONFIG_BLOCK in
+include/linux/genhd.h.  One solution would be to add a stub function
+definition in include/linux/genhd.h, the other option would be to ifndef
+CONFIG_BLOCK in C code.
 
- Acked-by: Tejun Heo <tj@kernel.org>
+thanks,
 
-Thanks!
-
--- 
-tejun
+Mimi
