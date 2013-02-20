@@ -1,41 +1,20 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: manual merge of the pm tree with the pci tree
-Date: Wed, 20 Feb 2013 13:57:18 +0100
-Message-ID: <1599012.kNnWTW8njt@vostro.rjw.lan>
-References: <20130220125555.46e16e16836ba48f70beb3a9@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hydra.sisk.pl ([212.160.235.94]:40247 "EHLO hydra.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756355Ab3BTMum (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Feb 2013 07:50:42 -0500
-In-Reply-To: <20130220125555.46e16e16836ba48f70beb3a9@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+From: Peter Jones <pjones@redhat.com>
+Subject: linux-next: build warning after merge of the akpm tree
+Date: Wed, 20 Feb 2013 09:37:00 -0500
+Message-ID: <1361371021-583-1-git-send-email-pjones@redhat.com>
+References: <20130220173414.fa4886355efd8f85d0d349f4@canb.auug.org.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130220173414.fa4886355efd8f85d0d349f4@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Matt Fleming <matt.fleming@intel.com>, Jens Axboe <axboe@kernel.dk>, Stephen Warren <swarren@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+Stephen,
 
-On Wednesday, February 20, 2013 12:55:55 PM Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> Today's linux-next merge of the pm tree got a conflict in
-> drivers/pci/pci-acpi.c between commit 181380b702ee ("PCI/ACPI: Don't
-> cache _PRT, and don't associate them with bus numbers") from the pci tree
-> and commit bc9b6407bd6d ("ACPI / PM: Rework the handling of devices
-> depending on power resources") from the pm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+The following email is an updated patch which should fix the warning you're
+seeing on architectures where sizeof is unsigned int rather than unsigned
+long.
 
-Thanks for the notice and fix.
-
-Rafael
-
-
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+This completely replaces the ef25bb0fa6e2 patch.  Andrew, if you'd prefer a
+single-line fixup patch, I can send you that instead.
