@@ -1,55 +1,59 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] events: always do slow path when trying to find a pmu
-Date: Wed, 20 Feb 2013 19:24:29 +0200
-Message-ID: <CAHp75VcB2v=pqOHjUr_r=sp1git0vzYEdt0bLJo9QvD29-UO9g@mail.gmail.com>
-References: <1361380176-15081-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	<20130220171645.GB3570@htj.dyndns.org>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCHv2] idr: always do slow path when hint is uninitialized
+Date: Wed, 20 Feb 2013 09:32:56 -0800
+Message-ID: <20130220173256.GC3570@htj.dyndns.org>
+References: <1361381015-446-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f169.google.com ([209.85.217.169]:43996 "EHLO
-	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757402Ab3BTRYb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Feb 2013 12:24:31 -0500
-In-Reply-To: <20130220171645.GB3570@htj.dyndns.org>
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:63884 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751462Ab3BTRdI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Feb 2013 12:33:08 -0500
+Received: by mail-pb0-f51.google.com with SMTP id un15so2972219pbc.38
+        for <linux-next@vger.kernel.org>; Wed, 20 Feb 2013 09:33:08 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1361381015-446-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-next@vger.kernel.org, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
 
-On Wed, Feb 20, 2013 at 7:16 PM, Tejun Heo <tj@kernel.org> wrote:
-> On Wed, Feb 20, 2013 at 07:09:36PM +0200, Andy Shevchenko wrote:
->> The guilty commit is cc5b5f6 "events: convert to idr_alloc()" together with
->> f49318a "idr: implement lookup hint". In our case the idr_alloc is never called, but idr_find is. The hint field is never initialized and could not be dereferenced.
->
-> Ah, right, ->hint is uninitialized at the beginning.
->
->> The proposed fix uses the idr_slowpath call which reflects old behaviour.
->>
->> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> Reported-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->> ---
->>  kernel/events/core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/kernel/events/core.c b/kernel/events/core.c
->> index 624e53f..20421ea 100644
->> --- a/kernel/events/core.c
->> +++ b/kernel/events/core.c
->> @@ -6076,7 +6076,7 @@ struct pmu *perf_init_event(struct perf_event *event)
->>       idx = srcu_read_lock(&pmus_srcu);
->>
->>       rcu_read_lock();
->> -     pmu = idr_find(&pmu_idr, event->attr.type);
->> +     pmu = idr_find_slowpath(&pmu_idr, event->attr.type);
->
-> But I don't think this is the right thing to do.  I'm working on
-> proper fix for idr_find().  Will post soon.
+Hello,
 
-Check my v2
+On Wed, Feb 20, 2013 at 07:23:35PM +0200, Andy Shevchenko wrote:
+> The guilty commit is cc5b5f6 "events: convert to idr_alloc()" together with
+> f49318a "idr: implement lookup hint". In our case the idr_alloc is never
+> called, but idr_find is. The hint field is never initialized and therefore
+> should not be dereferenced.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reported-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> ---
+>  include/linux/idr.h | 2 +-
+>  lib/idr.c           | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/idr.h b/include/linux/idr.h
+> index aed2a0c..a6f38b5 100644
+> --- a/include/linux/idr.h
+> +++ b/include/linux/idr.h
+> @@ -113,7 +113,7 @@ static inline void *idr_find(struct idr *idr, int id)
+>  {
+>  	struct idr_layer *hint = rcu_dereference_raw(idr->hint);
+>  
+> -	if ((id & ~IDR_MASK) == hint->prefix)
+> +	if (hint && (id & ~IDR_MASK) == hint->prefix)
+>  		return rcu_dereference_raw(hint->ary[id & IDR_MASK]);
 
+I was thinking more along the line of creating a shared empty layer w/
+bogus prefix and then updating free_layer to fallback to it so that we
+can avoid the extra if but, yeah, let's do that later.  We're already
+in merge window.
 
+ Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks!
 
 -- 
-With Best Regards,
-Andy Shevchenko
+tejun
