@@ -1,130 +1,38 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: [PATCH -next] security/integrity/ima: make part_pack_uuid()
- always visible
-Date: Wed, 20 Feb 2013 14:46:21 -0500
-Message-ID: <1361389581.29360.14.camel@falcor1>
-References: <20130219170309.efb90173fcd879bf32a7e89b@canb.auug.org.au>
-	 <512418A5.9010006@infradead.org> <1361379050.29360.12.camel@falcor1>
-	 <51252454.1050609@infradead.org>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: build failure after merge of the xen-two tree
+Date: Wed, 20 Feb 2013 15:49:41 -0500
+Message-ID: <20130220204941.GC4526@phenom.dumpdata.com>
+References: <20130215154551.d11e9d376d30d32b9673e6cc@canb.auug.org.au>
+ <11850955.SHqxVBsJqI@vostro.rjw.lan>
+ <DE8DF0795D48FD4CA783C40EC82923353FCCAC@SHSMSX101.ccr.corp.intel.com>
+ <4696812.SKkpQQd9iW@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e9.ny.us.ibm.com ([32.97.182.139]:35827 "EHLO e9.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934896Ab3BTUjR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Feb 2013 15:39:17 -0500
-Received: from /spool/local
-	by e9.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-	Wed, 20 Feb 2013 15:37:54 -0500
-In-Reply-To: <51252454.1050609@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@us.ibm.com>, axboe@kernel.dk
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4696812.SKkpQQd9iW@vostro.rjw.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: "Liu, Jinsong" <jinsong.liu@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 2013-02-20 at 11:30 -0800, Randy Dunlap wrote:
-> On 02/20/13 08:50, Mimi Zohar wrote:
-> > On Tue, 2013-02-19 at 16:28 -0800, Randy Dunlap wrote:
-> >> On 02/18/13 22:03, Stephen Rothwell wrote:
-> >>> Hi all,
-> >>>
-> >>> Changes since 20130218:
-> >>>
-> >>
-> >> on x86_64:
-> >>
-> >>   CC      security/integrity/ima/ima_policy.o
-> >> security/integrity/ima/ima_policy.c: In function 'ima_parse_rule':
-> >> security/integrity/ima/ima_policy.c:538:4: error: implicit declaration of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
-> >> cc1: some warnings being treated as errors
-> >> make[4]: *** [security/integrity/ima/ima_policy.o] Error 1
-> >>
-> >>
-> >> Full randconfig file is attached.
+> > > commit 3757b94802fb65d8f696597a74053cf21738da0b
+> > > Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > Date:   Wed Feb 13 14:36:47 2013 +0100
+> > > 
+> > >     ACPI / hotplug: Fix concurrency issues and memory leaks
+> > > 
+> > > after which acpi_bus_scan() and acpi_bus_trim() have to be run under
+> > > acpi_scan_lock (new in my tree as well).
 > > 
-> > part_pack_uuid() is only defined for CONFIG_BLOCK in
-> > include/linux/genhd.h.  One solution would be to add a stub function
-> > definition in include/linux/genhd.h, the other option would be to ifndef
-> > CONFIG_BLOCK in C code.
+> > Yes, we noticed that and only need minor updates at xen side, will send out
+> > 2 xen patches later accordingly, for cleanup and adding lock.
 > 
-> ITYM #ifdef CONFIG_BLOCK to call part_pack_uuid().
-> Yes, either of those would work.
-> How about a third option -- just make part_pack_uuid() always visible
-> and not just a stub?  Patch is below.
+> Thanks, but those new changes will only make sense after merging the Xen tree
+> with the PM tree.  Why don't we queue them up for merging later after both
+> the Xen and PM trees have been pulled from?
 
-That works too.
-
-Acked-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-
-thanks,
-
-Mimi
-
-> ---
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix build error when CONFIG_BLOCK is not enabled
-> by making the static inline function part_pack_uuid()
-> visible independent of CONFIG_BLOCK's setting.
-> 
-> security/integrity/ima/ima_policy.c:538:4: error: implicit declaration of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Mimi Zohar <zohar@us.ibm.com>
-> ---
->  include/linux/genhd.h |   36 ++++++++++++++++++------------------
->  1 file changed, 18 insertions(+), 18 deletions(-)
-> 
-> --- linux-next-20130220.orig/include/linux/genhd.h
-> +++ linux-next-20130220/include/linux/genhd.h
-> @@ -213,24 +213,6 @@ static inline struct gendisk *part_to_di
->  	return NULL;
->  }
-> 
-> -static inline void part_pack_uuid(const u8 *uuid_str, u8 *to)
-> -{
-> -	int i;
-> -	for (i = 0; i < 16; ++i) {
-> -		*to++ = (hex_to_bin(*uuid_str) << 4) |
-> -			(hex_to_bin(*(uuid_str + 1)));
-> -		uuid_str += 2;
-> -		switch (i) {
-> -		case 3:
-> -		case 5:
-> -		case 7:
-> -		case 9:
-> -			uuid_str++;
-> -			continue;
-> -		}
-> -	}
-> -}
-> -
->  static inline int disk_max_parts(struct gendisk *disk)
->  {
->  	if (disk->flags & GENHD_FL_EXT_DEVT)
-> @@ -720,4 +702,22 @@ static inline dev_t blk_lookup_devt(cons
-> 
->  #endif /* CONFIG_BLOCK */
-> 
-> +static inline void part_pack_uuid(const u8 *uuid_str, u8 *to)
-> +{
-> +	int i;
-> +	for (i = 0; i < 16; ++i) {
-> +		*to++ = (hex_to_bin(*uuid_str) << 4) |
-> +			(hex_to_bin(*(uuid_str + 1)));
-> +		uuid_str += 2;
-> +		switch (i) {
-> +		case 3:
-> +		case 5:
-> +		case 7:
-> +		case 9:
-> +			uuid_str++;
-> +			continue;
-> +		}
-> +	}
-> +}
-> +
->  #endif /* _LINUX_GENHD_H */
-> 
+OK, I've created a branch (http://git.kernel.org/?p=linux/kernel/git/konrad/xen.git;a=shortlog;h=refs/heads/linux-next-resolved)
+that has your branch and my branch - along with the fix from Stephan and then
+the three updates from Jinsong. Jinsong, please check that I've got all the
+right patches. I will rebase it once Linus has merged both of the Xen and PM trees.
