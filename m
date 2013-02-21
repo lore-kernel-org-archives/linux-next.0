@@ -1,86 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the signal tree with the powerpc
- tree
-Date: Fri, 22 Feb 2013 08:30:23 +1100
-Message-ID: <20130222083023.00d9f891e4a2d9b386078d70@canb.auug.org.au>
-References: <20130221155208.bcb1295ab9bdecf394d48bfc@canb.auug.org.au>
-	<1361425813.4676.47.camel@pasglop>
-	<27231.1361479429@ale.ozlabs.ibm.com>
+Subject: Re: [PATCH 01/11] ARM: disable virt_to_bus/virt_to_bus almost
+ everywhere
+Date: Fri, 22 Feb 2013 10:13:59 +1100
+Message-ID: <20130222101359.0c91a7259f648a3d06221bd8@canb.auug.org.au>
+References: <1360849767-1463135-1-git-send-email-arnd@arndb.de>
+	<1360849767-1463135-2-git-send-email-arnd@arndb.de>
+	<CAAG0J9_VqCGJJJZjSWGfFggALHU=vdWsSBeS39-DtxV=VXcJwQ@mail.gmail.com>
+	<201302201600.47522.arnd@arndb.de>
+	<5124FA93.5090504@imgtec.com>
+	<5125CED4.7030905@synopsys.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__22_Feb_2013_08_30_23_+1100_MGAb3sp07xvf_BDy"
+ boundary="Signature=_Fri__22_Feb_2013_10_13_59_+1100_myA6AUwIDcG6w0z8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55549 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33708 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752716Ab3BUVa3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Feb 2013 16:30:29 -0500
-In-Reply-To: <27231.1361479429@ale.ozlabs.ibm.com>
+	with ESMTP id S1753789Ab3BUXOL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Feb 2013 18:14:11 -0500
+In-Reply-To: <5125CED4.7030905@synopsys.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Michael Neuling <mikey@neuling.org>, Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: James Hogan <james.hogan@imgtec.com>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, arm@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, linux-next@vger.kernel.org
 
---Signature=_Fri__22_Feb_2013_08_30_23_+1100_MGAb3sp07xvf_BDy
+--Signature=_Fri__22_Feb_2013_10_13_59_+1100_myA6AUwIDcG6w0z8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ben,
+Hi,
 
-On Thu, 21 Feb 2013 14:43:49 -0600 Michael Neuling <mikey@neuling.org> wrot=
-e:
+On Thu, 21 Feb 2013 13:07:56 +0530 Vineet Gupta <Vineet.Gupta1@synopsys.com=
+> wrote:
 >
-> Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
+> >> I guess you'll have to do something similar for arch/metag, and Vineet
+> >> will do it for arch/arc.
 >=20
-> > On Thu, 2013-02-21 at 15:52 +1100, Stephen Rothwell wrote:
-> > >=20
-> > > Today's linux-next merge of the signal tree got conflicts in
-> > > arch/powerpc/kernel/signal_32.c and arch/powerpc/kernel/signal_64.c
-> > > between commit 2b0a576d15e0 ("powerpc: Add new transactional memory s=
-tate
-> > > to the signal context") from the powerpc tree and commit 7cce246557bf
-> > > ("powerpc: switch to generic sigaltstack") from the signal tree.
-> > >=20
-> > > I fixed it up (I think - see below) and can carry the fix as necessary
-> > > (no action is required).
-> >=20
-> > Mikey, can you check everything's all right ?
-> >=20
-> > I'm happy to wait for Al stuff to go in first & fixup the conflict
-> > before I send the pull request to Linus. I'm off travelling around but I
-> > should be able to get stuff out this week-end.
->=20
-> The merge looks fine to me.  My TM signal tests still pass on
-> next-20130221.
+> After getting the tip-bot msg about Stephen's patch for -mm, I never saw =
+it in
+> -next and thus was not sure how when it will start showing up in -next.
 
-I think all you (or Al) need do is mention it to Linus when you send the
-pull request - he is usually smart enough to fix these things :-) and
-likes to see the interactions.
+It arrived in next-21030220.
+
+> >> Stephen's patch is currently in Andrew's tree, and I don't see an easy
+> >> way to coordinate this. The patch we will need once both are merged
+> >> is below.
+> >>
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >=20
+> > FWIW:
+> > Acked-by: James Hogan <james.hogan@imgtec.com> (for arch/metag)
+> >=20
+> Acked-by: Vineet Gupta <vgupta@synopsys.com> (for arch/arc)
+>=20
+> So this means Stephen's patch - once merged will take care of existing in=
+-tree
+> arches and your's will take care of metag/arc.
+
+The easiest way would be to put the follow up patches in Andrew's patch
+set (since it is still based on top of linux-next).  It usually is merged
+pretty late, so I would get your own trees merged ASAP and this can be
+taken care of when Andrew sends his patch set to Linus.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__22_Feb_2013_08_30_23_+1100_MGAb3sp07xvf_BDy
+--Signature=_Fri__22_Feb_2013_10_13_59_+1100_myA6AUwIDcG6w0z8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRJpHvAAoJEECxmPOUX5FEhvUQAKLS/zHVwAgbSoHnVVtmojPp
-UwxghN9cTSOET4E5Z6rcMQjNqCogNOU6lZ/FBU5S4qM9FgWGuK/ZodCy9pkfR1Qr
-Oyy4ilpduIOqoCUVt7zrVcZkSe6Uoc6w0r18s/4NzNhGtVpROelFsDOJ1Rjy7LtS
-69O9k3pYaBOXxO1bP8E9zQVLnKNbzFiMAGPd0DqGxCn4oo4NvvNZQHnMWwredlJH
-pEyB0YXxKCZ+LZHSVMHuyost2YuWEDGFchZM0aG4qXHIJYY0mMrP+40KmO8AcCUg
-wJsVdJ1suXS9fani4I9o7awbQytDTFoF+7EDW8oGptz2Q9f1JJoFfUzVc6oPdyiH
-V7d+5rMdHH09vbhR4RimeVxugMMf2JGIR1r7Lf9D2Ca/W7Zj3qpZIf+K908Kfazq
-XP+S+y2+6Tj+hjmN3GWz5ifG59vwWkAvgO4HZcvuhOlnFwA1Wsk4142SMOIu32jD
-QnZPuoEDMlIzZwB+Uvbc0XOILplwAJe4N1LnRsQfml5lOL+zZMN5AiJqaM1syIXT
-nyavphblHEsBLC/bQ33k6xrsen3cjA06czP7jcDHOjq6KlCgSm+y3KzhqKDXmkCE
-+DTS2GumTsE4NPoJ43vvrQnaJC3+HpdwaeKHwye5z2vGb2UBGbAMY3AcCA8ax/RS
-t08Jx2AU+Yf7OKZ6mPJ2
-=382Q
+iQIcBAEBCAAGBQJRJqo3AAoJEECxmPOUX5FEQtMP+gPUyDRq30uA/glrvzfXZrsU
+xo8eSstV6SH4ZC6rhqGWhMjIh66a+w0oKMd2mMON/Qb8GCTSAqVwsID5uHcL4t8M
+jl3zh7qvMfUgIlQ+ykn73XVvlG0BGxa8uoVmdPnVfXVklgfgAmvUxKiiKAtdUnQg
+I0Z8bDC8SxujGx3HF4AboEIT28vANEIFBspaBbBjv+j6YBMrYWTLFHjZ8NohS12C
+sIj6SZAvmrId9M19NlzQX/++gp5dsIn8bnVw88bDcnEQ4GNkTvShWTQui9RPpnMc
+ZURDjm7HIv+jC/nkK9fgq8NqeKyRElAouMiMgjokv+FHsujZd8I+3+RI3VOUaRQv
+K8/rmYeUxQV9HmCwph3vdHmQ4ahnBRA9b2a+M1uMjAXfQqWCxWVQNrkgWrXtRCg/
+J2X7tce1Y//BgFHPFfvP8xbO0C6SgxyJ0/Nfm7duAKjkF1j5J4GbY5kd1KQIhDeY
+Arwz5pivIV1nyUVO3cgnLX6E0cb81PfVh8aacPmARvR3fa252x/d6JdDJUTWJ4K8
+CHtX4bs9e08p6cRjd2fGwTOHBV3GKBieeOYAE09gg3LxfSlQktURpT8GHP9Fjx4Q
+5+9EmwyR8fLV2fWJfcYGZ77O74K8OCM9yXDmrhGWMx+uiWk3oR4amoPhzFuSKS4P
+pROLvLrPvALOzp4aKQR0
+=VUlF
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__22_Feb_2013_08_30_23_+1100_MGAb3sp07xvf_BDy--
+--Signature=_Fri__22_Feb_2013_10_13_59_+1100_myA6AUwIDcG6w0z8--
