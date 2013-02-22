@@ -1,91 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 01/11] ARM: disable virt_to_bus/virt_to_bus almost
- everywhere
-Date: Fri, 22 Feb 2013 10:13:59 +1100
-Message-ID: <20130222101359.0c91a7259f648a3d06221bd8@canb.auug.org.au>
-References: <1360849767-1463135-1-git-send-email-arnd@arndb.de>
-	<1360849767-1463135-2-git-send-email-arnd@arndb.de>
-	<CAAG0J9_VqCGJJJZjSWGfFggALHU=vdWsSBeS39-DtxV=VXcJwQ@mail.gmail.com>
-	<201302201600.47522.arnd@arndb.de>
-	<5124FA93.5090504@imgtec.com>
-	<5125CED4.7030905@synopsys.com>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: manual merge of the infiniband tree with Linus' tree
+Date: Fri, 22 Feb 2013 11:50:21 +1100
+Message-ID: <20130222115021.d61d6101d1531f8dd4b581de@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__22_Feb_2013_10_13_59_+1100_myA6AUwIDcG6w0z8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33708 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753789Ab3BUXOL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Feb 2013 18:14:11 -0500
-In-Reply-To: <5125CED4.7030905@synopsys.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: James Hogan <james.hogan@imgtec.com>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, arm@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, linux-next@vger.kernel.org
+ boundary="Signature=_Fri__22_Feb_2013_11_50_21_+1100_2Gtkc=8F04L1Z0xu"
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jiri Pirko <jiri-rHqAuBHg3fBzbRFIqnYvSA@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Yan Burman <yanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__22_Feb_2013_10_13_59_+1100_myA6AUwIDcG6w0z8
+--Signature=_Fri__22_Feb_2013_11_50_21_+1100_2Gtkc=8F04L1Z0xu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi all,
 
-On Thu, 21 Feb 2013 13:07:56 +0530 Vineet Gupta <Vineet.Gupta1@synopsys.com=
-> wrote:
->
-> >> I guess you'll have to do something similar for arch/metag, and Vineet
-> >> will do it for arch/arc.
->=20
-> After getting the tip-bot msg about Stephen's patch for -mm, I never saw =
-it in
-> -next and thus was not sure how when it will start showing up in -next.
+Today's linux-next merge of the infiniband tree got a conflict in
+drivers/infiniband/ulp/ipoib/ipoib_ethtool.c between commit 7826d43f2db4
+("ethtool: fix drvinfo strings set in drivers") from the  tree and commit
+4b48680b5572 ("IPoIB: Add version and firmware info to ethtool
+reporting") from the infiniband tree.
 
-It arrived in next-21030220.
-
-> >> Stephen's patch is currently in Andrew's tree, and I don't see an easy
-> >> way to coordinate this. The patch we will need once both are merged
-> >> is below.
-> >>
-> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >=20
-> > FWIW:
-> > Acked-by: James Hogan <james.hogan@imgtec.com> (for arch/metag)
-> >=20
-> Acked-by: Vineet Gupta <vgupta@synopsys.com> (for arch/arc)
->=20
-> So this means Stephen's patch - once merged will take care of existing in=
--tree
-> arches and your's will take care of metag/arc.
-
-The easiest way would be to put the follow up patches in Andrew's patch
-set (since it is still based on top of linux-next).  It usually is merged
-pretty late, so I would get your own trees merged ASAP and this can be
-taken care of when Andrew sends his patch set to Linus.
+I fixed it up (using the latter version as it included the change to use
+strlcpy) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
 
---Signature=_Fri__22_Feb_2013_10_13_59_+1100_myA6AUwIDcG6w0z8
+--Signature=_Fri__22_Feb_2013_11_50_21_+1100_2Gtkc=8F04L1Z0xu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRJqo3AAoJEECxmPOUX5FEQtMP+gPUyDRq30uA/glrvzfXZrsU
-xo8eSstV6SH4ZC6rhqGWhMjIh66a+w0oKMd2mMON/Qb8GCTSAqVwsID5uHcL4t8M
-jl3zh7qvMfUgIlQ+ykn73XVvlG0BGxa8uoVmdPnVfXVklgfgAmvUxKiiKAtdUnQg
-I0Z8bDC8SxujGx3HF4AboEIT28vANEIFBspaBbBjv+j6YBMrYWTLFHjZ8NohS12C
-sIj6SZAvmrId9M19NlzQX/++gp5dsIn8bnVw88bDcnEQ4GNkTvShWTQui9RPpnMc
-ZURDjm7HIv+jC/nkK9fgq8NqeKyRElAouMiMgjokv+FHsujZd8I+3+RI3VOUaRQv
-K8/rmYeUxQV9HmCwph3vdHmQ4ahnBRA9b2a+M1uMjAXfQqWCxWVQNrkgWrXtRCg/
-J2X7tce1Y//BgFHPFfvP8xbO0C6SgxyJ0/Nfm7duAKjkF1j5J4GbY5kd1KQIhDeY
-Arwz5pivIV1nyUVO3cgnLX6E0cb81PfVh8aacPmARvR3fa252x/d6JdDJUTWJ4K8
-CHtX4bs9e08p6cRjd2fGwTOHBV3GKBieeOYAE09gg3LxfSlQktURpT8GHP9Fjx4Q
-5+9EmwyR8fLV2fWJfcYGZ77O74K8OCM9yXDmrhGWMx+uiWk3oR4amoPhzFuSKS4P
-pROLvLrPvALOzp4aKQR0
-=VUlF
+iQIcBAEBCAAGBQJRJsDNAAoJEECxmPOUX5FEACYP/RRPtGKSumNo17bMH1UnF6Kv
+qs0jvTUjtMSTubS9RgSGg27yDmEAYuCCIz2lVCmVUHr7K5QrNQchs/OeIOK4jjIb
+Svmd7qYVxmeJJNn+8YhZ1WYqDH4pzAoaActMPrKM7YPoTS1POQmbyWwY1+tPkkP5
+LrMe8FHyM+pX3M7cfcd6WuGxKX4LReCjQXNr8t9iajUltdrKv0m+CeMxe5A0m/CJ
+kWjvaGejEPXBUabHrB+rg2VEDmshW6ZAuV8HAKidImGpjNAMpLfnEKZAX7nSU09+
+iaRcSmYTyoihru8GrCxuXGN3EC8R3J5VniDORLqg5fU84wZd0cAjULmlFPO5EOB1
+qK3tMoLfF7/NpngLlbasv9gwtkiGE5c1DB7KK/PWXwwzlKVskfxdCbDzQXBjLQk0
+HZQNXK6XNI0Q+u2D40pqSBc406YuGIMImSONSq4aD7oVDbdQq13CFkWRyLdwuh+P
+hucVIDzi/3sXMCImHXUshVKHVYcSYBoGIvpEbXZq3lb6NV2QJaVSf7nPlQJ+UBnq
+3oPbmjGD7MdAnTZaUC347CKiQZSuboH4dEvuUh1FMUKWMlyVhmyg3vWaMeo/6tUU
+A+EZ7LsZp/vs5arSfskcE7yPd86F5dpbjldVqESjuoXlwsshqyodroV/61p8n+pe
+VMMC2rjISyvrcYGT2mxp
+=zhpp
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__22_Feb_2013_10_13_59_+1100_myA6AUwIDcG6w0z8--
+--Signature=_Fri__22_Feb_2013_11_50_21_+1100_2Gtkc=8F04L1Z0xu--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
