@@ -1,60 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the writeback tree with the btrfs tree
-Date: Fri, 22 Feb 2013 13:36:31 +1100
-Message-ID: <20130222133631.1441b0e703faeb40e29eb6c4@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the  tree
+Date: Fri, 22 Feb 2013 14:46:41 +1100
+Message-ID: <20130222144641.1121f174dda171a07a89636b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__22_Feb_2013_13_36_31_+1100_.ueqiJcrkOI1Trc9"
+ boundary="Signature=_Fri__22_Feb_2013_14_46_41_+1100_8o7Cg1dZcQ9S=kvl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57172 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:34444 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757643Ab3BVCgq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Feb 2013 21:36:46 -0500
+	with ESMTP id S1753037Ab3BVDqv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Feb 2013 22:46:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wu Fengguang <fengguang.wu@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miao Xie <miaox@cn.fujitsu.com>, Chris Mason <chris.mason@fusionio.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <koverstreet@google.com>, Chris Mason <chris.mason@fusionio.com>, Filipe Brandenburger <filbranden@google.com>
 
---Signature=_Fri__22_Feb_2013_13_36_31_+1100_.ueqiJcrkOI1Trc9
+--Signature=_Fri__22_Feb_2013_14_46_41_+1100_8o7Cg1dZcQ9S=kvl
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wu,
+Hi Andrew,
 
-Today's linux-next merge of the writeback tree got a conflict in
-fs/btrfs/extent-tree.c between commit da633a421701 ("Btrfs: flush all
-dirty inodes if writeback can not start") from the btrfs tree and commit
-10ee27a06cc8 ("vfs: re-implement writeback_inodes_sb(_nr)_if_idle() and
-rename them") from the writeback tree.
+Today's linux-next merge of the akpm-current tree got a conflict in
+fs/btrfs/inode.cfs/btrfs/file.c between commit 55e301fd57a6 ("Btrfs: move
+fs/btrfs/ioctl.h to include/uapi/linux/btrfs.h") from the btrfs tree and
+commit "aio: don't include aio.h in sched.h" from the akpm-current tree.
 
-I fixed it up (I assumed that the former supercedes the latter and used
-that) and can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__22_Feb_2013_13_36_31_+1100_.ueqiJcrkOI1Trc9
+diff --cc fs/btrfs/file.c
+index 8614c5b,39f556f..0000000
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@@ -30,7 -30,7 +30,8 @@@
+  #include <linux/statfs.h>
+  #include <linux/compat.h>
+  #include <linux/slab.h>
+ +#include <linux/btrfs.h>
++ #include <linux/aio.h>
+  #include "ctree.h"
+  #include "disk-io.h"
+  #include "transaction.h"
+diff --cc fs/btrfs/inode.c
+index 40d49da,ed7ea0a..0000000
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@@ -39,8 -39,7 +39,9 @@@
+  #include <linux/slab.h>
+  #include <linux/ratelimit.h>
+  #include <linux/mount.h>
+ +#include <linux/btrfs.h>
+ +#include <linux/blkdev.h>
++ #include <linux/aio.h>
+  #include "compat.h"
+  #include "ctree.h"
+  #include "disk-io.h"
+
+--Signature=_Fri__22_Feb_2013_14_46_41_+1100_8o7Cg1dZcQ9S=kvl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRJtmvAAoJEECxmPOUX5FEowQP/iFUnrDOnqfSUH+TGQzuRqS4
-4zsGb6HifQL9oP1av9/8gI1O6SxYYlMT6wrsxBlR5Dk9hIL/aiiX8/+DXpWHR+St
-HdJhJYOJ6Y1+PIMSt7mXNWm/nwjZLDw4wely5MYNVdCZeHV879EM5PvsZFWZZgi3
-MKOfqFzyElvD2qU77fpekwG1YLLb+St8EFlPE+8ZR9WPPfGAZaR0+d31TQ08SwML
-OJHstu0m1t8vhGmmrJreRCj1xJ7/ZF+BIpT9m2R0Wn4/RaoDBQMSPn+Pd27/UiHR
-P3/H+0Keo8G7XweotPUgCAPyGWPtihpdKvM/2W0ow7vBmr2lCXyEYWDhqDl1N5vl
-o+Sc4pah8bGi0/nt5fnFEauj04uA+EeidU+LscjYkfOF/+lsU7volPaIzfIoteZY
-SfISJ1deR6vRTPmOnwl7TXtmfWneaeirm0/PDDqFFwGzZRBZ2tJhTapoZ7R5CF3i
-IC8RWCMF2YHd5YyQ6pfUqAavPJG0UNSsEzKrYLZGhaZWYsNDqJibf1QVgOJs+4u5
-2PSVCsJsDlfxpYt2SHVWUwrbQ2w6rhMcx7vdwyjBNvNjvrevbuQfBZ/Cn0B7D+uG
-FjMyi4XyJN1mfKh+XcufZNYmKEO2Y+EUUeIDT2lVjd+/1cFZ6yLCCXrU2uZNdcZK
-PPMH9hlqmMZvlrF+aTiz
-=dcir
+iQIcBAEBCAAGBQJRJuohAAoJEECxmPOUX5FExvMP/2EV0Rk/wBBegvc+K+aka7aK
+KrEdXA9H6WI3PVGK7PJKf2+fskKeof6QfMe5JA8BbGvJ7DVNBtWMwTjxe6vJvsOt
+GMv1JyHTIvunOx0PsDeOxQzLWxMbV+nD9NHeSnR6zMc/wMoWM5+2NodCfP0MwJ11
+PF/fRBayfir7sAqzfF7yrMd7Dr0/SJGQAqYMEr1PdF7fx7jgBdsbpan9mmr+Z4uU
+Nd7T3jqeDm8V0QYbbyu5PzwXR6jmcmOOieBEsIkVMhNaM6bi3S9F1ouCN+rPur4K
+QJXmi5nhLQLEee39b6wHRpZlC1dN58numnB4hiHVfYmk8Va5xvx+JKrt6GAGE2mW
+YE7ufsVnOGFtkhQ0XbNe2sWN056YJMj2uZj3wAuXekHeG8q8eoKHgukDpPDm9qrb
+MbxcrNoQ1hwQ5Av92cTFk3L6RBErr6QM0rZMCw2gYIi1IxZ9MjUHIGbFa6DAqO7b
+JcA/TEKQhCSHBAT9tucDBHJuomM018J6NOwu+EAsM+/xX1axOJ+eG005XFMv8NyK
+2JI2RK2LLOcsdT71YlW1JXZvUWAk1U+2nYXhEFR2MeFxUn+5NzcW3ihgSDL1Kqaa
+lXzM+4LogkSJ+s0ji+BsUsIQ/yBH4Fwh6KZzINAbAaiBhv94nLsjOrXfgrJenPWX
+g6KkXPTiVoWKsqWmGGLu
+=NGnn
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__22_Feb_2013_13_36_31_+1100_.ueqiJcrkOI1Trc9--
+--Signature=_Fri__22_Feb_2013_14_46_41_+1100_8o7Cg1dZcQ9S=kvl--
