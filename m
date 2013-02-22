@@ -1,34 +1,103 @@
-From: Or Gerlitz <or.gerlitz@gmail.com>
-Subject: Re: linux-next: manual merge of the infiniband tree with Linus' tree
-Date: Fri, 22 Feb 2013 14:06:22 +0200
-Message-ID: <CAJZOPZLeNGwBy7YCTO1Ke7zzkGQDw8hGMGOsT7nt_QrSmX87zg@mail.gmail.com>
-References: <20130222115021.d61d6101d1531f8dd4b581de@canb.auug.org.au>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: [PATCH] ima: fix part_pack_uuid() build error
+Date: Fri, 22 Feb 2013 14:46:53 -0500
+Message-ID: <1361562413.2908.22.camel@falcor1.watson.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f53.google.com ([209.85.216.53]:40367 "EHLO
-	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755806Ab3BVMOW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Feb 2013 07:14:22 -0500
-In-Reply-To: <20130222115021.d61d6101d1531f8dd4b581de@canb.auug.org.au>
+Received: from e8.ny.us.ibm.com ([32.97.182.138]:48489 "EHLO e8.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754400Ab3BVTrS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Feb 2013 14:47:18 -0500
+Received: from /spool/local
+	by e8.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+	Fri, 22 Feb 2013 14:47:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, Yan Burman <yanb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>
+To: Randy Dunlap <rdunlap@infradead.org>, David Rientjes <rientjes@google.com>
+Cc: James Morris <jmorris@namei.org>, linux-security-module <linux-security-module@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>
 
-On Fri, Feb 22, 2013 at 2:50 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the infiniband tree got a conflict in
-> drivers/infiniband/ulp/ipoib/ipoib_ethtool.c between commit 7826d43f2db4
-> ("ethtool: fix drvinfo strings set in drivers") from the  tree and commit
-> 4b48680b5572 ("IPoIB: Add version and firmware info to ethtool
-> reporting") from the infiniband tree.
->
-> I fixed it up (using the latter version as it included the change to use
-> strlcpy) and can carry the fix as necessary (no action is required).
+Fix a build error when CONFIG_BLOCK is not enabled by defining
+a wrapper called ima_part_pack_uuid().  The wrapper returns
+-EINVAL, when CONFIG_BLOCK is not defined.
 
-thanks for fixing thay up!
+security/integrity/ima/ima_policy.c:538:4: error: implicit declaration
+of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
 
-Acked-by: Or Gerlitz <ogerlitz@mellanox.com>
+Changelog v0:
+- fix UUID scripts/Lindent msgs
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: David Rientjes <rientjes@google.com>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+---
+ security/integrity/ima/ima.h        | 13 +++++++++++++
+ security/integrity/ima/ima_policy.c | 11 ++++++-----
+ 2 files changed, 19 insertions(+), 5 deletions(-)
+
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index a41c9c1..902c356 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -21,6 +21,7 @@
+ #include <linux/crypto.h>
+ #include <linux/security.h>
+ #include <linux/hash.h>
++#include <linux/genhd.h>
+ #include <linux/tpm.h>
+ #include <linux/audit.h>
+ 
+@@ -199,4 +200,16 @@ static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
+ 	return -EINVAL;
+ }
+ #endif /* CONFIG_IMA_LSM_RULES */
++
++/* UUID policy option requires CONFIG_BLOCK */
++#ifdef CONFIG_BLOCK
++static inline int ima_part_pack_uuid(const u8 *uuid_str, u8 *to) {
++	part_pack_uuid(uuid_str, to);
++	return 0;
++}
++#else
++static inline int ima_part_pack_uuid(const u8 *uuid_str, u8 *to) {
++	return -EINVAL;
++}
++#endif
+ #endif
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index b27535a..41b7f48 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -176,7 +176,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
+ 	    && rule->fsmagic != inode->i_sb->s_magic)
+ 		return false;
+ 	if ((rule->flags & IMA_FSUUID) &&
+-		memcmp(rule->fsuuid, inode->i_sb->s_uuid, sizeof(rule->fsuuid)))
++	    memcmp(rule->fsuuid, inode->i_sb->s_uuid, sizeof(rule->fsuuid)))
+ 		return false;
+ 	if ((rule->flags & IMA_UID) && !uid_eq(rule->uid, cred->uid))
+ 		return false;
+@@ -530,14 +530,15 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			ima_log_string(ab, "fsuuid", args[0].from);
+ 
+ 			if (memchr_inv(entry->fsuuid, 0x00,
+-			    sizeof(entry->fsuuid))) {
++				       sizeof(entry->fsuuid))) {
+ 				result = -EINVAL;
+ 				break;
+ 			}
+ 
+-			part_pack_uuid(args[0].from, entry->fsuuid);
+-			entry->flags |= IMA_FSUUID;
+-			result = 0;
++			result = ima_part_pack_uuid(args[0].from,
++						    entry->fsuuid);
++			if (!result)
++				entry->flags |= IMA_FSUUID;
+ 			break;
+ 		case Opt_uid:
+ 			ima_log_string(ab, "uid", args[0].from);
+-- 
+1.8.1.rc3
