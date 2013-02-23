@@ -1,50 +1,41 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 2/2] lib/scatterlist: use page iterator in the mapping
- iterator
-Date: Fri, 22 Feb 2013 21:29:09 -0700
-Message-ID: <51284595.5040903@wwwdotorg.org>
-References: <1360768224-18163-1-git-send-email-imre.deak@intel.com> <1360768224-18163-2-git-send-email-imre.deak@intel.com>
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Subject: Re: [PATCH] leds-ot200: Fix misbehavior caused by wrong bit masks
+Date: Sat, 23 Feb 2013 10:20:48 +0100
+Message-ID: <CAH9NwWc+BP5ZbHwmMZ4AisviDHM-GizTmZO6vwxtd=ntYUAk=A@mail.gmail.com>
+References: <1360771110-9490-1-git-send-email-christian.gmeiner@gmail.com> <CAK5ve-K43n=4n1GyRW+2PgMTe2bU6ROHAa-_dK_0LgzM7JCRcw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:46894 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757366Ab3BWE3L (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Feb 2013 23:29:11 -0500
-In-Reply-To: <1360768224-18163-2-git-send-email-imre.deak@intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Imre Deak <imre.deak@intel.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Maxim Levitsky <maximlevitsky@gmail.com>, Tejun Heo <tj@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linaro-mm-sig@lists.linaro.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <CAK5ve-K43n=4n1GyRW+2PgMTe2bU6ROHAa-_dK_0LgzM7JCRcw@mail.gmail.com>
+Sender: stable-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: akpm <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 02/13/2013 08:10 AM, Imre Deak wrote:
-> For better code reuse use the newly added page iterator to iterate
-> through the pages. The offset, length within the page is still
-> calculated by the mapping iterator as well as the actual mapping.
-> Idea from Tejun Heo <tj@kernel.org>.
+2013/2/15 Bryan Wu <cooloney@gmail.com>:
+> On Wed, Feb 13, 2013 at 7:58 AM, Christian Gmeiner
+> <christian.gmeiner@gmail.com> wrote:
+>> During the development of this driver an in-house register
+>> documentation was used. The last weeks some integration tests
+>> were done and this problem was found. It turned out that
+>> the released register documentation is wrong.
+>>
+>> The fix is very simple: shift all masks by one.
+>>
+>> Our customers can control LEDs from userspace via Java,
+>> C++ or what every. They have running/working applications where
+>> they want to control led_3 but led_2 get's used.
+>> I got a bug report in our in-house bug tracker so it would be
+>> great to fix this upstream.
+>>
+>> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
+>
+> Thanks, Christian.
+>
+> And Andrew, are you going to take care of this patch? Or I will merge this.
+>
 
-This patch appears in linux-next since next-20130220. It breaks mounting
-a root filesystem on an SD card on the Raspberry Pi ARM platform, with
-errors such as those shown below.
+Whats the current state of the patch? Hope we can get it into 3.9 :)
 
-next-20130222 with just this patch reverted works fine.
-
-> [    0.708426] VFS: Mounted root (ext4 filesystem) on device 179:2.
-> [    0.723742] devtmpfs: mounted
-> [    0.733064] Freeing init memory: 204K
-> [    0.777992] EXT4-fs error (device mmcblk0p2): ext4_iget:3814: inode #4259: comm swapper: bad extra_isize (57200 != 256)
-> [    0.815172] EXT4-fs error (device mmcblk0p2): ext4_lookup:1428: inode #8198: comm swapper: deleted inode referenced: 487
-> [    0.826179] Kernel panic - not syncing: No init found.  Try passing init= option to kernel. See Linux Documentation/init.txt for guidance.
-
-> [    0.719365] VFS: Mounted root (ext4 filesystem) on device 179:2.
-> [    0.740918] devtmpfs: mounted
-> [    0.745219] Freeing init memory: 204K
-> ERROR: ld.so: object '/usr/lib/arm-linux-gnueabihf/libcofi_rpi.so' from /etc/ld.so.preload cannot be preloaded: ignored.
-> [    0.906840] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-
-> [    0.724018] VFS: Mounted root (ext4 filesystem) on device 179:2.
-> [    0.739404] devtmpfs: mounted
-> [    0.748741] Freeing init memory: 204K
-> [    0.793603] EXT4-fs error (device mmcblk0p2): ext4_iget:3814: inode #4259: comm swapper: bad extra_isize (57200 != 256)
-> [    0.822138] Kernel panic - not syncing: No init found.  Try passing init= option to kernel. See Linux Documentation/init.txt for guidance.
+--
+Christian Gmeiner, MSc
