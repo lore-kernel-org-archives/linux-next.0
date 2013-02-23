@@ -1,106 +1,50 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] ima: fix part_pack_uuid() build error
-Date: Fri, 22 Feb 2013 13:20:17 -0800
-Message-ID: <5127E111.6030605@infradead.org>
-References: <1361562413.2908.22.camel@falcor1.watson.ibm.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3 2/2] lib/scatterlist: use page iterator in the mapping
+ iterator
+Date: Fri, 22 Feb 2013 21:29:09 -0700
+Message-ID: <51284595.5040903@wwwdotorg.org>
+References: <1360768224-18163-1-git-send-email-imre.deak@intel.com> <1360768224-18163-2-git-send-email-imre.deak@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <1361562413.2908.22.camel@falcor1.watson.ibm.com>
-Sender: linux-security-module-owner@vger.kernel.org
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: David Rientjes <rientjes@google.com>, James Morris <jmorris@namei.org>, linux-security-module <linux-security-module@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:46894 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757366Ab3BWE3L (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Feb 2013 23:29:11 -0500
+In-Reply-To: <1360768224-18163-2-git-send-email-imre.deak@intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Imre Deak <imre.deak@intel.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Maxim Levitsky <maximlevitsky@gmail.com>, Tejun Heo <tj@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linaro-mm-sig@lists.linaro.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On 02/22/13 11:46, Mimi Zohar wrote:
-> Fix a build error when CONFIG_BLOCK is not enabled by defining
-> a wrapper called ima_part_pack_uuid().  The wrapper returns
-> -EINVAL, when CONFIG_BLOCK is not defined.
+On 02/13/2013 08:10 AM, Imre Deak wrote:
+> For better code reuse use the newly added page iterator to iterate
+> through the pages. The offset, length within the page is still
+> calculated by the mapping iterator as well as the actual mapping.
+> Idea from Tejun Heo <tj@kernel.org>.
 
-Some function wrapper for the case of BLOCK not enabled should be handled
-where the function is defined, not where it is called.
-That's how it is usually done in Linux.
+This patch appears in linux-next since next-20130220. It breaks mounting
+a root filesystem on an SD card on the Raspberry Pi ARM platform, with
+errors such as those shown below.
 
+next-20130222 with just this patch reverted works fine.
 
-> security/integrity/ima/ima_policy.c:538:4: error: implicit declaration
-> of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
-> 
-> Changelog v0:
-> - fix UUID scripts/Lindent msgs
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Reported-by: David Rientjes <rientjes@google.com>
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> ---
->  security/integrity/ima/ima.h        | 13 +++++++++++++
->  security/integrity/ima/ima_policy.c | 11 ++++++-----
->  2 files changed, 19 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index a41c9c1..902c356 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -21,6 +21,7 @@
->  #include <linux/crypto.h>
->  #include <linux/security.h>
->  #include <linux/hash.h>
-> +#include <linux/genhd.h>
->  #include <linux/tpm.h>
->  #include <linux/audit.h>
->  
-> @@ -199,4 +200,16 @@ static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
->  	return -EINVAL;
->  }
->  #endif /* CONFIG_IMA_LSM_RULES */
-> +
-> +/* UUID policy option requires CONFIG_BLOCK */
-> +#ifdef CONFIG_BLOCK
-> +static inline int ima_part_pack_uuid(const u8 *uuid_str, u8 *to) {
-> +	part_pack_uuid(uuid_str, to);
-> +	return 0;
-> +}
-> +#else
-> +static inline int ima_part_pack_uuid(const u8 *uuid_str, u8 *to) {
-> +	return -EINVAL;
-> +}
-> +#endif
->  #endif
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index b27535a..41b7f48 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -176,7 +176,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
->  	    && rule->fsmagic != inode->i_sb->s_magic)
->  		return false;
->  	if ((rule->flags & IMA_FSUUID) &&
-> -		memcmp(rule->fsuuid, inode->i_sb->s_uuid, sizeof(rule->fsuuid)))
-> +	    memcmp(rule->fsuuid, inode->i_sb->s_uuid, sizeof(rule->fsuuid)))
->  		return false;
->  	if ((rule->flags & IMA_UID) && !uid_eq(rule->uid, cred->uid))
->  		return false;
-> @@ -530,14 +530,15 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  			ima_log_string(ab, "fsuuid", args[0].from);
->  
->  			if (memchr_inv(entry->fsuuid, 0x00,
-> -			    sizeof(entry->fsuuid))) {
-> +				       sizeof(entry->fsuuid))) {
->  				result = -EINVAL;
->  				break;
->  			}
->  
-> -			part_pack_uuid(args[0].from, entry->fsuuid);
-> -			entry->flags |= IMA_FSUUID;
-> -			result = 0;
-> +			result = ima_part_pack_uuid(args[0].from,
-> +						    entry->fsuuid);
-> +			if (!result)
-> +				entry->flags |= IMA_FSUUID;
->  			break;
->  		case Opt_uid:
->  			ima_log_string(ab, "uid", args[0].from);
-> 
+> [    0.708426] VFS: Mounted root (ext4 filesystem) on device 179:2.
+> [    0.723742] devtmpfs: mounted
+> [    0.733064] Freeing init memory: 204K
+> [    0.777992] EXT4-fs error (device mmcblk0p2): ext4_iget:3814: inode #4259: comm swapper: bad extra_isize (57200 != 256)
+> [    0.815172] EXT4-fs error (device mmcblk0p2): ext4_lookup:1428: inode #8198: comm swapper: deleted inode referenced: 487
+> [    0.826179] Kernel panic - not syncing: No init found.  Try passing init= option to kernel. See Linux Documentation/init.txt for guidance.
 
+> [    0.719365] VFS: Mounted root (ext4 filesystem) on device 179:2.
+> [    0.740918] devtmpfs: mounted
+> [    0.745219] Freeing init memory: 204K
+> ERROR: ld.so: object '/usr/lib/arm-linux-gnueabihf/libcofi_rpi.so' from /etc/ld.so.preload cannot be preloaded: ignored.
+> [    0.906840] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
 
--- 
-~Randy
+> [    0.724018] VFS: Mounted root (ext4 filesystem) on device 179:2.
+> [    0.739404] devtmpfs: mounted
+> [    0.748741] Freeing init memory: 204K
+> [    0.793603] EXT4-fs error (device mmcblk0p2): ext4_iget:3814: inode #4259: comm swapper: bad extra_isize (57200 != 256)
+> [    0.822138] Kernel panic - not syncing: No init found.  Try passing init= option to kernel. See Linux Documentation/init.txt for guidance.
