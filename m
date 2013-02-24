@@ -1,41 +1,37 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 2/2] lib/scatterlist: use page iterator in the mapping
- iterator
-Date: Sat, 23 Feb 2013 16:45:11 -0700
-Message-ID: <51295487.7040602@wwwdotorg.org>
-References: <1360768224-18163-1-git-send-email-imre.deak@intel.com> <1360768224-18163-2-git-send-email-imre.deak@intel.com> <51284595.5040903@wwwdotorg.org>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: [PATCH] ima: fix part_pack_uuid() build error
+Date: Sun, 24 Feb 2013 10:15:06 -0500
+Message-ID: <1361718906.2908.48.camel@falcor1.watson.ibm.com>
+References: <1361562413.2908.22.camel@falcor1.watson.ibm.com>
+	 <5127E111.6030605@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:56761 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753551Ab3BWXpO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 23 Feb 2013 18:45:14 -0500
-In-Reply-To: <51284595.5040903@wwwdotorg.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Imre Deak <imre.deak@intel.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Maxim Levitsky <maximlevitsky@gmail.com>, Tejun Heo <tj@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linaro-mm-sig@lists.linaro.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <5127E111.6030605@infradead.org>
+Sender: linux-security-module-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: David Rientjes <rientjes@google.com>, James Morris <jmorris@namei.org>, linux-security-module <linux-security-module@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>, axboe <axboe@kernel.dk>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, 23 Feb 2013 22:04:06 +0200, Imre Deak wrote:
-> On Fri, 2013-02-22 at 21:29 -0700, Stephen Warren wrote:
->> On 02/13/2013 08:10 AM, Imre Deak wrote:
->>> For better code reuse use the newly added page iterator to iterate
->>> through the pages. The offset, length within the page is still
->>> calculated by the mapping iterator as well as the actual mapping.
->>> Idea from Tejun Heo <tj@kernel.org>.
->>
->> This patch appears in linux-next since next-20130220. It breaks mounting
->> a root filesystem on an SD card on the Raspberry Pi ARM platform, with
->> errors such as those shown below.
->>
->> next-20130222 with just this patch reverted works fine.
+On Fri, 2013-02-22 at 13:20 -0800, Randy Dunlap wrote:
+> On 02/22/13 11:46, Mimi Zohar wrote:
+> > Fix a build error when CONFIG_BLOCK is not enabled by defining
+> > a wrapper called ima_part_pack_uuid().  The wrapper returns
+> > -EINVAL, when CONFIG_BLOCK is not defined.
 > 
-> ...
-> the following might fix the
-> problem you saw. Could you give it a try? It applies on top of
-> v4 of the patch [1]:
+> Some function wrapper for the case of BLOCK not enabled should be handled
+> where the function is defined, not where it is called.
+> That's how it is usually done in Linux.
 
-Yes, thanks very much. That incremental patch you gave solves the
-problem perfectly.
+Ok, I've renamed the wrapper from ima_part_pack_uuid() to
+blk_part_pack_uuid() and moved it to linux/genhd.h
+
+thanks,
+
+Mimi
+
+
+
+
+
