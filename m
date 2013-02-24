@@ -1,19 +1,19 @@
-From: David Rientjes <rientjes@google.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 Subject: Re: [PATCH] block: fix part_pack_uuid() build error
-Date: Sun, 24 Feb 2013 10:29:19 -0800 (PST)
-Message-ID: <alpine.DEB.2.02.1302241029050.19612@chino.kir.corp.google.com>
+Date: Sun, 24 Feb 2013 12:28:31 -0800
+Message-ID: <512A77EF.4010100@infradead.org>
 References: <1361718944.2908.49.camel@falcor1.watson.ibm.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-security-module-owner@vger.kernel.org>
 In-Reply-To: <1361718944.2908.49.camel@falcor1.watson.ibm.com>
 Sender: linux-security-module-owner@vger.kernel.org
 To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, James Morris <jmorris@namei.org>, axboe <axboe@kernel.dk>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>, linux-security-module <linux-security-module@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Cc: David Rientjes <rientjes@google.com>, James Morris <jmorris@namei.org>, axboe <axboe@kernel.dk>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>, linux-security-module <linux-security-module@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, 24 Feb 2013, Mimi Zohar wrote:
-
+On 02/24/13 07:15, Mimi Zohar wrote:
 > Fix a build error when CONFIG_BLOCK is not enabled, by defining
 > a wrapper called blk_part_pack_uuid().  The wrapper returns
 > -EINVAL, when CONFIG_BLOCK is not defined.
@@ -31,4 +31,78 @@ On Sun, 24 Feb 2013, Mimi Zohar wrote:
 > Reported-by: David Rientjes <rientjes@google.com>
 > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-Acked-by: David Rientjes <rientjes@google.com>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> ---
+>  include/linux/genhd.h               | 10 ++++++++++
+>  security/integrity/ima/ima_policy.c | 11 ++++++-----
+>  2 files changed, 16 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+> index 79b8bba..9f3c275 100644
+> --- a/include/linux/genhd.h
+> +++ b/include/linux/genhd.h
+> @@ -231,6 +231,12 @@ static inline void part_pack_uuid(const u8 *uuid_str, u8 *to)
+>  	}
+>  }
+>  
+> +static inline int blk_part_pack_uuid(const u8 *uuid_str, u8 *to)
+> +{
+> +	part_pack_uuid(uuid_str, to);
+> +	return 0;
+> +}
+> +
+>  static inline int disk_max_parts(struct gendisk *disk)
+>  {
+>  	if (disk->flags & GENHD_FL_EXT_DEVT)
+> @@ -718,6 +724,10 @@ static inline dev_t blk_lookup_devt(const char *name, int partno)
+>  	return devt;
+>  }
+>  
+> +static inline int blk_part_pack_uuid(const u8 *uuid_str, u8 *to)
+> +{
+> +	return -EINVAL;
+> +}
+>  #endif /* CONFIG_BLOCK */
+>  
+>  #endif /* _LINUX_GENHD_H */
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index b27535a..399433a 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -176,7 +176,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
+>  	    && rule->fsmagic != inode->i_sb->s_magic)
+>  		return false;
+>  	if ((rule->flags & IMA_FSUUID) &&
+> -		memcmp(rule->fsuuid, inode->i_sb->s_uuid, sizeof(rule->fsuuid)))
+> +	    memcmp(rule->fsuuid, inode->i_sb->s_uuid, sizeof(rule->fsuuid)))
+>  		return false;
+>  	if ((rule->flags & IMA_UID) && !uid_eq(rule->uid, cred->uid))
+>  		return false;
+> @@ -530,14 +530,15 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  			ima_log_string(ab, "fsuuid", args[0].from);
+>  
+>  			if (memchr_inv(entry->fsuuid, 0x00,
+> -			    sizeof(entry->fsuuid))) {
+> +				       sizeof(entry->fsuuid))) {
+>  				result = -EINVAL;
+>  				break;
+>  			}
+>  
+> -			part_pack_uuid(args[0].from, entry->fsuuid);
+> -			entry->flags |= IMA_FSUUID;
+> -			result = 0;
+> +			result = blk_part_pack_uuid(args[0].from,
+> +						    entry->fsuuid);
+> +			if (!result)
+> +				entry->flags |= IMA_FSUUID;
+>  			break;
+>  		case Opt_uid:
+>  			ima_log_string(ab, "uid", args[0].from);
+> 
+
+
+-- 
+~Randy
