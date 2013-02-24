@@ -1,108 +1,52 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] block: fix part_pack_uuid() build error
-Date: Sun, 24 Feb 2013 12:28:31 -0800
-Message-ID: <512A77EF.4010100@infradead.org>
-References: <1361718944.2908.49.camel@falcor1.watson.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: please clean up
+Date: Mon, 25 Feb 2013 09:35:47 +1100
+Message-ID: <20130225093547.fc35a0499146047933e52f17@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <1361718944.2908.49.camel@falcor1.watson.ibm.com>
-Sender: linux-security-module-owner@vger.kernel.org
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: David Rientjes <rientjes@google.com>, James Morris <jmorris@namei.org>, axboe <axboe@kernel.dk>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>, linux-security-module <linux-security-module@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__25_Feb_2013_09_35_47_+1100_iUMngB0Tk=4pFoTr"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 02/24/13 07:15, Mimi Zohar wrote:
-> Fix a build error when CONFIG_BLOCK is not enabled, by defining
-> a wrapper called blk_part_pack_uuid().  The wrapper returns
-> -EINVAL, when CONFIG_BLOCK is not defined.
-> 
-> security/integrity/ima/ima_policy.c:538:4: error: implicit declaration
-> of function 'part_pack_uuid' [-Werror=implicit-function-declaration]
-> 
-> Changleog v1:
-> - rename ima_part_pack_uuid() to blk_part_pack_uuid()
-> - resolve scripts/checkpatch.pl warnings
-> Changelog v0:
-> - fix UUID scripts/Lindent msgs
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Reported-by: David Rientjes <rientjes@google.com>
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+--Signature=_Mon__25_Feb_2013_09_35_47_+1100_iUMngB0Tk=4pFoTr
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Hi all,
 
-Thanks.
+As your work is merged by upstream trees, please clean up your linux-next
+included branches.
 
-> ---
->  include/linux/genhd.h               | 10 ++++++++++
->  security/integrity/ima/ima_policy.c | 11 ++++++-----
->  2 files changed, 16 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-> index 79b8bba..9f3c275 100644
-> --- a/include/linux/genhd.h
-> +++ b/include/linux/genhd.h
-> @@ -231,6 +231,12 @@ static inline void part_pack_uuid(const u8 *uuid_str, u8 *to)
->  	}
->  }
->  
-> +static inline int blk_part_pack_uuid(const u8 *uuid_str, u8 *to)
-> +{
-> +	part_pack_uuid(uuid_str, to);
-> +	return 0;
-> +}
-> +
->  static inline int disk_max_parts(struct gendisk *disk)
->  {
->  	if (disk->flags & GENHD_FL_EXT_DEVT)
-> @@ -718,6 +724,10 @@ static inline dev_t blk_lookup_devt(const char *name, int partno)
->  	return devt;
->  }
->  
-> +static inline int blk_part_pack_uuid(const u8 *uuid_str, u8 *to)
-> +{
-> +	return -EINVAL;
-> +}
->  #endif /* CONFIG_BLOCK */
->  
->  #endif /* _LINUX_GENHD_H */
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index b27535a..399433a 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -176,7 +176,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
->  	    && rule->fsmagic != inode->i_sb->s_magic)
->  		return false;
->  	if ((rule->flags & IMA_FSUUID) &&
-> -		memcmp(rule->fsuuid, inode->i_sb->s_uuid, sizeof(rule->fsuuid)))
-> +	    memcmp(rule->fsuuid, inode->i_sb->s_uuid, sizeof(rule->fsuuid)))
->  		return false;
->  	if ((rule->flags & IMA_UID) && !uid_eq(rule->uid, cred->uid))
->  		return false;
-> @@ -530,14 +530,15 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  			ima_log_string(ab, "fsuuid", args[0].from);
->  
->  			if (memchr_inv(entry->fsuuid, 0x00,
-> -			    sizeof(entry->fsuuid))) {
-> +				       sizeof(entry->fsuuid))) {
->  				result = -EINVAL;
->  				break;
->  			}
->  
-> -			part_pack_uuid(args[0].from, entry->fsuuid);
-> -			entry->flags |= IMA_FSUUID;
-> -			result = 0;
-> +			result = blk_part_pack_uuid(args[0].from,
-> +						    entry->fsuuid);
-> +			if (!result)
-> +				entry->flags |= IMA_FSUUID;
->  			break;
->  		case Opt_uid:
->  			ima_log_string(ab, "uid", args[0].from);
-> 
+A big thanks to those who already do this in a timely fashion.
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-~Randy
+--Signature=_Mon__25_Feb_2013_09_35_47_+1100_iUMngB0Tk=4pFoTr
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRKpXDAAoJEECxmPOUX5FE2QUP/0ZEwOvSbyRZ0cyrGdl4pmWU
+5FrcY3jBxW3bfQdiNaJTDqaQrpwOA/UfATKcawHrdfJjhNvDxdDqQFTDjIYs18BS
+HI78wncLQP0F/UvtnZJlKV3r6AxmHFTMFHf29QGxCB1D1fwW7amhbL8B3XNvuvkp
+Rz4cVqRC+I49czdgyeQZPCbFZ+FWPey5VHbj6NDsirCVNF2BiQz3bhHc4l2hbyK2
+92NblgNi8ZU+V32aoZRxsoa1lj3YGSZtUUGgHwq7bJi4VFxWO8EQqwGoZES3s+SX
+e4NkQVKY7faWJQUdXOljHvYDeEHkwo5AkvmnK0ZK93HrxsfpLeVmq8jPLPo1f2DU
+LlpY1ouom+fpza/ZV4XixLCXxzcScQn5/TEMiSDtM75I6iQnCjsf94VhEn+/bHoc
+JCidIEwNoEqVBnCy7x+5UICr4oW7vtosTZxEC0LvfBK618hy2gx9ZEI4qcDALtss
+FH2gNWwStIptdNXjPrQuHZZVok4zwt4Y9S/DqzLLoKC8xPoZDV1Tv4/Ekq0iFBI0
+F5bHT/Hxt6mLhRZB5toSwVOGP5oq+9m63n/xkx/DYxfdTNR2cMxr+I15jaa0Awns
+cU7vX60pq4BTB/yc8FIPbi+99p+56l90SfXkpf5EVKZBIBUVsDdmICJHb2WnYCtp
+DHnHt9UeWBnNjlDLHtjz
+=x+uE
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__25_Feb_2013_09_35_47_+1100_iUMngB0Tk=4pFoTr--
