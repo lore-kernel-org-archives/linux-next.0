@@ -1,80 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Michal Marek <mmarek@suse.cz>
 Subject: Re: linux-next: build failure after merge of the kbuild tree
-Date: Mon, 25 Feb 2013 22:02:04 +1100
-Message-ID: <20130225220204.3e52fddd01b612723fda2fd2@canb.auug.org.au>
-References: <20130225105650.6b89477b11c895ba99a666fe@canb.auug.org.au>
-	<512B3CD8.5070802@suse.cz>
-	<20130225215845.c0ec14a467aa6fe8e788e80e@canb.auug.org.au>
+Date: Mon, 25 Feb 2013 12:36:34 +0100
+Message-ID: <512B4CC2.80008@suse.cz>
+References: <20130225105650.6b89477b11c895ba99a666fe@canb.auug.org.au> <512B3CD8.5070802@suse.cz> <20130225215845.c0ec14a467aa6fe8e788e80e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__25_Feb_2013_22_02_04_+1100_2X8U.dyy3BBwgc73"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45922 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752579Ab3BYLCG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Feb 2013 06:02:06 -0500
+Received: from cantor2.suse.de ([195.135.220.15]:43714 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759799Ab3BYLgi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Feb 2013 06:36:38 -0500
 In-Reply-To: <20130225215845.c0ec14a467aa6fe8e788e80e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Marek <mmarek@suse.cz>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Grzeschik <m.grzeschik@pengutronix.de>
 
---Signature=_Mon__25_Feb_2013_22_02_04_+1100_2X8U.dyy3BBwgc73
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 25 Feb 2013 21:58:45 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
+On 25.2.2013 11:58, Stephen Rothwell wrote:
+> ----------------------------------------------------------------------
+> $ ls -l /bin/sh
+> lrwxrwxrwx 1 root root 4 Jul  7  2010 /bin/sh -> bash
+> $ bash --version
+> GNU bash, version 4.2.20(1)-release (x86_64-pc-linux-gnu)
+[...]
 > But bash in sh mode does not work:
+> 
+> $ cat xtst.sh
+> #!/bin/sh
+> 
+> cd /scratch/sfr/powerpc_ppc64_defconfig
+> 
+> . .config
+> 
+> exit 0
+> $ ./xtst.sh
+> ./xtst.sh: line 5: .: .config: file not found
 
-The bash manual says:
+Ah, so it's a too new bash that causes this. I can also reproduce it now.
 
-       .  filename [arguments]
-       source filename [arguments]
-              Read and execute commands from filename  in  the  current  sh=
-ell
-              environment  and return the exit status of the last command e=
-xe=E2=80=90
-              cuted from filename.  If filename does not contain a slash, f=
-ile
-              names  in  PATH  are used to find the directory containing fi=
-le=E2=80=90
-              name.  The file searched for in PATH  need  not  be  executab=
-le.
-              When  bash  is  not  in  posix  mode,  the  current directory=
- is
-              searched if no file is found in PATH.  If the sourcepath  opt=
-ion
-              to  the  shopt  builtin  command  is turned off, the PATH is =
-not
-              searched.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__25_Feb_2013_22_02_04_+1100_2X8U.dyy3BBwgc73
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRK0SsAAoJEECxmPOUX5FEbfAQAKJycrNh7MsD8Pt/c8RIwfrG
-Pqi0Q+10UYrRollCuPGu85PmJ14+SS2iYZNg3fKK8Elw+rmu7z/G4sO0k0cLXNyR
-OuVzlj4SR7AHe5TRpPjVGll3ydRSuSHTNe2D7GcBjKgrLvJ+43vuh9cPvkKtTHw0
-lgm1EJStPu888PiA449UxW4KI2HCv2xzi8perGeLSllP0orOubSwzmplgQ+pIB8C
-wIfiBXES8AfD4J9JQbhnNX2Mi9SPdlUq+KlMDCLVafyF42fgEmeNeg12zhnUNuad
-Iw3g2WBYrconZatp2J4BjkrCdniy6ngCJllqj+ubRJ4ym0kpc1n/ljpjChBcb9NM
-Ng+VNIhorlaiYBZc0o7CXQMeIzWoabRfr/tZft/jZ1srUAPcVyOcvNqpekDthR6y
-NxEgR24zOtWXGNOJNjbpYZCjlVDWynWmU6V+HvibCK/U/BIOUEknS0Wy5Kyv4KfN
-cy7auwGmmWh1PIMpGNqVcjPiAz2QAzEc10QrUXw7i8uApd43ZRmKEYG7X/db2Q9n
-U8dQmBQ+xlVJFSd5J/bOoQUqhvMnMfooUpFFDIcD6f5mA+81K6US8/5Tw4E7/EcU
-g1i2q436GfohOm9SsPWIQeEAJZtOXrDvB2U02xGYdoZkfigA7qpFDmQKKfC2K5iP
-MiDeGXQRPpvUxWKba/kl
-=iiNz
------END PGP SIGNATURE-----
-
---Signature=_Mon__25_Feb_2013_22_02_04_+1100_2X8U.dyy3BBwgc73--
+Michal
