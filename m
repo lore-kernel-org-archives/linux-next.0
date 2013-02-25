@@ -1,48 +1,30 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Feb 23 [ fs/dcache.c: Root dentry has weird
- name <SYSV00000000> ]
-Date: Mon, 25 Feb 2013 15:35:54 +0100
-Message-ID: <CA+icZUWh09aGsD25Xhx+WNWo65U7Wn6ydLZy1vep3hzecy5RyQ@mail.gmail.com>
-References: <CA+icZUVE-KzZ_ZnhjK+WzaC9KWuwuOK0TAJbNcn+Vn=HC=snhQ@mail.gmail.com>
-	<20130225135436.GA4503@ZenIV.linux.org.uk>
-	<CA+icZUXLO6MX==1zz1CUL+ytXv1bt+HjDx8Gug2p7GmfqtYBHw@mail.gmail.com>
-	<20130225142749.GB4503@ZenIV.linux.org.uk>
-Reply-To: sedat.dilek@gmail.com
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 01/11] ARM: disable virt_to_bus/virt_to_bus almost everywhere
+Date: Mon, 25 Feb 2013 14:54:47 +0000
+Message-ID: <201302251454.47617.arnd@arndb.de>
+References: <1360849767-1463135-1-git-send-email-arnd@arndb.de> <20130222101359.0c91a7259f648a3d06221bd8@canb.auug.org.au> <512B72A7.6040307@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130225142749.GB4503@ZenIV.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.171]:64127 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756044Ab3BYOzM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Feb 2013 09:55:12 -0500
+In-Reply-To: <512B72A7.6040307@synopsys.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, James Hogan <james.hogan@imgtec.com>, Andrew Morton <akpm@linux-foundation.org>, arm@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, linux-next@vger.kernel.org
 
-On Mon, Feb 25, 2013 at 3:27 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Mon, Feb 25, 2013 at 03:22:03PM +0100, Sedat Dilek wrote:
->> On Mon, Feb 25, 2013 at 2:54 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->> > On Mon, Feb 25, 2013 at 02:22:42PM +0100, Sedat Dilek wrote:
->> >
->> >> [  120.310366] Root dentry has weird name <SYSV00000000>
->> >
->> > Umm...  Almost certainly a result of switching to shmem_file_setup() to
->> > d_alloc_pseudo(); I'll fix it (give the suckers ->d_op of their own).
->> > For now, just ignore the warning - it's harmless.  Or revert commit
->> > 7dbc68fcb0cdce27737dba9ee252f26d39d75fb6 and see if the rest of your
->> > problems persist; I would be very surprised if anything other than this
->> > warning had been caused by that commit.
->>
->> Thanks for the quick fix!
->>
->> YES, with "Revert "shmem_setup_file(): use d_alloc_pseudo() instead of
->> d_alloc()"" I do NOT see these warnings anymore.
->
-> Umm...  Are the perf ones you are seeing eliminated by that as well?  I would
-> expect them to be an independent problem...
+On Monday 25 February 2013, Vineet Gupta wrote:
+> Have you queued up this change via one of your trees already for 3.9-rcX ?
+> If not, I can fold it in with a bunch of Kconfig cleanups for ARC
+> (GENERIC_SIGALTSTACK, HAVE_IRQ_WORK), given that those bits are already in linus'
+> tree.
+> 
 
-Independent as I still see them.
-Please, see also my report in "Re: linux-next: Tree for Feb 23 [ perf:
-NULL pointer dereference perf_init_event() ]" [1].
+I haven't put it in my tree yet, not. Please put it in yours.
 
-- Sedat -
-
-[1] https://lkml.org/lkml/2013/2/25/119
+	Arnd
