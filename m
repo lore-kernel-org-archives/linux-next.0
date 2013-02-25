@@ -1,70 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] kbuild: Fix reading of .config in link-vmlinux.sh
-Date: Tue, 26 Feb 2013 01:11:28 +1100
-Message-ID: <20130226011128.192ed5a7d145dd2703b395f6@canb.auug.org.au>
-References: <20130225215845.c0ec14a467aa6fe8e788e80e@canb.auug.org.au>
-	<1361796898-19642-1-git-send-email-mmarek@suse.cz>
-	<512B5F8A.1060705@suse.cz>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: Re: [PATCH 01/11] ARM: disable virt_to_bus/virt_to_bus almost everywhere
+Date: Mon, 25 Feb 2013 19:48:15 +0530
+Message-ID: <512B72A7.6040307@synopsys.com>
+References: <1360849767-1463135-1-git-send-email-arnd@arndb.de> <1360849767-1463135-2-git-send-email-arnd@arndb.de> <CAAG0J9_VqCGJJJZjSWGfFggALHU=vdWsSBeS39-DtxV=VXcJwQ@mail.gmail.com> <201302201600.47522.arnd@arndb.de> <5124FA93.5090504@imgtec.com> <5125CED4.7030905@synopsys.com> <20130222101359.0c91a7259f648a3d06221bd8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__26_Feb_2013_01_11_28_+1100_VupF40=G/.YzpNk3"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <512B5F8A.1060705@suse.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Marek <mmarek@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, m.grzeschik@pengutronix.de
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from alvesta.synopsys.com ([198.182.60.77]:49607 "EHLO
+	alvesta.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751148Ab3BYOSf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Feb 2013 09:18:35 -0500
+In-Reply-To: <20130222101359.0c91a7259f648a3d06221bd8@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: James Hogan <james.hogan@imgtec.com>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, arm@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, linux-next@vger.kernel.org
 
---Signature=_Tue__26_Feb_2013_01_11_28_+1100_VupF40=G/.YzpNk3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Arnd,
 
-Hi Michal,
+On Friday 22 February 2013 04:43 AM, Stephen Rothwell wrote:
+> Hi,
+> 
+> On Thu, 21 Feb 2013 13:07:56 +0530 Vineet Gupta <Vineet.Gupta1@synopsys.com> wrote:
+>>
+>>>> I guess you'll have to do something similar for arch/metag, and Vineet
+>>>> will do it for arch/arc.
+>>
+>> After getting the tip-bot msg about Stephen's patch for -mm, I never saw it in
+>> -next and thus was not sure how when it will start showing up in -next.
+> 
+> It arrived in next-21030220.
+> 
+>>>> Stephen's patch is currently in Andrew's tree, and I don't see an easy
+>>>> way to coordinate this. The patch we will need once both are merged
+>>>> is below.
+>>>>
+>>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>>
+>>> FWIW:
+>>> Acked-by: James Hogan <james.hogan@imgtec.com> (for arch/metag)
+>>>
+>> Acked-by: Vineet Gupta <vgupta@synopsys.com> (for arch/arc)
+>>
+>> So this means Stephen's patch - once merged will take care of existing in-tree
+>> arches and your's will take care of metag/arc.
+> 
+> The easiest way would be to put the follow up patches in Andrew's patch
+> set (since it is still based on top of linux-next).  It usually is merged
+> pretty late, so I would get your own trees merged ASAP and this can be
+> taken care of when Andrew sends his patch set to Linus.
+> 
 
-On Mon, 25 Feb 2013 13:56:42 +0100 Michal Marek <mmarek@suse.cz> wrote:
->
-> On 25.2.2013 13:54, Michal Marek wrote:
-> > The shell '.' command is not required to search the current directory as
-> > a fallback and in fact newer versions of bash in sh-mode do not do this.
-> > Force reading the file from the current directory if $KCONFIG_CONFIG
-> > contains no '/'.
-> >=20
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Signed-off-by: Michal Marek <mmarek@suse.cz>
-> > ---
-> >  scripts/link-vmlinux.sh |    9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
->=20
-> I was able to reproduce the failure and this patch fixed it. So I am
-> going to push this in a couple of hours, so that tomorrow's linux-next
-> can include the latest kbuild changes.
+Have you queued up this change via one of your trees already for 3.9-rcX ?
+If not, I can fold it in with a bunch of Kconfig cleanups for ARC
+(GENERIC_SIGALTSTACK, HAVE_IRQ_WORK), given that those bits are already in linus'
+tree.
 
-Thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__26_Feb_2013_01_11_28_+1100_VupF40=G/.YzpNk3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRK3EQAAoJEECxmPOUX5FEOHMQAKXDK8Qa4Rrg2ZFzOL/VraR2
-dbcW58hN7U4aQw84uj6mMtl08h0SYINFzKJutWMwSLcCzze0yXDC5nfcGpHM5KkN
-H2eUYbg0RWW+IxeD0oCMo4+s9K2hPwXKg3nSDRP5Slfnpd3R8vSiVocTYgCSD3mX
-/523aJq93uUcJGjCGqQz4EUHks+eRK1kfLSqSh1nRhvh3nRE+idimARHRt1HbE3t
-Phn2U8/KrBZe8fTwCBg1BWYpdCFIulRZ7aRKECEpyU5hgnw5N/MgF2w4np02HwRs
-rkktIsUGqUfYj3ooHRwBPVF7lQTH0RzDX333/weIhIK1mgsMHs1f/pfgw8VfPATk
-TBiVbx2JLSTR+Jkm+2MQA+jOedZe7V81EsVsq8RIgmeWAWSf+Cy9J0ay0zMRM2z9
-znAKc5TFoZjxAVA5pTvmz3lMFEVKJjRPj36dAektHs1ef9fUYpoxKRuuTfKxN7FU
-NCdmmt9/TDvCwjlNgPvs6dREpTode5tH3M3i7qiKxG1p18VtG9B1jvid2P2KxYAT
-JneFMzeoH5Vf/VWkuyfzCmUhVVuHyCM+y7OhAhoFAJAjS9COy1hIAbhRcZKnNFA6
-SfMRHMCxqHW7mK63C8kG0MrGHr3cBJzmaciZ6izSijfdNer54tjM0dfC1NHj8VZd
-TQuEEHAc0Xk/Cz9Prsw0
-=PMhj
------END PGP SIGNATURE-----
-
---Signature=_Tue__26_Feb_2013_01_11_28_+1100_VupF40=G/.YzpNk3--
+Thx,
+-Vineet
