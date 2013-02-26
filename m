@@ -1,338 +1,157 @@
-From: Asai Thambi S P <asamymuthupa@micron.com>
-Subject: [PATCH] conversion to bio batch completion
-Date: Wed, 27 Feb 2013 00:15:07 +0530
-Message-ID: <512D02B3.2020202@micron.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: JFFS2 deadlock
+Date: Wed, 27 Feb 2013 10:17:04 +1100
+Message-ID: <20130227101704.90466ae6df78ab9b3aa4ba22@canb.auug.org.au>
+References: <512CA290.6050509@mimc.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kent Overstreet <koverstreet@google.com>, Andrew Morton <akpm@linux-foundation.org>, Sam Bradshaw <sbradshaw@micron.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__27_Feb_2013_10_17_04_+1100_d0RNwD8Hns4nTwWW"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:55730 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754656Ab3BZXRN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Feb 2013 18:17:13 -0500
+In-Reply-To: <512CA290.6050509@mimc.co.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Jackson <mpfj-list@mimc.co.uk>
+Cc: linux-next@vger.kernel.org, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, lkml <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
 
-Hi Jens,
+--Signature=_Wed__27_Feb_2013_10_17_04_+1100_d0RNwD8Hns4nTwWW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch is for linux-next, applies cleanly on for-next branch.
+Hi Mark,
 
-This patch contains the following:
-	* changes for conversion to bio batch completion from Kent
-	* fix to apply the above changes cleanly on latest mtip32xx code
-	* batch bio completion changes in 
-		* mtip_command_cleanup()
-		* mtip_timeout_function()
-		* mtip_handle_tfe()
+On Tue, 26 Feb 2013 11:54:56 +0000 Mark Jackson <mpfj-list@mimc.co.uk> wrot=
+e:
+>
+> Just tested the current next-20130226 on a custom AM335X board, and I rec=
+eived the JFFS2 deadlock shown below.
 
-Signed-off-by: Kent Overstreet <koverstreet@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Asai Thambi S P <asamymuthupa@micron.com>
----
- drivers/block/mtip32xx/mtip32xx.c |   86 ++++++++++++++++++++----------------
- drivers/block/mtip32xx/mtip32xx.h |    8 +--
- 2 files changed, 51 insertions(+), 43 deletions(-)
+Is this new today?  is it reproducible? Does if ail for Linus' tree?
 
-diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
-index 11cc952..22d2b0f 100644
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -146,6 +146,9 @@ static void mtip_command_cleanup(struct driver_data *dd)
- 	struct mtip_cmd *command;
- 	struct mtip_port *port = dd->port;
- 	static int in_progress;
-+	struct batch_complete batch;
-+
-+	batch_complete_init(&batch);
- 
- 	if (in_progress)
- 		return;
-@@ -161,11 +164,9 @@ static void mtip_command_cleanup(struct driver_data *dd)
- 			command = &port->commands[commandindex];
- 
- 			if (atomic_read(&command->active)
--			    && (command->async_callback)) {
--				command->async_callback(command->async_data,
--					-ENODEV);
--				command->async_callback = NULL;
--				command->async_data = NULL;
-+			    && (command->bio)) {
-+				bio_endio_batch(command->bio, -ENODEV, &batch);
-+				command->bio = NULL;
- 			}
- 
- 			dma_unmap_sg(&port->dd->pdev->dev,
-@@ -173,9 +174,10 @@ static void mtip_command_cleanup(struct driver_data *dd)
- 				command->scatter_ents,
- 				command->direction);
- 		}
-+		up(&port->cmd_slot);
- 	}
- 
--	up(&port->cmd_slot);
-+	batch_complete(&batch);
- 
- 	set_bit(MTIP_DDF_CLEANUP_BIT, &dd->dd_flag);
- 	in_progress = 0;
-@@ -564,6 +566,9 @@ static void mtip_timeout_function(unsigned long int data)
- 	unsigned int bit, group;
- 	unsigned int num_command_slots;
- 	unsigned long to, tagaccum[SLOTBITS_IN_LONGS];
-+	struct batch_complete batch;
-+
-+	batch_complete_init(&batch);
- 
- 	if (unlikely(!port))
- 		return;
-@@ -606,11 +611,9 @@ static void mtip_timeout_function(unsigned long int data)
- 			writel(1 << bit, port->completed[group]);
- 
- 			/* Call the async completion callback. */
--			if (likely(command->async_callback))
--				command->async_callback(command->async_data,
--							 -EIO);
--			command->async_callback = NULL;
--			command->comp_func = NULL;
-+			if (likely(command->bio))
-+				bio_endio_batch(command->bio, -EIO, &batch);
-+			command->bio = NULL;
- 
- 			/* Unmap the DMA scatter list entries */
- 			dma_unmap_sg(&port->dd->pdev->dev,
-@@ -628,6 +631,8 @@ static void mtip_timeout_function(unsigned long int data)
- 			up(&port->cmd_slot);
- 		}
- 	}
-+
-+	batch_complete(&batch);
- 
- 	if (cmdto_cnt) {
- 		print_tags(port->dd, "timed out", tagaccum, cmdto_cnt);
-@@ -679,7 +684,8 @@ static void mtip_timeout_function(unsigned long int data)
- static void mtip_async_complete(struct mtip_port *port,
- 				int tag,
- 				void *data,
--				int status)
-+				int status,
-+				struct batch_complete *batch)
- {
- 	struct mtip_cmd *command;
- 	struct driver_data *dd = data;
-@@ -696,11 +702,10 @@ static void mtip_async_complete(struct mtip_port *port,
- 	}
- 
- 	/* Upper layer callback */
--	if (likely(command->async_callback))
--		command->async_callback(command->async_data, cb_status);
-+	if (likely(command->bio))
-+		bio_endio_batch(command->bio, cb_status, batch);
- 
--	command->async_callback = NULL;
--	command->comp_func = NULL;
-+	command->bio = NULL;
- 
- 	/* Unmap the DMA scatter list entries */
- 	dma_unmap_sg(&dd->pdev->dev,
-@@ -733,24 +738,22 @@ static void mtip_async_complete(struct mtip_port *port,
- static void mtip_completion(struct mtip_port *port,
- 			    int tag,
- 			    void *data,
--			    int status)
-+			    int status,
-+			    struct batch_complete *batch)
- {
--	struct mtip_cmd *command = &port->commands[tag];
- 	struct completion *waiting = data;
- 	if (unlikely(status == PORT_IRQ_TF_ERR))
- 		dev_warn(&port->dd->pdev->dev,
- 			"Internal command %d completed with TFE\n", tag);
- 
--	command->async_callback = NULL;
--	command->comp_func = NULL;
--
- 	complete(waiting);
- }
- 
- static void mtip_null_completion(struct mtip_port *port,
- 			    int tag,
- 			    void *data,
--			    int status)
-+			    int status,
-+			    struct batch_complete *batch)
- {
- 	return;
- }
-@@ -779,6 +782,7 @@ static void mtip_handle_tfe(struct driver_data *dd)
- 	unsigned char *buf;
- 	char *fail_reason = NULL;
- 	int fail_all_ncq_write = 0, fail_all_ncq_cmds = 0;
-+	struct batch_complete batch;
- 
- 	dev_warn(&dd->pdev->dev, "Taskfile error\n");
- 
-@@ -796,13 +800,14 @@ static void mtip_handle_tfe(struct driver_data *dd)
- 		atomic_inc(&cmd->active); /* active > 1 indicates error */
- 		if (cmd->comp_data && cmd->comp_func) {
- 			cmd->comp_func(port, MTIP_TAG_INTERNAL,
--					cmd->comp_data, PORT_IRQ_TF_ERR);
-+					cmd->comp_data, PORT_IRQ_TF_ERR, NULL);
- 		}
- 		goto handle_tfe_exit;
- 	}
- 
- 	/* clear the tag accumulator */
- 	memset(tagaccum, 0, SLOTBITS_IN_LONGS * sizeof(long));
-+	batch_complete_init(&batch);
- 
- 	/* Loop through all the groups */
- 	for (group = 0; group < dd->slot_groups; group++) {
-@@ -829,7 +834,7 @@ static void mtip_handle_tfe(struct driver_data *dd)
- 				cmd->comp_func(port,
- 					 tag,
- 					 cmd->comp_data,
--					 0);
-+					 0, &batch);
- 			} else {
- 				dev_err(&port->dd->pdev->dev,
- 					"Missing completion func for tag %d",
-@@ -842,6 +847,7 @@ static void mtip_handle_tfe(struct driver_data *dd)
- 			}
- 		}
- 	}
-+	batch_complete(&batch);
- 
- 	print_tags(dd, "completed (TFE)", tagaccum, cmd_cnt);
- 
-@@ -883,6 +889,7 @@ static void mtip_handle_tfe(struct driver_data *dd)
- 
- 	/* clear the tag accumulator */
- 	memset(tagaccum, 0, SLOTBITS_IN_LONGS * sizeof(long));
-+	batch_complete_init(&batch);
- 
- 	/* Loop through all the groups */
- 	for (group = 0; group < dd->slot_groups; group++) {
-@@ -916,7 +923,7 @@ static void mtip_handle_tfe(struct driver_data *dd)
- 					if (cmd->comp_func) {
- 						cmd->comp_func(port, tag,
- 							cmd->comp_data,
--							-ENODATA);
-+							-ENODATA, &batch);
- 					}
- 					continue;
- 				}
-@@ -946,13 +953,15 @@ static void mtip_handle_tfe(struct driver_data *dd)
- 					port,
- 					tag,
- 					cmd->comp_data,
--					PORT_IRQ_TF_ERR);
-+					PORT_IRQ_TF_ERR, &batch);
- 			else
- 				dev_warn(&port->dd->pdev->dev,
- 					"Bad completion for tag %d\n",
- 					tag);
- 		}
- 	}
-+
-+	batch_complete(&batch);
- 	print_tags(dd, "reissued (TFE)", tagaccum, cmd_cnt);
- 
- handle_tfe_exit:
-@@ -973,6 +982,9 @@ static inline void mtip_workq_sdbfx(struct mtip_port *port, int group,
- 	struct driver_data *dd = port->dd;
- 	int tag, bit;
- 	struct mtip_cmd *command;
-+	struct batch_complete batch;
-+
-+	batch_complete_init(&batch);
- 
- 	if (!completed) {
- 		WARN_ON_ONCE(!completed);
-@@ -997,7 +1009,8 @@ static inline void mtip_workq_sdbfx(struct mtip_port *port, int group,
- 					port,
- 					tag,
- 					command->comp_data,
--					0);
-+					0,
-+					&batch);
- 			} else {
- 				dev_warn(&dd->pdev->dev,
- 					"Null completion "
-@@ -1007,13 +1020,16 @@ static inline void mtip_workq_sdbfx(struct mtip_port *port, int group,
- 				if (mtip_check_surprise_removal(
- 					dd->pdev)) {
- 					mtip_command_cleanup(dd);
--					return;
-+					goto out;
- 				}
- 			}
- 		}
- 		completed >>= 1;
- 	}
- 
-+out:
-+	batch_complete(&batch);
-+
- 	/* If last, re-enable interrupts */
- 	if (atomic_dec_return(&dd->irq_workers_active) == 0)
- 		writel(0xffffffff, dd->mmio + HOST_IRQ_STAT);
-@@ -1034,7 +1050,7 @@ static inline void mtip_process_legacy(struct driver_data *dd, u32 port_stat)
- 			cmd->comp_func(port,
- 				MTIP_TAG_INTERNAL,
- 				cmd->comp_data,
--				0);
-+				0, NULL);
- 			return;
- 		}
- 	}
-@@ -2554,8 +2570,8 @@ static int mtip_hw_ioctl(struct driver_data *dd, unsigned int cmd,
-  *	None
-  */
- static void mtip_hw_submit_io(struct driver_data *dd, sector_t sector,
--			      int nsect, int nents, int tag, void *callback,
--			      void *data, int dir)
-+			      int nsect, int nents, int tag,
-+			      struct bio *bio, int dir)
- {
- 	struct host_to_dev_fis	*fis;
- 	struct mtip_port *port = dd->port;
-@@ -2610,12 +2626,7 @@ static void mtip_hw_submit_io(struct driver_data *dd, sector_t sector,
- 	command->comp_func = mtip_async_complete;
- 	command->direction = dma_dir;
- 
--	/*
--	 * Set the completion function and data for the command passed
--	 * from the upper layer.
--	 */
--	command->async_data = data;
--	command->async_callback = callback;
-+	command->bio = bio;
- 
- 	/*
- 	 * To prevent this command from being issued
-@@ -3795,7 +3806,6 @@ static void mtip_make_request(struct request_queue *queue, struct bio *bio)
- 				bio_sectors(bio),
- 				nents,
- 				tag,
--				bio_endio,
- 				bio,
- 				bio_data_dir(bio));
- 	} else
-diff --git a/drivers/block/mtip32xx/mtip32xx.h b/drivers/block/mtip32xx/mtip32xx.h
-index 3bffff5..af8c6f7 100644
---- a/drivers/block/mtip32xx/mtip32xx.h
-+++ b/drivers/block/mtip32xx/mtip32xx.h
-@@ -325,11 +325,9 @@ struct mtip_cmd {
- 	void (*comp_func)(struct mtip_port *port,
- 				int tag,
- 				void *data,
--				int status);
--	/* Additional callback function that may be called by comp_func() */
--	void (*async_callback)(void *data, int status);
--
--	void *async_data; /* Addl. data passed to async_callback() */
-+				int status,
-+				struct batch_complete *batch);
-+	struct bio *bio;
- 
- 	int scatter_ents; /* Number of scatter list entries used */
- 
--- 
-1.7.1
+Al, could this be something to do with the new stuff in the vfs tree?
+
+> Regards
+> Mark JACKSON
+> ---
+> [    3.250349] jffs2: notice: (1) jffs2_build_xattr_subsystem: complete b=
+uilding xattr subsystem, 0 of xdatum (0 unchecked, 0 orphan) and 0 of xref =
+(0 dead, 0 orphan) found.
+> [    3.268364] VFS: Mounted root (jffs2 filesystem) readonly on device 31=
+:6.
+> [    3.277233] devtmpfs: mounted
+> [    3.280982] Freeing init memory: 332K
+> [    3.706697]
+> [    3.708306] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [    3.714804] [ INFO: possible circular locking dependency detected ]
+> [    3.721398] 3.8.0-next-20130226-dirty #10 Not tainted
+> [    3.726708] -------------------------------------------------------
+> [    3.733297] rcS/686 is trying to acquire lock:
+> [    3.737969]  (&mm->mmap_sem){++++++}, at: [<c00f0af4>] might_fault+0x3=
+c/0x90
+> [    3.745437]
+> [    3.745437] but task is already holding lock:
+> [    3.751569]  (&f->sem){+.+.+.}, at: [<c023d128>] jffs2_readdir+0x44/0x=
+1a8
+> [    3.758748]
+> [    3.758748] which lock already depends on the new lock.
+> [    3.758748]
+> [    3.767348]
+> [    3.767348] the existing dependency chain (in reverse order) is:
+> [    3.775215]
+> -> #1 (&f->sem){+.+.+.}:
+> [    3.779184]        [<c0092df0>] lock_acquire+0x9c/0x104
+> [    3.784701]        [<c04b76e4>] mutex_lock_nested+0x3c/0x334
+> [    3.790666]        [<c023d950>] jffs2_readpage+0x20/0x44
+> [    3.796261]        [<c00d9d38>] __do_page_cache_readahead+0x2a0/0x2cc
+> [    3.803050]        [<c00da004>] ra_submit+0x28/0x30
+> [    3.808187]        [<c00d179c>] filemap_fault+0x304/0x458
+> [    3.813884]        [<c00f0c58>] __do_fault+0x6c/0x490
+> [    3.819203]        [<c00f3c5c>] handle_pte_fault+0xb0/0x6f0
+> [    3.825071]        [<c00f433c>] handle_mm_fault+0xa0/0xd4
+> [    3.830755]        [<c04bbdcc>] do_page_fault+0x2a0/0x3d4
+> [    3.836449]        [<c000845c>] do_DataAbort+0x30/0x9c
+> [    3.841861]        [<c04ba2a4>] __dabt_svc+0x44/0x80
+> [    3.847089]        [<c0289c34>] __clear_user_std+0x1c/0x64
+> [    3.852877]
+> -> #0 (&mm->mmap_sem){++++++}:
+> [    3.857393]        [<c00927ec>] __lock_acquire+0x1d70/0x1de0
+> [    3.863353]        [<c0092df0>] lock_acquire+0x9c/0x104
+> [    3.868855]        [<c00f0b18>] might_fault+0x60/0x90
+> [    3.874174]        [<c011bc3c>] filldir+0x5c/0x158
+> [    3.879230]        [<c023d1c0>] jffs2_readdir+0xdc/0x1a8
+> [    3.884823]        [<c011becc>] vfs_readdir+0x98/0xb4
+> [    3.890144]        [<c011bfcc>] sys_getdents+0x74/0xd0
+> [    3.895554]        [<c0013820>] ret_fast_syscall+0x0/0x3c
+> [    3.901251]
+> [    3.901251] other info that might help us debug this:
+> [    3.901251]
+> [    3.909668]  Possible unsafe locking scenario:
+> [    3.909668]
+> [    3.915892]        CPU0                    CPU1
+> [    3.920652]        ----                    ----
+> [    3.925411]   lock(&f->sem);
+> [    3.928451]                                lock(&mm->mmap_sem);
+> [    3.934688]                                lock(&f->sem);
+> [    3.940376]   lock(&mm->mmap_sem);
+> [    3.943965]
+> [    3.943965]  *** DEADLOCK ***
+> [    3.943965]
+> [    3.950196] 2 locks held by rcS/686:
+> [    3.953952]  #0:  (&type->i_mutex_dir_key){+.+.+.}, at: [<c011be90>] v=
+fs_readdir+0x5c/0xb4
+> [    3.962686]  #1:  (&f->sem){+.+.+.}, at: [<c023d128>] jffs2_readdir+0x=
+44/0x1a8
+> [    3.970320]
+> [    3.970320] stack backtrace:
+> [    3.974930] [<c001b158>] (unwind_backtrace+0x0/0xf0) from [<c008f29c>]=
+ (print_circular_bug+0x1d0/0x2dc)
+> [    3.984815] [<c008f29c>] (print_circular_bug+0x1d0/0x2dc) from [<c0092=
+7ec>] (__lock_acquire+0x1d70/0x1de0)
+> [    3.994975] [<c00927ec>] (__lock_acquire+0x1d70/0x1de0) from [<c0092df=
+0>] (lock_acquire+0x9c/0x104)
+> [    4.004494] [<c0092df0>] (lock_acquire+0x9c/0x104) from [<c00f0b18>] (=
+might_fault+0x60/0x90)
+> [    4.013376] [<c00f0b18>] (might_fault+0x60/0x90) from [<c011bc3c>] (fi=
+lldir+0x5c/0x158)
+> [    4.021802] [<c011bc3c>] (filldir+0x5c/0x158) from [<c023d1c0>] (jffs2=
+_readdir+0xdc/0x1a8)
+> [    4.030502] [<c023d1c0>] (jffs2_readdir+0xdc/0x1a8) from [<c011becc>] =
+(vfs_readdir+0x98/0xb4)
+> [    4.039477] [<c011becc>] (vfs_readdir+0x98/0xb4) from [<c011bfcc>] (sy=
+s_getdents+0x74/0xd0)
+> [    4.048270] [<c011bfcc>] (sys_getdents+0x74/0xd0) from [<c0013820>] (r=
+et_fast_syscall+0x0/0x3c)
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__27_Feb_2013_10_17_04_+1100_d0RNwD8Hns4nTwWW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRLUJwAAoJEECxmPOUX5FEjBwP/1tqyOXBZ+GMjeqnXBKqkBrW
+wGkVmPQG5jGSSwrtgPrnxkLoa6UyVuABdwXCh3EO5yW+UFYkJn0SHWhEkcXNVqzH
+0ktmG0vjGJ2jq0DOXRiKIzHpDWIATQce7fbUUZiUQ4fCqumQ1OHlEz5q91AKvygU
+ltqTf7Ms/XclU4WwSPnN7hAJucHwO7J8EGYXkWLyceTz56IBzrNFXVWqsL8/jG7M
+uojBBxsIZdDONWdvvU5t9P3fVOLnRZ1FIiRvnQYwCj55af9aNXiHM3foOzggG0tP
+JiHHIMPGT/QNEjmGrmaVgjpQ46RWMTpj+6pBj3tULUkf+ezN2hfxwF1pe+rro6Si
+Iy1jSpLjSHZWLRQNWQ8Pc8YJUTb1WmSTrOVMHV/hvZiashB5JEpevi/lORfpudcB
+eWhQbjCFcyxUSUjJkk4s83CkZxO6KPsAiRMJn7ElWORY1LkW5s4DX1hiRQqpHVWC
+t53OzI/8od/+X3n+qJmXsV1ZZJ1fRqXpUZw1oLEWkVbbM/O1s7BuOucYRRH0IyuM
+y+35DTUAO7BVuHXsCx2Sc7qrz9eEBW0WIRhcZOOUks+koai8o8AsExyxjhdufYDG
+9oOOW+IzBw1GFJ1sF1lZqz6Tek9PSVrlUqhIZvibXUiTzYNgnpwLqBpy1FNHz1L3
+S4HfNY3Y+TJ30G4hvvz0
+=xWdF
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__27_Feb_2013_10_17_04_+1100_d0RNwD8Hns4nTwWW--
