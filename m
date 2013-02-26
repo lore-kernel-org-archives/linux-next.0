@@ -1,61 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Feb 24
-Date: Tue, 26 Feb 2013 16:30:08 +1100
-Message-ID: <20130226163008.2f32ece867f8c421097a7933@canb.auug.org.au>
-References: <20130226141629.94789be6d093636a736e05dd@canb.auug.org.au>
-	<CA+icZUXDSdRQqtqOBG04ROWeM+v7q8TX0LSwnBQoG867FRM5MQ@mail.gmail.com>
+From: Or Gerlitz <ogerlitz@mellanox.com>
+Subject: Re: linux-next: manual merge of the infiniband tree with Linus' tree
+Date: Tue, 26 Feb 2013 09:27:06 +0200
+Message-ID: <512C63CA.3050004@mellanox.com>
+References: <20130226114508.0f8d1101156f9f4a309579f6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__26_Feb_2013_16_30_08_+1100_hxQfzufMQu4+kpV+"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56463 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750973Ab3BZFaR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Feb 2013 00:30:17 -0500
-In-Reply-To: <CA+icZUXDSdRQqtqOBG04ROWeM+v7q8TX0LSwnBQoG867FRM5MQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130226114508.0f8d1101156f9f4a309579f6@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hadar Hen Zion <hadarh@mellanox.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Shani Michaeli <shanim@mellanox.com>, Haggai Eran <haggaie@mellanox.com>, Amir Vadai <amirv@mellanox.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__26_Feb_2013_16_30_08_+1100_hxQfzufMQu4+kpV+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Tue, 26 Feb 2013 06:00:24 +0100 Sedat Dilek <sedat.dilek@gmail.com> wrot=
-e:
+On 26/02/2013 02:45, Stephen Rothwell wrote:
+> Hi all,
 >
-> February 26th...
+> Today's linux-next merge of the infiniband tree got a conflict in
+> drivers/net/ethernet/mellanox/mlx4/mlx4.h between commit 23537b732f5d
+> ("net/mlx4_core: Use firmware driven flow steering hash mode") from
+> Linus' tree and commit e448834e3545 ("mlx4_core: Enable memory windows in
+> {INIT, QUERY}_HCA") from the infiniband tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+>
 
-Yeah  :-(
+thanks,
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__26_Feb_2013_16_30_08_+1100_hxQfzufMQu4+kpV+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRLEhgAAoJEECxmPOUX5FEfW0P/0gg1TorPmbp08+A1difhJUq
-dl71VWk/omDLU31/X9dRV0haOkRd6WGsG6qErtsnZUBGFZNOcX2apJVQ3m2/qyl0
-tLrEv2Dd0amUjnKx051/4IMoFz7ITctGZ9P4NPjbSsejZLFyBI+YViaWaz9+RY7R
-KXojSaNWXvLkhjAEey4VB9XubDKsT44loIcUdIbPjIWE2fOaUrThbSDD9boElmJS
-N/bYEVGk9xgpseYVZPsvZLrkcXyGKLNH0VXwOcwvWiCl0nHIDAFbohrP6x6q6p09
-LRTWO3KCG69kWGZzYg05BWt3a/a593fq9CmKneRjwhyHaxUmD8WitGwyJgpILWfx
-PbbIcqzdCRajFi9iquc+7Q4ymTzGFiDk6pMDrXPrEahNoevwmMYnerQMMq/vanG0
-gMBBlIwkyUfjfEzp4a9eh+p2iAL+JDvYgW1HF0AZwqp66nPpLM2g0eK6Pe4EAdah
-2noi8QBYbk2MAPPKxPfnZXowctiYVXyDMpRvopVcTVzpmf017G8fJbvF5eQ8nJgr
-WNpwHRIyMGg9INFCvtJEjyNCp4ISvINyJUqF5VlzCvEqiMNc96BINEAbYf2fngMS
-jrCqJKS3tpFEium/l6kYIohx9y9l5AbrHBUQ5q6M4GXGOLxrZSXi5xKP66ArqXfv
-IxQ806Co864k/3calYwp
-=caEe
------END PGP SIGNATURE-----
-
---Signature=_Tue__26_Feb_2013_16_30_08_+1100_hxQfzufMQu4+kpV+--
+Acked-by: Or Gerlitz <ogerlitz@mellanox.com>
