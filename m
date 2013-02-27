@@ -1,57 +1,52 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [next-20130227] kernel NULL pointer dereference [ watchdog |
- perf related ? ]
-Date: Wed, 27 Feb 2013 07:07:33 -0800
-Message-ID: <20130227150733.GB22383@htj.dyndns.org>
-References: <CA+icZUUsedHPqZc5jXQ_AqAbfmTMu5WW8CJ+vnHwL69ofw7uTw@mail.gmail.com>
- <20130227122302.GA5678@pd.tnic>
- <CA+icZUVXDfOhztQtrOxyYaHutpx=iVpPGmRT0PzP7045_mjh6w@mail.gmail.com>
- <CA+icZUXJb5O7ML-xnQq8Zoa46NmaGZp2Xaqj6fJL+vudPeQTLw@mail.gmail.com>
+From: Mark Jackson <mpfj-list@mimc.co.uk>
+Subject: Re: linux-next: JFFS2 corruption
+Date: Wed, 27 Feb 2013 15:12:01 +0000
+Message-ID: <512E2241.9040705@mimc.co.uk>
+References: <512CD9BA.3080300@mimc.co.uk> <20130227101824.6e18ba21fb99070594420f29@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-da0-f51.google.com ([209.85.210.51]:60938 "EHLO
-	mail-da0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752865Ab3B0PHi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Feb 2013 10:07:38 -0500
-Content-Disposition: inline
-In-Reply-To: <CA+icZUXJb5O7ML-xnQq8Zoa46NmaGZp2Xaqj6fJL+vudPeQTLw@mail.gmail.com>
+Received: from mercuryimc.plus.com ([80.229.200.144]:39989 "EHLO
+	centos1.newflow.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1758160Ab3B0PME (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Feb 2013 10:12:04 -0500
+In-Reply-To: <20130227101824.6e18ba21fb99070594420f29@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Borislav Petkov <bp@alien8.de>, Wim Van Sebroeck <wim@iguana.be>, Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, linux-watchdog@vger.kernel.org, x86@kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, lkml <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
 
-Replying here too just in case.
+On 26/02/13 23:18, Stephen Rothwell wrote:
+> Hi Mark,
+> 
+> On Tue, 26 Feb 2013 15:50:18 +0000 Mark Jackson <mpfj-list@mimc.co.uk> wrote:
+>>
+>> Just tested the current next-20130226 on a custom AM335X board, and if I mount
+>> our JFFS2 image as read/write, the next reboot shows the image as being corrupt.
+>>
+>> If I reprogram the jffs2 image into NAND and only mount the volume as read-only,
+>> no corruption occurs and the system remains intact.
+>>
+>> I have also tested:-
+>>
+>> (a) reprogram ubifs image into nand
+>> (b) boot the volume as read-only (corrupt -> no)
+>> (c) remount the volume as read/write
+>> (d) rebooting the volume as read-only (corrupt -> yes)
+> 
+> Thanks for all the testing.  Sam questions as in my other email.
 
-On Wed, Feb 27, 2013 at 02:08:40PM +0100, Sedat Dilek wrote:
-> >> static inline void *idr_find(struct idr *idr, int id)
-> >> {
-> >>         struct idr_layer *hint = rcu_dereference_raw(idr->hint);
-> >>     86d7:       48 8b 05 00 00 00 00    mov    0x0(%rip),%rax        # 86de <perf_init_event+0x2e>
-> >>                         86da: R_X86_64_PC32     .bss+0xfc
-> >>
-> >>         if ((id & ~IDR_MASK) == hint->prefix)
-> >>     86de:       89 f2                   mov    %esi,%edx
-> >>     86e0:       30 d2                   xor    %dl,%dl
-> >>     86e2:       3b 10                   cmp    (%rax),%edx              <--- trapping insn
-> >>     86e4:       74 4a                   je     8730 <perf_init_event+0x80>
-> >>                 return rcu_dereference_raw(hint->ary[id & IDR_MASK]);
-> >>
-> >>
-> >> So 'hint' is NULL as RAX above confirms and we're not supposed to deref
-> >> NULL things.
-> >>
-> >> Looking at 29cf29e1fbb875019713eb55cf27ec35f1e5fa5e, Tejun should
-> >> probably know. CCed.
+Okay, just tested 3v8 plus:-
 
-Fix was posted some days ago.
+https://patchwork.kernel.org/patch/1931251/
+https://patchwork.kernel.org/patch/1931221/
+https://patchwork.kernel.org/patch/1931201/
+and changed drivers/mtd/nand/elm.c, line 388 "ti,am33xx-elm" to "ti,am3352-elm"
 
-  http://thread.gmane.org/gmane.linux.kernel.next/26213
+This produces an identical corruption.
 
-I got Andrew's patch added to -mm message a week ago.  Not sure why it
-still hasn't showed up.  Andrew, any ideas?
+I have also tested next-20130225 and next-20130227, and both cause the same corruption.
 
-Thanks.
-
--- 
-tejun
+Regards
+Mark J.
