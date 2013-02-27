@@ -1,43 +1,42 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: [next-20130227] kernel NULL pointer dereference [ watchdog |
- perf related ? ]
-Date: Wed, 27 Feb 2013 17:46:10 +0100
-Message-ID: <20130227164610.GG5530@pd.tnic>
-References: <CA+icZUUsedHPqZc5jXQ_AqAbfmTMu5WW8CJ+vnHwL69ofw7uTw@mail.gmail.com>
- <20130227122302.GA5678@pd.tnic>
- <CA+icZUVXDfOhztQtrOxyYaHutpx=iVpPGmRT0PzP7045_mjh6w@mail.gmail.com>
- <CA+icZUXJb5O7ML-xnQq8Zoa46NmaGZp2Xaqj6fJL+vudPeQTLw@mail.gmail.com>
- <20130227150733.GB22383@htj.dyndns.org>
- <CA+icZUUFCOPJ=TAE-5=suUqPy0NjA+BSToiZxX=Xm7u=30GdOA@mail.gmail.com>
- <20130227160833.GF5530@pd.tnic>
- <CA+icZUVhfYHu_EtC=itTR04OGq_yOq902_ZMb9_Jy=1pZfU_FA@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: [git pull] drm merge for 3.9-rc1
+Date: Wed, 27 Feb 2013 23:36:44 +0100
+Message-ID: <CA+icZUXG7WgRap2-oQGBr_s=QbE0QW6_zChDRqC-eEzrWR3Y5g@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+icZUVhfYHu_EtC=itTR04OGq_yOq902_ZMb9_Jy=1pZfU_FA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, linux-watchdog@vger.kernel.org, x86@kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:35476 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751592Ab3B0Wgq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Feb 2013 17:36:46 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Dave Airlie <airlied@gmail.com>, DRI <dri-devel@lists.freedesktop.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
-On Wed, Feb 27, 2013 at 05:14:04PM +0100, Sedat Dilek wrote:
-> I am not screaming or whining... people should reflect a bit on the
-> patch workflow process? Also, I am sure a patchwork-service especially
-> for -next is helpful.
+Hi,
 
-Ok, now this formulation reads much nicer. So if you really think this
-is needed, simply talk to sfr and see what he has to say about it. But
-please do it in a nice way.
+I am seeing this also on Linux-Next.
 
-I'd say, serious suggestions on how the workflow could be improved are
-always welcome.
+/var/log/kern.log:Feb 27 22:52:35 fambox kernel: [   28.202381]
+[drm:intel_dp_aux_wait_done] *ERROR* dp aux hw did not signal timeout
+(has irq: 1)!
+/var/log/kern.log:Feb 27 22:52:35 fambox kernel: [   28.210588]
+[drm:intel_dp_aux_wait_done] *ERROR* dp aux hw did not signal timeout
+(has irq: 1)!
 
-Thanks.
+/var/log/kern.log.1:Feb 22 07:36:04 fambox kernel: [   27.408280]
+[drm:intel_dp_aux_wait_done] *ERROR* dp aux hw did not signal timeout
+(has irq: 1)!
 
--- 
-Regards/Gruss,
-    Boris.
+This seems to be hard reproducible...
+Laptop-LCD... Sandybridge Mobile-GT2.
 
-Sent from a fat crate under my desk. Formatting is fine.
---
+Is there a way to force the error?
+
+Possible patch see [1].
+
+- Sedat -
+
+[1] https://patchwork.kernel.org/patch/2192721/
