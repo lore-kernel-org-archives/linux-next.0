@@ -1,120 +1,123 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm tree
-Date: Thu, 28 Feb 2013 12:15:22 +1100
-Message-ID: <20130228121522.b13a9a9aad4d8aceeb70edf0@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+ (device-mapper tree related)
+Date: Thu, 28 Feb 2013 13:19:30 +1100
+Message-ID: <20130228131930.7d1f440a4c671e887253a2e4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__28_Feb_2013_12_15_22_+1100_m7tVkt1j_Kljw6+H"
+ boundary="Signature=_Thu__28_Feb_2013_13_19_30_+1100_aylyw6bWy90j0Yn9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41331 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40193 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752383Ab3B1BPc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Feb 2013 20:15:32 -0500
+	with ESMTP id S1750999Ab3B1CTl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Feb 2013 21:19:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sasha Levin <sasha.levin@oracle.com>, Joe Thornber <ejt@redhat.com>, Heinz Mauelshagen <mauelshagen@redhat.com>, Alasdair G Kergon <agk@redhat.com>
+To: Alasdair G Kergon <agk@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Thornber <ejt@redhat.com>, Heinz Mauelshagen <mauelshagen@redhat.com>
 
---Signature=_Thu__28_Feb_2013_12_15_22_+1100_m7tVkt1j_Kljw6+H
+--Signature=_Thu__28_Feb_2013_13_19_30_+1100_aylyw6bWy90j0Yn9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-After merging the akpm tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-drivers/md/dm-cache-policy-cleaner.c: In function 'lookup_cache_entry':
-drivers/md/dm-cache-policy-cleaner.c:148:46: error: macro "hlist_for_each_e=
-ntry" passed 4 arguments, but takes just 3
-drivers/md/dm-cache-policy-cleaner.c:148:2: error: 'hlist_for_each_entry' u=
-ndeclared (first use in this function)
-drivers/md/dm-cache-policy-cleaner.c:148:2: note: each undeclared identifie=
-r is reported only once for each function it appears in
-drivers/md/dm-cache-policy-cleaner.c:148:48: error: expected ';' before '{'=
- token
-drivers/md/dm-cache-policy-cleaner.c:146:21: warning: unused variable 'buck=
-et' [-Wunused-variable]
-drivers/md/dm-cache-policy-cleaner.c:145:21: warning: unused variable 'tmp'=
- [-Wunused-variable]
-drivers/md/dm-cache-policy-cleaner.c:144:25: warning: unused variable 'cur'=
- [-Wunused-variable]
-drivers/md/dm-cache-policy-cleaner.c:158:1: warning: no return statement in=
- function returning non-void [-Wreturn-type]
-drivers/md/dm-cache-policy-mq.c: In function 'hash_lookup':
-drivers/md/dm-cache-policy-mq.c:375:44: error: macro "hlist_for_each_entry"=
- passed 4 arguments, but takes just 3
-drivers/md/dm-cache-policy-mq.c:375:2: error: 'hlist_for_each_entry' undecl=
-ared (first use in this function)
-drivers/md/dm-cache-policy-mq.c:375:2: note: each undeclared identifier is =
-reported only once for each function it appears in
-drivers/md/dm-cache-policy-mq.c:376:3: error: expected ';' before 'if'
-drivers/md/dm-cache-policy-mq.c:373:16: warning: unused variable 'e' [-Wunu=
-sed-variable]
-drivers/md/dm-cache-policy-mq.c:372:21: warning: unused variable 'tmp' [-Wu=
-nused-variable]
-drivers/md/dm-cache-policy-mq.c:371:21: warning: unused variable 'bucket' [=
--Wunused-variable]
-drivers/md/dm-cache-policy-mq.c:383:1: warning: no return statement in func=
-tion returning non-void [-Wreturn-type]
+drivers/md/dm-cache-policy-cleaner.c: In function 'alloc_hash':
+drivers/md/dm-cache-policy-cleaner.c:87:2: error: implicit declaration of f=
+unction 'vzalloc' [-Werror=3Dimplicit-function-declaration]
+drivers/md/dm-cache-policy-cleaner.c:87:14: warning: assignment makes point=
+er from integer without a cast [enabled by default]
+drivers/md/dm-cache-policy-cleaner.c: In function 'free_hash':
+drivers/md/dm-cache-policy-cleaner.c:94:2: error: implicit declaration of f=
+unction 'vfree' [-Werror=3Dimplicit-function-declaration]
+drivers/md/dm-cache-policy-cleaner.c: In function 'alloc_cache_blocks_with_=
+hash':
+drivers/md/dm-cache-policy-cleaner.c:101:13: warning: assignment makes poin=
+ter from integer without a cast [enabled by default]
+cc1: some warnings being treated as errors
+make[3]: *** [drivers/md/dm-cache-policy-cleaner.o] Error 1
+drivers/md/dm-cache-policy-mq.c: In function 'alloc_bitset':
+drivers/md/dm-cache-policy-mq.c:32:2: error: implicit declaration of functi=
+on 'vzalloc' [-Werror=3Dimplicit-function-declaration]
+drivers/md/dm-cache-policy-mq.c:32:2: warning: return makes pointer from in=
+teger without a cast [enabled by default]
+drivers/md/dm-cache-policy-mq.c: In function 'free_bitset':
+drivers/md/dm-cache-policy-mq.c:37:2: error: implicit declaration of functi=
+on 'vfree' [-Werror=3Dimplicit-function-declaration]
+cc1: some warnings being treated as errors
+make[3]: *** [drivers/md/dm-cache-policy-mq.o] Error 1
+drivers/md/dm-cache-target.c: In function 'alloc_bitset':
+drivers/md/dm-cache-target.c:46:2: error: implicit declaration of function =
+'vzalloc' [-Werror=3Dimplicit-function-declaration]
+drivers/md/dm-cache-target.c:46:2: warning: return makes pointer from integ=
+er without a cast [enabled by default]
+drivers/md/dm-cache-target.c: In function 'free_bitset':
+drivers/md/dm-cache-target.c:57:2: error: implicit declaration of function =
+'vfree' [-Werror=3Dimplicit-function-declaration]
 
-Caused by commit "hlist: drop the node parameter from iterators" from the
-akpm tree interacting with commits b5dc50616996 ("A cache policy that
-uses a multiqueue ordered by recent hit") and 9c44464a0aed ("A simple
-cache policy that writes back all data to the origin") from the
-device-mapper tree.
+Caused by commits d5d224ab22e4 ("Add a target that allows a fast device
+such as an SSD to be used as a"), b5dc50616996 ("A cache policy that uses
+a multiqueue ordered by recent hit") and 9c44464a0aed ("A simple cache
+policy that writes back all data to the origin") from the device-mapper
+tree.
 
-I applied the following merge fix patch:
+I added the following fix patch for today:
 
+=46rom 0fe0a64ba2a600a10725318998c19e0b3820e6d7 Mon Sep 17 00:00:00 2001
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 28 Feb 2013 12:09:42 +1100
-Subject: [PATCH] hlist-drop-the-node-parameter-from-iterators-dm-cache-poli=
-cy-fix
+Date: Thu, 28 Feb 2013 13:11:49 +1100
+Subject: [PATCH] md: use of vmalloc et al needs vmalloc.h
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/md/dm-cache-policy-cleaner.c | 3 +--
- drivers/md/dm-cache-policy-mq.c      | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/md/dm-cache-policy-cleaner.c | 1 +
+ drivers/md/dm-cache-policy-mq.c      | 1 +
+ drivers/md/dm-cache-target.c         | 1 +
+ 3 files changed, 3 insertions(+)
 
 diff --git a/drivers/md/dm-cache-policy-cleaner.c b/drivers/md/dm-cache-pol=
 icy-cleaner.c
-index 6b0fdb0..43c270a 100644
+index 43c270a..f43896f 100644
 --- a/drivers/md/dm-cache-policy-cleaner.c
 +++ b/drivers/md/dm-cache-policy-cleaner.c
-@@ -142,10 +142,9 @@ static struct wb_cache_entry *lookup_cache_entry(struc=
-t policy *p, dm_oblock_t o
- 	struct hash *hash =3D &p->chash;
- 	unsigned h =3D hash_64(from_oblock(oblock), hash->hash_bits);
- 	struct wb_cache_entry *cur;
--	struct hlist_node *tmp;
- 	struct hlist_head *bucket =3D &hash->table[h];
+@@ -12,6 +12,7 @@
+ #include <linux/hash.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
++#include <linux/vmalloc.h>
 =20
--	hlist_for_each_entry(cur, tmp, bucket, hlist) {
-+	hlist_for_each_entry(cur, bucket, hlist) {
- 		if (cur->oblock =3D=3D oblock) {
- 			/* Move upfront bucket for faster access. */
- 			hlist_del(&cur->hlist);
+ /*----------------------------------------------------------------*/
+=20
 diff --git a/drivers/md/dm-cache-policy-mq.c b/drivers/md/dm-cache-policy-m=
 q.c
-index cd4582d..63ec258 100644
+index 63ec258..d62d0c1 100644
 --- a/drivers/md/dm-cache-policy-mq.c
 +++ b/drivers/md/dm-cache-policy-mq.c
-@@ -369,10 +369,9 @@ static struct entry *hash_lookup(struct mq_policy *mq,=
- dm_oblock_t oblock)
- {
- 	unsigned h =3D hash_64(from_oblock(oblock), mq->hash_bits);
- 	struct hlist_head *bucket =3D mq->table + h;
--	struct hlist_node *tmp;
- 	struct entry *e;
+@@ -11,6 +11,7 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
++#include <linux/vmalloc.h>
 =20
--	hlist_for_each_entry(e, tmp, bucket, hlist)
-+	hlist_for_each_entry(e, bucket, hlist)
- 		if (e->oblock =3D=3D oblock) {
- 			hlist_del(&e->hlist);
- 			hlist_add_head(&e->hlist, bucket);
+ #define DM_MSG_PREFIX "cache-policy-mq"
+ #define MQ_VERSION	"1.0.0"
+diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-target.c
+index 630f769..1215050 100644
+--- a/drivers/md/dm-cache-target.c
++++ b/drivers/md/dm-cache-target.c
+@@ -14,6 +14,7 @@
+ #include <linux/mempool.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
++#include <linux/vmalloc.h>
+=20
+ #define DM_MSG_PREFIX "cache"
+=20
 --=20
 1.8.1
 
@@ -122,25 +125,25 @@ index cd4582d..63ec258 100644
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__28_Feb_2013_12_15_22_+1100_m7tVkt1j_Kljw6+H
+--Signature=_Thu__28_Feb_2013_13_19_30_+1100_aylyw6bWy90j0Yn9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRLq+qAAoJEECxmPOUX5FEYBUQAKJw8Eo6oHoDosCplPGgQ9PG
-6IV675L6c7+5ULIKyZzeCRUujiNxDxT1Ncdgiv8w8ye2BjUCoVfnmqtYG9MZLV8b
-Cn7FsVNZgnYQ07ZBTEW0JcSSfBexpT7yLW0Ts6GcYcmgt6g+Fb/+1DsHm6GpMWMo
-h9mwzHibzXEm5H4U84yi1xkzTBWfsORaO+9h0peu305FNkrJsFW5CHaBNNohID0L
-qs47/32R4DVdILeJjKcZAFB/VquYJU+ERbFMS2jGehotMSKLSvEffXrGfrPndPgB
-8GiVqiPPCNHgOSqkCFL5xOtqMiwt22hMv6aZ1JTLAlb3Z4E4q7HVRlkosiCgrhSX
-dTHWco1v10g2D/e4lRF/C5c4lGilTmcBJXHtbPQtShcYovclbJ+p5v1huPdaxhaE
-54uIEdb8yzqplLFKi8Kfhm4KNsYTVWJpWqr00XDIAw+DkS6+fwBWZlRyBTnTS8aF
-5cwE3r3w83OrIj2kowGDX2XulAI+FRjgQLY5PvTAUlJXtRbjyeuzKtLo6Y5SJy+0
-fK8aeHbBm3V4/+HF3xKQi6HDxLDfaru0DGUs9T6bBfsnrzN0U+0BNLokaBUaFThh
-oYfH2U2yhtKk4XHKRm8IURRCP0LwQ5e0+BGEqbBeOwW4W8QWKbRDdt7Wnc571U+b
-udEu3PIst5Hfhp25AVyL
-=Oh+w
+iQIcBAEBCAAGBQJRLr6yAAoJEECxmPOUX5FEFyIQAJAfSXyMYGaECzNyc58RhPnF
+dnODB251ERZbtydmMtZEkDmdLrEsZGwRrEkYQK6X23xotc0o5SJtCX9Vo9PpkOHQ
+B2lLez22q+D0IBw3AoWIOgcVI3sYByyjvayv9pNDZJkUl8AD0kkI84bgY5jnngWY
+cE3qG8cxYlzHi8DAHOHPRDUB635MZiUWGu4JH+D/upumlfR0wCYciXcR4NUDh9Bo
+4uh3jt4P8J/CsOyu5SeHdpc2Ni06gxqit+glOOeBw5PVdPnhyvGstvRyUs+sLbX5
+GAVv0Nc64fHuXPtrZDgwl78wVdGNMzXbHMkS0Y7/Qkl8yB5iDn2mJKsKK/jsKDtt
+2jCwVOvaskTyH4uFt59alC3FUtShI9OfUgWNvgUK/gzET8gn/y1ZSrRXYyuxqDZP
+jyfjg8T25gcpZEFCFz2ijsUfmQgaSEDirKmfO9b8w+T7jjurYxluXRR9U9mSHUsF
++1S5KMSjgWND7lAkYIKfngvpYuOHy8l08S7cdO7DyE3ly9u7YO61wWhjfSNdi/3O
+5NLkR9fX2Y1xT9ubGep39pksWarjGAMzB+VShyI5bkSRoc9T2TJGlnXn0FkIQvWr
+PRCSE7+RrGYwn+BkaXid6ahxZxxsnvdo5SKqUVeJ0FS0dKroZZqC5TfSxuGkOiSg
+eJBR34rZFrKk0jO7U1hg
+=lfZo
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__28_Feb_2013_12_15_22_+1100_m7tVkt1j_Kljw6+H--
+--Signature=_Thu__28_Feb_2013_13_19_30_+1100_aylyw6bWy90j0Yn9--
