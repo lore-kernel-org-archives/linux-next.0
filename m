@@ -1,25 +1,29 @@
-From: Paulo Zanoni <przanoni@gmail.com>
-Subject: Re: [Intel-gfx] [git pull] drm merge for 3.9-rc1
-Date: Thu, 28 Feb 2013 11:31:45 -0300
-Message-ID: <CA+gsUGQ-cn00=emFkHeWi6akL9TrJ9CV6ikv7C62fhLYMtB=HQ@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: [git pull] drm merge for 3.9-rc1
+Date: Thu, 28 Feb 2013 18:07:01 +0100
+Message-ID: <CA+icZUU1ckwT8HiyYP=aT+57gBOu7ZVDNC=as6yzAG=Xpma5AQ@mail.gmail.com>
 References: <CA+icZUXG7WgRap2-oQGBr_s=QbE0QW6_zChDRqC-eEzrWR3Y5g@mail.gmail.com>
 	<CA+icZUUP0hLjkTjsAGbhoT1QG55X2062G5KCCDsKkhDyM_SQEg@mail.gmail.com>
 	<20130228111819.GF11892@cantiga.alporthouse.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:59333 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751332Ab3B1Obp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Feb 2013 09:31:45 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org>
 In-Reply-To: <20130228111819.GF11892@cantiga.alporthouse.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Sender: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
+Errors-To: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
 To: Chris Wilson <chris@chris-wilson.co.uk>, Sedat Dilek <sedat.dilek@gmail.com>, Dave Airlie <airlied@gmail.com>, DRI <dri-devel@lists.freedesktop.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi
-
-2013/2/28 Chris Wilson <chris@chris-wilson.co.uk>:
+On Thu, Feb 28, 2013 at 12:18 PM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
 > On Thu, Feb 28, 2013 at 12:06:28AM +0100, Sedat Dilek wrote:
 >> On Wed, Feb 27, 2013 at 11:36 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
 >> > Hi,
@@ -65,29 +69,16 @@ Hi
 > %i), status=%08x!\n",
 > +                         has_aux_irq, status);
 > +       {
-
-In addition to this, after the problem happens can you please dump the
-registers 0x44008 (DEIIR) and 0xC4008 (SDEIIR)? You can do this either
-by running intel-reg-read (from intel-gpu-tools) or by changing the
-DRM_ERROR above to also print the result of I915_READ(0x44008) and
-I915_READ(0xC4008).
-
-If you conclude that the value of 0x44008 is 0x0 while the value of
-0xC4008 is not, then this patch should help:
-https://patchwork.kernel.org/patch/2177841/
-
 >
 > That second '{' is the source of the compile error.
+
+Schei**e, OK I try with a v2.
+
+A hint how to force the error?
+
+- Sedat -
+
 > -Chris
 >
 > --
 > Chris Wilson, Intel Open Source Technology Centre
-> _______________________________________________
-> Intel-gfx mailing list
-> Intel-gfx@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/intel-gfx
-
-
-
--- 
-Paulo Zanoni
