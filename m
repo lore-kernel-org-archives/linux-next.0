@@ -1,40 +1,71 @@
-From: Mark Jackson <mpfj-list@mimc.co.uk>
-Subject: Re: linux-next: JFFS2 corruption
-Date: Thu, 28 Feb 2013 09:23:13 +0000
-Message-ID: <512F2201.6010407@mimc.co.uk>
-References: <512CD9BA.3080300@mimc.co.uk> <20130227101824.6e18ba21fb99070594420f29@canb.auug.org.au> <512E2241.9040705@mimc.co.uk> <518397C60809E147AF5323E0420B992E3EA8EF4A@DBDE01.ent.ti.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Subject: Re: [git pull] drm merge for 3.9-rc1
+Date: Thu, 28 Feb 2013 11:18:19 +0000
+Message-ID: <20130228111819.GF11892@cantiga.alporthouse.com>
+References: <CA+icZUXG7WgRap2-oQGBr_s=QbE0QW6_zChDRqC-eEzrWR3Y5g@mail.gmail.com>
+ <CA+icZUUP0hLjkTjsAGbhoT1QG55X2062G5KCCDsKkhDyM_SQEg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <518397C60809E147AF5323E0420B992E3EA8EF4A@DBDE01.ent.ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Philip, Avinash" <avinashphilip@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Woodhouse <dwmw2@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, lkml <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:41237 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751127Ab3B1LSc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Feb 2013 06:18:32 -0500
+Content-Disposition: inline
+In-Reply-To: <CA+icZUUP0hLjkTjsAGbhoT1QG55X2062G5KCCDsKkhDyM_SQEg@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Dave Airlie <airlied@gmail.com>, DRI <dri-devel@lists.freedesktop.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
-On 28/02/13 04:11, Philip, Avinash wrote:
-> On Wed, Feb 27, 2013 at 20:42:01, Mark Jackson wrote:
->>
->> Okay, just tested 3v8 plus:-
->>
->> https://patchwork.kernel.org/patch/1931251/
->> https://patchwork.kernel.org/patch/1931221/
->> https://patchwork.kernel.org/patch/1931201/
->> and changed drivers/mtd/nand/elm.c, line 388 "ti,am33xx-elm" to "ti,am3352-elm"
->>
->> This produces an identical corruption.
->>
->> I have also tested next-20130225 and next-20130227, and both cause the same corruption.
-> 
-> JFFS2 is not supported in am335x with BCH8 ecc scheme because of ECC layout constraints.
-> Reasons for disabling JFFS2 support documented in the wiki
-> http://processors.wiki.ti.com/index.php/AM335x_JFFS2_Support_Guide#Reasons_for_disabling_JFFS2_support
+On Thu, Feb 28, 2013 at 12:06:28AM +0100, Sedat Dilek wrote:
+> On Wed, Feb 27, 2013 at 11:36 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> > Hi,
+> >
+> > I am seeing this also on Linux-Next.
+> >
+> > /var/log/kern.log:Feb 27 22:52:35 fambox kernel: [   28.202381]
+> > [drm:intel_dp_aux_wait_done] *ERROR* dp aux hw did not signal timeout
+> > (has irq: 1)!
+> > /var/log/kern.log:Feb 27 22:52:35 fambox kernel: [   28.210588]
+> > [drm:intel_dp_aux_wait_done] *ERROR* dp aux hw did not signal timeout
+> > (has irq: 1)!
+> >
+> > /var/log/kern.log.1:Feb 22 07:36:04 fambox kernel: [   27.408280]
+> > [drm:intel_dp_aux_wait_done] *ERROR* dp aux hw did not signal timeout
+> > (has irq: 1)!
+> >
+> > This seems to be hard reproducible...
+> > Laptop-LCD... Sandybridge Mobile-GT2.
+> >
+> > Is there a way to force the error?
+> >
+> > Possible patch see [1].
+> >
+> > - Sedat -
+> >
+> > [1] https://patchwork.kernel.org/patch/2192721/
 
-Aha ... thanks for the link.
+That was:
 
-I'll move over to UBIFS then, although I did have issues with that too (which is why I went back
-to JFFS2), but I'll start another thread if needs be.
++	if (!done) {
++		status = I915_READ_NOTRACE(ch_ctl);
++		DRM_ERROR("dp aux hw did not signal timeout (has irq:
+%i), status=%08x!\n",
++			  has_aux_irq, status);
++	}
 
-Cheers
-Mark J.
+You applied
+
++	if (!done) {
++		status = I915_READ_NOTRACE(ch_ctl);
++		DRM_ERROR("dp aux hw did not signal timeout (has irq:
+%i), status=%08x!\n",
++			  has_aux_irq, status);
++	{
+
+That second '{' is the source of the compile error.
+-Chris
+
+-- 
+Chris Wilson, Intel Open Source Technology Centre
