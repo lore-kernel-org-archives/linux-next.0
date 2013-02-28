@@ -1,26 +1,31 @@
-From: Alasdair G Kergon <agk@redhat.com>
-Subject: Re: [dm-devel] linux-next: Tree for Feb 28 (dm-cache)
-Date: Thu, 28 Feb 2013 19:58:05 +0000
-Message-ID: <20130228195805.GB8373@agk.fab.redhat.com>
-References: <20130228132713.b88634cfd1eb2e19770997ad@canb.auug.org.au> <512FA744.1080100@infradead.org>
+From: Mark Salter <msalter@redhat.com>
+Subject: no-MMU build failure
+Date: Thu, 28 Feb 2013 15:08:24 -0500
+Message-ID: <1362082104.7319.13.camel@t520.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:13789 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:54354 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750916Ab3B1T6M (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Feb 2013 14:58:12 -0500
-Content-Disposition: inline
-In-Reply-To: <512FA744.1080100@infradead.org>
+	id S1752585Ab3B1UIZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Feb 2013 15:08:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, dmdevel <dm-devel@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next <linux-next@vger.kernel.org>
 
-On Thu, Feb 28, 2013 at 10:51:48AM -0800, Randy Dunlap wrote:
-> Also, drivers/md/Kconfig contains "select DM_PRISON" but there is no
-> DM_PRISON defined anywhere that I can find...
- 
-Thanks! Hopefully fixed now: It's DM_BIO_PRISON.
+I'm seeing a build failure in linux-next for c6x (no-MMU):
 
-Alasdair
+  /linux-next/mm/shmem.c: In function 'shmem_file_setup':
+  /linux-next/mm/shmem.c:2936:2: error: 'error' undeclared (first use in this function)
+
+Looks like it is due to this commit:
+
+  commit 6b4d0b2793337cc8943cd2948388218e2777400c
+  Author: Al Viro <viro@zeniv.linux.org.uk>
+  Date:   Thu Feb 14 21:37:26 2013 -0500
+
+      clean shmem_file_setup() a bit
+    
+--Mark
