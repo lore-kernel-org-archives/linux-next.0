@@ -1,73 +1,40 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: [next-20130227] kernel NULL pointer dereference [ watchdog | perf
- related ? ]
-Date: Thu, 28 Feb 2013 08:27:36 +0100
-Message-ID: <CA+icZUUQPmo+dNRA2W_QMJ9zSwYPpqMMnr5brmE==TzG9bS8sw@mail.gmail.com>
-References: <CA+icZUUsedHPqZc5jXQ_AqAbfmTMu5WW8CJ+vnHwL69ofw7uTw@mail.gmail.com>
-	<20130227122302.GA5678@pd.tnic>
-	<CA+icZUVXDfOhztQtrOxyYaHutpx=iVpPGmRT0PzP7045_mjh6w@mail.gmail.com>
-	<CA+icZUXJb5O7ML-xnQq8Zoa46NmaGZp2Xaqj6fJL+vudPeQTLw@mail.gmail.com>
-	<20130227150733.GB22383@htj.dyndns.org>
-	<CA+icZUXGGQjKAwAET81pioAfZBw8mj3MO49Mm3xc35-UY=BgTg@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Mark Jackson <mpfj-list@mimc.co.uk>
+Subject: Re: linux-next: JFFS2 corruption
+Date: Thu, 28 Feb 2013 09:23:13 +0000
+Message-ID: <512F2201.6010407@mimc.co.uk>
+References: <512CD9BA.3080300@mimc.co.uk> <20130227101824.6e18ba21fb99070594420f29@canb.auug.org.au> <512E2241.9040705@mimc.co.uk> <518397C60809E147AF5323E0420B992E3EA8EF4A@DBDE01.ent.ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f51.google.com ([74.125.82.51]:38524 "EHLO
-	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751345Ab3B1H1i (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Feb 2013 02:27:38 -0500
-In-Reply-To: <CA+icZUXGGQjKAwAET81pioAfZBw8mj3MO49Mm3xc35-UY=BgTg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Wim Van Sebroeck <wim@iguana.be>, Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, linux-watchdog@vger.kernel.org, x86@kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <518397C60809E147AF5323E0420B992E3EA8EF4A@DBDE01.ent.ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Philip, Avinash" <avinashphilip@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Woodhouse <dwmw2@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, lkml <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 28, 2013 at 8:24 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Wed, Feb 27, 2013 at 4:07 PM, Tejun Heo <tj@kernel.org> wrote:
->> Replying here too just in case.
+On 28/02/13 04:11, Philip, Avinash wrote:
+> On Wed, Feb 27, 2013 at 20:42:01, Mark Jackson wrote:
 >>
->> On Wed, Feb 27, 2013 at 02:08:40PM +0100, Sedat Dilek wrote:
->>> >> static inline void *idr_find(struct idr *idr, int id)
->>> >> {
->>> >>         struct idr_layer *hint = rcu_dereference_raw(idr->hint);
->>> >>     86d7:       48 8b 05 00 00 00 00    mov    0x0(%rip),%rax        # 86de <perf_init_event+0x2e>
->>> >>                         86da: R_X86_64_PC32     .bss+0xfc
->>> >>
->>> >>         if ((id & ~IDR_MASK) == hint->prefix)
->>> >>     86de:       89 f2                   mov    %esi,%edx
->>> >>     86e0:       30 d2                   xor    %dl,%dl
->>> >>     86e2:       3b 10                   cmp    (%rax),%edx              <--- trapping insn
->>> >>     86e4:       74 4a                   je     8730 <perf_init_event+0x80>
->>> >>                 return rcu_dereference_raw(hint->ary[id & IDR_MASK]);
->>> >>
->>> >>
->>> >> So 'hint' is NULL as RAX above confirms and we're not supposed to deref
->>> >> NULL things.
->>> >>
->>> >> Looking at 29cf29e1fbb875019713eb55cf27ec35f1e5fa5e, Tejun should
->>> >> probably know. CCed.
+>> Okay, just tested 3v8 plus:-
 >>
->> Fix was posted some days ago.
+>> https://patchwork.kernel.org/patch/1931251/
+>> https://patchwork.kernel.org/patch/1931221/
+>> https://patchwork.kernel.org/patch/1931201/
+>> and changed drivers/mtd/nand/elm.c, line 388 "ti,am33xx-elm" to "ti,am3352-elm"
 >>
->>   http://thread.gmane.org/gmane.linux.kernel.next/26213
+>> This produces an identical corruption.
 >>
->> I got Andrew's patch added to -mm message a week ago.  Not sure why it
->> still hasn't showed up.  Andrew, any ideas?
->>
->> Thanks.
->>
->> --
->> tejun
->
-> AFAICS the updated (correct) patch "idr: implement lookup hint" is now
-> in mainline.
->
+>> I have also tested next-20130225 and next-20130227, and both cause the same corruption.
+> 
+> JFFS2 is not supported in am335x with BCH8 ecc scheme because of ECC layout constraints.
+> Reasons for disabling JFFS2 support documented in the wiki
+> http://processors.wiki.ti.com/index.php/AM335x_JFFS2_Support_Guide#Reasons_for_disabling_JFFS2_support
 
-...but not in next-20130228 yet (tomorrow's Linux-Next will have it).
+Aha ... thanks for the link.
 
-- Sedat -
+I'll move over to UBIFS then, although I did have issues with that too (which is why I went back
+to JFFS2), but I'll start another thread if needs be.
 
-> - Sedat -
->
-> [1] http://git.kernel.org/?p=linux/kernel/git/torvalds/linux.git;a=commitdiff;h=0ffc2a9c8072969253a20821c2c733a2cbb4c7c7
+Cheers
+Mark J.
