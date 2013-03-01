@@ -1,43 +1,93 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: build failure after merge of the ftrace tree
-Date: Thu, 28 Feb 2013 22:06:31 -0500
-Message-ID: <1362107191.1231.25.camel@gandalf.local.home>
-References: <20130301134738.ce925e1643a35b0a2c4ff275@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Fri, 1 Mar 2013 15:31:51 +1100
+Message-ID: <20130301153151.1c44c6af6283a3be8c715a1a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__1_Mar_2013_15_31_51_+1100_NpnacA0mVjplfHC4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:13453 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750884Ab3CADGd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Feb 2013 22:06:33 -0500
-In-Reply-To: <20130301134738.ce925e1643a35b0a2c4ff275@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51221 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750902Ab3CAEcB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Feb 2013 23:32:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 2013-03-01 at 13:47 +1100, Stephen Rothwell wrote:
-> Hi Steven,
-> 
-> After merging the ftrace tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> kernel/trace/trace_kdb.c: In function 'ftrace_dump_buf':
-> kernel/trace/trace_kdb.c:29:33: error: invalid type argument of '->' (have 'struct trace_array_cpu')
-> kernel/trace/trace_kdb.c:86:33: error: invalid type argument of '->' (have 'struct trace_array_cpu')
-> 
-> Caused by commit eaac1836c10e ("tracing: Replace the static global
-> per_cpu arrays with allocated per_cpu").
-> 
-> I have used the ftrace tree from next-20130228 for today.
+--Signature=_Fri__1_Mar_2013_15_31_51_+1100_NpnacA0mVjplfHC4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, I'll take a look into it. I also found that my latest push also
-broke the ftrace snapshot feature. I'm currently bisecting what caused
-that.
+Hi Andrew,
 
-Hmm, interesting though, I thought it succeeded in building against an
-allyesconfig?? Grumble, I'll have to run it through the tests again to
-make sure I didn't screw something up, like test the wrong branch :-p
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
--- Steve
+fs/aio.c: In function 'exit_aio':
+fs/aio.c:522:60: error: macro "hlist_for_each_entry_safe" passed 5 argument=
+s, but takes just 4
+fs/aio.c:522:2: error: 'hlist_for_each_entry_safe' undeclared (first use in=
+ this function)
+fs/aio.c:522:2: note: each undeclared identifier is reported only once for =
+each function it appears in
+fs/aio.c:522:62: error: expected ';' before '{' token
+
+I added this fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 1 Mar 2013 15:30:24 +1100
+Subject: [PATCH] aio: fixup for hlist_for_each_entry_safe API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/aio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index b36c2b6..2512232 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -517,9 +517,9 @@ EXPORT_SYMBOL(wait_on_sync_kiocb);
+ void exit_aio(struct mm_struct *mm)
+ {
+ 	struct kioctx *ctx;
+-	struct hlist_node *p, *n;
++	struct hlist_node *n;
+=20
+-	hlist_for_each_entry_safe(ctx, p, n, &mm->ioctx_list, list) {
++	hlist_for_each_entry_safe(ctx, n, &mm->ioctx_list, list) {
+ 		/*
+ 		 * We don't need to bother with munmap() here -
+ 		 * exit_mmap(mm) is coming and it'll unmap everything.
+--=20
+1.8.1
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__1_Mar_2013_15_31_51_+1100_NpnacA0mVjplfHC4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRMC83AAoJEECxmPOUX5FEJ6QP/1c7iwHWt6f8AVZpQVlQpxFK
+F45AR/DTv5iMJz8Jg/09jfdZFP7OhDxevxu6NdL4GEA7nYz1rFGAqsry/BP0xBsB
+Q3ddlCAGoSdNgI6YLWHFZNik2/9kuLei0T406cqRG9ybflE1rFSNcqqP6f+LJO3w
+Aqb+CFExfmenYp6AF0gX1ADSm9KnT8I2Fe74gjLLDSiWbFIZtHnrJ2386QQcG57a
+CAlIslqjhGTsvsxvcfJGv7W5wfwu1NL6t1/AYzwyg64yuP31GXgSrmvmOMg8hnNi
+jGDk2ojCGoem77ne5QRU4WOGRHbixQfH0rDgTGt+c+YspLEcSYSbzkgudoGkJ9zr
+cEGcJna3nll5fdLBW675mBFH40u1tNI87S7Bc2rf08AOiAiWnO8gy9xYLbYpIuqJ
+EXYw+5sOllUisHBs6fVKevvBKqcb6Rcfs0vIK+cvSSFC+k6SRz6hhPxIscJuGKcx
+/1upQ44yE53MCTn2iE4DJ6TlNM7raKC7c9hGPuWdUHFLod3TlCEdIEQxw0RE/8ls
+5Y8IbGoNJ6RBCCbgHPB5LqaQIdGSyB6cdzan+QbsmZKIHVNScvMoti170AfmJvM8
+JjCgDpgOKjM0xLLH/LWSmttHTCTujPjxzEKYlyzjJqp6fxjJYFaKVHKgZmE60Adg
+qWuao6Uuxyjt2QpNTF4H
+=uNVZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_Mar_2013_15_31_51_+1100_NpnacA0mVjplfHC4--
