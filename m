@@ -1,58 +1,28 @@
 From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: Pulling linux-next GIT
-Date: Fri, 1 Mar 2013 14:35:13 +0100
-Message-ID: <CA+icZUUUEAe+ZEsonW1CXjXLP3g97WVmC0xg0GXwB2oKrXUgEg@mail.gmail.com>
-References: <CA+icZUXWA1JQ11Ph-JL8snYAvc-FvMCZGBvTi9vNLwhyn-3S2g@mail.gmail.com>
-	<CA+icZUXJNDTFSjh4MnUjx7hsX8sxcP2E5DEANe757CcDuayp5g@mail.gmail.com>
-	<CA+icZUWQsKo7dX9f4uVP7_L0iX2SuCrSXUjv+G_s2SHQ7+0pbg@mail.gmail.com>
+Subject: Re: [PATCH] libata-acpi.c: fix copy and paste mistake in ata_acpi_register_power_resource
+Date: Fri, 1 Mar 2013 15:33:02 +0100
+Message-ID: <CA+icZUWHK-=gW_aLH-YsYKdwVUZBhmyOGACjY3MUzH+pL1eg7A@mail.gmail.com>
 Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:34882 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750696Ab3CANfY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Mar 2013 08:35:24 -0500
-In-Reply-To: <CA+icZUWQsKo7dX9f4uVP7_L0iX2SuCrSXUjv+G_s2SHQ7+0pbg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, ftpadmin@kernel.org, webmaster@kernel.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Sander Eikelenboom <linux@eikelenboom.it>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Linux PM List <linux-pm@lists.linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
-2 hours passed - same problems!
+Original posting see [1].
 
-I looked at <www.kernel.org>, but there is no message in the news area.
+Good catch!
+
+Latest Linux-Next (next-20130301) is also affected!
+
+The patch can be easily grabbed from [2].
+
+Sander pointed to the mismatch in [3].
 
 - Sedat -
 
-On Fri, Mar 1, 2013 at 11:55 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> GitWeb service says:
->
-> 503 - The load average on the server is too high
->
-> - Sedat -
->
-> On Fri, Mar 1, 2013 at 11:53 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> Hmm, cloning also not possible:
->>
->> $ LANG=C LC_ALL=C git clone
->> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->> Cloning into 'linux-next'...
->> fatal: Could not read from remote repository.
->>
->> Please make sure you have the correct access rights
->> and the repository exists.
->>
->> - Sedat -
->>
->> On Fri, Mar 1, 2013 at 11:49 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>> Hi,
->>>
->>> I have here troubles pulling from linux-next GIT, also GitWeb service
->>> is not reachable or slow.
->>> Server reports to high working load.
->>>
->>> Just in case this is not known - not only for the admins.
->>>
->>> Regards,
->>> - Sedat -
+[1] http://marc.info/?l=linux-kernel&m=136213666529000&w=2
+[2] https://patchwork.kernel.org/patch/2200901/
+[3] http://git.kernel.org/?p=linux/kernel/git/torvalds/linux.git;a=commitdiff;h=bc9b6407bd6df3ab7189e5622816bbc11ae9d2d8#patch5
