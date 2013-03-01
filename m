@@ -1,76 +1,56 @@
-From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Subject: Re: linux-next: build failure after merge of the nfsd tree
-Date: Fri, 1 Mar 2013 01:19:42 +0000
-Message-ID: <4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EB@sacexcmbx05-prd.hq.netapp.com>
-References: <20130301120401.bcb4a3c571cb0d2b7af96a4b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bluetooth tree with Linus' tree
+Date: Fri, 1 Mar 2013 12:54:25 +1100
+Message-ID: <20130301125425.1819c6cc77fb64be71351ade@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="_002_4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EBsacexcmbx05prdh_"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx12.netapp.com ([216.240.18.77]:33745 "EHLO mx12.netapp.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751509Ab3CABTo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Feb 2013 20:19:44 -0500
-In-Reply-To: <20130301120401.bcb4a3c571cb0d2b7af96a4b@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__1_Mar_2013_12_54_25_+1100_8Z82eTK66fLT_ln6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ying Xue <ying.xue@windriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Dean Jenkins <Dean_Jenkins@mentor.com>
+List-Id: linux-next.vger.kernel.org
 
---_002_4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EBsacexcmbx05prdh_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <B81173E0E26CFE4FB7481B1160E563D8@tahoe.netapp.com>
+--Signature=_Fri__1_Mar_2013_12_54_25_+1100_8Z82eTK66fLT_ln6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2013-03-01 at 12:04 +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the nfsd tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->=20
-> net/sunrpc/xprtsock.c:1923:30: error: 'struct rpc_task' has no member nam=
-ed 'tk_xprt'
->=20
-> Caused by commit dc107402ae06 ("SUNRPC: make AF_LOCAL connect
-> synchronous") interacting with commit 77102893ae68 ("SUNRPC: Nuke the
-> tk_xprt macro") from Linus' tree.
->=20
-> I have no idea how to fix this, so I have used the version of the nfsd
-> tree from next-20130228 for today.
+Hi Gustavo,
 
-Hi Bruce,
+Today's linux-next merge of the bluetooth tree got a conflict in
+net/bluetooth/rfcomm/core.c between commit 25cc4ae913a4 ("net: remove
+redundant check for timer pending state before del_timer") from Linus' tree
+and commit 5c87e6efd14d ("Bluetooth: Avoid rfcomm_session_timeout using
+freed session") from the bluetooth tree.
 
-The attached patch should suffice to fix this up.
-
-Cheers
-  Trond
+I fixed it up (I just used the bluetooth tree version) and can carry the
+fix as necessary (no action is required).
 
 --=20
-Trond Myklebust
-Linux NFS client maintainer
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-NetApp
-Trond.Myklebust@netapp.com
-www.netapp.com
+--Signature=_Fri__1_Mar_2013_12_54_25_+1100_8Z82eTK66fLT_ln6
+Content-Type: application/pgp-signature
 
---_002_4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EBsacexcmbx05prdh_
-Content-Type: text/x-patch; name="patches_bruce.dif"
-Content-Description: patches_bruce.dif
-Content-Disposition: attachment; filename="patches_bruce.dif"; size=471;
-	creation-date="Fri, 01 Mar 2013 01:19:42 GMT";
-	modification-date="Fri, 01 Mar 2013 01:19:42 GMT"
-Content-ID: <A3DD39FAB3A2EC46BA009350BD90244D@tahoe.netapp.com>
-Content-Transfer-Encoding: base64
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-ZGlmZiAtLWdpdCBhL25ldC9zdW5ycGMveHBydHNvY2suYyBiL25ldC9zdW5ycGMveHBydHNvY2su
-Yw0KaW5kZXggMmU3ZTA5Yy4uYzFkODQ3NiAxMDA2NDQNCi0tLSBhL25ldC9zdW5ycGMveHBydHNv
-Y2suYw0KKysrIGIvbmV0L3N1bnJwYy94cHJ0c29jay5jDQpAQCAtMTkxOCw5ICsxOTE4LDggQEAg
-b3V0Og0KIAlyZXR1cm4gc3RhdHVzOw0KIH0NCiANCi1zdGF0aWMgdm9pZCB4c19sb2NhbF9jb25u
-ZWN0KHN0cnVjdCBycGNfdGFzayAqdGFzaykNCitzdGF0aWMgdm9pZCB4c19sb2NhbF9jb25uZWN0
-KHN0cnVjdCBycGNfeHBydCAqeHBydCwgc3RydWN0IHJwY190YXNrICp0YXNrKQ0KIHsNCi0Jc3Ry
-dWN0IHJwY194cHJ0ICp4cHJ0ID0gdGFzay0+dGtfeHBydDsNCiAJc3RydWN0IHNvY2tfeHBydCAq
-dHJhbnNwb3J0ID0gY29udGFpbmVyX29mKHhwcnQsIHN0cnVjdCBzb2NrX3hwcnQsIHhwcnQpOw0K
-IAlpbnQgcmV0Ow0KIA0K
+iQIcBAEBCAAGBQJRMApRAAoJEECxmPOUX5FEticP/jnWQCWky1nMBKuz70fEQC87
+VIdFkpBiJ3XinwiEpFeVuFjdmEstj+92YjAWgPeqV1aSek2Ju0mUQievMPE3Ltn8
+c1aNnfTGK/Q6PQjTTuAi0P45nmbTQhffXg4oiOa4UeNOZzKF/msq8Et9w//oHarK
+fB3gg79bB88c9sH0g2YWS04vGUpggmFToaXXjer4caNIXti0qXOJL17ouloJ23qT
+K3O1kDebDuJg9f8d/XbHTTrVgxyz9O/uMbblV9N/gqxLIsO/9mnV4PbZ3TjkcPRd
+YS60ZqTOZENm4vxbxskmfSrMTxsE9Oz2Wl1XFtu/gv8dUUgAYzAAo+jCYIb6Vmy2
+AoQzoAQY0sXDEqut36Hqrv2dNILD5Qb8YUj5/+Tc+ZsVVisGsnHsUgiEDR3/MTSM
+EKex/WayY8D3dXVUGI8trK+7l03CHM8VmITx60p2tCF82NaJegwjZMzMRflrPfqX
+byAmEbehR8xZ15ixvxSXdSHEHlFGsC7dEQVe77frAyeZgJD3N3DZgRFe0le7gGeo
+juIOycH49dltamgfKdp/DVMFVDpGpX2/XariZkfwKCtTu/pZ/QFZ5Zzoj6nzkM2f
+sxtFhekUSRyGNXpxrNxw+uBKnCG+DKqWQqpVAXoJ25K4tsHT8+u614Nh0tZvbsY0
+o3shdbcVOPnuOPX59FuW
+=TSIf
+-----END PGP SIGNATURE-----
 
---_002_4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EBsacexcmbx05prdh_--
+--Signature=_Fri__1_Mar_2013_12_54_25_+1100_8Z82eTK66fLT_ln6--
