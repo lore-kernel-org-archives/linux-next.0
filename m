@@ -1,63 +1,76 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfsd tree
-Date: Fri, 1 Mar 2013 12:04:01 +1100
-Message-ID: <20130301120401.bcb4a3c571cb0d2b7af96a4b@canb.auug.org.au>
+From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Date: Fri, 1 Mar 2013 01:19:42 +0000
+Message-ID: <4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EB@sacexcmbx05-prd.hq.netapp.com>
+References: <20130301120401.bcb4a3c571cb0d2b7af96a4b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__1_Mar_2013_12_04_01_+1100_s=QuJCLBvy0noIKT"
+Content-Type: multipart/mixed;
+	boundary="_002_4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EBsacexcmbx05prdh_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60273 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751052Ab3CABEK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Feb 2013 20:04:10 -0500
+Received: from mx12.netapp.com ([216.240.18.77]:33745 "EHLO mx12.netapp.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751509Ab3CABTo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Feb 2013 20:19:44 -0500
+In-Reply-To: <20130301120401.bcb4a3c571cb0d2b7af96a4b@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Trond Myklebust <Trond.Myklebust@netapp.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__1_Mar_2013_12_04_01_+1100_s=QuJCLBvy0noIKT
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+--_002_4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EBsacexcmbx05prdh_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <B81173E0E26CFE4FB7481B1160E563D8@tahoe.netapp.com>
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, 2013-03-01 at 12:04 +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the nfsd tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>=20
+> net/sunrpc/xprtsock.c:1923:30: error: 'struct rpc_task' has no member nam=
+ed 'tk_xprt'
+>=20
+> Caused by commit dc107402ae06 ("SUNRPC: make AF_LOCAL connect
+> synchronous") interacting with commit 77102893ae68 ("SUNRPC: Nuke the
+> tk_xprt macro") from Linus' tree.
+>=20
+> I have no idea how to fix this, so I have used the version of the nfsd
+> tree from next-20130228 for today.
 
-After merging the nfsd tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Hi Bruce,
 
-net/sunrpc/xprtsock.c:1923:30: error: 'struct rpc_task' has no member named=
- 'tk_xprt'
+The attached patch should suffice to fix this up.
 
-Caused by commit dc107402ae06 ("SUNRPC: make AF_LOCAL connect
-synchronous") interacting with commit 77102893ae68 ("SUNRPC: Nuke the
-tk_xprt macro") from Linus' tree.
+Cheers
+  Trond
 
-I have no idea how to fix this, so I have used the version of the nfsd
-tree from next-20130228 for today.
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Trond Myklebust
+Linux NFS client maintainer
 
---Signature=_Fri__1_Mar_2013_12_04_01_+1100_s=QuJCLBvy0noIKT
-Content-Type: application/pgp-signature
+NetApp
+Trond.Myklebust@netapp.com
+www.netapp.com
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+--_002_4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EBsacexcmbx05prdh_
+Content-Type: text/x-patch; name="patches_bruce.dif"
+Content-Description: patches_bruce.dif
+Content-Disposition: attachment; filename="patches_bruce.dif"; size=471;
+	creation-date="Fri, 01 Mar 2013 01:19:42 GMT";
+	modification-date="Fri, 01 Mar 2013 01:19:42 GMT"
+Content-ID: <A3DD39FAB3A2EC46BA009350BD90244D@tahoe.netapp.com>
+Content-Transfer-Encoding: base64
 
-iQIcBAEBCAAGBQJRL/6BAAoJEECxmPOUX5FETYcP/R9Uwofv3E0CHDl8qTSpl/bu
-2YPgKANTZgOOt+hyHRFsNRCSn9tIZQTt/qEFv4hBXcUbyiBM6LY4f/et/BPzl3+F
-gzHHwXY89sqi4emH8BufhVPs28PtMUKn/0X9/aQTuWRIiXbvhstb49Sr7PYItUWw
-khjujgsVFvCi+UNrsR6A5fq2wZ4dxvssFt0hbMRJVI2khAw7dc9+90n8WbiVBNLP
-jaCJKBMXKtM6tye4QRHHnk+2wt8wPLfpUX4tjxM6Ga2Q4Nl1vQ+mlQUh/B+hKC04
-ITZcwLyGaLzlcsSd+8UkxYDnrU/goXllO64v/vP0DzvzD1JAXbPh/Lo8I/7o1ROs
-Q8XeQo3ZIDcUwExAerQx5p5E5Q+9ozSpSi6IrDCew/y+PgL8BM7aMSdQQXpXdbJm
-o0RG1m3L5w2BA0OLWEC0y+pVghdP/Km7OM4YrRxa/8dcFC43FqdbzZJyYRmRlvym
-hVojSt2hzaHJJjLsYGYG7JgcbpS2eB6Gs8Du7QP5PCzfLwPGbze0LQem2ZYplj0E
-HoRVbN2oz4WqR5bKyFEQ2aaq/mZKWmb5WlA4XNMO4IO++n9vbVxNN0JnPcrA8PHZ
-MSAlZCsm+qPYMYLJ/Dk/R677nPLmo1bEP6yypudZ6Q4RG45UliIJ/ul/tN7fVaAA
-TR02AYaPZVRx5wMDKFjy
-=GhEI
------END PGP SIGNATURE-----
+ZGlmZiAtLWdpdCBhL25ldC9zdW5ycGMveHBydHNvY2suYyBiL25ldC9zdW5ycGMveHBydHNvY2su
+Yw0KaW5kZXggMmU3ZTA5Yy4uYzFkODQ3NiAxMDA2NDQNCi0tLSBhL25ldC9zdW5ycGMveHBydHNv
+Y2suYw0KKysrIGIvbmV0L3N1bnJwYy94cHJ0c29jay5jDQpAQCAtMTkxOCw5ICsxOTE4LDggQEAg
+b3V0Og0KIAlyZXR1cm4gc3RhdHVzOw0KIH0NCiANCi1zdGF0aWMgdm9pZCB4c19sb2NhbF9jb25u
+ZWN0KHN0cnVjdCBycGNfdGFzayAqdGFzaykNCitzdGF0aWMgdm9pZCB4c19sb2NhbF9jb25uZWN0
+KHN0cnVjdCBycGNfeHBydCAqeHBydCwgc3RydWN0IHJwY190YXNrICp0YXNrKQ0KIHsNCi0Jc3Ry
+dWN0IHJwY194cHJ0ICp4cHJ0ID0gdGFzay0+dGtfeHBydDsNCiAJc3RydWN0IHNvY2tfeHBydCAq
+dHJhbnNwb3J0ID0gY29udGFpbmVyX29mKHhwcnQsIHN0cnVjdCBzb2NrX3hwcnQsIHhwcnQpOw0K
+IAlpbnQgcmV0Ow0KIA0K
 
---Signature=_Fri__1_Mar_2013_12_04_01_+1100_s=QuJCLBvy0noIKT--
+--_002_4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EBsacexcmbx05prdh_--
