@@ -1,73 +1,62 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: build failure after merge of the nfsd tree
-Date: Fri, 1 Mar 2013 22:42:53 -0500
-Message-ID: <20130302034253.GC14264@fieldses.org>
-References: <20130301120401.bcb4a3c571cb0d2b7af96a4b@canb.auug.org.au>
- <4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EB@sacexcmbx05-prd.hq.netapp.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: build failure after merge of the ftrace tree
+Date: Fri, 01 Mar 2013 22:55:29 -0500
+Message-ID: <1362196529.1231.80.camel@gandalf.local.home>
+References: <20130301134738.ce925e1643a35b0a2c4ff275@canb.auug.org.au>
+	 <1362192318.1231.67.camel@gandalf.local.home>
+	 <20130302144229.f41f56c36992497a1530d65f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fieldses.org ([174.143.236.118]:37343 "EHLO fieldses.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751804Ab3CBDm5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 1 Mar 2013 22:42:57 -0500
-Content-Disposition: inline
-In-Reply-To: <4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EB@sacexcmbx05-prd.hq.netapp.com>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:22206 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751688Ab3CBDza (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Mar 2013 22:55:30 -0500
+In-Reply-To: <20130302144229.f41f56c36992497a1530d65f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Mar 01, 2013 at 01:19:42AM +0000, Myklebust, Trond wrote:
-> On Fri, 2013-03-01 at 12:04 +1100, Stephen Rothwell wrote:
-> > Hi all,
+On Sat, 2013-03-02 at 14:42 +1100, Stephen Rothwell wrote:
+> Hi Steve,
+> 
+> On Fri, 01 Mar 2013 21:45:18 -0500 Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Fri, 2013-03-01 at 13:47 +1100, Stephen Rothwell wrote:
+> > > 
+> > > After merging the ftrace tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > > 
+> > > kernel/trace/trace_kdb.c: In function 'ftrace_dump_buf':
+> > > kernel/trace/trace_kdb.c:29:33: error: invalid type argument of '->' (have 'struct trace_array_cpu')
+> > > kernel/trace/trace_kdb.c:86:33: error: invalid type argument of '->' (have 'struct trace_array_cpu')
+> > > 
+> > > Caused by commit eaac1836c10e ("tracing: Replace the static global
+> > > per_cpu arrays with allocated per_cpu").
+> > > 
+> > > I have used the ftrace tree from next-20130228 for today.
 > > 
-> > After merging the nfsd tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> > 
-> > net/sunrpc/xprtsock.c:1923:30: error: 'struct rpc_task' has no member named 'tk_xprt'
-> > 
-> > Caused by commit dc107402ae06 ("SUNRPC: make AF_LOCAL connect
-> > synchronous") interacting with commit 77102893ae68 ("SUNRPC: Nuke the
-> > tk_xprt macro") from Linus' tree.
-> > 
-> > I have no idea how to fix this, so I have used the version of the nfsd
-> > tree from next-20130228 for today.
+> > I rebased, and it should all be good now. I also fixed breakage to the
+> > new snapshot feature. Here's my diff:
 > 
-> Hi Bruce,
+> Of course, I wonder if this is intended for the current merge window
+> (since it turned up in linux-next so late).  If not, then please don;t
+> put it in your -next included branch until after -rc1 is released.  If
+> you are aiming for this merge window, then good luck!  ;-)
 > 
-> The attached patch should suffice to fix this up.
 
-Thanks!
+Oh crap, sorry. Quite the contrary. I should have waited for -rc1 as
+this is intended for v3.10.
 
-Looks like Linus got this right in the upstream merge.
+I made some major changes and wanted testing on it as soon as possible.
+I've done tons of testing on my own but I wanted a broader audience. Do
+you want me to pull my tree and reset it to what is only for 3.9?
 
---b.
+All changes I wanted for 3.9 have already made it into Linus's tree.
+Everything I've been pushing is destined for 3.10. But as I said. They
+are big changes and wanted testing on them early. But it can wait for an
+-rc1 window.
 
-> 
-> Cheers
->   Trond
-> 
-> -- 
-> Trond Myklebust
-> Linux NFS client maintainer
-> 
-> NetApp
-> Trond.Myklebust@netapp.com
-> www.netapp.com
-
-> diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
-> index 2e7e09c..c1d8476 100644
-> --- a/net/sunrpc/xprtsock.c
-> +++ b/net/sunrpc/xprtsock.c
-> @@ -1918,9 +1918,8 @@ out:
->  	return status;
->  }
->  
-> -static void xs_local_connect(struct rpc_task *task)
-> +static void xs_local_connect(struct rpc_xprt *xprt, struct rpc_task *task)
->  {
-> -	struct rpc_xprt *xprt = task->tk_xprt;
->  	struct sock_xprt *transport = container_of(xprt, struct sock_xprt, xprt);
->  	int ret;
->  
+-- Steve
