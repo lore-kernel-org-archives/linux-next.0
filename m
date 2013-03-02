@@ -1,62 +1,63 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: build failure after merge of the ftrace tree
-Date: Fri, 01 Mar 2013 22:55:29 -0500
-Message-ID: <1362196529.1231.80.camel@gandalf.local.home>
-References: <20130301134738.ce925e1643a35b0a2c4ff275@canb.auug.org.au>
-	 <1362192318.1231.67.camel@gandalf.local.home>
-	 <20130302144229.f41f56c36992497a1530d65f@canb.auug.org.au>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: mmotm 2013-03-01-15-50 uploaded (strict user copy)
+Date: Fri, 01 Mar 2013 20:16:43 -0800
+Message-ID: <51317D2B.6060601@codeaurora.org>
+References: <20130301235135.E9F105A41B2@corp2gmr1-2.hot.corp.google.com> <51316B64.90102@infradead.org> <5131753F.3070302@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:22206 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751688Ab3CBDza (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Mar 2013 22:55:30 -0500
-In-Reply-To: <20130302144229.f41f56c36992497a1530d65f@canb.auug.org.au>
+Received: from wolverine02.qualcomm.com ([199.106.114.251]:10023 "EHLO
+	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751186Ab3CBEQo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Mar 2013 23:16:44 -0500
+In-Reply-To: <5131753F.3070302@codeaurora.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Sat, 2013-03-02 at 14:42 +1100, Stephen Rothwell wrote:
-> Hi Steve,
-> 
-> On Fri, 01 Mar 2013 21:45:18 -0500 Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > On Fri, 2013-03-01 at 13:47 +1100, Stephen Rothwell wrote:
-> > > 
-> > > After merging the ftrace tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > > 
-> > > kernel/trace/trace_kdb.c: In function 'ftrace_dump_buf':
-> > > kernel/trace/trace_kdb.c:29:33: error: invalid type argument of '->' (have 'struct trace_array_cpu')
-> > > kernel/trace/trace_kdb.c:86:33: error: invalid type argument of '->' (have 'struct trace_array_cpu')
-> > > 
-> > > Caused by commit eaac1836c10e ("tracing: Replace the static global
-> > > per_cpu arrays with allocated per_cpu").
-> > > 
-> > > I have used the ftrace tree from next-20130228 for today.
-> > 
-> > I rebased, and it should all be good now. I also fixed breakage to the
-> > new snapshot feature. Here's my diff:
-> 
-> Of course, I wonder if this is intended for the current merge window
-> (since it turned up in linux-next so late).  If not, then please don;t
-> put it in your -next included branch until after -rc1 is released.  If
-> you are aiming for this merge window, then good luck!  ;-)
-> 
+On 03/01/13 19:42, Stephen Boyd wrote:
+> On 03/01/13 19:00, Randy Dunlap wrote:
+>> On 03/01/13 15:51, akpm@linux-foundation.org wrote:
+>>> The mm-of-the-moment snapshot 2013-03-01-15-50 has been uploaded to
+>>>
+>>>    http://www.ozlabs.org/~akpm/mmotm/
+>>>
+>> on i386:
+>>
+>> ERROR: "copy_from_user_overflow" [fs/binfmt_misc.ko] undefined!
+>>
+>> which I don't understand.
+>> lib/usercopy.o is built and building binfmt_misc.c says:
+>>
+>>   CC [M]  fs/binfmt_misc.o
+>> In file included from arch/x86/include/asm/uaccess.h:537:0,
+>>                  from include/linux/uaccess.h:5,
+>>                  from include/linux/highmem.h:8,
+>>                  from include/linux/pagemap.h:10,
+>>                  from fs/binfmt_misc.c:27:
+>> arch/x86/include/asm/uaccess_32.h: In function 'parse_command.part.1':
+>> arch/x86/include/asm/uaccess_32.h:211:26: warning: call to 'copy_from_user_overflow' declared with attribute warning: copy_from_user() buffer size is not provably correct [enabled by default]
+> Hm.. That's because it's part of lib and not obj, right?
+>
+> diff --git a/lib/Makefile b/lib/Makefile
+> index 59fabd0..4c55104 100644
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@ -15,7 +15,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+>          is_single_threaded.o plist.o decompress.o kobject_uevent.o \
+>          earlycpio.o percpu-refcount.o
+>  
+> -lib-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) += usercopy.o
+> +obj-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) += usercopy.o
+>  lib-$(CONFIG_MMU) += ioremap.o
+>  lib-$(CONFIG_SMP) += cpumask.o
+>  
+>
 
-Oh crap, sorry. Quite the contrary. I should have waited for -rc1 as
-this is intended for v3.10.
+I'm a little confused though because it is lib-y on x86 before my patch.
 
-I made some major changes and wanted testing on it as soon as possible.
-I've done tons of testing on my own but I wanted a broader audience. Do
-you want me to pull my tree and reset it to what is only for 3.9?
-
-All changes I wanted for 3.9 have already made it into Linus's tree.
-Everything I've been pushing is destined for 3.10. But as I said. They
-are big changes and wanted testing on them early. But it can wait for an
--rc1 window.
-
--- Steve
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
