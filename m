@@ -1,61 +1,73 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: mmotm 2013-03-01-15-50 uploaded (strict user copy)
-Date: Fri, 01 Mar 2013 19:42:55 -0800
-Message-ID: <5131753F.3070302@codeaurora.org>
-References: <20130301235135.E9F105A41B2@corp2gmr1-2.hot.corp.google.com> <51316B64.90102@infradead.org>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Date: Fri, 1 Mar 2013 22:42:53 -0500
+Message-ID: <20130302034253.GC14264@fieldses.org>
+References: <20130301120401.bcb4a3c571cb0d2b7af96a4b@canb.auug.org.au>
+ <4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EB@sacexcmbx05-prd.hq.netapp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wolverine01.qualcomm.com ([199.106.114.254]:45517 "EHLO
-	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751483Ab3CBDm4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Mar 2013 22:42:56 -0500
-In-Reply-To: <51316B64.90102@infradead.org>
+Received: from fieldses.org ([174.143.236.118]:37343 "EHLO fieldses.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751804Ab3CBDm5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 1 Mar 2013 22:42:57 -0500
+Content-Disposition: inline
+In-Reply-To: <4FA345DA4F4AE44899BD2B03EEEC2FA9286A81EB@sacexcmbx05-prd.hq.netapp.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 03/01/13 19:00, Randy Dunlap wrote:
-> On 03/01/13 15:51, akpm@linux-foundation.org wrote:
->> The mm-of-the-moment snapshot 2013-03-01-15-50 has been uploaded to
->>
->>    http://www.ozlabs.org/~akpm/mmotm/
->>
->
-> on i386:
->
-> ERROR: "copy_from_user_overflow" [fs/binfmt_misc.ko] undefined!
->
-> which I don't understand.
-> lib/usercopy.o is built and building binfmt_misc.c says:
->
->   CC [M]  fs/binfmt_misc.o
-> In file included from arch/x86/include/asm/uaccess.h:537:0,
->                  from include/linux/uaccess.h:5,
->                  from include/linux/highmem.h:8,
->                  from include/linux/pagemap.h:10,
->                  from fs/binfmt_misc.c:27:
-> arch/x86/include/asm/uaccess_32.h: In function 'parse_command.part.1':
-> arch/x86/include/asm/uaccess_32.h:211:26: warning: call to 'copy_from_user_overflow' declared with attribute warning: copy_from_user() buffer size is not provably correct [enabled by default]
+On Fri, Mar 01, 2013 at 01:19:42AM +0000, Myklebust, Trond wrote:
+> On Fri, 2013-03-01 at 12:04 +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the nfsd tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> > 
+> > net/sunrpc/xprtsock.c:1923:30: error: 'struct rpc_task' has no member named 'tk_xprt'
+> > 
+> > Caused by commit dc107402ae06 ("SUNRPC: make AF_LOCAL connect
+> > synchronous") interacting with commit 77102893ae68 ("SUNRPC: Nuke the
+> > tk_xprt macro") from Linus' tree.
+> > 
+> > I have no idea how to fix this, so I have used the version of the nfsd
+> > tree from next-20130228 for today.
+> 
+> Hi Bruce,
+> 
+> The attached patch should suffice to fix this up.
 
-Hm.. That's because it's part of lib and not obj, right?
+Thanks!
 
-diff --git a/lib/Makefile b/lib/Makefile
-index 59fabd0..4c55104 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -15,7 +15,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
-         is_single_threaded.o plist.o decompress.o kobject_uevent.o \
-         earlycpio.o percpu-refcount.o
- 
--lib-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) += usercopy.o
-+obj-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) += usercopy.o
- lib-$(CONFIG_MMU) += ioremap.o
- lib-$(CONFIG_SMP) += cpumask.o
- 
+Looks like Linus got this right in the upstream merge.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+--b.
+
+> 
+> Cheers
+>   Trond
+> 
+> -- 
+> Trond Myklebust
+> Linux NFS client maintainer
+> 
+> NetApp
+> Trond.Myklebust@netapp.com
+> www.netapp.com
+
+> diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+> index 2e7e09c..c1d8476 100644
+> --- a/net/sunrpc/xprtsock.c
+> +++ b/net/sunrpc/xprtsock.c
+> @@ -1918,9 +1918,8 @@ out:
+>  	return status;
+>  }
+>  
+> -static void xs_local_connect(struct rpc_task *task)
+> +static void xs_local_connect(struct rpc_xprt *xprt, struct rpc_task *task)
+>  {
+> -	struct rpc_xprt *xprt = task->tk_xprt;
+>  	struct sock_xprt *transport = container_of(xprt, struct sock_xprt, xprt);
+>  	int ret;
+>  
