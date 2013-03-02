@@ -1,71 +1,81 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2013-03-01-15-50 uploaded (strict user copy)
-Date: Fri, 01 Mar 2013 21:22:35 -0800
-Message-ID: <51318C9B.8000403@infradead.org>
-References: <20130301235135.E9F105A41B2@corp2gmr1-2.hot.corp.google.com> <51316B64.90102@infradead.org> <5131753F.3070302@codeaurora.org> <51317D2B.6060601@codeaurora.org>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: Pulling linux-next GIT
+Date: Sat, 2 Mar 2013 10:56:12 +0100
+Message-ID: <CA+icZUXjQE4n=GrFq45D6rUaLkR4QM8UFhqSR7m0Cevqvut+CQ@mail.gmail.com>
+References: <CA+icZUXWA1JQ11Ph-JL8snYAvc-FvMCZGBvTi9vNLwhyn-3S2g@mail.gmail.com>
+	<CA+icZUXJNDTFSjh4MnUjx7hsX8sxcP2E5DEANe757CcDuayp5g@mail.gmail.com>
+	<CA+icZUWQsKo7dX9f4uVP7_L0iX2SuCrSXUjv+G_s2SHQ7+0pbg@mail.gmail.com>
+	<CA+icZUUUEAe+ZEsonW1CXjXLP3g97WVmC0xg0GXwB2oKrXUgEg@mail.gmail.com>
+	<5130C148.3070203@kernel.org>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:59471 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751017Ab3CBFWD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Mar 2013 00:22:03 -0500
-In-Reply-To: <51317D2B.6060601@codeaurora.org>
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:54406 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751584Ab3CBJ4N convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Mar 2013 04:56:13 -0500
+In-Reply-To: <5130C148.3070203@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+To: Konstantin Ryabitsev <mricon@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, webmaster@kernel.org
 
-On 03/01/13 20:16, Stephen Boyd wrote:
-> On 03/01/13 19:42, Stephen Boyd wrote:
->> On 03/01/13 19:00, Randy Dunlap wrote:
->>> On 03/01/13 15:51, akpm@linux-foundation.org wrote:
->>>> The mm-of-the-moment snapshot 2013-03-01-15-50 has been uploaded to
->>>>
->>>>    http://www.ozlabs.org/~akpm/mmotm/
->>>>
->>> on i386:
->>>
->>> ERROR: "copy_from_user_overflow" [fs/binfmt_misc.ko] undefined!
->>>
->>> which I don't understand.
->>> lib/usercopy.o is built and building binfmt_misc.c says:
->>>
->>>   CC [M]  fs/binfmt_misc.o
->>> In file included from arch/x86/include/asm/uaccess.h:537:0,
->>>                  from include/linux/uaccess.h:5,
->>>                  from include/linux/highmem.h:8,
->>>                  from include/linux/pagemap.h:10,
->>>                  from fs/binfmt_misc.c:27:
->>> arch/x86/include/asm/uaccess_32.h: In function 'parse_command.part.1':
->>> arch/x86/include/asm/uaccess_32.h:211:26: warning: call to 'copy_from_user_overflow' declared with attribute warning: copy_from_user() buffer size is not provably correct [enabled by default]
->> Hm.. That's because it's part of lib and not obj, right?
-
-Yes, this fixes the build error.
-
->> diff --git a/lib/Makefile b/lib/Makefile
->> index 59fabd0..4c55104 100644
->> --- a/lib/Makefile
->> +++ b/lib/Makefile
->> @@ -15,7 +15,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
->>          is_single_threaded.o plist.o decompress.o kobject_uevent.o \
->>          earlycpio.o percpu-refcount.o
->>  
->> -lib-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) += usercopy.o
->> +obj-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) += usercopy.o
->>  lib-$(CONFIG_MMU) += ioremap.o
->>  lib-$(CONFIG_SMP) += cpumask.o
->>  
+On Fri, Mar 1, 2013 at 3:55 PM, Konstantin Ryabitsev <mricon@kernel.org=
+> wrote:
+> On 01/03/13 08:35 AM, Sedat Dilek wrote:
+>> 2 hours passed - same problems!
 >>
-> 
-> I'm a little confused though because it is lib-y on x86 before my patch.
+>> I looked at <www.kernel.org>, but there is no message in the news ar=
+ea.
+>
+> Hi, all:
+>
+> We had early-morning hardware failure on the sole "old-skin" frontend
+> that was up (in preparation for site roll-over). This forced my hand =
+to
+> go live with the new site slightly ahead of time and without redundan=
+cy
+> (for the moment), but this should be fixed in the nearest future.
+>
+> Please enjoy the new www.kernel.org and let me know if the problem
+> cloning git repositories still persists.
+>
 
-binfmt_misc is built as a loadable module in my config.
-It must be the only user of copy_from_user_overflow() in this config.
-I guess that it would also fail prior to your patch, but I haven't
-tested it.  Anyway, your patch above is correct and needed.
+[ git.kernel.org ]
 
-thanks,
--- 
-~Randy
+Great, switching to cgit!
+
+Can you please, check at your own the formatted outputs of lines:
+Name	- Description - Owner - Idle etc.?
+On a laptop (13xx x 7yy) LCD this looks a bit ugly.
+Think of mobile devices!
+Especially, Name and Description seems to be too long.
+
+Then please look at Tag and Download, here the commit-ids are truncated=
+=2E..
+
+[ www.kernel.org ]
+
+Last point:
+Where are the old NEWS?
+News like security breach etc.
+Is "site-news" the new NEWS website?
+
+Just my 2 cents.
+
+- Sedat -
+
+
+[1] http://git.kernel.org/cgit/docs/kernel/website.git/commit/?id=3Da1d=
+f320ffb90d08c7e1b823004d7efcfb94912d1
+[2] https://www.kernel.org/category/site-news.html
+
+> Best,
+> --
+> Konstantin Ryabitsev
+> Systems Administrator
+> Linux Foundation, kernel.org
+> Montr=C3=A9al, Qu=C3=A9bec
+>
