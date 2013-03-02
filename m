@@ -1,81 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the ftrace tree
-Date: Sat, 2 Mar 2013 14:42:29 +1100
-Message-ID: <20130302144229.f41f56c36992497a1530d65f@canb.auug.org.au>
-References: <20130301134738.ce925e1643a35b0a2c4ff275@canb.auug.org.au>
-	<1362192318.1231.67.camel@gandalf.local.home>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: mmotm 2013-03-01-15-50 uploaded (strict user copy)
+Date: Fri, 01 Mar 2013 19:42:55 -0800
+Message-ID: <5131753F.3070302@codeaurora.org>
+References: <20130301235135.E9F105A41B2@corp2gmr1-2.hot.corp.google.com> <51316B64.90102@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__2_Mar_2013_14_42_29_+1100_ZKI_Yz5syWdckOBS"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36906 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752132Ab3CBDmc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Mar 2013 22:42:32 -0500
-In-Reply-To: <1362192318.1231.67.camel@gandalf.local.home>
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:45517 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751483Ab3CBDm4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Mar 2013 22:42:56 -0500
+In-Reply-To: <51316B64.90102@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 
---Signature=_Sat__2_Mar_2013_14_42_29_+1100_ZKI_Yz5syWdckOBS
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Steve,
-
-On Fri, 01 Mar 2013 21:45:18 -0500 Steven Rostedt <rostedt@goodmis.org> wro=
-te:
+On 03/01/13 19:00, Randy Dunlap wrote:
+> On 03/01/13 15:51, akpm@linux-foundation.org wrote:
+>> The mm-of-the-moment snapshot 2013-03-01-15-50 has been uploaded to
+>>
+>>    http://www.ozlabs.org/~akpm/mmotm/
+>>
 >
-> On Fri, 2013-03-01 at 13:47 +1100, Stephen Rothwell wrote:
-> >=20
-> > After merging the ftrace tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >=20
-> > kernel/trace/trace_kdb.c: In function 'ftrace_dump_buf':
-> > kernel/trace/trace_kdb.c:29:33: error: invalid type argument of '->' (h=
-ave 'struct trace_array_cpu')
-> > kernel/trace/trace_kdb.c:86:33: error: invalid type argument of '->' (h=
-ave 'struct trace_array_cpu')
-> >=20
-> > Caused by commit eaac1836c10e ("tracing: Replace the static global
-> > per_cpu arrays with allocated per_cpu").
-> >=20
-> > I have used the ftrace tree from next-20130228 for today.
->=20
-> I rebased, and it should all be good now. I also fixed breakage to the
-> new snapshot feature. Here's my diff:
+> on i386:
+>
+> ERROR: "copy_from_user_overflow" [fs/binfmt_misc.ko] undefined!
+>
+> which I don't understand.
+> lib/usercopy.o is built and building binfmt_misc.c says:
+>
+>   CC [M]  fs/binfmt_misc.o
+> In file included from arch/x86/include/asm/uaccess.h:537:0,
+>                  from include/linux/uaccess.h:5,
+>                  from include/linux/highmem.h:8,
+>                  from include/linux/pagemap.h:10,
+>                  from fs/binfmt_misc.c:27:
+> arch/x86/include/asm/uaccess_32.h: In function 'parse_command.part.1':
+> arch/x86/include/asm/uaccess_32.h:211:26: warning: call to 'copy_from_user_overflow' declared with attribute warning: copy_from_user() buffer size is not provably correct [enabled by default]
 
-Of course, I wonder if this is intended for the current merge window
-(since it turned up in linux-next so late).  If not, then please don;t
-put it in your -next included branch until after -rc1 is released.  If
-you are aiming for this merge window, then good luck!  ;-)
+Hm.. That's because it's part of lib and not obj, right?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+diff --git a/lib/Makefile b/lib/Makefile
+index 59fabd0..4c55104 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -15,7 +15,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+         is_single_threaded.o plist.o decompress.o kobject_uevent.o \
+         earlycpio.o percpu-refcount.o
+ 
+-lib-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) += usercopy.o
++obj-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) += usercopy.o
+ lib-$(CONFIG_MMU) += ioremap.o
+ lib-$(CONFIG_SMP) += cpumask.o
+ 
 
---Signature=_Sat__2_Mar_2013_14_42_29_+1100_ZKI_Yz5syWdckOBS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRMXUlAAoJEECxmPOUX5FE4bcP/jOJOJd+jwfc9s6XsboifQi9
-1nNzupOV+1WnjxIsm7/jiP0uIgxb+Bn/UtQgjx1Xru3YpW3thwI9DvDYG+rm0F2j
-mf19iVFOXi8snF2HMHdQJa3m8z6fkjpahPPLLfufXzoMEzBFoNsKX3dBq/SxTaue
-BK3mGCZDV0TIqye2z1VV3skdE5imSJnTL9ocpsI2DwKBxmxCq7AL98Oky4j/iF0D
-2FdNrZAT7nPxUTSuy6SknYaK8r4879W9ryqI3Z55wLrBdc4EMsdPgQE6m7qpwB15
-p9dwgAhH/wUwOrwRxUfx2zw9izF+TBUsEnXgMS6Fi1DaKNI6tPYMkL/TzDm/m+oW
-EtOI7O4p8bcJLwy+Q7EALVoY3Bsx0pMuIK9q1lEst6RErxoe/uPJpDCRhhkxAoG6
-kPK0lQbxSN/2RDgW15ho3gN8Rhqh+PLbap2u1koJCFsszHdsaoOJ4yws7Yea9Gr3
-zbFVk97Dl8BhalhB4qtiALyVPW4z6fwdhn0YaC/109DyPAtaYnRFLRi7gHWCf8uU
-uJMAyx6+TBYPvQy47jm5tGZQZUB9pt5pzl5fBQjh9WJ1tUMxI63BUPVPJDKXQ+b/
-8FqI+EkOQTDY3OLbw7vovPkCwY5C9HGk/GwtlPiIrdSeu90NWBVcV3jMBN8MfheL
-RQfE0zJni5bPD/1FNrP8
-=mIbV
------END PGP SIGNATURE-----
-
---Signature=_Sat__2_Mar_2013_14_42_29_+1100_ZKI_Yz5syWdckOBS--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
