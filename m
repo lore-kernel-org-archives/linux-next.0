@@ -1,70 +1,86 @@
-From: Konstantin Ryabitsev <mricon@kernel.org>
-Subject: Re: [git.k.o] Old linux-next WebGit points to $NewWebGitURL/tree
-Date: Sun, 03 Mar 2013 08:34:57 -0500
-Message-ID: <51335181.5070309@kernel.org>
-References: <CA+icZUW4SJ1OTmKtcHWYkaW5pYzJZU8Gv7BtxAeto++aqYB6gA@mail.gmail.com> <CA+icZUVyWAog7sxKXLSODaeO8v9BJReR8LhruC1gLux57oJ7Hg@mail.gmail.com> <CA+icZUWoqYWirP7F-pEUzqK4KoN357ST5eM=3a-esG_nP2G3yA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: consider tidying up the xen-two tree
+Date: Mon, 4 Mar 2013 10:46:05 +1100
+Message-ID: <20130304104605.7878c0c7f3d0ba795c9e7384@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="----enig2SXFSQVFKODDDCUIGSBCI"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__4_Mar_2013_10_46_05_+1100_sxBH5ZEj5KTpQKVz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:60754 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753332Ab3CCNfF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 08:35:05 -0500
-Received: by mail-ie0-f171.google.com with SMTP id 10so5166025ied.2
-        for <linux-next@vger.kernel.org>; Sun, 03 Mar 2013 05:35:05 -0800 (PST)
-In-Reply-To: <CA+icZUWoqYWirP7F-pEUzqK4KoN357ST5eM=3a-esG_nP2G3yA@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36912 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753217Ab3CCXqS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 18:46:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: webmaster@kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
-------enig2SXFSQVFKODDDCUIGSBCI
-Content-Type: text/plain; charset=UTF-8
+--Signature=_Mon__4_Mar_2013_10_46_05_+1100_sxBH5ZEj5KTpQKVz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 03/03/13 03:26 AM, Sedat Dilek wrote:
-> Same happens with ext4 GIT...
->=20
-> OLD: http://git.kernel.org/?p=3Dlinux/kernel/git/tytso/ext4.git
->=20
-> NEW: http://git.kernel.org/cgit/linux/kernel/git/tytso/ext4.git/tree/
->=20
-> FIXED: http://git.kernel.org/cgit/linux/kernel/git/tytso/ext4.git
+Hi Konrad,
 
-Hello:
+We are at the end of the merge window and the xen-two tree still looks
+like this:
 
-This is now fixed globally.
+ arch/x86/include/asm/xen/interface.h |  11 ++-
+ arch/x86/include/asm/xen/page.h      |   3 +
+ arch/x86/pci/xen.c                   |   9 ++
+ arch/x86/xen/Kconfig                 |   8 ++
+ arch/x86/xen/enlighten.c             |  76 ++++++++++++-----
+ arch/x86/xen/irq.c                   |   5 +-
+ arch/x86/xen/mmu.c                   | 159 +++++++++++++++++++++++++++++++=
++---
+ arch/x86/xen/mmu.h                   |   2 +
+ arch/x86/xen/p2m.c                   |   2 +-
+ arch/x86/xen/setup.c                 |  59 ++++++++++---
+ arch/x86/xen/smp.c                   |  39 ++++++---
+ arch/x86/xen/xen-head.S              |  10 ++-
+ drivers/net/xen-netback/netback.c    |  11 ++-
+ drivers/xen/balloon.c                |  14 +--
+ drivers/xen/cpu_hotplug.c            |   4 +-
+ drivers/xen/events.c                 |   9 +-
+ drivers/xen/gntdev.c                 |   3 +-
+ drivers/xen/grant-table.c            | 115 +++++++++++++------------
+ drivers/xen/privcmd.c                |   2 +-
+ drivers/xen/xenbus/xenbus_client.c   |   9 +-
+ include/xen/grant_table.h            |  12 ---
+ 21 files changed, 422 insertions(+), 140 deletions(-)
 
-Best,
+Some of this is from commits going back to December 2011.  And there
+are several duplicate commits (with reversions of old versions) as well
+as many merges.
+
+I assume that what is left in there is now v3.10 material (or
+bug/regression fixes), so maybe you should take the opportunity and
+rebase the whole lot onto v3.9-rc1 when that is released.
+
 --=20
-Konstantin Ryabitsev
-Systems Administrator
-Linux Foundation, kernel.org
-Montr=C3=A9al, Qu=C3=A9bec
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
-------enig2SXFSQVFKODDDCUIGSBCI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+--Signature=_Mon__4_Mar_2013_10_46_05_+1100_sxBH5ZEj5KTpQKVz
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.13 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQGcBAEBAgAGBQJRM1GBAAoJEI6WedmufEleyHEL/jJNxmnxM8x2dKwU9loWuMPo
-lEy+V3gyEOL7FqaJmRyNRFfXAthG8Cjcv5QkDBgnigbCrHXSd0KgMDbvGQCgJOWk
-3Wtu9LEPCtX7Cdft+kezb9ZkVZRE8eHAwEpgAkpkXCX2U/pbavNejlcaaXZIH5aG
-ujLV/Z75qdA1k46VqAVWcvgR/VREKoN38Ug/kjVDPNtjVfMbb6+C9UVktf8+P6Uq
-1o1puM0OJGTmfYOb1fM0m2Wp7cWsbuV8qbs4eBnL+N/yeftHq65zzYgn/qzUOu8u
-3cgHkppOnofOOY4LoA64s2XWpnlN+bpmsWLecAOGpBtDZkgdPkyxL0D/uII7Z06B
-6KsSHl11CPnaG4TC/BspwMZ/Oy7F0fCH6SjUs2Ki1WIrL3bZnWDWG/q1gvHDBCbN
-vS/Jps2D49sqQCLT5fUf0Igms9V+11NS04N/FqATpE4xpUQBSoVga+d0l/KrJKaY
-sJxYO3JwxIoazQenjotlJlc/AkKVi0UWw58bVGcESA==
-=lYuv
+iQIcBAEBCAAGBQJRM+C9AAoJEECxmPOUX5FEM9wP/ixtFpH7GksLiNmwd0SmEoym
+rlL8fmqLf4HgFHzjuspJRrvwUQbaGA1/h8MnaEBRfgbM2feDuh9m5m4Lbl2bvAz4
+5aDrtYNeolk7ejWXWkHV+opsXYJutY9NWmPACTZITf/RaGQNwNE7wO/p9QdQnXoH
+MTy+bNPI9WofBEkKlQIPxW8vztkzdZBGPnSrgOiXeScSUx1gC6JhpByzqmJLqIIx
+JZOcsjs2hS1C9g+eKIltE57+SOL3QoINmyL7o7NAkReUpoi98ybWvA0wBhDvEPjG
+PH/ag9BMJgs8r0YJXsimwRT7TGSh+c9JaD3PtV2HYXbL74XqXfL12YfKwD9J5I1u
+Cvgxen24gJeh84ffEpI8dLW3ifUnvuFRl/YHN0mrNg4UuYGjmmefOHvlBfaAN09G
+Zx9wpMedL5o5hQ46woZ0yatnCGka8Wc4vorxIcG4lCnmlXu3QyN/wsWqDdLGYYdt
+qpGpTiQqBEwC6KaNB/DDmrLHqkyeqRPokBNslccnKr5i/GK8yollS5SZVfWrDMlv
+QdgkZuKxk2tR6fyPiJwBN84icNlogqXau6PGd6llV+6cgorpCIPJO7L5GTL+pcYV
+H4edkfpl7CBiFWKeM4rwYefeycBPky/S3QwcQxKY4+8qutKk8SVdSrmwDqxQa+dI
+PI0zAMa4ChUJ2VCWemT/
+=a5et
 -----END PGP SIGNATURE-----
 
-------enig2SXFSQVFKODDDCUIGSBCI--
+--Signature=_Mon__4_Mar_2013_10_46_05_+1100_sxBH5ZEj5KTpQKVz--
