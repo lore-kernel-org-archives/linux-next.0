@@ -1,86 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: consider tidying up the xen-two tree
-Date: Mon, 4 Mar 2013 10:46:05 +1100
-Message-ID: <20130304104605.7878c0c7f3d0ba795c9e7384@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pm tree
+Date: Mon, 4 Mar 2013 10:58:41 +1100
+Message-ID: <20130304105841.39ba4afbd1b45cf0b31e4449@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Mar_2013_10_46_05_+1100_sxBH5ZEj5KTpQKVz"
+ boundary="Signature=_Mon__4_Mar_2013_10_58_41_+1100_fm+2neOn1GiXb+lt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36912 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:51486 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753217Ab3CCXqS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 18:46:18 -0500
+	with ESMTP id S1753834Ab3CCX6t (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 18:58:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__4_Mar_2013_10_46_05_+1100_sxBH5ZEj5KTpQKVz
+--Signature=_Mon__4_Mar_2013_10_58_41_+1100_fm+2neOn1GiXb+lt
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Konrad,
+Hi Rafael,
 
-We are at the end of the merge window and the xen-two tree still looks
-like this:
+After merging the pm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
- arch/x86/include/asm/xen/interface.h |  11 ++-
- arch/x86/include/asm/xen/page.h      |   3 +
- arch/x86/pci/xen.c                   |   9 ++
- arch/x86/xen/Kconfig                 |   8 ++
- arch/x86/xen/enlighten.c             |  76 ++++++++++++-----
- arch/x86/xen/irq.c                   |   5 +-
- arch/x86/xen/mmu.c                   | 159 +++++++++++++++++++++++++++++++=
-+---
- arch/x86/xen/mmu.h                   |   2 +
- arch/x86/xen/p2m.c                   |   2 +-
- arch/x86/xen/setup.c                 |  59 ++++++++++---
- arch/x86/xen/smp.c                   |  39 ++++++---
- arch/x86/xen/xen-head.S              |  10 ++-
- drivers/net/xen-netback/netback.c    |  11 ++-
- drivers/xen/balloon.c                |  14 +--
- drivers/xen/cpu_hotplug.c            |   4 +-
- drivers/xen/events.c                 |   9 +-
- drivers/xen/gntdev.c                 |   3 +-
- drivers/xen/grant-table.c            | 115 +++++++++++++------------
- drivers/xen/privcmd.c                |   2 +-
- drivers/xen/xenbus/xenbus_client.c   |   9 +-
- include/xen/grant_table.h            |  12 ---
- 21 files changed, 422 insertions(+), 140 deletions(-)
+drivers/base/power/qos.c: In function '__dev_pm_qos_flags':
+drivers/base/power/qos.c:64:2: error: implicit declaration of function 'IS_=
+ERR_OR_NULL' [-Werror=3Dimplicit-function-declaration]
+drivers/base/power/qos.c: In function 'dev_pm_qos_constraints_destroy':
+drivers/base/power/qos.c:248:2: error: implicit declaration of function 'ER=
+R_PTR' [-Werror=3Dimplicit-function-declaration]
+drivers/base/power/qos.c:248:17: warning: assignment makes pointer from int=
+eger without a cast [enabled by default]
+drivers/base/power/qos.c: In function 'dev_pm_qos_add_request':
+drivers/base/power/qos.c:294:2: error: implicit declaration of function 'IS=
+_ERR' [-Werror=3Dimplicit-function-declaration]
+drivers/base/power/qos.c: At top level:
+drivers/base/power/qos.c:202:13: warning: '__dev_pm_qos_hide_latency_limit'=
+ used but never defined [enabled by default]
+drivers/base/power/qos.c:203:13: warning: '__dev_pm_qos_hide_flags' used bu=
+t never defined [enabled by default]
 
-Some of this is from commits going back to December 2011.  And there
-are several duplicate commits (with reversions of old versions) as well
-as many merges.
+Caused by commit 1e3b5df683e2 ("PM / QoS: Remove device PM QoS sysfs
+attributes at the right place").
 
-I assume that what is left in there is now v3.10 material (or
-bug/regression fixes), so maybe you should take the opportunity and
-rebase the whole lot onto v3.9-rc1 when that is released.
-
+I have used the pm tree from next-20130301 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__4_Mar_2013_10_46_05_+1100_sxBH5ZEj5KTpQKVz
+--Signature=_Mon__4_Mar_2013_10_58_41_+1100_fm+2neOn1GiXb+lt
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRM+C9AAoJEECxmPOUX5FEM9wP/ixtFpH7GksLiNmwd0SmEoym
-rlL8fmqLf4HgFHzjuspJRrvwUQbaGA1/h8MnaEBRfgbM2feDuh9m5m4Lbl2bvAz4
-5aDrtYNeolk7ejWXWkHV+opsXYJutY9NWmPACTZITf/RaGQNwNE7wO/p9QdQnXoH
-MTy+bNPI9WofBEkKlQIPxW8vztkzdZBGPnSrgOiXeScSUx1gC6JhpByzqmJLqIIx
-JZOcsjs2hS1C9g+eKIltE57+SOL3QoINmyL7o7NAkReUpoi98ybWvA0wBhDvEPjG
-PH/ag9BMJgs8r0YJXsimwRT7TGSh+c9JaD3PtV2HYXbL74XqXfL12YfKwD9J5I1u
-Cvgxen24gJeh84ffEpI8dLW3ifUnvuFRl/YHN0mrNg4UuYGjmmefOHvlBfaAN09G
-Zx9wpMedL5o5hQ46woZ0yatnCGka8Wc4vorxIcG4lCnmlXu3QyN/wsWqDdLGYYdt
-qpGpTiQqBEwC6KaNB/DDmrLHqkyeqRPokBNslccnKr5i/GK8yollS5SZVfWrDMlv
-QdgkZuKxk2tR6fyPiJwBN84icNlogqXau6PGd6llV+6cgorpCIPJO7L5GTL+pcYV
-H4edkfpl7CBiFWKeM4rwYefeycBPky/S3QwcQxKY4+8qutKk8SVdSrmwDqxQa+dI
-PI0zAMa4ChUJ2VCWemT/
-=a5et
+iQIcBAEBCAAGBQJRM+OxAAoJEECxmPOUX5FE8+IP/i0b0yx95vC2GyNfnivRg58A
+lLa/+jJdS3HgQ0taNzlUnjO0h5I7nWYSeoNZl92flB2KVu/Q0nMfScpm1fJDdhqD
+7WWXvXbyNb9vWFXz49JwoyWQY1VoKQDaktkNXf2B9a4x4XJQqfdGpMl4PHhAE656
+jAtZeNhQOqoZYHgTJVM9BPvCoLXN50pFSl0SQbOKld+L6zgUk+za8WUQjj77BHpt
+OdIMsx4HWzM0lAKaLDbuhaEr0u9WQ88sY2hjGBu7RZlKBn11HGn+Ts18Y7Ohj5I6
+roEpJrdCI7wwN1UrTP7EA176XgNkzgVEyx6daMZJemhEq6ob0seapTpiBYDuq/Fu
+1MuFrErjDdVI1vsRQjnYqMdwKfxeX4QER04NUab4F6jbddC4dT51kv9JSDYj7m9D
+HqxGJTxIptj+ybVKfzVDuFLmHcnvBouE2dLL4jVVmRq8mMjj6+kaiSW3HG4QiXtY
+cMMnZV/xu1N0C8qvCj21LiF+n1Cu488WXhYRiqNmPONJT28W6okrmOAaH6Sc2Jtl
+XpZhI5zFrrZ0z10yAl5lDXDwX3xK/5Lx+oUjKRhZiRjvE7ACJ1iOF37/OQ2wUHjd
+creMhE6fMtlMlWH11RiF/xr3OpDjJpuVj2wE5j3Pnh+o7/EYNBZrgOMt7bhodZ0t
+WxCLINCUm5WBNVt+mH/R
+=GkuH
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Mar_2013_10_46_05_+1100_sxBH5ZEj5KTpQKVz--
+--Signature=_Mon__4_Mar_2013_10_58_41_+1100_fm+2neOn1GiXb+lt--
