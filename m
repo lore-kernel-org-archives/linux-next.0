@@ -1,49 +1,66 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Mon, 04 Mar 2013 12:54:23 +0100
-Message-ID: <12853583.ZUFP9lbocK@vostro.rjw.lan>
-References: <20130304105841.39ba4afbd1b45cf0b31e4449@canb.auug.org.au>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: consider tidying up the xen-two tree
+Date: Mon, 4 Mar 2013 08:56:21 -0500
+Message-ID: <20130304135621.GB13229@phenom.dumpdata.com>
+References: <20130304104605.7878c0c7f3d0ba795c9e7384@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hydra.sisk.pl ([212.160.235.94]:51458 "EHLO hydra.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755820Ab3CDLrc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Mar 2013 06:47:32 -0500
-In-Reply-To: <20130304105841.39ba4afbd1b45cf0b31e4449@canb.auug.org.au>
+Received: from userp1040.oracle.com ([156.151.31.81]:19299 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756537Ab3CDN41 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Mar 2013 08:56:27 -0500
+Content-Disposition: inline
+In-Reply-To: <20130304104605.7878c0c7f3d0ba795c9e7384@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Monday, March 04, 2013 10:58:41 AM Stephen Rothwell wrote:
-> Hi Rafael,
+On Mon, Mar 04, 2013 at 10:46:05AM +1100, Stephen Rothwell wrote:
+> Hi Konrad,
 > 
-> After merging the pm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> We are at the end of the merge window and the xen-two tree still looks
+> like this:
 > 
-> drivers/base/power/qos.c: In function '__dev_pm_qos_flags':
-> drivers/base/power/qos.c:64:2: error: implicit declaration of function 'IS_ERR_OR_NULL' [-Werror=implicit-function-declaration]
-> drivers/base/power/qos.c: In function 'dev_pm_qos_constraints_destroy':
-> drivers/base/power/qos.c:248:2: error: implicit declaration of function 'ERR_PTR' [-Werror=implicit-function-declaration]
-> drivers/base/power/qos.c:248:17: warning: assignment makes pointer from integer without a cast [enabled by default]
-> drivers/base/power/qos.c: In function 'dev_pm_qos_add_request':
-> drivers/base/power/qos.c:294:2: error: implicit declaration of function 'IS_ERR' [-Werror=implicit-function-declaration]
-> drivers/base/power/qos.c: At top level:
-> drivers/base/power/qos.c:202:13: warning: '__dev_pm_qos_hide_latency_limit' used but never defined [enabled by default]
-> drivers/base/power/qos.c:203:13: warning: '__dev_pm_qos_hide_flags' used but never defined [enabled by default]
+>  arch/x86/include/asm/xen/interface.h |  11 ++-
+>  arch/x86/include/asm/xen/page.h      |   3 +
+>  arch/x86/pci/xen.c                   |   9 ++
+>  arch/x86/xen/Kconfig                 |   8 ++
+>  arch/x86/xen/enlighten.c             |  76 ++++++++++++-----
+>  arch/x86/xen/irq.c                   |   5 +-
+>  arch/x86/xen/mmu.c                   | 159 ++++++++++++++++++++++++++++++++---
+>  arch/x86/xen/mmu.h                   |   2 +
+>  arch/x86/xen/p2m.c                   |   2 +-
+>  arch/x86/xen/setup.c                 |  59 ++++++++++---
+>  arch/x86/xen/smp.c                   |  39 ++++++---
+>  arch/x86/xen/xen-head.S              |  10 ++-
+>  drivers/net/xen-netback/netback.c    |  11 ++-
+>  drivers/xen/balloon.c                |  14 +--
+>  drivers/xen/cpu_hotplug.c            |   4 +-
+>  drivers/xen/events.c                 |   9 +-
+>  drivers/xen/gntdev.c                 |   3 +-
+>  drivers/xen/grant-table.c            | 115 +++++++++++++------------
+>  drivers/xen/privcmd.c                |   2 +-
+>  drivers/xen/xenbus/xenbus_client.c   |   9 +-
+>  include/xen/grant_table.h            |  12 ---
+>  21 files changed, 422 insertions(+), 140 deletions(-)
 > 
-> Caused by commit 1e3b5df683e2 ("PM / QoS: Remove device PM QoS sysfs
-> attributes at the right place").
+> Some of this is from commits going back to December 2011.  And there
+> are several duplicate commits (with reversions of old versions) as well
+> as many merges.
 > 
-> I have used the pm tree from next-20130301 for today.
+> I assume that what is left in there is now v3.10 material (or
+> bug/regression fixes), so maybe you should take the opportunity and
 
-Thanks for the report and sorry for the breakage.  It should be fixed now.
+Yup.
 
-Rafael
+> rebase the whole lot onto v3.9-rc1 when that is released.
 
+Will do. I didn't know that was an OK thing - thought I had to keep the
+history behind (so no rebase).
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
