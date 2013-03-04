@@ -1,67 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the gpio tree
-Date: Mon, 4 Mar 2013 12:45:13 +1100
-Message-ID: <20130304124513.cf97f6249b0759a1ea1cb34d@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with Linus' tree
+Date: Mon, 4 Mar 2013 12:58:51 +1100
+Message-ID: <20130304125851.9c4742ac4c8d0061fa71e0c0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Mar_2013_12_45_13_+1100_MYpeKRkhG8fykMTc"
+ boundary="Signature=_Mon__4_Mar_2013_12_58_51_+1100_yGE3P+.mTy1H9fTC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51469 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49162 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752996Ab3CDBpY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 20:45:24 -0500
+	with ESMTP id S1754635Ab3CDB7B (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 20:59:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gabriel Fernandez <gabriel.fernandez@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__4_Mar_2013_12_45_13_+1100_MYpeKRkhG8fykMTc
+--Signature=_Mon__4_Mar_2013_12_58_51_+1100_yGE3P+.mTy1H9fTC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
+Hi Al,
 
-After merging the gpio tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the signal tree got a conflict in
+arch/tile/Kconfig between commit 887cbce0adea ("arch Kconfig: centralise
+CONFIG_ARCH_NO_VIRT_TO_BUS") from Linus' tree and commit 15d9a5d9296a
+("make HAVE_SYSCALL_WRAPPERS unconditional") from the signal tree.
 
-drivers/gpio/gpio-stmpe.c: In function 'stmpe_gpio_irq_init':
-drivers/gpio/gpio-stmpe.c:313:23: error: 'struct gpio_chip' has no member n=
-amed 'of_node'
-drivers/gpio/gpio-stmpe.c:316:61: error: 'struct gpio_chip' has no member n=
-amed 'of_node'
-drivers/gpio/gpio-stmpe.c: In function 'stmpe_gpio_probe':
-drivers/gpio/gpio-stmpe.c:351:18: error: 'struct gpio_chip' has no member n=
-amed 'of_node'
-
-Caused by commit f7719903b7c7 ("").
-
-I have used the gpio tree from next-20130301 for today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__4_Mar_2013_12_45_13_+1100_MYpeKRkhG8fykMTc
+diff --cc arch/tile/Kconfig
+index 1404497,4069d87..0000000
+--- a/arch/tile/Kconfig
++++ b/arch/tile/Kconfig
+@@@ -16,8 -16,6 +16,7 @@@ config TIL
+  	select GENERIC_PENDING_IRQ if SMP
+  	select GENERIC_IRQ_SHOW
+  	select HAVE_DEBUG_BUGVERBOSE
+- 	select HAVE_SYSCALL_WRAPPERS if TILEGX
+ +	select HAVE_VIRT_TO_BUS
+  	select SYS_HYPERVISOR
+  	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+  	select GENERIC_CLOCKEVENTS
+
+--Signature=_Mon__4_Mar_2013_12_58_51_+1100_yGE3P+.mTy1H9fTC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRM/ypAAoJEECxmPOUX5FECI4P/j9QaDuVP2EkOfJD/MOVHsNL
-eZA9S5DwU6D93vO61U+IiMcqctkXZog7UHSwMxUKLmoou5mC0rfXz5wAD8ObKf/K
-nV5KnoQSCZFf9ErjxP5kFGWUs4pvBE24CduEV9AEAc+EJ+fRzQsnSJZMcnEGUdBG
-clld1eMfFwib9i0cMA21HKiGpFD4ZCynWNUMNe8xmh+VjjAkZSe60ntDYKjxz32S
-SgxFPU6oSkwJ3rziT4DpaSpA8f3ewTdiXGVcF3B2punVRN96z5+OA+FlarXLVfe1
-qnZVwvc91LGz3JfQCyFlXQK9sX9ndVXXZbkiOaGzvdEyZkECmSbyPORHZLtVWb7V
-3zcrGT8VOOKryB3Ae6VkMtZtjUynRfhVDwDsM6P4iRChJU/uy2Jql7tkb7x2WH7o
-JtmALtaRwJ/usHcwwgk7GlBjwURqQWQcv/Adkilju6RgP+S8EPT+ADezso2yLnJE
-fLoq9s17tMKBTtbxXlRKa6shiMNUmWL6z//PuENrS9qoaiMBXtE6O+JWR79vWeo8
-XjtYplLOp9hgge+tByDV4cKeMNiX4UzW25NnXL+m2FhBapQ9dzbhFG4DFnd0lrQ2
-6gGoCGQ0JgTIsXk5Yeht0bYCaMO4NCRGqDWeWCM1dK8+FVcUk3l2Z6aZoGLfniCZ
-FqFiAq7ptjW7SRnEpzFi
-=lMgE
+iQIcBAEBCAAGBQJRM//bAAoJEECxmPOUX5FEG+UQAKZRfQBv0nt602RNmZnqIhcr
+goDHrNg6wDOVigIiBQdgPAUmUhSNqEntgnxfRcM2woojzuAAAF48W6chjG56UKrz
+oftfH0bHhGjGfUJH5co2sV4iurRZ1nuUWnCTzIDwP0rsezMGUXeP3/26D1o/3WKs
+wX81RGISDcqy6Ly5zaZaq1blQCoPjHy+V2oWKtZ6yGecw39zJ+rmM0mPa/QGMlbz
++SQhzjQ2FVuM5KU9mdqr04unULOTr5FjVZ8ZrGMxV7SopFZOmJUAblGEClQOhvlU
+a6Ukm9eT/bvoY/w0dWhwykevjLoE9bDb8wscuKOM76oK0jsDQl1vbL7TIb0OgVWn
++FLV8Ok+42NqY6Ox5gAHv+rZh16JEdZxR52lJtjYiOeZ/O/5ergWAz6K11aNOlFj
+ihn9C+Yvq1SfGbbpYhdlYetVLsxp9FqtkaRt/xrzWTPTN48ZokGcSMStpRUyoG0y
+DKKhB6+h3zg1HT05BT8ES6iW6RVF8BJxbyMDLPxcGShT0LlgJ9Vk46YfSP8qwTbh
+1Wq4vIR//N8Z27dTJOX1TR74X1GaMBRej9x/7FMUJJSn/3SEEcrRlXjbAjpgGdHk
+5bybT2LQkBLz+1XpsXxnn+Vdwg4WE3kJ7g7YzQBkr8ppNtBaCZFF0r+tRhtgLtID
+uM9wysrQWXks2iUayQxB
+=eT64
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Mar_2013_12_45_13_+1100_MYpeKRkhG8fykMTc--
+--Signature=_Mon__4_Mar_2013_12_58_51_+1100_yGE3P+.mTy1H9fTC--
