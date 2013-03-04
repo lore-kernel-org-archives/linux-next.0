@@ -1,75 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pm tree
-Date: Mon, 4 Mar 2013 10:58:41 +1100
-Message-ID: <20130304105841.39ba4afbd1b45cf0b31e4449@canb.auug.org.au>
+Subject: linux-next: manual merge of the device-mapper tree with Linus' tree
+Date: Mon, 4 Mar 2013 11:36:47 +1100
+Message-ID: <20130304113647.c9d5cf947873ddd476a18506@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Mar_2013_10_58_41_+1100_fm+2neOn1GiXb+lt"
+ boundary="Signature=_Mon__4_Mar_2013_11_36_47_+1100_b7/ThKFnZpg=B3u5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51486 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58552 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753834Ab3CCX6t (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 18:58:49 -0500
+	with ESMTP id S1754624Ab3CDAhD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 19:37:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alasdair G Kergon <agk@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Thornber <ejt@redhat.com>, Heinz Mauelshagen <mauelshagen@redhat.com>, Mike Snitzer <snitzer@redhat.com>
 
---Signature=_Mon__4_Mar_2013_10_58_41_+1100_fm+2neOn1GiXb+lt
+--Signature=_Mon__4_Mar_2013_11_36_47_+1100_b7/ThKFnZpg=B3u5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Alasdair,
 
-After merging the pm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the device-mapper tree got a conflict in
+drivers/md/dm-cache-target.c between commit c6b4fcbad044 ("m: add cache
+target") from Linus' tree and commit 2db8e6e2cd1c ("Add a target that
+allows a fast device such as an SSD to be used as a") from the
+device-mapper tree.
 
-drivers/base/power/qos.c: In function '__dev_pm_qos_flags':
-drivers/base/power/qos.c:64:2: error: implicit declaration of function 'IS_=
-ERR_OR_NULL' [-Werror=3Dimplicit-function-declaration]
-drivers/base/power/qos.c: In function 'dev_pm_qos_constraints_destroy':
-drivers/base/power/qos.c:248:2: error: implicit declaration of function 'ER=
-R_PTR' [-Werror=3Dimplicit-function-declaration]
-drivers/base/power/qos.c:248:17: warning: assignment makes pointer from int=
-eger without a cast [enabled by default]
-drivers/base/power/qos.c: In function 'dev_pm_qos_add_request':
-drivers/base/power/qos.c:294:2: error: implicit declaration of function 'IS=
-_ERR' [-Werror=3Dimplicit-function-declaration]
-drivers/base/power/qos.c: At top level:
-drivers/base/power/qos.c:202:13: warning: '__dev_pm_qos_hide_latency_limit'=
- used but never defined [enabled by default]
-drivers/base/power/qos.c:203:13: warning: '__dev_pm_qos_hide_flags' used bu=
-t never defined [enabled by default]
+These are basically the same patch.  I used the version from Linus' tree
+and can carry the fix as necessary (no action is required).
 
-Caused by commit 1e3b5df683e2 ("PM / QoS: Remove device PM QoS sysfs
-attributes at the right place").
-
-I have used the pm tree from next-20130301 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__4_Mar_2013_10_58_41_+1100_fm+2neOn1GiXb+lt
+--Signature=_Mon__4_Mar_2013_11_36_47_+1100_b7/ThKFnZpg=B3u5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRM+OxAAoJEECxmPOUX5FE8+IP/i0b0yx95vC2GyNfnivRg58A
-lLa/+jJdS3HgQ0taNzlUnjO0h5I7nWYSeoNZl92flB2KVu/Q0nMfScpm1fJDdhqD
-7WWXvXbyNb9vWFXz49JwoyWQY1VoKQDaktkNXf2B9a4x4XJQqfdGpMl4PHhAE656
-jAtZeNhQOqoZYHgTJVM9BPvCoLXN50pFSl0SQbOKld+L6zgUk+za8WUQjj77BHpt
-OdIMsx4HWzM0lAKaLDbuhaEr0u9WQ88sY2hjGBu7RZlKBn11HGn+Ts18Y7Ohj5I6
-roEpJrdCI7wwN1UrTP7EA176XgNkzgVEyx6daMZJemhEq6ob0seapTpiBYDuq/Fu
-1MuFrErjDdVI1vsRQjnYqMdwKfxeX4QER04NUab4F6jbddC4dT51kv9JSDYj7m9D
-HqxGJTxIptj+ybVKfzVDuFLmHcnvBouE2dLL4jVVmRq8mMjj6+kaiSW3HG4QiXtY
-cMMnZV/xu1N0C8qvCj21LiF+n1Cu488WXhYRiqNmPONJT28W6okrmOAaH6Sc2Jtl
-XpZhI5zFrrZ0z10yAl5lDXDwX3xK/5Lx+oUjKRhZiRjvE7ACJ1iOF37/OQ2wUHjd
-creMhE6fMtlMlWH11RiF/xr3OpDjJpuVj2wE5j3Pnh+o7/EYNBZrgOMt7bhodZ0t
-WxCLINCUm5WBNVt+mH/R
-=GkuH
+iQIcBAEBCAAGBQJRM+yfAAoJEECxmPOUX5FEZ3QQAKW++h5l9NrzwXnKV9PB4MBG
+8+NY9Jg5eaUQTM3EshdTkPlz8uaA+cSfXGJhx8E/TJWbQLCoAg9MCOtlqccHBRYE
+fXAZvCgc8TFlk81CBUKPsoX4sFQ+egZezXtPuyIV5ajvfWFM8iCgcK6k8bpboX75
+YYcdnX1JAPJI4J9qd2FhdjTMCsT3fcpVKNuAQouC8GV+VhjWRU/SvX+G+FZIFr6d
+C8bm3CCjmaFnKSpm0M8LMz+79YTsdmg5HOnU0zWmlLAIndkS95LQahVcr+5Zaw0U
+xooG1dGO0nv/v6R6lV74WAbzXngeAlkLFnz2dg2EX4KEwmWufPeJ04ktt5yWoDBD
+KZGEsQpBKrtA7L2v42ynv8sn8OSavIXuj7rHfiOtFFOirvYa5kROIhZyC1zRG3ZT
+bbVDJMGW8vt+U0b3lQqlpC3WLNOBJIHNWqazqyOIcbwkDs/5ThmbD8H+x/psrW2F
+1F9MPgCnQFG90sKWDNMb7qZtnOTv1nSY0EvJbC2q6kvooBp/e14SLF860PQ+SHFp
+dVgwRK2+ZDOo9gya6ORd6vyFU5aw2nGYe5WPFPwm3xpVkagTE2ybNwxcSChBqS3i
++mxgXEYIUBzNh/ZXQi9HgIgH9+4ecDuvAeAmxeFoKHOmHDdtnnnQHfzFzb5iRbIN
+yteM8cgXCrJFFSoA6rWJ
+=M4+W
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Mar_2013_10_58_41_+1100_fm+2neOn1GiXb+lt--
+--Signature=_Mon__4_Mar_2013_11_36_47_+1100_b7/ThKFnZpg=B3u5--
