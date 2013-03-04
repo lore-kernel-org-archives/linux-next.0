@@ -1,52 +1,44 @@
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Subject: Re: [PATCH] leds-ot200: Fix misbehavior caused by wrong bit masks
-Date: Mon, 4 Mar 2013 08:40:17 +0100
-Message-ID: <CAH9NwWceaA0MPGj65fOhmECL8A522qngU3RHGZ++Uz-6mVKKAg@mail.gmail.com>
-References: <1360771110-9490-1-git-send-email-christian.gmeiner@gmail.com>
- <CAK5ve-K43n=4n1GyRW+2PgMTe2bU6ROHAa-_dK_0LgzM7JCRcw@mail.gmail.com> <CAH9NwWc+BP5ZbHwmMZ4AisviDHM-GizTmZO6vwxtd=ntYUAk=A@mail.gmail.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: linux-next: build failure after merge of the final tree (akpm
+ tree related)
+Date: Mon, 4 Mar 2013 10:22:44 +0100
+Message-ID: <20130304092244.GB17223@quack.suse.cz>
+References: <20130304142821.b61bd9800c4ea35331829a79@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f171.google.com ([209.85.216.171]:33653 "EHLO
-	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754981Ab3CDHki (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Mar 2013 02:40:38 -0500
-In-Reply-To: <CAH9NwWc+BP5ZbHwmMZ4AisviDHM-GizTmZO6vwxtd=ntYUAk=A@mail.gmail.com>
+Received: from cantor2.suse.de ([195.135.220.15]:60801 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756130Ab3CDJWq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Mar 2013 04:22:46 -0500
+Content-Disposition: inline
+In-Reply-To: <20130304142821.b61bd9800c4ea35331829a79@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bryan Wu <cooloney@gmail.com>
-Cc: akpm <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
 
-ping
---
-Christian Gmeiner, MSc
+On Mon 04-03-13 14:28:21, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (arm defconfig)
+> failed like this:
+> 
+> kernel/built-in.o: In function `console_unlock':
+> cpu_pm.c:(.text+0x4418): undefined reference to `__bad_udelay'
+> 
+> Caused by commit 4df7323a125f ("printk: avoid softlockups in
+> console_unlock()") which added
+> 
+> 	ndelay(max_interrupt_disabled_duration() / 2);
+> 
+> to console_unlock() which can be a 2.5 second delay ... and the maximum
+> delayed allowed by udelay (at least in this build) is 2ms.
+  Bah, one always learns. Didn't know there's some max limit on ndelay().
+I'll replace that with a while loop or something like that. Thanks for
+report!
 
-
-2013/2/23 Christian Gmeiner <christian.gmeiner@gmail.com>:
-> 2013/2/15 Bryan Wu <cooloney@gmail.com>:
->> On Wed, Feb 13, 2013 at 7:58 AM, Christian Gmeiner
->> <christian.gmeiner@gmail.com> wrote:
->>> During the development of this driver an in-house register
->>> documentation was used. The last weeks some integration tests
->>> were done and this problem was found. It turned out that
->>> the released register documentation is wrong.
->>>
->>> The fix is very simple: shift all masks by one.
->>>
->>> Our customers can control LEDs from userspace via Java,
->>> C++ or what every. They have running/working applications where
->>> they want to control led_3 but led_2 get's used.
->>> I got a bug report in our in-house bug tracker so it would be
->>> great to fix this upstream.
->>>
->>> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
->>
->> Thanks, Christian.
->>
->> And Andrew, are you going to take care of this patch? Or I will merge this.
->>
->
-> Whats the current state of the patch? Hope we can get it into 3.9 :)
->
-> --
-> Christian Gmeiner, MSc
+								Honza
+-- 
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
