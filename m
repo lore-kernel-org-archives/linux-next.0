@@ -1,64 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the final tree (akpm tree
  related)
-Date: Mon, 4 Mar 2013 14:10:51 +1100
-Message-ID: <20130304141051.a630590df1007f2d349a2d8a@canb.auug.org.au>
+Date: Mon, 4 Mar 2013 14:28:21 +1100
+Message-ID: <20130304142821.b61bd9800c4ea35331829a79@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Mar_2013_14_10_51_+1100_fMAxWi3o1Wu1Kw/e"
+ boundary="Signature=_Mon__4_Mar_2013_14_28_21_+1100_.JcSKTG3uZ/d28tT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51288 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53639 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754936Ab3CDDLD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 22:11:03 -0500
+	with ESMTP id S1752080Ab3CDD23 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 22:28:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
 
---Signature=_Mon__4_Mar_2013_14_10_51_+1100_fMAxWi3o1Wu1Kw/e
+--Signature=_Mon__4_Mar_2013_14_28_21_+1100_.JcSKTG3uZ/d28tT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (sparc64 defconfig)
+After merging the final tree, today's linux-next build (arm defconfig)
 failed like this:
 
-arch/sparc/built-in.o: In function `setup_arch':
-(.init.text+0xc38): undefined reference to `early_console'
-arch/sparc/built-in.o: In function `setup_arch':
-(.init.text+0xc44): undefined reference to `early_console'
+kernel/built-in.o: In function `console_unlock':
+cpu_pm.c:(.text+0x4418): undefined reference to `__bad_udelay'
 
-Caused by commit 16ac99bd7acd ("early_printk: consolidate random copies
-of identical code").  This build does not have CONFIG_EARLY_PRINTK defined.
+Caused by commit 4df7323a125f ("printk: avoid softlockups in
+console_unlock()") which added
 
-I have reverted that commit for today.
+	ndelay(max_interrupt_disabled_duration() / 2);
+
+to console_unlock() which can be a 2.5 second delay ... and the maximum
+delayed allowed by udelay (at least in this build) is 2ms.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__4_Mar_2013_14_10_51_+1100_fMAxWi3o1Wu1Kw/e
+--Signature=_Mon__4_Mar_2013_14_28_21_+1100_.JcSKTG3uZ/d28tT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRNBC7AAoJEECxmPOUX5FE2wQQAJcgrA8vC7iM6YQmLHKMo5t8
-YP/cc0ebTzT/huytRH1qClkrCyeFoFxjEYRqtrSX9Cb35KTd2jDoONm7W9NRfgSV
-0tXFids2sdmNtRMSf/5fBdqmAmzBMJB1kgEbeo+O1JE09HZq9w1+IWCUFAmRkwvc
-Wu04KAEOUff5714f7CpBaYwJ+voxIpIUJZ2xR8UFty0rjaJuVhaVNVREMoTTFiTR
-lBJr5b/LnaRXxCt873JgW2UfSErT2jpAqDP3Gg41bsPqX7PttVieyp2rZnQyC5Rw
-4TRky1s9VtNyAcv+WHj+kpBeO0818ViC4Dr82hv0hLPXd7QcRZv8TMqvG1h295Qc
-V+PQapht66PTPtjaeJ494ahZQL5y1asBrF3QHKnOAcGGX3RTKsFGOyK4H/wOJKeo
-zvAmZTb/n8EppwIxOdqWXES0zZvsfdqOb6u1QLCyCRkdGRRMDmIFofA98ldmF/Pt
-vgXXxG+9EYLQwcoUp3v2KSxD1nLhw47M3SSNdZWEK4Ue8EheC4RFBp19bZ0KTZw0
-9CvgZGnNpraKRddeGkqoVH0iXYiZc5Zp7s9ufPTvXA9CQxpnOFB9hQX9GTng8Bsd
-FPoqSQrh0g73OifzmKfpvm1aiGf2NM0SHXyFH5fWfprr68sIP+d0/JD+a/zIxkHB
-awDczXOpSGPEyEz+oT8R
-=8mbw
+iQIcBAEBCAAGBQJRNBTVAAoJEECxmPOUX5FEyLAP/Ah/+6IXdcmS/XwB/8axAPLn
+oOVZ1sWLXcklUc5fK+P1BvE4oNz/ceACrwqvG2CDuOYZTINd+BXAM3+ChdMCtFF7
+yIuBRXNRDFCpxm6fbXmcm/mVBvDCSWdYbG/c4VxGnMEHmWmauqWJUDikr4ofDSe+
+Hef48a38l4vmTpy0k20EIbp1Mip4D8cTBc7e+0Q/yeLk4gYES49alL3WPl/0jhU6
+uQF3UXUFZO1xlX8gD1GkC2WPBEuDJlmaB0HMzw4XOleGdHnnmgfyQTLm+AsWHMFl
+GlmgL0Lke9s/y16uYJno9zGDefbKyYTQBC3zeZ4OrJ1r6auMLMgVWlAf3jsiKrv6
+L5QNfpQmPqiOULGjExmjCg2+LM6zX38KPHR71zh/P0D3gKyaeKq3fpCWKZzYIdJo
+lLJjNd/HLZ53DYT7B9PXDIAht8w8idUba19jOFKXb9xf6MAMpKkMm+EZD/XNu5zw
+jZp+ubLZM8CucO41a6Mcwd2A9u8NFvgY3SIqyLpaCc9Z0s552UBB78WhDT8W6v7p
+bO04bZBot3vR+l0IQQNy+d/hVx+smY57YnRzFWFEkN9DPFGr+ZtbqWC9wVZIP5od
+hse2z6cRbCGpi8aR2OQCmQduDS84bbGHPJ/Vfach1LgJBw50iO+4PkIhmZfghwNd
+XBvUIPU7hTEWc0AruZA8
+=4GU4
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Mar_2013_14_10_51_+1100_fMAxWi3o1Wu1Kw/e--
+--Signature=_Mon__4_Mar_2013_14_28_21_+1100_.JcSKTG3uZ/d28tT--
