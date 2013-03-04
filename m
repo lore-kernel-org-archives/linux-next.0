@@ -1,62 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Grant Likely <grant.likely@secretlab.ca>
 Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Mon, 4 Mar 2013 03:30:30 +0100
-Message-ID: <CACRpkdZPkUT1=W=NgKDdUXy7fiSjymki0jjOFE5_KuVtyStuzg@mail.gmail.com>
+Date: Mon, 04 Mar 2013 10:32:31 +0800
+Message-ID: <20130304023231.9DB013E14C0@localhost>
 References: <20130304124513.cf97f6249b0759a1ea1cb34d@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:58336 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754503Ab3CDCdF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 21:33:05 -0500
+Received: by mail-pa0-f52.google.com with SMTP id fb1so2865999pad.39
+        for <linux-next@vger.kernel.org>; Sun, 03 Mar 2013 18:33:04 -0800 (PST)
 In-Reply-To: <20130304124513.cf97f6249b0759a1ea1cb34d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Gabriel Fernandez <gabriel.fernandez@stericsson.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gabriel Fernandez <gabriel.fernandez@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Mon, Mar 4, 2013 at 2:45 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
+On Mon, 4 Mar 2013 12:45:13 +1100, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Grant,
+> 
 > After merging the gpio tree, today's linux-next build (x86_64
 > allmodconfig) failed like this:
->
+> 
 > drivers/gpio/gpio-stmpe.c: In function 'stmpe_gpio_irq_init':
 > drivers/gpio/gpio-stmpe.c:313:23: error: 'struct gpio_chip' has no member named 'of_node'
 > drivers/gpio/gpio-stmpe.c:316:61: error: 'struct gpio_chip' has no member named 'of_node'
 > drivers/gpio/gpio-stmpe.c: In function 'stmpe_gpio_probe':
 > drivers/gpio/gpio-stmpe.c:351:18: error: 'struct gpio_chip' has no member named 'of_node'
+> 
+> Caused by commit f7719903b7c7 ("").
+> 
+> I have used the gpio tree from next-20130301 for today.
 
-So basically when I look at this issue the way we have
-the of node optional in gpiolib is inconsistent with the device
-core and that makes it easy to do things like this :-(
+Yup, I messed that one up. I've now pushed out a fixed branch.
 
-include/linux/device.h:
-struct device {
-(...)
-         struct device_node      *of_node; /* associated device tree node */
-(...)
-}
+g.
 
-No #ifdef, it used to be there but I guess we deleted it because
-of #ifdef clutter elsewhere.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-include/asm-generic/gpio.h:
-struct gpio_chip {
-(...)
-#if defined(CONFIG_OF_GPIO)
-        /*
-         * If CONFIG_OF is enabled, then all GPIO controllers described in the
-         * device tree automatically may have an OF translation
-         */
-        struct device_node *of_node;
-        int of_gpio_n_cells;
-        int (*of_xlate)(struct gpio_chip *gc,
-                        const struct of_phandle_args *gpiospec, u32 *flags);
-#endif
-(...)
-}
-
-Will it help if we just move the of_node outside of the #ifdef
-in this case? Or does it have hard deps such that the
-of_gpio_n_cells and of_xlate also need to be moved out
-in that case?
-
-Yours,
-Linus Walleij
+-- 
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies, Ltd.
