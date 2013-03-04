@@ -1,60 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the device-mapper tree with Linus' tree
-Date: Mon, 4 Mar 2013 11:36:47 +1100
-Message-ID: <20130304113647.c9d5cf947873ddd476a18506@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Mon, 4 Mar 2013 12:45:13 +1100
+Message-ID: <20130304124513.cf97f6249b0759a1ea1cb34d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Mar_2013_11_36_47_+1100_b7/ThKFnZpg=B3u5"
+ boundary="Signature=_Mon__4_Mar_2013_12_45_13_+1100_MYpeKRkhG8fykMTc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58552 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:51469 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754624Ab3CDAhD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 19:37:03 -0500
+	with ESMTP id S1752996Ab3CDBpY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 20:45:24 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alasdair G Kergon <agk@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Thornber <ejt@redhat.com>, Heinz Mauelshagen <mauelshagen@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gabriel Fernandez <gabriel.fernandez@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Mon__4_Mar_2013_11_36_47_+1100_b7/ThKFnZpg=B3u5
+--Signature=_Mon__4_Mar_2013_12_45_13_+1100_MYpeKRkhG8fykMTc
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alasdair,
+Hi Grant,
 
-Today's linux-next merge of the device-mapper tree got a conflict in
-drivers/md/dm-cache-target.c between commit c6b4fcbad044 ("m: add cache
-target") from Linus' tree and commit 2db8e6e2cd1c ("Add a target that
-allows a fast device such as an SSD to be used as a") from the
-device-mapper tree.
+After merging the gpio tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-These are basically the same patch.  I used the version from Linus' tree
-and can carry the fix as necessary (no action is required).
+drivers/gpio/gpio-stmpe.c: In function 'stmpe_gpio_irq_init':
+drivers/gpio/gpio-stmpe.c:313:23: error: 'struct gpio_chip' has no member n=
+amed 'of_node'
+drivers/gpio/gpio-stmpe.c:316:61: error: 'struct gpio_chip' has no member n=
+amed 'of_node'
+drivers/gpio/gpio-stmpe.c: In function 'stmpe_gpio_probe':
+drivers/gpio/gpio-stmpe.c:351:18: error: 'struct gpio_chip' has no member n=
+amed 'of_node'
+
+Caused by commit f7719903b7c7 ("").
+
+I have used the gpio tree from next-20130301 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__4_Mar_2013_11_36_47_+1100_b7/ThKFnZpg=B3u5
+--Signature=_Mon__4_Mar_2013_12_45_13_+1100_MYpeKRkhG8fykMTc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRM+yfAAoJEECxmPOUX5FEZ3QQAKW++h5l9NrzwXnKV9PB4MBG
-8+NY9Jg5eaUQTM3EshdTkPlz8uaA+cSfXGJhx8E/TJWbQLCoAg9MCOtlqccHBRYE
-fXAZvCgc8TFlk81CBUKPsoX4sFQ+egZezXtPuyIV5ajvfWFM8iCgcK6k8bpboX75
-YYcdnX1JAPJI4J9qd2FhdjTMCsT3fcpVKNuAQouC8GV+VhjWRU/SvX+G+FZIFr6d
-C8bm3CCjmaFnKSpm0M8LMz+79YTsdmg5HOnU0zWmlLAIndkS95LQahVcr+5Zaw0U
-xooG1dGO0nv/v6R6lV74WAbzXngeAlkLFnz2dg2EX4KEwmWufPeJ04ktt5yWoDBD
-KZGEsQpBKrtA7L2v42ynv8sn8OSavIXuj7rHfiOtFFOirvYa5kROIhZyC1zRG3ZT
-bbVDJMGW8vt+U0b3lQqlpC3WLNOBJIHNWqazqyOIcbwkDs/5ThmbD8H+x/psrW2F
-1F9MPgCnQFG90sKWDNMb7qZtnOTv1nSY0EvJbC2q6kvooBp/e14SLF860PQ+SHFp
-dVgwRK2+ZDOo9gya6ORd6vyFU5aw2nGYe5WPFPwm3xpVkagTE2ybNwxcSChBqS3i
-+mxgXEYIUBzNh/ZXQi9HgIgH9+4ecDuvAeAmxeFoKHOmHDdtnnnQHfzFzb5iRbIN
-yteM8cgXCrJFFSoA6rWJ
-=M4+W
+iQIcBAEBCAAGBQJRM/ypAAoJEECxmPOUX5FECI4P/j9QaDuVP2EkOfJD/MOVHsNL
+eZA9S5DwU6D93vO61U+IiMcqctkXZog7UHSwMxUKLmoou5mC0rfXz5wAD8ObKf/K
+nV5KnoQSCZFf9ErjxP5kFGWUs4pvBE24CduEV9AEAc+EJ+fRzQsnSJZMcnEGUdBG
+clld1eMfFwib9i0cMA21HKiGpFD4ZCynWNUMNe8xmh+VjjAkZSe60ntDYKjxz32S
+SgxFPU6oSkwJ3rziT4DpaSpA8f3ewTdiXGVcF3B2punVRN96z5+OA+FlarXLVfe1
+qnZVwvc91LGz3JfQCyFlXQK9sX9ndVXXZbkiOaGzvdEyZkECmSbyPORHZLtVWb7V
+3zcrGT8VOOKryB3Ae6VkMtZtjUynRfhVDwDsM6P4iRChJU/uy2Jql7tkb7x2WH7o
+JtmALtaRwJ/usHcwwgk7GlBjwURqQWQcv/Adkilju6RgP+S8EPT+ADezso2yLnJE
+fLoq9s17tMKBTtbxXlRKa6shiMNUmWL6z//PuENrS9qoaiMBXtE6O+JWR79vWeo8
+XjtYplLOp9hgge+tByDV4cKeMNiX4UzW25NnXL+m2FhBapQ9dzbhFG4DFnd0lrQ2
+6gGoCGQ0JgTIsXk5Yeht0bYCaMO4NCRGqDWeWCM1dK8+FVcUk3l2Z6aZoGLfniCZ
+FqFiAq7ptjW7SRnEpzFi
+=lMgE
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Mar_2013_11_36_47_+1100_b7/ThKFnZpg=B3u5--
+--Signature=_Mon__4_Mar_2013_12_45_13_+1100_MYpeKRkhG8fykMTc--
