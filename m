@@ -1,46 +1,64 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Mon, 04 Mar 2013 10:32:31 +0800
-Message-ID: <20130304023231.9DB013E14C0@localhost>
-References: <20130304124513.cf97f6249b0759a1ea1cb34d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (akpm tree
+ related)
+Date: Mon, 4 Mar 2013 14:10:51 +1100
+Message-ID: <20130304141051.a630590df1007f2d349a2d8a@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__4_Mar_2013_14_10_51_+1100_fMAxWi3o1Wu1Kw/e"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:58336 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754503Ab3CDCdF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 21:33:05 -0500
-Received: by mail-pa0-f52.google.com with SMTP id fb1so2865999pad.39
-        for <linux-next@vger.kernel.org>; Sun, 03 Mar 2013 18:33:04 -0800 (PST)
-In-Reply-To: <20130304124513.cf97f6249b0759a1ea1cb34d@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51288 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754936Ab3CDDLD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 22:11:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gabriel Fernandez <gabriel.fernandez@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
-On Mon, 4 Mar 2013 12:45:13 +1100, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Grant,
-> 
-> After merging the gpio tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/gpio/gpio-stmpe.c: In function 'stmpe_gpio_irq_init':
-> drivers/gpio/gpio-stmpe.c:313:23: error: 'struct gpio_chip' has no member named 'of_node'
-> drivers/gpio/gpio-stmpe.c:316:61: error: 'struct gpio_chip' has no member named 'of_node'
-> drivers/gpio/gpio-stmpe.c: In function 'stmpe_gpio_probe':
-> drivers/gpio/gpio-stmpe.c:351:18: error: 'struct gpio_chip' has no member named 'of_node'
-> 
-> Caused by commit f7719903b7c7 ("").
-> 
-> I have used the gpio tree from next-20130301 for today.
+--Signature=_Mon__4_Mar_2013_14_10_51_+1100_fMAxWi3o1Wu1Kw/e
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yup, I messed that one up. I've now pushed out a fixed branch.
+Hi all,
 
-g.
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+arch/sparc/built-in.o: In function `setup_arch':
+(.init.text+0xc38): undefined reference to `early_console'
+arch/sparc/built-in.o: In function `setup_arch':
+(.init.text+0xc44): undefined reference to `early_console'
 
--- 
-Grant Likely, B.Sc, P.Eng.
-Secret Lab Technologies, Ltd.
+Caused by commit 16ac99bd7acd ("early_printk: consolidate random copies
+of identical code").  This build does not have CONFIG_EARLY_PRINTK defined.
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__4_Mar_2013_14_10_51_+1100_fMAxWi3o1Wu1Kw/e
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRNBC7AAoJEECxmPOUX5FE2wQQAJcgrA8vC7iM6YQmLHKMo5t8
+YP/cc0ebTzT/huytRH1qClkrCyeFoFxjEYRqtrSX9Cb35KTd2jDoONm7W9NRfgSV
+0tXFids2sdmNtRMSf/5fBdqmAmzBMJB1kgEbeo+O1JE09HZq9w1+IWCUFAmRkwvc
+Wu04KAEOUff5714f7CpBaYwJ+voxIpIUJZ2xR8UFty0rjaJuVhaVNVREMoTTFiTR
+lBJr5b/LnaRXxCt873JgW2UfSErT2jpAqDP3Gg41bsPqX7PttVieyp2rZnQyC5Rw
+4TRky1s9VtNyAcv+WHj+kpBeO0818ViC4Dr82hv0hLPXd7QcRZv8TMqvG1h295Qc
+V+PQapht66PTPtjaeJ494ahZQL5y1asBrF3QHKnOAcGGX3RTKsFGOyK4H/wOJKeo
+zvAmZTb/n8EppwIxOdqWXES0zZvsfdqOb6u1QLCyCRkdGRRMDmIFofA98ldmF/Pt
+vgXXxG+9EYLQwcoUp3v2KSxD1nLhw47M3SSNdZWEK4Ue8EheC4RFBp19bZ0KTZw0
+9CvgZGnNpraKRddeGkqoVH0iXYiZc5Zp7s9ufPTvXA9CQxpnOFB9hQX9GTng8Bsd
+FPoqSQrh0g73OifzmKfpvm1aiGf2NM0SHXyFH5fWfprr68sIP+d0/JD+a/zIxkHB
+awDczXOpSGPEyEz+oT8R
+=8mbw
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__4_Mar_2013_14_10_51_+1100_fMAxWi3o1Wu1Kw/e--
