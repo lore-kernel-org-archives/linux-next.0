@@ -1,59 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: error fetching the osd tree
-Date: Tue, 5 Mar 2013 09:25:47 +1100
-Message-ID: <20130305092547.be2378f0caa8c2139865de87@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
+Date: Tue, 5 Mar 2013 10:23:34 +1100
+Message-ID: <20130305102334.0cc15cb90a0f8baa4126cc14@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__5_Mar_2013_09_25_47_+1100_6aL4NqQkTUAMTEXE"
+ boundary="Signature=_Tue__5_Mar_2013_10_23_34_+1100_.sYOjZtRr6=.d=bM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35878 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:42148 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932367Ab3CDWZ5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Mar 2013 17:25:57 -0500
+	with ESMTP id S932373Ab3CDXXq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Mar 2013 18:23:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Boaz Harrosh <bharrosh@panasas.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paulo Zanoni <paulo.r.zanoni@intel.com>, Thierry Reding <thierry.reding@avionic-design.de>
 
---Signature=_Tue__5_Mar_2013_09_25_47_+1100_6aL4NqQkTUAMTEXE
+--Signature=_Tue__5_Mar_2013_10_23_34_+1100_.sYOjZtRr6=.d=bM
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Boaz,
+Hi all,
 
-Fetching the osd tree
-(git://git.open-osd.org/linux-open-osd.git#linux-next) produces this
-error:
+Today's linux-next merge of the drm-intel tree got conflicts in
+drivers/gpu/drm/i915/intel_hdmi.c and drivers/gpu/drm/i915/intel_sdvo.c
+between commit 18316c8c39a8 ("drm: Remove duplicate drm_mode_cea_vic()")
+from Linus' tree and commit 4f3a8bc7ba6e ("drm/i915: rename some HDMI bit
+definitions") from the drm-intel tree.
 
-fatal: read error: Connection reset by peer
-
-It has been doing that for a few days, now.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__5_Mar_2013_09_25_47_+1100_6aL4NqQkTUAMTEXE
+diff --cc drivers/gpu/drm/i915/intel_hdmi.c
+index fa8ec4a,4d222ec..0000000
+--- a/drivers/gpu/drm/i915/intel_hdmi.c
++++ b/drivers/gpu/drm/i915/intel_hdmi.c
+@@@ -781,8 -777,8 +777,8 @@@ bool intel_hdmi_mode_fixup(struct drm_e
+  	if (intel_hdmi->color_range_auto) {
+  		/* See CEA-861-E - 5.1 Default Encoding Parameters */
+  		if (intel_hdmi->has_hdmi_sink &&
+ -		    drm_mode_cea_vic(adjusted_mode) > 1)
+ +		    drm_match_cea_mode(adjusted_mode) > 1)
+- 			intel_hdmi->color_range =3D SDVO_COLOR_RANGE_16_235;
++ 			intel_hdmi->color_range =3D HDMI_COLOR_RANGE_16_235;
+  		else
+  			intel_hdmi->color_range =3D 0;
+  	}
+diff --cc drivers/gpu/drm/i915/intel_sdvo.c
+index d07a8cd,63dcb76..0000000
+--- a/drivers/gpu/drm/i915/intel_sdvo.c
++++ b/drivers/gpu/drm/i915/intel_sdvo.c
+@@@ -1076,9 -1076,11 +1076,11 @@@ static bool intel_sdvo_mode_fixup(struc
+ =20
+  	if (intel_sdvo->color_range_auto) {
+  		/* See CEA-861-E - 5.1 Default Encoding Parameters */
++ 		/* FIXME: This bit is only valid when using TMDS encoding and 8
++ 		 * bit per color mode. */
+  		if (intel_sdvo->has_hdmi_monitor &&
+ -		    drm_mode_cea_vic(adjusted_mode) > 1)
+ +		    drm_match_cea_mode(adjusted_mode) > 1)
+- 			intel_sdvo->color_range =3D SDVO_COLOR_RANGE_16_235;
++ 			intel_sdvo->color_range =3D HDMI_COLOR_RANGE_16_235;
+  		else
+  			intel_sdvo->color_range =3D 0;
+  	}
+
+--Signature=_Tue__5_Mar_2013_10_23_34_+1100_.sYOjZtRr6=.d=bM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRNR9rAAoJEECxmPOUX5FEZtkP/2w1c/XxWZ1FAANrr0j6JG36
-iuAGKS+BABmPooaYAFSMREZ9juNaGqRo7g3ojWAoPXMnbhtXaF0/VLPRC4xPdNj1
-0CvbHeZHAc1VP948ZpzUR18gtBJhMh1nrj9x8fmKdziSvcxGPuGT53Nd7IhfFwGc
-HxFUOvUWoaYCvgeTBptk3mGQZwmBDNyQM5+t9aVNksAM1OGhldx09SM5dal1wLjo
-xpm/xlJ3zd+584W4UJFfFpjT/EFhqH0d0nGMNEotEsB2bc/J3g5o84grWUyDdPGU
-MvC7qvrNg4FYhJ/znA3dW8f4cFu8i9ud1WX/qaxfIwK/63ABnBagsWChmq1oSRBh
-dAacGiC71KZRN0XuPx16aowVWMHYUnH9q9rv/XCuH1sNcjUgD7hMXsjZONaj17TG
-NS+hzcypfCfGsBJObM4MhjYLrDf1rwKuOZ/fNsLPwFql9Ut7SSZWhLlXUDK3ur9u
-KzkM1OsrYfC8whvW80RldfPYKfTAOcVTHOgqfGVQcT3stWUPeHxhU0ZOw2tzXpyM
-lUY8nW7JGI31dlnJ8F2wVhtJx50n1lQZIvmCG+AxiMn6Yh489bIvpIqQtlnzLOv+
-pNaFRDdNX22EnKxENaM0YZhVbBTllTB9XVsDJVI+KyI//WrivC+C6Fa4oD0YsYmQ
-L49MA+9om8/c7I9CySjA
-=c0Ev
+iQIcBAEBCAAGBQJRNSz2AAoJEECxmPOUX5FEZqoP/1nPS0tj3XwJTdDiQhzKXV8g
+T1hJS7MiFQvLLPT8eAnG7/GgmekP00Ryvh9ZUvNVpuQ5BcjEMnlN99pArrm41zzM
+YFczmop0E0a96Y3/LFguWT6Le1h0gIEqjMWYdVO7KMJf12NrfxFRmFssgiHRYDrA
+lDBygxJtz9bq4/8NBDmmtxXycB5ApZFwvudw+mShXftNo74+IDidbnqbXaYzsnTl
+jf70kO/JGoSkHV9oQdoATJsIMnoghNN6b+xIwov6P3ldeq3K7l5Yyku+Py+FlNbZ
+j0zKYnsHYhL3w88TB+J7S1yxsXCkXPCBrac2e4KR1Vfer6UDdZ1jRufxCVIUllpd
+Ecjzi3oyMIOFZGxlS6OUezITRbXfMFZh36JkBGNQ9keYxRMm8VGciNnX1KpTb6Rb
+9eAdnSpIMhhbBGpNDSXI/zdcyF3EWcBVAbF5TTX7qBWT9ucEJdOv351PIWmRcAAO
+VI+gaiwdcSUcDZIm1ekho/lnVbVTbY37FtgVRNiKU3p801XCd7XoJwwh5zRW62Sr
+En4HbO3dKOu9HN8WsTTZ0FrG2wucRa0p64OIprJ83rYVnUO6E6hv953M8TuQkHRB
+KmbXqEwwN5utqbZCOKor29fNd8T7yh+Gryh8JiIsoPawASLg+ZTUyH1Fxe8rp7PL
+AtgCA5FSM7d/X07x8tWs
+=6OCE
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__5_Mar_2013_09_25_47_+1100_6aL4NqQkTUAMTEXE--
+--Signature=_Tue__5_Mar_2013_10_23_34_+1100_.sYOjZtRr6=.d=bM--
