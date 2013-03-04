@@ -1,124 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Mon, 4 Mar 2013 13:21:39 +1100
-Message-ID: <20130304132139.f9efee7b45655d9f75abf643@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Mon, 4 Mar 2013 03:30:30 +0100
+Message-ID: <CACRpkdZPkUT1=W=NgKDdUXy7fiSjymki0jjOFE5_KuVtyStuzg@mail.gmail.com>
+References: <20130304124513.cf97f6249b0759a1ea1cb34d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Mar_2013_13_21_39_+1100_hDWWe2EnhxaeGjC6"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49149 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752794Ab3CDCVu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 21:21:50 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130304124513.cf97f6249b0759a1ea1cb34d@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>, Gabriel Fernandez <gabriel.fernandez@stericsson.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__4_Mar_2013_13_21_39_+1100_hDWWe2EnhxaeGjC6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Mar 4, 2013 at 2:45 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Andrew,
+> After merging the gpio tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/gpio/gpio-stmpe.c: In function 'stmpe_gpio_irq_init':
+> drivers/gpio/gpio-stmpe.c:313:23: error: 'struct gpio_chip' has no member named 'of_node'
+> drivers/gpio/gpio-stmpe.c:316:61: error: 'struct gpio_chip' has no member named 'of_node'
+> drivers/gpio/gpio-stmpe.c: In function 'stmpe_gpio_probe':
+> drivers/gpio/gpio-stmpe.c:351:18: error: 'struct gpio_chip' has no member named 'of_node'
 
-Today's linux-next merge of the akpm tree got a conflict in mm/shmem.c
-between commit 26567cdbbf1a ("fix nommu breakage in shmem.c") from Linus'
-tree and commit "shmem-fix-build-regression-fix" from the akpm tree.
+So basically when I look at this issue the way we have
+the of node optional in gpiolib is inconsistent with the device
+core and that makes it easy to do things like this :-(
 
-I fixed it up (I used the latter version - see the full new version
-below) and can carry the fix as necessary (no action is required).
+include/linux/device.h:
+struct device {
+(...)
+         struct device_node      *of_node; /* associated device tree node */
+(...)
+}
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+No #ifdef, it used to be there but I guess we deleted it because
+of #ifdef clutter elsewhere.
 
-diff --git a/include/linux/ramfs.h b/include/linux/ramfs.h
-index 5bf5500..69e37c2 100644
---- a/include/linux/ramfs.h
-+++ b/include/linux/ramfs.h
-@@ -6,7 +6,13 @@ struct inode *ramfs_get_inode(struct super_block *sb, cons=
-t struct inode *dir,
- extern struct dentry *ramfs_mount(struct file_system_type *fs_type,
- 	 int flags, const char *dev_name, void *data);
-=20
--#ifndef CONFIG_MMU
-+#ifdef CONFIG_MMU
-+static inline int
-+ramfs_nommu_expand_for_mapping(struct inode *inode, size_t newsize)
-+{
-+	return 0;
-+}
-+#else
- extern int ramfs_nommu_expand_for_mapping(struct inode *inode, size_t news=
-ize);
- extern unsigned long ramfs_nommu_get_unmapped_area(struct file *file,
- 						   unsigned long addr,
-diff --git a/mm/shmem.c b/mm/shmem.c
-index b863bf3..a8d9da0 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -25,6 +25,7 @@
- #include <linux/init.h>
- #include <linux/vfs.h>
- #include <linux/mount.h>
-+#include <linux/ramfs.h>
- #include <linux/pagemap.h>
- #include <linux/file.h>
- #include <linux/mm.h>
-@@ -2830,8 +2831,6 @@ out4:
-  * effectively equivalent, but much lighter weight.
-  */
-=20
--#include <linux/ramfs.h>
--
- static struct file_system_type shmem_fs_type =3D {
- 	.name		=3D "tmpfs",
- 	.mount		=3D ramfs_mount,
-@@ -2897,7 +2896,6 @@ static struct dentry_operations anon_ops =3D {
-  */
- struct file *shmem_file_setup(const char *name, loff_t size, unsigned long=
- flags)
- {
--	int error;
- 	struct file *res;
- 	struct inode *inode;
- 	struct path path;
-@@ -2932,11 +2930,10 @@ struct file *shmem_file_setup(const char *name, lof=
-f_t size, unsigned long flags
- 	d_instantiate(path.dentry, inode);
- 	inode->i_size =3D size;
- 	clear_nlink(inode);	/* It is unlinked */
--#ifndef CONFIG_MMU
-+
- 	res =3D ERR_PTR(ramfs_nommu_expand_for_mapping(inode, size));
- 	if (IS_ERR(res))
- 		goto put_dentry;
--#endif
-=20
- 	res =3D alloc_file(&path, FMODE_WRITE | FMODE_READ,
- 		  &shmem_file_operations);
+include/asm-generic/gpio.h:
+struct gpio_chip {
+(...)
+#if defined(CONFIG_OF_GPIO)
+        /*
+         * If CONFIG_OF is enabled, then all GPIO controllers described in the
+         * device tree automatically may have an OF translation
+         */
+        struct device_node *of_node;
+        int of_gpio_n_cells;
+        int (*of_xlate)(struct gpio_chip *gc,
+                        const struct of_phandle_args *gpiospec, u32 *flags);
+#endif
+(...)
+}
 
---Signature=_Mon__4_Mar_2013_13_21_39_+1100_hDWWe2EnhxaeGjC6
-Content-Type: application/pgp-signature
+Will it help if we just move the of_node outside of the #ifdef
+in this case? Or does it have hard deps such that the
+of_gpio_n_cells and of_xlate also need to be moved out
+in that case?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRNAUzAAoJEECxmPOUX5FETUAP/AvvQoW+a2qxKdUUmsyTe9Bu
-vnSBTRO8IsyB/cMtXdDHAH4PMhgpcX1JoHtluGYWHax9s5SOg63VkH4gHRSraX9z
-s1OIPvvEB6gNZgEmdMEtyHyKJ9ZmfskMW+wYwD9AhzmlslJf61aOvVO92lrILtb4
-EV8xkte9bvOHIWp+VFwQv3ADQCV8gvTXyBKS4UV46qmF0IgWzOi5sFKUQMo0kd27
-qAN3edQZL/cvS1wjETbhF5imDr6sP4aXHOS0U0Up2U8AVrt5+Mg9OI98hfYbFL8U
-USqmbgkkjiUJ6bWWz9+Qn/h7YO+1lSWe303nRen91MubfLrxkIcqlVsQrsMnFvhz
-7IV3FxsHZDYDanjMl9KL9mc3jaSJXWkbhTc0VbnO1WX594gnkgnhU0WMwuQ67KDh
-Vcnh/zA/hzILlZ5KM9lvdD9AINZPJPL+Znh2vvZbs5Vz1STgnSTKac+N/15cAyFd
-WwHEcSJ6pSFvUX2i1g1Ki7GP/RSCNz3X7z7Db6lbx5PCYewCfgwVhK6MPUBlnfP1
-0o4GoATBjBtsqY2In1LEDLUe20MgWE4q+aXl4cq8eaUKOmcYotHZTE/0en9eXDed
-3s9paeizpaRtgrDAidSJYq2rxhfyfbtGMEEms0VcxNGcJhr/W981TSBg7GC2Rs3O
-sQhtjyTzloPtbKLhfi9c
-=Pb0o
------END PGP SIGNATURE-----
-
---Signature=_Mon__4_Mar_2013_13_21_39_+1100_hDWWe2EnhxaeGjC6--
+Yours,
+Linus Walleij
