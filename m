@@ -1,102 +1,59 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Mar 4 (dm-cache-target)
-Date: Mon, 04 Mar 2013 14:17:44 -0800
-Message-ID: <51351D88.7060100@infradead.org>
-References: <20130304144358.bd62a57601d4d4793921213e@canb.auug.org.au> <5134EE05.30305@infradead.org> <20130304221207.GA12140@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: error fetching the osd tree
+Date: Tue, 5 Mar 2013 09:25:47 +1100
+Message-ID: <20130305092547.be2378f0caa8c2139865de87@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__5_Mar_2013_09_25_47_+1100_6aL4NqQkTUAMTEXE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:43956 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932378Ab3CDWRQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Mar 2013 17:17:16 -0500
-In-Reply-To: <20130304221207.GA12140@redhat.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35878 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932367Ab3CDWZ5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Mar 2013 17:25:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, dmdevel <dm-devel@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ejt@redhat.com
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/04/13 14:12, Mike Snitzer wrote:
-> On Mon, Mar 04 2013 at  1:55pm -0500,
-> Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> On 03/03/13 19:43, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20130301:
->>>
->>> The device-mapper tree gained a conflict against Linus' tree.
->>>
->>
->>
->> on i386:
->>
->> drivers/built-in.o: In function `is_discarded_oblock':
->> dm-cache-target.c:(.text+0x1ea28e): undefined reference to `__udivdi3'
->> drivers/built-in.o: In function `remap_to_origin_clear_discard':
->> dm-cache-target.c:(.text+0x1ea3ac): undefined reference to `__udivdi3'
->> drivers/built-in.o: In function `remap_to_cache_dirty.part.21':
->> dm-cache-target.c:(.text+0x1ea48f): undefined reference to `__udivdi3'
->> drivers/built-in.o: In function `cache_ctr':
->> dm-cache-target.c:(.text+0x1eaa2b): undefined reference to `__udivdi3'
->> dm-cache-target.c:(.text+0x1eaa71): undefined reference to `__udivdi3'
->> drivers/built-in.o:dm-cache-target.c:(.text+0x1eac51): more undefined references to `__udivdi3' follow
->>
->>
->>
->> Full randconfig file is attached.
-> 
-> I was able to reproduce using your randconfig file.
-> 
-> This patch fixed the build for my v3.9-rc1 tree:
+--Signature=_Tue__5_Mar_2013_09_25_47_+1100_6aL4NqQkTUAMTEXE
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Hi Boaz,
 
-Thanks.
+Fetching the osd tree
+(git://git.open-osd.org/linux-open-osd.git#linux-next) produces this
+error:
 
-> diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-target.c
-> index 0f4e84b..96bfec1 100644
-> --- a/drivers/md/dm-cache-target.c
-> +++ b/drivers/md/dm-cache-target.c
-> @@ -415,7 +415,7 @@ static bool block_size_is_power_of_two(struct cache *cache)
->  static dm_dblock_t oblock_to_dblock(struct cache *cache, dm_oblock_t oblock)
->  {
->  	sector_t discard_blocks = cache->discard_block_size;
-> -	dm_block_t b = from_oblock(oblock);
-> +	sector_t b = from_oblock(oblock);
->  
->  	if (!block_size_is_power_of_two(cache))
->  		(void) sector_div(discard_blocks, cache->sectors_per_block);
-> @@ -999,7 +999,7 @@ static void process_discard_bio(struct cache *cache, struct bio *bio)
->  {
->  	dm_block_t start_block = dm_sector_div_up(bio->bi_sector,
->  						  cache->discard_block_size);
-> -	dm_block_t end_block = bio->bi_sector + bio_sectors(bio);
-> +	sector_t end_block = bio->bi_sector + bio_sectors(bio);
->  	dm_block_t b;
->  
->  	(void) sector_div(end_block, cache->discard_block_size);
-> @@ -1801,7 +1801,7 @@ static int cache_create(struct cache_args *ca, struct cache **result)
->  	char **error = &ca->ti->error;
->  	struct cache *cache;
->  	struct dm_target *ti = ca->ti;
-> -	dm_block_t origin_blocks;
-> +	sector_t origin_blocks;
->  	struct dm_cache_metadata *cmd;
->  	bool may_format = ca->features.mode == CM_WRITE;
->  
-> @@ -1845,7 +1845,7 @@ static int cache_create(struct cache_args *ca, struct cache **result)
->  	}
->  
->  	if (ca->block_size & (ca->block_size - 1)) {
-> -		dm_block_t cache_size = ca->cache_sectors;
-> +		sector_t cache_size = ca->cache_sectors;
->  
->  		cache->sectors_per_block_shift = -1;
->  		(void) sector_div(cache_size, ca->block_size);
-> 
+fatal: read error: Connection reset by peer
 
+It has been doing that for a few days, now.
 
--- 
-~Randy
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__5_Mar_2013_09_25_47_+1100_6aL4NqQkTUAMTEXE
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRNR9rAAoJEECxmPOUX5FEZtkP/2w1c/XxWZ1FAANrr0j6JG36
+iuAGKS+BABmPooaYAFSMREZ9juNaGqRo7g3ojWAoPXMnbhtXaF0/VLPRC4xPdNj1
+0CvbHeZHAc1VP948ZpzUR18gtBJhMh1nrj9x8fmKdziSvcxGPuGT53Nd7IhfFwGc
+HxFUOvUWoaYCvgeTBptk3mGQZwmBDNyQM5+t9aVNksAM1OGhldx09SM5dal1wLjo
+xpm/xlJ3zd+584W4UJFfFpjT/EFhqH0d0nGMNEotEsB2bc/J3g5o84grWUyDdPGU
+MvC7qvrNg4FYhJ/znA3dW8f4cFu8i9ud1WX/qaxfIwK/63ABnBagsWChmq1oSRBh
+dAacGiC71KZRN0XuPx16aowVWMHYUnH9q9rv/XCuH1sNcjUgD7hMXsjZONaj17TG
+NS+hzcypfCfGsBJObM4MhjYLrDf1rwKuOZ/fNsLPwFql9Ut7SSZWhLlXUDK3ur9u
+KzkM1OsrYfC8whvW80RldfPYKfTAOcVTHOgqfGVQcT3stWUPeHxhU0ZOw2tzXpyM
+lUY8nW7JGI31dlnJ8F2wVhtJx50n1lQZIvmCG+AxiMn6Yh489bIvpIqQtlnzLOv+
+pNaFRDdNX22EnKxENaM0YZhVbBTllTB9XVsDJVI+KyI//WrivC+C6Fa4oD0YsYmQ
+L49MA+9om8/c7I9CySjA
+=c0Ev
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__5_Mar_2013_09_25_47_+1100_6aL4NqQkTUAMTEXE--
