@@ -1,60 +1,124 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with Linus' tree
-Date: Mon, 4 Mar 2013 13:03:33 +1100
-Message-ID: <20130304130333.96ae5a2f223cca784bd1aa82@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 4 Mar 2013 13:21:39 +1100
+Message-ID: <20130304132139.f9efee7b45655d9f75abf643@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Mar_2013_13_03_33_+1100_1fiub=/4t=IZu=9T"
+ boundary="Signature=_Mon__4_Mar_2013_13_21_39_+1100_hDWWe2EnhxaeGjC6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36574 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49149 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752564Ab3CDCDk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 21:03:40 -0500
+	with ESMTP id S1752794Ab3CDCVu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Mar 2013 21:21:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Hogan <james.hogan@imgtec.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
---Signature=_Mon__4_Mar_2013_13_03_33_+1100_1fiub=/4t=IZu=9T
+--Signature=_Mon__4_Mar_2013_13_21_39_+1100_hDWWe2EnhxaeGjC6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Andrew,
 
-Today's linux-next merge of the signal tree got a conflict in
-include/asm-generic/unistd.h between commit 4dd3c95940b8
-("asm-generic/unistd.h: handle symbol prefixes in cond_syscall") from
-Linus' tree and commit 24a2641326f1 ("consolidate cond_syscall and
-SYSCALL_ALIAS declarations") from the signal tree.
+Today's linux-next merge of the akpm tree got a conflict in mm/shmem.c
+between commit 26567cdbbf1a ("fix nommu breakage in shmem.c") from Linus'
+tree and commit "shmem-fix-build-regression-fix" from the akpm tree.
 
-I fixed it up (I used the signal tree version as I think it supersedes
-the former) and can carry the fix as necessary (no action is required).
+I fixed it up (I used the latter version - see the full new version
+below) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__4_Mar_2013_13_03_33_+1100_1fiub=/4t=IZu=9T
+diff --git a/include/linux/ramfs.h b/include/linux/ramfs.h
+index 5bf5500..69e37c2 100644
+--- a/include/linux/ramfs.h
++++ b/include/linux/ramfs.h
+@@ -6,7 +6,13 @@ struct inode *ramfs_get_inode(struct super_block *sb, cons=
+t struct inode *dir,
+ extern struct dentry *ramfs_mount(struct file_system_type *fs_type,
+ 	 int flags, const char *dev_name, void *data);
+=20
+-#ifndef CONFIG_MMU
++#ifdef CONFIG_MMU
++static inline int
++ramfs_nommu_expand_for_mapping(struct inode *inode, size_t newsize)
++{
++	return 0;
++}
++#else
+ extern int ramfs_nommu_expand_for_mapping(struct inode *inode, size_t news=
+ize);
+ extern unsigned long ramfs_nommu_get_unmapped_area(struct file *file,
+ 						   unsigned long addr,
+diff --git a/mm/shmem.c b/mm/shmem.c
+index b863bf3..a8d9da0 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -25,6 +25,7 @@
+ #include <linux/init.h>
+ #include <linux/vfs.h>
+ #include <linux/mount.h>
++#include <linux/ramfs.h>
+ #include <linux/pagemap.h>
+ #include <linux/file.h>
+ #include <linux/mm.h>
+@@ -2830,8 +2831,6 @@ out4:
+  * effectively equivalent, but much lighter weight.
+  */
+=20
+-#include <linux/ramfs.h>
+-
+ static struct file_system_type shmem_fs_type =3D {
+ 	.name		=3D "tmpfs",
+ 	.mount		=3D ramfs_mount,
+@@ -2897,7 +2896,6 @@ static struct dentry_operations anon_ops =3D {
+  */
+ struct file *shmem_file_setup(const char *name, loff_t size, unsigned long=
+ flags)
+ {
+-	int error;
+ 	struct file *res;
+ 	struct inode *inode;
+ 	struct path path;
+@@ -2932,11 +2930,10 @@ struct file *shmem_file_setup(const char *name, lof=
+f_t size, unsigned long flags
+ 	d_instantiate(path.dentry, inode);
+ 	inode->i_size =3D size;
+ 	clear_nlink(inode);	/* It is unlinked */
+-#ifndef CONFIG_MMU
++
+ 	res =3D ERR_PTR(ramfs_nommu_expand_for_mapping(inode, size));
+ 	if (IS_ERR(res))
+ 		goto put_dentry;
+-#endif
+=20
+ 	res =3D alloc_file(&path, FMODE_WRITE | FMODE_READ,
+ 		  &shmem_file_operations);
+
+--Signature=_Mon__4_Mar_2013_13_21_39_+1100_hDWWe2EnhxaeGjC6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRNAD1AAoJEECxmPOUX5FEQDgP/0aaioyu+F2FiFmb8ubWwoHw
-9zF/Mi2ehRiZ4sBj2lPcv7F2d1oK4ekVU3XhnO9DBv0NQMmQxXJpOYxQZAnlFqIS
-XmZlMAZdKnqgCePWBvSI1vtGP+UTT4u0oG4FkOL0jgto48ow6QiQz4rI/KXq0xmr
-fGQtXKvpRco+SPvIS8AWafUn5H9n49msNInjU/vIohjyT6yQlN1Nck08uHQeqLbd
-E9Tdpx+IsroppjGKVAD46krIye49wUyyBIoUKnw+Y+guPZ3Pg7UHPOqEW/8HZG/l
-GicshegfHv1AGN7BCu1AtMsIdlw2vBLjq50ZqTexo3QJu5UuD00GJ2AXC2DTwicK
-WOZTXIvCU3e5G184uyMSCM1fSUXzb9qj5ovnZSCIxCgriHbEV+Se/DlOeD72/MNg
-F1ZPJvuDkCkK2xg2eFRmmjmvp/WDkZQdbbL6Rx9P5w55lSskoDktm2UZr/mwyF7c
-LVRAjJELF5Hlr2QwfgphmUvXgViYIuttRLDDZNPGdthFF8oq/DwF93RoUcwOURmG
-pwEP8LL4Ik0ikIgD2J+8EudPtT0szrHDpTByS6wPuQzHs1YpIfUf6vKAuGpJ4GYD
-oGBofDvWAlSa6rDrOpkawzBpe0bVNedWDB25UAPa20R7xxU2h+yQyR9/9X3eCc3O
-9zYDtjJGWxAlfU4iD3tq
-=wlet
+iQIcBAEBCAAGBQJRNAUzAAoJEECxmPOUX5FETUAP/AvvQoW+a2qxKdUUmsyTe9Bu
+vnSBTRO8IsyB/cMtXdDHAH4PMhgpcX1JoHtluGYWHax9s5SOg63VkH4gHRSraX9z
+s1OIPvvEB6gNZgEmdMEtyHyKJ9ZmfskMW+wYwD9AhzmlslJf61aOvVO92lrILtb4
+EV8xkte9bvOHIWp+VFwQv3ADQCV8gvTXyBKS4UV46qmF0IgWzOi5sFKUQMo0kd27
+qAN3edQZL/cvS1wjETbhF5imDr6sP4aXHOS0U0Up2U8AVrt5+Mg9OI98hfYbFL8U
+USqmbgkkjiUJ6bWWz9+Qn/h7YO+1lSWe303nRen91MubfLrxkIcqlVsQrsMnFvhz
+7IV3FxsHZDYDanjMl9KL9mc3jaSJXWkbhTc0VbnO1WX594gnkgnhU0WMwuQ67KDh
+Vcnh/zA/hzILlZ5KM9lvdD9AINZPJPL+Znh2vvZbs5Vz1STgnSTKac+N/15cAyFd
+WwHEcSJ6pSFvUX2i1g1Ki7GP/RSCNz3X7z7Db6lbx5PCYewCfgwVhK6MPUBlnfP1
+0o4GoATBjBtsqY2In1LEDLUe20MgWE4q+aXl4cq8eaUKOmcYotHZTE/0en9eXDed
+3s9paeizpaRtgrDAidSJYq2rxhfyfbtGMEEms0VcxNGcJhr/W981TSBg7GC2Rs3O
+sQhtjyTzloPtbKLhfi9c
+=Pb0o
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Mar_2013_13_03_33_+1100_1fiub=/4t=IZu=9T--
+--Signature=_Mon__4_Mar_2013_13_21_39_+1100_hDWWe2EnhxaeGjC6--
