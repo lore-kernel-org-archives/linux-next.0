@@ -1,56 +1,95 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: failure to fetch the watchdog tree
-Date: Wed, 6 Mar 2013 08:38:56 +1100
-Message-ID: <20130306083856.5ba4d203ec0c7320af862047@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Wed, 6 Mar 2013 11:35:08 +1100
+Message-ID: <20130306113508.9c868be103b6b140295c548f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__6_Mar_2013_08_38_56_+1100_4OxX=1H35iyM5X4y"
+ boundary="Signature=_Wed__6_Mar_2013_11_35_08_+1100_Sdlnboqs7UrxdvPv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40628 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33703 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751233Ab3CEVjH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Mar 2013 16:39:07 -0500
+	with ESMTP id S1754642Ab3CFAfT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Mar 2013 19:35:19 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
---Signature=_Wed__6_Mar_2013_08_38_56_+1100_4OxX=1H35iyM5X4y
+--Signature=_Wed__6_Mar_2013_11_35_08_+1100_Sdlnboqs7UrxdvPv
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wim,
+Hi all,
 
-Fetching the watchdog tree produces this message:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-fatal: unable to connect to www.linux-watchdog.org:
-www.linux-watchdog.org[0: 83.149.101.17]: errno=3DConnection refused
+In file included from drivers/staging/zcache/debug.c:2:0:
+drivers/staging/zcache/debug.h: In function 'dec_zcache_obj_count':
+drivers/staging/zcache/debug.h:16:2: error: implicit declaration of functio=
+n 'BUG_ON' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 95bdaee2140e ("zcache: Move debugfs code out of
+zcache-main.c file").
+
+I applied this patch for today:
+
+=46rom 24b03cf426007c4e94c6bed81560e436afcc136c Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 6 Mar 2013 11:31:06 +1100
+Subject: [PATCH] disable ZCACHE_DEBUG due to build error
+
+In file included from drivers/staging/zcache/debug.c:2:0:
+drivers/staging/zcache/debug.h: In function 'dec_zcache_obj_count':
+drivers/staging/zcache/debug.h:16:2: error: implicit declaration of functio=
+n 'BUG_ON' [-Werror=3Dimplicit-function-declaration]
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/zcache/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/zcache/Kconfig b/drivers/staging/zcache/Kconfig
+index 2da6cc4..ad47b4b 100644
+--- a/drivers/staging/zcache/Kconfig
++++ b/drivers/staging/zcache/Kconfig
+@@ -13,6 +13,7 @@ config ZCACHE
+ config ZCACHE_DEBUG
+ 	bool "Enable debug statistics"
+ 	depends on DEBUG_FS && ZCACHE
++	depends on BROKEN
+ 	default n
+ 	help
+ 	  This is used to provide an debugfs directory with counters of
+--=20
+1.8.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__6_Mar_2013_08_38_56_+1100_4OxX=1H35iyM5X4y
+--Signature=_Wed__6_Mar_2013_11_35_08_+1100_Sdlnboqs7UrxdvPv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRNmXwAAoJEECxmPOUX5FEyGMP/Ry3YOU2lAheXXik+LLBycUm
-IbTk8ieBirf/VJvFCHEjbAfUJLUx894ElW1ncd6lmB4E2nUiTmsRilzU3ENcb3TM
-Eh4v+JrmrtpDroESiXlvpLiG0QgNJxl+sg6CNlFCi+aNLplD8Ycp17Yaibeyhoik
-W5f8bWXw23tZPLEGmPH1+8rbzPMC6ztvLAg0b4EN9dpwOnPYXfEiF6wm3JQph0v4
-CrB+igMJ5wO7sPxBkxcSEvVuLmDfXjttKBkdPXiPoTkPwNigwF45JdFYdqjdt6xv
-V+9EvATle8yY7OnwlLXhtH+ImFzM9h6kK8i/LWKfbHsJ4BjEmwdslxz9+dw6y0JY
-UvBxjFJoDnwFEdKVfOmKLDtgCPBmux8FbzicgwVQu7LSnA48+qo22/RfOk6fD23n
-A4ysEFlkrg46PWdjKo6oXDS3j23KoqWpzBGl/elrvvWzKjb8SrX+LEtp5NaABUXD
-/JvENGLH7bf7Gc4vveNUGw0HReU0nCa3HMqp8qpv/9IEDC4zpurFlWlV3bvnt2xp
-aUuxNlaU3+NWo9MtfND7E5xtfDA1hCun/aNK6DVVctQUzfYBQnG+IUJd51OT/GPQ
-MSNVZG46MxuT9NVeF3mYtamb4eohMn16pf9S9GkEMP+1omXHrzKwPmBKqnYij3q7
-ma32EPojY1J34u0LM2H7
-=rG+e
+iQIcBAEBCAAGBQJRNo88AAoJEECxmPOUX5FE32QP/Rz9w3FXwtFa1q4CN147zGTk
+dyuiFbmjhwSXQHRPjht8pV7IV16dLyQRSM1ljYMxz12uhb8pbznrTqFarLkm44HY
++dNINrHNiDfr5YMm/nYtn4TFyFJYd2UyJcbmh8kHWqmz/ExOo1DEAXTfUCp8ZSBb
+QnsE6tFqvawdpJendXVI9EiqVycPnepJQNuHTh29ffmg5KsjNWrWOjJTsr9VzHM+
+3xqv05tVFbTKVxfFg6NHbZDA8QjdZCFWGi5nelwTY+2OqWCj3YBOTfgl/DGaW5wq
+4bLIHNA2u2Khz5oESgosy2qirqdbc33qxtSbN1zrHVHiibFFV+tsJOHkex2CqlbJ
+sXuxt1R3gEJR6KwRAuX1ydVBCwB8WCutkEwDXIxk/XctNvqWv2FqzGeXCp3B938y
+60Y9cmkZVVjNqvKcm1eTz3dbwo3z+4Y4fD6wWpGktMyDM6j2xlN/Nd/m7CS60RX0
+7gWTsCB8EQEzHpD+ZtlkzSvOcen2i4A/99QkxRalyJPHkdxJ6IsqREENDvcq9ZOx
+qmmqK0d7Be0uW2Ke8IaOEGANFH2iUJbl9GjDtUxDGYFcpINKr6Jg+g7UXKlDKY0H
+U/tTmZ21uLwmPuYN4XHxV15yM0or/gIqB+s1IGhncES94OmReKPN5J0f2tzSIysn
+oPV9SVUzcQxT6rBHEPwy
+=xm7T
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__6_Mar_2013_08_38_56_+1100_4OxX=1H35iyM5X4y--
+--Signature=_Wed__6_Mar_2013_11_35_08_+1100_Sdlnboqs7UrxdvPv--
