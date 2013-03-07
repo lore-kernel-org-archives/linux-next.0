@@ -1,41 +1,51 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: [PATCH] zcache/debug: compiler failure on PPC64.
-Date: Wed,  6 Mar 2013 19:13:36 -0500
-Message-ID: <1362615216-12293-1-git-send-email-konrad.wilk@oracle.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:47974 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755232Ab3CGANv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Mar 2013 19:13:51 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, greg@kroah.com
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH] zcache/debug: compiler failure on PPC64.
+Date: Thu, 7 Mar 2013 09:31:58 +0800
+Message-ID: <20130307013158.GC2910@kroah.com>
+References: <1362615216-12293-1-git-send-email-konrad.wilk@oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1362615216-12293-1-git-send-email-konrad.wilk@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au
+List-Id: linux-next.vger.kernel.org
 
-On PPC64 we get this:
-In file included from drivers/staging/zcache/debug.c:2:
-drivers/staging/zcache/debug.h: In function 'dec_zcache_obj_count':
-drivers/staging/zcache/debug.h:16: error: implicit declaration of function 'BUG_ON'
+On Wed, Mar 06, 2013 at 07:13:36PM -0500, Konrad Rzeszutek Wilk wrote:
+> On PPC64 we get this:
+> In file included from drivers/staging/zcache/debug.c:2:
+> drivers/staging/zcache/debug.h: In function 'dec_zcache_obj_count':
+> drivers/staging/zcache/debug.h:16: error: implicit declaration of function 'BUG_ON'
+> 
+> This simple patch adds the appropiate header file to finish
+> the compile.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> ---
+>  drivers/staging/zcache/debug.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/staging/zcache/debug.h b/drivers/staging/zcache/debug.h
+> index eef67db..0d9c6b4 100644
+> --- a/drivers/staging/zcache/debug.h
+> +++ b/drivers/staging/zcache/debug.h
+> @@ -1,5 +1,6 @@
+>  #ifdef CONFIG_ZCACHE_DEBUG
+>  
+> +#include <linux/bug.h>
+>  /* we try to keep these statistics SMP-consistent */
 
-This simple patch adds the appropiate header file to finish
-the compile.
+Put the #include files at the top of the file.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
----
- drivers/staging/zcache/debug.h | 1 +
- 1 file changed, 1 insertion(+)
+Also, you didn't really test this on linux-next as you can't select this
+option at the moment, I think you also want to fix that at the same
+time, unless you really don't want anyone to ever select this option :)
 
-diff --git a/drivers/staging/zcache/debug.h b/drivers/staging/zcache/debug.h
-index eef67db..0d9c6b4 100644
---- a/drivers/staging/zcache/debug.h
-+++ b/drivers/staging/zcache/debug.h
-@@ -1,5 +1,6 @@
- #ifdef CONFIG_ZCACHE_DEBUG
- 
-+#include <linux/bug.h>
- /* we try to keep these statistics SMP-consistent */
- static ssize_t zcache_obj_count;
- static atomic_t zcache_obj_atomic = ATOMIC_INIT(0);
--- 
-1.8.0.2
+Try it again?
+
+thanks,
+
+greg k-h
