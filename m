@@ -1,70 +1,112 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Multiple for-next branches from same tree
-Date: Thu, 7 Mar 2013 22:24:46 +1100
-Message-ID: <20130307222446.d2b14a7a3785ef99dbf098b8@canb.auug.org.au>
-References: <51382DCA.5010209@synopsys.com>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: [RFC -next] linux/linkage.h: fix symbol prefix handling
+Date: Thu, 7 Mar 2013 11:44:02 +0000
+Message-ID: <1362656642-2693-1-git-send-email-james.hogan@imgtec.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__7_Mar_2013_22_24_46_+1100_cO.6QTp=ZGKXx3nf"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54491 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932278Ab3CGLY6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Mar 2013 06:24:58 -0500
-In-Reply-To: <51382DCA.5010209@synopsys.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Michal Marek <mmarek@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <khali@linux-fr.org>, Rusty Russell <rusty@rustcorp.com.au>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>, uclinux-dist-devel@blackfin.uclinux.org, linux-next@vger.kernel.org, James Hogan <james.hogan@imgtec.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__7_Mar_2013_22_24_46_+1100_cO.6QTp=ZGKXx3nf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The commit "consolidate cond_syscall and SYSCALL_ALIAS declarations"
+broke the build on blackfin and metag due to the following code:
 
-Hi Vineet,
+  #ifndef SYMBOL_NAME
+  #ifdef CONFIG_SYMBOL_PREFIX
+  #define SYMBOL_NAME(x) CONFIG_SYMBOL_PREFIX ## x
+  #else
+  #define SYMBOL_NAME(x) x
+  #endif
+  #endif
+  #define __SYMBOL_NAME(x) __stringify(SYMBOL_NAME(x))
 
-On Thu, 7 Mar 2013 11:33:54 +0530 Vineet Gupta <Vineet.Gupta1@synopsys.com>=
- wrote:
->
-> With ARC arch merged in 3.9-rc1 I feel the need for a revised workflow.
->=20
-> I intend to have 2 branches for -next exposure: for-curr and for-next.
-> * for-curr would contain the bug fixes for this release to be sent to Lin=
-us at
-> some point in time.
-> * for-next obviously is next release stuff and will be rebased off for-cu=
-rr.
+__stringify literally stringifies CONFIG_SYMBOL_PREFIX ##x, so you get
+lines like this in the assembly output:
 
-I have several sets of branches like that and it works fine.
+  .weak CONFIG_SYMBOL_PREFIXsys_quotactl
+  .set
+  CONFIG_SYMBOL_PREFIXsys_quotactl,CONFIG_SYMBOL_PREFIXsys_ni_syscall
 
-Occasionally, the branches will conflict, but that can be sorted by
-merging the for-curr branch into the for-next branch after Linus has
-merged the for-curr branch.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+This is fixed by defining SYMBOL_PREFIX from the command line for c
+files in addition to assembly for architectures that set
+CONFIG_SYMBOL_PREFIX (scripts/Makefile.lib), and defining __SYMBOL_NAME
+as:
 
---Signature=_Thu__7_Mar_2013_22_24_46_+1100_cO.6QTp=ZGKXx3nf
-Content-Type: application/pgp-signature
+  #define __SYMBOL_NAME(x) __stringify(SYMBOL_PREFIX) #x
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+We first have to ensure SYMBOL_PREFIX is defined (which avoids polluting
+the command lines for architectures that don't use symbol prefixes).
+Also the definition of SYMBOL_PREFIX in <linux/kernel.h> is removed as
+it conflicts, isn't used anywhere, and is defined as a string so differs
+from the assembly definition.
 
-iQIcBAEBCAAGBQJROHj+AAoJEECxmPOUX5FEtioQAIuMFDqTihi8OcbGkbEj3WRU
-fEKFlr/nsnIIk7+yeiNh6yIOLt0UickwRSi++kHDrzngh3o4S6E8lq7zhRjyacTO
-xBnBS3qA0qAAFd095I7HT5xr0jKD0ApWNEU+JqMjtgpnJNTo7h5Q4yKxVP+HdbdC
-BRrJvqFuc3SM9uS+KWEH27LjGdy56hpsNOVV46KiXl9XITzxM7lQoPcHPwKGZ9E5
-MpQDuJ2jQlW6/MKwDspjVKOAgXcakR6MY8nhxNEjLmNO6DrLGHl7YqRB8QtVBNg5
-xypMT6RMse850mN8TUH69gU4tL4s26L5Epm3xXCrhDRWVLdLTbPih3jZloLDxWGR
-4qUdU4KsZBaUAR6U37z/vZ377BJuMc1MyPWEoAArDeBAjCRtTvFH1qnzMZEOUWby
-QzWzIA8VTxXneI1IhSmmJuX5Qz/s8mvDw2f1pUO490X5jZLDwALxNoFrliilx7tz
-HHOPSG5HeUsxec55kG1FaohRfnERhzHXfJfGbGgm29ks0QCld3h55WgnCG3jCZ1/
-YusK1FJRDaN/POpMkSlStujgRAn0VHrPyrDfsXyDwjcyyzRFIxyrt5bskoiMOt6W
-++7Yrp0W+gWfpn/ses9SANl2PHFlcxu6zzYbF2RvfW6JOHNBEGqlKAC3xo58AlmX
-5bNbjulFjnM8JZaGczIk
-=2jE7
------END PGP SIGNATURE-----
+Signed-off-by: James Hogan <james.hogan@imgtec.com>
+---
+This is just one possible way of fixing it. It felt the cleanest out of
+the ways I tried, but feel free to suggest something better!
 
---Signature=_Thu__7_Mar_2013_22_24_46_+1100_cO.6QTp=ZGKXx3nf--
+ include/linux/kernel.h  |  7 -------
+ include/linux/linkage.h | 12 +++++-------
+ scripts/Makefile.lib    |  1 +
+ 3 files changed, 6 insertions(+), 14 deletions(-)
+
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 80d3687..e13e992 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -723,13 +723,6 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
+ /* Trap pasters of __FUNCTION__ at compile-time */
+ #define __FUNCTION__ (__func__)
+ 
+-/* This helps us to avoid #ifdef CONFIG_SYMBOL_PREFIX */
+-#ifdef CONFIG_SYMBOL_PREFIX
+-#define SYMBOL_PREFIX CONFIG_SYMBOL_PREFIX
+-#else
+-#define SYMBOL_PREFIX ""
+-#endif
+-
+ /* Rebuild everything on CONFIG_FTRACE_MCOUNT_RECORD */
+ #ifdef CONFIG_FTRACE_MCOUNT_RECORD
+ # define REBUILD_DUE_TO_FTRACE_MCOUNT_RECORD
+diff --git a/include/linux/linkage.h b/include/linux/linkage.h
+index 829d66c..acb869b 100644
+--- a/include/linux/linkage.h
++++ b/include/linux/linkage.h
+@@ -15,14 +15,12 @@
+ #define asmlinkage CPP_ASMLINKAGE
+ #endif
+ 
+-#ifndef SYMBOL_NAME
+-#ifdef CONFIG_SYMBOL_PREFIX
+-#define SYMBOL_NAME(x) CONFIG_SYMBOL_PREFIX ## x
+-#else
+-#define SYMBOL_NAME(x) x
+-#endif
++/* This helps us to avoid #ifdef SYMBOL_PREFIX */
++#ifndef SYMBOL_PREFIX
++#define SYMBOL_PREFIX
+ #endif
+-#define __SYMBOL_NAME(x) __stringify(SYMBOL_NAME(x))
++
++#define __SYMBOL_NAME(x) __stringify(SYMBOL_PREFIX) #x
+ 
+ #ifndef cond_syscall
+ #define cond_syscall(x) asm(".weak\t" __SYMBOL_NAME(x) \
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 07125e6..f1cce6a 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -123,6 +123,7 @@ ifdef CONFIG_SYMBOL_PREFIX
+ _sym_flags = -DSYMBOL_PREFIX=$(patsubst "%",%,$(CONFIG_SYMBOL_PREFIX))
+ _cpp_flags += $(_sym_flags)
+ _a_flags += $(_sym_flags)
++_c_flags += $(_sym_flags)
+ endif
+ 
+ 
+-- 
+1.8.1.2
+
+
