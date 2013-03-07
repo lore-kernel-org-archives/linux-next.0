@@ -1,57 +1,70 @@
-From: Benjamin Tissoires <benjamin.tissoires@gmail.com>
-Subject: Re: linux-next: Tree for Mar 6 (hid)
-Date: Thu, 7 Mar 2013 12:20:52 +0100
-Message-ID: <CAN+gG=GftPSHEbrsFkjQdCdGeRXQvDU-=c7bhBxK9n5YRQe2iQ@mail.gmail.com>
-References: <20130306115052.2b1969acb7b7a0fa35975984@canb.auug.org.au>
-	<51379849.6040903@infradead.org>
-	<CAN+gG=H4_1nUhhsUe031Q1QrnVna+F7hmAepe6kbNm=8z_gOjw@mail.gmail.com>
-	<alpine.LNX.2.00.1303071108150.28677@pobox.suse.cz>
-	<CAN+gG=HhatpiPWUJ72Pr45odtcM6AJ5broNVrQ_=dF5AU6TEig@mail.gmail.com>
-	<alpine.LNX.2.00.1303071130520.28677@pobox.suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Multiple for-next branches from same tree
+Date: Thu, 7 Mar 2013 22:24:46 +1100
+Message-ID: <20130307222446.d2b14a7a3785ef99dbf098b8@canb.auug.org.au>
+References: <51382DCA.5010209@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__7_Mar_2013_22_24_46_+1100_cO.6QTp=ZGKXx3nf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:37014 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932235Ab3CGLUy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Mar 2013 06:20:54 -0500
-In-Reply-To: <alpine.LNX.2.00.1303071130520.28677@pobox.suse.cz>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54491 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932278Ab3CGLY6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Mar 2013 06:24:58 -0500
+In-Reply-To: <51382DCA.5010209@synopsys.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: linux-next <linux-next@vger.kernel.org>
 
-On Thu, Mar 7, 2013 at 11:33 AM, Jiri Kosina <jkosina@suse.cz> wrote:
-> On Thu, 7 Mar 2013, Benjamin Tissoires wrote:
+--Signature=_Thu__7_Mar_2013_22_24_46_+1100_cO.6QTp=ZGKXx3nf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Vineet,
+
+On Thu, 7 Mar 2013 11:33:54 +0530 Vineet Gupta <Vineet.Gupta1@synopsys.com>=
+ wrote:
 >
->> You should have at least one other patch for hid-mt:
->> https://patchwork.kernel.org/patch/2193641/
->
-> Ah, right, that one is in my queue as well, sorry for not mentioning it in
-> my previous post.
+> With ARC arch merged in 3.9-rc1 I feel the need for a revised workflow.
+>=20
+> I intend to have 2 branches for -next exposure: for-curr and for-next.
+> * for-curr would contain the bug fixes for this release to be sent to Lin=
+us at
+> some point in time.
+> * for-next obviously is next release stuff and will be rebased off for-cu=
+rr.
 
-No problems :)
+I have several sets of branches like that and it works fine.
 
->
-> That doesn't remove the direct call either though.
-
-true
-
->
->> And I sent as a RFC the patch I was talking about:
->> https://patchwork.kernel.org/patch/2193801/
->> https://patchwork.kernel.org/patch/2193821/
->>
->> These two RFCs have been reviewed by David Herrmann, so maybe we can
->> include them in their current form as no one else complained about it
->> ( maybe you will :) ).
->
-> For some reason these two vanished between the cracks of my mailbox.
-> Thanks for pointing those out, I will process them today and either apply
-> it, or fix it for -next by adding a config dependency.
->
-
-ok, thanks for dealing with it.
-
+Occasionally, the branches will conflict, but that can be sorted by
+merging the for-curr branch into the for-next branch after Linus has
+merged the for-curr branch.
+--=20
 Cheers,
-Benjamin
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__7_Mar_2013_22_24_46_+1100_cO.6QTp=ZGKXx3nf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJROHj+AAoJEECxmPOUX5FEtioQAIuMFDqTihi8OcbGkbEj3WRU
+fEKFlr/nsnIIk7+yeiNh6yIOLt0UickwRSi++kHDrzngh3o4S6E8lq7zhRjyacTO
+xBnBS3qA0qAAFd095I7HT5xr0jKD0ApWNEU+JqMjtgpnJNTo7h5Q4yKxVP+HdbdC
+BRrJvqFuc3SM9uS+KWEH27LjGdy56hpsNOVV46KiXl9XITzxM7lQoPcHPwKGZ9E5
+MpQDuJ2jQlW6/MKwDspjVKOAgXcakR6MY8nhxNEjLmNO6DrLGHl7YqRB8QtVBNg5
+xypMT6RMse850mN8TUH69gU4tL4s26L5Epm3xXCrhDRWVLdLTbPih3jZloLDxWGR
+4qUdU4KsZBaUAR6U37z/vZ377BJuMc1MyPWEoAArDeBAjCRtTvFH1qnzMZEOUWby
+QzWzIA8VTxXneI1IhSmmJuX5Qz/s8mvDw2f1pUO490X5jZLDwALxNoFrliilx7tz
+HHOPSG5HeUsxec55kG1FaohRfnERhzHXfJfGbGgm29ks0QCld3h55WgnCG3jCZ1/
+YusK1FJRDaN/POpMkSlStujgRAn0VHrPyrDfsXyDwjcyyzRFIxyrt5bskoiMOt6W
+++7Yrp0W+gWfpn/ses9SANl2PHFlcxu6zzYbF2RvfW6JOHNBEGqlKAC3xo58AlmX
+5bNbjulFjnM8JZaGczIk
+=2jE7
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__7_Mar_2013_22_24_46_+1100_cO.6QTp=ZGKXx3nf--
