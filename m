@@ -1,58 +1,40 @@
-From: Benjamin Tissoires <benjamin.tissoires@gmail.com>
+From: Jiri Kosina <jkosina@suse.cz>
 Subject: Re: linux-next: Tree for Mar 6 (hid)
-Date: Thu, 7 Mar 2013 09:13:32 +0100
-Message-ID: <CAN+gG=H4_1nUhhsUe031Q1QrnVna+F7hmAepe6kbNm=8z_gOjw@mail.gmail.com>
-References: <20130306115052.2b1969acb7b7a0fa35975984@canb.auug.org.au>
-	<51379849.6040903@infradead.org>
+Date: Thu, 7 Mar 2013 11:09:50 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1303071108150.28677@pobox.suse.cz>
+References: <20130306115052.2b1969acb7b7a0fa35975984@canb.auug.org.au> <51379849.6040903@infradead.org> <CAN+gG=H4_1nUhhsUe031Q1QrnVna+F7hmAepe6kbNm=8z_gOjw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <51379849.6040903@infradead.org>
+In-Reply-To: <CAN+gG=H4_1nUhhsUe031Q1QrnVna+F7hmAepe6kbNm=8z_gOjw@mail.gmail.com>
 Sender: linux-input-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org
+To: Benjamin Tissoires <benjamin.tissoires@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Randy,
+On Thu, 7 Mar 2013, Benjamin Tissoires wrote:
 
-On Wed, Mar 6, 2013 at 8:26 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 03/05/13 16:50, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20130305:
->>
->
-> on i386 and x86_64:
->
+> > on i386 and x86_64:
+> >
+> 
+> Sorry, it looks like my patches went not very smoothly.
+> 
+> > ERROR: "usb_control_msg" [drivers/hid/hid-multitouch.ko] undefined!
+> 
+> I've submitted a new patch removing this direct call. Maybe we should
+> change the Kconfig while these patches are not applied. Jiri?
 
-Sorry, it looks like my patches went not very smoothly.
+Benjamin,
 
-> ERROR: "usb_control_msg" [drivers/hid/hid-multitouch.ko] undefined!
+which patch is that? The only hid-multitouch I still have in my queue is 
+the hybrid finger/pen devices support, and I don't think it's fixing this 
+problem.
 
-I've submitted a new patch removing this direct call. Maybe we should
-change the Kconfig while these patches are not applied. Jiri?
+Then I have one for logitech-dj which I still need to review, but I don't 
+see anything else ... ?
 
-> ERROR: "usb_ifnum_to_if" [drivers/hid/hid-holtek-kbd.ko] undefined!
+Thanks,
 
-oops, I'll have to double check this one.
-
->
-> when CONFIG_USB_SUPPORT is not enabled.
->
-> Should these drivers depend on USB_HID?
-
-The goal of the patch series that breaks this was to make the hid
-drivers independent of their transport layers, thus most of them
-should not depend on usbhid anymore.
-
-Cheers,
-Benjamin
-
->
->
-> --
-> ~Randy
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-input" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Jiri Kosina
+SUSE Labs
