@@ -1,54 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no release on March 8 or 11
-Date: Thu, 7 Mar 2013 22:48:01 +1100
-Message-ID: <20130307224801.254d9cbde5ab080b96ec7fcc@canb.auug.org.au>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: Re: Multiple for-next branches from same tree
+Date: Thu, 7 Mar 2013 17:55:21 +0530
+Message-ID: <51388731.5020805@synopsys.com>
+References: <51382DCA.5010209@synopsys.com> <20130307222446.d2b14a7a3785ef99dbf098b8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__7_Mar_2013_22_48_01_+1100_YFyUPyF2KW6XFikz"
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36842 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756704Ab3CGLsG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Mar 2013 06:48:06 -0500
+Received: from us02smtp1.synopsys.com ([198.182.60.75]:50871 "EHLO
+	vaxjo.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751229Ab3CGM0I (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Mar 2013 07:26:08 -0500
+In-Reply-To: <20130307222446.d2b14a7a3785ef99dbf098b8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next <linux-next@vger.kernel.org>
 
---Signature=_Thu__7_Mar_2013_22_48_01_+1100_YFyUPyF2KW6XFikz
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thursday 07 March 2013 04:54 PM, Stephen Rothwell wrote:
+> Hi Vineet,
+>
+> On Thu, 7 Mar 2013 11:33:54 +0530 Vineet Gupta <Vineet.Gupta1@synopsys.com> wrote:
+>> With ARC arch merged in 3.9-rc1 I feel the need for a revised workflow.
+>>
+>> I intend to have 2 branches for -next exposure: for-curr and for-next.
+>> * for-curr would contain the bug fixes for this release to be sent to Linus at
+>> some point in time.
+>> * for-next obviously is next release stuff and will be rebased off for-curr.
+> I have several sets of branches like that and it works fine.
+>
+> Occasionally, the branches will conflict, but that can be sorted by
+> merging the for-curr branch into the for-next branch after Linus has
+> merged the for-curr branch.
 
-Hi all,
+Thanks for your reply Stephen. In that case, can you add the following additional
+arc branch to -next
 
-I will not be doing linux-next releases tomorrow (March 8) or Monday
-(March 11).  Normal service will resume on March 12.
+git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git for-curr
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__7_Mar_2013_22_48_01_+1100_YFyUPyF2KW6XFikz
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJROH5xAAoJEECxmPOUX5FEimAP/R2l01P14AFUXIoEDlzhowNT
-jZT0cEI729bF39y085ccqrPs0W2FbTRNQAicaEeqo4qWcWfsvuUnpSVoaSR+ha+Y
-mEPDebZ6iGR3XdhUhe4hdIeDR0HfRsitNYhrtF1NT3KAj9VoBVbt3ytunb0DAiEd
-7z14UR90Lry3k/OSC0wj8tMb8jZkM42FkLQHuaCbtO+QPrnc0oZ3iuEbiCT/lQXz
-6V5TXwTLFFlVgQjwmFQidB2bkph0YEoUCo3muYXTZfH7kgmZ1FQbCl5ijIPG30eY
-eiQ3Kqrl9z5S8cJfywFF27OuhfTbglbtrZ3MuKkSzttIYxt4B5UoWNVNIHBpyk56
-dEX4YJa02YP1G9u6hqmavQcJiT723TPyGN1bWQYdogknH9beHrpbyFDJeU+Qx2dV
-gzyIHHn+kdPZF7kl6fkXRnPzbv+nzLMbw7Tma4UHbpYmxNDq6xRhhJ4UlDoO0b4M
-nHvYQgdOIpmtiVKvbUC6b78iQk/B88z5oe4rmktjD9D45ekhsatoTBnptOuwsaaH
-AtEWwqCjstGEaqB4GUf+TcZ14pBo0e1EOisLLITxw4eXK1oDKeKrqY1b8HRFnGN4
-0rG8BXx2KS62eMD7J+c1/2TViR1p2j0BtTh6iaojkOn7fE+kIF8TWYwbkTubMFsa
-wY12AtAJh0ktAEC7eINV
-=9d1s
------END PGP SIGNATURE-----
-
---Signature=_Thu__7_Mar_2013_22_48_01_+1100_YFyUPyF2KW6XFikz--
+-Vineet
