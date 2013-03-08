@@ -1,75 +1,65 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [RFC -next] linux/linkage.h: fix symbol prefix handling
-Date: Fri, 08 Mar 2013 11:03:13 +1100
-Message-ID: <87sj46wyf2.fsf@rustcorp.com.au>
-References: <1362656642-2693-1-git-send-email-james.hogan@imgtec.com>
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Subject: Re: [PATCH] leds-ot200: Fix misbehavior caused by wrong bit masks
+Date: Fri, 8 Mar 2013 08:26:56 +0100
+Message-ID: <CAH9NwWeMMYzvE0VVMCYmF9oXA-wBiW-BnwoK1q7mjUkE4JF9uw@mail.gmail.com>
+References: <1360771110-9490-1-git-send-email-christian.gmeiner@gmail.com>
+ <CAK5ve-K43n=4n1GyRW+2PgMTe2bU6ROHAa-_dK_0LgzM7JCRcw@mail.gmail.com>
+ <CAH9NwWc+BP5ZbHwmMZ4AisviDHM-GizTmZO6vwxtd=ntYUAk=A@mail.gmail.com>
+ <CAH9NwWceaA0MPGj65fOhmECL8A522qngU3RHGZ++Uz-6mVKKAg@mail.gmail.com> <CAK5ve-JmVes+OA3MRyoZEo_Fz8_RHpdqmcTxNwwrUAnADpqvyw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <1362656642-2693-1-git-send-email-james.hogan@imgtec.com>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Michal Marek <mmarek@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <khali@linux-fr.org>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>, uclinux-dist-devel@blackfin.uclinux.org, linux-next@vger.kernel.org, James Hogan <james.hogan@imgtec.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAK5ve-JmVes+OA3MRyoZEo_Fz8_RHpdqmcTxNwwrUAnADpqvyw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: akpm <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-James Hogan <james.hogan@imgtec.com> writes:
-> The commit "consolidate cond_syscall and SYSCALL_ALIAS declarations"
-> broke the build on blackfin and metag due to the following code:
+2013/3/5 Bryan Wu <cooloney@gmail.com>:
+> On Sun, Mar 3, 2013 at 11:40 PM, Christian Gmeiner
+> <christian.gmeiner@gmail.com> wrote:
+>> ping
+>> --
+>> Christian Gmeiner, MSc
+>>
+>>
+>> 2013/2/23 Christian Gmeiner <christian.gmeiner@gmail.com>:
+>>> 2013/2/15 Bryan Wu <cooloney@gmail.com>:
+>>>> On Wed, Feb 13, 2013 at 7:58 AM, Christian Gmeiner
+>>>> <christian.gmeiner@gmail.com> wrote:
+>>>>> During the development of this driver an in-house register
+>>>>> documentation was used. The last weeks some integration tests
+>>>>> were done and this problem was found. It turned out that
+>>>>> the released register documentation is wrong.
+>>>>>
+>>>>> The fix is very simple: shift all masks by one.
+>>>>>
+>>>>> Our customers can control LEDs from userspace via Java,
+>>>>> C++ or what every. They have running/working applications where
+>>>>> they want to control led_3 but led_2 get's used.
+>>>>> I got a bug report in our in-house bug tracker so it would be
+>>>>> great to fix this upstream.
+>>>>>
+>>>>> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
+>>>>
+>>>> Thanks, Christian.
+>>>>
+>>>> And Andrew, are you going to take care of this patch? Or I will merge this.
+>>>>
+>>>
+>>> Whats the current state of the patch? Hope we can get it into 3.9 :)
+>>>
 >
->   #ifndef SYMBOL_NAME
->   #ifdef CONFIG_SYMBOL_PREFIX
->   #define SYMBOL_NAME(x) CONFIG_SYMBOL_PREFIX ## x
->   #else
->   #define SYMBOL_NAME(x) x
->   #endif
->   #endif
->   #define __SYMBOL_NAME(x) __stringify(SYMBOL_NAME(x))
+> I think this patch is already in linux-next via Andrew's tree (commit
+> 023206171f235f93f26c314f76f5405a3077aaba). So it will be merged into
+> 3.10 I guess, but not 3.9.
 >
-> __stringify literally stringifies CONFIG_SYMBOL_PREFIX ##x, so you get
-> lines like this in the assembly output:
+> Or I can send out this patch to Linus as a fix and ask Andrew to drop
+> this from his tree.
 >
->   .weak CONFIG_SYMBOL_PREFIXsys_quotactl
->   .set
->   CONFIG_SYMBOL_PREFIXsys_quotactl,CONFIG_SYMBOL_PREFIXsys_ni_syscall
->
-> This is fixed by defining SYMBOL_PREFIX from the command line for c
-> files in addition to assembly for architectures that set
-> CONFIG_SYMBOL_PREFIX (scripts/Makefile.lib), and defining __SYMBOL_NAME
-> as:
->
->   #define __SYMBOL_NAME(x) __stringify(SYMBOL_PREFIX) #x
->
-> We first have to ensure SYMBOL_PREFIX is defined (which avoids polluting
-> the command lines for architectures that don't use symbol prefixes).
-> Also the definition of SYMBOL_PREFIX in <linux/kernel.h> is removed as
-> it conflicts, isn't used anywhere, and is defined as a string so differs
-> from the assembly definition.
 
-So now, if CONFIG_SYMBOL_PREFIX, SYMBOL_PREFIX is defined on the cmdline
-as a string.  Otherwise it's empty (not the empty string?):
+I am fine with the current situation and 3.10 is fine too.
 
-> +/* This helps us to avoid #ifdef SYMBOL_PREFIX */
-> +#ifndef SYMBOL_PREFIX
-> +#define SYMBOL_PREFIX
->  #endif
-> -#define __SYMBOL_NAME(x) __stringify(SYMBOL_NAME(x))
-> +
-> +#define __SYMBOL_NAME(x) __stringify(SYMBOL_PREFIX) #x
-
-And why are you __stringify()ing a string?
-
->  #ifndef cond_syscall
->  #define cond_syscall(x) asm(".weak\t" __SYMBOL_NAME(x) \
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 07125e6..f1cce6a 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -123,6 +123,7 @@ ifdef CONFIG_SYMBOL_PREFIX
->  _sym_flags = -DSYMBOL_PREFIX=$(patsubst "%",%,$(CONFIG_SYMBOL_PREFIX))
->  _cpp_flags += $(_sym_flags)
->  _a_flags += $(_sym_flags)
-> +_c_flags += $(_sym_flags)
->  endif
-
-Confused,
-Rusty.
+thanks
+--
+Christian Gmeiner, MSc
