@@ -1,65 +1,40 @@
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Subject: Re: [PATCH] leds-ot200: Fix misbehavior caused by wrong bit masks
-Date: Fri, 8 Mar 2013 08:26:56 +0100
-Message-ID: <CAH9NwWeMMYzvE0VVMCYmF9oXA-wBiW-BnwoK1q7mjUkE4JF9uw@mail.gmail.com>
-References: <1360771110-9490-1-git-send-email-christian.gmeiner@gmail.com>
- <CAK5ve-K43n=4n1GyRW+2PgMTe2bU6ROHAa-_dK_0LgzM7JCRcw@mail.gmail.com>
- <CAH9NwWc+BP5ZbHwmMZ4AisviDHM-GizTmZO6vwxtd=ntYUAk=A@mail.gmail.com>
- <CAH9NwWceaA0MPGj65fOhmECL8A522qngU3RHGZ++Uz-6mVKKAg@mail.gmail.com> <CAK5ve-JmVes+OA3MRyoZEo_Fz8_RHpdqmcTxNwwrUAnADpqvyw@mail.gmail.com>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: [RFC -next] linux/linkage.h: fix symbol prefix handling
+Date: Fri, 8 Mar 2013 09:15:37 +0000
+Message-ID: <5139AC39.90805@imgtec.com>
+References: <1362656642-2693-1-git-send-email-james.hogan@imgtec.com> <87sj46wyf2.fsf@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK5ve-JmVes+OA3MRyoZEo_Fz8_RHpdqmcTxNwwrUAnADpqvyw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: akpm <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from multi.imgtec.com ([194.200.65.239]:17848 "EHLO multi.imgtec.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932815Ab3CHJPo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 Mar 2013 04:15:44 -0500
+In-Reply-To: <87sj46wyf2.fsf@rustcorp.com.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Michal Marek <mmarek@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <khali@linux-fr.org>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>, uclinux-dist-devel@blackfin.uclinux.org, linux-next@vger.kernel.org
 
-2013/3/5 Bryan Wu <cooloney@gmail.com>:
-> On Sun, Mar 3, 2013 at 11:40 PM, Christian Gmeiner
-> <christian.gmeiner@gmail.com> wrote:
->> ping
->> --
->> Christian Gmeiner, MSc
->>
->>
->> 2013/2/23 Christian Gmeiner <christian.gmeiner@gmail.com>:
->>> 2013/2/15 Bryan Wu <cooloney@gmail.com>:
->>>> On Wed, Feb 13, 2013 at 7:58 AM, Christian Gmeiner
->>>> <christian.gmeiner@gmail.com> wrote:
->>>>> During the development of this driver an in-house register
->>>>> documentation was used. The last weeks some integration tests
->>>>> were done and this problem was found. It turned out that
->>>>> the released register documentation is wrong.
->>>>>
->>>>> The fix is very simple: shift all masks by one.
->>>>>
->>>>> Our customers can control LEDs from userspace via Java,
->>>>> C++ or what every. They have running/working applications where
->>>>> they want to control led_3 but led_2 get's used.
->>>>> I got a bug report in our in-house bug tracker so it would be
->>>>> great to fix this upstream.
->>>>>
->>>>> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
->>>>
->>>> Thanks, Christian.
->>>>
->>>> And Andrew, are you going to take care of this patch? Or I will merge this.
->>>>
->>>
->>> Whats the current state of the patch? Hope we can get it into 3.9 :)
->>>
->
-> I think this patch is already in linux-next via Andrew's tree (commit
-> 023206171f235f93f26c314f76f5405a3077aaba). So it will be merged into
-> 3.10 I guess, but not 3.9.
->
-> Or I can send out this patch to Linus as a fix and ask Andrew to drop
-> this from his tree.
->
+Hi Rusty,
 
-I am fine with the current situation and 3.10 is fine too.
+On 08/03/13 00:03, Rusty Russell wrote:
+> James Hogan <james.hogan@imgtec.com> writes:
+>> Also the definition of SYMBOL_PREFIX in <linux/kernel.h> is removed as
+>> it conflicts, isn't used anywhere, and is defined as a string so differs
+>> from the assembly definition.
+> 
+> So now, if CONFIG_SYMBOL_PREFIX, SYMBOL_PREFIX is defined on the cmdline
+> as a string.  Otherwise it's empty (not the empty string?):
 
-thanks
---
-Christian Gmeiner, MSc
+No, SYMBOL_PREFIX is now defined as a non-string, same as asm files, but
+the now unused definition in linux/kernel.h did define it as a string as
+it used CONFIG_SYMBOL_PREFIX which is a string. When I said "and is
+defined as a string" I was referring to the one in linux/kernel.h that
+this removes.
+
+Does that make sense? It's all a bit messy unfortunately (hence RFC).
+
+Cheers
+James
