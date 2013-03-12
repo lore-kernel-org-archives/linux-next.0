@@ -1,88 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: unneeded merge in the security tree
-Date: Tue, 12 Mar 2013 16:18:23 +1100
-Message-ID: <20130312161823.86ea101fc4e45285b205817f@canb.auug.org.au>
-References: <20130312100950.e45ef0e721492ff0d5fd7c8d@canb.auug.org.au>
-	<alpine.LRH.2.02.1303121510270.25612@tundra.namei.org>
-	<20130312041641.GE18595@thunk.org>
+Subject: Re: linux-next: build warning after merge of the final tree (tip
+ tree related)
+Date: Tue, 12 Mar 2013 16:45:58 +1100
+Message-ID: <20130312164558.f352a1189f8c99ab73518002@canb.auug.org.au>
+References: <20130312154215.f9c3e957c2a2e510f27b826a@canb.auug.org.au>
+	<513EBA25.8060106@huawei.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__12_Mar_2013_16_18_23_+1100_0StuvUJ+KDk9c6XO"
+ boundary="Signature=_Tue__12_Mar_2013_16_45_58_+1100_2=97eZlAb1iF.tQk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54221 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:59724 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754015Ab3CLFSb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 01:18:31 -0400
-In-Reply-To: <20130312041641.GE18595@thunk.org>
+	with ESMTP id S1754411Ab3CLFqI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 01:46:08 -0400
+In-Reply-To: <513EBA25.8060106@huawei.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: James Morris <jmorris@namei.org>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Li Zefan <lizefan@huawei.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Tue__12_Mar_2013_16_18_23_+1100_0StuvUJ+KDk9c6XO
+--Signature=_Tue__12_Mar_2013_16_45_58_+1100_2=97eZlAb1iF.tQk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 12 Mar 2013 00:16:41 -0400 Theodore Ts'o <tytso@mit.edu> wrote:
+Hi,
+
+On Tue, 12 Mar 2013 13:16:21 +0800 Li Zefan <lizefan@huawei.com> wrote:
 >
-> On Tue, Mar 12, 2013 at 03:10:53PM +1100, James Morris wrote:
-> > On Tue, 12 Mar 2013, Stephen Rothwell wrote:
-> > > The top commit in the security tree today is a merge of v3.9-rc2.  Th=
-is
-> > > is a completely unnecessary merge as the tree before the merge was a
-> > > subset of v3.9-rc1 and so if the merge had been done using anything b=
-ut
-> > > the tag, it would have just been a fast forward.  I know that this is=
- now
-> > > deliberate behaviour on git's behalf, but isn't there some way we can
-> > > make this easier on maintainers who are just really just trying to pi=
-ck a
-> > > new starting point for their trees after a release?  (at least I assu=
-me
-> > > that is what James was trying to do)
-> >=20
-> > Yes, and I was merging to a tag as required by Linus.
+> Should be fixed by this, and it has been queued in tip:sched/core
 >=20
-> Why not just force the head of the security tree to be v3.9-rc2?  Then
-> you don't end up creating a completely unnecessary merge commit, and
-> users who were at the previous head of the security tree will
-> experience a fast forward when they pull your new head.
+> Commit-ID:  b719203b846284e77f5c50fca04b458b6484aeae
+> Gitweb:     http://git.kernel.org/tip/b719203b846284e77f5c50fca04b458b648=
+4aeae
+> Author:     Li Zefan <lizefan@huawei.com>
+> AuthorDate: Thu, 7 Mar 2013 10:00:26 +0800
+> Committer:  Ingo Molnar <mingo@kernel.org>
+> CommitDate: Mon, 11 Mar 2013 09:07:24 +0100
+>=20
+> sched: Fix update_group_power() prototype placement to fix build warning =
+when !CONFIG_SMP
 
-Well, you used to be able to merge a tag and it would just fast forward
-if possible.  That was changed (for good reason), but now gives us this
-outcome.   Also, "git merge --ff" does not override that behaviour, but
-"git merge --ff-only" does.  Also, of course, if (say) origin/master had
-been v3.9-rc2, then "git merge origin/master" would have also just done a
-fast forward.
-
-I wonder if "git merge v3.9-rc2^{}" should work (git says "fatal: v3.9-rc2{}
- - not something we can merge").
+Good, thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__12_Mar_2013_16_18_23_+1100_0StuvUJ+KDk9c6XO
+--Signature=_Tue__12_Mar_2013_16_45_58_+1100_2=97eZlAb1iF.tQk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRPrqfAAoJEECxmPOUX5FEyrQP/1K+K0QUrnUGV+NI8OwAbsE4
-OIZlvQ3jCB0dSjeLLFiji+96dVOFye2ycfC79TqosFCii8X01W7Obglr6D2wFKvf
-oZotOehgU3ufQRLssLzmiVJ+cBNUOdeXjnlQUXJtq4OFvWQTp+VuXqLoTkz2rGO+
-JroatEOPRbKmZbiuFrSxMN6Yvs1tovtFGSwEwj3y/3g1EmqgikSSP8Qs26Y4oG77
-/n1u+EWCzKJSIoxZHwuyvoRZevtB9L6yhrnu8GOof4KACtTDjAziSOwq6J0PkDfr
-mk6RhD9JZpiOvkKxPzNehXWiMpB3dgIMwt//H8hCMVAms/z2/n5dIwUK2bd5N6B8
-LwGvZV2nuM28N7NlP2ecNCzBf4KDXSZDxSYMxdQrmjmLpowpet++n7MUCjfatANf
-3ef5FvPyPbrQUeLjmor2BH4B13KmhfLe+lDWAahijwJs2zrWluCxxRgTfuDzzDHf
-NWQZEkPvFf6KiWTtOHtc3klKl27+vWOZ+rUdFFBYjd00dtb3i+Qs3rSsPcwK9gqP
-hm6GbHu31phn7ZOYW15SG1G0aetJmzE+iQq5YFS6Fn6yOrJrm5Kd0DUjlm4jORAt
-wFLTspREHqfpkG2ZJpVXRvy/zmJ4bfDp3p5fp9qTGx8/qggaKeLJBwT4ECWI4BT5
-3OYaRgC5puuUJrsAIjbk
-=1TCO
+iQIcBAEBCAAGBQJRPsEWAAoJEECxmPOUX5FEntAP/R/h9qxTIuI32DxGJcPAc+c6
+SApj3hbPd1Jc4EJuFA5SsdnqOcmoOkIwczpC1ChH28fFwFNoZEXbGQ2FG0HUM2r4
+1iRaOCY4Ql0CtfJjBZd6MzGEwCi6CzdmogMQeB3UKn7oAtjWTpXSJ6OmsedNKi8t
+QqENFZ6eeusIoydcYb0tyZQQLIY54aTpXtLMeGcuQpGDSsD99eP1Et95LnO3xI5h
+ZB1uTNC2vjbS9V/mngq96nsaN5Gkc4KYibCiEHWPoFdu5B3/3f14PSDIQDdrE6h0
+zEnFhJEY0E7aXJTh3ucf6JcxEkBvToghR1UcZbkBsEKa8pQ22naSYKOadawTWaa5
+/4E+g/Wnu5NDx+6ZPoLUBRlAPNpx+Jb2rJ3cYlrRcGcGDHsFbUxqbgxgjCAM2apR
+SF5H1ucqzAoNHh6l2/Hys+0OMSaTaaXmD70Iif/wexb8n7nNGGpD2j0zP3A2lBWv
+tZT4QRKqrs47TzNnULc7woXP6enjjVFWxDHcJkNG31KF8uwHAe8z1+ym/RrZFspu
+x4SUO5k/zLTqEyUnLg9zrzpi9Gbf85xg1IZwuDm7VLq51hYeEYGTtRbvETCEEXzR
+qP54tv5dbomgI1Y2HLEL7bc57tZnCG+Hh3Gb38MqC2i0jktWwlxhZieo6+NC4kQS
+I63ZocuRpd/robFe6wzm
+=36UW
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__12_Mar_2013_16_18_23_+1100_0StuvUJ+KDk9c6XO--
+--Signature=_Tue__12_Mar_2013_16_45_58_+1100_2=97eZlAb1iF.tQk--
