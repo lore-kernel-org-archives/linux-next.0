@@ -1,67 +1,54 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [-next] staging/comedi regressions
-Date: Tue, 12 Mar 2013 23:13:50 +0100
-Message-ID: <CAMuHMdXyBqwqn3aWpjwer5HYYqQvyMJTxJY-WeDGxLxkg_ZXQw@mail.gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [-next] staging/comedi regressions
+Date: Tue, 12 Mar 2013 15:21:32 -0700
+Message-ID: <20130312222132.GA12477@kroah.com>
+References: <CAMuHMdXyBqwqn3aWpjwer5HYYqQvyMJTxJY-WeDGxLxkg_ZXQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: driverdevel <devel@driverdev.osuosl.org>, linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:57002 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755787Ab3CLWVg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 18:21:36 -0400
+Received: by mail-ie0-f172.google.com with SMTP id c10so533515ieb.17
+        for <linux-next@vger.kernel.org>; Tue, 12 Mar 2013 15:21:36 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXyBqwqn3aWpjwer5HYYqQvyMJTxJY-WeDGxLxkg_ZXQw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: H Hartley Sweeten <hsweeten@visionengravers.com>, driverdevel <devel@driverdev.osuosl.org>, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
 
-m68k/allmodconfig:
+On Tue, Mar 12, 2013 at 11:13:50PM +0100, Geert Uytterhoeven wrote:
+> m68k/allmodconfig:
+>=20
+> drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_is=
+apnp_find_board=E2=80=99:
+> drivers/staging/comedi/drivers/ni_atmio.c:353: error: =E2=80=98n_ni_b=
+oards=E2=80=99
+> undeclared (first use in this function)
+> drivers/staging/comedi/drivers/ni_atmio.c:353: error: (Each undeclare=
+d
+> identifier is reported only once
+> drivers/staging/comedi/drivers/ni_atmio.c:353: error: for each
+> function it appears in.)
+> drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_ge=
+tboardtype=E2=80=99:
+> drivers/staging/comedi/drivers/ni_atmio.c:391: error: =E2=80=98n_ni_b=
+oards=E2=80=99
+> undeclared (first use in this function)
+> drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_at=
+mio_attach=E2=80=99:
+> drivers/staging/comedi/drivers/ni_atmio.c:470: error: =E2=80=98boardt=
+ype=E2=80=99
+> undeclared (first use in this function)
+>=20
+> http://kisskb.ellerman.id.au/kisskb/buildresult/8392062/
 
-drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_isap=
-np_find_board=E2=80=99:
-drivers/staging/comedi/drivers/ni_atmio.c:353: error: =E2=80=98n_ni_boa=
-rds=E2=80=99
-undeclared (first use in this function)
-drivers/staging/comedi/drivers/ni_atmio.c:353: error: (Each undeclared
-identifier is reported only once
-drivers/staging/comedi/drivers/ni_atmio.c:353: error: for each
-function it appears in.)
-drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_getb=
-oardtype=E2=80=99:
-drivers/staging/comedi/drivers/ni_atmio.c:391: error: =E2=80=98n_ni_boa=
-rds=E2=80=99
-undeclared (first use in this function)
-drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_atmi=
-o_attach=E2=80=99:
-drivers/staging/comedi/drivers/ni_atmio.c:470: error: =E2=80=98boardtyp=
-e=E2=80=99
-undeclared (first use in this function)
+Hartley already fixed it, this will show up in the next linux-next tree
+as I commited the fix a few hours ago.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/8392062/
+thanks,
 
-Seems like the following two commits removed some macros:
-
-commit 6293e35742550320b1720044f9969d9544a5deaa
-Author: H Hartley Sweeten <hsweeten@visionengravers.com>
-Date:   Tue Mar 5 10:20:41 2013 -0700
-
-    staging: comedi: ni_stc.h: remove boardtype macro
-
-ayla$ git show f5a1d92bf6f4fa063d5ea43613f43494896e333f
-commit f5a1d92bf6f4fa063d5ea43613f43494896e333f
-Author: H Hartley Sweeten <hsweeten@visionengravers.com>
-Date:   Tue Mar 5 10:21:03 2013 -0700
-
-    staging: comedi: ni_stc.h: remove n_ni_boards macro
-
-while they're still used by drivers/staging/comedi/drivers/ni_atmio.c.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-                                -- Linus Torvalds
+greg k-h
