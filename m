@@ -1,38 +1,67 @@
-From: Junio C Hamano <gitster@pobox.com>
-Subject: Re: linux-next: unneeded merge in the security tree
-Date: Tue, 12 Mar 2013 15:00:24 -0700
-Message-ID: <7vli9s5ldz.fsf@alter.siamese.dyndns.org>
-References: <20130312100950.e45ef0e721492ff0d5fd7c8d@canb.auug.org.au>
- <alpine.LRH.2.02.1303121510270.25612@tundra.namei.org>
- <20130312041641.GE18595@thunk.org>
- <CA+55aFzFLDcN-1GKae6Xqrns59K1xOD_HPzuv2Lv1__fZpqFMw@mail.gmail.com>
- <20130312212027.GE14792@thunk.org>
- <CA+55aFwHJtOU4Qzt3XZsER165kTc5P0ATQP2wPHvuUiVic8bnA@mail.gmail.com>
- <7vppz45lz9.fsf@alter.siamese.dyndns.org>
- <CA+55aFzWjfFjcRZXBO+edO7f66REA0pOsC3iZ2vYdHrkcovnHA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [-next] staging/comedi regressions
+Date: Tue, 12 Mar 2013 23:13:50 +0100
+Message-ID: <CAMuHMdXyBqwqn3aWpjwer5HYYqQvyMJTxJY-WeDGxLxkg_ZXQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from b-pb-sasl-quonix.pobox.com ([208.72.237.35]:33933 "EHLO
-	smtp.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755190Ab3CLWA1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Mar 2013 18:00:27 -0400
-In-Reply-To: <CA+55aFzWjfFjcRZXBO+edO7f66REA0pOsC3iZ2vYdHrkcovnHA@mail.gmail.com> (Linus
- Torvalds's message of "Tue, 12 Mar 2013 14:54:04 -0700")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: H Hartley Sweeten <hsweeten@visionengravers.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: driverdevel <devel@driverdev.osuosl.org>, linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+m68k/allmodconfig:
 
-> That said, adding the signature from an upstream tag doesn't really
-> seem to be hugely useful. I'm not seeing much of an upside, in other
-> words. I'd *expect* that people would pick up upstream tags
-> regardless, no?
+drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_isap=
+np_find_board=E2=80=99:
+drivers/staging/comedi/drivers/ni_atmio.c:353: error: =E2=80=98n_ni_boa=
+rds=E2=80=99
+undeclared (first use in this function)
+drivers/staging/comedi/drivers/ni_atmio.c:353: error: (Each undeclared
+identifier is reported only once
+drivers/staging/comedi/drivers/ni_atmio.c:353: error: for each
+function it appears in.)
+drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_getb=
+oardtype=E2=80=99:
+drivers/staging/comedi/drivers/ni_atmio.c:391: error: =E2=80=98n_ni_boa=
+rds=E2=80=99
+undeclared (first use in this function)
+drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_atmi=
+o_attach=E2=80=99:
+drivers/staging/comedi/drivers/ni_atmio.c:470: error: =E2=80=98boardtyp=
+e=E2=80=99
+undeclared (first use in this function)
 
-Yes, their "git fetch" will auto-follow, but mergetag embedded in
-the commit objects will give the history auditable trail the same
-way as the merges you make your downstream.  You of course could
-match out-of-line tags against back-merges and verify your merges
-with mergetags, but you do not have to.
+http://kisskb.ellerman.id.au/kisskb/buildresult/8392062/
+
+Seems like the following two commits removed some macros:
+
+commit 6293e35742550320b1720044f9969d9544a5deaa
+Author: H Hartley Sweeten <hsweeten@visionengravers.com>
+Date:   Tue Mar 5 10:20:41 2013 -0700
+
+    staging: comedi: ni_stc.h: remove boardtype macro
+
+ayla$ git show f5a1d92bf6f4fa063d5ea43613f43494896e333f
+commit f5a1d92bf6f4fa063d5ea43613f43494896e333f
+Author: H Hartley Sweeten <hsweeten@visionengravers.com>
+Date:   Tue Mar 5 10:21:03 2013 -0700
+
+    staging: comedi: ni_stc.h: remove n_ni_boards macro
+
+while they're still used by drivers/staging/comedi/drivers/ni_atmio.c.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+                                -- Linus Torvalds
