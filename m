@@ -1,61 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Tue, 12 Mar 2013 11:33:20 +1100
-Message-ID: <20130312113320.b1f41dcb59baa74a51b064cc@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+Date: Tue, 12 Mar 2013 12:00:51 +1100
+Message-ID: <20130312120051.5fade9ddf88c9d169d61c655@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__12_Mar_2013_11_33_20_+1100_9XMUROop0z_8UXdM"
+ boundary="Signature=_Tue__12_Mar_2013_12_00_51_+1100_Wtln0=9srY38MUxj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52276 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48513 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754446Ab3CLAdf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Mar 2013 20:33:35 -0400
+	with ESMTP id S1754484Ab3CLBBD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Mar 2013 21:01:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Khlebnikov <khlebnikov@openvz.org>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Bruce Allan <bruce.w.allan@intel.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Thierry Escande <thierry.escande@linux.intel.com>
 
---Signature=_Tue__12_Mar_2013_11_33_20_+1100_9XMUROop0z_8UXdM
+--Signature=_Tue__12_Mar_2013_12_00_51_+1100_Wtln0=9srY38MUxj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi John,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/intel/e1000e/netdev.c between commits 4e0855dff094
-("e1000e: fix pci-device enable-counter balance") and 66148babe728
-("e1000e: fix runtime power management transitions") from Linus' tree and
-commit f0ff439872e1 ("e1000e: cleanup CODE_INDENT checkpatch errors")
-from the net-next tree.
+Today's linux-next merge of the wireless-next tree got a conflict in
+net/nfc/llcp/llcp.c between commit 3536da06db0b ("NFC: llcp: Clean local
+timers and works when removing a device") from the wireless tree and
+commits d9b8d8e19b07 ("NFC: llcp: Service Name Lookup netlink interface")
+and 40213fa8513c ("NFC: llcp: Add cleanup support for unreplied SNL
+requests") from the wireless-next tree.
 
-The former removed the line fixed by the latter, so I did that and can
-carry the fix as necessary (no action is required).
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__12_Mar_2013_11_33_20_+1100_9XMUROop0z_8UXdM
+diff --cc net/nfc/llcp/llcp.c
+index b530afa,3361170..0000000
+--- a/net/nfc/llcp/llcp.c
++++ b/net/nfc/llcp/llcp.c
+@@@ -188,16 -156,9 +188,19 @@@ static void local_cleanup(struct nfc_ll
+  	cancel_work_sync(&local->rx_work);
+  	cancel_work_sync(&local->timeout_work);
+  	kfree_skb(local->rx_pending);
+ +}
+ +
+ +static void local_release(struct kref *ref)
+ +{
+ +	struct nfc_llcp_local *local;
+ +
+ +	local =3D container_of(ref, struct nfc_llcp_local, ref);
+ +
+ +	list_del(&local->list);
+ +	local_cleanup(local, false);
++ 	del_timer_sync(&local->sdreq_timer);
++ 	cancel_work_sync(&local->sdreq_timeout_work);
++ 	nfc_llcp_free_sdp_tlv_list(&local->pending_sdreqs);
+  	kfree(local);
+  }
+ =20
+
+--Signature=_Tue__12_Mar_2013_12_00_51_+1100_Wtln0=9srY38MUxj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRPnfQAAoJEECxmPOUX5FEQIUP/At6swZienJ8i92Y53y8t1t8
-tk/KsdXyZnopaH4NvUdyan4Q0BV39A9h3Mf8QBgA7m+spqSrwtrNivA9N3/CACnL
-3XC71EywF1n4NtUPgEqxJNYBrYr9NN1DXwagDzsivP6HE4p2C001rB47lkqIV1QQ
-y6NMBtZtwWDqlac8+m8phwKUDTW3D+c2OH2WCWaKUwc0NaDhm9NUD3F+7rr0j0pB
-TWu8FJ1sbVibxQ3KMaF+qBKQ6ZVS9NJKUAz/6e3VlUnJMQ7d/mBdq8lFTvHqFWuG
-wQ7BPGmeZkjMpSg3M4KbcxajFHvl5lLpxndhaYMKh76/Caz0Jy6NCLuyQoXql300
-M4wfHxj3cw8MJZxu74xK3wj8sgc40xYiGYO3+n9f2eXltAi0tsH7lJzWlAHO9ZrE
-C4DmzviahEgzwgq6/Wk/onnhMk0zHWa7EHwRnxKkS9BZjRy5vgCkcT3YuuZrxPoc
-Jar3CBmnKzLu+uQXhW4UNf9HQHHbY81BL2bnFanbnOrD5RQWEJPEwoDmUKSKOent
-NdNN4TZg5y0vCHqC7pnxQGVTwONOJqaa6CTMzbBAQQgas3WiUAjD2XlfRxty0dsS
-pW9ncF/Qy0eHN/DmWetjKMOOnPjprl7eDizUIVHj0LhI3iS3zuj3urFlj/rlClXW
-Z1xvSyASMA00L/U6Xvfx
-=Thrz
+iQIcBAEBCAAGBQJRPn5DAAoJEECxmPOUX5FETS0P/RGnrEjRpOQ81FtJOxEqh7S/
+IgHrT20pJ2ux/j48Nkn4Ok/qYIJWcnGNLN/BzM//h/bTSHzuX2/ycvNF+K7i/OhY
+je6yAILJCNssRDnZBjH9wJ6t3Jc2WO+jryJ3Y71GR/+9UdktsfbIFqONMUb4Gx/i
+BgTxYtSXvkCu/OC6tTnuwZ1Sbfo8yW8L11wo9w2EJwykYsklOnvu3w2LNA2cic1H
+cCGitFCD3oqGnizQPV2q+Nun9CwyTe1eQ5wLnsOostD7d3J/ufKt8OxglSrtepDk
+4HK3I7WFqbtX7axtngMLtKXc1gsouqty/15s96ozG9CabM+kTtrpGIANRZvChekk
+9N0HdtvhhfX8zUey6LF/mcW0e5UvVT/QgN6wnJ3PATHvgvPWF28g9dr7fAIGRaZo
+GnQA19V+W8+DkNGvX1dufCZRpgdWznr7gEvwkEWvfNDb8tfyegJ1eQK7fCTTW8ce
+iqwHxEtq390iYH9yYzvuW1P41GGdF18gNm6eSM6PBSkgXCMD6rv0VuE/q6D/vDRX
+a7xuQAMWES/M21ctFavjOZQAoV7DU6N8NN82jHeEXs+7qRUXEPo2AXJ+nE0YygXH
+UWDSzMovGPYpxg+xG6x23XUTQFiYOtZDm4VH5i0HmC0peXtyCJf6We7T9WlcxrcA
+WfmQS8hkAfAxWgyAf5nT
+=TE5j
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__12_Mar_2013_11_33_20_+1100_9XMUROop0z_8UXdM--
+--Signature=_Tue__12_Mar_2013_12_00_51_+1100_Wtln0=9srY38MUxj--
