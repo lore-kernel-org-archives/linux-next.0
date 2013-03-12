@@ -1,39 +1,84 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: linux-next: unneeded merge in the security tree
-Date: Tue, 12 Mar 2013 00:16:41 -0400
-Message-ID: <20130312041641.GE18595@thunk.org>
-References: <20130312100950.e45ef0e721492ff0d5fd7c8d@canb.auug.org.au>
- <alpine.LRH.2.02.1303121510270.25612@tundra.namei.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (drm-intel
+	tree related)
+Date: Tue, 12 Mar 2013 15:22:26 +1100
+Message-ID: <20130312152226.c5965a68f57444c8652eb46a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from li9-11.members.linode.com ([67.18.176.11]:52738 "EHLO
-	imap.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751321Ab3CLEQq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Mar 2013 00:16:46 -0400
+Content-Type: multipart/mixed; boundary="===============1859439212=="
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+List-Id: linux-next.vger.kernel.org
+
+--===============1859439212==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__12_Mar_2013_15_22_26_+1100_NNMI2/vr3RuM2wep"
+
+--Signature=_Tue__12_Mar_2013_15_22_26_+1100_NNMI2/vr3RuM2wep
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1303121510270.25612@tundra.namei.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 12, 2013 at 03:10:53PM +1100, James Morris wrote:
-> On Tue, 12 Mar 2013, Stephen Rothwell wrote:
-> > The top commit in the security tree today is a merge of v3.9-rc2.  This
-> > is a completely unnecessary merge as the tree before the merge was a
-> > subset of v3.9-rc1 and so if the merge had been done using anything but
-> > the tag, it would have just been a fast forward.  I know that this is now
-> > deliberate behaviour on git's behalf, but isn't there some way we can
-> > make this easier on maintainers who are just really just trying to pick a
-> > new starting point for their trees after a release?  (at least I assume
-> > that is what James was trying to do)
-> 
-> Yes, and I was merging to a tag as required by Linus.
+Hi all,
 
-Why not just force the head of the security tree to be v3.9-rc2?  Then
-you don't end up creating a completely unnecessary merge commit, and
-users who were at the previous head of the security tree will
-experience a fast forward when they pull your new head.
+After merging the final tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-	     	  	       	    	      	  - Ted
+drivers/built-in.o: In function `i915_min_freq_set':
+i915_debugfs.c:(.text+0xb1adc): undefined reference to `__udivdi3'
+drivers/built-in.o: In function `i915_max_freq_set':
+i915_debugfs.c:(.text+0xb1bac): undefined reference to `__udivdi3'
+
+Caused by commit 2389cc500686 ("drm/i915: use simple attribute in debugfs
+routines") from the drm-intel tree.
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__12_Mar_2013_15_22_26_+1100_NNMI2/vr3RuM2wep
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRPq2CAAoJEECxmPOUX5FE9yEP/1QOXjz7hiY8M6R1/kY7pB0w
+MD4kkHVnH0salYMyifNLFVBAs2mSOg8icY8ud2LtqC/6si5SqPA3My0MIOAMRkY6
+jPELBxV1i2vPUfDZATQ7ykOAB4SesiOGqBroqZoy9UeKiCDqu1yXdRSo5heT0Rhu
+nsKFMPPPIbvceSfa1had/x4wJcc8j/yOpl+Wig4cStpU8ffnIp7qOrNosguqbOA3
+8B3hXs5q+RqvECr9Cgu/tMOayTejRNmw6Hn8VVdCYsiAfyI/tmv+qjs8MjqBmD1a
++V0hiByiJ1PIhrMI0S09S5/cOlSyu4+UClbSkSskFE6nWTDUSjnU3C0ok492H6m3
+4ZHaHz9MMVKWhtKq1n4KBXWJvylJn58HX3QYsJTl292AcXEhu3GT8BI7P/ftl19N
+7q4U/FD9x722LggZqoufwD/TBbiR6igEQdqedYgjcTMuehyL2QqbV4Nq3dKDy0C0
+aIODH7CBYyhzg8P1y8yrDORg8DfzIuiOoIvPAxT4RP2m0dGdXWz+IaPErwKbo8oP
+3buyJ8TwOGrfv9sVKbNiHr9APTi3nfFxCscn7FEpdukeyQ5q5ofJMEDllyucpuOc
+gyZ0dH6RuGtPnohXVGyWsUsUNj7r0Ax3MiVdGKPrDcgwqsVKrfP48yiuAUCb2VzY
+3qn4d8GUDAEtPx3Vjcvi
+=1uDu
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__12_Mar_2013_15_22_26_+1100_NNMI2/vr3RuM2wep--
+
+--===============1859439212==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1859439212==--
