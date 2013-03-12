@@ -1,41 +1,54 @@
-From: Theodore Ts'o <tytso@mit.edu>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: unneeded merge in the security tree
-Date: Tue, 12 Mar 2013 17:20:27 -0400
-Message-ID: <20130312212027.GE14792@thunk.org>
+Date: Tue, 12 Mar 2013 14:28:39 -0700
+Message-ID: <CA+55aFwHJtOU4Qzt3XZsER165kTc5P0ATQP2wPHvuUiVic8bnA@mail.gmail.com>
 References: <20130312100950.e45ef0e721492ff0d5fd7c8d@canb.auug.org.au>
- <alpine.LRH.2.02.1303121510270.25612@tundra.namei.org>
- <20130312041641.GE18595@thunk.org>
- <CA+55aFzFLDcN-1GKae6Xqrns59K1xOD_HPzuv2Lv1__fZpqFMw@mail.gmail.com>
+	<alpine.LRH.2.02.1303121510270.25612@tundra.namei.org>
+	<20130312041641.GE18595@thunk.org>
+	<CA+55aFzFLDcN-1GKae6Xqrns59K1xOD_HPzuv2Lv1__fZpqFMw@mail.gmail.com>
+	<20130312212027.GE14792@thunk.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from li9-11.members.linode.com ([67.18.176.11]:52956 "EHLO
-	imap.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755682Ab3CLVUe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Mar 2013 17:20:34 -0400
-Content-Disposition: inline
-In-Reply-To: <CA+55aFzFLDcN-1GKae6Xqrns59K1xOD_HPzuv2Lv1__fZpqFMw@mail.gmail.com>
+Received: from mail-ve0-f179.google.com ([209.85.128.179]:63551 "EHLO
+	mail-ve0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932723Ab3CLV2m (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 17:28:42 -0400
+In-Reply-To: <20130312212027.GE14792@thunk.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>, Junio C Hamano <gitster@pobox.com>
+To: Theodore Ts'o <tytso@mit.edu>, Linus Torvalds <torvalds@linux-foundation.org>, James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>, Junio C Hamano <gitster@pobox.com>
 
-What if we added the ability to do something like this:
+On Tue, Mar 12, 2013 at 2:20 PM, Theodore Ts'o <tytso@mit.edu> wrote:
+> What if we added the ability to do something like this:
+>
+> [remote "origin"]
+>         url = git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
+>         fetch = +refs/heads/master:refs/heads/master
+>         mergeoptions = --ff-only
 
-[remote "origin"]
-	url = git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
-	fetch = +refs/heads/master:refs/heads/master
-	mergeoptions = --ff-only
+Hmm. Something like this could be interesting for other things:
 
-This would be an analog to branch.<name>.mergeoptions, but it would
-apply to the source of the pull request, instead of the destination.
+ - use "--rebase" when pulling (this is common for people who maintain
+a set of patches and do *not* export their git tree - I use it for
+projects like git and subsurface where there is an upstream maintainer
+and I usually send patches by email rather than git)
 
-That way, people who do a "git pull" from Linus's tree would get the
-protection of --ff-only, while pulls from submaintainer trees would
-automatically get a merge commit, which is what we want.
+ - "--no-summary". As a maintainer, you people probably do want to
+enable summaries for people they pull from, but *not* from upstream.
+So this might even make sense to do by default when you clone a new
+repository.
 
-It doesn't handle the case of a submaintainer pulling from a
-maintainer in a back-merge scenario, but that should be a pretty rare
-case, so maybe that's OK.
+ - I do think that we might want a "--no-signatures" for the specific
+case of merging signed tags without actually taking the signature
+(because it's a "upstream" repo). The "--ff-only" thing is *too*
+strict. Sometimes you really do want to merge in new code, disallowing
+it entirely is tough.
 
-      	     	       	   	- Ted
+Of course, I'm not really sure if we want to list the flags. Maybe
+it's better to just introduce the notion of "upstream" directly, and
+make that a flag, and make "origin" default to that when you clone.
+And then have git use different heurstics for pulling upstream (like
+warning by default when doing a back-merge, perhaps?)
+
+                   Linus
