@@ -1,28 +1,41 @@
-From: Junio C Hamano <gitster@pobox.com>
+From: Theodore Ts'o <tytso@mit.edu>
 Subject: Re: linux-next: unneeded merge in the security tree
-Date: Tue, 12 Mar 2013 13:43:44 -0700
-Message-ID: <7vboao73i7.fsf@alter.siamese.dyndns.org>
+Date: Tue, 12 Mar 2013 17:20:27 -0400
+Message-ID: <20130312212027.GE14792@thunk.org>
 References: <20130312100950.e45ef0e721492ff0d5fd7c8d@canb.auug.org.au>
  <alpine.LRH.2.02.1303121510270.25612@tundra.namei.org>
  <20130312041641.GE18595@thunk.org>
- <20130312161823.86ea101fc4e45285b205817f@canb.auug.org.au>
+ <CA+55aFzFLDcN-1GKae6Xqrns59K1xOD_HPzuv2Lv1__fZpqFMw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from b-pb-sasl-quonix.pobox.com ([208.72.237.35]:40519 "EHLO
-	smtp.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932514Ab3CLUnq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Mar 2013 16:43:46 -0400
-In-Reply-To: <20130312161823.86ea101fc4e45285b205817f@canb.auug.org.au>
- (Stephen Rothwell's message of "Tue, 12 Mar 2013 16:18:23 +1100")
+Received: from li9-11.members.linode.com ([67.18.176.11]:52956 "EHLO
+	imap.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755682Ab3CLVUe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Mar 2013 17:20:34 -0400
+Content-Disposition: inline
+In-Reply-To: <CA+55aFzFLDcN-1GKae6Xqrns59K1xOD_HPzuv2Lv1__fZpqFMw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Theodore Ts'o <tytso@mit.edu>, James Morris <jmorris@namei.org>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>, Junio C Hamano <gitster@pobox.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+What if we added the ability to do something like this:
 
-> I wonder if "git merge v3.9-rc2^{}" should work.
+[remote "origin"]
+	url = git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
+	fetch = +refs/heads/master:refs/heads/master
+	mergeoptions = --ff-only
 
-With less typing, "git merge v3.9-rc2^0", is the more traditional
-way, but "git merge v3.9-rc2^{}" should also work.
+This would be an analog to branch.<name>.mergeoptions, but it would
+apply to the source of the pull request, instead of the destination.
+
+That way, people who do a "git pull" from Linus's tree would get the
+protection of --ff-only, while pulls from submaintainer trees would
+automatically get a merge commit, which is what we want.
+
+It doesn't handle the case of a submaintainer pulling from a
+maintainer in a back-merge scenario, but that should be a pretty rare
+case, so maybe that's OK.
+
+      	     	       	   	- Ted
