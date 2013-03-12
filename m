@@ -1,61 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Tue, 12 Mar 2013 22:57:19 +1100
-Message-ID: <20130312225719.c70d478eff3e77633d029386@canb.auug.org.au>
-References: <20130312153047.dc10eb2392d07af8822e45f1@canb.auug.org.au>
-	<513EF5DD.2010501@gaisler.com>
+Subject: Re: [RFC -next] linux/linkage.h: fix symbol prefix handling
+Date: Tue, 12 Mar 2013 23:33:00 +1100
+Message-ID: <20130312233300.9d86d47bb5369923ad520a21@canb.auug.org.au>
+References: <1362656642-2693-1-git-send-email-james.hogan@imgtec.com>
+	<87sj46wyf2.fsf@rustcorp.com.au>
+	<5139AC39.90805@imgtec.com>
+	<874ngiwije.fsf@rustcorp.com.au>
+	<20130311230731.0c610d86569d09f6e23b8e61@canb.auug.org.au>
+	<87ppz5usts.fsf@rustcorp.com.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__12_Mar_2013_22_57_19_+1100_e7UZIWh9GNnJ2Vsx"
+ boundary="Signature=_Tue__12_Mar_2013_23_33_00_+1100_DFkOzlM2uo73ZOmL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47872 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41527 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755266Ab3CLL5b (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 07:57:31 -0400
-In-Reply-To: <513EF5DD.2010501@gaisler.com>
+	with ESMTP id S1750946Ab3CLMdX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 08:33:23 -0400
+In-Reply-To: <87ppz5usts.fsf@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Hellstrom <daniel@gaisler.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: James Hogan <james.hogan@imgtec.com>, Al Viro <viro@zeniv.linux.org.uk>, Michal Marek <mmarek@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <khali@linux-fr.org>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>, uclinux-dist-devel@blackfin.uclinux.org, linux-next@vger.kernel.org
 
---Signature=_Tue__12_Mar_2013_22_57_19_+1100_e7UZIWh9GNnJ2Vsx
+--Signature=_Tue__12_Mar_2013_23_33_00_+1100_DFkOzlM2uo73ZOmL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 12 Mar 2013 10:31:09 +0100 Daniel Hellstrom <daniel@gaisler.com> wr=
+Hi Rusty,
+
+Looks partly better.   You seem to be using
+CONFIG_SYMBOL_PREFIX_UNDERSCORE but selecting
+CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX.  One trivial comment below.
+
+Maybe this was an unfinished version of the patch?
+
+On Tue, 12 Mar 2013 15:18:15 +1030 Rusty Russell <rusty@rustcorp.com.au> wr=
 ote:
 >
-> APBPS2 driver is missing linux/slab.h required on at least PowerPC. See p=
-atch below. How do you want me to proceed?
+> diff --git a/arch/blackfin/Kconfig b/arch/blackfin/Kconfig
+> index 600494c..314ee6a 100644
+> --- a/arch/blackfin/Kconfig
+> +++ b/arch/blackfin/Kconfig
+> @@ -45,6 +42,7 @@ config BLACKFIN
+>  	select HAVE_MOD_ARCH_SPECIFIC
+>  	select MODULES_USE_ELF_RELA
+> =20
+> +
+>  config GENERIC_CSUM
+>  	def_bool y
 
-That is up to Dmitry - either a fix up patch (with SoB and commit
-message) or a replacement patch.
+Extra blank line added.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__12_Mar_2013_22_57_19_+1100_e7UZIWh9GNnJ2Vsx
+--Signature=_Tue__12_Mar_2013_23_33_00_+1100_DFkOzlM2uo73ZOmL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRPxgfAAoJEECxmPOUX5FEsfUP/19j8nMytK98oUzSSHiKsxO3
-lKnCzgeYe2fff+Np2wZL/FbY7OlpWxJU/vQr4HA+JWF44bmIHZBXVfa93Z5WpHuA
-Rqr2QDPiwpwTH3EF3lOB+yCoaAjU4LgScZ/C4aOljoW78hknjnjafeQd894yu2C9
-/W+hTHAsMUAjtUr4k15qVS09WtQIJuWnQ8XjvmQCmrFOlxoquGDl90P0l1pL9cGC
-XCnP0dM8cK3dDLg5o0XFRIfCwlkYoRODI4dwElJrN/VgNSAk/C9l7aYQIYIkGd6b
-6CYoJbmd/OeEMUEgzxhEa5yUeJQp0WVDHUc689w2uS0HBrkMKtw4VfukKsPATNxk
-dyo8jHYVBCQkQhE+Z7+aFK7jOxDj3ytjfo9hq6NvlYe2k+89iwkEGmJkWWrDYXMY
-0IFLn+TDCNTtxJh7gb13NIHX3IzyROrbbaga2e+YDJ5RxiZdTd3sTu3KaLcuHeft
-L9kOobSm1YfbxPW0YlFb1/ksW4LynxvqKxIhf6NQdvbw8uVH8h2ThFqQ0ikWDkm/
-KSRBPMXcHCgbKzjBa3lO3EGbL2uVoQnn4kYdyUWiqFgl+Mku6CaN5TzXy8J92uBR
-48UZ2gSWVaJ6mNwzQgacZA+hB/h7lfc9OpmubzMt2dw8XfMAxtDAcpthqwwIdNoK
-8WbCHLJBiZ5se7T/J6qy
-=zSXT
+iQIcBAEBCAAGBQJRPyB8AAoJEECxmPOUX5FEWmQP/j4PPUCPgSE0nl/oO0CFQUKV
+lzF0X2NJFVeOMbzIzBRbItbRm8LivU/Sw+W6u3i4rFZhANIzy9SN0F47au8IdR/+
+c3/qE6G6KUzBRL0PdM3020AtVKL34afqErHRApYjPjCTKJjnDcTFlkKlDej5Y1h8
+Rk/hCI4/rs+Flu2O+VnSIXVPxlJ/zmkrnNG/Z9KnJSqb4IsaF3BKbFE+cEknvx1t
+7L4VbhcXFRdYQPRPIySnKL7TYpj/HejYQLFM2C0F6NvnsDBvIv3Yh62f3+nKmvyq
+sPiShjxdypkZMMelnD1ntfcOWQvBwkWnvUttRPEw/CoeToWH8d4h4s5llrFgMyaP
+xKOPFTpL2JxXdvMc29L9I1A2I8ZqyJvyhl0uAcpoHeh2sKWruIpMeoPf3lxe6llp
+QmxhmEtCb3XhWKWJ2JNq5p7XXWLyu6pnPmACvDUqnEVwCm24oLbuvx0R++whJqB0
+Ip6yQOD8az3hBKUKZeH9tZCli4XdgHJpw2IxfdLpVVAutKE6rB4wHtxpLGYUYoTc
+qdpkVbV5RDegpZ2C2BPjYeQFzrO7z4pjWkswYpYiG24ATdEPokK9qlCTnuDCY970
+PZjbVQ9aS9ZeC3RNWxf/8gk3cken4Ug0llXS8zbVpkqB9Y70YVNaEWRh54HGOhXP
++IlRL2ZDSSNyJ4jHMeCU
+=mSBB
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__12_Mar_2013_22_57_19_+1100_e7UZIWh9GNnJ2Vsx--
+--Signature=_Tue__12_Mar_2013_23_33_00_+1100_DFkOzlM2uo73ZOmL--
