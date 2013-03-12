@@ -1,32 +1,41 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the akpm tree with the arm-soc tree
-Date: Tue, 12 Mar 2013 12:48:24 +0000
-Message-ID: <201303121248.24736.arnd@arndb.de>
-References: <20130312144714.39749c5b0bd1aea14c4d2ff8@canb.auug.org.au> <CAOesGMgSzn+uCVEMKZgtorcNkdzzvntmnfoej5vN-AjF43pnyQ@mail.gmail.com> <20130312115339.GF12700@titan.lakedaemon.net>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: linux-next: unneeded merge in the security tree
+Date: Tue, 12 Mar 2013 09:25:10 -0400
+Message-ID: <20130312132510.GH18595@thunk.org>
+References: <20130312100950.e45ef0e721492ff0d5fd7c8d@canb.auug.org.au>
+ <alpine.LRH.2.02.1303121510270.25612@tundra.namei.org>
+ <20130312041641.GE18595@thunk.org>
+ <20130312161823.86ea101fc4e45285b205817f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:64584 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754785Ab3CLMss convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 08:48:48 -0400
-In-Reply-To: <20130312115339.GF12700@titan.lakedaemon.net>
+Received: from li9-11.members.linode.com ([67.18.176.11]:52833 "EHLO
+	imap.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750948Ab3CLNZR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Mar 2013 09:25:17 -0400
+Content-Disposition: inline
+In-Reply-To: <20130312161823.86ea101fc4e45285b205817f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>
-Cc: Olof Johansson <olof@lixom.net>, Andrew Lunn <andrew@lunn.ch>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: James Morris <jmorris@namei.org>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tuesday 12 March 2013, Jason Cooper wrote:
-> I chose to keep them together to maintain bisectability.  Either you
-> have all of the fix (you landed on this branch), or you don't.  Was this
-> the correct decision in this case, or did I miss something?
+On Tue, Mar 12, 2013 at 04:18:23PM +1100, Stephen Rothwell wrote:
+> Well, you used to be able to merge a tag and it would just fast forward
+> if possible.  That was changed (for good reason), but now gives us this
+> outcome.   Also, "git merge --ff" does not override that behaviour, but
+> "git merge --ff-only" does.  Also, of course, if (say) origin/master had
+> been v3.9-rc2, then "git merge origin/master" would have also just done a
+> fast forward.
 
-I think you don't need to worry about bisection in this case, especially
-as you mentioned that 3.8 is already broken.
+I'm probably old school (or maybe wacky school --- who knows :-), but
+what I usually do is something like this:
 
->From all I can tell, these are four separate fixes, and you want to have
-all of them get merged, but applying just one of them will not make the
-state of the kernel tree any worse than what it is before the patches.
+git branch -a --contains HEAD   # make sure the HEAD pointer is
+git tag --contains HEAD         # include where I think it should be
+git reset --hard v3.9-rc2
 
-	Arnd
+Yeah, it's more key strokes than "git merge --ff-only v3.9-rc2", but I
+can type the above faster because they're finger macros for me.  :-)
+
+					- Ted
