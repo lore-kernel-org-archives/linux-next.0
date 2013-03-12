@@ -1,58 +1,88 @@
-From: Li Zefan <lizefan@huawei.com>
-Subject: Re: linux-next: build warning after merge of the final tree (tip
- tree related)
-Date: Tue, 12 Mar 2013 13:16:21 +0800
-Message-ID: <513EBA25.8060106@huawei.com>
-References: <20130312154215.f9c3e957c2a2e510f27b826a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: unneeded merge in the security tree
+Date: Tue, 12 Mar 2013 16:18:23 +1100
+Message-ID: <20130312161823.86ea101fc4e45285b205817f@canb.auug.org.au>
+References: <20130312100950.e45ef0e721492ff0d5fd7c8d@canb.auug.org.au>
+	<alpine.LRH.2.02.1303121510270.25612@tundra.namei.org>
+	<20130312041641.GE18595@thunk.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130312154215.f9c3e957c2a2e510f27b826a@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__12_Mar_2013_16_18_23_+1100_0StuvUJ+KDk9c6XO"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54221 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754015Ab3CLFSb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 01:18:31 -0400
+In-Reply-To: <20130312041641.GE18595@thunk.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: James Morris <jmorris@namei.org>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2013/3/12 12:42, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (sparc defconfig)
-> produced this warning:
-> 
-> In file included from kernel/sched/core.c:85:0:
-> kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared inside parameter list [enabled by default]
-> kernel/sched/sched.h:1043:39: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-> In file included from kernel/sched/cputime.c:7:0:
-> kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared inside parameter list [enabled by default]
-> kernel/sched/sched.h:1043:39: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-> In file included from kernel/sched/idle_task.c:1:0:
-> kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared inside parameter list [enabled by default]
-> kernel/sched/sched.h:1043:39: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-> In file included from kernel/sched/fair.c:35:0:
-> kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared inside parameter list [enabled by default]
-> kernel/sched/sched.h:1043:39: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-> In file included from kernel/sched/stop_task.c:1:0:
-> kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared inside parameter list [enabled by default]
-> kernel/sched/sched.h:1043:39: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-> In file included from kernel/sched/rt.c:6:0:
-> kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared inside parameter list [enabled by default]
-> kernel/sched/sched.h:1043:39: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-> 
-> Probably caused by commit c82ba9fa7588 ("sched: Move struct sched_class
-> to kernel/sched/sched.h") from the tip tree which removed a forward
-> declaration of "struct sched_domain" from include/linux/sched.h - the
-> read declaration is protected by CONFIG_SMP (which is not set for this
-> build).
-> 
+--Signature=_Tue__12_Mar_2013_16_18_23_+1100_0StuvUJ+KDk9c6XO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Should be fixed by this, and it has been queued in tip:sched/core
+On Tue, 12 Mar 2013 00:16:41 -0400 Theodore Ts'o <tytso@mit.edu> wrote:
+>
+> On Tue, Mar 12, 2013 at 03:10:53PM +1100, James Morris wrote:
+> > On Tue, 12 Mar 2013, Stephen Rothwell wrote:
+> > > The top commit in the security tree today is a merge of v3.9-rc2.  Th=
+is
+> > > is a completely unnecessary merge as the tree before the merge was a
+> > > subset of v3.9-rc1 and so if the merge had been done using anything b=
+ut
+> > > the tag, it would have just been a fast forward.  I know that this is=
+ now
+> > > deliberate behaviour on git's behalf, but isn't there some way we can
+> > > make this easier on maintainers who are just really just trying to pi=
+ck a
+> > > new starting point for their trees after a release?  (at least I assu=
+me
+> > > that is what James was trying to do)
+> >=20
+> > Yes, and I was merging to a tag as required by Linus.
+>=20
+> Why not just force the head of the security tree to be v3.9-rc2?  Then
+> you don't end up creating a completely unnecessary merge commit, and
+> users who were at the previous head of the security tree will
+> experience a fast forward when they pull your new head.
 
-Commit-ID:  b719203b846284e77f5c50fca04b458b6484aeae
-Gitweb:     http://git.kernel.org/tip/b719203b846284e77f5c50fca04b458b6484aeae
-Author:     Li Zefan <lizefan@huawei.com>
-AuthorDate: Thu, 7 Mar 2013 10:00:26 +0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 11 Mar 2013 09:07:24 +0100
+Well, you used to be able to merge a tag and it would just fast forward
+if possible.  That was changed (for good reason), but now gives us this
+outcome.   Also, "git merge --ff" does not override that behaviour, but
+"git merge --ff-only" does.  Also, of course, if (say) origin/master had
+been v3.9-rc2, then "git merge origin/master" would have also just done a
+fast forward.
 
-sched: Fix update_group_power() prototype placement to fix build warning when !CONFIG_SMP
+I wonder if "git merge v3.9-rc2^{}" should work (git says "fatal: v3.9-rc2{}
+ - not something we can merge").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__12_Mar_2013_16_18_23_+1100_0StuvUJ+KDk9c6XO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRPrqfAAoJEECxmPOUX5FEyrQP/1K+K0QUrnUGV+NI8OwAbsE4
+OIZlvQ3jCB0dSjeLLFiji+96dVOFye2ycfC79TqosFCii8X01W7Obglr6D2wFKvf
+oZotOehgU3ufQRLssLzmiVJ+cBNUOdeXjnlQUXJtq4OFvWQTp+VuXqLoTkz2rGO+
+JroatEOPRbKmZbiuFrSxMN6Yvs1tovtFGSwEwj3y/3g1EmqgikSSP8Qs26Y4oG77
+/n1u+EWCzKJSIoxZHwuyvoRZevtB9L6yhrnu8GOof4KACtTDjAziSOwq6J0PkDfr
+mk6RhD9JZpiOvkKxPzNehXWiMpB3dgIMwt//H8hCMVAms/z2/n5dIwUK2bd5N6B8
+LwGvZV2nuM28N7NlP2ecNCzBf4KDXSZDxSYMxdQrmjmLpowpet++n7MUCjfatANf
+3ef5FvPyPbrQUeLjmor2BH4B13KmhfLe+lDWAahijwJs2zrWluCxxRgTfuDzzDHf
+NWQZEkPvFf6KiWTtOHtc3klKl27+vWOZ+rUdFFBYjd00dtb3i+Qs3rSsPcwK9gqP
+hm6GbHu31phn7ZOYW15SG1G0aetJmzE+iQq5YFS6Fn6yOrJrm5Kd0DUjlm4jORAt
+wFLTspREHqfpkG2ZJpVXRvy/zmJ4bfDp3p5fp9qTGx8/qggaKeLJBwT4ECWI4BT5
+3OYaRgC5puuUJrsAIjbk
+=1TCO
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__12_Mar_2013_16_18_23_+1100_0StuvUJ+KDk9c6XO--
