@@ -1,120 +1,53 @@
 From: Junio C Hamano <gitster@pobox.com>
 Subject: Re: linux-next: unneeded merge in the security tree
-Date: Tue, 12 Mar 2013 12:49:38 -0700
-Message-ID: <7vsj40760d.fsf@alter.siamese.dyndns.org>
+Date: Tue, 12 Mar 2013 13:02:19 -0700
+Message-ID: <7vobeo75f8.fsf@alter.siamese.dyndns.org>
 References: <20130312100950.e45ef0e721492ff0d5fd7c8d@canb.auug.org.au>
  <alpine.LRH.2.02.1303121510270.25612@tundra.namei.org>
  <20130312041641.GE18595@thunk.org>
  <CA+55aFzFLDcN-1GKae6Xqrns59K1xOD_HPzuv2Lv1__fZpqFMw@mail.gmail.com>
+ <7vsj40760d.fsf@alter.siamese.dyndns.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+55aFzFLDcN-1GKae6Xqrns59K1xOD_HPzuv2Lv1__fZpqFMw@mail.gmail.com> (Linus
- Torvalds's message of "Tue, 12 Mar 2013 10:13:21 -0700")
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from b-pb-sasl-quonix.pobox.com ([208.72.237.35]:42864 "EHLO
+	smtp.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755533Ab3CLUCW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Mar 2013 16:02:22 -0400
+In-Reply-To: <7vsj40760d.fsf@alter.siamese.dyndns.org> (Junio C. Hamano's
+ message of "Tue, 12 Mar 2013 12:49:38 -0700")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Theodore Ts'o <tytso@mit.edu>, James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+Junio C Hamano <gitster@pobox.com> writes:
 
-> One is simple:
+> Then under the "--no-ff activates the magic" rule:
 >
->     git config alias.sync="pull --ff-only"
-
-Heh, I just wrote that myself after reading the early part of this
-message ;-)
-
-> which works fine, but forces submaintainers to be careful when doing
-> things like this, and using a special command to do back-merges.
-
-> And maybe that's the right thing to do? Back-merges *are* special,
-
-Yes.
-
-> after all. But the above alias is particularly fragile, in that
-> there's both "pull" and "merge" that people want to use this for, and
-> it doesn't really handle both. And --ff-only will obviously fail if
-> you actually have some work in your tree, and want to do a real merge,
-> so then you have to do that differently. So I'm mentioning this as a
-> better model than "git reset", but not really a *solution*.
-
-> That said, the fact that "--ff-only" errors out if you have local
-> development may actually be a big bonus - because you really shouldn't
-> do merges at all if you have local development, but syncing up to my
-> tree if you don't have it (and are going to start it) may be something
-> reasonable.
-
-Yes, that's the reasoning behind all the behaviours you described
-above.
-
-> Now, the other approach - and perhaps preferable, but requiring actual
-> changes to git itself - is to do the non-fast-forward merge *only* for
-> FETCH_HEAD, which already has magic semantics in other ways. So if
-> somebody does
+> 	git merge v3.9-rc2
 >
->     git fetch linus
->     git merge v3.8
+> will fast-forward, but this
 >
-> to sync with me, they would *not* get a merge commit with a signature,
-> just a fast-forward. But if you do
+> 	git merge --no-ff v3.9-rc2
 >
->     git pull linus v3.8
+> creates a real merge with the "mergetag" signature block.  The one
+> that caused trouble in the "security tree", i.e.
 >
-> or a
+>         git pull linus v3.9-rc2
 >
->     git fetch linus v3.8
->     git merge FETCH_HEAD
+> or its equivalent
 >
-> it would look like a "maintainer merge"....
+>         git fetch linus v3.9-rc2
+>         git merge FETCH_HEAD
+>
+> would still fast-forward under this rule.  The maintainer needs to
+> do
+>
+> 	git pull --no-ff git://git.kernel.org/... for-linus
+>
+> if the pull could fast-forward under this rule, though.
 
-I am not sure I follow.  Are you solving the real problem, the
-pointeless merge in the "security tree" that started this thread?
+Scratch the last sentence.  It should have been
 
-I would imagine it was made by somebody thinking that pulling a
-tagged stable point from you is a good idea, like this:
-
-	git pull linus v3.9-rc2
-
-which under your FETCH_HEAD rule would look like a maintainer merge,
-no?
-
-An alternative may be to activate the magic "mergetag" thing only
-when you give "--no-ff" explicitly; otherwise merge would unwrap the
-tag, whether it comes from FETCH_HEAD.
-
-The following examples all assume that your HEAD is somewhere
-behind v3.9-rc2, perhaps done by
-
-	git checkout -b test v3.8^0
-
-Then under the "--no-ff activates the magic" rule:
-
-	git merge v3.9-rc2
-
-will fast-forward, but this
-
-	git merge --no-ff v3.9-rc2
-
-creates a real merge with the "mergetag" signature block.  The one
-that caused trouble in the "security tree", i.e.
-
-        git pull linus v3.9-rc2
-
-or its equivalent
-
-        git fetch linus v3.9-rc2
-        git merge FETCH_HEAD
-
-would still fast-forward under this rule.  The maintainer needs to
-do
-
-	git pull --no-ff git://git.kernel.org/... for-linus
-
-if the pull could fast-forward under this rule, though.
-
-Having thought this up to this point, I am not sure it generally is
-a good change.  It feels that "pull --ff-only" that prevents people
-from creating pointless back-merges may still be a better mechanism.
-
-I dunno.
+"whether the pull fast-forwards or not".  You'd always need to.
