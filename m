@@ -1,57 +1,31 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree
- (drm-intel tree related)
-Date: Tue, 12 Mar 2013 10:50:16 +0100
-Message-ID: <CA+icZUVJ8bdA9JFMkMnt6ajU2QrATpz2O6VJwGbTQecJ2UYS1Q@mail.gmail.com>
-References: <20130312152226.c5965a68f57444c8652eb46a@canb.auug.org.au>
-	<CAGXu5jJm2QM-s6DV3e5guQc5i-qEK52uRR6xc=ViqrvCibHEUw@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: David Miller <davem@redhat.com>
+Subject: Re: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Tue, 12 Mar 2013 06:49:53 -0400 (EDT)
+Message-ID: <20130312.064953.1091536680060355804.davem@redhat.com>
+References: <20130312113320.b1f41dcb59baa74a51b064cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:53958 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755055Ab3CLJuS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 05:50:18 -0400
-In-Reply-To: <CAGXu5jJm2QM-s6DV3e5guQc5i-qEK52uRR6xc=ViqrvCibHEUw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20130312113320.b1f41dcb59baa74a51b064cc@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, khlebnikov@openvz.org, jeffrey.t.kirsher@intel.com, bruce.w.allan@intel.com
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 12, 2013 at 6:46 AM, Kees Cook <keescook@chromium.org> wrote:
-> On Mon, Mar 11, 2013 at 9:22 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
->>
->> After merging the final tree, today's linux-next build (i386 defconfig)
->> failed like this:
->>
->> drivers/built-in.o: In function `i915_min_freq_set':
->> i915_debugfs.c:(.text+0xb1adc): undefined reference to `__udivdi3'
->> drivers/built-in.o: In function `i915_max_freq_set':
->> i915_debugfs.c:(.text+0xb1bac): undefined reference to `__udivdi3'
->>
->> Caused by commit 2389cc500686 ("drm/i915: use simple attribute in debugfs
->> routines") from the drm-intel tree.
->>
->> I have reverted that commit for today.
->
-> Ah-ha, thanks. I've sent a follow-up patch to fix this.
->
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 12 Mar 2013 11:33:20 +1100
 
-Can you please point to the patch [1] next time?
-Thanks.
+> Hi all,
+> 
+> Today's linux-next merge of the net-next tree got a conflict in
+> drivers/net/ethernet/intel/e1000e/netdev.c between commits 4e0855dff094
+> ("e1000e: fix pci-device enable-counter balance") and 66148babe728
+> ("e1000e: fix runtime power management transitions") from Linus' tree and
+> commit f0ff439872e1 ("e1000e: cleanup CODE_INDENT checkpatch errors")
+> from the net-next tree.
+> 
+> The former removed the line fixed by the latter, so I did that and can
+> carry the fix as necessary (no action is required).
 
-- Sedat -
-
-[1] https://patchwork.kernel.org/patch/2253231/
-
-> -Kees
->
-> --
-> Kees Cook
-> Chrome OS Security
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I've just merged 'net' into 'net-next' and resolved this merge conflict.
