@@ -1,64 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
-Date: Tue, 12 Mar 2013 15:30:47 +1100
-Message-ID: <20130312153047.dc10eb2392d07af8822e45f1@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (tip tree
+ related)
+Date: Tue, 12 Mar 2013 15:42:15 +1100
+Message-ID: <20130312154215.f9c3e957c2a2e510f27b826a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__12_Mar_2013_15_30_47_+1100_bcwKL/VCAPw8jBHc"
+ boundary="Signature=_Tue__12_Mar_2013_15_42_15_+1100_K0V+qjiLHbzf9wyh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52433 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:45269 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752237Ab3CLEau (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 00:30:50 -0400
+	with ESMTP id S1750714Ab3CLEma (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 00:42:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Hellstrom <daniel@gaisler.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Tue__12_Mar_2013_15_30_47_+1100_bcwKL/VCAPw8jBHc
+--Signature=_Tue__12_Mar_2013_15_42_15_+1100_K0V+qjiLHbzf9wyh
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+After merging the final tree, today's linux-next build (sparc defconfig)
+produced this warning:
 
-drivers/input/serio/apbps2.c: In function 'apbps2_of_probe':
-drivers/input/serio/apbps2.c:176:2: error: implicit declaration of function=
- 'kzalloc' [-Werror=3Dimplicit-function-declaration]
-drivers/input/serio/apbps2.c:176:11: warning: assignment makes pointer from=
- integer without a cast [enabled by default]
+In file included from kernel/sched/core.c:85:0:
+kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared insid=
+e parameter list [enabled by default]
+kernel/sched/sched.h:1043:39: warning: its scope is only this definition or=
+ declaration, which is probably not what you want [enabled by default]
+In file included from kernel/sched/cputime.c:7:0:
+kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared insid=
+e parameter list [enabled by default]
+kernel/sched/sched.h:1043:39: warning: its scope is only this definition or=
+ declaration, which is probably not what you want [enabled by default]
+In file included from kernel/sched/idle_task.c:1:0:
+kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared insid=
+e parameter list [enabled by default]
+kernel/sched/sched.h:1043:39: warning: its scope is only this definition or=
+ declaration, which is probably not what you want [enabled by default]
+In file included from kernel/sched/fair.c:35:0:
+kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared insid=
+e parameter list [enabled by default]
+kernel/sched/sched.h:1043:39: warning: its scope is only this definition or=
+ declaration, which is probably not what you want [enabled by default]
+In file included from kernel/sched/stop_task.c:1:0:
+kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared insid=
+e parameter list [enabled by default]
+kernel/sched/sched.h:1043:39: warning: its scope is only this definition or=
+ declaration, which is probably not what you want [enabled by default]
+In file included from kernel/sched/rt.c:6:0:
+kernel/sched/sched.h:1043:39: warning: 'struct sched_domain' declared insid=
+e parameter list [enabled by default]
+kernel/sched/sched.h:1043:39: warning: its scope is only this definition or=
+ declaration, which is probably not what you want [enabled by default]
 
-Caused by commit 928a48c9e40e ("Input: add support for GRLIB APBPS2 PS/2
-Keyboard/Mouse") from the input tree.
+Probably caused by commit c82ba9fa7588 ("sched: Move struct sched_class
+to kernel/sched/sched.h") from the tip tree which removed a forward
+declaration of "struct sched_domain" from include/linux/sched.h - the
+read declaration is protected by CONFIG_SMP (which is not set for this
+build).
 
-I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__12_Mar_2013_15_30_47_+1100_bcwKL/VCAPw8jBHc
+--Signature=_Tue__12_Mar_2013_15_42_15_+1100_K0V+qjiLHbzf9wyh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRPq93AAoJEECxmPOUX5FEHRIP/RNv0tCGuh5SkHFW6BYy7yMJ
-HkqLClD2+7Qw96dVOyv85vM2e0OQD7e6lcLF6nY8YdwDGqlqHNM6DBw+67q6PDMW
-4i8oh+vaNbV30SvUbxwx0tqh7YRcXqqO81wY+i8RWTWBnz0plSOsgzQbKNh1bw+R
-pauxKIidlRTf/udJspXqtzE9vW56SwkvSe1+hYlC4PBc6Z570h5frLQfPGH3h20Q
-oIgdhW1P1tFSgnJDh9GhcOpr3Oo7HQg2jIm+MDgoZX1qm5KX+D+9Grzfmk7e8jx+
-FsEVtyWMNG999JyhvVgq4jtl78t1uM6ZBHEdrEsBxOekDzSQ9WSC/xab/DldHDBi
-LCizxVnQMPql5ZqbqTiFvWbFOajNdIHWRz5FJvlv0xYckS8KDVWkzd9h/d7wOI4T
-x/UhW0/DXslfcMtIcXofY6U2HBxWA7mF9zokyHBHQ5RwkG1/kFKOwkWpkfVI6Oe3
-nHZKvcr/4CJ7AdLIxJhPgI1DvL4OXYPAN0NSTtN3cG4Q1BhK+FfJUUWdJVO165wA
-rmH1PqX7mbmVWLGKkNreWjFtX1xZSowPIRsDxhyE7ECqO/AnmHP75OcjHXxBQ8ZX
-JGJHG8C00s+2V/NgxP6rzPSW5ElzWWIVMQ2gs/gv7FuUpYocsYlLE9u5L80yYsTY
-CyxdWDLRMPFNVLG4uooV
-=Ed2j
+iQIcBAEBCAAGBQJRPrInAAoJEECxmPOUX5FENaQP/iIoo5CqMVvdM8dV6RSS+R2i
+l0T1RG+bd3HdXW2aoo5qUh4y5dz4OJUm7SHTv4QT//AXcvXPXr5CeRAPrXfGzE3A
+0uTo33oK2PeJxizB1We7NeJM3xtp/619U3kAO2pEYoIjF7f6khandLwBkB57yfSj
+5/RzqGn9mQiezMGtyz6J4IjPKCNa3HYuETZByRol8qSGGxDKcrg4HtIBjcoE0xyl
+uPqnMz0d0n34uBH/knF8Aq7om3V5+kL09h/emqkJ2KbLrf0NKDgjVggVs6w5cX2b
+suT7g7G4NSaGGkNwlISFiEqGFbLkmUBxVEIj+udAGqVikpTjkqhxGfHj8SbFGMoG
+fLYHi35yswj+ZYM5yDw1sxgHHceAweSGzJI+dJJl4eA0rmqYA7t253ZJxihfwYEC
+1cHyn8HLrob0ajALieLjvGp11McauDnb6t2rueOUj8xmRe3Q1m0kzGjMyrxl7KdR
+bfGYQOXJ3UbwxbQ7mhpR7EHU+DBXYeqtFvFtFBVd0xaDV2WkArsNWKZmdlVhqNg9
+iyFbU9Z/RoV4MHQwI98INoUKbjp1JRvKLSJPAUoxQ6cTB40OJKxWiYnKBu6konov
+aO2KiIdrfkAunSdHDKTFdp+PnOqHtwLKZVey4qGFqFE4t9n5cItIts+ou/s5nhhR
+d+bdwu2H+QowhWjSuQwl
+=wV6b
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__12_Mar_2013_15_30_47_+1100_bcwKL/VCAPw8jBHc--
+--Signature=_Tue__12_Mar_2013_15_42_15_+1100_K0V+qjiLHbzf9wyh--
