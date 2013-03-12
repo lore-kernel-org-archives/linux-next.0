@@ -1,79 +1,57 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: linux-next: manual merge of the akpm tree with the arm-soc tree
-Date: Tue, 12 Mar 2013 07:25:09 +0100
-Message-ID: <20130312062509.GQ21478@lunn.ch>
-References: <20130312144714.39749c5b0bd1aea14c4d2ff8@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: unneeded merge in the security tree
+Date: Tue, 12 Mar 2013 10:29:46 +0100
+Message-ID: <CA+icZUUQMa3avo8HbqyZAjJF0xDTmSE4GXtw2YmypzauunW54g@mail.gmail.com>
+References: <20130312100950.e45ef0e721492ff0d5fd7c8d@canb.auug.org.au>
+	<alpine.LRH.2.02.1303121510270.25612@tundra.namei.org>
+	<20130312041641.GE18595@thunk.org>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from londo.lunn.ch ([80.238.139.98]:57433 "EHLO londo.lunn.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751825Ab3CLGZn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Mar 2013 02:25:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20130312144714.39749c5b0bd1aea14c4d2ff8@canb.auug.org.au>
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:64104 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754644Ab3CLJ3u (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Mar 2013 05:29:50 -0400
+In-Reply-To: <20130312041641.GE18595@thunk.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+To: Theodore Ts'o <tytso@mit.edu>, James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 12, 2013 at 02:47:14PM +1100, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> Today's linux-next merge of the akpm tree got a conflict in
-> drivers/rtc/rtc-mv.c between commit 89c58c198b25 ("rtc: rtc-mv: Add
-> support for clk to avoid lockups") from the arm-soc tree and commit "rtc:
-> rtc-mv: use devm_rtc_device_register()" from the akpm tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as necessary
-> (no action is required).
+On Tue, Mar 12, 2013 at 5:16 AM, Theodore Ts'o <tytso@mit.edu> wrote:
+> On Tue, Mar 12, 2013 at 03:10:53PM +1100, James Morris wrote:
+>> On Tue, 12 Mar 2013, Stephen Rothwell wrote:
+>> > The top commit in the security tree today is a merge of v3.9-rc2.  This
+>> > is a completely unnecessary merge as the tree before the merge was a
+>> > subset of v3.9-rc1 and so if the merge had been done using anything but
+>> > the tag, it would have just been a fast forward.  I know that this is now
+>> > deliberate behaviour on git's behalf, but isn't there some way we can
+>> > make this easier on maintainers who are just really just trying to pick a
+>> > new starting point for their trees after a release?  (at least I assume
+>> > that is what James was trying to do)
+>>
+>> Yes, and I was merging to a tag as required by Linus.
+>
+> Why not just force the head of the security tree to be v3.9-rc2?  Then
+> you don't end up creating a completely unnecessary merge commit, and
+> users who were at the previous head of the security tree will
+> experience a fast forward when they pull your new head.
+>
 
-Hi Stephan
+If maintainers of their for-next trees switch to latest -rcX
+(Linus-tree) as base, life would get a lot of easier.
 
-Looks O.K. to me.
+That's what I am doing here before any build:
+Take the latest available -rcX of Linus-tree and then pull in
+Linux-Next GIT into it.
+( Even if Stephen's "origin" GIT branch (Linus-tree) is post-rcX. )
 
-Acked-by: Andrew Lunn <andrew@lunn.ch>
+That strategy makes merging a bit easier (for me).
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc drivers/rtc/rtc-mv.c
-> index f378e17,1ee8551..0000000
-> --- a/drivers/rtc/rtc-mv.c
-> +++ b/drivers/rtc/rtc-mv.c
-> @@@ -272,16 -262,15 +272,17 @@@ static int __init mv_rtc_probe(struct p
->   
->   	if (pdata->irq >= 0) {
->   		device_init_wakeup(&pdev->dev, 1);
-> - 		pdata->rtc = rtc_device_register(pdev->name, &pdev->dev,
-> + 		pdata->rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
->   						 &mv_rtc_alarm_ops,
->   						 THIS_MODULE);
-> - 	} else
-> - 		pdata->rtc = rtc_device_register(pdev->name, &pdev->dev,
-> + 	} else {
-> + 		pdata->rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
->   						 &mv_rtc_ops, THIS_MODULE);
-> + 	}
->  -	if (IS_ERR(pdata->rtc))
->  -		return PTR_ERR(pdata->rtc);
->  +	if (IS_ERR(pdata->rtc)) {
->  +		ret = PTR_ERR(pdata->rtc);
->  +		goto out;
->  +	}
->   
->   	if (pdata->irq >= 0) {
->   		writel(0, pdata->ioaddr + RTC_ALARM_INTERRUPT_MASK_REG_OFFS);
-> @@@ -308,10 -292,6 +309,9 @@@ static int __exit mv_rtc_remove(struct 
->   	if (pdata->irq >= 0)
->   		device_init_wakeup(&pdev->dev, 0);
->   
-> - 	rtc_device_unregister(pdata->rtc);
->  +	if (!IS_ERR(pdata->clk))
->  +		clk_disable_unprepare(pdata->clk);
->  +
->   	return 0;
->   }
->   
+- Sedat -
+
+>                                                   - Ted
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
