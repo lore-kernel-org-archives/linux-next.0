@@ -1,38 +1,43 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: Re: mmotm 2013-03-07-15-45 uploaded
-Date: Wed, 13 Mar 2013 13:36:08 +0100
-Message-ID: <20130313123608.GD13954@dhcp22.suse.cz>
-References: <20130307234619.D2DD531C1BF@corp2gmr1-1.hot.corp.google.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH] workqueue: missing idr_preload_end() in
+ worker_pool_assign_id()
+Date: Wed, 13 Mar 2013 10:57:45 -0700
+Message-ID: <20130313175745.GA22267@htj.dyndns.org>
+References: <1363197092-4832-1-git-send-email-artem.savkov@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-da0-f41.google.com ([209.85.210.41]:59555 "EHLO
+	mail-da0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933043Ab3CMR5y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Mar 2013 13:57:54 -0400
 Content-Disposition: inline
-In-Reply-To: <20130307234619.D2DD531C1BF@corp2gmr1-1.hot.corp.google.com>
-Sender: owner-linux-mm@kvack.org
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <1363197092-4832-1-git-send-email-artem.savkov@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Artem Savkov <artem.savkov@gmail.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, viakernel.org@htj.dyndns.org, linux-next@vger.kernel.org
 
-Hi,
+(cc'ing Stephen and linux-next)
 
-On Thu 07-03-13 15:46:19, Andrew Morton wrote:
-[...]
-> A git tree which contains the memory management portion of this tree is
-> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-> by Michal Hocko.  It contains the patches which are between the
-> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-> file, http://www.ozlabs.org/~akpm/mmotm/series.
+Hello, Artem.
 
-It took a bit longer (as I was on vacation and scripts haven't coped with
-all the idr changes) but the tree is up-to-date again.
+On Wed, Mar 13, 2013 at 09:51:32PM +0400, Artem Savkov wrote:
+> Added missing idr_preload_end() call in worker_pool_assign_id().
+> Without it preemption stays disabled resulting in lots of "scheduling while
+> atomic" BUGs during boot.
+...
+> Introduced in "workqueue: convert to idr_alloc()"
 
-Sorry about the delay.
+That patch doesn't use idr_preload().  It looks like the issue is
+introduced during linux-next merge of wq/for-3.10 and idr patches in
+-mm.  Stephen, can you please add idr_preload_end() to the merge
+patch?
+
+Once the idr patches land in Linus' tree, I'll resolve the conflict
+from wq tree side.
+
+Thanks.
+
 -- 
-Michal Hocko
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+tejun
