@@ -1,27 +1,38 @@
-From: Daniel Hellstrom <daniel@gaisler.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Wed, 13 Mar 2013 12:20:09 +0100
-Message-ID: <514060E9.2030208@gaisler.com>
-References: <20130312153047.dc10eb2392d07af8822e45f1@canb.auug.org.au> <513EF5DD.2010501@gaisler.com> <20130312225719.c70d478eff3e77633d029386@canb.auug.org.au> <20130312161302.GA12317@core.coreip.homeip.net>
+From: Michal Hocko <mhocko@suse.cz>
+Subject: Re: mmotm 2013-03-07-15-45 uploaded
+Date: Wed, 13 Mar 2013 13:36:08 +0100
+Message-ID: <20130313123608.GD13954@dhcp22.suse.cz>
+References: <20130307234619.D2DD531C1BF@corp2gmr1-1.hot.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130312161302.GA12317@core.coreip.homeip.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20130307234619.D2DD531C1BF@corp2gmr1-1.hot.corp.google.com>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 03/12/2013 05:13 PM, Dmitry Torokhov wrote:
-> On Tue, Mar 12, 2013 at 10:57:19PM +1100, Stephen Rothwell wrote:
->> On Tue, 12 Mar 2013 10:31:09 +0100 Daniel Hellstrom <daniel@gaisler.com> wrote:
->>> APBPS2 driver is missing linux/slab.h required on at least PowerPC. See patch below. How do you want me to proceed?
->> That is up to Dmitry - either a fix up patch (with SoB and commit
->> message) or a replacement patch.
-> I fixed up the commit and refreshed the branch.
->
-> Thanks.
+Hi,
 
-Thanks,
-Daniel
+On Thu 07-03-13 15:46:19, Andrew Morton wrote:
+[...]
+> A git tree which contains the memory management portion of this tree is
+> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+> by Michal Hocko.  It contains the patches which are between the
+> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+> file, http://www.ozlabs.org/~akpm/mmotm/series.
+
+It took a bit longer (as I was on vacation and scripts haven't coped with
+all the idr changes) but the tree is up-to-date again.
+
+Sorry about the delay.
+-- 
+Michal Hocko
+SUSE Labs
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
