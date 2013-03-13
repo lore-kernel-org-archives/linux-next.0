@@ -1,37 +1,57 @@
-From: Li Zefan <lizefan@huawei.com>
-Subject: Re: linux-next: build failure after merge of the final tree (cgroup
- tree related)
-Date: Wed, 13 Mar 2013 14:33:15 +0800
-Message-ID: <51401DAB.1070602@huawei.com>
-References: <20130313161236.760c25633a4e8ea8d4847ccb@canb.auug.org.au>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: [RFC -next] linux/linkage.h: fix symbol prefix handling
+Date: Wed, 13 Mar 2013 09:21:01 +0000
+Message-ID: <514044FD.2040502@imgtec.com>
+References: <1362656642-2693-1-git-send-email-james.hogan@imgtec.com> <87sj46wyf2.fsf@rustcorp.com.au> <5139AC39.90805@imgtec.com> <874ngiwije.fsf@rustcorp.com.au> <20130311230731.0c610d86569d09f6e23b8e61@canb.auug.org.au> <87ppz5usts.fsf@rustcorp.com.au> <20130312233300.9d86d47bb5369923ad520a21@canb.auug.org.au> <87ehfkuq27.fsf@rustcorp.com.au> <20130313063157.GB19681@merkur.ravnborg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130313161236.760c25633a4e8ea8d4847ccb@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from multi.imgtec.com ([194.200.65.239]:36010 "EHLO multi.imgtec.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753114Ab3CMJVJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Mar 2013 05:21:09 -0400
+In-Reply-To: <20130313063157.GB19681@merkur.ravnborg.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, Michal Marek <mmarek@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <khali@linux-fr.org>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>, uclinux-dist-devel@blackfin.uclinux.org, linux-next@vger.kernel.org
 
-On 2013/3/13 13:12, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
-> 
-> In file included from include/linux/memcontrol.h:22:0,
->                  from include/linux/swap.h:8,
->                  from include/linux/suspend.h:4,
->                  from arch/powerpc/kernel/asm-offsets.c:24:
-> include/linux/cgroup.h:748:13: warning: 'struct cgroupstats' declared inside parameter list [enabled by default]
-> include/linux/cgroup.h:748:13: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-> cc1: all warnings being treated as errors
-> 
-> and many more similar.
-> 
-> Caused by commit c2c9ad164fa3 ("cgroup: remove unneeded includes from
-> cgroup.h").
-> 
+Hi Sam,
 
-Tejun has dropped this patch.
+On 13/03/13 06:31, Sam Ravnborg wrote:
+>>  /* Some toolchains use a `_' prefix for all user symbols. */
+>> -#ifdef CONFIG_SYMBOL_PREFIX
+>> -#define MODULE_SYMBOL_PREFIX CONFIG_SYMBOL_PREFIX
+>> +#ifdef CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX
+>> +#define __VMLINUX_SYMBOL(x) _##x
+>> +#define __VMLINUX_SYMBOL_STR(x) "_" #x
+>> +#define VMLINUX_SYMBOL_PREFIX_STR "_"
+>>  #else
+>> -#define MODULE_SYMBOL_PREFIX ""
+>> +#define __VMLINUX_SYMBOL(x) x
+>> +#define __VMLINUX_SYMBOL_STR(x) #x
+>> +#define VMLINUX_SYMBOL_PREFIX_STR ""
+>>  #endif
+> 
+> We know the prefix is an underscore. No benefits from defining
+> VMLINUX_SYMBOL_PREFIX_STR.
+
+scripts/modpost.c uses the actual prefix string though:
+
+>	if (memcmp(symname, MODULE_SYMBOL_PREFIX,
+>		   strlen(MODULE_SYMBOL_PREFIX)) == 0) {
+>		mod->unres =
+>		  alloc_symbol(symname +
+>		               strlen(MODULE_SYMBOL_PREFIX),
+> 		               ELF_ST_BIND(sym->st_info) == STB_WEAK,
+> 		               mod->unres);
+
+See also my "module: fix symbol versioning with symbol prefixes" patch
+for an additional use in modpost.
+
+Having a MODULE_SYMBOL_PREFIX/VMLINUX_SYMBOL_PREFIX_STR seems like the
+simplest way to keep this code clean and readable without special cases.
+
+Cheers
+James
