@@ -1,52 +1,85 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: manual merge of the akpm tree with the workqueues
- tree
-Date: Wed, 13 Mar 2013 13:51:47 -0700
-Message-ID: <20130313205147.GB22267@htj.dyndns.org>
-References: <20130313154905.59d00adb5b62d5169649aea0@canb.auug.org.au>
- <20130313124624.1d51184d95d2c69c37daad0d@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] workqueue: missing idr_preload_end() in
+ worker_pool_assign_id()
+Date: Thu, 14 Mar 2013 08:51:36 +1100
+Message-ID: <20130314085136.13358830385003e4263ec1f4@canb.auug.org.au>
+References: <1363197092-4832-1-git-send-email-artem.savkov@gmail.com>
+	<20130313175745.GA22267@htj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__14_Mar_2013_08_51_36_+1100_H0t7JhU9pYDKZvDq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:37052 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933178Ab3CMUvx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Mar 2013 16:51:53 -0400
-Content-Disposition: inline
-In-Reply-To: <20130313124624.1d51184d95d2c69c37daad0d@linux-foundation.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:57604 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933273Ab3CMVvj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Mar 2013 17:51:39 -0400
+In-Reply-To: <20130313175745.GA22267@htj.dyndns.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Artem Savkov <artem.savkov@gmail.com>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, viakernel.org@htj.dyndns.org, linux-next@vger.kernel.org
 
-Hello, Andrew.
+--Signature=_Thu__14_Mar_2013_08_51_36_+1100_H0t7JhU9pYDKZvDq
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 13, 2013 at 12:46:24PM -0700, Andrew Morton wrote:
-> Tejun, can you please confirm that this is how worker_pool_assign_id()
-> should look in linux-next?
-> 
-> static int worker_pool_assign_id(struct worker_pool *pool)
-> {
-> 	int ret;
-> 
-> 	do {
-> 		idr_preload(GFP_KERNEL);
-> 		spin_lock_irq(&workqueue_lock);
-> 		ret = idr_alloc(&worker_pool_idr, pool, 0, 0, GFP_NOWAIT);
-> 		if (ret >= 0)
-> 			pool->id = ret;
-> 		spin_unlock_irq(&workqueue_lock);
+Hi Tejun,
 
-		idr_preload_end();
+On Wed, 13 Mar 2013 10:57:45 -0700 Tejun Heo <tj@kernel.org> wrote:
+>
+> (cc'ing Stephen and linux-next)
+>=20
+> Hello, Artem.
+>=20
+> On Wed, Mar 13, 2013 at 09:51:32PM +0400, Artem Savkov wrote:
+> > Added missing idr_preload_end() call in worker_pool_assign_id().
+> > Without it preemption stays disabled resulting in lots of "scheduling w=
+hile
+> > atomic" BUGs during boot.
+> ...
+> > Introduced in "workqueue: convert to idr_alloc()"
+>=20
+> That patch doesn't use idr_preload().  It looks like the issue is
+> introduced during linux-next merge of wq/for-3.10 and idr patches in
+> -mm.  Stephen, can you please add idr_preload_end() to the merge
+> patch?
 
-> 	} while (ret == -EAGAIN);
-> 
-> 	return ret < 0 ? ret : 0;
-> }
+Oops, sorry about that.  I assume it needs to be added just after the
+spin_unlock_irq() but still inside the loop?
 
-Other than that, it looks good to me.
+> Once the idr patches land in Linus' tree, I'll resolve the conflict
+> from wq tree side.
 
-Thanks!
+Or you could do what Linus prefers and just tell him how to resolve the
+conflict and thereby avoid a back merge or rebase (or provide him with a
+separate branch that does the back merge with resolution in addition to
+the unmerged branch to pull).
 
--- 
-tejun
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__14_Mar_2013_08_51_36_+1100_H0t7JhU9pYDKZvDq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRQPToAAoJEECxmPOUX5FEHbEQAIIAZQPxa2emylgYs/goO4hW
+4UqMoHnhaIwTUXD22inUWRMwSH4srZAVwMKqhMqtmB0WV/zxU1dUErr8gvAD+oTU
+VUmkpOKLmNy6EduyidfyaPbiw/dQKAn3dMufwc++6fg1ytyHcSJgJYVPnz+UZ4A7
+rSIOqir+NUkuA9eY1bmZ1EcXgaqRjOqMmNZSeQPNDiKEpG0bjqsCTkaK8IpAiQCC
+xdQPVE9PsoKcT7vvoTdHxDuC5wQ9AWUgjx5ZYHNLvmTsJmxO29INoX3rPSY1Oh+p
+S9xoGuxTEN/H1y7PDUDxdNEVhn84yAL+SSe2nNOOEJQXvEybqgFOy20/t++VXBc1
+U06P0+eFUPnebsKdnonIpus0TlvDf1AAaa62y5VhbrEfRywFuJOD8isEub5RlkqT
+JGxyMKyubLibDUwsHR+MIWFYMWwHNMblcQL82lUfu4h1x5uRW6pFucZveFdX5xGY
+cHIG0q3BSyi1gDKIcXbuZFhdagWQ0g5uIYfwfSpPdHJimU6haBE3FaZNOBuQ1t5f
+z65GYhdmw5ebN6wOF0b1ZAMTzOF/HvgY0CmjpdUWkgSUkM6RboTyS01Cto4tCuKQ
+11V6JYzIAWVdGvdv51GADY+WFdfs2A1j7YmTDEs5TJnuR1sbXfWbzdIL0UGkFKl1
+OIeTg0FonbHEs6qAdyPt
+=YHY1
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__14_Mar_2013_08_51_36_+1100_H0t7JhU9pYDKZvDq--
