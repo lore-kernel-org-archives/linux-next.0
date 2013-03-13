@@ -1,61 +1,53 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: [RFC -next] linux/linkage.h: fix symbol prefix handling
-Date: Wed, 13 Mar 2013 19:15:38 +0100
-Message-ID: <20130313181538.GA20097@merkur.ravnborg.org>
-References: <1362656642-2693-1-git-send-email-james.hogan@imgtec.com> <87sj46wyf2.fsf@rustcorp.com.au> <5139AC39.90805@imgtec.com> <874ngiwije.fsf@rustcorp.com.au> <20130311230731.0c610d86569d09f6e23b8e61@canb.auug.org.au> <87ppz5usts.fsf@rustcorp.com.au> <20130312233300.9d86d47bb5369923ad520a21@canb.auug.org.au> <87ehfkuq27.fsf@rustcorp.com.au> <20130313063157.GB19681@merkur.ravnborg.org> <514044FD.2040502@imgtec.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm tree with the workqueues
+ tree
+Date: Wed, 13 Mar 2013 12:46:24 -0700
+Message-ID: <20130313124624.1d51184d95d2c69c37daad0d@linux-foundation.org>
+References: <20130313154905.59d00adb5b62d5169649aea0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <514044FD.2040502@imgtec.com>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, Michal Marek <mmarek@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <khali@linux-fr.org>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>, uclinux-dist-devel@blackfin.uclinux.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49590 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933226Ab3CMTq0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Mar 2013 15:46:26 -0400
+In-Reply-To: <20130313154905.59d00adb5b62d5169649aea0@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On Wed, Mar 13, 2013 at 09:21:01AM +0000, James Hogan wrote:
-> Hi Sam,
+On Wed, 13 Mar 2013 15:49:05 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Today's linux-next merge of the akpm tree got a conflict in
+> kernel/workqueue.c between commit fa1b54e69bc6 ("workqueue: update
+> synchronization rules on worker_pool_idr") from the workqueues tree and
+> commit "workqueue: convert to idr_alloc()" from the akpm tree.
 > 
-> On 13/03/13 06:31, Sam Ravnborg wrote:
-> >>  /* Some toolchains use a `_' prefix for all user symbols. */
-> >> -#ifdef CONFIG_SYMBOL_PREFIX
-> >> -#define MODULE_SYMBOL_PREFIX CONFIG_SYMBOL_PREFIX
-> >> +#ifdef CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX
-> >> +#define __VMLINUX_SYMBOL(x) _##x
-> >> +#define __VMLINUX_SYMBOL_STR(x) "_" #x
-> >> +#define VMLINUX_SYMBOL_PREFIX_STR "_"
-> >>  #else
-> >> -#define MODULE_SYMBOL_PREFIX ""
-> >> +#define __VMLINUX_SYMBOL(x) x
-> >> +#define __VMLINUX_SYMBOL_STR(x) #x
-> >> +#define VMLINUX_SYMBOL_PREFIX_STR ""
-> >>  #endif
-> > 
-> > We know the prefix is an underscore. No benefits from defining
-> > VMLINUX_SYMBOL_PREFIX_STR.
-> 
-> scripts/modpost.c uses the actual prefix string though:
-> 
-> >	if (memcmp(symname, MODULE_SYMBOL_PREFIX,
-> >		   strlen(MODULE_SYMBOL_PREFIX)) == 0) {
-> >		mod->unres =
-> >		  alloc_symbol(symname +
-> >		               strlen(MODULE_SYMBOL_PREFIX),
-> > 		               ELF_ST_BIND(sym->st_info) == STB_WEAK,
-> > 		               mod->unres);
+> I fixed it up (I think - see below) and can carry the fix as necessary
+> (no action is required).
 > 
 
-Allowing ourself to know this is "_" then we could make the above code look
-something like:
+OK, thanks.  I have workqueue-convert-to-idr_alloc.patch queued for 3.9
+so I moved it ahead of linux-next.patch and made a mess.
 
-	if (have_symbol_prefix_underscore) {
-		if (symname[0] == '_') {
-			mod->unres =
-			...
+Tejun, can you please confirm that this is how worker_pool_assign_id()
+should look in linux-next?
 
-But I do not feel strong about this part.
 
-It is much more important to clean up so we use the
-same definition all over the kernel.
+static int worker_pool_assign_id(struct worker_pool *pool)
+{
+	int ret;
 
-	Sam
+	do {
+		idr_preload(GFP_KERNEL);
+		spin_lock_irq(&workqueue_lock);
+		ret = idr_alloc(&worker_pool_idr, pool, 0, 0, GFP_NOWAIT);
+		if (ret >= 0)
+			pool->id = ret;
+		spin_unlock_irq(&workqueue_lock);
+	} while (ret == -EAGAIN);
+
+	return ret < 0 ? ret : 0;
+}
