@@ -1,43 +1,61 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] workqueue: missing idr_preload_end() in
- worker_pool_assign_id()
-Date: Wed, 13 Mar 2013 10:57:45 -0700
-Message-ID: <20130313175745.GA22267@htj.dyndns.org>
-References: <1363197092-4832-1-git-send-email-artem.savkov@gmail.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [RFC -next] linux/linkage.h: fix symbol prefix handling
+Date: Wed, 13 Mar 2013 19:15:38 +0100
+Message-ID: <20130313181538.GA20097@merkur.ravnborg.org>
+References: <1362656642-2693-1-git-send-email-james.hogan@imgtec.com> <87sj46wyf2.fsf@rustcorp.com.au> <5139AC39.90805@imgtec.com> <874ngiwije.fsf@rustcorp.com.au> <20130311230731.0c610d86569d09f6e23b8e61@canb.auug.org.au> <87ppz5usts.fsf@rustcorp.com.au> <20130312233300.9d86d47bb5369923ad520a21@canb.auug.org.au> <87ehfkuq27.fsf@rustcorp.com.au> <20130313063157.GB19681@merkur.ravnborg.org> <514044FD.2040502@imgtec.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-da0-f41.google.com ([209.85.210.41]:59555 "EHLO
-	mail-da0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933043Ab3CMR5y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Mar 2013 13:57:54 -0400
+Return-path: <linux-kbuild-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1363197092-4832-1-git-send-email-artem.savkov@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Artem Savkov <artem.savkov@gmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, viakernel.org@htj.dyndns.org, linux-next@vger.kernel.org
+In-Reply-To: <514044FD.2040502@imgtec.com>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: James Hogan <james.hogan@imgtec.com>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, Michal Marek <mmarek@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <khali@linux-fr.org>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>, uclinux-dist-devel@blackfin.uclinux.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-(cc'ing Stephen and linux-next)
+On Wed, Mar 13, 2013 at 09:21:01AM +0000, James Hogan wrote:
+> Hi Sam,
+> 
+> On 13/03/13 06:31, Sam Ravnborg wrote:
+> >>  /* Some toolchains use a `_' prefix for all user symbols. */
+> >> -#ifdef CONFIG_SYMBOL_PREFIX
+> >> -#define MODULE_SYMBOL_PREFIX CONFIG_SYMBOL_PREFIX
+> >> +#ifdef CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX
+> >> +#define __VMLINUX_SYMBOL(x) _##x
+> >> +#define __VMLINUX_SYMBOL_STR(x) "_" #x
+> >> +#define VMLINUX_SYMBOL_PREFIX_STR "_"
+> >>  #else
+> >> -#define MODULE_SYMBOL_PREFIX ""
+> >> +#define __VMLINUX_SYMBOL(x) x
+> >> +#define __VMLINUX_SYMBOL_STR(x) #x
+> >> +#define VMLINUX_SYMBOL_PREFIX_STR ""
+> >>  #endif
+> > 
+> > We know the prefix is an underscore. No benefits from defining
+> > VMLINUX_SYMBOL_PREFIX_STR.
+> 
+> scripts/modpost.c uses the actual prefix string though:
+> 
+> >	if (memcmp(symname, MODULE_SYMBOL_PREFIX,
+> >		   strlen(MODULE_SYMBOL_PREFIX)) == 0) {
+> >		mod->unres =
+> >		  alloc_symbol(symname +
+> >		               strlen(MODULE_SYMBOL_PREFIX),
+> > 		               ELF_ST_BIND(sym->st_info) == STB_WEAK,
+> > 		               mod->unres);
+> 
 
-Hello, Artem.
+Allowing ourself to know this is "_" then we could make the above code look
+something like:
 
-On Wed, Mar 13, 2013 at 09:51:32PM +0400, Artem Savkov wrote:
-> Added missing idr_preload_end() call in worker_pool_assign_id().
-> Without it preemption stays disabled resulting in lots of "scheduling while
-> atomic" BUGs during boot.
-...
-> Introduced in "workqueue: convert to idr_alloc()"
+	if (have_symbol_prefix_underscore) {
+		if (symname[0] == '_') {
+			mod->unres =
+			...
 
-That patch doesn't use idr_preload().  It looks like the issue is
-introduced during linux-next merge of wq/for-3.10 and idr patches in
--mm.  Stephen, can you please add idr_preload_end() to the merge
-patch?
+But I do not feel strong about this part.
 
-Once the idr patches land in Linus' tree, I'll resolve the conflict
-from wq tree side.
+It is much more important to clean up so we use the
+same definition all over the kernel.
 
-Thanks.
-
--- 
-tejun
+	Sam
