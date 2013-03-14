@@ -1,40 +1,75 @@
-From: =?utf-8?B?SsO2cm4=?= Engel <joern@logfs.org>
-Subject: Re: linux-next: Tree for Mar 7
-Date: Wed, 13 Mar 2013 19:33:07 -0400
-Message-ID: <20130313233307.GA31937@logfs.org>
-References: <20130307150645.e4e23e69340c25b5d21b70e0@canb.auug.org.au>
- <20130307162504.GA6727@logfs.org>
- <20130312184422.GA19035@logfs.org>
- <20130313111144.7d5c75022f0fd00e445ead1f@canb.auug.org.au>
- <20130312233311.GA23925@logfs.org>
- <20130314112040.c5a2a3f1d1bc801a7f527ed1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cgroup tree with Linus' tree
+Date: Thu, 14 Mar 2013 13:31:34 +1100
+Message-ID: <20130314133134.7b41b67f8ebc566af5c3cfd8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__14_Mar_2013_13_31_34_+1100_7v8Ka.i9nz7_Gsyq"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:42444 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932968Ab3CNCbn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Mar 2013 22:31:43 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Li Zefan <lizefan@huawei.com>
+
+--Signature=_Thu__14_Mar_2013_13_31_34_+1100_7v8Ka.i9nz7_Gsyq
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20130314112040.c5a2a3f1d1bc801a7f527ed1@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 14 March 2013 11:20:40 +1100, Stephen Rothwell wrote:
->=20
-> Added from today.
+Hi Tejun,
 
-Excellent, thanks!
+Today's linux-next merge of the cgroup tree got a conflict in
+include/linux/res_counter.h between commit ebf47beb660e
+("include/linux/res_counter.h needs errno.h") from Linus' tree and commit
+9259826ccb81 ("res_counter: remove include of cgroup.h from
+res_counter.h") from the cgroup tree.
 
-> One thing, the last few commits from Takashi do not have your
-> Signed-off-by even though you committed them.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-I think this is not bad enough to destroy history for, but I should
-really figure out what I messed up and how to avoid it in the future.
-Thanks for noticing.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-J=C3=B6rn
+diff --cc include/linux/res_counter.h
+index c230994,a83a849..0000000
+--- a/include/linux/res_counter.h
++++ b/include/linux/res_counter.h
+@@@ -13,8 -13,7 +13,8 @@@
+   * info about what this counter is.
+   */
+ =20
+- #include <linux/cgroup.h>
+ +#include <linux/errno.h>
++ #include <linux/spinlock.h>
+ =20
+  /*
+   * The core object. the cgroup that wishes to account for some
 
---
-No art, however minor, demands less than total dedication if you want
-to excel in it.
--- Leon Battista Alberti
+--Signature=_Thu__14_Mar_2013_13_31_34_+1100_7v8Ka.i9nz7_Gsyq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRQTaGAAoJEECxmPOUX5FE6X8P/R9E9rks8eOb/QpmuigY5cSn
+GXRvoFa+yvBC1/9K174OPXiXcHOPG4n4zDD9qGlUYBsInMkIkLMdoTOdN1r2pDw2
+jvdHixO5iGeWm3qoqa42LBSJgw0FBA9bNf1vQvPnAXn/MIdZd5wegizSrTo07wLm
+AGofaqmTwlZeUtcgEJJhe+b9Kvabeo1sf7bkZCprC+opdFvNNCRbVOlFtykA5y5N
+ptO50yBIkwkJk1UzFnZsdk5AlMo7MOUiTtSBrJ+DBAlIPrJ92ARrKXWwuL0dgzEN
+JwHkzsnqchuPprqvZrBtwX1VcPGxnYUisNJE8Ysq0xniYHWGBacgN98qRBW0vGUG
+aruky/NMWEA3PDOWkocv8tkHCCYzPJC3SRtzGlcPousAK9zBiJcsr/FgdRHVwZX8
+6CBNtLOFNAtRWY0nYacyGeulsZYngF7+DtxsUrEUcTeNVtHzECATEDOlaGD03L0Z
+r0WW84HORkDvoRZrt647zvmfL4W+HDtX2NO5V1D7zFpnmIcch1ydGPvMmtPyJJxk
+JmQiNM4lRQ6dGqXYr/ztHdNc7NUso0R/6lD1rhjJ3lnV0QTZ3OMOQ9vloFw6gJ7k
+3/k88Cfool3gn7/dQ3QI0V3c9/1rQDycXW63cclD01XODkKLAOEZv/Htm/2buYSj
++qNUV0nOMAA1qxWJzHvc
+=1sNY
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__14_Mar_2013_13_31_34_+1100_7v8Ka.i9nz7_Gsyq--
