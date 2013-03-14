@@ -1,85 +1,118 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bcon tree with Linus' tree
-Date: Thu, 14 Mar 2013 15:52:41 +1100
-Message-ID: <20130314155241.20d10e12d78f7986e1fec66e@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with the modules tree
+Date: Thu, 14 Mar 2013 17:27:37 +1100
+Message-ID: <20130314172737.2856af8a9b368bc395d977be@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__14_Mar_2013_15_52_41_+1100_a_H=MtoNYqxverT1"
+ boundary="Signature=_Thu__14_Mar_2013_17_27_37_+1100_fkMoaHdxBLqLloNv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33602 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:60487 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751627Ab3CNEwu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Mar 2013 00:52:50 -0400
+	with ESMTP id S1753699Ab3CNG1t (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Mar 2013 02:27:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?IkrDtnJuIEVuZ2VsIg==?= <joern@logfs.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, josh.h.morris@us.ibm.com, Jens Axboe <axboe@kernel.dk>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Thu__14_Mar_2013_15_52_41_+1100_a_H=MtoNYqxverT1
-Content-Type: text/plain; charset=UTF-8
+--Signature=_Thu__14_Mar_2013_17_27_37_+1100_fkMoaHdxBLqLloNv
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi J=C3=B6rn,
+Hi Al,
 
-Today's linux-next merge of the bcon tree got a conflict in
-drivers/block/Kconfig between commit 8722ff8cdbfa ("block: IBM RamSan
-70/80 device driver") from Linus' tree and commit a2ff9d05bbb4 ("add
-blockconsole version 1.1") from the bcon tree.
+Today's linux-next merge of the signal tree got a conflict in
+include/asm-generic/unistd.h between commit 837718bfd28b
+("CONFIG_SYMBOL_PREFIX: cleanup") from the modules tree and commit
+e1b5bb6d1236 ("consolidate cond_syscall and SYSCALL_ALIAS declarations")
+from the signal tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+The latter moved the cond_syscall stuff to linkage.h, so I applied the
+following patch as a merge fixup and can carry the fix as necessary (no
+action is required).  I am not sure if this is completely correct or all
+that is needed.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 14 Mar 2013 17:14:41 +1100
+Subject: [PATCH] cond_syscall and SYSCALL_ALIAS merge fixup
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/linkage.h | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
+
+diff --git a/include/linux/linkage.h b/include/linux/linkage.h
+index 829d66c..bedcddf 100644
+--- a/include/linux/linkage.h
++++ b/include/linux/linkage.h
+@@ -2,7 +2,7 @@
+ #define _LINUX_LINKAGE_H
+=20
+ #include <linux/compiler.h>
+-#include <linux/stringify.h>
++#include <linux/export.h>
+ #include <asm/linkage.h>
+=20
+ #ifdef __cplusplus
+@@ -15,24 +15,16 @@
+ #define asmlinkage CPP_ASMLINKAGE
+ #endif
+=20
+-#ifndef SYMBOL_NAME
+-#ifdef CONFIG_SYMBOL_PREFIX
+-#define SYMBOL_NAME(x) CONFIG_SYMBOL_PREFIX ## x
+-#else
+-#define SYMBOL_NAME(x) x
+-#endif
+-#endif
+-#define __SYMBOL_NAME(x) __stringify(SYMBOL_NAME(x))
+-
+ #ifndef cond_syscall
+-#define cond_syscall(x) asm(".weak\t" __SYMBOL_NAME(x) \
+-	"\n\t.set\t" __SYMBOL_NAME(x) "," __SYMBOL_NAME(sys_ni_syscall));
++#define cond_syscall(x) asm(".weak\t" VMLINUX_SYMBOL_STR(x) "\n\t"	\
++			    ".set\t" VMLINUX_SYMBOL_STR(x) ","	\
++			    VMLINUX_SYMBOL_STR(sys_ni_syscall))
+ #endif
+=20
+ #ifndef SYSCALL_ALIAS
+ #define SYSCALL_ALIAS(alias, name)				\
+-	asm ("\t.globl " __SYMBOL_NAME(alias)			\
+-	"\n\t.set\t" __SYMBOL_NAME(alias) "," __SYMBOL_NAME(name))
++	asm ("\t.globl " VMLINUX_SYMBOL_STR(alias)			\
++	"\n\t.set\t" VMLINUX_SYMBOL_STR(alias) "," VMLINUX_SYMBOL_STR(name))
+ #endif
+=20
+ #define __page_aligned_data	__section(.data..page_aligned) __aligned(PAGE_=
+SIZE)
+--=20
+1.8.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/block/Kconfig
-index 5dc0dae,06eb42f..0000000
---- a/drivers/block/Kconfig
-+++ b/drivers/block/Kconfig
-@@@ -531,14 -544,10 +531,20 @@@ config BLK_DEV_RB
- =20
-  	  If unsure, say N.
- =20
- +config BLK_DEV_RSXX
- +	tristate "RamSam PCIe Flash SSD Device Driver"
- +	depends on PCI
- +	help
- +	  Device driver for IBM's high speed PCIe SSD
- +	  storage devices: RamSan-70 and RamSan-80.
- +
- +	  To compile this driver as a module, choose M here: the
- +	  module will be called rsxx.
- +
-+ config BLOCKCONSOLE
-+ 	bool "Block device console logging support"
-+ 	help
-+ 	  This enables logging to block devices.
-+ 	  See <file:Documentation/block/blockconsole.txt> for details.
-+=20
-  endif # BLK_DEV
-
---Signature=_Thu__14_Mar_2013_15_52_41_+1100_a_H=MtoNYqxverT1
+--Signature=_Thu__14_Mar_2013_17_27_37_+1100_fkMoaHdxBLqLloNv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRQVeZAAoJEECxmPOUX5FEGhMQAJbnNsPsSs5GSrdmGHQJcN3V
-bHLYAG9XVuBd+x/OO4ZRR85GDnmTOZYwXNGPPzCSOSiU5hAAVn5sVl29H3iunaFB
-so0QavddHJkBUW8fkeeSkt3RHgxLeOcZIk/sFShYYfUCurFc86D6OkbcA56yoNy0
-6uUE8lsTqeo6ujKrSPeuhDF1A7ZHHqmGwcA+gVNU1n0+qAVj4jnJLBz3q+rJYOTS
-zHhgAQvAwVtsBOGXQT7Qy77Oh06wTa234NPobSaSC5Fm7F7yj/D2HBHmfueFnhm0
-VaYGlgMM5/SqiZiajWpyLw28wlxuE6h9jgJs1Lz3wLnBz8E85OCi0QOmXoMZGwLN
-FOKlVioU4Rl0Z1JQRuwuFVSe9Qx6AbQZ1G75Z4+aPVsM3AGdC6Z0QWEC5oS6JmBz
-UAeCoMmTJVbfWn21QDCY3ORJiwSpMvgdO7jIhoJNWJ299I3UtM6MGA3AMDArVKWQ
-OsWpnr3xH89vaJK2l7tvwNeiK3rWYAbZe4IU8JgN7pooMr1zvtxvrVRXF4P1XgEG
-fbMakVv7OAEyqQTLwnAlFekcEmTUWuA8H/4qnYtlZluI0IlR+Z+s9+XQtr31VY31
-j4niYHRoOl576KFbXQbvuMP+InK8jd0HwSzZzyvhsy+Ov2zr3pWxZ5YvlhKk83zv
-odH8dhBDahCRdiQ2qVJB
-=lHCW
+iQIcBAEBCAAGBQJRQW3ZAAoJEECxmPOUX5FEsJQQAJd4C7iRw0zbxBLz2lINql8s
+PEg2jIXOk7f7oFjUnbDNGetPv+NKZDyv+Ou9RjlyM3Zac0bLCPIcZsCRQOy33Rnx
+1W79kEbhAXnkw9nLChOB7TVLMkr3h6gEOSpWfTU9JHkvxx+PoP8FBHJ7yq64ffa7
+peOa9+1nKbHgz0JgPe+V0G+4kwF3n4EOQf0+e9s8ftmH6kl99jsvz/lyEW2cEN9U
+vi0KbzPXXPokPaW3Y8WrBLDLREKJ/oN9TyYyta4tJw0uDv98bhRIXdMiIVUGN3n+
+9XHxRKkQYtlrLrIkc6sbg3IZX/EYZEsjmCX+ZNiskrlDsEhG2/fIUOBI9vUmvHpH
+q8EnHz5g/+dh0FVsTzPZ0CBR7TA7xX6T4OC/6IRTSCIEYD8PKq8L3WwS7b594e6n
+8vpxLYWrt4LrhWcaW4fsWWSQy/kyGk/190HYG/GNHN4J6m/0Yt187/CsefBjKx7x
+DANudg/jLlk2ZwEWB1oNlJluDGFJlAtqDQ59/NUySbfLRSEfF4hij2wUSa00fCow
+DQ8dgndKh3EtIJqnY2lwxsX/r42z+qNZVzPCH6AnCuzzxq6pgqjkOZGpzbB1lfpG
+vbDaUVd7L8q6ut8oERLpRFmTy/8bWGjU7ygcPlMR3GSx0s1wWeQv5P1lCscFWUq3
+Ky0oe+k3XzAKC1gERzbI
+=S4y5
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__14_Mar_2013_15_52_41_+1100_a_H=MtoNYqxverT1--
+--Signature=_Thu__14_Mar_2013_17_27_37_+1100_fkMoaHdxBLqLloNv--
