@@ -1,70 +1,75 @@
 From: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
-Subject: RE: linux-next: build failure after merge of the final tree
- (staging tree related)
-Date: Thu, 14 Mar 2013 20:23:39 +0000
-Message-ID: <A2CA0424C0A6F04399FB9E1CD98E030458D8ED91@US01WEMBX2.internal.synopsys.com>
-References: <20130313163935.ea2f414d3ccc6ed1434d92b8@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130313163935.ea2f414d3ccc6ed1434d92b8@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Subject: [PATCH] staging: dwc2: fix compiler warnings
+Date: Thu, 14 Mar 2013 13:12:00 -0700
+Message-ID: <1363291920-11778-1-git-send-email-paulz@synopsys.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from alvesta.synopsys.com ([198.182.60.77]:49725 "EHLO
+	alvesta.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751989Ab3CNUYc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Mar 2013 16:24:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: linux-next@vger.kernel.org, Paul Zimmerman <Paul.Zimmerman@synopsys.com>
 
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Tuesday, March 12, 2013 10:40 PM
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> drivers/staging/dwc2/hcd.c: In function '_dwc2_hcd_urb_enqueue':
-> drivers/staging/dwc2/hcd.c:2387:3: error: implicit declaration of function 'bus_to_virt' [-Werror=implicit-function-declaration]
-> drivers/staging/dwc2/hcd.c:2387:7: warning: assignment makes pointer from integer without a cast [enabled by default]
-> 
-> Caused by commit 7359d482eb4d ("staging: HCD files for the DWC2 driver").
-> 
-> From Documentation/bus-virt-phys-mapping.txt:
-> 
-> "[ NOTE: The virt_to_bus() and bus_to_virt() functions have been
->         superseded by the functionality provided by the PCI DMA interface
->         (see Documentation/DMA-API-HOWTO.txt).  They continue
->         to be documented below for historical purposes, but new code
->         must not use them. --davidm 00/12/12 ]"
-> 
-> See also Documentation/DMA-API-HOWTO.txt.
-> 
-> I have added this patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 13 Mar 2013 16:35:50 +1100
-> Subject: [PATCH] staging: the DWC2 driver uses bus_to_virt
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/staging/dwc2/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/staging/dwc2/Kconfig b/drivers/staging/dwc2/Kconfig
-> index 610418a..bc4cdfe 100644
-> --- a/drivers/staging/dwc2/Kconfig
-> +++ b/drivers/staging/dwc2/Kconfig
-> @@ -1,6 +1,7 @@
->  config USB_DWC2
->  	tristate "DesignWare USB2 DRD Core Support"
->  	depends on USB
-> +	depends on VIRT_TO_BUS
->  	select USB_OTG_UTILS
->  	help
->  	  Say Y or M here if your system has a Dual Role HighSpeed
-> --
+Fix some compiler warnings when building for i386 arch. Reported by
+Fengguang's build-bot.
 
-Hi Greg,
+Signed-off-by: Paul Zimmerman <paulz@synopsys.com>
+---
+ drivers/staging/dwc2/hcd.c      | 13 +++++++------
+ drivers/staging/dwc2/hcd_intr.c |  8 ++++----
+ 2 files changed, 11 insertions(+), 10 deletions(-)
 
-Do you apply these sort of patches automatically, or do you need an ack from me?
-In case you do:
-
-Acked-by: Paul Zimmerman <paulz@synopsys.com>
+diff --git a/drivers/staging/dwc2/hcd.c b/drivers/staging/dwc2/hcd.c
+index cdb142d..246b483 100644
+--- a/drivers/staging/dwc2/hcd.c
++++ b/drivers/staging/dwc2/hcd.c
+@@ -1890,8 +1890,9 @@ void dwc2_hcd_dump_state(struct dwc2_hsotg *hsotg)
+ 				dev_dbg(hsotg->dev,
+ 					"      transfer_buffer: %p\n",
+ 					urb->buf);
+-				dev_dbg(hsotg->dev, "      transfer_dma: %p\n",
+-					(void *)urb->dma);
++				dev_dbg(hsotg->dev,
++					"      transfer_dma: %08lx\n",
++					(unsigned long)urb->dma);
+ 				dev_dbg(hsotg->dev,
+ 					"      transfer_buffer_length: %d\n",
+ 					urb->length);
+@@ -2296,10 +2297,10 @@ static void dwc2_dump_urb_info(struct usb_hcd *hcd, struct urb *urb,
+ 		 usb_maxpacket(urb->dev, urb->pipe, usb_pipeout(urb->pipe)));
+ 	dev_vdbg(hsotg->dev, "  Data buffer length: %d\n",
+ 		 urb->transfer_buffer_length);
+-	dev_vdbg(hsotg->dev, "  Transfer buffer: %p, Transfer DMA: %p\n",
+-		 urb->transfer_buffer, (void *)urb->transfer_dma);
+-	dev_vdbg(hsotg->dev, "  Setup buffer: %p, Setup DMA: %p\n",
+-		 urb->setup_packet, (void *)urb->setup_dma);
++	dev_vdbg(hsotg->dev, "  Transfer buffer: %p, Transfer DMA: %08lx\n",
++		 urb->transfer_buffer, (unsigned long)urb->transfer_dma);
++	dev_vdbg(hsotg->dev, "  Setup buffer: %p, Setup DMA: %08lx\n",
++		 urb->setup_packet, (unsigned long)urb->setup_dma);
+ 	dev_vdbg(hsotg->dev, "  Interval: %d\n", urb->interval);
+ 
+ 	if (usb_pipetype(urb->pipe) == PIPE_ISOCHRONOUS) {
+diff --git a/drivers/staging/dwc2/hcd_intr.c b/drivers/staging/dwc2/hcd_intr.c
+index 01addd0..4b007ab 100644
+--- a/drivers/staging/dwc2/hcd_intr.c
++++ b/drivers/staging/dwc2/hcd_intr.c
+@@ -1535,10 +1535,10 @@ static void dwc2_hc_ahberr_intr(struct dwc2_hsotg *hsotg,
+ 	dev_err(hsotg->dev, "  Max packet size: %d\n",
+ 		dwc2_hcd_get_mps(&urb->pipe_info));
+ 	dev_err(hsotg->dev, "  Data buffer length: %d\n", urb->length);
+-	dev_err(hsotg->dev, "  Transfer buffer: %p, Transfer DMA: %p\n",
+-		urb->buf, (void *)urb->dma);
+-	dev_err(hsotg->dev, "  Setup buffer: %p, Setup DMA: %p\n",
+-		urb->setup_packet, (void *)urb->setup_dma);
++	dev_err(hsotg->dev, "  Transfer buffer: %p, Transfer DMA: %08lx\n",
++		urb->buf, (unsigned long)urb->dma);
++	dev_err(hsotg->dev, "  Setup buffer: %p, Setup DMA: %08lx\n",
++		urb->setup_packet, (unsigned long)urb->setup_dma);
+ 	dev_err(hsotg->dev, "  Interval: %d\n", urb->interval);
+ 
+ 	/* Core halts the channel for Descriptor DMA mode */
+-- 
+1.8.2.rc0.16.g20a599e
