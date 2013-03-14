@@ -1,131 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the workqueues tree with Linus' tree
-Date: Thu, 14 Mar 2013 15:29:22 +1100
-Message-ID: <20130314152922.419606e04d2ff65a69cfa6f9@canb.auug.org.au>
+Subject: linux-next: manual merge of the bcon tree with Linus' tree
+Date: Thu, 14 Mar 2013 15:52:41 +1100
+Message-ID: <20130314155241.20d10e12d78f7986e1fec66e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__14_Mar_2013_15_29_22_+1100_mDEsWB1T8I9jbGv6"
+ boundary="Signature=_Thu__14_Mar_2013_15_52_41_+1100_a_H=MtoNYqxverT1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40818 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33602 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751628Ab3CNE3e (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Mar 2013 00:29:34 -0400
+	with ESMTP id S1751627Ab3CNEwu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Mar 2013 00:52:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: =?UTF-8?B?IkrDtnJuIEVuZ2VsIg==?= <joern@logfs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, josh.h.morris@us.ibm.com, Jens Axboe <axboe@kernel.dk>
 
---Signature=_Thu__14_Mar_2013_15_29_22_+1100_mDEsWB1T8I9jbGv6
-Content-Type: text/plain; charset=US-ASCII
+--Signature=_Thu__14_Mar_2013_15_52_41_+1100_a_H=MtoNYqxverT1
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi J=C3=B6rn,
 
-Today's linux-next merge of the workqueues tree got a conflict in
-kernel/workqueue.c between commit e68035fb65de ("workqueue: convert to
-idr_alloc()") from Linus' tree and commit fa1b54e69bc6 ("workqueue:
-update synchronization rules on worker_pool_idr") from the workqueues
-tree.
+Today's linux-next merge of the bcon tree got a conflict in
+drivers/block/Kconfig between commit 8722ff8cdbfa ("block: IBM RamSan
+70/80 device driver") from Linus' tree and commit a2ff9d05bbb4 ("add
+blockconsole version 1.1") from the bcon tree.
 
-I fixed it up (as suggested - see below) and can carry the fix as
-necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc kernel/workqueue.c
-index 55fac5b,2ebd182..0000000
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@@ -456,40 -456,31 +456,32 @@@ static int worker_pool_assign_id(struc
-  {
-  	int ret;
+diff --cc drivers/block/Kconfig
+index 5dc0dae,06eb42f..0000000
+--- a/drivers/block/Kconfig
++++ b/drivers/block/Kconfig
+@@@ -531,14 -544,10 +531,20 @@@ config BLK_DEV_RB
  =20
-- 	mutex_lock(&worker_pool_idr_mutex);
-- 	ret =3D idr_alloc(&worker_pool_idr, pool, 0, 0, GFP_KERNEL);
-- 	if (ret >=3D 0)
-- 		pool->id =3D ret;
-- 	mutex_unlock(&worker_pool_idr_mutex);
-+ 	do {
- -		if (!idr_pre_get(&worker_pool_idr, GFP_KERNEL))
- -			return -ENOMEM;
- -
-++		idr_preload(GFP_KERNEL);
-+ 		spin_lock_irq(&workqueue_lock);
- -		ret =3D idr_get_new(&worker_pool_idr, pool, &pool->id);
-++		ret =3D idr_alloc(&worker_pool_idr, pool, 0, 0, GFP_NOWAIT);
-++		if (ret >=3D 0)
-++			pool->id =3D ret;
-+ 		spin_unlock_irq(&workqueue_lock);
-++		idr_preload_end();
-+ 	} while (ret =3D=3D -EAGAIN);
+  	  If unsure, say N.
  =20
- -	return ret;
- +	return ret < 0 ? ret : 0;
-  }
- =20
-- /*
--  * Lookup worker_pool by id.  The idr currently is built during boot and
--  * never modified.  Don't worry about locking for now.
-+ /**
-+  * first_pwq - return the first pool_workqueue of the specified workqueue
-+  * @wq: the target workqueue
-+  *
-+  * This must be called either with workqueue_lock held or sched RCU read
-+  * locked.  If the pwq needs to be used beyond the locking in effect, the
-+  * caller is responsible for guaranteeing that the pwq stays online.
-   */
-- static struct worker_pool *worker_pool_by_id(int pool_id)
-- {
-- 	return idr_find(&worker_pool_idr, pool_id);
-- }
--=20
-- static struct worker_pool *get_std_worker_pool(int cpu, bool highpri)
-- {
-- 	struct worker_pool *pools =3D std_worker_pools(cpu);
--=20
-- 	return &pools[highpri];
-- }
--=20
-- static struct pool_workqueue *get_pwq(unsigned int cpu,
-- 				      struct workqueue_struct *wq)
-+ static struct pool_workqueue *first_pwq(struct workqueue_struct *wq)
-  {
-- 	if (!(wq->flags & WQ_UNBOUND)) {
-- 		if (likely(cpu < nr_cpu_ids))
-- 			return per_cpu_ptr(wq->pool_wq.pcpu, cpu);
-- 	} else if (likely(cpu =3D=3D WORK_CPU_UNBOUND))
-- 		return wq->pool_wq.single;
-- 	return NULL;
-+ 	assert_rcu_or_wq_lock();
-+ 	return list_first_or_null_rcu(&wq->pwqs, struct pool_workqueue,
-+ 				      pwqs_node);
-  }
- =20
-  static unsigned int work_color_to_flags(int color)
+ +config BLK_DEV_RSXX
+ +	tristate "RamSam PCIe Flash SSD Device Driver"
+ +	depends on PCI
+ +	help
+ +	  Device driver for IBM's high speed PCIe SSD
+ +	  storage devices: RamSan-70 and RamSan-80.
+ +
+ +	  To compile this driver as a module, choose M here: the
+ +	  module will be called rsxx.
+ +
++ config BLOCKCONSOLE
++ 	bool "Block device console logging support"
++ 	help
++ 	  This enables logging to block devices.
++ 	  See <file:Documentation/block/blockconsole.txt> for details.
++=20
+  endif # BLK_DEV
 
---Signature=_Thu__14_Mar_2013_15_29_22_+1100_mDEsWB1T8I9jbGv6
+--Signature=_Thu__14_Mar_2013_15_52_41_+1100_a_H=MtoNYqxverT1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRQVIiAAoJEECxmPOUX5FEAYcQAJq1uu4cmkesACoYz7H9uFrH
-27g2GXXgrznWzAKwTucIk/AI0GbbrpKNVci+AYvSS2o4XH/CWAcZlmtbCuh2X73O
-iUJ+WXI6UVcQUZhg4BGoxCY4Vm+pHXyyGsZCkPBQjRYR+aCwgLYl1+CmxJRklm+E
-5Jawi5sDKlyEPlwFzxy5Y2z+1RWifd/2l/e9iaOejj9cBrcYXTuZ9/+Wk4OhlbD4
-s+ek+fOdDSWvi7AXGh2WSjqqvSSIPcjBWvXhGgMkof5lPJc3xDi35gGkf0fVyYYa
-jI69PdXvYb/Y4AgCZ1G3tACwWuGyMrPEZuSGZmP2gt/aKr2O72bmYV1PqDa6rSg8
-7rtEh0QaxdV98GkUdeVYHBWCvphfNduQ1Nt5l1XU04ScDMPJg+0NuIGIqcthKQrk
-wivdp4aS+K0BDAwu6RC30Wi0NnwOvysmKrJomTEd4IfUJgWop7KyCloJJhJvzUpp
-ALHZm/eeOWOITC8/G4CU5fkPHbWQn6fhimPNek2u0F/p4mH1WjPeuMbbVx8Ttb3t
-P8w6BdqvRBe33Li96xgDS1dtT5hCzJYQUrARNKjQbTYCuXZ06po/BSUI/UOfKBNI
-PowXPy5z5o5ZEyHoFyZARJ99l4dR+wqFddGBA5PEOfggJO3xOyiQwSYDA2k2uiSd
-LcEDKWEX2KsmOj37nIxZ
-=jyOJ
+iQIcBAEBCAAGBQJRQVeZAAoJEECxmPOUX5FEGhMQAJbnNsPsSs5GSrdmGHQJcN3V
+bHLYAG9XVuBd+x/OO4ZRR85GDnmTOZYwXNGPPzCSOSiU5hAAVn5sVl29H3iunaFB
+so0QavddHJkBUW8fkeeSkt3RHgxLeOcZIk/sFShYYfUCurFc86D6OkbcA56yoNy0
+6uUE8lsTqeo6ujKrSPeuhDF1A7ZHHqmGwcA+gVNU1n0+qAVj4jnJLBz3q+rJYOTS
+zHhgAQvAwVtsBOGXQT7Qy77Oh06wTa234NPobSaSC5Fm7F7yj/D2HBHmfueFnhm0
+VaYGlgMM5/SqiZiajWpyLw28wlxuE6h9jgJs1Lz3wLnBz8E85OCi0QOmXoMZGwLN
+FOKlVioU4Rl0Z1JQRuwuFVSe9Qx6AbQZ1G75Z4+aPVsM3AGdC6Z0QWEC5oS6JmBz
+UAeCoMmTJVbfWn21QDCY3ORJiwSpMvgdO7jIhoJNWJ299I3UtM6MGA3AMDArVKWQ
+OsWpnr3xH89vaJK2l7tvwNeiK3rWYAbZe4IU8JgN7pooMr1zvtxvrVRXF4P1XgEG
+fbMakVv7OAEyqQTLwnAlFekcEmTUWuA8H/4qnYtlZluI0IlR+Z+s9+XQtr31VY31
+j4niYHRoOl576KFbXQbvuMP+InK8jd0HwSzZzyvhsy+Ov2zr3pWxZ5YvlhKk83zv
+odH8dhBDahCRdiQ2qVJB
+=lHCW
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__14_Mar_2013_15_29_22_+1100_mDEsWB1T8I9jbGv6--
+--Signature=_Thu__14_Mar_2013_15_52_41_+1100_a_H=MtoNYqxverT1--
