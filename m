@@ -1,59 +1,52 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: mmotm 2013-03-01-15-50 uploaded (strict user copy)
-Date: Thu, 14 Mar 2013 10:48:18 -0700
-Message-ID: <51420D62.7030701@codeaurora.org>
-References: <20130301235135.E9F105A41B2@corp2gmr1-2.hot.corp.google.com> <51316B64.90102@infradead.org> <5131753F.3070302@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH -next] m68k: Add missing cmpxchg64() if CONFIG_RMW_INSNS=y
+Date: Thu, 14 Mar 2013 20:30:49 +0100
+Message-ID: <1363289449-16116-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wolverine01.qualcomm.com ([199.106.114.254]:11582 "EHLO
-	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757873Ab3CNRsT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Mar 2013 13:48:19 -0400
-In-Reply-To: <5131753F.3070302@codeaurora.org>
+Received: from georges.telenet-ops.be ([195.130.137.68]:34412 "EHLO
+	georges.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751136Ab3CNTa6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Mar 2013 15:30:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: akpm@linux-foundation.org
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+To: linux-m68k@lists.linux-m68k.org, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On 03/01/13 19:42, Stephen Boyd wrote:
-> On 03/01/13 19:00, Randy Dunlap wrote:
->> on i386:
->>
->> ERROR: "copy_from_user_overflow" [fs/binfmt_misc.ko] undefined!
->>
->> which I don't understand.
->> lib/usercopy.o is built and building binfmt_misc.c says:
->>
->>   CC [M]  fs/binfmt_misc.o
->> In file included from arch/x86/include/asm/uaccess.h:537:0,
->>                  from include/linux/uaccess.h:5,
->>                  from include/linux/highmem.h:8,
->>                  from include/linux/pagemap.h:10,
->>                  from fs/binfmt_misc.c:27:
->> arch/x86/include/asm/uaccess_32.h: In function 'parse_command.part.1':
->> arch/x86/include/asm/uaccess_32.h:211:26: warning: call to 'copy_from_user_overflow' declared with attribute warning: copy_from_user() buffer size is not provably correct [enabled by default]
-> Hm.. That's because it's part of lib and not obj, right?
->
-> diff --git a/lib/Makefile b/lib/Makefile
-> index 59fabd0..4c55104 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -15,7 +15,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
->          is_single_threaded.o plist.o decompress.o kobject_uevent.o \
->          earlycpio.o percpu-refcount.o
->  
-> -lib-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) += usercopy.o
-> +obj-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) += usercopy.o
->  lib-$(CONFIG_MMU) += ioremap.o
->  lib-$(CONFIG_SMP) += cpumask.o
->  
->
+If CONFIG_RMW_INSNS=3Dy:
 
-Andrew, can you squash this into "Kconfig: consolidate
-CONFIG_DEBUG_STRICT_USER_COPY_CHECKS"?
+drivers/block/blockconsole.c: In function =E2=80=98bcon_advance_console=
+_bytes=E2=80=99:
+drivers/block/blockconsole.c:164: error: implicit declaration of functi=
+on =E2=80=98cmpxchg64=E2=80=99
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+Map cmpxchg64 to cmpxchg64_local, which is already mapped to
+__cmpxchg64_local_generic, just like for the CONFIG_RMW_INSNS=3Dn case.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+http://kisskb.ellerman.id.au/kisskb/buildresult/8398995/
+
+ arch/m68k/include/asm/cmpxchg.h |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/arch/m68k/include/asm/cmpxchg.h b/arch/m68k/include/asm/cm=
+pxchg.h
+index 5c81d0e..bc755bc 100644
+--- a/arch/m68k/include/asm/cmpxchg.h
++++ b/arch/m68k/include/asm/cmpxchg.h
+@@ -124,6 +124,9 @@ static inline unsigned long __cmpxchg(volatile void=
+ *p, unsigned long old,
+ #define cmpxchg_local(ptr, o, n)					    \
+ 	((__typeof__(*(ptr)))__cmpxchg((ptr), (unsigned long)(o),	    \
+ 			(unsigned long)(n), sizeof(*(ptr))))
++
++#define cmpxchg64(ptr, o, n)	cmpxchg64_local((ptr), (o), (n))
++
+ #else
+=20
+ /*
+--=20
+1.7.0.4
