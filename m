@@ -1,66 +1,70 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH -next] sparc32/sparc64: Provide cmpxchg64()
-Date: Thu, 14 Mar 2013 20:42:08 +0100
-Message-ID: <1363290128-21247-1-git-send-email-geert@linux-m68k.org>
+From: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
+Subject: RE: linux-next: build failure after merge of the final tree
+ (staging tree related)
+Date: Thu, 14 Mar 2013 20:23:39 +0000
+Message-ID: <A2CA0424C0A6F04399FB9E1CD98E030458D8ED91@US01WEMBX2.internal.synopsys.com>
+References: <20130313163935.ea2f414d3ccc6ed1434d92b8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from georges.telenet-ops.be ([195.130.137.68]:42466 "EHLO
-	georges.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750989Ab3CNTmZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Mar 2013 15:42:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: sparclinux@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130313163935.ea2f414d3ccc6ed1434d92b8@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-sparc/sparc64 allmodconfig:
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Sent: Tuesday, March 12, 2013 10:40 PM
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/staging/dwc2/hcd.c: In function '_dwc2_hcd_urb_enqueue':
+> drivers/staging/dwc2/hcd.c:2387:3: error: implicit declaration of function 'bus_to_virt' [-Werror=implicit-function-declaration]
+> drivers/staging/dwc2/hcd.c:2387:7: warning: assignment makes pointer from integer without a cast [enabled by default]
+> 
+> Caused by commit 7359d482eb4d ("staging: HCD files for the DWC2 driver").
+> 
+> From Documentation/bus-virt-phys-mapping.txt:
+> 
+> "[ NOTE: The virt_to_bus() and bus_to_virt() functions have been
+>         superseded by the functionality provided by the PCI DMA interface
+>         (see Documentation/DMA-API-HOWTO.txt).  They continue
+>         to be documented below for historical purposes, but new code
+>         must not use them. --davidm 00/12/12 ]"
+> 
+> See also Documentation/DMA-API-HOWTO.txt.
+> 
+> I have added this patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 13 Mar 2013 16:35:50 +1100
+> Subject: [PATCH] staging: the DWC2 driver uses bus_to_virt
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/staging/dwc2/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/staging/dwc2/Kconfig b/drivers/staging/dwc2/Kconfig
+> index 610418a..bc4cdfe 100644
+> --- a/drivers/staging/dwc2/Kconfig
+> +++ b/drivers/staging/dwc2/Kconfig
+> @@ -1,6 +1,7 @@
+>  config USB_DWC2
+>  	tristate "DesignWare USB2 DRD Core Support"
+>  	depends on USB
+> +	depends on VIRT_TO_BUS
+>  	select USB_OTG_UTILS
+>  	help
+>  	  Say Y or M here if your system has a Dual Role HighSpeed
+> --
 
-drivers/block/blockconsole.c: In function =E2=80=98bcon_advance_console=
-_bytes=E2=80=99:
-drivers/block/blockconsole.c:164: error: implicit declaration of functi=
-on
-=E2=80=98cmpxchg64=E2=80=99
+Hi Greg,
 
-Map cmpxchg64 to cmpxchg64_local to fix this.
+Do you apply these sort of patches automatically, or do you need an ack from me?
+In case you do:
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-http://kisskb.ellerman.id.au/kisskb/buildresult/8398811/
-http://kisskb.ellerman.id.au/kisskb/buildresult/8398801/
-
- arch/sparc/include/asm/cmpxchg_32.h |    1 +
- arch/sparc/include/asm/cmpxchg_64.h |    1 +
- 2 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/sparc/include/asm/cmpxchg_32.h b/arch/sparc/include/a=
-sm/cmpxchg_32.h
-index 1fae1a0..284fb96 100644
---- a/arch/sparc/include/asm/cmpxchg_32.h
-+++ b/arch/sparc/include/asm/cmpxchg_32.h
-@@ -81,5 +81,6 @@ __cmpxchg(volatile void *ptr, unsigned long old, unsi=
-gned long new_, int size)
- 	((__typeof__(*(ptr)))__cmpxchg_local_generic((ptr), (unsigned long)(o=
-),\
- 			(unsigned long)(n), sizeof(*(ptr))))
- #define cmpxchg64_local(ptr, o, n) __cmpxchg64_local_generic((ptr), (o=
-), (n))
-+#define cmpxchg64(ptr, o, n)	cmpxchg64_local((ptr), (o), (n))
-=20
- #endif /* __ARCH_SPARC_CMPXCHG__ */
-diff --git a/arch/sparc/include/asm/cmpxchg_64.h b/arch/sparc/include/a=
-sm/cmpxchg_64.h
-index b30eb37..4adefe8 100644
---- a/arch/sparc/include/asm/cmpxchg_64.h
-+++ b/arch/sparc/include/asm/cmpxchg_64.h
-@@ -141,5 +141,6 @@ static inline unsigned long __cmpxchg_local(volatil=
-e void *ptr,
- 	BUILD_BUG_ON(sizeof(*(ptr)) !=3D 8);				\
- 	cmpxchg_local((ptr), (o), (n));					\
-   })
-+#define cmpxchg64(ptr, o, n)	cmpxchg64_local((ptr), (o), (n))
-=20
- #endif /* __ARCH_SPARC64_CMPXCHG__ */
---=20
-1.7.0.4
+Acked-by: Paul Zimmerman <paulz@synopsys.com>
