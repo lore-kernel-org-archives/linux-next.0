@@ -1,73 +1,66 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [-next] staging/comedi regressions
-Date: Thu, 14 Mar 2013 20:33:29 +0100
-Message-ID: <CAMuHMdWS5jqA=mXsCO-Bb84PuWDH-Qc17Jt=cWzTdKEah36hpw@mail.gmail.com>
-References: <CAMuHMdXyBqwqn3aWpjwer5HYYqQvyMJTxJY-WeDGxLxkg_ZXQw@mail.gmail.com>
-	<20130312222132.GA12477@kroah.com>
+Subject: [PATCH -next] sparc32/sparc64: Provide cmpxchg64()
+Date: Thu, 14 Mar 2013 20:42:08 +0100
+Message-ID: <1363290128-21247-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ia0-f177.google.com ([209.85.210.177]:58569 "EHLO
-	mail-ia0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751461Ab3CNTda convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Mar 2013 15:33:30 -0400
-In-Reply-To: <20130312222132.GA12477@kroah.com>
+Received: from georges.telenet-ops.be ([195.130.137.68]:42466 "EHLO
+	georges.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750989Ab3CNTmZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Mar 2013 15:42:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: H Hartley Sweeten <hsweeten@visionengravers.com>, driverdevel <devel@driverdev.osuosl.org>, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: sparclinux@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Tue, Mar 12, 2013 at 11:21 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Tue, Mar 12, 2013 at 11:13:50PM +0100, Geert Uytterhoeven wrote:
->> m68k/allmodconfig:
->>
->> drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_i=
-sapnp_find_board=E2=80=99:
->> drivers/staging/comedi/drivers/ni_atmio.c:353: error: =E2=80=98n_ni_=
-boards=E2=80=99
->> undeclared (first use in this function)
->> drivers/staging/comedi/drivers/ni_atmio.c:353: error: (Each undeclar=
-ed
->> identifier is reported only once
->> drivers/staging/comedi/drivers/ni_atmio.c:353: error: for each
->> function it appears in.)
->> drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_g=
-etboardtype=E2=80=99:
->> drivers/staging/comedi/drivers/ni_atmio.c:391: error: =E2=80=98n_ni_=
-boards=E2=80=99
->> undeclared (first use in this function)
->> drivers/staging/comedi/drivers/ni_atmio.c: In function =E2=80=98ni_a=
-tmio_attach=E2=80=99:
->> drivers/staging/comedi/drivers/ni_atmio.c:470: error: =E2=80=98board=
-type=E2=80=99
->> undeclared (first use in this function)
->>
->> http://kisskb.ellerman.id.au/kisskb/buildresult/8392062/
->
-> Hartley already fixed it, this will show up in the next linux-next tr=
-ee
-> as I commited the fix a few hours ago.
+sparc/sparc64 allmodconfig:
 
-Thanks, but now it fails differently:
+drivers/block/blockconsole.c: In function =E2=80=98bcon_advance_console=
+_bytes=E2=80=99:
+drivers/block/blockconsole.c:164: error: implicit declaration of functi=
+on
+=E2=80=98cmpxchg64=E2=80=99
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/8398995/
-drivers/staging/comedi/drivers/ni_atmio.c:472:2: error: expected ';'
-before 'printk'
+Map cmpxchg64 to cmpxchg64_local to fix this.
 
-There's a semicolon missing on the previous line.
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+http://kisskb.ellerman.id.au/kisskb/buildresult/8398811/
+http://kisskb.ellerman.id.au/kisskb/buildresult/8398801/
 
-Gr{oetje,eeting}s,
+ arch/sparc/include/asm/cmpxchg_32.h |    1 +
+ arch/sparc/include/asm/cmpxchg_64.h |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-                                -- Linus Torvalds
+diff --git a/arch/sparc/include/asm/cmpxchg_32.h b/arch/sparc/include/a=
+sm/cmpxchg_32.h
+index 1fae1a0..284fb96 100644
+--- a/arch/sparc/include/asm/cmpxchg_32.h
++++ b/arch/sparc/include/asm/cmpxchg_32.h
+@@ -81,5 +81,6 @@ __cmpxchg(volatile void *ptr, unsigned long old, unsi=
+gned long new_, int size)
+ 	((__typeof__(*(ptr)))__cmpxchg_local_generic((ptr), (unsigned long)(o=
+),\
+ 			(unsigned long)(n), sizeof(*(ptr))))
+ #define cmpxchg64_local(ptr, o, n) __cmpxchg64_local_generic((ptr), (o=
+), (n))
++#define cmpxchg64(ptr, o, n)	cmpxchg64_local((ptr), (o), (n))
+=20
+ #endif /* __ARCH_SPARC_CMPXCHG__ */
+diff --git a/arch/sparc/include/asm/cmpxchg_64.h b/arch/sparc/include/a=
+sm/cmpxchg_64.h
+index b30eb37..4adefe8 100644
+--- a/arch/sparc/include/asm/cmpxchg_64.h
++++ b/arch/sparc/include/asm/cmpxchg_64.h
+@@ -141,5 +141,6 @@ static inline unsigned long __cmpxchg_local(volatil=
+e void *ptr,
+ 	BUILD_BUG_ON(sizeof(*(ptr)) !=3D 8);				\
+ 	cmpxchg_local((ptr), (o), (n));					\
+   })
++#define cmpxchg64(ptr, o, n)	cmpxchg64_local((ptr), (o), (n))
+=20
+ #endif /* __ARCH_SPARC64_CMPXCHG__ */
+--=20
+1.7.0.4
