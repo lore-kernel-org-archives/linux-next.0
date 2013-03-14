@@ -1,58 +1,75 @@
-From: H Hartley Sweeten <hartleys@visionengravers.com>
-Subject: RE: [-next] staging/comedi regressions
-Date: Thu, 14 Mar 2013 15:28:13 -0500
-Message-ID: <ADE657CA350FB648AAC2C43247A983F0020980106A1D@AUSP01VMBX24.collaborationhost.net>
-References: <CAMuHMdXyBqwqn3aWpjwer5HYYqQvyMJTxJY-WeDGxLxkg_ZXQw@mail.gmail.com>
- <20130312222132.GA12477@kroah.com>
- <CAMuHMdWS5jqA=mXsCO-Bb84PuWDH-Qc17Jt=cWzTdKEah36hpw@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Thu, 14 Mar 2013 13:33:53 -0700
+Message-ID: <20130314203353.GA16897@kroah.com>
+References: <20130313163935.ea2f414d3ccc6ed1434d92b8@canb.auug.org.au>
+ <A2CA0424C0A6F04399FB9E1CD98E030458D8ED91@US01WEMBX2.internal.synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devel-bounces@linuxdriverproject.org>
-In-Reply-To: <CAMuHMdWS5jqA=mXsCO-Bb84PuWDH-Qc17Jt=cWzTdKEah36hpw@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel/>
-List-Post: <mailto:devel@linuxdriverproject.org>
-List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: devel-bounces@linuxdriverproject.org
-Sender: "devel" <devel-bounces@linuxdriverproject.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: driverdevel <devel@driverdev.osuosl.org>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <A2CA0424C0A6F04399FB9E1CD98E030458D8ED91@US01WEMBX2.internal.synopsys.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-T24gVGh1cnNkYXksIE1hcmNoIDE0LCAyMDEzIDEyOjMzIFBNLCBHZWVydCBVeXR0ZXJob2V2ZW4g
-d3JvdGU6DQo+IE9uIFR1ZSwgTWFyIDEyLCAyMDEzIGF0IDExOjIxIFBNLCBHcmVnIEtyb2FoLUhh
-cnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPiB3cm90ZToNCj4+IE9uIFR1ZSwgTWFy
-IDEyLCAyMDEzIGF0IDExOjEzOjUwUE0gKzAxMDAsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToN
-Cj4+PiBtNjhrL2FsbG1vZGNvbmZpZzoNCj4+Pg0KPj4+IGRyaXZlcnMvc3RhZ2luZy9jb21lZGkv
-ZHJpdmVycy9uaV9hdG1pby5jOiBJbiBmdW5jdGlvbiDigJhuaV9pc2FwbnBfZmluZF9ib2FyZOKA
-mToNCj4+PiBkcml2ZXJzL3N0YWdpbmcvY29tZWRpL2RyaXZlcnMvbmlfYXRtaW8uYzozNTM6IGVy
-cm9yOiDigJhuX25pX2JvYXJkc+KAmQ0KPj4+IHVuZGVjbGFyZWQgKGZpcnN0IHVzZSBpbiB0aGlz
-IGZ1bmN0aW9uKQ0KPj4+IGRyaXZlcnMvc3RhZ2luZy9jb21lZGkvZHJpdmVycy9uaV9hdG1pby5j
-OjM1MzogZXJyb3I6IChFYWNoIHVuZGVjbGFyZWQNCj4+PiBpZGVudGlmaWVyIGlzIHJlcG9ydGVk
-IG9ubHkgb25jZQ0KPj4+IGRyaXZlcnMvc3RhZ2luZy9jb21lZGkvZHJpdmVycy9uaV9hdG1pby5j
-OjM1MzogZXJyb3I6IGZvciBlYWNoDQo+Pj4gZnVuY3Rpb24gaXQgYXBwZWFycyBpbi4pDQo+Pj4g
-ZHJpdmVycy9zdGFnaW5nL2NvbWVkaS9kcml2ZXJzL25pX2F0bWlvLmM6IEluIGZ1bmN0aW9uIOKA
-mG5pX2dldGJvYXJkdHlwZeKAmToNCj4+PiBkcml2ZXJzL3N0YWdpbmcvY29tZWRpL2RyaXZlcnMv
-bmlfYXRtaW8uYzozOTE6IGVycm9yOiDigJhuX25pX2JvYXJkc+KAmQ0KPj4+IHVuZGVjbGFyZWQg
-KGZpcnN0IHVzZSBpbiB0aGlzIGZ1bmN0aW9uKQ0KPj4+IGRyaXZlcnMvc3RhZ2luZy9jb21lZGkv
-ZHJpdmVycy9uaV9hdG1pby5jOiBJbiBmdW5jdGlvbiDigJhuaV9hdG1pb19hdHRhY2jigJk6DQo+
-Pj4gZHJpdmVycy9zdGFnaW5nL2NvbWVkaS9kcml2ZXJzL25pX2F0bWlvLmM6NDcwOiBlcnJvcjog
-4oCYYm9hcmR0eXBl4oCZDQo+Pj4gdW5kZWNsYXJlZCAoZmlyc3QgdXNlIGluIHRoaXMgZnVuY3Rp
-b24pDQo+Pj4NCj4+PiBodHRwOi8va2lzc2tiLmVsbGVybWFuLmlkLmF1L2tpc3NrYi9idWlsZHJl
-c3VsdC84MzkyMDYyLw0KPj4NCj4+IEhhcnRsZXkgYWxyZWFkeSBmaXhlZCBpdCwgdGhpcyB3aWxs
-IHNob3cgdXAgaW4gdGhlIG5leHQgbGludXgtbmV4dCB0cmVlDQo+PiBhcyBJIGNvbW1pdGVkIHRo
-ZSBmaXggYSBmZXcgaG91cnMgYWdvLg0KPg0KPiBUaGFua3MsIGJ1dCBub3cgaXQgZmFpbHMgZGlm
-ZmVyZW50bHk6DQo+DQo+IGh0dHA6Ly9raXNza2IuZWxsZXJtYW4uaWQuYXUva2lzc2tiL2J1aWxk
-cmVzdWx0LzgzOTg5OTUvDQo+IGRyaXZlcnMvc3RhZ2luZy9jb21lZGkvZHJpdmVycy9uaV9hdG1p
-by5jOjQ3MjoyOiBlcnJvcjogZXhwZWN0ZWQgJzsnDQo+IGJlZm9yZSAncHJpbnRrJw0KPg0KPiBU
-aGVyZSdzIGEgc2VtaWNvbG9uIG1pc3Npbmcgb24gdGhlIHByZXZpb3VzIGxpbmUuDQoNCkdycnIu
-Li4gU29ycnkgYWJvdXQgdGhhdC4NCg0KUGF0Y2ggY29taW5nIGluIGEgbWludXRlLg0KDQpSZWdh
-cmRzLA0KSGFydGxleQ0KDQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpo
-dHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-ZXZlbAo=
+On Thu, Mar 14, 2013 at 08:23:39PM +0000, Paul Zimmerman wrote:
+> > From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> > Sent: Tuesday, March 12, 2013 10:40 PM
+> > 
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > drivers/staging/dwc2/hcd.c: In function '_dwc2_hcd_urb_enqueue':
+> > drivers/staging/dwc2/hcd.c:2387:3: error: implicit declaration of function 'bus_to_virt' [-Werror=implicit-function-declaration]
+> > drivers/staging/dwc2/hcd.c:2387:7: warning: assignment makes pointer from integer without a cast [enabled by default]
+> > 
+> > Caused by commit 7359d482eb4d ("staging: HCD files for the DWC2 driver").
+> > 
+> > From Documentation/bus-virt-phys-mapping.txt:
+> > 
+> > "[ NOTE: The virt_to_bus() and bus_to_virt() functions have been
+> >         superseded by the functionality provided by the PCI DMA interface
+> >         (see Documentation/DMA-API-HOWTO.txt).  They continue
+> >         to be documented below for historical purposes, but new code
+> >         must not use them. --davidm 00/12/12 ]"
+> > 
+> > See also Documentation/DMA-API-HOWTO.txt.
+> > 
+> > I have added this patch for today:
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Wed, 13 Mar 2013 16:35:50 +1100
+> > Subject: [PATCH] staging: the DWC2 driver uses bus_to_virt
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  drivers/staging/dwc2/Kconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/staging/dwc2/Kconfig b/drivers/staging/dwc2/Kconfig
+> > index 610418a..bc4cdfe 100644
+> > --- a/drivers/staging/dwc2/Kconfig
+> > +++ b/drivers/staging/dwc2/Kconfig
+> > @@ -1,6 +1,7 @@
+> >  config USB_DWC2
+> >  	tristate "DesignWare USB2 DRD Core Support"
+> >  	depends on USB
+> > +	depends on VIRT_TO_BUS
+> >  	select USB_OTG_UTILS
+> >  	help
+> >  	  Say Y or M here if your system has a Dual Role HighSpeed
+> > --
+> 
+> Hi Greg,
+> 
+> Do you apply these sort of patches automatically, or do you need an ack from me?
+> In case you do:
+> 
+> Acked-by: Paul Zimmerman <paulz@synopsys.com>
+
+Thanks, I'll take it, I hadn't gotten to this fix just yet.
+
+greg k-h
