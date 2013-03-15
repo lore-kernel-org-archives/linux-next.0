@@ -1,98 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the l2-mtd tree with the mtd tree
-Date: Fri, 15 Mar 2013 11:58:25 +1100
-Message-ID: <20130315115825.6c2b7ad9c48c82640ff9f3b8@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with Linus' tree
+Date: Fri, 15 Mar 2013 15:13:34 +1100
+Message-ID: <20130315151334.2b52f63ab7f6b1efb893bf3e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__15_Mar_2013_11_58_25_+1100_6/afGELbzltNfTBa"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__15_Mar_2013_15_13_34_+1100_9lGGW6Cg/VEpS3Cz"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54926 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751507Ab3COENo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Mar 2013 00:13:44 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
 
---Signature=_Fri__15_Mar_2013_11_58_25_+1100_6/afGELbzltNfTBa
+--Signature=_Fri__15_Mar_2013_15_13_34_+1100_9lGGW6Cg/VEpS3Cz
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Artem,
+Hi Greg,
 
-Today's linux-next merge of the l2-mtd tree got a conflict in
-include/linux/mtd/nand.h between commit 5bc7c33ca93a ("mtd: nand:
-reintroduce NAND_NO_READRDY as NAND_NEED_READRDY") from the mtd tree and
-commit edac3311879c ("mtd: nand: remove AG-AND support") from the l2-mtd
-tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/ccg/f_fs.c between commit 7f78e0351394 ("fs: Limit
+sys_mount to only request filesystem modules") from Linus' tree and
+commit 515e6dd20b3f ("Staging: ccg: delete it from the tree") from the
+staging tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+The latter deleted the file, so I did that and can carry the fix as
+necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/mtd/nand.h
-index ef52d9c,33516eb..0000000
---- a/include/linux/mtd/nand.h
-+++ b/include/linux/mtd/nand.h
-@@@ -165,35 -145,8 +145,15 @@@ typedef enum=20
-   */
-  /* Buswidth is 16 bit */
-  #define NAND_BUSWIDTH_16	0x00000002
-- /* Device supports partial programming without padding */
-- #define NAND_NO_PADDING		0x00000004
-  /* Chip has cache program function */
-  #define NAND_CACHEPRG		0x00000008
-- /* Chip has copy back function */
-- #define NAND_COPYBACK		0x00000010
-- /*
--  * AND Chip which has 4 banks and a confusing page / block
--  * assignment. See Renesas datasheet for further information.
--  */
-- #define NAND_IS_AND		0x00000020
-- /*
--  * Chip has a array of 4 pages which can be read without
--  * additional ready /busy waits.
--  */
-- #define NAND_4PAGE_ARRAY	0x00000040
-- /*
--  * Chip requires that BBT is periodically rewritten to prevent
--  * bits from adjacent blocks from 'leaking' in altering data.
--  * This happens with the Renesas AG-AND chips, possibly others.
--  */
-- #define BBT_AUTO_REFRESH	0x00000080
- +/*
- + * Chip requires ready check on read (for auto-incremented sequential rea=
-d).
- + * True only for small page devices; large page devices do not support
- + * autoincrement.
- + */
- +#define NAND_NEED_READRDY	0x00000100
- +
-  /* Chip does not allow subpage writes */
-  #define NAND_NO_SUBPAGE_WRITE	0x00000200
- =20
-
---Signature=_Fri__15_Mar_2013_11_58_25_+1100_6/afGELbzltNfTBa
+--Signature=_Fri__15_Mar_2013_15_13_34_+1100_9lGGW6Cg/VEpS3Cz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRQnIxAAoJEECxmPOUX5FEje8P/jxyNugx+o8ZzbIS34zayVwB
-SXXv/z3U7Cxfs61+sPfei5JalX22eEuNyngAmaY6GuTBml7huY+4/s7CRfQy2fct
-S0uBBFcbI2QmIX0fwTJoC9v3/xpJwgtIvYGDwF/b5+7f6p/CqtenJ+EhP/rVZuBB
-idDZHVKCngacqQlpPq8eb2ZyRsFOKnRY6IQvBCKlUI9PCzwYSdIUcAaU321FQWsE
-nbclNCuZ3Uc535Oy3Y3kL7KzbC2s8h1y44TRvMsQ3Uexdj7dxUHlq3cf23ljAdOH
-jwQG7H/zfK58uC+J1NBxZp5eTGeaLwovPpVhyUgfTXRqRBTVJCQmIHN04T35q7jN
-nMN1JY6tYvKR2YtU1CMM7M+Xu7pcjVPA/VuOj9YTh+n6qYpA9mVp35VzgsGeGFT1
-1HHvFOUtcdRpZ/iDOC1FKZowYkzguY/ERD2kZEbzfVmmb2Dho89BRe8zNwMyQD0l
-rwtZBQaaV6b4UY7RjTgFYdsQp8Y9WwDn5J2Z6G79viJAFdfHi9+zWliunsg2YCqE
-fLZJOmG1guqqeTIPhfbNZCpdXU1w5topTx8tTrUqRm2CZC0DRTrFxopTVCRFaRPp
-zamJ7D08Uyl6rvDVCYp6u0I9iT35nUI1J3WzurtkLzT58qNFtqdOSq+JQO1KG6sh
-LyHhC3nAKKK2AFJyplSW
-=wxd9
+iQIbBAEBCAAGBQJRQp/uAAoJEECxmPOUX5FEL3IP92BNx1HMR7pHGpCNCBAlaqii
+6sDLCPGEUhhW/2U06XYiNQkFtCmpToCU/Ytzp85ht6P0wgEe2KhMHbyM15t4UJ02
+WJezcna5FLIE0w4+ft9Fzcu/6DlSJJkOUa8JX1ucZB1F4nESKm7YUajXsguei757
+wprAB63lE5iZsNJi23o25zSKTCPQYND7ofTneRPgdliaTnu/dbh+G9JOUr8JCtSk
+3EHgpgAWBGewlzdHQGAt9VkHWljgLLbqCvwOPmrgqCYvfr4BMZ9y98zwNtn0MDfd
+44WrO3YYuTto7Ohgf+z8QBCSaG7WQMsjvtptFMcqgIo6LtNzG2Aj0VkIHg9ecJ6o
+jMsWbmJrNGw0ON1sXUR6j8ORKSISyIUlHKtK9PCPjRIJPFIPJe8U50i+fnK6xpfy
+Kb4pakqL5exzM7x4VadIusn9eyZGMtZIYI/+bk+3tdyy9hjSDsg+RlAVbNyxS/hF
+5RpKPZ2PeephDDLVqUTPcvtD5h0G2X1Ohoi0Bn3DZ6Kz8evDv7E5v7E9KRduAdPR
+7L+3lsWp3CM1aHaeEK0JiemhKe7WU3ovpY+/SF2pKPMKynlZhW6Dt7y9pyho0OVr
+QciJoRVOZjy9TzromE9Eg5w5cHSwu2NrGKpXyNUKD28pB++KEiyWNsBmO7e6WST4
+lloK0L3A/T7SpAcX+ig=
+=Knpo
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__15_Mar_2013_11_58_25_+1100_6/afGELbzltNfTBa--
+--Signature=_Fri__15_Mar_2013_15_13_34_+1100_9lGGW6Cg/VEpS3Cz--
