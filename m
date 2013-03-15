@@ -1,60 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with Linus' tree
-Date: Fri, 15 Mar 2013 15:13:34 +1100
-Message-ID: <20130315151334.2b52f63ab7f6b1efb893bf3e@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: manual merge of the signal tree with the modules tree
+Date: Fri, 15 Mar 2013 15:11:53 +1030
+Message-ID: <87li9ptgtq.fsf@rustcorp.com.au>
+References: <20130314172737.2856af8a9b368bc395d977be@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__15_Mar_2013_15_13_34_+1100_9lGGW6Cg/VEpS3Cz"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54926 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751507Ab3COENo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Mar 2013 00:13:44 -0400
+Received: from ozlabs.org ([203.10.76.45]:41460 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751355Ab3COFEF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 15 Mar 2013 01:04:05 -0400
+In-Reply-To: <20130314172737.2856af8a9b368bc395d977be@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__15_Mar_2013_15_13_34_+1100_9lGGW6Cg/VEpS3Cz
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> Hi Al,
+>
+> Today's linux-next merge of the signal tree got a conflict in
+> include/asm-generic/unistd.h between commit 837718bfd28b
+> ("CONFIG_SYMBOL_PREFIX: cleanup") from the modules tree and commit
+> e1b5bb6d1236 ("consolidate cond_syscall and SYSCALL_ALIAS declarations")
+> from the signal tree.
+>
+> The latter moved the cond_syscall stuff to linkage.h, so I applied the
+> following patch as a merge fixup and can carry the fix as necessary (no
+> action is required).  I am not sure if this is completely correct or all
+> that is needed.
 
-Hi Greg,
+Your fix looks correct, thanks.
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/ccg/f_fs.c between commit 7f78e0351394 ("fs: Limit
-sys_mount to only request filesystem modules") from Linus' tree and
-commit 515e6dd20b3f ("Staging: ccg: delete it from the tree") from the
-staging tree.
+I've been forced to update that patch after another round of
+improvements, so you may need to re-do the merge.
 
-The latter deleted the file, so I did that and can carry the fix as
-necessary (no action is required).
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__15_Mar_2013_15_13_34_+1100_9lGGW6Cg/VEpS3Cz
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIbBAEBCAAGBQJRQp/uAAoJEECxmPOUX5FEL3IP92BNx1HMR7pHGpCNCBAlaqii
-6sDLCPGEUhhW/2U06XYiNQkFtCmpToCU/Ytzp85ht6P0wgEe2KhMHbyM15t4UJ02
-WJezcna5FLIE0w4+ft9Fzcu/6DlSJJkOUa8JX1ucZB1F4nESKm7YUajXsguei757
-wprAB63lE5iZsNJi23o25zSKTCPQYND7ofTneRPgdliaTnu/dbh+G9JOUr8JCtSk
-3EHgpgAWBGewlzdHQGAt9VkHWljgLLbqCvwOPmrgqCYvfr4BMZ9y98zwNtn0MDfd
-44WrO3YYuTto7Ohgf+z8QBCSaG7WQMsjvtptFMcqgIo6LtNzG2Aj0VkIHg9ecJ6o
-jMsWbmJrNGw0ON1sXUR6j8ORKSISyIUlHKtK9PCPjRIJPFIPJe8U50i+fnK6xpfy
-Kb4pakqL5exzM7x4VadIusn9eyZGMtZIYI/+bk+3tdyy9hjSDsg+RlAVbNyxS/hF
-5RpKPZ2PeephDDLVqUTPcvtD5h0G2X1Ohoi0Bn3DZ6Kz8evDv7E5v7E9KRduAdPR
-7L+3lsWp3CM1aHaeEK0JiemhKe7WU3ovpY+/SF2pKPMKynlZhW6Dt7y9pyho0OVr
-QciJoRVOZjy9TzromE9Eg5w5cHSwu2NrGKpXyNUKD28pB++KEiyWNsBmO7e6WST4
-lloK0L3A/T7SpAcX+ig=
-=Knpo
------END PGP SIGNATURE-----
-
---Signature=_Fri__15_Mar_2013_15_13_34_+1100_9lGGW6Cg/VEpS3Cz--
+Rusty.
