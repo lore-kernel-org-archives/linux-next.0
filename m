@@ -1,81 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ftrace tree with Linus' tree
-Date: Mon, 18 Mar 2013 13:00:14 +1100
-Message-ID: <20130318130014.bad6e49cd6d4a112050173de@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: manual merge of the signal tree with the modules tree
+Date: Mon, 18 Mar 2013 11:26:54 +1030
+Message-ID: <87vc8psey1.fsf@rustcorp.com.au>
+References: <20130314172737.2856af8a9b368bc395d977be@canb.auug.org.au> <87li9ptgtq.fsf@rustcorp.com.au> <CA+icZUUiGeUcbjphz6sY=1oA194a1MQN_FOpkm4=BVNXKmQmfA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__18_Mar_2013_13_00_14_+1100_4/ELQLVo_Qm+gsiu"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37058 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751010Ab3CRCA1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Mar 2013 22:00:27 -0400
+Received: from ozlabs.org ([203.10.76.45]:35689 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750913Ab3CRCpU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Mar 2013 22:45:20 -0400
+In-Reply-To: <CA+icZUUiGeUcbjphz6sY=1oA194a1MQN_FOpkm4=BVNXKmQmfA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sasha Levin <sasha.levin@oracle.com>, Andrew Morton <akpm@linux-foundation.org>
+To: sedat.dilek@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__18_Mar_2013_13_00_14_+1100_4/ELQLVo_Qm+gsiu
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sedat Dilek <sedat.dilek@gmail.com> writes:
+> On Fri, Mar 15, 2013 at 5:41 AM, Rusty Russell <rusty@rustcorp.com.au> wrote:
+>> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>>> Hi Al,
+>>>
+>>> Today's linux-next merge of the signal tree got a conflict in
+>>> include/asm-generic/unistd.h between commit 837718bfd28b
+>>> ("CONFIG_SYMBOL_PREFIX: cleanup") from the modules tree and commit
+>>> e1b5bb6d1236 ("consolidate cond_syscall and SYSCALL_ALIAS declarations")
+>>> from the signal tree.
+>>>
+>>> The latter moved the cond_syscall stuff to linkage.h, so I applied the
+>>> following patch as a merge fixup and can carry the fix as necessary (no
+>>> action is required).  I am not sure if this is completely correct or all
+>>> that is needed.
+>>
+>> Your fix looks correct, thanks.
+>>
+>> I've been forced to update that patch after another round of
+>> improvements, so you may need to re-do the merge.
+>>
+>
+> Hi,
+>
+> I just looked into modules-next...
+> The improved version is in [1]...
+> ...and contains a file called "kernel/modsign_certificate.S" which is
+> NOT in the latest Linux-Next tree [2].
+> So, I thought about reverting the one in -next and apply the new one
+> from modules-next.
+> This is not possible!
 
-Hi Steven,
+I'd wait until Stephen has done the new merge, which should happen
+within 12 hours from now.
 
-Today's linux-next merge of the ftrace tree got a conflict in
-kernel/trace/ftrace.c between commit b67bfe0d42ca ("hlist: drop the node
-parameter from iterators") from Linus' tree and commit e1df4cb682ab
-("ftrace: Fix function probe to only enable needed functions") from the
-ftrace tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc kernel/trace/ftrace.c
-index ab25b88,2577082..0000000
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@@ -3063,8 -3087,13 +3083,13 @@@ static voi
-  __unregister_ftrace_function_probe(char *glob, struct ftrace_probe_ops *o=
-ps,
-  				  void *data, int flags)
-  {
-+ 	struct ftrace_func_entry *rec_entry;
-  	struct ftrace_func_probe *entry;
-+ 	struct ftrace_func_probe *p;
-+ 	struct ftrace_hash **orig_hash =3D &trace_probe_ops.filter_hash;
-+ 	struct list_head free_list;
-+ 	struct ftrace_hash *hash;
- -	struct hlist_node *n, *tmp;
- +	struct hlist_node *tmp;
-  	char str[KSYM_SYMBOL_LEN];
-  	int type =3D MATCH_FULL;
-  	int i, len =3D 0;
-
---Signature=_Mon__18_Mar_2013_13_00_14_+1100_4/ELQLVo_Qm+gsiu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRRnUuAAoJEECxmPOUX5FExY8P/38xdNuLSPYYbBYSurkPaOrc
-Fgd8whb5TgYC5oSVqcrjqDWQ7OnWIu3bYVQnte/7Ur0aUL5J2CERNUpvNQtwVyuA
-wfURfopqj6xB08CCTP1eEqP0FX7qwOHG8XR/PyCmXbZMSB0zEp2AohbKTeckC/NY
-/WAuQxjQvEig8hZlKHRz96e38cBwAOghf2bX4JlC9vsgW2hsqNcJBmtc6w01DtlM
-aSyJrb0AJ5e88C55XZx4K3J2AIFkwhWAYPanHZxivnqVxw6EWQNetGJktvAN8icx
-EfiVfJ3d5B2NOe1tvau2vQZE8k2zsgdL5GUtMlhEIgaNz8QT027VAe50BCpOYZQL
-Ko9jw177ExNZoypsD23BdKZbEweUzaj3h5rsbN1uQ1DOMItn6gYm++4NwlloOGGR
-LUSrpfNKTntJqWGEkVK5bS0N6l3tZxSRBPR5NhSny9mg6taDCAEGbGBVrzLMMWO8
-O7zfuVNNkuGJblA206CRGlwX1VS+WJh+FyjMMaWbBmP8Emfg2hW4JSq6DLMT9Fit
-aimZMAYGNQhR4IepZJPapWOY52LhuZms+HW9Zwkl15U1WB1J9ziGC76RtkwWISiu
-3fKEqZT7YxYpTT+Ht9R03vQQUHKkbYI4wRwbTZ4L9tT0Hy+xn7rIv6G+feWmazD8
-wQi19guwuHpsMokVjcoQ
-=SZE9
------END PGP SIGNATURE-----
-
---Signature=_Mon__18_Mar_2013_13_00_14_+1100_4/ELQLVo_Qm+gsiu--
+Thanks,
+Rusty.
