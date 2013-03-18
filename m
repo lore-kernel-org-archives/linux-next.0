@@ -1,55 +1,78 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: manual merge of the signal tree with the modules tree
-Date: Mon, 18 Mar 2013 11:26:54 +1030
-Message-ID: <87vc8psey1.fsf@rustcorp.com.au>
-References: <20130314172737.2856af8a9b368bc395d977be@canb.auug.org.au> <87li9ptgtq.fsf@rustcorp.com.au> <CA+icZUUiGeUcbjphz6sY=1oA194a1MQN_FOpkm4=BVNXKmQmfA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the char-misc tree
+Date: Mon, 18 Mar 2013 13:56:14 +1100
+Message-ID: <20130318135614.ff04cf3d56fc64e2988a912c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__18_Mar_2013_13_56_14_+1100_u2n8XocuFnu=DGOw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:35689 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750913Ab3CRCpU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Mar 2013 22:45:20 -0400
-In-Reply-To: <CA+icZUUiGeUcbjphz6sY=1oA194a1MQN_FOpkm4=BVNXKmQmfA@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43873 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750930Ab3CRC41 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Mar 2013 22:56:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kurt Van Dijck <kurt.van.dijck@eia.be>
 
-Sedat Dilek <sedat.dilek@gmail.com> writes:
-> On Fri, Mar 15, 2013 at 5:41 AM, Rusty Russell <rusty@rustcorp.com.au> wrote:
->> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->>> Hi Al,
->>>
->>> Today's linux-next merge of the signal tree got a conflict in
->>> include/asm-generic/unistd.h between commit 837718bfd28b
->>> ("CONFIG_SYMBOL_PREFIX: cleanup") from the modules tree and commit
->>> e1b5bb6d1236 ("consolidate cond_syscall and SYSCALL_ALIAS declarations")
->>> from the signal tree.
->>>
->>> The latter moved the cond_syscall stuff to linkage.h, so I applied the
->>> following patch as a merge fixup and can carry the fix as necessary (no
->>> action is required).  I am not sure if this is completely correct or all
->>> that is needed.
->>
->> Your fix looks correct, thanks.
->>
->> I've been forced to update that patch after another round of
->> improvements, so you may need to re-do the merge.
->>
->
-> Hi,
->
-> I just looked into modules-next...
-> The improved version is in [1]...
-> ...and contains a file called "kernel/modsign_certificate.S" which is
-> NOT in the latest Linux-Next tree [2].
-> So, I thought about reverting the one in -next and apply the new one
-> from modules-next.
-> This is not possible!
+--Signature=_Mon__18_Mar_2013_13_56_14_+1100_u2n8XocuFnu=DGOw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'd wait until Stephen has done the new merge, which should happen
-within 12 hours from now.
+Hi all,
 
-Thanks,
-Rusty.
+After merging the char-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/net/can/softing/softing_cs.c:343:1: error: expected identifier or '=
+(' before '&' token
+drivers/net/can/softing/softing_cs.c: In function '__inittest':
+drivers/net/can/softing/softing_cs.c:343:1: error: 'softingcs_driver_init' =
+undeclared (first use in this function)
+drivers/net/can/softing/softing_cs.c:343:1: note: each undeclared identifie=
+r is reported only once for each function it appears in
+drivers/net/can/softing/softing_cs.c: At top level:
+drivers/net/can/softing/softing_cs.c:343:1: error: expected identifier or '=
+(' before '&' token
+drivers/net/can/softing/softing_cs.c: In function '__exittest':
+drivers/net/can/softing/softing_cs.c:343:1: error: 'softingcs_driver_exit' =
+undeclared (first use in this function)
+drivers/net/can/softing/softing_cs.c: At top level:
+drivers/net/can/softing/softing_cs.c:335:29: warning: 'softingcs_driver' de=
+fined but not used [-Wunused-variable]
+drivers/net/can/softing/softing_cs.c:343:1: error: 'init_module' aliased to=
+ undefined symbol '&softingcs_driver_init'
+drivers/net/can/softing/softing_cs.c:343:1: error: 'cleanup_module' aliased=
+ to undefined symbol '&softingcs_driver_exit'
+
+Caused by commit a750fa4edd9e ("softingcs: use module_pcmcia_driver").
+
+I have used the char-misc tree form next-20130315 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__18_Mar_2013_13_56_14_+1100_u2n8XocuFnu=DGOw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRRoJOAAoJEECxmPOUX5FEK80P/RIZZNpGNfnb5m3f8OFzHf7F
+4JAD/eq6a7kVwrtfRdq6LXOc0NIcIMRnPHCpMFhkgpJxU7z4dyfXuKo+dLGWRsSl
+3GporKQJXDqRFUOjrTiTXAWlKuluQgwWjx6/OwjSS1y9djYVFrTC20LcdL+oBOVK
+bu46b4X6WYmE0BO9idfeXO+cSEPEjeFQxYppHGFnCgNbuNtfqBwH8mQB6ud3rVql
+mmssBipmVFEV4dG7l2ulHGz88EYHX3RrydybmsOip6PJBKf3hgAUdNFYYUJHLf2F
+IAVf7Qx/WPfXhkBGFThHn97j8Y6RITw46dQ9I7Yn2jADBGmOSybMmsU7uEu2drmz
+n/BrqXODzehgbIIhLg8yUN5wHZ/Hi9qCdc2gJpOLFT6jYIVZWst5FeYdPZmA6w17
+cmLLj8DR0KMDZtq/An40/jI7qmtBbrBr1MnQRW+Zqy8K6d99QeTXU8V8mjazt1/B
+c/4xaDbC1K2cKRqvNzJ6LkpwaDYy16fe5Is51GBkRWOVjvsSkdv5I8YvY7p3B4yJ
+jQq3wyXeQqjCqk4i3cYkY/vId1LpOA5oNRhtf6Y20wgZBKHlsjdMTHB0xD85rW9c
+1pnT8tCE58KQgNZ+RQ1dat+0LApuHJpgNWML8l22tSN+EDLy8dkXR7djGbuQSJtn
+szcdwKkis06zPnmH2CWX
+=AKAw
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Mar_2013_13_56_14_+1100_u2n8XocuFnu=DGOw--
