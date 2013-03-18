@@ -1,32 +1,36 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: linux-next: manual merge of the bcm2835 tree with the arm-soc
- tree
-Date: Mon, 18 Mar 2013 09:19:29 -0600
-Message-ID: <51473081.2040607@wwwdotorg.org>
-References: <20130318150415.7a9db62e8cfe03623a411ae9@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tegra tree with the arm-soc tree
+Date: Mon, 18 Mar 2013 09:23:37 -0600
+Message-ID: <51473179.2030306@wwwdotorg.org>
+References: <20130318153140.100bdf364d5614ce31f12eae@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:47764 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:52650 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752398Ab3CRPTc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Mar 2013 11:19:32 -0400
-In-Reply-To: <20130318150415.7a9db62e8cfe03623a411ae9@canb.auug.org.au>
+	with ESMTP id S1751431Ab3CRPXk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Mar 2013 11:23:40 -0400
+In-Reply-To: <20130318153140.100bdf364d5614ce31f12eae@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 03/17/2013 10:04 PM, Stephen Rothwell wrote:
-> Hi Stephen,
+On 03/17/2013 10:31 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Today's linux-next merge of the bcm2835 tree got a conflict in 
-> arch/arm/Kconfig between commit 15bc1fe67f66 ("ARM: cns3xxx:
-> enable multiplatform support") from the arm-soc tree and commit
-> f1ac922dec7e ("ARM: bcm2835: convert to multi-platform") from the
-> bcm2835 tree.
+> Today's linux-next merge of the tegra tree got a conflict in 
+> drivers/clocksource/tegra20_timer.c between commit 1d16cfb3aeba 
+> ("clocksource: tegra20: use the device_node pointer passed to
+> init") from the arm-soc tree and commit 6f88fb8af6c6 ("clocksource:
+> tegra: move to of_clk_get") from the tegra tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no
+> action is required).
 
-Thanks. The resolution for the two bcm2835/arm-soc conflicts looks
-fine. These conflicts should go away once I send bcm2835 pull requests
-to arm-soc for inclusion in 3.10.
+Thanks. This resolution looks fine.
+
+Arnd/Olof, do you want me to rebase the Tegra branch onto some arm-soc
+branch to resolve this conflict, or are you happy to simply resolve it
+as below when pulling the Tegra branches into arm-soc for 3.10?
