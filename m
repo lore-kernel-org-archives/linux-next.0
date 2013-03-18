@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the bcm2835 tree with the arm-soc tree
-Date: Mon, 18 Mar 2013 15:04:15 +1100
-Message-ID: <20130318150415.7a9db62e8cfe03623a411ae9@canb.auug.org.au>
+Date: Mon, 18 Mar 2013 15:06:28 +1100
+Message-ID: <20130318150628.82d6a8a23fcb36d881764399@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__18_Mar_2013_15_04_15_+1100_he8JCDkuvR+tr5hW"
+ boundary="Signature=_Mon__18_Mar_2013_15_06_28_+1100_Fx8VjLxDnWLJjB0z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43297 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:54205 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750768Ab3CREEX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Mar 2013 00:04:23 -0400
+	with ESMTP id S1750703Ab3CREGa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Mar 2013 00:06:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Warren <swarren@wwwdotorg.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
---Signature=_Mon__18_Mar_2013_15_04_15_+1100_he8JCDkuvR+tr5hW
+--Signature=_Mon__18_Mar_2013_15_06_28_+1100_Fx8VjLxDnWLJjB0z
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,9 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi Stephen,
 
 Today's linux-next merge of the bcm2835 tree got a conflict in
-arch/arm/Kconfig between commit 15bc1fe67f66 ("ARM: cns3xxx: enable
-multiplatform support") from the arm-soc tree and commit f1ac922dec7e
-("ARM: bcm2835: convert to multi-platform") from the bcm2835 tree.
+arch/arm/Kconfig.debug between commit 29c9b7be7574 ("ARM: cns3xxx: move
+debug_ll code to include/debug/") from the arm-soc tree and commit
+f1ac922dec7e ("ARM: bcm2835: convert to multi-platform") from the bcm2835
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,68 +36,39 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/Kconfig
-index c63daef,0d3daa6..0000000
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@@ -362,26 -362,17 +362,6 @@@ config ARCH_AT9
-  	  This enables support for systems based on Atmel
-  	  AT91RM9200 and AT91SAM9* processors.
+diff --cc arch/arm/Kconfig.debug
+index bce30a8,a877d51..0000000
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@@ -593,7 -583,7 +597,8 @@@ endchoic
  =20
-- config ARCH_BCM2835
-- 	bool "Broadcom BCM2835 family"
-- 	select ARCH_REQUIRE_GPIOLIB
-- 	select ARM_AMBA
-- 	select ARM_ERRATA_411920
-- 	select ARM_TIMER_SP804
-- 	select CLKDEV_LOOKUP
-- 	select CLKSRC_OF
-- 	select COMMON_CLK
-- 	select CPU_V6
-- 	select GENERIC_CLOCKEVENTS
-- 	select MULTI_IRQ_HANDLER
-- 	select PINCTRL
-- 	select PINCTRL_BCM2835
-- 	select SPARSE_IRQ
-- 	select USE_OF
-- 	help
-- 	  This enables support for the Broadcom BCM2835 SoC. This SoC is
-- 	  use in the Raspberry Pi, and Roku 2 devices.
--=20
- -config ARCH_CNS3XXX
- -	bool "Cavium Networks CNS3XXX family"
- -	select ARM_GIC
- -	select CPU_V6K
- -	select GENERIC_CLOCKEVENTS
- -	select MIGHT_HAVE_CACHE_L2X0
- -	select MIGHT_HAVE_PCI
- -	select PCI_DOMAINS if PCI
- -	help
- -	  Support for Cavium Networks CNS3XXX platform.
- -
-  config ARCH_CLPS711X
-  	bool "Cirrus Logic CLPS711x/EP721x/EP731x-based"
-  	select ARCH_REQUIRE_GPIOLIB
+  config DEBUG_LL_INCLUDE
+  	string
++ 	default "debug/bcm2835.S" if DEBUG_BCM2835
+ +	default "debug/cns3xxx.S" if DEBUG_CNS3XXX
+  	default "debug/icedcc.S" if DEBUG_ICEDCC
+  	default "debug/imx.S" if DEBUG_IMX1_UART || \
+  				 DEBUG_IMX25_UART || \
 
---Signature=_Mon__18_Mar_2013_15_04_15_+1100_he8JCDkuvR+tr5hW
+--Signature=_Mon__18_Mar_2013_15_06_28_+1100_Fx8VjLxDnWLJjB0z
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRRpI/AAoJEECxmPOUX5FEe3MP/3hkv5sCAbZS/SBmys078VPD
-2Vz/I10qSRCzJnC4VHK6ksTXiN8azXHP6ZT9nKYwd8YBEGBJZhOltL7bu8cp5dRv
-DpvLaaEy0qmSQM4kYGU+hHdjzI40pNLN4NT8udvfhHxYP7LthiMdkpduucdSaBe1
-2VJqJxeLGKl1JrMpekSNNpcc69XGNiVBclfIkqjIo39kgmpQ35fgM2dfcca3h5vz
-Y/ajnadBMTVTYc/Uiw6pVyjaRkstSF1Q/sC04A+lSflNCk7ZzBwrs3n2tqgVsc3i
-/T6oHk83BlhPS01e8ZnHlGzt3ylcN33zPOaYkZ02Dcxv86F4yFwQiZpK6Nmcb7XU
-/koLJVDNy+RH8PTZGdlEeJM7PzgiCABgxMvKDQUdKQMCygmZ+Ara0T6z+lb+5JZB
-XdARnnetzXe+kjXV3N8yOp9rrSG2xftO6MsVE397C9v0+z+F0bKX0DHsDZCIxW3Z
-CBVzZR9FcXYV2TrWl+SdpQCuBJ43rizsilmCcIXxqydNquq4PsxQQMk6M3HfA3Ds
-L/xntIW3Y8EUFZm863N3rC9JfqV0jo7tSXpyFnsO9hQdkTWu1Q/g81M3V5SccVIt
-YcpDQBsT9+aokg0pqurqOCycllGKGWroMQDwSRacfXSdHqEsks6qf9YcBQzXrCPs
-V3V6fFNC05aCty8OSdw4
-=qoyx
+iQIcBAEBCAAGBQJRRpLEAAoJEECxmPOUX5FEjQ8P/RFHy3chUAmc2jy5mkqEbc/m
+9iP0kwBu26UBFR5dulkpDkuTza9Fum8dJ+mpTnq16RJIE6SAgjKhqm/tpr18gE8l
+oly/hxpUjc6m0rmgPnlY1M3z/8UNYfbCowow0LdkUR9nJepbwDXO1kFDz7SnfFkm
+gyAe8vxtSLsZWJBtzLW8J31JyFbgpsWWGn+KBm0Bd7pD4IDI30OjDlVqZ92xBIOg
+hVmxJDK0P8bEArWf9fJDYZNPL1FLGvz7NPKLlqvb2xAH2NHa6Z7Te6Moa/2mma52
+2xbMIAzX6So+J1CtLjSQOI5/3ElkuXpTpoUY0cogCEeHCSFAolbC0Dg525K/OBG7
+TIOo2SyGn32De3ATk+OgPLFUFgun0PISlsMSwA/mUYhb4NPqhIpvwrjawd434Llh
+mXUCAV8guUhUL33RzrfwZ4ncfzq87HenMBA9+Olfjml53aSI0M4c31WyYHQOGkNY
+YUDDGzSWc1GhQ8gOv44tS+s8tmFSnBVFrysjtw7cNEjwEBLxp2CUB1fZsoPNfoLI
+RxA3dfbkHl85SBECUbf+sRd7PYMqKzm8In6vgK5FhFktfA6b9EIjZ9sO3cwQXm9+
+9D+9kUvoWOzNM4lYxU63FaccfH2SZ9Tb7wxPKYXsm3pM4QAd86jDIaONJbWbNFfC
+31fTjbfeVNY1H8FRzb54
+=e5Lq
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__18_Mar_2013_15_04_15_+1100_he8JCDkuvR+tr5hW--
+--Signature=_Mon__18_Mar_2013_15_06_28_+1100_Fx8VjLxDnWLJjB0z--
