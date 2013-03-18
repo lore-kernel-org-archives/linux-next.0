@@ -1,35 +1,32 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: manual merge of the ftrace tree with Linus' tree
-Date: Mon, 18 Mar 2013 09:26:27 -0400
-Message-ID: <1363613187.25967.140.camel@gandalf.local.home>
-References: <20130318130014.bad6e49cd6d4a112050173de@canb.auug.org.au>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: linux-next: manual merge of the bcm2835 tree with the arm-soc
+ tree
+Date: Mon, 18 Mar 2013 09:19:29 -0600
+Message-ID: <51473081.2040607@wwwdotorg.org>
+References: <20130318150415.7a9db62e8cfe03623a411ae9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:27272 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752220Ab3CRN02 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Mar 2013 09:26:28 -0400
-In-Reply-To: <20130318130014.bad6e49cd6d4a112050173de@canb.auug.org.au>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:47764 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752398Ab3CRPTc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Mar 2013 11:19:32 -0400
+In-Reply-To: <20130318150415.7a9db62e8cfe03623a411ae9@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sasha Levin <sasha.levin@oracle.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
-On Mon, 2013-03-18 at 13:00 +1100, Stephen Rothwell wrote:
-> Hi Steven,
+On 03/17/2013 10:04 PM, Stephen Rothwell wrote:
+> Hi Stephen,
 > 
-> Today's linux-next merge of the ftrace tree got a conflict in
-> kernel/trace/ftrace.c between commit b67bfe0d42ca ("hlist: drop the node
-> parameter from iterators") from Linus' tree and commit e1df4cb682ab
-> ("ftrace: Fix function probe to only enable needed functions") from the
-> ftrace tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
+> Today's linux-next merge of the bcm2835 tree got a conflict in 
+> arch/arm/Kconfig between commit 15bc1fe67f66 ("ARM: cns3xxx:
+> enable multiplatform support") from the arm-soc tree and commit
+> f1ac922dec7e ("ARM: bcm2835: convert to multi-platform") from the
+> bcm2835 tree.
 
-Looks fine, thanks.
-
--- Steve
+Thanks. The resolution for the two bcm2835/arm-soc conflicts looks
+fine. These conflicts should go away once I send bcm2835 pull requests
+to arm-soc for inclusion in 3.10.
