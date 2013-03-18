@@ -1,78 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the char-misc tree
-Date: Mon, 18 Mar 2013 13:56:14 +1100
-Message-ID: <20130318135614.ff04cf3d56fc64e2988a912c@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
+Date: Mon, 18 Mar 2013 14:49:48 +1100
+Message-ID: <20130318144948.1d2c83fb633404d206f3ea0a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__18_Mar_2013_13_56_14_+1100_u2n8XocuFnu=DGOw"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43873 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750930Ab3CRC41 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Mar 2013 22:56:27 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kurt Van Dijck <kurt.van.dijck@eia.be>
+ boundary="Signature=_Mon__18_Mar_2013_14_49_48_+1100_jaqnDBA_v_UQf4EC"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__18_Mar_2013_13_56_14_+1100_u2n8XocuFnu=DGOw
+--Signature=_Mon__18_Mar_2013_14_49_48_+1100_jaqnDBA_v_UQf4EC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the char-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/boot/dts/snowball.dts between commit d52701d39e37 ("mfd: ab8500:
+Kill "reg" property from binding") from Linus' tree and commit
+924e82dacab9 ("ARM: ux500: allow Snowball access to the AB8500 GPIO
+pins") from the arm-soc tree.
 
-drivers/net/can/softing/softing_cs.c:343:1: error: expected identifier or '=
-(' before '&' token
-drivers/net/can/softing/softing_cs.c: In function '__inittest':
-drivers/net/can/softing/softing_cs.c:343:1: error: 'softingcs_driver_init' =
-undeclared (first use in this function)
-drivers/net/can/softing/softing_cs.c:343:1: note: each undeclared identifie=
-r is reported only once for each function it appears in
-drivers/net/can/softing/softing_cs.c: At top level:
-drivers/net/can/softing/softing_cs.c:343:1: error: expected identifier or '=
-(' before '&' token
-drivers/net/can/softing/softing_cs.c: In function '__exittest':
-drivers/net/can/softing/softing_cs.c:343:1: error: 'softingcs_driver_exit' =
-undeclared (first use in this function)
-drivers/net/can/softing/softing_cs.c: At top level:
-drivers/net/can/softing/softing_cs.c:335:29: warning: 'softingcs_driver' de=
-fined but not used [-Wunused-variable]
-drivers/net/can/softing/softing_cs.c:343:1: error: 'init_module' aliased to=
- undefined symbol '&softingcs_driver_init'
-drivers/net/can/softing/softing_cs.c:343:1: error: 'cleanup_module' aliased=
- to undefined symbol '&softingcs_driver_exit'
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit a750fa4edd9e ("softingcs: use module_pcmcia_driver").
-
-I have used the char-misc tree form next-20130315 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__18_Mar_2013_13_56_14_+1100_u2n8XocuFnu=DGOw
+diff --cc arch/arm/boot/dts/snowball.dts
+index d3ec32f,b095e85..0000000
+--- a/arch/arm/boot/dts/snowball.dts
++++ b/arch/arm/boot/dts/snowball.dts
+@@@ -298,7 -298,11 +298,11 @@@
+  				};
+  			};
+ =20
+ -			ab8500@5 {
+ +			ab8500 {
++ 				ab8500-gpio {
++ 					compatible =3D "stericsson,ab8500-gpio";
++ 				};
++=20
+  				ab8500-regulators {
+  					ab8500_ldo_aux1_reg: ab8500_ldo_aux1 {
+  						regulator-name =3D "V-DISPLAY";
+
+--Signature=_Mon__18_Mar_2013_14_49_48_+1100_jaqnDBA_v_UQf4EC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRRoJOAAoJEECxmPOUX5FEK80P/RIZZNpGNfnb5m3f8OFzHf7F
-4JAD/eq6a7kVwrtfRdq6LXOc0NIcIMRnPHCpMFhkgpJxU7z4dyfXuKo+dLGWRsSl
-3GporKQJXDqRFUOjrTiTXAWlKuluQgwWjx6/OwjSS1y9djYVFrTC20LcdL+oBOVK
-bu46b4X6WYmE0BO9idfeXO+cSEPEjeFQxYppHGFnCgNbuNtfqBwH8mQB6ud3rVql
-mmssBipmVFEV4dG7l2ulHGz88EYHX3RrydybmsOip6PJBKf3hgAUdNFYYUJHLf2F
-IAVf7Qx/WPfXhkBGFThHn97j8Y6RITw46dQ9I7Yn2jADBGmOSybMmsU7uEu2drmz
-n/BrqXODzehgbIIhLg8yUN5wHZ/Hi9qCdc2gJpOLFT6jYIVZWst5FeYdPZmA6w17
-cmLLj8DR0KMDZtq/An40/jI7qmtBbrBr1MnQRW+Zqy8K6d99QeTXU8V8mjazt1/B
-c/4xaDbC1K2cKRqvNzJ6LkpwaDYy16fe5Is51GBkRWOVjvsSkdv5I8YvY7p3B4yJ
-jQq3wyXeQqjCqk4i3cYkY/vId1LpOA5oNRhtf6Y20wgZBKHlsjdMTHB0xD85rW9c
-1pnT8tCE58KQgNZ+RQ1dat+0LApuHJpgNWML8l22tSN+EDLy8dkXR7djGbuQSJtn
-szcdwKkis06zPnmH2CWX
-=AKAw
+iQIcBAEBCAAGBQJRRo7cAAoJEECxmPOUX5FExucP/A5qhoQikNByyIKczBzCkcWy
+4SXU4NSQO5+H12iJ7ggxM0aRMNlLBtmXoCRkejMncJAaumPxGcDK/TQnTCMNgfc3
+U1CT190Xnuwr86CnoYVSbJIkl9aqdeodTXuoIvjWm2aSbc5BGqmNoA8la/vbEG2O
+cqi+zHISOhV05E4OIcGIr17XfR9P6UuHK6LGRIDYcb2CTjci/uiK+JgtPRxeFynD
+WdStr5VFj/kci22zBXgWzHZctvzqCFHz2gDS+Bj6VU+DkAdUqJ+MaMwLEeYSJxdI
+J07za0akkdgJiVP4SgmDBMhJNXfsv/Fyh4YK2pj2OuISUqCPHKcmo1kCOs3T1q9Q
+NVwxbEh5Qu9eo7DXKoVas7IgtvFc2Lb8aPxKSmSpWGuiZNx7ENY6Hzo+LszjBJms
+1GWqUvafa9647nAuc1qgQwEmKlNYHHPGwMnqGURBB5/lYheJLGhEEW7twoayMZKe
+HH8KzSmUR4zo1KMPIwZlhKuKFhZNDs1jrWOX436CFebv7hn4/qLYNESfdlU6yEyN
+v9yZJyR2QI57GDB3GPJ2+t9A7vMj3qU4qBXhSl6+/3gUsq6e3IBkSRWW5KAZhJe3
+O24E4K4jUFXnnIJn+vJWPARsEZS9dpO2Yqcly0dDk9lFCsia02EDGF8asiDXUxnu
+wsr2JyPOdNMop8UxIbqB
+=fKfH
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__18_Mar_2013_13_56_14_+1100_u2n8XocuFnu=DGOw--
+--Signature=_Mon__18_Mar_2013_14_49_48_+1100_jaqnDBA_v_UQf4EC--
