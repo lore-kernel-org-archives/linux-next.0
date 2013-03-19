@@ -1,28 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] sparc32/sparc64: Provide cmpxchg64()
-Date: Tue, 19 Mar 2013 16:20:00 -0400 (EDT)
-Message-ID: <20130319.162000.1936616024625986095.davem@davemloft.net>
-References: <1363290128-21247-1-git-send-email-geert@linux-m68k.org>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH wq/for-3.10] workqueue: define workqueue_freezing static
+ variable iff CONFIG_FREEZER
+Date: Tue, 19 Mar 2013 14:01:51 -0700
+Message-ID: <20130319210151.GM3042@htj.dyndns.org>
+References: <20130319145804.7af0b995413adb35d16992ef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
-Return-path: <sparclinux-owner@vger.kernel.org>
-In-Reply-To: <1363290128-21247-1-git-send-email-geert@linux-m68k.org>
-Sender: sparclinux-owner@vger.kernel.org
-To: geert@linux-m68k.org
-Cc: sparclinux@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-da0-f45.google.com ([209.85.210.45]:49358 "EHLO
+	mail-da0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933041Ab3CSVB4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Mar 2013 17:01:56 -0400
+Content-Disposition: inline
+In-Reply-To: <20130319145804.7af0b995413adb35d16992ef@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>
 
-RnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCkRhdGU6IFRo
-dSwgMTQgTWFyIDIwMTMgMjA6NDI6MDggKzAxMDANCg0KPiBzcGFyYy9zcGFyYzY0IGFsbG1vZGNv
-bmZpZzoNCj4gDQo+IGRyaXZlcnMvYmxvY2svYmxvY2tjb25zb2xlLmM6IEluIGZ1bmN0aW9uIKFi
-Y29uX2FkdmFuY2VfY29uc29sZV9ieXRlc6I6DQo+IGRyaXZlcnMvYmxvY2svYmxvY2tjb25zb2xl
-LmM6MTY0OiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24NCj4goWNtcHhj
-aGc2NKINCj4gDQo+IE1hcCBjbXB4Y2hnNjQgdG8gY21weGNoZzY0X2xvY2FsIHRvIGZpeCB0aGlz
-Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1t
-NjhrLm9yZz4NCg0KQnV0LCBpbiB0aGUgc3BhcmMgMzItYml0IGNhc2UsIHRoZSBfbG9jYWwoKSB2
-YXJpYW50cyBhcmUgb25seSBhdG9taWMNCmZyb20gdGhlIHBlcnNwZWN0aXZlIG9mIHRoZSBjdXJy
-ZW50IGNwdSwgdGhleSBhcmUgbm90IGdsb2JhbGx5IGF0b21pYy4NCg0KVGhpcyBpcyB0cnVlIGJl
-Y2F1c2UgdGhlIHNwYXJjIDMyLWJpdCBjYXNlcyB1c2UgdGhlDQphc20tZ2VuZXJpYy9jbXB4Y2hn
-LWxvY2FsLmggaGVscGVycy4NCg0KSSByZWFsbHkgY2FuJ3QgYXBwbHkgdGhpcywgaXQgaXNuJ3Qg
-Y29ycmVjdCwgc29ycnkuDQo=
+>From a0265a7f5161b6cb55e82b71edb236bbe0d9b3ae Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Tue, 19 Mar 2013 13:55:42 -0700
+
+699ce097efe ("workqueue: implement and use pwq_adjust_max_active()")
+replaced the only workqueue_freezing usage outside freezer callbacks
+with a POOL_FREEZING test.  This makes workqueue_freezing unused when
+!CONFIG_FREEZER leading to a compiler warning.  Define
+workqueue_freezing iff CONFIG_FREEZER.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+ kernel/workqueue.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index e38d035..775c2f4 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -261,7 +261,9 @@ static DEFINE_SPINLOCK(pwq_lock);	/* protects pool_workqueues */
+ static DEFINE_SPINLOCK(wq_mayday_lock);	/* protects wq->maydays list */
+ 
+ static LIST_HEAD(workqueues);		/* WQ: list of all workqueues */
++#ifdef CONFIG_FREEZER
+ static bool workqueue_freezing;		/* WQ: have wqs started freezing? */
++#endif
+ 
+ /* the per-cpu worker pools */
+ static DEFINE_PER_CPU_SHARED_ALIGNED(struct worker_pool [NR_STD_WORKER_POOLS],
+-- 
+1.8.1.4
