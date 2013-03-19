@@ -1,60 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for Mar 19
-Date: Tue, 19 Mar 2013 16:47:48 +1100
-Message-ID: <20130319164748.8ee90374db5d5db4c2838105@canb.auug.org.au>
+Date: Tue, 19 Mar 2013 16:54:02 +1100
+Message-ID: <20130319165402.d48c807899797f963f106a01@canb.auug.org.au>
 References: <CA+icZUXufeB=Vvfbd1tv4k8w82-wwJVb1RxyV8nvKa4+mvWERg@mail.gmail.com>
+	<20130319164748.8ee90374db5d5db4c2838105@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__19_Mar_2013_16_47_48_+1100_rg.AruClOxXGefAW"
+ boundary="Signature=_Tue__19_Mar_2013_16_54_02_+1100_FdmgZWZetMCHbvc5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34456 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48612 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933051Ab3CSFsA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Mar 2013 01:48:00 -0400
-In-Reply-To: <CA+icZUXufeB=Vvfbd1tv4k8w82-wwJVb1RxyV8nvKa4+mvWERg@mail.gmail.com>
+	with ESMTP id S932136Ab3CSFyE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Mar 2013 01:54:04 -0400
+In-Reply-To: <20130319164748.8ee90374db5d5db4c2838105@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: sedat.dilek@gmail.com
 Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
---Signature=_Tue__19_Mar_2013_16_47_48_+1100_rg.AruClOxXGefAW
+--Signature=_Tue__19_Mar_2013_16_54_02_+1100_FdmgZWZetMCHbvc5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Tue, 19 Mar 2013 06:42:27 +0100 Sedat Dilek <sedat.dilek@gmail.com> wrot=
-e:
+On Tue, 19 Mar 2013 16:47:48 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> did forget to sent your email [1] to linux-next ML?
+> On Tue, 19 Mar 2013 06:42:27 +0100 Sedat Dilek <sedat.dilek@gmail.com> wr=
+ote:
+> >
+> > did forget to sent your email [1] to linux-next ML?
+>=20
+> No, and I even checked my mail server's logs and it was accepted by vger.
 
-No, and I even checked my mail server's logs and it was accepted by vger.
-
+Also, I received a copy via the list within about 12 seconds of posting
+it.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__19_Mar_2013_16_47_48_+1100_rg.AruClOxXGefAW
+--Signature=_Tue__19_Mar_2013_16_54_02_+1100_FdmgZWZetMCHbvc5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRR/wEAAoJEECxmPOUX5FEoMkP/jT98dihtwNQ/oNw3mfT9HSw
-xzNWoYXj76kH3aptFaggG9jk0IT6zMLKAVvqJN3D8AskI4vEYKaR75chdwrqisc5
-D8iwYjAm/uVBcMKTH+N3NXpqL1qHPrXDHNDL63J8nVAfJt+gBQSAeCZuyUNxeL2k
-X7o+wVkaL0/LVJuyTcqQGYkNIUjSltdgKdcMfWURURcyhWcAy3KOwdspCtZnzRjx
-WPf+1AUOjClSWAWSNU09WuvRaZOFa/uFBaatv3S634wgp6BsOhopB//17snUkODg
-8mxvrKAP+NJA6h1qs3lIKZ2sPDCGWfHeYF9FwgWgECRvTS/hi4tOFBu671MjBmU+
-fRF1E35GzdqtTLh90DDqSolIV71vHyknnhU+mQrjdl7DsWkudt4dKU+MJxkT8YhM
-B0BKv7KaPbtxQ8YIKPVHJbWs4IT1n6eUd52okBzA9K+MndFhuw25ABU2YGCJ5++o
-z+hEvN8LEv1GSIqtPuTj0scMdUS17qd+6qYA7e/eyHlNxmAaGy+jb42xg6oEsxSw
-Qws+A73uT/dgULIc52wH6Rulv+VYjJirIWnOPGui3TreMOi0WQsmLOVvnXJfEXmY
-9eqcDqeZey3zvGvYWXaoZVQxkyRG+gbm96gNjJ1e4PyXo3Z7OiJU22JaQSiEZqye
-FTehX87hiB+DzMNbPRhz
-=c803
+iQIcBAEBCAAGBQJRR/16AAoJEECxmPOUX5FEyK4P/3OkZLV3gcJffkaRhmKwnTuC
+lENOweVLXZ69MXS0kDosHY0numZ32I+eDWvf1qGdrRn1kxXrb/6RRAR5oGbM+7k2
+d88mrDQ8lQY7bz20Q4G4QHiYuNTu/lX6bvRR1XXFKgOnTRDEwTRiDy/whDayOJXi
+jQ8R+mxnUfxLBCEURYvNdBDUz34tZ/f8bIDJH7asW2K64fMnoqxJOD4T/t6c6PIw
+iFoiJ2KuyxE0fs8TURS6XxRm4MjLhglWUuARy5ZRnpsdOwz3VhHWhP/dkeCGpiZl
+3H0A8mGe5U6IJ6UfaructjfMkk07cYSFf/g1LW5VbcoF+NdYDgCHgT6HYLFUjh8q
+nQ+ee7vbkiGD1Tk9ti2y0XdYx8pVmYTFSbSzntSOZRUQjvTBtDSpN/29BFwHWlIa
+fumek6g87bzF0cHsuP7BBRd5U4AioDjIPqZcHaPilkNnX19qBSssm2D4GMybSIMu
+P/0E5gEfurvyuv0tMazDs8tNn9apH7B1So2A8Nn/jveohQHbtKIirIwZn5QOy2LU
+eXXgZSffSolFJtI5IbzGQLkxXIOV4tmVD08uAgpFkaD24RbteLF5yCE5VFN040ry
+LHEnjiTCOA1hZ6yZ9wxXbTbOx54l5QoXsqrCLksKwX6kuopH9tT/5aWn/1m6D7HX
+sw8WJUNHu5khRK6wAOtI
+=u6TR
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__19_Mar_2013_16_47_48_+1100_rg.AruClOxXGefAW--
+--Signature=_Tue__19_Mar_2013_16_54_02_+1100_FdmgZWZetMCHbvc5--
