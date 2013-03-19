@@ -1,39 +1,28 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: USB-related build errors on Tegra in next-20130319
-Date: Tue, 19 Mar 2013 10:29:05 -0600
-Message-ID: <51489251.5040504@wwwdotorg.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -next] sparc32/sparc64: Provide cmpxchg64()
+Date: Tue, 19 Mar 2013 16:20:00 -0400 (EDT)
+Message-ID: <20130319.162000.1936616024625986095.davem@davemloft.net>
+References: <1363290128-21247-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: Text/Plain; charset=iso-8859-7
+Content-Transfer-Encoding: base64
+Return-path: <sparclinux-owner@vger.kernel.org>
+In-Reply-To: <1363290128-21247-1-git-send-email-geert@linux-m68k.org>
+Sender: sparclinux-owner@vger.kernel.org
+To: geert@linux-m68k.org
+Cc: sparclinux@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Felipe,
-
-I see the following Kconfig warnings in next-20130319:
-
-> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects USB_ULPI which has unmet direct dependencies (USB_SUPPORT && USB_PHY && ARM)
-> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects USB_ULPI_VIEWPORT which has unmet direct dependencies (USB_SUPPORT && USB_PHY && USB_ULPI)
-> include/config/auto.conf:624:warning: override: ARCH_MULTIPLATFORM changes choice state
-> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects USB_ULPI which has unmet direct dependencies (USB_SUPPORT && USB_PHY && ARM)
-> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects USB_ULPI_VIEWPORT which has unmet direct dependencies (USB_SUPPORT && USB_PHY && USB_ULPI)
-
-Which I believe are the cause of the following build errors:
-
-> drivers/built-in.o: In function `controller_resume':
-> drivers/usb/host/ehci-tegra.c:556: undefined reference to `tegra_usb_phy_preresume'
-> drivers/usb/host/ehci-tegra.c:479: undefined reference to `tegra_ehci_phy_restore_start'
-> drivers/usb/host/ehci-tegra.c:551: undefined reference to `tegra_ehci_phy_restore_end'
-> drivers/usb/host/ehci-tegra.c:546: undefined reference to `tegra_ehci_phy_restore_end'
-> drivers/built-in.o: In function `tegra_ehci_probe':
-> drivers/usb/host/ehci-tegra.c:734: undefined reference to `tegra_usb_phy_open'
-> drivers/built-in.o: In function `tegra_ehci_hub_control':
-> drivers/usb/host/ehci-tegra.c:162: undefined reference to `tegra_usb_phy_postresume'
-> drivers/usb/host/ehci-tegra.c:215: undefined reference to `tegra_usb_phy_preresume'
-> make: *** [vmlinux] Error 1
-
-I pointed out at least the Kconfig problems when you posted the PHY
-error handling cleanup series, so I'm not sure why those patches were
-applied.
+RnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCkRhdGU6IFRo
+dSwgMTQgTWFyIDIwMTMgMjA6NDI6MDggKzAxMDANCg0KPiBzcGFyYy9zcGFyYzY0IGFsbG1vZGNv
+bmZpZzoNCj4gDQo+IGRyaXZlcnMvYmxvY2svYmxvY2tjb25zb2xlLmM6IEluIGZ1bmN0aW9uIKFi
+Y29uX2FkdmFuY2VfY29uc29sZV9ieXRlc6I6DQo+IGRyaXZlcnMvYmxvY2svYmxvY2tjb25zb2xl
+LmM6MTY0OiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24NCj4goWNtcHhj
+aGc2NKINCj4gDQo+IE1hcCBjbXB4Y2hnNjQgdG8gY21weGNoZzY0X2xvY2FsIHRvIGZpeCB0aGlz
+Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1t
+NjhrLm9yZz4NCg0KQnV0LCBpbiB0aGUgc3BhcmMgMzItYml0IGNhc2UsIHRoZSBfbG9jYWwoKSB2
+YXJpYW50cyBhcmUgb25seSBhdG9taWMNCmZyb20gdGhlIHBlcnNwZWN0aXZlIG9mIHRoZSBjdXJy
+ZW50IGNwdSwgdGhleSBhcmUgbm90IGdsb2JhbGx5IGF0b21pYy4NCg0KVGhpcyBpcyB0cnVlIGJl
+Y2F1c2UgdGhlIHNwYXJjIDMyLWJpdCBjYXNlcyB1c2UgdGhlDQphc20tZ2VuZXJpYy9jbXB4Y2hn
+LWxvY2FsLmggaGVscGVycy4NCg0KSSByZWFsbHkgY2FuJ3QgYXBwbHkgdGhpcywgaXQgaXNuJ3Qg
+Y29ycmVjdCwgc29ycnkuDQo=
