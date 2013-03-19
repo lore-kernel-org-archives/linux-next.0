@@ -1,93 +1,69 @@
-From: Felipe Balbi <balbi@ti.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the akpm tree with the usb-gadget
  tree
-Date: Tue, 19 Mar 2013 08:33:34 +0200
-Message-ID: <20130319063334.GA16715@arwen.pp.htv.fi>
+Date: Tue, 19 Mar 2013 18:39:46 +1100
+Message-ID: <20130319183946.cbec2469b421909f8a5d7695@canb.auug.org.au>
 References: <20130319143922.f60895f782e5c8e9824c447b@canb.auug.org.au>
-Reply-To: <balbi@ti.com>
+	<20130319063334.GA16715@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__19_Mar_2013_18_39_46_+1100_V73cICh7hV34ms9="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:59553 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755034Ab3CSGdy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Mar 2013 02:33:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20130319143922.f60895f782e5c8e9824c447b@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46557 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755371Ab3CSHj5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Mar 2013 03:39:57 -0400
+In-Reply-To: <20130319063334.GA16715@arwen.pp.htv.fi>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xi Wang <xi.wang@gmail.com>, Felipe Balbi <balbi@ti.com>
+To: balbi@ti.com
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xi Wang <xi.wang@gmail.com>
 
---IS0zKkzwUGydFO0o
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Tue__19_Mar_2013_18_39_46_+1100_V73cICh7hV34ms9=
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Felipe,
 
-On Tue, Mar 19, 2013 at 02:39:22PM +1100, Stephen Rothwell wrote:
-> Hi Andrew,
+On Tue, 19 Mar 2013 08:33:34 +0200 Felipe Balbi <balbi@ti.com> wrote:
+>
+> On Tue, Mar 19, 2013 at 02:39:22PM +1100, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next merge of the akpm tree got a conflict in
+> > drivers/usb/gadget/amd5536udc.c between commit 6c39d90393a2 ("usb:
+> > gadget: amd5536udc: remove unnecessary initializations") from the  tree
 >=20
-> Today's linux-next merge of the akpm tree got a conflict in
-> drivers/usb/gadget/amd5536udc.c between commit 6c39d90393a2 ("usb:
-> gadget: amd5536udc: remove unnecessary initializations") from the  tree
+> Looks like there's a small bug in your scripts: "from the  tree" misses
+> "usb-gadget".
 
-Looks like there's a small bug in your scripts: "from the  tree" misses
-"usb-gadget".
-
-> and commit "drivers/usb/gadget/amd5536udc.c: avoid calling dma_pool_creat=
-e()
-> with NULL dev" from the akpm tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc drivers/usb/gadget/amd5536udc.c
-> index f52dcfe,142616a..0000000
-> --- a/drivers/usb/gadget/amd5536udc.c
-> +++ b/drivers/usb/gadget/amd5536udc.c
-> @@@ -3232,6 -3235,12 +3232,10 @@@ static int udc_pci_probe
->   	pci_set_master(pdev);
->   	pci_try_set_mwi(pdev);
->  =20
-> + 	dev->phys_addr =3D resource;
-> + 	dev->irq =3D pdev->irq;
-> + 	dev->pdev =3D pdev;
->  -	dev->gadget.dev.parent =3D &pdev->dev;
->  -	dev->gadget.dev.dma_mask =3D pdev->dev.dma_mask;
-> +=20
-
-fix looks alright, thank you
+Yeah, that's one of the bits I have to fill in manually and sometimes I
+forget - at least this time I got the Subject right.
 
 --=20
-balbi
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---IS0zKkzwUGydFO0o
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Signature=_Tue__19_Mar_2013_18_39_46_+1100_V73cICh7hV34ms9=
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRSAa+AAoJEIaOsuA1yqREzaMP/jtr0Wv0q2eZ2wzSPa5+bYti
-+SFKE8HlOIcTMESkL99hyHx6fyrFlZQwsExT8eu8Xbc6FVfMGvHdp84fFSAxoiOx
-Y0voFseQ6vZZOdKICczSpgsjJnloxeD4ToLQoAA/jBqDcdm4JYwFHkuenJZWCmn7
-nxKrAy528zo189uWKqjr/6LaiqWPvk4lNgYYpCM/ifgI0jUVpNMtgISR9xRiLOyy
-rMXG2WLALDaInZqrM7VqwnLczjJwyfqUoq/aRF+hGN3tuT7jIbh8KjI5A37X8e+O
-lbzf0HrD1/7IMh0TWTpz9uXTyx3ZLNB6lifoK72X3X8WvlDrOulVZswxfnRlCet8
-h4WRZ6ADckaZ7ViV3O265RDdEI12fWrvZOYP7t/ALQRIuwUobYymolGfx9xzJ3iR
-juBxKqcc2hxuatsAI+PBJsUxrWOJSqheCGihAzXaaw+Qdsf+qTp2oNbeX85ufxyc
-9TXC9ooOtf19FRjVmJ0Mugyz5BROKjfa+Rgi27oOiH+AEXNA4G2kFC9PWmF+vjdg
-m2vN8qZimFGPstGpgPiGmTqf+jsYVCF3FpBlYZgQe8ou/i0bxcNDn+KKhfO4n0E4
-rVyULejJEI++W0Qib8tRZKBDrQ6/y1Mjv5cC07zWiOskL0M8btoCKxrOH4Hg7/yo
-Q5DE+N/W6SfqZKMEKQVk
-=16mr
+iQIcBAEBCAAGBQJRSBZCAAoJEECxmPOUX5FEecMP/iaUJGccw2TMXg75JHNon8pa
+F5Aa+yYm0NYZ5fu7DxZu2Tm61QI6OkCBfTA0iVcBasW+c8ErRFi1zgNm8f8j7PTG
+BJ9zMtZSqpullAy3Zm0B13GVgEW05jn9VLNrGFx2A9KJciQxkb8hp6gstjjKOTLS
+ngUwBP4RJi4bfvPyvGXOfRUKcObru7MAdQiRQ8pQw5nBD/lFT+d/CU6UcbPIUh0i
+RyCyqzuOkpy8jNMXMEaUa2Nq+AL9wHKwZXClwsc1nSM/i9RwHgrsNHilehEndUeK
+obORceijVZZcagERQEtBdYwjPkGICdIDz0piZdMVUyDa8cXhvQ/nMP8qIG+jUkYs
+AZMPj+fUyjsHIyVePuJwslVQAyz1VYWvDSaqUVAOsGt6urovgR163ld2dNbhsBF/
+NJEi6eIbP9zQXghX7rcTSKS6fFDbfpNwZzk4DMITkKAMldTVWwL2e86yzDTnZXmP
+boLU50p/9D+/LddL70STUxhaEfOVkKiTH3I2Lh/H3VJ5WiG+XRKcgv9tnWD7A2iq
+sOX0ULEr4DMZwgmllN/B7YUp0/Dq1pWd/EpOMAdUCSSlbCJOdb2+Zug3u4dds/4d
+Bya8DNLdnV4TIBk5CXaVz5L8yIznYABAJ39A2xEe6lLr3xCEP0KTta7yuM6D+vpo
+kBwjMzSVk6TccpHQoVkw
+=GsGb
 -----END PGP SIGNATURE-----
 
---IS0zKkzwUGydFO0o--
+--Signature=_Tue__19_Mar_2013_18_39_46_+1100_V73cICh7hV34ms9=--
