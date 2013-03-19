@@ -1,78 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the usb-gadget tree
-Date: Tue, 19 Mar 2013 14:39:22 +1100
-Message-ID: <20130319143922.f60895f782e5c8e9824c447b@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the workqueues tree
+Date: Tue, 19 Mar 2013 14:58:04 +1100
+Message-ID: <20130319145804.7af0b995413adb35d16992ef@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__19_Mar_2013_14_39_22_+1100_m.geIte5gfJvMpEB"
+ boundary="Signature=_Tue__19_Mar_2013_14_58_04_+1100_eplpb9ulAv32tKEL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54410 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:38438 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750958Ab3CSDjb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Mar 2013 23:39:31 -0400
+	with ESMTP id S1751461Ab3CSD6N (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Mar 2013 23:58:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xi Wang <xi.wang@gmail.com>, Felipe Balbi <balbi@ti.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__19_Mar_2013_14_39_22_+1100_m.geIte5gfJvMpEB
+--Signature=_Tue__19_Mar_2013_14_58_04_+1100_eplpb9ulAv32tKEL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Tejun,
 
-Today's linux-next merge of the akpm tree got a conflict in
-drivers/usb/gadget/amd5536udc.c between commit 6c39d90393a2 ("usb:
-gadget: amd5536udc: remove unnecessary initializations") from the  tree
-and commit "drivers/usb/gadget/amd5536udc.c: avoid calling dma_pool_create()
-with NULL dev" from the akpm tree.
+After merging the workqueues tree, today's linux-next build (powerpc
+allnoconfig) produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+kernel/workqueue.c:260:13: warning: 'workqueue_freezing' defined but not us=
+ed [-Wunused-variable]
 
+Introduced by commit 699ce097efe8 ("workqueue: implement and use
+pwq_adjust_max_active()").  This build does not have CONFIG_FREEZER set.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/usb/gadget/amd5536udc.c
-index f52dcfe,142616a..0000000
---- a/drivers/usb/gadget/amd5536udc.c
-+++ b/drivers/usb/gadget/amd5536udc.c
-@@@ -3232,6 -3235,12 +3232,10 @@@ static int udc_pci_probe
-  	pci_set_master(pdev);
-  	pci_try_set_mwi(pdev);
- =20
-+ 	dev->phys_addr =3D resource;
-+ 	dev->irq =3D pdev->irq;
-+ 	dev->pdev =3D pdev;
- -	dev->gadget.dev.parent =3D &pdev->dev;
- -	dev->gadget.dev.dma_mask =3D pdev->dev.dma_mask;
-+=20
-  	/* init dma pools */
-  	if (use_dma) {
-  		retval =3D init_dma_pools(dev);
-
---Signature=_Tue__19_Mar_2013_14_39_22_+1100_m.geIte5gfJvMpEB
+--Signature=_Tue__19_Mar_2013_14_58_04_+1100_eplpb9ulAv32tKEL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRR93qAAoJEECxmPOUX5FEmYMQAKW/2p3gxB6qoYUR5TC276a1
-yvCc12vvXGCloezM/VRDgHjWGbzmaw/tCccq6BIxKAtTldyPo+Tux2wkKnPd6apX
-+DFauL0/uJdSezoq9R3VIJhg6EfS/2K67W5qHAlZ7HP1LQb+z56xgxy9SoXQ5T9e
-fZ/5l9zEdgwGpDD62go5lD7aUuEcxgvBLikQC4anLK/96sl4XDnoVISIR+5XZMwm
-c+grHW5djgydKkISZXHecocCBzgy0cAziZkDw/sxGPoKJh83H0vFk154cRRCPY5P
-Oo66+gGCezy0KP8rr1fVsTO9s3cMMJI/7bd/g+Dcmo7fN4ue0p6/4yk3ESzOvlrZ
-B4vusW0hr9c2i3gy/JW8aB6oaxFCi2y6N4YGGdIUmYDGZy+38mhFiYiRp2GdIDGF
-EE47Zck3G501vcdwtbKjaYB//EuKoSSeNJqxPjHX6u1IXvRCpddGLs+gaLLtMI1M
-huCwhBGJUrzuAdHyncXF0g9RetYBw1dGuCMAmBzlLxJnUi3JhN+zVHeLEPfSvrDL
-ICbJ86xIiMscBniQg4jcKGGds6L7sBDm+xUVitsk32dMlKZGknv6GP20bxnsMGgd
-gj1kbxYc2Msd7KsNFiUKQWfmWUj5UIfB9h3f4/feekppgOuzF1knqrZ99uZ0axXn
-2MgF84e5iOm7PhPJeiFN
-=iG+M
+iQIcBAEBCAAGBQJRR+JMAAoJEECxmPOUX5FErjQP/0RqlES48n9kPeseH0N+NfeB
+n20iWJGzjyAGH2527bt7OFaxHhDe/BPZjQ6xZ/HzWp0wRGBQ/PDaqT0ZoeUCl+DK
+weu73ucYbbL1GxZp4EW9MUTm7wC1s9VduoQJ3UiLT7KiyrqGHmWrjv50vitK3epz
+7njWe8qC4xpoxdvqXIoopGzYd6W4qiwX6qqTv5TGQ/bw0ihWi1iFRcj9CQUPDohr
+Z0v20rjEeXUQQd06Z22nZ34X03pzvQglBDvwdlQFw0yGYTfoD7iDNiW0szODgkVx
+l9Dcz+DBAvQhDHa6U4bSVKoU9c+b8br/qYuF207NYwYCDCJ/auGjMO6GeIcArB88
+94PrNrqDU3apyMY3r1zRGZmk1Wdj6ao8kTx2kKOIpddWAcrxaxvNjoYDxD0FvwGH
+psLudIww1QU4Oy8tloF3URKTHtIPPWFStrb2RTuoVIHH+qS6gdXAYC8yfV9nq9RV
+Y8kApRHrUvWpYcoCVt82QK/JSzBrvvpB++NyteYjBEC6KDhIC7NrN8xM9FZMEQjC
+EOnTSlKAha/MCB1Uvfk8injZSglP1W0tH9gAqBuVjAhS7sT5d0dqUCFGYHX1CLNG
+EsfNrwSvU/3NnEISHTjh4zo/P0A0E8zmDZLNwata7fcuiHasHFa9jZXAPD5mLiHK
+9wQ8U7tqua9saiKXy4XU
+=tzM+
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__19_Mar_2013_14_39_22_+1100_m.geIte5gfJvMpEB--
+--Signature=_Tue__19_Mar_2013_14_58_04_+1100_eplpb9ulAv32tKEL--
