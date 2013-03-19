@@ -1,128 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the workqueues tree with Linus' tree
-Date: Tue, 19 Mar 2013 13:19:38 +1100
-Message-ID: <20130319131938.73dd0f1233c8aba41742aded@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the usb-gadget tree
+Date: Tue, 19 Mar 2013 14:39:22 +1100
+Message-ID: <20130319143922.f60895f782e5c8e9824c447b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__19_Mar_2013_13_19_38_+1100_XFzR.aQtTuqSBjfD"
+ boundary="Signature=_Tue__19_Mar_2013_14_39_22_+1100_m.geIte5gfJvMpEB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60674 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:54410 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757643Ab3CSCTx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Mar 2013 22:19:53 -0400
+	with ESMTP id S1750958Ab3CSDjb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Mar 2013 23:39:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xi Wang <xi.wang@gmail.com>, Felipe Balbi <balbi@ti.com>
 
---Signature=_Tue__19_Mar_2013_13_19_38_+1100_XFzR.aQtTuqSBjfD
+--Signature=_Tue__19_Mar_2013_14_39_22_+1100_m.geIte5gfJvMpEB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi Andrew,
 
-Today's linux-next merge of the workqueues tree got a conflict in
-kernel/workqueue.c between commit e68035fb65de ("workqueue: convert to
-idr_alloc()") from Linus' tree and commit 5bcab3355a55 ("workqueue:
-separate out pool and workqueue locking into wq_mutex") from the
-workqueues tree.
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/usb/gadget/amd5536udc.c between commit 6c39d90393a2 ("usb:
+gadget: amd5536udc: remove unnecessary initializations") from the  tree
+and commit "drivers/usb/gadget/amd5536udc.c: avoid calling dma_pool_create()
+with NULL dev" from the akpm tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc kernel/workqueue.c
-index 55fac5b,833a152..0000000
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@@ -456,40 -462,30 +462,30 @@@ static int worker_pool_assign_id(struc
-  {
-  	int ret;
+diff --cc drivers/usb/gadget/amd5536udc.c
+index f52dcfe,142616a..0000000
+--- a/drivers/usb/gadget/amd5536udc.c
++++ b/drivers/usb/gadget/amd5536udc.c
+@@@ -3232,6 -3235,12 +3232,10 @@@ static int udc_pci_probe
+  	pci_set_master(pdev);
+  	pci_try_set_mwi(pdev);
  =20
-- 	mutex_lock(&worker_pool_idr_mutex);
-- 	ret =3D idr_alloc(&worker_pool_idr, pool, 0, 0, GFP_KERNEL);
-- 	if (ret >=3D 0)
-- 		pool->id =3D ret;
-- 	mutex_unlock(&worker_pool_idr_mutex);
-+ 	lockdep_assert_held(&wq_mutex);
++ 	dev->phys_addr =3D resource;
++ 	dev->irq =3D pdev->irq;
++ 	dev->pdev =3D pdev;
+ -	dev->gadget.dev.parent =3D &pdev->dev;
+ -	dev->gadget.dev.dma_mask =3D pdev->dev.dma_mask;
 +=20
-+ 	do {
- -		if (!idr_pre_get(&worker_pool_idr, GFP_KERNEL))
- -			return -ENOMEM;
- -		ret =3D idr_get_new(&worker_pool_idr, pool, &pool->id);
-++		ret =3D idr_alloc(&worker_pool_idr, pool, 0, 0, GFP_KERNEL);
-++		if (ret >=3D 0)
-++			pool->id =3D ret;
-+ 	} while (ret =3D=3D -EAGAIN);
- =20
- -	return ret;
- +	return ret < 0 ? ret : 0;
-  }
- =20
-- /*
--  * Lookup worker_pool by id.  The idr currently is built during boot and
--  * never modified.  Don't worry about locking for now.
-+ /**
-+  * first_pwq - return the first pool_workqueue of the specified workqueue
-+  * @wq: the target workqueue
-+  *
-+  * This must be called either with pwq_lock held or sched RCU read locked.
-+  * If the pwq needs to be used beyond the locking in effect, the caller is
-+  * responsible for guaranteeing that the pwq stays online.
-   */
-- static struct worker_pool *worker_pool_by_id(int pool_id)
-- {
-- 	return idr_find(&worker_pool_idr, pool_id);
-- }
--=20
-- static struct worker_pool *get_std_worker_pool(int cpu, bool highpri)
-+ static struct pool_workqueue *first_pwq(struct workqueue_struct *wq)
-  {
-- 	struct worker_pool *pools =3D std_worker_pools(cpu);
--=20
-- 	return &pools[highpri];
-- }
--=20
-- static struct pool_workqueue *get_pwq(unsigned int cpu,
-- 				      struct workqueue_struct *wq)
-- {
-- 	if (!(wq->flags & WQ_UNBOUND)) {
-- 		if (likely(cpu < nr_cpu_ids))
-- 			return per_cpu_ptr(wq->pool_wq.pcpu, cpu);
-- 	} else if (likely(cpu =3D=3D WORK_CPU_UNBOUND))
-- 		return wq->pool_wq.single;
-- 	return NULL;
-+ 	assert_rcu_or_pwq_lock();
-+ 	return list_first_or_null_rcu(&wq->pwqs, struct pool_workqueue,
-+ 				      pwqs_node);
-  }
- =20
-  static unsigned int work_color_to_flags(int color)
+  	/* init dma pools */
+  	if (use_dma) {
+  		retval =3D init_dma_pools(dev);
 
---Signature=_Tue__19_Mar_2013_13_19_38_+1100_XFzR.aQtTuqSBjfD
+--Signature=_Tue__19_Mar_2013_14_39_22_+1100_m.geIte5gfJvMpEB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRR8s6AAoJEECxmPOUX5FEHFcP/3JKiYQHmvegvHsVes4GJOLe
-yEBGEPe1nhaide7+2b1WGeng6c5y91IhevsMBUYqIDLdjCL0owhCacf4sXUwMoPS
-35vj/4gSVidt8A7YjAq3VQj5zA3Ur6MmIjeGUW2MKDh0bs2tAgy7RE452wIxhlcO
-H3LotC550TUr4lPY1VXi6xZsfseok6djAvrFK+f6iMhIrTNFmAjA5voCnWU4mDBa
-rGowxZpn2IR8oqAA8lHHM+GS5aAARO6E3/st7k2cUItzGhg0QcYNHhXkqVjgENpS
-MqZnmZ7/+gOIkwZuxuVYSsjYN249BKpRmbrahJ4+XNFLbKaOjZoaCZNXTFJKBNlC
-kRNqMcl9VtYhxyW38TBwHfbfsDFGurvNk97Qku58do3U0Y4UpHim9oBzqr8xHr7J
-SG3B1h9ByF6FiS8DLt4glxt5J/kBamviOsYKiPosg7pGSy1va0AivuSRdFiHKoMZ
-Yde2B0f047BVoFZyJt/yoUiGdsVMww4TwzFuaDNh59xbBatZdTGHUTDGrfjMAuYf
-6VeZCHo3gXrti+XK5klrexrHypFByRnsWgTk8xA9TPd5vVV6jxlEfv+AwsvLmaB5
-CLxagjkud+3NXUGGkxWuM/CCLlBgw5jZus3ouEiIR/Babl1lQYTaIdVYGoIiLOqg
-FeegbOTGJSrdzqtYI/lF
-=Vhkm
+iQIcBAEBCAAGBQJRR93qAAoJEECxmPOUX5FEmYMQAKW/2p3gxB6qoYUR5TC276a1
+yvCc12vvXGCloezM/VRDgHjWGbzmaw/tCccq6BIxKAtTldyPo+Tux2wkKnPd6apX
++DFauL0/uJdSezoq9R3VIJhg6EfS/2K67W5qHAlZ7HP1LQb+z56xgxy9SoXQ5T9e
+fZ/5l9zEdgwGpDD62go5lD7aUuEcxgvBLikQC4anLK/96sl4XDnoVISIR+5XZMwm
+c+grHW5djgydKkISZXHecocCBzgy0cAziZkDw/sxGPoKJh83H0vFk154cRRCPY5P
+Oo66+gGCezy0KP8rr1fVsTO9s3cMMJI/7bd/g+Dcmo7fN4ue0p6/4yk3ESzOvlrZ
+B4vusW0hr9c2i3gy/JW8aB6oaxFCi2y6N4YGGdIUmYDGZy+38mhFiYiRp2GdIDGF
+EE47Zck3G501vcdwtbKjaYB//EuKoSSeNJqxPjHX6u1IXvRCpddGLs+gaLLtMI1M
+huCwhBGJUrzuAdHyncXF0g9RetYBw1dGuCMAmBzlLxJnUi3JhN+zVHeLEPfSvrDL
+ICbJ86xIiMscBniQg4jcKGGds6L7sBDm+xUVitsk32dMlKZGknv6GP20bxnsMGgd
+gj1kbxYc2Msd7KsNFiUKQWfmWUj5UIfB9h3f4/feekppgOuzF1knqrZ99uZ0axXn
+2MgF84e5iOm7PhPJeiFN
+=iG+M
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__19_Mar_2013_13_19_38_+1100_XFzR.aQtTuqSBjfD--
+--Signature=_Tue__19_Mar_2013_14_39_22_+1100_m.geIte5gfJvMpEB--
