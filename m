@@ -1,36 +1,93 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Mar 19
-Date: Tue, 19 Mar 2013 06:53:00 +0100
-Message-ID: <CA+icZUV4=s-ssOMEU5KQXTxKmnp9AzZR-ApUwY3q9voL4-AycQ@mail.gmail.com>
-References: <CA+icZUXufeB=Vvfbd1tv4k8w82-wwJVb1RxyV8nvKa4+mvWERg@mail.gmail.com>
-	<20130319164748.8ee90374db5d5db4c2838105@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the usb-gadget
+ tree
+Date: Tue, 19 Mar 2013 08:33:34 +0200
+Message-ID: <20130319063334.GA16715@arwen.pp.htv.fi>
+References: <20130319143922.f60895f782e5c8e9824c447b@canb.auug.org.au>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130319164748.8ee90374db5d5db4c2838105@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:59553 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755034Ab3CSGdy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Mar 2013 02:33:54 -0400
+Content-Disposition: inline
+In-Reply-To: <20130319143922.f60895f782e5c8e9824c447b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xi Wang <xi.wang@gmail.com>, Felipe Balbi <balbi@ti.com>
 
-On Tue, Mar 19, 2013 at 6:47 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi,
->
-> On Tue, 19 Mar 2013 06:42:27 +0100 Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>
->> did forget to sent your email [1] to linux-next ML?
->
-> No, and I even checked my mail server's logs and it was accepted by vger.
->
+--IS0zKkzwUGydFO0o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For sure - it's not in my inbox :-).
-But I can read it offline.
+Hi,
 
-- Sedat -
+On Tue, Mar 19, 2013 at 02:39:22PM +1100, Stephen Rothwell wrote:
+> Hi Andrew,
+>=20
+> Today's linux-next merge of the akpm tree got a conflict in
+> drivers/usb/gadget/amd5536udc.c between commit 6c39d90393a2 ("usb:
+> gadget: amd5536udc: remove unnecessary initializations") from the  tree
 
-[1] http://marc.info/?t=133214360700001&r=1&w=2
+Looks like there's a small bug in your scripts: "from the  tree" misses
+"usb-gadget".
 
-> --
+> and commit "drivers/usb/gadget/amd5536udc.c: avoid calling dma_pool_creat=
+e()
+> with NULL dev" from the akpm tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+>=20
+> --=20
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
+>=20
+> diff --cc drivers/usb/gadget/amd5536udc.c
+> index f52dcfe,142616a..0000000
+> --- a/drivers/usb/gadget/amd5536udc.c
+> +++ b/drivers/usb/gadget/amd5536udc.c
+> @@@ -3232,6 -3235,12 +3232,10 @@@ static int udc_pci_probe
+>   	pci_set_master(pdev);
+>   	pci_try_set_mwi(pdev);
+>  =20
+> + 	dev->phys_addr =3D resource;
+> + 	dev->irq =3D pdev->irq;
+> + 	dev->pdev =3D pdev;
+>  -	dev->gadget.dev.parent =3D &pdev->dev;
+>  -	dev->gadget.dev.dma_mask =3D pdev->dev.dma_mask;
+> +=20
+
+fix looks alright, thank you
+
+--=20
+balbi
+
+--IS0zKkzwUGydFO0o
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRSAa+AAoJEIaOsuA1yqREzaMP/jtr0Wv0q2eZ2wzSPa5+bYti
++SFKE8HlOIcTMESkL99hyHx6fyrFlZQwsExT8eu8Xbc6FVfMGvHdp84fFSAxoiOx
+Y0voFseQ6vZZOdKICczSpgsjJnloxeD4ToLQoAA/jBqDcdm4JYwFHkuenJZWCmn7
+nxKrAy528zo189uWKqjr/6LaiqWPvk4lNgYYpCM/ifgI0jUVpNMtgISR9xRiLOyy
+rMXG2WLALDaInZqrM7VqwnLczjJwyfqUoq/aRF+hGN3tuT7jIbh8KjI5A37X8e+O
+lbzf0HrD1/7IMh0TWTpz9uXTyx3ZLNB6lifoK72X3X8WvlDrOulVZswxfnRlCet8
+h4WRZ6ADckaZ7ViV3O265RDdEI12fWrvZOYP7t/ALQRIuwUobYymolGfx9xzJ3iR
+juBxKqcc2hxuatsAI+PBJsUxrWOJSqheCGihAzXaaw+Qdsf+qTp2oNbeX85ufxyc
+9TXC9ooOtf19FRjVmJ0Mugyz5BROKjfa+Rgi27oOiH+AEXNA4G2kFC9PWmF+vjdg
+m2vN8qZimFGPstGpgPiGmTqf+jsYVCF3FpBlYZgQe8ou/i0bxcNDn+KKhfO4n0E4
+rVyULejJEI++W0Qib8tRZKBDrQ6/y1Mjv5cC07zWiOskL0M8btoCKxrOH4Hg7/yo
+Q5DE+N/W6SfqZKMEKQVk
+=16mr
+-----END PGP SIGNATURE-----
+
+--IS0zKkzwUGydFO0o--
