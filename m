@@ -1,29 +1,39 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: linux-next: Tree for Mar 18 (mtdcore)
-Date: Tue, 19 Mar 2013 13:24:55 +0200
-Message-ID: <1363692295.14966.12.camel@sauron.fi.intel.com>
-References: <20130318161841.a8f926f51a0b00033e2ee94c@canb.auug.org.au>
-	 <51478949.2080400@infradead.org>
-Reply-To: dedekind1@gmail.com
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: USB-related build errors on Tegra in next-20130319
+Date: Tue, 19 Mar 2013 10:29:05 -0600
+Message-ID: <51489251.5040504@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:10132 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750799Ab3CSLXz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Mar 2013 07:23:55 -0400
-In-Reply-To: <51478949.2080400@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2013-03-18 at 14:38 -0700, Randy Dunlap wrote:
-> when CONFIG_PROC_FS is not enabled:
+Felipe,
 
-Thanks Randy, should be fixed now.
+I see the following Kconfig warnings in next-20130319:
 
--- 
-Best Regards,
-Artem Bityutskiy
+> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects USB_ULPI which has unmet direct dependencies (USB_SUPPORT && USB_PHY && ARM)
+> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects USB_ULPI_VIEWPORT which has unmet direct dependencies (USB_SUPPORT && USB_PHY && USB_ULPI)
+> include/config/auto.conf:624:warning: override: ARCH_MULTIPLATFORM changes choice state
+> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects USB_ULPI which has unmet direct dependencies (USB_SUPPORT && USB_PHY && ARM)
+> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects USB_ULPI_VIEWPORT which has unmet direct dependencies (USB_SUPPORT && USB_PHY && USB_ULPI)
+
+Which I believe are the cause of the following build errors:
+
+> drivers/built-in.o: In function `controller_resume':
+> drivers/usb/host/ehci-tegra.c:556: undefined reference to `tegra_usb_phy_preresume'
+> drivers/usb/host/ehci-tegra.c:479: undefined reference to `tegra_ehci_phy_restore_start'
+> drivers/usb/host/ehci-tegra.c:551: undefined reference to `tegra_ehci_phy_restore_end'
+> drivers/usb/host/ehci-tegra.c:546: undefined reference to `tegra_ehci_phy_restore_end'
+> drivers/built-in.o: In function `tegra_ehci_probe':
+> drivers/usb/host/ehci-tegra.c:734: undefined reference to `tegra_usb_phy_open'
+> drivers/built-in.o: In function `tegra_ehci_hub_control':
+> drivers/usb/host/ehci-tegra.c:162: undefined reference to `tegra_usb_phy_postresume'
+> drivers/usb/host/ehci-tegra.c:215: undefined reference to `tegra_usb_phy_preresume'
+> make: *** [vmlinux] Error 1
+
+I pointed out at least the Kconfig problems when you posted the PHY
+error handling cleanup series, so I'm not sure why those patches were
+applied.
