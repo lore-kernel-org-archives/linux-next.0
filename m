@@ -1,49 +1,43 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] sparc64: Provide cmpxchg64()
-Date: Wed, 20 Mar 2013 15:35:04 +0100
-Message-ID: <1363790104-8140-1-git-send-email-geert@linux-m68k.org>
+Subject: Re: [PATCH -next] sparc32/sparc64: Provide cmpxchg64()
+Date: Wed, 20 Mar 2013 15:35:17 +0100
+Message-ID: <CAMuHMdUuOeh3YK1XcveB_5OoNKHLHzyNOgF8mysicSnkfMa7_Q@mail.gmail.com>
+References: <1363290128-21247-1-git-send-email-geert@linux-m68k.org>
+	<20130319.162000.1936616024625986095.davem@davemloft.net>
+	<CAMuHMdXHuT16xuw3-5rwL2WY7ZRzfweB7jKVyoi-xnqT4B0pBg@mail.gmail.com>
+	<20130320.101102.2237935685619866372.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <sparclinux-owner@vger.kernel.org>
+In-Reply-To: <20130320.101102.2237935685619866372.davem@davemloft.net>
 Sender: sparclinux-owner@vger.kernel.org
-To: "David S. Miller" <davem@davemloft.net>
-Cc: sparclinux@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: David Miller <davem@davemloft.net>
+Cc: sparclinux@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-sparc64 allmodconfig:
+On Wed, Mar 20, 2013 at 3:11 PM, David Miller <davem@davemloft.net> wrote:
+> From: Geert Uytterhoeven <geert@linux-m68k.org>
+> Date: Wed, 20 Mar 2013 09:05:19 +0100
+>
+>> The sparc64 part is still OK as it eventually calls __cmpxchg_u64(),
+>> isn't it?
+>
+> Yes, that part is OK.
+>
+>> Do you want me to send a new patch for that part only, or will you just
+>> remove the sparc32 part?
+>
+> Please send a new patch, thank you.
 
-drivers/block/blockconsole.c: In function =E2=80=98bcon_advance_console=
-_bytes=E2=80=99:
-drivers/block/blockconsole.c:164: error: implicit declaration of functi=
-on =E2=80=98cmpxchg64=E2=80=99
+OK, done.
 
-Map cmpxchg64() to cmpxchg64_local() (which eventually calls
-__cmpxchg_u64()) to fix this.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- arch/sparc/include/asm/cmpxchg_64.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/arch/sparc/include/asm/cmpxchg_64.h b/arch/sparc/include/a=
-sm/cmpxchg_64.h
-index b30eb37..4adefe8 100644
---- a/arch/sparc/include/asm/cmpxchg_64.h
-+++ b/arch/sparc/include/asm/cmpxchg_64.h
-@@ -141,5 +141,6 @@ static inline unsigned long __cmpxchg_local(volatil=
-e void *ptr,
- 	BUILD_BUG_ON(sizeof(*(ptr)) !=3D 8);				\
- 	cmpxchg_local((ptr), (o), (n));					\
-   })
-+#define cmpxchg64(ptr, o, n)	cmpxchg64_local((ptr), (o), (n))
-=20
- #endif /* __ARCH_SPARC64_CMPXCHG__ */
---=20
-1.7.0.4
+                        Geert
 
 --
-To unsubscribe from this list: send the line "unsubscribe sparclinux" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
