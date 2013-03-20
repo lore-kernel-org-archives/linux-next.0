@@ -1,43 +1,61 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH -next] sparc32/sparc64: Provide cmpxchg64()
-Date: Wed, 20 Mar 2013 15:35:17 +0100
-Message-ID: <CAMuHMdUuOeh3YK1XcveB_5OoNKHLHzyNOgF8mysicSnkfMa7_Q@mail.gmail.com>
-References: <1363290128-21247-1-git-send-email-geert@linux-m68k.org>
-	<20130319.162000.1936616024625986095.davem@davemloft.net>
-	<CAMuHMdXHuT16xuw3-5rwL2WY7ZRzfweB7jKVyoi-xnqT4B0pBg@mail.gmail.com>
-	<20130320.101102.2237935685619866372.davem@davemloft.net>
+From: wfp5p@viridian.itc.virginia.edu (Bill Pemberton)
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Wed, 20 Mar 2013 10:42:32 -0400
+Message-ID: <20130320144233.10125800E4@viridian.itc.virginia.edu>
+References: <5149C4E8.5020707@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <sparclinux-owner@vger.kernel.org>
-In-Reply-To: <20130320.101102.2237935685619866372.davem@davemloft.net>
-Sender: sparclinux-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sparclinux@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from viridian.itc.Virginia.EDU ([128.143.12.139]:41429 "EHLO
+	viridian.itc.virginia.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756125Ab3CTOmd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Mar 2013 10:42:33 -0400
+In-Reply-To: <5149C4E8.5020707@suse.cz>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jiri Slaby <jslaby@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 20, 2013 at 3:11 PM, David Miller <davem@davemloft.net> wrote:
-> From: Geert Uytterhoeven <geert@linux-m68k.org>
-> Date: Wed, 20 Mar 2013 09:05:19 +0100
->
->> The sparc64 part is still OK as it eventually calls __cmpxchg_u64(),
->> isn't it?
->
-> Yes, that part is OK.
->
->> Do you want me to send a new patch for that part only, or will you just
->> remove the sparc32 part?
->
-> Please send a new patch, thank you.
+Jiri Slaby writes:
+> 
+> On 03/20/2013 01:51 PM, Bill Pemberton wrote:
+> > Jiri Slaby writes:
+> >>
+> >>> drivers/usb/serial/quatech2.c: In function 'qt2_process_read_urb': 
+> >>> drivers/usb/serial/quatech2.c:661:18: error: 'struct
+> >>> qt2_port_private' has no member named 'is_open' 
+> >>> drivers/usb/serial/quatech2.c:705:15: error: 'struct
+> >>> qt2_port_private' has no member named 'is_open'
+> >>>
+> >>> Caused by commit e4408ce3c23f ("TTY: quatech2, remove unneeded 
+> >>> is_open").  grep is your friend (or searching while editting the
+> >>> file).
+> >>
+> >> I think this is caused by another commit. Bill added a check for
+> >> is_open meanwhile I removed that member completely. Bill, could you
+> >> fix that up, please?
+> >>
+> > 
+> > Is it legal to call tty_flip_buffer_push() without an open tty?  If
+> > so, I can get rid of the is_open logic completely.  Otherwise, I need
+> > to either keep is_open or otherwise check for a valid tty before
+> > calling tty_flip_buffer_push().
+> 
+> Yeah, it is legal to call that, as long as you have a valid tty_port.
+> Now, the data are queued and later flushed. The plan is to throw the
+> data directly on ingress in a way the drivers don't need to care.
+> 
 
-OK, done.
+Ok, for the unopened ports there *should* never be any actual data to
+push so the push is really doing nothing anyhow in these cases.  It's
+coming from the device sending an initial change port command.
 
-Gr{oetje,eeting}s,
+Anyhow, so my patch adding more is_open logic can be dropped and then
+yours will apply fine.  What's the best way for me to handle this?
+Send a revert for my patch so yours will apply or send an updated
+version of your patch that removes my additions?
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Bill
