@@ -1,72 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tty tree
-Date: Wed, 20 Mar 2013 14:12:11 +1100
-Message-ID: <20130320141211.52b44d0e202d32812c3e3c0c@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the char-misc tree
+Date: Wed, 20 Mar 2013 15:20:07 +1100
+Message-ID: <20130320152007.56de4a48eaf2760ccc07f02b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__20_Mar_2013_14_12_11_+1100_.gH8qTZJLDKsY2Yz"
+ boundary="Signature=_Wed__20_Mar_2013_15_20_07_+1100_OSPkR6SmVSmodvUy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34963 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48393 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751246Ab3CTDMW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Mar 2013 23:12:22 -0400
+	with ESMTP id S1751464Ab3CTEUT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Mar 2013 00:20:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
 
---Signature=_Wed__20_Mar_2013_14_12_11_+1100_.gH8qTZJLDKsY2Yz
+--Signature=_Wed__20_Mar_2013_15_20_07_+1100_OSPkR6SmVSmodvUy
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Andrew,
 
-After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the akpm tree got a conflict in
+include/linux/hyperv.h between commit 96dd86fa5881 ("Drivers: hv: Add a
+new driver to support host initiated backup") from the char-misc  tree
+and commit "drivers/video: add Hyper-V Synthetic Video Frame Buffer
+Driver" from the akpm tree.
 
-drivers/net/caif/caif_serial.c: In function 'update_tty_status':
-drivers/net/caif/caif_serial.c:94:11: error: 'struct tty_struct' has no mem=
-ber named 'warned'
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 6865ff222cca ("TTY: do not warn about setting speed via
-SPD_*").
-
-drivers/usb/serial/quatech2.c: In function 'qt2_process_read_urb':
-drivers/usb/serial/quatech2.c:661:18: error: 'struct qt2_port_private' has =
-no member named 'is_open'
-drivers/usb/serial/quatech2.c:705:15: error: 'struct qt2_port_private' has =
-no member named 'is_open'
-
-Caused by commit e4408ce3c23f ("TTY: quatech2, remove unneeded
-is_open").  grep is your friend (or searching while editting the file).
-
-I have used the tty tree from next-20130319 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__20_Mar_2013_14_12_11_+1100_.gH8qTZJLDKsY2Yz
+diff --cc include/linux/hyperv.h
+index 95d0850,a460ee4..0000000
+--- a/include/linux/hyperv.h
++++ b/include/linux/hyperv.h
+@@@ -1310,13 -1253,16 +1310,25 @@@ void vmbus_driver_unregister(struct hv_
+  		}
+ =20
+  /*
+ + * VSS (Backup/Restore) GUID
+ + */
+ +#define HV_VSS_GUID \
+ +	.guid =3D { \
+ +			0x29, 0x2e, 0xfa, 0x35, 0x23, 0xea, 0x36, 0x42, \
+ +			0x96, 0xae, 0x3a, 0x6e, 0xba, 0xcb, 0xa4,  0x40 \
+ +		}
+++
+++/*
++  * Synthetic Video GUID
++  * {DA0A7802-E377-4aac-8E77-0558EB1073F8}
++  */
++ #define HV_SYNTHVID_GUID \
++ 	.guid =3D { \
++ 			0x02, 0x78, 0x0a, 0xda, 0x77, 0xe3, 0xac, 0x4a, \
++ 			0x8e, 0x77, 0x05, 0x58, 0xeb, 0x10, 0x73, 0xf8 \
++ 		}
++=20
++=20
+  /*
+   * Common header for Hyper-V ICs
+   */
+
+--Signature=_Wed__20_Mar_2013_15_20_07_+1100_OSPkR6SmVSmodvUy
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRSSkLAAoJEECxmPOUX5FEQ88P+wZdrxcJGsRbm8jXuLqHWuuq
-/3yQPMQ+bZ5s3pBJj51ijGjMPDU0+Asnfq9+Ae7EPDg/Mhnj+b9EdYOTtkngqWD2
-3yCLMoGsTeYU5h2bcKLdLmyZTTkXtD9qxu3asPFJmgzYdGfSJgK7AFxD9TtIDgMD
-ohTKeqhkDk6MKA0257mhIieHpgYzVPceo9wguMkZaRNrMv5HVpmRyhKQYeiVsPI2
-GkruI/jomATVtS1QS3WGRTK5CeyDh7mctheqkrYjmGBntD7Yu6hJzP1StcANLqIB
-YF8xMNmcl9Ez6cIcGiDoR0E+CuJYoWIN1i/gzkjyJmhJ6NoCYS/LrnMGpG/27sVH
-hzfP6zjfo/vQdmqIlgZn/ma/10P58weN86hzLRYQ+Yqqn6CZt1bZkpIlYF2if2IT
-jLkQJI8p9/iEo66XX8/bpfBd7ACWPt+H2SYSwhA6VlpbIFK0g5CE7w9djVab0/GG
-nsKLdTHc8LMH5anFkTWpnjWoDz/cCoWm70GYKqJ44nUucQUgp7yiMDN4iQqnJz0H
-Xr0T0qJ+G2bdPImkQ6CeqC9/3Odlobg/YgjuOyVbxfsG0el9L+JLLNXWsPGFv3RB
-gjdSGtOiS0fUP9dAkNI0rF7fRj9tTGsw0pIBiePS2dWoanNHMKSpC/gG3DiWBTPp
-Er3nko/PyPooKsezzwyX
-=FUdZ
+iQIcBAEBCAAGBQJRSTj3AAoJEECxmPOUX5FEiTwP/iIaByM5dKpdkjodf2kV55GK
+MUN0fMijC9e+pa1v0w+L3dJ1VygI6TgKWbdeCfvRb8LBozGQZu3/z87+chorf9up
+R+fmbtDTXnbEX6ZvTKu/POCzqztgupuSbiwXcJ4XAtEfPtKdAC/FYcgfonbl/beA
+4elqx2mt+7ZxPJ7iEghDkrhJVh+on8bHwH+YL+8VPTojWgVLlSPUxd3CmKz+nn2f
+dSeH9Qki2vwMoFD6CIg1jLM5xVoWeYb5T+bDHVvjhZ9VHOQC8/Y3HpgTnXl0nBAY
+YBFl9EgzNag+AuTs9Z0PtXIq7FLHCHO9kPEph9kqXp/oj6Kw0ngtbQsgPbQcveid
+cgnofy/CIRmN9O/txVldgixnnAw67tWKlIcHa/GfubAGDuLDyASkyhwoEPLA3qa1
+Kaju23kYxtSlwoa8RUOtH/MG65Z0RjzfPoLU7rNdTzEPgqPSBmrmdZKSSMNQdHG5
+ZqqgQ1ScrC0UiXuXESxBQkAVBuPOeqBSE6bqKTIf7qznFgsnmrSGS4stALQKcXXB
+h/G3G2DYhGLF7CCuEgSx5eTiJ2nDo8ACwvjwD/bAxenhLJTt3R2XRAwQnhlz94zd
+MYdE+mN+X382u6u9hjdDEQHIJfc7jzWqSIY2oykAgbO+WRQN2zFBF+L4PWReEapG
+R13tM1zu5o3jFnaYBgcP
+=d5Tu
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__20_Mar_2013_14_12_11_+1100_.gH8qTZJLDKsY2Yz--
+--Signature=_Wed__20_Mar_2013_15_20_07_+1100_OSPkR6SmVSmodvUy--
