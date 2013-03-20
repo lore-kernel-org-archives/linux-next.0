@@ -1,51 +1,82 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Mar 20 (vmcore)
-Date: Wed, 20 Mar 2013 11:58:00 -0700
-Message-ID: <514A06B8.9060808@infradead.org>
-References: <20130320160536.54e62fc11a3651494b710e3b@canb.auug.org.au> <5149E813.8060307@infradead.org> <alpine.DEB.2.02.1303201153330.17761@chino.kir.corp.google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (gpio
+ tree relatred)
+Date: Thu, 21 Mar 2013 09:05:17 +1100
+Message-ID: <20130321090517.81475155bf48370157ceaafb@canb.auug.org.au>
+References: <20130306114452.a041ab0737783f9730c1486e@canb.auug.org.au>
+	<CACxGe6sZKRjSnwa-CHC1OhJoGP-ZQe4H2YbMYjDjNYcSdSyuow@mail.gmail.com>
+	<20130321022524.37baf9fedb1848cdbdfc0eef@canb.auug.org.au>
+	<CACxGe6shQN=RgPF+TQvQmkBC7E6MsG6Vnisxtxeq3kWgh-XHXw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__21_Mar_2013_09_05_17_+1100_KjJXqV=jaGdDsd5j"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:45142 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751120Ab3CTS5y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Mar 2013 14:57:54 -0400
-In-Reply-To: <alpine.DEB.2.02.1303201153330.17761@chino.kir.corp.google.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39417 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751348Ab3CTWFa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Mar 2013 18:05:30 -0400
+In-Reply-To: <CACxGe6shQN=RgPF+TQvQmkBC7E6MsG6Vnisxtxeq3kWgh-XHXw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: HATAYAMA Daisuke <d.hatayama@jp.fujitsu.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ian Lartey <ian@slimlogic.co.uk>, Graeme Gregory <gg@slimlogic.co.uk>
 
-On 03/20/13 11:56, David Rientjes wrote:
-> On Wed, 20 Mar 2013, Randy Dunlap wrote:
-> 
->> on x86_64:
->>
->> fs/proc/vmcore.c: In function 'merge_note_headers_elf64':
->> fs/proc/vmcore.c:349:22: error: 'VMCOREINFO_NOTE_NAME' undeclared (first use in this function)
->> fs/proc/vmcore.c:349:22: note: each undeclared identifier is reported only once for each function it appears in
->> fs/proc/vmcore.c: In function 'merge_note_headers_elf32':
->> fs/proc/vmcore.c:470:22: error: 'VMCOREINFO_NOTE_NAME' undeclared (first use in this function)
->> make[3]: *** [fs/proc/vmcore.o] Error 1
->>
->>
->> Needs to #include <linux/kexec.h>
->>
-> 
-> I don't think that's it, linux/kexec.h already gets included indirectly.  
-> The problem is that CONFIG_KEXEC isn't set so the definition in kexec.h is 
-> meaningless.
+--Signature=_Thu__21_Mar_2013_09_05_17_+1100_KjJXqV=jaGdDsd5j
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.   I meant to check on CONFIG_KEXEC and then forgot to do that.
+Hi Grant,
 
-> This comes from "vmcore: check NT_VMCORE_PAD as a mark indicating the end 
-> of ELF note buffer" merged through the -mm tree.  I've added the patch's 
-> author and Andrew to the cc.
-> 
-> How can this be protected by CONFIG_KEXEC?
-> --
+On Wed, 20 Mar 2013 15:57:01 +0000 Grant Likely <grant.likely@secretlab.ca>=
+ wrote:
+>
+> On Wed, Mar 20, 2013 at 3:25 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> >
+> > On Wed, 6 Mar 2013 09:10:42 +0800 Grant Likely <grant.likely@secretlab.=
+ca> wrote:
+> >>
+> >> On Wed, Mar 6, 2013 at 8:44 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >> > Caused by commit 82d4d6637fdf ("gpio/palmas: add in GPIO support for
+> >> > palmas charger").  I wonder if this was ever build tested. :-(
+> >>
+> >> Probably not. Looks like this driver doesn't get enabled without the
+> >> associated option in MFD. I didn't go searching for it, so my build
+> >> tests didn't catch it. I'll drop the patch from my tree. Sorry for the
+> >> pain.
+> >
+> > I am still having to revert this commit ....  :-(
+>=20
+> Ugh, sorry. I reverted the patch while travelling, but never pushed
+> out the fixed tree. Try it now.
 
+Thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-~Randy
+--Signature=_Thu__21_Mar_2013_09_05_17_+1100_KjJXqV=jaGdDsd5j
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRSjKdAAoJEECxmPOUX5FEfSsP/iCVMc1w9aw7MGI5Y6kvlxtA
+a4h5eu6mlNWmYagOpwNOg4zg6sbXC1a8NX29IVgKa39QTOa4khBh85BFnvVU7Z0p
+T8Og+MoY36467l9Qq2UaFdoqT1P/Ag6i6/7OUrRbnnWd/t53njnJWkgwBEItNfwy
+3d/1aLKqZywh543Z2hlq/60tjiRvFMpIlgF7s9VcftqdpxSekrdVt+JR003k7iNO
+3tGFSh76IotbjSHbNO2QfpGtVrDeckqNYMKEJUnz4IMN28SeIGS5FxRg8olKMgs+
+rLJTKF/SFgbC/Rd6jkurAXS0U0t9Ckf9hIIPxJtOx648itZMA0TUnX2X/ig8SfkV
+9Rqdufn/RuXfeJibUrx7QeFWncKT3SLR9uDjTexjQza47ljBrW5wbRiETJRVHO1k
+sobQMZLILimUhOentqUZuz6r1P12N/kKldYmcFFn2V58nRA8/koeSe2Zs+D0MxZj
+BdQBqH4jCLVviVAR8h0n7G5dlODdk5pCSYZ5aVcyf9qqRkOMZ8Bp6g+d0tV528c8
+XPEOpIdFPZW9mqEW1zezF42kjpa8+fyi5pCwHYI7URq8xamfRRnp0MS+c4pGp6QI
+yZYwTwWEbi9D3lsvSoXz7Cq9Lrk+4oo1tsH60P71VrZIakhn1K1SDCPOaxJQEo8P
+XX0W5V2BDgx4QrdGFUZY
+=TiMu
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__21_Mar_2013_09_05_17_+1100_KjJXqV=jaGdDsd5j--
