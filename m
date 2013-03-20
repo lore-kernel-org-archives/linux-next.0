@@ -1,42 +1,49 @@
-From: Haiyang Zhang <haiyangz@microsoft.com>
-Subject: RE: linux-next: manual merge of the akpm tree with the char-misc
- tree
-Date: Wed, 20 Mar 2013 14:29:26 +0000
-Message-ID: <960b30d6dde3492b81120985e28ff061@DFM-DB3MBX15-08.exchange.corp.microsoft.com>
-References: <20130320152007.56de4a48eaf2760ccc07f02b@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] sparc64: Provide cmpxchg64()
+Date: Wed, 20 Mar 2013 15:35:04 +0100
+Message-ID: <1363790104-8140-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130320152007.56de4a48eaf2760ccc07f02b@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, KY Srinivasan <kys@microsoft.com>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <sparclinux-owner@vger.kernel.org>
+Sender: sparclinux-owner@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: sparclinux@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-Id: linux-next.vger.kernel.org
 
+sparc64 allmodconfig:
 
+drivers/block/blockconsole.c: In function =E2=80=98bcon_advance_console=
+_bytes=E2=80=99:
+drivers/block/blockconsole.c:164: error: implicit declaration of functi=
+on =E2=80=98cmpxchg64=E2=80=99
 
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Wednesday, March 20, 2013 12:20 AM
-> To: Andrew Morton
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Haiyang
-> Zhang; KY Srinivasan; Greg KH; Arnd Bergmann
-> Subject: linux-next: manual merge of the akpm tree with the char-misc
-> tree
-> 
-> Hi Andrew,
-> 
-> Today's linux-next merge of the akpm tree got a conflict in
-> include/linux/hyperv.h between commit 96dd86fa5881 ("Drivers: hv: Add a
-> new driver to support host initiated backup") from the char-misc  tree
-> and commit "drivers/video: add Hyper-V Synthetic Video Frame Buffer
-> Driver" from the akpm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Map cmpxchg64() to cmpxchg64_local() (which eventually calls
+__cmpxchg_u64()) to fix this.
 
-Thank you for fixing it!
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ arch/sparc/include/asm/cmpxchg_64.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-- Haiyang
+diff --git a/arch/sparc/include/asm/cmpxchg_64.h b/arch/sparc/include/a=
+sm/cmpxchg_64.h
+index b30eb37..4adefe8 100644
+--- a/arch/sparc/include/asm/cmpxchg_64.h
++++ b/arch/sparc/include/asm/cmpxchg_64.h
+@@ -141,5 +141,6 @@ static inline unsigned long __cmpxchg_local(volatil=
+e void *ptr,
+ 	BUILD_BUG_ON(sizeof(*(ptr)) !=3D 8);				\
+ 	cmpxchg_local((ptr), (o), (n));					\
+   })
++#define cmpxchg64(ptr, o, n)	cmpxchg64_local((ptr), (o), (n))
+=20
+ #endif /* __ARCH_SPARC64_CMPXCHG__ */
+--=20
+1.7.0.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe sparclinux" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
