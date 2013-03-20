@@ -1,50 +1,42 @@
-From: Jiri Slaby <jslaby@suse.cz>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Wed, 20 Mar 2013 15:17:12 +0100
-Message-ID: <5149C4E8.5020707@suse.cz>
-References: <20130320125137.EDCD3802B0@viridian.itc.virginia.edu>
+From: Haiyang Zhang <haiyangz@microsoft.com>
+Subject: RE: linux-next: manual merge of the akpm tree with the char-misc
+ tree
+Date: Wed, 20 Mar 2013 14:29:26 +0000
+Message-ID: <960b30d6dde3492b81120985e28ff061@DFM-DB3MBX15-08.exchange.corp.microsoft.com>
+References: <20130320152007.56de4a48eaf2760ccc07f02b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f49.google.com ([74.125.83.49]:39215 "EHLO
-	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750799Ab3CTOY4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Mar 2013 10:24:56 -0400
-In-Reply-To: <20130320125137.EDCD3802B0@viridian.itc.virginia.edu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bill Pemberton <wfp5p@viridian.itc.virginia.edu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130320152007.56de4a48eaf2760ccc07f02b@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, KY Srinivasan <kys@microsoft.com>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
-On 03/20/2013 01:51 PM, Bill Pemberton wrote:
-> Jiri Slaby writes:
->>
->>> drivers/usb/serial/quatech2.c: In function 'qt2_process_read_urb': 
->>> drivers/usb/serial/quatech2.c:661:18: error: 'struct
->>> qt2_port_private' has no member named 'is_open' 
->>> drivers/usb/serial/quatech2.c:705:15: error: 'struct
->>> qt2_port_private' has no member named 'is_open'
->>>
->>> Caused by commit e4408ce3c23f ("TTY: quatech2, remove unneeded 
->>> is_open").  grep is your friend (or searching while editting the
->>> file).
->>
->> I think this is caused by another commit. Bill added a check for
->> is_open meanwhile I removed that member completely. Bill, could you
->> fix that up, please?
->>
+
+
+> -----Original Message-----
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Sent: Wednesday, March 20, 2013 12:20 AM
+> To: Andrew Morton
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Haiyang
+> Zhang; KY Srinivasan; Greg KH; Arnd Bergmann
+> Subject: linux-next: manual merge of the akpm tree with the char-misc
+> tree
 > 
-> Is it legal to call tty_flip_buffer_push() without an open tty?  If
-> so, I can get rid of the is_open logic completely.  Otherwise, I need
-> to either keep is_open or otherwise check for a valid tty before
-> calling tty_flip_buffer_push().
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm tree got a conflict in
+> include/linux/hyperv.h between commit 96dd86fa5881 ("Drivers: hv: Add a
+> new driver to support host initiated backup") from the char-misc  tree
+> and commit "drivers/video: add Hyper-V Synthetic Video Frame Buffer
+> Driver" from the akpm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Yeah, it is legal to call that, as long as you have a valid tty_port.
-Now, the data are queued and later flushed. The plan is to throw the
-data directly on ingress in a way the drivers don't need to care.
+Thank you for fixing it!
 
-thanks,
--- 
-js
-suse labs
+- Haiyang
