@@ -1,29 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] sparc32/sparc64: Provide cmpxchg64()
-Date: Wed, 20 Mar 2013 10:11:02 -0400 (EDT)
-Message-ID: <20130320.101102.2237935685619866372.davem@davemloft.net>
-References: <1363290128-21247-1-git-send-email-geert@linux-m68k.org>
-	<20130319.162000.1936616024625986095.davem@davemloft.net>
-	<CAMuHMdXHuT16xuw3-5rwL2WY7ZRzfweB7jKVyoi-xnqT4B0pBg@mail.gmail.com>
+From: Jiri Slaby <jslaby@suse.cz>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Wed, 20 Mar 2013 15:17:12 +0100
+Message-ID: <5149C4E8.5020707@suse.cz>
+References: <20130320125137.EDCD3802B0@viridian.itc.virginia.edu>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <sparclinux-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXHuT16xuw3-5rwL2WY7ZRzfweB7jKVyoi-xnqT4B0pBg@mail.gmail.com>
-Sender: sparclinux-owner@vger.kernel.org
-To: geert@linux-m68k.org
-Cc: sparclinux@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ee0-f49.google.com ([74.125.83.49]:39215 "EHLO
+	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750799Ab3CTOY4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Mar 2013 10:24:56 -0400
+In-Reply-To: <20130320125137.EDCD3802B0@viridian.itc.virginia.edu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bill Pemberton <wfp5p@viridian.itc.virginia.edu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 20 Mar 2013 09:05:19 +0100
+On 03/20/2013 01:51 PM, Bill Pemberton wrote:
+> Jiri Slaby writes:
+>>
+>>> drivers/usb/serial/quatech2.c: In function 'qt2_process_read_urb': 
+>>> drivers/usb/serial/quatech2.c:661:18: error: 'struct
+>>> qt2_port_private' has no member named 'is_open' 
+>>> drivers/usb/serial/quatech2.c:705:15: error: 'struct
+>>> qt2_port_private' has no member named 'is_open'
+>>>
+>>> Caused by commit e4408ce3c23f ("TTY: quatech2, remove unneeded 
+>>> is_open").  grep is your friend (or searching while editting the
+>>> file).
+>>
+>> I think this is caused by another commit. Bill added a check for
+>> is_open meanwhile I removed that member completely. Bill, could you
+>> fix that up, please?
+>>
+> 
+> Is it legal to call tty_flip_buffer_push() without an open tty?  If
+> so, I can get rid of the is_open logic completely.  Otherwise, I need
+> to either keep is_open or otherwise check for a valid tty before
+> calling tty_flip_buffer_push().
 
-> The sparc64 part is still OK as it eventually calls __cmpxchg_u64(),
-> isn't it?
+Yeah, it is legal to call that, as long as you have a valid tty_port.
+Now, the data are queued and later flushed. The plan is to throw the
+data directly on ingress in a way the drivers don't need to care.
 
-Yes, that part is OK.
-
-> Do you want me to send a new patch for that part only, or will you just
-> remove the sparc32 part?
-
-Please send a new patch, thank you.
+thanks,
+-- 
+js
+suse labs
