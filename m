@@ -1,48 +1,55 @@
 From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Thu, 21 Mar 2013 16:36:15 -0700
-Message-ID: <20130321233614.GA9125@kroah.com>
+Date: Thu, 21 Mar 2013 16:47:24 -0700
+Message-ID: <20130321234724.GA1734@kroah.com>
 References: <5149D1FD.90400@suse.cz>
  <20130320151511.170EC8017A@viridian.itc.virginia.edu>
  <20130321001628.GC27981@kroah.com>
  <20130322095423.799b201fd0f6671e8127c2ac@canb.auug.org.au>
+ <20130322102808.5bdd9e5e0d98733e202e49c2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:44526 "EHLO
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58788 "EHLO
 	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754055Ab3CUXgR (ORCPT
+	by vger.kernel.org with ESMTP id S932882Ab3CUXr0 (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Mar 2013 19:36:17 -0400
+	Thu, 21 Mar 2013 19:47:26 -0400
 Content-Disposition: inline
-In-Reply-To: <20130322095423.799b201fd0f6671e8127c2ac@canb.auug.org.au>
+In-Reply-To: <20130322102808.5bdd9e5e0d98733e202e49c2@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Bill Pemberton <wfp5p@viridian.itc.virginia.edu>, Jiri Slaby <jslaby@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Mar 22, 2013 at 09:54:23AM +1100, Stephen Rothwell wrote:
+On Fri, Mar 22, 2013 at 10:28:08AM +1100, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> On Wed, 20 Mar 2013 17:16:28 -0700 Greg KH <greg@kroah.com> wrote:
+> On Fri, 22 Mar 2013 09:54:23 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> > On Wed, Mar 20, 2013 at 11:15:11AM -0400, Bill Pemberton wrote:
-> > > Jiri Slaby writes:
+> > On Wed, 20 Mar 2013 17:16:28 -0700 Greg KH <greg@kroah.com> wrote:
+> > >
+> > > On Wed, Mar 20, 2013 at 11:15:11AM -0400, Bill Pemberton wrote:
+> > > > Jiri Slaby writes:
+> > > > > 
+> > > > > On 03/20/2013 03:42 PM, Bill Pemberton wrote:
+> > > > > 
+> > > > > Asking Greg to revert should suffice. I commented on that patch, but in
+> > > > > a different thread, so Greg missed the comment the patch is not needed
+> > > > > IIRC. What was the title of the patch, I cannot find it immediately :/?
 > > > > 
-> > > > On 03/20/2013 03:42 PM, Bill Pemberton wrote:
-> > > > 
-> > > > Asking Greg to revert should suffice. I commented on that patch, but in
-> > > > a different thread, so Greg missed the comment the patch is not needed
-> > > > IIRC. What was the title of the patch, I cannot find it immediately :/?
+> > > > "USB: quatech2: only write to the tty if the port is open." (commit
+> > > > 27b351c in v3.9-rc3).
 > > > 
-> > > "USB: quatech2: only write to the tty if the port is open." (commit
-> > > 27b351c in v3.9-rc3).
+> > > I've now reverted this, so it should be ok.
 > > 
-> > I've now reverted this, so it should be ok.
+> > That patch needed to be reverted in your tty tree, not your usb tree
+> > since it breaks a patch added to your tty tree (see Subject).
 > 
-> That patch needed to be reverted in your tty tree, not your usb tree
-> since it breaks a patch added to your tty tree (see Subject).
+> Except, of course, commit 27b351c is not in your tty tree :-(
 
-Ah, ok, I've done that now, sorry for the confusion.
+Which was causing me lots of confusion :)
+
+I've merged it in there now, and reverted it, so all should be good.
 
 greg k-h
