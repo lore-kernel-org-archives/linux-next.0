@@ -1,77 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Thu, 21 Mar 2013 15:20:04 +1100
-Message-ID: <20130321152004.27ac4f29e9b6caae7beb3bdb@canb.auug.org.au>
-References: <20130320141211.52b44d0e202d32812c3e3c0c@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Date: Thu, 21 Mar 2013 15:24:21 +1100
+Message-ID: <20130321152421.94d213e7b520c5affb1acd19@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__21_Mar_2013_15_20_04_+1100_EllBpOCoKh2GmjXM"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130320141211.52b44d0e202d32812c3e3c0c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Thu__21_Mar_2013_15_24_21_+1100_shKXq8YxKs_IjKRY"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:33559 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753363Ab3CUEYY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Mar 2013 00:24:24 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Bill Pemberton <wfp5p@virginia.edu>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
 
---Signature=_Thu__21_Mar_2013_15_20_04_+1100_EllBpOCoKh2GmjXM
+--Signature=_Thu__21_Mar_2013_15_24_21_+1100_shKXq8YxKs_IjKRY
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-On Wed, 20 Mar 2013 14:12:11 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->=20
-> drivers/net/caif/caif_serial.c: In function 'update_tty_status':
-> drivers/net/caif/caif_serial.c:94:11: error: 'struct tty_struct' has no m=
-ember named 'warned'
->=20
-> Caused by commit 6865ff222cca ("TTY: do not warn about setting speed via
-> SPD_*").
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/host/ehci-timer.c between commit d714aaf64946 ("USB: EHCI:
+fix regression in QH unlinking") from the usb.current tree and commit
+60fd4aa742a0 ("USB: EHCI: reorganize ehci_iaa_watchdog()") from the usb
+tree.
 
-I still have this error today so have still used the tty tree from
-next-20130319.
-
-> drivers/usb/serial/quatech2.c: In function 'qt2_process_read_urb':
-> drivers/usb/serial/quatech2.c:661:18: error: 'struct qt2_port_private' ha=
-s no member named 'is_open'
-> drivers/usb/serial/quatech2.c:705:15: error: 'struct qt2_port_private' ha=
-s no member named 'is_open'
->=20
-> Caused by commit e4408ce3c23f ("TTY: quatech2, remove unneeded
-> is_open").  grep is your friend (or searching while editting the file).
-
-As has been reported, this one is fixed by reverting commit 27b351c "USB:
-quatech2: only write to the tty if the port is open".
+I assume that the latter fixed the problem fixed by the former, so just
+used the latter and can carry the fix as necessary (no action is
+required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__21_Mar_2013_15_20_04_+1100_EllBpOCoKh2GmjXM
+--Signature=_Thu__21_Mar_2013_15_24_21_+1100_shKXq8YxKs_IjKRY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRSop0AAoJEECxmPOUX5FEQG4QAKokh4hiPEHZ0HP3nHbhtM34
-FZUqZFspq2oW6CwcYLbAVPeGLqmHlyGKovXZ5cSlriUYnVnBjV1hBxSIJoSa3GXO
-8cO+xupOU/ISP/HwKurh0RnT9zPLJioD+Pjd+6AyCTuivaj0KSAyJeJVCBO4mt12
-Kmv/kQF/DasxRw2w3AsdkiqM1U4XN9XzhGnB2Ek9ebuOT3Vkr8EBki7perAWzNh1
-q4s/cUVPhOzOZOHzuPBCmTRF4YFFL0SpqyUCcwuvQCiXU4Y8F/szgqxRht69lu+7
-nokkWE4fUyx6PAuijOkb8za45NaYbUiGsIMltzAloluofyA95neOeqzhQv8fCSPb
-/dzepYMBuKh9cGZ5S59aZGJM0TDMvJXY8T5naQLkfxhVCugT6Nm28BZZjGoUwFfN
-GJtCGRisQeRJFJafvpkV7EBpqxO+s5UNlJtgZpe+lrQKw2ExbEjSqdzZ8VTyGiA4
-w62egQgkKTKozDw3nO/yYG3g4POhuQGjMr4PPoXvda2JG3ns2KoCIVMoeNLscqps
-JX1pAzzUkS9Wk0qzZHD6949tnBcWFjkm0XC3RfzQWow1Q2JKh9zwPaVCoLcJsyHc
-CQkwB5g4EJha/tdTH8vqBgVJomWPPch+zPEJPu9x1ykIcKOCI7YgcjVS4pA8qE+a
-4H49qlUXYPBWg0++nq81
-=B0Us
+iQIcBAEBCAAGBQJRSot1AAoJEECxmPOUX5FEO6cQAKkl2j3TwuC6kIt+FHDzFFyB
+r747eSfDJGuYmJeEM8kpFkUu56gfpBwLDoRHJwDYg1z1CGHBS4KDbSQNVzDxlQAy
+0Byx1bHfgnXuccFDATgk3wpYW0kID49nKb+uH5WXXQLtWMVA2DzRw5G2MmV0oMy1
+cjr4Obozto+fvQFQCil4XTnhJCEcjH4xqProB+x2r8VHNbK823T8Oo0GQC4TJyVr
+oRLFuH+V5MEeVX3YE6MnZXrbZ73X9PzdbamXVmB5wo2cCdiicNqMfGirfbtgFtfQ
+/N/KKSdnubWTBGYQ4pCJ4KF0z2fNJ9HN0F+p2JzqvO7L1LinMMyUfC5flcLI1LG+
+g9Z113fGU94YAgxUkTTmnVV+7P++LjJaYkNu4Zqna4NeWk6yvGrsAato0+M27Aii
+hi58OTX8txYv0BF9H1AtfYih+aqxRnNEBx84/SyFNL5d70pE6D6yqJvQhNY/PqIn
+AbSvqHI2DMZpZlgApgLM30+o7VaODcTzJQWbYhiKvOlpSUE9Hnv0F+4t4D+AKkDl
+XMpl1kg5SRJERkkGkKPt2Y4R0dQ29jkq/P4wvtDYCPgfWSk8I+TO8FxB5j7Ws+Lf
+KadRX5HNo/FrL8EM805F+ABf6u7fAvyZi00c9vzgEPujIWBpG+UA3X5s8yelCRSx
+7rq1iBo3bltl8V1L2184
+=kvjt
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__21_Mar_2013_15_20_04_+1100_EllBpOCoKh2GmjXM--
+--Signature=_Thu__21_Mar_2013_15_24_21_+1100_shKXq8YxKs_IjKRY--
