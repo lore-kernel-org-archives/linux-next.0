@@ -1,61 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the usb.current tree
-Date: Thu, 21 Mar 2013 15:24:21 +1100
-Message-ID: <20130321152421.94d213e7b520c5affb1acd19@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the sparc-next tree
+Date: Thu, 21 Mar 2013 16:33:28 +1100
+Message-ID: <20130321163328.2c6dccabad6a8dc8fe4b0e24@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__21_Mar_2013_15_24_21_+1100_shKXq8YxKs_IjKRY"
+ boundary="Signature=_Thu__21_Mar_2013_16_33_28_+1100_rrdZM4x_uqqUxoGx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33559 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53926 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753363Ab3CUEYY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Mar 2013 00:24:24 -0400
+	with ESMTP id S1753088Ab3CUFdj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Mar 2013 01:33:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiang Liu <liuj97@gmail.com>, Tkhai Kirill <tkhai@yandex.ru>, David Miller <davem@davemloft.net>
 
---Signature=_Thu__21_Mar_2013_15_24_21_+1100_shKXq8YxKs_IjKRY
+--Signature=_Thu__21_Mar_2013_16_33_28_+1100_rrdZM4x_uqqUxoGx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Andrew,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/host/ehci-timer.c between commit d714aaf64946 ("USB: EHCI:
-fix regression in QH unlinking") from the usb.current tree and commit
-60fd4aa742a0 ("USB: EHCI: reorganize ehci_iaa_watchdog()") from the usb
-tree.
+Today's linux-next merge of the akpm tree got a conflict in
+arch/sparc/mm/init_64.c between commit ce835e513a93 ("sparc64: Do not
+change num_physpages during initmem freeing") from the sparc-next tree
+and commit "mm/SPARC: use common help functions to free reserved pages"
+from the akpm tree.
 
-I assume that the latter fixed the problem fixed by the former, so just
-used the latter and can carry the fix as necessary (no action is
-required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__21_Mar_2013_15_24_21_+1100_shKXq8YxKs_IjKRY
+diff --cc arch/sparc/mm/init_64.c
+index 076068f,3f559d1..0000000
+--- a/arch/sparc/mm/init_64.c
++++ b/arch/sparc/mm/init_64.c
+@@@ -2119,14 -2117,10 +2117,8 @@@ void free_initmem(void
+  			((unsigned long) KERNBASE));
+  		memset((void *)addr, POISON_FREE_INITMEM, PAGE_SIZE);
+ =20
+--		if (do_free) {
+- 			p =3D virt_to_page(page);
+-=20
+- 			ClearPageReserved(p);
+- 			init_page_count(p);
+- 			__free_page(p);
+- 			totalram_pages++;
+- 		}
+++		if (do_free)
++ 			free_reserved_page(virt_to_page(page));
+ -			num_physpages++;
+ -		}
+  	}
+  }
+ =20
+
+--Signature=_Thu__21_Mar_2013_16_33_28_+1100_rrdZM4x_uqqUxoGx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRSot1AAoJEECxmPOUX5FEO6cQAKkl2j3TwuC6kIt+FHDzFFyB
-r747eSfDJGuYmJeEM8kpFkUu56gfpBwLDoRHJwDYg1z1CGHBS4KDbSQNVzDxlQAy
-0Byx1bHfgnXuccFDATgk3wpYW0kID49nKb+uH5WXXQLtWMVA2DzRw5G2MmV0oMy1
-cjr4Obozto+fvQFQCil4XTnhJCEcjH4xqProB+x2r8VHNbK823T8Oo0GQC4TJyVr
-oRLFuH+V5MEeVX3YE6MnZXrbZ73X9PzdbamXVmB5wo2cCdiicNqMfGirfbtgFtfQ
-/N/KKSdnubWTBGYQ4pCJ4KF0z2fNJ9HN0F+p2JzqvO7L1LinMMyUfC5flcLI1LG+
-g9Z113fGU94YAgxUkTTmnVV+7P++LjJaYkNu4Zqna4NeWk6yvGrsAato0+M27Aii
-hi58OTX8txYv0BF9H1AtfYih+aqxRnNEBx84/SyFNL5d70pE6D6yqJvQhNY/PqIn
-AbSvqHI2DMZpZlgApgLM30+o7VaODcTzJQWbYhiKvOlpSUE9Hnv0F+4t4D+AKkDl
-XMpl1kg5SRJERkkGkKPt2Y4R0dQ29jkq/P4wvtDYCPgfWSk8I+TO8FxB5j7Ws+Lf
-KadRX5HNo/FrL8EM805F+ABf6u7fAvyZi00c9vzgEPujIWBpG+UA3X5s8yelCRSx
-7rq1iBo3bltl8V1L2184
-=kvjt
+iQIcBAEBCAAGBQJRSpuoAAoJEECxmPOUX5FES/YP/0TBzzgUOnY/VC4NCojwdP3+
+G8Bye+OTqTdRWx9pQaV0+bCHSxAfDwDmpBKYcBQufNjG+iN+UBn9f21mQw1Mo+QA
+QqRQ6huxcSjk1+xBFMZNMJDtEM536efbquKO5gMCkItUlBRNvYRhFn1c4upMWo8a
+c5S0NjGLycFuZq79PRQF6HeMHkkgInseN0ax6OxNSPFgLL/FDaSA/LrCBLTHOXCP
+I7DiSi15rZsw9XsyP40vBNKvuCX2VnX4PJtOxutZRuuwbOXzyAfjrpuYkvPYf2tH
+SAPgPZhoktOaftYCzTH3+TUMjS0q7tvdyzCM+KHRZw/WRtMPUlcuT1CaxW3fEVg2
+chvfpWm735zKIHxbjX+hHfuKfs4Ju2pyNPb1tk5A07KGdeanlMDoBRFUXE/iM5B8
+T6qzR6fc6WBWOnC9Q0JHxafHPOZsJJymyW/ZRXSNlB5VQ3tHHfsQWoQnjtEA8/IP
+T2g4DUBlO9XUg1QACyut8AHAfJI4Vn5doH2yb0WwGXnzhCjU0f0Bvzkz/6PJJ5HD
+f5SHC+IzjgfQjA+nECeTv5qh+YwQLFSrN8qeOIkLT+ueQiQM/r9dYxafxdXa6GPH
+ohUDlJXa67EcExpj2BZRLF9rPTOG3sDyF/K31uVc5QZeMvLDE9QGsOzcDSg5bTfP
+5PloALjKVmcPLU+e5yOh
+=K4jw
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__21_Mar_2013_15_24_21_+1100_shKXq8YxKs_IjKRY--
+--Signature=_Thu__21_Mar_2013_16_33_28_+1100_rrdZM4x_uqqUxoGx--
