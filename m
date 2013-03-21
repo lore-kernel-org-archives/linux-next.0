@@ -1,38 +1,45 @@
-From: David Rientjes <rientjes@google.com>
-Subject: Re: linux-next: Tree for Mar 20 (vmcore)
-Date: Wed, 20 Mar 2013 17:10:30 -0700 (PDT)
-Message-ID: <alpine.DEB.2.02.1303201709440.23363@chino.kir.corp.google.com>
-References: <20130320160536.54e62fc11a3651494b710e3b@canb.auug.org.au> <5149E813.8060307@infradead.org> <alpine.DEB.2.02.1303201153330.17761@chino.kir.corp.google.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Wed, 20 Mar 2013 17:16:28 -0700
+Message-ID: <20130321001628.GC27981@kroah.com>
+References: <5149D1FD.90400@suse.cz>
+ <20130320151511.170EC8017A@viridian.itc.virginia.edu>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f50.google.com ([209.85.160.50]:40384 "EHLO
-	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755217Ab3CUAKd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Mar 2013 20:10:33 -0400
-Received: by mail-pb0-f50.google.com with SMTP id up1so1740165pbc.23
-        for <linux-next@vger.kernel.org>; Wed, 20 Mar 2013 17:10:32 -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.02.1303201153330.17761@chino.kir.corp.google.com>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:55098 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752030Ab3CUAQa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Mar 2013 20:16:30 -0400
+Content-Disposition: inline
+In-Reply-To: <20130320151511.170EC8017A@viridian.itc.virginia.edu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, HATAYAMA Daisuke <d.hatayama@jp.fujitsu.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+To: Bill Pemberton <wfp5p@viridian.itc.virginia.edu>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 20 Mar 2013, David Rientjes wrote:
-
-> I don't think that's it, linux/kexec.h already gets included indirectly.  
-> The problem is that CONFIG_KEXEC isn't set so the definition in kexec.h is 
-> meaningless.
+On Wed, Mar 20, 2013 at 11:15:11AM -0400, Bill Pemberton wrote:
+> Jiri Slaby writes:
+> > 
+> > On 03/20/2013 03:42 PM, Bill Pemberton wrote:
+> > > Ok, for the unopened ports there *should* never be any actual data to
+> > > push so the push is really doing nothing anyhow in these cases.  It's
+> > > coming from the device sending an initial change port command.
+> > > 
+> > > Anyhow, so my patch adding more is_open logic can be dropped and then
+> > > yours will apply fine.  What's the best way for me to handle this?
+> > > Send a revert for my patch so yours will apply or send an updated
+> > > version of your patch that removes my additions?
+> > 
+> > Asking Greg to revert should suffice. I commented on that patch, but in
+> > a different thread, so Greg missed the comment the patch is not needed
+> > IIRC. What was the title of the patch, I cannot find it immediately :/?
+> > 
 > 
-> This comes from "vmcore: check NT_VMCORE_PAD as a mark indicating the end 
-> of ELF note buffer" merged through the -mm tree.  I've added the patch's 
-> author and Andrew to the cc.
-> 
-> How can this be protected by CONFIG_KEXEC?
-> 
+> "USB: quatech2: only write to the tty if the port is open." (commit
+> 27b351c in v3.9-rc3).
 
-These patches were removed from -mm today so it should no longer be a 
-problem.
+I've now reverted this, so it should be ok.
 
-If the patchset is reintroduced, please keep this build failure in the 
-back of your mind, thanks.
+greg k-h
