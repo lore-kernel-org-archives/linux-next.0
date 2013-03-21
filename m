@@ -1,34 +1,76 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the akpm tree with the sparc-next
- tree
-Date: Thu, 21 Mar 2013 16:21:53 -0400 (EDT)
-Message-ID: <20130321.162153.1171536447340639084.davem@davemloft.net>
-References: <20130321163328.2c6dccabad6a8dc8fe4b0e24@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Fri, 22 Mar 2013 09:54:23 +1100
+Message-ID: <20130322095423.799b201fd0f6671e8127c2ac@canb.auug.org.au>
+References: <5149D1FD.90400@suse.cz>
+	<20130320151511.170EC8017A@viridian.itc.virginia.edu>
+	<20130321001628.GC27981@kroah.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__22_Mar_2013_09_54_23_+1100_0Ba.XP8ggyZ9BPSI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:46678 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752589Ab3CUUVy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Mar 2013 16:21:54 -0400
-In-Reply-To: <20130321163328.2c6dccabad6a8dc8fe4b0e24@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44033 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752362Ab3CUWyg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Mar 2013 18:54:36 -0400
+In-Reply-To: <20130321001628.GC27981@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: akpm@linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, liuj97@gmail.com, tkhai@yandex.ru
+To: Greg KH <greg@kroah.com>
+Cc: Bill Pemberton <wfp5p@viridian.itc.virginia.edu>, Jiri Slaby <jslaby@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 21 Mar 2013 16:33:28 +1100
+--Signature=_Fri__22_Mar_2013_09_54_23_+1100_0Ba.XP8ggyZ9BPSI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the akpm tree got a conflict in
-> arch/sparc/mm/init_64.c between commit ce835e513a93 ("sparc64: Do not
-> change num_physpages during initmem freeing") from the sparc-next tree
-> and commit "mm/SPARC: use common help functions to free reserved pages"
-> from the akpm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Hi Greg,
 
-This was expected, and the merge resolution looks fine to me,
-thanks Stephen!
+On Wed, 20 Mar 2013 17:16:28 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> On Wed, Mar 20, 2013 at 11:15:11AM -0400, Bill Pemberton wrote:
+> > Jiri Slaby writes:
+> > >=20
+> > > On 03/20/2013 03:42 PM, Bill Pemberton wrote:
+> > >=20
+> > > Asking Greg to revert should suffice. I commented on that patch, but =
+in
+> > > a different thread, so Greg missed the comment the patch is not needed
+> > > IIRC. What was the title of the patch, I cannot find it immediately :=
+/?
+> >=20
+> > "USB: quatech2: only write to the tty if the port is open." (commit
+> > 27b351c in v3.9-rc3).
+>=20
+> I've now reverted this, so it should be ok.
+
+That patch needed to be reverted in your tty tree, not your usb tree
+since it breaks a patch added to your tty tree (see Subject).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__22_Mar_2013_09_54_23_+1100_0Ba.XP8ggyZ9BPSI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRS4+fAAoJEECxmPOUX5FEScQP/iciMGso1KV3fHdBCGzwUO40
+H3B8c+QGXLjmvp06+dLO6ol8kzxGGNNhoL+/vMM1bCwXrDQOIwlryFhFnOoWuHTA
+fWXXpxZesbkHvwUQkstVMsIT73ibn8hV0RJezgeGclFL7XlG1sBmW1/sJBFby3Fu
+ZrMQLI8V1CtRr5sNhKvbmDSh6Id7K6BPLq3sxQK+AH1TGoIiJJo9cH8V3glqN4cs
+va5rlBDNjZ5PkpJpC4HRWZRRrjI2NJ1sBqAWX8MfygcDCayCFSK0EdHuso3yBFZs
+Kwg3Lig3nzZr/aMTGUCbM7hoa1mdtBXYmEBu7Zq3rD9jhLZsgsGqWbFKKFv1nwut
+19VMOvhias3eqqYRumryN+vX2UMdaQJ8RM0PnuKAT0aCSVbaufOVGmuj3nv+TfOP
+YObt9b4IYS5wvrKKjaqjRnEhZO5gVCxNBySPM3zq/FGTPDQscBL6SL8niPsbAK5O
+WFpbxah1Dy3xltV4YWZp3re9MqbtOo6ewoMo+LCBrfFcsl2mqNpFKhAOKVMym5MK
+5O1RDTLWPuPh7UykEWd9GJRhLvkTG97RBurWjifiXfFnVuldIzDDgu0IQb/7p2H8
+tNCrMP3MNI7tteu/yoeejI7DqGpqhui+Y4MA+Ng/DmKTWbplLj1ZpdHpGKgCZdKk
+piytPn6lN9ll5qsaMSMC
+=9DpX
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__22_Mar_2013_09_54_23_+1100_0Ba.XP8ggyZ9BPSI--
