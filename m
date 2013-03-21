@@ -1,108 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Mar 20 (vmcore)
-Date: Thu, 21 Mar 2013 14:51:54 +1100
-Message-ID: <20130321145154.78c7c46b69894c6d15aeb4da@canb.auug.org.au>
-References: <20130320160536.54e62fc11a3651494b710e3b@canb.auug.org.au>
-	<5149E813.8060307@infradead.org>
-	<alpine.DEB.2.02.1303201153330.17761@chino.kir.corp.google.com>
-	<alpine.DEB.2.02.1303201709440.23363@chino.kir.corp.google.com>
-	<20130321132012.e6f9a10287fb171dcd05c62d@canb.auug.org.au>
-	<alpine.DEB.2.02.1303201945580.29880@chino.kir.corp.google.com>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Thu, 21 Mar 2013 15:20:04 +1100
+Message-ID: <20130321152004.27ac4f29e9b6caae7beb3bdb@canb.auug.org.au>
+References: <20130320141211.52b44d0e202d32812c3e3c0c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__21_Mar_2013_14_51_54_+1100_GllQRO_d+oZbhF3a"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40765 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751603Ab3CUDwA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Mar 2013 23:52:00 -0400
-In-Reply-To: <alpine.DEB.2.02.1303201945580.29880@chino.kir.corp.google.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, HATAYAMA Daisuke <d.hatayama@jp.fujitsu.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+ boundary="Signature=_Thu__21_Mar_2013_15_20_04_+1100_EllBpOCoKh2GmjXM"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130320141211.52b44d0e202d32812c3e3c0c@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Bill Pemberton <wfp5p@virginia.edu>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__21_Mar_2013_14_51_54_+1100_GllQRO_d+oZbhF3a
+--Signature=_Thu__21_Mar_2013_15_20_04_+1100_EllBpOCoKh2GmjXM
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+Hi Greg,
 
-On Wed, 20 Mar 2013 19:49:09 -0700 (PDT) David Rientjes <rientjes@google.co=
-m> wrote:
+On Wed, 20 Mar 2013 14:12:11 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> On Thu, 21 Mar 2013, Stephen Rothwell wrote:
+> After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 >=20
-> > What exactly are "these patches" so that I can remove them from my copy
-> > of the mmotm tree (assuming that Andrew does not get a new mmotm releas=
-ed
-> > in the next hour or so).
-> >=20
+> drivers/net/caif/caif_serial.c: In function 'update_tty_status':
+> drivers/net/caif/caif_serial.c:94:11: error: 'struct tty_struct' has no m=
+ember named 'warned'
 >=20
-> [nacked] vmcore-reference-e_phoff-member-explicitly-to-get-position-of-pr=
-ogram-header-table.patch
-> [nacked] vmcore-clean-up-by-removing-unnecessary-variable.patch
-> [nacked] vmcore-rearrange-program-headers-without-assuming-consequtive-pt=
-_note-entries.patch
-> [nacked] vmcore-sysfs-export-elf-note-segment-size-instead-of-vmcoreinfo-=
-data-size.patch
-> [nacked] vmcore-allocate-buffer-for-elf-headers-on-page-size-alignment.pa=
-tch
-> [nacked] vmcore-round-up-buffer-size-of-elf-headers-by-page_size.patch
-> [nacked] vmcore-procfs-introduce-a-flag-to-distinguish-objects-copied-in-=
-2nd-kernel.patch
-> [nacked] vmcore-copy-non-page-size-aligned-head-and-tail-pages-in-2nd-ker=
-nel.patch
-> [nacked] vmcore-modify-vmcore-clean-up-function-to-free-buffer-on-2nd-ker=
-nel.patch
-> [nacked] vmcore-clean-up-read_vmcore.patch
-> [nacked] vmcore-read-buffers-for-vmcore-objects-copied-from-old-memory.pa=
-tch
-> [nacked] vmcore-allocate-per-cpu-crash_notes-objects-on-page-size-boundar=
-y.patch
-> [nacked] kexec-allocate-vmcoreinfo-note-buffer-on-page-size-boundary.patch
-> [nacked] kexec-elf-introduce-nt_vmcore_debuginfo-note-type.patch
-> [nacked] elf-introduce-nt_vmcore_pad-type.patch
-> [nacked] kexec-fill-note-buffers-by-nt_vmcore_pad-notes-in-page-size-boun=
-dary.patch
-> [nacked] vmcore-check-nt_vmcore_pad-as-a-mark-indicating-the-end-of-elf-n=
-ote-buffer.patch
-> [nacked] vmcore-check-if-vmcore-objects-satify-mmaps-page-size-boundary-r=
-equirement.patch
-> [nacked] vmcore-round-up-offset-of-vmcore-object-in-page-size-boundary.pa=
-tch
-> [nacked] vmcore-count-holes-generated-by-round-up-operation-for-vmcore-si=
-ze.patch
-> [nacked] vmcore-introduce-mmap_vmcore.patch
+> Caused by commit 6865ff222cca ("TTY: do not warn about setting speed via
+> SPD_*").
 
-Thanks.  I have removed these from my copy so that even if Andrew doesn't
-get done in time, they will not be in linux-next today.
+I still have this error today so have still used the tty tree from
+next-20130319.
+
+> drivers/usb/serial/quatech2.c: In function 'qt2_process_read_urb':
+> drivers/usb/serial/quatech2.c:661:18: error: 'struct qt2_port_private' ha=
+s no member named 'is_open'
+> drivers/usb/serial/quatech2.c:705:15: error: 'struct qt2_port_private' ha=
+s no member named 'is_open'
+>=20
+> Caused by commit e4408ce3c23f ("TTY: quatech2, remove unneeded
+> is_open").  grep is your friend (or searching while editting the file).
+
+As has been reported, this one is fixed by reverting commit 27b351c "USB:
+quatech2: only write to the tty if the port is open".
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__21_Mar_2013_14_51_54_+1100_GllQRO_d+oZbhF3a
+--Signature=_Thu__21_Mar_2013_15_20_04_+1100_EllBpOCoKh2GmjXM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRSoPaAAoJEECxmPOUX5FEsFMP/1XUB7sSdCsE51mtDMAlqbS7
-630meZOrgpQk63NtKgSXim3h2BWhoCCIbOl5S9IsqjwBxqwfZimXvFD/f7+DrLgx
-gMf3YkwalaWoENW6/HIpDLuGYdY/wRj9IKAjOBm/BmAiN3eTqV7zKFXCWFd33eB3
-ESWcSY1n1cthhiqF0k0gB35JhKlGCUdE3cFwzwugnwrPZrVJcJNEpCaLxOTTS79X
-AstiGNLk9wXWbpA/FgwlmJWs10+VqkiiwcuAoKXFgUpfbxJEIonjlu0Ph4cglKhe
-WpGQtFu53d9EEnwQHReTb4D45ulEt3aYR8PqBwO+hxlIsTd+BgrzUZd6YnuQnp+Q
-dTE/6E3zA7qH+w0K+ARbEHVd5tDapitawjg/lZV2bOdC/tZA53K9apb1NRSw6BxK
-cz0cat3dW+BgB0LlqaQl0GDwGRFIft+ktJNPmW5/hjD8H/eA5laJ+36PYygBW52b
-oAdzR/CNkzEK5CpFkPb486zOgj6fs5eA1G2dbGU4Y4JK32VEI8OsnT91+B0uRzAW
-sDHQWSHrzsLWTBh6UP7az1FeeB+H67/IDCCWua61abv0ZcXTlTIbjZFb2yphceOA
-g1XduyaHp3daq5nKBKNGiQcaJqKWMNzTdJSmEbRMWyJw/v5BjN5tVgGvTzizhfoj
-J1NcF9pH0lVHhFB8uNKR
-=mFVX
+iQIcBAEBCAAGBQJRSop0AAoJEECxmPOUX5FEQG4QAKokh4hiPEHZ0HP3nHbhtM34
+FZUqZFspq2oW6CwcYLbAVPeGLqmHlyGKovXZ5cSlriUYnVnBjV1hBxSIJoSa3GXO
+8cO+xupOU/ISP/HwKurh0RnT9zPLJioD+Pjd+6AyCTuivaj0KSAyJeJVCBO4mt12
+Kmv/kQF/DasxRw2w3AsdkiqM1U4XN9XzhGnB2Ek9ebuOT3Vkr8EBki7perAWzNh1
+q4s/cUVPhOzOZOHzuPBCmTRF4YFFL0SpqyUCcwuvQCiXU4Y8F/szgqxRht69lu+7
+nokkWE4fUyx6PAuijOkb8za45NaYbUiGsIMltzAloluofyA95neOeqzhQv8fCSPb
+/dzepYMBuKh9cGZ5S59aZGJM0TDMvJXY8T5naQLkfxhVCugT6Nm28BZZjGoUwFfN
+GJtCGRisQeRJFJafvpkV7EBpqxO+s5UNlJtgZpe+lrQKw2ExbEjSqdzZ8VTyGiA4
+w62egQgkKTKozDw3nO/yYG3g4POhuQGjMr4PPoXvda2JG3ns2KoCIVMoeNLscqps
+JX1pAzzUkS9Wk0qzZHD6949tnBcWFjkm0XC3RfzQWow1Q2JKh9zwPaVCoLcJsyHc
+CQkwB5g4EJha/tdTH8vqBgVJomWPPch+zPEJPu9x1ykIcKOCI7YgcjVS4pA8qE+a
+4H49qlUXYPBWg0++nq81
+=B0Us
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__21_Mar_2013_14_51_54_+1100_GllQRO_d+oZbhF3a--
+--Signature=_Thu__21_Mar_2013_15_20_04_+1100_EllBpOCoKh2GmjXM--
