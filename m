@@ -1,130 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] KVM: fix powerpc build error for !CONFIG_KVM
-Date: Fri, 22 Mar 2013 14:35:50 +1100
-Message-ID: <20130322143550.c7ebe79c9fd97ec7a385ea16@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
+Date: Fri, 22 Mar 2013 15:09:41 +1100
+Message-ID: <20130322150941.dd103b83bc0da8a4bcb1647f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__22_Mar_2013_14_35_50_+1100_5RVicCPV778M5jED"
+ boundary="Signature=_Fri__22_Mar_2013_15_09_41_+1100_L6vLV3z+j=a2lcvQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51274 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50087 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753817Ab3CVDf6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Mar 2013 23:35:58 -0400
+	with ESMTP id S1750990Ab3CVEJx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Mar 2013 00:09:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kevin Hilman <khilman@linaro.org>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Phil Carmody <pc+lkml@asdf.org>, Gleb Natapov <gleb@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Anson Huang <b20788@freescale.com>
 
---Signature=_Fri__22_Mar_2013_14_35_50_+1100_5RVicCPV778M5jED
+--Signature=_Fri__22_Mar_2013_15_09_41_+1100_L6vLV3z+j=a2lcvQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Fixes these build error when CONFIG_KVM is not defined:
+Hi Shawn,
 
-In file included from arch/powerpc/include/asm/kvm_ppc.h:33:0,
-                 from arch/powerpc/kernel/setup_64.c:67:
-arch/powerpc/include/asm/kvm_book3s.h:65:20: error: field 'pte' has incompl=
-ete type
-arch/powerpc/include/asm/kvm_book3s.h:69:18: error: field 'vcpu' has incomp=
-lete type
-arch/powerpc/include/asm/kvm_book3s.h:98:34: error: 'HPTEG_HASH_NUM_PTE' un=
-declared here (not in a function)
-arch/powerpc/include/asm/kvm_book3s.h:99:39: error: 'HPTEG_HASH_NUM_PTE_LON=
-G' undeclared here (not in a function)
-arch/powerpc/include/asm/kvm_book3s.h:100:35: error: 'HPTEG_HASH_NUM_VPTE' =
-undeclared here (not in a function)
-arch/powerpc/include/asm/kvm_book3s.h:101:40: error: 'HPTEG_HASH_NUM_VPTE_L=
-ONG' undeclared here (not in a function)
-arch/powerpc/include/asm/kvm_book3s.h:129:4: error: 'struct kvm_run' declar=
-ed inside parameter list [-Werror]
-arch/powerpc/include/asm/kvm_book3s.h:129:4: error: its scope is only this =
-definition or declaration, which is probably not what you want [-Werror]
+Today's linux-next merge of the imx-mxs tree got a conflict in
+arch/arm/mach-imx/mach-imx6q.c between commit da4a686a2cfb ("ARM:
+smp_twd: convert to use CLKSRC_OF init") from the arm-soc tree and commit
+371287432334 ("ARM: imx: enable anatop suspend/resume") from the imx-mxs
+tree.
 
-... and so on ...
-
-This was introduced by commit f445f11eb2cc265dd47da5b2e864df46cd6e5a82
-"KVM: allow host header to be included even for !CONFIG_KVM"
-
-Cc: Kevin Hilman <khilman@linaro.org>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/kvm_host.h | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-Kevin, does this still fix the error that commit
-f445f11eb2cc265dd47da5b2e864df46cd6e5a82 was fixing?
-
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index a942863..90ebec0 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1,8 +1,6 @@
- #ifndef __KVM_HOST_H
- #define __KVM_HOST_H
-=20
--#if IS_ENABLED(CONFIG_KVM)
--
- /*
-  * This work is licensed under the terms of the GNU GPL, version 2.  See
-  * the COPYING file in the top-level directory.
-@@ -751,6 +749,7 @@ static inline int kvm_deassign_device(struct kvm *kvm,
- }
- #endif /* CONFIG_IOMMU_API */
-=20
-+#if IS_ENABLED(CONFIG_KVM)
- static inline void __guest_enter(void)
- {
- 	/*
-@@ -770,6 +769,10 @@ static inline void __guest_exit(void)
- 	vtime_account_system(current);
- 	current->flags &=3D ~PF_VCPU;
- }
-+#else
-+static inline void __guest_enter(void) { return; }
-+static inline void __guest_exit(void) { return; }
-+#endif /* IS_ENABLED(CONFIG_KVM) */
-=20
- #ifdef CONFIG_CONTEXT_TRACKING
- extern void guest_enter(void);
-@@ -1057,8 +1060,4 @@ static inline bool kvm_vcpu_eligible_for_directed_yie=
-ld(struct kvm_vcpu *vcpu)
- }
-=20
- #endif /* CONFIG_HAVE_KVM_CPU_RELAX_INTERCEPT */
--#else
--static inline void __guest_enter(void) { return; }
--static inline void __guest_exit(void) { return; }
--#endif /* IS_ENABLED(CONFIG_KVM) */
- #endif
---=20
-1.8.1
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__22_Mar_2013_14_35_50_+1100_5RVicCPV778M5jED
+diff --cc arch/arm/mach-imx/mach-imx6q.c
+index b59ddcb,31aee4d..0000000
+--- a/arch/arm/mach-imx/mach-imx6q.c
++++ b/arch/arm/mach-imx/mach-imx6q.c
+@@@ -291,8 -257,7 +256,7 @@@ static void __init imx6q_init_irq(void
+  static void __init imx6q_timer_init(void)
+  {
+  	mx6q_clocks_init();
+ -	twd_local_timer_of_register();
+ +	clocksource_of_init();
+- 	imx_print_silicon_rev("i.MX6Q", imx6q_revision());
+  }
+ =20
+  static const char *imx6q_dt_compat[] __initdata =3D {
+
+--Signature=_Fri__22_Mar_2013_15_09_41_+1100_L6vLV3z+j=a2lcvQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRS9GWAAoJEECxmPOUX5FEs3oP/3aaK+35VuFy9/ykX9NUa6XS
-AeNOFLknYAoBy3MHYmhAnIyJLMyCQdPy/VEJmalNGLq4Nd6dL7MOoX2K7o6OI1Xg
-OMcIz4tuktTTbGxKPh7uszNYTP6t0+N73VnlRUfrmcLxqK7P3GVPf8VUvde/xfwd
-8CRdOkgay3MDQ84FFq2Zp6iLZr8DIXBk6d/kV4imeYshTkqJsy2w2Avvre0pZCm/
-jCeRRmRt3RBSiBXeesAvG/onwdoNhQc6B6PeDQvfrfSSY1kTYhYkOMjs/0igPFii
-QtUYiyshcKITbmAfV4w4UzEZzkpbdNBOvJ2LYQDfHJI5DeIDI3t4ly/1vvilLtqc
-lCxgL4Jtvu/pSnzJfIKP8nmiI3plPm6TSBdReF3JNntZsZCy99j5asFKXhrqDNMP
-z/jPSSoQaolHct+Hn4INzVGSouhqEtbt104mIezZFLegC2J5dntuD2ZJS2SmMpFE
-PupQTtI5TCP9WZ75qY8LjceJ7c+r2H3itZmjuaPualhvUzpPxPEeaxOuHegEljvn
-TnV5fmoYiNALGdzXH45wLNZQL+88ccsu6gKi2KQMl5sgjklXNj/Cyqt2395aGLml
-TVVPS9UrIX/LTFy1ulnqBQP+DMjmqwMRFd87x9IfEGmjZ16/GSdISBvkxd2L1Ggk
-KZbHKMJD85S8FnX9oRQF
-=6SX0
+iQIcBAEBCAAGBQJRS9mFAAoJEECxmPOUX5FExLoP/15P6KPjEIkPVN0EBrrPCebR
+XcnoZRT/SKIfigMC0pj/QYdaSi7CZvK32MJfWXqVFEKMF8JIIcKVhVHSZ813ZAFb
+TrTof+D1AvK7McfL/sO2Qs9ifmPgKyoJ+uNlMivukmmABjvNxtcoyne8bnu3Ekxr
+JoL1CoN/xCmOFmizKFMlQpjiNKK/tBexj7RAt1/THADFaXcJGTV3mAZMF+WxPZXF
+OZfIVE8tP+sZmpxcu9E/bDdamyxIzKliyLHHp+48cVg+vHNOTwvUbV0hiKq6DQ1F
+81gCQuMU1aW2em+VekBFUDDAaXD9HaGtpRsjF68cDQBUBBzwqPOJBfmtZUxs+yRl
+mpi1Z7Gzui8lxLmIq+Ec32qw4lpQ8RcQLHFqlt46B/Gs3aLKk6dXUBdD9Omv7hIl
+Xh9pimVEPpHpUwpDPhfqlkRaf6B8igIelQ6DC1/bUag43n2BmHytejiLfMuOeW5y
+P/4z10nDnpEDeoMxe22jMEOuRmlUpPI9f1Gwjr/zhobL923NPKPS0OGVQfpcN7SK
+ibmY1rQk5aIcr3045VhdpgGSyL1noDgKjS41k0RXwcbJiEt9YRQKULRfYxwlbE+K
+9h7mDCs7aWHoV3V3Nj4EiRZ87JKk99sQHOU1kK7SXU1Z5x17048igt3s5mQSM/+6
+95q4gxboKgh0X39Tr0FY
+=tBDq
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__22_Mar_2013_14_35_50_+1100_5RVicCPV778M5jED--
+--Signature=_Fri__22_Mar_2013_15_09_41_+1100_L6vLV3z+j=a2lcvQ--
