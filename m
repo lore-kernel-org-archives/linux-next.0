@@ -1,70 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Fri, 22 Mar 2013 11:42:33 +1100
-Message-ID: <20130322114233.e4a0262fef21a929191dcc9f@canb.auug.org.au>
-References: <5149D1FD.90400@suse.cz>
-	<20130320151511.170EC8017A@viridian.itc.virginia.edu>
-	<20130321001628.GC27981@kroah.com>
-	<20130322095423.799b201fd0f6671e8127c2ac@canb.auug.org.au>
-	<20130322102808.5bdd9e5e0d98733e202e49c2@canb.auug.org.au>
-	<20130321234724.GA1734@kroah.com>
+Subject: linux-next: manual merge of the usb-gadget tree with the
+ usb.current tree
+Date: Fri, 22 Mar 2013 14:28:11 +1100
+Message-ID: <20130322142811.41c24edf17de8c6809da5224@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__22_Mar_2013_11_42_33_+1100_p/6zCboxek5YevWs"
+ boundary="Signature=_Fri__22_Mar_2013_14_28_11_+1100_lxd2ET5lZ6tcjkeS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52939 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:47992 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754124Ab3CVAmm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Mar 2013 20:42:42 -0400
-In-Reply-To: <20130321234724.GA1734@kroah.com>
+	with ESMTP id S1753815Ab3CVD2Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Mar 2013 23:28:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Bill Pemberton <wfp5p@viridian.itc.virginia.edu>, Jiri Slaby <jslaby@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Greg KH <greg@kroah.com>
 
---Signature=_Fri__22_Mar_2013_11_42_33_+1100_p/6zCboxek5YevWs
+--Signature=_Fri__22_Mar_2013_14_28_11_+1100_lxd2ET5lZ6tcjkeS
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Felipe,
 
-On Thu, 21 Mar 2013 16:47:24 -0700 Greg KH <greg@kroah.com> wrote:
->
-> On Fri, Mar 22, 2013 at 10:28:08AM +1100, Stephen Rothwell wrote:
-> >=20
-> > Except, of course, commit 27b351c is not in your tty tree :-(
->=20
-> Which was causing me lots of confusion :)
->=20
-> I've merged it in there now, and reverted it, so all should be good.
+Today's linux-next merge of the usb-gadget tree got a conflict in
+drivers/usb/gadget/net2272.c between commit eda81bea894e ("usb: gadget:
+net2272: finally convert "CONFIG_USB_GADGET_NET2272_DMA"") from the
+usb.current tree and commit c36cbfc045bf ("usb: gadget: net2272: remove
+unused DMA_ADDR_INVALID") from the usb-gadget tree.
 
-Thanks.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__22_Mar_2013_11_42_33_+1100_p/6zCboxek5YevWs
+diff --cc drivers/usb/gadget/net2272.c
+index 32524b63,03e4104..0000000
+--- a/drivers/usb/gadget/net2272.c
++++ b/drivers/usb/gadget/net2272.c
+@@@ -58,8 -58,7 +58,7 @@@ static const char * const ep_name[] =3D=20
+  	"ep-a", "ep-b", "ep-c",
+  };
+ =20
+- #define DMA_ADDR_INVALID	(~(dma_addr_t)0)
+ -#ifdef CONFIG_USB_GADGET_NET2272_DMA
+ +#ifdef CONFIG_USB_NET2272_DMA
+  /*
+   * use_dma: the NET2272 can use an external DMA controller.
+   * Note that since there is no generic DMA api, some functions,
+
+--Signature=_Fri__22_Mar_2013_14_28_11_+1100_lxd2ET5lZ6tcjkeS
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRS6j5AAoJEECxmPOUX5FEU2EQAIoD+ziLTJ5/k40hE+JWFZew
-ZJJSTgBsnw2URegGKCmim9/lr76yT30Jw6m0S/cW/h1+FIXvAk5PdsaVzHqwMDyA
-1VfJEcyida9slXhEyBy+WgrWK3uaztl3/5/bC1K+mIMh3UvdysmvOFlzPG8azz/a
-RH4W1+WeXKiD3XK3EzbdFMOfY19JPYFv6kvEXNVj73krBN1CYT6xhIWgOT/yDB4x
-jnRwlSbQu3PfpA2+7dGkQbt+iuDZWg63oWzMCYELpP9JYpFTyCGmPNncRg8tgt1s
-F51x2AVJPyjrwfymN8csM4ZEvHtFA+oLmuaIYx8A1ZatKDrtUCkeCjJouSmh9EsZ
-mwu8M4BKpcE9SCKoY3Bfq44qYK7TLE9EXrzGPZ23aGCxU4PZ3501W7SYk0tHQyvG
-KIwNiY5iDE6QXBFcjWVOug0GmEajLYpAn2pH8hRnStLJxAP7Dh6s2KfvJ0ysf+ye
-NFWkKiVrUFJRc28Pgj1tWqHR4y9zfLhaDKvmnp5WZJrzG+uwqLowRn19GPLFnAZ5
-8AMOOlvzHdl6dKP63pnlGU26JEUX8URY7MyYQHcCy2CsOy/8/KDLYMMW7bEa2Thi
-S40HJjAQt7MTDRrM0RCagw+HjzYlZrsL+ShdYgxsXcII6mW56OXGBRT2LYeAksAS
-gEclcKnHoAi7OpDJOkvz
-=S7Z6
+iQIcBAEBCAAGBQJRS8/LAAoJEECxmPOUX5FEtGwP/jMykrs0fuNioiJozzl7HH0x
+4f+xxa0D+xmsoW669xiBc97XNtlvE+GoyU5qhw/rLlHXk8yJTJmPleMufTmKOX1X
+TMSFy6QEf8m85fGuIl6olf+nbI5xPhXMep2xqY6Zd5y+uX4O9dca5lEJVzkaP4YE
++c2R/aXvItWv+/VLXXbxx3Ii14eH7B4UpURiRmd9DnquvZZMimZT/rQHfWgA73y1
+097tmKgHG+NR3iQ3zFW5Gc9fG186be84i69XSGLPBldg8nBiqFDxb3p55GV82mpV
+3aroG/DhtYzCiJZtHqgmE9f/XV4ffAw5nBI6NSCqQHRq37jIbDbDXuXmiEi0OFBS
+WrornSSD/VdPBTBvefORhHVkAyC8VFZ6kbSER9nAKyMpCbwS9G9fRODLTzwTxBUo
+qYP0nV5z9JS5vDtiWnPe17ulo4/KNw/VGjbaSvmuAcUhc+N8PI+W8bT3qPEHSoqX
+QgRRydtzgeRguNvfjrEgc8A+YpwoEgBkngXTiKEfh2LrdQ5JGcPMkT2Fo3kAAxa3
+FsKeQIx7zMacyJZn7uWtRShNmorGrnfyNjewP4Q/rX/+Yce64N1vFtfzjK8xQZN4
+w3vZUjG7iXSNUtG9hVsRpjipvQxn5gJYL1wZkN1rFhgt84C7XKW5xGHHIcrrs9xK
+vXH+MsCfAFaTL4S/5Rvu
+=dyqd
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__22_Mar_2013_11_42_33_+1100_p/6zCboxek5YevWs--
+--Signature=_Fri__22_Mar_2013_14_28_11_+1100_lxd2ET5lZ6tcjkeS--
