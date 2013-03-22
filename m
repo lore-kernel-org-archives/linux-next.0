@@ -1,82 +1,109 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: manual merge of the usb-gadget tree with the
- usb.current tree
-Date: Fri, 22 Mar 2013 08:28:51 +0200
-Message-ID: <20130322062851.GB21346@arwen.pp.htv.fi>
-References: <20130322143135.8f9c42c298fd86e4084ca397@canb.auug.org.au>
-Reply-To: <balbi@ti.com>
+From: Gleb Natapov <gleb@redhat.com>
+Subject: Re: [PATCH] KVM: fix powerpc build error for !CONFIG_KVM
+Date: Fri, 22 Mar 2013 09:21:03 +0200
+Message-ID: <20130322072102.GL9382@redhat.com>
+References: <20130322143550.c7ebe79c9fd97ec7a385ea16@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vGgW1X5XWziG23Ko"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:51643 "EHLO bear.ext.ti.com"
+Received: from mx1.redhat.com ([209.132.183.28]:27502 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932190Ab3CVG3R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 Mar 2013 02:29:17 -0400
+	id S1751765Ab3CVHVT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Mar 2013 03:21:19 -0400
 Content-Disposition: inline
-In-Reply-To: <20130322143135.8f9c42c298fd86e4084ca397@canb.auug.org.au>
+In-Reply-To: <20130322143550.c7ebe79c9fd97ec7a385ea16@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Greg KH <greg@kroah.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Marcelo Tosatti <mtosatti@redhat.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Phil Carmody <pc+lkml@asdf.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
---vGgW1X5XWziG23Ko
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 22, 2013 at 02:35:50PM +1100, Stephen Rothwell wrote:
+> Fixes these build error when CONFIG_KVM is not defined:
+> 
+> In file included from arch/powerpc/include/asm/kvm_ppc.h:33:0,
+>                  from arch/powerpc/kernel/setup_64.c:67:
+> arch/powerpc/include/asm/kvm_book3s.h:65:20: error: field 'pte' has incomplete type
+> arch/powerpc/include/asm/kvm_book3s.h:69:18: error: field 'vcpu' has incomplete type
+> arch/powerpc/include/asm/kvm_book3s.h:98:34: error: 'HPTEG_HASH_NUM_PTE' undeclared here (not in a function)
+> arch/powerpc/include/asm/kvm_book3s.h:99:39: error: 'HPTEG_HASH_NUM_PTE_LONG' undeclared here (not in a function)
+> arch/powerpc/include/asm/kvm_book3s.h:100:35: error: 'HPTEG_HASH_NUM_VPTE' undeclared here (not in a function)
+> arch/powerpc/include/asm/kvm_book3s.h:101:40: error: 'HPTEG_HASH_NUM_VPTE_LONG' undeclared here (not in a function)
+> arch/powerpc/include/asm/kvm_book3s.h:129:4: error: 'struct kvm_run' declared inside parameter list [-Werror]
+> arch/powerpc/include/asm/kvm_book3s.h:129:4: error: its scope is only this definition or declaration, which is probably not what you want [-Werror]
+> 
+> ... and so on ...
+> 
+> This was introduced by commit f445f11eb2cc265dd47da5b2e864df46cd6e5a82
+> "KVM: allow host header to be included even for !CONFIG_KVM"
+> 
+This will re-introduce the problem that Kevin tried to fix with his
+original patch. The problem is that kernel/context_tracking.c includes
+linux/kvm_host.h unconditionally and the later includes asm/kvm_host.h
+and this breaks on archs without KVM.
 
-On Fri, Mar 22, 2013 at 02:31:35PM +1100, Stephen Rothwell wrote:
-> Hi Felipe,
->=20
-> Today's linux-next merge of the usb-gadget tree got a conflict in
-> drivers/usb/gadget/net2280.c between commit 8119b55aed81 ("USB: gadget:
-> net2280: remove leftover driver->unbind call in error pathway") from the
-> usb.current tree and commit 68abc94f8de8 ("usb: gadget: net2280: don't=20
-> touch gadget.dev.driver") from the usb-gadget tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
->=20
-> --=20
+I think the correct solution is to not include linux/kvm_host.h in
+kernel/context_tracking.c unconditionally. The patch by Kevin is here:
+http://lkml.org/lkml/2013/3/21/745
+
+> Cc: Kevin Hilman <khilman@linaro.org>
+> Cc: Marcelo Tosatti <mtosatti@redhat.com>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/linux/kvm_host.h | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+> 
+> Kevin, does this still fix the error that commit
+> f445f11eb2cc265dd47da5b2e864df46cd6e5a82 was fixing?
+> 
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index a942863..90ebec0 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -1,8 +1,6 @@
+>  #ifndef __KVM_HOST_H
+>  #define __KVM_HOST_H
+>  
+> -#if IS_ENABLED(CONFIG_KVM)
+> -
+>  /*
+>   * This work is licensed under the terms of the GNU GPL, version 2.  See
+>   * the COPYING file in the top-level directory.
+> @@ -751,6 +749,7 @@ static inline int kvm_deassign_device(struct kvm *kvm,
+>  }
+>  #endif /* CONFIG_IOMMU_API */
+>  
+> +#if IS_ENABLED(CONFIG_KVM)
+>  static inline void __guest_enter(void)
+>  {
+>  	/*
+> @@ -770,6 +769,10 @@ static inline void __guest_exit(void)
+>  	vtime_account_system(current);
+>  	current->flags &= ~PF_VCPU;
+>  }
+> +#else
+> +static inline void __guest_enter(void) { return; }
+> +static inline void __guest_exit(void) { return; }
+> +#endif /* IS_ENABLED(CONFIG_KVM) */
+>  
+>  #ifdef CONFIG_CONTEXT_TRACKING
+>  extern void guest_enter(void);
+> @@ -1057,8 +1060,4 @@ static inline bool kvm_vcpu_eligible_for_directed_yield(struct kvm_vcpu *vcpu)
+>  }
+>  
+>  #endif /* CONFIG_HAVE_KVM_CPU_RELAX_INTERCEPT */
+> -#else
+> -static inline void __guest_enter(void) { return; }
+> -static inline void __guest_exit(void) { return; }
+> -#endif /* IS_ENABLED(CONFIG_KVM) */
+>  #endif
+> -- 
+> 1.8.1
+> 
+> -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc drivers/usb/gadget/net2280.c
-> index 3bd0f99,691cc65..0000000
-> --- a/drivers/usb/gadget/net2280.c
-> +++ b/drivers/usb/gadget/net2280.c
-> @@@ -1924,7 -1920,7 +1920,6 @@@ static int net2280_start(struct usb_gad
->   err_func:
->   	device_remove_file (&dev->pdev->dev, &dev_attr_function);
->   err_unbind:
-> - 	dev->gadget.dev.driver =3D NULL;
->  -	driver->unbind (&dev->gadget);
 
-This also looks correct. Thank you
 
---=20
-balbi
 
---vGgW1X5XWziG23Ko
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRS/ojAAoJEIaOsuA1yqREKwcP/iqAIpFvwWG2gXyfEH0jZoK8
-IQ3JY+wbTben3jrDUrv2uL2r/Hcjz+yLjqDeF4j4AMViH6QmlnRLEKqjWp7DtI0K
-G7Vjhu2849K7FMuC/tAFe26w/8yNuMjdIZuffxgihoLVzMnjALwamZz81hO+1uUQ
-wE74dgDJoWpjohFWHEImEWsAKMhruTx9XApY/HRAVFRBqEaaUvEpSE3XrOe9+Xeh
-w1jgKmAUmE4neth7Dio29BQl9k20jSbw/zO6s6eC3vIQ+ZvYzo5VJm+FydRBQ+m5
-61+CpKHGynilln9cZ9cLw+eGIPY4H7gUwxmpZnAsTIXJ9m/jSOA13MbShy1a8ASR
-ynxllek/7X2/gi5mfzwci2SwawR4A1WgHm8eRLVNM0jKZs5umPBnsV+Ansezm2Iy
-aKmo2f5efcVpGmh4twiC6kPOTVCxKNyJgJZw5eT5y/9CZsAM+uXCj6jhK2DMvHAL
-y5T6IoyJ6OUnXV2ht8XoEMUT8bX4OoDiNGVPNbcYjnx5WmgH3QUf/ctybvYnmeyL
-jajwFf8UomObfWO70dTm8bUfuxt9srd0FagyuD6TBx9tFG1TWwj/9bhAgGi8YZBj
-6FQl60qETb0oOiEXpwtwureuGGsPB1vc6HgCHhUOUXicreeUjFFzGID6e4EAdUPw
-jYsB3W/+cM1EuyEkOzWU
-=gxX6
------END PGP SIGNATURE-----
-
---vGgW1X5XWziG23Ko--
+--
+			Gleb.
