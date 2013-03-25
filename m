@@ -1,61 +1,75 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [patch] sound/soc/codec : fix build failure in next-201303225
-Date: Mon, 25 Mar 2013 12:06:01 +0000
-Message-ID: <20130325120601.GN18316@opensource.wolfsonmicro.com>
-References: <alpine.DEB.2.02.1303251950440.20514@M2420>
+From: Xiong Zhou <jencce.kernel@gmail.com>
+Subject: [patch] sound/soc/codec : fix build failure in next-201303225
+Date: Mon, 25 Mar 2013 19:59:43 +0800 (CST)
+Message-ID: <alpine.DEB.2.02.1303251950440.20514@M2420>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xTKfHyrFnSV9DG3y"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:32954 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756522Ab3CYMGF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Mar 2013 08:06:05 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.02.1303251950440.20514@M2420>
+Received: from mail-pa0-f68.google.com ([209.85.220.68]:37475 "EHLO
+	mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756907Ab3CYMNS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Mar 2013 08:13:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Xiong Zhou <jencce.kernel@gmail.com>
-Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, jencce.kernel@gmail.com
 
+From: Xiong Zhou <jencce.kernel@gmail.com>
 
---xTKfHyrFnSV9DG3y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch fixes build failure of next-20130325 (and also next-20130322), 
+about sound soc codec modules, based on previous implementation. 
+Failing message:
 
-On Mon, Mar 25, 2013 at 07:59:43PM +0800, Xiong Zhou wrote:
+  MODPOST 2490 modules
+  ERROR: "arizona_rate_text" [sound/soc/codecs/snd-soc-wm-adsp.ko] undefined!
+  ERROR: "arizona_rate_val" [sound/soc/codecs/snd-soc-wm-adsp.ko] undefined!
+  WARNING: modpost: Found 5 section mismatch(es).
 
-> -const char *arizona_rate_text[ARIZONA_RATE_ENUM_SIZE] = {
-> -	"SYNCCLK rate", "8kHz", "16kHz", "ASYNCCLK rate",
-> -};
-> +extern const char *arizona_rate_text[ARIZONA_RATE_ENUM_SIZE];
->  EXPORT_SYMBOL_GPL(arizona_rate_text);
+Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
+---
+sound/soc/codecs/arizona.c |    8 ++------
+sound/soc/codecs/arizona.h |   10 ++++++++--
+2 files changed, 10 insertions(+), 8 deletions(-)
 
-No, this isn't a good fix at all - we're moving the array to the header
-but still exporting it from this file which is not clever at all.  The
-user should be conditional.
-
---xTKfHyrFnSV9DG3y
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRUD2hAAoJELSic+t+oim9zbUP/3UPOSn2TBvfkYAx2l3dR55a
-tS+Z9cHoyv3Y5h+l5sM+uBRjXTE63p0EcNEE/TvcjJpEfLVmiWlmTZbcxgZY7RnF
-OEcwkxcDJvoGvofmOKIqX4lOKy1dfpOwFuCSo7cXEFOAoQ8gvTesfG3BPSWgEZex
-DRgI9vB1sx9MtlH29f7XTHjUKAMSxfy60nfjFkYPehRtV40HjjChaqv+HIDbAOi6
-N+rmKRR/DLvlhbzmjtDNYdL7KAMaZguPkcse9TYO1jLVtetC8z2sL7+6AZTqIxUw
-bP1Y1+GCpyDpEPYuu+BOM8yTfuooDGyOpdz7fyFZtk3YJYUCSq0oFeMh5btqq/b1
-xxT0byKvBYobizXj6EmV9xzmY2bHWuKOWeGxk9jxdZMeFKj8abBdbCyusOifupdz
-RrZ+UjbKuFYwhC7Oagz/jm4aK8mbOqL5djTqKLV8FNz4bRKyon6NUt+C0QUbiOEK
-5q/0BEPCh0XvKho2J0vM52lczHTcRAdrX6cM0EgwvgxntYwfqtWMXHCiKM8myklC
-rlJk5nIYznLG6SojU3TxdRqqrGURJQirNJbFfJWuXk5adH0wByTGqHqKYA5EjdRB
-/Th16OaLqUn0M8Z99Z2aD3CGgWfPQ4kLq7eC+PgRmoQPYiet3Twfd42KiZaqRkBk
-lSGL4j+Nj5MPqOFcjySh
-=ajYk
------END PGP SIGNATURE-----
-
---xTKfHyrFnSV9DG3y--
+diff --git a/sound/soc/codecs/arizona.c b/sound/soc/codecs/arizona.c
+index 26e1579..166db32 100644
+--- a/sound/soc/codecs/arizona.c
++++ b/sound/soc/codecs/arizona.c
+@@ -433,14 +433,10 @@ EXPORT_SYMBOL_GPL(arizona_mixer_values);
+ const DECLARE_TLV_DB_SCALE(arizona_mixer_tlv, -3200, 100, 0);
+ EXPORT_SYMBOL_GPL(arizona_mixer_tlv);
+ 
+-const char *arizona_rate_text[ARIZONA_RATE_ENUM_SIZE] = {
+-	"SYNCCLK rate", "8kHz", "16kHz", "ASYNCCLK rate",
+-};
++extern const char *arizona_rate_text[ARIZONA_RATE_ENUM_SIZE];
+ EXPORT_SYMBOL_GPL(arizona_rate_text);
+ 
+-const int arizona_rate_val[ARIZONA_RATE_ENUM_SIZE] = {
+-	0, 1, 2, 8,
+-};
++extern const int arizona_rate_val[ARIZONA_RATE_ENUM_SIZE];
+ EXPORT_SYMBOL_GPL(arizona_rate_val);
+ 
+ 
+diff --git a/sound/soc/codecs/arizona.h b/sound/soc/codecs/arizona.h
+index a754a1c..3e43456 100644
+--- a/sound/soc/codecs/arizona.h
++++ b/sound/soc/codecs/arizona.h
+@@ -181,8 +181,14 @@ extern int arizona_mixer_values[ARIZONA_NUM_MIXER_INPUTS];
+ 	ARIZONA_MIXER_ROUTES(name, name "R")
+ 
+ #define ARIZONA_RATE_ENUM_SIZE 4
+-extern const char *arizona_rate_text[ARIZONA_RATE_ENUM_SIZE];
+-extern const int arizona_rate_val[ARIZONA_RATE_ENUM_SIZE];
++
++const char *arizona_rate_text[ARIZONA_RATE_ENUM_SIZE] = {
++	"SYNCCLK rate", "8kHz", "16kHz", "ASYNCCLK rate",
++};
++
++const int arizona_rate_val[ARIZONA_RATE_ENUM_SIZE] = {
++	0, 1, 2, 8,
++};
+ 
+ extern const struct soc_enum arizona_isrc_fsl[];
+ 
