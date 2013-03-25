@@ -1,65 +1,58 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [patch] sound/soc/codec : fix build failure in next-201303225
-Date: Mon, 25 Mar 2013 12:37:51 +0000
-Message-ID: <20130325123750.GP18316@opensource.wolfsonmicro.com>
-References: <alpine.DEB.2.02.1303251950440.20514@M2420>
- <20130325120601.GN18316@opensource.wolfsonmicro.com>
- <alpine.DEB.2.02.1303252017020.20514@M2420>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: failed to fetch the osd tree
+Date: Tue, 26 Mar 2013 10:17:17 +1100
+Message-ID: <20130326101717.36b4a4c2e23b108a9592b32c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4SRTEifjNkXp0Rce"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__26_Mar_2013_10_17_17_+1100_pTRxlc_KQUCO.qnf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60346 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757168Ab3CYMh5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Mar 2013 08:37:57 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.02.1303252017020.20514@M2420>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50861 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932338Ab3CYXR3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Mar 2013 19:17:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Xiong Zhou <jencce.kernel@gmail.com>
-Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
---4SRTEifjNkXp0Rce
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Tue__26_Mar_2013_10_17_17_+1100_pTRxlc_KQUCO.qnf
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 25, 2013 at 08:34:27PM +0800, Xiong Zhou wrote:
-> On Mon, 25 Mar 2013, Mark Brown wrote:
+Hi Boaz,
 
-> > No, this isn't a good fix at all - we're moving the array to the header
-> > but still exporting it from this file which is not clever at all.  The
-> > user should be conditional.
+Fetching the osd tree
+(git://git.open-osd.org/linux-open-osd.git#linux-next) produces a time
+out and this error:
 
-> Yes, I agree with you much. Do you have some plan with this array?=20
-> The exproting seems not necesary right now, How about just moving=20
-> the array to the header?
+fatal: read error: Connection reset by peer
 
-Exactly what I said in my reply...
+I will continue to use the last osd tree I fetched.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---4SRTEifjNkXp0Rce
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Signature=_Tue__26_Mar_2013_10_17_17_+1100_pTRxlc_KQUCO.qnf
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRUEUKAAoJELSic+t+oim9VCAP/RRgb5qhm4rv0XbfZ3eQ2Oeg
-vpWL2rKN34fkJTiUOUffecUOU5yynKfQjDrwxiwBvnr1i1Xfl5jbPcr++eSKVwxL
-SiQUGNvrtEfyyv4EWq6/J2yQsM4emFMVUYOEVJM9gNuRfHAzdu1MN//S8M4UTA6B
-O9wW/2Sz0TXxL+gk0n51kB9AWSh1rX/KeUPjkcM0gQG420LnCR5TY7xX57lIO31U
-+oDPR3VKgx6n0L25cwPiWphKn2IhrfVyQVXOw3qrMW9hqaqS72biVK04fhpOQ6bU
-fA4S2MqeNt5/0A4nCJ49Wqo020y8lWZkCKVkx37EYr8sJWO/FBhWY/mywjzXpq77
-CYyoB0Q3HyI2TaCgmA2/c0f6snlNiTHSg2pajRtBrVnrhkg80BwCIdMSa6PzDAHq
-GAOibCRhohPZeTm/wgtP6I2kGyK2EJZyTWivzultcUKM3Fvnhk8IXUNXhVfqa2HK
-GG+TFUxlUVXLCsKb/JvvhJGNpnpHxj/thsUOBqB73YNcMFrDDF3COY8VPXxfjqMz
-SnoKPG9WWNawiEy1tbfA8LTI3wZ9IUvnxOsmoM9HBILBj5mHM7dBwNatpJh648h6
-49yWYPtcG9e1IiQ3GOIL0r7MCBUCe5SP6qnTPYfb2VOBkMygpIRbN69BaAzw/4Jo
-MHstd+cS60pdUmDsUL4F
-=znhM
+iQIcBAEBCAAGBQJRUNr9AAoJEECxmPOUX5FEDg4P/RDV5U3U47yRfP3HO9RrkeBF
+1f6gALTEInAmeXb5FKC0mNK/H2kF9wQ/KHPm3uewqfpZ3OHoh6AQWZh+HuEbsNQK
+lS+1/MXxSu+BcrLP42J+x4lT8FzhvjpOouWkH1OoqCq3fcINiBKGy26dSWzr/oCh
+Q+NkKR3NMnVYQCoCjuktMbgPuhUoEQ+H2xmQI9EKDH5GW+9yXqn8V/eycmfw4lDl
+EFtUSCslC8vg1QNROHh7uXlTGoR8JgfIINsMYXNtG0MF/bh04WMJsw+1plli1cgD
+3Wf/3+JMBiYdpnNlhh9e5KIS7B7hbQIy0crkWSKK0hLBv1oMBY4ey/UOpAH+Es8Z
+oIYqdS3yXpED3c4UzrKPfV0WvUELdsctPILObrC46K1EKl9P5ibU25TiFOccaWfP
+TmQEuxwU8w26QIC34uHUcsKsiHYjQt2cFGdFTwMPg1DU7F2dOVF200Vzd1Bt5Irs
+RIVd0O1PzQzHk1PQjkNcmrgspLJVoUnPcH9wYt4NrzFlPK5xWxdNYJQKaMrwkrfu
+b1aKF48v5+NXXmuSzcVpZBf0rJdiADZDQNDCffGaKil0N++Z6YxNtoFScR9yhddH
+glDvnSyvYbU6NtzabGqnoqrVBKp5UIOyVzT4w3FT5IfK+mVbUalVjjWhCQpFiKnQ
+N0Um2QBLluCJJ2enYCZk
+=UKJ7
 -----END PGP SIGNATURE-----
 
---4SRTEifjNkXp0Rce--
+--Signature=_Tue__26_Mar_2013_10_17_17_+1100_pTRxlc_KQUCO.qnf--
