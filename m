@@ -1,29 +1,28 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the  tree
-Date: Mon, 25 Mar 2013 13:32:33 +1100
-Message-ID: <20130325133233.0ae2af5bf7e25dca9c3999ba@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 25 Mar 2013 15:22:58 +1100
+Message-ID: <20130325152258.b930b51cccd98bedceeca92c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__25_Mar_2013_13_32_33_+1100_1gdbcvePjnMfTsyV"
+ boundary="Signature=_Mon__25_Mar_2013_15_22_58_+1100_RGlvdfRyH.K68Y9n"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, Cornelia Huck <cornelia.huck@de.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Nathan Zimmer <nzimmer@sgi.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__25_Mar_2013_13_32_33_+1100_1gdbcvePjnMfTsyV
+--Signature=_Mon__25_Mar_2013_15_22_58_+1100_RGlvdfRyH.K68Y9n
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-Today's linux-next merge of the kvm tree got a conflict in
-drivers/s390/kvm/virtio_ccw.c between commit 9d0ca6ed6f2f ("virtio:
-remove obsolete virtqueue_get_queue_index()") from the net-next tree and
-commit 07e169335ff0 ("virtio_ccw: pass a cookie value to kvm hypercall")
-from the kvm tree.
+Today's linux-next merge of the akpm tree got a conflict in
+fs/proc/inode.c between commit  ("vfs,proc: guarantee unique inodes
+in /proc") from Linus' tree and commit
+"procfs-improve-scaling-in-proc-v5" from the akpm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -32,41 +31,58 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/s390/kvm/virtio_ccw.c
-index fb877b59,42d507c..0000000
---- a/drivers/s390/kvm/virtio_ccw.c
-+++ b/drivers/s390/kvm/virtio_ccw.c
-@@@ -166,7 -167,8 +167,7 @@@ static void virtio_ccw_kvm_notify(struc
+diff --cc fs/proc/inode.c
+index 38f0775,f53660a..0000000
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@@ -463,10 -464,10 +464,11 @@@ static const struct file_operations pro
  =20
-  	vcdev =3D to_vc_device(info->vq->vdev);
-  	ccw_device_get_schid(vcdev->cdev, &schid);
-- 	do_kvm_notify(schid, vq->index);
- -	info->cookie =3D do_kvm_notify(schid, virtqueue_get_queue_index(vq),
- -				     info->cookie);
-++	info->cookie =3D do_kvm_notify(schid, vq->index, info->cookie);
-  }
+  struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entr=
+y *de)
+  {
+ -	struct inode *inode =3D iget_locked(sb, de->low_ino);
+ +	struct inode *inode =3D new_inode_pseudo(sb);
++ 	const struct file_operations *fops;
  =20
-  static int virtio_ccw_read_vq_conf(struct virtio_ccw_device *vcdev,
+ -	if (inode && (inode->i_state & I_NEW)) {
+ +	if (inode) {
+ +		inode->i_ino =3D de->low_ino;
+  		inode->i_mtime =3D inode->i_atime =3D inode->i_ctime =3D CURRENT_TIME;
+  		PROC_I(inode)->pde =3D de;
+ =20
+@@@ -491,9 -494,11 +495,10 @@@
+  #endif
+  					inode->i_fop =3D &proc_reg_file_ops;
+  			} else {
+- 				inode->i_fop =3D de->proc_fops;
++ 				inode->i_fop =3D fops;
+  			}
+  		}
++ 		rcu_read_unlock();
+ -		unlock_new_inode(inode);
+  	} else
+  	       pde_put(de);
+  	return inode;
 
---Signature=_Mon__25_Mar_2013_13_32_33_+1100_1gdbcvePjnMfTsyV
+--Signature=_Mon__25_Mar_2013_15_22_58_+1100_RGlvdfRyH.K68Y9n
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRT7dBAAoJEECxmPOUX5FEP+cP/1nKRZrmAQdVUwZZjUg4HrfO
-89FViPfO1YI3RYYCoyGLyj8Krx/KBvyKggBKB5CIevdc3BY0igUgXrdoNptaXQg2
-iR+46Ea9vj2AGKrZV40qFHEN4xIX6SVmRvpnLXb44boyVLtoylheTYt7+avvtc14
-UrcL+nAQeL8DczRzJjQ/9FSDfYjisC1M/4Qc1Z8YAqD1spziROdpvLTsX5Yci2pr
-0rkMoi6FVQENZFbzUtWqovbBeN6mkLiW8oqPahw/IcJkDk+WfNo3h9xt1se4c5oN
-tyS9C9/X7m3c+vtpoJy5F1YryyJwO4CvNO/RLUPpclq9kLKM3rE6k/hUIIw2r82o
-lDBKxhvr4FtZHHz8rYrH/bkpi/IHbXKDD61aiNMKEFBGsDSg6Je8uYnKq8rIpRW7
-nTycS+4vEzSbz1kT/BM0RHfv4ggvG1EueCv4rYoIlKo5lQV16uykRiCDaTtRqcRt
-xJfgPt3zQxaiIe0xlZTddPeeadI2EFTDIGDBwL/3tsRX9q43sa+LseyhgomY+RmL
-paVivi/C0/29dlnbn4l8x0ABMhF4yQDkfzL9jilr4H/Ydji7KdnIZsqH12pT1HM/
-1nLJ5osT5o5ociAzN6WMEwdOSxqF/MnDbCJA7s0MzHdQHZbzZY5443O3xLpZ8Zv+
-QzNatC67sKuV4Vmu5dI2
-=y4WA
+iQIcBAEBCAAGBQJRT9EiAAoJEECxmPOUX5FEuEcP/ixF8rPMBmE0SNzoKgMRonUJ
+oTckvTgfcB2V9CDqdx3OPsYLDx4WDm/cP45PIx88CzGaSZozSClSUc9SmRvGNcS+
+0S1UmWhoQVWcd40YygzT8kEsHPUNPKleiqg8NQ6ZyboUMj692Oh+JVYkA+L5Wkl7
+Aa82j0ZJ5cNyzvApcs0GdKTBjvnDRRrCFRYY5DwchXfKSExXVD93HMjgINb6jzFt
+TlBbUUcCoEtYoUNs6EU0gZ15xnsGpYleggU0FuO9OhwjqL8G4v4OGglH4V9lr6yI
+h0UvZONaTU+9Hvzqx67z5V1txW7nSBUPGJS8DM+s3pKZD6aHf2oa5u0qBGNOIEHo
+27gnT2X8OnADp5lmFBpWHZL5fh/Q6mBa6UHTbwEysCLfZrkmeg8762rZrk/TXZb1
+9XihyMmmSp2AOZ2TZ/1NnqirkSDFX++9+L3+5BwmK76EzyWmI52TxOVpujkvBH0n
+370dNI0KoC13F0MLS3ZI4V8Gt6hVFVQxGGOa+l7JJjOgfBEo4+hoWjQb3Dy5DpLC
+AOuJ/ysba93dEbe/oKsuHJ92EYTKIZA6ISuzKzV8tpMSA3HkLE49/NnwyKZFVbIK
+o88xVf3WYRB+gMg1t6zROqzH3n63Rs6Z6dOpuRjPhVchXvgbCNeaNEp0XoBsFDP1
+I8DyW7z8SE2wqsfb1Z4B
+=d2Gh
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__25_Mar_2013_13_32_33_+1100_1gdbcvePjnMfTsyV--
+--Signature=_Mon__25_Mar_2013_15_22_58_+1100_RGlvdfRyH.K68Y9n--
