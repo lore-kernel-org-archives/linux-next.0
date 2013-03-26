@@ -1,64 +1,100 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (v4l-dvb
- tree related)
-Date: Tue, 26 Mar 2013 17:18:47 +1100
-Message-ID: <20130326171847.18cd41b85d3caee6373d9447@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (block tree
+ related)
+Date: Tue, 26 Mar 2013 17:31:59 +1100
+Message-ID: <20130326173159.09dad51a1b8825a264f3171f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__26_Mar_2013_17_18_47_+1100_=o/P5CXbM8431v4d"
+ boundary="Signature=_Tue__26_Mar_2013_17_31_59_+1100_aiRggckB+t4XII3R"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46836 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:60921 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759050Ab3CZGTD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Mar 2013 02:19:03 -0400
+	with ESMTP id S1756759Ab3CZGcR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Mar 2013 02:32:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Greg KH <greg@kroah.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <koverstreet@google.com>
 
---Signature=_Tue__26_Mar_2013_17_18_47_+1100_=o/P5CXbM8431v4d
+--Signature=_Tue__26_Mar_2013_17_31_59_+1100_aiRggckB+t4XII3R
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+After merging the final tree, today's linux-next build (powerpc allyesconfi=
+g)
+failed like this:
 
-drivers/staging/media/solo6x10/solo6x10-v4l2-enc.c: In function 'solo_enc_d=
-efault':
-drivers/staging/media/solo6x10/solo6x10-v4l2-enc.c:1031:7: error: case labe=
-l does not reduce to an integer constant
-drivers/staging/media/solo6x10/solo6x10-v4l2-enc.c:1035:7: error: case labe=
-l does not reduce to an integer constant
+drivers/built-in.o: In function `bio_alloc_pages':
+(.opd+0x2364a8): multiple definition of `bio_alloc_pages'
+fs/built-in.o:(.opd+0x7188): first defined here
 
-I am not sure why this has suddenly appeared, but I have disabled the
-driver for now using this patch:
+Caused by an interaction between commits a07876064a0b ("block: Add
+bio_alloc_pages()") and commit cafe56359144 ("bcache: A block layer
+cache") from the block tree.
+
+I have applied the following fix patch (this should have happened in
+merge commit 12f45f28441e "Merge branch 'for-3.10/drivers' into
+for-next"):
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 26 Mar 2013 17:14:47 +1100
-Subject: [PATCH] disable solo6x10 driver due to build errors
+Date: Tue, 26 Mar 2013 17:26:45 +1100
+Subject: [PATCH] block: remove the extra copy of bio_alloc_pages
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/staging/media/solo6x10/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/bcache/util.c | 18 ------------------
+ drivers/md/bcache/util.h |  2 --
+ 2 files changed, 20 deletions(-)
 
-diff --git a/drivers/staging/media/solo6x10/Kconfig b/drivers/staging/media=
-/solo6x10/Kconfig
-index ec32776..a6a970f 100644
---- a/drivers/staging/media/solo6x10/Kconfig
-+++ b/drivers/staging/media/solo6x10/Kconfig
-@@ -1,6 +1,7 @@
- config SOLO6X10
- 	tristate "Softlogic 6x10 MPEG codec cards"
- 	depends on PCI && VIDEO_DEV && SND && I2C
-+	depends on BROKEN
- 	select VIDEOBUF2_DMA_SG
- 	select VIDEOBUF2_DMA_CONTIG
- 	select SND_PCM
+diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+index dcec2e4..671a55d 100644
+--- a/drivers/md/bcache/util.c
++++ b/drivers/md/bcache/util.c
+@@ -237,24 +237,6 @@ start:		bv->bv_len	=3D min_t(size_t, PAGE_SIZE - bv->b=
+v_offset,
+ }
+ EXPORT_SYMBOL_GPL(bio_map);
+=20
+-int bio_alloc_pages(struct bio *bio, gfp_t gfp)
+-{
+-	int i;
+-	struct bio_vec *bv;
+-
+-	bio_for_each_segment(bv, bio, i) {
+-		bv->bv_page =3D alloc_page(gfp);
+-		if (!bv->bv_page) {
+-			while (bv-- !=3D bio->bi_io_vec + bio->bi_idx)
+-				__free_page(bv->bv_page);
+-			return -ENOMEM;
+-		}
+-	}
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(bio_alloc_pages);
+-
+ /*
+  * Portions Copyright (c) 1996-2001, PostgreSQL Global Development Group (=
+Any
+  * use permitted, subject to terms of PostgreSQL license; see.)
+diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
+index 56705fd..499d746 100644
+--- a/drivers/md/bcache/util.h
++++ b/drivers/md/bcache/util.h
+@@ -570,8 +570,6 @@ static inline unsigned fract_exp_two(unsigned x, unsign=
+ed fract_bits)
+=20
+ void bio_map(struct bio *bio, void *base);
+=20
+-int bio_alloc_pages(struct bio *bio, gfp_t gfp);
+-
+ static inline sector_t bdev_sectors(struct block_device *bdev)
+ {
+ 	return bdev->bd_inode->i_size >> 9;
 --=20
 1.8.1
 
@@ -66,25 +102,25 @@ index ec32776..a6a970f 100644
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__26_Mar_2013_17_18_47_+1100_=o/P5CXbM8431v4d
+--Signature=_Tue__26_Mar_2013_17_31_59_+1100_aiRggckB+t4XII3R
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRUT3HAAoJEECxmPOUX5FE9RMP/15Ek741drlKSfXJ/OE639Yt
-Nqc2N3+IwASsqtVUTKRYPBhEfqUi3xMDszEhJ7WRR4zF33MNl0JZ3rIVDWmUOj/M
-i/QlaEhWm9CZZfQqyBuGpLKmPbrm3BgpTkBpHTwa1gr2DvNiv0pozq5i+Fu8dhvy
-Npaxx8LhBVKIW/BqmJqxcKX4OfBhn6QEVFDm/xL+zkMG61jugh48qfCR4Dyu+LQk
-Up94m7e0bm1jLGrYs+gpqxkxqaYfCIUK0gn/eEW3seYoGiQG3jOesw5eyj0u7Mcs
-aN8OquX75TZvZAp6IgzZY5SqyR2akfojIEA3PFjBGUmP4NTqyWuIT8jBTMDJ4hja
-41wXf9d6mE9cNf8c6f/6TtngBG2Tq4ggtLhN5xGKi9WVAjvjYoZo40d1qCf6nB1n
-pxErezKUy/0z5NtuPb96XxA19WWaiseidw4LgZFtBbkvnU0Av1kwQfAwT/mO4rX7
-glmX0RpKg5GzrAjsK/0cF43S59TYacgFYx29BG7YVzUsbGsg4I8MSQWg2pUwldIk
-gxph8lR4EdbUhWu8CKQq4G/Zzaa1Yf7uziLbJ0zfvMVMq7GgxdtSW1CkW13C6e04
-BzWuJUiHum96uLTPRnG2Ow9Fia1lcALkL+IPUf6pTWxORNI5px3BFwQfaz6L8rxP
-U08IGoQ6+e3/zp7p3OS7
-=/uUH
+iQIcBAEBCAAGBQJRUUDfAAoJEECxmPOUX5FE9k4P/2GhCwPScZSaxuQECwjDcGru
+8obxB1u871+FW1v9PHwrKwuiV6qvKxJJgOUf2/3Q7RVqmVEFgX8IvK5+HbnmhyV+
+r7C9vZ0n/MgMzAwtEeRjBtekonvwV/HpM4+CeiAnUdpQIJqCBr7n4JF1YgExIZhq
+kPS1skRqp1fxVj435bmqMvwv+L3/LimGUCxYzQxUBNEGRI2/slhkU9qLWav4CEv/
+IZEasFcEN9/6T4qCjk1vVwPOhwoxVB/syA9b9yJ8uobQr+r53CZYICFl0jDRyIdO
+N5IqisofwhJS0YqpoGnKs6SuHN9uC3F1O1KhogOTHnhbtx0cvSaEYeCt4S7mMwJM
+WLlt3vv3d3BMRs8Ws37d/ywIC2gbsF+SMcguhAGtjbzhg1N6uzGqzg0a+qIshSr/
+ixY0uIPZJWLmJM1qYnwfXi80she/mpY8cmvcteden8FG7HTuBKeGTNw4ERqkCpx1
+VXUasVD7WrbDvVxIo0e0sqn9pgyZTdMtC11gTNbhpaY9jD2HsUKAfJIMtVtKF+hJ
+CmVTvabcSe0YI0A6MMofx02nX3mRnlMcXRKnSEDFpra6CIIG0ZUxa1odd/jMJgPH
+qwpIfEaQytBt6VFRuWw5YXJm1fOj+7bZX1/EC0PF7AHcjJeH3Ze21obDfqkT2kOU
+OTCLPaTcO3ikcOA6KtE0
+=DXGh
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Mar_2013_17_18_47_+1100_=o/P5CXbM8431v4d--
+--Signature=_Tue__26_Mar_2013_17_31_59_+1100_aiRggckB+t4XII3R--
