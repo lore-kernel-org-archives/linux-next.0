@@ -1,61 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-Date: Tue, 26 Mar 2013 12:18:36 +1100
-Message-ID: <20130326121836.bb1c6ab0cbc8dfd4ad39b0c3@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Tue, 26 Mar 2013 13:05:53 +1100
+Message-ID: <20130326130553.b405a953bc2da6914313186a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__26_Mar_2013_12_18_36_+1100_k24oGMSb_RbzhQ6."
+ boundary="Signature=_Tue__26_Mar_2013_13_05_53_+1100_E/+0=s3F3eFPntWL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42477 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:42563 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759024Ab3CZBSq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Mar 2013 21:18:46 -0400
+	with ESMTP id S1755903Ab3CZCGW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Mar 2013 22:06:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Brassow <jbrassow@redhat.com>, NeilBrown <neilb@suse.de>, Kent Overstreet <koverstreet@google.com>
 
---Signature=_Tue__26_Mar_2013_12_18_36_+1100_k24oGMSb_RbzhQ6.
+--Signature=_Tue__26_Mar_2013_13_05_53_+1100_E/+0=s3F3eFPntWL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Jens,
 
-Today's linux-next merge of the wireless-next tree got a conflict in
-net/mac80211/sta_info.c between commit 27a737ff7cb0 ("mac80211: always
-synchronize_net() during station removal") from the wireless tree and
-commits 3b8d9c290364 ("mac80211: remove underscores from some key
-functions") and 6d10e46be5ac ("mac80211: batch key free synchronize_net()")
-from the wireless-next tree.
+Today's linux-next merge of the block tree got a conflict in
+drivers/md/raid5.c between commit e3620a3ad526 ("MD RAID5: Avoid
+accessing gendisk or queue structs when not available") from Linus' tree
+and commit 2f6db2a70734 ("raid5: use bio_reset()") from the block tree.
 
-The latter seems to supercede the former, so I just used the latter and
-can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__26_Mar_2013_12_18_36_+1100_k24oGMSb_RbzhQ6.
+diff --cc drivers/md/raid5.c
+index 24909eb,7bbd285..0000000
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@@ -666,16 -665,11 +665,13 @@@ static void ops_run_io(struct stripe_he
+  			bi->bi_io_vec[0].bv_len =3D STRIPE_SIZE;
+  			bi->bi_io_vec[0].bv_offset =3D 0;
+  			bi->bi_size =3D STRIPE_SIZE;
+- 			bi->bi_next =3D NULL;
+  			if (rrdev)
+  				set_bit(R5_DOUBLE_LOCKED, &sh->dev[i].flags);
+ -			trace_block_bio_remap(bdev_get_queue(bi->bi_bdev),
+ -					      bi, disk_devt(conf->mddev->gendisk),
+ -					      sh->dev[i].sector);
+ +
+ +			if (conf->mddev->gendisk)
+ +				trace_block_bio_remap(bdev_get_queue(bi->bi_bdev),
+ +						      bi, disk_devt(conf->mddev->gendisk),
+ +						      sh->dev[i].sector);
+  			generic_make_request(bi);
+  		}
+  		if (rrdev) {
+@@@ -700,13 -700,9 +702,10 @@@
+  			rbi->bi_io_vec[0].bv_len =3D STRIPE_SIZE;
+  			rbi->bi_io_vec[0].bv_offset =3D 0;
+  			rbi->bi_size =3D STRIPE_SIZE;
+- 			rbi->bi_next =3D NULL;
+ -			trace_block_bio_remap(bdev_get_queue(rbi->bi_bdev),
+ -					      rbi, disk_devt(conf->mddev->gendisk),
+ -					      sh->dev[i].sector);
+ +			if (conf->mddev->gendisk)
+ +				trace_block_bio_remap(bdev_get_queue(rbi->bi_bdev),
+ +						      rbi, disk_devt(conf->mddev->gendisk),
+ +						      sh->dev[i].sector);
+  			generic_make_request(rbi);
+  		}
+  		if (!rdev && !rrdev) {
+
+--Signature=_Tue__26_Mar_2013_13_05_53_+1100_E/+0=s3F3eFPntWL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRUPdsAAoJEECxmPOUX5FED60P/2Qlo5UktIALmoOmaA2t8J4m
-jvVmURddUK6Lh7OiWX1VZs9MW709jkpckLUkpxEFzZJ0i6ZSXDlvQx642xWN7ALc
-j0rC/cFJCvuI7QzlmUSs9K+0Dz88Y+MmEAMUocHbts7SojvexgVV7I9ZFm0duz+e
-AMgkq64nh6Jcq/ZzmQwXTsmox7WFEWC8krJyeA2T6qeKUbljhFl2Ga5aXavb3o7A
-CfiUMQWqbbkYJez7T2VvMm0FXoDSAjfQNvVP79jC5Ms7dcpqOBTHr3z+nLznKeUV
-kQjt48h0QuHH2rhvyNFQxLXiuLCY6ovxgU2110J0ivfuGAQXbNxoho1CNj1dO0cR
-GNzou+DbrI2JeRQ6WkIQKffSoMvEJhz44AjlzlYhkgeetQLq796UKW8H0Qvoe3f8
-Fd6u472ot+rGfLjyJWfrLbMYbh9aKI3E7keSbaiiR0jWGCJlN04YaFNFa4vze3gJ
-nSuSZBeO29uxLLq033EhPqcuEw+AhaBSlRYmTa+rhK9ZpLOQqugUd/U3jloADCY7
-ETCQQtT4NzY91eS96XUtq4W702Eyvcb6UnBs1mP8OqnatZS6zBWHzTyMouUaEqOV
-4z9WnSTx+SSKUxXxYKBLE4Jk4TsVWiIPT9d7hLr3Xh03gBpJl1W5JjJ1YSdHfCXS
-oCW5YoZXUJWJFPTTJRqi
-=b6aL
+iQIcBAEBCAAGBQJRUQKBAAoJEECxmPOUX5FEcBoP/ixFhfdEBW0TpyIKTFB9j51B
+8eFJ3kcBcSLj9jQeAUZMyQJEDSDUv0SDJiol+l/O/jlk7YcIBisFL5+ao2HRnBYT
+DZijdsdn4NVU2//K+AAJIJXeUkhvz7gjR8m+qrgKqcqrLSO4aN/nJkspe32gudY5
+7KwZQQ13C4TTxSF8lIJ/UJzpshNKn0Ry0P3cSLFRugcH+qSfPct5OOL++oB3K5Mf
+qllVxduOfxLhnN50qAJKJdrFGZJ1y7h/td4oF3TYJurNG4SGfV93DI/tW+gl+QZS
+NlcS0SIKpI+UaOOKPGs9M6btMvLcKoJoWoCekfJEvhFYU8HmJhK07P5PdxcXu4Ha
+F6gJP2sP4p+WW3NS68O+NpCtzjz9DPSkZsf+3SsoMkZ6Ae/psiOwgR5z/xAxTthb
+MLYpzyx3i36CjwqhJl2siXRbLWKzr7prv3GTdDIrWKvZPHN63++IoCqoy4WZaO9F
+KSNtTkIGQfMp5C1EJ7wP69rtyHKxzQqVnxG1Fxtr1Fo9FL6nRtFF6koeoJqeoVZi
+qji/WhBz5Ne1lQTDar9uXoKB7jErbE6jYRr1iL/BUEA0yUNlktVl51k2NG1JaBh7
+x7NJWcGVojhKxjRJAFF7tpgWH8Ys6oJwDJWnG97pU57LxqE+qXXsHySyj8X7IDVC
+qnEZuiGf6fNAZqNkMkio
+=Dir5
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Mar_2013_12_18_36_+1100_k24oGMSb_RbzhQ6.--
+--Signature=_Tue__26_Mar_2013_13_05_53_+1100_E/+0=s3F3eFPntWL--
