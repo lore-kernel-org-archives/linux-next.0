@@ -1,64 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the char-misc tree
-Date: Tue, 26 Mar 2013 15:18:11 +1100
-Message-ID: <20130326151811.de958e38f0116334a62e1c8b@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the block tree
+Date: Tue, 26 Mar 2013 16:11:06 +1100
+Message-ID: <20130326161106.a482807476e631ed5422bed8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__26_Mar_2013_15_18_11_+1100_OmeuWvNHFMq+aBNc"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60257 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755029Ab3CZESU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Mar 2013 00:18:20 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kenneth Heitke <kheitke@codeaurora.org>, David Brown <davidb@codeaurora.org>
+ boundary="Signature=_Tue__26_Mar_2013_16_11_06_+1100_37_Wgr6wg3NPYe5r"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Darrick J. Wong" <darrick.wong@oracle.com>, Kent Overstreet <koverstreet@google.com>, Jens Axboe <axboe@kernel.dk>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__26_Mar_2013_15_18_11_+1100_OmeuWvNHFMq+aBNc
+--Signature=_Tue__26_Mar_2013_16_11_06_+1100_37_Wgr6wg3NPYe5r
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-After merging the char-misc tree, today's linux-next build
-(x86_64_allmodconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in
+include/linux/blk_types.h between commit a38352e0ac02 ("block: Add an
+explicit bio flag for bios that own their bvec") from the block tree and
+commit "mm: make snapshotting pages for stable writes a per-bio
+operation" from the akpm tree.
 
-drivers/input/keyboard/pmic8xxx-keypad.c:24:35: fatal error: linux/mfd/pm8x=
-xx/gpio.h: No such file or directory
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit e44b0ceee4cc ("add single-wire serial bus interface
-(SSBI) driver") which added the Kconfig symbol MSM_SSBI (later changed to
-just SSBI) which did not exist in the tree before.  However,
-MFD_PM8921_CORE depended on it and that selects MFD_PM8XXX which allows
-the above file to build (and fail).
-
-I have used the char-misc tree from next-20130325 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__26_Mar_2013_15_18_11_+1100_OmeuWvNHFMq+aBNc
+diff --cc include/linux/blk_types.h
+index e8de670,22990cf..0000000
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@@ -116,8 -117,7 +117,8 @@@ struct bio=20
+   * Flags starting here get preserved by bio_reset() - this includes
+   * BIO_POOL_IDX()
+   */
+- #define BIO_RESET_BITS	12
+- #define BIO_OWNS_VEC	12	/* bio_free() should free bvec */
++ #define BIO_RESET_BITS	13
+++#define BIO_OWNS_VEC	13	/* bio_free() should free bvec */
+ =20
+  #define bio_flagged(bio, flag)	((bio)->bi_flags & (1 << (flag)))
+ =20
+
+--Signature=_Tue__26_Mar_2013_16_11_06_+1100_37_Wgr6wg3NPYe5r
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRUSGDAAoJEECxmPOUX5FEwQ4P/3ZVicnBCxhBFi1Z+CvlTF6G
-AGSk7LqjopKQrel/+SV0u/H/71B0dfz8Ydko4OMjhUaWaMtcZoTljCPL9nUpLBaF
-taOsu5SnFrU+7PKWtcr3T9SVqalyoljKGBoqGhM4UnR9MZGDga7PGzC+ps6MZJY4
-l//lHKpVQhvpsIZGDIl881E6eSwHCWWS/KJ0qDNiHYLW+DsPWWTWgDSt4fKD5YzZ
-kNiyNcw2HFCbnwBqF4lGnZC61KxT06LRgTgkZ9FEsfE6YRU/Sqrxmr2rPVIbMbSY
-CoGuNGllcRBI4hEkoHUYZ+uYh2WBcFkQDZwBBfZByKbqfT2e22dWHKbVvU4aG1Tt
-PsvCEB/zhFffrTCXAbNxiVwTRYOIT/mRRfzL86VHYu3MK6KyigHLWystmQ+LItJm
-qBx7dlQVC0/hts1UXlKCVhCYdxNvOOOVb3g9SiUBDNcGRJrlAhDFwU721qeG/Fjk
-FiOgpa0lTAixE4ObYSrcl936cOBMCoxjG8PnUT5htHJ+oQwaTduBQuTBU5PMsczO
-M8plHcelBvrMnNo3dIXoQ8L8qTk1gxdiuW0ggrQY++aFxWYvfaUHXIfOtJGY1IIM
-so96Z6V+HREnbxrPmRup+elOuayyszXguGpWmWWhoAH/uuBuWm5mPLRaRQfRkoDB
-gWlfpPJ407vCvh/R2Ax9
-=y7zr
+iQIcBAEBCAAGBQJRUS3rAAoJEECxmPOUX5FECQUP/jLwGkEqO70I6nmLSJAXUT+W
+hQAnJJVKJqN1NB3Ow3HG6BaErOluNsuXgaS3NynwDth0NU7Iz15jMNk435ADUXB6
+NxVkLlXI7Lc/0aP0AXBD8TkSZlpYfepKiYEzqPUtRyoF2LyqVJ0uMPgOm1vcvkDZ
+MjRtEI8RB+24sCeog1JpNWI3K2kb82+GnCaNKQXS8KVlNqYcO8yR0akx0jNY5Sbk
+1JsWtDjQet4+1CRe+46oWqfC5SmTJYA4UTwz66ramMfB/IqFn2WDs/cw4M9HyZJs
+akKKfRH1fA4RMm7Flh2kQ3VAM17Cz1uLXGvoVLRiqwp9kajci7AEJwvoGyppazEk
+48Ff5ZPZFysxJyxLmWm6mO4Zy+fKsic7APAo85oFPuj1VsTfY3HCINHwdBixO/Z2
+Rg9UKP7Ac58Uf9mv8kh3xGN93KC6WkE0GdxUBSA7Nr4M81zfz3SR33uM6/zHgnur
+2psaYaCLPGP4B6pY3j7+L7iCcKAKX6UnLKjp3Aeez4rrYKRG1tdegHWZH2UdCTbt
+l4Xn62cx1laS2lbuJrcTOK21Fgy/aFPh3i3wdQzt5bH2x2qihbTeHWz2MhV5zTVj
++ctF2uZXaDmpi6+pitR0SdfxTYB4TDtMKETkJ9uduj4LtYzaqSKvlfbTgwvH5TDA
+zHvkZKr62/bMtUSoaKDm
+=9XFX
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Mar_2013_15_18_11_+1100_OmeuWvNHFMq+aBNc--
+--Signature=_Tue__26_Mar_2013_16_11_06_+1100_37_Wgr6wg3NPYe5r--
