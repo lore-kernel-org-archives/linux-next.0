@@ -1,72 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm tree with the block tree
-Date: Tue, 26 Mar 2013 16:11:06 +1100
-Message-ID: <20130326161106.a482807476e631ed5422bed8@canb.auug.org.au>
+Date: Tue, 26 Mar 2013 16:25:23 +1100
+Message-ID: <20130326162523.e3bffe6a6086c107c950879f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__26_Mar_2013_16_11_06_+1100_37_Wgr6wg3NPYe5r"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Tue__26_Mar_2013_16_25_23_+1100_bbJffsJtZCOKdmB_"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47995 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933505Ab3CZFZd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Mar 2013 01:25:33 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Darrick J. Wong" <darrick.wong@oracle.com>, Kent Overstreet <koverstreet@google.com>, Jens Axboe <axboe@kernel.dk>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <koverstreet@google.com>, Jens Axboe <axboe@kernel.dk>, NeilBrown <neilb@suse.de>
 
---Signature=_Tue__26_Mar_2013_16_11_06_+1100_37_Wgr6wg3NPYe5r
+--Signature=_Tue__26_Mar_2013_16_25_23_+1100_bbJffsJtZCOKdmB_
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in
-include/linux/blk_types.h between commit a38352e0ac02 ("block: Add an
-explicit bio flag for bios that own their bvec") from the block tree and
-commit "mm: make snapshotting pages for stable writes a per-bio
-operation" from the akpm tree.
+Today's linux-next merge of the akpm tree got conflicts in
+drivers/md/raid1.c and drivers/md/raid10.c between commit 9e882242c619
+("block: Add submit_bio_wait(), remove from md") from the block tree and
+commit "block: prep work for batch completion" from the akpm tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (by removing the functions from the files as in the block
+tree patch) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/blk_types.h
-index e8de670,22990cf..0000000
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@@ -116,8 -117,7 +117,8 @@@ struct bio=20
-   * Flags starting here get preserved by bio_reset() - this includes
-   * BIO_POOL_IDX()
-   */
-- #define BIO_RESET_BITS	12
-- #define BIO_OWNS_VEC	12	/* bio_free() should free bvec */
-+ #define BIO_RESET_BITS	13
-++#define BIO_OWNS_VEC	13	/* bio_free() should free bvec */
- =20
-  #define bio_flagged(bio, flag)	((bio)->bi_flags & (1 << (flag)))
- =20
-
---Signature=_Tue__26_Mar_2013_16_11_06_+1100_37_Wgr6wg3NPYe5r
+--Signature=_Tue__26_Mar_2013_16_25_23_+1100_bbJffsJtZCOKdmB_
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRUS3rAAoJEECxmPOUX5FECQUP/jLwGkEqO70I6nmLSJAXUT+W
-hQAnJJVKJqN1NB3Ow3HG6BaErOluNsuXgaS3NynwDth0NU7Iz15jMNk435ADUXB6
-NxVkLlXI7Lc/0aP0AXBD8TkSZlpYfepKiYEzqPUtRyoF2LyqVJ0uMPgOm1vcvkDZ
-MjRtEI8RB+24sCeog1JpNWI3K2kb82+GnCaNKQXS8KVlNqYcO8yR0akx0jNY5Sbk
-1JsWtDjQet4+1CRe+46oWqfC5SmTJYA4UTwz66ramMfB/IqFn2WDs/cw4M9HyZJs
-akKKfRH1fA4RMm7Flh2kQ3VAM17Cz1uLXGvoVLRiqwp9kajci7AEJwvoGyppazEk
-48Ff5ZPZFysxJyxLmWm6mO4Zy+fKsic7APAo85oFPuj1VsTfY3HCINHwdBixO/Z2
-Rg9UKP7Ac58Uf9mv8kh3xGN93KC6WkE0GdxUBSA7Nr4M81zfz3SR33uM6/zHgnur
-2psaYaCLPGP4B6pY3j7+L7iCcKAKX6UnLKjp3Aeez4rrYKRG1tdegHWZH2UdCTbt
-l4Xn62cx1laS2lbuJrcTOK21Fgy/aFPh3i3wdQzt5bH2x2qihbTeHWz2MhV5zTVj
-+ctF2uZXaDmpi6+pitR0SdfxTYB4TDtMKETkJ9uduj4LtYzaqSKvlfbTgwvH5TDA
-zHvkZKr62/bMtUSoaKDm
-=9XFX
+iQIcBAEBCAAGBQJRUTFDAAoJEECxmPOUX5FE51oP/2rU3cZp9dHWQs6lch3gY9aR
+VKp2AYLsBKlFZdby24rTqRqhx8jiJc5GOtZ9ha31oSg/C+I7agknlD4PZVjLHCRP
+wyLegpFmUBYn5f4fD3prHvUQCIac4N1OIEsPAXiVzvjqp/42WumZwVPLJ1PAhPzJ
+6DC3zehizHFoBDMP4B85/EKbWfXKLJzVpxiPWztlRamCt1Gc4hXQuA8y5bng2zei
+Ixi9fui8E/b1N4BNEuAJLJuXxICX9UwxCrqu5Cr1eOEU00lEI9oHGUAaxhFH5d0x
+D0tA4j0Mq+J6chwOEol6yIranSdYgrCrbL8bV6goJmWiRSV4eE4o9LP4E5CEUfi2
+aUL2OU5mzMFZtyV0DLAVlQLZFAEQuASNivVXiXBlwOdCGFb3qdumnpPRuGWFWqex
+vKIlbiyqdPYd/r/49pno3iZ6IXPf8kWGK4Wpe+S8BIimZU0tyYuKIVFul85b29T+
+I4e4Je/+52ikwgpvtw6Tsyehmb/zRPXf30PvTM8bXC3BG/DaEkKM3XMaJ1L4TzE6
+qGdLFg92fN5nKh6XGeZKxcA4C5Qtw0dUYV+FUgIoQG53/tdcXAd8pG9aJvGSuNKy
+vDrsWAUqsTCXBvGg8kxSqhPEoA0NOk2RdpUvKktvIyrcNoXTYJHPXv99pZYB3HhK
+SxeDRqob7TDqPL/fGT+d
+=Uo3E
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Mar_2013_16_11_06_+1100_37_Wgr6wg3NPYe5r--
+--Signature=_Tue__26_Mar_2013_16_25_23_+1100_bbJffsJtZCOKdmB_--
