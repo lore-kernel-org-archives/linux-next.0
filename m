@@ -1,58 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: failed to fetch the osd tree
-Date: Tue, 26 Mar 2013 10:17:17 +1100
-Message-ID: <20130326101717.36b4a4c2e23b108a9592b32c@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the wireless
+ tree
+Date: Tue, 26 Mar 2013 11:48:52 +1100
+Message-ID: <20130326114852.770f3e14f4b59aa29800e7f7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__26_Mar_2013_10_17_17_+1100_pTRxlc_KQUCO.qnf"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50861 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932338Ab3CYXR3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Mar 2013 19:17:29 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Boaz Harrosh <bharrosh@panasas.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Tue__26_Mar_2013_11_48_52_+1100_6L665DeZ_WM_m89W"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__26_Mar_2013_10_17_17_+1100_pTRxlc_KQUCO.qnf
+--Signature=_Tue__26_Mar_2013_11_48_52_+1100_6L665DeZ_WM_m89W
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Boaz,
+Hi all,
 
-Fetching the osd tree
-(git://git.open-osd.org/linux-open-osd.git#linux-next) produces a time
-out and this error:
+Today's linux-next merge of the net-next tree got a conflict in
+net/mac80211/sta_info.c between commit 27a737ff7cb0 ("mac80211: always
+synchronize_net() during station removal") from the wireless tree and
+commit 8d1f7ecd2af5 ("mac80211: defer tailroom counter manipulation when
+roaming") from the net-next tree.
 
-fatal: read error: Connection reset by peer
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-I will continue to use the last osd tree I fetched.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__26_Mar_2013_10_17_17_+1100_pTRxlc_KQUCO.qnf
+diff --cc net/mac80211/sta_info.c
+index 238a0cc,3644ad7..0000000
+--- a/net/mac80211/sta_info.c
++++ b/net/mac80211/sta_info.c
+@@@ -794,19 -798,14 +799,21 @@@ int __must_check __sta_info_destroy(str
+  	list_del_rcu(&sta->list);
+ =20
+  	mutex_lock(&local->key_mtx);
+ -	for (i =3D 0; i < NUM_DEFAULT_KEYS; i++)
+ +	for (i =3D 0; i < NUM_DEFAULT_KEYS; i++) {
+- 		__ieee80211_key_free(key_mtx_dereference(local, sta->gtk[i]));
++ 		__ieee80211_key_free(key_mtx_dereference(local, sta->gtk[i]),
++ 				     true);
+ -	if (sta->ptk)
+ +		have_key =3D true;
+ +	}
+ +	if (sta->ptk) {
+- 		__ieee80211_key_free(key_mtx_dereference(local, sta->ptk));
++ 		__ieee80211_key_free(key_mtx_dereference(local, sta->ptk),
++ 				     true);
+ +		have_key =3D true;
+ +	}
+  	mutex_unlock(&local->key_mtx);
+ =20
+ +	if (!have_key)
+ +		synchronize_net();
+ +
+  	sta->dead =3D true;
+ =20
+  	local->num_sta--;
+
+--Signature=_Tue__26_Mar_2013_11_48_52_+1100_6L665DeZ_WM_m89W
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRUNr9AAoJEECxmPOUX5FEDg4P/RDV5U3U47yRfP3HO9RrkeBF
-1f6gALTEInAmeXb5FKC0mNK/H2kF9wQ/KHPm3uewqfpZ3OHoh6AQWZh+HuEbsNQK
-lS+1/MXxSu+BcrLP42J+x4lT8FzhvjpOouWkH1OoqCq3fcINiBKGy26dSWzr/oCh
-Q+NkKR3NMnVYQCoCjuktMbgPuhUoEQ+H2xmQI9EKDH5GW+9yXqn8V/eycmfw4lDl
-EFtUSCslC8vg1QNROHh7uXlTGoR8JgfIINsMYXNtG0MF/bh04WMJsw+1plli1cgD
-3Wf/3+JMBiYdpnNlhh9e5KIS7B7hbQIy0crkWSKK0hLBv1oMBY4ey/UOpAH+Es8Z
-oIYqdS3yXpED3c4UzrKPfV0WvUELdsctPILObrC46K1EKl9P5ibU25TiFOccaWfP
-TmQEuxwU8w26QIC34uHUcsKsiHYjQt2cFGdFTwMPg1DU7F2dOVF200Vzd1Bt5Irs
-RIVd0O1PzQzHk1PQjkNcmrgspLJVoUnPcH9wYt4NrzFlPK5xWxdNYJQKaMrwkrfu
-b1aKF48v5+NXXmuSzcVpZBf0rJdiADZDQNDCffGaKil0N++Z6YxNtoFScR9yhddH
-glDvnSyvYbU6NtzabGqnoqrVBKp5UIOyVzT4w3FT5IfK+mVbUalVjjWhCQpFiKnQ
-N0Um2QBLluCJJ2enYCZk
-=UKJ7
+iQIcBAEBCAAGBQJRUPB0AAoJEECxmPOUX5FE+aYP/iDCN0u9SHvJEULCvqb+zekQ
+qqSUJdj90rKT4Sa4/PSWE9CtzTdPgAJyDjFid3qgvMF7E4XlOroyxzFmLGUEBZFZ
+yBt09RHVbkoOQgzAYKhN9laxQiZR7C+V5JM8hG5ddncL76UvzoqOZjXrHDNeSFmH
+XWx6zdVTho02SHHSwJbMSiPOHesBJN0pS+KpxIz64TGv20W/rU1IoATcHt1Hcrza
+QOIoDoCtzzFzrhfr8rYinNtIvCIZoCh74gijPv9K5gOM/K0RukTnYGdhkXOE8hHG
+/RTMVjirIRVgUBgaiCO4/YDdCW8gPEd73D4EjES60XjMX7KZDNeFGnm2fCpQsoOx
+1xQOts0SZWetprbz/5GjsGKMeNQq9YH+f3VUrDYB1fS3NBBuLH3W7dMANHhULkiW
+I4u2Dg+QTgEQGRUTEU7IPLcqoEGrMUSMt/Kh2tQx4fb8qsc+pO4YZLKKwtEuXKiw
+h6rmlh6bqRHpd0tP4q2Sk1/EeI0rWAPaFAUNsBHRAKDcqZEYbMtUZDgiseJl0TTR
+awbJUq8nMwvoHV1ALIfkwx5TcVp4GsQKJP85GFZf8KD8xSdUgv1Xu9kchtHR+dBf
+zcw5KtvAETzr9ZyxIpHKgNsUHQlWkm3vk43Db8iFj9DFcYdewF31KF3YhI/OBFHx
+80SGRm0yw10ucrqP2NNp
+=8Y81
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Mar_2013_10_17_17_+1100_pTRxlc_KQUCO.qnf--
+--Signature=_Tue__26_Mar_2013_11_48_52_+1100_6L665DeZ_WM_m89W--
