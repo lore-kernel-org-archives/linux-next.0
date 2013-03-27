@@ -1,99 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (v4l-dvb tree related)
-Date: Wed, 27 Mar 2013 10:52:34 +1100
-Message-ID: <20130327105234.3396059519ca69f405f703b1@canb.auug.org.au>
-References: <20130326171847.18cd41b85d3caee6373d9447@canb.auug.org.au>
-	<20130326090452.01550c37@redhat.com>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Wed, 27 Mar 2013 11:57:43 +1100
+Message-ID: <20130327115743.7d6c10f1e1c67f02e9c96ff8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__27_Mar_2013_10_52_34_+1100_1_CqcDLgA7MyMc4m"
+ boundary="Signature=_Wed__27_Mar_2013_11_57_43_+1100_Nsh5HxZ5UA=__njk"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130326090452.01550c37@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Greg KH <greg@kroah.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pravin B Shelar <pshelar@nicira.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__27_Mar_2013_10_52_34_+1100_1_CqcDLgA7MyMc4m
+--Signature=_Wed__27_Mar_2013_11_57_43_+1100_Nsh5HxZ5UA=__njk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi all,
 
-On Tue, 26 Mar 2013 09:04:52 -0300 Mauro Carvalho Chehab <mchehab@redhat.co=
-m> wrote:
->
-> Em Tue, 26 Mar 2013 17:18:47 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
->=20
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> >=20
-> > drivers/staging/media/solo6x10/solo6x10-v4l2-enc.c: In function 'solo_e=
-nc_default':
-> > drivers/staging/media/solo6x10/solo6x10-v4l2-enc.c:1031:7: error: case =
-label does not reduce to an integer constant
-> > drivers/staging/media/solo6x10/solo6x10-v4l2-enc.c:1035:7: error: case =
-label does not reduce to an integer constant
-> >=20
-> > I am not sure why this has suddenly appeared, but I have disabled the
-> > driver for now using this patch:
->=20
-> Well, solo6x10 didn't use to have its own private ioctl's until now.
-> Still, that's strange, as there are other drivers also using vidioc_defau=
-lt.
->=20
-> I suspect that those _IO* have its highest bit equal to 1 on powerpc
-> being too big for int. If so, the enclosed patch should fix.=20
-> I'm still wandering why it didn't cause any compilation problems here.
->=20
-> Ok, I didn't try to compile it on powerpc, but still integers have 32
-> bits on ppc, right?
+Today's linux-next merge of the net-next tree got a conflict in
+include/net/ipip.h between commit 330305cc4a6b ("pv4: Fix ip-header
+identification for gso packets") from Linus' tree and commit c54419321455
+("GRE: Refactor GRE tunneling code") from the net-next tree.
 
-yes.
+I just dropped the file (as the latter change did) and can carry the fix
+as necessary (no action is required).
 
-> Anyway, could you please try the enclosed patch?
-
-Doesn't help.
-
-on powerpc, SOLO_IOC_G_MOTION_THRESHOLDS expands to
-
-(((2U) << (((0 +8)+8)+13)) | ((('V')) << (0 +8)) | (((192 +0)) << 0) | ((((=
-(sizeof(struct solo_motion_thresholds) =3D=3D sizeof(struct solo_motion_thr=
-esholds[1]) && sizeof(struct solo_motion_thresholds) < (1 << 13)) ? sizeof(=
-struct solo_motion_thresholds) : __invalid_size_argument_for_IOC))) << ((0 =
-+8)+8)))
-
-sizeof(struct solo_motion_thresholds) is 64*64*2 =3D=3D 8192 which is not
-less than 1 << 13
-
-:-(
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__27_Mar_2013_10_52_34_+1100_1_CqcDLgA7MyMc4m
+--Signature=_Wed__27_Mar_2013_11_57_43_+1100_Nsh5HxZ5UA=__njk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRUjTCAAoJEECxmPOUX5FEjhoP/16X4+HCgNo4147pe5SVu3uM
-haOCFMYPzcrlx0TujA2+cqYdMM4pZ4qNvvFCxWlDdEnvg+6luJsYCEKhAkrrFemv
-WlmTgdpnURAFb7pCPiR6OvE7NbniaAazHN8fI+acZfklbk5w2ZxEHkGTmnbS4SdT
-PibNS+Vo9mV/GXFWH9AnrBFRhyNEXpmPjYTm4471Se6NciINP1PvoWradwrkDMtE
-3P8XKVE5JzE+42FTZKsCxizyXVtZdX+wW5C79AUSizMbHt39l+DCkfz+M7Ff/4UP
-A/VNFdDelPdP0NWfyp5BozW9HlJAs1y2iVA43RHUs8f8+qPZ6uMysRTLUcnAmqZD
-qa46vIjYIvLqzEiTgRUDidwaZvi4wX3/Pfo2yywPcgL7Ys1uRO4PNy0NY2sMOXQc
-piYLAjGQBUQLwjSesiefPsva7aoAPQa6rRozhuykKbrOLg3qye5Ok9H8T7cOA1yh
-sZeKwnrvaGtZNbDSs9n+4BQ262sji6WNoU9FdajAeWTNyt7qmb+XEqyAOnOU1das
-BxBHdFhthIJOOMxuMoHb4dzr0k8ZkHCTVi+0GAa4gQtAjsC4zWIo4PxR8scmlfLG
-dTX6eQpKmtDQ/5Q1eaqseNp7cKUb80X6D6F8V4ibxjPRjeZo/pD0ot8O54wVOoAw
-Fxa135WnbCUPu+tzRl2R
-=5yYz
+iQIcBAEBCAAGBQJRUkQHAAoJEECxmPOUX5FEgGcQAIpoYOTTVWNFnLPle4ds+Wdk
+QA+vgzI/RM7vK3CGHC7dcDenJdAgp4bmxgFImiVOMR0PNYJ9se2EBFXN7krbrFXN
+kJ/famdQJRnZKMw1Wd9na3Rcb1hLtHUe9ASErq4PKl41Cn0C4edwI9dBQcJJ13xJ
+1uIg31IOZmZsakLoXw5V+l+BYYD3vSPJfGEw5EMDAtW6vKo5+NZFYmw3jABxRG5X
+lm83qBXAaJsg1IV1J4ZzDUVfepE5djXIHpzlWeCLupdMnQx86WK1DwwmW8jLe29l
+kkvQ3nThBUbOGSZ4ITfkZqNbxwQx3rWLlCysRvQzaEljt+fMilVqCC60MuWfTtTs
+0mnu/Ednm/+aifaD3TQnWXDHAGNUvBnkMvffJ/qOH/2G8tyBuuTkFdXRbwW6ykU9
+GV2+18E6jeTTjm3jDLASA1WhqrL1q7MdfR5giyML71JBkhr2ZupJmiUEwKHI1xqT
+SCuP00bYXRUH5O5xP2s30E1tWXgUw954ghOSMfKexSxlky4IDvdTWborYKZ+p0s4
+rtc1SNmBBrzYhYeALJl+vv2NefuqZJ1zGPl8tc2orINHlLiLaZNW8xti+YTaGh0Q
+Wroam+2hy2Hmepy3omL37ivIuAgrOLYAF7iYgONFvGXtAlMgBHDDaNI18gT7qCdx
+zf0brDL/LfNVzojNdvIA
+=kTCc
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__27_Mar_2013_10_52_34_+1100_1_CqcDLgA7MyMc4m--
+--Signature=_Wed__27_Mar_2013_11_57_43_+1100_Nsh5HxZ5UA=__njk--
