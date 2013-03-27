@@ -1,44 +1,50 @@
-From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH -next 1/3] bcache: Add missing #include <linux/prefetch.h>
-Date: Wed, 27 Mar 2013 11:27:58 -0700
-Message-ID: <51533A2E.2000501@infradead.org>
-References: <1364406990-20541-1-git-send-email-geert@linux-m68k.org> <20130327182150.GB25906@google.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [patch v2] sound/soc/codecs : fix build failure for next-20130325
+Date: Wed, 27 Mar 2013 11:30:43 -0700
+Message-ID: <51533AD3.9040809@infradead.org>
+References: <alpine.DEB.2.02.1303272127400.26487@M2420> <20130327133915.GU18316@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-bcache-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130327182150.GB25906-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Sender: linux-bcache-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kent Overstreet <koverstreet-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, linux-bcache-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130327133915.GU18316@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Xiong Zhou <jencce.kernel@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 List-Id: linux-next.vger.kernel.org
 
-On 03/27/13 11:21, Kent Overstreet wrote:
-> On Wed, Mar 27, 2013 at 06:56:28PM +0100, Geert Uytterhoeven wrote:
->> m68k/allmodconfig:
->>
->> drivers/md/bcache/bset.c: In function =E2=80=98bset_search_tree=E2=80=
-=99:
->> drivers/md/bcache/bset.c:727: error: implicit declaration of functio=
-n =E2=80=98prefetch=E2=80=99
->>
->> drivers/md/bcache/btree.c: In function =E2=80=98bch_btree_node_get=E2=
-=80=99:
->> drivers/md/bcache/btree.c:933: error: implicit declaration of functi=
-on =E2=80=98prefetch=E2=80=99
->=20
-> Thanks, applied! The other two I already have a patch queued up for.
+On 03/27/13 06:39, Mark Brown wrote:
+> On Wed, Mar 27, 2013 at 09:31:33PM +0800, Xiong Zhou wrote:
+> 
+>> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+>> index 18fea10..f38af70 100644
+>> --- a/sound/soc/codecs/Kconfig
+>> +++ b/sound/soc/codecs/Kconfig
+>> @@ -79,7 +79,6 @@ config SND_SOC_ALL_CODECS
+>>  	select SND_SOC_WM0010 if SPI_MASTER
+>>  	select SND_SOC_WM1250_EV1 if I2C
+>>  	select SND_SOC_WM2000 if I2C
+>> -	select SND_SOC_WM2200 if I2C
+>>  	select SND_SOC_WM5100 if I2C
+>>  	select SND_SOC_WM5102 if MFD_WM5102
+>>  	select SND_SOC_WM5110 if MFD_WM5110
+>> @@ -370,6 +369,7 @@ config SND_SOC_WM2000
+>>  	tristate
+>>  
+>>  config SND_SOC_WM2200
+>> +	depends on SND_SOC_ARIZONA && I2C
+>>  	tristate
+> 
+> I really don't understand this at all, removing something from
+> ALL_CODECS is not a good idea.  This isn't a Kconfig issue.
+> 
 
+Hi Mark,
 
-On i386 and x86_64, I also see this build problem:
-
-drivers/md/bcache/bset.c:885:4: error: implicit declaration of function=
- '__WARN' [-Werror=3Dimplicit-function-declaration]
-
-
-Do you also have a patch for it?
-
+Do you have a suggestion for a kernel config where SND_SOC_ARIZONA
+is not enabled but SND_SOC_WM_ADSP is enabled, which causes a build
+error in linux-next?
 
 thanks,
---=20
+-- 
 ~Randy
