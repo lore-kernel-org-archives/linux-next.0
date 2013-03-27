@@ -1,50 +1,77 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [patch v2] sound/soc/codecs : fix build failure for next-20130325
-Date: Wed, 27 Mar 2013 11:30:43 -0700
-Message-ID: <51533AD3.9040809@infradead.org>
-References: <alpine.DEB.2.02.1303272127400.26487@M2420> <20130327133915.GU18316@opensource.wolfsonmicro.com>
+From: Kent Overstreet <koverstreet@google.com>
+Subject: Re: [PATCH -next 1/3] bcache: Add missing #include <linux/prefetch.h>
+Date: Wed, 27 Mar 2013 12:50:50 -0700
+Message-ID: <20130327195050.GB22232@google.com>
+References: <1364406990-20541-1-git-send-email-geert@linux-m68k.org>
+ <20130327182150.GB25906@google.com>
+ <51533A2E.2000501@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130327133915.GU18316@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Xiong Zhou <jencce.kernel@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-da0-f44.google.com ([209.85.210.44]:46004 "EHLO
+	mail-da0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754216Ab3C0Tuy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Mar 2013 15:50:54 -0400
+Received: by mail-da0-f44.google.com with SMTP id z20so4251061dae.3
+        for <linux-next@vger.kernel.org>; Wed, 27 Mar 2013 12:50:53 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <51533A2E.2000501@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On 03/27/13 06:39, Mark Brown wrote:
-> On Wed, Mar 27, 2013 at 09:31:33PM +0800, Xiong Zhou wrote:
-> 
->> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
->> index 18fea10..f38af70 100644
->> --- a/sound/soc/codecs/Kconfig
->> +++ b/sound/soc/codecs/Kconfig
->> @@ -79,7 +79,6 @@ config SND_SOC_ALL_CODECS
->>  	select SND_SOC_WM0010 if SPI_MASTER
->>  	select SND_SOC_WM1250_EV1 if I2C
->>  	select SND_SOC_WM2000 if I2C
->> -	select SND_SOC_WM2200 if I2C
->>  	select SND_SOC_WM5100 if I2C
->>  	select SND_SOC_WM5102 if MFD_WM5102
->>  	select SND_SOC_WM5110 if MFD_WM5110
->> @@ -370,6 +369,7 @@ config SND_SOC_WM2000
->>  	tristate
->>  
->>  config SND_SOC_WM2200
->> +	depends on SND_SOC_ARIZONA && I2C
->>  	tristate
-> 
-> I really don't understand this at all, removing something from
-> ALL_CODECS is not a good idea.  This isn't a Kconfig issue.
-> 
+On Wed, Mar 27, 2013 at 11:27:58AM -0700, Randy Dunlap wrote:
+> On 03/27/13 11:21, Kent Overstreet wrote:
+> > On Wed, Mar 27, 2013 at 06:56:28PM +0100, Geert Uytterhoeven wrote:
+> >> m68k/allmodconfig:
+> >>
+> >> drivers/md/bcache/bset.c: In function =E2=80=98bset_search_tree=E2=
+=80=99:
+> >> drivers/md/bcache/bset.c:727: error: implicit declaration of funct=
+ion =E2=80=98prefetch=E2=80=99
+> >>
+> >> drivers/md/bcache/btree.c: In function =E2=80=98bch_btree_node_get=
+=E2=80=99:
+> >> drivers/md/bcache/btree.c:933: error: implicit declaration of func=
+tion =E2=80=98prefetch=E2=80=99
+> >=20
+> > Thanks, applied! The other two I already have a patch queued up for=
+=2E
+>=20
+>=20
+> On i386 and x86_64, I also see this build problem:
+>=20
+> drivers/md/bcache/bset.c:885:4: error: implicit declaration of functi=
+on '__WARN' [-Werror=3Dimplicit-function-declaration]
+>=20
+>=20
+> Do you also have a patch for it?
 
-Hi Mark,
+Nope - looks like __WARN() doesn't exist if CONFIG_BUG=3Dn, whoops.
 
-Do you have a suggestion for a kernel config where SND_SOC_ARIZONA
-is not enabled but SND_SOC_WM_ADSP is enabled, which causes a build
-error in linux-next?
+Adding this to the queue:
 
-thanks,
--- 
-~Randy
+commit 796c213186b850b3e6e8d5fd5799b0fd74721ea3
+Author: Kent Overstreet <koverstreet@google.com>
+Date:   Wed Mar 27 12:47:45 2013 -0700
+
+    bcache: Use WARN_ONCE() instead of __WARN()
+   =20
+    Signed-off-by: Kent Overstreet <koverstreet@google.com>
+
+diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+index d4f2164..cb4578a 100644
+--- a/drivers/md/bcache/bset.c
++++ b/drivers/md/bcache/bset.c
+@@ -883,7 +883,7 @@ struct bkey *bch_btree_iter_next(struct btree_iter =
+*iter)
+ 		iter->data->k =3D bkey_next(iter->data->k);
+=20
+ 		if (iter->data->k > iter->data->end) {
+-			__WARN();
++			WARN_ONCE(1, "bset was corrupt!\n");
+ 			iter->data->k =3D iter->data->end;
+ 		}
+=20
