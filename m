@@ -1,66 +1,110 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the regmap tree
-Date: Wed, 27 Mar 2013 21:35:42 +1100
-Message-ID: <20130327213542.ebbac5f00544f89ae369e7cc@canb.auug.org.au>
-References: <20130327154737.bdcc835ec2ea56409fa0c7e8@canb.auug.org.au>
-	<20130327102456.GR18316@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (v4l-dvb tree related)
+Date: Wed, 27 Mar 2013 22:11:28 +1100
+Message-ID: <20130327221128.db6d370b4c06ceaf600b6ab5@canb.auug.org.au>
+References: <20130326171847.18cd41b85d3caee6373d9447@canb.auug.org.au>
+	<20130326090452.01550c37@redhat.com>
+	<20130327105234.3396059519ca69f405f703b1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__27_Mar_2013_21_35_42_+1100_/EClizkvt6eejYb0"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130327102456.GR18316@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__27_Mar_2013_22_11_28_+1100_lLQO+D24Ab5V1o6f"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36564 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750766Ab3C0LLp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Mar 2013 07:11:45 -0400
+In-Reply-To: <20130327105234.3396059519ca69f405f703b1@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Greg KH <greg@kroah.com>
 
---Signature=_Wed__27_Mar_2013_21_35_42_+1100_/EClizkvt6eejYb0
+--Signature=_Wed__27_Mar_2013_22_11_28_+1100_lLQO+D24Ab5V1o6f
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 27 Mar 2013 10:24:57 +0000 Mark Brown <broonie@opensource.wolfsonmi=
-cro.com> wrote:
+Hi Mauro,
+
+On Wed, 27 Mar 2013 10:52:34 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> On Wed, Mar 27, 2013 at 03:47:37PM +1100, Stephen Rothwell wrote:
+> On Tue, 26 Mar 2013 09:04:52 -0300 Mauro Carvalho Chehab <mchehab@redhat.=
+com> wrote:
+> >
+> > Em Tue, 26 Mar 2013 17:18:47 +1100
+> > Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+> >=20
+> > > After merging the final tree, today's linux-next build (powerpc
+> > > allyesconfig) failed like this:
+> > >=20
+> > > drivers/staging/media/solo6x10/solo6x10-v4l2-enc.c: In function 'solo=
+_enc_default':
+> > > drivers/staging/media/solo6x10/solo6x10-v4l2-enc.c:1031:7: error: cas=
+e label does not reduce to an integer constant
+> > > drivers/staging/media/solo6x10/solo6x10-v4l2-enc.c:1035:7: error: cas=
+e label does not reduce to an integer constant
+> > >=20
+> > > I am not sure why this has suddenly appeared, but I have disabled the
+> > > driver for now using this patch:
+> >=20
+> > Well, solo6x10 didn't use to have its own private ioctl's until now.
+> > Still, that's strange, as there are other drivers also using vidioc_def=
+ault.
+> >=20
+> > I suspect that those _IO* have its highest bit equal to 1 on powerpc
+> > being too big for int. If so, the enclosed patch should fix.=20
+> > I'm still wandering why it didn't cause any compilation problems here.
+> >=20
+> > Ok, I didn't try to compile it on powerpc, but still integers have 32
+> > bits on ppc, right?
 >=20
-> > Introduced by commit 45c6a3e449ea ("regmap: cache: Provide a get address
-> > of value operation").
+> yes.
 >=20
-> Don't know when you grabbed the tree but that's not what's there now.
+> > Anyway, could you please try the enclosed patch?
+>=20
+> Doesn't help.
+>=20
+> on powerpc, SOLO_IOC_G_MOTION_THRESHOLDS expands to
+>=20
+> (((2U) << (((0 +8)+8)+13)) | ((('V')) << (0 +8)) | (((192 +0)) << 0) | ((=
+(((sizeof(struct solo_motion_thresholds) =3D=3D sizeof(struct solo_motion_t=
+hresholds[1]) && sizeof(struct solo_motion_thresholds) < (1 << 13)) ? sizeo=
+f(struct solo_motion_thresholds) : __invalid_size_argument_for_IOC))) << ((=
+0 +8)+8)))
+>=20
+> sizeof(struct solo_motion_thresholds) is 64*64*2 =3D=3D 8192 which is not
+> less than 1 << 13
 
-Just before 10:30 am my time (UTC+1100) - so about 11 hours ago.  I just
-refetched and the regmap tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next)
-is still the same as what I fetched this morning (top commit is
-b32667515168 "Merge remote-tracking branch 'regmap/topic/range' into
-regmap-next").  Probably just the mirroring delays.
+Note that this will also break on alpha and mips.  Sparc seems to have a
+tricky workaround (to allow 14 bits for size) - I wonder if that could be
+used for these other arches as well?
 
-Anyway, good to know it is fixed.  Thanks.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__27_Mar_2013_21_35_42_+1100_/EClizkvt6eejYb0
+--Signature=_Wed__27_Mar_2013_22_11_28_+1100_lLQO+D24Ab5V1o6f
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRUst+AAoJEECxmPOUX5FE/WUP/j5Ddcw4qct+HPROP0htQbc5
-nVLc6TPIQE84/8izX2bYxT7ILaIYAqSqCM+0oXyeBw37uhuVPiUk5FjKzFOhTQGm
-6NPgk2xPglG1fb5INm9Px44xLOA60iv5KNT0d60gfeS6Pv14cde4odV3vs2LKi3j
-9+T6A0HA+OpG/Gk/uLOsc8uyd/Rrc1Y4q5UFrdEei2de1X8U2WPNyhlNKH7KjeA+
-+enUkALHlCxgx4iXEkEZN7XW/y+V63WxvMh20SqNkpuQoqJQATpPQyufyfFARUkl
-kK9DjUjDX/kpTsTDXELli7Xl5+jbGDNlIkJ0rnlsAaOBGjfSrukxFRhS2wuzkO/E
-LrSSLs/VfgalYFbP6UT3qWAmTdNbhcs1omkCTppnYYqxmjWRHhEUo3CwLSL0g/Hc
-UzhWRDdDkoyuMcag9o3NakJuhkanwhQIkrDW5l5RagoH5Ln8BYtJKUxOT14veNmt
-L0fCEjjADJ3TLf2i+k7ginkuyazD6+O8vf3zuh9ROClvFxb+O3lGxZsp6Jpdpmmo
-ZXewjB6d87uTVdSX2Z64O82CrxerRR2UaWilXClDmcJLwKD/PghUI5TfqUp28d2N
-eFAT3/dIOG27u/GOpRkxwkL9YCLlzFYPuhWz5+CywqUEkkE+Hy+3Hn5OBIa7yR/J
-b+bTONtwEQTHc2K2vUm9
-=llUM
+iQIcBAEBCAAGBQJRUtPgAAoJEECxmPOUX5FEizQQAJz/rVFBGnQwDvJAXrWmTFTX
+hyN6xfOF6+0Sp920TbbLGG1GEJo17majM5uJhtTOPY2KtYvfa1STi5ILFeZN5Ts9
+Zw8zTmeTNEbb1dpADsQhBz/1ABzRmXlRoHhgnUepQ72khjgF8U9lCkDbbNxVamGV
+686raNhmGv5qTYPsRs/DFvfRnpxa+d68oFHFb1H16df5nQzWKrMWx90RgM6U1fzU
+DAW9S6Ln/ke2Io8VaDoPHrnU9FK/YugqqwaHIse5UjXBwuUMakT7zEByY/2P88br
+pQThcbbNIlWx3smTm5A2O6+bQ+LO2iakL317IG0A6QUSWUuKZ22kdtDZOjrQh9ZL
+5N5lNySUVIrPNK5uyav6achRQT4d8p4+cyTjqSy7d+pDu6N9tXHOypazZ4cR/yw5
+ERGRANqx/O211wWufsGJF83dCWHIfc7YIust1YJCRR0i6knLehUVhYWysWdVj8xh
+a8c1lEx9T/PD9rSLbUQGyJVyszyiRi9trO/efSXD6TQkgUu17E0AagJ6VMln9Lco
+XusQYRz1wR0jOgi8gFgi6QKScdg++KAKUM2F8SfhaAn3GUCTdHFC5OYDC+oxG1NQ
+OnESnmZGGvcBZx4Te13SskKMgGuKw7URiBw1QBuFliGRJnbtUp/7PwyU0XXGu/Wo
+Vr8NAwW65UXQhepiBQIT
+=Bh1i
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__27_Mar_2013_21_35_42_+1100_/EClizkvt6eejYb0--
+--Signature=_Wed__27_Mar_2013_22_11_28_+1100_lLQO+D24Ab5V1o6f--
