@@ -1,36 +1,40 @@
-From: Ming Lei <tom.leiming@gmail.com>
+From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Wed, 27 Mar 2013 11:51:41 +0800
-Message-ID: <CACVXFVPM6qbG2zdDE7apfyKf5mtnEZ2uQNHQTcFNVQ+SPBtbRA@mail.gmail.com>
+Date: Tue, 26 Mar 2013 21:20:38 -0700
+Message-ID: <20130327042038.GB21615@kroah.com>
 References: <20130327144134.0809a21c09b45d20a1fe480d@canb.auug.org.au>
+ <CACVXFVPM6qbG2zdDE7apfyKf5mtnEZ2uQNHQTcFNVQ+SPBtbRA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ve0-f172.google.com ([209.85.128.172]:64623 "EHLO
-	mail-ve0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750932Ab3C0Dvm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Mar 2013 23:51:42 -0400
-In-Reply-To: <20130327144134.0809a21c09b45d20a1fe480d@canb.auug.org.au>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:37067 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750859Ab3C0EUk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Mar 2013 00:20:40 -0400
+Content-Disposition: inline
+In-Reply-To: <CACVXFVPM6qbG2zdDE7apfyKf5mtnEZ2uQNHQTcFNVQ+SPBtbRA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
+To: Ming Lei <tom.leiming@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
 
-Hi,
+On Wed, Mar 27, 2013 at 11:51:41AM +0800, Ming Lei wrote:
+> Hi,
+> 
+> On Wed, Mar 27, 2013 at 11:41 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> >
+> > I have reverted the commit from usb.current on the assumption that the
+> > problem it solves has been, or will be, solved some other way.
+> 
+> The commit is needed in 3.9 linus tree and stable tree,  but for next
+> tree or 3.10,
+> a revert commit is required.
+> 
+> We know it is a problem, sorry, :-(
 
-On Wed, Mar 27, 2013 at 11:41 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
->
-> I have reverted the commit from usb.current on the assumption that the
-> problem it solves has been, or will be, solved some other way.
+Yeah, sorry about that, I'll fix this up tomorrow when I merge the trees
+together and resolve the conflict.
 
-The commit is needed in 3.9 linus tree and stable tree,  but for next
-tree or 3.10,
-a revert commit is required.
-
-We know it is a problem, sorry, :-(
-
-
-Thanks,
---
-Ming Lei
+greg k-h
