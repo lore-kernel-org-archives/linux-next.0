@@ -1,77 +1,73 @@
-From: Kent Overstreet <koverstreet@google.com>
-Subject: Re: [PATCH -next 1/3] bcache: Add missing #include <linux/prefetch.h>
-Date: Wed, 27 Mar 2013 12:50:50 -0700
-Message-ID: <20130327195050.GB22232@google.com>
-References: <1364406990-20541-1-git-send-email-geert@linux-m68k.org>
- <20130327182150.GB25906@google.com>
- <51533A2E.2000501@infradead.org>
+From: Ben Hutchings <bhutchings@solarflare.com>
+Subject: Re: [PATCH -next] GRE: Use strlcat() for size checking
+Date: Wed, 27 Mar 2013 20:06:16 +0000
+Message-ID: <1364414776.2922.19.camel@bwh-desktop.uk.solarflarecom.com>
+References: <1364410111-29418-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-da0-f44.google.com ([209.85.210.44]:46004 "EHLO
-	mail-da0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754216Ab3C0Tuy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Mar 2013 15:50:54 -0400
-Received: by mail-da0-f44.google.com with SMTP id z20so4251061dae.3
-        for <linux-next@vger.kernel.org>; Wed, 27 Mar 2013 12:50:53 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <51533A2E.2000501@infradead.org>
+Received: from webmail.solarflare.com ([12.187.104.25]:47823 "EHLO
+	webmail.solarflare.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754192Ab3C0UGU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Mar 2013 16:06:20 -0400
+In-Reply-To: <1364410111-29418-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Pravin B Shelar <pshelar@nicira.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Wed, Mar 27, 2013 at 11:27:58AM -0700, Randy Dunlap wrote:
-> On 03/27/13 11:21, Kent Overstreet wrote:
-> > On Wed, Mar 27, 2013 at 06:56:28PM +0100, Geert Uytterhoeven wrote:
-> >> m68k/allmodconfig:
-> >>
-> >> drivers/md/bcache/bset.c: In function =E2=80=98bset_search_tree=E2=
-=80=99:
-> >> drivers/md/bcache/bset.c:727: error: implicit declaration of funct=
-ion =E2=80=98prefetch=E2=80=99
-> >>
-> >> drivers/md/bcache/btree.c: In function =E2=80=98bch_btree_node_get=
-=E2=80=99:
-> >> drivers/md/bcache/btree.c:933: error: implicit declaration of func=
-tion =E2=80=98prefetch=E2=80=99
-> >=20
-> > Thanks, applied! The other two I already have a patch queued up for=
-=2E
->=20
->=20
-> On i386 and x86_64, I also see this build problem:
->=20
-> drivers/md/bcache/bset.c:885:4: error: implicit declaration of functi=
-on '__WARN' [-Werror=3Dimplicit-function-declaration]
->=20
->=20
-> Do you also have a patch for it?
+On Wed, 2013-03-27 at 19:48 +0100, Geert Uytterhoeven wrote:
+> On m68k, gcc tries to be smart and turns
+> 
+>     strncat(name, "%d", 2);
+> 
+> into a call to strlen() and a 16-bit store, causing a link failure,
+> as arch/m68k/include/asm/string.h provides strlen() using a macro:
+> 
+>     ERROR: "strlen" [net/ipv4/ip_tunnel.ko] undefined!
 
-Nope - looks like __WARN() doesn't exist if CONFIG_BUG=3Dn, whoops.
+Perhaps you should fix the string library for m68k, then!
 
-Adding this to the queue:
+> Use strlcat() instead to avoid this, which also allows to simplify the
+> check for buffer overflows.
 
-commit 796c213186b850b3e6e8d5fd5799b0fd74721ea3
-Author: Kent Overstreet <koverstreet@google.com>
-Date:   Wed Mar 27 12:47:45 2013 -0700
+It looks like you're also fixing an off-by-one error: the maximum length
+of ops->kind will be IFNAMSIZ - 3 (just enough to add "%d" and the null
+terminator), rather than IFNAMSIZ - 4.
 
-    bcache: Use WARN_ONCE() instead of __WARN()
-   =20
-    Signed-off-by: Kent Overstreet <koverstreet@google.com>
+Ben.
 
-diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
-index d4f2164..cb4578a 100644
---- a/drivers/md/bcache/bset.c
-+++ b/drivers/md/bcache/bset.c
-@@ -883,7 +883,7 @@ struct bkey *bch_btree_iter_next(struct btree_iter =
-*iter)
- 		iter->data->k =3D bkey_next(iter->data->k);
-=20
- 		if (iter->data->k > iter->data->end) {
--			__WARN();
-+			WARN_ONCE(1, "bset was corrupt!\n");
- 			iter->data->k =3D iter->data->end;
- 		}
-=20
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> --
+> Compile-tested only
+> 
+> http://kisskb.ellerman.id.au/kisskb/buildresult/8462108/
+> ---
+>  net/ipv4/ip_tunnel.c |    5 ++---
+>  1 files changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
+> index 9d96b68..8dbe672 100644
+> --- a/net/ipv4/ip_tunnel.c
+> +++ b/net/ipv4/ip_tunnel.c
+> @@ -284,12 +284,11 @@ static struct net_device *__ip_tunnel_create(struct net *net,
+>  	if (parms->name[0])
+>  		strlcpy(name, parms->name, IFNAMSIZ);
+>  	else {
+> -		if (strlen(ops->kind) + 3 >= IFNAMSIZ) {
+> +		strlcpy(name, ops->kind, IFNAMSIZ);
+> +		if (strlcat(name, "%d", IFNAMSIZ) >= IFNAMSIZ) {
+>  			err = -E2BIG;
+>  			goto failed;
+>  		}
+> -		strlcpy(name, ops->kind, IFNAMSIZ);
+> -		strncat(name, "%d", 2);
+>  	}
+>  
+>  	ASSERT_RTNL();
+
+-- 
+Ben Hutchings, Staff Engineer, Solarflare
+Not speaking for my employer; that's the marketing department's job.
+They asked us to note that Solarflare product names are trademarked.
