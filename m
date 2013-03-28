@@ -1,70 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with Linus' tree
-Date: Thu, 28 Mar 2013 15:28:57 +1100
-Message-ID: <20130328152857.e0bb45f7cd88a04614427665@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Thu, 28 Mar 2013 16:04:20 +1100
+Message-ID: <20130328160420.e57d7fdbd2894807e73e8497@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__28_Mar_2013_15_28_57_+1100_cwO2kToWja16qkco"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__28_Mar_2013_16_04_20_+1100_TGef+=DYYQ0ECeQT"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:57297 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750911Ab3C1FEb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Mar 2013 01:04:31 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>
 
---Signature=_Thu__28_Mar_2013_15_28_57_+1100_cwO2kToWja16qkco
+--Signature=_Thu__28_Mar_2013_16_04_20_+1100_TGef+=DYYQ0ECeQT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi all,
 
-Today's linux-next merge of the signal tree got a conflict in fs/splice.c
-between commit 06ae43f34bcc ("Don't bother with redoing rw_verify_area()
-from default_file_splice_from()") from Linus' tree and commit
-76b021d053ed ("convert vmsplice to COMPAT_SYSCALL_DEFINE") from the
-signal tree.
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+net/packet/af_packet.c: In function 'packet_sendmsg_spkt':
+net/packet/af_packet.c:1515:2: error: implicit declaration of function 'skb=
+_probe_transport_header' [-Werror=3Dimplicit-function-declaration]
+drivers/net/tun.c: In function 'tun_get_user':
+drivers/net/tun.c:1206:2: error: implicit declaration of function 'skb_prob=
+e_transport_header' [-Werror=3Dimplicit-function-declaration]
 
+Caused by commit 40893fd0fd4e ("net: switch to use
+skb_probe_transport_header()").  This is a 32 bit build, so that
+"BITS_PER_LONG > 32" is false and so NET_SKBUFF_DATA_USES_OFFSET is not
+defined ... and skb_probe_transport_header() is only defined in an area of
+skbuff.h protected by "#ifdef NET_SKBUFF_DATA_USES_OFFSET"  :-(
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/splice.c
-index 29e394e,23ade0e..0000000
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@@ -31,7 -31,7 +31,8 @@@
-  #include <linux/security.h>
-  #include <linux/gfp.h>
-  #include <linux/socket.h>
-+ #include <linux/compat.h>
- +#include "internal.h"
- =20
-  /*
-   * Attempt to steal a page from a pipe buffer. This should perhaps go into
-
---Signature=_Thu__28_Mar_2013_15_28_57_+1100_cwO2kToWja16qkco
+--Signature=_Thu__28_Mar_2013_16_04_20_+1100_TGef+=DYYQ0ECeQT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRU8cJAAoJEECxmPOUX5FEZ2QP/37+964z9sB/re5mMuTHKjVt
-0YSTEsFA51qJpG9YNYXUxIkO9LL9D0EYM0R50nJQ0pHWVSDBeAv9Iv/02ts/Vy17
-MVpHnYdh/JwvSac6LeLSqvLXlwYtkWdAysV0iOHtzbvnb1792bF3A14dDEAZYkON
-G9UJVpgPIa4wKdCOEsC4UkRY/vjnSrUCWh6MCuDjnShkL9pyshQNvw8zGPqeTf2s
-aG5JlOnbJGqGMHdkuzMbjDW8+QQUKejQ8+/Sjzz0ysyEY+e1rB+C9aj89A4e9Hu4
-zCCMr0+KG8wbxdem7uHR0h8wmej+WK4SOWq86t/NwUqVCrkmmkiBjBfEAHEeU6kY
-qg7T7YjdtAgTUXAujSoK7ifRbAk+ip9hbKP2ASAMELd5KTjG0ov726DzWWkXFJ+i
-GDqsCF3ae5REcOLcDUgKSufoRSyJhGzmviwORV9KPlNIQF6UzxUtSVTlHNetOAbr
-ntxuFf+uzexmIpXetiI9ZhivFiaUUh7UJxABl8HFc+ztT79mODUmHUS2V+No5566
-u3lrqFLIkYxyNCJ8YP11brAdwhUjjN8ibIiJNnzqJH3Z+TQe9DcWlwNYpsIEClF/
-F4ZrsFln27GTF20hpsJ+faT/ngNk/KcMVp4438OVc9B8f709tlvejAKSFxZuLbcL
-peJ+pi4n/D+AwdGCguOC
-=b7iL
+iQIcBAEBCAAGBQJRU89UAAoJEECxmPOUX5FEn6IP/3vN6nDZpA0VF/AQ7P/rF31Q
+gU1bYl40SHBe8Nmb+bZYGXXAdU2o2y7u52nR+rOQsnjlRL7V22BUyCVY/glpqIP8
+82r0i5zCplZ+6cK+LqzFEy86//YSMivUi0Tu+rrmXMPsBtEAsQhV+oF50hSZIhn/
+/4JpO8+M5IdxkjjWyhkaNJEVSzzgK0hazQ4ZRn5qL71YV7oC8fj9Zr035C1/0Iut
+ns5Z1cnWOAbrBtmKz86tKPUAF1rtrGipKqnWetnEbDktV8eHw5H3xdZ11TRuzax8
+LzcE3q/uIYA76D5qlqHbsPpIEZYMl+UmL1dTjgm/Gr0hrJPIZeBFRpx+bYHtT3tp
+nozQrkVuQGVKbV6VOas0sFxo2AbQHLVM1ySQfkzy90oH52UCVYOJCsBCn9HeKl35
+Fw7hPz1PS9+muexoVREH8O2VFDHZozCOMQe4e0JDQXi9V7K6PbcOKzV2xvVchXlh
+Rhttok2fjkeqsFPLfn0yBx9414GEtZTpMr+ws1IG1xkAGcOLw0JOMOHiOhUD8C3q
+Fi3Mghjr+01omQUlh7BIMbTObURLujsEb/nHX1trKNxQJy3vsmR7A4t6oHNOQq0p
+zzqwoC0cB7VvhP4aM1wPerWyYnsysaUt4AjiPp77bLChRsJBiOCYGmqIVpEy7pMh
+E5meeCUSWr0JviLofgNT
+=a1zM
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__28_Mar_2013_15_28_57_+1100_cwO2kToWja16qkco--
+--Signature=_Thu__28_Mar_2013_16_04_20_+1100_TGef+=DYYQ0ECeQT--
