@@ -1,80 +1,69 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for Mar 28 (broadcom/bnx2x)
-Date: Thu, 28 Mar 2013 14:20:58 -0400 (EDT)
-Message-ID: <20130328.142058.1418770354237033948.davem@davemloft.net>
-References: <20130328162804.0676c97abb26d356ad8e50a6@canb.auug.org.au>
-	<51547915.2010607@infradead.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCH] solo6x10: The size of the thresholds ioctls was too large.
+Date: Fri, 29 Mar 2013 12:20:36 +0100
+Message-ID: <201303291220.36090.hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:44078 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752320Ab3C1SVA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Mar 2013 14:21:00 -0400
-In-Reply-To: <51547915.2010607@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: rdunlap@infradead.org
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, eilong@broadcom.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-media <linux-media@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Thu, 28 Mar 2013 10:08:37 -0700
+This should fix the build failure in linux-next.
 
-> On 03/27/13 22:28, Stephen Rothwell wrote:
->> Hi all,
->> 
->> The next linux-next release will be on Tuesday April 2.
->> 
->> Changes since 20130327:
->> 
-> 
-> on i386:
-> 
-> drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c: In function 'bnx2x_init_one':
-> drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:12525:3: error: 'struct bnx2x' has no member named 'vf2pf_mutex'
-> 
-> 
-> Full randconfig file is attached.
+[PATCH] solo6x10: The size of the thresholds ioctls was too large.
 
-This should be fixed in net-next by:
+On powerpc the maximum size for the ioctl argument is 8191, and it was
+8192. However, the 64x64 array of threshold values is more than is actually
+needed in practice for PAL and NTSC formats. A 45x45 array will do just fine.
 
-commit 8b49a4c75965ed157e21450d23dcadd6b27c1aa3
-Author: Dmitry Kravkov <dmitry@broadcom.com>
-Date:   Wed Mar 27 08:56:10 2013 +0000
+So change the size accordingly to fix this problem.
 
-    bnx2x: fix compilation without CONFIG_BNX2X_SRIOV
-    
-    Move mutex initialization by allocation of the mailbox it protects.
-    
-    introduced in commit 1d6f3cd89 'bnx2x: Prevent VF race'
-    
-    Signed-off-by: Dmitry Kravkov <dmitry@broadcom.com>
-    Reported-by: kbuild test robot <fengguang.wu@intel.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ drivers/staging/media/solo6x10/solo6x10-disp.c |    3 ++-
+ drivers/staging/media/solo6x10/solo6x10.h      |    8 +++++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 10af03e..fdfe33b 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -12522,7 +12522,6 @@ static int bnx2x_init_one(struct pci_dev *pdev,
- 	 */
- 	if (IS_VF(bp)) {
- 		bp->doorbells = bnx2x_vf_doorbells(bp);
--		mutex_init(&bp->vf2pf_mutex);
- 		rc = bnx2x_vf_pci_alloc(bp);
- 		if (rc)
- 			goto init_one_exit;
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
-index db63d86..2ce7c74 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
-@@ -3425,6 +3425,8 @@ void __iomem *bnx2x_vf_doorbells(struct bnx2x *bp)
- 
- int bnx2x_vf_pci_alloc(struct bnx2x *bp)
+diff --git a/drivers/staging/media/solo6x10/solo6x10-disp.c b/drivers/staging/media/solo6x10/solo6x10-disp.c
+index 78070c8..32d9953 100644
+--- a/drivers/staging/media/solo6x10/solo6x10-disp.c
++++ b/drivers/staging/media/solo6x10/solo6x10-disp.c
+@@ -205,10 +205,11 @@ int solo_set_motion_block(struct solo_dev *solo_dev, u8 ch,
+ 		const struct solo_motion_thresholds *thresholds)
  {
-+	mutex_init(&bp->vf2pf_mutex);
-+
- 	/* allocate vf2pf mailbox for vf to pf channel */
- 	BNX2X_PCI_ALLOC(bp->vf2pf_mbox, &bp->vf2pf_mbox_mapping,
- 			sizeof(struct bnx2x_vf_mbx_msg));
+ 	u32 off = SOLO_MOT_FLAG_AREA + ch * SOLO_MOT_THRESH_SIZE * 2;
+-	u16 buf[SOLO_MOTION_SZ];
++	u16 buf[64];
+ 	int x, y;
+ 	int ret = 0;
+ 
++	memset(buf, 0, sizeof(buf));
+ 	for (y = 0; y < SOLO_MOTION_SZ; y++) {
+ 		for (x = 0; x < SOLO_MOTION_SZ; x++)
+ 			buf[x] = cpu_to_le16(thresholds->thresholds[y][x]);
+diff --git a/drivers/staging/media/solo6x10/solo6x10.h b/drivers/staging/media/solo6x10/solo6x10.h
+index 3526d6b..6f91d2e 100644
+--- a/drivers/staging/media/solo6x10/solo6x10.h
++++ b/drivers/staging/media/solo6x10/solo6x10.h
+@@ -113,8 +113,14 @@
+  * each sample representing 16x16 pixels of the source. In
+  * effect, 44x30 samples are used for NTSC, and 44x36 for PAL.
+  * The 5th sample on the 10th row is (10*64)+5 = 645.
++ *
++ * Using a 64x64 array will result in a problem on some architectures like
++ * the powerpc where the size of the argument is limited to 13 bits.
++ * Since both PAL and NTSC do not use the full table anyway I've chosen
++ * to limit the array to 45x45 (45*16 = 720, which is the maximum PAL/NTSC
++ * width).
+  */
+-#define SOLO_MOTION_SZ (64)
++#define SOLO_MOTION_SZ (45)
+ struct solo_motion_thresholds {
+ 	__u16	thresholds[SOLO_MOTION_SZ][SOLO_MOTION_SZ];
+ };
+-- 
+1.7.10.4
