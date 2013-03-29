@@ -1,58 +1,60 @@
-From: Peter Hurley <peter@hurleysoftware.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: [PATCH -next] sound/soc/codecs: Mark snd-soc-wm2200 and
  snd-soc-wm-adsp as BROKEN
-Date: Fri, 29 Mar 2013 14:45:54 -0400
-Message-ID: <1364582754.3559.66.camel@thor.lan>
+Date: Fri, 29 Mar 2013 18:50:04 +0000
+Message-ID: <20130329185004.GL18316@opensource.wolfsonmicro.com>
 References: <1364566347-29941-1-git-send-email-peter@hurleysoftware.com>
-	 <20130329171229.GD18316@opensource.wolfsonmicro.com>
+ <20130329171229.GD18316@opensource.wolfsonmicro.com>
+ <1364582754.3559.66.camel@thor.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="O0IyAV00D+PP6Zj0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout01.c08.mtsvc.net ([205.186.168.189]:38385 "EHLO
-	mailout01.c08.mtsvc.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756359Ab3C2SqC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Mar 2013 14:46:02 -0400
-In-Reply-To: <20130329171229.GD18316@opensource.wolfsonmicro.com>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50585 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756453Ab3C2SuI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 Mar 2013 14:50:08 -0400
+Content-Disposition: inline
+In-Reply-To: <1364582754.3559.66.camel@thor.lan>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Peter Hurley <peter@hurleysoftware.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Xiong Zhou <jencce.kernel@gmail.com>
 
-On Fri, 2013-03-29 at 17:12 +0000, Mark Brown wrote:
-> On Fri, Mar 29, 2013 at 10:12:27AM -0400, Peter Hurley wrote:
-> 
-> > The linux-next tree has failed to build for last 7 days with these
-> > errors:
-> 
-> In some pretty specific and basically unrealistic configurations rather
-> than anything a human is likely to want to use or the core automatic
-> ones.
-> 
-> >   MODPOST 2490 modules
-> >   ERROR: "arizona_rate_text" [sound/soc/codecs/snd-soc-wm-adsp.ko] undefined!
-> >   ERROR: "arizona_rate_val" [sound/soc/codecs/snd-soc-wm-adsp.ko] undefined!
-> >   WARNING: modpost: Found 5 section mismatch(es).
-> 
-> > Patches submitted by Xiong Zhou <jencce.kernel@gmail.com> to fix this
-> > have been rejected.
-> 
-> > Until the author(s) resolve the situation, mark the offenders as BROKEN.
-> 
-> I'm not going to apply this, it's clearly not a constructive or helpful
-> effort to address the issue - it's not engaging with any of the
-> discussion about how to resolve the issue (there's no mention of the
-> suggested fix for example).
-> 
-> If you're going to run randconfigs that's great and the testing is
-> useful but if you're going to send patches as well as reports it would
-> be really helpful to look at what the code is doing so that the change
-> makes sense rather than just sending the first thing that springs to
-> mind.  The smarter the stuff that gets sent is the more likely it is to
-> either get merged or encourage people to work on the problem.
-> 
-> In this case it seems like Xiong is likely to fix things and it'd be
-> much better overall to get a fix from Xiong merged (which we seem to be
-> progressing towards).
 
-This is stock Ubuntu configs.
+--O0IyAV00D+PP6Zj0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Mar 29, 2013 at 02:45:54PM -0400, Peter Hurley wrote:
+
+> This is stock Ubuntu configs.
+
+Then the stock Ubuntu configuration is not a sensible one, enabling
+SND_SOC_ALL_CODECS for any purpose other than build coverage testing is
+just a waste of time - that's all it does.
+
+--O0IyAV00D+PP6Zj0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRVeIHAAoJELSic+t+oim9ou4P/22FoUASV6OJN4OerR7UKBpk
+JJMybnnUCRP8hBokpKhNuHRqq4UL4IXDUFbns6R/aotKex/81IyFgSfeCKNEXpch
+MwI8x8G8KRt7kXC66CYpYvZ5XbFShNqTbtXFutBQbp4v1FWXCQLNQVHmZOP7B/ef
+3PmU6mB2xkFCOV/YFvu2OKK1dHgkSO0ho0E8jsQRrY/d+7GcPYAYi+Vz+JBipi2k
+MmTsUdKEHraEteC6m4cRc94ghiuEL8OxpNg/eYIvKgLAW0DAz8ODTLMQbYAWRBlT
+vJcImh5erFe8nTBIp7vNvPKjIpXXUjARNUBh+HtUIa/Ieyddwq51KJhs7zcr1eoF
+6UnWgDkSHUcHgDa0fHxCv9wQ3AdF4Y9YwXYAqJFOdWvn7vsvUA3mEJn3Jtra9oYB
+0ub1OetjmMdM9eKn1nfYYZssmwrzRpXudnhbN7PHX+5z1MP3xdbuXt77/+nxYT7x
+7FCMFS9TMnn3cHtuVeEwn4PKpLpdaNvea+tLHiZ3X/cpJG4mtmo6l561Ylw8Djx4
+qEXxRdumzwaZbcaM0iIDrJKbi0+dkOHtRDFU0lnbRatP+eOBrXhjK1GdVUVry+Zx
+sHcAzEXyjvo6uQL6g9Jm3+8C12byUpyo/ZuhQhe63S7hx1u+hohk2nNoqPdunhba
+FQUJUQ9VRcGdyITHoVZh
+=W7vw
+-----END PGP SIGNATURE-----
+
+--O0IyAV00D+PP6Zj0--
