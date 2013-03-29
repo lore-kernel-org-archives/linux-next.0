@@ -1,69 +1,56 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCH] solo6x10: The size of the thresholds ioctls was too large.
-Date: Fri, 29 Mar 2013 12:20:36 +0100
-Message-ID: <201303291220.36090.hverkuil@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-media <linux-media@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-List-Id: linux-next.vger.kernel.org
+From: Peter Hurley <peter@hurleysoftware.com>
+Subject: [PATCH -next] sound/soc/codecs: Mark snd-soc-wm2200 and snd-soc-wm-adsp as BROKEN
+Date: Fri, 29 Mar 2013 10:12:27 -0400
+Message-ID: <1364566347-29941-1-git-send-email-peter@hurleysoftware.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout02.c08.mtsvc.net ([205.186.168.190]:60989 "EHLO
+	mailout02.c08.mtsvc.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754390Ab3C2Occ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Mar 2013 10:32:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Peter Hurley <peter@hurleysoftware.com>, Xiong Zhou <jencce.kernel@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-This should fix the build failure in linux-next.
+The linux-next tree has failed to build for last 7 days with these
+errors:
+  MODPOST 2490 modules
+  ERROR: "arizona_rate_text" [sound/soc/codecs/snd-soc-wm-adsp.ko] undefined!
+  ERROR: "arizona_rate_val" [sound/soc/codecs/snd-soc-wm-adsp.ko] undefined!
+  WARNING: modpost: Found 5 section mismatch(es).
 
-[PATCH] solo6x10: The size of the thresholds ioctls was too large.
+Patches submitted by Xiong Zhou <jencce.kernel@gmail.com> to fix this
+have been rejected.
 
-On powerpc the maximum size for the ioctl argument is 8191, and it was
-8192. However, the 64x64 array of threshold values is more than is actually
-needed in practice for PAL and NTSC formats. A 45x45 array will do just fine.
+Until the author(s) resolve the situation, mark the offenders as BROKEN.
 
-So change the size accordingly to fix this problem.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Xiong Zhou <jencce.kernel@gmail.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
 ---
- drivers/staging/media/solo6x10/solo6x10-disp.c |    3 ++-
- drivers/staging/media/solo6x10/solo6x10.h      |    8 +++++++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ sound/soc/codecs/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/solo6x10/solo6x10-disp.c b/drivers/staging/media/solo6x10/solo6x10-disp.c
-index 78070c8..32d9953 100644
---- a/drivers/staging/media/solo6x10/solo6x10-disp.c
-+++ b/drivers/staging/media/solo6x10/solo6x10-disp.c
-@@ -205,10 +205,11 @@ int solo_set_motion_block(struct solo_dev *solo_dev, u8 ch,
- 		const struct solo_motion_thresholds *thresholds)
- {
- 	u32 off = SOLO_MOT_FLAG_AREA + ch * SOLO_MOT_THRESH_SIZE * 2;
--	u16 buf[SOLO_MOTION_SZ];
-+	u16 buf[64];
- 	int x, y;
- 	int ret = 0;
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index 18fea10..470b66b 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -79,7 +79,7 @@ config SND_SOC_ALL_CODECS
+ 	select SND_SOC_WM0010 if SPI_MASTER
+ 	select SND_SOC_WM1250_EV1 if I2C
+ 	select SND_SOC_WM2000 if I2C
+-	select SND_SOC_WM2200 if I2C
++	select SND_SOC_WM2200 if I2C && BROKEN
+ 	select SND_SOC_WM5100 if I2C
+ 	select SND_SOC_WM5102 if MFD_WM5102
+ 	select SND_SOC_WM5110 if MFD_WM5110
+@@ -153,6 +153,7 @@ config SND_SOC_WM_HUBS
  
-+	memset(buf, 0, sizeof(buf));
- 	for (y = 0; y < SOLO_MOTION_SZ; y++) {
- 		for (x = 0; x < SOLO_MOTION_SZ; x++)
- 			buf[x] = cpu_to_le16(thresholds->thresholds[y][x]);
-diff --git a/drivers/staging/media/solo6x10/solo6x10.h b/drivers/staging/media/solo6x10/solo6x10.h
-index 3526d6b..6f91d2e 100644
---- a/drivers/staging/media/solo6x10/solo6x10.h
-+++ b/drivers/staging/media/solo6x10/solo6x10.h
-@@ -113,8 +113,14 @@
-  * each sample representing 16x16 pixels of the source. In
-  * effect, 44x30 samples are used for NTSC, and 44x36 for PAL.
-  * The 5th sample on the 10th row is (10*64)+5 = 645.
-+ *
-+ * Using a 64x64 array will result in a problem on some architectures like
-+ * the powerpc where the size of the argument is limited to 13 bits.
-+ * Since both PAL and NTSC do not use the full table anyway I've chosen
-+ * to limit the array to 45x45 (45*16 = 720, which is the maximum PAL/NTSC
-+ * width).
-  */
--#define SOLO_MOTION_SZ (64)
-+#define SOLO_MOTION_SZ (45)
- struct solo_motion_thresholds {
- 	__u16	thresholds[SOLO_MOTION_SZ][SOLO_MOTION_SZ];
- };
+ config SND_SOC_WM_ADSP
+ 	tristate
++	depends on BROKEN
+ 	default y if SND_SOC_WM5102=y
+ 	default y if SND_SOC_WM2200=y
+ 	default m if SND_SOC_WM5102=m
 -- 
-1.7.10.4
+1.8.1.2
