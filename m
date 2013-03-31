@@ -1,86 +1,41 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: Tree for Mar 28
-Date: Sun, 31 Mar 2013 10:25:27 -0300
-Message-ID: <20130331102527.76acb553@redhat.com>
-References: <20130328162804.0676c97abb26d356ad8e50a6@canb.auug.org.au>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: GENERIC_GPIO considered deprecated
+Date: Sun, 31 Mar 2013 15:18:33 -0700
+Message-ID: <CAAVeFu++8YOOSxPbAaTudxSGcBomkGrakBjiVyD+XSee54TrWw@mail.gmail.com>
+References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
+ <51576214.8010307@openwide.fr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/lgqkoJkWPwUtpMNTmEyNEmx"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:23017 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753744Ab3CaNZj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 31 Mar 2013 09:25:39 -0400
-In-Reply-To: <20130328162804.0676c97abb26d356ad8e50a6@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <51576214.8010307@openwide.fr>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Romain Naour <romain.naour@openwide.fr>, kgene.kim@samsung.com
+Cc: linux-next <linux-next@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, tomasz.figa@gmail.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/lgqkoJkWPwUtpMNTmEyNEmx
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Romain,
 
-Hi Stephen,
+On Sat, Mar 30, 2013 at 3:07 PM, Romain Naour <romain.naour@openwide.fr> wrote:
+> Hi Alex,
+>
+> When I read your mail, I was surprised that you were speaking about GPIOs, my pathes for samsung CPUs are intended for timer sub-system.
+>
+> As you can see in this thread, when I send my patches "ARM: S3C24XX: Add samsung-time support for s3c24xx" and "Add samsung-time support for s5pc100". They didn't add "select GENERIC_GPIO".
+> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=14980
+> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=14982
+>
+> There is something wrong with the commit, I see that "select GENERIC_GPIO" was added in my patches by mistake.
+>
+> I recommend you to speak directly with samsung's kernel maintainer that I CC in this mail.
 
-Em Thu, 28 Mar 2013 16:28:04 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+Indeed, it seems like these "select GENERIC_GPIO" have been added
+during the merge of your patches, since I can see the line is here in
+your patch (but not added by it). Kim, on the current next there are
+two of these "select GENERIC_GPIO" that are added from your branch,
+could you amend the patches that adds them such as they get changed
+into "select ARCH_REQUIRE_GPIOLIB" instead? You can grep for "select
+GENERIC_GPIO" in arch/arm to find the offending lines. We are removing
+GENERIC_GPIO and this work cannot be merged until you do this since it
+would break ARM builds. Thanks!
 
-> Hi all,
->=20
-> The next linux-next release will be on Tuesday April 2.
->=20
-> Changes since 20130327:
->=20
-> The vl4-dvb tree still had its build failure for which I disabled a
-> staging driver.
-
-Sorry for a late fix. Hans was/is on vacations, and didn't noticed about
-that breakage, as he was/is without access to his email at work. A proper
-fix for it were added on my tree:
-
-commit 9e7664e0827528701074875eef872f2be1dfaab8
-Author: Hans Verkuil <hverkuil@xs4all.nl>
-Date:   Fri Mar 29 07:20:36 2013 -0300
-
-    [media] solo6x10: The size of the thresholds ioctls was too large
-   =20
-    On powerpc the maximum size for the ioctl argument is 8191, and it was
-    8192. However, the 64x64 array of threshold values is more than is actu=
-ally
-    needed in practice for PAL and NTSC formats. A 45x45 array will do just=
- fine.
-    So change the size accordingly to fix this problem.
-   =20
-    Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-    Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-
-So, you should be able to drop the patch that disables solo6x10 compilation
-on the next linux-next.
-
-Regards,
-Mauro
-
---Sig_/lgqkoJkWPwUtpMNTmEyNEmx
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRWDlHAAoJEGO08Bl/PELnfWMP/3LfZxj+0RTsA+eyqb9JG9NL
-wM8EbZC9GA80qJzVMzF5hqNoXj9JtP3ZlrZ7Kj0mYU7Sjj46aGMnLUZyvzCpn3e7
-g5aS4dNXBjQJoEX5yq8zkfrOGLEgj5hd2G2uSsCXI9lDiz/8V7kmpJIvcW/Pe7bg
-+Rz2x2eFDLaz8KrlNROKJU6mbNC2f45o/aKLpg4AEqDlTjPzS1iUGPs2Wp6ASDdO
-nqnCehUz6JleHbbrhdE3Mj+kCgDIXW7Vpznqs/w2Z827eVsUZG+wGcxnoiqsKWx0
-FLOe7DMkaaU5Q1uZMITy6eQe4tUXrPOHx4zvF4M+kwVEzpR6PHmJOpsZkZkv9uyG
-pBFNWHC0hcTtUMtXqgbxmh4IgNqC1WEgK+ltKNe+fxxqLbP2xS8cu12bTCgmFnnn
-DS+d9IKT/FQE/EFfNU7IWYBLKjjctCzP92C26aa1oTVLY6pDPgtazCS95ULe2Isu
-qoXwCHUhbWeWvzqyy1f7/ktDdM8zMjyZuOOu4KgijmoPIap+dgJlfe/P/zRRlKQg
-msPCqfvljKbtwIj3xSWbAhkyT+p0NkOKl4AvroAuRUKvc1iZ0VNNLtwPSpMe6GOV
-sDY0ZzyDYbGUZRZVoznb90Mvo/g3vvqqwHRBnjScl4Q8YGsFChH8Rgv3rJpgSu9k
-Ld2dWTd+jw2+FMwBwC4V
-=FY9e
------END PGP SIGNATURE-----
-
---Sig_/lgqkoJkWPwUtpMNTmEyNEmx--
+Alex.
