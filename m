@@ -1,67 +1,115 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the char-misc tree
-Date: Tue, 2 Apr 2013 17:29:50 +1100
-Message-ID: <20130402172950.1fd8d6653a4c79b319945212@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Apr_2013_17_29_50_+1100_6QBsxo5aodd/GpJr"
+From: Richard Weinberger <richard@nod.at>
+Subject: [PATCH v2] cs5535-mfgpt: Add another reset method
+Date: Tue,  2 Apr 2013 08:46:37 +0200
+Message-ID: <1364885197-17212-1-git-send-email-richard@nod.at>
+References: <20130402172950.1fd8d6653a4c79b319945212@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48229 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760205Ab3DBGaC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Apr 2013 02:30:02 -0400
+Received: from a.ns.miles-group.at ([95.130.255.143]:47835 "EHLO radon.swed.at"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754165Ab3DBGqv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Apr 2013 02:46:51 -0400
+In-Reply-To: <20130402172950.1fd8d6653a4c79b319945212@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>
+To: greg@kroah.com
+Cc: arnd@arndb.de, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>
 
---Signature=_Tue__2_Apr_2013_17_29_50_+1100_6QBsxo5aodd/GpJr
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The CS5535/CS5536 MFGPT has no support to reset the device.
+The current method uses an undocumented bit but does not work on all
+devices. At least on my ALIX board it completely freezes the board.
 
-Hi all,
+This new method tries to soft reset all timers by unconfiguring them.
+But this does not clear the RO setup register and therefore it has to
+be ignored while probing.
 
-After merging the char-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Resetting the timers is not only needed on broken BIOSes also when
+kexec is used. Otherwise the new kernel will find preconfigured timers
+and odd things will happen.
 
-drivers/misc/cs5535-mfgpt.c:30:3: warning: missing terminating " character =
-[enabled by default]
-drivers/misc/cs5535-mfgpt.c:31:31: warning: missing terminating " character=
- [enabled by default]
-drivers/misc/cs5535-mfgpt.c:384:0: error: unterminated argument list invoki=
-ng macro "MODULE_PARM_DESC"
-drivers/misc/cs5535-mfgpt.c:27:1: error: expected '=3D', ',', ';', 'asm' or=
- '__attribute__' at end of input
+Signed-off-by: Richard Weinberger <richard@nod.at>
+---
+ drivers/misc/cs5535-mfgpt.c | 41 +++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 37 insertions(+), 4 deletions(-)
 
-Caused by commit 945480b159aa ("cs5535-mfgpt: Add another reset method").
-
-I have used the char-misc tree from next-20130328 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-
---Signature=_Tue__2_Apr_2013_17_29_50_+1100_6QBsxo5aodd/GpJr
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRWnreAAoJEECxmPOUX5FEhlUP/24y8ydJOE6G+fqmY6bqM99j
-dWkCNl6GCpG/3acPm0N4faWtBZIG5DHd0JUbnbfQRcm1nkhurug78K5lECItyvls
-JAD8R3Q9FSnb1k+FYuQqa0LsEEJDNKCEH8EMmQE5ZoTo/Hg4qrurqCAyui7aNVvu
-66mjtBSJ6bSYkzBgJW1LwmVXIFazYADJOckonjR7pijGALSvWuFLdCre+U7aw16h
-zBJcfm3Q7L9/yQyVnZ26sAsfjV1c3d4V+x+X7oMTczZQ9w7tAdZdT+KtHhqVPxSo
-pe+Md8gE2wjK8iZyGdtey6JUIBvHKduzx+TxYoPtDR5wcu2vQoL0GBdlQAv+afK1
-cAHFigWQPDkBA9yazEMa3YCpjFQYe9nwQAzRnOtnB25c/bEYF98hM2liGDbCU2d9
-slIhiJC05ojoJO3t05l4inL38QKH85QHWOPUb9yb+99RQT3ldoHoCDZH8XDKWUzy
-W/LkOrDM++/cb+8B9o0Z3x2d15SnwjdE8DRCyhjR4jBv8ShyD1kK/BsUIcd/PG8E
-lsFgK6ARl+0rhw0I7+9k1tgQOY7ZHAySq4zTEr7kP/UhASjUViQTXbZlmX28v++2
-8tw4Qms7Ocv7CmoOmwstKbXUiyBaVXmdFnnGsFjdnyq5fzEIY7bFlZqsDD3icRRt
-Lk7T25O/7i9dJfZGbphc
-=1RDy
------END PGP SIGNATURE-----
-
---Signature=_Tue__2_Apr_2013_17_29_50_+1100_6QBsxo5aodd/GpJr--
+diff --git a/drivers/misc/cs5535-mfgpt.c b/drivers/misc/cs5535-mfgpt.c
+index 9858f36..effd8c6 100644
+--- a/drivers/misc/cs5535-mfgpt.c
++++ b/drivers/misc/cs5535-mfgpt.c
+@@ -24,8 +24,11 @@
+ 
+ static int mfgpt_reset_timers;
+ module_param_named(mfgptfix, mfgpt_reset_timers, int, 0644);
+-MODULE_PARM_DESC(mfgptfix, "Reset the MFGPT timers during init; "
+-		"required by some broken BIOSes (ie, TinyBIOS < 0.99).");
++MODULE_PARM_DESC(mfgptfix, "Try to reset the MFGPT timers during init; "
++		"required by some broken BIOSes (ie, TinyBIOS < 0.99) or kexec "
++		"(1 = reset the MFGPT using an undocumented bit, "
++		"2 = perform a soft reset by unconfiguring all timers); "
++		"use what works best for you.");
+ 
+ struct cs5535_mfgpt_timer {
+ 	struct cs5535_mfgpt_chip *chip;
+@@ -256,6 +259,28 @@ static void reset_all_timers(void)
+ }
+ 
+ /*
++ * This is another sledgehammer to reset all MFGPT timers.
++ * Instead of using the undocumented bit method it clears
++ * IRQ, NMI and RESET settings.
++ */
++static void soft_reset(void)
++{
++	int i;
++	struct cs5535_mfgpt_timer t;
++
++	for (i = 0; i < MFGPT_MAX_TIMERS; i++) {
++		t.nr = i;
++
++		cs5535_mfgpt_toggle_event(&t, MFGPT_CMP1, MFGPT_EVENT_RESET, 0);
++		cs5535_mfgpt_toggle_event(&t, MFGPT_CMP2, MFGPT_EVENT_RESET, 0);
++		cs5535_mfgpt_toggle_event(&t, MFGPT_CMP1, MFGPT_EVENT_NMI, 0);
++		cs5535_mfgpt_toggle_event(&t, MFGPT_CMP2, MFGPT_EVENT_NMI, 0);
++		cs5535_mfgpt_toggle_event(&t, MFGPT_CMP1, MFGPT_EVENT_IRQ, 0);
++		cs5535_mfgpt_toggle_event(&t, MFGPT_CMP2, MFGPT_EVENT_IRQ, 0);
++	}
++}
++
++/*
+  * Check whether any MFGPTs are available for the kernel to use.  In most
+  * cases, firmware that uses AMD's VSA code will claim all timers during
+  * bootup; we certainly don't want to take them if they're already in use.
+@@ -271,15 +296,17 @@ static int scan_timers(struct cs5535_mfgpt_chip *mfgpt)
+ 	int i;
+ 
+ 	/* bios workaround */
+-	if (mfgpt_reset_timers)
++	if (mfgpt_reset_timers == 1)
+ 		reset_all_timers();
++	else if (mfgpt_reset_timers == 2)
++		soft_reset();
+ 
+ 	/* just to be safe, protect this section w/ lock */
+ 	spin_lock_irqsave(&mfgpt->lock, flags);
+ 	for (i = 0; i < MFGPT_MAX_TIMERS; i++) {
+ 		timer.nr = i;
+ 		val = cs5535_mfgpt_read(&timer, MFGPT_REG_SETUP);
+-		if (!(val & MFGPT_SETUP_SETUP)) {
++		if (!(val & MFGPT_SETUP_SETUP) || mfgpt_reset_timers == 2) {
+ 			__set_bit(i, mfgpt->avail);
+ 			timers++;
+ 		}
+@@ -294,6 +321,12 @@ static int cs5535_mfgpt_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	int err = -EIO, t;
+ 
++	if (mfgpt_reset_timers < 0 || mfgpt_reset_timers > 2) {
++		dev_err(&pdev->dev, "Bad mfgpt_reset_timers value: %i\n",
++			mfgpt_reset_timers);
++		goto done;
++	}
++
+ 	/* There are two ways to get the MFGPT base address; one is by
+ 	 * fetching it from MSR_LBAR_MFGPT, the other is by reading the
+ 	 * PCI BAR info.  The latter method is easier (especially across
+-- 
+1.8.1.4
