@@ -1,58 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Tue, 2 Apr 2013 11:26:27 +1100
-Message-ID: <20130402112627.223048680be1397ad59cdcec@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Date: Tue, 2 Apr 2013 01:39:14 +0100
+Message-ID: <20130402003914.GG21522@ZenIV.linux.org.uk>
+References: <20130402112627.223048680be1397ad59cdcec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Apr_2013_11_26_27_+1100_SZq5CFA.y7qgc_2s"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Tue__2_Apr_2013_11_26_27_+1100_SZq5CFA.y7qgc_2s
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:40447 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751601Ab3DBAjP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Apr 2013 20:39:15 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20130402112627.223048680be1397ad59cdcec@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Al,
+On Tue, Apr 02, 2013 at 11:26:27AM +1100, Stephen Rothwell wrote:
+> Hi Al,
+> 
+> After merging the vfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> arch/powerpc/kernel/lparcfg.c:44:31: error: 'proc_ppc64_lparcfg' defined but not used [-Werror=unused-variable]
+> cc1: all warnings being treated as errors
+> 
+> Caused by commit dfda3a48f2e7 ("lparcfg: don't bother saving pointer to
+> proc_dir_entry").
+> 
+> I have used the vfs tree form next-20130328 for today.
 
-After merging the vfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-arch/powerpc/kernel/lparcfg.c:44:31: error: 'proc_ppc64_lparcfg' defined bu=
-t not used [-Werror=3Dunused-variable]
-cc1: all warnings being treated as errors
-
-Caused by commit dfda3a48f2e7 ("lparcfg: don't bother saving pointer to
-proc_dir_entry").
-
-I have used the vfs tree form next-20130328 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__2_Apr_2013_11_26_27_+1100_SZq5CFA.y7qgc_2s
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRWiWzAAoJEECxmPOUX5FEmg0P/3cEKgmDuhbHJZkYQRGXNxz9
-CN0m9+YF375u5gEgyQBOl8KBYL4rIDH3IuTz2yTkjE/sg8THuGp0NDaYugF9Nd8M
-i1Lsc23O70QMtlDa/J1Wyk0EbVZh6ngqX4IJ7Rm0nsXPs1rJcTwLi4SYXnkvp6tY
-Wd8jBs8864Hs/6cM6c7mjwZiDVIrcqqmnjNg2CyYWBdnN98bZFDzNTM2hc1ZPCtk
-FI1jb+LOIh96MQAy58GWD4DZH0p36hcf+BizgSktbp9EmjAoQaPtODAgY3SzYiVj
-YzcSRp+nAKqKgA8GPQhamKCiyjTNuOITetIpzgfInmYYpCkDtArZEcO0rPOyGLHu
-J2NlLDxLIdgusgK30FLBFvBZNmm8Z9NJ8C2vYZ41FDTRWbueqBXtbFjtuj07RP6c
-C6JAsrRQ7/ubGtpN1TrXHx5Lwj2ssVLpzca5dPUV5YU8mkIvFaqLWqq3dUEv7Q87
-j9taUAe0WUNDFzqxeysN2KomWc/MdYGmJKnlfOqqxaWYdyH41TTeCZOk+4lsuUhN
-b06Gwqe0EK4kfXF/5CHszbuKOqHGRNFuuLTRHPwwC+Mth/w1g2UlYPpgZqB9wKdP
-DWWNiP14fk895Hwtw8zgw1hxJEwRIH9Cudu3u+qzaMabrBpc8jZMfEzLYeMqaKVB
-nMaKlqgEJBRYcsWigFPi
-=tUag
------END PGP SIGNATURE-----
-
---Signature=_Tue__2_Apr_2013_11_26_27_+1100_SZq5CFA.y7qgc_2s--
+... or just remove the variable ;-)  Fixed and pushed.
