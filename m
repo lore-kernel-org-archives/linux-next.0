@@ -1,132 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (block
- tree related)
-Date: Tue, 2 Apr 2013 10:22:36 +1100
-Message-ID: <20130402102236.9a597c047fbf8d09038bc989@canb.auug.org.au>
-References: <20130326173159.09dad51a1b8825a264f3171f@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the ia64 tree
+Date: Tue, 2 Apr 2013 11:20:17 +1100
+Message-ID: <20130402112017.8c5e288cbbd31f93788df9d5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Apr_2013_10_22_36_+1100_RdaSoNRo_H_auoFA"
+ boundary="Signature=_Tue__2_Apr_2013_11_20_17_+1100_s8EG/KBpP0VUapAv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59040 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56448 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757248Ab3DAXWr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Apr 2013 19:22:47 -0400
-In-Reply-To: <20130326173159.09dad51a1b8825a264f3171f@canb.auug.org.au>
+	with ESMTP id S1758322Ab3DBAUa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Apr 2013 20:20:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <koverstreet@google.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, "Luck, Tony" <tony.luck@intel.com>
 
---Signature=_Tue__2_Apr_2013_10_22_36_+1100_RdaSoNRo_H_auoFA
+--Signature=_Tue__2_Apr_2013_11_20_17_+1100_s8EG/KBpP0VUapAv
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Al,
 
-On Tue, 26 Mar 2013 17:31:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the final tree, today's linux-next build (powerpc allyescon=
-fig)
-> failed like this:
->=20
-> drivers/built-in.o: In function `bio_alloc_pages':
-> (.opd+0x2364a8): multiple definition of `bio_alloc_pages'
-> fs/built-in.o:(.opd+0x7188): first defined here
->=20
-> Caused by an interaction between commits a07876064a0b ("block: Add
-> bio_alloc_pages()") and commit cafe56359144 ("bcache: A block layer
-> cache") from the block tree.
->=20
-> I have applied the following fix patch (this should have happened in
-> merge commit 12f45f28441e "Merge branch 'for-3.10/drivers' into
-> for-next"):
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 26 Mar 2013 17:26:45 +1100
-> Subject: [PATCH] block: remove the extra copy of bio_alloc_pages
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/md/bcache/util.c | 18 ------------------
->  drivers/md/bcache/util.h |  2 --
->  2 files changed, 20 deletions(-)
->=20
-> diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
-> index dcec2e4..671a55d 100644
-> --- a/drivers/md/bcache/util.c
-> +++ b/drivers/md/bcache/util.c
-> @@ -237,24 +237,6 @@ start:		bv->bv_len	=3D min_t(size_t, PAGE_SIZE - bv-=
->bv_offset,
->  }
->  EXPORT_SYMBOL_GPL(bio_map);
-> =20
-> -int bio_alloc_pages(struct bio *bio, gfp_t gfp)
-> -{
-> -	int i;
-> -	struct bio_vec *bv;
-> -
-> -	bio_for_each_segment(bv, bio, i) {
-> -		bv->bv_page =3D alloc_page(gfp);
-> -		if (!bv->bv_page) {
-> -			while (bv-- !=3D bio->bi_io_vec + bio->bi_idx)
-> -				__free_page(bv->bv_page);
-> -			return -ENOMEM;
-> -		}
-> -	}
-> -
-> -	return 0;
-> -}
-> -EXPORT_SYMBOL_GPL(bio_alloc_pages);
-> -
->  /*
->   * Portions Copyright (c) 1996-2001, PostgreSQL Global Development Group=
- (Any
->   * use permitted, subject to terms of PostgreSQL license; see.)
-> diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
-> index 56705fd..499d746 100644
-> --- a/drivers/md/bcache/util.h
-> +++ b/drivers/md/bcache/util.h
-> @@ -570,8 +570,6 @@ static inline unsigned fract_exp_two(unsigned x, unsi=
-gned fract_bits)
-> =20
->  void bio_map(struct bio *bio, void *base);
-> =20
-> -int bio_alloc_pages(struct bio *bio, gfp_t gfp);
-> -
->  static inline sector_t bdev_sectors(struct block_device *bdev)
->  {
->  	return bdev->bd_inode->i_size >> 9;
-> --=20
-> 1.8.1
+Today's linux-next merge of the vfs tree got a conflict in
+arch/ia64/kernel/palinfo.c between commit 40c275bd92b8 ("[IA64] Fix stack
+overflow in create_palinfo_proc_entries") from the ia64 tree and commit
+d8e904861a28 ("palinfo fixes") from the vfs tree.
 
-Ping?
+I fixed it up (arbitrarily choosing the vfs tree version) and can carry
+the fix as necessary (no action is required).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__2_Apr_2013_10_22_36_+1100_RdaSoNRo_H_auoFA
+--Signature=_Tue__2_Apr_2013_11_20_17_+1100_s8EG/KBpP0VUapAv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRWha8AAoJEECxmPOUX5FEEGEP/Re050H6OsZMocEbnbqpI6qP
-4zIkJFaJ98Yfz2jjXGUxd0vTshntITg8weCkIrDfQlTNCuSowYW+uSg/2npsQw07
-iboMemhcFpR1qXNuBeC3IHjPin3rfIWQJ91Z6+z5Y2GMLqbnTox5/nUDDQTTn73l
-b8IN4LGE+GMOkLyJiunrD1R4Wamyi7EW77zYcD4V2et9rqgS6wfUMO/mEwSbCsoL
-0cacFwmPdp/iX67hbsX2M32x7pTBEMdLqcaX7Jyj6XJfpYsq7MHHE3SFaDk2CGAU
-oPvL/gLswD0XLwloA49yjZD/tCbyMoiNXOBaZ/t67u3Ux3P0h/p+K+qN9Bf1HIJ7
-ZdLrhC259F+aWqvggrJnIdoJhkt+E2bQ8JPVCuMEqulVSafZjYY7zobLkjh36gGo
-5ZjhB5SXfADMjgIYXhiNuYoMGhMCeJMAFQ/D0N3KhDu07yjw6V21hoRFtzhcm1iH
-/ttx/14tNAZfnTv777ydJJZiuNGH81KTYjWyIeS/K7nNi6HQawn1hj3JUuK7ysIw
-pmBkc48CV/VWPlO3jQ2Jq/kWuYcINubphahZBOUC55GLYDr2FqS4i/xA2RWbM3Am
-OkyirM5Ji5SrOrVX4ZEDUMkQt2PcAObhJ1cZNfBIxBabI4rND/KAVDqdqv1hj5kK
-k7kWGlli7fjAoz3/OEZM
-=kuhw
+iQIcBAEBCAAGBQJRWiRBAAoJEECxmPOUX5FEz1MP/Au28Vtsm6l6/bCDJJphGT8K
+1t8nHPXWTuNlpRkFmQn6dIp9Lqz2Y2mqqkTuI+UIMnd5m7S9ghCsXXHIZ9FHHkPB
+xM1j9j5ROrIX9oenf1yaDdNvBiJnkNWk0uMsWHaa1WrtJHe9YOlIqzXist/ONSEP
+IA1gHqtUEgQDVjieLDSUjfMTDOxqkl44l7qfqNXW533dSsnGpXvKu/aPqJyzIISO
+17OhlOqhgSkwfCKGVNHXT/rQt+0z/yaAHShKNwhIGN1169OTkSW6czNweDSrLMfY
+NHsQ6kEOu9k5xzHrcgKwQFLwzL7/T6/9wYwwz26M1c6LClYq5KVdCGjaKeZRUXWt
+ylkUzuqdRPtijIb/20PuUFbAgO0XPIYhtIqUkNltOUyvlgefVkFMVssvf2dOwPnP
+Qu+K7PF37OPnPmteFlBWueL0FwKmqg5j902eEKebjIogSdaorAEVRJvzxNUpmt3Z
+L8CTX4PaADE6RHZVwYxwork02YhhWcvlCU3h0ivGGSJpJwA7IUe3oRsueSOjsYxu
+AC93znJVjVzwBi+/UGqPkdh2Y/AWkqK/Lo+mcc7Ij+QiA33Yu8rw+DYf4DZy2Dom
+dTXzgNNuSpljShSZQhSWOcHGr7sN6LCsAk9CWrZN01zDHjkku31VI9n0ZqWVqFag
+shVNA0cBjjSFqRcrOlKC
+=I5mJ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__2_Apr_2013_10_22_36_+1100_RdaSoNRo_H_auoFA--
+--Signature=_Tue__2_Apr_2013_11_20_17_+1100_s8EG/KBpP0VUapAv--
