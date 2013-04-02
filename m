@@ -1,59 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the ia64 tree
-Date: Tue, 2 Apr 2013 11:20:17 +1100
-Message-ID: <20130402112017.8c5e288cbbd31f93788df9d5@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Tue, 2 Apr 2013 11:26:27 +1100
+Message-ID: <20130402112627.223048680be1397ad59cdcec@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Apr_2013_11_20_17_+1100_s8EG/KBpP0VUapAv"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56448 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758322Ab3DBAUa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Apr 2013 20:20:30 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Tue__2_Apr_2013_11_26_27_+1100_SZq5CFA.y7qgc_2s"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, "Luck, Tony" <tony.luck@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__2_Apr_2013_11_20_17_+1100_s8EG/KBpP0VUapAv
+--Signature=_Tue__2_Apr_2013_11_26_27_+1100_SZq5CFA.y7qgc_2s
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Al,
 
-Today's linux-next merge of the vfs tree got a conflict in
-arch/ia64/kernel/palinfo.c between commit 40c275bd92b8 ("[IA64] Fix stack
-overflow in create_palinfo_proc_entries") from the ia64 tree and commit
-d8e904861a28 ("palinfo fixes") from the vfs tree.
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (arbitrarily choosing the vfs tree version) and can carry
-the fix as necessary (no action is required).
+arch/powerpc/kernel/lparcfg.c:44:31: error: 'proc_ppc64_lparcfg' defined bu=
+t not used [-Werror=3Dunused-variable]
+cc1: all warnings being treated as errors
 
+Caused by commit dfda3a48f2e7 ("lparcfg: don't bother saving pointer to
+proc_dir_entry").
+
+I have used the vfs tree form next-20130328 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__2_Apr_2013_11_20_17_+1100_s8EG/KBpP0VUapAv
+--Signature=_Tue__2_Apr_2013_11_26_27_+1100_SZq5CFA.y7qgc_2s
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRWiRBAAoJEECxmPOUX5FEz1MP/Au28Vtsm6l6/bCDJJphGT8K
-1t8nHPXWTuNlpRkFmQn6dIp9Lqz2Y2mqqkTuI+UIMnd5m7S9ghCsXXHIZ9FHHkPB
-xM1j9j5ROrIX9oenf1yaDdNvBiJnkNWk0uMsWHaa1WrtJHe9YOlIqzXist/ONSEP
-IA1gHqtUEgQDVjieLDSUjfMTDOxqkl44l7qfqNXW533dSsnGpXvKu/aPqJyzIISO
-17OhlOqhgSkwfCKGVNHXT/rQt+0z/yaAHShKNwhIGN1169OTkSW6czNweDSrLMfY
-NHsQ6kEOu9k5xzHrcgKwQFLwzL7/T6/9wYwwz26M1c6LClYq5KVdCGjaKeZRUXWt
-ylkUzuqdRPtijIb/20PuUFbAgO0XPIYhtIqUkNltOUyvlgefVkFMVssvf2dOwPnP
-Qu+K7PF37OPnPmteFlBWueL0FwKmqg5j902eEKebjIogSdaorAEVRJvzxNUpmt3Z
-L8CTX4PaADE6RHZVwYxwork02YhhWcvlCU3h0ivGGSJpJwA7IUe3oRsueSOjsYxu
-AC93znJVjVzwBi+/UGqPkdh2Y/AWkqK/Lo+mcc7Ij+QiA33Yu8rw+DYf4DZy2Dom
-dTXzgNNuSpljShSZQhSWOcHGr7sN6LCsAk9CWrZN01zDHjkku31VI9n0ZqWVqFag
-shVNA0cBjjSFqRcrOlKC
-=I5mJ
+iQIcBAEBCAAGBQJRWiWzAAoJEECxmPOUX5FEmg0P/3cEKgmDuhbHJZkYQRGXNxz9
+CN0m9+YF375u5gEgyQBOl8KBYL4rIDH3IuTz2yTkjE/sg8THuGp0NDaYugF9Nd8M
+i1Lsc23O70QMtlDa/J1Wyk0EbVZh6ngqX4IJ7Rm0nsXPs1rJcTwLi4SYXnkvp6tY
+Wd8jBs8864Hs/6cM6c7mjwZiDVIrcqqmnjNg2CyYWBdnN98bZFDzNTM2hc1ZPCtk
+FI1jb+LOIh96MQAy58GWD4DZH0p36hcf+BizgSktbp9EmjAoQaPtODAgY3SzYiVj
+YzcSRp+nAKqKgA8GPQhamKCiyjTNuOITetIpzgfInmYYpCkDtArZEcO0rPOyGLHu
+J2NlLDxLIdgusgK30FLBFvBZNmm8Z9NJ8C2vYZ41FDTRWbueqBXtbFjtuj07RP6c
+C6JAsrRQ7/ubGtpN1TrXHx5Lwj2ssVLpzca5dPUV5YU8mkIvFaqLWqq3dUEv7Q87
+j9taUAe0WUNDFzqxeysN2KomWc/MdYGmJKnlfOqqxaWYdyH41TTeCZOk+4lsuUhN
+b06Gwqe0EK4kfXF/5CHszbuKOqHGRNFuuLTRHPwwC+Mth/w1g2UlYPpgZqB9wKdP
+DWWNiP14fk895Hwtw8zgw1hxJEwRIH9Cudu3u+qzaMabrBpc8jZMfEzLYeMqaKVB
+nMaKlqgEJBRYcsWigFPi
+=tUag
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__2_Apr_2013_11_20_17_+1100_s8EG/KBpP0VUapAv--
+--Signature=_Tue__2_Apr_2013_11_26_27_+1100_SZq5CFA.y7qgc_2s--
