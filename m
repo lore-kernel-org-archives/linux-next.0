@@ -1,76 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tegra tree with the i2c tree
-Date: Tue, 2 Apr 2013 18:10:41 +1100
-Message-ID: <20130402181041.067483395c622b627826fed9@canb.auug.org.au>
+Subject: Re: [PATCH v2] cs5535-mfgpt: Add another reset method
+Date: Tue, 2 Apr 2013 18:17:28 +1100
+Message-ID: <20130402181728.1c3f92fc8727a39e1145c688@canb.auug.org.au>
+References: <20130402172950.1fd8d6653a4c79b319945212@canb.auug.org.au>
+	<1364885197-17212-1-git-send-email-richard@nod.at>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Apr_2013_18_10_41_+1100_aT/F0BCLAdiIGVNL"
+ boundary="Signature=_Tue__2_Apr_2013_18_17_28_+1100_eiU.wpd+hvXLL/bn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58538 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:47310 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758972Ab3DBHKv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Apr 2013 03:10:51 -0400
+	with ESMTP id S1753302Ab3DBHRa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Apr 2013 03:17:30 -0400
+In-Reply-To: <1364885197-17212-1-git-send-email-richard@nod.at>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Wolfram Sang <wsa@the-dreams.de>, Danny Huang <dahuang@nvidia.com>
+To: Richard Weinberger <richard@nod.at>
+Cc: greg@kroah.com, arnd@arndb.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__2_Apr_2013_18_10_41_+1100_aT/F0BCLAdiIGVNL
+--Signature=_Tue__2_Apr_2013_18_17_28_+1100_eiU.wpd+hvXLL/bn
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Richard,
 
-Today's linux-next merge of the tegra tree got a conflict in
-arch/arm/mach-tegra/tegra.c between commit 49a64ac555f1 ("i2c: tegra:
-assume CONFIG_OF, remove platform data") from the i2c tree and commit
-d591fdf8e23e ("ARM: tegra: expose chip ID and revision") from the tegra
-tree.
+On Tue,  2 Apr 2013 08:46:37 +0200 Richard Weinberger <richard@nod.at> wrot=
+e:
+>
+> The CS5535/CS5536 MFGPT has no support to reset the device.
+> The current method uses an undocumented bit but does not work on all
+> devices. At least on my ALIX board it completely freezes the board.
+>=20
+> This new method tries to soft reset all timers by unconfiguring them.
+> But this does not clear the RO setup register and therefore it has to
+> be ignored while probing.
+>=20
+> Resetting the timers is not only needed on broken BIOSes also when
+> kexec is used. Otherwise the new kernel will find preconfigured timers
+> and odd things will happen.
+>=20
+> Signed-off-by: Richard Weinberger <richard@nod.at>
+> ---
+>  drivers/misc/cs5535-mfgpt.c | 41 +++++++++++++++++++++++++++++++++++++--=
+--
+>  1 file changed, 37 insertions(+), 4 deletions(-)
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Greg will probably want an incremental fix patch as he does not rewrite
+his trees.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-tegra/tegra.c
-index 6e1c9a9,84deeab..0000000
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@@ -30,6 -31,10 +31,8 @@@
-  #include <linux/pda_power.h>
-  #include <linux/platform_data/tegra_usb.h>
-  #include <linux/io.h>
- -#include <linux/i2c.h>
- -#include <linux/i2c-tegra.h>
-+ #include <linux/slab.h>
-+ #include <linux/sys_soc.h>
-  #include <linux/usb/tegra_usb_phy.h>
- =20
-  #include <asm/mach-types.h>
-
---Signature=_Tue__2_Apr_2013_18_10_41_+1100_aT/F0BCLAdiIGVNL
+--Signature=_Tue__2_Apr_2013_18_17_28_+1100_eiU.wpd+hvXLL/bn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRWoRxAAoJEECxmPOUX5FEz0sP/2vROtB0T7AsDG4RIZ7NS98S
-oWwIPOkNF89vW50jM6Jos9p7MjGtEhSszyIz4PUutvrW2ltIgoxc7HF4rp64U9tR
-KI4qmrNvwQq/mcNqEi3am2o/bgYkEbS7ehW/79vOh+BHOFp8kiYORe49M8Lpgc6A
-KXhIamPcv1MbniIbp6XXx+r3tIk8Jc2S9FpsM8MP1ekUjlnr131ChDBD53w8KUFv
-pujRJXEF4XwkmG0JsbYFWZo9/UODELMSQIB6LdiukNWOhPsXvZi6Vm9xLa0O9mln
-2V3DqrIaQKXrNNsd71xhOYWQwwsYZrpqB9OhVv6RZ7RE0iXg2Fc2Dl0h78k6jTef
-huSL//4V6bTFvyhFLpO96+B92aZjGX9+X/Oae04sz/jZS+6Uk3aA24ux3xDVDf0+
-EoOUij7mPMOVypOk+ij/ThL6cTdFLf/bhY0AhCoi9gCrnKfazczdK8211BnvJ3Uy
-AZNKez61Y8K+GmDt2hIlTTJQgl4sMb1niJyPK9qjz3LjXCXPCrT7mVCmqJLntpfw
-/d6YjH/22o7qNx+MOKa9qhBgCK5ycgGGlPTqz8b7yU45/YrZwDPJF3CupB5ajikk
-CGgLkv027pNc9irIaCG9+3T7Lc8jgxKfxI46Zu72cVPhHZykN2s3kWXE5Wf+Hz7F
-rppZJVdSFMPOTtAFXHdQ
-=y18W
+iQIcBAEBCAAGBQJRWoYIAAoJEECxmPOUX5FErHcP/1vmVLA88ffCCUSg60M5nNWA
+2dBtr8JBQeWwt6h8UFno686JMxc7qLj4mVbVWHWuSJgTetOPo13kcSVQU1JUZ//F
+eguxWYcM9+X9AIAjJTkRtl2su9OrfArZr+R7WpU14hRTw7l7QeoYYkfghMi7QJZH
+Z3kLG4NWJMw41S/VsLvdr1DHCqPoW5waOFVqJ8LwdVLbmNXKHofvKlMe1r1/zBiH
+gYe1jlY2oMsy20X0Oxr49mkb0q8QGZWDiv7xkN0O0oWZTT84r1HwYeCBT1Ccb3Li
+EXzgZMURiXzC1NpJ96385L9B4caVBscI3Vr5ftburgf60yEAC+eIIAwB6GqO1nZH
+wZ0x/8lvtepNLnXFE6JcCuZvpJfD8oq5VTQPI+oFiTqb2XqrN4XGFcK/5epU0kTi
+6Q2hvEwD/btVp7pHJlpW+OFQdRbHsnkH/k2+Y0QyoE1RMuAVH33kCTusge+d1Yrs
+MebR2W6dCjExTuSCpo+j4lkpSUauueJFX1r69t5AHWyRIIFFZ2iCtlj61pz33cto
+CZA8eX1cyk0qqPCvFGoCuZYnCkzTw7+P1H8e+pNTfnEdenJ95M6swKSyFDufKgZR
+yaq4k6rPRVAjnNKhfuzCnV5QGgWtmtRn7ewKo1VTuZ6ZjxcMYdteYoi/luUJnTzm
+8JYKocxHXgF1yLORYPuv
+=Pca0
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__2_Apr_2013_18_10_41_+1100_aT/F0BCLAdiIGVNL--
+--Signature=_Tue__2_Apr_2013_18_17_28_+1100_eiU.wpd+hvXLL/bn--
