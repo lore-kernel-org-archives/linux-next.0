@@ -1,42 +1,80 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: [PATCH] cs5535-mfgpt: Fix quotation marks
-Date: Tue,  2 Apr 2013 09:37:09 +0200
-Message-ID: <1364888229-27714-1-git-send-email-richard@nod.at>
-References: <20130402181728.1c3f92fc8727a39e1145c688@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (tty tree
+ related)
+Date: Tue, 2 Apr 2013 18:57:47 +1100
+Message-ID: <20130402185747.c4d8c60880025b242953da63@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__2_Apr_2013_18_57_47_+1100_3gPegBl4i9VQ9bkI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from a.ns.miles-group.at ([95.130.255.143]:47834 "EHLO radon.swed.at"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760289Ab3DBHhS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Apr 2013 03:37:18 -0400
-In-Reply-To: <20130402181728.1c3f92fc8727a39e1145c688@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34824 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754233Ab3DBH55 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Apr 2013 03:57:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: greg@kroah.com, arnd@arndb.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chanho Min <chanho.min@lge.com>
 
-Commit "cs5535-mfgpt: Add another reset method" introduced an unterminated
-string and broke the build.
+--Signature=_Tue__2_Apr_2013_18_57_47_+1100_3gPegBl4i9VQ9bkI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Richard Weinberger <richard@nod.at>
----
- drivers/misc/cs5535-mfgpt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi all,
 
-diff --git a/drivers/misc/cs5535-mfgpt.c b/drivers/misc/cs5535-mfgpt.c
-index 6bdb3ba..effd8c6 100644
---- a/drivers/misc/cs5535-mfgpt.c
-+++ b/drivers/misc/cs5535-mfgpt.c
-@@ -27,8 +27,8 @@ module_param_named(mfgptfix, mfgpt_reset_timers, int, 0644);
- MODULE_PARM_DESC(mfgptfix, "Try to reset the MFGPT timers during init; "
- 		"required by some broken BIOSes (ie, TinyBIOS < 0.99) or kexec "
- 		"(1 = reset the MFGPT using an undocumented bit, "
--		"2 = perform a soft reset by unconfiguring all timers);
--		use what works best for you.");
-+		"2 = perform a soft reset by unconfiguring all timers); "
-+		"use what works best for you.");
- 
- struct cs5535_mfgpt_timer {
- 	struct cs5535_mfgpt_chip *chip;
--- 
-1.8.1.4
+After merging the final tree, today's linux-next build (arm defconfig)
+failed like this:
+
+drivers/tty/serial/amba-pl011.c: In function 'pl011_rx_chars':
+drivers/tty/serial/amba-pl011.c:1199:11: error: 'struct uart_amba_port' has=
+ no member named 'dmarx'
+drivers/tty/serial/amba-pl011.c:1200:8: error: 'struct uart_amba_port' has =
+no member named 'dmarx'
+drivers/tty/serial/amba-pl011.c:1201:8: error: 'struct uart_amba_port' has =
+no member named 'dmarx'
+drivers/tty/serial/amba-pl011.c:1201:31: error: 'PL011_DMA_BUFFER_SIZE' und=
+eclared (first use in this function)
+drivers/tty/serial/amba-pl011.c:1201:31: note: each undeclared identifier i=
+s reported only once for each function it appears in
+drivers/tty/serial/amba-pl011.c:1202:19: error: 'struct uart_amba_port' has=
+ no member named 'dmarx'
+drivers/tty/serial/amba-pl011.c:1204:26: error: 'struct uart_amba_port' has=
+ no member named 'dmarx'
+drivers/tty/serial/amba-pl011.c: In function 'pl011_set_termios':
+drivers/tty/serial/amba-pl011.c:1671:9: error: 'struct uart_amba_port' has =
+no member named 'dmarx'
+drivers/tty/serial/amba-pl011.c:1672:6: error: 'struct uart_amba_port' has =
+no member named 'dmarx'
+
+Caused by commit cb06ff102e2d ("ARM: PL011: Add support for Rx DMA buffer
+polling").  This build does not have CONFIG_DMA_ENGINE set.
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__2_Apr_2013_18_57_47_+1100_3gPegBl4i9VQ9bkI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRWo97AAoJEECxmPOUX5FEkdsQAJpX0mNm7n4Qnc/7GRBH0HcO
+1MlnUE4WPda2VarJVhN80vjzidzaSMV6deQK9wjqXcyAOgpjeNBJ+PJ4FtgWloOU
+Dsd1AeWBDVNgo1u95MPC/Sc7zcDS/wSuuAhwJ1zGoeZli95GANnSk//rtNuvRC4z
+/E5d4p75NKFlMxYbrzrtWAM8XMJdNRBtSGypBkE4SIFjKl36LNspbnLSN6v/XXZK
+faigIfWFPi3Ei9C9gCIu4V/+OJC1l9SE7iSNzQbtil2sPGnWnJ3Cpi8XDrCLAaw5
+RWA0CeFy+Mt4rQJKm8hekCyIcuN2lPb/vNsS+fccV2QAAOb831/yL0wed68l2TDe
+fEf3bN3uzLDsVexAVhXD6OF2jLmu2UeVfg9lsO4EZxKBGw7NqouJxyMthKHzw+vC
+IkBnzII8LEyROrOZ+BiMPT0Os8RbiPHjOv6s5rmHUN9KPhPOIFBK1KhSO5tWAggT
+vgo1yAYQ7VchiSSaLx9vlap9KBvhdAcKjhAcZEXpfy18aNVKSPFn9Dfjm17bGZ6X
+3560YQn+KYYzjHodPhycHPTIIn4WN3QZJVPP13CtQS1au0GXsB3yLXYfCuhcFlPi
+43BVBOzL+tdLUuTCsNXVapblBAEgNUHx81KDlc9eqSxlESr3LP8UwgsD/UVT4l9+
+KyN+4CXsDHU2r6M4ISgI
+=FTI4
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Apr_2013_18_57_47_+1100_3gPegBl4i9VQ9bkI--
