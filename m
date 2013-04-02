@@ -1,61 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the wireless
- tree
-Date: Tue, 2 Apr 2013 13:00:44 +1100
-Message-ID: <20130402130044.ddacc1c990698bd416e4c808@canb.auug.org.au>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: linux-next: build failure after merge of the slave-dma tree
+Date: Tue, 2 Apr 2013 07:08:26 +0530
+Message-ID: <20130402013826.GK10326@intel.com>
+References: <20130402125711.02c750493475fc6a119ef3d8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Apr_2013_13_00_44_+1100_n7=e+wvFFUabKbTr"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="GyRA7555PLgSTuth"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58536 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757907Ab3DBCAu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Apr 2013 22:00:50 -0400
+Received: from mga02.intel.com ([134.134.136.20]:39222 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758774Ab3DBCFp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Apr 2013 22:05:45 -0400
+Content-Disposition: inline
+In-Reply-To: <20130402125711.02c750493475fc6a119ef3d8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__2_Apr_2013_13_00_44_+1100_n7=e+wvFFUabKbTr
-Content-Type: text/plain; charset=US-ASCII
+
+--GyRA7555PLgSTuth
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Apr 02, 2013 at 12:57:11PM +1100, Stephen Rothwell wrote:
+> Hi Vinod,
+>=20
+> After merging the slave-dma tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> In file included from include/linux/netdevice.h:38:0,
+>                  from arch/x86/net/bpf_jit_comp.c:12:
+> include/linux/dmaengine.h:973:1: error: expected identifier or '(' before=
+ '>>' token
+>=20
+> And many, many more :-(
+>=20
+> Caused by commit 896b29f155cf ("Merge branch 'for-linus' into next").
+>=20
+> Please at least build test your tree *before* publishing it :-(
+Sorry, I had fixed it up early today but looks like have push didnt happen.
+Its pushed now
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/nfc/microread/mei.c between commit 9593b0b1179c ("NFC: microread:
-Fix build failure due to a new MEI bus API") from the wireless tree and
-commit 63cd353c34a0 ("NFC: microread: Fix MEI build failure") from the
-net-next tree.
+>=20
+> I have used the slave-dma tree from next-20130328 for today.
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-I fixed it up (using the wireless tree version) and can carry the fix as
-necessary (no action is required).
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__2_Apr_2013_13_00_44_+1100_n7=e+wvFFUabKbTr
-Content-Type: application/pgp-signature
+--GyRA7555PLgSTuth
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRWjvMAAoJEECxmPOUX5FEYecP/RWmvNmN63kf5X/6ZfzZj1aw
-RccbsO9QE2oZ0ROjy2SAFFv1v0XCZm6ekavdwrmdVnGzaHmYOjzBCZHYm5JI6SP2
-3X9URm7ATbLiXMbIZB5XOkRUbx2X8s49M/ZPJ5Nwd49xNvizi/kn6q369Feds9v/
-2RQ955B/Cvp7CgoUCAv1TsTELnwgWowyFZ3TXv4UKxMsYF1mYzruD9R2n4TJ18mg
-BQPJdlO8nU3bkLIPByMmRDLFqFJQZPHTgPyHBP25g3nPT01KrCHc2104gHM/GOR3
-zIcOcrstIMg2CgjPGuBqktMFsVCMLCMpeSXMi8m8dYi8/7DrrXrnDjfsyjRS9HCL
-D7XL8mEXyOBL37HKXC/t7vS9/1D2/fGN3HiYIB/ZHcqQyp45AvyQiRQ9+wYlGWBC
-k9q+USQSGkNUiUSHjnyHur3Ao0S1dGRGmYC0WBnKqjEwJ+ouReovziDg4ifzBU5X
-lEAVODT0O++rJAirTjyRDsVKJpwKlL18/FAdD5jYUdZvWgIY+KC4/lJ3fUzYRqko
-7kHaw8qtqLhzxd3X16oHnOI8OUkn5PfywrZwNsLUCDVX3pXFAarzUh2xSTzSboq4
-Yk0JhO0cl3A+EjMbq3hlkJcEjMZUfLXOVQJ/NIGoeKeqB+ECIklY5enGgsQycT7S
-27Et7rNfZ0cZ6oI0vzdq
-=ABY3
+iQIcBAEBAgAGBQJRWjaSAAoJEHwUBw8lI4NH3MMP/ArI80+Ad3Wp3wUUsfaZH2zk
+VGL9p2TAzHV/DFkgtTKpfVQYC/g8s8G3fjwm1Go2U7HrFyW+WnwjZW7KzxoRB2ho
+KTj4sM9nhHPmGCYP4gDGPeTVuDwQGJ/VkW8QvAAaAp11RfAEQ82PV/OMQ3OgwKSE
+SU1l69ej7+lofkj02IHRNBEtbCN9unESY3jWRBOikIzxFvmtACLJ7ry+LytoDVIP
+BQfCaSiLvUya54RG99yN6iQRkt0pH3TZmCLv8upwhKmM3V9HFxXkQz+SBZqPP5Po
+f+eO1+cexK137jgTQbbzhw7ugGtrRBDle1I4BIPFOpbPqaTkRtB8kTNlw3Vtx6NS
+cfBq95//nBOMzjJcx/TUHnSjuN16O0Eg2bNCkvCRLlKviRagC2dI3e9qmCfRFjoI
+hfLCyFxIwpUqVd+5dL1vqsI907SYpQYxjejGHJjOy3VwhIauckkvuae5pe948oux
+XCBrB/mdYWME0xv7C/+lAYjy8joZd4UjzlpzJ4ZBICsxaZ289g/xCHuDEAjMgUeh
+02iUD9NWFuj8wIeAL8QRiCfrWlGvn/UQgL/aRqYOR38GypEbuiP2xV9TARNelkOv
+SdyVsNWDHYgUDhcNdVbGXba6vX1uOZXL4h+obLBgi1MsLffPr22IiSKEAkR4JVCB
+vMp2CujddpYpPvQ+gJ9L
+=tlt4
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__2_Apr_2013_13_00_44_+1100_n7=e+wvFFUabKbTr--
+--GyRA7555PLgSTuth--
