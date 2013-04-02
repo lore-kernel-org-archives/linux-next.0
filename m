@@ -1,74 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Tue, 2 Apr 2013 13:46:36 +1100
-Message-ID: <20130402134636.7311b6f6f8d2a9534a4a5b7b@canb.auug.org.au>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: linux-next: build failure after merge of the wireless-next tree
+Date: Mon, 01 Apr 2013 22:07:24 -0500
+Message-ID: <515A4B6C.2080805@lwfinger.net>
+References: <20130402133400.017b4ec5cd37725b32aa8079@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Apr_2013_13_46_36_+1100_0xnYxCm7K6yOgarF"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qa0-f46.google.com ([209.85.216.46]:65342 "EHLO
+	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758545Ab3DBDH2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Apr 2013 23:07:28 -0400
+In-Reply-To: <20130402133400.017b4ec5cd37725b32aa8079@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__2_Apr_2013_13_46_36_+1100_0xnYxCm7K6yOgarF
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 04/01/2013 09:34 PM, Stephen Rothwell wrote:
+> Hi John,
+>
+> After merging the wireless-next tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/net/wireless/rtlwifi/rtl8188ee/dm.c:30:18: fatal error: wifi.h: No such file or directory
+>
+> Caused by commit f0eb856e0b6c ("rtlwifi: rtl8188ee: Add new driver").
+> Forgot a file?
+>
+> I have used the wireless-next tree from next-20130328 for today.
 
-Hi all,
+Stephen,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_dp.c between commit 9d1a455b0ca1 ("") from
-Linus' tree and commit 965e0c489f36 ("drm/i915: introduce
-pipe_config->dither|pipe_bpp") from the drm-intel tree.
+I do not understand. File wifi.h is definitely there and is in 
+drivers/net/wireless/rtlwifi/. Use of that directory as a source of include 
+files is handled by "ccflags-y += -I drivers/net/wireless/rtlwifi 
+-D__CHECK_ENDIAN__" in the Makefile for rtl8188ee. In fact, it builds just fine 
+here.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+What am I missing?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/gpu/drm/i915/intel_dp.c
-index d7d4afe,92a7c62..0000000
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@@ -850,10 -792,10 +802,10 @@@ intel_dp_set_m_n(struct drm_crtc *crtc
-  	 * the number of bytes_per_pixel post-LUT, which we always
-  	 * set up for 8-bits of R/G/B, or 3 bytes total.
-  	 */
-- 	intel_link_compute_m_n(intel_crtc->bpp, lane_count,
-+ 	intel_link_compute_m_n(intel_crtc->config.pipe_bpp, lane_count,
- -			       mode->clock, adjusted_mode->clock, &m_n);
- +			       target_clock, adjusted_mode->clock, &m_n);
- =20
-- 	if (IS_HASWELL(dev)) {
-+ 	if (HAS_DDI(dev)) {
-  		I915_WRITE(PIPE_DATA_M1(cpu_transcoder),
-  			   TU_SIZE(m_n.tu) | m_n.gmch_m);
-  		I915_WRITE(PIPE_DATA_N1(cpu_transcoder), m_n.gmch_n);
-
---Signature=_Tue__2_Apr_2013_13_46_36_+1100_0xnYxCm7K6yOgarF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRWkaMAAoJEECxmPOUX5FEBaYP/3PiLPN2BNyo0a1NpWXjhlPc
-x9jbd9SufCDLS/KuRpjEn3tcsZ+yOJaQlysHqTCg29nZhewHBF2mtl8MyKuRr8Gt
-YECnYCV0v9QHxpu783nrfQeMaYjhgq1FmwugjC1pLuulYmtN9PQjDHc1xCCu46My
-pOMa8ya01AmcsHLW/Ui+4OpG/iKtxeZ4mJGKOo1e5EaFuEqyJ1Yy/1/draMqUzHc
-QQYbnXYuT9D4eCbvc0H0wnJof2Bag1QQgrNqe7S1IJtCLxQAQcVamiX6sDw9QqBq
-ngNZ1b56PHYI2eJf9zqUU5jy0f8X7lHdxin9n2OPsWHqUv5AyCwhZe5/Pc1Ohx5p
-YzXywgbA7h5BgH1T4Mp+PnFJRfadt8mU4OROD7hBXf5r7Jooc3jVOEC+TPKJeiGQ
-sDXfk147xTzNF+rX3PI3Oqqxz5JCoamNGcJbTpqKQVD1u0+gngxGMAOeI1QaRMVT
-3+/bWfaoJJe2kNbwzfnlNd7hDlyNtKAjw04ZikAcgAhyIg10BqNdbW7l8KiRT9sw
-XO5D6FoN1e8gY1/2yoHb3Y63cp1HJvLIBWB/nlaiyplRi/Hv9tsOSjjVJaMohb0Q
-dojLFHTpPCKyMJn585aNchmjel2XdCu0zHoNOo/+8kspDuIuvDkSZq08qpo0sS8p
-asyHEGC0bPogdrTTufP2
-=cthO
------END PGP SIGNATURE-----
-
---Signature=_Tue__2_Apr_2013_13_46_36_+1100_0xnYxCm7K6yOgarF--
+Larry
