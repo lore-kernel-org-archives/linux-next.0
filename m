@@ -1,83 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Wed, 3 Apr 2013 17:10:32 +1100
-Message-ID: <20130403171032.9a50cf0a827508fe5ea82e8a@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (nfsd tree
+ related)
+Date: Wed, 3 Apr 2013 17:42:19 +1100
+Message-ID: <20130403174219.0786d27109633a30d89b38bf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__3_Apr_2013_17_10_32_+1100_cdknf74bePeQ7Lha"
+ boundary="Signature=_Wed__3_Apr_2013_17_42_19_+1100_bf1RPF65+WHvsVRm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44442 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55596 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760912Ab3DCGKn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Apr 2013 02:10:43 -0400
+	with ESMTP id S1753955Ab3DCGma (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Apr 2013 02:42:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stanislav Kinsbursky <skinsbursky@parallels.com>, Linus Torvalds <torvalds@linux-foundation.org>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>
 
---Signature=_Wed__3_Apr_2013_17_10_32_+1100_cdknf74bePeQ7Lha
+--Signature=_Wed__3_Apr_2013_17_42_19_+1100_bf1RPF65+WHvsVRm
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-Today's linux-next merge of the akpm tree got a conflict in ipc/msg.c
-between commit 2dc958fa2fe6 ("ipc: set msg back to -EAGAIN if copy wasn't
-performed") from Linus' tree and commit "ipc: remove msg handling from
-queue scan" from the akpm tree.
+After merging the final tree, today's linux-next build (arm defconfig)
+failed like this:
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+fs/built-in.o: In function `nfsd_reply_cache_stats_show':
+super.c:(.text+0x87308): undefined reference to `__udivdi3'
 
+Probably caused by commit 187da2f90879 ("nfsd: keep track of the max and
+average time to search the cache") which adds a divide by u64
+(num_searches).
+
+I have reverted that commit and the following one for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc ipc/msg.c
-index 4eaf3fd,628c6ea..0000000
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@@ -860,17 -860,8 +860,9 @@@ long do_msgrcv(int msqid, void __user *
-  						walk_msg->m_type !=3D 1) {
-  					msgtyp =3D walk_msg->m_type - 1;
-  				} else if (msgflg & MSG_COPY) {
-- 					if (copy_number =3D=3D msg_counter) {
-- 						/*
-- 						 * Found requested message.
-- 						 * Copy it.
-- 						 */
-- 						msg =3D copy_msg(msg, copy);
-- 						if (IS_ERR(msg))
-- 							goto out_unlock;
-+ 					if (copy_number =3D=3D msg_counter)
-  						break;
-- 					}
- +					msg =3D ERR_PTR(-EAGAIN);
-  				} else
-  					break;
-  				msg_counter++;
-
---Signature=_Wed__3_Apr_2013_17_10_32_+1100_cdknf74bePeQ7Lha
+--Signature=_Wed__3_Apr_2013_17_42_19_+1100_bf1RPF65+WHvsVRm
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRW8fYAAoJEECxmPOUX5FElJEP/RzBwdKUjymLn1YYWzConncN
-LDuRNWFFHTfSNc3jhViIATQ4jiHzMjS3GOlE2nJY1Dg6Z2srdPCeVkGjFNS4fG/j
-1AKQu52/wzwfcteck0zwZg0prIAntEASwAnolRqRQd2UqYozZ1f11zbxIot52NbT
-EAOiI4h4pQuNJv9f01d6iLncmcW3h+F+Zb8lKXGDRUFXAyiYV+fMpeq8kkM2a7wJ
-GZXAyMo0M3UPRu3G1BvxkIByYlNBdMoynY26dXRNHty4rbbdfF2RsqA7Hqjy+I5A
-TnT8El7+8hoI62cjzkKf4c0bk5ZPVOAslbc08m351PPIWnHtLrkO5bHw400xycja
-LSaakV7BU1aSbWSORoGK8Rvwqw8YWQQXCOk9ZwtG7rPWP2QU5oIt2dBO4+bQbyhW
-3kNJU3TXXDyO1dBezC7F1j6wB70VMA496Uf2qKTN04ugeyH7LFB9BR80NsHQVZrO
-1nE4452Xu+q/nhihg3A7wD89D763sd13EdWegJPSuOLo51YDu7WxmXk75jDDcwXB
-WLxBPNEY2rtoCqilWeSQo8wzLTVtJCLbFUR5FDP31J9P9NKXv7eQjtrsBp0lZIU7
-0L7jiZX2YSBLtHZBAXgJsX3b3IpMmsgW/Or+H/+NtEP2bDYI8Rg54VfU/Jebqn95
-VdMiSvJHncitJVDNEMSr
-=KFIT
+iQIcBAEBCAAGBQJRW89LAAoJEECxmPOUX5FE1XEQAIOv1tXX/4oOh7ImoAiFDa08
+06mtbZmXkQ7QNA0V15KiS6kv8/xNIdn32vdvyxqSr+SeqdAcp7BzC3tFCv2IgXDz
+jLhsvwXvanWM7n1NsDloL3H6HNNCQNpedyopfniHn6q70LR7uB1u4ddHrK/1LiKM
+fLWh85e+d7YI5ikEdarKWYgTdXOwJgdQViZV2DPqlGIppZTMGDwKuLmuVmsQOAa4
+Hbp3i5zyA+fRiasPJ24ENyWraPoKlVkkwzACCEMeSTbDSIGmsc60Z0SN7qLvDOVv
+N0hF4OAOdfNQcHqeh54EsmwShuKockTUBCNFux1MuDaVvMYF0L5rWMsDk29hyfFp
+8TscKvyuLbpu5t7gfYVGFCUh3CIfRHYrwtC+fF7sPsEs3cONyIk9VXLny8ALtnBe
+uCyei7pOSkEOOoauv9ayJP3OwPRCm4jwQv9VE98L1rjujnDNbohxW2OdkipYfSMb
+IxTSDefaa5uIUqjCgAxHRN7cEULDtvc23s0j9b9K0cEqgmk7bl2hm2zV1E9sB88J
+hnIKMethcqv2QcF7n16A8gHeNw782NhzBF8B3dhyblE4LXyMwSb/honVefCKrUD4
+fKu1zWLxPMtlCBl5ekIc81JkVFVX1j4ANCFK2exdgEqXG6Tm1Y8zTVOYBb0p8HGy
+v1HQqn8X6HZ0wK51RxnZ
+=8blL
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__3_Apr_2013_17_10_32_+1100_cdknf74bePeQ7Lha--
+--Signature=_Wed__3_Apr_2013_17_42_19_+1100_bf1RPF65+WHvsVRm--
