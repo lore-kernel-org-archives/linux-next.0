@@ -1,74 +1,120 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Wed, 3 Apr 2013 11:22:35 +1100
-Message-ID: <20130403112235.0ec96e6e03389a791ad6b959@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree with the 2c tree
+Date: Wed, 3 Apr 2013 12:10:16 +1100
+Message-ID: <20130403121016.f86c8b90472878f9918706c2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__3_Apr_2013_11_22_35_+1100_lIhM_06fs=_WQOMw"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39247 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758045Ab3DCAWo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Apr 2013 20:22:44 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Wed__3_Apr_2013_12_10_16_+1100_7+ZbNlAdar6UAExF"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Wolfram Sang <wsa@the-dreams.de>, Hans Verkuil <hans.verkuil@cisco.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__3_Apr_2013_11_22_35_+1100_lIhM_06fs=_WQOMw
+--Signature=_Wed__3_Apr_2013_12_10_16_+1100_7+ZbNlAdar6UAExF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Mauro,
 
-After merging the vfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the v4l-dvb tree got a conflict in
+drivers/staging/media/go7007/go7007-driver.c between commit bf51a8c5e0b6
+("i2c: Ignore return value of i2c_del_adapter()") from the i2c tree and
+commit d5d3a7cc127d ("[media] go7007: fix unregister/disconnect
+handling") from the v4l-dvb tree.
 
-In file included from arch/powerpc/oprofile/../../../drivers/oprofile/timer=
-_int.c:14:0:
-include/linux/profile.h: In function 'create_prof_cpu_mask':
-include/linux/profile.h:34:1: error: empty declaration [-Werror]
-include/linux/profile.h:41:12: error: storage class specified for parameter=
- 'prof_on'
-include/linux/profile.h:41:12: error: section attribute not allowed for 'pr=
-of_on'
-include/linux/profile.h:57:1: error: expected '=3D', ',', ';', 'asm' or '__=
-attribute__' before '{' token
-include/linux/profile.h:65:1: error: empty declaration [-Werror]
-include/linux/profile.h:66:1: error: empty declaration [-Werror]
-include/linux/profile.h:85:1: error: empty declaration [-Werror]
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-And many, many more.
-
-Caused by commit 1f4fbcb8700c ("create_proc_cpu_mask() doesn't need an
-argument...").  Please build test this stuff *before* publishing it.  :-(
-
-I have used the vfs tree from next-20130328 again fro today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__3_Apr_2013_11_22_35_+1100_lIhM_06fs=_WQOMw
+diff --cc drivers/staging/media/go7007/go7007-driver.c
+index 6f83c52,a5ca99d..0000000
+--- a/drivers/staging/media/go7007/go7007-driver.c
++++ b/drivers/staging/media/go7007/go7007-driver.c
+@@@ -201,13 -208,50 +208,47 @@@ static int init_i2c_module(struct i2c_a
+  {
+  	struct go7007 *go =3D i2c_get_adapdata(adapter);
+  	struct v4l2_device *v4l2_dev =3D &go->v4l2_dev;
+-=20
+- 	if (v4l2_i2c_new_subdev(v4l2_dev, adapter, type, addr, NULL))
++ 	struct v4l2_subdev *sd;
++ 	struct i2c_board_info info;
++=20
++ 	memset(&info, 0, sizeof(info));
++ 	strlcpy(info.type, i2c->type, sizeof(info.type));
++ 	info.addr =3D i2c->addr;
++ 	info.flags =3D i2c->flags;
++=20
++ 	sd =3D v4l2_i2c_new_subdev_board(v4l2_dev, adapter, &info, NULL);
++ 	if (sd) {
++ 		if (i2c->is_video)
++ 			go->sd_video =3D sd;
++ 		if (i2c->is_audio)
++ 			go->sd_audio =3D sd;
+  		return 0;
++ 	}
++=20
++ 	printk(KERN_INFO "go7007: probing for module i2c:%s failed\n", i2c->type=
+);
++ 	return -EINVAL;
++ }
++=20
++ /*
++  * Detach and unregister the encoder.  The go7007 struct won't be freed
++  * until v4l2 finishes releasing its resources and all associated fds are
++  * closed by applications.
++  */
++ static void go7007_remove(struct v4l2_device *v4l2_dev)
++ {
++ 	struct go7007 *go =3D container_of(v4l2_dev, struct go7007, v4l2_dev);
++=20
++ 	v4l2_device_unregister(v4l2_dev);
++ 	if (go->hpi_ops->release)
++ 		go->hpi_ops->release(go);
++ 	if (go->i2c_adapter_online) {
+ -		if (i2c_del_adapter(&go->i2c_adapter) =3D=3D 0)
+ -			go->i2c_adapter_online =3D 0;
+ -		else
+ -			v4l2_err(&go->v4l2_dev,
+ -				"error removing I2C adapter!\n");
+++		i2c_del_adapter(&go->i2c_adapter);
+++		go->i2c_adapter_online =3D 0;
++ 	}
+ =20
+- 	dev_info(&adapter->dev,
+- 		 "go7007: probing for module i2c:%s failed\n", type);
+- 	return -1;
++ 	kfree(go->boot_fw);
++ 	go7007_v4l2_remove(go);
++ 	kfree(go);
+  }
+ =20
+  /*
+
+--Signature=_Wed__3_Apr_2013_12_10_16_+1100_7+ZbNlAdar6UAExF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRW3ZLAAoJEECxmPOUX5FESf8P+wSCMgrQ5p3gZq8VwqtKdGMx
-oKKLZrwR7Lm05rNU92bK+hGtT/v78eMmrRHMLb6HXiLOz+Z4zwmn/GilQGD3/R92
-Tp8QjAA4MTND/PIz2/H/Kw89uoYmIOCGKUZxxg8N3yWcp13rqa4/KWXIUrZX0eMP
-eGydBxWlvM7b2gXkansru7+WeETmA0Lv62Q45JuOwgj7PQq4VLB93PH1bDqCvih+
-cwk0OCZggK5Qnz1AUcuoFUh3YNshtnxyrDFUh4nv/u20c1t1Kw+vYJ1OGHaj+yCf
-vOcJ0xfq8hkv6CWqltfAhXFysI1cYkNy/8XuRG4HD/7VRsazIyvD0OMOhhCiE8Ju
-WqZ8Sg44pnXoQsTvf6TRcoihXWT8nir03RdYFtBZXUeuXUUHOMzMvC3Hrs+S1xmb
-InsEbZCM7X2DQP/q8VVqgOrsMJQDAFpNVpJYfRscpHyjdCHnId+ow27CZxX3QDIy
-M5fjmddv1vQggXaI2ShVSQPLFdXge2t5yVR3TOKsZ8P42bxaTqvDh8OcALRfdBg/
-i10V9p66sDpWx5B+k/Z3kMlvSXFbN9nIowZyjMiPD26EqfPcXZGgoFfHTt+ySIco
-JzxZ7jTOIFuKYN5tZazhhnVuHhPbv/Kr0kEzAa21kB9m6+vLEOzX4OTqxNCoGIhH
-A4TMao+Qt2E/6KsG9fVB
-=yY4F
+iQIcBAEBCAAGBQJRW4F4AAoJEECxmPOUX5FEAA4P/R4AZc3x9E23OHasR1FVoBwO
+I4cLc5liZQlpeoPfvJN4+ysXCd6qZgs9bUTjei+vwUJWQbIFRUzKla8GwPcOAldT
+j4MHRT3R+QJ1dN2wPpbB+MDtRgJu8VhmMtz1bV91kZ5QK9I3UPJkN8FreBQX2tVr
+eWHgO1Fqgkdot83jlKUTRlt0bwwOaD0qmRl5WMGNM5wUHVGmTRgBpGfOjnYVs4++
+0wJjVOUsWNteleVxpogTE9WcVSgqJ+YdGA42D21Y73NInUnNU+xVbJjnenG7mgKv
+loganuuOWNdlmLy1whtMPziOvrE/yIji18X+9/RBOh7YbGA76VosLTh69jyqWuYn
+fgw66PY12qeLHoqh52453LwsjrqRTiKnTRrgAbeLc64ZaNkRvsRJGoOCcBNTkIar
+cVHDTFe5Bt5Bpq1Ywd4u8wM+d5LDUl5dkbiTgKolV91YC48Jq+pnZNF2tdaJvw5p
+0aBxaZJ8CsS7Be977Zc+e8zngGsnO3CwUdYgHOEr/dUCh3SFJF9PniWg1HXqvZvp
+fPc6XeahgFxz0wci2wLNyFAokMTYnSaq+ZKepXzdM43E6WoKNg12FmF6N8ARQbxT
+DFUktI7GoEIHaYs6VlEfoYMkA1QKYNNXN+odIkZa9ZzbWWPSsAW/zdPMHzqTZiSe
+68k/j/mz3GvBS4Tm6MHI
+=wkCh
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__3_Apr_2013_11_22_35_+1100_lIhM_06fs=_WQOMw--
+--Signature=_Wed__3_Apr_2013_12_10_16_+1100_7+ZbNlAdar6UAExF--
