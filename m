@@ -1,33 +1,100 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: [PATCH] Smack: include magic.h in smackfs.c
-Date: Wed, 3 Apr 2013 13:15:51 +1100 (EST)
-Message-ID: <alpine.LRH.2.02.1304031315380.25743@tundra.namei.org>
-References: <20130402190929.62cea8988921a2599588a566@canb.auug.org.au> <515B12EB.50303@infradead.org> <515B264E.2020603@schaufler-ca.com> <515B4EEC.8000908@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
+Date: Wed, 3 Apr 2013 13:43:49 +1100
+Message-ID: <20130403134349.e009a401ab6ec761edbfedd7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <515B4EEC.8000908@infradead.org>
-Sender: linux-security-module-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__3_Apr_2013_13_43_49_+1100_N9erHEL0pEpypmp_"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 2 Apr 2013, Randy Dunlap wrote:
+--Signature=_Wed__3_Apr_2013_13_43_49_+1100_N9erHEL0pEpypmp_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 04/02/13 11:41, Casey Schaufler wrote:
-> > As reported for linux-next: Tree for Apr 2 (smack)
-> > Add the required include for smackfs.c
-> > 
-> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> 
+Hi all,
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/intel_panel.c between commit b1289371fcd5 ("Revert
+"drm/i915: write backlight harder"") from Linus' tree and commit
+31ad8ec6a614 ("drm/i915: group backlight related stuff into a struct")
+from the drm-intel tree.
 
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
--- 
-James Morris
-<jmorris@namei.org>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/gpu/drm/i915/intel_panel.c
+index bee8cb6,0e7e873..0000000
+--- a/drivers/gpu/drm/i915/intel_panel.c
++++ b/drivers/gpu/drm/i915/intel_panel.c
+@@@ -318,9 -321,16 +321,13 @@@ void intel_panel_enable_backlight(struc
+  {
+  	struct drm_i915_private *dev_priv =3D dev->dev_private;
+ =20
+- 	if (dev_priv->backlight_level =3D=3D 0)
+- 		dev_priv->backlight_level =3D intel_panel_get_max_backlight(dev);
++ 	if (dev_priv->backlight.level =3D=3D 0) {
++ 		dev_priv->backlight.level =3D intel_panel_get_max_backlight(dev);
++ 		if (dev_priv->backlight.device)
++ 			dev_priv->backlight.device->props.brightness =3D
++ 				dev_priv->backlight.level;
++ 	}
+ =20
+ -	dev_priv->backlight.enabled =3D true;
+ -	intel_panel_actually_set_backlight(dev, dev_priv->backlight.level);
+ -
+  	if (INTEL_INFO(dev)->gen >=3D 4) {
+  		uint32_t reg, tmp;
+ =20
+@@@ -356,12 -366,12 +363,12 @@@
+  	}
+ =20
+  set_level:
+ -	/* Check the current backlight level and try to set again if it's zero.
+ -	 * On some machines, BLC_PWM_CPU_CTL is cleared to zero automatically
+ -	 * when BLC_PWM_CPU_CTL2 and BLC_PWM_PCH_CTL1 are written.
+ +	/* Call below after setting BLC_PWM_CPU_CTL2 and BLC_PWM_PCH_CTL1.
+ +	 * BLC_PWM_CPU_CTL may be cleared to zero automatically when these
+ +	 * registers are set.
+  	 */
+- 	dev_priv->backlight_enabled =3D true;
+- 	intel_panel_actually_set_backlight(dev, dev_priv->backlight_level);
+ -	if (!intel_panel_get_backlight(dev))
+ -		intel_panel_actually_set_backlight(dev, dev_priv->backlight.level);
+++	dev_priv->backlight.enabled =3D true;
+++	intel_panel_actually_set_backlight(dev, dev_priv->backlight.level);
+  }
+ =20
+  static void intel_panel_init_backlight(struct drm_device *dev)
+
+--Signature=_Wed__3_Apr_2013_13_43_49_+1100_N9erHEL0pEpypmp_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRW5dlAAoJEECxmPOUX5FEZLgQAJBQT2X7MKrbQSxU3986/Y6f
+WepYxMTnDv0acaJRf/78cYEz+JIpV428pLYqjg6W4SAIUixVE0PlHuCSc2s9E8/X
+gOBOqMTUram5odiaD9XqbXdlhwwSL3yYfNWeSAybtFLAq0A4ICTHrb4JeImcrCwx
+0DCo6NI6RXaHkGuiST2dFDUtVlIzHoDAFQrPVLI3sr5FlKKH9LZOBSaOT5KCTLGd
+HPS0SVJTmsFDzcpzDm/IRiZXAlRAoNP7Uxv2oAUkZf5EteeJUY8J0RfAaFVfMI3Q
+gdWv1k3xejr0s2GVsy5tpTAN9ih6BVG2eAwR+N597aFrzvx8yC4ytURNvB6xw0/V
+HznVwRTKEp2X5oQeWJj/272r513nyPTN7r6QnTjkZayG6Hr2A+FfzT3dHKekd8xB
+cAkE4NiTQY+5wRwgTh9K31gqLKW0g4xp2Vl3+cVowvGRZPHMlVzjp/rBw/NPVx6S
+BXdqERzKS66303e2n950VRXMzgQLm7MyxQjnKJFkyGJq/bdNGNwO5V0ttFom5Hj0
+ur/UiCusKfz+M4VqKIA1pcGhNsssGHkgg7xiFKKYpD9dISEgYusMmkAko0AjuI9Q
+oNvfuBrSGdrceiuMM8hpPFCQZB8Mj7JOb5hFtK+AVo2AXGYb7ZQ5SdiUdqMGepmp
+7HY/vDnw2yBJafZcTAxd
+=Yymz
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Apr_2013_13_43_49_+1100_N9erHEL0pEpypmp_--
