@@ -1,77 +1,73 @@
-From: Jeff Layton <jlayton@redhat.com>
-Subject: Re: linux-next: build failure after merge of the final tree (nfsd
- tree related)
-Date: Wed, 3 Apr 2013 14:16:43 -0400
-Message-ID: <20130403141643.1872e17e@tlielax.poochiereds.net>
-References: <20130403174219.0786d27109633a30d89b38bf@canb.auug.org.au>
-	<20130403071054.45a02a88@tlielax.poochiereds.net>
-	<20130403113301.GA13951@fieldses.org>
-	<20130403073857.78c2a24f@tlielax.poochiereds.net>
-	<20130403180519.GA6044@fieldses.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ext4 tree
+Date: Thu, 4 Apr 2013 10:43:19 +1100
+Message-ID: <20130404104319.42d97a8ad7badf00af7ef1e0@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__4_Apr_2013_10_43_19_+1100_d8i1MyZy9+JBf1vo"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__4_Apr_2013_10_43_19_+1100_d8i1MyZy9+JBf1vo
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:63356 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762817Ab3DCSQy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Apr 2013 14:16:54 -0400
-In-Reply-To: <20130403180519.GA6044@fieldses.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 3 Apr 2013 14:05:19 -0400
-"J. Bruce Fields" <bfields@fieldses.org> wrote:
+Hi Ted,
 
-> On Wed, Apr 03, 2013 at 07:38:57AM -0400, Jeff Layton wrote:
-> > On Wed, 3 Apr 2013 07:33:01 -0400
-> > "J. Bruce Fields" <bfields@fieldses.org> wrote:
-> > 
-> > > On Wed, Apr 03, 2013 at 07:10:54AM -0400, Jeff Layton wrote:
-> > > > On Wed, 3 Apr 2013 17:42:19 +1100
-> > > > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > 
-> > > > > Hi all,
-> > > > > 
-> > > > > After merging the final tree, today's linux-next build (arm defconfig)
-> > > > > failed like this:
-> > > > > 
-> > > > > fs/built-in.o: In function `nfsd_reply_cache_stats_show':
-> > > > > super.c:(.text+0x87308): undefined reference to `__udivdi3'
-> > > > > 
-> > > > > Probably caused by commit 187da2f90879 ("nfsd: keep track of the max and
-> > > > > average time to search the cache") which adds a divide by u64
-> > > > > (num_searches).
-> > > > > 
-> > > > > I have reverted that commit and the following one for today.
-> > > > 
-> > > > Thanks, known problem...
-> > > > 
-> > > > Looks like Bruce's tree has an older version of that patch series. I
-> > > > think we just need to get him to drop that one and merge the new one.
-> > > 
-> > > Arrgh, sorry--could you remind me which is the new one?
-> > > 
-> > 
-> > It was the one I sent on 3/19. Those patches (plus a couple more) are
-> > also in the current nfsd-3.10 branch of my git tree too, so it may be
-> > easiest to just pick them from there.
-> 
-> I hate rewriting that branch, but OK, done: does my for-3.10 look right
-> to you now?
-> 
-> (It's still missing some of your latest patches.)
-> 
-> --b.
+After merging the ext4 tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Yeah, sorry for that... I didn't find the problem with __udivdi3
-until after I had asked you to merge the earlier set. Mea culpa...
+fs/ext4/resize.c: In function 'ext4_resize_fs':
+fs/ext4/ext4.h:1799:21: sorry, unimplemented: inlining failed in call to 'e=
+xt4_get_group_number': function body not available
+fs/ext4/resize.c:1882:10: sorry, unimplemented: called from here
+fs/ext4/ext4.h:1799:21: sorry, unimplemented: inlining failed in call to 'e=
+xt4_get_group_number': function body not available
+fs/ext4/resize.c:275:9: sorry, unimplemented: called from here
+fs/ext4/ext4.h:1799:21: sorry, unimplemented: inlining failed in call to 'e=
+xt4_get_group_number': function body not available
+fs/ext4/resize.c:287:9: sorry, unimplemented: called from here
+fs/ext4/ext4.h:1799:21: sorry, unimplemented: inlining failed in call to 'e=
+xt4_get_group_number': function body not available
+fs/ext4/resize.c:299:9: sorry, unimplemented: called from here
+fs/ext4/mballoc.c: In function 'ext4_mb_release_context':
+fs/ext4/ext4.h:1799:21: sorry, unimplemented: inlining failed in call to 'e=
+xt4_get_group_number': function body not available
+fs/ext4/mballoc.c:3347:6: sorry, unimplemented: called from here
 
-Latest branch looks good. It would be good to get the later patches in
-too, but those are less important than the DRC ones.
+Caused by commit dc351389caa5 ("ext4: introduce ext4_get_group_number()").
 
-Thanks,
--- 
-Jeff Layton <jlayton@redhat.com>
+This build was done with gcc 4.6.3 if that matters.
+
+I have used the ext4 tree from next-20130403 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__4_Apr_2013_10_43_19_+1100_d8i1MyZy9+JBf1vo
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRXL6XAAoJEECxmPOUX5FEDmwQAKFzUfENbCiSRnFZoeLKkkcz
+pmDoNtHlP5EqcqtKDtEuBOiyaieZiYGu8HCsknX8GIx7x9CERdbiKBKBGrQW7HmI
+28SRQlkIDRdTEunnCcRSX3hIvspCTP4HGVIUbBJTXUZSOxOuSgn1bshsm07Lbn8a
+tr8+eraem2IaqACNS4HwZ0+msX+7Sw7S2+ooLdLE4876xESQUEFk781Go4hQXzGj
+4hLgKz5BC/1YptDbWoAPhSR6/UqUODlzsW2bhCDEderHLS32B9rhW0QLPPMTxH96
+k7ake37+gZYkD7XZmZeCxvWFUYbQtdqQxj0CcTTMlgl0T9hZWcJp3hXRcM6F4mld
+g2V5zPBz8ILrmnset5d5CD2MzctzHQmOZxyPawsW6kJ11U6DbpvCtP2ReCmoIVC2
+G74K5mNwB3TRjHlYqpzCJ10YUPtCwJzDo1zl1QxPFxr4HP+KAQ+Brr3PXFpQeLb6
+7tAle+pUb9uYw8NvGlf/sVkvItgfM9+PjWi8s6POxku1hdtrGfOCtJztki/wiy0E
+20HwuJy8g3jCo8TYLgZFJs1YJ+mdUZA73sSRDtpnRTLVFJnpvIdM5EhhgSV9moQA
+RaOKchbqppyjLtkaIcIvnSMiB/u2QsxIJztkNnWQSZh2lCPH8htDzBZMVR4VqCjK
+A0yTO4k0HqqaA+mBPRhR
+=QvDk
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Apr_2013_10_43_19_+1100_d8i1MyZy9+JBf1vo--
