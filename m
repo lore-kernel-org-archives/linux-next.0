@@ -1,91 +1,68 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Wed, 3 Apr 2013 10:31:24 +0200
-Message-ID: <20130403083124.GG2228@phenom.ffwll.local>
-References: <20130403134349.e009a401ab6ec761edbfedd7@canb.auug.org.au>
+From: Jeff Layton <jlayton@redhat.com>
+Subject: Re: linux-next: build failure after merge of the final tree (nfsd
+ tree related)
+Date: Wed, 3 Apr 2013 07:10:54 -0400
+Message-ID: <20130403071054.45a02a88@tlielax.poochiereds.net>
+References: <20130403174219.0786d27109633a30d89b38bf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ea0-f173.google.com ([209.85.215.173]:41931 "EHLO
-	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761386Ab3DCI2a (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Apr 2013 04:28:30 -0400
-Received: by mail-ea0-f173.google.com with SMTP id k11so540819eaj.4
-        for <linux-next@vger.kernel.org>; Wed, 03 Apr 2013 01:28:28 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20130403134349.e009a401ab6ec761edbfedd7@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/m51IO3YnGshhLAqu8U8rpYD"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130403174219.0786d27109633a30d89b38bf@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 03, 2013 at 01:43:49PM +1100, Stephen Rothwell wrote:
+--Sig_/m51IO3YnGshhLAqu8U8rpYD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 3 Apr 2013 17:42:19 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
 > Hi all,
-> 
-> Today's linux-next merge of the drm-intel tree got a conflict in
-> drivers/gpu/drm/i915/intel_panel.c between commit b1289371fcd5 ("Revert
-> "drm/i915: write backlight harder"") from Linus' tree and commit
-> 31ad8ec6a614 ("drm/i915: group backlight related stuff into a struct")
-> from the drm-intel tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+>=20
+> After merging the final tree, today's linux-next build (arm defconfig)
+> failed like this:
+>=20
+> fs/built-in.o: In function `nfsd_reply_cache_stats_show':
+> super.c:(.text+0x87308): undefined reference to `__udivdi3'
+>=20
+> Probably caused by commit 187da2f90879 ("nfsd: keep track of the max and
+> average time to search the cache") which adds a divide by u64
+> (num_searches).
+>=20
+> I have reverted that commit and the following one for today.
 
-Looks good, I carry the same merge resolution locally.
--Daniel
+Thanks, known problem...
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc drivers/gpu/drm/i915/intel_panel.c
-> index bee8cb6,0e7e873..0000000
-> --- a/drivers/gpu/drm/i915/intel_panel.c
-> +++ b/drivers/gpu/drm/i915/intel_panel.c
-> @@@ -318,9 -321,16 +321,13 @@@ void intel_panel_enable_backlight(struc
->   {
->   	struct drm_i915_private *dev_priv = dev->dev_private;
->   
-> - 	if (dev_priv->backlight_level == 0)
-> - 		dev_priv->backlight_level = intel_panel_get_max_backlight(dev);
-> + 	if (dev_priv->backlight.level == 0) {
-> + 		dev_priv->backlight.level = intel_panel_get_max_backlight(dev);
-> + 		if (dev_priv->backlight.device)
-> + 			dev_priv->backlight.device->props.brightness =
-> + 				dev_priv->backlight.level;
-> + 	}
->   
->  -	dev_priv->backlight.enabled = true;
->  -	intel_panel_actually_set_backlight(dev, dev_priv->backlight.level);
->  -
->   	if (INTEL_INFO(dev)->gen >= 4) {
->   		uint32_t reg, tmp;
->   
-> @@@ -356,12 -366,12 +363,12 @@@
->   	}
->   
->   set_level:
->  -	/* Check the current backlight level and try to set again if it's zero.
->  -	 * On some machines, BLC_PWM_CPU_CTL is cleared to zero automatically
->  -	 * when BLC_PWM_CPU_CTL2 and BLC_PWM_PCH_CTL1 are written.
->  +	/* Call below after setting BLC_PWM_CPU_CTL2 and BLC_PWM_PCH_CTL1.
->  +	 * BLC_PWM_CPU_CTL may be cleared to zero automatically when these
->  +	 * registers are set.
->   	 */
-> - 	dev_priv->backlight_enabled = true;
-> - 	intel_panel_actually_set_backlight(dev, dev_priv->backlight_level);
->  -	if (!intel_panel_get_backlight(dev))
->  -		intel_panel_actually_set_backlight(dev, dev_priv->backlight.level);
-> ++	dev_priv->backlight.enabled = true;
-> ++	intel_panel_actually_set_backlight(dev, dev_priv->backlight.level);
->   }
->   
->   static void intel_panel_init_backlight(struct drm_device *dev)
+Looks like Bruce's tree has an older version of that patch series. I
+think we just need to get him to drop that one and merge the new one.
 
+--=20
+Jeff Layton <jlayton@redhat.com>
 
+--Sig_/m51IO3YnGshhLAqu8U8rpYD
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRXA4+AAoJEAAOaEEZVoIVQVYQAL9rpTSNOj3kSmSktRfh1aQW
+jTyjlpN0QlXTqzu1PpsEBvO3ugEuGFEutT70J6rfVql1ZznwodjbvJaJnVku7gUE
+b2Wn/ZsjtZU7i2x7aUhUcLjFjZABNS7zoG72ofx4/3MLtjSHCGCUf8qMlP+5u0sS
++CG6Oq4ayI4Edlcl9xfaii/a6pJns3JdnQP4iy/4SkriL6Vf0XMXjgo0ZwwW4leT
+BO4DHXdrJDQHiUYomu9oxMb6F/M5IhN3zGsrplbGViVLusk5znJT7iPI96/rsUEO
+3iMnefdIFCGuIYnltAkCcztobyhL3kAjJUg70d//gu8uE4AVw4kOwRPL08LUjySc
+LbNfRvvxmx7kcoywK8Y7chZtENIOAER/m/KoT9O2qf1qWJRzYE1zDwz+HxhBLMg/
+4Nk3J2JpaUOAh9WAUFvw2ApETJE+CcWY7fvLqH5t1861qogagiKrDc3vhnJa1FkP
+TmhosWlJ9HUYil0+VCI3XQMxsDwnTN0eBJVX0q/FIZ6R72ZbU1fJmkR37hmNx1Qq
+smeUmxR0mv9VHHDsh4HMSLnYFVcOF7m/ASchMYYrm1ezZp1DXcX6qJtXqqeiotyl
+T+75OGe9lXZ/OSmuHBNE5LnbCuaDz3HQq+9EQ1WkLwGc/1v6C1KZUkTc7H0P8eo5
+yJ2SfZ1nXmHHzul2h4jW
+=5ZdX
+-----END PGP SIGNATURE-----
+
+--Sig_/m51IO3YnGshhLAqu8U8rpYD--
