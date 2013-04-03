@@ -1,76 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfs tree with the ia64 tree
-Date: Wed, 3 Apr 2013 10:07:02 +1100
-Message-ID: <20130403100702.3396b4c87f4867bf5907dcd4@canb.auug.org.au>
-References: <20130402112017.8c5e288cbbd31f93788df9d5@canb.auug.org.au>
-	<3908561D78D1C84285E8C5FCA982C28F1E09672C@ORSMSX108.amr.corp.intel.com>
+Subject: linux-next: manual merge of the nfsd tree with Linus' tree
+Date: Wed, 3 Apr 2013 11:01:08 +1100
+Message-ID: <20130403110108.e669ebda4b5a88550d96a485@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__3_Apr_2013_10_07_02_+1100_/A1enS5qlO4dKgun"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F1E09672C@ORSMSX108.amr.corp.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Richard Weinberger <richard@nod.at>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__3_Apr_2013_11_01_08_+1100_aP3/i96E5eM.6bkm"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53320 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752865Ab3DCABV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Apr 2013 20:01:21 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>
 
---Signature=_Wed__3_Apr_2013_10_07_02_+1100_/A1enS5qlO4dKgun
+--Signature=_Wed__3_Apr_2013_11_01_08_+1100_aP3/i96E5eM.6bkm
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tony,
+Hi,
 
-On Tue, 2 Apr 2013 16:42:27 +0000 "Luck, Tony" <tony.luck@intel.com> wrote:
->
-> > Today's linux-next merge of the vfs tree got a conflict in
-> > arch/ia64/kernel/palinfo.c between commit 40c275bd92b8 ("[IA64] Fix sta=
-ck
-> > overflow in create_palinfo_proc_entries") from the ia64 tree and commit
-> > d8e904861a28 ("palinfo fixes") from the vfs tree.
-> >
-> > I fixed it up (arbitrarily choosing the vfs tree version) and can carry
-> > the fix as necessary (no action is required).
->=20
-> It looks like you picked the version from the ia64 tree - but it would ha=
-ve
-> been better to pick Al's version. He wastes less space on the stack by on=
-ly
-> declaring cpustr[3+4+1] instead of cpustr[32], but more importantly he
-> checks the return value from proc_mkdir().
+Today's linux-next merge of the nfsd tree got a conflict in
+fs/nfsd/nfscache.c between commit a517b608fa3d ("nfsd: only unhash DRC
+entries that are in the hashtable") from Linus' tree and commit
+559aa350587e ("nfsd: track memory utilization in the DRC") from the nfsd
+tree.
 
-I actually (effectively) dropped Al's tree due to a build error (after
-making the "correct" choice).  It will be back in today.
-
-> I'll drop 40c275bd92b8 out of my tree so Al's can go in without a conflic=
-t.
-
-OK.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__3_Apr_2013_10_07_02_+1100_/A1enS5qlO4dKgun
+diff --cc fs/nfsd/nfscache.c
+index ca05f6d,3af1767..0000000
+--- a/fs/nfsd/nfscache.c
++++ b/fs/nfsd/nfscache.c
+@@@ -100,12 -130,14 +130,15 @@@ nfsd_reply_cache_alloc(void
+  static void
+  nfsd_reply_cache_free_locked(struct svc_cacherep *rp)
+  {
+- 	if (rp->c_type =3D=3D RC_REPLBUFF)
++ 	if (rp->c_type =3D=3D RC_REPLBUFF && rp->c_replvec.iov_base) {
++ 		drc_mem_usage -=3D rp->c_replvec.iov_len;
+  		kfree(rp->c_replvec.iov_base);
++ 	}
+ -	hlist_del(&rp->c_hash);
+ +	if (!hlist_unhashed(&rp->c_hash))
+ +		hlist_del(&rp->c_hash);
+  	list_del(&rp->c_lru);
+  	--num_drc_entries;
++ 	drc_mem_usage -=3D sizeof(*rp);
+  	kmem_cache_free(drc_slab, rp);
+  }
+ =20
+
+--Signature=_Wed__3_Apr_2013_11_01_08_+1100_aP3/i96E5eM.6bkm
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRW2SWAAoJEECxmPOUX5FEXSMP/AtcRyDsoRfpJBdxRof/VFkW
-roMLEs3K5NyuzQz9noMzirV438AqDNLxNy7KcVtkndYejWHL1H+ziJ1bVIobZPgf
-5ZQ5zLgWXJUb5j9rKvhboa8c4HNMwVgNrCSHZ9QxnJOsQXF8MrDBgTytjL44hUPP
-4uwyt3BNdOfYEzy8sXy3mmEWGAgwQ0IoCT0nO9wZ5WaCsAgzCcP70oYMCmkLKLhE
-bvKFnbi6I9XPOI4ab/UONjXNjadj/hJGp0tQIGDsW2wvCOSB5KYyI9TLd9yAaxpy
-AWB9+dJySMfbYApI0RpAD47uKd5owzGlMOcFPxqDCU0okpOO2AQnjzXGneCSXaGX
-S99JKD744tDZ/ZEiZ4lP4WY+w08pqvNrgYaHZdBTVlwllGM7EdbEk7jfcCe5JncN
-4/cYYR3JwpBufZhQfSP64kYYlQ5/o6I7pTcK1xDSrtmPABKSXgJFCYmvwZJUFVMG
-I/xjtpXEJNFkff8laQhbCZU9Ish2qVAru41l17RGXAiEGWUM+6TiIaAW/oAxFday
-l31iFIGu9qSaoAQt+5l/Z7KIU6ti9NEkp9Egh3rBo1fb/kLqFVFfS8fStSAtdHPA
-XAwhIzup0eym5VTKE7GpinN/wahzDMyGNGRXBDEX/i1lT2PWP4vj9ttJkTIUoF5U
-FzPA+gFOoyFmc6+9uB8X
-=RG64
+iQIcBAEBCAAGBQJRW3FEAAoJEECxmPOUX5FEkeUQAKACPQ6iI583rDG1cOoxgbXg
+yRtmuIDzJsDMUqvSHX/fkh0dL4SzUCXIUiagUj6ZCRHHZLnwbCL/8YuCFnnXLnd3
+vSNpYE+UGABODXhNjDAu5O6v2fInaMHnccq/2/7jF4zL9FeT9zWp+gOQHbgYrxPF
+HxFVzB58JtBIeMUM7OEQWfz+oImksm7t0El5wjoG4VyP1U6yUAhfMCN9gsNfm92e
+i9WFHmgk9j/hUeztalzv9aZ6a6vqfs6fHQhOia9Zz7MD2s2DeK/RrpqKMIndJPrO
+K/x01DUNqS1tvWUtJrOORo3ifPXqFnQ1ct9U3WBMoSkyr2pvxeiiLnGnIlwx1UAP
+XWvEwMk9gsR/c11wSCFQF/33Id21ZIxH0B72bKY3KKXTcV/4nbwgRIK4H8vRF4z5
+ebdrbVd7iST0awG9vMlsr/ybRlV3WpD61i9RZVln74rWxuZda0fY10wHT4YJfeS3
+WILODNgHHEtV4o4iZ6KX1ekL40AVRPBtOSf3ib0Sg8JaLS82xhw5QiZsvkmnktM1
+x1t+u7l13FACLUmeOxYqmWS5d2QnOnEOysELEoxI1sp0FT9rrM79pJA1j262JoVI
+IFOC8tJDkwtoVZUtXieUDP0vWeY0/K+so6A5+1qugsRLaoKRK2xCH5laO1xUrUWH
+w+JA82RUowdWm2HhOtNv
+=rpK4
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__3_Apr_2013_10_07_02_+1100_/A1enS5qlO4dKgun--
+--Signature=_Wed__3_Apr_2013_11_01_08_+1100_aP3/i96E5eM.6bkm--
