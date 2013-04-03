@@ -1,26 +1,33 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Wed, 3 Apr 2013 02:14:30 +0100
-Message-ID: <20130403011430.GL21522@ZenIV.linux.org.uk>
-References: <20130403112235.0ec96e6e03389a791ad6b959@canb.auug.org.au>
+From: James Morris <jmorris@namei.org>
+Subject: Re: [PATCH] Smack: include magic.h in smackfs.c
+Date: Wed, 3 Apr 2013 13:15:51 +1100 (EST)
+Message-ID: <alpine.LRH.2.02.1304031315380.25743@tundra.namei.org>
+References: <20130402190929.62cea8988921a2599588a566@canb.auug.org.au> <515B12EB.50303@infradead.org> <515B264E.2020603@schaufler-ca.com> <515B4EEC.8000908@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:42795 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758164Ab3DCBOb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Apr 2013 21:14:31 -0400
-Content-Disposition: inline
-In-Reply-To: <20130403112235.0ec96e6e03389a791ad6b959@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <515B4EEC.8000908@infradead.org>
+Sender: linux-security-module-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module <linux-security-module@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 03, 2013 at 11:22:35AM +1100, Stephen Rothwell wrote:
-> And many, many more.
+On Tue, 2 Apr 2013, Randy Dunlap wrote:
+
+> On 04/02/13 11:41, Casey Schaufler wrote:
+> > As reported for linux-next: Tree for Apr 2 (smack)
+> > Add the required include for smackfs.c
+> > 
+> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > 
-> Caused by commit 1f4fbcb8700c ("create_proc_cpu_mask() doesn't need an
-> argument...").  Please build test this stuff *before* publishing it.  :-(
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Acked-by: Randy Dunlap <rdunlap@infradead.org>
+> 
 
-"Remember to push the fixes", actually ;-/
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
+
+
+-- 
+James Morris
+<jmorris@namei.org>
