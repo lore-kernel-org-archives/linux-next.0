@@ -1,41 +1,52 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 4 (usb/gadget/configfs)
-Date: Thu, 04 Apr 2013 11:50:32 -0700
-Message-ID: <515DCB78.3010207@infradead.org>
-References: <20130404182232.bd2dbfba27620bdab9e0de42@canb.auug.org.au>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: linux-next: build failure after merge of the final tree (wireless-next
+ tree related)
+Date: Thu, 04 Apr 2013 14:43:42 -0500
+Message-ID: <515DD7EE.2080903@lwfinger.net>
+References: <20130404181043.c191e7f4aa3057e6eda151cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:57754 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762864Ab3DDSu2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Apr 2013 14:50:28 -0400
-In-Reply-To: <20130404182232.bd2dbfba27620bdab9e0de42@canb.auug.org.au>
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:58870 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1764631Ab3DDTno (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Apr 2013 15:43:44 -0400
+In-Reply-To: <20130404181043.c191e7f4aa3057e6eda151cc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/04/13 00:22, Stephen Rothwell wrote:
+On 04/04/2013 02:10 AM, Stephen Rothwell wrote:
 > Hi all,
-> 
-> Changes since 20130403:
-> 
+>
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+>
+> drivers/net/wireless/rtlwifi/rtl8188ee/built-in.o: In function `.rtl92c_phy_ap_calibrate':
+> (.text+0x21d14): multiple definition of `.rtl92c_phy_ap_calibrate'
+> drivers/net/wireless/rtlwifi/rtl8192c/built-in.o:(.text+0xb1e8): first defined here
+> drivers/net/wireless/rtlwifi/rtl8188ee/built-in.o: In function `rtl_hal_pwrseqcmdparsing':
+> (.opd+0xed0): multiple definition of `rtl_hal_pwrseqcmdparsing'
+> drivers/net/wireless/rtlwifi/rtl8723ae/built-in.o:(.opd+0x11a0): first defined here
+> drivers/net/wireless/rtlwifi/rtl8188ee/built-in.o: In function `rtl92c_phy_ap_calibrate':
+> (.opd+0xe58): multiple definition of `rtl92c_phy_ap_calibrate'
+> drivers/net/wireless/rtlwifi/rtl8192c/built-in.o:(.opd+0x570): first defined here
+> drivers/net/wireless/rtlwifi/rtl8188ee/built-in.o: In function `.rtl_hal_pwrseqcmdparsing':
+> (.text+0x22164): multiple definition of `.rtl_hal_pwrseqcmdparsing'
+> drivers/net/wireless/rtlwifi/rtl8723ae/built-in.o:(.text+0x297a8): first defined here
+>
+> Caused by commit f0eb856e0b6c ("rtlwifi: rtl8188ee: Add new driver").
+>
+> I reverted commit 8b138d4898a0 ("rtlwifi: rtl8188ee: Enable build of new
+> driver") for today.
 
+I don't know why it is so hard to remember to do an allyesconfig build, but I 
+seem to forget. The 2.5 hours it takes on my box does not help.
 
-on x86_64, when CONFIG_BUG is not enabled:
+As you have probably seen, I just submitted a patch to fix the problem.
 
-  CC [M]  drivers/usb/gadget/configfs.o
-drivers/usb/gadget/configfs.c: In function 'config_usb_cfg_unlink':
-drivers/usb/gadget/configfs.c:442:2: error: implicit declaration of function '__WARN_printf' [-Werror=implicit-function-declaration]
-drivers/usb/gadget/configfs.c: In function 'configfs_do_nothing':
-drivers/usb/gadget/configfs.c:733:2: error: implicit declaration of function '__WARN' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
-make[4]: *** [drivers/usb/gadget/configfs.o] Error 1
+Thanks for the report,
 
-
-
-
--- 
-~Randy
+Larry
