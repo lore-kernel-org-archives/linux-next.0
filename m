@@ -1,94 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the wireless
- tree
-Date: Thu, 4 Apr 2013 11:44:44 +1100
-Message-ID: <20130404114444.de4e40c24f4e1a0e4c0b7328@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the wireless-next tree
+Date: Thu, 4 Apr 2013 12:00:43 +1100
+Message-ID: <20130404120043.794afc7dd061dcd3adac0fdb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__4_Apr_2013_11_44_44_+1100_v3v+zd8ZXeCgqXdk"
+ boundary="Signature=_Thu__4_Apr_2013_12_00_43_+1100_qiCBU7KbX69M9Pr9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53824 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:47855 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932071Ab3DDAo6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Apr 2013 20:44:58 -0400
+	with ESMTP id S932245Ab3DDBAv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Apr 2013 21:00:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Gabor Juhos <juhosg@openwrt.org>, "John W. Linville" <linville@tuxdriver.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__4_Apr_2013_11_44_44_+1100_v3v+zd8ZXeCgqXdk
+--Signature=_Thu__4_Apr_2013_12_00_43_+1100_qiCBU7KbX69M9Pr9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi John,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/wireless/rt2x00/rt2x00pci.c between commit 69a2bac8984c
-("rt2x00: rt2x00pci: fix build error on Ralink RT3x5x SoCs") from the
-wireless tree and commit 1f9061d27d3d ("drivers:net: dma_alloc_coherent:
-use __GFP_ZERO instead of memset(, 0)") from the net-next tree.
+After merging the wireless-next tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-The former moved the code modified by the latter into a different file,
-so I added the following merge fix patch and can carry the fix as
-necessary (no action is required).
+x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file =
+unused because linking not done
+x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file =
+unused because linking not done
+x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file =
+unused because linking not done
+x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file =
+unused because linking not done
+x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file =
+unused because linking not done
+x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file =
+unused because linking not done
+x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file =
+unused because linking not done
+x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file =
+unused because linking not done
+x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file =
+unused because linking not done
+x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file =
+unused because linking not done
+x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file =
+unused because linking not done
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 4 Apr 2013 11:42:05 +1100
-Subject: [PATCH] drivers:net: fix up for code movement from rt2x00pci.c
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/wireless/rt2x00/rt2x00mmio.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/rt2x00/rt2x00mmio.c b/drivers/net/wireles=
-s/rt2x00/rt2x00mmio.c
-index d84a680..9fe9a36 100644
---- a/drivers/net/wireless/rt2x00/rt2x00mmio.c
-+++ b/drivers/net/wireless/rt2x00/rt2x00mmio.c
-@@ -123,12 +123,10 @@ static int rt2x00pci_alloc_queue_dma(struct rt2x00_de=
-v *rt2x00dev,
- 	 */
- 	addr =3D dma_alloc_coherent(rt2x00dev->dev,
- 				  queue->limit * queue->desc_size,
--				  &dma, GFP_KERNEL);
-+				  &dma, GFP_KERNEL | __GFP_ZERO);
- 	if (!addr)
- 		return -ENOMEM;
-=20
--	memset(addr, 0, queue->limit * queue->desc_size);
--
- 	/*
- 	 * Initialize all queue entries to contain valid addresses.
- 	 */
---=20
-1.8.1
-
+I have no idea what caused that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__4_Apr_2013_11_44_44_+1100_v3v+zd8ZXeCgqXdk
+--Signature=_Thu__4_Apr_2013_12_00_43_+1100_qiCBU7KbX69M9Pr9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRXMz8AAoJEECxmPOUX5FExBIP/jewPg6JVgi3GQuJ5zp4GFmv
-thlXnE13eSG/g5O3AiuMCM+QXwhtuWMTHUSn8KXLPqZQqur6QrTYYAtWUFKB3i6u
-xTSlx8DU722PSEFhkbdIjnoeKBqFHatQrk4CWk2GRBFGdvpZjH+bzSlKvqYK49Dr
-fYU6i/labWNTgpUY7apzdkFNuKmYRBrQmwZwGYNfMX4LLWkR61oMO6jzyNRFWj8f
-G3zQqnc+8hzq9DkPzPcBS7/C3gWjOb4fZPfVsydYdwt6WGSPZ+lZdyxD00+n9MhH
-gNQVaC1vkf6rkIs+24OHaK9l2seZz3B181CZr0n8JWkcBlSh3euOa+0B25+BJRZ6
-0aZNA5RoDglwgKMDI9n2Qlcfm+5XalqVMMk9A/QvwHc84qO1uCTYqjV0XXklhapI
-NZjcwvbay8o8FJ+q5L76SnbgGE8Ko5QI4Qndl87NzJvstbZarUkpm4ZZR/+FuBhW
-Ih4KLMp/toeM5Rpy3DYFKIuOTC97IvYT45QWRunecUVGF9QIdi9oAKcqUeN9gJ0g
-JIV8evPWGjvGf/+Aq31BusZFErKsmnweiJtPDSCb2aEVroM0HS5zjtHq8TxPx53e
-rOjqeSqvNLlV6HAE7hHXFfljWWaV3adjmyq5opysYncH0pOZmdWR48kkdv2bUvj6
-on2CSbvYhrrl0j8TJPBc
-=9fJF
+iQIcBAEBCAAGBQJRXNC7AAoJEECxmPOUX5FEhdsP/3hIFdcL8uvNNd/9QTblY3N+
+iEleK2+15iAKbboYgLpd9xTSzcUH9McInwhLiYEcdLvxTQC4ZBo/C+tZwETQ2yU3
+IhCz1clbOv/dy/d4tVwU4aIaNTozgEirCrSZ3nq1KzTthl8qA+blSaj6GSJ7iTLY
+AWBOk9SPGJcHeYqj1KhrZoPJfxMeDw7FaJVixPsXGg8/lwj5kMvzxNMzafNI5QNm
+M+U2Qfn1JMKx5qFJCZcjZkv48jcSkm7aHOhB6Mk2iogx6vB+0grlCrPi4xclntCa
+BoEMIBEW9KghYCZlW54OPDLLCsFxRLURaMgbHnPtHEWHfVkDHjv+W16RGisVYLyx
+8a8jkLuCMoIfCSOifVIVIkIZJXO6ss4hPXvatCpub0G6ci+AvsC11+I3YxPqCmnl
+BjpIhEZkjHk8wQ6SPfuaP4jr0CbtDJXsS9ekrYJNh4wLrGhTN4R8CHOAqw/R1m2c
+UZDm5jnOu5rIxYSoc8vhxN7sRBjpISMZzPEPEZ93mlR/cHSKP0IItkbZK9/vaVAA
+Hwkh5t55p6PzEyuEIJ/gajhqDbARk+BU5+yejLkR09uqCZ9yB1rUjpS80vjKpeAi
+fzHo9CD0v3yX5opGmftGj+eSUYSFkN9UxAGdo1esLTZWoKcGYqm6i08Z+RGssId5
+JF1SOLoW+AirUhyjZUwx
+=E5K9
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Apr_2013_11_44_44_+1100_v3v+zd8ZXeCgqXdk--
+--Signature=_Thu__4_Apr_2013_12_00_43_+1100_qiCBU7KbX69M9Pr9--
