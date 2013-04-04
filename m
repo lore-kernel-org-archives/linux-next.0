@@ -1,61 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the vfs tree
-Date: Thu, 4 Apr 2013 15:43:29 +1100
-Message-ID: <20130404154329.d0c983568da9650d5dcb31bd@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the pm tree
+Date: Thu, 4 Apr 2013 16:18:06 +1100
+Message-ID: <20130404161806.8f53f96c7197b978bfa1b63e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__4_Apr_2013_15_43_29_+1100_zPYyW3.SRIQbcM7A"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41689 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756088Ab3DDEna (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Apr 2013 00:43:30 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+ boundary="Signature=_Thu__4_Apr_2013_16_18_06_+1100_k1W1XwSTcwo_wo2."
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Markus Pargmann <mpa@pengutronix.de>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__4_Apr_2013_15_43_29_+1100_zPYyW3.SRIQbcM7A
+--Signature=_Thu__4_Apr_2013_16_18_06_+1100_k1W1XwSTcwo_wo2.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Shawn,
 
-Today's linux-next merge of the staging tree got conflicts in
-drivers/staging/ccg/f_fs.c and drivers/staging/ccg/rndis.c between
-commits 465bced2e3ed ("ccg: don't bother with fops->owner") and
-4dfac87dca02 ("procfs: new helper - PDE_DATA(inode)") from the vfs tree
-and commit 515e6dd20b3f ("Staging: ccg: delete it from the tree") from
-the staging tree.
+Today's linux-next merge of the imx-mxs tree got a conflict in
+arch/arm/mach-imx/cpufreq.c between commits b43a7ffbf33b ("cpufreq:
+Notify all policy->cpus in cpufreq_notify_transition()") and eb2f50ff93f0
+("cpufreq: drivers: Remove unnecessary assignments of policy-> members")
+from the pm tree and commit 180cb7d6ab8c ("ARM: imx: Remove cpufreq
+driver") from the imx-mxs tree.
 
-The latter just deletes the files, so I did that and can carry the fix as
+The latter removed the file, so I just did that and can carry the fix as
 necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__4_Apr_2013_15_43_29_+1100_zPYyW3.SRIQbcM7A
+--Signature=_Thu__4_Apr_2013_16_18_06_+1100_k1W1XwSTcwo_wo2.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRXQTxAAoJEECxmPOUX5FEilEP/0I1/q/DOqiM4g5IUkCsth1w
-q+pvU+DLSYv5Yk5+Hl9EMk9QemDWEXkOsdgt9yWvbHRd+0O78o4KX+Gjc0EFIfud
-wi6QYjUindxcARPJTlemZly+AXIzVjghrUP+gZ7RdtxCIpOkJvvJerqzR6pNuLaF
-Lhajo8Rcl1GUX8aDq2C4dqE57+UsyKwsRGWONJBKRAi84VjZEVTkYI2yMGaRA/36
-67ft0JTr7HetvtQJnxDtHFLJiR6CRO5rB7+Ed9urz9aj7+kVC4UfN8Bor7IYArV7
-gt5NjzaArmxEP//9UkxDnsYtkCQXEYdYp/a6NYkK9g408ukr6963c59YOZFehSQ5
-6rjbvqMxFFgWJXN5sEupz3JW9U4TS+8Fo2aXsjPcGRKm8omei7hOCsyQpCF9chXI
-79KyVeIfIgesk961wDXnUZ5EghIl9Bur1eSJvHnMmnFACKT4mFZ2YsbMuHiCswQ3
-1gUMXZ7HgstF32f3SHXAWzXfu0W7keRk0L2zeHAQ7YIPwYtmgrreVieOHMdPezOr
-yGuyV4HYcQ0EA19AV9KHIV6Gy/wakKdjXEZN5PQlDq71ebRcnZXG2eYBQnLoPvcz
-PJ7J+9DDiNOOSMuVMnDWPwfe7RCKiVbmQo2fTJuGP5tZTloJD3iNBu4Y7cdpvPbF
-nzYvwBwCEEuA8+8gNP+r
-=3JQC
+iQIcBAEBCAAGBQJRXQ0OAAoJEECxmPOUX5FE20EQAKFQF8Gws5T7lGD/0/6huFRq
+lyWxCfe0yrIwEIsghb9GcR8uVJWEMd8y4ZshPp8bB749iYgtil1EN+qHfTbVnEKC
+UW9ZP5Jca1HgzE0+fWpBypfTcvuSfAp9S8Uq0oHvFMHc0s3IJNksa7jFhcbSFJ94
+3mSo+2K7pzdzJ2cGGKgovF1q888DtFI+NOxdSdNfqB9sOKGgYV2NjavFeLm7SfR6
+syEZ6vHAQNRHa7sw5bAhz7AN7MyuoEmKZf3N0Q3d7WDD9V3xN2nSK+L2tg/tdlfJ
+S3CRcDRkVpf3NSK4E+SlDHUBK2rOTPQRq9sDHUiHOTUsj84q5ZrAVNw37s3t1Yf1
+1cp7qhl1DITwJdTXVAtd6qlaLQmW+f63aGQeItAaGUmjNmCCyzYol5E5SxNvFPb8
+PcHpH14eejm6qZ9H15uDh88HH1zK2rYfoH2cp+W9aI0BR+3xeCUO4xppdnDsm8dA
++fDF9fJc4uQihd93JW91Pu5VF9gQn+L2BAUmMFcYx9zFedeT6OO6Omv4oD4efdJd
+FFxJeoat+S8rQhjZ/+00A8rgHC+5MOmOcAQJlw51tEYni3J4tPvYdTDN8ivopVli
+gFrDJOplldBI5EnDGAmmppHsxOgsJI6GSWVHaJlR0eY1+lho49eEiSzQ631cmk6L
+nnF1eUC2pzTCMy1LZ0OB
+=DlIA
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Apr_2013_15_43_29_+1100_zPYyW3.SRIQbcM7A--
+--Signature=_Thu__4_Apr_2013_16_18_06_+1100_k1W1XwSTcwo_wo2.--
