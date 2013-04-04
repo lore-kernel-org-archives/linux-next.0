@@ -1,73 +1,115 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ext4 tree
-Date: Thu, 4 Apr 2013 10:43:19 +1100
-Message-ID: <20130404104319.42d97a8ad7badf00af7ef1e0@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: GENERIC_GPIO considered deprecated
+Date: Thu, 04 Apr 2013 09:35:58 +0900
+Message-ID: <26e401ce30cc$602e45f0$208ad1d0$%kim@samsung.com>
+References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
+ <51576214.8010307@openwide.fr>
+ <CAAVeFu++8YOOSxPbAaTudxSGcBomkGrakBjiVyD+XSee54TrWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__4_Apr_2013_10_43_19_+1100_d8i1MyZy9+JBf1vo"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:22663 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761262Ab3DDAgS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Apr 2013 20:36:18 -0400
+In-reply-to: <CAAVeFu++8YOOSxPbAaTudxSGcBomkGrakBjiVyD+XSee54TrWw@mail.gmail.com>
+Content-language: ko
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: 'Alexandre Courbot' <gnurou@gmail.com>, 'Romain Naour' <romain.naour@openwide.fr>
+Cc: 'linux-next' <linux-next@vger.kernel.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, tomasz.figa@gmail.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org
 
---Signature=_Thu__4_Apr_2013_10_43_19_+1100_d8i1MyZy9+JBf1vo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Alexandre Courbot wrote:
+> 
+> Hi Romain,
+> 
+> On Sat, Mar 30, 2013 at 3:07 PM, Romain Naour <romain.naour@openwide.fr>
+> wrote:
+> > Hi Alex,
+> >
+> > When I read your mail, I was surprised that you were speaking about
+> GPIOs, my pathes for samsung CPUs are intended for timer sub-system.
+> >
+> > As you can see in this thread, when I send my patches "ARM: S3C24XX: Add
+> samsung-time support for s3c24xx" and "Add samsung-time support for
+> s5pc100". They didn't add "select GENERIC_GPIO".
+> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=14980
+> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=14982
+> >
+> > There is something wrong with the commit, I see that "select
+> GENERIC_GPIO" was added in my patches by mistake.
 
-Hi Ted,
+Oops, sorry about that.
 
-After merging the ext4 tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+> >
+> > I recommend you to speak directly with samsung's kernel maintainer that
+> I CC in this mail.
+> 
+Thanks...
 
-fs/ext4/resize.c: In function 'ext4_resize_fs':
-fs/ext4/ext4.h:1799:21: sorry, unimplemented: inlining failed in call to 'e=
-xt4_get_group_number': function body not available
-fs/ext4/resize.c:1882:10: sorry, unimplemented: called from here
-fs/ext4/ext4.h:1799:21: sorry, unimplemented: inlining failed in call to 'e=
-xt4_get_group_number': function body not available
-fs/ext4/resize.c:275:9: sorry, unimplemented: called from here
-fs/ext4/ext4.h:1799:21: sorry, unimplemented: inlining failed in call to 'e=
-xt4_get_group_number': function body not available
-fs/ext4/resize.c:287:9: sorry, unimplemented: called from here
-fs/ext4/ext4.h:1799:21: sorry, unimplemented: inlining failed in call to 'e=
-xt4_get_group_number': function body not available
-fs/ext4/resize.c:299:9: sorry, unimplemented: called from here
-fs/ext4/mballoc.c: In function 'ext4_mb_release_context':
-fs/ext4/ext4.h:1799:21: sorry, unimplemented: inlining failed in call to 'e=
-xt4_get_group_number': function body not available
-fs/ext4/mballoc.c:3347:6: sorry, unimplemented: called from here
+> Indeed, it seems like these "select GENERIC_GPIO" have been added
+> during the merge of your patches, since I can see the line is here in
+> your patch (but not added by it). Kim, on the current next there are
+> two of these "select GENERIC_GPIO" that are added from your branch,
 
-Caused by commit dc351389caa5 ("ext4: introduce ext4_get_group_number()").
+OK, I see.
 
-This build was done with gcc 4.6.3 if that matters.
+> could you amend the patches that adds them such as they get changed
+> into "select ARCH_REQUIRE_GPIOLIB" instead? You can grep for "select
 
-I have used the ext4 tree from next-20130403 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I can do it for my tree but the branch already included in arm-soc tree so I think, it should be fixed with another patch. And 
 
---Signature=_Thu__4_Apr_2013_10_43_19_+1100_d8i1MyZy9+JBf1vo
-Content-Type: application/pgp-signature
+> GENERIC_GPIO" in arch/arm to find the offending lines. We are removing
+> GENERIC_GPIO and this work cannot be merged until you do this since it
+> would break ARM builds. Thanks!
+> 
+So how about following? If you are OK, let me take into samsung tree.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+--------8<----------------8<--------
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: change GENERIC_GPIO to ARCH_REQUIRE_GPIOLIB
 
-iQIcBAEBCAAGBQJRXL6XAAoJEECxmPOUX5FEDmwQAKFzUfENbCiSRnFZoeLKkkcz
-pmDoNtHlP5EqcqtKDtEuBOiyaieZiYGu8HCsknX8GIx7x9CERdbiKBKBGrQW7HmI
-28SRQlkIDRdTEunnCcRSX3hIvspCTP4HGVIUbBJTXUZSOxOuSgn1bshsm07Lbn8a
-tr8+eraem2IaqACNS4HwZ0+msX+7Sw7S2+ooLdLE4876xESQUEFk781Go4hQXzGj
-4hLgKz5BC/1YptDbWoAPhSR6/UqUODlzsW2bhCDEderHLS32B9rhW0QLPPMTxH96
-k7ake37+gZYkD7XZmZeCxvWFUYbQtdqQxj0CcTTMlgl0T9hZWcJp3hXRcM6F4mld
-g2V5zPBz8ILrmnset5d5CD2MzctzHQmOZxyPawsW6kJ11U6DbpvCtP2ReCmoIVC2
-G74K5mNwB3TRjHlYqpzCJ10YUPtCwJzDo1zl1QxPFxr4HP+KAQ+Brr3PXFpQeLb6
-7tAle+pUb9uYw8NvGlf/sVkvItgfM9+PjWi8s6POxku1hdtrGfOCtJztki/wiy0E
-20HwuJy8g3jCo8TYLgZFJs1YJ+mdUZA73sSRDtpnRTLVFJnpvIdM5EhhgSV9moQA
-RaOKchbqppyjLtkaIcIvnSMiB/u2QsxIJztkNnWQSZh2lCPH8htDzBZMVR4VqCjK
-A0yTO4k0HqqaA+mBPRhR
-=QvDk
------END PGP SIGNATURE-----
+When I applied regarding samsung-time patches, the "select GENERIC_GPIO"
+has been added wrong, so this patch fixes that.
+And since the GENERIC_GPIO in arch/arm/ will be gone away, this adds
+ARCH_REQUIRE_GPIOLIB for S3C24XX and S5PC100 instead.
 
---Signature=_Thu__4_Apr_2013_10_43_19_+1100_d8i1MyZy9+JBf1vo--
+Reported-by: Alexandre Courbot <gnurou@gmail.com>
+Cc: Romain Naour <romain.naour@openwide.fr>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/Kconfig |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 46fcfa8..a239c7e 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -770,10 +770,10 @@ config ARCH_SA1100
+ config ARCH_S3C24XX
+ 	bool "Samsung S3C24XX SoCs"
+ 	select ARCH_HAS_CPUFREQ
++	select ARCH_REQUIRE_GPIOLIB
+ 	select CLKDEV_LOOKUP
+ 	select CLKSRC_MMIO
+ 	select GENERIC_CLOCKEVENTS
+-	select GENERIC_GPIO
+ 	select HAVE_CLK
+ 	select HAVE_S3C2410_I2C if I2C
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+@@ -828,11 +828,11 @@ config ARCH_S5P64X0
+ 
+ config ARCH_S5PC100
+ 	bool "Samsung S5PC100"
++	select ARCH_REQUIRE_GPIOLIB
+ 	select CLKDEV_LOOKUP
+ 	select CLKSRC_MMIO
+ 	select CPU_V7
+ 	select GENERIC_CLOCKEVENTS
+-	select GENERIC_GPIO
+ 	select HAVE_CLK
+ 	select HAVE_S3C2410_I2C if I2C
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+-- 
+1.7.10.4
