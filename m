@@ -1,69 +1,95 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Subject: Re: linux-next: build warning after merge of the wireless-next tree
-Date: Wed, 03 Apr 2013 21:58:04 -0500
-Message-ID: <515CEC3C.1030307@lwfinger.net>
-References: <20130404120043.794afc7dd061dcd3adac0fdb@canb.auug.org.au> <20130404120402.2384c71a6e1850ebe76d62e2@canb.auug.org.au> <515CD48D.9030607@lwfinger.net> <20130404133610.ea48118208cbfc22f0fd3b73@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the usb tree
+Date: Thu, 4 Apr 2013 15:18:45 +1100
+Message-ID: <20130404151845.406517e19f29380ccb90ac35@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:55033 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932903Ab3DDC6I (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Apr 2013 22:58:08 -0400
-In-Reply-To: <20130404133610.ea48118208cbfc22f0fd3b73@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__4_Apr_2013_15_18_45_+1100_XVBF8hBQEkFNVApt"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry@gilfi.de>, Greg KH <greg@kroah.com>
+List-Id: linux-next.vger.kernel.org
 
-On 04/03/2013 09:36 PM, Stephen Rothwell wrote:
-> Hi Larry,
->
-> On Wed, 03 Apr 2013 20:17:01 -0500 Larry Finger <Larry.Finger@lwfinger.net> wrote:
->>
->> On 04/03/2013 08:04 PM, Stephen Rothwell wrote:
->>>
->>> On Thu, 4 Apr 2013 12:00:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>>
->>>> After merging the wireless-next tree, today's linux-next build (x86_64
->>>> allmodconfig) produced this warning:
->>>>
->>>> x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file unused because linking not done
->>>> x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file unused because linking not done
->>>> x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file unused because linking not done
->>>> x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file unused because linking not done
->>>> x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file unused because linking not done
->>>> x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file unused because linking not done
->>>> x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file unused because linking not done
->>>> x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file unused because linking not done
->>>> x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file unused because linking not done
->>>> x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file unused because linking not done
->>>> x86_64-linux-gcc: warning: drivers/net/wireless/rtlwifi: linker input file unused because linking not done
->>>>
->>>> I have no idea what caused that.
->>>
->>> Though I suspect commit 8b138d4898a0 ("rtlwifi: rtl8188ee: Enable build
->>> of new driver") - I wonder if the gap between the "-I" and
->>> "drivers/net/wireless/rtlwifi" added to ccflags-y is the cause?
->>>
->>> I am using gcc 4.6.3 if that matters.
->>
->> I use 4.7.2.
->>
->> I'll send a patch with the space removed to see if that helps.
->
-> I just tested without the space and it fixes the problem for my Debian
-> 4.7.2 compiler.  Removing the space also fixes the problem with finding
-> include files (after I removed the "../" bits again).
+--Signature=_Thu__4_Apr_2013_15_18_45_+1100_XVBF8hBQEkFNVApt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Stephan,
+Hi Felipe,
 
-Ah, that was the real error. Thanks for testing.
+Today's linux-next merge of the usb-gadget tree got a conflict in
+drivers/usb/host/ehci-tegra.c between commit 369a9a9d2af7 ("usb: host:
+ehci-tegra: Fix oops in error cleanup") from the usb tree and commit
+4261b8f3538c ("usb: host: ehci-tegra: fix PHY error handling") from the
+usb-gadget tree.
 
-John: Please take my patch of this evening entitles "[PATCH] rtlwifi: rtl8188ee: 
-Fix linker warnings" and drop the one by Chen, Chien-Chia entitled "[PATCH] 
-rtlwifi: rtl8188ee: Fix wrong header path". If we put the ../ into the header 
-paths, I'll just have to take them out later. We might as well leave them out.
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
-Larry
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/usb/host/ehci-tegra.c
+index 4f3cfb8,1d2488c..0000000
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@@ -770,19 -765,15 +770,17 @@@ static int tegra_ehci_probe(struct plat
+  	if (!irq) {
+  		dev_err(&pdev->dev, "Failed to get IRQ\n");
+  		err =3D -ENODEV;
+ -		goto fail;
+ +		goto fail_phy;
+  	}
+ =20
+  	if (pdata->operating_mode =3D=3D TEGRA_USB_OTG) {
+  		tegra->transceiver =3D
+  			devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+- 		if (!IS_ERR_OR_NULL(tegra->transceiver))
++ 		if (!IS_ERR(tegra->transceiver))
+  			otg_set_host(tegra->transceiver->otg, &hcd->self);
+ +	} else {
+ +		tegra->transceiver =3D ERR_PTR(-ENODEV);
+  	}
+- #endif
+ =20
+  	err =3D usb_add_hcd(hcd, irq, IRQF_SHARED);
+  	if (err) {
+@@@ -801,11 -792,8 +799,9 @@@
+  	return err;
+ =20
+  fail:
+- #ifdef CONFIG_USB_OTG_UTILS
+- 	if (!IS_ERR_OR_NULL(tegra->transceiver))
++ 	if (!IS_ERR(tegra->transceiver))
+  		otg_set_host(tegra->transceiver->otg, NULL);
+- #endif
+ +fail_phy:
+  	usb_phy_shutdown(hcd->phy);
+  fail_io:
+  	clk_disable_unprepare(tegra->clk);
+
+--Signature=_Thu__4_Apr_2013_15_18_45_+1100_XVBF8hBQEkFNVApt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRXP8lAAoJEECxmPOUX5FExtwP/2nEPhlhqwQ791y9zGq8fMZy
+WKf0pzPuEjEUEk2HvwrfSYC3sn8lyD6TZPJ35VD7E5jMj8WCeDeErR7rnJWQ6rgH
+LFRF480UQBZXYwmtmH1GbCr2hkA/soleZ4NRsbfBPkbC0HJQvF5Eob4MxIQJNP+e
+Hpy4r3wc5X0ltDpf1mUw6z7wnl+SZ7JxfOrqvXoJsjFc5Yk64f8AyOHEYk9pbzDn
+gpWt8Hml4Eq8oNpoy7vG02pD2Ll8yvMJwThQVQufNO1sVUKddqPKqThWuMZFB1RT
+7FhMJ33vy74OvuBDinNXmkked8EQ5Z3+rAem8B2fN04UZ/lvXTtzWsyfr9AiM1s3
+FbRyi4F7CmwOwi2sjU9xRHybtNn/zVSbZ/NlDOj6u6x07woea8TpAjpMv9U8bjZq
++s4zfsRMr8XAktiYXdJqh0aHFm8dxG6gAFzWgGg+Ct1rfn1ZHy2mlWWpamBc6lTZ
+kDgjcBEatTk/2HYdFd1cec9QZeBcziiyxaEzRVKdjJEv0Fdb2KMziQ0M2qXM+PCe
+OeoPRQeofVIzFK58m0JZCEdHrqY1FsNJfDp4MtBRMlcHH+jHq+fKycYhXEBeTYYR
+RgkY0ramdMhtyisIrYviOTK4xvNxku6KSHO/9ikoEoLoOUKAsCHS6LGAeAl3va39
+PIrCic2lj795BoGxQ83b
+=iy1S
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Apr_2013_15_18_45_+1100_XVBF8hBQEkFNVApt--
