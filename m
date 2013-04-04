@@ -1,52 +1,88 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Subject: Re: linux-next: build failure after merge of the final tree (wireless-next
- tree related)
-Date: Thu, 04 Apr 2013 14:43:42 -0500
-Message-ID: <515DD7EE.2080903@lwfinger.net>
-References: <20130404181043.c191e7f4aa3057e6eda151cc@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the akpm tree with the vfs tree
+Date: Fri, 5 Apr 2013 10:18:53 +1100
+Message-ID: <20130405101853.769d3b915cacd8a4863b7c19@canb.auug.org.au>
+References: <20130404172648.27834d12cbb68338f4b89482@canb.auug.org.au>
+	<20130403235634.6bc72c39.akpm@linux-foundation.org>
+	<20130404000253.2fc9c75d.akpm@linux-foundation.org>
+	<20130404081011.GO21522@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__5_Apr_2013_10_18_53_+1100_q0CGuO8FIiErykVS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:58870 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1764631Ab3DDTno (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Apr 2013 15:43:44 -0400
-In-Reply-To: <20130404181043.c191e7f4aa3057e6eda151cc@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:55435 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1765142Ab3DDXTE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Apr 2013 19:19:04 -0400
+In-Reply-To: <20130404081011.GO21522@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Zimmer <nzimmer@sgi.com>
 
-On 04/04/2013 02:10 AM, Stephen Rothwell wrote:
-> Hi all,
+--Signature=_Fri__5_Apr_2013_10_18_53_+1100_q0CGuO8FIiErykVS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Al,
+
+On Thu, 4 Apr 2013 09:10:11 +0100 Al Viro <viro@ZenIV.linux.org.uk> wrote:
 >
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->
-> drivers/net/wireless/rtlwifi/rtl8188ee/built-in.o: In function `.rtl92c_phy_ap_calibrate':
-> (.text+0x21d14): multiple definition of `.rtl92c_phy_ap_calibrate'
-> drivers/net/wireless/rtlwifi/rtl8192c/built-in.o:(.text+0xb1e8): first defined here
-> drivers/net/wireless/rtlwifi/rtl8188ee/built-in.o: In function `rtl_hal_pwrseqcmdparsing':
-> (.opd+0xed0): multiple definition of `rtl_hal_pwrseqcmdparsing'
-> drivers/net/wireless/rtlwifi/rtl8723ae/built-in.o:(.opd+0x11a0): first defined here
-> drivers/net/wireless/rtlwifi/rtl8188ee/built-in.o: In function `rtl92c_phy_ap_calibrate':
-> (.opd+0xe58): multiple definition of `rtl92c_phy_ap_calibrate'
-> drivers/net/wireless/rtlwifi/rtl8192c/built-in.o:(.opd+0x570): first defined here
-> drivers/net/wireless/rtlwifi/rtl8188ee/built-in.o: In function `.rtl_hal_pwrseqcmdparsing':
-> (.text+0x22164): multiple definition of `.rtl_hal_pwrseqcmdparsing'
-> drivers/net/wireless/rtlwifi/rtl8723ae/built-in.o:(.text+0x297a8): first defined here
->
-> Caused by commit f0eb856e0b6c ("rtlwifi: rtl8188ee: Add new driver").
->
-> I reverted commit 8b138d4898a0 ("rtlwifi: rtl8188ee: Enable build of new
-> driver") for today.
+> On Thu, Apr 04, 2013 at 12:02:53AM -0700, Andrew Morton wrote:
+>=20
+> > > Well perhaps the vfs tree should start paying some attention to the
+> > > rest of the world, particularly after -rc5.
+> >=20
+> > I can't even find this "lift sb_start_write() out of ->write()".  Not o=
+n fsdevel,
+> > not on lkml.  What the heck is it and why was it so important?
+>=20
+> Deadlocks around splice; see the threads re overlayfs/unionmount/aufs and
+> deadlocks in their copyup implementations.  See also XFS freeze-related
+> deadlocks, etc.
+>=20
+> The thing is, sb_start_write() is pretty high in locking hierarchy (outsi=
+de
+> ->i_mutex, etc.), but ->splice_write() and friends had it buried pretty
+> deep.  With distinctly unpleasant results, including ->..._write() instan=
+ces
+> using generic ones (which took the lock) *and* doing some IO outside of t=
+hose
+> (ext4, for example; ocfs2 also looked fishy in that respect, IIRC).
+>=20
+> The obvious solution is to lift taking that lock out of the methods, which
+> had been done.  It had been discussed on fsdevel and sat in #experimental=
+ for
+> several weeks; time for it to go into #for-next.
 
-I don't know why it is so hard to remember to do an allyesconfig build, but I 
-seem to forget. The 2.5 hours it takes on my box does not help.
+It would have been useful to put something like that in the commit message =
+...
 
-As you have probably seen, I just submitted a patch to fix the problem.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks for the report,
+--Signature=_Fri__5_Apr_2013_10_18_53_+1100_q0CGuO8FIiErykVS
+Content-Type: application/pgp-signature
 
-Larry
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRXgpdAAoJEECxmPOUX5FEfVkP/RUeL6JuiTZSoUXc02z0PcdN
+hS26kfzYp6Ziz0MUHx/rauzVqNm6+swCQqnwc8v4smzc9acBIMhIvpSl3UuAw4HO
+T673B7MYqLyJ0WwsX21ChZ9wETGY2BIXCE+mzVtAv+7LPRVX0ZRFBBgyCnsBgn6n
+v7oIIBH76eM2ZDY4f+aUNaxlVVdLlfLy3liG+vpal3pRa5WLfXxvyL3Ax0iYGRJk
+V3Td7/j175gWyOs93srej7ryNYVpk1e0BRB7wnXHEZu2HEAmW8IsDrUZYVJEQR6D
+71p06t+Vl7KzG8+R6DjKMnRIOT/iLjv5OkrKkYopLoX0wzmRwcj5vwvNAcdOJAmc
+DdVcgsqmKIKIfV4gUhImBLhF/S+NnQv3m3DegRC1j4MpeKczZIRaeuhT73H1RjzA
+TcevApShCmp3YHEHSvjilBbPBPwjEnu4I2V4M5TzX/EmtTnJtEc5Unu0lJ5eu/+N
+5LXUxWoU6EUg0+kCrfCNq3cFXLGy7jAXaoiB2z4zVA7LswvHTbqF5Vm8DNjJwuQ+
+qF0dhdsORObCrFL7SBBxqRFp/CM0UhPv7I7rmcqReHxbFwSbuZ5fDZKWzvbzxRKM
+WKoXNxmnGh8LejrPrdExnm77dS61W9uWbv8Q9XZ9x8Z8PQoch5QihZBB1Dzva6nA
+YLWeGP/utc+7lrv+dZXV
+=Yn9n
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__5_Apr_2013_10_18_53_+1100_q0CGuO8FIiErykVS--
