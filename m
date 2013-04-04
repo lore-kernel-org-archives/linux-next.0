@@ -1,115 +1,94 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: GENERIC_GPIO considered deprecated
-Date: Thu, 04 Apr 2013 09:35:58 +0900
-Message-ID: <26e401ce30cc$602e45f0$208ad1d0$%kim@samsung.com>
-References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
- <51576214.8010307@openwide.fr>
- <CAAVeFu++8YOOSxPbAaTudxSGcBomkGrakBjiVyD+XSee54TrWw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the wireless
+ tree
+Date: Thu, 4 Apr 2013 11:44:44 +1100
+Message-ID: <20130404114444.de4e40c24f4e1a0e4c0b7328@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__4_Apr_2013_11_44_44_+1100_v3v+zd8ZXeCgqXdk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:22663 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761262Ab3DDAgS convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Apr 2013 20:36:18 -0400
-In-reply-to: <CAAVeFu++8YOOSxPbAaTudxSGcBomkGrakBjiVyD+XSee54TrWw@mail.gmail.com>
-Content-language: ko
+Received: from haggis.pcug.org.au ([203.10.76.10]:53824 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932071Ab3DDAo6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Apr 2013 20:44:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Alexandre Courbot' <gnurou@gmail.com>, 'Romain Naour' <romain.naour@openwide.fr>
-Cc: 'linux-next' <linux-next@vger.kernel.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, tomasz.figa@gmail.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Gabor Juhos <juhosg@openwrt.org>, "John W. Linville" <linville@tuxdriver.com>
 
-Alexandre Courbot wrote:
-> 
-> Hi Romain,
-> 
-> On Sat, Mar 30, 2013 at 3:07 PM, Romain Naour <romain.naour@openwide.fr>
-> wrote:
-> > Hi Alex,
-> >
-> > When I read your mail, I was surprised that you were speaking about
-> GPIOs, my pathes for samsung CPUs are intended for timer sub-system.
-> >
-> > As you can see in this thread, when I send my patches "ARM: S3C24XX: Add
-> samsung-time support for s3c24xx" and "Add samsung-time support for
-> s5pc100". They didn't add "select GENERIC_GPIO".
-> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=14980
-> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=14982
-> >
-> > There is something wrong with the commit, I see that "select
-> GENERIC_GPIO" was added in my patches by mistake.
+--Signature=_Thu__4_Apr_2013_11_44_44_+1100_v3v+zd8ZXeCgqXdk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Oops, sorry about that.
+Hi all,
 
-> >
-> > I recommend you to speak directly with samsung's kernel maintainer that
-> I CC in this mail.
-> 
-Thanks...
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/wireless/rt2x00/rt2x00pci.c between commit 69a2bac8984c
+("rt2x00: rt2x00pci: fix build error on Ralink RT3x5x SoCs") from the
+wireless tree and commit 1f9061d27d3d ("drivers:net: dma_alloc_coherent:
+use __GFP_ZERO instead of memset(, 0)") from the net-next tree.
 
-> Indeed, it seems like these "select GENERIC_GPIO" have been added
-> during the merge of your patches, since I can see the line is here in
-> your patch (but not added by it). Kim, on the current next there are
-> two of these "select GENERIC_GPIO" that are added from your branch,
+The former moved the code modified by the latter into a different file,
+so I added the following merge fix patch and can carry the fix as
+necessary (no action is required).
 
-OK, I see.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 4 Apr 2013 11:42:05 +1100
+Subject: [PATCH] drivers:net: fix up for code movement from rt2x00pci.c
 
-> could you amend the patches that adds them such as they get changed
-> into "select ARCH_REQUIRE_GPIOLIB" instead? You can grep for "select
-
-I can do it for my tree but the branch already included in arm-soc tree so I think, it should be fixed with another patch. And 
-
-> GENERIC_GPIO" in arch/arm to find the offending lines. We are removing
-> GENERIC_GPIO and this work cannot be merged until you do this since it
-> would break ARM builds. Thanks!
-> 
-So how about following? If you are OK, let me take into samsung tree.
-
---------8<----------------8<--------
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: change GENERIC_GPIO to ARCH_REQUIRE_GPIOLIB
-
-When I applied regarding samsung-time patches, the "select GENERIC_GPIO"
-has been added wrong, so this patch fixes that.
-And since the GENERIC_GPIO in arch/arm/ will be gone away, this adds
-ARCH_REQUIRE_GPIOLIB for S3C24XX and S5PC100 instead.
-
-Reported-by: Alexandre Courbot <gnurou@gmail.com>
-Cc: Romain Naour <romain.naour@openwide.fr>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- arch/arm/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/rt2x00/rt2x00mmio.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 46fcfa8..a239c7e 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -770,10 +770,10 @@ config ARCH_SA1100
- config ARCH_S3C24XX
- 	bool "Samsung S3C24XX SoCs"
- 	select ARCH_HAS_CPUFREQ
-+	select ARCH_REQUIRE_GPIOLIB
- 	select CLKDEV_LOOKUP
- 	select CLKSRC_MMIO
- 	select GENERIC_CLOCKEVENTS
--	select GENERIC_GPIO
- 	select HAVE_CLK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-@@ -828,11 +828,11 @@ config ARCH_S5P64X0
- 
- config ARCH_S5PC100
- 	bool "Samsung S5PC100"
-+	select ARCH_REQUIRE_GPIOLIB
- 	select CLKDEV_LOOKUP
- 	select CLKSRC_MMIO
- 	select CPU_V7
- 	select GENERIC_CLOCKEVENTS
--	select GENERIC_GPIO
- 	select HAVE_CLK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
--- 
-1.7.10.4
+diff --git a/drivers/net/wireless/rt2x00/rt2x00mmio.c b/drivers/net/wireles=
+s/rt2x00/rt2x00mmio.c
+index d84a680..9fe9a36 100644
+--- a/drivers/net/wireless/rt2x00/rt2x00mmio.c
++++ b/drivers/net/wireless/rt2x00/rt2x00mmio.c
+@@ -123,12 +123,10 @@ static int rt2x00pci_alloc_queue_dma(struct rt2x00_de=
+v *rt2x00dev,
+ 	 */
+ 	addr =3D dma_alloc_coherent(rt2x00dev->dev,
+ 				  queue->limit * queue->desc_size,
+-				  &dma, GFP_KERNEL);
++				  &dma, GFP_KERNEL | __GFP_ZERO);
+ 	if (!addr)
+ 		return -ENOMEM;
+=20
+-	memset(addr, 0, queue->limit * queue->desc_size);
+-
+ 	/*
+ 	 * Initialize all queue entries to contain valid addresses.
+ 	 */
+--=20
+1.8.1
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__4_Apr_2013_11_44_44_+1100_v3v+zd8ZXeCgqXdk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRXMz8AAoJEECxmPOUX5FExBIP/jewPg6JVgi3GQuJ5zp4GFmv
+thlXnE13eSG/g5O3AiuMCM+QXwhtuWMTHUSn8KXLPqZQqur6QrTYYAtWUFKB3i6u
+xTSlx8DU722PSEFhkbdIjnoeKBqFHatQrk4CWk2GRBFGdvpZjH+bzSlKvqYK49Dr
+fYU6i/labWNTgpUY7apzdkFNuKmYRBrQmwZwGYNfMX4LLWkR61oMO6jzyNRFWj8f
+G3zQqnc+8hzq9DkPzPcBS7/C3gWjOb4fZPfVsydYdwt6WGSPZ+lZdyxD00+n9MhH
+gNQVaC1vkf6rkIs+24OHaK9l2seZz3B181CZr0n8JWkcBlSh3euOa+0B25+BJRZ6
+0aZNA5RoDglwgKMDI9n2Qlcfm+5XalqVMMk9A/QvwHc84qO1uCTYqjV0XXklhapI
+NZjcwvbay8o8FJ+q5L76SnbgGE8Ko5QI4Qndl87NzJvstbZarUkpm4ZZR/+FuBhW
+Ih4KLMp/toeM5Rpy3DYFKIuOTC97IvYT45QWRunecUVGF9QIdi9oAKcqUeN9gJ0g
+JIV8evPWGjvGf/+Aq31BusZFErKsmnweiJtPDSCb2aEVroM0HS5zjtHq8TxPx53e
+rOjqeSqvNLlV6HAE7hHXFfljWWaV3adjmyq5opysYncH0pOZmdWR48kkdv2bUvj6
+on2CSbvYhrrl0j8TJPBc
+=9fJF
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Apr_2013_11_44_44_+1100_v3v+zd8ZXeCgqXdk--
