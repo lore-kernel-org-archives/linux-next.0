@@ -1,55 +1,40 @@
-From: =?ISO-8859-15?Q?Luk=E1=A8_Czerner?= <lczerner@redhat.com>
-Subject: Re: linux-next: build failure after merge of the ext4 tree
-Date: Thu, 4 Apr 2013 15:27:34 +0200 (CEST)
-Message-ID: <alpine.LFD.2.00.1304041526290.10110@localhost>
-References: <20130404104319.42d97a8ad7badf00af7ef1e0@canb.auug.org.au> <alpine.LFD.2.00.1304041516160.30499@localhost> <20130404132048.GB4756@thunk.org>
+From: Nathan Zimmer <nzimmer@sgi.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the vfs tree
+Date: Thu, 4 Apr 2013 10:43:06 -0500
+Message-ID: <515D9F8A.2060505@sgi.com>
+References: <20130404172648.27834d12cbb68338f4b89482@canb.auug.org.au> <20130403235634.6bc72c39.akpm@linux-foundation.org> <20130404080248.GN21522@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323328-1351506952-1365082057=:10110"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:39562 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760184Ab3DDN1o (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Apr 2013 09:27:44 -0400
-In-Reply-To: <20130404132048.GB4756@thunk.org>
+Received: from relay2.sgi.com ([192.48.179.30]:59574 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1761680Ab3DDPm5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Apr 2013 11:42:57 -0400
+In-Reply-To: <20130404080248.GN21522@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: =?ISO-8859-15?Q?Luk=E1=A8_Czerner?= <lczerner@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-1351506952-1365082057=:10110
-Content-Type: TEXT/PLAIN; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-
-On Thu, 4 Apr 2013, Theodore Ts'o wrote:
-
-> Date: Thu, 4 Apr 2013 09:20:48 -0400
-> From: Theodore Ts'o <tytso@mit.edu>
-> To: Lukáš Czerner <lczerner@redhat.com>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org,
->     linux-kernel@vger.kernel.org
-> Subject: Re: linux-next: build failure after merge of the ext4 tree
-> 
-> On Thu, Apr 04, 2013 at 03:18:32PM +0200, Lukáš Czerner wrote:
-> > I am afraid I do not understand why this is happening. The commit
-> > simply replaces ext4_get_group_no_and_offset() with
-> > ext4_get_group_number() which has the similar definition in the same
-> > header file. Maybe someone knows what this is all about ?
-> 
-> I've fixed this up already in the ext4 tree.  The problem is that you
-> defined the function ext4_get_group_number() as "inline", but the
-> function body was only in fs/ext4/balloc.c.  I have no idea why gcc
-> wasn't complaining about this on x86, but the fix was to simply
-> declare the function as "extern", not as "inline".
-> 
-> 						- Ted
-> 
-
-Ok, that's why I have not seen it in ext4 tree :). I do not know why
-I did it, but it was obviously wrong.
-
-Thanks for fixing it.
--Lukas
---8323328-1351506952-1365082057=:10110--
+On 04/04/2013 03:02 AM, Al Viro wrote:
+> On Wed, Apr 03, 2013 at 11:56:34PM -0700, Andrew Morton wrote:
+>> On Thu, 4 Apr 2013 17:26:48 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>>> Hi Andrew,
+>>>
+>>> Today's linux-next merge of the akpm tree got a conflict in
+>>> fs/proc/generic.c between several commits from the vfs tree and commit
+>>> "procfs: improve scaling in proc" from the akpm tree.
+>>>
+>>> I just dropped the akpm tree patch (and the following
+>>> "procfs-improve-scaling-in-proc-v5") as the conflicts are a bit complex.
+>> Well perhaps the vfs tree should start paying some attention to the
+>> rest of the world, particularly after -rc5.
+> I'm sorry, but... not in this case.  There are seriously nasty races around
+> remove_proc_entry()/proc_reg_release() and the whole area needs a rewrite.
+> Tentative fix is in vfs.git#experimental; I hadn't pushed it into #for-next
+> yet, but Nathan's patches are definitely going to buggered by any realistic
+> solution.
+In this case I will resubmit my first patch for moving the kfree in 
+proc_reg_release.
