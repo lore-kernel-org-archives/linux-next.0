@@ -1,62 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm tree with the vfs tree
-Date: Thu, 4 Apr 2013 17:12:11 +1100
-Message-ID: <20130404171211.3d359e39ca54e074f122d541@canb.auug.org.au>
+Date: Thu, 4 Apr 2013 17:17:39 +1100
+Message-ID: <20130404171739.4ca53305020a2422e0c00f64@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__4_Apr_2013_17_12_11_+1100_lm2EqbNn1KmxB7VV"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58216 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756421Ab3DDGMO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Apr 2013 02:12:14 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Thu__4_Apr_2013_17_17_39_+1100_AlzKg9dcn3CzinAu"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__4_Apr_2013_17_12_11_+1100_lm2EqbNn1KmxB7VV
+--Signature=_Thu__4_Apr_2013_17_17_39_+1100_AlzKg9dcn3CzinAu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got conflicts in mm/filemap.c,
-fs/xfs/xfs_file.c, fs/splice.c, fs/ocfs2/file.c, fs/ntfs/file.c,
-fs/fuse/file.c, fs/cifs/file.c and fs/btrfs/file.c between commit
-36bd5dc0c4e2 ("lift sb_start_write/sb_end_write out of ->aio_write()")
-from the vfs tree and commit "fs: return EAGAIN when O_NONBLOCK write
-should block on frozen fs" from the akpm tree.
+Today's linux-next merge of the akpm tree got a conflict in fs/coredump.c
+between commit d9fe6ea81efe ("lift sb_start_write() out of ->write()")
+from the vfs tree and commit "coredump: sanitize the setting of
+signal->group_exit_code" from the akpm tree.
 
-The former was removing the code modified by the letter, so I just
-dropped the akpm tree patch and the following "ocfs2: add freeze
-protection to ocfs2_file_splice_write()".
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__4_Apr_2013_17_12_11_+1100_lm2EqbNn1KmxB7VV
+diff --cc fs/coredump.c
+index 69d5141,4201338..0000000
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@@ -636,11 -641,8 +639,10 @@@ void do_coredump(siginfo_t *siginfo
+  		goto close_fail;
+  	if (displaced)
+  		put_files_struct(displaced);
++=20
+ +	file_start_write(cprm.file);
+- 	retval =3D binfmt->core_dump(&cprm);
+- 	if (retval)
+- 		current->signal->group_exit_code |=3D 0x80;
++ 	core_dumped =3D binfmt->core_dump(&cprm);
+ +	file_end_write(cprm.file);
+ =20
+  	if (ispipe && core_pipe_limit)
+  		wait_for_dump_helpers(cprm.file);
+
+--Signature=_Thu__4_Apr_2013_17_17_39_+1100_AlzKg9dcn3CzinAu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRXRm7AAoJEECxmPOUX5FExDEP/2OSVv/twwkkewBAuBkAG51I
-a60ZaF9WPDWB4WFj8gy5Dj8snwIrS1jbq0SEh4dxF0gQqaZhskQvZv1V4XTlRzD9
-shGq+6cTJOyhj8h28m3GYJ6/cE+2lD6tNLwm5Pi4K75gvmm9UL/R1tN7ybwvV4IN
-4kzxPloqmRHgtG+buxpd47bGocJzDuZyJfVUra4mgwiDj9Yf794HVVD5X+9NwBzp
-ZU3qc7z+rBUphcNztFv40IE2YjC7u4h0xdFdcw2isp44VitlpXUfwQYuILy1Omvs
-dMk9UsOHnB1LWzt+FUuCb4ENHeoXCMiz0xcVqhuCTQFxg4IQS97v5wbrrM5RGYYD
-WoRfPQnmL6aT0GqnF2ZaGkmLiAgYHrLJ8f/WD8DW6uAZuXd6BcQSDNz9zGo3KPX7
-pyq9cGyGwUeE/WLVO+/+5HKCQzV+HpBIjw56SMsRgaFRsHlCOYH6qFPjD1qrvdYU
-e4DKb6XvyV+Vb8taKkFe8tSMS7o3QAN6DL7opB79TYFIF0uMP0D8b2mD+2bS41tR
-B1eHGe8OpduG9xSBJ4thsoYHfgkX1PhRAyTSPzQxeZpZXQlduApqt6akTklF9pld
-ZIJ9w2vawlWC0VaPU3AKzRR3v/A8yNdEtczJ/CsMWqZQq4UYMC9vMwdXdFwH9Dbq
-aQT4jHq49JLmjD584n9L
-=shJe
+iQIcBAEBCAAGBQJRXRsDAAoJEECxmPOUX5FEXz0P/2eWwUU57VM0hNBheui3z5UI
+vV8MjLqUFaAj5EIgp+DNgUKsHj8q7jEVb43WwW4NSwO0nNb2T6U4fHCHse/YhyoF
+vOPVQkQ47KjA6523pUzqpmObQNrKio/b9uzTWz+atWVB5GP1rXVLoGGnBBARS3CS
+tP6DDE5KDNJU8058ZM4qqM2vMPFdDr84eIidyHVEJfYIiQUBsrCR44T8s1dWUycD
+y3cQYdHXHP1RtMZ+W2/60LU6nbfiRU9wAJxofzNnMKsj15wglPCaLKXZ930Ve+QI
+YdHWEiM2jqob0BEL7TGcVaqzFzWs5FNo8jjPmH8bC5ZGR3aEMWEqTVtrSmkkjEFq
+fQcheh+Sv9U8ndmtsRMJ7hpLr9IkJKypYL8+GdDYuFgIyN28Z0l42xIuHj/6UN9X
+6mzmirFsRXHEfSFGuNinhJDTOzZkI3uCr7G0GcIx5L1vppvoVSkjGbcEFAZ5hkbF
+hsBjwy3xVcbEIsZBNYCJlFdkHZrKQi+1B6dquMbFmhsX4yq8GES2cZbbCSsFCP+2
+KMZgVMDzDahATQkA5ZgSDvDFyIXzdgsnIM4yrXYNMTJ7mcBdYGIf4vA50FtwyZj8
+c/IxmtTBEmOoS3Is3KqVOuscWyJRcvlPQ+AM/Zzes+H8U/v9sLKlu1I02tVf0VbN
+uahsCuqNzCReqHNUhMJJ
+=D0SE
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Apr_2013_17_12_11_+1100_lm2EqbNn1KmxB7VV--
+--Signature=_Thu__4_Apr_2013_17_17_39_+1100_AlzKg9dcn3CzinAu--
