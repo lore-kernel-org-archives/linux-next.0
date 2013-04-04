@@ -1,107 +1,99 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: linux-next: manual merge of the usb-gadget tree with the usb tree
-Date: Thu, 4 Apr 2013 08:27:30 +0200
-Message-ID: <20130404062730.GA4806@avionic-0098.mockup.avionic-design.de>
-References: <20130404151845.406517e19f29380ccb90ac35@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Thu, 4 Apr 2013 17:44:50 +1100
+Message-ID: <20130404174450.0ffe81ac6c994dcce442f88d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__4_Apr_2013_17_44_50_+1100_A.8zfjwGjH8bi/7r"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:51743 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755698Ab3DDG1g (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Apr 2013 02:27:36 -0400
-Content-Disposition: inline
-In-Reply-To: <20130404151845.406517e19f29380ccb90ac35@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54357 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1763496Ab3DDGpA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Apr 2013 02:45:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry@gilfi.de>, Greg KH <greg@kroah.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Kent Overstreet <koverstreet@google.com>
 
-
---tKW2IUtsqtDRztdT
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Thu__4_Apr_2013_17_44_50_+1100_A.8zfjwGjH8bi/7r
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 04, 2013 at 03:18:45PM +1100, Stephen Rothwell wrote:
-> Hi Felipe,
->=20
-> Today's linux-next merge of the usb-gadget tree got a conflict in
-> drivers/usb/host/ehci-tegra.c between commit 369a9a9d2af7 ("usb: host:
-> ehci-tegra: Fix oops in error cleanup") from the usb tree and commit
-> 4261b8f3538c ("usb: host: ehci-tegra: fix PHY error handling") from the
-> usb-gadget tree.
->=20
-> I fixed it up (I think - see below) and can carry the fix as necessary
-> (no action is required).
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc drivers/usb/host/ehci-tegra.c
-> index 4f3cfb8,1d2488c..0000000
-> --- a/drivers/usb/host/ehci-tegra.c
-> +++ b/drivers/usb/host/ehci-tegra.c
-> @@@ -770,19 -765,15 +770,17 @@@ static int tegra_ehci_probe(struct plat
->   	if (!irq) {
->   		dev_err(&pdev->dev, "Failed to get IRQ\n");
->   		err =3D -ENODEV;
->  -		goto fail;
->  +		goto fail_phy;
->   	}
->  =20
->   	if (pdata->operating_mode =3D=3D TEGRA_USB_OTG) {
->   		tegra->transceiver =3D
->   			devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
-> - 		if (!IS_ERR_OR_NULL(tegra->transceiver))
-> + 		if (!IS_ERR(tegra->transceiver))
->   			otg_set_host(tegra->transceiver->otg, &hcd->self);
->  +	} else {
->  +		tegra->transceiver =3D ERR_PTR(-ENODEV);
->   	}
-> - #endif
->  =20
->   	err =3D usb_add_hcd(hcd, irq, IRQF_SHARED);
->   	if (err) {
-> @@@ -801,11 -792,8 +799,9 @@@
->   	return err;
->  =20
->   fail:
-> - #ifdef CONFIG_USB_OTG_UTILS
-> - 	if (!IS_ERR_OR_NULL(tegra->transceiver))
-> + 	if (!IS_ERR(tegra->transceiver))
->   		otg_set_host(tegra->transceiver->otg, NULL);
-> - #endif
->  +fail_phy:
->   	usb_phy_shutdown(hcd->phy);
->   fail_io:
->   	clk_disable_unprepare(tegra->clk);
+Hi Andrew,
 
-Looks good to me, thanks.
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Thierry
+fs/aio.c: In function 'aio_rw_vect_retry':
+fs/aio.c:1106:6: error: 'opcode' undeclared (first use in this function)
 
---tKW2IUtsqtDRztdT
+Caused by commit 36bd5dc0c4e2 ("lift sb_start_write/sb_end_write out of
+->aio_write()") from the vfs tree interacting with commit 61ead3d450a4
+("aio: kill ki_retry") from the akpm tree.
+
+I applied the following fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 4 Apr 2013 17:41:59 +1100
+Subject: [PATCH] aio: kill ki_retry merge fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/aio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index 162b418..5b7ed78 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1103,7 +1103,7 @@ static ssize_t aio_rw_vect_retry(struct kiocb *iocb, =
+int rw, aio_rw_op *rw_op)
+ 	if (iocb->ki_pos < 0)
+ 		return -EINVAL;
+=20
+-	if (opcode =3D=3D IOCB_CMD_PWRITEV)
++	if (rw =3D=3D WRITE)
+ 		file_start_write(file);
+ 	do {
+ 		ret =3D rw_op(iocb, &iocb->ki_iovec[iocb->ki_cur_seg],
+@@ -1117,7 +1117,7 @@ static ssize_t aio_rw_vect_retry(struct kiocb *iocb, =
+int rw, aio_rw_op *rw_op)
+ 	} while (ret > 0 && iocb->ki_left > 0 &&
+ 		 (rw =3D=3D WRITE ||
+ 		  (!S_ISFIFO(inode->i_mode) && !S_ISSOCK(inode->i_mode))));
+-	if (opcode =3D=3D IOCB_CMD_PWRITEV)
++	if (rw =3D=3D WRITE)
+ 		file_end_write(file);
+=20
+ 	/* This means we must have transferred all that we could */
+--=20
+1.8.1
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__4_Apr_2013_17_44_50_+1100_A.8zfjwGjH8bi/7r
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRXR1SAAoJEN0jrNd/PrOhOhYQAJsFpwzSmw9HNGC50ap95a5B
-J0nn0tH1HTYtNjlS0KuuNW0bqQ7PqDL3R/oFHK7oeOOr38oA1p4E9PvFR/ly+q+m
-r+wT4YOY8x0P8QEL2wGjJRcLmBDAWT+G07P4UHRwBQgEzLgtyj2AUBwKYAzifYq9
-3vd+cD4jTg5gVoAnyttZv85tcK0FL6DpOQCqAIyO3t7MSeHpKG4bxdQVnKtsCF5k
-12gPjb0YGbexN72ldfjb9hMwxX/PzzLHVZxgH7JRNWoQKnvpEDcyy6CN8MMbXf7Z
-XJgjMsbNFV40wUcq7s2Xn+1Of2jjDPhjvLwhpuEG1vpa6LWF4bSNfkWFtPCWMWbX
-9qpMRJwy26g9YoTRAsUMiHSXH665St5y4REwOx8Ul/IL6iu14qQys0cp2Am2yCSp
-Zeaw9x2QxLnhcF0Fi7IXG3Hb6oclMY18I5lChib2Nb0KcKvIcr6/NwlIaSA6N0m+
-T1FQ5tif0Kfk1cIuntq3CT3m4Lhgt4cGoj1RdTmPU8E7X7nOjD04YBtcVVL3AV8+
-cEBOp+LJ/5PSf2/Hkqaij2jy/HUN3PnrQlzMiPJSzuJVN7uk4M8kbaZcC113QOVw
-29+D/P20Do+WWER+MM6YK5iNAAs1OwrdThsX0WqDyf/LrRSWs8musdxZYco4xRGS
-qyl9r8cOsNREJs7I7Q/e
-=BL2A
+iQIcBAEBCAAGBQJRXSFiAAoJEECxmPOUX5FEHmUQAKeIR02SzwPOnJTZ69RLgyPd
+xsdqCS4QW5mqZ9Z+ghr73BImPBC8vYJSXO6ovItYufMpbOrCR0lElBzG92ro1RCW
+siAKF16EW4/GvSStmEHfu3JlxShWw5QQmWdRmZjfDVIgf2gJ8SKpN0SE/0UkM31y
+vNunlr+bTtQNk1rxpY0s3yZg100SZzhwbFHp8M+wFUkJ07m6sh+aAaOhHGlix3B3
+NXV0qhKWN7hmSvez3Oq1LtcMg7ZUXltTTcIMp1ibgG8VF425d14SkUvR7v+iN1fv
+XBqe5qxsSRqpsUcPdXMgmoyfw6KUr3RAiteWDeyNgeKyA/W3ASpsCIyxz+DecsJR
+pHwHVdEhrwfHOaY3GNZ4crxysUkFW0aL0wJCwwo9KZzlVnyT/eJ5UuSPHfZd4ILx
+3MzGqgpRaoENRrq/qLiit8PSrwThasVnSwFuwgaCHxJ42hjDZSsf7iLQ1mq0kmVX
+wh+AVolWwnyxnDfqrdd0zUMF2hdL60rG7SfI/f6xsM6JQQKvluuQMCVeotdeRy0/
+obw03QtVqQG032Tk72YCkuNdo8Btz1KMnZgZ29PuXMH5dRIjUUnDEG6br8Y5y4+0
+N2uxlH2EMj5r4kIHC3p9bGC5bZJGbmM343KhAebVnjmiWBJAEkzSRmUvamxokDZj
+JqmywPcY+s5EETVgK0Y7
+=rVdn
 -----END PGP SIGNATURE-----
 
---tKW2IUtsqtDRztdT--
+--Signature=_Thu__4_Apr_2013_17_44_50_+1100_A.8zfjwGjH8bi/7r--
