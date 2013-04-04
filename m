@@ -1,56 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the staging tree with the vfs tree
-Date: Thu, 4 Apr 2013 15:40:17 +1100
-Message-ID: <20130404154017.baa42c6bcef82c4cbc750646@canb.auug.org.au>
+Date: Thu, 4 Apr 2013 15:43:29 +1100
+Message-ID: <20130404154329.d0c983568da9650d5dcb31bd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__4_Apr_2013_15_40_17_+1100_bT_/Y+cHcCg8.lmm"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Thu__4_Apr_2013_15_43_29_+1100_zPYyW3.SRIQbcM7A"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:41689 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756088Ab3DDEna (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Apr 2013 00:43:30 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Zimmer <nzimmer@sgi.com>, Al Viro <viro@zeniv.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
---Signature=_Thu__4_Apr_2013_15_40_17_+1100_bT_/Y+cHcCg8.lmm
+--Signature=_Thu__4_Apr_2013_15_43_29_+1100_zPYyW3.SRIQbcM7A
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/dgrp/dgrp_specproc.c between commit 464b4fd02caa ("dgrp
-procfs fixes, part 2") and various other commits from the vfs tree and
-commit 433121c6ef51 ("staging: dgrp: cleanup sparse warnings") from the
-staging tree.
+Today's linux-next merge of the staging tree got conflicts in
+drivers/staging/ccg/f_fs.c and drivers/staging/ccg/rndis.c between
+commits 465bced2e3ed ("ccg: don't bother with fops->owner") and
+4dfac87dca02 ("procfs: new helper - PDE_DATA(inode)") from the vfs tree
+and commit 515e6dd20b3f ("Staging: ccg: delete it from the tree") from
+the staging tree.
 
-I just used the version from the vfs tree and can carry the fix as
+The latter just deletes the files, so I did that and can carry the fix as
 necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__4_Apr_2013_15_40_17_+1100_bT_/Y+cHcCg8.lmm
+--Signature=_Thu__4_Apr_2013_15_43_29_+1100_zPYyW3.SRIQbcM7A
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRXQQxAAoJEECxmPOUX5FECeAP/A9NxEKjQlNbe3YBMF2OpsmZ
-XAUKIbtHGXxbnMig81agmXGCO5xpmNbqRnZ1SYU5Q6Dn2I2ZE+ueaZP/3OOwawX2
-lJm1zcJGUTLesfUF7g7G+nmZJmGj2E8pLuf/K9WLIcwW0P+neqJwEjj/3ICnf2Pg
-Ak63XB5gnB6IuMR5QmvC31FdavZfwebb6e+xF2L27F6nV/WtZdNG2JP/BLcIlT9j
-ILzSrUbnQCPTpNOqvXcCRkehTXr6r75LbntV/LSpnAD5tieaKTy1H9CfaL5WlkrK
-LPyMoEZiqpgZaejvrn73DJ3MRTwoNMD2GTIUp2ezEwJKPNQ++igO9xWo5Pr9ERgm
-8uhPq0FU+9YgUH5Cszt67S/g2KyDcGZ0Ckw9VRh9336U3zoxWPEX/Afrh30Yj8aA
-Ra628c58Jtabw5IlURUHgvfySaAOpuo/fUrdEPlWRAhV/vcurntq7bur+1zF9D2e
-HZoO7kvRZUgh5EzVB4i8h+HJ6+qUMj45I0BKQ+Zy2EpuhwqqeJ5Gmjq1mJHgDILV
-MCY0N007lb5C7fU6/QSeKL6t3wGIGHe7kDpBw0FgQLsqszU6xu/vYY+DGxwm5xun
-mC9+pQEeDJq11pIOsbAdPehF1kSbrCnkXNZLwAFrJJRSDkdmeDpxPtGrZ1UcN3T4
-xm0w5wVBuPyK32BjdwmE
-=5tc+
+iQIcBAEBCAAGBQJRXQTxAAoJEECxmPOUX5FEilEP/0I1/q/DOqiM4g5IUkCsth1w
+q+pvU+DLSYv5Yk5+Hl9EMk9QemDWEXkOsdgt9yWvbHRd+0O78o4KX+Gjc0EFIfud
+wi6QYjUindxcARPJTlemZly+AXIzVjghrUP+gZ7RdtxCIpOkJvvJerqzR6pNuLaF
+Lhajo8Rcl1GUX8aDq2C4dqE57+UsyKwsRGWONJBKRAi84VjZEVTkYI2yMGaRA/36
+67ft0JTr7HetvtQJnxDtHFLJiR6CRO5rB7+Ed9urz9aj7+kVC4UfN8Bor7IYArV7
+gt5NjzaArmxEP//9UkxDnsYtkCQXEYdYp/a6NYkK9g408ukr6963c59YOZFehSQ5
+6rjbvqMxFFgWJXN5sEupz3JW9U4TS+8Fo2aXsjPcGRKm8omei7hOCsyQpCF9chXI
+79KyVeIfIgesk961wDXnUZ5EghIl9Bur1eSJvHnMmnFACKT4mFZ2YsbMuHiCswQ3
+1gUMXZ7HgstF32f3SHXAWzXfu0W7keRk0L2zeHAQ7YIPwYtmgrreVieOHMdPezOr
+yGuyV4HYcQ0EA19AV9KHIV6Gy/wakKdjXEZN5PQlDq71ebRcnZXG2eYBQnLoPvcz
+PJ7J+9DDiNOOSMuVMnDWPwfe7RCKiVbmQo2fTJuGP5tZTloJD3iNBu4Y7cdpvPbF
+nzYvwBwCEEuA8+8gNP+r
+=3JQC
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Apr_2013_15_40_17_+1100_bT_/Y+cHcCg8.lmm--
+--Signature=_Thu__4_Apr_2013_15_43_29_+1100_zPYyW3.SRIQbcM7A--
