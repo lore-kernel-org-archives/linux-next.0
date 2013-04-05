@@ -1,64 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the xilinx
- tree
-Date: Fri, 5 Apr 2013 15:34:53 +1100
-Message-ID: <20130405153453.75b76d68fe9adc6e981e02fb@canb.auug.org.au>
-References: <20130405153335.baf29606a97b1bee415f3546@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the pinctrl tree
+Date: Fri, 5 Apr 2013 15:42:03 +1100
+Message-ID: <20130405154203.4069187c95a65ab74a2590a0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__5_Apr_2013_15_34_53_+1100_al/L1eky5RHizf52"
+ boundary="Signature=_Fri__5_Apr_2013_15_42_03_+1100_R0GGTqAssWKrFqqB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52091 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44872 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750890Ab3DEEez (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Apr 2013 00:34:55 -0400
-In-Reply-To: <20130405153335.baf29606a97b1bee415f3546@canb.auug.org.au>
+	with ESMTP id S1750738Ab3DEEmG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Apr 2013 00:42:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, John Linn <John.Linn@xilinx.com>, Michal Simek <michal.simek@xilinx.com>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Fri__5_Apr_2013_15_34_53_+1100_al/L1eky5RHizf52
+--Signature=_Fri__5_Apr_2013_15_42_03_+1100_R0GGTqAssWKrFqqB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Shawn,
 
-On Fri, 5 Apr 2013 15:33:35 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/mach-spear/spear13xx.c between commit c79e33b3e828 ("ARM:
-> smp_twd: convert to use CLKSRC_OF init") from the xilinx tree and commit
-> 2b9c613c4ee1 ("ARM: spear: move generic.h and pl080.h into private dir")
-> from the arm-soc tree.
+Today's linux-next merge of the imx-mxs tree got a conflict in
+drivers/pinctrl/Makefile between commit 62194200e5e3 ("pinctrl: remove
+pxa pinctrl driver") from the pinctrl tree and commit b8979245b6ff
+("pinctrl: add pinctrl driver for imx6dl") from the imx-mxs tree.
 
-BTW, that xilinx tree commit has no "Signed-off-by" for the committer ...
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__5_Apr_2013_15_34_53_+1100_al/L1eky5RHizf52
+diff --cc drivers/pinctrl/Makefile
+index 82db76c,8bdaf23..0000000
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@@ -21,7 -21,10 +21,8 @@@ obj-$(CONFIG_PINCTRL_IMX35)	+=3D pinctrl-
+  obj-$(CONFIG_PINCTRL_IMX51)	+=3D pinctrl-imx51.o
+  obj-$(CONFIG_PINCTRL_IMX53)	+=3D pinctrl-imx53.o
+  obj-$(CONFIG_PINCTRL_IMX6Q)	+=3D pinctrl-imx6q.o
++ obj-$(CONFIG_PINCTRL_IMX6Q)	+=3D pinctrl-imx6dl.o
+ -obj-$(CONFIG_PINCTRL_PXA3xx)	+=3D pinctrl-pxa3xx.o
+  obj-$(CONFIG_PINCTRL_FALCON)	+=3D pinctrl-falcon.o
+ -obj-$(CONFIG_PINCTRL_MMP2)	+=3D pinctrl-mmp2.o
+  obj-$(CONFIG_PINCTRL_MXS)	+=3D pinctrl-mxs.o
+  obj-$(CONFIG_PINCTRL_IMX23)	+=3D pinctrl-imx23.o
+  obj-$(CONFIG_PINCTRL_IMX28)	+=3D pinctrl-imx28.o
+
+--Signature=_Fri__5_Apr_2013_15_42_03_+1100_R0GGTqAssWKrFqqB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRXlRtAAoJEECxmPOUX5FE2eQP/0APDyuee9yeqdsmjyFT8D0C
-R1VTHqD1AOtBeVQiEe4MVvYJ44cCR+T5G188RVRa7GydQRln2NFSDvdPzi1yE+mL
-x9iL0lp2ZOzrCG5+lAwp/2/1Zv/Db3EqWfT1FDJAFgUqIadQzTZif89NKkaPWcVa
-N4fYKz4rMOrcQ9vJy9VgVfAsBVobXkw7S6JunR//zn3ohov84v5q0zv/AogcRrpM
-GTQgIjOBVqNr9UOwbyXYAGuJ0wYqdW/B1+rNoLuqp9YGAufsz0jvCzjvMkuWSlz9
-NCoD/HPcrUdk9xNnCETz7NFKZ3ANwoPRuk5BHga1wTP0Npolx82VZkltJmjLsjlP
-fgV9PR08UK2LluwZ8sAMxV2K2SS4dJ6fiB99RHXcNM+LoGwzVcMe529hH6AZSCF1
-CLloFPsfah0re4p3fnHduSXgXYnA8GE59qRPhxs9/wm7fsnCkShx2p0mIQjAi1jn
-JYXiq20b+14Ncm1bIutxRBQd3vMuuygb0riCgobk81O3P+3wURy1Wx0ZgIYSsqi7
-ITaxYoBriRflK653Kue0fRQ95oXGfx31UfCnU4wt8X+xYUxs9ND96EzMktiSUiAS
-PL+Bf/1Fva1U3fI6ysxuoJ63AUwHj+6ERc0Isby0qz/a59iQp3Vk+541CL7Dw01N
-Ztde0s9Y4LNWmYtOs7f9
-=+cFV
+iQIcBAEBCAAGBQJRXlYbAAoJEECxmPOUX5FEFVEP/2i3bSXmOw4a1HD7YNLwj9Gw
+aCtH6SBmAjXaWac9ngXA+7DF/r5gsqanybvo65ACRFkhw1acHB0owNLssjfA6apu
+SNUNQ37itlXeLMel4QbtqHtQm3qevI+QvfMQitcziGJpzA/UD5zepqtLYlPtqEU0
+gkRm5NS2IPQ5cPd9+AH/t6nvPlETOa4Hs9XStRhrGhq76TaT51qkZjbtzyX4pdTp
+kctp3knhkRUEo0BdKs6txgSgX8swEZx1GrAyWMJcNWMOre/XUF7LosAuBLWjEYbY
+bEVTqgeYw4aqlBye8O5y4P6AFGzgzaQWJgIClFxy4iVaRMqGQ6pHme9vode1KD8W
+QpOw/P/nzZpacIqFTXgJ/OEGS1X22OqUlZ0/euo20enfVSA7fPi6NFHn9248jpX2
+52QFirf4Tlvq4MAF1CepLqEgN9iO8BF9ydIcn2ecRofJV4cuiJcHsJIdHFzDMag4
+Au0YiBARrqDDuBiJrbyQYQFNYuwK8q9ueEtN1S6pLcTO3XGJ+sMAo3wFSwKLrr3I
+EM5AqwBWmTgQczR0sHhlpm1vTou5bay4hl7VOzfeaFLD125VDF9TKb5FbL5/kv4I
+epOa8Cxvf/a6RKWYqm+d+e/r4/UBm54PcD2mxyJ5/tMgVUBYLrbLgNGgkXxa067v
+q59WgevbHjQd8fEsrud7
+=hnKq
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__5_Apr_2013_15_34_53_+1100_al/L1eky5RHizf52--
+--Signature=_Fri__5_Apr_2013_15_42_03_+1100_R0GGTqAssWKrFqqB--
