@@ -1,90 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vhost tree with the kvm tree
-Date: Fri, 5 Apr 2013 15:12:52 +1100
-Message-ID: <20130405151252.23846e5ad5d6ec7faa49b50f@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the xilinx tree
+Date: Fri, 5 Apr 2013 15:33:35 +1100
+Message-ID: <20130405153335.baf29606a97b1bee415f3546@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__5_Apr_2013_15_12_52_+1100__daEdzxNJwD+yZtu"
+ boundary="Signature=_Fri__5_Apr_2013_15_33_35_+1100_Hh0d19sgnc5J/3Fs"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56215 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58374 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751383Ab3DEEMy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Apr 2013 00:12:54 -0400
+	with ESMTP id S1750723Ab3DEEds (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Apr 2013 00:33:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cornelia Huck <cornelia.huck@de.ibm.com>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@redhat.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, John Linn <John.Linn@xilinx.com>, Michal Simek <michal.simek@xilinx.com>
 
---Signature=_Fri__5_Apr_2013_15_12_52_+1100__daEdzxNJwD+yZtu
+--Signature=_Fri__5_Apr_2013_15_33_35_+1100_Hh0d19sgnc5J/3Fs
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+Hi all,
 
-Today's linux-next merge of the vhost tree got a conflict in
-include/uapi/linux/kvm.h between commit 2b83451b45d7 ("KVM: ioeventfd for
-virtio-ccw devices") from the kvm tree and commit 4697e2cddfe6 ("kvm: add
-PV MMIO EVENTFD") from the vhost tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-spear/spear13xx.c between commit c79e33b3e828 ("ARM:
+smp_twd: convert to use CLKSRC_OF init") from the xilinx tree and commit
+2b9c613c4ee1 ("ARM: spear: move generic.h and pl080.h into private dir")
+from the arm-soc tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (just used the arm-soc tree version) and can carry the fix
+as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/uapi/linux/kvm.h
-index 74d0ff3,61783ee..0000000
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@@ -449,15 -449,20 +449,23 @@@ enum=20
-  	kvm_ioeventfd_flag_nr_datamatch,
-  	kvm_ioeventfd_flag_nr_pio,
-  	kvm_ioeventfd_flag_nr_deassign,
- +	kvm_ioeventfd_flag_nr_virtio_ccw_notify,
-+ 	kvm_ioeventfd_flag_nr_pv_mmio,
-  	kvm_ioeventfd_flag_nr_max,
-  };
- =20
-  #define KVM_IOEVENTFD_FLAG_DATAMATCH (1 << kvm_ioeventfd_flag_nr_datamatc=
-h)
-  #define KVM_IOEVENTFD_FLAG_PIO       (1 << kvm_ioeventfd_flag_nr_pio)
-+ /*
-+  * PV_MMIO - Guest can promise us that all accesses touching this address
-+  * are writes of specified length, starting at the specified address.
-+  * If not - it's a Guest bug.
-+  * Can not be used together with either PIO or DATAMATCH.
-+  */
-+ #define KVM_IOEVENTFD_FLAG_PV_MMIO   (1 << kvm_ioeventfd_flag_nr_pv_mmio)
-  #define KVM_IOEVENTFD_FLAG_DEASSIGN  (1 << kvm_ioeventfd_flag_nr_deassign)
- +#define KVM_IOEVENTFD_FLAG_VIRTIO_CCW_NOTIFY \
- +	(1 << kvm_ioeventfd_flag_nr_virtio_ccw_notify)
- =20
-  #define KVM_IOEVENTFD_VALID_FLAG_MASK  ((1 << kvm_ioeventfd_flag_nr_max) =
-- 1)
- =20
-
---Signature=_Fri__5_Apr_2013_15_12_52_+1100__daEdzxNJwD+yZtu
+--Signature=_Fri__5_Apr_2013_15_33_35_+1100_Hh0d19sgnc5J/3Fs
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRXk9EAAoJEECxmPOUX5FE9DAQAIDH8VrdLCsy10BV39x79+px
-hNK9kqFtSuOfIesYnzvoNUPw/1/yHIUJ7vp4Qjt8wfEZ5q/uWEmoRqh5x6GXNk3M
-od3swqOryrY9wkS6sULcB4P80WyIunoVzH7demcntOVxTtdiM1AQ86Jt0GcZcXjx
-1ASaNJw6oqK0MXmFHclw3hvh19kT8IGJyFSgfO6qOi/qyz+ut4OCGHEUGei2y/Dx
-XToGU2qhwep9tZo1/vSZEad9FY9/E9Qan9L0x9cZjkg17fL8MuXYvv6qxL/FkcWQ
-4aVlCOgAx+cRvLbQy0MPv1W2Ht4KO479U/82ooXbejsiJEKYUXHNgPGdsAjIiq01
-E8zGkxXpdLt/20/GcBoAnMMTtI6MBK1oEfJ+s/HJyshw+zeJYCpIuig43N0BT6bu
-XC2J2x5pewcTK25Zx4w3ZupqZqbDkWh62I+ldT5j37MvF90q57sBw6TJjUXh37vX
-eruT/qalj5Qn6ZxchOtgkI3pO7kpsM8IH01AakWwBk8tNNnC2F649XYieFVLlC/G
-WXYy52UvkeK4S8HwmjsGMzN2mjXyWGid2ohcwiww43na7w2Ad9d1AVzl2tTRWYza
-h6pKP0lUKJST3so6BBrn6ZqlIeromXjZ77XKvHoBQlVDjBAiFt0pHXw52JyjKfdv
-WzCX/Vo+6RhBG26zevzj
-=0Jhy
+iQIcBAEBCAAGBQJRXlQfAAoJEECxmPOUX5FEG6gQAJLq0j0Tcld0A19ondF7Og/T
+17RInsKaSVIJi4vo0GGb0yS/ekaIbkB/oNA9Pfq6DiDYq8qbxoj+GqkcZ1PFWGLQ
+vW54h77kSAI5ksleT0lthE36m5UDl2LBoUQrlgmNrfdgUAhAffFePCi7dRoyo2jI
+pAOHIz3IdopK7FkDHwMGreE+okiwRaPhi+zyWbX1fjVS6PX5SQKeA9//o6aCOkWo
+uN7WCgvetuw4HYDFVFYZvXBWqgsxGp0ouTW3TQ88uhcaucb7PwgJuM2c7PqzBDpB
+D9tec+k6DIT/mqXLPLvCQ/PZA3LEIqKqk+iOtYMPaoF/xpoA58Y2nSTBlSyjbsxl
+NXbY7FnCDF9VLi4Jc3t78MlLgaNC8G3k8BVtAf6zDnfHgyK5rIolFRmHTDQmv7H6
+XmhwYSAvVb5tmTxlppiwEgyLMexK+rGvPlIkmnjwEVcB0JUxVx3OLREJas4qptDi
+A0cUDRj4tRtUfWi/BsniusT0a2GTaxcJvlCZMnXw7vhKxURnWkMlO9pD4WvcICZJ
+SuORvbdCcVEPtU1vAXzPsVA2FeP5kH5726ey0PlFtfG18yw/3JcanQ0ITjsH7fxT
+cFlyj9vY1fdNF3odOQDsDS5kJyYnrk8EXRoy9OATDnoxtXpI07qx6ZJSJiQqNK8Y
+Z/JKtnn5GPTs2zkFf76V
+=bWz2
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__5_Apr_2013_15_12_52_+1100__daEdzxNJwD+yZtu--
+--Signature=_Fri__5_Apr_2013_15_33_35_+1100_Hh0d19sgnc5J/3Fs--
