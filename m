@@ -1,32 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the imx-mxs tree with the pinctrl tree
-Date: Fri, 5 Apr 2013 15:42:03 +1100
-Message-ID: <20130405154203.4069187c95a65ab74a2590a0@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with the arm-soc tree
+Date: Fri, 5 Apr 2013 16:02:56 +1100
+Message-ID: <20130405160256.7ca6f52e25e0d2231eb1fcfe@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__5_Apr_2013_15_42_03_+1100_R0GGTqAssWKrFqqB"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44872 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750738Ab3DEEmG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Apr 2013 00:42:06 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+ boundary="Signature=_Fri__5_Apr_2013_16_02_56_+1100_o7040RbB=VtDLCDB"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__5_Apr_2013_15_42_03_+1100_R0GGTqAssWKrFqqB
+--Signature=_Fri__5_Apr_2013_16_02_56_+1100_o7040RbB=VtDLCDB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Shawn,
+Hi Kukjin,
 
-Today's linux-next merge of the imx-mxs tree got a conflict in
-drivers/pinctrl/Makefile between commit 62194200e5e3 ("pinctrl: remove
-pxa pinctrl driver") from the pinctrl tree and commit b8979245b6ff
-("pinctrl: add pinctrl driver for imx6dl") from the imx-mxs tree.
+Today's linux-next merge of the samsung tree got a conflict in
+drivers/irqchip/irq-s3c24xx.c between commit de88cbb7b244 ("arm: Move
+chained_irq_(enter|exit) to a generic file") from the arm-soc tree (where
+it is called arch/arm/mach-s3c24xx/irq.c) and commit f0774d41da0e
+("irqchip: s3c24xx: add devicetree support") from the samsung tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,41 +32,43 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pinctrl/Makefile
-index 82db76c,8bdaf23..0000000
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@@ -21,7 -21,10 +21,8 @@@ obj-$(CONFIG_PINCTRL_IMX35)	+=3D pinctrl-
-  obj-$(CONFIG_PINCTRL_IMX51)	+=3D pinctrl-imx51.o
-  obj-$(CONFIG_PINCTRL_IMX53)	+=3D pinctrl-imx53.o
-  obj-$(CONFIG_PINCTRL_IMX6Q)	+=3D pinctrl-imx6q.o
-+ obj-$(CONFIG_PINCTRL_IMX6Q)	+=3D pinctrl-imx6dl.o
- -obj-$(CONFIG_PINCTRL_PXA3xx)	+=3D pinctrl-pxa3xx.o
-  obj-$(CONFIG_PINCTRL_FALCON)	+=3D pinctrl-falcon.o
- -obj-$(CONFIG_PINCTRL_MMP2)	+=3D pinctrl-mmp2.o
-  obj-$(CONFIG_PINCTRL_MXS)	+=3D pinctrl-mxs.o
-  obj-$(CONFIG_PINCTRL_IMX23)	+=3D pinctrl-imx23.o
-  obj-$(CONFIG_PINCTRL_IMX28)	+=3D pinctrl-imx28.o
+diff --cc drivers/irqchip/irq-s3c24xx.c
+index 8296d94,5e40b34..0000000
+--- a/drivers/irqchip/irq-s3c24xx.c
++++ b/drivers/irqchip/irq-s3c24xx.c
+@@@ -25,8 -25,11 +25,12 @@@
+  #include <linux/ioport.h>
+  #include <linux/device.h>
+  #include <linux/irqdomain.h>
+ +#include <linux/irqchip/chained_irq.h>
++ #include <linux/of.h>
++ #include <linux/of_irq.h>
++ #include <linux/of_address.h>
+ =20
++ #include <asm/exception.h>
+  #include <asm/mach/irq.h>
+ =20
+  #include <mach/regs-irq.h>
 
---Signature=_Fri__5_Apr_2013_15_42_03_+1100_R0GGTqAssWKrFqqB
+--Signature=_Fri__5_Apr_2013_16_02_56_+1100_o7040RbB=VtDLCDB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRXlYbAAoJEECxmPOUX5FEFVEP/2i3bSXmOw4a1HD7YNLwj9Gw
-aCtH6SBmAjXaWac9ngXA+7DF/r5gsqanybvo65ACRFkhw1acHB0owNLssjfA6apu
-SNUNQ37itlXeLMel4QbtqHtQm3qevI+QvfMQitcziGJpzA/UD5zepqtLYlPtqEU0
-gkRm5NS2IPQ5cPd9+AH/t6nvPlETOa4Hs9XStRhrGhq76TaT51qkZjbtzyX4pdTp
-kctp3knhkRUEo0BdKs6txgSgX8swEZx1GrAyWMJcNWMOre/XUF7LosAuBLWjEYbY
-bEVTqgeYw4aqlBye8O5y4P6AFGzgzaQWJgIClFxy4iVaRMqGQ6pHme9vode1KD8W
-QpOw/P/nzZpacIqFTXgJ/OEGS1X22OqUlZ0/euo20enfVSA7fPi6NFHn9248jpX2
-52QFirf4Tlvq4MAF1CepLqEgN9iO8BF9ydIcn2ecRofJV4cuiJcHsJIdHFzDMag4
-Au0YiBARrqDDuBiJrbyQYQFNYuwK8q9ueEtN1S6pLcTO3XGJ+sMAo3wFSwKLrr3I
-EM5AqwBWmTgQczR0sHhlpm1vTou5bay4hl7VOzfeaFLD125VDF9TKb5FbL5/kv4I
-epOa8Cxvf/a6RKWYqm+d+e/r4/UBm54PcD2mxyJ5/tMgVUBYLrbLgNGgkXxa067v
-q59WgevbHjQd8fEsrud7
-=hnKq
+iQIcBAEBCAAGBQJRXlsAAAoJEECxmPOUX5FE9uwP/i7WjEciiAx+Vr1IllWEpLS/
+c5uQH6Gv5E7ikYpRb9iFOmr6k8o41B9ba4GSw1X7HqnuCMiquVCauWpOVFX4pRdb
+2cmkpb3GPOz4RJaIQ4KSZVWN3Qiu0c9+d7NQju/UQhORZ2SHWQJ+q0RR/EICeLpl
+PxxdwrKvs2dGJAGK/z232+O2fYDXCRuBJvGDUhsQGBzr/mFBzxuRqWcMud12sEL9
+2hNZGkhaVEYojaP/2mkppyAUoCu5L0yprEGlrplVszpPAdtgoPRM4D1UdpfaWQlA
+ADcSV4m8mORXml8Du4MWy+1Jem7rdBwAkwqX1WCbPbpudr9MDlUfSedPf1ES68N/
+pj9VGdRics/BY56SRiQPMMs6PQ4/H4RokibYrPjGsU/X6PPxMDNHP5bg+IYCtUo3
+CAarS6u3rzqMKnKGDaTg+sS0UR3b2fV7zMExKLflrmUW+Z++FztMYnmB8YAvSwKk
+hcmddOIX2shyH8QRDCp6jhyhrh8WT747mXP4PAtCW1g4YC/itrwTZOPSHbLG64i6
+pO1maqbQfKZ7RoTVn2gim03G32oF0OaoI29xjF4Vszw++ACjsLMiQV1ji+lf4CnE
+iJ9feV9UDEv8qq85SJhZe3m8hWutlIfoS4l0Q0so8IIKSeaLAeKAlkXVdusE79Qx
+pM7XWGlYMAllAMpuU+9G
+=dFKJ
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__5_Apr_2013_15_42_03_+1100_R0GGTqAssWKrFqqB--
+--Signature=_Fri__5_Apr_2013_16_02_56_+1100_o7040RbB=VtDLCDB--
