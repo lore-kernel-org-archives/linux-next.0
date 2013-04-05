@@ -1,74 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with the arm-soc tree
-Date: Fri, 5 Apr 2013 16:02:56 +1100
-Message-ID: <20130405160256.7ca6f52e25e0d2231eb1fcfe@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the wireless-next tree
+Date: Fri, 5 Apr 2013 16:46:57 +1100
+Message-ID: <20130405164657.e6d914b120679150a4395801@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__5_Apr_2013_16_02_56_+1100_o7040RbB=VtDLCDB"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__5_Apr_2013_16_46_57_+1100_guOwB15ab7L3ykI4"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54482 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750985Ab3DEFrH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Apr 2013 01:47:07 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
 
---Signature=_Fri__5_Apr_2013_16_02_56_+1100_o7040RbB=VtDLCDB
+--Signature=_Fri__5_Apr_2013_16_46_57_+1100_guOwB15ab7L3ykI4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+Hi John,
 
-Today's linux-next merge of the samsung tree got a conflict in
-drivers/irqchip/irq-s3c24xx.c between commit de88cbb7b244 ("arm: Move
-chained_irq_(enter|exit) to a generic file") from the arm-soc tree (where
-it is called arch/arm/mach-s3c24xx/irq.c) and commit f0774d41da0e
-("irqchip: s3c24xx: add devicetree support") from the samsung tree.
+After merging the wireless-next tree, today's linux-next build (powerpc
+allyesconfig) produced these warnings:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from drivers/net/wireless/rtlwifi/rtl8188ee/dm.c:38:0:
+drivers/net/wireless/rtlwifi/rtl8188ee/trx.h:553:6: warning: "__LITTLE_ENDI=
+AN" is not defined [-Wundef]
+drivers/net/wireless/rtlwifi/rtl8188ee/trx.h:577:5: warning: "__LITTLE_ENDI=
+AN" is not defined [-Wundef]
+In file included from drivers/net/wireless/rtlwifi/rtl8188ee/trx.c:37:0:
+drivers/net/wireless/rtlwifi/rtl8188ee/trx.h:553:6: warning: "__LITTLE_ENDI=
+AN" is not defined [-Wundef]
+drivers/net/wireless/rtlwifi/rtl8188ee/trx.h:577:5: warning: "__LITTLE_ENDI=
+AN" is not defined [-Wundef]
+In file included from drivers/net/wireless/rtlwifi/rtl8188ee/sw.c:39:0:
+drivers/net/wireless/rtlwifi/rtl8188ee/trx.h:553:6: warning: "__LITTLE_ENDI=
+AN" is not defined [-Wundef]
+drivers/net/wireless/rtlwifi/rtl8188ee/trx.h:577:5: warning: "__LITTLE_ENDI=
+AN" is not defined [-Wundef]
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/irqchip/irq-s3c24xx.c
-index 8296d94,5e40b34..0000000
---- a/drivers/irqchip/irq-s3c24xx.c
-+++ b/drivers/irqchip/irq-s3c24xx.c
-@@@ -25,8 -25,11 +25,12 @@@
-  #include <linux/ioport.h>
-  #include <linux/device.h>
-  #include <linux/irqdomain.h>
- +#include <linux/irqchip/chained_irq.h>
-+ #include <linux/of.h>
-+ #include <linux/of_irq.h>
-+ #include <linux/of_address.h>
- =20
-+ #include <asm/exception.h>
-  #include <asm/mach/irq.h>
- =20
-  #include <mach/regs-irq.h>
-
---Signature=_Fri__5_Apr_2013_16_02_56_+1100_o7040RbB=VtDLCDB
+--Signature=_Fri__5_Apr_2013_16_46_57_+1100_guOwB15ab7L3ykI4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRXlsAAAoJEECxmPOUX5FE9uwP/i7WjEciiAx+Vr1IllWEpLS/
-c5uQH6Gv5E7ikYpRb9iFOmr6k8o41B9ba4GSw1X7HqnuCMiquVCauWpOVFX4pRdb
-2cmkpb3GPOz4RJaIQ4KSZVWN3Qiu0c9+d7NQju/UQhORZ2SHWQJ+q0RR/EICeLpl
-PxxdwrKvs2dGJAGK/z232+O2fYDXCRuBJvGDUhsQGBzr/mFBzxuRqWcMud12sEL9
-2hNZGkhaVEYojaP/2mkppyAUoCu5L0yprEGlrplVszpPAdtgoPRM4D1UdpfaWQlA
-ADcSV4m8mORXml8Du4MWy+1Jem7rdBwAkwqX1WCbPbpudr9MDlUfSedPf1ES68N/
-pj9VGdRics/BY56SRiQPMMs6PQ4/H4RokibYrPjGsU/X6PPxMDNHP5bg+IYCtUo3
-CAarS6u3rzqMKnKGDaTg+sS0UR3b2fV7zMExKLflrmUW+Z++FztMYnmB8YAvSwKk
-hcmddOIX2shyH8QRDCp6jhyhrh8WT747mXP4PAtCW1g4YC/itrwTZOPSHbLG64i6
-pO1maqbQfKZ7RoTVn2gim03G32oF0OaoI29xjF4Vszw++ACjsLMiQV1ji+lf4CnE
-iJ9feV9UDEv8qq85SJhZe3m8hWutlIfoS4l0Q0so8IIKSeaLAeKAlkXVdusE79Qx
-pM7XWGlYMAllAMpuU+9G
-=dFKJ
+iQIcBAEBCAAGBQJRXmVRAAoJEECxmPOUX5FEmBwP/2T2O8Yfl+s79UGlQFPJ822g
+pRChFigiJJmRQVPyOXTVM8UxjNtYzGa1uArRkfs0XKYb8CIa3Y22IIUB67ESq8TN
+iZqw6R/nGUQE+zxUg9KmmVYpVCYGGH4c7wUs+Q2ZK8UaBEIZq/QNmBuN9yiE9exI
+L+mPGkdugt60v50F+f2NKt0QQHz4Hs71ds00LWdASCBX3Mhmd6rQY3x0mqgUj+EN
+Tbz4Gj6ikVhAHAJI0G9ENEf5qnrFtGhs9KVGlxm0hRMdLoj0bN98L2oAmQDXiIsE
+J1vP+zSyuIDtOAPu/igLQVz4VhuYubKmBEB+SLKr4tR3H+YejoS7ttfy/+QivBN2
+tPORyoeMgwDLIVWQqT1FT1pjOcquZ7Gcq80QlPuA9iF9e0y2+YlJxcAFx+EI0y2y
+kqwBgVxspPMlsvK5IGk080+E3HCPsB0QbevPMSVSImUOxWR1KyAPt4JTTW/DUnQT
+FHsMV0QIqxf1yMN9CcvWqYPes429jFsprUpsOBck1ztuxWsgO2F/aZt/72LtWMBs
+ft+ZVbrrxMZgFEV+W6iXTbtZ+czY1Lkwx0etDHfep35U2/nIpiBEPAH74Lse3Pgd
+8DLWDFlHx42YZlEH0Q604KBYZvktKhsJwaYIy0nJq5VEEPHGcu9TqlkLTGxUFOd8
+uzZLPUjkhsxlB1ASMVD8
+=W234
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__5_Apr_2013_16_02_56_+1100_o7040RbB=VtDLCDB--
+--Signature=_Fri__5_Apr_2013_16_46_57_+1100_guOwB15ab7L3ykI4--
