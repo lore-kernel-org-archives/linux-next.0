@@ -1,52 +1,51 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the xilinx tree
-Date: Fri, 5 Apr 2013 14:09:37 +0200
-Message-ID: <201304051409.37708.arnd@arndb.de>
-References: <20130405153335.baf29606a97b1bee415f3546@canb.auug.org.au>
- <CAHTX3d+NK7b3RVMASZ4BARs1kHeVKGgxNwKTjAeiNB+44TPsFg@mail.gmail.com>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH -next 1/3] bcache: Add missing #include
+ <linux/prefetch.h>
+Date: Sun, 7 Apr 2013 14:15:49 -0700 (PDT)
+Message-ID: <alpine.DEB.2.02.1304071415220.3441@chino.kir.corp.google.com>
+References: <1364406990-20541-1-git-send-email-geert@linux-m68k.org> <20130327182150.GB25906@google.com> <51533A2E.2000501@infradead.org> <20130327195050.GB22232@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAHTX3d+NK7b3RVMASZ4BARs1kHeVKGgxNwKTjAeiNB+44TPsFg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Michal Simek <monstr@monstr.eu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, John Linn <John.Linn@xilinx.com>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-da0-f41.google.com ([209.85.210.41]:54101 "EHLO
+	mail-da0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1762418Ab3DGVPw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Apr 2013 17:15:52 -0400
+Received: by mail-da0-f41.google.com with SMTP id w4so2356142dam.28
+        for <linux-next@vger.kernel.org>; Sun, 07 Apr 2013 14:15:51 -0700 (PDT)
+In-Reply-To: <20130327195050.GB22232@google.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kent Overstreet <koverstreet@google.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Friday 05 April 2013, Michal Simek wrote:
-> Hi,
-> 
-> 2013/4/5 Stephen Rothwell <sfr@canb.auug.org.au>
-> 
-> > Hi all,
-> >
-> > Today's linux-next merge of the arm-soc tree got a conflict in
-> > arch/arm/mach-spear/spear13xx.c between commit c79e33b3e828 ("ARM:
-> > smp_twd: convert to use CLKSRC_OF init") from the xilinx tree and commit
-> > 2b9c613c4ee1 ("ARM: spear: move generic.h and pl080.h into private dir")
-> > from the arm-soc tree.
-> >
-> > I fixed it up (just used the arm-soc tree version) and can carry the fix
-> > as necessary (no action is required).
-> >  <sfr@canb.auug.org.au>
-> 
-> 
-> Interesting. I rebased my arm-next branch based on 3.9-rc5
-> with some Rob's + one Arnd patch from arm-soc - clksrc/cleanup branch.
-> 
-> I will fix my arm-next branch.
+On Wed, 27 Mar 2013, Kent Overstreet wrote:
 
-The for-next branch in arm-soc is not stable, you should never base
-/anything/ on it. If you depend on some stable branch, that is in arm-soc,
-then use just that branch, not one of the next/* branches or for-next.
+> Nope - looks like __WARN() doesn't exist if CONFIG_BUG=n, whoops.
+> 
+> Adding this to the queue:
+> 
+> commit 796c213186b850b3e6e8d5fd5799b0fd74721ea3
+> Author: Kent Overstreet <koverstreet@google.com>
+> Date:   Wed Mar 27 12:47:45 2013 -0700
+> 
+>     bcache: Use WARN_ONCE() instead of __WARN()
+>     
+>     Signed-off-by: Kent Overstreet <koverstreet@google.com>
+> 
+> diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+> index d4f2164..cb4578a 100644
+> --- a/drivers/md/bcache/bset.c
+> +++ b/drivers/md/bcache/bset.c
+> @@ -883,7 +883,7 @@ struct bkey *bch_btree_iter_next(struct btree_iter *iter)
+>  		iter->data->k = bkey_next(iter->data->k);
+>  
+>  		if (iter->data->k > iter->data->end) {
+> -			__WARN();
+> +			WARN_ONCE(1, "bset was corrupt!\n");
+>  			iter->data->k = iter->data->end;
+>  		}
+>  
 
-	Arnd
+This problem still persists in linux-next as of today, how is this fix 
+being pushed?
