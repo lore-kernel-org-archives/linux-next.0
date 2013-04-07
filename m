@@ -1,51 +1,53 @@
-From: David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH -next 1/3] bcache: Add missing #include
- <linux/prefetch.h>
-Date: Sun, 7 Apr 2013 14:15:49 -0700 (PDT)
-Message-ID: <alpine.DEB.2.02.1304071415220.3441@chino.kir.corp.google.com>
-References: <1364406990-20541-1-git-send-email-geert@linux-m68k.org> <20130327182150.GB25906@google.com> <51533A2E.2000501@infradead.org> <20130327195050.GB22232@google.com>
+From: David Rientjes <rientjes-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: [patch -next] usb, gadget: use appropriate warning accessors
+Date: Sun, 7 Apr 2013 14:11:47 -0700 (PDT)
+Message-ID: <alpine.DEB.2.02.1304071407520.3441@chino.kir.corp.google.com>
+References: <20130404182232.bd2dbfba27620bdab9e0de42@canb.auug.org.au> <515DCB78.3010207@infradead.org>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-da0-f41.google.com ([209.85.210.41]:54101 "EHLO
-	mail-da0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762418Ab3DGVPw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Apr 2013 17:15:52 -0400
-Received: by mail-da0-f41.google.com with SMTP id w4so2356142dam.28
-        for <linux-next@vger.kernel.org>; Sun, 07 Apr 2013 14:15:51 -0700 (PDT)
-In-Reply-To: <20130327195050.GB22232@google.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kent Overstreet <koverstreet@google.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <515DCB78.3010207-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 27 Mar 2013, Kent Overstreet wrote:
+Use the appropriate WARN() and WARN_ON() accessors to avoid a build error 
+when CONFIG_BUG=n:
 
-> Nope - looks like __WARN() doesn't exist if CONFIG_BUG=n, whoops.
-> 
-> Adding this to the queue:
-> 
-> commit 796c213186b850b3e6e8d5fd5799b0fd74721ea3
-> Author: Kent Overstreet <koverstreet@google.com>
-> Date:   Wed Mar 27 12:47:45 2013 -0700
-> 
->     bcache: Use WARN_ONCE() instead of __WARN()
->     
->     Signed-off-by: Kent Overstreet <koverstreet@google.com>
-> 
-> diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
-> index d4f2164..cb4578a 100644
-> --- a/drivers/md/bcache/bset.c
-> +++ b/drivers/md/bcache/bset.c
-> @@ -883,7 +883,7 @@ struct bkey *bch_btree_iter_next(struct btree_iter *iter)
->  		iter->data->k = bkey_next(iter->data->k);
->  
->  		if (iter->data->k > iter->data->end) {
-> -			__WARN();
-> +			WARN_ONCE(1, "bset was corrupt!\n");
->  			iter->data->k = iter->data->end;
->  		}
->  
+	drivers/usb/gadget/configfs.c: In function 'config_usb_cfg_unlink':
+	drivers/usb/gadget/configfs.c:442:2: error: implicit declaration of function '__WARN_printf'
+	drivers/usb/gadget/configfs.c: In function 'configfs_do_nothing':
+	drivers/usb/gadget/configfs.c:733:2: error: implicit declaration of function '__WARN'
 
-This problem still persists in linux-next as of today, how is this fix 
-being pushed?
+Reported-by: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Signed-off-by: David Rientjes <rientjes-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/usb/gadget/configfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -439,7 +439,7 @@ static int config_usb_cfg_unlink(
+ 		}
+ 	}
+ 	mutex_unlock(&gi->lock);
+-	__WARN_printf("Unable to locate function to unbind\n");
++	WARN(1, "Unable to locate function to unbind\n");
+ 	return 0;
+ }
+ 
+@@ -730,7 +730,7 @@ USB_CONFIG_STRINGS_LANG(gadget_strings, gadget_info);
+ 
+ static int configfs_do_nothing(struct usb_composite_dev *cdev)
+ {
+-	__WARN();
++	WARN_ON(1);
+ 	return -EINVAL;
+ }
+ 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
