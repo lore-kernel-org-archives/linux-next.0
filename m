@@ -1,51 +1,41 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmVbMl06IGxpbnV4LW5leHQ6IGJ1aWxkIGZhaWx1cmUgYWZ0ZXIgbWVyZ2Ug?=
- =?UTF-8?B?b2YgdGhlIG1mZCB0cmVl?=
-Date: Mon, 08 Apr 2013 20:27:49 +0400
-Message-ID: <1365438469.322553103@f51.mail.ru>
-References: <20130408142124.ac540429a889cdc9800e529a@canb.auug.org.au>
- <1365396351.542317232@f36.mail.ru>
- <20130408092243.GK24058@zurbaran>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] media:
+Date: Mon, 08 Apr 2013 10:47:03 -0700
+Message-ID: <51630297.2040803@infradead.org>
+References: <20130408174343.cc13eb1972470d20d38ecff1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130408092243.GK24058@zurbaran>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?U2FtdWVsIE9ydGl6?= <sameo@linux.intel.com>
-Cc: =?UTF-8?B?U3RlcGhlbiBSb3Rod2VsbA==?= <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:52133 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935219Ab3DHRrV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Apr 2013 13:47:21 -0400
+In-Reply-To: <20130408174343.cc13eb1972470d20d38ecff1@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@redhat.com>, Antti Palosaari <crope@iki.fi>
 
-PiA+ID4gQWZ0ZXIgbWVyZ2luZyB0aGUgbWZkIHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWls
-ZCAoeDg2XzY0IGFsbG1vZGNvbmZpZykKPiA+ID4gZmFpbGVkIGxpa2UgdGhpczoKPiA+ID4gCj4g
-PiA+IGRyaXZlcnMvcmVndWxhdG9yL2FuYXRvcC1yZWd1bGF0b3IuYzogSW4gZnVuY3Rpb24gJ2Fu
-YXRvcF9yZWd1bGF0b3JfcHJvYmUnOgo+ID4gPiBkcml2ZXJzL3JlZ3VsYXRvci9hbmF0b3AtcmVn
-dWxhdG9yLmM6MTM0OjI6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiAn
-b2ZfZ2V0X3BhcmVudCcgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCj4g
-PiA+IAo+ID4gPiBDYXVzZWQgYnkgY29tbWl0IDVhYjNhODlhNzQxZiAoIm1mZDogc3lzY29uOiBB
-ZGQgbm9uLURUIHN1cHBvcnQiKS4KPiA+ID4gCj4gPiA+IEkgaGF2ZSB1c2VkIHRoZSBtZmQgdHJl
-ZSBmcm9tIG5leHQtMjAxMzA0MDUgZm9yIHRvZGF5Lgo+ID4gCj4gPiBUaGlzIG1lYW5zIHRoYXQg
-d2UgZG8gbm90IGhhdmUgZW1wdHkgZGVjbGFyYXRpb25zIGZvciB0aGUKPiA+IG9mX3h4IGZ1bmN0
-aW9ucyBpbiBsaW51eC9vZi5oIGZvciAhQ09ORklHX09GLgo+ID4gT0sgdG8gZGVjbGFyZSB0aGVz
-ZSBmdW5jdGlvbnMgb3IgYW55IG90aGVyIG9waW5pb25zPwo+IE9rIHdpdGggbWUsIGJ1dCB5b3Un
-ZCBuZWVkIHRvIGdldCBHcmFudCBhbmQgUm9iJ3MgQUNLLgoKSSd2ZSByZXZpc2VkIG15IGluaXRp
-YWwgb3BpbmlvbiBhbmQgd3JpdGUg4oCL4oCLYSBxdWljayBwYXRjaCBmb3IgZml4IHRoaXMgaXNz
-dWUuCgpGcm9tIGE4ODRkMzA5ZDI5NzhjYmM0NGM1MmI2NTBkNjY5ZTU2ZmVmNjY0ZTIgTW9uIFNl
-cCAxNyAwMDowMDowMCAyMDAxCkZyb206IEFsZXhhbmRlciBTaGl5YW4gPHNoY193b3JrQG1haWwu
-cnU+CkRhdGU6IE1vbiwgOCBBcHIgMjAxMyAxOToxMzoxMCArMDQwMApTdWJqZWN0OiBbUEFUQ0hd
-IHJlZ3VsYXRvcjogYW5hdG9wOiBNYWtlIHNlbGVjdCBkZXBlbmRlbmN5IGZyb20KIEhBVkVfSU1Y
-X0FOQVRPUCBzeW1ib2wKClRoaXMgcGF0Y2ggbWFrZSBzZWxlY3Rpb24gb2YgYW5hdG9wLXJlZ3Vs
-YXRvciBmcm9tIEhBVkVfSU1YX0FOQVRPUAprZXJuZWwgc3ltYm9sLiBUaGlzIGZpeGVzIGJ1aWxk
-IGtlcm5lbCB3aXRoIHN5c2NvbiBkcml2ZXIgYnV0IHdpdGhvdXQKb2Z0cmVlIHN1cHBvcnQuCgpT
-aWduZWQtb2ZmLWJ5OiBBbGV4YW5kZXIgU2hpeWFuIDxzaGNfd29ya0BtYWlsLnJ1PgotLS0KIGRy
-aXZlcnMvcmVndWxhdG9yL0tjb25maWcgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRp
-b24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3JlZ3VsYXRvci9LY29u
-ZmlnIGIvZHJpdmVycy9yZWd1bGF0b3IvS2NvbmZpZwppbmRleCBhNWQ5N2VhLi4wNzg5MzJkIDEw
-MDY0NAotLS0gYS9kcml2ZXJzL3JlZ3VsYXRvci9LY29uZmlnCisrKyBiL2RyaXZlcnMvcmVndWxh
-dG9yL0tjb25maWcKQEAgLTEzMyw3ICsxMzMsNyBAQCBjb25maWcgUkVHVUxBVE9SX0ZBTjUzNTU1
-CiAKIGNvbmZpZyBSRUdVTEFUT1JfQU5BVE9QCiAJdHJpc3RhdGUgIkZyZWVzY2FsZSBpLk1YIG9u
-LWNoaXAgQU5BVE9QIExETyByZWd1bGF0b3JzIgotCWRlcGVuZHMgb24gTUZEX1NZU0NPTgorCWRl
-cGVuZHMgb24gSEFWRV9JTVhfQU5BVE9QCiAJaGVscAogCSAgU2F5IHkgaGVyZSB0byBzdXBwb3J0
-IEZyZWVzY2FsZSBpLk1YIG9uLWNoaXAgQU5BVE9QIExET3MKIAkgIHJlZ3VsYXRvcnMuIEl0IGlz
-IHJlY29tbWVuZGVkIHRoYXQgdGhpcyBvcHRpb24gYmUKLS0gCjEuOC4xLjUKCi0tLQo=
+From: Randy Dunlap <rdunlap@infradead.org>
+
+Fix randconfig error when USB is not enabled:
+
+ERROR: "usb_control_msg" [drivers/media/common/cypress_firmware.ko] undefined!
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Antti Palosaari <crope@iki.fi>
+---
+ drivers/media/common/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20130408.orig/drivers/media/common/Kconfig
++++ linux-next-20130408/drivers/media/common/Kconfig
+@@ -18,6 +18,7 @@ config VIDEO_TVEEPROM
+ 
+ config CYPRESS_FIRMWARE
+ 	tristate "Cypress firmware helper routines"
++	depends on USB
+ 
+ source "drivers/media/common/b2c2/Kconfig"
+ source "drivers/media/common/saa7146/Kconfig"
