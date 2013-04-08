@@ -1,28 +1,57 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IGxpbnV4LW5leHQ6IGJ1aWxkIGZhaWx1cmUgYWZ0ZXIgbWVyZ2Ugb2Yg?=
- =?UTF-8?B?dGhlIG1mZCB0cmVl?=
-Date: Mon, 08 Apr 2013 08:45:51 +0400
-Message-ID: <1365396351.542317232@f36.mail.ru>
-References: <20130408142124.ac540429a889cdc9800e529a@canb.auug.org.au>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Mon, 8 Apr 2013 14:21:24 +1000
+Message-ID: <20130408142124.ac540429a889cdc9800e529a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__8_Apr_2013_14_21_24_+1000_EmJn.GmBvJY2KKpU"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130408142124.ac540429a889cdc9800e529a@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?U3RlcGhlbiBSb3Rod2VsbA==?= <sfr@canb.auug.org.au>
-Cc: =?UTF-8?B?U2FtdWVsIE9ydGl6?= <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>
 List-Id: linux-next.vger.kernel.org
 
-SGVsbG8uCgo+IEFmdGVyIG1lcmdpbmcgdGhlIG1mZCB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQg
-YnVpbGQgKHg4Nl82NCBhbGxtb2Rjb25maWcpCj4gZmFpbGVkIGxpa2UgdGhpczoKPiAKPiBkcml2
-ZXJzL3JlZ3VsYXRvci9hbmF0b3AtcmVndWxhdG9yLmM6IEluIGZ1bmN0aW9uICdhbmF0b3BfcmVn
-dWxhdG9yX3Byb2JlJzoKPiBkcml2ZXJzL3JlZ3VsYXRvci9hbmF0b3AtcmVndWxhdG9yLmM6MTM0
-OjI6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiAnb2ZfZ2V0X3BhcmVu
-dCcgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCj4gCj4gQ2F1c2VkIGJ5
-IGNvbW1pdCA1YWIzYTg5YTc0MWYgKCJtZmQ6IHN5c2NvbjogQWRkIG5vbi1EVCBzdXBwb3J0Iiku
-Cj4gCj4gSSBoYXZlIHVzZWQgdGhlIG1mZCB0cmVlIGZyb20gbmV4dC0yMDEzMDQwNSBmb3IgdG9k
-YXkuCgpUaGlzIG1lYW5zIHRoYXQgd2UgZG8gbm90IGhhdmUgZW1wdHkgZGVjbGFyYXRpb25zIGZv
-ciB0aGUKb2ZfeHggZnVuY3Rpb25zIGluIGxpbnV4L29mLmggZm9yICFDT05GSUdfT0YuCk9LIHRv
-IGRlY2xhcmUgdGhlc2UgZnVuY3Rpb25zIG9yIGFueSBvdGhlciBvcGluaW9ucz8KCi0tLQo=
+--Signature=_Mon__8_Apr_2013_14_21_24_+1000_EmJn.GmBvJY2KKpU
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Samuel,
+
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+drivers/regulator/anatop-regulator.c: In function 'anatop_regulator_probe':
+drivers/regulator/anatop-regulator.c:134:2: error: implicit declaration of =
+function 'of_get_parent' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 5ab3a89a741f ("mfd: syscon: Add non-DT support").
+
+I have used the mfd tree from next-20130405 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__8_Apr_2013_14_21_24_+1000_EmJn.GmBvJY2KKpU
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRYkXEAAoJEECxmPOUX5FEHOIP/1XXeT01+j7QaG1VS6fvmOWC
+nu0AWxqeQqk7CHW5hfXod953sfvCzWKnDZNLQt5jgDY9RQbdFBP0ohq65n+HFiSV
+zcWK7GrS5RMNjo2WAGrsFamJZnWmpBds9aAiRPVwbM0h0F9mL1l+UnUh5dQP54ro
+ZZFuKPUujvL3xkWrci9rtC0CAAK3Zo8vrXZ9dffDOwFeOT+CEK6sm+CjYoK80Fvh
+elcQbkld09dOrzIcmV2JHVHu6CkhVxR1Fkl3Gz6BVQUcgOhsRYhAitqhAh1vP4YO
+gBMr8n4i+8IEblLeRKTTH+1FR+Qwr5EJCiX5fW8manuSSTRUhl619vu5W8XnVCJ2
+tyKtZoeA+XYqqMmuqbDZaskD3r0HitmvRcrkJp5wMg3k61RXI2IAaNQ3aiz1bGB9
+xqnkYJItU4IuH1vN0Cy8iw/cEHoFRaEVpo+Ln1MRSHS07qT3rVK3QKvxcMAvs9q3
+ScvO3DPfDM30Tzvo/w0zEYYQekV+nP1yI1QdEXRDw7IZCyleTzLpw6Drhubofdry
+eFkjADsAjswFAZJRecyK2rQo2nxLBJu/F7XIey+QH5/yLcM2REGmh4pXwhRrRC3O
+KrlqQZsOpHF8CNS0NVzJBYJ/OsafRMt67BZribQ3D9spS3vUFdwKs81UssqEtvCV
+p180LFaUqZBMuFvE1yuP
+=Skhd
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__8_Apr_2013_14_21_24_+1000_EmJn.GmBvJY2KKpU--
