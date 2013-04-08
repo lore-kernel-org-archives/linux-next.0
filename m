@@ -1,95 +1,51 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: GENERIC_GPIO considered deprecated
-Date: Mon, 08 Apr 2013 10:11:30 -0600
-Message-ID: <5162EC32.2030602@wwwdotorg.org>
-References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com> <51576214.8010307@openwide.fr> <CAAVeFu++8YOOSxPbAaTudxSGcBomkGrakBjiVyD+XSee54TrWw@mail.gmail.com> <26e401ce30cc$602e45f0$208ad1d0$%kim@samsung.com> <CAAVeFuJcAgFma6wxmyoUN4Kfp-+y-gj3QMWvVYsCK_D8q0gSXQ@mail.gmail.com> <2c9501ce342b$1535d290$3fa177b0$%kim@samsung.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmVbMl06IGxpbnV4LW5leHQ6IGJ1aWxkIGZhaWx1cmUgYWZ0ZXIgbWVyZ2Ug?=
+ =?UTF-8?B?b2YgdGhlIG1mZCB0cmVl?=
+Date: Mon, 08 Apr 2013 20:27:49 +0400
+Message-ID: <1365438469.322553103@f51.mail.ru>
+References: <20130408142124.ac540429a889cdc9800e529a@canb.auug.org.au>
+ <1365396351.542317232@f36.mail.ru>
+ <20130408092243.GK24058@zurbaran>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <2c9501ce342b$1535d290$3fa177b0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Alexandre Courbot' <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: 'Romain Naour' <romain.naour@openwide.fr>, 'linux-next' <linux-next@vger.kernel.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, =?UTF-8?B?J0hlaWtvIFN0w7xibmVyJw==?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130408092243.GK24058@zurbaran>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?B?U2FtdWVsIE9ydGl6?= <sameo@linux.intel.com>
+Cc: =?UTF-8?B?U3RlcGhlbiBSb3Rod2VsbA==?= <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 04/08/2013 01:31 AM, Kukjin Kim wrote:
-> Alexandre Courbot wrote:
->>
->> On Wed, Apr 3, 2013 at 5:35 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->>>> could you amend the patches that adds them such as they get changed
->>>> into "select ARCH_REQUIRE_GPIOLIB" instead? You can grep for "select
->>>
->>> I can do it for my tree but the branch already included in arm-soc tree
->> so I think, it should be fixed with another patch. And
->>>
->>>> GENERIC_GPIO" in arch/arm to find the offending lines. We are removing
->>>> GENERIC_GPIO and this work cannot be merged until you do this since it
->>>> would break ARM builds. Thanks!
->>>>
->>> So how about following? If you are OK, let me take into samsung tree.
->>>
->>> --------8<----------------8<--------
->>> From: Kukjin Kim <kgene.kim@samsung.com>
->>> Subject: [PATCH] ARM: SAMSUNG: change GENERIC_GPIO to
->> ARCH_REQUIRE_GPIOLIB
->>>
->>> When I applied regarding samsung-time patches, the "select GENERIC_GPIO"
->>> has been added wrong, so this patch fixes that.
->>> And since the GENERIC_GPIO in arch/arm/ will be gone away, this adds
->>> ARCH_REQUIRE_GPIOLIB for S3C24XX and S5PC100 instead.
->>>
->>> Reported-by: Alexandre Courbot <gnurou@gmail.com>
->>> Cc: Romain Naour <romain.naour@openwide.fr>
->>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->>> ---
->>>  arch/arm/Kconfig |    4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
->>> index 46fcfa8..a239c7e 100644
->>> --- a/arch/arm/Kconfig
->>> +++ b/arch/arm/Kconfig
->>> @@ -770,10 +770,10 @@ config ARCH_SA1100
->>>  config ARCH_S3C24XX
->>>         bool "Samsung S3C24XX SoCs"
->>>         select ARCH_HAS_CPUFREQ
->>> +       select ARCH_REQUIRE_GPIOLIB
->>>         select CLKDEV_LOOKUP
->>>         select CLKSRC_MMIO
->>>         select GENERIC_CLOCKEVENTS
->>> -       select GENERIC_GPIO
->>>         select HAVE_CLK
->>>         select HAVE_S3C2410_I2C if I2C
->>>         select HAVE_S3C2410_WATCHDOG if WATCHDOG
->>> @@ -828,11 +828,11 @@ config ARCH_S5P64X0
->>>
->>>  config ARCH_S5PC100
->>>         bool "Samsung S5PC100"
->>> +       select ARCH_REQUIRE_GPIOLIB
->>>         select CLKDEV_LOOKUP
->>>         select CLKSRC_MMIO
->>>         select CPU_V7
->>>         select GENERIC_CLOCKEVENTS
->>> -       select GENERIC_GPIO
->>>         select HAVE_CLK
->>>         select HAVE_S3C2410_I2C if I2C
->>>         select HAVE_S3C2410_WATCHDOG if WATCHDOG
->>> --
->>> 1.7.10.4
->>
->> Should do the trick, if we can make sure that your tree is merged
->> prior to my patches.
-> 
-> I'm not sure but I think, arm-soc tree should be merged into mainline before others...
-> 
->> Can you put it into your tree for 3.10?
->>
-> I did, so it should be fine.
-> 
-> Thanks.
-> 
-> - Kukjin
-
-You may want to discuss how to handle this dependency with the arm-soc
-maintainers (CC'd).
+PiA+ID4gQWZ0ZXIgbWVyZ2luZyB0aGUgbWZkIHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWls
+ZCAoeDg2XzY0IGFsbG1vZGNvbmZpZykKPiA+ID4gZmFpbGVkIGxpa2UgdGhpczoKPiA+ID4gCj4g
+PiA+IGRyaXZlcnMvcmVndWxhdG9yL2FuYXRvcC1yZWd1bGF0b3IuYzogSW4gZnVuY3Rpb24gJ2Fu
+YXRvcF9yZWd1bGF0b3JfcHJvYmUnOgo+ID4gPiBkcml2ZXJzL3JlZ3VsYXRvci9hbmF0b3AtcmVn
+dWxhdG9yLmM6MTM0OjI6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiAn
+b2ZfZ2V0X3BhcmVudCcgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCj4g
+PiA+IAo+ID4gPiBDYXVzZWQgYnkgY29tbWl0IDVhYjNhODlhNzQxZiAoIm1mZDogc3lzY29uOiBB
+ZGQgbm9uLURUIHN1cHBvcnQiKS4KPiA+ID4gCj4gPiA+IEkgaGF2ZSB1c2VkIHRoZSBtZmQgdHJl
+ZSBmcm9tIG5leHQtMjAxMzA0MDUgZm9yIHRvZGF5Lgo+ID4gCj4gPiBUaGlzIG1lYW5zIHRoYXQg
+d2UgZG8gbm90IGhhdmUgZW1wdHkgZGVjbGFyYXRpb25zIGZvciB0aGUKPiA+IG9mX3h4IGZ1bmN0
+aW9ucyBpbiBsaW51eC9vZi5oIGZvciAhQ09ORklHX09GLgo+ID4gT0sgdG8gZGVjbGFyZSB0aGVz
+ZSBmdW5jdGlvbnMgb3IgYW55IG90aGVyIG9waW5pb25zPwo+IE9rIHdpdGggbWUsIGJ1dCB5b3Un
+ZCBuZWVkIHRvIGdldCBHcmFudCBhbmQgUm9iJ3MgQUNLLgoKSSd2ZSByZXZpc2VkIG15IGluaXRp
+YWwgb3BpbmlvbiBhbmQgd3JpdGUg4oCL4oCLYSBxdWljayBwYXRjaCBmb3IgZml4IHRoaXMgaXNz
+dWUuCgpGcm9tIGE4ODRkMzA5ZDI5NzhjYmM0NGM1MmI2NTBkNjY5ZTU2ZmVmNjY0ZTIgTW9uIFNl
+cCAxNyAwMDowMDowMCAyMDAxCkZyb206IEFsZXhhbmRlciBTaGl5YW4gPHNoY193b3JrQG1haWwu
+cnU+CkRhdGU6IE1vbiwgOCBBcHIgMjAxMyAxOToxMzoxMCArMDQwMApTdWJqZWN0OiBbUEFUQ0hd
+IHJlZ3VsYXRvcjogYW5hdG9wOiBNYWtlIHNlbGVjdCBkZXBlbmRlbmN5IGZyb20KIEhBVkVfSU1Y
+X0FOQVRPUCBzeW1ib2wKClRoaXMgcGF0Y2ggbWFrZSBzZWxlY3Rpb24gb2YgYW5hdG9wLXJlZ3Vs
+YXRvciBmcm9tIEhBVkVfSU1YX0FOQVRPUAprZXJuZWwgc3ltYm9sLiBUaGlzIGZpeGVzIGJ1aWxk
+IGtlcm5lbCB3aXRoIHN5c2NvbiBkcml2ZXIgYnV0IHdpdGhvdXQKb2Z0cmVlIHN1cHBvcnQuCgpT
+aWduZWQtb2ZmLWJ5OiBBbGV4YW5kZXIgU2hpeWFuIDxzaGNfd29ya0BtYWlsLnJ1PgotLS0KIGRy
+aXZlcnMvcmVndWxhdG9yL0tjb25maWcgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRp
+b24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3JlZ3VsYXRvci9LY29u
+ZmlnIGIvZHJpdmVycy9yZWd1bGF0b3IvS2NvbmZpZwppbmRleCBhNWQ5N2VhLi4wNzg5MzJkIDEw
+MDY0NAotLS0gYS9kcml2ZXJzL3JlZ3VsYXRvci9LY29uZmlnCisrKyBiL2RyaXZlcnMvcmVndWxh
+dG9yL0tjb25maWcKQEAgLTEzMyw3ICsxMzMsNyBAQCBjb25maWcgUkVHVUxBVE9SX0ZBTjUzNTU1
+CiAKIGNvbmZpZyBSRUdVTEFUT1JfQU5BVE9QCiAJdHJpc3RhdGUgIkZyZWVzY2FsZSBpLk1YIG9u
+LWNoaXAgQU5BVE9QIExETyByZWd1bGF0b3JzIgotCWRlcGVuZHMgb24gTUZEX1NZU0NPTgorCWRl
+cGVuZHMgb24gSEFWRV9JTVhfQU5BVE9QCiAJaGVscAogCSAgU2F5IHkgaGVyZSB0byBzdXBwb3J0
+IEZyZWVzY2FsZSBpLk1YIG9uLWNoaXAgQU5BVE9QIExET3MKIAkgIHJlZ3VsYXRvcnMuIEl0IGlz
+IHJlY29tbWVuZGVkIHRoYXQgdGhpcyBvcHRpb24gYmUKLS0gCjEuOC4xLjUKCi0tLQo=
