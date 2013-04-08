@@ -1,79 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap_dss2 tree with Linus' tree
-Date: Mon, 8 Apr 2013 14:36:23 +1000
-Message-ID: <20130408143623.bbf18647b96df42b8b8ec6a0@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the scsi tree
+Date: Mon, 8 Apr 2013 17:02:31 +1000
+Message-ID: <20130408170231.3c50013bb8bacebab8ca4cea@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__8_Apr_2013_14_36_23_+1000_Y__T1eWGENzZ/7D5"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__8_Apr_2013_17_02_31_+1000_2Rs1i1qywv8upa7/"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50200 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759089Ab3DHHCq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Apr 2013 03:02:46 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Saurav Kashyap <saurav.kashyap@qlogic.com>, Giridhar Malavali <giridhar.malavali@qlogic.com>, James Bottomley <JBottomley@Parallels.com>, Akinobu Mita <akinobu.mita@gmail.com>
 
---Signature=_Mon__8_Apr_2013_14_36_23_+1000_Y__T1eWGENzZ/7D5
+--Signature=_Mon__8_Apr_2013_17_02_31_+1000_2Rs1i1qywv8upa7/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tomi,
+Hi Andrew,
 
-Today's linux-next merge of the omap_dss2 tree got a conflict in
-drivers/video/fbmon.c between commit 477fc03f5baa ("fbmon: use
-VESA_DMT_VSYNC_HIGH to fix typo") from Linus' tree and commit
-06a3307975aa ("videomode: combine videomode dmt_flags and data_flags")
-from the omap_dss2 tree.
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/scsi/qla2xxx/qla_attr.c between commit 4a9fa41bd404 ("[SCSI]
+qla2xxx: Remove debug code that msleeps for random duration") from the
+scsi tree and commit "scsi: rename random32() to prandom_u32()" from the
+akpm tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+The former removed the code in this file that was updated by the latter,
+so I did that (and dropped the next patch ("scsi: fix the wrong position
+of the comment") and can carry the fix as necessary (no action is
+required).
 
-diff --cc drivers/video/fbmon.c
-index 7f67099,e5cc2fd..0000000
---- a/drivers/video/fbmon.c
-+++ b/drivers/video/fbmon.c
-@@@ -1398,13 -1398,13 +1398,13 @@@ int fb_videomode_from_videomode(const s
- =20
-  	fbmode->sync =3D 0;
-  	fbmode->vmode =3D 0;
-- 	if (vm->dmt_flags & VESA_DMT_HSYNC_HIGH)
-+ 	if (vm->flags & DISPLAY_FLAGS_HSYNC_HIGH)
-  		fbmode->sync |=3D FB_SYNC_HOR_HIGH_ACT;
-- 	if (vm->dmt_flags & VESA_DMT_VSYNC_HIGH)
- -	if (vm->flags & DISPLAY_FLAGS_HSYNC_HIGH)
-++	if (vm->flags & DISPLAY_FLAGS_VSYNC_HIGH)
-  		fbmode->sync |=3D FB_SYNC_VERT_HIGH_ACT;
-- 	if (vm->data_flags & DISPLAY_FLAGS_INTERLACED)
-+ 	if (vm->flags & DISPLAY_FLAGS_INTERLACED)
-  		fbmode->vmode |=3D FB_VMODE_INTERLACED;
-- 	if (vm->data_flags & DISPLAY_FLAGS_DOUBLESCAN)
-+ 	if (vm->flags & DISPLAY_FLAGS_DOUBLESCAN)
-  		fbmode->vmode |=3D FB_VMODE_DOUBLE;
-  	fbmode->flag =3D 0;
- =20
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__8_Apr_2013_14_36_23_+1000_Y__T1eWGENzZ/7D5
+--Signature=_Mon__8_Apr_2013_17_02_31_+1000_2Rs1i1qywv8upa7/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRYklHAAoJEECxmPOUX5FEHykQAIrb6AAW3C6XqAXI/ImYLAqY
-WMkju//k7eYiS+w0jARnF1r6ytGyVYVRc6Niy5bOUGFEd8CvkePBsiSsnTuLIXZt
-kSBdYtC0m07bdzFdz904BmrnePuC3Od9jFNSfw/IuQnLLJUhLp5YqyybSwecd9Pe
-SQQViL8Vygo83F7hrhHVF4S1fb5oxTErWmnJAQPCzs22ZAvfNXbV8DuUW1SSwIxD
-TlMLBnwKN9H5jbvGjnJa+c+CmRHsBi/BhH52NbpwwYuJWiPThxi3Hof5vLdCCBfz
-nz2uN7uNyG+taoAeFo5lbe4Q2Hgax6I7TJmFqJ8iw4BoYP4YOJI6NRz6oD/i3YRL
-OOKhHUhO9MikabOwlA3SSFXyTFc3gGhQ7WWZqt/0QvFOGii65tgr7rpQz099+SrZ
-wFQNnR/WvHH1DuwWtmCeHOUFCH2Asv/dRWroUbqxC4rYlbSh2XGJdybIIO+AiRGe
-p57VbqorCGt3U6efpMsCdA1zbAS9EZy0LjAd9O9i0cIEG4Nv8ZMvthj+gUlHdto3
-Q7HUN6hIYImNZ8v3AnHnY4PKYGVl415EhXRcGUIcYbkmZKyosJWkPVlmh6QScJgl
-Kdf8GrwF1Jlo92bnO3pf/LjvOR4ilYTBEfyOaweWrnKFED3B2Wehh8tOOE93Ewrm
-QG1Jll3zIyhgHRyNMsoq
-=nLRv
+iQIcBAEBCAAGBQJRYmuHAAoJEECxmPOUX5FEUwoP/0lQgdzAZp9ID4EePVRAOYn1
+DqQcBeSZjpIgL6c3e9mGaPA6FB2OmrUTtjZu4BOM3IuoqTYD2oTCV5OocSHrCqbC
+19UGjpwSFoMKg5ZJI0DPt2H9wdMCZaOoMghSwS+38ghuYKgGw5LFMOubKut6yzYm
+YFM+0JHDnZ4IsglJc7hNmKZ0EB/k1OY6f4xCFPqUpoWvAcraPx86x+czs73Gx9Au
+fzuV85Onb1UAgAq7vZGHTZQtkPUHaRINcK2Y9SpSDpw40axCzng1UakHDqvfMhwW
+CQxDdeJd5zOaTTln2a/ix25VDUfqx+3sQT4Tz+edqtX10HfvmLDzKLzL71xBBiB7
+oMzAdlVmy43Zy7xNuKmPmWeza3NSICaTMMnqKRDn0AxakOjdo5HF509LkiygTt0k
+87WEQ4R0JJi46Fc9f2v9RC8ML2DenozKWFDXLoqvJawndZC9FUWf7UEVM8Cs3BYu
+xzG0ZrqX7FNoZZqOlobZ6RiZE9+RflB7AzKtwQTt0QvMoTi8YkLe6xd7Mh68fHbo
+z0xpPtBHe+Ih+RR7C9w+3gCNMUeNjOMhXj0fen9opt/vy0J01LeAz+3yjvNo0k/q
+BdSsJ/MiqVwbC1+YLE/VT+bOU6pGNOTn8XMvoIn+Vo0XTzzvkPWAbwq1jWkE9HjB
+AcEdbHTjEiZTZAF99S9z
+=NI+5
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__8_Apr_2013_14_36_23_+1000_Y__T1eWGENzZ/7D5--
+--Signature=_Mon__8_Apr_2013_17_02_31_+1000_2Rs1i1qywv8upa7/--
