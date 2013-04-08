@@ -1,41 +1,40 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] media:
-Date: Mon, 08 Apr 2013 10:47:03 -0700
-Message-ID: <51630297.2040803@infradead.org>
-References: <20130408174343.cc13eb1972470d20d38ecff1@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: GENERIC_GPIO considered deprecated
+Date: Mon, 8 Apr 2013 21:36:44 +0200
+Message-ID: <201304082136.44905.arnd@arndb.de>
+References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com> <2c9501ce342b$1535d290$3fa177b0$%kim@samsung.com> <5162EC32.2030602@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:52133 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935219Ab3DHRrV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Apr 2013 13:47:21 -0400
-In-Reply-To: <20130408174343.cc13eb1972470d20d38ecff1@canb.auug.org.au>
+Received: from moutng.kundenserver.de ([212.227.17.8]:51046 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935747Ab3DHTgt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Apr 2013 15:36:49 -0400
+In-Reply-To: <5162EC32.2030602@wwwdotorg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@redhat.com>, Antti Palosaari <crope@iki.fi>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Alexandre Courbot' <gnurou@gmail.com>, Olof Johansson <olof@lixom.net>, 'Romain Naour' <romain.naour@openwide.fr>, 'linux-next' <linux-next@vger.kernel.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Heiko =?utf-8?q?St=C3=BCbner=27?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Monday 08 April 2013, Stephen Warren wrote:
+> >>
+> >> Should do the trick, if we can make sure that your tree is merged
+> >> prior to my patches.
+> > 
+> > I'm not sure but I think, arm-soc tree should be merged into mainline before others...
+> > 
+> >> Can you put it into your tree for 3.10?
+> >>
+> > I did, so it should be fine.
+> > 
+> 
+> You may want to discuss how to handle this dependency with the arm-soc
+> maintainers (CC'd).
 
-Fix randconfig error when USB is not enabled:
+I'm fine with putting the same branch into arm-soc as well as the gpio tree
+and anything else that might need it, that tends to be the least invasive
+way.
 
-ERROR: "usb_control_msg" [drivers/media/common/cypress_firmware.ko] undefined!
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Antti Palosaari <crope@iki.fi>
----
- drivers/media/common/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
---- linux-next-20130408.orig/drivers/media/common/Kconfig
-+++ linux-next-20130408/drivers/media/common/Kconfig
-@@ -18,6 +18,7 @@ config VIDEO_TVEEPROM
- 
- config CYPRESS_FIRMWARE
- 	tristate "Cypress firmware helper routines"
-+	depends on USB
- 
- source "drivers/media/common/b2c2/Kconfig"
- source "drivers/media/common/saa7146/Kconfig"
+	Arnd
