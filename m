@@ -1,40 +1,59 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: GENERIC_GPIO considered deprecated
-Date: Mon, 8 Apr 2013 21:36:44 +0200
-Message-ID: <201304082136.44905.arnd@arndb.de>
-References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com> <2c9501ce342b$1535d290$3fa177b0$%kim@samsung.com> <5162EC32.2030602@wwwdotorg.org>
+From: Kent Overstreet <koverstreet@google.com>
+Subject: Re: [PATCH -next 1/3] bcache: Add missing #include <linux/prefetch.h>
+Date: Mon, 8 Apr 2013 14:00:20 -0700
+Message-ID: <20130408210020.GI15749@google.com>
+References: <1364406990-20541-1-git-send-email-geert@linux-m68k.org>
+ <20130327182150.GB25906@google.com>
+ <51533A2E.2000501@infradead.org>
+ <20130327195050.GB22232@google.com>
+ <alpine.DEB.2.02.1304071415220.3441@chino.kir.corp.google.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:51046 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935747Ab3DHTgt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Apr 2013 15:36:49 -0400
-In-Reply-To: <5162EC32.2030602@wwwdotorg.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:44778 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1762166Ab3DHVAX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Apr 2013 17:00:23 -0400
+Received: by mail-pa0-f53.google.com with SMTP id bh4so3426821pad.26
+        for <linux-next@vger.kernel.org>; Mon, 08 Apr 2013 14:00:23 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.02.1304071415220.3441@chino.kir.corp.google.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Alexandre Courbot' <gnurou@gmail.com>, Olof Johansson <olof@lixom.net>, 'Romain Naour' <romain.naour@openwide.fr>, 'linux-next' <linux-next@vger.kernel.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Heiko =?utf-8?q?St=C3=BCbner=27?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
+To: David Rientjes <rientjes@google.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Monday 08 April 2013, Stephen Warren wrote:
-> >>
-> >> Should do the trick, if we can make sure that your tree is merged
-> >> prior to my patches.
-> > 
-> > I'm not sure but I think, arm-soc tree should be merged into mainline before others...
-> > 
-> >> Can you put it into your tree for 3.10?
-> >>
-> > I did, so it should be fine.
-> > 
+On Sun, Apr 07, 2013 at 02:15:49PM -0700, David Rientjes wrote:
+> On Wed, 27 Mar 2013, Kent Overstreet wrote:
 > 
-> You may want to discuss how to handle this dependency with the arm-soc
-> maintainers (CC'd).
+> > Nope - looks like __WARN() doesn't exist if CONFIG_BUG=n, whoops.
+> > 
+> > Adding this to the queue:
+> > 
+> > commit 796c213186b850b3e6e8d5fd5799b0fd74721ea3
+> > Author: Kent Overstreet <koverstreet@google.com>
+> > Date:   Wed Mar 27 12:47:45 2013 -0700
+> > 
+> >     bcache: Use WARN_ONCE() instead of __WARN()
+> >     
+> >     Signed-off-by: Kent Overstreet <koverstreet@google.com>
+> > 
+> > diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+> > index d4f2164..cb4578a 100644
+> > --- a/drivers/md/bcache/bset.c
+> > +++ b/drivers/md/bcache/bset.c
+> > @@ -883,7 +883,7 @@ struct bkey *bch_btree_iter_next(struct btree_iter *iter)
+> >  		iter->data->k = bkey_next(iter->data->k);
+> >  
+> >  		if (iter->data->k > iter->data->end) {
+> > -			__WARN();
+> > +			WARN_ONCE(1, "bset was corrupt!\n");
+> >  			iter->data->k = iter->data->end;
+> >  		}
+> >  
+> 
+> This problem still persists in linux-next as of today, how is this fix 
+> being pushed?
 
-I'm fine with putting the same branch into arm-soc as well as the gpio tree
-and anything else that might need it, that tends to be the least invasive
-way.
-
-	Arnd
+Sorry for the delay, I've been moving all last week - I just sent Jens a
+pull request with the latest bcache fixes, though.
