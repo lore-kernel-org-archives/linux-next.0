@@ -1,7 +1,7 @@
 From: Al Viro <viro@ZenIV.linux.org.uk>
 Subject: Re: hangs on boot in 9984d7394618df9
-Date: Mon, 8 Apr 2013 23:57:15 +0100
-Message-ID: <20130408225715.GX4068@ZenIV.linux.org.uk>
+Date: Tue, 9 Apr 2013 00:06:58 +0100
+Message-ID: <20130408230658.GY4068@ZenIV.linux.org.uk>
 References: <20130405173623.GE4068@ZenIV.linux.org.uk>
  <515F3A71.9080008@sgi.com>
  <20130405210042.GH4068@ZenIV.linux.org.uk>
@@ -11,40 +11,49 @@ References: <20130405173623.GE4068@ZenIV.linux.org.uk>
  <20130408212327.GU4068@ZenIV.linux.org.uk>
  <20130408214834.GV4068@ZenIV.linux.org.uk>
  <516341ED.5060803@wwwdotorg.org>
- <20130408224637.GW4068@ZenIV.linux.org.uk>
+ <CAD=FV=WodJER2g45u5pEw0edf+K4uYJjyt0w4ZfX9q=o1a7pYw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:33014 "EHLO
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33039 "EHLO
 	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1763222Ab3DHW5T (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Apr 2013 18:57:19 -0400
+	with ESMTP id S1760264Ab3DHXHC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Apr 2013 19:07:02 -0400
 Content-Disposition: inline
-In-Reply-To: <20130408224637.GW4068@ZenIV.linux.org.uk>
+In-Reply-To: <CAD=FV=WodJER2g45u5pEw0edf+K4uYJjyt0w4ZfX9q=o1a7pYw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Nathan Zimmer <nzimmer@sgi.com>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, David Woodhouse <dwmw2@infradead.org>, stable@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Nathan Zimmer <nzimmer@sgi.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, David Woodhouse <dwmw2@infradead.org>, stable@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Mon, Apr 08, 2013 at 11:46:37PM +0100, Al Viro wrote:
-
-> Very interesting...  Just in case, could you try this on top of that
-> branch and see if it triggers?
+On Mon, Apr 08, 2013 at 03:45:31PM -0700, Doug Anderson wrote:
+> Hi,
 > 
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index 8ce279b..b6cd51b 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -1022,6 +1022,11 @@ static int fifo_open(struct inode *inode, struct file *filp)
->  	/* We can only do regular read/write on fifos */
->  	filp->f_mode &= (FMODE_READ | FMODE_WRITE);
->  
-> +	if (inode->i_sb->s_magic == PIPEFS_MAGIC) {
-> +		WARN_ON(filp->f_flags & O_NONBLOCK);
-> +		filp->f_flags &= ~O_NONBLOCK;
-> +	}
+> On Mon, Apr 8, 2013 at 3:17 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> >> Anyway, I've just pushed a splitup of that commit (carved in 3 pieces)
+> >> into vfs.git#pipe-splitup; could you check which part triggers that
+> >> hang?  Should propagate in a few...
+> >
+> > It looks like "pipe: unify ->release() and ->open()" introduces the
+> > problem. Note that I had to add a prototype for fifo_open() before the
+> > structs that reference it for that commit to compile.
+> 
+> It sounds like Stephen has provided you the info you needed so not
+> doing any extra testing now, but I figured I'd chime in that I hit
+> problems this morning with linux-next and it appears to be the same
+> thing.  I did a revert of 9984d7394618df9 and (plus a revert of a
+> handful of patches to the same file) and problems are resolved.  The
+> failure case is really weird in that everything works well booting to
+> a simple /bin/bash but fails when you do more complex tasks.
+> 
+> Anyway: If you need some extra testing feel free to CC me.
 
-*d'oh*
+Folks, see if vfs.git#experimental works for you; the PITA had apparently
+been caused by change of open() semantics for /proc/<pid>/fd/<some_pipe> -
+it started to behave like a FIFO, i.e. wait for peer to show up.  Normally
+that's not a problem, but if you have closed e.g. the write end of a pipe
+and try to open /proc/<pid>/fd/<read_end_of_pipe>, you'll get open() waiting
+for writers to appear.  Which isn't what we used to do here (open succeeded
+immediately) and apparently that was enough to trip drakut.
 
-OK, I'm an idiot.  I see what's going on now...  Give me a few and I'll push
-a fix.
+Branch head should be at 574179469f7370aadb9cbac1ceca7c3723c17bee.
