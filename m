@@ -1,51 +1,78 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: hangs on boot in 9984d7394618df9
-Date: Mon, 08 Apr 2013 17:20:30 -0600
-Message-ID: <516350BE.2000106@wwwdotorg.org>
-References: <20130405173623.GE4068@ZenIV.linux.org.uk> <515F3A71.9080008@sgi.com> <20130405210042.GH4068@ZenIV.linux.org.uk> <5162E36F.5020305@sgi.com> <20130408155847.GS4068@ZenIV.linux.org.uk> <51632DF8.2080402@sgi.com> <20130408212327.GU4068@ZenIV.linux.org.uk> <20130408214834.GV4068@ZenIV.linux.org.uk> <516341ED.5060803@wwwdotorg.org> <CAD=FV=WodJER2g45u5pEw0edf+K4uYJjyt0w4ZfX9q=o1a7pYw@mail.gmail.com> <20130408230658.GY4068@ZenIV.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: GENERIC_GPIO considered deprecated
+Date: Tue, 9 Apr 2013 09:38:42 +1000
+Message-ID: <20130409093842.656ae3fff92d5368db5c0646@canb.auug.org.au>
+References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
+	<2c9501ce342b$1535d290$3fa177b0$%kim@samsung.com>
+	<5162EC32.2030602@wwwdotorg.org>
+	<201304082136.44905.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20130408230658.GY4068@ZenIV.linux.org.uk>
-Sender: stable-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Doug Anderson <dianders@chromium.org>, Nathan Zimmer <nzimmer@sgi.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, David Woodhouse <dwmw2@infradead.org>, stable@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__9_Apr_2013_09_38_42_+1000_7wLC3SjYUJ.IXUu3"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <201304082136.44905.arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>, 'Alexandre Courbot' <gnurou@gmail.com>, Olof Johansson <olof@lixom.net>, 'Romain Naour' <romain.naour@openwide.fr>, 'linux-next' <linux-next@vger.kernel.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, =?UTF-8?B?IidIZWlrbyBTdMO8Ym5l?= =?UTF-8?B?cici?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On 04/08/2013 05:06 PM, Al Viro wrote:
-> On Mon, Apr 08, 2013 at 03:45:31PM -0700, Doug Anderson wrote:
->> Hi,
->>
->> On Mon, Apr 8, 2013 at 3:17 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->>>> Anyway, I've just pushed a splitup of that commit (carved in 3 pieces)
->>>> into vfs.git#pipe-splitup; could you check which part triggers that
->>>> hang?  Should propagate in a few...
->>>
->>> It looks like "pipe: unify ->release() and ->open()" introduces the
->>> problem. Note that I had to add a prototype for fifo_open() before the
->>> structs that reference it for that commit to compile.
->>
->> It sounds like Stephen has provided you the info you needed so not
->> doing any extra testing now, but I figured I'd chime in that I hit
->> problems this morning with linux-next and it appears to be the same
->> thing.  I did a revert of 9984d7394618df9 and (plus a revert of a
->> handful of patches to the same file) and problems are resolved.  The
->> failure case is really weird in that everything works well booting to
->> a simple /bin/bash but fails when you do more complex tasks.
->>
->> Anyway: If you need some extra testing feel free to CC me.
-> 
-> Folks, see if vfs.git#experimental works for you; the PITA had apparently
-> been caused by change of open() semantics for /proc/<pid>/fd/<some_pipe> -
-> it started to behave like a FIFO, i.e. wait for peer to show up.  Normally
-> that's not a problem, but if you have closed e.g. the write end of a pipe
-> and try to open /proc/<pid>/fd/<read_end_of_pipe>, you'll get open() waiting
-> for writers to appear.  Which isn't what we used to do here (open succeeded
-> immediately) and apparently that was enough to trip drakut.
-> 
-> Branch head should be at 574179469f7370aadb9cbac1ceca7c3723c17bee.
+--Signature=_Tue__9_Apr_2013_09_38_42_+1000_7wLC3SjYUJ.IXUu3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That branch works.
+Hi all,
 
-Thanks!
+On Mon, 8 Apr 2013 21:36:44 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Monday 08 April 2013, Stephen Warren wrote:
+> > >>
+> > >> Should do the trick, if we can make sure that your tree is merged
+> > >> prior to my patches.
+> > >=20
+> > > I'm not sure but I think, arm-soc tree should be merged into mainline=
+ before others...
+> > >=20
+> > >> Can you put it into your tree for 3.10?
+> > >>
+> > > I did, so it should be fine.
+> > >=20
+> >=20
+> > You may want to discuss how to handle this dependency with the arm-soc
+> > maintainers (CC'd).
+>=20
+> I'm fine with putting the same branch into arm-soc as well as the gpio tr=
+ee
+> and anything else that might need it, that tends to be the least invasive
+> way.
+
+Just a reminder: that had better be the exact same branch and that branch
+had better never be rebased/rewritten ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__9_Apr_2013_09_38_42_+1000_7wLC3SjYUJ.IXUu3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRY1UCAAoJEECxmPOUX5FEJvwP/2ho4rdgU54EsqmohH0IXaxC
+pY5XzzcVDRUbyNizxbVeYyQJNq5c7NYY2NJa+Sl6eoHtBeN8u0woIzA1zSMxYro7
+j2sXwb2TUb2XwkkrujEa9URgb78rCH9aeWl9usGRpv7wfDAdLuQJUG4yYPf7G+pu
++coDBQyN4+lqVxcocNmtmt6ZLwyq7fcp4ecam+9X/L+Wi4BRz8X+RxrzHHM78RQB
+KjZ6xo4d4EK+nZTNEO71wFmGUrjlyjqjFrSv6gRLk7Q6MRsoyIxf+izC9b+bD4E2
+MXoR2aJCqUXgw6xUXPGNJNY03ltFN/oWgjjUt41sIGfGygT1ch+b49O6rIgl6oNo
+vepkzis0SddT+JfSSHRTf9Wb3jPWSSBeyAwn1mPiODHziglY2VNO7M2uSWdB1EHR
+CdYA8nGp1ejwchX55AlW6coXr9SN/Mj86IF5QTlC19QSlMbky7VokCqhXSdja0Ns
+DvYCmdn1nLHAvB/2WKu7FWrMe+W6gr3POhLlzWVgFaJkblbFHaealtesOR+cb8p8
+HXVJ5VfofEYvaVhrc03sduVVJm2wWX7FwHm/CJiYWYq1Qn4ikFhWtO4zmbaNdD9t
+WUzvp+mXCQknWEQGFSYPNd+B2pBbegUprSYhuYjKoyWdY413to9djhIWjdBWACUR
+O84orbclBMPymrZPbjux
+=aFTD
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Apr_2013_09_38_42_+1000_7wLC3SjYUJ.IXUu3--
