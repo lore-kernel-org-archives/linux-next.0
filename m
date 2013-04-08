@@ -1,53 +1,63 @@
-From: David Rientjes <rientjes-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: [patch -next] usb, gadget: use appropriate warning accessors
-Date: Sun, 7 Apr 2013 14:11:47 -0700 (PDT)
-Message-ID: <alpine.DEB.2.02.1304071407520.3441@chino.kir.corp.google.com>
-References: <20130404182232.bd2dbfba27620bdab9e0de42@canb.auug.org.au> <515DCB78.3010207@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Mon, 8 Apr 2013 11:15:13 +1000
+Message-ID: <20130408111513.da2fc33b28669ede50622d67@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <515DCB78.3010207-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__8_Apr_2013_11_15_13_+1000_4T58_OzANPwy4rUA"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Use the appropriate WARN() and WARN_ON() accessors to avoid a build error 
-when CONFIG_BUG=n:
+--Signature=_Mon__8_Apr_2013_11_15_13_+1000_4T58_OzANPwy4rUA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	drivers/usb/gadget/configfs.c: In function 'config_usb_cfg_unlink':
-	drivers/usb/gadget/configfs.c:442:2: error: implicit declaration of function '__WARN_printf'
-	drivers/usb/gadget/configfs.c: In function 'configfs_do_nothing':
-	drivers/usb/gadget/configfs.c:733:2: error: implicit declaration of function '__WARN'
+Hi Al,
 
-Reported-by: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Signed-off-by: David Rientjes <rientjes-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
----
- drivers/usb/gadget/configfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
---- a/drivers/usb/gadget/configfs.c
-+++ b/drivers/usb/gadget/configfs.c
-@@ -439,7 +439,7 @@ static int config_usb_cfg_unlink(
- 		}
- 	}
- 	mutex_unlock(&gi->lock);
--	__WARN_printf("Unable to locate function to unbind\n");
-+	WARN(1, "Unable to locate function to unbind\n");
- 	return 0;
- }
- 
-@@ -730,7 +730,7 @@ USB_CONFIG_STRINGS_LANG(gadget_strings, gadget_info);
- 
- static int configfs_do_nothing(struct usb_composite_dev *cdev)
- {
--	__WARN();
-+	WARN_ON(1);
- 	return -EINVAL;
- }
- 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c: In function 'kvm_init':
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:2990:2: error: assignment of =
+member 'owner' in read-only object
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:2991:2: error: assignment of =
+member 'owner' in read-only object
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:2992:2: error: assignment of =
+member 'owner' in read-only object
+
+Caused by commit d612df096dce ("constify a bunch of struct
+file_operations instances").  Grep is your friend ...
+
+I have used the vfs tree from next-230130405 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__8_Apr_2013_11_15_13_+1000_4T58_OzANPwy4rUA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRYhohAAoJEECxmPOUX5FEKQQQAIEiUj6FN60ejBXbd0am+8XX
+0P3wkuX5p0wr4npJTyzOoOgOFNCg+rO7QYr+BDCHYeYXsmYH5a1TyRWfstxnyZ0J
+tpnJTlHobRf9k37j81StCOOfrbR3UK86pjKvJLhnfNn40UqymwvfsmJonf/tmaE2
+rD2qg8KFQEwb2ez+7eIL8K4NaMysWnEOPHOtnaNYAbDRzI14StS315zJxg1ByhTy
+gBrS8AR5jF3FAIH5CyEzO2u+b2ohPi7cWdPt1RQMi1bNZ+GZpjLxqNw1jyEidP6H
+ly/FzBSpyTkXFdpgYP8yEgpFxO4S9rLVgAddUkN+4poycF11LqG034zQLeTnMTrF
+niyiMXaQ6X+Xl9t8cdxI4QfPMeKkLL57Fox1CCIWsd2xbtd6q2HWXdGRa3kQ0ryC
++h0bbgbuSSoVSWtgldo8feJPoqmtuT6CSQjS8I/2JwRaz4LUnQunlxCJNKeJhb3r
+5klKSNtAtBXpQxgeCNBVVAcA/ucVI3K63R7ezMilLTC7OfFGTScyXPN415ufa/r/
+Zkth7QKSINvWXfFw98gtwqEjL1iUFRk3qVJxFUjfCMVO3S/lcT/Q1zlufGyaaXys
+5ziYJAJ33Pork53W2a82UzkPTyjUZTagKpnY7sVThD2JPabPKFSOY6iwe/k622uQ
+BiNqE4xA0vCdpwllkwxV
+=XLU3
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__8_Apr_2013_11_15_13_+1000_4T58_OzANPwy4rUA--
