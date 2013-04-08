@@ -1,37 +1,33 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Boot hang due to "pipe: fold file_operations instances in one"
- in next-20130408
-Date: Mon, 08 Apr 2013 15:36:06 -0600
-Message-ID: <51633846.2040305@wwwdotorg.org>
-References: <5163346B.5090602@wwwdotorg.org> <20130408212249.GT4068@ZenIV.linux.org.uk>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: hangs on boot in 9984d7394618df9
+Date: Mon, 08 Apr 2013 16:17:17 -0600
+Message-ID: <516341ED.5060803@wwwdotorg.org>
+References: <515DB465.1060004@sgi.com> <20130404204459.GU21522@ZenIV.linux.org.uk> <515F0456.9040803@sgi.com> <20130405173623.GE4068@ZenIV.linux.org.uk> <515F3A71.9080008@sgi.com> <20130405210042.GH4068@ZenIV.linux.org.uk> <5162E36F.5020305@sgi.com> <20130408155847.GS4068@ZenIV.linux.org.uk> <51632DF8.2080402@sgi.com> <20130408212327.GU4068@ZenIV.linux.org.uk> <20130408214834.GV4068@ZenIV.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130408212249.GT4068-3bDd1+5oDREiFSDQTTA3OLVCufUGDwFn@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Al Viro <viro-3bDd1+5oDREiFSDQTTA3OLVCufUGDwFn@public.gmane.org>
-Cc: "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20130408214834.GV4068@ZenIV.linux.org.uk>
+Sender: stable-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Nathan Zimmer <nzimmer@sgi.com>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, David Woodhouse <dwmw2@infradead.org>, stable@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 04/08/2013 03:22 PM, Al Viro wrote:
-> On Mon, Apr 08, 2013 at 03:19:39PM -0600, Stephen Warren wrote:
->> Al,
+On 04/08/2013 03:48 PM, Al Viro wrote:
+> On Mon, Apr 08, 2013 at 10:23:27PM +0100, Al Viro wrote:
+>> On Mon, Apr 08, 2013 at 03:52:08PM -0500, Nathan Zimmer wrote:
 >>
->> I'm seeing a boot hang on Tegra in next-20130408. Even sysrq on the
->> serial console doesn't work, yet I think cpuidle is still running since
->> the LED that shows CPU power is flickering.
+>>> Further digging seems to indicate 9984d7394618df9, the one right
+>>> after the commit I previously identified.
+>>> Not sure what I did wrong with my bisect to put it off by one.
 >>
->> git bisect points at commit 9984d73 "pipe: fold file_operations
->> instances in one". Reverting
->> the-merge-of-the-branch-that-contains-this-patch from next-20130408
->> certainly solves the problem; reverting just that one patch is a bit
->> painful since it's in the middle of a bunch of other cleanup.
->>
->> Do you have any idea what might be wrong? I can't see anything obvious
->> in the patch.
+>> Ugh...  Can't reproduce here ;-/  Could you give more details on your
+>> setup?
 > 
-> What userland do you have?
+> Anyway, I've just pushed a splitup of that commit (carved in 3 pieces)
+> into vfs.git#pipe-splitup; could you check which part triggers that
+> hang?  Should propagate in a few...
 
-It's Ubuntu 12.04.01 for ARM (armhf), with quite a few updates not
-installed.
+It looks like "pipe: unify ->release() and ->open()" introduces the
+problem. Note that I had to add a prototype for fifo_open() before the
+structs that reference it for that commit to compile.
