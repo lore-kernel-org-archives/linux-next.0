@@ -1,57 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd tree
-Date: Mon, 8 Apr 2013 14:21:24 +1000
-Message-ID: <20130408142124.ac540429a889cdc9800e529a@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap_dss2 tree with Linus' tree
+Date: Mon, 8 Apr 2013 14:36:23 +1000
+Message-ID: <20130408143623.bbf18647b96df42b8b8ec6a0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__8_Apr_2013_14_21_24_+1000_EmJn.GmBvJY2KKpU"
+ boundary="Signature=_Mon__8_Apr_2013_14_36_23_+1000_Y__T1eWGENzZ/7D5"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__8_Apr_2013_14_21_24_+1000_EmJn.GmBvJY2KKpU
+--Signature=_Mon__8_Apr_2013_14_36_23_+1000_Y__T1eWGENzZ/7D5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi Tomi,
 
-After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the omap_dss2 tree got a conflict in
+drivers/video/fbmon.c between commit 477fc03f5baa ("fbmon: use
+VESA_DMT_VSYNC_HIGH to fix typo") from Linus' tree and commit
+06a3307975aa ("videomode: combine videomode dmt_flags and data_flags")
+from the omap_dss2 tree.
 
-drivers/regulator/anatop-regulator.c: In function 'anatop_regulator_probe':
-drivers/regulator/anatop-regulator.c:134:2: error: implicit declaration of =
-function 'of_get_parent' [-Werror=3Dimplicit-function-declaration]
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 5ab3a89a741f ("mfd: syscon: Add non-DT support").
-
-I have used the mfd tree from next-20130405 for today.
+diff --cc drivers/video/fbmon.c
+index 7f67099,e5cc2fd..0000000
+--- a/drivers/video/fbmon.c
++++ b/drivers/video/fbmon.c
+@@@ -1398,13 -1398,13 +1398,13 @@@ int fb_videomode_from_videomode(const s
+ =20
+  	fbmode->sync =3D 0;
+  	fbmode->vmode =3D 0;
+- 	if (vm->dmt_flags & VESA_DMT_HSYNC_HIGH)
++ 	if (vm->flags & DISPLAY_FLAGS_HSYNC_HIGH)
+  		fbmode->sync |=3D FB_SYNC_HOR_HIGH_ACT;
+- 	if (vm->dmt_flags & VESA_DMT_VSYNC_HIGH)
+ -	if (vm->flags & DISPLAY_FLAGS_HSYNC_HIGH)
+++	if (vm->flags & DISPLAY_FLAGS_VSYNC_HIGH)
+  		fbmode->sync |=3D FB_SYNC_VERT_HIGH_ACT;
+- 	if (vm->data_flags & DISPLAY_FLAGS_INTERLACED)
++ 	if (vm->flags & DISPLAY_FLAGS_INTERLACED)
+  		fbmode->vmode |=3D FB_VMODE_INTERLACED;
+- 	if (vm->data_flags & DISPLAY_FLAGS_DOUBLESCAN)
++ 	if (vm->flags & DISPLAY_FLAGS_DOUBLESCAN)
+  		fbmode->vmode |=3D FB_VMODE_DOUBLE;
+  	fbmode->flag =3D 0;
+ =20
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__8_Apr_2013_14_21_24_+1000_EmJn.GmBvJY2KKpU
+--Signature=_Mon__8_Apr_2013_14_36_23_+1000_Y__T1eWGENzZ/7D5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRYkXEAAoJEECxmPOUX5FEHOIP/1XXeT01+j7QaG1VS6fvmOWC
-nu0AWxqeQqk7CHW5hfXod953sfvCzWKnDZNLQt5jgDY9RQbdFBP0ohq65n+HFiSV
-zcWK7GrS5RMNjo2WAGrsFamJZnWmpBds9aAiRPVwbM0h0F9mL1l+UnUh5dQP54ro
-ZZFuKPUujvL3xkWrci9rtC0CAAK3Zo8vrXZ9dffDOwFeOT+CEK6sm+CjYoK80Fvh
-elcQbkld09dOrzIcmV2JHVHu6CkhVxR1Fkl3Gz6BVQUcgOhsRYhAitqhAh1vP4YO
-gBMr8n4i+8IEblLeRKTTH+1FR+Qwr5EJCiX5fW8manuSSTRUhl619vu5W8XnVCJ2
-tyKtZoeA+XYqqMmuqbDZaskD3r0HitmvRcrkJp5wMg3k61RXI2IAaNQ3aiz1bGB9
-xqnkYJItU4IuH1vN0Cy8iw/cEHoFRaEVpo+Ln1MRSHS07qT3rVK3QKvxcMAvs9q3
-ScvO3DPfDM30Tzvo/w0zEYYQekV+nP1yI1QdEXRDw7IZCyleTzLpw6Drhubofdry
-eFkjADsAjswFAZJRecyK2rQo2nxLBJu/F7XIey+QH5/yLcM2REGmh4pXwhRrRC3O
-KrlqQZsOpHF8CNS0NVzJBYJ/OsafRMt67BZribQ3D9spS3vUFdwKs81UssqEtvCV
-p180LFaUqZBMuFvE1yuP
-=Skhd
+iQIcBAEBCAAGBQJRYklHAAoJEECxmPOUX5FEHykQAIrb6AAW3C6XqAXI/ImYLAqY
+WMkju//k7eYiS+w0jARnF1r6ytGyVYVRc6Niy5bOUGFEd8CvkePBsiSsnTuLIXZt
+kSBdYtC0m07bdzFdz904BmrnePuC3Od9jFNSfw/IuQnLLJUhLp5YqyybSwecd9Pe
+SQQViL8Vygo83F7hrhHVF4S1fb5oxTErWmnJAQPCzs22ZAvfNXbV8DuUW1SSwIxD
+TlMLBnwKN9H5jbvGjnJa+c+CmRHsBi/BhH52NbpwwYuJWiPThxi3Hof5vLdCCBfz
+nz2uN7uNyG+taoAeFo5lbe4Q2Hgax6I7TJmFqJ8iw4BoYP4YOJI6NRz6oD/i3YRL
+OOKhHUhO9MikabOwlA3SSFXyTFc3gGhQ7WWZqt/0QvFOGii65tgr7rpQz099+SrZ
+wFQNnR/WvHH1DuwWtmCeHOUFCH2Asv/dRWroUbqxC4rYlbSh2XGJdybIIO+AiRGe
+p57VbqorCGt3U6efpMsCdA1zbAS9EZy0LjAd9O9i0cIEG4Nv8ZMvthj+gUlHdto3
+Q7HUN6hIYImNZ8v3AnHnY4PKYGVl415EhXRcGUIcYbkmZKyosJWkPVlmh6QScJgl
+Kdf8GrwF1Jlo92bnO3pf/LjvOR4ilYTBEfyOaweWrnKFED3B2Wehh8tOOE93Ewrm
+QG1Jll3zIyhgHRyNMsoq
+=nLRv
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__8_Apr_2013_14_21_24_+1000_EmJn.GmBvJY2KKpU--
+--Signature=_Mon__8_Apr_2013_14_36_23_+1000_Y__T1eWGENzZ/7D5--
