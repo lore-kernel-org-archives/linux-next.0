@@ -1,63 +1,28 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Mon, 8 Apr 2013 11:15:13 +1000
-Message-ID: <20130408111513.da2fc33b28669ede50622d67@canb.auug.org.au>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IGxpbnV4LW5leHQ6IGJ1aWxkIGZhaWx1cmUgYWZ0ZXIgbWVyZ2Ugb2Yg?=
+ =?UTF-8?B?dGhlIG1mZCB0cmVl?=
+Date: Mon, 08 Apr 2013 08:45:51 +0400
+Message-ID: <1365396351.542317232@f36.mail.ru>
+References: <20130408142124.ac540429a889cdc9800e529a@canb.auug.org.au>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__8_Apr_2013_11_15_13_+1000_4T58_OzANPwy4rUA"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130408142124.ac540429a889cdc9800e529a@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?B?U3RlcGhlbiBSb3Rod2VsbA==?= <sfr@canb.auug.org.au>
+Cc: =?UTF-8?B?U2FtdWVsIE9ydGl6?= <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__8_Apr_2013_11_15_13_+1000_4T58_OzANPwy4rUA
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Al,
-
-After merging the vfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-arch/powerpc/kvm/../../../virt/kvm/kvm_main.c: In function 'kvm_init':
-arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:2990:2: error: assignment of =
-member 'owner' in read-only object
-arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:2991:2: error: assignment of =
-member 'owner' in read-only object
-arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:2992:2: error: assignment of =
-member 'owner' in read-only object
-
-Caused by commit d612df096dce ("constify a bunch of struct
-file_operations instances").  Grep is your friend ...
-
-I have used the vfs tree from next-230130405 for today.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__8_Apr_2013_11_15_13_+1000_4T58_OzANPwy4rUA
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRYhohAAoJEECxmPOUX5FEKQQQAIEiUj6FN60ejBXbd0am+8XX
-0P3wkuX5p0wr4npJTyzOoOgOFNCg+rO7QYr+BDCHYeYXsmYH5a1TyRWfstxnyZ0J
-tpnJTlHobRf9k37j81StCOOfrbR3UK86pjKvJLhnfNn40UqymwvfsmJonf/tmaE2
-rD2qg8KFQEwb2ez+7eIL8K4NaMysWnEOPHOtnaNYAbDRzI14StS315zJxg1ByhTy
-gBrS8AR5jF3FAIH5CyEzO2u+b2ohPi7cWdPt1RQMi1bNZ+GZpjLxqNw1jyEidP6H
-ly/FzBSpyTkXFdpgYP8yEgpFxO4S9rLVgAddUkN+4poycF11LqG034zQLeTnMTrF
-niyiMXaQ6X+Xl9t8cdxI4QfPMeKkLL57Fox1CCIWsd2xbtd6q2HWXdGRa3kQ0ryC
-+h0bbgbuSSoVSWtgldo8feJPoqmtuT6CSQjS8I/2JwRaz4LUnQunlxCJNKeJhb3r
-5klKSNtAtBXpQxgeCNBVVAcA/ucVI3K63R7ezMilLTC7OfFGTScyXPN415ufa/r/
-Zkth7QKSINvWXfFw98gtwqEjL1iUFRk3qVJxFUjfCMVO3S/lcT/Q1zlufGyaaXys
-5ziYJAJ33Pork53W2a82UzkPTyjUZTagKpnY7sVThD2JPabPKFSOY6iwe/k622uQ
-BiNqE4xA0vCdpwllkwxV
-=XLU3
------END PGP SIGNATURE-----
-
---Signature=_Mon__8_Apr_2013_11_15_13_+1000_4T58_OzANPwy4rUA--
+SGVsbG8uCgo+IEFmdGVyIG1lcmdpbmcgdGhlIG1mZCB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQg
+YnVpbGQgKHg4Nl82NCBhbGxtb2Rjb25maWcpCj4gZmFpbGVkIGxpa2UgdGhpczoKPiAKPiBkcml2
+ZXJzL3JlZ3VsYXRvci9hbmF0b3AtcmVndWxhdG9yLmM6IEluIGZ1bmN0aW9uICdhbmF0b3BfcmVn
+dWxhdG9yX3Byb2JlJzoKPiBkcml2ZXJzL3JlZ3VsYXRvci9hbmF0b3AtcmVndWxhdG9yLmM6MTM0
+OjI6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiAnb2ZfZ2V0X3BhcmVu
+dCcgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCj4gCj4gQ2F1c2VkIGJ5
+IGNvbW1pdCA1YWIzYTg5YTc0MWYgKCJtZmQ6IHN5c2NvbjogQWRkIG5vbi1EVCBzdXBwb3J0Iiku
+Cj4gCj4gSSBoYXZlIHVzZWQgdGhlIG1mZCB0cmVlIGZyb20gbmV4dC0yMDEzMDQwNSBmb3IgdG9k
+YXkuCgpUaGlzIG1lYW5zIHRoYXQgd2UgZG8gbm90IGhhdmUgZW1wdHkgZGVjbGFyYXRpb25zIGZv
+ciB0aGUKb2ZfeHggZnVuY3Rpb25zIGluIGxpbnV4L29mLmggZm9yICFDT05GSUdfT0YuCk9LIHRv
+IGRlY2xhcmUgdGhlc2UgZnVuY3Rpb25zIG9yIGFueSBvdGhlciBvcGluaW9ucz8KCi0tLQo=
