@@ -1,62 +1,100 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the scsi tree
-Date: Mon, 8 Apr 2013 17:02:31 +1000
-Message-ID: <20130408170231.3c50013bb8bacebab8ca4cea@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: GENERIC_GPIO considered deprecated
+Date: Mon, 08 Apr 2013 16:31:28 +0900
+Message-ID: <2c9501ce342b$1535d290$3fa177b0$%kim@samsung.com>
+References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
+ <51576214.8010307@openwide.fr>
+ <CAAVeFu++8YOOSxPbAaTudxSGcBomkGrakBjiVyD+XSee54TrWw@mail.gmail.com>
+ <26e401ce30cc$602e45f0$208ad1d0$%kim@samsung.com>
+ <CAAVeFuJcAgFma6wxmyoUN4Kfp-+y-gj3QMWvVYsCK_D8q0gSXQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__8_Apr_2013_17_02_31_+1000_2Rs1i1qywv8upa7/"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50200 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759089Ab3DHHCq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Apr 2013 03:02:46 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:60538 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932739Ab3DHHba convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Apr 2013 03:31:30 -0400
+In-reply-to: <CAAVeFuJcAgFma6wxmyoUN4Kfp-+y-gj3QMWvVYsCK_D8q0gSXQ@mail.gmail.com>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Saurav Kashyap <saurav.kashyap@qlogic.com>, Giridhar Malavali <giridhar.malavali@qlogic.com>, James Bottomley <JBottomley@Parallels.com>, Akinobu Mita <akinobu.mita@gmail.com>
+To: 'Alexandre Courbot' <gnurou@gmail.com>
+Cc: 'Romain Naour' <romain.naour@openwide.fr>, 'linux-next' <linux-next@vger.kernel.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org
 
---Signature=_Mon__8_Apr_2013_17_02_31_+1000_2Rs1i1qywv8upa7/
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Alexandre Courbot wrote:
+> 
+> On Wed, Apr 3, 2013 at 5:35 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> >> could you amend the patches that adds them such as they get changed
+> >> into "select ARCH_REQUIRE_GPIOLIB" instead? You can grep for "select
+> >
+> > I can do it for my tree but the branch already included in arm-soc tree
+> so I think, it should be fixed with another patch. And
+> >
+> >> GENERIC_GPIO" in arch/arm to find the offending lines. We are removing
+> >> GENERIC_GPIO and this work cannot be merged until you do this since it
+> >> would break ARM builds. Thanks!
+> >>
+> > So how about following? If you are OK, let me take into samsung tree.
+> >
+> > --------8<----------------8<--------
+> > From: Kukjin Kim <kgene.kim@samsung.com>
+> > Subject: [PATCH] ARM: SAMSUNG: change GENERIC_GPIO to
+> ARCH_REQUIRE_GPIOLIB
+> >
+> > When I applied regarding samsung-time patches, the "select GENERIC_GPIO"
+> > has been added wrong, so this patch fixes that.
+> > And since the GENERIC_GPIO in arch/arm/ will be gone away, this adds
+> > ARCH_REQUIRE_GPIOLIB for S3C24XX and S5PC100 instead.
+> >
+> > Reported-by: Alexandre Courbot <gnurou@gmail.com>
+> > Cc: Romain Naour <romain.naour@openwide.fr>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> >  arch/arm/Kconfig |    4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> > index 46fcfa8..a239c7e 100644
+> > --- a/arch/arm/Kconfig
+> > +++ b/arch/arm/Kconfig
+> > @@ -770,10 +770,10 @@ config ARCH_SA1100
+> >  config ARCH_S3C24XX
+> >         bool "Samsung S3C24XX SoCs"
+> >         select ARCH_HAS_CPUFREQ
+> > +       select ARCH_REQUIRE_GPIOLIB
+> >         select CLKDEV_LOOKUP
+> >         select CLKSRC_MMIO
+> >         select GENERIC_CLOCKEVENTS
+> > -       select GENERIC_GPIO
+> >         select HAVE_CLK
+> >         select HAVE_S3C2410_I2C if I2C
+> >         select HAVE_S3C2410_WATCHDOG if WATCHDOG
+> > @@ -828,11 +828,11 @@ config ARCH_S5P64X0
+> >
+> >  config ARCH_S5PC100
+> >         bool "Samsung S5PC100"
+> > +       select ARCH_REQUIRE_GPIOLIB
+> >         select CLKDEV_LOOKUP
+> >         select CLKSRC_MMIO
+> >         select CPU_V7
+> >         select GENERIC_CLOCKEVENTS
+> > -       select GENERIC_GPIO
+> >         select HAVE_CLK
+> >         select HAVE_S3C2410_I2C if I2C
+> >         select HAVE_S3C2410_WATCHDOG if WATCHDOG
+> > --
+> > 1.7.10.4
+> 
+> Should do the trick, if we can make sure that your tree is merged
+> prior to my patches.
 
-Hi Andrew,
+I'm not sure but I think, arm-soc tree should be merged into mainline before others...
 
-Today's linux-next merge of the akpm tree got a conflict in
-drivers/scsi/qla2xxx/qla_attr.c between commit 4a9fa41bd404 ("[SCSI]
-qla2xxx: Remove debug code that msleeps for random duration") from the
-scsi tree and commit "scsi: rename random32() to prandom_u32()" from the
-akpm tree.
+> Can you put it into your tree for 3.10?
+> 
+I did, so it should be fine.
 
-The former removed the code in this file that was updated by the latter,
-so I did that (and dropped the next patch ("scsi: fix the wrong position
-of the comment") and can carry the fix as necessary (no action is
-required).
+Thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__8_Apr_2013_17_02_31_+1000_2Rs1i1qywv8upa7/
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRYmuHAAoJEECxmPOUX5FEUwoP/0lQgdzAZp9ID4EePVRAOYn1
-DqQcBeSZjpIgL6c3e9mGaPA6FB2OmrUTtjZu4BOM3IuoqTYD2oTCV5OocSHrCqbC
-19UGjpwSFoMKg5ZJI0DPt2H9wdMCZaOoMghSwS+38ghuYKgGw5LFMOubKut6yzYm
-YFM+0JHDnZ4IsglJc7hNmKZ0EB/k1OY6f4xCFPqUpoWvAcraPx86x+czs73Gx9Au
-fzuV85Onb1UAgAq7vZGHTZQtkPUHaRINcK2Y9SpSDpw40axCzng1UakHDqvfMhwW
-CQxDdeJd5zOaTTln2a/ix25VDUfqx+3sQT4Tz+edqtX10HfvmLDzKLzL71xBBiB7
-oMzAdlVmy43Zy7xNuKmPmWeza3NSICaTMMnqKRDn0AxakOjdo5HF509LkiygTt0k
-87WEQ4R0JJi46Fc9f2v9RC8ML2DenozKWFDXLoqvJawndZC9FUWf7UEVM8Cs3BYu
-xzG0ZrqX7FNoZZqOlobZ6RiZE9+RflB7AzKtwQTt0QvMoTi8YkLe6xd7Mh68fHbo
-z0xpPtBHe+Ih+RR7C9w+3gCNMUeNjOMhXj0fen9opt/vy0J01LeAz+3yjvNo0k/q
-BdSsJ/MiqVwbC1+YLE/VT+bOU6pGNOTn8XMvoIn+Vo0XTzzvkPWAbwq1jWkE9HjB
-AcEdbHTjEiZTZAF99S9z
-=NI+5
------END PGP SIGNATURE-----
-
---Signature=_Mon__8_Apr_2013_17_02_31_+1000_2Rs1i1qywv8upa7/--
+- Kukjin
