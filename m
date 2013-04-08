@@ -1,78 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: GENERIC_GPIO considered deprecated
-Date: Tue, 9 Apr 2013 09:38:42 +1000
-Message-ID: <20130409093842.656ae3fff92d5368db5c0646@canb.auug.org.au>
-References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
-	<2c9501ce342b$1535d290$3fa177b0$%kim@samsung.com>
-	<5162EC32.2030602@wwwdotorg.org>
-	<201304082136.44905.arnd@arndb.de>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: hangs on boot in 9984d7394618df9
+Date: Mon, 8 Apr 2013 16:46:27 -0700
+Message-ID: <CAD=FV=VrOh+3ucJ_4DfzpbMsOOWLK7rPue1e23=oV9tH-wUVPQ@mail.gmail.com>
+References: <20130405173623.GE4068@ZenIV.linux.org.uk>
+	<515F3A71.9080008@sgi.com>
+	<20130405210042.GH4068@ZenIV.linux.org.uk>
+	<5162E36F.5020305@sgi.com>
+	<20130408155847.GS4068@ZenIV.linux.org.uk>
+	<51632DF8.2080402@sgi.com>
+	<20130408212327.GU4068@ZenIV.linux.org.uk>
+	<20130408214834.GV4068@ZenIV.linux.org.uk>
+	<516341ED.5060803@wwwdotorg.org>
+	<CAD=FV=WodJER2g45u5pEw0edf+K4uYJjyt0w4ZfX9q=o1a7pYw@mail.gmail.com>
+	<20130408230658.GY4068@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__9_Apr_2013_09_38_42_+1000_7wLC3SjYUJ.IXUu3"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <201304082136.44905.arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>, 'Alexandre Courbot' <gnurou@gmail.com>, Olof Johansson <olof@lixom.net>, 'Romain Naour' <romain.naour@openwide.fr>, 'linux-next' <linux-next@vger.kernel.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, =?UTF-8?B?IidIZWlrbyBTdMO8Ym5l?= =?UTF-8?B?cici?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130408230658.GY4068@ZenIV.linux.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Nathan Zimmer <nzimmer@sgi.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, David Woodhouse <dwmw2@infradead.org>, stable@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__9_Apr_2013_09_38_42_+1000_7wLC3SjYUJ.IXUu3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Al,
 
-Hi all,
-
-On Mon, 8 Apr 2013 21:36:44 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+On Mon, Apr 8, 2013 at 4:06 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> Folks, see if vfs.git#experimental works for you; the PITA had apparently
+> been caused by change of open() semantics for /proc/<pid>/fd/<some_pipe> -
+> it started to behave like a FIFO, i.e. wait for peer to show up.  Normally
+> that's not a problem, but if you have closed e.g. the write end of a pipe
+> and try to open /proc/<pid>/fd/<read_end_of_pipe>, you'll get open() waiting
+> for writers to appear.  Which isn't what we used to do here (open succeeded
+> immediately) and apparently that was enough to trip drakut.
 >
-> On Monday 08 April 2013, Stephen Warren wrote:
-> > >>
-> > >> Should do the trick, if we can make sure that your tree is merged
-> > >> prior to my patches.
-> > >=20
-> > > I'm not sure but I think, arm-soc tree should be merged into mainline=
- before others...
-> > >=20
-> > >> Can you put it into your tree for 3.10?
-> > >>
-> > > I did, so it should be fine.
-> > >=20
-> >=20
-> > You may want to discuss how to handle this dependency with the arm-soc
-> > maintainers (CC'd).
->=20
-> I'm fine with putting the same branch into arm-soc as well as the gpio tr=
-ee
-> and anything else that might need it, that tends to be the least invasive
-> way.
+> Branch head should be at 574179469f7370aadb9cbac1ceca7c3723c17bee.
 
-Just a reminder: that had better be the exact same branch and that branch
-had better never be rebased/rewritten ...
+That branch booted fine for me and didn't show any problems.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I wasn't easily able to merge onto linux-next and test there though.
+I tried applying these the 4 top commits of your branch to
+"next-20130408" and it didn't solve my problems.  A full merge of your
+branch to linux-next showed conflicts and I didn't dig.
 
---Signature=_Tue__9_Apr_2013_09_38_42_+1000_7wLC3SjYUJ.IXUu3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRY1UCAAoJEECxmPOUX5FEJvwP/2ho4rdgU54EsqmohH0IXaxC
-pY5XzzcVDRUbyNizxbVeYyQJNq5c7NYY2NJa+Sl6eoHtBeN8u0woIzA1zSMxYro7
-j2sXwb2TUb2XwkkrujEa9URgb78rCH9aeWl9usGRpv7wfDAdLuQJUG4yYPf7G+pu
-+coDBQyN4+lqVxcocNmtmt6ZLwyq7fcp4ecam+9X/L+Wi4BRz8X+RxrzHHM78RQB
-KjZ6xo4d4EK+nZTNEO71wFmGUrjlyjqjFrSv6gRLk7Q6MRsoyIxf+izC9b+bD4E2
-MXoR2aJCqUXgw6xUXPGNJNY03ltFN/oWgjjUt41sIGfGygT1ch+b49O6rIgl6oNo
-vepkzis0SddT+JfSSHRTf9Wb3jPWSSBeyAwn1mPiODHziglY2VNO7M2uSWdB1EHR
-CdYA8nGp1ejwchX55AlW6coXr9SN/Mj86IF5QTlC19QSlMbky7VokCqhXSdja0Ns
-DvYCmdn1nLHAvB/2WKu7FWrMe+W6gr3POhLlzWVgFaJkblbFHaealtesOR+cb8p8
-HXVJ5VfofEYvaVhrc03sduVVJm2wWX7FwHm/CJiYWYq1Qn4ikFhWtO4zmbaNdD9t
-WUzvp+mXCQknWEQGFSYPNd+B2pBbegUprSYhuYjKoyWdY413to9djhIWjdBWACUR
-O84orbclBMPymrZPbjux
-=aFTD
------END PGP SIGNATURE-----
-
---Signature=_Tue__9_Apr_2013_09_38_42_+1000_7wLC3SjYUJ.IXUu3--
+-Doug
