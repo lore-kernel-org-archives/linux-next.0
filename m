@@ -1,56 +1,62 @@
 From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Apr 9
-Date: Tue, 9 Apr 2013 16:03:18 +0200
-Message-ID: <CA+icZUXEd41BkB=C+52xQfwhR2OECcd6pCPQ4_j=8fnME76eWQ@mail.gmail.com>
-References: <CA+icZUX-RMW=pHzhOumB2_R99BRAf2qGC4n5bzyLqU6pOCMDFw@mail.gmail.com>
-	<20130409235941.11eef57a42cb97efec72f037@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
+Date: Tue, 9 Apr 2013 16:04:53 +0200
+Message-ID: <CA+icZUXXHb9vmcNuFmYha34SV7xch2S8OcgZ+cLVVnNebs5pNQ@mail.gmail.com>
+References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
+	<31778276.CDMUtaAAnc@vostro.rjw.lan>
 Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f46.google.com ([74.125.82.46]:42286 "EHLO
-	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933445Ab3DIODU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Apr 2013 10:03:20 -0400
-In-Reply-To: <20130409235941.11eef57a42cb97efec72f037@canb.auug.org.au>
+Received: from mail-we0-f175.google.com ([74.125.82.175]:50129 "EHLO
+	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761269Ab3DIOEz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Apr 2013 10:04:55 -0400
+In-Reply-To: <31778276.CDMUtaAAnc@vostro.rjw.lan>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
 
-On Tue, Apr 9, 2013 at 3:59 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Sedat,
->
-> On Tue, 9 Apr 2013 12:56:46 +0200 Sedat Dilek <sedat.dilek@gmail.com> wrote:
+On Tue, Apr 9, 2013 at 4:03 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
+> On Tuesday, April 09, 2013 02:47:39 PM Sedat Dilek wrote:
+>> On Tue, Apr 9, 2013 at 11:30 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> > Hi all,
+>> >
+>> > Changes since 20130408:
+>> >
+>> > The vfs tree still had its build failure so I used the version from
+>> > next-20130405.
+>> >
+>> > The wireless-next tree lost its build failure.
+>> >
+>> > The mfd tree still had its build failure so I used the version from
+>> > next-20130405.
+>> >
+>> > The ftrace tree gained a conflict against Linus' tree.
+>> >
+>> > The arm-soc tree gained conflicts against the omap_dss2 and gpio-lw trees.
+>> >
+>> > ----------------------------------------------------------------------------
+>> >
 >>
->> This version hangs... I started in rescue-mode and see that udev,
->> premount and init scripts are run.
->> Currently, I have no glue why when what...
->> Lemme see if I get k(g)bd started.
+>> On reboot I see hanging cpufreq with the help of kdb/kgdb?
+>> See screenshot.
 >>
->> Unfortunately, there was a "quiet" boot-param for grub2 here but it's gone.
->> With "text" I don't see more.
->>
->> Maybe, someone has a hint.
+>> I have also a screenshot with next-20130326, so this issue seems not to be new.
 >
-> This is probably the known problem that Al Viro is looking at.  See "Boot
-> hang due to "pipe: fold file_operations instances in one" in
-> next-20130408" and  "Re: hangs on boot in 9984d7394618df9" thread on lkml
-> and linux-next mailing lists.
+> This is during CPU offline.  Does it only happen on reboot?  What about trying
+> to offline/online CPUs from sysfs?
 >
 
-Yupp, just was reading them, for followers.
-
-http://marc.info/?t=136545603700003&r=1&w=2
-http://marc.info/?t=136545773000008&r=1&w=2
-
-If such things are known - can you please mention it in your daily
-Linux-Next changelog.
-That would have saved me several hours - digging into the issue -
-digging into kdb/kgdb.
+I have seen it on reboots.
+How to online/offline from sysfs?
 
 - Sedat -
 
+> Rafael
+>
+>
 > --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> I speak only for myself.
+> Rafael J. Wysocki, Intel Open Source Technology Center.
