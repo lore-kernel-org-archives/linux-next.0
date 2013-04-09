@@ -1,105 +1,50 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Apr 9
-Date: Tue, 9 Apr 2013 15:34:01 +0200
-Message-ID: <CA+icZUVpJcBCOOd7zC=mi_2U+aC8u+WCBfDBZNnut7XVX3Ps7Q@mail.gmail.com>
-References: <CA+icZUX-RMW=pHzhOumB2_R99BRAf2qGC4n5bzyLqU6pOCMDFw@mail.gmail.com>
-	<CA+icZUU2dHLz_iWCiJkgnU8HpkWeWbGL0niAoBzoE55CLuvRiQ@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
+Date: Tue, 09 Apr 2013 16:03:50 +0200
+Message-ID: <31778276.CDMUtaAAnc@vostro.rjw.lan>
+References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=047d7bfd0c2e335e6c04d9ed9b40
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f51.google.com ([74.125.82.51]:33215 "EHLO
-	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760658Ab3DINeD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Apr 2013 09:34:03 -0400
-In-Reply-To: <CA+icZUU2dHLz_iWCiJkgnU8HpkWeWbGL0niAoBzoE55CLuvRiQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.orgLinux PM list <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
---047d7bfd0c2e335e6c04d9ed9b40
-Content-Type: text/plain; charset=UTF-8
+On Tuesday, April 09, 2013 02:47:39 PM Sedat Dilek wrote:
+> On Tue, Apr 9, 2013 at 11:30 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > Changes since 20130408:
+> >
+> > The vfs tree still had its build failure so I used the version from
+> > next-20130405.
+> >
+> > The wireless-next tree lost its build failure.
+> >
+> > The mfd tree still had its build failure so I used the version from
+> > next-20130405.
+> >
+> > The ftrace tree gained a conflict against Linus' tree.
+> >
+> > The arm-soc tree gained conflicts against the omap_dss2 and gpio-lw trees.
+> >
+> > ----------------------------------------------------------------------------
+> >
+> 
+> On reboot I see hanging cpufreq with the help of kdb/kgdb?
+> See screenshot.
+> 
+> I have also a screenshot with next-20130326, so this issue seems not to be new.
 
-On Tue, Apr 9, 2013 at 2:37 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Tue, Apr 9, 2013 at 12:56 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> Hi,
->>
->> I still did not get the original posting...
->>
->> This version hangs... I started in rescue-mode and see that udev,
->> premount and init scripts are run.
->
-> ... udevd ....
-> /scripts/init-premount ... done
-> /scripts/pre-premount ... done
-> /scripts/local-bottom ... done
-> /scripts/init-bottom ... <--- hanging here!
->
+This is during CPU offline.  Does it only happen on reboot?  What about trying
+to offline/online CPUs from sysfs?
 
-Looks like a problem with udev.
+Rafael
 
-# ll
-insgesamt 16
-drwxr-xr-x  4 root root 4096 Apr  9 15:31 ./
-drwxr-xr-x  4 root root 4096 Apr  9 15:31 ../
-drwxr-xr-x 10 root root 4096 Apr  9 15:31 initrd-unpacked/
-drwxr-xr-x  2 root root 4096 Apr  9 15:31 original/
 
-# ll original/
-insgesamt 3216
-drwxr-xr-x 2 root root    4096 Apr  9 15:31 ./
-drwxr-xr-x 4 root root    4096 Apr  9 15:31 ../
--rw-r--r-- 1 root root 3277802 Apr  9 12:36
-initrd.img-3.9.0-rc6-next20130409-1-iniza-small
-
-# cd initrd-unpacked/
-
-# ll scripts/init-bottom/
-insgesamt 16
-drwxr-xr-x 2 root root 4096 Apr  9 15:30 ./
-drwxr-xr-x 8 root root 4096 Apr  9 15:27 ../
--rw-r--r-- 1 root root   72 Apr  9 15:27 ORDER
--rwxr-xr-x 1 root root  396 Apr  9 15:27 udev*
-
-Both files attached.
-
-> - Sedat -
->
->> Currently, I have no glue why when what...
->> Lemme see if I get k(g)bd started.
->>
->> Unfortunately, there was a "quiet" boot-param for grub2 here but it's gone.
->> With "text" I don't see more.
->>
->> Maybe, someone has a hint.
->>
->> Regards,
->> - Sedat -
->>
->>
->>
->> [1] http://marc.info/?l=linux-next&m=136549987718448&w=2
-
---047d7bfd0c2e335e6c04d9ed9b40
-Content-Type: application/octet-stream; name=ORDER
-Content-Disposition: attachment; filename=ORDER
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_hfb40xxz0
-
-L3NjcmlwdHMvaW5pdC1ib3R0b20vdWRldgpbIC1lIC9jb25mL3BhcmFtLmNvbmYgXSAmJiAuIC9j
-b25mL3BhcmFtLmNvbmYK
---047d7bfd0c2e335e6c04d9ed9b40
-Content-Type: application/octet-stream; name=udev
-Content-Disposition: attachment; filename=udev
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_hfb411rp1
-
-IyEvYmluL3NoIC1lCiMgaW5pdHJhbWZzIGluaXQtYm90dG9tIHNjcmlwdCBmb3IgdWRldgoKUFJF
-UkVRPSIiCgojIE91dHB1dCBwcmUtcmVxdWlzaXRlcwpwcmVyZXFzKCkKewoJZWNobyAiJFBSRVJF
-USIKfQoKY2FzZSAiJDEiIGluCiAgICBwcmVyZXFzKQoJcHJlcmVxcwoJZXhpdCAwCgk7Owplc2Fj
-CgoKIyBTdG9wIHVkZXZkLCB3ZSdsbCBtaXNzIGEgZmV3IGV2ZW50cyB3aGlsZSB3ZSBydW4gaW5p
-dCwgYnV0IHdlIGNhdGNoIHVwCnVkZXZhZG0gY29udHJvbCAtLXRpbWVvdXQ9MTIxIC0tZXhpdCB8
-fCBcCgllY2hvICJ1ZGV2IGV4aXQgZmFpbGVkIC0tIHJjPSQ/IgoKIyBNb3ZlIC9kZXYgdG8gdGhl
-IHJlYWwgZmlsZXN5c3RlbQptb3VudCAtbiAtbyBtb3ZlIC9kZXYgJHtyb290bW50fS9kZXYK
---047d7bfd0c2e335e6c04d9ed9b40--
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
