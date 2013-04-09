@@ -1,45 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Wed, 10 Apr 2013 01:49:54 +1000
-Message-ID: <ff9ba0cbc139d6f4937a892ceb5b6e9c@ozlabs.org>
-References: <20130408111513.da2fc33b28669ede50622d67@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
+Date: Tue, 9 Apr 2013 18:08:46 +0200
+Message-ID: <CA+icZUWH5Ni9koj4V8Ws8jJ7smwmU7JuUWBFh=aiCqkrCpqB5A@mail.gmail.com>
+References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
+	<31778276.CDMUtaAAnc@vostro.rjw.lan>
+	<CA+icZUXXHb9vmcNuFmYha34SV7xch2S8OcgZ+cLVVnNebs5pNQ@mail.gmail.com>
+	<CAKohpok+9dRaENjBfnN9gZF3zvFU9v19xV_eFfcM3Pj6Cv=S2w@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:52918 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S936270Ab3DIPt4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Apr 2013 11:49:56 -0400
-In-Reply-To: <20130408111513.da2fc33b28669ede50622d67@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAKohpok+9dRaENjBfnN9gZF3zvFU9v19xV_eFfcM3Pj6Cv=S2w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Al,
+On Tue, Apr 9, 2013 at 4:56 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 9 April 2013 19:34, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> I have seen it on reboots.
+>> How to online/offline from sysfs?
+>
+> offline a cpu "x" with:
+>
+> echo 0 > /sys/devices/system/cpu/cpux/online
+>
+> and online with echo 1 > to same location.
 
-On 2013-04-08 11:15, Stephen Rothwell wrote:
->
-> After merging the vfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> arch/powerpc/kvm/../../../virt/kvm/kvm_main.c: In function 
-> 'kvm_init':
-> arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:2990:2: error:
-> assignment of member 'owner' in read-only object
-> arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:2991:2: error:
-> assignment of member 'owner' in read-only object
-> arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:2992:2: error:
-> assignment of member 'owner' in read-only object
->
-> Caused by commit d612df096dce ("constify a bunch of struct
-> file_operations instances").  Grep is your friend ...
->
-> I have used the vfs tree from next-230130405 for today.
+With x=3 the system gets in an unuseable state.
 
-Ping?
--- 
-Cheers,
-Stephen Rothwell
+     root# echo 0 > /sys/devices/system/cpu/cpu3/online
+
+I could not write my reply and had to do a hard/cold reboot.
+The dmesg log I saw looked similiar to my digicam-shot.
+
+- Sedat -
