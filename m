@@ -1,45 +1,52 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: hangs on boot in 9984d7394618df9
-Date: Mon, 8 Apr 2013 16:46:27 -0700
-Message-ID: <CAD=FV=VrOh+3ucJ_4DfzpbMsOOWLK7rPue1e23=oV9tH-wUVPQ@mail.gmail.com>
-References: <20130405173623.GE4068@ZenIV.linux.org.uk>
-	<515F3A71.9080008@sgi.com>
-	<20130405210042.GH4068@ZenIV.linux.org.uk>
-	<5162E36F.5020305@sgi.com>
-	<20130408155847.GS4068@ZenIV.linux.org.uk>
-	<51632DF8.2080402@sgi.com>
-	<20130408212327.GU4068@ZenIV.linux.org.uk>
-	<20130408214834.GV4068@ZenIV.linux.org.uk>
-	<516341ED.5060803@wwwdotorg.org>
-	<CAD=FV=WodJER2g45u5pEw0edf+K4uYJjyt0w4ZfX9q=o1a7pYw@mail.gmail.com>
-	<20130408230658.GY4068@ZenIV.linux.org.uk>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: GENERIC_GPIO considered deprecated
+Date: Mon, 8 Apr 2013 17:07:54 -0700
+Message-ID: <CAAVeFuJCxYiOXRkjJZXpSFUaGoiAtWwBWBJmxXUyQMkmrSEsew@mail.gmail.com>
+References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
+ <2c9501ce342b$1535d290$3fa177b0$%kim@samsung.com> <5162EC32.2030602@wwwdotorg.org>
+ <201304082136.44905.arnd@arndb.de> <20130409093842.656ae3fff92d5368db5c0646@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130408230658.GY4068@ZenIV.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Nathan Zimmer <nzimmer@sgi.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, David Woodhouse <dwmw2@infradead.org>, stable@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20130409093842.656ae3fff92d5368db5c0646@canb.auug.org.au>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Romain Naour <romain.naour@openwide.fr>, linux-next <linux-next@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-Al,
-
-On Mon, Apr 8, 2013 at 4:06 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> Folks, see if vfs.git#experimental works for you; the PITA had apparently
-> been caused by change of open() semantics for /proc/<pid>/fd/<some_pipe> -
-> it started to behave like a FIFO, i.e. wait for peer to show up.  Normally
-> that's not a problem, but if you have closed e.g. the write end of a pipe
-> and try to open /proc/<pid>/fd/<read_end_of_pipe>, you'll get open() waiting
-> for writers to appear.  Which isn't what we used to do here (open succeeded
-> immediately) and apparently that was enough to trip drakut.
+On Mon, Apr 8, 2013 at 4:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> Branch head should be at 574179469f7370aadb9cbac1ceca7c3723c17bee.
+> On Mon, 8 Apr 2013 21:36:44 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+>>
+>> On Monday 08 April 2013, Stephen Warren wrote:
+>> > >>
+>> > >> Should do the trick, if we can make sure that your tree is merged
+>> > >> prior to my patches.
+>> > >
+>> > > I'm not sure but I think, arm-soc tree should be merged into mainline before others...
+>> > >
+>> > >> Can you put it into your tree for 3.10?
+>> > >>
+>> > > I did, so it should be fine.
+>> > >
+>> >
+>> > You may want to discuss how to handle this dependency with the arm-soc
+>> > maintainers (CC'd).
+>>
+>> I'm fine with putting the same branch into arm-soc as well as the gpio tree
+>> and anything else that might need it, that tends to be the least invasive
+>> way.
+>
+> Just a reminder: that had better be the exact same branch and that branch
+> had better never be rebased/rewritten ...
 
-That branch booted fine for me and didn't show any problems.
+Sorry, which branch are we talking about - is it the one I published
+for -next initially? If so wouldn't it be simpler to withdraw it and
+have Grant integrate the patches in his branch? Since no one depends
+on them for now anyway...
 
-I wasn't easily able to merge onto linux-next and test there though.
-I tried applying these the 4 top commits of your branch to
-"next-20130408" and it didn't solve my problems.  A full merge of your
-branch to linux-next showed conflicts and I didn't dig.
+I remember rebasing it once some time ago to add Acked-bys, but it
+hasn't changed since then.
 
--Doug
+Alex.
