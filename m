@@ -1,59 +1,37 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Tue, 9 Apr 2013 11:50:30 -0500
-Message-ID: <CAL_Jsq+=n6SYpMCUNc0PSBdGOWOWcbdmtBrAxZhRqhLr4stxow@mail.gmail.com>
-References: <20130408142124.ac540429a889cdc9800e529a@canb.auug.org.au>
-	<1365438469.322553103@f51.mail.ru>
-	<20130409072059.GC23447@zurbaran>
-	<1365522460.690965802@f12.mail.ru>
-	<20130409161222.GZ24058@zurbaran>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
+Date: Tue, 9 Apr 2013 22:21:09 +0530
+Message-ID: <CAKohponzmLzPN8ua3p4TCt2waZCQCd+4Znh+tSQ4MBjcy+Ss6A@mail.gmail.com>
+References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
+	<31778276.CDMUtaAAnc@vostro.rjw.lan>
+	<CA+icZUXXHb9vmcNuFmYha34SV7xch2S8OcgZ+cLVVnNebs5pNQ@mail.gmail.com>
+	<CAKohpok+9dRaENjBfnN9gZF3zvFU9v19xV_eFfcM3Pj6Cv=S2w@mail.gmail.com>
+	<CA+icZUWH5Ni9koj4V8Ws8jJ7smwmU7JuUWBFh=aiCqkrCpqB5A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130409161222.GZ24058@zurbaran>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Alexander Shiyan <shc_work@mail.ru>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CA+icZUWH5Ni9koj4V8Ws8jJ7smwmU7JuUWBFh=aiCqkrCpqB5A@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 9, 2013 at 11:12 AM, Samuel Ortiz <sameo@linux.intel.com> wrote:
-> Hi Alexander,
+On 9 April 2013 21:38, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> With x=3 the system gets in an unuseable state.
 >
-> On Tue, Apr 09, 2013 at 07:47:40PM +0400, Alexander Shiyan wrote:
->> > On Mon, Apr 08, 2013 at 08:27:49PM +0400, Alexander Shiyan wrote:
+>      root# echo 0 > /sys/devices/system/cpu/cpu3/online
+>
+> I could not write my reply and had to do a hard/cold reboot.
+> The dmesg log I saw looked similiar to my digicam-shot.
 
-[...]
+Few things i need from you. First is output of cpufreq-info. Then
+all the steps you did to reproduce above? Removed any other cpus?
 
->> From 3296415f29818a430bad12c92dc65cd81e4d133f Mon Sep 17 00:00:00 2001
->> From: Alexander Shiyan <shc_work@mail.ru>
->> Date: Tue, 9 Apr 2013 19:41:27 +0400
->> Subject: [PATCH] of: add stub of_get_parent for non-OF builds
->>
->> Fixes build error on x86_64 allmodconfig, introduced by commit
->> 5ab3a89a741f ("mfd: syscon: Add non-DT support").
->>
->> drivers/regulator/anatop-regulator.c: In function 'anatop_regulator_probe':
->> drivers/regulator/anatop-regulator.c:134:2: error: implicit declaration of function 'of_get_parent' [-Werror=implicit-function-declaration]
->>
->> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
->> ---
->>  include/linux/of.h | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/include/linux/of.h b/include/linux/of.h
->> index a0f1292..9f5923f 100644
->> --- a/include/linux/of.h
->> +++ b/include/linux/of.h
->> @@ -353,6 +353,11 @@ static inline struct device_node *of_find_node_by_name(struct device_node *from,
->>       return NULL;
->>  }
->>
->> +static inline struct device_node *of_get_parent(const struct device_node *node)
->> +{
->> +     return NULL;
->> +}
->> +
-> That looks like a proper fix, but I'd like to get Grant or/and Rob's ACK for
-> it before merging it. Please look at MAINTAINERS and cc them on this thread.
+I am not able to find next-20130326 tag in my repo, only have 23 and 28.
+Can you debug it a bit to find exact line of code causing this issue using
+objdump?
 
-Acked-by: Rob Herring <rob.herring@calxeda.com>
+HINT: Documentation/BUG-HUNTING..
+
+Give me line numbers of both of these functions: __cpufreq_governor() and
+__cpufreq_remove_dev().
