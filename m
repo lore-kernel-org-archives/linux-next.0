@@ -1,56 +1,107 @@
 From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
-Date: Tue, 9 Apr 2013 18:57:49 +0200
-Message-ID: <CA+icZUW+SuJurKp-_CWW4Q22YCJUOmfDCsqaQxv6OLhE0_pjpw@mail.gmail.com>
-References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
-	<31778276.CDMUtaAAnc@vostro.rjw.lan>
-	<CA+icZUXXHb9vmcNuFmYha34SV7xch2S8OcgZ+cLVVnNebs5pNQ@mail.gmail.com>
-	<CAKohpok+9dRaENjBfnN9gZF3zvFU9v19xV_eFfcM3Pj6Cv=S2w@mail.gmail.com>
-	<CA+icZUWH5Ni9koj4V8Ws8jJ7smwmU7JuUWBFh=aiCqkrCpqB5A@mail.gmail.com>
-	<CAKohponzmLzPN8ua3p4TCt2waZCQCd+4Znh+tSQ4MBjcy+Ss6A@mail.gmail.com>
+Subject: Re: linux-next: Tree for Apr 9 [ BROKEN vfs-next: fs/pipe.c ]
+Date: Tue, 9 Apr 2013 19:06:01 +0200
+Message-ID: <CA+icZUU82LMNjvJg6W2RKuo1VoC21VsFPJ4qg9Meou_oSKCGyA@mail.gmail.com>
 Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/mixed; boundary=047d7bfd0c2e6f7a7004d9f09160
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKohponzmLzPN8ua3p4TCt2waZCQCd+4Znh+tSQ4MBjcy+Ss6A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 9, 2013 at 6:51 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 9 April 2013 21:38, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> With x=3 the system gets in an unuseable state.
->>
->>      root# echo 0 > /sys/devices/system/cpu/cpu3/online
->>
->> I could not write my reply and had to do a hard/cold reboot.
->> The dmesg log I saw looked similiar to my digicam-shot.
+--047d7bfd0c2e6f7a7004d9f09160
+Content-Type: text/plain; charset=UTF-8
+
+On Tue, Apr 9, 2013 at 11:30 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> Few things i need from you. First is output of cpufreq-info. Then
-> all the steps you did to reproduce above? Removed any other cpus?
+> Changes since 20130408:
 >
-> I am not able to find next-20130326 tag in my repo, only have 23 and 28.
-> Can you debug it a bit to find exact line of code causing this issue using
-> objdump?
->
-> HINT: Documentation/BUG-HUNTING..
+> The vfs tree still had its build failure so I used the version from
+> next-20130405.
 >
 
-next-20130326 see...
+With the attached patch including a follow-up I was able to boot
+today's Linux-Next.
 
-[1] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tag/?id=next-20130326
+I have reverted "Revert "pipe: fold file_operations instances in one"
+from linux-next and applied the fixed correct one from vfs-next.
 
-objdump of file?
-
-> Give me line numbers of both of these functions: __cpufreq_governor() and
-> __cpufreq_remove_dev().
-
-I must checkout by myself and jump on next-20130326.
-Unfortunately, I have it installed but have no binaries and deleted
-the branch from my local GIT branch.
-
-Still on the fs/pipe issue from vfs-next :-).
-I guess I have a working follow-up patch, still compiling.
 
 - Sedat -
+
+--047d7bfd0c2e6f7a7004d9f09160
+Content-Type: application/octet-stream;
+	name="3.9.0-rc6-next20130409-2-iniza-small.patch"
+Content-Disposition: attachment;
+	filename="3.9.0-rc6-next20130409-2-iniza-small.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_hfbbiufc1
+
+QWwgVmlybyAoMSk6CiAgICAgIHBpcGU6IGZvbGQgZmlsZV9vcGVyYXRpb25zIGluc3RhbmNlcyBp
+biBvbmUKClNlZGF0IERpbGVrICg4KToKICAgICAga2J1aWxkOiBkZWItcGtnOiBUcnkgdG8gZGV0
+ZXJtaW5lIGRpc3RyaWJ1dGlvbgogICAgICBrYnVpbGQ6IGRlYi1wa2c6IEJ1bXAgeWVhciBpbiBk
+ZWJpYW4vY29weXJpZ2h0IGZpbGUKICAgICAga2J1aWxkOiBkZWItcGtnOiBVcGRhdGUgZ2l0IHJl
+cG9zaXRvcnkgVVJMIGluIGRlYmlhbi9jb3B5cmlnaHQgZmlsZQogICAgICBNZXJnZSB0YWcgJ25l
+eHQtMjAxMzA0MDknIG9mIGdpdDovL2dpdC5rZXJuZWwub3JnLy4uLi9uZXh0L2xpbnV4LW5leHQg
+aW50byBMaW51eC1OZXh0LXYyMDEzMDQwOQogICAgICBNZXJnZSBicmFuY2ggJ2RlYi1wa2ctZml4
+ZXMnIGludG8gMy45LjAtcmM2LW5leHQyMDEzMDQwOS0xLWluaXphLXNtYWxsCiAgICAgIFJldmVy
+dCAicGlwZTogZm9sZCBmaWxlX29wZXJhdGlvbnMgaW5zdGFuY2VzIGluIG9uZSIKICAgICAgTWVy
+Z2UgYnJhbmNoICd2ZnMtVEVNUCcgaW50byB2ZnMtbmV4dC1maXhlcwogICAgICBNZXJnZSBicmFu
+Y2ggJ3Zmcy1uZXh0LWZpeGVzJyBpbnRvIDMuOS4wLXJjNi1uZXh0MjAxMzA0MDktMi1pbml6YS1z
+bWFsbAoKIGZzL3BpcGUuYyAgICAgICAgICAgICAgICB8ICA3ICsrKystLS0KIGxvY2FsdmVyc2lv
+bi1uZXh0ICAgICAgICB8ICAxIC0KIHNjcmlwdHMvcGFja2FnZS9idWlsZGRlYiB8IDE5ICsrKysr
+KysrKysrKysrKystLS0KIDMgZmlsZXMgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgNyBkZWxl
+dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9mcy9waXBlLmMgYi9mcy9waXBlLmMKaW5kZXggYjQ5OWYz
+Yi4uZDJjNDVlMSAxMDA2NDQKLS0tIGEvZnMvcGlwZS5jCisrKyBiL2ZzL3BpcGUuYwpAQCAtMTAx
+Myw2ICsxMDEzLDcgQEAgc3RhdGljIHZvaWQgd2FrZV91cF9wYXJ0bmVyKHN0cnVjdCBwaXBlX2lu
+b2RlX2luZm8gKnBpcGUpCiBzdGF0aWMgaW50IGZpZm9fb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2Rl
+LCBzdHJ1Y3QgZmlsZSAqZmlscCkKIHsKIAlzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICpwaXBlOwor
+CWJvb2wgaXNfcGlwZSA9IGlub2RlLT5pX3NiLT5zX21hZ2ljID09IFBJUEVGU19NQUdJQzsKIAlp
+bnQga2lsbCA9IDA7CiAJaW50IHJldDsKIApAQCAtMTA1OSw3ICsxMDYwLDcgQEAgc3RhdGljIGlu
+dCBmaWZvX29wZW4oc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUgKmZpbHApCiAJCWlm
+IChwaXBlLT5yZWFkZXJzKysgPT0gMCkKIAkJCXdha2VfdXBfcGFydG5lcihwaXBlKTsKIAotCQlp
+ZiAoIXBpcGUtPndyaXRlcnMpIHsKKwkJaWYgKCFpc19waXBlICYmICFwaXBlLT53cml0ZXJzKSB7
+CiAJCQlpZiAoKGZpbHAtPmZfZmxhZ3MgJiBPX05PTkJMT0NLKSkgewogCQkJCS8qIHN1cHByZXNz
+IFBPTExIVVAgdW50aWwgd2UgaGF2ZQogCQkJCSAqIHNlZW4gYSB3cml0ZXIgKi8KQEAgLTEwNzgs
+MTQgKzEwNzksMTQgQEAgc3RhdGljIGludCBmaWZvX29wZW4oc3RydWN0IGlub2RlICppbm9kZSwg
+c3RydWN0IGZpbGUgKmZpbHApCiAJICogIGVycm5vPUVOWElPIHdoZW4gdGhlcmUgaXMgbm8gcHJv
+Y2VzcyByZWFkaW5nIHRoZSBGSUZPLgogCSAqLwogCQlyZXQgPSAtRU5YSU87Ci0JCWlmICgoZmls
+cC0+Zl9mbGFncyAmIE9fTk9OQkxPQ0spICYmICFwaXBlLT5yZWFkZXJzKQorCQlpZiAoIWlzX3Bp
+cGUgJiYgKGZpbHAtPmZfZmxhZ3MgJiBPX05PTkJMT0NLKSAmJiAhcGlwZS0+cmVhZGVycykKIAkJ
+CWdvdG8gZXJyOwogCiAJCXBpcGUtPndfY291bnRlcisrOwogCQlpZiAoIXBpcGUtPndyaXRlcnMr
+KykKIAkJCXdha2VfdXBfcGFydG5lcihwaXBlKTsKIAotCQlpZiAoIXBpcGUtPnJlYWRlcnMpIHsK
+KwkJaWYgKCFpc19waXBlICYmICFwaXBlLT5yZWFkZXJzKSB7CiAJCQlpZiAod2FpdF9mb3JfcGFy
+dG5lcihwaXBlLCAmcGlwZS0+cl9jb3VudGVyKSkKIAkJCQlnb3RvIGVycl93cjsKIAkJfQpkaWZm
+IC0tZ2l0IGEvbG9jYWx2ZXJzaW9uLW5leHQgYi9sb2NhbHZlcnNpb24tbmV4dApkZWxldGVkIGZp
+bGUgbW9kZSAxMDA2NDQKaW5kZXggMDI0YzExNS4uMDAwMDAwMAotLS0gYS9sb2NhbHZlcnNpb24t
+bmV4dAorKysgL2Rldi9udWxsCkBAIC0xICswLDAgQEAKLS1uZXh0LTIwMTMwNDA5CmRpZmYgLS1n
+aXQgYS9zY3JpcHRzL3BhY2thZ2UvYnVpbGRkZWIgYi9zY3JpcHRzL3BhY2thZ2UvYnVpbGRkZWIK
+aW5kZXggYWNiODY1MC4uN2Q3YzlkOCAxMDA2NDQKLS0tIGEvc2NyaXB0cy9wYWNrYWdlL2J1aWxk
+ZGViCisrKyBiL3NjcmlwdHMvcGFja2FnZS9idWlsZGRlYgpAQCAtMTcyLDkgKzE3MiwyMiBAQCBl
+bHNlCiBmaQogbWFpbnRhaW5lcj0iJG5hbWUgPCRlbWFpbD4iCiAKKyMgVHJ5IHRvIGRldGVybWlu
+ZSBkaXN0cmlidXRpb24KK2lmIFsgLWUgJCh3aGljaCBsc2JfcmVsZWFzZSkgXTsgdGhlbgorICAg
+ICAgIGNvZGVuYW1lPSQobHNiX3JlbGVhc2UgLS1jb2RlbmFtZSAtLXNob3J0KQorICAgICAgIGlm
+IFsgIiRjb2RlbmFtZSIgIT0gIiIgXTsgdGhlbgorCQlkaXN0cmlidXRpb249JGNvZGVuYW1lCisg
+ICAgICAgZWxzZQorCQlkaXN0cmlidXRpb249IlVOUkVMRUFTRUQiCisJCWVjaG8gIldBUk5JTkc6
+IFRoZSBkaXN0cmlidXRpb24gY291bGQgTk9UIGJlIGRldGVybWluZWQhIgorICAgICAgIGZpCitl
+bHNlCisgICAgICAgZWNobyAiSElOVDogSW5zdGFsbCBsc2JfcmVsZWFzZSBiaW5hcnksIHRoaXMg
+aGVscHMgdG8gaWRlbnRpZnkgeW91ciBkaXN0cmlidXRpb24hIgorZmkKKwogIyBHZW5lcmF0ZSBh
+IHNpbXBsZSBjaGFuZ2Vsb2cgdGVtcGxhdGUKIGNhdCA8PEVPRiA+IGRlYmlhbi9jaGFuZ2Vsb2cK
+LWxpbnV4LXVwc3RyZWFtICgkcGFja2FnZXZlcnNpb24pIHVuc3RhYmxlOyB1cmdlbmN5PWxvdwor
+bGludXgtdXBzdHJlYW0gKCRwYWNrYWdldmVyc2lvbikgJGRpc3RyaWJ1dGlvbjsgdXJnZW5jeT1s
+b3cKIAogICAqIEN1c3RvbSBidWlsdCBMaW51eCBrZXJuZWwuCiAKQEAgLTE4OCwxMCArMjAxLDEw
+IEBAIFRoaXMgaXMgYSBwYWNrYWNrZWQgdXBzdHJlYW0gdmVyc2lvbiBvZiB0aGUgTGludXgga2Vy
+bmVsLgogVGhlIHNvdXJjZXMgbWF5IGJlIGZvdW5kIGF0IG1vc3QgTGludXggZnRwIHNpdGVzLCBp
+bmNsdWRpbmc6CiBmdHA6Ly9mdHAua2VybmVsLm9yZy9wdWIvbGludXgva2VybmVsCiAKLUNvcHly
+aWdodDogMTk5MSAtIDIwMDkgTGludXMgVG9ydmFsZHMgYW5kIG90aGVycy4KK0NvcHlyaWdodDog
+MTk5MSAtIDIwMTMgTGludXMgVG9ydmFsZHMgYW5kIG90aGVycy4KIAogVGhlIGdpdCByZXBvc2l0
+b3J5IGZvciBtYWlubGluZSBrZXJuZWwgZGV2ZWxvcG1lbnQgaXMgYXQ6Ci1naXQ6Ly9naXQua2Vy
+bmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXgtMi42LmdpdAor
+Z2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xp
+bnV4LmdpdAogCiAgICAgVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVk
+aXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkKICAgICBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhl
+IEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIGFzIHB1Ymxpc2hlZCBieQo=
+--047d7bfd0c2e6f7a7004d9f09160--
