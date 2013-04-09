@@ -1,80 +1,81 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: GENERIC_GPIO considered deprecated
-Date: Tue, 09 Apr 2013 10:45:49 +0900
-Message-ID: <2e6101ce34c3$f6449580$e2cdc080$%kim@samsung.com>
-References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
- <2c9501ce342b$1535d290$3fa177b0$%kim@samsung.com>
- <5162EC32.2030602@wwwdotorg.org> <201304082136.44905.arnd@arndb.de>
- <20130409093842.656ae3fff92d5368db5c0646@canb.auug.org.au>
- <CAAVeFuJCxYiOXRkjJZXpSFUaGoiAtWwBWBJmxXUyQMkmrSEsew@mail.gmail.com>
- <20130409101035.c59edcf9fa6e40a064f7fe41@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ftrace tree with Linus' tree
+Date: Tue, 9 Apr 2013 16:30:06 +1000
+Message-ID: <20130409163006.ed6b04b4a91d41b4633a4b4d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <20130409101035.c59edcf9fa6e40a064f7fe41@canb.auug.org.au>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Alexandre Courbot' <gnurou@gmail.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Olof Johansson' <olof@lixom.net>, 'Romain Naour' <romain.naour@openwide.fr>, 'linux-next' <linux-next@vger.kernel.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, 'ARM kernel mailing list' <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__9_Apr_2013_16_30_06_+1000_20OvoKQWRAUo30Lq"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39413 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933092Ab3DIGaU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Apr 2013 02:30:20 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen Rothwell wrote:
-> 
-> Hi,
-> 
-> On Mon, 8 Apr 2013 17:07:54 -0700 Alexandre Courbot <gnurou@gmail.com>
-> wrote:
-> >
-> > On Mon, Apr 8, 2013 at 4:38 PM, Stephen Rothwell <sfr@canb.auug.org.au>
-> wrote:
-> > >
-> > > On Mon, 8 Apr 2013 21:36:44 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
-> > >>
-> > >> On Monday 08 April 2013, Stephen Warren wrote:
-> > >> > >>
-> > >> > >> Should do the trick, if we can make sure that your tree is
-> merged
-> > >> > >> prior to my patches.
-> > >> > >
-> > >> > > I'm not sure but I think, arm-soc tree should be merged into
-> mainline before others...
-> > >> > >
-> > >> > >> Can you put it into your tree for 3.10?
-> > >> > >>
-> > >> > > I did, so it should be fine.
-> > >> > >
-> > >> >
-> > >> > You may want to discuss how to handle this dependency with the arm-
-> soc
-> > >> > maintainers (CC'd).
-> > >>
-> > >> I'm fine with putting the same branch into arm-soc as well as the
-> gpio tree
-> > >> and anything else that might need it, that tends to be the least
-> invasive
-> > >> way.
-> > >
-> > > Just a reminder: that had better be the exact same branch and that
-> branch
-> > > had better never be rebased/rewritten ...
-> >
-> > Sorry, which branch are we talking about - is it the one I published
-> > for -next initially? If so wouldn't it be simpler to withdraw it and
-> > have Grant integrate the patches in his branch? Since no one depends
-> > on them for now anyway...
-> >
-> > I remember rebasing it once some time ago to add Acked-bys, but it
-> > hasn't changed since then.
-> 
-> I am talking about the branch that Arnd says should be merged into both
-> the arm-soc and gpio trees.
-> 
-Well, AFAIK, the problem including "select GENERIC_GPIO" happened only in
-samsung tree so arm-soc tree is enough. If any problems, please let me know.
+--Signature=_Tue__9_Apr_2013_16_30_06_+1000_20OvoKQWRAUo30Lq
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Arnd, just note, the fix is included in my pull-request [09/10].
+Hi Steven,
 
-Thanks.
+Today's linux-next merge of the ftrace tree got a conflict in
+kernel/trace/trace.c between commit 2930e04d00e1 ("tracing: Fix race with
+update_max_tr_single and changing tracers") from Linus' tree and commits
+2b6080f28c7c ("tracing: Encapsulate global_trace and remove dependencies
+on global vars") and 45ad21ca5530 ("tracing: Have trace_array keep track
+if snapshot buffer is allocated") from the ftrace tree.
 
-- Kukjin
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/trace/trace.c
+index 7ba7fc7,829b2be..963491a
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@@ -744,11 -904,8 +904,11 @@@ update_max_tr_single(struct trace_arra
+  		return;
+ =20
+  	WARN_ON_ONCE(!irqs_disabled());
+- 	if (!current_trace->allocated_snapshot) {
+ -	if (WARN_ON_ONCE(!tr->allocated_snapshot))
+++	if (!tr->allocated_snapshot) {
+ +		/* Only the nop tracer should hit this when disabling */
+- 		WARN_ON_ONCE(current_trace !=3D &nop_trace);
+++		WARN_ON_ONCE(tr->current_trace !=3D &nop_trace);
+  		return;
+ +	}
+ =20
+  	arch_spin_lock(&ftrace_max_lock);
+ =20
+
+--Signature=_Tue__9_Apr_2013_16_30_06_+1000_20OvoKQWRAUo30Lq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRY7VuAAoJEECxmPOUX5FE3dsP/3F1n36Goux2tCf8PJTQegQH
+XbDLe1xz9WfBdbELxR9AuYwMMux0UVvHOqHunZhpmXQrH+UEwJp/oQDhhFdTYm+k
+68lvc74R0S9jG/F1ZTi90KH7sd2OUolcPRqbbWISTLWpr3GS30RIc7TbhkVlX6jS
+/NKBrKhp/9lGPAidjhhvkDMniyAE1ehPD60nV0hqmF4nXkUFqOmFKQQQ454S0/nA
+cy9nr7zrhBQTLEr7H2DF+1/acNkSH0MseJoi0axKGa57K1x5Psy8iEMpgycK2A6c
+CA9gvCaF8qcClmby1xS9mgKhna2eNein+/6oTD1+VDTr0wbD+PMTc1KDou+U8M5J
+AkgAcAGIZkuDFLEvsy945kI1eBhEyPJf45Mipd7dbS1y0eqhjcWy41Dv8AXEnDUN
+IxIPAGB3+zVRKWiIhryzStAo1sptLXe0OEZXTSSi42SwPvF9UWgmeV/KUj48O19l
+f6haaI0KbucSzgb6VpNskTYl4YkRg3BAOAhNaClvB85EDgSTfi0JDxc21xwDkTki
+xaAPKIWUkh+uOLLZsdnOF93bNrZbuIrTvInzSlv3hV0BNi7YW8LijS711eGK3eUY
+UzXjVlHsz7wGgDyOlu9e4R/rS5b6MDqUyN12wSXGibNwMvaQpVl+CpIeGPUv0TOa
+GRsxtkveukC+lpKta8tW
+=CkcP
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Apr_2013_16_30_06_+1000_20OvoKQWRAUo30Lq--
