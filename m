@@ -1,107 +1,45 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Apr 9 [ BROKEN vfs-next: fs/pipe.c ]
-Date: Tue, 9 Apr 2013 19:06:01 +0200
-Message-ID: <CA+icZUU82LMNjvJg6W2RKuo1VoC21VsFPJ4qg9Meou_oSKCGyA@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Nathan Zimmer <nzimmer@sgi.com>
+Subject: Re: hangs on boot in 9984d7394618df9
+Date: Tue, 9 Apr 2013 12:12:34 -0500
+Message-ID: <51644C02.7020508@sgi.com>
+References: <20130405173623.GE4068@ZenIV.linux.org.uk> <515F3A71.9080008@sgi.com> <20130405210042.GH4068@ZenIV.linux.org.uk> <5162E36F.5020305@sgi.com> <20130408155847.GS4068@ZenIV.linux.org.uk> <51632DF8.2080402@sgi.com> <20130408212327.GU4068@ZenIV.linux.org.uk> <20130408214834.GV4068@ZenIV.linux.org.uk> <516341ED.5060803@wwwdotorg.org> <CAD=FV=WodJER2g45u5pEw0edf+K4uYJjyt0w4ZfX9q=o1a7pYw@mail.gmail.com> <20130408230658.GY4068@ZenIV.linux.org.uk> <CAD=FV=VrOh+3ucJ_4DfzpbMsOOWLK7rPue1e23=oV9tH-wUVPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=047d7bfd0c2e6f7a7004d9f09160
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from relay3.sgi.com ([192.48.152.1]:41829 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1762769Ab3DIRMi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Apr 2013 13:12:38 -0400
+In-Reply-To: <CAD=FV=VrOh+3ucJ_4DfzpbMsOOWLK7rPue1e23=oV9tH-wUVPQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Andrew Morton <akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, David Woodhouse <dwmw2@infradead.org>, stable@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---047d7bfd0c2e6f7a7004d9f09160
-Content-Type: text/plain; charset=UTF-8
-
-On Tue, Apr 9, 2013 at 11:30 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+On 04/08/2013 06:46 PM, Doug Anderson wrote:
+> Al,
 >
-> Changes since 20130408:
+> On Mon, Apr 8, 2013 at 4:06 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>> Folks, see if vfs.git#experimental works for you; the PITA had apparently
+>> been caused by change of open() semantics for /proc/<pid>/fd/<some_pipe> -
+>> it started to behave like a FIFO, i.e. wait for peer to show up.  Normally
+>> that's not a problem, but if you have closed e.g. the write end of a pipe
+>> and try to open /proc/<pid>/fd/<read_end_of_pipe>, you'll get open() waiting
+>> for writers to appear.  Which isn't what we used to do here (open succeeded
+>> immediately) and apparently that was enough to trip drakut.
+>>
+>> Branch head should be at 574179469f7370aadb9cbac1ceca7c3723c17bee.
+> That branch booted fine for me and didn't show any problems.
 >
-> The vfs tree still had its build failure so I used the version from
-> next-20130405.
+> I wasn't easily able to merge onto linux-next and test there though.
+> I tried applying these the 4 top commits of your branch to
+> "next-20130408" and it didn't solve my problems.  A full merge of your
+> branch to linux-next showed conflicts and I didn't dig.
 >
-
-With the attached patch including a follow-up I was able to boot
-today's Linux-Next.
-
-I have reverted "Revert "pipe: fold file_operations instances in one"
-from linux-next and applied the fixed correct one from vfs-next.
-
-
-- Sedat -
-
---047d7bfd0c2e6f7a7004d9f09160
-Content-Type: application/octet-stream;
-	name="3.9.0-rc6-next20130409-2-iniza-small.patch"
-Content-Disposition: attachment;
-	filename="3.9.0-rc6-next20130409-2-iniza-small.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_hfbbiufc1
-
-QWwgVmlybyAoMSk6CiAgICAgIHBpcGU6IGZvbGQgZmlsZV9vcGVyYXRpb25zIGluc3RhbmNlcyBp
-biBvbmUKClNlZGF0IERpbGVrICg4KToKICAgICAga2J1aWxkOiBkZWItcGtnOiBUcnkgdG8gZGV0
-ZXJtaW5lIGRpc3RyaWJ1dGlvbgogICAgICBrYnVpbGQ6IGRlYi1wa2c6IEJ1bXAgeWVhciBpbiBk
-ZWJpYW4vY29weXJpZ2h0IGZpbGUKICAgICAga2J1aWxkOiBkZWItcGtnOiBVcGRhdGUgZ2l0IHJl
-cG9zaXRvcnkgVVJMIGluIGRlYmlhbi9jb3B5cmlnaHQgZmlsZQogICAgICBNZXJnZSB0YWcgJ25l
-eHQtMjAxMzA0MDknIG9mIGdpdDovL2dpdC5rZXJuZWwub3JnLy4uLi9uZXh0L2xpbnV4LW5leHQg
-aW50byBMaW51eC1OZXh0LXYyMDEzMDQwOQogICAgICBNZXJnZSBicmFuY2ggJ2RlYi1wa2ctZml4
-ZXMnIGludG8gMy45LjAtcmM2LW5leHQyMDEzMDQwOS0xLWluaXphLXNtYWxsCiAgICAgIFJldmVy
-dCAicGlwZTogZm9sZCBmaWxlX29wZXJhdGlvbnMgaW5zdGFuY2VzIGluIG9uZSIKICAgICAgTWVy
-Z2UgYnJhbmNoICd2ZnMtVEVNUCcgaW50byB2ZnMtbmV4dC1maXhlcwogICAgICBNZXJnZSBicmFu
-Y2ggJ3Zmcy1uZXh0LWZpeGVzJyBpbnRvIDMuOS4wLXJjNi1uZXh0MjAxMzA0MDktMi1pbml6YS1z
-bWFsbAoKIGZzL3BpcGUuYyAgICAgICAgICAgICAgICB8ICA3ICsrKystLS0KIGxvY2FsdmVyc2lv
-bi1uZXh0ICAgICAgICB8ICAxIC0KIHNjcmlwdHMvcGFja2FnZS9idWlsZGRlYiB8IDE5ICsrKysr
-KysrKysrKysrKystLS0KIDMgZmlsZXMgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgNyBkZWxl
-dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9mcy9waXBlLmMgYi9mcy9waXBlLmMKaW5kZXggYjQ5OWYz
-Yi4uZDJjNDVlMSAxMDA2NDQKLS0tIGEvZnMvcGlwZS5jCisrKyBiL2ZzL3BpcGUuYwpAQCAtMTAx
-Myw2ICsxMDEzLDcgQEAgc3RhdGljIHZvaWQgd2FrZV91cF9wYXJ0bmVyKHN0cnVjdCBwaXBlX2lu
-b2RlX2luZm8gKnBpcGUpCiBzdGF0aWMgaW50IGZpZm9fb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2Rl
-LCBzdHJ1Y3QgZmlsZSAqZmlscCkKIHsKIAlzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICpwaXBlOwor
-CWJvb2wgaXNfcGlwZSA9IGlub2RlLT5pX3NiLT5zX21hZ2ljID09IFBJUEVGU19NQUdJQzsKIAlp
-bnQga2lsbCA9IDA7CiAJaW50IHJldDsKIApAQCAtMTA1OSw3ICsxMDYwLDcgQEAgc3RhdGljIGlu
-dCBmaWZvX29wZW4oc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUgKmZpbHApCiAJCWlm
-IChwaXBlLT5yZWFkZXJzKysgPT0gMCkKIAkJCXdha2VfdXBfcGFydG5lcihwaXBlKTsKIAotCQlp
-ZiAoIXBpcGUtPndyaXRlcnMpIHsKKwkJaWYgKCFpc19waXBlICYmICFwaXBlLT53cml0ZXJzKSB7
-CiAJCQlpZiAoKGZpbHAtPmZfZmxhZ3MgJiBPX05PTkJMT0NLKSkgewogCQkJCS8qIHN1cHByZXNz
-IFBPTExIVVAgdW50aWwgd2UgaGF2ZQogCQkJCSAqIHNlZW4gYSB3cml0ZXIgKi8KQEAgLTEwNzgs
-MTQgKzEwNzksMTQgQEAgc3RhdGljIGludCBmaWZvX29wZW4oc3RydWN0IGlub2RlICppbm9kZSwg
-c3RydWN0IGZpbGUgKmZpbHApCiAJICogIGVycm5vPUVOWElPIHdoZW4gdGhlcmUgaXMgbm8gcHJv
-Y2VzcyByZWFkaW5nIHRoZSBGSUZPLgogCSAqLwogCQlyZXQgPSAtRU5YSU87Ci0JCWlmICgoZmls
-cC0+Zl9mbGFncyAmIE9fTk9OQkxPQ0spICYmICFwaXBlLT5yZWFkZXJzKQorCQlpZiAoIWlzX3Bp
-cGUgJiYgKGZpbHAtPmZfZmxhZ3MgJiBPX05PTkJMT0NLKSAmJiAhcGlwZS0+cmVhZGVycykKIAkJ
-CWdvdG8gZXJyOwogCiAJCXBpcGUtPndfY291bnRlcisrOwogCQlpZiAoIXBpcGUtPndyaXRlcnMr
-KykKIAkJCXdha2VfdXBfcGFydG5lcihwaXBlKTsKIAotCQlpZiAoIXBpcGUtPnJlYWRlcnMpIHsK
-KwkJaWYgKCFpc19waXBlICYmICFwaXBlLT5yZWFkZXJzKSB7CiAJCQlpZiAod2FpdF9mb3JfcGFy
-dG5lcihwaXBlLCAmcGlwZS0+cl9jb3VudGVyKSkKIAkJCQlnb3RvIGVycl93cjsKIAkJfQpkaWZm
-IC0tZ2l0IGEvbG9jYWx2ZXJzaW9uLW5leHQgYi9sb2NhbHZlcnNpb24tbmV4dApkZWxldGVkIGZp
-bGUgbW9kZSAxMDA2NDQKaW5kZXggMDI0YzExNS4uMDAwMDAwMAotLS0gYS9sb2NhbHZlcnNpb24t
-bmV4dAorKysgL2Rldi9udWxsCkBAIC0xICswLDAgQEAKLS1uZXh0LTIwMTMwNDA5CmRpZmYgLS1n
-aXQgYS9zY3JpcHRzL3BhY2thZ2UvYnVpbGRkZWIgYi9zY3JpcHRzL3BhY2thZ2UvYnVpbGRkZWIK
-aW5kZXggYWNiODY1MC4uN2Q3YzlkOCAxMDA2NDQKLS0tIGEvc2NyaXB0cy9wYWNrYWdlL2J1aWxk
-ZGViCisrKyBiL3NjcmlwdHMvcGFja2FnZS9idWlsZGRlYgpAQCAtMTcyLDkgKzE3MiwyMiBAQCBl
-bHNlCiBmaQogbWFpbnRhaW5lcj0iJG5hbWUgPCRlbWFpbD4iCiAKKyMgVHJ5IHRvIGRldGVybWlu
-ZSBkaXN0cmlidXRpb24KK2lmIFsgLWUgJCh3aGljaCBsc2JfcmVsZWFzZSkgXTsgdGhlbgorICAg
-ICAgIGNvZGVuYW1lPSQobHNiX3JlbGVhc2UgLS1jb2RlbmFtZSAtLXNob3J0KQorICAgICAgIGlm
-IFsgIiRjb2RlbmFtZSIgIT0gIiIgXTsgdGhlbgorCQlkaXN0cmlidXRpb249JGNvZGVuYW1lCisg
-ICAgICAgZWxzZQorCQlkaXN0cmlidXRpb249IlVOUkVMRUFTRUQiCisJCWVjaG8gIldBUk5JTkc6
-IFRoZSBkaXN0cmlidXRpb24gY291bGQgTk9UIGJlIGRldGVybWluZWQhIgorICAgICAgIGZpCitl
-bHNlCisgICAgICAgZWNobyAiSElOVDogSW5zdGFsbCBsc2JfcmVsZWFzZSBiaW5hcnksIHRoaXMg
-aGVscHMgdG8gaWRlbnRpZnkgeW91ciBkaXN0cmlidXRpb24hIgorZmkKKwogIyBHZW5lcmF0ZSBh
-IHNpbXBsZSBjaGFuZ2Vsb2cgdGVtcGxhdGUKIGNhdCA8PEVPRiA+IGRlYmlhbi9jaGFuZ2Vsb2cK
-LWxpbnV4LXVwc3RyZWFtICgkcGFja2FnZXZlcnNpb24pIHVuc3RhYmxlOyB1cmdlbmN5PWxvdwor
-bGludXgtdXBzdHJlYW0gKCRwYWNrYWdldmVyc2lvbikgJGRpc3RyaWJ1dGlvbjsgdXJnZW5jeT1s
-b3cKIAogICAqIEN1c3RvbSBidWlsdCBMaW51eCBrZXJuZWwuCiAKQEAgLTE4OCwxMCArMjAxLDEw
-IEBAIFRoaXMgaXMgYSBwYWNrYWNrZWQgdXBzdHJlYW0gdmVyc2lvbiBvZiB0aGUgTGludXgga2Vy
-bmVsLgogVGhlIHNvdXJjZXMgbWF5IGJlIGZvdW5kIGF0IG1vc3QgTGludXggZnRwIHNpdGVzLCBp
-bmNsdWRpbmc6CiBmdHA6Ly9mdHAua2VybmVsLm9yZy9wdWIvbGludXgva2VybmVsCiAKLUNvcHly
-aWdodDogMTk5MSAtIDIwMDkgTGludXMgVG9ydmFsZHMgYW5kIG90aGVycy4KK0NvcHlyaWdodDog
-MTk5MSAtIDIwMTMgTGludXMgVG9ydmFsZHMgYW5kIG90aGVycy4KIAogVGhlIGdpdCByZXBvc2l0
-b3J5IGZvciBtYWlubGluZSBrZXJuZWwgZGV2ZWxvcG1lbnQgaXMgYXQ6Ci1naXQ6Ly9naXQua2Vy
-bmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXgtMi42LmdpdAor
-Z2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xp
-bnV4LmdpdAogCiAgICAgVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVk
-aXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkKICAgICBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhl
-IEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIGFzIHB1Ymxpc2hlZCBieQo=
---047d7bfd0c2e6f7a7004d9f09160--
+> -Doug
+I booted great for me too.
+Also the numbers from the scaling test are improved also, at least on my 
+128p box.
+I'll verify on a 512 or larger box when I have the chance.
+However I think I still should to provide some relief for the older kernels.
