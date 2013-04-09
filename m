@@ -1,69 +1,73 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for Apr 9
-Date: Tue, 9 Apr 2013 16:11:50 +0200
-Message-ID: <CA+icZUVk-iLtodZi_46qmk410Ei+tW6RR5kV2fx0N8v6neKTPQ@mail.gmail.com>
+Date: Wed, 10 Apr 2013 00:23:11 +1000
+Message-ID: <20130410002311.8a0b0503bcbda151b9de9469@canb.auug.org.au>
 References: <CA+icZUX-RMW=pHzhOumB2_R99BRAf2qGC4n5bzyLqU6pOCMDFw@mail.gmail.com>
 	<20130409235941.11eef57a42cb97efec72f037@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+	<CA+icZUVk-iLtodZi_46qmk410Ei+tW6RR5kV2fx0N8v6neKTPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f51.google.com ([74.125.82.51]:59573 "EHLO
-	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762822Ab3DIOLw convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Apr 2013 10:11:52 -0400
-In-Reply-To: <20130409235941.11eef57a42cb97efec72f037@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__10_Apr_2013_00_23_11_+1000_ChWrRazAFdl59UPm"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+icZUVk-iLtodZi_46qmk410Ei+tW6RR5kV2fx0N8v6neKTPQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sedat.dilek@gmail.com
 Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 9, 2013 at 3:59 PM, Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> Hi Sedat,
+--Signature=_Wed__10_Apr_2013_00_23_11_+1000_ChWrRazAFdl59UPm
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Sedat,
+
+On Tue, 9 Apr 2013 16:11:50 +0200 Sedat Dilek <sedat.dilek@gmail.com> wrote:
 >
-> On Tue, 9 Apr 2013 12:56:46 +0200 Sedat Dilek <sedat.dilek@gmail.com>=
- wrote:
->>
->> This version hangs... I started in rescue-mode and see that udev,
->> premount and init scripts are run.
->> Currently, I have no glue why when what...
->> Lemme see if I get k(g)bd started.
->>
->> Unfortunately, there was a "quiet" boot-param for grub2 here but it'=
-s gone.
->> With "text" I don't see more.
->>
->> Maybe, someone has a hint.
->
-> This is probably the known problem that Al Viro is looking at.  See "=
-Boot
-> hang due to "pipe: fold file_operations instances in one" in
-> next-20130408" and  "Re: hangs on boot in 9984d7394618df9" thread on =
-lkml
-> and linux-next mailing lists.
->
+> [ CC Al Viro ]
 
-[ CC Al Viro ]
+You forgot to do that ...
 
-Is there a "magic" git-command to revert all commits coming from your
-latest vfs-merge (commit c1c04d3667608a630ae0821995b465a523e83fb1)?
+> Is there a "magic" git-command to revert all commits coming from your
+> latest vfs-merge (commit c1c04d3667608a630ae0821995b465a523e83fb1)?
+>=20
+> 2013-04-09 11:36 Stephen Rothwell   =E2=94=82 M=E2=94=80=E2=94=90 =E2=94=
+=82 =E2=94=82 =E2=94=82 =E2=94=82 =E2=94=82 =E2=94=82         =E2=94=82 201=
+30405/vfs
 
-2013-04-09 11:36 Stephen Rothwell   =E2=94=82 M=E2=94=80=E2=94=90 =E2=94=
-=82 =E2=94=82 =E2=94=82 =E2=94=82 =E2=94=82 =E2=94=82         =E2=94=82=
- 20130405/vfs
+You would normally do "git revert -m 1 c1c04d366760". However, that does
+not revert cleanly in today's linux-next (due to more patches modifying
+the files involved).
 
-After reverting all these commits I would like to pull-in latest
-vfs.git#for-next.
+> After reverting all these commits I would like to pull-in latest
+> vfs.git#for-next.
 
-Thanks in advance.
+It would probably be easier to wait for tomorrow's linux-next.  Or just
+test Al's tree in its own.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-- Sedat -
+--Signature=_Wed__10_Apr_2013_00_23_11_+1000_ChWrRazAFdl59UPm
+Content-Type: application/pgp-signature
 
-[1] http://git.kernel.org/cgit/linux/kernel/git/viro/vfs.git/log/?h=3Df=
-or-next
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+iQIcBAEBCAAGBQJRZCRPAAoJEECxmPOUX5FEZGQP/A27dgaV3NT7b9+QeMZ1eDAa
+1FDLj9VfiKM0j1mt4hlINnIowWRxLJkJpLirDJVKOz+lyMOP6+d3uBRdA6T0tBc9
+Pg0oY+RH5tRVVsqXp81wzA+pxgibW0TC502CbgPVsSvWlm/3YxPzcSFhom6Y3s7p
+TmUWSFXh9ut6JaW01JnKGaEmrx6YV/zufFnqZ/Kt6/ET2BLAjNcixRgP59zc/OrZ
+X/qU0DJ/d6ek9rLHGpp9hvl0wQFy47YTddXGocnLJXp3m3c95W215B9oXhVG3okK
+Vl80jfU2uJ9nxKNOKLhu9K+nE7DDlwUJ+xXq8h1b0Q3EijDPiKC5veTN6gXBrd/D
+LLc54oj79ashte4tKW3B8KyKNFIdf6+ggAFo2YUipgjZqM6SnWnVJDXObrTfROaG
+C0yak0VVxEYhZeCzt3Ln4Yu+oofqiWQJyC1LeLo03GFyRWHw2WR3Q1Dc3KkCvs2u
+2nkAxU5QLAZs29PAWAc6eq1sD4gfC4TRgw/uOTnmYs5/I2hJt8IriokUHgEiBBZZ
+AfByGlLw5AR4rI4tfpb5IbDJL/QOw6QHCUMPLuqDxb6GR0k8G5PT9SA18GoOjNFO
+UG2RN8wnCMpEK2VQaIFOShR10uAgMjr541fimiA7WPyln9A9ce/tVrkHNVTMIugl
+2U7/GMHG+MLvIH3GKHYf
+=9If+
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Apr_2013_00_23_11_+1000_ChWrRazAFdl59UPm--
