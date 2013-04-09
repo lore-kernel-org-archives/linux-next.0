@@ -1,52 +1,103 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the omap_dss2
- tree
-Date: Tue, 9 Apr 2013 11:32:01 +0200
-Message-ID: <201304091132.01771.arnd@arndb.de>
-References: <20130409174047.c506479e08e9688c0a4ced9a@canb.auug.org.au>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: linux-next: manual merge of the omap_dss2 tree with Linus' tree
+Date: Tue, 9 Apr 2013 13:10:45 +0300
+Message-ID: <5163E925.4060601@ti.com>
+References: <20130408143623.bbf18647b96df42b8b8ec6a0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20130409174047.c506479e08e9688c0a4ced9a@canb.auug.org.au>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="------------enig22EA518EFF3EB7B73E810343"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:39995 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935101Ab3DIKKy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Apr 2013 06:10:54 -0400
+In-Reply-To: <20130408143623.bbf18647b96df42b8b8ec6a0@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Bolle <pebolle@tiscali.nl>, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Archit Taneja <archit@ti.com>, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 
-On Tuesday 09 April 2013, Stephen Rothwell wrote:
-> 
-> - #if defined(CONFIG_SMC91X) || defined(CONFIG_SMC91x_MODULE)
->  -static void __init sdp2430_display_init(void)
->  -{
->  -      int r;
->  -
->  -      static struct gpio gpios[] __initdata = {
->  -              { SDP2430_LCD_PANEL_ENABLE_GPIO, GPIOF_OUT_INIT_LOW,
->  -                      "LCD reset" },
->  -              { SDP2430_LCD_PANEL_BACKLIGHT_GPIO, GPIOF_OUT_INIT_LOW,
->  -                      "LCD Backlight" },
->  -      };
->  -
->  -      r = gpio_request_array(gpios, ARRAY_SIZE(gpios));
->  -      if (r) {
->  -              pr_err("Cannot request LCD GPIOs, error %d\n", r);
->  -              return;
->  -      }
->  -
->  -      omap_display_init(&sdp2430_dss_data);
->  -}
->  -
-> + #if IS_ENABLED(CONFIG_SMC91X)
+--------------enig22EA518EFF3EB7B73E810343
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Looks good, thanks!
+Hi,
 
-	Arnd
+On 2013-04-08 07:36, Stephen Rothwell wrote:
+> Hi Tomi,
+>=20
+> Today's linux-next merge of the omap_dss2 tree got a conflict in
+> drivers/video/fbmon.c between commit 477fc03f5baa ("fbmon: use
+> VESA_DMT_VSYNC_HIGH to fix typo") from Linus' tree and commit
+> 06a3307975aa ("videomode: combine videomode dmt_flags and data_flags")
+> from the omap_dss2 tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no action=
+
+> is required).
+>=20
+> diff --cc drivers/video/fbmon.c
+> index 7f67099,e5cc2fd..0000000
+> --- a/drivers/video/fbmon.c
+> +++ b/drivers/video/fbmon.c
+> @@@ -1398,13 -1398,13 +1398,13 @@@ int fb_videomode_from_videomode(cons=
+t s
+>  =20
+>   	fbmode->sync =3D 0;
+>   	fbmode->vmode =3D 0;
+> - 	if (vm->dmt_flags & VESA_DMT_HSYNC_HIGH)
+> + 	if (vm->flags & DISPLAY_FLAGS_HSYNC_HIGH)
+>   		fbmode->sync |=3D FB_SYNC_HOR_HIGH_ACT;
+> - 	if (vm->dmt_flags & VESA_DMT_VSYNC_HIGH)
+>  -	if (vm->flags & DISPLAY_FLAGS_HSYNC_HIGH)
+> ++	if (vm->flags & DISPLAY_FLAGS_VSYNC_HIGH)
+>   		fbmode->sync |=3D FB_SYNC_VERT_HIGH_ACT;
+> - 	if (vm->data_flags & DISPLAY_FLAGS_INTERLACED)
+> + 	if (vm->flags & DISPLAY_FLAGS_INTERLACED)
+>   		fbmode->vmode |=3D FB_VMODE_INTERLACED;
+> - 	if (vm->data_flags & DISPLAY_FLAGS_DOUBLESCAN)
+> + 	if (vm->flags & DISPLAY_FLAGS_DOUBLESCAN)
+>   		fbmode->vmode |=3D FB_VMODE_DOUBLE;
+>   	fbmode->flag =3D 0;
+
+Thanks, looks correct.
+
+I wonder what I should do about this conflict. Both the fix in Linus'
+tree and the new code come from fbdev tree (I'm currently handling fbdev
+patches), and it feels a bit silly to have conflicts between the fixes
+and new commits from the same subsystem tree.
+
+I could just leave the conflict be, or I could merge the fix into the
+fbdev-next branch. Do you know if there's a rule of thumb I should
+follow here?
+
+ Tomi
+
+
+
+--------------enig22EA518EFF3EB7B73E810343
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+Comment: Using GnuPG with undefined - http://www.enigmail.net/
+
+iQIcBAEBAgAGBQJRY+klAAoJEPo9qoy8lh71AgEQAJyQ4NBDJ6fcdGbuqilQt+Hk
+fe/Bip5XKTdEAy/od5KgQe2lxt8sDgey5sfXxn/Njurnw6R+39LVMDChzvW0m2+/
+lLmYh6I/rkjvzl6p9B/pz+bAExvFOo91ZbTrDkDj9pemyzHmkybqnywjLiQHWbxv
+GZ6wGaSRWVYxHLIDeAUPB3TwEXsLjzlI2YN/QnyYyIs9rK4YZijJ/HlWmovJo0mT
+EqgWdXBjg4IBrZzjB2WrMmMNPEfmJ2OK2HjSz/lz1vZg3GLz2IsaHdv6ZSJUv98H
+pLbYX6+4b51vC+DhhNnh26xH4tCaXoa93OgMsomqCOzsxh1FNgyF4wxsYb+GIexr
+qCdMlHMI8AVGgj0x51RPwBg2XwM8u0bZ6ZgaunLlu/3N+sb/al566eFD0EAM+ZrS
+IEpF8bHu5LDnyN8EfS2ME48nqrjIkZt6aWfXLOlkY6fKr9fNM7kqf5HfgMgriMSQ
+7ecTCvdL2ZHZgG5ReakRbW8r7ZYgjJQovBkHV/AH3AaGuZ4/RAxqPlYvYvXt8kZ+
+wKm5PAKrJ5vltHN1c/4jzh01hyVRo4G0bg4HoIFNkZiaTxo5dEqjQ+5RP+aFM6HU
+OJ3mUDw+mTWm8FdmU5rqD2gTw3eecIVIEc2YAASE3PvG2wxvxq/XXPBTAMNXDRwR
+gb2YgTYiO64Q57atjwQk
+=5t5+
+-----END PGP SIGNATURE-----
+
+--------------enig22EA518EFF3EB7B73E810343--
