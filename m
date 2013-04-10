@@ -1,157 +1,114 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mfd tree with the v4l-dvb tree
-Date: Wed, 10 Apr 2013 13:48:13 +1000
-Message-ID: <20130410134813.b1bff6027f64f14d75d43927@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
+Date: Wed, 10 Apr 2013 07:41:18 +0200
+Message-ID: <CA+icZUW12caZHDfgCV6E-1T4ExBPmu5bBNSqCzDwjUeidfRUPA@mail.gmail.com>
+References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
+	<31778276.CDMUtaAAnc@vostro.rjw.lan>
+	<CA+icZUXXHb9vmcNuFmYha34SV7xch2S8OcgZ+cLVVnNebs5pNQ@mail.gmail.com>
+	<CAKohpok+9dRaENjBfnN9gZF3zvFU9v19xV_eFfcM3Pj6Cv=S2w@mail.gmail.com>
+	<CA+icZUWH5Ni9koj4V8Ws8jJ7smwmU7JuUWBFh=aiCqkrCpqB5A@mail.gmail.com>
+	<CAKohponzmLzPN8ua3p4TCt2waZCQCd+4Znh+tSQ4MBjcy+Ss6A@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__10_Apr_2013_13_48_13_+1000_BHXyCuoTN3K1V.mc"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60883 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750713Ab3DJDsY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Apr 2013 23:48:24 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
+Content-Type: multipart/mixed; boundary=089e01419d7c88a34504d9fb1ef9
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CAKohponzmLzPN8ua3p4TCt2waZCQCd+4Znh+tSQ4MBjcy+Ss6A@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__10_Apr_2013_13_48_13_+1000_BHXyCuoTN3K1V.mc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--089e01419d7c88a34504d9fb1ef9
+Content-Type: text/plain; charset=UTF-8
 
-Hi Samuel,
+On Tue, Apr 9, 2013 at 6:51 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 9 April 2013 21:38, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> With x=3 the system gets in an unuseable state.
+>>
+>>      root# echo 0 > /sys/devices/system/cpu/cpu3/online
+>>
+>> I could not write my reply and had to do a hard/cold reboot.
+>> The dmesg log I saw looked similiar to my digicam-shot.
+>
+> Few things i need from you. First is output of cpufreq-info. Then
+> all the steps you did to reproduce above? Removed any other cpus?
+>
 
-Today's linux-next merge of the mfd tree got a conflict in
-drivers/mfd/Kconfig between commit 3f8ec5df11aa ("[media] mfd: Add header
-files and Kbuild plumbing for SI476x MFD core") from the v4l-dvb tree and
-commit ab85b120e692 ("mfd: Kconfig alphabetical re-ordering") from the
-mfd tree.
+Here is the output of cpufreq-info of the stable distro-kernel I am using.
+If you need the one from the "BROKEN" kernel, please let me know.
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+- Sedat -
 
-diff --cc drivers/mfd/Kconfig
-index b6bb6d5,2f3ce18..0000000
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@@ -977,68 -920,38 +920,51 @@@ config MFD_WL1273_COR
-  	  driver connects the radio-wl1273 V4L2 module and the wl1273
-  	  audio codec.
- =20
- +config MFD_SI476X_CORE
- +	tristate "Support for Silicon Laboratories 4761/64/68 AM/FM radio."
- +	depends on I2C
- +	select MFD_CORE
- +	select REGMAP_I2C
- +	help
- +	  This is the core driver for the SI476x series of AM/FM
- +	  radio. This MFD driver connects the radio-si476x V4L2 module
- +	  and the si476x audio codec.
- +
- +	  To compile this driver as a module, choose M here: the
- +	  module will be called si476x-core.
- +
-- config MFD_OMAP_USB_HOST
-- 	bool "Support OMAP USBHS core and TLL driver"
-- 	depends on USB_EHCI_HCD_OMAP || USB_OHCI_HCD_OMAP3
-- 	default y
-- 	help
-- 	  This is the core driver for the OAMP EHCI and OHCI drivers.
-- 	  This MFD driver does the required setup functionalities for
-- 	  OMAP USB Host drivers.
--=20
-- config MFD_PM8XXX
-- 	tristate
--=20
-- config MFD_PM8921_CORE
-- 	tristate "Qualcomm PM8921 PMIC chip"
-- 	depends on MSM_SSBI
-+ config MFD_LM3533
-+ 	tristate "TI/National Semiconductor LM3533 Lighting Power chip"
-+ 	depends on I2C
-  	select MFD_CORE
-- 	select MFD_PM8XXX
-+ 	select REGMAP_I2C
-+ 	depends on GENERIC_HARDIRQS
-  	help
-- 	  If you say yes to this option, support will be included for the
-- 	  built-in PM8921 PMIC chip.
--=20
-- 	  This is required if your board has a PM8921 and uses its features,
-- 	  such as: MPPs, GPIOs, regulators, interrupts, and PWM.
--=20
-- 	  Say M here if you want to include support for PM8921 chip as a module.
-- 	  This will build a module called "pm8921-core".
-+ 	  Say yes here to enable support for National Semiconductor / TI
-+ 	  LM3533 Lighting Power chips.
- =20
-- config MFD_PM8XXX_IRQ
-- 	bool "Support for Qualcomm PM8xxx IRQ features"
-- 	depends on MFD_PM8XXX
-- 	default y if MFD_PM8XXX
-- 	help
-- 	  This is the IRQ driver for Qualcomm PM 8xxx PMIC chips.
-+ 	  This driver provides common support for accessing the device;
-+ 	  additional drivers must be enabled in order to use the LED,
-+ 	  backlight or ambient-light-sensor functionality of the device.
- =20
-- 	  This is required to use certain other PM 8xxx features, such as GPIO
-- 	  and MPP.
-+ config MFD_TIMBERDALE
-+ 	tristate "Timberdale FPGA"
-+ 	select MFD_CORE
-+ 	depends on PCI && GPIOLIB
-+ 	---help---
-+ 	This is the core driver for the timberdale FPGA. This device is a
-+ 	multifunction device which exposes numerous platform devices.
- =20
-- config TPS65911_COMPARATOR
-- 	tristate
-+ 	The timberdale FPGA can be found on the Intel Atom development board
-+ 	for in-vehicle infontainment, called Russellville.
- =20
-- config MFD_TPS65090
-- 	bool "TPS65090 Power Management chips"
-+ config MFD_TC3589X
-+ 	bool "Toshiba TC35892 and variants"
-  	depends on I2C=3Dy && GENERIC_HARDIRQS
-  	select MFD_CORE
-- 	select REGMAP_I2C
-- 	select REGMAP_IRQ
-  	help
-- 	  If you say yes here you get support for the TPS65090 series of
-- 	  Power Management chips.
-+ 	  Support for the Toshiba TC35892 and variants I/O Expander.
-+=20
-  	  This driver provides common support for accessing the device,
-  	  additional drivers must be enabled in order to use the
-  	  functionality of the device.
+--089e01419d7c88a34504d9fb1ef9
+Content-Type: text/plain; charset=US-ASCII; name="cpufreq-info_3.2.0-40-generic.txt"
+Content-Disposition: attachment;
+	filename="cpufreq-info_3.2.0-40-generic.txt"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_hfc2l20b0
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__10_Apr_2013_13_48_13_+1000_BHXyCuoTN3K1V.mc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRZOD9AAoJEECxmPOUX5FEaK4P/2EIOIJUQIibR4gRBmvHuwKS
-xSBL+OjZBj0tMznscQEWSDdVw49iP9LG2dh7cE201NvR0/mj8OgmJGYJfnGi+oSA
-lLKck0/KwzBTyKcmNv59FXXLzpSs4N3WpHoBkXfq+5nUOJIrXW+En09bJPIj3pt0
-PbLFpXvSHc+gZ9OuC3DFFuyCOVEoYygWGJKI6Y+iNSq8wb00TAmQrl8yCjvZpgiQ
-Jm07b96MCQGNVi9HWo1wvECNhNkmCd+v7qGEBNjR4y5CZ4+j53C+TVAqXtfzfjjM
-3Xm6lwK84WcF52XBUP2oUsH+r+/sRYQpZpF97MFHcMRknJxeu6Gk3J+zSsxOJ0Ov
-zBWk7WzutnTKwFAKPRTTS+Kg4i7tHIhyma5SoQcllyDALTKtHQ4SOvuTHJb3NdJK
-HAUggrRLsym4AuunH428BCeSROyIikn/qumiwx82JSRNIDsMoVAj1e3nbhkN89Il
-ZxxXbNMmmoxdb9Jf7VTQsAO7mMatyRcdUMGcI1zqRn/GzjPskPlBMYpVMISgYfXL
-8twKmkjPqEb5CUmJDN+AR3kQT01rEc1uRlTVjygCupe6NLBR+fAZFgzOaK9QyAIM
-oXE9LcuNQku01vwbY5Panx8uwcuMNhV7/9YAqfGSD2lPh5p81r5D1bsFhxxBj01n
-4CZ5jVGLyvaFXWwTO2gR
-=DDFS
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Apr_2013_13_48_13_+1000_BHXyCuoTN3K1V.mc--
+Y3B1ZnJlcXV0aWxzIDAwNzogY3B1ZnJlcS1pbmZvIChDKSBEb21pbmlrIEJyb2Rvd3NraSAyMDA0
+LTIwMDkKUmVwb3J0IGVycm9ycyBhbmQgYnVncyB0byBjcHVmcmVxQHZnZXIua2VybmVsLm9yZywg
+cGxlYXNlLgphbmFseXppbmcgQ1BVIDA6CiAgZHJpdmVyOiBhY3BpLWNwdWZyZXEKICBDUFVzIHdo
+aWNoIHJ1biBhdCB0aGUgc2FtZSBoYXJkd2FyZSBmcmVxdWVuY3k6IDAgMSAyIDMKICBDUFVzIHdo
+aWNoIG5lZWQgdG8gaGF2ZSB0aGVpciBmcmVxdWVuY3kgY29vcmRpbmF0ZWQgYnkgc29mdHdhcmU6
+IDAKICBtYXhpbXVtIHRyYW5zaXRpb24gbGF0ZW5jeTogMTAuMCB1cy4KICBoYXJkd2FyZSBsaW1p
+dHM6IDgwMCBNSHogLSAxLjYwIEdIegogIGF2YWlsYWJsZSBmcmVxdWVuY3kgc3RlcHM6IDEuNjAg
+R0h6LCAxLjYwIEdIeiwgMS41MCBHSHosIDEuNDAgR0h6LCAxLjMwIEdIeiwgMS4yMCBHSHosIDEu
+MTAgR0h6LCAxMDAwIE1IeiwgOTAwIE1IeiwgODAwIE1IegogIGF2YWlsYWJsZSBjcHVmcmVxIGdv
+dmVybm9yczogY29uc2VydmF0aXZlLCBvbmRlbWFuZCwgdXNlcnNwYWNlLCBwb3dlcnNhdmUsIHBl
+cmZvcm1hbmNlCiAgY3VycmVudCBwb2xpY3k6IGZyZXF1ZW5jeSBzaG91bGQgYmUgd2l0aGluIDgw
+MCBNSHogYW5kIDEuNjAgR0h6LgogICAgICAgICAgICAgICAgICBUaGUgZ292ZXJub3IgIm9uZGVt
+YW5kIiBtYXkgZGVjaWRlIHdoaWNoIHNwZWVkIHRvIHVzZQogICAgICAgICAgICAgICAgICB3aXRo
+aW4gdGhpcyByYW5nZS4KICBjdXJyZW50IENQVSBmcmVxdWVuY3kgaXMgMS42MCBHSHogKGFzc2Vy
+dGVkIGJ5IGNhbGwgdG8gaGFyZHdhcmUpLgogIGNwdWZyZXEgc3RhdHM6IDEuNjAgR0h6OjE4Ljg3
+JSwgMS42MCBHSHo6MC44OSUsIDEuNTAgR0h6OjAuNDUlLCAxLjQwIEdIejowLjg5JSwgMS4zMCBH
+SHo6MS4xNSUsIDEuMjAgR0h6OjEuNzUlLCAxLjEwIEdIejoxLjgzJSwgMTAwMCBNSHo6MS45MSUs
+IDkwMCBNSHo6MC45MiUsIDgwMCBNSHo6NzEuMzQlICAoNjM1NSkKYW5hbHl6aW5nIENQVSAxOgog
+IGRyaXZlcjogYWNwaS1jcHVmcmVxCiAgQ1BVcyB3aGljaCBydW4gYXQgdGhlIHNhbWUgaGFyZHdh
+cmUgZnJlcXVlbmN5OiAwIDEgMiAzCiAgQ1BVcyB3aGljaCBuZWVkIHRvIGhhdmUgdGhlaXIgZnJl
+cXVlbmN5IGNvb3JkaW5hdGVkIGJ5IHNvZnR3YXJlOiAxCiAgbWF4aW11bSB0cmFuc2l0aW9uIGxh
+dGVuY3k6IDEwLjAgdXMuCiAgaGFyZHdhcmUgbGltaXRzOiA4MDAgTUh6IC0gMS42MCBHSHoKICBh
+dmFpbGFibGUgZnJlcXVlbmN5IHN0ZXBzOiAxLjYwIEdIeiwgMS42MCBHSHosIDEuNTAgR0h6LCAx
+LjQwIEdIeiwgMS4zMCBHSHosIDEuMjAgR0h6LCAxLjEwIEdIeiwgMTAwMCBNSHosIDkwMCBNSHos
+IDgwMCBNSHoKICBhdmFpbGFibGUgY3B1ZnJlcSBnb3Zlcm5vcnM6IGNvbnNlcnZhdGl2ZSwgb25k
+ZW1hbmQsIHVzZXJzcGFjZSwgcG93ZXJzYXZlLCBwZXJmb3JtYW5jZQogIGN1cnJlbnQgcG9saWN5
+OiBmcmVxdWVuY3kgc2hvdWxkIGJlIHdpdGhpbiA4MDAgTUh6IGFuZCAxLjYwIEdIei4KICAgICAg
+ICAgICAgICAgICAgVGhlIGdvdmVybm9yICJvbmRlbWFuZCIgbWF5IGRlY2lkZSB3aGljaCBzcGVl
+ZCB0byB1c2UKICAgICAgICAgICAgICAgICAgd2l0aGluIHRoaXMgcmFuZ2UuCiAgY3VycmVudCBD
+UFUgZnJlcXVlbmN5IGlzIDEuNjAgR0h6IChhc3NlcnRlZCBieSBjYWxsIHRvIGhhcmR3YXJlKS4K
+ICBjcHVmcmVxIHN0YXRzOiAxLjYwIEdIejoxOC42OCUsIDEuNjAgR0h6OjMuODUlLCAxLjUwIEdI
+ejowLjM1JSwgMS40MCBHSHo6MC41MiUsIDEuMzAgR0h6OjAuNzQlLCAxLjIwIEdIejowLjcyJSwg
+MS4xMCBHSHo6MC43NyUsIDEwMDAgTUh6OjEuMDIlLCA5MDAgTUh6OjAuNDQlLCA4MDAgTUh6Ojcy
+LjkxJSAgKDM4MTUpCmFuYWx5emluZyBDUFUgMjoKICBkcml2ZXI6IGFjcGktY3B1ZnJlcQogIENQ
+VXMgd2hpY2ggcnVuIGF0IHRoZSBzYW1lIGhhcmR3YXJlIGZyZXF1ZW5jeTogMCAxIDIgMwogIENQ
+VXMgd2hpY2ggbmVlZCB0byBoYXZlIHRoZWlyIGZyZXF1ZW5jeSBjb29yZGluYXRlZCBieSBzb2Z0
+d2FyZTogMgogIG1heGltdW0gdHJhbnNpdGlvbiBsYXRlbmN5OiAxMC4wIHVzLgogIGhhcmR3YXJl
+IGxpbWl0czogODAwIE1IeiAtIDEuNjAgR0h6CiAgYXZhaWxhYmxlIGZyZXF1ZW5jeSBzdGVwczog
+MS42MCBHSHosIDEuNjAgR0h6LCAxLjUwIEdIeiwgMS40MCBHSHosIDEuMzAgR0h6LCAxLjIwIEdI
+eiwgMS4xMCBHSHosIDEwMDAgTUh6LCA5MDAgTUh6LCA4MDAgTUh6CiAgYXZhaWxhYmxlIGNwdWZy
+ZXEgZ292ZXJub3JzOiBjb25zZXJ2YXRpdmUsIG9uZGVtYW5kLCB1c2Vyc3BhY2UsIHBvd2Vyc2F2
+ZSwgcGVyZm9ybWFuY2UKICBjdXJyZW50IHBvbGljeTogZnJlcXVlbmN5IHNob3VsZCBiZSB3aXRo
+aW4gODAwIE1IeiBhbmQgMS42MCBHSHouCiAgICAgICAgICAgICAgICAgIFRoZSBnb3Zlcm5vciAi
+b25kZW1hbmQiIG1heSBkZWNpZGUgd2hpY2ggc3BlZWQgdG8gdXNlCiAgICAgICAgICAgICAgICAg
+IHdpdGhpbiB0aGlzIHJhbmdlLgogIGN1cnJlbnQgQ1BVIGZyZXF1ZW5jeSBpcyAxLjYwIEdIeiAo
+YXNzZXJ0ZWQgYnkgY2FsbCB0byBoYXJkd2FyZSkuCiAgY3B1ZnJlcSBzdGF0czogMS42MCBHSHo6
+MjEuMjElLCAxLjYwIEdIejowLjI2JSwgMS41MCBHSHo6MC4zNCUsIDEuNDAgR0h6OjAuNDglLCAx
+LjMwIEdIejowLjU5JSwgMS4yMCBHSHo6MC43MyUsIDEuMTAgR0h6OjAuNzUlLCAxMDAwIE1Iejox
+LjE2JSwgOTAwIE1IejowLjU2JSwgODAwIE1Iejo3My45MSUgICg0MTA4KQphbmFseXppbmcgQ1BV
+IDM6CiAgZHJpdmVyOiBhY3BpLWNwdWZyZXEKICBDUFVzIHdoaWNoIHJ1biBhdCB0aGUgc2FtZSBo
+YXJkd2FyZSBmcmVxdWVuY3k6IDAgMSAyIDMKICBDUFVzIHdoaWNoIG5lZWQgdG8gaGF2ZSB0aGVp
+ciBmcmVxdWVuY3kgY29vcmRpbmF0ZWQgYnkgc29mdHdhcmU6IDMKICBtYXhpbXVtIHRyYW5zaXRp
+b24gbGF0ZW5jeTogMTAuMCB1cy4KICBoYXJkd2FyZSBsaW1pdHM6IDgwMCBNSHogLSAxLjYwIEdI
+egogIGF2YWlsYWJsZSBmcmVxdWVuY3kgc3RlcHM6IDEuNjAgR0h6LCAxLjYwIEdIeiwgMS41MCBH
+SHosIDEuNDAgR0h6LCAxLjMwIEdIeiwgMS4yMCBHSHosIDEuMTAgR0h6LCAxMDAwIE1IeiwgOTAw
+IE1IeiwgODAwIE1IegogIGF2YWlsYWJsZSBjcHVmcmVxIGdvdmVybm9yczogY29uc2VydmF0aXZl
+LCBvbmRlbWFuZCwgdXNlcnNwYWNlLCBwb3dlcnNhdmUsIHBlcmZvcm1hbmNlCiAgY3VycmVudCBw
+b2xpY3k6IGZyZXF1ZW5jeSBzaG91bGQgYmUgd2l0aGluIDgwMCBNSHogYW5kIDEuNjAgR0h6Lgog
+ICAgICAgICAgICAgICAgICBUaGUgZ292ZXJub3IgIm9uZGVtYW5kIiBtYXkgZGVjaWRlIHdoaWNo
+IHNwZWVkIHRvIHVzZQogICAgICAgICAgICAgICAgICB3aXRoaW4gdGhpcyByYW5nZS4KICBjdXJy
+ZW50IENQVSBmcmVxdWVuY3kgaXMgODAwIE1IeiAoYXNzZXJ0ZWQgYnkgY2FsbCB0byBoYXJkd2Fy
+ZSkuCiAgY3B1ZnJlcSBzdGF0czogMS42MCBHSHo6MTYuMjglLCAxLjYwIEdIejowLjI4JSwgMS41
+MCBHSHo6MC4yMiUsIDEuNDAgR0h6OjAuMzAlLCAxLjMwIEdIejowLjQzJSwgMS4yMCBHSHo6MC42
+OSUsIDEuMTAgR0h6OjAuNzklLCAxMDAwIE1IejoxLjE3JSwgOTAwIE1IejowLjYyJSwgODAwIE1I
+ejo3OS4yMiUgICgyOTk1KQo=
+--089e01419d7c88a34504d9fb1ef9--
