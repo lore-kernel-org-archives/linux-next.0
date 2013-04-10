@@ -1,61 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Apr 8
-Date: Wed, 10 Apr 2013 18:53:09 +1000
-Message-ID: <20130410185309.c6dd41a9f1c104a6742cf6b3@canb.auug.org.au>
-References: <20130408174343.cc13eb1972470d20d38ecff1@canb.auug.org.au>
-	<CAMuHMdUdXV2w8u6idL+shs_rEMvJ92+h_q-sKobWy=ucxp6nYw@mail.gmail.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: linux-next: manual merge of the mfd tree with the v4l-dvb tree
+Date: Wed, 10 Apr 2013 06:48:28 -0300
+Message-ID: <20130410064828.6c946ad8@redhat.com>
+References: <20130410134813.b1bff6027f64f14d75d43927@canb.auug.org.au>
+	<20130410064253.GA4874@zurbaran>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__10_Apr_2013_18_53_09_+1000_WZlboF6n_CjzGPuW"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55477 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964955Ab3DJIxN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Apr 2013 04:53:13 -0400
-In-Reply-To: <CAMuHMdUdXV2w8u6idL+shs_rEMvJ92+h_q-sKobWy=ucxp6nYw@mail.gmail.com>
+Received: from mx1.redhat.com ([209.132.183.28]:29609 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S935049Ab3DJJsk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Apr 2013 05:48:40 -0400
+In-Reply-To: <20130410064253.GA4874@zurbaran>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>
 
---Signature=_Wed__10_Apr_2013_18_53_09_+1000_WZlboF6n_CjzGPuW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Em Wed, 10 Apr 2013 08:42:53 +0200
+Samuel Ortiz <sameo@linux.intel.com> escreveu:
 
-Hi Geert,
+> Hi Stephen,
+> 
+> On Wed, Apr 10, 2013 at 01:48:13PM +1000, Stephen Rothwell wrote:
+> > Hi Samuel,
+> > 
+> > Today's linux-next merge of the mfd tree got a conflict in
+> > drivers/mfd/Kconfig between commit 3f8ec5df11aa ("[media] mfd: Add header
+> > files and Kbuild plumbing for SI476x MFD core") from the v4l-dvb tree and
+> > commit ab85b120e692 ("mfd: Kconfig alphabetical re-ordering") from the
+> > mfd tree.
+> I'm surprised the v4l-dvb tree is carrying this patchset because I haven't
+> ACKed it. 
 
-On Wed, 10 Apr 2013 10:51:54 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
-> wrote:
->
-> make: /opt/cross/gcc-4.6-nolibc/bin/alpha-linux-gcc: Command not found
+Sorry. Not sure why I understood that you gave your ack. Perhaps I miss-read
+one of the comments of that thread.
 
-Fixed.  Sorry about that.
+> I was planning to take the MFD bits of it and provide Mauro a branch
+> to pull from (Including the mfd/Kconfig change).
+> Mauro, could we please go that way instead ? This conflict does not look
+> pretty to me.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Sure. Do you have such branch already? As the patches are on my main
+tree[1], I'll need to either revert them or to do a merge from your
+branch. The latter is likely a little cleaner, but I'm ok with either ways.
 
---Signature=_Wed__10_Apr_2013_18_53_09_+1000_WZlboF6n_CjzGPuW
-Content-Type: application/pgp-signature
+Regards,
+Mauro
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+[1] Currently, we're not using topic branches yet. I'm planning to do it
+for 3.11. So, once a patch got merged, I can't remove it, as I don't
+rebase my tree.
 
-iQIcBAEBCAAGBQJRZSh2AAoJEECxmPOUX5FEj+MP/2J6yKetQDlUj4H5rqqVd+E7
-1ij5oDgdW2X7zwTwi4vJAl10HOrAm4F1VYSGOdI6eNM11HlNGCffrFvL4Gd1f407
-l3EbGxC36Y1HcwUJlhF5NbYloO6p0jChYe89TifDKThuvhyAbN8RXefNyvfQoHpN
-AnGPLax8lvVWnYg3jpjfAkseGD3z6MPSI5JVu/6UFanBKUvEM8kW5y+NemrdbVfo
-+1PXyQUBVyzyx5bILN0AZ3Dq9F/l1yOVvSxeSJOXWkXo3SHG5FvHO3LJtqS5XZD5
-q69VQUL8lGQ7RGnYW3MPs75dyVfTDol29zn+v+4p8PUG8Z6BkzY7imrLKOcM6VIP
-tuXHq5NchXBUYNIUtKmBwo8lv0Tkswn36OTsBV2rT8wQAKXCf/A8Gxyce1YVTFON
-mqUax/1A1mPzzD575kqqhwxDLD2rbUwMbpvAsVh4hZekWvMlJngMiFG0mRC1wYwv
-6MUvRJjkMYi6kUGe1AyxGWTnvk9B86hjtEVn05j/9bcYKjxtidZtqUVIBeIuwamA
-Rhou0qH+wQL/NWLdKyQb3s3iKFkPdSQoKaBvwB0JYSquWc+t9yx6j3WL5VM+/qCH
-AFW29lj7ipoNXKcPPKXwBlHJslsV3oknZL5aSHqvmQdEB01kKZKaCAUHBocpnpFt
-WUxj3AVIipM2MFfz/iyP
-=/4/b
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Apr_2013_18_53_09_+1000_WZlboF6n_CjzGPuW--
+Regards,
+Mauro
