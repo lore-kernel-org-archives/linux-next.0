@@ -1,92 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the pinctrl tree
-Date: Wed, 10 Apr 2013 17:10:01 +1000
-Message-ID: <20130410171001.d485e70b48cd1a64dd2a6343@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the pm tree
+Date: Wed, 10 Apr 2013 17:17:43 +1000
+Message-ID: <20130410171743.2ffa67388b330991228a6775@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__10_Apr_2013_17_10_01_+1000_ryH+BBVW8yWge9UR"
+ boundary="Signature=_Wed__10_Apr_2013_17_17_43_+1000_ooEOTyZZyygsQj8M"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36854 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35661 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754705Ab3DJHKQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Apr 2013 03:10:16 -0400
+	with ESMTP id S1751632Ab3DJHRu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Apr 2013 03:17:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
---Signature=_Wed__10_Apr_2013_17_10_01_+1000_ryH+BBVW8yWge9UR
+--Signature=_Wed__10_Apr_2013_17_17_43_+1000_ooEOTyZZyygsQj8M
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got conflicts in
-drivers/pinctrl/pinctrl-samsung.c and drivers/pinctrl/pinctrl-samsung.h
-between commit 61dd72613177 ("pinctrl: Add pinctrl-s3c64xx driver") from
-the pinctrl tree and commit f67faf487fc1 ("pinctrl: exynos: add
-exynos5250 SoC specific data") from the arm-soc tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-s3c24xx/Kconfig between commit 785f40040874 ("cpufreq:
+s3c24xx: move cpufreq driver to drivers/cpufreq") from the pm tree and
+commits fb278af74b28 ("ARM: S3C24XX: Removed unneeded dependency on
+CPU_S3C2410") and a4e4d22c6f53 ("ARM: S3C24XX: Removed unneeded
+dependency on CPU_S3C2412") from the arm-soc tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up by removing the sections from arch/arm/mach-s3c24xx/Kconfig
+and can carry thefix as necessary (no action is required).
 
+P.S. those arm-soc tree commits have a bad Author email address ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pinctrl/pinctrl-samsung.c
-index 4f54faf,fe7ace2..0000000
---- a/drivers/pinctrl/pinctrl-samsung.c
-+++ b/drivers/pinctrl/pinctrl-samsung.c
-@@@ -970,11 -948,8 +970,13 @@@ static const struct of_device_id samsun
-  		.data =3D (void *)exynos4210_pin_ctrl },
-  	{ .compatible =3D "samsung,exynos4x12-pinctrl",
-  		.data =3D (void *)exynos4x12_pin_ctrl },
- +#endif
- +#ifdef CONFIG_PINCTRL_S3C64XX
- +	{ .compatible =3D "samsung,s3c64xx-pinctrl",
- +		.data =3D s3c64xx_pin_ctrl },
- +#endif
-+ 	{ .compatible =3D "samsung,exynos5250-pinctrl",
-+ 		.data =3D (void *)exynos5250_pin_ctrl },
-  	{},
-  };
-  MODULE_DEVICE_TABLE(of, samsung_pinctrl_dt_match);
-diff --cc drivers/pinctrl/pinctrl-samsung.h
-index 45f27b4,ee964aa..0000000
---- a/drivers/pinctrl/pinctrl-samsung.h
-+++ b/drivers/pinctrl/pinctrl-samsung.h
-@@@ -244,6 -237,6 +244,7 @@@ struct samsung_pmx_func=20
-  /* list of all exported SoC specific data */
-  extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
-  extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
- +extern struct samsung_pin_ctrl s3c64xx_pin_ctrl[];
-+ extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
- =20
-  #endif /* __PINCTRL_SAMSUNG_H */
-
-
---Signature=_Wed__10_Apr_2013_17_10_01_+1000_ryH+BBVW8yWge9UR
+--Signature=_Wed__10_Apr_2013_17_17_43_+1000_ooEOTyZZyygsQj8M
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRZRBJAAoJEECxmPOUX5FEjNcP/jZigKUceDAoPoW497gKg0W6
-giGmom+KR4al/ocQXTiF364RbdNgQe8tyzmKMnP8huNnceLXkp0D4YVCZ8yLQ5Gb
-QONnKxkyTjXkRvXv3LXADmmnEEVuU2hEqD7ESxHZgFm6VYXrqzAuAaKMTSXCqHyZ
-ca56kX03cSv8BibCawNRTJj1SW4D9OZIgm3gKXr1+3MMg+Wl9LUpwpSCxYcXABay
-3VOsD0+5NcGVElyK69+YnRFr+F6S3zMUsK2PPWvdkV4h8sLizjz043p9sdvf8/h+
-z7gEXTh8z6bo7w4vKaBu9t0uBOGaTsWkxSprZKcTBC6q4CwJmwBNpXUpMUhA1tFj
-SoO8PSfxE3iGd/cc+J+a05TDFI0yhIdhi4rIh8tf84y5UMIedn3OHuaoPmybE/md
-TmDydirt4ntqP4eXKrFTFjnhl+W+aJR2OzOkrua5+bkWYnmR2qddU797VVmPjnXt
-jjrRyjaKe4r6wBHITHgUEiOXp8+i9gxikccTeCib5vcMTs0XYcglX5nSSF7P7/I0
-6vE+vvlj4dJFe30rBuD6NVbZyvsWScYIcdH0FYJVzHFbmPzUY36KjRcRXxnMQDos
-P6Y3A+WfsiMA5tMXbnNBt8FhW6kwcNQg6aRd6+8Hf9z2Qm/C6mmeoRPsn/eFnjiI
-oynnWs2gsbizBQBCcSN/
-=+7rA
+iQIcBAEBCAAGBQJRZRIXAAoJEECxmPOUX5FEugUP/20P7BgYgGzsw2Cfx8MaWqyv
+YFMKmEt1qXR7qRk4Yog2g8eJ/EvgZVg1xUOO5vV0TbUZOZYigDRBxPwfNTLLCD2y
+ex0XpZ/ZvMD3EcRSA5LxteCN2GKU0P7XzdJ5YVK8rCn92fBTuuktNPGUHu439Ow0
+oizsWDs5ZFKi15l+3zvBRIK3B1wknYLAcTirda//xycf3M75+QTXO2PODzonlOIx
+Kia9NdZHfqlT+Wj626fFNdYvaXIm39a9hVuJ0wDSyKUazGJwmWEI/recdbtEELZu
+ApIF1dwsH/qB0PIjYIrADtu80ifUNrt5Aejqb82NUDZGvOhBOH6Wm6EqEZFoEA8U
+ymdy2iowNjtjPZfeo0tAum26sNmSsmC62vICyU1eFquB7/4GwiXNmy2KxAVXJi3q
+lXAb+1QoE+jA+OqQ/NEpZy59YvBcMT7IubsV8JXcMBNvNS5KI0A07ToJYk0Qwve6
+iU0ld65s8dwpnSOX7Ic3AT9QDxdrieOQiaWXFv0ty+eis7TH1mmgkNAfO7oF9vMF
+aE8kOURBzEaKSil7TLtQqsJ0Sfi+o3wG5FUqeUJM/EHqlsZulCtBz4WjVgHcw5Je
+edD+bPjOUHfZXDK25utzzV/8z/VH6d0UoVUG/ZVa+0dLf/TyH3oAERHmMwLtLSIE
+vhEjDq98tW/tsQ1ET4d9
+=kNLL
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__10_Apr_2013_17_10_01_+1000_ryH+BBVW8yWge9UR--
+--Signature=_Wed__10_Apr_2013_17_17_43_+1000_ooEOTyZZyygsQj8M--
