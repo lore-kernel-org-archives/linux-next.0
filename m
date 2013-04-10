@@ -1,62 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the pm tree
-Date: Wed, 10 Apr 2013 17:17:43 +1000
-Message-ID: <20130410171743.2ffa67388b330991228a6775@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
+Date: Wed, 10 Apr 2013 17:33:01 +1000
+Message-ID: <20130410173301.a9fb60beb9ca0865c93930f0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__10_Apr_2013_17_17_43_+1000_ooEOTyZZyygsQj8M"
+ boundary="Signature=_Wed__10_Apr_2013_17_33_01_+1000_js_TbwuzCIGaxp8P"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35661 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49195 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751632Ab3DJHRu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Apr 2013 03:17:50 -0400
+	with ESMTP id S934290Ab3DJHdK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Apr 2013 03:33:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Philipp Zabel <p.zabel@pengutronix.de>
 
---Signature=_Wed__10_Apr_2013_17_17_43_+1000_ooEOTyZZyygsQj8M
+--Signature=_Wed__10_Apr_2013_17_33_01_+1000_js_TbwuzCIGaxp8P
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Shawn,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-s3c24xx/Kconfig between commit 785f40040874 ("cpufreq:
-s3c24xx: move cpufreq driver to drivers/cpufreq") from the pm tree and
-commits fb278af74b28 ("ARM: S3C24XX: Removed unneeded dependency on
-CPU_S3C2410") and a4e4d22c6f53 ("ARM: S3C24XX: Removed unneeded
-dependency on CPU_S3C2412") from the arm-soc tree.
+Today's linux-next merge of the imx-mxs tree got a conflict in
+arch/arm/mach-imx/clk-imx6q.c between commit e8094b2c1712 ("ARM i.MX6:
+Fix ldb_di clock selection") from the arm-soc tree and commit
+8034cf45ac38 ("ARM i.MX6q: Add audio/video PLL post dividers for i.MX6q
+rev 1.1") from the imx-mxs tree.
 
-I fixed it up by removing the sections from arch/arm/mach-s3c24xx/Kconfig
-and can carry thefix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-P.S. those arm-soc tree commits have a bad Author email address ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__10_Apr_2013_17_17_43_+1000_ooEOTyZZyygsQj8M
+diff --cc arch/arm/mach-imx/clk-imx6q.c
+index d38e54f,65319d5..0000000
+--- a/arch/arm/mach-imx/clk-imx6q.c
++++ b/arch/arm/mach-imx/clk-imx6q.c
+@@@ -115,8 -187,8 +187,8 @@@ static const char *gpu2d_core_sels[]	=3D=20
+  static const char *gpu3d_core_sels[]	=3D { "mmdc_ch0_axi", "pll3_usb_otg"=
+, "pll2_pfd1_594m", "pll2_pfd2_396m", };
+  static const char *gpu3d_shader_sels[] =3D { "mmdc_ch0_axi", "pll3_usb_ot=
+g", "pll2_pfd1_594m", "pll2_pfd9_720m", };
+  static const char *ipu_sels[]		=3D { "mmdc_ch0_axi", "pll2_pfd2_396m", "p=
+ll3_120m", "pll3_pfd1_540m", };
+- static const char *ldb_di_sels[]	=3D { "pll5_video", "pll2_pfd0_352m", "p=
+ll2_pfd2_396m", "mmdc_ch1_axi", "pll3_usb_otg", };
+- static const char *ipu_di_pre_sels[]	=3D { "mmdc_ch0_axi", "pll3_usb_otg"=
+, "pll5_video", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll3_pfd1_540m", };
+ -static const char *ldb_di_sels[]	=3D { "pll5_video_div", "pll2_pfd0_352m"=
+, "pll2_pfd2_396m", "mmdc_ch1_axi", "pll3_pfd1_540m", };
+++static const char *ldb_di_sels[]	=3D { "pll5_video_div", "pll2_pfd0_352m"=
+, "pll2_pfd2_396m", "mmdc_ch1_axi", "pll3_usb_otg", };
++ static const char *ipu_di_pre_sels[]	=3D { "mmdc_ch0_axi", "pll3_usb_otg"=
+, "pll5_video_div", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll3_pfd1_540m", };
+  static const char *ipu1_di0_sels[]	=3D { "ipu1_di0_pre", "dummy", "dummy"=
+, "ldb_di0", "ldb_di1", };
+  static const char *ipu1_di1_sels[]	=3D { "ipu1_di1_pre", "dummy", "dummy"=
+, "ldb_di0", "ldb_di1", };
+  static const char *ipu2_di0_sels[]	=3D { "ipu2_di0_pre", "dummy", "dummy"=
+, "ldb_di0", "ldb_di1", };
+
+--Signature=_Wed__10_Apr_2013_17_33_01_+1000_js_TbwuzCIGaxp8P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRZRIXAAoJEECxmPOUX5FEugUP/20P7BgYgGzsw2Cfx8MaWqyv
-YFMKmEt1qXR7qRk4Yog2g8eJ/EvgZVg1xUOO5vV0TbUZOZYigDRBxPwfNTLLCD2y
-ex0XpZ/ZvMD3EcRSA5LxteCN2GKU0P7XzdJ5YVK8rCn92fBTuuktNPGUHu439Ow0
-oizsWDs5ZFKi15l+3zvBRIK3B1wknYLAcTirda//xycf3M75+QTXO2PODzonlOIx
-Kia9NdZHfqlT+Wj626fFNdYvaXIm39a9hVuJ0wDSyKUazGJwmWEI/recdbtEELZu
-ApIF1dwsH/qB0PIjYIrADtu80ifUNrt5Aejqb82NUDZGvOhBOH6Wm6EqEZFoEA8U
-ymdy2iowNjtjPZfeo0tAum26sNmSsmC62vICyU1eFquB7/4GwiXNmy2KxAVXJi3q
-lXAb+1QoE+jA+OqQ/NEpZy59YvBcMT7IubsV8JXcMBNvNS5KI0A07ToJYk0Qwve6
-iU0ld65s8dwpnSOX7Ic3AT9QDxdrieOQiaWXFv0ty+eis7TH1mmgkNAfO7oF9vMF
-aE8kOURBzEaKSil7TLtQqsJ0Sfi+o3wG5FUqeUJM/EHqlsZulCtBz4WjVgHcw5Je
-edD+bPjOUHfZXDK25utzzV/8z/VH6d0UoVUG/ZVa+0dLf/TyH3oAERHmMwLtLSIE
-vhEjDq98tW/tsQ1ET4d9
-=kNLL
+iQIcBAEBCAAGBQJRZRWtAAoJEECxmPOUX5FEcpoP/2vMHEE3iS7ohkr/YPfJh834
+uwRwwMtMUGz8O9ER2c9h8xgfF4Msb7Ng837ZWj9nKzWp4LtTZmceFKamS0VpIiJP
+AeP/C/AOL2yxvKe15YIMfBl46US2CYOKpwyeirhq/iSI/x5Iyd83g2gGG+i6AIJP
+rAUX525X82ehbIAmIk5iKeq5RPCDzaIODb2OHNEgKrKs15ftft4uCeqstlm7LTOv
+WNMVIpkGqR8mwioJ/vAf3xLzVfao1Idg2/eW3K30IKvshpJUZPmeC1cbewTlfw/T
+JCrLQp+fFI7VAYCANUEYwi7b4VzKzRhLw+r4hUiOypTzoiSKhpwX8OeEExZX1jb+
+PUDgF1x8CAdXSgMl0aSHGf0MlmmZ9Z+VJo45K1JBbTQfyr5jDfn/RdiAc5U5jYBU
+pH6CWtYCiE20VDq8dKH0uuzWmSBZUT6Yb1HdENYMmcyb3PIjXxZTsf0EQqpWnx+d
+FaQh6bY2/K+r1yoy/aM0sEy85HXrOlG9BDAgWwoNv3owS2KDujxktWJPxQ8mgLYg
+aiNGC7X2dN0Nr7st1KEINDF/QD+wMPLIxL9EuG+DMUHyKeDNvL25s5fIdqrshe/u
+ZWVZqOYN9FtGWWlwvwtwOgzxxSv72meea/fo4J3UwkGh1cr6TusxQCUFS+0fZ9ay
+1deY4A+HqO9jTha2mPf0
+=ZlFD
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__10_Apr_2013_17_17_43_+1000_ooEOTyZZyygsQj8M--
+--Signature=_Wed__10_Apr_2013_17_33_01_+1000_js_TbwuzCIGaxp8P--
