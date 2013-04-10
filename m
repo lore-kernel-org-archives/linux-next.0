@@ -1,148 +1,92 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: manual merge of the mfd tree with the v4l-dvb tree
-Date: Wed, 10 Apr 2013 08:42:53 +0200
-Message-ID: <20130410064253.GA4874@zurbaran>
-References: <20130410134813.b1bff6027f64f14d75d43927@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the pinctrl tree
+Date: Wed, 10 Apr 2013 17:10:01 +1000
+Message-ID: <20130410171001.d485e70b48cd1a64dd2a6343@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__10_Apr_2013_17_10_01_+1000_ryH+BBVW8yWge9UR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:8922 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752280Ab3DJGm5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Apr 2013 02:42:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20130410134813.b1bff6027f64f14d75d43927@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36854 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754705Ab3DJHKQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Apr 2013 03:10:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Stephen,
+--Signature=_Wed__10_Apr_2013_17_10_01_+1000_ryH+BBVW8yWge9UR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 10, 2013 at 01:48:13PM +1000, Stephen Rothwell wrote:
-> Hi Samuel,
-> 
-> Today's linux-next merge of the mfd tree got a conflict in
-> drivers/mfd/Kconfig between commit 3f8ec5df11aa ("[media] mfd: Add header
-> files and Kbuild plumbing for SI476x MFD core") from the v4l-dvb tree and
-> commit ab85b120e692 ("mfd: Kconfig alphabetical re-ordering") from the
-> mfd tree.
-I'm surprised the v4l-dvb tree is carrying this patchset because I haven't
-ACKed it. I was planning to take the MFD bits of it and provide Mauro a branch
-to pull from (Including the mfd/Kconfig change).
-Mauro, could we please go that way instead ? This conflict does not look
-pretty to me.
+Hi all,
 
+Today's linux-next merge of the arm-soc tree got conflicts in
+drivers/pinctrl/pinctrl-samsung.c and drivers/pinctrl/pinctrl-samsung.h
+between commit 61dd72613177 ("pinctrl: Add pinctrl-s3c64xx driver") from
+the pinctrl tree and commit f67faf487fc1 ("pinctrl: exynos: add
+exynos5250 SoC specific data") from the arm-soc tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
 Cheers,
-Samuel.
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/pinctrl/pinctrl-samsung.c
+index 4f54faf,fe7ace2..0000000
+--- a/drivers/pinctrl/pinctrl-samsung.c
++++ b/drivers/pinctrl/pinctrl-samsung.c
+@@@ -970,11 -948,8 +970,13 @@@ static const struct of_device_id samsun
+  		.data =3D (void *)exynos4210_pin_ctrl },
+  	{ .compatible =3D "samsung,exynos4x12-pinctrl",
+  		.data =3D (void *)exynos4x12_pin_ctrl },
+ +#endif
+ +#ifdef CONFIG_PINCTRL_S3C64XX
+ +	{ .compatible =3D "samsung,s3c64xx-pinctrl",
+ +		.data =3D s3c64xx_pin_ctrl },
+ +#endif
++ 	{ .compatible =3D "samsung,exynos5250-pinctrl",
++ 		.data =3D (void *)exynos5250_pin_ctrl },
+  	{},
+  };
+  MODULE_DEVICE_TABLE(of, samsung_pinctrl_dt_match);
+diff --cc drivers/pinctrl/pinctrl-samsung.h
+index 45f27b4,ee964aa..0000000
+--- a/drivers/pinctrl/pinctrl-samsung.h
++++ b/drivers/pinctrl/pinctrl-samsung.h
+@@@ -244,6 -237,6 +244,7 @@@ struct samsung_pmx_func=20
+  /* list of all exported SoC specific data */
+  extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
+  extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
+ +extern struct samsung_pin_ctrl s3c64xx_pin_ctrl[];
++ extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
+ =20
+  #endif /* __PINCTRL_SAMSUNG_H */
 
 
-> I fixed it up (I think - see below) and can carry the fix as necessary
-> (no action is required).
-> 
-> diff --cc drivers/mfd/Kconfig
-> index b6bb6d5,2f3ce18..0000000
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@@ -977,68 -920,38 +920,51 @@@ config MFD_WL1273_COR
->   	  driver connects the radio-wl1273 V4L2 module and the wl1273
->   	  audio codec.
->   
->  +config MFD_SI476X_CORE
->  +	tristate "Support for Silicon Laboratories 4761/64/68 AM/FM radio."
->  +	depends on I2C
->  +	select MFD_CORE
->  +	select REGMAP_I2C
->  +	help
->  +	  This is the core driver for the SI476x series of AM/FM
->  +	  radio. This MFD driver connects the radio-si476x V4L2 module
->  +	  and the si476x audio codec.
->  +
->  +	  To compile this driver as a module, choose M here: the
->  +	  module will be called si476x-core.
->  +
-> - config MFD_OMAP_USB_HOST
-> - 	bool "Support OMAP USBHS core and TLL driver"
-> - 	depends on USB_EHCI_HCD_OMAP || USB_OHCI_HCD_OMAP3
-> - 	default y
-> - 	help
-> - 	  This is the core driver for the OAMP EHCI and OHCI drivers.
-> - 	  This MFD driver does the required setup functionalities for
-> - 	  OMAP USB Host drivers.
-> - 
-> - config MFD_PM8XXX
-> - 	tristate
-> - 
-> - config MFD_PM8921_CORE
-> - 	tristate "Qualcomm PM8921 PMIC chip"
-> - 	depends on MSM_SSBI
-> + config MFD_LM3533
-> + 	tristate "TI/National Semiconductor LM3533 Lighting Power chip"
-> + 	depends on I2C
->   	select MFD_CORE
-> - 	select MFD_PM8XXX
-> + 	select REGMAP_I2C
-> + 	depends on GENERIC_HARDIRQS
->   	help
-> - 	  If you say yes to this option, support will be included for the
-> - 	  built-in PM8921 PMIC chip.
-> - 
-> - 	  This is required if your board has a PM8921 and uses its features,
-> - 	  such as: MPPs, GPIOs, regulators, interrupts, and PWM.
-> - 
-> - 	  Say M here if you want to include support for PM8921 chip as a module.
-> - 	  This will build a module called "pm8921-core".
-> + 	  Say yes here to enable support for National Semiconductor / TI
-> + 	  LM3533 Lighting Power chips.
->   
-> - config MFD_PM8XXX_IRQ
-> - 	bool "Support for Qualcomm PM8xxx IRQ features"
-> - 	depends on MFD_PM8XXX
-> - 	default y if MFD_PM8XXX
-> - 	help
-> - 	  This is the IRQ driver for Qualcomm PM 8xxx PMIC chips.
-> + 	  This driver provides common support for accessing the device;
-> + 	  additional drivers must be enabled in order to use the LED,
-> + 	  backlight or ambient-light-sensor functionality of the device.
->   
-> - 	  This is required to use certain other PM 8xxx features, such as GPIO
-> - 	  and MPP.
-> + config MFD_TIMBERDALE
-> + 	tristate "Timberdale FPGA"
-> + 	select MFD_CORE
-> + 	depends on PCI && GPIOLIB
-> + 	---help---
-> + 	This is the core driver for the timberdale FPGA. This device is a
-> + 	multifunction device which exposes numerous platform devices.
->   
-> - config TPS65911_COMPARATOR
-> - 	tristate
-> + 	The timberdale FPGA can be found on the Intel Atom development board
-> + 	for in-vehicle infontainment, called Russellville.
->   
-> - config MFD_TPS65090
-> - 	bool "TPS65090 Power Management chips"
-> + config MFD_TC3589X
-> + 	bool "Toshiba TC35892 and variants"
->   	depends on I2C=y && GENERIC_HARDIRQS
->   	select MFD_CORE
-> - 	select REGMAP_I2C
-> - 	select REGMAP_IRQ
->   	help
-> - 	  If you say yes here you get support for the TPS65090 series of
-> - 	  Power Management chips.
-> + 	  Support for the Toshiba TC35892 and variants I/O Expander.
-> + 
->   	  This driver provides common support for accessing the device,
->   	  additional drivers must be enabled in order to use the
->   	  functionality of the device.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+--Signature=_Wed__10_Apr_2013_17_10_01_+1000_ryH+BBVW8yWge9UR
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
+iQIcBAEBCAAGBQJRZRBJAAoJEECxmPOUX5FEjNcP/jZigKUceDAoPoW497gKg0W6
+giGmom+KR4al/ocQXTiF364RbdNgQe8tyzmKMnP8huNnceLXkp0D4YVCZ8yLQ5Gb
+QONnKxkyTjXkRvXv3LXADmmnEEVuU2hEqD7ESxHZgFm6VYXrqzAuAaKMTSXCqHyZ
+ca56kX03cSv8BibCawNRTJj1SW4D9OZIgm3gKXr1+3MMg+Wl9LUpwpSCxYcXABay
+3VOsD0+5NcGVElyK69+YnRFr+F6S3zMUsK2PPWvdkV4h8sLizjz043p9sdvf8/h+
+z7gEXTh8z6bo7w4vKaBu9t0uBOGaTsWkxSprZKcTBC6q4CwJmwBNpXUpMUhA1tFj
+SoO8PSfxE3iGd/cc+J+a05TDFI0yhIdhi4rIh8tf84y5UMIedn3OHuaoPmybE/md
+TmDydirt4ntqP4eXKrFTFjnhl+W+aJR2OzOkrua5+bkWYnmR2qddU797VVmPjnXt
+jjrRyjaKe4r6wBHITHgUEiOXp8+i9gxikccTeCib5vcMTs0XYcglX5nSSF7P7/I0
+6vE+vvlj4dJFe30rBuD6NVbZyvsWScYIcdH0FYJVzHFbmPzUY36KjRcRXxnMQDos
+P6Y3A+WfsiMA5tMXbnNBt8FhW6kwcNQg6aRd6+8Hf9z2Qm/C6mmeoRPsn/eFnjiI
+oynnWs2gsbizBQBCcSN/
+=+7rA
+-----END PGP SIGNATURE-----
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+--Signature=_Wed__10_Apr_2013_17_10_01_+1000_ryH+BBVW8yWge9UR--
