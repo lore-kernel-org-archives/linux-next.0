@@ -1,77 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: manual merge of the omap_dss2 tree with Linus' tree
-Date: Wed, 10 Apr 2013 10:13:17 +1000
-Message-ID: <20130410101317.0fa466659e2376aada964540@canb.auug.org.au>
+Date: Tue, 9 Apr 2013 17:41:00 -0700
+Message-ID: <CA+55aFxDmLtDkWtyn9atBvaqok+X-CHe593Rj8WN92ZA+iyC6Q@mail.gmail.com>
 References: <20130408143623.bbf18647b96df42b8b8ec6a0@canb.auug.org.au>
 	<5163E925.4060601@ti.com>
+	<20130410101317.0fa466659e2376aada964540@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__10_Apr_2013_10_13_17_+1000_ARzuh/zW.KXa9/Lc"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42392 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1765437Ab3DJAN3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Apr 2013 20:13:29 -0400
-In-Reply-To: <5163E925.4060601@ti.com>
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:61787 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1762270Ab3DJAlB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Apr 2013 20:41:01 -0400
+In-Reply-To: <20130410101317.0fa466659e2376aada964540@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>
 
---Signature=_Wed__10_Apr_2013_10_13_17_+1000_ARzuh/zW.KXa9/Lc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Tomi,
-
-On Tue, 9 Apr 2013 13:10:45 +0300 Tomi Valkeinen <tomi.valkeinen@ti.com> wr=
-ote:
+On Tue, Apr 9, 2013 at 5:13 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> I wonder what I should do about this conflict. Both the fix in Linus'
-> tree and the new code come from fbdev tree (I'm currently handling fbdev
-> patches), and it feels a bit silly to have conflicts between the fixes
-> and new commits from the same subsystem tree.
+> Since you really should have that fix in your -next branch as well (for
+> testing), I would merge the same branch that Linus merged i.e. I would
+> merge commit 090da752cdd6 ("video:uvesafb: Fix dereference NULL pointer
+> code path") since that is already in your tree (presumably as a separate
+> branch or tag).  I would also put a comment in the merge commit itself
+> explaining why you did it.
 
-Since you really should have that fix in your -next branch as well (for
-testing), I would merge the same branch that Linus merged i.e. I would
-merge commit 090da752cdd6 ("video:uvesafb: Fix dereference NULL pointer
-code path") since that is already in your tree (presumably as a separate
-branch or tag).  I would also put a comment in the merge commit itself
-explaining why you did it.
+I'd actually prefer people *not* do this unless they really have to.
+Just fixing a merge conflict is not a good enough reason to add
+another merge.
 
-> I could just leave the conflict be, or I could merge the fix into the
-> fbdev-next branch. Do you know if there's a rule of thumb I should
-> follow here?
+If you really really need the particular fix for some other reason (ie
+that bug creates real problems for you and you need the bugfix in
+order to test all the other development you've done), then yes, doing
+the merge is worth it. But just to resolve a merge conflct early? No.
 
-The normal rule is to leave it to me and Linus, but since both sides of
-the conflict came your own tree, I think the above makes more sense.
-
-[cc'd Linus for any conflicting opinion]
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__10_Apr_2013_10_13_17_+1000_ARzuh/zW.KXa9/Lc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRZK6dAAoJEECxmPOUX5FE6wEP/2C/VmKDvw+h7Gv3QF2q655N
-SbkOfZ02ETdHlYygQyvmOmt2BrIZ3bNH5zFnMnZiG0hE2pv9YXIEn04kFiZFpem6
-nkrSICwbrjm2KjOXpKQAKU4eoYqotKBwOxvknIR9vKEFu4MW8PhmOV/GfLKsgMlH
-ojx54/E177ubwlbxANZBE1v423GyBNl8q7fpx+TOQERChBqZ4slRvIBsI/Pf+cBC
-01v4CfZNNZzK10gXsjVnJRoGoSwowG/u1NP5u3Jm0tH08+Gq4nRMapqB/gW289Zq
-paCrkwidilCZG2p5utgaUd7ioEUat9guHqiBTwgoFN26KlNHk6Q8L+w/n9mAOOGW
-7OzA22IPH+b1ABxNPu0NC8bKQtitWx32NMpSl1rAnbO1OQ5hvQcQB6MNo1QS3fke
-oVWeAAjqeIczCNc8GQPl7nKgGUJDH46NXjow8kfPGwktA0UipahtS+aBuCyfIDix
-fdI4ECrBSLDoeyEENiEYuHOJdebd4McsWFcz45V66MOyduFrk+Ksd+Qcp1AakKmc
-1t2P8fQLlp+/cDCiuP1lybnZNZoBpK+56ococ+BhA89P1HvMax2tt8p3fdMyv7v5
-wN+p3dawI+PXBggm5AUbzbxflJE/0oqcpv8HhfBna/7eWv5vgBI+gBeH03zCuRR6
-dDfiTkAlpAxHLspHqZYC
-=9kgd
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Apr_2013_10_13_17_+1000_ARzuh/zW.KXa9/Lc--
+                   Linus
