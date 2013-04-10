@@ -1,63 +1,47 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: manual merge of the mfd tree with the v4l-dvb tree
-Date: Wed, 10 Apr 2013 11:58:52 +0200
-Message-ID: <20130410095852.GB4874@zurbaran>
-References: <20130410134813.b1bff6027f64f14d75d43927@canb.auug.org.au>
- <20130410064253.GA4874@zurbaran>
- <20130410064828.6c946ad8@redhat.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Apr 10
+Date: Wed, 10 Apr 2013 12:40:32 +0200
+Message-ID: <CA+icZUWYHv5h26Q6xr30=UxavD52ZX6W1vfTKj8n6gyuCz0q3g@mail.gmail.com>
+References: <20130410184852.92a3a02bbe5c3a040be76365@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:57137 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750806Ab3DJJ64 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Apr 2013 05:58:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20130410064828.6c946ad8@redhat.com>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:48134 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750975Ab3DJKkd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Apr 2013 06:40:33 -0400
+In-Reply-To: <20130410184852.92a3a02bbe5c3a040be76365@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, cpufreq@vger.kernel.org
 
-Hi Mauro,
+On Wed, Apr 10, 2013 at 10:48 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Changes since 20130409:
+>
+> The vfs tree lost its build failure.
+>
 
-On Wed, Apr 10, 2013 at 06:48:28AM -0300, Mauro Carvalho Chehab wrote:
-> Em Wed, 10 Apr 2013 08:42:53 +0200
-> Samuel Ortiz <sameo@linux.intel.com> escreveu:
-> 
-> > Hi Stephen,
-> > 
-> > On Wed, Apr 10, 2013 at 01:48:13PM +1000, Stephen Rothwell wrote:
-> > > Hi Samuel,
-> > > 
-> > > Today's linux-next merge of the mfd tree got a conflict in
-> > > drivers/mfd/Kconfig between commit 3f8ec5df11aa ("[media] mfd: Add header
-> > > files and Kbuild plumbing for SI476x MFD core") from the v4l-dvb tree and
-> > > commit ab85b120e692 ("mfd: Kconfig alphabetical re-ordering") from the
-> > > mfd tree.
-> > I'm surprised the v4l-dvb tree is carrying this patchset because I haven't
-> > ACKed it. 
-> 
-> Sorry. Not sure why I understood that you gave your ack. Perhaps I miss-read
-> one of the comments of that thread.
-No worries, really. This has been a long thread...
+Beyond build-failures in vfs-next [0] and [1], it was not bootable
+(see [2] till [4])!
+This is now all fixed, thanks to all involved people!
 
+$ cat /proc/version
+Linux version 3.9.0-rc6-next20130410-1-iniza-small
+(sedat.dilek@gmail.com@fambox) (gcc version 4.6.3 (Ubuntu/Linaro
+4.6.3-1ubuntu5) ) #1 SMP Wed Apr 10 11:55:58 CEST 2013
 
-> > I was planning to take the MFD bits of it and provide Mauro a branch
-> > to pull from (Including the mfd/Kconfig change).
-> > Mauro, could we please go that way instead ? This conflict does not look
-> > pretty to me.
-> 
-> Sure. Do you have such branch already? As the patches are on my main
-> tree[1], 
-I don't have it yet. I asked Andrei to add a header to one of the MFD patches
-because his patchset is currently not bisectable (The MFD patches include a
-media/ header that is created later in the patchset). Once he has that done,
-I'll create a branch for you to merge. I'll let you know when that's ready.
+NOTE: There still exists the NULL-pointer-deref in cpufreq for me on
+Intel SandyBridge CPU (see [5]) on reboot and when CPUs get offline.
 
-Cheers,
-Samuel.
+- Sedat -
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+[0] https://lkml.org/lkml/2013/4/7/229
+[1] http://marc.info/?l=linux-next&m=136552249527170&w=2
+[2] http://marc.info/?t=136545773000008&r=1&w=2
+[3] http://marc.info/?t=136545603700003&r=1&w=2
+[4] http://marc.info/?l=linux-next&m=136552718229123&w=2
+[5] http://marc.info/?t=136551588400003&r=1&w=2
