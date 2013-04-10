@@ -1,22 +1,29 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: hangs on boot in 9984d7394618df9
-Date: Wed, 10 Apr 2013 12:44:27 +0200
-Message-ID: <CA+icZUUDSSsc+a+deQ-Kdj_gbqFiKa6Zd45No1KkRCGmNZKa8w@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:49054 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S936450Ab3DJKo3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Apr 2013 06:44:29 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next <linux-next@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 1/2] sun3_scsi: Fill in missing scsi_host_template.proc_info method
+Date: Wed, 10 Apr 2013 13:52:08 +0200
+Message-ID: <1365594729-25759-1-git-send-email-geert@linux-m68k.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Sam Creasey <sammy@sammy.net>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+List-Id: linux-next.vger.kernel.org
 
-The issue is fixed with Linux-Next (next-20130410).
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/scsi/sun3_scsi.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-- Sedat -
-
-[1] http://marc.info/?l=linux-next&m=136559043516192&w=2
+diff --git a/drivers/scsi/sun3_scsi.c b/drivers/scsi/sun3_scsi.c
+index 6e25889..b0dc034 100644
+--- a/drivers/scsi/sun3_scsi.c
++++ b/drivers/scsi/sun3_scsi.c
+@@ -626,6 +626,7 @@ static int sun3scsi_dma_finish(int write_flag)
+ #include "sun3_NCR5380.c"
+ 
+ static struct scsi_host_template driver_template = {
++	.proc_info		= sun3scsi_proc_info,
+ 	.name			= SUN3_SCSI_NAME,
+ 	.detect			= sun3scsi_detect,
+ 	.release		= sun3scsi_release,
+-- 
+1.7.0.4
