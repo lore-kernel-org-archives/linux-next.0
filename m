@@ -1,75 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Date: Thu, 11 Apr 2013 14:08:23 +1000
-Message-ID: <20130411140823.8a41393bb865c73d398ceb24@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the tip tree
+Date: Thu, 11 Apr 2013 15:30:23 +1000
+Message-ID: <20130411153023.7a987d1ef6f5cfc699eab672@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__11_Apr_2013_14_08_23_+1000_a5.hHuh/jFyco5HY"
+ boundary="Signature=_Thu__11_Apr_2013_15_30_23_+1000_fGRVFOB+B0apCjPE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59066 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:46439 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752475Ab3DKEI2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Apr 2013 00:08:28 -0400
+	with ESMTP id S1752808Ab3DKFae (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Apr 2013 01:30:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sasha Levin <sasha.levin@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Thu__11_Apr_2013_14_08_23_+1000_a5.hHuh/jFyco5HY
+--Signature=_Thu__11_Apr_2013_15_30_23_+1000_fGRVFOB+B0apCjPE
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the tip tree got a conflict in
-include/linux/clockchips.h between commit 4dbad816febb ("timer: move enum
-definition out of ifdef section") from the pm tree and commit
-19919226c3f2 ("clockevents: Add missing tick_check_broadcast_expired()
-for CLOCKEVENTS=3Dn") from the tip tree.
+Today's linux-next merge of the driver-core tree got a conflict in
+kernel/rtmutex-tester.c between commit 8184004ed7a0
+("locking/rtmutex/tester: Set correct permissions on sysfs files") from
+the tip tree and commit 928c0c1571b0 ("rtmutex-tester: fix mode of sysfs
+files") from the driver-core tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Both patches do the same thing - I used the tip version and can carry the
+fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/clockchips.h
-index f9fd937,464e229..0000000
---- a/include/linux/clockchips.h
-+++ b/include/linux/clockchips.h
-@@@ -181,7 -192,8 +192,8 @@@ static inline void clockevents_notify(u
-  static inline void clockevents_suspend(void) {}
-  static inline void clockevents_resume(void) {}
- =20
- -#define clockevents_notify(reason, arg) do { } while (0)
- +static inline void clockevents_notify(unsigned long reason, void *arg) {}
-+ static inline int tick_check_broadcast_expired(void) { return 0; }
- =20
-  #endif
- =20
-
---Signature=_Thu__11_Apr_2013_14_08_23_+1000_a5.hHuh/jFyco5HY
+--Signature=_Thu__11_Apr_2013_15_30_23_+1000_fGRVFOB+B0apCjPE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRZjc3AAoJEECxmPOUX5FE8L8QAIUHEfZ/NJ1gCbDKGOsJuCsx
-hryG7ZG2AOyYlhCc2QUKwc2vfw4UEpl7AOeyqTwTiE5/lqy7Qww0KoP7ifututUI
-qsGjI7GGIjIR1ZXWWSAZQ7R8zHQYaHw8wTpRnyKUhusynWdCh/WVefptIh6ulC3L
-oDSqUnmYAf84VQetguWKYlvYTAgIsbDhMhvatlt0cWqcUW9KK6TLEmYrbe6s0FOB
-+m0ROVfqocBMfMgek2QrEAdg3xlnohfiM4drbP6CkUTA3Zejb/kDIo0rov6k1/o+
-J16jUni/gAM3sSpWW3JYsvWUmhfiol+/0QYsu4Y20VrlqZiJHhI5hDDQXhnbgBcj
-vC6TyE6LMHejG5wAoOqzglZrEHLTOjbaTSiXp9zn+ETneEOuzfKwJOlCHj2XbVnu
-axEg22dNePBGWwvgnfO+vCjQIDHFPRBH17o4G2VcyMiXAuOILOtjqxKXqN/Jufjh
-2qtA67arhDA+BCobYL8qZyn3o9dPdZaWmgBRGtkt6Zn4wZQGApzkuPJp/yHLbhvy
-J81rDEVKdavZYvJ70xIOdSukKnFMQofN7cGoT9n70n0QuEJjzNpmPh3G9DJaT26f
-JrygF4hT5dJLxscndqlPCuIGpeOgZ7Wly2bI7dUkDd8593l7PBuVXEsgMeBDO/34
-gxSdqpFtECLtb1df45wC
-=NM2t
+iQIcBAEBCAAGBQJRZkpvAAoJEECxmPOUX5FEi34QAJz2IFFMmFkyGZuoY7jFVd9f
+76+44G0twGD3EjnxvJgqFnNs01x3y6pZ4VBtuThMHsflWz8I6oEnt35fq5tBQ2JQ
+1aFrYrgLF5thk7m7epTajdJ1iYiz4fM7bYqmyNq9MitJtaup7VCdOTKJsKG/FzNs
+rxlHWwcPHiMC0klYhQP9td3vBwCTIZRYp53p9BrLsfgXta5ARI5Nf9BHk68JLgQd
+oasz0fRv4SWy2Knr9JpQv45CGNnR5mGWGl6oHh1Qx8vUZNqAkFdjQHLJSwSKleXE
+UtUXgnDeJaRd1PpYn67PlSNyu2ni0gPvAbcS64jNxuVKX78qKN5IhFgRwhCP7VXv
+NCm5TQ7cB2GS6G5JF8yIIBZWSgang1HCFGBJ6cWCFvucPmYg5z7e1YgcWN1pWqO9
+jbwECj2/WYCUsYmrxzuxQfrgOI+8s8NROQTaszMTDK8r6hRKKArXt3ABIjRtfHW2
+cpDRWugVGLdCULMxBgdss3wd3b1e4tpFUXb6ADqXIQfHBFOGlNnzwi/SiwBagzHY
+ZbQWaYgNRkzys+ZkMsUlK0CXiCzHkJjPazj8lErhjxNQYpgkhPgWqUbe6w+8JTNQ
+E3Tetod5b82f/bfiF54qZJQPVTN/7s3fV0OZoWQ30TwDpD0Cd2TeugQBzpPN1/PQ
+Fv6CxFrTiUYsWxaN/4iL
+=VuuE
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__11_Apr_2013_14_08_23_+1000_a5.hHuh/jFyco5HY--
+--Signature=_Thu__11_Apr_2013_15_30_23_+1000_fGRVFOB+B0apCjPE--
