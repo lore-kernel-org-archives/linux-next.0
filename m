@@ -1,61 +1,98 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: failed to fetch the osd tree
-Date: Thu, 11 Apr 2013 09:43:25 +1000
-Message-ID: <20130411094325.1fef833c1192fed81a70a6e4@canb.auug.org.au>
-References: <20130326101717.36b4a4c2e23b108a9592b32c@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the net-next tree
+Date: Thu, 11 Apr 2013 14:03:06 +1000
+Message-ID: <20130411140306.e5c3366fea7ac2f7aadd77ff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__11_Apr_2013_09_43_25_+1000_stqFS6aftvva2+cR"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130326101717.36b4a4c2e23b108a9592b32c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Boaz Harrosh <bharrosh@panasas.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__11_Apr_2013_14_03_06_+1000_aLriROILgGdq=io+"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43047 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750736Ab3DKEDX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Apr 2013 00:03:23 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <dborkman@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Borislav Petkov <bp@suse.de>
 
---Signature=_Thu__11_Apr_2013_09_43_25_+1000_stqFS6aftvva2+cR
+--Signature=_Thu__11_Apr_2013_14_03_06_+1000_aLriROILgGdq=io+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-HI Boaz,
+Hi all,
 
-On Tue, 26 Mar 2013 10:17:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Fetching the osd tree
-> (git://git.open-osd.org/linux-open-osd.git#linux-next) produces a time
-> out and this error:
->=20
-> fatal: read error: Connection reset by peer
->=20
-> I will continue to use the last osd tree I fetched.
+Today's linux-next merge of the tip tree got a conflict in tools/Makefile
+between commit e306e2c13b8c ("filter: add minimal BPF JIT image
+disassembler") from the net-next tree and commit 85c66be101e1 ("perf
+tools: Introduce tools/lib/lk library") from the tip tree.
 
-This is still happening :-(
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__11_Apr_2013_09_43_25_+1000_stqFS6aftvva2+cR
+diff --cc tools/Makefile
+index c73c635,6aaeb6c..0000000
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@@ -35,7 -34,13 +35,13 @@@ help
+  cpupower: FORCE
+  	$(call descend,power/$@)
+ =20
+- cgroup firewire lguest perf usb virtio vm net: FORCE
+ -cgroup firewire guest usb virtio vm: FORCE
+++cgroup firewire guest usb virtio vm net: FORCE
++ 	$(call descend,$@)
++=20
++ liblk: FORCE
++ 	$(call descend,lib/lk)
++=20
++ perf: liblk FORCE
+  	$(call descend,$@)
+ =20
+  selftests: FORCE
+@@@ -63,7 -68,13 +69,13 @@@ install: cgroup_install cpupower_instal
+  cpupower_clean:
+  	$(call descend,power/cpupower,clean)
+ =20
+- cgroup_clean firewire_clean lguest_clean perf_clean usb_clean virtio_clea=
+n vm_clean net_clean:
+ -cgroup_clean firewire_clean lguest_clean usb_clean virtio_clean vm_clean:
+++cgroup_clean firewire_clean lguest_clean usb_clean virtio_clean vm_clean =
+net_clean:
++ 	$(call descend,$(@:_clean=3D),clean)
++=20
++ liblk_clean:
++ 	$(call descend,lib/lk,clean)
++=20
++ perf_clean: liblk_clean
+  	$(call descend,$(@:_clean=3D),clean)
+ =20
+  selftests_clean:
+
+--Signature=_Thu__11_Apr_2013_14_03_06_+1000_aLriROILgGdq=io+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRZfkdAAoJEECxmPOUX5FEmYwQAJjZ2cfRj8Mtgeo2TVpwZzqw
-gG7OlIvewHUJlv1wodr6mtO97J4Kn60mawEc0twtVG9uKQNqWD/PVgPrOz/jouKe
-YcBZrmmQJawl67fOgDWpyDzeDnMtEYGZh9D1NUDb9wHY1Yn5pcBVqI+hvc4i0KpD
-3PDWiWxcRN2jGZNKIfnL3xoVgYJTG13JM//tpYhRhhSOrhCDXobjqhJlGvHY6SQU
-SFlWuOvBzXGYnIV8n06o+DmXsnNEFO98xhgaYyjOkx/kq1AyB9HnHVFwVRGoTMZe
-af+tSKFREco2ZC0KeKATlLRjC0y3aFYbCuhDHp4XuQcgN8BqU5czeHFEQLf8VgIy
-Tg3J8AjBHi+PFjgaK0KCvOlhmdOhcOv24METE3GNtmJoUvqdTCEDONUDrQ57Q3Gq
-2L8n35jjuaF8ACg+L7JPj/34bO1j/W/M0SLQNkGuV2xfB90ivHaSE7Gt1xKXLIXC
-jPhjAQi9sJwEhqv17raJ++R1OgDAk/g5hLC8JcIlqX+UMkRE0Y2wGJBTA86Ez1+x
-fn8q1aQV+EufXp9wf2aLWKaWfq4rbHKYjkq3fcwBAkZQc8Ohy/gnxPeVAJ3xx3gB
-Wo81ZeiI4wOE1KuvufzjdPb/T5WTOqGLlVk2u97aBASfcg+hzHzF4iJJOppREKG/
-nebLqtH60mpxWA1S7lFq
-=obwc
+iQIcBAEBCAAGBQJRZjX6AAoJEECxmPOUX5FEdXMP/3S6l+AezrpDV8tbcvaDgQE4
+JXPftURvrnM3SThx2iQ3PVCCIBv001lGMHSAKOeKjXQ2Ma/u7K2iylMbY2MC448W
+eb2wh0RjGDBoe6PeMvXnktJqFLtsUO2gKVNamAs0HQw9WLV0/IhKnMbRzys7pN9l
+CLPqPAftTfjweLX5/MEXQxCzFPFHyDtO3fUOi0mtRbytcBX82/3G0BsBWRknK8pe
++g13g8KiUQAngAWUkbNelEw5ElfqHe3A5EHVphkLV4L2nIvvuCDk1z7ngRV9D1Jl
+iY32fNUOziK8t2dEgdAuBsRz5McCJLEErurgbbYbpQ+WekD5Y7vkspaagvAcw01D
+0ZKhnrKwpYQcIUJEiN4vPVlibNJ56Bjdyqaemr9NLtjzp80Sxzyhgpe3OlNduSpP
+6fUftPitOEZLL52MWChfs76cTL2T8xM4dCmjKneZ4GZaJj3P/YlZ7AsHlo653ibV
+mIxI0JUKtqIDgUAydcn+5dMIdBv/+m5TeOcgcFMw0nd+WeFNl4or3LU6u3Dp/uuW
+FU+OdtkSNRRBIz1eJ6ySHjYmgRd1z0FbqsL/5YuNWHgUj3FajzBzgcNNWZbjiD2B
+kLPJh8hXj594U8ivinIQiN5K20A/FKSqZlpFfgcR2k7m9GRe/FgeFslI+J3SrEwM
+RJlJWIdmGj0XxTe9oQso
+=D4ct
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__11_Apr_2013_09_43_25_+1000_stqFS6aftvva2+cR--
+--Signature=_Thu__11_Apr_2013_14_03_06_+1000_aLriROILgGdq=io+--
