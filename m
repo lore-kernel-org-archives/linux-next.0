@@ -1,54 +1,67 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: Tree for Apr 11 [ crypto: aesni-intel ]
-Date: Fri, 12 Apr 2013 10:13:36 +0800
-Message-ID: <20130412021336.GA14735@gondor.apana.org.au>
-References: <CA+icZUXR-dYRWkkz=V8=zn7cO=G1Ksa0bNweGn6kbYpjPn4mTg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Fri, 12 Apr 2013 16:00:18 +1000
+Message-ID: <20130412160018.3d54c801f40fbc13058ded07@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__12_Apr_2013_16_00_18_+1000_i.wgQ1IU4MA4oC/c"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:42160 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751316Ab3DLGAa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Apr 2013 02:00:30 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, stephen hemminger <stephen@networkplumber.org>
+
+--Signature=_Fri__12_Apr_2013_16_00_18_+1000_i.wgQ1IU4MA4oC/c
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <CA+icZUXR-dYRWkkz=V8=zn7cO=G1Ksa0bNweGn6kbYpjPn4mTg@mail.gmail.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 11, 2013 at 07:14:31PM +0200, Sedat Dilek wrote:
-> On Thu, Apr 11, 2013 at 10:30 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> >
-> > Changes since 20130410:
-> >
-> > The tip tree gained conflicts against the net-next and pm trees.
-> >
-> > The driver-core tree gained a conflict against the tip tree.
-> >
-> > The arm-soc tree gained a conflict against the arm-current tree.
-> >
-> > The akpm tree lost a patch that turned up elsewhere.
-> >
-> > ----------------------------------------------------------------------------
-> 
-> [ CC linux-crypto folks ]
-> 
-> On Ubuntu/precise AMD64 I see:
-> 
-> ERROR: "glue_xts_crypt_128bit_one" [arch/x86/crypto/aesni-intel.ko] undefined!
-> ERROR: "glue_xts_crypt_128bit" [arch/x86/crypto/aesni-intel.ko] undefined!
-> make[3]: *** [__modpost] Error 1
-> make[2]: *** [modules] Error 2
+Hi all,
 
-Should be fixed by:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-commit 110e7610190cc4693f26c05b43ea83468a0a925c
-Author: Jussi Kivilinna <jussi.kivilinna@iki.fi>
-Date:   Wed Apr 10 18:39:20 2013 +0300
+net/core/netprio_cgroup.c:250:29: error: static declaration of 'net_prio_su=
+bsys' follows non-static declaration
+include/linux/cgroup_subsys.h:71:1: note: previous declaration of 'net_prio=
+_subsys' was here
 
-    crypto: aesni_intel - fix Kconfig problem with CRYPTO_GLUE_HELPER_X86
+Caused by commit 763eff57de89 ("netprio_cgroup: make local table static")
+from the net-next tree.
 
+I have reverted that commit for today.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+/me hates macros that construct symbols ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__12_Apr_2013_16_00_18_+1000_i.wgQ1IU4MA4oC/c
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRZ6LyAAoJEECxmPOUX5FE9k0QAIZZHB3XPG16jLsOROlzd98S
+rrUgt/yd6nLHJ4TihuAPni6SIKkWNwSgawuXBosPicLuhcDfI5hGIH2a3KfT7Gli
+34RsAWvTL1ZYjsu6RKIWZlQGbm9CD0K35RJ+V6UQot0awTyJ+AXQ/3O1tBe6q4T1
+UqdSNaZpXDaMLZXm60iNWpGZbCd0c6IAdnRQw5rSI1HbPefPwHXpervEhJiZG06e
+5swt6zgZahO29Ii5yl140/xoG8R7Av/5JQT01wKpnEHWkfR1DH4D3Vfji1s7Jbsf
+guI7a91MrgfCiF+yN73oQA3fSbyDW8azU6SjGgnf/onHVmbWoj57NYpyiq1dziJJ
+m7pNhM/wsgXkg5J54jYumr8hKxYwUa7GbrHIcwHU525jCQfl+NfRhv6FuIzhcjFV
+rYVBuC7dYyf8vciguGksyLrpdwg8h5ds3etX9CzZFwr1Z28grFVuvSZuA49DA15Q
+L+XPv2RwkCnNK0urLuWFDq+X968cFTmcrD9skRUQW+aoE5pIkkkbAc67sUg7yE32
+CjDmsgNtRbpRMgimuIyujQObTFrFKwhmiAopOflZ1lUZa1YG43LiNZ1RB8uQ1Jmv
+zJvgOMhITXcM+ookYc9/LTlJvj/bYA6PcHALWOddh4kwv9dKmt57pxtCPuYO5hx3
+MsI/XUkrcd85zdYtgkeK
+=AESV
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__12_Apr_2013_16_00_18_+1000_i.wgQ1IU4MA4oC/c--
