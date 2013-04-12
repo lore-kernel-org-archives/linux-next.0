@@ -1,71 +1,69 @@
 From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
-Date: Fri, 12 Apr 2013 16:24:19 +0200
-Message-ID: <CA+icZUULhGR61V=wCXYctzBaM7Dei0-zGXApmfqQyiByzd5-cw@mail.gmail.com>
-References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
-	<31778276.CDMUtaAAnc@vostro.rjw.lan>
-	<CA+icZUXXHb9vmcNuFmYha34SV7xch2S8OcgZ+cLVVnNebs5pNQ@mail.gmail.com>
-	<CAKohpok+9dRaENjBfnN9gZF3zvFU9v19xV_eFfcM3Pj6Cv=S2w@mail.gmail.com>
-	<CA+icZUWH5Ni9koj4V8Ws8jJ7smwmU7JuUWBFh=aiCqkrCpqB5A@mail.gmail.com>
-	<CAKohponzmLzPN8ua3p4TCt2waZCQCd+4Znh+tSQ4MBjcy+Ss6A@mail.gmail.com>
-	<CA+icZUW12caZHDfgCV6E-1T4ExBPmu5bBNSqCzDwjUeidfRUPA@mail.gmail.com>
-	<CA+icZUUEExm5Mktxoj6=UdzBe5HUzskktKWdHNOKaFXVHaySBg@mail.gmail.com>
-	<CA+icZUW2LQmWMdaVjf5oE8y3zCq8Y2829WM9dwDKxA42N5tVDQ@mail.gmail.com>
-	<CAKohpom7Mn8aQZTUx-_fQF+9KWste0uYsZcaQ5rcM6ab45-0+g@mail.gmail.com>
+Subject: Re: linux-next: Tree for Apr 11 [ crypto: aesni-intel ]
+Date: Fri, 12 Apr 2013 16:46:20 +0200
+Message-ID: <CA+icZUXkaOE2wyzxR-jPjxYAgzi8LEQJJDJo8fa5cfN+UMgErQ@mail.gmail.com>
+References: <CA+icZUXR-dYRWkkz=V8=zn7cO=G1Ksa0bNweGn6kbYpjPn4mTg@mail.gmail.com>
+	<20130412021336.GA14735@gondor.apana.org.au>
 Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:57520 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751809Ab3DLOYV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Apr 2013 10:24:21 -0400
-In-Reply-To: <CAKohpom7Mn8aQZTUx-_fQF+9KWste0uYsZcaQ5rcM6ab45-0+g@mail.gmail.com>
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:64870 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752180Ab3DLOqV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Apr 2013 10:46:21 -0400
+In-Reply-To: <20130412021336.GA14735@gondor.apana.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
 
-On Fri, Apr 12, 2013 at 10:23 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 10 April 2013 11:44, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> I found this "[RFC PATCH] kbuild: Build linux-tools package with 'make
->> deb-pkg'" from February 2012.
->> Can't say what happened to it...
+On Fri, Apr 12, 2013 at 4:13 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Thu, Apr 11, 2013 at 07:14:31PM +0200, Sedat Dilek wrote:
+>> On Thu, Apr 11, 2013 at 10:30 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> > Hi all,
+>> >
+>> > Changes since 20130410:
+>> >
+>> > The tip tree gained conflicts against the net-next and pm trees.
+>> >
+>> > The driver-core tree gained a conflict against the tip tree.
+>> >
+>> > The arm-soc tree gained a conflict against the arm-current tree.
+>> >
+>> > The akpm tree lost a patch that turned up elsewhere.
+>> >
+>> > ----------------------------------------------------------------------------
+>>
+>> [ CC linux-crypto folks ]
+>>
+>> On Ubuntu/precise AMD64 I see:
+>>
+>> ERROR: "glue_xts_crypt_128bit_one" [arch/x86/crypto/aesni-intel.ko] undefined!
+>> ERROR: "glue_xts_crypt_128bit" [arch/x86/crypto/aesni-intel.ko] undefined!
+>> make[3]: *** [__modpost] Error 1
+>> make[2]: *** [modules] Error 2
 >
-> Sedat,
+> Should be fixed by:
 >
-> Sorry for being late. I am down with Fever and throat infection since few days.
-> Still struggling with it..
+> commit 110e7610190cc4693f26c05b43ea83468a0a925c
+> Author: Jussi Kivilinna <jussi.kivilinna@iki.fi>
+> Date:   Wed Apr 10 18:39:20 2013 +0300
 >
-> There are few things i tried. Firstly the tag: next-20130326 is bad as there are
-> some bad commits in cpufreq core in it.
+>     crypto: aesni_intel - fix Kconfig problem with CRYPTO_GLUE_HELPER_X86
 >
-> I then tried latest linux-next/master on my Thinkpad (model name        : Intel(R)
-> Core(TM) i7-2640M CPU @ 2.80GHz) and couldn't boot it up. My ubuntu
-> just hanged.
->
-> Then i tried Rafael's linux-next branch
->
-> 079576f Merge branch 'pm-cpufreq-next' into linux-next
->
-> And couldn't find any issues with it. I am easily able to remove/add cpus at
-> runtime..
->
-> Can you give this branch a try?
 >
 
-OK, you seem to be well again, nice to hear.
+Yeah, that's fixing the issue.
 
-I was doing the whole week spring-cleaning in the apartment of my parents.
-Now, I have some minutes for a compilation run.
-
-I guess "cpufreq: Call __cpufreq_governor() with correct policy->cpus
-mask" could be the correct fix, but will try the GIT branch you have
-mentioned.
+Can you and your patch-supplier also CC Linux-Next ML for crypto-next fixes?
+( ...would have saved one linux-kernel compilation. )
+Thanks!
 
 - Sedat -
 
-[1] http://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git/commit/?h=linux-next&id=e4969ebac83fdea78d89c779331396728a4e6199
-
+> Thanks,
 > --
-> viresh
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
