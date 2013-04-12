@@ -1,39 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-next tree related)
-Date: Fri, 12 Apr 2013 03:08:07 -0400 (EDT)
-Message-ID: <20130412.030807.2228977831606614404.davem@davemloft.net>
-References: <20130412160018.3d54c801f40fbc13058ded07@canb.auug.org.au>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
+Date: Fri, 12 Apr 2013 13:53:36 +0530
+Message-ID: <CAKohpom7Mn8aQZTUx-_fQF+9KWste0uYsZcaQ5rcM6ab45-0+g@mail.gmail.com>
+References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
+	<31778276.CDMUtaAAnc@vostro.rjw.lan>
+	<CA+icZUXXHb9vmcNuFmYha34SV7xch2S8OcgZ+cLVVnNebs5pNQ@mail.gmail.com>
+	<CAKohpok+9dRaENjBfnN9gZF3zvFU9v19xV_eFfcM3Pj6Cv=S2w@mail.gmail.com>
+	<CA+icZUWH5Ni9koj4V8Ws8jJ7smwmU7JuUWBFh=aiCqkrCpqB5A@mail.gmail.com>
+	<CAKohponzmLzPN8ua3p4TCt2waZCQCd+4Znh+tSQ4MBjcy+Ss6A@mail.gmail.com>
+	<CA+icZUW12caZHDfgCV6E-1T4ExBPmu5bBNSqCzDwjUeidfRUPA@mail.gmail.com>
+	<CA+icZUUEExm5Mktxoj6=UdzBe5HUzskktKWdHNOKaFXVHaySBg@mail.gmail.com>
+	<CA+icZUW2LQmWMdaVjf5oE8y3zCq8Y2829WM9dwDKxA42N5tVDQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:44173 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751549Ab3DLHIK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Apr 2013 03:08:10 -0400
-In-Reply-To: <20130412160018.3d54c801f40fbc13058ded07@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, stephen@networkplumber.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CA+icZUW2LQmWMdaVjf5oE8y3zCq8Y2829WM9dwDKxA42N5tVDQ@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 12 Apr 2013 16:00:18 +1000
+On 10 April 2013 11:44, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> I found this "[RFC PATCH] kbuild: Build linux-tools package with 'make
+> deb-pkg'" from February 2012.
+> Can't say what happened to it...
 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> net/core/netprio_cgroup.c:250:29: error: static declaration of 'net_prio_subsys' follows non-static declaration
-> include/linux/cgroup_subsys.h:71:1: note: previous declaration of 'net_prio_subsys' was here
-> 
-> Caused by commit 763eff57de89 ("netprio_cgroup: make local table static")
-> from the net-next tree.
-> 
-> I have reverted that commit for today.
+Sedat,
 
-I've reverted it from net-next too, thanks Stephen.
+Sorry for being late. I am down with Fever and throat infection since few days.
+Still struggling with it..
 
-> /me hates macros that construct symbols ...
+There are few things i tried. Firstly the tag: next-20130326 is bad as there are
+some bad commits in cpufreq core in it.
 
-/me hates automatic checkers that don't expand macros :-)
+I then tried latest linux-next/master on my Thinkpad (model name	: Intel(R)
+Core(TM) i7-2640M CPU @ 2.80GHz) and couldn't boot it up. My ubuntu
+just hanged.
+
+Then i tried Rafael's linux-next branch
+
+079576f Merge branch 'pm-cpufreq-next' into linux-next
+
+And couldn't find any issues with it. I am easily able to remove/add cpus at
+runtime..
+
+Can you give this branch a try?
+
+--
+viresh
