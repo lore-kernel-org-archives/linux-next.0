@@ -1,138 +1,56 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
-Date: Sat, 13 Apr 2013 11:55:54 +0200
-Message-ID: <CA+icZUXUGOjGUAFxgQk0780pcBB-YjiujDLXF+gJFegi+pd+dA@mail.gmail.com>
-References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
-	<CA+icZUUsAqJ3kyCZivYeTpY7n=EDMv1UcC2VNwQro4h7NHDWag@mail.gmail.com>
-	<CA+icZUW+TB3q58bL+d=A355S4vtRhwMq8AV+tqjv6MgDtHRCaA@mail.gmail.com>
-	<1923819.6Nb81T2TR8@vostro.rjw.lan>
-Reply-To: sedat.dilek@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1923819.6Nb81T2TR8@vostro.rjw.lan>
-Sender: cpufreq-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Dirk Brandewie <dirk.j.brandewie@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Nathan Zimmer <nzimmer@sgi.com>
-List-Id: linux-next.vger.kernel.org
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: Heads up on a device tree change
+Date: Sat, 13 Apr 2013 20:26:59 +0100
+Message-ID: <20130413192659.D92973E2249@localhost>
+References: <CACxGe6sCBCGfLDAGVRgP3cnmE+oyXBDdPeVXVCqrsvCh13yPiw@mail.gmail.com> <51125B56.9050407@imgtec.com> <CACxGe6vuZ2H-G7xamS6SAiX_aCbjpO+vKavqCK77ek8tTdOmdA@mail.gmail.com> <511382AD.7030804@imgtec.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:43527 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751737Ab3DMT1F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 13 Apr 2013 15:27:05 -0400
+Received: by mail-wi0-f171.google.com with SMTP id hn17so498039wib.10
+        for <linux-next@vger.kernel.org>; Sat, 13 Apr 2013 12:27:03 -0700 (PDT)
+In-Reply-To: <511382AD.7030804@imgtec.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Hogan <james.hogan@imgtec.com>
+Cc: linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, Rob Herring <rob.herring@calxeda.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Sat, Apr 13, 2013 at 12:51 AM, Rafael J. Wysocki <rjw@sisk.pl> wrote=
-:
-> On Friday, April 12, 2013 11:08:37 PM Sedat Dilek wrote:
->> On Fri, Apr 12, 2013 at 6:27 PM, Sedat Dilek <sedat.dilek@gmail.com>=
- wrote:
->> > On Fri, Apr 12, 2013 at 5:45 PM, Sedat Dilek <sedat.dilek@gmail.co=
-m> wrote:
->> >> On Fri, Apr 12, 2013 at 4:24 PM, Sedat Dilek <sedat.dilek@gmail.c=
-om> wrote:
->> >>> On Fri, Apr 12, 2013 at 10:23 AM, Viresh Kumar <viresh.kumar@lin=
-aro.org> wrote:
->> >>>> On 10 April 2013 11:44, Sedat Dilek <sedat.dilek@gmail.com> wro=
-te:
->> >>>>> I found this "[RFC PATCH] kbuild: Build linux-tools package wi=
-th 'make
->> >>>>> deb-pkg'" from February 2012.
->> >>>>> Can't say what happened to it...
->> >>>>
->> >>>> Sedat,
->> >>>>
->> >>>> Sorry for being late. I am down with Fever and throat infection=
- since few days.
->> >>>> Still struggling with it..
->> >>>>
->> >>>> There are few things i tried. Firstly the tag: next-20130326 is=
- bad as there are
->> >>>> some bad commits in cpufreq core in it.
->> >>>>
->> >>>> I then tried latest linux-next/master on my Thinkpad (model nam=
-e        : Intel(R)
->> >>>> Core(TM) i7-2640M CPU @ 2.80GHz) and couldn't boot it up. My ub=
-untu
->> >>>> just hanged.
->> >>>>
->> >>>> Then i tried Rafael's linux-next branch
->> >>>>
->> >>>> 079576f Merge branch 'pm-cpufreq-next' into linux-next
->> >>>>
->> >>>> And couldn't find any issues with it. I am easily able to remov=
-e/add cpus at
->> >>>> runtime..
->> >>>>
->> >>>> Can you give this branch a try?
->> >>>>
->> >>>
->> >>> OK, you seem to be well again, nice to hear.
->> >>>
->> >>> I was doing the whole week spring-cleaning in the apartment of m=
-y parents.
->> >>> Now, I have some minutes for a compilation run.
->> >>>
->> >>> I guess "cpufreq: Call __cpufreq_governor() with correct policy-=
->cpus
->> >>> mask" could be the correct fix, but will try the GIT branch you =
-have
->> >>> mentioned.
->> >>>
->> >>> - Sedat -
->> >>>
->> >>> [1] http://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.=
-git/commit/?h=3Dlinux-next&id=3De4969ebac83fdea78d89c779331396728a4e619=
-9
->> >>>
->> >>
->> >> Both BROKEN here, specific pm-next commitid and pulling
->> >> pm.git#linux-next into next-20130411 (see attached files).
->> >>
->> >> Is "cpufreq: convert cpufreq_driver to using RCU" the root cause =
-of this all?
->> >>
->> >
->> > [ CC Nathan ]
->> >
->> > NO, wrong assumption.
->> >
->> > 2013-04-12 18:04 Sedat Dilek        o [revert-cpufreq-rcu] Revert
->> > "cpufreq: convert cpufreq_driver to using RCU"
->> > 2013-04-12 18:04 Sedat Dilek        o Revert "cpufreq: Call
->> > __cpufreq_governor() with correct policy->cpus mask"
->> > 2013-04-11 23:24 Rafael J. Wysocki  M=E2=94=80=E2=94=90 [pm-next-0=
-79576f] Merge branch
->> > 'pm-cpufreq-next' into linux-next
->> >
->> > - Sedat -
->> >
->> >
->> >> - Sedat -
->> >>
->> >> [1] http://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.g=
-it/commit/?h=3Dlinux-next&id=3D5800043b2488a1c4c6e859af860644d37419d58b
->> >>
->> >>>> --
->> >>>> viresh
->>
->> [ TO Dirk (Author of Intel pstate driver) ]
->>
->> With CONFIG_X86_INTEL_PSTATE=3Dn (unset) I do not see the call-trace=
-!
->>
->> My kernel-config and dmesg are attached.
->
-> You're seeing a trouble with a new driver, then, so that's not a regr=
-ession.
->
+On Thu, 7 Feb 2013 10:32:13 +0000, James Hogan <james.hogan@imgtec.com> wrote:
+> On 06/02/13 14:28, Grant Likely wrote:
+> > On Wed, Feb 6, 2013 at 1:32 PM, James Hogan <james.hogan@imgtec.com> wrote:
+> >> On 06/02/13 13:11, Grant Likely wrote:
+> >>> - Resources on platform_devices get registered so they appear in
+> >>> /proc/iomem and /proc/ioports and so that device drivers get the added
+> >>> protection of request_region. This will cause breakage on device trees
+> >>> nodes with partially overlapping memory regions. (ie. 0x100..0x1ff and
+> >>> 0x180..0x27f). I also have a workaround for this, but I doubt that it
+> >>> will be necessary.
+> >>
+> >> Hi Grant,
+> >>
+> >> If I understand you correctly, the non-overlapping memory regions thing
+> >> could be a problem for me. We have a Meta based SoC that has various SoC
+> >> registers grouped together for doing GPIOs and Pin control things. I'm
+> >> still in the process of converting it to device tree, but the way I've
+> >> been handling it is to provide overlapping registers to both the gpio
+> >> and pinctl DT nodes. Each GPIO bank's registers are also interleaved
+> >> with the others, so I've been providing overlapping register ranges
+> >> (offset by 4 for each bank) to the DT node for each gpio bank too, so
+> >> each bank can function independently and the driver doesn't have to
+> >> worry about multiple banks. Does that sound like a reasonable use case?
+> >>
+> >> I guess I could cheat with the length, or specify each register in it's
+> >> own memory resource, but it seems like overkill.
+> > 
+> > Note that overlapping regions are fine /provided/ that they are the
+> > same size or one fits nicely inside another. It's partial overlap that
+> > is a problem
+> 
+> It still feels a bit artificial to impose that limitation on something
+> that is supposed to be implementation independent. Having said that it
+> doesn't particularly bother me having to work around it.
 
-What do you mean by this?
+I've backed out on this. It broke too much.
 
-What are the next steps to get this fixed?
-
-- Sedat -
-
-> Thanks for taking the time to debug this!
->
-> Rafael
->
->
-> --
-> I speak only for myself.
-> Rafael J. Wysocki, Intel Open Source Technology Center.
+g.
