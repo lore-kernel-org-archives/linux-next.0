@@ -1,123 +1,66 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
-Date: Sat, 13 Apr 2013 00:51:39 +0200
-Message-ID: <1923819.6Nb81T2TR8@vostro.rjw.lan>
-References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com> <CA+icZUUsAqJ3kyCZivYeTpY7n=EDMv1UcC2VNwQro4h7NHDWag@mail.gmail.com> <CA+icZUW+TB3q58bL+d=A355S4vtRhwMq8AV+tqjv6MgDtHRCaA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: failed to fetch the osd tree
+Date: Sat, 13 Apr 2013 11:58:17 +1000
+Message-ID: <20130413115817.d1d0e711328ccb38bc387b04@canb.auug.org.au>
+References: <20130326101717.36b4a4c2e23b108a9592b32c@canb.auug.org.au>
+	<20130411094325.1fef833c1192fed81a70a6e4@canb.auug.org.au>
+	<5167A4E5.8060700@panasas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUW+TB3q58bL+d=A355S4vtRhwMq8AV+tqjv6MgDtHRCaA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sedat.dilek@gmail.com
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Dirk Brandewie <dirk.j.brandewie@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Nathan Zimmer <nzimmer@sgi.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sat__13_Apr_2013_11_58_17_+1000_dmPkCdMBNjzNvfCn"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47659 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752539Ab3DMB6a (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Apr 2013 21:58:30 -0400
+In-Reply-To: <5167A4E5.8060700@panasas.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Friday, April 12, 2013 11:08:37 PM Sedat Dilek wrote:
-> On Fri, Apr 12, 2013 at 6:27 PM, Sedat Dilek <sedat.dilek@gmail.com> =
-wrote:
-> > On Fri, Apr 12, 2013 at 5:45 PM, Sedat Dilek <sedat.dilek@gmail.com=
-> wrote:
-> >> On Fri, Apr 12, 2013 at 4:24 PM, Sedat Dilek <sedat.dilek@gmail.co=
-m> wrote:
-> >>> On Fri, Apr 12, 2013 at 10:23 AM, Viresh Kumar <viresh.kumar@lina=
-ro.org> wrote:
-> >>>> On 10 April 2013 11:44, Sedat Dilek <sedat.dilek@gmail.com> wrot=
+--Signature=_Sat__13_Apr_2013_11_58_17_+1000_dmPkCdMBNjzNvfCn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Boaz,
+
+On Fri, 12 Apr 2013 09:08:37 +0300 Boaz Harrosh <bharrosh@panasas.com> wrot=
 e:
-> >>>>> I found this "[RFC PATCH] kbuild: Build linux-tools package wit=
-h 'make
-> >>>>> deb-pkg'" from February 2012.
-> >>>>> Can't say what happened to it...
-> >>>>
-> >>>> Sedat,
-> >>>>
-> >>>> Sorry for being late. I am down with Fever and throat infection =
-since few days.
-> >>>> Still struggling with it..
-> >>>>
-> >>>> There are few things i tried. Firstly the tag: next-20130326 is =
-bad as there are
-> >>>> some bad commits in cpufreq core in it.
-> >>>>
-> >>>> I then tried latest linux-next/master on my Thinkpad (model name=
-        : Intel(R)
-> >>>> Core(TM) i7-2640M CPU @ 2.80GHz) and couldn't boot it up. My ubu=
-ntu
-> >>>> just hanged.
-> >>>>
-> >>>> Then i tried Rafael's linux-next branch
-> >>>>
-> >>>> 079576f Merge branch 'pm-cpufreq-next' into linux-next
-> >>>>
-> >>>> And couldn't find any issues with it. I am easily able to remove=
-/add cpus at
-> >>>> runtime..
-> >>>>
-> >>>> Can you give this branch a try?
-> >>>>
-> >>>
-> >>> OK, you seem to be well again, nice to hear.
-> >>>
-> >>> I was doing the whole week spring-cleaning in the apartment of my=
- parents.
-> >>> Now, I have some minutes for a compilation run.
-> >>>
-> >>> I guess "cpufreq: Call __cpufreq_governor() with correct policy->=
-cpus
-> >>> mask" could be the correct fix, but will try the GIT branch you h=
-ave
-> >>> mentioned.
-> >>>
-> >>> - Sedat -
-> >>>
-> >>> [1] http://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.g=
-it/commit/?h=3Dlinux-next&id=3De4969ebac83fdea78d89c779331396728a4e6199
-> >>>
-> >>
-> >> Both BROKEN here, specific pm-next commitid and pulling
-> >> pm.git#linux-next into next-20130411 (see attached files).
-> >>
-> >> Is "cpufreq: convert cpufreq_driver to using RCU" the root cause o=
-f this all?
-> >>
-> >
-> > [ CC Nathan ]
-> >
-> > NO, wrong assumption.
-> >
-> > 2013-04-12 18:04 Sedat Dilek        o [revert-cpufreq-rcu] Revert
-> > "cpufreq: convert cpufreq_driver to using RCU"
-> > 2013-04-12 18:04 Sedat Dilek        o Revert "cpufreq: Call
-> > __cpufreq_governor() with correct policy->cpus mask"
-> > 2013-04-11 23:24 Rafael J. Wysocki  M=E2=94=80=E2=94=90 [pm-next-07=
-9576f] Merge branch
-> > 'pm-cpufreq-next' into linux-next
-> >
-> > - Sedat -
-> >
-> >
-> >> - Sedat -
-> >>
-> >> [1] http://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.gi=
-t/commit/?h=3Dlinux-next&id=3D5800043b2488a1c4c6e859af860644d37419d58b
-> >>
-> >>>> --
-> >>>> viresh
+>
+> That old server has finally crapped out on me.
+> It is being replaced by a new machine. It will take few days
+> to set up and run.
 >=20
-> [ TO Dirk (Author of Intel pstate driver) ]
->=20
-> With CONFIG_X86_INTEL_PSTATE=3Dn (unset) I do not see the call-trace!
->=20
-> My kernel-config and dmesg are attached.
+> So expect failure for the next few days
 
-You're seeing a trouble with a new driver, then, so that's not a regres=
-sion.
-
-Thanks for taking the time to debug this!
-
-Rafael
-
+OK, I will ignore the errors for a while longer.
 
 --=20
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Sat__13_Apr_2013_11_58_17_+1000_dmPkCdMBNjzNvfCn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRaLu5AAoJEECxmPOUX5FEdisP/0UziRx6X2kjI8KYCMVeEkDq
+Fs79CFSpBhhNirxpF+dDE554hgnc4OSIGZ3rAlY6G6ME2WilppmMP0renXLEHdiH
+ylBs3x8hm95ThTgj7UXvZJW3NBgIa6Kq3QUTLYmKmbvBRDxwqbLh4zGGG6hfQn5n
+2JkNJmw3iWQodhxGrpVxO1QqcfntY/sHCHOQPv7xGiBURi+mSLzaaZ1e6W1FvRae
+cvuqIvauF98MAupj79PinIuPpeZH4xbHDGu66LDoFpOC8svYsCaBHAthcaXZBT7P
+N4fQIjdDed06bd08eg8vvF1dsEUCshLD688wToUMf7Ke1+ZW3peZbf5gpWI7kMRs
+1gV3QdhBDJxrHID2HMHgCnHA2yOAym00in9rhJUTBpHfI3QyXqfpHQsHt6qoN2Ze
+xJTmjnK0xlVUI8ph83Zir0l8hgPWuvRg+kkzSVTJxf6cfMqLhGaG3Wa/rOvVD7XG
+rOC7JmANRXk8mDEslbtuMjXMt7u0HMPN3WAHg7SQJBHyvp5yZaAwBQbekssSofHe
+lOfh3FTJgboJi9658jMh2AM3sZ6BijM6pFqaO81CUMzP1hQ26Mqh+GyoivKxwlNc
+tq4GL2jwkiDofVcMxojNLzvG5rJboIo9Cr+NH3AKzjd+M5kiQGY14AAGVD+PMy/t
+QhRam9UsN4u7v7rCDxHq
+=YSsy
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__13_Apr_2013_11_58_17_+1000_dmPkCdMBNjzNvfCn--
