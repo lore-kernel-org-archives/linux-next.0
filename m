@@ -1,227 +1,44 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
-Date: Mon, 15 Apr 2013 18:13:43 +0200
-Message-ID: <CA+icZUU11F3OUCyKmNAcUu-p7M8SaJ+gY2ZD-RDTyjg-7MvqPA@mail.gmail.com>
-References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
-	<CA+icZUUsAqJ3kyCZivYeTpY7n=EDMv1UcC2VNwQro4h7NHDWag@mail.gmail.com>
-	<CA+icZUW+TB3q58bL+d=A355S4vtRhwMq8AV+tqjv6MgDtHRCaA@mail.gmail.com>
-	<1923819.6Nb81T2TR8@vostro.rjw.lan>
-	<CA+icZUXUGOjGUAFxgQk0780pcBB-YjiujDLXF+gJFegi+pd+dA@mail.gmail.com>
-	<516C25AE.4050503@intel.com>
-Reply-To: sedat.dilek@gmail.com
+From: Kim Phillips <kim.phillips@freescale.com>
+Subject: Re: [PATCH] powerpc: fix usage of setup_pci_atmu()
+Date: Mon, 15 Apr 2013 11:30:17 -0500
+Message-ID: <20130415113017.69fd8dacd93264b9c9b54001@freescale.com>
+References: <1363201636-7318-1-git-send-email-galak@kernel.crashing.org>
+	<5881.1366004521@ale.ozlabs.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <516C25AE.4050503@intel.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Dirk Brandewie <dirk.brandewie@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, Dirk Brandewie <dirk.j.brandewie@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Nathan Zimmer <nzimmer@sgi.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from co1ehsobe004.messaging.microsoft.com ([216.32.180.187]:51416
+	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755859Ab3DOQeB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Apr 2013 12:34:01 -0400
+In-Reply-To: <5881.1366004521@ale.ozlabs.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michael Neuling <mikey@neuling.org>
+Cc: Kumar Gala <galak@kernel.crashing.org>, sfr@canb.auug.org.au, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org
 
-On Mon, Apr 15, 2013 at 6:07 PM, Dirk Brandewie
-<dirk.brandewie@gmail.com> wrote:
-> On 04/13/2013 02:55 AM, Sedat Dilek wrote:
->>
->> On Sat, Apr 13, 2013 at 12:51 AM, Rafael J. Wysocki <rjw@sisk.pl> wr=
-ote:
->>>
->>> On Friday, April 12, 2013 11:08:37 PM Sedat Dilek wrote:
->>>>
->>>> On Fri, Apr 12, 2013 at 6:27 PM, Sedat Dilek <sedat.dilek@gmail.co=
-m>
->>>> wrote:
->>>>>
->>>>> On Fri, Apr 12, 2013 at 5:45 PM, Sedat Dilek <sedat.dilek@gmail.c=
-om>
->>>>> wrote:
->>>>>>
->>>>>> On Fri, Apr 12, 2013 at 4:24 PM, Sedat Dilek <sedat.dilek@gmail.=
-com>
->>>>>> wrote:
->>>>>>>
->>>>>>> On Fri, Apr 12, 2013 at 10:23 AM, Viresh Kumar
->>>>>>> <viresh.kumar@linaro.org> wrote:
->>>>>>>>
->>>>>>>> On 10 April 2013 11:44, Sedat Dilek <sedat.dilek@gmail.com> wr=
-ote:
->>>>>>>>>
->>>>>>>>> I found this "[RFC PATCH] kbuild: Build linux-tools package w=
-ith
->>>>>>>>> 'make
->>>>>>>>> deb-pkg'" from February 2012.
->>>>>>>>> Can't say what happened to it...
->>>>>>>>
->>>>>>>>
->>>>>>>> Sedat,
->>>>>>>>
->>>>>>>> Sorry for being late. I am down with Fever and throat infectio=
-n
->>>>>>>> since few days.
->>>>>>>> Still struggling with it..
->>>>>>>>
->>>>>>>> There are few things i tried. Firstly the tag: next-20130326 i=
-s bad
->>>>>>>> as there are
->>>>>>>> some bad commits in cpufreq core in it.
->>>>>>>>
->>>>>>>> I then tried latest linux-next/master on my Thinkpad (model na=
-me
->>>>>>>> : Intel(R)
->>>>>>>> Core(TM) i7-2640M CPU @ 2.80GHz) and couldn't boot it up. My u=
-buntu
->>>>>>>> just hanged.
->>>>>>>>
->>>>>>>> Then i tried Rafael's linux-next branch
->>>>>>>>
->>>>>>>> 079576f Merge branch 'pm-cpufreq-next' into linux-next
->>>>>>>>
->>>>>>>> And couldn't find any issues with it. I am easily able to remo=
-ve/add
->>>>>>>> cpus at
->>>>>>>> runtime..
->>>>>>>>
->>>>>>>> Can you give this branch a try?
->>>>>>>>
->>>>>>>
->>>>>>> OK, you seem to be well again, nice to hear.
->>>>>>>
->>>>>>> I was doing the whole week spring-cleaning in the apartment of =
-my
->>>>>>> parents.
->>>>>>> Now, I have some minutes for a compilation run.
->>>>>>>
->>>>>>> I guess "cpufreq: Call __cpufreq_governor() with correct policy=
-->cpus
->>>>>>> mask" could be the correct fix, but will try the GIT branch you=
- have
->>>>>>> mentioned.
->>>>>>>
->>>>>>> - Sedat -
->>>>>>>
->>>>>>> [1]
->>>>>>> http://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git=
-/commit/?h=3Dlinux-next&id=3De4969ebac83fdea78d89c779331396728a4e6199
->>>>>>>
->>>>>>
->>>>>> Both BROKEN here, specific pm-next commitid and pulling
->>>>>> pm.git#linux-next into next-20130411 (see attached files).
->>>>>>
->>>>>> Is "cpufreq: convert cpufreq_driver to using RCU" the root cause=
- of
->>>>>> this all?
->>>>>>
->>>>>
->>>>> [ CC Nathan ]
->>>>>
->>>>> NO, wrong assumption.
->>>>>
->>>>> 2013-04-12 18:04 Sedat Dilek        o [revert-cpufreq-rcu] Revert
->>>>> "cpufreq: convert cpufreq_driver to using RCU"
->>>>> 2013-04-12 18:04 Sedat Dilek        o Revert "cpufreq: Call
->>>>> __cpufreq_governor() with correct policy->cpus mask"
->>>>> 2013-04-11 23:24 Rafael J. Wysocki  M=E2=94=80=E2=94=90 [pm-next-=
-079576f] Merge branch
->>>>> 'pm-cpufreq-next' into linux-next
->>>>>
->>>>> - Sedat -
->>>>>
->>>>>
->>>>>> - Sedat -
->>>>>>
->>>>>> [1]
->>>>>> http://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git/=
-commit/?h=3Dlinux-next&id=3D5800043b2488a1c4c6e859af860644d37419d58b
->>>>>>
->>>>>>>> --
->>>>>>>> viresh
->>>>
->>>>
->>>> [ TO Dirk (Author of Intel pstate driver) ]
->>>>
->>>> With CONFIG_X86_INTEL_PSTATE=3Dn (unset) I do not see the call-tra=
-ce!
->>>>
->>>> My kernel-config and dmesg are attached.
->>>
->>>
->>> You're seeing a trouble with a new driver, then, so that's not a
->>> regression.
->>>
->
-> This IS a regression.
->
-> If the intel_pstate driver is being used __cpufreq_governor() should =
-NOT be
-> called intel_pstate does not implement the target() callback.
->
+On Mon, 15 Apr 2013 15:42:01 +1000
+Michael Neuling <mikey@neuling.org> wrote:
 
-So the "if (has_target)" line has to be put some lines above or what
-is your proposal?
+> Linux next is currently failing to compile mpc85xx_defconfig with:
+>   arch/powerpc/sysdev/fsl_pci.c:944:2: error: too many arguments to function 'setup_pci_atmu'
+> 
+> This is caused by (from Kumar's next branch):
+>   commit 34642bbb3d12121333efcf4ea7dfe66685e403a1
+>   Author: Kumar Gala <galak@kernel.crashing.org>
+>   powerpc/fsl-pci: Keep PCI SoC controller registers in pci_controller
+> 
+> Which changed definition of setup_pci_atmu() but didn't update one of
+> the callers.  Below fixes this.
+> 
+> Signed-off-by: Michael Neuling <mikey@neuling.org>
+> ---
+> Kumar: this is for your next tree
 
-- Sedat -
+Reviewed-by: Kim Phillips <kim.phillips@freescale.com>
 
-> Nathan's commit 5800043b2 changed the fence around the call to
-> __cpufreq_governor() in __cpufreq_remove_dev() here is the relevant h=
-unk.
->
-> @@ -1007,9 +1068,12 @@ static int __cpufreq_remove_dev(struct device =
-*dev,
-> struct subsys_interface *sif
->         unsigned int cpu =3D dev->id, ret, cpus;
->         unsigned long flags;
->         struct cpufreq_policy *data;
-> +       struct cpufreq_driver *driver;
->         struct kobject *kobj;
->         struct completion *cmp;
->         struct device *cpu_dev;
-> +       bool has_target;
-> +       int (*exit)(struct cpufreq_policy *policy);
->
->         pr_debug("%s: unregistering CPU %u\n", __func__, cpu);
->
-> @@ -1025,14 +1089,19 @@ static int __cpufreq_remove_dev(struct device=
- *dev,
-> struct subsys_interface *sif
->                 return -EINVAL;
->         }
->
-> -       if (cpufreq_driver->target)
-> +       rcu_read_lock();
-> +       driver =3D rcu_dereference(cpufreq_driver);
-> +       has_target =3D driver->target ? true : false;
-> +       exit =3D driver->exit;
-> +       if (has_target)
->                 __cpufreq_governor(data, CPUFREQ_GOV_STOP);
->
->  #ifdef CONFIG_HOTPLUG_CPU
-> -       if (!cpufreq_driver->setpolicy)
-> +       if (!driver->setpolicy)
->                 strncpy(per_cpu(cpufreq_cpu_governor, cpu),
->                         data->governor->name, CPUFREQ_NAME_LEN);
->  #endif
-> +       rcu_read_unlock();
->
->         WARN_ON(lock_policy_rwsem_write(cpu));
->         cpus =3D cpumask_weight(data->cpus);
->
->
->
->
->>
->> What do you mean by this?
->>
->> What are the next steps to get this fixed?
->>
->> - Sedat -
->>
->>> Thanks for taking the time to debug this!
->>>
->>> Rafael
->>>
->>>
->>> --
->>> I speak only for myself.
->>> Rafael J. Wysocki, Intel Open Source Technology Center.
->
->
+Thanks,
+
+Kim
