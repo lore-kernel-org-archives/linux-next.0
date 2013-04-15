@@ -1,62 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the clk tree
-Date: Mon, 15 Apr 2013 15:04:02 +1000
-Message-ID: <20130415150402.fd83866829f3108f45b7c126@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the staging tree
+Date: Mon, 15 Apr 2013 15:21:05 +1000
+Message-ID: <20130415152105.c658ed6f5ce2140b1034beca@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__15_Apr_2013_15_04_02_+1000_KMJBeA7P/j1xHBW+"
+ boundary="Signature=_Mon__15_Apr_2013_15_21_05_+1000_YWtygs=i2O81SYCj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52829 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49713 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752351Ab3DOFEX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Apr 2013 01:04:23 -0400
+	with ESMTP id S1752351Ab3DOFVQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Apr 2013 01:21:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Turquette <mturquette@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Magenheimer <dan.magenheimer@oracle.com>, Wanpeng Li <liwanp@linux.vnet.ibm.com>, Greg KH <greg@kroah.com>
 
---Signature=_Mon__15_Apr_2013_15_04_02_+1000_KMJBeA7P/j1xHBW+
+--Signature=_Mon__15_Apr_2013_15_21_05_+1000_YWtygs=i2O81SYCj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
+Hi Andrew,
 
-After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/staging/zcache/ramster/ramster.c between commit df735543008f
+("staging: ramster: Move debugfs code out of ramster.c file") from the
+staging tree and commit "staging: zcache: enable ramster to be
+built/loaded as a module" from the akpm tree.
 
-ERROR: "of_clk_add_provider" [drivers/clk/clk-si5351.ko] undefined!
-ERROR: "of_clk_src_onecell_get" [drivers/clk/clk-si5351.ko] undefined!
-ERROR: "__clk_get_flags" [drivers/clk/clk-si5351.ko] undefined!
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 9abd5f0555df ("clk: add si5351 i2c common clock
-driver").  It probbaly need to depend on CONFIG_OF.
-
-I have used the clk tree from next-20130412 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__15_Apr_2013_15_04_02_+1000_KMJBeA7P/j1xHBW+
+diff --cc drivers/staging/zcache/ramster/ramster.c
+index 8781627,3ead248..0000000
+--- a/drivers/staging/zcache/ramster/ramster.c
++++ b/drivers/staging/zcache/ramster/ramster.c
+diff --git a/drivers/staging/zcache/ramster/debug.c b/drivers/staging/zcach=
+e/ramster/debug.c
+index bf34133..327e4f0 100644
+--- a/drivers/staging/zcache/ramster/debug.c
++++ b/drivers/staging/zcache/ramster/debug.c
+@@ -43,7 +43,7 @@ static struct debug_entry {
+ };
+ #undef ATTR
+=20
+-int __init ramster_debugfs_init(void)
++int ramster_debugfs_init(void)
+ {
+ 	int i;
+ 	struct dentry *root =3D debugfs_create_dir("ramster", NULL);
+
+--Signature=_Mon__15_Apr_2013_15_21_05_+1000_YWtygs=i2O81SYCj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRa4pCAAoJEECxmPOUX5FEN8cQAJy9aER5AGtGTXAeXmh9+0BY
-Ip/x0k2DD48llUKYxxw4u4EO1ujWartc2Bo4KYLw3Y1kwYJtyRevOEqkHyiq3e2U
-izOWCgDeTdcosXrxb2oo3HLzTBksY52OIxSOKbDxoWbi2hMPJjgfbaneFw7eD9hh
-dVEqf6IFI00SzxmvbjabyWX+aY/3AsCKsufEuGt9SE4+ptWEv0IVTaR96wLFFPeB
-FQZJpXNuwCa3FPlwxBrwbMcUCrjso5yXrmDdRQyikScQYC4zWvK2O3QCM/1CGc1L
-hz2ydtrL6oovppcMSLj9hAEFSMCTvsjbMoH9yrUynYprLRK9f9G4cWoa7Ci+bYB5
-quIej+E490jbYRHFdV/A9+fFVTOWzFO9z7J/vVqHfeaNRGhHyBYAlEI8g1moCjyB
-uPZU5IQZVV14FD9w6eqGOjcc2QOp86J448c4lGXDttrziTLvpLke9JB/8W4gCGYK
-9/o2nYDgSK3aHc+BU4djAzomBOehdyPNgzH6ZpSUxtZLrTQNWvMkSMq+J/+nl/E8
-snolzPQWrr5C5O8hcDoH+1D26cDP0aKoF+dCxr9ZRyRLYaq2p7oRJPMTCtiSlzPv
-Xi6bKyzbZkZRy0/SlqTqIvM1S/X4f1qaVg56u0atXbYwEzUICXXRgW+tlYoLl75T
-mvb3Cx5+bYwi6TIr/Qir
-=HSAd
+iQIcBAEBCAAGBQJRa45BAAoJEECxmPOUX5FEDioP+wduwFUTIaXYCdNMf+SI/9Ki
+WEFC8QBWyLiWkdlKKcWYxqpU1uI6aQS+cp+zj9KEXYFrsZtaKBI5w3Dz6IsMC28z
+kBo+eAerlSDb5Emh5qj7MX/7j6OaT9X8+vqvjKMzdqxRF4LdvmuTGErdDkiPNjoE
+Bz9XOfP9y5GjcFFB+UxFHTx26yMTq0Xe2HbOOwV+mxzfiPJMMx3QgSMGyT4V68A5
+rcz94anAWCsLhOY9Fav27hA4lVzP8/E7lkKN7oYAAnHoksBhbcTVGVtcIcUH9PQJ
+BzMSrd8isxB84+msmiove1xc5+gOf0hSLU9bMmvzbz3KTokKz5xndniSlrJP0PdD
+6nR2YD2OZOyMZJMmVJnUosyadjSVdkqhdVZGdHRGXcDYhsiaeqcH724pGpGmn223
+MBqosrcxBfxunoOihrBjqPPujKbh8whSQ3TaolLPgQ24PZoF1sy1U3loHfw2FAqQ
+mUQNpnSJxgL3vlbUY+Z/V416XveD1uHxC58V8n2HSFy+01ql7GhSFq2de5kZ6aHv
++JaYr7PjJLEOB9WL/GYDjCEgGyoBIxooWVk/tcoO0nU8Ckz+sgkfFqRQ6F0LadIm
+9JAnHxPdX8PEr0YyF96US8g70b/qHLA+ZMG56vnmDpTiMgOV/hI+roWuSGTNjV7v
+jN39JpjCxl9pUtPF+H5J
+=ONPV
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__15_Apr_2013_15_04_02_+1000_KMJBeA7P/j1xHBW+--
+--Signature=_Mon__15_Apr_2013_15_21_05_+1000_YWtygs=i2O81SYCj--
