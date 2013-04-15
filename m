@@ -1,79 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the staging tree
-Date: Mon, 15 Apr 2013 15:21:05 +1000
-Message-ID: <20130415152105.c658ed6f5ce2140b1034beca@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__15_Apr_2013_15_21_05_+1000_YWtygs=i2O81SYCj"
+From: Michael Neuling <mikey@neuling.org>
+Subject: [PATCH] powerpc: fix usage of setup_pci_atmu()
+Date: Mon, 15 Apr 2013 15:42:01 +1000
+Message-ID: <5881.1366004521@ale.ozlabs.ibm.com>
+References: <1363201636-7318-1-git-send-email-galak@kernel.crashing.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49713 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752351Ab3DOFVQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Apr 2013 01:21:16 -0400
+Received: from ozlabs.org ([203.10.76.45]:54030 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750739Ab3DOFmF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Apr 2013 01:42:05 -0400
+In-reply-to: <1363201636-7318-1-git-send-email-galak@kernel.crashing.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Magenheimer <dan.magenheimer@oracle.com>, Wanpeng Li <liwanp@linux.vnet.ibm.com>, Greg KH <greg@kroah.com>
+To: Kumar Gala <galak@kernel.crashing.org>, sfr@canb.auug.org.au
+Cc: linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, benh@kernel.crashing.org
 
---Signature=_Mon__15_Apr_2013_15_21_05_+1000_YWtygs=i2O81SYCj
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Linux next is currently failing to compile mpc85xx_defconfig with:
+  arch/powerpc/sysdev/fsl_pci.c:944:2: error: too many arguments to function 'setup_pci_atmu'
 
-Hi Andrew,
+This is caused by (from Kumar's next branch):
+  commit 34642bbb3d12121333efcf4ea7dfe66685e403a1
+  Author: Kumar Gala <galak@kernel.crashing.org>
+  powerpc/fsl-pci: Keep PCI SoC controller registers in pci_controller
 
-Today's linux-next merge of the akpm tree got a conflict in
-drivers/staging/zcache/ramster/ramster.c between commit df735543008f
-("staging: ramster: Move debugfs code out of ramster.c file") from the
-staging tree and commit "staging: zcache: enable ramster to be
-built/loaded as a module" from the akpm tree.
+Which changed definition of setup_pci_atmu() but didn't update one of
+the callers.  Below fixes this.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+---
+Kumar: this is for your next tree
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/staging/zcache/ramster/ramster.c
-index 8781627,3ead248..0000000
---- a/drivers/staging/zcache/ramster/ramster.c
-+++ b/drivers/staging/zcache/ramster/ramster.c
-diff --git a/drivers/staging/zcache/ramster/debug.c b/drivers/staging/zcach=
-e/ramster/debug.c
-index bf34133..327e4f0 100644
---- a/drivers/staging/zcache/ramster/debug.c
-+++ b/drivers/staging/zcache/ramster/debug.c
-@@ -43,7 +43,7 @@ static struct debug_entry {
- };
- #undef ATTR
-=20
--int __init ramster_debugfs_init(void)
-+int ramster_debugfs_init(void)
- {
- 	int i;
- 	struct dentry *root =3D debugfs_create_dir("ramster", NULL);
-
---Signature=_Mon__15_Apr_2013_15_21_05_+1000_YWtygs=i2O81SYCj
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRa45BAAoJEECxmPOUX5FEDioP+wduwFUTIaXYCdNMf+SI/9Ki
-WEFC8QBWyLiWkdlKKcWYxqpU1uI6aQS+cp+zj9KEXYFrsZtaKBI5w3Dz6IsMC28z
-kBo+eAerlSDb5Emh5qj7MX/7j6OaT9X8+vqvjKMzdqxRF4LdvmuTGErdDkiPNjoE
-Bz9XOfP9y5GjcFFB+UxFHTx26yMTq0Xe2HbOOwV+mxzfiPJMMx3QgSMGyT4V68A5
-rcz94anAWCsLhOY9Fav27hA4lVzP8/E7lkKN7oYAAnHoksBhbcTVGVtcIcUH9PQJ
-BzMSrd8isxB84+msmiove1xc5+gOf0hSLU9bMmvzbz3KTokKz5xndniSlrJP0PdD
-6nR2YD2OZOyMZJMmVJnUosyadjSVdkqhdVZGdHRGXcDYhsiaeqcH724pGpGmn223
-MBqosrcxBfxunoOihrBjqPPujKbh8whSQ3TaolLPgQ24PZoF1sy1U3loHfw2FAqQ
-mUQNpnSJxgL3vlbUY+Z/V416XveD1uHxC58V8n2HSFy+01ql7GhSFq2de5kZ6aHv
-+JaYr7PjJLEOB9WL/GYDjCEgGyoBIxooWVk/tcoO0nU8Ckz+sgkfFqRQ6F0LadIm
-9JAnHxPdX8PEr0YyF96US8g70b/qHLA+ZMG56vnmDpTiMgOV/hI+roWuSGTNjV7v
-jN39JpjCxl9pUtPF+H5J
-=ONPV
------END PGP SIGNATURE-----
-
---Signature=_Mon__15_Apr_2013_15_21_05_+1000_YWtygs=i2O81SYCj--
+diff --git a/arch/powerpc/sysdev/fsl_pci.c b/arch/powerpc/sysdev/fsl_pci.c
+index 83918c3..a10a036 100644
+--- a/arch/powerpc/sysdev/fsl_pci.c
++++ b/arch/powerpc/sysdev/fsl_pci.c
+@@ -941,7 +941,7 @@ static int fsl_pci_resume(struct device *dev)
+ 		return -ENODEV;
+ 	}
+ 
+-	setup_pci_atmu(hose, &pci_rsrc);
++	setup_pci_atmu(hose);
+ 
+ 	return 0;
+ }
