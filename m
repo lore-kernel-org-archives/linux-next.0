@@ -1,56 +1,62 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: Heads up on a device tree change
-Date: Sat, 13 Apr 2013 20:26:59 +0100
-Message-ID: <20130413192659.D92973E2249@localhost>
-References: <CACxGe6sCBCGfLDAGVRgP3cnmE+oyXBDdPeVXVCqrsvCh13yPiw@mail.gmail.com> <51125B56.9050407@imgtec.com> <CACxGe6vuZ2H-G7xamS6SAiX_aCbjpO+vKavqCK77ek8tTdOmdA@mail.gmail.com> <511382AD.7030804@imgtec.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the clk tree
+Date: Mon, 15 Apr 2013 15:04:02 +1000
+Message-ID: <20130415150402.fd83866829f3108f45b7c126@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__15_Apr_2013_15_04_02_+1000_KMJBeA7P/j1xHBW+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:43527 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751737Ab3DMT1F (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 13 Apr 2013 15:27:05 -0400
-Received: by mail-wi0-f171.google.com with SMTP id hn17so498039wib.10
-        for <linux-next@vger.kernel.org>; Sat, 13 Apr 2013 12:27:03 -0700 (PDT)
-In-Reply-To: <511382AD.7030804@imgtec.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52829 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752351Ab3DOFEX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Apr 2013 01:04:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Hogan <james.hogan@imgtec.com>
-Cc: linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, Rob Herring <rob.herring@calxeda.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On Thu, 7 Feb 2013 10:32:13 +0000, James Hogan <james.hogan@imgtec.com> wrote:
-> On 06/02/13 14:28, Grant Likely wrote:
-> > On Wed, Feb 6, 2013 at 1:32 PM, James Hogan <james.hogan@imgtec.com> wrote:
-> >> On 06/02/13 13:11, Grant Likely wrote:
-> >>> - Resources on platform_devices get registered so they appear in
-> >>> /proc/iomem and /proc/ioports and so that device drivers get the added
-> >>> protection of request_region. This will cause breakage on device trees
-> >>> nodes with partially overlapping memory regions. (ie. 0x100..0x1ff and
-> >>> 0x180..0x27f). I also have a workaround for this, but I doubt that it
-> >>> will be necessary.
-> >>
-> >> Hi Grant,
-> >>
-> >> If I understand you correctly, the non-overlapping memory regions thing
-> >> could be a problem for me. We have a Meta based SoC that has various SoC
-> >> registers grouped together for doing GPIOs and Pin control things. I'm
-> >> still in the process of converting it to device tree, but the way I've
-> >> been handling it is to provide overlapping registers to both the gpio
-> >> and pinctl DT nodes. Each GPIO bank's registers are also interleaved
-> >> with the others, so I've been providing overlapping register ranges
-> >> (offset by 4 for each bank) to the DT node for each gpio bank too, so
-> >> each bank can function independently and the driver doesn't have to
-> >> worry about multiple banks. Does that sound like a reasonable use case?
-> >>
-> >> I guess I could cheat with the length, or specify each register in it's
-> >> own memory resource, but it seems like overkill.
-> > 
-> > Note that overlapping regions are fine /provided/ that they are the
-> > same size or one fits nicely inside another. It's partial overlap that
-> > is a problem
-> 
-> It still feels a bit artificial to impose that limitation on something
-> that is supposed to be implementation independent. Having said that it
-> doesn't particularly bother me having to work around it.
+--Signature=_Mon__15_Apr_2013_15_04_02_+1000_KMJBeA7P/j1xHBW+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've backed out on this. It broke too much.
+Hi Mike,
 
-g.
+After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+ERROR: "of_clk_add_provider" [drivers/clk/clk-si5351.ko] undefined!
+ERROR: "of_clk_src_onecell_get" [drivers/clk/clk-si5351.ko] undefined!
+ERROR: "__clk_get_flags" [drivers/clk/clk-si5351.ko] undefined!
+
+Caused by commit 9abd5f0555df ("clk: add si5351 i2c common clock
+driver").  It probbaly need to depend on CONFIG_OF.
+
+I have used the clk tree from next-20130412 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__15_Apr_2013_15_04_02_+1000_KMJBeA7P/j1xHBW+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRa4pCAAoJEECxmPOUX5FEN8cQAJy9aER5AGtGTXAeXmh9+0BY
+Ip/x0k2DD48llUKYxxw4u4EO1ujWartc2Bo4KYLw3Y1kwYJtyRevOEqkHyiq3e2U
+izOWCgDeTdcosXrxb2oo3HLzTBksY52OIxSOKbDxoWbi2hMPJjgfbaneFw7eD9hh
+dVEqf6IFI00SzxmvbjabyWX+aY/3AsCKsufEuGt9SE4+ptWEv0IVTaR96wLFFPeB
+FQZJpXNuwCa3FPlwxBrwbMcUCrjso5yXrmDdRQyikScQYC4zWvK2O3QCM/1CGc1L
+hz2ydtrL6oovppcMSLj9hAEFSMCTvsjbMoH9yrUynYprLRK9f9G4cWoa7Ci+bYB5
+quIej+E490jbYRHFdV/A9+fFVTOWzFO9z7J/vVqHfeaNRGhHyBYAlEI8g1moCjyB
+uPZU5IQZVV14FD9w6eqGOjcc2QOp86J448c4lGXDttrziTLvpLke9JB/8W4gCGYK
+9/o2nYDgSK3aHc+BU4djAzomBOehdyPNgzH6ZpSUxtZLrTQNWvMkSMq+J/+nl/E8
+snolzPQWrr5C5O8hcDoH+1D26cDP0aKoF+dCxr9ZRyRLYaq2p7oRJPMTCtiSlzPv
+Xi6bKyzbZkZRy0/SlqTqIvM1S/X4f1qaVg56u0atXbYwEzUICXXRgW+tlYoLl75T
+mvb3Cx5+bYwi6TIr/Qir
+=HSAd
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__15_Apr_2013_15_04_02_+1000_KMJBeA7P/j1xHBW+--
