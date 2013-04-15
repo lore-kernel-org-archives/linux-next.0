@@ -1,43 +1,193 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: linux-next: build failure after merge of the clk tree
-Date: Mon, 15 Apr 2013 09:03:23 +0200
-Message-ID: <516BA63B.5090707@gmail.com>
-References: <20130415150402.fd83866829f3108f45b7c126@canb.auug.org.au>
+From: Dirk Brandewie <dirk.brandewie@gmail.com>
+Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
+Date: Mon, 15 Apr 2013 09:07:10 -0700
+Message-ID: <516C25AE.4050503@intel.com>
+References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com> <CA+icZUUsAqJ3kyCZivYeTpY7n=EDMv1UcC2VNwQro4h7NHDWag@mail.gmail.com> <CA+icZUW+TB3q58bL+d=A355S4vtRhwMq8AV+tqjv6MgDtHRCaA@mail.gmail.com> <1923819.6Nb81T2TR8@vostro.rjw.lan> <CA+icZUXUGOjGUAFxgQk0780pcBB-YjiujDLXF+gJFegi+pd+dA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f48.google.com ([209.85.214.48]:60670 "EHLO
-	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932679Ab3DOHD0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Apr 2013 03:03:26 -0400
-In-Reply-To: <20130415150402.fd83866829f3108f45b7c126@canb.auug.org.au>
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:42357 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753541Ab3DOQHO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Apr 2013 12:07:14 -0400
+In-Reply-To: <CA+icZUXUGOjGUAFxgQk0780pcBB-YjiujDLXF+gJFegi+pd+dA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, Dirk Brandewie <dirk.j.brandewie@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Nathan Zimmer <nzimmer@sgi.com>
 
-On 04/15/2013 07:04 AM, Stephen Rothwell wrote:
-> After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+On 04/13/2013 02:55 AM, Sedat Dilek wrote:
+> On Sat, Apr 13, 2013 at 12:51 AM, Rafael J. Wysocki <rjw@sisk.pl> wro=
+te:
+>> On Friday, April 12, 2013 11:08:37 PM Sedat Dilek wrote:
+>>> On Fri, Apr 12, 2013 at 6:27 PM, Sedat Dilek <sedat.dilek@gmail.com=
+> wrote:
+>>>> On Fri, Apr 12, 2013 at 5:45 PM, Sedat Dilek <sedat.dilek@gmail.co=
+m> wrote:
+>>>>> On Fri, Apr 12, 2013 at 4:24 PM, Sedat Dilek <sedat.dilek@gmail.c=
+om> wrote:
+>>>>>> On Fri, Apr 12, 2013 at 10:23 AM, Viresh Kumar <viresh.kumar@lin=
+aro.org> wrote:
+>>>>>>> On 10 April 2013 11:44, Sedat Dilek <sedat.dilek@gmail.com> wro=
+te:
+>>>>>>>> I found this "[RFC PATCH] kbuild: Build linux-tools package wi=
+th 'make
+>>>>>>>> deb-pkg'" from February 2012.
+>>>>>>>> Can't say what happened to it...
+>>>>>>>
+>>>>>>> Sedat,
+>>>>>>>
+>>>>>>> Sorry for being late. I am down with Fever and throat infection=
+ since few days.
+>>>>>>> Still struggling with it..
+>>>>>>>
+>>>>>>> There are few things i tried. Firstly the tag: next-20130326 is=
+ bad as there are
+>>>>>>> some bad commits in cpufreq core in it.
+>>>>>>>
+>>>>>>> I then tried latest linux-next/master on my Thinkpad (model nam=
+e        : Intel(R)
+>>>>>>> Core(TM) i7-2640M CPU @ 2.80GHz) and couldn't boot it up. My ub=
+untu
+>>>>>>> just hanged.
+>>>>>>>
+>>>>>>> Then i tried Rafael's linux-next branch
+>>>>>>>
+>>>>>>> 079576f Merge branch 'pm-cpufreq-next' into linux-next
+>>>>>>>
+>>>>>>> And couldn't find any issues with it. I am easily able to remov=
+e/add cpus at
+>>>>>>> runtime..
+>>>>>>>
+>>>>>>> Can you give this branch a try?
+>>>>>>>
+>>>>>>
+>>>>>> OK, you seem to be well again, nice to hear.
+>>>>>>
+>>>>>> I was doing the whole week spring-cleaning in the apartment of m=
+y parents.
+>>>>>> Now, I have some minutes for a compilation run.
+>>>>>>
+>>>>>> I guess "cpufreq: Call __cpufreq_governor() with correct policy-=
+>cpus
+>>>>>> mask" could be the correct fix, but will try the GIT branch you =
+have
+>>>>>> mentioned.
+>>>>>>
+>>>>>> - Sedat -
+>>>>>>
+>>>>>> [1] http://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.=
+git/commit/?h=3Dlinux-next&id=3De4969ebac83fdea78d89c779331396728a4e619=
+9
+>>>>>>
+>>>>>
+>>>>> Both BROKEN here, specific pm-next commitid and pulling
+>>>>> pm.git#linux-next into next-20130411 (see attached files).
+>>>>>
+>>>>> Is "cpufreq: convert cpufreq_driver to using RCU" the root cause =
+of this all?
+>>>>>
+>>>>
+>>>> [ CC Nathan ]
+>>>>
+>>>> NO, wrong assumption.
+>>>>
+>>>> 2013-04-12 18:04 Sedat Dilek        o [revert-cpufreq-rcu] Revert
+>>>> "cpufreq: convert cpufreq_driver to using RCU"
+>>>> 2013-04-12 18:04 Sedat Dilek        o Revert "cpufreq: Call
+>>>> __cpufreq_governor() with correct policy->cpus mask"
+>>>> 2013-04-11 23:24 Rafael J. Wysocki  M=E2=94=80=E2=94=90 [pm-next-0=
+79576f] Merge branch
+>>>> 'pm-cpufreq-next' into linux-next
+>>>>
+>>>> - Sedat -
+>>>>
+>>>>
+>>>>> - Sedat -
+>>>>>
+>>>>> [1] http://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.g=
+it/commit/?h=3Dlinux-next&id=3D5800043b2488a1c4c6e859af860644d37419d58b
+>>>>>
+>>>>>>> --
+>>>>>>> viresh
+>>>
+>>> [ TO Dirk (Author of Intel pstate driver) ]
+>>>
+>>> With CONFIG_X86_INTEL_PSTATE=3Dn (unset) I do not see the call-trac=
+e!
+>>>
+>>> My kernel-config and dmesg are attached.
+>>
+>> You're seeing a trouble with a new driver, then, so that's not a reg=
+ression.
+>>
+
+This IS a regression.
+
+If the intel_pstate driver is being used __cpufreq_governor() should NO=
+T be
+called intel_pstate does not implement the target() callback.
+
+Nathan's commit 5800043b2 changed the fence around the call to
+__cpufreq_governor() in __cpufreq_remove_dev() here is the relevant hun=
+k.
+
+@@ -1007,9 +1068,12 @@ static int __cpufreq_remove_dev(struct device *d=
+ev,=20
+struct subsys_interface *sif
+  	unsigned int cpu =3D dev->id, ret, cpus;
+  	unsigned long flags;
+  	struct cpufreq_policy *data;
++	struct cpufreq_driver *driver;
+  	struct kobject *kobj;
+  	struct completion *cmp;
+  	struct device *cpu_dev;
++	bool has_target;
++	int (*exit)(struct cpufreq_policy *policy);
+
+  	pr_debug("%s: unregistering CPU %u\n", __func__, cpu);
+
+@@ -1025,14 +1089,19 @@ static int __cpufreq_remove_dev(struct device *=
+dev,=20
+struct subsys_interface *sif
+  		return -EINVAL;
+  	}
+
+-	if (cpufreq_driver->target)
++	rcu_read_lock();
++	driver =3D rcu_dereference(cpufreq_driver);
++	has_target =3D driver->target ? true : false;
++	exit =3D driver->exit;
++	if (has_target)
+  		__cpufreq_governor(data, CPUFREQ_GOV_STOP);
+
+  #ifdef CONFIG_HOTPLUG_CPU
+-	if (!cpufreq_driver->setpolicy)
++	if (!driver->setpolicy)
+  		strncpy(per_cpu(cpufreq_cpu_governor, cpu),
+  			data->governor->name, CPUFREQ_NAME_LEN);
+  #endif
++	rcu_read_unlock();
+
+  	WARN_ON(lock_policy_rwsem_write(cpu));
+  	cpus =3D cpumask_weight(data->cpus);
+
+
+
 >
-> ERROR: "of_clk_add_provider" [drivers/clk/clk-si5351.ko] undefined!
-> ERROR: "of_clk_src_onecell_get" [drivers/clk/clk-si5351.ko] undefined!
-
-Stephen,
-
-I must have missed the both above when allowing clk-si5351 to be built
-for !OF. I sent a patch to make clk-si5351 depend on CONFIG_OF until
-we sort it out.
-
-> ERROR: "__clk_get_flags" [drivers/clk/clk-si5351.ko] undefined!
-
-I sent a patch to export the above function but Mike must have missed
-it. I resent it on list.
-
-Sebastian
-
-> Caused by commit 9abd5f0555df ("clk: add si5351 i2c common clock
-> driver").  It probbaly need to depend on CONFIG_OF.
+> What do you mean by this?
 >
-> I have used the clk tree from next-20130412 for today.
+> What are the next steps to get this fixed?
+>
+> - Sedat -
+>
+>> Thanks for taking the time to debug this!
+>>
+>> Rafael
+>>
+>>
+>> --
+>> I speak only for myself.
+>> Rafael J. Wysocki, Intel Open Source Technology Center.
