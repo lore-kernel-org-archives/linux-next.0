@@ -1,167 +1,55 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
-Date: Mon, 15 Apr 2013 20:07:43 +0200
-Message-ID: <CA+icZUVbdeOVMFU0RePtpA+-fxFyk0JnePUg6MVP-ZkeicEGKw@mail.gmail.com>
-References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
-	<CA+icZUUsAqJ3kyCZivYeTpY7n=EDMv1UcC2VNwQro4h7NHDWag@mail.gmail.com>
-	<CA+icZUW+TB3q58bL+d=A355S4vtRhwMq8AV+tqjv6MgDtHRCaA@mail.gmail.com>
-	<1923819.6Nb81T2TR8@vostro.rjw.lan>
-	<CA+icZUXUGOjGUAFxgQk0780pcBB-YjiujDLXF+gJFegi+pd+dA@mail.gmail.com>
-	<516C25AE.4050503@intel.com>
-	<CAKohpo=OOPBYCD_K6RLw2YrJxhMokwrOww4QM2t2T4SnGObyQQ@mail.gmail.com>
-	<CA+icZUVk1_Dw5Kb8uWwk7xjrgx6jPOfP8BZdFXQ9bqgmdckHuQ@mail.gmail.com>
-	<CA+icZUVbv-e8tY1+zZE+z0377yvrFUZvPkZ5qi9nHzfmEYNbTQ@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: linux-next: build failure after merge of the clk tree
+Date: Mon, 15 Apr 2013 17:42:36 -0700
+Message-ID: <20130416004236.6507.63400@quantum>
+References: <20130415150402.fd83866829f3108f45b7c126@canb.auug.org.au>
+ <516BA63B.5090707@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUVbv-e8tY1+zZE+z0377yvrFUZvPkZ5qi9nHzfmEYNbTQ@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Dirk Brandewie <dirk.brandewie@gmail.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Dirk Brandewie <dirk.j.brandewie@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Nathan Zimmer <nzimmer@sgi.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-da0-f54.google.com ([209.85.210.54]:56874 "EHLO
+	mail-da0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934873Ab3DPAnE convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Apr 2013 20:43:04 -0400
+Received: by mail-da0-f54.google.com with SMTP id p1so2298112dad.27
+        for <linux-next@vger.kernel.org>; Mon, 15 Apr 2013 17:43:03 -0700 (PDT)
+In-Reply-To: <516BA63B.5090707@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Apr 15, 2013 at 7:57 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Mon, Apr 15, 2013 at 7:51 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> On Mon, Apr 15, 2013 at 7:22 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>> On 15 April 2013 21:37, Dirk Brandewie <dirk.brandewie@gmail.com> wrote:
->>>> If the intel_pstate driver is being used __cpufreq_governor() should NOT be
->>>> called intel_pstate does not implement the target() callback.
->>>>
->>>> Nathan's commit 5800043b2 changed the fence around the call to
->>>> __cpufreq_governor() in __cpufreq_remove_dev() here is the relevant hunk.
->>>
->>> No it isn't.
->>>
->>>> +       if (has_target)
->>>>                 __cpufreq_governor(data, CPUFREQ_GOV_STOP);
->>>
->>> As it has taken care of this limitation.
->>>
->>> BUT some of my earlier patches haven't. :(
->>> Here is the fix (Sedat please try this and give your tested-by, use the attached
->>> patch as gmail might break what i am copying in mail)..
->>>
->>> Sorry for being late in fixing this issue, i am still down with Tonsil infection
->>> and fever.. Today only i got some power to fix it after seeing Dirk's mail.
->>>
->>> Your tested-by may help me to recover quickly :)
->>>
->>
->> Hehe.
->> Me myself and I was today chez-mon-docteur... Let's see the results on Thursday.
->> Again, get well soon.
->>
->> Tested against...
->>
->>  "BROKEN" Linux-Next (next-20130411) with attached patchset (incl.
->> your cpufreq-next-fixes).
->>
->> Test-Case...
->>
->> CONFIG_X86_INTEL_PSTATE=y
->>
->> root# echo 0 > /sys/devices/system/cpu/cpu3/online
->>
->> Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
->>
->> ...did not test on-reboot-case.
->>
+Quoting Sebastian Hesselbarth (2013-04-15 00:03:23)
+> On 04/15/2013 07:04 AM, Stephen Rothwell wrote:
+> > After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
+> > failed like this:
+> >
+> > ERROR: "of_clk_add_provider" [drivers/clk/clk-si5351.ko] undefined!
+> > ERROR: "of_clk_src_onecell_get" [drivers/clk/clk-si5351.ko] undefined!
+> 
+> Stephen,
+> 
+> I must have missed the both above when allowing clk-si5351 to be built
+> for !OF. I sent a patch to make clk-si5351 depend on CONFIG_OF until
+> we sort it out.
+> 
+> > ERROR: "__clk_get_flags" [drivers/clk/clk-si5351.ko] undefined!
+> 
+> I sent a patch to export the above function but Mike must have missed
+> it. I resent it on list.
+> 
 
-Reboot is also fine here.
+Sorry about missing that export.
 
->> ( Dirk promised to test as well... )
->>
+I've taken both of your fixes into clk-next.
 
-Dirk confirmed your patch works for him.
-Good!
+Regards,
+Mike
 
-- Sedat -
-
->
-> Might be interesting as an extra-confirmation:
->
-> root# echo 1 > /sys/devices/system/cpu/cpu3/online
->
-> [ dmesg ]
->
-> [  556.101961] smpboot: Booting Node 0 Processor 3 APIC 0x3
-> [  556.113158] Disabled fast string operations
-> [  556.116621] Intel pstate controlling: cpu 3
->
-> - Sedat -
->
->> - Sedat -
->>
->>> @Rafael: I will probably be down for one more week and so not doing any
->>> reviews for now... I do check important mails sent directly to me though.
->>>
->>> ------------x----------------------x------------------
->>>
->>> From: Viresh Kumar <viresh.kumar@linaro.org>
->>> Date: Mon, 15 Apr 2013 22:43:57 +0530
->>> Subject: [PATCH] cpufreq: Don't call __cpufreq_governor() for drivers without
->>>  target()
->>>
->>> Some cpufreq drivers implement their own governor and so don't need us to call
->>> generic governors interface via __cpufreq_governor(). Few recent commits haven't
->>> obeyed this law well and we saw some regressions.
->>>
->>> This patch tries to fix this issue.
->>>
->>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->>> ---
->>>  drivers/cpufreq/cpufreq.c | 18 +++++++++++++-----
->>>  1 file changed, 13 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
->>> index 3564947..a6f6595 100644
->>> --- a/drivers/cpufreq/cpufreq.c
->>> +++ b/drivers/cpufreq/cpufreq.c
->>> @@ -858,13 +858,18 @@ static int cpufreq_add_policy_cpu(unsigned int
->>> cpu, unsigned int sibling,
->>>                                   struct device *dev)
->>>  {
->>>         struct cpufreq_policy *policy;
->>> -       int ret = 0;
->>> +       int ret = 0, has_target = 0;
->>>         unsigned long flags;
->>>
->>>         policy = cpufreq_cpu_get(sibling);
->>>         WARN_ON(!policy);
->>>
->>> -       __cpufreq_governor(policy, CPUFREQ_GOV_STOP);
->>> +       rcu_read_lock();
->>> +       has_target = !!rcu_dereference(cpufreq_driver)->target;
->>> +       rcu_read_unlock();
->>> +
->>> +       if (has_target)
->>> +               __cpufreq_governor(policy, CPUFREQ_GOV_STOP);
->>>
->>>         lock_policy_rwsem_write(sibling);
->>>
->>> @@ -877,8 +882,10 @@ static int cpufreq_add_policy_cpu(unsigned int
->>> cpu, unsigned int sibling,
->>>
->>>         unlock_policy_rwsem_write(sibling);
->>>
->>> -       __cpufreq_governor(policy, CPUFREQ_GOV_START);
->>> -       __cpufreq_governor(policy, CPUFREQ_GOV_LIMITS);
->>> +       if (has_target) {
->>> +               __cpufreq_governor(policy, CPUFREQ_GOV_START);
->>> +               __cpufreq_governor(policy, CPUFREQ_GOV_LIMITS);
->>> +       }
->>>
->>>         ret = sysfs_create_link(&dev->kobj, &policy->kobj, "cpufreq");
->>>         if (ret) {
->>> @@ -1146,7 +1153,8 @@ static int __cpufreq_remove_dev(struct device
->>> *dev, struct subsys_interface *sif
->>>
->>>         /* If cpu is last user of policy, free policy */
->>>         if (cpus == 1) {
->>> -               __cpufreq_governor(data, CPUFREQ_GOV_POLICY_EXIT);
->>> +               if (has_target)
->>> +                       __cpufreq_governor(data, CPUFREQ_GOV_POLICY_EXIT);
->>>
->>>                 lock_policy_rwsem_read(cpu);
->>>                 kobj = &data->kobj;
+> Sebastian
+> 
+> > Caused by commit 9abd5f0555df ("clk: add si5351 i2c common clock
+> > driver").  It probbaly need to depend on CONFIG_OF.
+> >
+> > I have used the clk tree from next-20130412 for today.
