@@ -1,56 +1,44 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: manual merge of the mfd tree with the v4l-dvb tree
-Date: Tue, 16 Apr 2013 10:59:50 -0300
-Message-ID: <516D5956.2090409@redhat.com>
-References: <20130410134813.b1bff6027f64f14d75d43927@canb.auug.org.au> <20130410064253.GA4874@zurbaran> <20130410064828.6c946ad8@redhat.com> <20130416135137.GA31283@zurbaran>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] staging/media: fix go7007 dependencies and build
+Date: Tue, 16 Apr 2013 08:33:22 -0700
+Message-ID: <516D6F42.7000709@infradead.org>
+References: <20130408174343.cc13eb1972470d20d38ecff1@canb.auug.org.au> <51630297.2040803@infradead.org> <516461FE.4020007@iki.fi> <alpine.DEB.2.02.1304152010180.3952@chino.kir.corp.google.com> <20130416061243.22d06140@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:29733 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S935469Ab3DPOl5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Apr 2013 10:41:57 -0400
-In-Reply-To: <20130416135137.GA31283@zurbaran>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130416061243.22d06140@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: David Rientjes <rientjes@google.com>, Antti Palosaari <crope@iki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
+List-Id: linux-next.vger.kernel.org
 
-Em 16-04-2013 10:51, Samuel Ortiz escreveu:
-> Hi Mauro,
->
-> On Wed, Apr 10, 2013 at 06:48:28AM -0300, Mauro Carvalho Chehab wrote:
->> Em Wed, 10 Apr 2013 08:42:53 +0200
->> Samuel Ortiz <sameo@linux.intel.com> escreveu:
->>
->>> Hi Stephen,
->>>
->>> On Wed, Apr 10, 2013 at 01:48:13PM +1000, Stephen Rothwell wrote:
->>>> Hi Samuel,
->>>>
->>>> Today's linux-next merge of the mfd tree got a conflict in
->>>> drivers/mfd/Kconfig between commit 3f8ec5df11aa ("[media] mfd: Add header
->>>> files and Kbuild plumbing for SI476x MFD core") from the v4l-dvb tree and
->>>> commit ab85b120e692 ("mfd: Kconfig alphabetical re-ordering") from the
->>>> mfd tree.
->>> I'm surprised the v4l-dvb tree is carrying this patchset because I haven't
->>> ACKed it.
->>
->> Sorry. Not sure why I understood that you gave your ack. Perhaps I miss-read
->> one of the comments of that thread.
-> I haven't heard back from Andrey yet. If I don't get anything from him on
-> Wednesday, would you mind reverting this patchset ? I have not ACKed it
-> because it breaks bisectability, and it conflicts with mfd-next.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Sure. Just ping me and I'll revert it.
+VIDEO_GO7007 uses usb interfaces so it should depend on USB.
+It also selects CYPRESS_FIRMWARE, which depends on USB.
 
->
-> Andrey, any plans to adress my comments from last week ?
->
-> Cheers,
-> Samuel.
->
+Fixes build errors and a kconfig warning:
 
-Regards,
-Mauro
+go7007-loader.c:(.text+0xcc7d0): undefined reference to `usb_get_dev'
+go7007-loader.c:(.init.text+0x49f0): undefined reference to `usb_register_driver'
+go7007-loader.c:(.exit.text+0x17ce): undefined reference to `usb_deregister'
+
+warning: (DVB_USB_AZ6007 && VIDEO_GO7007) selects CYPRESS_FIRMWARE which has unmet direct dependencies (MEDIA_SUPPORT && USB)
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+ drivers/staging/media/go7007/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20130416.orig/drivers/staging/media/go7007/Kconfig
++++ linux-next-20130416/drivers/staging/media/go7007/Kconfig
+@@ -1,7 +1,7 @@
+ config VIDEO_GO7007
+ 	tristate "WIS GO7007 MPEG encoder support"
+ 	depends on VIDEO_DEV && I2C
+-	depends on SND
++	depends on SND && USB
+ 	select VIDEOBUF2_VMALLOC
+ 	select VIDEO_TUNER
+ 	select CYPRESS_FIRMWARE
