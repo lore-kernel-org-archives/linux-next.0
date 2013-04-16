@@ -1,55 +1,77 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: linux-next: build failure after merge of the clk tree
-Date: Mon, 15 Apr 2013 17:42:36 -0700
-Message-ID: <20130416004236.6507.63400@quantum>
-References: <20130415150402.fd83866829f3108f45b7c126@canb.auug.org.au>
- <516BA63B.5090707@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with the pci tree
+Date: Tue, 16 Apr 2013 12:46:11 +1000
+Message-ID: <20130416124611.3dd55ea49fc6724e0994ed8e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__16_Apr_2013_12_46_11_+1000_CpyGK.6Whi9nffV_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-da0-f54.google.com ([209.85.210.54]:56874 "EHLO
-	mail-da0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934873Ab3DPAnE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Apr 2013 20:43:04 -0400
-Received: by mail-da0-f54.google.com with SMTP id p1so2298112dad.27
-        for <linux-next@vger.kernel.org>; Mon, 15 Apr 2013 17:43:03 -0700 (PDT)
-In-Reply-To: <516BA63B.5090707@gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54150 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935183Ab3DPCqW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Apr 2013 22:46:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiang Liu <liuj97@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
 
-Quoting Sebastian Hesselbarth (2013-04-15 00:03:23)
-> On 04/15/2013 07:04 AM, Stephen Rothwell wrote:
-> > After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
-> > failed like this:
-> >
-> > ERROR: "of_clk_add_provider" [drivers/clk/clk-si5351.ko] undefined!
-> > ERROR: "of_clk_src_onecell_get" [drivers/clk/clk-si5351.ko] undefined!
-> 
-> Stephen,
-> 
-> I must have missed the both above when allowing clk-si5351 to be built
-> for !OF. I sent a patch to make clk-si5351 depend on CONFIG_OF until
-> we sort it out.
-> 
-> > ERROR: "__clk_get_flags" [drivers/clk/clk-si5351.ko] undefined!
-> 
-> I sent a patch to export the above function but Mike must have missed
-> it. I resent it on list.
-> 
+--Signature=_Tue__16_Apr_2013_12_46_11_+1000_CpyGK.6Whi9nffV_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry about missing that export.
+Hi Rafael,
 
-I've taken both of your fixes into clk-next.
+Today's linux-next merge of the pm tree got a conflict in
+drivers/acpi/scan.c between commit 5c0b04e3d913 ("PCI/ACPI: Handle PCI
+slot devices when creating/destroying PCI buses") from the pci tree and
+commit 0a34764411aa ("ACPI / scan: Make memory hotplug driver use struct
+acpi_scan_handler") from the pm tree.
 
-Regards,
-Mike
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-> Sebastian
-> 
-> > Caused by commit 9abd5f0555df ("clk: add si5351 i2c common clock
-> > driver").  It probbaly need to depend on CONFIG_OF.
-> >
-> > I have used the clk tree from next-20130412 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/acpi/scan.c
+index f54d198,d7f3c8b..0000000
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@@ -1788,8 -2041,11 +2041,10 @@@ int __init acpi_scan_init(void
+  	acpi_pci_root_init();
+  	acpi_pci_link_init();
+  	acpi_platform_init();
++ 	acpi_lpss_init();
+  	acpi_csrt_init();
+  	acpi_container_init();
+ -	acpi_pci_slot_init();
++ 	acpi_memory_hotplug_init();
+ =20
+  	mutex_lock(&acpi_scan_lock);
+  	/*
+
+--Signature=_Tue__16_Apr_2013_12_46_11_+1000_CpyGK.6Whi9nffV_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRbLtzAAoJEECxmPOUX5FESXsQAI7c/xr9I1II6aYbiHwSOrsy
+t71xEPSQyR964q4yMvKwcjSUOLOBIR9RyseSSPBMqotyQMMHkjMrdSYCOy/bE2tD
+lDi4b4OWcz8V0S3Syk2MuuAP/dhZLpeA2MIb97LMoEXjc3g/g19qK2EfKMLHyQv+
+7BxAA83kgQfMmDgYYj9R5k/fbDLGC5iQTDd6CTCI0wtQPDOrHeOcn+F5+091aMLr
+pMFyI7c8+z6BGLpTgit3BpT5/GFuphfvT1J4ZyADbQt/FLOO70GnDexnGqbmZZml
+FoP1QDv3dBAfQ8S/yHRpTM6cKXrM+NXtKsEqQEpzFx+CQt9mBA066W2Tj0USPbZg
+ZMcLLLl7r3X77PUeSO1AQ0gBeb2FY+vMmS+Iyp/gy8D56GB+ta6x6TsZ8Yt0vhSw
+e/9M1O/QN7Y1LpTO7kHEypj28kJFWiKR+0tgGLSQy8RakNLlHAOFeWYnmhTT/VNW
+jnoyjABpS2XwuPS+PfGYuJ5x/EY9qliWvUUhLEXU8PVJqAmxnzBnNW522oKG4lSS
+AJSrXUzlhs8RW1JZj6Eof+vyNEd2QXuPN/mbkKy8LMFvKBWW/ojhTLgBsoT1wvSN
+s7uooJshNH9oedoNTNcDyEaKJNoIFh08af5Kq5iW1I5cuYtc/Ja6kxFlSwo8JOMq
+nJ4Q7Th16ZMCbpI1lTSz
+=ekBo
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__16_Apr_2013_12_46_11_+1000_CpyGK.6Whi9nffV_--
