@@ -1,76 +1,54 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: [PATCH -next] media:
-Date: Tue, 16 Apr 2013 06:12:43 -0300
-Message-ID: <20130416061243.22d06140@redhat.com>
-References: <20130408174343.cc13eb1972470d20d38ecff1@canb.auug.org.au>
-	<51630297.2040803@infradead.org>
-	<516461FE.4020007@iki.fi>
-	<alpine.DEB.2.02.1304152010180.3952@chino.kir.corp.google.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: manual merge of the mfd tree with the v4l-dvb tree
+Date: Tue, 16 Apr 2013 15:51:37 +0200
+Message-ID: <20130416135137.GA31283@zurbaran>
+References: <20130410134813.b1bff6027f64f14d75d43927@canb.auug.org.au>
+ <20130410064253.GA4874@zurbaran>
+ <20130410064828.6c946ad8@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.02.1304152010180.3952@chino.kir.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Rientjes <rientjes@google.com>
-Cc: Antti Palosaari <crope@iki.fi>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:53254 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757543Ab3DPNvz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Apr 2013 09:51:55 -0400
+Content-Disposition: inline
+In-Reply-To: <20130410064828.6c946ad8@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>, Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Em Mon, 15 Apr 2013 20:10:49 -0700 (PDT)
-David Rientjes <rientjes@google.com> escreveu:
+Hi Mauro,
 
-> On Tue, 9 Apr 2013, Antti Palosaari wrote:
+On Wed, Apr 10, 2013 at 06:48:28AM -0300, Mauro Carvalho Chehab wrote:
+> Em Wed, 10 Apr 2013 08:42:53 +0200
+> Samuel Ortiz <sameo@linux.intel.com> escreveu:
 > 
-> > On 04/08/2013 08:47 PM, Randy Dunlap wrote:
-> > > From: Randy Dunlap <rdunlap@infradead.org>
-> > > 
-> > > Fix randconfig error when USB is not enabled:
-> > > 
-> > > ERROR: "usb_control_msg" [drivers/media/common/cypress_firmware.ko]
-> > > undefined!
-> > > 
-> > > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> > > Cc: Antti Palosaari <crope@iki.fi>
+> > Hi Stephen,
 > > 
-> > Reviewed-by: Antti Palosaari <crope@iki.fi>
-> > 
-> > 
-> > > ---
-> > >   drivers/media/common/Kconfig |    1 +
-> > >   1 file changed, 1 insertion(+)
+> > On Wed, Apr 10, 2013 at 01:48:13PM +1000, Stephen Rothwell wrote:
+> > > Hi Samuel,
 > > > 
-> > > --- linux-next-20130408.orig/drivers/media/common/Kconfig
-> > > +++ linux-next-20130408/drivers/media/common/Kconfig
-> > > @@ -18,6 +18,7 @@ config VIDEO_TVEEPROM
-> > > 
-> > >   config CYPRESS_FIRMWARE
-> > >   	tristate "Cypress firmware helper routines"
-> > > +	depends on USB
-> > > 
-> > >   source "drivers/media/common/b2c2/Kconfig"
-> > >   source "drivers/media/common/saa7146/Kconfig"
-> > > 
+> > > Today's linux-next merge of the mfd tree got a conflict in
+> > > drivers/mfd/Kconfig between commit 3f8ec5df11aa ("[media] mfd: Add header
+> > > files and Kbuild plumbing for SI476x MFD core") from the v4l-dvb tree and
+> > > commit ab85b120e692 ("mfd: Kconfig alphabetical re-ordering") from the
+> > > mfd tree.
+> > I'm surprised the v4l-dvb tree is carrying this patchset because I haven't
+> > ACKed it. 
 > 
-> Mauro, this problem persists in linux-next seven days later, any chance we 
-> can get this fix from Randy merged?
+> Sorry. Not sure why I understood that you gave your ack. Perhaps I miss-read
+> one of the comments of that thread.
+I haven't heard back from Andrey yet. If I don't get anything from him on
+Wednesday, would you mind reverting this patchset ? I have not ACKed it
+because it breaks bisectability, and it conflicts with mfd-next.
 
-AFAIKT, this got merged at -next already:
+Andrey, any plans to adress my comments from last week ?
 
-commit 7c15b715ef301a7f8bb2dc8de335497ffde568a6
-Author:     Randy Dunlap <rdunlap@infradead.org>
-AuthorDate: Mon Apr 8 13:47:03 2013 -0300
-Commit:     Mauro Carvalho Chehab <mchehab@redhat.com>
-CommitDate: Sun Apr 14 20:04:08 2013 -0300
+Cheers,
+Samuel.
 
-    [media] media: Fix randconfig error
-    
-    Fix randconfig error when USB is not enabled:
-    ERROR: "usb_control_msg" [drivers/media/common/cypress_firmware.ko] undefined!
-    
-    Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-    Reviewed-by: Antti Palosaari <crope@iki.fi>
-    Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-    Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-
-Regards,
-Mauro
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
