@@ -1,129 +1,51 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
-Date: Wed, 17 Apr 2013 18:14:55 +0200
-Message-ID: <3689306.YZQlEiUYft@vostro.rjw.lan>
-References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com> <CAKohpo=OOPBYCD_K6RLw2YrJxhMokwrOww4QM2t2T4SnGObyQQ@mail.gmail.com> <CA+icZUVsNG66_v8QA17LQ27z1tjRjDqzB148OSV9WQP0_NkRKA@mail.gmail.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] PCI: pci_bus_add_device() should succeed even if creating
+ sysfs files fails
+Date: Wed, 17 Apr 2013 10:42:12 -0600
+Message-ID: <CAErSpo7nj3DQ-RB0UJdkzfN0L891xiTH8yzzcv7pW4AZ6waJ2A@mail.gmail.com>
+References: <1366196798-15929-1-git-send-email-artem.savkov@gmail.com> <CAErSpo6uAbiJ5GtvOmoABvwSnWj3DRRrXB6K1PzQSnReFqbqxA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUVsNG66_v8QA17LQ27z1tjRjDqzB148OSV9WQP0_NkRKA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: sedat.dilek@gmail.com
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Dirk Brandewie <dirk.brandewie@gmail.com>, Dirk Brandewie <dirk.j.brandewie@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Nathan Zimmer <nzimmer@sgi.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <CAErSpo6uAbiJ5GtvOmoABvwSnWj3DRRrXB6K1PzQSnReFqbqxA@mail.gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Artem Savkov <artem.savkov@gmail.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, Yinghai Lu <yinghai@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wednesday, April 17, 2013 04:04:46 PM Sedat Dilek wrote:
-> On Mon, Apr 15, 2013 at 7:22 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > On 15 April 2013 21:37, Dirk Brandewie <dirk.brandewie@gmail.com> wrote:
-> >> If the intel_pstate driver is being used __cpufreq_governor() should NOT be
-> >> called intel_pstate does not implement the target() callback.
-> >>
-> >> Nathan's commit 5800043b2 changed the fence around the call to
-> >> __cpufreq_governor() in __cpufreq_remove_dev() here is the relevant hunk.
-> >
-> > No it isn't.
-> >
-> >> +       if (has_target)
-> >>                 __cpufreq_governor(data, CPUFREQ_GOV_STOP);
-> >
-> > As it has taken care of this limitation.
-> >
-> > BUT some of my earlier patches haven't. :(
-> > Here is the fix (Sedat please try this and give your tested-by, use the attached
-> > patch as gmail might break what i am copying in mail)..
-> >
-> > Sorry for being late in fixing this issue, i am still down with Tonsil infection
-> > and fever.. Today only i got some power to fix it after seeing Dirk's mail.
-> >
-> > Your tested-by may help me to recover quickly :)
-> >
-> > @Rafael: I will probably be down for one more week and so not doing any
-> > reviews for now... I do check important mails sent directly to me though.
-> >
-> 
-> Hi Viresh,
-> 
-> can you sent a separate patch on this (with Reported/Tested-by#s)?
-> AFAICS this is not in pm.git#linux-next?
+On Wed, Apr 17, 2013 at 9:54 AM, Bjorn Helgaas <bhelgaas@google.com> wrote:
+> On Wed, Apr 17, 2013 at 5:06 AM, Artem Savkov <artem.savkov@gmail.com> wrote:
+>> Introduced in cc8f7f9e4e79a0940af6b4b6fdfbcf18a03aa9f4
+>> ("PCI: Fix __must_check annotation on pci_create_sysfs_dev_files()")
+>>
+>> pci_bus_add_device() should not fail to add device if
+>> pci_create_sysfs_dev_files() call fails, as sysfs files are not critical.
+>>
+>> pci_sysfs_init() is a "late_initcall" and is called after acpi_init, so
+>> pci_bus_add_device() fails to create devices during boot resulting in a
+>> bug during acpi_init. It is safe not to create sysfs_dev_files in
+>> pci_bus_add_device() as they are later created in pci_sysfs_ini().
+>> ...
 
-That's because I'm traveling and not pushing things to the tree.  I'll start
-doing that again on Saturday.  Till then, please apply the Viresh's patch
-on top of linux-next.
+> Sorry for the breakage.  Thanks for the report, analysis, and fix.
+> I'll fix this up
 
-Thanks,
-Rafael
+It's not clear to me what the best fix is, so I just dropped my original patch.
 
+It's clearly wrong to have __must_check on the
+pci_create_sysfs_dev_files() definition, because it doesn't do
+anything there.
 
-> > ------------x----------------------x------------------
-> >
-> > From: Viresh Kumar <viresh.kumar@linaro.org>
-> > Date: Mon, 15 Apr 2013 22:43:57 +0530
-> > Subject: [PATCH] cpufreq: Don't call __cpufreq_governor() for drivers without
-> >  target()
-> >
-> > Some cpufreq drivers implement their own governor and so don't need us to call
-> > generic governors interface via __cpufreq_governor(). Few recent commits haven't
-> > obeyed this law well and we saw some regressions.
-> >
-> > This patch tries to fix this issue.
-> >
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > ---
-> >  drivers/cpufreq/cpufreq.c | 18 +++++++++++++-----
-> >  1 file changed, 13 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > index 3564947..a6f6595 100644
-> > --- a/drivers/cpufreq/cpufreq.c
-> > +++ b/drivers/cpufreq/cpufreq.c
-> > @@ -858,13 +858,18 @@ static int cpufreq_add_policy_cpu(unsigned int
-> > cpu, unsigned int sibling,
-> >                                   struct device *dev)
-> >  {
-> >         struct cpufreq_policy *policy;
-> > -       int ret = 0;
-> > +       int ret = 0, has_target = 0;
-> >         unsigned long flags;
-> >
-> >         policy = cpufreq_cpu_get(sibling);
-> >         WARN_ON(!policy);
-> >
-> > -       __cpufreq_governor(policy, CPUFREQ_GOV_STOP);
-> > +       rcu_read_lock();
-> > +       has_target = !!rcu_dereference(cpufreq_driver)->target;
-> > +       rcu_read_unlock();
-> > +
-> > +       if (has_target)
-> > +               __cpufreq_governor(policy, CPUFREQ_GOV_STOP);
-> >
-> >         lock_policy_rwsem_write(sibling);
-> >
-> > @@ -877,8 +882,10 @@ static int cpufreq_add_policy_cpu(unsigned int
-> > cpu, unsigned int sibling,
-> >
-> >         unlock_policy_rwsem_write(sibling);
-> >
-> > -       __cpufreq_governor(policy, CPUFREQ_GOV_START);
-> > -       __cpufreq_governor(policy, CPUFREQ_GOV_LIMITS);
-> > +       if (has_target) {
-> > +               __cpufreq_governor(policy, CPUFREQ_GOV_START);
-> > +               __cpufreq_governor(policy, CPUFREQ_GOV_LIMITS);
-> > +       }
-> >
-> >         ret = sysfs_create_link(&dev->kobj, &policy->kobj, "cpufreq");
-> >         if (ret) {
-> > @@ -1146,7 +1153,8 @@ static int __cpufreq_remove_dev(struct device
-> > *dev, struct subsys_interface *sif
-> >
-> >         /* If cpu is last user of policy, free policy */
-> >         if (cpus == 1) {
-> > -               __cpufreq_governor(data, CPUFREQ_GOV_POLICY_EXIT);
-> > +               if (has_target)
-> > +                       __cpufreq_governor(data, CPUFREQ_GOV_POLICY_EXIT);
-> >
-> >                 lock_policy_rwsem_read(cpu);
-> >                 kobj = &data->kobj;
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+We could simply drop the __must_check altogether, as you suggest, but
+I'd rather structure things to avoid the failure in the first place
+rather than ignoring an error.
+
+It would be ideal if we could get rid of the pci_sysfs_init()
+late_initcall and just make the pci_create_sysfs_dev_files() from
+pci_bus_add_device() work all the time, even at boot-time.  I didn't
+look hard enough to figure out why this needs to be a late_initcall.
+
+In any case, we can figure this out later, after we merge the current
+stuff for v3.10.
+
+Bjorn
