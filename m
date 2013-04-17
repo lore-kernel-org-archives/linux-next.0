@@ -1,62 +1,86 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v2 0/4] remove GENERIC_GPIO
-Date: Tue, 16 Apr 2013 15:11:41 -0700
-Message-ID: <CAAVeFuJ1iVZ24iU7yKSdjn_KSHThpYQFG0ccxS4Z0Qqg04v-tg@mail.gmail.com>
-References: <1365445950-5736-1-git-send-email-gnurou@gmail.com>
- <20130416093259.BEB0E3E14C0@localhost> <CACxGe6ukQ7eys9-m_hgpscy9tTncPd1CL0O+n0sBZA-o0AbwdA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the gen-gpio tree with the usb tree
+Date: Wed, 17 Apr 2013 15:47:15 +1000
+Message-ID: <20130417154715.cd3036b3cc791800938119c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__17_Apr_2013_15_47_15_+1000_sGrzGt7DDRPQma=_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ia0-f180.google.com ([209.85.210.180]:56932 "EHLO
-	mail-ia0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965255Ab3DPWMC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Apr 2013 18:12:02 -0400
-In-Reply-To: <CACxGe6ukQ7eys9-m_hgpscy9tTncPd1CL0O+n0sBZA-o0AbwdA@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40768 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751074Ab3DQFr0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Apr 2013 01:47:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>, Stephen Rothwell <sfr@canb.auug.org.au>, Chen Baozi <baozich@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
 
-Hi Grant, Stephen,
+--Signature=_Wed__17_Apr_2013_15_47_15_+1000_sGrzGt7DDRPQma=_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 16, 2013 at 2:45 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
->>> Grant, if this is ok with you, how shall we have this integrated into your
->>> branch? Half of this has been tested in my -next branch, and the present patches
->>> make the next half, should I resend you the whole series based on -next and
->>> withdraw my branch? This is a fast moving target, so we should try and shoot
->>> that duck as soon as we can! :)
->>
->> Most of your patches are already in linux-next in a separate branch, so
->> the first thing to do is get these remaining patches into that same
->> branch. As we discussed on IRC, you need to move yor current
->> "remove_generic_gpio" branch into your for_next branch so that it is
->> picked up by Stephen. There isn't any functional change there, but it
->> means that your series will be based on a defined point of Linus' tree
->> (v3.9-rc6) instead of an arbitrary commit point between -rc3 and -rc4.
->
-> On second thought, no don't do this. Just leave it as is. It is more
-> important to retain the test coverage you've already had in linux-next
-> on these commits. Just apply the patches I've acked onto your existing
-> for_next branch.
+Hi Alexandre,
 
-Ok, so I have added the 3 acked patches to the top of my for_next
-branch and they will be pulled by Stephen for the next -next
-iteration. I have also tried to merge the branch by myself into
-today's next, and have been relieved to see that conflicts were
-actually minimal (thanks to not including the GPIOLIB -> GPIO renaming
-patch - definitely a good idea). Here is some information about how
-the branch should look after merging:
+Today's linux-next merge of the gen-gpio tree got a conflict in
+drivers/usb/otg/Kconfig between commit a0e631235a04 ("usb: phy: move all
+PHY drivers to drivers/usb/phy/") from the usb tree and commit
+76ec9d18b897 ("Convert selectors of GENERIC_GPIO to GPIOLIB") from the
+gen-gpio tree.
 
-"git grep CONFIG_GENERIC_GPIO" should return 0 hits whereas "git grep
-'\bGENERIC_GPIO\b'" should return only one hit, in
-Documentation/zh_CN/gpio.txt (Chen, I'm not sure if you intended to
-leave this one in your documentation update patch?). Remaining
-selectors or dependencies on GENERIC_GPIO should be turned into
-GPIOLIB. Also the arc/ architecture defines GENERIC_GPIO once more,
-this definition can be deleted.
+The former patch removed the file, so I did that and then applied the
+following patch and can carry the fix as necessary (no action is
+required).
 
-There were only 3 or 4 conflicts to address on today's -next, and then
-the kernel compiles just fine on the architectures I tried.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 17 Apr 2013 15:44:53 +1000
+Subject: [PATCH] gen-gpio: GPIOLIB merge fix up
 
-Thanks!
-Alex.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/usb/phy/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
+index 3a7fec9..21153d1 100644
+--- a/drivers/usb/phy/Kconfig
++++ b/drivers/usb/phy/Kconfig
+@@ -128,7 +128,7 @@ config TWL6030_USB
+=20
+ config USB_GPIO_VBUS
+ 	tristate "GPIO based peripheral-only VBUS sensing 'transceiver'"
+-	depends on GENERIC_GPIO
++	depends on GPIOLIB
+ 	help
+ 	  Provides simple GPIO VBUS sensing for controllers with an
+ 	  internal transceiver via the usb_phy interface, and
+--=20
+1.8.1
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__17_Apr_2013_15_47_15_+1000_sGrzGt7DDRPQma=_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRbjdjAAoJEECxmPOUX5FEtwgQAKqDlM9TFr+zX8cYk/ECpF5u
+5bRmyJEGeuBO2VFjEd8GyNH3KzV3rTFiJo1kBxY65qVAcJqKctk43mKOgooPbWo0
+nIQec2sp4w+Evlr5krsGKhkKhJZLWso4HosRFawGdU/KGrlZ/1vRGZ+3rtMXx/n5
+t6PUeIMA3nVE5qQQd+MzdiksjneuXnq8fg+5+GD5iBh0unQV41KJJ8qAzFVASIH6
+SNl6VdcbqF7qA08nL3yohlaRLnm8W4ewyMoPjNEjsh5z+yBmXgo8neb28gljSsqb
+J5oh0oysrAwUeSixy/kpdHOihx3jyO4ZO4h40Ml+xgJM8t2reCSvav37IpvFfB4d
+QPxWwzzytKfTsg2VbXElcTWySRAiEou7YyWHL2RDrQdsE+3wcZlPKur9/TUsBP5t
+ei5HoQSALrNCaM6v8iDRWqApBGILb8AR5rzCQfmmaX5xiGK9buBMAif1q57FfSo6
+FR8me5ovXVb8NvVMYZXUu/Mckg7ZOugQDHFtrYylyr3pPYuCY5owTnVkdjdCtbxM
+qaUGrK008ELtASFo86TB1bNuhRsX5d+tUz43s1nKneE4KqvSAV82dSujr5zTzN47
+xOtlxgLyxJPYJcDTRa8vTamjDde0mN8Tl3UtBd2nu1Ytglbv7tGHCFpyLGiSg3Tx
+3MFr/X/i/AvWKrps2jl1
+=lBdX
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__17_Apr_2013_15_47_15_+1000_sGrzGt7DDRPQma=_--
