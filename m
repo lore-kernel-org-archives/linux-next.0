@@ -1,44 +1,38 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: Tree for Apr 17 (infiniband/rdma)
-Date: Wed, 17 Apr 2013 11:44:54 -0700
-Message-ID: <1366224294.9379.32.camel@haakon3.risingtidesystems.com>
-References: <20130417170450.5dd6e5f450de4d5bf197d997@canb.auug.org.au>
-	 <516EE4BD.3000200@infradead.org>
-	 <CAJZOPZJHJ0qKJo=HyEiJq1rRPXg+8bNh+8U_2WhX6FKbE2Km7A@mail.gmail.com>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: linux-next: Tree for Apr 17 (kvm)
+Date: Wed, 17 Apr 2013 15:55:28 -0700 (PDT)
+Message-ID: <alpine.DEB.2.02.1304171555030.10112@chino.kir.corp.google.com>
+References: <20130417170450.5dd6e5f450de4d5bf197d997@canb.auug.org.au> <516EE5AB.4080201@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <target-devel-owner@vger.kernel.org>
-In-Reply-To: <CAJZOPZJHJ0qKJo=HyEiJq1rRPXg+8bNh+8U_2WhX6FKbE2Km7A@mail.gmail.com>
-Sender: target-devel-owner@vger.kernel.org
-To: Or Gerlitz <or.gerlitz@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, target-devel <target-devel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:34714 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966900Ab3DQWzb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Apr 2013 18:55:31 -0400
+Received: by mail-pa0-f42.google.com with SMTP id kq13so1145777pab.15
+        for <linux-next@vger.kernel.org>; Wed, 17 Apr 2013 15:55:31 -0700 (PDT)
+In-Reply-To: <516EE5AB.4080201@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, KVM <kvm@vger.kernel.org>
 
-On Wed, 2013-04-17 at 21:15 +0300, Or Gerlitz wrote:
-> On Wed, Apr 17, 2013 at 9:06 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> > On 04/17/13 00:04, Stephen Rothwell wrote:
-> >> Changes since 20130416:
-> 
-> > on x86_64:
-> > drivers/built-in.o: In function `isert_free_np':
-> > ib_isert.c:(.text+0x6e8a77): undefined reference to `rdma_destroy_id'
-> [...]
-> 
-> Nic,
-> 
-> Yep, you need to add
-> 
-> depends on INET &&  INFINIBAND_ADDR_TRANS
+On Wed, 17 Apr 2013, Randy Dunlap wrote:
+
+> On 04/17/13 00:04, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20130416:
+> > 
 > 
 > 
-> to the isert Kconfig entry
+> on i386, SMP is disabled, X86_UP_APIC is not enabled, but
+> CONFIG_KVM_APIC_ARCHITECTURE=y:
 > 
-> 
-> This will make sure to get the rdma_cm to be configured and builts
-> whenever isert is
+> arch/x86/kvm/vmx.c: In function 'vmx_deliver_posted_interrupt':
+> arch/x86/kvm/vmx.c:3950:3: error: 'apic' undeclared (first use in this function)
 > 
 
-Thanks Roland & Or, fixing this up now.
-
---nab
+Confirmed this happens on x86_64 as well, it seems that CONFIG_SMP=n is 
+the key.
