@@ -1,39 +1,126 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: Re: Removal of GENERIC_GPIO breaks -next
-Date: Wed, 17 Apr 2013 18:46:44 +0530
-Message-ID: <516EA0BC.2040109@synopsys.com>
-References: <CAAVeFu+fM=fJ2zp-gX4T07COMB31yvs74dXUqrw1LH09M7MXLg@mail.gmail.com> <516E9083.6050808@synopsys.com> <CAAVeFuL6qAz1OvnxtMj4jCjR3YR8C218+8oAgGRkCaWQJ_-KEg@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
+Date: Wed, 17 Apr 2013 16:04:46 +0200
+Message-ID: <CA+icZUVsNG66_v8QA17LQ27z1tjRjDqzB148OSV9WQP0_NkRKA@mail.gmail.com>
+References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
+	<CA+icZUUsAqJ3kyCZivYeTpY7n=EDMv1UcC2VNwQro4h7NHDWag@mail.gmail.com>
+	<CA+icZUW+TB3q58bL+d=A355S4vtRhwMq8AV+tqjv6MgDtHRCaA@mail.gmail.com>
+	<1923819.6Nb81T2TR8@vostro.rjw.lan>
+	<CA+icZUXUGOjGUAFxgQk0780pcBB-YjiujDLXF+gJFegi+pd+dA@mail.gmail.com>
+	<516C25AE.4050503@intel.com>
+	<CAKohpo=OOPBYCD_K6RLw2YrJxhMokwrOww4QM2t2T4SnGObyQQ@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vaxjo.synopsys.com ([198.182.60.75]:60328 "EHLO
-	vaxjo.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965643Ab3DQNQ7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Apr 2013 09:16:59 -0400
-In-Reply-To: <CAAVeFuL6qAz1OvnxtMj4jCjR3YR8C218+8oAgGRkCaWQJ_-KEg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Shaveta Leekha <shaveta@freescale.com>, Christian Ruppert <christian.ruppert@abilis.com>, linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CAKohpo=OOPBYCD_K6RLw2YrJxhMokwrOww4QM2t2T4SnGObyQQ@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Dirk Brandewie <dirk.brandewie@gmail.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Dirk Brandewie <dirk.j.brandewie@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Nathan Zimmer <nzimmer@sgi.com>
+List-Id: linux-next.vger.kernel.org
 
-On 04/17/2013 06:34 PM, Alexandre Courbot wrote:
+On Mon, Apr 15, 2013 at 7:22 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 15 April 2013 21:37, Dirk Brandewie <dirk.brandewie@gmail.com> wrote:
+>> If the intel_pstate driver is being used __cpufreq_governor() should NOT be
+>> called intel_pstate does not implement the target() callback.
+>>
+>> Nathan's commit 5800043b2 changed the fence around the call to
+>> __cpufreq_governor() in __cpufreq_remove_dev() here is the relevant hunk.
 >
-> Yes, I am not too worried about arc since it doesn't break anything.
-> But as you mention it would be better if the whole job could be done
-> by the same patch. The problem here is the merge order, for me to
-> address this I need to work after your patches. 
+> No it isn't.
+>
+>> +       if (has_target)
+>>                 __cpufreq_governor(data, CPUFREQ_GOV_STOP);
+>
+> As it has taken care of this limitation.
+>
+> BUT some of my earlier patches haven't. :(
+> Here is the fix (Sedat please try this and give your tested-by, use the attached
+> patch as gmail might break what i am copying in mail)..
+>
+> Sorry for being late in fixing this issue, i am still down with Tonsil infection
+> and fever.. Today only i got some power to fix it after seeing Dirk's mail.
+>
+> Your tested-by may help me to recover quickly :)
+>
+> @Rafael: I will probably be down for one more week and so not doing any
+> reviews for now... I do check important mails sent directly to me though.
+>
 
-OK I understand. Since your code touches a lot more stuff, I don't know if the
-ordering should be governed by this small harmless patch alone :-)
+Hi Viresh,
 
-> So maybe in the end my
-> series should be merged at the end of the merge window, and after all
-> architecture code is merged, to make sure I can address all instances.
+can you sent a separate patch on this (with Reported/Tested-by#s)?
+AFAICS this is not in pm.git#linux-next?
 
-You are touching a lot of arches anyways so you will have to be after them
-anyways. Is that right ?
+Regards,
+- Sedat -
 
-Anyhow lets park this patch for now - we can push it in the 3.10-rc cycle.
-
--Vineet
+> ------------x----------------------x------------------
+>
+> From: Viresh Kumar <viresh.kumar@linaro.org>
+> Date: Mon, 15 Apr 2013 22:43:57 +0530
+> Subject: [PATCH] cpufreq: Don't call __cpufreq_governor() for drivers without
+>  target()
+>
+> Some cpufreq drivers implement their own governor and so don't need us to call
+> generic governors interface via __cpufreq_governor(). Few recent commits haven't
+> obeyed this law well and we saw some regressions.
+>
+> This patch tries to fix this issue.
+>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  drivers/cpufreq/cpufreq.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index 3564947..a6f6595 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -858,13 +858,18 @@ static int cpufreq_add_policy_cpu(unsigned int
+> cpu, unsigned int sibling,
+>                                   struct device *dev)
+>  {
+>         struct cpufreq_policy *policy;
+> -       int ret = 0;
+> +       int ret = 0, has_target = 0;
+>         unsigned long flags;
+>
+>         policy = cpufreq_cpu_get(sibling);
+>         WARN_ON(!policy);
+>
+> -       __cpufreq_governor(policy, CPUFREQ_GOV_STOP);
+> +       rcu_read_lock();
+> +       has_target = !!rcu_dereference(cpufreq_driver)->target;
+> +       rcu_read_unlock();
+> +
+> +       if (has_target)
+> +               __cpufreq_governor(policy, CPUFREQ_GOV_STOP);
+>
+>         lock_policy_rwsem_write(sibling);
+>
+> @@ -877,8 +882,10 @@ static int cpufreq_add_policy_cpu(unsigned int
+> cpu, unsigned int sibling,
+>
+>         unlock_policy_rwsem_write(sibling);
+>
+> -       __cpufreq_governor(policy, CPUFREQ_GOV_START);
+> -       __cpufreq_governor(policy, CPUFREQ_GOV_LIMITS);
+> +       if (has_target) {
+> +               __cpufreq_governor(policy, CPUFREQ_GOV_START);
+> +               __cpufreq_governor(policy, CPUFREQ_GOV_LIMITS);
+> +       }
+>
+>         ret = sysfs_create_link(&dev->kobj, &policy->kobj, "cpufreq");
+>         if (ret) {
+> @@ -1146,7 +1153,8 @@ static int __cpufreq_remove_dev(struct device
+> *dev, struct subsys_interface *sif
+>
+>         /* If cpu is last user of policy, free policy */
+>         if (cpus == 1) {
+> -               __cpufreq_governor(data, CPUFREQ_GOV_POLICY_EXIT);
+> +               if (has_target)
+> +                       __cpufreq_governor(data, CPUFREQ_GOV_POLICY_EXIT);
+>
+>                 lock_policy_rwsem_read(cpu);
+>                 kobj = &data->kobj;
