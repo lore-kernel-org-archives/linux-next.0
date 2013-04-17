@@ -1,126 +1,119 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
-Date: Wed, 17 Apr 2013 16:04:46 +0200
-Message-ID: <CA+icZUVsNG66_v8QA17LQ27z1tjRjDqzB148OSV9WQP0_NkRKA@mail.gmail.com>
-References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com>
-	<CA+icZUUsAqJ3kyCZivYeTpY7n=EDMv1UcC2VNwQro4h7NHDWag@mail.gmail.com>
-	<CA+icZUW+TB3q58bL+d=A355S4vtRhwMq8AV+tqjv6MgDtHRCaA@mail.gmail.com>
-	<1923819.6Nb81T2TR8@vostro.rjw.lan>
-	<CA+icZUXUGOjGUAFxgQk0780pcBB-YjiujDLXF+gJFegi+pd+dA@mail.gmail.com>
-	<516C25AE.4050503@intel.com>
-	<CAKohpo=OOPBYCD_K6RLw2YrJxhMokwrOww4QM2t2T4SnGObyQQ@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] PCI: pci_bus_add_device() should succeed even if creating
+ sysfs files fails
+Date: Wed, 17 Apr 2013 09:54:49 -0600
+Message-ID: <CAErSpo6uAbiJ5GtvOmoABvwSnWj3DRRrXB6K1PzQSnReFqbqxA@mail.gmail.com>
+References: <1366196798-15929-1-git-send-email-artem.savkov@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAKohpo=OOPBYCD_K6RLw2YrJxhMokwrOww4QM2t2T4SnGObyQQ@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Dirk Brandewie <dirk.brandewie@gmail.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Dirk Brandewie <dirk.j.brandewie@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Nathan Zimmer <nzimmer@sgi.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:40720 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966708Ab3DQPzK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Apr 2013 11:55:10 -0400
+Received: by mail-ob0-f182.google.com with SMTP id dn14so1563239obc.27
+        for <linux-next@vger.kernel.org>; Wed, 17 Apr 2013 08:55:09 -0700 (PDT)
+In-Reply-To: <1366196798-15929-1-git-send-email-artem.savkov@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Artem Savkov <artem.savkov@gmail.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, Yinghai Lu <yinghai@kernel.org>
 
-On Mon, Apr 15, 2013 at 7:22 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 15 April 2013 21:37, Dirk Brandewie <dirk.brandewie@gmail.com> wrote:
->> If the intel_pstate driver is being used __cpufreq_governor() should NOT be
->> called intel_pstate does not implement the target() callback.
->>
->> Nathan's commit 5800043b2 changed the fence around the call to
->> __cpufreq_governor() in __cpufreq_remove_dev() here is the relevant hunk.
+On Wed, Apr 17, 2013 at 5:06 AM, Artem Savkov <artem.savkov@gmail.com> wrote:
+> Introduced in cc8f7f9e4e79a0940af6b4b6fdfbcf18a03aa9f4
+> ("PCI: Fix __must_check annotation on pci_create_sysfs_dev_files()")
 >
-> No it isn't.
+> pci_bus_add_device() should not fail to add device if
+> pci_create_sysfs_dev_files() call fails, as sysfs files are not critical.
 >
->> +       if (has_target)
->>                 __cpufreq_governor(data, CPUFREQ_GOV_STOP);
+> pci_sysfs_init() is a "late_initcall" and is called after acpi_init, so
+> pci_bus_add_device() fails to create devices during boot resulting in a
+> bug during acpi_init. It is safe not to create sysfs_dev_files in
+> pci_bus_add_device() as they are later created in pci_sysfs_ini().
 >
-> As it has taken care of this limitation.
+> [    0.316603] ------------[ cut here ]------------
+> [    0.317000] kernel BUG at drivers/pci/bus.c:210!
+> [    0.317000] invalid opcode: 0000 [#1] SMP
+> [    0.317000] Modules linked in:
+> [    0.317000] Pid: 1, comm: swapper/0 Not tainted 3.9.0-rc2+ #357 Bochs Bochs
+> [    0.317000] EIP: 0060:[<c12d2d7e>] EFLAGS: 00010246 CPU: 0
+> [    0.317000] EIP is at pci_bus_add_devices+0x7e/0x80
+> [    0.317000] EAX: fffffff3 EBX: df207000 ECX: 00000000 EDX: 00000001
+> [    0.317000] ESI: df228000 EDI: df228014 EBP: df0a1dec ESP: df0a1de0
+> [    0.317000]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
+> [    0.317000] CR0: 8005003b CR2: ffe16000 CR3: 01c32000 CR4: 00000690
+> [    0.317000] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+> [    0.317000] DR6: ffff0ff0 DR7: 00000400
+> [    0.317000] Process swapper/0 (pid: 1, ti=df0a0000 task=df098000 task.ti=df0a0000)
+> [    0.317000] Stack:
+> [    0.317000]  df1702c0 c19f2294 00000000 df0a1e2c c13102d9 c18fec3e c18febce 00000008
+> [    0.317000]  00000000 df1702d4 df056044 00000008 00000000 00000000 c130d023 00000006
+> [    0.317000]  c19f22fc c173ec9c df17c590 df0a1e5c c130d0f4 df056000 df05603c df02f9c0
+> [    0.317000] Call Trace:
+> [    0.317000]  [<c13102d9>] acpi_pci_root_add+0x3af/0x3ea
+> [    0.317000]  [<c130d023>] ? acpi_bus_type_and_status+0x3d/0x88
+> [    0.317000]  [<c130d0f4>] acpi_bus_device_attach+0x86/0xe4
+> [    0.317000]  [<c1334d05>] acpi_ns_walk_namespace+0xf5/0x240
+> [    0.317000]  [<c1335567>] acpi_walk_namespace+0xdd/0x11c
+> [    0.317000]  [<c130d06e>] ? acpi_bus_type_and_status+0x88/0x88
+> [    0.317000]  [<c130e021>] acpi_bus_scan+0x95/0xa8
+> [    0.317000]  [<c130d06e>] ? acpi_bus_type_and_status+0x88/0x88
+> [    0.317000]  [<c1a5dae6>] acpi_scan_init+0x59/0x152
+> [    0.317000]  [<c1a5d90d>] acpi_init+0x243/0x28b
+> [    0.317000]  [<c1a5d6ca>] ? acpi_sleep_proc_init+0x2e/0x2e
+> [    0.317000]  [<c10011f2>] do_one_initcall+0x102/0x150
+> [    0.317000]  [<c1a36b40>] kernel_init_freeable+0x135/0x1c7
+> [    0.317000]  [<c1a364c8>] ? do_early_param+0x78/0x78
+> [    0.317000]  [<c16daae0>] kernel_init+0x10/0x140
+> [    0.317000]  [<c16fa4b7>] ret_from_kernel_thread+0x1b/0x28
+> [    0.317000]  [<c16daad0>] ? rest_init+0xd0/0xd0
+> [    0.317000] Code: 0c 85 f6 74 1b 89 f0 e8 a1 ff ff ff 0f b6 86 18 03 00 00 a8 01 75 09 83 c8 01 88 86 18 03 00 00 8b 1b 39 fb 75 cf 5b 5e 5f 5d c3 <0f> 0b 55 89 e5 53 3e 8d 74 26 00 83 fa 03 7e 32 8b 48 38 8d 58
+> [    0.317000] EIP: [<c12d2d7e>] pci_bus_add_devices+0x7e/0x80 SS:ESP 0068:df0a1de0
+> [    0.318013] ---[ end trace 9e4164edb7144ba6 ]---
+> [    0.319015] swapper/0 (1) used greatest stack depth: 5720 bytes left
+> [    0.320011] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+> [    0.320011]
 >
-> BUT some of my earlier patches haven't. :(
-> Here is the fix (Sedat please try this and give your tested-by, use the attached
-> patch as gmail might break what i am copying in mail)..
->
-> Sorry for being late in fixing this issue, i am still down with Tonsil infection
-> and fever.. Today only i got some power to fix it after seeing Dirk's mail.
->
-> Your tested-by may help me to recover quickly :)
->
-> @Rafael: I will probably be down for one more week and so not doing any
-> reviews for now... I do check important mails sent directly to me though.
->
+> Signed-off-by: Artem Savkov <artem.savkov@gmail.com>
 
-Hi Viresh,
+Sorry for the breakage.  Thanks for the report, analysis, and fix.
+I'll fix this up
 
-can you sent a separate patch on this (with Reported/Tested-by#s)?
-AFAICS this is not in pm.git#linux-next?
+Bjorn
 
-Regards,
-- Sedat -
-
-> ------------x----------------------x------------------
->
-> From: Viresh Kumar <viresh.kumar@linaro.org>
-> Date: Mon, 15 Apr 2013 22:43:57 +0530
-> Subject: [PATCH] cpufreq: Don't call __cpufreq_governor() for drivers without
->  target()
->
-> Some cpufreq drivers implement their own governor and so don't need us to call
-> generic governors interface via __cpufreq_governor(). Few recent commits haven't
-> obeyed this law well and we saw some regressions.
->
-> This patch tries to fix this issue.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  drivers/cpufreq/cpufreq.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
+>  drivers/pci/bus.c |    4 +---
+>  drivers/pci/pci.h |    2 +-
+>  2 files changed, 2 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 3564947..a6f6595 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -858,13 +858,18 @@ static int cpufreq_add_policy_cpu(unsigned int
-> cpu, unsigned int sibling,
->                                   struct device *dev)
->  {
->         struct cpufreq_policy *policy;
-> -       int ret = 0;
-> +       int ret = 0, has_target = 0;
->         unsigned long flags;
+> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> index 445a99d..748f8f3 100644
+> --- a/drivers/pci/bus.c
+> +++ b/drivers/pci/bus.c
+> @@ -174,9 +174,7 @@ int pci_bus_add_device(struct pci_dev *dev)
+>          * Can not put in pci_device_add yet because resources
+>          * are not assigned yet for some devices.
+>          */
+> -       retval = pci_create_sysfs_dev_files(dev);
+> -       if (retval)
+> -               return retval;
+> +       pci_create_sysfs_dev_files(dev);
 >
->         policy = cpufreq_cpu_get(sibling);
->         WARN_ON(!policy);
+>         dev->match_driver = true;
+>         retval = device_attach(&dev->dev);
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 0f1b306..68678ed 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -8,7 +8,7 @@
 >
-> -       __cpufreq_governor(policy, CPUFREQ_GOV_STOP);
-> +       rcu_read_lock();
-> +       has_target = !!rcu_dereference(cpufreq_driver)->target;
-> +       rcu_read_unlock();
-> +
-> +       if (has_target)
-> +               __cpufreq_governor(policy, CPUFREQ_GOV_STOP);
+>  /* Functions internal to the PCI core code */
 >
->         lock_policy_rwsem_write(sibling);
+> -int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev);
+> +int pci_create_sysfs_dev_files(struct pci_dev *pdev);
+>  void pci_remove_sysfs_dev_files(struct pci_dev *pdev);
+>  #if !defined(CONFIG_DMI) && !defined(CONFIG_ACPI)
+>  static inline void pci_create_firmware_label_files(struct pci_dev *pdev)
+> --
+> 1.7.0.4
 >
-> @@ -877,8 +882,10 @@ static int cpufreq_add_policy_cpu(unsigned int
-> cpu, unsigned int sibling,
->
->         unlock_policy_rwsem_write(sibling);
->
-> -       __cpufreq_governor(policy, CPUFREQ_GOV_START);
-> -       __cpufreq_governor(policy, CPUFREQ_GOV_LIMITS);
-> +       if (has_target) {
-> +               __cpufreq_governor(policy, CPUFREQ_GOV_START);
-> +               __cpufreq_governor(policy, CPUFREQ_GOV_LIMITS);
-> +       }
->
->         ret = sysfs_create_link(&dev->kobj, &policy->kobj, "cpufreq");
->         if (ret) {
-> @@ -1146,7 +1153,8 @@ static int __cpufreq_remove_dev(struct device
-> *dev, struct subsys_interface *sif
->
->         /* If cpu is last user of policy, free policy */
->         if (cpus == 1) {
-> -               __cpufreq_governor(data, CPUFREQ_GOV_POLICY_EXIT);
-> +               if (has_target)
-> +                       __cpufreq_governor(data, CPUFREQ_GOV_POLICY_EXIT);
->
->                 lock_policy_rwsem_read(cpu);
->                 kobj = &data->kobj;
