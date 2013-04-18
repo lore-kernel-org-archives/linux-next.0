@@ -1,35 +1,62 @@
-From: Dave Airlie <airlied@gmail.com>
-Subject: Re: mmotm 2013-04-17-16-02 uploaded (gpu/drm/qxl)
-Date: Wed, 17 Apr 2013 18:56:53 -0700
-Message-ID: <CAPM=9tw2w1nYoj7n2h_CW-EvtTJpRphG9NEyuBPi7-dbxFXo_w@mail.gmail.com>
-References: <20130417230333.4A9E15A4206@corp2gmr1-2.hot.corp.google.com>
-	<516F4FE7.4070309@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the infiniband
+ tree
+Date: Thu, 18 Apr 2013 13:18:43 +1000
+Message-ID: <20130418131843.bfeb6b1ad5fba1b0f706076e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__18_Apr_2013_13_18_43_+1000_KNU/WCBiq_VN2ZdP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:38753 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935698Ab3DRB4z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Apr 2013 21:56:55 -0400
-In-Reply-To: <516F4FE7.4070309@infradead.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36763 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965364Ab3DRDS5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Apr 2013 23:18:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thadeu Lima de Souza Cascardo <cascardo@linux.vnet.ibm.com>, Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org, Vipul Pandya <vipul@chelsio.com>
 
-On Wed, Apr 17, 2013 at 6:44 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 04/17/13 16:03, akpm@linux-foundation.org wrote:
->> The mm-of-the-moment snapshot 2013-04-17-16-02 has been uploaded to
->>
->>    http://www.ozlabs.org/~akpm/mmotm/
->>
->
->
-> I saw this in linux-next a few days ago and forgot to post it.
->
-> When CONFIG_DEBUG_FS is not enabled:
+--Signature=_Thu__18_Apr_2013_13_18_43_+1000_KNU/WCBiq_VN2ZdP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-just pushed a fix to my drm-next branch.
+Hi all,
 
-Thanks.
-Dave.
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/infiniband/hw/cxgb4/qp.c between commit 5b0c275926b8
+("RDMA/cxgb4: Fix SQ allocation when on-chip SQ is disabled") from the
+infiniband tree and commit 9919d5bd01b9 ("RDMA/cxgb4: Fix onchip queue
+support for T5") from the net-next tree.
+
+I think that they are 2 different fixes for the same problem, so I just
+used the net-next version and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__18_Apr_2013_13_18_43_+1000_KNU/WCBiq_VN2ZdP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRb2YTAAoJEECxmPOUX5FEFpcP/jxk88uFsqeNw4wl1AXsa0ql
+B/bW1x/ehp6kumkS1/1YYl8SoACtTr8FnBKJVv3hWKGQ7ZD8iQzqV1kcTnw32M5y
+7gfgalnf+P3Pj156sI9onURhUUglq0u8+aN6skysnB9W4ucvCFq32bpYGn2jA89w
+tVSZZTJS9O7XAMBuKpizEar+nk+gA++T3FKpynFoaZeizyoT6YKaMAuiXxMoGP3O
+0odvLdUFmIalkcn15wkIIinrtgK0nkXy1QBeipxVtBusuuJhxp9fiI+cuXw6whCm
+VWyfN72bh8PT2nri+xjNJI4TO+K4OZKjDN2MVXsRwVApNz/j0ML6TOSTWWemLscR
+mBh2i4XXkhgY2PKHYioeubuCGbI6MAFXky9QQulOIV4GdZqeK16FwxOBYJsxxqc5
+8+23I0V2OHloFe1ss3+gkBz1Niyb83EDRk1+wLGyydvotwpMj0s6P91rfKXO5s8p
+q9AJM7XuNWn8SCsBjr280yfQeyoKoGsG9Be6y6grEZraasBCrVi4tqoKdi/U6SCM
+Rxg5y1sKI2RgIpXlHNKsGzmXpA+tyte0HotPnVMvK/j54PXT7cRpTAo9Xy1o5X8r
+GVMBSq9aw3Mgb0oBDoPufLPwsOmb8dwa2qpGgjpDpYoEx/OWRfZkcQX0ykwt+Ta3
+fgO9YHHVfE9V8LwZP/IN
+=qH0d
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__18_Apr_2013_13_18_43_+1000_KNU/WCBiq_VN2ZdP--
