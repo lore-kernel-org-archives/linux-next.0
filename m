@@ -1,47 +1,74 @@
-From: Joe Perches <joe@perches.com>
-Subject: [PATCH usb-next] usb: storage: Fix link error
-Date: Thu, 18 Apr 2013 14:17:14 -0700
-Message-ID: <1366319834.2119.27.camel@joe-AO722>
-References: <20130418160541.57123749577f29665fba7839@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Apr 18 [ call-trace: drm | x86 | smp | rcu
+ related? ]
+Date: Thu, 18 Apr 2013 23:59:21 +0200
+Message-ID: <CA+icZUWQEiGecR8jgw4P-2YCKyqSDMMP0Ufwn8aBU_-AOf0a-Q@mail.gmail.com>
+References: <CA+icZUVWC+Rgd9wh4Z4CPZkEa9Pm2=2udnY5=UD1nnH0Wot1pQ@mail.gmail.com>
+	<CAKMK7uFEaiT_1siQBcp_-S0RwLvy3XSjqLn1ksq70VhNTZSfLw@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from perches-mx.perches.com ([206.117.179.246]:34839 "EHLO
-	labridge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751781Ab3DRVRP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 18 Apr 2013 17:17:15 -0400
-In-Reply-To: <20130418160541.57123749577f29665fba7839@canb.auug.org.au>
+Received: from mail-we0-f177.google.com ([74.125.82.177]:48169 "EHLO
+	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752498Ab3DRV7X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Apr 2013 17:59:23 -0400
+In-Reply-To: <CAKMK7uFEaiT_1siQBcp_-S0RwLvy3XSjqLn1ksq70VhNTZSfLw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Dharm <mdharm-usb@one-eyed-alien.net>, linux-usb <linux-usb@vger.kernel.org>, usb-storage <usb-storage@lists.one-eyed-alien.net>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, x86@kernel.org, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Paul McKenney <paulmck@linux.vnet.ibm.com>, Paul McKenney <paul.mckenney@linaro.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@redhat.com>
 
-Fix allmodconfig link error introduced by commit 75b9130e8a
-("usb: storage: Add usb_stor_dbg, reduce object size")
+On Thu, Apr 18, 2013 at 9:48 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> On Thu, Apr 18, 2013 at 3:05 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> On Thu, Apr 18, 2013 at 10:28 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20130417:
+>>>
+>>> New Trees:      rpmsg (actually added yesterday)
+>>>                 ppc-temp (replacing powerpc for this week)
+>>>
+>>> The ceph tree gained a conflict against Linus' tree.
+>>>
+>>> The net-next tree gained a conflict against the infiniband tree.
+>>>
+>>> The usb tree gained a build failure so I used the version from
+>>> next-20130417.
+>>>
+>>> I added two merge fix patches after the gen-gpio tree.
+>>>
+>>> The ppc-temp tree gained a conflict against the metag tree.
+>>>
+>>> The akpm tree lost a patch that turned up elsewhere.
+>>>
+>>> ----------------------------------------------------------------------------
+>>>
+>>
+>> Not sure what the root-cause for this call-trace is (see screenshot).
+>>
+>> This is reproducible when running my kernel build-script (4 parallel-make-jobs).
+>>
+>> Any hints welcome!
+>
+> The panic handlers in our modeset code are pretty decent fubar - they
+> take mutexes all over the place. So I think the backtrace you see
+> there is actually a secondary effect. I've looked into fixing this up,
+> but the issue is that drivers themselves have tons of state protected
+> with mutexes, which all potentially affects the panic handler. So I've
+> given up on that for now ...
 
-Export the symbol usb_stor_dbg.
-Add export.h
+Thanks for taking care.
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- drivers/usb/storage/debug.c | 2 ++
- 1 file changed, 2 insertions(+)
+On suspicion [1] I have reverted [2]... NOPE.
 
-diff --git a/drivers/usb/storage/debug.c b/drivers/usb/storage/debug.c
-index b428129..29fe08f 100644
---- a/drivers/usb/storage/debug.c
-+++ b/drivers/usb/storage/debug.c
-@@ -43,6 +43,7 @@
-  */
- 
- #include <linux/cdrom.h>
-+#include <linux/export.h>
- #include <scsi/scsi.h>
- #include <scsi/scsi_cmnd.h>
- #include <scsi/scsi_dbg.h>
-@@ -193,3 +194,4 @@ int usb_stor_dbg(const char *fmt, ...)
- 
- 	return r;
- }
-+EXPORT_SYMBOL_GPL(usb_stor_dbg);
+- Sedat -
+
+[1] http://marc.info/?l=linux-kernel&m=136631921208895&w=2
+[2] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=5a90d1a95356de7a32acb2e5309ac579a891af8f
+
+> -Daniel
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
