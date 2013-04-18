@@ -1,50 +1,43 @@
-From: Randy Dunlap <rdunlap@infradead.org>
+From: David Rientjes <rientjes@google.com>
 Subject: Re: [patch] x86, kvm: fix build failure with CONFIG_SMP disabled
-Date: Wed, 17 Apr 2013 17:02:07 -0700
-Message-ID: <516F37FF.8040703@infradead.org>
+Date: Wed, 17 Apr 2013 17:09:19 -0700 (PDT)
+Message-ID: <alpine.DEB.2.02.1304171707090.24494@chino.kir.corp.google.com>
 References: <20130417170450.5dd6e5f450de4d5bf197d997@canb.auug.org.au> <516EE5AB.4080201@infradead.org> <alpine.DEB.2.02.1304171555030.10112@chino.kir.corp.google.com> <alpine.DEB.2.02.1304171609580.5541@chino.kir.corp.google.com>
+ <516F37FF.8040703@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.02.1304171609580.5541@chino.kir.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Rientjes <rientjes@google.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:62987 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935433Ab3DRAJW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Apr 2013 20:09:22 -0400
+Received: by mail-pd0-f172.google.com with SMTP id 5so1120802pdd.17
+        for <linux-next@vger.kernel.org>; Wed, 17 Apr 2013 17:09:21 -0700 (PDT)
+In-Reply-To: <516F37FF.8040703@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Yang Zhang <yang.z.zhang@Intel.com>
 Cc: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, KVM <kvm@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
-On 04/17/13 16:12, David Rientjes wrote:
-> The build fails when CONFIG_SMP is disabled:
+On Wed, 17 Apr 2013, Randy Dunlap wrote:
+
+> On 04/17/13 16:12, David Rientjes wrote:
+> > The build fails when CONFIG_SMP is disabled:
+> > 
+> > 	arch/x86/kvm/vmx.c: In function 'vmx_deliver_posted_interrupt':
+> > 	arch/x86/kvm/vmx.c:3950:3: error: 'apic' undeclared (first use in this function)
+> > 
+> > Fix it by including the necessary header.
 > 
-> 	arch/x86/kvm/vmx.c: In function 'vmx_deliver_posted_interrupt':
-> 	arch/x86/kvm/vmx.c:3950:3: error: 'apic' undeclared (first use in this function)
+> Sorry, i386 build still fails with the same error message plus this one:
 > 
-> Fix it by including the necessary header.
-
-Sorry, i386 build still fails with the same error message plus this one:
-
-ERROR: "apic" [arch/x86/kvm/kvm-intel.ko] undefined!
-
-
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: David Rientjes <rientjes@google.com>
-> ---
->  arch/x86/kvm/vmx.c | 1 +
->  1 file changed, 1 insertion(+)
+> ERROR: "apic" [arch/x86/kvm/kvm-intel.ko] undefined!
 > 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -34,6 +34,7 @@
->  #include "kvm_cache_regs.h"
->  #include "x86.h"
->  
-> +#include <asm/apic.h>
->  #include <asm/io.h>
->  #include <asm/desc.h>
->  #include <asm/vmx.h>
-> --
 
+Ahh, that's because you don't have CONFIG_X86_LOCAL_APIC as you already 
+mentioned.  So it looks like this error can manifest in two different ways 
+and we got different reports.
 
--- 
-~Randy
+This failure came from "KVM: VMX: Add the deliver posted interrupt 
+algorithm", so adding Yang to the cc to specify the dependency this has on 
+apic and how it can be protected without CONFIG_X86_LOCAL_APIC on i386.
