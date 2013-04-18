@@ -1,76 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ppc-temp tree with the metag tree
-Date: Thu, 18 Apr 2013 17:49:57 +1000
-Message-ID: <20130418174957.90176c7a0a6b95d3cb30a5a4@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the akpm tree
+Date: Thu, 18 Apr 2013 18:03:06 +1000
+Message-ID: <20130418180306.7dd5c5ad968effad4f50b100@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__18_Apr_2013_17_49_57_+1000_Z+HerTYRCOwE7F9y"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <michael@ellerman.id.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Bolle <pebolle@tiscali.nl>, James Hogan <james.hogan@imgtec.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__18_Apr_2013_18_03_06_+1000_x69f//jyiq=PN/k9"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48567 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965363Ab3DRIDN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Apr 2013 04:03:13 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>
 
---Signature=_Thu__18_Apr_2013_17_49_57_+1000_Z+HerTYRCOwE7F9y
+--Signature=_Thu__18_Apr_2013_18_03_06_+1000_x69f//jyiq=PN/k9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+Hi Andrew,
 
-Today's linux-next merge of the ppc-temp tree got a conflict in
-arch/metag/mm/Kconfig between commit 2b8660ed3bfe ("memblock: Kill
-ARCH_POPULATES_NODE_MAP once more") from the metag tree and commit
-45b02f8d94e3 ("memblock: kill "config MAX_ACTIVE_REGIONS"") from the
-ppc-temp tree.
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+fs/fat/inode.c: In function 'fat_zero_falloc_area':
+fs/fat/inode.c:170:11: warning: comparison of distinct pointer types lacks =
+a cast [enabled by default]
+
+Introduced by commit "fat: additions to support fat_fallocate".
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/metag/mm/Kconfig
-index 794f26a,ccf2576..0000000
---- a/arch/metag/mm/Kconfig
-+++ b/arch/metag/mm/Kconfig
-@@@ -93,11 -93,9 +93,6 @@@ config ARCH_SPARSEMEM_ENABL
-  config ARCH_SPARSEMEM_DEFAULT
-  	def_bool y
- =20
-- config MAX_ACTIVE_REGIONS
-- 	int
-- 	default "2" if SPARSEMEM
-- 	default "1"
--=20
- -config ARCH_POPULATES_NODE_MAP
- -	def_bool y
- -
-  config ARCH_SELECT_MEMORY_MODEL
-  	def_bool y
- =20
-
---Signature=_Thu__18_Apr_2013_17_49_57_+1000_Z+HerTYRCOwE7F9y
+--Signature=_Thu__18_Apr_2013_18_03_06_+1000_x69f//jyiq=PN/k9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRb6WlAAoJEECxmPOUX5FEiLcP/1Iki+Dyh0p5FT74CXQWQomM
-76311xhkknGd4pY5l+gVQTfiT/GKsYziY2d6Ymy7mLC6UXLkhJ6NH430Kk2BbZHc
-cufSH1o0G4DOmNaZamIx6ZbsJn2UsV8YS79XGY+Jw9Z/wYAmWM66TEH7hpEe38Ru
-c7d59sEsaa1JQT8fNaeqvdEMgNmKzxuPdvuEhfxfNuxhjMOvs4kO41zfs+pVqcXJ
-ZhOz2fvTtcwBeh2ql5Ey5u6K5aZ4C951l1EyOYGO8PzQ7JdGISdhV/0ammeG0/JT
-2N3T9RgcEPPSGlwZjALMgYHWREH7Es94pp2ArpHC1hLSZ4BeI5oWwAlV1Ncn8uk4
-7wPmfVMy28xIyddHwEQdTL1k8lDU/stE/xidZTLy7f4S226FjUBKo2CdMOQESvAr
-I4p7XZnkUiF4aYKy4fL5tRTMIhIl4idTlgS9StyLIkiLB1+b8fVL/9yAMMV2liWq
-Nc5muTcMxHciRwFxBFXzgNUgHw7jenrKI8Xa2f6O7jLY3VoWYUdcv6U4kq0GcWex
-ZCJ2Fvivgq65wi7KXFQy27hjirRfZD+K3cetOatpmlVLEwItyIhUtyRmfFaoPTWc
-7ZLCrj7HENDUUMW9xrbhx60D0OWHHZIKeShrFbgxlAiLHY60uOySLJY6IyXoValB
-84QeOBnx0lF/ETva3ySG
-=2sxa
+iQIcBAEBCAAGBQJRb6i6AAoJEECxmPOUX5FEHEIQAIBhE51rmXmae/j8KeJ7IXf2
+2rZ0TZOFfbSeb7E9K0KmQ6B6oYm4S7y5ZtasFwFromTFzAE34fTitz7Cvmmn0kL9
+L4Zf7m/oko3thnq9vphuanMcdgmNXH1J3XwG7+yHMQsGCD8LsqItYz9ZE4S0IWgs
+pm9NbNjRAA2gmnWeY1Tw1ZgxTfCdQIKbMKA3P0Z8cybKwrFKWN9/CLAMKmTWnItr
+Aslku9OXpwSf+ASlswNynmfjPYpeSEbg07e1Ai6tzbkmSxh6wgkqej60yGeyr5C1
+JxJDxz5yE+/G30HytMFthNWKQN7Lqc4VejfUBeRuQKC/sPhO6YWPd1TrITmhDiq6
+j/SZDwewAg03i52cU39pQxExMeXW8FgSVHJ/84yGsZzGuNoMuicF408Bm4G73nit
+lgK+4mMG4fxXlL8L5c55ROQ6jAi/sNW62vLQMxjiKyHng+Du5OVMcCKTjDNlJWuJ
+7wFTatp8MPfBw7dRy3lOglq4JAfIzL5lKTKK7a3D7QOmNe9k8zPNfKPSzuzWymgg
+ulMm/Vg+uuA1mdHG4JnJL/VMa9CsXLMNQCBS0y0ccEk+0GCVLEZJffFEKjjZd4Ll
+I9KE+hQK6qRA8NP5hlmsyJSmiihzJ3GuloIQTlSLJLsIIR/duP7R5kCEUnTb4qlJ
+uKz7fp8gAn8eX8lJOf+A
+=R5AF
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__18_Apr_2013_17_49_57_+1000_Z+HerTYRCOwE7F9y--
+--Signature=_Thu__18_Apr_2013_18_03_06_+1000_x69f//jyiq=PN/k9--
