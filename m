@@ -1,39 +1,125 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH usb-next] usb: storage: Fix link error
-Date: Thu, 18 Apr 2013 19:02:40 -0700
-Message-ID: <20130419020240.GA6931@kroah.com>
-References: <20130418160541.57123749577f29665fba7839@canb.auug.org.au>
- <1366319834.2119.27.camel@joe-AO722>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 19 Apr 2013 12:53:04 +1000
+Message-ID: <20130419125304.9980f9b037abf00bef7b6f8c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__19_Apr_2013_12_53_04_+1000_pinOPf3L1G/h48ph"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:47200 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S967641Ab3DSCCt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Apr 2013 22:02:49 -0400
-Received: by mail-pd0-f169.google.com with SMTP id 14so91122pdc.0
-        for <linux-next@vger.kernel.org>; Thu, 18 Apr 2013 19:02:49 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1366319834.2119.27.camel@joe-AO722>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46246 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S967843Ab3DSCxT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Apr 2013 22:53:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joe Perches <joe@perches.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Dharm <mdharm-usb@one-eyed-alien.net>, linux-usb <linux-usb@vger.kernel.org>, usb-storage <usb-storage@lists.one-eyed-alien.net>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antonio Quartulli <ordex@autistici.org>, Marek Lindner <lindner_marek@yahoo.de>, Martin =?UTF-8?B?SHVuZGViw7hsbA==?= <martin@hundeboll.net>
 
-On Thu, Apr 18, 2013 at 02:17:14PM -0700, Joe Perches wrote:
-> Fix allmodconfig link error introduced by commit 75b9130e8a
-> ("usb: storage: Add usb_stor_dbg, reduce object size")
-> 
-> Export the symbol usb_stor_dbg.
-> Add export.h
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  drivers/usb/storage/debug.c | 2 ++
->  1 file changed, 2 insertions(+)
+--Signature=_Fri__19_Apr_2013_12_53_04_+1000_pinOPf3L1G/h48ph
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You forgot the "Reported-by:" line :(
+Hi all,
 
-I'll go add it now, thanks for the quick fix-up patch.
+Today's linux-next merge of the net-next tree got a conflict in
+net/batman-adv/routing.c between commit fe8a93b95145 ("batman-adv: make
+is_my_mac() check for the current mesh only") from the net tree and
+commits f86ce0ad107b ("batman-adv: Return reason for failure in
+batadv_check_unicast_packet()") and 612d2b4fe0a1 ("batman-adv: network
+coding - save overheard and tx packets for decoding") from the net-next
+tree.
 
-greg k-h
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc net/batman-adv/routing.c
+index 319f290,8f88967..0000000
+--- a/net/batman-adv/routing.c
++++ b/net/batman-adv/routing.c
+@@@ -548,8 -549,17 +549,19 @@@ batadv_find_ifalter_router(struct batad
+  	return router;
+  }
+ =20
++ /**
++  * batadv_check_unicast_packet - Check for malformed unicast packets
+++ * @batpriv: some description ...
++  * @skb: packet to check
++  * @hdr_size: size of header to pull
++  *
++  * Check for short header and bad addresses in given packet. Returns nega=
+tive
++  * value when check fails and 0 otherwise. The negative value depends on =
+the
++  * reason: -ENODATA for bad header, -EBADR for broadcast destination or s=
+ource,
++  * and -EREMOTE for non-local (other host) destination.
++  */
+ -static int batadv_check_unicast_packet(struct sk_buff *skb, int hdr_size)
+ +static int batadv_check_unicast_packet(struct batadv_priv *bat_priv,
+ +				       struct sk_buff *skb, int hdr_size)
+  {
+  	struct ethhdr *ethhdr;
+ =20
+@@@ -565,11 -575,11 +577,11 @@@
+ =20
+  	/* packet with broadcast sender address */
+  	if (is_broadcast_ether_addr(ethhdr->h_source))
+- 		return -1;
++ 		return -EBADR;
+ =20
+  	/* not for me */
+ -	if (!batadv_is_my_mac(ethhdr->h_dest))
+ +	if (!batadv_is_my_mac(bat_priv, ethhdr->h_dest))
+- 		return -1;
++ 		return -EREMOTE;
+ =20
+  	return 0;
+  }
+@@@ -1046,7 -1058,16 +1061,16 @@@ int batadv_recv_unicast_packet(struct s
+  	if (is4addr)
+  		hdr_size =3D sizeof(*unicast_4addr_packet);
+ =20
+- 	if (batadv_check_unicast_packet(bat_priv, skb, hdr_size) < 0)
++ 	/* function returns -EREMOTE for promiscuous packets */
+ -	check =3D batadv_check_unicast_packet(skb, hdr_size);
+++	check =3D batadv_check_unicast_packet(bat_priv, skb, hdr_size);
++=20
++ 	/* Even though the packet is not for us, we might save it to use for
++ 	 * decoding a later received coded packet
++ 	 */
++ 	if (check =3D=3D -EREMOTE)
++ 		batadv_nc_skb_store_sniffed_unicast(bat_priv, skb);
++=20
++ 	if (check < 0)
+  		return NET_RX_DROP;
+ =20
+  	if (!batadv_check_unicast_ttvn(bat_priv, skb))
+
+--Signature=_Fri__19_Apr_2013_12_53_04_+1000_pinOPf3L1G/h48ph
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRcLGQAAoJEECxmPOUX5FEW/MP/2MTNpJyYB09OH+f1KMI4Vra
+R1LtHLig3DFwCeAff9FMIt659C7XJIQLTERXO4SL6YLz742uJMU9D6edBl1H2acJ
+zcz24mMgjIAqAWN8VxndCzGxA6GAmXU2l/b7kYUyGWjFVq3TAnM7MrgxM7uMzipU
+uV3vd6dJlvbdST83Tj0NuzdvNBwVo2luVSdtnj3UW6x8w9TOUMD3HN+k0mD3l5iE
+fvipSzsJ/WjTiISAiixoA6cOMx2RF3NsBtO985LDbZMXAnMknECkYHnZYSwbIck7
+WOrJ3AU4M+Z1YOLCWHdTLfJLU4kW4gLvcboogq6FwRFGQVjOvkrsYlhY5lVI8tKm
+5TNYNu4FTXRfvu35CZvJVcn/vd8wGkQvJDZTEsTryYyoXz7MHgCqIX9NZJAxPgj2
+n/VXnlzzoKVqGhigPziddSzHQai8zL3OwOaNd7vLN0wt9ZQNYJRUpiYQZEbFHBOe
+wzYnnJhwT0Nz5pK6vGrpSnH9PyP9+nxZjdrKVnhO0g4q4VUAMxjinjjIxYnjPrce
+QDyowgum5nPEqtQRFEb1A35lYO0DHECOeWcIuadPQDU6obh3/2xwwC6eL477levQ
+rX0EOB+5Yv8BYylHiD8xvZVradu3R9JAuwq9ctJ47sDxWJrZ1g7zGbb5yvnrN0Pc
+Z5X4UMmPAOjwNJtzPE42
+=k11x
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__19_Apr_2013_12_53_04_+1000_pinOPf3L1G/h48ph--
