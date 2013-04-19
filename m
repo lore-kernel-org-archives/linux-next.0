@@ -1,66 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the final tree
-Date: Fri, 19 Apr 2013 18:07:24 +1000
-Message-ID: <20130419180724.a0fecca0869e712e48e430f2@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Fri, 19 Apr 2013 18:13:34 +1000
+Message-ID: <20130419181334.3e042702caa9c2ad9171b4c2@canb.auug.org.au>
+References: <20130419132127.05ea53adec329ca794d62be7@canb.auug.org.au>
+	<20130419073409.GH20819@ritirata.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__19_Apr_2013_18_07_24_+1000_zZqVvd96fuyGe31B"
+ boundary="Signature=_Fri__19_Apr_2013_18_13_34_+1000_e2CbsKAP_mvcYz.V"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59929 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:37643 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751844Ab3DSIHd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 04:07:33 -0400
+	with ESMTP id S1751084Ab3DSINj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 04:13:39 -0400
+In-Reply-To: <20130419073409.GH20819@ritirata.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>
+To: Antonio Quartulli <ordex@autistici.org>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin =?UTF-8?B?SHVuZGViw7hsbA==?= <martin@hundeboll.net>, Marek Lindner <lindner_marek@yahoo.de>, b.a.t.m.a.n@lists.open-mesh.org
 
---Signature=_Fri__19_Apr_2013_18_07_24_+1000_zZqVvd96fuyGe31B
+--Signature=_Fri__19_Apr_2013_18_13_34_+1000_e2CbsKAP_mvcYz.V
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Antonio,
 
-After merging the final tree, today's linux-next build (i386 defconfig)
-produced this warning:
+On Fri, 19 Apr 2013 09:34:09 +0200 Antonio Quartulli <ordex@autistici.org> =
+wrote:
+>
+> Your patch looks good, but I'd prefer to send my already prepared pull re=
+quest.
+>=20
+> Is it ok with you?
 
-In file included from arch/x86/kernel/early-quirks.c:21:0:
-arch/x86/include/asm/irq_remapping.h:87:58: warning: 'struct irq_chip' decl=
-ared inside parameter list [enabled by default]
-arch/x86/include/asm/irq_remapping.h:87:58: warning: its scope is only this=
- definition or declaration, which is probably not what you want [enabled by=
- default]
-arch/x86/include/asm/irq_remapping.h:93:18: warning: 'struct irq_chip' decl=
-ared inside parameter list [enabled by default]
+Its entirely up to Dave how/if he fixes this up.  He could just leave it
+to Linus, though he would usually pull the net tree into the net-next
+tree after Linus merges the net tree - in which case, this should be
+fixed in that merge.
 
-Probably caused by commit 03bbcb2e7e29 ("iommu/vt-d: add quirk for broken
-interrupt remapping on 55XX chipsets") from the iommu tree.
-
+i.e. ask Dave :-)
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__19_Apr_2013_18_07_24_+1000_zZqVvd96fuyGe31B
+--Signature=_Fri__19_Apr_2013_18_13_34_+1000_e2CbsKAP_mvcYz.V
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRcPs8AAoJEECxmPOUX5FEQ30P/RfVgrLIxVrvQQwYJV9z0NlN
-l6VWtquUuH/vGD+MlCij9yQLPM+DxcOeMzxspR0ZVtGzPsTs7Jn+k8kB2uCzg820
-9MpUcAt0d6fyNCD2Tc1YSJ3NmSPQ//rqEJQJuD2Hu1s099Ma+FL7SJ5wal0xlU5J
-kU96N9kPLkpcpZQpK6IcCHA2obNtNJraPeieEr4qAGt6Tzi5nfDJWNgvvdIoyRXl
-7rnycMbxChJkCQ6tlYJb8OSAWLESQAQs84ejsl9vIEW3p2R2ur3ke9sdoBSJrdne
-k0wIHHGlNcin/P1qLh12aNHBb6zMF5gC5cOMfyYiaoV5jUaMMq46PlSvTl1ZHQ27
-GmDaoRmrWrWmopg3sLrJEfQvS9AkPNKXG6qv1x/5VKbUH0GDFpSOfI6hJ1gRIthr
-4gatBag4G5UWPQkRgwJV2deUmamqz+LkmjV2tQ3VzsrJQJjw14I3C+Sfpzv3FRT8
-qmpoMaL8Fk+x1fo5FrRCFPgyq+YQITrf3R+SStYLM5SaWGr/PuyZk9T6I/eJAUZA
-cWceysfW/lyG7WQa2pLbE8AUh2m1rBtcyNfH+9qP57Pl3RMArlm6iz/nbdf3Eu+n
-eGoW+NrKmJMSz7tgTPFo+VbuBi8v96Fnhwp7ZpmhstIGjnksSDzPmWrPFdGSFIOT
-CrkSpzrg6+MisBmYGLgy
-=+/QD
+iQIcBAEBCAAGBQJRcPyuAAoJEECxmPOUX5FEXtQQAKhPfqx7n2tBZ/1BM2g3rXRZ
+ltM4N9ueIWnvzLnfOwdoBEsWmgZ1RjhTx7/kxEla02hUw69VrHtpmo5aYZmu2vcl
+bx9jiOzPk3FEGSmbsQyV6gnRBuyA6KwwpkUNF7VApdUzaTnd+qBAT0cRf1T/l5PN
+Nn6VjxVg4fnfqsy1FhOhPuTV8xE7t/sVRpY46jLSQdMGpNWQo7ro/bbwchdEFFgI
+E1Iqf+BKBTBd77ckW4Wr8kGOdBLawBMcuR9sMQPpxWhfkxYGD84bZPQ7npqxk6j4
+h03svuHcYl6OkJorjtc4e8j7MiH6wLMukjOlgGoEuRO4lHjqUHq6cHRQvFZwNZ16
+VkZzejJ5itg9v1C+mIykk9F6igncBm7T7GSzz3MvADhrjvRZuFkGw0PCXTGU0Bpe
+iyYUA5LapCtTcc8vvIULyDvAIaPrNP/hPoG3d3JhFAbTkom5xQjNQDlyb4BQmVtT
+6NxEu7HKGR6nbwypWcgjV0mjDq+prgHsGXWV20gQPlh9BOQ0RZOTscIIDL2Pq6mw
+RZQnbKOVVleFe4RV0yztjaynS1atH2GkVSZnNIvug1+MSMBqGqZzNpwT2HkZrWLm
+tef+yqe3fcU9WG9jhdyH4otdDuTnvUxy3mOXjHIbZzz3+P83s841YVIW+b/O7tzv
+R+nAToOPGvv+ifMyREuB
+=lkP4
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__19_Apr_2013_18_07_24_+1000_zZqVvd96fuyGe31B--
+--Signature=_Fri__19_Apr_2013_18_13_34_+1000_e2CbsKAP_mvcYz.V--
