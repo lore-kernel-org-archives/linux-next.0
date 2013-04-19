@@ -1,70 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the gen-gpio tree
-Date: Fri, 19 Apr 2013 16:29:08 +1000
-Message-ID: <20130419162908.69aa0cbccc708ea1ca563a11@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the arm-soc tree
+Date: Fri, 19 Apr 2013 16:46:36 +1000
+Message-ID: <20130419164636.0d2405ca5fd927f1ba31fe40@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__19_Apr_2013_16_29_08_+1000_CCugxtMk_e=L.RdE"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Fri__19_Apr_2013_16_46_36_+1000_dI5P+PfW_KVhrBgQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40118 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756479Ab3DSGqo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 02:46:44 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Bjorn Helgaas <bhelgaas@google.com>
 
---Signature=_Fri__19_Apr_2013_16_29_08_+1000_CCugxtMk_e=L.RdE
+--Signature=_Fri__19_Apr_2013_16_46_36_+1000_dI5P+PfW_KVhrBgQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/plat-orion/Makefile between commit 43b426d6fae8 ("arm:
-plat-orion: use GPIO driver on CONFIG_GPIOLIB") from the gen-gpio tree
-and various commits from the arm-soc tree.
+After merging the arm-soc tree, today's linux-next build (powerpc ppc64_def=
+config)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+powerpc64-linux-ld: cannot find drivers/pci/host/built-in.o: No such file o=
+r directory
 
+Caused by commit 9ecbe03ae85b ("pci: infrastructure to add drivers in
+drivers/pci/host").
+
+I have used the arm-soc tree from next-20130418 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/plat-orion/Makefile
-index bbc0d6b,2eca54b..0000000
---- a/arch/arm/plat-orion/Makefile
-+++ b/arch/arm/plat-orion/Makefile
-@@@ -3,8 -3,6 +3,6 @@@
-  #
-  ccflags-$(CONFIG_ARCH_MULTIPLATFORM) :=3D -I$(srctree)/$(src)/include
- =20
-- obj-y                             +=3D addr-map.o
--=20
- -orion-gpio-$(CONFIG_GENERIC_GPIO) +=3D gpio.o
- +orion-gpio-$(CONFIG_GPIOLIB)      +=3D gpio.o
-  obj-$(CONFIG_PLAT_ORION_LEGACY)   +=3D irq.o pcie.o time.o common.o mpp.o
-  obj-$(CONFIG_PLAT_ORION_LEGACY)   +=3D $(orion-gpio-y)
-
---Signature=_Fri__19_Apr_2013_16_29_08_+1000_CCugxtMk_e=L.RdE
+--Signature=_Fri__19_Apr_2013_16_46_36_+1000_dI5P+PfW_KVhrBgQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRcOQ0AAoJEECxmPOUX5FEX70P/2WSNBoA6Q/Gb4XCxtvhoEVu
-m8OPgKU3pn/NtpPXajjMhcPS+L9lMr2Role/4zPtSSmXyH1q5tf9HyTBtizraBdO
-Ij3S/JonmJnQBYmHsjestYExMo6XbH+PcGUQTeKV+yCOeELBqjc5TO55vtcfRk95
-QUHo76/qCkWGNiQkw4SJPBirZwu90OHmSB5XN6CVmDCvArJrlId6dWV14DkZU3x6
-vKpwfW2I2s+qeMawAMqBxHyMQ01etx86da1ZFwMFDmR7DuMUabsOMsQAH4R87d2+
-gzambO0hTt0o5YjXzFxncWl5zF3bVFUPt+Hz6zSgsrHRkE2F+NgxatGuSLUvTgmZ
-MEMA/cq/F3MAHz99L1togsQ55Ce+/SEiL3/thUndDHxhj98CbdODwifyK3AtI3Zi
-Ci4ed7l/sWXbteVnzi0UUH7MHxv/3hTIoPlazikGtjB4ZikiA1LzesgPJeo2gLvU
-BxwB70zHxvU27US0nZ/9sw1/LDn3tNuMrB1Rx46W7R1FVUQ89N7tYEgLq4Pl+FGt
-B8BdIBHe1Cr/07z/8hgMiJ9t32JpNCoG2veO1qvbVLlTVJIINLIRxljhOTVXqmcF
-Jidj8IM0pyGRQdKazo7XWPOtpiqseu+UC9HYPlHjjBSAtRr1CbOus4UjXDUxUxTC
-vYUPVDpeQwo3rhvWffAM
-=dGug
+iQIcBAEBCAAGBQJRcOhMAAoJEECxmPOUX5FE56UP/jEsJfqzf/BntE6DhkKUnHYw
+XnDFAxk/8pW0GMTd8iwqSqitmdtPutViX5BtO36m7abiYA9OJyTl1rYaELpSFeGU
+kE0eDAXZamCdGc+/A7sDWikl894kCD7XLC+UxFDq9JAeiaxiKB7tRwIzEvhrhZGK
+rELP1FDkDPY66NiTRIC+D02qs8gGNNLtBxJOqYHEhpJCXNXF/ImAkhaBnct8PUcF
+sGDSyYODP0cODsdMzA7z5nqZZDfZAGRovXrtIycAN6OibXHv465f+xfXUyg8+K70
+f9OwdnyktrQoOrXaYpHy+c947kC080AaPT3vrJIiqBRhK1sDks8v2Fov0rgO7t8y
+FzZemWqBe5MQPX+KJqRrZLaYzgPREVR7hvVGZ/sz/U804nMG8atpgQh/lKDF7cBz
+qJb53uL0DKrDKIP3R0rlzaBDLEGjenKVvQzBYPkjFbdtX75ZqjILhfx23Z7MIivU
+EUqcrakyrMFyV92Im5S4XJrJW3IJX1TwWPL1iDNSgpfpdxiDb6adk3X1N8eLsF0+
+OJP+VPWg2N8spuj7tRPseXdN0AiQS4UPNCugHoAIuSJdz41Uemxfm+vGszlnwE8W
+pljGP9E+umBoqxhRXM5fX7SWq4ICtGZaE6B29KyEBe7dpgC+sV+iWpQPAEruH5LI
+WpQ9y3O6M1LEsmvYnehK
+=4N0v
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__19_Apr_2013_16_29_08_+1000_CCugxtMk_e=L.RdE--
+--Signature=_Fri__19_Apr_2013_16_46_36_+1000_dI5P+PfW_KVhrBgQ--
