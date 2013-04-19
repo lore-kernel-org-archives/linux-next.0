@@ -1,125 +1,201 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 19 Apr 2013 12:53:04 +1000
-Message-ID: <20130419125304.9980f9b037abf00bef7b6f8c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Fri, 19 Apr 2013 13:21:27 +1000
+Message-ID: <20130419132127.05ea53adec329ca794d62be7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__19_Apr_2013_12_53_04_+1000_pinOPf3L1G/h48ph"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46246 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S967843Ab3DSCxT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Apr 2013 22:53:19 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Fri__19_Apr_2013_13_21_27_+1000_dvd23tER/adnHB1W"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antonio Quartulli <ordex@autistici.org>, Marek Lindner <lindner_marek@yahoo.de>, Martin =?UTF-8?B?SHVuZGViw7hsbA==?= <martin@hundeboll.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin =?UTF-8?B?SHVuZGViw7hsbA==?= <martin@hundeboll.net>, Marek Lindner <lindner_marek@yahoo.de>, Antonio Quartulli <ordex@autistici.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__19_Apr_2013_12_53_04_+1000_pinOPf3L1G/h48ph
+--Signature=_Fri__19_Apr_2013_13_21_27_+1000_dvd23tER/adnHB1W
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/batman-adv/routing.c between commit fe8a93b95145 ("batman-adv: make
-is_my_mac() check for the current mesh only") from the net tree and
-commits f86ce0ad107b ("batman-adv: Return reason for failure in
-batadv_check_unicast_packet()") and 612d2b4fe0a1 ("batman-adv: network
-coding - save overheard and tx packets for decoding") from the net-next
-tree.
+After merging the net-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+net/batman-adv/network-coding.c: In function 'batadv_nc_skb_store_sniffed_u=
+nicast':
+net/batman-adv/network-coding.c:1487:2: warning: passing argument 1 of 'bat=
+adv_is_my_mac' from incompatible pointer type [enabled by default]
+net/batman-adv/main.h:168:5: note: expected 'struct batadv_priv *' but argu=
+ment is of type 'unsigned char *'
+net/batman-adv/network-coding.c:1487:2: error: too few arguments to functio=
+n 'batadv_is_my_mac'
+net/batman-adv/main.h:168:5: note: declared here
+net/batman-adv/network-coding.c: In function 'batadv_nc_skb_decode_packet':
+net/batman-adv/network-coding.c:1540:2: warning: passing argument 1 of 'bat=
+adv_is_my_mac' from incompatible pointer type [enabled by default]
+net/batman-adv/main.h:168:5: note: expected 'struct batadv_priv *' but argu=
+ment is of type 'uint8_t *'
+net/batman-adv/network-coding.c:1540:2: error: too few arguments to functio=
+n 'batadv_is_my_mac'
+net/batman-adv/main.h:168:5: note: declared here
+net/batman-adv/network-coding.c: In function 'batadv_nc_find_decoding_packe=
+t':
+net/batman-adv/network-coding.c:1611:2: warning: passing argument 1 of 'bat=
+adv_is_my_mac' from incompatible pointer type [enabled by default]
+net/batman-adv/main.h:168:5: note: expected 'struct batadv_priv *' but argu=
+ment is of type 'uint8_t *'
+net/batman-adv/network-coding.c:1611:2: error: too few arguments to functio=
+n 'batadv_is_my_mac'
+net/batman-adv/main.h:168:5: note: declared here
+net/batman-adv/network-coding.c: In function 'batadv_nc_recv_coded_packet':
+net/batman-adv/network-coding.c:1678:2: warning: passing argument 1 of 'bat=
+adv_is_my_mac' from incompatible pointer type [enabled by default]
+net/batman-adv/main.h:168:5: note: expected 'struct batadv_priv *' but argu=
+ment is of type 'unsigned char *'
+net/batman-adv/network-coding.c:1678:2: error: too few arguments to functio=
+n 'batadv_is_my_mac'
+net/batman-adv/main.h:168:5: note: declared here
+net/batman-adv/network-coding.c:1679:6: warning: passing argument 1 of 'bat=
+adv_is_my_mac' from incompatible pointer type [enabled by default]
+net/batman-adv/main.h:168:5: note: expected 'struct batadv_priv *' but argu=
+ment is of type 'uint8_t *'
+net/batman-adv/network-coding.c:1679:6: error: too few arguments to functio=
+n 'batadv_is_my_mac'
+net/batman-adv/main.h:168:5: note: declared here
+net/batman-adv/network-coding.c:1683:2: warning: passing argument 1 of 'bat=
+adv_is_my_mac' from incompatible pointer type [enabled by default]
+net/batman-adv/main.h:168:5: note: expected 'struct batadv_priv *' but argu=
+ment is of type 'uint8_t *'
+net/batman-adv/network-coding.c:1683:2: error: too few arguments to functio=
+n 'batadv_is_my_mac'
+net/batman-adv/main.h:168:5: note: declared here
+
+Caused by commits 612d2b4fe0a1 ("batman-adv: network coding - save
+overheard and tx packets for decoding") and 2df5278b0267 ("batman-adv:
+network coding - receive coded packets and decode them") from the
+net-next tree interacting with commit fe8a93b95145 ("batman-adv: make
+is_my_mac() check for the current mesh only") from the net tree.
+
+I added the following merge fix patch and can carry it as necessary:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 19 Apr 2013 13:13:25 +1000
+Subject: [PATCH] batman-adv: merge fix for batadv_is_my_mac() API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/batman-adv/network-coding.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/net/batman-adv/network-coding.c b/net/batman-adv/network-codin=
+g.c
+index 6b9a544..382db5e 100644
+--- a/net/batman-adv/network-coding.c
++++ b/net/batman-adv/network-coding.c
+@@ -1484,7 +1484,7 @@ void batadv_nc_skb_store_sniffed_unicast(struct batad=
+v_priv *bat_priv,
+ {
+ 	struct ethhdr *ethhdr =3D (struct ethhdr *)skb_mac_header(skb);
+=20
+-	if (batadv_is_my_mac(ethhdr->h_dest))
++	if (batadv_is_my_mac(bat_priv, ethhdr->h_dest))
+ 		return;
+=20
+ 	/* Set data pointer to MAC header to mimic packets from our tx path */
+@@ -1496,6 +1496,7 @@ void batadv_nc_skb_store_sniffed_unicast(struct batad=
+v_priv *bat_priv,
+ /**
+  * batadv_nc_skb_decode_packet - decode given skb using the decode data st=
+ored
+  *  in nc_packet
++ * @bat_priv: the bat priv with all the soft interface information
+  * @skb: unicast skb to decode
+  * @nc_packet: decode data needed to decode the skb
+  *
+@@ -1503,7 +1504,7 @@ void batadv_nc_skb_store_sniffed_unicast(struct batad=
+v_priv *bat_priv,
+  * in case of an error.
+  */
+ static struct batadv_unicast_packet *
+-batadv_nc_skb_decode_packet(struct sk_buff *skb,
++batadv_nc_skb_decode_packet(struct batadv_priv *bat_priv, struct sk_buff *=
+skb,
+ 			    struct batadv_nc_packet *nc_packet)
+ {
+ 	const int h_size =3D sizeof(struct batadv_unicast_packet);
+@@ -1537,7 +1538,7 @@ batadv_nc_skb_decode_packet(struct sk_buff *skb,
+ 	/* Select the correct unicast header information based on the location
+ 	 * of our mac address in the coded_packet header
+ 	 */
+-	if (batadv_is_my_mac(coded_packet_tmp.second_dest)) {
++	if (batadv_is_my_mac(bat_priv, coded_packet_tmp.second_dest)) {
+ 		/* If we are the second destination the packet was overheard,
+ 		 * so the Ethernet address must be copied to h_dest and
+ 		 * pkt_type changed from PACKET_OTHERHOST to PACKET_HOST
+@@ -1608,7 +1609,7 @@ batadv_nc_find_decoding_packet(struct batadv_priv *ba=
+t_priv,
+=20
+ 	/* Select the correct packet id based on the location of our mac-addr */
+ 	dest =3D ethhdr->h_source;
+-	if (!batadv_is_my_mac(coded->second_dest)) {
++	if (!batadv_is_my_mac(bat_priv, coded->second_dest)) {
+ 		source =3D coded->second_source;
+ 		packet_id =3D coded->second_crc;
+ 	} else {
+@@ -1675,12 +1676,12 @@ static int batadv_nc_recv_coded_packet(struct sk_bu=
+ff *skb,
+ 	ethhdr =3D (struct ethhdr *)skb_mac_header(skb);
+=20
+ 	/* Verify frame is destined for us */
+-	if (!batadv_is_my_mac(ethhdr->h_dest) &&
+-	    !batadv_is_my_mac(coded_packet->second_dest))
++	if (!batadv_is_my_mac(bat_priv, ethhdr->h_dest) &&
++	    !batadv_is_my_mac(bat_priv, coded_packet->second_dest))
+ 		return NET_RX_DROP;
+=20
+ 	/* Update stat counter */
+-	if (batadv_is_my_mac(coded_packet->second_dest))
++	if (batadv_is_my_mac(bat_priv, coded_packet->second_dest))
+ 		batadv_inc_counter(bat_priv, BATADV_CNT_NC_SNIFFED);
+=20
+ 	nc_packet =3D batadv_nc_find_decoding_packet(bat_priv, ethhdr,
+@@ -1698,7 +1699,7 @@ static int batadv_nc_recv_coded_packet(struct sk_buff=
+ *skb,
+ 		goto free_nc_packet;
+=20
+ 	/* Decode the packet */
+-	unicast_packet =3D batadv_nc_skb_decode_packet(skb, nc_packet);
++	unicast_packet =3D batadv_nc_skb_decode_packet(bat_priv, skb, nc_packet);
+ 	if (!unicast_packet) {
+ 		batadv_inc_counter(bat_priv, BATADV_CNT_NC_DECODE_FAILED);
+ 		goto free_nc_packet;
+--=20
+1.8.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/batman-adv/routing.c
-index 319f290,8f88967..0000000
---- a/net/batman-adv/routing.c
-+++ b/net/batman-adv/routing.c
-@@@ -548,8 -549,17 +549,19 @@@ batadv_find_ifalter_router(struct batad
-  	return router;
-  }
- =20
-+ /**
-+  * batadv_check_unicast_packet - Check for malformed unicast packets
-++ * @batpriv: some description ...
-+  * @skb: packet to check
-+  * @hdr_size: size of header to pull
-+  *
-+  * Check for short header and bad addresses in given packet. Returns nega=
-tive
-+  * value when check fails and 0 otherwise. The negative value depends on =
-the
-+  * reason: -ENODATA for bad header, -EBADR for broadcast destination or s=
-ource,
-+  * and -EREMOTE for non-local (other host) destination.
-+  */
- -static int batadv_check_unicast_packet(struct sk_buff *skb, int hdr_size)
- +static int batadv_check_unicast_packet(struct batadv_priv *bat_priv,
- +				       struct sk_buff *skb, int hdr_size)
-  {
-  	struct ethhdr *ethhdr;
- =20
-@@@ -565,11 -575,11 +577,11 @@@
- =20
-  	/* packet with broadcast sender address */
-  	if (is_broadcast_ether_addr(ethhdr->h_source))
-- 		return -1;
-+ 		return -EBADR;
- =20
-  	/* not for me */
- -	if (!batadv_is_my_mac(ethhdr->h_dest))
- +	if (!batadv_is_my_mac(bat_priv, ethhdr->h_dest))
-- 		return -1;
-+ 		return -EREMOTE;
- =20
-  	return 0;
-  }
-@@@ -1046,7 -1058,16 +1061,16 @@@ int batadv_recv_unicast_packet(struct s
-  	if (is4addr)
-  		hdr_size =3D sizeof(*unicast_4addr_packet);
- =20
-- 	if (batadv_check_unicast_packet(bat_priv, skb, hdr_size) < 0)
-+ 	/* function returns -EREMOTE for promiscuous packets */
- -	check =3D batadv_check_unicast_packet(skb, hdr_size);
-++	check =3D batadv_check_unicast_packet(bat_priv, skb, hdr_size);
-+=20
-+ 	/* Even though the packet is not for us, we might save it to use for
-+ 	 * decoding a later received coded packet
-+ 	 */
-+ 	if (check =3D=3D -EREMOTE)
-+ 		batadv_nc_skb_store_sniffed_unicast(bat_priv, skb);
-+=20
-+ 	if (check < 0)
-  		return NET_RX_DROP;
- =20
-  	if (!batadv_check_unicast_ttvn(bat_priv, skb))
-
---Signature=_Fri__19_Apr_2013_12_53_04_+1000_pinOPf3L1G/h48ph
+--Signature=_Fri__19_Apr_2013_13_21_27_+1000_dvd23tER/adnHB1W
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRcLGQAAoJEECxmPOUX5FEW/MP/2MTNpJyYB09OH+f1KMI4Vra
-R1LtHLig3DFwCeAff9FMIt659C7XJIQLTERXO4SL6YLz742uJMU9D6edBl1H2acJ
-zcz24mMgjIAqAWN8VxndCzGxA6GAmXU2l/b7kYUyGWjFVq3TAnM7MrgxM7uMzipU
-uV3vd6dJlvbdST83Tj0NuzdvNBwVo2luVSdtnj3UW6x8w9TOUMD3HN+k0mD3l5iE
-fvipSzsJ/WjTiISAiixoA6cOMx2RF3NsBtO985LDbZMXAnMknECkYHnZYSwbIck7
-WOrJ3AU4M+Z1YOLCWHdTLfJLU4kW4gLvcboogq6FwRFGQVjOvkrsYlhY5lVI8tKm
-5TNYNu4FTXRfvu35CZvJVcn/vd8wGkQvJDZTEsTryYyoXz7MHgCqIX9NZJAxPgj2
-n/VXnlzzoKVqGhigPziddSzHQai8zL3OwOaNd7vLN0wt9ZQNYJRUpiYQZEbFHBOe
-wzYnnJhwT0Nz5pK6vGrpSnH9PyP9+nxZjdrKVnhO0g4q4VUAMxjinjjIxYnjPrce
-QDyowgum5nPEqtQRFEb1A35lYO0DHECOeWcIuadPQDU6obh3/2xwwC6eL477levQ
-rX0EOB+5Yv8BYylHiD8xvZVradu3R9JAuwq9ctJ47sDxWJrZ1g7zGbb5yvnrN0Pc
-Z5X4UMmPAOjwNJtzPE42
-=k11x
+iQIcBAEBCAAGBQJRcLg3AAoJEECxmPOUX5FE9b4QAJ6ygjIGSpyNfMyEVpVirJEC
+81TcDOI7aj91vCJznj3LClFo9+LsJcPyNzL58ZqG8N8cv/x6rQgGcWZb9pFVAYO1
+qeHcVM90c3UWSMP5CTdphwJgh5EePGCzu7CqBcbcXJsRT/HC9WsrejoTIUpVU2Lw
+ecokYEEiSgZrfIPmsIqrncK/+veBzxvnJnifooFLIUaNcQg/elIyeTxokUKPDLiG
+11/lfDQN6HhcYe9BW/bWWBkey6xON2L3FNhM02/nIfs9mSDlBl+LcUUFXZ1mzfa1
+LOdDQQNeWRp1N8DiEIEiDKKAm8D3oR6mGifGzyaSCW40WBle9VPTsWTmbs9PIct+
+46/gxjkkSEwPK2KWU03pkD7G3GVO3mexBIZIQ4u2L0ccN2jbpJqWaiKpWpnthkHU
+D0fiakgzMwIXhOrL/ZVYFggdMLvepcP2USLd9LiE6EzctNDH8vpdaTrlwxNyLt8t
+RLEdiWBoUBzy/P6hIadHqtgJV/3P0BywyhSl3sil9KoXHr/OOv8VZbr1KYdIRWLk
+vX48SKFentiCY7pzGnidbK/7UMNJXayeLIii9fKlR00gHXgRLlB32zOm/nqAWrhY
+RaqvqmtfZUPWk2pOcPdj+EqD3eJL15/3z5VzwLQUazL+BShhurCJ2MwhXLKp3St+
+BS3OGT/attBRaoLha4SZ
+=bmzk
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__19_Apr_2013_12_53_04_+1000_pinOPf3L1G/h48ph--
+--Signature=_Fri__19_Apr_2013_13_21_27_+1000_dvd23tER/adnHB1W--
