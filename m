@@ -1,128 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Fri, 19 Apr 2013 17:40:41 +1000
-Message-ID: <20130419174041.f0f8f47ae745896a6857000d@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree
+Date: Fri, 19 Apr 2013 18:07:24 +1000
+Message-ID: <20130419180724.a0fecca0869e712e48e430f2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__19_Apr_2013_17_40_41_+1000_BgeF2Eu/uyHfv=PI"
+ boundary="Signature=_Fri__19_Apr_2013_18_07_24_+1000_zZqVvd96fuyGe31B"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51374 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:59929 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756763Ab3DSHkz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 03:40:55 -0400
+	with ESMTP id S1751844Ab3DSIHd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 04:07:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Kent Overstreet <koverstreet@google.com>, Minchan Kim <minchan@kernel.org>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>
 
---Signature=_Fri__19_Apr_2013_17_40_41_+1000_BgeF2Eu/uyHfv=PI
+--Signature=_Fri__19_Apr_2013_18_07_24_+1000_zZqVvd96fuyGe31B
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-Today's linux-next merge of the akpm tree got a conflict in fs/bio.c
-between commit 0a82a8d132b2 ("Revert "block: add missing
-block_bio_complete() tracepoint"") from Linus' tree and commit "block,
-aio: batch completion for bios/kiocbs" from the akpm tree.
+After merging the final tree, today's linux-next build (i386 defconfig)
+produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from arch/x86/kernel/early-quirks.c:21:0:
+arch/x86/include/asm/irq_remapping.h:87:58: warning: 'struct irq_chip' decl=
+ared inside parameter list [enabled by default]
+arch/x86/include/asm/irq_remapping.h:87:58: warning: its scope is only this=
+ definition or declaration, which is probably not what you want [enabled by=
+ default]
+arch/x86/include/asm/irq_remapping.h:93:18: warning: 'struct irq_chip' decl=
+ared inside parameter list [enabled by default]
+
+Probably caused by commit 03bbcb2e7e29 ("iommu/vt-d: add quirk for broken
+interrupt remapping on 55XX chipsets") from the iommu tree.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/bio.c
-index e082907,a8081ae..0000000
---- a/fs/bio.c
-+++ b/fs/bio.c
-@@@ -1688,31 -1689,42 +1689,40 @@@ void bio_flush_dcache_pages(struct bio=20
-  EXPORT_SYMBOL(bio_flush_dcache_pages);
-  #endif
- =20
-- /**
--  * bio_endio - end I/O on a bio
--  * @bio:	bio
--  * @error:	error, if any
--  *
--  * Description:
--  *   bio_endio() will end I/O on the whole bio. bio_endio() is the
--  *   preferred way to end I/O on a bio, it takes care of clearing
--  *   BIO_UPTODATE on error. @error is 0 on success, and and one of the
--  *   established -Exxxx (-EIO, for instance) error values in case
--  *   something went wrong. No one should call bi_end_io() directly on a
--  *   bio unless they own it and thus know that it has an end_io
--  *   function.
--  **/
-- void bio_endio(struct bio *bio, int error)
-+ static inline void __bio_endio(struct bio *bio, struct batch_complete *ba=
-tch)
-  {
-- 	if (error)
-+ 	if (bio->bi_error)
-  		clear_bit(BIO_UPTODATE, &bio->bi_flags);
-  	else if (!test_bit(BIO_UPTODATE, &bio->bi_flags))
-- 		error =3D -EIO;
-+ 		bio->bi_error =3D -EIO;
- =20
-  	if (bio->bi_end_io)
-- 		bio->bi_end_io(bio, error, NULL);
-+ 		bio->bi_end_io(bio, bio->bi_error, batch);
-+ }
-+=20
-+ void bio_endio_batch(struct bio *bio, int error, struct batch_complete *b=
-atch)
-+ {
-+ 	if (error)
-+ 		bio->bi_error =3D error;
-+=20
- -	trace_block_bio_complete(bio, error);
- -
-+ 	if (batch)
-+ 		bio_list_add(&batch->bio, bio);
-+ 	else
-+ 		__bio_endio(bio, batch);
-+=20
-+ }
-+ EXPORT_SYMBOL(bio_endio_batch);
-+=20
-+ void batch_complete(struct batch_complete *batch)
-+ {
-+ 	struct bio *bio;
-+=20
-+ 	while ((bio =3D bio_list_pop(&batch->bio)))
-+ 		__bio_endio(bio, batch);
-+=20
-+ 	batch_complete_aio(batch);
-  }
-- EXPORT_SYMBOL(bio_endio);
-+ EXPORT_SYMBOL(batch_complete);
- =20
-  void bio_pair_release(struct bio_pair *bp)
-  {
-
---Signature=_Fri__19_Apr_2013_17_40_41_+1000_BgeF2Eu/uyHfv=PI
+--Signature=_Fri__19_Apr_2013_18_07_24_+1000_zZqVvd96fuyGe31B
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRcPT5AAoJEECxmPOUX5FENsUP/iCghpLoIf9Yjh9Z8nTGtk1J
-ctdVZZ+448EHB9YnC6nUesbbmjG9VeAmBDHMjSmkwB4y7sDPhJL8doGrptRuunMv
-wTP0cPn+r6bTqkMKgdZBUhrVXkTHvNaOUCcq2IBfSAbVVVcrCHJeOZnwd6yKNZv9
-6q3OiVSsL2riXk4sq54VK5BJStX5eMTGG0QPKoim+I3WB55fGbfGTupwzDvUtAGP
-f5QxXZdeUfdkJvnBHfdRlzNDwl4DYEOajgtpzBD9eCa97MZ2rg3AehdYBKj/KtjQ
-t1i8fiaSiLt6qTwLhvwxf9pNXxvZz+Ra3Fr5rggyekJz+Y8cFFRaQcaschHpBICC
-+ltJZTL9eNZ/0zNIIRWZgcXZXxbA4eqEXORjSJKpPLx19qtUFGFoWtg1fOlHy6Do
-WWJLPykoIKt/yUxF+S1KlUazQ2Xet6hFaYklbNMKFmJoZFzmgmwFD5ppUylk/dV/
-aga4EdHdLWcyCg/wX9yZskt3zUjLz5/3NRhvWqD88DSdIWOG3jn9XB27wBh+/O2P
-W2YaZCFSXZGqczTabK1f1vh1SUV/mp0HgISyZvyFhAXmA9FfUUAGjpKGdM7GuY72
-I7c0HHuQ6uHAVffIDoiZaaNv5EZoIfWREFlLhw99Ml9BFPKl4W/gcqLx1eJEL6dJ
-d8nGJrennXFNwyz7TMwf
-=ZqR7
+iQIcBAEBCAAGBQJRcPs8AAoJEECxmPOUX5FEQ30P/RfVgrLIxVrvQQwYJV9z0NlN
+l6VWtquUuH/vGD+MlCij9yQLPM+DxcOeMzxspR0ZVtGzPsTs7Jn+k8kB2uCzg820
+9MpUcAt0d6fyNCD2Tc1YSJ3NmSPQ//rqEJQJuD2Hu1s099Ma+FL7SJ5wal0xlU5J
+kU96N9kPLkpcpZQpK6IcCHA2obNtNJraPeieEr4qAGt6Tzi5nfDJWNgvvdIoyRXl
+7rnycMbxChJkCQ6tlYJb8OSAWLESQAQs84ejsl9vIEW3p2R2ur3ke9sdoBSJrdne
+k0wIHHGlNcin/P1qLh12aNHBb6zMF5gC5cOMfyYiaoV5jUaMMq46PlSvTl1ZHQ27
+GmDaoRmrWrWmopg3sLrJEfQvS9AkPNKXG6qv1x/5VKbUH0GDFpSOfI6hJ1gRIthr
+4gatBag4G5UWPQkRgwJV2deUmamqz+LkmjV2tQ3VzsrJQJjw14I3C+Sfpzv3FRT8
+qmpoMaL8Fk+x1fo5FrRCFPgyq+YQITrf3R+SStYLM5SaWGr/PuyZk9T6I/eJAUZA
+cWceysfW/lyG7WQa2pLbE8AUh2m1rBtcyNfH+9qP57Pl3RMArlm6iz/nbdf3Eu+n
+eGoW+NrKmJMSz7tgTPFo+VbuBi8v96Fnhwp7ZpmhstIGjnksSDzPmWrPFdGSFIOT
+CrkSpzrg6+MisBmYGLgy
+=+/QD
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__19_Apr_2013_17_40_41_+1000_BgeF2Eu/uyHfv=PI--
+--Signature=_Fri__19_Apr_2013_18_07_24_+1000_zZqVvd96fuyGe31B--
