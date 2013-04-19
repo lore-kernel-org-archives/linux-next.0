@@ -1,79 +1,111 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the renesas tree with the arm-soc tree
-Date: Fri, 19 Apr 2013 16:59:31 +1000
-Message-ID: <20130419165931.740d243c82497664e6bd95b1@canb.auug.org.au>
+Subject: linux-next: manual merge of the clk tree with the arm-soc tree
+Date: Fri, 19 Apr 2013 17:27:53 +1000
+Message-ID: <20130419172753.0e604e9bad0b7a26a8b52787@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__19_Apr_2013_16_59_31_+1000_YFeUdkA_AdOyYuOR"
+ boundary="Signature=_Fri__19_Apr_2013_17_27_53_+1000_BNfprMtcbLVFwfu7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34362 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53225 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756725Ab3DSG7t (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 02:59:49 -0400
+	with ESMTP id S1756760Ab3DSH2E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 03:28:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Bastian Hecht <hechtb@gmail.com>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
---Signature=_Fri__19_Apr_2013_16_59_31_+1000_YFeUdkA_AdOyYuOR
+--Signature=_Fri__19_Apr_2013_17_27_53_+1000_BNfprMtcbLVFwfu7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Simon,
+Hi Mike,
 
-Today's linux-next merge of the renesas tree got a conflict in
-arch/arm/mach-shmobile/setup-r8a7740.c between commit 0583fe478a7d ("ARM:
-convert arm/arm64 arch timer to use CLKSRC_OF init") from the arm-soc
-tree and commit 74d6523995cc ("ARM: shmobile: r8a7740: Prepare for
-reference DT setup") from the renesas tree.
+Today's linux-next merge of the clk tree got a conflict in
+arch/arm/mach-vexpress/v2m.c between commit dabfd8fb84ab ("ARM: vexpress:
+remove sp804 OF init") from the arm-soc tree and commit 6e973d2c4385
+("clk: vexpress: Add separate SP810 driver") from the clk tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I thnk - see below) and can carry the fix as necessary (no
+action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-shmobile/setup-r8a7740.c
-index 326a4ab,00c5a70..0000000
---- a/arch/arm/mach-shmobile/setup-r8a7740.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7740.c
-@@@ -1027,9 -1016,10 +1016,9 @@@ static const char *r8a7740_boards_compa
+diff --cc arch/arm/mach-vexpress/v2m.c
+index d8e2954,c5e20b5..0000000
+--- a/arch/arm/mach-vexpress/v2m.c
++++ b/arch/arm/mach-vexpress/v2m.c
+@@@ -23,9 -21,13 +23,11 @@@
+  #include <linux/regulator/fixed.h>
+  #include <linux/regulator/machine.h>
+  #include <linux/vexpress.h>
++ #include <linux/clk-provider.h>
++ #include <linux/clkdev.h>
  =20
-  DT_MACHINE_START(R8A7740_DT, "Generic R8A7740 (Flattened Device Tree)")
-  	.map_io		=3D r8a7740_map_io,
-- 	.init_early	=3D r8a7740_add_early_devices_dt,
-- 	.init_irq	=3D r8a7740_init_irq,
-- 	.init_machine	=3D r8a7740_add_standard_devices_dt,
-+ 	.init_early	=3D r8a7740_init_delay,
-+ 	.init_irq	=3D r8a7740_init_irq_of,
-+ 	.init_machine	=3D r8a7740_generic_init,
- -	.init_time	=3D shmobile_timer_init,
-  	.dt_compat	=3D r8a7740_boards_compat_dt,
-  MACHINE_END
+ -#include <asm/arch_timer.h>
+  #include <asm/mach-types.h>
+  #include <asm/sizes.h>
+ -#include <asm/smp_twd.h>
+  #include <asm/mach/arch.h>
+  #include <asm/mach/map.h>
+  #include <asm/mach/time.h>
+@@@ -425,11 -433,29 +427,11 @@@ void __init v2m_dt_init_early(void
+ =20
+  static void __init v2m_dt_timer_init(void)
+  {
+- 	vexpress_clk_of_init();
+ -	struct device_node *node =3D NULL;
+ -
++ 	of_clk_init(NULL);
+ =20
+ -	do {
+ -		node =3D of_find_compatible_node(node, NULL, "arm,sp804");
+ -	} while (node && vexpress_get_site_by_node(node) !=3D VEXPRESS_SITE_MB);
+ -	if (node) {
+ -		pr_info("Using SP804 '%s' as a clock & events source\n",
+ -				node->full_name);
+ -		WARN_ON(clk_register_clkdev(of_clk_get_by_name(node,
+ -				"timclken1"), "v2m-timer0", "sp804"));
+ -		WARN_ON(clk_register_clkdev(of_clk_get_by_name(node,
+ -				"timclken2"), "v2m-timer1", "sp804"));
+ -		v2m_sp804_init(of_iomap(node, 0),
+ -				irq_of_parse_and_map(node, 0));
+ -	}
+ -
+ -	if (arch_timer_of_register() !=3D 0)
+ -		twd_local_timer_of_register();
+ +	clocksource_of_init();
+ =20
+ -	if (arch_timer_sched_clock_init() !=3D 0)
+ -		versatile_sched_clock_init(vexpress_get_24mhz_clock_base(),
+ +	versatile_sched_clock_init(vexpress_get_24mhz_clock_base(),
+  				24000000);
+  }
  =20
 
---Signature=_Fri__19_Apr_2013_16_59_31_+1000_YFeUdkA_AdOyYuOR
+--Signature=_Fri__19_Apr_2013_17_27_53_+1000_BNfprMtcbLVFwfu7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRcOtTAAoJEECxmPOUX5FEtFUP/jyojXRCgZFAS5lSSA9ltr5f
-9Jltfu2bQmsLehIsUQb1QuXWnUzTe0Nrp5oe2BTLTH4Tt9R2Mq1JR79/fyEqvtBU
-W/2JiHrRtoKGGo5QHAp656umQ+b9PIctVs3PNncmrYJubDuQpNek4+k3hqISeQ6/
-ktmvJN5bSvzJ1w1z3Y0tNg/j4GHIix5mVeoAKbIyzQco9r3k7ON5NrUJnr/5QYnL
-F4MNAI5+3dUxHR+zxn8sX8HRbX0HOTOC7m2BMdhCOGSxjk74bLI/S81TFXn5r1ue
-B2ZKkiFY8F1R+kJy9v+meqlkZEwF/tO0uuSm+nMgFysLQv7MtCaicN6/dA24+oHT
-MlLP1vOFQwBwoGezeuloFIzpQ+uCkGNfkcG/yfmELgiCVbywjcAGCJqzTMNfhbi4
-O58S7CEfMritrvGJ0mc8BPz6eaZiUN/m2vBmRdPrksYFLfn9RoiQ/L1mbLJeiKih
-tl/9KjVu011jg2wdvTLkPMW3Up6gGCYSzJFzg9bVzuEsTmgk3eEQjgatMEqEgkhE
-FqV4WAiyh/rg7k9fxYXKrOqv3pyjZW0pMIBdE7n6aucxU3koHvhdAx+7kmLu5uSQ
-k8bYPvzagtVuuXZaROTaiiDEgAvaacZnttJCs97e5mobcmTQsBVYinJ3lvoHHvnl
-vhZgHYmdy42L6s96BEwv
-=yxli
+iQIcBAEBCAAGBQJRcPH5AAoJEECxmPOUX5FEOu4QAJcuq2e7zFYRMvFxJftgIUIz
+E+OGWa4OwRI2zoMPuxw6+ZE6uU1FS5T248/8sJ2c5lkzfe8JJhyIpHG2J6aP59pX
+OFpYngNeNVOK0MdxjNLD6xKWkV8FNJv/UM+IznK7XbXHAYFdA2Ez+moIuBbZoXnP
+M/c4LFR2l61B4On3nzHIcWt8x4/iFWy1fkFjejYjRgyCLCR4a3UWxpgfN+WNeId/
+f/ESFZ4/4OPwBA4KBHayse2CAjLeY1Wyeh82ucnvrPRNZOI2A/jL8rhXxgdWCST4
+MZWCB2W2kNQ1IUOFzWxm1YS5dyHX3Ru7uUYBPB1m7zfJQ/sne+zuTaei8nh+CQfY
+UpeZrgYTLgnRRWlw3NWnxhPdmmD66DwJkl/xqFFynv7BtcbH3G/dcYnPGYifFVN4
+SfJI92+10UByEPaf/za8txne8Qvt0EAwcJLkHGUXcgR8g/0rmUjXu7lklF6x5q3M
+zT4e7Ruka06Dg5glB77VH0Jnf0JdfQIyN4SIKVi5v6wtQ9ZMS4Nq77zKVwnfBZOD
+r75U6JQZf7MbfoSnqMyib8KxgilV2cNWA0d96IymkFq2+FUIYcnQce8khUSAAHe0
+8N1Hq/bMYwbSxkebwlHAgDeWqnNLDrFrNoGLD0rlBzQQlme6noyaAeWsYOl2o9Nj
+xAfhTVdjKU0NuG1Gitah
+=zs5A
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__19_Apr_2013_16_59_31_+1000_YFeUdkA_AdOyYuOR--
+--Signature=_Fri__19_Apr_2013_17_27_53_+1000_BNfprMtcbLVFwfu7--
