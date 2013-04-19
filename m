@@ -1,31 +1,82 @@
-From: Pawel Moll <pawel.moll@arm.com>
-Subject: Re: linux-next: manual merge of the clk tree with the arm-soc tree
-Date: Fri, 19 Apr 2013 10:47:56 +0100
-Message-ID: <1366364876.3077.51.camel@hornet>
-References: <20130419172753.0e604e9bad0b7a26a8b52787@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Apr 18 [ call-trace: drm | x86 | smp | rcu
+ related? ]
+Date: Fri, 19 Apr 2013 12:19:08 +0200
+Message-ID: <CA+icZUWcwvFFVesJDoFNT3DbgRMXvDp7QLn+S5Ze_5d8gJRx1g@mail.gmail.com>
+References: <CA+icZUVWC+Rgd9wh4Z4CPZkEa9Pm2=2udnY5=UD1nnH0Wot1pQ@mail.gmail.com>
+	<CAKMK7uFEaiT_1siQBcp_-S0RwLvy3XSjqLn1ksq70VhNTZSfLw@mail.gmail.com>
+	<CA+icZUWQEiGecR8jgw4P-2YCKyqSDMMP0Ufwn8aBU_-AOf0a-Q@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130419172753.0e604e9bad0b7a26a8b52787@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Turquette <mturquette@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:51675 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S967957Ab3DSKTL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 06:19:11 -0400
+In-Reply-To: <CA+icZUWQEiGecR8jgw4P-2YCKyqSDMMP0Ufwn8aBU_-AOf0a-Q@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, x86@kernel.org, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Paul McKenney <paulmck@linux.vnet.ibm.com>, Paul McKenney <paul.mckenney@linaro.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@redhat.com>
 
-On Fri, 2013-04-19 at 08:27 +0100, Stephen Rothwell wrote:
-> Hi Mike,
->=20
-> Today's linux-next merge of the clk tree got a conflict in
-> arch/arm/mach-vexpress/v2m.c between commit dabfd8fb84ab ("ARM: vexpr=
-ess:
-> remove sp804 OF init") from the arm-soc tree and commit 6e973d2c4385
-> ("clk: vexpress: Add separate SP810 driver") from the clk tree.
->=20
-> I fixed it up (I thnk - see below) and can carry the fix as necessary=
- (no
-> action is required).
+On Thu, Apr 18, 2013 at 11:59 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> On Thu, Apr 18, 2013 at 9:48 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>> On Thu, Apr 18, 2013 at 3:05 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>>> On Thu, Apr 18, 2013 at 10:28 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>> Hi all,
+>>>>
+>>>> Changes since 20130417:
+>>>>
+>>>> New Trees:      rpmsg (actually added yesterday)
+>>>>                 ppc-temp (replacing powerpc for this week)
+>>>>
+>>>> The ceph tree gained a conflict against Linus' tree.
+>>>>
+>>>> The net-next tree gained a conflict against the infiniband tree.
+>>>>
+>>>> The usb tree gained a build failure so I used the version from
+>>>> next-20130417.
+>>>>
+>>>> I added two merge fix patches after the gen-gpio tree.
+>>>>
+>>>> The ppc-temp tree gained a conflict against the metag tree.
+>>>>
+>>>> The akpm tree lost a patch that turned up elsewhere.
+>>>>
+>>>> ----------------------------------------------------------------------------
+>>>>
+>>>
+>>> Not sure what the root-cause for this call-trace is (see screenshot).
+>>>
+>>> This is reproducible when running my kernel build-script (4 parallel-make-jobs).
+>>>
+>>> Any hints welcome!
+>>
+>> The panic handlers in our modeset code are pretty decent fubar - they
+>> take mutexes all over the place. So I think the backtrace you see
+>> there is actually a secondary effect. I've looked into fixing this up,
+>> but the issue is that drivers themselves have tons of state protected
+>> with mutexes, which all potentially affects the panic handler. So I've
+>> given up on that for now ...
+>
+> Thanks for taking care.
+>
+> On suspicion [1] I have reverted [2]... NOPE.
+>
+> - Sedat -
+>
+> [1] http://marc.info/?l=linux-kernel&m=136631921208895&w=2
+> [2] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=5a90d1a95356de7a32acb2e5309ac579a891af8f
+>
 
-Yep, this merge is fine, thanks!
+Hmmm, the issue seems to be gone with today's Linux-Next (next-20130419).
+My kernel-build is still running with no call-trace...
 
-Pawe=C5=82
+- Sedat -
+
+>> -Daniel
+>> --
+>> Daniel Vetter
+>> Software Engineer, Intel Corporation
+>> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
