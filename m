@@ -1,91 +1,128 @@
-From: Antonio Quartulli <ordex-GaUfNO9RBHfsrOwW+9ziJQ@public.gmane.org>
-Subject: Re: linux-next: build failure after merge of the
-	net-next tree
-Date: Fri, 19 Apr 2013 09:34:09 +0200
-Message-ID: <20130419073409.GH20819@ritirata.org>
-References: <20130419132127.05ea53adec329ca794d62be7@canb.auug.org.au>
-Reply-To: The list for a Better Approach To Mobile Ad-hoc Networking
- <b.a.t.m.a.n-ZwoEplunGu2X36UT3dwllkB+6BGkLq7r@public.gmane.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Fri, 19 Apr 2013 17:40:41 +1000
+Message-ID: <20130419174041.f0f8f47ae745896a6857000d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature"; boundary="nYySOmuH/HDX6pKp"
-Return-path: <b.a.t.m.a.n-bounces-ZwoEplunGu2X36UT3dwllkB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130419132127.05ea53adec329ca794d62be7-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-List-Unsubscribe: <https://lists.open-mesh.org/mm/options/b.a.t.m.a.n>,
- <mailto:b.a.t.m.a.n-request-ZwoEplunGu2X36UT3dwllkB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.open-mesh.org/pipermail/b.a.t.m.a.n/>
-List-Post: <mailto:b.a.t.m.a.n-ZwoEplunGu2X36UT3dwllkB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:b.a.t.m.a.n-request-ZwoEplunGu2X36UT3dwllkB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.open-mesh.org/mm/listinfo/b.a.t.m.a.n>,
- <mailto:b.a.t.m.a.n-request-ZwoEplunGu2X36UT3dwllkB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Errors-To: b.a.t.m.a.n-bounces-ZwoEplunGu2X36UT3dwllkB+6BGkLq7r@public.gmane.org
-Sender: "B.A.T.M.A.N" <b.a.t.m.a.n-bounces-ZwoEplunGu2X36UT3dwllkB+6BGkLq7r@public.gmane.org>
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b.a.t.m.a.n-ZwoEplunGu2X36UT3dwllkB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin-SHBFXCSm21MJGwgDXS7ZQA@public.gmane.org>, Marek Lindner <lindner_marek-LWAfsSFWpa4@public.gmane.org>, David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__19_Apr_2013_17_40_41_+1000_BgeF2Eu/uyHfv=PI"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51374 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756763Ab3DSHkz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 03:40:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Kent Overstreet <koverstreet@google.com>, Minchan Kim <minchan@kernel.org>
 
-
---nYySOmuH/HDX6pKp
-Content-Type: text/plain; charset=utf-8
+--Signature=_Fri__19_Apr_2013_17_40_41_+1000_BgeF2Eu/uyHfv=PI
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi Andrew,
 
-On Fri, Apr 19, 2013 at 01:21:27PM +1000, Stephen Rothwell wrote:
->=20
-> Caused by commits 612d2b4fe0a1 ("batman-adv: network coding - save
-> overheard and tx packets for decoding") and 2df5278b0267 ("batman-adv:
-> network coding - receive coded packets and decode them") from the
-> net-next tree interacting with commit fe8a93b95145 ("batman-adv: make
-> is_my_mac() check for the current mesh only") from the net tree.
->=20
-> I added the following merge fix patch and can carry it as necessary:
+Today's linux-next merge of the akpm tree got a conflict in fs/bio.c
+between commit 0a82a8d132b2 ("Revert "block: add missing
+block_bio_complete() tracepoint"") from Linus' tree and commit "block,
+aio: batch completion for bios/kiocbs" from the akpm tree.
 
-
-thank you very much for taking care of this.
-However, as I wrote to David in the pull request which generated this noise
-(http://patchwork.ozlabs.org/patch/237363/), I am now going to send a second
-pull request which fixes this problem properly and adds the related kernel =
-doc.
-
-Your patch looks good, but I'd prefer to send my already prepared pull requ=
-est.
-
-Is it ok with you?
-
-Cheers,
-
-
-
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
-Antonio Quartulli
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-=2E.each of us alone is worth nothing..
-Ernesto "Che" Guevara
+diff --cc fs/bio.c
+index e082907,a8081ae..0000000
+--- a/fs/bio.c
++++ b/fs/bio.c
+@@@ -1688,31 -1689,42 +1689,40 @@@ void bio_flush_dcache_pages(struct bio=20
+  EXPORT_SYMBOL(bio_flush_dcache_pages);
+  #endif
+ =20
+- /**
+-  * bio_endio - end I/O on a bio
+-  * @bio:	bio
+-  * @error:	error, if any
+-  *
+-  * Description:
+-  *   bio_endio() will end I/O on the whole bio. bio_endio() is the
+-  *   preferred way to end I/O on a bio, it takes care of clearing
+-  *   BIO_UPTODATE on error. @error is 0 on success, and and one of the
+-  *   established -Exxxx (-EIO, for instance) error values in case
+-  *   something went wrong. No one should call bi_end_io() directly on a
+-  *   bio unless they own it and thus know that it has an end_io
+-  *   function.
+-  **/
+- void bio_endio(struct bio *bio, int error)
++ static inline void __bio_endio(struct bio *bio, struct batch_complete *ba=
+tch)
+  {
+- 	if (error)
++ 	if (bio->bi_error)
+  		clear_bit(BIO_UPTODATE, &bio->bi_flags);
+  	else if (!test_bit(BIO_UPTODATE, &bio->bi_flags))
+- 		error =3D -EIO;
++ 		bio->bi_error =3D -EIO;
+ =20
+  	if (bio->bi_end_io)
+- 		bio->bi_end_io(bio, error, NULL);
++ 		bio->bi_end_io(bio, bio->bi_error, batch);
++ }
++=20
++ void bio_endio_batch(struct bio *bio, int error, struct batch_complete *b=
+atch)
++ {
++ 	if (error)
++ 		bio->bi_error =3D error;
++=20
+ -	trace_block_bio_complete(bio, error);
+ -
++ 	if (batch)
++ 		bio_list_add(&batch->bio, bio);
++ 	else
++ 		__bio_endio(bio, batch);
++=20
++ }
++ EXPORT_SYMBOL(bio_endio_batch);
++=20
++ void batch_complete(struct batch_complete *batch)
++ {
++ 	struct bio *bio;
++=20
++ 	while ((bio =3D bio_list_pop(&batch->bio)))
++ 		__bio_endio(bio, batch);
++=20
++ 	batch_complete_aio(batch);
+  }
+- EXPORT_SYMBOL(bio_endio);
++ EXPORT_SYMBOL(batch_complete);
+ =20
+  void bio_pair_release(struct bio_pair *bp)
+  {
 
---nYySOmuH/HDX6pKp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Signature=_Fri__19_Apr_2013_17_40_41_+1000_BgeF2Eu/uyHfv=PI
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRcPNxAAoJEADl0hg6qKeOimIP/1OQBmOUOAtmC2ysu94YCdNk
-pBuo+0D7b7UtbdsIfYVQoj3EienZBWKB7DTPbWW3dV91/zWt7jG3YJuseVFqSDzs
-XYehdFZ1xXkz1VBSj/EBmQcNeyEHRQm2UDYcYvkQxaGIH6lOQ1ChFusyBD+UMQ8q
-Ke4N/fsAHbnsHdhv/qrtxg7qom7ZUxiKvXfyzeW/6l5Lc5x6dtYhU7/8mP/wzaKx
-iiastd8h5NHhnxGrBQl26SzKiyryS9xInINQWU+ZBeNddnqGo5AHjuACxbpt5z1A
-jn8eyGTzL5GyG+ylBKwMoCJPmuzvQ5b6CUIKrY5iFY2iz4h96Ja7srQIdBjeHNYH
-o99KAQrFF7pNN9FF0nFMnz3ngA7rh8cHYndgVBANZWyQl0mWCMmbIfnR2w2YSfQG
-tGI1I1WujcHs670DQZsIMadg8EWCIASQNfu17efH2QogHqikjjw3MPKeiTkr+JZM
-kwYSHvntfK0aY6AkLzUsUlWWMC57EVdHoSgr/RWoRtc6TNcV8C+z4rqfiHdycA27
-5G38FdED2KBILvbUSfneE8Za4XSc9gDCVq0D2d3rzhnGDyrvJ6B5q0C7+DH8FTI5
-GCJBfzbcOmn/zyw+UHfHQiV/ucF2Msd8/uWVuDjKeHKbm5emHKVeDGns7iAgYe3x
-GSRNU2fPoGviSa9pUts7
-=GfXY
+iQIcBAEBCAAGBQJRcPT5AAoJEECxmPOUX5FENsUP/iCghpLoIf9Yjh9Z8nTGtk1J
+ctdVZZ+448EHB9YnC6nUesbbmjG9VeAmBDHMjSmkwB4y7sDPhJL8doGrptRuunMv
+wTP0cPn+r6bTqkMKgdZBUhrVXkTHvNaOUCcq2IBfSAbVVVcrCHJeOZnwd6yKNZv9
+6q3OiVSsL2riXk4sq54VK5BJStX5eMTGG0QPKoim+I3WB55fGbfGTupwzDvUtAGP
+f5QxXZdeUfdkJvnBHfdRlzNDwl4DYEOajgtpzBD9eCa97MZ2rg3AehdYBKj/KtjQ
+t1i8fiaSiLt6qTwLhvwxf9pNXxvZz+Ra3Fr5rggyekJz+Y8cFFRaQcaschHpBICC
++ltJZTL9eNZ/0zNIIRWZgcXZXxbA4eqEXORjSJKpPLx19qtUFGFoWtg1fOlHy6Do
+WWJLPykoIKt/yUxF+S1KlUazQ2Xet6hFaYklbNMKFmJoZFzmgmwFD5ppUylk/dV/
+aga4EdHdLWcyCg/wX9yZskt3zUjLz5/3NRhvWqD88DSdIWOG3jn9XB27wBh+/O2P
+W2YaZCFSXZGqczTabK1f1vh1SUV/mp0HgISyZvyFhAXmA9FfUUAGjpKGdM7GuY72
+I7c0HHuQ6uHAVffIDoiZaaNv5EZoIfWREFlLhw99Ml9BFPKl4W/gcqLx1eJEL6dJ
+d8nGJrennXFNwyz7TMwf
+=ZqR7
 -----END PGP SIGNATURE-----
 
---nYySOmuH/HDX6pKp--
+--Signature=_Fri__19_Apr_2013_17_40_41_+1000_BgeF2Eu/uyHfv=PI--
