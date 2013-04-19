@@ -1,83 +1,43 @@
-From: Davidlohr Bueso <davidlohr.bueso@hp.com>
-Subject: Re: linux-next: Tree for Apr 18 [ call-trace: drm | x86 | smp | rcu
- related? ]
-Date: Fri, 19 Apr 2013 13:12:08 -0700
-Message-ID: <1366402328.5317.9.camel@buesod1.americas.hpqcorp.net>
-References: <CA+icZUVWC+Rgd9wh4Z4CPZkEa9Pm2=2udnY5=UD1nnH0Wot1pQ@mail.gmail.com>
-	 <CAKMK7uFEaiT_1siQBcp_-S0RwLvy3XSjqLn1ksq70VhNTZSfLw@mail.gmail.com>
-	 <CA+icZUWQEiGecR8jgw4P-2YCKyqSDMMP0Ufwn8aBU_-AOf0a-Q@mail.gmail.com>
-	 <CA+icZUWcwvFFVesJDoFNT3DbgRMXvDp7QLn+S5Ze_5d8gJRx1g@mail.gmail.com>
-	 <CA+icZUXjTGSG+tejOAFgXr8EpKd7dL=-W41ha_-0N=roAxN3eg@mail.gmail.com>
-	 <CA+icZUVE-ikxEp65bUHMp0WEPX_MDbA06ykzeSxygJv=9f45ig@mail.gmail.com>
-	 <CA+icZUUp84vzF_0n77wsJ6dBOS26vSRCXaFUDbCQi-wG0b-Osg@mail.gmail.com>
-	 <517198A7.8020904@surriel.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] nilfs2: fix printk format warning in page.c
+Date: Fri, 19 Apr 2013 14:19:07 -0700
+Message-ID: <5171B4CB.7040302@infradead.org>
+References: <20130419181924.a035efe6d5e73fe0db9ddb84@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from g4t0016.houston.hp.com ([15.201.24.19]:6653 "EHLO
-	g4t0016.houston.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753535Ab3DSUMN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 16:12:13 -0400
-In-Reply-To: <517198A7.8020904@surriel.com>
+Received: from casper.infradead.org ([85.118.1.10]:52633 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754413Ab3DSVT3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 17:19:29 -0400
+In-Reply-To: <20130419181924.a035efe6d5e73fe0db9ddb84@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rik van Riel <riel@surriel.com>
-Cc: sedat.dilek@gmail.com, Daniel Vetter <daniel.vetter@ffwll.ch>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, x86@kernel.org, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Paul McKenney <paulmck@linux.vnet.ibm.com>, Paul McKenney <paul.mckenney@linaro.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, Emmanuel Benisty <benisty.e@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, KONISHI Ryusuke <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org
 
-On Fri, 2013-04-19 at 15:19 -0400, Rik van Riel wrote:
-> On 04/19/2013 02:53 PM, Sedat Dilek wrote:
-> > On Fri, Apr 19, 2013 at 6:43 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> >
-> >> I tried to switch from SLUB to SLAB...
-> >>
-> >> ...and also from VIRT_CPU_ACCOUNTING_GEN to TICK_CPU_ACCOUNTING.
-> >>
-> >> 2x NOPE.
-> >>
-> >> In one kernel-build I saw in my console...
-> >>
-> >>       semop(1): encountered an error: Identifier removed
+From: Randy Dunlap <rdunlap@infradead.org>
 
-This looks like what Emmanuel was/is running into:
-https://lkml.org/lkml/2013/3/30/1
+Fix printk format warning by using %zu for 'size_t':
 
-> >>
-> >> ...if this says sth. to you.
-> >>
-> > [ CC folks from below thread ]
-> >
-> > I have found a thread called "Re: ipc,sem: sysv semaphore scalability"
-> > on LKML with a screenshot that shows the same call-trace.
-> > I followed it a bit.
-> > There is a patch in [3]... unconfirmed.
-> >
-> > Comments on the rcu read-lock and "sem_lock()" vs "sem_unlock()" from Linus.
-> >
-> > What's the status of this discussion?
-> >
-> > - Sedat -
-> >
-> > [1] https://lkml.org/lkml/2013/3/30/6
-> > [2] http://i.imgur.com/uk6gmq1.jpg
-> > [3] https://lkml.org/lkml/2013/3/31/12
-> > [4] https://lkml.org/lkml/2013/3/31/77
-> >
-> I am at a conference right now, but when I get
-> back I will check linux-next vs. all the fixes from
-> the semaphore scalability email thread.
+fs/nilfs2/page.c:430:6: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'size_t' [-Wformat]
 
-I'm back from the collab. summit, so AFAICT these still need to go in
-linux-next:
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc:	KONISHI Ryusuke <konishi.ryusuke@lab.ntt.co.jp>
+Cc:	linux-nilfs@vger.kernel.org
+---
+ fs/nilfs2/page.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ipc,sem: untangle RCU locking with find_alloc_undo:
-https://lkml.org/lkml/2013/3/28/275
-
-ipc,sem: fix lockdep false positive:
-https://lkml.org/lkml/2013/3/29/119
-
-ipc, sem: do not call sem_lock when bogus sma:
-https://lkml.org/lkml/2013/3/31/12
-
-Thanks,
-Davidlohr
+--- linux-next-20130419.orig/fs/nilfs2/page.c
++++ linux-next-20130419/fs/nilfs2/page.c
+@@ -426,7 +426,7 @@ void nilfs_clear_dirty_page(struct page
+ 			lock_buffer(bh);
+ 			if (!silent) {
+ 				nilfs_warning(sb, __func__,
+-					"discard block %llu, size %lu",
++					"discard block %llu, size %zu",
+ 					(u64)bh->b_blocknr, bh->b_size);
+ 			}
+ 			clear_buffer_dirty(bh);
