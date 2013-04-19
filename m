@@ -1,82 +1,31 @@
 From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Apr 18 [ call-trace: drm | x86 | smp | rcu
- related? ]
-Date: Fri, 19 Apr 2013 12:19:08 +0200
-Message-ID: <CA+icZUWcwvFFVesJDoFNT3DbgRMXvDp7QLn+S5Ze_5d8gJRx1g@mail.gmail.com>
-References: <CA+icZUVWC+Rgd9wh4Z4CPZkEa9Pm2=2udnY5=UD1nnH0Wot1pQ@mail.gmail.com>
-	<CAKMK7uFEaiT_1siQBcp_-S0RwLvy3XSjqLn1ksq70VhNTZSfLw@mail.gmail.com>
-	<CA+icZUWQEiGecR8jgw4P-2YCKyqSDMMP0Ufwn8aBU_-AOf0a-Q@mail.gmail.com>
+Subject: [Q] Diff of two successive -next releases?
+Date: Fri, 19 Apr 2013 12:35:01 +0200
+Message-ID: <CA+icZUXSbzxYjC2JWdso-OPVjjaoFkFX-t9f8CqJdVuPeE7vJw@mail.gmail.com>
 Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:51675 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S967957Ab3DSKTL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 06:19:11 -0400
-In-Reply-To: <CA+icZUWQEiGecR8jgw4P-2YCKyqSDMMP0Ufwn8aBU_-AOf0a-Q@mail.gmail.com>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:64241 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S967984Ab3DSKfE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Apr 2013 06:35:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, x86@kernel.org, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Paul McKenney <paulmck@linux.vnet.ibm.com>, Paul McKenney <paul.mckenney@linaro.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 18, 2013 at 11:59 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Thu, Apr 18, 2013 at 9:48 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->> On Thu, Apr 18, 2013 at 3:05 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>> On Thu, Apr 18, 2013 at 10:28 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>> Hi all,
->>>>
->>>> Changes since 20130417:
->>>>
->>>> New Trees:      rpmsg (actually added yesterday)
->>>>                 ppc-temp (replacing powerpc for this week)
->>>>
->>>> The ceph tree gained a conflict against Linus' tree.
->>>>
->>>> The net-next tree gained a conflict against the infiniband tree.
->>>>
->>>> The usb tree gained a build failure so I used the version from
->>>> next-20130417.
->>>>
->>>> I added two merge fix patches after the gen-gpio tree.
->>>>
->>>> The ppc-temp tree gained a conflict against the metag tree.
->>>>
->>>> The akpm tree lost a patch that turned up elsewhere.
->>>>
->>>> ----------------------------------------------------------------------------
->>>>
->>>
->>> Not sure what the root-cause for this call-trace is (see screenshot).
->>>
->>> This is reproducible when running my kernel build-script (4 parallel-make-jobs).
->>>
->>> Any hints welcome!
->>
->> The panic handlers in our modeset code are pretty decent fubar - they
->> take mutexes all over the place. So I think the backtrace you see
->> there is actually a secondary effect. I've looked into fixing this up,
->> but the issue is that drivers themselves have tons of state protected
->> with mutexes, which all potentially affects the panic handler. So I've
->> given up on that for now ...
->
-> Thanks for taking care.
->
-> On suspicion [1] I have reverted [2]... NOPE.
->
-> - Sedat -
->
-> [1] http://marc.info/?l=linux-kernel&m=136631921208895&w=2
-> [2] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=5a90d1a95356de7a32acb2e5309ac579a891af8f
->
+Hi,
 
-Hmmm, the issue seems to be gone with today's Linux-Next (next-20130419).
-My kernel-build is still running with no call-trace...
+I would like to do a diff between a problematic next-yyyymmdd and
+next-[yyyymmdd+1].
+How can I do this easily?
 
+My old style was to checkout a specific Linux-Next release and then
+create a diff against the latest -rcX (of mainline).
+So, I have two diffs and try to compare them.
+
+Thanks in advance.
+
+Regards,
 - Sedat -
-
->> -Daniel
->> --
->> Daniel Vetter
->> Software Engineer, Intel Corporation
->> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
