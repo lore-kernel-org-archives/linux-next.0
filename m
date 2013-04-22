@@ -1,34 +1,50 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
-Date: Mon, 22 Apr 2013 14:00:01 +0200
-Message-ID: <1432322.Gxoq9LXUAO@vostro.rjw.lan>
-References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com> <2533805.egcIGXDHJD@vostro.rjw.lan> <CAKohponuipht4BKoWjuk1HQyovdAO7mOQaRbWWepXQCWvKLyEw@mail.gmail.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: linux-next: build failure after merge of the arm-soc tree
+Date: Mon, 22 Apr 2013 15:26:06 +0200
+Message-ID: <20130422152606.5e4fb41a@skate>
+References: <20130419164636.0d2405ca5fd927f1ba31fe40@canb.auug.org.au>
+	<CAOesGMhUTyPdNo=yaRqEv+Zhf7ga8e-R0asbnuje_LioWbqsgg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAKohponuipht4BKoWjuk1HQyovdAO7mOQaRbWWepXQCWvKLyEw@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Dirk Brandewie <dirk.brandewie@gmail.com>, sedat.dilek@gmail.com, Dirk Brandewie <dirk.j.brandewie@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Nathan Zimmer <nzimmer@sgi.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([94.23.35.102]:45790 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752846Ab3DVN0T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Apr 2013 09:26:19 -0400
+In-Reply-To: <CAOesGMhUTyPdNo=yaRqEv+Zhf7ga8e-R0asbnuje_LioWbqsgg@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@lists.infradead.org
 
-On Monday, April 22, 2013 08:44:30 AM Viresh Kumar wrote:
-> On 22 April 2013 05:00, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> > Applied to linux-pm.git/linux-next, although please check the result, because
-> > the patchwork version of the patch wasn't quite applicable and I fixed it up
-> > manually.
+Dear Olof Johansson,
+
+On Fri, 19 Apr 2013 07:01:28 -0700, Olof Johansson wrote:
+
+> > After merging the arm-soc tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >
+> > powerpc64-linux-ld: cannot find drivers/pci/host/built-in.o: No
+> > such file or directory
+> >
+> > Caused by commit 9ecbe03ae85b ("pci: infrastructure to add drivers
+> > in drivers/pci/host").
+> >
+> > I have used the arm-soc tree from next-20130418 for today.
 > 
-> Yes it looks fine and that's why i have attached the patch with my
-> email earlier.
+> Sorry about that, I'll drop the branch that brought in the of_pci
+> consolidation from our repo.
 
-Yes, I forgot about the attachment and saw it again only after I had applied
-the patch.
+The build failure reported here is totally independent of the of_pci
+consolidation work. It's caused by the commit pointed in this e-mail,
+and it is independent from Andrew Murray's work on of_pci consolidation.
 
-Thanks,
-Rafael
+Best regards,
 
-
+Thomas
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Thomas Petazzoni, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
