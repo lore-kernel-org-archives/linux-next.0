@@ -1,52 +1,34 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/2] lib: Add lz4 compressor module
-Date: Mon, 22 Apr 2013 11:24:21 +0200
-Message-ID: <CAMuHMdUv=GR6s=BYXHR7KyaKCUSxmkJO8dzZJMRktu3cUCTbsw@mail.gmail.com>
-References: <CAOAMb1D8rokZpQpp6mEJw6KXcQq8fJUWBJoC5+ZfkNaE6WvAZA@mail.gmail.com>
-	<CAMuHMdXXoaQjb9sRK=X3gEDwqQBJcJQtaJbUGB8cJmteHSN3vQ@mail.gmail.com>
-	<51750159.07d70e0a.5461.ffffec64SMTPIN_ADDED_BROKEN@mx.google.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
+Date: Mon, 22 Apr 2013 14:00:01 +0200
+Message-ID: <1432322.Gxoq9LXUAO@vostro.rjw.lan>
+References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com> <2533805.egcIGXDHJD@vostro.rjw.lan> <CAKohponuipht4BKoWjuk1HQyovdAO7mOQaRbWWepXQCWvKLyEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-m68k-owner@vger.kernel.org>
-In-Reply-To: <51750159.07d70e0a.5461.ffffec64SMTPIN_ADDED_BROKEN@mx.google.com>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Chanho Min <chanho.min@lge.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Darrick J. Wong" <djwong@us.ibm.com>, Bob Pearson <rpearson@systemfabricworks.com>, Richard Weinberger <richard@nod.at>, Herbert Xu <herbert@gondor.apana.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Yann Collet <yann.collet.73@gmail.com>, Kyungsik Lee <kyungsik.lee@lge.com>, Linux/m68k <linux-m68k@vger.kernel.org>, sparclinux <sparclinux@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CAKohponuipht4BKoWjuk1HQyovdAO7mOQaRbWWepXQCWvKLyEw@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Dirk Brandewie <dirk.brandewie@gmail.com>, sedat.dilek@gmail.com, Dirk Brandewie <dirk.j.brandewie@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Nathan Zimmer <nzimmer@sgi.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Apr 22, 2013 at 11:22 AM, Chanho Min <chanho.min@lge.com> wrote:
->>> +#define HTYPE const u8*
->>> +
->>> +#ifdef __BIG_ENDIAN
->>> +#define LZ4_NBCOMMONBYTES(val) (__builtin_clz(val) >> 3)
->>> +#else
->>> +#define LZ4_NBCOMMONBYTES(val) (__builtin_ctz(val) >> 3)
->>> +#endif
->>
->>It seems at least m68k and sparc don't have the __builtin_clz() functions:
->>
->>m68k-allmodconfig (http://kisskb.ellerman.id.au/kisskb/buildresult/8572593/):
->>
->>ERROR: "__clzsi2" [lib/lz4/lz4hc_compress.ko] undefined!
->>ERROR: "__clzsi2" [lib/lz4/lz4_compress.ko] undefined!
->
-> gcc seems to define __builtin_clz as __clzsi2 in some architecture.
-> But, kernel doesn't link libgcc.a.
-> If kernel should use gcc's built-in function without libgcc.a,
-> do we need to port __clzsi2 to 'arch/*/lib/*'?
+On Monday, April 22, 2013 08:44:30 AM Viresh Kumar wrote:
+> On 22 April 2013 05:00, Rafael J. Wysocki <rjw@sisk.pl> wrote:
+> > Applied to linux-pm.git/linux-next, although please check the result, because
+> > the patchwork version of the patch wasn't quite applicable and I fixed it up
+> > manually.
+> 
+> Yes it looks fine and that's why i have attached the patch with my
+> email earlier.
 
-That's another option.
+Yes, I forgot about the attachment and saw it again only after I had applied
+the patch.
 
-So far no one used __builtin_c[lt]z in generic code. We always used
-__fls and __ffs.
+Thanks,
+Rafael
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
