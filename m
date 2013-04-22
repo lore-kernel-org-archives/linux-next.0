@@ -1,123 +1,78 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for Apr 9 [cpufreq: NULL pointer deref]
-Date: Mon, 22 Apr 2013 01:30:50 +0200
-Message-ID: <2533805.egcIGXDHJD@vostro.rjw.lan>
-References: <CA+icZUU_K9PiFMqMsOEk1+c2DX8LrUojZptPiRVarv4dcB2qFA@mail.gmail.com> <516C25AE.4050503@intel.com> <CAKohpo=OOPBYCD_K6RLw2YrJxhMokwrOww4QM2t2T4SnGObyQQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Mon, 22 Apr 2013 12:43:34 +1000
+Message-ID: <20130422124334.92adfce6bdbcba7b08fe83a2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAKohpo=OOPBYCD_K6RLw2YrJxhMokwrOww4QM2t2T4SnGObyQQ@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Dirk Brandewie <dirk.brandewie@gmail.com>, sedat.dilek@gmail.com, Dirk Brandewie <dirk.j.brandewie@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Nathan Zimmer <nzimmer@sgi.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__22_Apr_2013_12_43_34_+1000_PXABuKPIOl6vlyzx"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37570 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753892Ab3DVCns (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 21 Apr 2013 22:43:48 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ivan Vecera <ivecera@redhat.com>, Patrick McHardy <kaber@trash.net>
 
-On Monday, April 15, 2013 10:52:28 PM Viresh Kumar wrote:
-> On 15 April 2013 21:37, Dirk Brandewie <dirk.brandewie@gmail.com> wrote:
-> > If the intel_pstate driver is being used __cpufreq_governor() should NOT be
-> > called intel_pstate does not implement the target() callback.
-> >
-> > Nathan's commit 5800043b2 changed the fence around the call to
-> > __cpufreq_governor() in __cpufreq_remove_dev() here is the relevant hunk.
-> 
-> No it isn't.
-> 
-> > +       if (has_target)
-> >                 __cpufreq_governor(data, CPUFREQ_GOV_STOP);
-> 
-> As it has taken care of this limitation.
-> 
-> BUT some of my earlier patches haven't. :(
-> Here is the fix (Sedat please try this and give your tested-by, use the attached
-> patch as gmail might break what i am copying in mail)..
-> 
-> Sorry for being late in fixing this issue, i am still down with Tonsil infection
-> and fever.. Today only i got some power to fix it after seeing Dirk's mail.
-> 
-> Your tested-by may help me to recover quickly :)
-> 
-> @Rafael: I will probably be down for one more week and so not doing any
-> reviews for now... I do check important mails sent directly to me though.
-> 
-> ------------x----------------------x------------------
-> 
-> From: Viresh Kumar <viresh.kumar@linaro.org>
-> Date: Mon, 15 Apr 2013 22:43:57 +0530
-> Subject: [PATCH] cpufreq: Don't call __cpufreq_governor() for drivers without
->  target()
-> 
-> Some cpufreq drivers implement their own governor and so don't need us to call
-> generic governors interface via __cpufreq_governor(). Few recent commits haven't
-> obeyed this law well and we saw some regressions.
-> 
-> This patch tries to fix this issue.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+--Signature=_Mon__22_Apr_2013_12_43_34_+1000_PXABuKPIOl6vlyzx
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied to linux-pm.git/linux-next, although please check the result, because
-the patchwork version of the patch wasn't quite applicable and I fixed it up
-manually.
+Hi all,
 
-Thanks,
-Rafael
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/emulex/benet/be_main.c between commit f11a869d4e38
+("be2net: take care of __vlan_put_tag return value") from Linus' tree and
+commit 86a9bad3ab6b ("net: vlan: add protocol argument to packet tagging
+functions") from the net-next tree.
 
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-> ---
->  drivers/cpufreq/cpufreq.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 3564947..a6f6595 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -858,13 +858,18 @@ static int cpufreq_add_policy_cpu(unsigned int
-> cpu, unsigned int sibling,
->  				  struct device *dev)
->  {
->  	struct cpufreq_policy *policy;
-> -	int ret = 0;
-> +	int ret = 0, has_target = 0;
->  	unsigned long flags;
-> 
->  	policy = cpufreq_cpu_get(sibling);
->  	WARN_ON(!policy);
-> 
-> -	__cpufreq_governor(policy, CPUFREQ_GOV_STOP);
-> +	rcu_read_lock();
-> +	has_target = !!rcu_dereference(cpufreq_driver)->target;
-> +	rcu_read_unlock();
-> +
-> +	if (has_target)
-> +		__cpufreq_governor(policy, CPUFREQ_GOV_STOP);
-> 
->  	lock_policy_rwsem_write(sibling);
-> 
-> @@ -877,8 +882,10 @@ static int cpufreq_add_policy_cpu(unsigned int
-> cpu, unsigned int sibling,
-> 
->  	unlock_policy_rwsem_write(sibling);
-> 
-> -	__cpufreq_governor(policy, CPUFREQ_GOV_START);
-> -	__cpufreq_governor(policy, CPUFREQ_GOV_LIMITS);
-> +	if (has_target) {
-> +		__cpufreq_governor(policy, CPUFREQ_GOV_START);
-> +		__cpufreq_governor(policy, CPUFREQ_GOV_LIMITS);
-> +	}
-> 
->  	ret = sysfs_create_link(&dev->kobj, &policy->kobj, "cpufreq");
->  	if (ret) {
-> @@ -1146,7 +1153,8 @@ static int __cpufreq_remove_dev(struct device
-> *dev, struct subsys_interface *sif
-> 
->  	/* If cpu is last user of policy, free policy */
->  	if (cpus == 1) {
-> -		__cpufreq_governor(data, CPUFREQ_GOV_POLICY_EXIT);
-> +		if (has_target)
-> +			__cpufreq_governor(data, CPUFREQ_GOV_POLICY_EXIT);
-> 
->  		lock_policy_rwsem_read(cpu);
->  		kobj = &data->kobj;
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/ethernet/emulex/benet/be_main.c
+index 2886c9b,811d0a4..0000000
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@@ -759,9 -771,8 +771,9 @@@ static struct sk_buff *be_insert_vlan_i
+ =20
+  	if (vlan_tx_tag_present(skb)) {
+  		vlan_tag =3D be_get_tx_vlan_tag(adapter, skb);
+- 		skb =3D __vlan_put_tag(skb, vlan_tag);
+ -		__vlan_put_tag(skb, htons(ETH_P_8021Q), vlan_tag);
+ -		skb->vlan_tci =3D 0;
+++		skb =3D __vlan_put_tag(skb, htons(ETH_P_8021Q), vlan_tag);
+ +		if (skb)
+ +			skb->vlan_tci =3D 0;
+  	}
+ =20
+  	return skb;
+
+--Signature=_Mon__22_Apr_2013_12_43_34_+1000_PXABuKPIOl6vlyzx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRdKPWAAoJEECxmPOUX5FE3Z4QAKQpZEsa06tp5n6CkozqKV6W
+FD+pCgfe+nL2GGUbsUJ/3xVK4XXCiL437tQQd/91hOf9t76dZLMbjULfKlF3gpvF
+dmLWdMuULQ8k/FMf/4ocR28XFHcszPUg8yTICxTS/D38YwM0GXNjrOLljZNjONtv
+BqMeN04sCqoIIu3j1BxnO1/n9YPDUx8DYP8A2hcuZMCExaFlRXQIzozaCeXLXohl
+bTvHUQQEi+0WnNgH9STfi/cZb9lKjmcHBRQR0hGIvsW82a7y59NDGpfuVIKEzUzv
+z+POD6vLkzhbqpSBCGQdcb1fkDZYlO1zyMDhU8OlVGGf+dEtp9IDrYzDvEYTjvII
+003KUDm7FUHJ8Zy3pby98DomouCUKpzp2fvTuXwDMmJ0zIB8mAmtGWZQKHHwoyzf
+39msC7TX6w0XqIXuN8M4pNTkd8s0iaGxtOITPdot0sw1cvS+Odf9+cETAVsE2gZL
+xkvL4jswVgZb5Y871jm/Jk/RsyS/XqDbAsLbaoBSKMOH+Ti9eLYWiaDA+euk6b/o
+YT9l00N3YzaUCuofVe4jflqeqXQ6oZqaKGzH7Ma52rE6UuWhKqnLYjHEa9a0DGq+
+GARKhlBQYlu6pxXWOFWlDDswQ66YH0ZMaIdQIDIvAYDPTEptOla/3GEK0CLFclVF
+UP34nO5Q4YRg7Zm1WzAn
+=Lb1t
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__22_Apr_2013_12_43_34_+1000_PXABuKPIOl6vlyzx--
