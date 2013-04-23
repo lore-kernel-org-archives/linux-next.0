@@ -1,22 +1,32 @@
 From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Mon, 22 Apr 2013 20:39:12 -0400 (EDT)
-Message-ID: <20130422.203912.1469412832002282235.davem@davemloft.net>
-References: <20130419132127.05ea53adec329ca794d62be7@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Mon, 22 Apr 2013 20:41:34 -0400 (EDT)
+Message-ID: <20130422.204134.24585943335801567.davem@davemloft.net>
+References: <20130422124334.92adfce6bdbcba7b08fe83a2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130419132127.05ea53adec329ca794d62be7@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:40684 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753338Ab3DWAlf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Apr 2013 20:41:35 -0400
+In-Reply-To: <20130422124334.92adfce6bdbcba7b08fe83a2@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, martin@hundeboll.net, lindner_marek@yahoo.de, ordex@autistici.org
-List-Id: linux-next.vger.kernel.org
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ivecera@redhat.com, kaber@trash.net
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 19 Apr 2013 13:21:27 +1000
+Date: Mon, 22 Apr 2013 12:43:34 +1000
 
-> After merging the net-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Today's linux-next merge of the net-next tree got a conflict in
+> drivers/net/ethernet/emulex/benet/be_main.c between commit f11a869d4e38
+> ("be2net: take care of __vlan_put_tag return value") from Linus' tree and
+> commit 86a9bad3ab6b ("net: vlan: add protocol argument to packet tagging
+> functions") from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-I also made sure this got fixed in the merge commit.
+I took care of this during the net --> net-next merge, thanks!
