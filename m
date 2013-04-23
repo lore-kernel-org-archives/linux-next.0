@@ -1,49 +1,37 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 1/2] lib: Add lz4 compressor module
-Date: Mon, 22 Apr 2013 14:29:05 -0700
-Message-ID: <20130422142905.3e4fff72671bb3e245055eee@linux-foundation.org>
-References: <CAOAMb1D8rokZpQpp6mEJw6KXcQq8fJUWBJoC5+ZfkNaE6WvAZA@mail.gmail.com>
-	<CAMuHMdXXoaQjb9sRK=X3gEDwqQBJcJQtaJbUGB8cJmteHSN3vQ@mail.gmail.com>
-	<51750159.07d70e0a.5461.ffffec64SMTPIN_ADDED_BROKEN@mx.google.com>
-	<CAMuHMdUv=GR6s=BYXHR7KyaKCUSxmkJO8dzZJMRktu3cUCTbsw@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 22 Apr 2013 20:38:46 -0400 (EDT)
+Message-ID: <20130422.203846.798313857495836249.davem@davemloft.net>
+References: <20130419125304.9980f9b037abf00bef7b6f8c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52848 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753115Ab3DVV3H (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Apr 2013 17:29:07 -0400
-In-Reply-To: <CAMuHMdUv=GR6s=BYXHR7KyaKCUSxmkJO8dzZJMRktu3cUCTbsw@mail.gmail.com>
+Received: from shards.monkeyblade.net ([149.20.54.216]:40633 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752184Ab3DWAiv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Apr 2013 20:38:51 -0400
+In-Reply-To: <20130419125304.9980f9b037abf00bef7b6f8c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chanho Min <chanho.min@lge.com>, "Darrick J. Wong" <djwong@us.ibm.com>, Bob Pearson <rpearson@systemfabricworks.com>, Richard Weinberger <richard@nod.at>, Herbert Xu <herbert@gondor.hengli.com.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Yann Collet <yann.collet.73@gmail.com>, Kyungsik Lee <kyungsik.lee@lge.com>, Linux/m68k <linux-m68k@vger.kernel.org>, sparclinux <sparclinux@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ordex@autistici.org, lindner_marek@yahoo.de, martin@hundeboll.net
 
-On Mon, 22 Apr 2013 11:24:21 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 19 Apr 2013 12:53:04 +1000
 
-> On Mon, Apr 22, 2013 at 11:22 AM, Chanho Min <chanho.min@lge.com> wrote:
-> >>> +#define HTYPE const u8*
-> >>> +
-> >>> +#ifdef __BIG_ENDIAN
-> >>> +#define LZ4_NBCOMMONBYTES(val) (__builtin_clz(val) >> 3)
-> >>> +#else
-> >>> +#define LZ4_NBCOMMONBYTES(val) (__builtin_ctz(val) >> 3)
-> >>> +#endif
-> >>
-> >>It seems at least m68k and sparc don't have the __builtin_clz() functions:
-> >>
-> >>m68k-allmodconfig (http://kisskb.ellerman.id.au/kisskb/buildresult/8572593/):
-> >>
-> >>ERROR: "__clzsi2" [lib/lz4/lz4hc_compress.ko] undefined!
-> >>ERROR: "__clzsi2" [lib/lz4/lz4_compress.ko] undefined!
-> >
-> > gcc seems to define __builtin_clz as __clzsi2 in some architecture.
-> > But, kernel doesn't link libgcc.a.
-> > If kernel should use gcc's built-in function without libgcc.a,
-> > do we need to port __clzsi2 to 'arch/*/lib/*'?
+> Today's linux-next merge of the net-next tree got a conflict in
+> net/batman-adv/routing.c between commit fe8a93b95145 ("batman-adv: make
+> is_my_mac() check for the current mesh only") from the net tree and
+> commits f86ce0ad107b ("batman-adv: Return reason for failure in
+> batadv_check_unicast_packet()") and 612d2b4fe0a1 ("batman-adv: network
+> coding - save overheard and tx packets for decoding") from the net-next
+> tree.
 > 
-> That's another option.
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Without having seen the patch ....  Yes, if we fix it this way then we
-also fix it for future callers of __builtin_clz().
+I've merged net into net-next and added all the necessary fixups
+in the merge commit.
+
+Thanks!
