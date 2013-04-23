@@ -1,40 +1,35 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 23 (netlink)
-Date: Tue, 23 Apr 2013 11:04:18 -0700
-Message-ID: <5176CD22.6070906@infradead.org>
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: linux-next: Tree for Apr 23 (usb storage)
+Date: Tue, 23 Apr 2013 11:53:55 -0700
+Message-ID: <5176D8C3.5020701@infradead.org>
 References: <20130423180028.e08f92e6cc72105f67b77491@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:49064 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756895Ab3DWSFZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Apr 2013 14:05:25 -0400
-In-Reply-To: <20130423180028.e08f92e6cc72105f67b77491@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130423180028.e08f92e6cc72105f67b77491-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, wei_wang-kXabqFNEczNtrwSWzY7KCg@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
 On 04/23/13 01:00, Stephen Rothwell wrote:
 > Hi all,
 > 
 > Changes since 20130422:
 > 
-> The net-next tree lost its build failure but gained another for which I
-> applied a patch.
-> 
 
 
-when CONFIG_NETLINK_MMAP is not enabled:
+on i386, when CONFIG_PM_RUNTIME is not enabled so REALTEK_AUTOPM is not
+enabled:
 
-net/netlink/diag.c: In function 'sk_diag_put_rings_cfg':
-net/netlink/diag.c:28:17: error: 'struct netlink_sock' has no member named 'pg_vec_lock'
-net/netlink/diag.c:29:29: error: 'struct netlink_sock' has no member named 'rx_ring'
-net/netlink/diag.c:31:30: error: 'struct netlink_sock' has no member named 'tx_ring'
-net/netlink/diag.c:33:19: error: 'struct netlink_sock' has no member named 'pg_vec_lock'
+drivers/usb/storage/realtek_cr.c: In function 'realtek_cr_destructor':
+drivers/usb/storage/realtek_cr.c:942:11: error: 'struct rts51x_chip' has no member named 'us'
 
 
 -- 
 ~Randy
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
