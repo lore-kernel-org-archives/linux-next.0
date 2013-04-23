@@ -1,34 +1,102 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Mon, 22 Apr 2013 20:42:02 -0400 (EDT)
-Message-ID: <20130422.204202.847934226356654222.davem@davemloft.net>
-References: <20130422130939.9162d4f519402dcfc4cdbe0c@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130422130939.9162d4f519402dcfc4cdbe0c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, ebiederm@xmission.com
-List-Id: linux-next.vger.kernel.org
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 22 Apr 2013 13:09:39 +1000
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Tue, 23 Apr 2013 17:17:01 +1000
+Message-ID: <20130423171701.00996503300c975a39ccea63@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__23_Apr_2013_17_17_01_+1000_GiRRvw639wSzD5JG"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58326 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755352Ab3DWHRR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Apr 2013 03:17:17 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-> Today's linux-next merge of the net-next tree got a conflict in
-> include/net/scm.h between commit 83f1b4ba917d ("net: fix incorrect
-> credentials passing") from Linus' tree and commit 6b0ee8c036ec ("scm:
-> Stop passing struct cred") from the net-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).  I also applied the following merge fix patch (I am not
-> sure if this is correct, but it seems to be consistent):
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 22 Apr 2013 13:06:10 +1000
-> Subject: [PATCH] net: af_unix fix for incorrect credentials passing
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+--Signature=_Tue__23_Apr_2013_17_17_01_+1000_GiRRvw639wSzD5JG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I took care of this during the net --> net-next merge, thanks!
+Hi Andrew,
+
+Today's linux-next merge of the akpm tree got a conflict in
+kernel/posix-cpu-timers.c between commits a85721601ad2 ("posix_timers:
+Kick full dynticks CPUs when a posix cpu timer is armed") and
+555347f6c080 ("posix_timers: New API to prevent from stopping the tick
+when timers are running") from the tip tree and commit "posix_cpu_timer:
+consolidate expiry time type" from the akpm tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/posix-cpu-timers.c
+index 84d5cb3,e5286b5..0000000
+--- a/kernel/posix-cpu-timers.c
++++ b/kernel/posix-cpu-timers.c
+@@@ -155,22 -106,7 +108,22 @@@ static void bump_cpu_timer(struct k_iti
+  	}
+  }
+ =20
+ +/**
+ + * task_cputime_zero - Check a task_cputime struct for all zero fields.
+ + *
+ + * @cputime:	The struct to compare.
+ + *
+ + * Checks @cputime to see if all fields are zero.  Returns true if all fi=
+elds
+ + * are zero, false if any field is nonzero.
+ + */
+ +static inline int task_cputime_zero(const struct task_cputime *cputime)
+ +{
+ +	if (!cputime->utime && !cputime->stime && !cputime->sum_exec_runtime)
+ +		return 1;
+ +	return 0;
+ +}
+ +
+- static inline cputime_t prof_ticks(struct task_struct *p)
++ static inline unsigned long long prof_ticks(struct task_struct *p)
+  {
+  	cputime_t utime, stime;
+ =20
+@@@ -1408,8 -1312,8 +1354,8 @@@ void set_process_cpu_timer(struct task_
+  		}
+ =20
+  		if (!*newval)
+ -			return;
+ +			goto out;
+- 		*newval +=3D now.cpu;
++ 		*newval +=3D now;
+  	}
+ =20
+  	/*
+
+--Signature=_Tue__23_Apr_2013_17_17_01_+1000_GiRRvw639wSzD5JG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRdjVtAAoJEECxmPOUX5FE5FEP/jS+Xr+XgteKoaB9o8Sz0lrC
+bm/y2jdjIUYPwMS4wt6aHZJAcFD7gBeHnCaGCOP7UGhWkW9zbkqUXrCbxXAiMTSI
+jBifn7AZ7wlpvHTia/R/w38Uk+IpLWewmqyavMt3qdMCd/YXnjE2rIeOuf9WE7YB
+F4dXtL9FmGtA4RtFP0kECVGcJ/tXIt7nGCVtgXG1IQkw1QLaNEV+8dzQTYhyY7er
+tEi7VUJKihoOXZUDmb5JgSm1FfHuLPXrfDXk0dvIWSeWUkTasy0CTmBHHiAtgUkY
+VS355o/l5YmfncRcl7bXOzjOPJ+neW8h0sSLDL2AtTcmGUhR0yTgvmrfFXVv/tfS
+L3YfnqWs/uxkrZX4ntsQfelYoznKxOzkpefmB1EWmPrLmpY4dIzXOug6/vDpn26m
+ARHb2hfq45hOebTcaib0qGg+ZDYavyWUMxvD+KAKqHZ1BqpYuBsPPwZoXPaoALro
+UrzY/O3bONepLE5HgRaCvbP385RSj8HP5A2zWgPn1KZdURR8ojlCg7VNkCNXuGWM
+CVGMzWfV+Cffjyk/5dW9Es4ImwHI7QK1QspYUI09bXidgbaXHJqXNO/BRtLQkOae
+Os5G4ncidtKAP64BxmEgu1qfXgiJB3iWjImCOzdHGXSsMvKBoVFBSYgzMeC9PHUN
+sYauyL2KY6yPM+vNeeBg
+=wv1+
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__23_Apr_2013_17_17_01_+1000_GiRRvw639wSzD5JG--
