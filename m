@@ -1,79 +1,50 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 23 (netlink)
-Date: Tue, 23 Apr 2013 13:27:20 -0700
-Message-ID: <5176EEA8.1010507@infradead.org>
-References: <20130423180028.e08f92e6cc72105f67b77491@canb.auug.org.au> <5176CD22.6070906@infradead.org> <20130423.151949.1174398672200053405.davem@davemloft.net>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Tue, 23 Apr 2013 16:44:33 -0700 (PDT)
+Message-ID: <alpine.DEB.2.02.1304231639490.6938@chino.kir.corp.google.com>
+References: <20130423174618.59095bd1cf999c61332d4805@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:51980 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754864Ab3DWU1m (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Apr 2013 16:27:42 -0400
-In-Reply-To: <20130423.151949.1174398672200053405.davem@davemloft.net>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:36925 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756283Ab3DWXog (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Apr 2013 19:44:36 -0400
+Received: by mail-pa0-f45.google.com with SMTP id lf10so797222pab.32
+        for <linux-next@vger.kernel.org>; Tue, 23 Apr 2013 16:44:35 -0700 (PDT)
+In-Reply-To: <20130423174618.59095bd1cf999c61332d4805@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Patrick McHardy <kaber@trash.net>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/23/13 12:19, David Miller wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> Date: Tue, 23 Apr 2013 11:04:18 -0700
+On Tue, 23 Apr 2013, Stephen Rothwell wrote:
+
+> Hi all,
 > 
->> On 04/23/13 01:00, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20130422:
->>>
->>> The net-next tree lost its build failure but gained another for which I
->>> applied a patch.
->>>
->>
->>
->> when CONFIG_NETLINK_MMAP is not enabled:
->>
->> net/netlink/diag.c: In function 'sk_diag_put_rings_cfg':
->> net/netlink/diag.c:28:17: error: 'struct netlink_sock' has no member named 'pg_vec_lock'
->> net/netlink/diag.c:29:29: error: 'struct netlink_sock' has no member named 'rx_ring'
->> net/netlink/diag.c:31:30: error: 'struct netlink_sock' has no member named 'tx_ring'
->> net/netlink/diag.c:33:19: error: 'struct netlink_sock' has no member named 'pg_vec_lock'
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 > 
-> Thanks Randy, I'm testing out the following fix:
+> net/netlink/af_netlink.c: In function 'netlink_frame_flush_dcache':
+> net/netlink/af_netlink.c:384:40: error: 'NL_MMAP_MSG_HDRLEN' undeclared (first use in this function)
+> 
+> Caused by commit 9652e931e73b ("netlink: add mmap'ed netlink helper
+> functions").  This needed to be build tested on an architecture that has
+> ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE set to 1 (like Sparc :-)).
 > 
 
-Works for me.  Thanks.
+Hijacking this thread since I didn't see the causing patch to be posted to 
+lkml.  From linux-next:
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+net/netlink/af_netlink.c: In function 'netlink_queue_mmaped_skb':
+net/netlink/af_netlink.c:663:14: error: incompatible types when assigning to type '__u32' from type 'kuid_t'
+net/netlink/af_netlink.c:664:14: error: incompatible types when assigning to type '__u32' from type 'kgid_t'
+net/netlink/af_netlink.c: In function 'netlink_ring_set_copied':
+net/netlink/af_netlink.c:693:14: error: incompatible types when assigning to type '__u32' from type 'kuid_t'
+net/netlink/af_netlink.c:694:14: error: incompatible types when assigning to type '__u32' from type 'kgid_t'
 
+for a config with CONFIG_UIDGID_STRICT_TYPE_CHECKS enabled.
 
-> diff --git a/net/netlink/diag.c b/net/netlink/diag.c
-> index 4e4aa47..1af2962 100644
-> --- a/net/netlink/diag.c
-> +++ b/net/netlink/diag.c
-> @@ -7,6 +7,7 @@
->  
->  #include "af_netlink.h"
->  
-> +#ifdef CONFIG_NETLINK_MMAP
->  static int sk_diag_put_ring(struct netlink_ring *ring, int nl_type,
->  			    struct sk_buff *nlskb)
->  {
-> @@ -34,6 +35,12 @@ static int sk_diag_put_rings_cfg(struct sock *sk, struct sk_buff *nlskb)
->  
->  	return ret;
->  }
-> +#else
-> +static int sk_diag_put_rings_cfg(struct sock *sk, struct sk_buff *nlskb)
-> +{
-> +	return 0;
-> +}
-> +#endif
->  
->  static int sk_diag_dump_groups(struct sock *sk, struct sk_buff *nlskb)
->  {
-> --
-
-
--- 
-~Randy
+Looks like it's coming from f9c2288837ba ("netlink: implement memory 
+mapped recvmsg()").  Patrick?
