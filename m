@@ -1,48 +1,35 @@
-From: Thadeu Lima de Souza Cascardo <cascardo-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-Subject: Re: linux-next: manual merge of the net-next tree with the
- infiniband tree
-Date: Wed, 24 Apr 2013 14:53:04 -0300
-Message-ID: <20130424175304.GA701@oc0268524204.ibm.com>
-References: <20130418131843.bfeb6b1ad5fba1b0f706076e@canb.auug.org.au>
+From: H Hartley Sweeten <hartleys@visionengravers.com>
+Subject: RE: linux-next: build failure after merge of the final tree
+ (staging tree related))
+Date: Wed, 24 Apr 2013 12:53:42 -0500
+Message-ID: <ADE657CA350FB648AAC2C43247A983F0021D451A3BC3@AUSP01VMBX24.collaborationhost.net>
+References: <20130424175600.df4a7e5307ea813e3afe73ea@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130418131843.bfeb6b1ad5fba1b0f706076e-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vipul Pandya <vipul-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail1.bemta8.messagelabs.com ([216.82.243.206]:51425 "EHLO
+	mail1.bemta8.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755883Ab3DXSBJ convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Apr 2013 14:01:09 -0400
+In-Reply-To: <20130424175600.df4a7e5307ea813e3afe73ea@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Apr 18, 2013 at 01:18:43PM +1000, Stephen Rothwell wrote:
+On Wednesday, April 24, 2013 12:56 AM, Stephen Rothwell wrote:
 > Hi all,
-> 
-> Today's linux-next merge of the net-next tree got a conflict in
-> drivers/infiniband/hw/cxgb4/qp.c between commit 5b0c275926b8
-> ("RDMA/cxgb4: Fix SQ allocation when on-chip SQ is disabled") from the
-> infiniband tree and commit 9919d5bd01b9 ("RDMA/cxgb4: Fix onchip queue
-> support for T5") from the net-next tree.
-> 
-> I think that they are 2 different fixes for the same problem, so I just
-> used the net-next version and can carry the fix as necessary (no action
-> is required).
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+>
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 
+Ugh.. powerpc probably has CONFIG_ISA_DMA_API but not
+CONFIG_VIRT_TO_BUS.
 
-Commit 5b0c275926b8 also keeps the intention of the original patch which
-broke it, which was to return an error code, in case the allocation fails.
-Commit 9919d5bd01b9 fix will return 0 in case the allocation fails.
+I'm looking for a fix now.
 
-We should keep the other fix or fix the code again to return the proper
-error code.
-
-Regards.
-Cascardo.
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+Hartley
