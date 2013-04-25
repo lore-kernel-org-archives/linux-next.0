@@ -1,48 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: samsung: Fix link error with
- CONFIG_PINCTRL_EXYNOS disabled
-Date: Thu, 25 Apr 2013 15:26:05 +0200
-Message-ID: <CACRpkdY61h-H14QYHhADnAz1JRa=8Wbi0aYKSRW21xm4WHOHGA@mail.gmail.com>
-References: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com>
-	<6940961.67Lk2axxPL@amdc1227>
-	<CACRpkdZmSj-AqUA9kd7NMN6cL2Nxa0EaKoSVkwQSrxhcWEeQtg@mail.gmail.com>
-	<2113989.KXXvDDhnMa@amdc1227>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: linux-next: Tree for Apr 24 [ PM: Device 1-1.2 failed to resume
+ async: error -32 ]
+Date: Thu, 25 Apr 2013 11:44:58 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1304251135540.948-100000@iolanthe.rowland.org>
+References: <CA+icZUVBbFPYXQRG6C7RN00NPXqwsq7Jy=Gj8udA97utiCd=ZA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <2113989.KXXvDDhnMa@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kwangwoo LEE <kwangwoo.lee@gmail.com>, Peter Korsgaard <jacmet@sunsite.dk>, Darius Augulis <augulis.darius@gmail.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Rob Herring <robherring2@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from iolanthe.rowland.org ([192.131.102.54]:39195 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1757820Ab3DYPo7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Apr 2013 11:44:59 -0400
+In-Reply-To: <CA+icZUVBbFPYXQRG6C7RN00NPXqwsq7Jy=Gj8udA97utiCd=ZA@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux PM List <linux-pm@lists.linux-foundation.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-usb@vger.kernel.org
 
-On Wed, Apr 24, 2013 at 4:47 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> On Wednesday 24 of April 2013 16:27:09 Linus Walleij wrote:
->> On Tue, Apr 23, 2013 at 2:09 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->> > On Tuesday 23 of April 2013 14:03:12 Linus Walleij wrote:
->> >> This does not apply to my "devel" branch in the pinctrl tree.
->> >>
->> >> Could you rebase it on that branch?
->> >>
->> >> Or is the error not even in my tree?
->> >
->> > This one got sent incorrectly due to my mistake. Please try the correct
->> > version:
->> >
->> > [PATCH RESEND 2/2] pinctrl: samsung: Fix link error with
->> > CONFIG_PINCTRL_EXYNOS disabled
->>
->> This does not apply either.
->>
->> Can you please test against the "devel" branch in the pinctrl tree?
->
-> Right, it does not apply.
->
-> Well, actually it does with git am -3, but it is incorrect, since the problem
-> it intends to fix is not present in your tree, but rather is a merge error in
-> linux-next in a merge of Kgene's and your tree...
+On Wed, 24 Apr 2013, Sedat Dilek wrote:
 
-Oh. Then you have to send the patch to Stephen Rothwell.
+> With CONFIG_USB_DEBUG=y I do not see a PM/async line.
+> 
+> Might you have a look at the logs?
 
-Yours,
-Linus Walleij
+They look quite normal.  Except for one thing: The built-in hubs appear 
+to have gotten reset during the suspend/resume, for no apparent reason.  
+That's probably the reason why the Logitech mouse needed a reset.
+
+I don't know why the mouse reset worked this time but not before,
+unless it's a subtle timing issue (the extra debugging output causes
+the resume to go a little more slowly).
+
+Alan Stern
