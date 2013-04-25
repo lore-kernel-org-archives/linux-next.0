@@ -1,42 +1,41 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: linux-next: Tree for Apr 24 [ PM: Device 1-1.2 failed to resume
- async: error -32 ]
-Date: Thu, 25 Apr 2013 13:02:20 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1304251301190.948-100000@iolanthe.rowland.org>
-References: <CA+icZUVUd=0oFhPt8Gneze1UyZ5vyGxoEDnBNrya0+mn99nQkA@mail.gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 1/2] lib: Add lz4 compressor module
+Date: Thu, 25 Apr 2013 15:42:17 -0700
+Message-ID: <20130425154217.c54bd65fba92866c309c94fc@linux-foundation.org>
+References: <CAOAMb1D8rokZpQpp6mEJw6KXcQq8fJUWBJoC5+ZfkNaE6WvAZA@mail.gmail.com>
+	<CAMuHMdXXoaQjb9sRK=X3gEDwqQBJcJQtaJbUGB8cJmteHSN3vQ@mail.gmail.com>
+	<5175014e.487a420a.4c58.ffffe0b9SMTPIN_ADDED_BROKEN@mx.google.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CA+icZUVUd=0oFhPt8Gneze1UyZ5vyGxoEDnBNrya0+mn99nQkA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sedat Dilek <sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux PM List <linux-pm-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <5175014e.487a420a.4c58.ffffe0b9SMTPIN_ADDED_BROKEN@mx.google.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Chanho Min <chanho.min@lge.com>
+Cc: 'Geert Uytterhoeven' <geert@linux-m68k.org>, "'Darrick J. Wong'" <djwong@us.ibm.com>, 'Bob Pearson' <rpearson@systemfabricworks.com>, 'Richard Weinberger' <richard@nod.at>, 'Herbert Xu' <herbert@gondor.hengli.com.au>, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 'Yann Collet' <yann.collet.73@gmail.com>, 'Kyungsik Lee' <kyungsik.lee@lge.com>, 'Linux/m68k' <linux-m68k@vger.kernel.org>, 'sparclinux' <sparclinux@vger.kernel.org>, 'Linux-Next' <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 25 Apr 2013, Sedat Dilek wrote:
+On Mon, 22 Apr 2013 18:22:18 +0900 "Chanho Min" <chanho.min@lge.com> wrote:
 
-> > That also looks normal.  Did you have CONFIG_USB_DEBUG enabled during
-> > this test?  If you did, you could try turning it back off to see if the
-> > original problem returns while still doing a usbmon trace.
+> >> +#define HTYPE const u8*
+> >> +
+> >> +#ifdef __BIG_ENDIAN
+> >> +#define LZ4_NBCOMMONBYTES(val) (__builtin_clz(val) >> 3)
+> >> +#else
+> >> +#define LZ4_NBCOMMONBYTES(val) (__builtin_ctz(val) >> 3)
+> >> +#endif
 > >
+> >It seems at least m68k and sparc don't have the __builtin_clz() functions:
+> >
+> >m68k-allmodconfig (http://kisskb.ellerman.id.au/kisskb/buildresult/8572593/):
+> >
+> >ERROR: "__clzsi2" [lib/lz4/lz4hc_compress.ko] undefined!
+> >ERROR: "__clzsi2" [lib/lz4/lz4_compress.ko] undefined!
 > 
-> As my system works as "expected" after suspend-resume and as you
-> pointed out "this is harmless" I am not really willing to do more
-> "homework".
-> 
-> The ipc-sem-next issue has stolen quite bit of my time.
-> 
-> Thanks for the usbmon hint, now I know for next USB issues what to do.
-> And I have never tried my USB-XHCI interface :-).
-> 
-> /me is just an encouraged Linux-kernel hobbyist.
+> gcc seems to define __builtin_clz as __clzsi2 in some architecture. 
+> But, kernel doesn't link libgcc.a.
+> If kernel should use gcc's built-in function without libgcc.a,
+> do we need to port __clzsi2 to 'arch/*/lib/*'?
 
-Okay.  Don't lose hope; lots of people face unexpected issues like 
-this.  Good luck!
-
-Alan Stern
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This breaks alpha (gcc-4.4.4) as well.  Can we please get this fixed
+promptly?
