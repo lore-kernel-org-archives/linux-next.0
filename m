@@ -1,71 +1,48 @@
-From: Emmanuel Benisty <benisty.e@gmail.com>
-Subject: Re: [PATCH -next] ipc: make refcounter atomic (was Re: linux-next:
- Tree for Apr 23 [ Call-Traces: lib/debugobjects.c | kernel/rcupdate.c |
- kernel/rcutree.c ])
-Date: Thu, 25 Apr 2013 20:14:42 +0700
-Message-ID: <CA+i8gK+ouTuk=1oUT8ZLrLnbKDf75-f_NPeXn9763JK-csRdmQ@mail.gmail.com>
-References: <CA+icZUWXpaXi9GwB37hLaPbZaAi2aOMXez1f79DDtb_22ZY1jQ@mail.gmail.com>
-	<CA+icZUXmsvbj2km=PxbAs5K+hoP+zjcXqG_wCdKR9akWF5Eucw@mail.gmail.com>
-	<CA+55aFw5J+DFgQjAdhUnhitHw+wHEmspeZP9jbyZowqNE6Nafg@mail.gmail.com>
-	<CA+icZUXHkcj_bAuPcfghZMHjRTud2jN91hjpOUiLaXd0yN9diw@mail.gmail.com>
-	<1366741069.1802.12.camel@buesod1.americas.hpqcorp.net>
-	<1366741394.1802.13.camel@buesod1.americas.hpqcorp.net>
-	<CA+icZUV48SZeNt4GRKi8yDKbsO_c7ApUOgb4mRX67=d_ridE8w@mail.gmail.com>
-	<CA+55aFxh_-3BSBXrm8j1-3bN_oLLA66ApykRcfFFKRvrb6MDkQ@mail.gmail.com>
-	<1366841773.1790.7.camel@buesod1.americas.hpqcorp.net>
-	<CA+icZUUY1U=gxxT8hbU-JyyuoRgaht=KUwttQT=yh4_Yh32VnQ@mail.gmail.com>
-	<517927E2.1090907@surriel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: samsung: Fix link error with
+ CONFIG_PINCTRL_EXYNOS disabled
+Date: Thu, 25 Apr 2013 15:26:05 +0200
+Message-ID: <CACRpkdY61h-H14QYHhADnAz1JRa=8Wbi0aYKSRW21xm4WHOHGA@mail.gmail.com>
+References: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com>
+	<6940961.67Lk2axxPL@amdc1227>
+	<CACRpkdZmSj-AqUA9kd7NMN6cL2Nxa0EaKoSVkwQSrxhcWEeQtg@mail.gmail.com>
+	<2113989.KXXvDDhnMa@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f171.google.com ([209.85.216.171]:33921 "EHLO
-	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932219Ab3DYNOn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Apr 2013 09:14:43 -0400
-In-Reply-To: <517927E2.1090907@surriel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rik van Riel <riel@surriel.com>
-Cc: sedat.dilek@gmail.com, Davidlohr Bueso <davidlohr.bueso@hp.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Paul McKenney <paulmck@linux.vnet.ibm.com>, Paul McKenney <paul.mckenney@linaro.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <2113989.KXXvDDhnMa@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kwangwoo LEE <kwangwoo.lee@gmail.com>, Peter Korsgaard <jacmet@sunsite.dk>, Darius Augulis <augulis.darius@gmail.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Rob Herring <robherring2@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Apr 25, 2013 at 7:56 PM, Rik van Riel <riel@surriel.com> wrote:
-> On 04/24/2013 07:05 PM, Sedat Dilek wrote:
+On Wed, Apr 24, 2013 at 4:47 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> On Wednesday 24 of April 2013 16:27:09 Linus Walleij wrote:
+>> On Tue, Apr 23, 2013 at 2:09 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> > On Tuesday 23 of April 2013 14:03:12 Linus Walleij wrote:
+>> >> This does not apply to my "devel" branch in the pinctrl tree.
+>> >>
+>> >> Could you rebase it on that branch?
+>> >>
+>> >> Or is the error not even in my tree?
+>> >
+>> > This one got sent incorrectly due to my mistake. Please try the correct
+>> > version:
+>> >
+>> > [PATCH RESEND 2/2] pinctrl: samsung: Fix link error with
+>> > CONFIG_PINCTRL_EXYNOS disabled
 >>
->> On Thu, Apr 25, 2013 at 12:16 AM, Davidlohr Bueso
->> <davidlohr.bueso@hp.com> wrote:
->
->
->>> This patch converts the IPC RCU header's reference counter to atomic_t.
->>> The return of
->>> ipc_rcu_getref() is modified to inform the callers if it actually
->>> succeeded.
->>>
->>> Now all callers return -EIDRM upon failure and abort the current
->>> operation. Two exceptions are
->>> in semaphore code where sem_getref_and_unlock() and sem_getref() trigger
->>> a warning but proceed
->>> to freeing up any held locks.
->>>
->>> Signed-off-by: Davidlohr Bueso <davidlohr.bueso@hp.com>
->>> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
->>> CC: Rik van Riel <riel@surriel.com>
->>> CC: Paul McKenney <paul.mckenney@linaro.org>
->>> CC: Sedat Dilek <sedat.dilek@gmail.com>
->>> CC: Emmanuel Benisty <benisty.e@gmail.com>
->>> CC: Andrew Morton <akpm@linux-foundation.org>
+>> This does not apply either.
 >>
->>
->> Missing my Reported-by ...!
+>> Can you please test against the "devel" branch in the pinctrl tree?
 >
+> Right, it does not apply.
 >
->> ...so please add also my Tested-by!
->
->
-> And my ax!
->
-> I mean ... Reviewed-by: Rik van Riel <riel@redhat.com>
+> Well, actually it does with git am -3, but it is incorrect, since the problem
+> it intends to fix is not present in your tree, but rather is a merge error in
+> linux-next in a merge of Kgene's and your tree...
 
-FWIW, my machine survived building chromium with this patch instead of Linus'.
+Oh. Then you have to send the patch to Stephen Rothwell.
 
-Thanks.
--- Emmanuel
+Yours,
+Linus Walleij
