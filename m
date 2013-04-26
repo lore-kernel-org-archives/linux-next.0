@@ -1,106 +1,113 @@
-From: Sedat Dilek <sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: Tree for Apr 26 [ bluetooth on suspend/resume ]
-Date: Fri, 26 Apr 2013 23:07:44 +0200
-Message-ID: <CA+icZUVWRkP_fxTH22ywx9Ntnnp1xW_2dVRjwTvBfs0eJBcEVg@mail.gmail.com>
-References: <CA+icZUVCmFeh3Xna37VJDDzvZ34sYJ_Dser7i5rRzGLhMTi5-Q@mail.gmail.com>
-	<CA+icZUXeDT8x60iUtjJV2GO5KkDnm8CJsz8mntz5hREoOD+YJw@mail.gmail.com>
-	<CA+icZUWkyP9TE0eeqstyvVNP++MtN8rYfGcPBT6NuMOHEHm7dw@mail.gmail.com>
-	<20130426182239.GA25767@mtj.dyndns.org>
-Reply-To: sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Subject: Re: linux-next: Tree for Apr 26
+Date: Sat, 27 Apr 2013 00:01:31 +0200
+Message-ID: <20130426220131.GC5100@free.fr>
+References: <20130426180357.7599d1b6b7965470905dcdf3@canb.auug.org.au>
+ <CA+icZUWt_W5FUQgQ2TFoQU0df+sAbxZZE8AcD16T3f_fiTD9DQ@mail.gmail.com>
+ <517A4FC1.3070605@suse.cz>
+ <20130426100435.GA28733@sepie.suse.cz>
+ <CA+icZUVOfB2JuL1xh1EO1hTP_eOkntYFKsUJ0Zp6VZqn09NABA@mail.gmail.com>
+ <CA+icZUWNVEsiTs6u_2R9krb45ub4t-pZj_VEPRmrX2c4DzwfmA@mail.gmail.com>
+ <CA+icZUXSsqN1iE3ttQakvpZqG-oOL9NR6RMUezB7LGeUw3d00Q@mail.gmail.com>
+ <517A6033.5060103@suse.cz>
+ <517A615D.9020400@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130426182239.GA25767-9pTldWuhBndy/B6EtB590w@public.gmane.org>
-Sender: linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcel Holtmann <marcel-kz+m5ild9QBg9hUCZPvPmw@public.gmane.org>, Gustavo Padovan <gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org>, Johan Hedberg <johan.hedberg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux PM List <linux-pm-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <517A615D.9020400@suse.cz>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: sedat.dilek@gmail.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Apr 26, 2013 at 8:22 PM, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Fri, Apr 26, 2013 at 07:40:20PM +0200, Sedat Dilek wrote:
->> Oops, NULL-pointer-deref [ __queue_work() ]
->>
->> [   25.974932] BUG: unable to handle kernel NULL pointer dereference
->> at 0000000000000100
->> [   25.974944] IP: [<ffffffff81077502>] __queue_work+0x32/0x3d0
->
-> So, 0x100 deref near the top of the function.
->
-> ...
->> [   25.975037] RIP: 0010:[<ffffffff81077502>]  [<ffffffff81077502>]
->> __queue_work+0x32/0x3d0
->> [   25.975047] RSP: 0018:ffff88008fed5c48  EFLAGS: 00010046
->> [   25.975052] RAX: 0000000000000096 RBX: 0000000000000292 RCX: 0000000000000000
->> [   25.975058] RDX: ffff880095281850 RSI: 0000000000000000 RDI: 0000000000000100
->> [   25.975063] RBP: ffff88008fed5c88 R08: 0000000000000000 R09: 0000000000000300
->> [   25.975069] R10: ffff880094981a00 R11: 0000000000000000 R12: ffff880095281850
->> [   25.975074] R13: 0000000000000000 R14: 0000000000000100 R15: 00000000000009c4
->> [   25.975081] FS:  00007f2f61707740(0000) GS:ffff88011fac0000(0000)
->> knlGS:0000000000000000
->> [   25.975088] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [   25.975093] CR2: 0000000000000100 CR3: 000000009101f000 CR4: 00000000000407e0
->> [   25.975099] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> [   25.975104] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-> ...
->> [   25.975143] Call Trace:
->> [   25.975151]  [<ffffffff81077be5>] queue_work_on+0x45/0x50
->> [   25.975165]  [<ffffffffa016e8ff>] hci_req_run+0xbf/0xf0 [bluetooth]
->> [   25.975188]  [<ffffffffa016ea06>] __hci_req_sync+0xd6/0x1c0 [bluetooth]
->> [   25.975217]  [<ffffffffa016fad5>] hci_dev_open+0x275/0x2e0 [bluetooth]
->> [   25.975230]  [<ffffffffa0182752>] hci_sock_ioctl+0x1f2/0x3f0 [bluetooth]
->> [   25.975238]  [<ffffffff815c6050>] sock_do_ioctl+0x30/0x70
->> [   25.975245]  [<ffffffff815c75f9>] sock_ioctl+0x79/0x2f0
->> [   25.975254]  [<ffffffff811a8046>] do_vfs_ioctl+0x96/0x560
->> [   25.975262]  [<ffffffff811a85a1>] SyS_ioctl+0x91/0xb0
->> [   25.975271]  [<ffffffff816d989d>] system_call_fastpath+0x1a/0x1f
->> [   25.975276] Code: 89 e5 41 57 41 56 41 89 fe 41 55 49 89 f5 41 54
->> 49 89 d4 53 48 83 ec 18 89 7d c8 9c 58 66 66 90 66 90 f6 c4 02 0f 85
->> 56 02 00 00 <41> 8b 85 00 01 00 00 a9 00 00 01 00 0f 85 b0 02 00 00 48
->> c7 c2
->
-> All code
-> ========
->    0:   89 e5                   mov    %esp,%ebp
->    2:   41 57                   push   %r15
->    4:   41 56                   push   %r14
->    6:   41 89 fe                mov    %edi,%r14d
->    9:   41 55                   push   %r13
->    b:   49 89 f5                mov    %rsi,%r13
->    e:   41 54                   push   %r12
->   10:   49 89 d4                mov    %rdx,%r12
->   13:   53                      push   %rbx
->   14:   48 83 ec 18             sub    $0x18,%rsp
->   18:   89 7d c8                mov    %edi,-0x38(%rbp)
->   1b:   9c                      pushfq
->   1c:   58                      pop    %rax
->   1d:   66 66 90                data32 xchg %ax,%ax
->   20:   66 90                   xchg   %ax,%ax
->   22:   f6 c4 02                test   $0x2,%ah
->   25:   0f 85 56 02 00 00       jne    0x281
->   2b:*  41 8b 85 00 01 00 00    mov    0x100(%r13),%eax     <-- trapping instruction
->   32:   a9 00 00 01 00          test   $0x10000,%eax
->   37:   0f 85 b0 02 00 00       jne    0x2ed
->   3d:   48                      rex.W
->   3e:   c7                      .byte 0xc7
->   3f:   c2                      .byte 0xc2
->
-> The second argument %rsi is zero, which got transferred to %r13 and
-> then offset deref on it trapped.
->
-> The second argument is @wq and the oopsing code is the wq->flags deref
-> in the following if condition.
->
->         /* if dying, only works from the same workqueue are allowed */
->         if (unlikely(wq->flags & __WQ_DRAINING) &&
->                 WARN_ON_ONCE(!is_chained_work(wq)))
->                 return;
->
-> So, umm, don't pass in NULL as @wq. :)
->
+Michal, Sedat, All,
 
-Do you have a patch for this?
+On Fri, Apr 26, 2013 at 01:13:33PM +0200, Michal Marek wrote:
+> On 26.4.2013 13:08, Michal Marek wrote:
+> > On 26.4.2013 12:49, Sedat Dilek wrote:
+> >> With reverting all kbuild-next commits I was able to build again.
+> >>
+> >>       Revert "kconfig: implement KCONFIG_PROBABILITY for randconfig"
+> >>       Revert "kconfig: allow specifying the seed for randconfig"
+> >>       Revert "kconfig: fix randomising choice entries in presence of
+> >> KCONFIG_ALLCONFIG"
+> >>       Revert "kconfig: do not override symbols already set"
+> >>       Revert "kconfig: fix randconfig tristate detection"
+> > 
+> > I did the same, then applied all the kconfig commits once more and did a
+> > git bisect with this script:
+> > 
+> > #!/bin/sh
+> > 
+> > cp config-bad .config
+> > make silentoldconfig </dev/null
+> > 
+> > This resulted in
+> > 
+> > 7ded2624f8988bd22819a60a6000ba6b7091db89 is the first bad commit
+> > commit 7ded2624f8988bd22819a60a6000ba6b7091db89
+> > Author: Yann E. MORIN <yann.morin.1998@free.fr>
+> > Date:   Sun Mar 10 16:34:10 2013 +0100
+> > 
+> >     kconfig: fix randomising choice entries in presence of KCONFIG_ALLCONFIG
+> > 
+> > The commit id is different, because it is reverted and applied again. Yann?
+> 
+> Commit 422c809 ("kconfig: fix randomising choice entries in presence of
+> KCONFIG_ALLCONFIG") reverts cleanly and reverting it fixes the bug. So
+> there is a plan B.
 
-- Sedat -
+I do not understand how reverting 422c809 could have fixed the
+silentoldconfig issue: as I previously reported, it already happens on
+Linus' master.
 
-> --
-> tejun
+I tried again jsut a few minutes ago against:
+    d7d7271: Merge branch 'v4l_for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
+and it is already broken, although 422c809 is not yet in Linus' tree:
+
+    $ make silentoldconfig </dev/null
+    scripts/kconfig/conf --silentoldconfig Kconfig
+    warning: (IA32_EMULATION) selects COMPAT_BINFMT_ELF which has unmet
+    direct dependencies (COMPAT && BINFMT_ELF)
+    *
+    * Restart config...
+    *
+    *
+    * Paravirtualized guest support
+    *
+    Paravirtualized guest support (PARAVIRT_GUEST) [N/y/?] (NEW) aborted!
+
+    Console input/output is redirected. Run 'make oldconfig' to update configuration.
+
+    make[1]: *** [silentoldconfig] Error 1
+    make: *** [silentoldconfig] Error 2
+
+Or did I miss something?
+
+However, oldconfig just works (with an error for each new symbol):
+    $ make oldconfig </dev/null
+    [--SNIP--]
+      NOP USB Transceiver Driver (NOP_USB_XCEIV) [N/m/?] (NEW)
+    Error in reading or end of file.
+
+    #
+    # configuration written to .config
+    #
+
+(Which does not mean 422c809 can't be reverted for other reasons, more
+on that in another mail).
+
+Regards,
+Yann E. MORIN.
+
+PS. I'm sad that I do not receive Sedat's emails for some reasons... :-(
+YEM.
+
+-- 
+.-----------------.--------------------.------------------.--------------------.
+|  Yann E. MORIN  | Real-Time Embedded | /"\ ASCII RIBBON | Erics' conspiracy: |
+| +33 662 376 056 | Software  Designer | \ / CAMPAIGN     |  ___               |
+| +33 223 225 172 `------------.-------:  X  AGAINST      |  \e/  There is no  |
+| http://ymorin.is-a-geek.org/ | _/*\_ | / \ HTML MAIL    |   v   conspiracy.  |
+'------------------------------^-------^------------------^--------------------'
