@@ -1,99 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the renesas tree with the input tree
-Date: Fri, 26 Apr 2013 17:12:29 +1000
-Message-ID: <20130426171229.134dc25101970f908132d523@canb.auug.org.au>
+From: Richard Genoud <richard.genoud@gmail.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the spi-mb tree
+Date: Fri, 26 Apr 2013 09:21:36 +0200
+Message-ID: <CACQ1gAidYqDm_SHea9jQFGqernZpgT8RuaRSP2N0ZPUX7JYyrA@mail.gmail.com>
+References: <20130426170649.d21c2d7a74e56d836ff6f04f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__26_Apr_2013_17_12_29_+1000_a+aKUwX1k7PK_bgm"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36233 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757078Ab3DZHMc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Apr 2013 03:12:32 -0400
+Received: from mail-ia0-f179.google.com ([209.85.210.179]:33790 "EHLO
+	mail-ia0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752001Ab3DZHV5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Apr 2013 03:21:57 -0400
+In-Reply-To: <20130426170649.d21c2d7a74e56d836ff6f04f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bastian Hecht <hechtb@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wenyou Yang <wenyou.yang@atmel.com>, Mark Brown <broonie@kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>
 
---Signature=_Fri__26_Apr_2013_17_12_29_+1000_a+aKUwX1k7PK_bgm
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+2013/4/26 Stephen Rothwell <sfr@canb.auug.org.au>:
+> Hi all,
+>
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/boot/dts/at91sam9x5.dtsi between commits d50f88a0c304 ("ARM:
+> dts: add spi nodes for atmel SoC") and a68b728f7a21 ("ARM: dts: add
+> pinctrl property for spi node for atmel SoC") from the spi-mb tree and
+> commits e9a72ee81d58 ("ARM: at91: dt: at91sam9x5: add i2c pinctrl"),
+> 463c9c7bf1f3 ("ARM: at91: dt: at91sam9x5: add i2c-gpio pinctrl") and
+> b909c6c94462 ("ARM: at91/at91sam9x5: add RTC node") from the arm-soc tree.
+>
+> I fixed it up (hopefully - see below) and can carry the fix as necessary
+> (no action is required).
 
-Hi Simon,
+Hi,
 
-Today's linux-next merge of the renesas tree got a conflict in
-arch/arm/mach-shmobile/board-armadillo800eva.c between commit
-cbaf7f808081 ("ARM - shmobile: Armadillo800EVA: Move st1232 reset pin
-handling") from the input tree and commit 0c5ba87e1b2e ("ARM: shmobile:
-armadillo800eva: Register pinctrl mapping for INTC") from the renesas
-tree.
+It's all ok for me !
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Thanks,
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-shmobile/board-armadillo800eva.c
-index b85b288,ff04d1e..0000000
---- a/arch/arm/mach-shmobile/board-armadillo800eva.c
-+++ b/arch/arm/mach-shmobile/board-armadillo800eva.c
-@@@ -1127,32 -1151,10 +1161,7 @@@ static void __init eva_init(void
-  	gpio_request_one(61, GPIOF_OUT_INIT_HIGH, NULL); /* LCDDON */
-  	gpio_request_one(202, GPIOF_OUT_INIT_LOW, NULL); /* LCD0_LED_CONT */
- =20
---	/* Touchscreen */
-- 	gpio_request(GPIO_FN_IRQ10,	NULL); /* TP_INT */
--=20
- -	gpio_request_one(166, GPIOF_OUT_INIT_HIGH, NULL); /* TP_RST_B */
- -
-  	/* GETHER */
-- 	gpio_request(GPIO_FN_ET_CRS,		NULL);
-- 	gpio_request(GPIO_FN_ET_MDC,		NULL);
-- 	gpio_request(GPIO_FN_ET_MDIO,		NULL);
-- 	gpio_request(GPIO_FN_ET_TX_ER,		NULL);
-- 	gpio_request(GPIO_FN_ET_RX_ER,		NULL);
-- 	gpio_request(GPIO_FN_ET_ERXD0,		NULL);
-- 	gpio_request(GPIO_FN_ET_ERXD1,		NULL);
-- 	gpio_request(GPIO_FN_ET_ERXD2,		NULL);
-- 	gpio_request(GPIO_FN_ET_ERXD3,		NULL);
-- 	gpio_request(GPIO_FN_ET_TX_CLK,		NULL);
-- 	gpio_request(GPIO_FN_ET_TX_EN,		NULL);
-- 	gpio_request(GPIO_FN_ET_ETXD0,		NULL);
-- 	gpio_request(GPIO_FN_ET_ETXD1,		NULL);
-- 	gpio_request(GPIO_FN_ET_ETXD2,		NULL);
-- 	gpio_request(GPIO_FN_ET_ETXD3,		NULL);
-- 	gpio_request(GPIO_FN_ET_PHY_INT,	NULL);
-- 	gpio_request(GPIO_FN_ET_COL,		NULL);
-- 	gpio_request(GPIO_FN_ET_RX_DV,		NULL);
-- 	gpio_request(GPIO_FN_ET_RX_CLK,		NULL);
--=20
-  	gpio_request_one(18, GPIOF_OUT_INIT_HIGH, NULL); /* PHY_RST */
- =20
-  	/* USB */
-
---Signature=_Fri__26_Apr_2013_17_12_29_+1000_a+aKUwX1k7PK_bgm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJReijdAAoJEECxmPOUX5FEGfIP/0Y2uH7UKMh12yDSCaKdE7hN
-LEgKJljdJPhYV+j7VNaKQrCOxYB0OiGuxDE1AMZBoXAo57vwCmjlJjPW0/0FEr/S
-2agkgNbyINGDFz8Ae1UTZW0r9CWSR0aZpMFtDgpt/DaJp891ITVtskUb+nrypqQI
-S3CW8xCQdAVc+wOwd78EQdYPQJMy1RPXOamSNP6cWDosze0vLv5WuIv6irS6fNMm
-+o9rJFcIOTPgwrzW50/tRE+4PiDivUm1oDsPVmqel0ldFUB1ap+9S8wuhp0/Fh5w
-2M9itJKn6wbBme9LuJHjcAFJDXd1mtn1sx67BzXYCimXE5S+XFY0Ut2U7nKM1TLd
-eshx3/Krtlm4n5Rm0IZi8grH5ws8PaXB1V74lYtvIf0jedCqk6cD0nDBAaO5aoeC
-IpGyX/pTwfPKt/iPBarQq6sOabp8Oie569RmXjpiiDqGuxrypoHX/79Cd6cpmnBF
-lmDATh0Haf/J9yeeMnAexVRiTv/oKdOA4f+iQiLklIy8ufeHUPQZ4tg/3AJNejsF
-0htxc0LB0vveZXaRVCt2m+2+OqTJaUgIjD5vdC4KqmmXaL4/uyC5Kr8eiW0s1LJ7
-8xEtFhOslP76RXrDZiL7XonfQmlXFfuMVGCVBwyYqmd3heDZlyWmDv2O8AFSBZh+
-lVyTzCcnQuqV/t442ZG2
-=2kSq
------END PGP SIGNATURE-----
-
---Signature=_Fri__26_Apr_2013_17_12_29_+1000_a+aKUwX1k7PK_bgm--
+Richard.
