@@ -1,63 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the omap_dss2 tree
-Date: Fri, 26 Apr 2013 15:10:27 +1000
-Message-ID: <20130426151027.db71ddf367c85fe0682cbff6@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the arm tree
+Date: Fri, 26 Apr 2013 15:27:11 +1000
+Message-ID: <20130426152711.75809ed49e490843db673840@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__26_Apr_2013_15_10_27_+1000_664yTLzvJr6n2Mhm"
+ boundary="Signature=_Fri__26_Apr_2013_15_27_11_+1000_xX+1luxybWckPHmW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38989 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35814 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751530Ab3DZFKh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Apr 2013 01:10:37 -0400
+	with ESMTP id S1753324Ab3DZF1W (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Apr 2013 01:27:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, Christoffer Dall <cdall@cs.columbia.edu>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Fri__26_Apr_2013_15_10_27_+1000_664yTLzvJr6n2Mhm
+--Signature=_Fri__26_Apr_2013_15_27_11_+1000_xX+1luxybWckPHmW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tomi,
+Hi Jiri,
 
-After merging the omap_dss2 tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the trivial tree got a conflict in
+arch/arm/kvm/arm.c between commit 3414bbfff98b ("ARM: KVM: move exit
+handler selection to a separate file") from the arm tree and commit
+b23f7a09f935 ("treewide: Fix typo in printk and comments") from the
+trivial tree.
 
-drivers/video/ps3fb.c: In function 'ps3fb_mmap':
-drivers/video/ps3fb.c:710:2: error: implicit declaration of function 'vm_io=
-remap_memory' [-Werror=3Dimplicit-function-declaration]
-drivers/video/ps3fb.c:712:2: error: 'offset' undeclared (first use in this =
-function)
+The former removed the code that the latter fixed, so I did that and can
+carry the fix as necessary (no action is required).
 
-Caused by commit 6ea19860d6c5 ("fbdev/ps3fb: use vm_iomap_memory()").
-
-I have used the omap_dss2 tree from next-20130424 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__26_Apr_2013_15_10_27_+1000_664yTLzvJr6n2Mhm
+--Signature=_Fri__26_Apr_2013_15_27_11_+1000_xX+1luxybWckPHmW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRegxDAAoJEECxmPOUX5FE1vgP/RYl87Xow7YyIwk/OoimCCgy
-zzU/9paXOQpSmrjnL5Q1nfXumUekBG3o9XmoZFgGWxo0GevnCxGIRJopsnd0bmaJ
-qUVmzcFkgxcVdjP9hguYJnb1Q01bEobuoCZfQWSGTg7QrpPjDrnnsinUKOHJ20/7
-cZV48KKcRVkYTzkS/KtX05RlGoOM4kPOicorjBM6pFiulhgmbqKavQT1La6HX7T5
-8S7893VWSOoQ5QDv3ZuFNmRCxqHFkO/nhUS+jeUW4IGMrJsVT5wP6COt8U8h8JK0
-iiDmd/Dd3Ahpncn7Yrgm3oyrLDRUtWpl7SN0ITLZ1VJDePgHHgAxKZMzMFD9WhZ+
-3hAUxCeO4x6IcJMPEtQ9SvCjxVcOTUQeu5+c9p6b3AQLhiY7Jc2v5IM96xUbwb92
-H3cwSORTUCF1738Yrjmhv5enS5vTb+T07F0e21BsNtLaUkMVrULbtFbWNhhlVyjC
-G+1ILAsrYB3XltuW5CzGCo6JmvE/EZ/uOZ702lp/sx0NHCpf34F6EjVbU0t9+aFy
-uLrrOnqDXqBMBhZlOczfmU/PubuVTFDPcmlRYJg9AqvMMKbNNmACZMQStIRRka9c
-aHzs3pSeNf5eJEf7IDWoBg0qirBe9g0Hc8dhOClyHfO7ruJLLIRVzEeOrclRIgaf
-IhH6A06jCPkShT8+znvq
-=Tp05
+iQIcBAEBCAAGBQJRehAvAAoJEECxmPOUX5FEwtAP/j3XyYep7o04sbl2o9THRMb1
+jsOTC9rx5PN6PlC/FFQAiuc9CBeng/gy2F/xWO5JK77K85MRvDV04rQUkaLxfKmY
+kxdxN1nwAYc6zV801Mn1nHjWHyl6ACAUD1NitLJFkcATPYx9t+N/x3rj/u58/uYk
+JKKGL03ZAkTyVGmAGuroeU7oJxFkh/tsz7vitKvyDar0w7TMtaeTdwjBpQbdO2uk
+U1mlrlR4H4xRtFP9vULY9sVH7VgLpi+gJLW9S8wHychd4D6qviDbvZix3T4Gfyzp
+W9O7TWewswb/RLhgokCIdiK03j0GTzXKO9nrKlVoYNlasGccATKBplVzNoIPyird
+BnE2nRQTgwMpu79uBqFUO2vHWwu5QszVcGBjKIqSqqXrDpVPNfzOwIvkmtDYnLTN
+OKAF9jGL4yv20zj1Li2XUnNkSe0FHhC1u4q5+sp3CRErJ5hVqsesUd/U4LuzI9aS
+Pjs1lJaUvPY+0GfavxmexRrRTG6RZjot3fQzIl/QQMavdAZWeAls7HuAUvX1GvMe
+HrgiE97q4i7VRnep13O7Cg+aKkZgoRju1KI4BnuDV/pr8NGF+mr9Zph9mLZwoyHw
+2G9nPvZ9eJhr3KdtfmBTMWJH+DQeQ736lSkKgtJgBq3Xkix9VVsLYgg6TsLiBNeh
+gQWqMf46bZU4WD4Blhob
+=nmV8
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__26_Apr_2013_15_10_27_+1000_664yTLzvJr6n2Mhm--
+--Signature=_Fri__26_Apr_2013_15_27_11_+1000_xX+1luxybWckPHmW--
