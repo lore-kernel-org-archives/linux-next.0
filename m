@@ -1,65 +1,65 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: linux-next: Tree for Apr 26
-Date: Fri, 26 Apr 2013 13:55:43 +0200
-Message-ID: <517A6B3F.6060000@suse.cz>
-References: <20130426180357.7599d1b6b7965470905dcdf3@canb.auug.org.au> <CA+icZUWt_W5FUQgQ2TFoQU0df+sAbxZZE8AcD16T3f_fiTD9DQ@mail.gmail.com> <517A4FC1.3070605@suse.cz> <20130426100435.GA28733@sepie.suse.cz> <CA+icZUVOfB2JuL1xh1EO1hTP_eOkntYFKsUJ0Zp6VZqn09NABA@mail.gmail.com> <CA+icZUWNVEsiTs6u_2R9krb45ub4t-pZj_VEPRmrX2c4DzwfmA@mail.gmail.com> <CA+icZUXSsqN1iE3ttQakvpZqG-oOL9NR6RMUezB7LGeUw3d00Q@mail.gmail.com> <517A6033.5060103@suse.cz> <517A615D.9020400@suse.cz> <CA+icZUWiZZDq1NsK9K9_dp0624ytU9n5Z49UmwONdM4M9jAt=A@mail.gmail.com> <CA+icZUVUPCU_pZBJeVNAGsF1rYLH=eCTig11fh=5i7RXdehMFA@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: mmotm 2013-04-25-16-24 uploaded
+Date: Fri, 26 Apr 2013 14:05:52 +0200
+Message-ID: <CA+icZUXqmF5QcfVtGpEh5KX4OkgbUncyZB0DKixqSNquUpis1A@mail.gmail.com>
+References: <20130425232702.AF3D831C265@corp2gmr1-1.hot.corp.google.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUVUPCU_pZBJeVNAGsF1rYLH=eCTig11fh=5i7RXdehMFA@mail.gmail.com>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: sedat.dilek@gmail.com
-Cc: "Yann E. MORIN" <yann.morin.1998@free.fr>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20130425232702.AF3D831C265@corp2gmr1-1.hot.corp.google.com>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 26.4.2013 13:45, Sedat Dilek wrote:
-> On Fri, Apr 26, 2013 at 1:23 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> On Fri, Apr 26, 2013 at 1:13 PM, Michal Marek <mmarek@suse.cz> wrote:
->>> On 26.4.2013 13:08, Michal Marek wrote:
->>>> On 26.4.2013 12:49, Sedat Dilek wrote:
->>>>> With reverting all kbuild-next commits I was able to build again.
->>>>>
->>>>>       Revert "kconfig: implement KCONFIG_PROBABILITY for randconfig"
->>>>>       Revert "kconfig: allow specifying the seed for randconfig"
->>>>>       Revert "kconfig: fix randomising choice entries in presence of
->>>>> KCONFIG_ALLCONFIG"
->>>>>       Revert "kconfig: do not override symbols already set"
->>>>>       Revert "kconfig: fix randconfig tristate detection"
->>>>
->>>> I did the same, then applied all the kconfig commits once more and did a
->>>> git bisect with this script:
->>>>
->>>> #!/bin/sh
->>>>
->>>> cp config-bad .config
->>>> make silentoldconfig </dev/null
->>>>
->>>> This resulted in
->>>>
->>>> 7ded2624f8988bd22819a60a6000ba6b7091db89 is the first bad commit
->>>> commit 7ded2624f8988bd22819a60a6000ba6b7091db89
->>>> Author: Yann E. MORIN <yann.morin.1998@free.fr>
->>>> Date:   Sun Mar 10 16:34:10 2013 +0100
->>>>
->>>>     kconfig: fix randomising choice entries in presence of KCONFIG_ALLCONFIG
->>>>
->>>> The commit id is different, because it is reverted and applied again. Yann?
->>>
->>> Commit 422c809 ("kconfig: fix randomising choice entries in presence of
->>> KCONFIG_ALLCONFIG") reverts cleanly and reverting it fixes the bug. So
->>> there is a plan B.
->>>
->>
->> Thanks for your efforts!
->>
-> 
-> Feel free to add my...
-> 
->      Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+On Fri, Apr 26, 2013 at 1:27 AM,  <akpm@linux-foundation.org> wrote:
+> The mm-of-the-moment snapshot 2013-04-25-16-24 has been uploaded to
+>
+>    http://www.ozlabs.org/~akpm/mmotm/
+>
 
-Well, I hope that Yann will come up with a proper fix. He is usually
-online during evening hours (+0200), so let's wait some time. Of course,
-the fallback is to apply the revert and then I will add your Tested-by.
+Hi Andrew,
 
-Michal
+Nice to see that IPC-SEM is now safe again with Linux-Next (next-20130426).
+
+Affected patches...
+
+ipcsem-fine-grained-locking-for-semtimedop-do-not-call-sem_lock-when-bogus-sma.patch
+ipcsem-fine-grained-locking-for-semtimedop-fix-lockdep-false-positive.patch
+ipcsem-fine-grained-locking-for-semtimedop-fix-locking-in-semctl_main.patch
+ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic-fix.patch
+ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic.patch
+ipcsem-fine-grained-locking-for-semtimedop-untangle-rcu-locking-with-find_alloc_undo.patch
+
+Just see one patch has my Tested-by (Reported-by) ...
+
+All these 6 ipc-sem-next patches were tested several times by me.
+
+It took me approx 2 weeks and XX kernel-builds.
+Please gimme appropriate credits, Thanks.
+
+Have a nice weekend,
+- Sedat -
+
+P.S.: Check for Sedat's credits.
+
+ipcsem-fine-grained-locking-for-semtimedop-fix-lockdep-false-positive.patch:Cc:
+Sedat Dilek <sedat.dilek@gmail.com>
+
+ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic.patch:Sedat
+reported an issue leading to a NULL dereference in update_queue():
+ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic.patch:Tested-by:
+Sedat Dilek <sedat.dilek@gmail.com>
+
+ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic.patch:Reported-by:
+Sedat Dilek <sedat.dilek@gmail.com>
+
+ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic.patch:Cc:
+Sedat Dilek <sedat.dilek@gmail.com>
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
