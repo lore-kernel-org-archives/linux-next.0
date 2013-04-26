@@ -1,81 +1,172 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: linux-next: build failure after merge of the omap_dss2 tree
-Date: Fri, 26 Apr 2013 09:57:22 +0300
-Message-ID: <517A2552.30808@ti.com>
-References: <20130426151027.db71ddf367c85fe0682cbff6@canb.auug.org.au> <517A1117.7000501@ti.com> <20130426155659.f203481f914edeaba9f1e493@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the spi-mb tree
+Date: Fri, 26 Apr 2013 17:06:49 +1000
+Message-ID: <20130426170649.d21c2d7a74e56d836ff6f04f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="------------enig9568ACAC880CA2EFD9CE51D3"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130426155659.f203481f914edeaba9f1e493@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Breeds <tony@bakeyournoodle.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__26_Apr_2013_17_06_49_+1000_.gWkdUh4WvAJACri"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48952 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754361Ab3DZHHI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Apr 2013 03:07:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wenyou Yang <wenyou.yang@atmel.com>, Richard Genoud <richard.genoud@gmail.com>, Mark Brown <broonie@kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>
 
---------------enig9568ACAC880CA2EFD9CE51D3
-Content-Type: text/plain; charset=ISO-8859-1
+--Signature=_Fri__26_Apr_2013_17_06_49_+1000_.gWkdUh4WvAJACri
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 2013-04-26 08:56, Stephen Rothwell wrote:
-> Hi Tomi,
->=20
-> On Fri, 26 Apr 2013 08:31:03 +0300 Tomi Valkeinen <tomi.valkeinen@ti.co=
-m> wrote:
->>
->> On 2013-04-26 08:10, Stephen Rothwell wrote:
->>>
->>> After merging the omap_dss2 tree, today's linux-next build (powerpc
->>> ppc64_defconfig) failed like this:
->>>
->>> drivers/video/ps3fb.c: In function 'ps3fb_mmap':
->>> drivers/video/ps3fb.c:710:2: error: implicit declaration of function =
-'vm_ioremap_memory' [-Werror=3Dimplicit-function-declaration]
->>> drivers/video/ps3fb.c:712:2: error: 'offset' undeclared (first use in=
- this function)
->>>
->>> Caused by commit 6ea19860d6c5 ("fbdev/ps3fb: use vm_iomap_memory()").=
+Hi all,
 
->>>
->>> I have used the omap_dss2 tree from next-20130424 for today.
->>>
->>
->> Thanks. Updated patch below. I couldn't right away find where to downl=
-oad a
->> ppc64 toolchain, so not compile tested...
->=20
-> https://www.kernel.org/pub/tools/crosstool/
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/boot/dts/at91sam9x5.dtsi between commits d50f88a0c304 ("ARM:
+dts: add spi nodes for atmel SoC") and a68b728f7a21 ("ARM: dts: add
+pinctrl property for spi node for atmel SoC") from the spi-mb tree and
+commits e9a72ee81d58 ("ARM: at91: dt: at91sam9x5: add i2c pinctrl"),
+463c9c7bf1f3 ("ARM: at91: dt: at91sam9x5: add i2c-gpio pinctrl") and
+b909c6c94462 ("ARM: at91/at91sam9x5: add RTC node") from the arm-soc tree.
 
-Thanks. It compiles now. I've pushed new version to my for-next branch.
+I fixed it up (hopefully - see below) and can carry the fix as necessary
+(no action is required).
 
- Tomi
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+diff --cc arch/arm/boot/dts/at91sam9x5.dtsi
+index 347b438,284bf24..0000000
+--- a/arch/arm/boot/dts/at91sam9x5.dtsi
++++ b/arch/arm/boot/dts/at91sam9x5.dtsi
+@@@ -343,23 -343,53 +343,70 @@@
+  					};
+  				};
+ =20
+ +				spi0 {
+ +					pinctrl_spi0: spi0-0 {
+ +						atmel,pins =3D
+ +							<0 11 0x1 0x0	/* PA11 periph A SPI0_MISO pin */
+ +							 0 12 0x1 0x0	/* PA12 periph A SPI0_MOSI pin */
+ +							 0 13 0x1 0x0>;	/* PA13 periph A SPI0_SPCK pin */
+ +					};
+ +				};
+ +
+ +				spi1 {
+ +					pinctrl_spi1: spi1-0 {
+ +						atmel,pins =3D
+ +							<0 21 0x2 0x0	/* PA21 periph B SPI1_MISO pin */
+ +							 0 22 0x2 0x0	/* PA22 periph B SPI1_MOSI pin */
+ +							 0 23 0x2 0x0>;	/* PA23 periph B SPI1_SPCK pin */
+ +					};
+ +				};
++ 				i2c0 {
++ 					pinctrl_i2c0: i2c0-0 {
++ 						atmel,pins =3D
++ 							<0 30 0x1 0x0	/* PA30 periph A I2C0 data */
++ 							 0 31 0x1 0x0>;	/* PA31 periph A I2C0 clock */
++ 					};
++ 				};
++=20
++ 				i2c1 {
++ 					pinctrl_i2c1: i2c1-0 {
++ 						atmel,pins =3D
++ 							<2 0 0x3 0x0	/* PC0 periph C I2C1 data */
++ 							 2 1 0x3 0x0>;	/* PC1 periph C I2C1 clock */
++ 					};
++ 				};
++=20
++ 				i2c2 {
++ 					pinctrl_i2c2: i2c2-0 {
++ 						atmel,pins =3D
++ 							<1 4 0x2 0x0	/* PB4 periph B I2C2 data */
++ 							 1 5 0x2 0x0>;	/* PB5 periph B I2C2 clock */
++ 					};
++ 				};
++=20
++ 				i2c_gpio0 {
++ 					pinctrl_i2c_gpio0: i2c_gpio0-0 {
++ 						atmel,pins =3D
++ 							<0 30 0x0 0x2	/* PA30 gpio multidrive I2C0 data */
++ 							 0 31 0x0 0x2>;	/* PA31 gpio multidrive I2C0 clock */
++ 					};
++ 				};
++=20
++ 				i2c_gpio1 {
++ 					pinctrl_i2c_gpio1: i2c_gpio1-0 {
++ 						atmel,pins =3D
++ 							<2 0 0x0 0x2	/* PC0 gpio multidrive I2C1 data */
++ 							 2 1 0x0 0x2>;	/* PC1 gpio multidrive I2C1 clock */
++ 					};
++ 				};
++=20
++ 				i2c_gpio2 {
++ 					pinctrl_i2c_gpio2: i2c_gpio2-0 {
++ 						atmel,pins =3D
++ 							<1 4 0x0 0x2	/* PB4 gpio multidrive I2C2 data */
++ 							 1 5 0x0 0x2>;	/* PB5 gpio multidrive I2C2 clock */
++ 					};
++ 				};
+ =20
+  				pioA: gpio@fffff400 {
+  					compatible =3D "atmel,at91sam9x5-gpio", "atmel,at91rm9200-gpio";
+@@@ -548,27 -587,12 +604,33 @@@
+  				};
+  			};
+ =20
+ +			spi0: spi@f0000000 {
+ +				#address-cells =3D <1>;
+ +				#size-cells =3D <0>;
+ +				compatible =3D "atmel,at91rm9200-spi";
+ +				reg =3D <0xf0000000 0x100>;
+ +				interrupts =3D <13 4 3>;
+ +				pinctrl-names =3D "default";
+ +				pinctrl-0 =3D <&pinctrl_spi0>;
+ +				status =3D "disabled";
+ +			};
+ +
+ +			spi1: spi@f0004000 {
+ +				#address-cells =3D <1>;
+ +				#size-cells =3D <0>;
+ +				compatible =3D "atmel,at91rm9200-spi";
+ +				reg =3D <0xf0004000 0x100>;
+ +				interrupts =3D <14 4 3>;
+ +				pinctrl-names =3D "default";
+ +				pinctrl-0 =3D <&pinctrl_spi1>;
+ +				status =3D "disabled";
+ +			};
++ 			rtc@fffffeb0 {
++ 				compatible =3D "atmel,at91rm9200-rtc";
++ 				reg =3D <0xfffffeb0 0x40>;
++ 				interrupts =3D <1 4 7>;
++ 				status =3D "disabled";
++ 			};
+  		};
+ =20
+  		nand0: nand@40000000 {
 
-
-
---------------enig9568ACAC880CA2EFD9CE51D3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+--Signature=_Fri__26_Apr_2013_17_06_49_+1000_.gWkdUh4WvAJACri
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with undefined - http://www.enigmail.net/
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJReiVSAAoJEPo9qoy8lh71l+UP/3uxcPMPOewbeFagVkHBhgoK
-MphfS1ehCipIMoiDmSIZMDke9YATwsI/0nc/WEqDq5VjnZPIwadVEX+mL4gogj1H
-uMG4d9BKe86oSv+XZWDEmsVEuT2q/3h7bFIu5EYIXfhswd91XhgrbEIBPOLU+Cmd
-L8+9YIGRJBtV3/uRDkiiBxpI9cyEYGrLvybuWFFNyE0/I/3aCfoXM1VeH9gP1eEx
-t6fzo+NJhSwdcSzWgQbIUrPiDOfbmpaawBUFXrmz25Kt0eoCkhOtqLMEsuvKlGTe
-gMKut1T3BNB3iGYyRLb6R14o/uWZtgoFZibmLJF8LW1HzCQJsQOH1aWYs+/qFGU3
-9MSW7vCEbQrGrUUz4O+1RtcBjm3zsG8YI1hCBWo5COzUhee5g2trpsRexGRdjjuy
-OADlTg4s55C3i8wXvQvtkL+y0iUbFELUnJ81IbkWMLX+dpYCwDxo7RrcqsmhIBxX
-tVA4ik6zZaRkwDQcOY8z3wlt3hr0uMN8yeVy0tK8LWSryzo8bEF7pLTo97oWYG5z
-R6JsqNX/nQyyJdsrzyG8IVQKWRu+TZccYqT0+Ya/yA/u7PzGwMmT/cZ+u31GZjDC
-a9n9difHK8BPrV1EZbOYsuTINvOMBfDuNk6TQnmh4Rb1hsqzW1cnGaOjTa8tenYk
-tXwAhmboyf3jonp4J4Uv
-=mKHL
+iQIcBAEBCAAGBQJReieJAAoJEECxmPOUX5FEW3QP/2pDNQojoRhiyavVkbr/FLyM
+00IEsn2ehrvqf/0pZxJiLIVWnumCRezJ6yIjHBANX69n4GYDJ/90TA3WkU2UzFcC
+WpWS3/IwPOQ94VS4YscshHfm0R8G9bu5Lhj80F9T42eTP+lSczUutCnIvLdKT4qB
+a34AbgYFnGcVzUP0oKSqRrv/2km0rapOCRZzSCsFf23/yBy+YozOmkMHm1OrTJG8
+hzK9YIfoLyU9wECIDSzplqGtc4qhdptOCQaW4HPinspybduNxtPN4OaaUIpBFSRj
+0Nt7Vc0TCzKvMBdeKnLbdyUi1iMzpRo7Jh7Z/jcPt2ZoMNria1UPbt5toG7OfM/R
+ZHl+iRLw87E+1aGzBmLWjU8uPu1BjzyqNA9RdDntGtD7kkBuymx8nAbz+wol1lbq
+WNTieWG522opM+nPYpqtAKzKqta1423aUNOWmNzDkVNyC++sP7R91eF0USDiE2/L
+vWVLAOzADgg6iN1p2WbYeRxyYsI5HH02eh8zSS5ns+R2/75uc9zP3Rn1FBW1Ks4G
+5RrJOktexg00egok03GUqsYvE2+A6M5q/eda45K6fohdKCbQfVJkR84x4iz5QWYJ
+IsBNT5N+Z5t02AIbLKW2/xDoSxbotXQal0fUmiL+Cprs73lbhwrgN//D/E5hNafQ
+pmsJ9gq5o4TRecy5psLw
+=sFcP
 -----END PGP SIGNATURE-----
 
---------------enig9568ACAC880CA2EFD9CE51D3--
+--Signature=_Fri__26_Apr_2013_17_06_49_+1000_.gWkdUh4WvAJACri--
