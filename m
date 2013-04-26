@@ -1,94 +1,50 @@
 From: Michal Marek <mmarek@suse.cz>
 Subject: Re: linux-next: Tree for Apr 26
-Date: Fri, 26 Apr 2013 13:08:35 +0200
-Message-ID: <517A6033.5060103@suse.cz>
-References: <20130426180357.7599d1b6b7965470905dcdf3@canb.auug.org.au> <CA+icZUWt_W5FUQgQ2TFoQU0df+sAbxZZE8AcD16T3f_fiTD9DQ@mail.gmail.com> <517A4FC1.3070605@suse.cz> <20130426100435.GA28733@sepie.suse.cz> <CA+icZUVOfB2JuL1xh1EO1hTP_eOkntYFKsUJ0Zp6VZqn09NABA@mail.gmail.com> <CA+icZUWNVEsiTs6u_2R9krb45ub4t-pZj_VEPRmrX2c4DzwfmA@mail.gmail.com> <CA+icZUXSsqN1iE3ttQakvpZqG-oOL9NR6RMUezB7LGeUw3d00Q@mail.gmail.com>
+Date: Fri, 26 Apr 2013 13:13:33 +0200
+Message-ID: <517A615D.9020400@suse.cz>
+References: <20130426180357.7599d1b6b7965470905dcdf3@canb.auug.org.au> <CA+icZUWt_W5FUQgQ2TFoQU0df+sAbxZZE8AcD16T3f_fiTD9DQ@mail.gmail.com> <517A4FC1.3070605@suse.cz> <20130426100435.GA28733@sepie.suse.cz> <CA+icZUVOfB2JuL1xh1EO1hTP_eOkntYFKsUJ0Zp6VZqn09NABA@mail.gmail.com> <CA+icZUWNVEsiTs6u_2R9krb45ub4t-pZj_VEPRmrX2c4DzwfmA@mail.gmail.com> <CA+icZUXSsqN1iE3ttQakvpZqG-oOL9NR6RMUezB7LGeUw3d00Q@mail.gmail.com> <517A6033.5060103@suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUXSsqN1iE3ttQakvpZqG-oOL9NR6RMUezB7LGeUw3d00Q@mail.gmail.com>
+In-Reply-To: <517A6033.5060103@suse.cz>
 Sender: linux-kbuild-owner@vger.kernel.org
 To: sedat.dilek@gmail.com, "Yann E. MORIN" <yann.morin.1998@free.fr>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 26.4.2013 12:49, Sedat Dilek wrote:
-> On Fri, Apr 26, 2013 at 12:37 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> On Fri, Apr 26, 2013 at 12:35 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>> On Fri, Apr 26, 2013 at 12:04 PM, Michal Marek <mmarek@suse.cz> wrote:
->>>> On Fri, Apr 26, 2013 at 11:58:25AM +0200, Michal Marek wrote:
->>>>> Can you send a copy of your .config?
->>>>
->>>> I can reproduce it as well:
->>>>
->>>> $ yes "" | make oldconfig
->>>> ...
->>>>   Enumeration method [M/y/?] (NEW)
->>>>     Basic (RAPIDIO_ENUM_BASIC) [N/m/?] n
->>>> ...
->>>> #
->>>> # configuration written to .config
->>>> #
->>>> $ make oldconfig
->>>> ...
->>>>   Enumeration method [M/y/?] (NEW)
->>>>
->>>>
->>>> .config is attached.
->>>>
->>>
->>> Mine, too.
->>>
->>> I hoped that -next release will be one w/o troubles
->>> (cpufreq/intel_pstate / pm/timekeeping / ipc-sem-from-mmotm).
->>> Unfortunately, I am not lucky :-(.
->>>
->>> Anyway, waiting for a fix.
->>>
+On 26.4.2013 13:08, Michal Marek wrote:
+> On 26.4.2013 12:49, Sedat Dilek wrote:
+>> With reverting all kbuild-next commits I was able to build again.
 >>
->> Just FYI: Mail delivery troubles!
->>
->> Delivery to the following recipient failed permanently:
->>
->>      yann.morin.1998@free.fr
->>
->> Technical details of permanent failure:
->> Google tried to deliver your message, but it was rejected by the
->> server for the recipient domain free.fr by mx1.free.fr. [212.27.48.6].
->>
->> The error that the other server returned was:
->> 550 spam detected
->> ...
->>
+>>       Revert "kconfig: implement KCONFIG_PROBABILITY for randconfig"
+>>       Revert "kconfig: allow specifying the seed for randconfig"
+>>       Revert "kconfig: fix randomising choice entries in presence of
+>> KCONFIG_ALLCONFIG"
+>>       Revert "kconfig: do not override symbols already set"
+>>       Revert "kconfig: fix randconfig tristate detection"
 > 
-> With reverting all kbuild-next commits I was able to build again.
+> I did the same, then applied all the kconfig commits once more and did a
+> git bisect with this script:
 > 
->       Revert "kconfig: implement KCONFIG_PROBABILITY for randconfig"
->       Revert "kconfig: allow specifying the seed for randconfig"
->       Revert "kconfig: fix randomising choice entries in presence of
-> KCONFIG_ALLCONFIG"
->       Revert "kconfig: do not override symbols already set"
->       Revert "kconfig: fix randconfig tristate detection"
+> #!/bin/sh
+> 
+> cp config-bad .config
+> make silentoldconfig </dev/null
+> 
+> This resulted in
+> 
+> 7ded2624f8988bd22819a60a6000ba6b7091db89 is the first bad commit
+> commit 7ded2624f8988bd22819a60a6000ba6b7091db89
+> Author: Yann E. MORIN <yann.morin.1998@free.fr>
+> Date:   Sun Mar 10 16:34:10 2013 +0100
+> 
+>     kconfig: fix randomising choice entries in presence of KCONFIG_ALLCONFIG
+> 
+> The commit id is different, because it is reverted and applied again. Yann?
 
-I did the same, then applied all the kconfig commits once more and did a
-git bisect with this script:
+Commit 422c809 ("kconfig: fix randomising choice entries in presence of
+KCONFIG_ALLCONFIG") reverts cleanly and reverting it fixes the bug. So
+there is a plan B.
 
-#!/bin/sh
-
-cp config-bad .config
-make silentoldconfig </dev/null
-
-This resulted in
-
-7ded2624f8988bd22819a60a6000ba6b7091db89 is the first bad commit
-commit 7ded2624f8988bd22819a60a6000ba6b7091db89
-Author: Yann E. MORIN <yann.morin.1998@free.fr>
-Date:   Sun Mar 10 16:34:10 2013 +0100
-
-    kconfig: fix randomising choice entries in presence of KCONFIG_ALLCONFIG
-
-The commit id is different, because it is reverted and applied again. Yann?
-
-Thanks,
 Michal
