@@ -1,75 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Subject: Re: linux-next: build failure after merge of the omap_dss2 tree
-Date: Fri, 26 Apr 2013 15:56:59 +1000
-Message-ID: <20130426155659.f203481f914edeaba9f1e493@canb.auug.org.au>
-References: <20130426151027.db71ddf367c85fe0682cbff6@canb.auug.org.au>
-	<517A1117.7000501@ti.com>
+Date: Fri, 26 Apr 2013 09:57:22 +0300
+Message-ID: <517A2552.30808@ti.com>
+References: <20130426151027.db71ddf367c85fe0682cbff6@canb.auug.org.au> <517A1117.7000501@ti.com> <20130426155659.f203481f914edeaba9f1e493@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__26_Apr_2013_15_56_59_+1000_OlLwstuNhuvCwfE1"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="------------enig9568ACAC880CA2EFD9CE51D3"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <517A1117.7000501@ti.com>
+In-Reply-To: <20130426155659.f203481f914edeaba9f1e493@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Breeds <tony@bakeyournoodle.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__26_Apr_2013_15_56_59_+1000_OlLwstuNhuvCwfE1
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+--------------enig9568ACAC880CA2EFD9CE51D3
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tomi,
-
-On Fri, 26 Apr 2013 08:31:03 +0300 Tomi Valkeinen <tomi.valkeinen@ti.com> w=
-rote:
->
-> On 2013-04-26 08:10, Stephen Rothwell wrote:
-> >=20
-> > After merging the omap_dss2 tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >=20
-> > drivers/video/ps3fb.c: In function 'ps3fb_mmap':
-> > drivers/video/ps3fb.c:710:2: error: implicit declaration of function 'v=
-m_ioremap_memory' [-Werror=3Dimplicit-function-declaration]
-> > drivers/video/ps3fb.c:712:2: error: 'offset' undeclared (first use in t=
-his function)
-> >=20
-> > Caused by commit 6ea19860d6c5 ("fbdev/ps3fb: use vm_iomap_memory()").
-> >=20
-> > I have used the omap_dss2 tree from next-20130424 for today.
-> >=20
+On 2013-04-26 08:56, Stephen Rothwell wrote:
+> Hi Tomi,
 >=20
-> Thanks. Updated patch below. I couldn't right away find where to download=
- a
-> ppc64 toolchain, so not compile tested...
+> On Fri, 26 Apr 2013 08:31:03 +0300 Tomi Valkeinen <tomi.valkeinen@ti.co=
+m> wrote:
+>>
+>> On 2013-04-26 08:10, Stephen Rothwell wrote:
+>>>
+>>> After merging the omap_dss2 tree, today's linux-next build (powerpc
+>>> ppc64_defconfig) failed like this:
+>>>
+>>> drivers/video/ps3fb.c: In function 'ps3fb_mmap':
+>>> drivers/video/ps3fb.c:710:2: error: implicit declaration of function =
+'vm_ioremap_memory' [-Werror=3Dimplicit-function-declaration]
+>>> drivers/video/ps3fb.c:712:2: error: 'offset' undeclared (first use in=
+ this function)
+>>>
+>>> Caused by commit 6ea19860d6c5 ("fbdev/ps3fb: use vm_iomap_memory()").=
 
-https://www.kernel.org/pub/tools/crosstool/
+>>>
+>>> I have used the omap_dss2 tree from next-20130424 for today.
+>>>
+>>
+>> Thanks. Updated patch below. I couldn't right away find where to downl=
+oad a
+>> ppc64 toolchain, so not compile tested...
+>=20
+> https://www.kernel.org/pub/tools/crosstool/
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks. It compiles now. I've pushed new version to my for-next branch.
 
---Signature=_Fri__26_Apr_2013_15_56_59_+1000_OlLwstuNhuvCwfE1
-Content-Type: application/pgp-signature
+ Tomi
+
+
+
+
+--------------enig9568ACAC880CA2EFD9CE51D3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
+Comment: Using GnuPG with undefined - http://www.enigmail.net/
 
-iQIcBAEBCAAGBQJRehcrAAoJEECxmPOUX5FEm6IP/Rcx9iNcMzffejY9uP8h1TGr
-pwF755aN4rrEfCYB2FNJ5ufhgoHPJlb6vflpo4YVSF4ukpMR41li2POBVFSyGBDv
-Y3IudHIxcU4FEgfsF9QPq5mssiAhUUTANYJVUEti5/nZFZ9ZDOi3i73Tmut02IDp
-OEfoIGyXZ0vSZMPgxwSClG4uzRi947cR3eh0XAMyuyvO+l4xKc8dj6zV9U3+Thqn
-pvAZ2kE/xTeKWj4QhqQB+lXKFDZewBdLBSClvSjb1ZwoepX4431hpYvnLQah8t67
-yalA/kFjNH5hGcs6v65tkmrEhZH4sbIm0q4gDTYc0kOWWlqUhUj+D4VbBrQLBGMH
-LaY5XnpPvaLgzB4UEEV38bdAMiSb3+Nq6V1WRHlIboUzGerp/zxdzYyRuO3TnKSU
-02qUkaOIPG9zn46dH768VKZ2oN17ztDhCWvb5dW6SimQKMxRWqU/xwI86735qbR1
-h8mifibxbgEWz2otBU/im1h6BzvM+ATrrcdAi7K89ThKtB59ROS88QB4yuetuWfF
-uig31HHBHjyUGQthnT+Iodif5tAdGnrt+2J/Ady57/jJQ0c8dpWbwo8A5G2on7ee
-p19ARFlITu3HzyGE0rfpNi07ebaadBI+rQ9LNggFpWJyGr5kUz9YkMzdAs0yr1QF
-lhqHX88fJt8RyUkcYc/c
-=UUsp
+iQIcBAEBAgAGBQJReiVSAAoJEPo9qoy8lh71l+UP/3uxcPMPOewbeFagVkHBhgoK
+MphfS1ehCipIMoiDmSIZMDke9YATwsI/0nc/WEqDq5VjnZPIwadVEX+mL4gogj1H
+uMG4d9BKe86oSv+XZWDEmsVEuT2q/3h7bFIu5EYIXfhswd91XhgrbEIBPOLU+Cmd
+L8+9YIGRJBtV3/uRDkiiBxpI9cyEYGrLvybuWFFNyE0/I/3aCfoXM1VeH9gP1eEx
+t6fzo+NJhSwdcSzWgQbIUrPiDOfbmpaawBUFXrmz25Kt0eoCkhOtqLMEsuvKlGTe
+gMKut1T3BNB3iGYyRLb6R14o/uWZtgoFZibmLJF8LW1HzCQJsQOH1aWYs+/qFGU3
+9MSW7vCEbQrGrUUz4O+1RtcBjm3zsG8YI1hCBWo5COzUhee5g2trpsRexGRdjjuy
+OADlTg4s55C3i8wXvQvtkL+y0iUbFELUnJ81IbkWMLX+dpYCwDxo7RrcqsmhIBxX
+tVA4ik6zZaRkwDQcOY8z3wlt3hr0uMN8yeVy0tK8LWSryzo8bEF7pLTo97oWYG5z
+R6JsqNX/nQyyJdsrzyG8IVQKWRu+TZccYqT0+Ya/yA/u7PzGwMmT/cZ+u31GZjDC
+a9n9difHK8BPrV1EZbOYsuTINvOMBfDuNk6TQnmh4Rb1hsqzW1cnGaOjTa8tenYk
+tXwAhmboyf3jonp4J4Uv
+=mKHL
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__26_Apr_2013_15_56_59_+1000_OlLwstuNhuvCwfE1--
+--------------enig9568ACAC880CA2EFD9CE51D3--
