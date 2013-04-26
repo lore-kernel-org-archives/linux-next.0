@@ -1,65 +1,117 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: mmotm 2013-04-25-16-24 uploaded
-Date: Fri, 26 Apr 2013 14:05:52 +0200
-Message-ID: <CA+icZUXqmF5QcfVtGpEh5KX4OkgbUncyZB0DKixqSNquUpis1A@mail.gmail.com>
-References: <20130425232702.AF3D831C265@corp2gmr1-1.hot.corp.google.com>
-Reply-To: sedat.dilek@gmail.com
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Subject: Re: linux-next: Tree for Apr 26
+Date: Fri, 26 Apr 2013 14:06:06 +0200
+Message-ID: <20130426120606.GB10241@free.fr>
+References: <20130426180357.7599d1b6b7965470905dcdf3@canb.auug.org.au>
+ <CA+icZUWt_W5FUQgQ2TFoQU0df+sAbxZZE8AcD16T3f_fiTD9DQ@mail.gmail.com>
+ <517A4FC1.3070605@suse.cz>
+ <20130426100435.GA28733@sepie.suse.cz>
+ <CA+icZUVOfB2JuL1xh1EO1hTP_eOkntYFKsUJ0Zp6VZqn09NABA@mail.gmail.com>
+ <CA+icZUWNVEsiTs6u_2R9krb45ub4t-pZj_VEPRmrX2c4DzwfmA@mail.gmail.com>
+ <CA+icZUXSsqN1iE3ttQakvpZqG-oOL9NR6RMUezB7LGeUw3d00Q@mail.gmail.com>
+ <517A6033.5060103@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20130425232702.AF3D831C265@corp2gmr1-1.hot.corp.google.com>
-Sender: owner-linux-mm@kvack.org
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <517A6033.5060103@suse.cz>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: sedat.dilek@gmail.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Apr 26, 2013 at 1:27 AM,  <akpm@linux-foundation.org> wrote:
-> The mm-of-the-moment snapshot 2013-04-25-16-24 has been uploaded to
->
->    http://www.ozlabs.org/~akpm/mmotm/
->
+Michal, Sedat, All,
 
-Hi Andrew,
+On Fri, Apr 26, 2013 at 01:08:35PM +0200, Michal Marek wrote:
+> On 26.4.2013 12:49, Sedat Dilek wrote:
+> > On Fri, Apr 26, 2013 at 12:37 PM, Sedat Dilek <sedat.dilek@gmail.co=
+m> wrote:
+> >> On Fri, Apr 26, 2013 at 12:35 PM, Sedat Dilek <sedat.dilek@gmail.c=
+om> wrote:
+> >>> On Fri, Apr 26, 2013 at 12:04 PM, Michal Marek <mmarek@suse.cz> w=
+rote:
+> >>>> On Fri, Apr 26, 2013 at 11:58:25AM +0200, Michal Marek wrote:
+> >>>>> Can you send a copy of your .config?
+> >>>>
+> >>>> I can reproduce it as well:
+> >>>>
+> >>>> $ yes "" | make oldconfig
+> >>>> ...
+> >>>>   Enumeration method [M/y/?] (NEW)
+> >>>>     Basic (RAPIDIO_ENUM_BASIC) [N/m/?] n
+> >>>> ...
+> >>>> #
+> >>>> # configuration written to .config
+> >>>> #
+> >>>> $ make oldconfig
+> >>>> ...
+> >>>>   Enumeration method [M/y/?] (NEW)
+> >>>>
+> >>>>
+> >>>> .config is attached.
+> >>>>
+> >>>
+> >>> Mine, too.
+> >>>
+> >>> I hoped that -next release will be one w/o troubles
+> >>> (cpufreq/intel_pstate / pm/timekeeping / ipc-sem-from-mmotm).
+> >>> Unfortunately, I am not lucky :-(.
+> >>>
+> >>> Anyway, waiting for a fix.
 
-Nice to see that IPC-SEM is now safe again with Linux-Next (next-20130426).
+I am even able to reproduce it with Linus' master:
 
-Affected patches...
+    $ git checkout master   # This is Linus' master
+    [--SNIP--]
+    $ git rev-parse HEAD
+    697dfd884438058b15032b0169887c742704434a
+    $ git clean -dX; git clean -d
+    [--SNIP--]
+    $ cp ../linux-next.config .config
+    $ make silentoldconfig </dev/null
+    scripts/kconfig/conf --silentoldconfig Kconfig
+    warning: (IA32_EMULATION) selects COMPAT_BINFMT_ELF which has unmet
+    direct dependencies (COMPAT && BINFMT_ELF)
+    *
+    * Restart config...
+    *
+    *
+    * Paravirtualized guest support
+    *
+    Paravirtualized guest support (PARAVIRT_GUEST) [N/y/?] (NEW) aborte=
+d!
 
-ipcsem-fine-grained-locking-for-semtimedop-do-not-call-sem_lock-when-bogus-sma.patch
-ipcsem-fine-grained-locking-for-semtimedop-fix-lockdep-false-positive.patch
-ipcsem-fine-grained-locking-for-semtimedop-fix-locking-in-semctl_main.patch
-ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic-fix.patch
-ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic.patch
-ipcsem-fine-grained-locking-for-semtimedop-untangle-rcu-locking-with-find_alloc_undo.patch
+    Console input/output is redirected. Run 'make oldconfig' to update
+    configuration.
+                                                                       =
+                                                                       =
+                =E2=94=82
+    make[1]: *** [silentoldconfig] Error 1
+    make: *** [silentoldconfig] Error 2
 
-Just see one patch has my Tested-by (Reported-by) ...
+I'm currently at work. I will look at it when I'm back home (as Michal
+said, I'm GMT+2, so in about 5h from now).
 
-All these 6 ipc-sem-next patches were tested several times by me.
+> >> Just FYI: Mail delivery troubles!
+[--SNIP--]
+> >> 550 spam detected
 
-It took me approx 2 weeks and XX kernel-builds.
-Please gimme appropriate credits, Thanks.
+Sorry, I have no grasp on how my ISP filters incoming emails... :-(
 
-Have a nice weekend,
-- Sedat -
+Regards,
+Yann E. MORIN.
 
-P.S.: Check for Sedat's credits.
-
-ipcsem-fine-grained-locking-for-semtimedop-fix-lockdep-false-positive.patch:Cc:
-Sedat Dilek <sedat.dilek@gmail.com>
-
-ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic.patch:Sedat
-reported an issue leading to a NULL dereference in update_queue():
-ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic.patch:Tested-by:
-Sedat Dilek <sedat.dilek@gmail.com>
-
-ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic.patch:Reported-by:
-Sedat Dilek <sedat.dilek@gmail.com>
-
-ipcsem-fine-grained-locking-for-semtimedop-ipc-make-refcounter-atomic.patch:Cc:
-Sedat Dilek <sedat.dilek@gmail.com>
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--=20
+=2E-----------------.--------------------.------------------.----------=
+----------.
+|  Yann E. MORIN  | Real-Time Embedded | /"\ ASCII RIBBON | Erics' cons=
+piracy: |
+| +33 662 376 056 | Software  Designer | \ / CAMPAIGN     |  ___       =
+        |
+| +33 223 225 172 `------------.-------:  X  AGAINST      |  \e/  There=
+ is no  |
+| http://ymorin.is-a-geek.org/ | _/*\_ | / \ HTML MAIL    |   v   consp=
+iracy.  |
+'------------------------------^-------^------------------^------------=
+--------'
