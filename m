@@ -1,39 +1,95 @@
-From: Richard Genoud <richard.genoud@gmail.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the spi-mb tree
-Date: Fri, 26 Apr 2013 09:21:36 +0200
-Message-ID: <CACQ1gAidYqDm_SHea9jQFGqernZpgT8RuaRSP2N0ZPUX7JYyrA@mail.gmail.com>
+From: "Yang, Wenyou" <Wenyou.Yang@atmel.com>
+Subject: RE: linux-next: manual merge of the arm-soc tree with the spi-mb
+ tree
+Date: Fri, 26 Apr 2013 07:48:51 +0000
+Message-ID: <B256D81BAE5131468A838E5D7A24364154234E9D@penmbx02>
 References: <20130426170649.d21c2d7a74e56d836ff6f04f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ia0-f179.google.com ([209.85.210.179]:33790 "EHLO
-	mail-ia0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752001Ab3DZHV5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Apr 2013 03:21:57 -0400
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20130426170649.d21c2d7a74e56d836ff6f04f@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wenyou Yang <wenyou.yang@atmel.com>, Mark Brown <broonie@kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Richard Genoud <richard.genoud@gmail.com>, Mark Brown <broonie@kernel.org>, "Ferre, Nicolas" <Nicolas.FERRE@atmel.com>
+List-Id: linux-next.vger.kernel.org
 
-2013/4/26 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi all,
->
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/boot/dts/at91sam9x5.dtsi between commits d50f88a0c304 ("ARM:
-> dts: add spi nodes for atmel SoC") and a68b728f7a21 ("ARM: dts: add
-> pinctrl property for spi node for atmel SoC") from the spi-mb tree and
-> commits e9a72ee81d58 ("ARM: at91: dt: at91sam9x5: add i2c pinctrl"),
-> 463c9c7bf1f3 ("ARM: at91: dt: at91sam9x5: add i2c-gpio pinctrl") and
-> b909c6c94462 ("ARM: at91/at91sam9x5: add RTC node") from the arm-soc tree.
->
-> I fixed it up (hopefully - see below) and can carry the fix as necessary
-> (no action is required).
-
-Hi,
-
-It's all ok for me !
-
-Thanks,
-
-Richard.
+SGksDQoNCkl0IGlzIE9LIGZvciBzcGkNCg0KVGhhbmtzDQoNCkJlc3QgUmVnYXJkcywNCldlbnlv
+dSBZYW5nDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3RlcGhlbiBS
+b3Rod2VsbCBbbWFpbHRvOnNmckBjYW5iLmF1dWcub3JnLmF1XQ0KPiBTZW50OiAyMDEzxOo01MIy
+NsjVIDE1OjA3DQo+IFRvOiBPbG9mIEpvaGFuc3NvbjsgQXJuZCBCZXJnbWFubjsgbGludXgtYXJt
+LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IENjOiBsaW51eC1uZXh0QHZnZXIua2VybmVs
+Lm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgWWFuZywgV2VueW91Ow0KPiBSaWNo
+YXJkIEdlbm91ZDsgTWFyayBCcm93bjsgRmVycmUsIE5pY29sYXMNCj4gU3ViamVjdDogbGludXgt
+bmV4dDogbWFudWFsIG1lcmdlIG9mIHRoZSBhcm0tc29jIHRyZWUgd2l0aCB0aGUgc3BpLW1iIHRy
+ZWUNCj4gDQo+IEhpIGFsbCwNCj4gDQo+IFRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUg
+YXJtLXNvYyB0cmVlIGdvdCBhIGNvbmZsaWN0IGluDQo+IGFyY2gvYXJtL2Jvb3QvZHRzL2F0OTFz
+YW05eDUuZHRzaSBiZXR3ZWVuIGNvbW1pdHMgZDUwZjg4YTBjMzA0ICgiQVJNOg0KPiBkdHM6IGFk
+ZCBzcGkgbm9kZXMgZm9yIGF0bWVsIFNvQyIpIGFuZCBhNjhiNzI4ZjdhMjEgKCJBUk06IGR0czog
+YWRkIHBpbmN0cmwNCj4gcHJvcGVydHkgZm9yIHNwaSBub2RlIGZvciBhdG1lbCBTb0MiKSBmcm9t
+IHRoZSBzcGktbWIgdHJlZSBhbmQgY29tbWl0cw0KPiBlOWE3MmVlODFkNTggKCJBUk06IGF0OTE6
+IGR0OiBhdDkxc2FtOXg1OiBhZGQgaTJjIHBpbmN0cmwiKSwNCj4gNDYzYzljN2JmMWYzICgiQVJN
+OiBhdDkxOiBkdDogYXQ5MXNhbTl4NTogYWRkIGkyYy1ncGlvIHBpbmN0cmwiKSBhbmQNCj4gYjkw
+OWM2Yzk0NDYyICgiQVJNOiBhdDkxL2F0OTFzYW05eDU6IGFkZCBSVEMgbm9kZSIpIGZyb20gdGhl
+IGFybS1zb2MNCj4gdHJlZS4NCj4gDQo+IEkgZml4ZWQgaXQgdXAgKGhvcGVmdWxseSAtIHNlZSBi
+ZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeSAobm8gYWN0aW9uDQo+IGlz
+IHJlcXVpcmVkKS4NCj4gDQo+IC0tDQo+IENoZWVycywNCj4gU3RlcGhlbiBSb3Rod2VsbCAgICAg
+ICAgICAgICAgICAgICAgc2ZyQGNhbmIuYXV1Zy5vcmcuYXUNCj4gDQo+IGRpZmYgLS1jYyBhcmNo
+L2FybS9ib290L2R0cy9hdDkxc2FtOXg1LmR0c2kgaW5kZXggMzQ3YjQzOCwyODRiZjI0Li4wMDAw
+MDAwDQo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2F0OTFzYW05eDUuZHRzaQ0KPiArKysgYi9h
+cmNoL2FybS9ib290L2R0cy9hdDkxc2FtOXg1LmR0c2kNCj4gQEBAIC0zNDMsMjMgLTM0Myw1MyAr
+MzQzLDcwIEBAQA0KPiAgIAkJCQkJfTsNCj4gICAJCQkJfTsNCj4gDQo+ICArCQkJCXNwaTAgew0K
+PiAgKwkJCQkJcGluY3RybF9zcGkwOiBzcGkwLTAgew0KPiAgKwkJCQkJCWF0bWVsLHBpbnMgPQ0K
+PiAgKwkJCQkJCQk8MCAxMSAweDEgMHgwCS8qIFBBMTEgcGVyaXBoIEEgU1BJMF9NSVNPDQo+IHBp
+biAqLw0KPiAgKwkJCQkJCQkgMCAxMiAweDEgMHgwCS8qIFBBMTIgcGVyaXBoIEEgU1BJMF9NT1NJ
+DQo+IHBpbiAqLw0KPiAgKwkJCQkJCQkgMCAxMyAweDEgMHgwPjsJLyogUEExMyBwZXJpcGggQQ0K
+PiBTUEkwX1NQQ0sgcGluICovDQo+ICArCQkJCQl9Ow0KPiAgKwkJCQl9Ow0KPiAgKw0KPiAgKwkJ
+CQlzcGkxIHsNCj4gICsJCQkJCXBpbmN0cmxfc3BpMTogc3BpMS0wIHsNCj4gICsJCQkJCQlhdG1l
+bCxwaW5zID0NCj4gICsJCQkJCQkJPDAgMjEgMHgyIDB4MAkvKiBQQTIxIHBlcmlwaCBCIFNQSTFf
+TUlTTw0KPiBwaW4gKi8NCj4gICsJCQkJCQkJIDAgMjIgMHgyIDB4MAkvKiBQQTIyIHBlcmlwaCBC
+IFNQSTFfTU9TSQ0KPiBwaW4gKi8NCj4gICsJCQkJCQkJIDAgMjMgMHgyIDB4MD47CS8qIFBBMjMg
+cGVyaXBoIEINCj4gU1BJMV9TUENLIHBpbiAqLw0KPiAgKwkJCQkJfTsNCj4gICsJCQkJfTsNCj4g
+KyAJCQkJaTJjMCB7DQo+ICsgCQkJCQlwaW5jdHJsX2kyYzA6IGkyYzAtMCB7DQo+ICsgCQkJCQkJ
+YXRtZWwscGlucyA9DQo+ICsgCQkJCQkJCTwwIDMwIDB4MSAweDAJLyogUEEzMCBwZXJpcGggQSBJ
+MkMwIGRhdGEgKi8NCj4gKyAJCQkJCQkJIDAgMzEgMHgxIDB4MD47CS8qIFBBMzEgcGVyaXBoIEEg
+STJDMA0KPiBjbG9jayAqLw0KPiArIAkJCQkJfTsNCj4gKyAJCQkJfTsNCj4gKw0KPiArIAkJCQlp
+MmMxIHsNCj4gKyAJCQkJCXBpbmN0cmxfaTJjMTogaTJjMS0wIHsNCj4gKyAJCQkJCQlhdG1lbCxw
+aW5zID0NCj4gKyAJCQkJCQkJPDIgMCAweDMgMHgwCS8qIFBDMCBwZXJpcGggQyBJMkMxIGRhdGEg
+Ki8NCj4gKyAJCQkJCQkJIDIgMSAweDMgMHgwPjsJLyogUEMxIHBlcmlwaCBDIEkyQzEgY2xvY2sg
+Ki8NCj4gKyAJCQkJCX07DQo+ICsgCQkJCX07DQo+ICsNCj4gKyAJCQkJaTJjMiB7DQo+ICsgCQkJ
+CQlwaW5jdHJsX2kyYzI6IGkyYzItMCB7DQo+ICsgCQkJCQkJYXRtZWwscGlucyA9DQo+ICsgCQkJ
+CQkJCTwxIDQgMHgyIDB4MAkvKiBQQjQgcGVyaXBoIEIgSTJDMiBkYXRhICovDQo+ICsgCQkJCQkJ
+CSAxIDUgMHgyIDB4MD47CS8qIFBCNSBwZXJpcGggQiBJMkMyIGNsb2NrICovDQo+ICsgCQkJCQl9
+Ow0KPiArIAkJCQl9Ow0KPiArDQo+ICsgCQkJCWkyY19ncGlvMCB7DQo+ICsgCQkJCQlwaW5jdHJs
+X2kyY19ncGlvMDogaTJjX2dwaW8wLTAgew0KPiArIAkJCQkJCWF0bWVsLHBpbnMgPQ0KPiArIAkJ
+CQkJCQk8MCAzMCAweDAgMHgyCS8qIFBBMzAgZ3BpbyBtdWx0aWRyaXZlIEkyQzANCj4gZGF0YSAq
+Lw0KPiArIAkJCQkJCQkgMCAzMSAweDAgMHgyPjsJLyogUEEzMSBncGlvIG11bHRpZHJpdmUNCj4g
+STJDMCBjbG9jayAqLw0KPiArIAkJCQkJfTsNCj4gKyAJCQkJfTsNCj4gKw0KPiArIAkJCQlpMmNf
+Z3BpbzEgew0KPiArIAkJCQkJcGluY3RybF9pMmNfZ3BpbzE6IGkyY19ncGlvMS0wIHsNCj4gKyAJ
+CQkJCQlhdG1lbCxwaW5zID0NCj4gKyAJCQkJCQkJPDIgMCAweDAgMHgyCS8qIFBDMCBncGlvIG11
+bHRpZHJpdmUgSTJDMQ0KPiBkYXRhICovDQo+ICsgCQkJCQkJCSAyIDEgMHgwIDB4Mj47CS8qIFBD
+MSBncGlvIG11bHRpZHJpdmUgSTJDMQ0KPiBjbG9jayAqLw0KPiArIAkJCQkJfTsNCj4gKyAJCQkJ
+fTsNCj4gKw0KPiArIAkJCQlpMmNfZ3BpbzIgew0KPiArIAkJCQkJcGluY3RybF9pMmNfZ3BpbzI6
+IGkyY19ncGlvMi0wIHsNCj4gKyAJCQkJCQlhdG1lbCxwaW5zID0NCj4gKyAJCQkJCQkJPDEgNCAw
+eDAgMHgyCS8qIFBCNCBncGlvIG11bHRpZHJpdmUgSTJDMg0KPiBkYXRhICovDQo+ICsgCQkJCQkJ
+CSAxIDUgMHgwIDB4Mj47CS8qIFBCNSBncGlvIG11bHRpZHJpdmUgSTJDMg0KPiBjbG9jayAqLw0K
+PiArIAkJCQkJfTsNCj4gKyAJCQkJfTsNCj4gDQo+ICAgCQkJCXBpb0E6IGdwaW9AZmZmZmY0MDAg
+ew0KPiAgIAkJCQkJY29tcGF0aWJsZSA9ICJhdG1lbCxhdDkxc2FtOXg1LWdwaW8iLA0KPiAiYXRt
+ZWwsYXQ5MXJtOTIwMC1ncGlvIjsgQEBAIC01NDgsMjcgLTU4NywxMiArNjA0LDMzIEBAQA0KPiAg
+IAkJCQl9Ow0KPiAgIAkJCX07DQo+IA0KPiAgKwkJCXNwaTA6IHNwaUBmMDAwMDAwMCB7DQo+ICAr
+CQkJCSNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPiAgKwkJCQkjc2l6ZS1jZWxscyA9IDwwPjsNCj4g
+ICsJCQkJY29tcGF0aWJsZSA9ICJhdG1lbCxhdDkxcm05MjAwLXNwaSI7DQo+ICArCQkJCXJlZyA9
+IDwweGYwMDAwMDAwIDB4MTAwPjsNCj4gICsJCQkJaW50ZXJydXB0cyA9IDwxMyA0IDM+Ow0KPiAg
+KwkJCQlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOw0KPiAgKwkJCQlwaW5jdHJsLTAgPSA8JnBp
+bmN0cmxfc3BpMD47DQo+ICArCQkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ICArCQkJfTsNCj4g
+ICsNCj4gICsJCQlzcGkxOiBzcGlAZjAwMDQwMDAgew0KPiAgKwkJCQkjYWRkcmVzcy1jZWxscyA9
+IDwxPjsNCj4gICsJCQkJI3NpemUtY2VsbHMgPSA8MD47DQo+ICArCQkJCWNvbXBhdGlibGUgPSAi
+YXRtZWwsYXQ5MXJtOTIwMC1zcGkiOw0KPiAgKwkJCQlyZWcgPSA8MHhmMDAwNDAwMCAweDEwMD47
+DQo+ICArCQkJCWludGVycnVwdHMgPSA8MTQgNCAzPjsNCj4gICsJCQkJcGluY3RybC1uYW1lcyA9
+ICJkZWZhdWx0IjsNCj4gICsJCQkJcGluY3RybC0wID0gPCZwaW5jdHJsX3NwaTE+Ow0KPiAgKwkJ
+CQlzdGF0dXMgPSAiZGlzYWJsZWQiOw0KPiAgKwkJCX07DQo+ICsgCQkJcnRjQGZmZmZmZWIwIHsN
+Cj4gKyAJCQkJY29tcGF0aWJsZSA9ICJhdG1lbCxhdDkxcm05MjAwLXJ0YyI7DQo+ICsgCQkJCXJl
+ZyA9IDwweGZmZmZmZWIwIDB4NDA+Ow0KPiArIAkJCQlpbnRlcnJ1cHRzID0gPDEgNCA3PjsNCj4g
+KyAJCQkJc3RhdHVzID0gImRpc2FibGVkIjsNCj4gKyAJCQl9Ow0KPiAgIAkJfTsNCj4gDQo+ICAg
+CQluYW5kMDogbmFuZEA0MDAwMDAwMCB7DQo=
