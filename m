@@ -1,62 +1,99 @@
-From: <wei_wang@realsil.com.cn>
-Subject: [PATCH] linux-next:usb-stor:realtek_cr:Fix compile error
-Date: Sat, 27 Apr 2013 10:49:13 +0800
-Message-ID: <1367030953-24707-1-git-send-email-wei_wang@realsil.com.cn>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: Tree for Apr 26
+Date: Sat, 27 Apr 2013 08:54:37 +0200
+Message-ID: <517B762D.8030409@suse.cz>
+References: <20130426180357.7599d1b6b7965470905dcdf3@canb.auug.org.au> <CA+icZUWt_W5FUQgQ2TFoQU0df+sAbxZZE8AcD16T3f_fiTD9DQ@mail.gmail.com> <517A4FC1.3070605@suse.cz> <20130426100435.GA28733@sepie.suse.cz> <CA+icZUVOfB2JuL1xh1EO1hTP_eOkntYFKsUJ0Zp6VZqn09NABA@mail.gmail.com> <CA+icZUWNVEsiTs6u_2R9krb45ub4t-pZj_VEPRmrX2c4DzwfmA@mail.gmail.com> <CA+icZUXSsqN1iE3ttQakvpZqG-oOL9NR6RMUezB7LGeUw3d00Q@mail.gmail.com> <517A6033.5060103@suse.cz> <517A615D.9020400@suse.cz> <20130426220131.GC5100@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rdunlap@infradead.org
-Cc: devel@linuxdriverproject.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-usb@vger.kernel.org, Wei WANG <wei_wang@realsil.com.cn>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <20130426220131.GC5100@free.fr>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Cc: sedat.dilek@gmail.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-From: Wei WANG <wei_wang@realsil.com.cn>
+Dne 27.4.2013 00:01, Yann E. MORIN napsal(a):
+> Michal, Sedat, All,
+> 
+> On Fri, Apr 26, 2013 at 01:13:33PM +0200, Michal Marek wrote:
+>> On 26.4.2013 13:08, Michal Marek wrote:
+>>> On 26.4.2013 12:49, Sedat Dilek wrote:
+>>>> With reverting all kbuild-next commits I was able to build again.
+>>>>
+>>>>       Revert "kconfig: implement KCONFIG_PROBABILITY for randconfig"
+>>>>       Revert "kconfig: allow specifying the seed for randconfig"
+>>>>       Revert "kconfig: fix randomising choice entries in presence of
+>>>> KCONFIG_ALLCONFIG"
+>>>>       Revert "kconfig: do not override symbols already set"
+>>>>       Revert "kconfig: fix randconfig tristate detection"
+>>>
+>>> I did the same, then applied all the kconfig commits once more and did a
+>>> git bisect with this script:
+>>>
+>>> #!/bin/sh
+>>>
+>>> cp config-bad .config
+>>> make silentoldconfig </dev/null
+>>>
+>>> This resulted in
+>>>
+>>> 7ded2624f8988bd22819a60a6000ba6b7091db89 is the first bad commit
+>>> commit 7ded2624f8988bd22819a60a6000ba6b7091db89
+>>> Author: Yann E. MORIN <yann.morin.1998@free.fr>
+>>> Date:   Sun Mar 10 16:34:10 2013 +0100
+>>>
+>>>     kconfig: fix randomising choice entries in presence of KCONFIG_ALLCONFIG
+>>>
+>>> The commit id is different, because it is reverted and applied again. Yann?
+>>
+>> Commit 422c809 ("kconfig: fix randomising choice entries in presence of
+>> KCONFIG_ALLCONFIG") reverts cleanly and reverting it fixes the bug. So
+>> there is a plan B.
+> 
+> I do not understand how reverting 422c809 could have fixed the
+> silentoldconfig issue: as I previously reported, it already happens on
+> Linus' master.
+> 
+> I tried again jsut a few minutes ago against:
+>     d7d7271: Merge branch 'v4l_for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
+> and it is already broken, although 422c809 is not yet in Linus' tree:
+> 
+>     $ make silentoldconfig </dev/null
+>     scripts/kconfig/conf --silentoldconfig Kconfig
+>     warning: (IA32_EMULATION) selects COMPAT_BINFMT_ELF which has unmet
+>     direct dependencies (COMPAT && BINFMT_ELF)
+>     *
+>     * Restart config...
+>     *
+>     *
+>     * Paravirtualized guest support
+>     *
+>     Paravirtualized guest support (PARAVIRT_GUEST) [N/y/?] (NEW) aborted!
+> 
+>     Console input/output is redirected. Run 'make oldconfig' to update configuration.
+> 
+>     make[1]: *** [silentoldconfig] Error 1
+>     make: *** [silentoldconfig] Error 2
+> 
+> Or did I miss something?
+> 
+> However, oldconfig just works (with an error for each new symbol):
+>     $ make oldconfig </dev/null
+>     [--SNIP--]
+>       NOP USB Transceiver Driver (NOP_USB_XCEIV) [N/m/?] (NEW)
+>     Error in reading or end of file.
+> 
+>     #
+>     # configuration written to .config
+>     #
 
-To fix the compile error when CONFIG_PM_RUNTIME is not enabled,
-move the declaration of us out of CONFIG_REALTEK_AUTOPM macro in rts51x_chip.
+That (silent)oldconfig with stdin redirection throws an error if it
+encounters a new option is expected and correct. The bug here is that
+_normal_ oldconfig run apparently does not set all the options. I.e.
 
-drivers/usb/storage/realtek_cr.c: In function 'realtek_cr_destructor':
-drivers/usb/storage/realtek_cr.c:942:11: error: 'struct rts51x_chip' has no member named 'us'
+$ yes "" | make oldconfig; make silentoldconfig </dev/null
 
-Signed-off-by: Wei WANG <wei_wang@realsil.com.cn>
----
- drivers/usb/storage/realtek_cr.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+should always pass.
 
-diff --git a/drivers/usb/storage/realtek_cr.c b/drivers/usb/storage/realtek_cr.c
-index 4797228..64c2b28 100644
---- a/drivers/usb/storage/realtek_cr.c
-+++ b/drivers/usb/storage/realtek_cr.c
-@@ -105,8 +105,9 @@ struct rts51x_chip {
- 	int status_len;
- 
- 	u32 flag;
--#ifdef CONFIG_REALTEK_AUTOPM
- 	struct us_data *us;
-+
-+#ifdef CONFIG_REALTEK_AUTOPM
- 	struct timer_list rts51x_suspend_timer;
- 	unsigned long timer_expires;
- 	int pwr_state;
-@@ -991,6 +992,7 @@ static int init_realtek_cr(struct us_data *us)
- 	us->extra = chip;
- 	us->extra_destructor = realtek_cr_destructor;
- 	us->max_lun = chip->max_lun = rts51x_get_max_lun(us);
-+	chip->us = us;
- 
- 	usb_stor_dbg(us, "chip->max_lun = %d\n", chip->max_lun);
- 
-@@ -1013,10 +1015,8 @@ static int init_realtek_cr(struct us_data *us)
- 			SET_AUTO_DELINK(chip);
- 	}
- #ifdef CONFIG_REALTEK_AUTOPM
--	if (ss_en) {
--		chip->us = us;
-+	if (ss_en)
- 		realtek_cr_autosuspend_setup(us);
--	}
- #endif
- 
- 	usb_stor_dbg(us, "chip->flag = 0x%x\n", chip->flag);
--- 
-1.7.11.3
+Michal
