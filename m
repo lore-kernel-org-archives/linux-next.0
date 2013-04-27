@@ -1,55 +1,62 @@
-From: Sedat Dilek <sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: Tree for Apr 26 [ bluetooth on suspend/resume ]
-Date: Sat, 27 Apr 2013 01:24:48 +0200
-Message-ID: <CA+icZUWJ=LoMTMMGfU9pJc7fVOFEdoZjxfMba2TaLgPWruiH4g@mail.gmail.com>
-References: <CA+icZUVCmFeh3Xna37VJDDzvZ34sYJ_Dser7i5rRzGLhMTi5-Q@mail.gmail.com>
-	<CA+icZUXeDT8x60iUtjJV2GO5KkDnm8CJsz8mntz5hREoOD+YJw@mail.gmail.com>
-	<CA+icZUWkyP9TE0eeqstyvVNP++MtN8rYfGcPBT6NuMOHEHm7dw@mail.gmail.com>
-	<20130426182239.GA25767@mtj.dyndns.org>
-	<CA+icZUVWRkP_fxTH22ywx9Ntnnp1xW_2dVRjwTvBfs0eJBcEVg@mail.gmail.com>
-	<20130426220427.GE1433@mtj.dyndns.org>
-Reply-To: sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: <wei_wang@realsil.com.cn>
+Subject: [PATCH] linux-next:usb-stor:realtek_cr:Fix compile error
+Date: Sat, 27 Apr 2013 10:49:13 +0800
+Message-ID: <1367030953-24707-1-git-send-email-wei_wang@realsil.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130426220427.GE1433-9pTldWuhBndy/B6EtB590w@public.gmane.org>
-Sender: linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcel Holtmann <marcel-kz+m5ild9QBg9hUCZPvPmw@public.gmane.org>, Gustavo Padovan <gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org>, Johan Hedberg <johan.hedberg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux PM List <linux-pm-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Frederic Weisbecker <fweisbec-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rdunlap@infradead.org
+Cc: devel@linuxdriverproject.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-usb@vger.kernel.org, Wei WANG <wei_wang@realsil.com.cn>
 List-Id: linux-next.vger.kernel.org
 
-On Sat, Apr 27, 2013 at 12:04 AM, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Fri, Apr 26, 2013 at 11:07:44PM +0200, Sedat Dilek wrote:
->> > The second argument %rsi is zero, which got transferred to %r13 and
->> > then offset deref on it trapped.
->> >
->> > The second argument is @wq and the oopsing code is the wq->flags deref
->> > in the following if condition.
->> >
->> >         /* if dying, only works from the same workqueue are allowed */
->> >         if (unlikely(wq->flags & __WQ_DRAINING) &&
->> >                 WARN_ON_ONCE(!is_chained_work(wq)))
->> >                 return;
->> >
->> > So, umm, don't pass in NULL as @wq. :)
->> >
->>
->> Do you have a patch for this?
->
-> Heh, I haven't even looked at the caller.  It's a bug on the workqueue
-> user side.
->
+From: Wei WANG <wei_wang@realsil.com.cn>
 
-[ CC Frederic ]
+To fix the compile error when CONFIG_PM_RUNTIME is not enabled,
+move the declaration of us out of CONFIG_REALTEK_AUTOPM macro in rts51x_chip.
 
-You should explain that a bit.
+drivers/usb/storage/realtek_cr.c: In function 'realtek_cr_destructor':
+drivers/usb/storage/realtek_cr.c:942:11: error: 'struct rts51x_chip' has no member named 'us'
 
-I have tested with my "problematic -3" kernel and did not see the warning again.
-So, I assume it's independent of linux-dynticks kconfig-settings.
+Signed-off-by: Wei WANG <wei_wang@realsil.com.cn>
+---
+ drivers/usb/storage/realtek_cr.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-- Sedat -
-
-> Thanks.
->
-> --
-> tejun
+diff --git a/drivers/usb/storage/realtek_cr.c b/drivers/usb/storage/realtek_cr.c
+index 4797228..64c2b28 100644
+--- a/drivers/usb/storage/realtek_cr.c
++++ b/drivers/usb/storage/realtek_cr.c
+@@ -105,8 +105,9 @@ struct rts51x_chip {
+ 	int status_len;
+ 
+ 	u32 flag;
+-#ifdef CONFIG_REALTEK_AUTOPM
+ 	struct us_data *us;
++
++#ifdef CONFIG_REALTEK_AUTOPM
+ 	struct timer_list rts51x_suspend_timer;
+ 	unsigned long timer_expires;
+ 	int pwr_state;
+@@ -991,6 +992,7 @@ static int init_realtek_cr(struct us_data *us)
+ 	us->extra = chip;
+ 	us->extra_destructor = realtek_cr_destructor;
+ 	us->max_lun = chip->max_lun = rts51x_get_max_lun(us);
++	chip->us = us;
+ 
+ 	usb_stor_dbg(us, "chip->max_lun = %d\n", chip->max_lun);
+ 
+@@ -1013,10 +1015,8 @@ static int init_realtek_cr(struct us_data *us)
+ 			SET_AUTO_DELINK(chip);
+ 	}
+ #ifdef CONFIG_REALTEK_AUTOPM
+-	if (ss_en) {
+-		chip->us = us;
++	if (ss_en)
+ 		realtek_cr_autosuspend_setup(us);
+-	}
+ #endif
+ 
+ 	usb_stor_dbg(us, "chip->flag = 0x%x\n", chip->flag);
+-- 
+1.7.11.3
