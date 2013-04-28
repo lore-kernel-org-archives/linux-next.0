@@ -1,64 +1,79 @@
-From: "Yuval Mintz" <yuvalmin@broadcom.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the net
- tree
-Date: Sun, 28 Apr 2013 16:49:33 +0300
-Message-ID: <20130428164933.6d3da501@lb-tlvb-yuvalmin.il.broadcom.com>
-References: <20130426132447.c7b06622240088ccad366b03@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] linux-next:usb-stor:realtek_cr:Fix compile error
+Date: Sun, 28 Apr 2013 15:22:27 -0700
+Message-ID: <517DA123.10005@infradead.org>
+References: <1367030953-24707-1-git-send-email-wei_wang@realsil.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms2.broadcom.com ([216.31.210.18]:3507 "EHLO mms2.broadcom.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754970Ab3D1OuX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Apr 2013 10:50:23 -0400
-In-Reply-To: <20130426132447.c7b06622240088ccad366b03@canb.auug.org.au>
+Received: from casper.infradead.org ([85.118.1.10]:50180 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754103Ab3D1WW5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Apr 2013 18:22:57 -0400
+In-Reply-To: <1367030953-24707-1-git-send-email-wei_wang@realsil.com.cn>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ariel Elior <ariele@broadcom.com>, Yuval Mintz <yuvalmin@broadcom.com>, Eilon Greenstein <eilong@broadcom.com>
+To: wei_wang@realsil.com.cn
+Cc: devel@linuxdriverproject.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-usb@vger.kernel.org
 
-> Hi all,
+On 04/26/13 19:49, wei_wang@realsil.com.cn wrote:
+> From: Wei WANG <wei_wang@realsil.com.cn>
 > 
-> Today's linux-next merge of the net-next tree got a conflict in
-> drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c between commit
-> ecf01c22be03 ("bnx2x: Prevent NULL pointer dereference in kdump") from
-> the net tree and commit 5b0752c863d7 ("bnx2x: Fix VF statistics") from
-> the net-next tree.
+> To fix the compile error when CONFIG_PM_RUNTIME is not enabled,
+> move the declaration of us out of CONFIG_REALTEK_AUTOPM macro in rts51x_chip.
 > 
-> I am not sure about this, but I just used the net tree version but I
-> assume something more may be needed and can carry the fix as
-> necessary (no action is required).
+> drivers/usb/storage/realtek_cr.c: In function 'realtek_cr_destructor':
+> drivers/usb/storage/realtek_cr.c:942:11: error: 'struct rts51x_chip' has no member named 'us'
+> 
+> Signed-off-by: Wei WANG <wei_wang@realsil.com.cn>
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> ---
+>  drivers/usb/storage/realtek_cr.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/storage/realtek_cr.c b/drivers/usb/storage/realtek_cr.c
+> index 4797228..64c2b28 100644
+> --- a/drivers/usb/storage/realtek_cr.c
+> +++ b/drivers/usb/storage/realtek_cr.c
+> @@ -105,8 +105,9 @@ struct rts51x_chip {
+>  	int status_len;
+>  
+>  	u32 flag;
+> -#ifdef CONFIG_REALTEK_AUTOPM
+>  	struct us_data *us;
+> +
+> +#ifdef CONFIG_REALTEK_AUTOPM
+>  	struct timer_list rts51x_suspend_timer;
+>  	unsigned long timer_expires;
+>  	int pwr_state;
+> @@ -991,6 +992,7 @@ static int init_realtek_cr(struct us_data *us)
+>  	us->extra = chip;
+>  	us->extra_destructor = realtek_cr_destructor;
+>  	us->max_lun = chip->max_lun = rts51x_get_max_lun(us);
+> +	chip->us = us;
+>  
+>  	usb_stor_dbg(us, "chip->max_lun = %d\n", chip->max_lun);
+>  
+> @@ -1013,10 +1015,8 @@ static int init_realtek_cr(struct us_data *us)
+>  			SET_AUTO_DELINK(chip);
+>  	}
+>  #ifdef CONFIG_REALTEK_AUTOPM
+> -	if (ss_en) {
+> -		chip->us = us;
+> +	if (ss_en)
+>  		realtek_cr_autosuspend_setup(us);
+> -	}
+>  #endif
+>  
+>  	usb_stor_dbg(us, "chip->flag = 0x%x\n", chip->flag);
 > 
 
-Hi Stephen,
 
-This patch adds the missing functionality from the `net-next' patch
-which was lost due to the merge.
-
-Is `linux-next' the correct tree to send it into?
-(I couldn't designate it to `net-next' as the merge between `net' and
-`net-next' hasn't occured yet, thus no collision there)
-
-Signed-off-by: Yuval Mintz <yuvalmin@broadcom.com>
-Signed-off-by: Ariel Elior <ariele@broadcom.com>
----
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c index
-06dee5c..52cf71c 100644 ---
-a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c +++
-b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c @@ -6053,6 +6053,8
-@@ void bnx2x_pre_irq_nic_init(struct bnx2x *bp) bnx2x_init_def_sb(bp);
- 		bnx2x_update_dsb_idx(bp);
- 		bnx2x_init_sp_ring(bp);
-+	} else {
-+		bnx2x_memset_stats(bp);
- 	}
- }
- 
 -- 
-1.8.1.227.g44fe835
+~Randy
