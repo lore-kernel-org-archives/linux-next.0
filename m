@@ -1,69 +1,45 @@
-From: Matt Fleming <matt.fleming@intel.com>
-Subject: Re: linux-next: Tree for Apr 26
-Date: Mon, 29 Apr 2013 14:50:47 +0100
-Message-ID: <517E7AB7.6050101@intel.com>
-References: <20130426180357.7599d1b6b7965470905dcdf3@canb.auug.org.au> <CAMuHMdWQ0rMuoH+peGMZ3=AdsYrMPpeV4_vSsLD3kaJukx=83w@mail.gmail.com> <20130429093628.b739ef3b879b6f8759bd31af@canb.auug.org.au> <517E2B21.8070009@intel.com> <20130429185322.afaed9fd11269fba9bb09a54@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Date: Mon, 29 Apr 2013 10:53:37 -0400
+Message-ID: <CA52A586-E4DF-42D0-9020-D17F8822BF7C@oracle.com>
+References: <20130429112434.dcc80cfce804beeacc68793a@canb.auug.org.au>
+Mime-Version: 1.0 (Mac OS X Mail 6.3 \(1503\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:54975 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758400Ab3D2Nuv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 09:50:51 -0400
-Received: by mail-wi0-f176.google.com with SMTP id hi8so522381wib.3
-        for <linux-next@vger.kernel.org>; Mon, 29 Apr 2013 06:50:50 -0700 (PDT)
-In-Reply-To: <20130429185322.afaed9fd11269fba9bb09a54@canb.auug.org.au>
+Received: from userp1040.oracle.com ([156.151.31.81]:49817 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751019Ab3D2OyE convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 10:54:04 -0400
+In-Reply-To: <20130429112434.dcc80cfce804beeacc68793a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Matthew Garrett <matthew.garrett@nebula.com>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, "Luck, Tony" <tony.luck@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Simo Sorce <simo@redhat.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
 
-On 29/04/13 09:53, Stephen Rothwell wrote:
-> On Mon, 29 Apr 2013 09:11:13 +0100 Matt Fleming <matt.fleming@intel.com> wrote:
->>
->> On 29/04/13 00:36, Stephen Rothwell wrote:
->>> Commit e29c2de5f591 ("Merge tag 'v3.9-rc8' into efi-for-tip") by Matt
->>> Fleming from the tip tree merged v3.9-rc8 (which has 0635eb8a54cf) with
->>> the branch that contains 048517722cde but lost the "select UCS2_STRING"
->>> which should be in drivers/firmware/efi/Kconfig.
->>
->> Eek, yes. Sorry about that. How should we resolve this?
+
+On Apr 28, 2013, at 9:24 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi J.,
 > 
-> You should probably add a commit that puts the line back in your tree and
-> get that merged into the tip tree.
+> After merging the nfsd tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> net/sunrpc/auth_gss/svcauth_gss.c: In function 'gss_proxy_save_rsc':
+> net/sunrpc/auth_gss/svcauth_gss.c:1182:3: error: implicit declaration of function 'gss_mech_get_by_OID' [-Werror=implicit-function-declaration]
+> 
+> Caused byc ommit 030d794bf498 ("SUNRPC: Use gssproxy upcall for server
+> RPCGSS authentication").  gss_mech_get_by_OID() made static to
+> net/sunrpc/auth_gss/gss_mech_switch.c by commit 9568c5e9a61d ("SUNRPC:
+> Introduce rpcauth_get_pseudoflavor()") in the nfs tree (part of the nfs
+> tree that you did not merge).
+> 
+> I don't know how to fix this, so I have used the nfsd tree from
+> next-20130426 for today.
 
-Tip folks,
+Bruce, it might make sense for me to submit the three server-side RPC GSS patches, and then you can rebase the gssproxy work on top of those.  Let me know how you would like to proceed.
 
-I applied the following to the 'efi-for-tip' branch in the EFI
-repository. Unless someone complains I'll send a pull request shortly.
 
-commit da74caa6cead3f6c55dabcaa7b397b2fddd655e3
-Author: Matt Fleming <matt.fleming@intel.com>
-Date:   Mon Apr 29 14:30:28 2013 +0100
-
-    ia64, efi: select UCS2_STRING when building EFI support
-    
-    The ucs2 string library functions are required by the core EFI code.
-    Select UCS2_STRING from the EFI symbol entry in arch/ia64/Kconfig, just
-    like we do for x86. This Kconfig bug was caused by a mis-merge in commit
-    e29c2de5f591 ("Merge tag 'v3.9-rc8' into efi-for-tip").
-    
-    Cc: Ingo Molnar <mingo@kernel.org>
-    CC: H. Peter Anvin <hpa@zytor.com>
-    Cc: Tony Luck <tony.luck@intel.com>
-    Cc: Matthew Garrett <matthew.garrett@nebula.com>
-    Signed-off-by: Matt Fleming <matt.fleming@intel.com>
-
-diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-index 9a02f71..da18c8e 100644
---- a/arch/ia64/Kconfig
-+++ b/arch/ia64/Kconfig
-@@ -110,6 +110,7 @@ config DMI
- 
- config EFI
- 	bool
-+	select UCS2_STRING
- 	default y
- 
- config SCHED_OMIT_FRAME_POINTER
+-- 
+Chuck Lever
+chuck[dot]lever[at]oracle[dot]com
