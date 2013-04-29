@@ -1,47 +1,69 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build failure after merge of the cgroup tree
-Date: Mon, 29 Apr 2013 15:55:13 -0700
-Message-ID: <20130429225513.GG2395@htj.dyndns.org>
-References: <20130429140433.92d05cd48b66ac323616d572@canb.auug.org.au>
+From: Rob Landley <rob@landley.net>
+Subject: Re: [PATCH 1/1] kconfig: fix lists definition for C++
+Date: Mon, 29 Apr 2013 17:57:43 -0500
+Message-ID: <1367276263.18069.193@driftwood>
+References: <cover.1367258255.git.yann.morin.1998@free.fr>
+	<21ca352b71ca252e1933b1538fe89da8a04395c3.1367258255.git.yann.morin.1998@free.fr>
+	<517EC9C7.9000903@infradead.org> <1367272454.18069.191@driftwood>
+	<20130429223054.GB31039@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; DelSp=Yes; Format=Flowed
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:46991 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757302Ab3D2WzS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 18:55:18 -0400
+Received: from mail-qc0-f180.google.com ([209.85.216.180]:41459 "EHLO
+	mail-qc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757302Ab3D2W5s convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 18:57:48 -0400
+Received: by mail-qc0-f180.google.com with SMTP id b40so3382892qcq.39
+        for <linux-next@vger.kernel.org>; Mon, 29 Apr 2013 15:57:47 -0700 (PDT)
+In-Reply-To: <20130429223054.GB31039@free.fr> (from yann.morin.1998@free.fr
+	on Mon Apr 29 17:30:54 2013)
 Content-Disposition: inline
-In-Reply-To: <20130429140433.92d05cd48b66ac323616d572@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Li Zefan <lizefan@huawei.com>
+To: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Michal Marek <mmarek@suse.cz>, Benjamin Poirier <bpoirier@suse.de>
 
-Hello,
-
-On Mon, Apr 29, 2013 at 02:04:33PM +1000, Stephen Rothwell wrote:
-> I have added the following merge fix patch for today (but it should be
-> applied to the powerpc tree ASAP).
+On 04/29/2013 05:30:54 PM, Yann E. MORIN wrote:
+> Rob, All,
 > 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 29 Apr 2013 14:01:44 +1000
-> Subject: [PATCH] powerpc: numa.c: using kzalloc/kfree requires including
->  slab.h
+> On Mon, Apr 29, 2013 at 04:54:14PM -0500, Rob Landley wrote:
+> > On 04/29/2013 02:28:07 PM, Randy Dunlap wrote:
+> > >On 04/29/13 10:59, Yann E. MORIN wrote:
+> > >> From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+> > >>
+> > >> The C++ compiler is more strict in that it refuses to assign
+> > >> a void* to a struct list_head*.
+> >
+> > Given that the code _isn't_ C++ (because C is not a subset of C++  
+> but a
+> > separate langauge in its own right where "throw" is a legitimate  
+> variable
+> > name and so on), how is this an issue?
 > 
-> fixes these build errors:
+> It's an issue because the xconfig frontends is qconf, which as the  
+> name
+> implies is using Qt, which *is* C++, and includes list.h.
 > 
-> arch/powerpc/mm/numa.c: In function 'arch_update_cpu_topology':
-> arch/powerpc/mm/numa.c:1465:2: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
-> arch/powerpc/mm/numa.c:1465:10: error: assignment makes pointer from integer without a cast [-Werror]
-> arch/powerpc/mm/numa.c:1497:2: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+> So, list.h is included by both by C and C++ code.
 > 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> So yes, list.h can be compiled by a C++ compiler.
+> 
+> Now, granted: list.h should all be enclosed in:
+>     ifdef __cpluplus
+>     extern "C" {
+>     endif
+>     ...
+>     ifdef __cpluplus
+>     }
+>     endif
+> 
+> Was that the fix you were suggesting between the lines? ;-)
 
-Acked-by: Tejun Heo <tj@kernel.org>
+It does more clearly document the issue. (A comment about the QT  
+front-end would also be nice. I don't use that one, so I didn't think  
+of it.)
 
-Benjamin, can you please pick this up?
+Thanks,
 
-Thanks a lot and sorry about the trouble.
-
--- 
-tejun
+Rob
