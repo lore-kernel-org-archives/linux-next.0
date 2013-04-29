@@ -1,197 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tip tree
-Date: Mon, 29 Apr 2013 15:45:12 +1000
-Message-ID: <20130429154512.13325eb1fe134fbfce93774b@canb.auug.org.au>
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: linux-next: Tree for Apr 26
+Date: Mon, 29 Apr 2013 08:58:15 +0200
+Message-ID: <CAMuHMdXZrjaSmttoGHqWCpTkUaxNm3zpWCeU8Lojnp3i=TjhZw@mail.gmail.com>
+References: <20130426180357.7599d1b6b7965470905dcdf3@canb.auug.org.au>
+	<CAMuHMdWQ0rMuoH+peGMZ3=AdsYrMPpeV4_vSsLD3kaJukx=83w@mail.gmail.com>
+	<20130429093628.b739ef3b879b6f8759bd31af@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Apr_2013_15_45_12_+1000_=3uQy5uIrnr2OwPH"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37319 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750970Ab3D2FpW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 01:45:22 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Gundersen <teg@jklm.no>, Matt Fleming <matt.fleming@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-efi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130429093628.b739ef3b879b6f8759bd31af-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-efi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: Matt Fleming <matt.fleming-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matthew Garrett <matthew.garrett-05XSO3Yj/JvQT0dZR+AlfA@public.gmane.org>, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, "H. Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>, Peter Zijlstra <peterz-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__29_Apr_2013_15_45_12_+1000_=3uQy5uIrnr2OwPH
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Apr 29, 2013 at 1:36 AM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
+> P.S. Geert, please trim your replies.
 
-Hi all,
+Sorry, I noticed only after sending.
+(First time I wanted to reply without quoting anything using the new gmail
+web interface. So it was not intuitive ;-)
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Gr{oetje,eeting}s,
 
-drivers/firmware/efi/efivars.c: In function 'efivar_release':
-drivers/firmware/efi/efivars.c:300:2: error: implicit declaration of functi=
-on 'kfree' [-Werror=3Dimplicit-function-declaration]
-drivers/firmware/efi/efivars.c: In function 'efivar_create':
-drivers/firmware/efi/efivars.c:341:2: error: implicit declaration of functi=
-on 'kzalloc' [-Werror=3Dimplicit-function-declaration]
-drivers/firmware/efi/efivars.c:341:12: warning: assignment makes pointer fr=
-om integer without a cast [enabled by default]
-drivers/firmware/efi/efivars.c: In function 'efivar_create_sysfs_entry':
-drivers/firmware/efi/efivars.c:420:13: warning: assignment makes pointer fr=
-om integer without a cast [enabled by default]
-drivers/firmware/efi/efivars.c: In function 'create_efivars_bin_attributes':
-drivers/firmware/efi/efivars.c:460:7: warning: assignment makes pointer fro=
-m integer without a cast [enabled by default]
-drivers/firmware/efi/efivars.c:470:7: warning: assignment makes pointer fro=
-m integer without a cast [enabled by default]
-drivers/firmware/efi/efivars.c: In function 'efivar_update_sysfs_entries':
-drivers/firmware/efi/efivars.c:527:8: warning: assignment makes pointer fro=
-m integer without a cast [enabled by default]
-drivers/firmware/efi/efivars.c: In function 'efivars_sysfs_callback':
-drivers/firmware/efi/efivars.c:551:8: warning: assignment makes pointer fro=
-m integer without a cast [enabled by default]
-fs/efivarfs/inode.c: In function 'efivarfs_create':
-fs/efivarfs/inode.c:115:2: error: implicit declaration of function 'kzalloc=
-' [-Werror=3Dimplicit-function-declaration]
-fs/efivarfs/inode.c:115:6: warning: assignment makes pointer from integer w=
-ithout a cast [enabled by default]
-fs/efivarfs/inode.c:139:3: error: implicit declaration of function 'kfree' =
-[-Werror=3Dimplicit-function-declaration]
-fs/efivarfs/file.c: In function 'efivarfs_file_write':
-fs/efivarfs/file.c:35:2: error: implicit declaration of function 'kmalloc' =
-[-Werror=3Dimplicit-function-declaration]
-fs/efivarfs/file.c:35:7: warning: assignment makes pointer from integer wit=
-hout a cast [enabled by default]
-fs/efivarfs/file.c:62:2: error: implicit declaration of function 'kfree' [-=
-Werror=3Dimplicit-function-declaration]
-fs/efivarfs/file.c: In function 'efivarfs_file_read':
-fs/efivarfs/file.c:81:7: warning: assignment makes pointer from integer wit=
-hout a cast [enabled by default]
-fs/efivarfs/super.c: In function 'efivarfs_callback':
-fs/efivarfs/super.c:132:2: error: implicit declaration of function 'kmalloc=
-' [-Werror=3Dimplicit-function-declaration]
-fs/efivarfs/super.c:132:8: warning: assignment makes pointer from integer w=
-ithout a cast [enabled by default]
-fs/efivarfs/super.c:142:7: warning: assignment makes pointer from integer w=
-ithout a cast [enabled by default]
-fs/efivarfs/super.c:166:2: error: implicit declaration of function 'kfree' =
-[-Werror=3Dimplicit-function-declaration]
-drivers/firmware/efi/efi-pstore.c: In function 'efi_pstore_read_func':
-drivers/firmware/efi/efi-pstore.c:77:2: error: implicit declaration of func=
-tion 'kmalloc' [-Werror=3Dimplicit-function-declaration]
-drivers/firmware/efi/efi-pstore.c:77:16: warning: assignment makes pointer =
-from integer without a cast [enabled by default]
-drivers/firmware/efi/efi-pstore.c: In function 'efivars_pstore_init':
-drivers/firmware/efi/efi-pstore.c:225:22: warning: assignment makes pointer=
- from integer without a cast [enabled by default]
+                        Geert
 
-Probably caused by commits d68772b7c83f ("efivarfs: Move to fs/efivarfs")
-and/or a9499fa7cd3f ("efi: split efisubsystem from efivars") interacting
-with some header inclusion changes in the rest of today's trees.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
 
-See Rule 1 from Documentation/SubmitChecklist.
-
-I have applied the following merge fix patch for today (this won't quite
-apply to the tip tree due to the other patch adding linux/magic.h to
-fs/efivarfs/super.c, but that could be applied as well):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 29 Apr 2013 15:34:28 +1000
-Subject: [PATCH] efivars: use of kmalloc etc requires the inclusion of slab=
-.h
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/firmware/efi/efivars.c | 1 +
- fs/efivarfs/file.c             | 1 +
- fs/efivarfs/inode.c            | 1 +
- fs/efivarfs/super.c            | 1 +
- drivers/firmware/efi/efi-pstore.c | 1 +
- 5 files changed, 5 insertions(+)
-
-diff --git a/drivers/firmware/efi/efivars.c b/drivers/firmware/efi/efivars.c
-index f8f5e5d..66928a3 100644
---- a/drivers/firmware/efi/efivars.c
-+++ b/drivers/firmware/efi/efivars.c
-@@ -68,6 +68,7 @@
- #include <linux/efi.h>
- #include <linux/module.h>
- #include <linux/ucs2_string.h>
-+#include <linux/slab.h>
-=20
- #define EFIVARS_VERSION "0.08"
- #define EFIVARS_DATE "2004-May-17"
-diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
-index ede07fc..bfb5315 100644
---- a/fs/efivarfs/file.c
-+++ b/fs/efivarfs/file.c
-@@ -9,6 +9,7 @@
-=20
- #include <linux/efi.h>
- #include <linux/fs.h>
-+#include <linux/slab.h>
-=20
- #include "internal.h"
-=20
-diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
-index 640e289..7e787fb 100644
---- a/fs/efivarfs/inode.c
-+++ b/fs/efivarfs/inode.c
-@@ -10,6 +10,7 @@
- #include <linux/efi.h>
- #include <linux/fs.h>
- #include <linux/ctype.h>
-+#include <linux/slab.h>
-=20
- #include "internal.h"
-=20
-diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-index 1fa5e6d..94d9192 100644
---- a/fs/efivarfs/super.c
-+++ b/fs/efivarfs/super.c
-@@ -12,6 +12,7 @@
- #include <linux/fs.h>
- #include <linux/module.h>
- #include <linux/pagemap.h>
-+#include <linux/slab.h>
- #include <linux/magic.h>
-=20
- #include "internal.h"
-diff --git a/drivers/firmware/efi/efi-pstore.c b/drivers/firmware/efi/efi-p=
-store.c
-index 221ad1b..0242795 100644
---- a/drivers/firmware/efi/efi-pstore.c
-+++ b/drivers/firmware/efi/efi-pstore.c
-@@ -2,6 +2,7 @@
- #include <linux/module.h>
- #include <linux/pstore.h>
- #include <linux/ucs2_string.h>
-+#include <linux/slab.h>
-=20
- #define DUMP_NAME_LEN 52
-=20
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__29_Apr_2013_15_45_12_+1000_=3uQy5uIrnr2OwPH
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRfgjoAAoJEECxmPOUX5FEYZsP/2Xjb1wkAJ6JfuZZOPQysry1
-i9+z+NS6ASBt/H6Jl0CARem4fE7OZFlzdgK4xjJ/40ZfvYbDqjkql9eHfYdVWuzB
-W4EWwnD48ZJ/63n5Cj6ADPL15Qy/jn27m4dYhUJ7/MJKsi7Rge1pKdS7kQtZ2TQU
-FopPtUqcncMMMMa8u0FMiEn6kGObNnOJ38iNFu5wWf32jDG3KhagC+VjHHkxEzlw
-330NBU4WeHR9ZlO7nBsDl6RsP1AyNmtdnDb8usw74UFBHyCHgGYsPIyoY7jgb5LX
-9qRGrsYiwbW3OPN9oOrmsqQqU4/xnZesJjJY9QJP7Xh1V7ZkcT3b32YAKvTr6glY
-JQZPUGiUO1T9thfdtagl61hbRVI5sYUbLfdah7KRIbEgLiLGc3w96V3DOOq1ljnb
-/gKWOAFBMJ9LFTZjouRLwwXTmg3um8gBDzKF7vqZd+UEk+5JP/GoHeCp0jnDTHvV
-6y0KLEEu/fBTJJ6m5cCeOkjWJib+N/ryrcnujn2pBGWkMeuwff9iMn9e7BLe3uxj
-EzZNg92TGuWvGOF2vigiwwK2ixLp02gq4orlu4n7TxyxKQSFeNF/MnknU/bbSKNU
-LGoxGBoZCbMkFOFVLC6jF/7Tq7vNXIjd9Udee2X99msiH0+XQtApS8uB6FEvbQux
-1ARX8NoRXVdqbPBe99/1
-=35Bn
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Apr_2013_15_45_12_+1000_=3uQy5uIrnr2OwPH--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
