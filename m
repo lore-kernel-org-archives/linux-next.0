@@ -1,89 +1,132 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] powerpc: fix usage of setup_pci_atmu()
-Date: Tue, 30 Apr 2013 09:06:36 +1000
-Message-ID: <20130430090636.5e06bbfc6db472e1e677cb0b@canb.auug.org.au>
-References: <1363201636-7318-1-git-send-email-galak@kernel.crashing.org>
-	<5881.1366004521@ale.ozlabs.ibm.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the xen-arm
+ tree
+Date: Tue, 30 Apr 2013 09:18:45 +1000
+Message-ID: <20130430091845.27d8de4935bd33ddb4a3e8c0@canb.auug.org.au>
+References: <20130429175426.9423279609437a2d746cbb7b@canb.auug.org.au>
+	<20130429082511.GA539@arm.com>
+	<alpine.DEB.2.02.1304291049060.5398@kaball.uk.xensource.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__30_Apr_2013_09_06_36_+1000_W64OUeHgjdz5V5/F"
+ boundary="Signature=_Tue__30_Apr_2013_09_18_45_+1000_MpV.1NXfvb6Qhh+W"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60275 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:57740 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757559Ab3D2XGr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 19:06:47 -0400
-In-Reply-To: <5881.1366004521@ale.ozlabs.ibm.com>
+	with ESMTP id S932143Ab3D2XS6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 19:18:58 -0400
+In-Reply-To: <alpine.DEB.2.02.1304291049060.5398@kaball.uk.xensource.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kumar Gala <galak@kernel.crashing.org>
-Cc: Michael Neuling <mikey@neuling.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, benh@kernel.crashing.org
+To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>
 
---Signature=_Tue__30_Apr_2013_09_06_36_+1000_W64OUeHgjdz5V5/F
+--Signature=_Tue__30_Apr_2013_09_18_45_+1000_MpV.1NXfvb6Qhh+W
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kumar,
+Hi Stefano,
 
-On Mon, 15 Apr 2013 15:42:01 +1000 Michael Neuling <mikey@neuling.org> wrot=
-e:
+On Mon, 29 Apr 2013 10:50:22 +0100 Stefano Stabellini <stefano.stabellini@e=
+u.citrix.com> wrote:
 >
-> Linux next is currently failing to compile mpc85xx_defconfig with:
->   arch/powerpc/sysdev/fsl_pci.c:944:2: error: too many arguments to funct=
-ion 'setup_pci_atmu'
+> On Mon, 29 Apr 2013, Catalin Marinas wrote:
+> >=20
+> > On Mon, Apr 29, 2013 at 08:54:26AM +0100, Stephen Rothwell wrote:
+> > > Today's linux-next merge of the arm-soc tree got a conflict in
+> > > arch/arm/mach-virt/platsmp.c between commit fe4bff02886b ("arm: intro=
+duce
+> > > psci_smp_ops") from the xen-arm tree and commit c0114709ed85 ("irqchi=
+p:
+> > > gic: Perform the gic_secondary_init() call via CPU notifier") from the
+> > > arm-soc tree.
+> > >=20
+> > > The former renamed the file (and contents) so I applied the following
+> > > patch and can carry the fix as necessary (no action is required).
+> > >=20
+> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Date: Mon, 29 Apr 2013 17:52:27 +1000
+> > > Subject: [PATCH] arm: fix for Perform the gic_secondary_init() call v=
+ia CPU
+> > >  notifier
+> > >=20
+> > > due to code movement.
+> > >=20
+> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > ---
+> > >  arch/arm/kernel/psci_smp.c | 7 -------
+> > >  1 file changed, 7 deletions(-)
+> > >=20
+> > > diff --git a/arch/arm/kernel/psci_smp.c b/arch/arm/kernel/psci_smp.c
+> > > index 6ef139d..cd9acc7 100644
+> > > --- a/arch/arm/kernel/psci_smp.c
+> > > +++ b/arch/arm/kernel/psci_smp.c
+> > > @@ -14,7 +14,6 @@
+> > >   */
+> > > =20
+> > >  #include <linux/init.h>
+> > > -#include <linux/irqchip/arm-gic.h>
+> > >  #include <linux/smp.h>
+> > >  #include <linux/of.h>
+> > > =20
+> > > @@ -55,11 +54,6 @@ static int __cpuinit psci_boot_secondary(unsigned =
+int cpu,
+> > >  	return -ENODEV;
+> > >  }
+> > > =20
+> > > -static void __cpuinit psci_secondary_init(unsigned int cpu)
+> > > -{
+> > > -	gic_secondary_init(0);
+> > > -}
+> > > -
+> > >  #ifdef CONFIG_HOTPLUG_CPU
+> > >  void __ref psci_cpu_die(unsigned int cpu)
+> > >  {
+> > > @@ -84,7 +78,6 @@ bool __init psci_smp_available(void)
+> > >  }
+> > > =20
+> > >  struct smp_operations __initdata psci_smp_ops =3D {
+> > > -	.smp_secondary_init	=3D psci_secondary_init,
+> > >  	.smp_boot_secondary	=3D psci_boot_secondary,
+> > >  	.cpu_die		=3D psci_cpu_die,
+> > >  };
+> >=20
+> > The fix looks fine. Thanks.
 >=20
-> This is caused by (from Kumar's next branch):
->   commit 34642bbb3d12121333efcf4ea7dfe66685e403a1
->   Author: Kumar Gala <galak@kernel.crashing.org>
->   powerpc/fsl-pci: Keep PCI SoC controller registers in pci_controller
->=20
-> Which changed definition of setup_pci_atmu() but didn't update one of
-> the callers.  Below fixes this.
->=20
-> Signed-off-by: Michael Neuling <mikey@neuling.org>
-> ---
-> Kumar: this is for your next tree
->=20
-> diff --git a/arch/powerpc/sysdev/fsl_pci.c b/arch/powerpc/sysdev/fsl_pci.c
-> index 83918c3..a10a036 100644
-> --- a/arch/powerpc/sysdev/fsl_pci.c
-> +++ b/arch/powerpc/sysdev/fsl_pci.c
-> @@ -941,7 +941,7 @@ static int fsl_pci_resume(struct device *dev)
->  		return -ENODEV;
->  	}
-> =20
-> -	setup_pci_atmu(hose, &pci_rsrc);
-> +	setup_pci_atmu(hose);
-> =20
->  	return 0;
->  }
->=20
+> Indeed, thanks! I'll add to it to the tree.
 
-This is still not in your tree ...
+You should not apply that to your tree as you don't have the rest of the
+change from the arm-soc tree.  It needs to be applied to the merge of the
+two trees i.e. when Linus merges the last of the two trees.
+
+This is why I wrote "no action is required".
+
+And you committed it to your tree without your Signed-off-by ...
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__30_Apr_2013_09_06_36_+1000_W64OUeHgjdz5V5/F
+--Signature=_Tue__30_Apr_2013_09_18_45_+1000_MpV.1NXfvb6Qhh+W
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRfvz8AAoJEECxmPOUX5FE7e8P/0oIytPPeMTp3SQMhiThnp9H
-oydgN3VZrAzKee/pwpSQfxp+Sa6fdERHkOGiwgOuqwRxwOaSSuMS2Y3SaFiokEKh
-0Emzh63iO1S8oW6N+7kNRSiNMCfbDQTRh/KUee1Sy0aOjWW1AKJ7UwI9H960zvPG
-XCk2iUTeBU+UW5QAxiKSsbvt9dw/EVy602s0IggEdAgvsdF6p2k/XzqzyX3PpF46
-4J8z4um42qL8e16SANbHaLvvTSjaSLdZnOGLQEN+IS4qbjYfamMbIfdmqlMYwFvp
-BVfldWKqBOQBvmFUXH48BMLIoDs7Xu2y6JHgd8iBa64f3x+Lw3IBPoKUHOwst824
-bfJRjcQk+AkgqEgG2E0+XLovtepT6zvm8RWSxPIkfkmbT9ocNBQyVaiNhoQBMQjV
-0buvQql9CpJdVualbaWQ8AGzaRqYaPDrjjMbuzegi2/IULpIMlM05UnPkt7n5wFm
-0rY+nM1kAlxZCkxZztHLHwy3Rxukbxyp4FwSh30EOnULdWf9aDY9qxssHQX8DFPg
-U/rdDyduqQdsivjI4Nttcv5unwenUEajVocNeXs80ClBfoS4AezHhg0OvSkxydDX
-52v1bs5sccV1rmJ3ik/+MR1ozqIbaIwJr7RhAPTbwFdBHOniQKfhlO1YRiGl8WD4
-jQVMZMNP3APivIq9lcU5
-=mdcY
+iQIcBAEBCAAGBQJRfv/VAAoJEECxmPOUX5FE7nMP/2XYZml1f96FdGpVj6d0zJqF
+Pv0GaoXA6w/xJT7ejSXXc4b/IiwiqG5A2reFVYDYm8E34rAPuZIQGulGt97m8Z0A
+Jf2ORr6+kaZ0TgPDs7Xf1lWGh/w+S8I2sINEnXNOdceN5xDldqka/C0MieopQ+ix
+1c/QdFqFUu0eNJg/iOw/ddD4ta0HvZ6CINdcgouLz0oZDaJuc3aWsZi7gIlk1tra
+9Gb62K5dmzuVIqx+qsyeFhVLlARzRcynmiGuSbr/6V7sQcT0Pazb0RE5ZMnkgXGM
+v+kCa1lq0NzSDPxS51PXFbQEHDPL5nDfBv9xfJdJvZ3lYV6eqRwjhhCP4WHVTixj
+JLtN6h7aE6P/J/74Klv/X8IgSizAgfRkkxQrC+acdQG164ybIVc8H/YD/h8S7N6f
+0TOSJJUtdzT/wVVaAMPa8kHoEFOE8zztxhOmESgmj0dhwVa3838kXehSbblInDqJ
+oB1BDIG9EbBSqyWWzCDyR69eBFMS1CKrpiAlT30ez+eqPAfFqfP0dRx6NDjDmW7T
+O7eiDOmfW1ehGB5HtIXCLkkEDdOKV49dpm2IKI5PXopPOaf0rXIa1QI64nSWuOkx
+yFhsgW8fdY34Ktcz4/9yoSCbPzTftiXHHxxtv9nJt2iun56Wy+m93XmTtLLlPulz
+j3IyN+xecK1duo/mI4Xu
+=6T87
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__30_Apr_2013_09_06_36_+1000_W64OUeHgjdz5V5/F--
+--Signature=_Tue__30_Apr_2013_09_18_45_+1000_MpV.1NXfvb6Qhh+W--
