@@ -1,89 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' and the vfs
- tree
-Date: Mon, 29 Apr 2013 15:21:49 +1000
-Message-ID: <20130429152149.d5bb408bf88bf46232282419@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Apr_2013_15_21_49_+1000__sgeb./wvjQFhjm6"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58270 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751106Ab3D2FWB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 01:22:01 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>, David Howells <dhowells@redhat.com>, Tom Gundersen <teg@jklm.no>
+From: Chanho Min <chanho.min@lge.com>
+Subject: [PATCH] lib: add weak __clzsi2()/__clzdi2() functions
+Date: Mon, 29 Apr 2013 14:40:05 +0900
+Message-ID: <1367214005-14302-1-git-send-email-chanho.min@lge.com>
+Return-path: <sparclinux-owner@vger.kernel.org>
+Sender: sparclinux-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kyungsik Lee <kyungsik.lee@lge.com>, Yann Collet <yann.collet.73@gmail.com>, Bob Pearson <rpearson@systemfabricworks.com>, Richard Weinberger <richard@nod.at>, Geert Uytterhoeven <geert.uytterhoeven@gmail.com>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, linux-m68k@vger.kernel.org, linux-next@vger.kernel.org, Chanho Min <chanho.min@lge.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__29_Apr_2013_15_21_49_+1000__sgeb./wvjQFhjm6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Some architectures need __clzsi2() or __clzdi2() for __builtin_clz and
+It causes build failure. They can be implemented using the fls() and
+overridden by linking arch-specific versions may not be implemented yet.
 
-Hi all,
-
-Today's linux-next merge of the tip tree got a conflict in
-drivers/firmware/efivars.c between commits f464246d85d5 ("efivars: only
-check for duplicates on the registered list") from Linus' tree and
-a2162ae42bc4 ("Include missing linux/magic.h inclusions") from the vfs
-tree and commits d68772b7c83f ("efivarfs: Move to fs/efivarfs") and
-e14ab23dde12 ("efivars: efivar_entry API") from the tip tree.
-
-I think that the second tip tree patch supersedes the patch in Linus'
-tree.
-
-I removed the file and applied the following fix up patch and can carry
-the fix as necessary (no action is required).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 29 Apr 2013 15:18:07 +1000
-Subject: [PATCH] efivars: Include missing linux/magic.h inclusions
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Reference: https://lkml.org/lkml/2013/4/18/603
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Chanho Min <chanho.min@lge.com>
 ---
- fs/efivarfs/super.c | 1 +
- 1 file changed, 1 insertion(+)
+ lib/Makefile |    2 +-
+ lib/clz.c    |   36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+), 1 deletion(-)
+ create mode 100644 lib/clz.c
 
-diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-index 34c48f1..1fa5e6d 100644
---- a/fs/efivarfs/super.c
-+++ b/fs/efivarfs/super.c
-@@ -12,6 +12,7 @@
- #include <linux/fs.h>
- #include <linux/module.h>
- #include <linux/pagemap.h>
-+#include <linux/magic.h>
-=20
- #include "internal.h"
-=20
---=20
-1.8.1
+diff --git a/lib/Makefile b/lib/Makefile
+index af79e8c..e17b3ee 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -23,7 +23,7 @@ lib-y	+= kobject.o klist.o
+ 
+ obj-y += bcd.o div64.o sort.o parser.o halfmd4.o debug_locks.o random32.o \
+ 	 bust_spinlocks.o hexdump.o kasprintf.o bitmap.o scatterlist.o \
+-	 gcd.o lcm.o list_sort.o uuid.o flex_array.o \
++	 gcd.o lcm.o list_sort.o uuid.o flex_array.o clz.o\
+ 	 bsearch.o find_last_bit.o find_next_bit.o llist.o memweight.o kfifo.o
+ obj-y += string_helpers.o
+ obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
+diff --git a/lib/clz.c b/lib/clz.c
+new file mode 100644
+index 0000000..5222b2d
+--- /dev/null
++++ b/lib/clz.c
+@@ -0,0 +1,36 @@
++/*
++ * lib/clz.c
++ *
++ * Copyright (C) 2013 Chanho Min <chanho.min@lge.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * __clzsi2/_clzdi2() can be overridden by linking arch-specific versions.
++ */
++
++#include <linux/export.h>
++#include <linux/kernel.h>
++
++int __weak __clzsi2(int val)
++{
++	return BITS_PER_LONG - fls(val);
++}
++EXPORT_SYMBOL(__clzsi2);
++
++#if BITS_PER_LONG == 32
++int __weak __clzdi2(long val)
++{
++	return BITS_PER_LONG - fls((int)val);
++}
++EXPORT_SYMBOL(__clzdi2);
++#elif BITS_PER_LONG == 64
++int __weak __clzdi2i(long val)
++{
++	return BITS_PER_LONG - fls64((u64)val);
++}
++EXPORT_SYMBOL(__clzdi2);
++#else
++#error BITS_PER_LONG not 32 or 64
++#endif
+-- 
+1.7.9.5
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__29_Apr_2013_15_21_49_+1000__sgeb./wvjQFhjm6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRfgNtAAoJEECxmPOUX5FE9NAQAIyvM9/+z2gONxOEQ3jLu0sc
-YMCdeJ0PCcVGjXA/ZbN6kWPF9feNhrB1U1tEJIYBVFEWZuZUcK89UWAUdfZ4BheO
-3E8DnnIEgQo8mvFJuW4GD/iTe8q+P3rKvQkeWehXHMoE2bklWTUaZD2dDc0/NovJ
-Y3LB2nNMYZR3yy2t9mLX+MY28791LkncDYXxNKQkStecyNRKKasnSWKtDTfaUd3k
-k3kTIvwizmlYrO8b/6mVH7uUL3wv5qOEcTBneuUFVXLHk543a0UHXBmM08Hu8sRk
-UnIGsCZcfQqPgwJVH+6q9P+CwLgchJTfROGUhCQT9leFchOufkqd3lX5CGPUj7EE
-wcnqJpPyx4BWDWz0AonPDQLcvfWvXuGxeCss+UKBt1zj5hQOaj0Aun5aHJO4rUH3
-Rupxx0caKLWFgjR4ON7VFz1m4/55Xuzst7hk+4li2IL0NqgprEaBfZIDsd8ADUd+
-n2bgIBa6+cTl0IT3r9XwzftxkTH1AJJDo5QYn5s1eMVlb2ftdw2zOSHJIYJfMNAJ
-Sou48dGeHLXmP6dcY8Id77ltAW8AWqSQxuq6XRg/gY959rJc9tZovj+G0+Lip/7f
-c7SRQ4LegaunsckdhnMNBY111drEo+KiFka+gG1PXihGXMdAj4D+nqIDb45HT2gw
-uHVHUq9zYHi+x9R0pZ/s
-=srVy
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Apr_2013_15_21_49_+1000__sgeb./wvjQFhjm6--
