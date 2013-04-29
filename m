@@ -1,42 +1,42 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] proc_fs.h: fix build error when PROC_FS is not enabled
-Date: Mon, 29 Apr 2013 09:05:29 -0700
-Message-ID: <517E9A49.5080106@infradead.org>
+Subject: [PATCH -next] tty.h: fix build errors when PROC_FS is not enabled
+Date: Mon, 29 Apr 2013 09:05:35 -0700
+Message-ID: <517E9A4F.1080609@infradead.org>
 References: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:54849 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757256Ab3D2QF4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 12:05:56 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <rdunlap@infradead.org>
 
 Fix build error when CONFIG_PROC_FS is not enabled:
-(remove duplicated line)
 
-include/linux/proc_fs.h:58:20: error: redefinition of 'proc_set_size'
-include/linux/proc_fs.h:51:20: note: previous definition of 'proc_set_size' was here
+include/linux/tty.h: In function 'proc_tty_register_driver':
+include/linux/tty.h:698:52: error: parameter name omitted
+include/linux/tty.h: In function 'proc_tty_unregister_driver':
+include/linux/tty.h:699:54: error: parameter name omitted
 
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
- include/linux/proc_fs.h |    1 -
- 1 file changed, 1 deletion(-)
+ include/linux/tty.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- linux-next-20130429.orig/include/linux/proc_fs.h
-+++ linux-next-20130429/include/linux/proc_fs.h
-@@ -55,7 +55,6 @@ static inline void *proc_get_parent_data
- static inline struct proc_dir_entry *proc_create_data(const char *name,
- 	umode_t mode, struct proc_dir_entry *parent,
- 	const struct file_operations *proc_fops, void *data) { return NULL; }
--static inline void proc_set_size(struct proc_dir_entry *de, loff_t size) {}
+--- linux-next-20130429.orig/include/linux/tty.h
++++ linux-next-20130429/include/linux/tty.h
+@@ -695,8 +695,8 @@ do {									\
+ extern void proc_tty_register_driver(struct tty_driver *);
+ extern void proc_tty_unregister_driver(struct tty_driver *);
+ #else
+-static inline void proc_tty_register_driver(struct tty_driver *) {}
+-static inline void proc_tty_unregister_driver(struct tty_driver *) {}
++static inline void proc_tty_register_driver(struct tty_driver *d) {}
++static inline void proc_tty_unregister_driver(struct tty_driver *d) {}
+ #endif
  
- static inline void proc_remove(struct proc_dir_entry *de) {}
- static inline void remove_proc_entry(const char *name, struct proc_dir_entry *parent) {}
+ #endif
