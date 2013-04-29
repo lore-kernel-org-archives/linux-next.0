@@ -1,21 +1,17 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 29 (include/linux/proc_fs.h: proc_net_mkdir)
-Date: Mon, 29 Apr 2013 09:17:36 -0700
-Message-ID: <517E9D20.7080403@infradead.org>
+Subject: Re: linux-next: Tree for Apr 29 (kconfig)
+Date: Mon, 29 Apr 2013 09:25:54 -0700
+Message-ID: <517E9F12.1020309@infradead.org>
 References: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:56596 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757127Ab3D2QSD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 12:18:03 -0400
+Return-path: <linux-kbuild-owner@vger.kernel.org>
 In-Reply-To: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kbuild-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
 On 04/29/13 02:17, Stephen Rothwell wrote:
 > Hi all,
@@ -23,14 +19,17 @@ On 04/29/13 02:17, Stephen Rothwell wrote:
 > Changes since 20130426:
 > 
 
-when CONFIG_PROC_FS is not enabled:
 
-  CC      init/main.o
-In file included from init/main.c:16:0:
-include/linux/proc_fs.h: In function 'proc_net_mkdir':
-include/linux/proc_fs.h:69:2: error: implicit declaration of function 'proc_mkdir_data' [-Werror=implicit-function-declaration]
-include/linux/proc_fs.h:69:2: warning: return makes pointer from integer without a cast [enabled by default]
-
+> make ARCH=x86_64 O=X64 xconfig &
+  GEN     /local/lnx/next/linux-next-20130429/X64/Makefile
+  HOSTCXX scripts/kconfig/qconf.o
+In file included from scripts/kconfig/expr.h:15:0,
+                 from scripts/kconfig/lkc.h:9,
+                 from scripts/kconfig/qconf.cc:46:
+scripts/kconfig/list.h: In function 'void list_del(list_head*)':
+scripts/kconfig/list.h:128:16: error: invalid conversion from 'void*' to 'list_head*' [-fpermissive]
+scripts/kconfig/list.h:129:16: error: invalid conversion from 'void*' to 'list_head*' [-fpermissive]
+make[2]: *** [scripts/kconfig/qconf.o] Error 1
 
 
 
