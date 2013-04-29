@@ -1,132 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the xen-arm
- tree
-Date: Tue, 30 Apr 2013 09:18:45 +1000
-Message-ID: <20130430091845.27d8de4935bd33ddb4a3e8c0@canb.auug.org.au>
-References: <20130429175426.9423279609437a2d746cbb7b@canb.auug.org.au>
-	<20130429082511.GA539@arm.com>
-	<alpine.DEB.2.02.1304291049060.5398@kaball.uk.xensource.com>
+Subject: linux-next: build warning while building Linus' tree
+Date: Tue, 30 Apr 2013 09:55:27 +1000
+Message-ID: <20130430095527.fd4c5ad48ece70c567991416@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__30_Apr_2013_09_18_45_+1000_MpV.1NXfvb6Qhh+W"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57740 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932143Ab3D2XS6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 19:18:58 -0400
-In-Reply-To: <alpine.DEB.2.02.1304291049060.5398@kaball.uk.xensource.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>
+ boundary="Signature=_Tue__30_Apr_2013_09_55_27_+1000_RPDGrXVlC3UiATPa"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__30_Apr_2013_09_18_45_+1000_MpV.1NXfvb6Qhh+W
+--Signature=_Tue__30_Apr_2013_09_55_27_+1000_RPDGrXVlC3UiATPa
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stefano,
+Hi Tomi,
 
-On Mon, 29 Apr 2013 10:50:22 +0100 Stefano Stabellini <stefano.stabellini@e=
-u.citrix.com> wrote:
->
-> On Mon, 29 Apr 2013, Catalin Marinas wrote:
-> >=20
-> > On Mon, Apr 29, 2013 at 08:54:26AM +0100, Stephen Rothwell wrote:
-> > > Today's linux-next merge of the arm-soc tree got a conflict in
-> > > arch/arm/mach-virt/platsmp.c between commit fe4bff02886b ("arm: intro=
-duce
-> > > psci_smp_ops") from the xen-arm tree and commit c0114709ed85 ("irqchi=
-p:
-> > > gic: Perform the gic_secondary_init() call via CPU notifier") from the
-> > > arm-soc tree.
-> > >=20
-> > > The former renamed the file (and contents) so I applied the following
-> > > patch and can carry the fix as necessary (no action is required).
-> > >=20
-> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Date: Mon, 29 Apr 2013 17:52:27 +1000
-> > > Subject: [PATCH] arm: fix for Perform the gic_secondary_init() call v=
-ia CPU
-> > >  notifier
-> > >=20
-> > > due to code movement.
-> > >=20
-> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > ---
-> > >  arch/arm/kernel/psci_smp.c | 7 -------
-> > >  1 file changed, 7 deletions(-)
-> > >=20
-> > > diff --git a/arch/arm/kernel/psci_smp.c b/arch/arm/kernel/psci_smp.c
-> > > index 6ef139d..cd9acc7 100644
-> > > --- a/arch/arm/kernel/psci_smp.c
-> > > +++ b/arch/arm/kernel/psci_smp.c
-> > > @@ -14,7 +14,6 @@
-> > >   */
-> > > =20
-> > >  #include <linux/init.h>
-> > > -#include <linux/irqchip/arm-gic.h>
-> > >  #include <linux/smp.h>
-> > >  #include <linux/of.h>
-> > > =20
-> > > @@ -55,11 +54,6 @@ static int __cpuinit psci_boot_secondary(unsigned =
-int cpu,
-> > >  	return -ENODEV;
-> > >  }
-> > > =20
-> > > -static void __cpuinit psci_secondary_init(unsigned int cpu)
-> > > -{
-> > > -	gic_secondary_init(0);
-> > > -}
-> > > -
-> > >  #ifdef CONFIG_HOTPLUG_CPU
-> > >  void __ref psci_cpu_die(unsigned int cpu)
-> > >  {
-> > > @@ -84,7 +78,6 @@ bool __init psci_smp_available(void)
-> > >  }
-> > > =20
-> > >  struct smp_operations __initdata psci_smp_ops =3D {
-> > > -	.smp_secondary_init	=3D psci_secondary_init,
-> > >  	.smp_boot_secondary	=3D psci_boot_secondary,
-> > >  	.cpu_die		=3D psci_cpu_die,
-> > >  };
-> >=20
-> > The fix looks fine. Thanks.
->=20
-> Indeed, thanks! I'll add to it to the tree.
+In Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
+produced this warning:
 
-You should not apply that to your tree as you don't have the rest of the
-change from the arm-soc tree.  It needs to be applied to the merge of the
-two trees i.e. when Linus merges the last of the two trees.
+drivers/video/ps3fb.c: In function 'ps3fb_mmap':
+drivers/video/ps3fb.c:712:2: warning: suggest parentheses around '+' inside=
+ '<<' [-Wparentheses]
 
-This is why I wrote "no action is required".
-
-And you committed it to your tree without your Signed-off-by ...
+Introduced by commit 11bd5933abe0 ("fbdev/ps3fb: use vm_iomap_memory()").
+Sorry I missed this in yesterday's linux-next.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__30_Apr_2013_09_18_45_+1000_MpV.1NXfvb6Qhh+W
+--Signature=_Tue__30_Apr_2013_09_55_27_+1000_RPDGrXVlC3UiATPa
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRfv/VAAoJEECxmPOUX5FE7nMP/2XYZml1f96FdGpVj6d0zJqF
-Pv0GaoXA6w/xJT7ejSXXc4b/IiwiqG5A2reFVYDYm8E34rAPuZIQGulGt97m8Z0A
-Jf2ORr6+kaZ0TgPDs7Xf1lWGh/w+S8I2sINEnXNOdceN5xDldqka/C0MieopQ+ix
-1c/QdFqFUu0eNJg/iOw/ddD4ta0HvZ6CINdcgouLz0oZDaJuc3aWsZi7gIlk1tra
-9Gb62K5dmzuVIqx+qsyeFhVLlARzRcynmiGuSbr/6V7sQcT0Pazb0RE5ZMnkgXGM
-v+kCa1lq0NzSDPxS51PXFbQEHDPL5nDfBv9xfJdJvZ3lYV6eqRwjhhCP4WHVTixj
-JLtN6h7aE6P/J/74Klv/X8IgSizAgfRkkxQrC+acdQG164ybIVc8H/YD/h8S7N6f
-0TOSJJUtdzT/wVVaAMPa8kHoEFOE8zztxhOmESgmj0dhwVa3838kXehSbblInDqJ
-oB1BDIG9EbBSqyWWzCDyR69eBFMS1CKrpiAlT30ez+eqPAfFqfP0dRx6NDjDmW7T
-O7eiDOmfW1ehGB5HtIXCLkkEDdOKV49dpm2IKI5PXopPOaf0rXIa1QI64nSWuOkx
-yFhsgW8fdY34Ktcz4/9yoSCbPzTftiXHHxxtv9nJt2iun56Wy+m93XmTtLLlPulz
-j3IyN+xecK1duo/mI4Xu
-=6T87
+iQIcBAEBCAAGBQJRfwhvAAoJEECxmPOUX5FEwioP/ArhTOzWkmGkkAAFKW4e4OpS
+/xiXlmxcRzmo+yiO74spptB8wL2jU4sfiVeZdZrpyxgvnxMy6p+hpvRRP5UZdk6w
+ODsBcI16qlt2VlrJIOgjAMrXtOwGC2LPxT6Qnbh5WxLfTwA46EK+7O2uKcesm9xb
+zpioGkBx/VOCBU3Zqxp4FbybO4DzuAOGAy1RcSguCkOdJuDyoMabsCP5+hWZzgW+
+Ll32ftAlGIVl7f71BZAPt4t/YWq2TCsNJ5RmM5utV4aVNK9xi7iIH7/LXmNFsNwS
+4Kp1m+EZxwWzju/fAhu/aj+73xYPU7iN+r2Xz61tvADAt4+JFRZf9cefGJIuY+lA
+CHgtxjQhGi0KMQm6NqzNSqkwdtf0+2zIRWqvkFhyl7mXEJTWGaFcQdAUmimWN2qf
+WBwhM1To/aBB48ehYsi/tgyyoh2PQVmc/8Xh5qBP9I9l11NnRIdq1OMgbAq9Wh/s
+Np7yhnKYiDQr9sV/5HxdxOWSdcpXwaL4Upx1eys+PREYrlgxDiWKhVWt8CkorRpR
+UhWWVgApb/hXfBOh0xkTj7jcDqLzo4s1xtAH1GdOq8oNV5tCqBApgB2Yiy2FgEjU
+fQDz9ukoBIX0obhlHFnZqyfviAauajLaVZ88l9Q1qqfVNb1BIRZkDUEO3kALkOSF
+J5jMn2da3ZC1JFeMmd0f
+=ozA8
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__30_Apr_2013_09_18_45_+1000_MpV.1NXfvb6Qhh+W--
+--Signature=_Tue__30_Apr_2013_09_55_27_+1000_RPDGrXVlC3UiATPa--
