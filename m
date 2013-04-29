@@ -1,57 +1,40 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 1/1] kconfig: fix lists definition for C++
-Date: Mon, 29 Apr 2013 12:28:07 -0700
-Message-ID: <517EC9C7.9000903@infradead.org>
-References: <cover.1367258255.git.yann.morin.1998@free.fr> <21ca352b71ca252e1933b1538fe89da8a04395c3.1367258255.git.yann.morin.1998@free.fr>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: Tegra 30 System hangs because of commit "pinctrl: move subsystem
+ mutex to pinctrl_dev struct"
+Date: Mon, 29 Apr 2013 20:48:36 +0100
+Message-ID: <517ECE94.4020806@imgtec.com>
+References: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <21ca352b71ca252e1933b1538fe89da8a04395c3.1367258255.git.yann.morin.1998@free.fr>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Michal Marek <mmarek@suse.cz>, Benjamin Poirier <bpoirier@suse.de>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from multi.imgtec.com ([194.200.65.239]:29600 "EHLO multi.imgtec.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932539Ab3D2Tsm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Apr 2013 15:48:42 -0400
+In-Reply-To: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: patrice.chotard@st.com, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On 04/29/13 10:59, Yann E. MORIN wrote:
-> From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+On 29/04/13 19:15, Bryan Wu wrote:
+> Hi Patrice and Linus,
 > 
-> The C++ compiler is more strict in that it refuses to assign
-> a void* to a struct list_head*.
+> I'm running linux-next on my Tegra 30 system everyday. But since
+> next-20130426 release, the linux-next kernel will hang on my Tegra 30
+> boards like Cardhu and Beaver.
 > 
-> Fix that by explicitly casting the poisonning constants.
+> After some bisect and comparing to next-20130424, I found the commit
+> "pinctrl: move subsystem mutex to pinctrl_dev struct" introduced this
+> issue. If I simply revert this patch in next-20130429, system boots up
+> as before.
 > 
-> (Tested with all 5 frontends, now.)
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Benjamin Poirier <bpoirier@suse.de>
+> Could you please help to check this?
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+I spent a while tracking this one down today too, then found it was
+already fixed. See the patch "[PATCH, for-next] pinctrl: fix mutex
+deadlock in get_pinctrl_dev_from_of_node()" from Daniel Mack.
 
-Thanks.
-
-> ---
->  scripts/kconfig/list.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/scripts/kconfig/list.h b/scripts/kconfig/list.h
-> index ea1d581..685d80e 100644
-> --- a/scripts/kconfig/list.h
-> +++ b/scripts/kconfig/list.h
-> @@ -125,7 +125,7 @@ static inline void __list_del(struct list_head *prev, struct list_head *next)
->  static inline void list_del(struct list_head *entry)
->  {
->  	__list_del(entry->prev, entry->next);
-> -	entry->next = LIST_POISON1;
-> -	entry->prev = LIST_POISON2;
-> +	entry->next = (struct list_head*)LIST_POISON1;
-> +	entry->prev = (struct list_head*)LIST_POISON2;
->  }
->  #endif
-> 
-
-
--- 
-~Randy
+Cheers
+James
