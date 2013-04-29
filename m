@@ -1,76 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Mon, 29 Apr 2013 18:38:23 +1000
-Message-ID: <20130429183823.fac55917339ff7b84a03c262@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Apr 26
+Date: Mon, 29 Apr 2013 18:53:22 +1000
+Message-ID: <20130429185322.afaed9fd11269fba9bb09a54@canb.auug.org.au>
+References: <20130426180357.7599d1b6b7965470905dcdf3@canb.auug.org.au>
+	<CAMuHMdWQ0rMuoH+peGMZ3=AdsYrMPpeV4_vSsLD3kaJukx=83w@mail.gmail.com>
+	<20130429093628.b739ef3b879b6f8759bd31af@canb.auug.org.au>
+	<517E2B21.8070009@intel.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Apr_2013_18_38_23_+1000_mMeZxy7mzoIfYt5x"
+ boundary="Signature=_Mon__29_Apr_2013_18_53_22_+1000_gV90cMuZJ3LM=K/J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52729 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50895 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751413Ab3D2Ii2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 04:38:28 -0400
+	with ESMTP id S1757161Ab3D2Ixc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 04:53:32 -0400
+In-Reply-To: <517E2B21.8070009@intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhao Hongjiang <zhaohongjiang@huawei.com>, Linus <torvalds@linux-foundation.org>, Kent Overstreet <koverstreet@google.com>
+To: Matt Fleming <matt.fleming@intel.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Matthew Garrett <matthew.garrett@nebula.com>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Luck, Tony" <tony.luck@intel.com>
 
---Signature=_Mon__29_Apr_2013_18_38_23_+1000_mMeZxy7mzoIfYt5x
+--Signature=_Mon__29_Apr_2013_18_53_22_+1000_gV90cMuZJ3LM=K/J
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+On Mon, 29 Apr 2013 09:11:13 +0100 Matt Fleming <matt.fleming@intel.com> wr=
+ote:
+>
+> On 29/04/13 00:36, Stephen Rothwell wrote:
+> > Commit e29c2de5f591 ("Merge tag 'v3.9-rc8' into efi-for-tip") by Matt
+> > Fleming from the tip tree merged v3.9-rc8 (which has 0635eb8a54cf) with
+> > the branch that contains 048517722cde but lost the "select UCS2_STRING"
+> > which should be in drivers/firmware/efi/Kconfig.
+>=20
+> Eek, yes. Sorry about that. How should we resolve this?
 
-Today's linux-next merge of the akpm tree got a conflict in fs/aio.c
-between commit 91d80a84bbc8 ("aio: fix possible invalid memory access
-when DEBUG is enabled") from Linus' tree and commit "aio: dprintk() ->
-pr_debug()" from the akpm tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+You should probably add a commit that puts the line back in your tree and
+get that merged into the tip tree.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/aio.c
-index 670cb8b,1574cb2..0000000
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@@ -802,9 -794,8 +794,8 @@@ static int aio_read_evt(struct kioctx *
-  	spin_unlock(&info->ring_lock);
- =20
-  out:
-- 	dprintk("leaving aio_read_evt: %d  h%lu t%lu\n", ret,
-- 		 (unsigned long)ring->head, (unsigned long)ring->tail);
- -	kunmap_atomic(ring);
-+ 	pr_debug("%d  h%u t%u\n", ret, ring->head, ring->tail);
- +	kunmap_atomic(ring);
-  	return ret;
-  }
- =20
-
---Signature=_Mon__29_Apr_2013_18_38_23_+1000_mMeZxy7mzoIfYt5x
+--Signature=_Mon__29_Apr_2013_18_53_22_+1000_gV90cMuZJ3LM=K/J
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRfjF/AAoJEECxmPOUX5FEeusP/0Jet/0dX3QD9LgH7aAEatEW
-MxuU29A+FeSGB0VOYa8/TQiXW8LB9zI3wz8V8BeDEzk2n3j/lxn5gmwsYn2I9mXR
-KV57LbCgP+SbPGWH8pMXb9ZJriJPNI489uCGMIwiGpedRVhJyPQL//gExvy/k5cT
-LioBuhMDsMFlpPvwLMslE3fLcG+fHLG2k6SYjMdHRH2WD/eSNhIsxHWHgEx0uSOb
-2bchdNdHReyn43OblCAzymap0UgnUL0zMIwrooPCgz3d8FzfwOwwslOxBzfi5DAr
-tjuTh1pToOZfTUh5uMGjtW2+PefGL6ke7BpJIrPJRZ7mIxhCizt1xfFx8ClXZmHp
-XCvsV1BhYqL3JGc4TkwVQj30GUIVEAmFRxXLIg+2PLStXRXq4Fk4rgfZ1CTp9Awq
-XNG5HLCdty1Dx+Mzac3Vfg/AU/d6UjP/1ObbeKPbs+viTJt7jQGarvbbXD9qPma/
-SixfxlDQ7zeLu/pbOhLl8WOGn/H/xOetLJ6qB6TrCQAgGcxbffhMP1O72u0Z4/PP
-B/FxEYD2Mnqp/AmIRS37W0pOoSNGEslibsigxcu4Q2UoW5CrdI7scugGSWwPYTtT
-8VgrFH1vfvRMJac4qoRwf5l3GGeC56gKGUBufjdNbtshTgRHyGJO0vkW1u8VMnOt
-ED9AsTUSOzPX1QXUKGId
-=Z8X8
+iQIbBAEBCAAGBQJRfjUCAAoJEECxmPOUX5FEfkoP92Oji3PIqDoIu5x0669xM7bC
+azbDd7U8PFmwaiFGSpfhtpLXuzZai7B9gDGHmPuUU8F0vjXUdVUDnkBYp421FPDa
+uEnUe/Tjghx/W+/NIS5/vDMQQu46bEhswJlgrt9iNHogyfB/dqJLxvKP7rYPe5V1
+gcgwQMBIEAk6zbDXNyCkeh0hZeTRjDe3gUBNI7oPTNXYFP2MGUqHuenP1anaUPeK
+Frd6+gGVu+6veuCVmDE+KXs0tHZ7orhQfI6x6TDy70VKfYpLIxk+/p+iWGiQ2y6W
+FJq/19mvs1vLZTTiLhXthzv42H17ZfxSqn1WH/cKSkJgXa7MG3yH6xfF9UNvHtEk
+OE/fi8YbfQVyGEiuqnxNPnt5fRQr/Bmy0oqVEH4vKcGc/EZxT6sq3Ca7f3oX/PS2
+PV4JQUKoML/GVjLboaFGYaDu3n1fcbkU5eHlInqw/qXLfvlYNhbeylshGL9SBlyz
+4e9uFsveo4eY9qzXPAt4u5LSn7BWOplCDq/1jfABCTF7E2RkIn67Wny/8kyaFb5T
+xgKJBUxlm+JhgYSiD37WxnoPGvuyfdRLvNRCfLaWjG+OO9daAj7izkElVrGhEXKl
+9/J+02Mnvc55f0ai/t7P5+kCM73TtyKpbzXfvrfL9M1ckoQNlg65F1jghlJXYCNM
+M/rNSIiT/FjYDHv4IGY=
+=ZYgd
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Apr_2013_18_38_23_+1000_mMeZxy7mzoIfYt5x--
+--Signature=_Mon__29_Apr_2013_18_53_22_+1000_gV90cMuZJ3LM=K/J--
