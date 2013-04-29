@@ -1,47 +1,123 @@
-From: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Subject: [PATCH 1/1] kconfig: fix lists definition for C++
-Date: Mon, 29 Apr 2013 19:59:02 +0200
-Message-ID: <21ca352b71ca252e1933b1538fe89da8a04395c3.1367258255.git.yann.morin.1998@free.fr>
-References: <cover.1367258255.git.yann.morin.1998@free.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1367258255.git.yann.morin.1998@free.fr>
-In-Reply-To: <cover.1367258255.git.yann.morin.1998@free.fr>
-References: <cover.1367258255.git.yann.morin.1998@free.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, Michal Marek <mmarek@suse.cz>, "Yann E. MORIN" <yann.morin.1998@free.fr>, Benjamin Poirier <bpoirier@suse.de>
-List-Id: linux-next.vger.kernel.org
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Tegra 30 System hangs because of commit "pinctrl: move subsystem
+ mutex to pinctrl_dev struct"
+Date: Mon, 29 Apr 2013 11:15:57 -0700
+Message-ID: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-la0-f52.google.com ([209.85.215.52]:40231 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758503Ab3D2SQT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 14:16:19 -0400
+Received: by mail-la0-f52.google.com with SMTP id fd20so5683454lab.39
+        for <linux-next@vger.kernel.org>; Mon, 29 Apr 2013 11:16:17 -0700 (PDT)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: patrice.chotard@st.com, Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Hi Patrice and Linus,
 
-The C++ compiler is more strict in that it refuses to assign
-a void* to a struct list_head*.
+I'm running linux-next on my Tegra 30 system everyday. But since
+next-20130426 release, the linux-next kernel will hang on my Tegra 30
+boards like Cardhu and Beaver.
 
-Fix that by explicitly casting the poisonning constants.
+After some bisect and comparing to next-20130424, I found the commit
+"pinctrl: move subsystem mutex to pinctrl_dev struct" introduced this
+issue. If I simply revert this patch in next-20130429, system boots up
+as before.
 
-(Tested with all 5 frontends, now.)
+Could you please help to check this?
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Benjamin Poirier <bpoirier@suse.de>
----
- scripts/kconfig/list.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+----
+Uncompressing Linux... done, booting the kernel.
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Initializing cgroup subsys cpu
+[    0.000000] Initializing cgroup subsys cpuacct
+[    0.000000] Linux version 3.9.0-rc8-09782-ga6df01a
+(roc@roc-HP-desktop) (gcc version 4.7.3 (Ubuntu/Linaro 4.7.3-1ubuntu1)
+) #20 SMP PREEMPT Mon Apr 29 10:09:07 PDT 2013
+[    0.000000] CPU: ARMv7 Processor [412fc099] revision 9 (ARMv7), cr=10c5387d
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
+instruction cache
+[    0.000000] Machine: NVIDIA Tegra30 (Flattened Device Tree), model:
+NVIDIA Tegra30 Beaver evaluation board
+[    0.000000] bootconsole [earlycon0] enabled
+[    0.000000] cma: CMA: reserved 16 MiB at ae800000
+[    0.000000] Memory policy: ECC disabled, Data cache writealloc
+[    0.000000] On node 0 totalpages: 524032
+[    0.000000] free_area_init_node: node 0, pgdat c070b7c0,
+node_mem_map c075c000
+[    0.000000]   Normal zone: 1520 pages used for memmap
+[    0.000000]   Normal zone: 0 pages reserved
+[    0.000000]   Normal zone: 194560 pages, LIFO batch:31
+[    0.000000]   HighMem zone: 2574 pages used for memmap
+[    0.000000]   HighMem zone: 329472 pages, LIFO batch:31
+[    0.000000] fuse_speedo_calib: ATE prog ver 3.3
+[    0.000000] Tegra30: CPU Speedo ID 5, Soc Speedo ID 2
+[    0.000000] Tegra Revision: A03 SKU: 128 CPU Process: 4 Core Process: 0
+[    0.000000] L310 cache controller enabled
+[    0.000000] l2x0: 8 ways, CACHE_ID 0x410000c7, AUX_CTRL 0x7e480001,
+Cache size: 1048576 B
+[    0.000000] PERCPU: Embedded 8 pages/cpu @c176e000 s9280 r8192 d15296 u32768
+[    0.000000] pcpu-alloc: s9280 r8192 d15296 u32768 alloc=8*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3
+[    0.000000] Built 1 zonelists in Zone order, mobility grouping on.
+Total pages: 522512
+[    0.000000] Kernel command line: console=ttyS0,115200n8
+root=/dev/mmcblk0p1 loglevel=8 rootwait rw earlyprintk
+[    0.000000] PID hash table entries: 4096 (order: 2, 16384 bytes)
+[    0.000000] Dentry cache hash table entries: 131072 (order: 7, 524288 bytes)
+[    0.000000] Inode-cache hash table entries: 65536 (order: 6, 262144 bytes)
+[    0.000000] Memory: 2047MB = 2047MB total
+[    0.000000] Memory: 2054764k/2054764k available, 41364k reserved,
+1317888K highmem
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+[    0.000000]     fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
+[    0.000000]     vmalloc : 0xf0000000 - 0xff000000   ( 240 MB)
+[    0.000000]     lowmem  : 0xc0000000 - 0xef800000   ( 760 MB)
+[    0.000000]     pkmap   : 0xbfe00000 - 0xc0000000   (   2 MB)
+[    0.000000]     modules : 0xbf000000 - 0xbfe00000   (  14 MB)
+[    0.000000]       .text : 0xc0008000 - 0xc0695268   (6709 kB)
+[    0.000000]       .init : 0xc0696000 - 0xc06c8440   ( 202 kB)
+[    0.000000]       .data : 0xc06ca000 - 0xc070d020   ( 269 kB)
+[    0.000000]        .bss : 0xc070d020 - 0xc075bb88   ( 315 kB)
+[    0.000000] Preemptible hierarchical RCU implementation.
+[    0.000000] NR_IRQS:16 nr_irqs:16 16
+[    0.000000] sched_clock: 32 bits at 1000kHz, resolution 1000ns,
+wraps every 4294967ms
+[    0.000000] Console: colour dummy device 80x30
+[    0.005231] Calibrating delay loop... 1993.93 BogoMIPS (lpj=9969664)
+[    0.062959] pid_max: default: 32768 minimum: 301
+[    0.068223] Mount-cache hash table entries: 512
+[    0.083957] Initializing cgroup subsys debug
+[    0.088428] Initializing cgroup subsys freezer
+[    0.093220] CPU: Testing write buffer coherency: ok
+[    0.098680] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.104632] Setting up static identity map for 0xc04d9dc8 - 0xc04d9e4c
+[    0.166265] CPU1: Booted secondary processor
+[    0.224635] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+[    0.246245] CPU2: Booted secondary processor
+[    0.304634] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
+[    0.326206] CPU3: Booted secondary processor
+[    0.384634] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
+[    0.384730] Brought up 4 CPUs
+[    0.418869] SMP: Total of 4 processors activated (7975.73 BogoMIPS).
+[    0.425471] CPU: All CPU(s) started in SVC mode.
+[    0.431323] devtmpfs: initialized
+[    0.449863] pinctrl core: initialized pinctrl subsystem
+[    0.455839] regulator-dummy: no parameters
+[    0.461447] NET: Registered protocol family 16
+[    0.469728] DMA: preallocated 256 KiB pool for atomic coherent allocations
+[    0.487314] No ATAGs?
+[    0.489478] hw-breakpoint: found 5 (+1 reserved) breakpoint and 1
+watchpoint registers.
+[    0.498053] hw-breakpoint: maximum watchpoint size is 4 bytes.
+----
+System hangs here, no output at all.
 
-diff --git a/scripts/kconfig/list.h b/scripts/kconfig/list.h
-index ea1d581..685d80e 100644
---- a/scripts/kconfig/list.h
-+++ b/scripts/kconfig/list.h
-@@ -125,7 +125,7 @@ static inline void __list_del(struct list_head *prev, struct list_head *next)
- static inline void list_del(struct list_head *entry)
- {
- 	__list_del(entry->prev, entry->next);
--	entry->next = LIST_POISON1;
--	entry->prev = LIST_POISON2;
-+	entry->next = (struct list_head*)LIST_POISON1;
-+	entry->prev = (struct list_head*)LIST_POISON2;
- }
- #endif
--- 
-1.8.1.2
+Any suggestions are welcome, I can test that on my hardware.
+Thanks,
+-Bryan
