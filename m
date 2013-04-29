@@ -1,49 +1,31 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 29
-Date: Mon, 29 Apr 2013 14:03:23 -0700
-Message-ID: <517EE01B.80109@infradead.org>
-References: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au> <517ED2A6.5030200@infradead.org>
+From: Rob Landley <rob@landley.net>
+Subject: Re: [PATCH 1/1] kconfig: fix lists definition for C++
+Date: Mon, 29 Apr 2013 16:54:14 -0500
+Message-ID: <1367272454.18069.191@driftwood>
+References: <cover.1367258255.git.yann.morin.1998@free.fr>
+	<21ca352b71ca252e1933b1538fe89da8a04395c3.1367258255.git.yann.morin.1998@free.fr>
+	<517EC9C7.9000903@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <517ED2A6.5030200@infradead.org>
-Sender: owner-linux-mm@kvack.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset=us-ascii; DelSp=Yes; Format=Flowed
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <517EC9C7.9000903@infradead.org> (from rdunlap@infradead.org on
+	Mon Apr 29 14:28:07 2013)
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: "Yann E. MORIN" <yann.morin.1998@free.fr>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Michal Marek <mmarek@suse.cz>, Benjamin Poirier <bpoirier@suse.de>
 List-Id: linux-next.vger.kernel.org
 
-On 04/29/13 13:05, Randy Dunlap wrote:
-> On 04/29/13 02:17, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20130426:
->>
-> 
-> 
-> (who is responsible for MEM_SOFT_DIRTY?)
-> 
-> 
-> on x86_64:
-> 
-> warning: (HWPOISON_INJECT && MEM_SOFT_DIRTY) selects PROC_PAGE_MONITOR which has unmet direct dependencies (PROC_FS && MMU)
-> 
-> because MEM_SOFT_DIRTY selects PROC_PAGE_MONITOR when CONFIG_PROC_FS is not enabled.
-> 
-> 
-> Can MEM_SOFT_DIRTY depend on PROC_FS?
-> 
-> and the help text for MEM_SOFT_DIRTY refers to Documentation/vm/soft-dirty.txt,
-> which does not exist.  Please add the file.
+On 04/29/2013 02:28:07 PM, Randy Dunlap wrote:
+> On 04/29/13 10:59, Yann E. MORIN wrote:
+> > From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+> >
+> > The C++ compiler is more strict in that it refuses to assign
+> > a void* to a struct list_head*.
 
-Oops, sorry, I looked in the wrong place for that file, which DOES exist.
+Given that the code _isn't_ C++ (because C is not a subset of C++ but a  
+separate langauge in its own right where "throw" is a legitimate  
+variable name and so on), how is this an issue?
 
-
--- 
-~Randy
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Rob
