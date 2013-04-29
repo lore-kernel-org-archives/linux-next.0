@@ -1,33 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the  vfstree
-Date: Mon, 29 Apr 2013 18:29:06 +1000
-Message-ID: <20130429182906.a964166ca79375595a16681c@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the vfs tree
+Date: Mon, 29 Apr 2013 18:34:28 +1000
+Message-ID: <20130429183428.d420f496ba32b0aef7856fb6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Apr_2013_18_29_06_+1000_E93cOwQXTCe8MUsW"
+ boundary="Signature=_Mon__29_Apr_2013_18_34_28_+1000_ni4YyHDOi2fQwU3d"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42495 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:32794 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751206Ab3D2I3J (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 04:29:09 -0400
+	with ESMTP id S1751660Ab3D2Iea (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 04:34:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, Pavel Emelyanov <xemul@parallels.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, HoSung Jung <rain6557@gmail.com>
 
---Signature=_Mon__29_Apr_2013_18_29_06_+1000_E93cOwQXTCe8MUsW
+--Signature=_Mon__29_Apr_2013_18_34_28_+1000_ni4YyHDOi2fQwU3d
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in
-fs/proc/internal.h between commit 4608da4a9433 ("proc: Move non-public
-stuff from linux/proc_fs.h to fs/proc/internal.h") from the vfs tree and
-commit "pagemap: introduce the /proc/PID/pagemap2 file" from the akpm
-tree.
+Today's linux-next merge of the akpm tree got a conflict in ipc/msgutil.c
+between commit b3ecda5869da ("proc: Split the namespace stuff out into
+linux/proc_ns.h") from the vfs tree and commit "ipc/msgutil.c: use
+linux/uaccess.h" from the akpm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,108 +35,41 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/proc/internal.h
-index d600fb0,188b886..0000000
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@@ -223,76 -191,4 +223,77 @@@ extern void proc_device_tree_init(void)
-  extern const struct inode_operations proc_ns_dir_inode_operations;
-  extern const struct file_operations proc_ns_dir_operations;
+diff --cc ipc/msgutil.c
+index a53f38f,d43439e..0000000
+--- a/ipc/msgutil.c
++++ b/ipc/msgutil.c
+@@@ -16,8 -16,8 +16,8 @@@
+  #include <linux/msg.h>
+  #include <linux/ipc_namespace.h>
+  #include <linux/utsname.h>
+ -#include <linux/proc_fs.h>
+ +#include <linux/proc_ns.h>
+- #include <asm/uaccess.h>
++ #include <linux/uaccess.h>
  =20
- +/*
- + * proc_net.c
- + */
- +extern const struct file_operations proc_net_operations;
- +extern const struct inode_operations proc_net_inode_operations;
- +
- +#ifdef CONFIG_NET
- +extern int proc_net_init(void);
- +#else
- +static inline int proc_net_init(void) { return 0; }
- +#endif
- +
- +/*
- + * proc_self.c
- + */
-  extern int proc_setup_self(struct super_block *);
- +
- +/*
- + * proc_sysctl.c
- + */
- +#ifdef CONFIG_PROC_SYSCTL
- +extern int proc_sys_init(void);
- +extern void sysctl_head_put(struct ctl_table_header *);
- +#else
- +static inline void proc_sys_init(void) { }
- +static inline void sysctl_head_put(struct ctl_table_header *head) { }
- +#endif
- +
- +/*
- + * proc_tty.c
- + */
- +#ifdef CONFIG_TTY
- +extern void proc_tty_init(void);
- +#else
- +static inline void proc_tty_init(void) {}
- +#endif
- +
- +/*
- + * root.c
- + */
- +extern struct proc_dir_entry proc_root;
- +
- +extern void proc_self_init(void);
- +extern int proc_remount(struct super_block *, int *, char *);
- +
- +/*
- + * task_[no]mmu.c
- + */
- +struct proc_maps_private {
- +	struct pid *pid;
- +	struct task_struct *task;
- +#ifdef CONFIG_MMU
- +	struct vm_area_struct *tail_vma;
- +#endif
- +#ifdef CONFIG_NUMA
- +	struct mempolicy *task_mempolicy;
- +#endif
- +};
- +
- +extern const struct file_operations proc_pid_maps_operations;
- +extern const struct file_operations proc_tid_maps_operations;
- +extern const struct file_operations proc_pid_numa_maps_operations;
- +extern const struct file_operations proc_tid_numa_maps_operations;
- +extern const struct file_operations proc_pid_smaps_operations;
- +extern const struct file_operations proc_tid_smaps_operations;
- +extern const struct file_operations proc_clear_refs_operations;
- +extern const struct file_operations proc_pagemap_operations;
-++extern const struct file_operations proc_pagemap2_operations;
- +
- +extern unsigned long task_vsize(struct mm_struct *);
- +extern unsigned long task_statm(struct mm_struct *,
- +				unsigned long *, unsigned long *,
- +				unsigned long *, unsigned long *);
- +extern void task_mem(struct seq_file *, struct mm_struct *);
+  #include "util.h"
+ =20
 
---Signature=_Mon__29_Apr_2013_18_29_06_+1000_E93cOwQXTCe8MUsW
+--Signature=_Mon__29_Apr_2013_18_34_28_+1000_ni4YyHDOi2fQwU3d
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRfi9SAAoJEECxmPOUX5FETCgP/je17R+70DbW12MgFyZwTEVP
-f4IrZMiIeP+IjZhlBrHokcSBzdSC6CrEtmfJj1NIUYKxLgL039p1EwPO1Sjr0DoU
-VlZATbTrZxEAoPe2zV2xOsHUPr0rWzEtfPl/JKjt3lm55m3qP6zfUcYc/Sp6s/76
-lTWbPnsz2W5UaXPJvaVTSjtHvLsBPrAVARfaro/BhIYlBJu3ZyvocfMOLY4G8hcK
-7HZAyMI1pa3ulIvRdOBmtl+sB7m+MOup64S+U3EgHvDTiUizWRV8LL+vlgIb1GQd
-yxXq1ClsSRh1GgcP/2xtxLjlMgsOeaZ3KPdWz1E65S5v0uGkJ8/6iAjjIq/LY9z/
-310hYjJpi5C3tKJbTCYa4/5SVW7doUDL/Kvv+qaDz6dNw0FbcZlv4cmFRYkaKzH5
-i+tl8PN0qtb6+3p4ND8MDmiY/ooOhxqpiUtxswVPnGa68U39YKrKeX/slEmfGKQC
-leRtAqqhZdGsB+JErjQ8zDLK2Ngxr4k5D/Gohp0FgmwBKGOST6wdxYZSeeBpttfE
-ZArn3XkfkEVrnrKgJCy494S+QJM8Z5chrhH4wX0g2tl3zbmig9rTCCjvwOFNNlBO
-pDjG+wt1lL+E7xCHJx69oFH8v7xfrheGazZZHBabM9CrRguOYqiPQ7jAU7SXp5Q/
-FoR+jUJA9zg7BMMAUuxR
-=5m6g
+iQIcBAEBCAAGBQJRfjCUAAoJEECxmPOUX5FEm7IQAKPDdf5FH1OrlM/APTrBwzjB
+GtZ9/ut7PuZl1e0jpEevSiyNLlgtafZQwaBtAc59LYtYNmG+0NllfBxbcgAOePUx
+yGwh9lJ4HkDHDOcI/5w63F1qrI8XLYmXKu9bctOflnWdEZCdOJQAP7yabzE6CoBJ
+Yw1d72j4Z81D3rGZUVByFsLvYgvIXYLeshfhXF7pgy0K5FrASo0vi6rBIjLtUd1v
+QWQIGadpX2nKKK4mzUsrmdkozs2RgG51Mu9yicwkAalcZSneG0hXzfryvTdM0+Ff
+GNH4BycSvnp74aui31rehsRUupyhsec49eN5J1u9CNOcn/CTRv+au6E1QLZ/wAkW
+lqPDQRBEn8yIRsuvZBgrIzuPbCUxJBMmI2IkTp7KJBX4Kf/XRd8cE4Sb1t6Cmszm
+4ePKIuEkPOZdKY7jm3er05gv6rdTgkOcSKme4VutvDv65moqG1WSUpr3E8fIGZgK
+sBmbegJ5zOt3f9ufSuO2ipT5qPp7oxTYjdwHTLZFTm5Tzi6kTQhABAN/5A3ylo6B
+XIC/SZ9n4Dr2zji+MzJQMacq5iZW8IebLRwLrm7hURQNuHP5gJF14It3v/dV9Lc5
+ac0rYP3ur+mxHUoMR9jBiy/T5l998Bxy/NZci4KJu317r6SHHeQByh/nKc7HeRRM
+eYwgmYPCDZ1bWvwl9bEB
+=ChlZ
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Apr_2013_18_29_06_+1000_E93cOwQXTCe8MUsW--
+--Signature=_Mon__29_Apr_2013_18_34_28_+1000_ni4YyHDOi2fQwU3d--
