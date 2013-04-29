@@ -1,106 +1,57 @@
-From: Chuck Lever <chuck.lever@oracle.com>
-Subject: Re: linux-next: build failure after merge of the nfsd tree
-Date: Mon, 29 Apr 2013 15:14:34 -0400
-Message-ID: <05D6BB77-3957-46D1-A7C2-B8813185ADCB@oracle.com>
-References: <20130429112434.dcc80cfce804beeacc68793a@canb.auug.org.au> <CA52A586-E4DF-42D0-9020-D17F8822BF7C@oracle.com> <20130429154541.GI17268@fieldses.org> <09A69F90-5D9A-4AF6-9B7D-CC1D74A237EA@oracle.com> <1367252460.19515.7.camel@leira.trondhjem.org> <DBD3CE27-3A93-4BC0-B390-2EDB9D0D2BBE@oracle.com> <20130429173821.GJ17268@fieldses.org> <BD32EC01-EA3A-403C-A8D2-904B77EB79BA@oracle.com> <20130429175902.GK17268@fieldses.org> <756994C4-53FE-4723-A37C-A5E4DAB905D2@oracle.com> <20130429185712.GP17268@fieldses.org>
-Mime-Version: 1.0 (Mac OS X Mail 6.3 \(1503\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:46160 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760344Ab3D2TPI convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 15:15:08 -0400
-In-Reply-To: <20130429185712.GP17268@fieldses.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: Trond Myklebust <trond.myklebust@fys.uio.no>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Simo Sorce <simo@redhat.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH 1/1] kconfig: fix lists definition for C++
+Date: Mon, 29 Apr 2013 12:28:07 -0700
+Message-ID: <517EC9C7.9000903@infradead.org>
+References: <cover.1367258255.git.yann.morin.1998@free.fr> <21ca352b71ca252e1933b1538fe89da8a04395c3.1367258255.git.yann.morin.1998@free.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <21ca352b71ca252e1933b1538fe89da8a04395c3.1367258255.git.yann.morin.1998@free.fr>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Michal Marek <mmarek@suse.cz>, Benjamin Poirier <bpoirier@suse.de>
+List-Id: linux-next.vger.kernel.org
 
+On 04/29/13 10:59, Yann E. MORIN wrote:
+> From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+> 
+> The C++ compiler is more strict in that it refuses to assign
+> a void* to a struct list_head*.
+> 
+> Fix that by explicitly casting the poisonning constants.
+> 
+> (Tested with all 5 frontends, now.)
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Benjamin Poirier <bpoirier@suse.de>
 
-On Apr 29, 2013, at 2:57 PM, J. Bruce Fields <bfields@fieldses.org> wrote:
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-> On Mon, Apr 29, 2013 at 02:30:33PM -0400, Chuck Lever wrote:
->> 
->> On Apr 29, 2013, at 1:59 PM, "J. Bruce Fields" <bfields@fieldses.org>
->> wrote:
->> 
->>> On Mon, Apr 29, 2013 at 01:47:16PM -0400, Chuck Lever wrote:
->>>> 
->>>> On Apr 29, 2013, at 1:38 PM, "J. Bruce Fields"
->>>> <bfields@fieldses.org> wrote:
->>>> 
->>>>> On Mon, Apr 29, 2013 at 01:04:01PM -0400, Chuck Lever wrote:
->>>>>> Trond's nfs-for-next now has the new rpcauth_get_gssinfo() and
->>>>>> rpcauth_get_pseudoflavor() APIs, which are replacements for
->>>>>> direct calls into the GSS mech switch.  These APIs are a little
->>>>>> more generic, and more robust in the face of unloaded GSS kernel
->>>>>> modules.
->>>>>> 
->>>>>> Instead of gss_mech_get_by_OID(), I suspect you want
->>>>>> rpcauth_get_pseudoflavor(), but I haven't looked at the gssproxy
->>>>>> code.
->>>>> 
->>>>> It's doing
->>>>> 
->>>>> 		status = -EOPNOTSUPP; gm =
->>>>> 		gss_mech_get_by_OID(&ud->mech_oid); if (!gm) goto out;
->>>>> 		status = -EINVAL; status =
->>>>> 		gss_import_sec_context(ud->out_handle.data,
->>>>> 		ud->out_handle.len, gm, &rsci.mechctx, &expiry,
->>>>> 		GFP_KERNEL); if (status) goto out;
->>>>> 
->>>>> So we need a way to get from an OID and some mechanism-specific
->>>>> data to a context.
->>>>> 
->>>>> Looks to me like we just want to re-export gss_mech_get_by_OID().
->>>> 
->>>> The reason for the new wrappers is to load the kernel modules
->>>> properly before trying to discover the OID -> mechanism mapping.
->>>> 
->>>> Where are you calling it from?  If it's from outside of the GSS
->>>> module, how do you guarantee the rpc_gss_auth module is loaded?
->>>> What if the GSS mechanism for that OID isn't loaded?
->>> 
->>> Sorry, I should have said just "remove static from", not
->>> "re-export"--it's in the same module.  So there should be no problem
->>> here, right?
->> 
->> OK, gotcha.  Architecturally outside of the mech switch I'd like to
->> see OIDs passed around embedded in GSS tuples rather than by
->> themselves.
-> 
-> I'm not sure what you mean.  When I accept a gss context I don't yet
-> know what service or qop it's going to be used with, I only know the
-> mechanism OID.
+Thanks.
 
-RPC server GSS support didn't need the gss_mech_get_by_OID() interface before gssproxy, so I'm trying to understand why it is needed now.
-
-But it sounds like you do need it now, so go ahead and make gss_mech_get_by_OID() global within the AUTH_GSS module. 
-
+> ---
+>  scripts/kconfig/list.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
->> An alternative would be to use gss_mech_get_by_name(), which is
->> already visible, loads GSS mechanism modules automatically, and
->> returns struct gss_api_mech *.  For NFS, we should already have a
->> clean mapping of mechanism name to pseudoflavor to GSS tuple.  Looks
->> like rsc_parse() already uses this API.
+> diff --git a/scripts/kconfig/list.h b/scripts/kconfig/list.h
+> index ea1d581..685d80e 100644
+> --- a/scripts/kconfig/list.h
+> +++ b/scripts/kconfig/list.h
+> @@ -125,7 +125,7 @@ static inline void __list_del(struct list_head *prev, struct list_head *next)
+>  static inline void list_del(struct list_head *entry)
+>  {
+>  	__list_del(entry->prev, entry->next);
+> -	entry->next = LIST_POISON1;
+> -	entry->prev = LIST_POISON2;
+> +	entry->next = (struct list_head*)LIST_POISON1;
+> +	entry->prev = (struct list_head*)LIST_POISON2;
+>  }
+>  #endif
 > 
-> We don't have a name here, only an OID.
-> 
->> Do you have gssproxy patches published in a git tree somewhere I could
->> review?
-> 
-> It's in my for-3.10 branch.
-> 
-> Which is more or less what I plan to submit for 3.10, so I'd prefer not
-> to rebase it at this point.
-> 
-> It looks like just removing "static" would resolve the immediate
-> conflict, is that right?  And then I'd happily help deal with cleaning
-> up the API as followup work.
-
 
 
 -- 
-Chuck Lever
-chuck[dot]lever[at]oracle[dot]com
+~Randy
