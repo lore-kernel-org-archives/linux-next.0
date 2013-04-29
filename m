@@ -1,66 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfsd tree
-Date: Mon, 29 Apr 2013 11:24:34 +1000
-Message-ID: <20130429112434.dcc80cfce804beeacc68793a@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the xfs tree
+Date: Mon, 29 Apr 2013 11:29:43 +1000
+Message-ID: <20130429112943.afdd088c7bb8d80046bdfd2f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Apr_2013_11_24_34_+1000_sgX0M30+kJRdxXme"
+ boundary="Signature=_Mon__29_Apr_2013_11_29_43_+1000_9uakL3EUbfUXjLcr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55507 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56504 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756586Ab3D2BYo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Apr 2013 21:24:44 -0400
+	with ESMTP id S1756586Ab3D2B3t (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Apr 2013 21:29:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, Simo Sorce <simo@redhat.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
+To: Ben Myers <bpm@sgi.com>, David Chinner <david@fromorbit.com>, xfs@oss.sgi.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
---Signature=_Mon__29_Apr_2013_11_24_34_+1000_sgX0M30+kJRdxXme
+--Signature=_Mon__29_Apr_2013_11_29_43_+1000_9uakL3EUbfUXjLcr
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi J.,
+Hi all,
 
-After merging the nfsd tree, today's linux-next build (powerpc
+After merging the xfs tree, today's linux-next build (powerpc
 ppc64_defconfig) failed like this:
 
-net/sunrpc/auth_gss/svcauth_gss.c: In function 'gss_proxy_save_rsc':
-net/sunrpc/auth_gss/svcauth_gss.c:1182:3: error: implicit declaration of fu=
-nction 'gss_mech_get_by_OID' [-Werror=3Dimplicit-function-declaration]
+ERROR: "xfs_dquot_buf_ops" [fs/xfs/xfs.ko] undefined!
 
-Caused byc ommit 030d794bf498 ("SUNRPC: Use gssproxy upcall for server
-RPCGSS authentication").  gss_mech_get_by_OID() made static to
-net/sunrpc/auth_gss/gss_mech_switch.c by commit 9568c5e9a61d ("SUNRPC:
-Introduce rpcauth_get_pseudoflavor()") in the nfs tree (part of the nfs
-tree that you did not merge).
+Probably caused by commit 3fe58f30b4fc ("xfs: add CRC checks for quota
+blocks").
 
-I don't know how to fix this, so I have used the nfsd tree from
-next-20130426 for today.
+I have used the xfs tree from next-20130426 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__29_Apr_2013_11_24_34_+1000_sgX0M30+kJRdxXme
+--Signature=_Mon__29_Apr_2013_11_29_43_+1000_9uakL3EUbfUXjLcr
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRfcvSAAoJEECxmPOUX5FEjJwP/0Vq2kAnv/o6Hl0FBsQIBv3l
-/DPFJRxvqvisIS9t/KFC526vHHhCDz4JyNc+kXT8Mpp2nqJDe/Teim/HoH7ZbKSQ
-NLfq0RLBvFAaltF8PJKOC9oh71ZIpW52tvV6MdLMc/d630wGBhj4TakUxOH1+5Xm
-kzyLZH474fZopiYx8xMHg8yAvaNJ+cO6fXkW+GbR/CN+3qga/IV6MgJNK1yUxhc5
-x3vj3q3F3pMayRmwl6u5PjAAHLZA4Pe1DYFsP7hYt5dB+liX+BQvXk9QLlCD3wX+
-8x0EkthEXCnE3RtTV4rBWKZtVLnTAQrnqCIgrfvm1GxU/vtS02XDoPIRU2AMoXG+
-lGzSmdIWl0zZsOKYEXOwjfiNS2BUsc2ifKGZfOVQqWNZB2T0EIYod/C+8SHzOmZQ
-Z6cIRlp1esTcdTCXI0dyXS4F60KN2j2lYH2F5iCwvcABRhKbG09Tw62pYQXY/Bng
-LDMKnqDvARK1UZjPoJFyYZZD2Bh20BFfNKiGu87gyCdRaUHSrQmDVb3NKmNHHsNj
-8HQkGTfbk9vSPifNhK2g8ss0L96lBrL0is3Kk4tXQGoQel7JstlO5q3/AOLRcI4d
-gkV9IdL5zyasFfd1ofQlo+tLnISLSTBL9CmY6c60IAuwMKtZy9W3kNbsm3EuCieR
-/Yr2qTHbjsaij2ax/0Ja
-=69sz
+iQIcBAEBCAAGBQJRfc0HAAoJEECxmPOUX5FEHjgP/0TBlVxlC2wyZ+Blha5ODu/C
+vUJumRVXIl75EOJ2EsEXs9XwiP1/Tkv7LSKanWveahtwQx16LVGbuSbK8zQTxrGT
+ZYTN8MCML8nD7P659EDa/KOyo0dOx7kiqPX0MV0XIjsdTqnggOqIbeqjZemjmLlX
+/dZhwCbeIj8sFGj5jW14itstm0DpzpgLnilESZe1EZEKGuZVyj7TteI5qjxUH4wo
+4qtOWN4KEDStc9Ye9SEl+p2N/S3duSs42+IA4G3XEeib+PSOamgKGZXCqhmZ5Kq4
+L6HmcuYsYHUNpbQ5SqGtEN8KWSC4ri89AhbXWr+qnwVqYIsOOjtJAnhHMXgtbXkN
+tIg67qWdtYPuyp69I29gZE3scKtkUUfub8aOMmNPZaTSang6I9hwtKeMf53fsPKk
+mLX9fCv1wYYX9ygeUnQxUWJu3a6nuP9pl2m3XB3Xc2uu8C/20zvH/PC5g9csBnwM
+4xPjwedqm9ThKHXrfuNDHf9FdJngc+LD2b+POOb8L3WAT5nSjXG6GM5BbplGDjh5
+BTM5rwYptwGb1SzUYEC31xRJPN6erzaH67uWSlA3tG9035WlxQhC/CAq9ukDSFmi
+c0cZf9+dfuCIo6sUaW7LeeHv3FOwB36gowykobvos415jVhTgeLSor07V2vPgHGB
+Tm4sADvntX2DxQX1YvO0
+=shlP
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Apr_2013_11_24_34_+1000_sgX0M30+kJRdxXme--
+--Signature=_Mon__29_Apr_2013_11_29_43_+1000_9uakL3EUbfUXjLcr--
