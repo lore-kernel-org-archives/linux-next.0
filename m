@@ -1,61 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the xfs tree
-Date: Mon, 29 Apr 2013 11:29:43 +1000
-Message-ID: <20130429112943.afdd088c7bb8d80046bdfd2f@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the powerpc tree
+Date: Mon, 29 Apr 2013 11:35:40 +1000
+Message-ID: <20130429113540.55b2593d303bc2a9142919fc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Apr_2013_11_29_43_+1000_9uakL3EUbfUXjLcr"
+ boundary="Signature=_Mon__29_Apr_2013_11_35_40_+1000_7twd2=FMfYKT3uPf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56504 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:60548 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756586Ab3D2B3t (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Apr 2013 21:29:49 -0400
+	with ESMTP id S1755878Ab3D2Bfq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Apr 2013 21:35:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ben Myers <bpm@sgi.com>, David Chinner <david@fromorbit.com>, xfs@oss.sgi.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
 
---Signature=_Mon__29_Apr_2013_11_29_43_+1000_9uakL3EUbfUXjLcr
+--Signature=_Mon__29_Apr_2013_11_35_40_+1000_7twd2=FMfYKT3uPf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Al,
 
-After merging the xfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the vfs tree got a conflict in
+arch/powerpc/kernel/rtas_flash.c between commit ad18a364f186
+("powerpc/rtas_flash: Free kmem upon module exit"),  from the powerpc
+tree and commit 5c0333c00ff6 ("ppc: Clean up rtas_flash driver somewhat")
+from the vfs tree.
 
-ERROR: "xfs_dquot_buf_ops" [fs/xfs/xfs.ko] undefined!
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Probably caused by commit 3fe58f30b4fc ("xfs: add CRC checks for quota
-blocks").
-
-I have used the xfs tree from next-20130426 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__29_Apr_2013_11_29_43_+1000_9uakL3EUbfUXjLcr
+diff --cc arch/powerpc/kernel/rtas_flash.c
+index a3e4034,8196bfb..0000000
+--- a/arch/powerpc/kernel/rtas_flash.c
++++ b/arch/powerpc/kernel/rtas_flash.c
+@@@ -806,20 -740,17 +758,22 @@@ enomem_buf
+ =20
+  static void __exit rtas_flash_cleanup(void)
+  {
++ 	int i;
++=20
+  	rtas_flash_term_hook =3D NULL;
+ =20
+ +	if (rtas_firmware_flash_list) {
+ +		free_flash_list(rtas_firmware_flash_list);
+ +		rtas_firmware_flash_list =3D NULL;
+ +	}
+ +
+- 	if (flash_block_cache)
+- 		kmem_cache_destroy(flash_block_cache);
++ 	for (i =3D 0; i < ARRAY_SIZE(rtas_flash_files); i++) {
++ 		const struct rtas_flash_file *f =3D &rtas_flash_files[i];
++ 		remove_proc_entry(f->filename, NULL);
++ 	}
+ =20
+- 	remove_flash_pde(firmware_flash_pde);
+- 	remove_flash_pde(firmware_update_pde);
+- 	remove_flash_pde(validate_pde);
+- 	remove_flash_pde(manage_pde);
++ 	kmem_cache_destroy(flash_block_cache);
++ 	kfree(rtas_validate_flash_data.buf);
+  }
+ =20
+  module_init(rtas_flash_init);
+
+--Signature=_Mon__29_Apr_2013_11_35_40_+1000_7twd2=FMfYKT3uPf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRfc0HAAoJEECxmPOUX5FEHjgP/0TBlVxlC2wyZ+Blha5ODu/C
-vUJumRVXIl75EOJ2EsEXs9XwiP1/Tkv7LSKanWveahtwQx16LVGbuSbK8zQTxrGT
-ZYTN8MCML8nD7P659EDa/KOyo0dOx7kiqPX0MV0XIjsdTqnggOqIbeqjZemjmLlX
-/dZhwCbeIj8sFGj5jW14itstm0DpzpgLnilESZe1EZEKGuZVyj7TteI5qjxUH4wo
-4qtOWN4KEDStc9Ye9SEl+p2N/S3duSs42+IA4G3XEeib+PSOamgKGZXCqhmZ5Kq4
-L6HmcuYsYHUNpbQ5SqGtEN8KWSC4ri89AhbXWr+qnwVqYIsOOjtJAnhHMXgtbXkN
-tIg67qWdtYPuyp69I29gZE3scKtkUUfub8aOMmNPZaTSang6I9hwtKeMf53fsPKk
-mLX9fCv1wYYX9ygeUnQxUWJu3a6nuP9pl2m3XB3Xc2uu8C/20zvH/PC5g9csBnwM
-4xPjwedqm9ThKHXrfuNDHf9FdJngc+LD2b+POOb8L3WAT5nSjXG6GM5BbplGDjh5
-BTM5rwYptwGb1SzUYEC31xRJPN6erzaH67uWSlA3tG9035WlxQhC/CAq9ukDSFmi
-c0cZf9+dfuCIo6sUaW7LeeHv3FOwB36gowykobvos415jVhTgeLSor07V2vPgHGB
-Tm4sADvntX2DxQX1YvO0
-=shlP
+iQIcBAEBCAAGBQJRfc5sAAoJEECxmPOUX5FEwY8P/3/NCSy0xC1uFbWmhOhyh4uo
+bTeoLBIw67kh6HUQYimQm/vcAofREmoLVNTu8rkQ6XlGE/ZtRWqLsQQ2tujwgDHq
+LniVT38GqlfQyI+Ze2KlQJpxk3mJGyKgUHVMhzoDYLdSkDMCJp0a+lA2Ze9QY/Pc
+OyeaH38Qqu99U7vLJAIFUEhaA7BPs7byXIRa2AZ8j9Qgx941No+uzcQRNOjfU6yn
+yR2G9gfIghZpWOligNmlIKgyGqvQS9iPR1JHtSl572GgCZroycyDGle6VnqDR3k1
+ZEmoD5GJT4bRME8hhL70zEvRfazKTWcaREprx+g2yaxCR7uiDG579AXi4xWsWSRC
+zV/qF5eHuy1dUw+X6VQCi5a4lcAD1O4iChYP5x+Jf7LN3GiPvr6TBuYiCT0v7HD+
+27odo0HX49S5kOSW837tYCbXTHIffAYU7Te9uu39nCJTXnkBOXvnPj2EKSYSugM5
+7m47PDiZsKOn9NBnvkmlYKiDYuHso9F0c6aTwAtpvUAW65Sko65yUvExzCF+dkrj
+AgoEPDv6kTcCv1Xw5pi+ycrQuJrW+QZEai9apu+r6j7dfZziqGcKS29lYOwf8uWp
+MuF0XS5Hu2ixKCnw0ZIBzD0YtJDfYRNTHgyvij8TAkrc/d7m0pStcm0+SbbyC14b
+Gsle7wQ3FypJKPdzf1TK
+=1gIE
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Apr_2013_11_29_43_+1000_9uakL3EUbfUXjLcr--
+--Signature=_Mon__29_Apr_2013_11_35_40_+1000_7twd2=FMfYKT3uPf--
