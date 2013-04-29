@@ -1,108 +1,22 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the xen-arm tree
-Date: Mon, 29 Apr 2013 17:54:26 +1000
-Message-ID: <20130429175426.9423279609437a2d746cbb7b@canb.auug.org.au>
+From: Matt Fleming <matt.fleming-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: Tree for Apr 26
+Date: Mon, 29 Apr 2013 09:11:13 +0100
+Message-ID: <517E2B21.8070009@intel.com>
+References: <20130426180357.7599d1b6b7965470905dcdf3@canb.auug.org.au> <CAMuHMdWQ0rMuoH+peGMZ3=AdsYrMPpeV4_vSsLD3kaJukx=83w@mail.gmail.com> <20130429093628.b739ef3b879b6f8759bd31af@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Apr_2013_17_54_26_+1000_CH1T9ucmQ6GgzmVh"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:52629 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750828Ab3D2Hyg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Apr 2013 03:54:36 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-efi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130429093628.b739ef3b879b6f8759bd31af-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-efi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Matthew Garrett <matthew.garrett-05XSO3Yj/JvQT0dZR+AlfA@public.gmane.org>, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, "H. Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>, Peter Zijlstra <peterz-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "Luck, Tony" <tony.luck-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__29_Apr_2013_17_54_26_+1000_CH1T9ucmQ6GgzmVh
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 29/04/13 00:36, Stephen Rothwell wrote:
+> Commit e29c2de5f591 ("Merge tag 'v3.9-rc8' into efi-for-tip") by Matt
+> Fleming from the tip tree merged v3.9-rc8 (which has 0635eb8a54cf) with
+> the branch that contains 048517722cde but lost the "select UCS2_STRING"
+> which should be in drivers/firmware/efi/Kconfig.
 
-Hi all,
-
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-virt/platsmp.c between commit fe4bff02886b ("arm: introduce
-psci_smp_ops") from the xen-arm tree and commit c0114709ed85 ("irqchip:
-gic: Perform the gic_secondary_init() call via CPU notifier") from the
-arm-soc tree.
-
-The former renamed the file (and contents) so I applied the following
-patch and can carry the fix as necessary (no action is required).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 29 Apr 2013 17:52:27 +1000
-Subject: [PATCH] arm: fix for Perform the gic_secondary_init() call via CPU
- notifier
-
-due to code movement.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/kernel/psci_smp.c | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/arch/arm/kernel/psci_smp.c b/arch/arm/kernel/psci_smp.c
-index 6ef139d..cd9acc7 100644
---- a/arch/arm/kernel/psci_smp.c
-+++ b/arch/arm/kernel/psci_smp.c
-@@ -14,7 +14,6 @@
-  */
-=20
- #include <linux/init.h>
--#include <linux/irqchip/arm-gic.h>
- #include <linux/smp.h>
- #include <linux/of.h>
-=20
-@@ -55,11 +54,6 @@ static int __cpuinit psci_boot_secondary(unsigned int cp=
-u,
- 	return -ENODEV;
- }
-=20
--static void __cpuinit psci_secondary_init(unsigned int cpu)
--{
--	gic_secondary_init(0);
--}
--
- #ifdef CONFIG_HOTPLUG_CPU
- void __ref psci_cpu_die(unsigned int cpu)
- {
-@@ -84,7 +78,6 @@ bool __init psci_smp_available(void)
- }
-=20
- struct smp_operations __initdata psci_smp_ops =3D {
--	.smp_secondary_init	=3D psci_secondary_init,
- 	.smp_boot_secondary	=3D psci_boot_secondary,
- 	.cpu_die		=3D psci_cpu_die,
- };
---=20
-1.8.1
-
-
---=20
-Stephen Rothwell <sfr@canb.auug.org.au>
-
---Signature=_Mon__29_Apr_2013_17_54_26_+1000_CH1T9ucmQ6GgzmVh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRficyAAoJEECxmPOUX5FEfC4P/3BDqp2gyDOZf0IJ8GXgGCnI
-oKmL+poxxZuLEgTXeEAqA9/VW466B9O2wPYmroOo9iOCpQfOs7AB1JTbwELqY6Fx
-Htjy2x/F/eOuywitjXQujTHf4Yc3AshoroBnO6fsOFVehFQ9VDl+s/U2a013uUwa
-U478OEJaj0rP2zTnxaI6MA4/EP9EO/RdQZk+IO4goPVrYSzh2jlhEULCQ0WvVrB0
-5JwOQaxbAL/GfZAMDHc0J7AyM4lUP3n9o9sDBRUu3D/zqLXkBT9q+ONfcMXenAdf
-JShoooOqVIVoOr5TCmE1vKA/2ysyQO6MxaaCqP9uX8+eV0h9B5m1gowhLX391nRg
-57m9ubRDbxvAbWJG6m597w0SAkTO1O2iZ6T7ohPinqqQkotcA0usQQnOUl56N7Fy
-ZirVW8e4JQLJoB6khwOwiCsFRD9xggb9zARIRf28pWMKy8lnMmOIqZ56bbSmjsp8
-AtqdtKIJyCqNYLu57JwTDwdCp22wHsixXUJKMrN2tWoFBaYnM4cYsMr9MOxaIEd+
-aHVJFTOsBHUNc5twT6qgbFo7Lvq3GV5DUxcXb7Xv4id6JabjXCYoSX1zy/XVG9Nz
-V1qjgbSle46O8VMiQeEZrKWHvUN8CV2qSmeWg3X+4iMXn3I8FDuL52DmRKJyog4L
-UcsotSzlA7TJuvI7oJyC
-=w3bO
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Apr_2013_17_54_26_+1000_CH1T9ucmQ6GgzmVh--
+Eek, yes. Sorry about that. How should we resolve this?
