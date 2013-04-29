@@ -1,83 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the cgroup tree
-Date: Mon, 29 Apr 2013 14:04:33 +1000
-Message-ID: <20130429140433.92d05cd48b66ac323616d572@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' and the vfs
+ tree
+Date: Mon, 29 Apr 2013 15:21:49 +1000
+Message-ID: <20130429152149.d5bb408bf88bf46232282419@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Apr_2013_14_04_33_+1000_hYuiR+FI0xuOy/tt"
+ boundary="Signature=_Mon__29_Apr_2013_15_21_49_+1000__sgeb./wvjQFhjm6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50286 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58270 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750696Ab3D2EEr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 00:04:47 -0400
+	with ESMTP id S1751106Ab3D2FWB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 01:22:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Li Zefan <lizefan@huawei.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>, David Howells <dhowells@redhat.com>, Tom Gundersen <teg@jklm.no>
 
---Signature=_Mon__29_Apr_2013_14_04_33_+1000_hYuiR+FI0xuOy/tt
+--Signature=_Mon__29_Apr_2013_15_21_49_+1000__sgeb./wvjQFhjm6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi all,
 
-After merging the cgroup tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the tip tree got a conflict in
+drivers/firmware/efivars.c between commits f464246d85d5 ("efivars: only
+check for duplicates on the registered list") from Linus' tree and
+a2162ae42bc4 ("Include missing linux/magic.h inclusions") from the vfs
+tree and commits d68772b7c83f ("efivarfs: Move to fs/efivarfs") and
+e14ab23dde12 ("efivars: efivar_entry API") from the tip tree.
 
-arch/powerpc/mm/numa.c: In function 'arch_update_cpu_topology':
-arch/powerpc/mm/numa.c:1465:2: error: implicit declaration of function 'kza=
-lloc' [-Werror=3Dimplicit-function-declaration]
-arch/powerpc/mm/numa.c:1465:10: error: assignment makes pointer from intege=
-r without a cast [-Werror]
-arch/powerpc/mm/numa.c:1497:2: error: implicit declaration of function 'kfr=
-ee' [-Werror=3Dimplicit-function-declaration]
+I think that the second tip tree patch supersedes the patch in Linus'
+tree.
 
-Caused by commit 30c05350c39d ("powerpc/pseries: Use stop machine to
-update cpu maps") from the powerpc tree interacting with (probably)
-commit ff794dea52ea ("cpuset: remove include of cgroup.h from cpuset.h")
-from the cgroup tree.  Removing includes from header files is fraught
-with danger ...
-
-The former should have added an include of linux/slab.h to
-arch/powerpc/mm/numa.c.
-
-I have added the following merge fix patch for today (but it should be
-applied to the powerpc tree ASAP).
+I removed the file and applied the following fix up patch and can carry
+the fix as necessary (no action is required).
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 29 Apr 2013 14:01:44 +1000
-Subject: [PATCH] powerpc: numa.c: using kzalloc/kfree requires including
- slab.h
-
-fixes these build errors:
-
-arch/powerpc/mm/numa.c: In function 'arch_update_cpu_topology':
-arch/powerpc/mm/numa.c:1465:2: error: implicit declaration of function 'kza=
-lloc' [-Werror=3Dimplicit-function-declaration]
-arch/powerpc/mm/numa.c:1465:10: error: assignment makes pointer from intege=
-r without a cast [-Werror]
-arch/powerpc/mm/numa.c:1497:2: error: implicit declaration of function 'kfr=
-ee' [-Werror=3Dimplicit-function-declaration]
+Date: Mon, 29 Apr 2013 15:18:07 +1000
+Subject: [PATCH] efivars: Include missing linux/magic.h inclusions
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- arch/powerpc/mm/numa.c | 1 +
+ fs/efivarfs/super.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
-index 2d13f90..490e39c 100644
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -26,6 +26,7 @@
- #include <linux/proc_fs.h>
- #include <linux/seq_file.h>
- #include <linux/uaccess.h>
-+#include <linux/slab.h>
- #include <asm/sparsemem.h>
- #include <asm/prom.h>
- #include <asm/smp.h>
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index 34c48f1..1fa5e6d 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -12,6 +12,7 @@
+ #include <linux/fs.h>
+ #include <linux/module.h>
+ #include <linux/pagemap.h>
++#include <linux/magic.h>
+=20
+ #include "internal.h"
+=20
 --=20
 1.8.1
 
@@ -85,25 +65,25 @@ index 2d13f90..490e39c 100644
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__29_Apr_2013_14_04_33_+1000_hYuiR+FI0xuOy/tt
+--Signature=_Mon__29_Apr_2013_15_21_49_+1000__sgeb./wvjQFhjm6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRffFRAAoJEECxmPOUX5FEzacP/jsGwiqZj6GlQgstb+DS6NQ7
-f2tW2Hi2aXmUokWOcwkrn55XpaGxt22wauQtwIVAkjYIpFS+QfCkpof/6niwrXiE
-7Tzyu8Cv4Y63eYTPn3Rtrj9MKTW7pHbnP/CK4jhvxmxGJzLMB+fEaFO46vLXkLbE
-RwgWskit8o1QDpoKOh9eSuOOd10xKlL6NDJwfRaISXTZdVKybNuB5pOfHTX8tdso
-Y0ZUe1hufiOkpR0TeHjjJka0MaTikxUnN5Aoi9yP4xca3FZ9R6T2RKcUPKlLEtPq
-FkViro0aecudpEvZpfH+QONt6Mneg2lyPEQftgPtV0E0yvtES1Is9JRHcQtLl62d
-S0DAaIgKMKRZiTWbn0GW7VcMhARRueLaiczJmVoIcFrIUqGZ/DNRiiYbrrqbK6r8
-zkfPw2h3GngJY9bEQUhd7Yis9Ray7b0w96iqmKwZUGyu7bRmbZhbYgnLtIRPJ33F
-mieCOfDOKuYauG5AteoCWRNAtsElCWF9JonlR5lBPOiGqDRKAe1VKlE+CE58KCbV
-HqZegbGh/GguCnqE9bXKAA3jZlycDCZiXvzn9LZm7t28pBAaq1rlLHp/UsGSP/lZ
-wds1fhG8zHGPd5pFL6fHGPOV08DK1TNWy7chXYVoZJB3TzO/gTSRabZnoLfzPQW7
-Z+WP+1FCTE0+FMtyeCAS
-=8K40
+iQIcBAEBCAAGBQJRfgNtAAoJEECxmPOUX5FE9NAQAIyvM9/+z2gONxOEQ3jLu0sc
+YMCdeJ0PCcVGjXA/ZbN6kWPF9feNhrB1U1tEJIYBVFEWZuZUcK89UWAUdfZ4BheO
+3E8DnnIEgQo8mvFJuW4GD/iTe8q+P3rKvQkeWehXHMoE2bklWTUaZD2dDc0/NovJ
+Y3LB2nNMYZR3yy2t9mLX+MY28791LkncDYXxNKQkStecyNRKKasnSWKtDTfaUd3k
+k3kTIvwizmlYrO8b/6mVH7uUL3wv5qOEcTBneuUFVXLHk543a0UHXBmM08Hu8sRk
+UnIGsCZcfQqPgwJVH+6q9P+CwLgchJTfROGUhCQT9leFchOufkqd3lX5CGPUj7EE
+wcnqJpPyx4BWDWz0AonPDQLcvfWvXuGxeCss+UKBt1zj5hQOaj0Aun5aHJO4rUH3
+Rupxx0caKLWFgjR4ON7VFz1m4/55Xuzst7hk+4li2IL0NqgprEaBfZIDsd8ADUd+
+n2bgIBa6+cTl0IT3r9XwzftxkTH1AJJDo5QYn5s1eMVlb2ftdw2zOSHJIYJfMNAJ
+Sou48dGeHLXmP6dcY8Id77ltAW8AWqSQxuq6XRg/gY959rJc9tZovj+G0+Lip/7f
+c7SRQ4LegaunsckdhnMNBY111drEo+KiFka+gG1PXihGXMdAj4D+nqIDb45HT2gw
+uHVHUq9zYHi+x9R0pZ/s
+=srVy
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Apr_2013_14_04_33_+1000_hYuiR+FI0xuOy/tt--
+--Signature=_Mon__29_Apr_2013_15_21_49_+1000__sgeb./wvjQFhjm6--
