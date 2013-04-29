@@ -1,123 +1,125 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Tegra 30 System hangs because of commit "pinctrl: move subsystem
- mutex to pinctrl_dev struct"
-Date: Mon, 29 Apr 2013 11:15:57 -0700
-Message-ID: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Date: Mon, 29 Apr 2013 14:30:33 -0400
+Message-ID: <756994C4-53FE-4723-A37C-A5E4DAB905D2@oracle.com>
+References: <20130429112434.dcc80cfce804beeacc68793a@canb.auug.org.au> <CA52A586-E4DF-42D0-9020-D17F8822BF7C@oracle.com> <20130429154541.GI17268@fieldses.org> <09A69F90-5D9A-4AF6-9B7D-CC1D74A237EA@oracle.com> <1367252460.19515.7.camel@leira.trondhjem.org> <DBD3CE27-3A93-4BC0-B390-2EDB9D0D2BBE@oracle.com> <20130429173821.GJ17268@fieldses.org> <BD32EC01-EA3A-403C-A8D2-904B77EB79BA@oracle.com> <20130429175902.GK17268@fieldses.org>
+Mime-Version: 1.0 (Mac OS X Mail 6.3 \(1503\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:40231 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758503Ab3D2SQT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 14:16:19 -0400
-Received: by mail-la0-f52.google.com with SMTP id fd20so5683454lab.39
-        for <linux-next@vger.kernel.org>; Mon, 29 Apr 2013 11:16:17 -0700 (PDT)
+Received: from userp1040.oracle.com ([156.151.31.81]:24512 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757950Ab3D2SbL convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 14:31:11 -0400
+In-Reply-To: <20130429175902.GK17268@fieldses.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: patrice.chotard@st.com, Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Trond Myklebust <trond.myklebust@fys.uio.no>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Simo Sorce <simo@redhat.com>
 
-Hi Patrice and Linus,
 
-I'm running linux-next on my Tegra 30 system everyday. But since
-next-20130426 release, the linux-next kernel will hang on my Tegra 30
-boards like Cardhu and Beaver.
+On Apr 29, 2013, at 1:59 PM, "J. Bruce Fields" <bfields@fieldses.org> wrote:
 
-After some bisect and comparing to next-20130424, I found the commit
-"pinctrl: move subsystem mutex to pinctrl_dev struct" introduced this
-issue. If I simply revert this patch in next-20130429, system boots up
-as before.
+> On Mon, Apr 29, 2013 at 01:47:16PM -0400, Chuck Lever wrote:
+>> 
+>> On Apr 29, 2013, at 1:38 PM, "J. Bruce Fields" <bfields@fieldses.org> wrote:
+>> 
+>>> On Mon, Apr 29, 2013 at 01:04:01PM -0400, Chuck Lever wrote:
+>>>> 
+>>>> On Apr 29, 2013, at 12:21 PM, Trond Myklebust
+>>>> <trond.myklebust@fys.uio.no> wrote:
+>>>> 
+>>>>> On Mon, 2013-04-29 at 12:05 -0400, Chuck Lever wrote:
+>>>>>> On Apr 29, 2013, at 11:45 AM, "J. Bruce Fields"
+>>>>>> <bfields@fieldses.org> wrote:
+>>>>>> 
+>>>>>>> On Mon, Apr 29, 2013 at 10:53:37AM -0400, Chuck Lever wrote:
+>>>>>>>> 
+>>>>>>>> On Apr 28, 2013, at 9:24 PM, Stephen Rothwell
+>>>>>>>> <sfr@canb.auug.org.au> wrote:
+>>>>>>>> 
+>>>>>>>>> Hi J.,
+>>>>>>>>> 
+>>>>>>>>> After merging the nfsd tree, today's linux-next build (powerpc
+>>>>>>>>> ppc64_defconfig) failed like this:
+>>>>>>>>> 
+>>>>>>>>> net/sunrpc/auth_gss/svcauth_gss.c: In function
+>>>>>>>>> 'gss_proxy_save_rsc': net/sunrpc/auth_gss/svcauth_gss.c:1182:3:
+>>>>>>>>> error: implicit declaration of function 'gss_mech_get_by_OID'
+>>>>>>>>> [-Werror=implicit-function-declaration]
+>>>>>>>>> 
+>>>>>>>>> Caused byc ommit 030d794bf498 ("SUNRPC: Use gssproxy upcall for
+>>>>>>>>> server RPCGSS authentication").  gss_mech_get_by_OID() made
+>>>>>>>>> static to net/sunrpc/auth_gss/gss_mech_switch.c by commit
+>>>>>>>>> 9568c5e9a61d ("SUNRPC: Introduce rpcauth_get_pseudoflavor()") in
+>>>>>>>>> the nfs tree (part of the nfs tree that you did not merge).
+>>>>>>>>> 
+>>>>>>>>> I don't know how to fix this, so I have used the nfsd tree from
+>>>>>>>>> next-20130426 for today.
+>>>>>>>> 
+>>>>>>>> Bruce, it might make sense for me to submit the three server-side
+>>>>>>>> RPC GSS patches, and then you can rebase the gssproxy work on top
+>>>>>>>> of those.  Let me know how you would like to proceed.
+>>>>>>> 
+>>>>>>> I'm happy to take those patches whenever you consider them ready.
+>>>>>>> Would that fix the problem?
+>>>>>> 
+>>>>>> Someone would need to modify the gssproxy patches to use the new
+>>>>>> interfaces.
+>>>>>> 
+>>>>>>> Also: it looks like 030d794bf498 "SUNRPC: Introduce
+>>>>>>> rpcauth_get_pseudoflavor()" is in Trond's linux-next, but not his
+>>>>>>> nfs-for-next.  I'm not sure what that means--is it safe to rebase
+>>>>>>> on top of *that*?
+>>>>>> 
+>>>>>> That doesn't seem right to me.
+>>>>> 
+>>>>> I've now pulled the rpcsec_gss changes into the nfs-for-next. The
+>>>>> main reason why they were not pulled in earlier was due to
+>>>>> uncertainty what to do about the increase in "AUTH_GSS upcall timed
+>>>>> out." syslog warnings.
+>>>> 
+>>>> Trond's nfs-for-next now has the new rpcauth_get_gssinfo() and
+>>>> rpcauth_get_pseudoflavor() APIs, which are replacements for direct
+>>>> calls into the GSS mech switch.  These APIs are a little more generic,
+>>>> and more robust in the face of unloaded GSS kernel modules.
+>>>> 
+>>>> Instead of gss_mech_get_by_OID(), I suspect you want
+>>>> rpcauth_get_pseudoflavor(), but I haven't looked at the gssproxy code.
+>>> 
+>>> It's doing
+>>> 
+>>> 		status = -EOPNOTSUPP;
+>>> 		gm = gss_mech_get_by_OID(&ud->mech_oid);
+>>> 		if (!gm)
+>>> 			goto out;
+>>> 		status = -EINVAL;
+>>> 		status = gss_import_sec_context(ud->out_handle.data,
+>>> 						ud->out_handle.len,
+>>> 						gm, &rsci.mechctx,
+>>> 						&expiry, GFP_KERNEL);
+>>> 		if (status)
+>>> 			goto out;
+>>> 
+>>> So we need a way to get from an OID and some mechanism-specific data to
+>>> a context.
+>>> 
+>>> Looks to me like we just want to re-export gss_mech_get_by_OID().
+>> 
+>> The reason for the new wrappers is to load the kernel modules properly before trying to discover the OID -> mechanism mapping.
+>> 
+>> Where are you calling it from?  If it's from outside of the GSS module, how do you guarantee the rpc_gss_auth module is loaded?  What if the GSS mechanism for that OID isn't loaded?
+> 
+> Sorry, I should have said just "remove static from", not
+> "re-export"--it's in the same module.  So there should be no problem
+> here, right?
 
-Could you please help to check this?
+OK, gotcha.  Architecturally outside of the mech switch I'd like to see OIDs passed around embedded in GSS tuples rather than by themselves.
 
-----
-Uncompressing Linux... done, booting the kernel.
-[    0.000000] Booting Linux on physical CPU 0x0
-[    0.000000] Initializing cgroup subsys cpu
-[    0.000000] Initializing cgroup subsys cpuacct
-[    0.000000] Linux version 3.9.0-rc8-09782-ga6df01a
-(roc@roc-HP-desktop) (gcc version 4.7.3 (Ubuntu/Linaro 4.7.3-1ubuntu1)
-) #20 SMP PREEMPT Mon Apr 29 10:09:07 PDT 2013
-[    0.000000] CPU: ARMv7 Processor [412fc099] revision 9 (ARMv7), cr=10c5387d
-[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
-instruction cache
-[    0.000000] Machine: NVIDIA Tegra30 (Flattened Device Tree), model:
-NVIDIA Tegra30 Beaver evaluation board
-[    0.000000] bootconsole [earlycon0] enabled
-[    0.000000] cma: CMA: reserved 16 MiB at ae800000
-[    0.000000] Memory policy: ECC disabled, Data cache writealloc
-[    0.000000] On node 0 totalpages: 524032
-[    0.000000] free_area_init_node: node 0, pgdat c070b7c0,
-node_mem_map c075c000
-[    0.000000]   Normal zone: 1520 pages used for memmap
-[    0.000000]   Normal zone: 0 pages reserved
-[    0.000000]   Normal zone: 194560 pages, LIFO batch:31
-[    0.000000]   HighMem zone: 2574 pages used for memmap
-[    0.000000]   HighMem zone: 329472 pages, LIFO batch:31
-[    0.000000] fuse_speedo_calib: ATE prog ver 3.3
-[    0.000000] Tegra30: CPU Speedo ID 5, Soc Speedo ID 2
-[    0.000000] Tegra Revision: A03 SKU: 128 CPU Process: 4 Core Process: 0
-[    0.000000] L310 cache controller enabled
-[    0.000000] l2x0: 8 ways, CACHE_ID 0x410000c7, AUX_CTRL 0x7e480001,
-Cache size: 1048576 B
-[    0.000000] PERCPU: Embedded 8 pages/cpu @c176e000 s9280 r8192 d15296 u32768
-[    0.000000] pcpu-alloc: s9280 r8192 d15296 u32768 alloc=8*4096
-[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3
-[    0.000000] Built 1 zonelists in Zone order, mobility grouping on.
-Total pages: 522512
-[    0.000000] Kernel command line: console=ttyS0,115200n8
-root=/dev/mmcblk0p1 loglevel=8 rootwait rw earlyprintk
-[    0.000000] PID hash table entries: 4096 (order: 2, 16384 bytes)
-[    0.000000] Dentry cache hash table entries: 131072 (order: 7, 524288 bytes)
-[    0.000000] Inode-cache hash table entries: 65536 (order: 6, 262144 bytes)
-[    0.000000] Memory: 2047MB = 2047MB total
-[    0.000000] Memory: 2054764k/2054764k available, 41364k reserved,
-1317888K highmem
-[    0.000000] Virtual kernel memory layout:
-[    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
-[    0.000000]     fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
-[    0.000000]     vmalloc : 0xf0000000 - 0xff000000   ( 240 MB)
-[    0.000000]     lowmem  : 0xc0000000 - 0xef800000   ( 760 MB)
-[    0.000000]     pkmap   : 0xbfe00000 - 0xc0000000   (   2 MB)
-[    0.000000]     modules : 0xbf000000 - 0xbfe00000   (  14 MB)
-[    0.000000]       .text : 0xc0008000 - 0xc0695268   (6709 kB)
-[    0.000000]       .init : 0xc0696000 - 0xc06c8440   ( 202 kB)
-[    0.000000]       .data : 0xc06ca000 - 0xc070d020   ( 269 kB)
-[    0.000000]        .bss : 0xc070d020 - 0xc075bb88   ( 315 kB)
-[    0.000000] Preemptible hierarchical RCU implementation.
-[    0.000000] NR_IRQS:16 nr_irqs:16 16
-[    0.000000] sched_clock: 32 bits at 1000kHz, resolution 1000ns,
-wraps every 4294967ms
-[    0.000000] Console: colour dummy device 80x30
-[    0.005231] Calibrating delay loop... 1993.93 BogoMIPS (lpj=9969664)
-[    0.062959] pid_max: default: 32768 minimum: 301
-[    0.068223] Mount-cache hash table entries: 512
-[    0.083957] Initializing cgroup subsys debug
-[    0.088428] Initializing cgroup subsys freezer
-[    0.093220] CPU: Testing write buffer coherency: ok
-[    0.098680] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
-[    0.104632] Setting up static identity map for 0xc04d9dc8 - 0xc04d9e4c
-[    0.166265] CPU1: Booted secondary processor
-[    0.224635] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
-[    0.246245] CPU2: Booted secondary processor
-[    0.304634] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
-[    0.326206] CPU3: Booted secondary processor
-[    0.384634] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
-[    0.384730] Brought up 4 CPUs
-[    0.418869] SMP: Total of 4 processors activated (7975.73 BogoMIPS).
-[    0.425471] CPU: All CPU(s) started in SVC mode.
-[    0.431323] devtmpfs: initialized
-[    0.449863] pinctrl core: initialized pinctrl subsystem
-[    0.455839] regulator-dummy: no parameters
-[    0.461447] NET: Registered protocol family 16
-[    0.469728] DMA: preallocated 256 KiB pool for atomic coherent allocations
-[    0.487314] No ATAGs?
-[    0.489478] hw-breakpoint: found 5 (+1 reserved) breakpoint and 1
-watchpoint registers.
-[    0.498053] hw-breakpoint: maximum watchpoint size is 4 bytes.
-----
-System hangs here, no output at all.
+An alternative would be to use gss_mech_get_by_name(), which is already visible, loads GSS mechanism modules automatically, and returns struct gss_api_mech *.  For NFS, we should already have a clean mapping of mechanism name to pseudoflavor to GSS tuple.  Looks like rsc_parse() already uses this API.
 
-Any suggestions are welcome, I can test that on my hardware.
-Thanks,
--Bryan
+Do you have gssproxy patches published in a git tree somewhere I could review?
+
+-- 
+Chuck Lever
+chuck[dot]lever[at]oracle[dot]com
