@@ -1,61 +1,29 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 29 (staging/gdm72xx)
-Date: Mon, 29 Apr 2013 09:42:12 -0700
-Message-ID: <517EA2E4.8030905@infradead.org>
-References: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: linux-next: Tree for Apr 29 (kvm)
+Date: Mon, 29 Apr 2013 18:46:18 +0200
+Message-ID: <517EA3DA.3070706@redhat.com>
+References: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au> <517E9758.4000506@infradead.org> <20130429163135.GA2737@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:34527 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757275Ab3D2Qmi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 12:42:38 -0400
-In-Reply-To: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130429163135.GA2737@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gleb Natapov <gleb@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, KVM <kvm@vger.kernel.org>, Alex Williamson <alex.williamson@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On 04/29/13 02:17, Stephen Rothwell wrote:
-> Hi all,
+Il 29/04/2013 18:31, Gleb Natapov ha scritto:
+>> > arch/x86/kvm/x86.c: In function 'kvm_dev_ioctl_check_extension':
+>> > arch/x86/kvm/x86.c:2547:22: error: 'pci_bus_type' undeclared (first use in this function)
+>> > 
+>> > 
+>> > Oops, CONFIG_PCI is not enabled.
+> Alex, can you look at this please. Before "kvm: Allow build-time configuration
+> of KVM device assignment" commit KVM depended on PCI to be enabled.
 > 
-> Changes since 20130426:
-> 
 
-on x86_64:
+KVM_CAP_IOMMU probably should depend on device assignment.  It doesn't
+really belong in KVM at all, and is only there for device assignment.
 
-when CONFIG_MMC=m and
-CONFIG_WIMAX_GDM72XX_SDIO=y (because it is boolean, not tristate):
-
-gdm_sdio.c:(.text+0x147093): undefined reference to `sdio_claim_host'
-gdm_sdio.c:(.text+0x1470a2): undefined reference to `sdio_release_irq'
-gdm_sdio.c:(.text+0x1470b1): undefined reference to `sdio_disable_func'
-gdm_sdio.c:(.text+0x1470c0): undefined reference to `sdio_release_host'
-gdm_sdio.c:(.text+0x14725a): undefined reference to `sdio_claim_host'
-gdm_sdio.c:(.text+0x14728f): undefined reference to `sdio_memcpy_toio'
-gdm_sdio.c:(.text+0x1472fa): undefined reference to `sdio_memcpy_toio'
-gdm_sdio.c:(.text+0x147342): undefined reference to `sdio_release_host'
-gdm_sdio.c:(.text+0x1477b6): undefined reference to `sdio_readb'
-gdm_sdio.c:(.text+0x1477db): undefined reference to `sdio_writeb'
-gdm_sdio.c:(.text+0x1477f5): undefined reference to `sdio_memcpy_fromio'
-gdm_sdio.c:(.text+0x14795b): undefined reference to `sdio_memcpy_fromio'
-gdm_sdio.c:(.text+0x1479ba): undefined reference to `sdio_memcpy_fromio'
-gdm_sdio.c:(.text+0x147ba8): undefined reference to `sdio_writeb'
-gdm_sdio.c:(.text+0x147f45): undefined reference to `sdio_claim_host'
-gdm_sdio.c:(.text+0x147f54): undefined reference to `sdio_enable_func'
-gdm_sdio.c:(.text+0x147f6a): undefined reference to `sdio_claim_irq'
-gdm_sdio.c:(.text+0x148343): undefined reference to `sdio_writeb'
-gdm_sdio.c:(.text+0x148352): undefined reference to `sdio_release_host'
-sdio_boot.c:(.text+0x148543): undefined reference to `sdio_memcpy_toio'
-sdio_boot.c:(.text+0x1485b7): undefined reference to `sdio_readb'
-sdio_boot.c:(.text+0x14862c): undefined reference to `sdio_memcpy_fromio'
-sdio_boot.c:(.text+0x14867d): undefined reference to `sdio_writeb'
-sdio_boot.c:(.text+0x14869a): undefined reference to `sdio_writeb'
-gdm_sdio.c:(.init.text+0xa6bc): undefined reference to `sdio_register_driver'
-gdm_sdio.c:(.exit.text+0x23b6): undefined reference to `sdio_unregister_driver'
-
-
-
--- 
-~Randy
+Paolo
