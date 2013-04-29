@@ -1,50 +1,49 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: Tegra 30 System hangs because of commit "pinctrl: move subsystem
- mutex to pinctrl_dev struct"
-Date: Mon, 29 Apr 2013 13:53:00 -0700
-Message-ID: <CAK5ve-+F2QgO7UUX-RVtu1C9_wzk8V9UCe231HVTQq9CuTu+rQ@mail.gmail.com>
-References: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
- <517ECE94.4020806@imgtec.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Apr 29
+Date: Mon, 29 Apr 2013 14:03:23 -0700
+Message-ID: <517EE01B.80109@infradead.org>
+References: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au> <517ED2A6.5030200@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:55152 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758152Ab3D2UxW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 16:53:22 -0400
-Received: by mail-la0-f53.google.com with SMTP id eg20so5890572lab.12
-        for <linux-next@vger.kernel.org>; Mon, 29 Apr 2013 13:53:20 -0700 (PDT)
-In-Reply-To: <517ECE94.4020806@imgtec.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Hogan <james.hogan@imgtec.com>
-Cc: "patrice.chotard" <patrice.chotard@st.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <517ED2A6.5030200@infradead.org>
+Sender: owner-linux-mm@kvack.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MM <linux-mm@kvack.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Apr 29, 2013 at 12:48 PM, James Hogan <james.hogan@imgtec.com> wrote:
-> On 29/04/13 19:15, Bryan Wu wrote:
->> Hi Patrice and Linus,
+On 04/29/13 13:05, Randy Dunlap wrote:
+> On 04/29/13 02:17, Stephen Rothwell wrote:
+>> Hi all,
 >>
->> I'm running linux-next on my Tegra 30 system everyday. But since
->> next-20130426 release, the linux-next kernel will hang on my Tegra 30
->> boards like Cardhu and Beaver.
+>> Changes since 20130426:
 >>
->> After some bisect and comparing to next-20130424, I found the commit
->> "pinctrl: move subsystem mutex to pinctrl_dev struct" introduced this
->> issue. If I simply revert this patch in next-20130429, system boots up
->> as before.
->>
->> Could you please help to check this?
->
-> I spent a while tracking this one down today too, then found it was
-> already fixed. See the patch "[PATCH, for-next] pinctrl: fix mutex
-> deadlock in get_pinctrl_dev_from_of_node()" from Daniel Mack.
->
-> Cheers
-> James
->
+> 
+> 
+> (who is responsible for MEM_SOFT_DIRTY?)
+> 
+> 
+> on x86_64:
+> 
+> warning: (HWPOISON_INJECT && MEM_SOFT_DIRTY) selects PROC_PAGE_MONITOR which has unmet direct dependencies (PROC_FS && MMU)
+> 
+> because MEM_SOFT_DIRTY selects PROC_PAGE_MONITOR when CONFIG_PROC_FS is not enabled.
+> 
+> 
+> Can MEM_SOFT_DIRTY depend on PROC_FS?
+> 
+> and the help text for MEM_SOFT_DIRTY refers to Documentation/vm/soft-dirty.txt,
+> which does not exist.  Please add the file.
 
-Thanks James, I confirm the new patch in pinctrl repo's for-next
-branch fixed this issue.
-Everything works fine on my Cardhu and Beaver board.
+Oops, sorry, I looked in the wrong place for that file, which DOES exist.
 
--Bryan
+
+-- 
+~Randy
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
