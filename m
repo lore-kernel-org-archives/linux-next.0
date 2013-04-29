@@ -1,81 +1,197 @@
-From: Chanho Min <chanho.min@lge.com>
-Subject: [PATCH] lib: add weak __clzsi2()/__clzdi2() functions
-Date: Mon, 29 Apr 2013 14:40:05 +0900
-Message-ID: <1367214005-14302-1-git-send-email-chanho.min@lge.com>
-Return-path: <sparclinux-owner@vger.kernel.org>
-Sender: sparclinux-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kyungsik Lee <kyungsik.lee@lge.com>, Yann Collet <yann.collet.73@gmail.com>, Bob Pearson <rpearson@systemfabricworks.com>, Richard Weinberger <richard@nod.at>, Geert Uytterhoeven <geert.uytterhoeven@gmail.com>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, linux-m68k@vger.kernel.org, linux-next@vger.kernel.org, Chanho Min <chanho.min@lge.com>
-List-Id: linux-next.vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Mon, 29 Apr 2013 15:45:12 +1000
+Message-ID: <20130429154512.13325eb1fe134fbfce93774b@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__29_Apr_2013_15_45_12_+1000_=3uQy5uIrnr2OwPH"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37319 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750970Ab3D2FpW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 01:45:22 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Gundersen <teg@jklm.no>, Matt Fleming <matt.fleming@intel.com>
 
-Some architectures need __clzsi2() or __clzdi2() for __builtin_clz and
-It causes build failure. They can be implemented using the fls() and
-overridden by linking arch-specific versions may not be implemented yet.
+--Signature=_Mon__29_Apr_2013_15_45_12_+1000_=3uQy5uIrnr2OwPH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reference: https://lkml.org/lkml/2013/4/18/603
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Chanho Min <chanho.min@lge.com>
+Hi all,
+
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+drivers/firmware/efi/efivars.c: In function 'efivar_release':
+drivers/firmware/efi/efivars.c:300:2: error: implicit declaration of functi=
+on 'kfree' [-Werror=3Dimplicit-function-declaration]
+drivers/firmware/efi/efivars.c: In function 'efivar_create':
+drivers/firmware/efi/efivars.c:341:2: error: implicit declaration of functi=
+on 'kzalloc' [-Werror=3Dimplicit-function-declaration]
+drivers/firmware/efi/efivars.c:341:12: warning: assignment makes pointer fr=
+om integer without a cast [enabled by default]
+drivers/firmware/efi/efivars.c: In function 'efivar_create_sysfs_entry':
+drivers/firmware/efi/efivars.c:420:13: warning: assignment makes pointer fr=
+om integer without a cast [enabled by default]
+drivers/firmware/efi/efivars.c: In function 'create_efivars_bin_attributes':
+drivers/firmware/efi/efivars.c:460:7: warning: assignment makes pointer fro=
+m integer without a cast [enabled by default]
+drivers/firmware/efi/efivars.c:470:7: warning: assignment makes pointer fro=
+m integer without a cast [enabled by default]
+drivers/firmware/efi/efivars.c: In function 'efivar_update_sysfs_entries':
+drivers/firmware/efi/efivars.c:527:8: warning: assignment makes pointer fro=
+m integer without a cast [enabled by default]
+drivers/firmware/efi/efivars.c: In function 'efivars_sysfs_callback':
+drivers/firmware/efi/efivars.c:551:8: warning: assignment makes pointer fro=
+m integer without a cast [enabled by default]
+fs/efivarfs/inode.c: In function 'efivarfs_create':
+fs/efivarfs/inode.c:115:2: error: implicit declaration of function 'kzalloc=
+' [-Werror=3Dimplicit-function-declaration]
+fs/efivarfs/inode.c:115:6: warning: assignment makes pointer from integer w=
+ithout a cast [enabled by default]
+fs/efivarfs/inode.c:139:3: error: implicit declaration of function 'kfree' =
+[-Werror=3Dimplicit-function-declaration]
+fs/efivarfs/file.c: In function 'efivarfs_file_write':
+fs/efivarfs/file.c:35:2: error: implicit declaration of function 'kmalloc' =
+[-Werror=3Dimplicit-function-declaration]
+fs/efivarfs/file.c:35:7: warning: assignment makes pointer from integer wit=
+hout a cast [enabled by default]
+fs/efivarfs/file.c:62:2: error: implicit declaration of function 'kfree' [-=
+Werror=3Dimplicit-function-declaration]
+fs/efivarfs/file.c: In function 'efivarfs_file_read':
+fs/efivarfs/file.c:81:7: warning: assignment makes pointer from integer wit=
+hout a cast [enabled by default]
+fs/efivarfs/super.c: In function 'efivarfs_callback':
+fs/efivarfs/super.c:132:2: error: implicit declaration of function 'kmalloc=
+' [-Werror=3Dimplicit-function-declaration]
+fs/efivarfs/super.c:132:8: warning: assignment makes pointer from integer w=
+ithout a cast [enabled by default]
+fs/efivarfs/super.c:142:7: warning: assignment makes pointer from integer w=
+ithout a cast [enabled by default]
+fs/efivarfs/super.c:166:2: error: implicit declaration of function 'kfree' =
+[-Werror=3Dimplicit-function-declaration]
+drivers/firmware/efi/efi-pstore.c: In function 'efi_pstore_read_func':
+drivers/firmware/efi/efi-pstore.c:77:2: error: implicit declaration of func=
+tion 'kmalloc' [-Werror=3Dimplicit-function-declaration]
+drivers/firmware/efi/efi-pstore.c:77:16: warning: assignment makes pointer =
+from integer without a cast [enabled by default]
+drivers/firmware/efi/efi-pstore.c: In function 'efivars_pstore_init':
+drivers/firmware/efi/efi-pstore.c:225:22: warning: assignment makes pointer=
+ from integer without a cast [enabled by default]
+
+Probably caused by commits d68772b7c83f ("efivarfs: Move to fs/efivarfs")
+and/or a9499fa7cd3f ("efi: split efisubsystem from efivars") interacting
+with some header inclusion changes in the rest of today's trees.
+
+See Rule 1 from Documentation/SubmitChecklist.
+
+I have applied the following merge fix patch for today (this won't quite
+apply to the tip tree due to the other patch adding linux/magic.h to
+fs/efivarfs/super.c, but that could be applied as well):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 29 Apr 2013 15:34:28 +1000
+Subject: [PATCH] efivars: use of kmalloc etc requires the inclusion of slab=
+.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- lib/Makefile |    2 +-
- lib/clz.c    |   36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 37 insertions(+), 1 deletion(-)
- create mode 100644 lib/clz.c
+ drivers/firmware/efi/efivars.c | 1 +
+ fs/efivarfs/file.c             | 1 +
+ fs/efivarfs/inode.c            | 1 +
+ fs/efivarfs/super.c            | 1 +
+ drivers/firmware/efi/efi-pstore.c | 1 +
+ 5 files changed, 5 insertions(+)
 
-diff --git a/lib/Makefile b/lib/Makefile
-index af79e8c..e17b3ee 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -23,7 +23,7 @@ lib-y	+= kobject.o klist.o
- 
- obj-y += bcd.o div64.o sort.o parser.o halfmd4.o debug_locks.o random32.o \
- 	 bust_spinlocks.o hexdump.o kasprintf.o bitmap.o scatterlist.o \
--	 gcd.o lcm.o list_sort.o uuid.o flex_array.o \
-+	 gcd.o lcm.o list_sort.o uuid.o flex_array.o clz.o\
- 	 bsearch.o find_last_bit.o find_next_bit.o llist.o memweight.o kfifo.o
- obj-y += string_helpers.o
- obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
-diff --git a/lib/clz.c b/lib/clz.c
-new file mode 100644
-index 0000000..5222b2d
---- /dev/null
-+++ b/lib/clz.c
-@@ -0,0 +1,36 @@
-+/*
-+ * lib/clz.c
-+ *
-+ * Copyright (C) 2013 Chanho Min <chanho.min@lge.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * __clzsi2/_clzdi2() can be overridden by linking arch-specific versions.
-+ */
-+
-+#include <linux/export.h>
-+#include <linux/kernel.h>
-+
-+int __weak __clzsi2(int val)
-+{
-+	return BITS_PER_LONG - fls(val);
-+}
-+EXPORT_SYMBOL(__clzsi2);
-+
-+#if BITS_PER_LONG == 32
-+int __weak __clzdi2(long val)
-+{
-+	return BITS_PER_LONG - fls((int)val);
-+}
-+EXPORT_SYMBOL(__clzdi2);
-+#elif BITS_PER_LONG == 64
-+int __weak __clzdi2i(long val)
-+{
-+	return BITS_PER_LONG - fls64((u64)val);
-+}
-+EXPORT_SYMBOL(__clzdi2);
-+#else
-+#error BITS_PER_LONG not 32 or 64
-+#endif
--- 
-1.7.9.5
+diff --git a/drivers/firmware/efi/efivars.c b/drivers/firmware/efi/efivars.c
+index f8f5e5d..66928a3 100644
+--- a/drivers/firmware/efi/efivars.c
++++ b/drivers/firmware/efi/efivars.c
+@@ -68,6 +68,7 @@
+ #include <linux/efi.h>
+ #include <linux/module.h>
+ #include <linux/ucs2_string.h>
++#include <linux/slab.h>
+=20
+ #define EFIVARS_VERSION "0.08"
+ #define EFIVARS_DATE "2004-May-17"
+diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
+index ede07fc..bfb5315 100644
+--- a/fs/efivarfs/file.c
++++ b/fs/efivarfs/file.c
+@@ -9,6 +9,7 @@
+=20
+ #include <linux/efi.h>
+ #include <linux/fs.h>
++#include <linux/slab.h>
+=20
+ #include "internal.h"
+=20
+diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
+index 640e289..7e787fb 100644
+--- a/fs/efivarfs/inode.c
++++ b/fs/efivarfs/inode.c
+@@ -10,6 +10,7 @@
+ #include <linux/efi.h>
+ #include <linux/fs.h>
+ #include <linux/ctype.h>
++#include <linux/slab.h>
+=20
+ #include "internal.h"
+=20
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index 1fa5e6d..94d9192 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -12,6 +12,7 @@
+ #include <linux/fs.h>
+ #include <linux/module.h>
+ #include <linux/pagemap.h>
++#include <linux/slab.h>
+ #include <linux/magic.h>
+=20
+ #include "internal.h"
+diff --git a/drivers/firmware/efi/efi-pstore.c b/drivers/firmware/efi/efi-p=
+store.c
+index 221ad1b..0242795 100644
+--- a/drivers/firmware/efi/efi-pstore.c
++++ b/drivers/firmware/efi/efi-pstore.c
+@@ -2,6 +2,7 @@
+ #include <linux/module.h>
+ #include <linux/pstore.h>
+ #include <linux/ucs2_string.h>
++#include <linux/slab.h>
+=20
+ #define DUMP_NAME_LEN 52
+=20
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__29_Apr_2013_15_45_12_+1000_=3uQy5uIrnr2OwPH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRfgjoAAoJEECxmPOUX5FEYZsP/2Xjb1wkAJ6JfuZZOPQysry1
+i9+z+NS6ASBt/H6Jl0CARem4fE7OZFlzdgK4xjJ/40ZfvYbDqjkql9eHfYdVWuzB
+W4EWwnD48ZJ/63n5Cj6ADPL15Qy/jn27m4dYhUJ7/MJKsi7Rge1pKdS7kQtZ2TQU
+FopPtUqcncMMMMa8u0FMiEn6kGObNnOJ38iNFu5wWf32jDG3KhagC+VjHHkxEzlw
+330NBU4WeHR9ZlO7nBsDl6RsP1AyNmtdnDb8usw74UFBHyCHgGYsPIyoY7jgb5LX
+9qRGrsYiwbW3OPN9oOrmsqQqU4/xnZesJjJY9QJP7Xh1V7ZkcT3b32YAKvTr6glY
+JQZPUGiUO1T9thfdtagl61hbRVI5sYUbLfdah7KRIbEgLiLGc3w96V3DOOq1ljnb
+/gKWOAFBMJ9LFTZjouRLwwXTmg3um8gBDzKF7vqZd+UEk+5JP/GoHeCp0jnDTHvV
+6y0KLEEu/fBTJJ6m5cCeOkjWJib+N/ryrcnujn2pBGWkMeuwff9iMn9e7BLe3uxj
+EzZNg92TGuWvGOF2vigiwwK2ixLp02gq4orlu4n7TxyxKQSFeNF/MnknU/bbSKNU
+LGoxGBoZCbMkFOFVLC6jF/7Tq7vNXIjd9Udee2X99msiH0+XQtApS8uB6FEvbQux
+1ARX8NoRXVdqbPBe99/1
+=35Bn
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__29_Apr_2013_15_45_12_+1000_=3uQy5uIrnr2OwPH--
