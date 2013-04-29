@@ -1,36 +1,72 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: linux-next: Tree for Apr 29 (kvm)
-Date: Mon, 29 Apr 2013 11:01:50 -0600
-Message-ID: <1367254910.16887.101.camel@ul30vt.home>
-References: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au>
-	 <517E9758.4000506@infradead.org> <20130429163135.GA2737@redhat.com>
-	 <517EA3DA.3070706@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Date: Mon, 29 Apr 2013 13:04:01 -0400
+Message-ID: <DBD3CE27-3A93-4BC0-B390-2EDB9D0D2BBE@oracle.com>
+References: <20130429112434.dcc80cfce804beeacc68793a@canb.auug.org.au> <CA52A586-E4DF-42D0-9020-D17F8822BF7C@oracle.com> <20130429154541.GI17268@fieldses.org> <09A69F90-5D9A-4AF6-9B7D-CC1D74A237EA@oracle.com> <1367252460.19515.7.camel@leira.trondhjem.org>
+Mime-Version: 1.0 (Mac OS X Mail 6.3 \(1503\))
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:51645 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757031Ab3D2RCz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Apr 2013 13:02:55 -0400
-In-Reply-To: <517EA3DA.3070706@redhat.com>
+Received: from userp1040.oracle.com ([156.151.31.81]:38967 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757311Ab3D2REb convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 13:04:31 -0400
+In-Reply-To: <1367252460.19515.7.camel@leira.trondhjem.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Gleb Natapov <gleb@redhat.com>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, KVM <kvm@vger.kernel.org>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Trond Myklebust <trond.myklebust@fys.uio.no>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Simo Sorce <simo@redhat.com>
 
-On Mon, 2013-04-29 at 18:46 +0200, Paolo Bonzini wrote:
-> Il 29/04/2013 18:31, Gleb Natapov ha scritto:
-> >> > arch/x86/kvm/x86.c: In function 'kvm_dev_ioctl_check_extension':
-> >> > arch/x86/kvm/x86.c:2547:22: error: 'pci_bus_type' undeclared (first use in this function)
-> >> > 
-> >> > 
-> >> > Oops, CONFIG_PCI is not enabled.
-> > Alex, can you look at this please. Before "kvm: Allow build-time configuration
-> > of KVM device assignment" commit KVM depended on PCI to be enabled.
-> > 
+
+On Apr 29, 2013, at 12:21 PM, Trond Myklebust <trond.myklebust@fys.uio.no> wrote:
+
+> On Mon, 2013-04-29 at 12:05 -0400, Chuck Lever wrote:
+>> On Apr 29, 2013, at 11:45 AM, "J. Bruce Fields" <bfields@fieldses.org> wrote:
+>> 
+>>> On Mon, Apr 29, 2013 at 10:53:37AM -0400, Chuck Lever wrote:
+>>>> 
+>>>> On Apr 28, 2013, at 9:24 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>> 
+>>>>> Hi J.,
+>>>>> 
+>>>>> After merging the nfsd tree, today's linux-next build (powerpc
+>>>>> ppc64_defconfig) failed like this:
+>>>>> 
+>>>>> net/sunrpc/auth_gss/svcauth_gss.c: In function 'gss_proxy_save_rsc':
+>>>>> net/sunrpc/auth_gss/svcauth_gss.c:1182:3: error: implicit declaration of function 'gss_mech_get_by_OID' [-Werror=implicit-function-declaration]
+>>>>> 
+>>>>> Caused byc ommit 030d794bf498 ("SUNRPC: Use gssproxy upcall for server
+>>>>> RPCGSS authentication").  gss_mech_get_by_OID() made static to
+>>>>> net/sunrpc/auth_gss/gss_mech_switch.c by commit 9568c5e9a61d ("SUNRPC:
+>>>>> Introduce rpcauth_get_pseudoflavor()") in the nfs tree (part of the nfs
+>>>>> tree that you did not merge).
+>>>>> 
+>>>>> I don't know how to fix this, so I have used the nfsd tree from
+>>>>> next-20130426 for today.
+>>>> 
+>>>> Bruce, it might make sense for me to submit the three server-side RPC GSS patches, and then you can rebase the gssproxy work on top of those.  Let me know how you would like to proceed.
+>>> 
+>>> I'm happy to take those patches whenever you consider them ready.  Would
+>>> that fix the problem?
+>> 
+>> Someone would need to modify the gssproxy patches to use the new interfaces.
+>> 
+>>> Also: it looks like 030d794bf498 "SUNRPC: Introduce
+>>> rpcauth_get_pseudoflavor()" is in Trond's linux-next, but not his
+>>> nfs-for-next.  I'm not sure what that means--is it safe to rebase on top
+>>> of *that*?
+>> 
+>> That doesn't seem right to me.
 > 
-> KVM_CAP_IOMMU probably should depend on device assignment.  It doesn't
-> really belong in KVM at all, and is only there for device assignment.
+> I've now pulled the rpcsec_gss changes into the nfs-for-next. The main
+> reason why they were not pulled in earlier was due to uncertainty what
+> to do about the increase in "AUTH_GSS upcall timed out." syslog
+> warnings.
 
-Yep, exactly.
+Trond's nfs-for-next now has the new rpcauth_get_gssinfo() and rpcauth_get_pseudoflavor() APIs, which are replacements for direct calls into the GSS mech switch.  These APIs are a little more generic, and more robust in the face of unloaded GSS kernel modules.
+
+Instead of gss_mech_get_by_OID(), I suspect you want rpcauth_get_pseudoflavor(), but I haven't looked at the gssproxy code.
+
+-- 
+Chuck Lever
+chuck[dot]lever[at]oracle[dot]com
