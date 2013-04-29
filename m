@@ -1,85 +1,149 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the xen-arm tree
-Date: Mon, 29 Apr 2013 09:25:12 +0100
-Message-ID: <20130429082511.GA539@arm.com>
-References: <20130429175426.9423279609437a2d746cbb7b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the vfs tree
+Date: Mon, 29 Apr 2013 18:25:37 +1000
+Message-ID: <20130429182537.1a6c83aa578271d427dd0ce2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__29_Apr_2013_18_25_37_+1000_Fyc7DK016UovaLG5"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47705 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751043Ab3D2IZs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 04:25:48 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joonsoo Kim <js1304@gmail.com>, David Howells <dhowells@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
+
+--Signature=_Mon__29_Apr_2013_18_25_37_+1000_Fyc7DK016UovaLG5
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20130429175426.9423279609437a2d746cbb7b@canb.auug.org.au>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Stephen,
+Hi Andrew,
 
-On Mon, Apr 29, 2013 at 08:54:26AM +0100, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/mach-virt/platsmp.c between commit fe4bff02886b ("arm: introduce
-> psci_smp_ops") from the xen-arm tree and commit c0114709ed85 ("irqchip:
-> gic: Perform the gic_secondary_init() call via CPU notifier") from the
-> arm-soc tree.
-> 
-> The former renamed the file (and contents) so I applied the following
-> patch and can carry the fix as necessary (no action is required).
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 29 Apr 2013 17:52:27 +1000
-> Subject: [PATCH] arm: fix for Perform the gic_secondary_init() call via CPU
->  notifier
-> 
-> due to code movement.
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/arm/kernel/psci_smp.c | 7 -------
->  1 file changed, 7 deletions(-)
-> 
-> diff --git a/arch/arm/kernel/psci_smp.c b/arch/arm/kernel/psci_smp.c
-> index 6ef139d..cd9acc7 100644
-> --- a/arch/arm/kernel/psci_smp.c
-> +++ b/arch/arm/kernel/psci_smp.c
-> @@ -14,7 +14,6 @@
->   */
->  
->  #include <linux/init.h>
-> -#include <linux/irqchip/arm-gic.h>
->  #include <linux/smp.h>
->  #include <linux/of.h>
->  
-> @@ -55,11 +54,6 @@ static int __cpuinit psci_boot_secondary(unsigned int cpu,
->  	return -ENODEV;
->  }
->  
-> -static void __cpuinit psci_secondary_init(unsigned int cpu)
-> -{
-> -	gic_secondary_init(0);
-> -}
-> -
->  #ifdef CONFIG_HOTPLUG_CPU
->  void __ref psci_cpu_die(unsigned int cpu)
->  {
-> @@ -84,7 +78,6 @@ bool __init psci_smp_available(void)
->  }
->  
->  struct smp_operations __initdata psci_smp_ops = {
-> -	.smp_secondary_init	= psci_secondary_init,
->  	.smp_boot_secondary	= psci_boot_secondary,
->  	.cpu_die		= psci_cpu_die,
->  };
+Today's linux-next merge of the akpm tree got a conflict in
+fs/proc/internal.h between commit 4608da4a9433 ("proc: Move non-public
+stuff from linux/proc_fs.h to fs/proc/internal.h") from the vfs tree and
+commit "mm, vmalloc: move get_vmalloc_info() to vmalloc.c" from the akpm
+tree.
 
-The fix looks fine. Thanks.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
--- 
-Catalin
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/proc/internal.h
+index 04255b6,47eac85..0000000
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@@ -191,56 -157,36 +191,35 @@@ static inline struct proc_dir_entry *pd
+  	atomic_inc(&pde->count);
+  	return pde;
+  }
+ -void pde_put(struct proc_dir_entry *pde);
+ -
+ -int proc_fill_super(struct super_block *);
+ -struct inode *proc_get_inode(struct super_block *, struct proc_dir_entry =
+*);
+ -int proc_remount(struct super_block *sb, int *flags, char *data);
+ +extern void pde_put(struct proc_dir_entry *);
+ =20
+  /*
+ - * These are generic /proc routines that use the internal
+ - * "struct proc_dir_entry" tree to traverse the filesystem.
+ - *
+ - * The /proc root directory has extended versions to take care
+ - * of the /proc/<pid> subdirectories.
+ + * inode.c
+   */
+ -int proc_readdir(struct file *, void *, filldir_t);
+ -struct dentry *proc_lookup(struct inode *, struct dentry *, unsigned int);
+ +struct pde_opener {
+ +	struct file *file;
+ +	struct list_head lh;
+ +	int closing;
+ +	struct completion *c;
+ +};
+ =20
+ +extern const struct inode_operations proc_pid_link_inode_operations;
+ =20
+ +extern void proc_init_inodecache(void);
+ +extern struct inode *proc_get_inode(struct super_block *, struct proc_dir=
+_entry *);
+ +extern int proc_fill_super(struct super_block *);
+ +extern void proc_entry_rundown(struct proc_dir_entry *);
+ =20
+ -/* Lookups */
+ -typedef struct dentry *instantiate_t(struct inode *, struct dentry *,
+ -				struct task_struct *, const void *);
+ -int proc_fill_cache(struct file *filp, void *dirent, filldir_t filldir,
+ -	const char *name, int len,
+ -	instantiate_t instantiate, struct task_struct *task, const void *ptr);
+ -int pid_revalidate(struct dentry *dentry, unsigned int flags);
+ -struct inode *proc_pid_make_inode(struct super_block * sb, struct task_st=
+ruct *task);
+ -extern const struct dentry_operations pid_dentry_operations;
+ -int pid_getattr(struct vfsmount *mnt, struct dentry *dentry, struct kstat=
+ *stat);
+ -int proc_setattr(struct dentry *dentry, struct iattr *attr);
+ +/*
+-  * mmu.c
+-  */
+- struct vmalloc_info {
+- 	unsigned long	used;
+- 	unsigned long	largest_chunk;
+- };
+-=20
+- #ifdef CONFIG_MMU
+- #define VMALLOC_TOTAL (VMALLOC_END - VMALLOC_START)
+- extern void get_vmalloc_info(struct vmalloc_info *);
+-=20
+- #else
+- #define VMALLOC_TOTAL 0UL
+- static inline void get_vmalloc_info(struct vmalloc_info *vmi)
+- {
+- 	vmi->used =3D 0;
+- 	vmi->largest_chunk =3D 0;
+- }
+- #endif
+-=20
+- /*
+ + * proc_devtree.c
+ + */
+ +#ifdef CONFIG_PROC_DEVICETREE
+ +extern void proc_device_tree_init(void);
+ +#endif
+ =20
+ +/*
+ + * proc_namespaces.c
+ + */
+  extern const struct inode_operations proc_ns_dir_inode_operations;
+  extern const struct file_operations proc_ns_dir_operations;
+ =20
+
+--Signature=_Mon__29_Apr_2013_18_25_37_+1000_Fyc7DK016UovaLG5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRfi6BAAoJEECxmPOUX5FEz+kP/2rv7GXus+f4n5+Kozs+kzA0
+bumNaI1DS3NSFUH+iCWJ1tZqHiYk/KSTKKDL5UhVXIdQxNm7fZMpBL31N9tSh9vb
+D6gsDo6YOMgZ307IClU+FriiRj/8W38e6cbVv1q0bDSswB/uTLikKq+gFA21J56E
+fLMZVtcpdW8Rxjxb8m+UksUs63u8qZOoj09vU4556llyNp3d8NXFwWPaWb5sEbWN
+8Ozy0XFoQXnXfLyAVW9W04tOZJKoGHwRQiPFSwKEKvB8PQoOEIUYGQAs/lZu4rm9
+Cc4yV/1PkWb+JP4IXJj8IxcDtmP1jNkR1dYOmZu6bcOs2ALbptOpkpnx10ayttrp
+uoAqbWsvXcKUeTotVkbs6LHPdaPDBMxoDRwIPBiMM9yvwTqcHcx4q7vD//BvhSX1
+dyISv+P1TPen09MZq0cfQJ8XEVGZkP8pbG5oiB0xRQAKVVBiGLIWCEfD95zLPSL9
+BxTaefA4i9ys0v8T5Z2jFqFJnpPyoOcN43Teli/Bctw7//NXx1H8XZNAB4WlaOOH
+/qxh5QzeqeE5UihhKjIIZsADuz5cSAqlkgWjsOyb7CnD0GP45JMeRiojA8PwsPmV
+3zu8cJ4sLT4V+a1a/0/twF+rrKu6imXtPwvcUSvmbxR2dl18Q10tZDAwffLQ0L3n
+mG5jc+tuf+RyaZz9RzXj
+=x7ey
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__29_Apr_2013_18_25_37_+1000_Fyc7DK016UovaLG5--
