@@ -1,40 +1,46 @@
-From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: Tegra 30 System hangs because of commit "pinctrl: move subsystem
- mutex to pinctrl_dev struct"
-Date: Mon, 29 Apr 2013 20:48:36 +0100
-Message-ID: <517ECE94.4020806@imgtec.com>
-References: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Apr 29
+Date: Mon, 29 Apr 2013 13:05:58 -0700
+Message-ID: <517ED2A6.5030200@infradead.org>
+References: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from multi.imgtec.com ([194.200.65.239]:29600 "EHLO multi.imgtec.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932539Ab3D2Tsm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Apr 2013 15:48:42 -0400
-In-Reply-To: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bryan Wu <cooloney@gmail.com>
-Cc: patrice.chotard@st.com, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au>
+Sender: owner-linux-mm@kvack.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MM <linux-mm@kvack.org>
+List-Id: linux-next.vger.kernel.org
 
-On 29/04/13 19:15, Bryan Wu wrote:
-> Hi Patrice and Linus,
+On 04/29/13 02:17, Stephen Rothwell wrote:
+> Hi all,
 > 
-> I'm running linux-next on my Tegra 30 system everyday. But since
-> next-20130426 release, the linux-next kernel will hang on my Tegra 30
-> boards like Cardhu and Beaver.
+> Changes since 20130426:
 > 
-> After some bisect and comparing to next-20130424, I found the commit
-> "pinctrl: move subsystem mutex to pinctrl_dev struct" introduced this
-> issue. If I simply revert this patch in next-20130429, system boots up
-> as before.
-> 
-> Could you please help to check this?
 
-I spent a while tracking this one down today too, then found it was
-already fixed. See the patch "[PATCH, for-next] pinctrl: fix mutex
-deadlock in get_pinctrl_dev_from_of_node()" from Daniel Mack.
 
-Cheers
-James
+(who is responsible for MEM_SOFT_DIRTY?)
+
+
+on x86_64:
+
+warning: (HWPOISON_INJECT && MEM_SOFT_DIRTY) selects PROC_PAGE_MONITOR which has unmet direct dependencies (PROC_FS && MMU)
+
+because MEM_SOFT_DIRTY selects PROC_PAGE_MONITOR when CONFIG_PROC_FS is not enabled.
+
+
+Can MEM_SOFT_DIRTY depend on PROC_FS?
+
+and the help text for MEM_SOFT_DIRTY refers to Documentation/vm/soft-dirty.txt,
+which does not exist.  Please add the file.
+
+
+-- 
+~Randy
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
