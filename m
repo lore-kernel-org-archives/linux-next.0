@@ -1,56 +1,37 @@
-From: Ben Myers <bpm@sgi.com>
-Subject: Re: linux-next: build failure after merge of the xfs tree
-Date: Tue, 30 Apr 2013 13:36:47 -0500
-Message-ID: <20130430183647.GF812@sgi.com>
-References: <20130429112943.afdd088c7bb8d80046bdfd2f@canb.auug.org.au>
-	<20130429014002.GY10481@dastard>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Apr 30 (sound)
+Date: Tue, 30 Apr 2013 11:42:08 -0700
+Message-ID: <51801080.6050809@infradead.org>
+References: <20130430165730.7779d7e5d8fdca911213cce7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
-Content-Disposition: inline
-In-Reply-To: <20130429014002.GY10481@dastard>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Dave Chinner <david@fromorbit.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:39734 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758953Ab3D3Smh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Apr 2013 14:42:37 -0400
+In-Reply-To: <20130430165730.7779d7e5d8fdca911213cce7@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, alsa <alsa-devel@alsa-project.org>
 
-Hey Stephen and Dave,
-
-On Mon, Apr 29, 2013 at 11:40:02AM +1000, Dave Chinner wrote:
-> On Mon, Apr 29, 2013 at 11:29:43AM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > After merging the xfs tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> > 
-> > ERROR: "xfs_dquot_buf_ops" [fs/xfs/xfs.ko] undefined!
-> > 
-> > Probably caused by commit 3fe58f30b4fc ("xfs: add CRC checks for quota
-> > blocks").
-> > 
-> > I have used the xfs tree from next-20130426 for today.
+On 04/29/13 23:57, Stephen Rothwell wrote:
+> Hi all,
 > 
-> CONFIG_XFS_QUOTA=y will fix it.
+> Please do not add any v3.11 destined work to your linux-next included
+> branches until after v3.10-rc1 is released.
 > 
-> Or, alternatively, apply this patch:
+> Changes since 20130429:
 > 
-> http://oss.sgi.com/pipermail/xfs/2013-April/025434.html
 
-I applied this patch so it should be fixed today.
 
-Regards,
-	Ben
+when CONFIG_PROC_FS is not enabled:
 
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+sound/core/memalloc.c: In function 'snd_mem_exit':
+sound/core/memalloc.c:525:20: error: 'SND_MEM_PROC_FILE' undeclared (first use in this function)
+
+
+-- 
+~Randy
