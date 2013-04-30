@@ -1,72 +1,33 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: linux-next: build warning while building Linus' tree
-Date: Tue, 30 Apr 2013 10:47:54 +0300
-Message-ID: <517F772A.3060806@ti.com>
-References: <20130430095527.fd4c5ad48ece70c567991416@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 30 Apr 2013 04:02:51 -0400 (EDT)
+Message-ID: <20130430.040251.1648116137288414643.davem@davemloft.net>
+References: <20130426132447.c7b06622240088ccad366b03@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="----enig2NDKTPBIXPODSVKJHEEML"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:36704 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752725Ab3D3HsA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Apr 2013 03:48:00 -0400
-In-Reply-To: <20130430095527.fd4c5ad48ece70c567991416@canb.auug.org.au>
+Received: from shards.monkeyblade.net ([149.20.54.216]:41394 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751586Ab3D3ICz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Apr 2013 04:02:55 -0400
+In-Reply-To: <20130426132447.c7b06622240088ccad366b03@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ariele@broadcom.com, yuvalmin@broadcom.com, eilong@broadcom.com
 
-------enig2NDKTPBIXPODSVKJHEEML
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 26 Apr 2013 13:24:47 +1000
 
-Hi,
+> Today's linux-next merge of the net-next tree got a conflict in
+> drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c between commit
+> ecf01c22be03 ("bnx2x: Prevent NULL pointer dereference in kdump") from
+> the net tree and commit 5b0752c863d7 ("bnx2x: Fix VF statistics") from
+> the net-next tree.
+> 
+> I am not sure about this, but I just used the net tree version but I
+> assume something more may be needed and can carry the fix as necessary (no
+> action is required).
 
-On 04/30/2013 02:55 AM, Stephen Rothwell wrote:
-> Hi Tomi,
->=20
-> In Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
-> produced this warning:
->=20
-> drivers/video/ps3fb.c: In function 'ps3fb_mmap':
-> drivers/video/ps3fb.c:712:2: warning: suggest parentheses around '+' in=
-side '<<' [-Wparentheses]
->=20
-> Introduced by commit 11bd5933abe0 ("fbdev/ps3fb: use vm_iomap_memory()"=
-).
-> Sorry I missed this in yesterday's linux-next.
-
-Thanks. My bad, I should have checked the warnings also, not just if it
-compiles. Sigh...
-
- Tomi
-
-
-
-------enig2NDKTPBIXPODSVKJHEEML
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJRf3cqAAoJEPo9qoy8lh71DnsP/3P2k97ldrx0tCz2ztx+1FPF
-34POIuBKwlOi2VhzVXBQ6ZnXlo8pGI6BaNkoDq0t1SrqLjojNihSCLwd8Wl069g9
-/hqdWfy/AlAIBHWWLvkz3DW2b/rCgFqoepfvVFtWU8RPJptcGOlitkaIXEZzdlUV
-KliHW005+eU5ns2qC3prEj0QuealS24ZRWNeKb11R0EuokQKtw1pEjkWYycxOHwP
-iygtkZjrahwaXdbo/q4CXojGZwBMTl2qrfk1r0HF8hsersmmQkW140cpth7b11Ql
-2CI/07KQSH1Kgbke8j894lhIbuBAmUmBysYIAzNlaXsB8e6Jwsfn83vg6Iuslvbw
-61KoR3w8c9BLjS0DL7ODzAJEX7RLzpt1I8DBQjgSLz4lj9e0uFLlUDRU6xoNQU3Y
-/aENSYrsvGfqEa2Ny91C/a3DTRB+fm2tqXA2FptQBGgv9VVcpkBMay2XKvdNxr03
-anPNpnx7Z29Z4pA97ds9/iV446AiwPewr2pgDGHpv89xZgvXXrlkrGmkqpdK3Lxx
-P05X3DJgwv6cMY8nRxi4Qx8kv2WdiI8X4iwYmSkNZPSiwpTy+DwX6qaVhWfJps7I
-8hMbC2DXcPGDmDJNRcYCoXC//3HhW+5MiaSLVHS7cLt8Vs/Bfm4R3c3ZeoNoRcIE
-RFMHYgphbl+HWMScml/d
-=z4l9
------END PGP SIGNATURE-----
-
-------enig2NDKTPBIXPODSVKJHEEML--
+I've just resolved this when I merged net into net-next.
