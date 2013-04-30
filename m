@@ -1,64 +1,83 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: linux-next: Tree for Apr 30 (netdev: mellanox/mlx4)
-Date: Tue, 30 Apr 2013 12:36:18 -0700
-Message-ID: <1367350578.11020.4.camel@edumazet-glaptop>
-References: <20130430165730.7779d7e5d8fdca911213cce7@canb.auug.org.au>
-	 <51801449.7080600@infradead.org>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] lib: add weak __clzsi2()/__clzdi2() functions
+Date: Tue, 30 Apr 2013 12:47:50 -0700
+Message-ID: <20130430124750.bf5655264e637bbcb82c9693@linux-foundation.org>
+References: <1367214005-14302-1-git-send-email-chanho.min@lge.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:38129 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932746Ab3D3TgV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Apr 2013 15:36:21 -0400
-In-Reply-To: <51801449.7080600@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Amir Vadai <amirv@mellanox.com>
+Return-path: <linux-m68k-owner@vger.kernel.org>
+In-Reply-To: <1367214005-14302-1-git-send-email-chanho.min@lge.com>
+Sender: linux-m68k-owner@vger.kernel.org
+To: Chanho Min <chanho.min@lge.com>
+Cc: Kyungsik Lee <kyungsik.lee@lge.com>, Yann Collet <yann.collet.73@gmail.com>, Bob Pearson <rpearson@systemfabricworks.com>, Richard Weinberger <richard@nod.at>, Geert Uytterhoeven <geert.uytterhoeven@gmail.com>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, linux-m68k@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2013-04-30 at 11:58 -0700, Randy Dunlap wrote:
-> On 04/29/13 23:57, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Please do not add any v3.11 destined work to your linux-next included
-> > branches until after v3.10-rc1 is released.
-> > 
-> > Changes since 20130429:
-> > 
-> 
-> on i386:
-> 
-> ERROR: "__udivdi3" [drivers/net/ethernet/mellanox/mlx4/mlx4_en.ko] undefined!
-> 
-> 
+On Mon, 29 Apr 2013 14:40:05 +0900 Chanho Min <chanho.min@lge.com> wrote:
 
-Could you try the following patch/fix ?
+> Some architectures need __clzsi2() or __clzdi2() for __builtin_clz and
+> It causes build failure. They can be implemented using the fls() and
+> overridden by linking arch-specific versions may not be implemented yet.
+> 
+> Reference: https://lkml.org/lkml/2013/4/18/603
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Chanho Min <chanho.min@lge.com>
+>
+> ...
+>
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@ -23,7 +23,7 @@ lib-y	+= kobject.o klist.o
+>  
+>  obj-y += bcd.o div64.o sort.o parser.o halfmd4.o debug_locks.o random32.o \
+>  	 bust_spinlocks.o hexdump.o kasprintf.o bitmap.o scatterlist.o \
+> -	 gcd.o lcm.o list_sort.o uuid.o flex_array.o \
+> +	 gcd.o lcm.o list_sort.o uuid.o flex_array.o clz.o\
+>  	 bsearch.o find_last_bit.o find_next_bit.o llist.o memweight.o kfifo.o
+>  obj-y += string_helpers.o
+>  obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
+> diff --git a/lib/clz.c b/lib/clz.c
+> new file mode 100644
+> index 0000000..5222b2d
+> --- /dev/null
+> +++ b/lib/clz.c
+> @@ -0,0 +1,36 @@
+> +/*
+> + * lib/clz.c
+> + *
+> + * Copyright (C) 2013 Chanho Min <chanho.min@lge.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * __clzsi2/_clzdi2() can be overridden by linking arch-specific versions.
+> + */
+> +
+> +#include <linux/export.h>
+> +#include <linux/kernel.h>
+> +
+> +int __weak __clzsi2(int val)
+> +{
+> +	return BITS_PER_LONG - fls(val);
+> +}
+> +EXPORT_SYMBOL(__clzsi2);
+> +
+> +#if BITS_PER_LONG == 32
+> +int __weak __clzdi2(long val)
+> +{
+> +	return BITS_PER_LONG - fls((int)val);
+> +}
+> +EXPORT_SYMBOL(__clzdi2);
+> +#elif BITS_PER_LONG == 64
+> +int __weak __clzdi2i(long val)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_clock.c b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
-index 2f18121..fd64410 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_clock.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
-@@ -114,6 +114,7 @@ void mlx4_en_fill_hwtstamps(struct mlx4_en_dev *mdev,
- void mlx4_en_init_timestamp(struct mlx4_en_dev *mdev)
- {
- 	struct mlx4_dev *dev = mdev->dev;
-+	u64 ns;
- 
- 	memset(&mdev->cycles, 0, sizeof(mdev->cycles));
- 	mdev->cycles.read = mlx4_en_read_clock;
-@@ -133,10 +134,9 @@ void mlx4_en_init_timestamp(struct mlx4_en_dev *mdev)
- 	/* Calculate period in seconds to call the overflow watchdog - to make
- 	 * sure counter is checked at least once every wrap around.
- 	 */
--	mdev->overflow_period =
--		(cyclecounter_cyc2ns(&mdev->cycles,
--				    mdev->cycles.mask) / NSEC_PER_SEC / 2)
--		* HZ;
-+	ns = cyclecounter_cyc2ns(&mdev->cycles, mdev->cycles.mask);
-+	do_div(ns, NSEC_PER_SEC / 2 / HZ);
-+	mdev->overflow_period = ns;
- }
- 
- void mlx4_en_ptp_overflow_check(struct mlx4_en_dev *mdev)
+This is a typo, surely?  I'll switch it to __clzdi2.
+
+> +{
+> +	return BITS_PER_LONG - fls64((u64)val);
+> +}
+> +EXPORT_SYMBOL(__clzdi2);
+> +#else
+> +#error BITS_PER_LONG not 32 or 64
+> +#endif
