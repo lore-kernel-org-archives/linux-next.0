@@ -1,29 +1,77 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: build failure after merge of the cgroup tree
-Date: Tue, 30 Apr 2013 11:51:32 +1000
-Message-ID: <1367286692.7288.57.camel@pasglop>
-References: <20130429140433.92d05cd48b66ac323616d572@canb.auug.org.au>
-	 <20130429225513.GG2395@htj.dyndns.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 30 Apr 2013 12:24:23 +1000
+Message-ID: <20130430122423.ab57c82604f13f6773ef4aeb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__30_Apr_2013_12_24_23_+1000_XyLL3_xSVTg2TfTS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:35890 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760078Ab3D3Bws (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Apr 2013 21:52:48 -0400
-In-Reply-To: <20130429225513.GG2395@htj.dyndns.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60064 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757851Ab3D3CYd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Apr 2013 22:24:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Fontenot <nfont@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org, Li Zefan <lizefan@huawei.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chen Gang <gang.chen@asianux.com>, Alan Ott <alan@signal11.us>
 
-On Mon, 2013-04-29 at 15:55 -0700, Tejun Heo wrote:
-> Benjamin, can you please pick this up?
-> 
-> Thanks a lot and sorry about the trouble.
+--Signature=_Tue__30_Apr_2013_12_24_23_+1000_XyLL3_xSVTg2TfTS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Done.
+Hi all,
 
+Today's linux-next merge of the net-next tree got a conflict in
+net/mac802154/mac802154.h between commit 2c1bbbffa0b6 ("net: mac802154:
+comparision issue of type cast, finding by EXTRA_CFLAGS=3D-W") from the net
+tree and commit 7dd43d356e73 ("mac802154: Do not try to resend failed
+packets") from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc net/mac802154/mac802154.h
+index 703c121,5c9e021..0000000
+--- a/net/mac802154/mac802154.h
++++ b/net/mac802154/mac802154.h
+@@@ -88,9 -88,7 +88,7 @@@ struct mac802154_sub_if_data=20
+ =20
+  #define mac802154_to_priv(_hw)	container_of(_hw, struct mac802154_priv, h=
+w)
+ =20
+- #define MAC802154_MAX_XMIT_ATTEMPTS	3
+-=20
+ -#define MAC802154_CHAN_NONE		(~(u8)0) /* No channel is assigned */
+ +#define MAC802154_CHAN_NONE		0xff /* No channel is assigned */
+ =20
+  extern struct ieee802154_reduced_mlme_ops mac802154_mlme_reduced;
+  extern struct ieee802154_mlme_ops mac802154_mlme_wpan;
+
+--Signature=_Tue__30_Apr_2013_12_24_23_+1000_XyLL3_xSVTg2TfTS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRfytXAAoJEECxmPOUX5FE5+cP/2Tm5OeSWmVJju9Ji18oAZhm
+zQVI0s9OkBPZRrCoeU39ADxOrvLh3p8eWEk4NZxJvU8SvpDFhJ80Rh7vBPh7cqQM
+TFU5chWD38TLbby/hTjeuv4fKRMjrwmkizgzmRBdt7Vc0fsG1sxj8lqwyLB3JSiw
+SYn+PcREo2OJoPs3liBkOq+rBors+duUq3lZBJ5q2g5tTjuGaj2nYImRCApM366d
+ROTi1ZDbwN5wKsWTqAWTYtNXmTlLlYYW0d9022ByySaP/nL2MpaTBSKKfVHxxyHh
++hAyb4SS/dJcGNKeTFVvFOSv64LlDRFj9CgK9nqMePLYvqA9t005xqbVmOwKWjJH
+hf2BdLVzB22qALI5sgFlaRRx1Oy1RWceKH3/QczRxaSggzzj3Mp8qMOeX6oJC+Bf
+f3GuL/+Pm3aVtjsHVR/9lLnxLZ6FXABNdQ+9KJ8aDYgsCva/e6yI6bYx3/3HZ5KC
+XcVxzquSpwF0oP3ZxBaxEMkdEwOHf5zCixy1To64SwOZw/4/ZrjWkqhWRDAGwGXd
+xS9ZoM4ybjAuRuHYXNW1iBm+bDuMIGEl0zPdFo6Ta8BbVyQL41LoU7LhCYtNYdp2
+9kUdt8Xt5MoDEcpxChtTTpm50ju3kLIke0fgsEyq36HuNHZx6nhJhXuAwEEGDcoy
+CHhukkUEEFQcGqTwzHbn
+=AHSv
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__30_Apr_2013_12_24_23_+1000_XyLL3_xSVTg2TfTS--
