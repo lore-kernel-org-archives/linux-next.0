@@ -1,57 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning while building Linus' tree
-Date: Tue, 30 Apr 2013 09:55:27 +1000
-Message-ID: <20130430095527.fd4c5ad48ece70c567991416@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH] powerpc: fix usage of setup_pci_atmu()
+Date: Tue, 30 Apr 2013 11:08:12 +1000
+Message-ID: <1367284092.7288.55.camel@pasglop>
+References: <1363201636-7318-1-git-send-email-galak@kernel.crashing.org>
+	 <5881.1366004521@ale.ozlabs.ibm.com>
+	 <20130430090636.5e06bbfc6db472e1e677cb0b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__30_Apr_2013_09_55_27_+1000_RPDGrXVlC3UiATPa"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:43602 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758753Ab3D3BIf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Apr 2013 21:08:35 -0400
+In-Reply-To: <20130430090636.5e06bbfc6db472e1e677cb0b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kumar Gala <galak@kernel.crashing.org>, Michael Neuling <mikey@neuling.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org
 
---Signature=_Tue__30_Apr_2013_09_55_27_+1000_RPDGrXVlC3UiATPa
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2013-04-30 at 09:06 +1000, Stephen Rothwell wrote:
 
-Hi Tomi,
+> 
+> This is still not in your tree ...
 
-In Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
-produced this warning:
+I'll apply it after I merge kumar stuff.
 
-drivers/video/ps3fb.c: In function 'ps3fb_mmap':
-drivers/video/ps3fb.c:712:2: warning: suggest parentheses around '+' inside=
- '<<' [-Wparentheses]
-
-Introduced by commit 11bd5933abe0 ("fbdev/ps3fb: use vm_iomap_memory()").
-Sorry I missed this in yesterday's linux-next.
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__30_Apr_2013_09_55_27_+1000_RPDGrXVlC3UiATPa
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRfwhvAAoJEECxmPOUX5FEwioP/ArhTOzWkmGkkAAFKW4e4OpS
-/xiXlmxcRzmo+yiO74spptB8wL2jU4sfiVeZdZrpyxgvnxMy6p+hpvRRP5UZdk6w
-ODsBcI16qlt2VlrJIOgjAMrXtOwGC2LPxT6Qnbh5WxLfTwA46EK+7O2uKcesm9xb
-zpioGkBx/VOCBU3Zqxp4FbybO4DzuAOGAy1RcSguCkOdJuDyoMabsCP5+hWZzgW+
-Ll32ftAlGIVl7f71BZAPt4t/YWq2TCsNJ5RmM5utV4aVNK9xi7iIH7/LXmNFsNwS
-4Kp1m+EZxwWzju/fAhu/aj+73xYPU7iN+r2Xz61tvADAt4+JFRZf9cefGJIuY+lA
-CHgtxjQhGi0KMQm6NqzNSqkwdtf0+2zIRWqvkFhyl7mXEJTWGaFcQdAUmimWN2qf
-WBwhM1To/aBB48ehYsi/tgyyoh2PQVmc/8Xh5qBP9I9l11NnRIdq1OMgbAq9Wh/s
-Np7yhnKYiDQr9sV/5HxdxOWSdcpXwaL4Upx1eys+PREYrlgxDiWKhVWt8CkorRpR
-UhWWVgApb/hXfBOh0xkTj7jcDqLzo4s1xtAH1GdOq8oNV5tCqBApgB2Yiy2FgEjU
-fQDz9ukoBIX0obhlHFnZqyfviAauajLaVZ88l9Q1qqfVNb1BIRZkDUEO3kALkOSF
-J5jMn2da3ZC1JFeMmd0f
-=ozA8
------END PGP SIGNATURE-----
-
---Signature=_Tue__30_Apr_2013_09_55_27_+1000_RPDGrXVlC3UiATPa--
+Ben.
