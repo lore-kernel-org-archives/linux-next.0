@@ -1,101 +1,66 @@
-From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the xen-arm
- tree
-Date: Tue, 30 Apr 2013 14:54:38 +0100
-Message-ID: <alpine.DEB.2.02.1304301438330.5398@kaball.uk.xensource.com>
-References: <20130429175426.9423279609437a2d746cbb7b@canb.auug.org.au> <20130429082511.GA539@arm.com> <alpine.DEB.2.02.1304291049060.5398@kaball.uk.xensource.com> <20130430091845.27d8de4935bd33ddb4a3e8c0@canb.auug.org.au>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH -next] proc_fs.h: fix build error when PROC_FS is not
+ enabled
+Date: Tue, 30 Apr 2013 09:36:58 -0700 (PDT)
+Message-ID: <alpine.DEB.2.02.1304300935290.31619@chino.kir.corp.google.com>
+References: <20130429191754.8ee71fb814790bf345516ab8@canb.auug.org.au> <517E9A49.5080106@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.citrix.com ([66.165.176.89]:40292 "EHLO SMTP.CITRIX.COM"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760658Ab3D3Nym (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Apr 2013 09:54:42 -0400
-In-Reply-To: <20130430091845.27d8de4935bd33ddb4a3e8c0@canb.auug.org.au>
+Received: from mail-da0-f47.google.com ([209.85.210.47]:55866 "EHLO
+	mail-da0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760840Ab3D3QhB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Apr 2013 12:37:01 -0400
+Received: by mail-da0-f47.google.com with SMTP id p1so318241dad.6
+        for <linux-next@vger.kernel.org>; Tue, 30 Apr 2013 09:37:00 -0700 (PDT)
+In-Reply-To: <517E9A49.5080106@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>, Catalin Marinas <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Al Viro <viro@zeniv.linux.org.uk>
 
-On Tue, 30 Apr 2013, Stephen Rothwell wrote:
-> Hi Stefano,
-> 
-> On Mon, 29 Apr 2013 10:50:22 +0100 Stefano Stabellini <stefano.stabellini@eu.citrix.com> wrote:
-> >
-> > On Mon, 29 Apr 2013, Catalin Marinas wrote:
-> > > 
-> > > On Mon, Apr 29, 2013 at 08:54:26AM +0100, Stephen Rothwell wrote:
-> > > > Today's linux-next merge of the arm-soc tree got a conflict in
-> > > > arch/arm/mach-virt/platsmp.c between commit fe4bff02886b ("arm: introduce
-> > > > psci_smp_ops") from the xen-arm tree and commit c0114709ed85 ("irqchip:
-> > > > gic: Perform the gic_secondary_init() call via CPU notifier") from the
-> > > > arm-soc tree.
-> > > > 
-> > > > The former renamed the file (and contents) so I applied the following
-> > > > patch and can carry the fix as necessary (no action is required).
-> > > > 
-> > > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > Date: Mon, 29 Apr 2013 17:52:27 +1000
-> > > > Subject: [PATCH] arm: fix for Perform the gic_secondary_init() call via CPU
-> > > >  notifier
-> > > > 
-> > > > due to code movement.
-> > > > 
-> > > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > ---
-> > > >  arch/arm/kernel/psci_smp.c | 7 -------
-> > > >  1 file changed, 7 deletions(-)
-> > > > 
-> > > > diff --git a/arch/arm/kernel/psci_smp.c b/arch/arm/kernel/psci_smp.c
-> > > > index 6ef139d..cd9acc7 100644
-> > > > --- a/arch/arm/kernel/psci_smp.c
-> > > > +++ b/arch/arm/kernel/psci_smp.c
-> > > > @@ -14,7 +14,6 @@
-> > > >   */
-> > > >  
-> > > >  #include <linux/init.h>
-> > > > -#include <linux/irqchip/arm-gic.h>
-> > > >  #include <linux/smp.h>
-> > > >  #include <linux/of.h>
-> > > >  
-> > > > @@ -55,11 +54,6 @@ static int __cpuinit psci_boot_secondary(unsigned int cpu,
-> > > >  	return -ENODEV;
-> > > >  }
-> > > >  
-> > > > -static void __cpuinit psci_secondary_init(unsigned int cpu)
-> > > > -{
-> > > > -	gic_secondary_init(0);
-> > > > -}
-> > > > -
-> > > >  #ifdef CONFIG_HOTPLUG_CPU
-> > > >  void __ref psci_cpu_die(unsigned int cpu)
-> > > >  {
-> > > > @@ -84,7 +78,6 @@ bool __init psci_smp_available(void)
-> > > >  }
-> > > >  
-> > > >  struct smp_operations __initdata psci_smp_ops = {
-> > > > -	.smp_secondary_init	= psci_secondary_init,
-> > > >  	.smp_boot_secondary	= psci_boot_secondary,
-> > > >  	.cpu_die		= psci_cpu_die,
-> > > >  };
-> > > 
-> > > The fix looks fine. Thanks.
-> > 
-> > Indeed, thanks! I'll add to it to the tree.
-> 
-> You should not apply that to your tree as you don't have the rest of the
-> change from the arm-soc tree.  It needs to be applied to the merge of the
-> two trees i.e. when Linus merges the last of the two trees.
-> 
-> This is why I wrote "no action is required".
+On Mon, 29 Apr 2013, Randy Dunlap wrote:
 
-I added the patch because it is very small and only affects psci_smp.c,
-so it is not a problem for me to carry it in the xen-arm tree.
-But I see your point, I'll remove it.
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix build error when CONFIG_PROC_FS is not enabled:
+> (remove duplicated line)
+> 
+> include/linux/proc_fs.h:58:20: error: redefinition of 'proc_set_size'
+> include/linux/proc_fs.h:51:20: note: previous definition of 'proc_set_size' was here
+> 
 
-As a side note for the arm-soc maintainers in CC, even though I
-proactively added the PSCI and the smp_init patches
-(http://marc.info/?l=linux-kernel&m=136716063717467&w=2) to linux-next
-to make sure they get enough exposure for this merge window, I would
-appreciate if you could pick them up in your tree. I think they should
-to Linus via arm-soc.
+I get more than that on linux-next:
+
+include/linux/proc_fs.h:58:20: error: redefinition of 'proc_set_size'
+include/linux/proc_fs.h:51:20: note: previous definition of 'proc_set_size' was here
+include/linux/proc_fs.h: In function 'proc_net_mkdir':
+include/linux/proc_fs.h:69:2: error: implicit declaration of function 'proc_mkdir_data' [-Werror=implicit-function-declaration]
+include/linux/proc_fs.h:69:2: warning: return makes pointer from integer without a cast [enabled by default]
+
+so don't we need to do this instead?
+
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -21,7 +21,6 @@ extern struct proc_dir_entry *proc_mkdir_data(const char *, umode_t,
+ 					      struct proc_dir_entry *, void *);
+ extern struct proc_dir_entry *proc_mkdir_mode(const char *, umode_t,
+ 					      struct proc_dir_entry *);
+- 
+ extern struct proc_dir_entry *proc_create_data(const char *, umode_t,
+ 					       struct proc_dir_entry *,
+ 					       const struct file_operations *,
+@@ -52,10 +51,11 @@ static inline void proc_set_size(struct proc_dir_entry *de, loff_t size) {}
+ static inline void proc_set_user(struct proc_dir_entry *de, kuid_t uid, kgid_t gid) {}
+ static inline void *proc_get_parent_data(const struct inode *inode) { return NULL; }
+ 
++static inline struct proc_dir_entry *proc_mkdir_data(const char *name, umode_t mode,
++	struct proc_dir_entry *parent, void *data) { return NULL; }
+ static inline struct proc_dir_entry *proc_create_data(const char *name,
+ 	umode_t mode, struct proc_dir_entry *parent,
+ 	const struct file_operations *proc_fops, void *data) { return NULL; }
+-static inline void proc_set_size(struct proc_dir_entry *de, loff_t size) {}
+ 
+ static inline void proc_remove(struct proc_dir_entry *de) {}
+ static inline void remove_proc_entry(const char *name, struct proc_dir_entry *parent) {}
