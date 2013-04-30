@@ -1,52 +1,39 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] lib: add weak __clzsi2()/__clzdi2() functions
-Date: Tue, 30 Apr 2013 14:46:05 -0700
-Message-ID: <20130430144605.1a99a7397702b332ee818fc8@linux-foundation.org>
-References: <1367214005-14302-1-git-send-email-chanho.min@lge.com>
-	<CAMuHMdWk4oi_KCmZv7hLZ7JSwy=meziKPBMQ1HJiJR9W8AdrDg@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH net-next] mlx4_en: fix a build error on 32bit arches
+Date: Tue, 30 Apr 2013 19:01:28 -0400 (EDT)
+Message-ID: <20130430.190128.2033981457511481406.davem@davemloft.net>
+References: <1367350578.11020.4.camel@edumazet-glaptop>
+	<51802BE9.7020805@infradead.org>
+	<1367355231.11020.10.camel@edumazet-glaptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <sparclinux-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdWk4oi_KCmZv7hLZ7JSwy=meziKPBMQ1HJiJR9W8AdrDg@mail.gmail.com>
-Sender: sparclinux-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chanho Min <chanho.min@lge.com>, Kyungsik Lee <kyungsik.lee@lge.com>, Yann Collet <yann.collet.73@gmail.com>, Bob Pearson <rpearson@systemfabricworks.com>, Richard Weinberger <richard@nod.at>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, sparclinux <sparclinux@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:55239 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933643Ab3D3XBa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Apr 2013 19:01:30 -0400
+In-Reply-To: <1367355231.11020.10.camel@edumazet-glaptop>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: eric.dumazet@gmail.com
+Cc: rdunlap@infradead.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, amirv@mellanox.com
 
-On Mon, 29 Apr 2013 09:20:25 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Date: Tue, 30 Apr 2013 13:53:51 -0700
 
-> On Mon, Apr 29, 2013 at 7:40 AM, Chanho Min <chanho.min@lge.com> wrote:
-> > Some architectures need __clzsi2() or __clzdi2() for __builtin_clz and
-> > It causes build failure. They can be implemented using the fls() and
-> > overridden by linking arch-specific versions may not be implemented yet.
-> >
-> > Reference: https://lkml.org/lkml/2013/4/18/603
-> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Signed-off-by: Chanho Min <chanho.min@lge.com>
+> From: Eric Dumazet <edumazet@google.com>
 > 
-> Thanks, this fixes the link error on m68k, so
+> commit b6c39bfcf1d7d63 ("net/mlx4_en: Add a service task")
+> added a build error on 32bit arches.
 > 
-> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ERROR: "__udivdi3" [drivers/net/ethernet/mellanox/mlx4/mlx4_en.ko]
+> undefined!
+> 
+> Fix this problem by using do_div()
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-It doesn't work for alpha (gcc-4.4.4):
-
-ERROR: "__ctzdi2" [lib/lz4/lz4hc_compress.ko] undefined!
-ERROR: "__ctzdi2" [lib/lz4/lz4_compress.ko] undefined!
-
-akpm3:/usr/src/25> nm vmlinux|grep ctzd
-akpm3:/usr/src/25> 
-
-I assume the linker threw the code away.
-
-
-How's about we stop using __builtin_ctz[ll]() altogether?  Use N-fls()?
-
-btw, this:
-
-int __weak __clzsi2(int val)
-{
-       return BITS_PER_LONG - fls(val);
-}
-
-looks wrong.  It will give a different result for 32- and 64-bit.
+Applied, thanks for fixing this Eric.
