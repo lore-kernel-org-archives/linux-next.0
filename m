@@ -1,67 +1,52 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 1 (media/usb/stk1160)
-Date: Wed, 01 May 2013 13:58:26 -0700
-Message-ID: <518181F2.3@infradead.org>
-References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au> <518157EB.3010700@infradead.org> <20130501192845.GA18811@free.fr> <alpine.DEB.2.02.1305011258180.8448@chino.kir.corp.google.com> <518179BD.3010407@infradead.org> <20130501205355.GB18811@free.fr>
+From: "Kim, Milo" <Milo.Kim@ti.com>
+Subject: RE: [PATCH -next] power: fix lp8788-charger kconfig & build
+Date: Wed, 1 May 2013 23:04:38 +0000
+Message-ID: <A874F61F95741C4A9BA573A70FE3998F82E5C1EC@DQHE06.ent.ti.com>
+References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au>
+ <51816A93.4070802@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20130501205355.GB18811@free.fr>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Cc: David Rientjes <rientjes@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, linux-kbuild@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:40156 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757335Ab3EAXFS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 19:05:18 -0400
+In-Reply-To: <51816A93.4070802@infradead.org>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Anton Vorontsov <cbou@mail.ru>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On 05/01/13 13:53, Yann E. MORIN wrote:
-> Randy, All,
+> -----Original Message-----
+> From: Randy Dunlap [mailto:rdunlap@infradead.org]
+> Sent: Thursday, May 02, 2013 4:19 AM
+> To: Stephen Rothwell
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Kim, Milo;
+> Anton Vorontsov; David Woodhouse
+> Subject: [PATCH -next] power: fix lp8788-charger kconfig & build
 > 
-> On Wed, May 01, 2013 at 01:23:25PM -0700, Randy Dunlap wrote:
->> On 05/01/13 12:58, David Rientjes wrote:
->>> On Wed, 1 May 2013, Yann E. MORIN wrote:
->>>
->>>>> When CONFIG_SND=m and CONFIG_SND_AC97_CODEC=m and
->>>>> CONFIG_VIDEO_STK1160=y
->>>>> CONFIG_VIDEO_STK1160_AC97=y
->>>>>
->>>>> drivers/built-in.o: In function `stk1160_ac97_register':
->>>>> (.text+0x122706): undefined reference to `snd_card_create'
->>>>> drivers/built-in.o: In function `stk1160_ac97_register':
->>>>> (.text+0x1227b2): undefined reference to `snd_ac97_bus'
->>>>> drivers/built-in.o: In function `stk1160_ac97_register':
->>>>> (.text+0x1227cd): undefined reference to `snd_card_free'
->>>>> drivers/built-in.o: In function `stk1160_ac97_register':
->>>>> (.text+0x12281b): undefined reference to `snd_ac97_mixer'
->>>>> drivers/built-in.o: In function `stk1160_ac97_register':
->>>>> (.text+0x122832): undefined reference to `snd_card_register'
->>>>> drivers/built-in.o: In function `stk1160_ac97_unregister':
->>>>> (.text+0x12285e): undefined reference to `snd_card_free'
->>>>>
->>>>>
->>>>> This kconfig fragment:
->>>>> config VIDEO_STK1160_AC97
->>>>> 	bool "STK1160 AC97 codec support"
->>>>> 	depends on VIDEO_STK1160 && SND
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> BTW, can you check that:
->     make silentoldconfig
-> does not warn about unmet dependencies for those symbols?
-
-'make silentoldconfig' on the config file that I am using only gives me this:
-
-warning: (VIDEO_EM28XX) selects VIDEO_MT9V011 which has unmet direct dependencies (MEDIA_SUPPORT && I2C && VIDEO_V4L2 && MEDIA_CAMERA_SUPPORT)
-
-
->>> This doesn't depend on SND, it depends on SND=y.
->>
->> Maybe this option *should* depend on SND=y, but that's not what the
->> kconfig syntax says.
+> Fix build errors in lp8788-charger by making it depend on IIO.
+> Fixes errors when CONFIG_IIO=m and CHARGER_LP8788=y.
 > 
-> I'd say  Documentation/kbuild/kconfig-language.txt  is not complete wrt
-> the current syntax, grammar and semantics of the language. :-(
+> lp8788-charger.c:(.text+0x2146b5): undefined reference to
+> `iio_channel_get'
+> lp8788-charger.c:(.text+0x2146ce): undefined reference to
+> `iio_channel_get'
+> lp8788-charger.c:(.text+0x214a86): undefined reference to
+> `iio_read_channel_processed'
+> lp8788-charger.c:(.text+0x214b51): undefined reference to
+> `iio_read_channel_processed'
+> lp8788-charger.c:(.text+0x214c30): undefined reference to
+> `iio_read_channel_processed'
+> lp8788-charger.c:(.text+0x214d93): undefined reference to
+> `iio_channel_release'
+> lp8788-charger.c:(.text+0x214dac): undefined reference to
+> `iio_channel_release'
 
-OK, that's not surprising.
+Thanks for fixing this.
 
-thanks,
--- 
-~Randy
+Acked-by: Milo Kim <milo.kim@ti.com>
