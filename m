@@ -1,39 +1,76 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the vfs tree with the powerpc tree
-Date: Wed, 1 May 2013 06:10:14 +0100
-Message-ID: <20130501051014.GA11630@ZenIV.linux.org.uk>
-References: <20130501120636.0e54681b2dfb7ebe6aeb27c4@canb.auug.org.au>
- <5180A1AD.4060409@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Wed, 1 May 2013 15:17:09 +1000
+Message-ID: <20130501151709.9ff4ebb3a76248b175bad9fc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__1_May_2013_15_17_09_+1000_3RT0RlTspxfkoHy3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:58911 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751275Ab3EAFKW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 01:10:22 -0400
-Content-Disposition: inline
-In-Reply-To: <5180A1AD.4060409@linux.vnet.ibm.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35436 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751748Ab3EAFRU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 01:17:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Darrick J. Wong" <darrick.wong@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Kent Overstreet <koverstreet@google.com>
 
-On Wed, May 01, 2013 at 10:31:33AM +0530, Vasant Hegde wrote:
-> On 05/01/2013 07:36 AM, Stephen Rothwell wrote:
-> >Hi Al,
-> >
-> >Today's linux-next merge of the vfs tree got a conflict in
-> >arch/powerpc/kernel/rtas_flash.c between commit fb4696c39573
-> >("powerpc/rtas_flash: Fix bad memory access") from the powerpc tree and
-> >commits ad18a364f186 ("powerpc/rtas_flash: Free kmem upon module exit")
-> >and 2352ad01409d ("ppc: Clean up rtas_flash driver somewhat") from the
-> >vfs tree.
-> >
-> 
-> Stephen,
-> 
-> As Ben mentioned earlier, there are outstanding comments from me which
-> needs to be addressed by Dave, before its merged.
+--Signature=_Wed__1_May_2013_15_17_09_+1000_3RT0RlTspxfkoHy3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What the hell?  Your fixes *are* folded into that commit and according to
-Ben it passes testing; is there anything still missing?
+Hi Jens,
+
+Today's linux-next merge of the block tree got a conflict in
+include/linux/blk_types.h between commit 713685111774 ("mm: make
+snapshotting pages for stable writes a per-bio operation") from the  tree
+and commit a38352e0ac02 ("block: Add an explicit bio flag for bios that
+own their bvec") from the block tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/linux/blk_types.h
+index 22990cf,e8de670..0000000
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@@ -117,7 -116,8 +117,8 @@@ struct bio=20
+   * Flags starting here get preserved by bio_reset() - this includes
+   * BIO_POOL_IDX()
+   */
+ -#define BIO_RESET_BITS	12
+ -#define BIO_OWNS_VEC	12	/* bio_free() should free bvec */
+ +#define BIO_RESET_BITS	13
+++#define BIO_OWNS_VEC	13	/* bio_free() should free bvec */
+ =20
+  #define bio_flagged(bio, flag)	((bio)->bi_flags & (1 << (flag)))
+ =20
+
+--Signature=_Wed__1_May_2013_15_17_09_+1000_3RT0RlTspxfkoHy3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRgKVVAAoJEECxmPOUX5FEbB0P/3CIPuRuvwx1cSzxr7m9JKRU
+/uQ5npQb+NG/ih1EYdiQkEmhIkzBY4Jf1t3dVipCQ4pIBirRzxlzfXyfdT6060Q+
+6D/dpECCY6+ebPX9yWj1IuQsiFuDRmipJ0F4iKlMoukTzfsJLmgN2uT9FSdae7I2
+AxjNGICu7PHDJur6VJlVv0M8PINiwoktwXKWhLDoJlHAeyxCRb4SaI3bXnlsc1QZ
+AxDX0wpId0DVENydJ5pM2vvS2XqigJaTf+QBxmu9/wrjFFjcQw6IwkkuaOKbOvt0
+u+lVUZhPbgzb72478crY5IH6xBndzsaLdQ+l0M6oOvEeAnHlR4R44krNPVnM2s7T
+T/c1GAm7qgfy5bl6DWKIwZ0MAhpzMRBziezgWgdh6t3NUJBVEw6lIk5Qq2gfSdnX
+tLGSV34rUcscP6k+HtrfztNpg+2HfZqacxiGM9ZNNxeZaTU62o6NKTIZCQE/btIW
+sLVNuvanl5qNWVZ+nMzsz0xFrg8kJL+k0IcO3+lptPH2YfMArPe7PhmK+i/zPOF+
+2fLWZbnWCcAU1RPQzCZwk/UqCHuHbIIUoNenIHqPthlG7wXDtHGPnAm3vx1biUaM
+5MNtpSJ0xYUW+05iuodB1vEDYFtXQbGrNCJdIMCgEs92VG5Kman4SYL93zshM3XW
+uA6WN1Xd1oOuoR129GwP
+=pkdN
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__1_May_2013_15_17_09_+1000_3RT0RlTspxfkoHy3--
