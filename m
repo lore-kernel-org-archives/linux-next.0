@@ -1,40 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with the drm tree
-Date: Wed, 1 May 2013 14:37:34 +1000
-Message-ID: <20130501143734.5305cf8e4cef42c19a1bd5ce@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Wed, 1 May 2013 16:44:23 +1000
+Message-ID: <20130501164423.1233db0b618d0e6b7184c05b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1340509736=="
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---===============1340509736==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__1_May_2013_14_37_34_+1000_LZMv1gtCR9QJnwA1"
+ boundary="Signature=_Wed__1_May_2013_16_44_23_+1000_6cBp1.wTVVK=undr"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37331 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753206Ab3EAGof (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 02:44:35 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hiroshi Doyu <hdoyu@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Wed__1_May_2013_14_37_34_+1000_LZMv1gtCR9QJnwA1
+--Signature=_Wed__1_May_2013_16_44_23_+1000_6cBp1.wTVVK=undr
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/i915_reg.h between commit a65851af5938 ("drm/i915:
-Make data/link N value power of two") from the drm tree and commit
-72419203cab9 ("drm/i915: hw state readout support for fdi m/n") from the
-drm-intel tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-tegra/hotplug.c between commit da2265b130f6 ("ARM: tegra:
+remove tegra specific cpu_disable()") from the arm tree and commit
+7469688e832e ("ARM: tegra: Unify tegra{20,30,114}_init_early()") from the
+arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -43,60 +36,76 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/i915_reg.h
-index 83f9c26,b5d87bd..0000000
---- a/drivers/gpu/drm/i915/i915_reg.h
-+++ b/drivers/gpu/drm/i915/i915_reg.h
-@@@ -2652,11 -2774,11 +2774,12 @@@
-  #define _PIPEB_GMCH_DATA_M			0x71050
+diff --cc arch/arm/mach-tegra/hotplug.c
+index e8323bc,8da9f78..0000000
+--- a/arch/arm/mach-tegra/hotplug.c
++++ b/arch/arm/mach-tegra/hotplug.c
+@@@ -12,8 -11,10 +11,9 @@@
+  #include <linux/smp.h>
+  #include <linux/clk/tegra.h>
  =20
-  /* Transfer unit size for display port - 1, default is 0x3f (for TU size =
-64) */
- -#define   PIPE_GMCH_DATA_M_TU_SIZE_MASK		(0x3f << 25)
- -#define   PIPE_GMCH_DATA_M_TU_SIZE_SHIFT	25
- +#define  TU_SIZE(x)             (((x)-1) << 25) /* default size 64 */
- +#define  TU_SIZE_MASK           (0x3f << 25)
-+ #define  TU_SIZE_SHIFT		25
+ -#include <asm/cacheflush.h>
+  #include <asm/smp_plat.h>
  =20
- -#define   PIPE_GMCH_DATA_M_MASK			(0xffffff)
- +#define  DATA_LINK_M_N_MASK	(0xffffff)
- +#define  DATA_LINK_N_MAX	(0x800000)
++ #include "fuse.h"
+  #include "sleep.h"
  =20
-  #define _PIPEA_GMCH_DATA_N			0x70054
-  #define _PIPEB_GMCH_DATA_N			0x71054
+  static void (*tegra_hotplug_shutdown)(void);
+@@@ -46,18 -47,22 +46,13 @@@ void __ref tegra_cpu_die(unsigned int c
+  	BUG();
+  }
+ =20
+- #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+- extern void tegra20_hotplug_shutdown(void);
+- void __init tegra20_hotplug_init(void)
+ -int tegra_cpu_disable(unsigned int cpu)
+ -{
+ -	/*
+ -	 * we don't allow CPU 0 to be shutdown (it is still too special
+ -	 * e.g. clock tick interrupts)
+ -	 */
+ -	return cpu =3D=3D 0 ? -EPERM : 0;
+ -}
+ -
++ void __init tegra_hotplug_init(void)
+  {
+- 	tegra_hotplug_shutdown =3D tegra20_hotplug_shutdown;
+- }
+- #endif
++ 	if (!IS_ENABLED(CONFIG_HOTPLUG_CPU))
++ 		return;
+ =20
+- #ifdef CONFIG_ARCH_TEGRA_3x_SOC
+- extern void tegra30_hotplug_shutdown(void);
+- void __init tegra30_hotplug_init(void)
+- {
+- 	tegra_hotplug_shutdown =3D tegra30_hotplug_shutdown;
++ 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) && tegra_chip_id =3D=3D TEGRA20)
++ 		tegra_hotplug_shutdown =3D tegra20_hotplug_shutdown;
++ 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) && tegra_chip_id =3D=3D TEGRA30)
++ 		tegra_hotplug_shutdown =3D tegra30_hotplug_shutdown;
+  }
+- #endif
 
---Signature=_Wed__1_May_2013_14_37_34_+1000_LZMv1gtCR9QJnwA1
+--Signature=_Wed__1_May_2013_16_44_23_+1000_6cBp1.wTVVK=undr
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRgJwOAAoJEECxmPOUX5FEfTcP/jQMfWmYjH1tvpzLpP7ZgtBt
-mGe0s7xnjvz2p37MevVaRcJOFkBNH4NWUqa9XPsYqi/PKZA5B0BQzlKXbcq+Zthj
-9vMJ6FigSMtg/Td96wBzWUSh9fgjpeQlrSwDXv+PIChOgnY+PZdLoGyhD9moYb8x
-Yxlq23Z60v9+3gZzEoX0H0g71/91NsW7s9SMYKB1IVEV98xNbPfgFub66OLhrAjP
-1rEfyWtfYioB1HS9GxoXmWkllLHuNqi4evFmhAwsSJYeoXw2BN93E86fw2LjwgqQ
-U1eLnHKuVjCibl8xsSc3OBxorHmgia1c57K5RRuM6v245306tmVswvxZSE/a0Q8m
-ji+YfBgGgQ3cvug5CIZVDp2tS7zYxZYbMqiPMeKCHv3FbUNelMA9dloiFzCS+siz
-s5TSBkToEkYEiVnFNg3W7uDOQXY7T4goV+aO592Nw4eKgGnZCW6dG/LypcKY2tjr
-5xcG87LH96oqGM1BKhwlxAUUrDpSFJipnLKAGSQxUkCzYYgypFPN3do8KYE8TJId
-6p36nI8vK8IpQxOp7qBEKchb+t88IbR3fAZQeFuJsBQxCc5Lrpw7T9aC6lk03sqY
-O5OuqPh1FOIwVFjoNkw6WtFUkUxvvfp1vWa1+pxvDwua3YOL5GXd4lvUTk/0218z
-u9+OppPBfhLKMSZQVln5
-=Tkb5
+iQIcBAEBCAAGBQJRgLnHAAoJEECxmPOUX5FE0EsP+wZBhYdWkVYf9/bDgFGJMjyw
+mcEv+hx5BcTRmfMsQPlFDZIk3uvlejQoOQiEv4ws1Y9jweFMMlh3msVcEzLlZwyu
+o80NE43eMHDBjHRWV3r/Hdi+fBjcXg+G/flYhG3H/0KtEb8I5znpJCkm2GHiXk2u
+b+s0UPcAwD2OiCF488lncPji7CNt02kX5qaajlLs5pHiSfBBIweoVwCgQPXGEi4K
+FVcKHan8dvmZzHabTBrrTd8gT2c3fI2fR6hFEVcZ6xerDasHXtXgXL+lFkJ7Tvko
+movs/SYwyX05d3JV5EyiQZnYev/27d47K3ZiWOkUEm+8cNIi9qBZR/zVTTEN5+un
+Rnm57mqrqpU7KPJnzyp30xY62v71mzRRutWnTS/NKV1D16ZG/sV/D//KcJohREhY
+1RpV5BVbqu+gmPuANskMFaHgQSqVZZWQcdylr29XLip3CFWzW1WXcqavpjcsBDlo
+Zdni8z9OBpwoZM2oygBQTxlOXM4Az0wGRCzuCgQysN30IUkNrBvhFOW8cQ2RUNFa
+GYaGWsW1Op9d4R+ix68YOHSYvYhm9/9APBoX36zfTVLZcoff/EFBgEBfiAIo29E/
+0G4UX67C6Wmt4F7pzK9x0jVhzjTfSt5yChKBFWkNe7JSUyuPYTZnF4rDMgGJN95C
+F2Oa4bmeQsRVf2Fy7ZaB
+=QSHt
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__1_May_2013_14_37_34_+1000_LZMv1gtCR9QJnwA1--
-
---===============1340509736==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1340509736==--
+--Signature=_Wed__1_May_2013_16_44_23_+1000_6cBp1.wTVVK=undr--
