@@ -1,111 +1,70 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Wed, 1 May 2013 16:44:23 +1000
-Message-ID: <20130501164423.1233db0b618d0e6b7184c05b@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] lib: add weak __clzsi2()/__clzdi2() functions
+Date: Wed, 1 May 2013 09:35:35 +0200
+Message-ID: <CAMuHMdXJaZTSNavsPxQQ8df+J=Rfyn6mKjP2g7xoDXnW5PiF3Q@mail.gmail.com>
+References: <1367214005-14302-1-git-send-email-chanho.min@lge.com>
+	<CAMuHMdWk4oi_KCmZv7hLZ7JSwy=meziKPBMQ1HJiJR9W8AdrDg@mail.gmail.com>
+	<20130430144605.1a99a7397702b332ee818fc8@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__1_May_2013_16_44_23_+1000_6cBp1.wTVVK=undr"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37331 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753206Ab3EAGof (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 02:44:35 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hiroshi Doyu <hdoyu@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Russell King <rmk@arm.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <sparclinux-owner@vger.kernel.org>
+In-Reply-To: <20130430144605.1a99a7397702b332ee818fc8@linux-foundation.org>
+Sender: sparclinux-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Chanho Min <chanho.min@lge.com>, Kyungsik Lee <kyungsik.lee@lge.com>, Yann Collet <yann.collet.73@gmail.com>, Bob Pearson <rpearson@systemfabricworks.com>, Richard Weinberger <richard@nod.at>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, sparclinux <sparclinux@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__1_May_2013_16_44_23_+1000_6cBp1.wTVVK=undr
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Apr 30, 2013 at 11:46 PM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Mon, 29 Apr 2013 09:20:25 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> On Mon, Apr 29, 2013 at 7:40 AM, Chanho Min <chanho.min@lge.com> wrote:
+>> > Some architectures need __clzsi2() or __clzdi2() for __builtin_clz and
+>> > It causes build failure. They can be implemented using the fls() and
+>> > overridden by linking arch-specific versions may not be implemented yet.
+>> >
+>> > Reference: https://lkml.org/lkml/2013/4/18/603
+>> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> > Signed-off-by: Chanho Min <chanho.min@lge.com>
+>>
+>> Thanks, this fixes the link error on m68k, so
+>>
+>> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>
+> It doesn't work for alpha (gcc-4.4.4):
+>
+> ERROR: "__ctzdi2" [lib/lz4/lz4hc_compress.ko] undefined!
+> ERROR: "__ctzdi2" [lib/lz4/lz4_compress.ko] undefined!
+>
+> akpm3:/usr/src/25> nm vmlinux|grep ctzd
+> akpm3:/usr/src/25>
+>
+> I assume the linker threw the code away.
 
-Hi all,
+No, the link errors are for __ctzdi2, not __clzdi2.
+__ctzdi2 can be implemented using __ffs().
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-tegra/hotplug.c between commit da2265b130f6 ("ARM: tegra:
-remove tegra specific cpu_disable()") from the arm tree and commit
-7469688e832e ("ARM: tegra: Unify tegra{20,30,114}_init_early()") from the
-arm-soc tree.
+> How's about we stop using __builtin_ctz[ll]() altogether?  Use N-fls()?
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+That was my first suggestion ;-)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> btw, this:
+>
+> int __weak __clzsi2(int val)
+> {
+>        return BITS_PER_LONG - fls(val);
+> }
+>
+> looks wrong.  It will give a different result for 32- and 64-bit.
 
-diff --cc arch/arm/mach-tegra/hotplug.c
-index e8323bc,8da9f78..0000000
---- a/arch/arm/mach-tegra/hotplug.c
-+++ b/arch/arm/mach-tegra/hotplug.c
-@@@ -12,8 -11,10 +11,9 @@@
-  #include <linux/smp.h>
-  #include <linux/clk/tegra.h>
- =20
- -#include <asm/cacheflush.h>
-  #include <asm/smp_plat.h>
- =20
-+ #include "fuse.h"
-  #include "sleep.h"
- =20
-  static void (*tegra_hotplug_shutdown)(void);
-@@@ -46,18 -47,22 +46,13 @@@ void __ref tegra_cpu_die(unsigned int c
-  	BUG();
-  }
- =20
-- #ifdef CONFIG_ARCH_TEGRA_2x_SOC
-- extern void tegra20_hotplug_shutdown(void);
-- void __init tegra20_hotplug_init(void)
- -int tegra_cpu_disable(unsigned int cpu)
- -{
- -	/*
- -	 * we don't allow CPU 0 to be shutdown (it is still too special
- -	 * e.g. clock tick interrupts)
- -	 */
- -	return cpu =3D=3D 0 ? -EPERM : 0;
- -}
- -
-+ void __init tegra_hotplug_init(void)
-  {
-- 	tegra_hotplug_shutdown =3D tegra20_hotplug_shutdown;
-- }
-- #endif
-+ 	if (!IS_ENABLED(CONFIG_HOTPLUG_CPU))
-+ 		return;
- =20
-- #ifdef CONFIG_ARCH_TEGRA_3x_SOC
-- extern void tegra30_hotplug_shutdown(void);
-- void __init tegra30_hotplug_init(void)
-- {
-- 	tegra_hotplug_shutdown =3D tegra30_hotplug_shutdown;
-+ 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) && tegra_chip_id =3D=3D TEGRA20)
-+ 		tegra_hotplug_shutdown =3D tegra20_hotplug_shutdown;
-+ 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) && tegra_chip_id =3D=3D TEGRA30)
-+ 		tegra_hotplug_shutdown =3D tegra30_hotplug_shutdown;
-  }
-- #endif
+Indeed. It should be hardcoded 32.
 
---Signature=_Wed__1_May_2013_16_44_23_+1000_6cBp1.wTVVK=undr
-Content-Type: application/pgp-signature
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+                        Geert
 
-iQIcBAEBCAAGBQJRgLnHAAoJEECxmPOUX5FE0EsP+wZBhYdWkVYf9/bDgFGJMjyw
-mcEv+hx5BcTRmfMsQPlFDZIk3uvlejQoOQiEv4ws1Y9jweFMMlh3msVcEzLlZwyu
-o80NE43eMHDBjHRWV3r/Hdi+fBjcXg+G/flYhG3H/0KtEb8I5znpJCkm2GHiXk2u
-b+s0UPcAwD2OiCF488lncPji7CNt02kX5qaajlLs5pHiSfBBIweoVwCgQPXGEi4K
-FVcKHan8dvmZzHabTBrrTd8gT2c3fI2fR6hFEVcZ6xerDasHXtXgXL+lFkJ7Tvko
-movs/SYwyX05d3JV5EyiQZnYev/27d47K3ZiWOkUEm+8cNIi9qBZR/zVTTEN5+un
-Rnm57mqrqpU7KPJnzyp30xY62v71mzRRutWnTS/NKV1D16ZG/sV/D//KcJohREhY
-1RpV5BVbqu+gmPuANskMFaHgQSqVZZWQcdylr29XLip3CFWzW1WXcqavpjcsBDlo
-Zdni8z9OBpwoZM2oygBQTxlOXM4Az0wGRCzuCgQysN30IUkNrBvhFOW8cQ2RUNFa
-GYaGWsW1Op9d4R+ix68YOHSYvYhm9/9APBoX36zfTVLZcoff/EFBgEBfiAIo29E/
-0G4UX67C6Wmt4F7pzK9x0jVhzjTfSt5yChKBFWkNe7JSUyuPYTZnF4rDMgGJN95C
-F2Oa4bmeQsRVf2Fy7ZaB
-=QSHt
------END PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---Signature=_Wed__1_May_2013_16_44_23_+1000_6cBp1.wTVVK=undr--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
