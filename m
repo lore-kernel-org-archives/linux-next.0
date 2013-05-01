@@ -1,68 +1,74 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] staging: sep: fix driver build and kconfig
-Date: Wed, 01 May 2013 12:27:31 -0700
-Message-ID: <51816CA3.7000806@infradead.org>
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Subject: Re: linux-next: Tree for May 1 (media/usb/stk1160)
+Date: Wed, 1 May 2013 21:28:45 +0200
+Message-ID: <20130501192845.GA18811@free.fr>
 References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au>
+ <518157EB.3010700@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <518157EB.3010700@infradead.org>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, linux-kbuild@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Wed, May 01, 2013 at 10:59:07AM -0700, Randy Dunlap wrote:
+> On 05/01/13 01:37, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Please do not add any v3.11 destined work to your linux-next included
+> > branches until after v3.10-rc1 is released.
+> > 
+> > Changes since 20130430:
+> > 
+> 
+> 
+> When CONFIG_SND=m and CONFIG_SND_AC97_CODEC=m and
+> CONFIG_VIDEO_STK1160=y
+> CONFIG_VIDEO_STK1160_AC97=y
+> 
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x122706): undefined reference to `snd_card_create'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x1227b2): undefined reference to `snd_ac97_bus'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x1227cd): undefined reference to `snd_card_free'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x12281b): undefined reference to `snd_ac97_mixer'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x122832): undefined reference to `snd_card_register'
+> drivers/built-in.o: In function `stk1160_ac97_unregister':
+> (.text+0x12285e): undefined reference to `snd_card_free'
+> 
+> 
+> This kconfig fragment:
+> config VIDEO_STK1160_AC97
+> 	bool "STK1160 AC97 codec support"
+> 	depends on VIDEO_STK1160 && SND
+> 	select SND_AC97_CODEC
+> 
+> is unreliable (doesn't do what some people expect) when SND=m and SND_AC97_CODEC=m,
+> since VIDEO_STK1160_AC97 is a bool.
 
-Fix build errors in staging/sep/ by making DX_SEP depend on
-CRYPTO.
+I'm not sure to understand what you want, here.
+I find it valid that a 'bool' can 'select' a 'tristate', to force it to 'y'.
 
-drivers/built-in.o: In function `sep_sha1_init':
-sep_crypto.c:(.text+0x245ece): undefined reference to `crypto_enqueue_request'
-drivers/built-in.o: In function `sep_sha1_update':
-sep_crypto.c:(.text+0x245f4f): undefined reference to `crypto_enqueue_request'
-drivers/built-in.o: In function `sep_sha1_final':
-sep_crypto.c:(.text+0x245fcf): undefined reference to `crypto_enqueue_request'
-drivers/built-in.o: In function `sep_sha1_finup':
-sep_crypto.c:(.text+0x24604f): undefined reference to `crypto_enqueue_request'
-drivers/built-in.o: In function `sep_sha1_digest':
-sep_crypto.c:(.text+0x2460de): undefined reference to `crypto_enqueue_request'
-drivers/built-in.o:sep_crypto.c:(.text+0x24616e): more undefined references to `crypto_enqueue_request' follow
-drivers/built-in.o: In function `sep_crypto_block':
-sep_crypto.c:(.text+0x247c81): undefined reference to `ablkcipher_walk_phys'
-sep_crypto.c:(.text+0x247e40): undefined reference to `ablkcipher_walk_phys'
-drivers/built-in.o: In function `sep_dequeuer':
-sep_crypto.c:(.text+0x248ab9): undefined reference to `crypto_dequeue_request'
-sep_crypto.c:(.text+0x248afa): undefined reference to `crypto_ahash_type'
-sep_crypto.c:(.text+0x248fdf): undefined reference to `crypto_dequeue_request'
-drivers/built-in.o: In function `sep_crypto_setup':
-(.text+0x24902a): undefined reference to `crypto_init_queue'
-drivers/built-in.o: In function `sep_crypto_setup':
-(.text+0x24909c): undefined reference to `crypto_register_ahash'
-drivers/built-in.o: In function `sep_crypto_setup':
-(.text+0x2490c4): undefined reference to `crypto_register_alg'
-drivers/built-in.o: In function `sep_crypto_setup':
-(.text+0x2490f7): undefined reference to `crypto_unregister_alg'
-drivers/built-in.o: In function `sep_crypto_setup':
-(.text+0x249118): undefined reference to `crypto_unregister_ahash'
-drivers/built-in.o: In function `sep_crypto_takedown':
-(.text+0x249176): undefined reference to `crypto_unregister_ahash'
-drivers/built-in.o: In function `sep_crypto_takedown':
-(.text+0x249197): undefined reference to `crypto_unregister_alg'
+Do you mean there is an issue with Kconfig, the parser?
+  -> should Kconfig warn or error out in such a case?
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
- drivers/staging/sep/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Or do you mean the structure above is wrong, and should be ammended?
+  -> change the 'select' to a 'depends on'?
+  -> change the symbol to a tristate?
 
---- linux-next-20130501.orig/drivers/staging/sep/Kconfig
-+++ linux-next-20130501/drivers/staging/sep/Kconfig
-@@ -1,6 +1,6 @@
- config DX_SEP
- 	tristate "Discretix SEP driver"
--	depends on PCI
-+	depends on PCI && CRYPTO
- 	help
- 	  Discretix SEP driver; used for the security processor subsystem
- 	  on board the Intel Mobile Internet Device and adds SEP availability
+Regards,
+Yann E. MORIN.
+
+-- 
+.-----------------.--------------------.------------------.--------------------.
+|  Yann E. MORIN  | Real-Time Embedded | /"\ ASCII RIBBON | Erics' conspiracy: |
+| +33 662 376 056 | Software  Designer | \ / CAMPAIGN     |  ___               |
+| +33 223 225 172 `------------.-------:  X  AGAINST      |  \e/  There is no  |
+| http://ymorin.is-a-geek.org/ | _/*\_ | / \ HTML MAIL    |   v   conspiracy.  |
+'------------------------------^-------^------------------^--------------------'
