@@ -1,53 +1,139 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 1 (media/usb/stk1160)
-Date: Wed, 01 May 2013 13:23:25 -0700
-Message-ID: <518179BD.3010407@infradead.org>
-References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au> <518157EB.3010700@infradead.org> <20130501192845.GA18811@free.fr> <alpine.DEB.2.02.1305011258180.8448@chino.kir.corp.google.com>
+From: simon@mungewell.org
+Subject: Re: [PATCH -next] hid: fix hid-steelseries kconfig/build
+Date: Wed, 1 May 2013 16:32:04 -0400
+Message-ID: <60e441a9713d5f518ba3f951f9e8a062.squirrel@www.mungewell.org>
+References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au>
+    <51816271.3040400@infradead.org>
+    <c23b45b45b6a27055cdf18fe4dbc6309.squirrel@www.mungewell.org>
+    <51816F8D.80607@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.02.1305011258180.8448@chino.kir.corp.google.com>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: David Rientjes <rientjes@google.com>
-Cc: "Yann E. MORIN" <yann.morin.1998@free.fr>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <51816F8D.80607@infradead.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: simon@mungewell.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 05/01/13 12:58, David Rientjes wrote:
-> On Wed, 1 May 2013, Yann E. MORIN wrote:
-> 
->>> When CONFIG_SND=m and CONFIG_SND_AC97_CODEC=m and
->>> CONFIG_VIDEO_STK1160=y
->>> CONFIG_VIDEO_STK1160_AC97=y
+> On 05/01/13 12:27, simon@mungewell.org wrote:
+>> Hi Randy and all,
+>> Seems like you found a problem... but the relevant sections of
+>> 'hid-steelseries.c' already have
+>> --
+>> #if defined(CONFIG_LEDS_CLASS) || defined(CONFIG_LEDS_CLASS_MODULE)
+>
+> which should be replaced with:
+>
+> #include <linux/kconfig.h>
+>
+> #if IS_ENABLED(LEDS_CLASS)
+>
+>
+>> ...
+>> #endif
+>> --
+>>
+>> Shouldn't this prevent the module having calls to register/unregister if
+>> the LED_CLASS is not enabled?
+>
+> Please read the patch description.  CONFIG_LEDS_CLASS=m but
+> CONFIG_HID_STEELSEREIS=y.
+> A builtin driver cannot make calls to a modular driver if the modular
+> driver
+> is not loaded.  Is there a way to require that the modular driver is
+> loaded
+> for hid-steelseries?  Maybe so, but I don't know.
+
+I had a look around what other drivers do, but there is not much 'case
+law' to follow (or copy from).
+
+'drivers/media/radio/radio-shark.c' does it like this:
+--
+#if defined(CONFIG_LEDS_CLASS) || \
+    (defined(CONFIG_LEDS_CLASS_MODULE) && defined(CONFIG_RADIO_SHARK_MODULE))
+...
+#endif
+--
+
+Which I think is another solution, and perhaps a little more
+readable/understandable (ie. you have led control if LED_CLASS is
+built-in, or both the driver _and_ LED_CLASS are modules).
+
+
+If there is not an objection to this style I'll prepare and test a patch
+in the next couple of days.
+
+Simon.
+
+PS. 'drivers/platform/x86/fujitsu-laptop.c' might have the same issues as
+hid-steelseries....
+
+>
+>
+>> Does forcing a 'depends on LED_CLASS' in Kconfig prevent the
+>> hid-steelseries module being built on systems without LEDs, or is this
+>> simply a way to ensure that the LED_CLASS module gets loaded first?
+>
+> It prevents the driver from being built.  I think that a satisfactory
+> solution
+> would be this small change:
+>
+> 	depends on LEDS_CLASS || LEDS_CLASS=n
+>
+> That makes HID_STEELSERIES depend on LEDS_CLASS when it is enabled but
+> still
+> allows the driver to build when LEDS_CLASS=n.  Makes sense?
+>
+>
+>
+> Oh, and please don't top-post.
+>
+> Thanks.
+>
+>>
+>> Simon.
+>>
+>>> From: Randy Dunlap <rdunlap@infradead.org>
 >>>
->>> drivers/built-in.o: In function `stk1160_ac97_register':
->>> (.text+0x122706): undefined reference to `snd_card_create'
->>> drivers/built-in.o: In function `stk1160_ac97_register':
->>> (.text+0x1227b2): undefined reference to `snd_ac97_bus'
->>> drivers/built-in.o: In function `stk1160_ac97_register':
->>> (.text+0x1227cd): undefined reference to `snd_card_free'
->>> drivers/built-in.o: In function `stk1160_ac97_register':
->>> (.text+0x12281b): undefined reference to `snd_ac97_mixer'
->>> drivers/built-in.o: In function `stk1160_ac97_register':
->>> (.text+0x122832): undefined reference to `snd_card_register'
->>> drivers/built-in.o: In function `stk1160_ac97_unregister':
->>> (.text+0x12285e): undefined reference to `snd_card_free'
+>>> Fix hid-steelseries build by making it depends on LEDS_CLASS.
+>>> Build errors happen when LEDS_CLASS=m  and HID_STEELSERIES=y.
 >>>
+>>> drivers/built-in.o: In function `steelseries_srws1_remove':
+>>> hid-steelseries.c:(.text+0x3b97a1): undefined reference to
+>>> `led_classdev_unregister'
+>>> drivers/built-in.o: In function `steelseries_srws1_probe':
+>>> hid-steelseries.c:(.text+0x3b9c51): undefined reference to
+>>> `led_classdev_register'
+>>> hid-steelseries.c:(.text+0x3b9ce5): undefined reference to
+>>> `led_classdev_register'
+>>> hid-steelseries.c:(.text+0x3b9d4b): undefined reference to
+>>> `led_classdev_unregister'
 >>>
->>> This kconfig fragment:
->>> config VIDEO_STK1160_AC97
->>> 	bool "STK1160 AC97 codec support"
->>> 	depends on VIDEO_STK1160 && SND
-> 
-> This doesn't depend on SND, it depends on SND=y.
+>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>> ---
+>>>  drivers/hid/Kconfig |    1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> --- linux-next-20130501.orig/drivers/hid/Kconfig
+>>> +++ linux-next-20130501/drivers/hid/Kconfig
+>>> @@ -610,6 +610,7 @@ config HID_SPEEDLINK
+>>>  config HID_STEELSERIES
+>>>  	tristate "Steelseries SRW-S1 steering wheel support"
+>>>  	depends on HID
+>>> +	depends on LEDS_CLASS
+>>>  	---help---
+>>>  	Support for Steelseries SRW-S1 steering wheel
+>>>
+>>> --
+>
+>
 > --
+> ~Randy
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-input" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
 
 
-Maybe this option *should* depend on SND=y, but that's not what the
-kconfig syntax says.  The kconfig language does not care if the variable is
-a bool or a tristate when evaluating a depends expression AFAICT (but I am
-only reading Documentation/kbuild/kconfig-language.txt, not the source code).
-
-
--- 
-~Randy
