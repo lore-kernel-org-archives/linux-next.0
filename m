@@ -1,74 +1,201 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: the mips tree is completely screwed
-Date: Wed, 1 May 2013 10:05:41 +1000
-Message-ID: <20130501100541.7577b375b041559fbc8de5a7@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the powerpc tree
+Date: Wed, 1 May 2013 12:06:36 +1000
+Message-ID: <20130501120636.0e54681b2dfb7ebe6aeb27c4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__1_May_2013_10_05_41_+1000_2fK_0hM6dzRMCgLL"
+ boundary="Signature=_Wed__1_May_2013_12_06_36_+1000_XYNZNJPro60xXbfT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45858 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:34366 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933945Ab3EAAFx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Apr 2013 20:05:53 -0400
+	with ESMTP id S934003Ab3EACGt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Apr 2013 22:06:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Steven J. Hill" <Steven.Hill@imgtec.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
 
---Signature=_Wed__1_May_2013_10_05_41_+1000_2fK_0hM6dzRMCgLL
+--Signature=_Wed__1_May_2013_12_06_36_+1000_XYNZNJPro60xXbfT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi Al,
 
-You seem to have mucked up your tree badly overnight:
+Today's linux-next merge of the vfs tree got a conflict in
+arch/powerpc/kernel/rtas_flash.c between commit fb4696c39573
+("powerpc/rtas_flash: Fix bad memory access") from the powerpc tree and
+commits ad18a364f186 ("powerpc/rtas_flash: Free kmem upon module exit")
+and 2352ad01409d ("ppc: Clean up rtas_flash driver somewhat") from the
+vfs tree.
 
-Fetching it produced this:
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-remote: Counting objects: 358824, done.
-remote: Compressing objects: 100% (81248/81248), done.
-remote: Total 350365 (delta 306957), reused 299661 (delta 267902)
-Receiving objects: 100% (350365/350365), 131.26 MiB | 700 KiB/s, done.
-Resolving deltas: 100% (306957/306957), completed with 5669 local objects.
-=46rom git://git.linux-mips.org/pub/scm/ralf/upstream-sfr
- + 6eac6e6...eb35a29 mips-for-linux-next -> mips/mips-for-linux-next  (forc=
-ed update)
-
-It seems to have an enormous number of back merges in it (which Linus
-will complain about) and old versions of patches that have been merged by
-Linus after being rebased.  It looks like you have the complete history
-of MIPS development in there :-(
-
-It looks like (maybe) the mti-next branch of
-git://git.linux-mips.org/pub/scm/sjhill/linux-sjhill that you merged was
-based on the wrong thing.
-
-I can't use that.  I will use the mips tree from yesterday.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__1_May_2013_10_05_41_+1000_2fK_0hM6dzRMCgLL
+diff --cc arch/powerpc/kernel/rtas_flash.c
+index 243e184,5b77026..0000000
+--- a/arch/powerpc/kernel/rtas_flash.c
++++ b/arch/powerpc/kernel/rtas_flash.c
+@@@ -310,9 -316,9 +328,9 @@@ static ssize_t rtas_flash_write(struct=20
+  	 * proc file
+  	 */
+  	if (uf->flist =3D=3D NULL) {
+ -		uf->flist =3D kmem_cache_alloc(flash_block_cache, GFP_KERNEL);
+ +		uf->flist =3D kmem_cache_zalloc(flash_block_cache, GFP_KERNEL);
+  		if (!uf->flist)
+- 			return -ENOMEM;
++ 			goto nomem;
+  	}
+ =20
+  	fl =3D uf->flist;
+@@@ -321,18 -327,18 +339,18 @@@
+  	next_free =3D fl->num_blocks;
+  	if (next_free =3D=3D FLASH_BLOCKS_PER_NODE) {
+  		/* Need to allocate another block_list */
+ -		fl->next =3D kmem_cache_alloc(flash_block_cache, GFP_KERNEL);
+ +		fl->next =3D kmem_cache_zalloc(flash_block_cache, GFP_KERNEL);
+  		if (!fl->next)
+- 			return -ENOMEM;
++ 			goto nomem;
+  		fl =3D fl->next;
+  		next_free =3D 0;
+  	}
+ =20
+  	if (count > RTAS_BLK_SIZE)
+  		count =3D RTAS_BLK_SIZE;
+ -	p =3D kmem_cache_alloc(flash_block_cache, GFP_KERNEL);
+ +	p =3D kmem_cache_zalloc(flash_block_cache, GFP_KERNEL);
+  	if (!p)
+- 		return -ENOMEM;
++ 		goto nomem;
+  =09
+  	if(copy_from_user(p, buffer, count)) {
+  		kmem_cache_free(flash_block_cache, p);
+@@@ -722,65 -694,13 +706,13 @@@ static int __init rtas_flash_init(void
+  		return 1;
+  	}
+ =20
+- 	firmware_flash_pde =3D create_flash_pde("powerpc/rtas/"
+- 					      FIRMWARE_FLASH_NAME,
+- 					      &rtas_flash_operations);
+- 	if (firmware_flash_pde =3D=3D NULL) {
+- 		rc =3D -ENOMEM;
+- 		goto cleanup;
+- 	}
+-=20
+- 	rc =3D initialize_flash_pde_data("ibm,update-flash-64-and-reboot",
+- 			 	       sizeof(struct rtas_update_flash_t),=20
+- 				       firmware_flash_pde);
+- 	if (rc !=3D 0)
+- 		goto cleanup;
+-=20
+- 	firmware_update_pde =3D create_flash_pde("powerpc/rtas/"
+- 					       FIRMWARE_UPDATE_NAME,
+- 					       &rtas_flash_operations);
+- 	if (firmware_update_pde =3D=3D NULL) {
+- 		rc =3D -ENOMEM;
+- 		goto cleanup;
+- 	}
+-=20
+- 	rc =3D initialize_flash_pde_data("ibm,update-flash-64-and-reboot",
+- 			 	       sizeof(struct rtas_update_flash_t),=20
+- 				       firmware_update_pde);
+- 	if (rc !=3D 0)
+- 		goto cleanup;
+-=20
+- 	validate_pde =3D create_flash_pde("powerpc/rtas/" VALIDATE_FLASH_NAME,
+- 			      		&validate_flash_operations);
+- 	if (validate_pde =3D=3D NULL) {
+- 		rc =3D -ENOMEM;
+- 		goto cleanup;
+- 	}
+-=20
+- 	rc =3D initialize_flash_pde_data("ibm,validate-flash-image",
+- 		                       sizeof(struct rtas_validate_flash_t),=20
+- 				       validate_pde);
+- 	if (rc !=3D 0)
+- 		goto cleanup;
+-=20
+- 	manage_pde =3D create_flash_pde("powerpc/rtas/" MANAGE_FLASH_NAME,
+- 				      &manage_flash_operations);
+- 	if (manage_pde =3D=3D NULL) {
+- 		rc =3D -ENOMEM;
+- 		goto cleanup;
+- 	}
+-=20
+- 	rc =3D initialize_flash_pde_data("ibm,manage-flash-image",
+- 			               sizeof(struct rtas_manage_flash_t),
+- 				       manage_pde);
+- 	if (rc !=3D 0)
+- 		goto cleanup;
+-=20
+- 	rtas_flash_term_hook =3D rtas_flash_firmware;
++ 	rtas_validate_flash_data.buf =3D kzalloc(VALIDATE_BUF_SIZE, GFP_KERNEL);
++ 	if (!rtas_validate_flash_data.buf)
++ 		return -ENOMEM;
+ =20
+  	flash_block_cache =3D kmem_cache_create("rtas_flash_cache",
+ -					      RTAS_BLK_SIZE, RTAS_BLK_SIZE, 0,
+ -					      rtas_block_ctor);
+ +				RTAS_BLK_SIZE, RTAS_BLK_SIZE, 0,
+ +				NULL);
+  	if (!flash_block_cache) {
+  		printk(KERN_ERR "%s: failed to create block cache\n",
+  				__func__);
+@@@ -800,20 -742,17 +754,22 @@@ enomem_buf
+ =20
+  static void __exit rtas_flash_cleanup(void)
+  {
++ 	int i;
++=20
+  	rtas_flash_term_hook =3D NULL;
+ =20
+ +	if (rtas_firmware_flash_list) {
+ +		free_flash_list(rtas_firmware_flash_list);
+ +		rtas_firmware_flash_list =3D NULL;
+ +	}
+ +
+- 	if (flash_block_cache)
+- 		kmem_cache_destroy(flash_block_cache);
++ 	for (i =3D 0; i < ARRAY_SIZE(rtas_flash_files); i++) {
++ 		const struct rtas_flash_file *f =3D &rtas_flash_files[i];
++ 		remove_proc_entry(f->filename, NULL);
++ 	}
+ =20
+- 	remove_flash_pde(firmware_flash_pde);
+- 	remove_flash_pde(firmware_update_pde);
+- 	remove_flash_pde(validate_pde);
+- 	remove_flash_pde(manage_pde);
++ 	kmem_cache_destroy(flash_block_cache);
++ 	kfree(rtas_validate_flash_data.buf);
+  }
+ =20
+  module_init(rtas_flash_init);
+
+--Signature=_Wed__1_May_2013_12_06_36_+1000_XYNZNJPro60xXbfT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRgFxVAAoJEECxmPOUX5FEqrgP/00Tcxg+F3Pvm8ENiEekpsWT
-/GCuZlx0RLFFUSBMIfnLTe5qUZjAJBBIu7lcCwtb6h/Y8/4eCGCctcn8jtfOLmcz
-KDCnRHqpAzhvNwVUjE5lyjTEggWtSin2gH+Xaxn1q4T1yjM05sEKNSfGwpyMMm/t
-zfpdFM72Kmx0eeOzGo5bgu5YgSgCUJX1MtQhnx+iiaDHUVJnWgImwfGVsnI1G2FP
-qPFtz3FQiY2NiE/XzdAbCfsaUxB89P+ydqklKDzA3o8Pd4fvE0JwbjXybvUmMLhe
-Xs3UqFlES3eKJWfSW3Qn5M7v5r3nnN6t00PoWw55KEHvtOkVkRVOWZkz2+wkBUbD
-zyPkTHsVKC6lttXHhA8vUFBLoMrzWCb8wdBQBMYfHERN+a1J9xXrWKnIOGjyz2DE
-aB6W+19mLgzOfAWMZ91mLiUJiOYRhLlBMTnh2oBZEpMuSPUFkvHDPr6qus/JeP/u
-UWtf48uRsOEJytcCzQBIccEZC4u2Wbo6O8ibhxRFCBQvYwALhNmpDIET0HPYwN1x
-j9XEgcpue9WtLvtkngwj+DFLFZMHE7d5i+B5lAV9r8eenMNOZrs1aJ4Z97//xVO2
-PSgs0EWidmKrKgVlBHyd014Xrd/cPEBNfksANgykNeE1RSKGcvVjOQzZXjbiL3M1
-AAE67XjCsJzKpHTznO5o
-=wu0A
+iQIcBAEBCAAGBQJRgHisAAoJEECxmPOUX5FEjEQP/iXqmm1eo+FfSL6lbQrwpO69
+kfKyhQyB1fqd4IU1ZBcpnlClBMCcQlx4qIr8ox0M+fnhdaqXMgjwkeRJU1QtfDif
+FLBLPH4awi+DqODSXtUcL1zRSOfVW3GVhvFylYeXx2v9HpFHsw6irREZMrcLGWOF
+NpyXiWJjMsQOJYVYKjpdlsw+Z4nBURuPg1ddz1WwPNN1pqMUrS7r974Q+21l8C6j
+23FMqJWbMK21U0IeWORpKNpT8Q/vyXRK89EnIv20YUNGU2oRFPI+6AQDcIHW4dqb
+MpS4QxqkaNT2Jl6rNMZfFGXEuLfoD8r7xnjumoyBohgTPCl/W476sBfjYM0pmhQ0
+y1MwLC8doGN3LQAzH1tGWaYm4leYMDwFq3k7gqOIj8BkAOOUWx7vZXHrFLzrTCr1
+az1JRF7Ibbfb+MN8V5U+CtWxueIksrmhLxDV+RsJ1P/AaFqVZFa+Wv0B2pXhhkJ4
+z0AK5NUXUuaAIRMtJY+dkwp3BtnPgpSxq3jh24Uts1ton6ls7WaZaMBdTw+s5QAe
+V0V58JX6vi28khfNTYoKFUBSh6XPZYkLqZRyFwHWhd12ChTKeEZzyku+BlydDg1B
+wYwRPRwGT/b6gB3V3Z0NjTIGM+59c284Cks5ULGXpkcbqskaBSRcz7rRsVcYLrCB
+rfqXo/KJ2zgpWv5PPJXl
+=iJ+g
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__1_May_2013_10_05_41_+1000_2fK_0hM6dzRMCgLL--
+--Signature=_Wed__1_May_2013_12_06_36_+1000_XYNZNJPro60xXbfT--
