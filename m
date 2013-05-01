@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the powerpc tree
-Date: Wed, 1 May 2013 12:06:36 +1000
-Message-ID: <20130501120636.0e54681b2dfb7ebe6aeb27c4@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with Linus' tree
+Date: Wed, 1 May 2013 12:11:10 +1000
+Message-ID: <20130501121110.88f324c1c28493cf9a7b296f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__1_May_2013_12_06_36_+1000_XYNZNJPro60xXbfT"
+ boundary="Signature=_Wed__1_May_2013_12_11_10_+1000_GxOAbDC6vBOHPAjW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34366 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:36408 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934003Ab3EACGt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Apr 2013 22:06:49 -0400
+	with ESMTP id S933058Ab3EACLN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Apr 2013 22:11:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Vasant Hegde <hegdevasant@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Joonsoo Kim <js1304@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Wed__1_May_2013_12_06_36_+1000_XYNZNJPro60xXbfT
+--Signature=_Wed__1_May_2013_12_11_10_+1000_GxOAbDC6vBOHPAjW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,11 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi Al,
 
 Today's linux-next merge of the vfs tree got a conflict in
-arch/powerpc/kernel/rtas_flash.c between commit fb4696c39573
-("powerpc/rtas_flash: Fix bad memory access") from the powerpc tree and
-commits ad18a364f186 ("powerpc/rtas_flash: Free kmem upon module exit")
-and 2352ad01409d ("ppc: Clean up rtas_flash driver somewhat") from the
-vfs tree.
+fs/proc/internal.h between commit db3808c1bac6 ("mm, vmalloc: move
+get_vmalloc_info() to vmalloc.c") from Linus' tree and commit
+ae8970dd9ccb ("proc: Move non-public stuff from linux/proc_fs.h to
+fs/proc/internal.h") from the vfs tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,165 +36,114 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/powerpc/kernel/rtas_flash.c
-index 243e184,5b77026..0000000
---- a/arch/powerpc/kernel/rtas_flash.c
-+++ b/arch/powerpc/kernel/rtas_flash.c
-@@@ -310,9 -316,9 +328,9 @@@ static ssize_t rtas_flash_write(struct=20
-  	 * proc file
-  	 */
-  	if (uf->flist =3D=3D NULL) {
- -		uf->flist =3D kmem_cache_alloc(flash_block_cache, GFP_KERNEL);
- +		uf->flist =3D kmem_cache_zalloc(flash_block_cache, GFP_KERNEL);
-  		if (!uf->flist)
-- 			return -ENOMEM;
-+ 			goto nomem;
-  	}
- =20
-  	fl =3D uf->flist;
-@@@ -321,18 -327,18 +339,18 @@@
-  	next_free =3D fl->num_blocks;
-  	if (next_free =3D=3D FLASH_BLOCKS_PER_NODE) {
-  		/* Need to allocate another block_list */
- -		fl->next =3D kmem_cache_alloc(flash_block_cache, GFP_KERNEL);
- +		fl->next =3D kmem_cache_zalloc(flash_block_cache, GFP_KERNEL);
-  		if (!fl->next)
-- 			return -ENOMEM;
-+ 			goto nomem;
-  		fl =3D fl->next;
-  		next_free =3D 0;
-  	}
- =20
-  	if (count > RTAS_BLK_SIZE)
-  		count =3D RTAS_BLK_SIZE;
- -	p =3D kmem_cache_alloc(flash_block_cache, GFP_KERNEL);
- +	p =3D kmem_cache_zalloc(flash_block_cache, GFP_KERNEL);
-  	if (!p)
-- 		return -ENOMEM;
-+ 		goto nomem;
-  =09
-  	if(copy_from_user(p, buffer, count)) {
-  		kmem_cache_free(flash_block_cache, p);
-@@@ -722,65 -694,13 +706,13 @@@ static int __init rtas_flash_init(void
-  		return 1;
-  	}
- =20
-- 	firmware_flash_pde =3D create_flash_pde("powerpc/rtas/"
-- 					      FIRMWARE_FLASH_NAME,
-- 					      &rtas_flash_operations);
-- 	if (firmware_flash_pde =3D=3D NULL) {
-- 		rc =3D -ENOMEM;
-- 		goto cleanup;
-- 	}
--=20
-- 	rc =3D initialize_flash_pde_data("ibm,update-flash-64-and-reboot",
-- 			 	       sizeof(struct rtas_update_flash_t),=20
-- 				       firmware_flash_pde);
-- 	if (rc !=3D 0)
-- 		goto cleanup;
--=20
-- 	firmware_update_pde =3D create_flash_pde("powerpc/rtas/"
-- 					       FIRMWARE_UPDATE_NAME,
-- 					       &rtas_flash_operations);
-- 	if (firmware_update_pde =3D=3D NULL) {
-- 		rc =3D -ENOMEM;
-- 		goto cleanup;
-- 	}
--=20
-- 	rc =3D initialize_flash_pde_data("ibm,update-flash-64-and-reboot",
-- 			 	       sizeof(struct rtas_update_flash_t),=20
-- 				       firmware_update_pde);
-- 	if (rc !=3D 0)
-- 		goto cleanup;
--=20
-- 	validate_pde =3D create_flash_pde("powerpc/rtas/" VALIDATE_FLASH_NAME,
-- 			      		&validate_flash_operations);
-- 	if (validate_pde =3D=3D NULL) {
-- 		rc =3D -ENOMEM;
-- 		goto cleanup;
-- 	}
--=20
-- 	rc =3D initialize_flash_pde_data("ibm,validate-flash-image",
-- 		                       sizeof(struct rtas_validate_flash_t),=20
-- 				       validate_pde);
-- 	if (rc !=3D 0)
-- 		goto cleanup;
--=20
-- 	manage_pde =3D create_flash_pde("powerpc/rtas/" MANAGE_FLASH_NAME,
-- 				      &manage_flash_operations);
-- 	if (manage_pde =3D=3D NULL) {
-- 		rc =3D -ENOMEM;
-- 		goto cleanup;
-- 	}
--=20
-- 	rc =3D initialize_flash_pde_data("ibm,manage-flash-image",
-- 			               sizeof(struct rtas_manage_flash_t),
-- 				       manage_pde);
-- 	if (rc !=3D 0)
-- 		goto cleanup;
--=20
-- 	rtas_flash_term_hook =3D rtas_flash_firmware;
-+ 	rtas_validate_flash_data.buf =3D kzalloc(VALIDATE_BUF_SIZE, GFP_KERNEL);
-+ 	if (!rtas_validate_flash_data.buf)
-+ 		return -ENOMEM;
- =20
-  	flash_block_cache =3D kmem_cache_create("rtas_flash_cache",
- -					      RTAS_BLK_SIZE, RTAS_BLK_SIZE, 0,
- -					      rtas_block_ctor);
- +				RTAS_BLK_SIZE, RTAS_BLK_SIZE, 0,
- +				NULL);
-  	if (!flash_block_cache) {
-  		printk(KERN_ERR "%s: failed to create block cache\n",
-  				__func__);
-@@@ -800,20 -742,17 +754,22 @@@ enomem_buf
- =20
-  static void __exit rtas_flash_cleanup(void)
-  {
-+ 	int i;
-+=20
-  	rtas_flash_term_hook =3D NULL;
- =20
- +	if (rtas_firmware_flash_list) {
- +		free_flash_list(rtas_firmware_flash_list);
- +		rtas_firmware_flash_list =3D NULL;
- +	}
- +
-- 	if (flash_block_cache)
-- 		kmem_cache_destroy(flash_block_cache);
-+ 	for (i =3D 0; i < ARRAY_SIZE(rtas_flash_files); i++) {
-+ 		const struct rtas_flash_file *f =3D &rtas_flash_files[i];
-+ 		remove_proc_entry(f->filename, NULL);
-+ 	}
- =20
-- 	remove_flash_pde(firmware_flash_pde);
-- 	remove_flash_pde(firmware_update_pde);
-- 	remove_flash_pde(validate_pde);
-- 	remove_flash_pde(manage_pde);
-+ 	kmem_cache_destroy(flash_block_cache);
-+ 	kfree(rtas_validate_flash_data.buf);
+diff --cc fs/proc/internal.h
+index 7571035,04255b6..0000000
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@@ -154,36 -191,56 +191,35 @@@ static inline struct proc_dir_entry *pd
+  	atomic_inc(&pde->count);
+  	return pde;
   }
+- void pde_put(struct proc_dir_entry *pde);
+-=20
+- int proc_fill_super(struct super_block *);
+- struct inode *proc_get_inode(struct super_block *, struct proc_dir_entry =
+*);
+- int proc_remount(struct super_block *sb, int *flags, char *data);
++ extern void pde_put(struct proc_dir_entry *);
  =20
-  module_init(rtas_flash_init);
+  /*
+-  * These are generic /proc routines that use the internal
+-  * "struct proc_dir_entry" tree to traverse the filesystem.
+-  *
+-  * The /proc root directory has extended versions to take care
+-  * of the /proc/<pid> subdirectories.
++  * inode.c
+   */
+- int proc_readdir(struct file *, void *, filldir_t);
+- struct dentry *proc_lookup(struct inode *, struct dentry *, unsigned int);
++ struct pde_opener {
++ 	struct file *file;
++ 	struct list_head lh;
++ 	int closing;
++ 	struct completion *c;
++ };
+ =20
++ extern const struct inode_operations proc_pid_link_inode_operations;
+ =20
++ extern void proc_init_inodecache(void);
++ extern struct inode *proc_get_inode(struct super_block *, struct proc_dir=
+_entry *);
++ extern int proc_fill_super(struct super_block *);
++ extern void proc_entry_rundown(struct proc_dir_entry *);
+ =20
+- /* Lookups */
+- typedef struct dentry *instantiate_t(struct inode *, struct dentry *,
+- 				struct task_struct *, const void *);
+- int proc_fill_cache(struct file *filp, void *dirent, filldir_t filldir,
+- 	const char *name, int len,
+- 	instantiate_t instantiate, struct task_struct *task, const void *ptr);
+- int pid_revalidate(struct dentry *dentry, unsigned int flags);
+- struct inode *proc_pid_make_inode(struct super_block * sb, struct task_st=
+ruct *task);
+- extern const struct dentry_operations pid_dentry_operations;
+- int pid_getattr(struct vfsmount *mnt, struct dentry *dentry, struct kstat=
+ *stat);
+- int proc_setattr(struct dentry *dentry, struct iattr *attr);
++ /*
+ - * mmu.c
+ - */
+ -struct vmalloc_info {
+ -	unsigned long	used;
+ -	unsigned long	largest_chunk;
+ -};
+ -
+ -#ifdef CONFIG_MMU
+ -#define VMALLOC_TOTAL (VMALLOC_END - VMALLOC_START)
+ -extern void get_vmalloc_info(struct vmalloc_info *);
+ -
+ -#else
+ -#define VMALLOC_TOTAL 0UL
+ -static inline void get_vmalloc_info(struct vmalloc_info *vmi)
+ -{
+ -	vmi->used =3D 0;
+ -	vmi->largest_chunk =3D 0;
+ -}
+ -#endif
+ -
+ -/*
++  * proc_devtree.c
++  */
++ #ifdef CONFIG_PROC_DEVICETREE
++ extern void proc_device_tree_init(void);
++ #endif
+ =20
++ /*
++  * proc_namespaces.c
++  */
+  extern const struct inode_operations proc_ns_dir_inode_operations;
+  extern const struct file_operations proc_ns_dir_operations;
+ =20
 
---Signature=_Wed__1_May_2013_12_06_36_+1000_XYNZNJPro60xXbfT
+--Signature=_Wed__1_May_2013_12_11_10_+1000_GxOAbDC6vBOHPAjW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRgHisAAoJEECxmPOUX5FEjEQP/iXqmm1eo+FfSL6lbQrwpO69
-kfKyhQyB1fqd4IU1ZBcpnlClBMCcQlx4qIr8ox0M+fnhdaqXMgjwkeRJU1QtfDif
-FLBLPH4awi+DqODSXtUcL1zRSOfVW3GVhvFylYeXx2v9HpFHsw6irREZMrcLGWOF
-NpyXiWJjMsQOJYVYKjpdlsw+Z4nBURuPg1ddz1WwPNN1pqMUrS7r974Q+21l8C6j
-23FMqJWbMK21U0IeWORpKNpT8Q/vyXRK89EnIv20YUNGU2oRFPI+6AQDcIHW4dqb
-MpS4QxqkaNT2Jl6rNMZfFGXEuLfoD8r7xnjumoyBohgTPCl/W476sBfjYM0pmhQ0
-y1MwLC8doGN3LQAzH1tGWaYm4leYMDwFq3k7gqOIj8BkAOOUWx7vZXHrFLzrTCr1
-az1JRF7Ibbfb+MN8V5U+CtWxueIksrmhLxDV+RsJ1P/AaFqVZFa+Wv0B2pXhhkJ4
-z0AK5NUXUuaAIRMtJY+dkwp3BtnPgpSxq3jh24Uts1ton6ls7WaZaMBdTw+s5QAe
-V0V58JX6vi28khfNTYoKFUBSh6XPZYkLqZRyFwHWhd12ChTKeEZzyku+BlydDg1B
-wYwRPRwGT/b6gB3V3Z0NjTIGM+59c284Cks5ULGXpkcbqskaBSRcz7rRsVcYLrCB
-rfqXo/KJ2zgpWv5PPJXl
-=iJ+g
+iQIcBAEBCAAGBQJRgHm+AAoJEECxmPOUX5FEuqQQAJrXLumMLF9JxVa1e9H2P0uY
+lRiOQ5NUYQ1BQUvHucqAkWMIGgPQoXmkidx8F30uWdY5fV4jKRQzEthLAp3HKNsI
+OIv8ISIjcimQ0E3yOCIOh/1J1v5O3sawCVEMpnWNKP2jKViS4Ukh1Vx4w4L9r+vH
+dqL25SkeG7o3YxMnyByuR5ao32sRhwzVyZpRC2ZUQbGkXCYlYzRC9HVZA6ArSy2r
+/DrDuTEXovGWkZRsFSqkwwGYh0VxXvbnL0Cx2a982LlXgeD4BTWciAj4YQ7BPz14
+c7IUg/rhNwjWaKgrULgfBseLO3ZeeFX651FBbTdRvLXfUVM46mEpVjLZfD01Z9vL
+4Vpvi2y0JeYgUElIxPGVpmUDiB896Bb9iMb7Jh8wWgOc2sTULM8FWlI5O2b6Kh/g
+zZxhmmAqyRO67yklwpRx7idcKDJzTaXLuiG/1aBvqoL5POHY7vohAGVr0OKbgQK7
+cqedD0QmdDvVaSiM/fXyGK4u0EH7XYvd4QLTHMEFYPIjLTUvt5bBw/BlgwD06MCH
+ls3JJV9GIchC0wuC52Tat7DgQ/dV6sMYmErjEo9XkLGlgBG8PoX4+nnTq6nDDIa4
+wWr/PNZUIvNqesTuz8QQsVrfGeMY1nHwsYAet0kyCe+kZtEfdI4J7uHbnPAzx+fv
+zsyfNdtaC6bv8cQ6LPMP
+=JuzY
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__1_May_2013_12_06_36_+1000_XYNZNJPro60xXbfT--
+--Signature=_Wed__1_May_2013_12_11_10_+1000_GxOAbDC6vBOHPAjW--
