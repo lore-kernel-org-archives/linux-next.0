@@ -1,48 +1,72 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] power: fix lp8788-charger kconfig & build
-Date: Wed, 01 May 2013 12:18:43 -0700
-Message-ID: <51816A93.4070802@infradead.org>
+From: simon@mungewell.org
+Subject: Re: [PATCH -next] hid: fix hid-steelseries kconfig/build
+Date: Wed, 1 May 2013 15:27:22 -0400
+Message-ID: <c23b45b45b6a27055cdf18fe4dbc6309.squirrel@www.mungewell.org>
 References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au>
+    <51816271.3040400@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:49443 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752703Ab3EATTO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 15:19:14 -0400
-In-Reply-To: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Milo(Woogyom) Kim" <milo.kim@ti.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <51816271.3040400@infradead.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi Randy and all,
+Seems like you found a problem... but the relevant sections of
+'hid-steelseries.c' already have
+--
+#if defined(CONFIG_LEDS_CLASS) || defined(CONFIG_LEDS_CLASS_MODULE)
+...
+#endif
+--
 
-Fix build errors in lp8788-charger by making it depend on IIO.
-Fixes errors when CONFIG_IIO=m and CHARGER_LP8788=y.
+Shouldn't this prevent the module having calls to register/unregister if
+the LED_CLASS is not enabled?
 
-lp8788-charger.c:(.text+0x2146b5): undefined reference to `iio_channel_get'
-lp8788-charger.c:(.text+0x2146ce): undefined reference to `iio_channel_get'
-lp8788-charger.c:(.text+0x214a86): undefined reference to `iio_read_channel_processed'
-lp8788-charger.c:(.text+0x214b51): undefined reference to `iio_read_channel_processed'
-lp8788-charger.c:(.text+0x214c30): undefined reference to `iio_read_channel_processed'
-lp8788-charger.c:(.text+0x214d93): undefined reference to `iio_channel_release'
-lp8788-charger.c:(.text+0x214dac): undefined reference to `iio_channel_release'
+Does forcing a 'depends on LED_CLASS' in Kconfig prevent the
+hid-steelseries module being built on systems without LEDs, or is this
+simply a way to ensure that the LED_CLASS module gets loaded first?
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: "Milo(Woogyom) Kim" <milo.kim@ti.com>
----
- drivers/power/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Simon.
 
---- linux-next-20130501.orig/drivers/power/Kconfig
-+++ linux-next-20130501/drivers/power/Kconfig
-@@ -284,6 +284,7 @@ config CHARGER_LP8788
- 	tristate "TI LP8788 charger driver"
- 	depends on MFD_LP8788
- 	depends on LP8788_ADC
-+	depends on IIO
- 	help
- 	  Say Y to enable support for the LP8788 linear charger.
- 
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix hid-steelseries build by making it depends on LEDS_CLASS.
+> Build errors happen when LEDS_CLASS=m  and HID_STEELSERIES=y.
+>
+> drivers/built-in.o: In function `steelseries_srws1_remove':
+> hid-steelseries.c:(.text+0x3b97a1): undefined reference to
+> `led_classdev_unregister'
+> drivers/built-in.o: In function `steelseries_srws1_probe':
+> hid-steelseries.c:(.text+0x3b9c51): undefined reference to
+> `led_classdev_register'
+> hid-steelseries.c:(.text+0x3b9ce5): undefined reference to
+> `led_classdev_register'
+> hid-steelseries.c:(.text+0x3b9d4b): undefined reference to
+> `led_classdev_unregister'
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+>  drivers/hid/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+>
+> --- linux-next-20130501.orig/drivers/hid/Kconfig
+> +++ linux-next-20130501/drivers/hid/Kconfig
+> @@ -610,6 +610,7 @@ config HID_SPEEDLINK
+>  config HID_STEELSERIES
+>  	tristate "Steelseries SRW-S1 steering wheel support"
+>  	depends on HID
+> +	depends on LEDS_CLASS
+>  	---help---
+>  	Support for Steelseries SRW-S1 steering wheel
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-input" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+
+
