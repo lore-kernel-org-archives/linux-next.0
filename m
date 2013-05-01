@@ -1,87 +1,103 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 1 (media/usb/stk1160)
-Date: Wed, 01 May 2013 12:32:54 -0700
-Message-ID: <51816DE6.9060308@infradead.org>
-References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au> <518157EB.3010700@infradead.org> <20130501192845.GA18811@free.fr>
+Subject: Re: [PATCH -next] hid: fix hid-steelseries kconfig/build
+Date: Wed, 01 May 2013 12:39:57 -0700
+Message-ID: <51816F8D.80607@infradead.org>
+References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au>    <51816271.3040400@infradead.org> <c23b45b45b6a27055cdf18fe4dbc6309.squirrel@www.mungewell.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:56138 "EHLO
+Received: from casper.infradead.org ([85.118.1.10]:56202 "EHLO
 	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756186Ab3EATd0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 15:33:26 -0400
-In-Reply-To: <20130501192845.GA18811@free.fr>
+	with ESMTP id S1757081Ab3EATk1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 15:40:27 -0400
+In-Reply-To: <c23b45b45b6a27055cdf18fe4dbc6309.squirrel@www.mungewell.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, linux-kbuild@vger.kernel.org
+To: simon@mungewell.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
 
-On 05/01/13 12:28, Yann E. MORIN wrote:
-> On Wed, May 01, 2013 at 10:59:07AM -0700, Randy Dunlap wrote:
->> On 05/01/13 01:37, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Please do not add any v3.11 destined work to your linux-next included
->>> branches until after v3.10-rc1 is released.
->>>
->>> Changes since 20130430:
->>>
->>
->>
->> When CONFIG_SND=m and CONFIG_SND_AC97_CODEC=m and
->> CONFIG_VIDEO_STK1160=y
->> CONFIG_VIDEO_STK1160_AC97=y
->>
->> drivers/built-in.o: In function `stk1160_ac97_register':
->> (.text+0x122706): undefined reference to `snd_card_create'
->> drivers/built-in.o: In function `stk1160_ac97_register':
->> (.text+0x1227b2): undefined reference to `snd_ac97_bus'
->> drivers/built-in.o: In function `stk1160_ac97_register':
->> (.text+0x1227cd): undefined reference to `snd_card_free'
->> drivers/built-in.o: In function `stk1160_ac97_register':
->> (.text+0x12281b): undefined reference to `snd_ac97_mixer'
->> drivers/built-in.o: In function `stk1160_ac97_register':
->> (.text+0x122832): undefined reference to `snd_card_register'
->> drivers/built-in.o: In function `stk1160_ac97_unregister':
->> (.text+0x12285e): undefined reference to `snd_card_free'
->>
->>
->> This kconfig fragment:
->> config VIDEO_STK1160_AC97
->> 	bool "STK1160 AC97 codec support"
->> 	depends on VIDEO_STK1160 && SND
->> 	select SND_AC97_CODEC
->>
->> is unreliable (doesn't do what some people expect) when SND=m and SND_AC97_CODEC=m,
->> since VIDEO_STK1160_AC97 is a bool.
+On 05/01/13 12:27, simon@mungewell.org wrote:
+> Hi Randy and all,
+> Seems like you found a problem... but the relevant sections of
+> 'hid-steelseries.c' already have
+> --
+> #if defined(CONFIG_LEDS_CLASS) || defined(CONFIG_LEDS_CLASS_MODULE)
+
+which should be replaced with:
+
+#include <linux/kconfig.h>
+
+#if IS_ENABLED(LEDS_CLASS)
+
+
+> ...
+> #endif
+> --
 > 
-> I'm not sure to understand what you want, here.
+> Shouldn't this prevent the module having calls to register/unregister if
+> the LED_CLASS is not enabled?
 
-I just want the build errors fixed.  I'm not asking for any particular fix.
+Please read the patch description.  CONFIG_LEDS_CLASS=m but CONFIG_HID_STEELSEREIS=y.
+A builtin driver cannot make calls to a modular driver if the modular driver
+is not loaded.  Is there a way to require that the modular driver is loaded
+for hid-steelseries?  Maybe so, but I don't know.
 
-> I find it valid that a 'bool' can 'select' a 'tristate', to force it to 'y'.
 
-But a bool selecting a tristate that already =m does not force it to y AFAICT.
-I guess that would be an acceptable change/fix.  Maybe.
+> Does forcing a 'depends on LED_CLASS' in Kconfig prevent the
+> hid-steelseries module being built on systems without LEDs, or is this
+> simply a way to ensure that the LED_CLASS module gets loaded first?
 
-> Do you mean there is an issue with Kconfig, the parser?
+It prevents the driver from being built.  I think that a satisfactory solution
+would be this small change:
 
-I think so.
+	depends on LEDS_CLASS || LEDS_CLASS=n
 
->   -> should Kconfig warn or error out in such a case?
+That makes HID_STEELSERIES depend on LEDS_CLASS when it is enabled but still
+allows the driver to build when LEDS_CLASS=n.  Makes sense?
+
+
+
+Oh, and please don't top-post.
+
+Thanks.
+
 > 
-> Or do you mean the structure above is wrong, and should be ammended?
->   -> change the 'select' to a 'depends on'?
+> Simon.
+> 
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>>
+>> Fix hid-steelseries build by making it depends on LEDS_CLASS.
+>> Build errors happen when LEDS_CLASS=m  and HID_STEELSERIES=y.
+>>
+>> drivers/built-in.o: In function `steelseries_srws1_remove':
+>> hid-steelseries.c:(.text+0x3b97a1): undefined reference to
+>> `led_classdev_unregister'
+>> drivers/built-in.o: In function `steelseries_srws1_probe':
+>> hid-steelseries.c:(.text+0x3b9c51): undefined reference to
+>> `led_classdev_register'
+>> hid-steelseries.c:(.text+0x3b9ce5): undefined reference to
+>> `led_classdev_register'
+>> hid-steelseries.c:(.text+0x3b9d4b): undefined reference to
+>> `led_classdev_unregister'
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>> ---
+>>  drivers/hid/Kconfig |    1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> --- linux-next-20130501.orig/drivers/hid/Kconfig
+>> +++ linux-next-20130501/drivers/hid/Kconfig
+>> @@ -610,6 +610,7 @@ config HID_SPEEDLINK
+>>  config HID_STEELSERIES
+>>  	tristate "Steelseries SRW-S1 steering wheel support"
+>>  	depends on HID
+>> +	depends on LEDS_CLASS
+>>  	---help---
+>>  	Support for Steelseries SRW-S1 steering wheel
+>>
+>> --
 
-That should be one way to fix the problem, yes.
 
->   -> change the symbol to a tristate?
-
-I thought about that, but I don't think that it will work.  There is no
-separate module that is built for AC97 codec support.
-
-
-thanks,
 -- 
 ~Randy
