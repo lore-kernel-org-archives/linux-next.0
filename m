@@ -1,70 +1,67 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] lib: add weak __clzsi2()/__clzdi2() functions
-Date: Wed, 1 May 2013 09:35:35 +0200
-Message-ID: <CAMuHMdXJaZTSNavsPxQQ8df+J=Rfyn6mKjP2g7xoDXnW5PiF3Q@mail.gmail.com>
-References: <1367214005-14302-1-git-send-email-chanho.min@lge.com>
-	<CAMuHMdWk4oi_KCmZv7hLZ7JSwy=meziKPBMQ1HJiJR9W8AdrDg@mail.gmail.com>
-	<20130430144605.1a99a7397702b332ee818fc8@linux-foundation.org>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: linux-next: manual merge of the drm-intel tree with the drm tree
+Date: Wed, 1 May 2013 10:08:40 +0200
+Message-ID: <CAKMK7uE8M3gCbwmuxBrh0StqyRd0hyX+7YgZhUg-PcX8uJg+5Q@mail.gmail.com>
+References: <20130501143734.5305cf8e4cef42c19a1bd5ce@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <sparclinux-owner@vger.kernel.org>
-In-Reply-To: <20130430144605.1a99a7397702b332ee818fc8@linux-foundation.org>
-Sender: sparclinux-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Chanho Min <chanho.min@lge.com>, Kyungsik Lee <kyungsik.lee@lge.com>, Yann Collet <yann.collet.73@gmail.com>, Bob Pearson <rpearson@systemfabricworks.com>, Richard Weinberger <richard@nod.at>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, sparclinux <sparclinux@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ie0-f176.google.com ([209.85.223.176]:43193 "EHLO
+	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753821Ab3EAIIm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 04:08:42 -0400
+Received: by mail-ie0-f176.google.com with SMTP id x14so1650174ief.35
+        for <linux-next@vger.kernel.org>; Wed, 01 May 2013 01:08:41 -0700 (PDT)
+In-Reply-To: <20130501143734.5305cf8e4cef42c19a1bd5ce@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: intel-gfx <intel-gfx@lists.freedesktop.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>, =?ISO-8859-1?Q?linux=2Dkernel=40vger=2Ekernel=2Eorg=2E_Ville_Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, Dave Airlie <airlied@linux.ie>
 
-On Tue, Apr 30, 2013 at 11:46 PM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Mon, 29 Apr 2013 09:20:25 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Mon, Apr 29, 2013 at 7:40 AM, Chanho Min <chanho.min@lge.com> wrote:
->> > Some architectures need __clzsi2() or __clzdi2() for __builtin_clz and
->> > It causes build failure. They can be implemented using the fls() and
->> > overridden by linking arch-specific versions may not be implemented yet.
->> >
->> > Reference: https://lkml.org/lkml/2013/4/18/603
->> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> > Signed-off-by: Chanho Min <chanho.min@lge.com>
->>
->> Thanks, this fixes the link error on m68k, so
->>
->> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+On Wed, May 1, 2013 at 6:37 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> It doesn't work for alpha (gcc-4.4.4):
+> Today's linux-next merge of the drm-intel tree got a conflict in
+> drivers/gpu/drm/i915/i915_reg.h between commit a65851af5938 ("drm/i915:
+> Make data/link N value power of two") from the drm tree and commit
+> 72419203cab9 ("drm/i915: hw state readout support for fdi m/n") from the
+> drm-intel tree.
 >
-> ERROR: "__ctzdi2" [lib/lz4/lz4hc_compress.ko] undefined!
-> ERROR: "__ctzdi2" [lib/lz4/lz4_compress.ko] undefined!
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+
+Looks good, thanks.
+-Daniel
+
 >
-> akpm3:/usr/src/25> nm vmlinux|grep ctzd
-> akpm3:/usr/src/25>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 >
-> I assume the linker threw the code away.
-
-No, the link errors are for __ctzdi2, not __clzdi2.
-__ctzdi2 can be implemented using __ffs().
-
-> How's about we stop using __builtin_ctz[ll]() altogether?  Use N-fls()?
-
-That was my first suggestion ;-)
-
-> btw, this:
+> diff --cc drivers/gpu/drm/i915/i915_reg.h
+> index 83f9c26,b5d87bd..0000000
+> --- a/drivers/gpu/drm/i915/i915_reg.h
+> +++ b/drivers/gpu/drm/i915/i915_reg.h
+> @@@ -2652,11 -2774,11 +2774,12 @@@
+>   #define _PIPEB_GMCH_DATA_M                    0x71050
 >
-> int __weak __clzsi2(int val)
-> {
->        return BITS_PER_LONG - fls(val);
-> }
+>   /* Transfer unit size for display port - 1, default is 0x3f (for TU size 64) */
+>  -#define   PIPE_GMCH_DATA_M_TU_SIZE_MASK               (0x3f << 25)
+>  -#define   PIPE_GMCH_DATA_M_TU_SIZE_SHIFT      25
+>  +#define  TU_SIZE(x)             (((x)-1) << 25) /* default size 64 */
+>  +#define  TU_SIZE_MASK           (0x3f << 25)
+> + #define  TU_SIZE_SHIFT                25
 >
-> looks wrong.  It will give a different result for 32- and 64-bit.
+>  -#define   PIPE_GMCH_DATA_M_MASK                       (0xffffff)
+>  +#define  DATA_LINK_M_N_MASK   (0xffffff)
+>  +#define  DATA_LINK_N_MAX      (0x800000)
+>
+>   #define _PIPEA_GMCH_DATA_N                    0x70054
+>   #define _PIPEB_GMCH_DATA_N                    0x71054
 
-Indeed. It should be hardcoded 32.
 
-Gr{oetje,eeting}s,
-
-                        Geert
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
