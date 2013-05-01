@@ -1,72 +1,68 @@
-From: simon@mungewell.org
-Subject: Re: [PATCH -next] hid: fix hid-steelseries kconfig/build
-Date: Wed, 1 May 2013 15:27:22 -0400
-Message-ID: <c23b45b45b6a27055cdf18fe4dbc6309.squirrel@www.mungewell.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] staging: sep: fix driver build and kconfig
+Date: Wed, 01 May 2013 12:27:31 -0700
+Message-ID: <51816CA3.7000806@infradead.org>
 References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au>
-    <51816271.3040400@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <51816271.3040400@infradead.org>
-Sender: linux-input-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Randy and all,
-Seems like you found a problem... but the relevant sections of
-'hid-steelseries.c' already have
---
-#if defined(CONFIG_LEDS_CLASS) || defined(CONFIG_LEDS_CLASS_MODULE)
-...
-#endif
---
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Shouldn't this prevent the module having calls to register/unregister if
-the LED_CLASS is not enabled?
+Fix build errors in staging/sep/ by making DX_SEP depend on
+CRYPTO.
 
-Does forcing a 'depends on LED_CLASS' in Kconfig prevent the
-hid-steelseries module being built on systems without LEDs, or is this
-simply a way to ensure that the LED_CLASS module gets loaded first?
+drivers/built-in.o: In function `sep_sha1_init':
+sep_crypto.c:(.text+0x245ece): undefined reference to `crypto_enqueue_request'
+drivers/built-in.o: In function `sep_sha1_update':
+sep_crypto.c:(.text+0x245f4f): undefined reference to `crypto_enqueue_request'
+drivers/built-in.o: In function `sep_sha1_final':
+sep_crypto.c:(.text+0x245fcf): undefined reference to `crypto_enqueue_request'
+drivers/built-in.o: In function `sep_sha1_finup':
+sep_crypto.c:(.text+0x24604f): undefined reference to `crypto_enqueue_request'
+drivers/built-in.o: In function `sep_sha1_digest':
+sep_crypto.c:(.text+0x2460de): undefined reference to `crypto_enqueue_request'
+drivers/built-in.o:sep_crypto.c:(.text+0x24616e): more undefined references to `crypto_enqueue_request' follow
+drivers/built-in.o: In function `sep_crypto_block':
+sep_crypto.c:(.text+0x247c81): undefined reference to `ablkcipher_walk_phys'
+sep_crypto.c:(.text+0x247e40): undefined reference to `ablkcipher_walk_phys'
+drivers/built-in.o: In function `sep_dequeuer':
+sep_crypto.c:(.text+0x248ab9): undefined reference to `crypto_dequeue_request'
+sep_crypto.c:(.text+0x248afa): undefined reference to `crypto_ahash_type'
+sep_crypto.c:(.text+0x248fdf): undefined reference to `crypto_dequeue_request'
+drivers/built-in.o: In function `sep_crypto_setup':
+(.text+0x24902a): undefined reference to `crypto_init_queue'
+drivers/built-in.o: In function `sep_crypto_setup':
+(.text+0x24909c): undefined reference to `crypto_register_ahash'
+drivers/built-in.o: In function `sep_crypto_setup':
+(.text+0x2490c4): undefined reference to `crypto_register_alg'
+drivers/built-in.o: In function `sep_crypto_setup':
+(.text+0x2490f7): undefined reference to `crypto_unregister_alg'
+drivers/built-in.o: In function `sep_crypto_setup':
+(.text+0x249118): undefined reference to `crypto_unregister_ahash'
+drivers/built-in.o: In function `sep_crypto_takedown':
+(.text+0x249176): undefined reference to `crypto_unregister_ahash'
+drivers/built-in.o: In function `sep_crypto_takedown':
+(.text+0x249197): undefined reference to `crypto_unregister_alg'
 
-Simon.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+ drivers/staging/sep/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Fix hid-steelseries build by making it depends on LEDS_CLASS.
-> Build errors happen when LEDS_CLASS=m  and HID_STEELSERIES=y.
->
-> drivers/built-in.o: In function `steelseries_srws1_remove':
-> hid-steelseries.c:(.text+0x3b97a1): undefined reference to
-> `led_classdev_unregister'
-> drivers/built-in.o: In function `steelseries_srws1_probe':
-> hid-steelseries.c:(.text+0x3b9c51): undefined reference to
-> `led_classdev_register'
-> hid-steelseries.c:(.text+0x3b9ce5): undefined reference to
-> `led_classdev_register'
-> hid-steelseries.c:(.text+0x3b9d4b): undefined reference to
-> `led_classdev_unregister'
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
->  drivers/hid/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->
-> --- linux-next-20130501.orig/drivers/hid/Kconfig
-> +++ linux-next-20130501/drivers/hid/Kconfig
-> @@ -610,6 +610,7 @@ config HID_SPEEDLINK
->  config HID_STEELSERIES
->  	tristate "Steelseries SRW-S1 steering wheel support"
->  	depends on HID
-> +	depends on LEDS_CLASS
->  	---help---
->  	Support for Steelseries SRW-S1 steering wheel
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-input" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
-
+--- linux-next-20130501.orig/drivers/staging/sep/Kconfig
++++ linux-next-20130501/drivers/staging/sep/Kconfig
+@@ -1,6 +1,6 @@
+ config DX_SEP
+ 	tristate "Discretix SEP driver"
+-	depends on PCI
++	depends on PCI && CRYPTO
+ 	help
+ 	  Discretix SEP driver; used for the security processor subsystem
+ 	  on board the Intel Mobile Internet Device and adds SEP availability
