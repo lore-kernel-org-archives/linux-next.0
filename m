@@ -1,84 +1,37 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 1 (media/usb/stk1160)
-Date: Thu, 02 May 2013 14:23:08 -0700
-Message-ID: <5182D93C.4000706@infradead.org>
-References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au> <518157EB.3010700@infradead.org> <51827DB1.7000304@redhat.com>
+Subject: Re: linux-next: Tree for May 2 (platform/x86/samsung-laptop)
+Date: Thu, 02 May 2013 14:26:45 -0700
+Message-ID: <5182DA15.6030901@infradead.org>
+References: <20130502173537.c8aa671a1b22abe2ec341b87@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <51827DB1.7000304@redhat.com>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: "Yann E. MORIN" <yann.morin.1998@free.fr>, =?UTF-8?B?RXplcXVpZWwgR2Fy?= =?UTF-8?B?Y8OtYQ==?= <elezegarcia@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, linux-kbuild@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:47998 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751019Ab3EBV10 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 May 2013 17:27:26 -0400
+In-Reply-To: <20130502173537.c8aa671a1b22abe2ec341b87@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On 05/02/13 07:52, Mauro Carvalho Chehab wrote:
-> [media] stk1160: Make stk1160 module if SND is m and audio support is selected
+On 05/02/13 00:35, Stephen Rothwell wrote:
+> Hi all,
 > 
-> As reported by Randy:
+> Please do not add any v3.11 destined work to your linux-next included
+> branches until after v3.10-rc1 is released.
 > 
-> When CONFIG_SND=m and CONFIG_SND_AC97_CODEC=m and
-> CONFIG_VIDEO_STK1160=y
-> CONFIG_VIDEO_STK1160_AC97=y
+> Changes since 20130501:
 > 
-> drivers/built-in.o: In function `stk1160_ac97_register':
-> (.text+0x122706): undefined reference to `snd_card_create'
-> drivers/built-in.o: In function `stk1160_ac97_register':
-> (.text+0x1227b2): undefined reference to `snd_ac97_bus'
-> drivers/built-in.o: In function `stk1160_ac97_register':
-> (.text+0x1227cd): undefined reference to `snd_card_free'
-> drivers/built-in.o: In function `stk1160_ac97_register':
-> (.text+0x12281b): undefined reference to `snd_ac97_mixer'
-> drivers/built-in.o: In function `stk1160_ac97_register':
-> (.text+0x122832): undefined reference to `snd_card_register'
-> drivers/built-in.o: In function `stk1160_ac97_unregister':
-> (.text+0x12285e): undefined reference to `snd_card_free'
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-Thanks.
+when CONFIG_ACPI_VIDEO=m and CONFIG_SAMSUNG_LAPTOP=y:
 
-> 
-> diff --git a/drivers/media/usb/stk1160/Kconfig b/drivers/media/usb/stk1160/Kconfig
-> index 1c3a1ec..2bf6392 100644
-> --- a/drivers/media/usb/stk1160/Kconfig
-> +++ b/drivers/media/usb/stk1160/Kconfig
-> @@ -1,8 +1,6 @@
-> -config VIDEO_STK1160
-> +config VIDEO_STK1160_COMMON
->      tristate "STK1160 USB video capture support"
->      depends on VIDEO_DEV && I2C
-> -    select VIDEOBUF2_VMALLOC
-> -    select VIDEO_SAA711X
->  
->      ---help---
->        This is a video4linux driver for STK1160 based video capture devices.
-> @@ -12,9 +10,14 @@ config VIDEO_STK1160
->  
->  config VIDEO_STK1160_AC97
->      bool "STK1160 AC97 codec support"
-> -    depends on VIDEO_STK1160 && SND
-> -    select SND_AC97_CODEC
-> -
-> +    depends on VIDEO_STK1160_COMMON && SND
->      ---help---
->        Enables AC97 codec support for stk1160 driver.
-> -.
-> +
-> +config VIDEO_STK1160
-> +    tristate
-> +    depends on (!VIDEO_STK1160_AC97 || (SND='n') || SND) && VIDEO_STK1160_COMMON
-> +    default y
-> +    select VIDEOBUF2_VMALLOC
-> +    select VIDEO_SAA711X
-> +    select SND_AC97_CODEC if SND
-> 
-> 
-> -- 
+drivers/built-in.o: In function `samsung_init':
+samsung-laptop.c:(.init.text+0x94ba): undefined reference to `acpi_video_unregister'
+
 
 
 -- 
