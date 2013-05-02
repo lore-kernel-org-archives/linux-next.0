@@ -1,40 +1,278 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 02 May 2013 09:25:39 +0800
-Message-ID: <5181C093.3010301@asianux.com>
-References: <20130430122423.ab57c82604f13f6773ef4aeb@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with Linus' tree
+Date: Thu, 2 May 2013 11:55:46 +1000
+Message-ID: <20130502115546.06177c1994f2529f5324d6ac@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__2_May_2013_11_55_46_+1000_ewaNGwGuX4cqvpVD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from intranet.asianux.com ([58.214.24.6]:48409 "EHLO
-	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753294Ab3EBB01 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 21:26:27 -0400
-In-Reply-To: <20130430122423.ab57c82604f13f6773ef4aeb@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:49000 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753294Ab3EBBz6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 21:55:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Ott <alan@signal11.us>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2013=E5=B9=B404=E6=9C=8830=E6=97=A5 10:24, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the net-next tree got a conflict in
-> net/mac802154/mac802154.h between commit 2c1bbbffa0b6 ("net: mac80215=
-4:
-> comparision issue of type cast, finding by EXTRA_CFLAGS=3D-W") from t=
-he net
-> tree and commit 7dd43d356e73 ("mac802154: Do not try to resend failed
-> packets") from the net-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no acti=
-on
-> is required).
+--Signature=_Thu__2_May_2013_11_55_46_+1000_ewaNGwGuX4cqvpVD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
+Hi Al,
+
+Today's linux-next merge of the vfs tree got a conflict in fs/compat.c
+between commit 76b021d053ed ("convert vmsplice to COMPAT_SYSCALL_DEFINE")
+from Linus' tree and commit 72ec35163f9f ("switch compat readv/writev
+variants to COMPAT_SYSCALL_DEFINE") from the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
-Chen Gang
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Asianux Corporation
+diff --cc fs/compat.c
+index 5f83ffa,5058345..0000000
+--- a/fs/compat.c
++++ b/fs/compat.c
+@@@ -1068,190 -1069,26 +1068,6 @@@ asmlinkage long compat_sys_getdents64(u
+  }
+  #endif /* ! __ARCH_OMIT_COMPAT_SYS_GETDENTS64 */
+ =20
+- static ssize_t compat_do_readv_writev(int type, struct file *file,
+- 			       const struct compat_iovec __user *uvector,
+- 			       unsigned long nr_segs, loff_t *pos)
+- {
+- 	compat_ssize_t tot_len;
+- 	struct iovec iovstack[UIO_FASTIOV];
+- 	struct iovec *iov =3D iovstack;
+- 	ssize_t ret;
+- 	io_fn_t fn;
+- 	iov_fn_t fnv;
+-=20
+- 	ret =3D -EINVAL;
+- 	if (!file->f_op)
+- 		goto out;
+-=20
+- 	ret =3D compat_rw_copy_check_uvector(type, uvector, nr_segs,
+- 					       UIO_FASTIOV, iovstack, &iov);
+- 	if (ret <=3D 0)
+- 		goto out;
+-=20
+- 	tot_len =3D ret;
+- 	ret =3D rw_verify_area(type, file, pos, tot_len);
+- 	if (ret < 0)
+- 		goto out;
+-=20
+- 	fnv =3D NULL;
+- 	if (type =3D=3D READ) {
+- 		fn =3D file->f_op->read;
+- 		fnv =3D file->f_op->aio_read;
+- 	} else {
+- 		fn =3D (io_fn_t)file->f_op->write;
+- 		fnv =3D file->f_op->aio_write;
+- 	}
+-=20
+- 	if (fnv)
+- 		ret =3D do_sync_readv_writev(file, iov, nr_segs, tot_len,
+- 						pos, fnv);
+- 	else
+- 		ret =3D do_loop_readv_writev(file, iov, nr_segs, pos, fn);
+-=20
+- out:
+- 	if (iov !=3D iovstack)
+- 		kfree(iov);
+- 	if ((ret + (type =3D=3D READ)) > 0) {
+- 		if (type =3D=3D READ)
+- 			fsnotify_access(file);
+- 		else
+- 			fsnotify_modify(file);
+- 	}
+- 	return ret;
+- }
+-=20
+- static size_t compat_readv(struct file *file,
+- 			   const struct compat_iovec __user *vec,
+- 			   unsigned long vlen, loff_t *pos)
+- {
+- 	ssize_t ret =3D -EBADF;
+-=20
+- 	if (!(file->f_mode & FMODE_READ))
+- 		goto out;
+-=20
+- 	ret =3D -EINVAL;
+- 	if (!file->f_op || (!file->f_op->aio_read && !file->f_op->read))
+- 		goto out;
+-=20
+- 	ret =3D compat_do_readv_writev(READ, file, vec, vlen, pos);
+-=20
+- out:
+- 	if (ret > 0)
+- 		add_rchar(current, ret);
+- 	inc_syscr(current);
+- 	return ret;
+- }
+-=20
+- asmlinkage ssize_t
+- compat_sys_readv(unsigned long fd, const struct compat_iovec __user *vec,
+- 		 unsigned long vlen)
+- {
+- 	struct fd f =3D fdget(fd);
+- 	ssize_t ret;
+- 	loff_t pos;
+-=20
+- 	if (!f.file)
+- 		return -EBADF;
+- 	pos =3D f.file->f_pos;
+- 	ret =3D compat_readv(f.file, vec, vlen, &pos);
+- 	f.file->f_pos =3D pos;
+- 	fdput(f);
+- 	return ret;
+- }
+-=20
+- asmlinkage ssize_t
+- compat_sys_preadv64(unsigned long fd, const struct compat_iovec __user *v=
+ec,
+- 		    unsigned long vlen, loff_t pos)
+- {
+- 	struct fd f;
+- 	ssize_t ret;
+-=20
+- 	if (pos < 0)
+- 		return -EINVAL;
+- 	f =3D fdget(fd);
+- 	if (!f.file)
+- 		return -EBADF;
+- 	ret =3D -ESPIPE;
+- 	if (f.file->f_mode & FMODE_PREAD)
+- 		ret =3D compat_readv(f.file, vec, vlen, &pos);
+- 	fdput(f);
+- 	return ret;
+- }
+-=20
+- asmlinkage ssize_t
+- compat_sys_preadv(unsigned long fd, const struct compat_iovec __user *vec,
+- 		  unsigned long vlen, u32 pos_low, u32 pos_high)
+- {
+- 	loff_t pos =3D ((loff_t)pos_high << 32) | pos_low;
+- 	return compat_sys_preadv64(fd, vec, vlen, pos);
+- }
+-=20
+- static size_t compat_writev(struct file *file,
+- 			    const struct compat_iovec __user *vec,
+- 			    unsigned long vlen, loff_t *pos)
+- {
+- 	ssize_t ret =3D -EBADF;
+-=20
+- 	if (!(file->f_mode & FMODE_WRITE))
+- 		goto out;
+-=20
+- 	ret =3D -EINVAL;
+- 	if (!file->f_op || (!file->f_op->aio_write && !file->f_op->write))
+- 		goto out;
+-=20
+- 	ret =3D compat_do_readv_writev(WRITE, file, vec, vlen, pos);
+-=20
+- out:
+- 	if (ret > 0)
+- 		add_wchar(current, ret);
+- 	inc_syscw(current);
+- 	return ret;
+- }
+-=20
+- asmlinkage ssize_t
+- compat_sys_writev(unsigned long fd, const struct compat_iovec __user *vec,
+- 		  unsigned long vlen)
+- {
+- 	struct fd f =3D fdget(fd);
+- 	ssize_t ret;
+- 	loff_t pos;
+-=20
+- 	if (!f.file)
+- 		return -EBADF;
+- 	pos =3D f.file->f_pos;
+- 	ret =3D compat_writev(f.file, vec, vlen, &pos);
+- 	f.file->f_pos =3D pos;
+- 	fdput(f);
+- 	return ret;
+- }
+-=20
+- asmlinkage ssize_t
+- compat_sys_pwritev64(unsigned long fd, const struct compat_iovec __user *=
+vec,
+- 		     unsigned long vlen, loff_t pos)
+- {
+- 	struct fd f;
+- 	ssize_t ret;
+-=20
+- 	if (pos < 0)
+- 		return -EINVAL;
+- 	f =3D fdget(fd);
+- 	if (!f.file)
+- 		return -EBADF;
+- 	ret =3D -ESPIPE;
+- 	if (f.file->f_mode & FMODE_PWRITE)
+- 		ret =3D compat_writev(f.file, vec, vlen, &pos);
+- 	fdput(f);
+- 	return ret;
+- }
+-=20
+- asmlinkage ssize_t
+- compat_sys_pwritev(unsigned long fd, const struct compat_iovec __user *ve=
+c,
+- 		   unsigned long vlen, u32 pos_low, u32 pos_high)
+- {
+- 	loff_t pos =3D ((loff_t)pos_high << 32) | pos_low;
+- 	return compat_sys_pwritev64(fd, vec, vlen, pos);
+- }
+-=20
+ -asmlinkage long
+ -compat_sys_vmsplice(int fd, const struct compat_iovec __user *iov32,
+ -		    unsigned int nr_segs, unsigned int flags)
+ -{
+ -	unsigned i;
+ -	struct iovec __user *iov;
+ -	if (nr_segs > UIO_MAXIOV)
+ -		return -EINVAL;
+ -	iov =3D compat_alloc_user_space(nr_segs * sizeof(struct iovec));
+ -	for (i =3D 0; i < nr_segs; i++) {
+ -		struct compat_iovec v;
+ -		if (get_user(v.iov_base, &iov32[i].iov_base) ||
+ -		    get_user(v.iov_len, &iov32[i].iov_len) ||
+ -		    put_user(compat_ptr(v.iov_base), &iov[i].iov_base) ||
+ -		    put_user(v.iov_len, &iov[i].iov_len))
+ -			return -EFAULT;
+ -	}
+ -	return sys_vmsplice(fd, iov, nr_segs, flags);
+ -}
+ -
+  /*
+   * Exactly like fs/open.c:sys_open(), except that it doesn't set the
+   * O_LARGEFILE flag.
+
+--Signature=_Thu__2_May_2013_11_55_46_+1000_ewaNGwGuX4cqvpVD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRgceiAAoJEECxmPOUX5FE9acQAKe92UAfVB7y/X0p+M2r/W13
+Eov3fEF+aa8rr9Ub5n/NW65NncKcAnBr7DTLHLrQEZCmPq5d3GTCusANV7PVvPRR
+2vHEEY0aG2trTEWAtIn8KyB6e7h33XG+koD+ak2uVDB26qlTmkexIiG/vOI+RrvO
+lcUQcsy3kMvDVf9xr3d5pCysgUUj9sM9oBm5+ytaQv9YKN9nz+lD2WFH70y8NqkX
+PcBVHSp+cOlpwmLE07xhLgHvGlq7rlQbLRa3HI1zWJ37xDqqkh45/RD77P0lJAb3
+YTCeCE5e6kDRLcnza1DLbPQWfXIXw3omAyQUcvviCfz/11OcRsJzagPwVLp22zvF
+EWia9yhLg4X6UhRmemKh+o597Duqn8JffOk/w374saqvzvqUVitjILPiHMiYHxr/
+/lfH1ltS/QsXKUZfK3f8kyl86TTzay48MmASL1zprgteHHHReuLcVtphJqyXAukH
+mJ854hzrBvZDqcB/JqYVO9MFet0gYglgMDJiaS7zDlwloTgcECwUej0g9UN6nRLU
+L0SJB89Fg8i43SDFrTXHlvKfYeMoX04+Nv1oub/9RIPrBaIdp4eT56GCQzQZcu4z
+F0yO2awrtBTu9jQTvCknsIS/tJlNEqBpZI9jMID8HzGOTEiZvHNvpMo/OKKN4Vlb
+Kfv8VaDk0WU28mx2CzAx
+=sB4H
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__2_May_2013_11_55_46_+1000_ewaNGwGuX4cqvpVD--
