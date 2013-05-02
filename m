@@ -1,102 +1,183 @@
-From: Chanho Min <chanho.min@lge.com>
-Subject: [PATCH] lib: add weak clz/ctz functions
-Date: Thu,  2 May 2013 18:56:19 +0900
-Message-ID: <1367488579-15456-1-git-send-email-chanho.min@lge.com>
-Return-path: <linux-m68k-owner@vger.kernel.org>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kyungsik Lee <kyungsik.lee@lge.com>, Yann Collet <yann.collet.73@gmail.com>, Bob Pearson <rpearson@systemfabricworks.com>, Richard Weinberger <richard@nod.at>, Geert Uytterhoeven <geert.uytterhoeven@gmail.com>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, linux-m68k@vger.kernel.org, linux-next@vger.kernel.org, Chanho Min <chanho.min@lge.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: linux-next: Tree for May 1 (media/usb/stk1160)
+Date: Thu, 02 May 2013 11:52:33 -0300
+Message-ID: <51827DB1.7000304@redhat.com>
+References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au> <518157EB.3010700@infradead.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <518157EB.3010700@infradead.org>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, "Yann E. MORIN" <yann.morin.1998@free.fr>, =?UTF-8?B?RXplcXVpZWwgR2FyY8OtYQ==?= <elezegarcia@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, linux-kbuild@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Some architectures need __c[lt]z[sd]i2() for __builtin_c[lt]z[ll] and
-It causes build failure. They can be implemented using the fls()/__ffs() and
-overridden by linking arch-specific versions may not be implemented yet.
+Em 01-05-2013 14:59, Randy Dunlap escreveu:
+> On 05/01/13 01:37, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Please do not add any v3.11 destined work to your linux-next included
+>> branches until after v3.10-rc1 is released.
+>>
+>> Changes since 20130430:
+>>
+>
+>
+> When CONFIG_SND=m and CONFIG_SND_AC97_CODEC=m and
+> CONFIG_VIDEO_STK1160=y
+> CONFIG_VIDEO_STK1160_AC97=y
+>
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x122706): undefined reference to `snd_card_create'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x1227b2): undefined reference to `snd_ac97_bus'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x1227cd): undefined reference to `snd_card_free'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x12281b): undefined reference to `snd_ac97_mixer'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x122832): undefined reference to `snd_card_register'
+> drivers/built-in.o: In function `stk1160_ac97_unregister':
+> (.text+0x12285e): undefined reference to `snd_card_free'
+>
+>
+> This kconfig fragment:
+> config VIDEO_STK1160_AC97
+> 	bool "STK1160 AC97 codec support"
+> 	depends on VIDEO_STK1160 && SND
+> 	select SND_AC97_CODEC
+>
+> is unreliable (doesn't do what some people expect) when SND=m and SND_AC97_CODEC=m,
+> since VIDEO_STK1160_AC97 is a bool.
 
-Reference: https://lkml.org/lkml/2013/4/18/603
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Chanho Min <chanho.min@lge.com>
----
- lib/Makefile  |    2 +-
- lib/clz_ctz.c |   58 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 59 insertions(+), 1 deletion(-)
- create mode 100644 lib/clz_ctz.c
+Using select is always tricky.
 
-diff --git a/lib/Makefile b/lib/Makefile
-index af79e8c..3eacb2c 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -23,7 +23,7 @@ lib-y	+= kobject.o klist.o
- 
- obj-y += bcd.o div64.o sort.o parser.o halfmd4.o debug_locks.o random32.o \
- 	 bust_spinlocks.o hexdump.o kasprintf.o bitmap.o scatterlist.o \
--	 gcd.o lcm.o list_sort.o uuid.o flex_array.o \
-+	 gcd.o lcm.o list_sort.o uuid.o flex_array.o clz_ctz.o\
- 	 bsearch.o find_last_bit.o find_next_bit.o llist.o memweight.o kfifo.o
- obj-y += string_helpers.o
- obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
-diff --git a/lib/clz_ctz.c b/lib/clz_ctz.c
-new file mode 100644
-index 0000000..a8f8379
---- /dev/null
-+++ b/lib/clz_ctz.c
-@@ -0,0 +1,58 @@
-+/*
-+ * lib/clz_ctz.c
-+ *
-+ * Copyright (C) 2013 Chanho Min <chanho.min@lge.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * __c[lt]z[sd]i2 can be overridden by linking arch-specific versions.
-+ */
+I can see a few possible fixes for it:
+
+1) split the alsa part into a separate module. IMHO, this is cleaner,
+but requires a little more work.
+
+2) Use the Kconfig syntax:
+
+	depends on SND || (SND=n)
+
+on a tristate symbol. That behaves like:
+
+	if SND is 'n', it won't depend on SND;
+	if SND is 'm', the symbol will be 'm'
+	if SND is 'y', the symbol will be 'y'.
+
+However, as as VIDEO_STK1160_AC97 is boolean, this will require
+an additional hidden Kconfig. Something like:
+
+config VIDEO_STK1160_COMMON
+	tristate "STK1160 USB video capture support"
+	depends on VIDEO_DEV && I2C
+
+config VIDEO_STK1160_AC97
+	bool "STK1160 AC97 codec support"
+	depends on VIDEO_STK1160_COMMON && SND
+
+config VIDEO_STK1160
+	tristate
+	depends on ((SND || (SND=n) || !VIDEO_STK1160_AC97) && VIDEO_STK1160_COMMON
+	default y
+	select SND_AC97_CODEC if SND
+	select VIDEOBUF2_VMALLOC
+	select VIDEO_SAA711X
+	select SND_AC97_CODEC
+
+We do already something similar to the above for the mutual dependency
+of most media drivers for I2C and V4L2 and/or DVB core.
+
+There's just one small drawback with the above: if SND='m', even if
+the user selects VIDEO_STK1160_COMMON='y', VIDEO_STK1160 will be 'm'.
+
+A quick test here with make allyesconfig and then changing SND to m
+seemed to produce the right value for CONFIG_VIDEO_STK1160:
+
+Selecting STK1160_AC97:
+
+$ grep -e STK1160 -e SND= .config
+CONFIG_VIDEO_STK1160_COMMON=y
+CONFIG_VIDEO_STK1160_AC97=y
+CONFIG_VIDEO_STK1160=m
+CONFIG_SND=m
+
+Unselecting STK1160_AC97:
+
+$ grep -e STK1160 -e SND= .config
+CONFIG_VIDEO_STK1160_COMMON=y
+# CONFIG_VIDEO_STK1160_AC97 is not set
+CONFIG_VIDEO_STK1160=y
+CONFIG_SND=m
+
+With a little more work, it could be possible to find a way to
+avoid the drawback of saying to the user that the module will be
+builtin, but compiling it as a module.
+
+Regards,
+Mauro.
+
+-
+
+[media] stk1160: Make stk1160 module if SND is m and audio support is selected
+
+As reported by Randy:
+
+When CONFIG_SND=m and CONFIG_SND_AC97_CODEC=m and
+CONFIG_VIDEO_STK1160=y
+CONFIG_VIDEO_STK1160_AC97=y
+
+drivers/built-in.o: In function `stk1160_ac97_register':
+(.text+0x122706): undefined reference to `snd_card_create'
+drivers/built-in.o: In function `stk1160_ac97_register':
+(.text+0x1227b2): undefined reference to `snd_ac97_bus'
+drivers/built-in.o: In function `stk1160_ac97_register':
+(.text+0x1227cd): undefined reference to `snd_card_free'
+drivers/built-in.o: In function `stk1160_ac97_register':
+(.text+0x12281b): undefined reference to `snd_ac97_mixer'
+drivers/built-in.o: In function `stk1160_ac97_register':
+(.text+0x122832): undefined reference to `snd_card_register'
+drivers/built-in.o: In function `stk1160_ac97_unregister':
+(.text+0x12285e): undefined reference to `snd_card_free'
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+diff --git a/drivers/media/usb/stk1160/Kconfig b/drivers/media/usb/stk1160/Kconfig
+index 1c3a1ec..2bf6392 100644
+--- a/drivers/media/usb/stk1160/Kconfig
++++ b/drivers/media/usb/stk1160/Kconfig
+@@ -1,8 +1,6 @@
+-config VIDEO_STK1160
++config VIDEO_STK1160_COMMON
+  	tristate "STK1160 USB video capture support"
+  	depends on VIDEO_DEV && I2C
+-	select VIDEOBUF2_VMALLOC
+-	select VIDEO_SAA711X
+  
+  	---help---
+  	  This is a video4linux driver for STK1160 based video capture devices.
+@@ -12,9 +10,14 @@ config VIDEO_STK1160
+  
+  config VIDEO_STK1160_AC97
+  	bool "STK1160 AC97 codec support"
+-	depends on VIDEO_STK1160 && SND
+-	select SND_AC97_CODEC
+-
++	depends on VIDEO_STK1160_COMMON && SND
+  	---help---
+  	  Enables AC97 codec support for stk1160 driver.
+-.
 +
-+#include <linux/export.h>
-+#include <linux/kernel.h>
-+
-+int __weak __ctzsi2(int val)
-+{
-+	return __ffs(val);
-+}
-+EXPORT_SYMBOL(__ctzsi2);
-+
-+int __weak __clzsi2(int val)
-+{
-+	return 32 - fls(val);
-+}
-+EXPORT_SYMBOL(__clzsi2);
-+
-+#if BITS_PER_LONG == 32
-+
-+int __weak __clzdi2(long val)
-+{
-+	return 32 - fls((int)val);
-+}
-+EXPORT_SYMBOL(__clzdi2);
-+
-+int __weak __ctzdi2(long val)
-+{
-+	return __ffs((u32)val);
-+}
-+EXPORT_SYMBOL(__ctzdi2);
-+
-+#elif BITS_PER_LONG == 64
-+
-+int __weak __clzdi2(long val)
-+{
-+	return 64 - fls64((u64)val);
-+}
-+EXPORT_SYMBOL(__clzdi2);
-+
-+int __weak __ctzdi2(long val)
-+{
-+	return __ffs64((u64)val);
-+}
-+EXPORT_SYMBOL(__ctzdi2);
-+
-+#else
-+#error BITS_PER_LONG not 32 or 64
-+#endif
--- 
-1.7.9.5
++config VIDEO_STK1160
++	tristate
++	depends on (!VIDEO_STK1160_AC97 || (SND='n') || SND) && VIDEO_STK1160_COMMON
++	default y
++	select VIDEOBUF2_VMALLOC
++	select VIDEO_SAA711X
++	select SND_AC97_CODEC if SND
+
+
