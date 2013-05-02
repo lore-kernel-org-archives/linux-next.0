@@ -1,38 +1,85 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH -next] ashmem: Fix ashmem_shrink deadlock.
-Date: Thu, 2 May 2013 13:39:35 -0700
-Message-ID: <20130502203935.GA25567@kroah.com>
-References: <1367416573-5430-1-git-send-email-rlove@google.com>
- <alpine.DEB.2.02.1305010853450.4547@chino.kir.corp.google.com>
- <alpine.DEB.2.02.1305021121160.2493@chino.kir.corp.google.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for May 1 (media/usb/stk1160)
+Date: Thu, 02 May 2013 14:23:08 -0700
+Message-ID: <5182D93C.4000706@infradead.org>
+References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au> <518157EB.3010700@infradead.org> <51827DB1.7000304@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.02.1305021121160.2493@chino.kir.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Rientjes <rientjes@google.com>
-Cc: Robert Love <rlove@google.com>, devel <devel@driverdev.osuosl.org>, Shankar Brahadeeswaran <shankoo77@gmail.com>, Bjorn Bringert <bringert@google.com>, Hugh Dickins <hughd@google.com>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Anjana V Kumar <anjanavk12@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <51827DB1.7000304@redhat.com>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: "Yann E. MORIN" <yann.morin.1998@free.fr>, =?UTF-8?B?RXplcXVpZWwgR2Fy?= =?UTF-8?B?Y8OtYQ==?= <elezegarcia@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, linux-kbuild@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, May 02, 2013 at 11:22:18AM -0700, David Rientjes wrote:
-> On Wed, 1 May 2013, David Rientjes wrote:
+On 05/02/13 07:52, Mauro Carvalho Chehab wrote:
+> [media] stk1160: Make stk1160 module if SND is m and audio support is selected
 > 
-> > > Don't acquire ashmem_mutex in ashmem_shrink if we've somehow recursed into the
-> > > shrinker code from within ashmem. Just bail out, avoiding a deadlock. This is
-> > > fine, as ashmem cache pruning is advisory anyhow.
-> > > 
-> > > Signed-off-by: Robert Love <rlove@google.com>
-> > 
-> > Any reason not to send this to stable@vger.kernel.org if it fixes an 
-> > observable deadlock?  (It's annotated to be applied to linux-next, but I 
-> > don't see any differences between it and Linus's tree.)
-> > 
+> As reported by Randy:
 > 
-> This was sent separately to stable@vger.kernel.org before being merged 
-> into Linus's tree .  Greg, could this be queued up for 3.10 with a cc to 
-> stable@vger.kernel.org?
+> When CONFIG_SND=m and CONFIG_SND_AC97_CODEC=m and
+> CONFIG_VIDEO_STK1160=y
+> CONFIG_VIDEO_STK1160_AC97=y
+> 
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x122706): undefined reference to `snd_card_create'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x1227b2): undefined reference to `snd_ac97_bus'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x1227cd): undefined reference to `snd_card_free'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x12281b): undefined reference to `snd_ac97_mixer'
+> drivers/built-in.o: In function `stk1160_ac97_register':
+> (.text+0x122832): undefined reference to `snd_card_register'
+> drivers/built-in.o: In function `stk1160_ac97_unregister':
+> (.text+0x12285e): undefined reference to `snd_card_free'
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
 
-Yes, I'll handle all of this properly, thanks.
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-greg k-h
+Thanks.
+
+> 
+> diff --git a/drivers/media/usb/stk1160/Kconfig b/drivers/media/usb/stk1160/Kconfig
+> index 1c3a1ec..2bf6392 100644
+> --- a/drivers/media/usb/stk1160/Kconfig
+> +++ b/drivers/media/usb/stk1160/Kconfig
+> @@ -1,8 +1,6 @@
+> -config VIDEO_STK1160
+> +config VIDEO_STK1160_COMMON
+>      tristate "STK1160 USB video capture support"
+>      depends on VIDEO_DEV && I2C
+> -    select VIDEOBUF2_VMALLOC
+> -    select VIDEO_SAA711X
+>  
+>      ---help---
+>        This is a video4linux driver for STK1160 based video capture devices.
+> @@ -12,9 +10,14 @@ config VIDEO_STK1160
+>  
+>  config VIDEO_STK1160_AC97
+>      bool "STK1160 AC97 codec support"
+> -    depends on VIDEO_STK1160 && SND
+> -    select SND_AC97_CODEC
+> -
+> +    depends on VIDEO_STK1160_COMMON && SND
+>      ---help---
+>        Enables AC97 codec support for stk1160 driver.
+> -.
+> +
+> +config VIDEO_STK1160
+> +    tristate
+> +    depends on (!VIDEO_STK1160_AC97 || (SND='n') || SND) && VIDEO_STK1160_COMMON
+> +    default y
+> +    select VIDEOBUF2_VMALLOC
+> +    select VIDEO_SAA711X
+> +    select SND_AC97_CODEC if SND
+> 
+> 
+> -- 
+
+
+-- 
+~Randy
