@@ -1,75 +1,31 @@
-From: Hannes Reinecke <hare@suse.de>
-Subject: Re: linux-next: Tree for May 1
-Date: Thu, 02 May 2013 09:46:05 +0200
-Message-ID: <518219BD.9090208@suse.de>
-References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au> <alpine.DEB.2.02.1305021529430.23933@M2420>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: [pull request] Pull request for branch yem-kconfig-for-next
+Date: Thu, 02 May 2013 10:48:36 +0200
+Message-ID: <51822864.4060304@suse.cz>
+References: <cover.1367258255.git.yann.morin.1998@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:58639 "EHLO mx2.suse.de"
+Received: from cantor2.suse.de ([195.135.220.15]:33661 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750771Ab3EBHqH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 May 2013 03:46:07 -0400
-In-Reply-To: <alpine.DEB.2.02.1305021529430.23933@M2420>
+	id S1751440Ab3EBIsk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 May 2013 04:48:40 -0400
+In-Reply-To: <cover.1367258255.git.yann.morin.1998@free.fr>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: ZX <jencce.kernel@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+To: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
 
-On 05/02/2013 09:37 AM, ZX wrote:
->=20
->=20
-> On Wed, 1 May 2013, Stephen Rothwell wrote:
->=20
->> Hi all,
->>
->> Please do not add any v3.11 destined work to your linux-next include=
-d
->> branches until after v3.10-rc1 is released.
->>
->> Changes since 20130430:
->>
->> The nfsd tree lost its build failure.
->>
->> The xfs tree lost its build failure.
->>
->> The vfs tree gained conflicts against Linus' and the powerpc trees a=
-nd
->> gained a build failure for which I applied a merge fix patch.
->>
->> The drm-intel tree gained a conflict against the drm tree.
->>
->> The block tree gained a conflict against Linus' tree.
->>
->> The arm-soc tree gained a conflict against the arm tree.
->>
->> The akpm tree lost a lot of patches that turned up elsewhere.
->>
->> --------------------------------------------------------------------=
---------
->=20
-> randconf build failure:
->=20
-> make -C drivers/scsi/aic7xxx/aicasm
-> *** Install db development libraries
-> gcc -I/usr/include -I. aicasm.c aicasm_symbol.c aicasm_gram.c=20
-> aicasm_macro_gram.c aicasm_scan.c aicasm_macro_scan.c -o aicasm -ldb
-> aicasm_symbol.c:48:19: fatal error: aicdb.h: No such file or director=
-y
-> compilation terminated.
->=20
->=20
-> random config file attached.
->=20
->=20
-You need to install berkeley db ...
+On 29.4.2013 19:59, Yann E. MORIN wrote:
+> The following changes since commit 23a5dfdad22a574d19d7cc19b391f9ce0d3c2f21:
+> 
+>   Revert "kconfig: fix randomising choice entries in presence of KCONFIG_ALLCONFIG" (2013-04-26 23:21:59 +0200)
+> 
+> are available in the git repository at:
+> 
+>   git://gitorious.org/linux-kconfig/linux-kconfig.git yem-kconfig-for-next
 
-Cheers,
+Pulled, thanks.
 
-Hannes
---=20
-Dr. Hannes Reinecke		      zSeries & Storage
-hare@suse.de			      +49 911 74053 688
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: J. Hawn, J. Guild, F. Imend=F6rffer, HRB 16746 (AG N=FCrnberg)
+Michal
