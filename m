@@ -1,45 +1,40 @@
-From: "=?EUC-KR?B?uc7C+cij?=" <chanho.min@lge.com>
-Subject: Re: [PATCH] lib: add weak __clzsi2()/__clzdi2() functions
-Date: Thu, 2 May 2013 09:58:02 +0900
-Message-ID: <OF7904F8C7.4731B9DC-ON49257B5F.00055048-49257B5F.0005504A@lge.com>
-References: <1367214005-14302-1-git-send-email-chanho.min@lge.com>
-	<CAMuHMdWk4oi_KCmZv7hLZ7JSwy=meziKPBMQ1HJiJR9W8AdrDg@mail.gmail.com>
-	<20130430144605.1a99a7397702b332ee818fc8@linux-foundation.org>
-Reply-To: "=?EUC-KR?B?uc7C+cij?=" <chanho.min@lge.com>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 02 May 2013 09:25:39 +0800
+Message-ID: <5181C093.3010301@asianux.com>
+References: <20130430122423.ab57c82604f13f6773ef4aeb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Return-path: <linux-m68k-owner@vger.kernel.org>
-In-Reply-To: <20130430144605.1a99a7397702b332ee818fc8@linux-foundation.org>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, =?EUC-KR?B?wMyw5r3E?= <kyungsik.lee@lge.com>, Yann Collet <yann.collet.73@gmail.com>, Bob Pearson <rpearson@systemfabricworks.com>, Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org, sparclinux <sparclinux@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from intranet.asianux.com ([58.214.24.6]:48409 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753294Ab3EBB01 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 May 2013 21:26:27 -0400
+In-Reply-To: <20130430122423.ab57c82604f13f6773ef4aeb@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Ott <alan@signal11.us>
 
-
->No, the link errors are for __ctzdi2, not __clzdi2.
->__ctzdi2 can be implemented using __ffs().
->> How's about we stop using __builtin_ctz[ll]() altogether?  Use N-fls()?
->
->That was my first suggestion ;-)
->
-Do we remove existing __builtin_ct[l]z?
-Some architecture's __builtin_clz will be more optimized than N-fls
-IMHO, This is not only about __builtin- but also supporting another
-libgcc functions in kernel.
-Some future user may need __clz[t]s[d]i2 symbol also.
-
->> btw, this:
->>
->> int __weak __clzsi2(int val)
->> {
->>        return BITS_PER_LONG - fls(val);
->> }
->>
->> looks wrong.  It will give a different result for 32- and 64-bit.
->
->Indeed. It should be hardcoded 32.
->
-I will re-work this for 64-bit, and ctz also.
+On 2013=E5=B9=B404=E6=9C=8830=E6=97=A5 10:24, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the net-next tree got a conflict in
+> net/mac802154/mac802154.h between commit 2c1bbbffa0b6 ("net: mac80215=
+4:
+> comparision issue of type cast, finding by EXTRA_CFLAGS=3D-W") from t=
+he net
+> tree and commit 7dd43d356e73 ("mac802154: Do not try to resend failed
+> packets") from the net-next tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no acti=
+on
+> is required).
 
 Thanks
-Chanho Min
+
+--=20
+Chen Gang
+
+Asianux Corporation
