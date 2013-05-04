@@ -1,51 +1,85 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH -next 2/2] sun3_scsi: switch to ->show_info()
-Date: Fri, 3 May 2013 22:03:43 +0200
-Message-ID: <CAMuHMdWEMT8FWaByiBh+Y2qhwWyqT4JyVZmLsCEYv30v2qM4yg@mail.gmail.com>
-References: <1365594729-25759-1-git-send-email-geert@linux-m68k.org>
-	<1365594729-25759-2-git-send-email-geert@linux-m68k.org>
+From: zhou jencce <jencce.kernel@gmail.com>
+Subject: Re: [PATCH -next] power: fix bq27x00_battery kconfig
+Date: Sat, 4 May 2013 18:11:51 +0800
+Message-ID: <CADJHv_s7TqdfULQKA6eTVEHkxBKqr44c9qeP8KCFXJuBxMmsYQ@mail.gmail.com>
+References: <alpine.DEB.2.02.1305031743190.6400@M2420>
+	<51838C3E.5090303@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:55884 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750729Ab3ECUDo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 May 2013 16:03:44 -0400
-In-Reply-To: <1365594729-25759-2-git-send-email-geert@linux-m68k.org>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:65366 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752730Ab3EDKLx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 4 May 2013 06:11:53 -0400
+In-Reply-To: <51838C3E.5090303@metafoo.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Sam Creasey <sammy@sammy.net>, scsi <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: anton@enomsg.org, dwmw2@infradead.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Ping?
-
-Now the build failure is also in Linus' tree:
-
-http://kisskb.ellerman.id.au/kisskb/buildresult/8674437/
-
-BTW, this patch depends on "[PATCH 1/2] sun3_scsi: Fill in missing
-scsi_host_template.proc_info method"
-
-On Wed, Apr 10, 2013 at 1:52 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Based on Al's changes to atari_scsi.
+2013/5/3 Lars-Peter Clausen <lars@metafoo.de>:
+> On 05/03/2013 11:56 AM, Xiong Zhou wrote:
+>> From: Xiong Zhou <jencce.kernel@gmail.com>
+>>
+>> This patch fixes build failure(randconfig) of next-20130501.
+>> When config I2C as m, BATTERY_BQ27x00 as y, here comes the failure.
+>> BATTERY_BQ27x00 depends on I2C according to the code.
+>>
 >
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> http://kisskb.ellerman.id.au/kisskb/buildresult/8543326/
+>> Failure message:
+>> drivers/built-in.o: In function `bq27x00_read_i2c':
+>> bq27x00_battery.c:(.text+0x1082a7): undefined reference to `i2c_transfer'
+>> drivers/built-in.o: In function `bq27x00_battery_init':
+>> bq27x00_battery.c:(.init.text+0x6085): undefined reference to `i2c_register_driver'
+>> bq27x00_battery.c:(.init.text+0x60c7): undefined reference to `i2c_del_driver'
+>> drivers/built-in.o: In function `bq27x00_battery_exit':
+>> bq27x00_battery.c:(.exit.text+0xbf0): undefined reference to `i2c_del_driver'
+>> make: *** [vmlinux] Error 1
+>>
+>> Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
 >
->  drivers/scsi/sun3_NCR5380.c |  185 ++++++++++++++++++------------------------
->  drivers/scsi/sun3_scsi.c    |    2 +-
->  drivers/scsi/sun3_scsi.h    |    2 +-
->  3 files changed, 81 insertions(+), 108 deletions(-)
+> It's actually a bit more tricky. The driver can be built without I2C
 
-Gr{oetje,eeting}s,
+What about the build error ?
 
-                        Geert
+> support, so it does not depend on I2C, but if I2C is built as a module the
+> driver should also only be built as a module.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ And this is what this patch trying to do.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> I think the best solution is to put the platform code and the i2c code of
+> the bq27x00 driver each in their on module, but if you want a quick solution
+
+Yes, more clear.
+
+>
+> depends on I2C || I2C=n
+>
+> should work.
+>
+
+Thanks. :)
+
+>> ---
+>> drivers/power/Kconfig |    1 +
+>> 1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/power/Kconfig b/drivers/power/Kconfig
+>> index 0d0b5d7..89e5ebd 100644
+>> --- a/drivers/power/Kconfig
+>> +++ b/drivers/power/Kconfig
+>> @@ -152,6 +152,7 @@ config BATTERY_SBS
+>>
+>>  config BATTERY_BQ27x00
+>>       tristate "BQ27x00 battery driver"
+>> +     depends on I2C
+>>       help
+>>         Say Y here to enable support for batteries with BQ27x00 (I2C/HDQ) chips.
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
+>
