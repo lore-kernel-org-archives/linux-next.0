@@ -1,92 +1,56 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH -next] power: fix bq27x00_battery kconfig
-Date: Sat, 04 May 2013 12:28:29 +0200
-Message-ID: <5184E2CD.8040900@metafoo.de>
-References: <alpine.DEB.2.02.1305031743190.6400@M2420> <51838C3E.5090303@metafoo.de> <CADJHv_s7TqdfULQKA6eTVEHkxBKqr44c9qeP8KCFXJuBxMmsYQ@mail.gmail.com>
+From: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+Subject: Splitting stk1160-ac97 as a module (Re: linux-next: Tree for May 1
+ (media/usb/stk1160))
+Date: Sat, 4 May 2013 14:21:44 -0300
+Message-ID: <20130504172142.GA21656@localhost>
+References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au>
+ <518157EB.3010700@infradead.org>
+ <51827DB1.7000304@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp-out-193.synserver.de ([212.40.185.193]:1030 "EHLO
-	smtp-out-193.synserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751700Ab3EDK3E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 4 May 2013 06:29:04 -0400
-In-Reply-To: <CADJHv_s7TqdfULQKA6eTVEHkxBKqr44c9qeP8KCFXJuBxMmsYQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: zhou jencce <jencce.kernel@gmail.com>
-Cc: anton@enomsg.org, dwmw2@infradead.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <51827DB1.7000304@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, "Yann E. MORIN" <yann.morin.1998@free.fr>, Ezequiel =?utf-8?Q?Garc=C3=ADa?= <elezegarcia@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, linux-kbuild@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 05/04/2013 12:11 PM, zhou jencce wrote:
-> 2013/5/3 Lars-Peter Clausen <lars@metafoo.de>:
->> On 05/03/2013 11:56 AM, Xiong Zhou wrote:
->>> From: Xiong Zhou <jencce.kernel@gmail.com>
->>>
->>> This patch fixes build failure(randconfig) of next-20130501.
->>> When config I2C as m, BATTERY_BQ27x00 as y, here comes the failure.
->>> BATTERY_BQ27x00 depends on I2C according to the code.
->>>
->>
->>> Failure message:
->>> drivers/built-in.o: In function `bq27x00_read_i2c':
->>> bq27x00_battery.c:(.text+0x1082a7): undefined reference to `i2c_transfer'
->>> drivers/built-in.o: In function `bq27x00_battery_init':
->>> bq27x00_battery.c:(.init.text+0x6085): undefined reference to `i2c_register_driver'
->>> bq27x00_battery.c:(.init.text+0x60c7): undefined reference to `i2c_del_driver'
->>> drivers/built-in.o: In function `bq27x00_battery_exit':
->>> bq27x00_battery.c:(.exit.text+0xbf0): undefined reference to `i2c_del_driver'
->>> make: *** [vmlinux] Error 1
->>>
->>> Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
->>
->> It's actually a bit more tricky. The driver can be built without I2C
-> 
-> What about the build error ?
-> 
+Hi Mauro,
 
-The built error only happens if the driver is built-in and I2C is built as a
-module. Every other combination works fine. E.g. if I2C is disabled the
-driver builds just fine. So the driver only depends on I2C if I2C is not
-disabled.
+On Thu, May 02, 2013 at 11:52:33AM -0300, Mauro Carvalho Chehab wrote:
+> >
+> > is unreliable (doesn't do what some people expect) when SND=3Dm and=
+ SND_AC97_CODEC=3Dm,
+> > since VIDEO_STK1160_AC97 is a bool.
+>=20
+> Using select is always tricky.
+>=20
+> I can see a few possible fixes for it:
+>=20
+> 1) split the alsa part into a separate module. IMHO, this is cleaner,
+> but requires a little more work.
+>=20
 
->> support, so it does not depend on I2C, but if I2C is built as a module the
->> driver should also only be built as a module.
-> 
->  And this is what this patch trying to do.
-> 
->>
->> I think the best solution is to put the platform code and the i2c code of
->> the bq27x00 driver each in their on module, but if you want a quick solution
-> 
-> Yes, more clear.
-> 
->>
->> depends on I2C || I2C=n
->>
->> should work.
->>
-> 
-> Thanks. :)
-> 
->>> ---
->>> drivers/power/Kconfig |    1 +
->>> 1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/power/Kconfig b/drivers/power/Kconfig
->>> index 0d0b5d7..89e5ebd 100644
->>> --- a/drivers/power/Kconfig
->>> +++ b/drivers/power/Kconfig
->>> @@ -152,6 +152,7 @@ config BATTERY_SBS
->>>
->>>  config BATTERY_BQ27x00
->>>       tristate "BQ27x00 battery driver"
->>> +     depends on I2C
->>>       help
->>>         Say Y here to enable support for batteries with BQ27x00 (I2C/HDQ) chips.
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>> Please read the FAQ at  http://www.tux.org/lkml/
->>
+I'm trying to split the ac97 support into a separate module.
+So far I've managed to do this with two different approaches,
+but both of them are broken in some way :-(
+
+Couple questions:
+
+1. Is it possible to force two symbols to be both built-in (=3Dy) or bo=
+th
+modules (=3Dm)? This would make one of my solutions work.
+
+2. Do you think it's possible to split this as a module *without*
+requesting the driver dynamically? I've tried the same extensions appro=
+ach
+as in em28xx and others, but found some problems with the way
+snd-usb-audio driver registers.
+=20
+Thanks,
+--=20
+Ezequiel Garc=C3=ADa, Free Electrons
+Embedded Linux, Kernel and Android Engineering
+http://free-electrons.com
