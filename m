@@ -1,74 +1,58 @@
-From: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Subject: Re: Splitting stk1160-ac97 as a module (Re: linux-next: Tree for May
- 1 (media/usb/stk1160))
-Date: Sat, 4 May 2013 21:59:50 +0200
-Message-ID: <20130504195950.GA3254@free.fr>
-References: <20130501183734.7ad1efca2d06e75432edabbd@canb.auug.org.au>
- <518157EB.3010700@infradead.org>
- <51827DB1.7000304@redhat.com>
- <20130504172142.GA21656@localhost>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: the mips tree is screwed up again
+Date: Mon, 6 May 2013 10:29:14 +1000
+Message-ID: <20130506102914.54b5d59b086e19223d5ba1e1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kbuild-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__6_May_2013_10_29_14_+1000_Yu9ykdA+SX3yw5GV"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44181 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751641Ab3EFA3Z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 5 May 2013 20:29:25 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>
+
+--Signature=_Mon__6_May_2013_10_29_14_+1000_Yu9ykdA+SX3yw5GV
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20130504172142.GA21656@localhost>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Randy Dunlap <rdunlap@infradead.org>, Ezequiel =?iso-8859-1?Q?Garc=EDa?= <elezegarcia@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, linux-kbuild@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Ezequiel, All,
+Hi Ralf,
 
-On Sat, May 04, 2013 at 02:21:44PM -0300, Ezequiel Garcia wrote:
-> I'm trying to split the ac97 support into a separate module.
-> So far I've managed to do this with two different approaches,
-> but both of them are broken in some way :-(
-> 
-> Couple questions:
-> 
-> 1. Is it possible to force two symbols to be both built-in (=y) or both
-> modules (=m)? This would make one of my solutions work.
+It looks like John Crispin has cherry-picked or rebased part of Linus'
+tree into his branch that you have now merged.
 
-If they are always the same value, there is no need to have two symbols
-in the first place.
+Guys, don't rebase your trees - especially this late and especially after
+they have been merged into a published tree.
 
-However, given the original problem from this thread, if what you meant
-was to have the second symbol either 'n' or the same as the first symbol,
-ie. the following table:
+I will use the mips tree from Friday.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-    A:  n   m   m   y   y
-    B:  n   n   m   n   y
+--Signature=_Mon__6_May_2013_10_29_14_+1000_Yu9ykdA+SX3yw5GV
+Content-Type: application/pgp-signature
 
-Then the closest I came up with is:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-    config MODULES
-        bool "Modules"
-    
-    config A
-        tristate "A"
-    
-    config B_dummy
-        bool "B"
-        depends on A
-    
-    config B
-        tristate
-        default m if A=m && B_dummy
-        default y if A=y && B_dummy
+iQIcBAEBCAAGBQJRhvlaAAoJEECxmPOUX5FEhJ8QAKJibL9l4kcfPTKqPOa1ZiL7
+PpDPlHvj7oZ9GXJuGBFRx7M09Fsrk96LMTx4YpAF7DgHfpEsTldqwNHheX6MQmFO
+iuKvI1t29djtf01qULGvoVybl0s2KjIE+Yul6TO17m4xw5r9Mn+EjHD3GQ07WyaW
+xYmR/YNZQiCJWthyqZR7Xtblot7NN8VzjMkONIxbeq0CHg7f8/vourVXZO2yxuNx
+PdY0zIjxII/Ax0fJxFs97SLQ0+fPDzml+EJx0KEoNo6/K/QXdEwgBmTvE/3NtUuy
+KvblhFnWx1b9+32qVRffPC4jTQR5540jG5hvwXyU1sI0NXJVPrvY/t0hxS9Fa6mu
+vf6p9qFhzcSIbJYrrNIFt33hSyAvlMIibsU/l9AHyWYGfcGvIrAyTyXvhwwaM37e
+bWOKxzQBVOHjhAtnIqDk5w1G/XBiI2WNPFALLnxy1ysTGBRRChTi6HEolrfyZO3E
+E991byMQd9z/+P4lSaC/GzOwTBeaJJLrzgzWCnHUrmoYvcG+hyWVHokKy3lLZGpL
+PCkg9pZ4pI5A/vLsoR4ki/jwB5HsywpikzHrR/W8LBjh+D97YEj2ALOsZPf+7egv
+RwJkEDslFmYLkO3YLzXlq/8ZK8ozRgl1+7viSCYFBmCeDv4peTlbC3P/UxNJCQYK
+2stYkDn1UbAeOH8FrBbq
+=zBtM
+-----END PGP SIGNATURE-----
 
-where B_dummy is not used outside of Kconfig, and only A and B are the
-symbols of interest (eg. to build the drivers).
-
-Otherwise, I was not able to get the desired behviour with only the A
-and B symbols.
-
-Regards,
-Yann E. MORIN.
-
--- 
-.-----------------.--------------------.------------------.--------------------.
-|  Yann E. MORIN  | Real-Time Embedded | /"\ ASCII RIBBON | Erics' conspiracy: |
-| +33 662 376 056 | Software  Designer | \ / CAMPAIGN     |  ___               |
-| +33 223 225 172 `------------.-------:  X  AGAINST      |  \e/  There is no  |
-| http://ymorin.is-a-geek.org/ | _/*\_ | / \ HTML MAIL    |   v   conspiracy.  |
-'------------------------------^-------^------------------^--------------------'
+--Signature=_Mon__6_May_2013_10_29_14_+1000_Yu9ykdA+SX3yw5GV--
