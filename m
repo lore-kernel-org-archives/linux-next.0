@@ -1,58 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: the mips tree is screwed up again
-Date: Mon, 6 May 2013 10:29:14 +1000
-Message-ID: <20130506102914.54b5d59b086e19223d5ba1e1@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the  tree
+Date: Mon, 6 May 2013 13:51:09 +1000
+Message-ID: <20130506135109.9c0b24ea1e22784fb28ae6b9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__6_May_2013_10_29_14_+1000_Yu9ykdA+SX3yw5GV"
+ boundary="Signature=_Mon__6_May_2013_13_51_09_+1000_xua6eR5cnSxyYVw4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44181 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40631 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751641Ab3EFA3Z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 5 May 2013 20:29:25 -0400
+	with ESMTP id S1752817Ab3EFDvT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 5 May 2013 23:51:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Manfred Spraul <manfred@colorfullife.com>
 
---Signature=_Mon__6_May_2013_10_29_14_+1000_Yu9ykdA+SX3yw5GV
+--Signature=_Mon__6_May_2013_13_51_09_+1000_xua6eR5cnSxyYVw4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi Andrew,
 
-It looks like John Crispin has cherry-picked or rebased part of Linus'
-tree into his branch that you have now merged.
+Today's linux-next merge of the akpm tree got a conflict in ipc/sem.c
+between commit 321310ced2d6 ("ipc: move sem_obtain_lock() rcu locking
+into the only caller") from Linus' tree and commit "ipc/sem.c:
+alternatives to preempt_disable()" from the akpm tree.
 
-Guys, don't rebase your trees - especially this late and especially after
-they have been merged into a published tree.
+I just dropped the akpm tree commit for now.
 
-I will use the mips tree from Friday.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__6_May_2013_10_29_14_+1000_Yu9ykdA+SX3yw5GV
+--Signature=_Mon__6_May_2013_13_51_09_+1000_xua6eR5cnSxyYVw4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRhvlaAAoJEECxmPOUX5FEhJ8QAKJibL9l4kcfPTKqPOa1ZiL7
-PpDPlHvj7oZ9GXJuGBFRx7M09Fsrk96LMTx4YpAF7DgHfpEsTldqwNHheX6MQmFO
-iuKvI1t29djtf01qULGvoVybl0s2KjIE+Yul6TO17m4xw5r9Mn+EjHD3GQ07WyaW
-xYmR/YNZQiCJWthyqZR7Xtblot7NN8VzjMkONIxbeq0CHg7f8/vourVXZO2yxuNx
-PdY0zIjxII/Ax0fJxFs97SLQ0+fPDzml+EJx0KEoNo6/K/QXdEwgBmTvE/3NtUuy
-KvblhFnWx1b9+32qVRffPC4jTQR5540jG5hvwXyU1sI0NXJVPrvY/t0hxS9Fa6mu
-vf6p9qFhzcSIbJYrrNIFt33hSyAvlMIibsU/l9AHyWYGfcGvIrAyTyXvhwwaM37e
-bWOKxzQBVOHjhAtnIqDk5w1G/XBiI2WNPFALLnxy1ysTGBRRChTi6HEolrfyZO3E
-E991byMQd9z/+P4lSaC/GzOwTBeaJJLrzgzWCnHUrmoYvcG+hyWVHokKy3lLZGpL
-PCkg9pZ4pI5A/vLsoR4ki/jwB5HsywpikzHrR/W8LBjh+D97YEj2ALOsZPf+7egv
-RwJkEDslFmYLkO3YLzXlq/8ZK8ozRgl1+7viSCYFBmCeDv4peTlbC3P/UxNJCQYK
-2stYkDn1UbAeOH8FrBbq
-=zBtM
+iQIcBAEBCAAGBQJRhyitAAoJEECxmPOUX5FE940QAKSRRBUYd34QqGl1iiKVWcTs
+tmBP/LC6uOmZrQwnw4Ru24gGw8vJrJtf+HExCOeC6TPcjshZSWt/1V7t2LbQ5Yd4
+PGpgPveyMQBhLx1gder4e0Qcaq6XfdM0FOPtD3LhULx27DlPCramUSZN8bs0bQ0D
+C6NIecGS4xSfvUBzWAznnpV911VDgtNL3JlvXZx9aj/Nj7uYTq0ibsxchkrXjGCz
+AHSomzuxdGIidXQZWTJj3ahDfW9IRuqkRT8hfbmxGjgUjV4mjaCGoFU/Zb7Q8Gcv
+bJ1aUaIYlilvZ3VtU0MPgztgFhP8iZDhq11mq9iWi6nzN/58NbXecOgEo4EJ+Gvi
+zNB2Nyj/ZYJb9aUCX3spNqvqwe5/D5S3CHH5OcEu7orYwJGprMH/KFJPNECBsdvT
+MBUv+gK5CqdWSezoLaSYdRoDYobgdiYhQxGKN3XoEf5tjL1rCBQ6hZNoFmhIu5yJ
+dXkM2SmeqmOyNkTpO7TPR8bHw8Aut4IKG86pDOiTsxX4X/gb6yuryDICRVxeuxj6
+hxP+aATzChwZvcedf2Gxz2EvxNPTjaVGnDFezpIgWi/VFzj0y631zr0g5Lw2QMVa
+6secpgWiuPqawWNXEUzhWejyNNi4SaoWGG1PkPhUQEU1NDGKHUyydjAQ+Udm0keq
+qNsVNUKX0++Hpt3Xe9y3
+=JNmf
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__6_May_2013_10_29_14_+1000_Yu9ykdA+SX3yw5GV--
+--Signature=_Mon__6_May_2013_13_51_09_+1000_xua6eR5cnSxyYVw4--
