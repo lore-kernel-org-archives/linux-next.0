@@ -1,102 +1,53 @@
-From: Chanho Min <chanho.min@lge.com>
-Subject: [PATCH RESEND] lib: add weak clz/ctz functions
-Date: Tue,  7 May 2013 17:12:37 +0900
-Message-ID: <1367914357-1876-1-git-send-email-chanho.min@lge.com>
-Return-path: <linux-m68k-owner@vger.kernel.org>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kyungsik Lee <kyungsik.lee@lge.com>, Yann Collet <yann.collet.73@gmail.com>, Bob Pearson <rpearson@systemfabricworks.com>, Richard Weinberger <richard@nod.at>, Geert Uytterhoeven <geert.uytterhoeven@gmail.com>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, linux-m68k@vger.kernel.org, linux-next@vger.kernel.org, Chanho Min <chanho.min@lge.com>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: linux-next: manual merge of the drm-intel tree with
+	Linus' tree
+Date: Tue, 7 May 2013 10:43:17 +0200
+Message-ID: <CAKMK7uEr4Fs00nM3iuwwBdd+LV3_6w2sarR+i8tk02BrTHQmNA@mail.gmail.com>
+References: <20130507112751.195757b78defdbea58aa6134@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <20130507112751.195757b78defdbea58aa6134@canb.auug.org.au>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Sender: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
+Errors-To: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: intel-gfx <intel-gfx@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-next.vger.kernel.org
 
-Some architectures need __c[lt]z[sd]i2() for __builtin_c[lt]z[ll] and
-It causes build failure. They can be implemented using the fls()/__ffs() and
-overridden by linking arch-specific versions may not be implemented yet.
+On Tue, May 7, 2013 at 3:27 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the drm-intel tree got a conflict in
+> drivers/gpu/drm/i915/i915_reg.h between commit a65851af5938 ("drm/i915:
+> Make data/link N value power of two") from Linus' tree and commit
+> e3b95f1eb5b9 ("drm/i915: Apply OCD to data/link m/n register #defines")
+> from the drm-intel tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+>
+> Daniel, I assume all this stuff being added to the drm-intel tree is
+> going upstream very soon?
 
-Reference: https://lkml.org/lkml/2013/4/18/603
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Chanho Min <chanho.min@lge.com>
----
- lib/Makefile  |    2 +-
- lib/clz_ctz.c |   58 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 59 insertions(+), 1 deletion(-)
- create mode 100644 lib/clz_ctz.c
+Oops, no that is stuff for 3.11. Lazy me hoped I could sneak stuff
+through (since we just keep on merging features to
+drm-intel-next-queued to avoid stalls), but that's obviously not what
+you want for linux-next. My apologies for that mess. I've now created
+a for-linux-next branch which will not contain patches heading for
+3.x+1 while 3.x-rc1 hasn't been released yet.
 
-diff --git a/lib/Makefile b/lib/Makefile
-index af79e8c..3eacb2c 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -23,7 +23,7 @@ lib-y	+= kobject.o klist.o
- 
- obj-y += bcd.o div64.o sort.o parser.o halfmd4.o debug_locks.o random32.o \
- 	 bust_spinlocks.o hexdump.o kasprintf.o bitmap.o scatterlist.o \
--	 gcd.o lcm.o list_sort.o uuid.o flex_array.o \
-+	 gcd.o lcm.o list_sort.o uuid.o flex_array.o clz_ctz.o\
- 	 bsearch.o find_last_bit.o find_next_bit.o llist.o memweight.o kfifo.o
- obj-y += string_helpers.o
- obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
-diff --git a/lib/clz_ctz.c b/lib/clz_ctz.c
-new file mode 100644
-index 0000000..a8f8379
---- /dev/null
-+++ b/lib/clz_ctz.c
-@@ -0,0 +1,58 @@
-+/*
-+ * lib/clz_ctz.c
-+ *
-+ * Copyright (C) 2013 Chanho Min <chanho.min@lge.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * __c[lt]z[sd]i2 can be overridden by linking arch-specific versions.
-+ */
-+
-+#include <linux/export.h>
-+#include <linux/kernel.h>
-+
-+int __weak __ctzsi2(int val)
-+{
-+	return __ffs(val);
-+}
-+EXPORT_SYMBOL(__ctzsi2);
-+
-+int __weak __clzsi2(int val)
-+{
-+	return 32 - fls(val);
-+}
-+EXPORT_SYMBOL(__clzsi2);
-+
-+#if BITS_PER_LONG == 32
-+
-+int __weak __clzdi2(long val)
-+{
-+	return 32 - fls((int)val);
-+}
-+EXPORT_SYMBOL(__clzdi2);
-+
-+int __weak __ctzdi2(long val)
-+{
-+	return __ffs((u32)val);
-+}
-+EXPORT_SYMBOL(__ctzdi2);
-+
-+#elif BITS_PER_LONG == 64
-+
-+int __weak __clzdi2(long val)
-+{
-+	return 64 - fls64((u64)val);
-+}
-+EXPORT_SYMBOL(__clzdi2);
-+
-+int __weak __ctzdi2(long val)
-+{
-+	return __ffs64((u64)val);
-+}
-+EXPORT_SYMBOL(__ctzdi2);
-+
-+#else
-+#error BITS_PER_LONG not 32 or 64
-+#endif
--- 
-1.7.9.5
+Can you please switch over to that branch for inclusion into linux-next?
+
+Yours, Daniel
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
