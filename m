@@ -1,54 +1,70 @@
-From: Xiong Zhou <jencce.kernel@gmail.com>
-Subject: Re: [PATCH -next] power: fix bq27x00_battery kconfig
-Date: Tue, 7 May 2013 10:15:56 +0800 (CST)
-Message-ID: <alpine.DEB.2.02.1305071013410.9830@M2420>
-References: <alpine.DEB.2.02.1305031743190.6400@M2420> <51838C3E.5090303@metafoo.de> <CADJHv_s7TqdfULQKA6eTVEHkxBKqr44c9qeP8KCFXJuBxMmsYQ@mail.gmail.com> <5184E2CD.8040900@metafoo.de>
+From: Larry Finger <Larry.Finger-tQ5ms3gMjBLk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: linux-next: Tree for May 6 (b43/bcma)
+Date: Mon, 06 May 2013 22:06:23 -0500
+Message-ID: <51886FAF.1030801@lwfinger.net>
+References: <20130506144207.c812a0227d7763d26e5fec80@canb.auug.org.au>
+ <5187EB95.2060605@infradead.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:33106 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757833Ab3EGCQI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 May 2013 22:16:08 -0400
-In-Reply-To: <5184E2CD.8040900@metafoo.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Xiong Zhou <jencce.kernel@gmail.com>, anton@enomsg.org, dwmw2@infradead.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <b43-dev-bounces+gldbd-bcm43xx-dev=gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <5187EB95.2060605-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
+ <mailto:b43-dev-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/b43-dev/>
+List-Post: <mailto:b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:b43-dev-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
+ <mailto:b43-dev-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "b43-dev" <b43-dev-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: b43-dev-bounces+gldbd-bcm43xx-dev=gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-From: Xiong Zhou <jencce.kernel@gmail.com>
+On 05/06/2013 12:42 PM, Randy Dunlap wrote:
+>
+> on x86_64:
+>
+> drivers/built-in.o: In function `b43_gpio_cleanup.isra.40':
+> main.c:(.text+0x1b425b): undefined reference to `bcma_chipco_gpio_control'
+> drivers/built-in.o: In function `b43_wireless_core_reset':
+> (.text+0x1b5fb6): undefined reference to `bcma_core_set_clockmode'
+> drivers/built-in.o: In function `b43_wireless_core_reset':
+> (.text+0x1b6058): undefined reference to `bcma_core_pll_ctl'
+> drivers/built-in.o: In function `b43_chip_init':
+> main.c:(.text+0x1b8444): undefined reference to `bcma_chipco_gpio_control'
+> drivers/built-in.o: In function `b43_wireless_core_init':
+> main.c:(.text+0x1b887b): undefined reference to `bcma_core_pci_irq_ctl'
+> drivers/built-in.o: In function `b43_bus_bcma_device_disable':
+> bus.c:(.text+0x1b9d46): undefined reference to `bcma_core_disable'
+> drivers/built-in.o: In function `b43_bus_bcma_device_enable':
+> bus.c:(.text+0x1b9d55): undefined reference to `bcma_core_enable'
+> drivers/built-in.o: In function `b43_bus_bcma_device_is_enabled':
+> bus.c:(.text+0x1b9d64): undefined reference to `bcma_core_is_enabled'
+> drivers/built-in.o: In function `b43_nphy_channel_setup':
+> phy_n.c:(.text+0x1c8fe5): undefined reference to `bcma_pmu_spuravoid_pllupdate'
+> drivers/built-in.o: In function `b43_phy_initn':
+> phy_n.c:(.text+0x1cb853): undefined reference to `bcma_chipco_gpio_control'
+> drivers/built-in.o: In function `b43_dma_init':
+> (.text+0x1d5790): undefined reference to `bcma_core_dma_translation'
+> drivers/built-in.o: In function `b43_init':
+> main.c:(.init.text+0xa07a): undefined reference to `__bcma_driver_register'
+> main.c:(.init.text+0xa09f): undefined reference to `bcma_driver_unregister'
+> drivers/built-in.o: In function `b43_exit':
+> main.c:(.exit.text+0x153a): undefined reference to `bcma_driver_unregister'
+>
+>
+> Probably mostly due to B43=y and BCMA=m.
 
-This patch fixes build failure(randconfig) of next-20130501.
-When config I2C as m, BATTERY_BQ27x00 as y, here comes the failure.
-The driver depends on I2C only if I2C is not disabled, as Lars
-commented. Last version of this patch make the driver depend on I2C
-unconditionally.
+Does any Kconfig wizard know the magic incantation to accomplish the following:
 
-Failure message:
-drivers/built-in.o: In function `bq27x00_read_i2c':
-bq27x00_battery.c:(.text+0x1082a7): undefined reference to `i2c_transfer'
-drivers/built-in.o: In function `bq27x00_battery_init':
-bq27x00_battery.c:(.init.text+0x6085): undefined reference to `i2c_register_driver'
-bq27x00_battery.c:(.init.text+0x60c7): undefined reference to `i2c_del_driver'
-drivers/built-in.o: In function `bq27x00_battery_exit':
-bq27x00_battery.c:(.exit.text+0xbf0): undefined reference to `i2c_del_driver'
-make: *** [vmlinux] Error 1
+1. Ensure that if SSB and BMCA are both selected, then both are either "m" or "y"
 
-Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
----
-drivers/power/Kconfig |    1 +
-1 file changed, 1 insertion(+)
+2. Ensure that BRCMSMAC is not "y" if BMCA is "m".
 
-diff --git a/drivers/power/Kconfig b/drivers/power/Kconfig
-index 0d0b5d7..f11bacd 100644
---- a/drivers/power/Kconfig
-+++ b/drivers/power/Kconfig
-@@ -152,6 +152,7 @@ config BATTERY_SBS
- 
- config BATTERY_BQ27x00
- 	tristate "BQ27x00 battery driver"
-+	depends on I2C || I2C=n
- 	help
- 	  Say Y here to enable support for batteries with BQ27x00 (I2C/HDQ) chips.
- 
+3. Ensure that B43 is not "y" if SSB and/or BCMA is "m".
+
+Thanks,
+
+Larry
