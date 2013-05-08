@@ -1,94 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Wed, 8 May 2013 10:11:54 +1000
-Message-ID: <20130508101154.05cd9327d7ebb0e7b9f82378@canb.auug.org.au>
-References: <20130507112751.195757b78defdbea58aa6134@canb.auug.org.au>
-	<CAKMK7uEr4Fs00nM3iuwwBdd+LV3_6w2sarR+i8tk02BrTHQmNA@mail.gmail.com>
+Subject: Re: linx-next: inclusion request for libata for-next branch
+Date: Wed, 8 May 2013 10:13:17 +1000
+Message-ID: <20130508101317.f90ccd595f2092b52c2e09ec@canb.auug.org.au>
+References: <20130507172501.GC5531@mtj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0092079454=="
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <CAKMK7uEr4Fs00nM3iuwwBdd+LV3_6w2sarR+i8tk02BrTHQmNA@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: intel-gfx <intel-gfx@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
-List-Id: linux-next.vger.kernel.org
-
---===============0092079454==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__8_May_2013_10_11_54_+1000_=0NLpcgQz7.Pqml="
+ boundary="Signature=_Wed__8_May_2013_10_13_17_+1000_VBrUufoptShg84sP"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43444 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750881Ab3EHANT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 May 2013 20:13:19 -0400
+In-Reply-To: <20130507172501.GC5531@mtj.dyndns.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-ide@vger.kernel.org, Jeff Garzik <jeff@garzik.org>
 
---Signature=_Wed__8_May_2013_10_11_54_+1000_=0NLpcgQz7.Pqml=
+--Signature=_Wed__8_May_2013_10_13_17_+1000_VBrUufoptShg84sP
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi Tejun,
 
-On Tue, 7 May 2013 10:43:17 +0200 Daniel Vetter <daniel.vetter@ffwll.ch> wr=
-ote:
+On Tue, 7 May 2013 10:25:01 -0700 Tejun Heo <tj@kernel.org> wrote:
 >
-> On Tue, May 7, 2013 at 3:27 AM, Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
-> >
-> > Daniel, I assume all this stuff being added to the drm-intel tree is
-> > going upstream very soon?
+> I'm undertaking the maintenance of libata now and just set up a new
+> libata tree.  Can you please include following git branch into
+> linux-next?
 >=20
-> Oops, no that is stuff for 3.11. Lazy me hoped I could sneak stuff
-> through (since we just keep on merging features to
-> drm-intel-next-queued to avoid stalls), but that's obviously not what
-> you want for linux-next. My apologies for that mess. I've now created
-> a for-linux-next branch which will not contain patches heading for
-> 3.x+1 while 3.x-rc1 hasn't been released yet.
->=20
-> Can you please switch over to that branch for inclusion into linux-next?
+>  git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git for-next
 
-Done.  Thanks.
+I have replaced Jeff's tree with yours.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---Signature=_Wed__8_May_2013_10_11_54_+1000_=0NLpcgQz7.Pqml=
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Wed__8_May_2013_10_13_17_+1000_VBrUufoptShg84sP
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRiZhKAAoJEECxmPOUX5FEHfYP/i9T1NEZgwsSA9PKpARo149/
-jBTt9i4R5XkXIE3s3rqi9DA7qMRT3Dz8/ueEmna+iIAXGo2eq/rkOfm0jUI4Hh8n
-ZFlL0IwqagrOOJYrBK6KIc8CLJRNFgRCvUSav3yrrG5zFxWgnpJBYIqd424t41VE
-cCC9MEtiXMjvPz4Ju5TaRjfJWcUPSU3UuJz7PTGtsNqj72bDMga/jpX1QXBjolRN
-gF/0Wo9rKbN2QHQZMn4F8ByVf9s2XReA4OkhLNI0VZeMSNuDdhlnmzbkuKuuWsme
-WAuQnGOvYJNcwAf96EF0jUQ3+4VxhlUSkdy0zQCI2qEgRIziNyxnhQzo2ROJvmVm
-Q1PXznNnc19/HpTCIpQNha8rNQPfl2QhU9pQ1zqxThnkOMQUc5hbcrzsyNOpfEPb
-AcwyexVYjXfzB45sxldwZxbImn7WT9BTLzyGM8yMc0A+lC1POKWRMqwqXpPnb0KU
-VXqFhl88leXRCarhCYOggIEEQzjio/cpXA0wnhtvQm/pfrqhrdNSdfpWe+f7O8V2
-t6Kt7hAz3rxi/5Wg11HeGjK6BFujvHirQb73c42ScxbVRh2heriefD3TiGpwVyYf
-iFadgTnAnNYA3wBjVIZxF7+w4leAgbwO9ypAlfhroQFoRBDefa/i6C9JE6ASaW3u
-mskalv1GAhxpsQxt8Rt5
-=cCsb
+iQIcBAEBCAAGBQJRiZidAAoJEECxmPOUX5FErUAP/11Ubn+nsQiRALTdrUqBzscU
+F4c4JcjP8khTFJBKkhu9TLDl0I1omN/jgNeaTCXrlEovO2fjzoizq83uINZySheq
+/574EDqHgtnl5UFNQqUYf78GiaJ8pTAutrCfNTnGihIZH7mo5Ya2PfSp5V+772xn
+r4Y8eQt57ro2c56E8OSXvIPMPwilE6CfUpu6g33OwTl21GCnnYlJ1gW52jIcpfjQ
+fJSHAuNbNvaknHsu3NjJbxvDRAytXsqu4qiJdWIxL2/OkpX94dUfWf27g7+wCPvu
++J17c8+tPAjDGPSIxu/+ROOfZiUxt3v2ilSBu1rEO4o/Ar6AUinFNjPVAOmMwTiO
+wZC+dAIpuPBcrfJOTIfX1+VdHnEo+MI3hkfwnlZJRRGsMXXCD4d7bts910Km51le
+ldEMilli3OYZYpz4xMdVAD7dGialweHgeGuq9MtZ1wku7iVoC9arR7OP2GARF85s
+KBhTG1J4Hyo/+I7ftnEdt79c8sc+7f5shmkii8UvfTwZKCoQS70/kc0wJrQZ3bn4
+4EhQc+pn30hz1TzxryCRmGm3HS49ALhVZdBFm+U7rVmqQU4nPivw/liwmWK8Gqpz
+Tj+SelKDVY1sM359hInrsmF2rAnigQIE7UxNOCwZ187xfMF1nM2c52QUZU0p1FF+
+X88VFUavaepXPPgQzNNs
+=f+g9
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__8_May_2013_10_11_54_+1000_=0NLpcgQz7.Pqml=--
-
---===============0092079454==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0092079454==--
+--Signature=_Wed__8_May_2013_10_13_17_+1000_VBrUufoptShg84sP--
