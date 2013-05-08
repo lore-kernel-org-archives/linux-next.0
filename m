@@ -1,21 +1,21 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 8 (gpio-mcp23s08)
-Date: Wed, 08 May 2013 10:57:27 -0700
-Message-ID: <518A9207.5030309@infradead.org>
+Subject: Re: linux-next: Tree for May 8 (dlm)
+Date: Wed, 08 May 2013 11:04:45 -0700
+Message-ID: <518A93BD.3020300@infradead.org>
 References: <20130508140122.e4747b58be4333060b7a248a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:41174 "EHLO
+Received: from casper.infradead.org ([85.118.1.10]:41265 "EHLO
 	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757010Ab3EHR6G (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 May 2013 13:58:06 -0400
+	with ESMTP id S1757583Ab3EHSFW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 May 2013 14:05:22 -0400
 In-Reply-To: <20130508140122.e4747b58be4333060b7a248a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, grant.likely@linaro.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com
 
 On 05/07/13 21:01, Stephen Rothwell wrote:
 > Hi all,
@@ -33,24 +33,30 @@ On 05/07/13 21:01, Stephen Rothwell wrote:
 > <crickets :-)>
 > 
 
+on x86_64:
 
-on i386:
+when CONFIG_GFS2_FS_LOCKING_DLM=y and CONFIG_DLM=m:
 
-drivers/built-in.o: In function `mcp23017_write':
-gpio-mcp23s08.c:(.text+0x20e9): undefined reference to `i2c_smbus_write_word_data'
-drivers/built-in.o: In function `mcp23017_read':
-gpio-mcp23s08.c:(.text+0x2103): undefined reference to `i2c_smbus_read_word_data'
-drivers/built-in.o: In function `mcp23008_write':
-gpio-mcp23s08.c:(.text+0x2164): undefined reference to `i2c_smbus_write_byte_data'
-drivers/built-in.o: In function `mcp23008_read':
-gpio-mcp23s08.c:(.text+0x217f): undefined reference to `i2c_smbus_read_byte_data'
-drivers/built-in.o: In function `mcp23s08_init':
-gpio-mcp23s08.c:(.init.text+0x1ae): undefined reference to `i2c_register_driver'
-drivers/built-in.o: In function `mcp23s08_exit':
-gpio-mcp23s08.c:(.exit.text+0x22): undefined reference to `i2c_del_driver'
+fs/built-in.o: In function `gfs2_lock':
+file.c:(.text+0xa512c): undefined reference to `dlm_posix_get'
+file.c:(.text+0xa5140): undefined reference to `dlm_posix_unlock'
+file.c:(.text+0xa514a): undefined reference to `dlm_posix_lock'
+fs/built-in.o: In function `gdlm_cancel':
+lock_dlm.c:(.text+0xb3f57): undefined reference to `dlm_unlock'
+fs/built-in.o: In function `gdlm_unmount':
+lock_dlm.c:(.text+0xb40ff): undefined reference to `dlm_release_lockspace'
+fs/built-in.o: In function `sync_unlock.isra.4':
+lock_dlm.c:(.text+0xb420d): undefined reference to `dlm_unlock'
+fs/built-in.o: In function `sync_lock.isra.5':
+lock_dlm.c:(.text+0xb42d9): undefined reference to `dlm_lock'
+fs/built-in.o: In function `gdlm_put_lock':
+lock_dlm.c:(.text+0xb45e7): undefined reference to `dlm_unlock'
+fs/built-in.o: In function `gdlm_mount':
+lock_dlm.c:(.text+0xb4928): undefined reference to `dlm_new_lockspace'
+lock_dlm.c:(.text+0xb4c75): undefined reference to `dlm_release_lockspace'
+fs/built-in.o: In function `gdlm_lock':
+lock_dlm.c:(.text+0xb529f): undefined reference to `dlm_lock'
 
-
-when CONFIG_I2C=m and CONFIG_GPIO_MCP23S08=y.
 
 
 -- 
