@@ -1,60 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vhost tree with Linus' tree
-Date: Thu, 9 May 2013 12:04:38 +1000
-Message-ID: <20130509120438.6112e2d5b559eb62ac0caa18@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (Linus'
+ tree related)
+Date: Thu, 9 May 2013 13:55:04 +1000
+Message-ID: <20130509135504.2b6598d3a52fdd367da1cbb4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__9_May_2013_12_04_38_+1000_lNev1U67mPI9FGl6"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54408 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755495Ab3EICEm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 May 2013 22:04:42 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
+ boundary="Signature=_Thu__9_May_2013_13_55_04_+1000_sKqPcT2=8ox_d5uN"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__9_May_2013_12_04_38_+1000_lNev1U67mPI9FGl6
+--Signature=_Thu__9_May_2013_13_55_04_+1000_sKqPcT2=8ox_d5uN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+Hi all,
 
-Today's linux-next merge of the vhost tree got a conflict in
-drivers/vhost/test.c between commit 73640c991e2f ("tools/virtio: fix
-build for 3.8") from Linus' tree and commit 30954cbc5818 ("vhost-test:
-fix up test module after API change") from the vhost tree.
+After merging the final tree, today's linux-next build (arm defconfig)
+produced this warning:
 
-I fixed it up (the former was a superset of the latter for the
-conflicting area, so I used that) and can carry the fix as necessary (no
-action is required).
+ipc/shm.c: In function 'newseg':
+ipc/shm.c:494:18: warning: unused variable 'hs' [-Wunused-variable]
+
+Introduced by commit af73e4d9506d ("hugetlbfs: fix mmap failure in
+unaligned size request") in Linus' tree.
+
+Did the "[akpm@linux-foundation.org: fix warning when
+CONFIG_HUGETLB_PAGE=3Dn]" part get dropped?  Or was that something else?
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__9_May_2013_12_04_38_+1000_lNev1U67mPI9FGl6
+--Signature=_Thu__9_May_2013_13_55_04_+1000_sKqPcT2=8ox_d5uN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRiwQ2AAoJEECxmPOUX5FEqvUP/2t4zB7bdCz64vdAeny0XvjE
-Vkjdilj8WO4Tf0jB5fExN64Ewc0GUo5cHR3HUThZmRs8AREy4i991SY4uJgMWpJG
-NfehltZqg6xE45L33rzh6wGHHws6JAey+pB3tPhGG9j4HmvkjOhm70DxSntivqSr
-rnfysYw+qKNsvN4tOCRgpW3eITC/HnaMavoi4OHnNbC5pZbp+B8xKdUubh/oqzTc
-j5VjNnOQQBp4cs4jNdDXbGUJW7He+OyRnhrONE7YGRSxEtrYkLj5CBbchP/OGr06
-162x2JsXO/Swn+Gt7Bn2mUX5ljfT6N5YBe8iw2j/7nTf2FCqbfp1hA/Fh4dtTZor
-eMDN98aN75KJRnd6lDNL9sWk0MJ97JykuYarNF3IBXcrSALz61Pj+IRcvUD1O+NI
-y1cA8F6Fet1M3/LUtsg6DIsAyAOKMmJw/bCobdS41HwKzECfD+XJR8jHjHQ6SVRq
-QmunC8z9+pEMrDvetmUo8YEbhSJk7u+N/f0R1UwUUC5OakimIGnXIYZEozAO5vG0
-bCiU7LyieQ1Wv1cVBbtfGVGteAjyFIrR2QZro8646mxksn+YcZz7VphbiTg9yWEt
-DN1I9kVOD+4PI8Wk+9M3DzSxiZCsIPNE7bOAVbPYnp6l54uICxZnqUB6X5ZBewzq
-ZeC147y+BaxDdSHL7nsb
-=XOUO
+iQIcBAEBCAAGBQJRix4YAAoJEECxmPOUX5FEbogP/0z+zR5ouBjrCkz+2kIx9I7b
+AKT/0d4oXNB6DRPKonbVahdkKczn0WhuPutuywI7Fkh5dHkf0iPCxmaAfmQY+RlD
+Mv4a4KBNm0NVJ8rRfEioOPiMuW3oz3/ImgQ91KwUqxM3mG/cw5BGmSFe+l7ZFQGs
+UfT5HP5xqD36nXNJ86SM1FAVjGXf7cF7TZV3d3T4gHaS1461BAwpAyCJTqy9UknP
+4tD8+FWmIt6dOY87LwhK0elNn4HdFQD92O7w8YBTa4bnneCbfG/EIoRbhHkcDsqV
+qUWkV/3cQmTaeXlxHNuqHboKF6tr5zC6suBCd03oQWYe9Cfal9YHXNkn4wfSd2N7
+W9fpS+USlp1NOQ7v7HJWiNafOmsAsvpzNX63oEQpz0d8wTQ32g5NtcgYZTMvBFSj
+064ja6qBVyUvKvLGi2r8cXJGGNpuF8gu0eFXTn5eFsBTtWz6c7mXvPDuN3szCWUi
+FJdPIDoUiDLH+dhhimH1X6jJRBMBSZTQcdbi1Z7/apJrynLc4X3f7a1cmZsAF3HS
+KFbfy+WMmZqlGF/X4euR64jH7wZpfwog9KuzlyzZNfGEL53DsURU3mhPWn68W03Y
+22+3HlWBfR4VdvFoVDPaCkYCdJ18vqrGV1lY2t+/5TB7SbrNgZLyYn2kdoITnkD7
++z3Sc9+ZGhptfsYBTE6v
+=iu06
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__9_May_2013_12_04_38_+1000_lNev1U67mPI9FGl6--
+--Signature=_Thu__9_May_2013_13_55_04_+1000_sKqPcT2=8ox_d5uN--
