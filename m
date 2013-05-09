@@ -1,81 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 8 (dlm)
-Date: Thu, 9 May 2013 09:47:45 +1000
-Message-ID: <20130509094745.049e46fff25f357e7eb50123@canb.auug.org.au>
-References: <20130508140122.e4747b58be4333060b7a248a@canb.auug.org.au>
-	<518A93BD.3020300@infradead.org>
+Subject: linux-next: manual merge of the microblaze tree with Linus' tree
+Date: Thu, 9 May 2013 10:35:13 +1000
+Message-ID: <20130509103513.8432fb1f7834a57de404f2a7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__9_May_2013_09_47_45_+1000_CVvkeDkwbZD5=G9Z"
+ boundary="Signature=_Thu__9_May_2013_10_35_13_+1000_+4wiyv4RlyGCRGSS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40318 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53767 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750932Ab3EHXrw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 May 2013 19:47:52 -0400
-In-Reply-To: <518A93BD.3020300@infradead.org>
+	with ESMTP id S1753345Ab3EIAf1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 May 2013 20:35:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Teigland <teigland@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com, Randy Dunlap <rdunlap@infradead.org>
+To: Michal Simek <michal.simek@petalogix.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiang Liu <liuj97@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Thu__9_May_2013_09_47_45_+1000_CVvkeDkwbZD5=G9Z
+--Signature=_Thu__9_May_2013_10_35_13_+1000_+4wiyv4RlyGCRGSS
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-[Just forwarding to David ...]
+Hi Michal,
 
-On Wed, 08 May 2013 11:04:45 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
-te:
->
-> on x86_64:
->=20
-> when CONFIG_GFS2_FS_LOCKING_DLM=3Dy and CONFIG_DLM=3Dm:
->=20
-> fs/built-in.o: In function `gfs2_lock':
-> file.c:(.text+0xa512c): undefined reference to `dlm_posix_get'
-> file.c:(.text+0xa5140): undefined reference to `dlm_posix_unlock'
-> file.c:(.text+0xa514a): undefined reference to `dlm_posix_lock'
-> fs/built-in.o: In function `gdlm_cancel':
-> lock_dlm.c:(.text+0xb3f57): undefined reference to `dlm_unlock'
-> fs/built-in.o: In function `gdlm_unmount':
-> lock_dlm.c:(.text+0xb40ff): undefined reference to `dlm_release_lockspace'
-> fs/built-in.o: In function `sync_unlock.isra.4':
-> lock_dlm.c:(.text+0xb420d): undefined reference to `dlm_unlock'
-> fs/built-in.o: In function `sync_lock.isra.5':
-> lock_dlm.c:(.text+0xb42d9): undefined reference to `dlm_lock'
-> fs/built-in.o: In function `gdlm_put_lock':
-> lock_dlm.c:(.text+0xb45e7): undefined reference to `dlm_unlock'
-> fs/built-in.o: In function `gdlm_mount':
-> lock_dlm.c:(.text+0xb4928): undefined reference to `dlm_new_lockspace'
-> lock_dlm.c:(.text+0xb4c75): undefined reference to `dlm_release_lockspace'
-> fs/built-in.o: In function `gdlm_lock':
-> lock_dlm.c:(.text+0xb529f): undefined reference to `dlm_lock'
+Today's linux-next merge of the microblaze tree got a conflict in
+arch/microblaze/mm/init.c between commit 7beb5987875b ("mm/microblaze:
+use common help functions to free reserved pages") from Linus' tree and
+commits 17408c87ba9e ("microblaze: Fix free_init_pages function") and
+c5c09c08718b ("microblaze: Fix initrd support") from the microblaze tree.
+
+I just used the version from Linus' tree (I am not sure if that is the
+correct solution) and can carry the fix as necessary (no action is
+required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__9_May_2013_09_47_45_+1000_CVvkeDkwbZD5=G9Z
+--Signature=_Thu__9_May_2013_10_35_13_+1000_+4wiyv4RlyGCRGSS
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRiuQhAAoJEECxmPOUX5FEz98P/2YGNmnmwmAx1aEorXAFPlX4
-5srNezqIPSE8xj2ZWPT/EyLnWsj+axdSdrqgnjMgMuN2WiVx8rakmM628DmcTQXN
-pknk53y2LBDUqHW3gesJC0c4FbGVjUsFDLxUlsngy0FPJqCCmM3o4eWdnreMyLTj
-cfwt4UPc1ndnQru5mXYjdc2YdMbUIVl8E1m8Sb9TyYyVRmq4ufa/OSLtQLa/1eJZ
-kjFbkEPRuslaqO4u3tyhoYQcDG3leE6WquwvXoMVAfGs7YQargdxlwVaXTbM3AP1
-/cqxiMXQ2RR4G3Ogk1H9+6VEdE99Pgs4YEW8Dudfi1kXD7PJVRBrq0yFN5OjlHO+
-RcaAdIHM7ehk7Rek4aOV953U3YtlZaUM55BroLpDdGEx46HYGOmx63pHZMWu8jMc
-6OEICYAgxwro+iXjNxT6UpV0pAYf2OJqJlvoSJi07E93Dp3/aZ/5lFtP87C2Afnm
-Zi4pUbaiJGR2YI6Ujm37rWuQ7ZQZD7GT8hNYT8nwdtjlpiaF5ZYemGELMkc7NTC8
-J/o1JfXTcNjjLjDZ+IBV+uux5uW6mUqtgWR5tqL+FKqevCMgINoAm7c97VdcHBIx
-hIbfhm/XlIwcfJJY8bezfmUkfp82hkOJZPDRZWmPv+VfDoVvnv5NaOoE0BbtaJaA
-i5tQKqxx6EVlT3yLawL6
-=IAV4
+iQIcBAEBCAAGBQJRiu9BAAoJEECxmPOUX5FEiyoQAKSaI66L6IlJ0JfV8EsjiOTq
+VMQEBSvnK8Ny+7ynIY3C2KAUHoePtCigKGo1jDK1aLgkPxJDZzgAj742sB4mtvRP
+8BKqodFSkByuupyQ+bgwZuqhUtRdNbO9lp461e27tg6A2aPngAS5C70wnAnCi4IO
+Ic78Ry2bVbgYr3+I4gne19N0eE+2RT54RA/QJ8BMZsp1nxf3672WRK2WixpiKvCD
+BxYUjGtLl6SP1HC11dVzV6qsZ6/rvZIxBzw1Ic0t8fjFbfMddLNWLYe2oOmo/a6U
+4Ctp/4v2rV4V0yE44wp+qx0m4fNRYwNQkTqNdxR4r04IWAuv8T/lMq922cDUDbHl
+I+X9WlNzthEwqW7vFUVqyYw7cmxJIta751dtu3JiiTs5pP6oeRX1LTi3ahIPghGu
+25gF9a+MhwnIvYLLPvFfORFbXAobAOxejnjDUohVXQVHLkV2ULbBaFXgjktGQAhC
+Czru1QRS+3hPo4Xf+EOuq9v+1WxNRwLXIt4iGn/1lhl1OF4ZDX4bajeptLkYzoBw
+UnLrqnMtXc0GAx5CvsBDjEl0vJhxtf/lLcAcmpJa3efnllciLtWKwYRwEEXjNb6p
+LbrK9bDLZXpsRFWJblwJ05HcFaSsVN5ujPh/3zPANgp+jMIBChXUcMvjHUUN88QX
+cVogTxrP2jc8ugWQ0nPX
+=3Qx6
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__9_May_2013_09_47_45_+1000_CVvkeDkwbZD5=G9Z--
+--Signature=_Thu__9_May_2013_10_35_13_+1000_+4wiyv4RlyGCRGSS--
