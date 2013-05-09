@@ -1,61 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the microblaze tree with Linus' tree
-Date: Thu, 9 May 2013 10:35:13 +1000
-Message-ID: <20130509103513.8432fb1f7834a57de404f2a7@canb.auug.org.au>
+Subject: linux-next: manual merge of the regmap tree with Linus' tree
+Date: Thu, 9 May 2013 11:56:59 +1000
+Message-ID: <20130509115659.fed19d305e0b180697060f95@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__9_May_2013_10_35_13_+1000_+4wiyv4RlyGCRGSS"
+ boundary="Signature=_Thu__9_May_2013_11_56_59_+1000_ZeAXPaI2h0brtA7I"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53767 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43056 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753345Ab3EIAf1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 May 2013 20:35:27 -0400
+	with ESMTP id S1754875Ab3EIB5R (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 May 2013 21:57:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Simek <michal.simek@petalogix.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiang Liu <liuj97@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@st.com>, Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
 
---Signature=_Thu__9_May_2013_10_35_13_+1000_+4wiyv4RlyGCRGSS
+--Signature=_Thu__9_May_2013_11_56_59_+1000_ZeAXPaI2h0brtA7I
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michal,
+Hi Mark,
 
-Today's linux-next merge of the microblaze tree got a conflict in
-arch/microblaze/mm/init.c between commit 7beb5987875b ("mm/microblaze:
-use common help functions to free reserved pages") from Linus' tree and
-commits 17408c87ba9e ("microblaze: Fix free_init_pages function") and
-c5c09c08718b ("microblaze: Fix initrd support") from the microblaze tree.
+Today's linux-next merge of the regmap tree got a conflict in
+drivers/base/regmap/regmap-debugfs.c between commit 480738de0e07
+("regmap: debugfs: Simplify calculation of `c->max_reg'") from Linus'
+tree and commit 5e3f5901ac6c ("regmap: debugfs: Fix start_reg
+calculation") from the regmap tree.
 
-I just used the version from Linus' tree (I am not sure if that is the
-correct solution) and can carry the fix as necessary (no action is
+I am not sure that the latter patch is ever required on top of the
+former, so for now I just used the former version (except for the last
+hunk) (see below) and can carry the fix as necessary (no action is
 required).
+
+Please let me know if this is the incorrect resolution.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__9_May_2013_10_35_13_+1000_+4wiyv4RlyGCRGSS
+diff --cc drivers/base/regmap/regmap-debugfs.c
+index 23b701f,6cd1b78a..0000000
+--- a/drivers/base/regmap/regmap-debugfs.c
++++ b/drivers/base/regmap/regmap-debugfs.c
+@@@ -144,8 -146,7 +144,8 @@@ static unsigned int regmap_debugfs_get_
+  			fpos_offset =3D from - c->min;
+  			reg_offset =3D fpos_offset / map->debugfs_tot_len;
+  			*pos =3D c->min + (reg_offset * map->debugfs_tot_len);
+ +			mutex_unlock(&map->cache_lock);
+- 			return c->base_reg + reg_offset;
++ 			return c->base_reg + (reg_offset * map->reg_stride);
+  		}
+ =20
+  		*pos =3D c->max;
+
+--Signature=_Thu__9_May_2013_11_56_59_+1000_ZeAXPaI2h0brtA7I
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRiu9BAAoJEECxmPOUX5FEiyoQAKSaI66L6IlJ0JfV8EsjiOTq
-VMQEBSvnK8Ny+7ynIY3C2KAUHoePtCigKGo1jDK1aLgkPxJDZzgAj742sB4mtvRP
-8BKqodFSkByuupyQ+bgwZuqhUtRdNbO9lp461e27tg6A2aPngAS5C70wnAnCi4IO
-Ic78Ry2bVbgYr3+I4gne19N0eE+2RT54RA/QJ8BMZsp1nxf3672WRK2WixpiKvCD
-BxYUjGtLl6SP1HC11dVzV6qsZ6/rvZIxBzw1Ic0t8fjFbfMddLNWLYe2oOmo/a6U
-4Ctp/4v2rV4V0yE44wp+qx0m4fNRYwNQkTqNdxR4r04IWAuv8T/lMq922cDUDbHl
-I+X9WlNzthEwqW7vFUVqyYw7cmxJIta751dtu3JiiTs5pP6oeRX1LTi3ahIPghGu
-25gF9a+MhwnIvYLLPvFfORFbXAobAOxejnjDUohVXQVHLkV2ULbBaFXgjktGQAhC
-Czru1QRS+3hPo4Xf+EOuq9v+1WxNRwLXIt4iGn/1lhl1OF4ZDX4bajeptLkYzoBw
-UnLrqnMtXc0GAx5CvsBDjEl0vJhxtf/lLcAcmpJa3efnllciLtWKwYRwEEXjNb6p
-LbrK9bDLZXpsRFWJblwJ05HcFaSsVN5ujPh/3zPANgp+jMIBChXUcMvjHUUN88QX
-cVogTxrP2jc8ugWQ0nPX
-=3Qx6
+iQIcBAEBCAAGBQJRiwJrAAoJEECxmPOUX5FE9EcP/1FGat4Okrg2Wg+dYmwIOnR+
+atKxqFibZr4Cd/8aAoavsTETaVzAt24BfzIf+7pD4daGSyT+Q+sCQVXY+nWySAet
+8uNAFWwL0xaDX5RT8s/rFxSapSqX5cqRan4FnCuRe8rYJXYKCoplxv/Ub/BsSdP4
+eV03AMmIlY8Rw8jK0lYj7RjJnassNCco/Iidr6G4tn+Yn/ruEi2NmJC+6Ub6jSp9
+ot2TB0wpsB1xo9ZWwrIVB4Qi5mkfN68XdxAQvWX4gNMg0emLwiCLLQv4T5mSqupC
+kgQmmTHquyT2p6HHWw+0N4ib1+P6+2lOGrbLB7IXDtk6Ch/qDGEW4ovyxUC/fPO5
+YRj7teD2+wEcjM9tXIvDXD9HBu+7HfWmKgsjirKM1OAtS/merPhjnIt8Wvgzl1ug
+aUJdUvTnXQD/tQn78R9VGAbRu7ALphFbax4UyPfb5lXP8REn6IoTOPOtTPA8eY+L
+sRC1AAc5wz1o9ZKgh+x+ulTHvvUnNSasV0Es/r8z0NfziXCZKaVsVHeyJ1Y9zpNT
+i3pJfBMr5InkIUA14ZqHFxdV9c5v9rtaz5qX1iEWObHJgRwuky4gNgbj7apnRCDr
+K3NVav5DhqxGbKwTMtB7Ej0mmA2oSO6nftoPpHWiuJKR6rSIOM431vQFj+vTXRG4
+/O0wGVcsyY92QA5ix0se
+=7Vs2
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__9_May_2013_10_35_13_+1000_+4wiyv4RlyGCRGSS--
+--Signature=_Thu__9_May_2013_11_56_59_+1000_ZeAXPaI2h0brtA7I--
