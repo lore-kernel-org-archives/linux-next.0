@@ -1,41 +1,65 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 10 (e_powersaver)
-Date: Fri, 10 May 2013 11:27:38 -0700
-Message-ID: <518D3C1A.2090500@infradead.org>
-References: <20130510134333.e0fa4e2d811af4c82e21139a@canb.auug.org.au>
+From: Anton Vorontsov <anton@enomsg.org>
+Subject: Re: [PATCH -next] power: fix bq27x00_battery kconfig
+Date: Fri, 10 May 2013 11:05:27 -0700
+Message-ID: <20130510180527.GA32333@teo>
+References: <alpine.DEB.2.02.1305031743190.6400@M2420>
+ <51838C3E.5090303@metafoo.de>
+ <CADJHv_s7TqdfULQKA6eTVEHkxBKqr44c9qeP8KCFXJuBxMmsYQ@mail.gmail.com>
+ <5184E2CD.8040900@metafoo.de>
+ <alpine.DEB.2.02.1305071013410.9830@M2420>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <20130510134333.e0fa4e2d811af4c82e21139a@canb.auug.org.au>
-Sender: cpufreq-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rafal Bilski <rafalbilski@interia.pl>, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ie0-f182.google.com ([209.85.223.182]:53027 "EHLO
+	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753252Ab3EJSzG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 10 May 2013 14:55:06 -0400
+Received: by mail-ie0-f182.google.com with SMTP id a14so8663072iee.41
+        for <linux-next@vger.kernel.org>; Fri, 10 May 2013 11:55:06 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.02.1305071013410.9830@M2420>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Xiong Zhou <jencce.kernel@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, dwmw2@infradead.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 05/09/13 20:43, Stephen Rothwell wrote:
-> Hi all,
+On Tue, May 07, 2013 at 10:15:56AM +0800, Xiong Zhou wrote:
+> From: Xiong Zhou <jencce.kernel@gmail.com>
 > 
-> Please do not add any v3.11 destined work to your linux-next included
-> branches until after v3.10-rc1 is released.
+> This patch fixes build failure(randconfig) of next-20130501.
+> When config I2C as m, BATTERY_BQ27x00 as y, here comes the failure.
+> The driver depends on I2C only if I2C is not disabled, as Lars
+> commented. Last version of this patch make the driver depend on I2C
+> unconditionally.
 > 
-> Changes since 20130509:
+> Failure message:
+> drivers/built-in.o: In function `bq27x00_read_i2c':
+> bq27x00_battery.c:(.text+0x1082a7): undefined reference to `i2c_transfer'
+> drivers/built-in.o: In function `bq27x00_battery_init':
+> bq27x00_battery.c:(.init.text+0x6085): undefined reference to `i2c_register_driver'
+> bq27x00_battery.c:(.init.text+0x60c7): undefined reference to `i2c_del_driver'
+> drivers/built-in.o: In function `bq27x00_battery_exit':
+> bq27x00_battery.c:(.exit.text+0xbf0): undefined reference to `i2c_del_driver'
+> make: *** [vmlinux] Error 1
 > 
+> Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> ---
 
-on i386:
-CONFIG_ACPI_PROCESSOR=m
-CONFIG_X86_E_POWERSAVER=y
+Applied, thanks!
 
-
-drivers/built-in.o: In function `eps_cpu_init.part.8':
-e_powersaver.c:(.text.unlikely+0x2243): undefined reference to `acpi_processor_register_performance'
-e_powersaver.c:(.text.unlikely+0x22a2): undefined reference to `acpi_processor_unregister_performance'
-e_powersaver.c:(.text.unlikely+0x246b): undefined reference to `acpi_processor_get_bios_limit'
-
-
-X86_E_POWERSAVER should also depend on ACPI_PROCESSOR.
-
-
-
--- 
-~Randy
+> drivers/power/Kconfig |    1 +
+> 1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/power/Kconfig b/drivers/power/Kconfig
+> index 0d0b5d7..f11bacd 100644
+> --- a/drivers/power/Kconfig
+> +++ b/drivers/power/Kconfig
+> @@ -152,6 +152,7 @@ config BATTERY_SBS
+>  
+>  config BATTERY_BQ27x00
+>  	tristate "BQ27x00 battery driver"
+> +	depends on I2C || I2C=n
+>  	help
+>  	  Say Y here to enable support for batteries with BQ27x00 (I2C/HDQ) chips.
+>  
