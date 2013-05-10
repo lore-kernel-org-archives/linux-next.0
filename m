@@ -1,38 +1,41 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: build warning after merge of the origintree
-Date: Fri, 10 May 2013 05:51:44 +0100
-Message-ID: <20130510045144.GJ25399@ZenIV.linux.org.uk>
-References: <20130510131926.bbbee7dec35f696c407ac63e@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for May 10 (e_powersaver)
+Date: Fri, 10 May 2013 11:27:38 -0700
+Message-ID: <518D3C1A.2090500@infradead.org>
+References: <20130510134333.e0fa4e2d811af4c82e21139a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35330 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751292Ab3EJEvq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 10 May 2013 00:51:46 -0400
-Content-Disposition: inline
-In-Reply-To: <20130510131926.bbbee7dec35f696c407ac63e@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <20130510134333.e0fa4e2d811af4c82e21139a@canb.auug.org.au>
+Sender: cpufreq-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <koverstreet@google.com>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rafal Bilski <rafalbilski@interia.pl>, cpufreq@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, May 10, 2013 at 01:19:26PM +1000, Stephen Rothwell wrote:
+On 05/09/13 20:43, Stephen Rothwell wrote:
 > Hi all,
 > 
-> After merging the akpm tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
+> Please do not add any v3.11 destined work to your linux-next included
+> branches until after v3.10-rc1 is released.
 > 
-> drivers/md/bcache/super.c:656:2: warning: initialization from incompatible pointer type [enabled by default]
-> drivers/md/bcache/super.c:656:2: warning: (near initialization for 'bcache_ops.release') [enabled by default]
+> Changes since 20130509:
 > 
-> Introduced by commit cafe56359144 ("bcache: A block layer cache")
-> interacting with commit db2a144bedd5 ("block_device_operations->release()
-> should return void").
 
-Simply drop that return 0; and make it return void.  Or just leave it as is
-for now - while C implementation has every right to blow up when calling a
-function that returns int as if it had been a function returning void (e.g.
-C ABI might have return value for int passed as it's usually done for big
-structs), AFAIK, none of the architectures we support do anything of that
-kind.
+on i386:
+CONFIG_ACPI_PROCESSOR=m
+CONFIG_X86_E_POWERSAVER=y
+
+
+drivers/built-in.o: In function `eps_cpu_init.part.8':
+e_powersaver.c:(.text.unlikely+0x2243): undefined reference to `acpi_processor_register_performance'
+e_powersaver.c:(.text.unlikely+0x22a2): undefined reference to `acpi_processor_unregister_performance'
+e_powersaver.c:(.text.unlikely+0x246b): undefined reference to `acpi_processor_get_bios_limit'
+
+
+X86_E_POWERSAVER should also depend on ACPI_PROCESSOR.
+
+
+
+-- 
+~Randy
