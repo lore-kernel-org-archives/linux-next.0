@@ -1,53 +1,97 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: =?utf-8?B?UkU6IGxpbnV4LW5leHQ6IG1hbnVhbCBtZXJnZSBvZiB0aGUgYWtwbSB0cmVlIHdpdGggTGludXMn?=
- =?utf-8?B?IHRyZWU=?=
-Date: Mon, 13 May 2013 01:20:16 -0400 (EDT)
-Message-ID: <341438329.225168.1368422416510.JavaMail.root@zmail12.collab.prod.int.phx2.redhat.com>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Subject: Re: linux-next: Tree for May 8 (dlm)
+Date: Mon, 13 May 2013 10:18:32 +0100
+Message-ID: <1368436712.2882.14.camel@menhir>
+References: <20130508140122.e4747b58be4333060b7a248a@canb.auug.org.au>
+	 <518A93BD.3020300@infradead.org>
+	 <20130509094745.049e46fff25f357e7eb50123@canb.auug.org.au>
+	 <20130509165028.GA18077@redhat.com>  <518BD826.4040403@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;boundary="__1368422429899TOUCHDOWN_BOUNDARY__"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3-phx2.redhat.com ([209.132.183.24]:42001 "EHLO
-	mx3-phx2.redhat.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751432Ab3EMFUV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 May 2013 01:20:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:7941 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750951Ab3EMJV0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 May 2013 05:21:26 -0400
+In-Reply-To: <518BD826.4040403@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: keescook@chromium.org
-Cc: sfr@canb.auug.org.au, akpm@linux-foundation.org, torvalds@linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jlayton@redhat.com, viro@zeniv.linux.org.uk
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: David Teigland <teigland@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cluster-devel@redhat.com
 
---__1368422429899TOUCHDOWN_BOUNDARY__
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-=0D=0A-----Original Message-----=0D=0AFrom: Kees Cook [keescook@chromium.org=
-]=0D=0AReceived: Monday, 13 May 2013, 12:49am=0D=0ATo: Eric Paris [eparis@re=
-dhat.com]=0D=0ACC: Stephen Rothwell [sfr@canb.auug.org.au]; Andrew Morton [a=
-kpm@linux-foundation.org]; Linus [torvalds@linux-foundation.org]; Linux-Next=
- [linux-next@vger.kernel.org]; LKML [linux-kernel@vger.kernel.org]; Jeff Lay=
-ton [jlayton@redhat.com]; Al Viro [viro@zeniv.linux.org.uk]=0D=0ASubject: Re=
-: linux-next: manual merge of the akpm tree with Linus' tree=0D=0A=0D=0AOn S=
-un, May 12, 2013 at 7:11 PM, Eric Paris <eparis@redhat.com> wrote:=0D=0A> On=
- Mon, 2013-05-13 at 12:07 +1000, Stephen Rothwell wrote:=0D=0A>> Hi Andrew,=0D=
-=0A>>=0D=0A>> Today's linux-next merge of the akpm tree got a conflict in=0D=
-=0A>> kernel/auditsc.c between commit b24a30a73054 ("audit: fix event covera=
-ge=0D=0A>> of AUDIT_ANOM_LINK") from Linus' tree and commit "audit: fix mq_o=
-pen and=0D=0A>> mq_unlink to add the MQ root as a hidden parent audit_names =
-record" from=0D=0A>> the akpm tree.=0D=0A>=0D=0A> Actually, I've already pic=
-ked the patch up for 3.11.  So Andrew, you can=0D=0A> drop it.=0D=0A>=0D=0A>=
-> I fixed it up (see below) and can carry the fix as necessary (no action=0D=
-=0A>> is required).=0D=0A>>=0D=0A>> BTW, commit b24a30a73054 from Linus' tre=
-e has Eric Paris as Author and=0D=0A>> Committer, but is only Signed-off-by =
-Kees Cook.  It is part of a long=0D=0A>> series that did not go anywhere nea=
-r linus-next.   I do have an audit=0D=0A>> tree in linux-next=0D=0A>> (git:/=
-/git.kernel.org/pub/scm/linux/kernel/git/viro/audit.git#for-next)=0D=0A>> bu=
-t that hasn't seen any recent activity.=0D=0A>=0D=0A> I thought I sent you a=
- note asking for audit to get pulled into -next=0D=0A> quite a while back.  =
-I'll resend...=0D=0A>=0D=0A=0D=0AHrm, how did the Author get mangled?=0D=0A=0D=
-=0A=0D=0AI remember it having a conflict when I tried to merge it (someone e=
-lse had changed the same area of the header file). So I used patch -p1 and f=
-ixed up the reject by hand. I wonder if I screwed up and used git commit -a =
-instead of git am --resolved?   That is 2 things I should have caught on fin=
-al review I missed.  :-(=0D=0A=0D=0ANow to wait for everything else I screwe=
-d up...
+On Thu, 2013-05-09 at 10:08 -0700, Randy Dunlap wrote:
+> On 05/09/13 09:50, David Teigland wrote:
+> > On Thu, May 09, 2013 at 09:47:45AM +1000, Stephen Rothwell wrote:
+> >> [Just forwarding to David ...]
+> >>
+> >> On Wed, 08 May 2013 11:04:45 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+> >>>
+> >>> on x86_64:
+> >>>
+> >>> when CONFIG_GFS2_FS_LOCKING_DLM=y and CONFIG_DLM=m:
+> >>>
+> >>> fs/built-in.o: In function `gfs2_lock':
+> >>> file.c:(.text+0xa512c): undefined reference to `dlm_posix_get'
+> >>> file.c:(.text+0xa5140): undefined reference to `dlm_posix_unlock'
+> >>> file.c:(.text+0xa514a): undefined reference to `dlm_posix_lock'
+> > 
+> > gfs2/file.c calls the dlm directly, so I suppose gfs2 itself needs
+> > to depend on the dlm.  It's been like this for a long time, so I
+> > don't know why it only appeared now.
+> 
+> Agreed to both statements.
+> 
+> >>> fs/built-in.o: In function `gdlm_cancel':
+> >>> lock_dlm.c:(.text+0xb3f57): undefined reference to `dlm_unlock'
+> >>> fs/built-in.o: In function `gdlm_unmount':
+> >>> lock_dlm.c:(.text+0xb40ff): undefined reference to `dlm_release_lockspace'
+> >>> fs/built-in.o: In function `sync_unlock.isra.4':
+> >>> lock_dlm.c:(.text+0xb420d): undefined reference to `dlm_unlock'
+> >>> fs/built-in.o: In function `sync_lock.isra.5':
+> >>> lock_dlm.c:(.text+0xb42d9): undefined reference to `dlm_lock'
+> >>> fs/built-in.o: In function `gdlm_put_lock':
+> >>> lock_dlm.c:(.text+0xb45e7): undefined reference to `dlm_unlock'
+> >>> fs/built-in.o: In function `gdlm_mount':
+> >>> lock_dlm.c:(.text+0xb4928): undefined reference to `dlm_new_lockspace'
+> >>> lock_dlm.c:(.text+0xb4c75): undefined reference to `dlm_release_lockspace'
+> >>> fs/built-in.o: In function `gdlm_lock':
+> >>> lock_dlm.c:(.text+0xb529f): undefined reference to `dlm_lock'
+> > 
+> > lock_dlm.c is GFS2_FS_LOCKING_DLM which depends on DLM.
+> > Is that not correct?
+> 
+> The problem is that GFS2_FS_LOCKING_DLM is a bool.  It depends on DLM,
+> which is a tristate with a value of 'm', so the bool is true (as long
+> as DLM != 'n').
+> 
+> One option is to make GFS2_FS_LOCKING_DLM depend on "DLM != n", but a
+> better fix is to make GFS2_FS depend on DLM, like you said above.
+> 
+> 
 
---__1368422429899TOUCHDOWN_BOUNDARY__--
+Does this look correct? As Dave says this has not changed for some time.
+It seems that every time we try to get this right, there is always some
+corner case that is missed :( 
+
+We can't make GFS2_FS depend on DLM as otherwise there would be no
+reason to have GFS2_FS_LOCKING_DLM, at least if I've understood the
+issue here correctly. So I've come up with the following... does it look
+ok?
+
+
+diff --git a/fs/gfs2/Kconfig b/fs/gfs2/Kconfig
+index eb08c9e..edbad96 100644
+--- a/fs/gfs2/Kconfig
++++ b/fs/gfs2/Kconfig
+@@ -26,7 +26,7 @@ config GFS2_FS
+ config GFS2_FS_LOCKING_DLM
+ 	bool "GFS2 DLM locking"
+ 	depends on (GFS2_FS!=n) && NET && INET && (IPV6 || IPV6=n) && \
+-		HOTPLUG && DLM && CONFIGFS_FS && SYSFS
++		HOTPLUG && (DLM!=n) && CONFIGFS_FS && SYSFS
+ 	help
+ 	  Multiple node locking module for GFS2
+ 
