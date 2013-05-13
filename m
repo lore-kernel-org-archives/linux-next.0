@@ -1,60 +1,102 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: clean up time
-Date: Mon, 13 May 2013 11:44:53 +1000
-Message-ID: <20130513114453.52bc4aa54b1ae565eb836aaa@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 13 May 2013 12:07:28 +1000
+Message-ID: <20130513120728.f3f469e5d71b39ec78800175@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__13_May_2013_11_44_53_+1000_m+uz3zap86AetYOH"
+ boundary="Signature=_Mon__13_May_2013_12_07_28_+1000_AdYT7yY=huZ6G7hi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34507 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40566 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752198Ab3EMBpA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 12 May 2013 21:45:00 -0400
+	with ESMTP id S1752198Ab3EMCHl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 12 May 2013 22:07:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-next@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>, Eric Paris <eparis@redhat.com>, Kees Cook <keescook@chromium.org>, Al Viro <viro@ZenIV.linux.org.uk>
 
---Signature=_Mon__13_May_2013_11_44_53_+1000_m+uz3zap86AetYOH
+--Signature=_Mon__13_May_2013_12_07_28_+1000_AdYT7yY=huZ6G7hi
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-Its good to see that many trees have been fast forwarded to v3.10-rc1.
-For the others, it would be good to see some clean up (especially those
-that now just consist of merge commits and those that contain versions of
-patches different to those that were integrated upstream).
+Today's linux-next merge of the akpm tree got a conflict in
+kernel/auditsc.c between commit b24a30a73054 ("audit: fix event coverage
+of AUDIT_ANOM_LINK") from Linus' tree and commit "audit: fix mq_open and
+mq_unlink to add the MQ root as a hidden parent audit_names record" from
+the akpm tree.
 
-So for the "good" trees :-), this just means a fast forward.  For the
-rest, a rebase (if there was leftovers) or a reset to you upstream.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Thanks for your cooperation.  ;-)
+BTW, commit b24a30a73054 from Linus' tree has Eric Paris as Author and
+Committer, but is only Signed-off-by Kees Cook.  It is part of a long
+series that did not go anywhere near linus-next.   I do have an audit
+tree in linux-next
+(git://git.kernel.org/pub/scm/linux/kernel/git/viro/audit.git#for-next)
+but that hasn't seen any recent activity.
+
+There is also another commit in that series that doesn't even have a
+Signed-off-by line at all (4d3fb709b285 "helper for some session id
+stuff").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__13_May_2013_11_44_53_+1000_m+uz3zap86AetYOH
+diff --cc kernel/auditsc.c
+index 3c8a601,f9eaa16..0000000
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@@ -1399,8 -1695,11 +1399,11 @@@ static void audit_log_exit(struct audit
+  	}
+ =20
+  	i =3D 0;
+- 	list_for_each_entry(n, &context->names_list, list)
++ 	list_for_each_entry(n, &context->names_list, list) {
++ 		if (n->hidden)
++ 			continue;
+ -		audit_log_name(context, n, i++, &call_panic);
+ +		audit_log_name(context, n, NULL, i++, &call_panic);
++ 	}
+ =20
+  	/* Send end of event record to help user space know we are finished */
+  	ab =3D audit_log_start(context, GFP_KERNEL, AUDIT_EOE);
+diff --git a/kernel/audit.h b/kernel/audit.h
+index 1c95131..52dfbfc 100644
+--- a/kernel/audit.h
++++ b/kernel/audit.h
+@@ -97,6 +97,7 @@ struct audit_names {
+ 	struct audit_cap_data	fcap;
+ 	unsigned int		fcap_ver;
+ 	unsigned char		type;		/* record type */
++	bool			hidden;		/* don't log this record */
+ 	/*
+ 	 * This was an allocated audit_names and not from the array of
+ 	 * names allocated in the task audit context.  Thus this name
+
+--Signature=_Mon__13_May_2013_12_07_28_+1000_AdYT7yY=huZ6G7hi
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRkEWVAAoJEECxmPOUX5FEA1UP/RMf0A1TTLVxliZfSas2MjYR
-mt0zadKOL7k0J+klqR8Cv4wKoudEURzWgJfDbkGaNK2xOaI5sEKyVzdCIJWs9J/U
-+Pl55TBqO+pyaCYeh3zGkZulcRf/ap/m1EHpi39qtn+d9WXLy2x8lAYcNOWbqPoY
-sOfRschNK51Il9QlbC7EJbXg41SczXPxsNa8xpmhKJnoHh/17/Ayf7vWUol6DpG4
-Exx9KCgcNl7FFAMiONPwqiSof1J87iKsaC1UPTuSr9OG+Fnu4JZ0cMdw9HFy0hf5
-4wdUpm25tyZH3p2vnz43zcunRWIyLs0xFe3Z2SV7sos7icMK4PhLfQRJyE9a7Z/0
-dtxJL1x2l94DXsUxG64trfas95UWLDMqapQIdnDqqzO4mVn6eDCE72AoUurMMk2v
-EPSVTCz5V2iaqDejbn+tI77C/tLezzmiocyWSuJjZwYVArXHgcEL9vv8u48tpr/p
-nia18Rno7i/4GDAS2cQtL2CqqDp7V6+mzewnqivilFK8kCwhYqLbi6khv6vmZWE7
-DSW31NKjiOuSLCv9A0Ln+ncd/6ulJY6fG2/JAAumu0ZUzP1dDZZUfdiY6Fi8Ifmj
-Fc6DJzlC/CQFhC7WNSsDd44XNnjjMJl78GPnXuQTwww5X8gr+2/qO6pc5DAvetGm
-6yh+u7rZCjTdS6iRmYHs
-=TjCY
+iQIcBAEBCAAGBQJRkErgAAoJEECxmPOUX5FEmVAP/j04d6CdK+qItwc5SIjsdPQ3
+2+cNFI1DrMVdD6AY+awiDvU9/bQQr1Wgwx7X6yqq3VBk7k+VsO98DYOyligtDcYf
+P1hhLYnMFsqOA3y5WrqQ1D1Mu40TtsDeYcguc2PgqxnX5cus+VFXZieumjrYEXLl
+uIip9d6wbMZ195glreUK8oz/Y/c8LC+6guJYGvtFeC3z5UpME5QbweivFJwg+sZv
+T+RcbC+OgrinWrifS7oSFwxmSFsDisELXyGNwe1kZBUAPiKyoUnGpIgv4rA5W9KT
+aAGK5KZLazyvn1CXI2nNW9pmluY4VgY/UqjAbIA6krPe8KIg6tyWaaNvAL7HFTkw
+GdjxDpnMXHWIPm/DXlbVt3aUaV3Peal7LTk5b/dVlfetB37XCU9hhb/hSN6++HTq
+pWEIgdCSI+rTBxU4sDd8ggSDh4a4wvwur/KyfAeG2EeugzA0vAbpF4WwsVVdyUe4
+4rC6KZLWxVXHcXpZrsJQcveBnTjCK8d93K9/+0c3fIFKeVS4k5/SKHR7FJAVDYot
+/C/72VQZr9Aeem0y3NN6dxuNFElZMPchTFBMSZbPVuL5mRk36rH+/zMhwppC8aDE
+CZCLpB6wz35K1C9261ipx9uQEYrKoVifPAfH6YRxGcvzZILMWDvsTy1BG2x5jfpr
+FK3HnoUqyAKgz4soHEFe
+=j3ku
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__13_May_2013_11_44_53_+1000_m+uz3zap86AetYOH--
+--Signature=_Mon__13_May_2013_12_07_28_+1000_AdYT7yY=huZ6G7hi--
