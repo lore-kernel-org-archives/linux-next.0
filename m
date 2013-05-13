@@ -1,29 +1,30 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: linux-next: comment on the watchdog tree
-Date: Mon, 13 May 2013 14:17:42 +0200
-Message-ID: <20130513121742.GZ14155@spo001.leaseweb.com>
-References: <20130513094339.b93a7a4ccf73ccb7fff86d03@canb.auug.org.au>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: comment on the xen-two tree
+Date: Mon, 13 May 2013 09:48:18 -0400
+Message-ID: <20130513134818.GN6811@phenom.dumpdata.com>
+References: <20130513095244.60176cad5e302c1156788096@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:46318 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751340Ab3EMMRp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 May 2013 08:17:45 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20130513094339.b93a7a4ccf73ccb7fff86d03@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20130513095244.60176cad5e302c1156788096@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On Mon, May 13, 2013 at 09:52:44AM +1000, Stephen Rothwell wrote:
+> Hi Konrad,
+> 
+> Since the xen-two tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git
+> linux-next) seems to only consist of merges commits and some old (pre
+> v3.9) stuff, it might be a good time to reset it to be just v3.10-rc1 (or
+> rebase onto that) so you can start with a nice clean tree again.
 
-> Since the watchdog tree now consists only of merge commits (relative to
-> v3.10-rc1), you might as well just reset it to v3.10-rc1 and have a nice
-> clean tree to start from.
+Done!
 
-Absolutely correct. I fixed it.
-
-Kind regards,
-Wim.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
