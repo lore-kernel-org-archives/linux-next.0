@@ -1,70 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: comment on the xen-two tree
-Date: Tue, 14 May 2013 10:08:23 +1000
-Message-ID: <20130514100823.09193b126d3742359997a717@canb.auug.org.au>
-References: <20130513095244.60176cad5e302c1156788096@canb.auug.org.au>
-	<20130513134818.GN6811@phenom.dumpdata.com>
+From: Neil Zhang <glacier1980@gmail.com>
+Subject: Re: [PATCH -next] ashmem: Fix ashmem_shrink deadlock.
+Date: Tue, 14 May 2013 11:29:46 +0800
+Message-ID: <CA+2_TiZ3dECAW8LV-Es=BjHCwgWw69zbWkr73at+0_c-EaDHmA@mail.gmail.com>
+References: <1367416573-5430-1-git-send-email-rlove@google.com>
+	<20130513214216.GA23743@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__14_May_2013_10_08_23_+1000_2U1ERBxyg_5+S7/Z"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43309 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754667Ab3ENAIZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 May 2013 20:08:25 -0400
-In-Reply-To: <20130513134818.GN6811@phenom.dumpdata.com>
+Received: from mail-qe0-f50.google.com ([209.85.128.50]:34158 "EHLO
+	mail-qe0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755882Ab3END3r (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 May 2013 23:29:47 -0400
+In-Reply-To: <20130513214216.GA23743@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: raulxiong@gmail.com, Robert Love <rlove@google.com>, Shankar Brahadeeswaran <shankoo77@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, LKML <linux-kernel@vger.kernel.org>, Bjorn Bringert <bringert@google.com>, devel <devel@driverdev.osuosl.org>, Hugh Dickins <hughd@google.com>, Anjana V Kumar <anjanavk12@gmail.com>, Dad <akpm@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>
 
---Signature=_Tue__14_May_2013_10_08_23_+1000_2U1ERBxyg_5+S7/Z
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Konrad,
-
-On Mon, 13 May 2013 09:48:18 -0400 Konrad Rzeszutek Wilk <konrad.wilk@oracl=
-e.com> wrote:
+2013/5/14 Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+> On Wed, May 01, 2013 at 09:56:13AM -0400, Robert Love wrote:
+>> Don't acquire ashmem_mutex in ashmem_shrink if we've somehow recursed
+>> into the
+>> shrinker code from within ashmem. Just bail out, avoiding a deadlock.
+>> This is
+>> fine, as ashmem cache pruning is advisory anyhow.
+>>
+>> Signed-off-by: Robert Love <rlove@google.com>
+>> ---
+>>  drivers/staging/android/ashmem.c | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
 >
-> On Mon, May 13, 2013 at 09:52:44AM +1000, Stephen Rothwell wrote:
-> >=20
-> > Since the xen-two tree
-> > (git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git
-> > linux-next) seems to only consist of merges commits and some old (pre
-> > v3.9) stuff, it might be a good time to reset it to be just v3.10-rc1 (=
-or
-> > rebase onto that) so you can start with a nice clean tree again.
->=20
-> Done!
+> Based on Andrew's review comments, I'll drop this from my queue and wait
+> for a "better" fix for this.
+>
+> thanks,
+>
+> greg k-h
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
-Excellent, thanks.
+We found the similar issue these days.
+Add RaulXiong to paste the call stack.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__14_May_2013_10_08_23_+1000_2U1ERBxyg_5+S7/Z
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRkYB3AAoJEECxmPOUX5FEtUEP/3tA++dEbE/xlgmwFkUVaVDN
-+waX94mx47nr9kSQe/KoEhZEXakgVDfSt5qEpQ25S7pItwHjCElG0aab5vomnROZ
-q2Nze6ipI3yQseTC3GEUjC4ZEY9AKqT9HGfD1qnoNunL2yh0+eUQMmqOpx4MNtB6
-kotsxe8XdbzBFIYRWIpXhX6E/ovZOgiAULNV9NdfYFD1uN4qfCi2w0Ot8WjczBm3
-r3VJ7rMGo+cNXIDAYwLyx5ndvPngwqLUldK2GDySZE32nnAxL39g4kie0NUUD0EF
-EmufvGaH4CqLRjHGNAfC3F2NLjO6S8RJqtGhW2BPxoLv7Au4nDso2oMjhPaMcMCq
-6WcvbVcQiRjjIrvuKsPVVW6qeXK+GrrIM+m8pW007xp4Jxiu/d5BE4yI0hWhfDJg
-ua4qw9dwtIlzHrzj33kHecIHbn8qviQ3rp9HagpeTLiVH7Jd8i+Mq9VSfS8BvKMm
-82wO+oj1BvCDeKxt2jB+bOgCiFbzT2psrDxgV6WGDDR26+yqr2tu1nefR9BdtH2Z
-Tj4I+ZoQjdWzHeRgna6oidDm68fJSX05OQ1CzqLBkQljBaSN5HlbJvZ0zmtSOF+g
-K8nbWS1Lwnz4AbFAzihJweY42ESehPls9riK/+3kd1GprZyNQxCDGU1mrEmGeVrV
-ThuBkGUfpRR05GO+KDJF
-=w57P
------END PGP SIGNATURE-----
-
---Signature=_Tue__14_May_2013_10_08_23_+1000_2U1ERBxyg_5+S7/Z--
+Best Regards,
+Neil Zhang
