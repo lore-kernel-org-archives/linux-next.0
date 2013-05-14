@@ -1,51 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: comment on the kbuild tree
-Date: Wed, 15 May 2013 09:25:05 +1000
-Message-ID: <20130515092505.294f3a8865c77e8420d27491@canb.auug.org.au>
+Subject: Re: linux-next: Tree for May 14 (vhost_scsi)
+Date: Wed, 15 May 2013 09:55:58 +1000
+Message-ID: <20130515095558.918f2b29ba318a477eb5dde2@canb.auug.org.au>
+References: <20130514141739.46eb9b42c95cb02947610379@canb.auug.org.au>
+	<51928D84.2040305@infradead.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__15_May_2013_09_25_05_+1000_xSiZecf4YOkDhSwu"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Marek <mmarek@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__15_May_2013_09_55_58_+1000_ylBDgaB6c8OvGGEA"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35571 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758538Ab3ENX4J (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 May 2013 19:56:09 -0400
+In-Reply-To: <51928D84.2040305@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Nicholas A. Bellinger" <nab@risingtidesystems.com>, virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
 
---Signature=_Wed__15_May_2013_09_25_05_+1000_xSiZecf4YOkDhSwu
+--Signature=_Wed__15_May_2013_09_55_58_+1000_ylBDgaB6c8OvGGEA
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michal,
+[Adding Michael to cc]
 
-Since the kbuild tree now consists only of merge commits (relative to
-v3.10-rc1), you might as well just reset it to v3.10-rc1 and have a nice
-clean tree to start from.
+On Tue, 14 May 2013 12:16:20 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
+te:
+>
+> on x86_64:
+>=20
+> ERROR: "memcpy_fromiovec" [drivers/vhost/vhost_scsi.ko] undefined!
+>=20
+>=20
+> It needs to depend on NET since net/core/ provides that function.
+>=20
+> --=20
+> ~Randy
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__15_May_2013_09_25_05_+1000_xSiZecf4YOkDhSwu
+--Signature=_Wed__15_May_2013_09_55_58_+1000_ylBDgaB6c8OvGGEA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRksfRAAoJEECxmPOUX5FEPswP/3u4BsvwxyykepvBOVI+1wWm
-D9rlgfHhApHl3/IrD1/uUZrM56NpYJ0tLxJ5a2gIpjxM1/cCB8PeXUucV1456tDt
-yPfjJm6PdcvxgfhMWnIElDWcG+9Ac/P7bgWcU0j8LmNHNHsD/6HQkOeG62pY9DBA
-tyeWltbtWK2DJURrEsz0IHyxeG2Qg+CPng+MHYonMc/fBX/lhBHUzb3pGBsW46zI
-LTt1XUc52/W+Wn7fH1C1tyFqo56Ff1abRyOmm+0ZndqLIwQigg4xKgRPPqQ3EUee
-lFyKqVqLd5bBQ5aOmQ6ABbY6wOFUBuZGZpFsnC7F+7qz/HwsU3LFfR8c2AoPHZ2T
-LLgGH8gCl4wkOYo4iHojZmKWynCLX2PomFBKrx95Odec+S6Mag7ErfmuT/hX6KXP
-BOFD8/rFcQKTkBcQ2s3n9jiaHgrzu678ieTD4X9mqHyWmKvLJ0k+B/jrFPghjhVV
-5XJTWih5ZQ492nxx91sgUVdKx2jYbMwFNbaqLH0Vrdrno0KwUmyO7ZRT2+Y4mA87
-gQo1ZSl13D1lSdMPoqnN3QPDYKQnBDYrOJYm4PPD2EdiLOTlG9U5FNwKdFHbO52b
-2o8LCmjoh1f3Sinkn3ueFegFkDV1guU7MXlfv4fAptRCnIC2WZcYtXIsn0R0kVsq
-hWtvnIOj7KHJVOBqzSqj
-=OrrJ
+iQIcBAEBCAAGBQJRks8OAAoJEECxmPOUX5FEmZYQAI8MJATooxMhrJVWJ8Qnzn0V
+TjJ9LftxyAXDCa1lfGZzI29I6y8fPNIt5YnwbBIWxfIqGKVzoCS7i83wdKjKm3/q
+8CXkMAuErner+EsisdzZ+0HcRVnkRi6cy0nIw5Sa6D1c+wnB6R4b0SBPe7YzA5pL
+qJdJtmJpa47fDEHdPmMTV+TddZdWz3W/AryxZlm8JwQJKiCYs2xB3Z2+goNJudgJ
+MbUOyiKO6s71Dk5VIEfOzPdHSolybHPerhK+l4uo4Rnua85tsgLp8BqGtzn5to8H
+QTsJ+ImVpRVOwxyRxhkP6OJiOZi7rDxRX9m5GT9x+TKITGO/D3wfDwBQ/0+EMjve
+f0BUZdsTio/XV9IM+/UlfP1GHVZKMnJ12pwZqj6fVAqVLNQrZgk0PsYeYUeYpXvW
+B9IBgbfNqzB2o93IpRRYTbY1z8tZDiJs05VfEzkZcf2UQ+m6njVSPGvxwIKgmy5F
+EIVGOBDhBXHIJe5fNinUekBcqhpwAhy2FUmTJ7DrU3pjwZ8bRTG9siN7nieMMWe1
+0rS11B6+5Ykvbag/WOVFrSUaiVE0LjL+tPZgskXfNH593xfp0XzVBzTjHsZXBFFb
+Qkg69o4tIfaMgY5G2e39O63MipbTyO89MYDP+MG+cr/Cdwf4nhlEd5Yi71KXXyoK
+96nhx+Fp87kXHI18F64R
+=qIRq
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__15_May_2013_09_25_05_+1000_xSiZecf4YOkDhSwu--
+--Signature=_Wed__15_May_2013_09_55_58_+1000_ylBDgaB6c8OvGGEA--
