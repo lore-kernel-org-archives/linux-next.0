@@ -1,37 +1,64 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH -next] ashmem: Fix ashmem_shrink deadlock.
-Date: Mon, 13 May 2013 17:42:16 -0400
-Message-ID: <20130513214216.GA23743@kroah.com>
-References: <1367416573-5430-1-git-send-email-rlove@google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: comment on the watchdog tree
+Date: Tue, 14 May 2013 10:07:44 +1000
+Message-ID: <20130514100744.0b7ba62711c972e0847f8e09@canb.auug.org.au>
+References: <20130513094339.b93a7a4ccf73ccb7fff86d03@canb.auug.org.au>
+	<20130513121742.GZ14155@spo001.leaseweb.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__14_May_2013_10_07_44_+1000_C1=nX.n8hHghv6gJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f42.google.com ([209.85.160.42]:55232 "EHLO
-	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754448Ab3EMXqW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 May 2013 19:46:22 -0400
-Received: by mail-pb0-f42.google.com with SMTP id up7so4854884pbc.1
-        for <linux-next@vger.kernel.org>; Mon, 13 May 2013 16:46:22 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1367416573-5430-1-git-send-email-rlove@google.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45972 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755222Ab3ENAH4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 May 2013 20:07:56 -0400
+In-Reply-To: <20130513121742.GZ14155@spo001.leaseweb.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Robert Love <rlove@google.com>
-Cc: Shankar Brahadeeswaran <shankoo77@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, LKML <linux-kernel@vger.kernel.org>, Bjorn Bringert <bringert@google.com>, devel <devel@driverdev.osuosl.org>, Hugh Dickins <hughd@google.com>, Anjana V Kumar <anjanavk12@gmail.com>, Dad <akpm@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 01, 2013 at 09:56:13AM -0400, Robert Love wrote:
-> Don't acquire ashmem_mutex in ashmem_shrink if we've somehow recursed into the
-> shrinker code from within ashmem. Just bail out, avoiding a deadlock. This is
-> fine, as ashmem cache pruning is advisory anyhow.
-> 
-> Signed-off-by: Robert Love <rlove@google.com>
-> ---
->  drivers/staging/android/ashmem.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+--Signature=_Tue__14_May_2013_10_07_44_+1000_C1=nX.n8hHghv6gJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Based on Andrew's review comments, I'll drop this from my queue and wait
-for a "better" fix for this.
+Hi Wim,
 
-thanks,
+On Mon, 13 May 2013 14:17:42 +0200 Wim Van Sebroeck <wim@iguana.be> wrote:
+>
+> > Since the watchdog tree now consists only of merge commits (relative to
+> > v3.10-rc1), you might as well just reset it to v3.10-rc1 and have a nice
+> > clean tree to start from.
+>=20
+> Absolutely correct. I fixed it.
 
-greg k-h
+Excellent, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__14_May_2013_10_07_44_+1000_C1=nX.n8hHghv6gJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRkYBQAAoJEECxmPOUX5FEcTwP/Am5VBW0VjJUSr4YdppV60Ny
+HQ34xcuWUofVYgDA0SexVPcWScYkwYVQ5u9e0/u6n1ZM0PkKJ3NIk+KBfi8PqmNK
+pNokhQxF5Wh3lw1P6n5lc61RI3Yl3fol25++zaydN5dWvCi0VMRLoIlONExA/OE1
+ZZFEVkvwSyEyj+sITiyU3PJ35c1W3DnvvGInCAbD5hLGcpzExKeMj/Wjppr+iksl
+SWf+SjL/4rGDOr+ymwJ0An4IxDTRhbbaoSFYrcw+4RyPePc6N7RvM3bPGhvbq2fH
+HFubZnus9xfSz/n6F7mZIgJfQRcO2cfXRK4nwirPWPmLSnrHwvBjiw/eeVj421fN
+AbRbSRRBD1W2tymOcM+1nyW+2RgFgS6PxSe+XWCiE8XqWz/DVlxcA5CpE7EZAvZj
+7nr9Ac4qUTLQdKSILGPIuobMJsLChc545EFsXpweJkX9Hi6PCde5ujiqUOdnRofX
+4L9D+BW4KaRDNG1T68juFSuwTAqsiSr9Xs6yFgD+Fbf8bO1JnwW9AkVhlYvfBu7l
+hyRHpvFqltpoVFFkPgZIFWV6nOXt+0qwkKAH9TZ7gkYrDulCYmQk2obYTAdR93KZ
+uMHWhzuoZFBR09Y8jhfx3Q76u5MnRvb0s0A72ek4PngBoxcs7sfwT9Z/84fwYkWR
+6mT/4cZy0ZdwPgvUL8Wh
+=fntt
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__14_May_2013_10_07_44_+1000_C1=nX.n8hHghv6gJ--
