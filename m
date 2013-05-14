@@ -1,50 +1,37 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] leds-ot200: Fix misbehavior caused by wrong bit masks
-Date: Tue, 14 May 2013 10:36:19 -0700
-Message-ID: <CAK5ve-+jBNTLrU5jRqj7LyxrQBWAE7GC634qYRJ4zDy2_LqgcA@mail.gmail.com>
-References: <1360771110-9490-1-git-send-email-christian.gmeiner@gmail.com>
- <CAK5ve-K43n=4n1GyRW+2PgMTe2bU6ROHAa-_dK_0LgzM7JCRcw@mail.gmail.com>
- <CAH9NwWc+BP5ZbHwmMZ4AisviDHM-GizTmZO6vwxtd=ntYUAk=A@mail.gmail.com>
- <CAH9NwWceaA0MPGj65fOhmECL8A522qngU3RHGZ++Uz-6mVKKAg@mail.gmail.com>
- <CAK5ve-JmVes+OA3MRyoZEo_Fz8_RHpdqmcTxNwwrUAnADpqvyw@mail.gmail.com>
- <CAH9NwWeMMYzvE0VVMCYmF9oXA-wBiW-BnwoK1q7mjUkE4JF9uw@mail.gmail.com>
- <CAH9NwWfgMswKtdCNTOa5nbmd9uf6zg_jV7UD_h28bsq+PQcX=g@mail.gmail.com>
- <CAH9NwWe6seN+y29wm8KMn-2y+ePUjuzUULFNWpGLJ8Rn2H7P7A@mail.gmail.com>
- <CAK5ve-JqvOHQR+eSaq7HJ3rsaxj-kuhKw2skOa74+Sc=WqxTAQ@mail.gmail.com> <20130514101608.60c64b73.akpm@linux-foundation.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for May 14 (vhost_scsi)
+Date: Tue, 14 May 2013 12:16:20 -0700
+Message-ID: <51928D84.2040305@infradead.org>
+References: <20130514141739.46eb9b42c95cb02947610379@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20130514101608.60c64b73.akpm@linux-foundation.org>
-Sender: stable-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christian Gmeiner <christian.gmeiner@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:46696 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754581Ab3ENTRD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 May 2013 15:17:03 -0400
+In-Reply-To: <20130514141739.46eb9b42c95cb02947610379@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Nicholas A. Bellinger" <nab@risingtidesystems.com>, virtualization@lists.linux-foundation.org
 
-On Tue, May 14, 2013 at 10:16 AM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Tue, 14 May 2013 10:12:04 -0700 Bryan Wu <cooloney@gmail.com> wrote:
->
->> On Tue, May 14, 2013 at 12:06 AM, Christian Gmeiner
->> <christian.gmeiner@gmail.com> wrote:
->> > 2013/5/12 Christian Gmeiner <christian.gmeiner@gmail.com>:
->> >> 2013/3/8 Christian Gmeiner <christian.gmeiner@gmail.com>:
->> >>> 2013/3/5 Bryan Wu <cooloney@gmail.com>:
->> >>>> On Sun, Mar 3, 2013 at 11:40 PM, Christian Gmeiner
->> >>>> <christian.gmeiner@gmail.com> wrote:
->> >>>>> ping
->> >>>>> --
->>
->> I found this patch is still in linux-next, I'm not sure whether it
->> will be merged into 3.10 like a bug fixing. We need to wait Andrew's
->> reply. I'm OK to pick up and send out to Linus as a bug fixing.
->
-> whome, I'd forgotten I had this.  I stuck a cc:stable on the end and
-> shall send it in to Linus in the next 3.10 batch, OK?
->
+On 05/13/13 21:17, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20130513:
+> 
+> <crickets :-)>
 
-No problem for me at all. I bet it's OK for Christian as well, since
-merging into 3.10-rc1 has no difference with merging into 3.10-rc2 or
-later. It will eventually show up in 3.10 release.
 
-Thanks,
--Bryan
+on x86_64:
+
+ERROR: "memcpy_fromiovec" [drivers/vhost/vhost_scsi.ko] undefined!
+
+
+It needs to depend on NET since net/core/ provides that function.
+
+
+-- 
+~Randy
