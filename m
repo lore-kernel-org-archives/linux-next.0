@@ -1,46 +1,45 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] platform/x86: fix amilo-rfkill build errors
-Date: Wed, 15 May 2013 14:03:35 -0700
-Message-ID: <5193F827.8030809@infradead.org>
-References: <20130515132627.817585a3d9fb3a3e502eb586@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the final tree (in
+ Linus' tree)
+Date: Thu, 16 May 2013 08:25:27 +1000
+Message-ID: <20130515222527.GA10117@members.tip.net.au>
+References: <20130515132001.6cc824ba42106db973f90991@canb.auug.org.au>
+ <1368624762.27262.1.camel@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:41024 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932431Ab3EOVEU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 May 2013 17:04:20 -0400
-In-Reply-To: <20130515132627.817585a3d9fb3a3e502eb586@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56928 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751221Ab3EOWZc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 May 2013 18:25:32 -0400
+Content-Disposition: inline
+In-Reply-To: <1368624762.27262.1.camel@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>, Matthew Garrett <matthew.garrett@nebula.com>, Platform Driver <platform-driver-x86@vger.kernel.org>
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Richard Guy Briggs <rgb@redhat.com>
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi Eric,
 
-Fix build error in amilo-rfkill.c by making it dependent on
-SERIO_I8042:
+On Wed, May 15, 2013 at 09:32:42AM -0400, Eric Paris wrote:
+> On Wed, 2013-05-15 at 13:20 +1000, Stephen Rothwell wrote:
+> > 
+> > After merging the final tree, today's linux-next build (i386 defconfig)
+> > produced this warning:
+> > 
+> > kernel/auditfilter.c: In function 'audit_data_to_entry':
+> > kernel/auditfilter.c:426:3: warning: this decimal constant is unsigned only in ISO C90 [enabled by default]
+> > 
+> > Introduced by commit 780a7654cee8 ("audit: Make testing for a valid
+> > loginuid explicit") from Linus' tree.
+> 
+> Thank you, I'll fix it up.  What am I likely missing that I don't see it
+> on my builds?  I'm using gcc 4.8.  Is there a config option that enables
+> additional warnings?
 
-drivers/built-in.o: In function `amilo_a1655_rfkill_set_block':
-amilo-rfkill.c:(.text+0x264a89): undefined reference to `i8042_lock_chip'
-amilo-rfkill.c:(.text+0x264a97): undefined reference to `i8042_command'
-amilo-rfkill.c:(.text+0x264a9e): undefined reference to `i8042_unlock_chip'
+I don't think so, I am still using gcc 4.6 for this build but it is a
+32 bit build ...
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/platform/x86/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20130515.orig/drivers/platform/x86/Kconfig
-+++ linux-next-20130515/drivers/platform/x86/Kconfig
-@@ -175,7 +175,7 @@ config FUJITSU_TABLET
- 
- config AMILO_RFKILL
- 	tristate "Fujitsu-Siemens Amilo rfkill support"
--	depends on RFKILL
-+	depends on RFKILL && SERIO_I8042
- 	---help---
- 	  This is a driver for enabling wifi on some Fujitsu-Siemens Amilo
- 	  laptops.
+-- 
+Cheers,
+Stephen Rothwell
