@@ -1,40 +1,56 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH] vhost-scsi: Depend on NET for memcpy_fromiovec
-Date: Wed, 15 May 2013 14:47:53 +0930
-Message-ID: <8761yk254u.fsf@rustcorp.com.au>
-References: <20130515095558.918f2b29ba318a477eb5dde2@canb.auug.org.au> <1368579583-13097-1-git-send-email-asias@redhat.com>
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Subject: Re: [PATCH] leds-ot200: Fix misbehavior caused by wrong bit masks
+Date: Wed, 15 May 2013 08:38:11 +0200
+Message-ID: <CAH9NwWfwVYitYw_+Ngnu1mU1-GgxF-SVtLyhq1xEXaGVyZoMXA@mail.gmail.com>
+References: <1360771110-9490-1-git-send-email-christian.gmeiner@gmail.com>
+ <CAK5ve-K43n=4n1GyRW+2PgMTe2bU6ROHAa-_dK_0LgzM7JCRcw@mail.gmail.com>
+ <CAH9NwWc+BP5ZbHwmMZ4AisviDHM-GizTmZO6vwxtd=ntYUAk=A@mail.gmail.com>
+ <CAH9NwWceaA0MPGj65fOhmECL8A522qngU3RHGZ++Uz-6mVKKAg@mail.gmail.com>
+ <CAK5ve-JmVes+OA3MRyoZEo_Fz8_RHpdqmcTxNwwrUAnADpqvyw@mail.gmail.com>
+ <CAH9NwWeMMYzvE0VVMCYmF9oXA-wBiW-BnwoK1q7mjUkE4JF9uw@mail.gmail.com>
+ <CAH9NwWfgMswKtdCNTOa5nbmd9uf6zg_jV7UD_h28bsq+PQcX=g@mail.gmail.com>
+ <CAH9NwWe6seN+y29wm8KMn-2y+ePUjuzUULFNWpGLJ8Rn2H7P7A@mail.gmail.com>
+ <CAK5ve-JqvOHQR+eSaq7HJ3rsaxj-kuhKw2skOa74+Sc=WqxTAQ@mail.gmail.com>
+ <20130514101608.60c64b73.akpm@linux-foundation.org> <CAK5ve-+jBNTLrU5jRqj7LyxrQBWAE7GC634qYRJ4zDy2_LqgcA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:33336 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751512Ab3EOFU7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 May 2013 01:20:59 -0400
-In-Reply-To: <1368579583-13097-1-git-send-email-asias@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Nicholas Bellinger <nab@linux-iscsi.org>, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, target-devel@vger.kernel.org, Asias He <asias@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <CAK5ve-+jBNTLrU5jRqj7LyxrQBWAE7GC634qYRJ4zDy2_LqgcA@mail.gmail.com>
+Sender: stable-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Asias He <asias@redhat.com> writes:
-> scsi.c includes vhost.c which uses memcpy_fromiovec.
+2013/5/14 Bryan Wu <cooloney@gmail.com>:
+> On Tue, May 14, 2013 at 10:16 AM, Andrew Morton
+> <akpm@linux-foundation.org> wrote:
+>> On Tue, 14 May 2013 10:12:04 -0700 Bryan Wu <cooloney@gmail.com> wrote:
+>>
+>>> On Tue, May 14, 2013 at 12:06 AM, Christian Gmeiner
+>>> <christian.gmeiner@gmail.com> wrote:
+>>> > 2013/5/12 Christian Gmeiner <christian.gmeiner@gmail.com>:
+>>> >> 2013/3/8 Christian Gmeiner <christian.gmeiner@gmail.com>:
+>>> >>> 2013/3/5 Bryan Wu <cooloney@gmail.com>:
+>>> >>>> On Sun, Mar 3, 2013 at 11:40 PM, Christian Gmeiner
+>>> >>>> <christian.gmeiner@gmail.com> wrote:
+>>> >>>>> ping
+>>> >>>>> --
+>>>
+>>> I found this patch is still in linux-next, I'm not sure whether it
+>>> will be merged into 3.10 like a bug fixing. We need to wait Andrew's
+>>> reply. I'm OK to pick up and send out to Linus as a bug fixing.
+>>
+>> whome, I'd forgotten I had this.  I stuck a cc:stable on the end and
+>> shall send it in to Linus in the next 3.10 batch, OK?
+>>
 >
-> This patch fixes this build failure.
+> No problem for me at all. I bet it's OK for Christian as well, since
+> merging into 3.10-rc1 has no difference with merging into 3.10-rc2 or
+> later. It will eventually show up in 3.10 release.
 >
->    From Randy Dunlap:
->    '''
->    on x86_64:
->
->    ERROR: "memcpy_fromiovec" [drivers/vhost/vhost_scsi.ko] undefined!
->
->    It needs to depend on NET since net/core/ provides that function.
->    '''
 
-Proper fix please.
+I am fine with that... it would be great if the patch will show up in 3.10.
 
-Though I can't see why you thought this was a good idea.  Nonetheless, I
-shan't highlight why: I have far too much respect for your intellects
-and abilities.
-
-No, don't thank me!
-Rusty.
+thanks
+--
+Christian Gmeiner, MSc
