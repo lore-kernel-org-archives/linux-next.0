@@ -1,77 +1,40 @@
-From: Asias He <asias@redhat.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
 Subject: Re: [PATCH] vhost-scsi: Depend on NET for memcpy_fromiovec
-Date: Wed, 15 May 2013 11:44:56 +0800
-Message-ID: <20130515034456.GA18256@hj.localdomain>
-References: <20130515095558.918f2b29ba318a477eb5dde2@canb.auug.org.au>
-	<1368579583-13097-1-git-send-email-asias@redhat.com>
-	<1368587420.9012.36.camel@haakon3.risingtidesystems.com>
+Date: Wed, 15 May 2013 14:47:53 +0930
+Message-ID: <8761yk254u.fsf@rustcorp.com.au>
+References: <20130515095558.918f2b29ba318a477eb5dde2@canb.auug.org.au> <1368579583-13097-1-git-send-email-asias@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <virtualization-bounces@lists.linux-foundation.org>
-Content-Disposition: inline
-In-Reply-To: <1368587420.9012.36.camel@haakon3.risingtidesystems.com>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
-List-Post: <mailto:virtualization@lists.linux-foundation.org>
-List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
-Sender: virtualization-bounces@lists.linux-foundation.org
-Errors-To: virtualization-bounces@lists.linux-foundation.org
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, target-devel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:33336 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751512Ab3EOFU7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 May 2013 01:20:59 -0400
+In-Reply-To: <1368579583-13097-1-git-send-email-asias@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Nicholas Bellinger <nab@linux-iscsi.org>, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, target-devel@vger.kernel.org, Asias He <asias@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
-On Tue, May 14, 2013 at 08:10:20PM -0700, Nicholas A. Bellinger wrote:
-> On Wed, 2013-05-15 at 08:59 +0800, Asias He wrote:
-> > scsi.c includes vhost.c which uses memcpy_fromiovec.
-> > 
-> > This patch fixes this build failure.
-> > 
-> >    From Randy Dunlap:
-> >    '''
-> >    on x86_64:
-> > 
-> >    ERROR: "memcpy_fromiovec" [drivers/vhost/vhost_scsi.ko] undefined!
-> > 
-> >    It needs to depend on NET since net/core/ provides that function.
-> >    '''
-> > 
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Signed-off-by: Asias He <asias@redhat.com>
-> 
-> Hey Asias & MST,
-> 
-> FYI, I'll be sending a PULL request to Linus in the next couple of days
-> for -rc2.
-> 
-> Let me know if you'd like this to be picked up.
+Asias He <asias@redhat.com> writes:
+> scsi.c includes vhost.c which uses memcpy_fromiovec.
+>
+> This patch fixes this build failure.
+>
+>    From Randy Dunlap:
+>    '''
+>    on x86_64:
+>
+>    ERROR: "memcpy_fromiovec" [drivers/vhost/vhost_scsi.ko] undefined!
+>
+>    It needs to depend on NET since net/core/ provides that function.
+>    '''
 
-Yes, this is 3.10 material. Sounds good to me.
+Proper fix please.
 
-> --nab
-> 
-> > ---
-> >  drivers/vhost/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/vhost/Kconfig b/drivers/vhost/Kconfig
-> > index 8b9226d..0403323 100644
-> > --- a/drivers/vhost/Kconfig
-> > +++ b/drivers/vhost/Kconfig
-> > @@ -12,7 +12,7 @@ config VHOST_NET
-> >  
-> >  config VHOST_SCSI
-> >  	tristate "VHOST_SCSI TCM fabric driver"
-> > -	depends on TARGET_CORE && EVENTFD && m
-> > +	depends on NET && TARGET_CORE && EVENTFD && m
-> >  	select VHOST_RING
-> >  	default n
-> >  	---help---
-> 
-> 
+Though I can't see why you thought this was a good idea.  Nonetheless, I
+shan't highlight why: I have far too much respect for your intellects
+and abilities.
 
--- 
-Asias
+No, don't thank me!
+Rusty.
