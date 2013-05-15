@@ -1,32 +1,35 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: linux-next: comment on the kbuild tree
-Date: Wed, 15 May 2013 14:25:38 +0200
-Message-ID: <51937EC2.6050604@suse.cz>
-References: <20130515092505.294f3a8865c77e8420d27491@canb.auug.org.au>
+From: Eric Paris <eparis@redhat.com>
+Subject: Re: linux-next: build warning after merge of the final tree (in
+ Linus' tree)
+Date: Wed, 15 May 2013 09:32:42 -0400
+Message-ID: <1368624762.27262.1.camel@localhost>
+References: <20130515132001.6cc824ba42106db973f90991@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:56378 "EHLO mx2.suse.de"
+Received: from mx1.redhat.com ([209.132.183.28]:64291 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754535Ab3EOMZn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 May 2013 08:25:43 -0400
-In-Reply-To: <20130515092505.294f3a8865c77e8420d27491@canb.auug.org.au>
+	id S1759002Ab3EONcr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 May 2013 09:32:47 -0400
+In-Reply-To: <20130515132001.6cc824ba42106db973f90991@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Richard Guy Briggs <rgb@redhat.com>
 
-On 15.5.2013 01:25, Stephen Rothwell wrote:
-> Hi Michal,
+On Wed, 2013-05-15 at 13:20 +1000, Stephen Rothwell wrote:
+> Hi ,
 > 
-> Since the kbuild tree now consists only of merge commits (relative to
-> v3.10-rc1), you might as well just reset it to v3.10-rc1 and have a nice
-> clean tree to start from.
+> After merging the final tree, today's linux-next build (i386 defconfig)
+> produced this warning:
+> 
+> kernel/auditfilter.c: In function 'audit_data_to_entry':
+> kernel/auditfilter.c:426:3: warning: this decimal constant is unsigned only in ISO C90 [enabled by default]
+> 
+> Introduced by commit 780a7654cee8 ("audit: Make testing for a valid
+> loginuid explicit") from Linus' tree.
 
-I thought I would newer rebase the for-next branch to allow people to
-pull from it. But I can see that it looks much cleaner in the linux-next
-tree if you can do a git log stable..master and see what is really in
-linux-next. So I reset it to v3.10-rc1 now.
-
-Michal
+Thank you, I'll fix it up.  What am I likely missing that I don't see it
+on my builds?  I'm using gcc 4.8.  Is there a config option that enables
+additional warnings?
