@@ -1,59 +1,92 @@
-From: Robert Love <rlove@google.com>
-Subject: Re: [PATCH -next] ashmem: Fix ashmem_shrink deadlock.
-Date: Thu, 16 May 2013 13:28:52 -0400
-Message-ID: <CAG6tG3yQVhANm1eHx3W3Hacp8t5Bh=pF9dQbHc3rSVs5n0WR9g@mail.gmail.com>
-References: <1367416573-5430-1-git-send-email-rlove@google.com>
-	<20130513214216.GA23743@kroah.com>
-	<CA+2_TiZ3dECAW8LV-Es=BjHCwgWw69zbWkr73at+0_c-EaDHmA@mail.gmail.com>
-	<CAG9bXvkH0L5FjkU3-=3X3zwp3vw8U7+jJRYp28GFXjLkQKBL5g@mail.gmail.com>
-	<CAG9bXvkjV6-O3JZH6taVX-dZ1tzbSoqaC_sN00LRszsS4QAnrg@mail.gmail.com>
-	<CAG6tG3zaU=gkJZzNezOX=s5WWDrc2x7SHiDy3UxVzDvKkw2foA@mail.gmail.com>
-	<20130516094559.4d2c9212.akpm@linux-foundation.org>
-	<CAG6tG3xLydqQTOHaXMpdCo8m+WkydAqgLvi5HW8_djoO-hcf9g@mail.gmail.com>
-	<20130516101907.d102dd91.akpm@linux-foundation.org>
+From: Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: linux-next: Tree for May 15 (crypto /crct10dif)
+Date: Thu, 16 May 2013 11:03:32 -0700
+Message-ID: <1368727412.27102.289.camel@schen9-DESK>
+References: <20130515132627.817585a3d9fb3a3e502eb586@canb.auug.org.au>
+	 <5193CCEC.7070909@infradead.org>
+	 <alpine.DEB.2.02.1305161152530.31865@M2420>
+	 <CAMuHMdUmD2DMNeezetHNbe9DgQXpTN4BEfEmJSztyzCivQpyXQ@mail.gmail.com>
+	 <1368723552.27102.286.camel@schen9-DESK>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qe0-f43.google.com ([209.85.128.43]:48476 "EHLO
-	mail-qe0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752520Ab3EPR2x (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 May 2013 13:28:53 -0400
-Received: by mail-qe0-f43.google.com with SMTP id i11so2121913qej.30
-        for <linux-next@vger.kernel.org>; Thu, 16 May 2013 10:28:52 -0700 (PDT)
-In-Reply-To: <20130516101907.d102dd91.akpm@linux-foundation.org>
+Received: from mga02.intel.com ([134.134.136.20]:64423 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752118Ab3EPSDb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 May 2013 14:03:31 -0400
+In-Reply-To: <1368723552.27102.286.camel@schen9-DESK>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Raul Xiong <raulxiong@gmail.com>, Neil Zhang <glacier1980@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shankar Brahadeeswaran <shankoo77@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, LKML <linux-kernel@vger.kernel.org>, Bjorn Bringert <bringert@google.com>, devel <devel@driverdev.osuosl.org>, Hugh Dickins <hughd@google.com>, Anjana V Kumar <anjanavk12@gmail.com>, linux-next <linux-next@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Xiong Zhou <jencce.kernel@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
 
-On Thu, May 16, 2013 at 1:19 PM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Thu, 16 May 2013 13:08:17 -0400 Robert Love <rlove@google.com> wrote:
->> This problem seems a rare proper use of mutex_trylock.
->
-> Not really.  The need for a trylock is often an indication that a
-> subsystem has a locking misdesign.  That is indeed the case here.
+On Thu, 2013-05-16 at 09:59 -0700, Tim Chen wrote:
+> On Thu, 2013-05-16 at 09:22 +0200, Geert Uytterhoeven wrote:
+> > On Thu, May 16, 2013 at 5:57 AM, Xiong Zhou <jencce.kernel@gmail.com> wrote:
+> > > --- a/crypto/Kconfig
+> > > +++ b/crypto/Kconfig
+> > > @@ -378,6 +378,7 @@ config CRYPTO_CRC32_PCLMUL
+> > >
+> > >  config CRYPTO_CRCT10DIF
+> > >         tristate "CRCT10DIF algorithm"
+> > > +       depends on CRC_T10DIF
+> > 
+> > This is a library symbol, so "select CRC_T10DIF"?
+> > 
+> > >         select CRYPTO_HASH
+> > >         help
+> > >           CRC T10 Data Integrity Field computation is being cast as
+> > 
+> > Gr{oetje,eeting}s,
+> > 
+> >                         Geert
+> > 
+> 
+> This is the fix I think that will resolve the build issues.  The generic
+> crc-t10dif transform depends on the library function crc_t10dif_generic
+> in lib/crc-t10dif.c, so "depends on CRC_T10DIF" for CRYPTO_CRCT10DIF is
+> needed.
+> 
+> Now for CRC_T10DIF, we should use select CRYPTO_HASH, so it can try to
+> allocate a T10DIF transform if it is available.  If not, it will simply
+> use the crc_t10dif_generic function. Loading the
+> generic t10dif crypto transform is not mandatory for the library
+> function crc_t10dif. 
+> 
+> Thanks for catching the issues.
+> 
+> Tim
+> 
 
-It is exactly the same as PF_MEMALLOC. We've got an effectively
-asynchronous event (shrinking) that can occur while you are holding
-locks requisite to that shrinking. Given that the shrinkage is best
-effort, a trylock actually communicates the intent pretty well: "If
-possible, grab this lock and shrink."
+Need to also add select CRYPTO for CRC_T10DIF.  Updated fix below:
 
-I think the idiomatic fix is to introduce a GFP_SHMEM but that seems
-overkill. Lots of the GFP flags are really just preventing recursing
-into the shrinkage code and it seems ill-designed that we require
-developers to know where they might end up. But we can disagree. :)
 
-> Well, it's not exactly a ton of work, but adding a per-ashmem_area lock
-> to protect ->file would rather be putting lipstick on a pig.  I suppose
-> we can put the trylock in there and run away, but it wouldn't hurt to
-> drop in a big fat comment somewhere explaining that the driver should be
-> migrated to a per-object locking scheme.
-
-Unfortunately I think ashmem_shrink would need to grab the per-object
-lock too; it needs to update the ranges. I'm sure we could re-design
-this but I don't think it is as easy as simply pushing the locking
-into the objects.
-
-       Robert
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+---
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index d1ca631..015df24 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -379,6 +379,7 @@ config CRYPTO_CRC32_PCLMUL
+ config CRYPTO_CRCT10DIF
+ 	tristate "CRCT10DIF algorithm"
+ 	select CRYPTO_HASH
++	depends on CRC_T10DIF
+ 	help
+ 	  CRC T10 Data Integrity Field computation is being cast as
+ 	  a crypto transform.  This allows for faster crc t10 diff
+diff --git a/lib/Kconfig b/lib/Kconfig
+index 0cee056..6407793 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -63,7 +63,8 @@ config CRC16
+ 
+ config CRC_T10DIF
+ 	tristate "CRC calculation for the T10 Data Integrity Field"
+-	select CRYPTO_CRCT10DIF
++	select CRYPTO
++	select CRYPTO_HASH
+ 	help
+ 	  This option is only needed if a module that's not in the
+ 	  kernel tree needs to calculate CRC checks for use with the
