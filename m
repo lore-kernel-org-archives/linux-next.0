@@ -1,45 +1,100 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for May 15 (crypto /crct10dif)
-Date: Thu, 16 May 2013 09:22:30 +0200
-Message-ID: <CAMuHMdUmD2DMNeezetHNbe9DgQXpTN4BEfEmJSztyzCivQpyXQ@mail.gmail.com>
-References: <20130515132627.817585a3d9fb3a3e502eb586@canb.auug.org.au>
-	<5193CCEC.7070909@infradead.org>
-	<alpine.DEB.2.02.1305161152530.31865@M2420>
+From: Raul Xiong <raulxiong@gmail.com>
+Subject: Re: [PATCH -next] ashmem: Fix ashmem_shrink deadlock.
+Date: Thu, 16 May 2013 16:15:49 +0800
+Message-ID: <CAG9bXvkjV6-O3JZH6taVX-dZ1tzbSoqaC_sN00LRszsS4QAnrg@mail.gmail.com>
+References: <1367416573-5430-1-git-send-email-rlove@google.com>
+	<20130513214216.GA23743@kroah.com>
+	<CA+2_TiZ3dECAW8LV-Es=BjHCwgWw69zbWkr73at+0_c-EaDHmA@mail.gmail.com>
+	<CAG9bXvkH0L5FjkU3-=3X3zwp3vw8U7+jJRYp28GFXjLkQKBL5g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:62699 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752738Ab3EPHWb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 May 2013 03:22:31 -0400
-In-Reply-To: <alpine.DEB.2.02.1305161152530.31865@M2420>
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:56301 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755310Ab3EPIPu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 May 2013 04:15:50 -0400
+In-Reply-To: <CAG9bXvkH0L5FjkU3-=3X3zwp3vw8U7+jJRYp28GFXjLkQKBL5g@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Xiong Zhou <jencce.kernel@gmail.com>
-Cc: tim.c.chen@linux.intel.com, Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+To: Neil Zhang <glacier1980@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Robert Love <rlove@google.com>, Shankar Brahadeeswaran <shankoo77@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, LKML <linux-kernel@vger.kernel.org>, Bjorn Bringert <bringert@google.com>, devel <devel@driverdev.osuosl.org>, Hugh Dickins <hughd@google.com>, Anjana V Kumar <anjanavk12@gmail.com>, Dad <akpm@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>
 
-On Thu, May 16, 2013 at 5:57 AM, Xiong Zhou <jencce.kernel@gmail.com> wrote:
-> --- a/crypto/Kconfig
-> +++ b/crypto/Kconfig
-> @@ -378,6 +378,7 @@ config CRYPTO_CRC32_PCLMUL
+2013/5/14 Raul Xiong <raulxiong@gmail.com>
 >
->  config CRYPTO_CRCT10DIF
->         tristate "CRCT10DIF algorithm"
-> +       depends on CRC_T10DIF
+> 2013/5/14 Neil Zhang <glacier1980@gmail.com>:
+> > 2013/5/14 Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+> >> On Wed, May 01, 2013 at 09:56:13AM -0400, Robert Love wrote:
+> >>> Don't acquire ashmem_mutex in ashmem_shrink if we've somehow recursed
+> >>> into the
+> >>> shrinker code from within ashmem. Just bail out, avoiding a deadlock.
+> >>> This is
+> >>> fine, as ashmem cache pruning is advisory anyhow.
+> >>>
+> >>> Signed-off-by: Robert Love <rlove@google.com>
+> >>> ---
+> >>>  drivers/staging/android/ashmem.c | 6 +++++-
+> >>>  1 file changed, 5 insertions(+), 1 deletion(-)
+> >>
+> >> Based on Andrew's review comments, I'll drop this from my queue and wait
+> >> for a "better" fix for this.
+> >>
+> >> thanks,
+> >>
+> >> greg k-h
+> >> --
+> >> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> >> the body of a message to majordomo@vger.kernel.org
+> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >> Please read the FAQ at  http://www.tux.org/lkml/
+> >
+> > We found the similar issue these days.
+> > Add RaulXiong to paste the call stack.
+> >
+> > Best Regards,
+> > Neil Zhang
+>
+> Hi all,
+> I just encountered this deadlock during some stress test and it can be
+> described clearly by below function stack. Please check and suggest a
+> formal fix for it.
+>
+> [<c05d3370>] (__schedule) from [<c05d3818>]
+> [<c05d3818>] (schedule_preempt_disabled) from [<c05d2578>]
+> [<c05d2578>] (__mutex_lock_slowpath) from [<c05d263c>]
+> [<c05d263c>] (mutex_lock) from [<c0441dd8>]
+> [<c0441dd8>] (ashmem_shrink) from [<c01ae00c>]
+> [<c01ae00c>] (shrink_slab) from [<c01b0ec8>]
+> [<c01b0ec8>] (try_to_free_pages) from [<c01a65ec>]
+> [<c01a65ec>] (__alloc_pages_nodemask) from [<c01d0414>]
+> [<c01d0414>] (new_slab) from [<c05cf3a0>]
+> [<c05cf3a0>] (__slab_alloc.isra.46.constprop.52) from [<c01d08cc>]
+> [<c01d08cc>] (kmem_cache_alloc) from [<c01b1f6c>]
+> [<c01b1f6c>] (shmem_alloc_inode) from [<c01e8d18>]
+> [<c01e8d18>] (alloc_inode) from [<c01ea3c4>]
+> [<c01ea3c4>] (new_inode_pseudo) from [<c01ea404>]
+> [<c01ea404>] (new_inode) from [<c01b157c>]
+> [<c01b157c>] (shmem_get_inode) from [<c01b3eac>]
+> [<c01b3eac>] (shmem_file_setup) from [<c0441d1c>]
+> [<c0441d1c>] (ashmem_mmap) from [<c01c1908>]
+> [<c01c1908>] (mmap_region) from [<c01c1eac>]
+> [<c01c1eac>] (sys_mmap_pgoff) from [<c0112d80>]
+>
+> Thanks,
+> Raul Xiong
 
-This is a library symbol, so "select CRC_T10DIF"?
 
->         select CRYPTO_HASH
->         help
->           CRC T10 Data Integrity Field computation is being cast as
 
-Gr{oetje,eeting}s,
+Hi Andrew, Greg,
 
-                        Geert
+Any feedback?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+The issue happens in such sequence:
+ashmem_mmap acquired ashmem_mutex --> ashmem_mutex:shmem_file_setup
+called kmem_cache_alloc --> shrink due to low memory --> ashmem_shrink
+tries to acquire the same ashmem_mutex -- it blocks here.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I think this reports the bug clearly. Please have a look.
+
+
+Thanks,
+Raul Xiong
