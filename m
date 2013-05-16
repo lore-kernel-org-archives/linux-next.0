@@ -1,80 +1,81 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH -next] ashmem: Fix ashmem_shrink deadlock.
-Date: Thu, 16 May 2013 09:45:59 -0700
-Message-ID: <20130516094559.4d2c9212.akpm@linux-foundation.org>
-References: <1367416573-5430-1-git-send-email-rlove@google.com>
-	<20130513214216.GA23743@kroah.com>
-	<CA+2_TiZ3dECAW8LV-Es=BjHCwgWw69zbWkr73at+0_c-EaDHmA@mail.gmail.com>
-	<CAG9bXvkH0L5FjkU3-=3X3zwp3vw8U7+jJRYp28GFXjLkQKBL5g@mail.gmail.com>
-	<CAG9bXvkjV6-O3JZH6taVX-dZ1tzbSoqaC_sN00LRszsS4QAnrg@mail.gmail.com>
-	<CAG6tG3zaU=gkJZzNezOX=s5WWDrc2x7SHiDy3UxVzDvKkw2foA@mail.gmail.com>
+From: Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: linux-next: Tree for May 15 (crypto /crct10dif)
+Date: Thu, 16 May 2013 09:59:12 -0700
+Message-ID: <1368723552.27102.286.camel@schen9-DESK>
+References: <20130515132627.817585a3d9fb3a3e502eb586@canb.auug.org.au>
+	 <5193CCEC.7070909@infradead.org>
+	 <alpine.DEB.2.02.1305161152530.31865@M2420>
+	 <CAMuHMdUmD2DMNeezetHNbe9DgQXpTN4BEfEmJSztyzCivQpyXQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42660 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751538Ab3EPQqG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 May 2013 12:46:06 -0400
-In-Reply-To: <CAG6tG3zaU=gkJZzNezOX=s5WWDrc2x7SHiDy3UxVzDvKkw2foA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Robert Love <rlove@google.com>
-Cc: Raul Xiong <raulxiong@gmail.com>, Neil Zhang <glacier1980@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shankar Brahadeeswaran <shankoo77@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, LKML <linux-kernel@vger.kernel.org>, Bjorn Bringert <bringert@google.com>, devel <devel@driverdev.osuosl.org>, Hugh Dickins <hughd@google.com>, Anjana V Kumar <anjanavk12@gmail.com>, linux-next <linux-next@vger.kernel.org>
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdUmD2DMNeezetHNbe9DgQXpTN4BEfEmJSztyzCivQpyXQ@mail.gmail.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Xiong Zhou <jencce.kernel@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 16 May 2013 09:44:49 -0400 Robert Love <rlove@google.com> wrote:
-
-> On Thu, May 16, 2013 at 4:15 AM, Raul Xiong <raulxiong@gmail.com> wrote:
-> > The issue happens in such sequence:
-> > ashmem_mmap acquired ashmem_mutex --> ashmem_mutex:shmem_file_setup
-> > called kmem_cache_alloc --> shrink due to low memory --> ashmem_shrink
-> > tries to acquire the same ashmem_mutex -- it blocks here.
+On Thu, 2013-05-16 at 09:22 +0200, Geert Uytterhoeven wrote:
+> On Thu, May 16, 2013 at 5:57 AM, Xiong Zhou <jencce.kernel@gmail.com> wrote:
+> > --- a/crypto/Kconfig
+> > +++ b/crypto/Kconfig
+> > @@ -378,6 +378,7 @@ config CRYPTO_CRC32_PCLMUL
 > >
-> > I think this reports the bug clearly. Please have a look.
+> >  config CRYPTO_CRCT10DIF
+> >         tristate "CRCT10DIF algorithm"
+> > +       depends on CRC_T10DIF
 > 
-> There is no debate about the nature of the bug. Only the fix.
+> This is a library symbol, so "select CRC_T10DIF"?
 > 
-> My mutex_trylock patch fixes the problem. I prefer that solution.
+> >         select CRYPTO_HASH
+> >         help
+> >           CRC T10 Data Integrity Field computation is being cast as
 > 
-> Andrew's suggestion of GFP_ATOMIC won't work as we'd have to propagate
-> that down into shmem and elsewhere.
-
-s/won't work/impractical/
-
-A better approach would be to add a new __GFP_NOSHRINKERS, but it's all
-variations on a theme.
-
-> Using PF_MEMALLOC will work. You'd want to define something like:
+> Gr{oetje,eeting}s,
 > 
-> static int set_memalloc(void)
-> {
->         if (current->flags & PF_MEMALLOC)
->                 return 0;
->         current->flags |= PF_MEMALLOC;
->         return 1;
-> }
+>                         Geert
 > 
-> static void clear_memalloc(int memalloc)
-> {
->         if (memalloc)
->                 current->flags &= ~PF_MEMALLOC;
-> }
-> 
-> and then set/clear PF_MEMALLOC around every memory allocation and
-> function that descends into a memory allocation. As said I prefer my
-> solution but if someone wants to put together a patch with this
-> approach, fine by me.
 
-The mutex_trylock(ashmem_mutex) will actually have the best
-performance, because it skips the least amount of memory reclaim
-opportunities.
+This is the fix I think that will resolve the build issues.  The generic
+crc-t10dif transform depends on the library function crc_t10dif_generic
+in lib/crc-t10dif.c, so "depends on CRC_T10DIF" for CRYPTO_CRCT10DIF is
+needed.
 
-But it still sucks!  The real problem is that there exists a lock
-called "ashmem_mutex", taken by both the high-level mmap() and by the
-low-level shrinker.  And taken by everything else too!  The ashmem
-locking is pretty crude...
+Now for CRC_T10DIF, we should use select CRYPTO_HASH, so it can try to
+allocate a T10DIF transform if it is available.  If not, it will simply
+use the crc_t10dif_generic function. Loading the
+generic t10dif crypto transform is not mandatory for the library
+function crc_t10dif. 
 
-What is the mutex_lock() in ashmem_mmap() actually protecting?  I don't
-see much, apart from perhaps some incidental races around the contents
-of the file's ashmem_area, and those could/should be protected by a
-per-object lock, not a global one?
+Thanks for catching the issues.
+
+Tim
+
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+---
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index d1ca631..015df24 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -379,6 +379,7 @@ config CRYPTO_CRC32_PCLMUL
+ config CRYPTO_CRCT10DIF
+ 	tristate "CRCT10DIF algorithm"
+ 	select CRYPTO_HASH
++	depends on CRC_T10DIF
+ 	help
+ 	  CRC T10 Data Integrity Field computation is being cast as
+ 	  a crypto transform.  This allows for faster crc t10 diff
+diff --git a/lib/Kconfig b/lib/Kconfig
+index 0cee056..e6ad2e4 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -63,7 +63,7 @@ config CRC16
+ 
+ config CRC_T10DIF
+ 	tristate "CRC calculation for the T10 Data Integrity Field"
+-	select CRYPTO_CRCT10DIF
++	select CRYPTO_HASH
+ 	help
+ 	  This option is only needed if a module that's not in the
+ 	  kernel tree needs to calculate CRC checks for use with the
