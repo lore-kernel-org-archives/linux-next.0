@@ -1,100 +1,47 @@
-From: Raul Xiong <raulxiong@gmail.com>
-Subject: Re: [PATCH -next] ashmem: Fix ashmem_shrink deadlock.
-Date: Thu, 16 May 2013 16:15:49 +0800
-Message-ID: <CAG9bXvkjV6-O3JZH6taVX-dZ1tzbSoqaC_sN00LRszsS4QAnrg@mail.gmail.com>
-References: <1367416573-5430-1-git-send-email-rlove@google.com>
-	<20130513214216.GA23743@kroah.com>
-	<CA+2_TiZ3dECAW8LV-Es=BjHCwgWw69zbWkr73at+0_c-EaDHmA@mail.gmail.com>
-	<CAG9bXvkH0L5FjkU3-=3X3zwp3vw8U7+jJRYp28GFXjLkQKBL5g@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] vhost-scsi: Depend on NET for memcpy_fromiovec
+Date: Thu, 16 May 2013 02:10:20 -0700 (PDT)
+Message-ID: <20130516.021020.886926151198681453.davem@davemloft.net>
+References: <871u9724vp.fsf@rustcorp.com.au>
+	<20130515.201055.1401062016041347476.davem@davemloft.net>
+	<20130516064620.GB26995@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:56301 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755310Ab3EPIPu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 May 2013 04:15:50 -0400
-In-Reply-To: <CAG9bXvkH0L5FjkU3-=3X3zwp3vw8U7+jJRYp28GFXjLkQKBL5g@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Neil Zhang <glacier1980@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Robert Love <rlove@google.com>, Shankar Brahadeeswaran <shankoo77@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, LKML <linux-kernel@vger.kernel.org>, Bjorn Bringert <bringert@google.com>, devel <devel@driverdev.osuosl.org>, Hugh Dickins <hughd@google.com>, Anjana V Kumar <anjanavk12@gmail.com>, Dad <akpm@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+In-Reply-To: <20130516064620.GB26995@redhat.com>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: mst@redhat.com
+Cc: sfr@canb.auug.org.au, rdunlap@infradead.org, kvm@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, target-devel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-2013/5/14 Raul Xiong <raulxiong@gmail.com>
->
-> 2013/5/14 Neil Zhang <glacier1980@gmail.com>:
-> > 2013/5/14 Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
-> >> On Wed, May 01, 2013 at 09:56:13AM -0400, Robert Love wrote:
-> >>> Don't acquire ashmem_mutex in ashmem_shrink if we've somehow recursed
-> >>> into the
-> >>> shrinker code from within ashmem. Just bail out, avoiding a deadlock.
-> >>> This is
-> >>> fine, as ashmem cache pruning is advisory anyhow.
-> >>>
-> >>> Signed-off-by: Robert Love <rlove@google.com>
-> >>> ---
-> >>>  drivers/staging/android/ashmem.c | 6 +++++-
-> >>>  1 file changed, 5 insertions(+), 1 deletion(-)
-> >>
-> >> Based on Andrew's review comments, I'll drop this from my queue and wait
-> >> for a "better" fix for this.
-> >>
-> >> thanks,
-> >>
-> >> greg k-h
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> >> the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >> Please read the FAQ at  http://www.tux.org/lkml/
-> >
-> > We found the similar issue these days.
-> > Add RaulXiong to paste the call stack.
-> >
-> > Best Regards,
-> > Neil Zhang
->
-> Hi all,
-> I just encountered this deadlock during some stress test and it can be
-> described clearly by below function stack. Please check and suggest a
-> formal fix for it.
->
-> [<c05d3370>] (__schedule) from [<c05d3818>]
-> [<c05d3818>] (schedule_preempt_disabled) from [<c05d2578>]
-> [<c05d2578>] (__mutex_lock_slowpath) from [<c05d263c>]
-> [<c05d263c>] (mutex_lock) from [<c0441dd8>]
-> [<c0441dd8>] (ashmem_shrink) from [<c01ae00c>]
-> [<c01ae00c>] (shrink_slab) from [<c01b0ec8>]
-> [<c01b0ec8>] (try_to_free_pages) from [<c01a65ec>]
-> [<c01a65ec>] (__alloc_pages_nodemask) from [<c01d0414>]
-> [<c01d0414>] (new_slab) from [<c05cf3a0>]
-> [<c05cf3a0>] (__slab_alloc.isra.46.constprop.52) from [<c01d08cc>]
-> [<c01d08cc>] (kmem_cache_alloc) from [<c01b1f6c>]
-> [<c01b1f6c>] (shmem_alloc_inode) from [<c01e8d18>]
-> [<c01e8d18>] (alloc_inode) from [<c01ea3c4>]
-> [<c01ea3c4>] (new_inode_pseudo) from [<c01ea404>]
-> [<c01ea404>] (new_inode) from [<c01b157c>]
-> [<c01b157c>] (shmem_get_inode) from [<c01b3eac>]
-> [<c01b3eac>] (shmem_file_setup) from [<c0441d1c>]
-> [<c0441d1c>] (ashmem_mmap) from [<c01c1908>]
-> [<c01c1908>] (mmap_region) from [<c01c1eac>]
-> [<c01c1eac>] (sys_mmap_pgoff) from [<c0112d80>]
->
-> Thanks,
-> Raul Xiong
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Date: Thu, 16 May 2013 09:46:21 +0300
 
+> On Wed, May 15, 2013 at 08:10:55PM -0700, David Miller wrote:
+>> From: Rusty Russell <rusty@rustcorp.com.au>
+>> Date: Thu, 16 May 2013 09:05:38 +0930
+>> 
+>> > memcpy_fromiovec() has nothing to do with networking: that was just the
+>> > first user.  Note that crypto/algif_skcipher.c also uses it.  The
+>> > obvious answer is to move it into lib/.
+>> 
+>> +1
+> 
+> Rusty sent a patch that does this:
+> http://patchwork.ozlabs.org/patch/244207/
+> 
+> David, looks like you weren't CC'd.
+> If you agree could you please Ack that patch and then I can merge it
+> through the vhost tree?
+> Or if you prefer merge it directly and I'll sort out the dependencies...
 
-
-Hi Andrew, Greg,
-
-Any feedback?
-
-The issue happens in such sequence:
-ashmem_mmap acquired ashmem_mutex --> ashmem_mutex:shmem_file_setup
-called kmem_cache_alloc --> shrink due to low memory --> ashmem_shrink
-tries to acquire the same ashmem_mutex -- it blocks here.
-
-I think this reports the bug clearly. Please have a look.
-
-
-Thanks,
-Raul Xiong
+Acked-by: David S. Miller <davem@davemloft.net>
