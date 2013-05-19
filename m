@@ -1,43 +1,51 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: Re: linux-next: build warning after merge of the final tree (in
- Linus' tree)
-Date: Fri, 17 May 2013 15:08:59 -0400
-Message-ID: <1368817739.1372.5.camel@localhost>
-References: <20130515132001.6cc824ba42106db973f90991@canb.auug.org.au>
-	 <1368624762.27262.1.camel@localhost>
-	 <CAOh2x=nNNdgndfXCAQ7-oXDcuiNwAbNSb3_DgYuGsO8cPC__5g@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: question about the pwm tree
+Date: Mon, 20 May 2013 09:53:55 +1000
+Message-ID: <20130520095355.edd430ab7ff5592c857bc6f1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:31876 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756599Ab3EQTJF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 May 2013 15:09:05 -0400
-In-Reply-To: <CAOh2x=nNNdgndfXCAQ7-oXDcuiNwAbNSb3_DgYuGsO8cPC__5g@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Richard Guy Briggs <rgb@redhat.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__20_May_2013_09_53_55_+1000_WvCUHn3q.UqG2qIa"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 2013-05-17 at 10:47 +0530, Viresh Kumar wrote:
-> On Wed, May 15, 2013 at 7:02 PM, Eric Paris <eparis@redhat.com> wrote:
-> > On Wed, 2013-05-15 at 13:20 +1000, Stephen Rothwell wrote:
-> >> Hi ,
-> >>
-> >> After merging the final tree, today's linux-next build (i386 defconfig)
-> >> produced this warning:
-> >>
-> >> kernel/auditfilter.c: In function 'audit_data_to_entry':
-> >> kernel/auditfilter.c:426:3: warning: this decimal constant is unsigned only in ISO C90 [enabled by default]
-> >>
-> >> Introduced by commit 780a7654cee8 ("audit: Make testing for a valid
-> >> loginuid explicit") from Linus' tree.
-> >
-> > Thank you, I'll fix it up.  What am I likely missing that I don't see it
-> > on my builds?  I'm using gcc 4.8.  Is there a config option that enables
-> > additional warnings?
-> 
-> Is  this fixed? I couldn't find a relevant patch in linux-next/master for it.
+--Signature=_Mon__20_May_2013_09_53_55_+1000_WvCUHn3q.UqG2qIa
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Something should be posted by the end of the day.  Sorry for the delay.
+Hi Thierry,
+
+I noticed that you changed the email address for the maintainer of the
+pwm tree in the MAINTAINERS file.  should I use this new address as your
+contact for linux-next as well?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__20_May_2013_09_53_55_+1000_WvCUHn3q.UqG2qIa
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRmWYTAAoJEECxmPOUX5FEBKkP/0VzkkbhLGxPC0P4ZCKwX/oB
+wGeX0R7zxFyCMTjBQnIDBIydFsWOH51JBPPlwLTnFYUEG0RVNmRHnCbZ5n58QE/X
+n+4pWfPD7PMIln3kWxoOnQRp5DIJ29RIVoGwjrywabwyAsmdMpwcLDXPOoa0D+x4
+3FrABk05mtNpT7nO3RbAa8/3Z72qEp36+fOUYS7TJjhvytABVaE+4Y92c1T942c0
+PZq31t2mkrpMIhJwzYZWuhubf0ta43PSYN/gaGwkaQL/OxjMoaBci+G2K9I7K3V3
+EdBmXnPvwAHYOxdBXmaoZ3/DgsHu1AtlAf0FSQI9mVeO+ZACQGz8DW/G/M00ADYs
+TAYmUymkvFQ/XYokLygWp1iL08Ak8l04ILQZRD1ho+O63m9R3h2Tg6NskFlu2xRR
+lCvoeIx6ZjmSJH1sd9dz4HKeAm5h1uMRt9Rg8Y33WFM7BSZ9vPhZ1g0rZUg0F1h4
+nM0Pn/WQ5vEOfKHznsGCDa/3uMp0UFX6uYLSXhYLJamLbYYZ5xWXLZNQO+NkMNAG
+Ox/EqBOqCFys0hEUEPCqHihrxxjCCLA5dQfb7BXKWcFVO1XnnnSpl+dIRdZY5Tt+
+Hxg4QzNJkxu0D3ZlxTGkwe1s86eS+oIwJrrY4ZTH60+VnnnXpd2ddk2B5nsIkt6J
+A7Zk1eUQvRq39V4/QXb6
+=Jems
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__20_May_2013_09_53_55_+1000_WvCUHn3q.UqG2qIa--
