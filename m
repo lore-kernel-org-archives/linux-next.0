@@ -1,60 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb.current tree with Linus' tree
-Date: Mon, 20 May 2013 10:21:59 +1000
-Message-ID: <20130520102159.18f2f976cb4000e48b45731e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rr-fixes tree
+Date: Mon, 20 May 2013 10:51:33 +1000
+Message-ID: <20130520105133.2bb50dcc4f8cf639f18f1a2c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__20_May_2013_10_21_59_+1000_HZwVN/Oi/lUBq=0M"
+ boundary="Signature=_Mon__20_May_2013_10_51_33_+1000_NVYx_w=BE0S/dx2B"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44969 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50359 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754823Ab3ETAWI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 19 May 2013 20:22:08 -0400
+	with ESMTP id S1754928Ab3ETAvn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 19 May 2013 20:51:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Libo Chen <clbchenlibo.chen@huawei.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>
 
---Signature=_Mon__20_May_2013_10_21_59_+1000_HZwVN/Oi/lUBq=0M
+--Signature=_Mon__20_May_2013_10_51_33_+1000_NVYx_w=BE0S/dx2B
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Rusty,
 
-Today's linux-next merge of the usb.current tree got a conflict in
-drivers/usb/host/ohci-nxp.c between commit bb522812a1a6
-("drivers/usb/host: don't check resource with devm_ioremap_resource")
-from Linus' tree and commit b3517d5de80e ("usb: ohci: fix goto wrong tag
-in err case") from the usb.current tree.
+After merging the rr-fixes tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-The former remove a bit of code modified by the latter, so I did that and
-can carry the fix as necessary (no action is required).
+drivers/dma/iovlock.c: In function 'dma_pin_iovec_pages':
+drivers/dma/iovlock.c:98:21: error: dereferencing pointer to incomplete type
+   down_read(&current->mm->mmap_sem);
+                     ^
+drivers/dma/iovlock.c:101:11: error: dereferencing pointer to incomplete ty=
+pe
+    current->mm,
+           ^
+drivers/dma/iovlock.c:108:19: error: dereferencing pointer to incomplete ty=
+pe
+   up_read(&current->mm->mmap_sem);
+                   ^
+
+Caused by commit 11227d242a8c ("Hoist memcpy_fromiovec/memcpy_toiovec
+into lib/").  Clearly, net/tcp.h was indirectly including sched.h or
+asm/current.h.  Changing inclusions is fraught with problems since people
+do not follow Rule 1 (in Documentation/SubmitChecklist) consistently.  :-(
+
+I have used the rr-fixes tree from next-20130515 (since the fix in
+rr-fixes in next-20130516/7 conflicts with the better fix now in Linus'
+tree) for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__20_May_2013_10_21_59_+1000_HZwVN/Oi/lUBq=0M
+--Signature=_Mon__20_May_2013_10_51_33_+1000_NVYx_w=BE0S/dx2B
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRmWynAAoJEECxmPOUX5FEohkP/i/pIKJ5KEp1ekF0DHGCxnI+
-3xJW3PQjZCDFfgW/KVy8xB8PFEnN6IUzYGiCH9CgKWaVsacQlsPuvCCDFrYhlL/P
-iMoM3k1IKIEPUexahYOS20t1HgBu7X8nDwmZ2nr7K3E1qi5RzSfros72/ghPDtDP
-kKXX5ZU2lTY1Bhr0PyLKjS1hu0dXyKJkutcwrPOa71AOlqbQV407fQE2Y22IVQPQ
-/c4U2qxzYkgIlfppRbDu1BBJKugeV0eOcXknOv49CaBtnDYRNf264EACJmoyzciV
-jIMLMHaKIm3+PnUihuzFH9tbcPzJ+6ZOAw0XnNWiNtjAuFiUK+b7zgz6ZgQN9BsO
-uIoB3H86PeYVkFcIKjB58e7VV1swWQjUDp7BzJWz8NVlDZg14s1oydBOB0JRGNgE
-09MEDMhzqADOXXMhxrezt97L8D984rRoAIAJVyWy68Ji+Wuq0BaYNA7etA3Cvdwi
-w2dmoEE87RocwjsZbgBpdbBghItVPCDWcYtGm8DpS90VAg/UMlFZpoGkYtfX8oIK
-uJy2WRTWzedHYcn2Rn/PR3ryvSXgmkur31kPMaJ1XjFvejDpBe9PZQc+Udy9cfDz
-SYghFOqqWumVvTdtmzNCFbPwrj4r1y9sFkNZDWZUNOmhkRqQWXQYvdmGtY00765H
-rbNqA1ODlmc6Od9AMa88
-=R27y
+iQIcBAEBCAAGBQJRmXOVAAoJEECxmPOUX5FEI8cQAIq5hrbtWR7oiVtoyq0bZ63y
+Fc8wzXD0hu9p/TCGSPekoJo0Q45Wu2u68wVGCgFH1HmmvOR21FDrEHVUxuDoBzKo
+s0IZaEROKQ8FyE8FICL7GrODo6THsNRetYz1SGNjnRg02/Yhuppdc8xms0NGA4hc
+UhVIFBK2oCHZeoMV2k5po7EcwRshH0z5AbVzO53pCimnsDwCve02h9rhaKt075mp
+au5lIDhCnjokwtpSjiQwO4sGrJxqZ9Zt0UoUkJG01i02aNcGl2KGwFja+Un8qjwk
+LUbaY2u+yUO/Fn/pP2RWLXt53jmyKVa0to+3K0lPp1+/4dzVWSUnVNmG1/ssz5pr
+PUGwOXYD9ZuAjp7O4MEv6n+cVUQhhOLf3EOwT/Eh53PyBElpkfku84rxtZ8uMkJ/
+5F336qBsi3GFHz2KI51zRuXP2p9b+nECcWB/vz5QjqWwnAaj+5ATuo6kphKVURgj
+ND8llVsfkC4aKqifldibr/QCrkPreIBDIOUz4M0u0SlppSnhTu+MJo7r6MQXsmrp
+7rd0LvwS9jMcN2vP1CknKNhd1CSlSuEgEl3V+T/mvqUySLXxAmbJWCre6l6oYjBk
+bHPKn3caXr3ah+J4PlTTAUYoTNX2QjOd5Xm+xUQ/+VWpedY6Oepf0GNiOeRE9Zgh
+Hsqk1Myr2y4JpC0+0I9Q
+=pFZf
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__20_May_2013_10_21_59_+1000_HZwVN/Oi/lUBq=0M--
+--Signature=_Mon__20_May_2013_10_51_33_+1000_NVYx_w=BE0S/dx2B--
