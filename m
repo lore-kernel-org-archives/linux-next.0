@@ -1,109 +1,67 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] media: fix hdpvr kconfig/build errors
-Date: Mon, 20 May 2013 09:32:39 -0700
-Message-ID: <519A5027.5070505@infradead.org>
-References: <20130520144940.a33c311c37824a57dd0c395e@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130520144940.a33c311c37824a57dd0c395e@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@redhat.com>
-List-Id: linux-next.vger.kernel.org
+From: Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH] audit: cast decimal constant for invalid uid to unsigned
+Date: Mon, 20 May 2013 15:08:18 -0400
+Message-ID: <1369076898-17265-1-git-send-email-rgb@redhat.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:24454 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756294Ab3ETTJm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 May 2013 15:09:42 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: sfr@canb.auug.org.au, ebiederm@xmission.com, eparis@redhat.com, viresh.kumar@linaro.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>, stable@vger.kernel.org.#.v3.9
 
-From: Randy Dunlap <rdunlap@infradead.org>
+SFR reported this 2013-05-15:
 
-Fix hdpvr build errors when CONFIG_I2C=m and VIDEO_V4L2=m and
-VIDEO_HDPVR=y.
+> After merging the final tree, today's linux-next build (i386 defconfig)
+> produced this warning:
+>
+> kernel/auditfilter.c: In function 'audit_data_to_entry':
+> kernel/auditfilter.c:426:3: warning: this decimal constant is unsigned only
+> in ISO C90 [enabled by default]
+>
+> Introduced by commit 780a7654cee8 ("audit: Make testing for a valid
+> loginuid explicit") from Linus' tree.
 
-drivers/built-in.o: In function `hdpvr_disconnect':
-hdpvr-core.c:(.text+0xef542): undefined reference to `v4l2_device_disconnect'
-hdpvr-core.c:(.text+0xef57e): undefined reference to `i2c_del_adapter'
-hdpvr-core.c:(.text+0xef58a): undefined reference to `video_unregister_device'
-drivers/built-in.o: In function `hdpvr_delete':
-(.text+0xef5b9): undefined reference to `video_device_release'
-drivers/built-in.o: In function `hdpvr_probe':
-hdpvr-core.c:(.text+0xef63a): undefined reference to `v4l2_device_register'
-hdpvr-core.c:(.text+0xefd97): undefined reference to `i2c_del_adapter'
-drivers/built-in.o: In function `hdpvr_s_ctrl':
-hdpvr-video.c:(.text+0xf03c0): undefined reference to `v4l2_ctrl_activate'
-drivers/built-in.o: In function `hdpvr_device_release':
-hdpvr-video.c:(.text+0xf0470): undefined reference to `v4l2_device_unregister'
-hdpvr-video.c:(.text+0xf0479): undefined reference to `v4l2_ctrl_handler_free'
-hdpvr-video.c:(.text+0xf048f): undefined reference to `i2c_del_adapter'
-drivers/built-in.o: In function `hdpvr_open':
-hdpvr-video.c:(.text+0xf0570): undefined reference to `video_devdata'
-hdpvr-video.c:(.text+0xf057b): undefined reference to `v4l2_fh_init'
-hdpvr-video.c:(.text+0xf0583): undefined reference to `v4l2_fh_add'
-drivers/built-in.o: In function `video_drvdata':
-hdpvr-video.c:(.text+0xf08a0): undefined reference to `video_devdata'
-drivers/built-in.o: In function `vidioc_s_dv_timings':
-hdpvr-video.c:(.text+0xf0d34): undefined reference to `v4l_match_dv_timings'
-drivers/built-in.o: In function `hdpvr_poll':
-hdpvr-video.c:(.text+0xf1455): undefined reference to `v4l2_ctrl_poll'
-drivers/built-in.o: In function `hdpvr_release':
-hdpvr-video.c:(.text+0xf18f6): undefined reference to `v4l2_fh_release'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1be3): undefined reference to `v4l2_ctrl_handler_init_class'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1c19): undefined reference to `v4l2_ctrl_new_std'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1c42): undefined reference to `v4l2_ctrl_new_std'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1c6b): undefined reference to `v4l2_ctrl_new_std'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1cac): undefined reference to `v4l2_ctrl_new_std'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1cd5): undefined reference to `v4l2_ctrl_new_std'
-drivers/built-in.o:(.text+0xf1cfe): more undefined references to `v4l2_ctrl_new_std' follow
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1d75): undefined reference to `v4l2_ctrl_new_std_menu'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1d9e): undefined reference to `v4l2_ctrl_new_std_menu'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1dc3): undefined reference to `v4l2_ctrl_new_std_menu'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1de5): undefined reference to `v4l2_ctrl_new_std_menu'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1e18): undefined reference to `v4l2_ctrl_new_std'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1e4b): undefined reference to `v4l2_ctrl_new_std'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1e90): undefined reference to `v4l2_ctrl_cluster'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1e98): undefined reference to `v4l2_ctrl_handler_setup'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1ec1): undefined reference to `video_device_alloc'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1f85): undefined reference to `__video_register_device'
-drivers/built-in.o: In function `hdpvr_register_videodev':
-(.text+0xf1fac): undefined reference to `v4l2_ctrl_handler_free'
-drivers/built-in.o: In function `hdpvr_register_ir_tx_i2c':
-(.text+0xf238f): undefined reference to `i2c_new_device'
-drivers/built-in.o: In function `hdpvr_register_ir_rx_i2c':
-(.text+0xf2434): undefined reference to `i2c_new_device'
-drivers/built-in.o: In function `hdpvr_register_i2c_adapter':
-(.text+0xf2514): undefined reference to `i2c_add_adapter'
-drivers/built-in.o:(.rodata+0x1b368): undefined reference to `video_ioctl2'
-drivers/built-in.o:(.rodata+0x1b690): undefined reference to `v4l2_ctrl_log_status'
-drivers/built-in.o:(.rodata+0x1b6f8): undefined reference to `v4l2_ctrl_subscribe_event'
-drivers/built-in.o:(.rodata+0x1b700): undefined reference to `v4l2_event_unsubscribe'
+Replace this decimal constant in the code with a macro to make it more readable
+and add an unsigned cast to quiet the warning.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: stable@vger.kernel.org # v3.9
+Cc: Eric Paris <eparis@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- drivers/media/usb/hdpvr/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/uapi/linux/audit.h |    2 ++
+ kernel/auditfilter.c       |    2 +-
+ 2 files changed, 3 insertions(+), 1 deletions(-)
 
---- linux-next-20130520.orig/drivers/media/usb/hdpvr/Kconfig
-+++ linux-next-20130520/drivers/media/usb/hdpvr/Kconfig
-@@ -1,7 +1,7 @@
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 75cef3f..b7cb978 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -374,6 +374,8 @@ struct audit_tty_status {
+ 	__u32		log_passwd;	/* 1 = enabled, 0 = disabled */
+ };
  
- config VIDEO_HDPVR
- 	tristate "Hauppauge HD PVR support"
--	depends on VIDEO_DEV
-+	depends on VIDEO_DEV && VIDEO_V4L2
- 	---help---
- 	  This is a video4linux driver for Hauppauge's HD PVR USB device.
++#define AUDIT_UID_UNSET (unsigned int)-1
++
+ /* audit_rule_data supports filter rules with both integer and string
+  * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
+  * AUDIT_LIST_RULES requests.
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index bc6595f..0d40b51 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -423,7 +423,7 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
+ 		f->lsm_rule = NULL;
  
+ 		/* Support legacy tests for a valid loginuid */
+-		if ((f->type == AUDIT_LOGINUID) && (f->val == 4294967295)) {
++		if ((f->type == AUDIT_LOGINUID) && (f->val == AUDIT_UID_UNSET)) {
+ 			f->type = AUDIT_LOGINUID_SET;
+ 			f->val = 0;
+ 		}
+-- 
+1.7.1
