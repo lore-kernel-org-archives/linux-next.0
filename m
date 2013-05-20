@@ -1,76 +1,45 @@
-From: Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: linux-next: Tree for May 15 (crypto /crct10dif)
-Date: Mon, 20 May 2013 12:09:45 -0700
-Message-ID: <1369076985.27102.319.camel@schen9-DESK>
-References: <20130515132627.817585a3d9fb3a3e502eb586@canb.auug.org.au>
-	 <5193CCEC.7070909@infradead.org>
-	 <alpine.DEB.2.02.1305161152530.31865@M2420>
-	 <CAMuHMdUmD2DMNeezetHNbe9DgQXpTN4BEfEmJSztyzCivQpyXQ@mail.gmail.com>
-	 <1368723552.27102.286.camel@schen9-DESK>
-	 <1368727412.27102.289.camel@schen9-DESK>
-	 <20130520114707.GA1187@gondor.apana.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: mmotm 2013-05-09-15-57 uploaded
+Date: Mon, 20 May 2013 15:31:35 -0700
+Message-ID: <20130520153135.a47e21227a4fc3a77996b482@linux-foundation.org>
+References: <20130509225833.C37A55A41D4@corp2gmr1-2.hot.corp.google.com>
+	<CAFTL4hwvP7GsrNTc4knQRMV1YHXnZRes=E_NpLAKSOgqTeou5g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130520114707.GA1187@gondor.apana.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Xiong Zhou <jencce.kernel@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <CAFTL4hwvP7GsrNTc4knQRMV1YHXnZRes=E_NpLAKSOgqTeou5g@mail.gmail.com>
+Sender: owner-linux-mm@kvack.org
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2013-05-20 at 19:47 +0800, Herbert Xu wrote:
+On Mon, 20 May 2013 11:42:09 +0200 Frederic Weisbecker <fweisbec@gmail.com> wrote:
 
+> Hi Andrew,
 > 
-> Nope this is still broken.  We need to move the actual crct10dif
-> code into crypto/.  I'll fix up the patch in the tree.
+> 2013/5/10  <akpm@linux-foundation.org>:
+> [...]
+> > * posix_cpu_timer-consolidate-expiry-time-type.patch
+> > * posix_cpu_timers-consolidate-timer-list-cleanups.patch
+> > * posix_cpu_timers-consolidate-expired-timers-check.patch
+> > * selftests-add-basic-posix-timers-selftests.patch
+> > * posix-timers-correctly-get-dying-task-time-sample-in-posix_cpu_timer_schedule.patch
+> > * posix_timers-fix-racy-timer-delta-caching-on-task-exit.patch
 > 
-> Also I'm going to get rid of crc_t10dif_update_lib function.  If you
-> still want to maintain the ordering you should do so using the
-> *_init constructs.
-> 
+> Do you have any plans concerning these patches? These seem to have
+> missed this merge window.
 
-Herbert, 
+They're in my queue of "stuff to send to tglx" when I do my next
+maintainer patchbombing.
 
-I used the following constructs in the pclmulqdq version of t10dif
-to get the module loaded. 
+I guess I should have done that significantly before the 3.10 release,
+but it's rather discouraging how few of those patches get applied by
+anyone.  Maybe the solution to that is to send them more often, not
+less.
 
-static const struct x86_cpu_id crct10dif_cpu_id[] = {
-        X86_FEATURE_MATCH(X86_FEATURE_PCLMULQDQ),
-        {}
-};
-MODULE_DEVICE_TABLE(x86cpu, crct10dif_cpu_id);
-
-However, the default generic algorithm is used
-in the library function. The options CRC_T10DIF, CRYPTO_CRCT10DIF
-and CRYPTO_CRCT10DIF_PCLMUL are selected as modules (which
-is most likely usage scenario in distribution) on my
-test machine.  The library module and generic crypto module was loaded
-before the pclmulqdq t10dif module during boot.  How should
-things be changed to get this crypto module loaded earlier before the
-library?  Should we add another init call level between fs and device
-init calls for loading the available crypto algorithms?  
-The crc_t10dif_update_lib was originally used to side step this issue.
-
-BTW, latest crypto-dev need the following modification if we get
-rid of crc_t10dif_update_lib.
-
-Thanks.
-
-Tim
-
-
-
-diff --git a/arch/x86/crypto/crct10dif-pclmul_glue.c
-b/arch/x86/crypto/crct10dif-pclmul_glue.c
-index 3c0abd3..d838b7f 100644
---- a/arch/x86/crypto/crct10dif-pclmul_glue.c
-+++ b/arch/x86/crypto/crct10dif-pclmul_glue.c
-@@ -136,8 +136,6 @@ static int __init crct10dif_intel_mod_init(void)
-                return -ENODEV;
- 
-        ret = crypto_register_shash(&alg);
--       if (!ret)
--               crc_t10dif_update_lib();
-        return ret;
- }
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
