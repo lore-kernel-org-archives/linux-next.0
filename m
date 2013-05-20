@@ -1,51 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: question about the pwm tree
-Date: Mon, 20 May 2013 09:53:55 +1000
-Message-ID: <20130520095355.edd430ab7ff5592c857bc6f1@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb.current tree with Linus' tree
+Date: Mon, 20 May 2013 10:21:59 +1000
+Message-ID: <20130520102159.18f2f976cb4000e48b45731e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__20_May_2013_09_53_55_+1000_WvCUHn3q.UqG2qIa"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__20_May_2013_10_21_59_+1000_HZwVN/Oi/lUBq=0M"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44969 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754823Ab3ETAWI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 19 May 2013 20:22:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Libo Chen <clbchenlibo.chen@huawei.com>
 
---Signature=_Mon__20_May_2013_09_53_55_+1000_WvCUHn3q.UqG2qIa
+--Signature=_Mon__20_May_2013_10_21_59_+1000_HZwVN/Oi/lUBq=0M
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Thierry,
+Hi Greg,
 
-I noticed that you changed the email address for the maintainer of the
-pwm tree in the MAINTAINERS file.  should I use this new address as your
-contact for linux-next as well?
+Today's linux-next merge of the usb.current tree got a conflict in
+drivers/usb/host/ohci-nxp.c between commit bb522812a1a6
+("drivers/usb/host: don't check resource with devm_ioremap_resource")
+from Linus' tree and commit b3517d5de80e ("usb: ohci: fix goto wrong tag
+in err case") from the usb.current tree.
+
+The former remove a bit of code modified by the latter, so I did that and
+can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__20_May_2013_09_53_55_+1000_WvCUHn3q.UqG2qIa
+--Signature=_Mon__20_May_2013_10_21_59_+1000_HZwVN/Oi/lUBq=0M
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRmWYTAAoJEECxmPOUX5FEBKkP/0VzkkbhLGxPC0P4ZCKwX/oB
-wGeX0R7zxFyCMTjBQnIDBIydFsWOH51JBPPlwLTnFYUEG0RVNmRHnCbZ5n58QE/X
-n+4pWfPD7PMIln3kWxoOnQRp5DIJ29RIVoGwjrywabwyAsmdMpwcLDXPOoa0D+x4
-3FrABk05mtNpT7nO3RbAa8/3Z72qEp36+fOUYS7TJjhvytABVaE+4Y92c1T942c0
-PZq31t2mkrpMIhJwzYZWuhubf0ta43PSYN/gaGwkaQL/OxjMoaBci+G2K9I7K3V3
-EdBmXnPvwAHYOxdBXmaoZ3/DgsHu1AtlAf0FSQI9mVeO+ZACQGz8DW/G/M00ADYs
-TAYmUymkvFQ/XYokLygWp1iL08Ak8l04ILQZRD1ho+O63m9R3h2Tg6NskFlu2xRR
-lCvoeIx6ZjmSJH1sd9dz4HKeAm5h1uMRt9Rg8Y33WFM7BSZ9vPhZ1g0rZUg0F1h4
-nM0Pn/WQ5vEOfKHznsGCDa/3uMp0UFX6uYLSXhYLJamLbYYZ5xWXLZNQO+NkMNAG
-Ox/EqBOqCFys0hEUEPCqHihrxxjCCLA5dQfb7BXKWcFVO1XnnnSpl+dIRdZY5Tt+
-Hxg4QzNJkxu0D3ZlxTGkwe1s86eS+oIwJrrY4ZTH60+VnnnXpd2ddk2B5nsIkt6J
-A7Zk1eUQvRq39V4/QXb6
-=Jems
+iQIcBAEBCAAGBQJRmWynAAoJEECxmPOUX5FEohkP/i/pIKJ5KEp1ekF0DHGCxnI+
+3xJW3PQjZCDFfgW/KVy8xB8PFEnN6IUzYGiCH9CgKWaVsacQlsPuvCCDFrYhlL/P
+iMoM3k1IKIEPUexahYOS20t1HgBu7X8nDwmZ2nr7K3E1qi5RzSfros72/ghPDtDP
+kKXX5ZU2lTY1Bhr0PyLKjS1hu0dXyKJkutcwrPOa71AOlqbQV407fQE2Y22IVQPQ
+/c4U2qxzYkgIlfppRbDu1BBJKugeV0eOcXknOv49CaBtnDYRNf264EACJmoyzciV
+jIMLMHaKIm3+PnUihuzFH9tbcPzJ+6ZOAw0XnNWiNtjAuFiUK+b7zgz6ZgQN9BsO
+uIoB3H86PeYVkFcIKjB58e7VV1swWQjUDp7BzJWz8NVlDZg14s1oydBOB0JRGNgE
+09MEDMhzqADOXXMhxrezt97L8D984rRoAIAJVyWy68Ji+Wuq0BaYNA7etA3Cvdwi
+w2dmoEE87RocwjsZbgBpdbBghItVPCDWcYtGm8DpS90VAg/UMlFZpoGkYtfX8oIK
+uJy2WRTWzedHYcn2Rn/PR3ryvSXgmkur31kPMaJ1XjFvejDpBe9PZQc+Udy9cfDz
+SYghFOqqWumVvTdtmzNCFbPwrj4r1y9sFkNZDWZUNOmhkRqQWXQYvdmGtY00765H
+rbNqA1ODlmc6Od9AMa88
+=R27y
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__20_May_2013_09_53_55_+1000_WvCUHn3q.UqG2qIa--
+--Signature=_Mon__20_May_2013_10_21_59_+1000_HZwVN/Oi/lUBq=0M--
