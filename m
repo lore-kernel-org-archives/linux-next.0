@@ -1,56 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the net-next tree
-Date: Mon, 20 May 2013 14:14:49 +1000
-Message-ID: <20130520141449.d6095c96c8fa031839ecf4db@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb.current tree with Linus' tree
+Date: Sun, 19 May 2013 21:15:36 -0700
+Message-ID: <20130520041536.GA15865@kroah.com>
+References: <20130520102159.18f2f976cb4000e48b45731e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__20_May_2013_14_14_49_+1000_eQIm6cyI.OORVjct"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130520102159.18f2f976cb4000e48b45731e@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Libo Chen <clbchenlibo.chen@huawei.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__20_May_2013_14_14_49_+1000_eQIm6cyI.OORVjct
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 20, 2013 at 10:21:59AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the usb.current tree got a conflict in
+> drivers/usb/host/ohci-nxp.c between commit bb522812a1a6
+> ("drivers/usb/host: don't check resource with devm_ioremap_resource")
+> from Linus' tree and commit b3517d5de80e ("usb: ohci: fix goto wrong tag
+> in err case") from the usb.current tree.
+> 
+> The former remove a bit of code modified by the latter, so I did that and
+> can carry the fix as necessary (no action is required).
 
-Hi Andrew,
+Sounds fine to me, thanks.
 
-Today's linux-next merge of the akpm tree got a conflict in
-arch/x86/net/bpf_jit_comp.c between commit 650c8496702f ("x86:
-bpf_jit_comp: can call module_free() from any context") from the net-next
-tree and commit "bpf: add comments explaining the schedule_work()
-operation" from the akpm tree.
-
-The former means that the latter is no longer needed, so I used the
-former and can carry the fix as necessary (no action is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__20_May_2013_14_14_49_+1000_eQIm6cyI.OORVjct
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRmaM5AAoJEECxmPOUX5FEWTIP/3xvcPKoNc+1KzVxIOqPYACY
-uRMi8t3HrEhH+IYE2zkZeEpg7W6wJXz7rCiqyIJRCs86xwuT25wVc1pxuShRU3Pk
-w/q6OLH/mWxdG44tmHG90SqG+FelxE/VyNQRs0eyVDQRYJHgnx5oRJIZGkcxXfMN
-DS3LwyZaXghrF3zuS7bgY3oojnzUCVEDnsh0ycUCjvmwP2DvNRjdl4kQr1K2w0k4
-TbXq2IxxkRgSxZLM84cHJtAuvCrZUJHSV0dW0P3a99mJ1W72z99NkzCoYHq6MRZc
-RWW73lsFmBda8rzwSY+Ssb8BwJ3aHCwcsbh8MP3hynzcPd8UA4wLZX/xs6oqLm5q
-F4C48yFIEMGjSatNwxB7bZCm4jrkUoSA4i9hHv64+EtpJCKg/HU0JOxDzht/GCtk
-ieNi7OG45jr3tKJ1Uq9m40qwp732gttnAw7mleeGvZFklyzab6O8eDJWD1iDPc9v
-cSVPdtXSvmxxbeuiNuGevBd94pb0uGXj6UL/wFZiw/QgoqeaT81eMeuLNBD+AH+j
-qmBkBvjWllESZSJECIA3bcAfcy8fFByqi7r1AyrdO23ADjHqKByVwiCYC4EBV3tg
-g3Vs2kZBxf1qv5p89ld3wkGj+GUXHiARLUWbf4dHJYI/OkS1NlQkOijZmvX4HIwk
-dxxo8W3xBubdpskXHG3r
-=je9p
------END PGP SIGNATURE-----
-
---Signature=_Mon__20_May_2013_14_14_49_+1000_eQIm6cyI.OORVjct--
+greg k-h
