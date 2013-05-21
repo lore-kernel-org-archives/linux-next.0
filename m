@@ -1,42 +1,46 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: [PATCH] TTY:vt: convert remain take_over_console's users to do_take_over_console
-Date: Tue, 21 May 2013 13:45:01 -0400
-Message-ID: <519BB29D.9010104@hurleysoftware.com>
-References: <20130521051511.GA11435@udknight> <519B7249.2070207@hurleysoftware.com> <20130521144215.GA5302@udknight.homenetwork> <519B976A.3050708@hurleysoftware.com> <20130521161849.GA11322@udknight.homenetwork> <20130521162958.GA1927@udknight>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm tree with the net-next
+ tree
+Date: Tue, 21 May 2013 13:04:38 -0700
+Message-ID: <20130521130438.1ecdf535ab2461888abbe0c3@linux-foundation.org>
+References: <20130521142948.444f09820c5406f9adc4b7f1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout39.mail01.mtsvc.net ([216.70.64.83]:49714 "EHLO
-	n12.mail01.mtsvc.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754878Ab3EURpG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 May 2013 13:45:06 -0400
-In-Reply-To: <20130521162958.GA1927@udknight>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58154 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751984Ab3EUUEk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 May 2013 16:04:40 -0400
+In-Reply-To: <20130521142948.444f09820c5406f9adc4b7f1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wang YanQing <udknight@gmail.com>
-Cc: gregkh@linuxfoundation.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <dborkman@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Nicolas Schichan <nschichan@freebox.fr>
 
-On 05/21/2013 12:29 PM, Wang YanQing wrote:
-> On Wed, May 22, 2013 at 12:18:49AM +0800, Wang YanQing wrote:
->>> Except now you're spreading the brokenness that is console_lock()
->>> over many more source files than the single-use case of
->>> do_take_over_console().
->>
->>> The actual interface is take_over_console(); the _workaround_ is
->>> exposing do_take_over_console() for fbcon to wrap.
->>
->> This _workaround_ willn't work, take_over_console will hold console_lock internal,
->> but do_take_over_console need caller hold console_lock, then we can't rewrite
->> do_take_over_console as a wrap base on take_over_console.
+On Tue, 21 May 2013 14:29:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-The workaround I'm referring to is commit 50e244cc793 which
-exposed do_take_over_console() as an interface to band aid the lock
-problems.
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm tree got a conflict in
+> arch/arm/net/bpf_jit_32.c between commit aafc787e41fd ("arm: bpf_jit: can
+> call module_free() from any context") from the net-next tree and commit
+> "bpf: add comments explaining the schedule_work() operation" from the
+> akpm tree.
+> 
+> The former means that the latter is no longer required, so I used the
+> former and can carry the fix as necessary (no action is required).
 
-I'm ok with take_over_console() being a lock wrapper around
-do_take_over_console(), if you are trying to preserve your
-other changes.
+Yes, there have been a lot of conflicts in
 
-Regards,
-Peter Hurley
+seccomp-add-generic-code-for-jitted-seccomp-filters.patch
+arm-net-bpf_jit-make-code-generation-less-dependent-on-struct-sk_filter.patch
+arm-net-bpf_jit-make-code-generation-less-dependent-on-struct-sk_filter-fixup-merge-conflict.patch
+arm-net-bpf_jit-add-support-for-jitted-seccomp-filters.patch
+
+recently and I'm presently seeing a compilation error.
+
+Nicolas, I think the patches need a re-check so I'll drop the versions
+which I presently have.  Please refresh, retest and resend when
+convenient?  It'll need to be against linux-next, which is where the
+conflicting (vfree/module_free) changes have occurred.
