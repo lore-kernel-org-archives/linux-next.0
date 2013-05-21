@@ -1,46 +1,37 @@
-From: Daniel Borkmann <dborkman@redhat.com>
-Subject: Re: linux-next: manual merge of the akpm tree with the net-next tree
-Date: Tue, 21 May 2013 09:44:13 +0200
-Message-ID: <519B25CD.5060801@redhat.com>
-References: <20130521142537.00a9ccb7ca4aa81f553b61cf@canb.auug.org.au>
+From: Peter Hurley <peter@hurleysoftware.com>
+Subject: Re: [PATCH] TTY:vt: convert remain take_over_console's users to do_take_over_console
+Date: Tue, 21 May 2013 09:10:33 -0400
+Message-ID: <519B7249.2070207@hurleysoftware.com>
+References: <20130521051511.GA11435@udknight>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:45741 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751574Ab3EUHoa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 May 2013 03:44:30 -0400
-In-Reply-To: <20130521142537.00a9ccb7ca4aa81f553b61cf@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Nicolas Schichan <nschichan@freebox.fr>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130521051511.GA11435@udknight>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wang YanQing <udknight@gmail.com>, gregkh@linuxfoundation.org
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
-
-On 05/21/2013 06:25 AM, Stephen Rothwell wrote:
-> Hi Andrew,
+On 05/21/2013 01:15 AM, Wang YanQing wrote:
+> Impact:
+> 1:convert all remain take_over_console to do_take_over_console
+> 2:update take_over_console to do_take_over_console in comment
 >
-> Today's linux-next merge of the akpm tree got a conflict in
-> arch/arm/net/bpf_jit_32.c between commit aafc787e41fd ("arm: bpf_jit: can
-> call module_free() from any context") from the net-next tree and commit
-> "ARM: net: bpf_jit: make code generation less dependent on struct
-> sk_filter" from the akpm tree.
+> Commit dc9641895abb ("vt: delete unneeded functions
+> register_con_driver|take_over_console") delete take_over_console,
+> but forget to convert remain take_over_console's users to new API
+> do_take_over_console, this patch fix it.
 >
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> Signed-off-by: Wang YanQing <udknight@gmail.com>
+> ---
+>   Sorry for my mistake, I believe I do the full
+>   kernel source find|grep, but the reality is I
+>   forget  take_over_console.
 
-Also seccomp_jit_free() needs a change otherwise the kernel won't build
-with CONFIG_SECCOMP_FILTER_JIT enabled since the work_struct is initialized
-with the bpf_jit_free_worker() callback, which is no longer existent.
+I would rather revert dc9641895abb which purported to delete
+_unneeded_ functions than have this. Obviously the functions
+were needed.
 
-Do you want me to send you a patch?
-
-Quite frankly, I don't like so much that {seccomp,bpf}_jit_compile() and
-{seccomp,bpf}_jit_free() are almost idential functions and now both need
-to be maintained with the same changes, but that's off-topic here.
-
-Cheers,
-
-Daniel
+Regards,
+Peter Hurley
