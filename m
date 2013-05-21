@@ -1,96 +1,115 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Tue, 21 May 2013 11:58:11 +1000
-Message-ID: <20130521115811.aa350c0edc6a9065adbf5852@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Tue, 21 May 2013 13:25:32 +1000
+Message-ID: <20130521132532.197ed9fa356199cbbda7389a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__21_May_2013_11_58_11_+1000_nybcUPoT4S5fC30o"
+ boundary="Signature=_Tue__21_May_2013_13_25_32_+1000_0P7AsvYlRzRXrKpP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47598 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55289 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755157Ab3EUB6T (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 May 2013 21:58:19 -0400
+	with ESMTP id S1752505Ab3EUDZp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 May 2013 23:25:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wang YanQing <udknight@gmail.com>
 
---Signature=_Tue__21_May_2013_11_58_11_+1000_nybcUPoT4S5fC30o
+--Signature=_Tue__21_May_2013_13_25_32_+1000_0P7AsvYlRzRXrKpP
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_dp.c between commit 657445fe8660 ("Revert
-"drm/i915: revert eDP bpp clamping code changes"") from Linus' tree and
-commits c6bb353815c3 ("drm/i915: move dp clock computations to
-encoder->compute_config"), af13188a1a66 ("drm/i915: force bpp for eDP
-panels") and 52541e30339d ("drm/i915: allow high-bpc modes on DP") from
-the drm-intel tree.
+After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-I fixed it up (see below and I used the latter two commits instead of the
-one from Linus' tree) and can carry the fix as necessary (no action is
-required).
+drivers/usb/misc/sisusbvga/sisusb_con.c: In function 'sisusb_console_init':
+drivers/usb/misc/sisusbvga/sisusb_con.c:1493:2: error: implicit declaration=
+ of function 'take_over_console' [-Werror=3Dimplicit-function-declaration]
+  ret =3D take_over_console(&sisusb_con, first - 1, last - 1, 0);
+  ^
+cc1: some warnings being treated as errors
 
+Caused by commit dc9641895abb ("vt: delete unneeded functions
+register_con_driver|take_over_console").  Grep is your friend!  There is
+more to clean up here:
+
+Documentation/console/console.txt:call take_over_console() will succeed in =
+the takeover regardless of the type
+Documentation/console/console.txt:	 take_over_console() - load and bind dri=
+ver to console layer
+Documentation/console/console.txt:take_over_console() is now broken up into:
+Documentation/console/console.txt:   or take_over_console(). register_con_d=
+river() will just add the driver to
+Documentation/console/console.txt:   console. take_over_console(), as it na=
+me implies, will also take over (or
+arch/alpha/kernel/console.c:	take_over_console(&vga_con, 0, MAX_NR_CONSOLES=
+-1, 1);
+arch/alpha/kernel/process.c:		take_over_console(&dummy_con, 0, MAX_NR_CONSO=
+LES-1, 1);
+arch/mips/pci/pci-bcm1480.c:	take_over_console(&vga_con, 0, MAX_NR_CONSOLES=
+-1, 1);
+arch/mips/pci/pci-sb1250.c:	take_over_console(&vga_con, 0, MAX_NR_CONSOLES =
+- 1, 1);
+arch/parisc/kernel/setup.c:	conswitchp =3D &dummy_con;	/* we use take_over_=
+console() later ! */
+drivers/tty/vt/vt.c: *	take_over_console is basically a register followed b=
+y unbind
+drivers/usb/misc/sisusbvga/sisusb_con.c:	/* This is called by take_over_con=
+sole(),
+drivers/usb/misc/sisusbvga/sisusb_con.c:	/* This is called by take_over_con=
+sole()
+drivers/usb/misc/sisusbvga/sisusb_con.c:	ret =3D take_over_console(&sisusb_=
+con, first - 1, last - 1, 0);
+drivers/usb/misc/sisusbvga/sisusb_con.c:				take_over_console(&sisusb_dummy=
+_con, i, i, 0);
+drivers/usb/misc/sisusbvga/sisusb_con.c:				 * consoles is executed by take=
+_over_console().
+drivers/video/console/fbcon.c:/* NOTE: fbcon cannot be __init: it may be ca=
+lled from take_over_console later */
+drivers/video/console/mdacon.c:	return take_over_console(&mda_con, mda_firs=
+t_vc-1, mda_last_vc-1, 0);
+drivers/video/console/newport_con.c:/* Can't be __init, take_over_console m=
+ay call it later */
+drivers/video/console/newport_con.c:	return take_over_console(&newport_con,=
+ 0, MAX_NR_CONSOLES - 1, 1);
+drivers/video/console/sticon.c:	return take_over_console(&sti_con, 0, MAX_N=
+R_CONSOLES - 1, 1);
+
+Documentation/console/console.txt:	 register_con_driver()
+Documentation/console/console.txt:     register_con_driver()
+Documentation/console/console.txt:1. All drivers, except system drivers, mu=
+st call either register_con_driver()
+Documentation/console/console.txt:   or take_over_console(). register_con_d=
+river() will just add the driver to
+
+I have used the version of the tty tree from next-20130520 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/intel_dp.c
-index 3d704b7,2bb4009..0000000
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@@ -755,6 -782,10 +783,8 @@@ found
-  			       target_clock, adjusted_mode->clock,
-  			       &pipe_config->dp_m_n);
- =20
- -	pipe_config->pipe_bpp =3D bpp;
- -
-+ 	intel_dp_set_clock(encoder, pipe_config, intel_dp->link_bw);
-+=20
-  	return true;
-  }
- =20
-@@@ -1379,8 -1400,15 +1399,16 @@@ static void intel_enable_dp(struct inte
-  	ironlake_edp_panel_on(intel_dp);
-  	ironlake_edp_panel_vdd_off(intel_dp, true);
-  	intel_dp_complete_link_train(intel_dp);
- +	intel_dp_stop_link_train(intel_dp);
-  	ironlake_edp_backlight_on(intel_dp);
-+=20
-+ 	if (IS_VALLEYVIEW(dev)) {
-+ 		struct intel_digital_port *dport =3D
-+ 			enc_to_dig_port(&encoder->base);
-+ 		int channel =3D vlv_dport_to_channel(dport);
-+=20
-+ 		vlv_wait_port_ready(dev_priv, channel);
-+ 	}
-  }
- =20
-  static void intel_pre_enable_dp(struct intel_encoder *encoder)
-
---Signature=_Tue__21_May_2013_11_58_11_+1000_nybcUPoT4S5fC30o
+--Signature=_Tue__21_May_2013_13_25_32_+1000_0P7AsvYlRzRXrKpP
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRmtSzAAoJEECxmPOUX5FEr5EP/RABQ4JPctaO6jIrpajzMBHt
-7SHcA15erG3en8m1hxpwz1Lh5wjTT2NduAe9608mVgu1XiWGVtMtRAJdT/LyIblt
-uaPRAt1th3TfyoVQwdE9H+xxNLjbN+zURN1xPxvqIf/fdWF4GGVi0fzpvcwbKSQ3
-iOYntEZxfHX4EkvoVnUgEcqrv4xIUsyP1S8aDux0777p9DJERJQjraMgkbWny2qB
-BsynJ4SWyBFaVfECQSAXt6pgoSQk9PzjNC6gqoPFRE6MaPf7AFDdoAC3OX8dbKQH
-U1JwUBYO83yVqanTjQwCunW+MR9uxvMoG5VC3/1Ej6cThLrrgb7M+A7moBRGmj5X
-f722LgKcd0u74IYsF0XJ46qYY3lAhB/Fgl2KX5n1B39bZfarcMNVnRS7XMxOFy8P
-NV4U2VI3unWx4mpcOjafTTEKt8QH3lcWc3W6QyShZTlh90rdt0XQeSd8bwvAZAJm
-trp55i6p6Ik+H3IdkFpsYl7nkeDDxn4fdPJl/wI0mAJPcgd3HE9leYGAodm1L7wH
-geHe4IeGG0hcnr5LJF9udANTh1HTZFGD4X/4mfxmXyZkwGqiSYlevRWLvJMoEJYp
-I1ogBO1MkXd4J+T2chDE2U+K4ImDJAu43FpHtLTOu4eAHH8qTGoD3GsgLBzTgFDp
-FnPrkPEJpIuIzA5Rjp+x
-=ry9I
+iQIcBAEBCAAGBQJRmuksAAoJEECxmPOUX5FELIsP/Rtt80insLGYdodX+o6gu2FR
+50PjdtgBKKeg14AgfG6BkRL7VBmDAlCavFzKAOVlBmZTAxoNEcTpsjknF3ytrN+p
+krRxevoARtED4BtiM1ArGNK1VuGXnd7LxX/j3dtWwsibj/X7kNHmSLQnjTNVfgZz
+Xvn1RxeuAcMy91/i+RKNqQYAkiFsQdToiegxjahADyOqWu60bovSAvavwn80P0vG
+RnYhWdYIihow8xXHuLm9xEd3jKkXbkSLGghVabjdQYot97r3pR/jip2lfh7rc8ou
+5acK6Ixo34TTsdHhs3rhM1HJG2IWqYW7gxfenZ/4yTPJL+8+UPaQUSK6M18VQBKQ
+Y/6YJ2zDN1kjE6px75D0jKVa/17+uhuBg0+VaXA5OAR6tKY98UzRMo1iKJ30fZFw
+zWR6Lnxa2Dxli78VSKuenV1dh+Zmc4SpzLK0lGUEw0UV+ZT7bpBWEYGBONi/4z7c
+NvVesUyWNqwzyXn+vwNaFjYAhlCZ+6T0GDIJ52ThVrVH405t2+kUieFHlF29cnTV
+ZiSPZCcaOutNq0zL67diVE+En/PEAaCXZaG8eXQWPVl2IboREDWCUh1flPjZSBAi
+xdYsbfQHvpOThLo2sivGXjMM9XeuBW0frk/yM4rhOLWWtfRj18krjLQbI7Hh2Ffd
+eNs7Hkog7+lG/afuXxbL
+=FTD9
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__21_May_2013_11_58_11_+1000_nybcUPoT4S5fC30o--
+--Signature=_Tue__21_May_2013_13_25_32_+1000_0P7AsvYlRzRXrKpP--
