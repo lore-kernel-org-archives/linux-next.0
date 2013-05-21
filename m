@@ -1,45 +1,68 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: mmotm 2013-05-09-15-57 uploaded
-Date: Mon, 20 May 2013 15:31:35 -0700
-Message-ID: <20130520153135.a47e21227a4fc3a77996b482@linux-foundation.org>
-References: <20130509225833.C37A55A41D4@corp2gmr1-2.hot.corp.google.com>
-	<CAFTL4hwvP7GsrNTc4knQRMV1YHXnZRes=E_NpLAKSOgqTeou5g@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: question about the pwm tree
+Date: Tue, 21 May 2013 10:12:19 +1000
+Message-ID: <20130521101219.5baab2b22a678cad2d258c84@canb.auug.org.au>
+References: <20130520095355.edd430ab7ff5592c857bc6f1@canb.auug.org.au>
+	<CA+PwDYeEiceeFBUMK_m+kArMgWivC6FsLDr+_i79Sied_cwhGg@mail.gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__21_May_2013_10_12_19_+1000_R5D/p+3Lap1ThhxV"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54633 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755939Ab3EUAMc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 May 2013 20:12:32 -0400
+In-Reply-To: <CA+PwDYeEiceeFBUMK_m+kArMgWivC6FsLDr+_i79Sied_cwhGg@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thierry Reding <thierry.reding@avionic-design.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+
+--Signature=_Tue__21_May_2013_10_12_19_+1000_R5D/p+3Lap1ThhxV
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <CAFTL4hwvP7GsrNTc4knQRMV1YHXnZRes=E_NpLAKSOgqTeou5g@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 20 May 2013 11:42:09 +0200 Frederic Weisbecker <fweisbec@gmail.com> wrote:
+Hi Thierry,
 
-> Hi Andrew,
-> 
-> 2013/5/10  <akpm@linux-foundation.org>:
-> [...]
-> > * posix_cpu_timer-consolidate-expiry-time-type.patch
-> > * posix_cpu_timers-consolidate-timer-list-cleanups.patch
-> > * posix_cpu_timers-consolidate-expired-timers-check.patch
-> > * selftests-add-basic-posix-timers-selftests.patch
-> > * posix-timers-correctly-get-dying-task-time-sample-in-posix_cpu_timer_schedule.patch
-> > * posix_timers-fix-racy-timer-delta-caching-on-task-exit.patch
-> 
-> Do you have any plans concerning these patches? These seem to have
-> missed this merge window.
+On Mon, 20 May 2013 09:57:48 +0200 Thierry Reding <thierry.reding@gmail.com=
+> wrote:
+>
+> On Monday 20 May 2013, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > I noticed that you changed the email address for the maintainer of the
+> > pwm tree in the MAINTAINERS file.  should I use this new address as your
+> > contact for linux-next as well?
+>=20
+> Yes, that'd be great. I'm in the process of migrating to my private
+> email address and it's turning out to be a complete nightmare.
 
-They're in my queue of "stuff to send to tglx" when I do my next
-maintainer patchbombing.
+Done.
 
-I guess I should have done that significantly before the 3.10 release,
-but it's rather discouraging how few of those patches get applied by
-anyone.  Maybe the solution to that is to send them more often, not
-less.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--Signature=_Tue__21_May_2013_10_12_19_+1000_R5D/p+3Lap1ThhxV
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRmrvjAAoJEECxmPOUX5FEMBwP/ipUeZzoEcoJID71+u9bAHfY
+mSJcD1cjxRBdIIfSO7OrLKsu7vmeQNV5cWwEBVrYpPt4rLUW1aBgmYl13cbo+fUV
+U2xOsLOv0dk8X7MLZ01KUJbMJ9z/EAeKU3eqgyd46zxE1kuZfaOEbsnpFCMkJgAz
+IrHYtx+Cb2KngsIQ0mtWUhh1DcbtbFNJ4HGDkKdfR9PaxdVdPz/kYCb+1m8aAywo
+lHefSWie9zmuLJDwEqvlBgMFyYmv4MIH6DylF78fPiKa83to624kOqUbnnzA0vDC
+ZG5irg+k2Avha0mG/CJ90IuJ4BDvUqF812ZqoKvTmR2oW2w0Cc3CM1gqOCi1IeOC
+LFYhvfnerdLQLg6uvVMRcXP18JnpvPrt/0evPnuA5zc6xS+tXjFL8k+ahp6k120o
+4V1bhMsi4TT3mrycbxBPWpczsNBfUePUBP8imNu0e0zPQ7137o155Xt0LW7GBFAZ
+BPY68Wvenl/hRLJhOiCwb6W+dE0VhGzCgutNYj2jFOGhG6NrB2wcDnRu3yzbR5D9
+isNyv8LXxgc+iov/fGYT5bAK98Sb23qToc+nOKWbiBSkRTYhhbnKKx/kv1kl4r67
+AWWVQ8Jy1eSIVEb0Dm3Xil+y6ztjf7ISTcud5WuxaFbCcWxjtipCilLHnGpl9CPN
+Dd4DUONWVguJo0ig9N2Y
+=4aEf
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__21_May_2013_10_12_19_+1000_R5D/p+3Lap1ThhxV--
