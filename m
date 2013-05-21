@@ -1,67 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the crypto tree
-Date: Tue, 21 May 2013 11:45:48 +1000
-Message-ID: <20130521114548.a7bc47b2247f39ec40c44e33@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
+Date: Tue, 21 May 2013 11:58:11 +1000
+Message-ID: <20130521115811.aa350c0edc6a9065adbf5852@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__21_May_2013_11_45_48_+1000_+qQAf10O4cmk4y2G"
+ boundary="Signature=_Tue__21_May_2013_11_58_11_+1000_nybcUPoT4S5fC30o"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34634 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:47598 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755340Ab3EUBp6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 May 2013 21:45:58 -0400
+	with ESMTP id S1755157Ab3EUB6T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 May 2013 21:58:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__21_May_2013_11_45_48_+1000_+qQAf10O4cmk4y2G
+--Signature=_Tue__21_May_2013_11_58_11_+1000_nybcUPoT4S5fC30o
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi all,
 
-After merging the crypto tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/intel_dp.c between commit 657445fe8660 ("Revert
+"drm/i915: revert eDP bpp clamping code changes"") from Linus' tree and
+commits c6bb353815c3 ("drm/i915: move dp clock computations to
+encoder->compute_config"), af13188a1a66 ("drm/i915: force bpp for eDP
+panels") and 52541e30339d ("drm/i915: allow high-bpc modes on DP") from
+the drm-intel tree.
 
-arch/x86/crypto/crct10dif-pclmul_glue.c: In function 'crct10dif_intel_mod_i=
-nit':
-arch/x86/crypto/crct10dif-pclmul_glue.c:140:3: error: implicit declaration =
-of function 'crc_t10dif_update_lib' [-Werror=3Dimplicit-function-declaratio=
-n]
-   crc_t10dif_update_lib();
-   ^
-cc1: some warnings being treated as errors
+I fixed it up (see below and I used the latter two commits instead of the
+one from Linus' tree) and can carry the fix as necessary (no action is
+required).
 
-Caused by commit b85ed9f056ee ("crypto: crct10dif - Glue code to cast
-accelerated CRCT10DIF assembly as a crypto transform").
-
-I have used the version of the crypto tree from next-20130520 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__21_May_2013_11_45_48_+1000_+qQAf10O4cmk4y2G
+diff --cc drivers/gpu/drm/i915/intel_dp.c
+index 3d704b7,2bb4009..0000000
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@@ -755,6 -782,10 +783,8 @@@ found
+  			       target_clock, adjusted_mode->clock,
+  			       &pipe_config->dp_m_n);
+ =20
+ -	pipe_config->pipe_bpp =3D bpp;
+ -
++ 	intel_dp_set_clock(encoder, pipe_config, intel_dp->link_bw);
++=20
+  	return true;
+  }
+ =20
+@@@ -1379,8 -1400,15 +1399,16 @@@ static void intel_enable_dp(struct inte
+  	ironlake_edp_panel_on(intel_dp);
+  	ironlake_edp_panel_vdd_off(intel_dp, true);
+  	intel_dp_complete_link_train(intel_dp);
+ +	intel_dp_stop_link_train(intel_dp);
+  	ironlake_edp_backlight_on(intel_dp);
++=20
++ 	if (IS_VALLEYVIEW(dev)) {
++ 		struct intel_digital_port *dport =3D
++ 			enc_to_dig_port(&encoder->base);
++ 		int channel =3D vlv_dport_to_channel(dport);
++=20
++ 		vlv_wait_port_ready(dev_priv, channel);
++ 	}
+  }
+ =20
+  static void intel_pre_enable_dp(struct intel_encoder *encoder)
+
+--Signature=_Tue__21_May_2013_11_58_11_+1000_nybcUPoT4S5fC30o
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRmtHMAAoJEECxmPOUX5FEuigP/jDuxsCokWu9Cyay5SDezQus
-RANy6gqwXWFjvkbdvr6huSwBUNcVF0EhUK92mj+i4D4aK+fL067b6CvbcyyXGXkt
-v6vcP5uMNZY3rRyNk5kRc5/pvcQSK1Gakz9GHyOBokVluDObyaeomFPeovmxvGUR
-A2SXi+b3/4jLf2KbAivn60+ttlBETzEAPeigsrOrHr/eG8RA9oDRcQpTCH0TbQ+k
-Il9Rb1cbz6Szf7kZ92IEvtsND3El89KEdMS2re6IbIh0zKyXQibfAZP1eb6UhR/B
-cTShtSGKdEygctxu2fj6wkrUk5GM7i63FKLDFFZYERU4Bp7wbJeKkEao2/AcCuLr
-zjOFBoVk5XtIIyGdUaZsYCfOmYxJn4BoY183SOZxfReHExzO4uELHDjbIbEDNF2J
-WT5rjq9CEH+gRpG3gMi8NQqACaxH/GduT2Z2ToBZ7MCiKpVjpZJa/zI/7dNItS2+
-B1CRY3Z6MhrO+zOZUSijbUyUCXB7E2QI881pkJF8hrWKkgi+KtA3LiAOM25tKq+E
-bke32ncQYxFRD36Pdj7zfIhkJd1eZtHjHJwoVA49YdO8Dfv221ydtpb9Ui2g2Aej
-xDQuwNuQnSJV4F0mdUuZ6Zxn9/0Ka9dt+HIPFNnWqnc7Zz2QWXgrKvZbtRargrll
-4chSmM/sW9pi5BU/OLIV
-=jrgF
+iQIcBAEBCAAGBQJRmtSzAAoJEECxmPOUX5FEr5EP/RABQ4JPctaO6jIrpajzMBHt
+7SHcA15erG3en8m1hxpwz1Lh5wjTT2NduAe9608mVgu1XiWGVtMtRAJdT/LyIblt
+uaPRAt1th3TfyoVQwdE9H+xxNLjbN+zURN1xPxvqIf/fdWF4GGVi0fzpvcwbKSQ3
+iOYntEZxfHX4EkvoVnUgEcqrv4xIUsyP1S8aDux0777p9DJERJQjraMgkbWny2qB
+BsynJ4SWyBFaVfECQSAXt6pgoSQk9PzjNC6gqoPFRE6MaPf7AFDdoAC3OX8dbKQH
+U1JwUBYO83yVqanTjQwCunW+MR9uxvMoG5VC3/1Ej6cThLrrgb7M+A7moBRGmj5X
+f722LgKcd0u74IYsF0XJ46qYY3lAhB/Fgl2KX5n1B39bZfarcMNVnRS7XMxOFy8P
+NV4U2VI3unWx4mpcOjafTTEKt8QH3lcWc3W6QyShZTlh90rdt0XQeSd8bwvAZAJm
+trp55i6p6Ik+H3IdkFpsYl7nkeDDxn4fdPJl/wI0mAJPcgd3HE9leYGAodm1L7wH
+geHe4IeGG0hcnr5LJF9udANTh1HTZFGD4X/4mfxmXyZkwGqiSYlevRWLvJMoEJYp
+I1ogBO1MkXd4J+T2chDE2U+K4ImDJAu43FpHtLTOu4eAHH8qTGoD3GsgLBzTgFDp
+FnPrkPEJpIuIzA5Rjp+x
+=ry9I
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__21_May_2013_11_45_48_+1000_+qQAf10O4cmk4y2G--
+--Signature=_Tue__21_May_2013_11_58_11_+1000_nybcUPoT4S5fC30o--
