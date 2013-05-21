@@ -1,46 +1,63 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the akpm tree with the net-next
  tree
-Date: Tue, 21 May 2013 13:04:38 -0700
-Message-ID: <20130521130438.1ecdf535ab2461888abbe0c3@linux-foundation.org>
-References: <20130521142948.444f09820c5406f9adc4b7f1@canb.auug.org.au>
+Date: Wed, 22 May 2013 09:54:36 +1000
+Message-ID: <20130522095436.66e63c613c41da01cd103208@canb.auug.org.au>
+References: <20130521142537.00a9ccb7ca4aa81f553b61cf@canb.auug.org.au>
+	<519B25CD.5060801@redhat.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__22_May_2013_09_54_36_+1000_0TExivfAl2d=7F9o"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <519B25CD.5060801@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Borkmann <dborkman@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Nicolas Schichan <nschichan@freebox.fr>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__22_May_2013_09_54_36_+1000_0TExivfAl2d=7F9o
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58154 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751984Ab3EUUEk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 May 2013 16:04:40 -0400
-In-Reply-To: <20130521142948.444f09820c5406f9adc4b7f1@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <dborkman@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Nicolas Schichan <nschichan@freebox.fr>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 21 May 2013 14:29:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Daniel,
 
-> Hi Andrew,
-> 
-> Today's linux-next merge of the akpm tree got a conflict in
-> arch/arm/net/bpf_jit_32.c between commit aafc787e41fd ("arm: bpf_jit: can
-> call module_free() from any context") from the net-next tree and commit
-> "bpf: add comments explaining the schedule_work() operation" from the
-> akpm tree.
-> 
-> The former means that the latter is no longer required, so I used the
-> former and can carry the fix as necessary (no action is required).
+On Tue, 21 May 2013 09:44:13 +0200 Daniel Borkmann <dborkman@redhat.com> wr=
+ote:
+>
+> Also seccomp_jit_free() needs a change otherwise the kernel won't build
+> with CONFIG_SECCOMP_FILTER_JIT enabled since the work_struct is initializ=
+ed
+> with the bpf_jit_free_worker() callback, which is no longer existent.
+>=20
+> Do you want me to send you a patch?
 
-Yes, there have been a lot of conflicts in
+Yes, please.
 
-seccomp-add-generic-code-for-jitted-seccomp-filters.patch
-arm-net-bpf_jit-make-code-generation-less-dependent-on-struct-sk_filter.patch
-arm-net-bpf_jit-make-code-generation-less-dependent-on-struct-sk_filter-fixup-merge-conflict.patch
-arm-net-bpf_jit-add-support-for-jitted-seccomp-filters.patch
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-recently and I'm presently seeing a compilation error.
+--Signature=_Wed__22_May_2013_09_54_36_+1000_0TExivfAl2d=7F9o
+Content-Type: application/pgp-signature
 
-Nicolas, I think the patches need a re-check so I'll drop the versions
-which I presently have.  Please refresh, retest and resend when
-convenient?  It'll need to be against linux-next, which is where the
-conflicting (vfree/module_free) changes have occurred.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRnAlAAAoJEECxmPOUX5FEp/0QAJAoFRXOZKc0tIn1kcPdgf1f
+iFQw8PZmE8VB+lC6SzmqfPs0nuFHG1TPMhfFLJaLw91jDdw+E9sgIN3bnm3gaerG
+JbwN4zzfygv5Aa3w+1Z8aDrVPYZAqKSheMPRRzxejeJ0RXiy3scQ6HZBv1U8rXhy
+jk/QdCj7vtGbKgnoEbKuo4EBdX/LayKMOC4RMn3TaIu6yCXlOPfgIcjNXaCedPT/
+gqslM6VTDHg/KpZ4mojMog+j5IB9YSpJGFMTqBLG3NJiCKwC3hHsi0sGtsV98ocw
+m1eWnUJTr4oa0xyKNOqXkVtCtD33JdteobpPA6tW7WfAJxW95Yt61TV5SEs3eI4S
+nJ8wbROtcTDmEoxp4e8pBHI/GBpqqj8RAZB5n/yJleWWWOK4O9WIXsaIcHm8+Dji
+OK4LNEOApkAkEO54gxZFRGzNSQYIPFRCeBizD/qH1d1dh45CeXZXqSj5T6gjpQFw
+j53inMbDF5+E8FCKXmoZI1CbWRwKferUl8KchvqEZf6+dkbA2XABgsYLTLNDudCO
+k76H14on3tcZJRxVTfke2DR8rfQCr269omcaKcS955cU/qirfjjoB7431Ea2me8W
+FWuZaqGIZW4wthMnnXZmPH2q1LI7q8A7kx2MWAT/BdKEfaOhgLCc62llQr0C7rd8
+pKXfN/62L9rX3za0DoQT
+=0Xwa
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_May_2013_09_54_36_+1000_0TExivfAl2d=7F9o--
