@@ -1,41 +1,32 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH -next] ia64, metag: Do not export min_low_pfn in
- arch-specific code
-Date: Wed, 22 May 2013 19:57:17 +0200
-Message-ID: <20130522175717.GG10769@linux-mips.org>
-References: <1367086831-10740-1-git-send-email-geert@linux-m68k.org>
- <CAAG0J982gbca3XHHSpTHgqPgeGyJRtG8Lm1cWsT0HsThqdFeMw@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build warning after merge of the final tree
+ (net-next tree related)
+Date: Wed, 22 May 2013 12:26:24 -0700 (PDT)
+Message-ID: <20130522.122624.266893118412034519.davem@davemloft.net>
+References: <20130522155537.3cc0ee6254775cc88cf2218f@canb.auug.org.au>
+	<519CC70C.30604@elopez.com.ar>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ia64-owner@vger.kernel.org>
-Received: from localhost.localdomain ([127.0.0.1]:34518 "EHLO linux-mips.org"
-        rhost-flags-OK-OK-OK-FAIL) by eddie.linux-mips.org with ESMTP
-        id S6835040Ab3EVR5ZRC5Cb (ORCPT <rfc822;linux-next@vger.kernel.org>
-        + 3 others); Wed, 22 May 2013 19:57:25 +0200
-Content-Disposition: inline
-In-Reply-To: <CAAG0J982gbca3XHHSpTHgqPgeGyJRtG8Lm1cWsT0HsThqdFeMw@mail.gmail.com>
-Sender: linux-ia64-owner@vger.kernel.org
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Sanjay Lal <sanjayl@kymasys.com>, kvm@vger.kernel.org, linux-mips@linux-mips.org, linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:43132 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756373Ab3EVT0Z convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 May 2013 15:26:25 -0400
+In-Reply-To: <519CC70C.30604@elopez.com.ar>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: emilio@elopez.com.ar
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Apr 28, 2013 at 11:24:35AM +0100, James Hogan wrote:
+=46rom: Emilio L=F3pez <emilio@elopez.com.ar>
+Date: Wed, 22 May 2013 10:24:28 -0300
 
-> On 27 April 2013 19:20, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > As of commit 787dcbe6984b3638e94f60d807dcb51bb8a07211 ("MIPS: Export
-> > symbols used by KVM/MIPS module"), min_low_pfn is already exported by
-> > the generic mm/bootmem.c, causing:
-> >
-> > WARNING: vmlinux: 'min_low_pfn' exported twice. Previous export was in vmlinux
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> 
-> This has been pointed out several times and needs fixing in the mips
-> tree where the warning was introduced.
+> @David, what would you like me to do? I can send another set of patch=
+es
+> fixing this, resend the full original series but fixed, or resend jus=
+t
+> the affected patches.
 
-I've changed the MIPS code to no longer require the export of min_low_pfn
-and dropped the export of that particular file.  I still see that IA-64
-and metag export min_low_pfn so maybe it should be exported from mm/
-after all?
-
-  Ralf
+Your patch series is in my tree and will not be reverted, we never do
+that.  Therefore you must send me patches which fix up these problems.
