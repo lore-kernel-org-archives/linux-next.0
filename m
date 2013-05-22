@@ -1,203 +1,46 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: manual merge of the driver-core tree with the pm tree
-Date: Wed, 22 May 2013 13:26:37 +0200
-Message-ID: <3737298.Dstqiqm06u@vostro.rjw.lan>
-References: <20130522134741.51b06d38cb4939003c8e37a0@canb.auug.org.au> <20130522140213.eb65bcc559088b199db1857f@canb.auug.org.au>
+From: =?ISO-8859-1?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>
+Subject: Re: linux-next: build warning after merge of the final tree (net-next
+ tree related)
+Date: Wed, 22 May 2013 10:24:28 -0300
+Message-ID: <519CC70C.30604@elopez.com.ar>
+References: <20130522155537.3cc0ee6254775cc88cf2218f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hydra.sisk.pl ([212.160.235.94]:45295 "EHLO hydra.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752457Ab3EVLRz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 May 2013 07:17:55 -0400
-In-Reply-To: <20130522140213.eb65bcc559088b199db1857f@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Igor Mammedov <imammedo@redhat.com>
-
-On Wednesday, May 22, 2013 02:02:13 PM Stephen Rothwell wrote:
-> Hi all,
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130522155537.3cc0ee6254775cc88cf2218f@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
 Hi Stephen,
 
-Thanks for fixing this up!
+El 22/05/13 02:55, Stephen Rothwell escribi=F3:
+> Hi all,
+>=20
+> After merging the final tree, today's linux-next build (sparc32 defco=
+nfig)
+> produced this warning:
+>=20
+> drivers/net/ethernet/sun/sunbmac.c: In function 'bigmac_set_multicast=
+':
+> drivers/net/ethernet/sun/sunbmac.c:998:6: warning: unused variable 'i=
+' [-Wunused-variable]
+>=20
+> Introduced by commit bfd428daaf61 ("net: ethernet: sun: initialize
+> variables directly") from the net-next tree.
+>=20
 
-Hi Greg,
+Thank you for notifying.
 
-What about merging my acpi-hotplug branch into the driver-core tree?
+After a second look at the code, I see the apple and korina patch
+counterparts also leave an extra i variable now; the dm9000 patch shoul=
+d
+be unaffected as it still uses i for other things.
 
-That would make the Linus' life easier going forward I suppose.
+@David, what would you like me to do? I can send another set of patches
+fixing this, resend the full original series but fixed, or resend just
+the affected patches.
 
-Thanks,
-Rafael
-
-
-> On Wed, 22 May 2013 13:47:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the driver-core tree got a conflict in
-> > drivers/base/cpu.c between commit 0902a9044fa5 ("Driver core: Use generic
-> > offline/online for CPU offline/online") from the pm tree and commit
-> > 1c4e2d70afb1 ("cpu: make sure that cpu/online file created before
-> > KOBJ_ADD is emitted") from the driver-core tree.
-> > 
-> > I fixed it up (they do some bits in common - see below) and can carry the
-> > fix as necessary (no action is required).
-> > 
-> > diff --cc drivers/base/cpu.c
-> > index 7431ba6,c377673..0000000
-> > --- a/drivers/base/cpu.c
-> > +++ b/drivers/base/cpu.c
-> > @@@ -38,39 -34,66 +38,48 @@@ static void change_cpu_under_node(struc
-> >   	cpu->node_id = to_nid;
-> >   }
-> >   
-> >  -static ssize_t show_online(struct device *dev,
-> >  -			   struct device_attribute *attr,
-> >  -			   char *buf)
-> >  +static int __ref cpu_subsys_online(struct device *dev)
-> >   {
-> >   	struct cpu *cpu = container_of(dev, struct cpu, dev);
-> >  +	int cpuid = dev->id;
-> >  +	int from_nid, to_nid;
-> >  +	int ret;
-> >  +
-> >  +	cpu_hotplug_driver_lock();
-> >  +
-> >  +	from_nid = cpu_to_node(cpuid);
-> >  +	ret = cpu_up(cpuid);
-> >  +	/*
-> >  +	 * When hot adding memory to memoryless node and enabling a cpu
-> >  +	 * on the node, node number of the cpu may internally change.
-> >  +	 */
-> >  +	to_nid = cpu_to_node(cpuid);
-> >  +	if (from_nid != to_nid)
-> >  +		change_cpu_under_node(cpu, from_nid, to_nid);
-> >   
-> >  -	return sprintf(buf, "%u\n", !!cpu_online(cpu->dev.id));
-> >  +	cpu_hotplug_driver_unlock();
-> >  +	return ret;
-> >   }
-> >   
-> >  -static ssize_t __ref store_online(struct device *dev,
-> >  -				  struct device_attribute *attr,
-> >  -				  const char *buf, size_t count)
-> >  +static int cpu_subsys_offline(struct device *dev)
-> >   {
-> >  -	struct cpu *cpu = container_of(dev, struct cpu, dev);
-> >  -	int cpuid = cpu->dev.id;
-> >  -	int from_nid, to_nid;
-> >  -	ssize_t ret;
-> >  +	int ret;
-> >   
-> >   	cpu_hotplug_driver_lock();
-> >  -	switch (buf[0]) {
-> >  -	case '0':
-> >  -		ret = cpu_down(cpuid);
-> >  -		if (!ret)
-> >  -			kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
-> >  -		break;
-> >  -	case '1':
-> >  -		from_nid = cpu_to_node(cpuid);
-> >  -		ret = cpu_up(cpuid);
-> >  -
-> >  -		/*
-> >  -		 * When hot adding memory to memoryless node and enabling a cpu
-> >  -		 * on the node, node number of the cpu may internally change.
-> >  -		 */
-> >  -		to_nid = cpu_to_node(cpuid);
-> >  -		if (from_nid != to_nid)
-> >  -			change_cpu_under_node(cpu, from_nid, to_nid);
-> >  -
-> >  -		if (!ret)
-> >  -			kobject_uevent(&dev->kobj, KOBJ_ONLINE);
-> >  -		break;
-> >  -	default:
-> >  -		ret = -EINVAL;
-> >  -	}
-> >  +	ret = cpu_down(dev->id);
-> >   	cpu_hotplug_driver_unlock();
-> >  -
-> >  -	if (ret >= 0)
-> >  -		ret = count;
-> >   	return ret;
-> >   }
-> >  -static DEVICE_ATTR(online, 0644, show_online, store_online);
-> >   
-> > + static struct attribute *hotplug_cpu_attrs[] = {
-> > + 	&dev_attr_online.attr,
-> > + 	NULL
-> > + };
-> > + 
-> > + static struct attribute_group hotplug_cpu_attr_group = {
-> > + 	.attrs = hotplug_cpu_attrs,
-> > + };
-> > + 
-> >   void unregister_cpu(struct cpu *cpu)
-> >   {
-> >   	int logical_cpu = cpu->dev.id;
-> > @@@ -102,20 -125,8 +111,19 @@@ static ssize_t cpu_release_store(struc
-> >   static DEVICE_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
-> >   static DEVICE_ATTR(release, S_IWUSR, NULL, cpu_release_store);
-> >   #endif /* CONFIG_ARCH_CPU_PROBE_RELEASE */
-> > - 
-> >   #endif /* CONFIG_HOTPLUG_CPU */
-> >   
-> >  +struct bus_type cpu_subsys = {
-> >  +	.name = "cpu",
-> >  +	.dev_name = "cpu",
-> >  +	.match = cpu_subsys_match,
-> >  +#ifdef CONFIG_HOTPLUG_CPU
-> >  +	.online = cpu_subsys_online,
-> >  +	.offline = cpu_subsys_offline,
-> >  +#endif
-> >  +};
-> >  +EXPORT_SYMBOL_GPL(cpu_subsys);
-> >  +
-> >   #ifdef CONFIG_KEXEC
-> >   #include <linux/kexec.h>
-> 
-> OK, after doing that I got this error:
-> 
-> drivers/base/cpu.c:75:3: error: 'dev_attr_online' undeclared here (not in a function)
->   &dev_attr_online.attr,
->    ^
-> 
-> So I applied this merge fix patch:
-> 
-> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-> index 811bb5a..ff97614 100644
-> --- a/drivers/base/cpu.c
-> +++ b/drivers/base/cpu.c
-> @@ -71,15 +71,6 @@ static int cpu_subsys_offline(struct device *dev)
->  	return ret;
->  }
->  
-> -static struct attribute *hotplug_cpu_attrs[] = {
-> -	&dev_attr_online.attr,
-> -	NULL
-> -};
-> -
-> -static struct attribute_group hotplug_cpu_attr_group = {
-> -	.attrs = hotplug_cpu_attrs,
-> -};
-> -
->  void unregister_cpu(struct cpu *cpu)
->  {
->  	int logical_cpu = cpu->dev.id;
-> @@ -182,9 +173,6 @@ static const struct attribute_group *hotplugable_cpu_attr_groups[] = {
->  #ifdef CONFIG_KEXEC
->  	&crash_note_cpu_attr_group,
->  #endif
-> -#ifdef CONFIG_HOTPLUG_CPU
-> -	&hotplug_cpu_attr_group,
-> -#endif
->  	NULL
->  };
->  
-> Better ideas welcome :-)
-> 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Emilio
