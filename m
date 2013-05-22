@@ -1,68 +1,37 @@
-From: Igor Mammedov <imammedo@redhat.com>
-Subject: [PATCH linux-next] Driver core: cpu: remove not needed anymore hotplugable_cpu_attr_groups[]
-Date: Wed, 22 May 2013 15:53:32 +0200
-Message-ID: <1369230812-27375-1-git-send-email-imammedo@redhat.com>
-References: <20130522140213.eb65bcc559088b199db1857f@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH] tty: mxser: Fix build warning introduced by dfc7b837c7f9
+ (Re: linux-next: build warning after merge of the tty.current tree)
+Date: Wed, 22 May 2013 08:35:30 -0700
+Message-ID: <20130522153530.GC10402@kroah.com>
+References: <20130522133722.d52b827e455275dfdecf12dd@canb.auug.org.au>
+ <alpine.LRH.2.00.1305221109110.10829@lnfm1.sai.msu.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:58189 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755724Ab3EVN5o (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 May 2013 09:57:44 -0400
-In-Reply-To: <20130522140213.eb65bcc559088b199db1857f@canb.auug.org.au>
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:38626 "EHLO
+	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756444Ab3EVPfj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 May 2013 11:35:39 -0400
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.00.1305221109110.10829@lnfm1.sai.msu.ru>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jirislaby@gmail.com, linux-serial@vger.kernel.org
 
-after fixing conflict between
-0902a9044 "Driver core: Use generic offline/online
-for CPU offline/online"
+On Wed, May 22, 2013 at 11:13:38AM +0400, Matwey V. Kornilov wrote:
+> From: Matwey V. Kornilov <matwey@sai.msu.ru>
+> 
+> Fix build warning at mxser.c introduced by dfc7b837c7f9
+> 
+> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+> ---
 
-and
+You forgot to add "reported-by:" :(
 
-1c4e2d70a "cpu: make sure that cpu/online file created
-before KOBJ_ADD is emitted"
+I'll go do it by hand...
 
-there was left some not needed remnants of the last
-commit, remove them since the first commit does the
-same thing in another way.
+thanks,
 
-Signed-off-by: Igor Mammedov <imammedo@redhat.com>
----
-PS:
-Alernative way is just to drop 1c4e2d70a if rebase of tree
-is acceptable.
-
----
- drivers/base/cpu.c |    9 ---------
- 1 files changed, 0 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index ff97614..130ba0b 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -169,13 +169,6 @@ static const struct attribute_group *common_cpu_attr_groups[] = {
- 	NULL
- };
- 
--static const struct attribute_group *hotplugable_cpu_attr_groups[] = {
--#ifdef CONFIG_KEXEC
--	&crash_note_cpu_attr_group,
--#endif
--	NULL
--};
--
- /*
-  * Print cpu online, possible, present, and system maps
-  */
-@@ -292,8 +285,6 @@ int __cpuinit register_cpu(struct cpu *cpu, int num)
- 	cpu->dev.bus->uevent = arch_cpu_uevent;
- #endif
- 	cpu->dev.groups = common_cpu_attr_groups;
--	if (cpu->hotpluggable)
--		cpu->dev.groups = hotplugable_cpu_attr_groups;
- 	error = device_register(&cpu->dev);
- 	if (!error)
- 		per_cpu(cpu_sys_devices, num) = &cpu->dev;
--- 
-1.7.1
+greg k-h
