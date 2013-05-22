@@ -1,69 +1,92 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: linux-next: build failure after merge of the vhost tree
-Date: Wed, 22 May 2013 12:03:40 +0300
-Message-ID: <20130522090340.GA19482@redhat.com>
-References: <20130522143704.3431658328f8f879f55b0910@canb.auug.org.au>
+From: Daniel Borkmann <dborkman@redhat.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the net-next tree
+Date: Wed, 22 May 2013 11:20:51 +0200
+Message-ID: <519C8DF3.7000605@redhat.com>
+References: <20130521142537.00a9ccb7ca4aa81f553b61cf@canb.auug.org.au> <519B25CD.5060801@redhat.com> <20130522095436.66e63c613c41da01cd103208@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed;
+ boundary="------------040407090900060402060109"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:63685 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:48393 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751495Ab3EVJDZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 May 2013 05:03:25 -0400
-Content-Disposition: inline
-In-Reply-To: <20130522143704.3431658328f8f879f55b0910@canb.auug.org.au>
+	id S1752407Ab3EVJVE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 May 2013 05:21:04 -0400
+In-Reply-To: <20130522095436.66e63c613c41da01cd103208@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Nicolas Schichan <nschichan@freebox.fr>
 
-On Wed, May 22, 2013 at 02:37:04PM +1000, Stephen Rothwell wrote:
-> Hi Michael,
-> 
-> After merging the vhost tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> In file included from arch/powerpc/include/asm/uaccess.h:12:0,
->                  from arch/powerpc/lib/checksum_wrappers_64.c:24:
-> include/asm-generic/uaccess.h: In function 'might_fault':
-> include/asm-generic/uaccess.h:36:2: error: implicit declaration of function 'segment_eq' [-Werror=implicit-function-declaration]
->   if (_might_fault())
->   ^
-> include/asm-generic/uaccess.h:36:2: error: implicit declaration of function 'get_fs' [-Werror=implicit-function-declaration]
-> include/asm-generic/uaccess.h:29:47: error: 'KERNEL_DS' undeclared (first use in this function)
->  #define _might_fault() (!segment_eq(get_fs(), KERNEL_DS) && !in_atomic())
->                                                ^
-> include/asm-generic/uaccess.h:36:6: note: in expansion of macro '_might_fault'
->   if (_might_fault())
->       ^
-> 
-> and many, many more.
-> 
-> Caused by commit d198a8acf543 ("kernel: might_fault does not imply
-> might_sleep").
-> 
-> I have used the version of the vhost tree from next-20130521 for today.
+This is a multi-part message in MIME format.
+--------------040407090900060402060109
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Aha I see what happened. I fixed it and made sure the
-changes build and work, but didn't commit and pushed from
-a dirty tree.
+On 05/22/2013 01:54 AM, Stephen Rothwell wrote:
+> Hi Daniel,
+>
+> On Tue, 21 May 2013 09:44:13 +0200 Daniel Borkmann <dborkman@redhat.com> wrote:
+>>
+>> Also seccomp_jit_free() needs a change otherwise the kernel won't build
+>> with CONFIG_SECCOMP_FILTER_JIT enabled since the work_struct is initialized
+>> with the bpf_jit_free_worker() callback, which is no longer existent.
+>>
+>> Do you want me to send you a patch?
+>
+> Yes, please.
 
-> 
-> It was unexpected that such patches would turn up in the "vhost" tree ...
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+In case this is still needed, patch attached. That should fix it.
 
-vhost wants to use these changes but these patches are still
-work in progress. Since the changes are all over the
-tree I thought looking at how they interact with
-everyone's work at an early stage is a good idea.
+--------------040407090900060402060109
+Content-Type: text/x-patch;
+ name="0001-arm-bpf_jit-fixup-build-error-in-seccomp_jit_free.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-arm-bpf_jit-fixup-build-error-in-seccomp_jit_free.patch"
 
-Of course breaking builds for everyone is not acceptable,
-I'm very sorry about that.
-I'll make double sure by tree is clean before push next time,
-will also look at whether git push can check this automatically.
+>From 72d68685f31b84f64826740cf3d33ba6d8d28ffc Mon Sep 17 00:00:00 2001
+Message-Id: <72d68685f31b84f64826740cf3d33ba6d8d28ffc.1369214198.git.dborkman@redhat.com>
+In-Reply-To: <cover.1369214198.git.dborkman@redhat.com>
+References: <cover.1369214198.git.dborkman@redhat.com>
+From: Daniel Borkmann <dborkman@redhat.com>
+Date: Wed, 22 May 2013 11:12:31 +0200
+Subject: [PATCH] arm: bpf_jit: fixup build error in seccomp_jit_free
 
+bpf_jit_free_worker() no longer exist, so get seccomp_jit_free()
+in line with bpf_jit_free().
+
+Signed-off-by: Daniel Borkmann <dborkman@redhat.com>
+---
+ arch/arm/net/bpf_jit_32.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/net/bpf_jit_32.c b/arch/arm/net/bpf_jit_32.c
+index 62aca35..3fe001d 100644
+--- a/arch/arm/net/bpf_jit_32.c
++++ b/arch/arm/net/bpf_jit_32.c
+@@ -969,18 +969,9 @@ void seccomp_jit_compile(struct seccomp_filter *fp)
+ 
+ void seccomp_jit_free(struct seccomp_filter *fp)
+ {
+-	struct work_struct *work;
+ 	void *bpf_func = seccomp_filter_get_bpf_func(fp);
+ 
+-	if (bpf_func != sk_run_filter) {
+-		/*
+-		 * seccomp_jit_free() can be called from softirq; module_free()
+-		 * requires process context.
+-		 */
+-		work = (struct work_struct *)bpf_func;
+-
+-		INIT_WORK(work, bpf_jit_free_worker);
+-		schedule_work(work);
+-	}
++	if (bpf_func != sk_run_filter)
++		module_free(NULL, bpf_func);
+ }
+ #endif
 -- 
-MST
+1.7.11.7
+
+
+--------------040407090900060402060109--
