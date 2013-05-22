@@ -1,92 +1,203 @@
-From: Daniel Borkmann <dborkman@redhat.com>
-Subject: Re: linux-next: manual merge of the akpm tree with the net-next tree
-Date: Wed, 22 May 2013 11:20:51 +0200
-Message-ID: <519C8DF3.7000605@redhat.com>
-References: <20130521142537.00a9ccb7ca4aa81f553b61cf@canb.auug.org.au> <519B25CD.5060801@redhat.com> <20130522095436.66e63c613c41da01cd103208@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: manual merge of the driver-core tree with the pm tree
+Date: Wed, 22 May 2013 13:26:37 +0200
+Message-ID: <3737298.Dstqiqm06u@vostro.rjw.lan>
+References: <20130522134741.51b06d38cb4939003c8e37a0@canb.auug.org.au> <20130522140213.eb65bcc559088b199db1857f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------040407090900060402060109"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:48393 "EHLO mx1.redhat.com"
+Received: from hydra.sisk.pl ([212.160.235.94]:45295 "EHLO hydra.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752407Ab3EVJVE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 May 2013 05:21:04 -0400
-In-Reply-To: <20130522095436.66e63c613c41da01cd103208@canb.auug.org.au>
+	id S1752457Ab3EVLRz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 May 2013 07:17:55 -0400
+In-Reply-To: <20130522140213.eb65bcc559088b199db1857f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Nicolas Schichan <nschichan@freebox.fr>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Igor Mammedov <imammedo@redhat.com>
 
-This is a multi-part message in MIME format.
---------------040407090900060402060109
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+On Wednesday, May 22, 2013 02:02:13 PM Stephen Rothwell wrote:
+> Hi all,
 
-On 05/22/2013 01:54 AM, Stephen Rothwell wrote:
-> Hi Daniel,
->
-> On Tue, 21 May 2013 09:44:13 +0200 Daniel Borkmann <dborkman@redhat.com> wrote:
->>
->> Also seccomp_jit_free() needs a change otherwise the kernel won't build
->> with CONFIG_SECCOMP_FILTER_JIT enabled since the work_struct is initialized
->> with the bpf_jit_free_worker() callback, which is no longer existent.
->>
->> Do you want me to send you a patch?
->
-> Yes, please.
+Hi Stephen,
 
-In case this is still needed, patch attached. That should fix it.
+Thanks for fixing this up!
 
---------------040407090900060402060109
-Content-Type: text/x-patch;
- name="0001-arm-bpf_jit-fixup-build-error-in-seccomp_jit_free.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-arm-bpf_jit-fixup-build-error-in-seccomp_jit_free.patch"
+Hi Greg,
 
->From 72d68685f31b84f64826740cf3d33ba6d8d28ffc Mon Sep 17 00:00:00 2001
-Message-Id: <72d68685f31b84f64826740cf3d33ba6d8d28ffc.1369214198.git.dborkman@redhat.com>
-In-Reply-To: <cover.1369214198.git.dborkman@redhat.com>
-References: <cover.1369214198.git.dborkman@redhat.com>
-From: Daniel Borkmann <dborkman@redhat.com>
-Date: Wed, 22 May 2013 11:12:31 +0200
-Subject: [PATCH] arm: bpf_jit: fixup build error in seccomp_jit_free
+What about merging my acpi-hotplug branch into the driver-core tree?
 
-bpf_jit_free_worker() no longer exist, so get seccomp_jit_free()
-in line with bpf_jit_free().
+That would make the Linus' life easier going forward I suppose.
 
-Signed-off-by: Daniel Borkmann <dborkman@redhat.com>
----
- arch/arm/net/bpf_jit_32.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+Thanks,
+Rafael
 
-diff --git a/arch/arm/net/bpf_jit_32.c b/arch/arm/net/bpf_jit_32.c
-index 62aca35..3fe001d 100644
---- a/arch/arm/net/bpf_jit_32.c
-+++ b/arch/arm/net/bpf_jit_32.c
-@@ -969,18 +969,9 @@ void seccomp_jit_compile(struct seccomp_filter *fp)
- 
- void seccomp_jit_free(struct seccomp_filter *fp)
- {
--	struct work_struct *work;
- 	void *bpf_func = seccomp_filter_get_bpf_func(fp);
- 
--	if (bpf_func != sk_run_filter) {
--		/*
--		 * seccomp_jit_free() can be called from softirq; module_free()
--		 * requires process context.
--		 */
--		work = (struct work_struct *)bpf_func;
--
--		INIT_WORK(work, bpf_jit_free_worker);
--		schedule_work(work);
--	}
-+	if (bpf_func != sk_run_filter)
-+		module_free(NULL, bpf_func);
- }
- #endif
+
+> On Wed, 22 May 2013 13:47:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the driver-core tree got a conflict in
+> > drivers/base/cpu.c between commit 0902a9044fa5 ("Driver core: Use generic
+> > offline/online for CPU offline/online") from the pm tree and commit
+> > 1c4e2d70afb1 ("cpu: make sure that cpu/online file created before
+> > KOBJ_ADD is emitted") from the driver-core tree.
+> > 
+> > I fixed it up (they do some bits in common - see below) and can carry the
+> > fix as necessary (no action is required).
+> > 
+> > diff --cc drivers/base/cpu.c
+> > index 7431ba6,c377673..0000000
+> > --- a/drivers/base/cpu.c
+> > +++ b/drivers/base/cpu.c
+> > @@@ -38,39 -34,66 +38,48 @@@ static void change_cpu_under_node(struc
+> >   	cpu->node_id = to_nid;
+> >   }
+> >   
+> >  -static ssize_t show_online(struct device *dev,
+> >  -			   struct device_attribute *attr,
+> >  -			   char *buf)
+> >  +static int __ref cpu_subsys_online(struct device *dev)
+> >   {
+> >   	struct cpu *cpu = container_of(dev, struct cpu, dev);
+> >  +	int cpuid = dev->id;
+> >  +	int from_nid, to_nid;
+> >  +	int ret;
+> >  +
+> >  +	cpu_hotplug_driver_lock();
+> >  +
+> >  +	from_nid = cpu_to_node(cpuid);
+> >  +	ret = cpu_up(cpuid);
+> >  +	/*
+> >  +	 * When hot adding memory to memoryless node and enabling a cpu
+> >  +	 * on the node, node number of the cpu may internally change.
+> >  +	 */
+> >  +	to_nid = cpu_to_node(cpuid);
+> >  +	if (from_nid != to_nid)
+> >  +		change_cpu_under_node(cpu, from_nid, to_nid);
+> >   
+> >  -	return sprintf(buf, "%u\n", !!cpu_online(cpu->dev.id));
+> >  +	cpu_hotplug_driver_unlock();
+> >  +	return ret;
+> >   }
+> >   
+> >  -static ssize_t __ref store_online(struct device *dev,
+> >  -				  struct device_attribute *attr,
+> >  -				  const char *buf, size_t count)
+> >  +static int cpu_subsys_offline(struct device *dev)
+> >   {
+> >  -	struct cpu *cpu = container_of(dev, struct cpu, dev);
+> >  -	int cpuid = cpu->dev.id;
+> >  -	int from_nid, to_nid;
+> >  -	ssize_t ret;
+> >  +	int ret;
+> >   
+> >   	cpu_hotplug_driver_lock();
+> >  -	switch (buf[0]) {
+> >  -	case '0':
+> >  -		ret = cpu_down(cpuid);
+> >  -		if (!ret)
+> >  -			kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
+> >  -		break;
+> >  -	case '1':
+> >  -		from_nid = cpu_to_node(cpuid);
+> >  -		ret = cpu_up(cpuid);
+> >  -
+> >  -		/*
+> >  -		 * When hot adding memory to memoryless node and enabling a cpu
+> >  -		 * on the node, node number of the cpu may internally change.
+> >  -		 */
+> >  -		to_nid = cpu_to_node(cpuid);
+> >  -		if (from_nid != to_nid)
+> >  -			change_cpu_under_node(cpu, from_nid, to_nid);
+> >  -
+> >  -		if (!ret)
+> >  -			kobject_uevent(&dev->kobj, KOBJ_ONLINE);
+> >  -		break;
+> >  -	default:
+> >  -		ret = -EINVAL;
+> >  -	}
+> >  +	ret = cpu_down(dev->id);
+> >   	cpu_hotplug_driver_unlock();
+> >  -
+> >  -	if (ret >= 0)
+> >  -		ret = count;
+> >   	return ret;
+> >   }
+> >  -static DEVICE_ATTR(online, 0644, show_online, store_online);
+> >   
+> > + static struct attribute *hotplug_cpu_attrs[] = {
+> > + 	&dev_attr_online.attr,
+> > + 	NULL
+> > + };
+> > + 
+> > + static struct attribute_group hotplug_cpu_attr_group = {
+> > + 	.attrs = hotplug_cpu_attrs,
+> > + };
+> > + 
+> >   void unregister_cpu(struct cpu *cpu)
+> >   {
+> >   	int logical_cpu = cpu->dev.id;
+> > @@@ -102,20 -125,8 +111,19 @@@ static ssize_t cpu_release_store(struc
+> >   static DEVICE_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
+> >   static DEVICE_ATTR(release, S_IWUSR, NULL, cpu_release_store);
+> >   #endif /* CONFIG_ARCH_CPU_PROBE_RELEASE */
+> > - 
+> >   #endif /* CONFIG_HOTPLUG_CPU */
+> >   
+> >  +struct bus_type cpu_subsys = {
+> >  +	.name = "cpu",
+> >  +	.dev_name = "cpu",
+> >  +	.match = cpu_subsys_match,
+> >  +#ifdef CONFIG_HOTPLUG_CPU
+> >  +	.online = cpu_subsys_online,
+> >  +	.offline = cpu_subsys_offline,
+> >  +#endif
+> >  +};
+> >  +EXPORT_SYMBOL_GPL(cpu_subsys);
+> >  +
+> >   #ifdef CONFIG_KEXEC
+> >   #include <linux/kexec.h>
+> 
+> OK, after doing that I got this error:
+> 
+> drivers/base/cpu.c:75:3: error: 'dev_attr_online' undeclared here (not in a function)
+>   &dev_attr_online.attr,
+>    ^
+> 
+> So I applied this merge fix patch:
+> 
+> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+> index 811bb5a..ff97614 100644
+> --- a/drivers/base/cpu.c
+> +++ b/drivers/base/cpu.c
+> @@ -71,15 +71,6 @@ static int cpu_subsys_offline(struct device *dev)
+>  	return ret;
+>  }
+>  
+> -static struct attribute *hotplug_cpu_attrs[] = {
+> -	&dev_attr_online.attr,
+> -	NULL
+> -};
+> -
+> -static struct attribute_group hotplug_cpu_attr_group = {
+> -	.attrs = hotplug_cpu_attrs,
+> -};
+> -
+>  void unregister_cpu(struct cpu *cpu)
+>  {
+>  	int logical_cpu = cpu->dev.id;
+> @@ -182,9 +173,6 @@ static const struct attribute_group *hotplugable_cpu_attr_groups[] = {
+>  #ifdef CONFIG_KEXEC
+>  	&crash_note_cpu_attr_group,
+>  #endif
+> -#ifdef CONFIG_HOTPLUG_CPU
+> -	&hotplug_cpu_attr_group,
+> -#endif
+>  	NULL
+>  };
+>  
+> Better ideas welcome :-)
+> 
 -- 
-1.7.11.7
-
-
---------------040407090900060402060109--
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
