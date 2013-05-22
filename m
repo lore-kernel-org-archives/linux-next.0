@@ -1,46 +1,36 @@
-From: "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Subject: [PATCH] tty: mxser: Fix build warning introduced by dfc7b837c7f9
- (Re: linux-next: build warning after merge of the tty.current tree)
-Date: Wed, 22 May 2013 11:13:38 +0400 (MSK)
-Message-ID: <alpine.LRH.2.00.1305221109110.10829@lnfm1.sai.msu.ru>
-References: <20130522133722.d52b827e455275dfdecf12dd@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm tree with the net-next
+ tree
+Date: Wed, 22 May 2013 00:14:58 -0700
+Message-ID: <20130522001458.af0f4ab5.akpm@linux-foundation.org>
+References: <20130521142948.444f09820c5406f9adc4b7f1@canb.auug.org.au>
+	<20130521130438.1ecdf535ab2461888abbe0c3@linux-foundation.org>
+	<20130522.000748.454683591881350280.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; format=flowed; charset=US-ASCII
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <20130522133722.d52b827e455275dfdecf12dd@canb.auug.org.au>
-Sender: linux-serial-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jirislaby@gmail.com, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130522.000748.454683591881350280.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dborkman@redhat.com, netdev@vger.kernel.org, nschichan@freebox.fr
 List-Id: linux-next.vger.kernel.org
 
-From: Matwey V. Kornilov <matwey@sai.msu.ru>
+On Wed, 22 May 2013 00:07:48 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
 
-Fix build warning at mxser.c introduced by dfc7b837c7f9
+> From: Andrew Morton <akpm@linux-foundation.org>
+> Date: Tue, 21 May 2013 13:04:38 -0700
+> 
+> > Nicolas, I think the patches need a re-check so I'll drop the versions
+> > which I presently have.  Please refresh, retest and resend when
+> > convenient?  It'll need to be against linux-next, which is where the
+> > conflicting (vfree/module_free) changes have occurred.
+> 
+> How about working against net-next and submitting your patches to netdev
+> just like the rest of the world?
+> 
 
-Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
----
-
-diff --git a/drivers/tty/mxser.c b/drivers/tty/mxser.c
-index f97b196..4c4a236 100644
---- a/drivers/tty/mxser.c
-+++ b/drivers/tty/mxser.c
-@@ -1674,15 +1674,15 @@ static int mxser_ioctl(struct tty_struct *tty,
-  		return mxser_ioctl_special(cmd, argp);
-
-  	if (cmd == MOXA_SET_OP_MODE || cmd == MOXA_GET_OP_MODE) {
--		if (info->board->chip_flag != MOXA_MUST_MU860_HWID)
--			return -EFAULT;
--
-  		int p;
-  		unsigned long opmode;
-  		static unsigned char ModeMask[] = { 0xfc, 0xf3, 0xcf, 0x3f };
-  		int shiftbit;
-  		unsigned char val, mask;
-
-+		if (info->board->chip_flag != MOXA_MUST_MU860_HWID)
-+			return -EFAULT;
-+
-  		p = tty->index % 4;
-  		if (cmd == MOXA_SET_OP_MODE) {
-  			if (get_user(opmode, (int __user *) argp))
-
+Well that's probably practical.  But the patchset is a seccomp
+enhancement for (at present) ARM.  Not exactly net stuff, or anything
+which netdev readers are likely to spend a lot of time testing and
+reviewing.
