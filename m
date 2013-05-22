@@ -1,54 +1,62 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: linux-next: build failure after merge of the vhost tree
-Date: Wed, 22 May 2013 08:07:18 +0300
-Message-ID: <20130522050718.GA7993@redhat.com>
-References: <20130522143704.3431658328f8f879f55b0910@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (drm-intel
+ tree related)
+Date: Wed, 22 May 2013 15:53:20 +1000
+Message-ID: <20130522155320.7ed167814699e965091ce6be@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__22_May_2013_15_53_20_+1000_nmursFvh10B3TQj3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:4514 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750952Ab3EVFG7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 May 2013 01:06:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20130522143704.3431658328f8f879f55b0910@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:57933 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751073Ab3EVFxb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 May 2013 01:53:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>
 
-On Wed, May 22, 2013 at 02:37:04PM +1000, Stephen Rothwell wrote:
-> Hi Michael,
-> 
-> After merging the vhost tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> In file included from arch/powerpc/include/asm/uaccess.h:12:0,
->                  from arch/powerpc/lib/checksum_wrappers_64.c:24:
-> include/asm-generic/uaccess.h: In function 'might_fault':
-> include/asm-generic/uaccess.h:36:2: error: implicit declaration of function 'segment_eq' [-Werror=implicit-function-declaration]
->   if (_might_fault())
->   ^
-> include/asm-generic/uaccess.h:36:2: error: implicit declaration of function 'get_fs' [-Werror=implicit-function-declaration]
-> include/asm-generic/uaccess.h:29:47: error: 'KERNEL_DS' undeclared (first use in this function)
->  #define _might_fault() (!segment_eq(get_fs(), KERNEL_DS) && !in_atomic())
->                                                ^
-> include/asm-generic/uaccess.h:36:6: note: in expansion of macro '_might_fault'
->   if (_might_fault())
->       ^
-> 
-> and many, many more.
-> 
-> Caused by commit d198a8acf543 ("kernel: might_fault does not imply
-> might_sleep").
-> 
-> I have used the version of the vhost tree from next-20130521 for today.
-> 
-> It was unexpected that such patches would turn up in the "vhost" tree ...
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+--Signature=_Wed__22_May_2013_15_53_20_+1000_nmursFvh10B3TQj3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi ,
 
-Looks like I pushed a wrong commit. Sorry, will fix this up ASAP.
+After merging the final tree, today's linux-next build (i386 defconfig)
+produced this warning:
+
+drivers/gpu/drm/i915/i915_gem.c:2978:3: warning: format '%ld' expects argum=
+ent of type 'long int', but argument 3 has type 'size_t' [-Wformat]
+
+Introduced by commit e4341d0356bc ("drm/i915: Be more informative when
+reporting "too large for aperture" error") from the drm-intel tree.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__22_May_2013_15_53_20_+1000_nmursFvh10B3TQj3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRnF1VAAoJEECxmPOUX5FEN8wP/1fd2oZnmTEiNjTPX+yeHyaH
+IlWK/vUF6Dm92hu9l6k0j5NGvGxzadpgAUP4ZwrKIn9rWvXPYfZ+vU5gwhs9l3I4
+1b0SoTwWlec4NwASY0LQZweEcI95HQxGVhQmzX0o2WOJ5WfOwglJJpBWpGNxffjT
+MOw2PKsGzELxqnLIQMnNf9Oo2T4ZcGeZPMAAU28WJ4z67T0Yxsi8CUt0Tnpdr4mJ
+wPy/oDrhL72ZhPmtUskqlx2mg6ztI0x7YOw03YIl2z1sUHa7OAhqERAGsSZTaTTH
+E3V3KSV9b4r4/UgQyyH0nQ/JwFSCcdaCfbU+6Bgdop6RxJDKm62XsCdXCDFV+nwL
+AW1gOaatkcdNyiU/CrMmIIDsVc/7xfJWS1+ptvNVchA3+Fs75gnDueDuuCqM8P/f
+ysHWsWMJ/bvT+vosKOGVZKauk6u5yfTbL6QYz5B7OsTzHDSj+V/5z6KmwIUvfNtr
+W3vH4IgSIxmn+lEwpVnUS0KMmLo4MT0yPWzJCChn52KXkkAxE72yHanpa3vRBSVT
+rPpX3/A8mYNVG2gqZYG1ZENxvfb/awNeWxkGNLJUIFgj0qLh2PgzIr+Oqdd4CUcW
+ulgEJFgrVURTc1nurh9o6vjXdTxX8NSisbKKIJKOFn1PN6uLw0A8GULwYYWELHpl
+PIMh2XrF2l23+MRshAai
+=wjCB
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_May_2013_15_53_20_+1000_nmursFvh10B3TQj3--
