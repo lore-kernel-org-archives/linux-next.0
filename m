@@ -1,45 +1,79 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build failure after merge of the crypto tree
-Date: Mon, 27 May 2013 11:44:43 +0800
-Message-ID: <20130527034443.GA16425@gondor.apana.org.au>
-References: <20130521114548.a7bc47b2247f39ec40c44e33@canb.auug.org.au>
- <20130524095715.GA1410@gondor.apana.org.au>
- <20130527021917.GA16087@gondor.apana.org.au>
- <20130527134301.f5dcfe3a17ac9914e35fe2ca@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 27 May 2013 16:20:26 +1000
+Message-ID: <20130527162026.3eebd45b3755a138e443c28e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__27_May_2013_16_20_26_+1000_nACQOIDwzduNZHre"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ringil.hengli.com.au ([178.18.16.133]:57898 "EHLO
-	fornost.hengli.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756175Ab3E0Doq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 26 May 2013 23:44:46 -0400
-Content-Disposition: inline
-In-Reply-To: <20130527134301.f5dcfe3a17ac9914e35fe2ca@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56313 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753524Ab3E0GUh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 May 2013 02:20:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <koverstreet@google.com>, Benjamin LaHaise <bcrl@kvack.org>
 
-On Mon, May 27, 2013 at 01:43:01PM +1000, Stephen Rothwell wrote:
-> Hi Herbert,
-> 
-> On Mon, 27 May 2013 10:19:18 +0800 Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> >
-> > Hi Stephen, did you get a chance to switch back to the current
-> > cryptodev tree?
-> 
-> Not quite sure what you mean?  I fetch your tree every morning (that I
-> build linux-next) so I got an update from you this morning.  I haven't
-> got to merging and building it yet, but it looks good.
+--Signature=_Mon__27_May_2013_16_20_26_+1000_nACQOIDwzduNZHre
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Great!
+Hi Andrew,
 
-The reason I asked is because I got a build failure from the
-kbuild robot over the weekend that was using a two-week old
-version of cryptodev.
+Today's linux-next merge of the akpm tree got a conflict in fs/aio.c
+between commit 03e04f048d27 ("aio: fix kioctx not being freed after
+cancellation at exit time") from Linus' tree and commit "aio: reqs_active
+-> reqs_available" from the akpm tree.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I fixed it up (see below - taken from a similar patch later in the akpm
+tree) and can carry the fix as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/aio.c
+index 7fe5bde,009a7b5..0000000
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@@ -306,10 -312,8 +312,10 @@@ static void free_ioctx(struct kioctx *c
+  	head =3D ring->head;
+  	kunmap_atomic(ring);
+ =20
+- 	while (atomic_read(&ctx->reqs_active) > 0) {
++ 	while (atomic_read(&ctx->reqs_available) < ctx->nr_events - 1) {
+ -		wait_event(ctx->wait, head !=3D ctx->tail);
+ +		wait_event(ctx->wait,
+- 				head !=3D ctx->tail ||
+- 				atomic_read(&ctx->reqs_active) <=3D 0);
+++			   (head !=3D ctx->tail) ||
+++			   (atomic_read(&ctx->reqs_available) >=3D ctx->nr_events - 1));
+ =20
+  		avail =3D (head <=3D ctx->tail ? ctx->tail : ctx->nr_events) - head;
+ =20
+
+--Signature=_Mon__27_May_2013_16_20_26_+1000_nACQOIDwzduNZHre
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRovsuAAoJEECxmPOUX5FEVRwP/1bqpVoXXiZkVM+NrvBCxezz
+K0EL1QX9HOjJ4PtHupvLsQfIXZQdYbOoRMNw6M5LSUzQ9Mo2HisitNUm01XO1Bb0
+no70GEtdlOREeHo+tA+faB+p+oo1NV9vYVTrOgoXg7hVcRlJmCbIBy9bJWzyNR/a
+8pKCwEZqo8JNs2BMJeEaFgyErFQOQte74Ufe6/ysuv+6aSQRXxUkK1A+npuoWlkr
+/qU9yu/R5QUcCRMUAZE5FNdjrliPpoLySlusUDaNOfsocLCNK8gXJLIjkzbxenks
+uIZ4R1+DMiFO2rl9KmyEO2095r7GFG2pnEY92PzcwnSYzuZpdgKxshQdlJvfioMg
+h/d2maQMm3yH0+YUcxr27mn2hEd470wVTmENkfcTykGTPd5Iuc2UdSLatgiuTcJ2
+/QNBbSXRQfPOS49NEJn8tIlHVPQgI2r5Xume/4OFdxLsZ9ofSBDXZEV4P6jF99B6
+26y3o8zNdDSeuvildzCmswUvzvEdnEyZv8Fmq2zZaeDz4cZqsvYu/wg2TDRVwsKn
+jk3N2ztlPbyQh9+/VZd/5Oc/XH0R1rKhJfVruPEbzRh6zEm4fvtmCWaKOl+UQbAR
+UWDtFFFpSNQSvU2fI8B4JhDaKKulLe8StNvyNrTGVtF/E4I4pv/zcrTi1GvN8WMq
+IfO+flUeXrvGpL+VEqNV
+=8JqT
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__27_May_2013_16_20_26_+1000_nACQOIDwzduNZHre--
