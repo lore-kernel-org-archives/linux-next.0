@@ -1,60 +1,96 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: NVIDIA Tegra DRM tree
-Date: Mon, 27 May 2013 18:14:03 +0200
-Message-ID: <20130527161402.GA9676@mithrandir>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: NVIDIA Tegra DRM tree
+Date: Tue, 28 May 2013 09:47:37 +1000
+Message-ID: <20130528094737.0bd6d41092c6e3aa7db9fd89@canb.auug.org.au>
+References: <20130527161402.GA9676@mithrandir>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f41.google.com ([209.85.214.41]:36339 "EHLO
-	mail-bk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752547Ab3E0QOH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 May 2013 12:14:07 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__28_May_2013_09_47_37_+1000_bYUtuY1Gxr4zJQok"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130527161402.GA9676@mithrandir>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Airlie <airlied@linux.ie>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Tue__28_May_2013_09_47_37_+1000_bYUtuY1Gxr4zJQok
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
+Hi Thierry,
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, 27 May 2013 18:14:03 +0200 Thierry Reding <thierry.reding@gmail.com=
+> wrote:
+>
+> In response to some fallout during the last merge window I've setup a
+> tree for the Tegra DRM driver to be included in linux-next in the hope
+> that it will help avoid more fallout in the future.
+>=20
+> The repository can be found here:
+>=20
+>   git://anongit.freedesktop.org/tegra/linux.git
+>=20
+> With the branch for linux-next being: drm/for-next
 
-Hi Stephen,
+I assume that this will be merged via Dave Airlie's drm tree.
 
-In response to some fallout during the last merge window I've setup a
-tree for the Tegra DRM driver to be included in linux-next in the hope
-that it will help avoid more fallout in the future.
+I have added this from today.
 
-The repository can be found here:
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-  git://anongit.freedesktop.org/tegra/linux.git
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-With the branch for linux-next being: drm/for-next
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-Thanks,
-Thierry
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---nFreZHaLTZJo0R7j
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Tue__28_May_2013_09_47_37_+1000_bYUtuY1Gxr4zJQok
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRo4ZKAAoJEN0jrNd/PrOhlGAP/2L6HRuRO06OYvHkduTlWvkZ
-HgJK551DgL/jYFlnZz8bRKIvKcXoZP6a5YjQ5SvMSK3NDrIiTR+96FKycKufMvZK
-376Tq7iMSYtdqJJAFEupZBQmCVdjeTJ9GV+g+uqZ7C/3tCSMqedF0np8fyQKKH2P
-7n86DAKZCysMiVNyfWmCkvDix1G4XF5jT5BuXLWMz4xCndI7/MlkAuEogBfPnlBx
-1/z5647Q2grz6GyxlnUDIfMTB+wjP0QXWsGI7PKUSx0ovoV7B5/08/iMc1MbvxrX
-KnImI8gaOUfYR4Ib1WCs0bzONYW23qiredimMaldq91OE+Em9p3VVx6QfayjzoWD
-4ovfBzVuQtiG8vSJl2OoTs3ZZ5FGAwLlQhbWeWU6XZwYjYgWKDT85z+NmMNYvfU5
-yYct3SRsVI2hoKOvbW28AGrEl4NQaYrBon+4fzqN6svZqGjqvQ3hJYLLoeXb1vBv
-1LTTbh4Y9dALzEzHTLmIoOVK+vZQvdhcr3QJHmHLjILKbpuFRGsjrTOelXh/8ak4
-wRySljU6Q7nc4e1FYXbr1SOEZdVedO5lOYldd0YZ6E1soSI1YadK9pe9u72dBiTn
-tWUHXl4eQQEeHpXZFGDWIkVKOAPQbScqgVsQa3wIlVyfjjpZQBY8pHAwQtaXmSzm
-P4d51bvC0yo1LOOhrw0g
-=fWXN
+iQIcBAEBCAAGBQJRo/CdAAoJEECxmPOUX5FE9wUP/jMYiKpjOc/NBshnhOnv3W9C
+Nsx4LYDGVkvaUKr0n0MGjYt2KtCYqkZNvEZz9N/kaIjgXaBXNksO1kWQdIzvqPuC
+aEZDL1lRHaZMdgmPpB3EgMaSO9jfb+wtpYHgozr2lX0CSUjHbCVVi+5Tun7/22z5
+habyIk7+Ujigch56CS9sD2yQeiz64hg1Z7pBUhrVyFkqBNyxcRbLVPsyqQjvHm+A
+An0Ua3MkTgogWyO882g6Du3z5tXkRdVF8WhvHmVUfjulQUFIWdinb5CMVoNY7Chk
+g4bdtliqLWYhtjDg0l+RPStOM8mbKGhyjw8/WgyEo8xLfY3gNVNAwfAhYjT7kb0G
+/P47b7mM+89mU2I4Vm3Ic1cP6b9sSjsTaGiuVq2Go+kg/tHn07zoIQlidwfkzUfW
+07V184ftfAmOLhpr4gFWjyVJmOJ64QoCWCTm4++s97EkiZOo2pwZkNLzIbWPqHPj
+oAX9CAzTdKJeV2xNOTHShUK/TQeovnNO0xYB4o7wasewLwr4RE6yY9WEeV7M+/Lp
+7kAcwY8BQUgXXWa5kwYC3GaXzVvbACRhr/mV9+1Ykt8qbPJ+2lUMEzo22wDmcbsc
+NufJJLcpIjExCTZBQikzawPmQe9f7qBycAR+psZPfigqliZ8QH7bvRiIU8iuo/Cl
+D8AUewug7A9ZUDTYu34A
+=nLhv
 -----END PGP SIGNATURE-----
 
---nFreZHaLTZJo0R7j--
+--Signature=_Tue__28_May_2013_09_47_37_+1000_bYUtuY1Gxr4zJQok--
