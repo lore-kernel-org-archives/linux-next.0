@@ -1,56 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the parisc-hd tree with Linus' tree
-Date: Mon, 27 May 2013 10:51:35 +1000
-Message-ID: <20130527105135.cac99b7d9930fbb2f03cc9e6@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: build failure after merge of the crypto tree
+Date: Mon, 27 May 2013 10:19:18 +0800
+Message-ID: <20130527021917.GA16087@gondor.apana.org.au>
+References: <20130521114548.a7bc47b2247f39ec40c44e33@canb.auug.org.au>
+ <20130524095715.GA1410@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__27_May_2013_10_51_35_+1000_W7FyexJiBct4XBBG"
-Return-path: <linux-parisc-owner@vger.kernel.org>
-Sender: linux-parisc-owner@vger.kernel.org
-To: Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__27_May_2013_10_51_35_+1000_W7FyexJiBct4XBBG
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ringil.hengli.com.au ([178.18.16.133]:37641 "EHLO
+	fornost.hengli.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755779Ab3E0CTU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 26 May 2013 22:19:20 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20130524095715.GA1410@gondor.apana.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>
 
-Hi all,
+On Fri, May 24, 2013 at 05:57:15PM +0800, Herbert Xu wrote:
+> On Tue, May 21, 2013 at 11:45:48AM +1000, Stephen Rothwell wrote:
+> > Hi Herbert,
+> > 
+> > After merging the crypto tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > arch/x86/crypto/crct10dif-pclmul_glue.c: In function 'crct10dif_intel_mod_init':
+> > arch/x86/crypto/crct10dif-pclmul_glue.c:140:3: error: implicit declaration of function 'crc_t10dif_update_lib' [-Werror=implicit-function-declaration]
+> >    crc_t10dif_update_lib();
+> >    ^
+> > cc1: some warnings being treated as errors
+> > 
+> > Caused by commit b85ed9f056ee ("crypto: crct10dif - Glue code to cast
+> > accelerated CRCT10DIF assembly as a crypto transform").
+> > 
+> > I have used the version of the crypto tree from next-20130520 for today.
+> 
+> Sorry for the late response, it should be fixed now.
 
-Today's linux-next merge of the parisc-hd tree got conflicts in
-arch/parisc/include/asm/processor.h and arch/parisc/kernel/irq.c between
-commit d96b51ec1465 ("parisc: fix irq stack on UP and SMP") from Linus'
-tree and commit 1c92ce8487f6 ("parisc: use arch_spinlock_t instead of
-raw_spinlock_t in irqstacks") from the parisc-hd tree.
+Hi Stephen, did you get a chance to switch back to the current
+cryptodev tree?
 
-I just used the version of both files from Linus' tree and can carry the
-fix as necessary (no action is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__27_May_2013_10_51_35_+1000_W7FyexJiBct4XBBG
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRoq4bAAoJEECxmPOUX5FELG4P/RukX9IpW+tSj9jK3PX4OAne
-9brkGUKGPG0Rw7MjfTdbLYF0vAWc7T/ir4Mk5coG0SCZ2g81FT005mhcV9i1ytyq
-CzxLfaL81VAZ3JbwDxc/+Oir4LmnUFhbBFPog9WJdzEz3hLnY7irphyWWJEvVRqi
-gSk20gk2t3NqVYel88dmdxyXbqI6wWUZcK9IjY7S5qRbLaTaQl+zKXChF0stX3z3
-V1LNnEqCKjWxUWXKf/1KlOWzAv+LgVkynIr5vCNrTAv6Lr+bU1zD5OssCeNAPYy0
-ph++rFlrd5O2IYb/BSiB/ad8QWVzPKdsQtmwgMMsTz/hYKS7ksWDA1bItAktk1vO
-5EihbxRW9DLDffj8TgCYE0sOF4IPZPIhhWkRnE+y3T6AAi2MJiUKkMlpVWWoTKXH
-KYlIUYI7BLdnfOz8UNE6SAe/2CLtvHePTI0khEbXAg8/RmW3AJdigpKsqKRS3w13
-LlnUvbZkAWweueriWg+zxXYX3cm24Fk6sRbn21HZ+IuOQzlk22npbj24ASqZOzuT
-BDxCTa0GQN5t8Pk+sJSwVfMkS06T6yvuS0e9NTQilGhn7M+JBGAoScWR4RD5QY4e
-1XMS6t619D8ASJ+sdSbLyEF84+dNyJMBTiPd8ssgVHSiVPxI2ma+ExIr0GFxI6t1
-DaGs1c/atoNgLAtW2gnB
-=hYgt
------END PGP SIGNATURE-----
-
---Signature=_Mon__27_May_2013_10_51_35_+1000_W7FyexJiBct4XBBG--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
