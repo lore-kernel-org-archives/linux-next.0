@@ -1,79 +1,95 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Mon, 27 May 2013 16:20:26 +1000
-Message-ID: <20130527162026.3eebd45b3755a138e443c28e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Mon, 27 May 2013 16:39:33 +1000
+Message-ID: <20130527163933.a0de3d8a94a15cd8164ee33f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__27_May_2013_16_20_26_+1000_nACQOIDwzduNZHre"
+ boundary="Signature=_Mon__27_May_2013_16_39_33_+1000_gF6sofWOTk67URt2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56313 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55413 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753524Ab3E0GUh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 May 2013 02:20:37 -0400
+	with ESMTP id S1756499Ab3E0Gjn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 May 2013 02:39:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <koverstreet@google.com>, Benjamin LaHaise <bcrl@kvack.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <koverstreet@google.com>, Gu Zheng <guz.fnst@cn.fujitsu.com>, Dave Kleikamp <dave.kleikamp@oracle.com>
 
---Signature=_Mon__27_May_2013_16_20_26_+1000_nACQOIDwzduNZHre
+--Signature=_Mon__27_May_2013_16_39_33_+1000_gF6sofWOTk67URt2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in fs/aio.c
-between commit 03e04f048d27 ("aio: fix kioctx not being freed after
-cancellation at exit time") from Linus' tree and commit "aio: reqs_active
--> reqs_available" from the akpm tree.
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (see below - taken from a similar patch later in the akpm
-tree) and can carry the fix as necessary (no action is required).
+fs/jfs/jfs_logmgr.c: In function 'lbmRead':
+fs/jfs/jfs_logmgr.c:2015:3: error: too few arguments to function 'lbmIODone'
+   lbmIODone(bio, 0);
+   ^
+fs/jfs/jfs_logmgr.c:194:21: note: declared here
+ static bio_end_io_t lbmIODone;
+                     ^
+
+Caused by commit daf8a85f357a ("block: prep work for batch completion")
+from the akpm tree interacting with commit 95bbb82f60c8 ("fs/jfs: Add
+check if journaling to disk has been disabled in lbmRead()") from the jfs
+tree.
+
+I applied the following fix up patch and can carry it as necessary.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 27 May 2013 16:37:05 +1000
+Subject: [PATCH] jfs: fix up for batch completion API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/jfs/jfs_logmgr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
+index 0787ecc..4c3289c 100644
+--- a/fs/jfs/jfs_logmgr.c
++++ b/fs/jfs/jfs_logmgr.c
+@@ -2012,7 +2012,7 @@ static int lbmRead(struct jfs_log * log, int pn, stru=
+ct lbuf ** bpp)
+ 	/*check if journaling to disk has been disabled*/
+ 	if (log->no_integrity) {
+ 		bio->bi_size =3D 0;
+-		lbmIODone(bio, 0);
++		lbmIODone(bio, 0, NULL);
+ 	} else {
+ 		submit_bio(READ_SYNC, bio);
+ 	}
+--=20
+1.8.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/aio.c
-index 7fe5bde,009a7b5..0000000
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@@ -306,10 -312,8 +312,10 @@@ static void free_ioctx(struct kioctx *c
-  	head =3D ring->head;
-  	kunmap_atomic(ring);
- =20
-- 	while (atomic_read(&ctx->reqs_active) > 0) {
-+ 	while (atomic_read(&ctx->reqs_available) < ctx->nr_events - 1) {
- -		wait_event(ctx->wait, head !=3D ctx->tail);
- +		wait_event(ctx->wait,
-- 				head !=3D ctx->tail ||
-- 				atomic_read(&ctx->reqs_active) <=3D 0);
-++			   (head !=3D ctx->tail) ||
-++			   (atomic_read(&ctx->reqs_available) >=3D ctx->nr_events - 1));
- =20
-  		avail =3D (head <=3D ctx->tail ? ctx->tail : ctx->nr_events) - head;
- =20
-
---Signature=_Mon__27_May_2013_16_20_26_+1000_nACQOIDwzduNZHre
+--Signature=_Mon__27_May_2013_16_39_33_+1000_gF6sofWOTk67URt2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRovsuAAoJEECxmPOUX5FEVRwP/1bqpVoXXiZkVM+NrvBCxezz
-K0EL1QX9HOjJ4PtHupvLsQfIXZQdYbOoRMNw6M5LSUzQ9Mo2HisitNUm01XO1Bb0
-no70GEtdlOREeHo+tA+faB+p+oo1NV9vYVTrOgoXg7hVcRlJmCbIBy9bJWzyNR/a
-8pKCwEZqo8JNs2BMJeEaFgyErFQOQte74Ufe6/ysuv+6aSQRXxUkK1A+npuoWlkr
-/qU9yu/R5QUcCRMUAZE5FNdjrliPpoLySlusUDaNOfsocLCNK8gXJLIjkzbxenks
-uIZ4R1+DMiFO2rl9KmyEO2095r7GFG2pnEY92PzcwnSYzuZpdgKxshQdlJvfioMg
-h/d2maQMm3yH0+YUcxr27mn2hEd470wVTmENkfcTykGTPd5Iuc2UdSLatgiuTcJ2
-/QNBbSXRQfPOS49NEJn8tIlHVPQgI2r5Xume/4OFdxLsZ9ofSBDXZEV4P6jF99B6
-26y3o8zNdDSeuvildzCmswUvzvEdnEyZv8Fmq2zZaeDz4cZqsvYu/wg2TDRVwsKn
-jk3N2ztlPbyQh9+/VZd/5Oc/XH0R1rKhJfVruPEbzRh6zEm4fvtmCWaKOl+UQbAR
-UWDtFFFpSNQSvU2fI8B4JhDaKKulLe8StNvyNrTGVtF/E4I4pv/zcrTi1GvN8WMq
-IfO+flUeXrvGpL+VEqNV
-=8JqT
+iQIcBAEBCAAGBQJRov+rAAoJEECxmPOUX5FEMf4P/RDaMv+UvPMd7lIz73IN0spv
+LnaggmyViC/meClmS4n4JPat/t6Pe6GAUu8rQP7N5yDWTtiG5qoo07uk4zHD85N/
+gP1oha8gPpZbfs+3nj6URJoAv3WZvIAKexYZf3pt/kPnm1MnwEU9j7H2vdZRw1wD
+RPLobpva9cFwABHPKarZ4TaEJh95toO8t905gzv0fn+hRTUhG+6JILoCJmQtEiH1
+S1KISPRXgq0hGOhZpeqMInRkw2rFhU2AByBDaMHVr4qoox0VNBwSvv12VI2lNIXq
+mCFZGsaCXElzXcOo4sxsQGZ3cA00sDwyQc6x0rTOSGOUAo+S3+1ESfuBhIXjqO3G
+b2kQWqd8Z7MO6j+nRdCaL/h+pWTIKhRhmbNBgvx+NYA+s0sY1JF9uYbSbFYVaeR8
+ctwsitSr0ddpbxo/wXxIl5LX0Kva2Sn6+U8xh4x2E/+GbM/mr3mlySELYznFmjGP
+Vk3TNuUFJXm5h+sg+4v4kA4416frGV1Rnh+AJJncmGBERUWuS1Vm5khx4o60Uism
+YdnvI0raU4RC0NlbzKGiDkIgbLxyYhV98hjR/qZlwYhloiQjGUcqFMLQPYtKr1Rk
+q7zlaC184nZ3qOe3asQotYPu4raj6oPCeTzUu+EmwfKcdaTuuRRFayR02nN0YoPI
+21KVmrWlTfcH7ndCIrbZ
+=+Hw4
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__27_May_2013_16_20_26_+1000_nACQOIDwzduNZHre--
+--Signature=_Mon__27_May_2013_16_39_33_+1000_gF6sofWOTk67URt2--
