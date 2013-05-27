@@ -1,101 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Adding fscache branch to linux-next
-Date: Mon, 27 May 2013 10:10:53 +1000
-Message-ID: <20130527101053.6e9daa850882f7c1ec6af230@canb.auug.org.au>
-References: <6967.1369322428@warthog.procyon.org.uk>
+Subject: linux-next: manual merge of the parisc-hd tree with Linus' tree
+Date: Mon, 27 May 2013 10:51:35 +1000
+Message-ID: <20130527105135.cac99b7d9930fbb2f03cc9e6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__27_May_2013_10_10_53_+1000_1JYMCOZgNyLD7JaI"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42463 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755483Ab3E0ALA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 26 May 2013 20:11:00 -0400
-In-Reply-To: <6967.1369322428@warthog.procyon.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: akpm@linux-foundation.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+ boundary="Signature=_Mon__27_May_2013_10_51_35_+1000_W7FyexJiBct4XBBG"
+Return-path: <linux-parisc-owner@vger.kernel.org>
+Sender: linux-parisc-owner@vger.kernel.org
+To: Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__27_May_2013_10_10_53_+1000_1JYMCOZgNyLD7JaI
+--Signature=_Mon__27_May_2013_10_51_35_+1000_W7FyexJiBct4XBBG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+Hi all,
 
-On Thu, 23 May 2013 16:20:28 +0100 David Howells <dhowells@redhat.com> wrot=
-e:
->
-> Can you add:
->=20
-> 	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=
-=3Dfscache
+Today's linux-next merge of the parisc-hd tree got conflicts in
+arch/parisc/include/asm/processor.h and arch/parisc/kernel/irq.c between
+commit d96b51ec1465 ("parisc: fix irq stack on UP and SMP") from Linus'
+tree and commit 1c92ce8487f6 ("parisc: use arch_spinlock_t instead of
+raw_spinlock_t in irqstacks") from the parisc-hd tree.
 
-Please use git URL's when talking about git trees.
-
-> To linux-next please?
-
-Added
-
-git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git#fscache
-
-from today.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+I just used the version of both files from Linus' tree and can carry the
+fix as necessary (no action is required).
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Mon__27_May_2013_10_10_53_+1000_1JYMCOZgNyLD7JaI
+--Signature=_Mon__27_May_2013_10_51_35_+1000_W7FyexJiBct4XBBG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRoqSNAAoJEECxmPOUX5FErq4P/inZpQ9gtQAmMiwCO4qvG5JH
-NkcFG1/r90Zspy/9ozUZVvtDH6HgWaTZh5zBxb3TO1aYNhTyIah8vSRdMLDkdzyT
-5VPyZhr8BcvI/0xGSed7py0fQ6P19nh/1uR1QpwiQLXt97SfKY216Hb/uTNmIPjP
-wXdByBGpW44xS4Db0nD5+Qa45y+8bJHCP9D/3hR9XgtDyrSseezdtu8Jnh3eiwqI
-izsBOJkPZYU1qz4LNymtRmcBppDbd68wM4eSpscMCWg6fbFbNW3OP3gDQLjq+kJv
-YAgg562lcsJEUcjBXweFgYpNUluMNmM10s4Q6oaLN0MuBGTq0MvmIWYP4yPQiYX8
-mBHu38O6cdW7kaYA+k1iSfpLmiyYL94nm0icthh3KyWUoX7cux8rf0TZisgW25LB
-2SAR/EAUHj+/GQOUqjCH11jd5tbva2wEy6epaHyfZ+D0mEwKcJpCo79ApHa2Bm/M
-0PutcTONBpaaZUwIc85oowypvJyo2iNFuo3y53+FJX7dZ4//4Su9NBl1esum1NOi
-T1dl6mPxquqFZF5PHQzP4hhtOQwpXOkJUTAwT23VCAJB6XV9DHI7IZuM93ns3GGa
-niYWGG8/fxd4m8L5CTgF08UWGOTP8zfBxz/vlgDx7AIBrfJYXyTqvX6vLLCW88kQ
-qUReXxPXdgjphKDVPBax
-=bsk8
+iQIcBAEBCAAGBQJRoq4bAAoJEECxmPOUX5FELG4P/RukX9IpW+tSj9jK3PX4OAne
+9brkGUKGPG0Rw7MjfTdbLYF0vAWc7T/ir4Mk5coG0SCZ2g81FT005mhcV9i1ytyq
+CzxLfaL81VAZ3JbwDxc/+Oir4LmnUFhbBFPog9WJdzEz3hLnY7irphyWWJEvVRqi
+gSk20gk2t3NqVYel88dmdxyXbqI6wWUZcK9IjY7S5qRbLaTaQl+zKXChF0stX3z3
+V1LNnEqCKjWxUWXKf/1KlOWzAv+LgVkynIr5vCNrTAv6Lr+bU1zD5OssCeNAPYy0
+ph++rFlrd5O2IYb/BSiB/ad8QWVzPKdsQtmwgMMsTz/hYKS7ksWDA1bItAktk1vO
+5EihbxRW9DLDffj8TgCYE0sOF4IPZPIhhWkRnE+y3T6AAi2MJiUKkMlpVWWoTKXH
+KYlIUYI7BLdnfOz8UNE6SAe/2CLtvHePTI0khEbXAg8/RmW3AJdigpKsqKRS3w13
+LlnUvbZkAWweueriWg+zxXYX3cm24Fk6sRbn21HZ+IuOQzlk22npbj24ASqZOzuT
+BDxCTa0GQN5t8Pk+sJSwVfMkS06T6yvuS0e9NTQilGhn7M+JBGAoScWR4RD5QY4e
+1XMS6t619D8ASJ+sdSbLyEF84+dNyJMBTiPd8ssgVHSiVPxI2ma+ExIr0GFxI6t1
+DaGs1c/atoNgLAtW2gnB
+=hYgt
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__27_May_2013_10_10_53_+1000_1JYMCOZgNyLD7JaI--
+--Signature=_Mon__27_May_2013_10_51_35_+1000_W7FyexJiBct4XBBG--
