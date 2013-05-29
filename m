@@ -1,61 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the net-next tree
-Date: Wed, 29 May 2013 12:33:17 +1000
-Message-ID: <20130529123317.5523988bebf0b9a19d04e53e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the xen-arm tree
+Date: Wed, 29 May 2013 13:34:59 +1000
+Message-ID: <20130529133459.fb060dcd20cb00049bed55cd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__29_May_2013_12_33_17_+1000_vwwtKaJgG/nXr/er"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42886 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753085Ab3E2Cdu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 May 2013 22:33:50 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anatol Pomozov <anatol.pomozov@gmail.com>, Masanari Iida <standby24x7@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+ boundary="Signature=_Wed__29_May_2013_13_34_59_+1000_LdZ9BN/mVqYZMTWX"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__29_May_2013_12_33_17_+1000_vwwtKaJgG/nXr/er
+--Signature=_Wed__29_May_2013_13_34_59_+1000_LdZ9BN/mVqYZMTWX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Stefano,
 
-Today's linux-next merge of the trivial tree got a conflict in
-Documentation/networking/netlink_mmap.txt between commit 3dd17edea018
-("doc:networking: Fix typo in documentation/networking") from the
-net-next tree and commit f884ab15afdc ("doc: fix misspellings with
-'codespell' tool") from the trivial tree.
+After merging the xen-arm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-The fix in the net-next tree was a superset of the one in the trivial
-tree, so I used that and can carry the fix as necessary (no action is
-required).
+kernel/sched/cputime.c:8:26: fatal error: asm/paravirt.h: No such file or d=
+irectory
+ #include <asm/paravirt.h>
+                          ^
 
+Caused by commit d31d069a9f68 ("kernel: missing include in cputime.c").
+Only three architectures have that file (x86, arm and ia64).
+
+I have used the xen-arm tree from next-20130528 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__29_May_2013_12_33_17_+1000_vwwtKaJgG/nXr/er
+--Signature=_Wed__29_May_2013_13_34_59_+1000_LdZ9BN/mVqYZMTWX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRpWkHAAoJEECxmPOUX5FEBdwP/A+By50J/4vbc0Gfji9No6gy
-Ch3Pf3UBhB3fogxSvDtlFtoAC9+OQaea79Rk1jPuTXMpSQ/Fg0HYTwjzqztasdfd
-in1uu4q8dUpNI2PayS+Ip4hE5e1mPz0fEkaAPV0Txs7JbCj5S6MeEcawCiWfJVY9
-d8f+IJjXziH8MZs7q8fUf73f1H2nzQl5pAsMOI9FL/Q6mALGu4wRdvPg+y7830UM
-4yQ43ILta1BGAXVypiPBVvbNI6uCKH2sM7WwQZTc1VgMEbnW+rDQVL2rzeDENH5Q
-KDJqIbf3m6j1WwoD4EQ823RTnNAuhODwb6ln+fEMH+g8Cj/S6oaDFbL0PyH9SBfh
-Q5LOLiRIDli8PDuvWgylWZDAMZZ8G7cH97jsYtLwcJESPWhLMHvbCUOnZqUCf2xQ
-LpGc2ginSDtE0mSXlktDf61zJYZmoOLD3OT61R33nkYqp3BHFObdSkIpiEbbT/pM
-4+nBEJqQSdsPxqUPs6A4dXg2Fj+wHWzE8vd+9Lqzg+0+1Tx+CypBF0bLFghhtgSI
-/gBk1lhwAjVg0YIpbbM2Bb6pb69hktxTqhv5N3BeKGfimVZhvV4Ixwz1+1lzD2LH
-J9bnuZSjFgUFjaOYofCdoVBYwerGzLiR/pSjAz/z0EemdGxPIkspCldAVun8mHob
-LgbeGil+Oi+oE0sONYhw
-=a1F1
+iQIcBAEBCAAGBQJRpXdnAAoJEECxmPOUX5FEAcEP/14lBH1E8VBk2P05aCDp6Leu
+FxBWAW74DX0a99epqyopyy7I2dXhPMTT/4PlDA9uNycYmI57eFlmY9s1Iny2N4Cs
+j7tlfBewAttSOTIIciuFM3O8pPgeXNj/c5roghri6UKmLh9oGSmlUFCwXJNo1CMy
+OygpKWlQ805CcZ2ut8ln8J8D52C3bQV5S11+Et0ka3frGftkcEQISzP9XN4iP0sP
+AXDEiTdihJt6YbdSNms+cE3OGpibA4rPuaTeLadg/cn0pQYMOv6+ACBNtSKsyxAn
+tMJ6y3QOhoyWO/ftCkRUgW23YT5HwIu7sZW6uF+XzuBhdd0vbWncHC6DTAFoW+Z3
+KNNuEq9odm2i12adFRZvy4BvjX4Gz5MnriFhDKjYnYk2pNCXb7w5ByyEkja+UpOB
+rX3lT/6XMlNUdqjfDHRZ3EfQYdcuMFo+DHcvWZEMUsutHZ2SpfO4wPnogQWPVYQP
+LQS3OK6/0zAA+s6hrubezwpsZhkWJl9ky2Pw5dQIcY4caS0gnTJFr8RXcqxoNwyO
+lXEuY5fMi7rdKR5r5bg4ry/voEUyeCQGQDbafDMxLIKpThxZO0iowRDGAGzJrALU
+Q9BpIF8x9qxFhdID/efhLhZUeF7tPKJ3FwJ5hGKEQSFqxzrOFPUC9vMM6KUmZ0iw
+yU9QnoJKorDaPMEOQNux
+=Yv5C
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__29_May_2013_12_33_17_+1000_vwwtKaJgG/nXr/er--
+--Signature=_Wed__29_May_2013_13_34_59_+1000_LdZ9BN/mVqYZMTWX--
