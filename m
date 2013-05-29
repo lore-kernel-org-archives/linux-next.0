@@ -1,59 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the xen-arm tree
-Date: Wed, 29 May 2013 13:34:59 +1000
-Message-ID: <20130529133459.fb060dcd20cb00049bed55cd@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the net-next tree
+Date: Wed, 29 May 2013 14:14:22 +1000
+Message-ID: <20130529141422.f0ce7703d21d02b9d2543930@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__29_May_2013_13_34_59_+1000_LdZ9BN/mVqYZMTWX"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__29_May_2013_14_14_22_+1000_cGEhQs7vuwNb7q5X"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:33300 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750888Ab3E2EOk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 May 2013 00:14:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, =?UTF-8?B?IlTDvGxpbiDEsHplciI=?= <tulinizer@gmail.com>
 
---Signature=_Wed__29_May_2013_13_34_59_+1000_LdZ9BN/mVqYZMTWX
+--Signature=_Wed__29_May_2013_14_14_22_+1000_cGEhQs7vuwNb7q5X
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stefano,
+Hi Greg,
 
-After merging the xen-arm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/silicom/bpctl_mod.c between commit 351638e7deee ("net:
+pass info struct via netdevice notifier") from the net-next tree and
+commit f84b075178b4 ("Staging: silicom: Fixed error 'do not initialise
+statics to 0 or NULL'") from the staging tree.
 
-kernel/sched/cputime.c:8:26: fatal error: asm/paravirt.h: No such file or d=
-irectory
- #include <asm/paravirt.h>
-                          ^
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit d31d069a9f68 ("kernel: missing include in cputime.c").
-Only three architectures have that file (x86, arm and ia64).
-
-I have used the xen-arm tree from next-20130528 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__29_May_2013_13_34_59_+1000_LdZ9BN/mVqYZMTWX
+diff --cc drivers/staging/silicom/bpctl_mod.c
+index c8ddb99,3082ba9..0000000
+--- a/drivers/staging/silicom/bpctl_mod.c
++++ b/drivers/staging/silicom/bpctl_mod.c
+@@@ -133,8 -133,8 +133,8 @@@ static unsigned long str_to_hex(char *p
+  static int bp_device_event(struct notifier_block *unused,
+  			   unsigned long event, void *ptr)
+  {
+ -	struct net_device *dev =3D ptr;
+ +	struct net_device *dev =3D netdev_notifier_info_to_dev(ptr);
+- 	static bpctl_dev_t *pbpctl_dev =3D NULL, *pbpctl_dev_m =3D NULL;
++ 	static bpctl_dev_t *pbpctl_dev, *pbpctl_dev_m;
+  	int dev_num =3D 0, ret =3D 0, ret_d =3D 0, time_left =3D 0;
+  	/* printk("BP_PROC_SUPPORT event =3D%d %s %d\n", event,dev->name, dev->i=
+findex ); */
+  	/* return NOTIFY_DONE; */
+
+--Signature=_Wed__29_May_2013_14_14_22_+1000_cGEhQs7vuwNb7q5X
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRpXdnAAoJEECxmPOUX5FEAcEP/14lBH1E8VBk2P05aCDp6Leu
-FxBWAW74DX0a99epqyopyy7I2dXhPMTT/4PlDA9uNycYmI57eFlmY9s1Iny2N4Cs
-j7tlfBewAttSOTIIciuFM3O8pPgeXNj/c5roghri6UKmLh9oGSmlUFCwXJNo1CMy
-OygpKWlQ805CcZ2ut8ln8J8D52C3bQV5S11+Et0ka3frGftkcEQISzP9XN4iP0sP
-AXDEiTdihJt6YbdSNms+cE3OGpibA4rPuaTeLadg/cn0pQYMOv6+ACBNtSKsyxAn
-tMJ6y3QOhoyWO/ftCkRUgW23YT5HwIu7sZW6uF+XzuBhdd0vbWncHC6DTAFoW+Z3
-KNNuEq9odm2i12adFRZvy4BvjX4Gz5MnriFhDKjYnYk2pNCXb7w5ByyEkja+UpOB
-rX3lT/6XMlNUdqjfDHRZ3EfQYdcuMFo+DHcvWZEMUsutHZ2SpfO4wPnogQWPVYQP
-LQS3OK6/0zAA+s6hrubezwpsZhkWJl9ky2Pw5dQIcY4caS0gnTJFr8RXcqxoNwyO
-lXEuY5fMi7rdKR5r5bg4ry/voEUyeCQGQDbafDMxLIKpThxZO0iowRDGAGzJrALU
-Q9BpIF8x9qxFhdID/efhLhZUeF7tPKJ3FwJ5hGKEQSFqxzrOFPUC9vMM6KUmZ0iw
-yU9QnoJKorDaPMEOQNux
-=Yv5C
+iQIcBAEBCAAGBQJRpYCiAAoJEECxmPOUX5FEM3sP/2rJTONSd5NFMmOGPqMPiUo7
+b6KWuTUUEX9d3HBU//Ms7zsvYBXyP/BmnB82JqiwZ62SYMmuBlhgeiXTEmod/4Sc
+rS2b3V3LPVn4VT3Drj65Cxgd0VXiYe0PHDEBXWkb3UXZbN8VbWHpWMNKDR0seTqk
+yiFNgd0/7mOdeAU+s6WeZ4LC+WiXyuLLo1l7mDCfGlODq4LHnbUjU8CwVsDukwIs
+oFDgaVpi+L45z4WwrSgPMnVh0JabcEX7cw0cCnAjDTvRpCMAHvFlz9tRUX6txEx4
+EnYMAy/hQjMyxfVkJd8VXAMdBBGXZp8gckvICkZcL5yFJyUo4h3QqHdVu5VBCUJ2
+tNZsaWb0awyE7s8Kk7rw5p/f01l9WZjUn4nmPnXt51KDd5yR0zv0et6tpd+y3Bot
+ECuEeAv1cACbXNTSZydvwrdI/JFSfr6uf9BUOk0L8M7JUj5ceym3DhktMjp1ubfr
+pMYpc/8wc/b+CAvWBD32oKLiVljuljxLJyjsYU1TosuhZh7DiLDvJbSgQPNbO4di
+qPym3ntBrO7RdwVjE44TtWybAHQPf7Kfm+i+SvqfTdgChmKXYbGEXAS08uVeRg6a
+maDB99MI1MbbIrNu1ZtGHdvOAdGslVH/DyqfCGewOjxgrlT0Vzkv7+LvnDz+WygT
+6egXAH/EI0KIU0frI7ul
+=0TuX
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__29_May_2013_13_34_59_+1000_LdZ9BN/mVqYZMTWX--
+--Signature=_Wed__29_May_2013_14_14_22_+1000_cGEhQs7vuwNb7q5X--
