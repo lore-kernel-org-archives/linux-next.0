@@ -1,77 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the net-next tree
-Date: Wed, 29 May 2013 14:14:22 +1000
-Message-ID: <20130529141422.f0ce7703d21d02b9d2543930@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree
+Date: Wed, 29 May 2013 15:29:15 +1000
+Message-ID: <20130529152915.efba860c7e825fe786b1ee99@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__29_May_2013_14_14_22_+1000_cGEhQs7vuwNb7q5X"
+ boundary="Signature=_Wed__29_May_2013_15_29_15_+1000_b=x_FMU/gJ=Q=ovg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33300 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49746 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750888Ab3E2EOk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 May 2013 00:14:40 -0400
+	with ESMTP id S1752706Ab3E2F3a (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 May 2013 01:29:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, =?UTF-8?B?IlTDvGxpbiDEsHplciI=?= <tulinizer@gmail.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>
 
---Signature=_Wed__29_May_2013_14_14_22_+1000_cGEhQs7vuwNb7q5X
+--Signature=_Wed__29_May_2013_15_29_15_+1000_b=x_FMU/gJ=Q=ovg
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/silicom/bpctl_mod.c between commit 351638e7deee ("net:
-pass info struct via netdevice notifier") from the net-next tree and
-commit f84b075178b4 ("Staging: silicom: Fixed error 'do not initialise
-statics to 0 or NULL'") from the staging tree.
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig, i386 defconfig, sparc32 defconfig) produced these
+warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from /scratch/sfr/next/include/net/tcp.h:44:0,
+                 from /scratch/sfr/next/net/core/sock.c:139:
+/scratch/sfr/next/include/net/inet_ecn.h: In function 'INET_ECN_set_ce':
+/scratch/sfr/next/include/net/inet_ecn.h:137:50: warning: comparison betwee=
+n pointer and integer [enabled by default]
+/scratch/sfr/next/include/net/inet_ecn.h:142:52: warning: comparison betwee=
+n pointer and integer [enabled by default]
+
+I got lots of these :-(
+
+Introduced by commit 1a37e412a022 ("net: Use 16bits for *_headers fields
+of struct skbuff") from the net-next tree.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/silicom/bpctl_mod.c
-index c8ddb99,3082ba9..0000000
---- a/drivers/staging/silicom/bpctl_mod.c
-+++ b/drivers/staging/silicom/bpctl_mod.c
-@@@ -133,8 -133,8 +133,8 @@@ static unsigned long str_to_hex(char *p
-  static int bp_device_event(struct notifier_block *unused,
-  			   unsigned long event, void *ptr)
-  {
- -	struct net_device *dev =3D ptr;
- +	struct net_device *dev =3D netdev_notifier_info_to_dev(ptr);
-- 	static bpctl_dev_t *pbpctl_dev =3D NULL, *pbpctl_dev_m =3D NULL;
-+ 	static bpctl_dev_t *pbpctl_dev, *pbpctl_dev_m;
-  	int dev_num =3D 0, ret =3D 0, ret_d =3D 0, time_left =3D 0;
-  	/* printk("BP_PROC_SUPPORT event =3D%d %s %d\n", event,dev->name, dev->i=
-findex ); */
-  	/* return NOTIFY_DONE; */
-
---Signature=_Wed__29_May_2013_14_14_22_+1000_cGEhQs7vuwNb7q5X
+--Signature=_Wed__29_May_2013_15_29_15_+1000_b=x_FMU/gJ=Q=ovg
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRpYCiAAoJEECxmPOUX5FEM3sP/2rJTONSd5NFMmOGPqMPiUo7
-b6KWuTUUEX9d3HBU//Ms7zsvYBXyP/BmnB82JqiwZ62SYMmuBlhgeiXTEmod/4Sc
-rS2b3V3LPVn4VT3Drj65Cxgd0VXiYe0PHDEBXWkb3UXZbN8VbWHpWMNKDR0seTqk
-yiFNgd0/7mOdeAU+s6WeZ4LC+WiXyuLLo1l7mDCfGlODq4LHnbUjU8CwVsDukwIs
-oFDgaVpi+L45z4WwrSgPMnVh0JabcEX7cw0cCnAjDTvRpCMAHvFlz9tRUX6txEx4
-EnYMAy/hQjMyxfVkJd8VXAMdBBGXZp8gckvICkZcL5yFJyUo4h3QqHdVu5VBCUJ2
-tNZsaWb0awyE7s8Kk7rw5p/f01l9WZjUn4nmPnXt51KDd5yR0zv0et6tpd+y3Bot
-ECuEeAv1cACbXNTSZydvwrdI/JFSfr6uf9BUOk0L8M7JUj5ceym3DhktMjp1ubfr
-pMYpc/8wc/b+CAvWBD32oKLiVljuljxLJyjsYU1TosuhZh7DiLDvJbSgQPNbO4di
-qPym3ntBrO7RdwVjE44TtWybAHQPf7Kfm+i+SvqfTdgChmKXYbGEXAS08uVeRg6a
-maDB99MI1MbbIrNu1ZtGHdvOAdGslVH/DyqfCGewOjxgrlT0Vzkv7+LvnDz+WygT
-6egXAH/EI0KIU0frI7ul
-=0TuX
+iQIcBAEBCAAGBQJRpZIvAAoJEECxmPOUX5FE/rYP/3x6OkJJbYePE/Hp0wFyQwDE
+zz6F2mQpukPaRLHx0mBZAMQe4ey7iMxQPAkP5g3/LsATJAoi6+fOrP/uvhUzV1hZ
+iNqTQAVrVDctOCXX26d7cOLomNwLo4tJkxypsHYPEdqzEwY/hkr87n/cikbI+W5s
+Y1vOVRhn5CX9K7vnRAZHfxLX0PnPUuh3a0boEh/iVjTdLP5Zcv76qaXxesJaD1U+
+LUwlSpJcYK3VguVSg9swPAPlDLhPfFMetSIxBU4/JjqoLVPHfq8SGg51CPoQGEHt
+x7bM+Z00+4FHYwQBArdKklfZykHYLrlXzmdtsdWlMJOEOABm5HorAVH2z1S9niYr
+w8eSQwWtTPV0e28JY4zzinwSjBsjIiTmdTfAXjWo/A0gkoNSHyibTzP0DBTgwQBI
+fnyDKsLiEFIvS809+3UKJdKE1Lndd1ghWtoAh1J3PwKbz1v4+l1HzwuZEyqN58mJ
+stCOELhwBZ01MKPhUeV8mBMFupCWOE+kDBu+ICx833X1Ub8G2+d3hgNtk++LLrK1
+Em2X64f3tR6ExY1DjTt0wrOasusexB6Z0MM5HANvcTL9bDFDL7UjrbSqQvJIgOrw
+kn7nJD1pEBaRni+d61Y7Ph6S0Bdn2lGccYW4ghr9+0QcdkBlPwkxDja20NrKdhiZ
+Y8mMo34idv7Q8IZgTM7V
+=tNiV
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__29_May_2013_14_14_22_+1000_cGEhQs7vuwNb7q5X--
+--Signature=_Wed__29_May_2013_15_29_15_+1000_b=x_FMU/gJ=Q=ovg--
