@@ -1,35 +1,61 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: Tree for May 28 (xen / frontswap)
-Date: Tue, 28 May 2013 16:14:09 -0400
-Message-ID: <20130528201409.GA25433@phenom.dumpdata.com>
-References: <20130528172142.4a70c0bbe4943495699e4e5e@canb.auug.org.au>
- <51A50AEC.7040705@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the net-next tree
+Date: Wed, 29 May 2013 12:33:17 +1000
+Message-ID: <20130529123317.5523988bebf0b9a19d04e53e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__29_May_2013_12_33_17_+1000_vwwtKaJgG/nXr/er"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:23796 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755699Ab3E1UOj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 May 2013 16:14:39 -0400
-Content-Disposition: inline
-In-Reply-To: <51A50AEC.7040705@infradead.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:42886 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753085Ab3E2Cdu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 May 2013 22:33:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anatol Pomozov <anatol.pomozov@gmail.com>, Masanari Iida <standby24x7@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-On Tue, May 28, 2013 at 12:52:12PM -0700, Randy Dunlap wrote:
-> On 05/28/13 00:21, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20130527:
-> > 
-> > New tree: drm-tegra
-> > 
-> 
-> on x86_64:
-> 
-> drivers/xen/tmem.c: In function 'xen_tmem_init':
-> drivers/xen/tmem.c:410:7: error: 'frontswap' undeclared (first use in this function)
+--Signature=_Wed__29_May_2013_12_33_17_+1000_vwwtKaJgG/nXr/er
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have already a patch for this in my tree.
+Hi Jiri,
+
+Today's linux-next merge of the trivial tree got a conflict in
+Documentation/networking/netlink_mmap.txt between commit 3dd17edea018
+("doc:networking: Fix typo in documentation/networking") from the
+net-next tree and commit f884ab15afdc ("doc: fix misspellings with
+'codespell' tool") from the trivial tree.
+
+The fix in the net-next tree was a superset of the one in the trivial
+tree, so I used that and can carry the fix as necessary (no action is
+required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__29_May_2013_12_33_17_+1000_vwwtKaJgG/nXr/er
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRpWkHAAoJEECxmPOUX5FEBdwP/A+By50J/4vbc0Gfji9No6gy
+Ch3Pf3UBhB3fogxSvDtlFtoAC9+OQaea79Rk1jPuTXMpSQ/Fg0HYTwjzqztasdfd
+in1uu4q8dUpNI2PayS+Ip4hE5e1mPz0fEkaAPV0Txs7JbCj5S6MeEcawCiWfJVY9
+d8f+IJjXziH8MZs7q8fUf73f1H2nzQl5pAsMOI9FL/Q6mALGu4wRdvPg+y7830UM
+4yQ43ILta1BGAXVypiPBVvbNI6uCKH2sM7WwQZTc1VgMEbnW+rDQVL2rzeDENH5Q
+KDJqIbf3m6j1WwoD4EQ823RTnNAuhODwb6ln+fEMH+g8Cj/S6oaDFbL0PyH9SBfh
+Q5LOLiRIDli8PDuvWgylWZDAMZZ8G7cH97jsYtLwcJESPWhLMHvbCUOnZqUCf2xQ
+LpGc2ginSDtE0mSXlktDf61zJYZmoOLD3OT61R33nkYqp3BHFObdSkIpiEbbT/pM
+4+nBEJqQSdsPxqUPs6A4dXg2Fj+wHWzE8vd+9Lqzg+0+1Tx+CypBF0bLFghhtgSI
+/gBk1lhwAjVg0YIpbbM2Bb6pb69hktxTqhv5N3BeKGfimVZhvV4Ixwz1+1lzD2LH
+J9bnuZSjFgUFjaOYofCdoVBYwerGzLiR/pSjAz/z0EemdGxPIkspCldAVun8mHob
+LgbeGil+Oi+oE0sONYhw
+=a1F1
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__29_May_2013_12_33_17_+1000_vwwtKaJgG/nXr/er--
