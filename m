@@ -1,35 +1,64 @@
-From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Subject: Re: linux-next: build failure after merge of the xen-arm tree
-Date: Wed, 29 May 2013 11:57:17 +0100
-Message-ID: <alpine.DEB.2.02.1305291156350.4799@kaball.uk.xensource.com>
-References: <20130529133459.fb060dcd20cb00049bed55cd@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (net-next
+ tree related)
+Date: Thu, 30 May 2013 16:17:57 +1000
+Message-ID: <20130530161757.e04eaefc2f3cf64c1135aac1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__30_May_2013_16_17_57_+1000_E9/C7EQt/PK3Omnd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp02.citrix.com ([66.165.176.63]:41601 "EHLO
-	SMTP02.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965542Ab3E2K5f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 May 2013 06:57:35 -0400
-In-Reply-To: <20130529133459.fb060dcd20cb00049bed55cd@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40811 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S967549Ab3E3GSI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 30 May 2013 02:18:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Stefano Stabellini <stefano.stabellini@eu.citrix.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>
 
-On Wed, 29 May 2013, Stephen Rothwell wrote:
-> Hi Stefano,
-> 
-> After merging the xen-arm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> kernel/sched/cputime.c:8:26: fatal error: asm/paravirt.h: No such file or directory
->  #include <asm/paravirt.h>
->                           ^
-> 
-> Caused by commit d31d069a9f68 ("kernel: missing include in cputime.c").
-> Only three architectures have that file (x86, arm and ia64).
-> 
-> I have used the xen-arm tree from next-20130528 for today.
+--Signature=_Thu__30_May_2013_16_17_57_+1000_E9/C7EQt/PK3Omnd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, good point.
-I'll fix the issue by adding an ifdef CONFIG_PARAVIRT around it.
+Hi all,
+
+After merging the final tree, today's linux-next build (i386 defconfig)
+produced this warning:
+
+net/netfilter/nf_nat_helper.c: In function 'mangle_contents':
+net/netfilter/nf_nat_helper.c:108:9: warning: passing argument 3 of 'memmov=
+e' makes integer from pointer without a cast [enabled by default]
+arch/x86/include/asm/string_32.h:200:7: note: expected 'size_t' but argumen=
+t is of type 'sk_buff_data_t'
+
+Presumably introduced by commit 1a37e412a022 ("net: Use 16bits for
+*_headers fields of struct skbuff").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__30_May_2013_16_17_57_+1000_E9/C7EQt/PK3Omnd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRpu8ZAAoJEECxmPOUX5FEJ60P/R8KFMA3VEnTM3ohDCdWkNUN
+PmWKdbiXSsP426MqYobDVIYltUPjYtpGNdu9dbbtl+wzwwO8UXC4eEdwAYRjX2+Q
++hZC1/UyCnKrjMANaenCXbCh91EyD3l4wxkm07r1/+wug6XeaKPti8QBrunFuJdT
+ml9KWrYyEWW4Nkz6mjlfpkiDCAK7u3BGfC+ZUzpDOWmc/kBgLxnoP2zi4e4VdMbR
+CD6hKT49ILU0WrP0u2vJiFVOdWWscpCgb3GFKbLn/9Bcl5SnTGMkYF0aqttrYIBP
+PKOg8GNKAqMVDDZ9Gb3YA5nXq4gRMHnQfr5drhkbHybIAOSxsJmNaWoGgZ9jX9gt
+J84/e6WRpZw+Lu2T26r48oDXjnmBFAuPQyt9Q47VHfTspFJz6pM+9yb6cLpt/7hg
+ocdcQWAiuXrvVVqn3sGIXJOwWLgqpydoBWORnUL4iBZi3z7TOhe9vv0J4C790seQ
+4vj6a6Hm5gRtLh27NCr+eY9NE3TzyaVWUnJIEfOE+TrVH3yZY6lH6rPjS4iqujaA
+FbqayP2VSdmd0fRTmdXt+qbxapUp+IAqA6ADHsnBbw5VUvFgedJMvVNmbjh1bhEY
+8PXJ5yAPWfA46hqaklFb6dficLlcTPuSpA+Gbc54YRswT/n46sWVt7NloYltYVXN
+dXzVDMp+z4tcrh7Lsb7V
+=Z5Zh
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__30_May_2013_16_17_57_+1000_E9/C7EQt/PK3Omnd--
