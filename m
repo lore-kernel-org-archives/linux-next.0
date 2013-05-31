@@ -1,36 +1,102 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: build warning after merge of the final tree
- (net-next tree related)
-Date: Fri, 31 May 2013 08:43:39 +0900
-Message-ID: <20130530234339.GC31349@verge.net.au>
-References: <20130530161757.e04eaefc2f3cf64c1135aac1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (msm tree
+ related)
+Date: Fri, 31 May 2013 14:59:15 +1000
+Message-ID: <20130531145915.e13b029dca07a2db098fb405@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__31_May_2013_14_59_15_+1000_WjpazMnSAZAi2bIH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52435 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751442Ab3E3Xm4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 May 2013 19:42:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20130530161757.e04eaefc2f3cf64c1135aac1@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46101 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750874Ab3EaE7Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 31 May 2013 00:59:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Brown <davidb@codeaurora.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rohit Vaswani <rvaswani@codeaurora.org>
 
-On Thu, May 30, 2013 at 04:17:57PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (i386 defconfig)
-> produced this warning:
-> 
-> net/netfilter/nf_nat_helper.c: In function 'mangle_contents':
-> net/netfilter/nf_nat_helper.c:108:9: warning: passing argument 3 of 'memmove' makes integer from pointer without a cast [enabled by default]
-> arch/x86/include/asm/string_32.h:200:7: note: expected 'size_t' but argument is of type 'sk_buff_data_t'
-> 
-> Presumably introduced by commit 1a37e412a022 ("net: Use 16bits for
-> *_headers fields of struct skbuff").
+--Signature=_Fri__31_May_2013_14_59_15_+1000_WjpazMnSAZAi2bIH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Stephen.
+Hi all,
 
-I believe that you are correct. I'll prepare and post a patch ASAP.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+drivers/gpio/gpio-msm-v2.c: In function 'msm_gpio_irq_domain_map':
+drivers/gpio/gpio-msm-v2.c:373:2: error: implicit declaration of function '=
+set_irq_flags' [-Werror=3Dimplicit-function-declaration]
+  set_irq_flags(irq, IRQF_VALID);
+  ^
+drivers/gpio/gpio-msm-v2.c:373:21: error: 'IRQF_VALID' undeclared (first us=
+e in this function)
+  set_irq_flags(irq, IRQF_VALID);
+                     ^
+drivers/gpio/gpio-msm-v2.c:373:21: note: each undeclared identifier is repo=
+rted only once for each function it appears in
+drivers/gpio/gpio-msm-v2.c: In function 'msm_gpio_remove':
+drivers/gpio/gpio-msm-v2.c:450:18: error: 'TLMM_SCSS_SUMMARY_IRQ' undeclare=
+d (first use in this function)
+  irq_set_handler(TLMM_SCSS_SUMMARY_IRQ, NULL);
+                  ^
+
+Caused by commit 69cf52b46b39 ("gpio: msm: Add device tree and irqdomain
+support for gpio-msm-v2").
+
+I applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 31 May 2013 14:54:00 +1000
+Subject: [PATCH] restore dependency on ARCH_MSM to GPIO_MSM_V2
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 2e4a21a..f471fe8 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -165,7 +165,7 @@ config GPIO_MSM_V1
+=20
+ config GPIO_MSM_V2
+ 	tristate "Qualcomm MSM GPIO v2"
+-	depends on GPIOLIB && OF
++	depends on GPIOLIB && OF && ARCH_MSM
+ 	help
+ 	  Say yes here to support the GPIO interface on ARM v7 based
+ 	  Qualcomm MSM chips.  Most of the pins on the MSM can be
+--=20
+1.8.1
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__31_May_2013_14_59_15_+1000_WjpazMnSAZAi2bIH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRqC4nAAoJEECxmPOUX5FEwe8P/2aAztF7C5GkSPIJNtazhoT5
+h5yv/nz6peFTfTZxXnRtdVTUovXiv3eDEP+pg2rDrOQFmTSfvnxseK9Zv9dy3STh
+npUbKGLMgh5aRG9V2DsmUc/L1UtY9svbyryNLscoQXjK8vwueA95YXpooOpKjnqw
+PmCxlPWLrx0Ba/oeDm4SaVjxirIBFQVdGjOyG3TUVco8NkKEWmpU6rCs3KuUjGx6
+ahpDfGNUDfx4tkiHuKXs2RzENAWANd0NiUvA8VuKQC+68kT08WV7KrNZlXLuSqqy
+D1rJWeDRxOjBRmUX/V2G0b2UrT2vno3ICVvTftbKu7j89Gme1mGElMcmxKqsv+AE
+US39R0vuwlVT2dYH/2kV1UkUwdvNSMp73BTNaKFrFWCvCdTkVzSce7BY7BxyG+Iw
+w0jeRBD72qGZ+U8s1IxXvF52WH16mm2bY78e2NlMTNY7qiLnpfcGYqvfqRR9dOFM
+TLN02FdDOij3joDObd3VdL2qy7MurnLrPbL1ZFmYkvWBzo/PL8scR9dsZ6mR1nFj
+32XbrlERNEed8PjT2w6xoxvhiA365NdJ9r0OuJ8sk8JqBSuH8fkKniIKZ4s1Xwnn
+/EgzIlUT7JQu288/WuDuKT9KDVsdvxV7vurf1UrgXY7GTX2MFlgZEdgAWqzdGsts
+SArjtLPD5C5fmUXlAbgp
+=GlmU
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__31_May_2013_14_59_15_+1000_WjpazMnSAZAi2bIH--
