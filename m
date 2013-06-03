@@ -1,68 +1,38 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jun 3 (fonts.c & vivi)
-Date: Mon, 03 Jun 2013 14:06:03 -0700
-Message-ID: <51AD053B.1040403@infradead.org>
-References: <20130603163717.a6f78476e57d92fadd6f6a23@canb.auug.org.au> <51ACFDF2.4040600@infradead.org> <CAMuHMdUALrScFE895xRiBvgUpVa9Tvic5M7YxefrEgyeMaSjhw@mail.gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Regression in 9390ace brcmfmac: free net device when registration
+ fails
+Date: Mon, 03 Jun 2013 16:56:34 -0600
+Message-ID: <51AD1F22.2080004@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:39907 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757089Ab3FCVHH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Jun 2013 17:07:07 -0400
-In-Reply-To: <CAMuHMdUALrScFE895xRiBvgUpVa9Tvic5M7YxefrEgyeMaSjhw@mail.gmail.com>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:53258 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759306Ab3FCW4i (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Jun 2013 18:56:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+To: Arend van Spriel <arend@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>
+Cc: Hante Meuleman <meuleman@broadcom.com>, "'linux-wireless@vger.kernel.org'" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On 06/03/13 13:54, Geert Uytterhoeven wrote:
-> On Mon, Jun 3, 2013 at 10:34 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 06/02/13 23:37, Stephen Rothwell wrote:
->>> Changes since 20130531:
->> on x86_64:
->>
->> warning: (VIDEO_VIVI && USB_SISUSBVGA && SOLO6X10) selects FONT_SUPPORT which has unmet direct dependencies (HAS_IOMEM && VT)
->> warning: (VIDEO_VIVI && FB_VGA16 && FB_S3 && FB_VT8623 && FB_ARK && USB_SISUSBVGA_CON && SOLO6X10) selects FONT_8x16 which has unmet direct dependencies (HAS_IOMEM && VT && FONT_SUPPORT)
-> 
-> I knew about thet warning. But I thought it was harmless, as none of the font
-> code really depends on console support...
-> 
->> drivers/built-in.o: In function `vivi_init':
->> vivi.c:(.init.text+0x1a3da): undefined reference to `find_font'
->>
->> when CONFIG_VT is not enabled.
-> 
-> ... but I missed that drivers/video/console is not used if CONFIG_VT=y.
-> Sorry for that.
-> 
->> Just make CONFIG_VIDEO_VIVI depend on VT ?
-> 
-> Does this (whitespace-damaged copy-and-paste) help?
+(John, note that this commit is part of the pull request you sent to
+Dave today)
 
-Yes, that works.  Thanks.
+Arend,
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Commit 9390ace "brcmfmac: free net device when registration fails"
+causes a regression.
 
+I had the BCM4330 firmware present in my root fs, whereas my HW is a
+BCM4329. With this patch applied, I get a kernel panic on boot. With it
+reverted, I see that no issues of that nature. This is true in
+next-20130531 (and also 5/30 and 6/1 but not earlier). A bisect of
+Linus's tree followed by a merge of John's wireless pull request from
+today pointed at this same commit.
 
-> --- a/drivers/video/Makefile
-> +++ b/drivers/video/Makefile
-> @@ -12,7 +12,7 @@ fb-y                              := fbmem.o fbmon.o fbcmap.o
->                                       modedb.o fbcvt.o
->  fb-objs                           := $(fb-y)
-> 
-> -obj-$(CONFIG_VT)                 += console/
-> +obj-y                            += console/
->  obj-$(CONFIG_LOGO)               += logo/
->  obj-y                            += backlight/
-> 
-> It shouldn't make a difference if nothing inside drivers/video/console
-> is enabled,
-> as all objects in drivers/video/console/Makefile are conditional.
-> 
-> BTW, my plan was to move the font code to lib/font, but I haven't done that yet.
-
-
--- 
-~Randy
+Related: Since the two hardware require different firmware, I wonder why
+the driver doesn't use a firmware filename that encodes the HW device ID
+instead of using the same name for all HW. This means that when I move
+my SD card between development systems, I have to copy different
+firmware over the top. That's a little painful...
