@@ -1,119 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the m68k tree with the cris tree
-Date: Mon, 3 Jun 2013 11:22:44 +1000
-Message-ID: <20130603112244.d2ffadc701b5c1e549b0efb9@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
+Date: Mon, 3 Jun 2013 15:41:01 +1000
+Message-ID: <20130603154101.f35d9198796f9735f0c886ad@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__3_Jun_2013_11_22_44_+1000_zrs+ww.BB3xzM4DG"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Jesper Nilsson <jesper.nilsson@axis.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__3_Jun_2013_15_41_01_+1000_/0tUGAD9i2039sQL"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40613 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751042Ab3FCFlJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Jun 2013 01:41:09 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
---Signature=_Mon__3_Jun_2013_11_22_44_+1000_zrs+ww.BB3xzM4DG
+--Signature=_Mon__3_Jun_2013_15_41_01_+1000_/0tUGAD9i2039sQL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Hi Shawn,
 
-Today's linux-next merge of the m68k tree got a conflict in
-arch/cris/arch-v32/drivers/Kconfig between commit aca30fdc0fb6 ("CRIS:
-drop unused Kconfig symbols") from the cris tree and commit 6b8faf979bca
-("cris: Switch cris to drivers/Kconfig") from the m68k tree.
+Today's linux-next merge of the imx-mxs tree got a conflict in
+arch/arm/mach-mxs/mach-mxs.c between commit 6aaab172c99b ("ARM: mxs:
+remove the .map_io declaration") from the arm-soc tree and commit
+fe7149dfa886 ("ARM: mxs: Remove init_irq declaration in machine
+description") from the imx-mxs tree.
 
-Thanks for the heads up Geert.  I fixed it up (see below) and can carry
-the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/cris/arch-v32/drivers/Kconfig
-index c1e21fc,f64779c..0000000
---- a/arch/cris/arch-v32/drivers/Kconfig
-+++ b/arch/cris/arch-v32/drivers/Kconfig
-@@@ -440,9 -785,51 +438,4 @@@ config ETRAX_SPI_GPI
-  	  Say m to build it as a module, which will be called spi_crisv32_gpio.
-  	  (You need to select MMC separately.)
+diff --cc arch/arm/mach-mxs/mach-mxs.c
+index d67ecc1,66fe810..0000000
+--- a/arch/arm/mach-mxs/mach-mxs.c
++++ b/arch/arm/mach-mxs/mach-mxs.c
+@@@ -434,7 -433,7 +433,6 @@@ static const char *mxs_dt_compat[] __in
+  };
  =20
-- # Avoid choices causing non-working configs by conditionalizing the inclu=
-sion.
-- if ETRAX_SPI_MMC
-- source drivers/spi/Kconfig
-- endif
--=20
- -# The default match that of sser0, only because that's how it was tested.
- -config ETRAX_SPI_CS_PIN
- -	string "SPI chip select pin"
- -	depends on ETRAX_SPI_GPIO
- -	default "pc3"
- -	help
- -	  The pin to use for SPI chip select.
- -
- -config ETRAX_SPI_CLK_PIN
- -	string "SPI clock pin"
- -	depends on ETRAX_SPI_GPIO
- -	default "pc1"
- -	help
- -	  The pin to use for the SPI clock.
- -
- -config ETRAX_SPI_DATAIN_PIN
- -	string "SPI MISO (data in) pin"
- -	depends on ETRAX_SPI_GPIO
- -	default "pc16"
- -	help
- -	  The pin to use for SPI data in from the device.
- -
- -config ETRAX_SPI_DATAOUT_PIN
- -	string "SPI MOSI (data out) pin"
- -	depends on ETRAX_SPI_GPIO
- -	default "pc0"
- -	help
- -	  The pin to use for SPI data out to the device.
- -
- -config ETRAX_SPI_MMC_CD_GPIO_PIN
- -	string "MMC/SD card detect pin for SPI using gpio (space for none)"
- -	depends on ETRAX_SPI_GPIO && MMC_SPI
- -	default "pd11"
- -	help
- -	  The pin to use for SD/MMC card detect.  This pin should be pulled up
- -	  and grounded when a card is present.  If defined as " " (space), no
- -	  pin is selected.  A card must then always be inserted for proper
- -	  action.
- -
- -config ETRAX_SPI_MMC_WP_GPIO_PIN
- -	string "MMC/SD card write-protect pin for SPI using gpio (space for none=
-)"
- -	depends on ETRAX_SPI_GPIO && MMC_SPI
- -	default "pd10"
- -	help
- -	  The pin to use for the SD/MMC write-protect signal for a memory
- -	  card.  If defined as " " (space), the card is considered writable.
- -
-  endif
+  DT_MACHINE_START(MXS, "Freescale MXS (Device Tree)")
+- 	.init_irq	=3D irqchip_init,
+ -	.map_io		=3D debug_ll_io_init,
+  	.handle_irq	=3D icoll_handle_irq,
+  	.init_time	=3D mxs_timer_init,
+  	.init_machine	=3D mxs_machine_init,
 
---Signature=_Mon__3_Jun_2013_11_22_44_+1000_zrs+ww.BB3xzM4DG
+--Signature=_Mon__3_Jun_2013_15_41_01_+1000_/0tUGAD9i2039sQL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRq+/pAAoJEECxmPOUX5FEG0kP/ja75FCxLsrBo3W03jCSoxvt
-53Qy2uIDvQF8rLRvkVZ+3aQ/QJo52gv9PL180Zb0lcYUaK9vlw/HSOf4nwDLcnrQ
-fiRpuz6RUh21TPggPs3GNIWRdZ7A1GTFUR74roS4LSFHHWiQlSvbIVKyjqh+srMz
-hy16vuLA82VwZV2n6VlpSXH/NzJ5wapX4bsOSPRC2kppOMJX86dWHm9ulouNS+po
-kFfvKoxhvSTZ18Im/yL+bkEgWfCv9UMug2RhOMmY14j7rq66Hgbi4Jyrz9VdA0k/
-2o65jFtasbhXSTl2+k/CSH7PHlKJoJ6CvEJYgiaWje7qKjs6TIP4pL+95YFLCJOX
-Yonu8O/c4TTBVuNxgvlmE2ZW5HvZ95evgh3TZUwFVJkKLQKt1vWKfXNHoUaUppVJ
-Dgxs3ecoEAICMdSPjuj3XK4jcNnwdXoK/1WuyoqpB6eM09iYoElpJ45F8175btgG
-e/oQjN5noaSRiA2WYXd4BP4y0gIv/xsY5ijk8SBKATTmt7dx7oMxKsg0tqn3jISn
-ExlsCSAPgwOIs999bGFMrK3io/kvuvNwyst2GUigXb8Kr35140IKbfHGp2DG5Ja5
-YwJ7FCVAYaPZWBsnRJuCALGMo4qlJcRnWl2PZJNMJnAxboaS9TzS/OtzHRV8M4b/
-TOq4TQR/KYHx4NNbxrCR
-=M2Ob
+iQIcBAEBCAAGBQJRrCxtAAoJEECxmPOUX5FEjJMQAILj0cQjXN9FeYbMVfcwNNDu
+grRaJj1OPyuPa9EhA3+gKE+fTK29gV3lQK5N3RND5Q6Pm968fuze8Dbx+TQvpT8A
+8yfMUDKedAlYr+902pkAtjbqLieIkEmKDe9AJTxqRSx5vkKJdBZf8AIAWWI0039T
+X2c5Io4sEssAf7TiUxx0ou/LvUdScGMOCFJj/a4//c3xZtskMirxBIA8y2aMI6Qz
+KyTGisrvWf3lvvcSsDZ0xWnqRHdOd4Ig8riXA5yAAKgy4EBAvc13kDcmxONo88v+
+uIT1+FBimZ+n6FC0KvIp3JiSEDVuLsz5arFMJmcpNmVRFv2BfqDhVRLIk3bNHCuM
+4tEw/7cJ5tM2m50WLhfqMwUomxs+PPQ9aLGRPZl2dzJ/vKG2bqoN5uVpm7dDXIqv
+G24lMuhuGK20k9BZj9mszWXXZ/Tj5hEnr85vlrAUSZA8+QKJMdDkfx2ddSsfYj3l
+RgUCnzsTlI9xjwFjO2Bk248ikNtRx47Vk0zUdFtP+PFSJi4Mz+hNgjRu9CnBCJoa
+oh9XJEFU5dS3e+lLHYhFf8ueWTkeLDuosclxwjqcM8OPjBY5tVMO7Y5Xexzbuchv
+2RouHgkJPRZmOArZlM89SLa8vC9wBDtRGcxoYA1A33qwc0bn7cuSmHwwnx5Dtyvl
+G0oxdRUuMKPbaiZc7pYh
+=R6nF
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__3_Jun_2013_11_22_44_+1000_zrs+ww.BB3xzM4DG--
+--Signature=_Mon__3_Jun_2013_15_41_01_+1000_/0tUGAD9i2039sQL--
