@@ -1,80 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with Linus' tree
-Date: Tue, 4 Jun 2013 11:49:55 +1000
-Message-ID: <20130604114955.753909b956c4f8e75ace86a0@canb.auug.org.au>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: manual merge of the pci tree with Linus' tree
+Date: Mon, 3 Jun 2013 20:11:26 -0600
+Message-ID: <CAErSpo7TJK0W2_KKC8jX-JcdirMNxR7HNwbOvpHqq158MMdy4g@mail.gmail.com>
+References: <20130604114955.753909b956c4f8e75ace86a0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__4_Jun_2013_11_49_55_+1000_BU+0X8bymfNj_iEW"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55208 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758531Ab3FDBu0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Jun 2013 21:50:26 -0400
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:33932 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756754Ab3FDCLr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Jun 2013 22:11:47 -0400
+Received: by mail-ob0-f172.google.com with SMTP id wo10so8551532obc.17
+        for <linux-next@vger.kernel.org>; Mon, 03 Jun 2013 19:11:47 -0700 (PDT)
+In-Reply-To: <20130604114955.753909b956c4f8e75ace86a0@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Jiang Liu <jiang.liu@huawei.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next list <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yinghai Lu <yinghai@kernel.org>, Jiang Liu <jiang.liu@huawei.com>
 
---Signature=_Tue__4_Jun_2013_11_49_55_+1000_BU+0X8bymfNj_iEW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jun 3, 2013 at 7:49 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Bjorn,
+>
+> Today's linux-next merge of the pci tree got a conflict in
+> drivers/acpi/pci_root.c between commit 3f327e39b4b8 ("PCI: acpiphp:
+> Re-enumerate devices when host bridge receives Bus Check") from Linus'
+> tree and commit 6dc7d22c6738 ("PCI/ACPI: Use dev_printk(),
+> acpi_handle_print(), pr_xxx() when possible") from the pci tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hi Bjorn,
+Looks perfect, thanks!
 
-Today's linux-next merge of the pci tree got a conflict in
-drivers/acpi/pci_root.c between commit 3f327e39b4b8 ("PCI: acpiphp:
-Re-enumerate devices when host bridge receives Bus Check") from Linus'
-tree and commit 6dc7d22c6738 ("PCI/ACPI: Use dev_printk(),
-acpi_handle_print(), pr_xxx() when possible") from the pci tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/acpi/pci_root.c
-index e427dc5,122b4dc..0000000
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@@ -639,11 -620,9 +620,11 @@@ static void _handle_hotplug_event_root(
-  	switch (type) {
-  	case ACPI_NOTIFY_BUS_CHECK:
-  		/* bus enumerate */
-- 		printk(KERN_DEBUG "%s: Bus check notify on %s\n", __func__,
-- 				 (char *)buffer.pointer);
-+ 		acpi_handle_printk(KERN_DEBUG, handle,
-+ 				   "Bus check notify on %s\n", __func__);
- -		if (!root)
- +		if (root)
- +			acpiphp_check_host_bridge(handle);
- +		else
-  			handle_root_bridge_insertion(handle);
- =20
-  		break;
-
---Signature=_Tue__4_Jun_2013_11_49_55_+1000_BU+0X8bymfNj_iEW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRrUfWAAoJEECxmPOUX5FEo08QAKY6fBtD2iU88m70mKV1Ibri
-O3u1L/Xa0Rr9fu3NY7EoYPGJCJpzPGUhy9LkY4LR42kWR8IA868acTWtE7tPWL1e
-X5TvP5qnPVHpcIdT/S4q7COB0fQEC+u/yFVIkdlxV0ejI6HmRKOKXB1PA55DYmxE
-CR+aiP6f8UWv9qf8apiEH/mll/FGFUtm1NIYNVUAKn5PYRBMY5aQ/4abY+2gej7q
-xkZATvgftwC2jBRek3JyxClAtZcYbXL9E5dwhCq2CRHDLEHlST2jW9RIFGcWETwP
-g/mQqf+OhsTY1pfcN2qwJUemV5ZFIEB1YlL9WM9DELbcgKwVz/Ug4OQjQhjlBFwe
-nijwfosUqc0xoqJV9SBoxSUrYjwzwdvvMGTr9WEUlaVzSgFUDwNq+cMw1X9mWGwf
-luLPLq1+nukCiNZ9InIqvv2y8Y193C6CWrBUjUiubUr9SVUPpy6WtfeyY1nbmVHm
-WqSDEThSZx+imqOCr+O3zVdLKCC8r0XYAivgIFOt72/0Nc5cX/h9kE2PvM1C2Gi0
-2qFhA80jpLV407/JkrAh2bTVFCym1fSRfk3Nj+1lh+48e1cgZrnJxueOOD4r6vU+
-y9STNozelyj/fytCfvSI9yvRO1qLCG4XkfmYehpX2VvN5hCtExR6AUIFj5zuSuYL
-XAI+rAQVbXrRXqkBjOk9
-=fuxp
------END PGP SIGNATURE-----
-
---Signature=_Tue__4_Jun_2013_11_49_55_+1000_BU+0X8bymfNj_iEW--
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>
+> diff --cc drivers/acpi/pci_root.c
+> index e427dc5,122b4dc..0000000
+> --- a/drivers/acpi/pci_root.c
+> +++ b/drivers/acpi/pci_root.c
+> @@@ -639,11 -620,9 +620,11 @@@ static void _handle_hotplug_event_root(
+>         switch (type) {
+>         case ACPI_NOTIFY_BUS_CHECK:
+>                 /* bus enumerate */
+> -               printk(KERN_DEBUG "%s: Bus check notify on %s\n", __func__,
+> -                                (char *)buffer.pointer);
+> +               acpi_handle_printk(KERN_DEBUG, handle,
+> +                                  "Bus check notify on %s\n", __func__);
+>  -              if (!root)
+>  +              if (root)
+>  +                      acpiphp_check_host_bridge(handle);
+>  +              else
+>                         handle_root_bridge_insertion(handle);
+>
+>                 break;
