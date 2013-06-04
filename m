@@ -1,92 +1,155 @@
-From: "Peng, Tao" <tao.peng@emc.com>
-Subject: [PATCH] staging/lustre: fix build errors
-Date: Tue, 4 Jun 2013 08:45:41 +0000
-Message-ID: <1882637210201641A747464075FFC6490E57F19F@MX101CL02.corp.emc.com>
+From: Peng Tao <bergwolf@gmail.com>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Tue, 4 Jun 2013 16:55:46 +0800
+Message-ID: <CA+a=Yy4WASN0XF3tfWgZzST+tP5N-u7OvGi1EzJNkxuz484mOA@mail.gmail.com>
+References: <20130604145700.6abe693b7e4628cf62948624@canb.auug.org.au> <20130604054233.GA23572@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hop-nat-141.emc.com ([168.159.213.141]:27435 "EHLO
-	mexforward.lss.emc.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751415Ab3FDIqG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Jun 2013 04:46:06 -0400
-Content-Language: en-US
+Received: from mail-wg0-f41.google.com ([74.125.82.41]:41831 "EHLO
+	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751011Ab3FDI4I (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Jun 2013 04:56:08 -0400
+In-Reply-To: <20130604054233.GA23572@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andreas Dilger <andreas.dilger@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lukas Czerner <lczerner@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <andreas.dilger@intel.com>
 
-RnJvbSAzNjkzOThjNzgyYzkxNGU1ZjA1NDhkNWJiYWQyMmMwMGM2YjU4YjZhIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQ0KRnJvbTogUGVuZyBUYW8gPGJlcmd3b2xmQGdtYWlsLmNvbT4NCkRhdGU6
-IFR1ZSwgNCBKdW4gMjAxMyAxNTo0ODoxNyArMDgwMA0KU3ViamVjdDogW1BBVENIXSBzdGFnaW5n
-L2x1c3RyZTogZml4IGJ1aWxkIGVycm9ycw0KDQpUaGVyZSBhcmUgc2V2ZXJhbCBpc3N1ZXM6DQox
-LiBzZXRfY3B1c19hbGxvd2VkKCkgaXMgbm90IGF2YWlsYWJsZSB3aXRoIENPTkZJR19DUFVNQVNL
-X09GRlNUQUNLIG9uDQoyLiBDT05GSUdfTU9EVUxFUyBtYXkgbm90IGJlIGRlZmluZWQNCjMuIENP
-TkZJR19NT0RVTEVfVU5MT0FEIG1heSBub3QgYmUgZGVmaW5lZA0KDQpTaWduZWQtb2ZmLWJ5OiBQ
-ZW5nIFRhbyA8dGFvLnBlbmdAZW1jLmNvbT4NCi0tLQ0KU3RlcGhlbiwgcGxlYXNlIHNlZSBpZiB0
-aGlzIGZpeGVzIHlvdXIgYnVpbGQgZmFpbHVyZS4gSSBoYXZlIHRlc3RlZCBpdCBsb2NhbGx5IGJ1
-dCBvbmx5IG9uIFg4NiBhcmNoaXRlY3R1cmUsIHdpdGggQ09ORklHX0NQVU1BU0tfT0ZGU1RBQ0sg
-b24gYW5kIENPTkZJR19NT0RVTEVTL0NPTkZJR19NT0RVTEVfVU5MT0FEIG9mZi4NCg0KIC4uLi9s
-dXN0cmUvaW5jbHVkZS9saW51eC9saWJjZnMvbGludXgvbGludXgtcHJpbS5oIHwgICAgMiAtLQ0K
-IC4uLi9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saW51eC9wb3J0YWxzX2NvbXBhdDI1LmggIHwgICAg
-MiAtLQ0KIC4uLi9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvbGliY2ZzL2xpbnV4L2xpbnV4LWNwdS5j
-IHwgICAgMiArLQ0KIGRyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL29iZGNsYXNzL2x1X29i
-amVjdC5jIHwgICAgNiArKysrKysNCiBkcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9wdGxy
-cGMvcHRscnBjZC5jICAgICB8ICAgIDQgKystLQ0KIDUgZmlsZXMgY2hhbmdlZCwgOSBpbnNlcnRp
-b25zKCspLCA3IGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2x1
-c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saW51eC9saW51eC1wcmltLmggYi9kcml2ZXJzL3N0
-YWdpbmcvbHVzdHJlL2luY2x1ZGUvbGludXgvbGliY2ZzL2xpbnV4L2xpbnV4LXByaW0uaA0KaW5k
-ZXggYzM0NmJjZC4uYTQ5NjNhOCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUv
-aW5jbHVkZS9saW51eC9saWJjZnMvbGludXgvbGludXgtcHJpbS5oDQorKysgYi9kcml2ZXJzL3N0
-YWdpbmcvbHVzdHJlL2luY2x1ZGUvbGludXgvbGliY2ZzL2xpbnV4L2xpbnV4LXByaW0uaA0KQEAg
-LTc5LDggKzc5LDYgQEANCiAjZGVmaW5lIE5SX0NQVVMgICAgIDENCiAjZW5kaWYNCiANCi0jZGVm
-aW5lIGNmc19zZXRfY3B1c19hbGxvd2VkKHQsIG1hc2spICBzZXRfY3B1c19hbGxvd2VkKHQsIG1h
-c2spDQotDQogLyoNCiAgKiBjYWNoZQ0KICAqLw0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2lu
-Zy9sdXN0cmUvaW5jbHVkZS9saW51eC9saWJjZnMvbGludXgvcG9ydGFsc19jb21wYXQyNS5oIGIv
-ZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saW51eC9wb3J0YWxz
-X2NvbXBhdDI1LmgNCmluZGV4IDJiOTQ4NzIuLjEzMmE0YmUgMTAwNjQ0DQotLS0gYS9kcml2ZXJz
-L3N0YWdpbmcvbHVzdHJlL2luY2x1ZGUvbGludXgvbGliY2ZzL2xpbnV4L3BvcnRhbHNfY29tcGF0
-MjUuaA0KKysrIGIvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9s
-aW51eC9wb3J0YWxzX2NvbXBhdDI1LmgNCkBAIC0xMDksOCArMTA5LDYgQEAgaW50IHByb2NfY2Fs
-bF9oYW5kbGVyKHZvaWQgKmRhdGEsIGludCB3cml0ZSwNCiAjZGVmaW5lIE5SX0NQVVMgICAgIDEN
-CiAjZW5kaWYNCiANCi0jZGVmaW5lIGNmc19zZXRfY3B1c19hbGxvd2VkKHQsIG1hc2spICBzZXRf
-Y3B1c19hbGxvd2VkKHQsIG1hc2spDQotDQogI2RlZmluZSBjZnNfcmVnaXN0ZXJfc3lzY3RsX3Rh
-YmxlKHQsIGEpIHJlZ2lzdGVyX3N5c2N0bF90YWJsZSh0KQ0KIA0KICNlbmRpZiAvKiBfUE9SVEFM
-U19DT01QQVRfSCAqLw0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJl
-L2xpYmNmcy9saW51eC9saW51eC1jcHUuYyBiL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJl
-L2xpYmNmcy9saW51eC9saW51eC1jcHUuYw0KaW5kZXggNmUyNTVmZi4uOTUxNDJkMSAxMDA2NDQN
-Ci0tLSBhL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL2xpYmNmcy9saW51eC9saW51eC1j
-cHUuYw0KKysrIGIvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvbGliY2ZzL2xpbnV4L2xp
-bnV4LWNwdS5jDQpAQCAtNjI3LDcgKzYyNyw3IEBAIGNmc19jcHRfYmluZChzdHJ1Y3QgY2ZzX2Nw
-dF90YWJsZSAqY3B0YWIsIGludCBjcHQpDQogCQlpZiAoY3B1X2lzc2V0KGksICpjcHVtYXNrKSkN
-CiAJCQljb250aW51ZTsNCiANCi0JCXJjID0gc2V0X2NwdXNfYWxsb3dlZChjdXJyZW50LCAqY3B1
-bWFzayk7DQorCQlyYyA9IHNldF9jcHVzX2FsbG93ZWRfcHRyKGN1cnJlbnQsIGNwdW1hc2spOw0K
-IAkJc2V0X21lbXNfYWxsb3dlZCgqbm9kZW1hc2spOw0KIAkJaWYgKHJjID09IDApDQogCQkJc2No
-ZWR1bGUoKTsgLyogc3dpdGNoIHRvIGFsbG93ZWQgQ1BVICovDQpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvb2JkY2xhc3MvbHVfb2JqZWN0LmMgYi9kcml2ZXJzL3N0
-YWdpbmcvbHVzdHJlL2x1c3RyZS9vYmRjbGFzcy9sdV9vYmplY3QuYw0KaW5kZXggMWNiYmI2Zi4u
-ZGE0NTllMSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL29iZGNs
-YXNzL2x1X29iamVjdC5jDQorKysgYi9kcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9vYmRj
-bGFzcy9sdV9vYmplY3QuYw0KQEAgLTEzNTEsNyArMTM1MSw5IEBAIHN0YXRpYyB2b2lkIGtleV9m
-aW5pKHN0cnVjdCBsdV9jb250ZXh0ICpjdHgsIGludCBpbmRleCkNCiANCiAJCUxBU1NFUlQoa2V5
-LT5sY3Rfb3duZXIgIT0gTlVMTCk7DQogCQlpZiAoKGN0eC0+bGNfdGFncyAmIExDVF9OT1JFRikg
-PT0gMCkgew0KKyNpZmRlZiBDT05GSUdfTU9EVUxFX1VOTE9BRA0KIAkJCUxJTlZSTlQobW9kdWxl
-X3JlZmNvdW50KGtleS0+bGN0X293bmVyKSA+IDApOw0KKyNlbmRpZg0KIAkJCW1vZHVsZV9wdXQo
-a2V5LT5sY3Rfb3duZXIpOw0KIAkJfQ0KIAkJY3R4LT5sY192YWx1ZVtpbmRleF0gPSBOVUxMOw0K
-QEAgLTE5MzMsNyArMTkzNSwxMSBAQCB2b2lkIGx1X2NvbnRleHRfa2V5c19kdW1wKHZvaWQpDQog
-CQkJICAgICAgIGksIGtleSwga2V5LT5sY3RfdGFncywNCiAJCQkgICAgICAga2V5LT5sY3RfaW5p
-dCwga2V5LT5sY3RfZmluaSwga2V5LT5sY3RfZXhpdCwNCiAJCQkgICAgICAga2V5LT5sY3RfaW5k
-ZXgsIGF0b21pY19yZWFkKCZrZXktPmxjdF91c2VkKSwNCisjaWZkZWYgQ09ORklHX01PRFVMRVMN
-CiAJCQkgICAgICAga2V5LT5sY3Rfb3duZXIgPyBrZXktPmxjdF9vd25lci0+bmFtZSA6ICIiLA0K
-KyNlbHNlDQorCQkJICAgICAgICIiLA0KKyNlbmRpZg0KIAkJCSAgICAgICBrZXktPmxjdF9vd25l
-cik7DQogCQkJbHVfcmVmX3ByaW50KCZrZXktPmxjdF9yZWZlcmVuY2UpOw0KIAkJfQ0KZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL3B0bHJwYy9wdGxycGNkLmMgYi9k
-cml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9wdGxycGMvcHRscnBjZC5jDQppbmRleCAxODU4
-NDFmLi41YTY2YTFiIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUv
-cHRscnBjL3B0bHJwY2QuYw0KKysrIGIvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvcHRs
-cnBjL3B0bHJwY2QuYw0KQEAgLTM5NSw4ICszOTUsOCBAQCBzdGF0aWMgaW50IHB0bHJwY2Qodm9p
-ZCAqYXJnKQ0KIAkJCQlpZiAoKytpbmRleCA+PSBudW1fcG9zc2libGVfY3B1cygpKQ0KIAkJCQkJ
-aW5kZXggPSAwOw0KIAkJCX0NCi0JCQljZnNfc2V0X2NwdXNfYWxsb3dlZChjdXJyZW50LA0KLQkJ
-CQkgICAgICpjcHVtYXNrX29mX25vZGUoY3B1X3RvX25vZGUoaW5kZXgpKSk7DQorCQkJc2V0X2Nw
-dXNfYWxsb3dlZF9wdHIoY3VycmVudCwNCisJCQkJCWNwdW1hc2tfb2Zfbm9kZShjcHVfdG9fbm9k
-ZShpbmRleCkpKTsNCiAJCX0NCiAJfQ0KICNlbmRpZg0KLS0gDQoxLjcuMQ0KDQo=
+On Tue, Jun 4, 2013 at 1:42 PM, Greg KH <greg@kroah.com> wrote:
+> On Tue, Jun 04, 2013 at 02:57:00PM +1000, Stephen Rothwell wrote:
+>> Hi Greg,
+>>
+>> After merging the staging tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> In file included from drivers/staging/lustre/lustre/fid/../include/linux/lustre_compat25.h:44:0,
+>>                  from drivers/staging/lustre/lustre/fid/../include/linux/lvfs.h:48,
+>>                  from drivers/staging/lustre/lustre/fid/../include/lvfs.h:45,
+>>                  from drivers/staging/lustre/lustre/fid/../include/obd_support.h:41,
+>>                  from drivers/staging/lustre/lustre/fid/../include/linux/obd.h:44,
+>>                  from drivers/staging/lustre/lustre/fid/../include/obd.h:40,
+>>                  from drivers/staging/lustre/lustre/fid/fid_store.c:48:
+>> drivers/staging/lustre/lustre/fid/../include/linux/lustre_patchless_compat.h: In function 'truncate_complete_page':
+>> drivers/staging/lustre/lustre/fid/../include/linux/lustre_patchless_compat.h:56:3: error: too few arguments to function 'page->mapping->a_ops->invalidatepage'
+>>    page->mapping->a_ops->invalidatepage(page, 0);
+>>    ^
+>>
+>> Lots of times.
+>>
+>> Caused by the Lustre client patches interacting with commit d47992f86b30
+>> ("mm: change invalidatepage prototype to accept length") from the ext4
+>> tree.
+>>
+>> I added this merge fix patch:
+>>
+>> From 3873636f50eb89ba5e4f8e4e0523fd62f681edc8 Mon Sep 17 00:00:00 2001
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Tue, 4 Jun 2013 14:41:00 +1000
+>> Subject: [PATCH] staging/lustre: fix for invalidatepage() API change
+>>
+>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>> ---
+>>  drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h b/drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h
+>> index f050808..67c4644 100644
+>> --- a/drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h
+>> +++ b/drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h
+>> @@ -53,7 +53,7 @@ truncate_complete_page(struct address_space *mapping, struct page *page)
+>>               return;
+>>
+>>       if (PagePrivate(page))
+>> -             page->mapping->a_ops->invalidatepage(page, 0);
+>> +             page->mapping->a_ops->invalidatepage(page, 0, PAGE_CACHE_SIZE);
+>>
+>>       cancel_dirty_page(page, PAGE_SIZE);
+>>       ClearPageMappedToDisk(page);
+>> --
+>> 1.8.1
+>>
+>> diff --git a/drivers/staging/lustre/lustre/llite/rw26.c b/drivers/staging/lustre/lustre/llite/rw26.c
+>> index 27e4e64..f1a1c5f 100644
+>> --- a/drivers/staging/lustre/lustre/llite/rw26.c
+>> +++ b/drivers/staging/lustre/lustre/llite/rw26.c
+>> @@ -72,7 +72,8 @@
+>>   * aligned truncate). Lustre leaves partially truncated page in the cache,
+>>   * relying on struct inode::i_size to limit further accesses.
+>>   */
+>> -static void ll_invalidatepage(struct page *vmpage, unsigned long offset)
+>> +static void ll_invalidatepage(struct page *vmpage, unsigned int offset,
+>> +                           unsigned int length)
+>>  {
+>>       struct inode     *inode;
+>>       struct lu_env    *env;
+>> @@ -89,7 +90,7 @@ static void ll_invalidatepage(struct page *vmpage, unsigned long offset)
+>>        * below because they are run with page locked and all our io is
+>>        * happening with locked page too
+>>        */
+>> -     if (offset == 0) {
+>> +     if (offset == 0 && length == PAGE_CACHE_SIZE) {
+>>               env = cl_env_get(&refcheck);
+>>               if (!IS_ERR(env)) {
+>>                       inode = vmpage->mapping->host;
+>
+> That patch makes sense.
+>
+> But then:
+>
+>> But then got these errors:
+>>
+>> drivers/staging/lustre/lustre/libcfs/linux/linux-cpu.c: In function 'cfs_cpt_bind':
+>> drivers/staging/lustre/lustre/libcfs/linux/linux-cpu.c:630:3: error: implicit declaration of function 'set_cpus_allowed' [-Werror=implicit-function-declaration]
+>>    rc = set_cpus_allowed(current, *cpumask);
+>>    ^
+>> cc1: some warnings being treated as errors
+>> drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'key_fini':
+>> drivers/staging/lustre/lustre/obdclass/lu_object.c:1354:4: error: implicit declaration of function 'module_refcount' [-Werror=implicit-function-declaration]
+>>     LINVRNT(module_refcount(key->lct_owner) > 0);
+>>     ^
+>> In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.h:203:0,
+>>                  from drivers/staging/lustre/lustre/obdclass/lu_object.c:47:
+>> drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_context_keys_dump':
+>> drivers/staging/lustre/lustre/obdclass/lu_object.c:1936:42: error: dereferencing pointer to incomplete type
+>>            key->lct_owner ? key->lct_owner->name : "",
+>>                                           ^
+>> drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:221:41: note: in definition of macro '__CDEBUG'
+>>    libcfs_debug_msg(&msgdata, format, ## __VA_ARGS__);     \
+>>                                          ^
+>> drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:238:30: note: in expansion of macro 'CDEBUG_LIMIT'
+>>  #define CERROR(format, ...)  CDEBUG_LIMIT(D_ERROR, format, ## __VA_ARGS__)
+>>                               ^
+>> drivers/staging/lustre/lustre/obdclass/lu_object.c:1932:4: note: in expansion of macro 'CERROR'
+>>     CERROR("[%d]: %p %x (%p,%p,%p) %d %d \"%s\"@%p\n",
+>>     ^
+>> cc1: some warnings being treated as errors
+>> drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c: In function 'ptlrpcd':
+>> drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c:398:4: error: implicit declaration of function 'set_cpus_allowed' [-Werror=implicit-function-declaration]
+>>     cfs_set_cpus_allowed(current,
+>>     ^
+>> cc1: some warnings being treated as errors
+>
+> That must be some #include files needed for ppc.
+>
+>> So I gave up and just reverted commit 52f6317528c6 ("staging/lustre: drop
+>> CONFIG_BROKEN dependency") (thus disabling the code again) for now.
+>
+> That makes sense.
+>
+> Any of the lustre developers want to send me patches to fix the build
+> issues up please?
+Hi Greg,
+
+I have just sent you a patch fixing the build failure. It was because
+of some CONFIG_ options that Lustre was not well tested against.
+
+1. set_cpus_allowed() is not available with CONFIG_CPUMASK_OFFSTACK on
+2. CONFIG_MODULES may not be defined and it causes accessing
+module->name field to fail.
+3. CONFIG_MODULE_UNLOAD may not be defined, and it causes missing
+module_refcount()
+
+--
+Thanks,
+Tao
