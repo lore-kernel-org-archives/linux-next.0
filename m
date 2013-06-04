@@ -1,32 +1,32 @@
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: linux-next: Tree for Jun 4 (pch_phub.c)
-Date: Tue, 04 Jun 2013 13:21:40 -0700
-Message-ID: <51AE4C54.6000709@infradead.org>
-References: <20130604174107.99848a1dbb2532ceffe993eb@canb.auug.org.au>
+Date: Tue, 4 Jun 2013 23:02:31 +0200
+Message-ID: <201306042302.31866.arnd@arndb.de>
+References: <20130604174107.99848a1dbb2532ceffe993eb@canb.auug.org.au> <51AE4C54.6000709@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:35685 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751366Ab3FDUWm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Jun 2013 16:22:42 -0400
-In-Reply-To: <20130604174107.99848a1dbb2532ceffe993eb@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51AE4C54.6000709@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On 06/04/13 00:41, Stephen Rothwell wrote:
-> Hi all,
+On Tuesday 04 June 2013, Randy Dunlap wrote:
 > 
-> Changes since 20130603:
+> On 06/04/13 00:41, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20130603:
+> > 
 > 
+> when CONFIG_NET is not enabled:
+> 
+> ERROR: "mac_pton" [drivers/misc/pch_phub.ko] undefined!
 
-when CONFIG_NET is not enabled:
+Andy Shevchenko just posted "[PATCH] net: core: move mac_pton() to
+lib/net_utils.c" to fix this.
 
-ERROR: "mac_pton" [drivers/misc/pch_phub.ko] undefined!
-
-
--- 
-~Randy
+	Arnd
