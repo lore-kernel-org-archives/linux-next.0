@@ -1,155 +1,56 @@
-From: Peng Tao <bergwolf@gmail.com>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Tue, 4 Jun 2013 16:55:46 +0800
-Message-ID: <CA+a=Yy4WASN0XF3tfWgZzST+tP5N-u7OvGi1EzJNkxuz484mOA@mail.gmail.com>
-References: <20130604145700.6abe693b7e4628cf62948624@canb.auug.org.au> <20130604054233.GA23572@kroah.com>
+From: "Arend van Spriel" <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: Re: Regression in 9390ace brcmfmac: free net device when
+ registration fails
+Date: Tue, 4 Jun 2013 14:58:37 +0200
+Message-ID: <51ADE47D.50700@broadcom.com>
+References: <51AD1F22.2080004@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f41.google.com ([74.125.82.41]:41831 "EHLO
-	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751011Ab3FDI4I (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Jun 2013 04:56:08 -0400
-In-Reply-To: <20130604054233.GA23572@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lukas Czerner <lczerner@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <andreas.dilger@intel.com>
+Content-Type: text/plain;
+ charset=iso-8859-1;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51AD1F22.2080004-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Hante Meuleman <meuleman-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "'linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jun 4, 2013 at 1:42 PM, Greg KH <greg@kroah.com> wrote:
-> On Tue, Jun 04, 2013 at 02:57:00PM +1000, Stephen Rothwell wrote:
->> Hi Greg,
->>
->> After merging the staging tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> In file included from drivers/staging/lustre/lustre/fid/../include/linux/lustre_compat25.h:44:0,
->>                  from drivers/staging/lustre/lustre/fid/../include/linux/lvfs.h:48,
->>                  from drivers/staging/lustre/lustre/fid/../include/lvfs.h:45,
->>                  from drivers/staging/lustre/lustre/fid/../include/obd_support.h:41,
->>                  from drivers/staging/lustre/lustre/fid/../include/linux/obd.h:44,
->>                  from drivers/staging/lustre/lustre/fid/../include/obd.h:40,
->>                  from drivers/staging/lustre/lustre/fid/fid_store.c:48:
->> drivers/staging/lustre/lustre/fid/../include/linux/lustre_patchless_compat.h: In function 'truncate_complete_page':
->> drivers/staging/lustre/lustre/fid/../include/linux/lustre_patchless_compat.h:56:3: error: too few arguments to function 'page->mapping->a_ops->invalidatepage'
->>    page->mapping->a_ops->invalidatepage(page, 0);
->>    ^
->>
->> Lots of times.
->>
->> Caused by the Lustre client patches interacting with commit d47992f86b30
->> ("mm: change invalidatepage prototype to accept length") from the ext4
->> tree.
->>
->> I added this merge fix patch:
->>
->> From 3873636f50eb89ba5e4f8e4e0523fd62f681edc8 Mon Sep 17 00:00:00 2001
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Tue, 4 Jun 2013 14:41:00 +1000
->> Subject: [PATCH] staging/lustre: fix for invalidatepage() API change
->>
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> ---
->>  drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h b/drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h
->> index f050808..67c4644 100644
->> --- a/drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h
->> +++ b/drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h
->> @@ -53,7 +53,7 @@ truncate_complete_page(struct address_space *mapping, struct page *page)
->>               return;
->>
->>       if (PagePrivate(page))
->> -             page->mapping->a_ops->invalidatepage(page, 0);
->> +             page->mapping->a_ops->invalidatepage(page, 0, PAGE_CACHE_SIZE);
->>
->>       cancel_dirty_page(page, PAGE_SIZE);
->>       ClearPageMappedToDisk(page);
->> --
->> 1.8.1
->>
->> diff --git a/drivers/staging/lustre/lustre/llite/rw26.c b/drivers/staging/lustre/lustre/llite/rw26.c
->> index 27e4e64..f1a1c5f 100644
->> --- a/drivers/staging/lustre/lustre/llite/rw26.c
->> +++ b/drivers/staging/lustre/lustre/llite/rw26.c
->> @@ -72,7 +72,8 @@
->>   * aligned truncate). Lustre leaves partially truncated page in the cache,
->>   * relying on struct inode::i_size to limit further accesses.
->>   */
->> -static void ll_invalidatepage(struct page *vmpage, unsigned long offset)
->> +static void ll_invalidatepage(struct page *vmpage, unsigned int offset,
->> +                           unsigned int length)
->>  {
->>       struct inode     *inode;
->>       struct lu_env    *env;
->> @@ -89,7 +90,7 @@ static void ll_invalidatepage(struct page *vmpage, unsigned long offset)
->>        * below because they are run with page locked and all our io is
->>        * happening with locked page too
->>        */
->> -     if (offset == 0) {
->> +     if (offset == 0 && length == PAGE_CACHE_SIZE) {
->>               env = cl_env_get(&refcheck);
->>               if (!IS_ERR(env)) {
->>                       inode = vmpage->mapping->host;
+On 06/04/2013 12:56 AM, Stephen Warren wrote:
+> (John, note that this commit is part of the pull request you sent to
+> Dave today)
 >
-> That patch makes sense.
+> Arend,
 >
-> But then:
+> Commit 9390ace "brcmfmac: free net device when registration fails"
+> causes a regression.
 >
->> But then got these errors:
->>
->> drivers/staging/lustre/lustre/libcfs/linux/linux-cpu.c: In function 'cfs_cpt_bind':
->> drivers/staging/lustre/lustre/libcfs/linux/linux-cpu.c:630:3: error: implicit declaration of function 'set_cpus_allowed' [-Werror=implicit-function-declaration]
->>    rc = set_cpus_allowed(current, *cpumask);
->>    ^
->> cc1: some warnings being treated as errors
->> drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'key_fini':
->> drivers/staging/lustre/lustre/obdclass/lu_object.c:1354:4: error: implicit declaration of function 'module_refcount' [-Werror=implicit-function-declaration]
->>     LINVRNT(module_refcount(key->lct_owner) > 0);
->>     ^
->> In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.h:203:0,
->>                  from drivers/staging/lustre/lustre/obdclass/lu_object.c:47:
->> drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_context_keys_dump':
->> drivers/staging/lustre/lustre/obdclass/lu_object.c:1936:42: error: dereferencing pointer to incomplete type
->>            key->lct_owner ? key->lct_owner->name : "",
->>                                           ^
->> drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:221:41: note: in definition of macro '__CDEBUG'
->>    libcfs_debug_msg(&msgdata, format, ## __VA_ARGS__);     \
->>                                          ^
->> drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:238:30: note: in expansion of macro 'CDEBUG_LIMIT'
->>  #define CERROR(format, ...)  CDEBUG_LIMIT(D_ERROR, format, ## __VA_ARGS__)
->>                               ^
->> drivers/staging/lustre/lustre/obdclass/lu_object.c:1932:4: note: in expansion of macro 'CERROR'
->>     CERROR("[%d]: %p %x (%p,%p,%p) %d %d \"%s\"@%p\n",
->>     ^
->> cc1: some warnings being treated as errors
->> drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c: In function 'ptlrpcd':
->> drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c:398:4: error: implicit declaration of function 'set_cpus_allowed' [-Werror=implicit-function-declaration]
->>     cfs_set_cpus_allowed(current,
->>     ^
->> cc1: some warnings being treated as errors
->
-> That must be some #include files needed for ppc.
->
->> So I gave up and just reverted commit 52f6317528c6 ("staging/lustre: drop
->> CONFIG_BROKEN dependency") (thus disabling the code again) for now.
->
-> That makes sense.
->
-> Any of the lustre developers want to send me patches to fix the build
-> issues up please?
-Hi Greg,
+> I had the BCM4330 firmware present in my root fs, whereas my HW is a
+> BCM4329. With this patch applied, I get a kernel panic on boot. With it
+> reverted, I see that no issues of that nature. This is true in
+> next-20130531 (and also 5/30 and 6/1 but not earlier). A bisect of
+> Linus's tree followed by a merge of John's wireless pull request from
+> today pointed at this same commit.
 
-I have just sent you a patch fixing the build failure. It was because
-of some CONFIG_ options that Lustre was not well tested against.
+Thanks, Stephen
 
-1. set_cpus_allowed() is not available with CONFIG_CPUMASK_OFFSTACK on
-2. CONFIG_MODULES may not be defined and it causes accessing
-module->name field to fail.
-3. CONFIG_MODULE_UNLOAD may not be defined, and it causes missing
-module_refcount()
+I will look into this.
+
+> Related: Since the two hardware require different firmware, I wonder why
+> the driver doesn't use a firmware filename that encodes the HW device ID
+> instead of using the same name for all HW. This means that when I move
+> my SD card between development systems, I have to copy different
+> firmware over the top. That's a little painful...
+
+I agree that for development switching cards it is kinda awkward and I 
+have been fooled by it as well. We may want to change or if your itch is 
+annoying enough feel free to send a patch for it ;-)
+
+Regards,
+Arend
+
 
 --
-Thanks,
-Tao
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
