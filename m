@@ -1,42 +1,32 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] TTY:vt: convert remain take_over_console's users to
- do_take_over_console
-Date: Tue, 4 Jun 2013 22:13:18 +0200
-Message-ID: <20130604201317.GA16303@amd.pavel.ucw.cz>
-References: <20130521051511.GA11435@udknight>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jun 4 (pch_phub.c)
+Date: Tue, 04 Jun 2013 13:21:40 -0700
+Message-ID: <51AE4C54.6000709@infradead.org>
+References: <20130604174107.99848a1dbb2532ceffe993eb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42686 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750872Ab3FDUNU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Jun 2013 16:13:20 -0400
-Content-Disposition: inline
-In-Reply-To: <20130521051511.GA11435@udknight>
+Received: from merlin.infradead.org ([205.233.59.134]:35685 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751366Ab3FDUWm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Jun 2013 16:22:42 -0400
+In-Reply-To: <20130604174107.99848a1dbb2532ceffe993eb@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wang YanQing <udknight@gmail.com>, gregkh@linuxfoundation.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
 
-On Tue 2013-05-21 13:15:12, Wang YanQing wrote:
-> Impact:
-> 1:convert all remain take_over_console to do_take_over_console
+On 06/04/13 00:41, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20130603:
+> 
 
-This is step backwards.
+when CONFIG_NET is not enabled:
 
-> --- a/arch/alpha/kernel/console.c
-> +++ b/arch/alpha/kernel/console.c
-> @@ -61,7 +61,9 @@ locate_and_init_vga(void *(*sel_func)(void *, void *))
->  
->  	/* Set the VGA hose and init the new console. */
->  	pci_vga_hose = hose;
-> -	take_over_console(&vga_con, 0, MAX_NR_CONSOLES-1, 1);
-> +	console_lock();
-> +	do_take_over_console(&vga_con, 0, MAX_NR_CONSOLES-1, 1);
-> +	console_unlock();
->  }
+ERROR: "mac_pton" [drivers/misc/pch_phub.ko] undefined!
 
-Original was better.
-									Pavel
+
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+~Randy
