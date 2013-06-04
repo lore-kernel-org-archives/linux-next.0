@@ -1,122 +1,182 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-next tree with the net
- tree
-Date: Tue, 4 Jun 2013 12:43:47 +1000
-Message-ID: <20130604124347.9b994e150e2f37c9be9f32ad@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging tree
+Date: Tue, 4 Jun 2013 14:57:00 +1000
+Message-ID: <20130604145700.6abe693b7e4628cf62948624@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__4_Jun_2013_12_43_47_+1000_kxrouT8PMJc4_mQZ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60483 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755668Ab3FDCnx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Jun 2013 22:43:53 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felix Fietkau <nbd@openwrt.org>, Helmut Schaa <helmut.schaa@googlemail.com>, Johannes Berg <johannes.berg@intel.com>, Jakub Kicinski <kubakici@wp.pl>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+ boundary="Signature=_Tue__4_Jun_2013_14_57_00_+1000_jmsq7Yr.rHJFsGJu"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Peng Tao <bergwolf@gmail.com>, Andreas Dilger <andreas.dilger@intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__4_Jun_2013_12_43_47_+1000_kxrouT8PMJc4_mQZ
+--Signature=_Tue__4_Jun_2013_14_57_00_+1000_jmsq7Yr.rHJFsGJu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Greg,
 
-Today's linux-next merge of the wireless-next tree got a conflict in
-net/mac80211/iface.c between commit ac20976dcaee ("mac80211: Allow single
-vif mac address change with addr_mask") from the net tree and commit
-31eba5bc56a9 ("mac80211: support active monitor interfaces") from the
-wireless-next tree.
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+In file included from drivers/staging/lustre/lustre/fid/../include/linux/lu=
+stre_compat25.h:44:0,
+                 from drivers/staging/lustre/lustre/fid/../include/linux/lv=
+fs.h:48,
+                 from drivers/staging/lustre/lustre/fid/../include/lvfs.h:4=
+5,
+                 from drivers/staging/lustre/lustre/fid/../include/obd_supp=
+ort.h:41,
+                 from drivers/staging/lustre/lustre/fid/../include/linux/ob=
+d.h:44,
+                 from drivers/staging/lustre/lustre/fid/../include/obd.h:40,
+                 from drivers/staging/lustre/lustre/fid/fid_store.c:48:
+drivers/staging/lustre/lustre/fid/../include/linux/lustre_patchless_compat.=
+h: In function 'truncate_complete_page':
+drivers/staging/lustre/lustre/fid/../include/linux/lustre_patchless_compat.=
+h:56:3: error: too few arguments to function 'page->mapping->a_ops->invalid=
+atepage'
+   page->mapping->a_ops->invalidatepage(page, 0);
+   ^
 
+Lots of times.
+
+Caused by the Lustre client patches interacting with commit d47992f86b30
+("mm: change invalidatepage prototype to accept length") from the ext4
+tree.
+
+I added this merge fix patch:
+
+=46rom 3873636f50eb89ba5e4f8e4e0523fd62f681edc8 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 4 Jun 2013 14:41:00 +1000
+Subject: [PATCH] staging/lustre: fix for invalidatepage() API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h | 2 =
++-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/lustre/lustre/include/linux/lustre_patchless_c=
+ompat.h b/drivers/staging/lustre/lustre/include/linux/lustre_patchless_comp=
+at.h
+index f050808..67c4644 100644
+--- a/drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h
++++ b/drivers/staging/lustre/lustre/include/linux/lustre_patchless_compat.h
+@@ -53,7 +53,7 @@ truncate_complete_page(struct address_space *mapping, str=
+uct page *page)
+ 		return;
+=20
+ 	if (PagePrivate(page))
+-		page->mapping->a_ops->invalidatepage(page, 0);
++		page->mapping->a_ops->invalidatepage(page, 0, PAGE_CACHE_SIZE);
+=20
+ 	cancel_dirty_page(page, PAGE_SIZE);
+ 	ClearPageMappedToDisk(page);
+--=20
+1.8.1
+
+diff --git a/drivers/staging/lustre/lustre/llite/rw26.c b/drivers/staging/l=
+ustre/lustre/llite/rw26.c
+index 27e4e64..f1a1c5f 100644
+--- a/drivers/staging/lustre/lustre/llite/rw26.c
++++ b/drivers/staging/lustre/lustre/llite/rw26.c
+@@ -72,7 +72,8 @@
+  * aligned truncate). Lustre leaves partially truncated page in the cache,
+  * relying on struct inode::i_size to limit further accesses.
+  */
+-static void ll_invalidatepage(struct page *vmpage, unsigned long offset)
++static void ll_invalidatepage(struct page *vmpage, unsigned int offset,
++			      unsigned int length)
+ {
+ 	struct inode     *inode;
+ 	struct lu_env    *env;
+@@ -89,7 +90,7 @@ static void ll_invalidatepage(struct page *vmpage, unsign=
+ed long offset)
+ 	 * below because they are run with page locked and all our io is
+ 	 * happening with locked page too
+ 	 */
+-	if (offset =3D=3D 0) {
++	if (offset =3D=3D 0 && length =3D=3D PAGE_CACHE_SIZE) {
+ 		env =3D cl_env_get(&refcheck);
+ 		if (!IS_ERR(env)) {
+ 			inode =3D vmpage->mapping->host;
+
+But then got these errors:
+
+drivers/staging/lustre/lustre/libcfs/linux/linux-cpu.c: In function 'cfs_cp=
+t_bind':
+drivers/staging/lustre/lustre/libcfs/linux/linux-cpu.c:630:3: error: implic=
+it declaration of function 'set_cpus_allowed' [-Werror=3Dimplicit-function-=
+declaration]
+   rc =3D set_cpus_allowed(current, *cpumask);
+   ^
+cc1: some warnings being treated as errors
+drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'key_fini':
+drivers/staging/lustre/lustre/obdclass/lu_object.c:1354:4: error: implicit =
+declaration of function 'module_refcount' [-Werror=3Dimplicit-function-decl=
+aration]
+    LINVRNT(module_refcount(key->lct_owner) > 0);
+    ^
+In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.h:=
+203:0,
+                 from drivers/staging/lustre/lustre/obdclass/lu_object.c:47:
+drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_context=
+_keys_dump':
+drivers/staging/lustre/lustre/obdclass/lu_object.c:1936:42: error: derefere=
+ncing pointer to incomplete type
+           key->lct_owner ? key->lct_owner->name : "",
+                                          ^
+drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:221:41: note: in=
+ definition of macro '__CDEBUG'
+   libcfs_debug_msg(&msgdata, format, ## __VA_ARGS__);     \
+                                         ^
+drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:238:30: note: in=
+ expansion of macro 'CDEBUG_LIMIT'
+ #define CERROR(format, ...)  CDEBUG_LIMIT(D_ERROR, format, ## __VA_ARGS__)
+                              ^
+drivers/staging/lustre/lustre/obdclass/lu_object.c:1932:4: note: in expansi=
+on of macro 'CERROR'
+    CERROR("[%d]: %p %x (%p,%p,%p) %d %d \"%s\"@%p\n",
+    ^
+cc1: some warnings being treated as errors
+drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c: In function 'ptlrpcd':
+drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c:398:4: error: implicit decla=
+ration of function 'set_cpus_allowed' [-Werror=3Dimplicit-function-declarat=
+ion]
+    cfs_set_cpus_allowed(current,
+    ^
+cc1: some warnings being treated as errors
+
+So I gave up and just reverted commit 52f6317528c6 ("staging/lustre: drop
+CONFIG_BROKEN dependency") (thus disabling the code again) for now.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/mac80211/iface.c
-index 7c3ba86,7cabaf2..0000000
---- a/net/mac80211/iface.c
-+++ b/net/mac80211/iface.c
-@@@ -159,10 -159,10 +159,11 @@@ static int ieee80211_change_mtu(struct=20
-  	return 0;
-  }
- =20
-- static int ieee80211_verify_mac(struct ieee80211_sub_if_data *sdata, u8 *=
-addr)
- -static int ieee80211_verify_mac(struct ieee80211_local *local, u8 *addr,
-++static int ieee80211_verify_mac(struct ieee80211_sub_if_data *sdata, u8 *=
-addr,
-+ 				bool check_dup)
-  {
- -	struct ieee80211_sub_if_data *sdata;
- +	struct ieee80211_local *local =3D sdata->local;
- +	struct ieee80211_sub_if_data *iter;
-  	u64 new, mask, tmp;
-  	u8 *m;
-  	int ret =3D 0;
-@@@ -180,16 -180,16 +181,19 @@@
-  		((u64)m[2] << 3*8) | ((u64)m[3] << 2*8) |
-  		((u64)m[4] << 1*8) | ((u64)m[5] << 0*8);
- =20
-+ 	if (!check_dup)
-+ 		return ret;
- =20
-  	mutex_lock(&local->iflist_mtx);
- -	list_for_each_entry(sdata, &local->interfaces, list) {
- -		if (sdata->vif.type =3D=3D NL80211_IFTYPE_MONITOR &&
- -		    !(sdata->u.mntr_flags & MONITOR_FLAG_ACTIVE))
- +	list_for_each_entry(iter, &local->interfaces, list) {
- +		if (iter =3D=3D sdata)
-  			continue;
- =20
-- 		if (iter->vif.type =3D=3D NL80211_IFTYPE_MONITOR)
- -		m =3D sdata->vif.addr;
-++		if (iter->vif.type =3D=3D NL80211_IFTYPE_MONITOR &&
-++		    !(iter->u.mntr_flags & MONITOR_FLAG_ACTIVE))
- +			continue;
- +
- +		m =3D iter->vif.addr;
-  		tmp =3D	((u64)m[0] << 5*8) | ((u64)m[1] << 4*8) |
-  			((u64)m[2] << 3*8) | ((u64)m[3] << 2*8) |
-  			((u64)m[4] << 1*8) | ((u64)m[5] << 0*8);
-@@@ -213,7 -214,11 +218,11 @@@ static int ieee80211_change_mac(struct=20
-  	if (ieee80211_sdata_running(sdata))
-  		return -EBUSY;
- =20
-- 	ret =3D ieee80211_verify_mac(sdata, sa->sa_data);
-+ 	if (sdata->vif.type =3D=3D NL80211_IFTYPE_MONITOR &&
-+ 	    !(sdata->u.mntr_flags & MONITOR_FLAG_ACTIVE))
-+ 		check_dup =3D false;
-+=20
- -	ret =3D ieee80211_verify_mac(sdata->local, sa->sa_data, check_dup);
-++	ret =3D ieee80211_verify_mac(sdata, sa->sa_data, check_dup);
-  	if (ret)
-  		return ret;
- =20
-
---Signature=_Tue__4_Jun_2013_12_43_47_+1000_kxrouT8PMJc4_mQZ
+--Signature=_Tue__4_Jun_2013_14_57_00_+1000_jmsq7Yr.rHJFsGJu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRrVRjAAoJEECxmPOUX5FE/TcP/R7rrsYkvqKPEFKfCmQTbQow
-NaRNFfyI//lsNoqn/SxgvUL2Z6jyaPLzIrjw1gjO0h2+xPkZXChTOwwke+q0WOhJ
-SvUt8uLenTOLwHDsGDcV/KvhqdTkF4gCpqAxz9F5xAUzeg7Zzv0PJRRiY8rN8/Zi
-Tc70GxyimcnjbhDrzclUCoR5C1akXBdLIPzStKNPzDLm6doWUwe3pgWEVC4nFRg5
-Na0a+E4iAh2qPUGZnhkLsqz0l8ysBqla6o0kxT0nMBNe4Ii7OHtbwPuoIIU1NUGC
-l0wRYrjTzqAaYNuiKJeqVZw50EFBfXQU/XndPOKeLvNujGhSL3Crej1SozXLICUc
-M7DU7Dz4AYbSMoggRklTl7PwURuAgcIRp2SnPyqmc/psAFwotsrJGFb3cwrbrQtV
-VTbNtHP0GZYg5nR6cZZrfkxwl7bsjq6eByAs0xyBV+ePp2cn2H5FSFJwd6AI/kjr
-S+YGHFBN/TxyfzBlz+ZQEAnfOYsislAqUCuA949TS6DMBjWSvp+c1xLw+QY28Rn5
-qpTYKBRiFJBKFCf4Nf7ikWMpgbgjleWH5UV1UC1rM1GNXNxA99tRpImqmW4xbOPt
-iontwmpaiTb2Q/1tnnrTBaV50xxlvf2f9zCfx6vDt4kW5RdgHvuIUM7dgItqaE4c
-X6fP52I90UylE5+kex6t
-=AnC/
+iQIcBAEBCAAGBQJRrXOhAAoJEECxmPOUX5FEuAIP/1Iaa3sAnpBgsLAIAKomrwxg
+hnh0O7gxoHYcuvQIY5dB2xpeuXojzYyXYB3J4Hp8zwl+YKjCLfGFDyeZyKPzbbDI
+HezkqXurUokfnxI398GWYf/3vlNZRFnpqEg6zjpHYYGvjpgnhd3qcDY1B49i3ZPN
+MB28FgdJ/7CZCML35BAtcUuG8jzawMl+5JeZbfDOVzRjAo7Hzdq5JxVoFol+bm3O
+a98wtboXTPWmkki54I/YUHF5UaqqN1NSurLvxCN4SAttda7Af1ueROvhUKUbT6v6
+0d8PQOEYFrBz59a3zUYHKU8kJRIpUtn5Rypl4MR6L3W9ZAzPTyrWX1IZ5oCp+rbW
+dvZovxzzcnnEkrEXO5uaAkdI49eM+QeiFalwxfcwKdvgxMX86Rt0iAHMaAkUrW79
+ZBA+f7c6oLsjEmSkODf8x35eZPEh9pveMlalcAuTDuI8t8/kfZHoHFeMnbaXwUIu
+YeYCkiehGTq7TciFQ6FtW5jE47JtvLtbWJFCcLHSjh7gj7pmrZDxJnJgQQccKfDf
+z7+M5Glt0DgtULcskCO7tQmKCPKvMaBwd6Vx/twy9XKzc9RHGXrIvOKld080hEtW
+mKwyYRlIUfOuOvtO66hv8iksS5XZAyu7/HvMIbIFPyonw3SCSeaiP9hAN39uVN4b
+8xueGDYmd/BR8vkAueAo
+=b7Uy
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__4_Jun_2013_12_43_47_+1000_kxrouT8PMJc4_mQZ--
+--Signature=_Tue__4_Jun_2013_14_57_00_+1000_jmsq7Yr.rHJFsGJu--
