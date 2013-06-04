@@ -1,60 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the percpu tree
-Date: Tue, 4 Jun 2013 15:43:41 +1000
-Message-ID: <20130604154341.f7afbe1cf405ec6205d14dc8@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for Jun 3 (fonts.c & vivi)
+Date: Tue, 4 Jun 2013 08:50:27 +0200
+Message-ID: <CAMuHMdXp_7aaoxCXqtjVnTivo1Ua+ohfQQ2ZEQNO-OGn-k8iqA@mail.gmail.com>
+References: <20130603163717.a6f78476e57d92fadd6f6a23@canb.auug.org.au>
+	<51ACFDF2.4040600@infradead.org>
+	<CAMuHMdUALrScFE895xRiBvgUpVa9Tvic5M7YxefrEgyeMaSjhw@mail.gmail.com>
+	<51AD053B.1040403@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__4_Jun_2013_15_43_41_+1000_jt=SyV2ECNcNa24C"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58578 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751256Ab3FDFnv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Jun 2013 01:43:51 -0400
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:57483 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752834Ab3FDGu1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Jun 2013 02:50:27 -0400
+In-Reply-To: <51AD053B.1040403@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <koverstreet@google.com>, Tejun Heo <tj@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>
 
---Signature=_Tue__4_Jun_2013_15_43_41_+1000_jt=SyV2ECNcNa24C
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jun 3, 2013 at 11:06 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 06/03/13 13:54, Geert Uytterhoeven wrote:
+>> On Mon, Jun 3, 2013 at 10:34 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>>> On 06/02/13 23:37, Stephen Rothwell wrote:
+>>>> Changes since 20130531:
+>>> on x86_64:
+>>>
+>>> warning: (VIDEO_VIVI && USB_SISUSBVGA && SOLO6X10) selects FONT_SUPPORT which has unmet direct dependencies (HAS_IOMEM && VT)
+>>> warning: (VIDEO_VIVI && FB_VGA16 && FB_S3 && FB_VT8623 && FB_ARK && USB_SISUSBVGA_CON && SOLO6X10) selects FONT_8x16 which has unmet direct dependencies (HAS_IOMEM && VT && FONT_SUPPORT)
+>>
+>> I knew about thet warning. But I thought it was harmless, as none of the font
+>> code really depends on console support...
+>>
+>>> drivers/built-in.o: In function `vivi_init':
+>>> vivi.c:(.init.text+0x1a3da): undefined reference to `find_font'
+>>>
+>>> when CONFIG_VT is not enabled.
+>>
+>> ... but I missed that drivers/video/console is not used if CONFIG_VT=y.
+>> Sorry for that.
+>>
+>>> Just make CONFIG_VIDEO_VIVI depend on VT ?
+>>
+>> Does this (whitespace-damaged copy-and-paste) help?
+>
+> Yes, that works.  Thanks.
+>
+> Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-Hi Andrew,
+Thanks, I'll fold this into the original commit, which is destined for v3.10.
 
-Today's linux-next merge of the akpm tree got conflicts in
-include/linux/percpu-refcount.h and lib/percpu-refcount.c between commit
-215e262f2aeb ("percpu: implement generic percpu refcounting") from the
-percpu tree and commit "generic dynamic per cpu refcounting" from the
-akpm tree.
+>> --- a/drivers/video/Makefile
+>> +++ b/drivers/video/Makefile
+>> @@ -12,7 +12,7 @@ fb-y                              := fbmem.o fbmon.o fbcmap.o
+>>                                       modedb.o fbcvt.o
+>>  fb-objs                           := $(fb-y)
+>>
+>> -obj-$(CONFIG_VT)                 += console/
+>> +obj-y                            += console/
+>>  obj-$(CONFIG_LOGO)               += logo/
+>>  obj-y                            += backlight/
+>>
+>> It shouldn't make a difference if nothing inside drivers/video/console
+>> is enabled,
+>> as all objects in drivers/video/console/Makefile are conditional.
+>>
+>> BTW, my plan was to move the font code to lib/font, but I haven't done that yet.
 
-I just dropped the patch from the akpm tree.  The percpu tree patch looks
-like it may be a later version.
+I'l try to do that for v3.11.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Gr{oetje,eeting}s,
 
---Signature=_Tue__4_Jun_2013_15_43_41_+1000_jt=SyV2ECNcNa24C
-Content-Type: application/pgp-signature
+                        Geert
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIcBAEBCAAGBQJRrX6SAAoJEECxmPOUX5FEsOQP/i/sAzho44VoT8kUy/zrZoQy
-/nObp2DvQ9eHLDseiaoQkOgoU30U50sM5N8idG50li7QYKjEgdx/kpe3oFE/AZ4O
-uwaX1Zc6pZQwpL4cHLHInVDOLJ3MWfVYxfVm4F46QmoCjng7BPBPdTFQEnsDK+5l
-anEOql/47gsJT62d5bcZjBVWok6QYpyIEPf1TTIycAOI7pxJwDFgkX7xHR41vSH2
-xa/qVxCdEvMi/IJZiTSiWrM2/hqgLZMRJ4MhvKIf+Bf3n8d8RacRXsvvbKK2lZZY
-YOHCiLDkZ61gcnbMwpOfuLTHfd8piyJak1ESlEagVXR3/kXQFZzvx3u0vhT1x5Sh
-AVCsnnSW/YQM3B+zCT5YVxPXthTd9avRTacMSASKcv2FIAwIsGdP+SKUHxXM3V7m
-OQrxmYPGpK8XWc4UeuLmGG6AZDvy3EDLBsOKCU4EHJSsZi95xibUm1ZIcDKvqBGN
-aMNERLnNGxLv5k2YUTBBWwKHoEJyctn2fZHyXoVaKCD9kZ6tJve4lVmZ0fyY4g64
-hTGMFtso4TEHY1pZix0UbDtnr398xKAXwkBqdIolbrJrlaNZXMAR29aZ6n/sf/6t
-GfuP7krZyvZGnFra+Y7J1bTJ54cEnd6V8sba27XhlkHzi7CNe68RxbOs/HI8nVa8
-FXm8GPyGzoBBB0noNeeL
-=t+Ok
------END PGP SIGNATURE-----
-
---Signature=_Tue__4_Jun_2013_15_43_41_+1000_jt=SyV2ECNcNa24C--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
