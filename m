@@ -1,54 +1,41 @@
-From: "Peng, Tao" <tao.peng@emc.com>
-Subject: RE: [PATCH] staging/lustre: fix build errors
-Date: Wed, 5 Jun 2013 10:36:20 +0000
-Message-ID: <1882637210201641A747464075FFC6490E580820@MX101CL02.corp.emc.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] staging/lustre: fix build errors
+Date: Wed, 5 Jun 2013 14:07:21 +0300
+Message-ID: <20130605110721.GV28112@mwanda>
 References: <1882637210201641A747464075FFC6490E57F19F@MX101CL02.corp.emc.com>
  <20130605104250.b332e5e9db6c4e458130abd0@canb.auug.org.au>
+ <1882637210201641A747464075FFC6490E580820@MX101CL02.corp.emc.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hop-nat-141.emc.com ([168.159.213.141]:30180 "EHLO
-	mexforward.lss.emc.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754716Ab3FEKgx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Jun 2013 06:36:53 -0400
-In-Reply-To: <20130605104250.b332e5e9db6c4e458130abd0@canb.auug.org.au>
-Content-Language: en-US
+Received: from userp1040.oracle.com ([156.151.31.81]:33877 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752978Ab3FELHk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Jun 2013 07:07:40 -0400
+Content-Disposition: inline
+In-Reply-To: <1882637210201641A747464075FFC6490E580820@MX101CL02.corp.emc.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+To: "Peng, Tao" <tao.peng@emc.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Andreas Dilger <andreas.dilger@intel.com>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIFJvdGh3ZWxsIFtt
-YWlsdG86c2ZyQGNhbmIuYXV1Zy5vcmcuYXVdDQo+IFNlbnQ6IFdlZG5lc2RheSwgSnVuZSAwNSwg
-MjAxMyA4OjQzIEFNDQo+IFRvOiBQZW5nLCBUYW8NCj4gQ2M6IEdyZWcgS3JvYWgtSGFydG1hbjsg
-QW5kcmVhcyBEaWxnZXI7IGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnOyBkZXZlbEBkcml2ZXJk
-ZXYub3N1b3NsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBzdGFnaW5nL2x1c3RyZTogZml4
-IGJ1aWxkIGVycm9ycw0KPiANCj4gSGksDQo+IA0KPiBPbiBUdWUsIDQgSnVuIDIwMTMgMDg6NDU6
-NDEgKzAwMDAgIlBlbmcsIFRhbyIgPHRhby5wZW5nQGVtYy5jb20+IHdyb3RlOg0KPiA+DQo+ID4g
-RnJvbSAzNjkzOThjNzgyYzkxNGU1ZjA1NDhkNWJiYWQyMmMwMGM2YjU4YjZhIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQ0KPiA+IEZyb206IFBlbmcgVGFvIDxiZXJnd29sZkBnbWFpbC5jb20+DQo+
-ID4gRGF0ZTogVHVlLCA0IEp1biAyMDEzIDE1OjQ4OjE3ICswODAwDQo+ID4gU3ViamVjdDogW1BB
-VENIXSBzdGFnaW5nL2x1c3RyZTogZml4IGJ1aWxkIGVycm9ycw0KPiA+DQo+ID4gVGhlcmUgYXJl
-IHNldmVyYWwgaXNzdWVzOg0KPiA+IDEuIHNldF9jcHVzX2FsbG93ZWQoKSBpcyBub3QgYXZhaWxh
-YmxlIHdpdGggQ09ORklHX0NQVU1BU0tfT0ZGU1RBQ0sgb24NCj4gPiAyLiBDT05GSUdfTU9EVUxF
-UyBtYXkgbm90IGJlIGRlZmluZWQNCj4gPiAzLiBDT05GSUdfTU9EVUxFX1VOTE9BRCBtYXkgbm90
-IGJlIGRlZmluZWQNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFBlbmcgVGFvIDx0YW8ucGVuZ0Bl
-bWMuY29tPg0KPiA+IC0tLQ0KPiA+IFN0ZXBoZW4sIHBsZWFzZSBzZWUgaWYgdGhpcyBmaXhlcyB5
-b3VyIGJ1aWxkIGZhaWx1cmUuIEkgaGF2ZSB0ZXN0ZWQgaXQgbG9jYWxseSBidXQgb25seSBvbiBY
-ODYNCj4gYXJjaGl0ZWN0dXJlLCB3aXRoIENPTkZJR19DUFVNQVNLX09GRlNUQUNLIG9uIGFuZCBD
-T05GSUdfTU9EVUxFUy9DT05GSUdfTU9EVUxFX1VOTE9BRCBvZmYuDQo+IA0KPiBJIGhhdmUgdHJp
-ZWQgdGhpcyB3aXRoIGFuIHg4Nl82NCBhbGxtb2Rjb25maWcgYnVpbGQgYW5kIG5vdyBJIGdldCBq
-dXN0DQo+IHRoaXMgYnVpbGQgcHJvYmxlbToNCj4gDQo+IGRyaXZlcnMvYnVpbHQtaW4ubzogSW4g
-ZnVuY3Rpb24gYGNyYzMyX3BjbG11bF9sZV8xNic6DQo+ICgudGV4dCsweDI4YjkzMTApOiBtdWx0
-aXBsZSBkZWZpbml0aW9uIG9mIGBjcmMzMl9wY2xtdWxfbGVfMTYnDQo+IGFyY2gveDg2L2J1aWx0
-LWluLm86KC50ZXh0KzB4ZTcwZDApOiBmaXJzdCBkZWZpbmVkIGhlcmUNCj4gDQpXZSBzaG91bGQg
-cmVhbGx5IHJlbW92ZSB0aGUgY3J5cHRvIGltcGxlbWVudGF0aW9ucyBpbnNpZGUgTHVzdHJlIGNv
-ZGUuIEkgaGF2ZSBhIHBhdGNoIHRvIGRvIHRoYXQgYW5kIEFuZHJlYXMgaXMgaGVscGluZyByZXZp
-ZXcgaXQuIE9uY2UgZG9uZSwgSSB3aWxsIHNlbmQgaXQgb3V0Lg0KDQo+IEJUVyBhbGwgdGhlIGJ1
-aWxkIHByb2JsZW1zIEkgcmVwb3J0ZWQgeWVzdGVyZGF5IHdlcmUgd2l0aCB0aGUgeDg2XzY0DQo+
-IGFsbG1vZGNvbmZpZyBidWlsZCwgbXkgUG93ZXJQQyBidWlsZCB3YXMgZmluZSAoc2luY2UgaXQg
-ZG9lc24ndCBldmVuIHRyeQ0KPiB0byBidWlsZCB0aGUgbHVzdHJlIGNvZGUpLg0KPiANClRoYW5r
-cy4gV2l0aCB0aGUgY3J5cHRvLXJlbW92YWwgcGF0Y2gsIEkgY2FuIHBhc3MgeDg2XzY0IGFsbG1v
-ZGVjb25maWcgYnVpbGQuIFdpbGwgc2VuZCBvdXQgcGF0Y2hlcyBsYXRlci4NCg0KQmVzdCwNClRh
-bw0K
+On Wed, Jun 05, 2013 at 10:36:20AM +0000, Peng, Tao wrote:
+> > > Stephen, please see if this fixes your build failure. I have tested it locally but only on X86
+> > architecture, with CONFIG_CPUMASK_OFFSTACK on and CONFIG_MODULES/CONFIG_MODULE_UNLOAD off.
+> > 
+> > I have tried this with an x86_64 allmodconfig build and now I get just
+> > this build problem:
+> > 
+> > drivers/built-in.o: In function `crc32_pclmul_le_16':
+> > (.text+0x28b9310): multiple definition of `crc32_pclmul_le_16'
+> > arch/x86/built-in.o:(.text+0xe70d0): first defined here
+> > 
+> We should really remove the crypto implementations inside Lustre
+> code. I have a patch to do that and Andreas is helping review it.
+> Once done, I will send it out.
+
+Hopefully, it will be ready for tomorrow's linux-next?  x86_64
+allmodconfig is one of the most common ways to build a kernel.
+
+regards,
+dan carpenter
