@@ -1,34 +1,60 @@
-From: Ming Lei <ming.lei@canonical.com>
-Subject: Re: linux-next: build warning after merge of the final tree
- (driver-core tree related)
-Date: Thu, 6 Jun 2013 15:59:01 +0800
-Message-ID: <CACVXFVN7qTcj_rLAj+2RrVaLtOf3jNdt3FoOPS1QaAZADefs3A@mail.gmail.com>
-References: <20130606173243.ba35169ddc8bcc32a81a9669@canb.auug.org.au>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: linux-next: manual merge of the mvebu tree with the imx-mxs
+ tree
+Date: Thu, 6 Jun 2013 07:08:06 -0400
+Message-ID: <20130606110806.GA23859@titan.lakedaemon.net>
+References: <20130606153600.a23c3489dc8b30d0836cb8ea@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:59539 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752911Ab3FFH7D (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Jun 2013 03:59:03 -0400
-In-Reply-To: <20130606173243.ba35169ddc8bcc32a81a9669@canb.auug.org.au>
+Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:42870 "EHLO
+	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932345Ab3FFLIe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Jun 2013 07:08:34 -0400
+Content-Disposition: inline
+In-Reply-To: <20130606153600.a23c3489dc8b30d0836cb8ea@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-On Thu, Jun 6, 2013 at 3:32 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, Jun 06, 2013 at 03:36:00PM +1000, Stephen Rothwell wrote:
 > Hi all,
->
-> After merging the final tree, today's linux-next build (sparc32 defconfig)
-> produced this warning:
->
-> drivers/base/firmware_class.c:921:13: warning: 'kill_requests_without_uevent' defined but not used [-Wunused-function]
+> 
+> Today's linux-next merge of the mvebu tree got a conflict in
+> arch/arm/Kconfig.debug between commit 284166ffebc3 ("ARM: imx: enable
+> low-level debug support for imx6sl") from the imx-mxs tree and commit
+> 5be22d8c29fd ("arm: mvebu: add another earlyprintk Kconfig option") from
+> the mvebu tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hmm, miss test with !CONFIG_PM_SLEEP.
+Looks good, thanks Stephen!
 
-I will post a patch to fix the warning, sorry for introducing these things.
+thx,
 
-Thanks,
---
-Ming Lei
+Jason.
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/Kconfig.debug
+> index 29f7623,e6a6ab1..0000000
+> --- a/arch/arm/Kconfig.debug
+> +++ b/arch/arm/Kconfig.debug
+> @@@ -639,9 -656,9 +664,10 @@@ config DEBUG_LL_INCLUD
+>   				 DEBUG_IMX35_UART || \
+>   				 DEBUG_IMX51_UART || \
+>   				 DEBUG_IMX53_UART ||\
+>  -				 DEBUG_IMX6Q_UART
+>  +				 DEBUG_IMX6Q_UART || \
+>  +				 DEBUG_IMX6SL_UART
+> - 	default "debug/mvebu.S" if DEBUG_MVEBU_UART
+> + 	default "debug/mvebu.S" if DEBUG_MVEBU_UART || \
+> + 				   DEBUG_MVEBU_UART_ALTERNATE
+>   	default "debug/mxs.S" if DEBUG_IMX23_UART || DEBUG_IMX28_UART
+>   	default "debug/nomadik.S" if DEBUG_NOMADIK_UART
+>   	default "debug/omap2plus.S" if DEBUG_OMAP2PLUS_UART
