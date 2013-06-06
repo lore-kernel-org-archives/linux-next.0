@@ -1,51 +1,67 @@
-From: Wang YanQing <udknight@gmail.com>
-Subject: Re: [PATCH] TTY:vt: convert remain take_over_console's users to
- do_take_over_console
-Date: Thu, 6 Jun 2013 09:23:13 +0800
-Message-ID: <20130606012312.GA2001@udknight>
-References: <20130521051511.GA11435@udknight>
- <20130604201317.GA16303@amd.pavel.ucw.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: mmotm 2013-06-05-17-24 uploaded
+Date: Thu, 6 Jun 2013 12:04:55 +1000
+Message-ID: <20130606120455.bd86a4c0ac009482db80f634@canb.auug.org.au>
+References: <20130606002636.6746F5A41AE@corp2gmr1-2.hot.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:61393 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755559Ab3FFBXa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Jun 2013 21:23:30 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__6_Jun_2013_12_04_55_+1000_4uFTmUaO3h/okSgd"
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20130606002636.6746F5A41AE@corp2gmr1-2.hot.corp.google.com>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__6_Jun_2013_12_04_55_+1000_4uFTmUaO3h/okSgd
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20130604201317.GA16303@amd.pavel.ucw.cz>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: gregkh@linuxfoundation.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 04, 2013 at 10:13:18PM +0200, Pavel Machek wrote:
-> On Tue 2013-05-21 13:15:12, Wang YanQing wrote:
-> > Impact:
-> > 1:convert all remain take_over_console to do_take_over_console
-> 
-> This is step backwards.
+Hi Andrew,
 
-What is step backwards? do_take_over_console appear MUCH MUCH later in kernel
-than take_over_console, do_take_over_console is the new API, I can't understand
-what is step backwards.
+On Wed, 05 Jun 2013 17:26:36 -0700 akpm@linux-foundation.org wrote:
+>
+>   linux-next-git-rejects.patch
 
-> > --- a/arch/alpha/kernel/console.c
-> > +++ b/arch/alpha/kernel/console.c
-> > @@ -61,7 +61,9 @@ locate_and_init_vga(void *(*sel_func)(void *, void *))
-> >  
-> >  	/* Set the VGA hose and init the new console. */
-> >  	pci_vga_hose = hose;
-> > -	take_over_console(&vga_con, 0, MAX_NR_CONSOLES-1, 1);
-> > +	console_lock();
-> > +	do_take_over_console(&vga_con, 0, MAX_NR_CONSOLES-1, 1);
-> > +	console_unlock();
-> >  }
-> 
-> Original was better.
+We must figure out why you sometimes get rejects that I do not get when I
+import your series into a git tree.  However in this case you resolution
+is not quite right.  It leaves 2 continue statements in
+net/mac80211/iface.c at line 191 which will unconditionally short circuit
+the enclosing loop.  The version that will be in linux-next today is
+correct (and git did it automatically as part of the merge of the old
+linux-next tree).
 
-Except reduce some console_lock/unlock scatter scattered in kernel, I 
-can't see the "BETTER", and it is not a BIG problem for the benefit to
-unify the API.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks.
+--Signature=_Thu__6_Jun_2013_12_04_55_+1000_4uFTmUaO3h/okSgd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRr+5HAAoJEECxmPOUX5FEOo8P/RnG5/O6F33VHBHkewwwihE2
+Ba9P9wfOy2DsgdIBvdSOcRaDE//2SFMheEbBdt1oFKWrPY1iycjn5NW1nqv4w051
+o+3JUcIJM8ApjhO4oXBuLoZdHI9MrGg8l57GoOqOvZSANHhJfHovEXTGVw/xKRHk
+p3cQ2YcnpwXiSf4BCWs/DniF7Ux3ETLomaEBwdd0Bg4Oqk64hfmXz3VDb9gJBCAT
+eCQ1wu6cLd/rAGOJuxHHpx2cNPp7xr+fhEWRi0krEhAOlRkn1qQLCPkNRx9DpB7m
+q0NTEf2nKzSwhYsKtspFJnl6aLyN91axuVF7m2nIa7E3BddJRCdCQIn5jlpB0ZwF
+xGX9lO2jM/fWoNMgadjeqmyrzlAFtUvLliTQSANz4GMoalhnGBuzIcols0OPjjcf
+1tHM2VGNVJ+6MpyN+KRsoIvfCCwnSKTh5m1DlWC/aLcCgJwTo3FbyK0WaBywErl9
+FthIRpYQOUo3c93MZyJzsvSywXCRgzujpvcetMqFP9XVWPLDJRdfxZ7owkDVsGwN
+r2xRegCCLWZIXlQpNsX6yJ67b8YkMJ5o2+62qW71N0CRDI/LVfNMST9K7W3/7OPR
+oJ/VE9PreIPeJiFsQuRDW4X4RvoRxr9m8hLb5FkVnteyVmvaMTObSKKrGK3ZeJoa
+B8g7q9rCyMcQmA9PPJA5
+=5k0P
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__6_Jun_2013_12_04_55_+1000_4uFTmUaO3h/okSgd--
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
