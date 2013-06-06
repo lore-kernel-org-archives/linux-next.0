@@ -1,62 +1,178 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] TTY:vt: convert remain take_over_console's users to
- do_take_over_console
-Date: Thu, 6 Jun 2013 13:47:46 +0200
-Message-ID: <20130606114746.GA3659@amd.pavel.ucw.cz>
-References: <20130521051511.GA11435@udknight>
- <20130604201317.GA16303@amd.pavel.ucw.cz>
- <20130606012312.GA2001@udknight>
+From: Zhang Yanfei <zhangyanfei.yes@gmail.com>
+Subject: [PATCH v2 -next] mm: Remove duplicated call of get_pfn_range_for_nid
+Date: Thu, 06 Jun 2013 20:04:35 +0800
+Message-ID: <51B07AD3.7050602@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38231 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933168Ab3FFLr7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Jun 2013 07:47:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20130606012312.GA2001@udknight>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Wang YanQing <udknight@gmail.com>, gregkh@linuxfoundation.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Zhang Yanfei <zhangyanfei@cn.fujitsu.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu 2013-06-06 09:23:13, Wang YanQing wrote:
-> On Tue, Jun 04, 2013 at 10:13:18PM +0200, Pavel Machek wrote:
-> > On Tue 2013-05-21 13:15:12, Wang YanQing wrote:
-> > > Impact:
-> > > 1:convert all remain take_over_console to do_take_over_console
-> > 
-> > This is step backwards.
-> 
-> What is step backwards? do_take_over_console appear MUCH MUCH later in kernel
-> than take_over_console, do_take_over_console is the new API, I can't understand
-> what is step backwards.
+From: Zhang Yanfei <zhangyanfei@cn.fujitsu.com>
 
-"do_*" is internal api, "*" is external api. You sprinkle internal api
-all over the place.
+When calculating pages in a node,
+for each zone in that node, we will have
+  zone_spanned_pages_in_node
+    --> get_pfn_range_for_nid
+  zone_absent_pages_in_node
+    --> get_pfn_range_for_nid
 
-> > > --- a/arch/alpha/kernel/console.c
-> > > +++ b/arch/alpha/kernel/console.c
-> > > @@ -61,7 +61,9 @@ locate_and_init_vga(void *(*sel_func)(void *, void *))
-> > >  
-> > >  	/* Set the VGA hose and init the new console. */
-> > >  	pci_vga_hose = hose;
-> > > -	take_over_console(&vga_con, 0, MAX_NR_CONSOLES-1, 1);
-> > > +	console_lock();
-> > > +	do_take_over_console(&vga_con, 0, MAX_NR_CONSOLES-1, 1);
-> > > +	console_unlock();
-> > >  }
-> > 
-> > Original was better.
-> 
-> Except reduce some console_lock/unlock scatter scattered in kernel, I 
-> can't see the "BETTER", and it is not a BIG problem for the benefit to
-> unify the API.
+That is to say, we call the get_pfn_range_for_nid to get start_pfn
+and end_pfn of the node for MAX_NR_ZONES * 2 times. And this is
+totally unnecessary if we call the get_pfn_range_for_nid before
+zone_*_pages_in_node add two extra arguments node_start_pfn
+and node_end_pfn for zone_*_pages_in_node, then we can remove the
+get_pfn_range_in_node in zone_*_pages_in_node.
 
-You replaced "calling exported function" with "calling
-internal-sounding function and adding locking too".
+-v2: Call get_pfn_range_for_nid within the protection of
+     CONFIG_HAVE_MEMBLOCK_NODE_MAP
 
+Signed-off-by: Zhang Yanfei <zhangyanfei@cn.fujitsu.com>
+---
+ mm/page_alloc.c |   42 +++++++++++++++++++++++++++++++-----------
+ 1 files changed, 31 insertions(+), 11 deletions(-)
 
-									Pavel
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 18102e1..b192f77 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -4418,13 +4418,13 @@ static void __meminit adjust_zone_range_for_zone_movable(int nid,
+  */
+ static unsigned long __meminit zone_spanned_pages_in_node(int nid,
+ 					unsigned long zone_type,
++					unsigned long node_start_pfn,
++					unsigned long node_end_pfn,
+ 					unsigned long *ignored)
+ {
+-	unsigned long node_start_pfn, node_end_pfn;
+ 	unsigned long zone_start_pfn, zone_end_pfn;
+ 
+-	/* Get the start and end of the node and zone */
+-	get_pfn_range_for_nid(nid, &node_start_pfn, &node_end_pfn);
++	/* Get the start and end of the zone */
+ 	zone_start_pfn = arch_zone_lowest_possible_pfn[zone_type];
+ 	zone_end_pfn = arch_zone_highest_possible_pfn[zone_type];
+ 	adjust_zone_range_for_zone_movable(nid, zone_type,
+@@ -4479,14 +4479,14 @@ unsigned long __init absent_pages_in_range(unsigned long start_pfn,
+ /* Return the number of page frames in holes in a zone on a node */
+ static unsigned long __meminit zone_absent_pages_in_node(int nid,
+ 					unsigned long zone_type,
++					unsigned long node_start_pfn,
++					unsigned long node_end_pfn,
+ 					unsigned long *ignored)
+ {
+ 	unsigned long zone_low = arch_zone_lowest_possible_pfn[zone_type];
+ 	unsigned long zone_high = arch_zone_highest_possible_pfn[zone_type];
+-	unsigned long node_start_pfn, node_end_pfn;
+ 	unsigned long zone_start_pfn, zone_end_pfn;
+ 
+-	get_pfn_range_for_nid(nid, &node_start_pfn, &node_end_pfn);
+ 	zone_start_pfn = clamp(node_start_pfn, zone_low, zone_high);
+ 	zone_end_pfn = clamp(node_end_pfn, zone_low, zone_high);
+ 
+@@ -4499,6 +4499,8 @@ static unsigned long __meminit zone_absent_pages_in_node(int nid,
+ #else /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ static inline unsigned long __meminit zone_spanned_pages_in_node(int nid,
+ 					unsigned long zone_type,
++					unsigned long node_start_pfn,
++					unsigned long node_end_pfn,
+ 					unsigned long *zones_size)
+ {
+ 	return zones_size[zone_type];
+@@ -4506,6 +4508,8 @@ static inline unsigned long __meminit zone_spanned_pages_in_node(int nid,
+ 
+ static inline unsigned long __meminit zone_absent_pages_in_node(int nid,
+ 						unsigned long zone_type,
++						unsigned long node_start_pfn,
++						unsigned long node_end_pfn,
+ 						unsigned long *zholes_size)
+ {
+ 	if (!zholes_size)
+@@ -4517,21 +4521,27 @@ static inline unsigned long __meminit zone_absent_pages_in_node(int nid,
+ #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ 
+ static void __meminit calculate_node_totalpages(struct pglist_data *pgdat,
+-		unsigned long *zones_size, unsigned long *zholes_size)
++						unsigned long node_start_pfn,
++						unsigned long node_end_pfn,
++						unsigned long *zones_size,
++						unsigned long *zholes_size)
+ {
+ 	unsigned long realtotalpages, totalpages = 0;
+ 	enum zone_type i;
+ 
+ 	for (i = 0; i < MAX_NR_ZONES; i++)
+ 		totalpages += zone_spanned_pages_in_node(pgdat->node_id, i,
+-								zones_size);
++							 node_start_pfn,
++							 node_end_pfn,
++							 zones_size);
+ 	pgdat->node_spanned_pages = totalpages;
+ 
+ 	realtotalpages = totalpages;
+ 	for (i = 0; i < MAX_NR_ZONES; i++)
+ 		realtotalpages -=
+ 			zone_absent_pages_in_node(pgdat->node_id, i,
+-								zholes_size);
++						  node_start_pfn, node_end_pfn,
++						  zholes_size);
+ 	pgdat->node_present_pages = realtotalpages;
+ 	printk(KERN_DEBUG "On node %d totalpages: %lu\n", pgdat->node_id,
+ 							realtotalpages);
+@@ -4640,6 +4650,7 @@ static unsigned long __paginginit calc_memmap_size(unsigned long spanned_pages,
+  * NOTE: pgdat should get zeroed by caller.
+  */
+ static void __paginginit free_area_init_core(struct pglist_data *pgdat,
++		unsigned long node_start_pfn, unsigned long node_end_pfn,
+ 		unsigned long *zones_size, unsigned long *zholes_size)
+ {
+ 	enum zone_type j;
+@@ -4661,8 +4672,11 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat,
+ 		struct zone *zone = pgdat->node_zones + j;
+ 		unsigned long size, realsize, freesize, memmap_pages;
+ 
+-		size = zone_spanned_pages_in_node(nid, j, zones_size);
++		size = zone_spanned_pages_in_node(nid, j, node_start_pfn,
++						  node_end_pfn, zones_size);
+ 		realsize = freesize = size - zone_absent_pages_in_node(nid, j,
++								node_start_pfn,
++								node_end_pfn,
+ 								zholes_size);
+ 
+ 		/*
+@@ -4776,6 +4790,7 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
+ 		unsigned long node_start_pfn, unsigned long *zholes_size)
+ {
+ 	pg_data_t *pgdat = NODE_DATA(nid);
++	unsigned long start_pfn, end_pfn;
+ 
+ 	/* pg_data_t should be reset to zero when it's allocated */
+ 	WARN_ON(pgdat->nr_zones || pgdat->classzone_idx);
+@@ -4783,7 +4798,11 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
+ 	pgdat->node_id = nid;
+ 	pgdat->node_start_pfn = node_start_pfn;
+ 	init_zone_allows_reclaim(nid);
+-	calculate_node_totalpages(pgdat, zones_size, zholes_size);
++#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
++	get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
++#endif
++	calculate_node_totalpages(pgdat, start_pfn, end_pfn,
++				  zones_size, zholes_size);
+ 
+ 	alloc_node_mem_map(pgdat);
+ #ifdef CONFIG_FLAT_NODE_MEM_MAP
+@@ -4792,7 +4811,8 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
+ 		(unsigned long)pgdat->node_mem_map);
+ #endif
+ 
+-	free_area_init_core(pgdat, zones_size, zholes_size);
++	free_area_init_core(pgdat, start_pfn, end_pfn,
++			    zones_size, zholes_size);
+ }
+ 
+ #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+1.7.1
