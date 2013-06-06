@@ -1,129 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (akpm tree
- related)
-Date: Thu, 6 Jun 2013 17:15:36 +1000
-Message-ID: <20130606171536.4e1ee85adf1e12d2551bed74@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: mmotm 2013-06-05-17-24 uploaded
+Date: Thu, 6 Jun 2013 09:23:10 +0200
+Message-ID: <CAMuHMdUKvJBS9u4qjDDKRhAMv9ikrxYSBgobLSSDWL1VmeV9wA@mail.gmail.com>
+References: <20130606002636.6746F5A41AE@corp2gmr1-2.hot.corp.google.com>
+	<20130606120455.bd86a4c0ac009482db80f634@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Jun_2013_17_15_36_+1000_GfOmtNty6329InaM"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48876 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750940Ab3FFHPt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Jun 2013 03:15:49 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Glauber Costa <glommer@openvz.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20130606120455.bd86a4c0ac009482db80f634@canb.auug.org.au>
+Sender: owner-linux-mm@kvack.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Cc: mm-commits@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__6_Jun_2013_17_15_36_+1000_GfOmtNty6329InaM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Andrew,
 
-Hi all,
+On Thu, Jun 6, 2013 at 4:04 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Wed, 05 Jun 2013 17:26:36 -0700 akpm@linux-foundation.org wrote:
+>>
+>>   linux-next-git-rejects.patch
+>
+> We must figure out why you sometimes get rejects that I do not get when I
+> import your series into a git tree.  However in this case you resolution
+> is not quite right.  It leaves 2 continue statements in
+> net/mac80211/iface.c at line 191 which will unconditionally short circuit
+> the enclosing loop.  The version that will be in linux-next today is
+> correct (and git did it automatically as part of the merge of the old
+> linux-next tree).
 
-After merging the final tree, today's linux-next build (sparc32 defconfig)
-failed like this:
+Do you have "git rerere" enabled?
 
-In file included from arch/sparc/include/asm/pgtable.h:6:0,
-                 from include/linux/mm.h:50,
-                 from include/linux/memcontrol.h:27,
-                 from include/linux/swap.h:8,
-                 from include/linux/suspend.h:4,
-                 from init/do_mounts.c:16:
-arch/sparc/include/asm/pgtable_32.h:357:40: error: unknown type name 'swp_e=
-ntry_t'
-arch/sparc/include/asm/pgtable_32.h:362:42: error: unknown type name 'swp_e=
-ntry_t'
-arch/sparc/include/asm/pgtable_32.h:367:1: error: unknown type name 'swp_en=
-try_t'
-arch/sparc/include/asm/pgtable_32.h: In function '__swp_entry':
-arch/sparc/include/asm/pgtable_32.h:369:10: error: 'swp_entry_t' undeclared=
- (first use in this function)
-arch/sparc/include/asm/pgtable_32.h:369:10: note: each undeclared identifie=
-r is reported only once for each function it appears in
-arch/sparc/include/asm/pgtable_32.h:369:23: error: expected ';' before '{' =
-token
-In file included from include/linux/memcontrol.h:27:0,
-                 from include/linux/swap.h:8,
-                 from arch/sparc/include/asm/pgtable_32.h:17,
-                 from arch/sparc/include/asm/pgtable.h:6,
-                 from arch/sparc/kernel/traps_32.c:23:
-include/linux/mm.h: In function 'is_vmalloc_addr':
-include/linux/mm.h:322:17: error: 'VMALLOC_START' undeclared (first use in =
-this function)
-include/linux/mm.h:322:17: note: each undeclared identifier is reported onl=
-y once for each function it appears in
-include/linux/mm.h:322:41: error: 'VMALLOC_END' undeclared (first use in th=
-is function)
-include/linux/mm.h: In function 'maybe_mkwrite':
-include/linux/mm.h:527:3: error: implicit declaration of function 'pte_mkwr=
-ite' [-Werror=3Dimplicit-function-declaration]
-In file included from arch/sparc/include/asm/pgtable.h:6:0,
-                 from arch/sparc/kernel/traps_32.c:23:
-arch/sparc/include/asm/pgtable_32.h: At top level:
-arch/sparc/include/asm/pgtable_32.h:251:21: error: conflicting types for 'p=
-te_mkwrite'
-include/linux/mm.h:527:9: note: previous implicit declaration of 'pte_mkwri=
-te' was here
+Gr{oetje,eeting}s,
 
-Caused by commit 41aed1ec2e09 ("lru: add an element to a memcg list")
-from the akpm tree.  This patch added an include of linux/mm.h to
-linux/memcontrol.h, but that was unneeded as the rest of the patch only
-added dependencies on pointers to struct page and struct mem_cgroup -
-both of which are already declared in this header.
+                        Geert
 
-I have applied the following patch for today:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 6 Jun 2013 16:52:42 +1000
-Subject: [PATCH] lru: memcontrol.h does not need mm.h
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/memcontrol.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index c8b1412..57b8c2b 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -24,7 +24,6 @@
- #include <linux/hardirq.h>
- #include <linux/jump_label.h>
- #include <linux/list_lru.h>
--#include <linux/mm.h>
-=20
- struct mem_cgroup;
- struct page_cgroup;
---=20
-1.8.1
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__6_Jun_2013_17_15_36_+1000_GfOmtNty6329InaM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRsDcfAAoJEECxmPOUX5FEKOkP/3u2/pj50jecRDqGMKc+RQSM
-dte9PKxeMbJ34zg8110PKIEHx18Wli7to3lMIEmuvGwKAOQfOMKn8haZyx/1tDio
-E1T7Mektr7J2tcmfgGWtxPRI62ip9FBUVLlwgpNTJM3AA/diKDneJxEcQeRTwl4A
-20j+wObyev0+MZQx5nqS+KJvVzvLoEzISa2ZmHUGtNhSx2W/MGFQXDdvelPXbe9J
-7TZ2IO/mdQXpHfEV/KoU6FwAa75B3MONkHxvv+iMysbmj0NEwLV9s+Rhz9PeHsq1
-mI3X1myAVMeC/CoWTrvjH6aAwRTMtvYD8orLSuncNvNbCFQRj0QzAqIr07KaCvyn
-u8cJ8X1p2FI8lUq4cn6wOd2f+MkSGB3KpnO0EUjrVwm3lQ4M+p0qzzo4kVqyXtXa
-Cm83Dbndv7ax6DQ753bx/UZn2aiSzgWnp4uHym2tN2dUrHaUyRrnnx0gJ21iUJ3u
-49sD9lpKrHheZ8CYNAOljDgJCgfFsZvwOBA5uD5ibuQ10+lujSX0Xto8GM0jxtej
-P3MsEyh4D/IrQ14UAiosv+J4DDVfpG6rq1rakSm6QEYNBplkbN6rcDPOHsG5giVC
-lF02O4IMbbgJaidlXTffRg1nCAJtP33wbnNMmImfq0sVewy9EXKxbRjC37oLB/VZ
-NQ081hEeIyLozwC81ucI
-=pbte
------END PGP SIGNATURE-----
-
---Signature=_Thu__6_Jun_2013_17_15_36_+1000_GfOmtNty6329InaM--
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
