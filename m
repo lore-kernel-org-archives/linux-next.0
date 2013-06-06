@@ -1,78 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with the imx-mxs tree
-Date: Thu, 6 Jun 2013 15:36:00 +1000
-Message-ID: <20130606153600.a23c3489dc8b30d0836cb8ea@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (akpm tree
+ related)
+Date: Thu, 6 Jun 2013 16:18:36 +1000
+Message-ID: <20130606161836.df5aebcf5ce5be2b42154f2d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Jun_2013_15_36_00_+1000_cipSAVLwCWoA0gEm"
+ boundary="Signature=_Thu__6_Jun_2013_16_18_36_+1000_9NcOcakEZh6vchJV"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38485 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50659 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753094Ab3FFFgN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Jun 2013 01:36:13 -0400
+	with ESMTP id S1753941Ab3FFGSq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Jun 2013 02:18:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shuah Khan <shuah.kh@samsung.com>
 
---Signature=_Thu__6_Jun_2013_15_36_00_+1000_cipSAVLwCWoA0gEm
+--Signature=_Thu__6_Jun_2013_16_18_36_+1000_9NcOcakEZh6vchJV
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mvebu tree got a conflict in
-arch/arm/Kconfig.debug between commit 284166ffebc3 ("ARM: imx: enable
-low-level debug support for imx6sl") from the imx-mxs tree and commit
-5be22d8c29fd ("arm: mvebu: add another earlyprintk Kconfig option") from
-the mvebu tree.
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/rtc/class.c: In function 'rtc_init':
+drivers/rtc/class.c:339:18: error: lvalue required as unary '&' operand
 
+Caused by commit c5a32d622261 ("drivers/rtc/class: convert from Legacy pm
+ops to dev_pm_ops") from the akpm tree.
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/Kconfig.debug
-index 29f7623,e6a6ab1..0000000
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@@ -639,9 -656,9 +664,10 @@@ config DEBUG_LL_INCLUD
-  				 DEBUG_IMX35_UART || \
-  				 DEBUG_IMX51_UART || \
-  				 DEBUG_IMX53_UART ||\
- -				 DEBUG_IMX6Q_UART
- +				 DEBUG_IMX6Q_UART || \
- +				 DEBUG_IMX6SL_UART
-- 	default "debug/mvebu.S" if DEBUG_MVEBU_UART
-+ 	default "debug/mvebu.S" if DEBUG_MVEBU_UART || \
-+ 				   DEBUG_MVEBU_UART_ALTERNATE
-  	default "debug/mxs.S" if DEBUG_IMX23_UART || DEBUG_IMX28_UART
-  	default "debug/nomadik.S" if DEBUG_NOMADIK_UART
-  	default "debug/omap2plus.S" if DEBUG_OMAP2PLUS_UART
-
---Signature=_Thu__6_Jun_2013_15_36_00_+1000_cipSAVLwCWoA0gEm
+--Signature=_Thu__6_Jun_2013_16_18_36_+1000_9NcOcakEZh6vchJV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRsB/FAAoJEECxmPOUX5FEb/cP+wS0e+YvHo2BFiI4G5cExyKb
-Nbs+/1E9jwlHNsflLgD4ZkSzlHrmTA9PZLZ97b9rIqUqmBxo4lafQnaV18uHqQi1
-YHskEzJixNaIYkCJCJ4gLdgQgBvthz6UeHJtxMYAM1jw1NnZ4Nox5b4Iq8Cg7vrw
-GeDfw5TAW+Xr3pC5zt4P6R8ELVZuHKnD74HGJqQONlEc7joNrLkPCI+udGI6Ww48
-RU7lQqprSHXm6GNORK1yEliX0/TMBNXNaz28xKSiWZ2roHstH/Q+nrhp5kk0TSsa
-lvdDE+t97mtOIMYp5/WVlL4qwMhkuGJVPHU8wUAH1CPAcMGNAjj+twmhtEzugfqF
-0J6JH00rVPyo0yQ+e4bplBNM3oUvbGQuVpt55pkhZDWXAShbUDKXCIybe/O69Up3
-7DQ3FNIVnVtbAchR/H2AfYX9TIMOydjq3o1fkUBh1WlO5W5IZ+Po7WnCJ5mB66ie
-jmAd6TVGnZPC3xZpjVcJXzvGb7Me8v65zS+7OQ1S8hkSk4ubnZQa0IR1wJk9jX3i
-Vayz7np4aK3j9fe0QdSq3m11/44ERxFfEaKbssli6GmGWGadmemK70VqszicduWB
-b2VYZbEu6hwqe028I7YJ8BtYONT+AGHlxM5LMp3rT0LgPS4p+OPUwYa+1WtK1gi9
-DGv2OkctjPJ7eSM8xxlj
-=hdSn
+iQIcBAEBCAAGBQJRsCnAAAoJEECxmPOUX5FEXbQP/0/HJosn060BpLk0WMzA2NqM
+uTrLoqMyrzzBhlZGIKUaQ0TEVHTMQhcB+8EqrK+kFb53wgcu40yxQPTY96a1ZDJo
+KMvZ0FJNSFTG/dgLdCAoMdMBIQ9/CfK67bn84lYxvcdJ0hacVD7WM8NbX+Zvx53T
+n+4NW5TR5CeKLYkGj/lfqTcPbHhAXHALg3Cgq4sNDJM1esUtSg51oTAvbJmHPwsw
+pQaIeSZ7eqPVSVuoa4kYbgBRMxdPwKeCwcptijkEDnzAhGMshW3TdBITZL0gke3k
+FFbOZ+icaeTdD01pZL8c32uhlN3CrItZ0+p2b8ZFZbgsPkwkK6hU4ejAFpvkFsY9
+rBayGSiPBHvMn72oRZyesMHP2VhoMLiH6HKmaFQRtptWPKSv0yQEXoWASWjivU/M
+fjQCKbrSKFlHUF1oeFf7FiWbySZk0sF5c0zKpz2E/Pw4DO/82ItPyZbCaP+xu+fi
+TsAcn6eRFf3ilPwwHEX3WqwWbGJN6iAYhOTpep/LYQB1wvCxs56J8D2wCXQIS6vr
+Kjr0cSE4L/HkG9GPx7cwvlVyZSyPbBYIJyfd6CGLkHsny9U35oxkLQhNY3f2kQF0
+p3/cjS6ODcVzvRd0WwnGCaGmfhNVbblO9snX8/eCf6teorQ2I7dSZpyyShZ2BUPo
+cK0y6Yec6TAfneMrCCSQ
+=nkVG
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__6_Jun_2013_15_36_00_+1000_cipSAVLwCWoA0gEm--
+--Signature=_Thu__6_Jun_2013_16_18_36_+1000_9NcOcakEZh6vchJV--
