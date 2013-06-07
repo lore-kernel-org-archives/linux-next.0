@@ -1,33 +1,50 @@
-From: Sujith Manoharan <sujith@msujith.org>
-Subject: Re: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-Date: Fri, 7 Jun 2013 11:51:01 +0530
-Message-ID: <20913.31693.629856.620724@gargle.gargle.HOWL>
-References: <20130607125612.4016cd4ee44614642dc5dd31@canb.auug.org.au>
+From: Peng Tao <bergwolf@gmail.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Fri, 7 Jun 2013 15:26:56 +0800
+Message-ID: <CA+a=Yy7BOcCXjZnbiZArWf=JCeSyp7k=J4DaBhQYQjy2ASgGkw@mail.gmail.com>
+References: <20130607162830.9d7ce277a9eda2b54fe73e92@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s72.web-hosting.com ([198.187.29.21]:58682 "EHLO
-	s72.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752285Ab3FGGxy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Jun 2013 02:53:54 -0400
-In-Reply-To: <20130607125612.4016cd4ee44614642dc5dd31@canb.auug.org.au>
+Received: from mail-we0-f182.google.com ([74.125.82.182]:57219 "EHLO
+	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750838Ab3FGH1S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Jun 2013 03:27:18 -0400
+In-Reply-To: <20130607162830.9d7ce277a9eda2b54fe73e92@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sujith Manoharan <c_manoha@qca.qualcomm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>, Greg KH <greg@kroah.com>, "Dilger, Andreas" <andreas.dilger@intel.com>
 
-Stephen Rothwell wrote:
-> Today's linux-next merge of the wireless-next tree got a conflict in
-> drivers/net/wireless/ath/ath9k/Kconfig between commit 8bb7f167a12a
-> ("ath9k: Use minstrel rate control by default") from the wireless tree
-> and commit cf657a2bc50d ("ath9k: Remove MAC_DEBUG") from the
-> wireless-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+On Fri, Jun 7, 2013 at 2:28 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Andrew,
+>
+> After merging the akpm tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> In file included from drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h:49:0,
+>                  from drivers/staging/lustre/include/linux/libcfs/libcfs.h:44,
+>                  from drivers/staging/lustre/include/linux/lnet/linux/lib-lnet.h:45,
+>                  from drivers/staging/lustre/include/linux/lnet/lib-lnet.h:44,
+>                  from drivers/staging/lustre/lnet/lnet/api-ni.c:38:
+> drivers/staging/lustre/include/linux/libcfs/linux/linux-mem.h: In function 'set_shrinker':
+> drivers/staging/lustre/include/linux/libcfs/linux/linux-mem.h:102:3: error: 'struct shrinker' has no member named 'shrink'
+>   s->shrink = func;
+>    ^
+>
+> Caused by commit a37f14f05f2f ("shrinker: Kill old ->shrink API") from
+> the akpm tree interacting with the new Lustre client code from the
+> staging tree.
+>
+> I have just disabled the Lustre client code again (by reverting commit
+> ee04fd11f11f ("Revert "Revert "staging/lustre: drop CONFIG_BROKEN
+> dependency""")) and maybe someone can tell me what I need to do to fix
+> this when I get back in a week.
+I have a patchset to fix this but haven't yet sent out because it will
+break build in Greg's staging tree. I can send it now but please tell
+me to whom I should send the patches? Greg's tree doesn't contain
+shrinker change, and mm- tree doesn't have Lustre code.
 
-Thanks !
-
-Sujith
+--
+Thanks,
+Tao
