@@ -1,58 +1,46 @@
 From: Peng Tao <bergwolf@gmail.com>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Fri, 7 Jun 2013 16:11:17 +0800
-Message-ID: <CA+a=Yy5cHJ1wEK+DrmptN6iUBu_KH7eABNe7pFqTKRyBiadQ1g@mail.gmail.com>
-References: <20130607162830.9d7ce277a9eda2b54fe73e92@canb.auug.org.au>
- <CA+a=Yy7BOcCXjZnbiZArWf=JCeSyp7k=J4DaBhQYQjy2ASgGkw@mail.gmail.com> <20130607175244.95368825087acdfb25a2a8eb@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130607175244.95368825087acdfb25a2a8eb@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>, Greg KH <greg@kroah.com>, "Dilger, Andreas" <andreas.dilger@intel.com>
-List-Id: linux-next.vger.kernel.org
+Subject: [PATCH 0/5] staging/lustre: fix build in linux-next/akpm tree
+Date: Fri,  7 Jun 2013 20:53:41 +0800
+Message-ID: <1370609626-3734-1-git-send-email-bergwolf@gmail.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:62930 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754132Ab3FGM4Z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Jun 2013 08:56:25 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andreas Dilger <andreas.dilger@intel.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Glauber Costa <glommer@openvz.org>, Peng Tao <bergwolf@gmail.com>
 
-On Fri, Jun 7, 2013 at 3:52 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi,
->
-> On Fri, 7 Jun 2013 15:26:56 +0800 Peng Tao <bergwolf@gmail.com> wrote:
->>
->> On Fri, Jun 7, 2013 at 2:28 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> >
->> > After merging the akpm tree, today's linux-next build (x86_64
->> > allmodconfig) failed like this:
->> >
->> > In file included from drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h:49:0,
->> >                  from drivers/staging/lustre/include/linux/libcfs/libcfs.h:44,
->> >                  from drivers/staging/lustre/include/linux/lnet/linux/lib-lnet.h:45,
->> >                  from drivers/staging/lustre/include/linux/lnet/lib-lnet.h:44,
->> >                  from drivers/staging/lustre/lnet/lnet/api-ni.c:38:
->> > drivers/staging/lustre/include/linux/libcfs/linux/linux-mem.h: In function 'set_shrinker':
->> > drivers/staging/lustre/include/linux/libcfs/linux/linux-mem.h:102:3: error: 'struct shrinker' has no member named 'shrink'
->> >   s->shrink = func;
->> >    ^
->> >
->> > Caused by commit a37f14f05f2f ("shrinker: Kill old ->shrink API") from
->> > the akpm tree interacting with the new Lustre client code from the
->> > staging tree.
->> >
->> > I have just disabled the Lustre client code again (by reverting commit
->> > ee04fd11f11f ("Revert "Revert "staging/lustre: drop CONFIG_BROKEN
->> > dependency""")) and maybe someone can tell me what I need to do to fix
->> > this when I get back in a week.
->> I have a patchset to fix this but haven't yet sent out because it will
->> break build in Greg's staging tree. I can send it now but please tell
->> me to whom I should send the patches? Greg's tree doesn't contain
->> shrinker change, and mm- tree doesn't have Lustre code.
->
-> The mm- tree now has the lustre code since it it based on most of
-> linux-next, so send them to Andrew.
->
-> It will then be up to Andrew and Greg to make sure that the staging tree
-> is merged into Linus' tree before Andrew's patch bomb.
-I see. Thanks. I will send them to Andrew then.
+Hi Andrew,
 
---
+Bellow five patches convert Lustre client to new shrinker API and also
+adapt num_physpages removal linux-next/akpm tree. Since both changes
+are not in Greg's staging tree, I'm sending them to you so that Lustre
+can build properly in linux-next.
+
 Thanks,
 Tao
+
+Peng Tao (5):
+  staging/lustre/ldlm: convert to shrinkers to count/scan API
+  staging/lustre/obdclass: convert lu_object shrinker to count/scan API
+  staging/lustre/ptlrpc: convert to new shrinker API
+  staging/lustre/libcfs: cleanup linux-mem.h
+  staging/lustre: replace num_physpages with totalram_pages
+
+ .../lustre/include/linux/libcfs/linux/linux-mem.h  |   42 +-----
+ drivers/staging/lustre/lustre/ldlm/ldlm_lib.c      |   10 +-
+ drivers/staging/lustre/lustre/ldlm/ldlm_pool.c     |  139 +++++++++++---------
+ .../lustre/lustre/libcfs/linux/linux-tracefile.c   |    2 +-
+ drivers/staging/lustre/lustre/llite/lproc_llite.c  |    8 +-
+ drivers/staging/lustre/lustre/obdclass/class_obd.c |    6 +-
+ .../lustre/lustre/obdclass/linux/linux-sysctl.c    |    6 +-
+ drivers/staging/lustre/lustre/obdclass/lu_object.c |  100 +++++++-------
+ drivers/staging/lustre/lustre/osc/lproc_osc.c      |    2 +-
+ .../staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c    |    2 +-
+ drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c    |   80 ++++++-----
+ 11 files changed, 192 insertions(+), 205 deletions(-)
+
+-- 
+1.7.9.5
