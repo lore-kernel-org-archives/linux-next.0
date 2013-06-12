@@ -1,32 +1,54 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] vhost-scsi: return -ENOENT when no matching
- tcm_vhost_tpg found
-Date: Tue, 11 Jun 2013 20:03:08 -0700
-Message-ID: <20130612030308.GB9398@kroah.com>
-References: <1369731284-4139-1-git-send-email-wenchaolinux@gmail.com>
- <20130528092539.GA22269@hj.localdomain>
- <51B7D166.3000109@gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: Regression in 9390ace brcmfmac: free net device when registration
+ fails
+Date: Wed, 12 Jun 2013 15:19:54 -0600
+Message-ID: <51B8E5FA.9040400@wwwdotorg.org>
+References: <51AD1F22.2080004@wwwdotorg.org> <51ADE47D.50700@broadcom.com> <51B0FAC0.4080709@broadcom.com> <51B100C2.8070905@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45012 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754638Ab3FLDCd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Jun 2013 23:02:33 -0400
-Content-Disposition: inline
-In-Reply-To: <51B7D166.3000109@gmail.com>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:35760 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757951Ab3FLVT5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2013 17:19:57 -0400
+In-Reply-To: <51B100C2.8070905@wwwdotorg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: wenchao <wenchaolinux@gmail.com>
-Cc: Asias He <asias@redhat.com>, linux-next@vger.kernel.org, wenchaolinuxkvm@gmail.com, mst@redhat.com, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, pbonzini@redhat.com, nab@linux-iscsi.org
+To: Arend van Spriel <arend@broadcom.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Hante Meuleman <meuleman@broadcom.com>, "'linux-wireless@vger.kernel.org'" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Wed, Jun 12, 2013 at 09:39:50AM +0800, wenchao wrote:
-> cc to Greg for 3.9.
+On 06/06/2013 03:36 PM, Stephen Warren wrote:
+> On 06/06/2013 03:10 PM, Arend van Spriel wrote:
+>> On 06/04/13 14:58, Arend van Spriel wrote:
+>>> On 06/04/2013 12:56 AM, Stephen Warren wrote:
+>>>> (John, note that this commit is part of the pull request you sent to
+>>>> Dave today)
+>>>>
+>>>> Arend,
+>>>>
+>>>> Commit 9390ace "brcmfmac: free net device when registration fails"
+>>>> causes a regression.
+>>>>
+>>>> I had the BCM4330 firmware present in my root fs, whereas my HW is a
+>>>> BCM4329. With this patch applied, I get a kernel panic on boot. With it
+>>>> reverted, I see that no issues of that nature. This is true in
+>>>> next-20130531 (and also 5/30 and 6/1 but not earlier). A bisect of
+>>>> Linus's tree followed by a merge of John's wireless pull request from
+>>>> today pointed at this same commit.
+>>>
+>>> Thanks, Stephen
+>>>
+>>> I will look into this.
+>>
+>> Hi Stephen,
+>>
+>> Can you try the attached patch? If it does not solve the issue, could
+>> you provide a log.
+> 
+> Yes, that works great, thanks.
+> 
+> Tested-by: Stephen Warren <swarren@nvidia.com>
 
-<formletter>
-
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
-for how to do this properly.
-
-</formletter>
+Did this patch get applied anywhere? I was hoping it'd go into 3.10-rc*
+given it's a user-triggerable backtrace introduced in 3.10-rc*.
