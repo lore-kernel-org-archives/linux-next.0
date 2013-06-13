@@ -1,54 +1,70 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: Regression in 9390ace brcmfmac: free net device when registration
- fails
-Date: Wed, 12 Jun 2013 15:19:54 -0600
-Message-ID: <51B8E5FA.9040400@wwwdotorg.org>
-References: <51AD1F22.2080004@wwwdotorg.org> <51ADE47D.50700@broadcom.com> <51B0FAC0.4080709@broadcom.com> <51B100C2.8070905@wwwdotorg.org>
+From: "Arend van Spriel" <arend@broadcom.com>
+Subject: Re: Regression in 9390ace brcmfmac: free net device when
+ registration fails
+Date: Thu, 13 Jun 2013 10:09:58 +0200
+Message-ID: <51B97E56.4030701@broadcom.com>
+References: <51AD1F22.2080004@wwwdotorg.org>
+ <51ADE47D.50700@broadcom.com> <51B0FAC0.4080709@broadcom.com>
+ <51B100C2.8070905@wwwdotorg.org> <51B8E5FA.9040400@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain;
+ charset=iso-8859-1;
+ format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:35760 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757951Ab3FLVT5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Jun 2013 17:19:57 -0400
-In-Reply-To: <51B100C2.8070905@wwwdotorg.org>
+Received: from mms1.broadcom.com ([216.31.210.17]:4443 "EHLO mms1.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757276Ab3FMIKH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Jun 2013 04:10:07 -0400
+In-Reply-To: <51B8E5FA.9040400@wwwdotorg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arend van Spriel <arend@broadcom.com>
+To: Stephen Warren <swarren@wwwdotorg.org>
 Cc: "John W. Linville" <linville@tuxdriver.com>, Hante Meuleman <meuleman@broadcom.com>, "'linux-wireless@vger.kernel.org'" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On 06/06/2013 03:36 PM, Stephen Warren wrote:
-> On 06/06/2013 03:10 PM, Arend van Spriel wrote:
->> On 06/04/13 14:58, Arend van Spriel wrote:
->>> On 06/04/2013 12:56 AM, Stephen Warren wrote:
->>>> (John, note that this commit is part of the pull request you sent to
->>>> Dave today)
+On 06/12/2013 11:19 PM, Stephen Warren wrote:
+> On 06/06/2013 03:36 PM, Stephen Warren wrote:
+>> On 06/06/2013 03:10 PM, Arend van Spriel wrote:
+>>> On 06/04/13 14:58, Arend van Spriel wrote:
+>>>> On 06/04/2013 12:56 AM, Stephen Warren wrote:
+>>>>> (John, note that this commit is part of the pull request you sent to
+>>>>> Dave today)
+>>>>>
+>>>>> Arend,
+>>>>>
+>>>>> Commit 9390ace "brcmfmac: free net device when registration fails"
+>>>>> causes a regression.
+>>>>>
+>>>>> I had the BCM4330 firmware present in my root fs, whereas my HW is a
+>>>>> BCM4329. With this patch applied, I get a kernel panic on boot. With it
+>>>>> reverted, I see that no issues of that nature. This is true in
+>>>>> next-20130531 (and also 5/30 and 6/1 but not earlier). A bisect of
+>>>>> Linus's tree followed by a merge of John's wireless pull request from
+>>>>> today pointed at this same commit.
 >>>>
->>>> Arend,
+>>>> Thanks, Stephen
 >>>>
->>>> Commit 9390ace "brcmfmac: free net device when registration fails"
->>>> causes a regression.
->>>>
->>>> I had the BCM4330 firmware present in my root fs, whereas my HW is a
->>>> BCM4329. With this patch applied, I get a kernel panic on boot. With it
->>>> reverted, I see that no issues of that nature. This is true in
->>>> next-20130531 (and also 5/30 and 6/1 but not earlier). A bisect of
->>>> Linus's tree followed by a merge of John's wireless pull request from
->>>> today pointed at this same commit.
+>>>> I will look into this.
 >>>
->>> Thanks, Stephen
+>>> Hi Stephen,
 >>>
->>> I will look into this.
+>>> Can you try the attached patch? If it does not solve the issue, could
+>>> you provide a log.
 >>
->> Hi Stephen,
+>> Yes, that works great, thanks.
 >>
->> Can you try the attached patch? If it does not solve the issue, could
->> you provide a log.
-> 
-> Yes, that works great, thanks.
-> 
-> Tested-by: Stephen Warren <swarren@nvidia.com>
+>> Tested-by: Stephen Warren <swarren@nvidia.com>
+>
+> Did this patch get applied anywhere? I was hoping it'd go into 3.10-rc*
+> given it's a user-triggerable backtrace introduced in 3.10-rc*.
 
-Did this patch get applied anywhere? I was hoping it'd go into 3.10-rc*
-given it's a user-triggerable backtrace introduced in 3.10-rc*.
+Hi Stephen,
+
+The patch went into the wireless-next tree. Given recent events with our 
+patch series I am a bit more carsful to tag patches for 3.10. Your issue 
+is user-triggerable but the scenario to get there can be avoided. But 
+you are right it was introduced in the 3.10-rc cycle. I leave it to John 
+to decide.
+
+Regards,
+Arend
