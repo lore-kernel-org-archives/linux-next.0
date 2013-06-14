@@ -1,80 +1,81 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: Regression in 9390ace brcmfmac: free net device when
- registration fails
-Date: Thu, 13 Jun 2013 13:32:13 -0400
-Message-ID: <20130613173213.GD3246@tuxdriver.com>
-References: <51AD1F22.2080004@wwwdotorg.org>
- <51ADE47D.50700@broadcom.com>
- <51B0FAC0.4080709@broadcom.com>
- <51B100C2.8070905@wwwdotorg.org>
- <51B8E5FA.9040400@wwwdotorg.org>
- <51B97E56.4030701@broadcom.com>
+From: Steve Capper <steve.capper@linaro.org>
+Subject: ARM64 HugePages for linux-next
+Date: Fri, 14 Jun 2013 12:29:09 +0100
+Message-ID: <20130614112908.GA4660@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:34232 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758842Ab3FMRpN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Jun 2013 13:45:13 -0400
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:54688 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752290Ab3FNL3c (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Jun 2013 07:29:32 -0400
+Received: by mail-wg0-f51.google.com with SMTP id e11so386475wgh.6
+        for <linux-next@vger.kernel.org>; Fri, 14 Jun 2013 04:29:30 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <51B97E56.4030701@broadcom.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arend van Spriel <arend@broadcom.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Hante Meuleman <meuleman@broadcom.com>, "'linux-wireless@vger.kernel.org'" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: catalin.marinas@arm.com, akpm@linux-foundation.org
 
-On Thu, Jun 13, 2013 at 10:09:58AM +0200, Arend van Spriel wrote:
-> On 06/12/2013 11:19 PM, Stephen Warren wrote:
-> >On 06/06/2013 03:36 PM, Stephen Warren wrote:
-> >>On 06/06/2013 03:10 PM, Arend van Spriel wrote:
-> >>>On 06/04/13 14:58, Arend van Spriel wrote:
-> >>>>On 06/04/2013 12:56 AM, Stephen Warren wrote:
-> >>>>>(John, note that this commit is part of the pull request you sent to
-> >>>>>Dave today)
-> >>>>>
-> >>>>>Arend,
-> >>>>>
-> >>>>>Commit 9390ace "brcmfmac: free net device when registration fails"
-> >>>>>causes a regression.
-> >>>>>
-> >>>>>I had the BCM4330 firmware present in my root fs, whereas my HW is a
-> >>>>>BCM4329. With this patch applied, I get a kernel panic on boot. With it
-> >>>>>reverted, I see that no issues of that nature. This is true in
-> >>>>>next-20130531 (and also 5/30 and 6/1 but not earlier). A bisect of
-> >>>>>Linus's tree followed by a merge of John's wireless pull request from
-> >>>>>today pointed at this same commit.
-> >>>>
-> >>>>Thanks, Stephen
-> >>>>
-> >>>>I will look into this.
-> >>>
-> >>>Hi Stephen,
-> >>>
-> >>>Can you try the attached patch? If it does not solve the issue, could
-> >>>you provide a log.
-> >>
-> >>Yes, that works great, thanks.
-> >>
-> >>Tested-by: Stephen Warren <swarren@nvidia.com>
-> >
-> >Did this patch get applied anywhere? I was hoping it'd go into 3.10-rc*
-> >given it's a user-triggerable backtrace introduced in 3.10-rc*.
-> 
-> Hi Stephen,
-> 
-> The patch went into the wireless-next tree. Given recent events with
-> our patch series I am a bit more carsful to tag patches for 3.10.
-> Your issue is user-triggerable but the scenario to get there can be
-> avoided. But you are right it was introduced in the 3.10-rc cycle. I
-> leave it to John to decide.
-> 
-> Regards,
-> Arend
+Hello,
+I've been working on a patch set to add huge page support to ARM64, this
+includes some changes to mm and x86. I've been advised by Andrew Morton to get
+these into linux-next asap:
+http://marc.info/?l=linux-mm&m=137115843813005&w=2
 
-I've just applied it to the wireless tree.  I doubt if it will make
--rc6, but it might make the final 3.10.
+Would it please be possible to have the patches from the git repo below pulled
+directly into linux-next?
 
-John
+(I've just merged them against linux-next/master and they build and run fine
+for me in an ARM64 Fast Model).
+
+Thanks,
 -- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+Steve
+
+--->8
+
+The following changes since commit d683b96b072dc4680fc74964eca77e6a23d1fa6e:
+
+  Linux 3.10-rc4 (2013-06-02 17:11:17 +0900)
+
+are available in the git repository at:
+
+  git://git.linaro.org/people/stevecapper/linux.git for-next/hugepages
+
+for you to fetch changes up to af07484863e0c20796081e57093886c22dc16705:
+
+  ARM64: mm: THP support. (2013-06-14 09:52:41 +0100)
+
+----------------------------------------------------------------
+Steve Capper (11):
+      mm: hugetlb: Copy huge_pmd_share from x86 to mm.
+      x86: mm: Remove x86 version of huge_pmd_share.
+      mm: hugetlb: Copy general hugetlb code from x86 to mm.
+      x86: mm: Remove general hugetlb code from x86.
+      mm: thp: Correct the HPAGE_PMD_ORDER check.
+      ARM64: mm: Restore memblock limit when map_mem finished.
+      ARM64: mm: Make PAGE_NONE pages read only and no-execute.
+      ARM64: mm: Move PTE_PROT_NONE bit.
+      ARM64: mm: HugeTLB support.
+      ARM64: mm: Raise MAX_ORDER for 64KB pages and THP.
+      ARM64: mm: THP support.
+
+ arch/arm64/Kconfig                     |  17 +++
+ arch/arm64/include/asm/hugetlb.h       | 117 ++++++++++++++++++
+ arch/arm64/include/asm/pgtable-hwdef.h |  12 ++
+ arch/arm64/include/asm/pgtable.h       |  96 ++++++++++++---
+ arch/arm64/include/asm/tlb.h           |   6 +
+ arch/arm64/include/asm/tlbflush.h      |   2 +
+ arch/arm64/mm/Makefile                 |   1 +
+ arch/arm64/mm/fault.c                  |  19 +--
+ arch/arm64/mm/hugetlbpage.c            |  70 +++++++++++
+ arch/arm64/mm/mmu.c                    |  19 ++-
+ arch/x86/Kconfig                       |   6 +
+ arch/x86/mm/hugetlbpage.c              | 187 ----------------------------
+ include/linux/huge_mm.h                |   2 +-
+ include/linux/hugetlb.h                |   4 +
+ mm/hugetlb.c                           | 219 +++++++++++++++++++++++++++++++--
+ 15 files changed, 543 insertions(+), 234 deletions(-)
+ create mode 100644 arch/arm64/include/asm/hugetlb.h
+ create mode 100644 arch/arm64/mm/hugetlbpage.c
