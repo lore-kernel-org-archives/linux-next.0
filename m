@@ -1,62 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Mon, 17 Jun 2013 13:46:31 +1000
-Message-ID: <20130617134631.fd1f6107b353c2e331ff06df@canb.auug.org.au>
+Subject: linux-next: manual merge of the fbdev tree with the drm tree
+Date: Mon, 17 Jun 2013 14:21:20 +1000
+Message-ID: <20130617142120.b42dafb967974d3906a43fc9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Jun_2013_13_46_31_+1000_vKz2wqzP2gcVCPYz"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56342 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753718Ab3FQDqm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 23:46:42 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rajeev Kumar <rajeev-dlh.kumar@st.com>
+ boundary="Signature=_Mon__17_Jun_2013_14_21_20_+1000_9P_cQyBS7OvTq7WB"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Dave Airlie <airlied@linux.ie>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__17_Jun_2013_13_46_31_+1000_vKz2wqzP2gcVCPYz
+--Signature=_Mon__17_Jun_2013_14_21_20_+1000_9P_cQyBS7OvTq7WB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the fbdev tree got a conflict in
+drivers/video/of_display_timing.c between commit f583662347c6 ("video:
+display_timing: make parameter const") from the drm tree and commits
+fcf7e6e5bd84 ("videomode: don't allocate mem in of_get_display_timing()")
+and ffa3fd21de8a ("videomode: implement public of_get_display_timing()")
+from the fbdev tree.
 
-make[4]: *** No rule to make target `sound/soc/spear/spear_evb.o', needed b=
-y `sound/soc/spear/built-in.o'.  Stop.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit e58070ee4fdf ("ASoC: Add Kconfig and Makefile to support
-SPEAr audio driver").
-
-I have used the version of the sound-asoc -tree from next-20130607 for
-today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__17_Jun_2013_13_46_31_+1000_vKz2wqzP2gcVCPYz
+diff --cc drivers/video/of_display_timing.c
+index 2894e03,9c0f17b..0000000
+--- a/drivers/video/of_display_timing.c
++++ b/drivers/video/of_display_timing.c
+@@@ -53,13 -53,12 +53,12 @@@ static int parse_timing_property(const=20
+  }
+ =20
+  /**
+-  * of_get_display_timing - parse display_timing entry from device_node
++  * of_parse_display_timing - parse display_timing entry from device_node
+   * @np: device_node with the properties
+   **/
+- static struct display_timing *of_get_display_timing(const struct device_n=
+ode
+- 						    *np)
+ -static int of_parse_display_timing(struct device_node *np,
+++static int of_parse_display_timing(const struct device_node *np,
++ 		struct display_timing *dt)
+  {
+- 	struct display_timing *dt;
+  	u32 val =3D 0;
+  	int ret =3D 0;
+ =20
+
+--Signature=_Mon__17_Jun_2013_14_21_20_+1000_9P_cQyBS7OvTq7WB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRvoacAAoJEECxmPOUX5FEhe4P+QG8ZGRX8IpRZPxH6UFrxy1m
-mZNugtKQNoU+pVbeZNW6eam32OWsMU4XFBk7Xi41ObxB+/i8QdUYw1B3weMuxznM
-i4rwSuXI8gzsThGEASVCPjF7R/ewayugFkzUnDs1gbMSpLaX4QTgKsBIIBozbJZ2
-M+s4i0e1Nl11hLt6UBP6dL0JTqg5WLifEEY+PDTD5W1ZVGLLj/ykDNlbNF7CijhI
-Ujp2yro0ZnKds9QZOyyGBJoCV69qb7DYzSFW0bGn7ha2+O0O6cHWtM7ZaAKDWRE0
-2cWmbTRzmeKv9sfKbVsbakO7/sfmZRCDSyzCkAEKSXw3JUqhMEKzMgLkvxUgDo2i
-GBPC8/la5rdQG+7zKYm5sbDyNnwi1DUVUpILIngXoI9wMVL68WoqhPGRENX1vTKy
-uEUalumLvLKTrIYBVCOvrTzExgujSn/mihoKoyL0D2lNxeVuZ3vm6fXKRxESxMPg
-ONvNhj2BWwFEXmMcoN1w9+iynD3zkTENc8JpCsIIjH0Q31uYO0+j3Ll0XBYhUZgP
-U8pBmwXuoYOc3suKDV5orYHYXrY3NVcejw0F4y4jx++Barkr/GtZJzovA9M0lhyX
-FZnOzOg9gtR57b9tlA3TXxvfye8EkcF/bQ4Byjcv8Cp/fvAKecUFIeWvYHKpY8IE
-aozDpgNxt0xtc7LzRcQO
-=JoJZ
+iQIcBAEBCAAGBQJRvo7FAAoJEECxmPOUX5FE5mcP+wWfcT4MuB4zIGJej3CBOQrV
+gs3/6LNB5TDIr9fAeDsINBjeYY2K+NhWYxp6G+nf1lWFDXi1k7TNAph5uJOzUbNc
+LQZz5beM2XYJgYqJYfd1P2UHwPXd7EHmcawOV+B42Wkbyn5ayfouKf1rxtZyQjxT
+EwIxeGq4aZ3FkI0wVzYWITTyCuXp/v8XLk7mKPTV1LqYuQevbUUcQT+g+Xv8+sVD
+Zxji8NzhrZtAlrvrlYOQnhilHRKASGA4nnwydZ/fC6/NqH54Dn2pT39w3/I6zP8h
+mwZN7bMbhsClpUUQU7KH5AJGIf8rtp06QwO4U8y6MfdOqUNTkN0Su7R9E8ERXFMn
+7MjwVgogJXjUX74QPKtKv8N4bXnG0dYU2G9FRI0wfzMUIKIx0jnZR6Wktpq8nQFF
+SKsNJWUhECipknsB/Do6ofL6m+g+TTJJ4PTtKYPP4fhaWLgIvlsoKs+KYWgHVuWC
+cK7SrIdgS1LFs2LNqzBcL2XIhdKOjVPau1NtP5AR03bBxONAG3V5VcZYUYqKbE12
+QegHgnsbHxj0D0zZ4pL7/d5fFK7uqlzoP4G8glo/hTCY30JGYYjIepzs8h5O56Mo
+pB4HmfsVOfkI8do0dL4hKhmYXDy5ztoI4L9i78XAVkrdSJi466YjcWEfreO9g3Iv
+oacwjSo27LXNB4L9/0uG
+=X2Oz
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Jun_2013_13_46_31_+1000_vKz2wqzP2gcVCPYz--
+--Signature=_Mon__17_Jun_2013_14_21_20_+1000_9P_cQyBS7OvTq7WB--
