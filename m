@@ -1,32 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm64 tree with Linus' tree
-Date: Mon, 17 Jun 2013 10:37:15 +1000
-Message-ID: <20130617103715.3c97aaeb932d8f69e31c0039@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with Linus' tree
+Date: Mon, 17 Jun 2013 11:42:43 +1000
+Message-ID: <20130617114243.1f3f14901db4a4e38060daf8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Jun_2013_10_37_15_+1000_mlfmfFAD=8JA1b62"
+ boundary="Signature=_Mon__17_Jun_2013_11_42_43_+1000_n8MincDTM9PSiQJI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56676 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:36601 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755443Ab3FQAhZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 20:37:25 -0400
+	with ESMTP id S1755284Ab3FQBmy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 21:42:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>, Gleb Natapov <gleb@redhat.com>, Marc Zyngier <marc.zyngier@arm.com>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lance Ortiz <lance.ortiz@hp.com>, Tony Luck <tony.luck@intel.com>, Betty Dall <betty.dall@hp.com>
 
---Signature=_Mon__17_Jun_2013_10_37_15_+1000_mlfmfFAD=8JA1b62
+--Signature=_Mon__17_Jun_2013_11_42_43_+1000_n8MincDTM9PSiQJI
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Catalin,
+Hi Bjorn,
 
-Today's linux-next merge of the arm64 tree got a conflict in
-include/uapi/linux/kvm.h between commit 2a8fedd0c142 ("kvm: Add
-definition of KVM_REG_MIPS") from Linus' tree and commit 7c8c5e6a9101
-("arm64: KVM: system register handling") from the arm64 tree.
+Today's linux-next merge of the pci tree got a conflict in
+include/linux/aer.h between commit 37448adfc7ce ("aerdrv: Move
+cper_print_aer() call out of interrupt context") from Linus' tree and
+commit fde41b9fa2d0 ("PCI/AER: Remove "extern" from function
+declarations") from the pci tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,39 +36,51 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/uapi/linux/kvm.h
-index d88c8ee,aac2764..0000000
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@@ -783,7 -784,7 +784,8 @@@ struct kvm_dirty_tlb=20
-  #define KVM_REG_IA64		0x3000000000000000ULL
-  #define KVM_REG_ARM		0x4000000000000000ULL
-  #define KVM_REG_S390		0x5000000000000000ULL
-+ #define KVM_REG_ARM64		0x6000000000000000ULL
- +#define KVM_REG_MIPS		0x7000000000000000ULL
+diff --cc include/linux/aer.h
+index 737f90a,55bb3dc..0000000
+--- a/include/linux/aer.h
++++ b/include/linux/aer.h
+@@@ -49,11 -53,10 +53,10 @@@ static inline int pci_cleanup_aer_uncor
+  }
+  #endif
  =20
-  #define KVM_REG_SIZE_SHIFT	52
-  #define KVM_REG_SIZE_MASK	0x00f0000000000000ULL
+- extern void cper_print_aer(struct pci_dev *dev,
+- 			   int cper_severity, struct aer_capability_regs *aer);
+- extern int cper_severity_to_aer(int cper_severity);
+- extern void aer_recover_queue(int domain, unsigned int bus, unsigned int =
+devfn,
+- 			      int severity,
+- 			      struct aer_capability_regs *aer_regs);
+ -void cper_print_aer(const char *prefix, struct pci_dev *dev, int cper_sev=
+erity,
+++void cper_print_aer(struct pci_dev *dev, int cper_severity,
++ 		    struct aer_capability_regs *aer);
++ int cper_severity_to_aer(int cper_severity);
++ void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
+ -		       int severity);
+++		       int severity, struct aer_capability_regs *aer_regs);
+  #endif //_AER_H_
+ =20
 
---Signature=_Mon__17_Jun_2013_10_37_15_+1000_mlfmfFAD=8JA1b62
+--Signature=_Mon__17_Jun_2013_11_42_43_+1000_n8MincDTM9PSiQJI
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRvlo/AAoJEECxmPOUX5FEJCAP/3bwMqDgXby35sORzZB7GBxl
-TgvHmXDOm0SDJyGhZrGCvfrcjY028nS92SKk9izywZTWT0NJffgrwWoTSfrVsrW/
-QYQuUb19lOZdNx6upcfH6nFsDLSIjOSB44F/PpWpN+NBiQ+Zm7BQTkCPgjAXAOdh
-g4LpuEGadAl6Ppm3BHby7ncjZhFAtkN0+0pLhIPu86JTXz3xaiVgk6f9EnY8CEzw
-vncAxw8Jl8G50kUojVaXqaZCnv0qphhyONPtIHN/zIbETa/TVTC71B9BVV9HtJcy
-LnFtfSeDDldnvF8/3xOphPrbuRE5aNhk2dYMVpdNKtSOsgPJzhz6OZehk9B67yYJ
-7RUVrgdBBcCs/kOYrlCefnrapWKTVe1SfD6rjlrDhmQEbDunQJyD6dzm4TVErINq
-8/YBzwCmvqN1ucS8yRJtMZWsHpUjzSp71h4/ZXp0lihO04bt1rMa5mrgXGjC3ud8
-O/rBGYt8N/Q/rPBimGtgkEbEzAjlXUeLc0AnrQLexzN+dLj//08+kvPurs9vxDeb
-psV8Y/Sv+3mudYNLl+6/arvU3oscqRGZpAfiqFrO32DNZnHyyqLmsGpwmTzM28kE
-e6RHrZxky6+K2rg96Sh/Qavyvd0HfrQnLU6dGImidXftaFFtIOuDGzcOQhnGPDyE
-ui/kddi4fLFP2wmkSO7u
-=rjKO
+iQIcBAEBCAAGBQJRvmmXAAoJEECxmPOUX5FExqYP/1PmBwaTG/Q2wVaeKpHQS5NQ
+7n0/zcwHXwQyj7TCC2677xgmfOAk29nPPz8QVBgi6SRWwSjWxgeG6z4MrLLbtb4G
+f6w1sqYQ4u+CtULGZu1wjZ9uX4qxUEm3jfMBfqzPJ8PDTP8Y+1E67LJ7eGMvricD
+pePKQJWHripLzcpIYdvnl5mdbdZWEfBNVdX0YjUSowWsXhmxxDGmNUzeYmy0qCyU
+d8RqeCOO4IKqlwxVXDL1dit96rbzqEOYF4hdv4iZahf/LabOzSlLLtwksOoNTC4r
+Or+8y+n3elNkrwuuPNPEuCt8frTscxQRO7G344/sIOoyVGiCgW/7jjT4UhqDIRyb
+zKZ5WSVDo1/MzMzZ95KaOJ8Sxxe/6UnVaTqDzTb6Pw9yT8EY7XMOsjP1SWSyY6Ux
+KpXnWTAH41NOP4VWNHLaDvv05JT7bP/A4768TtAaRR56MXsjAnBk58xMFRaGLfZC
+OTM1qlWaJJymD3sF8oPi9tbeYbGuNTtTjTV6PXds98T50dKaaoFDHhQo/V8+j1br
+tXFdpGxe0cPf34WVOtrPJwXwtv+qj454qpJw/IP96X60rpHazLoB0XEXG41HItdT
+nC3bfwywZFqxQOnjOGACVoz4w91QZCsUKH/1XyNpAXyxSprc3KwHvGHz2HMA5daT
+AzRMakW4YtPRd8EmLv8b
+=hYAb
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Jun_2013_10_37_15_+1000_mlfmfFAD=8JA1b62--
+--Signature=_Mon__17_Jun_2013_11_42_43_+1000_n8MincDTM9PSiQJI--
