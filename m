@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Mon, 17 Jun 2013 13:25:37 +1000
-Message-ID: <20130617132537.430b7875a3600a9cbd0f7ad5@canb.auug.org.au>
+Date: Mon, 17 Jun 2013 13:32:53 +1000
+Message-ID: <20130617133253.f59c0b9a1721111a8e3c75e3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Jun_2013_13_25_37_+1000__HnnVMRg6r7J7qq9"
+ boundary="Signature=_Mon__17_Jun_2013_13_32_53_+1000_tp2pf6IzJ=fGZHzr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33306 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:34337 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755522Ab3FQDZp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 23:25:45 -0400
+	with ESMTP id S1754446Ab3FQDc4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 23:32:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>
 
---Signature=_Mon__17_Jun_2013_13_25_37_+1000__HnnVMRg6r7J7qq9
+--Signature=_Mon__17_Jun_2013_13_32_53_+1000_tp2pf6IzJ=fGZHzr
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,10 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_display.c between commit d62cf62ad07d
-("drm/i915: Quirk the pipe A quirk in the modeset state checker") from
-Linus' tree and commit 6c49f24180c3 ("drm/i915: hw state readout support
-for pixel_multiplier") from the drm-intel tree.
+drivers/gpu/drm/i915/intel_sdvo.c between commit 7ba220cec0bb ("drm/i915:
+Enable hotplug interrupts after querying hw capabilities") from Linus'
+tree and commit e596a02ccfc6 ("drm/i915: Remove dead code from SDVO
+initialisation") from the drm-intel tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,50 +36,55 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/intel_display.c
-index 6eb99e1,218bc93..0000000
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@@ -8177,11 -8264,14 +8264,19 @@@ check_crtc_state(struct drm_device *dev
+diff --cc drivers/gpu/drm/i915/intel_sdvo.c
+index 7d31165,b8e1623..0000000
+--- a/drivers/gpu/drm/i915/intel_sdvo.c
++++ b/drivers/gpu/drm/i915/intel_sdvo.c
+@@@ -2850,18 -2889,12 +2891,6 @@@ bool intel_sdvo_init(struct drm_device=20
+  		}
+  	}
  =20
-  		active =3D dev_priv->display.get_pipe_config(crtc,
-  							   &pipe_config);
- +
- +		/* hw state is inconsistent with the pipe A quirk */
- +		if (crtc->pipe =3D=3D PIPE_A && dev_priv->quirks & QUIRK_PIPEA_FORCE)
- +			active =3D crtc->active;
- +
-+ 		list_for_each_entry(encoder, &dev->mode_config.encoder_list,
-+ 				    base.head) {
-+ 			if (encoder->base.crtc !=3D &crtc->base)
-+ 				continue;
-+ 			if (encoder->get_config)
-+ 				encoder->get_config(encoder, &pipe_config);
-+ 		}
-+=20
-  		WARN(crtc->active !=3D active,
-  		     "crtc active state doesn't match with hw state "
-  		     "(expected %i, found %i)\n", crtc->active, active);
+- 	hotplug_mask =3D 0;
+- 	if (IS_G4X(dev)) {
+- 		hotplug_mask =3D intel_sdvo->is_sdvob ?
+- 			SDVOB_HOTPLUG_INT_STATUS_G4X : SDVOC_HOTPLUG_INT_STATUS_G4X;
+- 	} else if (IS_GEN4(dev)) {
+- 		hotplug_mask =3D intel_sdvo->is_sdvob ?
+- 			SDVOB_HOTPLUG_INT_STATUS_I965 : SDVOC_HOTPLUG_INT_STATUS_I965;
+- 	} else {
+- 		hotplug_mask =3D intel_sdvo->is_sdvob ?
+- 			SDVOB_HOTPLUG_INT_STATUS_I915 : SDVOC_HOTPLUG_INT_STATUS_I915;
+- 	}
+-=20
+ -	/* Only enable the hotplug irq if we need it, to work around noisy
+ -	 * hotplug lines.
+ -	 */
+ -	if (intel_sdvo->hotplug_active)
+ -		intel_encoder->hpd_pin =3D HPD_SDVO_B ? HPD_SDVO_B : HPD_SDVO_C;
+ -
+  	intel_encoder->compute_config =3D intel_sdvo_compute_config;
+  	intel_encoder->disable =3D intel_disable_sdvo;
+  	intel_encoder->mode_set =3D intel_sdvo_mode_set;
 
---Signature=_Mon__17_Jun_2013_13_25_37_+1000__HnnVMRg6r7J7qq9
+--Signature=_Mon__17_Jun_2013_13_32_53_+1000_tp2pf6IzJ=fGZHzr
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRvoG0AAoJEECxmPOUX5FEQCMP/2pvSBjpmqDJyNlYspumm027
-wJ93PW3JPSfV/CGQFtWFoeXJj71nnkuePQEl9K+iVvxWgRc7VppfuTaycICxXL2T
-2bINIXaXinVQeXLZa/O+w4gmuvzoqWXW2o5eNBV4QXqJjQzfBkuugKX66QzyHTSW
-9ocowNL6cn1IXX0yFaa+HBjf+hFd1yOjmFy+ONSi/AZtl9Tjqqox/+y1XJYg/cct
-UrK7bAiRzFa8wozpjyVL4rwBbBd6UOBxC1jck9avT/vot1wa8pvTRE3l3qQeEP9N
-oKtIIg7PO6cBN5Cb5Jikcd+bVY2uWhsDlmpBGFYvnXSpGM6v+43oAo5BOxO4Hnhj
-wLZYrfofRf76AqyPc3jtUrQD/8vG/pgXIt0vwvKX1zmxOq0NBrAIj2qbpKdTa6iF
-G84XIj+ZdkfipDo6u2iX86EGHwOpF20fSTpUJ1NcFXAZ++nY7quFFNeNpa+a+pxd
-//dJjAQi/IPOe6ey6THJBPDpEJQStC3i2Kr2jVyPdyKXcgeQ31rkzdQ1zEzSUc8O
-onsFKs4+f1Nvr1pMsSJX/hTGRxpMmGOXPbE1g5CzfXKPSw35LlY92CUBnrumAv/3
-z0PAh2SOcC8CimCns3qXwh0wi71xksASIq0hkSh7SqwsK8cZUjBluFpKXU89vDB1
-IlaFq68s2oEGdpO5CbKx
-=PTo0
+iQIcBAEBCAAGBQJRvoNlAAoJEECxmPOUX5FEQLAP/jZ/KeVgqbQxN8AS3Jpljvlz
+NggKZwcThHF0KsMUer2vQ1qjt9u2z/ATvpk9y9DgLU9/nZhAoluUpkSC1nIFAjDM
+s0ypTj8ESqrBmCr1PE4mr8/Ksu8VZvU3Xs9WkKbEe89Y780XJmHDSftphkFa68zU
+y8Do7CBt2fnVh+zIvFJwyulZaI76fgB8oZUUVDSqfn5WWylj4+s4SqjyxDRicsUV
+ixI4p26rwoOw/hMXRqFr7aqC3tzE+9M8dakpc9LJlCYqAc9LRPqy3g//yiXexScB
+BMSxIAmFWtYVJXabgi85MeCCWevbUOyi8wtt+QeX0dmTl3Wnus9tkI/vmxtSopQ+
+yi+3A9sTKy2E0kTQxPWPOBEydp4/PCzNsRmS5vJh38QJTFvdgZt7JE3wGk3W0FVL
+uqGTc6HjkqH8hZM4S702UNzScQCVY2v8D+VuSJHjucc9lABcrih8BfH8q6RsR3jm
+PzbdbjRJb6PqzYIL81aL/a2yTiv/Cad6ScubMK1cOZShvGAkkFB9SSnmvIQU5I4o
+ynpl+yYLAqhZkkrW2k9ULOAaKMGIHt4h9ySymaa/7WuZM/7WqvRv47JJjNs9+esQ
+TC+Bj9MmrVQSaDf/Pp7peLO89G/t0wJ3x307yU7S7pc6v2bT/L5vSzXiKqZSnASZ
+GOe6arGQaOKv0jMHR/Y2
+=c3/5
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Jun_2013_13_25_37_+1000__HnnVMRg6r7J7qq9--
+--Signature=_Mon__17_Jun_2013_13_32_53_+1000_tp2pf6IzJ=fGZHzr--
