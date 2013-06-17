@@ -1,144 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Mon, 17 Jun 2013 12:44:41 +1000
-Message-ID: <20130617124441.e2e93d3a9e48952d685afa6b@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 17 Jun 2013 13:09:18 +1000
+Message-ID: <20130617130918.a8a361ff284b1ac2186598ea@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Jun_2013_12_44_41_+1000_8Hlngt7fx_6iMMlb"
+ boundary="Signature=_Mon__17_Jun_2013_13_09_18_+1000_.R5VNNYZ5F_nqn8R"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56801 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:51325 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755007Ab3FQCop (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 22:44:45 -0400
+	with ESMTP id S1754166Ab3FQDJa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 23:09:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antonio Quartulli <ordex@autistici.org>, Marek Lindner <lindner_marek@yahoo.de>, Simon Wunderlich <simon@open-mesh.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Rodrigo Vivi <rodrigo.vivi@gmail.com>
 
---Signature=_Mon__17_Jun_2013_12_44_41_+1000_8Hlngt7fx_6iMMlb
+--Signature=_Mon__17_Jun_2013_13_09_18_+1000_.R5VNNYZ5F_nqn8R
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Dave,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/batman-adv/bat_iv_ogm.c between commit 7c24bbbeab41 ("batman-adv:
-forward late OGMs from best next hop") from Linus' tree and commit
-24a5deeb8a19 ("batman-adv: move ring_buffer helper functions in
-bat_iv_ogm") from the net-next tree.
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/intel_sdvo.c between commit c3456fb3e471 ("drm/i915:
+prefer VBT modes for SVDO-LVDS over EDID") from Linus' tree and commit
+41aa344866e3 ("drm/i915: Organize VBT stuff inside drm_i915_private")
+from the drm tree.
 
-I fixed it up (as specified in your email (thanks) - see below) and can
-carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/batman-adv/bat_iv_ogm.c
-index f680ee1,d07323b..0000000
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@@ -30,20 -29,47 +29,63 @@@
-  #include "network-coding.h"
+diff --cc drivers/gpu/drm/i915/intel_sdvo.c
+index d4ea6c2,7068195..0000000
+--- a/drivers/gpu/drm/i915/intel_sdvo.c
++++ b/drivers/gpu/drm/i915/intel_sdvo.c
+@@@ -1776,17 -1848,14 +1848,17 @@@ static void intel_sdvo_get_lvds_modes(s
+  	 * Assume that the preferred modes are
+  	 * arranged in priority order.
+  	 */
+ -	intel_ddc_get_modes(connector, intel_sdvo->i2c);
+ -	if (list_empty(&connector->probed_modes) =3D=3D false)
+ -		goto end;
+ +	intel_ddc_get_modes(connector, &intel_sdvo->ddc);
  =20
-  /**
- + * batadv_dup_status - duplicate status
- + * @BATADV_NO_DUP: the packet is a duplicate
- + * @BATADV_ORIG_DUP: OGM is a duplicate in the originator (but not for the
- + *  neighbor)
- + * @BATADV_NEIGH_DUP: OGM is a duplicate for the neighbor
- + * @BATADV_PROTECTED: originator is currently protected (after reboot)
- + */
- +enum batadv_dup_status {
- +	BATADV_NO_DUP =3D 0,
- +	BATADV_ORIG_DUP,
- +	BATADV_NEIGH_DUP,
- +	BATADV_PROTECTED,
- +};
- +
-++/**
-+  * batadv_ring_buffer_set - update the ring buffer with the given value
-+  * @lq_recv: pointer to the ring buffer
-+  * @lq_index: index to store the value at
-+  * @value: value to store in the ring buffer
-+  */
-+ static void batadv_ring_buffer_set(uint8_t lq_recv[], uint8_t *lq_index,
-+ 				   uint8_t value)
-+ {
-+ 	lq_recv[*lq_index] =3D value;
-+ 	*lq_index =3D (*lq_index + 1) % BATADV_TQ_GLOBAL_WINDOW_SIZE;
-+ }
-+=20
-+ /**
-+  * batadv_ring_buffer_set - compute the average of all non-zero values st=
-ored
-+  * in the given ring buffer
-+  * @lq_recv: pointer to the ring buffer
-+  *
-+  * Returns computed average value.
-+  */
-+ static uint8_t batadv_ring_buffer_avg(const uint8_t lq_recv[])
-+ {
-+ 	const uint8_t *ptr;
-+ 	uint16_t count =3D 0, i =3D 0, sum =3D 0;
-+=20
-+ 	ptr =3D lq_recv;
-+=20
-+ 	while (i < BATADV_TQ_GLOBAL_WINDOW_SIZE) {
-+ 		if (*ptr !=3D 0) {
-+ 			count++;
-+ 			sum +=3D *ptr;
-+ 		}
-+=20
-+ 		i++;
-+ 		ptr++;
-+ 	}
-+=20
-+ 	if (count =3D=3D 0)
-+ 		return 0;
-+=20
-+ 	return (uint8_t)(sum / count);
-+ }
-++
-  static struct batadv_neigh_node *
-  batadv_iv_ogm_neigh_new(struct batadv_hard_iface *hard_iface,
-  			const uint8_t *neigh_addr,
-@@@ -1013,11 -1062,10 +1085,11 @@@ static void batadv_iv_ogm_process(cons
-  	struct batadv_neigh_node *orig_neigh_router =3D NULL;
-  	int has_directlink_flag;
-  	int is_my_addr =3D 0, is_my_orig =3D 0, is_my_oldorig =3D 0;
-- 	int is_broadcast =3D 0, is_bidirect;
-+ 	int is_bidirect;
-  	bool is_single_hop_neigh =3D false;
-  	bool is_from_best_next_hop =3D false;
- -	int is_duplicate, sameseq, simlar_ttl;
- +	int sameseq, similar_ttl;
- +	enum batadv_dup_status dup_status;
-  	uint32_t if_incoming_seqno;
-  	uint8_t *prev_sender;
- =20
+ -	/* Fetch modes from VBT */
+ +	/*
+ +	 * Fetch modes from VBT. For SDVO prefer the VBT mode since some
+ +	 * SDVO->LVDS transcoders can't cope with the EDID mode. Since
+ +	 * drm_mode_probed_add adds the mode at the head of the list we add it
+ +	 * last.
+ +	 */
+- 	if (dev_priv->sdvo_lvds_vbt_mode !=3D NULL) {
++ 	if (dev_priv->vbt.sdvo_lvds_vbt_mode !=3D NULL) {
+  		newmode =3D drm_mode_duplicate(connector->dev,
+- 					     dev_priv->sdvo_lvds_vbt_mode);
++ 					     dev_priv->vbt.sdvo_lvds_vbt_mode);
+  		if (newmode !=3D NULL) {
+  			/* Guarantee the mode is preferred */
+  			newmode->type =3D (DRM_MODE_TYPE_PREFERRED |
 
---Signature=_Mon__17_Jun_2013_12_44_41_+1000_8Hlngt7fx_6iMMlb
+--Signature=_Mon__17_Jun_2013_13_09_18_+1000_.R5VNNYZ5F_nqn8R
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRvngZAAoJEECxmPOUX5FEGWIP/AkJDmPSXtODqVmeV4hX5hSz
-sn1BNzv01g/kG+im4V49lOFFr99wgaWc7Fv7YeFIblL0d5oZwtXA5JypdeViLPkf
-jl/xkaMa8pzCa3ZQ2y+vG77b1RAmE5Gb2pYtjvAzRAoppytuRYtyPWoJV6oz+LnA
-v5jo1bwgCr72thFTkgWl7s7Y5szK7fl6OLR25ypBrbS4bIAe1yBe5A9UwWPjVfQa
-NGiLxoeCCcojqZw2L7bbbnB+eas1sU3HqDUOP6HvdBsuB1Lduzxj5Du6eMvLDluA
-qJjkwKG/BdLnaKGs1wj8DaJvUiC99M0O/80BuH9c2vIAEow4RGQvGcC2Gzbcp+Hp
-yB60CO4rZoZYyx9biLoekgEy4fdMPO/2ffLB3NAc+2g9U+291CVe6z9UhosKzWz2
-JgJjRwFx925Vh28RfqFdsYjcEyWyBtjV0A3L8dsNf8dH5v4h+23hqr6xROqhQOhv
-aqNFICS57F7I+Qjmyza98cZvJeXyOYAenflAnzfBFDZLA9eCdZZ2zcSkoGpfz7F5
-OGNTQ0t2iJAesPN2zvsCI2+zJImYWWjuQaoy77KSP/Yr69dWuaJoHXjx+1I4cg0e
-+iFBMfvLqTlYCWXyaz95wBjTWa6pAUXnB7yeqQwTsdo9THxcFjMTAWxyirfqgOcF
-/PNS631pylZcbD5TlX64
-=VzFl
+iQIcBAEBCAAGBQJRvn3iAAoJEECxmPOUX5FEinAP/3r1F4jn4E3O56GEdOtBEXtK
+Lffn7hViM2oCYaz3D/YTDHvbWJqlvw9Sy48WiIfZakAi4JSX4o0MOGAu0aOzHpYx
+uHtSIErrB34ZBavsrQghvuGRPikjE9iwh771ezlRwlgLzb+f2WnqiOftt7NRyew7
+9uDjJGfTIy/TR6qxG7rIgCDVIalTqHsGmrhnphOqLeP7kfXMomv5noLTrzXNP9km
+NrcSfiU8yCqNttCeneXbZ2Yn1QDVbOlRM8QQKoFUAuI5tFQhg1hC38vjlMj+tfWS
+5nhwmz1cTeLjd0ehT8EeTSqcE+eGm9Z4qhsZSA6xnVmWOZLBo1f0tUiyDYjr4RPi
+73W+qDBPkL8uFWddJBjyzElJcxL2Tp+L+ET9l+46vAg8ETsV+FJ1OTlgZytVtHh6
+fIC+cR2KHPrddiGUIgGsiBbOpu4ol8TOWUMQOoh/w6w1wV4bAKUMTppj2r+ajvvN
+QcnMrqg9shZduPG14vnRKE1yWxqjQUZTIHHym5qUXv/9ha/YtKtDaiNLGu0s37Y7
+iME0AVxBd4Dq2DRmBw8tPpBopa8k9u2/GNqaSgRa0KIxKcpPCRQzOnwPDshijqNS
+KgUDpChicfrDXc6ZRdfX26PYDQkmN2bsDSfeKWBsXPg45mo6nnNElQgwW19wCZBr
+Fiw+v61N6qMAnlRgPLxJ
+=t22J
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Jun_2013_12_44_41_+1000_8Hlngt7fx_6iMMlb--
+--Signature=_Mon__17_Jun_2013_13_09_18_+1000_.R5VNNYZ5F_nqn8R--
