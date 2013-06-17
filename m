@@ -1,77 +1,79 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: linux-next: manual merge of the fbdev tree with the drm tree
-Date: Mon, 17 Jun 2013 10:23:01 +0300
-Message-ID: <51BEB955.1020809@ti.com>
-References: <20130617142120.b42dafb967974d3906a43fc9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the clk tree with the arm-soc tree
+Date: Mon, 17 Jun 2013 17:27:19 +1000
+Message-ID: <20130617172719.f19a76fae98cc7ef82b91ae9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="----enig2TOCMVMLBHOFPOMFKBIQW"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__17_Jun_2013_17_27_19_+1000_Np9Aylc3TeHaLcuj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:35140 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754191Ab3FQHXV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Jun 2013 03:23:21 -0400
-In-Reply-To: <20130617142120.b42dafb967974d3906a43fc9@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52156 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751684Ab3FQH1b (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 03:27:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Dave Airlie <airlied@linux.ie>
-Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steffen Trumtrar <s.trumtrar@pengutronix.de>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Peter De Schrijver <pdeschrijver@nvidia.com>
 
-------enig2TOCMVMLBHOFPOMFKBIQW
-Content-Type: text/plain; charset=ISO-8859-1
+--Signature=_Mon__17_Jun_2013_17_27_19_+1000_Np9Aylc3TeHaLcuj
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Mike,
 
-On 17/06/13 07:21, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the fbdev tree got a conflict in
-> drivers/video/of_display_timing.c between commit f583662347c6 ("video:
-> display_timing: make parameter const") from the drm tree and commits
-> fcf7e6e5bd84 ("videomode: don't allocate mem in of_get_display_timing()=
-")
-> and ffa3fd21de8a ("videomode: implement public of_get_display_timing()"=
-)
-> from the fbdev tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no action=
+Today's linux-next merge of the clk tree got a conflict in
+drivers/clk/tegra/clk-tegra114.c between commit 31972fd95527 ("clk:
+tegra114: implement wait_for_reset and disable_clock for
+tegra_cpu_car_ops") from the arm-soc tree and commit d53442e94db0 ("clk:
+tegra: override bits for Tegra114 PLLM") from the clk tree.
 
-> is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Thanks, looks correct to me.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-I guess it'd be better to merge videomode and display_timing stuff via a
-single tree from this on. Being in drivers/video/, I suggest the fbdev tr=
-ee.
+diff --cc drivers/clk/tegra/clk-tegra114.c
+index 40d939d,7fe36ea..0000000
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@@ -250,9 -251,10 +251,13 @@@
+  #define CLK_SOURCE_XUSB_DEV_SRC 0x60c
+  #define CLK_SOURCE_EMC 0x19c
+ =20
+ +/* Tegra CPU clock and reset control regs */
+ +#define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS	0x470
+ +
++ /* PLLM override registers */
++ #define PMC_PLLM_WB0_OVERRIDE 0x1dc
++ #define PMC_PLLM_WB0_OVERRIDE_2 0x2b0
++=20
+  static int periph_clk_enb_refcnt[CLK_OUT_ENB_NUM * 32];
+ =20
+  static void __iomem *clk_base;
 
- Tomi
-
-
-
-------enig2TOCMVMLBHOFPOMFKBIQW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+--Signature=_Mon__17_Jun_2013_17_27_19_+1000_Np9Aylc3TeHaLcuj
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRvrlZAAoJEPo9qoy8lh71etgP/jsT/ZZt9o7oZFIrUadXPOVg
-Zi8ZUf/5/4RcWWBDhuXlYbmHOawt6LhlCGVF0tmWiNBa39DBh8HSTE6uXedZ8rlX
-Tf6b5kf1Je5t001Q8l98kIpgkCJT1QzQkFGK6OPvb7vhu8s+AjS//7gRUsfxmxHl
-wZ5BfZsYfQ7muVEyLskhLj+MCq52RddNov0gZQWBshxKVk22jYDNwqYUzgNCAnI4
-24wXPSILBGVZGUBYuZXM379hYiAGGhe6WuChgm9GauNtaX4JXUeVp5WnGhkk4Dz5
-E+LBgiJOLC0Khq+OkCDwkLK49Ru35oYkOVWWn+5ZV5YhiEfM2IcqBM7qLxVnt8Js
-6YoJuiwUUgXbBtfkffJb5gQuwPUK6yvRHb3nxTdXhav84iVZmpz61K4ktUMLB7sR
-dWsI8V8JVMZg1fTQgL4ltak7kNlndtV0jHIQ39+BYjR0lFXW3UqTt/IeZLnzBokN
-t7UdpPaqz36UifUnrX3CV7COS3yXIr1vulKeWGP7EGO8tSTerFer/A0HN93bepdy
-h7540LWtvStoZof3ZTrJtBgGwSoxg1bN2vA3sLIzDh3ojwWKTnqpGc6zlOiDmpQn
-CXpfXwtZ22bAqL5UsIEJ2R5EI2cdDnD3dlf195Bib3ku1zXMW0aGwyRfJaUwiug0
-XpwLocVAFw7rxstdXeZD
-=6nT8
+iQIcBAEBCAAGBQJRvrpcAAoJEECxmPOUX5FEz9YP/iJn1bX8mnRLCjg8yXkVWUHA
+oHW+Iu6dbQWAs48r01AYKebwS6e5zokKvyM9rqyxQX5QAw+pJHFsDdvJYy5s53yO
+2ObQolLEVmuOWpcbZArrCYvPFrTSG6oqGCNQUKj54H2wgjjzyHTfiUz3fLOlhBXa
+EQGvrF6ivHLpozyuRZWBsP0putEtxCHcgPyMkfdDuKnuF7mF0teeI6tsbPPj/P0N
+wAWP6ANToiM0wjC6xC1CBIB4OQMeIae6qyy19Awsf+lEKagwY5zTR0BVu0/SD3zX
+zq6iZVbK14xxXj2maTVqphurTz8q38X80znusLqrQBsykIGZSd1JGLF3k/26wVoC
+iWh5MxSmTO2lkJ34zA8u1x/tLdagIEWv8LvALzEpfZXz5MZJZM+uD6aleCHSa/1Q
+wPsr9b62AdGTcfok4QFIKUcO/eBVqJwesrPjp5yNn7rcumL0Kt8QjQ8aopSepPDY
+FZKvPya6BPzz3dfHkV8x5X9aJkjtePxe/fjrkjtQQl9MQftkWtr5FST0JjGDt0Hz
+4LV5DJ7wlwa3ncCr4BlLxyhCJDorPsacvGUiB4LSP9/Ca9oWwt4PY0vpd3zC+FL/
+Wboiuar5HprciEubnuOCx+pCiklVdhgceCdsKq8cDlDFZ9MOP7EKdKwcCjEzESVw
+tbUOiiffLMJHjp/fzJ2k
+=ZhZ2
 -----END PGP SIGNATURE-----
 
-------enig2TOCMVMLBHOFPOMFKBIQW--
+--Signature=_Mon__17_Jun_2013_17_27_19_+1000_Np9Aylc3TeHaLcuj--
