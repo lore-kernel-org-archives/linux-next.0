@@ -1,53 +1,41 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2] i2c: core: make it possible to match a pure device
- tree driver
-Date: Mon, 17 Jun 2013 09:48:21 -0600
-Message-ID: <51BF2FC5.40207@wwwdotorg.org>
-References: <1368476301-10495-1-git-send-email-linus.walleij@linaro.org> <CACRpkdae1chj9ZKuQV5MuiaicLUTKr4hZqr8rtjbB3Yjt+U_fg@mail.gmail.com>
+From: Sage Weil <sage@inktank.com>
+Subject: Re: linux-next: build warning after merge of the ceph tree
+Date: Mon, 17 Jun 2013 09:13:43 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1306170913270.31579@cobra.newdream.net>
+References: <20130617182934.8aab7e40dc01c91702b564b1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:57341 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750903Ab3FQPsZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 11:48:25 -0400
-In-Reply-To: <CACRpkdae1chj9ZKuQV5MuiaicLUTKr4hZqr8rtjbB3Yjt+U_fg@mail.gmail.com>
+Received: from cobra.newdream.net ([66.33.216.30]:55573 "EHLO
+	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751062Ab3FQQNn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 12:13:43 -0400
+In-Reply-To: <20130617182934.8aab7e40dc01c91702b564b1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sage Weil <sage@newdream.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/22/2013 01:56 AM, Linus Walleij wrote:
-> On Mon, May 13, 2013 at 10:18 PM, Linus Walleij
-> <linus.walleij@linaro.org> wrote:
+<facepalm>, fixed.  Thanks!
+
+sage
+
+On Mon, 17 Jun 2013, Stephen Rothwell wrote:
+
+> Hi Sage,
 > 
->> This tries to address an issue found when writing an MFD driver
->> for the Nomadik STw481x PMICs: as the platform is using device
->> tree exclusively I want to specify the driver matching like
->> this:
-> (...)
->> ---
->> ChangeLog v1->v2:
->> - Use of_match_device() to determine if there is a DT match in
->>   the probe code. If there is a match we pass NULL for the
->>   id_table match parameter.
+> After merging the ceph tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 > 
-> Ping on this.
+> drivers/block/rbd.c: In function 'rbd_release':
+> drivers/block/rbd.c:510:2: warning: 'return' with a value, in function returning void [enabled by default]
+>   return 0;
+>   ^
 > 
-> v2 should be doing what Grant suggested...
-
-This has just shown up in next-20130617, and breaks at least the
-TPS65910 and TPS62360 drivers, since they assume that the id parameter
-passed to probe is non-NULL. However, now the parameter is NULL since
-these drivers have both an ID table and an OF match table.
-
-I'd like to suggest this patch be reverted an re-introduced immediately
-after the merge window. That should give enough time for everyone to get
-a heads-up on fixing any drivers with a similar problem, rather than
-trying to cram all that in immediately before the merge window. I'd also
-suggest that this patch should be accompanied by fixes for any similarly
-broken drivers, based on code inspection.
-
-Do people agree? If not, please let us know ASAP so we can post patches
-to fix this.
+> Caused by commit f28d6bf9ef4d ("Merge remote-tracking branch
+> 'linus/master' into testing").
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
