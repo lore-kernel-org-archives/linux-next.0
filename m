@@ -1,34 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the
- devicetree tree
-Date: Mon, 17 Jun 2013 15:33:02 +1000
-Message-ID: <20130617153302.abd2024c094b8899904acb12@canb.auug.org.au>
+Subject: linux-next: manual merge of the pinctrl tree with Linus' tree
+Date: Mon, 17 Jun 2013 16:11:27 +1000
+Message-ID: <20130617161127.f202c6abe603c9ff8b30fc7c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Jun_2013_15_33_02_+1000_T2YUYQMRaw81fshd"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44717 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755522Ab3FQFdF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 01:33:05 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Libo Chen <clbchenlibo.chen@huawei.com>
+ boundary="Signature=_Mon__17_Jun_2013_16_11_27_+1000_.B8raeU5yTFdP/DH"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mugunthan V N <mugunthanvnm@ti.com>, Sebastian Siewior <bigeasy@linutronix.de>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__17_Jun_2013_15_33_02_+1000_T2YUYQMRaw81fshd
+--Signature=_Mon__17_Jun_2013_16_11_27_+1000_.B8raeU5yTFdP/DH
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Linus,
 
-Today's linux-next merge of the driver-core tree got a conflict in
-include/linux/platform_device.h between commit 10dbc5e39a60 ("driver
-core: move to_platform_driver to platform_device.h") from the devicetree
-tree and commit 9447057eaff8 ("platform_device: use a macro instead of
-platform_driver_register") from the driver-core tree.
+Today's linux-next merge of the pinctrl tree got a conflict in
+drivers/net/ethernet/ti/davinci_mdio.c between commit 2786aae7fc93
+("net/ti davinci_mdio: don't hold a spin lock while calling pm_runtime")
+from Linus' tree and commit 5c0e3580cb98 ("drivers: net: davinci_mdio:
+use pinctrl PM helpers") from the pinctrl tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,49 +32,66 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/platform_device.h
-index 3413897,cd46ee5..0000000
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@@ -180,10 -180,13 +180,16 @@@ struct platform_driver=20
-  	const struct platform_device_id *id_table;
-  };
+diff --cc drivers/net/ethernet/ti/davinci_mdio.c
+index c47f0db,5e361f4..0000000
+--- a/drivers/net/ethernet/ti/davinci_mdio.c
++++ b/drivers/net/ethernet/ti/davinci_mdio.c
+@@@ -449,22 -453,32 +453,28 @@@ static int davinci_mdio_suspend(struct=20
+  	__raw_writel(ctrl, &data->regs->control);
+  	wait_for_idle(data);
  =20
- +#define to_platform_driver(drv)	(container_of((drv), struct platform_driv=
-er, \
- +				 driver))
- +
-- extern int platform_driver_register(struct platform_driver *);
-+ /*
-+  * use a macro to avoid include chaining to get THIS_MODULE
-+  */
-+ #define platform_driver_register(drv) \
-+ 	__platform_driver_register(drv, THIS_MODULE)
-+ extern int __platform_driver_register(struct platform_driver *,
-+ 					struct module *);
-  extern void platform_driver_unregister(struct platform_driver *);
+ -	pm_runtime_put_sync(data->dev);
+ -
+  	data->suspended =3D true;
+  	spin_unlock(&data->lock);
+ +	pm_runtime_put_sync(data->dev);
  =20
-  /* non-hotpluggable platform devices may use this so that probe() and
++ 	/* Select sleep pin state */
++ 	pinctrl_pm_select_sleep_state(dev);
++=20
+  	return 0;
+  }
+ =20
+  static int davinci_mdio_resume(struct device *dev)
+  {
+  	struct davinci_mdio_data *data =3D dev_get_drvdata(dev);
+ -	u32 ctrl;
+ =20
++ 	/* Select default pin state */
++ 	pinctrl_pm_select_default_state(dev);
++=20
+ -	spin_lock(&data->lock);
+  	pm_runtime_get_sync(data->dev);
+ =20
+ +	spin_lock(&data->lock);
+  	/* restart the scan state machine */
+ -	ctrl =3D __raw_readl(&data->regs->control);
+ -	ctrl |=3D CONTROL_ENABLE;
+ -	__raw_writel(ctrl, &data->regs->control);
+ +	__davinci_mdio_reset(data);
+ =20
+  	data->suspended =3D false;
+  	spin_unlock(&data->lock);
 
---Signature=_Mon__17_Jun_2013_15_33_02_+1000_T2YUYQMRaw81fshd
+--Signature=_Mon__17_Jun_2013_16_11_27_+1000_.B8raeU5yTFdP/DH
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRvp+OAAoJEECxmPOUX5FE52IP/1cYMLSjm49SqTQd+dLPijIl
-BiWs0y0HlX7SJmQ0HhtbNnGjoYsJm3FDe87YMYUGUB60xxNCIRSvqeBoNHpShueI
-iLRagwgWuyl/kbSWBAg2GKt+MERSgzXNJpTLEGvHMsGy7eaIW2AEhqLJFIlCKr0e
-MwM70zkYi+Gzfq/ZIwjfWPeq+eOok92xrm6EQHD+24ZvzDDtISl0gpvv/DradJmM
-1cmPPUY87jHtwwLDUERclheGed04h7yQ4G9njZEvUouJMju4OQlw4xpBsi1S8yg6
-f7Q/WGhSzQtUnd3ebNAAFIvCth5xBgwrWlHKIxifhny3WuViWhiZJxka55rD3jF7
-BeiaI6FDQ5Zo3OdYy7MaO8tZ05123NXTzu3v47IQ+Cpo1/i1JIGvPtLlNRCsvbJL
-4tRzrPFLTlsJz8NN9jPyNtX9nBTitDkpEB8sRcAzGEY126pMu8smsotFNSNdo5Fb
-LSzITjjgkKDtZ7LY6J/ykQ6ZMRNMlNDg6ifqHkqeTx1EN67GPO+SEZ12+/ozfAYb
-JbLrvXTq9QIG2OAJCq7ACrL4dVTDS/3BgvHRGd3Z16PrP5QQ9yS7Y3ZOQGIU6hO2
-cuwXK8UeypKf8RRbcnYnQIQyavFDTLg6hgCH2q5jxtArFtak7zLwxR6KyA4+EFZI
-JTUGYJOAD7jN1PjeQ4ff
-=U4gG
+iQIcBAEBCAAGBQJRvqiUAAoJEECxmPOUX5FE5ZsQAIqtVeZEvVCGM52tpmSA7cEs
+FiKEjhQTRHkHOpvPr2QcWVqV61tkaj4AkSDZ2lAinhEWMyrgK73cTn7o6JL0Ser+
+KAbSO9hdBqUExflil6ljkPal6s2pMckdpsfJoQXYs5iOZ/TLwEdmJEVXlqmL5Y0L
+/56fF/z/9TXZBiNi5/EzaQPBvkT2EkPA0wZ+980fV9heFas7R4AcgQFCRWbnFdSI
+IErvXyN1ow2hipdF+PDotFOcuPTfINjqfVYhfp3a0KI7ganG1eFC1DSeUMCV/vEC
+87evLTC5qYh5vVmDEHkHPv92wlDTyRevOm2HlzCV+drSyD7kxMR1x181XYFtldJH
+VYtH88KbUFJXh5duaOKIB6cMs3gmieL5abOLBBFITnG9etx2i4/uB+p+F0arhCIE
+Nu1OeEyTs6C83hZYuQFDvsC5Bov4qeZTVCMKs5S13kuzHjOYcS4YK96uK8h5SmII
+syljzQkLeurga7hI+qyo5jJpSKdXSOBxClQr3ZwztM3CH0dqdpOhKTtJvZ4v/YbR
+fonIsjzziNhNzVGtwlmLSfA/Kz6N9MLZ9QlrXSNnLiTsuaF706FPhExKYVCydOv/
+R5XNTMzVaodh5jR2zmVFwkKcXaUkL2uI1lDCcNu7s+XpfZEKOSOscFxw++5r5fB0
+XFgaXroHdNmdq9rZcLDn
+=32LF
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Jun_2013_15_33_02_+1000_T2YUYQMRaw81fshd--
+--Signature=_Mon__17_Jun_2013_16_11_27_+1000_.B8raeU5yTFdP/DH--
