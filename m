@@ -1,41 +1,42 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2] i2c: core: make it possible to match a pure device
- tree driver
-Date: Mon, 17 Jun 2013 17:25:53 -0600
-Message-ID: <51BF9B01.1090205@wwwdotorg.org>
-References: <1368476301-10495-1-git-send-email-linus.walleij@linaro.org> <CACRpkdae1chj9ZKuQV5MuiaicLUTKr4hZqr8rtjbB3Yjt+U_fg@mail.gmail.com> <51BF2FC5.40207@wwwdotorg.org> <CACRpkdbjy+PcpNkSg4PuuP2Z9RyrnqSW0uchHFHVZ8VYPeoDyA@mail.gmail.com> <CACxGe6sTq=h9jjqesjvUA4Bweh7zgE4VOLoOTgGPC_D_v+8NtA@mail.gmail.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: commit "Thermal: CPU Package temperature thermal" has reject
+ files
+Date: Tue, 18 Jun 2013 07:28:14 +0800
+Message-ID: <1371511694.22538.0.camel@rzhang1-mobl4>
+References: <51BF6F74.80504@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACxGe6sTq=h9jjqesjvUA4Bweh7zgE4VOLoOTgGPC_D_v+8NtA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:28179 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751361Ab3FQX2f (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Jun 2013 19:28:35 -0400
+In-Reply-To: <51BF6F74.80504@windriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: srinivas.pandruvada@linux.intel.com, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On 06/17/2013 04:15 PM, Grant Likely wrote:
-> On Mon, Jun 17, 2013 at 5:33 PM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->> On Mon, Jun 17, 2013 at 5:48 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>
->>> This has just shown up in next-20130617, and breaks at least the
->>> TPS65910 and TPS62360 drivers, since they assume that the id parameter
->>> passed to probe is non-NULL. However, now the parameter is NULL since
->>> these drivers have both an ID table and an OF match table.
->>
->> So you mean they come in through the DT boot path and assume
->> that parameter is non-null even though they should not make use of
->> it?
->>
->>> I'd like to suggest this patch be reverted an re-introduced immediately
->>> after the merge window. That should give enough time for everyone to get
->>> a heads-up on fixing any drivers with a similar problem, rather than
->>> trying to cram all that in immediately before the merge window.
->>
->> OK that works for me, I'm not in any hurry.
+On Mon, 2013-06-17 at 16:20 -0400, Paul Gortmaker wrote:
+> Hi Guys,
 > 
-> Deferring by a merge window isn't going to make it any less painful.
+> Can you please respin this linux-next commit to not contain reject files?
+> 
+fixed in thermal -next.
 
-It'll give a lot more time for people to be exposed to the change and
-hence find/fix it linux-next rather than seeing it for the first time in
-Linus's tree.
+thanks,
+rui
+> $ git show  37056864a02dd6c79d8f2842e42576a4bfb694b2|diffstat -p0
+>  b/drivers/thermal/Kconfig                |   12 
+>  b/drivers/thermal/Makefile               |    2 
+>  b/drivers/thermal/cpu_cooling.c.rej      |   11 
+>  b/drivers/thermal/exynos_thermal.c.rej   |   96 ++++
+>  b/drivers/thermal/rcar_thermal.c.rej     |   59 ++
+>  b/drivers/thermal/thermal_core.c.rej     |   10 
+>  b/drivers/thermal/x86_pkg_temp_thermal.c |  642 +++++++++++++++++++++++++++++++
+>  7 files changed, 831 insertions(+), 1 deletion(-)
+> $ 
+> 
+> Thanks,
+> Paul.
