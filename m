@@ -1,42 +1,62 @@
 From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: commit "Thermal: CPU Package temperature thermal" has reject
- files
-Date: Tue, 18 Jun 2013 07:28:14 +0800
-Message-ID: <1371511694.22538.0.camel@rzhang1-mobl4>
-References: <51BF6F74.80504@windriver.com>
+Subject: Re: [PATCH -next v3] thermal:  fix x86_pkg_temp_thermal.c build and
+ Kconfig
+Date: Tue, 18 Jun 2013 07:28:44 +0800
+Message-ID: <1371511724.22538.1.camel@rzhang1-mobl4>
+References: <20130617185106.5950ffbf4b96acd9b2b2c834@canb.auug.org.au>
+	 <51BF4159.1000004@infradead.org> <51BF46C3.3090900@linux.intel.com>
+	 <51BF4DA2.40601@infradead.org> <51BF50E3.9000806@linux.intel.com>
+	 <51BF5174.805@infradead.org> <20130617181702.GA7217@pd.tnic>
+	 <51BF6315.9020501@infradead.org> <20130617194524.GD8197@pd.tnic>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:28179 "EHLO mga02.intel.com"
+Received: from mga14.intel.com ([143.182.124.37]:32152 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751361Ab3FQX2f (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Jun 2013 19:28:35 -0400
-In-Reply-To: <51BF6F74.80504@windriver.com>
+	id S1751361Ab3FQX2s (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Jun 2013 19:28:48 -0400
+In-Reply-To: <20130617194524.GD8197@pd.tnic>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: srinivas.pandruvada@linux.intel.com, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>
 
-On Mon, 2013-06-17 at 16:20 -0400, Paul Gortmaker wrote:
-> Hi Guys,
+On Mon, 2013-06-17 at 21:45 +0200, Borislav Petkov wrote:
+> On Mon, Jun 17, 2013 at 12:27:17PM -0700, Randy Dunlap wrote:
+> > From: Randy Dunlap <rdunlap@infradead.org>
+> > 
+> > Fix build error in x86_pkg_temp_thermal.c.  It requires that
+> > X86_MCE & X86_THERMAL_VECTOR be enabled, so depend on the latter symbol,
+> > since it depends on X86_MCE (indirectly).
+> > 
+> > Also, X86_PKG_TEMP_THERMAL is already inside an "if THERMAL" block,
+> > so remove that duplicated dependency.
+> > 
+> > ERROR: "platform_thermal_package_rate_control" [drivers/thermal/x86_pkg_temp_thermal.ko] undefined!
+> > ERROR: "platform_thermal_package_notify" [drivers/thermal/x86_pkg_temp_thermal.ko] undefined!
+> > 
+> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> > ---
+> >  drivers/thermal/Kconfig |    3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > --- linux-next-20130617.orig/drivers/thermal/Kconfig
+> > +++ linux-next-20130617/drivers/thermal/Kconfig
+> > @@ -171,8 +171,7 @@ config INTEL_POWERCLAMP
+> >  
+> >  config X86_PKG_TEMP_THERMAL
+> >  	tristate "X86 package temperature thermal driver"
+> > -	depends on THERMAL
+> > -	depends on X86
+> > +	depends on X86_THERMAL_VECTOR
+> >  	select THERMAL_GOV_USER_SPACE
+> >  	default m
+> >  	help
 > 
-> Can you please respin this linux-next commit to not contain reject files?
+> Acked-by: Borislav Petkov <bp@suse.de>
 > 
-fixed in thermal -next.
+applied to thermal -next.
 
 thanks,
 rui
-> $ git show  37056864a02dd6c79d8f2842e42576a4bfb694b2|diffstat -p0
->  b/drivers/thermal/Kconfig                |   12 
->  b/drivers/thermal/Makefile               |    2 
->  b/drivers/thermal/cpu_cooling.c.rej      |   11 
->  b/drivers/thermal/exynos_thermal.c.rej   |   96 ++++
->  b/drivers/thermal/rcar_thermal.c.rej     |   59 ++
->  b/drivers/thermal/thermal_core.c.rej     |   10 
->  b/drivers/thermal/x86_pkg_temp_thermal.c |  642 +++++++++++++++++++++++++++++++
->  7 files changed, 831 insertions(+), 1 deletion(-)
-> $ 
-> 
-> Thanks,
-> Paul.
