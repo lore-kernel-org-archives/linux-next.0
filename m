@@ -1,33 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the clk tree with the arm-soc tree
-Date: Mon, 17 Jun 2013 17:27:19 +1000
-Message-ID: <20130617172719.f19a76fae98cc7ef82b91ae9@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm64-hugepages tree with the arm64
+ tree
+Date: Mon, 17 Jun 2013 17:36:27 +1000
+Message-ID: <20130617173627.8bd67da7e93639cf85afcedb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Jun_2013_17_27_19_+1000_Np9Aylc3TeHaLcuj"
+ boundary="Signature=_Mon__17_Jun_2013_17_36_27_+1000_QglZN4Jw_b/uYW9a"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52156 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:37188 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751684Ab3FQH1b (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 03:27:31 -0400
+	with ESMTP id S1751684Ab3FQHg3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 03:36:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Turquette <mturquette@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Steve Capper <steve.capper@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Catalin Marinas <catalin.marinas@arm.com>
 
---Signature=_Mon__17_Jun_2013_17_27_19_+1000_Np9Aylc3TeHaLcuj
+--Signature=_Mon__17_Jun_2013_17_36_27_+1000_QglZN4Jw_b/uYW9a
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
+Hi Steve,
 
-Today's linux-next merge of the clk tree got a conflict in
-drivers/clk/tegra/clk-tegra114.c between commit 31972fd95527 ("clk:
-tegra114: implement wait_for_reset and disable_clock for
-tegra_cpu_car_ops") from the arm-soc tree and commit d53442e94db0 ("clk:
-tegra: override bits for Tegra114 PLLM") from the clk tree.
+Today's linux-next merge of the arm64-hugepages tree got a conflict in
+arch/arm64/Kconfig between commit aa42aa1389a5 ("arm64/xen: introduce
+CONFIG_XEN and hypercall.S on ARM64") from the arm64 tree and commit
+d03bb1455f3a ("ARM64: mm: Raise MAX_ORDER for 64KB pages and THP") from
+the arm64-hugepages tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,44 +37,66 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/clk/tegra/clk-tegra114.c
-index 40d939d,7fe36ea..0000000
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@@ -250,9 -251,10 +251,13 @@@
-  #define CLK_SOURCE_XUSB_DEV_SRC 0x60c
-  #define CLK_SOURCE_EMC 0x19c
+diff --cc arch/arm64/Kconfig
+index ef32eb1,308a556..0000000
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@@ -181,18 -180,25 +181,35 @@@ config HW_PERF_EVENT
+  	  Enable hardware performance counter support for perf events. If
+  	  disabled, perf events will use software events only.
  =20
- +/* Tegra CPU clock and reset control regs */
- +#define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS	0x470
- +
-+ /* PLLM override registers */
-+ #define PMC_PLLM_WB0_OVERRIDE 0x1dc
-+ #define PMC_PLLM_WB0_OVERRIDE_2 0x2b0
++ config SYS_SUPPORTS_HUGETLBFS
++ 	def_bool y
 +=20
-  static int periph_clk_enb_refcnt[CLK_OUT_ENB_NUM * 32];
++ config ARCH_WANT_GENERAL_HUGETLB
++ 	def_bool y
++=20
++ config ARCH_WANT_HUGE_PMD_SHARE
++ 	def_bool y if !ARM64_64K_PAGES
++=20
++ config HAVE_ARCH_TRANSPARENT_HUGEPAGE
++ 	def_bool y
++=20
+  source "mm/Kconfig"
  =20
-  static void __iomem *clk_base;
++ config FORCE_MAX_ZONEORDER
++ 	int
++ 	default "14" if (ARM64_64K_PAGES && TRANSPARENT_HUGEPAGE)
++ 	default "11"
++=20
+ +config XEN_DOM0
+ +	def_bool y
+ +	depends on XEN
+ +
+ +config XEN
+ +	bool "Xen guest support on ARM64 (EXPERIMENTAL)"
+ +	depends on ARM64 && OF
+ +	help
+ +	  Say Y if you want to run Linux in a Virtual Machine on Xen on ARM64.
+ +
+  endmenu
+ =20
+  menu "Boot options"
 
---Signature=_Mon__17_Jun_2013_17_27_19_+1000_Np9Aylc3TeHaLcuj
+--Signature=_Mon__17_Jun_2013_17_36_27_+1000_QglZN4Jw_b/uYW9a
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRvrpcAAoJEECxmPOUX5FEz9YP/iJn1bX8mnRLCjg8yXkVWUHA
-oHW+Iu6dbQWAs48r01AYKebwS6e5zokKvyM9rqyxQX5QAw+pJHFsDdvJYy5s53yO
-2ObQolLEVmuOWpcbZArrCYvPFrTSG6oqGCNQUKj54H2wgjjzyHTfiUz3fLOlhBXa
-EQGvrF6ivHLpozyuRZWBsP0putEtxCHcgPyMkfdDuKnuF7mF0teeI6tsbPPj/P0N
-wAWP6ANToiM0wjC6xC1CBIB4OQMeIae6qyy19Awsf+lEKagwY5zTR0BVu0/SD3zX
-zq6iZVbK14xxXj2maTVqphurTz8q38X80znusLqrQBsykIGZSd1JGLF3k/26wVoC
-iWh5MxSmTO2lkJ34zA8u1x/tLdagIEWv8LvALzEpfZXz5MZJZM+uD6aleCHSa/1Q
-wPsr9b62AdGTcfok4QFIKUcO/eBVqJwesrPjp5yNn7rcumL0Kt8QjQ8aopSepPDY
-FZKvPya6BPzz3dfHkV8x5X9aJkjtePxe/fjrkjtQQl9MQftkWtr5FST0JjGDt0Hz
-4LV5DJ7wlwa3ncCr4BlLxyhCJDorPsacvGUiB4LSP9/Ca9oWwt4PY0vpd3zC+FL/
-Wboiuar5HprciEubnuOCx+pCiklVdhgceCdsKq8cDlDFZ9MOP7EKdKwcCjEzESVw
-tbUOiiffLMJHjp/fzJ2k
-=ZhZ2
+iQIcBAEBCAAGBQJRvrx7AAoJEECxmPOUX5FEX1EP/3H9zVicSzkgNt3xj7CFrgos
+diZa+M4HCjVhvi7MxJ/DWYltxykDKxpyi4DPicmxsu664G6j/m0NXIH1ax4PKrh7
+nhodlc1YSk4evUhN16uM/H+m8B9JZluCmEaNnDWngQw+PTzFZ1HQm4Ll1jLi35Oh
+JwFj/y40GCI0Du/g1FSdv5UIbUhxENsXKf2xP4Wy8Y2MKVtgJSLJ5n1PFSK/z+oL
+GhBRs7A2SCx0zcOXcoplLgjXefl0KTU6UsADw8n13++dGumdyzB2nxfwP+cXM7rw
+kBEw5LCPxaKACUZzupAYWwL5SgfDBYFX1RheqbXyssoNUIfIOD3Dyp1IknkEJ9dF
+pLIBsmWtfoS8V4srKaUu02ZhHPYhaAM82MRkG636o2oKo7EayW6pbIXfuhEYqCdo
+H5ayVY1qXpRQqhSD5y3wRPh3qaNfnYsFngk/uzwBW3LLONRw7/f2GiGCLkPdkXTR
+0D/6j4mDc1Hu/+FeZASU4cQY4NasZFclBh5KNmwwaPW6kkDjLeYAvdJorOt0dHG6
+fg9KnwDB7Ad/+eBs7tLa0pO2q0b8zJHbSLv7ViyQDhYnHVpdhVfMhoT0rvXuF8F5
+/cDQn0DtUX0WuxHo8A7bmnve1N4FSGN0o48yjq2I3vRGvpsxe/KQOFUV1ojPrb1S
+luqhcrD1ym4zkbA7GWaI
+=EKiN
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Jun_2013_17_27_19_+1000_Np9Aylc3TeHaLcuj--
+--Signature=_Mon__17_Jun_2013_17_36_27_+1000_QglZN4Jw_b/uYW9a--
