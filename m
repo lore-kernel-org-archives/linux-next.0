@@ -1,77 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the renesas tree with the tty tree
-Date: Mon, 17 Jun 2013 17:16:22 +1000
-Message-ID: <20130617171622.450bae1a5319f54004a18e2d@canb.auug.org.au>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: linux-next: manual merge of the fbdev tree with the drm tree
+Date: Mon, 17 Jun 2013 10:23:01 +0300
+Message-ID: <51BEB955.1020809@ti.com>
+References: <20130617142120.b42dafb967974d3906a43fc9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Jun_2013_17_16_22_+1000_Xa70K/Ac/ne9=b/U"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="----enig2TOCMVMLBHOFPOMFKBIQW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49103 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750880Ab3FQHQY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 03:16:24 -0400
+Received: from comal.ext.ti.com ([198.47.26.152]:35140 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754191Ab3FQHXV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Jun 2013 03:23:21 -0400
+In-Reply-To: <20130617142120.b42dafb967974d3906a43fc9@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingchang Lu <b35083@freescale.com>, Greg KH <greg@kroah.com>, Ulrich Hecht <ulrich.hecht@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Dave Airlie <airlied@linux.ie>
+Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steffen Trumtrar <s.trumtrar@pengutronix.de>
 
---Signature=_Mon__17_Jun_2013_17_16_22_+1000_Xa70K/Ac/ne9=b/U
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+------enig2TOCMVMLBHOFPOMFKBIQW
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-Hi Simon,
+Hi,
 
-Today's linux-next merge of the renesas tree got a conflict in
-include/uapi/linux/serial_core.h between commit c9e2e946fb0b ("tty:
-serial: add Freescale lpuart driver support") from the tty tree and
-commit 24610a30600b ("serial: sh-sci: HSCIF support") from the renesas
-tree.
+On 17/06/13 07:21, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the fbdev tree got a conflict in
+> drivers/video/of_display_timing.c between commit f583662347c6 ("video:
+> display_timing: make parameter const") from the drm tree and commits
+> fcf7e6e5bd84 ("videomode: don't allocate mem in of_get_display_timing()=
+")
+> and ffa3fd21de8a ("videomode: implement public of_get_display_timing()"=
+)
+> from the fbdev tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no action=
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+> is required).
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks, looks correct to me.
 
-diff --cc include/uapi/linux/serial_core.h
-index c8eaeb5,26eee07..0000000
---- a/include/uapi/linux/serial_core.h
-+++ b/include/uapi/linux/serial_core.h
-@@@ -226,7 -226,7 +226,10 @@@
-  /* Rocketport EXPRESS/INFINITY */
-  #define PORT_RP2	102
- =20
- +/* Freescale lpuart */
- +#define PORT_LPUART	103
- +
-+ /* SH-SCI */
- -#define PORT_HSCIF	103
-++#define PORT_HSCIF	104
-+=20
-  #endif /* _UAPILINUX_SERIAL_CORE_H */
+I guess it'd be better to merge videomode and display_timing stuff via a
+single tree from this on. Being in drivers/video/, I suggest the fbdev tr=
+ee.
 
---Signature=_Mon__17_Jun_2013_17_16_22_+1000_Xa70K/Ac/ne9=b/U
-Content-Type: application/pgp-signature
+ Tomi
+
+
+
+------enig2TOCMVMLBHOFPOMFKBIQW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iQIcBAEBCAAGBQJRvrfGAAoJEECxmPOUX5FEayQQAJ0JEsBuXGCQLIW5U3hvvfOc
-CG6Zu4Va3Jp9xEzaGS0tggDODs/BeD9DCP5N0zTp9VU9lC5pBao/mFqpptnrK2us
-vXMMhjmXZHuZLOZtrI5lIzYh8V021HbQ2xvOwbgjVXtnTuNVdbXNmBeRXNNIfwSg
-I1a+gV7/knjRLmBpYSzbHcb9NWdKKgjUKPU9hq6Kr5935dM0CiHw1ek93UfXcGOX
-45rH0ubYEO6seGGNJZaCVfRPQHMmjrYoY5OI8Qjj1QKChILDX1HqGllc48WWiWmc
-NgtHkYZWxwHG+SHBlcePQMZ/cWBOIUkAdHjEpUfgonTNFpzvPpS2lYybFBI64mmz
-xjtxWeDpQuewfD7H27l1MEuLjRerFpI33t3YPlIw6cTGPN6VIXT37ZaPrdNPQ3MP
-dTXjXNVhP3LBSrhQDhK+NHea+PeItzqj28tfapZL840PbP0hiPlTKYkSX1as0LMK
-yqpBoZSISO8BzX5oUeKBmDIdSG60w8ZIQuGDFe9VEmrWWoDzd5IZpQkfNswWHaWx
-G6pya1acvpZqEI3Gb5jdnTYuLoT2Nd35Ujt11Fu7tB3bktRUBeAOT8i6x1LHGuxw
-jtohvTNTXqWvvJFEaAivOUVnfFShIUJwt1KMShxX7110btZjCPGWgeDIYsEV7/NG
-RI780yR00OMos1thj2Gd
-=jxwe
+iQIcBAEBAgAGBQJRvrlZAAoJEPo9qoy8lh71etgP/jsT/ZZt9o7oZFIrUadXPOVg
+Zi8ZUf/5/4RcWWBDhuXlYbmHOawt6LhlCGVF0tmWiNBa39DBh8HSTE6uXedZ8rlX
+Tf6b5kf1Je5t001Q8l98kIpgkCJT1QzQkFGK6OPvb7vhu8s+AjS//7gRUsfxmxHl
+wZ5BfZsYfQ7muVEyLskhLj+MCq52RddNov0gZQWBshxKVk22jYDNwqYUzgNCAnI4
+24wXPSILBGVZGUBYuZXM379hYiAGGhe6WuChgm9GauNtaX4JXUeVp5WnGhkk4Dz5
+E+LBgiJOLC0Khq+OkCDwkLK49Ru35oYkOVWWn+5ZV5YhiEfM2IcqBM7qLxVnt8Js
+6YoJuiwUUgXbBtfkffJb5gQuwPUK6yvRHb3nxTdXhav84iVZmpz61K4ktUMLB7sR
+dWsI8V8JVMZg1fTQgL4ltak7kNlndtV0jHIQ39+BYjR0lFXW3UqTt/IeZLnzBokN
+t7UdpPaqz36UifUnrX3CV7COS3yXIr1vulKeWGP7EGO8tSTerFer/A0HN93bepdy
+h7540LWtvStoZof3ZTrJtBgGwSoxg1bN2vA3sLIzDh3ojwWKTnqpGc6zlOiDmpQn
+CXpfXwtZ22bAqL5UsIEJ2R5EI2cdDnD3dlf195Bib3ku1zXMW0aGwyRfJaUwiug0
+XpwLocVAFw7rxstdXeZD
+=6nT8
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Jun_2013_17_16_22_+1000_Xa70K/Ac/ne9=b/U--
+------enig2TOCMVMLBHOFPOMFKBIQW--
