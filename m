@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Mon, 17 Jun 2013 13:09:18 +1000
-Message-ID: <20130617130918.a8a361ff284b1ac2186598ea@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
+Date: Mon, 17 Jun 2013 13:25:37 +1000
+Message-ID: <20130617132537.430b7875a3600a9cbd0f7ad5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Jun_2013_13_09_18_+1000_.R5VNNYZ5F_nqn8R"
+ boundary="Signature=_Mon__17_Jun_2013_13_25_37_+1000__HnnVMRg6r7J7qq9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51325 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33306 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754166Ab3FQDJa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 23:09:30 -0400
+	with ESMTP id S1755522Ab3FQDZp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 23:25:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Rodrigo Vivi <rodrigo.vivi@gmail.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__17_Jun_2013_13_09_18_+1000_.R5VNNYZ5F_nqn8R
+--Signature=_Mon__17_Jun_2013_13_25_37_+1000__HnnVMRg6r7J7qq9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/i915/intel_sdvo.c between commit c3456fb3e471 ("drm/i915:
-prefer VBT modes for SVDO-LVDS over EDID") from Linus' tree and commit
-41aa344866e3 ("drm/i915: Organize VBT stuff inside drm_i915_private")
-from the drm tree.
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/intel_display.c between commit d62cf62ad07d
+("drm/i915: Quirk the pipe A quirk in the modeset state checker") from
+Linus' tree and commit 6c49f24180c3 ("drm/i915: hw state readout support
+for pixel_multiplier") from the drm-intel tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,54 +36,50 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/intel_sdvo.c
-index d4ea6c2,7068195..0000000
---- a/drivers/gpu/drm/i915/intel_sdvo.c
-+++ b/drivers/gpu/drm/i915/intel_sdvo.c
-@@@ -1776,17 -1848,14 +1848,17 @@@ static void intel_sdvo_get_lvds_modes(s
-  	 * Assume that the preferred modes are
-  	 * arranged in priority order.
-  	 */
- -	intel_ddc_get_modes(connector, intel_sdvo->i2c);
- -	if (list_empty(&connector->probed_modes) =3D=3D false)
- -		goto end;
- +	intel_ddc_get_modes(connector, &intel_sdvo->ddc);
+diff --cc drivers/gpu/drm/i915/intel_display.c
+index 6eb99e1,218bc93..0000000
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@@ -8177,11 -8264,14 +8264,19 @@@ check_crtc_state(struct drm_device *dev
  =20
- -	/* Fetch modes from VBT */
- +	/*
- +	 * Fetch modes from VBT. For SDVO prefer the VBT mode since some
- +	 * SDVO->LVDS transcoders can't cope with the EDID mode. Since
- +	 * drm_mode_probed_add adds the mode at the head of the list we add it
- +	 * last.
- +	 */
-- 	if (dev_priv->sdvo_lvds_vbt_mode !=3D NULL) {
-+ 	if (dev_priv->vbt.sdvo_lvds_vbt_mode !=3D NULL) {
-  		newmode =3D drm_mode_duplicate(connector->dev,
-- 					     dev_priv->sdvo_lvds_vbt_mode);
-+ 					     dev_priv->vbt.sdvo_lvds_vbt_mode);
-  		if (newmode !=3D NULL) {
-  			/* Guarantee the mode is preferred */
-  			newmode->type =3D (DRM_MODE_TYPE_PREFERRED |
+  		active =3D dev_priv->display.get_pipe_config(crtc,
+  							   &pipe_config);
+ +
+ +		/* hw state is inconsistent with the pipe A quirk */
+ +		if (crtc->pipe =3D=3D PIPE_A && dev_priv->quirks & QUIRK_PIPEA_FORCE)
+ +			active =3D crtc->active;
+ +
++ 		list_for_each_entry(encoder, &dev->mode_config.encoder_list,
++ 				    base.head) {
++ 			if (encoder->base.crtc !=3D &crtc->base)
++ 				continue;
++ 			if (encoder->get_config)
++ 				encoder->get_config(encoder, &pipe_config);
++ 		}
++=20
+  		WARN(crtc->active !=3D active,
+  		     "crtc active state doesn't match with hw state "
+  		     "(expected %i, found %i)\n", crtc->active, active);
 
---Signature=_Mon__17_Jun_2013_13_09_18_+1000_.R5VNNYZ5F_nqn8R
+--Signature=_Mon__17_Jun_2013_13_25_37_+1000__HnnVMRg6r7J7qq9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRvn3iAAoJEECxmPOUX5FEinAP/3r1F4jn4E3O56GEdOtBEXtK
-Lffn7hViM2oCYaz3D/YTDHvbWJqlvw9Sy48WiIfZakAi4JSX4o0MOGAu0aOzHpYx
-uHtSIErrB34ZBavsrQghvuGRPikjE9iwh771ezlRwlgLzb+f2WnqiOftt7NRyew7
-9uDjJGfTIy/TR6qxG7rIgCDVIalTqHsGmrhnphOqLeP7kfXMomv5noLTrzXNP9km
-NrcSfiU8yCqNttCeneXbZ2Yn1QDVbOlRM8QQKoFUAuI5tFQhg1hC38vjlMj+tfWS
-5nhwmz1cTeLjd0ehT8EeTSqcE+eGm9Z4qhsZSA6xnVmWOZLBo1f0tUiyDYjr4RPi
-73W+qDBPkL8uFWddJBjyzElJcxL2Tp+L+ET9l+46vAg8ETsV+FJ1OTlgZytVtHh6
-fIC+cR2KHPrddiGUIgGsiBbOpu4ol8TOWUMQOoh/w6w1wV4bAKUMTppj2r+ajvvN
-QcnMrqg9shZduPG14vnRKE1yWxqjQUZTIHHym5qUXv/9ha/YtKtDaiNLGu0s37Y7
-iME0AVxBd4Dq2DRmBw8tPpBopa8k9u2/GNqaSgRa0KIxKcpPCRQzOnwPDshijqNS
-KgUDpChicfrDXc6ZRdfX26PYDQkmN2bsDSfeKWBsXPg45mo6nnNElQgwW19wCZBr
-Fiw+v61N6qMAnlRgPLxJ
-=t22J
+iQIcBAEBCAAGBQJRvoG0AAoJEECxmPOUX5FEQCMP/2pvSBjpmqDJyNlYspumm027
+wJ93PW3JPSfV/CGQFtWFoeXJj71nnkuePQEl9K+iVvxWgRc7VppfuTaycICxXL2T
+2bINIXaXinVQeXLZa/O+w4gmuvzoqWXW2o5eNBV4QXqJjQzfBkuugKX66QzyHTSW
+9ocowNL6cn1IXX0yFaa+HBjf+hFd1yOjmFy+ONSi/AZtl9Tjqqox/+y1XJYg/cct
+UrK7bAiRzFa8wozpjyVL4rwBbBd6UOBxC1jck9avT/vot1wa8pvTRE3l3qQeEP9N
+oKtIIg7PO6cBN5Cb5Jikcd+bVY2uWhsDlmpBGFYvnXSpGM6v+43oAo5BOxO4Hnhj
+wLZYrfofRf76AqyPc3jtUrQD/8vG/pgXIt0vwvKX1zmxOq0NBrAIj2qbpKdTa6iF
+G84XIj+ZdkfipDo6u2iX86EGHwOpF20fSTpUJ1NcFXAZ++nY7quFFNeNpa+a+pxd
+//dJjAQi/IPOe6ey6THJBPDpEJQStC3i2Kr2jVyPdyKXcgeQ31rkzdQ1zEzSUc8O
+onsFKs4+f1Nvr1pMsSJX/hTGRxpMmGOXPbE1g5CzfXKPSw35LlY92CUBnrumAv/3
+z0PAh2SOcC8CimCns3qXwh0wi71xksASIq0hkSh7SqwsK8cZUjBluFpKXU89vDB1
+IlaFq68s2oEGdpO5CbKx
+=PTo0
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Jun_2013_13_09_18_+1000_.R5VNNYZ5F_nqn8R--
+--Signature=_Mon__17_Jun_2013_13_25_37_+1000__HnnVMRg6r7J7qq9--
