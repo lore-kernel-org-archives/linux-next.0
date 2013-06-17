@@ -1,90 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Mon, 17 Jun 2013 13:32:53 +1000
-Message-ID: <20130617133253.f59c0b9a1721111a8e3c75e3@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 17 Jun 2013 13:46:31 +1000
+Message-ID: <20130617134631.fd1f6107b353c2e331ff06df@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Jun_2013_13_32_53_+1000_tp2pf6IzJ=fGZHzr"
+ boundary="Signature=_Mon__17_Jun_2013_13_46_31_+1000_vKz2wqzP2gcVCPYz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34337 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56342 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754446Ab3FQDc4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 23:32:56 -0400
+	with ESMTP id S1753718Ab3FQDqm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 23:46:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rajeev Kumar <rajeev-dlh.kumar@st.com>
 
---Signature=_Mon__17_Jun_2013_13_32_53_+1000_tp2pf6IzJ=fGZHzr
+--Signature=_Mon__17_Jun_2013_13_46_31_+1000_vKz2wqzP2gcVCPYz
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_sdvo.c between commit 7ba220cec0bb ("drm/i915:
-Enable hotplug interrupts after querying hw capabilities") from Linus'
-tree and commit e596a02ccfc6 ("drm/i915: Remove dead code from SDVO
-initialisation") from the drm-intel tree.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+make[4]: *** No rule to make target `sound/soc/spear/spear_evb.o', needed b=
+y `sound/soc/spear/built-in.o'.  Stop.
 
+Caused by commit e58070ee4fdf ("ASoC: Add Kconfig and Makefile to support
+SPEAr audio driver").
+
+I have used the version of the sound-asoc -tree from next-20130607 for
+today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/intel_sdvo.c
-index 7d31165,b8e1623..0000000
---- a/drivers/gpu/drm/i915/intel_sdvo.c
-+++ b/drivers/gpu/drm/i915/intel_sdvo.c
-@@@ -2850,18 -2889,12 +2891,6 @@@ bool intel_sdvo_init(struct drm_device=20
-  		}
-  	}
- =20
-- 	hotplug_mask =3D 0;
-- 	if (IS_G4X(dev)) {
-- 		hotplug_mask =3D intel_sdvo->is_sdvob ?
-- 			SDVOB_HOTPLUG_INT_STATUS_G4X : SDVOC_HOTPLUG_INT_STATUS_G4X;
-- 	} else if (IS_GEN4(dev)) {
-- 		hotplug_mask =3D intel_sdvo->is_sdvob ?
-- 			SDVOB_HOTPLUG_INT_STATUS_I965 : SDVOC_HOTPLUG_INT_STATUS_I965;
-- 	} else {
-- 		hotplug_mask =3D intel_sdvo->is_sdvob ?
-- 			SDVOB_HOTPLUG_INT_STATUS_I915 : SDVOC_HOTPLUG_INT_STATUS_I915;
-- 	}
--=20
- -	/* Only enable the hotplug irq if we need it, to work around noisy
- -	 * hotplug lines.
- -	 */
- -	if (intel_sdvo->hotplug_active)
- -		intel_encoder->hpd_pin =3D HPD_SDVO_B ? HPD_SDVO_B : HPD_SDVO_C;
- -
-  	intel_encoder->compute_config =3D intel_sdvo_compute_config;
-  	intel_encoder->disable =3D intel_disable_sdvo;
-  	intel_encoder->mode_set =3D intel_sdvo_mode_set;
-
---Signature=_Mon__17_Jun_2013_13_32_53_+1000_tp2pf6IzJ=fGZHzr
+--Signature=_Mon__17_Jun_2013_13_46_31_+1000_vKz2wqzP2gcVCPYz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRvoNlAAoJEECxmPOUX5FEQLAP/jZ/KeVgqbQxN8AS3Jpljvlz
-NggKZwcThHF0KsMUer2vQ1qjt9u2z/ATvpk9y9DgLU9/nZhAoluUpkSC1nIFAjDM
-s0ypTj8ESqrBmCr1PE4mr8/Ksu8VZvU3Xs9WkKbEe89Y780XJmHDSftphkFa68zU
-y8Do7CBt2fnVh+zIvFJwyulZaI76fgB8oZUUVDSqfn5WWylj4+s4SqjyxDRicsUV
-ixI4p26rwoOw/hMXRqFr7aqC3tzE+9M8dakpc9LJlCYqAc9LRPqy3g//yiXexScB
-BMSxIAmFWtYVJXabgi85MeCCWevbUOyi8wtt+QeX0dmTl3Wnus9tkI/vmxtSopQ+
-yi+3A9sTKy2E0kTQxPWPOBEydp4/PCzNsRmS5vJh38QJTFvdgZt7JE3wGk3W0FVL
-uqGTc6HjkqH8hZM4S702UNzScQCVY2v8D+VuSJHjucc9lABcrih8BfH8q6RsR3jm
-PzbdbjRJb6PqzYIL81aL/a2yTiv/Cad6ScubMK1cOZShvGAkkFB9SSnmvIQU5I4o
-ynpl+yYLAqhZkkrW2k9ULOAaKMGIHt4h9ySymaa/7WuZM/7WqvRv47JJjNs9+esQ
-TC+Bj9MmrVQSaDf/Pp7peLO89G/t0wJ3x307yU7S7pc6v2bT/L5vSzXiKqZSnASZ
-GOe6arGQaOKv0jMHR/Y2
-=c3/5
+iQIcBAEBCAAGBQJRvoacAAoJEECxmPOUX5FEhe4P+QG8ZGRX8IpRZPxH6UFrxy1m
+mZNugtKQNoU+pVbeZNW6eam32OWsMU4XFBk7Xi41ObxB+/i8QdUYw1B3weMuxznM
+i4rwSuXI8gzsThGEASVCPjF7R/ewayugFkzUnDs1gbMSpLaX4QTgKsBIIBozbJZ2
+M+s4i0e1Nl11hLt6UBP6dL0JTqg5WLifEEY+PDTD5W1ZVGLLj/ykDNlbNF7CijhI
+Ujp2yro0ZnKds9QZOyyGBJoCV69qb7DYzSFW0bGn7ha2+O0O6cHWtM7ZaAKDWRE0
+2cWmbTRzmeKv9sfKbVsbakO7/sfmZRCDSyzCkAEKSXw3JUqhMEKzMgLkvxUgDo2i
+GBPC8/la5rdQG+7zKYm5sbDyNnwi1DUVUpILIngXoI9wMVL68WoqhPGRENX1vTKy
+uEUalumLvLKTrIYBVCOvrTzExgujSn/mihoKoyL0D2lNxeVuZ3vm6fXKRxESxMPg
+ONvNhj2BWwFEXmMcoN1w9+iynD3zkTENc8JpCsIIjH0Q31uYO0+j3Ll0XBYhUZgP
+U8pBmwXuoYOc3suKDV5orYHYXrY3NVcejw0F4y4jx++Barkr/GtZJzovA9M0lhyX
+FZnOzOg9gtR57b9tlA3TXxvfye8EkcF/bQ4Byjcv8Cp/fvAKecUFIeWvYHKpY8IE
+aozDpgNxt0xtc7LzRcQO
+=JoJZ
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Jun_2013_13_32_53_+1000_tp2pf6IzJ=fGZHzr--
+--Signature=_Mon__17_Jun_2013_13_46_31_+1000_vKz2wqzP2gcVCPYz--
