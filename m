@@ -1,33 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with Linus' tree
-Date: Mon, 17 Jun 2013 11:42:43 +1000
-Message-ID: <20130617114243.1f3f14901db4a4e38060daf8@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Mon, 17 Jun 2013 12:38:58 +1000
+Message-ID: <20130617123858.863db3849d3db0adb1a79d77@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Jun_2013_11_42_43_+1000_n8MincDTM9PSiQJI"
+ boundary="Signature=_Mon__17_Jun_2013_12_38_58_+1000_tPAJ8whWeIG65RcK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36601 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:42325 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755284Ab3FQBmy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 21:42:54 -0400
+	with ESMTP id S1755246Ab3FQCjJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Jun 2013 22:39:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lance Ortiz <lance.ortiz@hp.com>, Tony Luck <tony.luck@intel.com>, Betty Dall <betty.dall@hp.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@suse.com>, Wei Liu <wei.liu2@citrix.com>
 
---Signature=_Mon__17_Jun_2013_11_42_43_+1000_n8MincDTM9PSiQJI
+--Signature=_Mon__17_Jun_2013_12_38_58_+1000_tPAJ8whWeIG65RcK
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bjorn,
+Hi all,
 
-Today's linux-next merge of the pci tree got a conflict in
-include/linux/aer.h between commit 37448adfc7ce ("aerdrv: Move
-cper_print_aer() call out of interrupt context") from Linus' tree and
-commit fde41b9fa2d0 ("PCI/AER: Remove "extern" from function
-declarations") from the pci tree.
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/xen-netback/netback.c between commit 94f950c4060c
+("xen-netback: don't de-reference vif pointer after having called
+xenvif_put()") from Linus' tree and commit e1f00a69ec26 ("xen-netback:
+split event channels support for Xen backend driver") from the net-next
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,51 +37,41 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/aer.h
-index 737f90a,55bb3dc..0000000
---- a/include/linux/aer.h
-+++ b/include/linux/aer.h
-@@@ -49,11 -53,10 +53,10 @@@ static inline int pci_cleanup_aer_uncor
-  }
-  #endif
+diff --cc drivers/net/xen-netback/netback.c
+index 8c20935,82576ff..0000000
+--- a/drivers/net/xen-netback/netback.c
++++ b/drivers/net/xen-netback/netback.c
+@@@ -783,9 -789,8 +790,9 @@@ static void xen_netbk_rx_action(struct=20
+  	}
  =20
-- extern void cper_print_aer(struct pci_dev *dev,
-- 			   int cper_severity, struct aer_capability_regs *aer);
-- extern int cper_severity_to_aer(int cper_severity);
-- extern void aer_recover_queue(int domain, unsigned int bus, unsigned int =
-devfn,
-- 			      int severity,
-- 			      struct aer_capability_regs *aer_regs);
- -void cper_print_aer(const char *prefix, struct pci_dev *dev, int cper_sev=
-erity,
-++void cper_print_aer(struct pci_dev *dev, int cper_severity,
-+ 		    struct aer_capability_regs *aer);
-+ int cper_severity_to_aer(int cper_severity);
-+ void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
- -		       int severity);
-++		       int severity, struct aer_capability_regs *aer_regs);
-  #endif //_AER_H_
+  	list_for_each_entry_safe(vif, tmp, &notify, notify_list) {
+- 		notify_remote_via_irq(vif->irq);
++ 		notify_remote_via_irq(vif->rx_irq);
+  		list_del_init(&vif->notify_list);
+ +		xenvif_put(vif);
+  	}
  =20
+  	/* More work to do? */
 
---Signature=_Mon__17_Jun_2013_11_42_43_+1000_n8MincDTM9PSiQJI
+--Signature=_Mon__17_Jun_2013_12_38_58_+1000_tPAJ8whWeIG65RcK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRvmmXAAoJEECxmPOUX5FExqYP/1PmBwaTG/Q2wVaeKpHQS5NQ
-7n0/zcwHXwQyj7TCC2677xgmfOAk29nPPz8QVBgi6SRWwSjWxgeG6z4MrLLbtb4G
-f6w1sqYQ4u+CtULGZu1wjZ9uX4qxUEm3jfMBfqzPJ8PDTP8Y+1E67LJ7eGMvricD
-pePKQJWHripLzcpIYdvnl5mdbdZWEfBNVdX0YjUSowWsXhmxxDGmNUzeYmy0qCyU
-d8RqeCOO4IKqlwxVXDL1dit96rbzqEOYF4hdv4iZahf/LabOzSlLLtwksOoNTC4r
-Or+8y+n3elNkrwuuPNPEuCt8frTscxQRO7G344/sIOoyVGiCgW/7jjT4UhqDIRyb
-zKZ5WSVDo1/MzMzZ95KaOJ8Sxxe/6UnVaTqDzTb6Pw9yT8EY7XMOsjP1SWSyY6Ux
-KpXnWTAH41NOP4VWNHLaDvv05JT7bP/A4768TtAaRR56MXsjAnBk58xMFRaGLfZC
-OTM1qlWaJJymD3sF8oPi9tbeYbGuNTtTjTV6PXds98T50dKaaoFDHhQo/V8+j1br
-tXFdpGxe0cPf34WVOtrPJwXwtv+qj454qpJw/IP96X60rpHazLoB0XEXG41HItdT
-nC3bfwywZFqxQOnjOGACVoz4w91QZCsUKH/1XyNpAXyxSprc3KwHvGHz2HMA5daT
-AzRMakW4YtPRd8EmLv8b
-=hYAb
+iQIcBAEBCAAGBQJRvnbHAAoJEECxmPOUX5FEqAIP/1EYub4i9bj2npHaNMz1PTzY
+hiDAA+i0i9+zaKRwwpE6dDYY6eFHjWU9Ck3Sz/xgie7sGOBeWvBRzizOPt12Kno0
+Uwy7fD/o0u4QTDrjKbDAE6BlcRzc9Vx08j+/QayprNm6cHupQc9PzuNLv1IoOgH0
+9Buy4vlFM/WFyNPgDbwiVA25Ls5IrREDeF/rXY+YrCmnB/kY+q5a5NP3aCJXIu2x
+3iU4Vop7qDl+UZVjPq5IemmIux7IjKvNeuAWRNaeunFljvR3BPthIeZKPVK9aQhM
+9SZica0zVp0oqCrpTz62U9alpFJ7KRTsHZ5QuG96+UApALi63DYfhxmdUc0GhhGJ
+FKm6Mq0hgkDB/JacZnDY0kiv4E368kUdKADYtrZ05iJ6GBlyDUKFsZdLiI0nLD+2
+G+eIjTQmT4XhE31d2/CISeDVfI9RJqeDOjt9DTbxn352AYgT2ednymqjNJTsKk5r
+BeL29nnsuj6yFAiblqCvhKRF7UwAwtrchH2QabaMovgFXTYGLJrry/0l4GgyZ7JZ
+kS0RpTu0N70M/7MIjRdvMZGO7t7sCJljdHCEOKq8G6SJMAd1IcXVKxqmQ42UZi9d
+jqlToHHPfAexHO0nbGZFg1Gk0DICig5WPx6sSojEqiBP+z75OC4a9atO097xd2fV
+mvWn7wwTeJXyXRmKaenA
+=u2Am
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Jun_2013_11_42_43_+1000_n8MincDTM9PSiQJI--
+--Signature=_Mon__17_Jun_2013_12_38_58_+1000_tPAJ8whWeIG65RcK--
