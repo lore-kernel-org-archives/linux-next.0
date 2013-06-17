@@ -1,26 +1,74 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: linux-next: manual merge of the pinctrl tree with Linus' tree
-Date: Mon, 17 Jun 2013 09:09:16 +0200
-Message-ID: <51BEB61C.3040904@linutronix.de>
-References: <20130617161127.f202c6abe603c9ff8b30fc7c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the renesas tree with the sh tree
+Date: Mon, 17 Jun 2013 17:13:05 +1000
+Message-ID: <20130617171305.d97598f75a42dfba89b3dbd0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130617161127.f202c6abe603c9ff8b30fc7c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mugunthan V N <mugunthanvnm@ti.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__17_Jun_2013_17_13_05_+1000_+jyu+a8f9Byx2xN="
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44047 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750880Ab3FQHNN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 03:13:13 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ulrich Hecht <ulrich.hecht@gmail.com>, Bastian Hecht <hechtb@gmail.com>, Paul Mundt <lethal@linux-sh.org>
 
-On 06/17/2013 08:11 AM, Stephen Rothwell wrote:
-> Hi Linus,
+--Signature=_Mon__17_Jun_2013_17_13_05_+1000_+jyu+a8f9Byx2xN=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi Simon,
 
-> I fixed it up (see below) and can carry the fix as necessary (no
-> action is required).
+Today's linux-next merge of the renesas tree got a conflict in
+include/linux/serial_sci.h between commit ada80ee7fa60 ("serial: sh-sci:
+Add OF support") from the sh tree and commit 24610a30600b ("serial:
+sh-sci: HSCIF support") from the renesas tree.
 
-The fix looks good.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Sebastian
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/linux/serial_sci.h
+index 857eec4,d340497..0000000
+--- a/include/linux/serial_sci.h
++++ b/include/linux/serial_sci.h
+@@@ -18,8 -16,7 +18,9 @@@ enum=20
+  	SCBRR_ALGO_3,		/* (((clk * 2) + 16 * bps) / (16 * bps) - 1) */
+  	SCBRR_ALGO_4,		/* (((clk * 2) + 16 * bps) / (32 * bps) - 1) */
+  	SCBRR_ALGO_5,		/* (((clk * 1000 / 32) / bps) - 1) */
++ 	SCBRR_ALGO_6,		/* HSCIF variable sample rate algorithm */
+ +
+ +	SCBRR_NR_ALGOS,
+  };
+ =20
+  #define SCSCR_TIE	(1 << 7)
+
+--Signature=_Mon__17_Jun_2013_17_13_05_+1000_+jyu+a8f9Byx2xN=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRvrcGAAoJEECxmPOUX5FErtQP/1owf6eCPPP8QBx1oqym8Zoq
+IeTG0dDTm3JHJQ0ur8rDLhDN70nHG+hJsXwgnTRcgwxsMcn7WPqU6/lxp+StEm7A
+XQfxthhmLsFDzOabHVGW5QrGyjVxZydlLnq1ImaHMNKim8HIP6klfyIk41qGDOnL
+7T3JocovGkJyr5FRyXv5rtBeZgT/U27hmfaXyAc+oLWcDSD9ic5dD9Vtux3P+sUO
+Fu/yUqM5f+OEbKyNVpeU40mR/sNKRe5XJIWmi1um9pS9NuoFfDmLh7vlvQ/ybl1r
+mkRM4XqfVzP4WIPtYTg6SOQU3GPRwmjA0E/C5Q8GA7qp9VRiK4km5j3NZzgzfjV7
+IIp2LXXQTiXJoeZkbiG2AGx3r78/nuDn/jsqQIpkK0fk6pzEsFvGh2rrfdrcb//F
+2Eu8m6cUmrFIdQK4lL/bnKjyztvgPLjnZ+Q103BjJeUdV7JdhqijRoEeANcoUhPl
+s0eYUEs+e5DwIReNRmFn7tPOU/ZrH29GKSz1gFYGcJd8pco8EnJMUbDu1+2frHUD
+f5/eyjgbe9DIRlXvRUIHwqsn69bBTOgMLPk6YpdDZGvTVZLTDJrXbtwM01y1qZE5
+hzj0hm+oVEvDVq9Dj/JDNvyR83iN8DDYfaL69FKfSLGy87T7QNcZQFbp5tKyceyl
+lyPYhz/1fn/Vv3DHt90u
+=bYtj
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__17_Jun_2013_17_13_05_+1000_+jyu+a8f9Byx2xN=--
