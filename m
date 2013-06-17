@@ -1,40 +1,34 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for Jun 17
-Date: Mon, 17 Jun 2013 12:04:18 +0200
-Message-ID: <CAMuHMdVOYx0vtCiN26nWcTZOc-YH+K5A=BTnvhd7g_w7ALjSsg@mail.gmail.com>
-References: <20130617185106.5950ffbf4b96acd9b2b2c834@canb.auug.org.au>
+From: Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the kvm tree
+Date: Mon, 17 Jun 2013 20:23:48 +0800
+Message-ID: <51BEFFD4.6090904@linux.vnet.ibm.com>
+References: <20130617180735.c10c058469ce0633c65225a4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:62160 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932273Ab3FQKEV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 06:04:21 -0400
-In-Reply-To: <20130617185106.5950ffbf4b96acd9b2b2c834@canb.auug.org.au>
+Received: from e28smtp08.in.ibm.com ([122.248.162.8]:39295 "EHLO
+	e28smtp08.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932813Ab3FQMYE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 08:24:04 -0400
+Received: from /spool/local
+	by e28smtp08.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <xiaoguangrong@linux.vnet.ibm.com>;
+	Mon, 17 Jun 2013 17:45:43 +0530
+In-Reply-To: <20130617180735.c10c058469ce0633c65225a4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@redhat.com>
 
 Hi Stephen,
 
-On Mon, Jun 17, 2013 at 10:51 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Changes since 20130607:
->
-> New trees: arm-mpidr and arm64-hugepages
+Thanks for your work!
 
-[long list of new conflicts deleted]
+On 06/17/2013 04:07 PM, Stephen Rothwell wrote:
 
-Good to see you're back!
-Thanks a lot ;-)
+> - 		prepare_zap_oldest_mmu_page(kvm, &invalid_list);
+> + 		freed += prepare_zap_oldest_mmu_page(kvm, &invalid_list);
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+It seems this change is not needed? and "freed" is not defined in mmu_shrink().
+Right?
