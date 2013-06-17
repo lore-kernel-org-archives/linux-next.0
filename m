@@ -1,102 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the arm64-hugepages tree with the arm64
  tree
-Date: Mon, 17 Jun 2013 17:36:27 +1000
-Message-ID: <20130617173627.8bd67da7e93639cf85afcedb@canb.auug.org.au>
+Date: Mon, 17 Jun 2013 17:45:28 +1000
+Message-ID: <20130617174528.fc0381c10f8c5296b4efe776@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Jun_2013_17_36_27_+1000_QglZN4Jw_b/uYW9a"
+ boundary="Signature=_Mon__17_Jun_2013_17_45_28_+1000_O4SlmQi/tnc=JyOH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37188 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:46142 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751684Ab3FQHg3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 03:36:29 -0400
+	with ESMTP id S1754868Ab3FQHpf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 03:45:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Steve Capper <steve.capper@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
 
---Signature=_Mon__17_Jun_2013_17_36_27_+1000_QglZN4Jw_b/uYW9a
+--Signature=_Mon__17_Jun_2013_17_45_28_+1000_O4SlmQi/tnc=JyOH
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Steve,
 
-Today's linux-next merge of the arm64-hugepages tree got a conflict in
-arch/arm64/Kconfig between commit aa42aa1389a5 ("arm64/xen: introduce
-CONFIG_XEN and hypercall.S on ARM64") from the arm64 tree and commit
-d03bb1455f3a ("ARM64: mm: Raise MAX_ORDER for 64KB pages and THP") from
-the arm64-hugepages tree.
+Today's linux-next merge of the arm64-hugepages tree got conflicts in
+arch/arm64/include/asm/pgtable-hwdef.h and
+arch/arm64/include/asm/pgtable.h between commit 363116073a26 ("arm64:
+KVM: define HYP and Stage-2 translation page flags") from the arm64 tree
+and commits 072b1b62a643 ("ARM64: mm: Make PAGE_NONE pages read only and
+no-execute") and af07484863e0 ("ARM64: mm: THP support") from the
+arm64-hugepages tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
 
+Note that the arm64 tree version of PMD_SECT_USER used a pteval_t where I
+would have expected a pmdval_t like the arm64-hugepages tree version.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm64/Kconfig
-index ef32eb1,308a556..0000000
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@@ -181,18 -180,25 +181,35 @@@ config HW_PERF_EVENT
-  	  Enable hardware performance counter support for perf events. If
-  	  disabled, perf events will use software events only.
+diff --cc arch/arm64/include/asm/pgtable.h
+index 5588e8a,720fc4a..0000000
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@@ -76,13 -76,7 +76,13 @@@ extern pgprot_t pgprot_default
+  #define PAGE_KERNEL		_MOD_PROT(pgprot_default, PTE_PXN | PTE_UXN | PTE_DI=
+RTY)
+  #define PAGE_KERNEL_EXEC	_MOD_PROT(pgprot_default, PTE_UXN | PTE_DIRTY)
  =20
-+ config SYS_SUPPORTS_HUGETLBFS
-+ 	def_bool y
-+=20
-+ config ARCH_WANT_GENERAL_HUGETLB
-+ 	def_bool y
-+=20
-+ config ARCH_WANT_HUGE_PMD_SHARE
-+ 	def_bool y if !ARM64_64K_PAGES
-+=20
-+ config HAVE_ARCH_TRANSPARENT_HUGEPAGE
-+ 	def_bool y
-+=20
-  source "mm/Kconfig"
- =20
-+ config FORCE_MAX_ZONEORDER
-+ 	int
-+ 	default "14" if (ARM64_64K_PAGES && TRANSPARENT_HUGEPAGE)
-+ 	default "11"
-+=20
- +config XEN_DOM0
- +	def_bool y
- +	depends on XEN
+ +#define PAGE_HYP		_MOD_PROT(pgprot_default, PTE_HYP)
+ +#define PAGE_HYP_DEVICE		__pgprot(PROT_DEVICE_nGnRE | PTE_HYP)
  +
- +config XEN
- +	bool "Xen guest support on ARM64 (EXPERIMENTAL)"
- +	depends on ARM64 && OF
- +	help
- +	  Say Y if you want to run Linux in a Virtual Machine on Xen on ARM64.
+ +#define PAGE_S2			__pgprot_modify(pgprot_default, PTE_S2_MEMATTR_MASK, PT=
+E_S2_MEMATTR(MT_S2_NORMAL) | PTE_S2_RDONLY)
+ +#define PAGE_S2_DEVICE		__pgprot(PROT_DEFAULT | PTE_S2_MEMATTR(MT_S2_DEVI=
+CE_nGnRE) | PTE_S2_RDWR | PTE_UXN)
  +
-  endmenu
- =20
-  menu "Boot options"
+- #define __PAGE_NONE		__pgprot(((_PAGE_DEFAULT) & ~PTE_TYPE_MASK) | PTE_PR=
+OT_NONE)
++ #define __PAGE_NONE		__pgprot(((_PAGE_DEFAULT) & ~PTE_TYPE_MASK) | PTE_PR=
+OT_NONE | PTE_RDONLY | PTE_PXN | PTE_UXN)
+  #define __PAGE_SHARED		__pgprot(_PAGE_DEFAULT | PTE_USER | PTE_NG | PTE_P=
+XN | PTE_UXN)
+  #define __PAGE_SHARED_EXEC	__pgprot(_PAGE_DEFAULT | PTE_USER | PTE_NG | P=
+TE_PXN)
+  #define __PAGE_COPY		__pgprot(_PAGE_DEFAULT | PTE_USER | PTE_NG | PTE_PXN=
+ | PTE_UXN | PTE_RDONLY)
 
---Signature=_Mon__17_Jun_2013_17_36_27_+1000_QglZN4Jw_b/uYW9a
+--Signature=_Mon__17_Jun_2013_17_45_28_+1000_O4SlmQi/tnc=JyOH
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRvrx7AAoJEECxmPOUX5FEX1EP/3H9zVicSzkgNt3xj7CFrgos
-diZa+M4HCjVhvi7MxJ/DWYltxykDKxpyi4DPicmxsu664G6j/m0NXIH1ax4PKrh7
-nhodlc1YSk4evUhN16uM/H+m8B9JZluCmEaNnDWngQw+PTzFZ1HQm4Ll1jLi35Oh
-JwFj/y40GCI0Du/g1FSdv5UIbUhxENsXKf2xP4Wy8Y2MKVtgJSLJ5n1PFSK/z+oL
-GhBRs7A2SCx0zcOXcoplLgjXefl0KTU6UsADw8n13++dGumdyzB2nxfwP+cXM7rw
-kBEw5LCPxaKACUZzupAYWwL5SgfDBYFX1RheqbXyssoNUIfIOD3Dyp1IknkEJ9dF
-pLIBsmWtfoS8V4srKaUu02ZhHPYhaAM82MRkG636o2oKo7EayW6pbIXfuhEYqCdo
-H5ayVY1qXpRQqhSD5y3wRPh3qaNfnYsFngk/uzwBW3LLONRw7/f2GiGCLkPdkXTR
-0D/6j4mDc1Hu/+FeZASU4cQY4NasZFclBh5KNmwwaPW6kkDjLeYAvdJorOt0dHG6
-fg9KnwDB7Ad/+eBs7tLa0pO2q0b8zJHbSLv7ViyQDhYnHVpdhVfMhoT0rvXuF8F5
-/cDQn0DtUX0WuxHo8A7bmnve1N4FSGN0o48yjq2I3vRGvpsxe/KQOFUV1ojPrb1S
-luqhcrD1ym4zkbA7GWaI
-=EKiN
+iQIcBAEBCAAGBQJRvr6YAAoJEECxmPOUX5FECKEQAI3lsxix2vmYti51W09C0Way
+n3dkHMgkkox/qbn87UOJJL8yxQlwwphK150mQMv4L12Dgv8HOIfVcUqUvrdm1pUP
+9uZ3L5/aYRspGtQKnS1eUhKYHOe91koqbkd9Eocdi5KIOn8s5Rx44VNHpR12p0Fe
+pDM0o+OvOrSWFrb9lwtGkysz6Uqg/D3r5CpVhxXHWpVLMmHpLgYjBXqpjDYe9iSO
+2pnCDcOJPd7JmUWeYmghK+tBlMAmYv270SwfWpaNnhd2Qq46VIl53zPslfi6naj8
++V9KJ/Y5WNnC/svLPqOJ4BeLa+TkxsJihzrOz6XATCLr3agbpT1ZRm8k/OTohZPt
+LHGfowDy1GsrXIOh0N6dXqYaOHbOkPoHX2/f6Gh/htod3VG4WqZKd+7AhmMQMMpF
+X7wB3x2v+XZh/A9UFa5B9Xfwyqq/zL/W6DtD/qLxuOSRaeg0+AtrfrZU0zAR1dz5
+dzdwQXVgDVJIB6CxYF4ieYWBe6+0CMZaGOSmYK8SrjuE0EHV2091Sbr+KNJ1bqLG
+dsQm5aPtFm2xVfKZgGvyGnocV/66BCGHr/ZAt/dq1lEOX8pFcQQFyI21RGJ2puXc
+x3jMzmSPM0xAYtUz/xmAxkZqcTcca94gaRwi8fJxH3FrGD4i6n5YSMd8j0XQ/yjo
+b3p2ayUW0GX792rtLMBr
+=4kqb
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Jun_2013_17_36_27_+1000_QglZN4Jw_b/uYW9a--
+--Signature=_Mon__17_Jun_2013_17_45_28_+1000_O4SlmQi/tnc=JyOH--
