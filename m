@@ -1,66 +1,36 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH -next v3] thermal:  fix x86_pkg_temp_thermal.c build and
- Kconfig
-Date: Mon, 17 Jun 2013 21:45:24 +0200
-Message-ID: <20130617194524.GD8197@pd.tnic>
-References: <20130617185106.5950ffbf4b96acd9b2b2c834@canb.auug.org.au>
- <51BF4159.1000004@infradead.org>
- <51BF46C3.3090900@linux.intel.com>
- <51BF4DA2.40601@infradead.org>
- <51BF50E3.9000806@linux.intel.com>
- <51BF5174.805@infradead.org>
- <20130617181702.GA7217@pd.tnic>
- <51BF6315.9020501@infradead.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ devicetree tree
+Date: Mon, 17 Jun 2013 12:58:16 -0700
+Message-ID: <20130617195816.GA28980@kroah.com>
+References: <20130617153302.abd2024c094b8899904acb12@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.skyhub.de ([78.46.96.112]:43025 "EHLO mail.skyhub.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751146Ab3FQTp3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Jun 2013 15:45:29 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:38400 "EHLO
+	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751320Ab3FQT6T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Jun 2013 15:58:19 -0400
 Content-Disposition: inline
-In-Reply-To: <51BF6315.9020501@infradead.org>
+In-Reply-To: <20130617153302.abd2024c094b8899904acb12@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Libo Chen <clbchenlibo.chen@huawei.com>
 
-On Mon, Jun 17, 2013 at 12:27:17PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
+On Mon, Jun 17, 2013 at 03:33:02PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Fix build error in x86_pkg_temp_thermal.c.  It requires that
-> X86_MCE & X86_THERMAL_VECTOR be enabled, so depend on the latter symbol,
-> since it depends on X86_MCE (indirectly).
+> Today's linux-next merge of the driver-core tree got a conflict in
+> include/linux/platform_device.h between commit 10dbc5e39a60 ("driver
+> core: move to_platform_driver to platform_device.h") from the devicetree
+> tree and commit 9447057eaff8 ("platform_device: use a macro instead of
+> platform_driver_register") from the driver-core tree.
 > 
-> Also, X86_PKG_TEMP_THERMAL is already inside an "if THERMAL" block,
-> so remove that duplicated dependency.
-> 
-> ERROR: "platform_thermal_package_rate_control" [drivers/thermal/x86_pkg_temp_thermal.ko] undefined!
-> ERROR: "platform_thermal_package_notify" [drivers/thermal/x86_pkg_temp_thermal.ko] undefined!
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
->  drivers/thermal/Kconfig |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> --- linux-next-20130617.orig/drivers/thermal/Kconfig
-> +++ linux-next-20130617/drivers/thermal/Kconfig
-> @@ -171,8 +171,7 @@ config INTEL_POWERCLAMP
->  
->  config X86_PKG_TEMP_THERMAL
->  	tristate "X86 package temperature thermal driver"
-> -	depends on THERMAL
-> -	depends on X86
-> +	depends on X86_THERMAL_VECTOR
->  	select THERMAL_GOV_USER_SPACE
->  	default m
->  	help
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Acked-by: Borislav Petkov <bp@suse.de>
+Fix looks good to me, thanks.
 
--- 
-Regards/Gruss,
-    Boris.
-
-Sent from a fat crate under my desk. Formatting is fine.
---
+greg k-h
