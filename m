@@ -1,56 +1,63 @@
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH -next v2] thermal:  fix x86_pkg_temp_thermal.c build and
- Kconfig
-Date: Mon, 17 Jun 2013 11:31:45 -0700
-Message-ID: <51BF5611.1080307@linux.intel.com>
-References: <20130617185106.5950ffbf4b96acd9b2b2c834@canb.auug.org.au> <51BF4159.1000004@infradead.org> <51BF46C3.3090900@linux.intel.com> <51BF4DA2.40601@infradead.org> <51BF50E3.9000806@linux.intel.com> <51BF5174.805@infradead.org> <20130617181702.GA7217@pd.tnic>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: linux-next: manual merge of the clk tree with the arm-soc tree
+Date: Mon, 17 Jun 2013 11:49:30 -0700
+Message-ID: <20130617184930.9136.76869@quantum>
+References: <20130617172719.f19a76fae98cc7ef82b91ae9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20130617181702.GA7217@pd.tnic>
-Sender: linux-pm-owner@vger.kernel.org
-To: Borislav Petkov <bp@alien8.de>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20130617172719.f19a76fae98cc7ef82b91ae9@canb.auug.org.au>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Stephen Warren <swarren@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-On 06/17/2013 11:17 AM, Borislav Petkov wrote:
-> On Mon, Jun 17, 2013 at 11:12:04AM -0700, Randy Dunlap wrote:
->> On 06/17/13 11:09, Srinivas Pandruvada wrote:
->>> Sorry for this issue. I was about to submit a patch for this,
->>>
->>> You should change to
->>>
->>> depends on X86 && X86_MCE && X86_THERMAL_VECTOR
->> ---
->> From: Randy Dunlap <rdunlap@infradead.org>
->>
->> Fix build error in x86_pkg_temp_thermal.c.  It requires that
->> X86_MCE be enabled, so depend on that symbol.
->> Also, X86_PKG_TEMP_THERMAL is already inside an "if THERMAL" block,
->> so remove that duplicated dependency.
->>
->> ERROR: "platform_thermal_package_rate_control" [drivers/thermal/x86_pkg_temp_thermal.ko] undefined!
->> ERROR: "platform_thermal_package_notify" [drivers/thermal/x86_pkg_temp_thermal.ko] undefined!
->>
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> ---
->>   drivers/thermal/Kconfig |    3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> --- linux-next-20130617.orig/drivers/thermal/Kconfig
->> +++ linux-next-20130617/drivers/thermal/Kconfig
->> @@ -171,8 +171,7 @@ config INTEL_POWERCLAMP
->>   
->>   config X86_PKG_TEMP_THERMAL
->>   	tristate "X86 package temperature thermal driver"
->> -	depends on THERMAL
->> -	depends on X86
->> +	depends on X86 && X86_MCE && X86_THERMAL_VECTOR
-> X86_THERMAL_VECTOR depends on X86_MCE_INTEL which depends on X86_MCE. So
->
-> 	depends on X86_THERMAL_VECTOR
->
-> should be enough, IMO.
-OK
+Quoting Stephen Rothwell (2013-06-17 00:27:19)
+> Hi Mike,
+> 
+> Today's linux-next merge of the clk tree got a conflict in
+> drivers/clk/tegra/clk-tegra114.c between commit 31972fd95527 ("clk:
+> tegra114: implement wait_for_reset and disable_clock for
+> tegra_cpu_car_ops") from the arm-soc tree and commit d53442e94db0 ("clk:
+> tegra: override bits for Tegra114 PLLM") from the clk tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
+Looks good.
+
+Thanks,
+Mike
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/clk/tegra/clk-tegra114.c
+> index 40d939d,7fe36ea..0000000
+> --- a/drivers/clk/tegra/clk-tegra114.c
+> +++ b/drivers/clk/tegra/clk-tegra114.c
+> @@@ -250,9 -251,10 +251,13 @@@
+>   #define CLK_SOURCE_XUSB_DEV_SRC 0x60c
+>   #define CLK_SOURCE_EMC 0x19c
+>   
+>  +/* Tegra CPU clock and reset control regs */
+>  +#define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS   0x470
+>  +
+> + /* PLLM override registers */
+> + #define PMC_PLLM_WB0_OVERRIDE 0x1dc
+> + #define PMC_PLLM_WB0_OVERRIDE_2 0x2b0
+> + 
+>   static int periph_clk_enb_refcnt[CLK_OUT_ENB_NUM * 32];
+>   
+>   static void __iomem *clk_base;
