@@ -1,44 +1,39 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: Request inclusion of ARM MPIDR linearization patches into
- linux-next
-Date: Mon, 17 Jun 2013 17:29:52 +0100
-Message-ID: <20130617162952.GA12667@e102568-lin.cambridge.arm.com>
-References: <20130611174629.GA14453@e102568-lin.cambridge.arm.com>
- <20130617100756.37c25388ab9f232b23321ce8@canb.auug.org.au>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] i2c: core: make it possible to match a pure device
+ tree driver
+Date: Mon, 17 Jun 2013 18:33:41 +0200
+Message-ID: <CACRpkdbjy+PcpNkSg4PuuP2Z9RyrnqSW0uchHFHVZ8VYPeoDyA@mail.gmail.com>
+References: <1368476301-10495-1-git-send-email-linus.walleij@linaro.org>
+	<CACRpkdae1chj9ZKuQV5MuiaicLUTKr4hZqr8rtjbB3Yjt+U_fg@mail.gmail.com>
+	<51BF2FC5.40207@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:51774 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751170Ab3FQQ35 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 12:29:57 -0400
-In-Reply-To: <20130617100756.37c25388ab9f232b23321ce8@canb.auug.org.au>
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>, Russell King <rmk@arm.linux.org.uk>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51BF2FC5.40207-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On Mon, Jun 17, 2013 at 5:48 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 
-On Mon, Jun 17, 2013 at 01:07:56AM +0100, Stephen Rothwell wrote:
-> Hi Lorenzo,
-> 
-> On Tue, 11 Jun 2013 18:46:29 +0100 Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
-> >
-> > can I ask you please to include the following branch into linux-next:
-> > 
-> > git://linux-arm.org/linux-2.6-lp.git for-next
-> > 
-> > It contains significant changes in ARM PM core code and would like to give it
-> > wide coverage before requesting a pull. It has been already publicly posted,
-> > reviewed and tested.
-> 
-> Added from today with you as contact and called arm-mpidr.  I assume that
-> this will be merged via Russell's arm tree.
+> This has just shown up in next-20130617, and breaks at least the
+> TPS65910 and TPS62360 drivers, since they assume that the id parameter
+> passed to probe is non-NULL. However, now the parameter is NULL since
+> these drivers have both an ID table and an OF match table.
 
-That's correct, thank you very much.
+So you mean they come in through the DT boot path and assume
+that parameter is non-null even though they should not make use of
+it?
 
-Cheers,
-Lorenzo
+> I'd like to suggest this patch be reverted an re-introduced immediately
+> after the merge window. That should give enough time for everyone to get
+> a heads-up on fixing any drivers with a similar problem, rather than
+> trying to cram all that in immediately before the merge window.
+
+OK that works for me, I'm not in any hurry.
+
+Wolfram get to decide how to handle this...
+
+Yours,
+Linus Walleij
