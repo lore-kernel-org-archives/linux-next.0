@@ -1,33 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the usb tree
-Date: Tue, 18 Jun 2013 14:55:59 +1000
-Message-ID: <20130618145559.cc7923dac280e736c908a422@canb.auug.org.au>
+Subject: linux-next: manual merge of the irqdomain tree with the  tree
+Date: Tue, 18 Jun 2013 15:45:15 +1000
+Message-ID: <20130618154515.828365d615bbe6b93169e706@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__18_Jun_2013_14_55_59_+1000_9sD/ms_5+mdhN2xF"
+ boundary="Signature=_Tue__18_Jun_2013_15_45_15_+1000_kyU8PQTMQm4tDb.5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54508 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:42313 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753559Ab3FRE4M (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 00:56:12 -0400
+	with ESMTP id S1750704Ab3FRFp1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 01:45:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bernd Bassimir <bassimir.kernel@gmx.de>, Nico Doerr <nico.doerr@hawo.net>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, Kefeng Wang <wangkefeng.wang@huawei.com>
 
---Signature=_Tue__18_Jun_2013_14_55_59_+1000_9sD/ms_5+mdhN2xF
+--Signature=_Tue__18_Jun_2013_15_45_15_+1000_kyU8PQTMQm4tDb.5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Grant,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/serqt_usb2/serqt_usb2.c between commit 1143832eca8f
-("USB: serial: ports: add minor and port number") from the usb tree and
-commit d68edc2881b1 ("staging: serqt_usb2: Fixed coding style
-CamelCases") from the staging tree.
+Today's linux-next merge of the irqdomain tree got a conflict in
+kernel/irq/irqdomain.c between commit c5cdc67a58a2 ("irqdomain: Remove
+temporary MIPS workaround code") from the mips tree and commit
+bd4641e31e90 ("irq: fix checkpatch error") from the irqdomain tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,104 +35,53 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/serqt_usb2/serqt_usb2.c
-index 880f5c0,39de5e0..0000000
---- a/drivers/staging/serqt_usb2/serqt_usb2.c
-+++ b/drivers/staging/serqt_usb2/serqt_usb2.c
-@@@ -870,10 -870,10 +870,10 @@@ static int qt_open(struct tty_struct *t
-  	usb_clear_halt(serial->dev, port->read_urb->pipe);
-  	port0->open_ports++;
+diff --cc kernel/irq/irqdomain.c
+index a341b3d,13f2654..0000000
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@@ -665,8 -475,20 +475,8 @@@ unsigned int irq_create_of_mapping(stru
  =20
-- 	result =3D qt_get_device(serial, &port0->DeviceData);
-+ 	result =3D qt_get_device(serial, &port0->device_data);
- =20
-  	/* Port specific setups */
-- 	result =3D qt_open_channel(serial, port->port_number, &ChannelData);
- -	result =3D qt_open_channel(serial, port->number, &channel_data);
-++	result =3D qt_open_channel(serial, port->port_number, &channel_data);
-  	if (result < 0) {
-  		dev_dbg(&port->dev, "qt_open_channel failed\n");
-  		return result;
-@@@ -1239,23 -1245,25 +1239,23 @@@ static void qt_set_termios(struct tty_s
- =20
-  	/* Now determine flow control */
-  	if (cflag & CRTSCTS) {
- -		dev_dbg(&port->dev, "%s - Enabling HW flow control port %d\n",
- -			__func__, port->number);
- +		dev_dbg(&port->dev, "%s - Enabling HW flow control\n", __func__);
- =20
-  		/* Enable RTS/CTS flow control */
-- 		status =3D BoxSetHW_FlowCtrl(port->serial, index, 1);
-+ 		status =3D box_set_hw_flow_ctrl(port->serial, index, 1);
- =20
-  		if (status < 0) {
-- 			dev_dbg(&port->dev, "BoxSetHW_FlowCtrl failed\n");
-+ 			dev_dbg(&port->dev, "box_set_hw_flow_ctrl failed\n");
-  			return;
-  		}
-  	} else {
-  		/* Disable RTS/CTS flow control */
-  		dev_dbg(&port->dev,
- -			"%s - disabling HW flow control port %d\n",
- -			__func__, port->number);
- +			"%s - disabling HW flow control\n", __func__);
- =20
-- 		status =3D BoxSetHW_FlowCtrl(port->serial, index, 0);
-+ 		status =3D box_set_hw_flow_ctrl(port->serial, index, 0);
-  		if (status < 0) {
-- 			dev_dbg(&port->dev, "BoxSetHW_FlowCtrl failed\n");
-+ 			dev_dbg(&port->dev, "box_set_hw_flow_ctrl failed\n");
-  			return;
-  		}
- =20
-@@@ -1324,12 -1332,12 +1324,12 @@@ static inline int qt_real_tiocmget(stru
-  	int status;
-  	unsigned int index;
- =20
- -	index =3D tty->index - serial->minor;
- +	index =3D port->port_number;
-  	status =3D
-- 	    BoxGetRegister(port->serial, index, MODEM_CONTROL_REGISTER, &mcr);
-+ 	    box_get_register(port->serial, index, MODEM_CONTROL_REGISTER, &mcr);
-  	if (status >=3D 0) {
-  		status =3D
-- 		    BoxGetRegister(port->serial, index,
-+ 		    box_get_register(port->serial, index,
-  				   MODEM_STATUS_REGISTER, &msr);
- =20
+  	domain =3D controller ? irq_find_host(controller) : irq_default_domain;
+  	if (!domain) {
+- 		pr_warning("no irq domain found for %s !\n",
+- 			   of_node_full_name(controller));
+ -#ifdef CONFIG_MIPS
+ -		/*
+ -		 * Workaround to avoid breaking interrupt controller drivers
+ -		 * that don't yet register an irq_domain.  This is temporary
+ -		 * code. ~~~gcl, Feb 24, 2012
+ -		 *
+ -		 * Scheduled for removal in Linux v3.6.  That should be enough
+ -		 * time.
+ -		 */
+ -		if (intsize > 0)
+ -			return intspec[0];
+ -#endif
++ 		pr_warn("no irq domain found for %s !\n",
++ 			of_node_full_name(controller));
+  		return 0;
   	}
-@@@ -1363,9 -1371,9 +1363,9 @@@ static inline int qt_real_tiocmset(stru
-  	int status;
-  	unsigned int index;
- =20
- -	index =3D tty->index - serial->minor;
- +	index =3D port->port_number;
-  	status =3D
-- 	    BoxGetRegister(port->serial, index, MODEM_CONTROL_REGISTER, &mcr);
-+ 	    box_get_register(port->serial, index, MODEM_CONTROL_REGISTER, &mcr);
-  	if (status < 0)
-  		return -ESPIPE;
  =20
 
---Signature=_Tue__18_Jun_2013_14_55_59_+1000_9sD/ms_5+mdhN2xF
+--Signature=_Tue__18_Jun_2013_15_45_15_+1000_kyU8PQTMQm4tDb.5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRv+hjAAoJEECxmPOUX5FEOF0P/iD7f1soVs8+CAEyQ/R+9fG6
-vzm38sQ67iWuxJEj5Xcir2CCQTdrm0jJJDMucvN3EKhPZA5ZkWPmsGqniKRNYEAz
-9SnfV2ZuQP4xE/Qzhx0Al/i/Hqh5pj/fLenCTeuo0f84mrXduEp3YF5vBhLiEhno
-4efUn66z05zQbUlYX2OSxZtbJf+gaWoH98otU+Gi6/WwQEEfpxkOV6jtjymk1fKf
-JFt15yKEbpC2b/57BX8cXxh+4oiuiNdLBqTbRFzXiTxcL5bU/5vaMrg4/39OFI9u
-59LMrzZZxsBlsvn87dheihk6HjGJ+VKTez0OZrBOntxTZ+giWwyEqjShJmPQ6pr8
-M00A/E159Qudt71Q8LxcHqPIpcKVhZ7QOid+ixO4q9jLQcNjv23eoNKLEtiQrA1y
-bIM3C1SETHc63ldjLBlLa809+YRS3L/ELya3Ymhj6x/D9m1VFDUv8QsrMuhGFixa
-hsyEKNsdpQ/oAOT/L3uZNUwQSlMB8+t2T/1UYZgcfSvCVYWZfBs5SHuJ54Vh+cEV
-MSHwqJlqakioIyEkSs4hsL3qYKSQFflorPJpLMAoCoHFWGSJGO1FD3Yg0VNCX5fk
-/3TDIuJhsXC2RpgHVOt/M82WTcTf3aiXztADVcQRUp4HFBH6GwyvECJgece6F53y
-lJEUCPBcu6Y+GHnOT3Xc
-=Hx75
+iQIcBAEBCAAGBQJRv/PvAAoJEECxmPOUX5FERSEP/A9HFMnUvVaXPGPmf9hFHzv2
+b+H0cXxnWDjFlq/dXUZmnxv2hmL/oEx1ZmkHAr3by1X9FJ1OkaMVFgb9ecc+oC24
+Id3iGBTHjmCwsqob+4cRyeYJ/5pwLjxKhglHeKuZ8SDsRqLIIUc6ApZHSjJwHyDA
+/gQCZ0n11pq/RMi9s5LcetSDuK6BkCKGGaiJ1LR9NJ7LJ+EQ68gXxLgQeggx1xOJ
+kVSB4NxSo8G18fhbgVSrcN0wNHs9I8siBvgfIYdn5Qu20he9TLepd/N+XfwsU4kM
+NIR5+ag8sDVxYh4uS8aKVb5gmpmPtFE6kMI4Eqx+v3xmJ2xvXmm/mF4BMusWBNy+
+O6f0CwVUVG64CsjewF0dfA+OFOosgOiFMiJ9kOCr9aQ09utKyukDZGw+xXEaCf0N
++MosZYihyH8Yh6e9OZtH7ydceKlVMh4gJizG1ZNPkjFfjQQetqZA7BP1iulfi6aK
+y0mKRzVZFtVdlKDpbdsnM3WwYR+XKMDGXCtivAGEvoOCGeRS85nLHnK3ARhLSbjk
+6xcP7zpzNl515bkqXcZgI9IJ3nfIh6hVeYEMt3rAHSJS6ifQUV9WL2V/C9c8a+Gk
+S2SoR/2iUQxKuX6hFJDTGwnX4G2xsf3tXEgfPJHfjzR4Us7tYu1z5Rp36wZvTUhF
+TZol188Z9LEsAH2HGvS0
+=ujxc
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__18_Jun_2013_14_55_59_+1000_9sD/ms_5+mdhN2xF--
+--Signature=_Tue__18_Jun_2013_15_45_15_+1000_kyU8PQTMQm4tDb.5--
