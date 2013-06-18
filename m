@@ -1,119 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: + include-linux-smph-on_each_cpu-switch-back-to-a-macro.patch
- added to -mm tree
-Date: Tue, 18 Jun 2013 16:47:46 +1000
-Message-ID: <20130618164746.2e8cf1a78aa8991b3920eb3b@canb.auug.org.au>
-References: <51bf7215.kCUvfXDQNVATYYGk%akpm@linux-foundation.org>
+Subject: linux-next: build failure after merge of the final tree (mfd tree
+ related)
+Date: Tue, 18 Jun 2013 17:19:57 +1000
+Message-ID: <20130618171957.9d8fbcf376243d1d5f1d92b0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__18_Jun_2013_16_47_46_+1000_1FnpDZcpJCYZ4Epb"
+ boundary="Signature=_Tue__18_Jun_2013_17_19_57_+1000_LAo0.u9TLvKdulc/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51522 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:60645 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751787Ab3FRGr5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 02:47:57 -0400
-In-Reply-To: <51bf7215.kCUvfXDQNVATYYGk%akpm@linux-foundation.org>
+	with ESMTP id S1752306Ab3FRHUK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 03:20:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: akpm@linux-foundation.org
-Cc: ralf@linux-mips.org, geert@linux-m68k.org, david.daney@cavium.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chao Xie <chao.xie@marvell.com>, Yi Zhang <yizhang@marvell.com>
 
---Signature=_Tue__18_Jun_2013_16_47_46_+1000_1FnpDZcpJCYZ4Epb
+--Signature=_Tue__18_Jun_2013_17_19_57_+1000_LAo0.u9TLvKdulc/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-On Mon, 17 Jun 2013 13:31:17 -0700 akpm@linux-foundation.org wrote:
->
-> From: Andrew Morton <akpm@linux-foundation.org>
-> Subject: include/linux/smp.h:on_each_cpu(): switch back to a macro
->=20
-> f21afc25f9ed4 ("smp.h: Use local_irq_{save,restore}() in !SMP version of
-> on_each_cpu()") converted on_each_cpu() to a C function.  This required
-> inclusion of irqflags.h, which broke ia64 and mn10300 (at least) due to
-> header ordering hell.
->=20
-> Switch on_each_cpu() back to a macro to fix this.
->=20
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: David Daney <david.daney@cavium.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
->=20
->  include/linux/smp.h |   20 ++++++++------------
->  1 file changed, 8 insertions(+), 12 deletions(-)
->=20
-> diff -puN include/linux/smp.h~include-linux-smph-on_each_cpu-switch-back-=
-to-a-macro include/linux/smp.h
-> --- a/include/linux/smp.h~include-linux-smph-on_each_cpu-switch-back-to-a=
--macro
-> +++ a/include/linux/smp.h
-> @@ -11,7 +11,6 @@
->  #include <linux/list.h>
->  #include <linux/cpumask.h>
->  #include <linux/init.h>
-> -#include <linux/irqflags.h>
-> =20
->  extern void cpu_idle(void);
-> =20
-> @@ -140,17 +139,14 @@ static inline int up_smp_call_function(s
->  }
->  #define smp_call_function(func, info, wait) \
->  			(up_smp_call_function(func, info))
-> -
-> -static inline int on_each_cpu(smp_call_func_t func, void *info, int wait)
-> -{
-> -	unsigned long flags;
-> -
-> -	local_irq_save(flags);
-> -	func(info);
-> -	local_irq_restore(flags);
-> -	return 0;
-> -}
-> -
-> +#define on_each_cpu(func,info,wait)		\
-> +	({					\
-> +		unsigned long flags;		\
-> +		local_irq_save(flags);		\
-> +		func(info);			\
-> +		local_irq_restore(flags);	\
-> +		0;				\
-> +	})
->  /*
->   * Note we still need to test the mask even for UP
->   * because we actually can get an empty mask from
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I added this to the akpm tree in linux-next today - but with
-s/flags/__flags/ in appropriate places.
+drivers/mfd/88pm800.c: In function 'pm800_pages_init':
+drivers/mfd/88pm800.c:434:2: error: implicit declaration of function 'IS_ER=
+R' [-Werror=3Dimplicit-function-declaration]
+  if (IS_ERR(subchip->regmap_power)) {
+  ^
+drivers/mfd/88pm800.c:435:3: error: implicit declaration of function 'PTR_E=
+RR' [-Werror=3Dimplicit-function-declaration]
+   ret =3D PTR_ERR(subchip->regmap_power);
+   ^
 
+Caused by commit f8ca616f67f7 ("mfd: 88pm800: Enhance error handling for
+sub pages probe/remove") from the mfd tree.  Forgot to include
+linux/err.h (see Rule 1 in Documentation/SubmitChecklist).
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__18_Jun_2013_16_47_46_+1000_1FnpDZcpJCYZ4Epb
+--Signature=_Tue__18_Jun_2013_17_19_57_+1000_LAo0.u9TLvKdulc/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRwAKWAAoJEECxmPOUX5FEMowP/iztRNSAJ6tHXez+QwZeLoY8
-7ETb7aFP1CArUl53Y9sk6Myp+b5CoqHjSYwJvIq4a8cM9uJznBkjEl6iY8plnoCP
-9r9McvSe3yzCgcPUbR1N2epFs/TxkjqnGXP+YT+NbehP44obd7Ih9dDjDyWZAPf+
-Kf7x4qz9hCzGnkex0QJHiEXVeEmiZC57eHDm2SLlnxvV+6zbG577ew4ZewjqHgbO
-b7D9z/qopczX4LUmN8Sic5RmwT42uPTcEWpPh0jzbdIsKPdElQHSjCEMsPNbxEMi
-T56WDahnw6TO1jfCH8Op5wxsevp2wH2sQ46AJt3BSu0qIF2dn+ZBDouKaiwwjf1a
-F7LxUY5y31YTtSNjyBHouomUF3KxKbwTcl5eroNrF6CrZngPDfwWmuNETJwFpdsb
-5Q5DdYdT8w74pGJ+yp693S1K/E+P9vhWCqTyX1sNFfF529E7iF0gs+Bar/8L37OH
-SQivIuFOfzqblmQJvTJwffrVcXRAYyTjMLGoBubbfAC4eC8T6x5vdYhaeUgt6P5d
-OAVibZFkCfD5dzhEPP4Ftp8aY9GvGoCmzSstyQiEyxfFVrrvzfJ7WCIq8iohkXj3
-GAQAsG9UvfSMAbg6upO6x/JPYVOqNgKTMpt95VtuUFjiLtSWTSMh5ZkNCdl7IXbr
-sTI/0H5u4mjcoHP2F4qL
-=zLvT
+iQIcBAEBCAAGBQJRwAojAAoJEECxmPOUX5FEFckP/RA0KFSzRI6uvB8OICH6utiW
+YKunCkSciSj56tzzvAk/wol7zQDjG1TubsLvaaJQKNU+Aicao/2tHdUoqBte7emV
+Irk263U+xlaa07x8fvIbq8QOiEECNM1CWZZmfq5NQpRX7vqmKbXqELXERRKx0xUO
+KEvXoEA+oi/BTNFBlpSMuWeL1OIoB5WjDoHtWGqTqyK3bl371bWsPOlbREsIMhx4
+kcUzvPPYj4LtCOA1dS2Hc6DiMP1OGd3sHhGRU2XG7KXA/BcfdY4I45kxZaSIjxgE
+wAhshGhsuIudooiSk6qV5oP2PEiRHJCinE7RbcSDnwflqVdt76z+jTwxv9ZwSabf
+HenQduU2UDFaAtt1IxLIr2TfrbPg5CDe/eS9SI1tWPoYMHCq3e6JB8v89iYln0Kf
+AlN7McgW6EBZsxr8Vk5d7k6VXd3ENG5qGvzDiVYe7BA/BfpOVu//smh3qNZf4D7O
+puArAbRYgkWYHVorMgOq0TtLLEb3L00jYsOuN2ulQvgLZ/+Vmd+ljFf3dPu9JTOI
+/c6q+rkpl/uEU66RjzDu3iv3/yqzP10pIglzI4rVdz2fU/Mav2c1UPUKSw1H7Fb5
+0EUI41mMDahxldgWCZXmeg59XFzQoq7cZ/EekKuOqK9wPrnmrcXlbEY8mNLljGy8
+vkYHbQVjMD7NSxz3eUMt
+=BdfY
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__18_Jun_2013_16_47_46_+1000_1FnpDZcpJCYZ4Epb--
+--Signature=_Tue__18_Jun_2013_17_19_57_+1000_LAo0.u9TLvKdulc/--
