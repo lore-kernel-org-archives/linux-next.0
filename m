@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with the drm tree
-Date: Tue, 18 Jun 2013 13:04:01 +1000
-Message-ID: <20130618130401.78cd4bac29c31fce22a13897@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the usb tree
+Date: Tue, 18 Jun 2013 14:55:59 +1000
+Message-ID: <20130618145559.cc7923dac280e736c908a422@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__18_Jun_2013_13_04_01_+1000_h9oymsxEphodw9Y1"
+ boundary="Signature=_Tue__18_Jun_2013_14_55_59_+1000_9sD/ms_5+mdhN2xF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49566 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:54508 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751829Ab3FRDER (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 23:04:17 -0400
+	with ESMTP id S1753559Ab3FRE4M (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 00:56:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlZpbGxlIFN5cmrDpGzDpCI=?= <ville.syrjala@linux.intel.com>, Dave Airlie <airlied@linux.ie>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bernd Bassimir <bassimir.kernel@gmx.de>, Nico Doerr <nico.doerr@hawo.net>
 
---Signature=_Tue__18_Jun_2013_13_04_01_+1000_h9oymsxEphodw9Y1
+--Signature=_Tue__18_Jun_2013_14_55_59_+1000_9sD/ms_5+mdhN2xF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_fb.c between commit b72447cdf129 ("drm/i915:
-Drop bogus fbdev sprite disable code") from the drm tree and commit
-b51b32cde175 ("drm/i915: s/drm_i915_private_t/struct drm_i915_private/")
-from the drm-intel tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/serqt_usb2/serqt_usb2.c between commit 1143832eca8f
+("USB: serial: ports: add minor and port number") from the usb tree and
+commit d68edc2881b1 ("staging: serqt_usb2: Fixed coding style
+CamelCases") from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,41 +36,104 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/intel_fb.c
-index 3b03c3c,244060a..0000000
---- a/drivers/gpu/drm/i915/intel_fb.c
-+++ b/drivers/gpu/drm/i915/intel_fb.c
-@@@ -291,7 -292,9 +292,7 @@@ void intel_fb_output_poll_changed(struc
-  void intel_fb_restore_mode(struct drm_device *dev)
-  {
-  	int ret;
-- 	drm_i915_private_t *dev_priv =3D dev->dev_private;
-+ 	struct drm_i915_private *dev_priv =3D dev->dev_private;
- -	struct drm_mode_config *config =3D &dev->mode_config;
- -	struct drm_plane *plane;
+diff --cc drivers/staging/serqt_usb2/serqt_usb2.c
+index 880f5c0,39de5e0..0000000
+--- a/drivers/staging/serqt_usb2/serqt_usb2.c
++++ b/drivers/staging/serqt_usb2/serqt_usb2.c
+@@@ -870,10 -870,10 +870,10 @@@ static int qt_open(struct tty_struct *t
+  	usb_clear_halt(serial->dev, port->read_urb->pipe);
+  	port0->open_ports++;
  =20
-  	if (INTEL_INFO(dev)->num_pipes =3D=3D 0)
-  		return;
+- 	result =3D qt_get_device(serial, &port0->DeviceData);
++ 	result =3D qt_get_device(serial, &port0->device_data);
+ =20
+  	/* Port specific setups */
+- 	result =3D qt_open_channel(serial, port->port_number, &ChannelData);
+ -	result =3D qt_open_channel(serial, port->number, &channel_data);
+++	result =3D qt_open_channel(serial, port->port_number, &channel_data);
+  	if (result < 0) {
+  		dev_dbg(&port->dev, "qt_open_channel failed\n");
+  		return result;
+@@@ -1239,23 -1245,25 +1239,23 @@@ static void qt_set_termios(struct tty_s
+ =20
+  	/* Now determine flow control */
+  	if (cflag & CRTSCTS) {
+ -		dev_dbg(&port->dev, "%s - Enabling HW flow control port %d\n",
+ -			__func__, port->number);
+ +		dev_dbg(&port->dev, "%s - Enabling HW flow control\n", __func__);
+ =20
+  		/* Enable RTS/CTS flow control */
+- 		status =3D BoxSetHW_FlowCtrl(port->serial, index, 1);
++ 		status =3D box_set_hw_flow_ctrl(port->serial, index, 1);
+ =20
+  		if (status < 0) {
+- 			dev_dbg(&port->dev, "BoxSetHW_FlowCtrl failed\n");
++ 			dev_dbg(&port->dev, "box_set_hw_flow_ctrl failed\n");
+  			return;
+  		}
+  	} else {
+  		/* Disable RTS/CTS flow control */
+  		dev_dbg(&port->dev,
+ -			"%s - disabling HW flow control port %d\n",
+ -			__func__, port->number);
+ +			"%s - disabling HW flow control\n", __func__);
+ =20
+- 		status =3D BoxSetHW_FlowCtrl(port->serial, index, 0);
++ 		status =3D box_set_hw_flow_ctrl(port->serial, index, 0);
+  		if (status < 0) {
+- 			dev_dbg(&port->dev, "BoxSetHW_FlowCtrl failed\n");
++ 			dev_dbg(&port->dev, "box_set_hw_flow_ctrl failed\n");
+  			return;
+  		}
+ =20
+@@@ -1324,12 -1332,12 +1324,12 @@@ static inline int qt_real_tiocmget(stru
+  	int status;
+  	unsigned int index;
+ =20
+ -	index =3D tty->index - serial->minor;
+ +	index =3D port->port_number;
+  	status =3D
+- 	    BoxGetRegister(port->serial, index, MODEM_CONTROL_REGISTER, &mcr);
++ 	    box_get_register(port->serial, index, MODEM_CONTROL_REGISTER, &mcr);
+  	if (status >=3D 0) {
+  		status =3D
+- 		    BoxGetRegister(port->serial, index,
++ 		    box_get_register(port->serial, index,
+  				   MODEM_STATUS_REGISTER, &msr);
+ =20
+  	}
+@@@ -1363,9 -1371,9 +1363,9 @@@ static inline int qt_real_tiocmset(stru
+  	int status;
+  	unsigned int index;
+ =20
+ -	index =3D tty->index - serial->minor;
+ +	index =3D port->port_number;
+  	status =3D
+- 	    BoxGetRegister(port->serial, index, MODEM_CONTROL_REGISTER, &mcr);
++ 	    box_get_register(port->serial, index, MODEM_CONTROL_REGISTER, &mcr);
+  	if (status < 0)
+  		return -ESPIPE;
+ =20
 
---Signature=_Tue__18_Jun_2013_13_04_01_+1000_h9oymsxEphodw9Y1
+--Signature=_Tue__18_Jun_2013_14_55_59_+1000_9sD/ms_5+mdhN2xF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRv84mAAoJEECxmPOUX5FEJEsQAJM0sef9B/birsZv5PmB1wV2
-dSvpzgHaJmWcOXz1G5VwhHIvAl9V63p9OTFX3GBFjtb5XLfuY6CDGWagu13saLLU
-0TG+y+1t9UdbTS5nkl7GZAJwzJCCXs0Fzs05c6zxDaqN1rh2PfLEtp72OOq4k70o
-JT2IPcbaDqoNNYeAqTHL1NjVNhsMaAWkKnk0NeS4qxw57/ThiO8NBftUUd6Tt6SH
-F80oqN3RLcIRZzY3q5ERwyEsBQ/aFQ87g6ywvExRU/7oYmX9yF7sS1W/eLaIAjhJ
-0EEjqxym2GwYOA189ocxhRIjsQW3ArLIekM1bsjRSmtSSwmzHqAw7WjAZyjXM6uE
-n9NO2obmeBHtbDf9nt7PWAEnin3XOazImPzcxIlSvyfODHFlZ55hBltZ1STOVK2q
-hOc+ShxrilaSfpaQxrOh+wi+ChhnhU9q6YzCFtvRNI2P5numVUTWk8+cWxbqvTio
-F+TYV3eI0VtBOdvqux46HSu6hwNmXiRZKdijHndTYSZnedAxH1x5GjdG0+LgpSrm
-x7/QetCK1g6hlB/DB3LYkbpbpgb+cMIVQQcfN43i4IM7nCh4TpPOCTDmwbv2pGkb
-e5S+W5O+sFTD0p3SZfooH0ypMFm5uBLDiR0WI1AyUzVY2USN8IwEvyhtKJ9wLoga
-NoIVzfrfe05yasrV1PeM
-=zhC2
+iQIcBAEBCAAGBQJRv+hjAAoJEECxmPOUX5FEOF0P/iD7f1soVs8+CAEyQ/R+9fG6
+vzm38sQ67iWuxJEj5Xcir2CCQTdrm0jJJDMucvN3EKhPZA5ZkWPmsGqniKRNYEAz
+9SnfV2ZuQP4xE/Qzhx0Al/i/Hqh5pj/fLenCTeuo0f84mrXduEp3YF5vBhLiEhno
+4efUn66z05zQbUlYX2OSxZtbJf+gaWoH98otU+Gi6/WwQEEfpxkOV6jtjymk1fKf
+JFt15yKEbpC2b/57BX8cXxh+4oiuiNdLBqTbRFzXiTxcL5bU/5vaMrg4/39OFI9u
+59LMrzZZxsBlsvn87dheihk6HjGJ+VKTez0OZrBOntxTZ+giWwyEqjShJmPQ6pr8
+M00A/E159Qudt71Q8LxcHqPIpcKVhZ7QOid+ixO4q9jLQcNjv23eoNKLEtiQrA1y
+bIM3C1SETHc63ldjLBlLa809+YRS3L/ELya3Ymhj6x/D9m1VFDUv8QsrMuhGFixa
+hsyEKNsdpQ/oAOT/L3uZNUwQSlMB8+t2T/1UYZgcfSvCVYWZfBs5SHuJ54Vh+cEV
+MSHwqJlqakioIyEkSs4hsL3qYKSQFflorPJpLMAoCoHFWGSJGO1FD3Yg0VNCX5fk
+/3TDIuJhsXC2RpgHVOt/M82WTcTf3aiXztADVcQRUp4HFBH6GwyvECJgece6F53y
+lJEUCPBcu6Y+GHnOT3Xc
+=Hx75
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__18_Jun_2013_13_04_01_+1000_h9oymsxEphodw9Y1--
+--Signature=_Tue__18_Jun_2013_14_55_59_+1000_9sD/ms_5+mdhN2xF--
