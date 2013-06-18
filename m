@@ -1,62 +1,67 @@
-From: Bastian Hecht <hechtb@gmail.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the net-next tree
-Date: Tue, 18 Jun 2013 10:33:27 +0200
-Message-ID: <CABYn4sx3PYBVMyio8uo-KhwprQnCmt_5k2EMaa9_EW2ud2q2nQ@mail.gmail.com>
-References: <20130617163920.04523ba6de50bcc81563f33e@canb.auug.org.au>
-	<51BF1461.8060401@cogentembedded.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: manual merge of the irqdomain tree with the tree
+Date: Tue, 18 Jun 2013 09:42:42 +0100
+Message-ID: <CACxGe6soHMDvt+bG=m+_A5qwxqXjcgr8jORoPJwMHeHAr8__ig@mail.gmail.com>
+References: <20130618154515.828365d615bbe6b93169e706@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <51BF1461.8060401@cogentembedded.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ie0-f178.google.com ([209.85.223.178]:44133 "EHLO
+	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754717Ab3FRInD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 04:43:03 -0400
+Received: by mail-ie0-f178.google.com with SMTP id u16so9540335iet.9
+        for <linux-next@vger.kernel.org>; Tue, 18 Jun 2013 01:43:02 -0700 (PDT)
+In-Reply-To: <20130618154515.828365d615bbe6b93169e706@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, Kefeng Wang <wangkefeng.wang@huawei.com>
 
-Hello Sergei, hello Stephen,
+On Tue, Jun 18, 2013 at 6:45 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Grant,
+>
+> Today's linux-next merge of the irqdomain tree got a conflict in
+> kernel/irq/irqdomain.c between commit c5cdc67a58a2 ("irqdomain: Remove
+> temporary MIPS workaround code") from the mips tree and commit
+> bd4641e31e90 ("irq: fix checkpatch error") from the irqdomain tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Sergei is completely right I think. He was sceptic about the commit in
-a mail some days ago already. Unfortunately I recently haven't had
-access to my development environment to check what's up with this
-patch. I'm sorry that it ended up to you both to deal with it. I have
-written some simple bindings for the sh-eth and wanted to use it for
-our DT reference version for the Armadillo board but discarded it as I
-saw Nobuhiro Iwamatsu, the author of the sh-eth driver, cooked up some
-more mature version. I don't see them in the next branch of Simon, so
-until they appear there we can delete commit 9e0b428f079d ("ARM:
-shmobile: r8a7740: Add interim sh-eth device name to clocks list")
-that is only needed for sh-eth DT usage.
+Looks good, thanks Stephen.
 
-Thanks,
+g.
 
- Bastian
-
-
-2013/6/17 Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>:
-> Hello.
 >
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 >
-> On 17-06-2013 10:39, Stephen Rothwell wrote:
+> diff --cc kernel/irq/irqdomain.c
+> index a341b3d,13f2654..0000000
+> --- a/kernel/irq/irqdomain.c
+> +++ b/kernel/irq/irqdomain.c
+> @@@ -665,8 -475,20 +475,8 @@@ unsigned int irq_create_of_mapping(stru
 >
->> Today's linux-next merge of the arm-soc tree got a conflict in
->> arch/arm/mach-shmobile/clock-r8a7740.c between commit e5c9b4cd6651
->> ("sh_eth: get R8A7740 support out of #ifdef") from the net-next tree and
->> commit 9e0b428f079d ("ARM: shmobile: r8a7740: Add interim sh-eth device
->> name to clocks list") from the arm-soc tree.
->
->
->    To me that latter commit looked utterly pointless, as there's no device
-> tree support for the 'sh-eth' driver yet (and at this stage it isn't even
-> going to happen due to procedural platform data). I'm instead going to use
-> OF_DEV_AUXDATA() in the platform code which again would render that commit
-> pointless.
->
->
->> I fixed it up (see below) and can carry the fix as necessary (no action
->> is required).
->
->
->    Thanks.
->
-> WBR, Sergei
+>         domain = controller ? irq_find_host(controller) : irq_default_domain;
+>         if (!domain) {
+> -               pr_warning("no irq domain found for %s !\n",
+> -                          of_node_full_name(controller));
+>  -#ifdef CONFIG_MIPS
+>  -              /*
+>  -               * Workaround to avoid breaking interrupt controller drivers
+>  -               * that don't yet register an irq_domain.  This is temporary
+>  -               * code. ~~~gcl, Feb 24, 2012
+>  -               *
+>  -               * Scheduled for removal in Linux v3.6.  That should be enough
+>  -               * time.
+>  -               */
+>  -              if (intsize > 0)
+>  -                      return intspec[0];
+>  -#endif
+> +               pr_warn("no irq domain found for %s !\n",
+> +                       of_node_full_name(controller));
+>                 return 0;
+>         }
 >
