@@ -1,89 +1,87 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH]amilo-rfkill: add depends on i8042 in Kconfig
-Date: Tue, 18 Jun 2013 14:04:40 +0100
-Message-ID: <1371560680.3495.121.camel@deadeye.wl.decadent.org.uk>
-References: <alpine.DEB.2.02.1306181705530.28460@M2420>
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>
+Subject: [PATCH linux-next] fb: make fp_get_options name argument const
+Date: Tue, 18 Jun 2013 16:23:05 +0200
+Message-ID: <1371565386-23335-1-git-send-email-vincent.stehle@freescale.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-qrCzgLNKPYJOigAJkzo6"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53415 "EHLO
-	shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752064Ab3FRNFF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Jun 2013 09:05:05 -0400
-In-Reply-To: <alpine.DEB.2.02.1306181705530.28460@M2420>
+Received: from co1ehsobe003.messaging.microsoft.com ([216.32.180.186]:40882
+	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932868Ab3FROXa convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Jun 2013 10:23:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Xiong Zhou <jencce.kernel@gmail.com>
-Cc: matthew.garrett@nebula.com, platform-driver-x86@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, jim.epost@gmail.com
+To: linux-next@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Dave Airlie <airlied@redhat.com>, trivial@kernel.org
+
+drm_get_connector_name now returns a const value, which causes the foll=
+owing
+compilation warning:
+
+  drivers/gpu/drm/drm_fb_helper.c: In function =E2=80=98drm_fb_helper_p=
+arse_command_line=E2=80=99:
+  drivers/gpu/drm/drm_fb_helper.c:127:3: warning: passing argument 1 of=
+ =E2=80=98fb_get_options=E2=80=99 discards =E2=80=98const=E2=80=99 qual=
+ifier from pointer target type [enabled by default]
+  In file included from drivers/gpu/drm/drm_fb_helper.c:35:0:
+  include/linux/fb.h:627:12: note: expected =E2=80=98char *=E2=80=99 bu=
+t argument is of type =E2=80=98const char *=E2=80=99
+
+As fb_get_options uses its name argument as read only, make it const. T=
+his
+fixes the aforementioned compilation warning.
+
+Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@freescale.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: trivial@kernel.org
+---
 
 
---=-qrCzgLNKPYJOigAJkzo6
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Tue, 2013-06-18 at 17:21 +0800, Xiong Zhou wrote:
-> From: Xiong Zhou <jencce.kernel@gmail.com>
->=20
-> Fix randconfig build failure for Amilo x86 platform driver.
-> AMILO_RFKILL requires SERIO_I8042 being available.
->=20
-> amilo-rfkill.c:(.text+0x108b5b): undefined reference to `i8042_lock_chip'
-> amilo-rfkill.c:(.text+0x108b69): undefined reference to `i8042_command'
-> amilo-rfkill.c:(.text+0x108b71): undefined reference to `i8042_unlock_chi=
-p'
->=20
-> Reported-by: Jim Davis <jim.epost@gmail.com>
-> Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
+I remarked this warning while building linux-next with imx_v6_v7_defcon=
+fig.
+Is changing fb_get_options prototype "permitted", please?
 
-Acked-by: Ben Hutchings <ben@decadent.org.uk>
+Best regards,
 
-But I thought somehow sent this same fix a while back...
+V.
 
-Ben.
 
-> ---
->  drivers/platform/x86/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 8577261..37645b9 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -176,6 +176,7 @@ config FUJITSU_TABLET
->  config AMILO_RFKILL
->  	tristate "Fujitsu-Siemens Amilo rfkill support"
->  	depends on RFKILL
-> +	depends on SERIO_I8042
->  	---help---
->  	  This is a driver for enabling wifi on some Fujitsu-Siemens Amilo
->  	  laptops.
+ drivers/video/fbmem.c |    2 +-
+ include/linux/fb.h    |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/video/fbmem.c b/drivers/video/fbmem.c
+index 098bfc6..d8d5779 100644
+--- a/drivers/video/fbmem.c
++++ b/drivers/video/fbmem.c
+@@ -1881,7 +1881,7 @@ static int ofonly __read_mostly;
+  *
+  * NOTE: Needed to maintain backwards compatibility
+  */
+-int fb_get_options(char *name, char **option)
++int fb_get_options(const char *name, char **option)
+ {
+ 	char *opt, *options =3D NULL;
+ 	int retval =3D 0;
+diff --git a/include/linux/fb.h b/include/linux/fb.h
+index d49c60f..ffac70a 100644
+--- a/include/linux/fb.h
++++ b/include/linux/fb.h
+@@ -624,7 +624,7 @@ extern void fb_pad_aligned_buffer(u8 *dst, u32 d_pi=
+tch, u8 *src, u32 s_pitch, u3
+ extern void fb_set_suspend(struct fb_info *info, int state);
+ extern int fb_get_color_depth(struct fb_var_screeninfo *var,
+ 			      struct fb_fix_screeninfo *fix);
+-extern int fb_get_options(char *name, char **option);
++extern int fb_get_options(const char *name, char **option);
+ extern int fb_new_modelist(struct fb_info *info);
+=20
+ extern struct fb_info *registered_fb[FB_MAX];
 --=20
-Ben Hutchings
-Humans are not rational beings; they are rationalising beings.
-
---=-qrCzgLNKPYJOigAJkzo6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIVAwUAUcBa6Oe/yOyVhhEJAQpvVw//QZ9lY/nuK8R7PL+FF5tnikbBTNScDP2h
-XFvI608KOplFe6ym6eTE5VSpd6195Go/kCjX+fpCzhjfJeRG92GSdYEWzKNw20oB
-FtZHsoH8yVRcIg0lAnVNfdpkMFQmjE74yWgXdYPzerZjHszX1H8/iUeRTFsXeuW6
-wPHpYEpAVX/NJB/vjSso/oVJ1g5QohFQOR+k5xY7e1PB5Oqd2oOl3y/K6+5VzBl0
-nXsexwCF9w7Yl8UP3iwCpMVWQSYY//0pcVdpPZzOZI53Sf9a21MoRHgfeXZZwuKu
-jOgCLAUAhfOBhpKBJ67OFepQ2vySr9JJ+el2d2nfqxyWlJ+ihJujiHE7wNyB/QRb
-cTh7KVorT1w06PDP/XKGqfm3BCvQZNCH3yLkIbLLtDuYCGsoL8S+au0ppr0W8c3X
-KmY6c752ULrlRn4hXtx2YVdJJeslkCtaxoaTgBlVEjZBC8fajlRDuF9lscTrbq3K
-x1d0V2MSVCqGedmrGJulUsi7JsAQU1S9nqH+fbYeRgiiLEEsOLRMcBmPKoPoG7Ad
-JC8bW5SEVZywwPf00soEkNvKK33aplQqgj28glhflyoH2lGL0oQLGP2/Vyb67K72
-WqSEWCXmvcD5QnxfMDN92o3mViBfQogTFIbjPC/AHGokaqdW+GrcITSrO9po/C43
-GC8nrJzNU0U=
-=UHac
------END PGP SIGNATURE-----
-
---=-qrCzgLNKPYJOigAJkzo6--
+1.7.10.4
