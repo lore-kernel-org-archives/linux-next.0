@@ -1,69 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v2 08/11] irqdomain: Refactor
- irq_domain_associate_many()
-Date: Tue, 18 Jun 2013 11:37:50 +1000
-Message-ID: <20130618113750.a59f53a3c60efb853e3b9295@canb.auug.org.au>
-References: <1371244086-9189-1-git-send-email-grant.likely@linaro.org>
-	<1371244086-9189-9-git-send-email-grant.likely@linaro.org>
-	<4521.1371518445@ale.ozlabs.ibm.com>
-	<5220.1371518734@ale.ozlabs.ibm.com>
+Subject: linux-next: manual merge of the drm-intel tree with the drm tree
+Date: Tue, 18 Jun 2013 13:04:01 +1000
+Message-ID: <20130618130401.78cd4bac29c31fce22a13897@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__18_Jun_2013_11_37_50_+1000_+OidcKg.lgo=huyv"
+ boundary="Signature=_Tue__18_Jun_2013_13_04_01_+1000_h9oymsxEphodw9Y1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52102 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49566 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752779Ab3FRBiH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 21:38:07 -0400
-In-Reply-To: <5220.1371518734@ale.ozlabs.ibm.com>
+	with ESMTP id S1751829Ab3FRDER (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jun 2013 23:04:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Neuling <mikey@neuling.org>
-Cc: Grant Likely <grant.likely@linaro.org>, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, Linux PPC dev <linuxppc-dev@ozlabs.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlZpbGxlIFN5cmrDpGzDpCI=?= <ville.syrjala@linux.intel.com>, Dave Airlie <airlied@linux.ie>
 
---Signature=_Tue__18_Jun_2013_11_37_50_+1000_+OidcKg.lgo=huyv
+--Signature=_Tue__18_Jun_2013_13_04_01_+1000_h9oymsxEphodw9Y1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Tue, 18 Jun 2013 11:25:34 +1000 Michael Neuling <mikey@neuling.org> wrot=
-e:
->
-> Michael Neuling <mikey@neuling.org> wrote:
->=20
-> > In next-20130617 we are getting the below crash on POWER7.  Bisecting,
-> > points to this patch (d39046ec72 in next)
->=20
-> Also, reverting just d39046ec72 fixes the crash in next-20130617.
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/intel_fb.c between commit b72447cdf129 ("drm/i915:
+Drop bogus fbdev sprite disable code") from the drm tree and commit
+b51b32cde175 ("drm/i915: s/drm_i915_private_t/struct drm_i915_private/")
+from the drm-intel tree.
 
-I will revert that commit in linux-next today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__18_Jun_2013_11_37_50_+1000_+OidcKg.lgo=huyv
+diff --cc drivers/gpu/drm/i915/intel_fb.c
+index 3b03c3c,244060a..0000000
+--- a/drivers/gpu/drm/i915/intel_fb.c
++++ b/drivers/gpu/drm/i915/intel_fb.c
+@@@ -291,7 -292,9 +292,7 @@@ void intel_fb_output_poll_changed(struc
+  void intel_fb_restore_mode(struct drm_device *dev)
+  {
+  	int ret;
+- 	drm_i915_private_t *dev_priv =3D dev->dev_private;
++ 	struct drm_i915_private *dev_priv =3D dev->dev_private;
+ -	struct drm_mode_config *config =3D &dev->mode_config;
+ -	struct drm_plane *plane;
+ =20
+  	if (INTEL_INFO(dev)->num_pipes =3D=3D 0)
+  		return;
+
+--Signature=_Tue__18_Jun_2013_13_04_01_+1000_h9oymsxEphodw9Y1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRv7nzAAoJEECxmPOUX5FE/eQP/Aq9PEpeFjnVHGR4eiCGkeZj
-gtJbs9AC/Rz4BKk9RU2ydyxyFp9doEmQUbmks4e9K/1MB2hCztEHlsWAuxnNdE5Z
-ZOX0bGRvPELMpCBGI3TKjV4+srVnYpDbbeB3nVpDV0mgnQO9Dzw/lR0trHusao1A
-yVtba9Cc4i4ZxS0x34GLnaxRtiovY5qQFS4sqvEm/fAHdkkDJOY+siA+RM56ujKn
-OhI7zfX6LVsSYvwgtFCshJx6RK2mJ1iEbvhPTs2XnQ/eOg4dXoG1wrKTPuXKfVvI
-8srkMHpL//jdl+h6daAMwSiteo/4mnWI7CTeGmBK05adSYiHyxuAs/JZOa39Bv5V
-jbP3hx7WxfjBmmX0coOVOGUyNgxLDY4A2S4bMwFVBiDPLzprjcpJAPDwzVdYWZMZ
-eDXIfykbE97P5y8+DpKG51wJaj2IlEEJ1d9s0Ol5ZgX045/1fDxrla5nyxdVXvLR
-Hkh17k6LfDL9umezZHPa2BmxWDsRZMirPKvTUkz5JGdD0PbKSdvVpmHG2E6U+PVP
-luHHLPvkybSf2QiIQLcIKnT2VAwTlZ1WePAsEuvAInq8v1UvEMK5zlu6cMonqspX
-FX9QCJXCQ5A5CFzzLmrfRzOTAo8MwLN8ef1mD06lrndb6oZFFCsXOGIMpyAwMooq
-uLwBO5cf3JXdx4/eprgq
-=EK+z
+iQIcBAEBCAAGBQJRv84mAAoJEECxmPOUX5FEJEsQAJM0sef9B/birsZv5PmB1wV2
+dSvpzgHaJmWcOXz1G5VwhHIvAl9V63p9OTFX3GBFjtb5XLfuY6CDGWagu13saLLU
+0TG+y+1t9UdbTS5nkl7GZAJwzJCCXs0Fzs05c6zxDaqN1rh2PfLEtp72OOq4k70o
+JT2IPcbaDqoNNYeAqTHL1NjVNhsMaAWkKnk0NeS4qxw57/ThiO8NBftUUd6Tt6SH
+F80oqN3RLcIRZzY3q5ERwyEsBQ/aFQ87g6ywvExRU/7oYmX9yF7sS1W/eLaIAjhJ
+0EEjqxym2GwYOA189ocxhRIjsQW3ArLIekM1bsjRSmtSSwmzHqAw7WjAZyjXM6uE
+n9NO2obmeBHtbDf9nt7PWAEnin3XOazImPzcxIlSvyfODHFlZ55hBltZ1STOVK2q
+hOc+ShxrilaSfpaQxrOh+wi+ChhnhU9q6YzCFtvRNI2P5numVUTWk8+cWxbqvTio
+F+TYV3eI0VtBOdvqux46HSu6hwNmXiRZKdijHndTYSZnedAxH1x5GjdG0+LgpSrm
+x7/QetCK1g6hlB/DB3LYkbpbpgb+cMIVQQcfN43i4IM7nCh4TpPOCTDmwbv2pGkb
+e5S+W5O+sFTD0p3SZfooH0ypMFm5uBLDiR0WI1AyUzVY2USN8IwEvyhtKJ9wLoga
+NoIVzfrfe05yasrV1PeM
+=zhC2
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__18_Jun_2013_11_37_50_+1000_+OidcKg.lgo=huyv--
+--Signature=_Tue__18_Jun_2013_13_04_01_+1000_h9oymsxEphodw9Y1--
