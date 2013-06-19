@@ -1,59 +1,76 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with the usb tree
-Date: Wed, 19 Jun 2013 16:45:21 +1000
-Message-ID: <20130619164521.f5477ccb559cc6c6f8b0a19a@canb.auug.org.au>
+From: Ming Lei <ming.lei@canonical.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ driver-core.current tree
+Date: Wed, 19 Jun 2013 14:58:39 +0800
+Message-ID: <CACVXFVMhVs7Wy1A=TfczYzHLFwyRPhEGW9Yo9hTERekaxSnpdQ@mail.gmail.com>
+References: <20130619153225.9ff68f0984bfa54333c4df10@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Jun_2013_16_45_21_+1000__3CCRdVQ7BlCL.j+"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42214 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933042Ab3FSGpa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 02:45:30 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33502 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933863Ab3FSG6m (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 02:58:42 -0400
+In-Reply-To: <20130619153225.9ff68f0984bfa54333c4df10@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg KH <greg@kroah.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
 
---Signature=_Wed__19_Jun_2013_16_45_21_+1000__3CCRdVQ7BlCL.j+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 19, 2013 at 1:32 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Greg,
+>
+> Today's linux-next merge of the driver-core tree got a conflict in
+> drivers/base/firmware_class.c between commit 875979368eb4 ("firmware
+> loader: fix use-after-free by double abort") from the driver-core.current
+> tree and commit fe304143b0c3 ("firmware: Avoid deadlock of usermodehelper
+> lock at shutdown") from the driver-core tree.
+>
+> I fixed it up (more may be required - see below) and can carry the fix as
+> necessary (no action is required).
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>
+> diff --cc drivers/base/firmware_class.c
+> index 01e2103,6ede229..0000000
+> --- a/drivers/base/firmware_class.c
+> +++ b/drivers/base/firmware_class.c
+> @@@ -446,22 -452,11 +452,18 @@@ static struct firmware_priv *to_firmwar
+>         return container_of(dev, struct firmware_priv, dev);
+>   }
+>
+> - static void fw_load_abort(struct firmware_priv *fw_priv)
+> + static void fw_load_abort(struct firmware_buf *buf)
+>   {
+> -       struct firmware_buf *buf = fw_priv->buf;
+> -
+>  +      /*
+>  +       * There is a small window in which user can write to 'loading'
+>  +       * between loading done and disappearance of 'loading'
+>  +       */
+>  +      if (test_bit(FW_STATUS_DONE, &buf->status))
+>  +              return;
+>  +
+> +       list_del_init(&buf->pending_list);
+>         set_bit(FW_STATUS_ABORT, &buf->status);
+>         complete_all(&buf->completion);
+> -
+> -       /* avoid user action after loading abort */
+> -       fw_priv->buf = NULL;
 
-Hi Kukjin,
+Hmm, maybe the most important part in the commit 875979368eb4
+("firmware loader: fix use-after-free by double abort") has been removed, :-)
 
-Today's linux-next merge of the samsung tree got a conflict in
-drivers/usb/Kconfig between commit d9ea21a77927 ("usb: host: make
-USB_ARCH_HAS_?HCI obsolete") from the usb tree and commit 58d5b72088cc
-("USB: Check for ARCH_EXYNOS separately") from the samsung tree.
+In fact, the commit 87597936 is for linus tree only because it is a fix,
+so the conflict is caused by merging it with other firmware loader patches
+in -next tree.
 
-I fixed it up (USB_ARCH_HAS_EHCI is no longer used) and can carry the fix
-as necessary (no action is required).
+Greg, I can figure out one patch for -next easily, but it depends you
+push it on 3.10-rc or 3.11-rc.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__19_Jun_2013_16_45_21_+1000__3CCRdVQ7BlCL.j+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRwVOGAAoJEECxmPOUX5FED/8P/ikBJtIzlUjEVUvuTt3QUXc3
-SeAuxrXIpWubilBI9JTygnOZ0b4KLQCoQ0oPB6ZIKpTgZkyu2RxgcUBG4MnRAdp2
-U8RgI562YXFEDrRvZsbXLOWTUaclg0Qsn9f76VM7Mmner1E6HeiMZ69XsB7KE/ja
-QXRZ6G1yxQkkrRNG+BE6volKGbQyJCr+f9FtamUlCaefCNxCJzgHZABoUp070GgE
-EUbAs9v65NjgcDEn+FLimdxXUBfCUvnnGFHdtTFAp3sUIVHgj6OcW+zA3kXdI2q8
-073tY4Jg9Bdy0IyULajpZHssCTmwXyzH0OBvwgV4/x76IK7JTDNiFCMIeEyRuqRP
-4Djx/iVVnp4FdLsVoy2EEgJ92+qwlh6rcFwu8YLYeAQZRJYB4ctK5YyvyE30AOnb
-HrJlMUIN9TJDcIAxdOyfw9N3ZPv412FHxC6glT/QX3KyWVzdecI3frcQAELMufRY
-QuwTXncXuCcMKotFZ+KooIBbdAGQwatWM/Ud4wl9Hvl/dgImAScFg+9KN6jZd3s4
-iRHtsrQlNdOC+bgxWZ8r4pYVzKkRcdzrpcaOv67+aVU0cbYnutsN1E7uSTFE+OLv
-387BdZTYBSVUPVHfx9qHGc8Ncf7zRj7qigR8NNUu4JwQoe4awFesr4AJqjmnstPn
-76UB7BFW2CUV6pjP9zXY
-=QXbM
------END PGP SIGNATURE-----
-
---Signature=_Wed__19_Jun_2013_16_45_21_+1000__3CCRdVQ7BlCL.j+--
+Thanks,
+--
+Ming Lei
