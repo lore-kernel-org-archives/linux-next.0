@@ -1,110 +1,163 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the arm-current tree
-Date: Wed, 19 Jun 2013 17:38:30 +1000
-Message-ID: <20130619173830.f8e821a88752aa95f8b50cab@canb.auug.org.au>
+From: Glauber Costa <glommer@gmail.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the ext4 tree
+Date: Wed, 19 Jun 2013 11:44:04 +0400
+Message-ID: <20130619074402.GC1990@localhost.localdomain>
+References: <20130619172721.00e757acd76e1f9d362f59be@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Jun_2013_17_38_30_+1000_QDr2v6AVEk6PL/8D"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35639 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754131Ab3FSHij (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 03:38:39 -0400
+Received: from mail-la0-f42.google.com ([209.85.215.42]:47684 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756555Ab3FSHoJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 03:44:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20130619172721.00e757acd76e1f9d362f59be@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Russell King <rmk@arm.linux.org.uk>, Robin Holt <holt@sgi.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zheng Liu <wenqing.lz@taobao.com>, Theodore Ts'o <tytso@mit.edu>, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>
 
---Signature=_Wed__19_Jun_2013_17_38_30_+1000_QDr2v6AVEk6PL/8D
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 19, 2013 at 05:27:21PM +1000, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm tree got a conflict in
+> fs/ext4/extents_status.c between commit 6480bad916be ("ext4: improve
+> extent cache shrink mechanism to avoid to burn CPU time") from the ext
+> tree and commit 1f42d0934b4e ("fs: convert fs shrinkers to new scan/count
+> API") from the akpm tree.
+> 
+> I fixed it up (I am not sure if the result makes complete sense - see
+> below) and can carry the fix as necessary (no action is required).
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc fs/ext4/extents_status.c
+> index 80dcc59,4bce4f0..0000000
+> --- a/fs/ext4/extents_status.c
+> +++ b/fs/ext4/extents_status.c
+> @@@ -876,58 -878,32 +876,63 @@@ int ext4_es_zeroout(struct inode *inode
+>   				     EXTENT_STATUS_WRITTEN);
+>   }
+>   
+>  +static int ext4_inode_touch_time_cmp(void *priv, struct list_head *a,
+>  +				     struct list_head *b)
+>  +{
+>  +	struct ext4_inode_info *eia, *eib;
+>  +	unsigned long diff;
+>  +
+>  +	eia = list_entry(a, struct ext4_inode_info, i_es_lru);
+>  +	eib = list_entry(b, struct ext4_inode_info, i_es_lru);
+>  +
+>  +	diff = eia->i_touch_when - eib->i_touch_when;
+>  +	if (diff < 0)
+>  +		return -1;
+>  +	if (diff > 0)
+>  +		return 1;
+>  +	return 0;
+>  +}
+>   
+This comes straight from ext4, so no problem.
 
-Hi Andrew,
+Now we just need to make sure that the shrinker is clearly separated
+between a count part and a scan part.
 
-Today's linux-next merge of the akpm tree got a conflict in
-arch/arm/kernel/process.c between commit 19ab428f4b79 ("ARM: 7759/1:
-decouple CPU offlining from reboot/shutdown") from the  tree and commit
-("reboot: move arch/x86 reboot=3D handling to generic kernel") from the
-akpm tree.
+> - static int ext4_es_shrink(struct shrinker *shrink, struct shrink_control *sc)
+> + static long ext4_es_count(struct shrinker *shrink, struct shrink_control *sc)
+> + {
+> + 	long nr;
+> + 	struct ext4_sb_info *sbi = container_of(shrink,
+> + 					struct ext4_sb_info, s_es_shrinker);
+> + 
+> + 	nr = percpu_counter_read_positive(&sbi->s_extent_cache_cnt);
+> + 	trace_ext4_es_shrink_enter(sbi->s_sb, sc->nr_to_scan, nr);
+> + 	return nr;
+> + }
+The count seems okay.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+> + 
+> + static long ext4_es_scan(struct shrinker *shrink, struct shrink_control *sc)
+>   {
+>   	struct ext4_sb_info *sbi = container_of(shrink,
+>   					struct ext4_sb_info, s_es_shrinker);
+>   	struct ext4_inode_info *ei;
+>  -	struct list_head *cur, *tmp, scanned;
+>  +	struct list_head *cur, *tmp;
+>  +	LIST_HEAD(skiped);
+>   	int nr_to_scan = sc->nr_to_scan;
+> - 	int ret, nr_shrunk = 0;
+> - 
+> - 	ret = percpu_counter_read_positive(&sbi->s_extent_cache_cnt);
+> - 	trace_ext4_es_shrink_enter(sbi->s_sb, nr_to_scan, ret);
+> - 
+> - 	if (!nr_to_scan)
+> - 		return ret;
+> + 	int ret = 0, nr_shrunk = 0;
+>   
+>  -	INIT_LIST_HEAD(&scanned);
+>  -
+>   	spin_lock(&sbi->s_es_lru_lock);
+>  +
+>  +	/*
+>  +	 * If the inode that is at the head of LRU list is newer than
+>  +	 * last_sorted time, that means that we need to sort this list.
+>  +	 */
+>  +	ei = list_first_entry(&sbi->s_es_lru, struct ext4_inode_info, i_es_lru);
+>  +	if (sbi->s_es_last_sorted < ei->i_touch_when) {
+>  +		list_sort(NULL, &sbi->s_es_lru, ext4_inode_touch_time_cmp);
+>  +		sbi->s_es_last_sorted = jiffies;
+>  +	}
+>  +
+They are sorting the list, but that doesn't change the ammount of items they report.
+So far it is fine. My only concern here would be locking, but it seems to be all
+protected by the s_es_lru_lock.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+>   	list_for_each_safe(cur, tmp, &sbi->s_es_lru) {
+>  -		list_move_tail(cur, &scanned);
+>  +		/*
+>  +		 * If we have already reclaimed all extents from extent
+>  +		 * status tree, just stop the loop immediately.
+>  +		 */
+>  +		if (percpu_counter_read_positive(&sbi->s_extent_cache_cnt) == 0)
+>  +			break;
+>   
+>   		ei = list_entry(cur, struct ext4_inode_info, i_es_lru);
+>   
+> @@@ -951,22 -923,22 +956,22 @@@
+>   		if (nr_to_scan == 0)
+>   			break;
+>   	}
+>  -	list_splice_tail(&scanned, &sbi->s_es_lru);
+>  +
+>  +	/* Move the newer inodes into the tail of the LRU list. */
+>  +	list_splice_tail(&skiped, &sbi->s_es_lru);
+>   	spin_unlock(&sbi->s_es_lru_lock);
+>   
+> - 	ret = percpu_counter_read_positive(&sbi->s_extent_cache_cnt);
+>   	trace_ext4_es_shrink_exit(sbi->s_sb, nr_shrunk, ret);
+> - 	return ret;
+> + 	return nr_shrunk;
+>   }
+>   
+This part also seems fine.
 
-diff --cc arch/arm/kernel/process.c
-index 4f569dc,5cbd139..0000000
---- a/arch/arm/kernel/process.c
-+++ b/arch/arm/kernel/process.c
-@@@ -175,39 -176,16 +175,29 @@@ void arch_cpu_idle(void
-  		default_idle();
-  }
- =20
-- enum reboot_mode reboot_mode =3D REBOOT_HARD;
--=20
-- static int __init reboot_setup(char *str)
-- {
-- 	if ('s' =3D=3D str[0])
-- 		reboot_mode =3D REBOOT_SOFT;
-- 	return 1;
-- }
-- __setup("reboot=3D", reboot_setup);
--=20
- +/*
- + * Called by kexec, immediately prior to machine_kexec().
- + *
- + * This must completely disable all secondary CPUs; simply causing those =
-CPUs
- + * to execute e.g. a RAM-based pin loop is not sufficient. This allows the
- + * kexec'd kernel to use any and all RAM as it sees fit, without having to
- + * avoid any code or data used by any SW CPU pin loop. The CPU hotplug
- + * functionality embodied in disable_nonboot_cpus() to achieve this.
- + */
-  void machine_shutdown(void)
-  {
- -#ifdef CONFIG_SMP
- -	smp_send_stop();
- -#endif
- +	disable_nonboot_cpus();
-  }
- =20
- +/*
- + * Halting simply requires that the secondary CPUs stop performing any
- + * activity (executing tasks, handling interrupts). smp_send_stop()
- + * achieves this.
- + */
-  void machine_halt(void)
-  {
- -	machine_shutdown();
- +	smp_send_stop();
- +
-  	local_irq_disable();
-  	while (1);
-  }
+>  -void ext4_es_register_shrinker(struct super_block *sb)
+>  +void ext4_es_register_shrinker(struct ext4_sb_info *sbi)
+>   {
+>  -	struct ext4_sb_info *sbi;
+>  -
+>  -	sbi = EXT4_SB(sb);
+>   	INIT_LIST_HEAD(&sbi->s_es_lru);
+>   	spin_lock_init(&sbi->s_es_lru_lock);
+>  +	sbi->s_es_last_sorted = 0;
+> - 	sbi->s_es_shrinker.shrink = ext4_es_shrink;
+> + 	sbi->s_es_shrinker.scan_objects = ext4_es_scan;
+> + 	sbi->s_es_shrinker.count_objects = ext4_es_count;
+>   	sbi->s_es_shrinker.seeks = DEFAULT_SEEKS;
+>   	register_shrinker(&sbi->s_es_shrinker);
+>   }
 
---Signature=_Wed__19_Jun_2013_17_38_30_+1000_QDr2v6AVEk6PL/8D
-Content-Type: application/pgp-signature
+And so does this.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRwV/6AAoJEECxmPOUX5FEsjMP/iiNpXm1kr7TdzzbXzJjXGRD
-HZKBv8rCHOJlJea4x4Wkpe6V5e2u++b6fem8SGOTKxHl/EQcFYhJiogscamrxVOH
-4BGb2+nQ5zl2KzckaQse7ymmjuob0jVewkFC4x9O3zJS8b10pxmjSjN7Ozdn5Ejd
-G16Yf1q8+eGxG87E2LF/j5nUuLFfRJDXfryHoF9ddSGwOvwzOHMun8DtUxQXz2GT
-6MbFJRgMQglBk5V63eQQfl6GgFmwjrHg+bWM83R9e2u560va9j7B2Z6ROgooeHgp
-ms4/ZutGrylk5MT9ty8DJ83YW1R/y8gjuEZSe+6Y1J7JGSW/eUKPduc1ON3vxTIN
-uaUlPiJkY6Iq3NXTZrIlRU5tpepO5MKPFcsyJVXIzVPejTJvlsVtt/xm5XgY6MNx
-Tk17TpLJCpYC1yafRHXluqDzBUS0C1WSFLaUr+EBZFcY+k5B5ragSeFpEqghqE/3
-T9JsDVU6PU6uK6dfFaqRyCmJHoheVZ7FyaJ40tjKaEhKFWODcabxISWOsxQMyBdL
-AcXif1AARynp/kEQMKoofpyfil5+7jp9tWGXduySx6CPAesyBXsZ7SYZZDrStLlw
-w7Bxg/KOGtVBtD13+NiSo9TFx3InK1KIPhjznQfVg3Fd0+kei+4nkPZjVaVdRZEv
-WMFy7Luu2IKerKaeNPXo
-=szCs
------END PGP SIGNATURE-----
-
---Signature=_Wed__19_Jun_2013_17_38_30_+1000_QDr2v6AVEk6PL/8D--
+I believe the resolution is okay, at least from our PoV.
