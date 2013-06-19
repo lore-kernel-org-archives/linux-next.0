@@ -1,70 +1,79 @@
-From: Xiong Zhou <jencce.kernel@gmail.com>
-Subject: Re: [PATCH]amilo-rfkill: add depends on i8042 in Kconfig
-Date: Wed, 19 Jun 2013 09:09:11 +0800
-Message-ID: <CADJHv_vZiPsDUiLrFao41rRVduf+AYFm0NuvpNaCW8S3KrAjnA@mail.gmail.com>
-References: <alpine.DEB.2.02.1306181705530.28460@M2420>
-	<1371560680.3495.121.camel@deadeye.wl.decadent.org.uk>
-	<51C07608.2070406@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ceph tree with Linus' tree
+Date: Wed, 19 Jun 2013 11:22:07 +1000
+Message-ID: <20130619112207.e7c50605c8f93bce4ccdcae0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__19_Jun_2013_11_22_07_+1000_vcoj0R6CTxskVvx3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:54655 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933023Ab3FSBJO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 21:09:14 -0400
-In-Reply-To: <51C07608.2070406@infradead.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44865 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932687Ab3FSBWS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 21:22:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Ben Hutchings <ben@decadent.org.uk>, matthew.garrett@nebula.com, platform-driver-x86@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, jim.epost@gmail.com
+To: Sage Weil <sage@newdream.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <elder@inktank.com>, Al Viro <viro@zeniv.linux.org.uk>
 
-2013/6/18 Randy Dunlap <rdunlap@infradead.org>:
-> On 06/18/13 06:04, Ben Hutchings wrote:
->> On Tue, 2013-06-18 at 17:21 +0800, Xiong Zhou wrote:
->>> From: Xiong Zhou <jencce.kernel@gmail.com>
->>>
->>> Fix randconfig build failure for Amilo x86 platform driver.
->>> AMILO_RFKILL requires SERIO_I8042 being available.
->>>
->>> amilo-rfkill.c:(.text+0x108b5b): undefined reference to `i8042_lock_chip'
->>> amilo-rfkill.c:(.text+0x108b69): undefined reference to `i8042_command'
->>> amilo-rfkill.c:(.text+0x108b71): undefined reference to `i8042_unlock_chip'
->>>
->>> Reported-by: Jim Davis <jim.epost@gmail.com>
->>> Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
->>
->> Acked-by: Ben Hutchings <ben@decadent.org.uk>
->>
->> But I thought somehow sent this same fix a while back...
->
-> Yes, I reported it and sent a patch for it that you acked...
-> I guess my patch was never picked up.
->
+--Signature=_Wed__19_Jun_2013_11_22_07_+1000_vcoj0R6CTxskVvx3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-... Better someone pick this up.
+Hi Sage,
 
+Today's linux-next merge of the ceph tree got a conflict in
+drivers/block/rbd.c between commit db2a144bedd5
+("block_device_operations->release() should return void") from Linus'
+tree and commit 87f11b7221f7 ("rbd: don't hold ctl_mutex to get/put
+device") from the ceph tree.
 
->>
->> Ben.
->>
->>> ---
->>>  drivers/platform/x86/Kconfig |    1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
->>> index 8577261..37645b9 100644
->>> --- a/drivers/platform/x86/Kconfig
->>> +++ b/drivers/platform/x86/Kconfig
->>> @@ -176,6 +176,7 @@ config FUJITSU_TABLET
->>>  config AMILO_RFKILL
->>>      tristate "Fujitsu-Siemens Amilo rfkill support"
->>>      depends on RFKILL
->>> +    depends on SERIO_I8042
->>>      ---help---
->>>        This is a driver for enabling wifi on some Fujitsu-Siemens Amilo
->>>        laptops.
->>
->
->
-> --
-> ~Randy
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+BTW, Sage, there is no Signed-off-by for you in the ceph tree commit (and
+several others - even though you committed them).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/block/rbd.c
+index 3063452,f24e241..0000000
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@@ -507,9 -505,9 +505,7 @@@ static void rbd_release(struct gendisk=20
+  	spin_unlock_irq(&rbd_dev->lock);
+  	rbd_assert(open_count_before > 0);
+ =20
+- 	mutex_lock_nested(&ctl_mutex, SINGLE_DEPTH_NESTING);
+  	put_device(&rbd_dev->dev);
+- 	mutex_unlock(&ctl_mutex);
+ -
+ -	return 0;
+  }
+ =20
+  static const struct block_device_operations rbd_bd_ops =3D {
+
+--Signature=_Wed__19_Jun_2013_11_22_07_+1000_vcoj0R6CTxskVvx3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRwQfDAAoJEECxmPOUX5FERNkP/i43oPdkJjhOT7P3Lxf5fGux
+8P66eXYljBHI4HvSOc+3obLXk63iFBefqfcdNP+WoAy5QYhq+hzxBexxE7Jzm29C
+X4AnR76ua7/T8PzMTfkfIVlRkgsW2JDIXTnUwR7RUz2hKDhi+RA4AeUYwCyh8i+x
+LFafcwKi1fSYGG7Ar8p+3UWs2N/RzxkdxtoheiDlhUg0RqgbY7eJW7spWgfUJ2Sg
+GOoha7VQv3m6usPUxflBhW7gipzEPFJXoPJFG3IAKAp/JxhKDxF6AR2xACjUSQjN
+WGarJbaoo4wR7n4ekApF7rci/XgRmX4OOZPRlGaI08skCan4RPR6dho6D1mfeFO8
+B3Xf5lG8JVIp47kauvZj5zlLEj8wOG1srv+XJdwU45V/VL5i1E/MYtMO8eIndiLe
+AQVDwSU7vdBTECURARRFjo77Cna5ryCwacvqQeAbQp7NWgZOXBJJVA5Uqfcnnyph
+1LDNYxlSF50nm+IF1sN3uaUiL1Z+ZxFzRg53SQtDkt/Sm488V8n1dnuIjj6WTDtL
+apIdnJUuwEJyi3AHWC/bzhuh3MD87W0i9IFkaR+oO6tpWofdmHkYtFs6Za/VVYnR
+Vz6rN86c22mNV1/GClZ+xSS0E47WgVTBm6SLFhaHGItAPahYgb6B/FxRF3eVRvpM
+oGmSZX1x2s7WjBFyhcZ/
+=Jed+
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__19_Jun_2013_11_22_07_+1000_vcoj0R6CTxskVvx3--
