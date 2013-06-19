@@ -1,55 +1,37 @@
-From: Peng Tao <bergwolf@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- tree related)
-Date: Wed, 19 Jun 2013 17:26:57 +0800
-Message-ID: <CA+a=Yy4z-ufq2GEtzC17TBbrNGWv6ZUzuVe=VLBH48Df=3HZxA@mail.gmail.com>
-References: <20130619181031.8b53acc44466ba70a47e1fcd@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the samsung tree with the usb tree
+Date: Wed, 19 Jun 2013 20:53:05 +0900
+Message-ID: <1f6801ce6ce3$8f1b7380$ad525a80$%kim@samsung.com>
+References: <20130619164521.f5477ccb559cc6c6f8b0a19a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f49.google.com ([74.125.82.49]:33595 "EHLO
-	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933947Ab3FSJ1T (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 05:27:19 -0400
-In-Reply-To: <20130619181031.8b53acc44466ba70a47e1fcd@canb.auug.org.au>
+Received: from mailout3.samsung.com ([203.254.224.33]:52050 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933666Ab3FSLxH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 07:53:07 -0400
+In-reply-to: <20130619164521.f5477ccb559cc6c6f8b0a19a@canb.auug.org.au>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Dilger <andreas.dilger@intel.com>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Greg KH' <greg@kroah.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On Wed, Jun 19, 2013 at 4:10 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->
-> In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.h:203:0,
->                  from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h:67,
->                  from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:41:
-> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kiblnd_dev_need_failover':
-> drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:215:16: error: implicit declaration of function 'NIPQUAD' [-Werror=implicit-function-declaration]
->   static struct libcfs_debug_msg_data msgdata;      \
->                 ^
-Thanks for reporting!
+Stephen Rothwell wrote:
+> 
+> Hi Kukjin,
+> 
+Hi,
 
-It is a bug in Lustre code that it is missing NIPQUAD definition on
-Linux platform. I will send fix later.
+> Today's linux-next merge of the samsung tree got a conflict in
+> drivers/usb/Kconfig between commit d9ea21a77927 ("usb: host: make
+> USB_ARCH_HAS_?HCI obsolete") from the usb tree and commit 58d5b72088cc
+> ("USB: Check for ARCH_EXYNOS separately") from the samsung tree.
+> 
+> I fixed it up (USB_ARCH_HAS_EHCI is no longer used) and can carry the fix
+> as necessary (no action is required).
+> 
+Looks good to me, thanks.
 
-> drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:231:2: note: in expansion of macro '__CDEBUG'
->   __CDEBUG(&cdls, mask, format, ## __VA_ARGS__);\
->   ^
-> drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:238:30: note: in expansion of macro 'CDEBUG_LIMIT'
->  #define CERROR(format, ...)  CDEBUG_LIMIT(D_ERROR, format, ## __VA_ARGS__)
->                               ^
-> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:2577:3: note: in expansion of macro 'CERROR'
->    CERROR("Failed to bind %s:%u.%u.%u.%u to device(%p): %d\n",
->    ^
->
-> I have once again disabled the building og the lustre client code.
->
-Sorry that Lustre is mostly tested only on x86 platform (and sadly I
-don't have other architectures to test on.). We sincerely thank you
-for your continuous help.
-
-Cheers,
-Tao
+- Kukjin
