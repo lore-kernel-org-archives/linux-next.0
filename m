@@ -1,51 +1,96 @@
-From: Peter Chen <hzpeterchen@gmail.com>
-Subject: Re: linux-next: Tree for Jun 18 usb/chipidea)
-Date: Wed, 19 Jun 2013 09:35:37 +0800
-Message-ID: <CAL411-qXeUNhL5Gw35LCC6QVRmym9mjAV_iedq-L+18QCd8-pA@mail.gmail.com>
-References: <20130618173030.16d73801ab72b7c611faccea@canb.auug.org.au>
- <51C0AC74.5050705@infradead.org> <20130618201245.GB14784@arwen.pp.htv.fi>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the cgroup tree
+Date: Wed, 19 Jun 2013 13:47:33 +1000
+Message-ID: <20130619134733.fcb49f4df20ec60cf51d6588@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__19_Jun_2013_13_47_33_+1000_O3Z.pyPrY.Kh1jbZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:51416 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932687Ab3FSBf6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 21:35:58 -0400
-In-Reply-To: <20130618201245.GB14784@arwen.pp.htv.fi>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52556 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933861Ab3FSDro (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 23:47:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "balbi@ti.com" <balbi@ti.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>, David Lopo <dlopo@chipidea.mips.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On Wed, Jun 19, 2013 at 4:12 AM, Felipe Balbi <balbi@ti.com> wrote:
-> Hi,
->
-> On Tue, Jun 18, 2013 at 11:52:36AM -0700, Randy Dunlap wrote:
->> On 06/18/13 00:30, Stephen Rothwell wrote:
->> > Hi all,
->> >
->> > Changes since 20130617:
->> >
->>
->>
->> on i386:
->>
->> # CONFIG_USB_PHY is not set
->>
->> drivers/built-in.o: In function `ci_hdrc_probe':
->> core.c:(.text+0x20446b): undefined reference to `of_usb_get_phy_mode'
->>
->>
->> chipidea needs to depend on or select some kind of USB_PHY support...?
->
-> hmm, looks like a missing stub to me. Alex ?
->
-> --
-> balbi
+--Signature=_Wed__19_Jun_2013_13_47_33_+1000_O3Z.pyPrY.Kh1jbZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Seems i386 chooses CONFIG_OF, but not CONFIG_USB_PHY.
-I will send a patch to fix it.
+Hi Jens,
 
---
-BR,
-Peter Chen
+Today's linux-next merge of the block tree got a conflict in
+include/linux/cgroup.h between commit f63674fd0d6a ("cgroup: update
+sane_behavior documentation") from the cgroup tree and commit
+9138125beabb ("blk-throttle: implement proper hierarchy support") from
+the block tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/linux/cgroup.h
+index e92e647,09f1a14..0000000
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@@ -261,23 -269,15 +261,25 @@@ enum=20
+  	 *
+  	 * - Remount is disallowed.
+  	 *
+ +	 * - "tasks" is removed.  Everything should be at process
+ +	 *   granularity.  Use "cgroup.procs" instead.
+ +	 *
+ +	 * - "release_agent" and "notify_on_release" are removed.
+ +	 *   Replacement notification mechanism will be implemented.
+ +	 *
+ +	 * - rename(2) is disallowed.
+ +	 *
+ +	 * - cpuset: tasks will be kept in empty cpusets when hotplug happens
+ +	 *   and take masks of ancestors with non-empty cpus/mems, instead of
+ +	 *   being moved to an ancestor.
+ +	 *
+ +	 * - cpuset: a task can be moved into an empty cpuset, and again it
+ +	 *   takes masks of ancestors.
+ +	 *
+  	 * - memcg: use_hierarchy is on by default and the cgroup file for
+  	 *   the flag is not created.
++ 	 *
++ 	 * - blkcg: blk-throttle becomes properly hierarchical.
+ -	 *
+ -	 * The followings are planned changes.
+ -	 *
+ -	 * - release_agent will be disallowed once replacement notification
+ -	 *   mechanism is implemented.
+  	 */
+  	CGRP_ROOT_SANE_BEHAVIOR	=3D (1 << 0),
+ =20
+
+--Signature=_Wed__19_Jun_2013_13_47_33_+1000_O3Z.pyPrY.Kh1jbZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRwSnaAAoJEECxmPOUX5FEC1wP+wd/r0KElsYpxAw/ojU3uuos
+R0KzJO51kkrU6GomVmCIJQlMjeIbsg0W2P0aGedCyuTPvN6vDoHqYOtzumrI5M+F
+bdyh+q0zm5kIjLJtCCYMZsKssfIeckO6q94sC260z8eyLG7fdfLRNkatGXeXF4ZE
+dii0FCbsMTderrPvbCxNlQjsRtXubgp4YOc3jBH7D8+UNYCJSKI2cZ8BagG8Jcqt
+PNnIS/Jfu9stTx9J/1RQQI3gNcIjek4WsBrfq8Sit1CDbmCXHNEVxZd4LyUXCAFV
+EW9GGDFSut1rUakBhD94Hb8iWdxEnriBSSmnvAmOE4nXiChhIrltYpbFmqwQlncE
+cwML5LMDAF4XyApsuHLPubPnC+i9I49nWoHWQWrKpNPgNq+/h3hKEOijhGixnLys
+lyXY3tlQCuC+OhumV7ZyKU128nrwpCg/Qh5SZ+bKRaPVSPxFsjDL7rZ4bNbSFj26
+ug/tRQYSFWxgOEvO8qm1UPXA4sRF0fRT26lblxNYdAvZOZf3vq6NKkgxEp4g2iYw
+Wpyeyg1rIDuXz6Vr7jTHA+VJylfM2iTTihPNJXo2YDFBW9CNq231+hKeDE/n1SWP
+1PeixFgUbpErLvDUm4VVFQjuoXDR4fmCXfIYQvSiUOkwMTqQb9SSDt3ljaKjaOp2
+zbz9QgmnNg0Di3GpuT9V
+=bXEQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__19_Jun_2013_13_47_33_+1000_O3Z.pyPrY.Kh1jbZ--
