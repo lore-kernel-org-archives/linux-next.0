@@ -1,79 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ceph tree with Linus' tree
-Date: Wed, 19 Jun 2013 11:22:07 +1000
-Message-ID: <20130619112207.e7c50605c8f93bce4ccdcae0@canb.auug.org.au>
+From: Peter Chen <hzpeterchen@gmail.com>
+Subject: Re: linux-next: Tree for Jun 18 usb/chipidea)
+Date: Wed, 19 Jun 2013 09:35:37 +0800
+Message-ID: <CAL411-qXeUNhL5Gw35LCC6QVRmym9mjAV_iedq-L+18QCd8-pA@mail.gmail.com>
+References: <20130618173030.16d73801ab72b7c611faccea@canb.auug.org.au>
+ <51C0AC74.5050705@infradead.org> <20130618201245.GB14784@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Jun_2013_11_22_07_+1000_vcoj0R6CTxskVvx3"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44865 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932687Ab3FSBWS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 21:22:18 -0400
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:51416 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932687Ab3FSBf6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 21:35:58 -0400
+In-Reply-To: <20130618201245.GB14784@arwen.pp.htv.fi>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sage Weil <sage@newdream.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <elder@inktank.com>, Al Viro <viro@zeniv.linux.org.uk>
+To: "balbi@ti.com" <balbi@ti.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>, David Lopo <dlopo@chipidea.mips.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
---Signature=_Wed__19_Jun_2013_11_22_07_+1000_vcoj0R6CTxskVvx3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 19, 2013 at 4:12 AM, Felipe Balbi <balbi@ti.com> wrote:
+> Hi,
+>
+> On Tue, Jun 18, 2013 at 11:52:36AM -0700, Randy Dunlap wrote:
+>> On 06/18/13 00:30, Stephen Rothwell wrote:
+>> > Hi all,
+>> >
+>> > Changes since 20130617:
+>> >
+>>
+>>
+>> on i386:
+>>
+>> # CONFIG_USB_PHY is not set
+>>
+>> drivers/built-in.o: In function `ci_hdrc_probe':
+>> core.c:(.text+0x20446b): undefined reference to `of_usb_get_phy_mode'
+>>
+>>
+>> chipidea needs to depend on or select some kind of USB_PHY support...?
+>
+> hmm, looks like a missing stub to me. Alex ?
+>
+> --
+> balbi
 
-Hi Sage,
+Seems i386 chooses CONFIG_OF, but not CONFIG_USB_PHY.
+I will send a patch to fix it.
 
-Today's linux-next merge of the ceph tree got a conflict in
-drivers/block/rbd.c between commit db2a144bedd5
-("block_device_operations->release() should return void") from Linus'
-tree and commit 87f11b7221f7 ("rbd: don't hold ctl_mutex to get/put
-device") from the ceph tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
-BTW, Sage, there is no Signed-off-by for you in the ceph tree commit (and
-several others - even though you committed them).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/block/rbd.c
-index 3063452,f24e241..0000000
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@@ -507,9 -505,9 +505,7 @@@ static void rbd_release(struct gendisk=20
-  	spin_unlock_irq(&rbd_dev->lock);
-  	rbd_assert(open_count_before > 0);
- =20
-- 	mutex_lock_nested(&ctl_mutex, SINGLE_DEPTH_NESTING);
-  	put_device(&rbd_dev->dev);
-- 	mutex_unlock(&ctl_mutex);
- -
- -	return 0;
-  }
- =20
-  static const struct block_device_operations rbd_bd_ops =3D {
-
---Signature=_Wed__19_Jun_2013_11_22_07_+1000_vcoj0R6CTxskVvx3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRwQfDAAoJEECxmPOUX5FERNkP/i43oPdkJjhOT7P3Lxf5fGux
-8P66eXYljBHI4HvSOc+3obLXk63iFBefqfcdNP+WoAy5QYhq+hzxBexxE7Jzm29C
-X4AnR76ua7/T8PzMTfkfIVlRkgsW2JDIXTnUwR7RUz2hKDhi+RA4AeUYwCyh8i+x
-LFafcwKi1fSYGG7Ar8p+3UWs2N/RzxkdxtoheiDlhUg0RqgbY7eJW7spWgfUJ2Sg
-GOoha7VQv3m6usPUxflBhW7gipzEPFJXoPJFG3IAKAp/JxhKDxF6AR2xACjUSQjN
-WGarJbaoo4wR7n4ekApF7rci/XgRmX4OOZPRlGaI08skCan4RPR6dho6D1mfeFO8
-B3Xf5lG8JVIp47kauvZj5zlLEj8wOG1srv+XJdwU45V/VL5i1E/MYtMO8eIndiLe
-AQVDwSU7vdBTECURARRFjo77Cna5ryCwacvqQeAbQp7NWgZOXBJJVA5Uqfcnnyph
-1LDNYxlSF50nm+IF1sN3uaUiL1Z+ZxFzRg53SQtDkt/Sm488V8n1dnuIjj6WTDtL
-apIdnJUuwEJyi3AHWC/bzhuh3MD87W0i9IFkaR+oO6tpWofdmHkYtFs6Za/VVYnR
-Vz6rN86c22mNV1/GClZ+xSS0E47WgVTBm6SLFhaHGItAPahYgb6B/FxRF3eVRvpM
-oGmSZX1x2s7WjBFyhcZ/
-=Jed+
------END PGP SIGNATURE-----
-
---Signature=_Wed__19_Jun_2013_11_22_07_+1000_vcoj0R6CTxskVvx3--
+--
+BR,
+Peter Chen
