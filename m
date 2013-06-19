@@ -1,108 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
-Date: Wed, 19 Jun 2013 16:24:49 +1000
-Message-ID: <20130619162449.5b0a64cc42e7cb9a744624e9@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with the usb tree
+Date: Wed, 19 Jun 2013 16:45:21 +1000
+Message-ID: <20130619164521.f5477ccb559cc6c6f8b0a19a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Jun_2013_16_24_49_+1000_XryU=g+4VCHqAjtt"
+ boundary="Signature=_Wed__19_Jun_2013_16_45_21_+1000__3CCRdVQ7BlCL.j+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34923 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:42214 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751089Ab3FSGYz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 02:24:55 -0400
+	with ESMTP id S933042Ab3FSGpa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 02:45:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg KH <greg@kroah.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
---Signature=_Wed__19_Jun_2013_16_24_49_+1000_XryU=g+4VCHqAjtt
+--Signature=_Wed__19_Jun_2013_16_45_21_+1000__3CCRdVQ7BlCL.j+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Shawn,
+Hi Kukjin,
 
-Today's linux-next merge of the imx-mxs tree got a conflict in
-arch/arm/Kconfig.debug between commit 828989ad87af ("ARM: keystone: Add
-minimal TI Keystone platform support") from the arm-soc tree and commit
-34e8a16b944e ("ARM: imx: enable low-level debug support for imx6sl") from
-the imx-mxs tree.
+Today's linux-next merge of the samsung tree got a conflict in
+drivers/usb/Kconfig between commit d9ea21a77927 ("usb: host: make
+USB_ARCH_HAS_?HCI obsolete") from the usb tree and commit 58d5b72088cc
+("USB: Check for ARCH_EXYNOS separately") from the samsung tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (USB_ARCH_HAS_EHCI is no longer used) and can carry the fix
+as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/Kconfig.debug
-index 4649bf5,29f7623..0000000
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@@ -251,20 -251,13 +251,27 @@@ choic
-  		  Say Y here if you want kernel low-level debugging support
-  		  on i.MX6Q/DL.
- =20
-+ 	config DEBUG_IMX6SL_UART
-+ 		bool "i.MX6SL Debug UART"
-+ 		depends on SOC_IMX6SL
-+ 		help
-+ 		  Say Y here if you want kernel low-level debugging support
-+ 		  on i.MX6SL.
-+=20
- +	config DEBUG_KEYSTONE_UART0
- +		bool "Kernel low-level debugging on KEYSTONE2 using UART0"
- +		depends on ARCH_KEYSTONE
- +		help
- +		  Say Y here if you want the debug print routines to direct
- +		  their output to UART0 serial port on KEYSTONE2 devices.
- +
- +	config DEBUG_KEYSTONE_UART1
- +		bool "Kernel low-level debugging on KEYSTONE2 using UART1"
- +		depends on ARCH_KEYSTONE
- +		help
- +		  Say Y here if you want the debug print routines to direct
- +		  their output to UART1 serial port on KEYSTONE2 devices.
- +
-  	config DEBUG_MMP_UART2
-  		bool "Kernel low-level debugging message via MMP UART2"
-  		depends on ARCH_MMP
-@@@ -677,11 -639,9 +685,12 @@@ config DEBUG_LL_INCLUD
-  				 DEBUG_IMX35_UART || \
-  				 DEBUG_IMX51_UART || \
-  				 DEBUG_IMX53_UART ||\
-- 				 DEBUG_IMX6Q_UART
-+ 				 DEBUG_IMX6Q_UART || \
-+ 				 DEBUG_IMX6SL_UART
- -	default "debug/mvebu.S" if DEBUG_MVEBU_UART
- +	default "debug/keystone.S" if DEBUG_KEYSTONE_UART0 || \
- +				      DEBUG_KEYSTONE_UART1
- +	default "debug/mvebu.S" if DEBUG_MVEBU_UART || \
- +				   DEBUG_MVEBU_UART_ALTERNATE
-  	default "debug/mxs.S" if DEBUG_IMX23_UART || DEBUG_IMX28_UART
-  	default "debug/nomadik.S" if DEBUG_NOMADIK_UART
-  	default "debug/omap2plus.S" if DEBUG_OMAP2PLUS_UART
-
---Signature=_Wed__19_Jun_2013_16_24_49_+1000_XryU=g+4VCHqAjtt
+--Signature=_Wed__19_Jun_2013_16_45_21_+1000__3CCRdVQ7BlCL.j+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRwU6xAAoJEECxmPOUX5FEY78QAJP5/3/3v1RfDGtZyeJR1HO1
-ThFbju+NnwbFYvXWWkX/Gne0EJ8OqTw0njwSBQ92UFdnXuuoiG+3bgUadjznuIv6
-PJlOBq50WjzRrsvZ4Ry5FPZKfrp9h1uP/+o1uhjNWKXTu70CH0DCwTvNC54/RRde
-o41a7uMKFdUI3egod6D4TU8mcWqticf0CkY2gotAaXzAGooPUoYWRRs2/bsppNn9
-a9O2yoxxJx6GljsxXQl753kOsE0xyF1LQfr/x2O9GPwiNi87AC2blybXZh8Uwi5R
-AlJp7Ryr40uihFBEKR2yjaMT8xd/ITwxvy9zH9MxGZVH0b2y5tnkiSOwvmDfJMxq
-ZcdRVE/MGmM2K801Jj3qxHo2lUCDKtVZdq3EZIbNLulKlCs/unX7N26NgizOv5C9
-83CHj1IdO3uULmuZA2DBGatwMcLrxg+cF3lgM+12P7RfL6t0JMk5m4MBHx3iwqwk
-aUJysQvexZI/11Xkog8p13S0Mvcgi8eKlJEHVtxhf7h2OOqTrIO/GPPm0o7/6tVC
-FPrh4incRNKgOmA63ggrN+j+84Rov68QndEL5wPHqk00AzvbiE8G0BqAYpPqsGQc
-BhG19I6GwWEwDAMMzdyjAaHxNkuKreg+9AJ1O85GzNZKzzugwu1ZqEXN/RJL+iSn
-Bzs7mwT26hXgVsT4G9KJ
-=KMt0
+iQIcBAEBCAAGBQJRwVOGAAoJEECxmPOUX5FED/8P/ikBJtIzlUjEVUvuTt3QUXc3
+SeAuxrXIpWubilBI9JTygnOZ0b4KLQCoQ0oPB6ZIKpTgZkyu2RxgcUBG4MnRAdp2
+U8RgI562YXFEDrRvZsbXLOWTUaclg0Qsn9f76VM7Mmner1E6HeiMZ69XsB7KE/ja
+QXRZ6G1yxQkkrRNG+BE6volKGbQyJCr+f9FtamUlCaefCNxCJzgHZABoUp070GgE
+EUbAs9v65NjgcDEn+FLimdxXUBfCUvnnGFHdtTFAp3sUIVHgj6OcW+zA3kXdI2q8
+073tY4Jg9Bdy0IyULajpZHssCTmwXyzH0OBvwgV4/x76IK7JTDNiFCMIeEyRuqRP
+4Djx/iVVnp4FdLsVoy2EEgJ92+qwlh6rcFwu8YLYeAQZRJYB4ctK5YyvyE30AOnb
+HrJlMUIN9TJDcIAxdOyfw9N3ZPv412FHxC6glT/QX3KyWVzdecI3frcQAELMufRY
+QuwTXncXuCcMKotFZ+KooIBbdAGQwatWM/Ud4wl9Hvl/dgImAScFg+9KN6jZd3s4
+iRHtsrQlNdOC+bgxWZ8r4pYVzKkRcdzrpcaOv67+aVU0cbYnutsN1E7uSTFE+OLv
+387BdZTYBSVUPVHfx9qHGc8Ncf7zRj7qigR8NNUu4JwQoe4awFesr4AJqjmnstPn
+76UB7BFW2CUV6pjP9zXY
+=QXbM
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__19_Jun_2013_16_24_49_+1000_XryU=g+4VCHqAjtt--
+--Signature=_Wed__19_Jun_2013_16_45_21_+1000__3CCRdVQ7BlCL.j+--
