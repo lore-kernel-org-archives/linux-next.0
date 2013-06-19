@@ -1,29 +1,58 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: linux-next: manual merge of the akpm tree with the ext4 tree
-Date: Wed, 19 Jun 2013 10:20:31 -0400
-Message-ID: <20130619142031.GC24194@thunk.org>
-References: <20130619172721.00e757acd76e1f9d362f59be@canb.auug.org.au>
- <20130619074402.GC1990@localhost.localdomain>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Wed, 19 Jun 2013 07:37:53 -0700
+Message-ID: <20130619143753.GA8413@kroah.com>
+References: <20130619181031.8b53acc44466ba70a47e1fcd@canb.auug.org.au>
+ <CA+a=Yy4z-ufq2GEtzC17TBbrNGWv6ZUzuVe=VLBH48Df=3HZxA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from li9-11.members.linode.com ([67.18.176.11]:59399 "EHLO
-	imap.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756669Ab3FSOUm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Jun 2013 10:20:42 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20130619074402.GC1990@localhost.localdomain>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Glauber Costa <glommer@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zheng Liu <wenqing.lz@taobao.com>, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>
+In-Reply-To: <CA+a=Yy4z-ufq2GEtzC17TBbrNGWv6ZUzuVe=VLBH48Df=3HZxA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peng Tao <bergwolf@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Dilger <andreas.dilger@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-Is there some way we can avoid this conflict during the next merge
-window?  Given that this is an API change, it may not be possible.
-Failing that, what's the best merge strategy; should we try to make
-sure your change goes first, and then I can defer the ext4 pull
-request until a little bit later in the merge window?
+On Wed, Jun 19, 2013 at 05:26:57PM +0800, Peng Tao wrote:
+> On Wed, Jun 19, 2013 at 4:10 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >
+> > In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.h:203:0,
+> >                  from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h:67,
+> >                  from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:41:
+> > drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kiblnd_dev_need_failover':
+> > drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:215:16: error: implicit declaration of function 'NIPQUAD' [-Werror=implicit-function-declaration]
+> >   static struct libcfs_debug_msg_data msgdata;      \
+> >                 ^
+> Thanks for reporting!
+> 
+> It is a bug in Lustre code that it is missing NIPQUAD definition on
+> Linux platform. I will send fix later.
+> 
+> > drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:231:2: note: in expansion of macro '__CDEBUG'
+> >   __CDEBUG(&cdls, mask, format, ## __VA_ARGS__);\
+> >   ^
+> > drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:238:30: note: in expansion of macro 'CDEBUG_LIMIT'
+> >  #define CERROR(format, ...)  CDEBUG_LIMIT(D_ERROR, format, ## __VA_ARGS__)
+> >                               ^
+> > drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:2577:3: note: in expansion of macro 'CERROR'
+> >    CERROR("Failed to bind %s:%u.%u.%u.%u to device(%p): %d\n",
+> >    ^
+> >
+> > I have once again disabled the building og the lustre client code.
+> >
+> Sorry that Lustre is mostly tested only on x86 platform (and sadly I
+> don't have other architectures to test on.). We sincerely thank you
+> for your continuous help.
 
-Thanks,
+You can always use a ppc cross compiler for just the kernel build tests
+to catch things like this.
 
-				- Ted
+thanks,
+
+greg k-h
