@@ -1,31 +1,33 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Theodore Ts'o <tytso@mit.edu>
 Subject: Re: linux-next: manual merge of the akpm tree with the ext4 tree
-Date: Wed, 19 Jun 2013 10:06:35 -0700
-Message-ID: <20130619100635.72acbd05.akpm@linux-foundation.org>
+Date: Wed, 19 Jun 2013 14:59:17 -0400
+Message-ID: <20130619185917.GC24587@thunk.org>
 References: <20130619172721.00e757acd76e1f9d362f59be@canb.auug.org.au>
-	<20130619074402.GC1990@localhost.localdomain>
-	<20130619142031.GC24194@thunk.org>
+ <20130619074402.GC1990@localhost.localdomain>
+ <20130619142031.GC24194@thunk.org>
+ <20130619100635.72acbd05.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34748 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756882Ab3FSRGy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 13:06:54 -0400
-In-Reply-To: <20130619142031.GC24194@thunk.org>
+Received: from li9-11.members.linode.com ([67.18.176.11]:59505 "EHLO
+	imap.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756776Ab3FSS71 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Jun 2013 14:59:27 -0400
+Content-Disposition: inline
+In-Reply-To: <20130619100635.72acbd05.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
+To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Glauber Costa <glommer@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zheng Liu <wenqing.lz@taobao.com>, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>
 
-On Wed, 19 Jun 2013 10:20:31 -0400 "Theodore Ts'o" <tytso@mit.edu> wrote:
+On Wed, Jun 19, 2013 at 10:06:35AM -0700, Andrew Morton wrote:
+> 
+> Merge the ext4 change early, please.  The core shrinker changes aren't
+> 100% certain at this time - first they need to stop oopsing ;)
 
-> Is there some way we can avoid this conflict during the next merge
-> window?  Given that this is an API change, it may not be possible.
-> Failing that, what's the best merge strategy; should we try to make
-> sure your change goes first, and then I can defer the ext4 pull
-> request until a little bit later in the merge window?
+Ack, sounds like a plan.
 
-Merge the ext4 change early, please.  The core shrinker changes aren't
-100% certain at this time - first they need to stop oopsing ;)
+Are they oopsing often enough that they are likely to interfere with
+running regression tests on linux-next?
+
+					- Ted
