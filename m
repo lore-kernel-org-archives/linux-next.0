@@ -1,54 +1,55 @@
-From: Jonathan Austin <Jonathan.Austin@arm.com>
-Subject: Re: linux-next: manual merge of the arm-mpidr tree with the arm	tree
-Date: Wed, 19 Jun 2013 09:39:39 +0100
-Message-ID: <51C16E4B.4060809@arm.com>
-References: <20130619104409.358078cdc4957fa6832f3413@canb.auug.org.au> <20130619082619.GA31513@flint.arm.linux.org.uk>
+From: Peng Tao <bergwolf@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Wed, 19 Jun 2013 17:26:57 +0800
+Message-ID: <CA+a=Yy4z-ufq2GEtzC17TBbrNGWv6ZUzuVe=VLBH48Df=3HZxA@mail.gmail.com>
+References: <20130619181031.8b53acc44466ba70a47e1fcd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:41704 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933833Ab3FSIo7 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 04:44:59 -0400
-In-Reply-To: <20130619082619.GA31513@flint.arm.linux.org.uk>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:33595 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933947Ab3FSJ1T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 05:27:19 -0400
+In-Reply-To: <20130619181031.8b53acc44466ba70a47e1fcd@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Will Deacon <Will.Deacon@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Dilger <andreas.dilger@intel.com>
 
-On 19/06/13 09:26, Russell King wrote:
-> On Wed, Jun 19, 2013 at 10:44:09AM +1000, Stephen Rothwell wrote:
->> Hi Lorenzo,
->>
->> Today's linux-next merge of the arm-mpidr tree got a conflict in
->> arch/arm/kernel/suspend.c between commit aa1aadc3305c ("ARM: suspend: fix
->> CPU suspend code for !CONFIG_MMU configurations") from the arm tree and
->> commit 3fed6a1e3bf0 ("ARM: kernel: implement stack pointer save array
->> through MPIDR hashing") from the arm-mpidr tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary (no action
->> is required).
->>
->> P.S. that arm tree commit above has no Signed-off-by from its
->> committer :-(
+On Wed, Jun 19, 2013 at 4:10 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> Oh bloody hell.  Now what do I do about that.  The branch is a declared
-> stable branch, and the commit came in from someone elses tree.  So it's
-> immutable...
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 >
+> In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.h:203:0,
+>                  from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h:67,
+>                  from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:41:
+> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kiblnd_dev_need_failover':
+> drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:215:16: error: implicit declaration of function 'NIPQUAD' [-Werror=implicit-function-declaration]
+>   static struct libcfs_debug_msg_data msgdata;      \
+>                 ^
+Thanks for reporting!
 
-Sorry guys, this was my first pull request and I didn't realise that,
-though Will was the author, I needed to sign off on the patch too as *I*
-had become the committer (I thought that Russell would become the
-committer as this was going 'via' him, as it does when it goes through
-Russell's patch system).
+It is a bug in Lustre code that it is missing NIPQUAD definition on
+Linux platform. I will send fix later.
 
-Apologies. I'll make sure this doesn't happen again...
+> drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:231:2: note: in expansion of macro '__CDEBUG'
+>   __CDEBUG(&cdls, mask, format, ## __VA_ARGS__);\
+>   ^
+> drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:238:30: note: in expansion of macro 'CDEBUG_LIMIT'
+>  #define CERROR(format, ...)  CDEBUG_LIMIT(D_ERROR, format, ## __VA_ARGS__)
+>                               ^
+> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:2577:3: note: in expansion of macro 'CERROR'
+>    CERROR("Failed to bind %s:%u.%u.%u.%u to device(%p): %d\n",
+>    ^
+>
+> I have once again disabled the building og the lustre client code.
+>
+Sorry that Lustre is mostly tested only on x86 platform (and sadly I
+don't have other architectures to test on.). We sincerely thank you
+for your continuous help.
 
-Jonny
-
-
-
-
--- IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium.  Thank you.
+Cheers,
+Tao
