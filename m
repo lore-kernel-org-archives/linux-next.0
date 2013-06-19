@@ -1,36 +1,108 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- driver-core.current tree
-Date: Tue, 18 Jun 2013 22:55:00 -0700
-Message-ID: <20130619055500.GA5283@kroah.com>
-References: <20130619153225.9ff68f0984bfa54333c4df10@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
+Date: Wed, 19 Jun 2013 16:24:49 +1000
+Message-ID: <20130619162449.5b0a64cc42e7cb9a744624e9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__19_Jun_2013_16_24_49_+1000_XryU=g+4VCHqAjtt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:38706 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751089Ab3FSFyV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Jun 2013 01:54:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20130619153225.9ff68f0984bfa54333c4df10@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34923 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751089Ab3FSGYz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 02:24:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <ming.lei@canonical.com>, Takashi Iwai <tiwai@suse.de>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
-On Wed, Jun 19, 2013 at 03:32:25PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> drivers/base/firmware_class.c between commit 875979368eb4 ("firmware
-> loader: fix use-after-free by double abort") from the driver-core.current
-> tree and commit fe304143b0c3 ("firmware: Avoid deadlock of usermodehelper
-> lock at shutdown") from the driver-core tree.
-> 
-> I fixed it up (more may be required - see below) and can carry the fix as
-> necessary (no action is required).
+--Signature=_Wed__19_Jun_2013_16_24_49_+1000_XryU=g+4VCHqAjtt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, the merge looks correct, Ming, any objection?
+Hi Shawn,
 
-greg k-h
+Today's linux-next merge of the imx-mxs tree got a conflict in
+arch/arm/Kconfig.debug between commit 828989ad87af ("ARM: keystone: Add
+minimal TI Keystone platform support") from the arm-soc tree and commit
+34e8a16b944e ("ARM: imx: enable low-level debug support for imx6sl") from
+the imx-mxs tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/Kconfig.debug
+index 4649bf5,29f7623..0000000
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@@ -251,20 -251,13 +251,27 @@@ choic
+  		  Say Y here if you want kernel low-level debugging support
+  		  on i.MX6Q/DL.
+ =20
++ 	config DEBUG_IMX6SL_UART
++ 		bool "i.MX6SL Debug UART"
++ 		depends on SOC_IMX6SL
++ 		help
++ 		  Say Y here if you want kernel low-level debugging support
++ 		  on i.MX6SL.
++=20
+ +	config DEBUG_KEYSTONE_UART0
+ +		bool "Kernel low-level debugging on KEYSTONE2 using UART0"
+ +		depends on ARCH_KEYSTONE
+ +		help
+ +		  Say Y here if you want the debug print routines to direct
+ +		  their output to UART0 serial port on KEYSTONE2 devices.
+ +
+ +	config DEBUG_KEYSTONE_UART1
+ +		bool "Kernel low-level debugging on KEYSTONE2 using UART1"
+ +		depends on ARCH_KEYSTONE
+ +		help
+ +		  Say Y here if you want the debug print routines to direct
+ +		  their output to UART1 serial port on KEYSTONE2 devices.
+ +
+  	config DEBUG_MMP_UART2
+  		bool "Kernel low-level debugging message via MMP UART2"
+  		depends on ARCH_MMP
+@@@ -677,11 -639,9 +685,12 @@@ config DEBUG_LL_INCLUD
+  				 DEBUG_IMX35_UART || \
+  				 DEBUG_IMX51_UART || \
+  				 DEBUG_IMX53_UART ||\
+- 				 DEBUG_IMX6Q_UART
++ 				 DEBUG_IMX6Q_UART || \
++ 				 DEBUG_IMX6SL_UART
+ -	default "debug/mvebu.S" if DEBUG_MVEBU_UART
+ +	default "debug/keystone.S" if DEBUG_KEYSTONE_UART0 || \
+ +				      DEBUG_KEYSTONE_UART1
+ +	default "debug/mvebu.S" if DEBUG_MVEBU_UART || \
+ +				   DEBUG_MVEBU_UART_ALTERNATE
+  	default "debug/mxs.S" if DEBUG_IMX23_UART || DEBUG_IMX28_UART
+  	default "debug/nomadik.S" if DEBUG_NOMADIK_UART
+  	default "debug/omap2plus.S" if DEBUG_OMAP2PLUS_UART
+
+--Signature=_Wed__19_Jun_2013_16_24_49_+1000_XryU=g+4VCHqAjtt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRwU6xAAoJEECxmPOUX5FEY78QAJP5/3/3v1RfDGtZyeJR1HO1
+ThFbju+NnwbFYvXWWkX/Gne0EJ8OqTw0njwSBQ92UFdnXuuoiG+3bgUadjznuIv6
+PJlOBq50WjzRrsvZ4Ry5FPZKfrp9h1uP/+o1uhjNWKXTu70CH0DCwTvNC54/RRde
+o41a7uMKFdUI3egod6D4TU8mcWqticf0CkY2gotAaXzAGooPUoYWRRs2/bsppNn9
+a9O2yoxxJx6GljsxXQl753kOsE0xyF1LQfr/x2O9GPwiNi87AC2blybXZh8Uwi5R
+AlJp7Ryr40uihFBEKR2yjaMT8xd/ITwxvy9zH9MxGZVH0b2y5tnkiSOwvmDfJMxq
+ZcdRVE/MGmM2K801Jj3qxHo2lUCDKtVZdq3EZIbNLulKlCs/unX7N26NgizOv5C9
+83CHj1IdO3uULmuZA2DBGatwMcLrxg+cF3lgM+12P7RfL6t0JMk5m4MBHx3iwqwk
+aUJysQvexZI/11Xkog8p13S0Mvcgi8eKlJEHVtxhf7h2OOqTrIO/GPPm0o7/6tVC
+FPrh4incRNKgOmA63ggrN+j+84Rov68QndEL5wPHqk00AzvbiE8G0BqAYpPqsGQc
+BhG19I6GwWEwDAMMzdyjAaHxNkuKreg+9AJ1O85GzNZKzzugwu1ZqEXN/RJL+iSn
+Bzs7mwT26hXgVsT4G9KJ
+=KMt0
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__19_Jun_2013_16_24_49_+1000_XryU=g+4VCHqAjtt--
