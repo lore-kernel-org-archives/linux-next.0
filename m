@@ -1,156 +1,68 @@
-From: Zheng Liu <wenqing.lz@alibaba-inc.com>
-Subject: Re: linux-next: manual merge of the akpm tree with the ext4 tree
-Date: Wed, 19 Jun 2013 15:48:55 +0800
-Message-ID: <8D4D4FB6-88E9-4407-8A16-C1C28F38592B@alibaba-inc.com>
-References: <20130619172721.00e757acd76e1f9d362f59be@canb.auug.org.au>
-Mime-Version: 1.0 (Mac OS X Mail 6.5 \(1508\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree
+ (driver-core tree related)
+Date: Wed, 19 Jun 2013 18:00:27 +1000
+Message-ID: <20130619180027.ede041e59b1c642c7e5c603c@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__19_Jun_2013_18_00_27_+1000_IziZqzEeFkv4niUT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from [205.204.113.250] ([205.204.113.250]:43489 "HELO
-	us-alimail-mta2.hst.scl.en.alidc.net." rhost-flags-FAIL-FAIL-FAIL-FAIL)
-	by vger.kernel.org with SMTP id S933966Ab3FSHya convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Jun 2013 03:54:30 -0400
-In-Reply-To: <20130619172721.00e757acd76e1f9d362f59be@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46616 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756436Ab3FSIAj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 04:00:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zheng Liu <wenqing.lz@taobao.com>, Theodore Ts'o <tytso@mit.edu>, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <ming.lei@canonical.com>
 
-Hi Stephen,
+--Signature=_Wed__19_Jun_2013_18_00_27_+1000_IziZqzEeFkv4niUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Jun 19, 2013, at 3:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi all,
 
-> Hi Andrew,
-> 
-> Today's linux-next merge of the akpm tree got a conflict in
-> fs/ext4/extents_status.c between commit 6480bad916be ("ext4: improve
-> extent cache shrink mechanism to avoid to burn CPU time") from the ext
-> tree and commit 1f42d0934b4e ("fs: convert fs shrinkers to new scan/count
-> API") from the akpm tree.
-> 
-> I fixed it up (I am not sure if the result makes complete sense - see
-> below) and can carry the fix as necessary (no action is required).
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig among others) produced these warnings:
 
-The patch looks good to me.  Thanks for fixing it.
+drivers/base/firmware_class.c:1254:12: warning: 'cache_firmware' defined bu=
+t not used [-Wunused-function]
+ static int cache_firmware(const char *fw_name)
+            ^
+drivers/base/firmware_class.c:1281:12: warning: 'uncache_firmware' defined =
+but not used [-Wunused-function]
+ static int uncache_firmware(const char *fw_name)
+            ^
 
-Regards,
-						- Zheng
+Revealed by commit 93232e46b209 ("firmware loader: don't export
+cache_firmware and uncache_firmware") from the driver-core tree.  These
+are only used if CONFIG_PM_SLEEP is set.
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc fs/ext4/extents_status.c
-> index 80dcc59,4bce4f0..0000000
-> --- a/fs/ext4/extents_status.c
-> +++ b/fs/ext4/extents_status.c
-> @@@ -876,58 -878,32 +876,63 @@@ int ext4_es_zeroout(struct inode *inode
->  				     EXTENT_STATUS_WRITTEN);
->  }
-> 
-> +static int ext4_inode_touch_time_cmp(void *priv, struct list_head *a,
-> +				     struct list_head *b)
-> +{
-> +	struct ext4_inode_info *eia, *eib;
-> +	unsigned long diff;
-> +
-> +	eia = list_entry(a, struct ext4_inode_info, i_es_lru);
-> +	eib = list_entry(b, struct ext4_inode_info, i_es_lru);
-> +
-> +	diff = eia->i_touch_when - eib->i_touch_when;
-> +	if (diff < 0)
-> +		return -1;
-> +	if (diff > 0)
-> +		return 1;
-> +	return 0;
-> +}
-> 
-> - static int ext4_es_shrink(struct shrinker *shrink, struct shrink_control *sc)
-> + static long ext4_es_count(struct shrinker *shrink, struct shrink_control *sc)
-> + {
-> + 	long nr;
-> + 	struct ext4_sb_info *sbi = container_of(shrink,
-> + 					struct ext4_sb_info, s_es_shrinker);
-> + 
-> + 	nr = percpu_counter_read_positive(&sbi->s_extent_cache_cnt);
-> + 	trace_ext4_es_shrink_enter(sbi->s_sb, sc->nr_to_scan, nr);
-> + 	return nr;
-> + }
-> + 
-> + static long ext4_es_scan(struct shrinker *shrink, struct shrink_control *sc)
->  {
->  	struct ext4_sb_info *sbi = container_of(shrink,
->  					struct ext4_sb_info, s_es_shrinker);
->  	struct ext4_inode_info *ei;
-> -	struct list_head *cur, *tmp, scanned;
-> +	struct list_head *cur, *tmp;
-> +	LIST_HEAD(skiped);
->  	int nr_to_scan = sc->nr_to_scan;
-> - 	int ret, nr_shrunk = 0;
-> - 
-> - 	ret = percpu_counter_read_positive(&sbi->s_extent_cache_cnt);
-> - 	trace_ext4_es_shrink_enter(sbi->s_sb, nr_to_scan, ret);
-> - 
-> - 	if (!nr_to_scan)
-> - 		return ret;
-> + 	int ret = 0, nr_shrunk = 0;
-> 
-> -	INIT_LIST_HEAD(&scanned);
-> -
->  	spin_lock(&sbi->s_es_lru_lock);
-> +
-> +	/*
-> +	 * If the inode that is at the head of LRU list is newer than
-> +	 * last_sorted time, that means that we need to sort this list.
-> +	 */
-> +	ei = list_first_entry(&sbi->s_es_lru, struct ext4_inode_info, i_es_lru);
-> +	if (sbi->s_es_last_sorted < ei->i_touch_when) {
-> +		list_sort(NULL, &sbi->s_es_lru, ext4_inode_touch_time_cmp);
-> +		sbi->s_es_last_sorted = jiffies;
-> +	}
-> +
->  	list_for_each_safe(cur, tmp, &sbi->s_es_lru) {
-> -		list_move_tail(cur, &scanned);
-> +		/*
-> +		 * If we have already reclaimed all extents from extent
-> +		 * status tree, just stop the loop immediately.
-> +		 */
-> +		if (percpu_counter_read_positive(&sbi->s_extent_cache_cnt) == 0)
-> +			break;
-> 
->  		ei = list_entry(cur, struct ext4_inode_info, i_es_lru);
-> 
-> @@@ -951,22 -923,22 +956,22 @@@
->  		if (nr_to_scan == 0)
->  			break;
->  	}
-> -	list_splice_tail(&scanned, &sbi->s_es_lru);
-> +
-> +	/* Move the newer inodes into the tail of the LRU list. */
-> +	list_splice_tail(&skiped, &sbi->s_es_lru);
->  	spin_unlock(&sbi->s_es_lru_lock);
-> 
-> - 	ret = percpu_counter_read_positive(&sbi->s_extent_cache_cnt);
->  	trace_ext4_es_shrink_exit(sbi->s_sb, nr_shrunk, ret);
-> - 	return ret;
-> + 	return nr_shrunk;
->  }
-> 
-> -void ext4_es_register_shrinker(struct super_block *sb)
-> +void ext4_es_register_shrinker(struct ext4_sb_info *sbi)
->  {
-> -	struct ext4_sb_info *sbi;
-> -
-> -	sbi = EXT4_SB(sb);
->  	INIT_LIST_HEAD(&sbi->s_es_lru);
->  	spin_lock_init(&sbi->s_es_lru_lock);
-> +	sbi->s_es_last_sorted = 0;
-> - 	sbi->s_es_shrinker.shrink = ext4_es_shrink;
-> + 	sbi->s_es_shrinker.scan_objects = ext4_es_scan;
-> + 	sbi->s_es_shrinker.count_objects = ext4_es_count;
->  	sbi->s_es_shrinker.seeks = DEFAULT_SEEKS;
->  	register_shrinker(&sbi->s_es_shrinker);
->  }
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__19_Jun_2013_18_00_27_+1000_IziZqzEeFkv4niUT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRwWUfAAoJEECxmPOUX5FEwCQP/3ymflDo+0Kl4wLPPnB/PFd8
+9RtJMAphcHtxdWKP+dMoG9hegPNBXGgqP7lX/Wu40FLpdVz1vuK8xwUAkDOH/DZy
+53QCWK8CNCU3yB956JqYQew8vTDWMhC/bwwYm3bhIb6bOak3SbMxLfJJLHCfKpvz
+Ulxwr2YY6oHqCqeDmnrEog4t25CciIfiOS7DhwtfVcaXAlTMvpZp19F4BaoC11/V
+1QdQGiYypxhGo8cAHr5gopLavCdg/YE5XTIHjzNJZL7iVWSdD9LOBoIz/k5DD2fF
+9H8dCARqedCcHx05Zpzd9ChmeHf37UAMmdrc4xAhH3biVyFAu6bFMQeyysuQecm4
+it1B2GKZenr9R1uO68akOaF9aMC1LMiyiwVA9OfqTMljzANdBtl6pe32XT+Guj4J
+/5Pgeubx6vF/cml7nwd+A2ePfL1k5NdbiPExr2fzQiurqxSotQmjVYVO301fZE2J
+XDP7DABLkucRtT2IZ8XG2krJ9Fijzl2S11HJ27dhD7PAOqmuLXeVkpPGkvoqbNhD
+Fv11xLq5u7PgEvE0MCvqpROoXO6tDppw8En+Mxd15HYndpksJ4kaAOkuqAthcIVF
+QaZCP+49vZdy/fcloGcfDM/mzW9isEwANbtKfwmwrEwwbrvC1RYoGQOKIawnLpcX
+CNAfO5sakNCTkZQFIa8p
+=BwFN
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__19_Jun_2013_18_00_27_+1000_IziZqzEeFkv4niUT--
