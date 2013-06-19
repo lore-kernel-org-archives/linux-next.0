@@ -1,23 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the final tree
- (driver-core tree related)
-Date: Wed, 19 Jun 2013 18:00:27 +1000
-Message-ID: <20130619180027.ede041e59b1c642c7e5c603c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Wed, 19 Jun 2013 18:10:31 +1000
+Message-ID: <20130619181031.8b53acc44466ba70a47e1fcd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Jun_2013_18_00_27_+1000_IziZqzEeFkv4niUT"
+ boundary="Signature=_Wed__19_Jun_2013_18_10_31_+1000_8O.1o8L5ab+RSDey"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46616 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49026 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756436Ab3FSIAj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 04:00:39 -0400
+	with ESMTP id S1755830Ab3FSIKd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 04:10:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <ming.lei@canonical.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peng Tao <bergwolf@gmail.com>, Andreas Dilger <andreas.dilger@intel.com>
 
---Signature=_Wed__19_Jun_2013_18_00_27_+1000_IziZqzEeFkv4niUT
+--Signature=_Wed__19_Jun_2013_18_10_31_+1000_8O.1o8L5ab+RSDey
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -25,44 +25,59 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 After merging the final tree, today's linux-next build (powerpc
-allnoconfig among others) produced these warnings:
+allyesconfig) failed like this:
 
-drivers/base/firmware_class.c:1254:12: warning: 'cache_firmware' defined bu=
-t not used [-Wunused-function]
- static int cache_firmware(const char *fw_name)
-            ^
-drivers/base/firmware_class.c:1281:12: warning: 'uncache_firmware' defined =
-but not used [-Wunused-function]
- static int uncache_firmware(const char *fw_name)
-            ^
+In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.h:=
+203:0,
+                 from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h:6=
+7,
+                 from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:4=
+1:
+drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kiblnd_de=
+v_need_failover':
+drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:215:16: error: i=
+mplicit declaration of function 'NIPQUAD' [-Werror=3Dimplicit-function-decl=
+aration]
+  static struct libcfs_debug_msg_data msgdata;      \
+                ^
+drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:231:2: note: in =
+expansion of macro '__CDEBUG'
+  __CDEBUG(&cdls, mask, format, ## __VA_ARGS__);\
+  ^
+drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:238:30: note: in=
+ expansion of macro 'CDEBUG_LIMIT'
+ #define CERROR(format, ...)  CDEBUG_LIMIT(D_ERROR, format, ## __VA_ARGS__)
+                              ^
+drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:2577:3: note: in expans=
+ion of macro 'CERROR'
+   CERROR("Failed to bind %s:%u.%u.%u.%u to device(%p): %d\n",
+   ^
 
-Revealed by commit 93232e46b209 ("firmware loader: don't export
-cache_firmware and uncache_firmware") from the driver-core tree.  These
-are only used if CONFIG_PM_SLEEP is set.
+I have once again disabled the building og the lustre client code.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__19_Jun_2013_18_00_27_+1000_IziZqzEeFkv4niUT
+--Signature=_Wed__19_Jun_2013_18_10_31_+1000_8O.1o8L5ab+RSDey
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRwWUfAAoJEECxmPOUX5FEwCQP/3ymflDo+0Kl4wLPPnB/PFd8
-9RtJMAphcHtxdWKP+dMoG9hegPNBXGgqP7lX/Wu40FLpdVz1vuK8xwUAkDOH/DZy
-53QCWK8CNCU3yB956JqYQew8vTDWMhC/bwwYm3bhIb6bOak3SbMxLfJJLHCfKpvz
-Ulxwr2YY6oHqCqeDmnrEog4t25CciIfiOS7DhwtfVcaXAlTMvpZp19F4BaoC11/V
-1QdQGiYypxhGo8cAHr5gopLavCdg/YE5XTIHjzNJZL7iVWSdD9LOBoIz/k5DD2fF
-9H8dCARqedCcHx05Zpzd9ChmeHf37UAMmdrc4xAhH3biVyFAu6bFMQeyysuQecm4
-it1B2GKZenr9R1uO68akOaF9aMC1LMiyiwVA9OfqTMljzANdBtl6pe32XT+Guj4J
-/5Pgeubx6vF/cml7nwd+A2ePfL1k5NdbiPExr2fzQiurqxSotQmjVYVO301fZE2J
-XDP7DABLkucRtT2IZ8XG2krJ9Fijzl2S11HJ27dhD7PAOqmuLXeVkpPGkvoqbNhD
-Fv11xLq5u7PgEvE0MCvqpROoXO6tDppw8En+Mxd15HYndpksJ4kaAOkuqAthcIVF
-QaZCP+49vZdy/fcloGcfDM/mzW9isEwANbtKfwmwrEwwbrvC1RYoGQOKIawnLpcX
-CNAfO5sakNCTkZQFIa8p
-=BwFN
+iQIcBAEBCAAGBQJRwWd3AAoJEECxmPOUX5FE13wQAISXZsS0sxPkyIbNFRZicYWw
+7mbkyDj7J2MhafuJQ5hts+kA6wrRKLyQnpwR9pyVh1MaxYfanwj69zkK2HV0I+ZJ
+dM24sxURPdkdek0HBpsXYtzOKypnIWcsPfcTQ+lmPrHS5e+cLY39+Psgv/kO/rRl
+j04CSYWsQS8TeVC4TNW440ChYL6JPAMS1O1neBEqlblHXoFcB1g/0sSeLrH86yGF
+utIyUN112uqA9secXpe/4VDrGfnBkN3amzZPOW8rgYmyBQ3zzV06/8RkfWxLyhkE
+3pgVC6uwaLndIdlOCNV5MBOTvS5EwXv1rmu6lt51ksz0M7FXhNpSwCbHn2Zv1aAk
+Vpy1Pm6iU5JcyViFmVVlPYmTBG/ml5E7lyS8uLSp5aumreGunex9C5nS14KWtfBE
+CUIV2f8sB1Qd90ySIj8qogJ/1iwKXUJcJQpiD3v5GKbuLgvcVQvlAT2bJqS9Odb/
+6fMX1ph7VlfYG5v4EASj6Xz3AtPHdL2kqiXHTzbebNq9x50+KofrOJGeIkI7Lv2p
+Gux4Kr0Glq5qLN15x8ApPSPZf0rdGblcIxTfs2Yn/O1948iUUSTDF2ejKShlhBx0
+rhsHVjOC+wSFQau4o/gI8fN7WgnLE7Zs79QUiT8mu5A4DOAc7UAXhrD9OFuB+ANH
+3dnVgVZEjthJnksMcKwd
+=Bw3w
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__19_Jun_2013_18_00_27_+1000_IziZqzEeFkv4niUT--
+--Signature=_Wed__19_Jun_2013_18_10_31_+1000_8O.1o8L5ab+RSDey--
