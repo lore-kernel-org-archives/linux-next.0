@@ -1,63 +1,117 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: ceph in linux-next
-Date: Wed, 19 Jun 2013 10:13:41 +1000
-Message-ID: <20130619101341.4873c5030311c3526054b4a0@canb.auug.org.au>
-References: <alpine.DEB.2.00.1306181009140.31132@cobra.newdream.net>
+Subject: linux-next: manual merge of the arm-mpidr tree with the arm tree
+Date: Wed, 19 Jun 2013 10:44:09 +1000
+Message-ID: <20130619104409.358078cdc4957fa6832f3413@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Jun_2013_10_13_41_+1000_mX/tqxahGQ8tDdJn"
-Return-path: <ceph-devel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.00.1306181009140.31132@cobra.newdream.net>
-Sender: ceph-devel-owner@vger.kernel.org
-To: Sage Weil <sage@inktank.com>
-Cc: linux-next@vger.kernel.org, ceph-devel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__19_Jun_2013_10_44_09_+1000_ZIj05V==VVXoOVAi"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48973 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932860Ab3FSAoY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 20:44:24 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Jonathan Austin <jonathan.austin@arm.com>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Wed__19_Jun_2013_10_13_41_+1000_mX/tqxahGQ8tDdJn
+--Signature=_Wed__19_Jun_2013_10_44_09_+1000_ZIj05V==VVXoOVAi
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sage,
+Hi Lorenzo,
 
-On Tue, 18 Jun 2013 10:12:30 -0700 (PDT) Sage Weil <sage@inktank.com> wrote:
->
-> A while back I asked to switch the ceph branch in linux-next from master=
-=20
-> to testing, but upon further reflection I'd like to switch it back: we're=
-=20
-> hitting various cases where we want to carry patches that we're running=20
-> through our QA that aren't destined for the next merge window.
->=20
-> That is,
->=20
->   git://github.com/ceph/ceph-client.git master
+Today's linux-next merge of the arm-mpidr tree got a conflict in
+arch/arm/kernel/suspend.c between commit aa1aadc3305c ("ARM: suspend: fix
+CPU suspend code for !CONFIG_MMU configurations") from the arm tree and
+commit 3fed6a1e3bf0 ("ARM: kernel: implement stack pointer save array
+through MPIDR hashing") from the arm-mpidr tree.
 
-OK, done.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+P.S. that arm tree commit above has no Signed-off-by from its
+committer :-(
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__19_Jun_2013_10_13_41_+1000_mX/tqxahGQ8tDdJn
+diff --cc arch/arm/kernel/suspend.c
+index 38a5067,17d02f6..0000000
+--- a/arch/arm/kernel/suspend.c
++++ b/arch/arm/kernel/suspend.c
+@@@ -82,3 -49,48 +85,20 @@@ void __cpu_suspend_save(u32 *ptr, u32 p
+  	outer_clean_range(virt_to_phys(save_ptr),
+  			  virt_to_phys(save_ptr) + sizeof(*save_ptr));
+  }
++=20
+ -/*
+ - * Hide the first two arguments to __cpu_suspend - these are an implement=
+ation
+ - * detail which platform code shouldn't have to know about.
+ - */
+ -int cpu_suspend(unsigned long arg, int (*fn)(unsigned long))
+ -{
+ -	struct mm_struct *mm =3D current->active_mm;
+ -	int ret;
+ -
+ -	if (!idmap_pgd)
+ -		return -EINVAL;
+ -
+ -	/*
+ -	 * Provide a temporary page table with an identity mapping for
+ -	 * the MMU-enable code, required for resuming.  On successful
+ -	 * resume (indicated by a zero return code), we need to switch
+ -	 * back to the correct page tables.
+ -	 */
+ -	ret =3D __cpu_suspend(arg, fn);
+ -	if (ret =3D=3D 0) {
+ -		cpu_switch_mm(mm->pgd, mm);
+ -		local_flush_bp_all();
+ -		local_flush_tlb_all();
+ -	}
+ -
+ -	return ret;
+ -}
+ -
++ extern struct sleep_save_sp sleep_save_sp;
++=20
++ static int cpu_suspend_alloc_sp(void)
++ {
++ 	void *ctx_ptr;
++ 	/* ctx_ptr is an array of physical addresses */
++ 	ctx_ptr =3D kcalloc(mpidr_hash_size(), sizeof(u32), GFP_KERNEL);
++=20
++ 	if (WARN_ON(!ctx_ptr))
++ 		return -ENOMEM;
++ 	sleep_save_sp.save_ptr_stash =3D ctx_ptr;
++ 	sleep_save_sp.save_ptr_stash_phys =3D virt_to_phys(ctx_ptr);
++ 	sync_cache_w(&sleep_save_sp);
++ 	return 0;
++ }
++ early_initcall(cpu_suspend_alloc_sp);
+
+--Signature=_Wed__19_Jun_2013_10_44_09_+1000_ZIj05V==VVXoOVAi
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRwPe5AAoJEECxmPOUX5FEAZUP/iThMZOYAZ8KIeqF/sKAwgw6
-MQEpsMxpvcNo+nmfrPxk0bzaDbYzNxaLYI2alhFj7V8WCG7y6A1Ftoytc9WbAc1k
-pqIBltX2Gz1KmAGx39foJStwT6vczpHFU2OOc8m/7tWpOtTip3fUSbt+wP4MPPmq
-Sf4COIlJxBw1fjM2LQcuzcceVHWFlwX869DK263+cjwZbeRhglKJpjOZ7gsUf34s
-PY4YbMxCzHFxHaIoQonzOeFDZWtOOWALfrQ20FTBBjAY1paU9/FrlJ+L9XsSxvUr
-lSW+iZjtGi6X1qLcupOA1UB3NHQIdcDQ44gSngknlid7HrQ8P0XPTxbNZsEvB31H
-8fTw+GOVqAI/q0zjHTFBWbF0rqd7axauveQR73Tqom+45ViSYFi4ufLOSTwWaNjM
-DSU0vy+JzPvCmPTtXpHlXDBUuX7tXqjftoe2r6AodvRnFzh81WX+IG8/RbOrQJ19
-Wbox02qlulgZ4oL7MM9FtMPFfV+oSaFW8WjpOw6Yotiz9ZLBP+Q3KecbI84NKX9B
-sA3Hdj7ykxirgVlkk6u8io0TrIQd23xMZ+fMwwz3VcKL+CJgIOqPC+uUWoC1dfm2
-F1r1OX2KjrvzlpH7F7hgyY41n5DM0yDlJGMPnQN2MWWPK275g25qVtg9200iHOsh
-0hxsZMumE2Mwd6/uUvyc
-=HRdK
+iQIcBAEBCAAGBQJRwP7gAAoJEECxmPOUX5FEs9oQAJup4gPEIiG+V22xSNsYzMEU
+qP4cr3p4HdpH02XCI8UNvyMnw/y9ygy2hSSC121VkODiTEAfCAURoPFewox7DuHL
+snw3Jjkfi3SfxJkMLb2d1FNDWc5yQK9Pu8dZDZAJIbVKUTD9qr9veOj15xw545XT
+v7xVXVfpdzVlZ4eHuDkfc+LySI8vL0rVFb8F0ps3qqechqSDmrISpE2tXIiHS/5x
+VuDBFTWb+5i+qQaJ5RY9FhfI4qDmWFN9DQNCDBuUqKdCH0FA5Gt8vHFZbM7beiGd
+ZLd3Oe6WradJDmLxcmtAZySYMiVvw5WaFrTtV2Tyk3Hw2jcdKCuuGDb0w8P7pPkW
+PAMGHKcRM3q5JECIybU134cuOunYMvoEVQmP7glgNSOeU6zCnodNvDY49Txqfja+
+D3oIoWn+0EERp3vcCfqOwcRKekWXxpcFcrR6QrT/Lr11A2YaSf1PKv6t9r09fjpt
+MPETd2buSZ0XnX0Lp2gR3koRFeEu3hidI8LH5ziImgwEOXHfmWdyVVgIXsNhlQu/
+dEyivg/b0iJa8Rxot0ARPIErmjJB7vszBoKJEeynvfG6vNwVMgfC/XuL8YZT7ex+
+eJjNho3MM+HaTUE61vhZ2rwjoZ1hZCZ+5DEdhN3vWMEjqd1yAqjFobDJXwtDWg4d
+KLYgz3FfWOZ3eA7YzHc6
+=BxcV
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__19_Jun_2013_10_13_41_+1000_mX/tqxahGQ8tDdJn--
+--Signature=_Wed__19_Jun_2013_10_44_09_+1000_ZIj05V==VVXoOVAi--
