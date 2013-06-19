@@ -1,37 +1,29 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the samsung tree with the usb tree
-Date: Wed, 19 Jun 2013 20:53:05 +0900
-Message-ID: <1f6801ce6ce3$8f1b7380$ad525a80$%kim@samsung.com>
-References: <20130619164521.f5477ccb559cc6c6f8b0a19a@canb.auug.org.au>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: linux-next: manual merge of the akpm tree with the ext4 tree
+Date: Wed, 19 Jun 2013 10:20:31 -0400
+Message-ID: <20130619142031.GC24194@thunk.org>
+References: <20130619172721.00e757acd76e1f9d362f59be@canb.auug.org.au>
+ <20130619074402.GC1990@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52050 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933666Ab3FSLxH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 07:53:07 -0400
-In-reply-to: <20130619164521.f5477ccb559cc6c6f8b0a19a@canb.auug.org.au>
-Content-language: ko
+Received: from li9-11.members.linode.com ([67.18.176.11]:59399 "EHLO
+	imap.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756669Ab3FSOUm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Jun 2013 10:20:42 -0400
+Content-Disposition: inline
+In-Reply-To: <20130619074402.GC1990@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Greg KH' <greg@kroah.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Glauber Costa <glommer@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zheng Liu <wenqing.lz@taobao.com>, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>
 
-Stephen Rothwell wrote:
-> 
-> Hi Kukjin,
-> 
-Hi,
+Is there some way we can avoid this conflict during the next merge
+window?  Given that this is an API change, it may not be possible.
+Failing that, what's the best merge strategy; should we try to make
+sure your change goes first, and then I can defer the ext4 pull
+request until a little bit later in the merge window?
 
-> Today's linux-next merge of the samsung tree got a conflict in
-> drivers/usb/Kconfig between commit d9ea21a77927 ("usb: host: make
-> USB_ARCH_HAS_?HCI obsolete") from the usb tree and commit 58d5b72088cc
-> ("USB: Check for ARCH_EXYNOS separately") from the samsung tree.
-> 
-> I fixed it up (USB_ARCH_HAS_EHCI is no longer used) and can carry the fix
-> as necessary (no action is required).
-> 
-Looks good to me, thanks.
+Thanks,
 
-- Kukjin
+				- Ted
