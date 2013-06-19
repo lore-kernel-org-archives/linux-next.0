@@ -1,117 +1,70 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-mpidr tree with the arm tree
-Date: Wed, 19 Jun 2013 10:44:09 +1000
-Message-ID: <20130619104409.358078cdc4957fa6832f3413@canb.auug.org.au>
+From: Xiong Zhou <jencce.kernel@gmail.com>
+Subject: Re: [PATCH]amilo-rfkill: add depends on i8042 in Kconfig
+Date: Wed, 19 Jun 2013 09:09:11 +0800
+Message-ID: <CADJHv_vZiPsDUiLrFao41rRVduf+AYFm0NuvpNaCW8S3KrAjnA@mail.gmail.com>
+References: <alpine.DEB.2.02.1306181705530.28460@M2420>
+	<1371560680.3495.121.camel@deadeye.wl.decadent.org.uk>
+	<51C07608.2070406@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Jun_2013_10_44_09_+1000_ZIj05V==VVXoOVAi"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48973 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932860Ab3FSAoY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 20:44:24 -0400
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:54655 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933023Ab3FSBJO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jun 2013 21:09:14 -0400
+In-Reply-To: <51C07608.2070406@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Jonathan Austin <jonathan.austin@arm.com>, Russell King <rmk@arm.linux.org.uk>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Ben Hutchings <ben@decadent.org.uk>, matthew.garrett@nebula.com, platform-driver-x86@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, jim.epost@gmail.com
 
---Signature=_Wed__19_Jun_2013_10_44_09_+1000_ZIj05V==VVXoOVAi
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+2013/6/18 Randy Dunlap <rdunlap@infradead.org>:
+> On 06/18/13 06:04, Ben Hutchings wrote:
+>> On Tue, 2013-06-18 at 17:21 +0800, Xiong Zhou wrote:
+>>> From: Xiong Zhou <jencce.kernel@gmail.com>
+>>>
+>>> Fix randconfig build failure for Amilo x86 platform driver.
+>>> AMILO_RFKILL requires SERIO_I8042 being available.
+>>>
+>>> amilo-rfkill.c:(.text+0x108b5b): undefined reference to `i8042_lock_chip'
+>>> amilo-rfkill.c:(.text+0x108b69): undefined reference to `i8042_command'
+>>> amilo-rfkill.c:(.text+0x108b71): undefined reference to `i8042_unlock_chip'
+>>>
+>>> Reported-by: Jim Davis <jim.epost@gmail.com>
+>>> Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
+>>
+>> Acked-by: Ben Hutchings <ben@decadent.org.uk>
+>>
+>> But I thought somehow sent this same fix a while back...
+>
+> Yes, I reported it and sent a patch for it that you acked...
+> I guess my patch was never picked up.
+>
 
-Hi Lorenzo,
+... Better someone pick this up.
 
-Today's linux-next merge of the arm-mpidr tree got a conflict in
-arch/arm/kernel/suspend.c between commit aa1aadc3305c ("ARM: suspend: fix
-CPU suspend code for !CONFIG_MMU configurations") from the arm tree and
-commit 3fed6a1e3bf0 ("ARM: kernel: implement stack pointer save array
-through MPIDR hashing") from the arm-mpidr tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
-P.S. that arm tree commit above has no Signed-off-by from its
-committer :-(
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/kernel/suspend.c
-index 38a5067,17d02f6..0000000
---- a/arch/arm/kernel/suspend.c
-+++ b/arch/arm/kernel/suspend.c
-@@@ -82,3 -49,48 +85,20 @@@ void __cpu_suspend_save(u32 *ptr, u32 p
-  	outer_clean_range(virt_to_phys(save_ptr),
-  			  virt_to_phys(save_ptr) + sizeof(*save_ptr));
-  }
-+=20
- -/*
- - * Hide the first two arguments to __cpu_suspend - these are an implement=
-ation
- - * detail which platform code shouldn't have to know about.
- - */
- -int cpu_suspend(unsigned long arg, int (*fn)(unsigned long))
- -{
- -	struct mm_struct *mm =3D current->active_mm;
- -	int ret;
- -
- -	if (!idmap_pgd)
- -		return -EINVAL;
- -
- -	/*
- -	 * Provide a temporary page table with an identity mapping for
- -	 * the MMU-enable code, required for resuming.  On successful
- -	 * resume (indicated by a zero return code), we need to switch
- -	 * back to the correct page tables.
- -	 */
- -	ret =3D __cpu_suspend(arg, fn);
- -	if (ret =3D=3D 0) {
- -		cpu_switch_mm(mm->pgd, mm);
- -		local_flush_bp_all();
- -		local_flush_tlb_all();
- -	}
- -
- -	return ret;
- -}
- -
-+ extern struct sleep_save_sp sleep_save_sp;
-+=20
-+ static int cpu_suspend_alloc_sp(void)
-+ {
-+ 	void *ctx_ptr;
-+ 	/* ctx_ptr is an array of physical addresses */
-+ 	ctx_ptr =3D kcalloc(mpidr_hash_size(), sizeof(u32), GFP_KERNEL);
-+=20
-+ 	if (WARN_ON(!ctx_ptr))
-+ 		return -ENOMEM;
-+ 	sleep_save_sp.save_ptr_stash =3D ctx_ptr;
-+ 	sleep_save_sp.save_ptr_stash_phys =3D virt_to_phys(ctx_ptr);
-+ 	sync_cache_w(&sleep_save_sp);
-+ 	return 0;
-+ }
-+ early_initcall(cpu_suspend_alloc_sp);
-
---Signature=_Wed__19_Jun_2013_10_44_09_+1000_ZIj05V==VVXoOVAi
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRwP7gAAoJEECxmPOUX5FEs9oQAJup4gPEIiG+V22xSNsYzMEU
-qP4cr3p4HdpH02XCI8UNvyMnw/y9ygy2hSSC121VkODiTEAfCAURoPFewox7DuHL
-snw3Jjkfi3SfxJkMLb2d1FNDWc5yQK9Pu8dZDZAJIbVKUTD9qr9veOj15xw545XT
-v7xVXVfpdzVlZ4eHuDkfc+LySI8vL0rVFb8F0ps3qqechqSDmrISpE2tXIiHS/5x
-VuDBFTWb+5i+qQaJ5RY9FhfI4qDmWFN9DQNCDBuUqKdCH0FA5Gt8vHFZbM7beiGd
-ZLd3Oe6WradJDmLxcmtAZySYMiVvw5WaFrTtV2Tyk3Hw2jcdKCuuGDb0w8P7pPkW
-PAMGHKcRM3q5JECIybU134cuOunYMvoEVQmP7glgNSOeU6zCnodNvDY49Txqfja+
-D3oIoWn+0EERp3vcCfqOwcRKekWXxpcFcrR6QrT/Lr11A2YaSf1PKv6t9r09fjpt
-MPETd2buSZ0XnX0Lp2gR3koRFeEu3hidI8LH5ziImgwEOXHfmWdyVVgIXsNhlQu/
-dEyivg/b0iJa8Rxot0ARPIErmjJB7vszBoKJEeynvfG6vNwVMgfC/XuL8YZT7ex+
-eJjNho3MM+HaTUE61vhZ2rwjoZ1hZCZ+5DEdhN3vWMEjqd1yAqjFobDJXwtDWg4d
-KLYgz3FfWOZ3eA7YzHc6
-=BxcV
------END PGP SIGNATURE-----
-
---Signature=_Wed__19_Jun_2013_10_44_09_+1000_ZIj05V==VVXoOVAi--
+>>
+>> Ben.
+>>
+>>> ---
+>>>  drivers/platform/x86/Kconfig |    1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+>>> index 8577261..37645b9 100644
+>>> --- a/drivers/platform/x86/Kconfig
+>>> +++ b/drivers/platform/x86/Kconfig
+>>> @@ -176,6 +176,7 @@ config FUJITSU_TABLET
+>>>  config AMILO_RFKILL
+>>>      tristate "Fujitsu-Siemens Amilo rfkill support"
+>>>      depends on RFKILL
+>>> +    depends on SERIO_I8042
+>>>      ---help---
+>>>        This is a driver for enabling wifi on some Fujitsu-Siemens Amilo
+>>>        laptops.
+>>
+>
+>
+> --
+> ~Randy
