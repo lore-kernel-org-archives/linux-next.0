@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the tip tree
-Date: Thu, 20 Jun 2013 17:14:52 +1000
-Message-ID: <20130620171452.365bf173b71870c690d52e27@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with Linus' tree
+Date: Thu, 20 Jun 2013 17:36:04 +1000
+Message-ID: <20130620173604.67b07fa0932dac4a75583fd5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__20_Jun_2013_17_14_52_+1000__RzWCn5H2QvaK9Z7"
+ boundary="Signature=_Thu__20_Jun_2013_17_36_04_+1000_offgw2Y_IAMhxnUC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33579 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44496 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751921Ab3FTHO5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2013 03:14:57 -0400
+	with ESMTP id S1753614Ab3FTHgJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2013 03:36:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Heiko Stuebner <heiko@sntech.de>, Baruch Siach <baruch@tkos.co.il>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tushar Behera <tushar.behera@linaro.org>, Mike Turquette <mturquette@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>
 
---Signature=_Thu__20_Jun_2013_17_14_52_+1000__RzWCn5H2QvaK9Z7
+--Signature=_Thu__20_Jun_2013_17_36_04_+1000_offgw2Y_IAMhxnUC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Kukjin,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/clocksource/dw_apb_timer_of.c between commits 0a0a7e66fa26
-("clocksource: dw_apb: Remove unused header") and 38ff87f77af0
-("sched_clock: Make ARM's sched_clock generic for all architectures")
-from the tip tree and commit a8b447f2bbbb ("clocksource: dw_apb_timer_of:
-add clock-handling") from the arm-soc tree.
+Today's linux-next merge of the samsung tree got a conflict in
+drivers/clk/samsung/clk-exynos5250.c between commit 39b72d89eb2b ("clk:
+exynos5250: Update cpufreq related clocks for EXYNOS5250") from Linus'
+tree and commit 407e8d62fa7d ("clk: exynos5250: Staticize local symbols")
+from the samsung tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,43 +36,46 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/clocksource/dw_apb_timer_of.c
-index d9a1e8d,cef5544..0000000
---- a/drivers/clocksource/dw_apb_timer_of.c
-+++ b/drivers/clocksource/dw_apb_timer_of.c
-@@@ -20,8 -20,11 +20,9 @@@
-  #include <linux/of.h>
-  #include <linux/of_address.h>
-  #include <linux/of_irq.h>
- +#include <linux/sched_clock.h>
-+ #include <linux/clk.h>
+diff --cc drivers/clk/samsung/clk-exynos5250.c
+index 22d7699,f6e3031..0000000
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@@ -207,11 -213,11 +213,11 @@@ static struct samsung_fixed_factor_cloc
+  	FFACTOR(none, "fout_bplldiv2", "fout_bpll", 1, 2, 0),
+  };
  =20
- -#include <asm/mach/time.h>
- -#include <asm/sched_clock.h>
- -
-  static void timer_get_base_and_rate(struct device_node *np,
-  				    void __iomem **base, u32 *rate)
-  {
+- struct samsung_mux_clock exynos5250_mux_clks[] __initdata =3D {
++ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata =3D {
+ -	MUX(none, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
+ -	MUX(none, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+ +	MUX_A(none, "mout_apll", mout_apll_p, SRC_CPU, 0, 1, "mout_apll"),
+ +	MUX_A(none, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1, "mout_cpu"),
+  	MUX(none, "mout_mpll_fout", mout_mpll_fout_p, PLL_DIV2_SEL, 4, 1),
+ -	MUX(none, "sclk_mpll", mout_mpll_p, SRC_CORE1, 8, 1),
+ +	MUX_A(none, "sclk_mpll", mout_mpll_p, SRC_CORE1, 8, 1, "mout_mpll"),
+  	MUX(none, "mout_bpll_fout", mout_bpll_fout_p, PLL_DIV2_SEL, 0, 1),
+  	MUX(none, "sclk_bpll", mout_bpll_p, SRC_CDREX, 0, 1),
+  	MUX(none, "mout_vpllsrc", mout_vpllsrc_p, SRC_TOP2, 0, 1),
 
---Signature=_Thu__20_Jun_2013_17_14_52_+1000__RzWCn5H2QvaK9Z7
+--Signature=_Thu__20_Jun_2013_17_36_04_+1000_offgw2Y_IAMhxnUC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRwqvsAAoJEECxmPOUX5FEHcQP/Rhz488ZSwLQvftg+jDr1xPR
-gWvG6wuKc4sH4+T5N5WZAB9axvdfNiUx2LlfbB4ClgLM+9b/d8lYSXs5JAP/e+HB
-ZWFZQxXMvBsio20uCmIyeKo+YnplbsP9K737BlACelJFN4kWpuku4A1Df8e6aBd6
-hvKxVRttg9ij88wuLU8lNGixlupzvgokxCZ81XhkbZhY+EmnUMw5+C6OP5XHCo8y
-hWFed327qJM440Mrr81ZhntNSLAUrPev8HHXtiymwZpUR0zw4/hBNQx1E27NF+9Q
-6FMY5UJjIOGnkquXKtsL63HMJz58CG+TXuiOucS3ygpPFN6XvbugL8CfHAzDz4OT
-ZsfpR5GfAdZ4PmrHeSFAibCwcmNzp1lQxhZv/HkF2pCAmwOSKCMRe6Pm7oz8naHK
-SR65VmxVL98yQmJpe4H85QOSwjBmXkkBrlgVAkIHX7STpRIDZq290yp5my9YR07a
-UdFUGwEefX047aRhtHsWduzKO0s+JhxmMdPER1pdUxLHk8fCGqjQzVARYKaOUXHS
-+fGZaON65ohm98J0N9xSnnjyLUKeitsJTZld/rNS8mwwed1QTfK6p/cQwas1gZXh
-YiOZF3CFvJxPfrwQmo1yZSpyUs2ivJ7ZxXz0iDxLaWrv7tzEOadfWEZ97igP1eoW
-qRInWLsFi805ZRYVko9O
-=x30r
+iQIcBAEBCAAGBQJRwrDkAAoJEECxmPOUX5FEbrAP/289l96CKfPfj2n9DGO6HWqW
+57UXpsvNpNdC7gbVJtMZGgg3xsAFFVFXGmtcANmDsFzV0A8WOUhrHeb/9yKhYZq4
+ekQxVogln4yoDJaP0k0RrDYhwlOVT/s/s3SJM4ylH4yyjaZur8mXBVwU+NAe7aKl
+eyAg3V6GZzQt5s5j3JpTFHNjRu++dfG1nEgKVBCMueqYrM09+M5XtnPYnpenBbu2
+kuleDEGp8GC1eAa2/rmthofR+gaQ1Aw7znwUAgXhU6+Bawef3Z1t4Wq3hVInPlUh
+8P+4JAxCVaWmcLFDJd4+NiWzqtXCdpqgkEwmzHPqSPE28mjuZ+ZSmsR4PmWLshr5
+1bmPp0fTLMTeruIanKo8UNYLNbFDNg9y/saACyF7FesrTaEFdoq30DIxNWV7oOeq
+ENs2+VQLqemrY0HbVMGxlSeew/pI3TQ0dKPMo8SzCc3XXXPZPbvi3cK56TUVRO9s
+jUsRiJxj7Mu1MJhTYdqM+ARp+JX1r1iZrbDJFhkmIQnVe7EAO8ZeR5cqOrC4sWdu
+s9CpHY8Mfbpc4Ceil7JxP47d+DoPBj3R5rb8B+84QhG7qqOagWT9YFzS6tu8kuGa
+M/O1OmdVKWCJL77gxgg83oSMe0TySRd6r5dm0MGmAjtOKMNwm9jQZq1psP1KEEVx
+kt9rFNYpt9n+lT5UBiXY
+=KCR1
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__20_Jun_2013_17_14_52_+1000__RzWCn5H2QvaK9Z7--
+--Signature=_Thu__20_Jun_2013_17_36_04_+1000_offgw2Y_IAMhxnUC--
