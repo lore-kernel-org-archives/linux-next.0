@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the arm-soc tree with the tip tree
-Date: Thu, 20 Jun 2013 17:09:51 +1000
-Message-ID: <20130620170951.248631b40c84c30a1a57ba7f@canb.auug.org.au>
+Date: Thu, 20 Jun 2013 17:14:52 +1000
+Message-ID: <20130620171452.365bf173b71870c690d52e27@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__20_Jun_2013_17_09_51_+1000_78.Fb=v_Trqckf6N"
+ boundary="Signature=_Thu__20_Jun_2013_17_14_52_+1000__RzWCn5H2QvaK9Z7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57006 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33579 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753902Ab3FTHKH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2013 03:10:07 -0400
+	with ESMTP id S1751921Ab3FTHO5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2013 03:14:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Heiko Stuebner <heiko@sntech.de>, Baruch Siach <baruch@tkos.co.il>
 
---Signature=_Thu__20_Jun_2013_17_09_51_+1000_78.Fb=v_Trqckf6N
+--Signature=_Thu__20_Jun_2013_17_14_52_+1000__RzWCn5H2QvaK9Z7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,10 +24,11 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-integrator/integrator_ap.c between commit 38ff87f77af0
+drivers/clocksource/dw_apb_timer_of.c between commits 0a0a7e66fa26
+("clocksource: dw_apb: Remove unused header") and 38ff87f77af0
 ("sched_clock: Make ARM's sched_clock generic for all architectures")
-from the tip tree and commit 01ef31053ddd ("ARM: integrator: move VGA
-base assignment") from the arm-soc tree.
+from the tip tree and commit a8b447f2bbbb ("clocksource: dw_apb_timer_of:
+add clock-handling") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,39 +37,43 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-integrator/integrator_ap.c
-index aa43462,a5b15c4..0000000
---- a/arch/arm/mach-integrator/integrator_ap.c
-+++ b/arch/arm/mach-integrator/integrator_ap.c
-@@@ -41,8 -41,6 +41,7 @@@
-  #include <linux/stat.h>
-  #include <linux/sys_soc.h>
-  #include <linux/termios.h>
+diff --cc drivers/clocksource/dw_apb_timer_of.c
+index d9a1e8d,cef5544..0000000
+--- a/drivers/clocksource/dw_apb_timer_of.c
++++ b/drivers/clocksource/dw_apb_timer_of.c
+@@@ -20,8 -20,11 +20,9 @@@
+  #include <linux/of.h>
+  #include <linux/of_address.h>
+  #include <linux/of_irq.h>
  +#include <linux/sched_clock.h>
-- #include <video/vga.h>
++ #include <linux/clk.h>
  =20
-  #include <mach/hardware.h>
-  #include <mach/platform.h>
+ -#include <asm/mach/time.h>
+ -#include <asm/sched_clock.h>
+ -
+  static void timer_get_base_and_rate(struct device_node *np,
+  				    void __iomem **base, u32 *rate)
+  {
 
---Signature=_Thu__20_Jun_2013_17_09_51_+1000_78.Fb=v_Trqckf6N
+--Signature=_Thu__20_Jun_2013_17_14_52_+1000__RzWCn5H2QvaK9Z7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRwqrEAAoJEECxmPOUX5FE7ZcP/2aLQObFpIJj57rw7tPwlPLB
-QItGpphI9kgtnT2geFpAQhU1yUR6WLVQpSkMp3+wGhvkOJlsyGNruH6tMT8JBfwI
-XEvtjsqLZo/Z720ievpvas54QRHYpDtMCcG8W0WY59svQ1ahc7x9Z4Ky3VbM58LA
-U5UqIX9rimtdcRRmvwFMf5+NGINwOGDAERVqdjf0mWoDI9P5Yhq3OfqNTlYxq3Z4
-7FwG956IKOvJLbvaa3+Z0wVu0MNpW5aagkEm4EtfyA+lctSwMjitIGqmptM7qlbq
-vF3Jairn1wnSdQXTPS3ubJIqVAqafdH4tqvhraY54DzDSVwS+0zzg9f6f8fNpK9K
-pQXemX/Kyvnay2UdgYdflDPyDRLW7lTap2LBd31zv0+8KJGVoOB18LT+dfO8CypO
-2YCFfk+MO5/VGUigan5yP/EF2hFZWm1yibsM0gtHUlNDc0dpXitSAAdKxDKMBatN
-VGff7vonDZIY4LQ3L83/gTn9BjJmxTYUJOeAeGIOzWWfMOBsM+oWJ00eYwJWX2Oc
-nY2gdOzPXdGjf0DWiiyoUqcuCTXOpa2o0db1KMqWV6FdxbiqmpFvvPLWQmdMPeBA
-SDUMTIm1ql0bNcvmbgnn5ayiIVZ1rhpBvZ21KJVlfdZFS03o432T12IvVbrx61Rm
-PKL55sENrMq7YETCkAqk
-=3E2p
+iQIcBAEBCAAGBQJRwqvsAAoJEECxmPOUX5FEHcQP/Rhz488ZSwLQvftg+jDr1xPR
+gWvG6wuKc4sH4+T5N5WZAB9axvdfNiUx2LlfbB4ClgLM+9b/d8lYSXs5JAP/e+HB
+ZWFZQxXMvBsio20uCmIyeKo+YnplbsP9K737BlACelJFN4kWpuku4A1Df8e6aBd6
+hvKxVRttg9ij88wuLU8lNGixlupzvgokxCZ81XhkbZhY+EmnUMw5+C6OP5XHCo8y
+hWFed327qJM440Mrr81ZhntNSLAUrPev8HHXtiymwZpUR0zw4/hBNQx1E27NF+9Q
+6FMY5UJjIOGnkquXKtsL63HMJz58CG+TXuiOucS3ygpPFN6XvbugL8CfHAzDz4OT
+ZsfpR5GfAdZ4PmrHeSFAibCwcmNzp1lQxhZv/HkF2pCAmwOSKCMRe6Pm7oz8naHK
+SR65VmxVL98yQmJpe4H85QOSwjBmXkkBrlgVAkIHX7STpRIDZq290yp5my9YR07a
+UdFUGwEefX047aRhtHsWduzKO0s+JhxmMdPER1pdUxLHk8fCGqjQzVARYKaOUXHS
++fGZaON65ohm98J0N9xSnnjyLUKeitsJTZld/rNS8mwwed1QTfK6p/cQwas1gZXh
+YiOZF3CFvJxPfrwQmo1yZSpyUs2ivJ7ZxXz0iDxLaWrv7tzEOadfWEZ97igP1eoW
+qRInWLsFi805ZRYVko9O
+=x30r
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__20_Jun_2013_17_09_51_+1000_78.Fb=v_Trqckf6N--
+--Signature=_Thu__20_Jun_2013_17_14_52_+1000__RzWCn5H2QvaK9Z7--
