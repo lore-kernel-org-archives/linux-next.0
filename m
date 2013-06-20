@@ -1,49 +1,30 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- driver-core.current tree
-Date: Wed, 19 Jun 2013 20:28:12 -0700
-Message-ID: <20130620032812.GA24385@kroah.com>
-References: <20130619153225.9ff68f0984bfa54333c4df10@canb.auug.org.au>
- <CACVXFVMhVs7Wy1A=TfczYzHLFwyRPhEGW9Yo9hTERekaxSnpdQ@mail.gmail.com>
- <20130619143918.GC8413@kroah.com>
- <CACVXFVObBDwaounzZ7RyF=+QrQCBoEd0s-uLYFokksOzKgZSjA@mail.gmail.com>
- <20130619163628.GA28672@kroah.com>
- <CACVXFVNsbBunNzYecUG34sFjPqRuzMHRTBD2Siy9d4RhqPnr3A@mail.gmail.com>
- <20130620110610.7d245d88b70620fa271a29f7@canb.auug.org.au>
- <CACVXFVN-B7ZrqjoA_QNkWKjM0XdM-S08h-d6JuRjsYOX0YPt=A@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 19 Jun 2013 20:37:12 -0700 (PDT)
+Message-ID: <20130619.203712.1274791928658538966.davem@davemloft.net>
+References: <20130620125823.da633b21e33688372729b9c0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:37228 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S935542Ab3FTD1e (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Jun 2013 23:27:34 -0400
-Content-Disposition: inline
-In-Reply-To: <CACVXFVN-B7ZrqjoA_QNkWKjM0XdM-S08h-d6JuRjsYOX0YPt=A@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ming Lei <ming.lei@canonical.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130620125823.da633b21e33688372729b9c0@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, johannes.berg@intel.com
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jun 20, 2013 at 09:22:13AM +0800, Ming Lei wrote:
-> Hi Stephen,
-> 
-> Thanks for your help.
-> 
-> On Thu, Jun 20, 2013 at 9:06 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> >
-> > Try "git diff-tree --cc e4b00d75ee3ed3af9fac83970d21e27d1ad4aa8d"
-> 
-> Greg, Stephen, so is sort of below generated patch what you expected?
-> 
-> If yes, I will send it out to you.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 20 Jun 2013 12:58:23 +1000
 
-Thanks, that helped out a lot.  I've now merged this together, and
-pushed it out to my driver-core-next branch, can you verify that I got
-it all correct?
+> Today's linux-next merge of the net-next tree got a conflict in
+> net/wireless/nl80211.c between commit 3a5a423bb958 ("nl80211: fix attrbuf
+> access race by allocating a separate one") from the net tree and commit
+> 5fe231e87372 ("cfg80211: vastly simplify locking") from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-thanks,
+I did this merge a few hours ago and hit the same conflict.
 
-greg k-h
+Although I fixed the bug in that rtnl_unlock() is not performed in
+all the return code paths.
