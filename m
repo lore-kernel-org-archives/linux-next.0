@@ -1,79 +1,127 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Ming Lei <ming.lei@canonical.com>
 Subject: Re: linux-next: manual merge of the driver-core tree with the
  driver-core.current tree
-Date: Thu, 20 Jun 2013 11:06:10 +1000
-Message-ID: <20130620110610.7d245d88b70620fa271a29f7@canb.auug.org.au>
+Date: Thu, 20 Jun 2013 09:22:13 +0800
+Message-ID: <CACVXFVN-B7ZrqjoA_QNkWKjM0XdM-S08h-d6JuRjsYOX0YPt=A@mail.gmail.com>
 References: <20130619153225.9ff68f0984bfa54333c4df10@canb.auug.org.au>
 	<CACVXFVMhVs7Wy1A=TfczYzHLFwyRPhEGW9Yo9hTERekaxSnpdQ@mail.gmail.com>
 	<20130619143918.GC8413@kroah.com>
 	<CACVXFVObBDwaounzZ7RyF=+QrQCBoEd0s-uLYFokksOzKgZSjA@mail.gmail.com>
 	<20130619163628.GA28672@kroah.com>
 	<CACVXFVNsbBunNzYecUG34sFjPqRuzMHRTBD2Siy9d4RhqPnr3A@mail.gmail.com>
+	<20130620110610.7d245d88b70620fa271a29f7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__20_Jun_2013_11_06_10_+1000_K78g1cXe1IosawX0"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57612 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934734Ab3FTBGX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 21:06:23 -0400
-In-Reply-To: <CACVXFVNsbBunNzYecUG34sFjPqRuzMHRTBD2Siy9d4RhqPnr3A@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ming Lei <ming.lei@canonical.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130620110610.7d245d88b70620fa271a29f7@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__20_Jun_2013_11_06_10_+1000_K78g1cXe1IosawX0
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Ming,
+Thanks for your help.
 
-On Thu, 20 Jun 2013 08:23:30 +0800 Ming Lei <ming.lei@canonical.com> wrote:
+On Thu, Jun 20, 2013 at 9:06 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
 >
-> Yes, I already merged the two branches together in my local repository,
-> and there is one merge commit, but I don't know how to generate/format
-> patch for this merge commit only:
->=20
-> commit e4b00d75ee3ed3af9fac83970d21e27d1ad4aa8d
-> Merge: bb07b00 8759793
-> Author: Ming Lei <tom.leiming@gmail.com>
-> Date:   Wed Jun 19 23:56:05 2013 +0800
->=20
->     firmware loader: fix conflict driver-core-linus and driver-core-next
->=20
->     Conflicts:
->         drivers/base/firmware_class.c
->=20
-> Anyone who knows, please let me know, thanks.
+> Try "git diff-tree --cc e4b00d75ee3ed3af9fac83970d21e27d1ad4aa8d"
 
-Try "git diff-tree --cc e4b00d75ee3ed3af9fac83970d21e27d1ad4aa8d"
+Greg, Stephen, so is sort of below generated patch what you expected?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+If yes, I will send it out to you.
 
---Signature=_Thu__20_Jun_2013_11_06_10_+1000_K78g1cXe1IosawX0
-Content-Type: application/pgp-signature
+e4b00d75ee3ed3af9fac83970d21e27d1ad4aa8d
+diff --cc drivers/base/firmware_class.c
+index 6ede229,01e2103..7fefcb5
+--- a/drivers/base/firmware_class.c
++++ b/drivers/base/firmware_class.c
+@@@ -452,35 -446,27 +452,52 @@@ static struct firmware_priv *to_firmwar
+  	return container_of(dev, struct firmware_priv, dev);
+  }
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+- static void fw_load_abort(struct firmware_buf *buf)
+ -static void fw_load_abort(struct firmware_priv *fw_priv)
+++static void __fw_load_abort(struct firmware_buf *buf)
+  {
+ -	struct firmware_buf *buf = fw_priv->buf;
+ -
++ 	/*
++ 	 * There is a small window in which user can write to 'loading'
++ 	 * between loading done and disappearance of 'loading'
++ 	 */
++ 	if (test_bit(FW_STATUS_DONE, &buf->status))
++ 		return;
++
+ +	list_del_init(&buf->pending_list);
+  	set_bit(FW_STATUS_ABORT, &buf->status);
+  	complete_all(&buf->completion);
+ +}
+ +
+++static void fw_load_abort(struct firmware_priv *fw_priv)
+++{
+++	struct firmware_buf *buf = fw_priv->buf;
+++
+++	__fw_load_abort(buf);
++
++ 	/* avoid user action after loading abort */
++ 	fw_priv->buf = NULL;
++ }
++
+  #define is_fw_load_aborted(buf)	\
+  	test_bit(FW_STATUS_ABORT, &(buf)->status)
 
-iQIcBAEBCAAGBQJRwlWGAAoJEECxmPOUX5FExRcP/ipZr1sef+CGOiF7/q1a9yHQ
-1wUkm65G7uru/KxYYH0+DY9kXp1ocEPTR4chxI78ZhoznNwwGd/InQw422WjbUQP
-GaKMPH5fWdarOraxmq+gOO0O3mPMVMefF3lNzKshXDN7CR1qgvXxy86QwXLqZM0E
-jY4Z9a8Bjq2X9OLixMNstzR6fRUMzUIe12Lcky9awjRp28ITSxFxZIB6lfJt/kz5
-UUKMVolKr0FFYgxzJ2+Xw3sDspuA8EGtL2PI9SPyI1u2bePxfb2AIsTGlIyFHwYY
-bCyZVGNC2A3Ot1jDIH+zte9J/iqITefIWBGePW3bhec1es2Eg2IqPjrVEDp2glgs
-rLqroiZ3rbaQHDhekTaF+O0yntt3R1uE40ERRY4atTq5PCYqVPi5Zjws+A0ej5Lg
-CmkD5qlgwzBggd2GsXUJZqWghqri4acILPF5jI2xyGnLf26TIlF9VkpoKVa+nPda
-F4+NcrIaBKsX7xXyUZChJ5+V/ZpUSXV3XMD4jvQbeaaukPwYJ1LmsDu4G3r70Rsn
-9j7Gp7IdFaDGSpLKiOfzSmt/uXnU8ICItxTxuZhcpPbavVl+NoganaiTWzvOtoy1
-MNphVlLT0P6sSKLTM8+sUJ7L4t9G5g2nFtZE7GIJsfH9dddKvo8EuHsImfv4JcFp
-nLnAfbqgrQE3c+EDYqIW
-=ctmJ
------END PGP SIGNATURE-----
+ +static LIST_HEAD(pending_fw_head);
+ +
+ +/* reboot notifier for avoid deadlock with usermode_lock */
+ +static int fw_shutdown_notify(struct notifier_block *unused1,
+ +			      unsigned long unused2, void *unused3)
+ +{
+ +	mutex_lock(&fw_lock);
+ +	while (!list_empty(&pending_fw_head))
+- 		fw_load_abort(list_first_entry(&pending_fw_head,
+++		__fw_load_abort(list_first_entry(&pending_fw_head,
+ +					       struct firmware_buf,
+ +					       pending_list));
+ +	mutex_unlock(&fw_lock);
+ +	return NOTIFY_DONE;
+ +}
+ +
+ +static struct notifier_block fw_shutdown_nb = {
+ +	.notifier_call = fw_shutdown_notify,
+ +};
+ +
+  static ssize_t firmware_timeout_show(struct class *class,
+  				     struct class_attribute *attr,
+  				     char *buf)
+@@@ -911,23 -895,6 +927,23 @@@ static int fw_load_from_user_helper(str
+  	fw_priv->buf = firmware->priv;
+  	return _request_firmware_load(fw_priv, uevent, timeout);
+  }
+ +
+ +#ifdef CONFIG_PM_SLEEP
+ +/* kill pending requests without uevent to avoid blocking suspend */
+ +static void kill_requests_without_uevent(void)
+ +{
+ +	struct firmware_buf *buf;
+ +	struct firmware_buf *next;
+ +
+ +	mutex_lock(&fw_lock);
+ +	list_for_each_entry_safe(buf, next, &pending_fw_head, pending_list) {
+ +		if (!buf->need_uevent)
+- 			 fw_load_abort(buf);
+++			 __fw_load_abort(buf);
+ +	}
+ +	mutex_unlock(&fw_lock);
+ +}
+ +#endif
+ +
+  #else /* CONFIG_FW_LOADER_USER_HELPER */
+  static inline int
+  fw_load_from_user_helper(struct firmware *firmware, const char *name,
 
---Signature=_Thu__20_Jun_2013_11_06_10_+1000_K78g1cXe1IosawX0--
+
+Thanks,
+--
+Ming Lei
