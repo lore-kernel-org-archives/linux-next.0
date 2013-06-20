@@ -1,45 +1,49 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] gpu: fix printk format warning in i915_gem.c
-Date: Wed, 19 Jun 2013 20:03:22 -0700
-Message-ID: <51C270FA.5010703@infradead.org>
-References: <20130619182115.e5786a389561898e8dce178d@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ driver-core.current tree
+Date: Wed, 19 Jun 2013 20:28:12 -0700
+Message-ID: <20130620032812.GA24385@kroah.com>
+References: <20130619153225.9ff68f0984bfa54333c4df10@canb.auug.org.au>
+ <CACVXFVMhVs7Wy1A=TfczYzHLFwyRPhEGW9Yo9hTERekaxSnpdQ@mail.gmail.com>
+ <20130619143918.GC8413@kroah.com>
+ <CACVXFVObBDwaounzZ7RyF=+QrQCBoEd0s-uLYFokksOzKgZSjA@mail.gmail.com>
+ <20130619163628.GA28672@kroah.com>
+ <CACVXFVNsbBunNzYecUG34sFjPqRuzMHRTBD2Siy9d4RhqPnr3A@mail.gmail.com>
+ <20130620110610.7d245d88b70620fa271a29f7@canb.auug.org.au>
+ <CACVXFVN-B7ZrqjoA_QNkWKjM0XdM-S08h-d6JuRjsYOX0YPt=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:57333 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935522Ab3FTDDk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 23:03:40 -0400
-In-Reply-To: <20130619182115.e5786a389561898e8dce178d@canb.auug.org.au>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:37228 "EHLO
+	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S935542Ab3FTD1e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Jun 2013 23:27:34 -0400
+Content-Disposition: inline
+In-Reply-To: <CACVXFVN-B7ZrqjoA_QNkWKjM0XdM-S08h-d6JuRjsYOX0YPt=A@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Andrew Morton <akpm@linux-foundation.org>
+To: Ming Lei <ming.lei@canonical.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Thu, Jun 20, 2013 at 09:22:13AM +0800, Ming Lei wrote:
+> Hi Stephen,
+> 
+> Thanks for your help.
+> 
+> On Thu, Jun 20, 2013 at 9:06 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> >
+> > Try "git diff-tree --cc e4b00d75ee3ed3af9fac83970d21e27d1ad4aa8d"
+> 
+> Greg, Stephen, so is sort of below generated patch what you expected?
+> 
+> If yes, I will send it out to you.
 
-Fix printk format warning in i915_gem.c:
+Thanks, that helped out a lot.  I've now merged this together, and
+pushed it out to my driver-core-next branch, can you verify that I got
+it all correct?
 
-drivers/gpu/drm/i915/i915_gem.c:3113:3: warning: format '%ld' expects argument of type 'long int', but argument 5 has type 'size_t' [-Wformat]
+thanks,
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: David Airlie <airlied@linux.ie>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org
----
- drivers/gpu/drm/i915/i915_gem.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20130619.orig/drivers/gpu/drm/i915/i915_gem.c
-+++ linux-next-20130619/drivers/gpu/drm/i915/i915_gem.c
-@@ -3110,7 +3110,7 @@ i915_gem_object_bind_to_gtt(struct drm_i
- 	 * before evicting everything in a vain attempt to find space.
- 	 */
- 	if (obj->base.size > gtt_max) {
--		DRM_ERROR("Attempting to bind an object larger than the aperture: object=%zd > %s aperture=%ld\n",
-+		DRM_ERROR("Attempting to bind an object larger than the aperture: object=%zd > %s aperture=%zu\n",
- 			  obj->base.size,
- 			  map_and_fenceable ? "mappable" : "total",
- 			  gtt_max);
+greg k-h
