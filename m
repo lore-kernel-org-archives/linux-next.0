@@ -1,8 +1,8 @@
-From: Ming Lei <ming.lei@canonical.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the driver-core tree with the
  driver-core.current tree
-Date: Thu, 20 Jun 2013 11:46:11 +0800
-Message-ID: <CACVXFVNLP4Wks_Fh+rUi7jLdL+tsGVKbpgME6CGt+s0_jm75rg@mail.gmail.com>
+Date: Thu, 20 Jun 2013 13:49:04 +1000
+Message-ID: <20130620134904.a621b5ebf28fb102a40ae9c2@canb.auug.org.au>
 References: <20130619153225.9ff68f0984bfa54333c4df10@canb.auug.org.au>
 	<CACVXFVMhVs7Wy1A=TfczYzHLFwyRPhEGW9Yo9hTERekaxSnpdQ@mail.gmail.com>
 	<20130619143918.GC8413@kroah.com>
@@ -13,36 +13,58 @@ References: <20130619153225.9ff68f0984bfa54333c4df10@canb.auug.org.au>
 	<CACVXFVN-B7ZrqjoA_QNkWKjM0XdM-S08h-d6JuRjsYOX0YPt=A@mail.gmail.com>
 	<20130620032812.GA24385@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__20_Jun_2013_13_49_04_+1000_AoCvR_4gpWq=NAhl"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47528 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935637Ab3FTDtJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 23:49:09 -0400
 In-Reply-To: <20130620032812.GA24385@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-List-Id: linux-next.vger.kernel.org
+Cc: Ming Lei <ming.lei@canonical.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
 
-On Thu, Jun 20, 2013 at 11:28 AM, Greg KH <greg@kroah.com> wrote:
-> On Thu, Jun 20, 2013 at 09:22:13AM +0800, Ming Lei wrote:
->> Hi Stephen,
->>
->> Thanks for your help.
->>
->> On Thu, Jun 20, 2013 at 9:06 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> >
->> > Try "git diff-tree --cc e4b00d75ee3ed3af9fac83970d21e27d1ad4aa8d"
->>
->> Greg, Stephen, so is sort of below generated patch what you expected?
->>
->> If yes, I will send it out to you.
+--Signature=_Thu__20_Jun_2013_13_49_04_+1000_AoCvR_4gpWq=NAhl
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Greg,
+
+On Wed, 19 Jun 2013 20:28:12 -0700 Greg KH <greg@kroah.com> wrote:
 >
 > Thanks, that helped out a lot.  I've now merged this together, and
 > pushed it out to my driver-core-next branch, can you verify that I got
 > it all correct?
 
-I just pull your driver-core-next branch, looks drivers/base/firmware_class.c
-is fine now, thank you
+And I have refetched the driver-core tree for today's linux-next so it
+includes that merge.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks,
---
-Ming Lei
+--Signature=_Thu__20_Jun_2013_13_49_04_+1000_AoCvR_4gpWq=NAhl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRwnuwAAoJEECxmPOUX5FEzWEQAJxhukISHEmtFNVoB6m3oJav
+1pTak37hq00S+l98qrIhu/kXmnYf/3kFdW8ZxS97FRI0Zj40y8uyt1UxgTyNcvnb
+Be9+0CxFPei1Ny8mOrULM8XhYPtQosrAq/9fsSjJQy+DOuawAjNFUbycLupfH6Cz
+xpZh24zc+MKG8CQUwQRKjveMARtSWSqtBxAVMxj7xTaXfaMWmQCX1xnDrRTaZPlS
+Q2teU9cz7bAF2AttXC7EY8IR3QtoEciyeLHNru5P2U7WzKbgiQ6ks8HzTsVDHUha
+Q93WucNYNFh6ubNamAcFX2X0ZjomD0DScT9EPlKgLlQh9sak6qCy0LejvfqGe176
+S21S1/4SCb546f6wu5wlpo3zaGNCpBwsu/Zv0vagO4nfAcGdF74TwqT/fsk2/4fc
+NRJc4rS0tCwyW9hqJETOxy/RJXGJkinxzXeFd9NhGKBQzXjFQwPYYeSSvQ2Ga5aj
+COYrbCOCnqqyLtK/Zdf7BlnOZucNC5y8i3461Yqop1+Wtqmsy4rGP7L0Zt8+Pxik
+f4Hk5SwW3FeKzKBm0vyrthf63QYc7Tib1Kyarkb9ExZDuC4we/0hfotSca69MMZJ
+qpbDWxdbNJDc6qrSK5ouHLc20qpJMTlRNe0AeJwbW19v8q3NudVG1l33GH5Ifj/q
+NhyTJM9eaAMNONVSH0nh
+=kCYp
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__20_Jun_2013_13_49_04_+1000_AoCvR_4gpWq=NAhl--
