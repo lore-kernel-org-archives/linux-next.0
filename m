@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the arm tree
-Date: Thu, 20 Jun 2013 15:05:50 +1000
-Message-ID: <20130620150550.9eda4f00469d4ba4a08dcb00@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the tip tree
+Date: Thu, 20 Jun 2013 17:09:51 +1000
+Message-ID: <20130620170951.248631b40c84c30a1a57ba7f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__20_Jun_2013_15_05_50_+1000_JlwwO_pKiKayUHO1"
+ boundary="Signature=_Thu__20_Jun_2013_17_09_51_+1000_78.Fb=v_Trqckf6N"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:32854 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:57006 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750856Ab3FTFGH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2013 01:06:07 -0400
+	with ESMTP id S1753902Ab3FTHKH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2013 03:10:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Russell King <rmk@arm.linux.org.uk>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Thu__20_Jun_2013_15_05_50_+1000_JlwwO_pKiKayUHO1
+--Signature=_Thu__20_Jun_2013_17_09_51_+1000_78.Fb=v_Trqckf6N
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/arm/kernel/Makefile between commit 4477ca45fb36 ("ARM: ARMv7-M:
-Allow the building of new kernel port") from the arm tree and commit
-38ff87f77af0 ("sched_clock: Make ARM's sched_clock generic for all
-architectures") from the tip tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-integrator/integrator_ap.c between commit 38ff87f77af0
+("sched_clock: Make ARM's sched_clock generic for all architectures")
+from the tip tree and commit 01ef31053ddd ("ARM: integrator: move VGA
+base assignment") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,41 +36,39 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/kernel/Makefile
-index fccfbdb,97cb057..0000000
---- a/arch/arm/kernel/Makefile
-+++ b/arch/arm/kernel/Makefile
-@@@ -15,8 -15,8 +15,8 @@@ CFLAGS_REMOVE_return_address.o =3D -p
+diff --cc arch/arm/mach-integrator/integrator_ap.c
+index aa43462,a5b15c4..0000000
+--- a/arch/arm/mach-integrator/integrator_ap.c
++++ b/arch/arm/mach-integrator/integrator_ap.c
+@@@ -41,8 -41,6 +41,7 @@@
+  #include <linux/stat.h>
+  #include <linux/sys_soc.h>
+  #include <linux/termios.h>
+ +#include <linux/sched_clock.h>
+- #include <video/vga.h>
  =20
-  # Object file lists.
- =20
- -obj-y		:=3D elf.o entry-armv.o entry-common.o irq.o opcodes.o \
- +obj-y		:=3D elf.o entry-common.o irq.o opcodes.o \
-- 		   process.o ptrace.o return_address.o sched_clock.o \
-+ 		   process.o ptrace.o return_address.o \
-  		   setup.o signal.o stacktrace.o sys_arm.o time.o traps.o
- =20
-  obj-$(CONFIG_ATAGS)		+=3D atags_parse.o
+  #include <mach/hardware.h>
+  #include <mach/platform.h>
 
---Signature=_Thu__20_Jun_2013_15_05_50_+1000_JlwwO_pKiKayUHO1
+--Signature=_Thu__20_Jun_2013_17_09_51_+1000_78.Fb=v_Trqckf6N
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRwo2yAAoJEECxmPOUX5FEMnIP/1OHe/iYlKZj5/sB7lSrtmBL
-bCI5kTdxgSDfF4yxSXWmGb91jrDM6mvrQvMD209pCdsJn4PGwArByB8KzSfItCHO
-um4N5JKzLf3++nkCKYCAJGDbLkg3X+AN10mYC4/tuC8r/wRivtfvBH+S3fjAAGLp
-uKzAQfiCD8GUr9w3mWtv/o3czPyShU9koH7xKscyWWoc/fGim+/HaNDStG5DoFQy
-OOLDHjkUhle2jH2IUduuC+gvz28KOeQeZMheBXzwi50cJg59UnthkwXndT2JxxSA
-VYhV305+TM+TvWOWncWq+cpWsSmcxrB9iynMbw7PB1paw6LpFgBps8g+W8fQSMra
-pIITIL8k6IWlZ9XLASevO0VWXK8PIlZ2W3Cvy+d3HqLUrCLlV7fULgIqU79b1KQh
-azCkCG5uaQK2dpQYO2RvKy/1xx8tAEwNJKmEVu0oLdHUKrDQXXaUrtDpkNBtmhP+
-J2ru9KeJyWJ6KmOOsttQYP8iVPj9+6HYungZOBU+axq6GGa/0aPv9NjNhTZjDPTr
-oZ6JanSO2z+h4lHaR2GP3Twqfw+Y+srRnGKtUUhKjRgf1J+2riQ13l2jbEAt4fw6
-mH/Vg1EwEuexjIUMeU1cebN0c9Ht4dpVabKUjnV+q2diJ4jQHmtGFXoj8wFXiyVP
-PDyi/Hu1OJ+0Rv/ACjn1
-=Q9w9
+iQIcBAEBCAAGBQJRwqrEAAoJEECxmPOUX5FE7ZcP/2aLQObFpIJj57rw7tPwlPLB
+QItGpphI9kgtnT2geFpAQhU1yUR6WLVQpSkMp3+wGhvkOJlsyGNruH6tMT8JBfwI
+XEvtjsqLZo/Z720ievpvas54QRHYpDtMCcG8W0WY59svQ1ahc7x9Z4Ky3VbM58LA
+U5UqIX9rimtdcRRmvwFMf5+NGINwOGDAERVqdjf0mWoDI9P5Yhq3OfqNTlYxq3Z4
+7FwG956IKOvJLbvaa3+Z0wVu0MNpW5aagkEm4EtfyA+lctSwMjitIGqmptM7qlbq
+vF3Jairn1wnSdQXTPS3ubJIqVAqafdH4tqvhraY54DzDSVwS+0zzg9f6f8fNpK9K
+pQXemX/Kyvnay2UdgYdflDPyDRLW7lTap2LBd31zv0+8KJGVoOB18LT+dfO8CypO
+2YCFfk+MO5/VGUigan5yP/EF2hFZWm1yibsM0gtHUlNDc0dpXitSAAdKxDKMBatN
+VGff7vonDZIY4LQ3L83/gTn9BjJmxTYUJOeAeGIOzWWfMOBsM+oWJ00eYwJWX2Oc
+nY2gdOzPXdGjf0DWiiyoUqcuCTXOpa2o0db1KMqWV6FdxbiqmpFvvPLWQmdMPeBA
+SDUMTIm1ql0bNcvmbgnn5ayiIVZ1rhpBvZ21KJVlfdZFS03o432T12IvVbrx61Rm
+PKL55sENrMq7YETCkAqk
+=3E2p
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__20_Jun_2013_15_05_50_+1000_JlwwO_pKiKayUHO1--
+--Signature=_Thu__20_Jun_2013_17_09_51_+1000_78.Fb=v_Trqckf6N--
