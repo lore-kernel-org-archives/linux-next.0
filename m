@@ -1,70 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- driver-core.current tree
-Date: Thu, 20 Jun 2013 13:49:04 +1000
-Message-ID: <20130620134904.a621b5ebf28fb102a40ae9c2@canb.auug.org.au>
-References: <20130619153225.9ff68f0984bfa54333c4df10@canb.auug.org.au>
-	<CACVXFVMhVs7Wy1A=TfczYzHLFwyRPhEGW9Yo9hTERekaxSnpdQ@mail.gmail.com>
-	<20130619143918.GC8413@kroah.com>
-	<CACVXFVObBDwaounzZ7RyF=+QrQCBoEd0s-uLYFokksOzKgZSjA@mail.gmail.com>
-	<20130619163628.GA28672@kroah.com>
-	<CACVXFVNsbBunNzYecUG34sFjPqRuzMHRTBD2Siy9d4RhqPnr3A@mail.gmail.com>
-	<20130620110610.7d245d88b70620fa271a29f7@canb.auug.org.au>
-	<CACVXFVN-B7ZrqjoA_QNkWKjM0XdM-S08h-d6JuRjsYOX0YPt=A@mail.gmail.com>
-	<20130620032812.GA24385@kroah.com>
+Subject: linux-next: manual merge of the tip tree with the arm tree
+Date: Thu, 20 Jun 2013 15:05:50 +1000
+Message-ID: <20130620150550.9eda4f00469d4ba4a08dcb00@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__20_Jun_2013_13_49_04_+1000_AoCvR_4gpWq=NAhl"
+ boundary="Signature=_Thu__20_Jun_2013_15_05_50_+1000_JlwwO_pKiKayUHO1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47528 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:32854 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935637Ab3FTDtJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 23:49:09 -0400
-In-Reply-To: <20130620032812.GA24385@kroah.com>
+	with ESMTP id S1750856Ab3FTFGH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2013 01:06:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Ming Lei <ming.lei@canonical.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Thu__20_Jun_2013_13_49_04_+1000_AoCvR_4gpWq=NAhl
+--Signature=_Thu__20_Jun_2013_15_05_50_+1000_JlwwO_pKiKayUHO1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-On Wed, 19 Jun 2013 20:28:12 -0700 Greg KH <greg@kroah.com> wrote:
->
-> Thanks, that helped out a lot.  I've now merged this together, and
-> pushed it out to my driver-core-next branch, can you verify that I got
-> it all correct?
+Today's linux-next merge of the tip tree got a conflict in
+arch/arm/kernel/Makefile between commit 4477ca45fb36 ("ARM: ARMv7-M:
+Allow the building of new kernel port") from the arm tree and commit
+38ff87f77af0 ("sched_clock: Make ARM's sched_clock generic for all
+architectures") from the tip tree.
 
-And I have refetched the driver-core tree for today's linux-next so it
-includes that merge.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__20_Jun_2013_13_49_04_+1000_AoCvR_4gpWq=NAhl
+diff --cc arch/arm/kernel/Makefile
+index fccfbdb,97cb057..0000000
+--- a/arch/arm/kernel/Makefile
++++ b/arch/arm/kernel/Makefile
+@@@ -15,8 -15,8 +15,8 @@@ CFLAGS_REMOVE_return_address.o =3D -p
+ =20
+  # Object file lists.
+ =20
+ -obj-y		:=3D elf.o entry-armv.o entry-common.o irq.o opcodes.o \
+ +obj-y		:=3D elf.o entry-common.o irq.o opcodes.o \
+- 		   process.o ptrace.o return_address.o sched_clock.o \
++ 		   process.o ptrace.o return_address.o \
+  		   setup.o signal.o stacktrace.o sys_arm.o time.o traps.o
+ =20
+  obj-$(CONFIG_ATAGS)		+=3D atags_parse.o
+
+--Signature=_Thu__20_Jun_2013_15_05_50_+1000_JlwwO_pKiKayUHO1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRwnuwAAoJEECxmPOUX5FEzWEQAJxhukISHEmtFNVoB6m3oJav
-1pTak37hq00S+l98qrIhu/kXmnYf/3kFdW8ZxS97FRI0Zj40y8uyt1UxgTyNcvnb
-Be9+0CxFPei1Ny8mOrULM8XhYPtQosrAq/9fsSjJQy+DOuawAjNFUbycLupfH6Cz
-xpZh24zc+MKG8CQUwQRKjveMARtSWSqtBxAVMxj7xTaXfaMWmQCX1xnDrRTaZPlS
-Q2teU9cz7bAF2AttXC7EY8IR3QtoEciyeLHNru5P2U7WzKbgiQ6ks8HzTsVDHUha
-Q93WucNYNFh6ubNamAcFX2X0ZjomD0DScT9EPlKgLlQh9sak6qCy0LejvfqGe176
-S21S1/4SCb546f6wu5wlpo3zaGNCpBwsu/Zv0vagO4nfAcGdF74TwqT/fsk2/4fc
-NRJc4rS0tCwyW9hqJETOxy/RJXGJkinxzXeFd9NhGKBQzXjFQwPYYeSSvQ2Ga5aj
-COYrbCOCnqqyLtK/Zdf7BlnOZucNC5y8i3461Yqop1+Wtqmsy4rGP7L0Zt8+Pxik
-f4Hk5SwW3FeKzKBm0vyrthf63QYc7Tib1Kyarkb9ExZDuC4we/0hfotSca69MMZJ
-qpbDWxdbNJDc6qrSK5ouHLc20qpJMTlRNe0AeJwbW19v8q3NudVG1l33GH5Ifj/q
-NhyTJM9eaAMNONVSH0nh
-=kCYp
+iQIcBAEBCAAGBQJRwo2yAAoJEECxmPOUX5FEMnIP/1OHe/iYlKZj5/sB7lSrtmBL
+bCI5kTdxgSDfF4yxSXWmGb91jrDM6mvrQvMD209pCdsJn4PGwArByB8KzSfItCHO
+um4N5JKzLf3++nkCKYCAJGDbLkg3X+AN10mYC4/tuC8r/wRivtfvBH+S3fjAAGLp
+uKzAQfiCD8GUr9w3mWtv/o3czPyShU9koH7xKscyWWoc/fGim+/HaNDStG5DoFQy
+OOLDHjkUhle2jH2IUduuC+gvz28KOeQeZMheBXzwi50cJg59UnthkwXndT2JxxSA
+VYhV305+TM+TvWOWncWq+cpWsSmcxrB9iynMbw7PB1paw6LpFgBps8g+W8fQSMra
+pIITIL8k6IWlZ9XLASevO0VWXK8PIlZ2W3Cvy+d3HqLUrCLlV7fULgIqU79b1KQh
+azCkCG5uaQK2dpQYO2RvKy/1xx8tAEwNJKmEVu0oLdHUKrDQXXaUrtDpkNBtmhP+
+J2ru9KeJyWJ6KmOOsttQYP8iVPj9+6HYungZOBU+axq6GGa/0aPv9NjNhTZjDPTr
+oZ6JanSO2z+h4lHaR2GP3Twqfw+Y+srRnGKtUUhKjRgf1J+2riQ13l2jbEAt4fw6
+mH/Vg1EwEuexjIUMeU1cebN0c9Ht4dpVabKUjnV+q2diJ4jQHmtGFXoj8wFXiyVP
+PDyi/Hu1OJ+0Rv/ACjn1
+=Q9w9
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__20_Jun_2013_13_49_04_+1000_AoCvR_4gpWq=NAhl--
+--Signature=_Thu__20_Jun_2013_15_05_50_+1000_JlwwO_pKiKayUHO1--
