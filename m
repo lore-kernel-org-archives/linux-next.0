@@ -1,83 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with the ia64 tree
-Date: Thu, 20 Jun 2013 11:36:36 +1000
-Message-ID: <20130620113636.9658fab2af8a67231093a462@canb.auug.org.au>
+From: Chao Xie <cxie4@marvell.com>
+Subject: RE: linux-next: build failure after merge of the final tree (mfd
+ tree related)
+Date: Wed, 19 Jun 2013 19:25:26 -0700
+Message-ID: <AAD1C6EB06EE3649B35B7E026785068D2581671C20@SC-VEXCH2.marvell.com>
+References: <20130618171957.9d8fbcf376243d1d5f1d92b0@canb.auug.org.au>
+ <20130619082456.GR7161@zurbaran>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__20_Jun_2013_11_36_36_+1000_xtCQbcbCc1ALYHRx"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36732 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935237Ab3FTBgu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Jun 2013 21:36:50 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiang Liu <liuj97@gmail.com>, Yijing Wang <wangyijing@huawei.com>, "Luck, Tony" <tony.luck@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130619082456.GR7161@zurbaran>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yi Zhang <yizhang@marvell.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__20_Jun_2013_11_36_36_+1000_xtCQbcbCc1ALYHRx
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> -----Original Message-----
+> From: Samuel Ortiz [mailto:sameo@linux.intel.com] 
+> Sent: Wednesday, June 19, 2013 4:25 PM
+> To: Stephen Rothwell
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Chao Xie; Yi Zhang
+> Subject: Re: linux-next: build failure after merge of the final tree (mfd tree related)
 
-Hi Bjorn,
+> Hi Stephen,
 
-Today's linux-next merge of the pci tree got a conflict in
-arch/ia64/sn/kernel/io_init.c between commit 2ead66b54725 ("PCI/IA64: SN:
-use normal resource instead of pci_window") from the ia64 tree and commit
-a649dbfea36b ("ia64/PCI: Clean up pci_scan_root_bus() usage") from the
-pci tree.
+>>On Tue, Jun 18, 2013 at 05:19:57PM +1000, Stephen Rothwell wrote:
+>> Hi all,
+>> 
+>> After merging the final tree, today's linux-next build (powerpc
+>> allyesconfig) failed like this:
+>> 
+>> drivers/mfd/88pm800.c: In function 'pm800_pages_init':
+>> drivers/mfd/88pm800.c:434:2: error: implicit declaration of function 'IS_ERR' [-Werror=implicit-function-declaration]
+>>   if (IS_ERR(subchip->regmap_power)) {
+>>   ^
+>> drivers/mfd/88pm800.c:435:3: error: implicit declaration of function 'PTR_ERR' [-Werror=implicit-function-declaration]
+>>    ret = PTR_ERR(subchip->regmap_power);
+>>    ^
+>> 
+>> Caused by commit f8ca616f67f7 ("mfd: 88pm800: Enhance error handling for
+>> sub pages probe/remove") from the mfd tree.  Forgot to include
+>> linux/err.h (see Rule 1 in Documentation/SubmitChecklist).
+>Sorry about that. This is fixed now.
 
-I fixed it up (see below - this could clearly be done better) and can
-carry the fix as necessary (no action is required).
+It is my fault. Thanks for fixing it.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> Cheers,
+> Samuel.
 
-diff --cc arch/ia64/sn/kernel/io_init.c
-index 2b00ade,e2c7733..0000000
---- a/arch/ia64/sn/kernel/io_init.c
-+++ b/arch/ia64/sn/kernel/io_init.c
-@@@ -269,16 -326,7 +269,14 @@@ sn_pci_controller_fixup(int segment, in
-  	bus =3D pci_scan_root_bus(NULL, busnum, &pci_root_ops, controller,
-  				&resources);
-   	if (bus =3D=3D NULL)
- -		kfree(controller);
- + 		goto error_return; /* error, or bus already scanned */
- +
-- 	bus->sysdata =3D controller;
--=20
- +	return;
- +
- +error_return:
- +	kfree(res);
- +	kfree(controller);
- +	return;
-  }
- =20
-  /*
-
---Signature=_Thu__20_Jun_2013_11_36_36_+1000_xtCQbcbCc1ALYHRx
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRwlypAAoJEECxmPOUX5FEOvoQAJFOrh+5oafzeOiAq2Nb75Ko
-F79631hR5eWNX+hsUJiOW+1wBVZvWXo/z2YX9wnIyLWDunG/vkKQaWq1quONvPk6
-5vEyMVdYta6Z1vAY0ebcdGBGiahOTPxIBUxdLzboJbWEHa8cpIU6l+GHSQ6OOIu1
-V+RNkgie3jox0Nu5tCV+zFabEnNNAWL921rUum1LJujauG44X0fxdTUTPhRrnI7U
-pNj6VEDbQRwP7IJUr1hkt8qTxQR1Q/OZCyFeWAZpuUoI7fHb/sJmj4p8t27FI+bM
-wDFRoBzgModU4iblY/jAS17ghPW7BH6jtqD5b191SrJ5B/CiutiJN1jv7NRa+mAh
-ZUqg9fJUFiHoB7hCBKiPNc12xWXCXcEHDNR105EY18/eKYyL5JtUMn4ZMY14lek3
-2QnejI+quacSLZKBamaxr7xYE7erapYpjXOpRg05BTSOENuLEQq434NtuPd+U2Ve
-kT4NftUfHoQ2H8Qh2JSVElTF3YyHLvQ5AxRnJSFil0fKEqTz/EwRmfSf6UgDjz1E
-qo1jqsAfHvCYUq2abswxrRz/NYr6zxwRmziUA/Pkc2ofyT8DLI4h54Fd0nFFlaCG
-DcVzR3Ol8QYdSrpwIxke+vw+ECniPNOIEA9LqcSzNLknaUPnFW0hxoxYf5dgEiit
-P/+q6Vj+bnPm3kb8NrUQ
-=1cr6
------END PGP SIGNATURE-----
-
---Signature=_Thu__20_Jun_2013_11_36_36_+1000_xtCQbcbCc1ALYHRx--
+> -- 
+> Intel Open Source Technology Centre
+> http://oss.intel.com/
