@@ -1,71 +1,74 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the mailbox
- tree
-Date: Fri, 21 Jun 2013 00:12:39 -0700
-Message-ID: <20130621071239.GM5523@atomide.com>
-References: <20130621162656.bb94e0fa8b6813781b804a73@canb.auug.org.au>
- <20130621164149.598b39bb78b6015057d03f6f@canb.auug.org.au>
- <20130621065310.GK5523@atomide.com>
- <CAOesGMjszju75jo6Ej6C=0-rfdPLuEj0mwmU1zYvFvYw1dyQCA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the ftrace tree
+Date: Fri, 21 Jun 2013 17:27:24 +1000
+Message-ID: <20130621172724.abc40cf979e7e585f70090c9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:40226 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1758748Ab3FUHMs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Jun 2013 03:12:48 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__21_Jun_2013_17_27_24_+1000_mMc/KGbH3E+r/8Sq"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>, Alex Thorlton <athorlton@sgi.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Fri__21_Jun_2013_17_27_24_+1000_mMc/KGbH3E+r/8Sq
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <CAOesGMjszju75jo6Ej6C=0-rfdPLuEj0mwmU1zYvFvYw1dyQCA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>, Omar Ramirez Luna <omar.ramirez@copitl.com>, Loic Pallardy <loic.pallardy@st.com>
+Content-Transfer-Encoding: quoted-printable
 
-* Olof Johansson <olof@lixom.net> [130621 00:07]:
-> On Thu, Jun 20, 2013 at 11:53 PM, Tony Lindgren <tony@atomide.com> wrote:
-> > * Stephen Rothwell <sfr@canb.auug.org.au> [130620 23:48]:
-> >> Hi all,
-> >>
-> >> On Fri, 21 Jun 2013 16:26:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >> >
-> >> > Today's linux-next merge of the arm-soc tree got a conflict in
-> >> > drivers/mailbox/Kconfig between commit a1824eaab70f ("mailbox: OMAP:
-> >> > introduce mailbox framework") from the mailbox tree and commit
-> >> > c869c75c16b3 ("mailbox/omap: move the OMAP mailbox framework to drivers")
-> >> > from the arm-soc tree.
-> >> >
-> >> > I fixed it up (I suspect not properly - see below) and can carry the fix
-> >> > as necessary (no action is required).
-> >> >
-> >> > It looks like we have two different versions of these changes in
-> >> > linux-next now, so please clean it all up.  i.e. can I just drop the
-> >> > mailbox tree now?
-> >>
-> >> OK, things went steeply downhill from here, so I went back and removed
-> >> the mailbox tree ...
-> >
-> > I think Olof dropped the earlier version of the mailbox branch, and
-> > remerged the updated mailbox branch. So if there was also yet another
-> > mailbox branch being pulled into Linux next, then yes, dropping it is
-> > the way to go.
-> 
-> No, I only reverted -- I didn't pull in any new branch.
+Hi Andrew,
 
-Arnd pulled in tags/omap-for-v3.11/mailbox-signed, which is the branch
-that should get merged to the mainline tree while we're waiting for
-the generic mailbox framework from Jassi.
- 
-> I wonder if this mess is caused by the fact that I did the revert
-> instead of rebuilding our for-next and dropping the merge in the first
-> place.
-> 
-> I'll rebuild our for-next (or maybe Arnd will beat me to it) before
-> next linux-next build, i.e. Sunday night my time.
+Today's linux-next merge of the akpm tree got a conflict in
+kernel/panic.c between commit de7edd31457b ("tracing: Disable tracing on
+warning") from the ftrace tree and commit "panic: add cpu/pid to
+warn_slowpath_common in WARNING printk()s" from the akpm tree.
 
-Could be, especially if some of the commits are the same in the reverted
-branch and newly merged branch as git might think that some merges have
-been already resolved the right way earlier.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Regards,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Tony
+diff --cc kernel/panic.c
+index 4cea6cc,aaa0b7c..0000000
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@@ -400,10 -399,9 +400,11 @@@ struct slowpath_args=20
+  static void warn_slowpath_common(const char *file, int line, void *caller,
+  				 unsigned taint, struct slowpath_args *args)
+  {
+ +	disable_trace_on_warning();
+ +
+- 	printk(KERN_WARNING "------------[ cut here ]------------\n");
+- 	printk(KERN_WARNING "WARNING: at %s:%d %pS()\n", file, line, caller);
++ 	pr_warn("------------[ cut here ]------------\n");
++ 	pr_warn("WARNING: CPU: %d PID: %d at %s:%d %pS()\n",  '
++ 		raw_smp_processor_id(), current->pid, file, line, caller);
+ =20
+  	if (args)
+  		vprintk(args->fmt, args->args);
+
+--Signature=_Fri__21_Jun_2013_17_27_24_+1000_mMc/KGbH3E+r/8Sq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRxABiAAoJEECxmPOUX5FELzkP/12ES/ZExGc4namkeDtDEKzF
+axRouDm4yXqQlmLoaMMTYjCWj6yPGKoFktDnLsR+WE7fchT8iEpwIFJfSp427KyE
+wdM0CZGfV3LaC91lCB54COFFvmZLPZoDFapGG8yjeX+hxY3k6/jDmuwzc4pVTYnv
+GFxUTO5ynODdAnr0/Au0gWInjdmxqNs8MZXT/mULQumzQS6HBG51tzS80IIAZ3qM
+FRUFCnahPMhYPR9A06TrQ6sw/Jp3Pso53RpAoALL4fmStDqL8pyITViQeqyn2V1z
+KyFDWLkfgZnjERoT+oHjprDv3OJ6yGngHg3NI2C2++2dWYLKQuhI915o8P60jOP2
+JSNFg4JFV4QQYWwsJW7vs46U+Tq0wWUR9mD80ZskTwvK3RV0PnFGVJwcBREEZ5xi
+p3/gVM+Wz9i9WORBnJ0jbErELQnBUEduv9E3DAsQPNtuWY5kbcqhueogUWrZKSqb
+NjqY0qMMD9cn/DGlx6m9Po6cMQXHq2yM1uwy6DSPAATvbm8pcOZzkAjCY2UHKtls
+Uqj8z3gyAlYI/+v6UP832jYDJQmjk/+wcyEii+gVzL3UkvXXIwttlDtyAZfagT+U
+N9pLrsXIrWp8fxJ8BhoPAvxW3hiOqa/n80cB9vEWRYyP7J4xpO8AcU94aJud8X7c
+J17w+xjXw0kOMPmlad/z
+=xtxf
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__21_Jun_2013_17_27_24_+1000_mMc/KGbH3E+r/8Sq--
