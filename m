@@ -1,33 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 21 Jun 2013 12:33:21 +1000
-Message-ID: <20130621123321.a6b54d66ef1a9f708caae452@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the net-next tree
+Date: Fri, 21 Jun 2013 15:49:25 +1000
+Message-ID: <20130621154925.13c957ee77c5c62e540d7cfc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__21_Jun_2013_12_33_21_+1000_1uwrfcQZwFdyVLeM"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58962 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758085Ab3FUCdb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2013 22:33:31 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Chris Healy <cphealy@gmail.com>
+ boundary="Signature=_Fri__21_Jun_2013_15_49_25_+1000_5pD4MS9fbneFeAPh"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mugunthan V N <mugunthanvnm@ti.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Benoit Cousson <benoit.cousson@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__21_Jun_2013_12_33_21_+1000_1uwrfcQZwFdyVLeM
+--Signature=_Fri__21_Jun_2013_15_49_25_+1000_5pD4MS9fbneFeAPh
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/freescale/fec_main.c between commit d13919301d9a
-("net: fec: Fix build for MCF5272") from the net tree and commit
-32bc9b46d840 ("fec: Add support to restart autonegotiate") from the
-net-next tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/boot/dts/am335x-evmsk.dts between commit f6655d697b85 ("ARM:
+dts: AM33XX: Add CPSW phy_id device tree data to am335x-evmsk") from the
+net-next tree and commit 94a924ca61f0 ("ARM: dts: AM33XX: Add pinmux
+configuration for CPSW to EVMsk") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,71 +32,55 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/ethernet/freescale/fec_main.c
-index d48099f,46f2544..0000000
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@@ -1444,13 -1435,20 +1443,24 @@@ static int fec_enet_set_pauseparam(stru
-  	return 0;
-  }
+diff --cc arch/arm/boot/dts/am335x-evmsk.dts
+index 4297899,9e00eef..0000000
+--- a/arch/arm/boot/dts/am335x-evmsk.dts
++++ b/arch/arm/boot/dts/am335x-evmsk.dts
+@@@ -249,12 -381,14 +381,24 @@@
+  	};
+  };
  =20
- +#endif /* !defined(CONFIG_M5272) */
+ +&cpsw_emac0 {
+ +	phy_id =3D <&davinci_mdio>, <0>;
+ +	phy-mode =3D "rgmii-txid";
+ +};
  +
-+ static int fec_enet_nway_reset(struct net_device *dev)
-+ {
-+ 	struct fec_enet_private *fep =3D netdev_priv(dev);
-+ 	struct phy_device *phydev =3D fep->phy_dev;
+ +&cpsw_emac1 {
+ +	phy_id =3D <&davinci_mdio>, <1>;
+ +	phy-mode =3D "rgmii-txid";
+ +};
+++
++ &mac {
++ 	pinctrl-names =3D "default", "sleep";
++ 	pinctrl-0 =3D <&cpsw_default>;
++ 	pinctrl-1 =3D <&cpsw_sleep>;
++ };
 +=20
-+ 	if (!phydev)
-+ 		return -ENODEV;
-+=20
-+ 	return genphy_restart_aneg(phydev);
-+ }
-+=20
-  static const struct ethtool_ops fec_enet_ethtool_ops =3D {
- +#if !defined(CONFIG_M5272)
-  	.get_pauseparam		=3D fec_enet_get_pauseparam,
-  	.set_pauseparam		=3D fec_enet_set_pauseparam,
- +#endif
-  	.get_settings		=3D fec_enet_get_settings,
-  	.set_settings		=3D fec_enet_set_settings,
-  	.get_drvinfo		=3D fec_enet_get_drvinfo,
-@@@ -1891,9 -1887,13 +1900,14 @@@ fec_probe(struct platform_device *pdev
-  	if (pdev->id_entry &&
-  	    (pdev->id_entry->driver_data & FEC_QUIRK_HAS_GBIT))
-  		fep->pause_flag |=3D FEC_PAUSE_FLAG_AUTONEG;
- +#endif
- =20
-- 	fep->hwp =3D devm_request_and_ioremap(&pdev->dev, r);
-+ 	fep->hwp =3D devm_ioremap_resource(&pdev->dev, r);
-+ 	if (IS_ERR(fep->hwp)) {
-+ 		ret =3D PTR_ERR(fep->hwp);
-+ 		goto failed_ioremap;
-+ 	}
-+=20
-  	fep->pdev =3D pdev;
-  	fep->dev_id =3D dev_id++;
- =20
++ &davinci_mdio {
++ 	pinctrl-names =3D "default", "sleep";
++ 	pinctrl-0 =3D <&davinci_mdio_default>;
++ 	pinctrl-1 =3D <&davinci_mdio_sleep>;
++ };
 
---Signature=_Fri__21_Jun_2013_12_33_21_+1000_1uwrfcQZwFdyVLeM
+--Signature=_Fri__21_Jun_2013_15_49_25_+1000_5pD4MS9fbneFeAPh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRw7t2AAoJEECxmPOUX5FEJnQP/18a3XuLiEllZnES9ToH36Zv
-6ANFOWlhKIYnpITBQ6PJGbvulx6kgXLTqjh/FoYoqVmTlUpBzdW1yVjFn+wlKokn
-M9njhNHioHixHPKa/qYUK5BXJKms7uy52F4KjSI2wlrEtU0oZbJRNJcZ2X9/xr+Z
-7HYHl3n0gg0P0vGFPfUJdYlvJSIWJnx8PhnmuJnSKY84cDPJbvRTaxPjoF+w/krG
-OTvHZrL6wkT253VlT7uGK9uIawuaoLdXHoxWH30l5ZJF+gC8ip1hRITLcnVLrXAI
-NgynkE/Ts+JNVZzDn4Ivd1WczYVEWHLcFHyW8jZ5r1OWesMEWOQPMgksCn7gDM7z
-AwMsj2daZVBcocgb5ncQjNDYJaGZ52aUd5p2N5AKHDldYNDzCcO0Lgy/Z6r2j+1g
-S5EdDs2UuwiTWBJM5GODo6aCYbtZwHNy2mC9FFkmM2nwi663r3WCa5yd4ykPqrH8
-1TVsbt6WiLPMpl+sQtGytY0BKDo5JCX+gbMsDr3dUb2E+iPIqrC5b2otywyuhGMo
-kGWcx1JIWaUuolFCYxxX9/PrkPv5w8bR23nr2ItrTpAPcixIZ5bCIAIrwAIK3FTr
-QReqnIJc6EGM+yZ4cT4iCxBSMG+l7bIE0ha1jPcFi6kX6+QsOsIFfWvLFZ8HKhCV
-Azy40VikB/osCwNm8olQ
-=JfTM
+iQIcBAEBCAAGBQJRw+lpAAoJEECxmPOUX5FEpmkP/2XaJ9LaFK3yYKXBCIqVU67G
+zNA2tpXHXIi7O0pTqvmXh/vEm6g0iDRZHY7E8dBMoCXIiGVoCnkWUKRCRv3rtww7
+zxfMt/bBVDNajhEljBopSTqMfo6yN9a/r9THIIASU9gvf3fv4zfV+d94JkbgJe2T
+evIWnnl5bU93bPabS/hCZIJ/b2Jt2nVk5uIPK1S7RPxrZJZxGieSp6TrYRErjhk8
+7+u37jxkc/qeaGCJEVowfHSYID4w67hRH74hGib8KpP79hLvvYJK4jSpiCgzDs+2
+NDSpjao5W/SbVmuzElpP4nfKCraNxp+yRBOzL9AaY/rxajLo6c2rJhBOtHLbYE6q
+S9cu7TTQiItTHybrZjViIHFdpK9f0XX3OCg76UD+6GXJ90Zk3wYt+wje4n36+1zi
+s7MY6kemEAM7k2/HCUrM13c1RoEflxq1x7pMKUpV6BV8wTQ5RAnSH58OYig/MT9I
+PuZcVXaEC0GajJhvZtWTghXMXxbFqiE8h1PZ94qHWNqgZpymtFlgPpru1U5uGuA/
+ITZbrgb0KMa8jH34B0Ke0tBYoGMfkQ/HLqf86sJQSyZ+CbEjImbtox/1Ro+MrAk2
+W4ozGSdtxgj+ekqcZjxbclGEJsAi4mHj2AHpumnAE6UEf5C+YxOToCXX9X+WjQXp
+jNfItZbjFQJSPKcbFPc9
+=FWzo
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__21_Jun_2013_12_33_21_+1000_1uwrfcQZwFdyVLeM--
+--Signature=_Fri__21_Jun_2013_15_49_25_+1000_5pD4MS9fbneFeAPh--
