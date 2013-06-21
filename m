@@ -1,47 +1,73 @@
-From: Yuan-Hsin Chen <yuanlmm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] usb: gadget: fotg210-udc: Use module_platform_driver_probe
- macro
-Date: Fri, 21 Jun 2013 14:36:45 +0800
-Message-ID: <CADB-GoLWrML8jjt5n_qBZJoqK2w-5ot+Dg5LZ4w5K-ik_UPD+w@mail.gmail.com>
-References: <51C20F3D.1060700@windriver.com>
-	<1371736393-5518-1-git-send-email-yhchen@faraday-tech.com>
-	<20130620121610.GE9817@arwen.pp.htv.fi>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the mailbox
+ tree
+Date: Fri, 21 Jun 2013 16:41:49 +1000
+Message-ID: <20130621164149.598b39bb78b6015057d03f6f@canb.auug.org.au>
+References: <20130621162656.bb94e0fa8b6813781b804a73@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130620121610.GE9817-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Cc: Yuan-Hsin Chen <yhchen-w0jeGXs5+AWXmMXjJBpWqg@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__21_Jun_2013_16_41_49_+1000_2UTvt5ohb1/YhHi0"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58354 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751110Ab3FUGl6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Jun 2013 02:41:58 -0400
+In-Reply-To: <20130621162656.bb94e0fa8b6813781b804a73@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, Omar Ramirez Luna <omar.ramirez@copitl.com>, Loic Pallardy <loic.pallardy@st.com>
 
-Hi,
+--Signature=_Fri__21_Jun_2013_16_41_49_+1000_2UTvt5ohb1/YhHi0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On Thu, Jun 20, 2013 at 8:16 PM, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote:
+On Fri, 21 Jun 2013 16:26:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> Hi,
->
-> On Thu, Jun 20, 2013 at 01:53:13PM +0000, Yuan-Hsin Chen wrote:
-> > Because fotg210-udc is configured as a non-hotpluggable device,
-> > that makes sense to use module_platform_driver_probe() instead of
-> > module_platform_driver(). This also fixes the section mismatch issue.
-> >
-> > Signed-off-by: Yuan-Hsin Chen <yhchen-w0jeGXs5+AWXmMXjJBpWqg@public.gmane.org>
->
-> I would rather see you remove __init annotation from your probe()
-> function. The reason being that it will users to bind/unbind the driver
-> through sysfs, which is pretty good for testing, at least.
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> drivers/mailbox/Kconfig between commit a1824eaab70f ("mailbox: OMAP:
+> introduce mailbox framework") from the mailbox tree and commit
+> c869c75c16b3 ("mailbox/omap: move the OMAP mailbox framework to drivers")
+> from the arm-soc tree.
+>=20
+> I fixed it up (I suspect not properly - see below) and can carry the fix
+> as necessary (no action is required).
+>=20
+> It looks like we have two different versions of these changes in
+> linux-next now, so please clean it all up.  i.e. can I just drop the
+> mailbox tree now?
 
-I see and will send a patch later. Thanks.
+OK, things went steeply downhill from here, so I went back and removed
+the mailbox tree ...
 
-Yuan-Hsin
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
->
->
-> --
-> balbi
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Signature=_Fri__21_Jun_2013_16_41_49_+1000_2UTvt5ohb1/YhHi0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRw/WxAAoJEECxmPOUX5FEGYcQAIfAiYgXs8kRCeIxM3csbjE5
+XGBWxdpbM1FYH1+4fWndOhPv4wp5UgyHvolwzwO52lh84Dm86p+pOVEJ5XmaVn38
+5kVyLcEDpPPTeAuVJiq0wdr27c+3cp8qXVMKmpZ3TYiHfMfrMKoPsCoUngXSvNUJ
+ScBgX4GfPS8OQLfRRCMrEpFxa6uS1CAk2JK+xsK4ATNYx+3yN9uR3RNVf1Q1Es5v
+kY/AaFp5JYcN7+KvFugHvSleNFOHQ8np0fdZxatwxAxBfIO9dJp+jiDHx5cqY58R
+g6pDN7RxINfILZnojc7NSnf6LeeYecMd86plaVADwkb0cReye7TLTbHTRMk9UvFD
+LBxS2VK8DAZraqaYZ1UYSGPI/EHp4OnuXJGAZClvI5lCTmTs1wZv+n4S0sdMej+C
+fg/6h7c1ywL5h1LR7iQah7UPkMdcmIDIWLkFDB80SgGNzjh7PEqXIQt25SFFzsJz
+B576Slng/8gDxVMAvvDu7fqWnIT7b36xJcsAmc6/J5UbkT4B8wz36voFcBfFCSco
+Igf58zUFw3Lidkmx+V9Z4ImxzKdrkHX7PO+tMHxFIVnw+UkoUyNF7CdGNaOxhl5r
+fNwpDc/SmSG1SWSOUoK/iS6LlpEkofYsU9uXC7KMPgdtQZUCLffDH0AaYzIbl6R+
+SDjfcklyjjPzDj253K20
+=y53m
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__21_Jun_2013_16_41_49_+1000_2UTvt5ohb1/YhHi0--
