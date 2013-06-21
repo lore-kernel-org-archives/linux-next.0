@@ -1,49 +1,106 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: build failure after merge of the leds tree
-Date: Fri, 21 Jun 2013 01:27:57 +0100
-Message-ID: <CACxGe6vDaQ91_nU7qxSMxv-aTJbtZFu2cM9NpY2SYbqbg2Gpcg@mail.gmail.com>
-References: <20130617152908.1b9c999c01f18262a387dc91@canb.auug.org.au>
- <1371450391.658890225@f333.mail.ru> <20130621101600.e9cff446d5f6e21c3e8599c8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 21 Jun 2013 12:33:21 +1000
+Message-ID: <20130621123321.a6b54d66ef1a9f708caae452@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__21_Jun_2013_12_33_21_+1000_1uwrfcQZwFdyVLeM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:55100 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965258Ab3FUA2R (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2013 20:28:17 -0400
-Received: by mail-ie0-f172.google.com with SMTP id 16so18345505iea.3
-        for <linux-next@vger.kernel.org>; Thu, 20 Jun 2013 17:28:17 -0700 (PDT)
-In-Reply-To: <20130621101600.e9cff446d5f6e21c3e8599c8@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58962 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758085Ab3FUCdb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2013 22:33:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alexander Shiyan <shc_work@mail.ru>, Bryan Wu <cooloney@gmail.com>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Chris Healy <cphealy@gmail.com>
 
-On Fri, Jun 21, 2013 at 1:16 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Guys,
->
-> On Mon, 17 Jun 2013 10:26:31 +0400 Alexander Shiyan <shc_work@mail.ru> wrote:
->>
->> > After merging the leds tree, today's linux-next build (x86_64
->> > allmodconfig) failed like this:
->> >
->> > drivers/leds/leds-mc13783.c: In function 'mc13xxx_led_probe':
->> > drivers/leds/leds-mc13783.c:280:4: error: implicit declaration of function 'of_get_next_child' [-Werror=implicit-function-declaration]
->> >     child = of_get_next_child(parent, child);
->> >     ^
->> >
->> > Caused by commit 2ca3a455432f ("leds: leds-mc13783: Add devicetree support").  of_get_next_child() is only defined if CONFIG_OF is set.
->> >
->> > I have used the version of the leds tree from next-20130607 for today.
->>
->> The patch has already been sent by me.
->> http://www.spinics.net/lists/linux-leds/msg00994.html
->
-> I anything happening about this?  That patch would need to go into the
-> leds tree (with acks from devicetree people - Grant cc'd).
+--Signature=_Fri__21_Jun_2013_12_33_21_+1000_1uwrfcQZwFdyVLeM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've gone and looked at the patch. It should be reverted and
-revisited. It interleaves a bunch of DT calls with non-DT calls which
-the absence of empty stubs when !CONFIG_OF is intended to catch.
+Hi all,
 
-g.
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/freescale/fec_main.c between commit d13919301d9a
+("net: fec: Fix build for MCF5272") from the net tree and commit
+32bc9b46d840 ("fec: Add support to restart autonegotiate") from the
+net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/ethernet/freescale/fec_main.c
+index d48099f,46f2544..0000000
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@@ -1444,13 -1435,20 +1443,24 @@@ static int fec_enet_set_pauseparam(stru
+  	return 0;
+  }
+ =20
+ +#endif /* !defined(CONFIG_M5272) */
+ +
++ static int fec_enet_nway_reset(struct net_device *dev)
++ {
++ 	struct fec_enet_private *fep =3D netdev_priv(dev);
++ 	struct phy_device *phydev =3D fep->phy_dev;
++=20
++ 	if (!phydev)
++ 		return -ENODEV;
++=20
++ 	return genphy_restart_aneg(phydev);
++ }
++=20
+  static const struct ethtool_ops fec_enet_ethtool_ops =3D {
+ +#if !defined(CONFIG_M5272)
+  	.get_pauseparam		=3D fec_enet_get_pauseparam,
+  	.set_pauseparam		=3D fec_enet_set_pauseparam,
+ +#endif
+  	.get_settings		=3D fec_enet_get_settings,
+  	.set_settings		=3D fec_enet_set_settings,
+  	.get_drvinfo		=3D fec_enet_get_drvinfo,
+@@@ -1891,9 -1887,13 +1900,14 @@@ fec_probe(struct platform_device *pdev
+  	if (pdev->id_entry &&
+  	    (pdev->id_entry->driver_data & FEC_QUIRK_HAS_GBIT))
+  		fep->pause_flag |=3D FEC_PAUSE_FLAG_AUTONEG;
+ +#endif
+ =20
+- 	fep->hwp =3D devm_request_and_ioremap(&pdev->dev, r);
++ 	fep->hwp =3D devm_ioremap_resource(&pdev->dev, r);
++ 	if (IS_ERR(fep->hwp)) {
++ 		ret =3D PTR_ERR(fep->hwp);
++ 		goto failed_ioremap;
++ 	}
++=20
+  	fep->pdev =3D pdev;
+  	fep->dev_id =3D dev_id++;
+ =20
+
+--Signature=_Fri__21_Jun_2013_12_33_21_+1000_1uwrfcQZwFdyVLeM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRw7t2AAoJEECxmPOUX5FEJnQP/18a3XuLiEllZnES9ToH36Zv
+6ANFOWlhKIYnpITBQ6PJGbvulx6kgXLTqjh/FoYoqVmTlUpBzdW1yVjFn+wlKokn
+M9njhNHioHixHPKa/qYUK5BXJKms7uy52F4KjSI2wlrEtU0oZbJRNJcZ2X9/xr+Z
+7HYHl3n0gg0P0vGFPfUJdYlvJSIWJnx8PhnmuJnSKY84cDPJbvRTaxPjoF+w/krG
+OTvHZrL6wkT253VlT7uGK9uIawuaoLdXHoxWH30l5ZJF+gC8ip1hRITLcnVLrXAI
+NgynkE/Ts+JNVZzDn4Ivd1WczYVEWHLcFHyW8jZ5r1OWesMEWOQPMgksCn7gDM7z
+AwMsj2daZVBcocgb5ncQjNDYJaGZ52aUd5p2N5AKHDldYNDzCcO0Lgy/Z6r2j+1g
+S5EdDs2UuwiTWBJM5GODo6aCYbtZwHNy2mC9FFkmM2nwi663r3WCa5yd4ykPqrH8
+1TVsbt6WiLPMpl+sQtGytY0BKDo5JCX+gbMsDr3dUb2E+iPIqrC5b2otywyuhGMo
+kGWcx1JIWaUuolFCYxxX9/PrkPv5w8bR23nr2ItrTpAPcixIZ5bCIAIrwAIK3FTr
+QReqnIJc6EGM+yZ4cT4iCxBSMG+l7bIE0ha1jPcFi6kX6+QsOsIFfWvLFZ8HKhCV
+Azy40VikB/osCwNm8olQ
+=JfTM
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__21_Jun_2013_12_33_21_+1000_1uwrfcQZwFdyVLeM--
