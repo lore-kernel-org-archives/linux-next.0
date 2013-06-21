@@ -1,55 +1,52 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jun 21 (infiniband: qib)
-Date: Fri, 21 Jun 2013 08:30:05 -0700
-Message-ID: <51C4717D.4090002@infradead.org>
-References: <20130621181721.11783d80583444868725b62c@canb.auug.org.au>
+From: Suman Anna <s-anna@ti.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the mailbox
+ tree
+Date: Fri, 21 Jun 2013 10:24:44 -0500
+Message-ID: <51C4703C.10206@ti.com>
+References: <20130621162656.bb94e0fa8b6813781b804a73@canb.auug.org.au> <CAOesGMjszju75jo6Ej6C=0-rfdPLuEj0mwmU1zYvFvYw1dyQCA@mail.gmail.com> <20130621071239.GM5523@atomide.com> <201306210936.09593.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:41601 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161367Ab3FUPa0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Jun 2013 11:30:26 -0400
-In-Reply-To: <20130621181721.11783d80583444868725b62c@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Marciniszyn <infinipath@intel.com>, linux-rdma@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <201306210936.09593.arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tony Lindgren <tony@atomide.com>, Olof Johansson <olof@lixom.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Omar Ramirez Luna <omar.ramirez@copitl.com>, Loic Pallardy <loic.pallardy@st.com>
+List-Id: linux-next.vger.kernel.org
 
-On 06/21/13 01:17, Stephen Rothwell wrote:
-> Hi all,
+Stephen,
+
+On 06/21/2013 02:36 AM, Arnd Bergmann wrote:
+> On Friday 21 June 2013, Tony Lindgren wrote:
+>>> I wonder if this mess is caused by the fact that I did the revert
+>>> instead of rebuilding our for-next and dropping the merge in the first
+>>> place.
+>>>
+>>> I'll rebuild our for-next (or maybe Arnd will beat me to it) before
+>>> next linux-next build, i.e. Sunday night my time.
+>>
+>> Could be, especially if some of the commits are the same in the reverted
+>> branch and newly merged branch as git might think that some merges have
+>> been already resolved the right way earlier.
+
+Yes, please drop the particular mailbox branch that you were picking
+into linux-next. It was the previous framework which was dropped at the
+last minute during the 3.10 merge window in favor of new one still under
+its final development steps, so we will not be using any commits from
+that branch.  Sorry for the trouble on this one. The branch that Arnd
+took has some of the OMAP patches reworked in preparation for the
+newer one.
+
 > 
-> Happy solstice!
+> I already rebuilt the arm-soc tree before Stephen started with today's
+> linux-next, so I think the conflict is elsewhere.
 > 
-> Changes since 20130620:
+> It's probably best if Suman Anna rebases the mailbox tree on top of
+> the omap mailbox branch that I took.
 > 
 
+I will rebase the mailbox tree once we have the new patches from Jassi
+finalized.
 
-on x86_64:
-
-when CONFIG_SMP is not enabled:
-
-(from qib.h:)
-
-#ifdef CONFIG_INFINIBAND_QIB_DCA
-struct qib_irq_notify {
-	int rcv;
-	void *arg;
-	struct irq_affinity_notify notify;
-};
-#endif
-
-struct irq_affinity_notify is only defined for CONFIG_SMP or GENERIC_HARDIRQS.
-Build error happens when one of those is not enabled.
-
-
-In file included from drivers/infiniband/hw/qib/qib_cq.c:41:0:
-drivers/infiniband/hw/qib/qib.h:447:29: error: field 'notify' has incomplete type
-make[4]: *** [drivers/infiniband/hw/qib/qib_cq.o] Error 1
-
-
-
-
--- 
-~Randy
+regards
+Suman
