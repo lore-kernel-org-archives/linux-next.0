@@ -1,18 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the mailbox tree
-Date: Fri, 21 Jun 2013 16:14:47 +1000
-Message-ID: <20130621161447.aa6c3eac42d9f1d26e39bc5f@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the tip tree
+Date: Fri, 21 Jun 2013 16:18:01 +1000
+Message-ID: <20130621161801.34c4a75c217ca4c1b7d6529c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__21_Jun_2013_16_14_47_+1000_cjpdhPN8TQQRT4d="
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Fri__21_Jun_2013_16_18_01_+1000_.P16kGKRp9sIJek4"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:57686 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1422796Ab3FUGSG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Jun 2013 02:18:06 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, Sricharan R <r.sricharan@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Tony Lindgren <tony@atomide.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Fri__21_Jun_2013_16_14_47_+1000_cjpdhPN8TQQRT4d=
+--Signature=_Fri__21_Jun_2013_16_18_01_+1000_.P16kGKRp9sIJek4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -20,10 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-omap2/omap_hwmod_44xx_data.c between commit 4a1c0e83bb4e
-("ARM: OMAP2+: mbox: remove dependencies with soc.h") from the mailbox
-tree and commit 3b9b10151c68 ("ARM: OMAP4: hwmod data: Clean up the data
-file") from the arm-soc tree.
+arch/arm/mach-u300/timer.c between commit 38ff87f77af0 ("sched_clock:
+Make ARM's sched_clock generic for all architectures") from the tip tree
+and commit 3c96d8ea8101 ("ARM: u300: enable delaytimer on the U300") from
+the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -32,53 +36,47 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-index 4065962,d04b5e6..0000000
---- a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-@@@ -1862,22 -1573,6 +1574,17 @@@ static struct omap_hwmod_class omap44xx
-  };
- =20
-  /* mailbox */
- +static struct omap_mbox_dev_info omap44xx_mailbox_info[] =3D {
- +	{ .name =3D "mbox-ipu", .tx_id =3D 0, .rx_id =3D 1 },
- +	{ .name =3D "mbox-dsp", .tx_id =3D 3, .rx_id =3D 2 },
- +};
- +
- +static struct omap_mbox_pdata omap44xx_mailbox_attrs =3D {
- +	.intr_type	=3D MBOX_INTR_CFG_TYPE2,
- +	.info_cnt	=3D ARRAY_SIZE(omap44xx_mailbox_info),
- +	.info		=3D omap44xx_mailbox_info,
- +};
- +
-- static struct omap_hwmod_irq_info omap44xx_mailbox_irqs[] =3D {
-- 	{ .irq =3D 26 + OMAP44XX_IRQ_GIC_START },
-- 	{ .irq =3D -1 }
-- };
+diff --cc arch/arm/mach-u300/timer.c
+index af771b7,390ae5f..0000000
+--- a/arch/arm/mach-u300/timer.c
++++ b/arch/arm/mach-u300/timer.c
+@@@ -18,12 -18,12 +18,12 @@@
+  #include <linux/clk.h>
+  #include <linux/err.h>
+  #include <linux/irq.h>
+ +#include <linux/sched_clock.h>
 -=20
-  static struct omap_hwmod omap44xx_mailbox_hwmod =3D {
-  	.name		=3D "mailbox",
-  	.class		=3D &omap44xx_mailbox_hwmod_class,
+- #include <mach/hardware.h>
+- #include <mach/irqs.h>
++ #include <linux/delay.h>
++ #include <linux/of_address.h>
++ #include <linux/of_irq.h>
+ =20
+  /* Generic stuff */
+ -#include <asm/sched_clock.h>
+  #include <asm/mach/map.h>
+  #include <asm/mach/time.h>
+ =20
 
---Signature=_Fri__21_Jun_2013_16_14_47_+1000_cjpdhPN8TQQRT4d=
+--Signature=_Fri__21_Jun_2013_16_18_01_+1000_.P16kGKRp9sIJek4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRw+9XAAoJEECxmPOUX5FEIukQAJ48IC6kBiiWpOCypYZxKa1r
-qBCMjCvx28B6ZkBC6hNIFcuWBy/e+RJkkgjzoXstilNnKAVUzb4WcTBRsRHf9W1S
-25CUkWXRPY5SBrqE2i/mlfFQyfkq9z8bsVOZhSn+Qy/tGUljXsDFF5J8TLq0I0SY
-Ius2pKlK7WQ0+Y+6y0ICgJtRk/qSeyYl97jO/en70SlBwwwNvwkU7kAYtg4LIx7t
-J3g83jSsKwQLd94mIOJk9jr259EuorojgP6Ohk+RVIrS/nF9Q59CFkw3BbzcXagR
-K6PIBqSN0RL9GwI2aJzEYCaD0O5g/ieurTkwoxn87FROgNk3qNGHPW92ruclKKJf
-0PeUPHrUnusWxnuWMr3GgKOL04flauDJVujTclOSUvru0EOnpOC78RlN9eQ2s4HS
-1okt1NTMgjDqgUqAIymE40jWIdLPKBXGnHLpzC4FlJamHUCc19EA1EDteokqJquf
-P5Bo4PyDSpr5ejRRdHoXUMZ5dGILRjW+GwZPiwpvfLvaIFwKiDQeKxTuyWCzn8P0
-qRkZbzB63rIkI/o9ZKdwcuXffdVXZieNB+csESH8rzuT6sYTsER53bJkMm2gqNBE
-TTGQ8p9MSuVR8guw2Wz9YvyUQjFXP4IGK/U5GEwJiio+W6ImyeMGV9Lu8YLj0uTH
-E6LLRpl/NXBCDlPlA7mt
-=YCHa
+iQIcBAEBCAAGBQJRw/AZAAoJEECxmPOUX5FEHucP/0YcpUvV90X3/ejnxetN1aYS
+IHAVTRvdA+4QgJQGOfQmeDRzZWSBHrZrpovCuKlMlmmY3ttyF4Fd0W3rJyMvibFe
++GCmZyUmHvgZMQ3gU4E0eB25YxFSWNS5quhWXaXoJxOOSDUOOh+vB4mq9yZsblAz
+R5ICIPvCnwpckH1lFOfNo8fRZo9APo4PWLQhkmfNTjXjS/FaUrhtLirnbJqUZvaP
+Nor4suqNP4MqjSAlZ0OUGDBdRW2DnCvAy0enbj8sPoCbzp0TOIgU8wrCvEsEuLvS
+30GvffWXelFxdkiNCV2q36lJx6q6HP6VOfquzCe8pSLbgV25VAtHV1TUday7EyeL
+H29g6wISLRp094q7R/eIJxupIdYfRMh4IHYUucfh9rMPykrRWcwI9qVQzk3jDoHd
+pwztE9bvXxsyFf3ggRWF8nskAXYN8Ab/xxgM9daG6Kj4CrnoNEHa28/n3SchOCfj
+4HpQ2jJIqY0UwqxP/mkjogqyEzMEoE4Z8BhEamsypLPjup+5UEq78qavx3Qcuhki
+XbhB9xNguU7gouD/Y3uzxYLSSsmsau5+uYMhLF0zHsGa6u1T7iJD3limI1sKD6FG
+6WOgEkP/PBUN/us7km/g73/jK0FWDT2HzTTuuOerlXaol14uoQTkOLKJujONKWUn
+5VaOJekbLMi8NKRaOB3C
+=qOKD
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__21_Jun_2013_16_14_47_+1000_cjpdhPN8TQQRT4d=--
+--Signature=_Fri__21_Jun_2013_16_18_01_+1000_.P16kGKRp9sIJek4--
