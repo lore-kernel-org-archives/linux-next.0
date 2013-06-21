@@ -1,39 +1,37 @@
-From: Arnd Bergmann <arnd@arndb.de>
+From: Jassi Brar <jaswinder.singh@linaro.org>
 Subject: Re: linux-next: manual merge of the arm-soc tree with the mailbox tree
-Date: Fri, 21 Jun 2013 09:36:09 +0200
-Message-ID: <201306210936.09593.arnd@arndb.de>
-References: <20130621162656.bb94e0fa8b6813781b804a73@canb.auug.org.au> <CAOesGMjszju75jo6Ej6C=0-rfdPLuEj0mwmU1zYvFvYw1dyQCA@mail.gmail.com> <20130621071239.GM5523@atomide.com>
+Date: Fri, 21 Jun 2013 13:18:59 +0530
+Message-ID: <CAJe_Zhcbi8+S5wejzy4DCzL+VnD62J5N0nWdkCEDAWdfUAQ6_g@mail.gmail.com>
+References: <20130621162656.bb94e0fa8b6813781b804a73@canb.auug.org.au>
+	<20130621164149.598b39bb78b6015057d03f6f@canb.auug.org.au>
+	<20130621065310.GK5523@atomide.com>
+	<CAOesGMjszju75jo6Ej6C=0-rfdPLuEj0mwmU1zYvFvYw1dyQCA@mail.gmail.com>
+	<20130621071239.GM5523@atomide.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.171]:65006 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161296Ab3FUHgm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Jun 2013 03:36:42 -0400
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:34003 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751829Ab3FUHs7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Jun 2013 03:48:59 -0400
+Received: by mail-ob0-f173.google.com with SMTP id wc20so8318314obb.32
+        for <linux-next@vger.kernel.org>; Fri, 21 Jun 2013 00:48:59 -0700 (PDT)
 In-Reply-To: <20130621071239.GM5523@atomide.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Tony Lindgren <tony@atomide.com>
-Cc: Olof Johansson <olof@lixom.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>, Omar Ramirez Luna <omar.ramirez@copitl.com>, Loic Pallardy <loic.pallardy@st.com>
+Cc: Olof Johansson <olof@lixom.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Loic Pallardy <loic.pallardy@st.com>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Omar Ramirez Luna <omar.ramirez@copitl.com>, Suman Anna <s-anna@ti.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Friday 21 June 2013, Tony Lindgren wrote:
-> > I wonder if this mess is caused by the fact that I did the revert
-> > instead of rebuilding our for-next and dropping the merge in the first
-> > place.
-> > 
-> > I'll rebuild our for-next (or maybe Arnd will beat me to it) before
-> > next linux-next build, i.e. Sunday night my time.
-> 
-> Could be, especially if some of the commits are the same in the reverted
-> branch and newly merged branch as git might think that some merges have
-> been already resolved the right way earlier.
+On 21 June 2013 12:42, Tony Lindgren <tony@atomide.com> wrote:
+>
+> Arnd pulled in tags/omap-for-v3.11/mailbox-signed, which is the branch
+> that should get merged to the mainline tree while we're waiting for
+> the generic mailbox framework from Jassi.
+>
+FYKI I, Suman and Loic have been co-ordinating offline. The generic
+framework is almost there, Suman recently did the omap porting too,
+Loic seems to be caught up with some other stuff. Lately we have been
+joined by another developer LF.Tan to write the driver for a
+not-yet-public IP.
 
-I already rebuilt the arm-soc tree before Stephen started with today's
-linux-next, so I think the conflict is elsewhere.
-
-It's probably best if Suman Anna rebases the mailbox tree on top of
-the omap mailbox branch that I took.
-
-	Arnd
+cheers.
