@@ -1,56 +1,76 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: linux-next: just chaeking correctness of the infiniband tree
-Date: Fri, 21 Jun 2013 10:09:28 +1000
-Message-ID: <20130621100928.36a0ccf45e310f02a4dff53a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the leds tree
+Date: Fri, 21 Jun 2013 10:16:00 +1000
+Message-ID: <20130621101600.e9cff446d5f6e21c3e8599c8@canb.auug.org.au>
+References: <20130617152908.1b9c999c01f18262a387dc91@canb.auug.org.au>
+	<1371450391.658890225@f333.mail.ru>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__21_Jun_2013_10_09_28_+1000_=zBCq/iQoRxiHrq8"
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__21_Jun_2013_10_16_00_+1000_1PsVv/KduT4oQb6="
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35832 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161284Ab3FUAQD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jun 2013 20:16:03 -0400
+In-Reply-To: <1371450391.658890225@f333.mail.ru>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: Bryan Wu <cooloney@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>
 
---Signature=_Fri__21_Jun_2013_10_09_28_+1000_=zBCq/iQoRxiHrq8
+--Signature=_Fri__21_Jun_2013_10_16_00_+1000_1PsVv/KduT4oQb6=
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Guys,
 
-I noticed that the infiniband tree is now based on the net-next tree.  I
-assume that is deliberate?  I do have to question how much testing that
-tree has had since it is now based on a tree that Dave only released in
-the last 24 hours ...
+On Mon, 17 Jun 2013 10:26:31 +0400 Alexander Shiyan <shc_work@mail.ru> wrot=
+e:
+>
+> > After merging the leds tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > drivers/leds/leds-mc13783.c: In function 'mc13xxx_led_probe':
+> > drivers/leds/leds-mc13783.c:280:4: error: implicit declaration of funct=
+ion 'of_get_next_child' [-Werror=3Dimplicit-function-declaration]
+> >     child =3D of_get_next_child(parent, child);
+> >     ^
+> >=20
+> > Caused by commit 2ca3a455432f ("leds: leds-mc13783: Add devicetree supp=
+ort").  of_get_next_child() is only defined if CONFIG_OF is set.
+> >=20
+> > I have used the version of the leds tree from next-20130607 for today.
+>=20
+> The patch has already been sent by me.
+> http://www.spinics.net/lists/linux-leds/msg00994.html
 
+I anything happening about this?  That patch would need to go into the
+leds tree (with acks from devicetree people - Grant cc'd).
 --=20
 Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__21_Jun_2013_10_09_28_+1000_=zBCq/iQoRxiHrq8
+--Signature=_Fri__21_Jun_2013_10_16_00_+1000_1PsVv/KduT4oQb6=
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRw5m8AAoJEECxmPOUX5FE8kQQAKVdpztXG+0cUurzFcDmV3Aw
-yZGkP22IurHYaKLsp/aIFJqmS4H8AmZP0wff/5w+EKj7fLVdjJyhCLuJCXZkOnGy
-GF2aHd+L29XDUugs8bOlw7Xgr0jN33/mZ9mVUaLk88zqCrePcFZiKXJ4qYud6Tjg
-MY/tO/yIQEzCwbAL+WBMliQFZlQOAzLmx9mZIwwvN8GiR4SUydFs0eFNpQTPRw69
-wHQHBaLbymqkH0vkWF4hUq5kpJJ3J1Sp676a0Y56BMAx667hAncsdhsXBC8jKyM2
-IlusUX/GXbW7QCCv7pdO+Ve9KX8b2OcMIlnF95gCnMRd+bgqy1Xwr/ejzBqEZtts
-OUSf+KZrmTfb1uXYH65u8BYkBtN5SJWzvdZ7qW1o8eSK41v2AaHi7GqMjDi+zYLX
-eI99k2MsuKMLb94zJeCAU2M4mHVWgxZuYkz0QaewMlldVi6ZnKxQwv8+HutI334Y
-nBRoOWDFzyIuYAx09auaxAzaS2VrO1j1xKKzhqIvGbpXCiTLY0kLieNJl4eT1nUl
-ZCOpKC2PXS6q3SviK3EeWUlbbtlSWhYyEzXb2LaaHcm2Oq3dwWmcLYEobqqH7YB1
-VeubJh61HvmoIQDygFFFBvOLAaQApUnSd4VJj24p1Tez55w7HVusvZKGv77f/lqS
-rPHYVp7oOXR+/A3MLOxS
-=T063
+iQIcBAEBCAAGBQJRw5tAAAoJEECxmPOUX5FEzrMQAKFsG8JugeLB3KatTJTVtfA9
+rN2zRmGiaEWIVNgDYCMnG04QO+V88LvBBjHK1wl4s3Wgt+T7BmS/9G7ciTT/Qkvx
+7rE/x9j8v+Om1NPccpAer5Z+V+LkFZt91Wg9K+heuRf1eU10bAtBl3aZE053JhQq
+CC7dS85Gn9z6LPitbdwvzAwkNzBj7sGPCb0AOrmUWspibKEq+b/xpxEYnnNG3eN/
+xsRHMpj+bMs7qSd78kmWf1uyBh4BdUi7hwlFPQbxuyFl9hCJraXk/fMphkmI2ILJ
+wgJuV4LzUgVvNWqtrwzojRK5z6T2zw+vBhdYqQPJRh8nocH5uCaG69L6wbgCleuQ
+yTEZXwvZYRRhHHE5cHylDfwu2ZyaxvJy3a99PJ9obyv1KmEXQzBErW9pQdtzFx0d
+16lpZz/707RSwneARI7/EY82Cmw8iEbge5UCGV3AGhbZu41750fJpnYJDE5QuphF
+mI458RNPrcYceugq7Y6DLau+rWcTrP+PjM6jrpBobC1dYjChpVuYYpyOu71jJqu5
+3Dbbl/BpILCZhXX2WYoXkRJA416mY5AHD8Ner0NaraF201B8rmoSPdBW2cUvllaV
+yrZL3WSi+/4PYmWZ6hJVvKF8FPbErftKPi3o6cb+sf0ZaKwF30DazaDSAtYLMsOT
+MKQgjfhbjFpjod4qk6Hz
+=t4hW
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__21_Jun_2013_10_09_28_+1000_=zBCq/iQoRxiHrq8--
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Signature=_Fri__21_Jun_2013_10_16_00_+1000_1PsVv/KduT4oQb6=--
