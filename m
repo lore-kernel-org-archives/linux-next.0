@@ -1,32 +1,59 @@
-From: Jesse Gross <jesse@nicira.com>
-Subject: Re: linux-next: Tree for Jun 21 (netdev: openvswitch)
-Date: Fri, 21 Jun 2013 16:18:11 -0700
-Message-ID: <CAEP_g=8Oka3RXns4sazz5hX=nbUvXHgjAHCZkhKcwaNvBHxr-g@mail.gmail.com>
-References: <20130621181721.11783d80583444868725b62c@canb.auug.org.au> <51C46F9C.7020500@infradead.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: randconfig build errors with next-20130620, in several drivers/media
+Date: Sat, 22 Jun 2013 02:27:20 +0200
+Message-ID: <5790855.fto4zA3B21@avalon>
+References: <20130620185244.GA14176@krebstar.arl.arizona.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <51C46F9C.7020500@infradead.org>
-Sender: netdev-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "dev@openvswitch.org" <dev@openvswitch.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([95.142.166.194]:52945 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161521Ab3FVA1C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Jun 2013 20:27:02 -0400
+In-Reply-To: <20130620185244.GA14176@krebstar.arl.arizona.edu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jim Davis <jim.epost@gmail.com>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pawel@osciak.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com
 
-On Fri, Jun 21, 2013 at 8:22 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 06/21/13 01:17, Stephen Rothwell wrote:
->> Hi all,
->>
->> Happy solstice!
->>
->> Changes since 20130620:
->>
->
-> when CONFIG_INET is not enabled:
->
->   CC      net/openvswitch/flow.o
-> In file included from net/openvswitch/flow.c:43:0:
-> include/net/ip_tunnels.h: In function 'tunnel_ip_select_ident':
-> include/net/ip_tunnels.h:155:3: error: implicit declaration of function '__ip_select_ident' [-Werror=implicit-function-declaration]
+Hi,
 
-Thanks, I just sent out a couple of patches to fix config issues with
-the recent tunneling series.
+On Thursday 20 June 2013 11:52:44 Jim Davis wrote:
+> Building with the attached random configuration file generates errors in
+> both
+> 
+> drivers/media/v4l2-core
+> drivers/media/usb/uvc
+> 
+>   LD      init/built-in.o
+> /home/jim/linux-next/linux/drivers/media/v4l2-core/videobuf2-core.c:2577:
+> undefi ned reference to `video_devdata'
+
+[snip]
+
+> /home/jim/linux-next/linux/drivers/media/v4l2-core/videobuf2-core.c:2591:
+> undefi ned reference to `v4l2_fh_release'
+
+[snip]
+
+> /home/jim/linux-next/linux/drivers/media/v4l2-core/videobuf2-core.c:1980:
+> undefi ned reference to `v4l2_event_pending'
+
+[snip]
+
+> drivers/built-in.o: In function `uvc_delete':
+> /home/jim/linux-next/linux/drivers/media/usb/uvc/uvc_driver.c:1606:
+> undefined re ference to `usb_put_intf'
+
+[snip]
+
+The issue seem to be caused by USB_VIDEO_CLASS=y and VIDEO_V4L2=m && USB=m. 
+I'm not sure what made that combination possible, but I haven't been able to 
+reproduce it locally on next-20130620. Running make with the attached config 
+turns USB_VIDEO_CLASS=y into USB_VIDEO_CLASS=m.
+
+-- 
+Regards,
+
+Laurent Pinchart
