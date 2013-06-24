@@ -1,51 +1,63 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: randconfig build errors with next-20130620, in several drivers/media
-Date: Sat, 22 Jun 2013 16:26:36 +0200
-Message-ID: <2349088.sJtDCiEhsm@avalon>
-References: <20130620185244.GA14176@krebstar.arl.arizona.edu> <5790855.fto4zA3B21@avalon> <51C50101.1000300@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Mon, 24 Jun 2013 11:35:40 +1000
+Message-ID: <20130624113540.dd2911f4d0a4732635eb2aa7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:56916 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754402Ab3FVO0R (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 22 Jun 2013 10:26:17 -0400
-In-Reply-To: <51C50101.1000300@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jim Davis <jim.epost@gmail.com>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pawel@osciak.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, linux-media <linux-media@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__24_Jun_2013_11_35_40_+1000_OP7SqkoCGkBqHOM2"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Randy,
+--Signature=_Mon__24_Jun_2013_11_35_40_+1000_OP7SqkoCGkBqHOM2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Friday 21 June 2013 18:42:25 Randy Dunlap wrote:
-> On 06/21/13 17:27, Laurent Pinchart wrote:
-> > On Thursday 20 June 2013 11:52:44 Jim Davis wrote:
-> >> Building with the attached random configuration file generates errors in
-> >> both
-> > 
-> > [snip]
-> > 
-> > The issue seem to be caused by USB_VIDEO_CLASS=y and VIDEO_V4L2=m &&
-> > USB=m.
-> > I'm not sure what made that combination possible, but I haven't been able
-> > to reproduce it locally on next-20130620. Running make with the attached
-> > config turns USB_VIDEO_CLASS=y into USB_VIDEO_CLASS=m.
-> 
-> Yes, same for me:  USB_VIDEO_CLASS=m instead of =y.
-> 
-> However, please check the attached config file (as reported on June 17).
-> 
-> On linux-next of 20130621 it still produces:
-> 
-> CONFIG_USB_VIDEO_CLASS=y
-> CONFIG_VIDEO_V4L2=m
-> CONFIG_USB=m
+Hi Al,
 
-I've just sent a patch to linux-media (you've been CC'ed) to fix this.
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
--- 
-Regards,
+In file included from arch/powerpc/xmon/xmon.c:41:0:
+arch/powerpc/include/asm/spu.h:245:43: error: 'struct coredump_params' decl=
+ared inside parameter list [-Werror]
+  int (*coredump_extra_notes_write)(struct coredump_params *cprm);
+                                           ^
+arch/powerpc/include/asm/spu.h:245:43: error: its scope is only this defini=
+tion or declaration, which is probably not what you want [-Werror]
 
-Laurent Pinchart
+Caused by commit 27e58d7e7e6d ("[needs split] switch to saner coredump
+primitives").  Presumably, arch/powerpc/include/asm/spu.h needs to
+include linux/binfmts.h or just forward declare "struct coredump_params".
+
+I have used the vfs tree from next-20130621 for today
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__24_Jun_2013_11_35_40_+1000_OP7SqkoCGkBqHOM2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRx6JxAAoJEECxmPOUX5FEAp8QAIo3viwvb2Rx25OGrKmrSD8h
+h6YgT2KXzt5dgHri9qyfpdQ2sXtjK53xg7lLde1a6VG4CUaqdWlPOkAwHmaLaaax
+MAeJgtU4t5ql4K+i7987zWE4DpgfnWBP5JUv6MWiJBDMuRnDltikH6BHeynELOzt
+5jawBXLjvXc25XhjW3gbtiJG1pl0hbb9zlp6EVXgVRwUqZ9CABHcywM2TPGQQOIy
+V2ZWh/sR6ujbckIwgx+IjXU4yTdbE8/EB3I3IU+JIrX+HJfmpy3OTz5ty95UfMza
+Tfj3WdBPLoBhKeNeu0zK0SBNoGhE7k7tm4h4WkTkZFUyiV2XllgBH+f1ArGKd7v7
+X/qEcUzF0rmaBoXFA/zWAjbjXM+8n/oxCJyTPTJM9biL4lUB6o9aa/mfKpoflTdk
+Md12CUBdhEa7e9uRKSZz0FrQb57mEHpU7O7ehMOdKjPIdCLye2n+OE+2Qv1J0fnE
+vqQJuMOoDLf9lV3hubluiHnFGoPajBZrl9pLTixVe48zCwTe4Ki70dE8IpQ3IWvb
+Foty0+n4klvdVnEErbfeiWreOu1jqQZXjnPpq8dV8KxmSs4g4NUm+G2tIWvQ+zXh
+AUC+YVepW4EMahZmmuCA20VbT94Bv0maqRK7v4p79Px7NX18ypZwuGdvjHMBjhmH
+FLHVx4kcioAuBRz992MQ
+=w0mp
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__24_Jun_2013_11_35_40_+1000_OP7SqkoCGkBqHOM2--
