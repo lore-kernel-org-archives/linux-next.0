@@ -1,39 +1,42 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Mon, 24 Jun 2013 10:34:03 +0100
-Message-ID: <20130624093403.GY4165@ZenIV.linux.org.uk>
-References: <20130624113540.dd2911f4d0a4732635eb2aa7@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Mon, 24 Jun 2013 15:40:35 -0700
+Message-ID: <20130624224035.GD24099@kroah.com>
+References: <20130619181031.8b53acc44466ba70a47e1fcd@canb.auug.org.au>
+ <CA+a=Yy4z-ufq2GEtzC17TBbrNGWv6ZUzuVe=VLBH48Df=3HZxA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41624 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751157Ab3FXJeG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Jun 2013 05:34:06 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20130624113540.dd2911f4d0a4732635eb2aa7@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <CA+a=Yy4z-ufq2GEtzC17TBbrNGWv6ZUzuVe=VLBH48Df=3HZxA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peng Tao <bergwolf@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Dilger <andreas.dilger@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jun 24, 2013 at 11:35:40AM +1000, Stephen Rothwell wrote:
-> Hi Al,
+On Wed, Jun 19, 2013 at 05:26:57PM +0800, Peng Tao wrote:
+> On Wed, Jun 19, 2013 at 4:10 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >
+> > In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.h:203:0,
+> >                  from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h:67,
+> >                  from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:41:
+> > drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kiblnd_dev_need_failover':
+> > drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:215:16: error: implicit declaration of function 'NIPQUAD' [-Werror=implicit-function-declaration]
+> >   static struct libcfs_debug_msg_data msgdata;      \
+> >                 ^
+> Thanks for reporting!
 > 
-> After merging the vfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> In file included from arch/powerpc/xmon/xmon.c:41:0:
-> arch/powerpc/include/asm/spu.h:245:43: error: 'struct coredump_params' declared inside parameter list [-Werror]
->   int (*coredump_extra_notes_write)(struct coredump_params *cprm);
->                                            ^
-> arch/powerpc/include/asm/spu.h:245:43: error: its scope is only this definition or declaration, which is probably not what you want [-Werror]
-> 
-> Caused by commit 27e58d7e7e6d ("[needs split] switch to saner coredump
-> primitives").  Presumably, arch/powerpc/include/asm/spu.h needs to
-> include linux/binfmts.h or just forward declare "struct coredump_params".
+> It is a bug in Lustre code that it is missing NIPQUAD definition on
+> Linux platform. I will send fix later.
 
-Mea culpa - it's missing forward + missing include of linux/coredump.h
-in spufs/coredump.c.  I've fixed that and moved that commit to the end
-of queue - it *does* need a splitup, so it'll get replaced with
-several commits anyway.
+We are running out of time, my tree is pretty much closed for 3.11 now,
+should I just disable the build of this module for 3.11?
+
+thanks,
+
+greg k-h
