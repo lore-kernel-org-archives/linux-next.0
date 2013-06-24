@@ -1,42 +1,64 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- tree related)
-Date: Mon, 24 Jun 2013 15:40:35 -0700
-Message-ID: <20130624224035.GD24099@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (staging tree related)
+Date: Tue, 25 Jun 2013 09:40:51 +1000
+Message-ID: <20130625094051.b9cf8f8950eeeeed0dd266b2@canb.auug.org.au>
 References: <20130619181031.8b53acc44466ba70a47e1fcd@canb.auug.org.au>
- <CA+a=Yy4z-ufq2GEtzC17TBbrNGWv6ZUzuVe=VLBH48Df=3HZxA@mail.gmail.com>
+	<CA+a=Yy4z-ufq2GEtzC17TBbrNGWv6ZUzuVe=VLBH48Df=3HZxA@mail.gmail.com>
+	<20130624224035.GD24099@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__25_Jun_2013_09_40_51_+1000_kwEhSuMHj_gi3Q4M"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39567 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751860Ab3FXXlA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Jun 2013 19:41:00 -0400
+In-Reply-To: <20130624224035.GD24099@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Peng Tao <bergwolf@gmail.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Dilger <andreas.dilger@intel.com>
+
+--Signature=_Tue__25_Jun_2013_09_40_51_+1000_kwEhSuMHj_gi3Q4M
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <CA+a=Yy4z-ufq2GEtzC17TBbrNGWv6ZUzuVe=VLBH48Df=3HZxA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peng Tao <bergwolf@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Dilger <andreas.dilger@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2013 at 05:26:57PM +0800, Peng Tao wrote:
-> On Wed, Jun 19, 2013 at 4:10 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> >
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> >
-> > In file included from drivers/staging/lustre/include/linux/libcfs/libcfs.h:203:0,
-> >                  from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h:67,
-> >                  from drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:41:
-> > drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kiblnd_dev_need_failover':
-> > drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:215:16: error: implicit declaration of function 'NIPQUAD' [-Werror=implicit-function-declaration]
-> >   static struct libcfs_debug_msg_data msgdata;      \
-> >                 ^
-> Thanks for reporting!
-> 
-> It is a bug in Lustre code that it is missing NIPQUAD definition on
-> Linux platform. I will send fix later.
+Hi Greg,
 
-We are running out of time, my tree is pretty much closed for 3.11 now,
-should I just disable the build of this module for 3.11?
+On Mon, 24 Jun 2013 15:40:35 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> We are running out of time, my tree is pretty much closed for 3.11 now,
+> should I just disable the build of this module for 3.11?
 
-thanks,
+That's what I've been doing - it has never been enabled in a final
+linux-next release.  So, it should probably just be disabled properly.
 
-greg k-h
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__25_Jun_2013_09_40_51_+1000_kwEhSuMHj_gi3Q4M
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJRyNkHAAoJEECxmPOUX5FELywP/RoXUr9Kj0vf587TPzgUxeFk
+fJOy740UUs0MGZ7tqQclzIKCataAd0Tyx/u/c7fMJM1d01r80iPZDTZaaV1p6Ew0
+WNerHdbfaHEcT0ihsT4XPzFoN7ggUBLb4OaA2hhOQa+SaAr5y/zz9CqFw3c3PYrg
+VtT2s241alvgqkPAf3vt1RkuIeWcXL7nKyp01Gfw+s5bghyZ8z+YxwHigmnwkrrL
+nS+VbZAVTgykUZfiBFeckpFBUxCWxygCHJkPuvQvbWrwu53mAwo4Atkv4l013RNC
+5uHlNTlFhYOn2kh02u4vnSeMvWji36tlnze+2tusM4Z96ZWV4iHZnesDUeeYEGUd
+p0l+ysCl/t0ESyLFySEM38XMCACzJbyZAv+ckx4Xnk820nfwj4WkKRYMeLbG9qQF
+I3X9OB5WFW8MLshUl9g0V1A8+xDgW8b57WfCu7rWh3rO1zfhUPkv6qJbNmJdcypR
+1KiuonqvD+lNlGmcWQ8MTNtsG5x9uOUQPe4wVL4e10okj8+mgZalMY8mJH/BL0F2
+gf2PBMxwt7opWpoLEVLEBXrbebrqeEeovjJPopJoLsZmeS4cHibNpcAfWn6mf2Wz
+wcr0d17xPFtI3sKYbp/Z/tLQpxMpsAuQMc5doCmykUD9fU24E5uaEaGTcr6aODke
+pFUbIqdFwDCRHSl7dgiv
+=I1XW
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Jun_2013_09_40_51_+1000_kwEhSuMHj_gi3Q4M--
