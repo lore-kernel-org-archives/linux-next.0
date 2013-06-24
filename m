@@ -1,80 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Mon, 24 Jun 2013 12:56:00 +1000
-Message-ID: <20130624125600.fecd2b8062dfe61b889927d9@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the mailbox
+ tree
+Date: Mon, 24 Jun 2013 15:29:30 +1000
+Message-ID: <20130624152930.4c6cef3c5a272d8ca82d94c6@canb.auug.org.au>
+References: <20130621162656.bb94e0fa8b6813781b804a73@canb.auug.org.au>
+	<CAOesGMjszju75jo6Ej6C=0-rfdPLuEj0mwmU1zYvFvYw1dyQCA@mail.gmail.com>
+	<20130621071239.GM5523@atomide.com>
+	<201306210936.09593.arnd@arndb.de>
+	<51C4703C.10206@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Jun_2013_12_56_00_+1000_HKL+yV+zYzNnl83i"
+ boundary="Signature=_Mon__24_Jun_2013_15_29_30_+1000_7wTGWFdFiz4cQkT."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40064 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40438 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752374Ab3FXC4N (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Jun 2013 22:56:13 -0400
+	with ESMTP id S1750990Ab3FXF3q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Jun 2013 01:29:46 -0400
+In-Reply-To: <51C4703C.10206@ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Maarten Lankhorst <maarten.lankhorst@canonical.com>
+To: Suman Anna <s-anna@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Omar Ramirez Luna <omar.ramirez@copitl.com>, Loic Pallardy <loic.pallardy@st.com>
 
---Signature=_Mon__24_Jun_2013_12_56_00_+1000_HKL+yV+zYzNnl83i
+--Signature=_Mon__24_Jun_2013_15_29_30_+1000_7wTGWFdFiz4cQkT.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi,
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/drm_prime.c between commit ebc0bad4a05a ("drm/prime:
-Honor requested file flags when exporting a buffer") from Linus' tree and
-commit ca793f75d91d ("drm: move pinning/unpinning to buffer attach") from
-the drm tree.
+On Fri, 21 Jun 2013 10:24:44 -0500 Suman Anna <s-anna@ti.com> wrote:
+>
+> On 06/21/2013 02:36 AM, Arnd Bergmann wrote:
+> > On Friday 21 June 2013, Tony Lindgren wrote:
+> >>> I wonder if this mess is caused by the fact that I did the revert
+> >>> instead of rebuilding our for-next and dropping the merge in the first
+> >>> place.
+> >>>
+> >>> I'll rebuild our for-next (or maybe Arnd will beat me to it) before
+> >>> next linux-next build, i.e. Sunday night my time.
+> >>
+> >> Could be, especially if some of the commits are the same in the revert=
+ed
+> >> branch and newly merged branch as git might think that some merges have
+> >> been already resolved the right way earlier.
+>=20
+> Yes, please drop the particular mailbox branch that you were picking
+> into linux-next. It was the previous framework which was dropped at the
+> last minute during the 3.10 merge window in favor of new one still under
+> its final development steps, so we will not be using any commits from
+> that branch.  Sorry for the trouble on this one. The branch that Arnd
+> took has some of the OMAP patches reworked in preparation for the
+> newer one.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
+OK, I have removed the mailbox tree for now.  Let me know if you want it
+to be back in again.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/drm_prime.c
-index 5b7b911,d92853e..0000000
---- a/drivers/gpu/drm/drm_prime.c
-+++ b/drivers/gpu/drm/drm_prime.c
-@@@ -185,12 -210,8 +210,7 @@@ static const struct dma_buf_ops drm_gem
-  struct dma_buf *drm_gem_prime_export(struct drm_device *dev,
-  				     struct drm_gem_object *obj, int flags)
-  {
-- 	if (dev->driver->gem_prime_pin) {
-- 		int ret =3D dev->driver->gem_prime_pin(obj);
-- 		if (ret)
-- 			return ERR_PTR(ret);
-- 	}
- -	return dma_buf_export(obj, &drm_gem_prime_dmabuf_ops, obj->size,
- -			     0600);
- +	return dma_buf_export(obj, &drm_gem_prime_dmabuf_ops, obj->size, flags);
-  }
-  EXPORT_SYMBOL(drm_gem_prime_export);
- =20
-
---Signature=_Mon__24_Jun_2013_12_56_00_+1000_HKL+yV+zYzNnl83i
+--Signature=_Mon__24_Jun_2013_15_29_30_+1000_7wTGWFdFiz4cQkT.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRx7VEAAoJEECxmPOUX5FEdyoQAKPSssv8avOCU8oDowSOCe6g
-8haE5H/cfXIIEwHNYPpkk2sTxcM9quv1LYE3cQWDI0oC9EHHTE9GMHumTmpZl5Bx
-vmdsMEp/sIrEG08YeIeV4S9yfCOTD/XJ8fDV6qgp2dTmOtiJtBB0WGEXiWm8ZhWZ
-jQ8GldFzAz7DEAQaadpUqcSJ7uPVomAH6mCOfUqIEIy+m1rVrlpFBFecfb/FMpGb
-VT4RYCuiEdeanHkU6JEN2sI6QRia5ZUncJoMDGqjZjtLL6u8BvUte1CZoujC9ffN
-h3P/DhhzbJDka3ZAvVWmxDJmURZv4/j1CMip1UqLouVgIt6HvEjRpMKuBtg3cCiF
-84wOC43JnlLerDzLnvOE+Zgll2j76JH9+aPM/ebtkz31ag4+mV/9Bh0ral+NcfaY
-wr5os4uhxgjWuPR3B78y/rcMJHlYsu8F6+ek/vboBBVG38MaVJBsh5Cx209EAwvo
-0qppi/ufiDP5DFdw9u/X2CmAz/i7PGTEO9Fl1olpegPm4yv8Kf5ASC/i7f9PLClc
-BiAvv8h6WYvZMDB+D0JrgBV9l1O2H8xALp0yQf8QtiYpSYBZWts/BefQDrrW3lPW
-QcfuYQk7JotQEgpl7kPA2pl+vjg2xxn3ACSQLUgM704MB2WgH/O7r8AhwVZDgT9t
-OZhRHNu55VbBw6FGjp5W
-=rroz
+iQIcBAEBCAAGBQJRx9k/AAoJEECxmPOUX5FECJMP/23ao125iilRUiraNJfn/lmB
+yjFrwZVVp1oCr0vtVnjFsPT+VYWFU0Xuq3h1cRfE/BtOi2tvWFziqAP3DgN1qtQR
++v5Xo8qclGJuUcqXUm8LRwUxyZtr8SpNYq7caxoPGo6hs8RyRqcFXiXAcDKYE0Om
+pIyjV1hzAWSNkeRZSUh3yVHsgfjAZF7cNEhSMECCzqERyn0H3J+Wsb/o2wwLrAX4
+0RAGBLEv1LMxl2rXEiF/LR9F2TW/lXlarRJ9WWI85viJiYFL7+naN897r89CSDF7
+uShcjPCasKYBWk8RvLwjNYOL/Ynih97KrJaTBBesdT5gLuhBAgB3OkwuQ1j4utVO
+YW6pzsGr93FVs4GC1RTN9bRFF2ONE3HE16yAntZwTs/xXRsCtjM8ZgL+cvBeSOA6
+HJeYGZaBLKW7/H1U4Lq2nd3Ju/giwh5t4PtX0Gu5pVsfsuLzjyxb4gf49tPXVkGs
+jo+eDR8F0Exoc4dZKqsWd5GOKfycOfwp6bRCqf2KVJw6zmj9bDtk1+BM8+VRmKnh
+7TGooWWOQx9b050OPAnDP7wHKkWbod/CrvgqM6wPUE6zRo7rn5rtbtfHQt4O7jAP
+/eKurem28fXSTPIp9N5qDwn6zZMl/j3XlV9byS5AGgtZPlYIWn3GHX1nlJObd/Jg
+zInem8vdRxay4QZ4APcd
+=5kag
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Jun_2013_12_56_00_+1000_HKL+yV+zYzNnl83i--
+--Signature=_Mon__24_Jun_2013_15_29_30_+1000_7wTGWFdFiz4cQkT.--
