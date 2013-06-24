@@ -1,84 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the mailbox
- tree
-Date: Mon, 24 Jun 2013 15:29:30 +1000
-Message-ID: <20130624152930.4c6cef3c5a272d8ca82d94c6@canb.auug.org.au>
-References: <20130621162656.bb94e0fa8b6813781b804a73@canb.auug.org.au>
-	<CAOesGMjszju75jo6Ej6C=0-rfdPLuEj0mwmU1zYvFvYw1dyQCA@mail.gmail.com>
-	<20130621071239.GM5523@atomide.com>
-	<201306210936.09593.arnd@arndb.de>
-	<51C4703C.10206@ti.com>
+Subject: linux-next: manual merge of the clk tree with the samsung tree
+Date: Mon, 24 Jun 2013 15:48:28 +1000
+Message-ID: <20130624154828.292bd8800c80c526695c1659@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Jun_2013_15_29_30_+1000_7wTGWFdFiz4cQkT."
+ boundary="Signature=_Mon__24_Jun_2013_15_48_28_+1000_JPoihGJ4ElMqRHxo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40438 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40901 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750990Ab3FXF3q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Jun 2013 01:29:46 -0400
-In-Reply-To: <51C4703C.10206@ti.com>
+	with ESMTP id S1751115Ab3FXFss (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Jun 2013 01:48:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Suman Anna <s-anna@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Omar Ramirez Luna <omar.ramirez@copitl.com>, Loic Pallardy <loic.pallardy@st.com>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tushar Behera <tushar.behera@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
 
---Signature=_Mon__24_Jun_2013_15_29_30_+1000_7wTGWFdFiz4cQkT.
+--Signature=_Mon__24_Jun_2013_15_48_28_+1000_JPoihGJ4ElMqRHxo
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Mike,
 
-On Fri, 21 Jun 2013 10:24:44 -0500 Suman Anna <s-anna@ti.com> wrote:
->
-> On 06/21/2013 02:36 AM, Arnd Bergmann wrote:
-> > On Friday 21 June 2013, Tony Lindgren wrote:
-> >>> I wonder if this mess is caused by the fact that I did the revert
-> >>> instead of rebuilding our for-next and dropping the merge in the first
-> >>> place.
-> >>>
-> >>> I'll rebuild our for-next (or maybe Arnd will beat me to it) before
-> >>> next linux-next build, i.e. Sunday night my time.
-> >>
-> >> Could be, especially if some of the commits are the same in the revert=
-ed
-> >> branch and newly merged branch as git might think that some merges have
-> >> been already resolved the right way earlier.
->=20
-> Yes, please drop the particular mailbox branch that you were picking
-> into linux-next. It was the previous framework which was dropped at the
-> last minute during the 3.10 merge window in favor of new one still under
-> its final development steps, so we will not be using any commits from
-> that branch.  Sorry for the trouble on this one. The branch that Arnd
-> took has some of the OMAP patches reworked in preparation for the
-> newer one.
+Today's linux-next merge of the clk tree got a conflict in
+drivers/clk/samsung/clk-exynos4.c between commit 6082f908b060 ("clk:
+exynos4: Staticize local symbols") from the samsung tree and commit
+82ba93b27cf5 ("clk: exynos4: Fix clock aliases for cpufreq related
+clocks") from the clk tree.
 
-OK, I have removed the mailbox tree for now.  Let me know if you want it
-to be back in again.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__24_Jun_2013_15_29_30_+1000_7wTGWFdFiz4cQkT.
+diff --cc drivers/clk/samsung/clk-exynos4.c
+index 50af410,94c5e1a..0000000
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@@ -355,9 -355,9 +355,9 @@@ static struct samsung_fixed_rate_clock=20
+  };
+ =20
+  /* list of mux clocks supported in all exynos4 soc's */
+ -struct samsung_mux_clock exynos4_mux_clks[] __initdata =3D {
+ +static struct samsung_mux_clock exynos4_mux_clks[] __initdata =3D {
+- 	MUX_F(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+- 			CLK_SET_RATE_PARENT, 0),
++ 	MUX_FA(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
++ 			CLK_SET_RATE_PARENT, 0, "mout_apll"),
+  	MUX(none, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
+  	MUX(none, "mout_mfc1", sclk_evpll_p, SRC_MFC, 4, 1),
+  	MUX(none, "mout_mfc", mout_mfc_p, SRC_MFC, 8, 1),
+@@@ -423,9 -423,9 +423,9 @@@ static struct samsung_mux_clock exynos4
+  };
+ =20
+  /* list of mux clocks supported in exynos4x12 soc */
+ -struct samsung_mux_clock exynos4x12_mux_clks[] __initdata =3D {
+ +static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata =3D {
+- 	MUX(mout_mpll_user_c, "mout_mpll_user_c", mout_mpll_user_p4x12,
+- 			SRC_CPU, 24, 1),
++ 	MUX_A(mout_mpll_user_c, "mout_mpll_user_c", mout_mpll_user_p4x12,
++ 			SRC_CPU, 24, 1, "mout_mpll"),
+  	MUX(none, "mout_aclk266_gps", aclk_p4412, SRC_TOP1, 4, 1),
+  	MUX(none, "mout_aclk400_mcuisp", aclk_p4412, SRC_TOP1, 8, 1),
+  	MUX(mout_mpll_user_t, "mout_mpll_user_t", mout_mpll_user_p4x12,
+
+--Signature=_Mon__24_Jun_2013_15_48_28_+1000_JPoihGJ4ElMqRHxo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRx9k/AAoJEECxmPOUX5FECJMP/23ao125iilRUiraNJfn/lmB
-yjFrwZVVp1oCr0vtVnjFsPT+VYWFU0Xuq3h1cRfE/BtOi2tvWFziqAP3DgN1qtQR
-+v5Xo8qclGJuUcqXUm8LRwUxyZtr8SpNYq7caxoPGo6hs8RyRqcFXiXAcDKYE0Om
-pIyjV1hzAWSNkeRZSUh3yVHsgfjAZF7cNEhSMECCzqERyn0H3J+Wsb/o2wwLrAX4
-0RAGBLEv1LMxl2rXEiF/LR9F2TW/lXlarRJ9WWI85viJiYFL7+naN897r89CSDF7
-uShcjPCasKYBWk8RvLwjNYOL/Ynih97KrJaTBBesdT5gLuhBAgB3OkwuQ1j4utVO
-YW6pzsGr93FVs4GC1RTN9bRFF2ONE3HE16yAntZwTs/xXRsCtjM8ZgL+cvBeSOA6
-HJeYGZaBLKW7/H1U4Lq2nd3Ju/giwh5t4PtX0Gu5pVsfsuLzjyxb4gf49tPXVkGs
-jo+eDR8F0Exoc4dZKqsWd5GOKfycOfwp6bRCqf2KVJw6zmj9bDtk1+BM8+VRmKnh
-7TGooWWOQx9b050OPAnDP7wHKkWbod/CrvgqM6wPUE6zRo7rn5rtbtfHQt4O7jAP
-/eKurem28fXSTPIp9N5qDwn6zZMl/j3XlV9byS5AGgtZPlYIWn3GHX1nlJObd/Jg
-zInem8vdRxay4QZ4APcd
-=5kag
+iQIbBAEBCAAGBQJRx92wAAoJEECxmPOUX5FEduUP+OYRF0rHMo/3gUYhW+ZaFwsd
+K8ekhKsvawuOvFhmdU1RpDNHZaPLfSswIuWXb/iwY9ltBsJQpIA8s9z5GqYF0zu+
+t7mrm6pNbOLeWEuW0VDlEnQ4+jfpgPrME+lMI1LlyvXP5XCIq72VZvc4A/ZQ3wdU
+Ugt4QOX3WUVbHsDIH7II+aaM3CmwvmsLITpTbjzlAYiq/0hAkurkbbrNRLgS9fTK
+QyALkQ0KpDGG9tdGiIe97zU33yBiOjE62bYzSpNa3sDM1kRoMEBD3JpAuD5b1CVn
+TTqNLSdFsTpdygOr3apOF+ZnfVrurmHB2MWZEvPRIxZ1S1/ujasIWzTcGJbrSJoG
+WZVElp4kwNLSowrfRosrPtf/jpOMrEj35WKSPX2Fmrm5jughQGP40XmATKZb2bwW
+kbxT7t4aAeBU1wIDtnq/520kOI2tQCsHudkPT8uhlhz6ynsKKQfeT+V6jkwWbOK8
+uMAhqoMVSqh6IUrh5kP41bFRSp87eRb92aMm52RksQnzb1chiPVmZPaH3TFJyHP+
+B4ZlKBLhPkBcuVejA2bwkmnk5RZzFjkZjtKP+7xTVtOtgnkXF7jlQ7pQCck32vJy
+RQOus1J55TaM14RAmOJK2Co9NoslFj4apm1s4/k5tYXJ2URd1CDaw8OHYSHIvKBD
+4Okzyc8DuOxnmTuHcSY=
+=orwx
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Jun_2013_15_29_30_+1000_7wTGWFdFiz4cQkT.--
+--Signature=_Mon__24_Jun_2013_15_48_28_+1000_JPoihGJ4ElMqRHxo--
