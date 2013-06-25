@@ -1,31 +1,36 @@
 From: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Subject: Re: linux-next: Tree for Jun 25 [ kbuild or rapidio? ]
-Date: Tue, 25 Jun 2013 22:57:31 +0200
-Message-ID: <20130625205731.GA14074@free.fr>
-References: <CA+icZUVcWAmbRGXqrbkPXux6hSpYVM2yAPfbv_q8Faf348TGyw@mail.gmail.com>
- <CA+icZUUta_HBtbpEOCsdPDRor1rvSNk46Wk=dHdvA6mAp61c1A@mail.gmail.com>
+Subject: Re: linux-next: Tree for Jun 25
+Date: Tue, 25 Jun 2013 23:03:14 +0200
+Message-ID: <20130625210314.GC14074@free.fr>
+References: <20130625184420.b811089a069c63ccd3721d68@canb.auug.org.au>
+ <CA+icZUUH7AeR7OSm-SB56AGRiE815tTkQW9fFkKzyrSvzs3Etg@mail.gmail.com>
+ <201306251121.53862.yann.morin.1998@free.fr>
+ <CA+icZUU06C43bxyX2UGtDxRQqcyqeAQgt7fZHq7H7HgcJ6sHzQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-we0-f174.google.com ([74.125.82.174]:46395 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752453Ab3FYVDU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Jun 2013 17:03:20 -0400
 Content-Disposition: inline
-In-Reply-To: <CA+icZUUta_HBtbpEOCsdPDRor1rvSNk46Wk=dHdvA6mAp61c1A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <CA+icZUU06C43bxyX2UGtDxRQqcyqeAQgt7fZHq7H7HgcJ6sHzQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.cz>, Alexandre Bounine <alexandre.bounine@idt.com>, Matt Porter <mporter@kernel.crashing.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.cz>
 
 Sedat, All,
 
-On 2013-06-25 11:28 +0200, Sedat Dilek spake thusly:
-> On Tue, Jun 25, 2013 at 11:17 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> > On Tue, Jun 25, 2013 at 10:55 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-[--SNIP--]
+On 2013-06-25 11:26 +0200, Sedat Dilek spake thusly:
+> On Tue, Jun 25, 2013 at 11:21 AM, Yann E. MORIN <yann.morin.1998@free.fr> wrote:
+> > On Tuesday 25 June 2013 10:55:20 Sedat Dilek wrote:
 > >> Not sure what's going on, but I get this with today's Linux-Next.
 > >> ( Yesterday's next-20130624 was OK. )
 > >>
 > >> $ LANG=C LC_ALL=C  yes "" | make oldconfig && LANG=C LC_ALL=C make
 > >> silentoldconfig </dev/null
-[--SNIP--]
+> > [--SNIP--]
 > >> RapidIO support (RAPIDIO) [Y/n/?] y
 > >>   IDT Tsi721 PCI Express SRIO Controller support (RAPIDIO_TSI721) [Y/n/?] y
 > >>   Discovery timeout duration (seconds) (RAPIDIO_DISC_TIMEOUT) [30] 30
@@ -36,14 +41,26 @@ On 2013-06-25 11:28 +0200, Sedat Dilek spake thusly:
 > >>
 > >> Console input/output is redirected. Run 'make oldconfig' to update
 > >> configuration.
-> >>
-> >> make[1]: *** [silentoldconfig] Error 1
-> >> make: *** [silentoldconfig] Error 2
 [--SNIP--]
-> So, it's a kbuild issue (info to the rapidio maintainers).
+> Bad bad bad Yann, didn't Marek told you to test always with...
+> 
+>     $ yes "" | make oldconfig; make silentoldconfig </dev/null
 
-To be true, it's a kconfig (not kbuild) issue I introduced when trying
-to fix choice randomisation.
+If you looked at the commit log, you'd see how I tested this:
+    touch defconfig
+    for(( i=0; i<10000; i++ )); do
+        KCONFIG_ALLCONFIG=$(pwd)/defconfig make randconfig >/dev/null 2>&1
+        make silentoldconfig </dev/null >/dev/null 2>&1 || break
+    done
+
+That is, 10 thousands random configurations, and none did exhibit the
+problem. :-(
+
+Which really means we need a comprehensive test-suite to kconfig.
+
+> Anyway, have fun.
+
+I would not call delving into the kconfig code 'fun'. ;-)
 
 Regards,
 Yann E. MORIN.
