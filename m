@@ -1,60 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with the tip tree
-Date: Tue, 25 Jun 2013 17:50:06 +1000
-Message-ID: <20130625175006.f3f3801f20c2d9dd9ff97842@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the samsung tree
+Date: Tue, 25 Jun 2013 18:16:21 +1000
+Message-ID: <20130625181621.bae8e93ec1ceedd7b70c7812@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Jun_2013_17_50_06_+1000_1b5AvJdYsb_oAy9C"
+ boundary="Signature=_Tue__25_Jun_2013_18_16_21_+1000_PSTr0BAPhTIVDQhg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43137 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58653 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751092Ab3FYHuK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Jun 2013 03:50:10 -0400
+	with ESMTP id S1751525Ab3FYIQc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Jun 2013 04:16:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Robin Holt <holt@sgi.com>
 
---Signature=_Tue__25_Jun_2013_17_50_06_+1000_1b5AvJdYsb_oAy9C
+--Signature=_Tue__25_Jun_2013_18_16_21_+1000_PSTr0BAPhTIVDQhg
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+Hi Andrew,
 
-Today's linux-next merge of the samsung tree got a conflict in
-arch/arm/plat-samsung/samsung-time.c between commit 38ff87f77af0
-("sched_clock: Make ARM's sched_clock generic for all architectures")
-from the tip tree and commit 5b8eaaab1668 ("ARM: SAMSUNG: Remove old
-samsung-time driver") from the samsung tree.
+Today's linux-next merge of the akpm tree got a conflict in
+arch/arm/mach-s3c64xx/common.c between commit cae36a5ce9c9 ("ARM:
+SAMSUNG: Set PWM platform data") from the samsung tree and commit
+"reboot: arm: change reboot_mode to use enum reboot_mode" from the akpm
+tree.
 
-The latter removed the file, so I did that, and can carry the fix as
-necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__25_Jun_2013_17_50_06_+1000_1b5AvJdYsb_oAy9C
+diff --cc arch/arm/mach-s3c64xx/common.c
+index 0b33683,54f4a05..0000000
+--- a/arch/arm/mach-s3c64xx/common.c
++++ b/arch/arm/mach-s3c64xx/common.c
+@@@ -26,7 -26,7 +26,8 @@@
+  #include <linux/irq.h>
+  #include <linux/gpio.h>
+  #include <linux/irqchip/arm-vic.h>
++ #include <linux/reboot.h>
+ +#include <clocksource/samsung_pwm.h>
+ =20
+  #include <asm/mach/arch.h>
+  #include <asm/mach/map.h>
+
+--Signature=_Tue__25_Jun_2013_18_16_21_+1000_PSTr0BAPhTIVDQhg
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRyUuuAAoJEECxmPOUX5FEyWgQAJsIKd4qM2mzCtvgocColy8v
-slnOprxgxSodt72qCm8bXF07dfepxyZLq+QHPxWuAIZTNAzC4XzvAQPwZk60RAQH
-Zj9y431z/vd2A0PjUkJrOFzWEwH9OGASjcXVj9iQQA9RRFTbyJQQmKzp96WArxEg
-E2eHwlEF9qMcPLkECUrCuFXJYJlzsjkluHr0p7kL8pEX2FTn0N7X65PR+cr/nsQZ
-IhlZF9CQyldum6hKjYmlFIrPiSaujKQBukq9iBqTGb2LbLnNfnomGnJceAzr92sd
-rhaMwVfx5b+Kf2ykQ5kfbMFSpiKHsmuKLsWmECFMBTak+x9CMyOVDxut24eTsfV6
-89gITtqhqDLohB0GpDpSyDDTiIld80/nGrSuT745d4oC/9wo/kVGE/nCbWrE/tjq
-DszN1dNjzahRL5bi/ABe+HsM9F2L5K29z+yj/BAyU/pjxioVRrP1G+7+LsH2PZ02
-JvJ1m4kp35QSrJihk5G0+gLWX6ONj30bIdGkeJPrhKisdwo3k66OmLWAwsF3f/sL
-C8H63icCYsmwjG8ynxW1+mxE0EF6hJJzc1ss5Eg6S0Awl7yqyvv8QSHxtL8dmc+E
-HyxQnMJsNvZvI7FkEPXN0ZIDIAHwUFUnu/jcRCotMHdRriEDqKqaV/CB15Y/jnEm
-9wXb0QVyGSCk8N05n0rm
-=4FBP
+iQIcBAEBCAAGBQJRyVHZAAoJEECxmPOUX5FEg7EP/1DXJp7xg+yyMLxvdSem6NoQ
+PeZpzjLjIO1ua5XaECbaxFVQ56B4w5oXCaNUhEyVewDVkuiwbDKgIffIPWoLGq6i
+LQUJwSDm1oOwEeHh22vbeuLrJX7jvJ5y/Sjt1mn4KdAz/tyRUFRQVXfGT4x9u3sp
+Ursp6Hk39MyIvnNXm5tkJ1YsaWaTZ3Zw48qN8LtxKSSAokFpQVduLoskEttq3v9o
+UWk8VWpOmOnVL9NEBbTBGeJm9vs5cuI+AbdlikW1S8C9ciDUH22AfhNnc6T8JosH
+TpG5oECAsR4IkdRwl/t27/drAUAYd+iAqRWgq0a3BZa6334x8qOXLjDeO695PGNK
+8uUFKtP9giOyPUETVXZal5STz+OnUpdiXDv+RGhTDOm+gC3FjaPdnsuC/qc6G61h
+YLBOnGggOpl5UuYNkfJm3e4jAv7ZAN9qZmNyHlV5mG2iHaJ6Gi2aZwomSlWUn+gu
+Ma5WfuU8EDKU9V2RM3EMuGUuNClscRpXGN8wUnbQfhCydGsv1e1oqSUFmN+kBvpM
+weLQKyDdSASsvLCvt43jq601I0ygMfKduqIXsqF+hhrqZMosRAGxASrFmowXujzX
+UvxmdTTk7vUqiFd+JeBbdtp+pHBQIMpQUptrYkHr9KFI6uzNt63fQqTdIDZmrVyE
+z6PbYN7nnLlnarkou2px
+=oH4O
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Jun_2013_17_50_06_+1000_1b5AvJdYsb_oAy9C--
+--Signature=_Tue__25_Jun_2013_18_16_21_+1000_PSTr0BAPhTIVDQhg--
