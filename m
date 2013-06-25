@@ -1,155 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 25 Jun 2013 12:54:43 +1000
-Message-ID: <20130625125443.fa0d462d854838c57f7b9abb@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the devicetree tree
+Date: Tue, 25 Jun 2013 16:53:10 +1000
+Message-ID: <20130625165310.161dafbc62ab505ecbfc3cd3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Jun_2013_12_54_43_+1000_8ahz79qvCquAdSdT"
+ boundary="Signature=_Tue__25_Jun_2013_16_53_10_+1000_lgSrwy+IObQI2sdG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42815 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50013 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751102Ab3FYCyx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Jun 2013 22:54:53 -0400
+	with ESMTP id S1751063Ab3FYGxW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Jun 2013 02:53:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
---Signature=_Tue__25_Jun_2013_12_54_43_+1000_8ahz79qvCquAdSdT
+--Signature=_Tue__25_Jun_2013_16_53_10_+1000_lgSrwy+IObQI2sdG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/renesas/sh_eth.c between commit ca8c35852138
-("sh_eth: fix unhandled RFE interrupt") from the net tree and commit
-8f80899665c4 ("sh_eth: remove 'tx_error_check' field of 'struct
-sh_eth_cpu_data'") from the net-next tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/chipidea/Makefile between commit 8973ba8b325f ("usb:
+chipidea: depend on CONFIG_OF instead of CONFIG_OF_DEVICE") from the
+devicetree tree and commit 8e22978c5708 ("usb: chipidea: drop "13xxx"
+infix") from the usb tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/ethernet/renesas/sh_eth.c
-index e29fe8d,7732f11..0000000
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@@ -380,10 -382,8 +382,9 @@@ static struct sh_eth_cpu_data r8a777x_d
-  	.eesipr_value	=3D 0x01ff009f,
+diff --cc drivers/usb/chipidea/Makefile
+index 4113feb,3bbbcba..0000000
+--- a/drivers/usb/chipidea/Makefile
++++ b/drivers/usb/chipidea/Makefile
+@@@ -13,9 -13,9 +13,9 @@@ obj-$(CONFIG_USB_CHIPIDEA)	+=3D ci_hdrc_m
  =20
-  	.tx_check	=3D EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
- -	.eesr_err_check	=3D EESR_TWB | EESR_TABT | EESR_RABT | EESR_RDE |
- -			  EESR_RFRMER | EESR_TFE | EESR_TDE | EESR_ECI,
- +	.eesr_err_check	=3D EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
- +			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE |
- +			  EESR_ECI,
-- 	.tx_error_check	=3D EESR_TWB | EESR_TABT | EESR_TDE | EESR_TFE,
+  # PCI doesn't provide stubs, need to check
+  ifneq ($(CONFIG_PCI),)
+- 	obj-$(CONFIG_USB_CHIPIDEA)	+=3D ci13xxx_pci.o
++ 	obj-$(CONFIG_USB_CHIPIDEA)	+=3D ci_hdrc_pci.o
+  endif
  =20
-  	.apr		=3D 1,
-  	.mpr		=3D 1,
-@@@ -425,13 -414,11 +415,12 @@@ static struct sh_eth_cpu_data sh7724_da
- =20
-  	.ecsr_value	=3D ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD,
-  	.ecsipr_value	=3D ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP,
-- 	.eesipr_value	=3D DMAC_M_RFRMER | DMAC_M_ECI | 0x01ff009f,
-+ 	.eesipr_value	=3D 0x01ff009f,
- =20
-  	.tx_check	=3D EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
- -	.eesr_err_check	=3D EESR_TWB | EESR_TABT | EESR_RABT | EESR_RDE |
- -			  EESR_RFRMER | EESR_TFE | EESR_TDE | EESR_ECI,
- +	.eesr_err_check	=3D EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
- +			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE |
- +			  EESR_ECI,
-- 	.tx_error_check	=3D EESR_TWB | EESR_TABT | EESR_TDE | EESR_TFE,
- =20
-  	.apr		=3D 1,
-  	.mpr		=3D 1,
-@@@ -480,11 -453,10 +455,11 @@@ static struct sh_eth_cpu_data sh7757_da
-  	.rmcr_value	=3D 0x00000001,
- =20
-  	.tx_check	=3D EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
- -	.eesr_err_check	=3D EESR_TWB | EESR_TABT | EESR_RABT | EESR_RDE |
- -			  EESR_RFRMER | EESR_TFE | EESR_TDE | EESR_ECI,
- +	.eesr_err_check	=3D EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
- +			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE |
- +			  EESR_ECI,
-- 	.tx_error_check	=3D EESR_TWB | EESR_TABT | EESR_TDE | EESR_TFE,
- =20
-+ 	.irq_flags	=3D IRQF_SHARED,
-  	.apr		=3D 1,
-  	.mpr		=3D 1,
-  	.tpauser	=3D 1,
-@@@ -595,11 -521,9 +524,9 @@@ static struct sh_eth_cpu_data sh7757_da
-  	.eesipr_value	=3D DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
- =20
-  	.tx_check	=3D EESR_TC1 | EESR_FTC,
- -	.eesr_err_check	=3D EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT | \
- -			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE | \
- -			  EESR_ECI,
- +	.eesr_err_check	=3D EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
- +			  EESR_RFE | EESR_RDE | EESR_RFRMER | EESR_TFE |
- +			  EESR_TDE | EESR_ECI,
-- 	.tx_error_check	=3D EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_TDE | \
-- 			  EESR_TFE,
-  	.fdr_value	=3D 0x0000072f,
-  	.rmcr_value	=3D 0x00000001,
- =20
-@@@ -677,11 -579,9 +582,9 @@@ static struct sh_eth_cpu_data sh7734_da
-  	.eesipr_value	=3D DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
- =20
-  	.tx_check	=3D EESR_TC1 | EESR_FTC,
- -	.eesr_err_check	=3D EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT | \
- -			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE | \
- -			  EESR_ECI,
- +	.eesr_err_check	=3D EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
- +			  EESR_RFE | EESR_RDE | EESR_RFRMER | EESR_TFE |
- +			  EESR_TDE | EESR_ECI,
-- 	.tx_error_check	=3D EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_TDE | \
-- 			  EESR_TFE,
- =20
-  	.apr		=3D 1,
-  	.mpr		=3D 1,
-@@@ -814,11 -643,9 +646,9 @@@ static struct sh_eth_cpu_data r8a7740_d
-  	.eesipr_value	=3D DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
- =20
-  	.tx_check	=3D EESR_TC1 | EESR_FTC,
- -	.eesr_err_check	=3D EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT | \
- -			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE | \
- -			  EESR_ECI,
- +	.eesr_err_check	=3D EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
- +			  EESR_RFE | EESR_RDE | EESR_RFRMER | EESR_TFE |
- +			  EESR_TDE | EESR_ECI,
-- 	.tx_error_check	=3D EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_TDE | \
-- 			  EESR_TFE,
- =20
-  	.apr		=3D 1,
-  	.mpr		=3D 1,
+ -ifneq ($(CONFIG_OF_DEVICE),)
+ +ifneq ($(CONFIG_OF),)
+- 	obj-$(CONFIG_USB_CHIPIDEA)	+=3D ci13xxx_imx.o usbmisc_imx.o
++ 	obj-$(CONFIG_USB_CHIPIDEA)	+=3D ci_hdrc_imx.o usbmisc_imx.o
+  endif
 
---Signature=_Tue__25_Jun_2013_12_54_43_+1000_8ahz79qvCquAdSdT
+--Signature=_Tue__25_Jun_2013_16_53_10_+1000_lgSrwy+IObQI2sdG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRyQZ3AAoJEECxmPOUX5FEKXcP/066hTZc5TMDlmJdntbxrWiH
-hhoAgJFrxtVHg5kvtXMLOdZ/a/7QLSg6Y5TLwEBEEsZldT2fwcmRiurY7P8h9zdw
-V3JtaUiFPm4+GmgAqhsyGKzn0utqodVWnJCX9GCgVy47TMu77M3OAn30ZrobvWaW
-ETcdpIx7L9vXjv3/DR1krgUc2phResjUFfAqcHuVVU75fbZo7Uc5XBxNBClmMiLe
-VjEBQ7059RUI2mArY2nV3fwHl9HOlpjGSsAKdBhFhFDIKaajhHkIxIj8gHCgIgUJ
-5exMZRtPHXygI/PmVtNOSam2qgbhVtkKos5rQUf4BsK0QsoR2NwnhHzNoW+FfrSq
-7eUp0PC/By8asGBO8chP1g7W+sym3dw7GAQJvoYZLd8SYeHHOhY38wqu4hYKiqVE
-+Qfjd+SVkmvPp6n055SXvV/n7OeV1MidkO2kKrnnv7YIGYDzvNg+KBWAwM2Psct9
-re38nvr2HhdOyr2uX3T2FirqlhhXzw53WcLqj9zOMDYNFH238mHuAuy4lW1n5+iz
-zf04UlKNlL68V0Ss5+CRxSIPz7FDn1YXLks1Ok67Sywa7trCww9Xz8nXEI4cTa/G
-QspoDMxm3+4ggWSnqvWIqDLVw6Oh0OQPxIoaBvD8UQX8j0kwks5BJl6uFD59WxAC
-KxnZAwhuoZa4yLnlTumf
-=21y8
+iQIcBAEBCAAGBQJRyT5bAAoJEECxmPOUX5FET2sP/3KfhrT+LvvUz0dXUNkJfqB5
+J4Wzr81x0Pfkj9WtQdEtAclyeZpAm5p3r4T2WwsySuXWxd9SnXCYue0IdKQXpda8
+IY5s1Gk1wo2jN9jsKTLbUZphHN2HLU2LZ31eUtmQGMqRtKKYJ1HWh/gCkEb2F4AH
+N3w2gqmNYadCoAy2hQ/fjyZe3KzWUSP7uY7IyQ3UiiMqMv4VmwPxOyafDs66Dcqp
+9sp8c8TzGNdzJQgwFwnVwUhLP8msTC4bB7bCu0MhtVO1hW4D68QM03IYI/dvRl9Y
+Z+X+0PGiSbQkbceBg+uIQLdQpOCQ/269X+DtJuJE037peDrup2O9OUMuCZcPssmy
+9qH/vxVAaqfbQ+NZ5yIPK6wKJLot2l4zb8TnlqZyk+RWcIMDFwnFCqET0XTt+QjK
+PvtqfA4DTUj07u1Rvk8rwhqJkdAVqJxLqRQmxhGwNaywchWeu0pRXDIheHcB/IFn
+qU4Kt/47xUG9tEZFEOKZebv22GiY94QFat+jN+mFN/Haqvbdm8/vpifNrrocEdf3
+Kn/QojNsN9/YJk7JiFSTCQabmsiVl3u+NIHyepuBHx3TzumDoUmMoNhVpV+Ggp+M
+L3/fqwbNYejRIqzg1d/B7GWg8cmabJQvbwBRqh1kiPNO73nUqErPV6LNFSStnDix
+Vk2uLBwzwh4A3tKfyzkM
+=eBac
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Jun_2013_12_54_43_+1000_8ahz79qvCquAdSdT--
+--Signature=_Tue__25_Jun_2013_16_53_10_+1000_lgSrwy+IObQI2sdG--
