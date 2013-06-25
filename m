@@ -1,56 +1,32 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Jun 25
-Date: Tue, 25 Jun 2013 11:40:18 +0200
-Message-ID: <CA+icZUWS6d98YA7_rdjXw-R3V+OyV2YCH9Hpn-C+qB385-QO_g@mail.gmail.com>
-References: <20130625184420.b811089a069c63ccd3721d68@canb.auug.org.au>
-	<CA+icZUUH7AeR7OSm-SB56AGRiE815tTkQW9fFkKzyrSvzs3Etg@mail.gmail.com>
-	<201306251121.53862.yann.morin.1998@free.fr>
-	<CA+icZUU06C43bxyX2UGtDxRQqcyqeAQgt7fZHq7H7HgcJ6sHzQ@mail.gmail.com>
-	<51C96322.9000801@suse.cz>
-Reply-To: sedat.dilek@gmail.com
+From: Ming Lei <ming.lei@canonical.com>
+Subject: Re: linux-next: build warning after merge of the driver-core tree
+Date: Tue, 25 Jun 2013 20:00:47 +0800
+Message-ID: <CACVXFVNUzNxwjFnDGSEEKAn81Guy1bF2_GncYe1+-WKOXtrXdQ@mail.gmail.com>
+References: <20130625183355.464b44df82ffc033aab31a4d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <51C96322.9000801@suse.cz>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Michal Marek <mmarek@suse.cz>
-Cc: "Yann E. MORIN" <yann.morin.1998@free.fr>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130625183355.464b44df82ffc033aab31a4d@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jun 25, 2013 at 11:30 AM, Michal Marek <mmarek@suse.cz> wrote:
-> On 25.6.2013 11:26, Sedat Dilek wrote:
->> On Tue, Jun 25, 2013 at 11:21 AM, Yann E. MORIN <yann.morin.1998@free.fr> wrote:
->> http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=a11650e11093ed57dca78bf16e7836517c599098
->>
->>>   - for tristate choices, it is possible to select zero, one or more of the
->>>     symbols in the choice
->>>   - if no symbol is selected (randomly or otherwise) in a tristate choice,
->>>     then the choice symbol itself has no assigned 'value'
->>>   - then silentoldconfig whines
->>
->> Bad bad bad Yann, didn't Marek told you to test always with...
->>
->>     $ yes "" | make oldconfig; make silentoldconfig </dev/null
->>
->> Anyway, have fun.
+On Tue, Jun 25, 2013 at 4:33 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Greg,
 >
-> You only hit this if you have CONFIG_RAPIDIO=y in the original config.
+> After merging the driver-core tree, today's linux-next build (powerpc
+> allnoconfig) produced this warning:
 >
+> drivers/base/firmware_class.c:221:29: warning: 'fw_lookup_buf' defined but not used [-Wunused-function]
+>
+> Introduced by commit 90f8908127b5 ("firmware loader: fix compile warning
+> with PM_SLEEP set").
 
-OK, my kernel-config base was from a Ubuntu/precise kernel.
-You are right for x86 it is not a defconfig.
-
-$ grep RAPIDIO arch/x86/configs/*_defconfig
-
-$ grep RAPIDIO arch/powerpc/configs/*_defconfig
-arch/powerpc/configs/corenet32_smp_defconfig:CONFIG_RAPIDIO=y
-arch/powerpc/configs/corenet64_smp_defconfig:CONFIG_RAPIDIO=y
-arch/powerpc/configs/mpc85xx_defconfig:CONFIG_RAPIDIO=y
-arch/powerpc/configs/mpc85xx_smp_defconfig:CONFIG_RAPIDIO=y
-
-Anyway, it is good we catched this.
-
-- Sedat -
+OK, I will submit a patch to kill the warning later, thanks again for
+your report.
 
 
-> Michal
+Thanks,
+--
+Ming Lei
