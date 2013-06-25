@@ -1,74 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the samsung tree
-Date: Tue, 25 Jun 2013 18:16:21 +1000
-Message-ID: <20130625181621.bae8e93ec1ceedd7b70c7812@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the driver-core tree
+Date: Tue, 25 Jun 2013 18:33:55 +1000
+Message-ID: <20130625183355.464b44df82ffc033aab31a4d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Jun_2013_18_16_21_+1000_PSTr0BAPhTIVDQhg"
+ boundary="Signature=_Tue__25_Jun_2013_18_33_55_+1000_SKPzg8R=TZwYm.0p"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58653 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56332 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751525Ab3FYIQc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Jun 2013 04:16:32 -0400
+	with ESMTP id S1751849Ab3FYIeE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Jun 2013 04:34:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Robin Holt <holt@sgi.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <ming.lei@canonical.com>
 
---Signature=_Tue__25_Jun_2013_18_16_21_+1000_PSTr0BAPhTIVDQhg
+--Signature=_Tue__25_Jun_2013_18_33_55_+1000_SKPzg8R=TZwYm.0p
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Greg,
 
-Today's linux-next merge of the akpm tree got a conflict in
-arch/arm/mach-s3c64xx/common.c between commit cae36a5ce9c9 ("ARM:
-SAMSUNG: Set PWM platform data") from the samsung tree and commit
-"reboot: arm: change reboot_mode to use enum reboot_mode" from the akpm
-tree.
+After merging the driver-core tree, today's linux-next build (powerpc
+allnoconfig) produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/base/firmware_class.c:221:29: warning: 'fw_lookup_buf' defined but =
+not used [-Wunused-function]
+
+Introduced by commit 90f8908127b5 ("firmware loader: fix compile warning
+with PM_SLEEP set").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-s3c64xx/common.c
-index 0b33683,54f4a05..0000000
---- a/arch/arm/mach-s3c64xx/common.c
-+++ b/arch/arm/mach-s3c64xx/common.c
-@@@ -26,7 -26,7 +26,8 @@@
-  #include <linux/irq.h>
-  #include <linux/gpio.h>
-  #include <linux/irqchip/arm-vic.h>
-+ #include <linux/reboot.h>
- +#include <clocksource/samsung_pwm.h>
- =20
-  #include <asm/mach/arch.h>
-  #include <asm/mach/map.h>
-
---Signature=_Tue__25_Jun_2013_18_16_21_+1000_PSTr0BAPhTIVDQhg
+--Signature=_Tue__25_Jun_2013_18_33_55_+1000_SKPzg8R=TZwYm.0p
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRyVHZAAoJEECxmPOUX5FEg7EP/1DXJp7xg+yyMLxvdSem6NoQ
-PeZpzjLjIO1ua5XaECbaxFVQ56B4w5oXCaNUhEyVewDVkuiwbDKgIffIPWoLGq6i
-LQUJwSDm1oOwEeHh22vbeuLrJX7jvJ5y/Sjt1mn4KdAz/tyRUFRQVXfGT4x9u3sp
-Ursp6Hk39MyIvnNXm5tkJ1YsaWaTZ3Zw48qN8LtxKSSAokFpQVduLoskEttq3v9o
-UWk8VWpOmOnVL9NEBbTBGeJm9vs5cuI+AbdlikW1S8C9ciDUH22AfhNnc6T8JosH
-TpG5oECAsR4IkdRwl/t27/drAUAYd+iAqRWgq0a3BZa6334x8qOXLjDeO695PGNK
-8uUFKtP9giOyPUETVXZal5STz+OnUpdiXDv+RGhTDOm+gC3FjaPdnsuC/qc6G61h
-YLBOnGggOpl5UuYNkfJm3e4jAv7ZAN9qZmNyHlV5mG2iHaJ6Gi2aZwomSlWUn+gu
-Ma5WfuU8EDKU9V2RM3EMuGUuNClscRpXGN8wUnbQfhCydGsv1e1oqSUFmN+kBvpM
-weLQKyDdSASsvLCvt43jq601I0ygMfKduqIXsqF+hhrqZMosRAGxASrFmowXujzX
-UvxmdTTk7vUqiFd+JeBbdtp+pHBQIMpQUptrYkHr9KFI6uzNt63fQqTdIDZmrVyE
-z6PbYN7nnLlnarkou2px
-=oH4O
+iQIcBAEBCAAGBQJRyVX3AAoJEECxmPOUX5FERPQP/3So5kuFDiK4fFMwcPst4R5E
+N9QtezTD2xqPQsGjCSQGQhskxfkCS5xRyzA6k8pfnRyclp+tYe1SIHyEc5XdIRkg
+jl2Nn0zeoJ5eq5HnmG1aokgpW0aTG+2IH8V1CdjztGRSkdVYP1yAWK/STdpK8r1X
++fZhGrsMTmYBy29d2Alu3rlPCXclYwwHH7/5jHXjEKTwbuKt3Gk7ZW3WGSFWIAgG
+Zm9DjIYiod4N7cssdzqUJbO1Wj4tWK7GKe2uaDNGrCY34c6JefM7FZklJB3aVzo8
+IZQUPncbOYQxtNzmkQVPET8a2nQ0ZNh102aeOglCAhgp5LjtN8jTklnMHZiAImpi
++xfEnh6R3Lr3U49gbeYfpcJ27hSg4r6unk1A5A52dIl0t+BucbLYopvOrsXBdpDK
+QahV8XCMfZYjBP2COB2KH3mtxL3rASk0fuJZxa94i8ZSt/Dw6lrgA14zpDB6/Hhz
+kJ4HaOYRCqlWn/ghC6LBF+N6b4cs78gFyC6zp6EcSDIC+pgl7EgmW4lzLU5hqflh
+wLQr+4H/spdysKx8UsrSTyDznImvnM9iVnGHg+924vh+812ZBRkz+JKIMhc2uOtc
+Y/URM3w+qatBEW9F9PSvmBPn8j0PuhKCv+oD4bOMNDwwVu7j1VbpDPczR+FCsxwz
+5yPytpYFlevaiTGGSpvi
+=49mw
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Jun_2013_18_16_21_+1000_PSTr0BAPhTIVDQhg--
+--Signature=_Tue__25_Jun_2013_18_33_55_+1000_SKPzg8R=TZwYm.0p--
