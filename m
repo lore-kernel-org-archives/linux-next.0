@@ -1,100 +1,32 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Jun 26 [ vfs | block | fuse (cpuidle)
- releated? ]
-Date: Wed, 26 Jun 2013 11:50:48 +0200
-Message-ID: <CA+icZUVzsOyOdL3zRF=mikx-6vrQbZ-aKnEQTaXau+HYD0YymQ@mail.gmail.com>
-References: <CA+icZUWDDCsXBK4+s4fEbM_AGj3EnfCRAe2=yE+8_MT4mauPXg@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm tree with the powerpc tree
+Date: Wed, 26 Jun 2013 06:13:00 -0700
+Message-ID: <20130626061300.6b2da9e3.akpm@linux-foundation.org>
+References: <20130626165642.8740ecb6d5d5882b06f173c8@canb.auug.org.au>
+	<1372234231.18612.6.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f53.google.com ([74.125.82.53]:64375 "EHLO
-	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751831Ab3FZJuu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Jun 2013 05:50:50 -0400
-In-Reply-To: <CA+icZUWDDCsXBK4+s4fEbM_AGj3EnfCRAe2=yE+8_MT4mauPXg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, fuse-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1372234231.18612.6.camel@pasglop>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Neuling <mikey@neuling.org>, linuxppc-dev@lists.ozlabs.org, Oleg Nesterov <oleg@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 26, 2013 at 11:48 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Wed, Jun 26, 2013 at 10:06 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
->>
->> Changes since 20130625:
->>
->> New tree: cpuinit
->>
->> The arm-mpidr tree gained a conflict against the arm tree.
->>
->> The net-next tree gained a conflict against the pm tree and a build
->> failure for which I reverted a commit.
->>
->> The drm-intel tree gained a conflict against Linus' tree.
->>
->> The pinctrl tree gained a conflict against the regmap tree.
->>
->> The akpm tree lost a patch that turned up elsewhere and gained a conflict
->> against the powerpc tree.
->>
->> The cpuinit tree lost a patch that turned up in the arc tree and gained a
->> conflict against the arm-current tree.
->>
->> ----------------------------------------------------------------------------
->>
->
-> [ CC some vfs | block | fuse maintainers ]
->
-> Since yesterday (next-20130625) and today (next-20130626) I can NOT
-> boot into my -next kernels.
->
-> I have seen two traces whereas I would like to concentrate on Trace #1.
->
-> Trace #1 (noted manually, read from the screen):
-> ...
-> general_protection
-> spin_dump
-> spin_bug
-> do_raw_spin_lock
-> _raw_spin_locking
-> rwsem_spin_locking
-> rwsem_downwrite_failed
-> _rwsem_downwrite_failed
-> call_rwsem_downwrite_failed
-> downwrite
-> fuse_kill_sb_blk
-> deactivate_locked_super
-> mount_bdev
-> fuse_iget
-> fuse_mountblk
-> mount_fs
-> vfs_kern_mount
-> do_mount
-> __get_free_pages
-> copy_mount_options
-> SyS_mount
-> tracesys
->
-> Trace #2 (noted manually, read from the screen):
-> ...
-> blablabla cpuidle
-> ...
-> arch_trigger_all_cpu_backtrace_handler
->
-> I have attached my kernel-config.
->
-> Any hints/feedback welcome!
->
+On Wed, 26 Jun 2013 18:10:31 +1000 Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
 
-Just as a sidenote:
+> On Wed, 2013-06-26 at 16:56 +1000, Stephen Rothwell wrote:
+> > Today's linux-next merge of the akpm tree got a conflict in
+> > arch/powerpc/kernel/ptrace.c between commit b0b0aa9c7faf
+> > ("powerpc/hw_brk: Fix setting of length for exact mode breakpoints") from
+> > the powerpc tree and commit "ptrace/powerpc: revert "hw_breakpoints: Fix
+> > racy access to ptrace breakpoints"" from the akpm tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary (no action
+> > is required).
+> 
+> Where does the latter come from ? Why didn't it go through the powerpc tree ?
 
-This is not a ***native*** Ubuntu/precise AMD64 installation - I am
-using a WUBI environment.
-
-- Sedat -
-
-https://wiki.ubuntu.com/WubiGuide
-
-> Regards,
-> - Sedat -
+um, the most rudimentary search will take you to Oleg's patch series. 
+You were cc'ed on the whole thing two or three times.
