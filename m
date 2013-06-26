@@ -1,29 +1,35 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: manual merge of the akpm tree with the powerpc tree
-Date: Wed, 26 Jun 2013 18:10:31 +1000
-Message-ID: <1372234231.18612.6.camel@pasglop>
-References: <20130626165642.8740ecb6d5d5882b06f173c8@canb.auug.org.au>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: linux-next: manual merge of the cpuinit tree with the arm-current
+ tree
+Date: Wed, 26 Jun 2013 10:27:29 +0200
+Message-ID: <51CAA5F1.2010001@free-electrons.com>
+References: <20130626171241.4629f4072fbd36f12d5fe3be@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130626165642.8740ecb6d5d5882b06f173c8@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([94.23.35.102]:47149 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751349Ab3FZI1d (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Jun 2013 04:27:33 -0400
+In-Reply-To: <20130626171241.4629f4072fbd36f12d5fe3be@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Neuling <mikey@neuling.org>, linuxppc-dev@lists.ozlabs.org, Oleg Nesterov <oleg@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-On Wed, 2013-06-26 at 16:56 +1000, Stephen Rothwell wrote:
-> Today's linux-next merge of the akpm tree got a conflict in
-> arch/powerpc/kernel/ptrace.c between commit b0b0aa9c7faf
-> ("powerpc/hw_brk: Fix setting of length for exact mode breakpoints") from
-> the powerpc tree and commit "ptrace/powerpc: revert "hw_breakpoints: Fix
-> racy access to ptrace breakpoints"" from the akpm tree.
+On 06/26/2013 09:12 AM, Stephen Rothwell wrote:
+> Hi Paul,
 > 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-
-Where does the latter come from ? Why didn't it go through the powerpc tree ?
-
-Cheers,
-Ben.
+> Today's linux-next merge of the cpuinit tree got a conflict in arch/arm/mm/proc-v7.S between commit 3e0a07f8c401 ("ARM: 7773/1: PJ4B: Add support for errata 4742") from the arm-current
+> tree and commit "arm: delete __cpuinit/__CPUINIT usage from all ARM users" from the cpuinit tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action is required).
+> 
+>From my point of view it looks good.
+Thanks,
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
