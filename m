@@ -1,33 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the powerpc tree
-Date: Wed, 26 Jun 2013 16:56:42 +1000
-Message-ID: <20130626165642.8740ecb6d5d5882b06f173c8@canb.auug.org.au>
+Subject: linux-next: manual merge of the cpuinit tree with the arm-current
+ tree
+Date: Wed, 26 Jun 2013 17:12:41 +1000
+Message-ID: <20130626171241.4629f4072fbd36f12d5fe3be@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Jun_2013_16_56_42_+1000_9ZYzORaX4_xzG.ZF"
+ boundary="Signature=_Wed__26_Jun_2013_17_12_41_+1000_lArE76q/rGmJNDa2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33799 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:46964 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751020Ab3FZG4y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Jun 2013 02:56:54 -0400
+	with ESMTP id S1751195Ab3FZHMw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Jun 2013 03:12:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Neuling <mikey@neuling.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Oleg Nesterov <oleg@redhat.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Gregory CLEMENT <gregory.clement@free-electrons.com>
 
---Signature=_Wed__26_Jun_2013_16_56_42_+1000_9ZYzORaX4_xzG.ZF
+--Signature=_Wed__26_Jun_2013_17_12_41_+1000_lArE76q/rGmJNDa2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Paul,
 
-Today's linux-next merge of the akpm tree got a conflict in
-arch/powerpc/kernel/ptrace.c between commit b0b0aa9c7faf
-("powerpc/hw_brk: Fix setting of length for exact mode breakpoints") from
-the powerpc tree and commit "ptrace/powerpc: revert "hw_breakpoints: Fix
-racy access to ptrace breakpoints"" from the akpm tree.
+Today's linux-next merge of the cpuinit tree got a conflict in
+arch/arm/mm/proc-v7.S between commit 3e0a07f8c401 ("ARM: 7773/1: PJ4B:
+Add support for errata 4742") from the arm-current tree and commit "arm:
+delete __cpuinit/__CPUINIT usage from all ARM users" from the cpuinit
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,42 +37,62 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/powerpc/kernel/ptrace.c
-index 64f7bd5,6645e57..0000000
---- a/arch/powerpc/kernel/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace.c
-@@@ -1449,10 -1437,7 +1437,9 @@@ static long ppc_set_hwdebug(struct task
-  	 */
-  	if (bp_info->addr_mode =3D=3D PPC_BREAKPOINT_MODE_RANGE_INCLUSIVE) {
-  		len =3D bp_info->addr2 - bp_info->addr;
- -	} else if (bp_info->addr_mode !=3D PPC_BREAKPOINT_MODE_EXACT) {
- +	} else if (bp_info->addr_mode =3D=3D PPC_BREAKPOINT_MODE_EXACT)
- +		len =3D 1;
- +	else {
-- 		ptrace_put_breakpoints(child);
-  		return -EINVAL;
-  	}
-  	bp =3D thread->ptrace_bps[0];
+diff --cc arch/arm/mm/proc-v7.S
+index 7ef3ad0,64b3acb..0000000
+--- a/arch/arm/mm/proc-v7.S
++++ b/arch/arm/mm/proc-v7.S
+@@@ -144,31 -144,6 +144,29 @@@ ENTRY(cpu_v7_do_resume
+  ENDPROC(cpu_v7_do_resume)
+  #endif
+ =20
+ +#ifdef CONFIG_CPU_PJ4B
+ +	globl_equ	cpu_pj4b_switch_mm,     cpu_v7_switch_mm
+ +	globl_equ	cpu_pj4b_set_pte_ext,	cpu_v7_set_pte_ext
+ +	globl_equ	cpu_pj4b_proc_init,	cpu_v7_proc_init
+ +	globl_equ	cpu_pj4b_proc_fin, 	cpu_v7_proc_fin
+ +	globl_equ	cpu_pj4b_reset,	   	cpu_v7_reset
+ +#ifdef CONFIG_PJ4B_ERRATA_4742
+ +ENTRY(cpu_pj4b_do_idle)
+ +	dsb					@ WFI may enter a low-power mode
+ +	wfi
+ +	dsb					@barrier
+ +	mov	pc, lr
+ +ENDPROC(cpu_pj4b_do_idle)
+ +#else
+ +	globl_equ	cpu_pj4b_do_idle,  	cpu_v7_do_idle
+ +#endif
+ +	globl_equ	cpu_pj4b_dcache_clean_area,	cpu_v7_dcache_clean_area
+ +	globl_equ	cpu_pj4b_do_suspend,	cpu_v7_do_suspend
+ +	globl_equ	cpu_pj4b_do_resume,	cpu_v7_do_resume
+ +	globl_equ	cpu_pj4b_suspend_size,	cpu_v7_suspend_size
+ +
+ +#endif
+ +
+- 	__CPUINIT
+-=20
+  /*
+   *	__v7_setup
+   *
 
---Signature=_Wed__26_Jun_2013_16_56_42_+1000_9ZYzORaX4_xzG.ZF
+--Signature=_Wed__26_Jun_2013_17_12_41_+1000_lArE76q/rGmJNDa2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRypCuAAoJEECxmPOUX5FEMFsP/iLMpsI83VEBPCVdZdKFq4ms
-mxTBOl7XT27o/pj+0b3Z+htLcBqjzDfeMfrvyURf2Rs/e0Ha0xUX88fUolzrFHK6
-7prwBftW35ee3eWTkv3rwprbGc0PPsqz8NZJAx5sUnGfjNNY6RTcpPohSy7i2T5x
-O7D7qYIVTRL9hsCvgHPiZrnbkjY6PLkzgEakgbt0QiDBYKmIQ9aFuFzimhIkTS4Q
-87BO/fc3sefuYT/4N59xP9lkS7eTVR0C6sSZDsUaImIhwY4QSeaouwAihTba7u9x
-UMSh2M2UkvN003Cj71UtaHrhsPW+K7QbFnW2TVD1X4OKe2gF9ncefYgfgYvZIUL1
-r/r6Edav3rnP+lyAMIHmvhSP4aes37Dfmeq5cIlVxLPTNxuQW3Mx5m6qSh0YT3wc
-UJf/peocUSIrsVJLtrYNAm3iv9Vy0N2CMaREgSX0YAzoM9u+KwHA8vft2PGH8wL9
-YLlm72AGg5W/glOGEd1WNg4zA0JQRr5ITPEYsgdb1jBNkh36BVmYxHohUF56ZoxN
-IJ+c7KQlmgdjkVxZ7hnGW/EWfZbv25yG6zpw3mFWPmSosP/q9PdjJ6YGKxGcr4WD
-KlW/RvXhoL/W1IJUyKbZtfzF7vPqOHmyfzm7pZcWDw4tcldpMMehX64zVL1guRiM
-eN1c1fAK2tjRP16l0kDj
-=JNfM
+iQIcBAEBCAAGBQJRypRuAAoJEECxmPOUX5FE9JUP/A6AX6ORS2U03luPC6iuyaN7
+V9m9IMYXcPJ6YM2dkBq5wSHtXaOmed6kOhW8NNS7E1r4lFoaOb938ZKyori3ZyOw
+8SG7xamWLFFF+2MFk95BHYnizaDmgTMY48zzEQ2H+ejq3UdFYCGGn9VLlcMAbRLK
+SSUJO2+TM9Sdq3gjWXogcPZOzNwFvCv44s+SGGKDHNxpFjVsvoMDn9U6dgs3lMsZ
+7n/Go6jFYe1U9903QlDk7HJY9hmKgJaeBaRl9PhV8auNCLp2FXnuSSdduwaszRxG
+WlF3nMMbTxi/JFSBUW/aD/OfgQR5aVUOMypMizPC2CR9pW8zqzZtUuDMl1ZxOVX7
+rDbse23W/g0FDljmrCPiMhiLMmXzs6f7gsoW8K3fkOgm4HjhJG0apX24snKkJQtY
+fzMTy1n8cWiDHLGQL84NKTwZ605rzaiX0nxhonWrGPqYwBh7pRnjg850qYTlP6dP
+6vqbSxL+M8DMud6RG4e2DmjaZnVlnJD63Ph8xqkf/92sDhSlM2ITrcKfH4NazbeC
+ud6F1ScUw1565ap4GMh5db+fg0jRWw4n6Um71XSn4pfISg49x1x5Ftw/rfEPPZa6
+FUK9dO1pFNc6fv6DQV71DqODZW9fe2uqQ0QDdRfP9sWz5gqso5eukTqcboehw9MP
+5u4GSxhS/Q2/OVOVC938
+=vz/H
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__26_Jun_2013_16_56_42_+1000_9ZYzORaX4_xzG.ZF--
+--Signature=_Wed__26_Jun_2013_17_12_41_+1000_lArE76q/rGmJNDa2--
