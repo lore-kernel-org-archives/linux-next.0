@@ -1,35 +1,35 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: linux-next: manual merge of the cpuinit tree with the arm-current
- tree
-Date: Wed, 26 Jun 2013 10:27:29 +0200
-Message-ID: <51CAA5F1.2010001@free-electrons.com>
-References: <20130626171241.4629f4072fbd36f12d5fe3be@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (net-next tree related)
+Date: Wed, 26 Jun 2013 01:36:20 -0700 (PDT)
+Message-ID: <20130626.013620.38647708061243546.davem@davemloft.net>
+References: <20130626175610.8a8b6606fd9a5b6269398059@canb.auug.org.au>
+	<4881796E12491D4BB15146FE0209CE643F603C48@DE02WEMBXB.internal.synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([94.23.35.102]:47149 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751349Ab3FZI1d (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Jun 2013 04:27:33 -0400
-In-Reply-To: <20130626171241.4629f4072fbd36f12d5fe3be@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4881796E12491D4BB15146FE0209CE643F603C48@DE02WEMBXB.internal.synopsys.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexey.Brodkin@synopsys.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 06/26/2013 09:12 AM, Stephen Rothwell wrote:
-> Hi Paul,
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Date: Wed, 26 Jun 2013 08:07:37 +0000
+
+> On 06/26/2013 11:56 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> After merging the final tree, today's linux-next build (powerpc
+>> allyesconfig) failed like this:
+> []
+>> Caused by commit e4f2379db6c6 ("ethernet/arc/arc_emac - Add new driver")
+>> from the net-next tree.
+>>
+>> I have reverted that commit for today.
 > 
-> Today's linux-next merge of the cpuinit tree got a conflict in arch/arm/mm/proc-v7.S between commit 3e0a07f8c401 ("ARM: 7773/1: PJ4B: Add support for errata 4742") from the arm-current
-> tree and commit "arm: delete __cpuinit/__CPUINIT usage from all ARM users" from the cpuinit tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action is required).
-> 
->From my point of view it looks good.
-Thanks,
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+> I've just sent a patch that fixes reported issues (both errors and 
+> warnings).
+
+And I've just applied it.
