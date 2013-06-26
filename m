@@ -1,32 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pinctrl tree with the regmap tree
-Date: Wed, 26 Jun 2013 16:06:03 +1000
-Message-ID: <20130626160603.7747e9db0f30c06a243c5aa5@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the powerpc tree
+Date: Wed, 26 Jun 2013 16:56:42 +1000
+Message-ID: <20130626165642.8740ecb6d5d5882b06f173c8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Jun_2013_16_06_03_+1000_ZjE/P8fCMuOl_=+G"
+ boundary="Signature=_Wed__26_Jun_2013_16_56_42_+1000_9ZYzORaX4_xzG.ZF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52516 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33799 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751645Ab3FZGGP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Jun 2013 02:06:15 -0400
+	with ESMTP id S1751020Ab3FZG4y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Jun 2013 02:56:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas KANDAGATLA <srinivas.kandagatla@st.com>, Mark Brown <broonie@kernel.org>, Jingchang Lu <b35083@freescale.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Neuling <mikey@neuling.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Oleg Nesterov <oleg@redhat.com>
 
---Signature=_Wed__26_Jun_2013_16_06_03_+1000_ZjE/P8fCMuOl_=+G
+--Signature=_Wed__26_Jun_2013_16_56_42_+1000_9ZYzORaX4_xzG.ZF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Andrew,
 
-Today's linux-next merge of the pinctrl tree got a conflict in
-drivers/pinctrl/Makefile between commit 701016c0cba5 ("pinctrl: st: Add
-pinctrl and pinconf support") from the regmap tree and commit
-78bafc66180d ("pinctrl: add VF610 pinctrl driver") from the pinctrl tree.
+Today's linux-next merge of the akpm tree got a conflict in
+arch/powerpc/kernel/ptrace.c between commit b0b0aa9c7faf
+("powerpc/hw_brk: Fix setting of length for exact mode breakpoints") from
+the powerpc tree and commit "ptrace/powerpc: revert "hw_breakpoints: Fix
+racy access to ptrace breakpoints"" from the akpm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,39 +36,42 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pinctrl/Makefile
-index 6fc7844,cf699a5..0000000
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@@ -45,7 -50,7 +50,8 @@@ obj-$(CONFIG_PINCTRL_EXYNOS5440)	+=3D pin
-  obj-$(CONFIG_PINCTRL_S3C64XX)	+=3D pinctrl-s3c64xx.o
-  obj-$(CONFIG_PINCTRL_XWAY)	+=3D pinctrl-xway.o
-  obj-$(CONFIG_PINCTRL_LANTIQ)	+=3D pinctrl-lantiq.o
- +obj-$(CONFIG_PINCTRL_ST) 	+=3D pinctrl-st.o
-+ obj-$(CONFIG_PINCTRL_VF610)	+=3D pinctrl-vf610.o
- =20
-  obj-$(CONFIG_PLAT_ORION)        +=3D mvebu/
-  obj-$(CONFIG_ARCH_SHMOBILE)	+=3D sh-pfc/
+diff --cc arch/powerpc/kernel/ptrace.c
+index 64f7bd5,6645e57..0000000
+--- a/arch/powerpc/kernel/ptrace.c
++++ b/arch/powerpc/kernel/ptrace.c
+@@@ -1449,10 -1437,7 +1437,9 @@@ static long ppc_set_hwdebug(struct task
+  	 */
+  	if (bp_info->addr_mode =3D=3D PPC_BREAKPOINT_MODE_RANGE_INCLUSIVE) {
+  		len =3D bp_info->addr2 - bp_info->addr;
+ -	} else if (bp_info->addr_mode !=3D PPC_BREAKPOINT_MODE_EXACT) {
+ +	} else if (bp_info->addr_mode =3D=3D PPC_BREAKPOINT_MODE_EXACT)
+ +		len =3D 1;
+ +	else {
+- 		ptrace_put_breakpoints(child);
+  		return -EINVAL;
+  	}
+  	bp =3D thread->ptrace_bps[0];
 
---Signature=_Wed__26_Jun_2013_16_06_03_+1000_ZjE/P8fCMuOl_=+G
+--Signature=_Wed__26_Jun_2013_16_56_42_+1000_9ZYzORaX4_xzG.ZF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRyoTPAAoJEECxmPOUX5FERz0P/03dsHTqK3Poaiiye2FRSke+
-nOGMHyoUbGLVMhQIN6ty4abKlDodAzpG2pQVaHV1rlRKdjQyw/cWW2PVgs2ubnhj
-tSdz5l6ZmQlPUoUWkFgaWaQ6r/duYUA31lMheSZnFuplq3zp3MXCFxt+MLcv0CKR
-FHw4xD2BXFkeqgSgn8X0GNwwq4z9CptxY9MOqFFw643ascOaBU/Zd8nIlvKpk0RN
-c30svIHmyhXrqqEhdzTbNUiYY2WYEzPwMuyt9LM0GxQHm0xofKCQpMkIv3pyavaG
-Qo9muz5Xa8cATVDc9PnUAc2QXiDKT0XJXP1Dc+Q7JsoCLwR8mIaRplh7pEwk+nTI
-TrXCuH2UTX0QH3euafjp27KkDo2YQ/FGydWLdF7C+v5oegvjJlkaD4oflJnU8zL1
-MS1NnzerLOP3ZBTU6AttpV3eWIgPtMXUKrDWL7wU05DeRp21Dvc2njFtZh2iY4Nj
-G4t8Xkkmw+Cd0MSHDd1bhJ9z/IqLH45wT4EW402KGbm6EJSR5w0aQ/vnxI7TIMSq
-b5OHn0LYWtHYx8yH22tnhUl7P9r71uXdpoSzlbM46r4Ot/Vyx+7MXKsd3FNZZKrj
-+9bdTNmLPtV0MHOxhyp2lySWgi2F3dp5UlIQbWAzV0uJRKr0eefylK4jFtBniW9q
-dQ42wMXeIMHHLnN0ubi/
-=03y+
+iQIcBAEBCAAGBQJRypCuAAoJEECxmPOUX5FEMFsP/iLMpsI83VEBPCVdZdKFq4ms
+mxTBOl7XT27o/pj+0b3Z+htLcBqjzDfeMfrvyURf2Rs/e0Ha0xUX88fUolzrFHK6
+7prwBftW35ee3eWTkv3rwprbGc0PPsqz8NZJAx5sUnGfjNNY6RTcpPohSy7i2T5x
+O7D7qYIVTRL9hsCvgHPiZrnbkjY6PLkzgEakgbt0QiDBYKmIQ9aFuFzimhIkTS4Q
+87BO/fc3sefuYT/4N59xP9lkS7eTVR0C6sSZDsUaImIhwY4QSeaouwAihTba7u9x
+UMSh2M2UkvN003Cj71UtaHrhsPW+K7QbFnW2TVD1X4OKe2gF9ncefYgfgYvZIUL1
+r/r6Edav3rnP+lyAMIHmvhSP4aes37Dfmeq5cIlVxLPTNxuQW3Mx5m6qSh0YT3wc
+UJf/peocUSIrsVJLtrYNAm3iv9Vy0N2CMaREgSX0YAzoM9u+KwHA8vft2PGH8wL9
+YLlm72AGg5W/glOGEd1WNg4zA0JQRr5ITPEYsgdb1jBNkh36BVmYxHohUF56ZoxN
+IJ+c7KQlmgdjkVxZ7hnGW/EWfZbv25yG6zpw3mFWPmSosP/q9PdjJ6YGKxGcr4WD
+KlW/RvXhoL/W1IJUyKbZtfzF7vPqOHmyfzm7pZcWDw4tcldpMMehX64zVL1guRiM
+eN1c1fAK2tjRP16l0kDj
+=JNfM
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__26_Jun_2013_16_06_03_+1000_ZjE/P8fCMuOl_=+G--
+--Signature=_Wed__26_Jun_2013_16_56_42_+1000_9ZYzORaX4_xzG.ZF--
