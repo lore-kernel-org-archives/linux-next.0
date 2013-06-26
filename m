@@ -1,160 +1,401 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: please add queue for removal of __cpuinit and
- friends.
-Date: Wed, 26 Jun 2013 17:38:22 +1000
-Message-ID: <20130626173822.957f35baad3637092bb61a7d@canb.auug.org.au>
-References: <20130625152702.GA27288@windriver.com>
-	<20130626112202.0929939fdc416f23d4bc06fa@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Wed, 26 Jun 2013 17:56:10 +1000
+Message-ID: <20130626175610.8a8b6606fd9a5b6269398059@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Jun_2013_17_38_22_+1000_N/ex+GbfL.Z5aE9Z"
+ boundary="Signature=_Wed__26_Jun_2013_17_56_10_+1000_o8w9zzheYWHHBYrb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49903 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:52348 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751776Ab3FZHid (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Jun 2013 03:38:33 -0400
-In-Reply-To: <20130626112202.0929939fdc416f23d4bc06fa@canb.auug.org.au>
+	with ESMTP id S1751212Ab3FZH4T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Jun 2013 03:56:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Ralf Baechle <ralf@linux-mips.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Brodkin <Alexey.Brodkin@synopsys.com>
 
---Signature=_Wed__26_Jun_2013_17_38_22_+1000_N/ex+GbfL.Z5aE9Z
+--Signature=_Wed__26_Jun_2013_17_56_10_+1000_o8w9zzheYWHHBYrb
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi all,
 
-On Wed, 26 Jun 2013 11:22:02 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> I will try it today and see how we go.  I assume that the current set of
-> patches is based on next-20130625?
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-OK, its in today.  Just for info (at the end of today's linux-next):
+In file included from arch/powerpc/include/asm/dma-mapping.h:123:0,
+                 from include/linux/dma-mapping.h:76,
+                 from include/linux/skbuff.h:33,
+                 from include/linux/if_ether.h:23,
+                 from include/linux/etherdevice.h:25,
+                 from drivers/net/ethernet/arc/emac_main.c:16:
+drivers/net/ethernet/arc/emac_main.c: In function 'arc_emac_tx_clean':
+include/linux/dma-mapping.h:227:56: error: request for member 'addr' in som=
+ething not a structure or union
+ #define dma_unmap_addr(PTR, ADDR_NAME)           ((PTR)->ADDR_NAME)
+                                                        ^
+include/asm-generic/dma-mapping-common.h:175:64: note: in definition of mac=
+ro 'dma_unmap_single'
+ #define dma_unmap_single(d, a, s, r) dma_unmap_single_attrs(d, a, s, r, NU=
+LL)
+                                                                ^
+drivers/net/ethernet/arc/emac_main.c:174:32: note: in expansion of macro 'd=
+ma_unmap_addr'
+   dma_unmap_single(&ndev->dev, dma_unmap_addr(&tx_buff, addr),
+                                ^
+include/linux/dma-mapping.h:229:56: error: request for member 'len' in some=
+thing not a structure or union
+ #define dma_unmap_len(PTR, LEN_NAME)             ((PTR)->LEN_NAME)
+                                                        ^
+include/asm-generic/dma-mapping-common.h:175:67: note: in definition of mac=
+ro 'dma_unmap_single'
+ #define dma_unmap_single(d, a, s, r) dma_unmap_single_attrs(d, a, s, r, NU=
+LL)
+                                                                   ^
+drivers/net/ethernet/arc/emac_main.c:175:6: note: in expansion of macro 'dm=
+a_unmap_len'
+      dma_unmap_len(&tx_buff, len), DMA_TO_DEVICE);
+      ^
+drivers/net/ethernet/arc/emac_main.c: In function 'arc_emac_rx':
+include/linux/dma-mapping.h:227:56: error: request for member 'addr' in som=
+ething not a structure or union
+ #define dma_unmap_addr(PTR, ADDR_NAME)           ((PTR)->ADDR_NAME)
+                                                        ^
+include/asm-generic/dma-mapping-common.h:175:64: note: in definition of mac=
+ro 'dma_unmap_single'
+ #define dma_unmap_single(d, a, s, r) dma_unmap_single_attrs(d, a, s, r, NU=
+LL)
+                                                                ^
+drivers/net/ethernet/arc/emac_main.c:243:32: note: in expansion of macro 'd=
+ma_unmap_addr'
+   dma_unmap_single(&ndev->dev, dma_unmap_addr(&rx_buff, addr),
+                                ^
+include/linux/dma-mapping.h:229:56: error: request for member 'len' in some=
+thing not a structure or union
+ #define dma_unmap_len(PTR, LEN_NAME)             ((PTR)->LEN_NAME)
+                                                        ^
+include/asm-generic/dma-mapping-common.h:175:67: note: in definition of mac=
+ro 'dma_unmap_single'
+ #define dma_unmap_single(d, a, s, r) dma_unmap_single_attrs(d, a, s, r, NU=
+LL)
+                                                                   ^
+drivers/net/ethernet/arc/emac_main.c:244:6: note: in expansion of macro 'dm=
+a_unmap_len'
+      dma_unmap_len(&rx_buff, len), DMA_FROM_DEVICE);
+      ^
+In file included from include/linux/skbuff.h:33:0,
+                 from include/linux/if_ether.h:23,
+                 from include/linux/etherdevice.h:25,
+                 from drivers/net/ethernet/arc/emac_main.c:16:
+include/linux/dma-mapping.h:228:57: error: request for member 'mapping' in =
+something not a structure or union
+ #define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  (((PTR)->ADDR_NAME) =3D (=
+VAL))
+                                                         ^
+drivers/net/ethernet/arc/emac_main.c:267:3: note: in expansion of macro 'dm=
+a_unmap_addr_set'
+   dma_unmap_addr_set(&rx_buff, mapping, addr);
+   ^
+include/linux/dma-mapping.h:230:57: error: request for member 'len' in some=
+thing not a structure or union
+ #define dma_unmap_len_set(PTR, LEN_NAME, VAL)    (((PTR)->LEN_NAME) =3D (V=
+AL))
+                                                         ^
+drivers/net/ethernet/arc/emac_main.c:268:3: note: in expansion of macro 'dm=
+a_unmap_len_set'
+   dma_unmap_len_set(&rx_buff, len, buflen);
+   ^
+In file included from include/linux/swab.h:4:0,
+                 from include/uapi/linux/byteorder/big_endian.h:12,
+                 from include/linux/byteorder/big_endian.h:4,
+                 from arch/powerpc/include/uapi/asm/byteorder.h:10,
+                 from include/asm-generic/bitops/le.h:5,
+                 from arch/powerpc/include/asm/bitops.h:278,
+                 from include/linux/bitops.h:22,
+                 from include/linux/kernel.h:10,
+                 from include/linux/skbuff.h:17,
+                 from include/linux/if_ether.h:23,
+                 from include/linux/etherdevice.h:25,
+                 from drivers/net/ethernet/arc/emac_main.c:16:
+include/uapi/linux/swab.h:115:24: warning: cast from pointer to integer of =
+different size [-Wpointer-to-int-cast]
+  (__builtin_constant_p((__u32)(x)) ? \
+                        ^
+include/uapi/linux/byteorder/big_endian.h:32:43: note: in expansion of macr=
+o '__swab32'
+ #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
+                                           ^
+include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu=
+_to_le32'
+ #define cpu_to_le32 __cpu_to_le32
+                     ^
+drivers/net/ethernet/arc/emac_main.c:270:16: note: in expansion of macro 'c=
+pu_to_le32'
+   rxbd->data =3D cpu_to_le32(rx_buff->skb->data);
+                ^
+include/uapi/linux/swab.h:17:4: warning: cast from pointer to integer of di=
+fferent size [-Wpointer-to-int-cast]
+  (((__u32)(x) & (__u32)0x000000ffUL) << 24) |  \
+    ^
+include/uapi/linux/swab.h:116:2: note: in expansion of macro '___constant_s=
+wab32'
+  ___constant_swab32(x) :   \
+  ^
+include/uapi/linux/byteorder/big_endian.h:32:43: note: in expansion of macr=
+o '__swab32'
+ #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
+                                           ^
+include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu=
+_to_le32'
+ #define cpu_to_le32 __cpu_to_le32
+                     ^
+drivers/net/ethernet/arc/emac_main.c:270:16: note: in expansion of macro 'c=
+pu_to_le32'
+   rxbd->data =3D cpu_to_le32(rx_buff->skb->data);
+                ^
+include/uapi/linux/swab.h:18:4: warning: cast from pointer to integer of di=
+fferent size [-Wpointer-to-int-cast]
+  (((__u32)(x) & (__u32)0x0000ff00UL) <<  8) |  \
+    ^
+include/uapi/linux/swab.h:116:2: note: in expansion of macro '___constant_s=
+wab32'
+  ___constant_swab32(x) :   \
+  ^
+include/uapi/linux/byteorder/big_endian.h:32:43: note: in expansion of macr=
+o '__swab32'
+ #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
+                                           ^
+include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu=
+_to_le32'
+ #define cpu_to_le32 __cpu_to_le32
+                     ^
+drivers/net/ethernet/arc/emac_main.c:270:16: note: in expansion of macro 'c=
+pu_to_le32'
+   rxbd->data =3D cpu_to_le32(rx_buff->skb->data);
+                ^
+include/uapi/linux/swab.h:19:4: warning: cast from pointer to integer of di=
+fferent size [-Wpointer-to-int-cast]
+  (((__u32)(x) & (__u32)0x00ff0000UL) >>  8) |  \
+    ^
+include/uapi/linux/swab.h:116:2: note: in expansion of macro '___constant_s=
+wab32'
+  ___constant_swab32(x) :   \
+  ^
+include/uapi/linux/byteorder/big_endian.h:32:43: note: in expansion of macr=
+o '__swab32'
+ #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
+                                           ^
+include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu=
+_to_le32'
+ #define cpu_to_le32 __cpu_to_le32
+                     ^
+drivers/net/ethernet/arc/emac_main.c:270:16: note: in expansion of macro 'c=
+pu_to_le32'
+   rxbd->data =3D cpu_to_le32(rx_buff->skb->data);
+                ^
+include/uapi/linux/swab.h:20:4: warning: cast from pointer to integer of di=
+fferent size [-Wpointer-to-int-cast]
+  (((__u32)(x) & (__u32)0xff000000UL) >> 24)))
+    ^
+include/uapi/linux/swab.h:116:2: note: in expansion of macro '___constant_s=
+wab32'
+  ___constant_swab32(x) :   \
+  ^
+include/uapi/linux/byteorder/big_endian.h:32:43: note: in expansion of macr=
+o '__swab32'
+ #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
+                                           ^
+include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu=
+_to_le32'
+ #define cpu_to_le32 __cpu_to_le32
+                     ^
+drivers/net/ethernet/arc/emac_main.c:270:16: note: in expansion of macro 'c=
+pu_to_le32'
+   rxbd->data =3D cpu_to_le32(rx_buff->skb->data);
+                ^
+drivers/net/ethernet/arc/emac_main.c:270:3: warning: passing argument 1 of =
+'__fswab32' makes integer from pointer without a cast [enabled by default]
+   rxbd->data =3D cpu_to_le32(rx_buff->skb->data);
+   ^
+In file included from include/linux/swab.h:4:0,
+                 from include/uapi/linux/byteorder/big_endian.h:12,
+                 from include/linux/byteorder/big_endian.h:4,
+                 from arch/powerpc/include/uapi/asm/byteorder.h:10,
+                 from include/asm-generic/bitops/le.h:5,
+                 from arch/powerpc/include/asm/bitops.h:278,
+                 from include/linux/bitops.h:22,
+                 from include/linux/kernel.h:10,
+                 from include/linux/skbuff.h:17,
+                 from include/linux/if_ether.h:23,
+                 from include/linux/etherdevice.h:25,
+                 from drivers/net/ethernet/arc/emac_main.c:16:
+include/uapi/linux/swab.h:57:41: note: expected '__u32' but argument is of =
+type 'unsigned char *'
+ static inline __attribute_const__ __u32 __fswab32(__u32 val)
+                                         ^
+drivers/net/ethernet/arc/emac_main.c: In function 'arc_emac_open':
+include/uapi/linux/swab.h:115:24: warning: cast from pointer to integer of =
+different size [-Wpointer-to-int-cast]
+  (__builtin_constant_p((__u32)(x)) ? \
+                        ^
+include/uapi/linux/byteorder/big_endian.h:32:43: note: in expansion of macr=
+o '__swab32'
+ #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
+                                           ^
+include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu=
+_to_le32'
+ #define cpu_to_le32 __cpu_to_le32
+                     ^
+drivers/net/ethernet/arc/emac_main.c:406:14: note: in expansion of macro 'c=
+pu_to_le32'
+   bd->data =3D cpu_to_le32(skb->data);
+              ^
+include/uapi/linux/swab.h:17:4: warning: cast from pointer to integer of di=
+fferent size [-Wpointer-to-int-cast]
+  (((__u32)(x) & (__u32)0x000000ffUL) << 24) |  \
+    ^
+include/uapi/linux/swab.h:116:2: note: in expansion of macro '___constant_s=
+wab32'
+  ___constant_swab32(x) :   \
+  ^
+include/uapi/linux/byteorder/big_endian.h:32:43: note: in expansion of macr=
+o '__swab32'
+ #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
+                                           ^
+include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu=
+_to_le32'
+ #define cpu_to_le32 __cpu_to_le32
+                     ^
+drivers/net/ethernet/arc/emac_main.c:406:14: note: in expansion of macro 'c=
+pu_to_le32'
+   bd->data =3D cpu_to_le32(skb->data);
+              ^
+include/uapi/linux/swab.h:18:4: warning: cast from pointer to integer of di=
+fferent size [-Wpointer-to-int-cast]
+  (((__u32)(x) & (__u32)0x0000ff00UL) <<  8) |  \
+    ^
+include/uapi/linux/swab.h:116:2: note: in expansion of macro '___constant_s=
+wab32'
+  ___constant_swab32(x) :   \
+  ^
+include/uapi/linux/byteorder/big_endian.h:32:43: note: in expansion of macr=
+o '__swab32'
+ #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
+                                           ^
+include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu=
+_to_le32'
+ #define cpu_to_le32 __cpu_to_le32
+                     ^
+drivers/net/ethernet/arc/emac_main.c:406:14: note: in expansion of macro 'c=
+pu_to_le32'
+   bd->data =3D cpu_to_le32(skb->data);
+              ^
+include/uapi/linux/swab.h:19:4: warning: cast from pointer to integer of di=
+fferent size [-Wpointer-to-int-cast]
+  (((__u32)(x) & (__u32)0x00ff0000UL) >>  8) |  \
+    ^
+include/uapi/linux/swab.h:116:2: note: in expansion of macro '___constant_s=
+wab32'
+  ___constant_swab32(x) :   \
+  ^
+include/uapi/linux/byteorder/big_endian.h:32:43: note: in expansion of macr=
+o '__swab32'
+ #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
+                                           ^
+include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu=
+_to_le32'
+ #define cpu_to_le32 __cpu_to_le32
+                     ^
+drivers/net/ethernet/arc/emac_main.c:406:14: note: in expansion of macro 'c=
+pu_to_le32'
+   bd->data =3D cpu_to_le32(skb->data);
+              ^
+include/uapi/linux/swab.h:20:4: warning: cast from pointer to integer of di=
+fferent size [-Wpointer-to-int-cast]
+  (((__u32)(x) & (__u32)0xff000000UL) >> 24)))
+    ^
+include/uapi/linux/swab.h:116:2: note: in expansion of macro '___constant_s=
+wab32'
+  ___constant_swab32(x) :   \
+  ^
+include/uapi/linux/byteorder/big_endian.h:32:43: note: in expansion of macr=
+o '__swab32'
+ #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
+                                           ^
+include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu=
+_to_le32'
+ #define cpu_to_le32 __cpu_to_le32
+                     ^
+drivers/net/ethernet/arc/emac_main.c:406:14: note: in expansion of macro 'c=
+pu_to_le32'
+   bd->data =3D cpu_to_le32(skb->data);
+              ^
+drivers/net/ethernet/arc/emac_main.c:406:3: warning: passing argument 1 of =
+'__fswab32' makes integer from pointer without a cast [enabled by default]
+   bd->data =3D cpu_to_le32(skb->data);
+   ^
+In file included from include/linux/swab.h:4:0,
+                 from include/uapi/linux/byteorder/big_endian.h:12,
+                 from include/linux/byteorder/big_endian.h:4,
+                 from arch/powerpc/include/uapi/asm/byteorder.h:10,
+                 from include/asm-generic/bitops/le.h:5,
+                 from arch/powerpc/include/asm/bitops.h:278,
+                 from include/linux/bitops.h:22,
+                 from include/linux/kernel.h:10,
+                 from include/linux/skbuff.h:17,
+                 from include/linux/if_ether.h:23,
+                 from include/linux/etherdevice.h:25,
+                 from drivers/net/ethernet/arc/emac_main.c:16:
+include/uapi/linux/swab.h:57:41: note: expected '__u32' but argument is of =
+type 'unsigned char *'
+ static inline __attribute_const__ __u32 __fswab32(__u32 val)
+                                         ^
+In file included from include/linux/skbuff.h:33:0,
+                 from include/linux/if_ether.h:23,
+                 from include/linux/etherdevice.h:25,
+                 from drivers/net/ethernet/arc/emac_main.c:16:
+drivers/net/ethernet/arc/emac_main.c: In function 'arc_emac_tx':
+include/linux/dma-mapping.h:228:57: error: 'struct buffer_state' has no mem=
+ber named 'mapping'
+ #define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  (((PTR)->ADDR_NAME) =3D (=
+VAL))
+                                                         ^
+drivers/net/ethernet/arc/emac_main.c:546:2: note: in expansion of macro 'dm=
+a_unmap_addr_set'
+  dma_unmap_addr_set(&priv->tx_buff[*txbd_curr], mapping, addr);
+  ^
 
-$ git grep -l __cpuinit
-arch/arm/mach-keystone/platsmp.c
-arch/arm/mach-sti/platsmp.c
-arch/mips/ath79/setup.c
-arch/mips/cavium-octeon/octeon-irq.c
-arch/mips/cavium-octeon/smp.c
-arch/mips/include/asm/uasm.h
-arch/mips/kernel/cevt-bcm1480.c
-arch/mips/kernel/cevt-gic.c
-arch/mips/kernel/cevt-r4k.c
-arch/mips/kernel/cevt-sb1250.c
-arch/mips/kernel/cevt-smtc.c
-arch/mips/kernel/cpu-bugs64.c
-arch/mips/kernel/cpu-probe.c
-arch/mips/kernel/smp-bmips.c
-arch/mips/kernel/smp-mt.c
-arch/mips/kernel/smp-up.c
-arch/mips/kernel/smp.c
-arch/mips/kernel/smtc.c
-arch/mips/kernel/spram.c
-arch/mips/kernel/sync-r4k.c
-arch/mips/kernel/traps.c
-arch/mips/kernel/watch.c
-arch/mips/lantiq/irq.c
-arch/mips/lib/uncached.c
-arch/mips/mm/c-octeon.c
-arch/mips/mm/c-r3k.c
-arch/mips/mm/c-r4k.c
-arch/mips/mm/c-tx39.c
-arch/mips/mm/cache.c
-arch/mips/mm/page.c
-arch/mips/mm/sc-ip22.c
-arch/mips/mm/sc-mips.c
-arch/mips/mm/sc-r5k.c
-arch/mips/mm/sc-rm7k.c
-arch/mips/mm/tlb-r3k.c
-arch/mips/mm/tlb-r4k.c
-arch/mips/mm/tlb-r8k.c
-arch/mips/mm/tlbex.c
-arch/mips/mti-malta/malta-smtc.c
-arch/mips/mti-malta/malta-time.c
-arch/mips/mti-sead3/sead3-time.c
-arch/mips/netlogic/common/smp.c
-arch/mips/netlogic/common/time.c
-arch/mips/netlogic/xlr/wakeup.c
-arch/mips/pci/pci-ip27.c
-arch/mips/pmcs-msp71xx/msp_smtc.c
-arch/mips/pmcs-msp71xx/msp_time.c
-arch/mips/pnx833x/common/interrupts.c
-arch/mips/powertv/time.c
-arch/mips/ralink/irq.c
-arch/mips/sgi-ip27/ip27-init.c
-arch/mips/sgi-ip27/ip27-smp.c
-arch/mips/sgi-ip27/ip27-timer.c
-arch/mips/sgi-ip27/ip27-xtalk.c
-arch/mips/sibyte/bcm1480/smp.c
-arch/mips/sibyte/sb1250/smp.c
-arch/x86/include/asm/microcode_amd.h
-arch/x86/include/asm/processor.h
-arch/x86/kernel/i387.c
-arch/x86/kernel/microcode_amd_early.c
-include/linux/init.h
-scripts/tags.sh
-$ git grep -l __cpuexit
-arch/blackfin/mach-common/smp.c
-arch/metag/kernel/smp.c
-include/linux/init.h
-$ git grep -l __cpuinitdata
-arch/mips/cavium-octeon/octeon-irq.c
-arch/mips/include/asm/uasm.h
-arch/mips/kernel/cpu-bugs64.c
-arch/mips/kernel/cpu-probe.c
-arch/mips/kernel/sync-r4k.c
-arch/mips/kernel/traps.c
-arch/mips/mm/c-r4k.c
-arch/mips/mm/page.c
-arch/mips/mm/tlb-r4k.c
-arch/mips/mm/tlbex.c
-include/linux/init.h
-scripts/tags.sh
-$ git grep -l __cpuinitconst
-include/linux/init.h
-$ git grep -l __cpuexitdata
-include/linux/init.h
-$ git grep -l __cpuexitconst
-include/linux/init.h
-$ git grep -l __CPUINIT
-arch/arm/kernel/head-nommu.S
-arch/mips/kernel/bmips_vec.S
-arch/mips/kernel/head.S
-arch/mips/mm/cex-sb1.S
-arch/mips/netlogic/common/smpboot.S
-include/linux/init.h
+Caused by commit e4f2379db6c6 ("ethernet/arc/arc_emac - Add new driver")
+from the net-next tree.
 
-So I guess the Ralf hasn't put the mips patch in his mips-for-linux-next
-branch yet.  And a few more uses have crept in. :-(
-
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__26_Jun_2013_17_38_22_+1000_N/ex+GbfL.Z5aE9Z
+--Signature=_Wed__26_Jun_2013_17_56_10_+1000_o8w9zzheYWHHBYrb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRyppzAAoJEECxmPOUX5FEBugQAKArUm2Ry6zJyu3eatxEkAjI
-G+YYLhHGDINVB+DsYs9nt6vWZAFjrP0OKs5ihip9hc8cfsQjgAPf550OFNQThqUJ
-Po1WxWLDSA5wLIhrMm6+TrsPgEuKjk84PCMe8ZYhjKlL3GSk4GNe+QECzHMW7cUW
-Qqto7sHt8xqmB39LEujHEAhoGvbnfidV2VbHMpLOW2FZBIoyYeEQ1xjvftLJcIZt
-wOdUW/fTGfywk9A4oj/iopteyPeywKb2N/W8SBLoZ8tBo029UPY/OBRf5MkeD3E3
-aa+88hlvmbCExq7or3ZJ5LCWbY18i/qxMHPwPeDQ0aF/leryywA2LBfKlxh1pmcN
-IsndsJx1alLPedI6HsAqs3QkDQGhmlBtBW1QsB5vnHgZ2gwpwf5LvRFpIB3fdLl3
-fl0tr1QnXPKq84Es6Q4Q6QIWBLdUljg9PHmNQpkXPS8CfVmKkZryBX5bJjr3W5L7
-3jasUnJlXEIrIrooX18v5JRWtfaRoQJpFAIXR8CPqQ6oPfa7jU9HkLe2mxe6M1ND
-ypcKqUoljm7jWYR6+oU5meQwDnioLA3M1hX+/pUxQnuGRmeNGfOn12zNRCQUUK/6
-0ZHbsZi+XA+k424ETwt+kWleoabtKjURxz4oFEUemsGU7665/84AfNVRfo8oB7FC
-bFg/JKkJ1t0zQCMXbXM8
-=v2qR
+iQIcBAEBCAAGBQJRyp6fAAoJEECxmPOUX5FErJ0P/1xDO1u8v63LMrF0dQms+hob
+88QvDMvzL2ZM+42jzQWfnXX+lBWfdQGTXC1rt/zq5FcBIhvaVYTRBEpiQ5mUGrQw
+/98iHEcN7Kqv6U0NXlQCMV9kqZKhv1xoJCR1G9R6EIqAcBVNZCS8byHDKUq/9In3
+BgSRE1Pcke3AplEPaC9lEzFnqeMLFhW3rD8g3VEnVeaYv4pLj5y1cpmDEh9GeliJ
+X5CsRncrck0k6A3IzALQjaBvSbI3ZF5RSHS80TYyKYXmneDug9WG0uQ28GXtJbUu
+ph5ogyfqsVBTyhpERDm60zED36QmeQi3xnakF+T6MN0GVCY96NlRdiI2tqxyDqxk
+ksvFk/fQec1fr0PxwLBoHP5P/+0CDpBmvPUgDlKJakun1hGYkQBmaMxxbZ7X0cmT
+W6VcOD7eNrjfuM8x4RyKiZNPn7HvhWv4vbNPhrIHC7/iRWOwdgQ6q9xY7vdtP1hf
+xrK/OG56eB3y1B+tvH9H+vteYaqMu+MPTdqBSKsTuoMXdakEO+LsgdTVo910pwxN
+mjy+KXB/Hg5V5FyE5AsJ3o3BQA0oF7CMLQLy1uwQG5ArGj2YPc3VV9hOf2+AtJPZ
+cGRsUhXVsvE409Hu2H2ojwJpMY4BJJRwtV2Oy6T957uc/7xTINV0U0z8XF2aaKO3
+jfqdnMD9ZzDl6wFWdj3L
+=hK27
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__26_Jun_2013_17_38_22_+1000_N/ex+GbfL.Z5aE9Z--
+--Signature=_Wed__26_Jun_2013_17_56_10_+1000_o8w9zzheYWHHBYrb--
