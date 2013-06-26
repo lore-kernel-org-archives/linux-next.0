@@ -1,73 +1,107 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the pm tree
-Date: Wed, 26 Jun 2013 13:08:38 +1000
-Message-ID: <20130626130838.fb1e8f7cbe232d231a036bf8@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
+Date: Wed, 26 Jun 2013 13:54:58 +1000
+Message-ID: <20130626135458.fa65dac429e9c1c04c6e48d4@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============1946447054=="
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--===============1946447054==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Jun_2013_13_08_38_+1000_W=OwMn=BqTw.AWqh"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44266 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751426Ab3FZDIw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Jun 2013 23:08:52 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Eliezer Tamir <eliezer.tamir@linux.intel.com>
+ boundary="Signature=_Wed__26_Jun_2013_13_54_58_+1000_lqnXlBsD5_qgfzx7"
 
---Signature=_Wed__26_Jun_2013_13_08_38_+1000_W=OwMn=BqTw.AWqh
+--Signature=_Wed__26_Jun_2013_13_54_58_+1000_lqnXlBsD5_qgfzx7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in
-fs/select.c between commit 9745cdb36da8 ("select: use freezable blocking
-call") from the pm tree and commit 2d48d67fa8cd ("net: poll/select low
-latency socket support") from the net-next tree.
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/intel_display.c between commits 2d05eae1c92f
+("drm/i915: Propagate errors back from fb set-base") and d62cf62ad07d
+("drm/i915: Quirk the pipe A quirk in the modeset state checker") from
+Linus' tree and commits 6c49f24180c3 ("drm/i915: hw state readout support
+for pixel_multiplier") and 9222be993921 ("drm/i915: don't scream into
+dmesg when a modeset fails") from the drm-intel tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/select.c
-index 6b14dc7,79b876e..0000000
---- a/fs/select.c
-+++ b/fs/select.c
-@@@ -27,7 -27,7 +27,8 @@@
-  #include <linux/rcupdate.h>
-  #include <linux/hrtimer.h>
-  #include <linux/sched/rt.h>
- +#include <linux/freezer.h>
-+ #include <net/ll_poll.h>
+diff --cc drivers/gpu/drm/i915/intel_display.c
+index 6eb99e1,8f746d9..0000000
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@@ -8177,11 -8264,14 +8264,19 @@@ check_crtc_state(struct drm_device *dev
  =20
-  #include <asm/uaccess.h>
- =20
+  		active =3D dev_priv->display.get_pipe_config(crtc,
+  							   &pipe_config);
+ +
+ +		/* hw state is inconsistent with the pipe A quirk */
+ +		if (crtc->pipe =3D=3D PIPE_A && dev_priv->quirks & QUIRK_PIPEA_FORCE)
+ +			active =3D crtc->active;
+ +
++ 		list_for_each_entry(encoder, &dev->mode_config.encoder_list,
++ 				    base.head) {
++ 			if (encoder->base.crtc !=3D &crtc->base)
++ 				continue;
++ 			if (encoder->get_config)
++ 				encoder->get_config(encoder, &pipe_config);
++ 		}
++=20
+  		WARN(crtc->active !=3D active,
+  		     "crtc active state doesn't match with hw state "
+  		     "(expected %i, found %i)\n", crtc->active, active);
 
---Signature=_Wed__26_Jun_2013_13_08_38_+1000_W=OwMn=BqTw.AWqh
+--Signature=_Wed__26_Jun_2013_13_54_58_+1000_lqnXlBsD5_qgfzx7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRyls6AAoJEECxmPOUX5FEfPIQAJalg2SzCoWlxlPDsri8zgtU
-KyN3SB3J5FVvxKJatyaXpKu/U0FmItceIFc0XFhEvPAk5gD2dZUi7lGs3i3oOn4O
-SZ8AU/oR/WBT9NSB2DWbZfTb7VGJ8r7AzDE7F77KgeYZoUpgY8oyceZtUAssPFWO
-7ZYvCcTPIoEUZF6M56PltLnKRUMnR0D2DIjevp7ynaeEKlmRPerNbDjT6zgYUhPd
-pOF0SWusNxAP3LFfgoRFfZEnIb4EDIwMSCoA6uAy8+9Li55tbx2OP0FQB5xD9FHR
-QJp+Eo2Rhpxi4pBVKsQXsPVb8Wnp4QdBvxJKB5nfxa6dkXrP3q480/1URlIZOS6y
-EcTkN635uk2eGLk7fPx4g/Hc0431JH8XxPsGzoroSHOdS//WHsF3yfgMF+cTBn69
-bBpOQiEYtlHn5EQebcSP+X6J4Eix2MqLC+rQqRGgy9V6oHa6zx/pmN58hkKwc4Ya
-lmXQ4AMMXtXFk4FNfHkXqJOSN7CrE/ZOo5Fb2vJlu3juVDijL9kSRRP1D9GNg6Yb
-czc9rOJ6HUvrRQEiUw/dPZnkm7KmQ37XhHUiJXhkQLLvfFMkZiPD+UWMs5wKug3x
-XRwqjJf6kJoJj9swRD5bU/p5Kdg4rYBQdyJ1T2p4RZKQ7WgzbRU7VUKCRWiJP40H
-y3+cFOL4Q5/ifNd61WhJ
-=zIHJ
+iQIcBAEBCAAGBQJRymYWAAoJEECxmPOUX5FE79EQAIQ69akBwp08I+wFXaMxNoRf
+xtRXzedDZG454HHpyV0G5KOHsqbrfGk+LrbPtWqrjijIuJhECDFLjA9Ud49iC3wh
+AwarQ/0anmIoAwgG8xiU5Nk9QWiR+/U0Eb3PiyAuE/q4Xw1O15nmqmuIZ4tf7w8K
+CcMCSl0BaDyXj+meol1t3ApLwcP7tcYYGdDNyK/OuY0F9+dBX96FEvWEuMuqMWtD
+Nu/qhZvM0OenTQqb1bsT/lnFt7GqRyTlzMmK6Z77So0deVX5KZYxh4kXrae0y816
+mHqFjZvzXus4Msf7t6Gyxfz/3medlNihWVvIUDjZzM6FYI3/rjOS3xqjrRIjPbpm
+CLCRviqWg7iufgujvAxtVvVqIqINpDvP1Mofua649FuKxx78ibFaEwqAsAdqlOul
+taYucL94TdVszJz9qJv9Y40raHUw9v6xC07rno7mKEPU4v3lkeBJVSPlhda2cNVN
+rljc/F8mcAIQ0UgkBTzfq2EcTUJ+3rdAlUNKHF1a1ADgi8IUS7yfswxRs9W+OweY
+eXh88wlLspzNE63nGco0RFTH46Q97Ld9T0xaR7HK3M+M/KCKQkmuG+wSOmMeUQg5
+M+q3/n6KhGXpkY7ucEYNAAP5BxZRqpEug8MAd2zoo9Kd5Mo1FR8fFAppKNIQNnPz
+HQGfQwxmcWQR4dC76JfX
+=dbqF
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__26_Jun_2013_13_08_38_+1000_W=OwMn=BqTw.AWqh--
+--Signature=_Wed__26_Jun_2013_13_54_58_+1000_lqnXlBsD5_qgfzx7--
+
+--===============1946447054==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1946447054==--
