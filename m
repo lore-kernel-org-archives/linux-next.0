@@ -1,89 +1,77 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH linux-next] fb: make fp_get_options name argument const
-Date: Thu, 27 Jun 2013 09:31:04 +0300
-Message-ID: <51CBDC28.9080808@ti.com>
-References: <1371565386-23335-1-git-send-email-vincent.stehle@freescale.com> <51CAEAD5.40601@ti.com> <1927037966.2377585.1372310085417.JavaMail.root@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the pm tree
+Date: Thu, 27 Jun 2013 17:14:18 +1000
+Message-ID: <20130627171418.6293697ff334ecc1a79608da@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="----enig2TSFNNGPUEREABXBCPLSH"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__27_Jun_2013_17_14_18_+1000_z0cqa8usfkqWy_Vd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:47050 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751172Ab3F0GbT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 Jun 2013 02:31:19 -0400
-In-Reply-To: <1927037966.2377585.1372310085417.JavaMail.root@redhat.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54377 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752206Ab3F0HOZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Jun 2013 03:14:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Airlie <airlied@redhat.com>
-Cc: =?UTF-8?B?VmluY2VudCBTdGVobMOp?= <vincent.stehle@freescale.com>, linux-next@vger.kernel.org, linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, trivial@kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Opdenacker <michael.opdenacker@free-electrons.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-------enig2TSFNNGPUEREABXBCPLSH
-Content-Type: text/plain; charset=UTF-8
+--Signature=_Thu__27_Jun_2013_17_14_18_+1000_z0cqa8usfkqWy_Vd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 27/06/13 08:14, David Airlie wrote:
->>>
->>>
->>> Hi,
->>>
->>> I remarked this warning while building linux-next with imx_v6_v7_defc=
-onfig.
->>> Is changing fb_get_options prototype "permitted", please?
->>
->> I don't see how changing the parameter to const could break anything, =
-so
->> I've applied this to fbdev-3.11 branch.
->>
->=20
-> Hi Tomi,
->=20
-> What tree does Jean-Christophe PLAGNIOL-VILLARD control?
+Hi Greg,
 
-git://git.kernel.org/pub/scm/linux/kernel/git/plagnioj/linux-fbdev.git
+Today's linux-next merge of the driver-core tree got a conflict in
+include/linux/device.h between commit 4f3549d72d1b ("Driver core: Add
+offline/online device operations") from the pm tree and commit
+bfd63cd24df6 ("driver core: device.h: fix doc compilation warnings") from
+the driver-core tree.
 
-> he said he merged the original patch to fix this from Ville, but I've n=
-o idea
-> where it ended up, so I just didn't merge it to drm-next at the time.
->=20
-> Message-Id: <1370619787-15341-3-git-send-email-ville.syrjala@linux.inte=
-l.com>
->=20
-> is the original properly attributed fix.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Hmm, ok. He asked me to collect fbdev patches as he's been away, so I
-went through my inbox and picked up what's there. I can't see the patch
-from Ville in Jean-Christophe's tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Jean-Christophe, have you taken that (and maybe other patches) but you
-haven't pushed them to the kernel.org tree?
+diff --cc include/linux/device.h
+index eeb3331,9d4835a..0000000
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@@ -655,8 -650,7 +657,9 @@@ struct acpi_dev_node=20
+   * @release:	Callback to free the device after all references have
+   * 		gone away. This should be set by the allocator of the
+   * 		device (i.e. the bus driver that discovered the device).
++  * @iommu_group: IOMMU group the device belongs to.
+ + * @offline_disabled: If set, the device is permanently online.
+ + * @offline:	Set after successful invocation of bus type's .offline().
+   *
+   * At the lowest level, every device in a Linux system is represented by =
+an
+   * instance of struct device. The device structure contains the informati=
+on
 
- Tomi
-
-
-
-------enig2TSFNNGPUEREABXBCPLSH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+--Signature=_Thu__27_Jun_2013_17_14_18_+1000_z0cqa8usfkqWy_Vd
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRy9wrAAoJEPo9qoy8lh71E9IP/3GtphqrqvVpae4pnjYfXurP
-eBq+00MaNsEHGhFNg4luJBvuZBZqfDnWzGf3YbweoMTsTW7gLKnzKiusu3DPSCG+
-5Gv0LYA6WZIzRyEgBvYXGcatjOWIkiwagsUckjtJWSiJWQhNbyhhUFH5tPxC1ZCo
-QhfvS9g3c136YHPuOmzYXhloAK44giq5Rwq4xlQTQG3lyRli02T3vdeyjdndO5gY
-ds2yhuTEhmuqsq4Tz5w2tTBt9Yd130ZSiBpcdemjKSb5ZofsYNGbt0CDk90xGYrL
-poIHlKRfn9+yAuFJqFBXQRgK8IdkPSz7mcv87oQYY+KxNsMjNfu2xn9QG9PAHEMe
-QWYf8eLfH2FBqW4i86oTWoaiGAuGVoB8tWMKJfGS/VRgHxbtrkQITP92s2PVCaFc
-Kdfyvmut1oGnw/JXDgLPkdBybDYAZF3D7H3qL4OnAo/knxA+/zLCH+H4RT1XPJhN
-wtWqTYLlEozM/g/96f+/TBQNXWvuoZOPvQpXdEEJuax2lpKW+uCXDfanAPT4lT+q
-9G2rO7JREGHs3WGhqKICOTejusFDDys1g3j+8UCM2hye3L9KLjzm28VWQD4n6reL
-Zr3U5nDaFZEhEvotZrliP4xXniivIfIU+wI8Y5REFts0MX18PJiauDfOuKawOEgQ
-R8JRTzUQbY4uW+dSh8Q/
-=In6L
+iQIcBAEBCAAGBQJRy+ZOAAoJEECxmPOUX5FEggcQAIItFcYSkPiOhNNPSn57KODr
+VaSQAvnwTXk787MaKsITQS4/27gQwPsstWXwMdFYa8v5a2lRB+RUDZCLcMNL24sU
+Gflohn2NT8vNPQBbjcUQyCsMjVUsozZVMD0uHPvAdt6mXsg09iF3SrNPnFgnoH7w
+Z1iDOaxILWiOaCnosgC4C0M0oexcqN/w7JSduYZI0zA7hK967Ng63rS+V0aSukxV
+J48S+oXDIXCkL1PGB7IJ+MjyU7QUxekz7Bv19H4J4v2qLQjpt7loywlEKFaYvKrZ
+XS1ujBNNbnUJzHdhv++0JLgAIxliTYdv5/+csGLFFkR0oaFZMN2oPXtrJcNivkY1
+ifHD+8AbP5LIvcGI1L1WxhOBfpHsrrVWCf/VLWqmyCoNTejH0PRK8dsOYUyTvnNk
+aGSvtuYUWtSrJIRCH5UxIpb+8cvJ4pAIVdn/YOjV3mg5gOjBuKPEK/k8E6wA8iz3
+GVCISX/iACOn+682MhyKLtXwxGwmJF857xg8+4YP1HgE6vdGB5tz2+gsz+02wYdm
+r5TmeiOFGdevFKiCNWDga6KDPW8TuP8afU81ii/V1N+fRgLRCF9/Kzk9mVlRzYCm
+taLKtcJnPoEZiM0YfUNIthUj5AwZsxE862zbRFmwRy/VHn3adzzJYyJ7At/FdYL/
+mY/1m6st9iJ6YtYqS9Gv
+=ZPdR
 -----END PGP SIGNATURE-----
 
-------enig2TSFNNGPUEREABXBCPLSH--
+--Signature=_Thu__27_Jun_2013_17_14_18_+1000_z0cqa8usfkqWy_Vd--
