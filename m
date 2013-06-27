@@ -1,77 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the pm tree
-Date: Thu, 27 Jun 2013 17:14:18 +1000
-Message-ID: <20130627171418.6293697ff334ecc1a79608da@canb.auug.org.au>
+From: "Berg, Johannes" <johannes.berg@intel.com>
+Subject: RE: linux-next: manual merge of the wireless-next tree with the
+ net-next tree
+Date: Thu, 27 Jun 2013 07:34:55 +0000
+Message-ID: <1DC40B07CD6EC041A66726C271A73AE61AA36266@IRSMSX102.ger.corp.intel.com>
+References: <20130627142318.78f78fdbb49c927a7cb7bc50@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__27_Jun_2013_17_14_18_+1000_z0cqa8usfkqWy_Vd"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54377 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752206Ab3F0HOZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Jun 2013 03:14:25 -0400
+Received: from mga02.intel.com ([134.134.136.20]:9893 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752286Ab3F0He6 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Jun 2013 03:34:58 -0400
+In-Reply-To: <20130627142318.78f78fdbb49c927a7cb7bc50@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Opdenacker <michael.opdenacker@free-electrons.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__27_Jun_2013_17_14_18_+1000_z0cqa8usfkqWy_Vd
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Greg,
+> Today's linux-next merge of the wireless-next tree got a conflict in
+> net/wireless/nl80211.c between merge commits from the net-next tree and
+> commit 86e8cf98de3e ("nl80211: use small state buffer for wiphy_dump")
+> from the wireless-next tree.
 
-Today's linux-next merge of the driver-core tree got a conflict in
-include/linux/device.h between commit 4f3549d72d1b ("Driver core: Add
-offline/online device operations") from the pm tree and commit
-bfd63cd24df6 ("driver core: device.h: fix doc compilation warnings") from
-the driver-core tree.
+Looks good, yes.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+> I think I fixed it up (see below, please check) and can carry the fix as
+> necessary (no action is required).  I think that my fix means that that commit
+> 86e8cf98de3e is missing the extra "rtnl_unlock();", right?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+*sigh*, yes, I clearly have issues with the locking in this function, second time here. Sorry about that, I'll put in a fix.
 
-diff --cc include/linux/device.h
-index eeb3331,9d4835a..0000000
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@@ -655,8 -650,7 +657,9 @@@ struct acpi_dev_node=20
-   * @release:	Callback to free the device after all references have
-   * 		gone away. This should be set by the allocator of the
-   * 		device (i.e. the bus driver that discovered the device).
-+  * @iommu_group: IOMMU group the device belongs to.
- + * @offline_disabled: If set, the device is permanently online.
- + * @offline:	Set after successful invocation of bus type's .offline().
-   *
-   * At the lowest level, every device in a Linux system is represented by =
-an
-   * instance of struct device. The device structure contains the informati=
-on
+johannes
 
---Signature=_Thu__27_Jun_2013_17_14_18_+1000_z0cqa8usfkqWy_Vd
-Content-Type: application/pgp-signature
+-- 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRy+ZOAAoJEECxmPOUX5FEggcQAIItFcYSkPiOhNNPSn57KODr
-VaSQAvnwTXk787MaKsITQS4/27gQwPsstWXwMdFYa8v5a2lRB+RUDZCLcMNL24sU
-Gflohn2NT8vNPQBbjcUQyCsMjVUsozZVMD0uHPvAdt6mXsg09iF3SrNPnFgnoH7w
-Z1iDOaxILWiOaCnosgC4C0M0oexcqN/w7JSduYZI0zA7hK967Ng63rS+V0aSukxV
-J48S+oXDIXCkL1PGB7IJ+MjyU7QUxekz7Bv19H4J4v2qLQjpt7loywlEKFaYvKrZ
-XS1ujBNNbnUJzHdhv++0JLgAIxliTYdv5/+csGLFFkR0oaFZMN2oPXtrJcNivkY1
-ifHD+8AbP5LIvcGI1L1WxhOBfpHsrrVWCf/VLWqmyCoNTejH0PRK8dsOYUyTvnNk
-aGSvtuYUWtSrJIRCH5UxIpb+8cvJ4pAIVdn/YOjV3mg5gOjBuKPEK/k8E6wA8iz3
-GVCISX/iACOn+682MhyKLtXwxGwmJF857xg8+4YP1HgE6vdGB5tz2+gsz+02wYdm
-r5TmeiOFGdevFKiCNWDga6KDPW8TuP8afU81ii/V1N+fRgLRCF9/Kzk9mVlRzYCm
-taLKtcJnPoEZiM0YfUNIthUj5AwZsxE862zbRFmwRy/VHn3adzzJYyJ7At/FdYL/
-mY/1m6st9iJ6YtYqS9Gv
-=ZPdR
------END PGP SIGNATURE-----
-
---Signature=_Thu__27_Jun_2013_17_14_18_+1000_z0cqa8usfkqWy_Vd--
+Intel GmbH
+Dornacher Strasse 1
+85622 Feldkirchen/Muenchen, Deutschland
+Sitz der Gesellschaft: Feldkirchen bei Muenchen
+Geschaeftsfuehrer: Christian Lamprechter, Hannes Schwaderer, Douglas Lusk
+Registergericht: Muenchen HRB 47456
+Ust.-IdNr./VAT Registration No.: DE129385895
+Citibank Frankfurt a.M. (BLZ 502 109 00) 600119052
