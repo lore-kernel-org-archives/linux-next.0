@@ -1,78 +1,35 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH linux-next] ARM: OMAP2+: fix omap4-restart compilation
-Date: Thu, 27 Jun 2013 08:18:06 -0500
-Message-ID: <51CC3B8E.8070702@ti.com>
-References: <1372335961-31401-1-git-send-email-vincent.stehle@freescale.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the pm tree
+Date: Thu, 27 Jun 2013 08:36:38 -0700
+Message-ID: <20130627153638.GB25244@kroah.com>
+References: <20130627171418.6293697ff334ecc1a79608da@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:50806 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752165Ab3F0NSr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 Jun 2013 09:18:47 -0400
-In-Reply-To: <1372335961-31401-1-git-send-email-vincent.stehle@freescale.com>
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:49194 "EHLO
+	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752806Ab3F0Pfy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 Jun 2013 11:35:54 -0400
+Content-Disposition: inline
+In-Reply-To: <20130627171418.6293697ff334ecc1a79608da@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?VmluY2VudCBTdGVobMOp?= <vincent.stehle@freescale.com>
-Cc: linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Robin Holt <holt@sgi.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, trivial@kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Opdenacker <michael.opdenacker@free-electrons.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-On 06/27/2013 07:26 AM, Vincent Stehl=C3=A9 wrote:
-> Fix following compilation error due to missing include file:
->
->    arch/arm/mach-omap2/omap4-restart.c:21:28: warning: =E2=80=98enum =
-reboot_mode=E2=80=99 declared inside parameter list [enabled by default=
-]
->    arch/arm/mach-omap2/omap4-restart.c:21:28: warning: its scope is o=
-nly this definition or declaration, which is probably not what you want=
- [enabled by default]
->    arch/arm/mach-omap2/omap4-restart.c:21:40: error: parameter 1 (=E2=
-=80=98mode=E2=80=99) has incomplete type
->    arch/arm/mach-omap2/omap4-restart.c:21:6: warning: function declar=
-ation isn=E2=80=99t a prototype [-Wstrict-prototypes]
->    make[1]: *** [arch/arm/mach-omap2/omap4-restart.o] Error 1
->
-> Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@freescale.com>
-> Cc: Robin Holt <holt@sgi.com>
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: trivial@kernel.org
-> ---
->
->
-> Hi,
->
-> This fixes the build of linux-next for arch ARM, config multi_v7_defc=
-onfig, tag
-> next-20130627.
->
-> Best regards,
->
-> V.
->
->
->   arch/arm/mach-omap2/omap4-restart.c |    1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/mach-omap2/omap4-restart.c b/arch/arm/mach-omap=
-2/omap4-restart.c
-> index 652adde..41dfd7d 100644
-> --- a/arch/arm/mach-omap2/omap4-restart.c
-> +++ b/arch/arm/mach-omap2/omap4-restart.c
-> @@ -8,6 +8,7 @@
->    */
->
->   #include <linux/types.h>
-> +#include <linux/reboot.h>
->   #include "prminst44xx.h"
->
->   /**
->
-Same was covered already?
-http://lists.infradead.org/pipermail/linux-arm-kernel/2013-June/178209.=
-html
+On Thu, Jun 27, 2013 at 05:14:18PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in
+> include/linux/device.h between commit 4f3549d72d1b ("Driver core: Add
+> offline/online device operations") from the pm tree and commit
+> bfd63cd24df6 ("driver core: device.h: fix doc compilation warnings") from
+> the driver-core tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
---=20
-Regards,
-Nishanth Menon
+Looks good to me, thanks.
+
+greg k-h
