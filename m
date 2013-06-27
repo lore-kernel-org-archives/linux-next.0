@@ -1,202 +1,129 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 27 Jun 2013 13:49:56 +1000
-Message-ID: <20130627134956.7f7854bef31558c2a4bfb037@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ net-next tree
+Date: Thu, 27 Jun 2013 14:23:18 +1000
+Message-ID: <20130627142318.78f78fdbb49c927a7cb7bc50@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__27_Jun_2013_13_49_56_+1000_paMiyakmMdZEaTvx"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Chris Healy <cphealy@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__27_Jun_2013_14_23_18_+1000_=EhFNpj+hBjn1IEi"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48037 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750806Ab3F0EX3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Jun 2013 00:23:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
 
---Signature=_Thu__27_Jun_2013_13_49_56_+1000_paMiyakmMdZEaTvx
+--Signature=_Thu__27_Jun_2013_14_23_18_+1000_=EhFNpj+hBjn1IEi
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi John,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/freescale/fec_main.c between commits 32bc9b46d840
-("fec: Add support to restart autonegotiate") and d13919301d9a ("net:
-fec: Fix build for MCF5272") from the net tree and commit 38ae92dc215e
-("ec: Add support for reading RMON registers") from the net-next tree.
+Today's linux-next merge of the wireless-next tree got a conflict in
+net/wireless/nl80211.c between merge commits from the net-next tree and
+commit 86e8cf98de3e ("nl80211: use small state buffer for wiphy_dump")
+from the wireless-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
+I think I fixed it up (see below, please check) and can carry the fix as
+necessary (no action is required).  I think that my fix means that that
+commit 86e8cf98de3e is missing the extra "rtnl_unlock();", right?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/ethernet/freescale/fec_main.c
-index d48099f,ed6180e..0000000
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@@ -1444,13 -1443,121 +1451,122 @@@ static int fec_enet_set_pauseparam(stru
-  	return 0;
-  }
+diff --cc net/wireless/nl80211.c
+index e545023,7dc3343..0000000
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@@ -1520,47 -1562,23 +1562,25 @@@ static int nl80211_dump_wiphy_parse(str
+  static int nl80211_dump_wiphy(struct sk_buff *skb, struct netlink_callbac=
+k *cb)
+  {
+  	int idx =3D 0, ret;
+- 	int start =3D cb->args[0];
++ 	struct nl80211_dump_wiphy_state *state =3D (void *)cb->args[0];
+  	struct cfg80211_registered_device *dev;
+- 	s64 filter_wiphy =3D -1;
+- 	bool split =3D false;
+- 	struct nlattr **tb;
+- 	int res;
+-=20
+- 	/* will be zeroed in nlmsg_parse() */
+- 	tb =3D kmalloc(sizeof(*tb) * (NL80211_ATTR_MAX + 1), GFP_KERNEL);
+- 	if (!tb)
+- 		return -ENOMEM;
  =20
-- #endif /* !defined(CONFIG_M5272) */
- -#ifndef CONFIG_M5272
-+ static const struct fec_stat {
-+ 	char name[ETH_GSTRING_LEN];
-+ 	u16 offset;
-+ } fec_stats[] =3D {
-+ 	/* RMON TX */
-+ 	{ "tx_dropped", RMON_T_DROP },
-+ 	{ "tx_packets", RMON_T_PACKETS },
-+ 	{ "tx_broadcast", RMON_T_BC_PKT },
-+ 	{ "tx_multicast", RMON_T_MC_PKT },
-+ 	{ "tx_crc_errors", RMON_T_CRC_ALIGN },
-+ 	{ "tx_undersize", RMON_T_UNDERSIZE },
-+ 	{ "tx_oversize", RMON_T_OVERSIZE },
-+ 	{ "tx_fragment", RMON_T_FRAG },
-+ 	{ "tx_jabber", RMON_T_JAB },
-+ 	{ "tx_collision", RMON_T_COL },
-+ 	{ "tx_64byte", RMON_T_P64 },
-+ 	{ "tx_65to127byte", RMON_T_P65TO127 },
-+ 	{ "tx_128to255byte", RMON_T_P128TO255 },
-+ 	{ "tx_256to511byte", RMON_T_P256TO511 },
-+ 	{ "tx_512to1023byte", RMON_T_P512TO1023 },
-+ 	{ "tx_1024to2047byte", RMON_T_P1024TO2047 },
-+ 	{ "tx_GTE2048byte", RMON_T_P_GTE2048 },
-+ 	{ "tx_octets", RMON_T_OCTETS },
-+=20
-+ 	/* IEEE TX */
-+ 	{ "IEEE_tx_drop", IEEE_T_DROP },
-+ 	{ "IEEE_tx_frame_ok", IEEE_T_FRAME_OK },
-+ 	{ "IEEE_tx_1col", IEEE_T_1COL },
-+ 	{ "IEEE_tx_mcol", IEEE_T_MCOL },
-+ 	{ "IEEE_tx_def", IEEE_T_DEF },
-+ 	{ "IEEE_tx_lcol", IEEE_T_LCOL },
-+ 	{ "IEEE_tx_excol", IEEE_T_EXCOL },
-+ 	{ "IEEE_tx_macerr", IEEE_T_MACERR },
-+ 	{ "IEEE_tx_cserr", IEEE_T_CSERR },
-+ 	{ "IEEE_tx_sqe", IEEE_T_SQE },
-+ 	{ "IEEE_tx_fdxfc", IEEE_T_FDXFC },
-+ 	{ "IEEE_tx_octets_ok", IEEE_T_OCTETS_OK },
-+=20
-+ 	/* RMON RX */
-+ 	{ "rx_packets", RMON_R_PACKETS },
-+ 	{ "rx_broadcast", RMON_R_BC_PKT },
-+ 	{ "rx_multicast", RMON_R_MC_PKT },
-+ 	{ "rx_crc_errors", RMON_R_CRC_ALIGN },
-+ 	{ "rx_undersize", RMON_R_UNDERSIZE },
-+ 	{ "rx_oversize", RMON_R_OVERSIZE },
-+ 	{ "rx_fragment", RMON_R_FRAG },
-+ 	{ "rx_jabber", RMON_R_JAB },
-+ 	{ "rx_64byte", RMON_R_P64 },
-+ 	{ "rx_65to127byte", RMON_R_P65TO127 },
-+ 	{ "rx_128to255byte", RMON_R_P128TO255 },
-+ 	{ "rx_256to511byte", RMON_R_P256TO511 },
-+ 	{ "rx_512to1023byte", RMON_R_P512TO1023 },
-+ 	{ "rx_1024to2047byte", RMON_R_P1024TO2047 },
-+ 	{ "rx_GTE2048byte", RMON_R_P_GTE2048 },
-+ 	{ "rx_octets", RMON_R_OCTETS },
-+=20
-+ 	/* IEEE RX */
-+ 	{ "IEEE_rx_drop", IEEE_R_DROP },
-+ 	{ "IEEE_rx_frame_ok", IEEE_R_FRAME_OK },
-+ 	{ "IEEE_rx_crc", IEEE_R_CRC },
-+ 	{ "IEEE_rx_align", IEEE_R_ALIGN },
-+ 	{ "IEEE_rx_macerr", IEEE_R_MACERR },
-+ 	{ "IEEE_rx_fdxfc", IEEE_R_FDXFC },
-+ 	{ "IEEE_rx_octets_ok", IEEE_R_OCTETS_OK },
-+ };
-+=20
-+ static void fec_enet_get_ethtool_stats(struct net_device *dev,
-+ 	struct ethtool_stats *stats, u64 *data)
-+ {
-+ 	struct fec_enet_private *fep =3D netdev_priv(dev);
-+ 	int i;
-+=20
-+ 	for (i =3D 0; i < ARRAY_SIZE(fec_stats); i++)
-+ 		data[i] =3D readl(fep->hwp + fec_stats[i].offset);
-+ }
-+=20
-+ static void fec_enet_get_strings(struct net_device *netdev,
-+ 	u32 stringset, u8 *data)
-+ {
-+ 	int i;
-+ 	switch (stringset) {
-+ 	case ETH_SS_STATS:
-+ 		for (i =3D 0; i < ARRAY_SIZE(fec_stats); i++)
-+ 			memcpy(data + i * ETH_GSTRING_LEN,
-+ 				fec_stats[i].name, ETH_GSTRING_LEN);
-+ 		break;
-+ 	}
-+ }
-+=20
-+ static int fec_enet_get_sset_count(struct net_device *dev, int sset)
-+ {
-+ 	switch (sset) {
-+ 	case ETH_SS_STATS:
-+ 		return ARRAY_SIZE(fec_stats);
-+ 	default:
-+ 		return -EOPNOTSUPP;
-+ 	}
-+ }
-+ #endif
-+=20
-+ static int fec_enet_nway_reset(struct net_device *dev)
-+ {
-+ 	struct fec_enet_private *fep =3D netdev_priv(dev);
-+ 	struct phy_device *phydev =3D fep->phy_dev;
-+=20
-+ 	if (!phydev)
-+ 		return -ENODEV;
-+=20
-+ 	return genphy_restart_aneg(phydev);
-+ }
+  	rtnl_lock();
+-=20
+- 	res =3D nlmsg_parse(cb->nlh, GENL_HDRLEN + nl80211_fam.hdrsize,
+- 			  tb, NL80211_ATTR_MAX, nl80211_policy);
+- 	if (res =3D=3D 0) {
+- 		split =3D tb[NL80211_ATTR_SPLIT_WIPHY_DUMP];
+- 		if (tb[NL80211_ATTR_WIPHY])
+- 			filter_wiphy =3D nla_get_u32(tb[NL80211_ATTR_WIPHY]);
+- 		if (tb[NL80211_ATTR_WDEV])
+- 			filter_wiphy =3D nla_get_u64(tb[NL80211_ATTR_WDEV]) >> 32;
+- 		if (tb[NL80211_ATTR_IFINDEX]) {
+- 			struct net_device *netdev;
+- 			int ifidx =3D nla_get_u32(tb[NL80211_ATTR_IFINDEX]);
+-=20
+- 			netdev =3D dev_get_by_index(sock_net(skb->sk), ifidx);
+- 			if (!netdev) {
+- 				rtnl_unlock();
+- 				kfree(tb);
+- 				return -ENODEV;
+- 			}
+- 			if (netdev->ieee80211_ptr) {
+- 				dev =3D wiphy_to_dev(
+- 					netdev->ieee80211_ptr->wiphy);
+- 				filter_wiphy =3D dev->wiphy_idx;
+- 			}
+- 			dev_put(netdev);
++ 	if (!state) {
++ 		state =3D kzalloc(sizeof(*state), GFP_KERNEL);
+ -		if (!state)
+++		if (!state) {
+++			rtnl_unlock();
++ 			return -ENOMEM;
+ +		}
++ 		state->filter_wiphy =3D -1;
++ 		ret =3D nl80211_dump_wiphy_parse(skb, cb, state);
++ 		if (ret) {
++ 			kfree(state);
++ 			rtnl_unlock();
++ 			return ret;
++ 		}
++ 		cb->args[0] =3D (long)state;
+  	}
+- 	kfree(tb);
  =20
-  static const struct ethtool_ops fec_enet_ethtool_ops =3D {
- +#if !defined(CONFIG_M5272)
-  	.get_pauseparam		=3D fec_enet_get_pauseparam,
-  	.set_pauseparam		=3D fec_enet_set_pauseparam,
- +#endif
-  	.get_settings		=3D fec_enet_get_settings,
-  	.set_settings		=3D fec_enet_set_settings,
-  	.get_drvinfo		=3D fec_enet_get_drvinfo,
-@@@ -1891,9 -2001,13 +2011,14 @@@ fec_probe(struct platform_device *pdev
-  	if (pdev->id_entry &&
-  	    (pdev->id_entry->driver_data & FEC_QUIRK_HAS_GBIT))
-  		fep->pause_flag |=3D FEC_PAUSE_FLAG_AUTONEG;
- +#endif
- =20
-- 	fep->hwp =3D devm_request_and_ioremap(&pdev->dev, r);
-+ 	fep->hwp =3D devm_ioremap_resource(&pdev->dev, r);
-+ 	if (IS_ERR(fep->hwp)) {
-+ 		ret =3D PTR_ERR(fep->hwp);
-+ 		goto failed_ioremap;
-+ 	}
-+=20
-  	fep->pdev =3D pdev;
-  	fep->dev_id =3D dev_id++;
- =20
+  	list_for_each_entry(dev, &cfg80211_rdev_list, list) {
+  		if (!net_eq(wiphy_net(&dev->wiphy), sock_net(skb->sk)))
 
---Signature=_Thu__27_Jun_2013_13_49_56_+1000_paMiyakmMdZEaTvx
+--Signature=_Thu__27_Jun_2013_14_23_18_+1000_=EhFNpj+hBjn1IEi
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRy7ZoAAoJEECxmPOUX5FErmsQAKdRnoqebv0pCsGItDH5qi1n
-yMVshC2kdcS/j9p3E4G1RAqWSPkHE2Gv8a2tV3Iz0dGfo4h5l0q7pCQtl1kh3Y05
-3+f4ObnRSV7eQ9JXWkMAE9pmFZxURoxsQK37f3XoAiAbp+87sKWocWlpoVVFOIfg
-Lj1nMXU+OXwsZS1SjFWpKjrC66/S0Ni/YATqfYyvBnVossBAJ4BEU+aGPBVqEghJ
-UU85G0Edll75cS3sT3T7G6EAXL0/XYBYT2z3DgwUoRDC9rg77dkYI4QXgsz8wWnO
-n4ss9c6QSM2oJqm19EK+Van+QhfeOwISdYHgC495wDS489puYaRjYNvgV7HBPf/X
-N4sTLFqpLk2+JoMlMUc8d7WqFEemlmSzszEBu8ysnsg8Xth4nW8fiK4S213sYk9y
-Xm5i09U+Cuq0YamB4MBHRFiVU753Gh42UM6JrHLL3LlRjkq2T+gf9C5bvpbLCDOF
-wwtjE4gNBthZNV6g6sp0ZWQNwFktJhQeOk49/yFafz4AgC5Myx1wN9hUom+cubVh
-lyD5vGQSJ1TJY5n5L4wel/bOuCW4WzP54QF1bxKPUm2c3JTvxCFTuIMSd06EaATQ
-DsahELFF3PdsjtxQiwMZKLZK5pGddp455+BEa2BuavTcpgNJFQJUZ3eD2qUYJOZs
-SV7nvF7EWRd1T/hHtLEw
-=q0Ji
+iQIcBAEBCAAGBQJRy746AAoJEECxmPOUX5FEBcsP/i5W3WsuWTGCFZbLWbrIwfbW
+GiUPzKTleWXMOLiOkNyRh/4YhSOrCuuOyeRdZe5c6VUSvpKDY78By7IpnVTX1U4y
+/dZP2s+qTMnMa3DLMSpWBGQ2sojMKWUXpFdUmkp1ucxWc03edzn75yIEiZ0pM25G
+bhNTlLWd/S9VAJUsh+daaMDXgoQMz0+8yIVT9iRhbu6thhWcKIenlgqQgi2X52qM
+ox0AHciiaM6Mn6fcdn0oLlXbYWN4GiBxEenQv9Q0CQ769RwyGxLnbVsiRNnURbuL
+XxcumrRNOYeQG9Ty/RjyD1OE+AzwK+WWkjlLE9emg1IzhjCuWSPmAmaAAAs/AIAe
+4+Ks3AK9jvM8LU7HbF+ygIxzx+GCCFs9I4eKZ4trPZyiQScCCgg4HZBmDFT576YA
+ZE/HRw5BbHzWv2EUYqG6nXp8VWSAzVqPSz107zpAwW96NvlBq/GS1mLzVFC1z2AJ
+X6oSppbgXKWS0N4hqWDJKcB4+Quil5A3VxvOf2ATrN+YuD+CBepm+FwaBheFHEk8
+6rmeHLF04wiacnJY5TqfPtcC3E+zh3YZ87gpvwHU6t49sWldz9uxlgd9qz0iyPTL
+6oYODfItaxmukZNSoKGCkn3/9Yvidwc9Fn7O6TsrYLyIzzcSZzCtkIlCvahmKrlg
+MQJEJHT0cZiHsBiH1xUp
+=SamX
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__27_Jun_2013_13_49_56_+1000_paMiyakmMdZEaTvx--
+--Signature=_Thu__27_Jun_2013_14_23_18_+1000_=EhFNpj+hBjn1IEi--
