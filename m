@@ -1,104 +1,78 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: [PATCH linux-next] arm: zynq: fix compilation warning
-Date: Thu, 27 Jun 2013 15:01:51 +0200
-Message-ID: <51CC37BF.8030309@monstr.eu>
-References: <1372336962-6459-1-git-send-email-vincent.stehle@freescale.com>
-Reply-To: monstr@monstr.eu
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH linux-next] ARM: OMAP2+: fix omap4-restart compilation
+Date: Thu, 27 Jun 2013 08:18:06 -0500
+Message-ID: <51CC3B8E.8070702@ti.com>
+References: <1372335961-31401-1-git-send-email-vincent.stehle@freescale.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="----enig2STBNAGOUBSRUVMTIETRM"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1372336962-6459-1-git-send-email-vincent.stehle@freescale.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:50806 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752165Ab3F0NSr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 Jun 2013 09:18:47 -0400
+In-Reply-To: <1372335961-31401-1-git-send-email-vincent.stehle@freescale.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: =?UTF-8?B?VmluY2VudCBTdGVobMOp?= <vincent.stehle@freescale.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Robin Holt <holt@sgi.com>, Michal Simek <michal.simek@xilinx.com>, Russell King <linux@arm.linux.org.uk>, trivial@kernel.org, Arnd Bergmann <arnd@arndb.de>holt@sgi.com
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Robin Holt <holt@sgi.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, trivial@kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
-------enig2STBNAGOUBSRUVMTIETRM
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-Hi Vincent,
-
-Arnd asked in this post
-http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg454947.html
-to fold his small patch to that larger one.
-
-Not sure why it is not there.
-Arnd, Robin?
-
-Thanks
-Michal
-
-
-On 06/27/2013 02:42 PM, Vincent Stehl=C3=A9 wrote:
-> Fix the following compilation warning:
->=20
->   arch/arm/mach-zynq/common.c:110:2: warning: initialization from incom=
-patible pointer type [enabled by default]
->   arch/arm/mach-zynq/common.c:110:2: warning: (near initialization for =
-=E2=80=98__mach_desc_XILINX_EP107.restart=E2=80=99) [enabled by default]
->=20
+On 06/27/2013 07:26 AM, Vincent Stehl=C3=A9 wrote:
+> Fix following compilation error due to missing include file:
+>
+>    arch/arm/mach-omap2/omap4-restart.c:21:28: warning: =E2=80=98enum =
+reboot_mode=E2=80=99 declared inside parameter list [enabled by default=
+]
+>    arch/arm/mach-omap2/omap4-restart.c:21:28: warning: its scope is o=
+nly this definition or declaration, which is probably not what you want=
+ [enabled by default]
+>    arch/arm/mach-omap2/omap4-restart.c:21:40: error: parameter 1 (=E2=
+=80=98mode=E2=80=99) has incomplete type
+>    arch/arm/mach-omap2/omap4-restart.c:21:6: warning: function declar=
+ation isn=E2=80=99t a prototype [-Wstrict-prototypes]
+>    make[1]: *** [arch/arm/mach-omap2/omap4-restart.o] Error 1
+>
 > Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@freescale.com>
 > Cc: Robin Holt <holt@sgi.com>
-> Cc: Michal Simek <michal.simek@xilinx.com>
-> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> Cc: Tony Lindgren <tony@atomide.com>
 > Cc: trivial@kernel.org
 > ---
->=20
->=20
+>
+>
 > Hi,
->=20
-> This warning was seen on linux-next tag next-20130627, with config ARM
-> multi_v7_defconfig.
->=20
+>
+> This fixes the build of linux-next for arch ARM, config multi_v7_defc=
+onfig, tag
+> next-20130627.
+>
 > Best regards,
->=20
+>
 > V.
->=20
->=20
->  arch/arm/mach-zynq/common.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/mach-zynq/common.c b/arch/arm/mach-zynq/common.c
-> index 4130e65..8ea5f11 100644
-> --- a/arch/arm/mach-zynq/common.c
-> +++ b/arch/arm/mach-zynq/common.c
-> @@ -91,7 +91,7 @@ static void __init zynq_map_io(void)
->  	zynq_scu_map_io();
->  }
-> =20
-> -static void zynq_system_reset(char mode, const char *cmd)
-> +static void zynq_system_reset(enum reboot_mode mode, const char *cmd)
->  {
->  	zynq_slcr_system_reset();
->  }
->=20
-
+>
+>
+>   arch/arm/mach-omap2/omap4-restart.c |    1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm/mach-omap2/omap4-restart.c b/arch/arm/mach-omap=
+2/omap4-restart.c
+> index 652adde..41dfd7d 100644
+> --- a/arch/arm/mach-omap2/omap4-restart.c
+> +++ b/arch/arm/mach-omap2/omap4-restart.c
+> @@ -8,6 +8,7 @@
+>    */
+>
+>   #include <linux/types.h>
+> +#include <linux/reboot.h>
+>   #include "prminst44xx.h"
+>
+>   /**
+>
+Same was covered already?
+http://lists.infradead.org/pipermail/linux-arm-kernel/2013-June/178209.=
+html
 
 --=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
-Maintainer of Linux kernel - Xilinx Zynq ARM architecture
-Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
-
-
-
-------enig2STBNAGOUBSRUVMTIETRM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iEYEARECAAYFAlHMN78ACgkQykllyylKDCFOOgCeId/zVK/yXVupdorfCD5eEVxZ
-PrYAn2t5blG6GhNrSwchF8UCoRnQki3W
-=2zqQ
------END PGP SIGNATURE-----
-
-------enig2STBNAGOUBSRUVMTIETRM--
+Regards,
+Nishanth Menon
