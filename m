@@ -1,64 +1,62 @@
 From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>
-Subject: [PATCH linux-next] videomode: fix compilation warning
-Date: Thu, 27 Jun 2013 14:34:57 +0200
-Message-ID: <1372336497-2005-1-git-send-email-vincent.stehle@freescale.com>
+Subject: [PATCH linux-next] arm: zynq: fix compilation warning
+Date: Thu, 27 Jun 2013 14:42:41 +0200
+Message-ID: <1372336962-6459-1-git-send-email-vincent.stehle@freescale.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ch1ehsobe002.messaging.microsoft.com ([216.32.181.182]:24793
-	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751819Ab3F0MfQ convert rfc822-to-8bit
+Received: from mail-db8lp0184.outbound.messaging.microsoft.com ([213.199.154.184]:31473
+	"EHLO db8outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751819Ab3F0MnL convert rfc822-to-8bit
 	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 Jun 2013 08:35:16 -0400
+	Thu, 27 Jun 2013 08:43:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, trivial@kernel.org
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>, Robin Holt <holt@sgi.com>, Michal Simek <michal.simek@xilinx.com>, Russell King <linux@arm.linux.org.uk>, trivial@kernel.org
 
-Add missing include file to fix the following compilation warning:
+=46ix the following compilation warning:
 
-  In file included from drivers/video/wm8505fb.c:35:0:
-  include/video/of_display_timing.h:18:10: warning: =E2=80=98struct dis=
-play_timing=E2=80=99 declared inside parameter list [enabled by default=
+  arch/arm/mach-zynq/common.c:110:2: warning: initialization from incom=
+patible pointer type [enabled by default]
+  arch/arm/mach-zynq/common.c:110:2: warning: (near initialization for =
+=E2=80=98__mach_desc_XILINX_EP107.restart=E2=80=99) [enabled by default=
 ]
-  include/video/of_display_timing.h:18:10: warning: its scope is only t=
-his definition or declaration, which is probably not what you want [ena=
-bled by default]
 
 Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@freescale.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Robin Holt <holt@sgi.com>
+Cc: Michal Simek <michal.simek@xilinx.com>
+Cc: Russell King <linux@arm.linux.org.uk>
 Cc: trivial@kernel.org
 ---
 
 
 Hi,
 
-This warning happens on linux-next tag next-20130627, for ARM multi_v7_=
-defconfig.
+This warning was seen on linux-next tag next-20130627, with config ARM
+multi_v7_defconfig.
 
 Best regards,
 
 V.
 
 
- include/video/of_display_timing.h |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/mach-zynq/common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/video/of_display_timing.h b/include/video/of_displ=
-ay_timing.h
-index 6562ad9..d43be98 100644
---- a/include/video/of_display_timing.h
-+++ b/include/video/of_display_timing.h
-@@ -9,6 +9,8 @@
- #ifndef __LINUX_OF_DISPLAY_TIMING_H
- #define __LINUX_OF_DISPLAY_TIMING_H
+diff --git a/arch/arm/mach-zynq/common.c b/arch/arm/mach-zynq/common.c
+index 4130e65..8ea5f11 100644
+--- a/arch/arm/mach-zynq/common.c
++++ b/arch/arm/mach-zynq/common.c
+@@ -91,7 +91,7 @@ static void __init zynq_map_io(void)
+ 	zynq_scu_map_io();
+ }
 =20
-+#include <video/display_timing.h>
-+
- struct device_node;
- struct display_timings;
-=20
+-static void zynq_system_reset(char mode, const char *cmd)
++static void zynq_system_reset(enum reboot_mode mode, const char *cmd)
+ {
+ 	zynq_slcr_system_reset();
+ }
 --=20
 1.7.10.4
