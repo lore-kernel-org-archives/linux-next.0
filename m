@@ -1,71 +1,64 @@
 From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>
-Subject: [PATCH linux-next] ARM: OMAP2+: fix omap4-restart compilation
-Date: Thu, 27 Jun 2013 14:26:00 +0200
-Message-ID: <1372335961-31401-1-git-send-email-vincent.stehle@freescale.com>
+Subject: [PATCH linux-next] videomode: fix compilation warning
+Date: Thu, 27 Jun 2013 14:34:57 +0200
+Message-ID: <1372336497-2005-1-git-send-email-vincent.stehle@freescale.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-omap-owner@vger.kernel.org>
-Sender: linux-omap-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>, Robin Holt <holt@sgi.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, trivial@kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ch1ehsobe002.messaging.microsoft.com ([216.32.181.182]:24793
+	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751819Ab3F0MfQ convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 Jun 2013 08:35:16 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, trivial@kernel.org
 
-=46ix following compilation error due to missing include file:
+Add missing include file to fix the following compilation warning:
 
-  arch/arm/mach-omap2/omap4-restart.c:21:28: warning: =E2=80=98enum reb=
-oot_mode=E2=80=99 declared inside parameter list [enabled by default]
-  arch/arm/mach-omap2/omap4-restart.c:21:28: warning: its scope is only=
- this definition or declaration, which is probably not what you want [e=
-nabled by default]
-  arch/arm/mach-omap2/omap4-restart.c:21:40: error: parameter 1 (=E2=80=
-=98mode=E2=80=99) has incomplete type
-  arch/arm/mach-omap2/omap4-restart.c:21:6: warning: function declarati=
-on isn=E2=80=99t a prototype [-Wstrict-prototypes]
-  make[1]: *** [arch/arm/mach-omap2/omap4-restart.o] Error 1
+  In file included from drivers/video/wm8505fb.c:35:0:
+  include/video/of_display_timing.h:18:10: warning: =E2=80=98struct dis=
+play_timing=E2=80=99 declared inside parameter list [enabled by default=
+]
+  include/video/of_display_timing.h:18:10: warning: its scope is only t=
+his definition or declaration, which is probably not what you want [ena=
+bled by default]
 
 Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@freescale.com>
-Cc: Robin Holt <holt@sgi.com>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Tony Lindgren <tony@atomide.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Cc: trivial@kernel.org
 ---
 
 
 Hi,
 
-This fixes the build of linux-next for arch ARM, config multi_v7_defcon=
-fig, tag
-next-20130627.
+This warning happens on linux-next tag next-20130627, for ARM multi_v7_=
+defconfig.
 
 Best regards,
 
 V.
 
 
- arch/arm/mach-omap2/omap4-restart.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/video/of_display_timing.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/omap4-restart.c b/arch/arm/mach-omap2/=
-omap4-restart.c
-index 652adde..41dfd7d 100644
---- a/arch/arm/mach-omap2/omap4-restart.c
-+++ b/arch/arm/mach-omap2/omap4-restart.c
-@@ -8,6 +8,7 @@
-  */
+diff --git a/include/video/of_display_timing.h b/include/video/of_displ=
+ay_timing.h
+index 6562ad9..d43be98 100644
+--- a/include/video/of_display_timing.h
++++ b/include/video/of_display_timing.h
+@@ -9,6 +9,8 @@
+ #ifndef __LINUX_OF_DISPLAY_TIMING_H
+ #define __LINUX_OF_DISPLAY_TIMING_H
 =20
- #include <linux/types.h>
-+#include <linux/reboot.h>
- #include "prminst44xx.h"
++#include <video/display_timing.h>
++
+ struct device_node;
+ struct display_timings;
 =20
- /**
 --=20
 1.7.10.4
-
-
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
