@@ -1,83 +1,72 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH]amilo-rfkill: add depends on i8042 in Kconfig
-Date: Thu, 27 Jun 2013 09:40:41 -0700
-Message-ID: <51CC6B09.5080809@infradead.org>
-References: <alpine.DEB.2.02.1306181705530.28460@M2420> <1371560680.3495.121.camel@deadeye.wl.decadent.org.uk> <51C07608.2070406@infradead.org> <CADJHv_vZiPsDUiLrFao41rRVduf+AYFm0NuvpNaCW8S3KrAjnA@mail.gmail.com>
+Subject: Re: linux-next: Tree for Jun 27 (v4l2 & usbtv)
+Date: Thu, 27 Jun 2013 10:03:58 -0700
+Message-ID: <51CC707E.6030204@infradead.org>
+References: <20130627192416.d37a51646a5317892298609e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:33071 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752024Ab3F0QlN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Jun 2013 12:41:13 -0400
-In-Reply-To: <CADJHv_vZiPsDUiLrFao41rRVduf+AYFm0NuvpNaCW8S3KrAjnA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Xiong Zhou <jencce.kernel@gmail.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>, matthew.garrett@nebula.com, platform-driver-x86@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, jim.epost@gmail.com
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20130627192416.d37a51646a5317892298609e@canb.auug.org.au>
+Sender: linux-media-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Lubomir Rintel <lkundrak@v3.sk>
+List-Id: linux-next.vger.kernel.org
 
-On 06/18/13 18:09, Xiong Zhou wrote:
-> 2013/6/18 Randy Dunlap <rdunlap@infradead.org>:
->> On 06/18/13 06:04, Ben Hutchings wrote:
->>> On Tue, 2013-06-18 at 17:21 +0800, Xiong Zhou wrote:
->>>> From: Xiong Zhou <jencce.kernel@gmail.com>
->>>>
->>>> Fix randconfig build failure for Amilo x86 platform driver.
->>>> AMILO_RFKILL requires SERIO_I8042 being available.
->>>>
->>>> amilo-rfkill.c:(.text+0x108b5b): undefined reference to `i8042_lock_chip'
->>>> amilo-rfkill.c:(.text+0x108b69): undefined reference to `i8042_command'
->>>> amilo-rfkill.c:(.text+0x108b71): undefined reference to `i8042_unlock_chip'
->>>>
->>>> Reported-by: Jim Davis <jim.epost@gmail.com>
->>>> Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
->>>
->>> Acked-by: Ben Hutchings <ben@decadent.org.uk>
->>>
->>> But I thought somehow sent this same fix a while back...
->>
->> Yes, I reported it and sent a patch for it that you acked...
->> I guess my patch was never picked up.
->>
+On 06/27/13 02:24, Stephen Rothwell wrote:
+> Hi all,
 > 
-> ... Better someone pick this up.
+> Changes since 20130626:
 > 
 
-This build error is still occurring in linux-next (20130627).
-I first reported it and posted a patch for it on May-15 2013.
+on i386:
 
-Please merge either patch...
+CONFIG_VIDEO_USBTV=y
+CONFIG_I2C=m
+CONFIG_VIDEO_V4L2=m
 
-Is anybody out there?
+
+Looks like VIDEO_USBTV should depend on VIDEO_V4L2.
 
 
-> 
->>>
->>> Ben.
->>>
->>>> ---
->>>>  drivers/platform/x86/Kconfig |    1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
->>>> index 8577261..37645b9 100644
->>>> --- a/drivers/platform/x86/Kconfig
->>>> +++ b/drivers/platform/x86/Kconfig
->>>> @@ -176,6 +176,7 @@ config FUJITSU_TABLET
->>>>  config AMILO_RFKILL
->>>>      tristate "Fujitsu-Siemens Amilo rfkill support"
->>>>      depends on RFKILL
->>>> +    depends on SERIO_I8042
->>>>      ---help---
->>>>        This is a driver for enabling wifi on some Fujitsu-Siemens Amilo
->>>>        laptops.
->>>
->>
->>
->> --
->> ~Randy
-> --
+drivers/built-in.o: In function `vb2_fop_mmap':
+(.text+0x199b4e): undefined reference to `video_devdata'
+drivers/built-in.o: In function `vb2_ioctl_streamoff':
+(.text+0x19a00b): undefined reference to `video_devdata'
+drivers/built-in.o: In function `vb2_ioctl_streamon':
+(.text+0x19a134): undefined reference to `video_devdata'
+drivers/built-in.o: In function `vb2_ioctl_expbuf':
+(.text+0x19a2cb): undefined reference to `video_devdata'
+drivers/built-in.o: In function `vb2_ioctl_querybuf':
+(.text+0x19a3fe): undefined reference to `video_devdata'
+drivers/built-in.o:(.text+0x19ad7d): more undefined references to `video_devdata' follow
+drivers/built-in.o: In function `vb2_poll':
+(.text+0x19bef0): undefined reference to `v4l2_event_pending'
+drivers/built-in.o: In function `vb2_fop_poll':
+(.text+0x19c0ce): undefined reference to `video_devdata'
+drivers/built-in.o: In function `vb2_fop_release':
+(.text+0x19c21c): undefined reference to `video_devdata'
+drivers/built-in.o: In function `vb2_fop_release':
+(.text+0x19c24a): undefined reference to `v4l2_fh_release'
+drivers/built-in.o: In function `usbtv_release':
+usbtv.c:(.text+0x1a9411): undefined reference to `v4l2_device_unregister'
+drivers/built-in.o: In function `usbtv_querycap':
+usbtv.c:(.text+0x1a942e): undefined reference to `video_devdata'
+drivers/built-in.o: In function `usbtv_probe':
+usbtv.c:(.text+0x1a95da): undefined reference to `v4l2_device_register'
+usbtv.c:(.text+0x1a961e): undefined reference to `video_device_release_empty'
+usbtv.c:(.text+0x1a9689): undefined reference to `__video_register_device'
+usbtv.c:(.text+0x1a96a3): undefined reference to `v4l2_device_unregister'
+drivers/built-in.o: In function `usbtv_disconnect':
+usbtv.c:(.text+0x1a9937): undefined reference to `video_unregister_device'
+usbtv.c:(.text+0x1a993e): undefined reference to `v4l2_device_disconnect'
+drivers/built-in.o: In function `usbtv_iso_cb':
+usbtv.c:(.text+0x1a9b5c): undefined reference to `v4l2_get_timestamp'
+drivers/built-in.o: In function `usbtv_disconnect':
+usbtv.c:(.text+0x1a9966): undefined reference to `v4l2_device_put'
+drivers/built-in.o:(.data+0x22918): undefined reference to `video_ioctl2'
+drivers/built-in.o:(.data+0x22924): undefined reference to `v4l2_fh_open'
+
 
 
 -- 
