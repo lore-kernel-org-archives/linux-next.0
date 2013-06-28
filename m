@@ -1,65 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH linux-next] arm: zynq: fix compilation warning
-Date: Fri, 28 Jun 2013 10:38:55 +1000
-Message-ID: <20130628103855.c4a89a6f1c6ef425fee34bc6@canb.auug.org.au>
-References: <1372336962-6459-1-git-send-email-vincent.stehle@freescale.com>
-	<51CC37BF.8030309@monstr.eu>
+Subject: Re: mmotm 2013-06-27-16-36 uploaded
+Date: Fri, 28 Jun 2013 11:09:55 +1000
+Message-ID: <20130628110955.31ccbb49fa088c35449e7741@canb.auug.org.au>
+References: <20130627233733.BAEB131C3BE@corp2gmr1-1.hot.corp.google.com>
+	<20130628095712.120bec7036284584fd467ee2@canb.auug.org.au>
+	<20130627173225.3915d976.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__28_Jun_2013_10_38_55_+1000_kU80yy/uyxKCg/2/"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43851 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753986Ab3F1Ai6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Jun 2013 20:38:58 -0400
-In-Reply-To: <51CC37BF.8030309@monstr.eu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: monstr@monstr.eu
-Cc: Vincent =?UTF-8?B?U3RlaGzDqQ==?= <vincent.stehle@freescale.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Robin Holt <holt@sgi.com>, Michal Simek <michal.simek@xilinx.com>, Russell King <linux@arm.linux.org.uk>, trivial@kernel.org, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>
+ boundary="Signature=_Fri__28_Jun_2013_11_09_55_+1000_cXkpIKyeQqXMe3y="
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20130627173225.3915d976.akpm@linux-foundation.org>
+Sender: owner-linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__28_Jun_2013_10_38_55_+1000_kU80yy/uyxKCg/2/
+--Signature=_Fri__28_Jun_2013_11_09_55_+1000_cXkpIKyeQqXMe3y=
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 27 Jun 2013 15:01:51 +0200 Michal Simek <monstr@monstr.eu> wrote:
+Hi Andrew,
+
+On Thu, 27 Jun 2013 17:32:25 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
 >
-> Arnd asked in this post
-> http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg454947.html
-> to fold his small patch to that larger one.
+> On Fri, 28 Jun 2013 09:57:12 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
 >=20
-> Not sure why it is not there.
-> Arnd, Robin?
+> > On Thu, 27 Jun 2013 16:37:33 -0700 akpm@linux-foundation.org wrote:
+> > >
+> > >   include-linux-smph-on_each_cpu-switch-back-to-a-macro.patch
+> > >   arch-c6x-mm-include-asm-uaccessh-to-pass-compiling.patch
+> > >   drivers-dma-pl330c-fix-locking-in-pl330_free_chan_resources.patch
+> >=20
+> > Did you mean to drop these three patches from linux-next?
+>=20
+> Nope, they should be inside the NEXT_PATCHES_START/NEXT_PATCHES_END
+> section, thanks.
 
-Should have asked Andrew :-)
+OK, I shoved them back in (in akpm-current).  One note:
 
-I have added (most of) Arnd's patch to the end of the akpm tree today.
+$ git am ../../mmotm/text/broken-out/arch-c6x-mm-include-asm-uaccessh-to-pa=
+ss-compiling.patch
+Applying: arch: c6x: mm: include "asm/uaccess.h" to pass compiling
+Warning: commit message did not conform to UTF-8.
+You may want to amend it after fixing the message, or set the config
+variable i18n.commitencoding to the encoding your project uses.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__28_Jun_2013_10_38_55_+1000_kU80yy/uyxKCg/2/
+--Signature=_Fri__28_Jun_2013_11_09_55_+1000_cXkpIKyeQqXMe3y=
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJRzNsfAAoJEECxmPOUX5FEH1QQAJJbcuM/neyTjv3oZoUl4zfn
-x//yJBgupXe1Y7a0BSRuqMzFj84DXamvg7P1ULFYR12Sg5OxD47uHsw0xjy2yO/W
-vzVod1q51naeNEq82UGZXlWV392IfxOEsFMuF3Ckakpuq2yA+GY75JyVyBXuWCkw
-TduS1pdU4v8l2+F1Gr/riAsrKEb5pMfgDawg6S5hJrubzmLHcv8SltBJ63fnD/o1
-tU5lFsRh1NdtdeDyI2ByKye6EGmuFPk9dSRV3pZioI1H01uA99Y0M1dZ13alFUbP
-alLWHBKAegXNELRi4p+HE9ZBVLhs7XGtXIv/x1/m80bnNhxPlNRCpoS7MxZXoL1B
-MxLQKirIJ+BxqvfcDlF//k2X1mvXHqsUMTXVOfrk9OWjaMf8WsYZ+MgCFn4z6FVu
-LGAizv+iyO+0BtUqKeNxKeTCvMLNE78RpmCpgJi1J0o3on4sa0FK5VzdIOLusaRn
-uObqfPlga7SWyIIY6GbR9EAoMwjFFZAzyzPglSFWdQPlhal7cBi0cSLQpfzemqsz
-272WIeJ6MajZlNf9gQEyXw7jWq1m0IaeRcQEYwedK3HVyydOhJ/WHin2Dx3Ns6RB
-td0ahxZ/9wO6Xv+/IKp9WY7wC3x60HXtUhUtZhOsjl119QmmSF4tCKiM7fuDOwy/
-OQi1Ku5CtuVtQ0XgYo3S
-=EtSs
+iQIcBAEBCAAGBQJRzOJoAAoJEECxmPOUX5FEdAYQAIXi7IRkHn/5XDZvU5lFkNX+
+I4yx2oNJmmeJtgL+4Akf8kJX1rKMhaExQC/9DW9m2AsiWxsGV8jcpnftWW3PdWi8
+gVmTOsZfbemmoyQ60YZrMZotHwY4/vPXrSCZiR4ZaJvlz8ctuiWLY+Pfvz4n1nCM
+Ckjb9Ji3cA+7Qn844htiE0bnA7Oql+c1b9mSyGRvvcgvPHuBSzMD+w6pXjFP7aeT
+dXm1BxILe0GcRnIXZM667taerV/Cmvh4AAHrALzed7acReal/Y0uc+KRSxkFC0TN
+UiLY/kCQItE9lD21pdDSMk/RtFn5OFSpT4LSNln3yVX9npKbdpxdviszbjumMV6+
+dKERM1sgnbYBsxkgk1eXAsNx1/OgBKPUpjVmzplK1dcJdBiQuwJk5+o5kMkWNygh
+ER9+j/kyQQNWV37OxYtcup0oWjAnf5qretEcMDOk9rz7MJiOeGqaEsgW9kBpjvrt
+6CNsK8mxympe2IwCF3i/mgO6pypkBzMoVwDfuOEUIfPl7JCsMzlQfYkEt7afZD3Y
+NthhGZ09oLfn6IO08C71lQe3fdkAxbShQsa5yuSb2SzkTAXTsw9LwpBSTapakT+c
+AF/1HzjRV29A9K63OI6+9TWkUfLDJF+Rfr5mKLB1l01ZG7JOI4EcwWYnEn7Ye6lO
+r4Rdynj/NtzPqILuD/SO
+=49A8
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__28_Jun_2013_10_38_55_+1000_kU80yy/uyxKCg/2/--
+--Signature=_Fri__28_Jun_2013_11_09_55_+1000_cXkpIKyeQqXMe3y=--
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
