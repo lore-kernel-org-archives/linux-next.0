@@ -1,63 +1,34 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Jun 28 [ call-trace: workqueue | drm
- releated? ]
-Date: Fri, 28 Jun 2013 11:30:32 +0200
-Message-ID: <CA+icZUXLMGeHom=8Gye8nBZoRxm7KTxy0ofXQsw4nfCayx5b_w@mail.gmail.com>
-References: <CA+icZUUsDoJHDk0Ug7FRc652CJvmcNdvhT1x44+8LOA2OSU3Hg@mail.gmail.com>
-	<CAPM=9tySnq0SDJEy0qvhhqjTnsSNTMuYzaMgOoi44SBRhuTF2Q@mail.gmail.com>
-	<CA+icZUVDX+rGMHaO3Pi+jRmHVs_QtdBOYcO++ugHPy4CmFurZA@mail.gmail.com>
-	<CA+icZUVJmUYFVOLTzkSqzw7+CW0TwK2S+vq=To8Cu2EpcNSxcQ@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: next-20130627 breaks i.MX6 sabre sd UART console
+Date: Fri, 28 Jun 2013 14:09:28 +0200 (CEST)
+Message-ID: <alpine.DEB.2.02.1306281403530.4013@ionos.tec.linutronix.de>
+References: <F7C43F8B2814514CA05F3436BC68046EF1EB72@039-SN2MPN1-013.039d.mgd.msft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f177.google.com ([74.125.82.177]:51612 "EHLO
-	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754614Ab3F1Jad (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Jun 2013 05:30:33 -0400
-In-Reply-To: <CA+icZUVJmUYFVOLTzkSqzw7+CW0TwK2S+vq=To8Cu2EpcNSxcQ@mail.gmail.com>
+Received: from www.linutronix.de ([62.245.132.108]:45879 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751236Ab3F1MJ2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Jun 2013 08:09:28 -0400
+In-Reply-To: <F7C43F8B2814514CA05F3436BC68046EF1EB72@039-SN2MPN1-013.039d.mgd.msft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+To: Stehle Vincent-B46079 <B46079@freescale.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, John Stultz <john.stultz@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Stephen Boyd <sboyd@codeaurora.org>
 
-On Fri, Jun 28, 2013 at 11:21 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Fri, Jun 28, 2013 at 10:31 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> On Fri, Jun 28, 2013 at 10:29 AM, Dave Airlie <airlied@gmail.com> wrote:
->>>>
->>>> [ CC wq and drm(-intel) folks ]
->>>>
->>>
->>> Already know the commit which caused it, mentioned on dri-devel,
->>> waiting for danvet to wake up and look, before I revert it later.
->>>
->>
->> Thanks, I like fast responses.
->>
->> For followers... See "workqueue warnings in helper code"
->>
->> - Sedat -
->>
->> http://lists.freedesktop.org/archives/dri-devel/2013-June/040707.html
->>
->
-> Just FYI:
->
-> Daniel decided to revert [2] (see [1]).
->
-> commit 160954b7bca43da7cd3cfbce310e6df919a8216e
-> "drm: kms_helper: don't lose hotplug event"
->
+On Thu, 27 Jun 2013, Stehle Vincent-B46079 wrote:
 
-I have tested that with my -2 build and the call-traces are gone.
+Cc'ed Mark and Stephen.
 
-Feel free to add my Reported-by/Tested-by.
-
-- Sedat -
-
-> - Sedat -
->
-> [1] http://lists.freedesktop.org/archives/dri-devel/2013-June/040721.html
-> [2] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=160954b7bca43da7cd3cfbce310e6df919a8216e
->
->>> Dave.
+> FYI I remark that today's Linux next 'next-20130627' breaks i.MX6
+> sabre sd UART console with ARM config imx_v6_v7_defconfig.
+> This was working fine yesterday with 'next-20130626'.
+> 
+> Bisecting gave me this commit:
+> 
+>   064706514ec3fea740c2656e03c4f01f6a551ac4 clocksource: Add generic
+> dummy timer driver
+> 
+> If I revert it I do indeed get the boot messages on the UART console
+> again, but the kernel then crashes in wm8962_probe(). So there is
+> more to find out...
