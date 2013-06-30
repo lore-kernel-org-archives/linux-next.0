@@ -1,33 +1,63 @@
-From: Oleg Nesterov <oleg@redhat.com>
-Subject: Re: mmotm 2013-06-27-16-36 uploaded (wait event common)
-Date: Sun, 30 Jun 2013 20:28:37 +0200
-Message-ID: <20130630182837.GA5738@redhat.com>
-References: <20130627233733.BAEB131C3BE@corp2gmr1-1.hot.corp.google.com> <51CD1F81.4040202@infradead.org> <65029.1372514416@turing-police.cc.vt.edu>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: linux-next: Tree for Jun 28 [ BISECTED: rsyslog/imklog: High CPU usage ]
+Date: Sun, 30 Jun 2013 16:17:07 -0400
+Message-ID: <4823.1372623427@turing-police.cc.vt.edu>
+References: <CA+icZUXo=Z4gDfCMvLqRQDq_fpNAq+UqtUw=jrU=3=kVZP-2+A@mail.gmail.com>
+            <20130630181945.GA5171@redhat.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1372623427_4671P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from lennier.cc.vt.edu ([198.82.162.213]:46808 "EHLO
+	lennier.cc.vt.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752295Ab3F3UXl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Jun 2013 16:23:41 -0400
+In-Reply-To: Your message of "Sun, 30 Jun 2013 20:19:45 +0200."
+             <20130630181945.GA5171@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Sedat Dilek <sedat.dilek@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Imre Deak <imre.deak@intel.com>, Lukas Czerner <lczerner@redhat.com>, Samuel Ortiz <samuel@sortiz.org>, Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Ralf Baechle <ralf@linux-mips.org>
+
+--==_Exmh_1372623427_4671P
 Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <65029.1372514416@turing-police.cc.vt.edu>
-Sender: owner-linux-mm@kvack.org
-To: Valdis.Kletnieks@vt.edu
-Cc: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
-On 06/29, Valdis.Kletnieks@vt.edu wrote:
+On Sun, 30 Jun 2013 20:19:45 +0200, Oleg Nesterov said:
 >
-> On Thu, 27 Jun 2013 22:30:41 -0700, Randy Dunlap said:
+> Not only "__wait_no_timeout(tout) ?:" was wrong, I didn't bother
+> to recheck this logic even after I got the "warning: the omitted
+> middle operand in ?:" reports.
 >
-> > +		__ret = __wait_no_timeout(tout) ?: (tout) ?: 1;
->
-> Was this trying to do a  wait_ho_timeout(!!tout)  or something?
+> Sedat, thanks you very much! Any chance you can try the patch below?
 
-No, __wait_no_timeout() means that tout == MAX_SCHEDULE_TIMEOUT.
-But the logic is wrong, we should return zero in this case.
+I'm not Sedat, but I had the same problem with rsyslog going nuts,
+and I can confirm that the patch fixes the problem.  (Had to hand-apply
+it, there was some difference of opinion regarding { } on an else)
 
-Oleg.
+Feel free to toss on a Tested-By: if this becomes a separate commit...
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+--==_Exmh_1372623427_4671P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.13 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iQIVAwUBUdCSQwdmEQWDXROgAQL5lBAAjtbkNdBAVuKWbG0wP6Nskb2L85CBvY5G
+zCmv7o7Fyb4ZyWufDl6cLVi26PsQnv2nZFxy3k1Ivh/0l5s+YPngjKplgUMl+mXD
+0X0zuwDx4J2868/rqqIVh91aKMo/wYMAg8Bf6NUAI4hpdOAaj6jo2kfDWzKA/FsR
+h24/cPL40aHzwUwxW2QAB0HEp02jxEXxExmTpjWrCGT5fVgM+AXaTTuPDga5KzRp
+b5kgsbIg5pqR6sR4jrNKxWiyU+uWIL0aNwD/duI85v7wk/oWDFTe7YF21BpX787H
+OjySotC5I+Zj3fxQb773fB4iexhuPz1HcnCo3PJqpRam4JDnjNhGe+NeO+AiKn+d
+zMyUBzvb4ruuKzk/zeiEysFlGvz6mhPjUqpRqL4DilqDGvBs5qE/MTtseNh0jEJa
+0vou3m7GfxoKob3LSYb+hQugvJOVbJgS+jyVD5YewVJOeyvcCVaGFVe/snzmHYy/
+Wu+C4/cVQYKMjv2fem5Y7h2ZFvWEaylqeDKwwtrDzXs3CX08YdbV90gXRF5TkPmK
+8nKV+n2qUiG1qvDN3lwfWyxRBVEADEbkRfXHlsQcsx2A8zugbc+Rh/mFyW5zTIS7
+l880+R8CKQIUaJMuQswoMd/cy2n9L26n2ZdMSa7Ef36NnMv3R/hLFEUwSaLHkBIT
+Xh1Dw+ee9m8=
+=8fz0
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1372623427_4671P--
