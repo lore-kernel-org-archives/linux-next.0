@@ -1,65 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the regulator tree
-Date: Mon, 1 Jul 2013 14:18:27 +1000
-Message-ID: <20130701141827.8f9122f0b6ca860fa5fd11a5@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the fbdev tree
+Date: Mon, 1 Jul 2013 14:38:24 +1000
+Message-ID: <20130701143824.dcff27129ecf4b29e836401e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__1_Jul_2013_14_18_27_+1000_v1AEq6aERCMb=MX7"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48277 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750833Ab3GAESi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2013 00:18:38 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Laxman Dewangan <ldewangan@nvidia.com>
+ boundary="Signature=_Mon__1_Jul_2013_14_38_24_+1000_IUZgo81xS8uuMOBL"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__1_Jul_2013_14_18_27_+1000_v1AEq6aERCMb=MX7
+--Signature=_Mon__1_Jul_2013_14_38_24_+1000_IUZgo81xS8uuMOBL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jiri,
 
-After merging the regulator tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the trivial tree got a conflict in
+drivers/video/omap2/displays/panel-n8x0.c between commit ecc8b3708986
+("OMAPDSS: Add panel dev pointer to dssdev") from the fbdev tree and
+commit 8b513d0cf603 ("treewide: Fix typo in printk") from the trivial
+tree.
 
-drivers/regulator/palmas-regulator.c: In function 'palmas_regulators_probe':
-drivers/regulator/palmas-regulator.c:850:8: error: 'PALMAS_REG_SMPS10' unde=
-clared (first use in this function)
-   case PALMAS_REG_SMPS10:
-        ^
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 07a02e0b1a4f ("regulator: palmas: model SMPS10 as two
-regulators").  Clearly not build tested at all :-(  Grep is your
-friend ...
-
-I have used the regulator tree from next-20130628 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__1_Jul_2013_14_18_27_+1000_v1AEq6aERCMb=MX7
+diff --cc drivers/video/omap2/displays/panel-n8x0.c
+index d3860c5,860b180..0000000
+--- a/drivers/video/omap2/displays/panel-n8x0.c
++++ b/drivers/video/omap2/displays/panel-n8x0.c
+@@@ -527,7 -527,7 +527,7 @@@ static int n8x0_panel_update(struct oma
+  	dh =3D dssdev->panel.timings.y_res;
+ =20
+  	if (x !=3D 0 || y !=3D 0 || w !=3D dw || h !=3D dh) {
+- 		dev_err(dssdev->dev, "invaid update region %d, %d, %d, %d\n",
+ -		dev_err(&dssdev->dev, "invalid update region %d, %d, %d, %d\n",
+++		dev_err(dssdev->dev, "invalid update region %d, %d, %d, %d\n",
+  			x, y, w, h);
+  		return -EINVAL;
+  	}
+
+--Signature=_Mon__1_Jul_2013_14_38_24_+1000_IUZgo81xS8uuMOBL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR0QMYAAoJEECxmPOUX5FEgckP/025sTKkAeAghOMSxMXU0GQi
-HkgeKHd+eBEIhKOOzKtrOF/frOjT+iLvVpbyVnHddUlG78Lrvl9wIZhoDqpH/cKe
-2ikIA3Xc6Lk3o0tsM3j3YNWnaxDu2bmwRrWFW03mHE9PFTk5bv0mcKKZ+iVGiJ3O
-L5quoW3Mrr+r0oFYb6fOdrnCp/5sK5p4ds8vj9V7KceqLDNWvPGlPdA9te14NvEv
-VyP4YbwHCxgEkhhp82p86A2oZgX0FAYaqdBEveGAySL0PIBEKcidfY+MzYOfJ2Xr
-Acnm/la4x+ogo3Po+A1Q/VYEV9xuVfufpMPb38/RaXxu34xQcDilWS06BuGNN2AR
-us2fK/TOFEpeTmwrisD7PZQ8wXsVOWRaRqR8ar4cP+/mB/27UyZKYhdwenBAFxmf
-Wj979olEAstdmWOOLhnE4QMkfDoSw2tDwDdbdp9blz4M9It9/iYW09D8T7kghyUG
-GiVUsIi26kcYEHJ4Bzl7Gs7i+ikOL4yJcLO3qyrM3ETm+y+ZY83klpoLanPkcwX/
-3M/wku9QTK8Fs3y1hV8y9kOQmOfv0+93iU1kHNEdee69vn4JseXiRiWUcl1099pD
-W27Uybi+K5YqJVqb3ITRYMQwK1UY+//LrngUp3XHJpeuFpbP6DDXVUH/K/dHcppr
-RDbb2rYNfNhBwyh5gOHG
-=yfgN
+iQIcBAEBCAAGBQJR0QfGAAoJEECxmPOUX5FEI28QAIr60hm9BliHiYyyOcrwvx4J
+mFJG27KVqUi19GycOySGzmy8o4V3db4owJZh9ZjlzHlo6zR5B0mqUXVVAqIuXRGO
+Qr8RpV7e44T0aY6oIpou0SVFlHDRtv9JbHXCAAFTH+leztVDDnikE1Mub/1nx9Fr
+2KhUtv2pTeH7/kuDiHo6a0uPwCdb2Seflqadx1s4HTUA7SCB9W9edbgGAAM6IOB0
+v06n13r8sFf2Ii9jBA0NskCFvUXp3u0KAXNbkjodfGacMjgR5WxYuH9puu9OA8NE
+HgrzJJtMyjYLpxnzBAKOQZI3NtQTeXfwjY/2trXLwNctHqaLzsYRPVPFJZRWqRyA
+RGaA2h1u5eYremSbnC53uHP6CEfJOZ8zWFDqsvwDivunZUhQXGQteIRyhhiBAluT
+9fPX7FoxGVgjXdG7nm80RaPatkxag+VXrYPhGZn5JBtLeKEUdCEEGyTzbzxxSQCS
+ZQV8wWHmwvbJ35np6NiOCBbY1xMoTN6EbFcLbGyLnBS+b7/d9gfup8kDJlCWqBcn
+Bm6YsLv42Fm6QKF4yVXmwIXCnnqGH9XIXMfMsBpX2OIHNBgmnShqkriuBfnRx2Cw
+ZJiOxLdqlVHSiFQRbUBlUo76bf7m+faa+ylD5IULQjyAIjyYEgTgyR3FAiIltJRV
+oDQ2ldSKViWE1VpFoGnz
+=nm7Z
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__1_Jul_2013_14_18_27_+1000_v1AEq6aERCMb=MX7--
+--Signature=_Mon__1_Jul_2013_14_38_24_+1000_IUZgo81xS8uuMOBL--
