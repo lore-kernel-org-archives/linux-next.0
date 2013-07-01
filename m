@@ -1,43 +1,62 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Jun 28 [ BISECTED: rsyslog/imklog: High CPU
- usage ]
-Date: Sun, 30 Jun 2013 23:52:19 +0200
-Message-ID: <CA+icZUUHXq-ZBYqgwitrC9Ek8LJZoK=bZQ8CbWppd8zJWx=F9w@mail.gmail.com>
-References: <CA+icZUXo=Z4gDfCMvLqRQDq_fpNAq+UqtUw=jrU=3=kVZP-2+A@mail.gmail.com>
-	<20130630181945.GA5171@redhat.com>
-	<4823.1372623427@turing-police.cc.vt.edu>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Linux 3.10
+Date: Mon, 1 Jul 2013 10:56:03 +1000
+Message-ID: <20130701105603.7eec28392183b476b224fd5a@canb.auug.org.au>
+References: <CA+55aFzWRsRGgE9Muig0LoeqMLZXZvGEw+ROYguV0ZcnMhqQ0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__1_Jul_2013_10_56_03_+1000_IMvOTEvykA/agpaj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:44572 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751400Ab3F3VwU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Jun 2013 17:52:20 -0400
-In-Reply-To: <4823.1372623427@turing-police.cc.vt.edu>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47752 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751325Ab3GAA4N (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Jun 2013 20:56:13 -0400
+In-Reply-To: <CA+55aFzWRsRGgE9Muig0LoeqMLZXZvGEw+ROYguV0ZcnMhqQ0g@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Valdis.Kletnieks@vt.edu
-Cc: Oleg Nesterov <oleg@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Imre Deak <imre.deak@intel.com>, Lukas Czerner <lczerner@redhat.com>, Samuel Ortiz <samuel@sortiz.org>, Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Ralf Baechle <ralf@linux-mips.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On Sun, Jun 30, 2013 at 10:17 PM,  <Valdis.Kletnieks@vt.edu> wrote:
-> On Sun, 30 Jun 2013 20:19:45 +0200, Oleg Nesterov said:
->>
->> Not only "__wait_no_timeout(tout) ?:" was wrong, I didn't bother
->> to recheck this logic even after I got the "warning: the omitted
->> middle operand in ?:" reports.
->>
->> Sedat, thanks you very much! Any chance you can try the patch below?
+--Signature=_Mon__1_Jul_2013_10_56_03_+1000_IMvOTEvykA/agpaj
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+On Sun, 30 Jun 2013 16:09:59 -0700 Linus Torvalds <torvalds@linux-foundatio=
+n.org> wrote:
 >
-> I'm not Sedat, but I had the same problem with rsyslog going nuts,
-> and I can confirm that the patch fixes the problem.  (Had to hand-apply
-> it, there was some difference of opinion regarding { } on an else)
->
+> ...
 
-I am... Legend :-).
-Thanks for confirmation!
+So, lets all take a deep breath, go test what's in linux-next, resist the
+urge to rebase/rewrite all those trees and then bury Linus under pull
+requests.
 
-- Yes, it's you (every day Gmail says this to me) "Sedat" -
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> Feel free to toss on a Tested-By: if this becomes a separate commit...
->
+--Signature=_Mon__1_Jul_2013_10_56_03_+1000_IMvOTEvykA/agpaj
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR0NOnAAoJEECxmPOUX5FEF+0P/jGkgwXa2SUK3MIpU1pMyZLy
+6souXRbOXG0rZbRoS01arwMst7Moh9KzNAtANxYPtbC82kgxPfDwPRhs+dAb/f+0
+bHl5eZCzdXJJ4sAYdpTdYC/MHNaAL7xI1G7QH1eqVD6mSDip/4LtX/9rb/r7dNKB
+v4mvf8mlAnDbBa4qcCld5QHZB4Wbs3ddkkBOweACw5BDelAXIOECORJD5bpLNf22
+p4XvYPBC4q6aLW1b9lIqUmeIut4PqK+WSAmduLbXitqUzYbymSiTNtX6PpTFsyT8
+GWgvTVFHSoGXr0FBSF0Q+kzWq7+4XTza0wNyCCYC49NT0MYpXos9Uf8yZldoHN51
+3ycWILwMuPf+ONR4PoOGGry4eLGpqV9JQIZFWhKge3UVQectzyHo7yZNBFYCJ0/P
+gGKJ8uBOTvkHTLQys093N/hLGOEp+woPGY+2eRTd9lupqR44Xmk2Lix9eNGQ7MQV
+aVdS2Mn2wpRs/4NIo00RYqRVBocsDx5Fd83yj1wG9J7S3CdU3SYRV+h4CcoIW8MI
+06Tl0DqrahLXU9ZIuSbXG99JXw+vqDffqtz8ucZFk12wQVr0sJjtpv+tLu/XmKTX
+0I9yKXEuJL1n7htlsSatkSOtO4l0J+c5OKlkKr8P+0s/WwDWsqCNNM0XyPSA0Dca
+bxicU0DBO4eVSmoU1BAW
+=6LrW
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__1_Jul_2013_10_56_03_+1000_IMvOTEvykA/agpaj--
