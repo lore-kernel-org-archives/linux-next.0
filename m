@@ -1,51 +1,62 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Sedat Dilek <sedat.dilek@gmail.com>
 Subject: Re: linux-next: Tree for Jul 1 [ drm-intel-next: Several call-traces ]
-Date: Mon, 1 Jul 2013 10:52:49 +0200
-Message-ID: <CAKMK7uFzwiztE8H1rvSDWQmw08JGoKdnTs5BYqxdrHwb=pK50A@mail.gmail.com>
+Date: Mon, 1 Jul 2013 11:03:14 +0200
+Message-ID: <CA+icZUXnHaT75NhhSx+AhcMEKybHugH9+hV_mS5h5-cimFdz6A@mail.gmail.com>
 References: <CA+icZUXyizuCR3YDfFXD5hCkgycFYGzMHaJxg=m9UackT7uzGQ@mail.gmail.com>
+	<CAKMK7uFzwiztE8H1rvSDWQmw08JGoKdnTs5BYqxdrHwb=pK50A@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oa0-f45.google.com ([209.85.219.45]:51459 "EHLO
-	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752884Ab3GAIwt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2013 04:52:49 -0400
-Received: by mail-oa0-f45.google.com with SMTP id j1so4568793oag.32
-        for <linux-next@vger.kernel.org>; Mon, 01 Jul 2013 01:52:49 -0700 (PDT)
-In-Reply-To: <CA+icZUXyizuCR3YDfFXD5hCkgycFYGzMHaJxg=m9UackT7uzGQ@mail.gmail.com>
+Received: from mail-we0-f171.google.com ([74.125.82.171]:63439 "EHLO
+	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751843Ab3GAJDQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2013 05:03:16 -0400
+In-Reply-To: <CAKMK7uFzwiztE8H1rvSDWQmw08JGoKdnTs5BYqxdrHwb=pK50A@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>, "Barnes, Jesse" <jbarnes@virtuousgeek.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: "Barnes, Jesse" <jbarnes@virtuousgeek.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@gmail.com>
 
-On Mon, Jul 1, 2013 at 10:49 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Mon, Jul 1, 2013 at 9:59 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
+On Mon, Jul 1, 2013 at 10:52 AM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> On Mon, Jul 1, 2013 at 10:49 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> On Mon, Jul 1, 2013 at 9:59 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20130628:
+>>>
+>>> The regulator tree gained a build failure so I used the version from
+>>> next-20130628.
+>>>
+>>> The trivial tree gained a conflict against the fbdev tree.
+>>>
+>>> The arm-soc tree gained a conflict against the net-next tree.
+>>>
+>>> The akpm tree lost a few patches that turned up elsewhere and I removed 2
+>>> that were causing run time problems.
+>>>
 >>
->> Changes since 20130628:
+>> [ CC drm and drm-intel folks ]
 >>
->> The regulator tree gained a build failure so I used the version from
->> next-20130628.
+>> [ Did not check any relevant MLs ]
 >>
->> The trivial tree gained a conflict against the fbdev tree.
->>
->> The arm-soc tree gained a conflict against the net-next tree.
->>
->> The akpm tree lost a few patches that turned up elsewhere and I removed 2
->> that were causing run time problems.
->>
+>> Please, see attached dmesg output.
 >
-> [ CC drm and drm-intel folks ]
->
-> [ Did not check any relevant MLs ]
->
-> Please, see attached dmesg output.
+> Clock mismatch, one for Jesse to figure out. Note that this patch is
+> for 3.12, I simply haven't yet gotten around to properly split my
+> patch queue so a few spilled into -next. I'll do that now.
 
-Clock mismatch, one for Jesse to figure out. Note that this patch is
-for 3.12, I simply haven't yet gotten around to properly split my
-patch queue so a few spilled into -next. I'll do that now.
--Daniel
---
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+I like lightspeed-fast replies :-).
+
+Guess "drm/i915: get mode clock when reading the pipe config v9" [1]
+is the cause.
+
+- Sedat -
+
+[1] http://cgit.freedesktop.org/~danvet/drm-intel/commit/?h=drm-intel-next-queued&id=d325d8b4f351f9d45e7c8baabf581fd21f343133
+
+> -Daniel
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
