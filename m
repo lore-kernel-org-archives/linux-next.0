@@ -1,78 +1,77 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 Subject: Re: next-20130627 breaks i.MX6 sabre sd UART console
-Date: Mon, 01 Jul 2013 13:54:36 -0700
-Message-ID: <51D1EC8C.4050101@codeaurora.org>
-References: <F7C43F8B2814514CA05F3436BC68046EF1EB72@039-SN2MPN1-013.039d.mgd.msft.net> <alpine.DEB.2.02.1306281403530.4013@ionos.tec.linutronix.de> <51CDB26A.9060500@codeaurora.org> <F7C43F8B2814514CA05F3436BC68046EF2297D@039-SN2MPN1-013.039d.mgd.msft.net> <51CDC2B3.1030907@codeaurora.org> <20130629020738.GG11625@codeaurora.org> <F7C43F8B2814514CA05F3436BC68046EF2EF29@039-SN2MPN1-011.039d.mgd.msft.net> <alpine.DEB.2.02.1307011425500.4013@ionos.tec.linutronix.de> <F7C43F8B2814514CA05F3436BC68046EF2F708@039-SN2MPN1-011.039d.mgd.msft.net> <alpine.DEB.2.02.1307011531210.4013@ionos.tec.linutronix.de> <51D1DD6D.8050805@codeaurora.org> <alpine.DEB.2.02.1307012153060.4013@ionos.tec.linutronix.de>
+Date: Mon, 1 Jul 2013 23:24:47 +0200 (CEST)
+Message-ID: <alpine.DEB.2.02.1307012259460.4013@ionos.tec.linutronix.de>
+References: <F7C43F8B2814514CA05F3436BC68046EF1EB72@039-SN2MPN1-013.039d.mgd.msft.net> <alpine.DEB.2.02.1306281403530.4013@ionos.tec.linutronix.de> <51CDB26A.9060500@codeaurora.org> <F7C43F8B2814514CA05F3436BC68046EF2297D@039-SN2MPN1-013.039d.mgd.msft.net>
+ <51CDC2B3.1030907@codeaurora.org> <20130629020738.GG11625@codeaurora.org> <F7C43F8B2814514CA05F3436BC68046EF2EF29@039-SN2MPN1-011.039d.mgd.msft.net> <alpine.DEB.2.02.1307011425500.4013@ionos.tec.linutronix.de> <F7C43F8B2814514CA05F3436BC68046EF2F708@039-SN2MPN1-011.039d.mgd.msft.net>
+ <alpine.DEB.2.02.1307011531210.4013@ionos.tec.linutronix.de> <51D1DD6D.8050805@codeaurora.org> <alpine.DEB.2.02.1307012153060.4013@ionos.tec.linutronix.de> <51D1EC8C.4050101@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:60894 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753269Ab3GAUyi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2013 16:54:38 -0400
-In-Reply-To: <alpine.DEB.2.02.1307012153060.4013@ionos.tec.linutronix.de>
+Received: from www.linutronix.de ([62.245.132.108]:57235 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754828Ab3GAVYt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2013 17:24:49 -0400
+In-Reply-To: <51D1EC8C.4050101@codeaurora.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
 Cc: Stehle Vincent-B46079 <B46079@freescale.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, John Stultz <john.stultz@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
 
-On 07/01/13 13:14, Thomas Gleixner wrote:
-> The issue is very subtle. What happens is:
->
-> CPU0						CPU1
->
-> Switch to oneshot mode
->
->  Copy the bits from tick_broadcast_mask to
->  tick_broadcast_oneshot_mask. We need to do
->  that so the other cpus reach the timer irq
->  and the softirq which switches them to
->  oneshot.
->
->  Kick the broadcast device into oneshot.
->
-> 						Timer interrupt fires
-> 						
-> 						irq_enter sees the cpu in
-> 						tick_broadcast_oneshot_mask and
-> 						sets the device to oneshot mode
-> 						
-> 						handle_periodic:
-> 						 Sees oneshot mode and adds
-> 						 period to
-> 						 dev->next_event(KTIME_MAX)
-> 			
+On Mon, 1 Jul 2013, Stephen Boyd wrote:
+> On 07/01/13 13:14, Thomas Gleixner wrote:
+> > The issue is very subtle. What happens is:
+> >
+> > CPU0						CPU1
+> >
+> > Switch to oneshot mode
+> >
+> >  Copy the bits from tick_broadcast_mask to
+> >  tick_broadcast_oneshot_mask. We need to do
+> >  that so the other cpus reach the timer irq
+> >  and the softirq which switches them to
+> >  oneshot.
+> >
+> >  Kick the broadcast device into oneshot.
+> >
+> > 						Timer interrupt fires
+> > 						
+> > 						irq_enter sees the cpu in
+> > 						tick_broadcast_oneshot_mask and
+> > 						sets the device to oneshot mode
+> > 						
+> > 						handle_periodic:
+> > 						 Sees oneshot mode and adds
+> > 						 period to
+> > 						 dev->next_event(KTIME_MAX)
+> > 			
+> 
+> Yep. It is also racing with the timer interrupt so having more than two
+> CPUs must help widen the window (which is why we see it on the higher
+> numbered CPUs).
 
-Yep. It is also racing with the timer interrupt so having more than two
-CPUs must help widen the window (which is why we see it on the higher
-numbered CPUs).
+The race above is about the timer interrupt. You mean the broadcast
+one which is still enabled due to the dummy -> functional transition
+issue, right? That helps a lot to make this more visible, because we
+double the number of events.
 
-> 			 
-> So we need two fixes:
->
-> 1) The replacement of the dummy timer and the effect on the broadcast
->    mask/device
->
-> 2) tick_check_oneshot_broadcast needs a sanity check
->
-> Patch below.
+> > +			 * because the CPU is running and therefor not
+> 
+> s/therefor/therefore/
 
-Looks good.
+Duh. That one haunts me forever.
 
-Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+/me goes off to split the patch into two separate fixes, add proper
+changelogs and wait for Vincents confirmation.
 
-One minor typo in the comment below.
+I really wish, that x86 would have been the only architecture which
+made use of that broadcast nonsense. Though the ARM folks went there
+and created the same mess as x86 but raised to the power of N, where
 
-> +		switch (tick_broadcast_device.mode) {
-> +		case TICKDEV_MODE_ONESHOT:
-> +			/*
-> +			 * If the system is in oneshot mode we can
-> +			 * unconditionally clear the oneshot mask,
-> +			 * because the CPU is running and therefor not
+    N = Number of odd ARM chips designed by morons who thought that
+      	copying the already publicly documented idiocy of x86 is a
+      	brilliant idea.
 
-s/therefor/therefore/
+Thanks,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+	tglx
