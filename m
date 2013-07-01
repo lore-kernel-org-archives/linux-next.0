@@ -1,53 +1,53 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: linux-next: build failure after merge of the regulator tree
-Date: Mon, 1 Jul 2013 09:42:02 +0100
-Message-ID: <20130701084202.GR27646@sirena.org.uk>
+Date: Mon, 1 Jul 2013 09:43:39 +0100
+Message-ID: <20130701084339.GS27646@sirena.org.uk>
 References: <20130701141827.8f9122f0b6ca860fa5fd11a5@canb.auug.org.au>
+ <51D11C8D.2010400@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2D9EG7COLye/vM78"
+	protocol="application/pgp-signature"; boundary="UiQbhG36sksrFEkN"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20130701141827.8f9122f0b6ca860fa5fd11a5@canb.auug.org.au>
+In-Reply-To: <51D11C8D.2010400@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Laxman Dewangan <ldewangan@nvidia.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Keerthy <a0393675@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-next.vger.kernel.org
 
 
---2D9EG7COLye/vM78
+--UiQbhG36sksrFEkN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Jul 01, 2013 at 02:18:27PM +1000, Stephen Rothwell wrote:
+On Mon, Jul 01, 2013 at 11:37:09AM +0530, Kishon Vijay Abraham I wrote:
 
-> Caused by commit 07a02e0b1a4f ("regulator: palmas: model SMPS10 as two
-> regulators").  Clearly not build tested at all :-(  Grep is your
-> friend ...
+> commit 1ffb0b (mfd: palmas: Add SMPS10_BOOST feature) had used PALMAS_REG_SMPS10
+> and I dint have that patch in my tree. Sorry, my bad.
+> Keerthy will send a fix for it.
 
-That's odd, it's also not been caught by Fengguang's system which
-generally gets this sort of stuff...
+Resubmit the patch, I've dropped it.
 
---2D9EG7COLye/vM78
+--UiQbhG36sksrFEkN
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR0UDWAAoJELSic+t+oim9vJsP/3+u3bJm45rGXI9Xqh6uxpJB
-idUrIlPNlIxhuZfAnh8CCTy5QuptMW+cG8mrYfx2ZWmJOe/O1MBXPiDDGdMuVN7+
-Xcgk6dy630YzEcWNShK4KVRSyGYtzFM1wOFxJ8fMQuYDYHtts+zP7U83cymOn4bE
-mQNLXOkMkjwnTgdY7L9RjiGmvnDAXP6V6iUqxAG+m2ZgkjC1mWzR9x+is0abYybw
-2inGlARJCNwlgheFCywkjNSUI1cvWFNNRB54RxDWLJDWITSG6Glhr6/CvCPgFHQO
-GdvYMa6dy8IUVMWdzXdMCTaIVb+xYaropRBPhrKUoMGCDuqoN8GjXxO9CBiXzJy3
-m9fUMGSHysWMorXS6/Y50ViP6Np8FvBOkZIvh7z2q0tnNDF2Zr6DYnu4KAIk8AEr
-kwSb8RUKRe+prRdB9hahY87/cqLZlleNZibYaWt7543ICIIHwIIWP2q5RgPsX8LN
-ej5NgBXuqCZDogsLOl6iFKAOFjTYvF9iNKAqP4YihbOPcJsIYAZDuYK9UEe6Y+tg
-CUV0RmkGfDl8wXltqroRaMursfrdLl309aAGcqepvucnOBr3g0xiSwAnQAi133kr
-z8auQYHCi8Ir+YmlqDnU9PbkVxxYHxNGMkNI6ghxy2QDZcg+nOWv5gGk66w2ka0I
-Rb478fBF+dM7zJwXltAY
-=4rJJ
+iQIcBAEBAgAGBQJR0UE4AAoJELSic+t+oim9FqsP/2/yWvpxJ5YYENy+AMeYGvos
+g0kwXwyxXGtD8WiId/YHTNOL8NY3g6tKLgeEarhCHKZeIUs3MnTCM++d+7Kv9VGV
+aBXdqLPNFUL+r3jO3s8G+quWpm6G5E+Rf/zizxFqfUBonKdTmfjehFPvxz0oD0fl
+b3fNEFiQ8vHUlY1tmb5fUvts1EL9O7DD4+Zjz7KGmK1bqRiaYuuCbIlXwWGtFPDL
+w62fADYaNhAcekEJ2+hZjsd1AYECK/VwwNncpdrInh8beqYQfbRn61LXNNoJ5Bf3
+WgxkKAn5WjhSVoan4ac++yg0IH9YR/8bpycHxhZxL+Uxe69gONCOYh4gkQvxpEEw
+6+d+mpIPIaEUnvVdaeLZVNZAvyXcfua1KvgxQ/I1VOYaiZxmEdWodixjTNnjDmua
+lBuslHhbE3uuK2QM38haj9O64f1JupINNjszLePWRZ6nmcLFPXOC8e3JVUboI3kp
+7yBia/tY9gyuPq7nOyEV+gplzw4IdZhvPav5gmbYFe+iHcAGEFARjGDgnKKx40aZ
+rWDmNCo7YNR2GdbdAAasrlE7/g3TkP6Aaf8JH+Q1nOS09GS2YIMZvKKJ37fOXonF
+Jv7e4nBC1W5sYWZ60pea+YrcjSYduNkvtuXruX7WmUeavBdFZMHxHtoe++GYtoQG
+o+mw79Y4/A0MVMIqYJC6
+=tCP8
 -----END PGP SIGNATURE-----
 
---2D9EG7COLye/vM78--
+--UiQbhG36sksrFEkN--
