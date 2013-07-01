@@ -1,53 +1,32 @@
-From: Mark Brown <broonie@kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
 Subject: Re: linux-next: build failure after merge of the regulator tree
-Date: Mon, 1 Jul 2013 09:43:39 +0100
-Message-ID: <20130701084339.GS27646@sirena.org.uk>
-References: <20130701141827.8f9122f0b6ca860fa5fd11a5@canb.auug.org.au>
- <51D11C8D.2010400@ti.com>
+Date: Mon, 1 Jul 2013 14:17:14 +0530
+Message-ID: <51D14212.50703@ti.com>
+References: <20130701141827.8f9122f0b6ca860fa5fd11a5@canb.auug.org.au> <51D11C8D.2010400@ti.com> <20130701084339.GS27646@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UiQbhG36sksrFEkN"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <51D11C8D.2010400@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:38876 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752798Ab3GAIrZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Jul 2013 04:47:25 -0400
+In-Reply-To: <20130701084339.GS27646@sirena.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Keerthy <a0393675@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
-List-Id: linux-next.vger.kernel.org
 
+On Monday 01 July 2013 02:13 PM, Mark Brown wrote:
+> On Mon, Jul 01, 2013 at 11:37:09AM +0530, Kishon Vijay Abraham I wrote:
+>
+>> commit 1ffb0b (mfd: palmas: Add SMPS10_BOOST feature) had used PALMAS_REG_SMPS10
+>> and I dint have that patch in my tree. Sorry, my bad.
+>> Keerthy will send a fix for it.
+>
+> Resubmit the patch, I've dropped it.
 
---UiQbhG36sksrFEkN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ok. I'll resend the patch.
 
-On Mon, Jul 01, 2013 at 11:37:09AM +0530, Kishon Vijay Abraham I wrote:
-
-> commit 1ffb0b (mfd: palmas: Add SMPS10_BOOST feature) had used PALMAS_REG_SMPS10
-> and I dint have that patch in my tree. Sorry, my bad.
-> Keerthy will send a fix for it.
-
-Resubmit the patch, I've dropped it.
-
---UiQbhG36sksrFEkN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR0UE4AAoJELSic+t+oim9FqsP/2/yWvpxJ5YYENy+AMeYGvos
-g0kwXwyxXGtD8WiId/YHTNOL8NY3g6tKLgeEarhCHKZeIUs3MnTCM++d+7Kv9VGV
-aBXdqLPNFUL+r3jO3s8G+quWpm6G5E+Rf/zizxFqfUBonKdTmfjehFPvxz0oD0fl
-b3fNEFiQ8vHUlY1tmb5fUvts1EL9O7DD4+Zjz7KGmK1bqRiaYuuCbIlXwWGtFPDL
-w62fADYaNhAcekEJ2+hZjsd1AYECK/VwwNncpdrInh8beqYQfbRn61LXNNoJ5Bf3
-WgxkKAn5WjhSVoan4ac++yg0IH9YR/8bpycHxhZxL+Uxe69gONCOYh4gkQvxpEEw
-6+d+mpIPIaEUnvVdaeLZVNZAvyXcfua1KvgxQ/I1VOYaiZxmEdWodixjTNnjDmua
-lBuslHhbE3uuK2QM38haj9O64f1JupINNjszLePWRZ6nmcLFPXOC8e3JVUboI3kp
-7yBia/tY9gyuPq7nOyEV+gplzw4IdZhvPav5gmbYFe+iHcAGEFARjGDgnKKx40aZ
-rWDmNCo7YNR2GdbdAAasrlE7/g3TkP6Aaf8JH+Q1nOS09GS2YIMZvKKJ37fOXonF
-Jv7e4nBC1W5sYWZ60pea+YrcjSYduNkvtuXruX7WmUeavBdFZMHxHtoe++GYtoQG
-o+mw79Y4/A0MVMIqYJC6
-=tCP8
------END PGP SIGNATURE-----
-
---UiQbhG36sksrFEkN--
+Thanks
+Kishon
