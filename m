@@ -1,145 +1,56 @@
-From: "Gupta, Pekon" <pekon@ti.com>
-Subject: RE: linux-next: manual merge of the arm-soc tree with the l2-mtd tree
-Date: Tue, 2 Jul 2013 05:44:25 +0000
-Message-ID: <20980858CB6D3A4BAE95CA194937D5E73E9E3BF5@DBDE04.ent.ti.com>
-References: <20130702152954.f25bbf51c1a79aa4437e22ee@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the renesas tree with the arm tree
+Date: Tue, 2 Jul 2013 15:45:14 +1000
+Message-ID: <20130702154514.89bffccc662256004f301552@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20130702152954.f25bbf51c1a79aa4437e22ee@canb.auug.org.au>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Tony Lindgren <tony@atomide.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Artem Bityutskiy <dedekind1@gmail.com>, Mark Jackson <mpfj-list@newflow.co.uk>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__2_Jul_2013_15_45_14_+1000_Z45NDYOD_QvtL7X/"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Russell King <rmk@arm.linux.org.uk>, Magnus Damm <damm@opensource.se>
 List-Id: linux-next.vger.kernel.org
 
-> 
-> Hi all,
-> 
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> Documentation/devicetree/bindings/mtd/gpmc-nand.txt between commits
-> 6c88058ef927 ("ARM: OMAP2+: cleaned-up DT support of various ECC
-> schemes") and 212012138deb ("mtd: nand: omap2: updated support for
-> BCH4
-> ECC scheme") from the l2-mtd tree and commit 496c8a0bbb72 ("ARM:
-> OMAP2+:
-> Allow NAND transfer mode to be specified in DT") from the arm-soc tree.
-> 
-> I fixed it up (maybe - see below) and can carry the fix as necessary (no
-> action is required).
-> 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-Yes following merge is correct. Apologies, as there were multiple OMAP2 NAND and GPMC updates and clean-up going into different trees, so these conflict came. Going forward you shouldn't find such issues, as code is more stable now. Thanks for help.
+--Signature=_Tue__2_Jul_2013_15_45_14_+1000_Z45NDYOD_QvtL7X/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-with regards, pekon
+Hi Simon,
 
-> diff --cc Documentation/devicetree/bindings/mtd/gpmc-nand.txt
-> index b3f23df,df338cb..0000000
-> --- a/Documentation/devicetree/bindings/mtd/gpmc-nand.txt
-> +++ b/Documentation/devicetree/bindings/mtd/gpmc-nand.txt
-> @@@ -17,59 -17,27 +17,66 @@@ Required properties
-> 
->   Optional properties:
-> 
->  - - nand-bus-width: 		Set this numeric value to 16 if the hardware
->  -				is wired that way. If not specified, a bus
->  -				width of 8 is assumed.
->  + - nand-bus-width: 		Determines data-width of the connected
-> device
->  +				x16 = "16"
->  +				x8  = "8" (default)
-> 
->  - - ti,nand-ecc-opt:		A string setting the ECC layout to use. One of:
-> 
->  -		"sw"		Software method (default)
->  -		"hw"		Hardware method
->  -		"hw-romcode"	gpmc hamming mode method & romcode
-> layout
->  -		"bch4"		4-bit BCH ecc code
->  -		"bch8"		8-bit BCH ecc code
->  + - ti,nand-ecc-opt:		Determines the ECC scheme used by driver.
->  +				It can be any of the following strings:
->  +
->  +	"hamming_code_sw"		1-bit Hamming ECC
->  +					- ECC calculation in software
->  +					- Error detection in software
->  +					- ECC layout compatible with S/W
-> scheme
->  +
->  +	"hamming_code_hw"		1-bit Hamming ECC
->  +					- ECC calculation in hardware
->  +					- Error detection in software
->  +					- ECC layout compatible with S/W
-> scheme
->  +
->  +	"hamming_code_hw_romcode"	1-bit Hamming ECC
->  +					- ECC calculation in hardware
->  +					- Error detection in software
->  +					- ECC layout compatible with ROM
-> code
->  +
->  +	"bch4_code_hw_detection_sw"	4-bit BCH ECC
->  +					- ECC calculation in hardware
->  +					- Error detection in software
->  +					- ECC layout compatible with S/W
-> scheme
->  +					* depends on
-> CONFIG_MTD_NAND_ECC_BCH
->  +
->  +	"bch4_code_hw"             	4-bit BCH ECC
->  +					- ECC calculation in hardware
->  +					- Error detection in hardware
->  +					- ECC layout compatible with ROM
-> code
->  +					* depends on
-> CONFIG_MTD_NAND_OMAP_BCH
->  +					* requires <elm_id> to be specified
->  +
->  +	"bch8_code_hw_detection_sw"	8-bit BCH ECC
->  +					- ECC calculation in hardware
->  +					- Error detection in software
->  +					- ECC layout compatible with S/W
-> scheme
->  +					* depends on
-> CONFIG_MTD_NAND_ECC_BCH
->  +
->  +	"bch8_code_hw"             	8-bit BCH ECC
->  +					- ECC calculation in hardware
->  +					- Error detection in hardware
->  +					- ECC layout compatible with ROM
-> code
->  +					* depends on
-> CONFIG_MTD_NAND_OMAP_BCH
->  +					* requires <elm_id> to be specified
-> 
-> +  - ti,nand-xfer-type:		A string setting the data transfer type. One
-> of:
-> +
-> + 		"prefetch-polled"	Prefetch polled mode (default)
-> + 		"polled"		Polled mode, without prefetch
-> + 		"prefetch-dma"		Prefetch enabled sDMA
-> mode
-> + 		"prefetch-irq"		Prefetch enabled irq mode
-> +
->  - - elm_id:	Specifies elm device node. This is required to support BCH
->  - 		error correction using ELM module.
->  +
->  + - elm_id:			Specifies elm device node. This is required to
->  +				support some BCH ECC schemes mentioned
-> above.
->  +
-> 
->   For inline partiton table parsing (optional):
-> 
+Today's linux-next merge of the renesas tree got a conflict in
+arch/arm/mach-shmobile/Kconfig between commit fb521a0da155 ("arm: fix up
+ARM_ARCH_TIMER selects") from the arm tree and commits 462972da5f18
+("ARM: shmobile: Make r8a7790 Arch timer optional") and 39d97587d6cb
+("ARM: shmobile: Make r8a73a4 Arch timer optional") from the renesas tree.
+
+I fixed it up (the latter patches removed the "select"s that the former
+modified) and can carry the fix as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__2_Jul_2013_15_45_14_+1000_Z45NDYOD_QvtL7X/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR0mjuAAoJEECxmPOUX5FEBbQP/0EbEIYekFwYtsL4HzC7MdiX
+xCMDs26FqnU1ULGIVN5EDHXxc0XY7uyRORCXcsgMhJgws2DZKpTEbZkdqaQDSGZe
+akXzir/ju/lX1oquUsP3P1l8grMpNnsohLWqNpjO4N37DRjiG5XZxKrRQAQUdbcZ
+8blk/Q5q3SlwiRAFeLlm7aOpLixCnIQ5VUPHYFZaFUvEiA8C7ZKDkkwHmHnI+0bm
+7oAjOiinnKCfxZYmyQC3/JfltpgAc6sgenWghBD3CA7jpBSRM7G3WipD/HbjxitX
+PmgrFhkfkque9zH5bHCrGy73y+5zsOQWsfolstZtdd1dUt2PRiTieEV93lcI4tk9
+vVIUDOYbwbCegaHi4twK7b+Ks3oJRgjwyoGdY85mwPI0dNRI4XCd+koLgaKoDAYl
+tmMiRn6WS2qnQ4NIN7evGYXJD1BUn1/trnsHVQFe3tgvmjLxLUfxoEQ4xa0CIJh1
+PCrd7CUa3KrB6qe6kp0wALz+eSaWkggsps+Two6cBkNmTvnSIddvpIy5kktZhs0X
+a5QJTrQ/xMDvv4XkZdK8D2Aj2uLp+TgmiY7XsyJ/knbDgOQCjtdcPaI3PDoorAYo
+UOYFLrEEQ52nPHedEhOp/XIqPB4PqOi6M+xjAaJH2dv8nEWOPL72mP2mw+ghzThH
+vg6Cv7EUFQzJvx1LDe8T
+=Ch90
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Jul_2013_15_45_14_+1000_Z45NDYOD_QvtL7X/--
