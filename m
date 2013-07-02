@@ -1,84 +1,106 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Jul 1 [ drm-intel-next: Several call-traces ]
-Date: Tue, 2 Jul 2013 07:31:41 +0200
-Message-ID: <CA+icZUVQ_UO_VnN9+Q7B3hhuFmw4XPEw19rhO+T4jU5hLGWaTQ@mail.gmail.com>
-References: <CA+icZUXyizuCR3YDfFXD5hCkgycFYGzMHaJxg=m9UackT7uzGQ@mail.gmail.com>
-	<CAKMK7uFzwiztE8H1rvSDWQmw08JGoKdnTs5BYqxdrHwb=pK50A@mail.gmail.com>
-	<CA+icZUXnHaT75NhhSx+AhcMEKybHugH9+hV_mS5h5-cimFdz6A@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the l2-mtd tree
+Date: Tue, 2 Jul 2013 15:33:48 +1000
+Message-ID: <20130702153348.ce27e4a6185c0b403e039e06@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__2_Jul_2013_15_33_48_+1000_bAACq1qmBWAh5kdy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:54437 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932097Ab3GBFbm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Jul 2013 01:31:42 -0400
-In-Reply-To: <CA+icZUXnHaT75NhhSx+AhcMEKybHugH9+hV_mS5h5-cimFdz6A@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34827 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932101Ab3GBFdu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Jul 2013 01:33:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: "Barnes, Jesse" <jbarnes@virtuousgeek.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@gmail.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pekon Gupta <pekon@ti.com>, Artem Bityutskiy <dedekind1@gmail.com>
 
-On Mon, Jul 1, 2013 at 11:03 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Mon, Jul 1, 2013 at 10:52 AM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->> On Mon, Jul 1, 2013 at 10:49 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>> On Mon, Jul 1, 2013 at 9:59 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>> Hi all,
->>>>
->>>> Changes since 20130628:
->>>>
->>>> The regulator tree gained a build failure so I used the version from
->>>> next-20130628.
->>>>
->>>> The trivial tree gained a conflict against the fbdev tree.
->>>>
->>>> The arm-soc tree gained a conflict against the net-next tree.
->>>>
->>>> The akpm tree lost a few patches that turned up elsewhere and I removed 2
->>>> that were causing run time problems.
->>>>
->>>
->>> [ CC drm and drm-intel folks ]
->>>
->>> [ Did not check any relevant MLs ]
->>>
->>> Please, see attached dmesg output.
->>
->> Clock mismatch, one for Jesse to figure out. Note that this patch is
->> for 3.12, I simply haven't yet gotten around to properly split my
->> patch queue so a few spilled into -next. I'll do that now.
->
-> I like lightspeed-fast replies :-).
->
-> Guess "drm/i915: get mode clock when reading the pipe config v9" [1]
-> is the cause.
->
+--Signature=_Tue__2_Jul_2013_15_33_48_+1000_bAACq1qmBWAh5kdy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Problem solved by applying these patches to next-20130701 from
-intel-gfx patchwork-service [0]:
+Hi all,
 
-   [1/2] drm/i915: fixup messages in pipe_config_compare
-   [2/2] drm/i915: get clock config when checking CRTC state too
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/mtd/nand/Kconfig between commit 212012138deb ("mtd: nand: omap2:
+updated support for BCH4 ECC scheme") from the l2-mtd tree and commit
+930d800bded7 ("mtd: omap2: allow bulding as a module") from the arm-soc
+tree.
 
-AFAICS 2/2 was folded into updated "drm/i915: get mode clock when
-reading the pipe config v9" [3].
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-It would be kind to be CCed on the patches and get also some credits.
-Also a CC to the report in linux-next should IMHO be done.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-- Sedat -
+diff --cc drivers/mtd/nand/Kconfig
+index a6e247c,50543f1..0000000
+--- a/drivers/mtd/nand/Kconfig
++++ b/drivers/mtd/nand/Kconfig
+@@@ -95,13 -95,35 +95,13 @@@ config MTD_NAND_OMAP
+ =20
+  config MTD_NAND_OMAP_BCH
+  	depends on MTD_NAND && MTD_NAND_OMAP2 && ARCH_OMAP3
+- 	bool "Support hardware based BCH error correction"
+ -	tristate "Enable support for hardware BCH error correction"
+++	tristate "Support hardware based BCH error correction"
+  	default n
+  	select BCH
+ -	select BCH_CONST_PARAMS
+  	help
+ -	 Support for hardware BCH error correction.
+ -
+ -choice
+ -	prompt "BCH error correction capability"
+ -	depends on MTD_NAND_OMAP_BCH
+ -
+ -config MTD_NAND_OMAP_BCH8
+ -	bool "8 bits / 512 bytes (recommended)"
+ -	help
+ -	 Support correcting up to 8 bitflips per 512-byte block.
+ -	 This will use 13 bytes of spare area per 512 bytes of page data.
+ -	 This is the recommended mode, as 4-bit mode does not work
+ -	 on some OMAP3 revisions, due to a hardware bug.
+ -
+ -config MTD_NAND_OMAP_BCH4
+ -	bool "4 bits / 512 bytes"
+ -	help
+ -	 Support correcting up to 4 bitflips per 512-byte block.
+ -	 This will use 7 bytes of spare area per 512 bytes of page data.
+ -	 Note that this mode does not work on some OMAP3 revisions, due to a
+ -	 hardware bug. Please check your OMAP datasheet before selecting this
+ -	 mode.
+ -
+ -endchoice
+ +	  Some devices have built-in ELM hardware engine, which can be used to
+ +	  locate and correct errors when using BCH ECC scheme. This enables the
+ +	  driver support for same.
+ =20
+  if MTD_NAND_OMAP_BCH
+  config BCH_CONST_M
 
-[0] https://patchwork.kernel.org/project/intel-gfx/list/
-[1] https://patchwork.kernel.org/patch/2809031/
-[2] https://patchwork.kernel.org/patch/2809021/
-[3] http://cgit.freedesktop.org/~danvet/drm-intel/commit/?h=drm-intel-nightly&id=f1f644dc66cbaf5a4c7dcde683361536b41885b9
+--Signature=_Tue__2_Jul_2013_15_33_48_+1000_bAACq1qmBWAh5kdy
+Content-Type: application/pgp-signature
 
-> - Sedat -
->
-> [1] http://cgit.freedesktop.org/~danvet/drm-intel/commit/?h=drm-intel-next-queued&id=d325d8b4f351f9d45e7c8baabf581fd21f343133
->
->> -Daniel
->> --
->> Daniel Vetter
->> Software Engineer, Intel Corporation
->> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR0mY8AAoJEECxmPOUX5FEKNEP/3TPLkzb+aXFcyh72uAnqg1X
+VOfIU7jWEdEzpdPyojDQqa9NTMEyO44aYftcWtkHy+MbxE1fVsq0g4t9vrgMazcU
+vr32joqzXneO1Qqd0UAxTQdlIk4tOLzkguIs6ijW4lGh97oYe6Wuv9KYHxKxdbAn
+rJTwPmfyGJtSPYxW6Jr11bbvOjuII2u97izaiQjn7HCOi+h1pxUzpE+Z932Gw2qI
+lRGZvHEfEh2lZZkqGE6qeOgSxUK72BRLY18EzvXQsmy7git04lOmelzQS7mzZpC0
+dWd01RTCsRmo0N02ixbw4+XzLZ7IteKHxgsyjVgLbmn6qDRuIjv2NL4gJrfRJ1vm
+iYDI+tzSP29C0uOcI7CciDZOQH0oEqQSky5LzryqxAAOTZdjq1imDNQv4Zh+cBfC
+O5cUm/a5Hu8UMeudskSWvWnCMrwUNmT85TmJ4cxjQmX7qp5njir7Xewp/52OR1xQ
+enJB3RFihgGB4NBHKAASBRJmXfvVO5qK3Zo4Fv4NiI+S59dmVy5kSU7RBQVapE/e
+qitJL4jzGeD28b28KaBI11QTKG3J3fOkNMHKOfM5e2Wwvm5VUJESAhKyZ88eNq31
+G5TgHanWqK+/dZ1NdAPJuTDwNdirn7WbSrQQvkY5jTzVP2LprZduNsrKoZDfK250
+HEakA5Gr4CH+v0zrny4F
+=Ao/b
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Jul_2013_15_33_48_+1000_bAACq1qmBWAh5kdy--
