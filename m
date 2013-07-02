@@ -1,37 +1,70 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the l2-mtd
- tree
-Date: Tue, 02 Jul 2013 10:33:02 +0300
-Message-ID: <1372750382.9767.19.camel@sauron.fi.intel.com>
-References: <20130702152954.f25bbf51c1a79aa4437e22ee@canb.auug.org.au>
-	 <20980858CB6D3A4BAE95CA194937D5E73E9E3BF5@DBDE04.ent.ti.com>
-	 <CAOesGMgh=CLCrtohrNF59Sh40-weCorL1_yjFgFKr47qhVy+xg@mail.gmail.com>
-	 <20980858CB6D3A4BAE95CA194937D5E73E9E3C27@DBDE04.ent.ti.com>
-Reply-To: dedekind1@gmail.com
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>
+Subject: [PATCH linux-next] i2c-designware: use div_u64 to fix link
+Date: Tue, 2 Jul 2013 11:46:54 +0200
+Message-ID: <1372758414-21513-1-git-send-email-vincent.stehle@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:16404 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932219Ab3GBH2t (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Jul 2013 03:28:49 -0400
-In-Reply-To: <20980858CB6D3A4BAE95CA194937D5E73E9E3C27@DBDE04.ent.ti.com>
+Received: from co1ehsobe006.messaging.microsoft.com ([216.32.180.189]:40201
+	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932324Ab3GBJr2 convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Jul 2013 05:47:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Gupta, Pekon" <pekon@ti.com>
-Cc: Olof Johansson <olof@lixom.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Jackson <mpfj-list@newflow.co.uk>, Tony Lindgren <tony@atomide.com>
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>, Wolfram Sang <wsa@the-dreams.de>, Christian Ruppert <christian.ruppert@abilis.com>, Pierrick Hascoet <pierrick.hascoet@abilis.com>
 
-On Tue, 2013-07-02 at 06:18 +0000, Gupta, Pekon wrote:
-> You may drop this patch if you wish so, but its not correct to say that this
-> was not reviewed. Following are comments from "Arnd Bergmann"
-> http://lists.infradead.org/pipermail/linux-mtd/2013-May/047030.html
-> And follow-up reasoning..
-> http://lists.infradead.org/pipermail/linux-mtd/2013-May/047032.html
+This fixes the following link error:
 
-Pekon, let me drop these 3 patches so far anyway. Please, re-submit it
-with CC to the devicetree-discuss mailing list. Thanks!
+  drivers/built-in.o: In function `dw_i2c_probe':
+  of_iommu.c:(.text+0x18c8f0): undefined reference to `__aeabi_uldivmod=
+'
+  make: *** [vmlinux] Error 1
 
--- 
-Best Regards,
-Artem Bityutskiy
+Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@freescale.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: Christian Ruppert <christian.ruppert@abilis.com>
+Cc: Pierrick Hascoet <pierrick.hascoet@abilis.com>
+---
+
+
+Hi,
+
+Linux next-20130702 link broke for ARM config multi_v7_defconfig. This =
+is with
+gcc 4.7.2 but I am not sure it matters much here.
+
+This patch repairs the link.
+
+It did not break anything for me on i.MX6 sabre sd, but it does'nt have=
+ a
+designware i2c, so more reviewing/testing is welcome.
+
+Best regards,
+
+V.
+
+
+ drivers/i2c/busses/i2c-designware-platdrv.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/=
+busses/i2c-designware-platdrv.c
+index def79b5..4c5fada 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -122,7 +122,8 @@ static int dw_i2c_probe(struct platform_device *pde=
+v)
+=20
+ 		of_property_read_u32(pdev->dev.of_node,
+ 					"i2c-sda-hold-time-ns", &ht);
+-		dev->sda_hold_time =3D ((u64)ic_clk * ht + 500000) / 1000000;
++		dev->sda_hold_time =3D div_u64((u64)ic_clk * ht + 500000,
++					     1000000);
+ 	}
+=20
+ 	dev->functionality =3D
+--=20
+1.7.10.4
