@@ -1,68 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the powerpc tree
-Date: Tue, 2 Jul 2013 10:54:15 +1000
-Message-ID: <20130702105415.8579055c3539bbb3e3cacfbc@canb.auug.org.au>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: [PATCH next] drivers/ptp/Kconfig: add "depends on HAS_IOMEM" for
+ 'PTP_1588_CLOCK_PCH'
+Date: Tue, 02 Jul 2013 09:08:43 +0800
+Message-ID: <51D2281B.2020607@asianux.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Jul_2013_10_54_15_+1000_6lmMRLOZs4.YIL2+"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45412 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755304Ab3GBAy2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2013 20:54:28 -0400
+Received: from intranet.asianux.com ([58.214.24.6]:49008 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755452Ab3GBBJe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2013 21:09:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aruna Balakrishnaiah <aruna@linux.vnet.ibm.com>
+To: richardcochran@gmail.com
+Cc: Richard Weinberger <richard@nod.at>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org
 
---Signature=_Tue__2_Jul_2013_10_54_15_+1000_6lmMRLOZs4.YIL2+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+The related driver need depend on HAS_IOMEM, or may be built under UML
+architecture.
 
-After merging the powerpc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+The related error (with allmodconfig, without pcap):
 
-fs/pstore/ftrace.c: In function 'pstore_ftrace_call':
-fs/pstore/ftrace.c:47:6: warning: passing argument 7 of 'psinfo->write_buf'=
- makes integer from pointer without a cast [enabled by default]
-      sizeof(rec), psinfo);
-      ^
-fs/pstore/ftrace.c:47:6: note: expected 'size_t' but argument is of type 's=
-truct pstore_info *'
-fs/pstore/ftrace.c:47:6: error: too few arguments to function 'psinfo->writ=
-e_buf'
+    CC [M]  drivers/ptp/ptp_pch.o
+  drivers/ptp/ptp_pch.c: In function =91pch_remove=92:
+  drivers/ptp/ptp_pch.c:571:3: error: implicit declaration of function =
+=91iounmap=92 [-Werror=3Dimplicit-function-declaration]
+  drivers/ptp/ptp_pch.c: In function =91pch_probe=92:
+  drivers/ptp/ptp_pch.c:621:2: error: implicit declaration of function =
+=91ioremap=92 [-Werror=3Dimplicit-function-declaration]
+  drivers/ptp/ptp_pch.c:621:13: warning: assignment makes pointer from =
+integer without a cast [enabled by default]
+  cc1: some warnings being treated as errors
 
-Caused by commit 6bbbca735936 ("pstore: Pass header size in the pstore
-write callback").
+Signed-off-by: Chen Gang <gang.chen@asianux.com>
+---
+ drivers/ptp/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-I have used the version from next-20130701 for today.
+diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
+index 5be73ba..5a7910e 100644
+--- a/drivers/ptp/Kconfig
++++ b/drivers/ptp/Kconfig
+@@ -73,6 +73,7 @@ config DP83640_PHY
+ config PTP_1588_CLOCK_PCH
+ 	tristate "Intel PCH EG20T as PTP clock"
+ 	depends on X86 || COMPILE_TEST
++	depends on HAS_IOMEM
+ 	select PTP_1588_CLOCK
+ 	help
+ 	  This driver adds support for using the PCH EG20T as a PTP
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__2_Jul_2013_10_54_15_+1000_6lmMRLOZs4.YIL2+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJR0iS8AAoJEECxmPOUX5FE/BEP/iW7+HjyytorMyGWIT7qo5VC
-FqEX9wRwTGe63tTRZ/c9fds9ARm+LFruMB8az+WFbLHEloV+I0ESp3SHbVa9X4FC
-LZb3HdxjY5HRfR15tc/xwu/dRhsLVt2hyds4u3D6gsT2c+XDMWSEZlakeeUph1+z
-fShfX4S8zE//J10scU6OoYm+9dLEY1uT6pL7v2PYD5GpywX557mhtqXdroeYNmE8
-POmGmHsYZoSuJBkZW/287EC66uUHG0TUUXNMf4282NDQsjpmuiXbWfvMIESNw/6v
-+X8mKiR/7ZxZqFebG+5cjiiXdhTbIbecF8D4+AMQR3lAKXy6jh8EY3hnzGN0N56g
-ltPOnSvhS4R6hjX0+6Ff0cI8YOwCrOdEqyzJVexYjSI2xNjiRRlOob94E8Tvqzi/
-eTMvBN4NUnM6Ooz4IZjMpLEmiKHw8bfBXeBcq8Utvx4N8d2gFAFZgCrDdOpYOeU+
-vdaAQWS8J1fleMpi5JJDDaA/XPfqBZbIekqzFfnjVwu2NX8vfMHR37Re0HoEAIw2
-EZsfEFRlUR6CjGA+KcqWx1SVGemuZ8wXsevu14LgbUS2sMiaI5iX/DfpU548oW3D
-KWkbWYax9lMc8ib/UKGDDHy4OCpl+vz6wJkKtuLvv95uQpzqngrPWHAz+XvPGF+A
-m8+Rmh7sZ2hs5yaCq9so
-=qlRT
------END PGP SIGNATURE-----
-
---Signature=_Tue__2_Jul_2013_10_54_15_+1000_6lmMRLOZs4.YIL2+--
+1.7.7.6
