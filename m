@@ -1,70 +1,102 @@
-From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>
-Subject: [PATCH linux-next] i2c-designware: use div_u64 to fix link
-Date: Tue, 2 Jul 2013 11:46:54 +0200
-Message-ID: <1372758414-21513-1-git-send-email-vincent.stehle@freescale.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Jun 28 [ BISECTED: rsyslog/imklog: High CPU
+ usage ]
+Date: Tue, 2 Jul 2013 12:15:09 +0200
+Message-ID: <CA+icZUWLUSg-Sfd9FHXs8Amz+-s6vs_VOJsQpUSa9+fYM8XyNQ@mail.gmail.com>
+References: <CA+icZUXo=Z4gDfCMvLqRQDq_fpNAq+UqtUw=jrU=3=kVZP-2+A@mail.gmail.com>
+	<20130630181945.GA5171@redhat.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from co1ehsobe006.messaging.microsoft.com ([216.32.180.189]:40201
-	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932324Ab3GBJr2 convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Jul 2013 05:47:28 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>, Wolfram Sang <wsa@the-dreams.de>, Christian Ruppert <christian.ruppert@abilis.com>, Pierrick Hascoet <pierrick.hascoet@abilis.com>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20130630181945.GA5171@redhat.com>
+Sender: owner-linux-mm@kvack.org
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Imre Deak <imre.deak@intel.com>, Lukas Czerner <lczerner@redhat.com>, Samuel Ortiz <samuel@sortiz.org>, Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Ralf Baechle <ralf@linux-mips.org>, Valdis.Kletnieks@vt.edu, linux-mm <linux-mm@kvack.org>
+List-Id: linux-next.vger.kernel.org
 
-This fixes the following link error:
+On Sun, Jun 30, 2013 at 8:19 PM, Oleg Nesterov <oleg@redhat.com> wrote:
+> Andrew, please drop these
+>
+>         wait-introduce-wait_event_commonwq-condition-state-timeout.patch
+>         wait-introduce-prepare_to_wait_event.patch
+>
+> patches again. I'll send v3 although it really looks like I should
+> never try to touch wait.h.
+>
+> On 06/29, Sedat Dilek wrote:
+>>
+>> As this all did not show me what caused the problem I started a
+>> git-bisect session.
+>>
+>> This revealed the following culprit commit:
+>>
+>>      commit bb1f30cb7d3ba21098f0ee7e0382160ba2599a43
+>>      "wait: introduce wait_event_common(wq, condition, state, timeout)"
+>
+> Heh. First of all, I am really sorry.
+>
+> Not only "__wait_no_timeout(tout) ?:" was wrong, I didn't bother
+> to recheck this logic even after I got the "warning: the omitted
+> middle operand in ?:" reports.
+>
+> Sedat, thanks you very much! Any chance you can try the patch below?
+>
 
-  drivers/built-in.o: In function `dw_i2c_probe':
-  of_iommu.c:(.text+0x18c8f0): undefined reference to `__aeabi_uldivmod=
-'
-  make: *** [vmlinux] Error 1
+[ CC linux-mm ML ]
 
-Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@freescale.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Christian Ruppert <christian.ruppert@abilis.com>
-Cc: Pierrick Hascoet <pierrick.hascoet@abilis.com>
----
+Hi Oleg,
 
+did you made a cleaned-up version?
+AFAICS v3, I read that on linux-mm ML, sorry if I ask here in this thread.
 
-Hi,
+Regards,
+- Sedat -
 
-Linux next-20130702 link broke for ARM config multi_v7_defconfig. This =
-is with
-gcc 4.7.2 but I am not sure it matters much here.
+> Oleg.
+>
+>
+> --- a/include/linux/wait.h
+> +++ b/include/linux/wait.h
+> @@ -191,12 +191,8 @@ wait_queue_head_t *bit_waitqueue(void *, int);
+>         for (;;) {                                                      \
+>                 __ret = prepare_to_wait_event(&wq, &__wait, state);     \
+>                 if (condition) {                                        \
+> -                       __ret = __wait_no_timeout(tout);                \
+> -                       if (!__ret) {                                   \
+> -                               __ret = __tout;                         \
+> -                               if (!__ret)                             \
+> -                                       __ret = 1;                      \
+> -                       }                                               \
+> +                       __ret = __wait_no_timeout(tout) ? 0 :           \
+> +                                                       (__tout ?: 1);  \
+>                         break;                                          \
+>                 }                                                       \
+>                                                                         \
+> @@ -217,16 +213,10 @@ wait_queue_head_t *bit_waitqueue(void *, int);
+>  #define wait_event_common(wq, condition, state, tout)                  \
+>  ({                                                                     \
+>         long __ret;                                                     \
+> -       if (condition) {                                                \
+> -               __ret = __wait_no_timeout(tout);                        \
+> -               if (!__ret) {                                           \
+> -                       __ret = tout;                                   \
+> -                       if (!__ret)                                     \
+> -                               __ret = 1;                              \
+> -               }                                                       \
+> -       } else {                                                        \
+> +       if (condition)                                                  \
+> +               __ret = __wait_no_timeout(tout) ? 0 : ((tout) ?: 1);    \
+> +       else                                                            \
+>                 __ret = __wait_event_common(wq, condition, state, tout);\
+> -       }                                                               \
+>         __ret;                                                          \
+>  })
+>
+>
 
-This patch repairs the link.
-
-It did not break anything for me on i.MX6 sabre sd, but it does'nt have=
- a
-designware i2c, so more reviewing/testing is welcome.
-
-Best regards,
-
-V.
-
-
- drivers/i2c/busses/i2c-designware-platdrv.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/=
-busses/i2c-designware-platdrv.c
-index def79b5..4c5fada 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -122,7 +122,8 @@ static int dw_i2c_probe(struct platform_device *pde=
-v)
-=20
- 		of_property_read_u32(pdev->dev.of_node,
- 					"i2c-sda-hold-time-ns", &ht);
--		dev->sda_hold_time =3D ((u64)ic_clk * ht + 500000) / 1000000;
-+		dev->sda_hold_time =3D div_u64((u64)ic_clk * ht + 500000,
-+					     1000000);
- 	}
-=20
- 	dev->functionality =3D
---=20
-1.7.10.4
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
