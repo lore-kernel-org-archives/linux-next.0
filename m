@@ -1,42 +1,43 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Jul 2
-Date: Tue, 2 Jul 2013 12:37:05 +0200
-Message-ID: <CA+icZUUP6ZNQN62aqHr3DKzFJmw7QjmkuquToLydg__iiXmNfA@mail.gmail.com>
-References: <20130702170708.4f1b6c24c40a6fe607802a22@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: Crash during reboot due to 7628774 "mmc: core: Handle card
+ shutdown from mmc_bus"
+Date: Tue, 2 Jul 2013 12:40:10 +0200
+Message-ID: <CAPDyKFrd7L0XvFCkRQku_nc8U5jSuRaqks-aOxTOMfj7fr_L=g@mail.gmail.com>
+References: <51D1E77A.3010601@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qe0-f54.google.com ([209.85.128.54]:48231 "EHLO
-	mail-qe0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750869Ab3GBKhH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Jul 2013 06:37:07 -0400
-In-Reply-To: <20130702170708.4f1b6c24c40a6fe607802a22@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <51D1E77A.3010601@wwwdotorg.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Chris Ball <cjb@laptop.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 2, 2013 at 9:07 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+On 1 July 2013 22:32, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> It looks like commit 7628774 "mmc: core: Handle card shutdown from
+> mmc_bus" causes a crash during "reboot" at least on Tegra platforms. The
+> issue appears to be in:
 >
-> Changes since 20130701:
+>> static void mmc_bus_shutdown(struct device *dev)
+>> {
+>>       struct mmc_driver *drv = to_mmc_driver(dev->driver);
+>>       struct mmc_card *card = mmc_dev_to_card(dev);
+>>       struct mmc_host *host = card->host;
+>>       int ret;
+>>
+>>       drv->shutdown(card);
 >
-> The powerpc tree gained a build failure so I used the version from
-> next-20130701.
+> Since drv == NULL.
 >
-> The regulator tree lost its build failure.
->
-> The arm-soc tree gained conflicts against the l2-mtd tree.
->
-> The renesas tree gained a conflict against the arm tree.
->
-> ----------------------------------------------------------------------------
->
+> Is this expected (and hence there's a missing guard on that function
+> call), or is the root-cause some other issue?
 
-When has this changed from drm-intel-next-queued (old) to for-linux-next (new)?
-I was astonished I see still the issue of yesterday.
+Hi Stephen,
 
-- Sedat -
+It is expected that drv is NULL, and obviously needs to be a check for
+it before calling it, my bad!
 
-[1] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees?id=next-20130702#n120
+A fixup patch is on it's way asap.
+
+Kind regards
+Ulf Hansson
