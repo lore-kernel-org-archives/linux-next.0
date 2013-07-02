@@ -1,67 +1,68 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: next-20130627 breaks i.MX6 sabre sd UART console
-Date: Tue, 2 Jul 2013 00:22:25 +0200 (CEST)
-Message-ID: <alpine.DEB.2.02.1307020016580.4013@ionos.tec.linutronix.de>
-References: <F7C43F8B2814514CA05F3436BC68046EF1EB72@039-SN2MPN1-013.039d.mgd.msft.net> <alpine.DEB.2.02.1306281403530.4013@ionos.tec.linutronix.de> <51CDB26A.9060500@codeaurora.org> <F7C43F8B2814514CA05F3436BC68046EF2297D@039-SN2MPN1-013.039d.mgd.msft.net>
- <51CDC2B3.1030907@codeaurora.org> <20130629020738.GG11625@codeaurora.org> <F7C43F8B2814514CA05F3436BC68046EF2EF29@039-SN2MPN1-011.039d.mgd.msft.net> <alpine.DEB.2.02.1307011425500.4013@ionos.tec.linutronix.de> <F7C43F8B2814514CA05F3436BC68046EF2F708@039-SN2MPN1-011.039d.mgd.msft.net>
- <alpine.DEB.2.02.1307011531210.4013@ionos.tec.linutronix.de> <51D1DD6D.8050805@codeaurora.org> <alpine.DEB.2.02.1307012153060.4013@ionos.tec.linutronix.de> <51D1EC8C.4050101@codeaurora.org> <alpine.DEB.2.02.1307012259460.4013@ionos.tec.linutronix.de>
- <51D1FF40.2030805@codeaurora.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the powerpc tree
+Date: Tue, 2 Jul 2013 10:54:15 +1000
+Message-ID: <20130702105415.8579055c3539bbb3e3cacfbc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__2_Jul_2013_10_54_15_+1000_6lmMRLOZs4.YIL2+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:57492 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754218Ab3GAWWZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2013 18:22:25 -0400
-In-Reply-To: <51D1FF40.2030805@codeaurora.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45412 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755304Ab3GBAy2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Jul 2013 20:54:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Stehle Vincent-B46079 <B46079@freescale.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, John Stultz <john.stultz@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aruna Balakrishnaiah <aruna@linux.vnet.ibm.com>
 
-On Mon, 1 Jul 2013, Stephen Boyd wrote:
-> On 07/01/13 14:24, Thomas Gleixner wrote:
-> > On Mon, 1 Jul 2013, Stephen Boyd wrote:
-> >> On 07/01/13 13:14, Thomas Gleixner wrote:
-> >>> The issue is very subtle. What happens is:
-> >>>
-> >>> CPU0						CPU1
-> >>>
-> >>> Switch to oneshot mode
-> >>>
-> >>>  Copy the bits from tick_broadcast_mask to
-> >>>  tick_broadcast_oneshot_mask. We need to do
-> >>>  that so the other cpus reach the timer irq
-> >>>  and the softirq which switches them to
-> >>>  oneshot.
-> >>>
-> >>>  Kick the broadcast device into oneshot.
-> >>>
-> >>> 						Timer interrupt fires
-> >>> 						
-> >>> 						irq_enter sees the cpu in
-> >>> 						tick_broadcast_oneshot_mask and
-> >>> 						sets the device to oneshot mode
-> >>> 						
-> >>> 						handle_periodic:
-> >>> 						 Sees oneshot mode and adds
-> >>> 						 period to
-> >>> 						 dev->next_event(KTIME_MAX)
-> >>> 			
-> >> Yep. It is also racing with the timer interrupt so having more than two
-> >> CPUs must help widen the window (which is why we see it on the higher
-> >> numbered CPUs).
-> > The race above is about the timer interrupt. You mean the broadcast
-> > one which is still enabled due to the dummy -> functional transition
-> > issue, right? That helps a lot to make this more visible, because we
-> > double the number of events.
-> 
-> I was thinking that tick_check_oneshot_broadcast() is racing with
-> tick_switch_to_oneshot() and because we have more CPUs we're more likely
-> to have a CPU fix up the handler in tick_switch_to_oneshot() after
-> tick_check_oneshot_broadcast() forces that CPU to oneshot mode and the
-> periodic handler runs. I wonder if I can reproduce it locally by making
-> tick_switch_to_oneshot() spin for a jiffy or two on CPU1.
+--Signature=_Tue__2_Jul_2013_10_54_15_+1000_6lmMRLOZs4.YIL2+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-tick_switch_to_oneshot() is invoked with interrupts disabled, so that
-wont help. 
+Hi all,
+
+After merging the powerpc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+fs/pstore/ftrace.c: In function 'pstore_ftrace_call':
+fs/pstore/ftrace.c:47:6: warning: passing argument 7 of 'psinfo->write_buf'=
+ makes integer from pointer without a cast [enabled by default]
+      sizeof(rec), psinfo);
+      ^
+fs/pstore/ftrace.c:47:6: note: expected 'size_t' but argument is of type 's=
+truct pstore_info *'
+fs/pstore/ftrace.c:47:6: error: too few arguments to function 'psinfo->writ=
+e_buf'
+
+Caused by commit 6bbbca735936 ("pstore: Pass header size in the pstore
+write callback").
+
+I have used the version from next-20130701 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__2_Jul_2013_10_54_15_+1000_6lmMRLOZs4.YIL2+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR0iS8AAoJEECxmPOUX5FE/BEP/iW7+HjyytorMyGWIT7qo5VC
+FqEX9wRwTGe63tTRZ/c9fds9ARm+LFruMB8az+WFbLHEloV+I0ESp3SHbVa9X4FC
+LZb3HdxjY5HRfR15tc/xwu/dRhsLVt2hyds4u3D6gsT2c+XDMWSEZlakeeUph1+z
+fShfX4S8zE//J10scU6OoYm+9dLEY1uT6pL7v2PYD5GpywX557mhtqXdroeYNmE8
+POmGmHsYZoSuJBkZW/287EC66uUHG0TUUXNMf4282NDQsjpmuiXbWfvMIESNw/6v
++X8mKiR/7ZxZqFebG+5cjiiXdhTbIbecF8D4+AMQR3lAKXy6jh8EY3hnzGN0N56g
+ltPOnSvhS4R6hjX0+6Ff0cI8YOwCrOdEqyzJVexYjSI2xNjiRRlOob94E8Tvqzi/
+eTMvBN4NUnM6Ooz4IZjMpLEmiKHw8bfBXeBcq8Utvx4N8d2gFAFZgCrDdOpYOeU+
+vdaAQWS8J1fleMpi5JJDDaA/XPfqBZbIekqzFfnjVwu2NX8vfMHR37Re0HoEAIw2
+EZsfEFRlUR6CjGA+KcqWx1SVGemuZ8wXsevu14LgbUS2sMiaI5iX/DfpU548oW3D
+KWkbWYax9lMc8ib/UKGDDHy4OCpl+vz6wJkKtuLvv95uQpzqngrPWHAz+XvPGF+A
+m8+Rmh7sZ2hs5yaCq9so
+=qlRT
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Jul_2013_10_54_15_+1000_6lmMRLOZs4.YIL2+--
