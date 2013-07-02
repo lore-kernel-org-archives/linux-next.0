@@ -1,56 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the renesas tree with the arm tree
-Date: Tue, 2 Jul 2013 15:45:14 +1000
-Message-ID: <20130702154514.89bffccc662256004f301552@canb.auug.org.au>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the l2-mtd tree
+Date: Mon, 1 Jul 2013 23:00:44 -0700
+Message-ID: <CAOesGMgh=CLCrtohrNF59Sh40-weCorL1_yjFgFKr47qhVy+xg@mail.gmail.com>
+References: <20130702152954.f25bbf51c1a79aa4437e22ee@canb.auug.org.au>
+	<20980858CB6D3A4BAE95CA194937D5E73E9E3BF5@DBDE04.ent.ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__2_Jul_2013_15_45_14_+1000_Z45NDYOD_QvtL7X/"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20980858CB6D3A4BAE95CA194937D5E73E9E3BF5@DBDE04.ent.ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Russell King <rmk@arm.linux.org.uk>, Magnus Damm <damm@opensource.se>
+To: "Gupta, Pekon" <pekon@ti.com>, Artem Bityutskiy <dedekind1@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Jackson <mpfj-list@newflow.co.uk>, Tony Lindgren <tony@atomide.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__2_Jul_2013_15_45_14_+1000_Z45NDYOD_QvtL7X/
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 1, 2013 at 10:44 PM, Gupta, Pekon <pekon@ti.com> wrote:
+>>
+>> Hi all,
+>>
+>> Today's linux-next merge of the arm-soc tree got a conflict in
+>> Documentation/devicetree/bindings/mtd/gpmc-nand.txt between commits
+>> 6c88058ef927 ("ARM: OMAP2+: cleaned-up DT support of various ECC
+>> schemes") and 212012138deb ("mtd: nand: omap2: updated support for
+>> BCH4
+>> ECC scheme") from the l2-mtd tree and commit 496c8a0bbb72 ("ARM:
+>> OMAP2+:
+>> Allow NAND transfer mode to be specified in DT") from the arm-soc tree.
+>>
+>> I fixed it up (maybe - see below) and can carry the fix as necessary (no
+>> action is required).
+>>
+>> --
+>> Cheers,
+>> Stephen Rothwell                    sfr@canb.auug.org.au
+>>
+> Yes following merge is correct. Apologies, as there were multiple OMAP2 NAND and GPMC updates and clean-up going into different trees, so these conflict came. Going forward you shouldn't find such issues, as code is more stable now. Thanks for help.
+>
+> with regards, pekon
 
-Hi Simon,
+Sigh. The new bindings seem to never have been reviewed by any device
+tree maintainers, and from the look of it, it might need some
+discussion. It wasn't even cc:d to devicetree-discuss.
 
-Today's linux-next merge of the renesas tree got a conflict in
-arch/arm/mach-shmobile/Kconfig between commit fb521a0da155 ("arm: fix up
-ARM_ARCH_TIMER selects") from the arm tree and commits 462972da5f18
-("ARM: shmobile: Make r8a7790 Arch timer optional") and 39d97587d6cb
-("ARM: shmobile: Make r8a73a4 Arch timer optional") from the renesas tree.
+It's completely inappropriate to merge a patch like this at this time
+without any kind of acks from the people reviewing bindings. Can it
+please be dropped ASAP from the MTD tree? Thanks!
 
-I fixed it up (the latter patches removed the "select"s that the former
-modified) and can carry the fix as necessary (no action is required).
+Or, if you want it in different wording: The mtd-tree patch is a
+strong NAK until this has been sorted out.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+It was also applied today, after the merge window opened. Don't merge
+it for 3.11. Artem?
 
---Signature=_Tue__2_Jul_2013_15_45_14_+1000_Z45NDYOD_QvtL7X/
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJR0mjuAAoJEECxmPOUX5FEBbQP/0EbEIYekFwYtsL4HzC7MdiX
-xCMDs26FqnU1ULGIVN5EDHXxc0XY7uyRORCXcsgMhJgws2DZKpTEbZkdqaQDSGZe
-akXzir/ju/lX1oquUsP3P1l8grMpNnsohLWqNpjO4N37DRjiG5XZxKrRQAQUdbcZ
-8blk/Q5q3SlwiRAFeLlm7aOpLixCnIQ5VUPHYFZaFUvEiA8C7ZKDkkwHmHnI+0bm
-7oAjOiinnKCfxZYmyQC3/JfltpgAc6sgenWghBD3CA7jpBSRM7G3WipD/HbjxitX
-PmgrFhkfkque9zH5bHCrGy73y+5zsOQWsfolstZtdd1dUt2PRiTieEV93lcI4tk9
-vVIUDOYbwbCegaHi4twK7b+Ks3oJRgjwyoGdY85mwPI0dNRI4XCd+koLgaKoDAYl
-tmMiRn6WS2qnQ4NIN7evGYXJD1BUn1/trnsHVQFe3tgvmjLxLUfxoEQ4xa0CIJh1
-PCrd7CUa3KrB6qe6kp0wALz+eSaWkggsps+Two6cBkNmTvnSIddvpIy5kktZhs0X
-a5QJTrQ/xMDvv4XkZdK8D2Aj2uLp+TgmiY7XsyJ/knbDgOQCjtdcPaI3PDoorAYo
-UOYFLrEEQ52nPHedEhOp/XIqPB4PqOi6M+xjAaJH2dv8nEWOPL72mP2mw+ghzThH
-vg6Cv7EUFQzJvx1LDe8T
-=Ch90
------END PGP SIGNATURE-----
-
---Signature=_Tue__2_Jul_2013_15_45_14_+1000_Z45NDYOD_QvtL7X/--
+-Olof
