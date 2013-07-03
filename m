@@ -1,42 +1,90 @@
-From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>
-Subject: [PATCH linux-next 1/2] arm: multi_v7_defconfig: add i.MX serial console
-Date: Wed, 3 Jul 2013 10:12:58 +0200
-Message-ID: <1372839179-14542-2-git-send-email-vincent.stehle@freescale.com>
-References: <1372839179-14542-1-git-send-email-vincent.stehle@freescale.com>
+From: Christian Ruppert <christian.ruppert@abilis.com>
+Subject: Re: [PATCH linux-next] i2c-designware: use div_u64 to fix link
+Date: Wed, 3 Jul 2013 10:44:31 +0200
+Message-ID: <20130703084429.GB19130@ab42.lan>
+References: <1372758414-21513-1-git-send-email-vincent.stehle@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1372839179-14542-1-git-send-email-vincent.stehle@freescale.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.abilis.ch ([195.70.19.74]:23331 "EHLO mail.abilis.ch"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755262Ab3GCIoj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 04:44:39 -0400
+Content-Disposition: inline
+In-Reply-To: <1372758414-21513-1-git-send-email-vincent.stehle@freescale.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Vincent Stehlll <vincent.stehle@freescale.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Pierrick Hascoet <pierrick.hascoet@abilis.com>
 
-Add i.MX serial console support. This gives us the boot messages on UAR=
-T on
-e.g. the i.MX6Q sabre sd platform.
+On Tue, Jul 02, 2013 at 11:46:54AM +0200, Vincent Stehlll wrote:
+> This fixes the following link error:
+>=20
+>   drivers/built-in.o: In function `dw_i2c_probe':
+>   of_iommu.c:(.text+0x18c8f0): undefined reference to `__aeabi_uldivm=
+od'
+>   make: *** [vmlinux] Error 1
 
-Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@freescale.com>
-Cc: Olof Johansson <olof@lixom.net>
-Cc: Russell King <linux@arm.linux.org.uk>
----
- arch/arm/configs/multi_v7_defconfig |    2 ++
- 1 file changed, 2 insertions(+)
+Looks good. I also tested it on our ARC based platform, no issues with
+compilation or functionality. Thanks for pointing this out.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/mul=
-ti_v7_defconfig
-index 6d8d3c4..cc8723a 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -75,6 +75,8 @@ CONFIG_SERIAL_OMAP=3Dy
- CONFIG_SERIAL_OMAP_CONSOLE=3Dy
- CONFIG_SERIAL_XILINX_PS_UART=3Dy
- CONFIG_SERIAL_XILINX_PS_UART_CONSOLE=3Dy
-+CONFIG_SERIAL_IMX=3Dy
-+CONFIG_SERIAL_IMX_CONSOLE=3Dy
- CONFIG_I2C_DESIGNWARE_PLATFORM=3Dy
- CONFIG_I2C_SIRF=3Dy
- CONFIG_I2C_TEGRA=3Dy
+Reviewed-by: Christian Ruppert <christian.ruppert@abilis.com>
+
+> Signed-off-by: Vincent Stehl=E9 <vincent.stehle@freescale.com>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: Christian Ruppert <christian.ruppert@abilis.com>
+> Cc: Pierrick Hascoet <pierrick.hascoet@abilis.com>
+> ---
+>=20
+>=20
+> Hi,
+>=20
+> Linux next-20130702 link broke for ARM config multi_v7_defconfig. Thi=
+s is with
+> gcc 4.7.2 but I am not sure it matters much here.
+>=20
+> This patch repairs the link.
+>=20
+> It did not break anything for me on i.MX6 sabre sd, but it does'nt ha=
+ve a
+> designware i2c, so more reviewing/testing is welcome.
+>=20
+> Best regards,
+>=20
+> V.
+>=20
+>=20
+>  drivers/i2c/busses/i2c-designware-platdrv.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2=
+c/busses/i2c-designware-platdrv.c
+> index def79b5..4c5fada 100644
+> --- a/drivers/i2c/busses/i2c-designware-platdrv.c
+> +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+> @@ -122,7 +122,8 @@ static int dw_i2c_probe(struct platform_device *p=
+dev)
+> =20
+>  		of_property_read_u32(pdev->dev.of_node,
+>  					"i2c-sda-hold-time-ns", &ht);
+> -		dev->sda_hold_time =3D ((u64)ic_clk * ht + 500000) / 1000000;
+> +		dev->sda_hold_time =3D div_u64((u64)ic_clk * ht + 500000,
+> +					     1000000);
+>  	}
+> =20
+>  	dev->functionality =3D
+> --=20
+> 1.7.10.4
+>=20
+>=20
+>=20
+
 --=20
-1.7.10.4
+  Christian Ruppert              ,          <christian.ruppert@abilis.c=
+om>
+                                /|
+  Tel: +41/(0)22 816 19-42     //|                 3, Chemin du Pr=E9-F=
+leuri
+                             _// | bilis Systems   CH-1228 Plan-les-Oua=
+tes
