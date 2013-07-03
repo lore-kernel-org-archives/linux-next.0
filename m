@@ -1,60 +1,76 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with Linus' tree
-Date: Wed, 3 Jul 2013 15:29:06 +1000
-Message-ID: <20130703152906.872979a7f0af80287e827920@canb.auug.org.au>
+From: Michal Simek <monstr@monstr.eu>
+Subject: Re: linux-next: manual merge of the xilinx tree
+Date: Wed, 03 Jul 2013 07:53:32 +0200
+Message-ID: <51D3BC5C.1080505@monstr.eu>
+References: <20130703111030.c0df2a231fc3e4ba6cb566cd@canb.auug.org.au>
+Reply-To: monstr@monstr.eu
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__3_Jul_2013_15_29_06_+1000_BTO0ANibGsJ.sVOG"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="----enig2AIOKXHDTCDSEGAAUMARK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56138 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751348Ab3GCF3K (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 01:29:10 -0400
+Received: from mail-ea0-f182.google.com ([209.85.215.182]:45820 "EHLO
+	mail-ea0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751830Ab3GCFxo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 01:53:44 -0400
+Received: by mail-ea0-f182.google.com with SMTP id d10so3206472eaj.41
+        for <linux-next@vger.kernel.org>; Tue, 02 Jul 2013 22:53:42 -0700 (PDT)
+In-Reply-To: <20130703111030.c0df2a231fc3e4ba6cb566cd@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Thomas Gleixner <tglx@linutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michal Simek <michal.simek@xilinx.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__3_Jul_2013_15_29_06_+1000_BTO0ANibGsJ.sVOG
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+------enig2AIOKXHDTCDSEGAAUMARK
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Stephen,
 
-Today's linux-next merge of the trivial tree got a conflict in
-kernel/irq/generic-chip.c between commit ccc414f83914 ("genirq: Add the
-generic chip to the genirq docbook") from Linus' tree and commit
-37074c5a1b99 ("irq/generic-chip: fix a few kernel-doc entries") from the
-trivial tree.
+On 07/03/2013 03:10 AM, Stephen Rothwell wrote:
+> Hi Michal,
+>=20
+> Today's linux-next merge of the xilinx tree got conflicts in several fi=
+les.
+>=20
+> These conflicts are caused by a set of old patches in the xilinx tree
+> other copies of which have been merged upstream a while ago.  I fact th=
+e
+> xilinx tree currently adds no changes to linux-next at all.   Could you=
 
-I fixed it up (I just arbitrarily used Linus' tree version) and can
-carry the fix as necessary (no action is required).
+> please clean up this tree?
+
+I have fixed it - it should be fixed there soon.
+But I am thinking about removing this tree from linux-next
+because we are pushing arm changes through arm-soc tree
+and they require to have specific feature branches.
+
+Thanks,
+Michal
+
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
+Maintainer of Linux kernel - Xilinx Zynq ARM architecture
+Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
 
---Signature=_Wed__3_Jul_2013_15_29_06_+1000_BTO0ANibGsJ.sVOG
-Content-Type: application/pgp-signature
+
+
+------enig2AIOKXHDTCDSEGAAUMARK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+Version: GnuPG v1.4.10 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iQIcBAEBCAAGBQJR07aiAAoJEECxmPOUX5FE+/sQAKHgvjJNFY/Oc5ZrVYiWu/Bf
-rji+dFG4Pxc1PVtn653WIOCyXHczEeT2Yij0SDqXXFrroVQ651iWBKEDFXLzDBsC
-oz54mLt6G9x6Rjf7cBGAPrwn3RU4KhlVMLTjogaxArQ1cpqprZyPdA8p53j4/2yZ
-w19WmUxbcoc31eIk/XxbWzxKWPdaSe4DBD/1+cFO8jodIIXO2LEYFXIv1qJP6O6a
-WDhH0E/bLB+i3swyL0T2EQxR/Ui7JhCzK1zNzHpXKRV9TJUZmJtMqW9iOFk0+lRU
-gJnhNorWgcoJnq+OBJGuoK+aBdEct38zxYmqwU12P/ivSZh1J/BAjIq+rprgCAmT
-CMnqKp1xnxxvNIT2Wtfz/MVKgn5bvQ4yTPQ/QooTyDn2vTRVg66kp4vTg/sXz0ti
-lG1rNzwpA7oaqoo3gp0aJY6D00CmrG8Skj8t2HwehnMIdOUhFueLyjvKJrpXiLrM
-RMYuMm2D/ddZqH5xp/qeiPON9f9F0djqUn52P1Es7pPip7H3PF/tvkdcS9E1OG+i
-PeHRbBJhb/VQ8N2JpA6TRgnu1omRZ8CiNmkLn1IqK9WwuoitHJoRjD4I60SXl+lI
-s1wAgux/34KcIIbrsn5aKGy2kInX5M31Hp3ydTm8ZENVRoj6iQjqt59VmXx1TQdR
-dBhd2LJRiREAWlgpYUJV
-=C4KC
+iEYEARECAAYFAlHTvFwACgkQykllyylKDCH4aACglkvNOPFlQKyG6YImvNdssRHa
+dLAAn3/V250CZOIj1mIxTTDO5hB2zFgb
+=k7C7
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__3_Jul_2013_15_29_06_+1000_BTO0ANibGsJ.sVOG--
+------enig2AIOKXHDTCDSEGAAUMARK--
