@@ -1,65 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the xilinx tree
-Date: Wed, 3 Jul 2013 16:02:47 +1000
-Message-ID: <20130703160247.bc20792d7bfaef893ee72137@canb.auug.org.au>
-References: <20130703111030.c0df2a231fc3e4ba6cb566cd@canb.auug.org.au>
-	<51D3BC5C.1080505@monstr.eu>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Jun 28 [ BISECTED: rsyslog/imklog: High CPU
+ usage ]
+Date: Wed, 3 Jul 2013 09:24:12 +0200
+Message-ID: <CA+icZUWV+O9x7VUt9ocu3kk10vqDv3oEQ533mnsWhBiEKk7fJQ@mail.gmail.com>
+References: <CA+icZUXo=Z4gDfCMvLqRQDq_fpNAq+UqtUw=jrU=3=kVZP-2+A@mail.gmail.com>
+	<20130630181945.GA5171@redhat.com>
+	<CA+icZUWLUSg-Sfd9FHXs8Amz+-s6vs_VOJsQpUSa9+fYM8XyNQ@mail.gmail.com>
+	<20130702223714.GA28048@redhat.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__3_Jul_2013_16_02_47_+1000_izrMlHwUF6z193NS"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40003 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753471Ab3GCGCu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 02:02:50 -0400
-In-Reply-To: <51D3BC5C.1080505@monstr.eu>
+Received: from mail-wg0-f53.google.com ([74.125.82.53]:58783 "EHLO
+	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754240Ab3GCHYO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 03:24:14 -0400
+In-Reply-To: <20130702223714.GA28048@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: monstr@monstr.eu
-Cc: Michal Simek <michal.simek@xilinx.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Imre Deak <imre.deak@intel.com>, Lukas Czerner <lczerner@redhat.com>, Samuel Ortiz <samuel@sortiz.org>, Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Ralf Baechle <ralf@linux-mips.org>, Valdis.Kletnieks@vt.edu, linux-mm <linux-mm@kvack.org>
 
---Signature=_Wed__3_Jul_2013_16_02_47_+1000_izrMlHwUF6z193NS
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Michal,
-
-On Wed, 03 Jul 2013 07:53:32 +0200 Michal Simek <monstr@monstr.eu> wrote:
+On Wed, Jul 3, 2013 at 12:37 AM, Oleg Nesterov <oleg@redhat.com> wrote:
+> Hi Sedat,
 >
-> I have fixed it - it should be fixed there soon.
+> On 07/02, Sedat Dilek wrote:
+>>
+>> did you made a cleaned-up version?
+>> AFAICS v3, I read that on linux-mm ML, sorry if I ask here in this thread.
+>
+> Yes, I am going to send v3 with this fix + another minor change.
+> Sorry for delay, I was distracted, will try tomorrow.
+>
+> Besides, I think Andrew and Stephen need a rest before I try to
+> break wait.h or the third time.
+>
 
-Thanks.
+Everyone should get a 3rd chance :-).
 
-> But I am thinking about removing this tree from linux-next
-> because we are pushing arm changes through arm-soc tree
-> and they require to have specific feature branches.
+BTW, dealing with such issues makes me more and more familiar with my
+Linux-systems.
 
-Just let me know when you decide.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+- Sedat -
 
---Signature=_Wed__3_Jul_2013_16_02_47_+1000_izrMlHwUF6z193NS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJR076HAAoJEECxmPOUX5FEUScQAKofcOkmXIiInGIWpl7zVTKX
-nEZVELCEPloH5LyDAwpuGByi1t0x95mkX2FwtLongcQ0HeHNX6td6cLpfUblPTmx
-orNinPClozzv9k8mbpabwJtGhxcMSZkpp8ty4yzBIrQB9aLdHDvNCCpEtbo7H1Jn
-FTWyTBHDor4fL25UL291tk9Y8HW5EBMtfUYfe+KhSJq5rr7UlaZbFiZtQQJqj9mq
-2EHvV8OweVcvTxbguFmLXXI1g8ymusPj9FdjdNUNxZD10bzN0d3rI6XscNFNnSvN
-y84hyF5Xg+lNV/KC+6BOQxEGo2oqXTsFwfEle27+rncbE7bFXAQiUSYfeTJ2RhFV
-RMYtSzPh0QM5M59E7hflpw6Dlo/xcEnK6uozVwXt06qn2lSF4OVf2QA9IgJhmRUA
-TqAh1Q/D6sreqmJ4EiAwLlA+Rl7eZZVomAknWnznwZUJBRZOL3pkjUG4Hmgbo5f9
-hJNkKTywLFRKiOqffdWhQtuizvJuUj25Ip7z3QRpfEOauXFnyr5CBMAG2XBMCct4
-BTRt2TfHcJXCQg2xULEoYjNOf324uuGPfLOBWJ6rzgUl/8buU6HzrUyROpqnAwEY
-1Ngbg73FCorTdDZPp1sgGZzQ6JINopTEQDdteWi17MQaRN9FFUOjUyI/ZJxUDq7K
-No8hEDQi63qC4+IF5ZVx
-=qBde
------END PGP SIGNATURE-----
-
---Signature=_Wed__3_Jul_2013_16_02_47_+1000_izrMlHwUF6z193NS--
+> Oleg.
+>
