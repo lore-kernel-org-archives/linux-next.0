@@ -1,57 +1,72 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH linux-next] i2c-designware: use div_u64 to fix link
-Date: Wed, 3 Jul 2013 22:09:43 +0200
-Message-ID: <20130703200943.GA2958@katana>
-References: <1372758414-21513-1-git-send-email-vincent.stehle@freescale.com>
+From: Davidlohr Bueso <davidlohr.bueso@hp.com>
+Subject: Re: mmotm 2013-07-02-15-32 uploaded
+Date: Wed, 03 Jul 2013 16:04:57 -0700
+Message-ID: <1372892697.8728.22.camel@buesod1.americas.hpqcorp.net>
+References: <20130702223405.AF5BB5A4016@corp2gmr1-2.hot.corp.google.com>
+	 <CA+icZUWX761O5tAfdYfgR0_QA8zMiZOqBBjzbWVeEcZPL+M_pQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1372758414-21513-1-git-send-email-vincent.stehle-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vincent =?iso-8859-15?Q?Stehl=E9?= <vincent.stehle-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christian Ruppert <christian.ruppert-ux6zf3SgZrrQT0dZR+AlfA@public.gmane.org>, Pierrick Hascoet <pierrick.hascoet-ux6zf3SgZrrQT0dZR+AlfA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from g4t0015.houston.hp.com ([15.201.24.18]:41343 "EHLO
+	g4t0015.houston.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932988Ab3GCXE7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 19:04:59 -0400
+In-Reply-To: <CA+icZUWX761O5tAfdYfgR0_QA8zMiZOqBBjzbWVeEcZPL+M_pQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 
+On Wed, 2013-07-03 at 09:44 +0200, Sedat Dilek wrote:
+> On Wed, Jul 3, 2013 at 12:34 AM,  <akpm@linux-foundation.org> wrote:
+> > The mm-of-the-moment snapshot 2013-07-02-15-32 has been uploaded to
+> >
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> >
+> > mmotm-readme.txt says
+> >
+> > README for mm-of-the-moment:
+> >
+> > http://www.ozlabs.org/~akpm/mmotm/
+> >
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> >
+> > You will need quilt to apply these patches to the latest Linus release (3.x
+> > or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> > http://ozlabs.org/~akpm/mmotm/series
+> >
+> > The file broken-out.tar.gz contains two datestamp files: .DATE and
+> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> > followed by the base kernel version against which this patch series is to
+> > be applied.
+> >
+> > This tree is partially included in linux-next.  To see which patches are
+> > included in linux-next, consult the `series' file.  Only the patches
+> > within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+> > linux-next.
+> >
+> 
+> Hi Andrew,
+> 
+> 1st, I would like to see a diff to previous mmotm release.
+> Is that possible - with the announce.
+> For example, I like to diff series file of mmot*m* and mmot*s*.
+> 
+> AFAICS, you wanted to fold the fix into the real patch?
+> 
+> ipcmsg-shorten-critical-region-in-msgctl_down.patch
+> ipcmsg-shorten-critical-region-in-msgrcv-fix-race-in-msgrcv2.patch
 
---6TrnltStXW4iwmi0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+IIRC, it will be folded in once it reaches Linus.
 
-On Tue, Jul 02, 2013 at 11:46:54AM +0200, Vincent Stehl=E9 wrote:
-> This fixes the following link error:
->=20
->   drivers/built-in.o: In function `dw_i2c_probe':
->   of_iommu.c:(.text+0x18c8f0): undefined reference to `__aeabi_uldivmod'
->   make: *** [vmlinux] Error 1
->=20
-> Signed-off-by: Vincent Stehl=E9 <vincent.stehle-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+> 
+> 3rd, is the "sysv-ipc-shm-optimizations" patchset from Davidlohr included here?
+> ( I had no closer look. )
 
-Applied to for-next, thanks!
+Those are being considered for 3.12 now, I'll resend the patchset once
+3.11-rc1 is out.
 
-
---6TrnltStXW4iwmi0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR1IUGAAoJEBQN5MwUoCm280cP+weSZlgUEbzYzokVWjay2cvd
-Hfz4TSUX8rRRJ6p8jCmuPH5T6PruPFPpo4NOsi9LqSAWtUUNoz0J4wIZyxoWIl87
-belhcGiQJsTbpC9yFeojoO1mg1BLGYcdRccsHsVN1kw9D6v4Yf1LpFn5u9td0Q48
-5qyHBgjw7E9NUjD+fVmIlWxmoVVrrx7t9IMQCzVI/LtnlUzx0yFAAeJWyyw8VOcC
-c26qRjFkxnJ+/S+lbkFEieTdzFl82bFukyD+YalPCAkR+wSqkurCF14UoXBI6PYA
-2cXgCPSrgLVsIK8VLnaKt/0Als+BVuXsCpzWDRJXSwmed/WsEzAIjE2SuKKzfCcl
-XW29qXlelraXNyGtKtEI4CPjm6wkR1M/x32LfxbC48xow/NEk4Up3kWxTkqSzDNg
-QzR4HFlPG2PX/0cauf/6hd3Yu65Hd8t2DTX/SM9BRQFVHjEMUDDDgXeXNO9QXTxD
-V90AxD32aU5sssSoSBqHqV+qxECXAK72Bz3kpmAxevRQptvJQ6C8b25M6ZzXxH4+
-UMh6i/32myEdo+52V/ZTyROf2bFRSuG3fgkvKZZSm0QzXzWa64x+yBoohCtolP/I
-nob5y5FRPVurI60YZyjq1K27Tui7zWRCqv05cpx2i/Jfe9kPirSlMjuS98LWxP2t
-yV9PLFTnwH1B9jw7N7Qv
-=lYZH
------END PGP SIGNATURE-----
-
---6TrnltStXW4iwmi0--
+Thanks,
+Davidlohr
