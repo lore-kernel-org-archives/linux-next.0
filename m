@@ -1,60 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the device-mapper tree with the md tree
-Date: Wed, 3 Jul 2013 14:05:52 +1000
-Message-ID: <20130703140552.7e8ecf58b0578bfa15d58935@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the btrfs tree
+Date: Wed, 3 Jul 2013 15:22:41 +1000
+Message-ID: <20130703152241.d9f23c7709f13a40493656f7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__3_Jul_2013_14_05_52_+1000_fDvHTzvplm7F531H"
+ boundary="Signature=_Wed__3_Jul_2013_15_22_41_+1000_=pcOMf_/QdbFHNBL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44128 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44158 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750706Ab3GCEGE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 00:06:04 -0400
+	with ESMTP id S1751193Ab3GCFWs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 01:22:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alasdair G Kergon <agk@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, NeilBrown <neilb@suse.de>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, David Sterba <dsterba@suse.cz>, Chris Mason <chris.mason@fusionio.com>, Josef Bacik <jbacik@fusionio.com>
 
---Signature=_Wed__3_Jul_2013_14_05_52_+1000_fDvHTzvplm7F531H
+--Signature=_Wed__3_Jul_2013_15_22_41_+1000_=pcOMf_/QdbFHNBL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alasdair,
+Hi Jiri,
 
-Today's linux-next merge of the device-mapper tree got a conflict in
-drivers/md/dm-raid.c between commit 3f6bbd3ffd7b ("dm-raid: silence
-compiler warning on rebuilds_per_group") from the md tree and commit
-acc946bad465 ("his patch suppresses this warning:") from the
-device-mapper tree.
+Today's linux-next merge of the trivial tree got a conflict in
+fs/btrfs/free-space-cache.c between commit 905d0f564e9c ("btrfs: add
+prefix to sanity tests messages") from the btrfs tree and commit
+8b513d0cf603 ("treewide: Fix typo in printk") from the trivial tree.
 
-I fixed it up (I just used the md tree version) and can carry the fix as
-necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__3_Jul_2013_14_05_52_+1000_fDvHTzvplm7F531H
+diff --cc fs/btrfs/free-space-cache.c
+index 7517285,2750b50..0000000
+--- a/fs/btrfs/free-space-cache.c
++++ b/fs/btrfs/free-space-cache.c
+@@@ -3202,7 -3200,7 +3202,7 @@@ static int test_extents(struct btrfs_bl
+ =20
+  	ret =3D btrfs_remove_free_space(cache, 2 * 1024 * 1024, 4096);
+  	if (ret) {
+- 		test_msg("Error removing middle peice %d\n", ret);
+ -		printk(KERN_ERR "Error removing middle piece %d\n", ret);
+++		test_msg("Error removing middle piece %d\n", ret);
+  		return ret;
+  	}
+ =20
+
+--Signature=_Wed__3_Jul_2013_15_22_41_+1000_=pcOMf_/QdbFHNBL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR06MlAAoJEECxmPOUX5FE87kQAJoz1iHcpt7KF3go87egCCyw
-w0B2AAYFzgSOPIqarAxoNfj5229xLneJCetFiIpbV6C1ku//3BYQrDY2JK33ouD1
-vA46S5iIrbKzfChcW9zmI1y7i/eYqovrraxtXnK7JLCVvswtgqMiFQi1M0hnIzXJ
-/qrex8rK6IfvFY0iIIcVb52Lu+NAtZreD59zynRrn/Icm7cVL0xoUST9zpjyAmZ/
-a6h8QYyKvIVwc5k8oDERVKgBoMblle4LXFllifHAUu6FKDzfTlgrvictgTIpTbtE
-d4HUzBxG69z62KX2P2x4HNqw78TRw896+/gT4c8xV3x3PNMnIQlOX4Rn4/3048gG
-ETl/JznvO2sF7/k57Xjyz7U+WqggW/ceEr3K4WqNjWeRxTkxu13g3mGQZ3ac2fDo
-nAY3K6GXdR+mOH4eonQaGkNoaCB/Z61cujHUKT31VYO5meudhdYuWkQSX0kpblBi
-zpPt70q75QKsSWnvh7gct+kwlkbyxMFUsIOyfmJxAjmwK8Y9UNAVfAIjsr4muHzC
-E2wOE9wlQ7BH0iONbbXotZYXPs0SDuCo9HCV8/QU/rxuIUUdyB71XWjlEoOYpUKn
-w01RntmpC8txwcr29Y4G8khbo5Iy5Es5Svyv9Wpk+T0yrwqYQsYQrPtKb/61rxTy
-LFhzHAmOPyiqqOj09iZo
-=tN0e
+iQIcBAEBCAAGBQJR07UlAAoJEECxmPOUX5FEi50QAJTqp5o36dxEblrAbw+4K9XM
+PGekDyfeLVwDfiVitG7+3Sg6naUrUmmh/7oEEmD+pDZ8Sz5797OD9c5OMvcXr8by
+gQc3phahswqA6zDeZloBJGjyPYDmkYLvZ666ua9gi6Jp+0hFh/oHpB+vTA5APT7U
+hoqw2agoMdbVi2i3tzyWFQNPDpEWgsAGheIq0IFlffz/J9gab7NMzCss+JEorFyW
+hkouop64iDZxpDyd0Au15JozY5eBIoSUSich0H1lzSYD2bdgEkZ/x0zrwetNrdL6
+A4weAQsRpLWBTvirsPkl2gOMwZBYmeK1XlQbu3aXvYaFwPo2axbNdt05IHsuwSDV
+eqUNArzO4+yBUCAXfrt7rvYlMzyVxc5qrYhFSGsmLrJJ3gRtzWLIBYo5na4J9Mba
+5ZRJZoCt5xwjPpCjfbm3bvWUcAmKuukuebg0/ugWapJfHfq2yc8jsIdANcwoTTfe
+6DLFRbt+8CfmETaxqgU9QZlRpvJaOcatfrD5HLPc/IWku2f9RHY1WzKIdBqicEMi
+A1rQaBqIDyRRWAp1Gfj5hrDBPTmcGJYk/PiMcn57WZzo4IMxR6aJqP/oNMYNHX9T
+QGi4i9Qs9q4jO0CgFYPRv/vqkmJ4rCF7fA8sDXbSCU7N2diDihFVcyEP2KL54mtK
+ZPqWHdVvFmKEDK7rAuPS
+=4ioF
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__3_Jul_2013_14_05_52_+1000_fDvHTzvplm7F531H--
+--Signature=_Wed__3_Jul_2013_15_22_41_+1000_=pcOMf_/QdbFHNBL--
