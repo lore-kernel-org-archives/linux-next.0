@@ -1,105 +1,47 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: [PATCH next-20130703] net: sock: Add ifdef CONFIG_MEMCG_KMEM for mem_cgroup_sockets_{init,destroy}
-Date: Wed, 3 Jul 2013 18:42:40 +0200
-Message-ID: <CA+icZUVx2qDYRF7BKHesjGtn8vPokeJkUE=T0MCkqcg8XK15-g@mail.gmail.com>
-References: <1372853998-15353-1-git-send-email-sedat.dilek@gmail.com>
-	<51D41E34.5010802@huawei.com>
-	<20130703152058.GA30267@dhcp22.suse.cz>
-	<CA+icZUX+mB2v9ghdhaLvpncCu+yxP4xJzzbFxXisFsB2tDM7TA@mail.gmail.com>
-	<20130703155958.GC5153@dhcp22.suse.cz>
-	<CA+icZUWiXr=wFoXHA_V3jy0Bkg1Pc5b79LX5j1fnfgmOkYhKCg@mail.gmail.com>
-	<20130703163429.GD5153@dhcp22.suse.cz>
-Reply-To: sedat.dilek@gmail.com
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: Section mismatch in drivers/usb/gadget/fotg210-udc.c
+Date: Wed, 3 Jul 2013 13:00:39 -0400
+Message-ID: <CAP=VYLpsF7bmF2HZ84_WV0YtbGqHoPDMaE=a9p9UhovHeckkRg@mail.gmail.com>
+References: <51C20F3D.1060700@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20130703163429.GD5153@dhcp22.suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@suse.cz>
-Cc: Li Zefan <lizefan@huawei.com>, akpm@linux-foundation.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, linux-mm@kvack.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:58658 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932471Ab3GCRBL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 13:01:11 -0400
+In-Reply-To: <51C20F3D.1060700@windriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Yuan-Hsin Chen <yhchen@faraday-tech.com>
+Cc: Felipe Balbi <balbi@ti.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-usb@vger.kernel.org
 
-On Wed, Jul 3, 2013 at 6:34 PM, Michal Hocko <mhocko@suse.cz> wrote:
-> On Wed 03-07-13 18:11:28, Sedat Dilek wrote:
->> On Wed, Jul 3, 2013 at 5:59 PM, Michal Hocko <mhocko@suse.cz> wrote:
->> > On Wed 03-07-13 17:53:21, Sedat Dilek wrote:
->> >> On Wed, Jul 3, 2013 at 5:20 PM, Michal Hocko <mhocko@suse.cz> wrote:
->> >> > On Wed 03-07-13 20:51:00, Li Zefan wrote:
->> >> > [...]
->> >> >> [PATCH] memcg: fix build error if CONFIG_MEMCG_KMEM=n
->> >> >>
->> >> >> Fix this build error:
->> >> >>
->> >> >> mm/built-in.o: In function `mem_cgroup_css_free':
->> >> >> memcontrol.c:(.text+0x5caa6): undefined reference to
->> >> >> 'mem_cgroup_sockets_destroy'
->> >> >>
->> >> >> Reported-by: Fengguang Wu <fengguang.wu@intel.com>
->> >> >> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> >> >> Signed-off-by: Li Zefan <lizefan@huawei.com>
->> >> >
->> >> > I am seeing the same thing I just didn't get to reporting it.
->> >> > The other approach is not bad as well but I find this tiny better
->> >> > because mem_cgroup_css_free should care only about a single cleanup
->> >> > function for whole kmem. If that one needs to do tcp kmem specific
->> >> > cleanup then it should be done inside kmem_cgroup_css_offline.
->> >> >
->> >>
->> >> As said in my other mail, for me this makes sense as it is a followup.
->> >>
->> >> But, still I don't know why sock.c has is own mem_cgroup_sockets_{init,destroy}.
->> >
->> > That is the only definition AFAICS (except for !CONFIG_NET where it
->> > expands to NOOP). Please note that memcg_init_kmem is a common kmem
->> > initializator and it needs to be prepared for !CONFIG_NET.
->> >
->> > The same applies to _destroy.
->> > Makes more sense now?
->> >
->>
->> So, that stuff comes originally from the net-tree.
+On Wed, Jun 19, 2013 at 4:06 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> Hi guys,
 >
-> No, it all came from tcp kmem accounting. It is a memcg thingy and I
-> guess it was placed into sock.c because it depends on some static
-> symbols there (e.g. proto_list_mutex).
+> This was seen on a linux-next (Jun18th tree) allmodconfig build:
 >
+> WARNING: drivers/usb/gadget/fotg210-udc.o(.data+0x0): Section mismatch in reference from the variable fotg210_driver to the function .init.text:fotg210_udc_probe()
+> The variable fotg210_driver references
+> the function __init fotg210_udc_probe()
+> If the reference is valid then annotate the
+> variable with __init* or __refdata (see linux/init.h) or name the variable:
+> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
 
-memcg thingies should belong to mm-tree :-).
+Hi,
 
->> I understand the !CONFIG_NET case, but lack the understanding why
->> memcontrol.c needs _destroy.
->
-> Because it is memcg specific and it has to be called when a group is
-> destroyed.
->
+Wondering if this fell through the cracks?   I recall the fix being discussed,
+but yet I'm still seeing the problem when I build today's linux-next, and the
+merge window has already opened on Monday.
 
-I looked again into my local GIT tree where I applied Li Zefan's patch.
-memcg_destroy_kmem() makes sense with existing memcg_init_kmem().
-
-I have now a better picture, but it's balck/white not coloured :-).
-
-Thanks for your patience and explanations.
-
-- Sedat -
-
->> Can you explain that (sorry /me is no mm-geek)?
->>
->> - Sedat -
->>
->> [1] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/net/core/sock.c?id=next-20130703#n147
->> [2] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/include/net/sock.h?id=next-20130703#n73
->>
->> > [...]
->> > --
->> > Michal Hocko
->> > SUSE Labs
->
-> --
-> Michal Hocko
-> SUSE Labs
-
+Paul.
 --
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+
+>
+> Paul.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
