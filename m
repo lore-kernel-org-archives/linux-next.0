@@ -1,36 +1,57 @@
-From: Oleg Nesterov <oleg@redhat.com>
-Subject: Re: linux-next: Tree for Jun 28 [ BISECTED: rsyslog/imklog: High
-	CPU usage ]
-Date: Wed, 3 Jul 2013 00:37:14 +0200
-Message-ID: <20130702223714.GA28048@redhat.com>
-References: <CA+icZUXo=Z4gDfCMvLqRQDq_fpNAq+UqtUw=jrU=3=kVZP-2+A@mail.gmail.com> <20130630181945.GA5171@redhat.com> <CA+icZUWLUSg-Sfd9FHXs8Amz+-s6vs_VOJsQpUSa9+fYM8XyNQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the xilinx tree
+Date: Wed, 3 Jul 2013 11:10:30 +1000
+Message-ID: <20130703111030.c0df2a231fc3e4ba6cb566cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__3_Jul_2013_11_10_30_+1000_/u_cb/6Z9IfA1T3y"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37266 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751767Ab3GCBKl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Jul 2013 21:10:41 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Wed__3_Jul_2013_11_10_30_+1000_/u_cb/6Z9IfA1T3y
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <CA+icZUWLUSg-Sfd9FHXs8Amz+-s6vs_VOJsQpUSa9+fYM8XyNQ@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Imre Deak <imre.deak@intel.com>, Lukas Czerner <lczerner@redhat.com>, Samuel Ortiz <samuel@sortiz.org>, Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Ralf Baechle <ralf@linux-mips.org>, Valdis.Kletnieks@vt.edu, linux-mm <linux-mm@kvack.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sedat,
+Hi Michal,
 
-On 07/02, Sedat Dilek wrote:
->
-> did you made a cleaned-up version?
-> AFAICS v3, I read that on linux-mm ML, sorry if I ask here in this thread.
+Today's linux-next merge of the xilinx tree got conflicts in several files.
 
-Yes, I am going to send v3 with this fix + another minor change.
-Sorry for delay, I was distracted, will try tomorrow.
+These conflicts are caused by a set of old patches in the xilinx tree
+other copies of which have been merged upstream a while ago.  I fact the
+xilinx tree currently adds no changes to linux-next at all.   Could you
+please clean up this tree?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Besides, I think Andrew and Stephen need a rest before I try to
-break wait.h or the third time.
+--Signature=_Wed__3_Jul_2013_11_10_30_+1000_/u_cb/6Z9IfA1T3y
+Content-Type: application/pgp-signature
 
-Oleg.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+iQIcBAEBCAAGBQJR03oLAAoJEECxmPOUX5FEpHcQAIxEmgfsHoLjPHE/8yiVyI7J
+Gd8mDrBtdQSfFoOujb22bxWLA52ZpdNTyZ3WDbQKcNApgHl2yIqSzlCFWLvqh/Oi
+HzUzbcwfzdcv4EUcrTUS1khvz3+JPpGyf3Wlvxfa6YqrrtGnU/QEx4ZSLb5iBcV1
+fDbR85tht/K2fmCEwa+dxZ47Zn3F4F00rYMZgdBKFBy6X4wGhiWtZLeh6WtPPPoT
+7EtXLh9uvJD50PqUE9tKGJV88nqup38vUrqmLE6BtDJ/eYDM109mIUa3YIXmw6Pa
+nOPoQNBXiIVwknTPfWGKzpsQdxJzxtgt4cTNVmquQrPXdSczQl/SaSIVl9eoV8JQ
+UBRqn61V5D6M/e1x2CYk7ItD6XTM5ksMpqF8E6zauT2f2eqN0X12tMF0Os2ydq1W
+EMnaGZQjTl7v/KAE7YkTJ5sKHEbqQRWEGH4cVw6WBNAP99GARqmEzzU5TKSQnj30
+BYaz18pbY/O7uvf7gGvd7v0eVgHauUR7JaSMvS4m9PY1gmmO0Dy/il6Zmmvy8DFP
+ndEmsY/S2atGy0BWU1LpCwR/CdRQY5SjfA7eYOSUSUuew2ENox0MCBZ87beqsqZg
+7X9k1ViKH9MFw9WmPllqwI0UVl5TrZNKhRoWjjGHTdhGaeAeHlnoSeb9AYie+18B
+1OvXq0ySCKcCkP8yn9kP
+=XU/Y
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Jul_2013_11_10_30_+1000_/u_cb/6Z9IfA1T3y--
