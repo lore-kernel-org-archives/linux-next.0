@@ -1,15 +1,15 @@
 From: Sedat Dilek <sedat.dilek@gmail.com>
 Subject: [PATCH next-20130703] net: sock: Add ifdef CONFIG_MEMCG_KMEM for mem_cgroup_sockets_{init,destroy}
-Date: Wed,  3 Jul 2013 14:14:53 +0200
-Message-ID: <1372853693-15303-1-git-send-email-sedat.dilek@gmail.com>
+Date: Wed,  3 Jul 2013 14:19:58 +0200
+Message-ID: <1372853998-15353-1-git-send-email-sedat.dilek@gmail.com>
 Return-path: <owner-linux-mm@kvack.org>
 Sender: owner-linux-mm@kvack.org
-To: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm <linux-mm@kvack.org>
+To: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, lizefan@huawei.com, akpm@linux-foundation.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, linux-mm@kvack.org
 Cc: Sedat Dilek <sedat.dilek@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
 When "CONFIG_MEMCG_KMEM=n" I see this in my build-log:
-...
+
  LD      init/built-in.o
 mm/built-in.o: In function `mem_cgroup_css_free':
 memcontrol.c:(.text+0x5caa6): undefined reference to `mem_cgroup_sockets_destroy'
@@ -18,11 +18,13 @@ make[2]: *** [vmlinux] Error 1
 Inspired by the ifdef for mem_cgroup_sockets_{init,destroy} here...
 
 [ net/core/sock.c ]
-...
-int mem_cgroup_sockets_init()
-...
-void mem_cgroup_sockets_destroy()
-...
+
+ #ifdef CONFIG_MEMCG_KMEM
+ int mem_cgroup_sockets_init()
+ ...
+ void mem_cgroup_sockets_destroy()
+ ...
+ #endif
 
 ...I did the the same for both in "include/net/sock.h".
 
@@ -30,6 +32,8 @@ This fixes the issue for me in next-20130703.
 
 Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
 ---
+[ v2: git dislikes lines beginning with hash ('#'). ]
+
  include/net/sock.h | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
