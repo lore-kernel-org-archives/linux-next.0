@@ -1,90 +1,44 @@
-From: Christian Ruppert <christian.ruppert@abilis.com>
-Subject: Re: [PATCH linux-next] i2c-designware: use div_u64 to fix link
-Date: Wed, 3 Jul 2013 10:44:31 +0200
-Message-ID: <20130703084429.GB19130@ab42.lan>
-References: <1372758414-21513-1-git-send-email-vincent.stehle@freescale.com>
+From: Eliezer Tamir <eliezer.tamir@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Wed, 03 Jul 2013 11:45:08 +0300
+Message-ID: <51D3E494.50206@linux.intel.com>
+References: <20130703174822.d06500db5cbd5191c39e3f08@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.abilis.ch ([195.70.19.74]:23331 "EHLO mail.abilis.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755262Ab3GCIoj convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 04:44:39 -0400
-Content-Disposition: inline
-In-Reply-To: <1372758414-21513-1-git-send-email-vincent.stehle@freescale.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vincent Stehlll <vincent.stehle@freescale.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Pierrick Hascoet <pierrick.hascoet@abilis.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130703174822.d06500db5cbd5191c39e3f08@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 02, 2013 at 11:46:54AM +0200, Vincent Stehlll wrote:
-> This fixes the following link error:
->=20
->   drivers/built-in.o: In function `dw_i2c_probe':
->   of_iommu.c:(.text+0x18c8f0): undefined reference to `__aeabi_uldivm=
-od'
->   make: *** [vmlinux] Error 1
 
-Looks good. I also tested it on our ARC based platform, no issues with
-compilation or functionality. Thanks for pointing this out.
+On 03/07/2013 10:48, Stephen Rothwell wrote:
+> Hi all,
+>
+> After merging the final tree, today's linux-next build (powerpc
+> allnoconfig) failed like this:
+>
+> fs/select.c: In function 'do_select':
+> fs/select.c:408:2: error: implicit declaration of function 'll_start_time' [-Werror=implicit-function-declaration]
+>    u64 ll_start = ll_start_time(ll_flag);
+[..]
+> Caused by commit 1bc2774d8664 ("net: convert lls to use time_in_range()")
+> from the net-next tree.
+>
+> I cherry-picked the commit 419076f59fc5 ("net: lls fix build with
+> allnoconfig") out of tomorrow's net-next tree.  (I am feeling generous
+> and noticed that patch being applied :-))
 
-Reviewed-by: Christian Ruppert <christian.ruppert@abilis.com>
+Yes, my bad.
+Thank you.
 
-> Signed-off-by: Vincent Stehl=E9 <vincent.stehle@freescale.com>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: Christian Ruppert <christian.ruppert@abilis.com>
-> Cc: Pierrick Hascoet <pierrick.hascoet@abilis.com>
-> ---
->=20
->=20
-> Hi,
->=20
-> Linux next-20130702 link broke for ARM config multi_v7_defconfig. Thi=
-s is with
-> gcc 4.7.2 but I am not sure it matters much here.
->=20
-> This patch repairs the link.
->=20
-> It did not break anything for me on i.MX6 sabre sd, but it does'nt ha=
-ve a
-> designware i2c, so more reviewing/testing is welcome.
->=20
-> Best regards,
->=20
-> V.
->=20
->=20
->  drivers/i2c/busses/i2c-designware-platdrv.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2=
-c/busses/i2c-designware-platdrv.c
-> index def79b5..4c5fada 100644
-> --- a/drivers/i2c/busses/i2c-designware-platdrv.c
-> +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-> @@ -122,7 +122,8 @@ static int dw_i2c_probe(struct platform_device *p=
-dev)
-> =20
->  		of_property_read_u32(pdev->dev.of_node,
->  					"i2c-sda-hold-time-ns", &ht);
-> -		dev->sda_hold_time =3D ((u64)ic_clk * ht + 500000) / 1000000;
-> +		dev->sda_hold_time =3D div_u64((u64)ic_clk * ht + 500000,
-> +					     1000000);
->  	}
-> =20
->  	dev->functionality =3D
-> --=20
-> 1.7.10.4
->=20
->=20
->=20
+I knew lots of people could get this so I sent out a fix ASAP (at 6AM
+my time).
 
---=20
-  Christian Ruppert              ,          <christian.ruppert@abilis.c=
-om>
-                                /|
-  Tel: +41/(0)22 816 19-42     //|                 3, Chemin du Pr=E9-F=
-leuri
-                             _// | bilis Systems   CH-1228 Plan-les-Oua=
-tes
+If it's not too much trouble we should add:
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+
+-Eliezer
