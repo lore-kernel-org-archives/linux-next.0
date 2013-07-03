@@ -1,60 +1,89 @@
-From: =?utf-8?B?SsO2cm4=?= Engel <joern@logfs.org>
-Subject: Re: linux-next: Tree for Jul 3
-Date: Wed, 3 Jul 2013 10:48:03 -0400
-Message-ID: <20130703144802.GA32130@logfs.org>
-References: <20130703180620.6919bf7d7f13f7ed21046c68@canb.auug.org.au>
- <20130703112539.GA32584@linaro.org>
+From: Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH next-20130703] net: sock: Add ifdef CONFIG_MEMCG_KMEM for
+ mem_cgroup_sockets_{init,destroy}
+Date: Wed, 3 Jul 2013 18:34:29 +0200
+Message-ID: <20130703163429.GD5153@dhcp22.suse.cz>
+References: <1372853998-15353-1-git-send-email-sedat.dilek@gmail.com>
+ <51D41E34.5010802@huawei.com>
+ <20130703152058.GA30267@dhcp22.suse.cz>
+ <CA+icZUX+mB2v9ghdhaLvpncCu+yxP4xJzzbFxXisFsB2tDM7TA@mail.gmail.com>
+ <20130703155958.GC5153@dhcp22.suse.cz>
+ <CA+icZUWiXr=wFoXHA_V3jy0Bkg1Pc5b79LX5j1fnfgmOkYhKCg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from longford.logfs.org ([213.229.74.203]:59726 "EHLO
-	longford.logfs.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932081Ab3GCQSp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 12:18:45 -0400
+Received: from cantor2.suse.de ([195.135.220.15]:40647 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751521Ab3GCQeb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Jul 2013 12:34:31 -0400
 Content-Disposition: inline
-In-Reply-To: <20130703112539.GA32584@linaro.org>
+In-Reply-To: <CA+icZUWiXr=wFoXHA_V3jy0Bkg1Pc5b79LX5j1fnfgmOkYhKCg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve Capper <steve.capper@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Li Zefan <lizefan@huawei.com>, akpm@linux-foundation.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, linux-mm@kvack.org
 
-On Wed, 3 July 2013 12:25:41 +0100, Steve Capper wrote:
->=20
-> Today's linux-next appears to introduce some BUGs when running the li=
-bhugetlbfs
-> testsuite (under both ARM64 and x86_64):
->=20
-> [   94.320661] BUG: Bad rss-counter state mm:ffff880119461040 idx:1 v=
-al:-512
-> [   94.330346] BUG: Bad rss-counter state mm:ffff880119460680 idx:1 v=
-al:-2560
-> [   94.341746] BUG: Bad rss-counter state mm:ffff880119460d00 idx:1 v=
-al:-512
-> [   94.347518] BUG: Bad rss-counter state mm:ffff880119460d00 idx:1 v=
-al:-512
-> [   94.415203] BUG: Bad rss-counter state mm:ffff8801194f9040 idx:1 v=
-al:-1024
->=20
-> I've bisected this to commit:
-> commit 446313e3e4e7274c4d1e449d107fab6c041ec59c
-> hugetlb: properly account rss
->=20
-> The bad counter values I get are all negative.
->=20
-> To reproduce this, just run through the latest libhugetlbfs test suit=
-e, these
-> warnings appear pretty much immediately. (I set aside 200 huge pages =
-first):
-> http://libhugetlbfs.sourceforge.net/
->=20
-> Reverting this commit allows the test suite to run without problems.
+On Wed 03-07-13 18:11:28, Sedat Dilek wrote:
+> On Wed, Jul 3, 2013 at 5:59 PM, Michal Hocko <mhocko@suse.cz> wrote:
+> > On Wed 03-07-13 17:53:21, Sedat Dilek wrote:
+> >> On Wed, Jul 3, 2013 at 5:20 PM, Michal Hocko <mhocko@suse.cz> wrote:
+> >> > On Wed 03-07-13 20:51:00, Li Zefan wrote:
+> >> > [...]
+> >> >> [PATCH] memcg: fix build error if CONFIG_MEMCG_KMEM=n
+> >> >>
+> >> >> Fix this build error:
+> >> >>
+> >> >> mm/built-in.o: In function `mem_cgroup_css_free':
+> >> >> memcontrol.c:(.text+0x5caa6): undefined reference to
+> >> >> 'mem_cgroup_sockets_destroy'
+> >> >>
+> >> >> Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+> >> >> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> >> >> Signed-off-by: Li Zefan <lizefan@huawei.com>
+> >> >
+> >> > I am seeing the same thing I just didn't get to reporting it.
+> >> > The other approach is not bad as well but I find this tiny better
+> >> > because mem_cgroup_css_free should care only about a single cleanup
+> >> > function for whole kmem. If that one needs to do tcp kmem specific
+> >> > cleanup then it should be done inside kmem_cgroup_css_offline.
+> >> >
+> >>
+> >> As said in my other mail, for me this makes sense as it is a followup.
+> >>
+> >> But, still I don't know why sock.c has is own mem_cgroup_sockets_{init,destroy}.
+> >
+> > That is the only definition AFAICS (except for !CONFIG_NET where it
+> > expands to NOOP). Please note that memcg_init_kmem is a common kmem
+> > initializator and it needs to be prepared for !CONFIG_NET.
+> >
+> > The same applies to _destroy.
+> > Makes more sense now?
+> >
+> 
+> So, that stuff comes originally from the net-tree.
 
-Thank you, I will have a look.  For the interim, dropping this patch
-from -mm seems the best approach.
+No, it all came from tcp kmem accounting. It is a memcg thingy and I
+guess it was placed into sock.c because it depends on some static
+symbols there (e.g. proto_list_mutex).
 
-J=C3=B6rn
+> I understand the !CONFIG_NET case, but lack the understanding why
+> memcontrol.c needs _destroy.
 
---
-Geld macht nicht gl=C3=BCcklich.
-Gl=C3=BCck macht nicht satt.
+Because it is memcg specific and it has to be called when a group is
+destroyed.
+
+> Can you explain that (sorry /me is no mm-geek)?
+> 
+> - Sedat -
+> 
+> [1] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/net/core/sock.c?id=next-20130703#n147
+> [2] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/include/net/sock.h?id=next-20130703#n73
+> 
+> > [...]
+> > --
+> > Michal Hocko
+> > SUSE Labs
+
+-- 
+Michal Hocko
+SUSE Labs
