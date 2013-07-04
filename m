@@ -1,70 +1,47 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for Jul 4
-Date: Thu, 4 Jul 2013 01:45:44 -0700
-Message-ID: <20130704014544.bce5cdb6.akpm@linux-foundation.org>
-References: <20130704160652.4f76f0ee43877a6e726d6c8b@canb.auug.org.au>
-	<CA+icZUXchb2H=ZZ0Zv+vA43x0CNVSbLvPptawnBR+OUpOzqP6A@mail.gmail.com>
-	<CA+icZUV8Nw2eY7aJg0qSCmg+Pk_EdRT2joUqxiL8y77rUsBGHg@mail.gmail.com>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: manual merge of the akpm tree with the kbuild tree
+Date: Thu, 04 Jul 2013 11:07:04 +0200
+Message-ID: <51D53B38.7040202@suse.cz>
+References: <20130704143353.e695ca64b17705c842676870@canb.auug.org.au> <20130703214300.11d9223a.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44930 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755550Ab3GDIpk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Jul 2013 04:45:40 -0400
-In-Reply-To: <CA+icZUV8Nw2eY7aJg0qSCmg+Pk_EdRT2joUqxiL8y77rUsBGHg@mail.gmail.com>
+Received: from cantor2.suse.de ([195.135.220.15]:38554 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752055Ab3GDJHI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Jul 2013 05:07:08 -0400
+In-Reply-To: <20130703214300.11d9223a.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yaakov Selkowitz <yselkowitz@users.sourceforge.net>, Daniel Tang <dt.tangr@gmail.com>
 
-On Thu, 4 Jul 2013 10:21:09 +0200 Sedat Dilek <sedat.dilek@gmail.com> wrote:
+On 4.7.2013 06:43, Andrew Morton wrote:
+> On Thu, 4 Jul 2013 14:33:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+>> Hi Andrew,
+>>
+>> Today's linux-next merge of the akpm tree got conflicts in
+>> tools/include/tools/be_byteshift.h and tools/include/tools/le_byteshift.h
+>> between commit b35310627f39 ("tools/include: use stdint types for
+>> user-space byteshift headers") from the kbuild tree and commit
+>> "scripts/sortextable.c: fix building on non-Linux systems" from the
+>> akpm tree.
+>>
+>> As fas as I can tell, these patches do the same thing except one uses
+>> stdint.h and the other inttypes.h.  I just dropped the akpm tree patch.
+> 
+> Well OK, but new patches really shouldn't be popping up in the middle
+> of the merge window like this.
 
-> I have compared both mm/memcontrol.c files from
-> next-20130703/next-20130704 - they are identical.
-> 
-> These hunks...
-> 
-> [ From Li Zefan ]
-> @@ -6332,8 +6341,7 @@ static void mem_cgroup_css_free(struct cgroup *cont)
->  {
->         struct mem_cgroup *memcg = mem_cgroup_from_cont(cont);
-> 
-> -       mem_cgroup_sockets_destroy(memcg);
-> -
-> +       memcg_destroy_kmem(memcg);
->         __mem_cgroup_free(memcg);
->  }
-> 
-> [ From mmots ]
-> @@ -6399,8 +6408,7 @@ static void mem_cgroup_css_free(struct c
->  {
->         struct mem_cgroup *memcg = mem_cgroup_from_cont(cont);
-> 
-> -       mem_cgroup_sockets_destroy(memcg);
-> -
-> +       memcg_destroy_kmem(memcg);
->         mem_cgroup_put(memcg);
->  }
-> 
-> ...seems to differ.
-> 
-> In both mentioned -next releases there exist no mem_cgroup_put() in
-> mm/memcontrol.c.
-> So the hunk in mmots seems to be wrong in my eyes.
+Sorry for that.
 
-Seems right - thanks for catching that.
 
---- a/mm/memcontrol.c~memcg-use-css_get-put-when-charging-uncharging-kmem-fix-fix-fix
-+++ a/mm/memcontrol.c
-@@ -6409,7 +6409,7 @@ static void mem_cgroup_css_free(struct c
- 	struct mem_cgroup *memcg = mem_cgroup_from_cont(cont);
- 
- 	memcg_destroy_kmem(memcg);
--	mem_cgroup_put(memcg);
-+	__mem_cgroup_free(memcg);
- }
- 
- #ifdef CONFIG_MMU
-_
+> AFAICT Yaakov (re)sent this patch way back in April, so it should have
+> been in -next for a long time.  Something has gone wrong here.
+
+I only saw an email from June 26, I wasn't on the CC list of the
+previous submissions.
+
+Michal
