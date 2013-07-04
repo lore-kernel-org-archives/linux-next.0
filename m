@@ -1,72 +1,61 @@
-From: Davidlohr Bueso <davidlohr.bueso@hp.com>
-Subject: Re: mmotm 2013-07-02-15-32 uploaded
-Date: Wed, 03 Jul 2013 16:04:57 -0700
-Message-ID: <1372892697.8728.22.camel@buesod1.americas.hpqcorp.net>
-References: <20130702223405.AF5BB5A4016@corp2gmr1-2.hot.corp.google.com>
-	 <CA+icZUWX761O5tAfdYfgR0_QA8zMiZOqBBjzbWVeEcZPL+M_pQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the kbuild tree
+Date: Thu, 4 Jul 2013 14:33:53 +1000
+Message-ID: <20130704143353.e695ca64b17705c842676870@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__4_Jul_2013_14_33_54_+1000_G+i6BIy1htjNcN6t"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from g4t0015.houston.hp.com ([15.201.24.18]:41343 "EHLO
-	g4t0015.houston.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932988Ab3GCXE7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jul 2013 19:04:59 -0400
-In-Reply-To: <CA+icZUWX761O5tAfdYfgR0_QA8zMiZOqBBjzbWVeEcZPL+M_pQ@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59648 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750909Ab3GDEeH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Jul 2013 00:34:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yaakov Selkowitz <yselkowitz@users.sourceforge.net>, Michal Marek <mmarek@suse.cz>, Daniel Tang <dt.tangr@gmail.com>
 
-On Wed, 2013-07-03 at 09:44 +0200, Sedat Dilek wrote:
-> On Wed, Jul 3, 2013 at 12:34 AM,  <akpm@linux-foundation.org> wrote:
-> > The mm-of-the-moment snapshot 2013-07-02-15-32 has been uploaded to
-> >
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> >
-> > mmotm-readme.txt says
-> >
-> > README for mm-of-the-moment:
-> >
-> > http://www.ozlabs.org/~akpm/mmotm/
-> >
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> >
-> > You will need quilt to apply these patches to the latest Linus release (3.x
-> > or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> > http://ozlabs.org/~akpm/mmotm/series
-> >
-> > The file broken-out.tar.gz contains two datestamp files: .DATE and
-> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> > followed by the base kernel version against which this patch series is to
-> > be applied.
-> >
-> > This tree is partially included in linux-next.  To see which patches are
-> > included in linux-next, consult the `series' file.  Only the patches
-> > within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> > linux-next.
-> >
-> 
-> Hi Andrew,
-> 
-> 1st, I would like to see a diff to previous mmotm release.
-> Is that possible - with the announce.
-> For example, I like to diff series file of mmot*m* and mmot*s*.
-> 
-> AFAICS, you wanted to fold the fix into the real patch?
-> 
-> ipcmsg-shorten-critical-region-in-msgctl_down.patch
-> ipcmsg-shorten-critical-region-in-msgrcv-fix-race-in-msgrcv2.patch
+--Signature=_Thu__4_Jul_2013_14_33_54_+1000_G+i6BIy1htjNcN6t
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-IIRC, it will be folded in once it reaches Linus.
+Hi Andrew,
 
-> 
-> 3rd, is the "sysv-ipc-shm-optimizations" patchset from Davidlohr included here?
-> ( I had no closer look. )
+Today's linux-next merge of the akpm tree got conflicts in
+tools/include/tools/be_byteshift.h and tools/include/tools/le_byteshift.h
+between commit b35310627f39 ("tools/include: use stdint types for
+user-space byteshift headers") from the kbuild tree and commit
+"scripts/sortextable.c: fix building on non-Linux systems" from the
+akpm tree.
 
-Those are being considered for 3.12 now, I'll resend the patchset once
-3.11-rc1 is out.
+As fas as I can tell, these patches do the same thing except one uses
+stdint.h and the other inttypes.h.  I just dropped the akpm tree patch.
 
-Thanks,
-Davidlohr
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__4_Jul_2013_14_33_54_+1000_G+i6BIy1htjNcN6t
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR1Ps2AAoJEECxmPOUX5FE2psP/3Cioz6hc9zioxcWjEOepagY
+JasyLmAYvR3XfFHf5GYobs57uJtJ1c1s3vQ9j+Ana9bFEU4PRjayVHto757lxhzS
+a7ilcru7pTWB7KuFfXU4Hyz+VXCUJ+nAlMQ8SAqbnRhxrAvU7zwl5gNwP0xWRLOz
+7XQC8hlM+WA7jOgLO8K8WPKTR6IqJ8brGLMGib5ZpambQyn5QPwbz9gVJnIYWN0d
+Ej+opxA4VViPZt1OxCukFHH85LEM7dXbQPqIb/TrL6Ti33g+F8rDLsgg68AJbx2R
+7kHCAQ8ljvMvHaLe3IDRIa9Ey4rB7HY3x5DiGUHDZhBQKuDJ6y27tGIjrFYmIS/A
+/h7/mkMPXvaF1a8KXDk0a6mKg6zk9BscjNUUpemoNpDWU8i+joVOHd5T8bMkSLms
+MU+Wap4Zhqth1FH/0rMyQlaMf4iaI1xTdhW5rJqoCUs7vfMRmvNgXRth2uCk6EEt
+3XTUxa5QsW7F3h1Gjx3ToQNPCbct3PGxZ6ge4JmguhxzRQ2JWAAsqjhUjJb4yM8L
+nmkjHcxkOH2u3wRe3Ar54xf0fgRT4syYYfYtGUxY51HT3eCojoIreywlATnFXl09
+hVpjnZBaRV5KWqHQfA8lZ4e18KIF4lf0XdUQP5/uQRF49gnacuy1pUPK8Q9DQ0tx
+H2OdM7Qxb3JbjyXX/N3e
+=DTQV
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Jul_2013_14_33_54_+1000_G+i6BIy1htjNcN6t--
