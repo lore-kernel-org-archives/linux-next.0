@@ -1,67 +1,34 @@
-From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Subject: RE: [PATCH -next] drm/radeon/dpm: Add missing #include
- <linux/seq_file.h>
-Date: Fri, 5 Jul 2013 13:01:45 +0000
-Message-ID: <A3397C8B8B789E45844E7EC5DEAD89D02E500B6B@sausexdag04.amd.com>
-References: <1373023528-3361-1-git-send-email-geert@linux-m68k.org>
+From: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Subject: Re: linux-next: build warning after merge of the mfd tree
+Date: Sun, 7 Jul 2013 20:29:11 +0200
+Message-ID: <20130707182911.GA1799@breakpoint.cc>
+References: <20130703155655.9fbacfa867af35fd743099e2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from co9ehsobe004.messaging.microsoft.com ([207.46.163.27]:43680
-	"EHLO co9outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757340Ab3GENBx convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Jul 2013 09:01:53 -0400
-In-Reply-To: <1373023528-3361-1-git-send-email-geert@linux-m68k.org>
-Content-Language: en-US
+Received: from Chamillionaire.breakpoint.cc ([80.244.247.6]:60061 "EHLO
+	Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752427Ab3GGS3V (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Jul 2013 14:29:21 -0400
+Content-Disposition: inline
+In-Reply-To: <20130703155655.9fbacfa867af35fd743099e2@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, David Airlie <airlied@linux.ie>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>
 
-> -----Original Message-----
-> From: Geert Uytterhoeven [mailto:geert@linux-m68k.org]
-> Sent: Friday, July 05, 2013 7:25 AM
-> To: Deucher, Alexander; David Airlie
-> Cc: dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; linux-
-> next@vger.kernel.org; Geert Uytterhoeven
-> Subject: [PATCH -next] drm/radeon/dpm: Add missing #include
-> <linux/seq_file.h>
-> 
-> ia64_defconfig:
-> 
-> drivers/gpu/drm/radeon/rv6xx_dpm.c: In function
-> 'rv6xx_dpm_debugfs_print_current_performance_level':
-> drivers/gpu/drm/radeon/rv6xx_dpm.c:2041:3: error: implicit declaration of
-> function 'seq_printf' [-Werror=implicit-function-declaration]
-> 
+On Wed, Jul 03, 2013 at 03:56:55PM +1000, Stephen Rothwell wrote:
+> Hi Samuel,
+Hi Stephen,
 
-Already fixed in:
-http://cgit.freedesktop.org/~airlied/linux/commit/?h=drm-next&id=bf0936e196ec21b604106578043d4c14831f99e7
+> Introduced by commit 18926edebcb8 ("iio: ti_am335x_adc: Allow to specify
+> input line").  CONFIG_OF is not set in this build.
+> 
+> Maybe someone could come up with a way to make these arguments to
+> of_property_for_each_u32() etc look used in the !CONFIG_OF case.
 
-Alex
+Already posted:
 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> http://kisskb.ellerman.id.au/kisskb/buildresult/9068726/
-> 
->  drivers/gpu/drm/radeon/rv6xx_dpm.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/radeon/rv6xx_dpm.c
-> b/drivers/gpu/drm/radeon/rv6xx_dpm.c
-> index 33705c5..0d09677 100644
-> --- a/drivers/gpu/drm/radeon/rv6xx_dpm.c
-> +++ b/drivers/gpu/drm/radeon/rv6xx_dpm.c
-> @@ -22,6 +22,7 @@
->   * Authors: Alex Deucher
->   */
-> 
-> +#include <linux/seq_file.h>
->  #include "drmP.h"
->  #include "radeon.h"
->  #include "rv6xxd.h"
-> --
-> 1.7.9.5
-> 
+  https://lists.ozlabs.org/pipermail/devicetree-discuss/2013-June/035703.html
+
+Sebastian
