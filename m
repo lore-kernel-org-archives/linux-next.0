@@ -1,93 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jul 3
-Date: Mon, 8 Jul 2013 14:39:47 +1000
-Message-ID: <20130708143947.d17036df40fdce8d9e90efb4@canb.auug.org.au>
-References: <20130703180620.6919bf7d7f13f7ed21046c68@canb.auug.org.au>
-	<20130703112539.GA32584@linaro.org>
-	<20130703144802.GA32130@logfs.org>
+Subject: Re: [RFC PATCH 7/7] autofs - change CONFIG_AUTOFS4_FS to
+ CONFIG_AUTOFS_FS
+Date: Mon, 8 Jul 2013 15:10:23 +1000
+Message-ID: <20130708151023.f29446059a3161fc2e8c9b2d@canb.auug.org.au>
+References: <20130701031335.4423.6154.stgit@perseus.fritz.box>
+	<20130701031449.4423.58614.stgit@perseus.fritz.box>
+	<20130701143924.79f57e7206577a2e7777c0a2@canb.auug.org.au>
+	<1373017884.2497.10.camel@perseus.fritz.box>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__8_Jul_2013_14_39_47_+1000_XXZzuIKORn1P1PXa"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41688 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751921Ab3GHEjw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Jul 2013 00:39:52 -0400
-In-Reply-To: <20130703144802.GA32130@logfs.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?IkrDtnJuIEVuZ2VsIg==?= <joern@logfs.org>
-Cc: Steve Capper <steve.capper@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+ boundary="Signature=_Mon__8_Jul_2013_15_10_23_+1000_Qs9c/i3MVEV0/Sm+"
+Return-path: <autofs-owner@vger.kernel.org>
+In-Reply-To: <1373017884.2497.10.camel@perseus.fritz.box>
+Sender: autofs-owner@vger.kernel.org
+To: Ian Kent <raven@themaw.net>
+Cc: linux-next@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, autofs mailing list <autofs@vger.kernel.org>, Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__8_Jul_2013_14_39_47_+1000_XXZzuIKORn1P1PXa
-Content-Type: text/plain; charset=UTF-8
+--Signature=_Mon__8_Jul_2013_15_10_23_+1000_Qs9c/i3MVEV0/Sm+
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi J=C3=B6rn,
+Hi Ian,
 
-On Wed, 3 Jul 2013 10:48:03 -0400 J=C3=B6rn Engel <joern@logfs.org> wrote:
+On Fri, 05 Jul 2013 17:51:24 +0800 Ian Kent <raven@themaw.net> wrote:
 >
-> On Wed, 3 July 2013 12:25:41 +0100, Steve Capper wrote:
+> On Mon, 2013-07-01 at 14:39 +1000, Stephen Rothwell wrote:
 > >=20
-> > Today's linux-next appears to introduce some BUGs when running the libh=
-ugetlbfs
-> > testsuite (under both ARM64 and x86_64):
+> > On Mon, 01 Jul 2013 11:14:51 +0800 Ian Kent <raven@themaw.net> wrote:
+> > >
+> > > Signed-off-by: Ian Kent <raven@themaw.net>
 > >=20
-> > [   94.320661] BUG: Bad rss-counter state mm:ffff880119461040 idx:1 val=
-:-512
-> > [   94.330346] BUG: Bad rss-counter state mm:ffff880119460680 idx:1 val=
-:-2560
-> > [   94.341746] BUG: Bad rss-counter state mm:ffff880119460d00 idx:1 val=
-:-512
-> > [   94.347518] BUG: Bad rss-counter state mm:ffff880119460d00 idx:1 val=
-:-512
-> > [   94.415203] BUG: Bad rss-counter state mm:ffff8801194f9040 idx:1 val=
-:-1024
-> >=20
-> > I've bisected this to commit:
-> > commit 446313e3e4e7274c4d1e449d107fab6c041ec59c
-> > hugetlb: properly account rss
-> >=20
-> > The bad counter values I get are all negative.
-> >=20
-> > To reproduce this, just run through the latest libhugetlbfs test suite,=
- these
-> > warnings appear pretty much immediately. (I set aside 200 huge pages fi=
-rst):
-> > http://libhugetlbfs.sourceforge.net/
-> >=20
-> > Reverting this commit allows the test suite to run without problems.
+> > Please don't do this.  Find a simple way to make sure that if
+> > CONFIG_AUTOFS4_FS is set, then "make oldconfig"  (or equivalent) will
+> > cause CONFIG_AUTOFS_FS to be set the same.
 >=20
-> Thank you, I will have a look.  For the interim, dropping this patch
-> from -mm seems the best approach.
+> I get what your recommending but still can't think of a way to do it,
+> any thoughts?
 
-OK, I have dropped that from the akpm tree in linux-next today.
+Isn't just having
+
+config AUTOFS4_FS
+	tristate
+	select AUTOFS_FS
+
+enough?
+
+> Am I correct that's a +1 for an outright rename of autofs4 to autofs
+> rather than keeping the autofs4 directory and a compile stub?
+
+I have no opinion :-)
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__8_Jul_2013_14_39_47_+1000_XXZzuIKORn1P1PXa
+--Signature=_Mon__8_Jul_2013_15_10_23_+1000_Qs9c/i3MVEV0/Sm+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR2kKTAAoJEECxmPOUX5FEpjEQAI+xUurd9vfy6TqiwQIMeF3M
-aenRScugcnXaXgmktAROh+3OUImDmDhhCe6ckS8CJQR5S2SBQRG1PFEYBUDoLB/l
-466Zq6GyVzF4b/utxr8J2WaxvvZFFjQGJTNlVgFNJVfSqtV19FbpUxRh4kYum3Ke
-zd+KhdiJuB5BiNgiRMLFm+O04+7IkTZVp8c430XkN7ZUyvGzZtzQpoQMq00F1xq4
-s6qUXHAw8HIW4zKEAboG5bbNx3Mm1QyAMj6s4XDEZKSsfyFJVIinwuY81ypP0lr6
-b6aiEaa4E6SKn0qiPG7aqrZeyo9rrvolAqjnrEQ4vQzEkkEiMeAIaxRh7ebmcMGm
-Uxv7HSSPNaDLMV2In/wqc7QMmgk1N02QYkO4uXw6p+TfBu3XLH1xFWNp0gC40c/I
-7I4lQ2MJ1+0I7pU8Wo7K9Nut43FNa9Br1xVPk/CQBc3kx8Lb3U8MlK7KQiqH0LHz
-v1xqgStToRoB1bi/UO+onDtzKL79+C8URhUGJny4W54eIUcQzwEg/aGVP+8IX3cn
-nICOesdifPn+joTDQWKHxPBojfAHYjPe+Vy4P2aYETRilLK/LTJitdODoEl9YySU
-4MjKZWZlmCl6cWXwWcSsmBhSUJx/rn29BOIy2vPzjB3+WHktnxoGt7w5sqSFZWBf
-r7cE4AVQadvVNhTNKUwi
-=Pikc
+iQIcBAEBCAAGBQJR2knGAAoJEECxmPOUX5FEKl0P/25QcKb/7e8Bj94jF+MxiVam
+whcOkOOA8N/0RU8qN4i5yAPCjSGhHlxtTBu8nggikHeZGwQLh4X0VGA7SPYRvzEh
+3nmUFHMTmOZj3A32fTdvvvSS5SvQdnpQBTClNXUF8/bee5bc2M2wbnZB0qQDbKMn
+SP5TQNEuZDy/pJ/IqXsYAyGHOy4uD+UaiOTlgcI4DAvUZFkOoCc0r3YKNKq9dSXB
+/FMsrZMf/7JI/L/CQ/zNVxbxHnyowi25pnMb2EsjfFJvvucdJnQyTGQbgxCBxmMu
+e0PsgXpS8hOM+p+gErdSR2z6um1A5MwpK+dQQj7ps+e2bUQ6Cn5WtHBA4+iaErIg
+aY2yyrCJp5EtZ235HS+F6nzp0oPZYYG8wqQ/AZK52Ji7lPMuTK90jytYSoVr0vyC
+WjLB0QiEbD7IhP8UikdEUwE6A6TMIYPjpzism6RKVdLi1JaiXUgqCqFpfQvZq/3Z
+glJxrc/zNTbqkCgFWNAueZguQF4+GxahOxFIh9Hb0DI1Xjymdqc2UJkWcnBm07is
+ybG49o8S0xZbisKeV0/yFt3jQRalPwFJosFLoIce6tutjghYMBjDl4ShW2JjmuVw
+dXKffV2PxAhXXA/3FGkXYQ3eAvmussvb8ikKBm4BdomBePYQ2Qecl3wydA/LxQi/
+TFz4JUckjaBw3pnc+MGU
+=40zN
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__8_Jul_2013_14_39_47_+1000_XXZzuIKORn1P1PXa--
+--Signature=_Mon__8_Jul_2013_15_10_23_+1000_Qs9c/i3MVEV0/Sm+--
