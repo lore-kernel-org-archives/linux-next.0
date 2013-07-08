@@ -1,103 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the drm-intel tree
-Date: Mon, 8 Jul 2013 14:31:33 +1000
-Message-ID: <20130708143133.c4529d22bf65c9a2742c2b22@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jul 3
+Date: Mon, 8 Jul 2013 14:39:47 +1000
+Message-ID: <20130708143947.d17036df40fdce8d9e90efb4@canb.auug.org.au>
+References: <20130703180620.6919bf7d7f13f7ed21046c68@canb.auug.org.au>
+	<20130703112539.GA32584@linaro.org>
+	<20130703144802.GA32130@logfs.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2018902725=="
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, Xiong Zhang <xiong.y.zhang@intel.com>
-List-Id: linux-next.vger.kernel.org
-
---===============2018902725==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__8_Jul_2013_14_31_33_+1000_K7kqIWKd9cCIcwx0"
+ boundary="Signature=_Mon__8_Jul_2013_14_39_47_+1000_XXZzuIKORn1P1PXa"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:41688 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751921Ab3GHEjw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Jul 2013 00:39:52 -0400
+In-Reply-To: <20130703144802.GA32130@logfs.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: =?UTF-8?B?IkrDtnJuIEVuZ2VsIg==?= <joern@logfs.org>
+Cc: Steve Capper <steve.capper@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Mon__8_Jul_2013_14_31_33_+1000_K7kqIWKd9cCIcwx0
-Content-Type: text/plain; charset=US-ASCII
+--Signature=_Mon__8_Jul_2013_14_39_47_+1000_XXZzuIKORn1P1PXa
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi J=C3=B6rn,
 
-Today's linux-next merge of the akpm tree got a conflict in
-drivers/gpu/drm/i915/i915_gem.c between commit 857d0a9a6e9e ("drm/i915:
-Correct obj->mm_list link to dev_priv->dev_priv->mm.inactive_list") from
-the drm-intel tree and commit
-"drivers-convert-shrinkers-to-new-count-scan-api-fix" from the akpm tree.
+On Wed, 3 Jul 2013 10:48:03 -0400 J=C3=B6rn Engel <joern@logfs.org> wrote:
+>
+> On Wed, 3 July 2013 12:25:41 +0100, Steve Capper wrote:
+> >=20
+> > Today's linux-next appears to introduce some BUGs when running the libh=
+ugetlbfs
+> > testsuite (under both ARM64 and x86_64):
+> >=20
+> > [   94.320661] BUG: Bad rss-counter state mm:ffff880119461040 idx:1 val=
+:-512
+> > [   94.330346] BUG: Bad rss-counter state mm:ffff880119460680 idx:1 val=
+:-2560
+> > [   94.341746] BUG: Bad rss-counter state mm:ffff880119460d00 idx:1 val=
+:-512
+> > [   94.347518] BUG: Bad rss-counter state mm:ffff880119460d00 idx:1 val=
+:-512
+> > [   94.415203] BUG: Bad rss-counter state mm:ffff8801194f9040 idx:1 val=
+:-1024
+> >=20
+> > I've bisected this to commit:
+> > commit 446313e3e4e7274c4d1e449d107fab6c041ec59c
+> > hugetlb: properly account rss
+> >=20
+> > The bad counter values I get are all negative.
+> >=20
+> > To reproduce this, just run through the latest libhugetlbfs test suite,=
+ these
+> > warnings appear pretty much immediately. (I set aside 200 huge pages fi=
+rst):
+> > http://libhugetlbfs.sourceforge.net/
+> >=20
+> > Reverting this commit allows the test suite to run without problems.
+>=20
+> Thank you, I will have a look.  For the interim, dropping this patch
+> from -mm seems the best approach.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+OK, I have dropped that from the akpm tree in linux-next today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/i915_gem.c
-index 8e57029,e743c27..0000000
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@@ -4605,13 -4605,13 +4605,13 @@@ i915_gem_inactive_count(struct shrinke
-  		unlock =3D false;
-  	}
- =20
-- 	cnt =3D 0;
-+ 	count =3D 0;
-  	list_for_each_entry(obj, &dev_priv->mm.unbound_list, global_list)
-  		if (obj->pages_pin_count =3D=3D 0)
-- 			cnt +=3D obj->base.size >> PAGE_SHIFT;
-+ 			count +=3D obj->base.size >> PAGE_SHIFT;
- -	list_for_each_entry(obj, &dev_priv->mm.inactive_list, global_list)
- +	list_for_each_entry(obj, &dev_priv->mm.inactive_list, mm_list)
-  		if (obj->pin_count =3D=3D 0 && obj->pages_pin_count =3D=3D 0)
-- 			cnt +=3D obj->base.size >> PAGE_SHIFT;
-+ 			count +=3D obj->base.size >> PAGE_SHIFT;
- =20
-  	if (unlock)
-  		mutex_unlock(&dev->struct_mutex);
-
---Signature=_Mon__8_Jul_2013_14_31_33_+1000_K7kqIWKd9cCIcwx0
+--Signature=_Mon__8_Jul_2013_14_39_47_+1000_XXZzuIKORn1P1PXa
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR2kClAAoJEECxmPOUX5FEgT8P/A2BucaIYsWGLHfUk3zwoHg6
-2ehFvbV/nruM3OeP+HdnhkG874qNzfwmwfDBNAursYVPH8KBKATtbhpFdZLzsLyx
-sxdJ/yQI9pEJEpaRTGOPLf/ITk2f4J/j2t+31f5ctJ5ZQkOfTevOU2fyQ+OQ3W4b
-PgZhTfoS9Q97V9LVxCIL9HKPIOJl5Id5NiLeH5wZGKTIGUE2IPdDGz2BM0zdRpgn
-ULePV06Z7XYPOTSKFZkjaS1hnUMDWYp1iXQIDh8W2x9bFgn3KTFe4jvcC/dC87eO
-AZfBEZxt2w3jUiV+ZnEU5lwjyodgstLExnnLmpvllJyQH90Y3B3ATHKAU5hfbULE
-GEfYHkXiBLGBH5ZDcmmat044a0PKvDoJUGCCO20B0nhcv9IiTSnlPb3sRtLTZl5S
-9PBz2Em9JRx4Zwt7UPLgM31528lBv+mTlzRFrUhtbXNpVJXwNf8FXd/ZHJ1vw3Sm
-i/Z7ejPrYVXB6HLOsIyt8drZlGzPms+meSW359M5LCKxicfoZ0p3dnTyy8qIxP7m
-BxUcLtZy/4d8qj7v3r3Ass4DwtM00EnKFhlb1y7p3GkD9LAXf+F9uuAq1sUeEDov
-2vlZ791IAfy4RNsik/TcthD6FXrJwQcamIzEl7Ke57alVKnpv2n4wXnlSKW7sSCf
-5oqzI9tX1vDKm2Zw3Fqd
-=D82Q
+iQIcBAEBCAAGBQJR2kKTAAoJEECxmPOUX5FEpjEQAI+xUurd9vfy6TqiwQIMeF3M
+aenRScugcnXaXgmktAROh+3OUImDmDhhCe6ckS8CJQR5S2SBQRG1PFEYBUDoLB/l
+466Zq6GyVzF4b/utxr8J2WaxvvZFFjQGJTNlVgFNJVfSqtV19FbpUxRh4kYum3Ke
+zd+KhdiJuB5BiNgiRMLFm+O04+7IkTZVp8c430XkN7ZUyvGzZtzQpoQMq00F1xq4
+s6qUXHAw8HIW4zKEAboG5bbNx3Mm1QyAMj6s4XDEZKSsfyFJVIinwuY81ypP0lr6
+b6aiEaa4E6SKn0qiPG7aqrZeyo9rrvolAqjnrEQ4vQzEkkEiMeAIaxRh7ebmcMGm
+Uxv7HSSPNaDLMV2In/wqc7QMmgk1N02QYkO4uXw6p+TfBu3XLH1xFWNp0gC40c/I
+7I4lQ2MJ1+0I7pU8Wo7K9Nut43FNa9Br1xVPk/CQBc3kx8Lb3U8MlK7KQiqH0LHz
+v1xqgStToRoB1bi/UO+onDtzKL79+C8URhUGJny4W54eIUcQzwEg/aGVP+8IX3cn
+nICOesdifPn+joTDQWKHxPBojfAHYjPe+Vy4P2aYETRilLK/LTJitdODoEl9YySU
+4MjKZWZlmCl6cWXwWcSsmBhSUJx/rn29BOIy2vPzjB3+WHktnxoGt7w5sqSFZWBf
+r7cE4AVQadvVNhTNKUwi
+=Pikc
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__8_Jul_2013_14_31_33_+1000_K7kqIWKd9cCIcwx0--
-
---===============2018902725==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============2018902725==--
+--Signature=_Mon__8_Jul_2013_14_39_47_+1000_XXZzuIKORn1P1PXa--
