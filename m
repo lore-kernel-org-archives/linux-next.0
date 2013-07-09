@@ -1,78 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Tue, 9 Jul 2013 14:36:00 +1000
-Message-ID: <20130709143600.b32384457b742f54e721dc33@canb.auug.org.au>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: linux-next: manual merge of the vhost tree with the
+ target-updates tree
+Date: Mon, 08 Jul 2013 23:12:38 -0700
+Message-ID: <1373350358.7397.169.camel@haakon3.risingtidesystems.com>
+References: <20130708134721.8ac2d67125b60c745d46006f@canb.auug.org.au>
+	 <1373332406.7397.161.camel@haakon3.risingtidesystems.com>
+	 <20130709132753.4ccecde4e20ac109ebeedc8e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__9_Jul_2013_14_36_00_+1000_QmLtM+TxMSXe+E7m"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50849 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750896Ab3GIEgM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2013 00:36:12 -0400
+Received: from mail.linux-iscsi.org ([67.23.28.174]:41957 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752722Ab3GIGHg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2013 02:07:36 -0400
+In-Reply-To: <20130709132753.4ccecde4e20ac109ebeedc8e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>, Grant Likely <grant.likely@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Asias He <asias@redhat.com>, target-devel <target-devel@vger.kernel.org>
 
---Signature=_Tue__9_Jul_2013_14_36_00_+1000_QmLtM+TxMSXe+E7m
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2013-07-09 at 13:27 +1000, Stephen Rothwell wrote:
+> Hi Nicholas,
+> 
+> On Mon, 08 Jul 2013 18:13:26 -0700 "Nicholas A. Bellinger" <nab@linux-iscsi.org> wrote:
+> >
+> > On Mon, 2013-07-08 at 13:47 +1000, Stephen Rothwell wrote:
+> > > 
+> > > Today's linux-next merge of the vhost tree got a conflict in
+> > > drivers/vhost/scsi.c between commit 084ed45b3846 ("vhost/scsi: Convert to
+> > > se_cmd->cmd_kref TARGET_SCF_ACK_KREF usage") from the target-updates tree
+> > > and commit 3c63f66a0dcd ("vhost-scsi: Rename struct tcm_vhost_cmd *tv_cmd
+> > > to *cmd") from the vhost tree.
+> > > 
+> > > I fixed it up (see below) and can carry the fix as necessary (no action
+> > > is required).
+> > > 
+> > 
+> > Can you briefly refresh my memory how the process of 'carrying the fix'
+> > in linux-next should work..?
+> 
+> That means that (assuming my fix is correct), I will continue to apply
+> that fix until your trees are merged into Linus' tree.  (git rerere is my
+> friend :-))
+> 
+> > So once I send a -rc1 PULL request to Linus over the next days, and MST
+> > sends one shortly there-after and hits a conflict, you'll include this
+> > patch in a separate next-fixes branch for Linus to PULL..?
+> 
+> No, Linus will figure it out just as I did.  If you want to give him a
+> hint, that 's fine.  The main intention of my "I fixed it up and can
+> carry the fix as necessary (no action is required)" is to just get you
+> guys to check that what I did was correct, and to dissuade you from
+> merging/rebasing/rewriting your tree(s) to eliminate the conflict.
+> 
 
-Hi all,
+Yes, of course.  I'll be sure to include a heads up in the PULL request.
 
-Today's linux-next merge of the tip tree got a conflict in
-kernel/irq/generic-chip.c between commit 1aa0dd94ca07 ("irqdomain:
-Eliminate revmap type") from Linus' tree and commit 002fca5df168
-("genirq: generic chip: Use DIV_ROUND_UP to calculate numchips") from the
-tip tree.
+Thanks again,
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc kernel/irq/generic-chip.c
-index 10e663a,2f274f3..0000000
---- a/kernel/irq/generic-chip.c
-+++ b/kernel/irq/generic-chip.c
-@@@ -275,7 -275,10 +275,7 @@@ int irq_alloc_domain_generic_chips(stru
-  	if (d->gc)
-  		return -EBUSY;
- =20
-- 	numchips =3D d->revmap_size / irqs_per_chip;
- -	if (d->revmap_type !=3D IRQ_DOMAIN_MAP_LINEAR)
- -		return -EINVAL;
- -
- -	numchips =3D DIV_ROUND_UP(d->revmap_data.linear.size, irqs_per_chip);
-++	numchips =3D DIV_ROUND_UP(d->revmap_size, irqs_per_chip);
-  	if (!numchips)
-  		return -EINVAL;
- =20
-
---Signature=_Tue__9_Jul_2013_14_36_00_+1000_QmLtM+TxMSXe+E7m
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJR25M1AAoJEECxmPOUX5FEbPUP/AhZLAZ+60O0ffnH7pnEbr1R
-sOZcfmyXXwiCk5Ng37Lf1hw1fchl0DOF0RbG4eumME9OUvXFKEEq+4JGwLPva3kE
-+Fk//+8NUd5EBR+PrTLSFK8MqRnNboSD7+MqdXeK8+tCaGgCV5zu05r1epXMp4Q4
-F3UmfQGYBN1A1VYkW3Jwu822RqJhL08i63ax1iAgIsBX4g4+7UqzHyPJvVjArqqw
-G/18kc0j30aKxoJSYfr27mT5as922TTYtUW5Ga+JFymD73syVuXYqFKu7b9dEuyg
-PkifbH3fAyd4pHBERKfpvEpkIExrmrXnxktmw+bvuU7mzWANlUqjuJeXE4HuxpjW
-KQbldOCrg86Bg/ZnLP5SibHo87r94cGSUXKq45oovWp7Ln5T6JmZy5mypmkR6U82
-jMWqPeVAzTPybOreer3VHKU/TYDql+1l+HlV461dYJptsRBIFki/Bl34pKpZ19AJ
-vQHzp7sFElrPHNceodPRfem7KQi6VNFO1sTbUiUS/aUAJ3ruDehVsx0CocQSZqom
-ep1nq/f8N78tu986YYZB1qSwPhMdsPzyRa7xCtQ7DwB27kmLjVEBVuDNsNwtKHjf
-VflGiapFK4xr9LjHdfZ8vQ9TOOtVRKX00pQGTohD9RyNZsPk+eSzjoOj4mcSYOTC
-V7+Zvblj6pLEGscq6bRL
-=uBKT
------END PGP SIGNATURE-----
-
---Signature=_Tue__9_Jul_2013_14_36_00_+1000_QmLtM+TxMSXe+E7m--
+--nab
