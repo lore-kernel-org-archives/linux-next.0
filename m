@@ -1,64 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (v4l-dvb tree related)
-Date: Tue, 9 Jul 2013 17:03:05 +1000
-Message-ID: <20130709170305.1a1840aa71af647bbd6ec79e@canb.auug.org.au>
-References: <20130708152658.1d6e24874c3363c5f115a005@canb.auug.org.au>
-	<alpine.LFD.2.03.1307080929510.3984@infradead.org>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Jul 9
+Date: Tue, 9 Jul 2013 11:50:38 +0200
+Message-ID: <CA+icZUV3cH5r6gScYt18tpaJx49oXtrn56BMTuj5jJQwvd_zig@mail.gmail.com>
+References: <20130709170155.a212513b3a95d78e404e70db@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__9_Jul_2013_17_03_05_+1000_YwRNYhWRzphGkq8c"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38675 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753271Ab3GIHDJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2013 03:03:09 -0400
-In-Reply-To: <alpine.LFD.2.03.1307080929510.3984@infradead.org>
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:60869 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752821Ab3GIJuj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2013 05:50:39 -0400
+In-Reply-To: <20130709170155.a212513b3a95d78e404e70db@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__9_Jul_2013_17_03_05_+1000_YwRNYhWRzphGkq8c
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Mauro,
-
-On Mon, 8 Jul 2013 09:58:19 -0300 (BRT) Mauro Carvalho Chehab <mchehab@infr=
-adead.org> wrote:
+On Tue, Jul 9, 2013 at 9:01 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> I'll wait for tomorrow's next to see if everything is ok, before sending =
-a=20
-> new pull request.
+> Changes since 20130708:
+>
+> The v4l-dvb tree lost its build failure.
+>
+> The tip tree gained a conflict against Linus' tree.
+>
+> The akpm tree lost a patch that turned up elsewhere.
+>
+> The cpuinit tree lost some patches that turned up in Linus' tree.
+>
+> ----------------------------------------------------------------------------
+>
 
-Looks good today.
+Hi,
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I got today several emails from Andrew, that some post-fixes to
+existing patches in mmotm got merged.
+Looking into mmotm patch-series, it was not updated since 03-Jul-2013.
 
---Signature=_Tue__9_Jul_2013_17_03_05_+1000_YwRNYhWRzphGkq8c
-Content-Type: application/pgp-signature
+>From where is [1]?
+It has "memcg: fix build error if CONFIG_MEMCG_KMEM=n" folded in.
+Isn't the procedure to get all these patches from Andrew's mmotm?
+BTW, the new patch has no furher informations or a vX history and my
+credits are gone, too.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+- Sedat -
 
-iQIcBAEBCAAGBQJR27WpAAoJEECxmPOUX5FEacYQAKHWPQxS6DjJmjPaFdZLI+xw
-igE7bTTEeQWF5R6Mvh2//XguK7k/TbFpsOpKicuAAF4Kl3R5b72BQCbK9OcC8WPa
-VlKniYP6uDi48kC5GlMdjl6ExhpwmJJTM1aPXlSj7ucrqZdJeIMynu2NTcCv409Z
-BD4P1N4vtcSZVTo7Z6Hkawefjm1gajrgUUDxj6HeV06hqZ2VEKQFWiOhVM+/h1sy
-KGE6rltdnT00Wj6JJN1A7AW3OJAN+a6t7Rgt+Tyn3oH34nu/Zqm+Sct+E8620a14
-QbEELv5bJsKK1SoclbbY/nIEwdD3ZS5J27yL2z3k+hkt4slY7KlMpFPgsQ4i6JwT
-elAyh4/TE74w0Ao6JF6vPNYApaam1tp8T+SvCWwl6pZwW3Io8DLVTo0CujgRdL78
-CW94H8QY432u9JddciUf3DjvAGhtSWfbqOUO7SIZ0KgKjweO1PB92lgjJvsVcL5R
-wiQSM2oPIIyTMVY+f9cvw058VSo9o3ZqkfMIFvn5apHwrfl6pVg6ByG/2KivQZqI
-He5XZmZV0Zd1vbhUMeE4pILSi/2+BoGTeysIXYZAR9eueKRUki23KXQ32cYQLKS/
-ORoij935PNSgAvoJVNDzeqCYQgy2HLhKSqYDI7CwGOInnMh3Mdt5o1cjtDXV/V+w
-Zd2ifug6bYWDMPJXgdor
-=yHvM
------END PGP SIGNATURE-----
 
---Signature=_Tue__9_Jul_2013_17_03_05_+1000_YwRNYhWRzphGkq8c--
+[0] http://ozlabs.org/~akpm/mmotm/broken-out/
+[1] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/mm/memcontrol.c?id=958f4381fa3cb7abd6f63103c9099e648595a27e
