@@ -1,58 +1,43 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build failure after merge of the final tree (v4l-dvb
- tree related)
-Date: Mon, 8 Jul 2013 09:58:19 -0300 (BRT)
-Message-ID: <alpine.LFD.2.03.1307080929510.3984@infradead.org>
-References: <20130708152658.1d6e24874c3363c5f115a005@canb.auug.org.au>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: linux-next: manual merge of the vhost tree with the
+ target-updates tree
+Date: Mon, 08 Jul 2013 18:13:26 -0700
+Message-ID: <1373332406.7397.161.camel@haakon3.risingtidesystems.com>
+References: <20130708134721.8ac2d67125b60c745d46006f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:50999 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751108Ab3GHM6d (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Jul 2013 08:58:33 -0400
-In-Reply-To: <20130708152658.1d6e24874c3363c5f115a005@canb.auug.org.au>
+Received: from mail.linux-iscsi.org ([67.23.28.174]:56140 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751279Ab3GIBIY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Jul 2013 21:08:24 -0400
+In-Reply-To: <20130708134721.8ac2d67125b60c745d46006f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Asias He <asias@redhat.com>, target-devel <target-devel@vger.kernel.org>
 
-On Mon, 8 Jul 2013, Stephen Rothwell wrote:
+On Mon, 2013-07-08 at 13:47 +1000, Stephen Rothwell wrote:
+> Hi Michael,
+> 
+> Today's linux-next merge of the vhost tree got a conflict in
+> drivers/vhost/scsi.c between commit 084ed45b3846 ("vhost/scsi: Convert to
+> se_cmd->cmd_kref TARGET_SCF_ACK_KREF usage") from the target-updates tree
+> and commit 3c63f66a0dcd ("vhost-scsi: Rename struct tcm_vhost_cmd *tv_cmd
+> to *cmd") from the vhost tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
 
-> Hi all,
->
-> After merging the final tree, today's linux-next build
-> (powerpc_ppc44x_defconfig) failed like this:
->
-> arch/powerpc/boot/wrapper: line 314: .../scripts/mkuboot.sh: Permission denied
->
-> Caused by commit cda2bf15f6dc ("Update email to m.chehab@samsung.com")
-> from the v4l-dvb tree.
+Hi Stephen,
 
-Sorry. That was due to a bad merge at my -next tree, where I had there 
-both the correct and the wrong patches merged. The correct changeset
-is this one:
- 	http://git.linuxtv.org/mchehab/media-next.git/commit/de58f1a28541fef62f20465dcd1bbcf25b4685c5
+Can you briefly refresh my memory how the process of 'carrying the fix'
+in linux-next should work..?
 
-It is fixed there already.
+So once I send a -rc1 PULL request to Linus over the next days, and MST
+sends one shortly there-after and hits a conflict, you'll include this
+patch in a separate next-fixes branch for Linus to PULL..?
 
-> I have reverted that commit for today.
->
-> Linus, please don't merge the v4l-dvb tree like it is.
-
-I'll wait for tomorrow's next to see if everything is ok, before sending a 
-new pull request.
-
-> Mauro, in the case of copyright notices, you should just remove your
-> email address, not bother changing it.
-
-Hmm... then I'll need to re-do the patch, manually reviewing each hunk, 
-instead of replacing via a script, as, on some places, like MAINTAINERS, 
-we need to preserve the email.
-
-Let me simplify it: I'll drop that patch, replacing by one that will
-just change MAINTAINERS. I'll later submit the remaining changes on
-a separate patch for the next merge window.
-
-Regards,
-Mauro
+--nab
