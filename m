@@ -1,47 +1,86 @@
-From: Xiong Zhou <jencce.kernel@gmail.com>
-Subject: [PATCH] x86: ce4100: add head file for reboot type
-Date: Tue, 9 Jul 2013 11:06:27 +0800 (CST)
-Message-ID: <alpine.DEB.2.02.1307091053280.28371@M2420>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the vhost tree with the
+ target-updates tree
+Date: Tue, 9 Jul 2013 13:27:53 +1000
+Message-ID: <20130709132753.4ccecde4e20ac109ebeedc8e@canb.auug.org.au>
+References: <20130708134721.8ac2d67125b60c745d46006f@canb.auug.org.au>
+	<1373332406.7397.161.camel@haakon3.risingtidesystems.com>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323328-1625292718-1373339199=:28371"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f45.google.com ([209.85.160.45]:48784 "EHLO
-	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752056Ab3GIDGl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Jul 2013 23:06:41 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: tglx@linutronix.de, matthew.garrett@nebula.com
-Cc: platform-driver-x86@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, x86@kernel.org, rui.zhang@intel.com, alan@linux.intel.com, ffainelli@freebox.fr, mingo@kernel.org, mbizon@freebox.fr
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__9_Jul_2013_13_27_53_+1000_tr/YG0rulSySpz.N"
+Return-path: <target-devel-owner@vger.kernel.org>
+In-Reply-To: <1373332406.7397.161.camel@haakon3.risingtidesystems.com>
+Sender: target-devel-owner@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Asias He <asias@redhat.com>, target-devel <target-devel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+--Signature=_Tue__9_Jul_2013_13_27_53_+1000_tr/YG0rulSySpz.N
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---8323328-1625292718-1373339199=:28371
-Content-Type: TEXT/PLAIN; charset=ISO-8859-7
-Content-Transfer-Encoding: 8BIT
+Hi Nicholas,
 
-From: Xiong Zhou <jencce.kernel@gmail.com>
+On Mon, 08 Jul 2013 18:13:26 -0700 "Nicholas A. Bellinger" <nab@linux-iscsi=
+.org> wrote:
+>
+> On Mon, 2013-07-08 at 13:47 +1000, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next merge of the vhost tree got a conflict in
+> > drivers/vhost/scsi.c between commit 084ed45b3846 ("vhost/scsi: Convert =
+to
+> > se_cmd->cmd_kref TARGET_SCF_ACK_KREF usage") from the target-updates tr=
+ee
+> > and commit 3c63f66a0dcd ("vhost-scsi: Rename struct tcm_vhost_cmd *tv_c=
+md
+> > to *cmd") from the vhost tree.
+> >=20
+> > I fixed it up (see below) and can carry the fix as necessary (no action
+> > is required).
+> >=20
+>=20
+> Can you briefly refresh my memory how the process of 'carrying the fix'
+> in linux-next should work..?
 
-Add head file for reboot type stuff to fix this:
-error: ¡reboot_type¢ undeclared (first use in this function)
-error: ¡BOOT_KBD¢ undeclared (first use in this function)
+That means that (assuming my fix is correct), I will continue to apply
+that fix until your trees are merged into Linus' tree.  (git rerere is my
+friend :-))
 
-Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
----
- arch/x86/platform/ce4100/ce4100.c |    1 +
- 1 file changed, 1 insertion(+)
+> So once I send a -rc1 PULL request to Linus over the next days, and MST
+> sends one shortly there-after and hits a conflict, you'll include this
+> patch in a separate next-fixes branch for Linus to PULL..?
 
-diff --git a/arch/x86/platform/ce4100/ce4100.c b/arch/x86/platform/ce4100/ce4100.c
-index baec704..643b8b5e 100644
---- a/arch/x86/platform/ce4100/ce4100.c
-+++ b/arch/x86/platform/ce4100/ce4100.c
-@@ -14,6 +14,7 @@
- #include <linux/module.h>
- #include <linux/serial_reg.h>
- #include <linux/serial_8250.h>
-+#include <linux/reboot.h>
- 
- #include <asm/ce4100.h>
- #include <asm/prom.h>
---8323328-1625292718-1373339199=:28371--
+No, Linus will figure it out just as I did.  If you want to give him a
+hint, that 's fine.  The main intention of my "I fixed it up and can
+carry the fix as necessary (no action is required)" is to just get you
+guys to check that what I did was correct, and to dissuade you from
+merging/rebasing/rewriting your tree(s) to eliminate the conflict.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__9_Jul_2013_13_27_53_+1000_tr/YG0rulSySpz.N
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR24M+AAoJEECxmPOUX5FEaqgQAKoxrLMvDmYtNih0/+IeDNy6
+W09UqAgeAJ3qluXaeYtu7+xoltHglV9v9WJv3B7N8q0TVToH5uR3vELceNWPpiva
+qFpLUdzj7Y+cahQHgHvakKmNyP66JEkXUOUE/f1H2VE76nLZaI4cw2y8hECCmnSi
+CjIE9GqikMFGC56TsGDW3Azi1BSYFy4NFDszTgv5tmRKK06+QS+jTYJks7IMED9s
+CxigeNqOn8zLDKvdBnKiXujy1Nux+DvTNCj5Pis1+/g5fTItvRK4iet1gaJsySxC
+Rwf7R7D77Q6379Z2McMs6FkOaKgrO3a5Eukjn/sw5wZ5TwHgXSv7puMmO6K9kj0F
+SSCF/0gXe0gLe5bPdF5Lc2eSmfU+lzs0fR87ht2vfJNfJbagiHvb5D8k8LUqiSx4
+98gwEmlB8xALIwIjg7qX6yHV9+vcWKb6r0L551X5IAV2PzmDMTe51eWIQBInUAHu
+5Tk6GGaH9UffNbbARHv4cFbDTP+XWK/dYO6mZiZmsO6pmpNqFABR1TalY/zDLxFy
+embCYGEfY+aH4lNoWfXWACzFRgOGPvqVdKCmxmiurOXhoY2If/pSV0JVztJZWwYI
+O2PnexX13E3su01m8tpgXnibPRi+O5DKGtouCcIOJDCUutXpjLKzPs3FsNbCB1Gj
+/58P6pNPnrvMeC3rXehJ
+=TkU9
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Jul_2013_13_27_53_+1000_tr/YG0rulSySpz.N--
