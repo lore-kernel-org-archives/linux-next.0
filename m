@@ -1,41 +1,48 @@
 From: Pekka Enberg <penberg@kernel.org>
-Subject: Re: linux-next: reminder
-Date: Wed, 10 Jul 2013 09:44:58 +0300
-Message-ID: <51DD02EA.9010909@kernel.org>
-References: <20130702170957.17c3173584fcdef073bf4a6b@canb.auug.org.au> <20130710100707.d79b5df2a826faf1caecf3b4@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the slab tree
+Date: Wed, 10 Jul 2013 10:00:57 +0300
+Message-ID: <51DD06A9.4030605@kernel.org>
+References: <20130710125654.dd36f8fb19588697226b99be@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:46951 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750894Ab3GJGpC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Jul 2013 02:45:02 -0400
-In-Reply-To: <20130710100707.d79b5df2a826faf1caecf3b4@canb.auug.org.au>
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:44087 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751097Ab3GJHBB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Jul 2013 03:01:01 -0400
+In-Reply-To: <20130710125654.dd36f8fb19588697226b99be@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux-foundation.org>
+Cc: Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/10/2013 03:07 AM, Stephen Rothwell wrote:
+On 07/10/2013 05:56 AM, Stephen Rothwell wrote:
 > Hi all,
 >
-> On Tue, 2 Jul 2013 17:09:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> We are in the merge window, so please do not add anything to your
->> linux-next included branches that is not destined for v3.11 until after
->> v3.11-rc1 is released.
+> After merging the slab tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 >
-> No, really :-(
+> In file included from include/linux/slab.h:17:0,
+>                   from include/linux/crypto.h:24,
+>                   from arch/x86/kernel/asm-offsets.c:8:
+> include/linux/kmemleak.h: In function 'kmemleak_alloc_recursive':
+> include/linux/kmemleak.h:44:16: error: 'SLAB_NOLEAKTRACE' undeclared (first use in this function)
+>    if (!(flags & SLAB_NOLEAKTRACE))
+>                  ^
+> include/linux/kmemleak.h: In function 'kmemleak_free_recursive':
+> include/linux/kmemleak.h:50:16: error: 'SLAB_NOLEAKTRACE' undeclared (first use in this function)
+>    if (!(flags & SLAB_NOLEAKTRACE))
+>                  ^
 >
-> i.e. maintainers should be saying "No" to any "features" that were not
-> ready before the merge window opened (even when the maintainer and the
-> developer are the same person) ...
+> Probably caused by commit 590a63973e36 ("mm/sl[aou]b: Move kmalloc
+> definitions to slab.h").
+>
+> I have used the slab tree from next-20130709 for today.
+>
+> And, yes, I am a little annoyed by this.
 
-It's being queued for v3.11. I was on vacation for two weeks
-with no internet at the worst possible moment and I was backlogged
-with slab patches.
-
-Sorry for breaking things!
+Yes, it indeed interacts badly with kmemleak and tracing. I reverted the 
+commit.
 
 			Pekka
