@@ -1,78 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ftrace tree with Linus' tree
-Date: Wed, 10 Jul 2013 13:51:29 +1000
-Message-ID: <20130710135129.f4e0966747fc684a7294544f@canb.auug.org.au>
+From: Sage Weil <sage@inktank.com>
+Subject: Re: linux-next: manual merge of the ceph tree with Linus' tree
+Date: Tue, 9 Jul 2013 20:57:15 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1307092056360.22858@cobra.newdream.net>
+References: <20130710112410.f786035ff9202e773aa052c9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__10_Jul_2013_13_51_29_+1000_P77V2=+PPpM0GWCW"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44092 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754066Ab3GJDvl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2013 23:51:41 -0400
+Received: from cobra.newdream.net ([66.33.216.30]:52395 "EHLO
+	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753410Ab3GJD5Q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2013 23:57:16 -0400
+In-Reply-To: <20130710112410.f786035ff9202e773aa052c9@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Thorlton <athorlton@sgi.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sage Weil <sage@newdream.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
---Signature=_Wed__10_Jul_2013_13_51_29_+1000_P77V2=+PPpM0GWCW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 10 Jul 2013, Stephen Rothwell wrote:
+> Hi Sage,
+> 
+> Today's linux-next merge of the ceph tree got conflicts in
+> drivers/block/rbd.c and net/ceph/osd_client.c because the ceph tree was
+> rebased before being sent to Linus and it looks like one patch
+> was dropped and several more added.
+> 
+> I just used the upstream version of the cpeh tree for today - please
+> clean up.
 
-Hi Steven,
+Fixed, thanks!
 
-Today's linux-next merge of the ftrace tree got a conflict in
-kernel/panic.c between commit dcb6b45254e2 ("panic: add cpu/pid to
-warn_slowpath_common in WARNING printk()s") from the  tree and commit
-de7edd31457b ("tracing: Disable tracing on warning") from the ftrace tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc kernel/panic.c
-index 9771231,4cea6cc..0000000
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@@ -399,9 -400,10 +400,11 @@@ struct slowpath_args=20
-  static void warn_slowpath_common(const char *file, int line, void *caller,
-  				 unsigned taint, struct slowpath_args *args)
-  {
-+ 	disable_trace_on_warning();
-+=20
- -	printk(KERN_WARNING "------------[ cut here ]------------\n");
- -	printk(KERN_WARNING "WARNING: at %s:%d %pS()\n", file, line, caller);
- +	pr_warn("------------[ cut here ]------------\n");
- +	pr_warn("WARNING: CPU: %d PID: %d at %s:%d %pS()\n",
- +		raw_smp_processor_id(), current->pid, file, line, caller);
- =20
-  	if (args)
-  		vprintk(args->fmt, args->args);
-
---Signature=_Wed__10_Jul_2013_13_51_29_+1000_P77V2=+PPpM0GWCW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJR3NpFAAoJEECxmPOUX5FEHy8P/2EwFI1r9KWoU8kQ/zR6Kyyg
-6KFqLOOGX8OUVEQA6y/A8XUPpTyDgV0LsUtPHnzMzbJGvl8ADkLdNZ5hl1wOWYCY
-NyKlHh9UHTr0XzVDMQxPzWVWFe3ZAvckT3hTtPJAZfEi7CMC2V49MJo1KKSpmf8Z
-4+Gyoebx8uH1HJdHRyZ3tvxQC2FQroHLT7lKqjfn4XunMKXbp4CetV401SIWRBOQ
-2uOCgqQe7yFly0+xAPRIw7t6z51DUsj8+pYnuSCM5VQbo5IWKKEquPR1K6oyA1iH
-Y63lc2Z2R0tmsO/e1kn7lERhPenYhz9aFijjY+okhnOHZFKHgZ28lX6x/bvYwZBd
-3OPm/PVJapnOiuzUVHr20XADDRZ9HimRvcqbZpP24Sr2z+/E5WYTmRg7qaUcLmTT
-6AV1GZYPc0ivv0jSu8rkjBrUPfR3F7fu4+T/nEZi6qB2UuiSef/x1c+sT81K1o5Z
-UH9sr2G+U20jVgboUHzn/pjMcvOCDkkPouLCedDKVOOp+06qj5T0yF4iWKZySisB
-Q+/GLP4P3lJOsWiad2JMQa8h1z3cOBi192HGDNYGFsuoQXVzFh/e2A7LcH+tY7hb
-cdntbr9dUHS++GDQ1wBajSzmWzRZRIF2pj1pD7GdA0woOrBYRg6k8dpL/RYAlftV
-uXyBFFQTv9CqjwHsZYAi
-=pHDl
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Jul_2013_13_51_29_+1000_P77V2=+PPpM0GWCW--
+sage
