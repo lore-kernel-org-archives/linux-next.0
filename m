@@ -1,50 +1,61 @@
-From: "Nikolova, Tatyana E" <tatyana.e.nikolova@intel.com>
-Subject: RE: linux-next: build warnings in Linus' tree
-Date: Tue, 9 Jul 2013 21:48:43 +0000
-Message-ID: <13AA599688F47243B14FCFCCC2C803BB0D81E71E@FMSMSX104.amr.corp.intel.com>
-References: <20130704145852.44975d5801f592d00807d1c0@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: reminder
+Date: Wed, 10 Jul 2013 10:07:07 +1000
+Message-ID: <20130710100707.d79b5df2a826faf1caecf3b4@canb.auug.org.au>
+References: <20130702170957.17c3173584fcdef073bf4a6b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:4643 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752704Ab3GIVso convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jul 2013 17:48:44 -0400
-In-Reply-To: <20130704145852.44975d5801f592d00807d1c0@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Roland Dreier <roland@purestorage.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__10_Jul_2013_10_07_07_+1000_5YEmap8dJcpi_bIS"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130702170957.17c3173584fcdef073bf4a6b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>, Christoph Lameter <cl@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Hello Stephen,
-
-Thank you for reporting the error. I removed these variables from the debug statement, because I didn't see that they were defined. It is possible that I manually enabled the nes_debug and the #ifdef CONFIG_INFINIBAND_NES_DEBUG statement these variables are enclosed in wasn't true, so I saw a compilation issue.
-
-Feel free to revert the commit bca1935ccdec ("RDMA/nes: Fix compilation error when nes_debug is enabled") or I will submit a patch to address the issue next week.
-
-Regards,
-Tatyana
-
------Original Message-----
-From: Stephen Rothwell [mailto:sfr@canb.auug.org.au] 
-Sent: Wednesday, July 03, 2013 11:59 PM
-To: Roland Dreier
-Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Nikolova, Tatyana E
-Subject: linux-next: build warnings in Linus' tree
+--Signature=_Wed__10_Jul_2013_10_07_07_+1000_5YEmap8dJcpi_bIS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Building Linus' tree, today's linux-next build (x86_64 allmodconfig) produced this warning (these have been around for a while):
+On Tue, 2 Jul 2013 17:09:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> We are in the merge window, so please do not add anything to your
+> linux-next included branches that is not destined for v3.11 until after
+> v3.11-rc1 is released.
 
-drivers/infiniband/hw/nes/nes_hw.c:81:23: warning: 'nes_iwarp_state_str' defined but not used [-Wunused-variable]  static unsigned char *nes_iwarp_state_str[] = {
-                       ^
-drivers/infiniband/hw/nes/nes_hw.c:92:23: warning: 'nes_tcp_state_str' defined but not used [-Wunused-variable]  static unsigned char *nes_tcp_state_str[] = {
-                       ^
+No, really :-(
 
-Introduced by commit bca1935ccdec ("RDMA/nes: Fix compilation error when nes_debug is enabled").
-
---
+i.e. maintainers should be saying "No" to any "features" that were not
+ready before the merge window opened (even when the maintainer and the
+developer are the same person) ...
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__10_Jul_2013_10_07_07_+1000_5YEmap8dJcpi_bIS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR3KWvAAoJEECxmPOUX5FEm8gP/0Yu3Ux5S5OXGPnLykUZLUIx
+4QZND6heNFM0KxDLQkAwVrhTfmDwzCynFZ7x55QZT2N4sAOfIeXQpO/ZNWLpq8Vh
+DS4lT58MyjW9n+N5hJ/NlSBKimtGfhX76wfhUbE8e1MNvysunlcB6BnP2cbUuNSi
+rF59uAQ9WEmAW9Cg4TILPsxqq/1KlFQefUbcOHIHiPQennT3vlG2N8XUJw1NPDlo
+9NfsUmQtSod4C0olMTK7HKVzVA1NIXCUh6C/J+2U0Z2tGa3h5HfVKhkXgt9di0N/
+eSlceL938QRmh1zkf1417r68uBAOeu8scu0lbgXE6Hi6X9DLaZCyzZ3AD8ytc4rx
+7w4aI7sQ/Dp0aVPp/E7A8vRdUidxEcI/oO3q2Q2ld50afzGVcAQ4tMLyrQqY77MY
+Q8Sb3e1FIGrKhl4rSYq+J6IY2W6yX8NDatkOfuogw/M389204T6nC2Ukh4RTWET9
+3pWUluOsHIgRx+WbDzAw20FeR5o+hJHNuL66Y/k6MG8ipDKHDRtBsWDlElzaOJvS
+iDCi7opDn+DSfR508aD0DUyaLsnow5H/zmmRs9liwO5ZewSATYIfOZcjFSl8qxrr
+GYv9+2f87jj0yv9dQ599rMjWuwqI6nSKnfo+oC+r6KT52suwHG4315IzftJ9cmcS
+RmIOXZ8N5r5WGOd5+B6E
+=GaWk
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Jul_2013_10_07_07_+1000_5YEmap8dJcpi_bIS--
