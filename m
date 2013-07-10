@@ -1,48 +1,94 @@
-From: Pekka Enberg <penberg@kernel.org>
-Subject: Re: linux-next: build failure after merge of the slab tree
-Date: Wed, 10 Jul 2013 10:00:57 +0300
-Message-ID: <51DD06A9.4030605@kernel.org>
-References: <20130710125654.dd36f8fb19588697226b99be@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH -next 2/2] kbuild: fix for updated LZ4 tool with the new
+ streaming format
+Date: Wed, 10 Jul 2013 10:12:46 +0200
+Message-ID: <CAMuHMdWH9w5fj6HRXi+9QcBJym4dukAFsPVGZVqSSk3yTZJUcA@mail.gmail.com>
+References: <1367829775-4434-1-git-send-email-kyungsik.lee@lge.com>
+	<1367829775-4434-2-git-send-email-kyungsik.lee@lge.com>
+	<20130506095124.GA22041@pd.tnic>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:44087 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751097Ab3GJHBB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Jul 2013 03:01:01 -0400
-In-Reply-To: <20130710125654.dd36f8fb19588697226b99be@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <20130506095124.GA22041@pd.tnic>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Borislav Petkov <bp@alien8.de>
+Cc: Kyungsik Lee <kyungsik.lee@lge.com>, Andrew Morton <akpm@linux-foundation.org>, Michal Marek <mmarek@suse.cz>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-kbuild <linux-kbuild@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>, CE Linux Developers List <celinux-dev@lists.celinuxforum.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, hyojun.im@lge.com, chan.jeong@lge.com, raphael.andy.lee@gmail.com, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, Russell King <rmk@arm.linux.org.uk>, Florian Fainelli <florian@openwrt.org>, Yann Collet <yann.collet.73@gmail.com>, Chanho Min <chanho.min@lge.com>, Linux-Next <linux-next@vger.kernel.org>, "uclinux-dist-devel@blackfin.uclinux.org" <uclinux-dist-devel@blackfin.uclinux.org>
+List-Id: linux-next.vger.kernel.org
 
-On 07/10/2013 05:56 AM, Stephen Rothwell wrote:
-> Hi all,
+On Mon, May 6, 2013 at 11:51 AM, Borislav Petkov <bp@alien8.de> wrote:
+> On Mon, May 06, 2013 at 05:42:55PM +0900, Kyungsik Lee wrote:
+>> LZ4 has been updated with LZ4 Streaming Format specification(v1.3).
+>> lz4demo is replaced by lz4c. lz4c supports both the new streaming and
+>> legacy format with -l option.
+>>
+>> This patch makes use of lz4c to support legacy format which is
+>> used for LZ4 De/compression in the linux kernel.
+>>
+>> Link: https://code.google.com/p/lz4/source/checkout
+>> Signed-off-by: Kyungsik Lee <kyungsik.lee@lge.com>
+>> Cc: "H. Peter Anvin" <hpa@zytor.com>
+>> Cc: Ingo Molnar <mingo@elte.hu>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Russell King <rmk@arm.linux.org.uk>
+>> Cc: Borislav Petkov <bp@alien8.de>
+>> Cc: Florian Fainelli <florian@openwrt.org>
+>> Cc: Yann Collet <yann.collet.73@gmail.com>
+>> Cc: Chanho Min <chanho.min@lge.com>
+>> ---
+>>  scripts/Makefile.lib | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+>> index a0ab6d7..c9bfbb0 100644
+>> --- a/scripts/Makefile.lib
+>> +++ b/scripts/Makefile.lib
+>> @@ -313,7 +313,7 @@ cmd_lzo = (cat $(filter-out FORCE,$^) | \
+>>
+>>  quiet_cmd_lz4 = LZ4     $@
+>>  cmd_lz4 = (cat $(filter-out FORCE,$^) | \
+>> -     lz4demo -c1 stdin stdout && $(call size_append, $(filter-out FORCE,$^))) > $@ || \
+>> +     lz4c -l -c1 stdin stdout && $(call size_append, $(filter-out FORCE,$^))) > $@ || \
 >
-> After merging the slab tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> In file included from include/linux/slab.h:17:0,
->                   from include/linux/crypto.h:24,
->                   from arch/x86/kernel/asm-offsets.c:8:
-> include/linux/kmemleak.h: In function 'kmemleak_alloc_recursive':
-> include/linux/kmemleak.h:44:16: error: 'SLAB_NOLEAKTRACE' undeclared (first use in this function)
->    if (!(flags & SLAB_NOLEAKTRACE))
->                  ^
-> include/linux/kmemleak.h: In function 'kmemleak_free_recursive':
-> include/linux/kmemleak.h:50:16: error: 'SLAB_NOLEAKTRACE' undeclared (first use in this function)
->    if (!(flags & SLAB_NOLEAKTRACE))
->                  ^
->
-> Probably caused by commit 590a63973e36 ("mm/sl[aou]b: Move kmalloc
-> definitions to slab.h").
->
-> I have used the slab tree from next-20130709 for today.
->
-> And, yes, I am a little annoyed by this.
+> You probably want to check for the presence of lz4c on the system and
+> bail with an informative message if absent.
 
-Yes, it indeed interacts badly with kmemleak and tracing. I reverted the 
-commit.
+Yep, x86_64-randconfig
+(http://kisskb.ellerman.id.au/kisskb/buildresult/9110794/):
 
-			Pekka
+  LZ4     arch/x86/boot/compressed/vmlinux.bin.lz4
+/bin/sh: lz4c: command not found
+
+Also, several of the blackfin builds started failing due to a
+compression-related
+issue, e.g. http://kisskb.ellerman.id.au/kisskb/buildresult/9101322/:
+
+  UIMAGE  arch/blackfin/boot/uImage.lzma
+
+Invalid Compression Type - valid names are: none, bzip2, gzip
+Usage: /usr/local/bin/mkimage -l image
+          -l ==> list image header information
+       /usr/local/bin/mkimage [-x] -A arch -O os -T type -C comp -a
+addr -e ep -n name -d data_file[:data_file...] image
+          -A ==> set architecture to 'arch'
+          -O ==> set operating system to 'os'
+          -T ==> set image type to 'type'
+          -C ==> set compression type 'comp'
+          -a ==> set load address to 'addr' (hex)
+          -e ==> set entry point to 'ep' (hex)
+          -n ==> set image name to 'name'
+          -d ==> use image data from 'datafile'
+          -x ==> set XIP (execute in place)
+make[2]: *** [arch/blackfin/boot/uImage.lzma] Error 1
+
+May be unrelated, though.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
