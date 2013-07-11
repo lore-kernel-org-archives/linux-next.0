@@ -1,52 +1,58 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH -next 2/2] kbuild: fix for updated LZ4 tool with the new
- streaming format
-Date: Wed, 10 Jul 2013 22:01:39 +0200
-Message-ID: <20130710200139.GC9140@pd.tnic>
-References: <1367829775-4434-1-git-send-email-kyungsik.lee@lge.com>
- <1367829775-4434-2-git-send-email-kyungsik.lee@lge.com>
- <20130506095124.GA22041@pd.tnic>
- <CAMuHMdWH9w5fj6HRXi+9QcBJym4dukAFsPVGZVqSSk3yTZJUcA@mail.gmail.com>
- <20130710093642.GC14873@pd.tnic>
- <20130710182815.GA362@x4>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: rebase of lblnet tree
+Date: Thu, 11 Jul 2013 10:01:17 +1000
+Message-ID: <20130711100117.8b042a1a2a494bb9ee0003fd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__11_Jul_2013_10_01_17_+1000_xZ8Lp2nMbq74BLmc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.skyhub.de ([78.46.96.112]:52197 "EHLO mail.skyhub.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754051Ab3GJUB4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Jul 2013 16:01:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20130710182815.GA362@x4>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56950 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754741Ab3GKAB0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Jul 2013 20:01:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Markus Trippelsdorf <markus@trippelsdorf.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Kyungsik Lee <kyungsik.lee@lge.com>, Andrew Morton <akpm@linux-foundation.org>, Michal Marek <mmarek@suse.cz>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-kbuild <linux-kbuild@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>, CE Linux Developers List <celinux-dev@lists.celinuxforum.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, hyojun.im@lge.com, chan.jeong@lge.com, raphael.andy.lee@gmail.com, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, Russell King <rmk@arm.linux.org.uk>, Florian Fainelli <florian@openwrt.org>, Yann Collet <yann.collet.73@gmail.com>, Chanho Min <chanho.min@lge.com>, Linux-Next <linux-next@vger.kernel.org>, "uclinux-dist-devel@blackfin.uclinux.org" <uclinux-dist-devel@blackfi>
+To: Paul Moore <paul.moore@hp.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2013 at 08:28:15PM +0200, Markus Trippelsdorf wrote:
-> Well, there's also no hand-holding when lzop is missing for LZO. And
-> the error message is clear enough. No?
+--Signature=_Thu__11_Jul_2013_10_01_17_+1000_xZ8Lp2nMbq74BLmc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Actually, we should error out more gracefully than that. Maybe check for
-the presence of the executable first and if not, exit out of the build
-with an informational message that lz4c is not present on the system.
-Ditto for lzop.
+Hi Paul,
 
-Currently, you wait for the whole build to complete just to see that
-there's no executable at the end. Not nice.
+Why have you just rebased the lblnet tree
+(git://git.infradead.org/users/pcmoore/lblnet-2.6_next#master)?  You have
+just invalidated your testing and made it likely that Linus will blast
+you if you ask him to pull your tree.  Your whole tree was already based
+after v3.10 (i.e. released or rebased after the merge window opened), so
+why move it again?
 
-> BTW speaking of introductory-level patches, what about the following
-> one:
-> 
-> Now that lz4 kernel compression is available, add *.lz4 to .gitignore
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Yep. That makes sense.
+--Signature=_Thu__11_Jul_2013_10_01_17_+1000_xZ8Lp2nMbq74BLmc
+Content-Type: application/pgp-signature
 
-Thanks.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
--- 
-Regards/Gruss,
-    Boris.
+iQIcBAEBCAAGBQJR3fXSAAoJEECxmPOUX5FEn/MP/inTAix2KYnAPY8GMhmmz6c4
+QaEeNqJY8RukEKWFNFbGw63j8nVrqSiQ4w+AEGJMJEssiBFm7/W5cBqabUdwXUCE
+Xp9num+Kq8ARMY0pArJ+Om+2v8QtCz2FbdoSP61LZ0C83uiioRkgoy91KBVXpZ6F
+rmeBvDkPVLfSmYIs9JRHn/A4gx5eircl/WaTk+2FpgCXwUM3gYmQRWUz67qoOKLH
+r3/rhIQzDWZcSN2ejNYYEA4C8rA3Xh2fwfTaNCifGypBDyZKuKZPH99kWSUd4gfB
+Ui2D2HlcXiFeOL3jT30SkEVK3TRwS5FKYUicHm+ZwZDZqnjN6vwg6bSpbHXFF6T4
+FJXu8AtBlTLkQcW9V4pnoTleZc76D0oUFumaueofgKPpDjBx1KFJYPqxJi78bavz
+m+5okkhB+OSwRsd1bwieWv+LKr5ZoVk6nTD3FrrM2PE8uZu3/PJW81ljt+i0B2YO
+T9cAB2t0NDrQw+EBVKI0Pq+6u+APqSafCypVdZgxPkLAGGgmqoxZJoLXTSpCkyRH
+unRsmGOMqMid+B1ENUZ52as3nY6+sdncsiPB5zOELHGJMaWj2nxhpiz+PKCWnGRw
+WZeN7JPJawwYqww28GnU1AtfWyB/fGVlGVfNjCzt3Eg83RygyLlVCAK52XZlybyJ
+nDov6e8FzwpoGo0Oo/+J
+=0GRK
+-----END PGP SIGNATURE-----
 
-Sent from a fat crate under my desk. Formatting is fine.
---
+--Signature=_Thu__11_Jul_2013_10_01_17_+1000_xZ8Lp2nMbq74BLmc--
