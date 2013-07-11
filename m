@@ -1,108 +1,122 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Jean Delvare <khali@linux-fr.org>
 Subject: Re: linux-next: rebase of the jdelvare-hwmon quilt series
-Date: Thu, 11 Jul 2013 16:53:43 +1000
-Message-ID: <20130711165343.f921e147403570508939f2df@canb.auug.org.au>
+Date: Thu, 11 Jul 2013 09:39:28 +0200
+Message-ID: <20130711093928.24490f06@endymion.delvare>
 References: <20130711102724.51608a4ace419b6d42591257@canb.auug.org.au>
 	<20130711075700.21d8482c@endymion.delvare>
+	<20130711165343.f921e147403570508939f2df@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__11_Jul_2013_16_53_43_+1000_Xw+Bkt5vcZVclzTU"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51774 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755543Ab3GKGxw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Jul 2013 02:53:52 -0400
-In-Reply-To: <20130711075700.21d8482c@endymion.delvare>
+Received: from zoneX.GCU-Squad.org ([194.213.125.0]:26051 "EHLO
+	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755767Ab3GKHjj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Jul 2013 03:39:39 -0400
+In-Reply-To: <20130711165343.f921e147403570508939f2df@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__11_Jul_2013_16_53_43_+1000_Xw+Bkt5vcZVclzTU
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 11 Jul 2013 16:53:43 +1000, Stephen Rothwell wrote:
+> On Thu, 11 Jul 2013 07:57:00 +0200 Jean Delvare <khali@linux-fr.org> wrote:
+> > On Thu, 11 Jul 2013 10:27:24 +1000, Stephen Rothwell wrote:
+> > > Why have you just rebased the jdelvare-hwmon series
+> > > (http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/)?  You have
+> > > just invalidated your testing and made it likely that Linus will blast
+> > > you if you ask him to pull your patches.  Your whole series was already
+> > > based after v3.10 (i.e. released or rebased after the merge window
+> > > opened), so why move it again?
+> > 
+> > I'm quite confused by this complaint of yours. I do not have the
+> > feeling that I rebased anything or invalidated any testing. And I don't
+> > think I did anything different this time from the way I have been
+> > proceeding for years.
+> 
+> Probably not, I guess I have been getting more sensitive lately.
+> However, you have changed the base of your quilt series.  This means that
+> you have included more changes from Linus' tree into your tree, thus any
+> testing you have done previously may be invalidated by those changes.
 
-Hi Jean,
+And then what? Linus will end up merging these patches into his
+up-to-date tree anyway. Me staying on an old tree is not going to help
+anything. I am precisely trying to stick to Linus' tree as much as
+possible, precisely to me sure that 1* merging my patches will be a
+trivial operation for Linus and 2* I can detect and fix any build or
+run-time issue before Linus merges my patches.
 
-On Thu, 11 Jul 2013 07:57:00 +0200 Jean Delvare <khali@linux-fr.org> wrote:
->
-> On Thu, 11 Jul 2013 10:27:24 +1000, Stephen Rothwell wrote:
-> > Why have you just rebased the jdelvare-hwmon series
-> > (http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/)?  You have
-> > just invalidated your testing and made it likely that Linus will blast
-> > you if you ask him to pull your patches.  Your whole series was already
-> > based after v3.10 (i.e. released or rebased after the merge window
-> > opened), so why move it again?
->=20
-> I'm quite confused by this complaint of yours. I do not have the
-> feeling that I rebased anything or invalidated any testing. And I don't
-> think I did anything different this time from the way I have been
-> proceeding for years.
+Isn't linux-next itself rebased on Linus's latest tree every day for
+exactly that reason?
 
-Probably not, I guess I have been getting more sensitive lately.
-However, you have changed the base of your quilt series.  This means that
-you have included more changes from Linus' tree into your tree, thus any
-testing you have done previously may be invalidated by those changes.
+> > I had only 2 hwmon patches for Linus for this merge window:
+> >   hwmon-lm63-drop-redundant-safety.patch
+> >   hwmon-lm90-drop-redundant-safety.patch
+> 
+> Yeah, sorry, but I was complaining to several people today.
+> 
+> > They have been in
+> > http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/ (and thus in
+> > linux-next) continuously since May 19th so I'd say they received pretty
+> > good testing. I did not touch them, I did not even have to refresh them.
+> 
+> Actually, those patches only hit linux-next on July 9 (my time), when the
+> were based on v3.10-6005-gd2b4a64.
 
-> I had only 2 hwmon patches for Linus for this merge window:
->   hwmon-lm63-drop-redundant-safety.patch
->   hwmon-lm90-drop-redundant-safety.patch
+Hmm, that would mean I forgot to update my public series when I
+accepted them. That's embarrassing and I apologize for that, this
+should not happen. My tree is seeing so little change these days, it
+can stay for weeks without a change, so if I forget to export once, it
+can take long before the omission is repaired.
 
-Yeah, sorry, but I was complaining to several people today.
+> Then today you changed the base of
+> your series to v3.10-8587-g496322b and added another patch.
 
-> They have been in
-> http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/ (and thus in
-> linux-next) continuously since May 19th so I'd say they received pretty
-> good testing. I did not touch them, I did not even have to refresh them.
+Yes I did. I always do that.
 
-Actually, those patches only hit linux-next on July 9 (my time), when the
-were based on v3.10-6005-gd2b4a64.  Then today you changed the base of
-your series to v3.10-8587-g496322b and added another patch.
+> > 3 days ago I added these 2 patches to the hwmon-for-linus branch of my
+> > staging tree:
+> > http://git.kernel.org/cgit/linux/kernel/git/jdelvare/staging.git/log/?h=hwmon-for-linus
+> > and asked Linux to pull from it.
+> 
+> Which is probably when they hit linux-next.
 
-> 3 days ago I added these 2 patches to the hwmon-for-linus branch of my
-> staging tree:
-> http://git.kernel.org/cgit/linux/kernel/git/jdelvare/staging.git/log/?h=
-=3Dhwmon-for-linus
-> and asked Linux to pull from it.
+I suppose so, yes. Updating my public patch series is a preliminary
+step to preparing my staging tree for Linus to pull from.
 
-Which is probably when they hit linux-next.
+> > Yesterday I reviewed a new (trivial) hwmon patch, and I accepted it, so
+> > it was added to http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/ as 
+> > hwmon-w83792d-update-module-author.patch (and thus went to linux-next.)
+> 
+> And I have no problem with maintainers making judgement calls about
+> simple patches during the merge window.
 
-> Yesterday I reviewed a new (trivial) hwmon patch, and I accepted it, so
-> it was added to http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/ a=
-s=20
-> hwmon-w83792d-update-module-author.patch (and thus went to linux-next.)
+FWIW I would have accepted the patch even if it was not trivial and it
+would have gone in linux-next just the same. The only difference is
+whether I consider the patch for this merge window or only for the next.
 
-And I have no problem with maintainers making judgement calls about
-simple patches during the merge window.
+Is there a policy to not include new patches in linux-next during a
+merge window if the patch is for the next merge window? If so I wasn't
+aware of it. I always considered that the earlier a patch gets in
+linux-next, the better.
 
-It all seems a bit trivial when we are talking about 2 patches, but it is
-the process that is important.
+> It all seems a bit trivial when we are talking about 2 patches, but it is
+> the process that is important.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I'm fine respecting any process in place, but at this point I still do
+not understand how what I did is supposed to be wrong or problematic. I
+can't believe you are asking me to not rebase my quilt series on
+Linus's latest kernel tree every now and then, to make sure it still
+applies cleanly. This is exactly what quilt is good for.
 
---Signature=_Thu__11_Jul_2013_16_53_43_+1000_Xw+Bkt5vcZVclzTU
-Content-Type: application/pgp-signature
+So please tell me exactly what you expect from me. Was I supposed to
+base my patches on v3.10 rather than following Linus's v3.11
+development tree until I sent my pull request? This would put the
+merging burden on his (and your) shoulders instead of mine, which seems
+wrong. And if so, what am I supposed to do after Linus has actually
+pulled my changes? What if I need to send a second round of patches
+during the merge window?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJR3lZ7AAoJEECxmPOUX5FEpvQQAJuGfNaK2+8q5vDpBd2URgmT
-Uns7ljZLl67dvofuzohvPXDqflAlXkyraekrZnM34YTsn6WCq9CF8iwVf7L/sQEW
-IVp+szdfIvMoiUOiv91vHagV+4Wf4ZGMea6UhxvUCSyp7PeeVKMcJq2+a0HPpiR4
-hAI+azuNNIoGlMX/vkjryu+CNoiaPKFNA8R03U/9EXps15AQs3/MXkXXNtxtbxTi
-hyApDrwwjv1ayy7SXWbLlC6r1K4LEyjZaQZWiQAnkzMGySXiVWalNXsJ1KVLhPme
-9KViTlHgKqLvz8RFzypnVnpZuuU3984CAyXRmz/subcBM5RYLmzE/SFayYwWX+5+
-xxGBhpseFkjUPqiX/0w7euy6i23K0+DbgBNq9oqYgVmeGrKBZrCqZwscOR+GHZHm
-AteuQT5YLzoeUIZ+z83VPIR65TKO26gv/I71YglmhZk2NYy7e3QBXnFP9LYOvUpU
-wAhpLYTY9R9XwrQbrtGw+IPKOZI2XjP9hMxMsixRfuxT0XyC7hVRIAdfuRrx4ywj
-Gy3mKhHzN593//Exdc3DzJC0WBbNCupJPYmZLmF511bthkT02oA+kRNEFPsV/mL+
-Af35JfMswH/IcdyaOkjKARVHuS6n9FXxEFKZ2mxzHBcDbGeIraUzpkeXJVEb3BSP
-8xhaSU2HxyrUpUd0ZFYY
-=togL
------END PGP SIGNATURE-----
-
---Signature=_Thu__11_Jul_2013_16_53_43_+1000_Xw+Bkt5vcZVclzTU--
+Confused,
+-- 
+Jean Delvare
