@@ -1,122 +1,200 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: rebase of the jdelvare-hwmon quilt series
-Date: Thu, 11 Jul 2013 09:39:28 +0200
-Message-ID: <20130711093928.24490f06@endymion.delvare>
-References: <20130711102724.51608a4ace419b6d42591257@canb.auug.org.au>
-	<20130711075700.21d8482c@endymion.delvare>
-	<20130711165343.f921e147403570508939f2df@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: Tree for Apr 26 [ bluetooth on suspend/resume ]
+Date: Thu, 11 Jul 2013 09:50:12 +0200
+Message-ID: <CA+icZUXn0WdjPfiDc7bCAAjhHO1dz52n5-PKTiSmttjtFJo2qQ@mail.gmail.com>
+References: <CA+icZUVCmFeh3Xna37VJDDzvZ34sYJ_Dser7i5rRzGLhMTi5-Q@mail.gmail.com>
+	<CA+icZUXeDT8x60iUtjJV2GO5KkDnm8CJsz8mntz5hREoOD+YJw@mail.gmail.com>
+	<CA+icZUWkyP9TE0eeqstyvVNP++MtN8rYfGcPBT6NuMOHEHm7dw@mail.gmail.com>
+	<20130710173032.GF2952@joana>
+Reply-To: sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zoneX.GCU-Squad.org ([194.213.125.0]:26051 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755767Ab3GKHjj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Jul 2013 03:39:39 -0400
-In-Reply-To: <20130711165343.f921e147403570508939f2df@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130710173032.GF2952@joana>
+Sender: linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Gustavo Padovan <gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org>, Sedat Dilek <sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcel Holtmann <marcel-kz+m5ild9QBg9hUCZPvPmw@public.gmane.org>, Johan Hedberg <johan.hedberg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux PM List <linux-pm-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>
+Cc: "s.dilek" <s.dilek-2IIL203at0wb1SvskN2V4Q@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 11 Jul 2013 16:53:43 +1000, Stephen Rothwell wrote:
-> On Thu, 11 Jul 2013 07:57:00 +0200 Jean Delvare <khali@linux-fr.org> wrote:
-> > On Thu, 11 Jul 2013 10:27:24 +1000, Stephen Rothwell wrote:
-> > > Why have you just rebased the jdelvare-hwmon series
-> > > (http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/)?  You have
-> > > just invalidated your testing and made it likely that Linus will blast
-> > > you if you ask him to pull your patches.  Your whole series was already
-> > > based after v3.10 (i.e. released or rebased after the merge window
-> > > opened), so why move it again?
-> > 
-> > I'm quite confused by this complaint of yours. I do not have the
-> > feeling that I rebased anything or invalidated any testing. And I don't
-> > think I did anything different this time from the way I have been
-> > proceeding for years.
-> 
-> Probably not, I guess I have been getting more sensitive lately.
-> However, you have changed the base of your quilt series.  This means that
-> you have included more changes from Linus' tree into your tree, thus any
-> testing you have done previously may be invalidated by those changes.
+On Wed, Jul 10, 2013 at 7:30 PM, Gustavo Padovan <gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org> wrote:
+> Hi Sedat,
+>
+> * Sedat Dilek <sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> [2013-04-26 19:40:20 +0200]:
+>
+>> On Fri, Apr 26, 2013 at 7:32 PM, Sedat Dilek <sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> > On Fri, Apr 26, 2013 at 7:30 PM, Sedat Dilek <sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> >> On Fri, Apr 26, 2013 at 10:03 AM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
+>> >>> Hi all,
+>> >>>
+>> >>> Changes since 20130424:
+>> >>>
+>> >>> Removed tree: ppc-temp (remerged into powerpc)
+>> >>>
+>> >>> The net-next tree gained conflicts against the net and pci trees and a
+>> >>> build failure for which I applied a merge fix patch.
+>> >>>
+>> >>> The omap_dss2 tree gained a build failure so I used the version from
+>> >>> next-20130424.
+>> >>>
+>> >>> The trivial tree gained a conflict against the arm tree.
+>> >>>
+>> >>> The staging tree still had its build failure for which I applied a
+>> >>> supplied patch.
+>> >>>
+>> >>> The arm-soc tree gained a conflict against the spi-mb tree.
+>> >>>
+>> >>> The renesas tree gained a conflict against the input tree.
+>> >>>
+>> >>
+>> >> [ CC linux-bluetooth + linux-pm folks ]
+>> >>
+>> >> I see the following:
+>> >>
+>> >> [  176.667799] PM: Syncing filesystems ... done.
+>> >> [  176.670014] PM: Preparing system for mem sleep
+>> >> [  176.670422] Freezing user space processes ...
+>> >> [  196.656719] Freezing of tasks failed after 20.00 seconds (1 tasks
+>> >> refusing to freeze, wq_busy=0):
+>> >> [  196.656728] bluetoothd      D ffffffff8180d8c0     0  1012    863 0x00000004
+>> >> [  196.656731]  ffff88008fdb3cc8 0000000000000046 ffff8800926530d0
+>> >> 0000020000000000
+>> >> [  196.656735]  ffff88008feca200 ffff88008fdb3fd8 ffff88008fdb3fd8
+>> >> ffff88008fdb3fd8
+>> >> [  196.656738]  ffff880119f78300 ffff88008feca200 ffff88008fdb3cf8
+>> >> ffff880095281950
+>> >> [  196.656741] Call Trace:
+>> >> [  196.656749]  [<ffffffff816cfc99>] schedule+0x29/0x70
+>> >> [  196.656752]  [<ffffffff816cff9e>] schedule_preempt_disabled+0xe/0x10
+>> >> [  196.656754]  [<ffffffff816ce075>] __mutex_lock_slowpath+0x125/0x2f0
+>> >> [  196.656757]  [<ffffffff816ce25e>] mutex_lock+0x1e/0x40
+>> >> [  196.656773]  [<ffffffffa016f8b1>] hci_dev_open+0x51/0x2e0 [bluetooth]
+>> >> [  196.656780]  [<ffffffffa0182752>] hci_sock_ioctl+0x1f2/0x3f0 [bluetooth]
+>> >> [  196.656783]  [<ffffffff815c6050>] sock_do_ioctl+0x30/0x70
+>> >> [  196.656786]  [<ffffffff815c75f9>] sock_ioctl+0x79/0x2f0
+>> >> [  196.656790]  [<ffffffff811a8046>] do_vfs_ioctl+0x96/0x560
+>> >> [  196.656794]  [<ffffffff811a85a1>] SyS_ioctl+0x91/0xb0
+>> >> [  196.656797]  [<ffffffff816d989d>] system_call_fastpath+0x1a/0x1f
+>> >> [  196.656811]
+>> >> [  196.656812] Restarting tasks ... done.
+>> >
+>> > Forgot to attach dmesg + config, sorry.
+>> >
+>>
+>> Oops, NULL-pointer-deref [ __queue_work() ]
+>>
+>> [   25.968262] Bluetooth: BNEP socket layer initialized
+>> [   25.974875] usb 2-1.5: link qh1-0e01/ffff880091bc90c0 start 0 [1/2 us]
+>> [   25.974932] BUG: unable to handle kernel NULL pointer dereference
+>> at 0000000000000100
+>> [   25.974944] IP: [<ffffffff81077502>] __queue_work+0x32/0x3d0
+>> [   25.974955] PGD 0
+>> [   25.974960] Oops: 0000 [#1] SMP
+>> [   25.974966] Modules linked in: bnep btusb(+) videobuf2_memops
+>> snd_timer drm_kms_helper videobuf2_core snd_seq_device drm parport_pc
+>> bluetooth microcode videodev ppdev psmouse snd cfg80211 soundcore
+>> samsung_laptop wmi lp serio_raw video parport mac_hid lpc_ich
+>> hid_generic usbhid hid r8169
+>> [   25.975014] CPU: 3 PID: 1007 Comm: bluetoothd Not tainted
+>> 3.9.0-rc8-next20130426-3-iniza-small #1
+>> [   25.975022] Hardware name: SAMSUNG ELECTRONICS CO., LTD.
+>> 530U3BI/530U4BI/530U4BH/530U3BI/530U4BI/530U4BH, BIOS 13XK 03/28/2013
+>> [   25.975030] task: ffff88008feda300 ti: ffff88008fed4000 task.ti:
+>> ffff88008fed4000
+>> [   25.975037] RIP: 0010:[<ffffffff81077502>]  [<ffffffff81077502>]
+>> __queue_work+0x32/0x3d0
+>> [   25.975047] RSP: 0018:ffff88008fed5c48  EFLAGS: 00010046
+>> [   25.975052] RAX: 0000000000000096 RBX: 0000000000000292 RCX: 0000000000000000
+>> [   25.975058] RDX: ffff880095281850 RSI: 0000000000000000 RDI: 0000000000000100
+>> [   25.975063] RBP: ffff88008fed5c88 R08: 0000000000000000 R09: 0000000000000300
+>> [   25.975069] R10: ffff880094981a00 R11: 0000000000000000 R12: ffff880095281850
+>> [   25.975074] R13: 0000000000000000 R14: 0000000000000100 R15: 00000000000009c4
+>> [   25.975081] FS:  00007f2f61707740(0000) GS:ffff88011fac0000(0000)
+>> knlGS:0000000000000000
+>> [   25.975088] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [   25.975093] CR2: 0000000000000100 CR3: 000000009101f000 CR4: 00000000000407e0
+>> [   25.975099] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> [   25.975104] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+>> [   25.975109] Stack:
+>> [   25.975113]  ffff88008fed5c88 ffffffff00000100 ffff880095281000
+>> 0000000000000292
+>> [   25.975124]  ffff880095281000 ffff880095281908 ffff88008fed5cf0
+>> 00000000000009c4
+>> [   25.975133]  ffff88008fed5ca8 ffffffff81077be5 ffff880095281000
+>> ffff88008fed5ce8
+>> [   25.975143] Call Trace:
+>> [   25.975151]  [<ffffffff81077be5>] queue_work_on+0x45/0x50
+>> [   25.975165]  [<ffffffffa016e8ff>] hci_req_run+0xbf/0xf0 [bluetooth]
+>> [   25.975177]  [<ffffffffa01709b0>] ? hci_init2_req+0x720/0x720 [bluetooth]
+>> [   25.975188]  [<ffffffffa016ea06>] __hci_req_sync+0xd6/0x1c0 [bluetooth]
+>> [   25.975197]  [<ffffffff8108ee10>] ? try_to_wake_up+0x2b0/0x2b0
+>> [   25.975205]  [<ffffffff8150e3f0>] ? usb_autopm_put_interface+0x30/0x40
+>> [   25.975217]  [<ffffffffa016fad5>] hci_dev_open+0x275/0x2e0 [bluetooth]
+>> [   25.975230]  [<ffffffffa0182752>] hci_sock_ioctl+0x1f2/0x3f0 [bluetooth]
+>> [   25.975238]  [<ffffffff815c6050>] sock_do_ioctl+0x30/0x70
+>> [   25.975245]  [<ffffffff815c75f9>] sock_ioctl+0x79/0x2f0
+>> [   25.975254]  [<ffffffff811a8046>] do_vfs_ioctl+0x96/0x560
+>> [   25.975262]  [<ffffffff811a85a1>] SyS_ioctl+0x91/0xb0
+>> [   25.975271]  [<ffffffff816d989d>] system_call_fastpath+0x1a/0x1f
+>
+> Sorry for the big delay on this one, I lost track of this e-mail.
+>
 
-And then what? Linus will end up merging these patches into his
-up-to-date tree anyway. Me staying on an old tree is not going to help
-anything. I am precisely trying to stick to Linus' tree as much as
-possible, precisely to me sure that 1* merging my patches will be a
-trivial operation for Linus and 2* I can detect and fix any build or
-run-time issue before Linus merges my patches.
+Hehe, better late than never :-).
 
-Isn't linux-next itself rebased on Linus's latest tree every day for
-exactly that reason?
+Currently, I am struggling with llvmlinux and annoy their ML.
 
-> > I had only 2 hwmon patches for Linus for this merge window:
-> >   hwmon-lm63-drop-redundant-safety.patch
-> >   hwmon-lm90-drop-redundant-safety.patch
-> 
-> Yeah, sorry, but I was complaining to several people today.
-> 
-> > They have been in
-> > http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/ (and thus in
-> > linux-next) continuously since May 19th so I'd say they received pretty
-> > good testing. I did not touch them, I did not even have to refresh them.
-> 
-> Actually, those patches only hit linux-next on July 9 (my time), when the
-> were based on v3.10-6005-gd2b4a64.
+To test this, means for me to checkout the related Linux-next release
+and try the fix.
+Currently, I can't say if the issue go away with a higher Linux-next release.
 
-Hmm, that would mean I forgot to update my public series when I
-accepted them. That's embarrassing and I apologize for that, this
-should not happen. My tree is seeing so little change these days, it
-can stay for weeks without a change, so if I forget to export once, it
-can take long before the omission is repaired.
+I can't promise anything.
 
-> Then today you changed the base of
-> your series to v3.10-8587-g496322b and added another patch.
+Thank you for your reply.
 
-Yes I did. I always do that.
+- Sedat -
 
-> > 3 days ago I added these 2 patches to the hwmon-for-linus branch of my
-> > staging tree:
-> > http://git.kernel.org/cgit/linux/kernel/git/jdelvare/staging.git/log/?h=hwmon-for-linus
-> > and asked Linux to pull from it.
-> 
-> Which is probably when they hit linux-next.
-
-I suppose so, yes. Updating my public patch series is a preliminary
-step to preparing my staging tree for Linus to pull from.
-
-> > Yesterday I reviewed a new (trivial) hwmon patch, and I accepted it, so
-> > it was added to http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/ as 
-> > hwmon-w83792d-update-module-author.patch (and thus went to linux-next.)
-> 
-> And I have no problem with maintainers making judgement calls about
-> simple patches during the merge window.
-
-FWIW I would have accepted the patch even if it was not trivial and it
-would have gone in linux-next just the same. The only difference is
-whether I consider the patch for this merge window or only for the next.
-
-Is there a policy to not include new patches in linux-next during a
-merge window if the patch is for the next merge window? If so I wasn't
-aware of it. I always considered that the earlier a patch gets in
-linux-next, the better.
-
-> It all seems a bit trivial when we are talking about 2 patches, but it is
-> the process that is important.
-
-I'm fine respecting any process in place, but at this point I still do
-not understand how what I did is supposed to be wrong or problematic. I
-can't believe you are asking me to not rebase my quilt series on
-Linus's latest kernel tree every now and then, to make sure it still
-applies cleanly. This is exactly what quilt is good for.
-
-So please tell me exactly what you expect from me. Was I supposed to
-base my patches on v3.10 rather than following Linus's v3.11
-development tree until I sent my pull request? This would put the
-merging burden on his (and your) shoulders instead of mine, which seems
-wrong. And if so, what am I supposed to do after Linus has actually
-pulled my changes? What if I need to send a second round of patches
-during the merge window?
-
-Confused,
--- 
-Jean Delvare
+> So, the only way I see this happening is a race between hci_register_dev and
+> hci_dev_open. If someone issue a syscall to power the bluetooth device on
+> while hci_register_dev is still running and have not yet created the
+> workqueues. The following patch should help with this, it defers the addition
+> of the device into the list, so hci_dev_open will only see the device if
+> workqueue and other things were already created.
+>
+>         Gustavo
+>
+> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+> index dc34bfa..ce34960 100644
+> --- a/net/bluetooth/hci_core.c
+> +++ b/net/bluetooth/hci_core.c
+> @@ -2165,10 +2165,6 @@ int hci_register_dev(struct hci_dev *hdev)
+>
+>         BT_DBG("%p name %s bus %d", hdev, hdev->name, hdev->bus);
+>
+> -       write_lock(&hci_dev_list_lock);
+> -       list_add(&hdev->list, &hci_dev_list);
+> -       write_unlock(&hci_dev_list_lock);
+> -
+>         hdev->workqueue = alloc_workqueue(hdev->name, WQ_HIGHPRI | WQ_UNBOUND |
+>                                           WQ_MEM_RECLAIM, 1);
+>         if (!hdev->workqueue) {
+> @@ -2207,6 +2203,10 @@ int hci_register_dev(struct hci_dev *hdev)
+>         hci_notify(hdev, HCI_DEV_REG);
+>         hci_dev_hold(hdev);
+>
+> +       write_lock(&hci_dev_list_lock);
+> +       list_add(&hdev->list, &hci_dev_list);
+> +       write_unlock(&hci_dev_list_lock);
+> +
+>         queue_work(hdev->req_workqueue, &hdev->power_on);
+>
+>         return id;
+> @@ -2216,9 +2216,6 @@ err_wqueue:
+>         destroy_workqueue(hdev->req_workqueue);
+>  err:
+>         ida_simple_remove(&hci_index_ida, hdev->id);
+> -       write_lock(&hci_dev_list_lock);
+> -       list_del(&hdev->list);
+> -       write_unlock(&hci_dev_list_lock);
+>
+>         return error;
+>  }
