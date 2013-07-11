@@ -1,61 +1,31 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: rebase of the jdelvare-hwmon quilt series
-Date: Thu, 11 Jul 2013 07:57:00 +0200
-Message-ID: <20130711075700.21d8482c@endymion.delvare>
-References: <20130711102724.51608a4ace419b6d42591257@canb.auug.org.au>
+From: Pekka Enberg <penberg@kernel.org>
+Subject: Re: linux-next: build failure after merge of the slab tree
+Date: Thu, 11 Jul 2013 09:42:35 +0300
+Message-ID: <51DE53DB.1010104@kernel.org>
+References: <20130710125654.dd36f8fb19588697226b99be@canb.auug.org.au> <51DD06A9.4030605@kernel.org> <0000013fc9e9f94b-e87067d6-0bb6-41b3-ae83-ed8f110f893f-000000@email.amazonses.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130711102724.51608a4ace419b6d42591257@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-la0-f49.google.com ([209.85.215.49]:41034 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751888Ab3GKGmj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Jul 2013 02:42:39 -0400
+In-Reply-To: <0000013fc9e9f94b-e87067d6-0bb6-41b3-ae83-ed8f110f893f-000000@email.amazonses.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christoph Lameter <cl@linux.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Wed, 10 Jul 2013, Pekka Enberg wrote:
+>> Yes, it indeed interacts badly with kmemleak and tracing. I reverted the
+>> commit.
 
-On Thu, 11 Jul 2013 10:27:24 +1000, Stephen Rothwell wrote:
-> Why have you just rebased the jdelvare-hwmon series
-> (http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/)?  You have
-> just invalidated your testing and made it likely that Linus will blast
-> you if you ask him to pull your patches.  Your whole series was already
-> based after v3.10 (i.e. released or rebased after the merge window
-> opened), so why move it again?
+On 07/10/2013 09:48 PM, Christoph Lameter wrote:
+> Here is the fix required. kmemleak.h is weird in that it cannot be
+> included at the top of slab.h due to its corresponding dependency on
+> slab.h. Bad situation. kmemleak.h itself should  include "slab.h"...
 
-I'm quite confused by this complaint of yours. I do not have the
-feeling that I rebased anything or invalidated any testing. And I don't
-think I did anything different this time from the way I have been
-proceeding for years.
+Can you please resend these after the merge window closes?
 
-I had only 2 hwmon patches for Linus for this merge window:
-  hwmon-lm63-drop-redundant-safety.patch
-  hwmon-lm90-drop-redundant-safety.patch
-
-They have been in
-http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/ (and thus in
-linux-next) continuously since May 19th so I'd say they received pretty
-good testing. I did not touch them, I did not even have to refresh them.
-
-3 days ago I added these 2 patches to the hwmon-for-linus branch of my
-staging tree:
-http://git.kernel.org/cgit/linux/kernel/git/jdelvare/staging.git/log/?h=hwmon-for-linus
-and asked Linux to pull from it.
-
-Yesterday I reviewed a new (trivial) hwmon patch, and I accepted it, so
-it was added to http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/ as 
-hwmon-w83792d-update-module-author.patch (and thus went to linux-next.)
-
-Last night Linus pulled from
-http://git.kernel.org/cgit/linux/kernel/git/jdelvare/staging.git/log/?h=hwmon-for-linus
-so the 2 "old" patches are now merged upstream. The one "new" patch
-is not, it will get upstream next time I ask Linus to pull from my
-staging tree.
-
-This is how things have happened, and I just can't see anything wrong.
-If you do, please explain what you thing shouldn't have happened, and
-let me know what I should have done instead.
-
-Thanks,
--- 
-Jean Delvare
+			Pekka
