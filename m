@@ -1,48 +1,61 @@
-From: Kyungsik Lee <kyungsik.lee@lge.com>
-Subject: Re: [PATCH -next 2/2] kbuild: fix for updated LZ4 tool with the new
- streaming format
-Date: Thu, 11 Jul 2013 13:34:33 +0900
-Message-ID: <20130711043433.GA29245@hulk>
-References: <1367829775-4434-1-git-send-email-kyungsik.lee@lge.com>
- <1367829775-4434-2-git-send-email-kyungsik.lee@lge.com>
- <20130506095124.GA22041@pd.tnic>
- <CAMuHMdWH9w5fj6HRXi+9QcBJym4dukAFsPVGZVqSSk3yTZJUcA@mail.gmail.com>
- <20130710093642.GC14873@pd.tnic>
- <20130710182815.GA362@x4>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: linux-next: rebase of the jdelvare-hwmon quilt series
+Date: Thu, 11 Jul 2013 07:57:00 +0200
+Message-ID: <20130711075700.21d8482c@endymion.delvare>
+References: <20130711102724.51608a4ace419b6d42591257@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from LGEMRELSE1Q.lge.com ([156.147.1.111]:62611 "EHLO
-	LGEMRELSE1Q.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750811Ab3GKEed (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Jul 2013 00:34:33 -0400
-Content-Disposition: inline
-In-Reply-To: <20130710182815.GA362@x4>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Markus Trippelsdorf <markus@trippelsdorf.de>
-Cc: Borislav Petkov <bp@alien8.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Morton <akpm@linux-foundation.org>, Michal Marek <mmarek@suse.cz>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-kbuild <linux-kbuild@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>, CE Linux Developers List <celinux-dev@lists.celinuxforum.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, hyojun.im@lge.com, chan.jeong@lge.com, raphael.andy.lee@gmail.com, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, Russell King <rmk@arm.linux.org.uk>, Florian Fainelli <florian@openwrt.org>, Yann Collet <yann.collet.73@gmail.com>, Chanho Min <chanho.min@lge.com>, Linux-Next <linux-next@vger.kernel.org>, "uclinux-dist-devel@blackfin.uclinux.org" <uclinux-dist-devel@blackfin.ucl>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130711102724.51608a4ace419b6d42591257@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-> 
-> BTW speaking of introductory-level patches, what about the following
-> one:
-> 
-> Now that lz4 kernel compression is available, add *.lz4 to .gitignore
-> 
-> diff --git a/.gitignore b/.gitignore
-> index 3b8b9b3..7e9932e 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -29,6 +29,7 @@ modules.builtin
->  *.bz2
->  *.lzma
->  *.xz
-> +*.lz4
->  *.lzo
->  *.patch
->  *.gcno
-> 
-Acked-by: Kyungsik Lee <kyungsik.lee@lge.com>
+Hi Stephen,
+
+On Thu, 11 Jul 2013 10:27:24 +1000, Stephen Rothwell wrote:
+> Why have you just rebased the jdelvare-hwmon series
+> (http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/)?  You have
+> just invalidated your testing and made it likely that Linus will blast
+> you if you ask him to pull your patches.  Your whole series was already
+> based after v3.10 (i.e. released or rebased after the merge window
+> opened), so why move it again?
+
+I'm quite confused by this complaint of yours. I do not have the
+feeling that I rebased anything or invalidated any testing. And I don't
+think I did anything different this time from the way I have been
+proceeding for years.
+
+I had only 2 hwmon patches for Linus for this merge window:
+  hwmon-lm63-drop-redundant-safety.patch
+  hwmon-lm90-drop-redundant-safety.patch
+
+They have been in
+http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/ (and thus in
+linux-next) continuously since May 19th so I'd say they received pretty
+good testing. I did not touch them, I did not even have to refresh them.
+
+3 days ago I added these 2 patches to the hwmon-for-linus branch of my
+staging tree:
+http://git.kernel.org/cgit/linux/kernel/git/jdelvare/staging.git/log/?h=hwmon-for-linus
+and asked Linux to pull from it.
+
+Yesterday I reviewed a new (trivial) hwmon patch, and I accepted it, so
+it was added to http://khali.linux-fr.org/devel/linux-3/jdelvare-hwmon/ as 
+hwmon-w83792d-update-module-author.patch (and thus went to linux-next.)
+
+Last night Linus pulled from
+http://git.kernel.org/cgit/linux/kernel/git/jdelvare/staging.git/log/?h=hwmon-for-linus
+so the 2 "old" patches are now merged upstream. The one "new" patch
+is not, it will get upstream next time I ask Linus to pull from my
+staging tree.
+
+This is how things have happened, and I just can't see anything wrong.
+If you do, please explain what you thing shouldn't have happened, and
+let me know what I should have done instead.
 
 Thanks,
-Kyungsik
+-- 
+Jean Delvare
