@@ -1,103 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the xfs tree
-Date: Fri, 12 Jul 2013 13:15:46 +1000
-Message-ID: <20130712131546.61d05ef97d33d58a28c728db@canb.auug.org.au>
+From: Xiong Zhou <jencce.kernel@gmail.com>
+Subject: Re: [PATCH]amilo-rfkill: add depends on i8042 in Kconfig
+Date: Fri, 12 Jul 2013 11:46:30 +0800
+Message-ID: <CADJHv_sSn9oU-xg5qgoHRKDeyHRCqy8VuPJW5_punHd45inzsA@mail.gmail.com>
+References: <alpine.DEB.2.02.1306181705530.28460@M2420>
+	<1371560680.3495.121.camel@deadeye.wl.decadent.org.uk>
+	<51C07608.2070406@infradead.org>
+	<CADJHv_vZiPsDUiLrFao41rRVduf+AYFm0NuvpNaCW8S3KrAjnA@mail.gmail.com>
+	<51CC6B09.5080809@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5558456188828386839=="
-Return-path: <xfs-bounces@oss.sgi.com>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Chandra Seetharaman <sekharan@us.ibm.com>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, Ben Myers <bpm@sgi.com>, linux-next@vger.kernel.org, Glauber Costa <glommer@openvz.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <51CC6B09.5080809@infradead.org>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Ben Hutchings <ben@decadent.org.uk>, matthew.garrett@nebula.com, platform-driver-x86@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Davis <jim.epost@gmail.com>, Jiri Kosina <trivial@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---===============5558456188828386839==
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__12_Jul_2013_13_15_46_+1000_+ZSBWRLm1HQHWOJT"
-
---Signature=_Fri__12_Jul_2013_13_15_46_+1000_+ZSBWRLm1HQHWOJT
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Andrew,
-
-Today's linux-next merge of the akpm tree got a conflict in
-fs/xfs/xfs_qm.h between commit 92f8ff73f186 ("xfs: Add pquota fields
-where gquota is used") from the xfs tree and commit  "xfs: convert dquot
-cache lru to list_lru" from the akpm tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc fs/xfs/xfs_qm.h
-index 579d6a0,cf2ad1f..0000000
---- a/fs/xfs/xfs_qm.h
-+++ b/fs/xfs/xfs_qm.h
-@@@ -44,14 -44,10 +44,12 @@@ extern struct kmem_zone	*xfs_qm_dqtrxzo
-  typedef struct xfs_quotainfo {
-  	struct radix_tree_root qi_uquota_tree;
-  	struct radix_tree_root qi_gquota_tree;
- +	struct radix_tree_root qi_pquota_tree;
-  	struct mutex qi_tree_lock;
- -	xfs_inode_t	*qi_uquotaip;	 /* user quota inode */
- -	xfs_inode_t	*qi_gquotaip;	 /* group quota inode */
- +	struct xfs_inode	*qi_uquotaip;	/* user quota inode */
- +	struct xfs_inode	*qi_gquotaip;	/* group quota inode */
- +	struct xfs_inode	*qi_pquotaip;	/* project quota inode */
-- 	struct list_head qi_lru_list;
-- 	struct mutex	 qi_lru_lock;
-- 	int		 qi_lru_count;
-+ 	struct list_lru	 qi_lru;
-  	int		 qi_dquots;
-  	time_t		 qi_btimelimit;	 /* limit for blks timer */
-  	time_t		 qi_itimelimit;	 /* limit for inodes timer */
-
---Signature=_Fri__12_Jul_2013_13_15_46_+1000_+ZSBWRLm1HQHWOJT
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJR33TnAAoJEECxmPOUX5FEdj4P/3q79Hko10rAF8RPkZ310xDm
-gH2yFo7ncjndKq0y74dqTQGSY08UpwAZPSCT7QaLrpTvHzEz/eKRytnQO7HrpePZ
-EiqPc3JeHX+i+XN5+jXSFRtNGHLg2hI8QsHoRzWaMKsfYk0/C9wgHgQKWdAwAsdW
-g65RVvePnAhDr8ZTC+YGVSWOhUuBlBoYdSODs9IX9qAzjGP5IBWvVuQOdekBq0QS
-Ij6497vO87UtQLf0NXECHQ8oSXXDsR3asjQElv0Rk11I5mEvVgwAZ5JCovPBHT1g
-XqXgQjh6TiVqQiKxdPVomUTxOHHw4gTJTxuiu9laul4a2zlzGy3EYhJU32ERvSqf
-osXMQJMKCTIYyagHfvGTPtM1Xemy+9tLvgK1rv9osHy6JmWo6zz/apWvoST/EvIC
-qJU6oS/CYEVUe94PhiFK5MOkvxnZX8qgOOnGTLqlFR4Y1MJwGQQueClSIZeH8b0N
-5NtE6Vs4U8koBDAWwYawye6NFcRG6z+XzO2cFXmS2WQVTceQlauheKYUUvvZoNLz
-4VaA/LB7WBmoSH5WBQ733xQJ2VrBVtq0RhhOkpr9IslmIvvSfQB5HA6pu7lAgbOF
-XINRIbI2DO5xNvFnAnDrOIl59wnfvaR5pjEqTx3UtuWjnYHllqEMF7x/jSdWV6KO
-cpqRxrHpyHgwplUpJ061
-=yhcL
------END PGP SIGNATURE-----
-
---Signature=_Fri__12_Jul_2013_13_15_46_+1000_+ZSBWRLm1HQHWOJT--
+2013/6/28 Randy Dunlap <rdunlap@infradead.org>:
+> On 06/18/13 18:09, Xiong Zhou wrote:
+>> 2013/6/18 Randy Dunlap <rdunlap@infradead.org>:
+>>> On 06/18/13 06:04, Ben Hutchings wrote:
+>>>> On Tue, 2013-06-18 at 17:21 +0800, Xiong Zhou wrote:
+>>>>> From: Xiong Zhou <jencce.kernel@gmail.com>
+>>>>>
+>>>>> Fix randconfig build failure for Amilo x86 platform driver.
+>>>>> AMILO_RFKILL requires SERIO_I8042 being available.
+>>>>>
+>>>>> amilo-rfkill.c:(.text+0x108b5b): undefined reference to `i8042_lock_chip'
+>>>>> amilo-rfkill.c:(.text+0x108b69): undefined reference to `i8042_command'
+>>>>> amilo-rfkill.c:(.text+0x108b71): undefined reference to `i8042_unlock_chip'
+>>>>>
+>>>>> Reported-by: Jim Davis <jim.epost@gmail.com>
+>>>>> Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
+>>>>
+>>>> Acked-by: Ben Hutchings <ben@decadent.org.uk>
+>>>>
+>>>> But I thought somehow sent this same fix a while back...
+>>>
+>>> Yes, I reported it and sent a patch for it that you acked...
+>>> I guess my patch was never picked up.
+>>>
+>>
+>> ... Better someone pick this up.
+>>
+>
+> This build error is still occurring in linux-next (20130627).
+> I first reported it and posted a patch for it on May-15 2013.
+>
+> Please merge either patch...
+>
+> Is anybody out there?
+>
+>
+>>
+>>>>
+>>>> Ben.
+>>>>
+>>>>> ---
+>>>>>  drivers/platform/x86/Kconfig |    1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+>>>>> index 8577261..37645b9 100644
+>>>>> --- a/drivers/platform/x86/Kconfig
+>>>>> +++ b/drivers/platform/x86/Kconfig
+>>>>> @@ -176,6 +176,7 @@ config FUJITSU_TABLET
+>>>>>  config AMILO_RFKILL
+>>>>>      tristate "Fujitsu-Siemens Amilo rfkill support"
+>>>>>      depends on RFKILL
+>>>>> +    depends on SERIO_I8042
+>>>>>      ---help---
+>>>>>        This is a driver for enabling wifi on some Fujitsu-Siemens Amilo
+>>>>>        laptops.
+>>>>
+>>>
+>>>
+>>> --
+>>> ~Randy
+>> --
+>
+>
+> --
+> ~Randy
 
 
---===============5558456188828386839==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
-
---===============5558456188828386839==--
+cc Jiri Kosina <trivial@kernel.org>
