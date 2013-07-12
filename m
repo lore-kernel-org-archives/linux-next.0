@@ -1,44 +1,103 @@
-From: Peter Chen <hzpeterchen@gmail.com>
-Subject: Re: linux-next: Tree for Jul 11 (usb/chipidea)
-Date: Fri, 12 Jul 2013 09:47:10 +0800
-Message-ID: <CAL411-pROGd5y5UoShq=_QHUeHFdM8=kv5r0TRLa5o8T1h1bbQ@mail.gmail.com>
-References: <20130711141745.04259271113c165310ec4768@canb.auug.org.au> <51DEFDDF.7050803@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the xfs tree
+Date: Fri, 12 Jul 2013 13:15:46 +1000
+Message-ID: <20130712131546.61d05ef97d33d58a28c728db@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <51DEFDDF.7050803@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Content-Type: multipart/mixed; boundary="===============5558456188828386839=="
+Return-path: <xfs-bounces@oss.sgi.com>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Chandra Seetharaman <sekharan@us.ibm.com>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, Ben Myers <bpm@sgi.com>, linux-next@vger.kernel.org, Glauber Costa <glommer@openvz.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 12, 2013 at 2:47 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 07/10/13 21:17, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20130710:
->>
->
->
-> on x86_64:
->
-> # CONFIG_USB_GADGET is not set
->
-> ERROR: "usb_gadget_map_request" [drivers/usb/chipidea/ci_hdrc.ko] undefined!
-> ERROR: "usb_del_gadget_udc" [drivers/usb/chipidea/ci_hdrc.ko] undefined!
-> ERROR: "usb_gadget_unmap_request" [drivers/usb/chipidea/ci_hdrc.ko] undefined!
-> ERROR: "usb_add_gadget_udc" [drivers/usb/chipidea/ci_hdrc.ko] undefined!
->
->
->
-> Full randconfig file is attached.
->
->
+--===============5558456188828386839==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__12_Jul_2013_13_15_46_+1000_+ZSBWRLm1HQHWOJT"
 
-Should be fixed with below fix, the problem is the same with host.
+--Signature=_Fri__12_Jul_2013_13_15_46_+1000_+ZSBWRLm1HQHWOJT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-http://marc.info/?l=linux-usb&m=137331577204167&w=2
+Hi Andrew,
 
---
-BR,
-Peter Chen
+Today's linux-next merge of the akpm tree got a conflict in
+fs/xfs/xfs_qm.h between commit 92f8ff73f186 ("xfs: Add pquota fields
+where gquota is used") from the xfs tree and commit  "xfs: convert dquot
+cache lru to list_lru" from the akpm tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/xfs/xfs_qm.h
+index 579d6a0,cf2ad1f..0000000
+--- a/fs/xfs/xfs_qm.h
++++ b/fs/xfs/xfs_qm.h
+@@@ -44,14 -44,10 +44,12 @@@ extern struct kmem_zone	*xfs_qm_dqtrxzo
+  typedef struct xfs_quotainfo {
+  	struct radix_tree_root qi_uquota_tree;
+  	struct radix_tree_root qi_gquota_tree;
+ +	struct radix_tree_root qi_pquota_tree;
+  	struct mutex qi_tree_lock;
+ -	xfs_inode_t	*qi_uquotaip;	 /* user quota inode */
+ -	xfs_inode_t	*qi_gquotaip;	 /* group quota inode */
+ +	struct xfs_inode	*qi_uquotaip;	/* user quota inode */
+ +	struct xfs_inode	*qi_gquotaip;	/* group quota inode */
+ +	struct xfs_inode	*qi_pquotaip;	/* project quota inode */
+- 	struct list_head qi_lru_list;
+- 	struct mutex	 qi_lru_lock;
+- 	int		 qi_lru_count;
++ 	struct list_lru	 qi_lru;
+  	int		 qi_dquots;
+  	time_t		 qi_btimelimit;	 /* limit for blks timer */
+  	time_t		 qi_itimelimit;	 /* limit for inodes timer */
+
+--Signature=_Fri__12_Jul_2013_13_15_46_+1000_+ZSBWRLm1HQHWOJT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR33TnAAoJEECxmPOUX5FEdj4P/3q79Hko10rAF8RPkZ310xDm
+gH2yFo7ncjndKq0y74dqTQGSY08UpwAZPSCT7QaLrpTvHzEz/eKRytnQO7HrpePZ
+EiqPc3JeHX+i+XN5+jXSFRtNGHLg2hI8QsHoRzWaMKsfYk0/C9wgHgQKWdAwAsdW
+g65RVvePnAhDr8ZTC+YGVSWOhUuBlBoYdSODs9IX9qAzjGP5IBWvVuQOdekBq0QS
+Ij6497vO87UtQLf0NXECHQ8oSXXDsR3asjQElv0Rk11I5mEvVgwAZ5JCovPBHT1g
+XqXgQjh6TiVqQiKxdPVomUTxOHHw4gTJTxuiu9laul4a2zlzGy3EYhJU32ERvSqf
+osXMQJMKCTIYyagHfvGTPtM1Xemy+9tLvgK1rv9osHy6JmWo6zz/apWvoST/EvIC
+qJU6oS/CYEVUe94PhiFK5MOkvxnZX8qgOOnGTLqlFR4Y1MJwGQQueClSIZeH8b0N
+5NtE6Vs4U8koBDAWwYawye6NFcRG6z+XzO2cFXmS2WQVTceQlauheKYUUvvZoNLz
+4VaA/LB7WBmoSH5WBQ733xQJ2VrBVtq0RhhOkpr9IslmIvvSfQB5HA6pu7lAgbOF
+XINRIbI2DO5xNvFnAnDrOIl59wnfvaR5pjEqTx3UtuWjnYHllqEMF7x/jSdWV6KO
+cpqRxrHpyHgwplUpJ061
+=yhcL
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__12_Jul_2013_13_15_46_+1000_+ZSBWRLm1HQHWOJT--
+
+
+--===============5558456188828386839==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
+
+--===============5558456188828386839==--
