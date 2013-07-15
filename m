@@ -1,33 +1,32 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: randconfig build error with next-20130715, in drivers/net/ethernet/mellanox/mlx5/core
-Date: Mon, 15 Jul 2013 10:32:42 -0700
-Message-ID: <51E4323A.3010903@infradead.org>
-References: <20130715172614.GA4656@krebstar.arl.arizona.edu>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
+Subject: Re: linux-next: rebase of the drivers-x86 tree
+Date: Mon, 15 Jul 2013 20:17:08 +0100
+Message-ID: <20130715191708.GA514@srcf.ucam.org>
+References: <20130711100437.4e5198a27a72dcdd3f69200f@canb.auug.org.au>
+ <f7e5023f-0e7e-4da1-a91d-5b9f4fd0db21@email.android.com>
+ <20130715101306.6d6fc3cb42ce956130606ac2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130715172614.GA4656@krebstar.arl.arizona.edu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, eli@mellanox.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cavan.codon.org.uk ([93.93.128.6]:57124 "EHLO
+	cavan.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754190Ab3GOTRR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Jul 2013 15:17:17 -0400
+Content-Disposition: inline
+In-Reply-To: <20130715101306.6d6fc3cb42ce956130606ac2@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On 07/15/13 10:26, Jim Davis wrote:
-> Building with the attached randcom configuration file, which sets
-> CONFIG_X86_32=Y
-> 
-> drivers/built-in.o: In function `average_read':
-> debugfs.c:(.text+0x448e91): undefined reference to `__udivdi3'
-> make: *** [vmlinux] Error 1
-> 
+On Mon, Jul 15, 2013 at 10:13:06AM +1000, Stephen Rothwell wrote:
 
-Hi,
-You are the third person to report this.
+> That is hardly a reason to rebase your tree.  Just add another commit to
+> correct the situation.  The tree as it stood would not have affected
+> anyone's building, running or bisecting.
 
-Eli says that he has already fixed it, but a patch was just posted for
-it earlier today.
+I verified that the only difference before and after rebasing was that 
+the file permission was back the way it should be. Why clutter history?
 
-thanks,
 -- 
-~Randy
+Matthew Garrett | mjg59@srcf.ucam.org
