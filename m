@@ -1,84 +1,127 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 16 Jul 2013 13:18:28 +1000
-Message-ID: <20130716131828.7c0b539f4ce5a515cc2553ef@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the ext4 tree
+Date: Tue, 16 Jul 2013 14:53:10 +1000
+Message-ID: <20130716145310.b6d6c02fc9dff12361278c7b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__16_Jul_2013_13_18_28_+1000_B8TiivWmCRNlluYr"
+ boundary="Signature=_Tue__16_Jul_2013_14_53_10_+1000_/btqy9cMs5/19_iU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37745 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33627 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753764Ab3GPDSp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Jul 2013 23:18:45 -0400
+	with ESMTP id S1750741Ab3GPExW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Jul 2013 00:53:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Dave Chinner <dchinner@redhat.com>
 
---Signature=_Tue__16_Jul_2013_13_18_28_+1000_B8TiivWmCRNlluYr
+--Signature=_Tue__16_Jul_2013_14_53_10_+1000_/btqy9cMs5/19_iU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in
+fs/ext4/extents_status.c between commit decae3aab047 ("ext4: make the
+extent_status code more robust against ENOMEM failures") from the ext4
+tree and commit  "fs: convert fs shrinkers to new scan/count API" from
+the akpm tree.
 
-sound/soc/tegra/tegra_alc5632.c:16:28: fatal error: asm/mach-types.h: No su=
-ch file or directory
- #include <asm/mach-types.h>
-                            ^
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
-Caused by commit df7e4082f47d ("ASoC: tegra: Enable COMPILE_TEST
-builds").  If you are going to do that, please test via (at least) an
-x86_64 allmodconf build.  Including asm/mach-types.h is an architecture
-dependency.
-
-sound/soc/omap/omap-pcm.c: In function 'omap_pcm_preallocate_dma_buffer':
-sound/soc/omap/omap-pcm.c:171:2: error: implicit declaration of function 'd=
-ma_alloc_writecombine' [-Werror=3Dimplicit-function-declaration]
-  buf->area =3D dma_alloc_writecombine(pcm->card->dev, size,
-  ^
-sound/soc/omap/omap-pcm.c:171:12: warning: assignment makes pointer from in=
-teger without a cast [enabled by default]
-  buf->area =3D dma_alloc_writecombine(pcm->card->dev, size,
-            ^
-sound/soc/omap/omap-pcm.c: In function 'omap_pcm_free_dma_buffers':
-sound/soc/omap/omap-pcm.c:195:3: error: implicit declaration of function 'd=
-ma_free_writecombine' [-Werror=3Dimplicit-function-declaration]
-   dma_free_writecombine(pcm->card->dev, buf->bytes,
-   ^
-
-Caused by commit 6109b2fca632 ("ASoC: omap: Enable COMPILE_TEST build for
-DT platforms").  In this case, a missing include.
-
-I have used the version of the sound-asoc tree from next-20130715 for
-today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__16_Jul_2013_13_18_28_+1000_B8TiivWmCRNlluYr
+diff --cc fs/ext4/extents_status.c
+index 91cb110,fb3b95e..0000000
+--- a/fs/ext4/extents_status.c
++++ b/fs/ext4/extents_status.c
+@@@ -903,9 -891,21 +903,20 @@@ static int ext4_inode_touch_time_cmp(vo
+  		return -1;
+  }
+ =20
++ static long ext4_es_count(struct shrinker *shrink, struct shrink_control =
+*sc)
++ {
++ 	long nr;
++ 	struct ext4_sb_info *sbi =3D container_of(shrink,
++ 					struct ext4_sb_info, s_es_shrinker);
++=20
++ 	nr =3D percpu_counter_read_positive(&sbi->s_extent_cache_cnt);
++ 	trace_ext4_es_shrink_enter(sbi->s_sb, sc->nr_to_scan, nr);
++ 	return nr;
++ }
++=20
+ -static long ext4_es_scan(struct shrinker *shrink, struct shrink_control *=
+sc)
+ +static int __ext4_es_shrink(struct ext4_sb_info *sbi, int nr_to_scan,
+ +			    struct ext4_inode_info *locked_ei)
+  {
+ -	struct ext4_sb_info *sbi =3D container_of(shrink,
+ -					struct ext4_sb_info, s_es_shrinker);
+  	struct ext4_inode_info *ei;
+  	struct list_head *cur, *tmp;
+  	LIST_HEAD(skiped);
+@@@ -958,30 -959,8 +969,23 @@@
+  	list_splice_tail(&skiped, &sbi->s_es_lru);
+  	spin_unlock(&sbi->s_es_lru_lock);
+ =20
+ +	if (locked_ei && nr_shrunk =3D=3D 0)
+ +		nr_shrunk =3D __es_try_to_reclaim_extents(ei, nr_to_scan);
+ +
+ +	return nr_shrunk;
+ +}
+ +
+- static int ext4_es_shrink(struct shrinker *shrink, struct shrink_control =
+*sc)
+++static long ext4_es_shrink(struct shrinker *shrink, struct shrink_control=
+ *sc)
+ +{
+ +	struct ext4_sb_info *sbi =3D container_of(shrink,
+ +					struct ext4_sb_info, s_es_shrinker);
+ +	int nr_to_scan =3D sc->nr_to_scan;
+- 	int ret, nr_shrunk;
+-=20
+- 	ret =3D percpu_counter_read_positive(&sbi->s_extent_cache_cnt);
+- 	trace_ext4_es_shrink_enter(sbi->s_sb, nr_to_scan, ret);
+-=20
+- 	if (!nr_to_scan)
+- 		return ret;
+++	int nr_shrunk;
+ +
+ +	nr_shrunk =3D __ext4_es_shrink(sbi, nr_to_scan, NULL);
+ +
+- 	ret =3D percpu_counter_read_positive(&sbi->s_extent_cache_cnt);
+  	trace_ext4_es_shrink_exit(sbi->s_sb, nr_shrunk, ret);
+- 	return ret;
++ 	return nr_shrunk;
+  }
+ =20
+  void ext4_es_register_shrinker(struct ext4_sb_info *sbi)
+
+--Signature=_Tue__16_Jul_2013_14_53_10_+1000_/btqy9cMs5/19_iU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR5LuPAAoJEECxmPOUX5FE2KkP/2Sd27n6PD2IolaxLXV1gc4w
-Q4pGGHI8Rt3ft76F7qIZmt9kZh7pgEq+cEvKeU8Bzed0LkRgAL1V1nc89QtapfU5
-LKC+fkjrefN5Hn0ZCCnvVzSCNGVeZ/KRKbscFYidw7XgZDsiWLiDo92HHaEVW49n
-VuXTn62nYwhapjTWOGoAWm3AOMNrbCZrJ9x99OdKnszheWuV+6PKnd0T8LGqZGrR
-qYe74dwoZan/MjAtYlOiV6EI4iISyqOeEE5mBWp7w3Asq0JdVAFbqOeJ4TrGDKH6
-kjXF0gnQQt8dr7au9qcZRnJIKlcyJZtTqKdp/U7MJPuHj2ZzkokPjeKEtU+4CGKC
-G+1/uDN4VR67S5XvZC15Lx7s9qXmq88eH5AiPVz8TmbnD90uWkFKYeaFsPAnylzR
-hSeptErjx9ZMVTi9Jlvmti2u81//fCFZ3JT5Q7eby9c3+hsrUmDF0RlawNLBG6pa
-tgWUAaDqOo5/XfNguyMKOPxnrDdhetsDcE51XqsHxoonBl8/+hGmj+gWPbRhCLKo
-GyOUMd1k5iYAg863dKOR3IGw8VkTkEAbumQ1DN80XLlhRw/krQAwqo2HQQ8e7uFi
-4VqQBYDTHwEJWNsRy5JnaQrmWBOOwE5u0D1nAXEdDIAXAGDaKk5U5QwEmvjUhsQl
-fbjZ3giATMhtKSjvjLDC
-=G0H3
+iQIcBAEBCAAGBQJR5NG7AAoJEECxmPOUX5FExwcP/1bymMcJdhi1zX8WiNc2J/+R
+Zo10ZuGO6zGJFYl9X+prD9CaiA+fWra4uZDntvPNJefMA5ze4SAR4uvBiQcMqjnU
+aqdoMrZU5gWfvB189naeUYSPg/wEvlGaD9zCABzd+U4yGIdiBcLc9HHV9v/mkX+D
+qVqkdwgQ2H2yXVjRFEDswt59wV8auNOxzbYP19Ccl1/xKDlEwM5O6mStSljd3z9y
+nQW8Gqic1RkWfhsMvmipACxDXOHyCtGSzxWpmx6N1Efynz0mj8xyXUeL4BtwgTkT
+zM4a0SFYoOOlRhy1y8ZvMCqd+UmBcCIUkZeumxq85itx2h3v+PL9TIpHE4oZ7gWi
+XD+LklUqwYiJArYBENIJ8cord5SdPq4B3kYIETpMCGDSIPQ7rBp661pagX9vXmPq
+bOz4i5w7CT1AvJyVAJr7x/ZSVq2QiuysYh4NyAdisujxJd4EAGDI348/q1WSMF9W
+ZLvUORDBFqjLDin5yadKsWFqUzI+oB/BUq02Obn0rt6IgAqJQ32Rd5HjH54Obn/u
+bdFbiL+/Av1AZ+v2zqN0c6uWm//eIX6OBfuttiJI0FuNJ9m9bW6v0B+rIJNLO5a/
+EPcHMqMJvuEXLBs2cS5s60NzZVtEmdbnO9T4iNUyLvSqYvnKOAzPWnBADddsOzM8
+Jqg5Tqo7kGBq7hnpP+z/
+=WHyN
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__16_Jul_2013_13_18_28_+1000_B8TiivWmCRNlluYr--
+--Signature=_Tue__16_Jul_2013_14_53_10_+1000_/btqy9cMs5/19_iU--
