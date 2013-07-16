@@ -1,68 +1,60 @@
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Subject: RE: linux-next: Tree for Jul 15 (usb gadget and rdnis)
-Date: Tue, 16 Jul 2013 10:51:51 +0200
-Message-ID: <003301ce8201$b785f1f0$2691d5d0$%p@samsung.com>
-References: <20130715134528.8e4977b2c2623d749d23d5ab@canb.auug.org.au>
- <51E41B37.6080801@infradead.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Tue, 16 Jul 2013 12:52:04 +0100
+Message-ID: <20130716115204.GK22506@sirena.org.uk>
+References: <20130716131828.7c0b539f4ce5a515cc2553ef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="hl1kWnBARzJiTscN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:12205 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753196Ab3GPIwB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Jul 2013 04:52:01 -0400
-In-reply-to: <51E41B37.6080801@infradead.org>
-Content-language: pl
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:41765 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932210Ab3GPLwJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Jul 2013 07:52:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20130716131828.7c0b539f4ce5a515cc2553ef@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Randy Dunlap' <rdunlap@infradead.org>, 'Stephen Rothwell' <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'USB list' <linux-usb@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello, 
 
-On Monday, July 15, 2013 5:55 PM Randy Dunlap wrote:
+--hl1kWnBARzJiTscN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On 07/14/13 20:45, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > The merge window is closed.  Time to clean up all those unclean trees.
-> > The good among you can just fast forward to v3.11-rc1 ;-)
-> >
-> > Changes since 20130712:
-> >
-> 
-> on x86_64:
-> 
-> ERROR: "rndis_msg_parser" [drivers/usb/gadget/usb_f_rndis.ko] undefined!
-> ERROR: "rndis_signal_disconnect" [drivers/usb/gadget/usb_f_rndis.ko]
-> undefined!
-> ERROR: "rndis_get_next_response" [drivers/usb/gadget/usb_f_rndis.ko]
-> undefined!
-> ERROR: "rndis_signal_connect" [drivers/usb/gadget/usb_f_rndis.ko]
-> undefined!
-> ERROR: "rndis_set_param_vendor" [drivers/usb/gadget/usb_f_rndis.ko]
-> undefined!
-> ERROR: "rndis_register" [drivers/usb/gadget/usb_f_rndis.ko] undefined!
-> ERROR: "rndis_uninit" [drivers/usb/gadget/usb_f_rndis.ko] undefined!
-> ERROR: "rndis_deregister" [drivers/usb/gadget/usb_f_rndis.ko] undefined!
-> ERROR: "rndis_rm_hdr" [drivers/usb/gadget/usb_f_rndis.ko] undefined!
-> ERROR: "rndis_free_response" [drivers/usb/gadget/usb_f_rndis.ko]
-undefined!
-> ERROR: "rndis_add_hdr" [drivers/usb/gadget/usb_f_rndis.ko] undefined!
-> ERROR: "rndis_set_host_mac" [drivers/usb/gadget/usb_f_rndis.ko] undefined!
-> ERROR: "rndis_set_param_medium" [drivers/usb/gadget/usb_f_rndis.ko]
-> undefined!
-> ERROR: "rndis_set_param_dev" [drivers/usb/gadget/usb_f_rndis.ko]
-undefined!
-> 
-> 
-> Full randconfig file is attached.
-> 
-> 
+On Tue, Jul 16, 2013 at 01:18:28PM +1000, Stephen Rothwell wrote:
 
-There is a patch for that:
+> Caused by commit df7e4082f47d ("ASoC: tegra: Enable COMPILE_TEST
+> builds").  If you are going to do that, please test via (at least) an
+> x86_64 allmodconf build.  Including asm/mach-types.h is an architecture
+> dependency.
 
-http://www.mail-archive.com/linux-usb@vger.kernel.org/msg24015.html
+I'm *very* surprised that the zero day tester didn't report this -
+normally it's much faster at allmodconfigs than anything I have
+available to me but it didn't report anything except the usual problem
+with s390 not being converted over to genirq.
 
-Andrzej
+--hl1kWnBARzJiTscN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR5TPhAAoJELSic+t+oim96DIP/1mRqk6koTsRlJ2DtK4M28R8
+gwooPziD60qCnvklc48s3A6wvJMX+PW+b0b7I0VwfWHmTVpVCs1llYGYsI+kS8Om
+s//Wkn0pH2iRrWA/fDtKD3MsAM+fSuk4e62to145nEsa6V+VTRRiWj62OVS2hCGU
+/Nv5TeW+X4WJYxm5MjrbqIqkfTFW+xqCkSOpEv/BUQLgaTDBhG225Molu4QD2JOJ
+xwSSIW7YZ5orRsgkevFLAkP/L++RFoDagEDGdOSihFTBfbZu24pBVMsYVEFLP0/Z
+SIb2rSWxR6NJbUmjYvl6YopwsSzOjx0nWAGwkdnpHHoiKWC9DMelsSSU9ldoDzDD
+sg2fkC8w708Ey0nLqunYPX/x12TJzkG4C6L2uA2uTAEFJf+uDVTWYgcNKTgPJpgo
+Ce+QlOcYaEdkix5S6Ier8Fnj7TbDFLr+vV59FtBXMEODx7xPLCT3mkoYzEpvazeE
+4NKTvAD0tM+cKdpFNE4HIQjM+zvx/ChUvNluVJmJhQcWs0TXeNr90cO+C3+fqbna
+MoPjRKz6A5lKJtEQlsIbZqs0MZyHXqzf66DCC46o1g9U5sXg4Zpeh2mo/eTov++Z
+aE/o1yxQsCf+X9MpbFdcfpa9CvilrDQMdTeHkLJ4gNPzZChlUouJb2/NNncW0xpe
+qS9tr8DOeVbZD4xfR/YP
+=vWHK
+-----END PGP SIGNATURE-----
+
+--hl1kWnBARzJiTscN--
