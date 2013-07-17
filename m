@@ -1,55 +1,94 @@
-From: Benjamin LaHaise <bcrl@kvack.org>
-Subject: Re: linux-next: build failure after merge of the final tree (aio tree related)
-Date: Wed, 17 Jul 2013 09:46:39 -0400
-Message-ID: <20130717134639.GC19643@kvack.org>
-References: <20130717134124.23192f8c9bcc29b07f57743f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jul 17
+Date: Thu, 18 Jul 2013 09:38:24 +1000
+Message-ID: <20130718093824.d449a17a810f8898f815c199@canb.auug.org.au>
+References: <20130717141335.02a3ad620bdb473935d05aa3@canb.auug.org.au>
+	<20130717083134.GB22506@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-aio@kvack.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__18_Jul_2013_09_38_24_+1000_oQG.TdiODLshLYXk"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46800 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932104Ab3GQXie (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Jul 2013 19:38:34 -0400
+In-Reply-To: <20130717083134.GB22506@sirena.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Thu__18_Jul_2013_09_38_24_+1000_oQG.TdiODLshLYXk
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20130717134124.23192f8c9bcc29b07f57743f@canb.auug.org.au>
-Sender: owner-linux-aio@kvack.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gu Zheng <guz.fnst@cn.fujitsu.com>, linux-aio@kvack.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Hello Stephen, (actually a greeting this time!)
+Hi Mark,
 
-On Wed, Jul 17, 2013 at 01:41:24PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
-> 
-> fs/aio.c: In function 'aio_migratepage':
-> fs/aio.c:196:2: error: implicit declaration of function 'migrate_page_move_mapping' [-Werror=implicit-function-declaration]
->   rc = migrate_page_move_mapping(mapping, new, old, NULL, mode);
->   ^
-> 
-> Caused by commit 36bc08cc0170 ("fs/aio: Add support to aio ring pages
-> migration"). The declaration of migrate_page_move_mapping() in
-> linux/migrate.h is protected by CONFIG_MIGRATION - its use in fs/aio.c is
-> not.  So the usage needs to be protected, or there needs to be a dummy
-> version in linux/migrate.h
+[Sorry for the delay, I had to go into work to find the logs of
+yesterday's builds.]
 
-I have added and tested a fix for this issue and pushed it out to my 
-tree.  Thanks for the report -- I'll try to be a bit more careful.
+On Wed, 17 Jul 2013 09:31:34 +0100 Mark Brown <broonie@kernel.org> wrote:
+>
+> On Wed, Jul 17, 2013 at 02:13:35PM +1000, Stephen Rothwell wrote:
+>=20
+> > The sound-asoc tree still has its build failure so I used the version f=
+rom
+> > next-20130715.
+>=20
+> I'd have expected both of those to have been fixed.  Are you sure you're
+> seeing the same issue?
 
-		-ben
+So these are the errors I got yesterday:
 
-> I have reverted that commit for today.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+sound/soc/fsl/imx-mc13783.c:23:28: fatal error: asm/mach-types.h: No such f=
+ile or directory
+ #include <asm/mach-types.h>
+                            ^
 
+I didn't look closely enough, because this is the same error that I got
+the previous day, but in a different file.
 
+sound/soc/omap/omap-pcm.c: In function 'omap_pcm_preallocate_dma_buffer':
+sound/soc/omap/omap-pcm.c:171:2: error: implicit declaration of function 'd=
+ma_alloc_writecombine' [-Werror=3Dimplicit-function-declaration]
+  buf->area =3D dma_alloc_writecombine(pcm->card->dev, size,
+  ^
+sound/soc/omap/omap-pcm.c:171:12: warning: assignment makes pointer from in=
+teger without a cast [enabled by default]
+  buf->area =3D dma_alloc_writecombine(pcm->card->dev, size,
+            ^
+sound/soc/omap/omap-pcm.c: In function 'omap_pcm_free_dma_buffers':
+sound/soc/omap/omap-pcm.c:195:3: error: implicit declaration of function 'd=
+ma_free_writecombine' [-Werror=3Dimplicit-function-declaration]
+   dma_free_writecombine(pcm->card->dev, buf->bytes,
+   ^
 
--- 
-"Thought is the essence of where you are now."
+These are the same as the day before.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---
-To unsubscribe, send a message with 'unsubscribe linux-aio' in
-the body to majordomo@kvack.org.  For more info on Linux AIO,
-see: http://www.kvack.org/aio/
-Don't email: <a href=mailto:"aart@kvack.org">aart@kvack.org</a>
+--Signature=_Thu__18_Jul_2013_09_38_24_+1000_oQG.TdiODLshLYXk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR5yr0AAoJEECxmPOUX5FER+0P/iojiheklwrgThvNnSosMT8U
+nlhW/CFsgItQ2Swgel8CCx4rreUCyayHtPZlZyzSQ/wmws4+EjEXrI0snnf33syf
+eAzJkyjcU2zk6pIc8YZVHa9ddqIBd6f+fc0+FW7WaCMjgDwXlDpNJ4Z8WPWQ/KuS
+TUYApAN7YD3Qj62alXzfwz9GDdqRhdPWEMQ2ZfsC8ZZsECDqO5xq/p2Mo1rTVyJy
+RWJkYk4sq8leAZPIzqO/AXKjNiZePQEoIaGRxL6KbvIupYy0B9GA6xW5Tr1HnyFo
+xQ60sBGk4j4NYs0nrtyntHNNZW+Rm3q5INYpeF/lJTvwqfdFfoqcG8KeoWegZf8M
+QvcjwDjZtBEetbqQVWfY8rYh3OG4NNprmCETCZxcZcVaAJvuOfBOwMfVMorcnExX
+AEJjxLXLnIVNLK+4Fl8OseeZ6DVN+JGGneC8tM3//9GevfaE+WVitcU0D72Vn13O
+S5T+FlD1hoXhEth3i0b0E4vIsE5ANfO77CtsclBxP2qFTnTmovEDKuTyE26Mc7iI
+7DkLygYe6fIpvyZzVGiyxUQiK5FxO5uFDFQpDtG8uGCPv5VSFF0a3/fInwMVi0cY
+isa7HakdYE90UrGFjJY9C1/qNhrixuB3i7QR/h+6zAHJFT/w6bsAOr2XXThWCYWs
+CQWrgXHqex/C2oCmWEGS
+=oFtH
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__18_Jul_2013_09_38_24_+1000_oQG.TdiODLshLYXk--
