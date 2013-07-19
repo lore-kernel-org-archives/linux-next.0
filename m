@@ -1,22 +1,18 @@
 From: Johannes Weiner <hannes@cmpxchg.org>
 Subject: Re: mmotm 2013-07-18-16-40 uploaded
 Date: Fri, 19 Jul 2013 14:00:35 -0400
-Message-ID: <20130719180035.GI17812__30370.2770187103$1374256850$gmane$org@cmpxchg.org>
+Message-ID: <20130719180035.GI17812__1560.38696081868$1374256860$gmane$org@cmpxchg.org>
 References: <20130718234123.4170F31C022@corp2gmr1-1.hot.corp.google.com>
  <51E8B34B.1070200@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zene.cmpxchg.org ([85.214.230.12]:50517 "EHLO zene.cmpxchg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760657Ab3GSSAk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Jul 2013 14:00:40 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <51E8B34B.1070200@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Paul Bolle <paul.bollee@gmail.com>
 Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
 On Thu, Jul 18, 2013 at 11:32:27PM -0400, Paul Bolle wrote:
 > On 07/18/2013 07:41 PM, akpm@linux-foundation.org wrote:
