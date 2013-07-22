@@ -1,22 +1,26 @@
 From: Johannes Weiner <hannes@cmpxchg.org>
 Subject: Re: mmotm 2013-07-18-16-40 uploaded
-Date: Mon, 22 Jul 2013 11:37:34 -0400
-Message-ID: <20130722153734.GB715__7678.93704255602$1374507485$gmane$org@cmpxchg.org>
+Date: Mon, 22 Jul 2013 11:39:30 -0400
+Message-ID: <20130722153930.GC715__15654.6569116928$1374507585$gmane$org@cmpxchg.org>
 References: <20130718234123.4170F31C022@corp2gmr1-1.hot.corp.google.com>
  <51E8B34B.1070200@gmail.com>
  <20130719180035.GI17812@cmpxchg.org>
- <51ED2276.2020205@gmail.com>
+ <51ED28AC.4080300@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from zene.cmpxchg.org ([85.214.230.12]:50695 "EHLO zene.cmpxchg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752381Ab3GVPjd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Jul 2013 11:39:33 -0400
 Content-Disposition: inline
-In-Reply-To: <51ED2276.2020205@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <51ED28AC.4080300@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Paul Bolle <paul.bollee@gmail.com>
 Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
-On Mon, Jul 22, 2013 at 08:15:50PM +0800, Paul Bolle wrote:
+On Mon, Jul 22, 2013 at 08:42:20PM +0800, Paul Bolle wrote:
 > On 07/20/2013 02:00 AM, Johannes Weiner wrote:
 > >On Thu, Jul 18, 2013 at 11:32:27PM -0400, Paul Bolle wrote:
 > >>On 07/18/2013 07:41 PM, akpm@linux-foundation.org wrote:
@@ -84,10 +88,12 @@ On Mon, Jul 22, 2013 at 08:15:50PM +0800, Paul Bolle wrote:
 > >>linux-next -mm branch?
 > >It depends what you want for the base.  What's in linux-next is based
 > >on linux-next, so the latest and greatest.
+> >
+> >Michal's -mm tree is based on the latest Linus release, and so more
+> >stable.  Or at least the craziness is contained to mm stuff.
 > 
-> But Andrew has his own queue which is the most latest one before
-> merged into linux-next. How can developer works against his queue?
+> -mm branch against linux-next is newer than master branch against
+> linux-next. Michal's -mm tree is newer than Linus's tree or older?
 
-By using either the quilt series from
-http://www.ozlabs.org/~akpm/mmotm/ or the master branch from
-http://git.cmpxchg.org/cgit/linux-mmotm.git/
+It's based on the latest release, so newer than the latest release and
+usually older than what's currently in Linus's master branch.
