@@ -1,25 +1,76 @@
-From: Jim Davis <jim.epost@gmail.com>
-Subject: Re: randconfig build error with next-20130722, in net/netfilter
-Date: Mon, 22 Jul 2013 15:24:40 -0700
-Message-ID: <CA+r1Zhjh646Ac95MFCrS2EB-ypLL9WV6CZH0CT0kmhUUkK2wuA@mail.gmail.com>
-References: <20130722211831.GA3304@krebstar.arl.arizona.edu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: status of various trees
+Date: Tue, 23 Jul 2013 09:55:13 +1000
+Message-ID: <20130723095513.19b9638ab4a19157e9834dcf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__23_Jul_2013_09_55_14_+1000_RuC90XG_zb2zFSEO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f179.google.com ([209.85.216.179]:63274 "EHLO
-	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752010Ab3GVWYk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Jul 2013 18:24:40 -0400
-In-Reply-To: <20130722211831.GA3304@krebstar.arl.arizona.edu>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38206 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752800Ab3GVXzT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Jul 2013 19:55:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pablo@netfilter.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Jul 22, 2013 at 2:18 PM, Jim Davis <jim.epost@gmail.com> wrote:
-> Building with the attached random configuration file,
->
-> net/built-in.o: In function `tproxy_tg_init':
-> /home/jim/linux/net/netfilter/xt_TPROXY.c:415: undefined reference to `nf_defra$
-> make: *** [vmlinux] Error 1
+--Signature=_Tue__23_Jul_2013_09_55_14_+1000_RuC90XG_zb2zFSEO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yikes -- that's 'nf_defrag_ipv6_enable'
+Hi Grant,
+
+Currently linux-next has the following gpio trees:
+
+gpio-current	git://git.secretlab.ca/git/linux-2.6#gpio/merge
+gpio		git://git.secretlab.ca/git/linux-2.6#gpio/next
+gpio-lw		git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.gi=
+t#for-next
+
+Given commit a0062d4e3a0a ("MAINTAINERS: Remove Grant Likely") in the
+devicetree-current tree today, should I remove the first two and rename
+the third to be just "gpio"?  (And does Linus have an alternative
+"current" tree?)
+
+I also have the irqdomain tree:
+
+irqdomain	git://git.secretlab.ca/git/linux-2.6.git#irqdomain/next
+
+Should I remove that?  And is there going to be an alternative?
+
+And for spi, I have:
+
+spi		git://git.secretlab.ca/git/linux-2.6#spi/next
+spi-mb		git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-n=
+ext
+
+again, should I remove the first and rename the second?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__23_Jul_2013_09_55_14_+1000_RuC90XG_zb2zFSEO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR7cZiAAoJEECxmPOUX5FEhRoQAIcG05nhIYWtgp0gfRVWgAQQ
+9xW8yK05bo2TMHaMjWJmqA/b0mCzfcSSmSDdkiM57N0USx1gFKCU3avFjssxZsKO
+RriBAmaazJQ41knnk0bsiOi+mEarE/NiQzGNvjvG7oqtzeVa2rBvRbACxyCDFi43
+na9lMSbZNsK25AgTEDz4DHMScIRRwHgFX1Bv3dVoj77Y6EeN5lupCnv/F1l99IT/
+N0BcWWSRg54Q/8wuzRoDapwZCvUsEs9dl+gV9+onYO72Lly1rLzZa6gjgPaKMyOZ
+jkovaHkEZ/0k/TI6QLYTJHtaKfvyDFrsBsP2Vs94jAq1H5q09OI6yACcyvjcAsO7
+Niq8r51Ss7xRzmR/i3Tzw4hSZADwfCHbRYsfevAK287RbdaMVZ5dyLGCvoRdp7ix
+wntOYqBI/jn6VjKf+hyU9XGRUfRQ1HxCwS1pNDCAmFRtTo9F4XPDhucgJUnoSl0t
+vlKMLQ5VRPvqMQkqE10od1t3py48WyPnRsJpMbB9D3VmZeyDR4OeqQCc1tipUHC3
+nMEZEPKHGNt+ZRfh7+0O9PuL9QDJE54IzTkOh4vdeL4PfXAoFv6Cguoa8hrAmLk+
+vS0vTA0d0nTQX7R2T9riR4Dl9WRNqCOak++DvFwB29zmtt1wDrcZUWj9KNDLpsK7
+m/84dL7Lk3Ixk+8TQL9o
+=snc7
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__23_Jul_2013_09_55_14_+1000_RuC90XG_zb2zFSEO--
