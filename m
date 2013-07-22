@@ -1,7 +1,7 @@
 From: Paul Bolle <paul.bollee@gmail.com>
 Subject: Re: mmotm 2013-07-18-16-40 uploaded
-Date: Mon, 22 Jul 2013 20:15:50 +0800
-Message-ID: <51ED2276.2020205@gmail.com>
+Date: Mon, 22 Jul 2013 20:42:20 +0800
+Message-ID: <51ED28AC.4080300@gmail.com>
 References: <20130718234123.4170F31C022@corp2gmr1-1.hot.corp.google.com> <51E8B34B.1070200@gmail.com> <20130719180035.GI17812@cmpxchg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
@@ -80,13 +80,12 @@ On 07/20/2013 02:00 AM, Johannes Weiner wrote:
 >> linux-next -mm branch?
 > It depends what you want for the base.  What's in linux-next is based
 > on linux-next, so the latest and greatest.
-
-But Andrew has his own queue which is the most latest one before merged 
-into linux-next. How can developer works against his queue?
-
 >
 > Michal's -mm tree is based on the latest Linus release, and so more
 > stable.  Or at least the craziness is contained to mm stuff.
+
+-mm branch against linux-next is newer than master branch against 
+linux-next. Michal's -mm tree is newer than Linus's tree or older?
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
