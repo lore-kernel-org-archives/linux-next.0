@@ -1,116 +1,48 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: Re: mmotm 2013-07-18-16-40 uploaded
-Date: Tue, 23 Jul 2013 15:47:56 +0200
-Message-ID: <20130723134756.GF8677@dhcp22.suse.cz>
-References: <20130718234123.4170F31C022@corp2gmr1-1.hot.corp.google.com>
- <51E8B34B.1070200@gmail.com>
- <20130719180035.GI17812@cmpxchg.org>
- <20130719111744.ce87390c8d8fa6b0b1c52eb6@linux-foundation.org>
- <20130719195812.GJ17812@cmpxchg.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH linux-next] arm: zynq: fix compilation warning
+Date: Tue, 23 Jul 2013 11:03:05 -0700
+Message-ID: <CAOesGMgCDb=YUdNsmNw7GfnnQM0F1C2r18h0orW8Zf4-nFWT1w@mail.gmail.com>
+References: <1372336962-6459-1-git-send-email-vincent.stehle@freescale.com>
+ <51CC37BF.8030309@monstr.eu>
+ <20130628103855.c4a89a6f1c6ef425fee34bc6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20130719195812.GJ17812@cmpxchg.org>
-Sender: owner-linux-mm@kvack.org
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Paul Bolle <paul.bollee@gmail.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20130628103855.c4a89a6f1c6ef425fee34bc6@canb.auug.org.au>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michal Simek <monstr@monstr.eu>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, =?ISO-8859-1?Q?Vincent_Stehl=E9?= <vincent.stehle@freescale.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Robin Holt <holt@sgi.com>, trivial@kernel.org, Andrew Morton <akpm@linux-foundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri 19-07-13 15:58:12, Johannes Weiner wrote:
-> On Fri, Jul 19, 2013 at 11:17:44AM -0700, Andrew Morton wrote:
-> > On Fri, 19 Jul 2013 14:00:35 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > 
-> > > > >A git tree which contains the memory management portion of this tree is
-> > > > >maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-> > > > >by Michal Hocko.  It contains the patches which are between the
-> > > > >"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-> > > > >file, http://www.ozlabs.org/~akpm/mmotm/series.
-> > > > >
-> > > > >
-> > > > >A full copy of the full kernel tree with the linux-next and mmotm patches
-> > > > >already applied is available through git within an hour of the mmotm
-> > > > >release.  Individual mmotm releases are tagged.  The master branch always
-> > > > >points to the latest release, so it's constantly rebasing.
-> > > > >
-> > > > >http://git.cmpxchg.org/?p=linux-mmotm.git;a=summary
-> > > > >
-> > > > >To develop on top of mmotm git:
-> > > > >
-> > > > >   $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-> > > > >   $ git remote update mmotm
-> > > > >   $ git checkout -b topic mmotm/master
-> > > > >   <make changes, commit>
-> > > > >   $ git send-email mmotm/master.. [...]
-> > > > >
-> > > > >To rebase a branch with older patches to a new mmotm release:
-> > > > >
-> > > > >   $ git remote update mmotm
-> > > > >   $ git rebase --onto mmotm/master <topic base> topic
-> > > 
-> > > Andrew, that workflow is actually meant for
-> > > http://git.cmpxchg.org/?p=linux-mmotm.git;a=summary, not Michal's tree
-> > > (i.e. the git remote add mmotm <michal's tree> does not make much
-> > > sense).  Michal's tree is append-only, so all this precision-rebasing
-> > > is unnecessary.
-> > 
-> > Gee, I haven't looked at that text in a while...
-> > 
-> > Could you guys please check it, propose any fixes we should make?
-> > 
-> > 
-> > 
-> > README for mm-of-the-moment:
-> > 
-> > http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> > 
-> > You will need quilt to apply these patches to the latest Linus release (3.x
-> > or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> > http://ozlabs.org/~akpm/mmotm/series
-> > 
-> > The file broken-out.tar.gz contains two datestamp files: .DATE and
-> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> > followed by the base kernel version against which this patch series is to
-> > be applied.
-> > 
-> > This tree is partially included in linux-next.  To see which patches are
-> > included in linux-next, consult the `series' file.  Only the patches
-> > within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> > linux-next.
-> > 
-> > A git tree which contains the memory management portion of this tree is
-> 
->                                                                 ^^^
->                                                        on top of the latest
->                                                        Linus release
-> 
-> maybe?
+On Thu, Jun 27, 2013 at 5:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Thu, 27 Jun 2013 15:01:51 +0200 Michal Simek <monstr@monstr.eu> wrote:
+>>
+>> Arnd asked in this post
+>> http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg454947.html
+>> to fold his small patch to that larger one.
+>>
+>> Not sure why it is not there.
+>> Arnd, Robin?
+>
+> Should have asked Andrew :-)
+>
+> I have added (most of) Arnd's patch to the end of the akpm tree today.
 
-Yes and also a mention that the lastest since-X.Y branch should be used.
- 
-[...]
-> Michal started his mm.git to have a stable memory management
-> development base, yet here is a long section on how to work with the
-> much more awkward mmotm.git.  So I wonder if this whole section on how
-> to develop against mmotm.git should be removed and only a reference to
-> where it could be found left in.
-> 
-> However, I have actually no idea what people use as an mm development
-> base these days...  
+It was a dependency thing where new code was added in arm-soc, so the
+sweeping patches in Andrew's tree couldn't cover them (without adding
+said dependency and thus no longer apply on top of mainline).
 
-I guess Glauber was using it for his shrinker patchset. Few other random
-people have asked about the tree in the past but I have no idea how many
-people use the tree, to be honest.
+I'll apply this and the keystone fix to the arm-soc fixes branch now
+for 3.11-rc3.
 
--- 
-Michal Hocko
-SUSE Labs
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+-Olof
