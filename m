@@ -1,63 +1,50 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: Re: linux-next: build failure after merge of the wireless-next tree
-Date: Tue, 23 Jul 2013 09:24:20 +0200
-Message-ID: <51EE2FA4.3020302@hauke-m.de>
-References: <20130723113245.a71f780b34193953a4a5cb45@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: status of various trees
+Date: Tue, 23 Jul 2013 13:38:45 +0100
+Message-ID: <CACxGe6tjrFG1aLc9Scmmuunjb9hTm5vyH6LqXiys8484YY=Zzw@mail.gmail.com>
+References: <20130723095513.19b9638ab4a19157e9834dcf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from server19320154104.serverpool.info ([193.201.54.104]:37689 "EHLO
-	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753730Ab3GWHYj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Jul 2013 03:24:39 -0400
-In-Reply-To: <20130723113245.a71f780b34193953a4a5cb45@canb.auug.org.au>
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:43623 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756432Ab3GWMjH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Jul 2013 08:39:07 -0400
+Received: by mail-oa0-f41.google.com with SMTP id n10so11200745oag.14
+        for <linux-next@vger.kernel.org>; Tue, 23 Jul 2013 05:39:06 -0700 (PDT)
+In-Reply-To: <20130723095513.19b9638ab4a19157e9834dcf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mark Brown <broonie@kernel.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Tue, Jul 23, 2013 at 12:55 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Grant,
+>
+> Currently linux-next has the following gpio trees:
+>
+> gpio-current    git://git.secretlab.ca/git/linux-2.6#gpio/merge
+> gpio            git://git.secretlab.ca/git/linux-2.6#gpio/next
+> gpio-lw         git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+>
+> Given commit a0062d4e3a0a ("MAINTAINERS: Remove Grant Likely") in the
+> devicetree-current tree today, should I remove the first two and rename
+> the third to be just "gpio"?  (And does Linus have an alternative
+> "current" tree?)
+>
+> I also have the irqdomain tree:
+>
+> irqdomain       git://git.secretlab.ca/git/linux-2.6.git#irqdomain/next
+>
+> Should I remove that?  And is there going to be an alternative?
+>
+> And for spi, I have:
+>
+> spi             git://git.secretlab.ca/git/linux-2.6#spi/next
+> spi-mb          git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+>
+> again, should I remove the first and rename the second?
 
-On 07/23/2013 03:32 AM, Stephen Rothwell wrote:
-> Hi John,
-> 
-> After merging the wireless-next tree, today's linux-next build
-> (x86_64 allmodconfig) failed like this:
-> 
-> drivers/net/ethernet/broadcom/bgmac.c:19:27: fatal error:
-> bcm47xx_nvram.h: No such file or directory #include
-> <bcm47xx_nvram.h> ^
-> 
-> That file only exists for the MIPS architecture ...
-> 
-> Caused by commit 6ffdead8027c ("bcma: make it possible to select
-> SoC support without mips").
-> 
-> I have used the version of the wireless-next tree from
-> next-20130722 for today.
+Yes on all of the above. Thanks.
 
-Thanks for spotting this. CONFIG_BGMAC should depend on
-CONFIG_BCM47XX, I will send a patch for this to David Miller in the
-evening.
-
-Hauke
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with undefined - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJR7i+eAAoJEIZ0px9YPRMyxdMP/ixL8Dff/vZSXrncnWXGeBea
-NgllYlmgPq44CyvPSYMi1WpsKBTOW2L3Yt8v7t/OJH4vDTQHrTxSbdtQFuFW9ZqN
-+TTbmRkK4EgYyvnJ87RFAA0o6VWkho+oMMdQD88Nj9uBl38wSH2BoX9Dfe/4UPCt
-xLS1TtrkNJOtwnu1crgh30aGUtX6Xw9AP201ySS6NElLuhulfHhx3pu3Y4ZiBPpW
-sIKUYkpUvrqghKBvFdjy81iJxtdQ99ZYBHVrrTvAWfiV7WMCV8siGj6UDOi+ujgF
-qzjMCy0Q4Bs4kL22XNDPTz+vFXRx45NoH7RJdPyV5Z6ylBVfAJZMSMMI5zqv08VG
-ihnnyDDUlOGKcgBCoe2HpYDDIwV34WXKTNFNbzmQ2tgE9JntkfDxq6xr4cIS9FTL
-iogNUJV32ColuansjkmAeeED6oy6QT7DcZYOMBXNcMHkRQGgt5/XfwYhVYTPWdsG
-LuKxnw4RCnzWwL5hsghrtP2s9EPXsmWHf8BWtT+Ob8KmAx/rcnLZL2YDHd8uro0+
-ZGZyqExkg9MFC3d+6goJd3E7BXEz/oytTUOBA7RuBsN7OlCVP2ixs1O4HtVwEi+/
-o+5CXFKYAlY1+sOVy2lW/RRfZ8XrhUW3rP477HNnrri9bZKb5jvlw9Bb0C2ANDSL
-JtW7+ofqPY7+m2xHNX76
-=cySC
------END PGP SIGNATURE-----
+g.
