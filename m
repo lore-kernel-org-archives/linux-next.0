@@ -1,81 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] bgmac: make bgmac depend on bcm47xx
-Date: Wed, 24 Jul 2013 13:26:01 +1000
-Message-ID: <20130724132601.94633488e3cb8a3b84267247@canb.auug.org.au>
-References: <1374614929-7528-1-git-send-email-hauke@hauke-m.de>
-	<20130724110858.01e033323d739cf6b998e2ea@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Wed, 24 Jul 2013 14:42:32 +1000
+Message-ID: <20130724144232.86d30134a8bc829b5172a5c2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__24_Jul_2013_13_26_01_+1000_qVw9_DmidIX24k5b"
+ boundary="Signature=_Wed__24_Jul_2013_14_42_32_+1000_ThXOq6ueziuduz+8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38050 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:54655 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751125Ab3GXD0T (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Jul 2013 23:26:19 -0400
-In-Reply-To: <20130724110858.01e033323d739cf6b998e2ea@canb.auug.org.au>
+	with ESMTP id S1750888Ab3GXEmo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Jul 2013 00:42:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: davem@davemloft.net, zajec5@gmail.com, netdev@vger.kernel.org, linville@tuxdriver.com, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Hurley <peter@hurleysoftware.com>
 
---Signature=_Wed__24_Jul_2013_13_26_01_+1000_qVw9_DmidIX24k5b
+--Signature=_Wed__24_Jul_2013_14_42_32_+1000_ThXOq6ueziuduz+8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Greg,
 
-On Wed, 24 Jul 2013 11:08:58 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Tue, 23 Jul 2013 23:28:49 +0200 Hauke Mehrtens <hauke@hauke-m.de> wrot=
-e:
-> >
-> > bgmac uses bcm47xx_nvram.h which is only available when BCM47XX was
-> > selected. Earlier BCMA_HOST_SOC depended on BCM47XX so this was not
-> > build on any other archs, but that changed. We should modify this
-> > driver to get access to the nvram or the variables through platform
-> > data.
-> >=20
-> > This fixes a build problem in linux-next reported by Stephen Rothwell:
-> >=20
-> > drivers/net/ethernet/broadcom/bgmac.c:19:27: fatal error: bcm47xx_nvram=
-.h: No such file or directory
-> >  #include <bcm47xx_nvram.h>
-> >                            ^
-> >=20
-> > Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
->=20
-> This patch really needs to go to John as the patch that exposes the
-> breakage is in his tree.
+After merging the tty tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I applied this to the wireless-next tree merge today.
+drivers/tty/n_tty.c: In function 'n_tty_close':
+drivers/tty/n_tty.c:1757:2: error: implicit declaration of function 'vfree'=
+ [-Werror=3Dimplicit-function-declaration]
+  vfree(ldata);
+  ^
+drivers/tty/n_tty.c: In function 'n_tty_open':
+drivers/tty/n_tty.c:1776:2: error: implicit declaration of function 'vmallo=
+c' [-Werror=3Dimplicit-function-declaration]
+  ldata =3D vmalloc(sizeof(*ldata));
+  ^
+drivers/tty/n_tty.c:1776:8: warning: assignment makes pointer from integer =
+without a cast [enabled by default]
+  ldata =3D vmalloc(sizeof(*ldata));
+        ^
+
+Caused by commit 20bafb3d23d1 ("n_tty: Move buffers into n_tty_data").
+Forgot to include linux/vmalloc.h?
+
+I have used the tty tree from next-20130723 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__24_Jul_2013_13_26_01_+1000_qVw9_DmidIX24k5b
+--Signature=_Wed__24_Jul_2013_14_42_32_+1000_ThXOq6ueziuduz+8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR70lOAAoJEECxmPOUX5FEJxIP/A3pq/z/liEUwsmQk10V5ITr
-Kx9HR/rRTthxqIr627xnhlD6lb/Ugm1Lk2/cE5Wjt7OutV9DB6W597PDeGqJVv8c
-rkUnPjAb+qQaMrU11JsDxLic7pfEDPxFY3CyLDdsCq0QebLCH43rjXOmiEi7XC1j
-2N56lEAsA5lHyhSgYMwffCvQBpOnJCV3ZZlJ/lp68tQcbddKjAkJQCvCZFLjyZMF
-HQlvyh0b7Jx7g1rbe555vlZO/pID8hj0HcZeDPu0pdz5X6C4cSP5Ai2Lv1sXeXvg
-nTsUAEme4tmu7uAxAPVnVC28GKhhynEE9D7kx9Jp/6UwvzZjgogAdoAYfdl3py97
-6+H6fvadYHwJ0qHvoCbmHeuZuoyDoubBgGBMLQPtsAO+bUTnVOBZFQSwJVcf1/Z8
-+ShnaNCM2G5xhQjMjxO8wFgDtgVp5DSMeXdkkAdplNdj7LoQdlmGhDefpKlCzLD7
-zleTUKy3M57BAAr5XfDquRiSE4bfA06zhR+pO+nQCJtd/+0Nq4xGuM+wTq1/1zT2
-y78VwEUJuBLiwJ7N354O80a2zvy4NPmiBlQS/l20Yraa8BfWY9ATT4koEpl9I5DW
-+BxBqyRN1Id6/RaEgcpGoWuN5YiqIHNY1V6j/7MixNd5W7lEQhjIAlxHxoFqxyXQ
-at+UwbNj6W8UFumCNnEE
-=53oc
+iQIcBAEBCAAGBQJR71s9AAoJEECxmPOUX5FErG4P/j8SsbcPUbrlJiGX+I7pHR+A
+uJhHRGCJkzFZxkn9dSwOaaMc9ny7aGk34Mk68lGpkE0HbBVp26iiwvSgkMqPX11Q
+TnR94NdL7ZcvWO22lOe0nGim8UHEwIDDMTxbYD+qRFIws09cIETnv5dtKFrCzkIV
+/00llRY4WkO6En7fYmidCX5G4jpmRX/Rgk52Ru8s8+Vs2dvkbYOesOWR3HT8dLid
+Ljc0X6l78fYs9/9viYAofLO6bhxuwi10xEnclPOS8EzUw8xz9CCrabe/6OSpfqcz
+vG8zS5f1vnx2YXote4ZYpGlrEiMMgvsUxzMQVU9wrLhLP9MKbia7M9vVGMKU2yiG
+mc2iaJFk7nEWdF3THUQWG/wXTkuEfaZSO35WySDuRfq2+OffZ9B2UpA1CbrFOlWU
+QgxHtkTs/fv5fN3ZJgPqYZZ3BFJtOZdFThjOCtcNldxHlqWQEMGwVd1SC3zDrRed
+AyFbzFnU3PRies3Zagyb0uaUH6dPXjKmoNqbnhZYpc4OSu+UCyvsASIeg0ebKqop
+5yH3j1kAImqrfwHXMjY0sx7iK0SIglIxCPdNd5psQ6QxOLVzNgKfwCXgCb9IP54u
+lvfl5D41Q/gPat0zSsvznDDTDKMpMxQUR+h5sh6GdjWfoMa4H8QaU3ihmj82ggje
+4ZNZsYa8hPkYg+TtgSQ0
+=r2TD
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__24_Jul_2013_13_26_01_+1000_qVw9_DmidIX24k5b--
+--Signature=_Wed__24_Jul_2013_14_42_32_+1000_ThXOq6ueziuduz+8--
