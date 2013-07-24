@@ -1,43 +1,97 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: [PATCH] bgmac: make bgmac depend on bcm47xx
-Date: Tue, 23 Jul 2013 23:28:49 +0200
-Message-ID: <1374614929-7528-1-git-send-email-hauke@hauke-m.de>
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: davem@davemloft.net
-Cc: zajec5@gmail.com, netdev@vger.kernel.org, linville@tuxdriver.com, linux-next@vger.kernel.org, sfr@canb.auug.org.au, Hauke Mehrtens <hauke@hauke-m.de>
-List-Id: linux-next.vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: status of various trees
+Date: Wed, 24 Jul 2013 10:21:23 +1000
+Message-ID: <20130724102123.6d1156925959e56640c23468@canb.auug.org.au>
+References: <20130723095513.19b9638ab4a19157e9834dcf@canb.auug.org.au>
+	<CACxGe6tjrFG1aLc9Scmmuunjb9hTm5vyH6LqXiys8484YY=Zzw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__24_Jul_2013_10_21_23_+1000_.dPdQWpNIUeEw98m"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46778 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750762Ab3GXAVg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Jul 2013 20:21:36 -0400
+In-Reply-To: <CACxGe6tjrFG1aLc9Scmmuunjb9hTm5vyH6LqXiys8484YY=Zzw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mark Brown <broonie@kernel.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-bgmac uses bcm47xx_nvram.h which is only available when BCM47XX was
-selected. Earlier BCMA_HOST_SOC depended on BCM47XX so this was not
-build on any other archs, but that changed. We should modify this
-driver to get access to the nvram or the variables through platform
-data.
+--Signature=_Wed__24_Jul_2013_10_21_23_+1000_.dPdQWpNIUeEw98m
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This fixes a build problem in linux-next reported by Stephen Rothwell:
+Hi Grant,
 
-drivers/net/ethernet/broadcom/bgmac.c:19:27: fatal error: bcm47xx_nvram.h: No such file or directory
- #include <bcm47xx_nvram.h>
-                           ^
+On Tue, 23 Jul 2013 13:38:45 +0100 Grant Likely <grant.likely@secretlab.ca>=
+ wrote:
+>
+> On Tue, Jul 23, 2013 at 12:55 AM, Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> >
+> > Currently linux-next has the following gpio trees:
+> >
+> > gpio-current    git://git.secretlab.ca/git/linux-2.6#gpio/merge
+> > gpio            git://git.secretlab.ca/git/linux-2.6#gpio/next
+> > gpio-lw         git://git.kernel.org/pub/scm/linux/kernel/git/linusw/li=
+nux-gpio.git#for-next
+> >
+> > Given commit a0062d4e3a0a ("MAINTAINERS: Remove Grant Likely") in the
+> > devicetree-current tree today, should I remove the first two and rename
+> > the third to be just "gpio"?  (And does Linus have an alternative
+> > "current" tree?)
+> >
+> > I also have the irqdomain tree:
+> >
+> > irqdomain       git://git.secretlab.ca/git/linux-2.6.git#irqdomain/next
+> >
+> > Should I remove that?  And is there going to be an alternative?
+> >
+> > And for spi, I have:
+> >
+> > spi             git://git.secretlab.ca/git/linux-2.6#spi/next
+> > spi-mb          git://git.kernel.org/pub/scm/linux/kernel/git/broonie/s=
+pi.git#for-next
+> >
+> > again, should I remove the first and rename the second?
+>=20
+> Yes on all of the above. Thanks.
 
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/ethernet/broadcom/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+OK, I have done all that.  I also removed the irqdomain-current and
+spi-current trees.
 
-diff --git a/drivers/net/ethernet/broadcom/Kconfig b/drivers/net/ethernet/broadcom/Kconfig
-index 52c9603..2fa5b86 100644
---- a/drivers/net/ethernet/broadcom/Kconfig
-+++ b/drivers/net/ethernet/broadcom/Kconfig
-@@ -130,7 +130,7 @@ config BNX2X_SRIOV
- 
- config BGMAC
- 	tristate "BCMA bus GBit core support"
--	depends on BCMA_HOST_SOC && HAS_DMA
-+	depends on BCMA_HOST_SOC && HAS_DMA && BCM47XX
- 	select PHYLIB
- 	---help---
- 	  This driver supports GBit MAC and BCM4706 GBit MAC cores on BCMA bus.
--- 
-1.7.10.4
+So the trees I have left that you are responsible for are:
+
+devicetree-current	git://git.secretlab.ca/git/linux-2.6#devicetree/merge
+devicetree		git://git.secretlab.ca/git/linux-2.6#devicetree/next
+arm-dt			git://git.secretlab.ca/git/linux-2.6#devicetree/arm-next
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__24_Jul_2013_10_21_23_+1000_.dPdQWpNIUeEw98m
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR7x4HAAoJEECxmPOUX5FE5XcP/3K9+FhqjhuVVbCqtojCUJWl
+0r5bSnQDzeU6CstEttGb5L1q8UGVxw6uxA/dyrqJhTXHN85FtqDt0JU8ETCM5Pxp
+ktPIhlYhdiGRwWVCr9qxUqgxwhLmzPqxA58FKWLpVq72ibQYHMvn00oFzT2qTcQ7
+uwQEeHj/eI3b+CxKsVxyvGag2bqXxNiJXoSBaaILEltAGanaWC1NMgu8mH3sXPuU
+ds0sNZUZ+Yi4arC1LVZL5zN/7ad6KEwtNWA7R3x08fM4VaiPgYMQK1MUlZ4TkrkJ
+pH4UXQAvLxD/uBpiAdhlX6d/G/UQBRbiNKxlvRCBeOM29s0Bbd1fcilIHnnu65qv
+0rnqYVaXdYjYPYDlYJ/7COfumJibLJgOLzWNacyHd3I2KX0YqYbtvBPoaA5f6dDp
+qorQha4jl6zaDkVSW5kVPa9Ogq0g2raBWCYnJJWkENJ51pSJfyhfxF4xH6FOhotj
+/xt5quhdKWRanI8mFIt+xTcywx+xCb51gLhfT7ZRrwFYjqzf6WaL0AQZXNnDrxLn
+cfnl9qctDWZeEOA8zJlhrUPdyM+pDAi1b+XAxbikLdErsXvjub8yKv8JExINCLuR
+WdENrBqFkMS9a3qUKce3lbl37jtmzBwquJszrxXWyIuRgogFhupU1nqcXN7p4CJZ
+i5v/9ZKbJpMltzh4pOd3
+=IF66
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__24_Jul_2013_10_21_23_+1000_.dPdQWpNIUeEw98m--
