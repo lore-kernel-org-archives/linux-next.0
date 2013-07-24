@@ -1,38 +1,45 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: [PATCH tty-next] n_tty: Fix build breakage on ppc64
-Date: Wed, 24 Jul 2013 09:30:05 -0400
-Message-ID: <1374672605-12326-1-git-send-email-peter@hurleysoftware.com>
-References: <20130724144232.86d30134a8bc829b5172a5c2@canb.auug.org.au>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130724144232.86d30134a8bc829b5172a5c2@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Hurley <peter@hurleysoftware.com>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: [PATCH] bgmac: make bgmac depend on bcm47xx
+Date: Wed, 24 Jul 2013 09:54:12 -0400
+Message-ID: <20130724135409.GA2385@tuxdriver.com>
+References: <1374614929-7528-1-git-send-email-hauke@hauke-m.de>
+ <20130724110858.01e033323d739cf6b998e2ea@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130724110858.01e033323d739cf6b998e2ea@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, davem@davemloft.net, zajec5@gmail.com, netdev@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Commit 20bafb3d23d108bc0a896eb8b7c1501f4f649b77
-  'n_tty: Move buffers into n_tty_data'
-broke the ppc64 build.
+On Wed, Jul 24, 2013 at 11:08:58AM +1000, Stephen Rothwell wrote:
+> Hi,
+> 
+> On Tue, 23 Jul 2013 23:28:49 +0200 Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> >
+> > bgmac uses bcm47xx_nvram.h which is only available when BCM47XX was
+> > selected. Earlier BCMA_HOST_SOC depended on BCM47XX so this was not
+> > build on any other archs, but that changed. We should modify this
+> > driver to get access to the nvram or the variables through platform
+> > data.
+> > 
+> > This fixes a build problem in linux-next reported by Stephen Rothwell:
+> > 
+> > drivers/net/ethernet/broadcom/bgmac.c:19:27: fatal error: bcm47xx_nvram.h: No such file or directory
+> >  #include <bcm47xx_nvram.h>
+> >                            ^
+> > 
+> > Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> 
+> This patch really needs to go to John as the patch that exposes the
+> breakage is in his tree.
 
-Include vmalloc.h for the required function declarations.
+I'll merge this one -- OK, Dave?
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
----
- drivers/tty/n_tty.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-index d8cf96a..dd8ae0c 100644
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -50,6 +50,7 @@
- #include <linux/uaccess.h>
- #include <linux/module.h>
- #include <linux/ratelimit.h>
-+#include <linux/vmalloc.h>
- 
- 
- /* number of characters left in xmit buffer before select has we have room */
+John
 -- 
-1.8.1.2
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
