@@ -1,70 +1,142 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH -next] staging: comedi: Add missing #include <linux/slab.h>
-Date: Thu, 25 Jul 2013 22:02:48 +0200
-Message-ID: <1374782568-3641-1-git-send-email-geert@linux-m68k.org>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: [Intel-gfx] linux-next: Tree for Jul 25 [ call-trace: drm |
+ drm-intel related? ]
+Date: Thu, 25 Jul 2013 22:07:02 +0200
+Message-ID: <CA+icZUU__nxcuX4RF9EBGm0nMBFaxfWpH00b2=ZsZZaxo9iscw@mail.gmail.com>
+References: <20130725170144.GE6493@cantiga.alporthouse.com>
+	<CA+icZUUOmoFY3JDZOYmiP3dV9KAR_8WYfEDQhaynKmhXCLpF9w@mail.gmail.com>
+	<20130725172616.GA11514@cantiga.alporthouse.com>
+	<CA+icZUUpnQ_=bTtK-0-qG90GjV38oeVe2E1v-KdLZQFQWH21GQ@mail.gmail.com>
+	<CA+icZUXz+6MgbW952fU_da1-RfX8CSZp76gJnOwGDNsd-rdebA@mail.gmail.com>
+	<CA+icZUV+D8PvEysipfg9nPXp3ON1QSA7DiFdpYFpdesFF5c0sw@mail.gmail.com>
+	<20130725184504.GC11514@cantiga.alporthouse.com>
+	<CA+icZUVLXxA5LPxzTjyhP5gryNUH3OY+vutoXQj6ydtCU0msbA@mail.gmail.com>
+	<20130725190006.GD11514@cantiga.alporthouse.com>
+	<CA+icZUW6oLE6cdnCkekz+43SrUn=vThqdfSKzz=XP-vmvB7Amw@mail.gmail.com>
+	<20130725192248.GA13295@cantiga.alporthouse.com>
+	<CA+icZUVE3s=6vXTLsCSmdLe_HMTOj+VD317kDeH3tF7svVW8kQ@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from jacques.telenet-ops.be ([195.130.132.50]:48821 "EHLO
-	jacques.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756408Ab3GYUC6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2013 16:02:58 -0400
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:33808 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755678Ab3GYUHF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2013 16:07:05 -0400
+In-Reply-To: <CA+icZUVE3s=6vXTLsCSmdLe_HMTOj+VD317kDeH3tF7svVW8kQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: H Hartley Sweeten <hsweeten@visionengravers.com>, Ian Abbott <abbotti@mev.co.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Chris Wilson <chris@chris-wilson.co.uk>, Sedat Dilek <sedat.dilek@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>
 
-sparc64 allmodconfig:
+On Thu, Jul 25, 2013 at 9:32 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> On Thu, Jul 25, 2013 at 9:22 PM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+>> On Thu, Jul 25, 2013 at 09:12:41PM +0200, Sedat Dilek wrote:
+>>> New -3 dmesg.
+>>
+>> That puts the ball back in the ddx's court. Next debugging patch:
+>>
+>> diff --git a/src/intel_driver.c b/src/intel_driver.c
+>> index f4d76bb..1f4f299 100644
+>> --- a/src/intel_driver.c
+>> +++ b/src/intel_driver.c
+>> @@ -170,6 +170,7 @@ static Bool i830CreateScreenResources(ScreenPtr screen)
+>>                 return FALSE;
+>>
+>>         intel_copy_fb(scrn);
+>> +       ErrorF("%s: Success\n", __func__);
+>>         return TRUE;
+>>  }
+>>
+>> diff --git a/src/intel_uxa.c b/src/intel_uxa.c
+>> index 2f14173..6be7ebe 100644
+>> --- a/src/intel_uxa.c
+>> +++ b/src/intel_uxa.c
+>> @@ -1150,11 +1150,15 @@ Bool intel_uxa_create_screen_resources(ScreenPtr screen)
+>>         intel_screen_private *intel = intel_get_screen_private(scrn);
+>>         dri_bo *bo = intel->front_buffer;
+>>
+>> -       if (!uxa_resources_init(screen))
+>> +       if (!uxa_resources_init(screen)) {
+>> +               ErrorF("bang: %d\n", __LINE__);
+>>                 return FALSE;
+>> +       }
+>>
+>> -       if (drm_intel_gem_bo_map_gtt(bo))
+>> +       if (drm_intel_gem_bo_map_gtt(bo)) {
+>> +               ErrorF("bang: %d\n", __LINE__);
+>>                 return FALSE;
+>> +       }
+>>
+>>         pixmap = screen->GetScreenPixmap(screen);
+>>         intel_set_pixmap_bo(pixmap, bo);
+>> @@ -1167,8 +1171,10 @@ Bool intel_uxa_create_screen_resources(ScreenPtr screen)
+>>                                    NULL);
+>>         scrn->displayWidth = intel->front_pitch / intel->cpp;
+>>
+>> -       if (!intel_glamor_create_screen_resources(screen))
+>> +       if (!intel_glamor_create_screen_resources(screen)) {
+>> +               ErrorF("bang: %d\n", __LINE__);
+>>                 return FALSE;
+>> +       }
+>>
+>>         return TRUE;
+>>  }
+>>
+>> --
+>
+> dmesg -4 and X.log attached.
+>
 
-drivers/staging/comedi/drivers/addi_apci_2032.c: In function 'apci2032_auto_attach':
-drivers/staging/comedi/drivers/addi_apci_2032.c:328:3: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
-drivers/staging/comedi/drivers/addi_apci_2032.c:328:11: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/staging/comedi/drivers/addi_apci_2032.c: In function 'apci2032_detach':
-drivers/staging/comedi/drivers/addi_apci_2032.c:350:3: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+What means the bang line?
 
-drivers/staging/comedi/drivers/amplc_pci224.c: In function 'pci224_attach_common':
-drivers/staging/comedi/drivers/amplc_pci224.c:1289:2: error: implicit declaration of function 'kmalloc' [-Werror=implicit-function-declaration]
-drivers/staging/comedi/drivers/amplc_pci224.c:1289:23: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/staging/comedi/drivers/amplc_pci224.c:1296:24: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/staging/comedi/drivers/amplc_pci224.c:1303:25: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/staging/comedi/drivers/amplc_pci224.c:1348:42: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/staging/comedi/drivers/amplc_pci224.c: In function 'pci224_detach':
-drivers/staging/comedi/drivers/amplc_pci224.c:1474:3: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+[    54.564] (II) GLX: Initialized DRI2 GL provider for screen 0
+[    54.565] bang: 1159
+[    54.565]
+Fatal server error:
+[    54.565] failed to create screen resources
 
-Introduced by commit 0bdab509bf9c6d838dc0a3b1d68bbf841fc20b5a ("staging:
-comedi: use comedi_alloc_devpriv()"), which removed some inclusions of
-<linux/slab.h>.
+>From [1];
+...
+Bool intel_uxa_create_screen_resources(ScreenPtr screen)
+{
+	ScrnInfoPtr scrn = xf86ScreenToScrn(screen);
+	PixmapPtr pixmap;
+	intel_screen_private *intel = intel_get_screen_private(scrn);
+	dri_bo *bo = intel->front_buffer;
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-http://kisskb.ellerman.id.au/kisskb/buildresult/9187516/
-http://kisskb.ellerman.id.au/kisskb/buildresult/9186576/
+	if (!uxa_resources_init(screen))
+		return FALSE;
 
- drivers/staging/comedi/drivers/addi_apci_2032.c |    1 +
- drivers/staging/comedi/drivers/amplc_pci224.c   |    1 +
- 2 files changed, 2 insertions(+)
+	if (drm_intel_gem_bo_map_gtt(bo))
+		return FALSE;
 
-diff --git a/drivers/staging/comedi/drivers/addi_apci_2032.c b/drivers/staging/comedi/drivers/addi_apci_2032.c
-index cb5d26a..6b0ea16 100644
---- a/drivers/staging/comedi/drivers/addi_apci_2032.c
-+++ b/drivers/staging/comedi/drivers/addi_apci_2032.c
-@@ -25,6 +25,7 @@
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/interrupt.h>
-+#include <linux/slab.h>
- 
- #include "../comedidev.h"
- #include "addi_watchdog.h"
-diff --git a/drivers/staging/comedi/drivers/amplc_pci224.c b/drivers/staging/comedi/drivers/amplc_pci224.c
-index 2fc56c4..179de53 100644
---- a/drivers/staging/comedi/drivers/amplc_pci224.c
-+++ b/drivers/staging/comedi/drivers/amplc_pci224.c
-@@ -101,6 +101,7 @@ Caveats:
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/interrupt.h>
-+#include <linux/slab.h>
- 
- #include "../comedidev.h"
- 
--- 
-1.7.9.5
+	pixmap = screen->GetScreenPixmap(screen); <--- Line #1159 ?
+	intel_set_pixmap_bo(pixmap, bo);
+	intel_get_pixmap_private(pixmap)->pinned |= PIN_SCANOUT;
+	screen->ModifyPixmapHeader(pixmap,
+				   scrn->virtualX,
+				   scrn->virtualY,
+				   -1, -1,
+				   intel->front_pitch,
+				   NULL);
+	scrn->displayWidth = intel->front_pitch / intel->cpp;
+
+	if (!intel_glamor_create_screen_resources(screen))
+		return FALSE;
+
+	return TRUE;
+}
+...
+
+- Sedat -
+
+[1] http://cgit.freedesktop.org/xorg/driver/xf86-video-intel/tree/src/intel_uxa.c?id=6f5fd772c7ca656b86394a0f036d4e0cf5b33d8e#n1159
+
+
+> - S.
+>
+>> Chris Wilson, Intel Open Source Technology Centre
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
