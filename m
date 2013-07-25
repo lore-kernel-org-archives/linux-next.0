@@ -1,77 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: status of various trees
-Date: Thu, 25 Jul 2013 10:04:10 +1000
-Message-ID: <20130725100410.66cf19c66164f29215228aef@canb.auug.org.au>
-References: <20130723095513.19b9638ab4a19157e9834dcf@canb.auug.org.au>
-	<CACxGe6tjrFG1aLc9Scmmuunjb9hTm5vyH6LqXiys8484YY=Zzw@mail.gmail.com>
-	<20130724102123.6d1156925959e56640c23468@canb.auug.org.au>
-	<CACxGe6uB5wKzaM_X3ROnD0z+wc7WZ=cHF1bm3zD=mm=mb5QJxg@mail.gmail.com>
+Subject: linux-next: manual merge of the wireless-next tree with Linus' tree
+Date: Thu, 25 Jul 2013 11:37:09 +1000
+Message-ID: <20130725113709.210d2157219410a4ff119510@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__25_Jul_2013_10_04_10_+1000_PQesyv.LdbKm2kVg"
+ boundary="Signature=_Thu__25_Jul_2013_11_37_09_+1000_yk=H6WhbomfUl.Vl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39354 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44225 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752872Ab3GYAE3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Jul 2013 20:04:29 -0400
-In-Reply-To: <CACxGe6uB5wKzaM_X3ROnD0z+wc7WZ=cHF1bm3zD=mm=mb5QJxg@mail.gmail.com>
+	with ESMTP id S1753231Ab3GYBhV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Jul 2013 21:37:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mark Brown <broonie@kernel.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>, David Miller <davem@davemloft.net>
 
---Signature=_Thu__25_Jul_2013_10_04_10_+1000_PQesyv.LdbKm2kVg
+--Signature=_Thu__25_Jul_2013_11_37_09_+1000_yk=H6WhbomfUl.Vl
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
+Hi John,
 
-On Wed, 24 Jul 2013 11:01:07 +0100 Grant Likely <grant.likely@secretlab.ca>=
- wrote:
->
-> On Wed, Jul 24, 2013 at 1:21 AM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> > OK, I have done all that.  I also removed the irqdomain-current and
-> > spi-current trees.
-> >
-> > So the trees I have left that you are responsible for are:
-> >
-> > devicetree-current      git://git.secretlab.ca/git/linux-2.6#devicetree=
-/merge
-> > devicetree              git://git.secretlab.ca/git/linux-2.6#devicetree=
-/next
-> > arm-dt                  git://git.secretlab.ca/git/linux-2.6#devicetree=
-/arm-next
->=20
-> You can drop the arm-dt tree also.
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/ethernet/broadcom/Kconfig between commit 31bd29776b85
+("bgmac: add dependency to phylib") from Linus' tree and commit
+72bb2f267887 ("bgmac: make bgmac depend on bcm47xx") from the
+wireless-next tree.
 
-Done.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__25_Jul_2013_10_04_10_+1000_PQesyv.LdbKm2kVg
+diff --cc drivers/net/ethernet/broadcom/Kconfig
+index 52c9603,7b839bf..0000000
+--- a/drivers/net/ethernet/broadcom/Kconfig
++++ b/drivers/net/ethernet/broadcom/Kconfig
+@@@ -130,8 -130,7 +130,8 @@@ config BNX2X_SRIO
+ =20
+  config BGMAC
+  	tristate "BCMA bus GBit core support"
+- 	depends on BCMA_HOST_SOC && HAS_DMA
++ 	depends on BCMA_HOST_SOC && HAS_DMA && BCM47XX
+ +	select PHYLIB
+  	---help---
+  	  This driver supports GBit MAC and BCM4706 GBit MAC cores on BCMA bus.
+  	  They can be found on BCM47xx SoCs and provide gigabit ethernet.
+
+--Signature=_Thu__25_Jul_2013_11_37_09_+1000_yk=H6WhbomfUl.Vl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR8GuDAAoJEECxmPOUX5FEMAMQAJ0hZn8SuwId7srbv92rM0IR
-84Ih/+bJ1xwo4VqW+dvv+qtHztVZ4EmSWEtv+fyY9d8krhAIjowYGGlwpHcMeAMK
-03N7XU3n5foG6OKtsMZouBHA6dBUlAvhDncCQ1FH2IIBncXQIsabpD3a/lKTOq8F
-RboO6zbS/NJZh2ysKI8DgjtlIAYQe3DGHN0VZ6If4nwPiywQVwz3zyYp5j8UrL6E
-s40Wz1n1s/gpYMUnaL+HjsYK+BwW+ZbFE4dWs2024WU1bU2wH2UB1YKhG6nSa3kj
-9cUs/hiu75xIhOlzpYOHop3znZ7qoY1CyfBT9Yn50cR/GQbq67mbMjE/FWM2Ivbc
-99bmPQAbs7Grqb+leaHJe0PPEIbp6d9Fka67ICn/DmBD+waT68AyVhr72Wt+URQW
-962Q24tt6zh+sjiwAzHJSLyuwJ/HlbsjHPA1UL5f6Oo+qdX6cxpZQvZg/x92hFiH
-J3qDJ7j/0biNv6yaheytGx0RpB3Xk0LVbZcftFPJE0XU+b7EG2Th20DD5NAHOqle
-6HY5ww6PygTYoIPrxt9qp2+NCSyMjaLLTJRzc5sGGUq9YZpssdTBrh/UpqM9WwLz
-rrvbD9axrHB+HX3pfG9d5hJ4qV2O1NNk5P/WQ9duUUviVev2rQPhi//knqF4FC/E
-B0BGdsnmteYflDVHDNog
-=Z36t
+iQIcBAEBCAAGBQJR8IFJAAoJEECxmPOUX5FE/xcP/2GnWYTcYgyVHqjNwr6t1AoE
+NrKHLTMYFivfnCGZJ6JXq1PsZ9msthQo0nKpnCSDleIjQlWr6wF9CkE1u5qMpw8M
+PhoSTm4JEILfCInTfrdP34O0LXyMGsDWZC0yZU2U0To3pcmzTgL7zMYedajQBvQL
+TG4O4gufGqLA7O4jQvJ7utROyp1BFiih08kjmfqRk6JXItMXueZsjBsDq9r3IcS/
+avNLyqidLOVRpbfPU9y0MYHFuhxmfZ7phOA7DWrr2NXY32FHycexy7a7tkcq9dHw
+xi/1YwKzl0AF+HoFa1JLtqSJQq7w//ojHPAbDkCRIjqSmMDkBzJNgwpfCqVFinA6
+dOF9al3LumxB3dXByfA4/Q4HRLJ4mKT/rgKXO7sCmph//Y1ZWdCpJ/WRlm/+0V99
+mlnfdYRKjEBwPT0qnyiTFjfZm+HacV2BcFGJJTg+NsuXewkPLZg3Edfmk79iU1u1
+z6hmfQDUrsljUvMeCIcIbjTQZisQXO07faU+ACSDHQ/4Hv/lj3eEF+54tapRN9J+
+Xo6CIJunCgNnXO5zqAUXYbHclCDSg8PQTexzgn4HSdSIL8oc8jRHVhNGqlSVeM0m
+k9mezQQfYBxNLNg/Ik5PRv5lB1LQjZbpxCOBCmacQY7S7MjMcK2CBBoIAcnExo0M
+qNN126T3ie411ku8o3gk
+=jgH4
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__25_Jul_2013_10_04_10_+1000_PQesyv.LdbKm2kVg--
+--Signature=_Thu__25_Jul_2013_11_37_09_+1000_yk=H6WhbomfUl.Vl--
