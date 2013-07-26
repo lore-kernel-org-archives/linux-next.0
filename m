@@ -1,67 +1,105 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the selinux tree with Linus' tree
-Date: Fri, 26 Jul 2013 17:38:49 +1000
-Message-ID: <20130726173849.4dabf5c94991228efa0bf03b@canb.auug.org.au>
-References: <20130726134823.e4c0a1b7bad087c12b3ce782@canb.auug.org.au>
-	<06EC4DE7-7DC5-4C80-BA1D-2A96527CA7BF@countercultured.net>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Jul 25 [ call-trace: drm |
+ drm-intel related? ]
+Date: Fri, 26 Jul 2013 10:25:26 +0200
+Message-ID: <CA+icZUXuj1O3oUvr_43BZDD_ikWyY9GxfOdzb3GLWJ1X1hvxyQ@mail.gmail.com>
+References: <CA+icZUVLXxA5LPxzTjyhP5gryNUH3OY+vutoXQj6ydtCU0msbA@mail.gmail.com>
+	<20130725190006.GD11514@cantiga.alporthouse.com>
+	<CA+icZUW6oLE6cdnCkekz+43SrUn=vThqdfSKzz=XP-vmvB7Amw@mail.gmail.com>
+	<20130725192248.GA13295@cantiga.alporthouse.com>
+	<CA+icZUVE3s=6vXTLsCSmdLe_HMTOj+VD317kDeH3tF7svVW8kQ@mail.gmail.com>
+	<CA+icZUU__nxcuX4RF9EBGm0nMBFaxfWpH00b2=ZsZZaxo9iscw@mail.gmail.com>
+	<20130725215259.GB13295@cantiga.alporthouse.com>
+	<CA+icZUXZKndg7==Y6v2Z45WZDp+tDC5FzaOC=KWTf4m=rjUKnA@mail.gmail.com>
+	<20130725232556.GF13295@cantiga.alporthouse.com>
+	<CA+icZUUBhW=KnAt0yn3CgEAzUhOfE=1ADUbCshFqrdZ5urEgbw@mail.gmail.com>
+	<20130726072646.GH13295@cantiga.alporthouse.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__26_Jul_2013_17_38_49_+1000_nM1yr97zIma+S1Tr"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51456 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756515Ab3GZHi6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2013 03:38:58 -0400
-In-Reply-To: <06EC4DE7-7DC5-4C80-BA1D-2A96527CA7BF@countercultured.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Quigley <merlin@countercultured.net>
-Cc: Eric Paris <eparis@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Quigley <dpquigl@davequigley.com>, "Matthew N. Dodd" <Matthew.Dodd@sparta.com>, Miguel Rodel Felipe <Rodel_FM@dsi.a-star.edu.sg>, Phua Eu Gene <PHUA_Eu_Gene@dsi.a-star.edu.sg>, Khin Mi Mi Aung <Mi_Mi_AUNG@dsi.a-star.edu.sg>, Trond Myklebust <Trond.Myklebust@netapp.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <20130726072646.GH13295@cantiga.alporthouse.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Sender: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
+Errors-To: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
+To: Chris Wilson <chris@chris-wilson.co.uk>, Sedat Dilek <sedat.dilek@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>, "s.dilek" <s.dilek@jpberlin.de>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__26_Jul_2013_17_38_49_+1000_nM1yr97zIma+S1Tr
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi David,
-
-On Thu, 25 Jul 2013 21:22:48 -0700 David Quigley <merlin@countercultured.ne=
-t> wrote:
+On Fri, Jul 26, 2013 at 9:26 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+> On Fri, Jul 26, 2013 at 09:15:14AM +0200, Sedat Dilek wrote:
+>> For example: I could start my X with even doing ugly hacks like this...
+>>
+>> [ intel-ddx (git) ]
+>> ...
+>> Bool intel_uxa_create_screen_resources(ScreenPtr screen)
+>> ...
+>> #if 0
+>>       if (drm_intel_gem_bo_map_gtt(bo))
+>>               return FALSE;
+>> #endif
+>> ...
+>>
+>> ...with any other kernel.
 >
-> I guess my signed off got stripped somewhere. Originally I maintained tho=
-se commits but Steve Dickson from red hat picked them up and they then made=
- it into trond's tree and then into Linus'.
->=20
-> I unfortunately don't have my davequigley.com identities on my iPhone
-> but you can add a sign off by dpquigl@davequigley.com for the commit.
+> Yes. Acquiring the map there is just a bit of paranoia to ensure we
+> having the mapping into the scanout already in place in case of
+> emergencies (and so don't fail along failure paths due to resource
+> conflicts).
+>
+> Hmm, though we only started checking for map failures in 2.20.10 - which
+> would explain why going back to the older ddx masks the issue. And yes,
+> this means we do require a kernel bisect - or some passing inspiron.
 
-Noone can, it is set in stone in Linus' tree, now.  My comment was just a
-heads up that something went wrong in the process.
+First confirmation...
+OK, next-20130726 shows the same symptoms!
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I tried diverse intel-ddx release and went back to v2.21.9... and
+searched for a version like v2.20.0 which has no checking for map
+failures...
 
---Signature=_Fri__26_Jul_2013_17_38_49_+1000_nM1yr97zIma+S1Tr
-Content-Type: application/pgp-signature
+[ intel-ddx (v2.20.0) ]
+...
+Bool intel_uxa_create_screen_resources(ScreenPtr screen)
+{
+        ScrnInfoPtr scrn = xf86ScreenToScrn(screen);
+        intel_screen_private *intel = intel_get_screen_private(scrn);
+        dri_bo *bo = intel->front_buffer;
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+        if (!uxa_resources_init(screen))
+                return FALSE;
 
-iQIcBAEBCAAGBQJR8ieNAAoJEECxmPOUX5FECQYQAI5ZyyA8ba1B7Aolxk2y6JMP
-Dy5FAe27Jgj/TK8sThUsxNyDzWQtmecLqQdD8AfJX4pmlK5eGP5s5K8g5bhlx2Q3
-9Fxs55PgbKRI/vrabzzLVp93371gGRXgU4mxG24kSzg+JraFOg9Yh47mCAbXrsGg
-Ao4do5at6TE2SfxAFhaCc7mC2cU4wCrPukykBlSF2J62t7XV1t80SyszPtAG6PFQ
-CnBDFOd0v7ePxJJT7exrD4h8FaNq9M9oPDpy5IprEkdCaZBf1/h3anU/oiXjb/0f
-rU08OKqOh+eHa8CnI+F12Jh2TNPkwTSSDSzVn1KmbrzPRsDcCcpu0Wbme0PH1mWe
-Cta1GG5cE+CrXTqJSSFA8sdnk9gmF3mzOnYMeSXzwaPzySSty0UFWXHF49B1V3lL
-kSKGZdPE2e/cJZW8fdxlj5nTJREZPsjNqpnRda/imUpS5JzUp81CP95HWyL7YpjA
-HKBrX3IxVKpuX2Icfy66vc+NEXeVncBdYL3Tb6UJChJIxFdVrRa3Fgk2FtDUKsBV
-QTQOloFrBdbQb8zxUqkuYTMWkr5Uso640pL6YA4gktHh39SiAcTNi8Xn8kmfUqcs
-bAZIKFBWHu3RKJbTW7TPbYqtiNooqBoLSntgX7Qf3oopLiuT7AuZjhiOXFLj8dAI
-EbrEPfDBklBj7eXMb03x
-=a8qC
------END PGP SIGNATURE-----
+        drm_intel_gem_bo_map_gtt(bo);
 
---Signature=_Fri__26_Jul_2013_17_38_49_+1000_nM1yr97zIma+S1Tr--
+        if (intel->use_shadow) {
+                intel_shadow_create(intel);
+        } else {
+                PixmapPtr pixmap = screen->GetScreenPixmap(screen);
+                intel_set_pixmap_bo(pixmap, bo);
+                intel_get_pixmap_private(pixmap)->pinned = 1;
+                screen->ModifyPixmapHeader(pixmap,
+                                           scrn->virtualX,
+                                           scrn->virtualY,
+                                           -1, -1,
+                                           intel->front_pitch,
+                                           NULL);
+                scrn->displayWidth = intel->front_pitch / intel->cpp;
+        }
+...
+... but does not start as well, so it seems to be a kernel-issue as
+assumed (2nd confirmation).
+
+X.log attached.
+
+- Sedat -
+
+> -Chris
+>
+> --
+> Chris Wilson, Intel Open Source Technology Centre
