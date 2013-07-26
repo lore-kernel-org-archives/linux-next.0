@@ -1,115 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the selinux tree with Linus' tree
-Date: Fri, 26 Jul 2013 13:48:23 +1000
-Message-ID: <20130726134823.e4c0a1b7bad087c12b3ce782@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [RFC 11/14] powerpc: Eliminate NO_IRQ usage
+Date: Thu, 25 Jul 2013 21:56:14 -0600
+Message-ID: <CACxGe6s3wit88ynuzYsBZBvijHmAfJNeY9LH2T5S9iY7kJtg=w@mail.gmail.com>
+References: <1326313337-24603-1-git-send-email-grant.likely@secretlab.ca>
+ <1326313337-24603-12-git-send-email-grant.likely@secretlab.ca> <CAMuHMdV=pSG+CtvGqr1c9nDKeHCU0cVQcFkfAo5iMMna2HOvZg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__26_Jul_2013_13_48_23_+1000_VItqWXMydGOGgI+6"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46296 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753924Ab3GZDsf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2013 23:48:35 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Quigley <dpquigl@davequigley.com>, "Matthew N. Dodd" <Matthew.Dodd@sparta.com>, Miguel Rodel Felipe <Rodel_FM@dsi.a-star.edu.sg>, Phua Eu Gene <PHUA_Eu_Gene@dsi.a-star.edu.sg>, Khin Mi Mi Aung <Mi_Mi_AUNG@dsi.a-star.edu.sg>, Trond Myklebust <Trond.Myklebust@netapp.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdV=pSG+CtvGqr1c9nDKeHCU0cVQcFkfAo5iMMna2HOvZg@mail.gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Rob Herring <rob.herring@calxeda.com>, Thomas Gleixner <tglx@linutronix.de>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Russell King <linux@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__26_Jul_2013_13_48_23_+1000_VItqWXMydGOGgI+6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 25, 2013 at 3:58 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Jan 11, 2012 at 9:22 PM, Grant Likely <grant.likely@secretlab.ca> wrote:
+>> NO_IRQ is evil.  Stop using it in arch/powerpc and powerpc device drivers
+>
+>> diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
+>> index 3e06696..55c6ff9 100644
+>> --- a/sound/soc/fsl/fsl_ssi.c
+>> +++ b/sound/soc/fsl/fsl_ssi.c
+>> @@ -666,7 +666,7 @@ static int __devinit fsl_ssi_probe(struct platform_device *pdev)
+>>         ssi_private->ssi_phys = res.start;
+>>
+>>         ssi_private->irq = irq_of_parse_and_map(np, 0);
+>> -       if (ssi_private->irq == NO_IRQ) {
+>> +       if (!ssi_private->irq) {
+>>                 dev_err(&pdev->dev, "no irq for node %s\n", np->full_name);
+>>                 ret = -ENXIO;
+>>                 goto error_iomap;
+>
+> What's the plan with this patch?
+>
+> This is now failing on xtensa, as it's one of the architectures that doesn't
+> define NO_IRQ. Only arm, c6x, mn10300, openrisc, parisc, powerpc, and sparc
+> define it.
 
-Hi Eric,
+Wow. I'd pretty much dropped that patch because I didn't have time to
+chase it down. It should be pursued though.
 
-Today's linux-next merge of the selinux tree got a conflict in
-security/selinux/hooks.c between commit eb9ae686507b ("SELinux: Add new
-labeling type native labels") from Linus' tree and commits 40d3d0b85fa2
-("SELinux: remove crazy contortions around proc") and a64c54cf0811
-("SELinux: pass a superblock to security_fs_use") from the selinux tree.
+In that particular case it is safe I think to apply the change. PPC
+defines NO_IRQ to be 0 anyway.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
-P.S. Unusually, that commit from Linus' tree has no Signed-off-by from
-its purported author (David Quigley).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-diff --cc security/selinux/hooks.c
-index a5091ec,4fbf2c5..0000000
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@@ -680,21 -702,14 +712,19 @@@ static int selinux_set_mnt_opts(struct=20
-  	if (strcmp(sb->s_type->name, "proc") =3D=3D 0)
-  		sbsec->flags |=3D SE_SBPROC;
- =20
- -	/* Determine the labeling behavior to use for this filesystem type. */
- -	rc =3D security_fs_use(sb);
- -	if (rc) {
- -		printk(KERN_WARNING "%s: security_fs_use(%s) returned %d\n",
- -		       __func__, sb->s_type->name, rc);
- -		goto out;
- +	if (!sbsec->behavior) {
- +		/*
- +		 * Determine the labeling behavior to use for this
- +		 * filesystem type.
- +		 */
-- 		rc =3D security_fs_use((sbsec->flags & SE_SBPROC) ?
-- 					"proc" : sb->s_type->name,
-- 					&sbsec->behavior, &sbsec->sid);
-++		rc =3D security_fs_use(sb);
- +		if (rc) {
- +			printk(KERN_WARNING
- +				"%s: security_fs_use(%s) returned %d\n",
- +					__func__, sb->s_type->name, rc);
- +			goto out;
- +		}
-  	}
- -
-  	/* sets the context of the superblock for the fs being mounted. */
-  	if (fscontext_sid) {
-  		rc =3D may_context_mount_sb_relabel(fscontext_sid, sbsec, cred);
-@@@ -2629,11 -2589,15 +2659,11 @@@ static int selinux_inode_init_security(
-  		isec->initialized =3D 1;
-  	}
- =20
-- 	if (!ss_initialized || !(sbsec->flags & SE_SBLABELSUPP))
-+ 	if (!ss_initialized || !(sbsec->flags & SBLABEL_MNT))
-  		return -EOPNOTSUPP;
- =20
- -	if (name) {
- -		namep =3D kstrdup(XATTR_SELINUX_SUFFIX, GFP_NOFS);
- -		if (!namep)
- -			return -ENOMEM;
- -		*name =3D namep;
- -	}
- +	if (name)
- +		*name =3D XATTR_SELINUX_SUFFIX;
- =20
-  	if (value && len) {
-  		rc =3D security_sid_to_context_force(newsid, &context, &clen);
-
---Signature=_Fri__26_Jul_2013_13_48_23_+1000_VItqWXMydGOGgI+6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJR8fGKAAoJEECxmPOUX5FEIFkP+wfb+ZrrOvvhwfh1zpYnoBYZ
-Uoh+lK2BmZuarDUpRPvTO68OACXbh0wlG/p7ThYWvYV51BDMDbKF2QD0oHA75w2M
-JhMs3aE7yufBTpQqdroAtafiG9jtLWrWidTflqJjCmRDoQGe4mgVW+OZowGC7Tao
-+VU/Ufbl8PwmyplZQStdFvTeI1nlfW1lbQhaWOvPpJYgCr2W6G6jkrBCcblmRaku
-tB+rKhpgO8rX2QvKySghDceJWWvDwqzJEN9V7KD9BOqsJiDoiv/cgVwE8aovwtLx
-oFX6EwfF8bjRpsLG9yXyM8mgUxjccWFm5mFghX++m1+SgxkDrnEC82Kkp57LxTQG
-2etNfHeC/w9aCZQnNbUnr7taS7dziGIoQ+kLuRFg5kDhsJKV5/HBIQroWit0y5H3
-TKZ0kRJ8P98CKPQWjB0DhAqLZBq7kptcUv9LeyxQAP8Ndignrd/3w2Ta+2jUnsbJ
-Ya9rfkIjh265E8CsAIJtMOMa4iPg6pEs4zSrzSS8JpqK7MeqGONS9hBaZZebWRkL
-XqO28TupNmXTzHKbPG44Ps/1oTh96faS85OcKxstS3Ccc9IIDpkaan2/SrkRTTzM
-nu4Y9l4puG9/eluBS6X31AcgsHpyxSAD/BatCZ+gXX13v9p267sb2E6V8FcQ7ZLu
-lKgbpE4Mrl5F1KAFQGjN
-=sFMN
------END PGP SIGNATURE-----
-
---Signature=_Fri__26_Jul_2013_13_48_23_+1000_VItqWXMydGOGgI+6--
+g.
