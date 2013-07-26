@@ -1,46 +1,54 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 Subject: Re: [Intel-gfx] linux-next: Tree for Jul 25 [ call-trace: drm |
  drm-intel related? ]
-Date: Fri, 26 Jul 2013 09:50:35 +0100
-Message-ID: <20130726085035.GJ13295@cantiga.alporthouse.com>
+Date: Fri, 26 Jul 2013 10:52:00 +0200
+Message-ID: <CAKMK7uGb5=-Ur4hJiVAviYeGKpup0ScHzsf436jHXEsKar+bCQ@mail.gmail.com>
 References: <20130725192248.GA13295@cantiga.alporthouse.com>
- <CA+icZUVE3s=6vXTLsCSmdLe_HMTOj+VD317kDeH3tF7svVW8kQ@mail.gmail.com>
- <CA+icZUU__nxcuX4RF9EBGm0nMBFaxfWpH00b2=ZsZZaxo9iscw@mail.gmail.com>
- <20130725215259.GB13295@cantiga.alporthouse.com>
- <CA+icZUXZKndg7==Y6v2Z45WZDp+tDC5FzaOC=KWTf4m=rjUKnA@mail.gmail.com>
- <20130725232556.GF13295@cantiga.alporthouse.com>
- <CA+icZUUBhW=KnAt0yn3CgEAzUhOfE=1ADUbCshFqrdZ5urEgbw@mail.gmail.com>
- <20130726072646.GH13295@cantiga.alporthouse.com>
- <CA+icZUXuj1O3oUvr_43BZDD_ikWyY9GxfOdzb3GLWJ1X1hvxyQ@mail.gmail.com>
- <CA+icZUWJynMr-OvXwN+2eRxWWOpt2s1-Q5UMrRt3rXDcCJpwkA@mail.gmail.com>
+	<CA+icZUVE3s=6vXTLsCSmdLe_HMTOj+VD317kDeH3tF7svVW8kQ@mail.gmail.com>
+	<CA+icZUU__nxcuX4RF9EBGm0nMBFaxfWpH00b2=ZsZZaxo9iscw@mail.gmail.com>
+	<20130725215259.GB13295@cantiga.alporthouse.com>
+	<CA+icZUXZKndg7==Y6v2Z45WZDp+tDC5FzaOC=KWTf4m=rjUKnA@mail.gmail.com>
+	<20130725232556.GF13295@cantiga.alporthouse.com>
+	<CA+icZUUBhW=KnAt0yn3CgEAzUhOfE=1ADUbCshFqrdZ5urEgbw@mail.gmail.com>
+	<20130726072646.GH13295@cantiga.alporthouse.com>
+	<CA+icZUXuj1O3oUvr_43BZDD_ikWyY9GxfOdzb3GLWJ1X1hvxyQ@mail.gmail.com>
+	<CA+icZUWJynMr-OvXwN+2eRxWWOpt2s1-Q5UMrRt3rXDcCJpwkA@mail.gmail.com>
+	<20130726085035.GJ13295@cantiga.alporthouse.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s16502780.onlinehome-server.info ([87.106.93.118]:50698 "EHLO
-	fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753446Ab3GZIun (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2013 04:50:43 -0400
-Content-Disposition: inline
-In-Reply-To: <CA+icZUWJynMr-OvXwN+2eRxWWOpt2s1-Q5UMrRt3rXDcCJpwkA@mail.gmail.com>
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:58917 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757659Ab3GZIwB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2013 04:52:01 -0400
+Received: by mail-oa0-f48.google.com with SMTP id f4so6957312oah.35
+        for <linux-next@vger.kernel.org>; Fri, 26 Jul 2013 01:52:00 -0700 (PDT)
+In-Reply-To: <20130726085035.GJ13295@cantiga.alporthouse.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>
+To: Chris Wilson <chris@chris-wilson.co.uk>, Sedat Dilek <sedat.dilek@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>
 
-On Fri, Jul 26, 2013 at 10:27:03AM +0200, Sedat Dilek wrote:
-> On Fri, Jul 26, 2013 at 10:25 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> > ...
-> > ... but does not start as well, so it seems to be a kernel-issue as
-> > assumed (2nd confirmation).
-> >
-> > X.log attached.
-> >
-> 
-> Now, really w/ promised attachment.
+On Fri, Jul 26, 2013 at 10:50 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+> On Fri, Jul 26, 2013 at 10:27:03AM +0200, Sedat Dilek wrote:
+>> On Fri, Jul 26, 2013 at 10:25 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> > ...
+>> > ... but does not start as well, so it seems to be a kernel-issue as
+>> > assumed (2nd confirmation).
+>> >
+>> > X.log attached.
+>> >
+>>
+>> Now, really w/ promised attachment.
+>
+> Yes, same failure (GTT mmaps) but at a later point, and UXA has no
+> fallback plan.
 
-Yes, same failure (GTT mmaps) but at a later point, and UXA has no
-fallback plan.
--Chris
-
--- 
-Chris Wilson, Intel Open Source Technology Centre
+I'm running igt on my machines here to prep a new -next test cycle,
+and gtt mmaps seem to fail across the board :( Currently I'd wager
+that the vma offset manager is the culprit, since I've only recently
+pulled that stuff in from drm-next.
+-Daniel
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
