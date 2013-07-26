@@ -1,70 +1,97 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the lblnet tree
-Date: Fri, 26 Jul 2013 14:06:17 +1000
-Message-ID: <20130726140617.c31cc3d8e5fb88dd69707906@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__26_Jul_2013_14_06_17_+1000_AyLpqR+LBrHsfMEf"
+From: David Quigley <merlin@countercultured.net>
+Subject: Re: linux-next: manual merge of the selinux tree with Linus' tree
+Date: Thu, 25 Jul 2013 21:22:48 -0700
+Message-ID: <06EC4DE7-7DC5-4C80-BA1D-2A96527CA7BF@countercultured.net>
+References: <20130726134823.e4c0a1b7bad087c12b3ce782@canb.auug.org.au>
+Mime-Version: 1.0 (1.0)
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39140 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750931Ab3GZEG3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2013 00:06:29 -0400
+Received: from countercultured.net ([209.51.175.25]:44772 "HELO
+	countercultured.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750873Ab3GZE3d convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2013 00:29:33 -0400
+In-Reply-To: <20130726134823.e4c0a1b7bad087c12b3ce782@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Eric Paris <eparis@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Quigley <dpquigl@davequigley.com>, "Matthew N. Dodd" <Matthew.Dodd@sparta.com>, Miguel Rodel Felipe <Rodel_FM@dsi.a-star.edu.sg>, Phua Eu Gene <PHUA_Eu_Gene@dsi.a-star.edu.sg>, Khin Mi Mi Aung <Mi_Mi_AUNG@dsi.a-star.edu.sg>, Trond Myklebust <Trond.Myklebust@netapp.com>
 
---Signature=_Fri__26_Jul_2013_14_06_17_+1000_AyLpqR+LBrHsfMEf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I guess my signed off got stripped somewhere. Originally I maintained those commits but Steve Dickson from red hat picked them up and they then made it into trond's tree and then into Linus'.
 
-Hi Paul,
+I unfortunately don't have my davequigley.com identities on my iPhone but you can add a sign off by dpquigl@davequigley.com for the commit.
 
-After merging the lblnet tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Sent from my iPhone
 
-security/selinux/hooks.c: In function 'sb_finish_set_opts':
-security/selinux/hooks.c:448:19: error: 'SE_SBLABELSUPP' undeclared (first =
-use in this function)
-   sbsec->flags |=3D SE_SBLABELSUPP;
-                   ^
+On Jul 25, 2013, at 8:48 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Caused by commit 8cf9124a324f ("SELinux: Enable setting security contexts
-on rootfs inodes") interacting with commit 12f348b9dcf6 ("SELinux: rename
-SE_SBLABELSUPP to SBLABEL_MNT") from the selinux tree.
-
-This is not helped by the fact that there are a lot of commits in the
-lblnet tree (including 8cf9124a324f) that have been cherry-picked
-(instead of being merged) into the selinux tree.  :-(
-
-I just reverted the lblnet commit above (since it has been applied twice).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__26_Jul_2013_14_06_17_+1000_AyLpqR+LBrHsfMEf
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJR8fW+AAoJEECxmPOUX5FEMoIP/jPj5oTOWURxopYHtiyt4Y29
-anp3jY3gtO7hcnBWWl2pLlQe8qM6991Vt8RKxyakRGZAcEQytKk8jGFFIFKIvDyp
-YA+F0pMgknXf5oUFdtFrjdCnUQvA6NRc2s/gZFJ6p9eLK0K5XiFPFjm7fOOmYCR/
-W7yAdVCDUq6zZE4LioX1f8orwIGeysxpiziMCrJL7JI+3S0drCJAfXWW83Q7PRVD
-MQ1PCyK3ozDJeoUF9b1QxpzrEWIOARF9I0zKCUry/KI+aW9jiLihS1+eWHtQWdWL
-6s/HB+bj63LXwxSm5ZgKv2gPJXCByPlooAT+31i0RVHcSsVnwVG2T5BCgUr5UmY/
-zxn+jAXFPeYM9wMagk729RCToCkOPz6kfF7MuInTAsRjlMc2kGW0duiSvYx5GRDD
-JyQSgk117idNI64gjB7Qw/g6O8WNhq914TJSQhCbGAMKPF/M6ZsBruVv2HsanEwT
-LcFSESIxCS6YEohEj2tkgsK/KwlrSWa32PPLmzqPS5V2UvA9SD3bv8z9py7VWwhf
-w6JV2UJ7p6sdIEKE6dBWYBpP4BBWh9ieZSZl1YRIsrIoHMHM9zkphtKLKgV2B7yX
-Mj78wHoNHdbBaamlgk/+lyDAKcuMV4xlicDlOsU8arx356C43mvbxYN/pfqhby9h
-bXiZ1VLKIpYXp9eGRR+C
-=6v6R
------END PGP SIGNATURE-----
-
---Signature=_Fri__26_Jul_2013_14_06_17_+1000_AyLpqR+LBrHsfMEf--
+> Hi Eric,
+> 
+> Today's linux-next merge of the selinux tree got a conflict in
+> security/selinux/hooks.c between commit eb9ae686507b ("SELinux: Add new
+> labeling type native labels") from Linus' tree and commits 40d3d0b85fa2
+> ("SELinux: remove crazy contortions around proc") and a64c54cf0811
+> ("SELinux: pass a superblock to security_fs_use") from the selinux tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
+> P.S. Unusually, that commit from Linus' tree has no Signed-off-by from
+> its purported author (David Quigley).
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> diff --cc security/selinux/hooks.c
+> index a5091ec,4fbf2c5..0000000
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@@ -680,21 -702,14 +712,19 @@@ static int selinux_set_mnt_opts(struct 
+>      if (strcmp(sb->s_type->name, "proc") == 0)
+>          sbsec->flags |= SE_SBPROC;
+> 
+> -    /* Determine the labeling behavior to use for this filesystem type. */
+> -    rc = security_fs_use(sb);
+> -    if (rc) {
+> -        printk(KERN_WARNING "%s: security_fs_use(%s) returned %d\n",
+> -               __func__, sb->s_type->name, rc);
+> -        goto out;
+> +    if (!sbsec->behavior) {
+> +        /*
+> +         * Determine the labeling behavior to use for this
+> +         * filesystem type.
+> +         */
+> -        rc = security_fs_use((sbsec->flags & SE_SBPROC) ?
+> -                    "proc" : sb->s_type->name,
+> -                    &sbsec->behavior, &sbsec->sid);
+> ++        rc = security_fs_use(sb);
+> +        if (rc) {
+> +            printk(KERN_WARNING
+> +                "%s: security_fs_use(%s) returned %d\n",
+> +                    __func__, sb->s_type->name, rc);
+> +            goto out;
+> +        }
+>      }
+> -
+>      /* sets the context of the superblock for the fs being mounted. */
+>      if (fscontext_sid) {
+>          rc = may_context_mount_sb_relabel(fscontext_sid, sbsec, cred);
+> @@@ -2629,11 -2589,15 +2659,11 @@@ static int selinux_inode_init_security(
+>          isec->initialized = 1;
+>      }
+> 
+> -    if (!ss_initialized || !(sbsec->flags & SE_SBLABELSUPP))
+> +    if (!ss_initialized || !(sbsec->flags & SBLABEL_MNT))
+>          return -EOPNOTSUPP;
+> 
+> -    if (name) {
+> -        namep = kstrdup(XATTR_SELINUX_SUFFIX, GFP_NOFS);
+> -        if (!namep)
+> -            return -ENOMEM;
+> -        *name = namep;
+> -    }
+> +    if (name)
+> +        *name = XATTR_SELINUX_SUFFIX;
+> 
+>      if (value && len) {
+>          rc = security_sid_to_context_force(newsid, &context, &clen);
