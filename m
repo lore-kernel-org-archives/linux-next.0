@@ -1,49 +1,70 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: linux-next: Tree for Jul 25 (ahci_imx.c)
-Date: Fri, 26 Jul 2013 12:03:51 +0800
-Message-ID: <20130726040349.GA29268@S2101-09.ap.freescale.net>
-References: <20130725151253.8b9b53b3a3cf6cacd501dc54@canb.auug.org.au>
- <51F16F17.4030002@infradead.org>
- <0E83723C55F66F43A6041464FE31119D3487F2@039-SN2MPN1-011.039d.mgd.msft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the lblnet tree
+Date: Fri, 26 Jul 2013 14:06:17 +1000
+Message-ID: <20130726140617.c31cc3d8e5fb88dd69707906@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-ide-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__26_Jul_2013_14_06_17_+1000_AyLpqR+LBrHsfMEf"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39140 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750931Ab3GZEG3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2013 00:06:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>
+
+--Signature=_Fri__26_Jul_2013_14_06_17_+1000_AyLpqR+LBrHsfMEf
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <0E83723C55F66F43A6041464FE31119D3487F2@039-SN2MPN1-011.039d.mgd.msft.net>
-Sender: linux-ide-owner@vger.kernel.org
-To: Zhu Richard-R65037 <r65037@freescale.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 26, 2013 at 03:46:42AM +0000, Zhu Richard-R65037 wrote:
-> -----Original Message-----
-> From: Randy Dunlap [mailto:rdunlap@infradead.org] 
-> Sent: Friday, July 26, 2013 2:32 AM
-> To: Stephen Rothwell
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; linux-ide@vger.kernel.org; Zhu Richard-R65037
-> Subject: Re: linux-next: Tree for Jul 25 (ahci_imx.c)
-> 
-> On 07/24/13 22:12, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20130724:
-> > 
-> 
-> on i386:
-> 
-> # CONFIG_MFD_SYSCON is not set
-> 
-> 
-> when ahci_imx.c is built as a loadable module:
-> 
-> ERROR: "syscon_regmap_lookup_by_compatible" [drivers/ata/ahci_imx.ko] undefined!
-> 
-> or when it is builtin:
-> 
-> ahci_imx.c:(.text+0x182e54): undefined reference to `syscon_regmap_lookup_by_compatible'
-> 
+Hi Paul,
 
-We should have it depend on MFD_SYSCON.
+After merging the lblnet tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Shawn
+security/selinux/hooks.c: In function 'sb_finish_set_opts':
+security/selinux/hooks.c:448:19: error: 'SE_SBLABELSUPP' undeclared (first =
+use in this function)
+   sbsec->flags |=3D SE_SBLABELSUPP;
+                   ^
 
+Caused by commit 8cf9124a324f ("SELinux: Enable setting security contexts
+on rootfs inodes") interacting with commit 12f348b9dcf6 ("SELinux: rename
+SE_SBLABELSUPP to SBLABEL_MNT") from the selinux tree.
+
+This is not helped by the fact that there are a lot of commits in the
+lblnet tree (including 8cf9124a324f) that have been cherry-picked
+(instead of being merged) into the selinux tree.  :-(
+
+I just reverted the lblnet commit above (since it has been applied twice).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__26_Jul_2013_14_06_17_+1000_AyLpqR+LBrHsfMEf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR8fW+AAoJEECxmPOUX5FEMoIP/jPj5oTOWURxopYHtiyt4Y29
+anp3jY3gtO7hcnBWWl2pLlQe8qM6991Vt8RKxyakRGZAcEQytKk8jGFFIFKIvDyp
+YA+F0pMgknXf5oUFdtFrjdCnUQvA6NRc2s/gZFJ6p9eLK0K5XiFPFjm7fOOmYCR/
+W7yAdVCDUq6zZE4LioX1f8orwIGeysxpiziMCrJL7JI+3S0drCJAfXWW83Q7PRVD
+MQ1PCyK3ozDJeoUF9b1QxpzrEWIOARF9I0zKCUry/KI+aW9jiLihS1+eWHtQWdWL
+6s/HB+bj63LXwxSm5ZgKv2gPJXCByPlooAT+31i0RVHcSsVnwVG2T5BCgUr5UmY/
+zxn+jAXFPeYM9wMagk729RCToCkOPz6kfF7MuInTAsRjlMc2kGW0duiSvYx5GRDD
+JyQSgk117idNI64gjB7Qw/g6O8WNhq914TJSQhCbGAMKPF/M6ZsBruVv2HsanEwT
+LcFSESIxCS6YEohEj2tkgsK/KwlrSWa32PPLmzqPS5V2UvA9SD3bv8z9py7VWwhf
+w6JV2UJ7p6sdIEKE6dBWYBpP4BBWh9ieZSZl1YRIsrIoHMHM9zkphtKLKgV2B7yX
+Mj78wHoNHdbBaamlgk/+lyDAKcuMV4xlicDlOsU8arx356C43mvbxYN/pfqhby9h
+bXiZ1VLKIpYXp9eGRR+C
+=6v6R
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__26_Jul_2013_14_06_17_+1000_AyLpqR+LBrHsfMEf--
