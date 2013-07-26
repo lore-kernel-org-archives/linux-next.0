@@ -1,47 +1,64 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [RFC 11/14] powerpc: Eliminate NO_IRQ usage
-Date: Thu, 25 Jul 2013 21:56:14 -0600
-Message-ID: <CACxGe6s3wit88ynuzYsBZBvijHmAfJNeY9LH2T5S9iY7kJtg=w@mail.gmail.com>
-References: <1326313337-24603-1-git-send-email-grant.likely@secretlab.ca>
- <1326313337-24603-12-git-send-email-grant.likely@secretlab.ca> <CAMuHMdV=pSG+CtvGqr1c9nDKeHCU0cVQcFkfAo5iMMna2HOvZg@mail.gmail.com>
+From: Zhu Richard-R65037 <r65037@freescale.com>
+Subject: RE: linux-next: Tree for Jul 25 (ahci_imx.c)
+Date: Fri, 26 Jul 2013 03:46:42 +0000
+Message-ID: <0E83723C55F66F43A6041464FE31119D3487F2@039-SN2MPN1-011.039d.mgd.msft.net>
+References: <20130725151253.8b9b53b3a3cf6cacd501dc54@canb.auug.org.au>
+ <51F16F17.4030002@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdV=pSG+CtvGqr1c9nDKeHCU0cVQcFkfAo5iMMna2HOvZg@mail.gmail.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Rob Herring <rob.herring@calxeda.com>, Thomas Gleixner <tglx@linutronix.de>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Russell King <linux@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-db9lp0251.outbound.messaging.microsoft.com ([213.199.154.251]:19916
+	"EHLO db9outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750699Ab3GZEBu convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Jul 2013 00:01:50 -0400
+In-Reply-To: <51F16F17.4030002@infradead.org>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>
 
-On Thu, Jul 25, 2013 at 3:58 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Jan 11, 2012 at 9:22 PM, Grant Likely <grant.likely@secretlab.ca> wrote:
->> NO_IRQ is evil.  Stop using it in arch/powerpc and powerpc device drivers
->
->> diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
->> index 3e06696..55c6ff9 100644
->> --- a/sound/soc/fsl/fsl_ssi.c
->> +++ b/sound/soc/fsl/fsl_ssi.c
->> @@ -666,7 +666,7 @@ static int __devinit fsl_ssi_probe(struct platform_device *pdev)
->>         ssi_private->ssi_phys = res.start;
->>
->>         ssi_private->irq = irq_of_parse_and_map(np, 0);
->> -       if (ssi_private->irq == NO_IRQ) {
->> +       if (!ssi_private->irq) {
->>                 dev_err(&pdev->dev, "no irq for node %s\n", np->full_name);
->>                 ret = -ENXIO;
->>                 goto error_iomap;
->
-> What's the plan with this patch?
->
-> This is now failing on xtensa, as it's one of the architectures that doesn't
-> define NO_IRQ. Only arm, c6x, mn10300, openrisc, parisc, powerpc, and sparc
-> define it.
+Hi Randy:
+Thanks for your kindly reminder.
+I re-produced this issue at my side.
+Now, I'm trying to find a proper method to fix it.
 
-Wow. I'd pretty much dropped that patch because I didn't have time to
-chase it down. It should be pursued though.
+Best Regards
+Richard Zhu
 
-In that particular case it is safe I think to apply the change. PPC
-defines NO_IRQ to be 0 anyway.
 
-g.
+-----Original Message-----
+From: Randy Dunlap [mailto:rdunlap@infradead.org] 
+Sent: Friday, July 26, 2013 2:32 AM
+To: Stephen Rothwell
+Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; linux-ide@vger.kernel.org; Zhu Richard-R65037
+Subject: Re: linux-next: Tree for Jul 25 (ahci_imx.c)
+
+On 07/24/13 22:12, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20130724:
+> 
+
+on i386:
+
+# CONFIG_MFD_SYSCON is not set
+
+
+when ahci_imx.c is built as a loadable module:
+
+ERROR: "syscon_regmap_lookup_by_compatible" [drivers/ata/ahci_imx.ko] undefined!
+
+or when it is builtin:
+
+ahci_imx.c:(.text+0x182e54): undefined reference to `syscon_regmap_lookup_by_compatible'
+
+
+
+Full randconfig file is attached.
+
+
+-- 
+~Randy
