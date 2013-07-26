@@ -1,97 +1,70 @@
-From: David Quigley <merlin@countercultured.net>
-Subject: Re: linux-next: manual merge of the selinux tree with Linus' tree
-Date: Thu, 25 Jul 2013 21:22:48 -0700
-Message-ID: <06EC4DE7-7DC5-4C80-BA1D-2A96527CA7BF@countercultured.net>
-References: <20130726134823.e4c0a1b7bad087c12b3ce782@canb.auug.org.au>
-Mime-Version: 1.0 (1.0)
-Content-Type: text/plain;
-	charset=us-ascii
+From: Zhu Richard-R65037 <r65037@freescale.com>
+Subject: RE: linux-next: Tree for Jul 25 (ahci_imx.c)
+Date: Fri, 26 Jul 2013 04:58:14 +0000
+Message-ID: <0E83723C55F66F43A6041464FE31119D34886A@039-SN2MPN1-011.039d.mgd.msft.net>
+References: <20130725151253.8b9b53b3a3cf6cacd501dc54@canb.auug.org.au>
+ <51F16F17.4030002@infradead.org>
+ <0E83723C55F66F43A6041464FE31119D3487F2@039-SN2MPN1-011.039d.mgd.msft.net>
+ <20130726040349.GA29268@S2101-09.ap.freescale.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from countercultured.net ([209.51.175.25]:44772 "HELO
-	countercultured.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1750873Ab3GZE3d convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2013 00:29:33 -0400
-In-Reply-To: <20130726134823.e4c0a1b7bad087c12b3ce782@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Eric Paris <eparis@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Quigley <dpquigl@davequigley.com>, "Matthew N. Dodd" <Matthew.Dodd@sparta.com>, Miguel Rodel Felipe <Rodel_FM@dsi.a-star.edu.sg>, Phua Eu Gene <PHUA_Eu_Gene@dsi.a-star.edu.sg>, Khin Mi Mi Aung <Mi_Mi_AUNG@dsi.a-star.edu.sg>, Trond Myklebust <Trond.Myklebust@netapp.com>
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <20130726040349.GA29268@S2101-09.ap.freescale.net>
+Content-Language: en-US
+Sender: linux-ide-owner@vger.kernel.org
+To: Shawn Guo <shawn.guo@linaro.org>, "tj@kernel.org" <tj@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-I guess my signed off got stripped somewhere. Originally I maintained those commits but Steve Dickson from red hat picked them up and they then made it into trond's tree and then into Linus'.
+Hi Shawn:
+yes, it is.
 
-I unfortunately don't have my davequigley.com identities on my iPhone but you can add a sign off by dpquigl@davequigley.com for the commit.
+BTW, Should I re-send the AHCI_IMX patch-set or send out one stand-alone patch to fix this issue?
 
-Sent from my iPhone
+Hi Tejun:
+What's your opinion?
 
-On Jul 25, 2013, at 8:48 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Best Regards
+Richard Zhu
 
-> Hi Eric,
+
+-----Original Message-----
+From: Shawn Guo [mailto:shawn.guo@linaro.org] 
+Sent: Friday, July 26, 2013 12:04 PM
+To: Zhu Richard-R65037
+Cc: Randy Dunlap; Stephen Rothwell; linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; linux-ide@vger.kernel.org
+Subject: Re: linux-next: Tree for Jul 25 (ahci_imx.c)
+
+On Fri, Jul 26, 2013 at 03:46:42AM +0000, Zhu Richard-R65037 wrote:
+> -----Original Message-----
+> From: Randy Dunlap [mailto:rdunlap@infradead.org] 
+> Sent: Friday, July 26, 2013 2:32 AM
+> To: Stephen Rothwell
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; linux-ide@vger.kernel.org; Zhu Richard-R65037
+> Subject: Re: linux-next: Tree for Jul 25 (ahci_imx.c)
 > 
-> Today's linux-next merge of the selinux tree got a conflict in
-> security/selinux/hooks.c between commit eb9ae686507b ("SELinux: Add new
-> labeling type native labels") from Linus' tree and commits 40d3d0b85fa2
-> ("SELinux: remove crazy contortions around proc") and a64c54cf0811
-> ("SELinux: pass a superblock to security_fs_use") from the selinux tree.
+> On 07/24/13 22:12, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20130724:
+> > 
 > 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> on i386:
 > 
-> P.S. Unusually, that commit from Linus' tree has no Signed-off-by from
-> its purported author (David Quigley).
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> diff --cc security/selinux/hooks.c
-> index a5091ec,4fbf2c5..0000000
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@@ -680,21 -702,14 +712,19 @@@ static int selinux_set_mnt_opts(struct 
->      if (strcmp(sb->s_type->name, "proc") == 0)
->          sbsec->flags |= SE_SBPROC;
+> # CONFIG_MFD_SYSCON is not set
 > 
-> -    /* Determine the labeling behavior to use for this filesystem type. */
-> -    rc = security_fs_use(sb);
-> -    if (rc) {
-> -        printk(KERN_WARNING "%s: security_fs_use(%s) returned %d\n",
-> -               __func__, sb->s_type->name, rc);
-> -        goto out;
-> +    if (!sbsec->behavior) {
-> +        /*
-> +         * Determine the labeling behavior to use for this
-> +         * filesystem type.
-> +         */
-> -        rc = security_fs_use((sbsec->flags & SE_SBPROC) ?
-> -                    "proc" : sb->s_type->name,
-> -                    &sbsec->behavior, &sbsec->sid);
-> ++        rc = security_fs_use(sb);
-> +        if (rc) {
-> +            printk(KERN_WARNING
-> +                "%s: security_fs_use(%s) returned %d\n",
-> +                    __func__, sb->s_type->name, rc);
-> +            goto out;
-> +        }
->      }
-> -
->      /* sets the context of the superblock for the fs being mounted. */
->      if (fscontext_sid) {
->          rc = may_context_mount_sb_relabel(fscontext_sid, sbsec, cred);
-> @@@ -2629,11 -2589,15 +2659,11 @@@ static int selinux_inode_init_security(
->          isec->initialized = 1;
->      }
 > 
-> -    if (!ss_initialized || !(sbsec->flags & SE_SBLABELSUPP))
-> +    if (!ss_initialized || !(sbsec->flags & SBLABEL_MNT))
->          return -EOPNOTSUPP;
+> when ahci_imx.c is built as a loadable module:
 > 
-> -    if (name) {
-> -        namep = kstrdup(XATTR_SELINUX_SUFFIX, GFP_NOFS);
-> -        if (!namep)
-> -            return -ENOMEM;
-> -        *name = namep;
-> -    }
-> +    if (name)
-> +        *name = XATTR_SELINUX_SUFFIX;
+> ERROR: "syscon_regmap_lookup_by_compatible" [drivers/ata/ahci_imx.ko] undefined!
 > 
->      if (value && len) {
->          rc = security_sid_to_context_force(newsid, &context, &clen);
+> or when it is builtin:
+> 
+> ahci_imx.c:(.text+0x182e54): undefined reference to `syscon_regmap_lookup_by_compatible'
+> 
+
+We should have it depend on MFD_SYSCON.
+
+Shawn
+
