@@ -1,54 +1,34 @@
-From: "tj@kernel.org" <tj@kernel.org>
-Subject: [PATCH] ahci_imx: depend on CONFIG_MFD_SYSCON
-Date: Fri, 26 Jul 2013 09:06:35 -0400
-Message-ID: <20130726130635.GB3013@htj.dyndns.org>
-References: <20130725151253.8b9b53b3a3cf6cacd501dc54@canb.auug.org.au>
- <51F16F17.4030002@infradead.org>
- <0E83723C55F66F43A6041464FE31119D3487F2@039-SN2MPN1-011.039d.mgd.msft.net>
- <20130726040349.GA29268@S2101-09.ap.freescale.net>
- <0E83723C55F66F43A6041464FE31119D34886A@039-SN2MPN1-011.039d.mgd.msft.net>
- <20130726052519.GB29268@S2101-09.ap.freescale.net>
- <20130726111850.GD30786@mtj.dyndns.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jul 26 (regulator/pfuze100-regulator.c)
+Date: Fri, 26 Jul 2013 10:27:15 -0700
+Message-ID: <51F2B173.2040107@infradead.org>
+References: <20130726172221.c99317679defacd811584f22@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130726111850.GD30786@mtj.dyndns.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Zhu Richard-R65037 <r65037@freescale.com>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:45385 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750754Ab3GZR2N (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2013 13:28:13 -0400
+In-Reply-To: <20130726172221.c99317679defacd811584f22@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robin Gong <b38343@freescale.com>
 
->From 867974fc09f93bdd7f98d46ac3733934486bbf4a Mon Sep 17 00:00:00 2001
-From: Tejun Heo <tj@kernel.org>
-Date: Fri, 26 Jul 2013 08:57:56 -0400
+On 07/26/13 00:22, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20130725:
+> 
 
-ahci_imx makes use of regmap but the dependency wasn't specified in
-Kconfig leading build failures if CONFIG_AHCI_IMX is enabled but
-CONFIG_MFD_SYSCON is not.  Add the Kconfig dependency.
+on x86_64 and i386:
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
-Applied to libata/for-3.11-fixes.
+WARNING: modpost: missing MODULE_LICENSE() in drivers/regulator/pfuze100-regulator.o
+see include/linux/module.h for more information
 
-Thanks.
 
- drivers/ata/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index a4af0a2..4e73772 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -99,7 +99,7 @@ config SATA_AHCI_PLATFORM
- 
- config AHCI_IMX
- 	tristate "Freescale i.MX AHCI SATA support"
--	depends on SATA_AHCI_PLATFORM
-+	depends on SATA_AHCI_PLATFORM && MFD_SYSCON
- 	help
- 	  This option enables support for the Freescale i.MX SoC's
- 	  onboard AHCI SATA.
 -- 
-1.8.3.1
+~Randy
