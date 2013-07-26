@@ -1,77 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Fri, 26 Jul 2013 13:01:29 +1000
-Message-ID: <20130726130129.b10066a83ebf9c59ec345ce9@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Date: Fri, 26 Jul 2013 13:10:57 +1000
+Message-ID: <20130726131057.e0afca6b0771f334111214dd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__26_Jul_2013_13_01_29_+1000_X3kn7WnTJdqgsV+i"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Khlebnikov <khlebnikov@openvz.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__26_Jul_2013_13_10_57_+1000_lahZHl1HmTTB4YG8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40360 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755919Ab3GZDLA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2013 23:11:00 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>
 
---Signature=_Fri__26_Jul_2013_13_01_29_+1000_X3kn7WnTJdqgsV+i
+--Signature=_Fri__26_Jul_2013_13_10_57_+1000_lahZHl1HmTTB4YG8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/i915/i915_dma.c between commit 7dcd2677ea91 ("drm/i915:
-fix long-standing SNB regression in power consumption after resume v2")
-from Linus' tree and commit 59cdb63d529c ("drm/i915: kill
-dev_priv->rps.lock") from the drm tree.
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/i915_dma.c between commit 14c5cec5d0cd ("drm/i915:
+initialize gt_lock early with other spin locks") from the drm-intel-fixes
+tree and commit 907b28c56ea4 ("drm/i915: Colocate all GT access routines
+in the same file") from the drm-intel tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (using the drm-intel tree version) and can carry the fix as
+necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/i915_dma.c
-index 66c6380,6ce9033..0000000
---- a/drivers/gpu/drm/i915/i915_dma.c
-+++ b/drivers/gpu/drm/i915/i915_dma.c
-@@@ -1495,15 -1490,6 +1490,14 @@@ int i915_driver_load(struct drm_device=20
-  	dev_priv->dev =3D dev;
-  	dev_priv->info =3D info;
- =20
- +	spin_lock_init(&dev_priv->irq_lock);
- +	spin_lock_init(&dev_priv->gpu_error.lock);
-- 	spin_lock_init(&dev_priv->rps.lock);
- +	spin_lock_init(&dev_priv->gt_lock);
- +	spin_lock_init(&dev_priv->backlight.lock);
- +	mutex_init(&dev_priv->dpio_lock);
- +	mutex_init(&dev_priv->rps.hw_lock);
- +	mutex_init(&dev_priv->modeset_restore_lock);
- +
-  	i915_dump_device_info(dev_priv);
- =20
-  	if (i915_get_bridge_dev(dev)) {
-
---Signature=_Fri__26_Jul_2013_13_01_29_+1000_X3kn7WnTJdqgsV+i
+--Signature=_Fri__26_Jul_2013_13_10_57_+1000_lahZHl1HmTTB4YG8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR8eaNAAoJEECxmPOUX5FEd+oP/2XbDbAU0noGwE0i7cNvtl4k
-VcI7WyrxIAEq4meORoMXRFRW4K16H8xI1O3/hjvJEr+if6Iz98MifVhavl0VELLR
-nw9p66M+FKIhn26oxZDyjsP3SLgBr6GhCm2fC67eAKggLGBaicE00/Nyke2bS6gm
-V+7/rVMQHG1AKU/vV8PG692/G5mP9CdTwFBPT2Kwiob0FkEj8itn8Rnr3xHgIuL/
-NS4kW+eHsoSmK1NpTOkzybHklIPK251TDl8K2Q/R2tkg5jCv0aYzkRx81hnIym2J
-OxRLg/c53ZO56IBnAx9YX8bkvX2kwMfJDsWSkBpii0Er3Z+Cnyu0wX/glPHcgjsE
-Mfh3tYC5llbV5q6ptLdAnwkVBaMkidRNZmOCG/JmE6iwDMfGn9D+WzK4V/iq5knE
-GQCnRCPfmfE7E56F5ElZCscAFBWPDeP7pZyCcqikBOMGkHr32cctNP7tcGkZabhj
-xBOqvFDlJIvdMp6G3LgbDc2jy1ywBJnufV8Y9qaGqYt2GZB5Fed/Xu6+dZOD+nau
-gpLmcOlYS6Glv3Hf2aqa2pKOA1+Y2RF6MgKDlPG4MFt6CVifqYWI73YTO4nPGR/S
-G8Yr9aQ3DFcOhSFpHjf3fg+bYRIbkQi3HswUeIPHCCgydnFJFPfcGY4XexxhmL3F
-NvavV9AwgsbLepQ51GbP
-=rmy3
+iQIcBAEBCAAGBQJR8ejBAAoJEECxmPOUX5FER9sP/3GOnPi0rOaP7yN09Tp2QlM2
+ch4VXEuJNN05rCLV2VX8m/sVxFFiM+RfK+dXMrCxJjSH9Wkb5XdSV5ZtRx4CYIqU
+VISCCIAEebbQEAl2Hj7aJ0JrLh4r/5Pr67CtAKyRe10bbfpYyEwqyQOeMwxJK/8J
+6hK+mejM8cso+muG2vV0GPq2EzuLrbTgHHJBNmoUND3mM+PlOTb+AeErGKGQV2t3
+b0eYKF2WpGHJnDjIpzg8CI6p7oKrhrCzl9EjclURRu3vnsEBnnGoOvL87cyyfw9P
+zQBUtkN89mOIgWHw/BXh4XPK7xPDzpfzVBMI+kLh4vz0H6WyDXo7yJMKtqr/UEAs
+bONyIBDju+JOkhYB2a1dMr7wq6d1qUo2ZgK6pQM0nkUfqyl/31vhflWHrpOQagT5
+7YodEbzaOY5wxWpEocqhDVejms4BvFoYqgw3VxmZI/Vminqtq74OVjNWE/7sLX9a
+LcvGjMJtuuYKAuTMeAgvdxtl344GT9MkpysCgbAaToSv/rbXePj9QoInGKwI8flr
+pK3jAwaAMjbWZGMttrdnuKvhDr9QVhhbn8oJ7GoxDr3J8asBj99kF4NDBOcFfi5a
+ozySdN7BqsZYPg5SXB5a/34Zgae4XDWobgz0RYoD5AMjeZs/SFO2j7byxWH5B3wi
+mbesQh7LoOeFw/p0w6HO
+=5jmo
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__26_Jul_2013_13_01_29_+1000_X3kn7WnTJdqgsV+i--
+--Signature=_Fri__26_Jul_2013_13_10_57_+1000_lahZHl1HmTTB4YG8--
