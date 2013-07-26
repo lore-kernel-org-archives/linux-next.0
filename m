@@ -1,61 +1,115 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with the
- drm-intel-fixes tree
-Date: Fri, 26 Jul 2013 13:14:27 +1000
-Message-ID: <20130726131427.31a36ca15eef6a19a4e9ca9a@canb.auug.org.au>
+Subject: linux-next: manual merge of the selinux tree with Linus' tree
+Date: Fri, 26 Jul 2013 13:48:23 +1000
+Message-ID: <20130726134823.e4c0a1b7bad087c12b3ce782@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__26_Jul_2013_13_14_27_+1000_RFhC13xyzAXUJlUt"
+ boundary="Signature=_Fri__26_Jul_2013_13_48_23_+1000_VItqWXMydGOGgI+6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60803 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:46296 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755919Ab3GZDOb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2013 23:14:31 -0400
+	with ESMTP id S1753924Ab3GZDsf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2013 23:48:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Quigley <dpquigl@davequigley.com>, "Matthew N. Dodd" <Matthew.Dodd@sparta.com>, Miguel Rodel Felipe <Rodel_FM@dsi.a-star.edu.sg>, Phua Eu Gene <PHUA_Eu_Gene@dsi.a-star.edu.sg>, Khin Mi Mi Aung <Mi_Mi_AUNG@dsi.a-star.edu.sg>, Trond Myklebust <Trond.Myklebust@netapp.com>
 
---Signature=_Fri__26_Jul_2013_13_14_27_+1000_RFhC13xyzAXUJlUt
+--Signature=_Fri__26_Jul_2013_13_48_23_+1000_VItqWXMydGOGgI+6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Eric,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_pm.c between commit 14c5cec5d0cd ("drm/i915:
-initialize gt_lock early with other spin locks") from the drm-intel-fixes
-tree and commit 907b28c56ea4 ("drm/i915: Colocate all GT access routines
-in the same file") from the drm-intel tree.
+Today's linux-next merge of the selinux tree got a conflict in
+security/selinux/hooks.c between commit eb9ae686507b ("SELinux: Add new
+labeling type native labels") from Linus' tree and commits 40d3d0b85fa2
+("SELinux: remove crazy contortions around proc") and a64c54cf0811
+("SELinux: pass a superblock to security_fs_use") from the selinux tree.
 
-I fixed it up (using the drm-intel tree version) and can carry the fix as
-necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
+P.S. Unusually, that commit from Linus' tree has no Signed-off-by from
+its purported author (David Quigley).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+diff --cc security/selinux/hooks.c
+index a5091ec,4fbf2c5..0000000
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@@ -680,21 -702,14 +712,19 @@@ static int selinux_set_mnt_opts(struct=20
+  	if (strcmp(sb->s_type->name, "proc") =3D=3D 0)
+  		sbsec->flags |=3D SE_SBPROC;
+ =20
+ -	/* Determine the labeling behavior to use for this filesystem type. */
+ -	rc =3D security_fs_use(sb);
+ -	if (rc) {
+ -		printk(KERN_WARNING "%s: security_fs_use(%s) returned %d\n",
+ -		       __func__, sb->s_type->name, rc);
+ -		goto out;
+ +	if (!sbsec->behavior) {
+ +		/*
+ +		 * Determine the labeling behavior to use for this
+ +		 * filesystem type.
+ +		 */
+- 		rc =3D security_fs_use((sbsec->flags & SE_SBPROC) ?
+- 					"proc" : sb->s_type->name,
+- 					&sbsec->behavior, &sbsec->sid);
+++		rc =3D security_fs_use(sb);
+ +		if (rc) {
+ +			printk(KERN_WARNING
+ +				"%s: security_fs_use(%s) returned %d\n",
+ +					__func__, sb->s_type->name, rc);
+ +			goto out;
+ +		}
+  	}
+ -
+  	/* sets the context of the superblock for the fs being mounted. */
+  	if (fscontext_sid) {
+  		rc =3D may_context_mount_sb_relabel(fscontext_sid, sbsec, cred);
+@@@ -2629,11 -2589,15 +2659,11 @@@ static int selinux_inode_init_security(
+  		isec->initialized =3D 1;
+  	}
+ =20
+- 	if (!ss_initialized || !(sbsec->flags & SE_SBLABELSUPP))
++ 	if (!ss_initialized || !(sbsec->flags & SBLABEL_MNT))
+  		return -EOPNOTSUPP;
+ =20
+ -	if (name) {
+ -		namep =3D kstrdup(XATTR_SELINUX_SUFFIX, GFP_NOFS);
+ -		if (!namep)
+ -			return -ENOMEM;
+ -		*name =3D namep;
+ -	}
+ +	if (name)
+ +		*name =3D XATTR_SELINUX_SUFFIX;
+ =20
+  	if (value && len) {
+  		rc =3D security_sid_to_context_force(newsid, &context, &clen);
 
---Signature=_Fri__26_Jul_2013_13_14_27_+1000_RFhC13xyzAXUJlUt
+--Signature=_Fri__26_Jul_2013_13_48_23_+1000_VItqWXMydGOGgI+6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR8emTAAoJEECxmPOUX5FEg8YP/258suZVvIRE4ELg/8gjBRqB
-5fqAVqgiLSMPR0M+PNL9+f4e0jsslIFnkUVhEb6ITqizwfA45JBf26MHEfrWv+yd
-fWWn0yxVVFUsNb+hmkSh0FDLvHC4yM77QwZqhufJdxXPhyl5cKm0N0oUhuAM9IYG
-blZB8ql3XAMfMETA+mUvoJPGEraZvhkOQ5DQXbD8aLVf4dsChsLflKs1EhkZhzE0
-ex22Z9gGocW9rr+Q5Ec5pwhVZW5lIogPYV0UhAuYSfAzGc9ICKy5zuI4gic80xZJ
-HIyYqFvFlImz8/U9KokSWN4IO4oMvbS48bKCqbC5xgdbcJ5B0b6VeGdxA8NjTLQn
-qxxm5otPwnZ8/0cv4iNw5V5x9p91WbnruphSP69x4KK68wYHOh9qKU/7ixa0xzGu
-CMjo2kIwYNgvKT7IX1YYLTNZwB5r91H9P9Q2nYu0s8O9gE3JTeys7KiZDthc7S3F
-ZQkIpH7vIMKMoC6YG/ZLwkk9fkQs+Pa2EqsslZ/DBdGSMSC3r6HjnMof3V5LSPoZ
-q5AWMkIiEjysWmPMaqZAOoKGW423hcYr9wR/fJWgZc2bjN3U3udNSA4n45vvpqxV
-/1llphi8Ry8ytBE6y7nbpQ/56lE1ytknxaD1I72b4qi5H+A+KNz1t4SFcqEROsTs
-rqyKby04HQthpBAcUFnL
-=KpqP
+iQIcBAEBCAAGBQJR8fGKAAoJEECxmPOUX5FEIFkP+wfb+ZrrOvvhwfh1zpYnoBYZ
+Uoh+lK2BmZuarDUpRPvTO68OACXbh0wlG/p7ThYWvYV51BDMDbKF2QD0oHA75w2M
+JhMs3aE7yufBTpQqdroAtafiG9jtLWrWidTflqJjCmRDoQGe4mgVW+OZowGC7Tao
++VU/Ufbl8PwmyplZQStdFvTeI1nlfW1lbQhaWOvPpJYgCr2W6G6jkrBCcblmRaku
+tB+rKhpgO8rX2QvKySghDceJWWvDwqzJEN9V7KD9BOqsJiDoiv/cgVwE8aovwtLx
+oFX6EwfF8bjRpsLG9yXyM8mgUxjccWFm5mFghX++m1+SgxkDrnEC82Kkp57LxTQG
+2etNfHeC/w9aCZQnNbUnr7taS7dziGIoQ+kLuRFg5kDhsJKV5/HBIQroWit0y5H3
+TKZ0kRJ8P98CKPQWjB0DhAqLZBq7kptcUv9LeyxQAP8Ndignrd/3w2Ta+2jUnsbJ
+Ya9rfkIjh265E8CsAIJtMOMa4iPg6pEs4zSrzSS8JpqK7MeqGONS9hBaZZebWRkL
+XqO28TupNmXTzHKbPG44Ps/1oTh96faS85OcKxstS3Ccc9IIDpkaan2/SrkRTTzM
+nu4Y9l4puG9/eluBS6X31AcgsHpyxSAD/BatCZ+gXX13v9p267sb2E6V8FcQ7ZLu
+lKgbpE4Mrl5F1KAFQGjN
+=sFMN
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__26_Jul_2013_13_14_27_+1000_RFhC13xyzAXUJlUt--
+--Signature=_Fri__26_Jul_2013_13_48_23_+1000_VItqWXMydGOGgI+6--
