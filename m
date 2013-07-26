@@ -1,160 +1,123 @@
-From: Mike Pagano <mpagano@gentoo.org>
-Subject: [PATCH] diffconfig: Update to support python 2.6 and greater
-Date: Thu, 25 Jul 2013 20:09:28 -0400
-Message-ID: <7173304.AcOIHH5vlX@comanche>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ia64 tree with the pci-current tree
+Date: Fri, 26 Jul 2013 11:18:54 +1000
+Message-ID: <20130726111854.62b21016903683608d1ba423@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__26_Jul_2013_11_18_54_+1000_kx3AsKBFKr//9Q/D"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 216.155.138.14.choopa.net ([216.155.138.14]:34023 "EHLO
-	hopi.mpagano.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756754Ab3GZAUE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2013 20:20:04 -0400
+Received: from haggis.pcug.org.au ([203.10.76.10]:45021 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756829Ab3GZBTI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2013 21:19:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, klausman@gentoo.org
-Cc: tim.bird@am.sony.com, ewoud@kohlvanwijngaarden.nl
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
 
-Modification of the diffconfig script to support both python versions 2.6 and 
-greater. Added a small change to gracefully exit if the default config files 
-are not present. (.config and .config.old)
+--Signature=_Fri__26_Jul_2013_11_18_54_+1000_kx3AsKBFKr//9Q/D
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Diffconfig is a utility script for comparing kernel configuration files.
+Hi all,
 
-Signed-off-by: Mike Pagano <mpagano@gentoo.org>
-Signed-off-by: Tobias Klausmann <klausman@gentoo.org>
-Signed-off-by: Ewoud Kohl van Wijngaarden <ewoud@kohlvanwijngaarden.nl>
----
- scripts/diffconfig | 60 ++++++++++++++++++++++++++++++------------------------
- 1 file changed, 33 insertions(+), 27 deletions(-)
+Today's linux-next merge of the ia64 tree got conflicts in
+arch/ia64/configs/generic_defconfig,
+arch/ia64/configs/gensparse_defconfig, arch/ia64/configs/tiger_defconfig
+and arch/ia64/configs/xen_domu_defconfig between commit eeaa9b427947
+("PCI: hotplug: Convert to be builtin only, not modular") from the
+pci-current tree and commit 5da8f68fb699 ("[IA64] Change
+CONFIG_HOTPLUG_PCI_ACPI=3Dm to =3Dy") from the ia64 tree.
 
-diff --git a/scripts/diffconfig b/scripts/diffconfig
-index b91f3e3..4829594 100755
---- a/scripts/diffconfig
-+++ b/scripts/diffconfig
-@@ -10,7 +10,7 @@
- import sys, os
- 
- def usage():
--    print """Usage: diffconfig [-h] [-m] [<config1> <config2>]
-+    print("""Usage: diffconfig [-h] [-m] [<config1> <config2>]
- 
- Diffconfig is a simple utility for comparing two .config files.
- Using standard diff to compare .config files often includes extraneous and
-@@ -33,7 +33,7 @@ Example usage:
-  EXT2_FS  y -> n
-  LOG_BUF_SHIFT  14 -> 16
-  PRINTK_TIME  n -> y
--"""
-+""")
-     sys.exit(0)
- 
- # returns a dictionary of name/value pairs for config items in the file
-@@ -54,23 +54,26 @@ def print_config(op, config, value, new_value):
-     if merge_style:
-         if new_value:
-             if new_value=="n":
--                print "# CONFIG_%s is not set" % config
-+                print("# CONFIG_%s is not set" % config)
-             else:
--                print "CONFIG_%s=%s" % (config, new_value)
-+                print("CONFIG_%s=%s" % (config, new_value))
-     else:
-         if op=="-":
--            print "-%s %s" % (config, value)
-+            print("-%s %s" % (config, value))
-         elif op=="+":
--            print "+%s %s" % (config, new_value)
-+            print("+%s %s" % (config, new_value))
-         else:
--            print " %s %s -> %s" % (config, value, new_value)
-+            print(" %s %s -> %s" % (config, value, new_value))
- 
- def main():
-     global merge_style
- 
-+    config_a = {}
-+    config_b = {}
-+
-     # parse command line args
-     if ("-h" in sys.argv or "--help" in sys.argv):
--	usage()
-+        usage()
- 
-     merge_style = 0
-     if "-m" in sys.argv:
-@@ -79,13 +82,13 @@ def main():
- 
-     argc = len(sys.argv)
-     if not (argc==1 or argc == 3):
--        print "Error: incorrect number of arguments or unrecognized option"
-+        print("Error: incorrect number of arguments or unrecognized option")
-         usage()
- 
-     if argc == 1:
-         # if no filenames given, assume .config and .config.old
-         build_dir=""
--        if os.environ.has_key("KBUILD_OUTPUT"):
-+        if "KBUILD_OUTPUT" in os.environ:
-             build_dir = os.environ["KBUILD_OUTPUT"]+"/"
- 
-         configa_filename = build_dir + ".config.old"
-@@ -94,36 +97,39 @@ def main():
-         configa_filename = sys.argv[1]
-         configb_filename = sys.argv[2]
- 
--    a = readconfig(file(configa_filename))
--    b = readconfig(file(configb_filename))
-+    try:
-+        config_a = readconfig(open(configa_filename))
-+        config_b = readconfig(open(configb_filename))
-+    except IOError as e:
-+        print("I/O error({0}): {1}\n".format(e.errno, e.strerror))
-+        usage()
- 
--    # print items in a but not b (accumulate, sort and print)
-+    # print items in config_a but not config_b (accumulate, sort and print)
-     old = []
--    for config in a:
--        if config not in b:
-+    for config in config_a:
-+        if config not in config_b:
-             old.append(config)
-     old.sort()
-     for config in old:
--        print_config("-", config, a[config], None)
--        del a[config]
-+        print_config("-", config, config_a[config], None)
-+        del config_a[config]
- 
-     # print items that changed (accumulate, sort, and print)
-     changed = []
--    for config in a:
--        if a[config] != b[config]:
-+    for config in config_a:
-+        if config_a[config] != config_b[config]:
-             changed.append(config)
-         else:
--            del b[config]
-+            del config_b[config]
-     changed.sort()
-     for config in changed:
--        print_config("->", config, a[config], b[config])
--        del b[config]
-+        print_config("->", config, config_a[config], config_b[config])
-+        del config_b[config]
- 
--    # now print items in b but not in a
--    # (items from b that were in a were removed above)
--    new = b.keys()
--    new.sort()
-+    # now print items in config_b but not in config_a
-+    # (items from config_b that were in config_a were removed above)
-+    new = sorted(config_b.keys())
-     for config in new:
--        print_config("+", config, None, b[config])
-+        print_config("+", config, None, config_b[config])
- 
- main()
--- 
-1.8.1.5
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/ia64/configs/generic_defconfig
+index efbd292,a4bd0ef..0000000
+--- a/arch/ia64/configs/generic_defconfig
++++ b/arch/ia64/configs/generic_defconfig
+@@@ -31,8 -31,8 +31,8 @@@ CONFIG_ACPI_FAN=3D
+  CONFIG_ACPI_DOCK=3Dy
+  CONFIG_ACPI_PROCESSOR=3Dm
+  CONFIG_ACPI_CONTAINER=3Dm
+ -CONFIG_HOTPLUG_PCI=3Dm
+ +CONFIG_HOTPLUG_PCI=3Dy
+- CONFIG_HOTPLUG_PCI_ACPI=3Dm
++ CONFIG_HOTPLUG_PCI_ACPI=3Dy
+  CONFIG_PACKET=3Dy
+  CONFIG_UNIX=3Dy
+  CONFIG_INET=3Dy
+diff --cc arch/ia64/configs/gensparse_defconfig
+index f64980d,5e5f074..0000000
+--- a/arch/ia64/configs/gensparse_defconfig
++++ b/arch/ia64/configs/gensparse_defconfig
+@@@ -25,8 -25,8 +25,8 @@@ CONFIG_ACPI_BUTTON=3D
+  CONFIG_ACPI_FAN=3Dm
+  CONFIG_ACPI_PROCESSOR=3Dm
+  CONFIG_ACPI_CONTAINER=3Dm
+ -CONFIG_HOTPLUG_PCI=3Dm
+ +CONFIG_HOTPLUG_PCI=3Dy
+- CONFIG_HOTPLUG_PCI_ACPI=3Dm
++ CONFIG_HOTPLUG_PCI_ACPI=3Dy
+  CONFIG_PACKET=3Dy
+  CONFIG_UNIX=3Dy
+  CONFIG_INET=3Dy
+diff --cc arch/ia64/configs/tiger_defconfig
+index 0f4e9e4,7049c3d..0000000
+--- a/arch/ia64/configs/tiger_defconfig
++++ b/arch/ia64/configs/tiger_defconfig
+@@@ -31,8 -31,8 +31,8 @@@ CONFIG_ACPI_BUTTON=3D
+  CONFIG_ACPI_FAN=3Dm
+  CONFIG_ACPI_PROCESSOR=3Dm
+  CONFIG_ACPI_CONTAINER=3Dm
+ -CONFIG_HOTPLUG_PCI=3Dm
+ +CONFIG_HOTPLUG_PCI=3Dy
+- CONFIG_HOTPLUG_PCI_ACPI=3Dm
++ CONFIG_HOTPLUG_PCI_ACPI=3Dy
+  CONFIG_PACKET=3Dy
+  CONFIG_UNIX=3Dy
+  CONFIG_INET=3Dy
+diff --cc arch/ia64/configs/xen_domu_defconfig
+index b025acf,7dc6ed7..0000000
+--- a/arch/ia64/configs/xen_domu_defconfig
++++ b/arch/ia64/configs/xen_domu_defconfig
+@@@ -32,8 -32,8 +32,8 @@@ CONFIG_ACPI_BUTTON=3D
+  CONFIG_ACPI_FAN=3Dm
+  CONFIG_ACPI_PROCESSOR=3Dm
+  CONFIG_ACPI_CONTAINER=3Dm
+ -CONFIG_HOTPLUG_PCI=3Dm
+ +CONFIG_HOTPLUG_PCI=3Dy
+- CONFIG_HOTPLUG_PCI_ACPI=3Dm
++ CONFIG_HOTPLUG_PCI_ACPI=3Dy
+  CONFIG_PACKET=3Dy
+  CONFIG_UNIX=3Dy
+  CONFIG_INET=3Dy
+
+--Signature=_Fri__26_Jul_2013_11_18_54_+1000_kx3AsKBFKr//9Q/D
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR8c6FAAoJEECxmPOUX5FE4PAP/jMkJM5vx+ZQy+E5IAsp8f51
+szzrOgSMB0DTh5SH2QSXUNWFT7od01tUYVc6gRediXFAH96PLeykJimkCXuhlRC/
+RX7qpcj3LV4CW6ftAkTkInOGP4K2camsfc4RuTwOFsWYkbZXYllTlybVYMqIjWBh
+nCjRKAeHnzDW5/9whpdNUxe6tD7RxyeUa5cMa5k3slFMPhSOTkvCY9TZzusu6ucX
+U6o0aDAaPh0chx1E0Jf84V0WcL52EcLGTfbrSX78ZancG0bSl3gL3NH3uoA7kzHd
+4RJf2T2DZPahnxKlE3yFOEfvIcT8rQZRXX8MAd85W04hDgHYaLWogMyXw/R5L9DH
+naRFALTR6qZg9RuHap8z0qeJvsx+vbVQtqBbxpK0x4DMkCRSjpWA3MLLEo5lWWFF
+ChP55R9gAJGYE6WgvF47QSEp1w7ESY1ok+VbKC7Y1uULIC/aLWx901QEMXRiu5Tq
+bx6Z9CaeOhV732/RiXzQuGZkC5lILmGl2bXsYGhKMy73Po0PgZThHrn0j5p9uoGn
+PWAQeVgt+UyRMrjI2ds9a0Umud71NAbB1QxqsChr3nms5Fbp9wTVbDjNl+SxsaT4
+erCgqlI9bGVYlfLV2d2Bib9vTuCB5h8UALXn1yQJzcztkTEfU7AXAvLP1iKcnblx
+VTOz9DWK/f6QYkkbe6pw
+=kzWf
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__26_Jul_2013_11_18_54_+1000_kx3AsKBFKr//9Q/D--
