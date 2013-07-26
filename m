@@ -1,8 +1,8 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Sedat Dilek <sedat.dilek@gmail.com>
 Subject: Re: [Intel-gfx] linux-next: Tree for Jul 25 [ call-trace: drm |
  drm-intel related? ]
-Date: Fri, 26 Jul 2013 10:52:00 +0200
-Message-ID: <CAKMK7uGb5=-Ur4hJiVAviYeGKpup0ScHzsf436jHXEsKar+bCQ@mail.gmail.com>
+Date: Fri, 26 Jul 2013 11:02:45 +0200
+Message-ID: <CA+icZUUZa=_nW1V6s_CVXNxCMPnxj-6vF+VafbPev3VpsCjfEg@mail.gmail.com>
 References: <20130725192248.GA13295@cantiga.alporthouse.com>
 	<CA+icZUVE3s=6vXTLsCSmdLe_HMTOj+VD317kDeH3tF7svVW8kQ@mail.gmail.com>
 	<CA+icZUU__nxcuX4RF9EBGm0nMBFaxfWpH00b2=ZsZZaxo9iscw@mail.gmail.com>
@@ -14,41 +14,59 @@ References: <20130725192248.GA13295@cantiga.alporthouse.com>
 	<CA+icZUXuj1O3oUvr_43BZDD_ikWyY9GxfOdzb3GLWJ1X1hvxyQ@mail.gmail.com>
 	<CA+icZUWJynMr-OvXwN+2eRxWWOpt2s1-Q5UMrRt3rXDcCJpwkA@mail.gmail.com>
 	<20130726085035.GJ13295@cantiga.alporthouse.com>
+	<CAKMK7uGb5=-Ur4hJiVAviYeGKpup0ScHzsf436jHXEsKar+bCQ@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:58917 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757659Ab3GZIwB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2013 04:52:01 -0400
-Received: by mail-oa0-f48.google.com with SMTP id f4so6957312oah.35
-        for <linux-next@vger.kernel.org>; Fri, 26 Jul 2013 01:52:00 -0700 (PDT)
-In-Reply-To: <20130726085035.GJ13295@cantiga.alporthouse.com>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:39512 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753365Ab3GZJCr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Jul 2013 05:02:47 -0400
+In-Reply-To: <CAKMK7uGb5=-Ur4hJiVAviYeGKpup0ScHzsf436jHXEsKar+bCQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Wilson <chris@chris-wilson.co.uk>, Sedat Dilek <sedat.dilek@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>, Jani Nikula <jani.nikula@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>
 
-On Fri, Jul 26, 2013 at 10:50 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> On Fri, Jul 26, 2013 at 10:27:03AM +0200, Sedat Dilek wrote:
->> On Fri, Jul 26, 2013 at 10:25 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> > ...
->> > ... but does not start as well, so it seems to be a kernel-issue as
->> > assumed (2nd confirmation).
->> >
->> > X.log attached.
->> >
+On Fri, Jul 26, 2013 at 10:52 AM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> On Fri, Jul 26, 2013 at 10:50 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+>> On Fri, Jul 26, 2013 at 10:27:03AM +0200, Sedat Dilek wrote:
+>>> On Fri, Jul 26, 2013 at 10:25 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>>> > ...
+>>> > ... but does not start as well, so it seems to be a kernel-issue as
+>>> > assumed (2nd confirmation).
+>>> >
+>>> > X.log attached.
+>>> >
+>>>
+>>> Now, really w/ promised attachment.
 >>
->> Now, really w/ promised attachment.
+>> Yes, same failure (GTT mmaps) but at a later point, and UXA has no
+>> fallback plan.
 >
-> Yes, same failure (GTT mmaps) but at a later point, and UXA has no
-> fallback plan.
+> I'm running igt on my machines here to prep a new -next test cycle,
+> and gtt mmaps seem to fail across the board :( Currently I'd wager
+> that the vma offset manager is the culprit, since I've only recently
+> pulled that stuff in from drm-next.
 
-I'm running igt on my machines here to prep a new -next test cycle,
-and gtt mmaps seem to fail across the board :( Currently I'd wager
-that the vma offset manager is the culprit, since I've only recently
-pulled that stuff in from drm-next.
--Daniel
---
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+So, I resetted next-20130726 to the merge-commit of
+drm-intel/for-linux-next, which is as expected bad.
+
+First, I looked w/ a Grrr at i915_gem_stolen.c with a focus on
+"drm/i915: Use Graphics Base of Stolen Memory on all gen3+", but this
+commit is also in next-20130725.
+
+Yeah, might be the stuff comes from the merge including vma stuff.
+
+- Sedat -
+
+[1] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/i915/i915_gem_stolen.c?id=4867509d9269228f69273312298fea11f414ae54
+
+- Sedat -
+
+> -Daniel
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
