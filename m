@@ -1,83 +1,160 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: [Intel-gfx] linux-next: Tree for Jul 25 [ call-trace: drm |
- drm-intel related? ]
-Date: Fri, 26 Jul 2013 00:25:56 +0100
-Message-ID: <20130725232556.GF13295@cantiga.alporthouse.com>
-References: <CA+icZUV+D8PvEysipfg9nPXp3ON1QSA7DiFdpYFpdesFF5c0sw@mail.gmail.com>
- <20130725184504.GC11514@cantiga.alporthouse.com>
- <CA+icZUVLXxA5LPxzTjyhP5gryNUH3OY+vutoXQj6ydtCU0msbA@mail.gmail.com>
- <20130725190006.GD11514@cantiga.alporthouse.com>
- <CA+icZUW6oLE6cdnCkekz+43SrUn=vThqdfSKzz=XP-vmvB7Amw@mail.gmail.com>
- <20130725192248.GA13295@cantiga.alporthouse.com>
- <CA+icZUVE3s=6vXTLsCSmdLe_HMTOj+VD317kDeH3tF7svVW8kQ@mail.gmail.com>
- <CA+icZUU__nxcuX4RF9EBGm0nMBFaxfWpH00b2=ZsZZaxo9iscw@mail.gmail.com>
- <20130725215259.GB13295@cantiga.alporthouse.com>
- <CA+icZUXZKndg7==Y6v2Z45WZDp+tDC5FzaOC=KWTf4m=rjUKnA@mail.gmail.com>
+From: Mike Pagano <mpagano@gentoo.org>
+Subject: [PATCH] diffconfig: Update to support python 2.6 and greater
+Date: Thu, 25 Jul 2013 20:09:28 -0400
+Message-ID: <7173304.AcOIHH5vlX@comanche>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+icZUXZKndg7==Y6v2Z45WZDp+tDC5FzaOC=KWTf4m=rjUKnA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 216.155.138.14.choopa.net ([216.155.138.14]:34023 "EHLO
+	hopi.mpagano.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1756754Ab3GZAUE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jul 2013 20:20:04 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org, klausman@gentoo.org
+Cc: tim.bird@am.sony.com, ewoud@kohlvanwijngaarden.nl
 
-On Fri, Jul 26, 2013 at 01:21:07AM +0200, Sedat Dilek wrote:
-> On Thu, Jul 25, 2013 at 11:52 PM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> > On Thu, Jul 25, 2013 at 10:07:02PM +0200, Sedat Dilek wrote:
-> >> What means the bang line?
-> >>
-> >> [    54.564] (II) GLX: Initialized DRI2 GL provider for screen 0
-> >> [    54.565] bang: 1159
-> >> [    54.565]
-> >> Fatal server error:
-> >> [    54.565] failed to create screen resources
-> >
-> > That means between the kernel reporting success for
-> > DRM_IOCTL_I915_GEM_MMAP_GTT and libdrm returning from
-> > drm_intel_gem_bo_map_gtt(), something went wrong. This implies that the
-> > call to mmap() failed.
-> >
-> > I don't see how changing versions of the ddx would unmask the bug, nor
-> > why the mmap() should suddenly start failing. Anybody have any
-> > suggestions other than
-> >
-> > diff --git a/src/intel_uxa.c b/src/intel_uxa.c
-> > index 2f14173..3872258 100644
-> > --- a/src/intel_uxa.c
-> > +++ b/src/intel_uxa.c
-> > @@ -1149,12 +1149,15 @@ Bool intel_uxa_create_screen_resources(ScreenPtr screen)
-> >         PixmapPtr pixmap;
-> >         intel_screen_private *intel = intel_get_screen_private(scrn);
-> >         dri_bo *bo = intel->front_buffer;
-> > +       int ret;
-> >
-> >         if (!uxa_resources_init(screen))
-> >                 return FALSE;
-> >
-> > -       if (drm_intel_gem_bo_map_gtt(bo))
-> > +       if ((ret = drm_intel_gem_bo_map_gtt(bo))) {
-> > +               ErrorF("%s:%d bang, errno=%d\n", __func__, __LINE__, -ret);
-> >                 return FALSE;
-> > +       }
-> >
-> >         pixmap = screen->GetScreenPixmap(screen);
-> >         intel_set_pixmap_bo(pixmap, bo);
-> >
-> > which is most likely to report EINVAL (22)?
-> 
-> Yupp, this shows me...
-> 
-> [    28.542] (II) GLX: Initialized DRI2 GL provider for screen 0
-> [    28.543] intel_uxa_create_screen_resources:1158 bang, errno=22
-> [    28.543]
-> Fatal server error:
-> [    28.543] failed to create screen resources
+Modification of the diffconfig script to support both python versions 2.6 and 
+greater. Added a small change to gracefully exit if the default config files 
+are not present. (.config and .config.old)
 
-I'm out of ideas, could you bisect this? Either kernel, userspace or
-both. Thanks,
--Chris
+Diffconfig is a utility script for comparing kernel configuration files.
 
+Signed-off-by: Mike Pagano <mpagano@gentoo.org>
+Signed-off-by: Tobias Klausmann <klausman@gentoo.org>
+Signed-off-by: Ewoud Kohl van Wijngaarden <ewoud@kohlvanwijngaarden.nl>
+---
+ scripts/diffconfig | 60 ++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 33 insertions(+), 27 deletions(-)
+
+diff --git a/scripts/diffconfig b/scripts/diffconfig
+index b91f3e3..4829594 100755
+--- a/scripts/diffconfig
++++ b/scripts/diffconfig
+@@ -10,7 +10,7 @@
+ import sys, os
+ 
+ def usage():
+-    print """Usage: diffconfig [-h] [-m] [<config1> <config2>]
++    print("""Usage: diffconfig [-h] [-m] [<config1> <config2>]
+ 
+ Diffconfig is a simple utility for comparing two .config files.
+ Using standard diff to compare .config files often includes extraneous and
+@@ -33,7 +33,7 @@ Example usage:
+  EXT2_FS  y -> n
+  LOG_BUF_SHIFT  14 -> 16
+  PRINTK_TIME  n -> y
+-"""
++""")
+     sys.exit(0)
+ 
+ # returns a dictionary of name/value pairs for config items in the file
+@@ -54,23 +54,26 @@ def print_config(op, config, value, new_value):
+     if merge_style:
+         if new_value:
+             if new_value=="n":
+-                print "# CONFIG_%s is not set" % config
++                print("# CONFIG_%s is not set" % config)
+             else:
+-                print "CONFIG_%s=%s" % (config, new_value)
++                print("CONFIG_%s=%s" % (config, new_value))
+     else:
+         if op=="-":
+-            print "-%s %s" % (config, value)
++            print("-%s %s" % (config, value))
+         elif op=="+":
+-            print "+%s %s" % (config, new_value)
++            print("+%s %s" % (config, new_value))
+         else:
+-            print " %s %s -> %s" % (config, value, new_value)
++            print(" %s %s -> %s" % (config, value, new_value))
+ 
+ def main():
+     global merge_style
+ 
++    config_a = {}
++    config_b = {}
++
+     # parse command line args
+     if ("-h" in sys.argv or "--help" in sys.argv):
+-	usage()
++        usage()
+ 
+     merge_style = 0
+     if "-m" in sys.argv:
+@@ -79,13 +82,13 @@ def main():
+ 
+     argc = len(sys.argv)
+     if not (argc==1 or argc == 3):
+-        print "Error: incorrect number of arguments or unrecognized option"
++        print("Error: incorrect number of arguments or unrecognized option")
+         usage()
+ 
+     if argc == 1:
+         # if no filenames given, assume .config and .config.old
+         build_dir=""
+-        if os.environ.has_key("KBUILD_OUTPUT"):
++        if "KBUILD_OUTPUT" in os.environ:
+             build_dir = os.environ["KBUILD_OUTPUT"]+"/"
+ 
+         configa_filename = build_dir + ".config.old"
+@@ -94,36 +97,39 @@ def main():
+         configa_filename = sys.argv[1]
+         configb_filename = sys.argv[2]
+ 
+-    a = readconfig(file(configa_filename))
+-    b = readconfig(file(configb_filename))
++    try:
++        config_a = readconfig(open(configa_filename))
++        config_b = readconfig(open(configb_filename))
++    except IOError as e:
++        print("I/O error({0}): {1}\n".format(e.errno, e.strerror))
++        usage()
+ 
+-    # print items in a but not b (accumulate, sort and print)
++    # print items in config_a but not config_b (accumulate, sort and print)
+     old = []
+-    for config in a:
+-        if config not in b:
++    for config in config_a:
++        if config not in config_b:
+             old.append(config)
+     old.sort()
+     for config in old:
+-        print_config("-", config, a[config], None)
+-        del a[config]
++        print_config("-", config, config_a[config], None)
++        del config_a[config]
+ 
+     # print items that changed (accumulate, sort, and print)
+     changed = []
+-    for config in a:
+-        if a[config] != b[config]:
++    for config in config_a:
++        if config_a[config] != config_b[config]:
+             changed.append(config)
+         else:
+-            del b[config]
++            del config_b[config]
+     changed.sort()
+     for config in changed:
+-        print_config("->", config, a[config], b[config])
+-        del b[config]
++        print_config("->", config, config_a[config], config_b[config])
++        del config_b[config]
+ 
+-    # now print items in b but not in a
+-    # (items from b that were in a were removed above)
+-    new = b.keys()
+-    new.sort()
++    # now print items in config_b but not in config_a
++    # (items from config_b that were in config_a were removed above)
++    new = sorted(config_b.keys())
+     for config in new:
+-        print_config("+", config, None, b[config])
++        print_config("+", config, None, config_b[config])
+ 
+ main()
 -- 
-Chris Wilson, Intel Open Source Technology Centre
+1.8.1.5
