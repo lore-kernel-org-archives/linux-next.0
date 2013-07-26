@@ -1,36 +1,48 @@
-From: "tj@kernel.org" <tj@kernel.org>
-Subject: Re: linux-next: Tree for Jul 25 (ahci_imx.c)
-Date: Fri, 26 Jul 2013 07:18:50 -0400
-Message-ID: <20130726111850.GD30786@mtj.dyndns.org>
-References: <20130725151253.8b9b53b3a3cf6cacd501dc54@canb.auug.org.au>
- <51F16F17.4030002@infradead.org>
- <0E83723C55F66F43A6041464FE31119D3487F2@039-SN2MPN1-011.039d.mgd.msft.net>
- <20130726040349.GA29268@S2101-09.ap.freescale.net>
- <0E83723C55F66F43A6041464FE31119D34886A@039-SN2MPN1-011.039d.mgd.msft.net>
- <20130726052519.GB29268@S2101-09.ap.freescale.net>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: linux-next: build failure after merge of the lblnet tree
+Date: Fri, 26 Jul 2013 08:52:59 -0400
+Message-ID: <2559996.tgPUuSUm5t@sifl>
+References: <20130726140617.c31cc3d8e5fb88dd69707906@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130726052519.GB29268@S2101-09.ap.freescale.net>
+In-Reply-To: <20130726140617.c31cc3d8e5fb88dd69707906@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Zhu Richard-R65037 <r65037@freescale.com>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 26, 2013 at 01:25:21PM +0800, Shawn Guo wrote:
-> On Fri, Jul 26, 2013 at 04:58:14AM +0000, Zhu Richard-R65037 wrote:
-> > Hi Shawn:
-> > yes, it is.
-> > 
-> > BTW, Should I re-send the AHCI_IMX patch-set or send out one stand-alone patch to fix this issue?
-> > 
+On Friday, July 26, 2013 02:06:17 PM Stephen Rothwell wrote:
+> Hi Paul,
 > 
-> I think an incremental fixing patch is good.
+> After merging the lblnet tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> security/selinux/hooks.c: In function 'sb_finish_set_opts':
+> security/selinux/hooks.c:448:19: error: 'SE_SBLABELSUPP' undeclared (first
+> use in this function) sbsec->flags |= SE_SBLABELSUPP;
+>                    ^
+> Caused by commit 8cf9124a324f ("SELinux: Enable setting security contexts
+> on rootfs inodes") interacting with commit 12f348b9dcf6 ("SELinux: rename
+> SE_SBLABELSUPP to SBLABEL_MNT") from the selinux tree.
+> 
+> This is not helped by the fact that there are a lot of commits in the
+> lblnet tree (including 8cf9124a324f) that have been cherry-picked
+> (instead of being merged) into the selinux tree.  :-(
 
-Yeap, it's already upstream.  There's no other way.
+The problem should be fixed now.
 
-Thanks.
+The issue was that I was temporarily holding a lot of these SELinux patches in 
+the lblnet-next tree so they could get some linux-next exposure while Eric was 
+busy an unable to update the SELinux tree.  Unfortunately, there was some 
+miscommunication between Eric and I yesterday and the trees got a bit out of 
+sync.  All the lblnet-next patches have now been included in the SELinux tree 
+so I've "pruned" them from the lblnet-next tree.
+
+Thanks for your understanding,
+-Paul
 
 -- 
-tejun
+paul moore
+www.paul-moore.com
