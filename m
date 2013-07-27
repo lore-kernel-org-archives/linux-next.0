@@ -1,82 +1,53 @@
-From: Greg KH <greg@kroah.com>
+From: Eli Billauer <eli.billauer@gmail.com>
 Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Fri, 26 Jul 2013 16:28:55 -0700
-Message-ID: <20130726232855.GA2492@kroah.com>
+Date: Sat, 27 Jul 2013 16:30:34 +0300
+Message-ID: <51F3CB7A.1060409@gmail.com>
 References: <20130726160254.83bbe994219d6ee732c64b7d@canb.auug.org.au>
- <20130726210335.GA2788@kroah.com>
- <51F2E8A4.2010405@gmail.com>
- <20130726215634.GA31820@kroah.com>
- <51F2FE34.8010601@gmail.com>
+ <20130726210335.GA2788@kroah.com> <51F2E8A4.2010405@gmail.com>
+ <20130726215634.GA31820@kroah.com> <51F2FE34.8010601@gmail.com>
+ <20130726232855.GA2492@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; CHARSET=US-ASCII; format=flowed
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:41587 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751874Ab3GZX27 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Jul 2013 19:28:59 -0400
-Content-Disposition: inline
-In-Reply-To: <51F2FE34.8010601@gmail.com>
+Received: from mxout1.netvision.net.il ([194.90.9.20]:33821 "EHLO
+	mxout1.netvision.net.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751585Ab3G0Nb0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 27 Jul 2013 09:31:26 -0400
+In-reply-to: <20130726232855.GA2492@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eli Billauer <eli.billauer@gmail.com>
+To: Greg KH <greg@kroah.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jul 27, 2013 at 01:54:44AM +0300, Eli Billauer wrote:
-> On 27/07/13 00:56, Greg KH wrote:
-> >No, I need you to do that.  Can you do a kernel build with:
-> >	make M=drivers/staging/xillybus C=1
-> >and fix up the errors that sparse reports and send a patch for that?
-> >
-> I'm not sure it's related to me. I get the same errors whether I
-> compile my own modules or something in e.g. drivers/tty/ . This is
-> what I get after make allmodconfig on the current staging git repo:
-> 
-> $ make M=drivers/staging/xillybus C=1
-> /home/eli/xillybus/submission/staging/arch/x86/Makefile:107:
-> CONFIG_X86_X32 enabled but no binutils support
->   CHECK   drivers/staging/xillybus/xillybus_core.c
-> /home/eli/xillybus/submission/staging/arch/x86/include/asm/jump_label.h:16:13:
-> error: Expected ( after asm
-> /home/eli/xillybus/submission/staging/arch/x86/include/asm/jump_label.h:16:13:
-> error: got goto
->   CC [M]  drivers/staging/xillybus/xillybus_core.o
->   CHECK   drivers/staging/xillybus/xillybus_pcie.c
-> /home/eli/xillybus/submission/staging/arch/x86/include/asm/jump_label.h:16:13:
-> error: Expected ( after asm
-> /home/eli/xillybus/submission/staging/arch/x86/include/asm/jump_label.h:16:13:
-> error: got goto
->   CC [M]  drivers/staging/xillybus/xillybus_pcie.o
-> 
-> I'll spare you the output from modules in drivers/tty. But it's
-> exactly the same messages on each of these modules.
-> 
-> Am I doing something wrong?
+Hello Greg,
 
-Odd, you might need to upgrade the version of sparse you have.  My
-output looks like:
+I upgraded sparse 0.4.2 -> 0.4.4 and now we see the same error messages.
 
-$ make M=drivers/staging/xillybus/ C=1
-  LD      drivers/staging/xillybus//built-in.o
-  CHECK   drivers/staging/xillybus//xillybus_core.c
-drivers/staging/xillybus//xillybus_core.c:76:25: warning: symbol 'xillybus_wq' was not declared. Should it be static?
-drivers/staging/xillybus//xillybus_core.c:175:57: warning: incorrect type in argument 2 (different address spaces)
-drivers/staging/xillybus//xillybus_core.c:175:57:    expected void [noderef] <asn:2>*<noident>
-drivers/staging/xillybus//xillybus_core.c:175:57:    got unsigned int [usertype] *
-drivers/staging/xillybus//xillybus_core.c:309:39: warning: incorrect type in argument 2 (different address spaces)
-drivers/staging/xillybus//xillybus_core.c:309:39:    expected void [noderef] <asn:2>*<noident>
-drivers/staging/xillybus//xillybus_core.c:309:39:    got unsigned int [usertype] *
-drivers/staging/xillybus//xillybus_core.c:606:55: warning: incorrect type in argument 2 (different address spaces)
-drivers/staging/xillybus//xillybus_core.c:606:55:    expected void [noderef] <asn:2>*<noident>
-drivers/staging/xillybus//xillybus_core.c:606:55:    got unsigned int [usertype] *
+It will take me a few days to prepare a patch for that.
 
-and goes on for a few screens.
+Thanks for your patience.
+     Eli
 
-$ sparse --version
-0.4.4
-
-Try a newer version and see if that fixes things.
-
-thanks,
-
-greg k-h
+On 27/07/13 02:28, Greg KH wrote:
+> $ make M=drivers/staging/xillybus/ C=1
+>    LD      drivers/staging/xillybus//built-in.o
+>    CHECK   drivers/staging/xillybus//xillybus_core.c
+> drivers/staging/xillybus//xillybus_core.c:76:25: warning: symbol 'xillybus_wq' was not declared. Should it be static?
+> drivers/staging/xillybus//xillybus_core.c:175:57: warning: incorrect type in argument 2 (different address spaces)
+> drivers/staging/xillybus//xillybus_core.c:175:57:    expected void [noderef]<asn:2>*<noident>
+> drivers/staging/xillybus//xillybus_core.c:175:57:    got unsigned int [usertype] *
+> drivers/staging/xillybus//xillybus_core.c:309:39: warning: incorrect type in argument 2 (different address spaces)
+> drivers/staging/xillybus//xillybus_core.c:309:39:    expected void [noderef]<asn:2>*<noident>
+> drivers/staging/xillybus//xillybus_core.c:309:39:    got unsigned int [usertype] *
+> drivers/staging/xillybus//xillybus_core.c:606:55: warning: incorrect type in argument 2 (different address spaces)
+> drivers/staging/xillybus//xillybus_core.c:606:55:    expected void [noderef]<asn:2>*<noident>
+> drivers/staging/xillybus//xillybus_core.c:606:55:    got unsigned int [usertype] *
+>
+> and goes on for a few screens.
+>
+> $ sparse --version
+> 0.4.4
+>
+> Try a newer version and see if that fixes things.
+>    
