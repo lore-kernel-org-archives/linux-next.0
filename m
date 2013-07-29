@@ -1,73 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the char-misc tree with Linus' tree
-Date: Mon, 29 Jul 2013 15:01:29 +1000
-Message-ID: <20130729150129.76a9fab4023ee22c940b7920@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the spi tree
+Date: Mon, 29 Jul 2013 15:56:09 +1000
+Message-ID: <20130729155609.bb9d635427d8eef1da954e3a@canb.auug.org.au>
+References: <20130729134223.bbae9d9f2a9cd6ca1717c976@canb.auug.org.au>
+	<20130729050011.GJ9858@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Jul_2013_15_01_29_+1000_+A8He6yoynWsVV0n"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__29_Jul_2013_15_56_09_+1000_76k97KRii/DMK2cu"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40583 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754806Ab3G2F4S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2013 01:56:18 -0400
+In-Reply-To: <20130729050011.GJ9858@sirena.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__29_Jul_2013_15_01_29_+1000_+A8He6yoynWsVV0n
+--Signature=_Mon__29_Jul_2013_15_56_09_+1000_76k97KRii/DMK2cu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mark,
 
-Today's linux-next merge of the char-misc tree got a conflict in
-drivers/misc/mei/init.c between commit 99f22c4ef24c ("mei: don't have to
-clean the state on power up") from Linus' tree and commit b950ac1dabfc
-("mei: don't get stuck in select during reset") from the char-misc tree.
+On Mon, 29 Jul 2013 06:00:11 +0100 Mark Brown <broonie@kernel.org> wrote:
+>
+> On Mon, Jul 29, 2013 at 01:42:23PM +1000, Stephen Rothwell wrote:
+>=20
+> > drivers/spi/spi-pxa2xx-pxadma.c: In function 'wait_dma_channel_stop':
+> > drivers/spi/spi-pxa2xx-pxadma.c:136:2: error: implicit declaration of f=
+unction 'DCSR' [-Werror=3Dimplicit-function-declaration]
+> >   while (!(DCSR(channel) & DCSR_STOPSTATE) && --limit)
+>=20
+> > Frankly, Mark, if you are unable or unwilling to do some basic cross
+> > build testing, please do not do any more of these patches that add
+> > CONFIG_COMPILE_TEST.  Leave them to someone who can.
+>=20
+> This was cross built.  It didn't show up due to the fact that the
+> minimal configs I use for build coverage (and in fact every single
+> config I was building) didn't have PCI turned on (which is a dependency
+> for this option actually building anything) which allowed this config
+> symbol to be enabled without showing the problem due to the slightly odd
+> way the config for the driver is structured; any system with PCI that's
+> not PXA would be affected.
+>=20
+> Most (though not all) of the other issues have been due to similar
+> stuff.  I do rely on the 0 day tester for the full builds but I do pretty
+> routinely test (especially on x86) these days though with minimal
+> configs and on my full working tree.
 
-(Unrelated white space changes are a pest :-()
+Did the 0 day tester find these?  If so, then maybe you should wait a
+while longer before adding these things to your published trees.  If not,
+then I wonder why not.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Even so as a developer, you should not really be submitting patches that
+have not been at least build tested.   You can find out which files are
+affected by these config changes and then really simply do:
+(assuming an x86 native platform - adjust for cross compiling)
 
+$ mkdir ../test.obj
+$ make O=3D../test.obj allmodconfig
+<make sure that the CONFIG options got turned on>
+$ make O=3D../test.obj <files affected s/.c/.o/>
+
+You don't need to do full builds to find most of this stuff.  Of course,
+this will not find link time errors or missing module symbols.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/misc/mei/init.c
-index e6f16f8,557eed2..0000000
---- a/drivers/misc/mei/init.c
-+++ b/drivers/misc/mei/init.c
-@@@ -148,8 -148,8 +148,9 @@@ void mei_reset(struct mei_device *dev,=20
- =20
-  	dev->hbm_state =3D MEI_HBM_IDLE;
- =20
- -	if (dev->dev_state !=3D MEI_DEV_INITIALIZING) {
- +	if (dev->dev_state !=3D MEI_DEV_INITIALIZING &&
- +	    dev->dev_state !=3D MEI_DEV_POWER_UP) {
-+=20
-  		if (dev->dev_state !=3D MEI_DEV_DISABLED &&
-  		    dev->dev_state !=3D MEI_DEV_POWER_DOWN)
-  			dev->dev_state =3D MEI_DEV_RESETTING;
-
---Signature=_Mon__29_Jul_2013_15_01_29_+1000_+A8He6yoynWsVV0n
+--Signature=_Mon__29_Jul_2013_15_56_09_+1000_76k97KRii/DMK2cu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR9fctAAoJEECxmPOUX5FE8REP/iDnz7kVzm3MQL676aATMay3
-mzEdcfM41nYPbtLeN/fly6WL2Q2JJb4VBrmoFtMth8dB7Xt/3OLSfOe2qi+ptgnz
-LzitsCdw6sn94IS6XiBgwLjwZNhAdzii7wdC4PBd6sv/IskwchBRxwrWd2vvrEaJ
-6Djhvz3ac0Xwwx6JXLHcRTQHoc75+Cr7rUDFWHBSy8xtmq6+ex1EibWNDTtScuN7
-geZBCQbvw6X1eeGUuq9XMAqKZe+NU4t+OEHAbCaT8kjjB2h2M5sR/pJUWJKQqn7M
-OIc4lfkbOLTbN94mqOnd6BpkvmH3+CULFFfvXl2Akihxx1kRtxFWt0HYM0eMrPlc
-hfYuOWYr4N8oFJPJjrvA/gd9wfJgqDrgaloJ3rQGZqyjBuJwsCHOWBjnYi3WwGvA
-QKiYcnktbAoHttNI+tLu/0TezxxC644TqWN/aWm67/O9BL0MkQa1089Q4HrISkh7
-kbiWATyPW68cRcQ/uY7SQ6JOqxjdsJwpHLUI4LHSqNORX8m6+eVJkfj73fNemASq
-JhNrVpT85g8irl0hNzNySQOeH8AmcF+KGDVsG9ZfaXj89S/I9olCojkIvG9Odvag
-knlGp/E+Hm8qguHq8uvOeAbNkZfL9yzygJc3bqjRrLLyAoImm8g5OkwL6zNPRNKu
-1B/FGRqIE4wuRVV0xfLO
-=vb/Z
+iQIcBAEBCAAGBQJR9gP9AAoJEECxmPOUX5FEUnMP/io/BBkFTS+XKzmzusE/+x+W
+AVsBizL5RizO5rvpg0TY6OYzchP7+08pt3FwKs70XlGhXLan2bBmp0bSqUbxqrIN
+kz3VZjnddno6hDCewH6YMgENVsbnXb6PScDhhv9++zRIy00uD3XCxniBUzNfFT8J
+dVR3/fCrpYEIZ6hbj7X65vgdRCdYs5/lO4NqvLROePQizt6LeS9NH7Tazc2faLYz
+r+1uXqw7Srgr9XLJwp7a35ePpeWKJUprQAYMa7dl2hWAPu2xgjtfD+SNQraAFg0N
+hn3N4pjgNqDQjRuMZc6XK+zDcTdQvnbf9uY4n2PjqG2ZfHC4hjw/gheUZ9pTkZ59
+iVjXE0AGG/YBq2GeXEA8Il/wfaJc9zC+EB/HH+4KYYXG/1R0UcllVBvChGC2MNqc
+SPSH5KMuHIQdIj/a1t1/r02m/kADiBoafHk95Zwb0nJTqOi/qK5ubb5Q4zpcO1No
+jd/ZdgDauF8chH2a+8j/u/agxR9617RIklvuUmee2zzBIm1y0qfAe8TfEEYRF/t9
+HKMIjhT2VEkWV2uehSsf/9+eTr7dejTSj2jrJoK5t4YFyZNbFgfglW+WqrmsH8Iw
+OG8I1NwwXGWTlnZdg500Tsz2n0i/A/ftRyOIHRFotpNFxHZSpXHysKNCe4XyBqED
+6i52mEC1yiZpKAY7XlFH
+=8Mu9
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Jul_2013_15_01_29_+1000_+A8He6yoynWsVV0n--
+--Signature=_Mon__29_Jul_2013_15_56_09_+1000_76k97KRii/DMK2cu--
