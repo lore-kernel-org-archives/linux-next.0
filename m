@@ -1,84 +1,362 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Mon, 29 Jul 2013 12:58:51 +1000
-Message-ID: <20130729125851.a4b10b1fe06303772afd74b0@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the spi tree
+Date: Mon, 29 Jul 2013 13:42:23 +1000
+Message-ID: <20130729134223.bbae9d9f2a9cd6ca1717c976@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Jul_2013_12_58_51_+1000_mayw1nBnNXU.r=Yc"
+ boundary="Signature=_Mon__29_Jul_2013_13_42_23_+1000_t5zUmu3KWosF8q4j"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49800 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43111 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752167Ab3G2C7E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Jul 2013 22:59:04 -0400
+	with ESMTP id S1752482Ab3G2Dmd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Jul 2013 23:42:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Herrmann <dh.herrmann@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__29_Jul_2013_12_58_51_+1000_mayw1nBnNXU.r=Yc
+--Signature=_Mon__29_Jul_2013_13_42_23_+1000_t5zUmu3KWosF8q4j
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Mark,
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/qxl/qxl_release.c between commit 8002db6336dd ("qxl:
-convert qxl driver to proper use for reservations") from Linus' tree and
-commit 72525b3f333d ("drm/ttm: convert to unified vma offset manager")
-from the drm tree.
+After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+drivers/spi/spi-pxa2xx-pxadma.c: In function 'wait_dma_channel_stop':
+drivers/spi/spi-pxa2xx-pxadma.c:136:2: error: implicit declaration of funct=
+ion 'DCSR' [-Werror=3Dimplicit-function-declaration]
+  while (!(DCSR(channel) & DCSR_STOPSTATE) && --limit)
+  ^
+drivers/spi/spi-pxa2xx-pxadma.c:136:27: error: 'DCSR_STOPSTATE' undeclared =
+(first use in this function)
+  while (!(DCSR(channel) & DCSR_STOPSTATE) && --limit)
+                           ^
+drivers/spi/spi-pxa2xx-pxadma.c:136:27: note: each undeclared identifier is=
+ reported only once for each function it appears in
+drivers/spi/spi-pxa2xx-pxadma.c: In function 'pxa2xx_spi_dma_error_stop':
+drivers/spi/spi-pxa2xx-pxadma.c:32:28: error: 'DCSR_NODESC' undeclared (fir=
+st use in this function)
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                            ^
+drivers/spi/spi-pxa2xx-pxadma.c:148:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->rx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c:31:24: error: 'DCSR_ENDINTR' undeclared (fi=
+rst use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                        ^
+drivers/spi/spi-pxa2xx-pxadma.c:32:42: note: in expansion of macro 'DMA_INT=
+_MASK'
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                                          ^
+drivers/spi/spi-pxa2xx-pxadma.c:148:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->rx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c:31:39: error: 'DCSR_STARTINTR' undeclared (=
+first use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                                       ^
+drivers/spi/spi-pxa2xx-pxadma.c:32:42: note: in expansion of macro 'DMA_INT=
+_MASK'
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                                          ^
+drivers/spi/spi-pxa2xx-pxadma.c:148:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->rx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c:31:56: error: 'DCSR_BUSERR' undeclared (fir=
+st use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                                                        ^
+drivers/spi/spi-pxa2xx-pxadma.c:32:42: note: in expansion of macro 'DMA_INT=
+_MASK'
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                                          ^
+drivers/spi/spi-pxa2xx-pxadma.c:148:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->rx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c: In function 'pxa2xx_spi_dma_transfer_compl=
+ete':
+drivers/spi/spi-pxa2xx-pxadma.c:32:28: error: 'DCSR_NODESC' undeclared (fir=
+st use in this function)
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                            ^
+drivers/spi/spi-pxa2xx-pxadma.c:173:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->tx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c:31:24: error: 'DCSR_ENDINTR' undeclared (fi=
+rst use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                        ^
+drivers/spi/spi-pxa2xx-pxadma.c:32:42: note: in expansion of macro 'DMA_INT=
+_MASK'
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                                          ^
+drivers/spi/spi-pxa2xx-pxadma.c:173:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->tx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c:31:39: error: 'DCSR_STARTINTR' undeclared (=
+first use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                                       ^
+drivers/spi/spi-pxa2xx-pxadma.c:32:42: note: in expansion of macro 'DMA_INT=
+_MASK'
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                                          ^
+drivers/spi/spi-pxa2xx-pxadma.c:173:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->tx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c:31:56: error: 'DCSR_BUSERR' undeclared (fir=
+st use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                                                        ^
+drivers/spi/spi-pxa2xx-pxadma.c:32:42: note: in expansion of macro 'DMA_INT=
+_MASK'
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                                          ^
+drivers/spi/spi-pxa2xx-pxadma.c:173:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->tx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c:188:4: error: implicit declaration of funct=
+ion 'DCMD' [-Werror=3Dimplicit-function-declaration]
+    (DCMD(drv_data->rx_channel) & DCMD_LENGTH);
+    ^
+drivers/spi/spi-pxa2xx-pxadma.c:188:34: error: 'DCMD_LENGTH' undeclared (fi=
+rst use in this function)
+    (DCMD(drv_data->rx_channel) & DCMD_LENGTH);
+                                  ^
+drivers/spi/spi-pxa2xx-pxadma.c: In function 'pxa2xx_spi_dma_handler':
+drivers/spi/spi-pxa2xx-pxadma.c:31:24: error: 'DCSR_ENDINTR' undeclared (fi=
+rst use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                        ^
+drivers/spi/spi-pxa2xx-pxadma.c:213:35: note: in expansion of macro 'DMA_IN=
+T_MASK'
+  u32 irq_status =3D DCSR(channel) & DMA_INT_MASK;
+                                   ^
+drivers/spi/spi-pxa2xx-pxadma.c:31:39: error: 'DCSR_STARTINTR' undeclared (=
+first use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                                       ^
+drivers/spi/spi-pxa2xx-pxadma.c:213:35: note: in expansion of macro 'DMA_IN=
+T_MASK'
+  u32 irq_status =3D DCSR(channel) & DMA_INT_MASK;
+                                   ^
+drivers/spi/spi-pxa2xx-pxadma.c:31:56: error: 'DCSR_BUSERR' undeclared (fir=
+st use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                                                        ^
+drivers/spi/spi-pxa2xx-pxadma.c:213:35: note: in expansion of macro 'DMA_IN=
+T_MASK'
+  u32 irq_status =3D DCSR(channel) & DMA_INT_MASK;
+                                   ^
+drivers/spi/spi-pxa2xx-pxadma.c: In function 'pxa2xx_spi_dma_transfer':
+drivers/spi/spi-pxa2xx-pxadma.c:255:36: error: 'DCSR_RUN' undeclared (first=
+ use in this function)
+   && (DCSR(drv_data->tx_channel) & DCSR_RUN)) {
+                                    ^
+drivers/spi/spi-pxa2xx-pxadma.c: In function 'pxa2xx_spi_dma_prepare':
+drivers/spi/spi-pxa2xx-pxadma.c:283:15: error: 'DCMD_WIDTH1' undeclared (fi=
+rst use in this function)
+   dma_width =3D DCMD_WIDTH1;
+               ^
+drivers/spi/spi-pxa2xx-pxadma.c:286:15: error: 'DCMD_WIDTH2' undeclared (fi=
+rst use in this function)
+   dma_width =3D DCMD_WIDTH2;
+               ^
+drivers/spi/spi-pxa2xx-pxadma.c:289:15: error: 'DCMD_WIDTH4' undeclared (fi=
+rst use in this function)
+   dma_width =3D DCMD_WIDTH4;
+               ^
+drivers/spi/spi-pxa2xx-pxadma.c:32:28: error: 'DCSR_NODESC' undeclared (fir=
+st use in this function)
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                            ^
+drivers/spi/spi-pxa2xx-pxadma.c:294:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->rx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c:31:24: error: 'DCSR_ENDINTR' undeclared (fi=
+rst use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                        ^
+drivers/spi/spi-pxa2xx-pxadma.c:32:42: note: in expansion of macro 'DMA_INT=
+_MASK'
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                                          ^
+drivers/spi/spi-pxa2xx-pxadma.c:294:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->rx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c:31:39: error: 'DCSR_STARTINTR' undeclared (=
+first use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                                       ^
+drivers/spi/spi-pxa2xx-pxadma.c:32:42: note: in expansion of macro 'DMA_INT=
+_MASK'
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                                          ^
+drivers/spi/spi-pxa2xx-pxadma.c:294:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->rx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c:31:56: error: 'DCSR_BUSERR' undeclared (fir=
+st use in this function)
+ #define DMA_INT_MASK  (DCSR_ENDINTR | DCSR_STARTINTR | DCSR_BUSERR)
+                                                        ^
+drivers/spi/spi-pxa2xx-pxadma.c:32:42: note: in expansion of macro 'DMA_INT=
+_MASK'
+ #define RESET_DMA_CHANNEL (DCSR_NODESC | DMA_INT_MASK)
+                                          ^
+drivers/spi/spi-pxa2xx-pxadma.c:294:31: note: in expansion of macro 'RESET_=
+DMA_CHANNEL'
+  DCSR(drv_data->rx_channel) =3D RESET_DMA_CHANNEL;
+                               ^
+drivers/spi/spi-pxa2xx-pxadma.c:295:2: error: implicit declaration of funct=
+ion 'DSADR' [-Werror=3Dimplicit-function-declaration]
+  DSADR(drv_data->rx_channel) =3D drv_data->ssdr_physical;
+  ^
+drivers/spi/spi-pxa2xx-pxadma.c:295:30: error: lvalue required as left oper=
+and of assignment
+  DSADR(drv_data->rx_channel) =3D drv_data->ssdr_physical;
+                              ^
+drivers/spi/spi-pxa2xx-pxadma.c:296:2: error: implicit declaration of funct=
+ion 'DTADR' [-Werror=3Dimplicit-function-declaration]
+  DTADR(drv_data->rx_channel) =3D drv_data->rx_dma;
+  ^
+drivers/spi/spi-pxa2xx-pxadma.c:296:30: error: lvalue required as left oper=
+and of assignment
+  DTADR(drv_data->rx_channel) =3D drv_data->rx_dma;
+                              ^
+drivers/spi/spi-pxa2xx-pxadma.c:299:32: error: 'DCMD_FLOWSRC' undeclared (f=
+irst use in this function)
+   DCMD(drv_data->rx_channel) =3D DCMD_FLOWSRC
+                                ^
+drivers/spi/spi-pxa2xx-pxadma.c:304:32: error: 'DCMD_INCTRGADDR' undeclared=
+ (first use in this function)
+   DCMD(drv_data->rx_channel) =3D DCMD_INCTRGADDR
+                                ^
+drivers/spi/spi-pxa2xx-pxadma.c:312:30: error: lvalue required as left oper=
+and of assignment
+  DSADR(drv_data->tx_channel) =3D drv_data->tx_dma;
+                              ^
+drivers/spi/spi-pxa2xx-pxadma.c:313:30: error: lvalue required as left oper=
+and of assignment
+  DTADR(drv_data->tx_channel) =3D drv_data->ssdr_physical;
+                              ^
+drivers/spi/spi-pxa2xx-pxadma.c:316:32: error: 'DCMD_FLOWTRG' undeclared (f=
+irst use in this function)
+   DCMD(drv_data->tx_channel) =3D DCMD_FLOWTRG
+                                ^
+drivers/spi/spi-pxa2xx-pxadma.c:321:32: error: 'DCMD_INCSRCADDR' undeclared=
+ (first use in this function)
+   DCMD(drv_data->tx_channel) =3D DCMD_INCSRCADDR
+                                ^
+drivers/spi/spi-pxa2xx-pxadma.c:329:33: error: 'DCMD_ENDIRQEN' undeclared (=
+first use in this function)
+   DCMD(drv_data->tx_channel) |=3D DCMD_ENDIRQEN;
+                                 ^
+drivers/spi/spi-pxa2xx-pxadma.c: In function 'pxa2xx_spi_dma_start':
+drivers/spi/spi-pxa2xx-pxadma.c:336:32: error: 'DCSR_RUN' undeclared (first=
+ use in this function)
+  DCSR(drv_data->rx_channel) |=3D DCSR_RUN;
+                                ^
+drivers/spi/spi-pxa2xx-pxadma.c: In function 'pxa2xx_spi_dma_setup':
+drivers/spi/spi-pxa2xx-pxadma.c:346:2: error: implicit declaration of funct=
+ion 'pxa_request_dma' [-Werror=3Dimplicit-function-declaration]
+  drv_data->rx_channel =3D pxa_request_dma("pxa2xx_spi_ssp_rx",
+  ^
+drivers/spi/spi-pxa2xx-pxadma.c:347:7: error: 'DMA_PRIO_HIGH' undeclared (f=
+irst use in this function)
+       DMA_PRIO_HIGH,
+       ^
+drivers/spi/spi-pxa2xx-pxadma.c:356:7: error: 'DMA_PRIO_MEDIUM' undeclared =
+(first use in this function)
+       DMA_PRIO_MEDIUM,
+       ^
+drivers/spi/spi-pxa2xx-pxadma.c:362:3: error: implicit declaration of funct=
+ion 'pxa_free_dma' [-Werror=3Dimplicit-function-declaration]
+   pxa_free_dma(drv_data->rx_channel);
+   ^
+drivers/spi/spi-pxa2xx-pxadma.c:366:2: error: implicit declaration of funct=
+ion 'DRCMR' [-Werror=3Dimplicit-function-declaration]
+  DRCMR(ssp->drcmr_rx) =3D DRCMR_MAPVLD | drv_data->rx_channel;
+  ^
+drivers/spi/spi-pxa2xx-pxadma.c:366:25: error: 'DRCMR_MAPVLD' undeclared (f=
+irst use in this function)
+  DRCMR(ssp->drcmr_rx) =3D DRCMR_MAPVLD | drv_data->rx_channel;
+                         ^
+drivers/spi/spi-pxa2xx-pxadma.c: In function 'pxa2xx_spi_dma_release':
+drivers/spi/spi-pxa2xx-pxadma.c:376:23: error: lvalue required as left oper=
+and of assignment
+  DRCMR(ssp->drcmr_rx) =3D 0;
+                       ^
+drivers/spi/spi-pxa2xx-pxadma.c:377:23: error: lvalue required as left oper=
+and of assignment
+  DRCMR(ssp->drcmr_tx) =3D 0;
+                       ^
+drivers/spi/spi-pxa2xx-pxadma.c: In function 'pxa2xx_spi_dma_resume':
+drivers/spi/spi-pxa2xx-pxadma.c:389:4: error: 'DRCMR_MAPVLD' undeclared (fi=
+rst use in this function)
+    DRCMR_MAPVLD | drv_data->rx_channel;
+    ^
+drivers/spi/spi-pxa2xx-pxadma.c: In function 'pxa2xx_spi_set_dma_burst_and_=
+threshold':
+drivers/spi/spi-pxa2xx-pxadma.c:441:27: error: 'DCMD_BURST8' undeclared (fi=
+rst use in this function)
+    chip->dma_burst_size =3D DCMD_BURST8;
+                           ^
+drivers/spi/spi-pxa2xx-pxadma.c:445:8: error: 'DCMD_BURST16' undeclared (fi=
+rst use in this function)
+   case DCMD_BURST16:
+        ^
+drivers/spi/spi-pxa2xx-pxadma.c:448:8: error: 'DCMD_BURST32' undeclared (fi=
+rst use in this function)
+   case DCMD_BURST32:
+        ^
 
+Presumably caused by commit 854b3b284ec9 ("spi/drivers: Enable build of
+drivers with COMPILE_TEST").
+
+Frankly, Mark, if you are unable or unwilling to do some basic cross
+build testing, please do not do any more of these patches that add
+CONFIG_COMPILE_TEST.  Leave them to someone who can.
+
+I have used the spi tree from next-20130726 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/qxl/qxl_release.c
-index b61449e,1a648e1..0000000
---- a/drivers/gpu/drm/qxl/qxl_release.c
-+++ b/drivers/gpu/drm/qxl/qxl_release.c
-@@@ -85,13 -85,12 +85,13 @@@ qxl_release_free(struct qxl_device *qde
-  	if (release->surface_release_id)
-  		qxl_surface_id_dealloc(qdev, release->surface_release_id);
- =20
- -	for (i =3D 0 ; i < release->bo_count; ++i) {
- +	list_for_each_entry_safe(entry, tmp, &release->bos, tv.head) {
- +		struct qxl_bo *bo =3D to_qxl_bo(entry->tv.bo);
-  		QXL_INFO(qdev, "release %llx\n",
-- 			entry->tv.bo->addr_space_offset
- -			drm_vma_node_offset_addr(&release->bos[i]->tbo.vma_node)
-++			drm_vma_node_offset_addr(&entry->tv.bo->vma_node)
-  						- DRM_FILE_OFFSET);
- -		qxl_fence_remove_release(&release->bos[i]->fence, release->id);
- -		qxl_bo_unref(&release->bos[i]);
- +		qxl_fence_remove_release(&bo->fence, release->id);
- +		qxl_bo_unref(&bo);
-  	}
-  	spin_lock(&qdev->release_idr_lock);
-  	idr_remove(&qdev->release_idr, release->id);
-
---Signature=_Mon__29_Jul_2013_12_58_51_+1000_mayw1nBnNXU.r=Yc
+--Signature=_Mon__29_Jul_2013_13_42_23_+1000_t5zUmu3KWosF8q4j
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR9dpxAAoJEECxmPOUX5FEXUAP/1q9evideNJZyokVNY6Ztg5r
-wsnJEBmG48GqziJYiC67NUtHvOp4Q0GMhAV1PwUeFofxCBPpWXLknXhVorvm7SJA
-i0o7y12l0wrLGvOKR582KCyto2IQU8u8umgKYg+XWJfIkUkKOb7Io0ML4rq9ix1g
-MikmUlmC1jEu0XTvUBzHNWgmGXrMtsTJBMcwegXc6MNbcRT06wRIROXip2OPXres
-zDkwy2heLarLWWAIb+YbwX0DWq37Fs8gKO6dOqKcqRvbklhIa+UY0SNfh02I3UdG
-TBrTLuX/B6DnNss77EBFT0DPy6x6xwRyuqZzJpeRxh0rFS0UnQM15U5yamfb+W5B
-HPzOYVa3uKtYY/sqUodhdHrd4171o2hqLHD2/vJmZGLg9IYGbbUNg3tYaLKavG2N
-OqNlZZB5Hofhj8h85waWF5TV7+TS0wuH2m+gy8n9Hj7p6E95j/KbtvdgO5elemLK
-TlTMGM11c1fzRcrZNoSZzMY9KxK1bduKjUyXcKnzK5ll6YBq873Wdm14VK3R7pNv
-L9h81DD6SC+WPo1W+ihSu1c5Ybi2w2VXT1YeMGvSo2+qdDuB8zB5ZezQ6OEh8D84
-4KyBhCsrY2T9+r8VE0RHwTnpyc+I2+uSdEOGOY66HhSbMiZSuAi3WM8rWctOODq6
-QCYvIAixsP1TJrpwNwGM
-=mDlg
+iQIcBAEBCAAGBQJR9eSjAAoJEECxmPOUX5FEMGMQAIX5r8etrZC/t8pmR1NaeIIW
+CbaiYe/3LxeQYxNNfeSar74T8Jgl6rN/bh5aGGkcQAByFF3xeu9/X9vUiGYteDGX
+qxodpYozdq7eVrp0Brax08hZ1+h2h8JHBPnV8wEjAgKcBiekLVoXqSCUAFJ+m2G9
+wdba6d+gL5+UtOMdd8XENZpVwdzScHvzisPa8Pv/2Srh9jkG+qV6BKFgGoUvMwuB
+Q8ekdDINmdEGqcrh6XfBYlzXejsQBgSkL0OazYp1Y/7W7XBvJVO6lGz5+21+6fxI
+JCzrcN+Ov7tQ6Y7TZobjyVrQZ/xwtj27rMnKblWXTdVHZrdK22e6NA5kD5SH6/hl
+18VoqTQBdznCy1nV+9K/gsDqv7Mb2EZtwxhgC3dE7ueqq+8LGkX3dlqglSM/sOOQ
+PtFq9iMGoo1DpLqO8hYFAbpEKv0nuFtiojnCvQjVaFRkTTupW/OkIO9lPdM5Ylqf
+e47AxK7x6NRSWK4wQ28lvapH6dcunSRH0lAp/ilqyJatm+sFji8JLP15zVoP1xtU
+S74IBxDxNapLAXCmWxfT3KoyIYBaVGtY9WaQEtbJhpzBffXTy9Kuy5QztyI2qcKP
+zq55NpClhhZZV4ryy5kujzscggi/u0xU+wx09imN0l3qdjOWTxSpwb/8UB3Ox1J1
+H8qLfx1iJbey7AR/n7QX
+=8lVr
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Jul_2013_12_58_51_+1000_mayw1nBnNXU.r=Yc--
+--Signature=_Mon__29_Jul_2013_13_42_23_+1000_t5zUmu3KWosF8q4j--
