@@ -1,70 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the spi tree
-Date: Mon, 29 Jul 2013 16:48:20 +1000
-Message-ID: <20130729164820.38c47ee56d98d67debc77f97@canb.auug.org.au>
-References: <20130729134223.bbae9d9f2a9cd6ca1717c976@canb.auug.org.au>
-	<20130729050011.GJ9858@sirena.org.uk>
-	<20130729155609.bb9d635427d8eef1da954e3a@canb.auug.org.au>
-	<20130729064028.GR9858@sirena.org.uk>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (netnext-tree related)
+Date: Mon, 29 Jul 2013 00:47:46 -0700 (PDT)
+Message-ID: <20130729.004746.91827990830866654.davem@davemloft.net>
+References: <20130729162544.574e4d7ffccf0f6bff5ba4c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Jul_2013_16_48_20_+1000_mFCFC1U/L2D8V4Pd"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42047 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752601Ab3G2GsW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2013 02:48:22 -0400
-In-Reply-To: <20130729064028.GR9858@sirena.org.uk>
+Received: from shards.monkeyblade.net ([149.20.54.216]:41639 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750803Ab3G2Hrr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2013 03:47:47 -0400
+In-Reply-To: <20130729162544.574e4d7ffccf0f6bff5ba4c4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, tgraf@suug.ch
 
---Signature=_Mon__29_Jul_2013_16_48_20_+1000_mFCFC1U/L2D8V4Pd
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 29 Jul 2013 16:25:44 +1000
 
-Hi Mark,
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 
-On Mon, 29 Jul 2013 07:40:28 +0100 Mark Brown <broonie@kernel.org> wrote:
->
-> Yeah, unfortunately those issues are a good proportion of what gets
-> caught by this sort of testing that wouldn't get caught in normal
-> development so it doesn't seem worth doing something that won't at least
-> give a linking kernel.
+Sorry about that.
 
-The problem is that you are impacting on other people's testing.  Even if
-this stuff builds for me, it may well break for people using other
-arches/configs.  These changes (adding dependencies on
-CONFIG_COMPILE_TEST for devices that are currently only built for
-particular platforms) are adding very little, but impacting on my time (at
-least).
+> I added this commit:
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__29_Jul_2013_16_48_20_+1000_mFCFC1U/L2D8V4Pd
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJR9hA0AAoJEECxmPOUX5FErg8P/0c3decH0jiAAVkb5O05RbqJ
-+ESyQ4f1C6Gx3nY7mt4Var6Byohjzk2yl6SA1zd1ncFRPb/Tkq9x6o6nm4v3BPwl
-JsVJzSebOBwkyT4L8yXzADfCtmv0NbJjRxZCY1SWho/xWnsxTLM2QmpGJC+LREbp
-DxxQcz0+gwj6kn2zUhMCmytXeR8YIuJZgc47WQe5Jt58yH/KNHb9JcCJQ6CnWX8P
-vepjf4ZcYnYNbtF5QTqviEZeo0+EYlMM+koqRhdYst6x9Q1fXRjGNZZ+GJfI8iyQ
-sdeGDjSuMCzLfmSE2CtcCq8dvolGXP/G9iQxX1HRVWhOjmGGTolflW0cGda64QHC
-/ABuiOp01XMcAWuHKJeT0u3mQ0BVn9u/yfwQBawVBkUwPZGKO5RRdNg2a7ydn46B
-9MJje1qbAfWdSaYS0a8X9bNWo51DiGQ2pwc0K2nstBUpCJxBVMPc7KfEauy7yKWV
-GUwpC1fkEWzDjltVNMhuwc7AFxM7DbgOisMME/tuYs5Bl/O+bi0fwKBVk3kROugU
-8EGfRAEUk9BE1fJtbPXaDSeB5XZGhyLrBPO1hSjAtQKiA8AcF5COH7Azds3PL2vL
-hUhO5VrU3YtlOiYCtajiSuKJVnyUAOiZnLuSWdThrxUBQmgkleUsEJYszK/LZp+N
-nLqYNgpP2VWL2RqhY9Db
-=HzQV
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Jul_2013_16_48_20_+1000_mFCFC1U/L2D8V4Pd--
+Applied, thanks Stephen.
