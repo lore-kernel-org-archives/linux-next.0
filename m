@@ -1,36 +1,52 @@
-From: Thomas Graf <tgraf@suug.ch>
-Subject: Re: linux-next: build failure after merge of the final tree
- (netnext-tree related)
-Date: Mon, 29 Jul 2013 09:13:50 +0100
-Message-ID: <20130729081350.GA28340@casper.infradead.org>
-References: <20130729162544.574e4d7ffccf0f6bff5ba4c4@canb.auug.org.au>
- <20130729.004746.91827990830866654.davem@davemloft.net>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jul 29 (staging/gdm724x)
+Date: Mon, 29 Jul 2013 10:04:41 -0700
+Message-ID: <51F6A0A9.5040702@infradead.org>
+References: <20130729163906.7ba07f7c024ad364b2feb513@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:57040 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751038Ab3G2INv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2013 04:13:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20130729.004746.91827990830866654.davem@davemloft.net>
+Received: from merlin.infradead.org ([205.233.59.134]:48856 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750820Ab3G2RFn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2013 13:05:43 -0400
+In-Reply-To: <20130729163906.7ba07f7c024ad364b2feb513@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Jonathan Kim <jonathankim@gctsemi.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dean ahn <deanahn@gctsemi.com>
 
-On 07/29/13 at 12:47am, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 29 Jul 2013 16:25:44 +1000
+On 07/28/13 23:39, Stephen Rothwell wrote:
+> Hi all,
 > 
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
+> Changes since 20130726:
 > 
-> Sorry about that.
-> 
-> > I added this commit:
-> 
-> Applied, thanks Stephen.
 
-Thanks for the fix-up Stephen, the include is needed on archs that
-don't provide an optimized csum_ipv6_magic().
+on i386:
+# CONFIG_TTY is not set
+
+
+ERROR: "tty_port_tty_get" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_port_close_end" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_register_driver" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_buffer_request_room" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "put_tty_driver" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_port_close_start" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_set_operations" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_port_init" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_insert_flip_string_fixed_flag" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_register_device" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_unregister_device" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_std_termios" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_unregister_driver" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "__tty_alloc_driver" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_flip_buffer_push" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_port_tty_set" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_wakeup" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+ERROR: "tty_port_block_til_ready" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+
+
+
+-- 
+~Randy
