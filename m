@@ -1,52 +1,45 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jul 29 (staging/gdm724x)
-Date: Mon, 29 Jul 2013 10:04:41 -0700
-Message-ID: <51F6A0A9.5040702@infradead.org>
-References: <20130729163906.7ba07f7c024ad364b2feb513@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: "Luck, Tony" <tony.luck@intel.com>
+Subject: [PATCH] Fix #include in drm_mm.h to unbreak ia64 build
+Date: Mon, 29 Jul 2013 11:51:33 -0700
+Message-ID: <51f6b9b51365634ccf@agluck-desk.sc.intel.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:48856 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750820Ab3G2RFn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2013 13:05:43 -0400
-In-Reply-To: <20130729163906.7ba07f7c024ad364b2feb513@canb.auug.org.au>
+Received: from mga14.intel.com ([143.182.124.37]:11808 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751339Ab3G2Svf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Jul 2013 14:51:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Jonathan Kim <jonathankim@gctsemi.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dean ahn <deanahn@gctsemi.com>
+To: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org
 
-On 07/28/13 23:39, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20130726:
-> 
+Linux-next build on ia64 is falling over with errors like this:
 
-on i386:
-# CONFIG_TTY is not set
+In file included from include/drm/drm_vma_manager.h:26,
+                 from include/drm/ttm/ttm_bo_api.h:35,
+                 from include/drm/ttm/ttm_bo_driver.h:33,
+                 from drivers/gpu/drm/ttm/ttm_agp_backend.c:35:
+include/drm/drm_mm.h:67: error: expected specifier-qualifier-list before 'spinlock_t'
 
+I guess other architectures are pulling in spinlock.h
+through some twisty #include path so are not seeing this
+error.  But drm_mm.h makes use of spinlock_t - so it
+should do the right thing and #include <linux/spinlock.h>
 
-ERROR: "tty_port_tty_get" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_port_close_end" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_register_driver" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_buffer_request_room" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "put_tty_driver" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_port_close_start" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_set_operations" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_port_init" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_insert_flip_string_fixed_flag" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_register_device" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_unregister_device" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_std_termios" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_unregister_driver" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "__tty_alloc_driver" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_flip_buffer_push" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_port_tty_set" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_wakeup" [drivers/staging/gdm724x/gdmtty.ko] undefined!
-ERROR: "tty_port_block_til_ready" [drivers/staging/gdm724x/gdmtty.ko] undefined!
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 
+---
 
+First saw this break in tag "next-20130726"
 
--- 
-~Randy
+diff --git a/include/drm/drm_mm.h b/include/drm/drm_mm.h
+index b87d05e..7d5fbae 100644
+--- a/include/drm/drm_mm.h
++++ b/include/drm/drm_mm.h
+@@ -37,6 +37,7 @@
+  * Generic range manager structs
+  */
+ #include <linux/list.h>
++#include <linux/spinlock.h>
+ #ifdef CONFIG_DEBUG_FS
+ #include <linux/seq_file.h>
+ #endif
