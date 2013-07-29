@@ -1,69 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ext4 tree
-Date: Mon, 29 Jul 2013 11:08:16 +1000
-Message-ID: <20130729110816.12958c3a26400f444a9a5012@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 29 Jul 2013 12:58:51 +1000
+Message-ID: <20130729125851.a4b10b1fe06303772afd74b0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Jul_2013_11_08_16_+1000_Z8xgwJTr2m.QLQB2"
+ boundary="Signature=_Mon__29_Jul_2013_12_58_51_+1000_mayw1nBnNXU.r=Yc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56747 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49800 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751824Ab3G2BI1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Jul 2013 21:08:27 -0400
+	with ESMTP id S1752167Ab3G2C7E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Jul 2013 22:59:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Herrmann <dh.herrmann@gmail.com>
 
---Signature=_Mon__29_Jul_2013_11_08_16_+1000_Z8xgwJTr2m.QLQB2
+--Signature=_Mon__29_Jul_2013_12_58_51_+1000_mayw1nBnNXU.r=Yc
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Theodore,
+Hi Dave,
 
-After merging the ext4 tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/qxl/qxl_release.c between commit 8002db6336dd ("qxl:
+convert qxl driver to proper use for reservations") from Linus' tree and
+commit 72525b3f333d ("drm/ttm: convert to unified vma offset manager")
+from the drm tree.
 
-fs/ext4/ialloc.c: In function '__ext4_new_inode':
-fs/ext4/ialloc.c:817:1: warning: label 'next_ino' defined but not used [-Wu=
-nused-label]
- next_ino:
- ^
-fs/ext4/ialloc.c:792:4: error: label 'next_inode' used but not defined
-    goto next_inode;
-    ^
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
-Hmm ...
-
-Caused by commit 4a8603ef197a ("ext4: avoid reusing recently deleted
-inodes in no journal mode").
-
-I have used the ext4 tree from next-20130726 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__29_Jul_2013_11_08_16_+1000_Z8xgwJTr2m.QLQB2
+diff --cc drivers/gpu/drm/qxl/qxl_release.c
+index b61449e,1a648e1..0000000
+--- a/drivers/gpu/drm/qxl/qxl_release.c
++++ b/drivers/gpu/drm/qxl/qxl_release.c
+@@@ -85,13 -85,12 +85,13 @@@ qxl_release_free(struct qxl_device *qde
+  	if (release->surface_release_id)
+  		qxl_surface_id_dealloc(qdev, release->surface_release_id);
+ =20
+ -	for (i =3D 0 ; i < release->bo_count; ++i) {
+ +	list_for_each_entry_safe(entry, tmp, &release->bos, tv.head) {
+ +		struct qxl_bo *bo =3D to_qxl_bo(entry->tv.bo);
+  		QXL_INFO(qdev, "release %llx\n",
+- 			entry->tv.bo->addr_space_offset
+ -			drm_vma_node_offset_addr(&release->bos[i]->tbo.vma_node)
+++			drm_vma_node_offset_addr(&entry->tv.bo->vma_node)
+  						- DRM_FILE_OFFSET);
+ -		qxl_fence_remove_release(&release->bos[i]->fence, release->id);
+ -		qxl_bo_unref(&release->bos[i]);
+ +		qxl_fence_remove_release(&bo->fence, release->id);
+ +		qxl_bo_unref(&bo);
+  	}
+  	spin_lock(&qdev->release_idr_lock);
+  	idr_remove(&qdev->release_idr, release->id);
+
+--Signature=_Mon__29_Jul_2013_12_58_51_+1000_mayw1nBnNXU.r=Yc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR9cCEAAoJEECxmPOUX5FEHqMQAICPjFfpLpx6DelsXRQVmAiP
-xJOLJpt4vC7LRXfT6+aR6m0rDjh/g3wbNbsTtqhE7q0QkKTKOU2WwpdXWRBBg2yS
-FimEPty61ry8m0cpvw44eKNvCjt0j7b+A3HXdfurgc3J8xzZuvdMMEcIcrZAYHdn
-+2zOk3rnNW/mmfqFJoDtR6A8zhUjcGI9u+SO9ecNsPJf257Jm8v5IVfpAAyuj3hs
-9hb2hGxp0xhwhC0RvqKrZCZ0pZX5pHLUvTrSQiojMNiCf5PunDxXDxivuGxNdrRz
-YvhmtMUqNoRzJCWtHR0tts80L8zAuVtUy4Hye5cVXL60l8b43zmJoAO5ScQuT1NK
-1cX8RnzD/6KiZe33v7VBohXQWHjt2vVFqHTbd/Gpo8n+4vFOG7cwFDwZIulPcWVm
-OsIKSnTOY8331hjWB4qi2onxCFllFR7fKkV/XQU4/0Y9mtA7AX3Ts18ILE1k3OHl
-4ETyLJs3sBJZ6a2Y6Z12LvgqNc/iCuYZiavgUbrTEAHbmHUFVUH7BRd2RtjX8N9+
-6zyNe0mqvoC9dsc3xSGEeL0Ih3BCV+GhPLGdONgTxn5Q6jbjwHi7Fis7CFSxWIBw
-YJFRl3PNPCrJFkEukoCdcBJTLCHz/j5QAL7RBqGxPn36lD7Ua2il6ulYRf1FBqPi
-SBGWjm/dyDdb1ERGToUk
-=4T0I
+iQIcBAEBCAAGBQJR9dpxAAoJEECxmPOUX5FEXUAP/1q9evideNJZyokVNY6Ztg5r
+wsnJEBmG48GqziJYiC67NUtHvOp4Q0GMhAV1PwUeFofxCBPpWXLknXhVorvm7SJA
+i0o7y12l0wrLGvOKR582KCyto2IQU8u8umgKYg+XWJfIkUkKOb7Io0ML4rq9ix1g
+MikmUlmC1jEu0XTvUBzHNWgmGXrMtsTJBMcwegXc6MNbcRT06wRIROXip2OPXres
+zDkwy2heLarLWWAIb+YbwX0DWq37Fs8gKO6dOqKcqRvbklhIa+UY0SNfh02I3UdG
+TBrTLuX/B6DnNss77EBFT0DPy6x6xwRyuqZzJpeRxh0rFS0UnQM15U5yamfb+W5B
+HPzOYVa3uKtYY/sqUodhdHrd4171o2hqLHD2/vJmZGLg9IYGbbUNg3tYaLKavG2N
+OqNlZZB5Hofhj8h85waWF5TV7+TS0wuH2m+gy8n9Hj7p6E95j/KbtvdgO5elemLK
+TlTMGM11c1fzRcrZNoSZzMY9KxK1bduKjUyXcKnzK5ll6YBq873Wdm14VK3R7pNv
+L9h81DD6SC+WPo1W+ihSu1c5Ybi2w2VXT1YeMGvSo2+qdDuB8zB5ZezQ6OEh8D84
+4KyBhCsrY2T9+r8VE0RHwTnpyc+I2+uSdEOGOY66HhSbMiZSuAi3WM8rWctOODq6
+QCYvIAixsP1TJrpwNwGM
+=mDlg
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Jul_2013_11_08_16_+1000_Z8xgwJTr2m.QLQB2--
+--Signature=_Mon__29_Jul_2013_12_58_51_+1000_mayw1nBnNXU.r=Yc--
