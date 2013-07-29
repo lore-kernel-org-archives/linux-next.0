@@ -1,85 +1,62 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the spi tree
-Date: Mon, 29 Jul 2013 07:40:28 +0100
-Message-ID: <20130729064028.GR9858@sirena.org.uk>
-References: <20130729134223.bbae9d9f2a9cd6ca1717c976@canb.auug.org.au>
- <20130729050011.GJ9858@sirena.org.uk>
- <20130729155609.bb9d635427d8eef1da954e3a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: problem fetching the drm-intel-fixes tree
+Date: Mon, 29 Jul 2013 16:42:15 +1000
+Message-ID: <20130729164215.9e8a10931138b29a38a7256e@canb.auug.org.au>
+References: <20130729100843.8d129b9953ed39e55e1d5a31@canb.auug.org.au>
+	<CAPM=9txKODStMCnLRjFKh4y7v8wijDsyMEHZvgdjjZoc7HQOug@mail.gmail.com>
+	<20130729102642.4f1bf9d49a95f5c3dee87b37@canb.auug.org.au>
+	<CAPM=9tyqWC4_YkB7dnFGCppZyeWn2AZLzkisUVQPO-36onpnFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="P+Tcv3rFao5ReJtX"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__29_Jul_2013_16_42_15_+1000_VRUPIpp5LcRHtwsR"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:49848 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751402Ab3G2GmS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2013 02:42:18 -0400
+In-Reply-To: <CAPM=9tyqWC4_YkB7dnFGCppZyeWn2AZLzkisUVQPO-36onpnFw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Mon__29_Jul_2013_16_42_15_+1000_VRUPIpp5LcRHtwsR
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20130729155609.bb9d635427d8eef1da954e3a@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
+Hi Dave,
 
---P+Tcv3rFao5ReJtX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, 29 Jul 2013 16:29:04 +1000 Dave Airlie <airlied@gmail.com> wrote:
+>
+> Okay should all be back in place now.
 
-On Mon, Jul 29, 2013 at 03:56:09PM +1000, Stephen Rothwell wrote:
+Excellent, thanks.
 
-> Did the 0 day tester find these?  If so, then maybe you should wait a
-> while longer before adding these things to your published trees.  If not,
-> then I wonder why not.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-No, it didn't.  The latency from the zero day tester seems to be quite
-variable at the minute - sometimes it's just not reporting things at
-all before they get found and fixed otherwise, sometimes it's as
-astonishingly prompt as ever and sometimes it's reporting things other
-than build issues but not the build issues.
-
-> Even so as a developer, you should not really be submitting patches that
-> have not been at least build tested.   You can find out which files are
-
-Right, I don't submit stuff that's not been build tested at all except
-in unusual situations - the issues have been coverage and dependency
-ones.
-
-> affected by these config changes and then really simply do:
-> (assuming an x86 native platform - adjust for cross compiling)
-
-> $ mkdir ../test.obj
-> $ make O=../test.obj allmodconfig
-> <make sure that the CONFIG options got turned on>
-> $ make O=../test.obj <files affected s/.c/.o/>
-
-When I change source files I do take steps to ensure that they've been
-built including variations on the above, this specific issue is a fairly
-unusual situation.
-
-> You don't need to do full builds to find most of this stuff.  Of course,
-> this will not find link time errors or missing module symbols.
-
-Yeah, unfortunately those issues are a good proportion of what gets
-caught by this sort of testing that wouldn't get caught in normal
-development so it doesn't seem worth doing something that won't at least
-give a linking kernel.
-
---P+Tcv3rFao5ReJtX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Signature=_Mon__29_Jul_2013_16_42_15_+1000_VRUPIpp5LcRHtwsR
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR9g5YAAoJELSic+t+oim9gJkP/1HU6N1A4pgedndOleE1Vf8G
-1lYL/GoxoP4NV7vT0iWHr9iSx1lgiymGI7Qo0/IzX26H3nGirvjhyQ199jrWVHi+
-LMEj/O0vZOwFs9z+fR6mKHSGvEZWqw1C4nle90ujxavuJA6yVgsROTWjTD9bnE2O
-EvdCxLqNRRFCFSRgIctSRvYWMOJY4fQjPiGu7lgpJXhVbv27nP4AwFH1BWqw29EA
-xlkh1RPZTJdXSPBya7DN8glJKdwb63ZNh4ZkfL7eL7WjWPDzsyF4ND2UCuO8tR3q
-v3ehcvF31xIzWNdGPgyNuAc39YlZvOOcN8OeqMzlU0HdQ6wBaanQPbjbMzrU0Ihj
-yzXQsZafoYRvgI73XWn4vmBzcn46o2yctRWr0n4T+7J3i5tPkk4tRPUjbc770c2+
-irKdy5YbEsO14mPQ9tKK+s1UUK89TnzvGh741wKGdvsDef++OzIDxsF3+JDPe8vJ
-9sBC/qPdHRdhMTJYwl5xIhOdiVoij35/MM+UE5g9A5+A8jh5UsgXcxezKByDXxKS
-bUQegEAReHSPBRXmaOtjiUmTlRuoPrzZT3ni6Nfrw4s+EQ7rrP0dG2253GzbOOH1
-Skt8ByJebLG1ico1jSnvRacGFtpb/N8G8Zv32JsqG7nWgDJEWujrvXz2W7bIbMtS
-EJX+Rj8dwH79MzsyMcCW
-=91TY
+iQIcBAEBCAAGBQJR9g7HAAoJEECxmPOUX5FE3HQQAKiLDQSv40bTZ8k1v3/p0uYr
+kFWNv8zkg7wsJU/XMcVI0+x3AvODuaN0vc6fbXAq0WAqNhgt3NISXUNqWlv5y35c
+sMY1ssAERn5ulkxMVIwRci3L0Vtxt77PBuiyTsXt6aaQQ5+VJtdCpDESGF64K5Vd
+2ZqZDJeEYaHMfHHuTCEGbK5tOlbD46cOJ519e56/OBGDPP4vXJnbdlLPK8GEZLIu
+E1oQaRjGwlYG2RHqiDSzR6wDmBl4jKDm7B6L7KA4T9QFs+6GLKUKYS+t+xD/+PJn
+6wgTnUGD3mWf6KTrH4TmmfqNm181tpTeZ+aIDE0wZmpsRDxW3PzKVlpp4NPVtT9S
+YpkzCN7qBo9JGhbd6nW7JobOtxbV5aVAsntruwMHdwkfh+l31epIEEUVNnRhHB/2
+eiu8DYDyE88y1VD/u8oLUUk88yvpr/E2QC69elsAHtRvS9XqKCd8h5faM2gGIw2L
+93JcL9v80gAR9BoklQyphtIAvQsW0RmZQ6r+YaR5fi5Vd17eq141X/UlmgdPM7Ea
+MNifGKPgrLuV3DftFkC9CQWK44j/Spqfh0Wte7iEe4UhYATkkSKWesNsMal8Y3tR
+B8Him1TBMmM5xY15oGjbcK2DmEySpq4EN/49HYHQRqpGMmcygYtbr8xBHYJhH0gS
+FRS6tGdEn4G/AYgzOGlL
+=3MFD
 -----END PGP SIGNATURE-----
 
---P+Tcv3rFao5ReJtX--
+--Signature=_Mon__29_Jul_2013_16_42_15_+1000_VRUPIpp5LcRHtwsR--
