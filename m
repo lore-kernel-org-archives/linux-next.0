@@ -1,67 +1,73 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the spi tree
-Date: Mon, 29 Jul 2013 06:00:11 +0100
-Message-ID: <20130729050011.GJ9858@sirena.org.uk>
-References: <20130729134223.bbae9d9f2a9cd6ca1717c976@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with Linus' tree
+Date: Mon, 29 Jul 2013 15:01:29 +1000
+Message-ID: <20130729150129.76a9fab4023ee22c940b7920@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XfQyFtxChl4bBa/T"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__29_Jul_2013_15_01_29_+1000_+A8He6yoynWsVV0n"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130729134223.bbae9d9f2a9cd6ca1717c976@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-
---XfQyFtxChl4bBa/T
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Mon__29_Jul_2013_15_01_29_+1000_+A8He6yoynWsVV0n
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2013 at 01:42:23PM +1000, Stephen Rothwell wrote:
+Hi all,
 
-> drivers/spi/spi-pxa2xx-pxadma.c: In function 'wait_dma_channel_stop':
-> drivers/spi/spi-pxa2xx-pxadma.c:136:2: error: implicit declaration of function 'DCSR' [-Werror=implicit-function-declaration]
->   while (!(DCSR(channel) & DCSR_STOPSTATE) && --limit)
+Today's linux-next merge of the char-misc tree got a conflict in
+drivers/misc/mei/init.c between commit 99f22c4ef24c ("mei: don't have to
+clean the state on power up") from Linus' tree and commit b950ac1dabfc
+("mei: don't get stuck in select during reset") from the char-misc tree.
 
-> Frankly, Mark, if you are unable or unwilling to do some basic cross
-> build testing, please do not do any more of these patches that add
-> CONFIG_COMPILE_TEST.  Leave them to someone who can.
+(Unrelated white space changes are a pest :-()
 
-This was cross built.  It didn't show up due to the fact that the
-minimal configs I use for build coverage (and in fact every single
-config I was building) didn't have PCI turned on (which is a dependency
-for this option actually building anything) which allowed this config
-symbol to be enabled without showing the problem due to the slightly odd
-way the config for the driver is structured; any system with PCI that's
-not PXA would be affected.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Most (though not all) of the other issues have been due to similar
-stuff.  I do rely on the 0 day tester for the full builds but I do pretty
-routinely test (especially on x86) these days though with minimal
-configs and on my full working tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---XfQyFtxChl4bBa/T
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --cc drivers/misc/mei/init.c
+index e6f16f8,557eed2..0000000
+--- a/drivers/misc/mei/init.c
++++ b/drivers/misc/mei/init.c
+@@@ -148,8 -148,8 +148,9 @@@ void mei_reset(struct mei_device *dev,=20
+ =20
+  	dev->hbm_state =3D MEI_HBM_IDLE;
+ =20
+ -	if (dev->dev_state !=3D MEI_DEV_INITIALIZING) {
+ +	if (dev->dev_state !=3D MEI_DEV_INITIALIZING &&
+ +	    dev->dev_state !=3D MEI_DEV_POWER_UP) {
++=20
+  		if (dev->dev_state !=3D MEI_DEV_DISABLED &&
+  		    dev->dev_state !=3D MEI_DEV_POWER_DOWN)
+  			dev->dev_state =3D MEI_DEV_RESETTING;
+
+--Signature=_Mon__29_Jul_2013_15_01_29_+1000_+A8He6yoynWsVV0n
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR9fbXAAoJELSic+t+oim9rD0P/1ExWH9uwPoNp+rzUywJlqFl
-uhZoqeBtXp+Q6MLLVfonMDcLxiM5hK+DyGtn0rZa1V+HuR7NYAAKkKuUiW1sElBX
-oaFodOZt3u4hCda1J9ohLDLRMy+S7o0WHYkk8Ub//vzH5XJ3nKA8jsDuP+6KT52b
-7hk6M2R4p0zv2GmDkhgOJDu39pE4eRZKkLo5E7N0i1CV3V8aRBPdEotn8Te1gV6S
-u+e9lQg1FQ3Vjboy1Taq8VpdV9Wi2DJ7dY9TM0rDS8QfdUexXDGG/xrKYvaZDTUy
-MMnltXOiyInTIPord4j1ScmPKZktdtXXGNmS3hr5RVAgyf/UpMnHIP3pw3uKhPWv
-SOYYuwNOJbsWbjAjM67GTLUyPgKg+Oi4YJUYPDyhrh0i2PO2DTdxnNC3sI2nV3ja
-9CNz8cm9Gb7DWOb/GFh6IDP0lZYOFyGMdeaXmNua590+uBDlUwcIdGhD6a++OWg5
-6HAa8R0AFqZJYxxZQq2+73eoQ9mgnInVR5fQWn/82rfm+4TBEcHwtNbb3OIGLpgG
-U2xs7jihPot9m/IqlfUw7JExw3LEFmr0RTEO6WLu9l35w6R48nySkyMHn1L/k22U
-adi4tZ/kzQNJOfcjvwJ1zVhX1MrHBednM1Ly5kRRDyYzU6vVP1eHqT4QnsbpogjC
-rJszbHUxLIH3icZn2Us8
-=zbCY
+iQIcBAEBCAAGBQJR9fctAAoJEECxmPOUX5FE8REP/iDnz7kVzm3MQL676aATMay3
+mzEdcfM41nYPbtLeN/fly6WL2Q2JJb4VBrmoFtMth8dB7Xt/3OLSfOe2qi+ptgnz
+LzitsCdw6sn94IS6XiBgwLjwZNhAdzii7wdC4PBd6sv/IskwchBRxwrWd2vvrEaJ
+6Djhvz3ac0Xwwx6JXLHcRTQHoc75+Cr7rUDFWHBSy8xtmq6+ex1EibWNDTtScuN7
+geZBCQbvw6X1eeGUuq9XMAqKZe+NU4t+OEHAbCaT8kjjB2h2M5sR/pJUWJKQqn7M
+OIc4lfkbOLTbN94mqOnd6BpkvmH3+CULFFfvXl2Akihxx1kRtxFWt0HYM0eMrPlc
+hfYuOWYr4N8oFJPJjrvA/gd9wfJgqDrgaloJ3rQGZqyjBuJwsCHOWBjnYi3WwGvA
+QKiYcnktbAoHttNI+tLu/0TezxxC644TqWN/aWm67/O9BL0MkQa1089Q4HrISkh7
+kbiWATyPW68cRcQ/uY7SQ6JOqxjdsJwpHLUI4LHSqNORX8m6+eVJkfj73fNemASq
+JhNrVpT85g8irl0hNzNySQOeH8AmcF+KGDVsG9ZfaXj89S/I9olCojkIvG9Odvag
+knlGp/E+Hm8qguHq8uvOeAbNkZfL9yzygJc3bqjRrLLyAoImm8g5OkwL6zNPRNKu
+1B/FGRqIE4wuRVV0xfLO
+=vb/Z
 -----END PGP SIGNATURE-----
 
---XfQyFtxChl4bBa/T--
+--Signature=_Mon__29_Jul_2013_15_01_29_+1000_+A8He6yoynWsVV0n--
