@@ -1,96 +1,100 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the spi tree
-Date: Mon, 29 Jul 2013 15:56:09 +1000
-Message-ID: <20130729155609.bb9d635427d8eef1da954e3a@canb.auug.org.au>
-References: <20130729134223.bbae9d9f2a9cd6ca1717c976@canb.auug.org.au>
-	<20130729050011.GJ9858@sirena.org.uk>
+Subject: linux-next: build failure after merge of the final tree
+ (netnext-tree related)
+Date: Mon, 29 Jul 2013 16:25:44 +1000
+Message-ID: <20130729162544.574e4d7ffccf0f6bff5ba4c4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__29_Jul_2013_15_56_09_+1000_76k97KRii/DMK2cu"
+ boundary="Signature=_Mon__29_Jul_2013_16_25_44_+1000_0/6U+c3SRkyad=HA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40583 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55819 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754806Ab3G2F4S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2013 01:56:18 -0400
-In-Reply-To: <20130729050011.GJ9858@sirena.org.uk>
+	with ESMTP id S1753017Ab3G2GZy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2013 02:25:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Graf <tgraf@suug.ch>
 
---Signature=_Mon__29_Jul_2013_15_56_09_+1000_76k97KRii/DMK2cu
+--Signature=_Mon__29_Jul_2013_16_25_44_+1000_0/6U+c3SRkyad=HA
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+Hi all,
 
-On Mon, 29 Jul 2013 06:00:11 +0100 Mark Brown <broonie@kernel.org> wrote:
->
-> On Mon, Jul 29, 2013 at 01:42:23PM +1000, Stephen Rothwell wrote:
->=20
-> > drivers/spi/spi-pxa2xx-pxadma.c: In function 'wait_dma_channel_stop':
-> > drivers/spi/spi-pxa2xx-pxadma.c:136:2: error: implicit declaration of f=
-unction 'DCSR' [-Werror=3Dimplicit-function-declaration]
-> >   while (!(DCSR(channel) & DCSR_STOPSTATE) && --limit)
->=20
-> > Frankly, Mark, if you are unable or unwilling to do some basic cross
-> > build testing, please do not do any more of these patches that add
-> > CONFIG_COMPILE_TEST.  Leave them to someone who can.
->=20
-> This was cross built.  It didn't show up due to the fact that the
-> minimal configs I use for build coverage (and in fact every single
-> config I was building) didn't have PCI turned on (which is a dependency
-> for this option actually building anything) which allowed this config
-> symbol to be enabled without showing the problem due to the slightly odd
-> way the config for the driver is structured; any system with PCI that's
-> not PXA would be affected.
->=20
-> Most (though not all) of the other issues have been due to similar
-> stuff.  I do rely on the 0 day tester for the full builds but I do pretty
-> routinely test (especially on x86) these days though with minimal
-> configs and on my full working tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Did the 0 day tester find these?  If so, then maybe you should wait a
-while longer before adding these things to your published trees.  If not,
-then I wonder why not.
+net/core/pktgen.c: In function 'fill_packet_ipv6':
+net/core/pktgen.c:2906:3: error: implicit declaration of function 'csum_ipv=
+6_magic' [-Werror=3Dimplicit-function-declaration]
+   udph->check =3D ~csum_ipv6_magic(&iph->saddr, &iph->daddr, udplen, IPPRO=
+TO_UDP, 0);
+   ^
 
-Even so as a developer, you should not really be submitting patches that
-have not been at least build tested.   You can find out which files are
-affected by these config changes and then really simply do:
-(assuming an x86 native platform - adjust for cross compiling)
+Caused by commit c26bf4a51308 ("pktgen: Add UDPCSUM flag to support UDP che=
+cksums") from the net-next tree.
 
-$ mkdir ../test.obj
-$ make O=3D../test.obj allmodconfig
-<make sure that the CONFIG options got turned on>
-$ make O=3D../test.obj <files affected s/.c/.o/>
+I added this commit:
 
-You don't need to do full builds to find most of this stuff.  Of course,
-this will not find link time errors or missing module symbols.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 29 Jul 2013 16:21:26 +1000
+Subject: [PATCH] pktgen: add needed include file
+
+Fixes this on PowerPC (at least):
+
+net/core/pktgen.c: In function 'fill_packet_ipv6':
+net/core/pktgen.c:2906:3: error: implicit declaration of function 'csum_ipv=
+6_magic' [-Werror=3Dimplicit-function-declaration]
+   udph->check =3D ~csum_ipv6_magic(&iph->saddr, &iph->daddr, udplen, IPPRO=
+TO_UDP, 0);
+   ^
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/core/pktgen.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+index 2dec6f1..261357a 100644
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -161,6 +161,7 @@
+ #include <net/checksum.h>
+ #include <net/ipv6.h>
+ #include <net/udp.h>
++#include <net/ip6_checksum.h>
+ #include <net/addrconf.h>
+ #ifdef CONFIG_XFRM
+ #include <net/xfrm.h>
+--=20
+1.8.4.rc0
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__29_Jul_2013_15_56_09_+1000_76k97KRii/DMK2cu
+--Signature=_Mon__29_Jul_2013_16_25_44_+1000_0/6U+c3SRkyad=HA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR9gP9AAoJEECxmPOUX5FEUnMP/io/BBkFTS+XKzmzusE/+x+W
-AVsBizL5RizO5rvpg0TY6OYzchP7+08pt3FwKs70XlGhXLan2bBmp0bSqUbxqrIN
-kz3VZjnddno6hDCewH6YMgENVsbnXb6PScDhhv9++zRIy00uD3XCxniBUzNfFT8J
-dVR3/fCrpYEIZ6hbj7X65vgdRCdYs5/lO4NqvLROePQizt6LeS9NH7Tazc2faLYz
-r+1uXqw7Srgr9XLJwp7a35ePpeWKJUprQAYMa7dl2hWAPu2xgjtfD+SNQraAFg0N
-hn3N4pjgNqDQjRuMZc6XK+zDcTdQvnbf9uY4n2PjqG2ZfHC4hjw/gheUZ9pTkZ59
-iVjXE0AGG/YBq2GeXEA8Il/wfaJc9zC+EB/HH+4KYYXG/1R0UcllVBvChGC2MNqc
-SPSH5KMuHIQdIj/a1t1/r02m/kADiBoafHk95Zwb0nJTqOi/qK5ubb5Q4zpcO1No
-jd/ZdgDauF8chH2a+8j/u/agxR9617RIklvuUmee2zzBIm1y0qfAe8TfEEYRF/t9
-HKMIjhT2VEkWV2uehSsf/9+eTr7dejTSj2jrJoK5t4YFyZNbFgfglW+WqrmsH8Iw
-OG8I1NwwXGWTlnZdg500Tsz2n0i/A/ftRyOIHRFotpNFxHZSpXHysKNCe4XyBqED
-6i52mEC1yiZpKAY7XlFH
-=8Mu9
+iQIcBAEBCAAGBQJR9grsAAoJEECxmPOUX5FEwhUP/1p4B/Ql355Tqwo8FRg+n3JP
+GEN5MGSBENs9WtIv88KhHniMagGbRfvqOBeanLXiXt3v4GHJKk8/8ZE0w+vpIzFA
+lNSdoG7sYIV6ta8fRWdngsX78VkdQ0mkw9DR2fIixHECDfkUpKo2IvYfy0NJHtdi
+iJ93fKZQ6PrI+sDOx2CwdCFjof3iC0BSnp/Fdo9KnW23cAdi5HGP09F+SkvdnVTb
+XMMQkLa1leYsEXzmUDP322s1XR5ZJsgX1v13b7wnLoeaeuLUddulTx5Z5wJhhJjT
+jO08/Sl+hzD+dEVKcau8lgRQmrXdJMVFgjrrcj/Em2pxt7n7VQcIf3TGB4aSzCcY
+zRJgR/gjxIoqOnR7o62g+gkkWg9ZUVedn7pd8dSoO5ddRSlRgTnHXxSrB8yi9nsN
+CMX0TMr6CYekZV61UOGOJWfeqtVKeyjwDG2ekrEh8TC2Rof2Gdva5ndpLWn23M10
+RSRP7TqumUzd54r5NKwMrmD1kfoeyJiDLQ/WYN7vCcM9fsGJ8HueX+y0Nn4wnl25
+NdGHV7VFxX+n1tzLeUYvB2to3vFelbG5t1gUzyI/qLBQtgY8TxeGtTBFHRPh2b9w
+zgplolod4mwoXD0ccqMf598K8e8PmTHeQ8btHPUz/eQ0EQlVDx6d/SFCiSSBhkhT
+LuZ7Ea9XjxqnRKJOIMxQ
+=8tmQ
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Jul_2013_15_56_09_+1000_76k97KRii/DMK2cu--
+--Signature=_Mon__29_Jul_2013_16_25_44_+1000_0/6U+c3SRkyad=HA--
