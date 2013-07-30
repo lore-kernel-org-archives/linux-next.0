@@ -1,65 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Tue, 30 Jul 2013 12:16:05 +1000
-Message-ID: <20130730121605.35c4de9d82b753a5a763f5c9@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the
+ usb.current tree
+Date: Tue, 30 Jul 2013 14:08:10 +1000
+Message-ID: <20130730140810.a61155d064e33248faef323b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__30_Jul_2013_12_16_05_+1000_4isAhAXf5loV4.2D"
+ boundary="Signature=_Tue__30_Jul_2013_14_08_10_+1000_KqQ5SSRfOOYTgVOG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53755 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35278 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753015Ab3G3CQP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2013 22:16:15 -0400
+	with ESMTP id S1750745Ab3G3EIW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Jul 2013 00:08:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Van Hensbergen <ericvh@gmail.com>, Andi Shyti <andi@etezian.org>
+To: Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rong Wang <Rong.Wang@csr.com>, Greg KH <greg@kroah.com>
 
---Signature=_Tue__30_Jul_2013_12_16_05_+1000_4isAhAXf5loV4.2D
+--Signature=_Tue__30_Jul_2013_14_08_10_+1000_KqQ5SSRfOOYTgVOG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Felipe,
 
-After merging the net-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the usb-gadget tree got a conflict in
+drivers/usb/gadget/udc-core.c between commit 1894870eb424 ("usb: gadget:
+udc-core: fix the typo of udc state attribute") from the usb.current tree
+and commit 5702f75375aa ("usb: gadget: udc-core: move sysfs_notify() to a
+workqueue") from the usb-gadget tree.
 
-net/9p/trans_rdma.c:724:15: error: 'rdma_cancelled' undeclared here (not in=
- a function)
-  .cancelled =3D rdma_cancelled,
-               ^
-
-Caused by commit 59ea52dc461e ("net: trans_rdma: remove unused function")
-interacting with commit d538a4ba906a ("net/9p: link rdma_cancelled in
-with trans_module") from the v9fs tree.
-
-I just reverted that net-next tree commit for today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__30_Jul_2013_12_16_05_+1000_4isAhAXf5loV4.2D
+diff --cc drivers/usb/gadget/udc-core.c
+index 13e25f8,3122ab9..0000000
+--- a/drivers/usb/gadget/udc-core.c
++++ b/drivers/usb/gadget/udc-core.c
+@@@ -105,6 -106,13 +106,13 @@@ EXPORT_SYMBOL_GPL(usb_gadget_unmap_requ
+ =20
+  /* ----------------------------------------------------------------------=
+--- */
+ =20
++ static void usb_gadget_state_work(struct work_struct *work)
++ {
++ 	struct usb_gadget	*gadget =3D work_to_gadget(work);
++=20
+ -	sysfs_notify(&gadget->dev.kobj, NULL, "status");
+++	sysfs_notify(&gadget->dev.kobj, NULL, "state");
++ }
++=20
+  void usb_gadget_set_state(struct usb_gadget *gadget,
+  		enum usb_device_state state)
+  {
+
+--Signature=_Tue__30_Jul_2013_14_08_10_+1000_KqQ5SSRfOOYTgVOG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR9yHpAAoJEECxmPOUX5FE0dYP/0OAiecjYd4w+YW3GF0RXpws
-vWS0zfJF1ASkdhK52ujQ11lVZfc97GfBjizJZ66PtNjL3Y/w6wtEu+Y0cJ4O/z8t
-PDa+pMnOC5ZIHcsk/Y72nr93k05EFEhmLvaIcXK3ehRaiQaqbCnSHRXAMbvh6mPy
-ajoFVn5X5gOlFebaEsyyBCYMCD9IxRVdcGIYxPtvbEnKQ+/xqsQeQKa+GQsD+yGr
-aqFVCENmPtfIf+MloKFUVoFlRG3swaoqZUDboXjN2L1WrcptGU4pU82YgCu+E1wQ
-CB76e3O41abYGHwJ+aolAdRhE2z7ZG4h+sONdktPjR5RGm309JxMLjfkp4Pjk6c+
-7OBdXu4JRrfYlaWDMXGKMG4RrcVfUTE3BPec7DjKcG6ucaMizEmlzoFyxgTqogLz
-yXlLMFa9QJgqgtBNmVjA/V2QSr0rAZQPMpM2XdCYzX1P8qy91/m2riRnCjvHGSPk
-1JKAedG/AGxR3Yt8VRAcsWJDEhs0Hzs4ckwf92plQh9zQ+72lF34Q7eUKFLnMR/R
-bYzoP2CVcSZ0Nf5HXf+Mn9V+MhIqCsnJJCXFcPvQR5+i4+LBAT6Gtpt1RGwpDDxC
-VeSvwCJhK1Ee2bEHCFyu8y+S8PvH3K88oq1Ty+eY1ioU9vNTYM9VYtrh+x/iEgJV
-1dVswf/TE2JUdal+Dl9C
-=8wLd
+iQIcBAEBCAAGBQJR9zwuAAoJEECxmPOUX5FEI14P/3qO6PCDKF9R8YlKTZqhM5xf
+UVZpeQdx5DC79dcPtVp2Q5r0sn2dg9uk9EKBVY4alxWcPxb3ToIVNEErC3bYmpjD
+da1IOOgcvrMozf/H4i0amSeH9wcGbh/60JsSZ89eor5fIiyWQVuxItOpYD8xyNTE
+qpaxhCHF43li3BOjfzPphk2yyxEynQfKDO8JIpxqX7SoEQub9V6fcknuZAB67uzG
+HCga5XZWm8wDxcI/41EHi0OPDOz8HpGngHLKvWui2h9Q7dzwsMTeyKGQPCtCVyY4
+AcQM4j4WmNmPG5jJcuwl08LgtzboowAqtpagmV+z3XgebDHQ058QoGXi4Vi3Csbr
+GWvo/G8oLRNrEldrkmeDS0ktvepMw0+L4CGFuQkW5tb2jzLAgQDcZ+h3x2EkKnDR
+zER1dZNgBzz6whRHwP6LgMKngu9RI+++Rb+zRc3DMRTn6auTOO62Jc0LdZB0MotZ
+VdpzEXrxcdMHiiGMtSzdOIOaTMWr4eaG/dV7RFI1xikGzZLGD2oC4aHn++e0mtZS
+LCESGVfxQFKwa4GkKEYnXxDBdE/mCIZHlMg0qZM+AVBTP1gmb0LV4GvWXnja/U33
+BkB+fe2/KEunl6FqE8gEcGJlGJ3u1fryKgRDuM/fBv4bp8h/b33Xanjdj4QvmLCH
+yf4gZ84pAqXoDvDOcGNS
+=lzMB
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__30_Jul_2013_12_16_05_+1000_4isAhAXf5loV4.2D--
+--Signature=_Tue__30_Jul_2013_14_08_10_+1000_KqQ5SSRfOOYTgVOG--
