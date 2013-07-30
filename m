@@ -1,76 +1,65 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with Linus' tree
-Date: Mon, 29 Jul 2013 18:38:08 -0700
-Message-ID: <20130730013808.GA5373@kroah.com>
-References: <20130729150129.76a9fab4023ee22c940b7920@canb.auug.org.au>
- <20130729192649.GA9191@kroah.com>
- <20130730102754.749949a5d53c54e4c6c72d53@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Tue, 30 Jul 2013 12:16:05 +1000
+Message-ID: <20130730121605.35c4de9d82b753a5a763f5c9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__30_Jul_2013_12_16_05_+1000_4isAhAXf5loV4.2D"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:60019 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751402Ab3G3BiL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Jul 2013 21:38:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20130730102754.749949a5d53c54e4c6c72d53@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53755 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753015Ab3G3CQP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jul 2013 22:16:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Van Hensbergen <ericvh@gmail.com>, Andi Shyti <andi@etezian.org>
 
-On Tue, Jul 30, 2013 at 10:27:54AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Mon, 29 Jul 2013 12:26:49 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > On Mon, Jul 29, 2013 at 03:01:29PM +1000, Stephen Rothwell wrote:
-> > > 
-> > > Today's linux-next merge of the char-misc tree got a conflict in
-> > > drivers/misc/mei/init.c between commit 99f22c4ef24c ("mei: don't have to
-> > > clean the state on power up") from Linus' tree and commit b950ac1dabfc
-> > > ("mei: don't get stuck in select during reset") from the char-misc tree.
-> > > 
-> > > (Unrelated white space changes are a pest :-()
-> > > 
-> > > I fixed it up (see below) and can carry the fix as necessary (no action
-> > > is required).
-> > 
-> > Thanks, I've merged the char-misc-next branch into 3.11-rc3, so this
-> > merge problem should no longer be there.
-> 
-> Unfortunately, I think this is exactly the sort of back merge that Linus
-> hates.  He and I are quite capable of coping with relatively complex
-> merge conflicts, so ones like this are really not a problem (and "git
-> rerere" takes care of it once I have resolved it the first time).  That
-> is why I added "no action is required" to my notification messages.
-> These messages are really more "this is what I did, please tell me if I
-> did something wrong", not "please fix this up"  (I know this message from
-> me has changed over time - we can all learn, even us oldies :-))
-> 
-> Also, if you are doing a merge of fixes that you have submitted to
-> Linus, it is probably better to merge your fixes branch rather that
-> Linus' tree after he has merged it - that way you are not dragging
-> irrelevant stuff from Linus' tree into yours and complicating the git
-> history/bisecting so much.
-> 
-> Of course, if you need something from Linus' tree that someone else put
-> there to continue development, then you need to back merge Linus' tree,
-> but after rc2 or 3 that should be rare.  And, of course, such a back
-> merge needs a good changelog explaining exactly why it was done.
+--Signature=_Tue__30_Jul_2013_12_16_05_+1000_4isAhAXf5loV4.2D
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I usually want those fixes from the rcs and merge at that point in time
-every other -rc release or so, just to make it much easier for me to
-test with, and to pick in the patches I've sent to Linus.
+Hi all,
 
-Yes, I could just suck in my fixes branch, but I would be stuck with
-trees based on -rc1, which is almost always a pain to test with.
+After merging the net-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I'm not doing "merges every week", and have been doing it this way for a
-few years now with no complaints.  The -rc point in time is a good place
-to sync up with it seems.
+net/9p/trans_rdma.c:724:15: error: 'rdma_cancelled' undeclared here (not in=
+ a function)
+  .cancelled =3D rdma_cancelled,
+               ^
 
-thanks,
+Caused by commit 59ea52dc461e ("net: trans_rdma: remove unused function")
+interacting with commit d538a4ba906a ("net/9p: link rdma_cancelled in
+with trans_module") from the v9fs tree.
 
-greg k-h
+I just reverted that net-next tree commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__30_Jul_2013_12_16_05_+1000_4isAhAXf5loV4.2D
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR9yHpAAoJEECxmPOUX5FE0dYP/0OAiecjYd4w+YW3GF0RXpws
+vWS0zfJF1ASkdhK52ujQ11lVZfc97GfBjizJZ66PtNjL3Y/w6wtEu+Y0cJ4O/z8t
+PDa+pMnOC5ZIHcsk/Y72nr93k05EFEhmLvaIcXK3ehRaiQaqbCnSHRXAMbvh6mPy
+ajoFVn5X5gOlFebaEsyyBCYMCD9IxRVdcGIYxPtvbEnKQ+/xqsQeQKa+GQsD+yGr
+aqFVCENmPtfIf+MloKFUVoFlRG3swaoqZUDboXjN2L1WrcptGU4pU82YgCu+E1wQ
+CB76e3O41abYGHwJ+aolAdRhE2z7ZG4h+sONdktPjR5RGm309JxMLjfkp4Pjk6c+
+7OBdXu4JRrfYlaWDMXGKMG4RrcVfUTE3BPec7DjKcG6ucaMizEmlzoFyxgTqogLz
+yXlLMFa9QJgqgtBNmVjA/V2QSr0rAZQPMpM2XdCYzX1P8qy91/m2riRnCjvHGSPk
+1JKAedG/AGxR3Yt8VRAcsWJDEhs0Hzs4ckwf92plQh9zQ+72lF34Q7eUKFLnMR/R
+bYzoP2CVcSZ0Nf5HXf+Mn9V+MhIqCsnJJCXFcPvQR5+i4+LBAT6Gtpt1RGwpDDxC
+VeSvwCJhK1Ee2bEHCFyu8y+S8PvH3K88oq1Ty+eY1ioU9vNTYM9VYtrh+x/iEgJV
+1dVswf/TE2JUdal+Dl9C
+=8wLd
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__30_Jul_2013_12_16_05_+1000_4isAhAXf5loV4.2D--
