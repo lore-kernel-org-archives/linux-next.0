@@ -1,43 +1,30 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Aug 1
-Date: Thu, 1 Aug 2013 09:50:50 +0200
-Message-ID: <CA+icZUU-mcv96gS8VLaMJ3szPR3pHFH8k2Ppu4WDmRu=kdOkYQ@mail.gmail.com>
-References: <20130801172544.3129b9e0d0e3c855f5b6d5ba@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ net-next tree
+Date: Fri, 2 Aug 2013 08:28:51 +0800
+Message-ID: <20130802002851.GD11408@kroah.com>
+References: <20130801152148.c98a281ec6e076646edeb7cb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f181.google.com ([74.125.82.181]:38278 "EHLO
-	mail-we0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751349Ab3HAHuv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Aug 2013 03:50:51 -0400
-In-Reply-To: <20130801172544.3129b9e0d0e3c855f5b6d5ba@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130801152148.c98a281ec6e076646edeb7cb@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Aug 1, 2013 at 9:25 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Changes since 20130731:
->
-> Removed trees: xen-arm (merged into the xen-tip tree)
->
-> The ext4 tree still has its build failure so I used the version from
-> next-20130726.
->
-> The driver-core tree gained a conflict against the net-next tree.
->
-> The usb-gadget tree lost its build failure but gained conflicts against
-> Linus' tree.
->
-> ----------------------------------------------------------------------------
->
+On Thu, Aug 01, 2013 at 03:21:48PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in
+> net/core/net-sysfs.c between commit ff80e519ab1b ("net: export physical
+> port id via sysfs") from the net-next tree and commit 6be8aeef348a ("net:
+> core: convert class code to use dev_groups") from the driver-core tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Just FYI:
-On some arches (like IA64) you will see a breakage in drm.
-See pending "drm/mm: include required headers in drm_mm.h" patch in drm-next.
+Looks good to me, thanks.
 
-[1] https://patchwork.kernel.org/patch/2833468/
-[2] http://cgit.freedesktop.org/~airlied/linux/commit/?h=drm-next&id=86e81f0e624b55fa9f1560c3b64bc80e458c5168
+greg k-h
