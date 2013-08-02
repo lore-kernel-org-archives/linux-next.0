@@ -1,59 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb-gadget tree with the usb tree
-Date: Fri, 2 Aug 2013 16:38:18 +1000
-Message-ID: <20130802163818.e29c7e6d3472cf161703ae60@canb.auug.org.au>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: linux-next: manual merge of the usb-gadget tree with the usb tree
+Date: Fri, 2 Aug 2013 10:23:03 +0300
+Message-ID: <20130802072303.GC24465@radagast>
+References: <20130802163818.e29c7e6d3472cf161703ae60@canb.auug.org.au>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__2_Aug_2013_16_38_18_+1000_ESqjQViPTQjRM5HA"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7gGkHNMELEOhSGF6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44038 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754669Ab3HBGi3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Aug 2013 02:38:29 -0400
+Received: from arroyo.ext.ti.com ([192.94.94.40]:44967 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755784Ab3HBHX1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Aug 2013 03:23:27 -0400
+Content-Disposition: inline
+In-Reply-To: <20130802163818.e29c7e6d3472cf161703ae60@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Felipe Balbi <balbi@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Greg KH <greg@kroah.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Greg KH <greg@kroah.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 
---Signature=_Fri__2_Aug_2013_16_38_18_+1000_ESqjQViPTQjRM5HA
-Content-Type: text/plain; charset=US-ASCII
+--7gGkHNMELEOhSGF6
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Felipe,
+Hi,
 
-Today's linux-next merge of the usb-gadget tree got a conflict in
-drivers/usb/host/ehci-tegra.c between commit d4f09e28d7bc ("USB: host:
-use dev_get_platdata()") from the usb tree and commit d50642794508 ("usb:
-tegra: host: Remove references to plat data") from the usb-gadget tree.
+On Fri, Aug 02, 2013 at 04:38:18PM +1000, Stephen Rothwell wrote:
+> Today's linux-next merge of the usb-gadget tree got a conflict in
+> drivers/usb/host/ehci-tegra.c between commit d4f09e28d7bc ("USB: host:
+> use dev_get_platdata()") from the usb tree and commit d50642794508 ("usb:
+> tegra: host: Remove references to plat data") from the usb-gadget tree.
+>=20
+> I fixed it up (the latter just removed the code updated by the former, so
+> I did that) and can carry the fix as necessary (no action is required).
 
-I fixed it up (the latter just removed the code updated by the former, so
-I did that) and can carry the fix as necessary (no action is required).
+Thank you
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+balbi
 
---Signature=_Fri__2_Aug_2013_16_38_18_+1000_ESqjQViPTQjRM5HA
-Content-Type: application/pgp-signature
+--7gGkHNMELEOhSGF6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJR+1PeAAoJEECxmPOUX5FEitQQAKT6pTekK1yxxxJduHtjklXm
-wWG1pX6eOj5DlHFUKuWnRaQYVxSsw9AbAUwwp7W6lZrTYXCy1u/A+xliow1iC2Xv
-07o1MNE/5riLFYLWn34SDXK57f5fiFYBXETvXcQB1aCFCseWX8kJxbQprHZcUz3q
-BbU9vaOz93dY1aKvSxaITy2HF0y82hP3/pRg/802hBfWrSO6047qrlAOh5lxjv+P
-G6qJqwKIVE7asZY3tQmWrz5rWnykPTCj8Lq52Vpe5BAZZM1EXwLfMbp8NN82e9f3
-mMfZQSSq/XS1eLdxDl/7s/24SrYNBSS+Q2+Xb8JJO1V6h4G57H1z0nfKbR9oISk4
-WRlcE3WgpTlqv0nRWWfRCP3iHlYamrbMciBTxlItAcTt6WWldGPMI1U0nnF0EATN
-/Miw2mN75D2LmBk1I2BFLsEChLaohuQlm5fyAMSWTcx0LBi+dkXMWADZ/vzXEhf/
-wUMQO48xAFBgp1nHWLPhmxa3L9YEb3QTfp4uWcF+oBvydFl3OWQfxswtadHzivuN
-1Bw0wboSRFDgnnu9lFp8uTcEOqcehpUD85uS0r2iV3L+OZafc7CeLRBTeV8d84q/
-bvEcMyD00MYoA3puTn4Nctd1tR+dN1mvaLFDYwjgh7X45uhSU8AgmLiggwBznSM1
-78s8Qv2arNF8RJCUUlDJ
-=ztAT
+iQIcBAEBAgAGBQJR+15XAAoJEIaOsuA1yqREonEQAIBeaXkRe4RddA478XSUUymp
+5xQV8MojRTFMmjwDKkAzw7dLmwDJ/T+j8VgiZL7jONlkC7dr48yX7DKEylSPj5r0
+JvfYBWINCoyMurH7/8I+BoCytuMB/H/CZlMO2PZvkTwWHYUtf4kDKLkvDADHeAbY
+i0avslgsHn4MhrMozbVxsSzXoP9M+nevRVkLccjGX47g1xuJ2K60jGqFzRYfjGvk
+B9Q5QS+2ix/d5Wi1L9bFLhuF0tpDTlKhulNZBoqJJYyb+FDimVsYX0mCISOWUqak
+LMUTh+xrTtfRulGVv3Fb8HZoeU3ki0CwAyegx1FmP9nDm2amTEc/shw8hIaFxetq
+IFLUcaG/qT0X2/GPgzzDPuNFvY5MaSiglFSoWqAg4/wUC54Tj8GXOn7RRritbKgh
+VB4W9WJLCRd0GZLlGc3rCeja5eocoJUTMzEh6UPgIWiVa1+qJf9EXRevXj7qBHxK
+pF7bHQGGZt6oolloVyxk2fZwin3BELLwqKtbnkj6fa0Xgwbm9eLUUkxcTgXDv1iK
+rfmzjUvi5SrC3fnkH8mvta7fvLGvuLn4wolu6cYRNa5YrPqahFb2eTCr225LGe/h
+9Hiq3ktFm1Or0OS1HJQQ3izqtktys6YvJ2vzhmeLzfQ6XThjMqa0+nBM4gI4icmq
+dASzERUa7uWpStnGoJzU
+=Q5PV
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__2_Aug_2013_16_38_18_+1000_ESqjQViPTQjRM5HA--
+--7gGkHNMELEOhSGF6--
