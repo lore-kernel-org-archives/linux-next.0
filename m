@@ -1,30 +1,59 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- net-next tree
-Date: Fri, 2 Aug 2013 08:28:51 +0800
-Message-ID: <20130802002851.GD11408@kroah.com>
-References: <20130801152148.c98a281ec6e076646edeb7cb@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the usb tree
+Date: Fri, 2 Aug 2013 16:38:18 +1000
+Message-ID: <20130802163818.e29c7e6d3472cf161703ae60@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__2_Aug_2013_16_38_18_+1000_ESqjQViPTQjRM5HA"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44038 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754669Ab3HBGi3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Aug 2013 02:38:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Greg KH <greg@kroah.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+
+--Signature=_Fri__2_Aug_2013_16_38_18_+1000_ESqjQViPTQjRM5HA
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20130801152148.c98a281ec6e076646edeb7cb@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 01, 2013 at 03:21:48PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> net/core/net-sysfs.c between commit ff80e519ab1b ("net: export physical
-> port id via sysfs") from the net-next tree and commit 6be8aeef348a ("net:
-> core: convert class code to use dev_groups") from the driver-core tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Hi Felipe,
 
-Looks good to me, thanks.
+Today's linux-next merge of the usb-gadget tree got a conflict in
+drivers/usb/host/ehci-tegra.c between commit d4f09e28d7bc ("USB: host:
+use dev_get_platdata()") from the usb tree and commit d50642794508 ("usb:
+tegra: host: Remove references to plat data") from the usb-gadget tree.
 
-greg k-h
+I fixed it up (the latter just removed the code updated by the former, so
+I did that) and can carry the fix as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__2_Aug_2013_16_38_18_+1000_ESqjQViPTQjRM5HA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJR+1PeAAoJEECxmPOUX5FEitQQAKT6pTekK1yxxxJduHtjklXm
+wWG1pX6eOj5DlHFUKuWnRaQYVxSsw9AbAUwwp7W6lZrTYXCy1u/A+xliow1iC2Xv
+07o1MNE/5riLFYLWn34SDXK57f5fiFYBXETvXcQB1aCFCseWX8kJxbQprHZcUz3q
+BbU9vaOz93dY1aKvSxaITy2HF0y82hP3/pRg/802hBfWrSO6047qrlAOh5lxjv+P
+G6qJqwKIVE7asZY3tQmWrz5rWnykPTCj8Lq52Vpe5BAZZM1EXwLfMbp8NN82e9f3
+mMfZQSSq/XS1eLdxDl/7s/24SrYNBSS+Q2+Xb8JJO1V6h4G57H1z0nfKbR9oISk4
+WRlcE3WgpTlqv0nRWWfRCP3iHlYamrbMciBTxlItAcTt6WWldGPMI1U0nnF0EATN
+/Miw2mN75D2LmBk1I2BFLsEChLaohuQlm5fyAMSWTcx0LBi+dkXMWADZ/vzXEhf/
+wUMQO48xAFBgp1nHWLPhmxa3L9YEb3QTfp4uWcF+oBvydFl3OWQfxswtadHzivuN
+1Bw0wboSRFDgnnu9lFp8uTcEOqcehpUD85uS0r2iV3L+OZafc7CeLRBTeV8d84q/
+bvEcMyD00MYoA3puTn4Nctd1tR+dN1mvaLFDYwjgh7X45uhSU8AgmLiggwBznSM1
+78s8Qv2arNF8RJCUUlDJ
+=ztAT
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__2_Aug_2013_16_38_18_+1000_ESqjQViPTQjRM5HA--
