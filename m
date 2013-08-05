@@ -1,83 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the sh tree
-Date: Mon, 5 Aug 2013 15:04:56 +1000
-Message-ID: <20130805150456.974461a9896ae4d61f044aab@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the tty tree with the sh tree
+Date: Mon, 5 Aug 2013 13:25:48 +0800
+Message-ID: <20130805052548.GB31808@kroah.com>
+References: <20130805150456.974461a9896ae4d61f044aab@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_Aug_2013_15_04_56_+1000_o3DHzrxeitm9e.lx"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bastian Hecht <hechtb@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Paul Mundt <lethal@linux-sh.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__5_Aug_2013_15_04_56_+1000_o3DHzrxeitm9e.lx
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35092 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754135Ab3HEFYc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Aug 2013 01:24:32 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20130805150456.974461a9896ae4d61f044aab@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bastian Hecht <hechtb@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Paul Mundt <lethal@linux-sh.org>
 
-Hi Greg,
+On Mon, Aug 05, 2013 at 03:04:56PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the tty tree got a conflict in
+> drivers/tty/serial/sh-sci.c between commit ada80ee7fa60 ("serial: sh-sci:
+> Add OF support") from the sh tree and commit 3ba35baa55fa ("serial:
+> sh-sci: use dev_get_platdata()") from the tty tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/tty/serial/sh-sci.c between commit ada80ee7fa60 ("serial: sh-sci:
-Add OF support") from the sh tree and commit 3ba35baa55fa ("serial:
-sh-sci: use dev_get_platdata()") from the tty tree.
+Looks good to me, thanks.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/tty/serial/sh-sci.c
-index 5ef9300,5377502..0000000
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@@ -2588,20 -2481,9 +2588,20 @@@ static int sci_probe(struct platform_de
-  	if (is_early_platform_device(dev))
-  		return sci_probe_earlyprintk(dev);
- =20
- +	if (dev->dev.of_node)
- +		p =3D sci_parse_dt(dev, &dev_id);
- +	else
-- 		p =3D dev->dev.platform_data;
-++		p =3D dev_get_platdata(&dev->dev);
- +
- +	if (!p) {
- +		dev_err(&dev->dev, "no setup data supplied\n");
- +		return -EINVAL;
- +	}
- +
- +	sp =3D &sci_ports[dev_id];
-  	platform_set_drvdata(dev, sp);
- =20
- -	ret =3D sci_probe_single(dev, dev->id, p, sp);
- +	ret =3D sci_probe_single(dev, dev_id, p, sp);
-  	if (ret)
-  		return ret;
- =20
-
---Signature=_Mon__5_Aug_2013_15_04_56_+1000_o3DHzrxeitm9e.lx
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJR/zJ9AAoJEECxmPOUX5FEI8kP/RbeTlkIP+mq+bpYHo/v/FBN
-JNkNv54K05bNgS0l3CFNAEKrkXGi5msY5b1FwVNHILAMvt8t02KE3LFxMeBU8SMN
-wQHasfsx5kf4fZXp9odc7c3coMG5XVM/biL6ypSZdRXeoFtsBbM25MPIW+4RewE5
-vFM3WZfDOjeHxGiPDiWig1iFXtQCBwetOoA99+U/TEO1vu3S69oW/fk1FohTpPJb
-iHPXhF6WxUKFw2bOBUUzjqFcmN2vvzMc8sdhWESvCP9UNEQBZtaFDbX98fkqk05O
-//3sk4SidNO05ZMnvgnmvWNPXOzNN5Tc/3tIVtA96srEAWBAU4PVDPWvq9CmJVQe
-sUJYCnUJ7RGuks7zzwWMqFCMLPi5PCnA0oMcDWHQ0jwrMWI0wIHa1wpokvxAUSt1
-2SQhUFgFvtFm8CobYvpWDuZqnFZkqQZ7GjdjNCTllSLp31tL8r9hOdc3VlBccO7/
-81OnFvKZSyDIDraigYN9Y4MQ3c7rnI9AiRCBct6AFRtkgwC+Bt/E0IYrGNTdA7pP
-8NslMLx8pvL7JR8UaQCyqzrPE+gs2FQIuCCTFxGiV3Z2fL05sXUiGOlK5gkyHQhz
-ZM0mCi+kjDysspD0wFchHgl7yYb3iROq95RPaT64LWOO8zud34P8Xj1gDdsaxM25
-4kYv10DZ04O2MQ0hl+HT
-=IVgv
------END PGP SIGNATURE-----
-
---Signature=_Mon__5_Aug_2013_15_04_56_+1000_o3DHzrxeitm9e.lx--
+greg k-h
