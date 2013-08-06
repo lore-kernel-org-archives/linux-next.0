@@ -1,7 +1,7 @@
 From: Sedat Dilek <sedat.dilek@gmail.com>
 Subject: Re: linux-next: Tree for Aug 6 [ wireless | iwlwifi | mac80211 ? ]
-Date: Tue, 6 Aug 2013 17:20:07 +0200
-Message-ID: <CA+icZUVCFOS6SHonEqzaJyWCGCU4nqqGjBN0VbmV-=OoM+deZg@mail.gmail.com>
+Date: Tue, 6 Aug 2013 17:27:24 +0200
+Message-ID: <CA+icZUVuOqdZUGy2ALAF1CehOqYdr7rtEsXhqNvDtYEns2BuRQ@mail.gmail.com>
 References: <CA+icZUX8OcTSOABO6Nbz5R6_5-m39rsYOpDqYBA7hf8LFvJLLA@mail.gmail.com>
 	<1375797260.8219.21.camel@jlt4.sipsolutions.net>
 	<CA+icZUUAJ25QybqHvxz7eubSLH6YuNjcc5zyU2O5Xi9vevMGkw@mail.gmail.com>
@@ -11,31 +11,45 @@ References: <CA+icZUX8OcTSOABO6Nbz5R6_5-m39rsYOpDqYBA7hf8LFvJLLA@mail.gmail.com>
 	<CA+icZUXrRsXfeW9hqxTMkKW4TdNSBH-zE8-zX2Rd7HTAx5MvqQ@mail.gmail.com>
 	<CA+icZUWijPJmNoqE22Msqcn7tRot3SB3e=KujMM7JNd-Om-oOw@mail.gmail.com>
 	<1375802297.8219.25.camel@jlt4.sipsolutions.net>
+	<CA+icZUVCFOS6SHonEqzaJyWCGCU4nqqGjBN0VbmV-=OoM+deZg@mail.gmail.com>
 Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1375802297.8219.25.camel@jlt4.sipsolutions.net>
+In-Reply-To: <CA+icZUVCFOS6SHonEqzaJyWCGCU4nqqGjBN0VbmV-=OoM+deZg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Johannes Berg <johannes@sipsolutions.net>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, wireless <linux-wireless@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Aug 6, 2013 at 5:18 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
+On Tue, Aug 6, 2013 at 5:20 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> On Tue, Aug 6, 2013 at 5:18 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
+>>
+>>
+>>> I have sent you a v2 of my logs (with -d and rsyslog-7.x).
+>>
+>> Hmm, that looks different? There no longer is anything about "PSK might
+>> be wrong", but now just disconnections by the AP, which unfortunately
+>> indicate no reason.
+>>
+>> When was it working last?
+>>
 >
->
->> I have sent you a v2 of my logs (with -d and rsyslog-7.x).
->
-> Hmm, that looks different? There no longer is anything about "PSK might
-> be wrong", but now just disconnections by the AP, which unfortunately
-> indicate no reason.
->
-> When was it working last?
+> next-20130801 was OK here.
 >
 
-next-20130801 was OK here.
+What about these lines?
+
+Aug  6 17:03:37 fambox kernel: [  134.575120] wlan0: deauthenticated
+from 00:04:0e:e4:00:3d (Reason: 1)
+Aug  6 17:03:37 fambox wpa_supplicant[2424]: wlan0: Event DEAUTH (12) received
+Aug  6 17:03:37 fambox wpa_supplicant[2424]: wlan0: Deauthentication
+notification
+Aug  6 17:03:37 fambox wpa_supplicant[2424]: Deauthentication frame
+IE(s) - hexdump(len=0): [NULL]
+Aug  6 17:03:37 fambox wpa_supplicant[2424]: wlan0: WPA: 4-Way
+Handshake failed - pre-shared key may be incorrect
+Aug  6 17:03:37 fambox NetworkManager[2431]: <info> (wlan0):
+supplicant interface state: 4-way handshake -> disconnected
 
 - Sedat -
-
-> johannes
->
