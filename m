@@ -1,37 +1,44 @@
-From: Johannes Berg <johannes@sipsolutions.net>
+From: Sedat Dilek <sedat.dilek@gmail.com>
 Subject: Re: linux-next: Tree for Aug 6 [ wireless | iwlwifi | mac80211 ? ]
-Date: Tue, 06 Aug 2013 16:50:17 +0200
-Message-ID: <1375800617.8219.23.camel@jlt4.sipsolutions.net>
+Date: Tue, 6 Aug 2013 16:56:08 +0200
+Message-ID: <CA+icZUVbKpyuke6PRg3-60gOggsTb=3cNRz3Sy0RmvcZSuPaNw@mail.gmail.com>
 References: <CA+icZUX8OcTSOABO6Nbz5R6_5-m39rsYOpDqYBA7hf8LFvJLLA@mail.gmail.com>
-	 <1375797260.8219.21.camel@jlt4.sipsolutions.net>
-	 <CA+icZUUAJ25QybqHvxz7eubSLH6YuNjcc5zyU2O5Xi9vevMGkw@mail.gmail.com>
-	 (sfid-20130806_164606_692527_0D2AF4DB)
+	<1375797260.8219.21.camel@jlt4.sipsolutions.net>
+	<CA+icZUUAJ25QybqHvxz7eubSLH6YuNjcc5zyU2O5Xi9vevMGkw@mail.gmail.com>
+	<1375800617.8219.23.camel@jlt4.sipsolutions.net>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:55468 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753088Ab3HFOuX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Aug 2013 10:50:23 -0400
-In-Reply-To: <CA+icZUUAJ25QybqHvxz7eubSLH6YuNjcc5zyU2O5Xi9vevMGkw@mail.gmail.com> (sfid-20130806_164606_692527_0D2AF4DB)
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:57909 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754680Ab3HFO4K (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Aug 2013 10:56:10 -0400
+In-Reply-To: <1375800617.8219.23.camel@jlt4.sipsolutions.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
+To: Johannes Berg <johannes@sipsolutions.net>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, wireless <linux-wireless@vger.kernel.org>
 
-On Tue, 2013-08-06 at 16:46 +0200, Sedat Dilek wrote:
+On Tue, Aug 6, 2013 at 4:50 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
+> On Tue, 2013-08-06 at 16:46 +0200, Sedat Dilek wrote:
+>
+> Heh, the interesting messages are always cut out of the log:
+>
+> Aug  6 16:30:34 fambox wpa_supplicant[2533]: wlan0: WPA: RX message 1 of 4-Way Handshake from 00:04:0e:e4:00:3d (ver=2)
+> Aug  6 16:30:34 fambox wpa_supplicant[2533]: RSN: msg 1/4 key data - hexdump(len=0):
+> Aug  6 16:30:34 fambox wpa_supplicant[2533]: Get randomness: len=32 entropy=4
+> Aug  6 16:30:34 fambox wpa_supplicant[2533]: random from os_get_random - hexdump(len=32): [REMOVED]
+> Aug  6 16:30:34 fambox wpa_supplicant[2533]: random_mix_pool - hexdump(len=20): [REMOVED]
+> Aug  6 16:30:34 fambox wpa_supplicant[2533]: random from internal pool - hexdump(len=16): [REMOVED]
+> Aug  6 16:30:34 fambox wpa_supplicant[2533]: random_mix_pool - hexdump(len=20): [REMOVED]
+> Aug  6 16:30:34 fambox rsyslogd-2177: imuxsock begins to drop messages from pid 2533 due to rate-limiting
+> [...]
+>
 
-Heh, the interesting messages are always cut out of the log:
+Do you know how I can workaround the rsyslogd rate-limiting?
 
-Aug  6 16:30:34 fambox wpa_supplicant[2533]: wlan0: WPA: RX message 1 of 4-Way Handshake from 00:04:0e:e4:00:3d (ver=2)
-Aug  6 16:30:34 fambox wpa_supplicant[2533]: RSN: msg 1/4 key data - hexdump(len=0):
-Aug  6 16:30:34 fambox wpa_supplicant[2533]: Get randomness: len=32 entropy=4
-Aug  6 16:30:34 fambox wpa_supplicant[2533]: random from os_get_random - hexdump(len=32): [REMOVED]
-Aug  6 16:30:34 fambox wpa_supplicant[2533]: random_mix_pool - hexdump(len=20): [REMOVED]
-Aug  6 16:30:34 fambox wpa_supplicant[2533]: random from internal pool - hexdump(len=16): [REMOVED]
-Aug  6 16:30:34 fambox wpa_supplicant[2533]: random_mix_pool - hexdump(len=20): [REMOVED]
-Aug  6 16:30:34 fambox rsyslogd-2177: imuxsock begins to drop messages from pid 2533 due to rate-limiting
-[...]
+- Sedat -
 
-johannes
+> johannes
+>
