@@ -1,48 +1,92 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: build failure after merge of the ext4 tree
-Date: Wed, 7 Aug 2013 07:16:57 +0200
-Message-ID: <CA+icZUUt4domktYZZn0Qp3BZoSFqmKic4qSnVP4cuTKwUww_=A@mail.gmail.com>
-References: <20130729110816.12958c3a26400f444a9a5012@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the ext4 tree
+Date: Wed, 7 Aug 2013 15:19:03 +1000
+Message-ID: <20130807151903.6281b33735f4e3f79231bf5e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__7_Aug_2013_15_19_03_+1000_zk5Du8fLECIDSwLz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:54197 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754707Ab3HGFRB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2013 01:17:01 -0400
-In-Reply-To: <20130729110816.12958c3a26400f444a9a5012@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34297 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754300Ab3HGFTF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2013 01:19:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Dave Chinner <dchinner@redhat.com>
 
-On Mon, Jul 29, 2013 at 3:08 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Theodore,
->
-> After merging the ext4 tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> fs/ext4/ialloc.c: In function '__ext4_new_inode':
-> fs/ext4/ialloc.c:817:1: warning: label 'next_ino' defined but not used [-Wunused-label]
->  next_ino:
->  ^
-> fs/ext4/ialloc.c:792:4: error: label 'next_inode' used but not defined
->     goto next_inode;
->     ^
->
-> Hmm ...
->
-> Caused by commit 4a8603ef197a ("ext4: avoid reusing recently deleted
-> inodes in no journal mode").
->
-> I have used the ext4 tree from next-20130726 for today.
+--Signature=_Wed__7_Aug_2013_15_19_03_+1000_zk5Du8fLECIDSwLz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Since this message ext4-tree was not updated.
-The commit "ext4: avoid reusing recently deleted inodes in no journal
-mode" was refreshed and has a different commit-id.
-Did you test with this one? You still see the breakage?
+Hi Andrew,
 
-- Sedat -
+Today's linux-next merge of the akpm tree got a conflict in
+fs/ext4/extents_status.c between commit 49c6efc7b80e ("ext4: add new
+ioctl EXT4_IOC_PRECACHE_EXTENTS") from the ext4 tree and commit
+"fs-convert-fs-shrinkers-to-new-scan-count-api-fix" from the akpm tree.
 
-[1] http://git.kernel.org/cgit/linux/kernel/git/tytso/ext4.git/patch/?id=533ec0ed5bac34233087f0c10c698d20095d6628
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/ext4/extents_status.c
+index 28e2627,0361206..0000000
+--- a/fs/ext4/extents_status.c
++++ b/fs/ext4/extents_status.c
+@@@ -947,13 -909,23 +947,15 @@@ static int __ext4_es_shrink(struct ext4
+  	struct ext4_inode_info *ei;
+  	struct list_head *cur, *tmp;
+  	LIST_HEAD(skiped);
+- 	int ret, nr_shrunk =3D 0;
++ 	unsigned long nr_shrunk =3D 0;
+ +	int retried =3D 0, skip_precached =3D 1, nr_skipped =3D 0;
+ =20
+  	spin_lock(&sbi->s_es_lru_lock);
+ =20
+ -	/*
+ -	 * If the inode that is at the head of LRU list is newer than
+ -	 * last_sorted time, that means that we need to sort this list.
+ -	 */
+ -	ei =3D list_first_entry(&sbi->s_es_lru, struct ext4_inode_info, i_es_lru=
+);
+ -	if (sbi->s_es_last_sorted < ei->i_touch_when) {
+ -		list_sort(NULL, &sbi->s_es_lru, ext4_inode_touch_time_cmp);
+ -		sbi->s_es_last_sorted =3D jiffies;
+ -	}
+ -
+ +retry:
+  	list_for_each_safe(cur, tmp, &sbi->s_es_lru) {
++ 		int ret;
++=20
+  		/*
+  		 * If we have already reclaimed all extents from extent
+  		 * status tree, just stop the loop immediately.
+
+--Signature=_Wed__7_Aug_2013_15_19_03_+1000_zk5Du8fLECIDSwLz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSAdjHAAoJEECxmPOUX5FEQjoP/jVOmwSIVBew+ABBkAze6Rp+
+An5grAv+3hegvDRPsAMIMfyNWEBB1cutNlLttEOPB4mWdA0nCQi1JnP0X2MfJh6R
+aA7lx3j+uNzRWc3NP+yCYp8Dc4fNJ3f86khq1o6WrX6no5WV4bfxJyCBHNKnSBo1
+QCcoNnvOAjR6W4MMI3FZW67qXABKUq9Y3+5bALo+OzX2NDe901RmQnEx58u8/QJF
+6w8/4f52gQ6sELXsNvHkyOarBD78vSBF//19rsewPHO/8vVFi75OR7vRCjDmMIva
+JFocYHq3WTLsiRIP4ekysMdKRV3CPhaZ35h2fkTB/JEb0lmz8CINEWVtOGpZSPUU
+7x+yOUA44eauoQqZso5WqkrM6BVdTqsGSzsCPkXlEPpi/FCf55Hbxj2ZfC0d7Blu
+iQT8x29jDq1CnGZrg4X7usZE0Pp2hXyN/gQ09MwdG4dpDYjwAhbP21uqDC+xHmyv
+GqsQF7c5zdUiP2HcT3Le7yS8kWSSwvAEzBOlRpWl74IfzqUtpH95vkUviPDm2gQN
+nklYSqeq+lKfnv0TqWhwWiu5IB+wgRNLPqmHJY1Pa9M5+GkPVBUmohUH+unT8iyy
+nszrByZEUp30la72s9mdy5yu4Tpoh78i89kwE1Ek0RigS0rpodCYD6y/cCr345Mk
+pv/KAACjIAsj2OUokJGL
+=oqeO
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__7_Aug_2013_15_19_03_+1000_zk5Du8fLECIDSwLz--
