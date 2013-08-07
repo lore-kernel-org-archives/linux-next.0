@@ -1,102 +1,122 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: linux-next: build failure after merge of the ext4 tree
-Date: Wed, 07 Aug 2013 08:28:35 -0700
-Message-ID: <87zjsted0c.fsf@linaro.org>
-References: <20130729110816.12958c3a26400f444a9a5012@canb.auug.org.au>
-	<CA+icZUUt4domktYZZn0Qp3BZoSFqmKic4qSnVP4cuTKwUww_=A@mail.gmail.com>
-	<20130807153840.4f2997b603397c07aca98b2d@canb.auug.org.au>
+From: Phil Sutter <phil@nwl.cc>
+Subject: Re: linux-next: Tree for Aug 7
+Date: Wed, 7 Aug 2013 17:59:18 +0200
+Message-ID: <20130807155918.GA16263@orbit.nwl.cc>
+References: <20130807155443.a0355d0429f3e0b4ccbed261@canb.auug.org.au>
+ <CA+icZUW+uxCsvPYcY2RRvMxRVzaBLuH9u8M4ziQNWXv=nk4b2w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:43422 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754072Ab3HGP2i (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2013 11:28:38 -0400
-Received: by mail-pd0-f177.google.com with SMTP id u10so1504027pdi.8
-        for <linux-next@vger.kernel.org>; Wed, 07 Aug 2013 08:28:38 -0700 (PDT)
-In-Reply-To: <20130807153840.4f2997b603397c07aca98b2d@canb.auug.org.au>
-	(Stephen Rothwell's message of "Wed, 7 Aug 2013 15:38:40 +1000")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: sedat.dilek@gmail.com, Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="VS++wcV0S1rZb1Fb"
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CA+icZUW+uxCsvPYcY2RRvMxRVzaBLuH9u8M4ziQNWXv=nk4b2w@mail.gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, David Miller <davem@davemloft.net>, Hannes Frederic Sowa <hannes@stressinduktion.org>, wireless <linux-wireless@vger.kernel.org>, John Linville <linville@tuxdriver.com>, Johannes Berg <johannes@sipsolutions.net>
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-> Hi Sedat,
->
-> On Wed, 7 Aug 2013 07:16:57 +0200 Sedat Dilek
-> <sedat.dilek@gmail.com> wrote:
->>
->> On Mon, Jul 29, 2013 at 3:08 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> >
->> > After merging the ext4 tree, today's linux-next build (powerpc
->> > ppc64_defconfig) failed like this:
->> >
->> > fs/ext4/ialloc.c: In function '__ext4_new_inode':
->> > fs/ext4/ialloc.c:817:1: warning: label 'next_ino' defined but not used [-Wunused-label]
->> >  next_ino:
->> >  ^
->> > fs/ext4/ialloc.c:792:4: error: label 'next_inode' used but not defined
->> >     goto next_inode;
->> >     ^
->> >
->> > Hmm ...
->> >
->> > Caused by commit 4a8603ef197a ("ext4: avoid reusing recently deleted
->> > inodes in no journal mode").
->> >
->> > I have used the ext4 tree from next-20130726 for today.
->> 
->> Since this message ext4-tree was not updated.
->> The commit "ext4: avoid reusing recently deleted inodes in no journal
->> mode" was refreshed and has a different commit-id.
->> Did you test with this one? You still see the breakage?
->
-> Today's linux-next does not have this build failure.
+--VS++wcV0S1rZb1Fb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-However, this same commit does introduce a new build failure (not
-present in next-20130806) when ext4 is built as a module:
+On Wed, Aug 07, 2013 at 10:29:18AM +0200, Sedat Dilek wrote:
+> On Wed, Aug 7, 2013 at 7:54 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > Changes since 20130806:
+> >
+> > The ext4 tree lost its build failure.
+> >
+> > The mvebu tree gained a build failure so I used the version from
+> > next-20130806.
+> >
+> > The akpm tree gained conflicts against the ext4 tree.
+> >
+> > ----------------------------------------------------------------------------
+> >
+> 
+> [ CC some netdev and wireless folks ]
+> 
+> Yesterday, I discovered an issue with net-next.
+> The patch in [1] fixed the problems in my network/wifi environment.
+> Hannes confirmed that virtio_net are solved, too.
+> Today's next-20130807 still needs it for affected people.
+> 
+> - Sedat -
+> 
+> [1] http://marc.info/?l=linux-netdev&m=137582524017840&w=2
+> [2] http://marc.info/?l=linux-netdev&m=137583048219416&w=2
+> [3] http://marc.info/?t=137579712800008&r=1&w=2
 
-ERROR: "dirty_expire_interval" [fs/ext4/ext4.ko] undefined!
-make[3]: *** [__modpost] Error 1
-make[2]: *** [modules] Error 2
+Could you please try the attached patch. It limits parsing the ethernet
+header (by calling eth_type_trans()) to cases when the configured
+protocol is ETH_P_ALL, so at least for 802.1X this should fix the
+problem.
 
-The change below fixes the problem.
+The idea behind this patch is that users setting the protocol to
+something else probably do know better and so should be left alone.
 
-Found when building the mv78xx0_defconfig on ARM.
+Best wishes, Phil
 
-Kevin
+--VS++wcV0S1rZb1Fb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="af_packet_fixup.diff"
 
-------------8<--------------
->From 8bd28888e08124d9b298f42a0e0c3a7584ba285f Mon Sep 17 00:00:00 2001
-From: Kevin Hilman <khilman@linaro.org>
-Date: Wed, 7 Aug 2013 08:17:43 -0700
-Subject: [PATCH] mm: page-writeback: export dirty_expire_interval, used by
- ext4
-
-commit 533ec0ed (ext4: avoid reusing recently deleted inodes in no
-journal mode) started using dirty_expire_inteval, which is not
-available to modules.  Make it available to modules.
-
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Signed-off-by: Kevin Hilman <khilman@linaro.org>
----
- mm/page-writeback.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index d374b29..c8b61ef 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -104,6 +104,8 @@ EXPORT_SYMBOL_GPL(dirty_writeback_interval);
-  */
- unsigned int dirty_expire_interval = 30 * 100; /* centiseconds */
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index bbe1ece..66bc79c 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -1932,8 +1932,6 @@ static int tpacket_fill_skb(struct packet_sock *po, struct sk_buff *skb,
  
-+EXPORT_SYMBOL_GPL(dirty_expire_interval);
+ 	ph.raw = frame;
+ 
+-	skb->protocol = proto;
+-	skb->dev = dev;
+ 	skb->priority = po->sk.sk_priority;
+ 	skb->mark = po->sk.sk_mark;
+ 	sock_tx_timestamp(&po->sk, &skb_shinfo(skb)->tx_flags);
+@@ -2002,13 +2000,18 @@ static int tpacket_fill_skb(struct packet_sock *po, struct sk_buff *skb,
+ 		if (unlikely(err))
+ 			return err;
+ 
+-		if (dev->type == ARPHRD_ETHER)
+-			skb->protocol = eth_type_trans(skb, dev);
+-
+ 		data += dev->hard_header_len;
+ 		to_write -= dev->hard_header_len;
+ 	}
+ 
++	if (dev->type == ARPHRD_ETHER &&
++	    proto = htons(ETH_P_ALL)) {
++		skb->protocol = eth_type_trans(skb, dev);
++	} else {
++		skb->protocol = proto;
++		skb->dev = dev;
++	}
 +
- /*
-  * Flag that makes the machine dump writes/reads and block dirtyings.
-  */
--- 
-1.8.3
+ 	max_frame_len = dev->mtu + dev->hard_header_len;
+ 	if (skb->protocol == htons(ETH_P_8021Q))
+ 		max_frame_len += VLAN_HLEN;
+@@ -2331,15 +2334,17 @@ static int packet_snd(struct socket *sock,
+ 
+ 	sock_tx_timestamp(sk, &skb_shinfo(skb)->tx_flags);
+ 
+-	if (dev->type == ARPHRD_ETHER) {
++	if (dev->type == ARPHRD_ETHER &&
++	    proto == htons(ETH_P_ALL)) {
+ 		skb->protocol = eth_type_trans(skb, dev);
+-		if (skb->protocol == htons(ETH_P_8021Q))
+-			reserve += VLAN_HLEN;
+ 	} else {
+ 		skb->protocol = proto;
+ 		skb->dev = dev;
+ 	}
+ 
++	if (skb->protocol == htons(ETH_P_8021Q))
++		reserve += VLAN_HLEN;
++
+ 	if (!gso_type && (len > dev->mtu + reserve + extra_len)) {
+ 		err = -EMSGSIZE;
+ 		goto out_free;
+
+--VS++wcV0S1rZb1Fb--
