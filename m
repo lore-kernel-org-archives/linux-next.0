@@ -1,63 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mvebu tree
-Date: Wed, 7 Aug 2013 14:25:01 +1000
-Message-ID: <20130807142501.79fea47cae17a6a25f1e719e@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the ext4 tree
+Date: Wed, 7 Aug 2013 15:16:11 +1000
+Message-ID: <20130807151611.7651be058d537610ea1b05bf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__7_Aug_2013_14_25_01_+1000_rLQMmm4gx0P/1Wg1"
+ boundary="Signature=_Wed__7_Aug_2013_15_16_11_+1000_X0+CnZmH44zbtmbm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54682 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48821 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751687Ab3HGEZl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2013 00:25:41 -0400
+	with ESMTP id S1753424Ab3HGFQ1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2013 01:16:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Dave Chinner <dchinner@redhat.com>
 
---Signature=_Wed__7_Aug_2013_14_25_01_+1000_rLQMmm4gx0P/1Wg1
+--Signature=_Wed__7_Aug_2013_15_16_11_+1000_X0+CnZmH44zbtmbm
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-After merging the mvebu tree, today's linux-next build
-(x86_64 allmodconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in
+fs/ext4/extents_status.c between commit 49c6efc7b80e ("ext4: add new
+ioctl EXT4_IOC_PRECACHE_EXTENTS") from the ext4 tree and commit "fs:
+convert fs shrinkers to new scan/count API" from the akpm tree.
 
-arch/x86/kernel/x86_init.c:115:22: error: 'default_restore_msi_irqs' undecl=
-ared here (not in a function)
-  .restore_msi_irqs =3D default_restore_msi_irqs,
-                      ^
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 8f400e08b197 ("PCI: use weak functions for MSI
-arch-specific functions").
-
-I have used the version of the mvebu tree from next-20130806 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__7_Aug_2013_14_25_01_+1000_rLQMmm4gx0P/1Wg1
+diff --cc fs/ext4/extents_status.c
+index 00e6589,9f931b2..0000000
+--- a/fs/ext4/extents_status.c
++++ b/fs/ext4/extents_status.c
+@@@ -1091,9 -1044,7 +1102,9 @@@ static int __es_try_to_reclaim_extents(
+  	struct ext4_es_tree *tree =3D &ei->i_es_tree;
+  	struct rb_node *node;
+  	struct extent_status *es;
+- 	int nr_shrunk =3D 0;
++ 	long nr_shrunk =3D 0;
+ +	static DEFINE_RATELIMIT_STATE(_rs, DEFAULT_RATELIMIT_INTERVAL,
+ +				      DEFAULT_RATELIMIT_BURST);
+ =20
+  	if (ei->i_es_lru_nr =3D=3D 0)
+  		return 0;
+
+--Signature=_Wed__7_Aug_2013_15_16_11_+1000_X0+CnZmH44zbtmbm
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSAcw7AAoJEECxmPOUX5FEs6YP/0xu3yQnEtlLhkbod6GHczMR
-D3RCWMIPJUXJZ2wzhJHkQr4SN4oG6Olu995aKzCZfcY2y0oqDtA5cZcGsz/nA8mN
-g0jmZ6WGLHBN1L7z7xmfJO5bGC6AAKQZV9TKlxLvqhXq1TmBqOZ7gdfo7u9lkqGI
-Wntw45xdYWNkwLSrp+Whf3tylntR2bG0FPxJVjBKNiyOeJK7SGxo1RRIJS0qE6Oa
-n9RWN6ZYGqzzc1ON+Hf3lNi6ZywLYkr5Wcz4ksDAsILqrtp0FJvpC7+azH19JuY2
-JK0I9IYP9tC6/KQ8HHOkM4wTh1qCzIkE66lPMddVEJg/AmstyQhg3BUjYsYe0QcC
-XS/vhlai6rd5hBBQ8zGA1KBxaqhe3CfOkJSAlYIWfzzSPbWRyZWnJsRRW09lYQ2W
-Xo7IEl7ORbi2ROn1orqPE7vRXkAq61Jnerdkmw0clHtcRGDcbCdbmwnuHs+xFLmS
-EVb6ryUwLGjB27r69yZ3MrLdnRQaZ+ID+HZT0A+cSLz6OkNR83seI2HYyBZqOAkN
-j9Vb89tszkNFFLR/hSMRIHiI2R8GmrE2AB/Fdfoseej53hOhSU8VRFCo30n/bbPL
-4FR3RKYOcTKBX97AQHpHQJe6T11/e/NrO2I+02XFH9ClRlbDxmyCskXIHnryVrm5
-af5ZMx0m2YE7NFRWlKJ4
-=Tyic
+iQIcBAEBCAAGBQJSAdgkAAoJEECxmPOUX5FEbzgP/2mVBzNu3DOJqItGNfMdHbC8
+Pr5yGweXc1gsaA8FoSGagkCryj0TJzONPV5HuDFfGzh8xH3NglOCF1hSVUoDxQIw
+9XFsjyuSjex7De9TT7Z2m9q0sqHD1/hnZV9Ovd5lpaDhSUU79KjoXuYnVJryg2IO
+eYf0sVfYh1A2V6YTiGV6vgHbLP9TigIRsB8zi4MIx3WvWkJo7U12nMiVzN8fbPFZ
+DcPLTsfNJrTBP83Axjoa2WNy8NxpU4/KoVLvN7WW5UOfz+l/pvxEGEVi8MkJlIAt
+696lSQnMT12Mj8dcqvuaLzHufRmzOIVU5gt5dHmfM06oCB3Fc1fjHDQctHEQffcg
+qoskxS3j2q+iV886nCX38lJk3sAyxyu6gYdlg0UcHTWKWlR9RAlQeriOBtfL3GuV
+mqFwGk9Y4H7HJaqhLu0Onzr8seUjTByOCs10wFYjOfpJlkv1sCgRVvX2SY9zEyMm
+B3Eb//yAb711IqY/bCVv/drdJ2sGORQSNFmlXWGFxWTdmjYWP04o0jkUlxRl474s
+5nbWmZyPEi9A9sOwb43oRi7rLPavjmzQGRr+65Dzripyk3QkBgeshYpOjn/6gzJO
+qO9KygjL92SkNKReb2IcoH8s/AH07FbiAOKyT61X6J66uLehqvU2EbeUNw3//AMm
+v0CV4UyfvYG9f4wfLZum
+=B9Mi
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__7_Aug_2013_14_25_01_+1000_rLQMmm4gx0P/1Wg1--
+--Signature=_Wed__7_Aug_2013_15_16_11_+1000_X0+CnZmH44zbtmbm--
