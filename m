@@ -1,46 +1,41 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Aug 7
-Date: Wed, 7 Aug 2013 10:29:18 +0200
-Message-ID: <CA+icZUW+uxCsvPYcY2RRvMxRVzaBLuH9u8M4ziQNWXv=nk4b2w@mail.gmail.com>
-References: <20130807155443.a0355d0429f3e0b4ccbed261@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: linux-next: build failure after merge of the mvebu tree
+Date: Wed, 7 Aug 2013 10:37:50 +0200
+Message-ID: <20130807103750.743b389a@skate>
+References: <20130807142501.79fea47cae17a6a25f1e719e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:53787 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756045Ab3HGI3U (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2013 04:29:20 -0400
-In-Reply-To: <20130807155443.a0355d0429f3e0b4ccbed261@canb.auug.org.au>
+Received: from top.free-electrons.com ([176.31.233.9]:58549 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1756394Ab3HGIiW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2013 04:38:22 -0400
+In-Reply-To: <20130807142501.79fea47cae17a6a25f1e719e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, David Miller <davem@davemloft.net>, Phil Sutter <phil@nwl.cc>, Hannes Frederic Sowa <hannes@stressinduktion.org>, wireless <linux-wireless@vger.kernel.org>, John Linville <linville@tuxdriver.com>, Johannes Berg <johannes@sipsolutions.net>
+Cc: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 7, 2013 at 7:54 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Dear Stephen Rothwell,
+
+On Wed, 7 Aug 2013 14:25:01 +1000, Stephen Rothwell wrote:
 > Hi all,
->
-> Changes since 20130806:
->
-> The ext4 tree lost its build failure.
->
-> The mvebu tree gained a build failure so I used the version from
-> next-20130806.
->
-> The akpm tree gained conflicts against the ext4 tree.
->
-> ----------------------------------------------------------------------------
->
+> 
+> After merging the mvebu tree, today's linux-next build
+> (x86_64 allmodconfig) failed like this:
+> 
+> arch/x86/kernel/x86_init.c:115:22: error: 'default_restore_msi_irqs' undeclared here (not in a function)
+>   .restore_msi_irqs = default_restore_msi_irqs,
+>                       ^
 
-[ CC some netdev and wireless folks ]
+Thanks Stephen, I'm looking into this.
 
-Yesterday, I discovered an issue with net-next.
-The patch in [1] fixed the problems in my network/wifi environment.
-Hannes confirmed that virtio_net are solved, too.
-Today's next-20130807 still needs it for affected people.
+Best regards,
 
-- Sedat -
-
-[1] http://marc.info/?l=linux-netdev&m=137582524017840&w=2
-[2] http://marc.info/?l=linux-netdev&m=137583048219416&w=2
-[3] http://marc.info/?t=137579712800008&r=1&w=2
+Thomas
+-- 
+Thomas Petazzoni, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
