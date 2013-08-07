@@ -1,109 +1,78 @@
-From: Belisko Marek <marek.belisko@gmail.com>
-Subject: next-20130807: possible circular locking dependency detected
-Date: Wed, 7 Aug 2013 23:25:32 +0200
-Message-ID: <CAAfyv37GWJeT6WqWD-oHURzY8RGBjWnD9CpJ5V+48APXp0e+KA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for Aug 7 [ call-trace on suspend: ext4 | pm related ? ]
+Date: Thu, 08 Aug 2013 01:02:50 +0200
+Message-ID: <2146168.3J7W6RtiZr@vostro.rjw.lan>
+References: <CA+icZUW990rWKdQmppjkGTJzFBtTnW-tb0dRu2AbTYB8KSDN4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hydra.sisk.pl ([212.160.235.94]:59773 "EHLO hydra.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933320Ab3HGWwc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Aug 2013 18:52:32 -0400
+In-Reply-To: <CA+icZUW990rWKdQmppjkGTJzFBtTnW-tb0dRu2AbTYB8KSDN4w@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ext4 Developers List <linux-ext4@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, Linux PM List <linux-pm@lists.linux-foundation.org>, Tejun Heo <tj@kernel.org>, Colin Cross <ccross@android.com>
 
-Hi,
+On Wednesday, August 07, 2013 04:25:14 PM Sedat Dilek wrote:
+> On Wed, Aug 7, 2013 at 7:54 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > Changes since 20130806:
+> >
+> > The ext4 tree lost its build failure.
+> >
+> > The mvebu tree gained a build failure so I used the version from
+> > next-20130806.
+> >
+> > The akpm tree gained conflicts against the ext4 tree.
+> >
+> > ----------------------------------------------------------------------------
+> >
+> 
+> [ CC ext4 and pm folks ]
+> 
+> I saw this on my 1st suspend which was not successful (2nd and 3rd try
+> I could suspend and resume):
+> 
+> [ 5467.724074] PM: Syncing filesystems ... done.
+> [ 5467.973575] PM: Preparing system for mem sleep
+> [ 5467.974121] Freezing user space processes ...
+> [ 5487.970574] Freezing of tasks failed after 20.010 seconds (1 tasks
+> refusing to freeze, wq_busy=0):
+> [ 5487.970591] DOM Worker      D ffffffff81811820     0  2437      1 0x00000004
+> [ 5487.970595]  ffff880056ca3ca8 0000000000000002 00000000002d627f
+> 000009af00000002
+> [ 5487.970598]  ffff880066ede640 ffff880056ca3fd8 ffff880056ca3fd8
+> ffff880056ca3fd8
+> [ 5487.970601]  ffff880119f98340 ffff880066ede640 ffff880056ca3ca8
+> ffff88011fad5118
+> [ 5487.970604] Call Trace:
+> [ 5487.970612]  [<ffffffff81144360>] ? __lock_page+0x70/0x70
+> [ 5487.970615]  [<ffffffff816e8179>] schedule+0x29/0x70
+> [ 5487.970618]  [<ffffffff816e824f>] io_schedule+0x8f/0xd0
+> [ 5487.970621]  [<ffffffff8114436e>] sleep_on_page+0xe/0x20
+> [ 5487.970624]  [<ffffffff816e4be2>] __wait_on_bit+0x62/0x90
+> [ 5487.970627]  [<ffffffff81144f9b>] ? find_get_pages_tag+0xcb/0x170
+> [ 5487.970630]  [<ffffffff811444d0>] wait_on_page_bit+0x80/0x90
+> [ 5487.970633]  [<ffffffff8108a0e0>] ? wake_atomic_t_function+0x40/0x40
+> [ 5487.970636]  [<ffffffff811445ec>] filemap_fdatawait_range+0x10c/0x190
+> [ 5487.970640]  [<ffffffff81145ce0>] filemap_write_and_wait_range+0x50/0x80
+> [ 5487.970644]  [<ffffffff81246c3d>] ext4_sync_file+0x15d/0x340
+> [ 5487.970648]  [<ffffffff811db8dd>] do_fsync+0x5d/0x90
+> [ 5487.970651]  [<ffffffff811dbcc0>] SyS_fsync+0x10/0x20
+> [ 5487.970655]  [<ffffffff816f25ef>] tracesys+0xe1/0xe6
+> [ 5487.970658]
+> [ 5487.970659] Restarting tasks ... done.
+> 
+> With yesterday's -next I did not have issues like this.
 
-I got this today when boot gta04 machine (dts is mostly same as for
-beagle-xm) on today's linux-next (with 3.11-rc4 it's not happening):
+It looks like ext4 was doing fsync, so it scheduled a write a waited for it
+to complete, but that never happened (most likely whoever was supposed to do
+the write had been already frozen then).
 
-[    4.404602] ======================================================
-[    4.411102] [ INFO: possible circular locking dependency detected ]
-[    4.417694] 3.11.0-rc4-next-20130807-dirty #2 Not tainted
-[    4.423339] -------------------------------------------------------
-[    4.429931] getty/767 is trying to acquire lock:
-[    4.434783]  (&tty->termios_rwsem){++++..}, at: [<c0308f24>]
-n_tty_read+0x3ec/0x958
-[    4.442871]
-[    4.442871] but task is already holding lock:
-[    4.449005]  (&ldata->atomic_read_lock){+.+...}, at: [<c0309100>]
-n_tty_read+0x5c8/0x958
-[    4.457519]
-[    4.457519] which lock already depends on the new lock.
-[    4.457519]
-[    4.466094]
-[    4.466094] the existing dependency chain (in reverse order) is:
-[    4.473968]
--> #1 (&ldata->atomic_read_lock){+.+...}:
-[    4.479461]        [<c0099800>] lock_acquire+0xa0/0xfc
-[    4.484893]        [<c0508a34>] mutex_lock_interruptible_nested+0x4c/0x420
-[    4.492126]        [<c0309100>] n_tty_read+0x5c8/0x958
-[    4.497528]        [<c030367c>] tty_read+0x78/0xc8
-[    4.502563]        [<c0112ba8>] vfs_read+0x98/0x140
-[    4.507690]        [<c01132a0>] SyS_read+0x3c/0x78
-[    4.512725]        [<c0013b00>] ret_fast_syscall+0x0/0x48
-[    4.518432]
--> #0 (&tty->termios_rwsem){++++..}:
-[    4.523468]        [<c0098e50>] __lock_acquire+0x195c/0x1b08
-[    4.529418]        [<c0099800>] lock_acquire+0xa0/0xfc
-[    4.534820]        [<c050a178>] down_read+0x30/0x40
-[    4.539947]        [<c0308f24>] n_tty_read+0x3ec/0x958
-[    4.545349]        [<c030367c>] tty_read+0x78/0xc8
-[    4.550384]        [<c0112ba8>] vfs_read+0x98/0x140
-[    4.555511]        [<c01132a0>] SyS_read+0x3c/0x78
-[    4.560546]        [<c0013b00>] ret_fast_syscall+0x0/0x48
-[    4.566253]
-[    4.566253] other info that might help us debug this:
-[    4.566253]
-[    4.574645]  Possible unsafe locking scenario:
-[    4.574645]
-[    4.580871]        CPU0                    CPU1
-[    4.585601]        ----                    ----
-[    4.590362]   lock(&ldata->atomic_read_lock);
-[    4.594940]                                lock(&tty->termios_rwsem);
-[    4.601715]                                lock(&ldata->atomic_read_lock);
-[    4.608947]   lock(&tty->termios_rwsem);
-[    4.613067]
-[    4.613067]  *** DEADLOCK ***
-[    4.613067]
-[    4.619293] 2 locks held by getty/767:
-[    4.623229]  #0:  (&tty->ldisc_sem){.+.+.+}, at: [<c030ac84>]
-tty_ldisc_ref_wait+0x14/0x3c
-[    4.631958]  #1:  (&ldata->atomic_read_lock){+.+...}, at:
-[<c0309100>] n_tty_read+0x5c8/0x958
-[    4.640930]
-[    4.640930] stack backtrace:
-[    4.645507] CPU: 0 PID: 767 Comm: getty Not tainted
-3.11.0-rc4-next-20130807-dirty #2
-[    4.653778] [<c001b8a4>] (unwind_backtrace+0x0/0xec) from
-[<c0017af8>] (show_stack+0x10/0x14)
-[    4.662719] [<c0017af8>] (show_stack+0x10/0x14) from [<c0506c88>]
-(dump_stack+0x7c/0x94)
-[    4.671234] [<c0506c88>] (dump_stack+0x7c/0x94) from [<c0504abc>]
-(print_circular_bug+0x27c/0x2d0)
-[    4.680633] [<c0504abc>] (print_circular_bug+0x27c/0x2d0) from
-[<c0098e50>] (__lock_acquire+0x195c/0x1b08)
-[    4.690795] [<c0098e50>] (__lock_acquire+0x195c/0x1b08) from
-[<c0099800>] (lock_acquire+0xa0/0xfc)
-[    4.700195] [<c0099800>] (lock_acquire+0xa0/0xfc) from [<c050a178>]
-(down_read+0x30/0x40)
-[    4.708801] [<c050a178>] (down_read+0x30/0x40) from [<c0308f24>]
-(n_tty_read+0x3ec/0x958)
-[    4.717407] [<c0308f24>] (n_tty_read+0x3ec/0x958) from [<c030367c>]
-(tty_read+0x78/0xc8)
-[    4.725891] [<c030367c>] (tty_read+0x78/0xc8) from [<c0112ba8>]
-(vfs_read+0x98/0x140)
-[    4.734130] [<c0112ba8>] (vfs_read+0x98/0x140) from [<c01132a0>]
-(SyS_read+0x3c/0x78)
-[    4.742370] [<c01132a0>] (SyS_read+0x3c/0x78) from [<c0013b00>]
-(ret_fast_syscall+0x0/0x48)
-
-marek
--- 
-as simple and primitive as possible
--------------------------------------------------
-Marek Belisko - OPEN-NANDRA
-Freelance Developer
-
-Ruska Nova Ves 219 | Presov, 08005 Slovak Republic
-Tel: +421 915 052 184
-skype: marekwhite
-twitter: #opennandra
-web: http://open-nandra.com
+Thanks,
+Rafael
