@@ -1,80 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with the i2c tree
-Date: Thu, 8 Aug 2013 15:40:43 +1000
-Message-ID: <20130808154043.fe160a4e178e87a8c1c5a045@canb.auug.org.au>
+Subject: linux-next: manual merge of the renesas tree with the leds tree
+Date: Thu, 8 Aug 2013 15:49:08 +1000
+Message-ID: <20130808154908.bf713709a9672dcd95b33a30@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__8_Aug_2013_15_40_43_+1000_VN61Arqa2XwMsA+/"
+ boundary="Signature=_Thu__8_Aug_2013_15_49_08_+1000_rd09.PUEmHLNj+V."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56325 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:38911 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751253Ab3HHFk6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Aug 2013 01:40:58 -0400
+	with ESMTP id S1752025Ab3HHFtM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Aug 2013 01:49:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms@verge.net.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Bryan Wu <cooloney@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
---Signature=_Thu__8_Aug_2013_15_40_43_+1000_VN61Arqa2XwMsA+/
+--Signature=_Thu__8_Aug_2013_15_49_08_+1000_rd09.PUEmHLNj+V.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Simon,
 
-Today's linux-next merge of the mvebu tree got a conflict in
-Documentation/devicetree/bindings/i2c/i2c-mv64xxx.txt between
-commit f480adaf1b71 ("i2c: mv64xxx: Document the newly introduced
-allwinner compatible") from the i2c tree and commit e7c4a1e9f937 ("ARM:
-dts: mvebu: Introduce a new compatible string for mv64xxx-i2c") from the
-mvebu tree.
+Today's linux-next merge of the renesas tree got a conflict in
+drivers/leds/leds-renesas-tpu.c between commit 33d693e59c42 ("leds: use
+dev_get_platdata()") from the leds tree and commit ae3e4c277669 ("leds:
+Remove leds-renesas-tpu driver") from the renesas tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the latter removed the file, so I did that) and can carry
+the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/devicetree/bindings/i2c/i2c-mv64xxx.txt
-index 6113f92,c5dd952..0000000
---- a/Documentation/devicetree/bindings/i2c/i2c-mv64xxx.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-mv64xxx.txt
-@@@ -4,7 -4,8 +4,9 @@@
-  Required properties :
- =20
-   - reg             : Offset and length of the register set for the device
- - - compatible      : Should be "marvell,mv64xxx-i2c" and "marvell,mv7230-=
-i2c"
- -for controller which support the I2C Transaction Generator
- + - compatible      : Should be "marvell,mv64xxx-i2c" or "allwinner,sun4i-=
-i2c"
-++                     or "marvell,mv7230-i2c" for controller which support
-++                     the I2C Transaction Generator
-   - interrupts      : The interrupt number
- =20
-  Optional properties :
-
---Signature=_Thu__8_Aug_2013_15_40_43_+1000_VN61Arqa2XwMsA+/
+--Signature=_Thu__8_Aug_2013_15_49_08_+1000_rd09.PUEmHLNj+V.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSAy9fAAoJEECxmPOUX5FE3YoP/3g1Z+uFCVSzRdg4xcfrHgA+
-WO0BxO9G+k/zo5cvgrybA3IHhZKerniaboxrzuNlCCLOjS/ikqkzEv/4nQ/PaFb6
-SK2FJqiEHIQ6Epo2YQ1teqkLRwS2ODL50QHMUjGT/LAxufNIZu2eTvIXY83VRV4o
-1RGa4qAlEWzClZ9VpKhBxWvYPKvPImp4uAZCkikvW/gMhVoVtvkWM0IS3DNkzIzw
-LGZCYpztvhxXCh7fgNEjysrN4lH/emRSIzIqnasQ2PwIh4jrL3L+QUYPeS7HGZI5
-0o3TTjm1O50aaK+dcjngCOr1pOiJm/CqgwkAdMsmO2ipnlKilpq/meYSmpgUbunA
-vZ2zx9OoRaVrW89my7JSC3xu2ePRYqzdtNGlJN4TDnECNOWUEIo1A1MOAELQQrpH
-b78x4RLOod9zou9jdnI/NozLhdS4AOVvWz6CtgMc1H6yIloOz2Ltci5Bhug5/AYi
-/gFRchadNKaeF9p/WovLFnNnt8JMZ0SJ6mdgrHB8+hThvkRXC/ISWW8GJc5cabsJ
-1nSKq9YoFQ0tKvQ/72FRwBM0Mzl3grV+qrLfUPvWHk7f2+eJMgVXe6N97XDnYO4s
-5gxAxdq0POcTIXFr6UPGAZOJeeJzh1jlrKtyNivS95Pj1XLO4ZtX2lr3UGM6KzhK
-cvQ6KulRhUP2d+CStm0L
-=xhvc
+iQIcBAEBCAAGBQJSAzFUAAoJEECxmPOUX5FEvCUP/jiiXwlszVgbmE/XmUkNovZd
+s0RG4Dt92jx+dS22KP95N3pB832z5c9O0DqCiQIS1ZXtsPaLlfYYeSKmhnE52Kbb
+Z6jNz9CPaFaX2k/ueUktAl21b8sMfiFz4eXsDCjUymmjXuErJExOoyiL5dcoNEFQ
+xMmitGoAAVdSPtwc4/CbcMSJwxyP4Mn0nP/n6V2uFERfrSFuQNCS2seZ7boN938q
+qTrUnVGi7qxbSH4GJCxt+zCwv+oTkC8KjSlMR/sfhUfiIgSKb7PG/DAOMLagn259
+qdaqzyTux1KRa8yz3WeEvvt7zNxjZaZ/iGlmbilv+FtfmLb/8XEpHywESRVBs1VB
+G0u5ZzUermIaPz7JRRspbagUGucK7Uie2sx/k85Mhr848iuKsG3G95h8xpE4hifS
+2Ea1203VXIrwIr1447vvhDV6ijsGpx1kK+jXoQeK0J3n2L9ZB0ugQQXIrehLBgau
+2aNVpHdu8sHyiGthD+v2WUKQfSx5oQkrEJsFWfu/aaaFxJtPqhOH1mngH5JrM3Xo
+8VwjmFcAZt05vEn5wQUcXa1w+55zLOFKj3eN4LqossYMbqwRVY4xTkVi6s+aC9Mf
+P7hTXNsdsO4to5vU3RwJqbd5L4vP3JJetyJ0VVms5Cjzg+apen4m0xnJm1nQS/QN
+F79aTv/HnKnhnaJh5N+E
+=OYr2
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__8_Aug_2013_15_40_43_+1000_VN61Arqa2XwMsA+/--
+--Signature=_Thu__8_Aug_2013_15_49_08_+1000_rd09.PUEmHLNj+V.--
