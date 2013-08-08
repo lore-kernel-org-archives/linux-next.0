@@ -1,94 +1,162 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the ext4 tree
-Date: Thu, 8 Aug 2013 10:22:28 +1000
-Message-ID: <20130808102228.d2034d3a4c986d2970926ab9@canb.auug.org.au>
-References: <20130729110816.12958c3a26400f444a9a5012@canb.auug.org.au>
-	<CA+icZUUt4domktYZZn0Qp3BZoSFqmKic4qSnVP4cuTKwUww_=A@mail.gmail.com>
-	<20130807153840.4f2997b603397c07aca98b2d@canb.auug.org.au>
-	<87zjsted0c.fsf@linaro.org>
+From: Mike Pagano <mpagano@gentoo.org>
+Subject: [PATCH RESEND] kconfig: Update to diffconfig to support python 2.6 and greater
+Date: Wed, 07 Aug 2013 20:33:32 -0400
+Message-ID: <1416176.geFjaPh5V0@comanche>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__8_Aug_2013_10_22_28_+1000_5EPi9PND=42egxuc"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37240 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933288Ab3HHAW4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2013 20:22:56 -0400
-In-Reply-To: <87zjsted0c.fsf@linaro.org>
+Received: from 216.155.138.14.choopa.net ([216.155.138.14]:40475 "EHLO
+	hopi.mpagano.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S933367Ab3HHAdj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Aug 2013 20:33:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kevin Hilman <khilman@linaro.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Michal Marek <mmarek@suse.cz>, sedat.dilek@gmail.com, Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: tim.bird@am.sony.com
 
---Signature=_Thu__8_Aug_2013_10_22_28_+1000_5EPi9PND=42egxuc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Modification of the diffconfig script to support python versions 2.6 and 
+greater. Added a small change to gracefully exit if the default config files 
+are not present. (.config and .config.old)
 
-Hi Kevin,
+Note that Linux distributions are starting to deprecate python versions < 2.5
 
-On Wed, 07 Aug 2013 08:28:35 -0700 Kevin Hilman
-<khilman@linaro.org> wrote:
->
-> However, this same commit does introduce a new build failure (not
-> present in next-20130806) when ext4 is built as a module:
->=20
-> ERROR: "dirty_expire_interval" [fs/ext4/ext4.ko] undefined!
-> make[3]: *** [__modpost] Error 1
-> make[2]: *** [modules] Error 2
->=20
-> The change below fixes the problem.
->=20
-> Found when building the mv78xx0_defconfig on ARM.
+Diffconfig is a utility script for comparing kernel configuration files.
 
-OK, this raises an interesting question for me.  Why does an x86_64
-allmodconfig build build ext4 (amongst lots of other things) into the
-kernel (instead of making them modules)?
+Signed-off-by: Mike Pagano <mpagano@gentoo.org>
+Signed-off-by: Tobias Klausmann <klausman@gentoo.org>
+Signed-off-by: Ewoud Kohl van Wijngaarden <ewoud@kohlvanwijngaarden.nl>
+---
+ scripts/diffconfig | 60 ++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 33 insertions(+), 27 deletions(-)
 
-Well, it seems that normally it doesn't.  However when I do my
-x86_64 allmodconfig builds, I set
-
-CONFIG_PROFILE_ALL_BRANCHES=3Dn
-CONFIG_DEBUG_INFO=3Dn
-CONFIG_X86_DECODER_SELFTEST=3Dn
-
-via the KCONFIG_ALLCONFIG=3D<file> mechanism and that is enough to make
-sure that CONFIG_MODULES=3Dn - which is a bit self defeating for an
-allmodconfig build. :-(
-
-In fact, even giving an empty file to KCONFIG_ALLCONFIG=3D is enough to
-turn CONFIG_MODULES off ...
-
-These tests were done with Linus' tree of today (head commit b7bc9e7
-"Merge tag 'trace-fixes-3.11-rc3' of
-git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace").
-
-More quick testing with an empty file: v3.9 is OK, v3.10 gives
-CONFIG_MODULES unset.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__8_Aug_2013_10_22_28_+1000_5EPi9PND=42egxuc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSAuTYAAoJEECxmPOUX5FEQp8P/10KFRMDxYR/OYBZgsMycv3o
-Fk7MHg+ljc5NN3nimlT3Rc587o4jXeTIlXdHexjovN2IGqiBJ698uJvv5VKrRiEX
-qOugsRO32MFg6lMIViQhc9LfKTDarXnr1vrXP/NUzoiuvnALSCoJTsvf7LK3SflB
-sRz3/xLRjwgbPF2jTb32NaoouNq/To3VTI2e+OqumK6IkYcttxCzOOdTm4fQx6Ds
-qGmdsq29brB5IFcF25jVEGBBlRe1EfZauDvbEZ7Ihb6GU7E/kO6MQbK43GPPKhQU
-6fwmRA7azibU+qRd4QgY/ERIiNXT7tb55h73zolHFnx2CmtZXG+Kx8IDAjMmu1rA
-0XLTg13ZbjudpbiQjoKX50wqihx43FOaTGuVzfXWAbmQi+f7EZRtblw1ztTj5vPV
-Nq30ZwAcJuPtcbgZ/D9p1PrvLOazTUEIdCdHPqbB4S+lTTYSFiV3TJ/GSnNqkEos
-2gQHhSl5xi1P55SxiZ21u0Oih9UvfTZWyO+o9ofMUQQoALf1y+HFw19z/yCeu+Ws
-ZhETBC+qRzcH1JAn1vOq/8SBoYjLfeO0bAGbFi3MhQsLIETMg01Rnej/LpeZ1AuL
-OVwf0aYgHIWmMIkb67c4HduqDsTBbQb7EBfszyeLgQ2SozkV6CHAkYrrMV94lUTe
-bIsteu2Oo1ChFfG0IXHl
-=YnYu
------END PGP SIGNATURE-----
-
---Signature=_Thu__8_Aug_2013_10_22_28_+1000_5EPi9PND=42egxuc--
+diff --git a/scripts/diffconfig b/scripts/diffconfig
+index b91f3e3..4829594 100755
+--- a/scripts/diffconfig
++++ b/scripts/diffconfig
+@@ -10,7 +10,7 @@
+ import sys, os
+ 
+ def usage():
+-    print """Usage: diffconfig [-h] [-m] [<config1> <config2>]
++    print("""Usage: diffconfig [-h] [-m] [<config1> <config2>]
+ 
+ Diffconfig is a simple utility for comparing two .config files.
+ Using standard diff to compare .config files often includes extraneous and
+@@ -33,7 +33,7 @@ Example usage:
+  EXT2_FS  y -> n
+  LOG_BUF_SHIFT  14 -> 16
+  PRINTK_TIME  n -> y
+-"""
++""")
+     sys.exit(0)
+ 
+ # returns a dictionary of name/value pairs for config items in the file
+@@ -54,23 +54,26 @@ def print_config(op, config, value, new_value):
+     if merge_style:
+         if new_value:
+             if new_value=="n":
+-                print "# CONFIG_%s is not set" % config
++                print("# CONFIG_%s is not set" % config)
+             else:
+-                print "CONFIG_%s=%s" % (config, new_value)
++                print("CONFIG_%s=%s" % (config, new_value))
+     else:
+         if op=="-":
+-            print "-%s %s" % (config, value)
++            print("-%s %s" % (config, value))
+         elif op=="+":
+-            print "+%s %s" % (config, new_value)
++            print("+%s %s" % (config, new_value))
+         else:
+-            print " %s %s -> %s" % (config, value, new_value)
++            print(" %s %s -> %s" % (config, value, new_value))
+ 
+ def main():
+     global merge_style
+ 
++    config_a = {}
++    config_b = {}
++
+     # parse command line args
+     if ("-h" in sys.argv or "--help" in sys.argv):
+-	usage()
++        usage()
+ 
+     merge_style = 0
+     if "-m" in sys.argv:
+@@ -79,13 +82,13 @@ def main():
+ 
+     argc = len(sys.argv)
+     if not (argc==1 or argc == 3):
+-        print "Error: incorrect number of arguments or unrecognized option"
++        print("Error: incorrect number of arguments or unrecognized option")
+         usage()
+ 
+     if argc == 1:
+         # if no filenames given, assume .config and .config.old
+         build_dir=""
+-        if os.environ.has_key("KBUILD_OUTPUT"):
++        if "KBUILD_OUTPUT" in os.environ:
+             build_dir = os.environ["KBUILD_OUTPUT"]+"/"
+ 
+         configa_filename = build_dir + ".config.old"
+@@ -94,36 +97,39 @@ def main():
+         configa_filename = sys.argv[1]
+         configb_filename = sys.argv[2]
+ 
+-    a = readconfig(file(configa_filename))
+-    b = readconfig(file(configb_filename))
++    try:
++        config_a = readconfig(open(configa_filename))
++        config_b = readconfig(open(configb_filename))
++    except IOError as e:
++        print("I/O error({0}): {1}\n".format(e.errno, e.strerror))
++        usage()
+ 
+-    # print items in a but not b (accumulate, sort and print)
++    # print items in config_a but not config_b (accumulate, sort and print)
+     old = []
+-    for config in a:
+-        if config not in b:
++    for config in config_a:
++        if config not in config_b:
+             old.append(config)
+     old.sort()
+     for config in old:
+-        print_config("-", config, a[config], None)
+-        del a[config]
++        print_config("-", config, config_a[config], None)
++        del config_a[config]
+ 
+     # print items that changed (accumulate, sort, and print)
+     changed = []
+-    for config in a:
+-        if a[config] != b[config]:
++    for config in config_a:
++        if config_a[config] != config_b[config]:
+             changed.append(config)
+         else:
+-            del b[config]
++            del config_b[config]
+     changed.sort()
+     for config in changed:
+-        print_config("->", config, a[config], b[config])
+-        del b[config]
++        print_config("->", config, config_a[config], config_b[config])
++        del config_b[config]
+ 
+-    # now print items in b but not in a
+-    # (items from b that were in a were removed above)
+-    new = b.keys()
+-    new.sort()
++    # now print items in config_b but not in config_a
++    # (items from config_b that were in config_a were removed above)
++    new = sorted(config_b.keys())
+     for config in new:
+-        print_config("+", config, None, b[config])
++        print_config("+", config, None, config_b[config])
+ 
+ main()
+-- 
+1.8.1.5
