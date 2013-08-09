@@ -1,75 +1,164 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: build failure after merge of the ext4 tree
-Date: Fri, 9 Aug 2013 13:42:48 +0200
-Message-ID: <20130809114248.GA5691@merkur.ravnborg.org>
-References: <20130729110816.12958c3a26400f444a9a5012@canb.auug.org.au> <CA+icZUUt4domktYZZn0Qp3BZoSFqmKic4qSnVP4cuTKwUww_=A@mail.gmail.com> <20130807153840.4f2997b603397c07aca98b2d@canb.auug.org.au> <87zjsted0c.fsf@linaro.org> <20130808102228.d2034d3a4c986d2970926ab9@canb.auug.org.au> <20130808103614.a039da2f236154b52329b28b@canb.auug.org.au> <20130808191650.GB3282@free.fr> <20130808215449.GD3282@free.fr>
+From: Phil Sutter <phil@nwl.cc>
+Subject: Re: linux-next: Tree for Aug 7
+Date: Fri, 9 Aug 2013 15:58:49 +0200
+Message-ID: <20130809135849.GA8870@orbit.nwl.cc>
+References: <20130807.104713.1615549684239408926.davem@davemloft.net>
+ <20130807183758.GB16263@orbit.nwl.cc>
+ <20130807.162748.779496444843938176.davem@davemloft.net>
+ <20130807.163621.84433966934449459.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.snhosting.dk ([87.238.248.203]:27967 "EHLO
-	smtp.domainteam.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934248Ab3HILmv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Aug 2013 07:42:51 -0400
+Received: from orbit.nwl.cc ([176.31.251.142]:41767 "EHLO mail.nwl.cc"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752568Ab3HIN7S (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 9 Aug 2013 09:59:18 -0400
 Content-Disposition: inline
-In-Reply-To: <20130808215449.GD3282@free.fr>
+In-Reply-To: <20130807.163621.84433966934449459.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>, Michal Marek <mmarek@suse.cz>, Kevin Hilman <khilman@linaro.org>, sedat.dilek@gmail.com, Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux kbuild ML <linux-kbuild@vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: eric.dumazet@gmail.com, johannes@sipsolutions.net, sedat.dilek@gmail.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, hannes@stressinduktion.org, linux-wireless@vger.kernel.org, linville@tuxdriver.com
 
-On Thu, Aug 08, 2013 at 11:54:49PM +0200, Yann E. MORIN wrote:
-> Stephen, All,
+On Wed, Aug 07, 2013 at 04:36:21PM -0700, David Miller wrote:
+> From: David Miller <davem@davemloft.net>
+> Date: Wed, 07 Aug 2013 16:27:48 -0700 (PDT)
 > 
-> On 2013-08-08 21:16 +0200, Yann E. MORIN spake thusly:
-> > On 2013-08-08 10:36 +1000, Stephen Rothwell spake thusly:
-> > > On Thu, 8 Aug 2013 10:22:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au>
-> > > wrote:
-> > > >
-> > > > More quick testing with an empty file: v3.9 is OK, v3.10 gives
-> > > > CONFIG_MODULES unset.
-> > 
-> > Sorry, I don't understand the above. Can you elaborate on what you did,
-> > what you got, what expected, so I can try to reproduce and fix this,
-> > please?
+> > Look, I'm going to fix this myself, because I'm pretty tired of
+> > waiting for the obvious fix.
 > 
-> Ok, I've had a look in the linux-next archives, and I think I got it.
-> Is the following right?
+> Someone please test this:
 > 
->     git clean -d; git clean -dX     # To be sure tree is clean
->     touch empty
->     make KCONFIG_ALLCONFIG=empty allmodconfig
->     grep MODULES .config
->     $ CONFIG_MODULES is not set
-> 
-> If so, I think I found the reason: the modules symbol is _always_ set to
-> being valid as soon as KCONFIG_ALLCONFIG is read, even if it was not
-> present in that file.
-> 
-> Since it is set to be valid, the following change means it is not
-> affected another value later on.
-> 
-> So, I wonder what the best option is:
->   1- revert the following, and find another solution,
->   2- de-specialise the modules symbol,
->   3- or further specialise the modules symbol.
+> diff --git a/include/linux/etherdevice.h b/include/linux/etherdevice.h
+> index c623861..afc02a6 100644
+> --- a/include/linux/etherdevice.h
+> +++ b/include/linux/etherdevice.h
+> @@ -29,6 +29,7 @@
+>  
+>  #ifdef __KERNEL__
+>  extern __be16		eth_type_trans(struct sk_buff *skb, struct net_device *dev);
+> +extern __be16		__eth_type_trans(struct sk_buff *skb, struct net_device *dev);
+>  extern const struct header_ops eth_header_ops;
+>  
+>  extern int eth_header(struct sk_buff *skb, struct net_device *dev,
+> diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
+> index be1f64d..35dc1be 100644
+> --- a/net/ethernet/eth.c
+> +++ b/net/ethernet/eth.c
+> @@ -146,6 +146,45 @@ int eth_rebuild_header(struct sk_buff *skb)
+>  EXPORT_SYMBOL(eth_rebuild_header);
+>  
+>  /**
+> + * __eth_type_trans - only determine the packet's protocol ID.
+> + * @skb: packet
+> + * @dev: device
+> + */
+> +__be16 __eth_type_trans(struct sk_buff *skb, struct net_device *dev)
+> +{
+> +	struct ethhdr *eth = (struct ethhdr *) skb->data;
+> +
+> +	/*
+> +	 * Some variants of DSA tagging don't have an ethertype field
+> +	 * at all, so we check here whether one of those tagging
+> +	 * variants has been configured on the receiving interface,
+> +	 * and if so, set skb->protocol without looking at the packet.
+> +	 */
+> +	if (netdev_uses_dsa_tags(dev))
+> +		return htons(ETH_P_DSA);
+> +	if (netdev_uses_trailer_tags(dev))
+> +		return htons(ETH_P_TRAILER);
+> +
+> +	if (ntohs(eth->h_proto) >= ETH_P_802_3_MIN)
+> +		return eth->h_proto;
+> +
+> +	/*
+> +	 *      This is a magic hack to spot IPX packets. Older Novell breaks
+> +	 *      the protocol design and runs IPX over 802.3 without an 802.2 LLC
+> +	 *      layer. We look for FFFF which isn't a used 802.2 SSAP/DSAP. This
+> +	 *      won't work for fault tolerant netware but does for the rest.
+> +	 */
+> +	if (skb->len >= 2 && *(unsigned short *)(skb->data) == 0xFFFF)
+> +		return htons(ETH_P_802_3);
+> +
+> +	/*
+> +	 *      Real 802.2 LLC
+> +	 */
+> +	return htons(ETH_P_802_2);
+> +}
+> +EXPORT_SYMBOL(__eth_type_trans);
+> +
+> +/**
+>   * eth_type_trans - determine the packet's protocol ID.
+>   * @skb: received socket data
+>   * @dev: receiving network device
+> @@ -184,33 +223,7 @@ __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev)
+>  			skb->pkt_type = PACKET_OTHERHOST;
+>  	}
+>  
+> -	/*
+> -	 * Some variants of DSA tagging don't have an ethertype field
+> -	 * at all, so we check here whether one of those tagging
+> -	 * variants has been configured on the receiving interface,
+> -	 * and if so, set skb->protocol without looking at the packet.
+> -	 */
+> -	if (netdev_uses_dsa_tags(dev))
+> -		return htons(ETH_P_DSA);
+> -	if (netdev_uses_trailer_tags(dev))
+> -		return htons(ETH_P_TRAILER);
+> -
+> -	if (ntohs(eth->h_proto) >= ETH_P_802_3_MIN)
+> -		return eth->h_proto;
+> -
+> -	/*
+> -	 *      This is a magic hack to spot IPX packets. Older Novell breaks
+> -	 *      the protocol design and runs IPX over 802.3 without an 802.2 LLC
+> -	 *      layer. We look for FFFF which isn't a used 802.2 SSAP/DSAP. This
+> -	 *      won't work for fault tolerant netware but does for the rest.
+> -	 */
+> -	if (skb->len >= 2 && *(unsigned short *)(skb->data) == 0xFFFF)
+> -		return htons(ETH_P_802_3);
+> -
+> -	/*
+> -	 *      Real 802.2 LLC
+> -	 */
+> -	return htons(ETH_P_802_2);
+> +	return __eth_type_trans(skb, dev);
+>  }
+>  EXPORT_SYMBOL(eth_type_trans);
+>  
+> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> index 0c0f6c9..ec8e1c3 100644
+> --- a/net/packet/af_packet.c
+> +++ b/net/packet/af_packet.c
+> @@ -2003,7 +2003,7 @@ static int tpacket_fill_skb(struct packet_sock *po, struct sk_buff *skb,
+>  			return err;
+>  
+>  		if (dev->type == ARPHRD_ETHER)
+> -			skb->protocol = eth_type_trans(skb, dev);
+> +			skb->protocol = __eth_type_trans(skb, dev);
+>  
+>  		data += dev->hard_header_len;
+>  		to_write -= dev->hard_header_len;
+> @@ -2332,13 +2332,13 @@ static int packet_snd(struct socket *sock,
+>  	sock_tx_timestamp(sk, &skb_shinfo(skb)->tx_flags);
+>  
+>  	if (dev->type == ARPHRD_ETHER) {
+> -		skb->protocol = eth_type_trans(skb, dev);
+> +		skb->protocol = __eth_type_trans(skb, dev);
+>  		if (skb->protocol == htons(ETH_P_8021Q))
+>  			reserve += VLAN_HLEN;
+>  	} else {
+>  		skb->protocol = proto;
+> -		skb->dev = dev;
+>  	}
+> +	skb->dev = dev;
+>  
+>  	if (!gso_type && (len > dev->mtu + reserve + extra_len)) {
+>  		err = -EMSGSIZE;
 
-If we drop the special handling of "MODULES" and introduced
-the following in we may fix it - hopefully:
+The problem with this patch is __eth_type_trans() assuming the MAC
+header at skb->data which might be correct in the most cases, but not
+when called from eth_type_trans() as the later sets skb->data to after
+the ethernet header (which was the problem from the beginning).
 
-config MODULES
-	option modules
-
-The option handling is already in place. It is even documented :-)
-
-At least we could then drop the sym_lookup here (zconf.y):
-        if (!modules_sym->prop) {
-                struct property *prop;
-
-                prop = prop_alloc(P_DEFAULT, modules_sym);
-                prop->expr = expr_alloc_symbol(sym_lookup("MODULES", 0));
-        }
-Without the sym_lookup I think the symbol will not be defined and tus not marked valid.
-
-Soory - no patch as I am busy with day-time job stuff.
-
-	Sam
+Best wishes, Phil
