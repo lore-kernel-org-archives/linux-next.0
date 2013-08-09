@@ -1,86 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the ext4 tree
-Date: Fri, 9 Aug 2013 09:58:17 +1000
-Message-ID: <20130809095817.4fafdf8cb64428ea062a19b7@canb.auug.org.au>
-References: <20130729110816.12958c3a26400f444a9a5012@canb.auug.org.au>
-	<CA+icZUUt4domktYZZn0Qp3BZoSFqmKic4qSnVP4cuTKwUww_=A@mail.gmail.com>
-	<20130807153840.4f2997b603397c07aca98b2d@canb.auug.org.au>
-	<87zjsted0c.fsf@linaro.org>
-	<20130808102228.d2034d3a4c986d2970926ab9@canb.auug.org.au>
-	<20130808103614.a039da2f236154b52329b28b@canb.auug.org.au>
-	<20130808191650.GB3282@free.fr>
-	<20130808215449.GD3282@free.fr>
+From: Tejun Heo <tj@kernel.org>
+Subject: [HEADSUP] conflicts between cgroup/for-3.12 and memcg
+Date: Thu, 8 Aug 2013 20:34:02 -0400
+Message-ID: <20130809003402.GC13427@mtj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Aug_2013_09_58_17_+1000_ca.4epyt/2pxOUE."
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20130808215449.GD3282@free.fr>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Michal Marek <mmarek@suse.cz>, Kevin Hilman <khilman@linaro.org>, sedat.dilek@gmail.com, Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux kbuild ML <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+Sender: owner-linux-mm@kvack.org
+To: sfr@canb.auug.org.au, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.cz>, Balbir Singh <bsingharora@gmail.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, cgroups@vger.kernel.org, linux-mm@kvack.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__9_Aug_2013_09_58_17_+1000_ca.4epyt/2pxOUE.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello, Stephen, Andrew.
 
-Hi Yann,
+I just applied rather invasive API update to cgroup/for-3.12, which
+led to conflicts in two files - include/net/netprio_cgroup.h and
+mm/memcontrol.c.  The former is trivial context conflict and the two
+changes conflicting are independent.  The latter contains several
+conflicts and unfortunately isn't trivial, especially the iterator
+update and the memcg patches should probably be rebased.
 
-On Thu, 8 Aug 2013 23:54:49 +0200 "Yann E. MORIN" <yann.morin.1998@free.fr>=
- wrote:
->
-> Ok, I've had a look in the linux-next archives, and I think I got it.
-> Is the following right?
->=20
->     git clean -d; git clean -dX     # To be sure tree is clean
->     touch empty
->     make KCONFIG_ALLCONFIG=3Dempty allmodconfig
->     grep MODULES .config
->     $ CONFIG_MODULES is not set
-
-Yes, that is what I am seeing.
-
-> If so, I think I found the reason: the modules symbol is _always_ set to
-> being valid as soon as KCONFIG_ALLCONFIG is read, even if it was not
-> present in that file.
->=20
-> Since it is set to be valid, the following change means it is not
-> affected another value later on.
->=20
-> So, I wonder what the best option is:
->   1- revert the following, and find another solution,
->   2- de-specialise the modules symbol,
->   3- or further specialise the modules symbol.
->=20
-> I'd be inclined to go for 1, but I have no straightforward idea so far.
-> It's late here, so I'll look more thouroughly this WE.
+I can hold back pushing for-3.12 into for-next until the memcg patches
+are rebased.  Would that work?
 
 Thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__9_Aug_2013_09_58_17_+1000_ca.4epyt/2pxOUE.
-Content-Type: application/pgp-signature
+-- 
+tejun
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSBDCeAAoJEECxmPOUX5FEqEsP/jq8vB7El1WhsydZeVb/YpYX
-PR/14PAEgXnRW4Fy4YDYUK49ZQKk2uFZg920EcNgvfBZ2sh2LE/7hOMIEMFrFlvk
-7iyyjZxebgWRqXJHf0Eu69qTnPOI++DXd0kqtnWr0DrCM9hSlKsakqFvVsRuP7hu
-AeXQKRvU2TMWIIlwXQDaB3C64ovfUysAX4nkSgu+U2lokQBT0cQFURWe14txCoLv
-EKeZ8RVgrmIvU18SlzzZE5RCNq1gxCRuRCyQQVF9PH3coEvXNWpYuet4IP+Ibb/B
-m5L8r0hShzKHLWsUV9oGrXTAPnr/UTtCxOLg9qJcl5+cWBzTtJCtaoyMo9+le3CS
-6GoS5NM5hBOmPdMDwNHCuI5+EIkxJ9rkkYlAxFU5/SXFVJU+QCWOnRZNoL+0yPnM
-VVpNNbloIS2fQJ/1bPR396pZ0/PXm8wJv1fPvCYcv+ICNdCfkB6qxFH/cvTN/TRl
-glepNgeE+8qkLweBVr00DfNCUImtiUrPMG4NlCXXaCOr0LQzF96ZHrmqH55wcJEb
-2//e6ppoxHcMHP9yhSbgMA/asZMeL57mH2h/0vp3eVqc84cH/oc4LeljKDagDenm
-TPyAVneNzrfT373wKfwba97BGTEOQL3n20oe8Qrn2BtdhWAmVBgd9Q41AHHz5p02
-lHxt9mNGGjo8irzL1poT
-=qjz5
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Aug_2013_09_58_17_+1000_ca.4epyt/2pxOUE.--
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
