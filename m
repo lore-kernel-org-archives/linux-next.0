@@ -1,133 +1,75 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: Re: [HEADSUP] conflicts between cgroup/for-3.12 and memcg
-Date: Fri, 9 Aug 2013 09:22:07 +0200
-Message-ID: <20130809072207.GA16531@dhcp22.suse.cz>
-References: <20130809003402.GC13427@mtj.dyndns.org>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: build failure after merge of the ext4 tree
+Date: Fri, 9 Aug 2013 13:42:48 +0200
+Message-ID: <20130809114248.GA5691@merkur.ravnborg.org>
+References: <20130729110816.12958c3a26400f444a9a5012@canb.auug.org.au> <CA+icZUUt4domktYZZn0Qp3BZoSFqmKic4qSnVP4cuTKwUww_=A@mail.gmail.com> <20130807153840.4f2997b603397c07aca98b2d@canb.auug.org.au> <87zjsted0c.fsf@linaro.org> <20130808102228.d2034d3a4c986d2970926ab9@canb.auug.org.au> <20130808103614.a039da2f236154b52329b28b@canb.auug.org.au> <20130808191650.GB3282@free.fr> <20130808215449.GD3282@free.fr>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="PNTmBPCT7hxwcZjr"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:46938 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S967432Ab3HIHWL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 9 Aug 2013 03:22:11 -0400
+Received: from smtp.snhosting.dk ([87.238.248.203]:27967 "EHLO
+	smtp.domainteam.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934248Ab3HILmv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Aug 2013 07:42:51 -0400
 Content-Disposition: inline
-In-Reply-To: <20130809003402.GC13427@mtj.dyndns.org>
+In-Reply-To: <20130808215449.GD3282@free.fr>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, Balbir Singh <bsingharora@gmail.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, cgroups@vger.kernel.org, linux-mm@kvack.org
+To: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>, Michal Marek <mmarek@suse.cz>, Kevin Hilman <khilman@linaro.org>, sedat.dilek@gmail.com, Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux kbuild ML <linux-kbuild@vger.kernel.org>
 
-
---PNTmBPCT7hxwcZjr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu 08-08-13 20:34:02, Tejun Heo wrote:
-> Hello, Stephen, Andrew.
+On Thu, Aug 08, 2013 at 11:54:49PM +0200, Yann E. MORIN wrote:
+> Stephen, All,
 > 
-> I just applied rather invasive API update to cgroup/for-3.12, which
-> led to conflicts in two files - include/net/netprio_cgroup.h and
-> mm/memcontrol.c.  The former is trivial context conflict and the two
-> changes conflicting are independent.  The latter contains several
-> conflicts and unfortunately isn't trivial, especially the iterator
-> update and the memcg patches should probably be rebased.
+> On 2013-08-08 21:16 +0200, Yann E. MORIN spake thusly:
+> > On 2013-08-08 10:36 +1000, Stephen Rothwell spake thusly:
+> > > On Thu, 8 Aug 2013 10:22:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au>
+> > > wrote:
+> > > >
+> > > > More quick testing with an empty file: v3.9 is OK, v3.10 gives
+> > > > CONFIG_MODULES unset.
+> > 
+> > Sorry, I don't understand the above. Can you elaborate on what you did,
+> > what you got, what expected, so I can try to reproduce and fix this,
+> > please?
 > 
-> I can hold back pushing for-3.12 into for-next until the memcg patches
-> are rebased.  Would that work?
+> Ok, I've had a look in the linux-next archives, and I think I got it.
+> Is the following right?
+> 
+>     git clean -d; git clean -dX     # To be sure tree is clean
+>     touch empty
+>     make KCONFIG_ALLCONFIG=empty allmodconfig
+>     grep MODULES .config
+>     $ CONFIG_MODULES is not set
+> 
+> If so, I think I found the reason: the modules symbol is _always_ set to
+> being valid as soon as KCONFIG_ALLCONFIG is read, even if it was not
+> present in that file.
+> 
+> Since it is set to be valid, the following change means it is not
+> affected another value later on.
+> 
+> So, I wonder what the best option is:
+>   1- revert the following, and find another solution,
+>   2- de-specialise the modules symbol,
+>   3- or further specialise the modules symbol.
 
-I have just tried to merge cgroups/for-3.12 into my memcg tree and there
-were some conflicts indeed. They are attached for reference. The
-resolving is trivial. I've just picked up HEAD as all the conflicts are
-for added resp. removed code in mmotm.
+If we drop the special handling of "MODULES" and introduced
+the following in we may fix it - hopefully:
 
-Andrew, let me know if you need a help with rebasing.
+config MODULES
+	option modules
 
-HTH
--- 
-Michal Hocko
-SUSE Labs
+The option handling is already in place. It is even documented :-)
 
---PNTmBPCT7hxwcZjr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="memcontrol.conflicts"
+At least we could then drop the sym_lookup here (zconf.y):
+        if (!modules_sym->prop) {
+                struct property *prop;
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index b73988a..c208154 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -182,6 +182,29 @@ struct mem_cgroup_per_node {
- 	struct mem_cgroup_per_zone zoneinfo[MAX_NR_ZONES];
- };
- 
-+<<<<<<< HEAD
-+=======
-+/*
-+ * Cgroups above their limits are maintained in a RB-Tree, independent of
-+ * their hierarchy representation
-+ */
-+
-+struct mem_cgroup_tree_per_zone {
-+	struct rb_root rb_root;
-+	spinlock_t lock;
-+};
-+
-+struct mem_cgroup_tree_per_node {
-+	struct mem_cgroup_tree_per_zone rb_tree_per_zone[MAX_NR_ZONES];
-+};
-+
-+struct mem_cgroup_tree {
-+	struct mem_cgroup_tree_per_node *rb_tree_per_node[MAX_NUMNODES];
-+};
-+
-+static struct mem_cgroup_tree soft_limit_tree __read_mostly;
-+
-+>>>>>>> tj-cgroups/for-3.12
- struct mem_cgroup_threshold {
- 	struct eventfd_ctx *eventfd;
- 	u64 threshold;
-@@ -255,7 +278,10 @@ struct mem_cgroup {
- 
- 	bool		oom_lock;
- 	atomic_t	under_oom;
-+<<<<<<< HEAD
- 	atomic_t	oom_wakeups;
-+=======
-+>>>>>>> tj-cgroups/for-3.12
- 
- 	int	swappiness;
- 	/* OOM-Killer disable */
-@@ -323,6 +349,7 @@ struct mem_cgroup {
- 	 */
- 	spinlock_t soft_lock;
- 
-+<<<<<<< HEAD
- 	/*
- 	 * If true then this group has increased parents' children_in_excess
- 	 * when it got over the soft limit.
-@@ -334,6 +361,8 @@ struct mem_cgroup {
- 	/* Number of children that are in soft limit excess */
- 	atomic_t children_in_excess;
- 
-+=======
-+>>>>>>> tj-cgroups/for-3.12
- 	struct mem_cgroup_per_node *nodeinfo[0];
- 	/* WARNING: nodeinfo must be the last member here */
- };
-@@ -3573,9 +3602,15 @@ __memcg_kmem_newpage_charge(gfp_t gfp, struct mem_cgroup **_memcg, int order)
- 	 * the page allocator. Therefore, the following sequence when backed by
- 	 * the SLUB allocator:
- 	 *
-+<<<<<<< HEAD
- 	 *	memcg_stop_kmem_account();
- 	 *	kmalloc(<large_number>)
- 	 *	memcg_resume_kmem_account();
-+=======
-+	 * 	memcg_stop_kmem_account();
-+	 * 	kmalloc(<large_number>)
-+	 * 	memcg_resume_kmem_account();
-+>>>>>>> tj-cgroups/for-3.12
- 	 *
- 	 * would effectively ignore the fact that we should skip accounting,
- 	 * since it will drive us directly to this function without passing
+                prop = prop_alloc(P_DEFAULT, modules_sym);
+                prop->expr = expr_alloc_symbol(sym_lookup("MODULES", 0));
+        }
+Without the sym_lookup I think the symbol will not be defined and tus not marked valid.
 
---PNTmBPCT7hxwcZjr--
+Soory - no patch as I am busy with day-time job stuff.
+
+	Sam
