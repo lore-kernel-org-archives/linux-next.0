@@ -1,107 +1,62 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the akpm tree with the ext4 tree
-Date: Fri, 9 Aug 2013 15:34:07 -0700
-Message-ID: <20130809153407.3bcf44fadd4fa99472fb70b8@linux-foundation.org>
-References: <20130807151903.6281b33735f4e3f79231bf5e@canb.auug.org.au>
-	<20130809222104.GY2280@outflux.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Aug 9
+Date: Sat, 10 Aug 2013 09:46:42 +1000
+Message-ID: <20130810094642.c06a8f469f8601895c0f569f@canb.auug.org.au>
+References: <20130809161540.f65dd6412ac59d49a32881c8@canb.auug.org.au>
+	<52051E90.3090507@infradead.org>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sat__10_Aug_2013_09_46_42_+1000_wYSKdlaE5uQyExiX"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58934 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031620Ab3HIXqx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Aug 2013 19:46:53 -0400
+In-Reply-To: <52051E90.3090507@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Sat__10_Aug_2013_09_46_42_+1000_wYSKdlaE5uQyExiX
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130809222104.GY2280@outflux.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <kees@outflux.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Dave Chinner <dchinner@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 9 Aug 2013 15:21:04 -0700 Kees Cook <kees@outflux.net> wrote:
+Hi Randy,
 
-> Hi,
-> 
-> On Wed, Aug 07, 2013 at 03:19:03PM +1000, Stephen Rothwell wrote:
-> > Hi Andrew,
-> > 
-> >   	list_for_each_safe(cur, tmp, &sbi->s_es_lru) {
-> > + 		int ret;
-> > + 
-> >   		/*
-> >   		 * If we have already reclaimed all extents from extent
-> >   		 * status tree, just stop the loop immediately.
-> 
-> Which is masking the "ret" at the start, leading to warnings at build-time:
-> 
-> fs/ext4/extents_status.c: In function _____ext4_es_shrink___:
-> fs/ext4/extents_status.c:950:6: warning: unused variable ___ret___ [-Wunused-variable]
+On Fri, 09 Aug 2013 09:53:36 -0700 Randy Dunlap
+<rdunlap@infradead.org> wrote:
+>
+> and if you are not using git but are using tarballs instead,
+> where is the patch file?
 
-yup.
+Yeah, sorry I did not notice the error from kup.  It should be there now.
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: fs-convert-fs-shrinkers-to-new-scan-count-api-fix-fix-2
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-fix shadowed local, spell "skipped" correctly
+--Signature=_Sat__10_Aug_2013_09_46_42_+1000_wYSKdlaE5uQyExiX
+Content-Type: application/pgp-signature
 
-Cc: Dave Chinner <dchinner@redhat.com>
-Cc: Glauber Costa <glommer@openvz.org>
-Cc: Kees Cook <kees@outflux.net>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
- fs/ext4/extents_status.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+iQIcBAEBCAAGBQJSBX9nAAoJEECxmPOUX5FE+yUP/jr4PR+2sCGv5sT95u0fgfYm
+eQj/X4GAw1jE0ONxZO/8eixxBsbZ22z5b0US2t0dVMBbi9eufPn0sK9mrLGkXXfa
+ZVf8aBoXjdfyFR82vkxwPkw+yJ4bNTbx/lTyLuq03yAGqag7KKjwwanSC60wCIL6
+XqMVrmwNc4U0PSSMQqVXQNEKw6oYtXWAOyFW93vbHjRxC+BbZaAFRMfyG/xjp7E2
+Fp2NIiAxedHdEccw7r3JIFLdTDMlDMO68x8WnUTSBtXJ6sKRS0bmgPEe7+OVbgEk
+MzpcPRCYWhLX7Muo/mfdVE92LCcyN/yQ07P+G3VYo/nFZxn71lWk1kabSXgsPiRy
+Ogaitf73eH+bgoDxm1HVTZ42HQL3nQjqyeZ54c5PR9gmhNDbkvoBILsEe9Zl4xkD
+JWjzOkV0PcsaixIVK0H8a2qlhA0cBcTZyAj8yqQpOsNWGcY8e0INwDr1JMbUgDyD
+Yr2pr1xeuDen+6ytaPk/6P/Jus6N+5BrmoYV0N5B0xYvuX7lIImh/7++5kKBa/dS
+vtL9kvZquGss2YO7mUwCBjwn8Lxp6YkgPdo6Hu/4QC9YzZoTKwys7pM12oF2q/Ll
+zrjC2CXqTnHge+pf719h1ZaraFQgnS34DmoU6Pw6X56ZG03P5b2djC55NCCt4DLd
+8+3OfEAwTSbo4TyfCNf7
+=6u5R
+-----END PGP SIGNATURE-----
 
-diff -puN fs/ext4/extents_status.c~fs-convert-fs-shrinkers-to-new-scan-count-api-fix-fix-2 fs/ext4/extents_status.c
---- a/fs/ext4/extents_status.c~fs-convert-fs-shrinkers-to-new-scan-count-api-fix-fix-2
-+++ a/fs/ext4/extents_status.c
-@@ -946,15 +946,15 @@ static int __ext4_es_shrink(struct ext4_
- {
- 	struct ext4_inode_info *ei;
- 	struct list_head *cur, *tmp;
--	LIST_HEAD(skiped);
--	int ret, nr_shrunk = 0;
-+	LIST_HEAD(skipped);
-+	int nr_shrunk = 0;
- 	int retried = 0, skip_precached = 1, nr_skipped = 0;
- 
- 	spin_lock(&sbi->s_es_lru_lock);
- 
- retry:
- 	list_for_each_safe(cur, tmp, &sbi->s_es_lru) {
--		int ret;
-+		int shrunk;
- 
- 		/*
- 		 * If we have already reclaimed all extents from extent
-@@ -974,7 +974,7 @@ retry:
- 		    (skip_precached && ext4_test_inode_state(&ei->vfs_inode,
- 						EXT4_STATE_EXT_PRECACHED))) {
- 			nr_skipped++;
--			list_move_tail(cur, &skiped);
-+			list_move_tail(cur, &skipped);
- 			continue;
- 		}
- 
-@@ -982,19 +982,19 @@ retry:
- 			continue;
- 
- 		write_lock(&ei->i_es_lock);
--		ret = __es_try_to_reclaim_extents(ei, nr_to_scan);
-+		shrunk = __es_try_to_reclaim_extents(ei, nr_to_scan);
- 		if (ei->i_es_lru_nr == 0)
- 			list_del_init(&ei->i_es_lru);
- 		write_unlock(&ei->i_es_lock);
- 
--		nr_shrunk += ret;
--		nr_to_scan -= ret;
-+		nr_shrunk += shrunk;
-+		nr_to_scan -= shrunk;
- 		if (nr_to_scan == 0)
- 			break;
- 	}
- 
- 	/* Move the newer inodes into the tail of the LRU list. */
--	list_splice_tail(&skiped, &sbi->s_es_lru);
-+	list_splice_tail(&skipped, &sbi->s_es_lru);
- 
- 	/*
- 	 * If we skipped any inodes, and we weren't able to make any
-_
+--Signature=_Sat__10_Aug_2013_09_46_42_+1000_wYSKdlaE5uQyExiX--
