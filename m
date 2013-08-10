@@ -1,62 +1,93 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Aug 9
-Date: Sat, 10 Aug 2013 09:46:42 +1000
-Message-ID: <20130810094642.c06a8f469f8601895c0f569f@canb.auug.org.au>
-References: <20130809161540.f65dd6412ac59d49a32881c8@canb.auug.org.au>
-	<52051E90.3090507@infradead.org>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: Tree for Aug 8 (not CONFIG_PCI_MSI conflict)
+Date: Sat, 10 Aug 2013 08:01:49 -0600
+Message-ID: <CAErSpo6S9uYTEhoS-+4EZv41pc0bu6jvcMaGX7WR9hY4o+2dsA@mail.gmail.com>
+References: <20130808170822.82bf33d3cf5100f5e2646815@canb.auug.org.au>
+ <5203F978.2050504@infradead.org> <20130809145939.GE25111@titan.lakedaemon.net>
+ <52051BC2.2060004@infradead.org> <20130809185036.GG25111@titan.lakedaemon.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__10_Aug_2013_09_46_42_+1000_wYSKdlaE5uQyExiX"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58934 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1031620Ab3HIXqx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Aug 2013 19:46:53 -0400
-In-Reply-To: <52051E90.3090507@infradead.org>
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:35138 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754991Ab3HJOCK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 10 Aug 2013 10:02:10 -0400
+Received: by mail-ie0-f177.google.com with SMTP id a11so5844862iee.36
+        for <linux-next@vger.kernel.org>; Sat, 10 Aug 2013 07:02:09 -0700 (PDT)
+In-Reply-To: <20130809185036.GG25111@titan.lakedaemon.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jason Cooper <jason@lakedaemon.net>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next list <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>
 
---Signature=_Sat__10_Aug_2013_09_46_42_+1000_wYSKdlaE5uQyExiX
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Randy,
-
-On Fri, 09 Aug 2013 09:53:36 -0700 Randy Dunlap
-<rdunlap@infradead.org> wrote:
+On Fri, Aug 9, 2013 at 12:50 PM, Jason Cooper <jason@lakedaemon.net> wrote:
+> Randy,
 >
-> and if you are not using git but are using tarballs instead,
-> where is the patch file?
+> On Fri, Aug 09, 2013 at 09:41:38AM -0700, Randy Dunlap wrote:
+>> On 08/09/13 07:59, Jason Cooper wrote:
+>> > Randy,
+>> >
+>> > On Thu, Aug 08, 2013 at 01:03:04PM -0700, Randy Dunlap wrote:
+>> >> On 08/08/13 00:08, Stephen Rothwell wrote:
+>> >>> Hi all,
+>> >>>
+>> >>> Changes since 20130807:
+>> >>>
+>> >>
+>> >> on i386 and x86_64:
+>> >> when CONFIG_PCI_MSI is not enabled:
+>> >>
+>> >> There are many of these errors:
+>> >> include/linux/msi.h:65:6: error: expected identifier or '(' before 'void'
+>> >> include/linux/msi.h:65:6: error: expected ')' before numeric constant
+>> >>
+>> >> because arch/x86/include/asm/pci.h defines:
+>> >> #define default_teardown_msi_irqs  NULL
+>> >
+>> > Do you have an example config you used?
+>>
+>> Sure, attached. (or I have 14 of them)
+>
+> Thanks, I was able to reproduce the error.  I'm not real familiar with
+> this area of the code, but the relief is it doesn't appear to be caused
+> by the mvebu changes (well, relief for us ;-) ).
+>
+> At any rate, give this a spin and see if it works for you
+>
+> If it's acceptable, I'll do an official patch for Bjorn.
+>
+> thx,
+>
+> Jason.
+>
+> ---------->8----------
+> diff --git a/arch/x86/include/asm/pci.h b/arch/x86/include/asm/pci.h
+> index d9e9e6c..6169414 100644
+> --- a/arch/x86/include/asm/pci.h
+> +++ b/arch/x86/include/asm/pci.h
+> @@ -138,8 +138,8 @@ void default_restore_msi_irqs(struct pci_dev *dev, int irq);
+>  #else
+>  #define native_setup_msi_irqs          NULL
+>  #define native_teardown_msi_irq                NULL
+> -#define default_teardown_msi_irqs      NULL
+> -#define default_restore_msi_irqs       NULL
+> +void __weak default_teardown_msi_irqs(struct pci_dev *dev) { }
+> +void __weak default_restore_msi_irqs(struct pci_dev *dev, int irq) { }
 
-Yeah, sorry I did not notice the error from kup.  It should be there now.
+I don't really like this solution of putting the empty implementation
+in the header file, because then a weak body is generated in the
+object of every source file that includes the header.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+default_teardown_msi_irqs() and default_restore_msi_irqs() seem like
+fairly internal MSI functions, so I wonder why we need them defined at
+all when CONFIG_PCI_MSI=n.  It seems like any uses of them should be
+in code that's only compiled when CONFIG_PCI_MSI=y.  But I haven't
+reproduced the problem and investigated yet.
 
---Signature=_Sat__10_Aug_2013_09_46_42_+1000_wYSKdlaE5uQyExiX
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSBX9nAAoJEECxmPOUX5FE+yUP/jr4PR+2sCGv5sT95u0fgfYm
-eQj/X4GAw1jE0ONxZO/8eixxBsbZ22z5b0US2t0dVMBbi9eufPn0sK9mrLGkXXfa
-ZVf8aBoXjdfyFR82vkxwPkw+yJ4bNTbx/lTyLuq03yAGqag7KKjwwanSC60wCIL6
-XqMVrmwNc4U0PSSMQqVXQNEKw6oYtXWAOyFW93vbHjRxC+BbZaAFRMfyG/xjp7E2
-Fp2NIiAxedHdEccw7r3JIFLdTDMlDMO68x8WnUTSBtXJ6sKRS0bmgPEe7+OVbgEk
-MzpcPRCYWhLX7Muo/mfdVE92LCcyN/yQ07P+G3VYo/nFZxn71lWk1kabSXgsPiRy
-Ogaitf73eH+bgoDxm1HVTZ42HQL3nQjqyeZ54c5PR9gmhNDbkvoBILsEe9Zl4xkD
-JWjzOkV0PcsaixIVK0H8a2qlhA0cBcTZyAj8yqQpOsNWGcY8e0INwDr1JMbUgDyD
-Yr2pr1xeuDen+6ytaPk/6P/Jus6N+5BrmoYV0N5B0xYvuX7lIImh/7++5kKBa/dS
-vtL9kvZquGss2YO7mUwCBjwn8Lxp6YkgPdo6Hu/4QC9YzZoTKwys7pM12oF2q/Ll
-zrjC2CXqTnHge+pf719h1ZaraFQgnS34DmoU6Pw6X56ZG03P5b2djC55NCCt4DLd
-8+3OfEAwTSbo4TyfCNf7
-=6u5R
------END PGP SIGNATURE-----
-
---Signature=_Sat__10_Aug_2013_09_46_42_+1000_wYSKdlaE5uQyExiX--
+>  #endif
+>
+>  #define PCI_DMA_BUS_IS_PHYS (dma_ops->is_phys)
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
