@@ -1,93 +1,41 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: Tree for Aug 8 (not CONFIG_PCI_MSI conflict)
-Date: Sat, 10 Aug 2013 08:01:49 -0600
-Message-ID: <CAErSpo6S9uYTEhoS-+4EZv41pc0bu6jvcMaGX7WR9hY4o+2dsA@mail.gmail.com>
-References: <20130808170822.82bf33d3cf5100f5e2646815@canb.auug.org.au>
- <5203F978.2050504@infradead.org> <20130809145939.GE25111@titan.lakedaemon.net>
- <52051BC2.2060004@infradead.org> <20130809185036.GG25111@titan.lakedaemon.net>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Aug 9 (staging/ozwpan)
+Date: Sat, 10 Aug 2013 15:15:34 -0700
+Message-ID: <5206BB86.2000604@infradead.org>
+References: <20130809161540.f65dd6412ac59d49a32881c8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f177.google.com ([209.85.223.177]:35138 "EHLO
-	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754991Ab3HJOCK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 10 Aug 2013 10:02:10 -0400
-Received: by mail-ie0-f177.google.com with SMTP id a11so5844862iee.36
-        for <linux-next@vger.kernel.org>; Sat, 10 Aug 2013 07:02:09 -0700 (PDT)
-In-Reply-To: <20130809185036.GG25111@titan.lakedaemon.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next list <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20130809161540.f65dd6412ac59d49a32881c8@canb.auug.org.au>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Aug 9, 2013 at 12:50 PM, Jason Cooper <jason@lakedaemon.net> wrote:
-> Randy,
->
-> On Fri, Aug 09, 2013 at 09:41:38AM -0700, Randy Dunlap wrote:
->> On 08/09/13 07:59, Jason Cooper wrote:
->> > Randy,
->> >
->> > On Thu, Aug 08, 2013 at 01:03:04PM -0700, Randy Dunlap wrote:
->> >> On 08/08/13 00:08, Stephen Rothwell wrote:
->> >>> Hi all,
->> >>>
->> >>> Changes since 20130807:
->> >>>
->> >>
->> >> on i386 and x86_64:
->> >> when CONFIG_PCI_MSI is not enabled:
->> >>
->> >> There are many of these errors:
->> >> include/linux/msi.h:65:6: error: expected identifier or '(' before 'void'
->> >> include/linux/msi.h:65:6: error: expected ')' before numeric constant
->> >>
->> >> because arch/x86/include/asm/pci.h defines:
->> >> #define default_teardown_msi_irqs  NULL
->> >
->> > Do you have an example config you used?
->>
->> Sure, attached. (or I have 14 of them)
->
-> Thanks, I was able to reproduce the error.  I'm not real familiar with
-> this area of the code, but the relief is it doesn't appear to be caused
-> by the mvebu changes (well, relief for us ;-) ).
->
-> At any rate, give this a spin and see if it works for you
->
-> If it's acceptable, I'll do an official patch for Bjorn.
->
-> thx,
->
-> Jason.
->
-> ---------->8----------
-> diff --git a/arch/x86/include/asm/pci.h b/arch/x86/include/asm/pci.h
-> index d9e9e6c..6169414 100644
-> --- a/arch/x86/include/asm/pci.h
-> +++ b/arch/x86/include/asm/pci.h
-> @@ -138,8 +138,8 @@ void default_restore_msi_irqs(struct pci_dev *dev, int irq);
->  #else
->  #define native_setup_msi_irqs          NULL
->  #define native_teardown_msi_irq                NULL
-> -#define default_teardown_msi_irqs      NULL
-> -#define default_restore_msi_irqs       NULL
-> +void __weak default_teardown_msi_irqs(struct pci_dev *dev) { }
-> +void __weak default_restore_msi_irqs(struct pci_dev *dev, int irq) { }
+On 08/08/13 23:15, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20130808:
+> 
+> *crickets*
+> 
 
-I don't really like this solution of putting the empty implementation
-in the header file, because then a weak body is generated in the
-object of every source file that includes the header.
+on i386:
 
-default_teardown_msi_irqs() and default_restore_msi_irqs() seem like
-fairly internal MSI functions, so I wonder why we need them defined at
-all when CONFIG_PCI_MSI=n.  It seems like any uses of them should be
-in code that's only compiled when CONFIG_PCI_MSI=y.  But I haven't
-reproduced the problem and investigated yet.
+ERROR: "__divdi3" [drivers/staging/ozwpan/ozwpan.ko] undefined!
 
->  #endif
->
->  #define PCI_DMA_BUS_IS_PHYS (dma_ops->is_phys)
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+Apologies if this has already been reported/fixed.
+
+-- 
+~Randy
