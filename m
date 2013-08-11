@@ -1,164 +1,116 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: [PATCH tty-next] n_tty: Fix termios_rwsem lockdep false positive
-Date: Sun, 11 Aug 2013 08:04:23 -0400
-Message-ID: <1376222663-5666-1-git-send-email-peter@hurleysoftware.com>
-References: <20130731114726.GA11570@cpv436-motbuntu.spb.ea.mot-mobility.com>
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Subject: Re: linux-next: build failure after merge of the ext4 tree
+Date: Sun, 11 Aug 2013 23:39:23 +0200
+Message-ID: <20130811213923.GA5312@free.fr>
+References: <20130729110816.12958c3a26400f444a9a5012@canb.auug.org.au>
+ <CA+icZUUt4domktYZZn0Qp3BZoSFqmKic4qSnVP4cuTKwUww_=A@mail.gmail.com>
+ <20130807153840.4f2997b603397c07aca98b2d@canb.auug.org.au>
+ <87zjsted0c.fsf@linaro.org>
+ <20130808102228.d2034d3a4c986d2970926ab9@canb.auug.org.au>
+ <20130808103614.a039da2f236154b52329b28b@canb.auug.org.au>
+ <20130808191650.GB3282@free.fr>
+ <20130808215449.GD3282@free.fr>
+ <20130809114248.GA5691@merkur.ravnborg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout01.c08.mtsvc.net ([205.186.168.189]:49565 "EHLO
-	mailout01.c08.mtsvc.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753202Ab3HKMEo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Aug 2013 08:04:44 -0400
-In-Reply-To: <20130731114726.GA11570@cpv436-motbuntu.spb.ea.mot-mobility.com>
+Received: from mail-wg0-f53.google.com ([74.125.82.53]:33561 "EHLO
+	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751115Ab3HKVjb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Aug 2013 17:39:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20130809114248.GA5691@merkur.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Artem Savkov <artem.savkov@gmail.com>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Belisko Marek <marek.belisko@gmail.com>, Peter Hurley <peter@hurleysoftware.com>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>, Michal Marek <mmarek@suse.cz>, Kevin Hilman <khilman@linaro.org>, sedat.dilek@gmail.com, Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux kbuild ML <linux-kbuild@vger.kernel.org>
 
-Lockdep reports a circular lock dependency between
-atomic_read_lock and termios_rwsem [1]. However, a lock
-order deadlock is not possible since CPU1 only holds a
-read lock which cannot prevent CPU0 from also acquiring
-a read lock on the same r/w semaphore.
+Sam, All,
 
-Unfortunately, lockdep cannot currently distinguish whether
-the locks are read or write for any particular lock graph,
-merely that the locks _were_ previously read and/or write.
+On 2013-08-09 13:42 +0200, Sam Ravnborg spake thusly:
+> On Thu, Aug 08, 2013 at 11:54:49PM +0200, Yann E. MORIN wrote:
+> > Stephen, All,
+> > 
+> > On 2013-08-08 21:16 +0200, Yann E. MORIN spake thusly:
+> > > On 2013-08-08 10:36 +1000, Stephen Rothwell spake thusly:
+> > > > On Thu, 8 Aug 2013 10:22:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au>
+> > > > wrote:
+> > > > >
+> > > > > More quick testing with an empty file: v3.9 is OK, v3.10 gives
+> > > > > CONFIG_MODULES unset.
+> > > 
+> > > Sorry, I don't understand the above. Can you elaborate on what you did,
+> > > what you got, what expected, so I can try to reproduce and fix this,
+> > > please?
+> > 
+> > Ok, I've had a look in the linux-next archives, and I think I got it.
+> > Is the following right?
+> > 
+> >     git clean -d; git clean -dX     # To be sure tree is clean
+> >     touch empty
+> >     make KCONFIG_ALLCONFIG=empty allmodconfig
+> >     grep MODULES .config
+> >     $ CONFIG_MODULES is not set
+> > 
+> > If so, I think I found the reason: the modules symbol is _always_ set to
+> > being valid as soon as KCONFIG_ALLCONFIG is read, even if it was not
+> > present in that file.
+> > 
+> > Since it is set to be valid, the following change means it is not
+> > affected another value later on.
+> > 
+> > So, I wonder what the best option is:
+> >   1- revert the following, and find another solution,
+> >   2- de-specialise the modules symbol,
+> >   3- or further specialise the modules symbol.
+> 
+> If we drop the special handling of "MODULES" and introduced
+> the following in we may fix it - hopefully:
+> 
+> config MODULES
+> 	option modules
+> 
+> The option handling is already in place. It is even documented :-)
 
-Until lockdep is fixed, re-order atomic_read_lock so
-termios_rwsem can be dropped and reacquired without
-triggering lockdep.
+Yes, indeed, that one is pretty easy! :-)
 
-Reported-by: Artem Savkov <artem.savkov@gmail.com>
-Reported-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
+> At least we could then drop the sym_lookup here (zconf.y):
+>         if (!modules_sym->prop) {
+>                 struct property *prop;
+> 
+>                 prop = prop_alloc(P_DEFAULT, modules_sym);
+>                 prop->expr = expr_alloc_symbol(sym_lookup("MODULES", 0));
+>         }
+> Without the sym_lookup I think the symbol will not be defined and tus not marked valid.
 
-[1] Initial lockdep report from Artem Savkov <artem.savkov@gmail.com>
+Sorry, I don't understand what we should do here.
 
- ======================================================
- [ INFO: possible circular locking dependency detected ]
- 3.11.0-rc3-next-20130730+ #140 Tainted: G        W
- -------------------------------------------------------
- bash/1198 is trying to acquire lock:
-  (&tty->termios_rwsem){++++..}, at: [<ffffffff816aa3bb>] n_tty_read+0x49b/0x660
+>From what I understand, here's what happens:
+  - there's no symbol that declared the 'modules' option, so the
+    modules_sym->prop is NULL;
+  - so we look for the symbol 'MODULES' and use that as the symbol used
+    to evaluate if tristates are enabled.
 
- but task is already holding lock:
-  (&ldata->atomic_read_lock){+.+...}, at: [<ffffffff816aa0f0>] n_tty_read+0x1d0/0x660
+So, now we have 'option modules' added to MODULES, we never enter this
+if() condition.
 
- which lock already depends on the new lock.
+But what would happen to other projects that do not have a symbol set
+with 'option modules' and no 'MODULES' symbol? Surely, those projects do
+not need tristates, but what should the code do in this case?
 
- the existing dependency chain (in reverse order) is:
+So, I don't know what to replace this 'sym_lookup("MODULES", 0)' with.
 
- -> #1 (&ldata->atomic_read_lock){+.+...}:
-        [<ffffffff811111cc>] validate_chain+0x73c/0x850
-        [<ffffffff811117e0>] __lock_acquire+0x500/0x5d0
-        [<ffffffff81111a29>] lock_acquire+0x179/0x1d0
-        [<ffffffff81d34b9c>] mutex_lock_interruptible_nested+0x7c/0x540
-        [<ffffffff816aa0f0>] n_tty_read+0x1d0/0x660
-        [<ffffffff816a3bb6>] tty_read+0x86/0xf0
-        [<ffffffff811f21d3>] vfs_read+0xc3/0x130
-        [<ffffffff811f2702>] SyS_read+0x62/0xa0
-        [<ffffffff81d45259>] system_call_fastpath+0x16/0x1b
+> Soory - no patch as I am busy with day-time job stuff.
 
- -> #0 (&tty->termios_rwsem){++++..}:
-        [<ffffffff8111064f>] check_prev_add+0x14f/0x590
-        [<ffffffff811111cc>] validate_chain+0x73c/0x850
-        [<ffffffff811117e0>] __lock_acquire+0x500/0x5d0
-        [<ffffffff81111a29>] lock_acquire+0x179/0x1d0
-        [<ffffffff81d372c1>] down_read+0x51/0xa0
-        [<ffffffff816aa3bb>] n_tty_read+0x49b/0x660
-        [<ffffffff816a3bb6>] tty_read+0x86/0xf0
-        [<ffffffff811f21d3>] vfs_read+0xc3/0x130
-        [<ffffffff811f2702>] SyS_read+0x62/0xa0
-        [<ffffffff81d45259>] system_call_fastpath+0x16/0x1b
+I hope you can share some guidnce here, please... ;-)
 
- other info that might help us debug this:
+Regards,
+Yann E. MORIN.
 
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&ldata->atomic_read_lock);
-                                lock(&tty->termios_rwsem);
-                                lock(&ldata->atomic_read_lock);
-   lock(&tty->termios_rwsem);
-
-  *** DEADLOCK ***
-
- 2 locks held by bash/1198:
-  #0:  (&tty->ldisc_sem){.+.+.+}, at: [<ffffffff816ade04>] tty_ldisc_ref_wait+0x24/0x60
-  #1:  (&ldata->atomic_read_lock){+.+...}, at: [<ffffffff816aa0f0>] n_tty_read+0x1d0/0x660
-
- stack backtrace:
- CPU: 1 PID: 1198 Comm: bash Tainted: G        W    3.11.0-rc3-next-20130730+ #140
- Hardware name: Bochs Bochs, BIOS Bochs 01/01/2007
-  0000000000000000 ffff880019acdb28 ffffffff81d34074 0000000000000002
-  0000000000000000 ffff880019acdb78 ffffffff8110ed75 ffff880019acdb98
-  ffff880019fd0000 ffff880019acdb78 ffff880019fd0638 ffff880019fd0670
- Call Trace:
-  [<ffffffff81d34074>] dump_stack+0x59/0x7d
-  [<ffffffff8110ed75>] print_circular_bug+0x105/0x120
-  [<ffffffff8111064f>] check_prev_add+0x14f/0x590
-  [<ffffffff81d3ab5f>] ? _raw_spin_unlock_irq+0x4f/0x70
-  [<ffffffff811111cc>] validate_chain+0x73c/0x850
-  [<ffffffff8110ae0f>] ? trace_hardirqs_off_caller+0x1f/0x190
-  [<ffffffff811117e0>] __lock_acquire+0x500/0x5d0
-  [<ffffffff81111a29>] lock_acquire+0x179/0x1d0
-  [<ffffffff816aa3bb>] ? n_tty_read+0x49b/0x660
-  [<ffffffff81d372c1>] down_read+0x51/0xa0
-  [<ffffffff816aa3bb>] ? n_tty_read+0x49b/0x660
-  [<ffffffff816aa3bb>] n_tty_read+0x49b/0x660
-  [<ffffffff810e4130>] ? try_to_wake_up+0x210/0x210
-  [<ffffffff816a3bb6>] tty_read+0x86/0xf0
-  [<ffffffff811f21d3>] vfs_read+0xc3/0x130
-  [<ffffffff811f2702>] SyS_read+0x62/0xa0
-  [<ffffffff815e24ee>] ? trace_hardirqs_on_thunk+0x3a/0x3f
-  [<ffffffff81d45259>] system_call_fastpath+0x16/0x1b
----
- drivers/tty/n_tty.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-index dd8ae0c..c9a9ddd 100644
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -2122,6 +2122,17 @@ static ssize_t n_tty_read(struct tty_struct *tty, struct file *file,
- 	if (c < 0)
- 		return c;
- 
-+	/*
-+	 *	Internal serialization of reads.
-+	 */
-+	if (file->f_flags & O_NONBLOCK) {
-+		if (!mutex_trylock(&ldata->atomic_read_lock))
-+			return -EAGAIN;
-+	} else {
-+		if (mutex_lock_interruptible(&ldata->atomic_read_lock))
-+			return -ERESTARTSYS;
-+	}
-+
- 	down_read(&tty->termios_rwsem);
- 
- 	minimum = time = 0;
-@@ -2141,20 +2152,6 @@ static ssize_t n_tty_read(struct tty_struct *tty, struct file *file,
- 		}
- 	}
- 
--	/*
--	 *	Internal serialization of reads.
--	 */
--	if (file->f_flags & O_NONBLOCK) {
--		if (!mutex_trylock(&ldata->atomic_read_lock)) {
--			up_read(&tty->termios_rwsem);
--			return -EAGAIN;
--		}
--	} else {
--		if (mutex_lock_interruptible(&ldata->atomic_read_lock)) {
--			up_read(&tty->termios_rwsem);
--			return -ERESTARTSYS;
--		}
--	}
- 	packet = tty->packet;
- 
- 	add_wait_queue(&tty->read_wait, &wait);
 -- 
-1.8.1.2
+.-----------------.--------------------.------------------.--------------------.
+|  Yann E. MORIN  | Real-Time Embedded | /"\ ASCII RIBBON | Erics' conspiracy: |
+| +33 662 376 056 | Software  Designer | \ / CAMPAIGN     |  ___               |
+| +33 223 225 172 `------------.-------:  X  AGAINST      |  \e/  There is no  |
+| http://ymorin.is-a-geek.org/ | _/*\_ | / \ HTML MAIL    |   v   conspiracy.  |
+'------------------------------^-------^------------------^--------------------'
