@@ -1,48 +1,70 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Aug 9 (staging/ozwpan)
-Date: Sat, 10 Aug 2013 16:15:55 -0700
-Message-ID: <5206C9AB.8050706@infradead.org>
-References: <20130809161540.f65dd6412ac59d49a32881c8@canb.auug.org.au>
- <5206BB86.2000604@infradead.org>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: ext4: the list debug reports about corruptions
+Date: Sun, 11 Aug 2013 02:03:38 -0400
+Message-ID: <20130811060338.GA19297@thunk.org>
+References: <CANaxB-yikOkwFLtMDJjUyOm6MQPyCr6P+awhp9eZdFL_9vw4ag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <5206BB86.2000604@infradead.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CANaxB-yikOkwFLtMDJjUyOm6MQPyCr6P+awhp9eZdFL_9vw4ag@mail.gmail.com>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Andrey Vagin <avagin@openvz.org>
+Cc: linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, linux-next@vger.kernel.org, Glauber Costa <glommer@openvz.org>
 List-Id: linux-next.vger.kernel.org
 
-On 08/10/13 15:15, Randy Dunlap wrote:
-> On 08/08/13 23:15, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20130808:
->>
->> *crickets*
->>
+On Thu, Aug 08, 2013 at 01:45:52PM +0400, Andrey Vagin wrote:
+> Hello,
 > 
-> on i386:
+> I use akpm branch of linux-next
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/?h=akpm&id=05abc43724793827835728f4f25ba827e1c54902
+> .
+> This bug is reproduced, when I do the following sequence of commands:
 > 
-> ERROR: "__divdi3" [drivers/staging/ozwpan/ozwpan.ko] undefined!
-> 
+> mkdir /sys/fs/cgroup/memory/xxx
+> echo 1024000000 >  /sys/fs/cgroup/memory/xxx/memory.kmem.limit_in_bytes
+> echo $$ > /sys/fs/cgroup/memory/xxx/tasks
+> find /proc -name abra-kadabra
+> echo $$ > /sys/fs/cgroup/memory/tasks
+> rmdir /sys/fs/cgroup/memory/xxx/
+> echo 3 > /proc/sys/vm/drop_caches
 
-2 occurrences of this in oz_hcd_heartbeat().
+Thanks for reporting this.  I believe I have this fixed in the updated
+dev branch for the ext4 tree.  The relevant fix is additition of the
+INIT_LIST_HEAD(&skipped) below.  The rest is just a spelling fix up I
+made along the way.
 
-> 
-> 
-> Apologies if this has already been reported/fixed.
-> 
+    	       	   	       	   	    	- Ted
 
-
--- 
-~Randy
+diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
+index 00e6589..0e88a36 100644
+--- a/fs/ext4/extents_status.c
++++ b/fs/ext4/extents_status.c
+@@ -946,7 +946,7 @@ static int __ext4_es_shrink(struct ext4_sb_info *sbi, int nr_to_scan,
+ {
+ 	struct ext4_inode_info *ei;
+ 	struct list_head *cur, *tmp;
+-	LIST_HEAD(skiped);
++	LIST_HEAD(skipped);
+ 	int ret, nr_shrunk = 0;
+ 	int retried = 0, skip_precached = 1, nr_skipped = 0;
+ 
+@@ -972,7 +972,7 @@ retry:
+ 		    (skip_precached && ext4_test_inode_state(&ei->vfs_inode,
+ 						EXT4_STATE_EXT_PRECACHED))) {
+ 			nr_skipped++;
+-			list_move_tail(cur, &skiped);
++			list_move_tail(cur, &skipped);
+ 			continue;
+ 		}
+ 
+@@ -992,7 +992,8 @@ retry:
+ 	}
+ 
+ 	/* Move the newer inodes into the tail of the LRU list. */
+-	list_splice_tail(&skiped, &sbi->s_es_lru);
++	list_splice_tail(&skipped, &sbi->s_es_lru);
++	INIT_LIST_HEAD(&skipped);
+ 
+ 	/*
+ 	 * If we skipped any inodes, and we weren't able to make any
