@@ -1,62 +1,164 @@
-From: "Gujare, Rupesh" <Rupesh.Gujare@atmel.com>
-Subject: RE: linux-next: Tree for Aug 9 (staging/ozwpan)
-Date: Sun, 11 Aug 2013 09:04:00 +0000
-Message-ID: <CB57019DFBA97B45884DCA732411B955341FA6C8@hnombx02.corp.atmel.com>
-References: <20130809161540.f65dd6412ac59d49a32881c8@canb.auug.org.au>
- <5206BB86.2000604@infradead.org>,<5206C9AB.8050706@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <5206C9AB.8050706@infradead.org>
-Content-Language: en-GB
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+From: Peter Hurley <peter@hurleysoftware.com>
+Subject: [PATCH tty-next] n_tty: Fix termios_rwsem lockdep false positive
+Date: Sun, 11 Aug 2013 08:04:23 -0400
+Message-ID: <1376222663-5666-1-git-send-email-peter@hurleysoftware.com>
+References: <20130731114726.GA11570@cpv436-motbuntu.spb.ea.mot-mobility.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout01.c08.mtsvc.net ([205.186.168.189]:49565 "EHLO
+	mailout01.c08.mtsvc.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753202Ab3HKMEo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Aug 2013 08:04:44 -0400
+In-Reply-To: <20130731114726.GA11570@cpv436-motbuntu.spb.ea.mot-mobility.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Artem Savkov <artem.savkov@gmail.com>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Belisko Marek <marek.belisko@gmail.com>, Peter Hurley <peter@hurleysoftware.com>
 
+Lockdep reports a circular lock dependency between
+atomic_read_lock and termios_rwsem [1]. However, a lock
+order deadlock is not possible since CPU1 only holds a
+read lock which cannot prevent CPU0 from also acquiring
+a read lock on the same r/w semaphore.
 
-________________________________________
-From: Randy Dunlap [rdunlap@infradead.org]
-Sent: 11 August 2013 00:15
-To: Stephen Rothwell
-Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; devel@driverdev.osuosl.org; Gujare, Rupesh; Greg Kroah-Hartman
-Subject: Re: linux-next: Tree for Aug 9 (staging/ozwpan)
+Unfortunately, lockdep cannot currently distinguish whether
+the locks are read or write for any particular lock graph,
+merely that the locks _were_ previously read and/or write.
 
-On 08/10/13 15:15, Randy Dunlap wrote:
-> On 08/08/13 23:15, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20130808:
->>
->> *crickets*
->>
->
-> on i386:
->
-> ERROR: "__divdi3" [drivers/staging/ozwpan/ozwpan.ko] undefined!
->
+Until lockdep is fixed, re-order atomic_read_lock so
+termios_rwsem can be dropped and reacquired without
+triggering lockdep.
 
-2 occurrences of this in oz_hcd_heartbeat().
+Reported-by: Artem Savkov <artem.savkov@gmail.com>
+Reported-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
 
->
->
-> Apologies if this has already been reported/fixed.
->
+[1] Initial lockdep report from Artem Savkov <artem.savkov@gmail.com>
 
-Yes, It had been already been fixed here :-
+ ======================================================
+ [ INFO: possible circular locking dependency detected ]
+ 3.11.0-rc3-next-20130730+ #140 Tainted: G        W
+ -------------------------------------------------------
+ bash/1198 is trying to acquire lock:
+  (&tty->termios_rwsem){++++..}, at: [<ffffffff816aa3bb>] n_tty_read+0x49b/0x660
 
-http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2013-August/040091.html
-I have been waiting for Greg to apply this patch to his tree.
+ but task is already holding lock:
+  (&ldata->atomic_read_lock){+.+...}, at: [<ffffffff816aa0f0>] n_tty_read+0x1d0/0x660
 
---
-Regards,
-Rupesh Gujare
+ which lock already depends on the new lock.
+
+ the existing dependency chain (in reverse order) is:
+
+ -> #1 (&ldata->atomic_read_lock){+.+...}:
+        [<ffffffff811111cc>] validate_chain+0x73c/0x850
+        [<ffffffff811117e0>] __lock_acquire+0x500/0x5d0
+        [<ffffffff81111a29>] lock_acquire+0x179/0x1d0
+        [<ffffffff81d34b9c>] mutex_lock_interruptible_nested+0x7c/0x540
+        [<ffffffff816aa0f0>] n_tty_read+0x1d0/0x660
+        [<ffffffff816a3bb6>] tty_read+0x86/0xf0
+        [<ffffffff811f21d3>] vfs_read+0xc3/0x130
+        [<ffffffff811f2702>] SyS_read+0x62/0xa0
+        [<ffffffff81d45259>] system_call_fastpath+0x16/0x1b
+
+ -> #0 (&tty->termios_rwsem){++++..}:
+        [<ffffffff8111064f>] check_prev_add+0x14f/0x590
+        [<ffffffff811111cc>] validate_chain+0x73c/0x850
+        [<ffffffff811117e0>] __lock_acquire+0x500/0x5d0
+        [<ffffffff81111a29>] lock_acquire+0x179/0x1d0
+        [<ffffffff81d372c1>] down_read+0x51/0xa0
+        [<ffffffff816aa3bb>] n_tty_read+0x49b/0x660
+        [<ffffffff816a3bb6>] tty_read+0x86/0xf0
+        [<ffffffff811f21d3>] vfs_read+0xc3/0x130
+        [<ffffffff811f2702>] SyS_read+0x62/0xa0
+        [<ffffffff81d45259>] system_call_fastpath+0x16/0x1b
+
+ other info that might help us debug this:
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&ldata->atomic_read_lock);
+                                lock(&tty->termios_rwsem);
+                                lock(&ldata->atomic_read_lock);
+   lock(&tty->termios_rwsem);
+
+  *** DEADLOCK ***
+
+ 2 locks held by bash/1198:
+  #0:  (&tty->ldisc_sem){.+.+.+}, at: [<ffffffff816ade04>] tty_ldisc_ref_wait+0x24/0x60
+  #1:  (&ldata->atomic_read_lock){+.+...}, at: [<ffffffff816aa0f0>] n_tty_read+0x1d0/0x660
+
+ stack backtrace:
+ CPU: 1 PID: 1198 Comm: bash Tainted: G        W    3.11.0-rc3-next-20130730+ #140
+ Hardware name: Bochs Bochs, BIOS Bochs 01/01/2007
+  0000000000000000 ffff880019acdb28 ffffffff81d34074 0000000000000002
+  0000000000000000 ffff880019acdb78 ffffffff8110ed75 ffff880019acdb98
+  ffff880019fd0000 ffff880019acdb78 ffff880019fd0638 ffff880019fd0670
+ Call Trace:
+  [<ffffffff81d34074>] dump_stack+0x59/0x7d
+  [<ffffffff8110ed75>] print_circular_bug+0x105/0x120
+  [<ffffffff8111064f>] check_prev_add+0x14f/0x590
+  [<ffffffff81d3ab5f>] ? _raw_spin_unlock_irq+0x4f/0x70
+  [<ffffffff811111cc>] validate_chain+0x73c/0x850
+  [<ffffffff8110ae0f>] ? trace_hardirqs_off_caller+0x1f/0x190
+  [<ffffffff811117e0>] __lock_acquire+0x500/0x5d0
+  [<ffffffff81111a29>] lock_acquire+0x179/0x1d0
+  [<ffffffff816aa3bb>] ? n_tty_read+0x49b/0x660
+  [<ffffffff81d372c1>] down_read+0x51/0xa0
+  [<ffffffff816aa3bb>] ? n_tty_read+0x49b/0x660
+  [<ffffffff816aa3bb>] n_tty_read+0x49b/0x660
+  [<ffffffff810e4130>] ? try_to_wake_up+0x210/0x210
+  [<ffffffff816a3bb6>] tty_read+0x86/0xf0
+  [<ffffffff811f21d3>] vfs_read+0xc3/0x130
+  [<ffffffff811f2702>] SyS_read+0x62/0xa0
+  [<ffffffff815e24ee>] ? trace_hardirqs_on_thunk+0x3a/0x3f
+  [<ffffffff81d45259>] system_call_fastpath+0x16/0x1b
+---
+ drivers/tty/n_tty.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
+index dd8ae0c..c9a9ddd 100644
+--- a/drivers/tty/n_tty.c
++++ b/drivers/tty/n_tty.c
+@@ -2122,6 +2122,17 @@ static ssize_t n_tty_read(struct tty_struct *tty, struct file *file,
+ 	if (c < 0)
+ 		return c;
+ 
++	/*
++	 *	Internal serialization of reads.
++	 */
++	if (file->f_flags & O_NONBLOCK) {
++		if (!mutex_trylock(&ldata->atomic_read_lock))
++			return -EAGAIN;
++	} else {
++		if (mutex_lock_interruptible(&ldata->atomic_read_lock))
++			return -ERESTARTSYS;
++	}
++
+ 	down_read(&tty->termios_rwsem);
+ 
+ 	minimum = time = 0;
+@@ -2141,20 +2152,6 @@ static ssize_t n_tty_read(struct tty_struct *tty, struct file *file,
+ 		}
+ 	}
+ 
+-	/*
+-	 *	Internal serialization of reads.
+-	 */
+-	if (file->f_flags & O_NONBLOCK) {
+-		if (!mutex_trylock(&ldata->atomic_read_lock)) {
+-			up_read(&tty->termios_rwsem);
+-			return -EAGAIN;
+-		}
+-	} else {
+-		if (mutex_lock_interruptible(&ldata->atomic_read_lock)) {
+-			up_read(&tty->termios_rwsem);
+-			return -ERESTARTSYS;
+-		}
+-	}
+ 	packet = tty->packet;
+ 
+ 	add_wait_queue(&tty->read_wait, &wait);
+-- 
+1.8.1.2
