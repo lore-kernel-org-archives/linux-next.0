@@ -1,91 +1,73 @@
-From: "Berg, Johannes" <johannes.berg@intel.com>
-Subject: RE: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-Date: Mon, 12 Aug 2013 15:34:09 +0000
-Message-ID: <1DC40B07CD6EC041A66726C271A73AE61AA5EB4C@IRSMSX102.ger.corp.intel.com>
-References: <20130812115327.7bcbb203ac8614d16d32ba52@canb.auug.org.au>
- <20130812151514.GD27408@tuxdriver.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH tty-next] n_tty: Fix termios_rwsem lockdep false positive
+Date: Mon, 12 Aug 2013 08:53:47 -0700
+Message-ID: <20130812155347.GA20696@kroah.com>
+References: <20130731114726.GA11570@cpv436-motbuntu.spb.ea.mot-mobility.com>
+ <1376222663-5666-1-git-send-email-peter@hurleysoftware.com>
+ <20130812092810.GA26400@cpv436-motbuntu.spb.ea.mot-mobility.com>
+ <20130812105041.GA2268@swordfish>
+ <5208DB32.40304@hurleysoftware.com>
+ <20130812131949.GA2297@swordfish>
+ <5208E575.1080008@hurleysoftware.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:38195 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752634Ab3HLPeO convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Aug 2013 11:34:14 -0400
-In-Reply-To: <20130812151514.GD27408@tuxdriver.com>
-Content-Language: en-US
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54523 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756890Ab3HLPwV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Aug 2013 11:52:21 -0400
+Content-Disposition: inline
+In-Reply-To: <5208E575.1080008@hurleysoftware.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To: Peter Hurley <peter@hurleysoftware.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Belisko Marek <marek.belisko@gmail.com>
 
-> I think I have this slightly different in wireless-testing.  Johannes, please
-> review and advise...
-
-> > Today's linux-next merge of the wireless-next tree got a conflict in
-> > drivers/net/wireless/iwlwifi/pcie/trans.c between commit eabc4ac5d760
-> > ("iwlwifi: pcie: disable L1 Active after pci_enable_device") from
-> > thewireless tree and commit f2532b04b2ec ("iwlwifi: pcie: don't
-> > disable
-> > L1 for newest NICs") from the wireless-next tree.
+On Mon, Aug 12, 2013 at 09:39:01AM -0400, Peter Hurley wrote:
+> On 08/12/2013 09:19 AM, Sergey Senozhatsky wrote:
+> >On (08/12/13 08:55), Peter Hurley wrote:
+> >>>>>[..]
+> >>>>>  drivers/tty/n_tty.c | 25 +++++++++++--------------
+> >>>>>  1 file changed, 11 insertions(+), 14 deletions(-)
+> >>>>>
+> >>>
+> >>>I hate to do this, but isn't it actually my patch posted here
+> >>>https://lkml.org/lkml/2013/8/1/510
+> >>>
+> >>>which was tagged as `wrong'?
+> >>
+> >>Sergey,
+> >>
+> >>My apologies; I was mistaken regarding this problem being a lockdep
+> >>regression (although it's still a false positive from lockdep). Once
+> >>I had worked around some issues with the nouveau driver, I was able to
+> >>reproduce the lockdep report on 3.10.
+> >>
+> >no problem.
 > >
-> > I fixed it up (maybe - see below) and can carry the fix as necessary
-> > (no action is required).
-
-
-> > diff --cc drivers/net/wireless/iwlwifi/pcie/trans.c
-> > index 390e2f0,e52d1ce..0000000
-> > --- a/drivers/net/wireless/iwlwifi/pcie/trans.c
-> > +++ b/drivers/net/wireless/iwlwifi/pcie/trans.c
-> > @@@ -1502,16 -1400,22 +1400,22 @@@ struct iwl_trans
-> *iwl_trans_pcie_alloc(
-> >   	spin_lock_init(&trans_pcie->reg_lock);
-> >   	init_waitqueue_head(&trans_pcie->ucode_write_waitq);
+> >>I included Artem's lockdep report in the changelog because I received
+> >>that first, on 30 July.
+> >>
+> >>My patch below is not the same as your patch of 1 Aug. This patch
+> >>preserves the protected access of termios.c_cc[VMIN] and termios.c_cc[VTIME]
+> >>(via the MIN_CHAR() and TIME_CHAR() macros).
 > >
-> >  +	if (pci_enable_device(pdev)) {
-> >  +		err = -ENODEV;
-> >  +		goto out_no_pci;
-> >  +	}
-> >  +
-> > - 	/* W/A - seems to solve weird behavior. We need to remove this if
-> we
-> > - 	 * don't want to stay in L1 all the time. This wastes a lot of power */
-> > - 	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S |
-> PCIE_LINK_STATE_L1 |
-> > - 			       PCIE_LINK_STATE_CLKPM);
-> > + 	if (!cfg->base_params->pcie_l1_allowed) {
-> > + 		/*
-> > + 		 * W/A - seems to solve weird behavior. We need to remove
-> this
-> > + 		 * if we don't want to stay in L1 all the time. This wastes a
-> > + 		 * lot of power.
-> > + 		 */
-> > + 		pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S |
-> > + 				       PCIE_LINK_STATE_L1 |
-> > + 				       PCIE_LINK_STATE_CLKPM);
-> > + 	}
+> >fair enough. v3 was protecting VMIN/VTIME (my bad, I noticed this a bit later),
+> >but I didn't submit it since v2 did not get positive response.
 > >
-> >  -	if (pci_enable_device(pdev)) {
-> >  -		err = -ENODEV;
-> >  -		goto out_no_pci;
-> >  -	}
-> >  -
-> >   	pci_set_master(pdev);
+> >>If you'd prefer, I could add to changelog:
+> >>
+> >>    Patch based on original posted here https://lkml.org/lkml/2013/8/1/510
+> >>    by Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 > >
-> >   	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(36));
+> >if you don't mind, that would be great.
+> 
+> Ok.
+> 
+> Greg,
+> Should I re-spin a v2 to include the note above
+> (or can you add it with Artem's Tested-by)?
 
-This looks fine, and it seems to be exactly what you have in wireless-testing/master. I have yet another change pending to this which removes the err= in favour of taking it from pci_enable_device() though.
+I'll add it, no need to resend.
 
-johannes
-(sorry for the outlook mess - might want to use johannes@sipsolutions.net)
--- 
-
-Intel GmbH
-Dornacher Strasse 1
-85622 Feldkirchen/Muenchen, Deutschland
-Sitz der Gesellschaft: Feldkirchen bei Muenchen
-Geschaeftsfuehrer: Christian Lamprechter, Hannes Schwaderer, Douglas Lusk
-Registergericht: Muenchen HRB 47456
-Ust.-IdNr./VAT Registration No.: DE129385895
-Citibank Frankfurt a.M. (BLZ 502 109 00) 600119052
+greg k-h
