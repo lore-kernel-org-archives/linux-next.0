@@ -1,211 +1,97 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: [PATCH tty-next] n_tty: Fix termios_rwsem lockdep false positive
-Date: Mon, 12 Aug 2013 08:55:14 -0400
-Message-ID: <5208DB32.40304@hurleysoftware.com>
-References: <20130731114726.GA11570@cpv436-motbuntu.spb.ea.mot-mobility.com> <1376222663-5666-1-git-send-email-peter@hurleysoftware.com> <20130812092810.GA26400@cpv436-motbuntu.spb.ea.mot-mobility.com> <20130812105041.GA2268@swordfish>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: linux-next: Tree for Aug 8 (not CONFIG_PCI_MSI conflict)
+Date: Mon, 12 Aug 2013 09:18:33 -0400
+Message-ID: <20130812131833.GI25111@titan.lakedaemon.net>
+References: <20130808170822.82bf33d3cf5100f5e2646815@canb.auug.org.au>
+ <5203F978.2050504@infradead.org>
+ <20130809145939.GE25111@titan.lakedaemon.net>
+ <52051BC2.2060004@infradead.org>
+ <20130809185036.GG25111@titan.lakedaemon.net>
+ <CAErSpo6S9uYTEhoS-+4EZv41pc0bu6jvcMaGX7WR9hY4o+2dsA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout39.mail01.mtsvc.net ([216.70.64.83]:36835 "EHLO
-	n12.mail01.mtsvc.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756274Ab3HLMzR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Aug 2013 08:55:17 -0400
-In-Reply-To: <20130812105041.GA2268@swordfish>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Belisko Marek <marek.belisko@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAErSpo6S9uYTEhoS-+4EZv41pc0bu6jvcMaGX7WR9hY4o+2dsA@mail.gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next list <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 08/12/2013 06:50 AM, Sergey Senozhatsky wrote:
-> On (08/12/13 13:28), Artem Savkov wrote:
->> Hi Peter,
->>
->> On Sun, Aug 11, 2013 at 08:04:23AM -0400, Peter Hurley wrote:
->>> Lockdep reports a circular lock dependency between
->>> atomic_read_lock and termios_rwsem [1]. However, a lock
->>> order deadlock is not possible since CPU1 only holds a
->>> read lock which cannot prevent CPU0 from also acquiring
->>> a read lock on the same r/w semaphore.
->>>
->>> Unfortunately, lockdep cannot currently distinguish whether
->>> the locks are read or write for any particular lock graph,
->>> merely that the locks _were_ previously read and/or write.
->>>
->>> Until lockdep is fixed, re-order atomic_read_lock so
->>> termios_rwsem can be dropped and reacquired without
->>> triggering lockdep.
->>
->> Works fine, thanks.
->>
->> Reported-and-tested-by: Artem Savkov <artem.savkov@gmail.com>
->>
->>> Reported-by: Artem Savkov <artem.savkov@gmail.com>
->>> Reported-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
->>> Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
->>>
->>> [1] Initial lockdep report from Artem Savkov <artem.savkov@gmail.com>
->>>
->>>   ======================================================
->>>   [ INFO: possible circular locking dependency detected ]
->>>   3.11.0-rc3-next-20130730+ #140 Tainted: G        W
->>>   -------------------------------------------------------
->>>   bash/1198 is trying to acquire lock:
->>>    (&tty->termios_rwsem){++++..}, at: [<ffffffff816aa3bb>] n_tty_read+0x49b/0x660
->>>
->>>   but task is already holding lock:
->>>    (&ldata->atomic_read_lock){+.+...}, at: [<ffffffff816aa0f0>] n_tty_read+0x1d0/0x660
->>>
->>>   which lock already depends on the new lock.
->>>
->>>   the existing dependency chain (in reverse order) is:
->>>
->>>   -> #1 (&ldata->atomic_read_lock){+.+...}:
->>>          [<ffffffff811111cc>] validate_chain+0x73c/0x850
->>>          [<ffffffff811117e0>] __lock_acquire+0x500/0x5d0
->>>          [<ffffffff81111a29>] lock_acquire+0x179/0x1d0
->>>          [<ffffffff81d34b9c>] mutex_lock_interruptible_nested+0x7c/0x540
->>>          [<ffffffff816aa0f0>] n_tty_read+0x1d0/0x660
->>>          [<ffffffff816a3bb6>] tty_read+0x86/0xf0
->>>          [<ffffffff811f21d3>] vfs_read+0xc3/0x130
->>>          [<ffffffff811f2702>] SyS_read+0x62/0xa0
->>>          [<ffffffff81d45259>] system_call_fastpath+0x16/0x1b
->>>
->>>   -> #0 (&tty->termios_rwsem){++++..}:
->>>          [<ffffffff8111064f>] check_prev_add+0x14f/0x590
->>>          [<ffffffff811111cc>] validate_chain+0x73c/0x850
->>>          [<ffffffff811117e0>] __lock_acquire+0x500/0x5d0
->>>          [<ffffffff81111a29>] lock_acquire+0x179/0x1d0
->>>          [<ffffffff81d372c1>] down_read+0x51/0xa0
->>>          [<ffffffff816aa3bb>] n_tty_read+0x49b/0x660
->>>          [<ffffffff816a3bb6>] tty_read+0x86/0xf0
->>>          [<ffffffff811f21d3>] vfs_read+0xc3/0x130
->>>          [<ffffffff811f2702>] SyS_read+0x62/0xa0
->>>          [<ffffffff81d45259>] system_call_fastpath+0x16/0x1b
->>>
->>>   other info that might help us debug this:
->>>
->>>    Possible unsafe locking scenario:
->>>
->>>          CPU0                    CPU1
->>>          ----                    ----
->>>     lock(&ldata->atomic_read_lock);
->>>                                  lock(&tty->termios_rwsem);
->>>                                  lock(&ldata->atomic_read_lock);
->>>     lock(&tty->termios_rwsem);
->>>
->>>    *** DEADLOCK ***
->>>
->>>   2 locks held by bash/1198:
->>>    #0:  (&tty->ldisc_sem){.+.+.+}, at: [<ffffffff816ade04>] tty_ldisc_ref_wait+0x24/0x60
->>>    #1:  (&ldata->atomic_read_lock){+.+...}, at: [<ffffffff816aa0f0>] n_tty_read+0x1d0/0x660
->>>
->>>   stack backtrace:
->>>   CPU: 1 PID: 1198 Comm: bash Tainted: G        W    3.11.0-rc3-next-20130730+ #140
->>>   Hardware name: Bochs Bochs, BIOS Bochs 01/01/2007
->>>    0000000000000000 ffff880019acdb28 ffffffff81d34074 0000000000000002
->>>    0000000000000000 ffff880019acdb78 ffffffff8110ed75 ffff880019acdb98
->>>    ffff880019fd0000 ffff880019acdb78 ffff880019fd0638 ffff880019fd0670
->>>   Call Trace:
->>>    [<ffffffff81d34074>] dump_stack+0x59/0x7d
->>>    [<ffffffff8110ed75>] print_circular_bug+0x105/0x120
->>>    [<ffffffff8111064f>] check_prev_add+0x14f/0x590
->>>    [<ffffffff81d3ab5f>] ? _raw_spin_unlock_irq+0x4f/0x70
->>>    [<ffffffff811111cc>] validate_chain+0x73c/0x850
->>>    [<ffffffff8110ae0f>] ? trace_hardirqs_off_caller+0x1f/0x190
->>>    [<ffffffff811117e0>] __lock_acquire+0x500/0x5d0
->>>    [<ffffffff81111a29>] lock_acquire+0x179/0x1d0
->>>    [<ffffffff816aa3bb>] ? n_tty_read+0x49b/0x660
->>>    [<ffffffff81d372c1>] down_read+0x51/0xa0
->>>    [<ffffffff816aa3bb>] ? n_tty_read+0x49b/0x660
->>>    [<ffffffff816aa3bb>] n_tty_read+0x49b/0x660
->>>    [<ffffffff810e4130>] ? try_to_wake_up+0x210/0x210
->>>    [<ffffffff816a3bb6>] tty_read+0x86/0xf0
->>>    [<ffffffff811f21d3>] vfs_read+0xc3/0x130
->>>    [<ffffffff811f2702>] SyS_read+0x62/0xa0
->>>    [<ffffffff815e24ee>] ? trace_hardirqs_on_thunk+0x3a/0x3f
->>>    [<ffffffff81d45259>] system_call_fastpath+0x16/0x1b
->>> ---
->>>   drivers/tty/n_tty.c | 25 +++++++++++--------------
->>>   1 file changed, 11 insertions(+), 14 deletions(-)
->>>
->
-> I hate to do this, but isn't it actually my patch posted here
-> https://lkml.org/lkml/2013/8/1/510
->
-> which was tagged as `wrong'?
+On Sat, Aug 10, 2013 at 08:01:49AM -0600, Bjorn Helgaas wrote:
+> On Fri, Aug 9, 2013 at 12:50 PM, Jason Cooper <jason@lakedaemon.net> wrote:
+> > Randy,
+> >
+> > On Fri, Aug 09, 2013 at 09:41:38AM -0700, Randy Dunlap wrote:
+> >> On 08/09/13 07:59, Jason Cooper wrote:
+> >> > Randy,
+> >> >
+> >> > On Thu, Aug 08, 2013 at 01:03:04PM -0700, Randy Dunlap wrote:
+> >> >> On 08/08/13 00:08, Stephen Rothwell wrote:
+> >> >>> Hi all,
+> >> >>>
+> >> >>> Changes since 20130807:
+> >> >>>
+> >> >>
+> >> >> on i386 and x86_64:
+> >> >> when CONFIG_PCI_MSI is not enabled:
+> >> >>
+> >> >> There are many of these errors:
+> >> >> include/linux/msi.h:65:6: error: expected identifier or '(' before 'void'
+> >> >> include/linux/msi.h:65:6: error: expected ')' before numeric constant
+> >> >>
+> >> >> because arch/x86/include/asm/pci.h defines:
+> >> >> #define default_teardown_msi_irqs  NULL
+> >> >
+> >> > Do you have an example config you used?
+> >>
+> >> Sure, attached. (or I have 14 of them)
+> >
+> > Thanks, I was able to reproduce the error.  I'm not real familiar with
+> > this area of the code, but the relief is it doesn't appear to be caused
+> > by the mvebu changes (well, relief for us ;-) ).
+> >
+> > At any rate, give this a spin and see if it works for you
+> >
+> > If it's acceptable, I'll do an official patch for Bjorn.
+> >
+> > thx,
+> >
+> > Jason.
+> >
+> > ---------->8----------
+> > diff --git a/arch/x86/include/asm/pci.h b/arch/x86/include/asm/pci.h
+> > index d9e9e6c..6169414 100644
+> > --- a/arch/x86/include/asm/pci.h
+> > +++ b/arch/x86/include/asm/pci.h
+> > @@ -138,8 +138,8 @@ void default_restore_msi_irqs(struct pci_dev *dev, int irq);
+> >  #else
+> >  #define native_setup_msi_irqs          NULL
+> >  #define native_teardown_msi_irq                NULL
+> > -#define default_teardown_msi_irqs      NULL
+> > -#define default_restore_msi_irqs       NULL
+> > +void __weak default_teardown_msi_irqs(struct pci_dev *dev) { }
+> > +void __weak default_restore_msi_irqs(struct pci_dev *dev, int irq) { }
+> 
+> I don't really like this solution of putting the empty implementation
+> in the header file, because then a weak body is generated in the
+> object of every source file that includes the header.
+> 
+> default_teardown_msi_irqs() and default_restore_msi_irqs() seem like
+> fairly internal MSI functions, so I wonder why we need them defined at
+> all when CONFIG_PCI_MSI=n.  It seems like any uses of them should be
+> in code that's only compiled when CONFIG_PCI_MSI=y.  But I haven't
+> reproduced the problem and investigated yet.
 
-Sergey,
+I first tried commenting out the definitions after reproducing the
+problem.  It also failed miserably.
 
-My apologies; I was mistaken regarding this problem being a lockdep
-regression (although it's still a false positive from lockdep). Once
-I had worked around some issues with the nouveau driver, I was able to
-reproduce the lockdep report on 3.10.
+Please take a look at Thomas' latest MSI patch series,
 
-I included Artem's lockdep report in the changelog because I received
-that first, on 30 July.
+  [PATCHv9 01/10] PCI: use weak functions for MSI arch-specific functions
 
-My patch below is not the same as your patch of 1 Aug. This patch
-preserves the protected access of termios.c_cc[VMIN] and termios.c_cc[VTIME]
-(via the MIN_CHAR() and TIME_CHAR() macros).
+I think his solution is much nicer than mine.
 
-If you'd prefer, I could add to changelog:
+thx,
 
-    Patch based on original posted here https://lkml.org/lkml/2013/8/1/510
-    by Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-
-Regards,
-Peter Hurley
-
-
->>> diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
->>> index dd8ae0c..c9a9ddd 100644
->>> --- a/drivers/tty/n_tty.c
->>> +++ b/drivers/tty/n_tty.c
->>> @@ -2122,6 +2122,17 @@ static ssize_t n_tty_read(struct tty_struct *tty, struct file *file,
->>>   	if (c < 0)
->>>   		return c;
->>>
->>> +	/*
->>> +	 *	Internal serialization of reads.
->>> +	 */
->>> +	if (file->f_flags & O_NONBLOCK) {
->>> +		if (!mutex_trylock(&ldata->atomic_read_lock))
->>> +			return -EAGAIN;
->>> +	} else {
->>> +		if (mutex_lock_interruptible(&ldata->atomic_read_lock))
->>> +			return -ERESTARTSYS;
->>> +	}
->>> +
->>>   	down_read(&tty->termios_rwsem);
->>>
->>>   	minimum = time = 0;
->>> @@ -2141,20 +2152,6 @@ static ssize_t n_tty_read(struct tty_struct *tty, struct file *file,
->>>   		}
->>>   	}
->>>
->>> -	/*
->>> -	 *	Internal serialization of reads.
->>> -	 */
->>> -	if (file->f_flags & O_NONBLOCK) {
->>> -		if (!mutex_trylock(&ldata->atomic_read_lock)) {
->>> -			up_read(&tty->termios_rwsem);
->>> -			return -EAGAIN;
->>> -		}
->>> -	} else {
->>> -		if (mutex_lock_interruptible(&ldata->atomic_read_lock)) {
->>> -			up_read(&tty->termios_rwsem);
->>> -			return -ERESTARTSYS;
->>> -		}
->>> -	}
->>>   	packet = tty->packet;
->>>
->>>   	add_wait_queue(&tty->read_wait, &wait);
->>> --
->>> 1.8.1.2
->>>
->>
->> --
->> Regards,
->>      Artem
->>
+Jason.
