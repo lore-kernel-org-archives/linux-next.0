@@ -1,73 +1,101 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH tty-next] n_tty: Fix termios_rwsem lockdep false positive
-Date: Mon, 12 Aug 2013 08:53:47 -0700
-Message-ID: <20130812155347.GA20696@kroah.com>
-References: <20130731114726.GA11570@cpv436-motbuntu.spb.ea.mot-mobility.com>
- <1376222663-5666-1-git-send-email-peter@hurleysoftware.com>
- <20130812092810.GA26400@cpv436-motbuntu.spb.ea.mot-mobility.com>
- <20130812105041.GA2268@swordfish>
- <5208DB32.40304@hurleysoftware.com>
- <20130812131949.GA2297@swordfish>
- <5208E575.1080008@hurleysoftware.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: Tree for Aug 8 (not CONFIG_PCI_MSI conflict)
+Date: Mon, 12 Aug 2013 10:38:58 -0600
+Message-ID: <CAErSpo52KKY9mRc7wduFqYYpKQakEBa5KrJ0P3J9su6P5tJ6gQ@mail.gmail.com>
+References: <20130808170822.82bf33d3cf5100f5e2646815@canb.auug.org.au>
+ <5203F978.2050504@infradead.org> <20130809145939.GE25111@titan.lakedaemon.net>
+ <52051BC2.2060004@infradead.org> <20130809185036.GG25111@titan.lakedaemon.net>
+ <CAErSpo6S9uYTEhoS-+4EZv41pc0bu6jvcMaGX7WR9hY4o+2dsA@mail.gmail.com> <20130812131833.GI25111@titan.lakedaemon.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54523 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756890Ab3HLPwV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Aug 2013 11:52:21 -0400
-Content-Disposition: inline
-In-Reply-To: <5208E575.1080008@hurleysoftware.com>
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:55626 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757146Ab3HLQjU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Aug 2013 12:39:20 -0400
+Received: by mail-ie0-f177.google.com with SMTP id a11so8117544iee.8
+        for <linux-next@vger.kernel.org>; Mon, 12 Aug 2013 09:39:18 -0700 (PDT)
+In-Reply-To: <20130812131833.GI25111@titan.lakedaemon.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Hurley <peter@hurleysoftware.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Belisko Marek <marek.belisko@gmail.com>
+To: Jason Cooper <jason@lakedaemon.net>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next list <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>
 
-On Mon, Aug 12, 2013 at 09:39:01AM -0400, Peter Hurley wrote:
-> On 08/12/2013 09:19 AM, Sergey Senozhatsky wrote:
-> >On (08/12/13 08:55), Peter Hurley wrote:
-> >>>>>[..]
-> >>>>>  drivers/tty/n_tty.c | 25 +++++++++++--------------
-> >>>>>  1 file changed, 11 insertions(+), 14 deletions(-)
-> >>>>>
-> >>>
-> >>>I hate to do this, but isn't it actually my patch posted here
-> >>>https://lkml.org/lkml/2013/8/1/510
-> >>>
-> >>>which was tagged as `wrong'?
-> >>
-> >>Sergey,
-> >>
-> >>My apologies; I was mistaken regarding this problem being a lockdep
-> >>regression (although it's still a false positive from lockdep). Once
-> >>I had worked around some issues with the nouveau driver, I was able to
-> >>reproduce the lockdep report on 3.10.
-> >>
-> >no problem.
-> >
-> >>I included Artem's lockdep report in the changelog because I received
-> >>that first, on 30 July.
-> >>
-> >>My patch below is not the same as your patch of 1 Aug. This patch
-> >>preserves the protected access of termios.c_cc[VMIN] and termios.c_cc[VTIME]
-> >>(via the MIN_CHAR() and TIME_CHAR() macros).
-> >
-> >fair enough. v3 was protecting VMIN/VTIME (my bad, I noticed this a bit later),
-> >but I didn't submit it since v2 did not get positive response.
-> >
-> >>If you'd prefer, I could add to changelog:
-> >>
-> >>    Patch based on original posted here https://lkml.org/lkml/2013/8/1/510
-> >>    by Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> >
-> >if you don't mind, that would be great.
-> 
-> Ok.
-> 
-> Greg,
-> Should I re-spin a v2 to include the note above
-> (or can you add it with Artem's Tested-by)?
+On Mon, Aug 12, 2013 at 7:18 AM, Jason Cooper <jason@lakedaemon.net> wrote:
+> On Sat, Aug 10, 2013 at 08:01:49AM -0600, Bjorn Helgaas wrote:
+>> On Fri, Aug 9, 2013 at 12:50 PM, Jason Cooper <jason@lakedaemon.net> wrote:
+>> > Randy,
+>> >
+>> > On Fri, Aug 09, 2013 at 09:41:38AM -0700, Randy Dunlap wrote:
+>> >> On 08/09/13 07:59, Jason Cooper wrote:
+>> >> > Randy,
+>> >> >
+>> >> > On Thu, Aug 08, 2013 at 01:03:04PM -0700, Randy Dunlap wrote:
+>> >> >> On 08/08/13 00:08, Stephen Rothwell wrote:
+>> >> >>> Hi all,
+>> >> >>>
+>> >> >>> Changes since 20130807:
+>> >> >>>
+>> >> >>
+>> >> >> on i386 and x86_64:
+>> >> >> when CONFIG_PCI_MSI is not enabled:
+>> >> >>
+>> >> >> There are many of these errors:
+>> >> >> include/linux/msi.h:65:6: error: expected identifier or '(' before 'void'
+>> >> >> include/linux/msi.h:65:6: error: expected ')' before numeric constant
+>> >> >>
+>> >> >> because arch/x86/include/asm/pci.h defines:
+>> >> >> #define default_teardown_msi_irqs  NULL
+>> >> >
+>> >> > Do you have an example config you used?
+>> >>
+>> >> Sure, attached. (or I have 14 of them)
+>> >
+>> > Thanks, I was able to reproduce the error.  I'm not real familiar with
+>> > this area of the code, but the relief is it doesn't appear to be caused
+>> > by the mvebu changes (well, relief for us ;-) ).
+>> >
+>> > At any rate, give this a spin and see if it works for you
+>> >
+>> > If it's acceptable, I'll do an official patch for Bjorn.
+>> >
+>> > thx,
+>> >
+>> > Jason.
+>> >
+>> > ---------->8----------
+>> > diff --git a/arch/x86/include/asm/pci.h b/arch/x86/include/asm/pci.h
+>> > index d9e9e6c..6169414 100644
+>> > --- a/arch/x86/include/asm/pci.h
+>> > +++ b/arch/x86/include/asm/pci.h
+>> > @@ -138,8 +138,8 @@ void default_restore_msi_irqs(struct pci_dev *dev, int irq);
+>> >  #else
+>> >  #define native_setup_msi_irqs          NULL
+>> >  #define native_teardown_msi_irq                NULL
+>> > -#define default_teardown_msi_irqs      NULL
+>> > -#define default_restore_msi_irqs       NULL
+>> > +void __weak default_teardown_msi_irqs(struct pci_dev *dev) { }
+>> > +void __weak default_restore_msi_irqs(struct pci_dev *dev, int irq) { }
+>>
+>> I don't really like this solution of putting the empty implementation
+>> in the header file, because then a weak body is generated in the
+>> object of every source file that includes the header.
+>>
+>> default_teardown_msi_irqs() and default_restore_msi_irqs() seem like
+>> fairly internal MSI functions, so I wonder why we need them defined at
+>> all when CONFIG_PCI_MSI=n.  It seems like any uses of them should be
+>> in code that's only compiled when CONFIG_PCI_MSI=y.  But I haven't
+>> reproduced the problem and investigated yet.
+>
+> I first tried commenting out the definitions after reproducing the
+> problem.  It also failed miserably.
+>
+> Please take a look at Thomas' latest MSI patch series,
+>
+>   [PATCHv9 01/10] PCI: use weak functions for MSI arch-specific functions
+>
+> I think his solution is much nicer than mine.
 
-I'll add it, no need to resend.
+OK, I'll assume I don't need to do anything until I hear otherwise.
 
-greg k-h
+Bjorn
