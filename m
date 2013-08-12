@@ -1,116 +1,98 @@
-From: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Subject: Re: linux-next: build failure after merge of the ext4 tree
-Date: Sun, 11 Aug 2013 23:39:23 +0200
-Message-ID: <20130811213923.GA5312@free.fr>
-References: <20130729110816.12958c3a26400f444a9a5012@canb.auug.org.au>
- <CA+icZUUt4domktYZZn0Qp3BZoSFqmKic4qSnVP4cuTKwUww_=A@mail.gmail.com>
- <20130807153840.4f2997b603397c07aca98b2d@canb.auug.org.au>
- <87zjsted0c.fsf@linaro.org>
- <20130808102228.d2034d3a4c986d2970926ab9@canb.auug.org.au>
- <20130808103614.a039da2f236154b52329b28b@canb.auug.org.au>
- <20130808191650.GB3282@free.fr>
- <20130808215449.GD3282@free.fr>
- <20130809114248.GA5691@merkur.ravnborg.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+Date: Mon, 12 Aug 2013 11:53:27 +1000
+Message-ID: <20130812115327.7bcbb203ac8614d16d32ba52@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__12_Aug_2013_11_53_27_+1000_Mwz1=7V6r1_BAeaa"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f53.google.com ([74.125.82.53]:33561 "EHLO
-	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751115Ab3HKVjb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Aug 2013 17:39:31 -0400
-Content-Disposition: inline
-In-Reply-To: <20130809114248.GA5691@merkur.ravnborg.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:49364 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755303Ab3HLBxh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Aug 2013 21:53:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>, Michal Marek <mmarek@suse.cz>, Kevin Hilman <khilman@linaro.org>, sedat.dilek@gmail.com, Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux kbuild ML <linux-kbuild@vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-Sam, All,
+--Signature=_Mon__12_Aug_2013_11_53_27_+1000_Mwz1=7V6r1_BAeaa
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2013-08-09 13:42 +0200, Sam Ravnborg spake thusly:
-> On Thu, Aug 08, 2013 at 11:54:49PM +0200, Yann E. MORIN wrote:
-> > Stephen, All,
-> > 
-> > On 2013-08-08 21:16 +0200, Yann E. MORIN spake thusly:
-> > > On 2013-08-08 10:36 +1000, Stephen Rothwell spake thusly:
-> > > > On Thu, 8 Aug 2013 10:22:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > wrote:
-> > > > >
-> > > > > More quick testing with an empty file: v3.9 is OK, v3.10 gives
-> > > > > CONFIG_MODULES unset.
-> > > 
-> > > Sorry, I don't understand the above. Can you elaborate on what you did,
-> > > what you got, what expected, so I can try to reproduce and fix this,
-> > > please?
-> > 
-> > Ok, I've had a look in the linux-next archives, and I think I got it.
-> > Is the following right?
-> > 
-> >     git clean -d; git clean -dX     # To be sure tree is clean
-> >     touch empty
-> >     make KCONFIG_ALLCONFIG=empty allmodconfig
-> >     grep MODULES .config
-> >     $ CONFIG_MODULES is not set
-> > 
-> > If so, I think I found the reason: the modules symbol is _always_ set to
-> > being valid as soon as KCONFIG_ALLCONFIG is read, even if it was not
-> > present in that file.
-> > 
-> > Since it is set to be valid, the following change means it is not
-> > affected another value later on.
-> > 
-> > So, I wonder what the best option is:
-> >   1- revert the following, and find another solution,
-> >   2- de-specialise the modules symbol,
-> >   3- or further specialise the modules symbol.
-> 
-> If we drop the special handling of "MODULES" and introduced
-> the following in we may fix it - hopefully:
-> 
-> config MODULES
-> 	option modules
-> 
-> The option handling is already in place. It is even documented :-)
+Hi John,
 
-Yes, indeed, that one is pretty easy! :-)
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/wireless/iwlwifi/pcie/trans.c between commit eabc4ac5d760
+("iwlwifi: pcie: disable L1 Active after pci_enable_device") from
+thewireless tree and commit f2532b04b2ec ("iwlwifi: pcie: don't disable
+L1 for newest NICs") from the wireless-next tree.
 
-> At least we could then drop the sym_lookup here (zconf.y):
->         if (!modules_sym->prop) {
->                 struct property *prop;
-> 
->                 prop = prop_alloc(P_DEFAULT, modules_sym);
->                 prop->expr = expr_alloc_symbol(sym_lookup("MODULES", 0));
->         }
-> Without the sym_lookup I think the symbol will not be defined and tus not marked valid.
+I fixed it up (maybe - see below) and can carry the fix as necessary (no
+action is required).
 
-Sorry, I don't understand what we should do here.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
->From what I understand, here's what happens:
-  - there's no symbol that declared the 'modules' option, so the
-    modules_sym->prop is NULL;
-  - so we look for the symbol 'MODULES' and use that as the symbol used
-    to evaluate if tristates are enabled.
+diff --cc drivers/net/wireless/iwlwifi/pcie/trans.c
+index 390e2f0,e52d1ce..0000000
+--- a/drivers/net/wireless/iwlwifi/pcie/trans.c
++++ b/drivers/net/wireless/iwlwifi/pcie/trans.c
+@@@ -1502,16 -1400,22 +1400,22 @@@ struct iwl_trans *iwl_trans_pcie_alloc(
+  	spin_lock_init(&trans_pcie->reg_lock);
+  	init_waitqueue_head(&trans_pcie->ucode_write_waitq);
+ =20
+ +	if (pci_enable_device(pdev)) {
+ +		err =3D -ENODEV;
+ +		goto out_no_pci;
+ +	}
+ +
+- 	/* W/A - seems to solve weird behavior. We need to remove this if we
+- 	 * don't want to stay in L1 all the time. This wastes a lot of power */
+- 	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
+- 			       PCIE_LINK_STATE_CLKPM);
++ 	if (!cfg->base_params->pcie_l1_allowed) {
++ 		/*
++ 		 * W/A - seems to solve weird behavior. We need to remove this
++ 		 * if we don't want to stay in L1 all the time. This wastes a
++ 		 * lot of power.
++ 		 */
++ 		pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S |
++ 				       PCIE_LINK_STATE_L1 |
++ 				       PCIE_LINK_STATE_CLKPM);
++ 	}
+ =20
+ -	if (pci_enable_device(pdev)) {
+ -		err =3D -ENODEV;
+ -		goto out_no_pci;
+ -	}
+ -
+  	pci_set_master(pdev);
+ =20
+  	err =3D pci_set_dma_mask(pdev, DMA_BIT_MASK(36));
 
-So, now we have 'option modules' added to MODULES, we never enter this
-if() condition.
+--Signature=_Mon__12_Aug_2013_11_53_27_+1000_Mwz1=7V6r1_BAeaa
+Content-Type: application/pgp-signature
 
-But what would happen to other projects that do not have a symbol set
-with 'option modules' and no 'MODULES' symbol? Surely, those projects do
-not need tristates, but what should the code do in this case?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-So, I don't know what to replace this 'sym_lookup("MODULES", 0)' with.
+iQIcBAEBCAAGBQJSCEAbAAoJEECxmPOUX5FErOEP/09pnS34ZHeiAxPdzgIi6y5A
++aeaQLwlODyxBWjLleU09bSaexqNUbL1NELSmTAtEIfM40B/55fMUR1yTChIC6I4
+aQ0Ldif1mCyui05aoPabA5W2ERHafVU/G4wZfT0FX8WPL0ufO5/gDXGVSG9jn1UO
+Qm0WRKO5ehK6pi6jHyNvzLEkpb4m2NlmFrB3kyiy1fqYe5zCm+xLQkrD9NrcDRji
+x7rt0dRMCSjRFosz9XMH6IKyOkwivTuIetJXH6Jxejx5Qofzt9jIXubrbuFJ5EHY
+tr9ScGDD5HyCWQWK2bHYt0dKQL7/oAF/BGjBrYux+/k/QGlZBN9E2t6i6YG7oWwT
+rFKJ4L0mxAWPacghoeUhSi8hksYLmrqIJbtZoPMvmFhbPwAMyOazV8INXuR8ot6/
+r7kBdS3ukbltWVFBYMpo3MaJ4xY3PN3Ke0Wnb1FGgdefTAw62/8oj8AiHBJCQWY2
++qgvUwbXnYEifxpQJhQ4jB0oBanlkjNvoxiu67AXIqmv2RAujMxiiG500DYOUtr0
+TvU+JTFlm6KGJQiLMayB+DghkmI080+vGU4EuViHiRjH6juiTxTeFD4qyxII4HUL
+05lny5fqEmmsGv8Ji19Yiy8l+1CLltapxDWEu0MGPnIetcWSHrfSiYxmiauY4WgG
+ARPblKx2j3N5MmkSo0E3
+=Nt/8
+-----END PGP SIGNATURE-----
 
-> Soory - no patch as I am busy with day-time job stuff.
-
-I hope you can share some guidnce here, please... ;-)
-
-Regards,
-Yann E. MORIN.
-
--- 
-.-----------------.--------------------.------------------.--------------------.
-|  Yann E. MORIN  | Real-Time Embedded | /"\ ASCII RIBBON | Erics' conspiracy: |
-| +33 662 376 056 | Software  Designer | \ / CAMPAIGN     |  ___               |
-| +33 223 225 172 `------------.-------:  X  AGAINST      |  \e/  There is no  |
-| http://ymorin.is-a-geek.org/ | _/*\_ | / \ HTML MAIL    |   v   conspiracy.  |
-'------------------------------^-------^------------------^--------------------'
+--Signature=_Mon__12_Aug_2013_11_53_27_+1000_Mwz1=7V6r1_BAeaa--
