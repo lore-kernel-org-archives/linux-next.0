@@ -1,65 +1,83 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: [PATCH tty-next] n_tty: Fix termios_rwsem lockdep false positive
-Date: Mon, 12 Aug 2013 09:39:01 -0400
-Message-ID: <5208E575.1080008@hurleysoftware.com>
-References: <20130731114726.GA11570@cpv436-motbuntu.spb.ea.mot-mobility.com> <1376222663-5666-1-git-send-email-peter@hurleysoftware.com> <20130812092810.GA26400@cpv436-motbuntu.spb.ea.mot-mobility.com> <20130812105041.GA2268@swordfish> <5208DB32.40304@hurleysoftware.com> <20130812131949.GA2297@swordfish>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+Date: Mon, 12 Aug 2013 11:15:15 -0400
+Message-ID: <20130812151514.GD27408@tuxdriver.com>
+References: <20130812115327.7bcbb203ac8614d16d32ba52@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout39.mail01.mtsvc.net ([216.70.64.83]:52613 "EHLO
-	n12.mail01.mtsvc.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756181Ab3HLNjE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Aug 2013 09:39:04 -0400
-In-Reply-To: <20130812131949.GA2297@swordfish>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:56843 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756992Ab3HLPa1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Aug 2013 11:30:27 -0400
+Content-Disposition: inline
+In-Reply-To: <20130812115327.7bcbb203ac8614d16d32ba52@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Belisko Marek <marek.belisko@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Johannes Berg <johannes.berg@intel.com>
 
-On 08/12/2013 09:19 AM, Sergey Senozhatsky wrote:
-> On (08/12/13 08:55), Peter Hurley wrote:
->>>>> [..]
->>>>>   drivers/tty/n_tty.c | 25 +++++++++++--------------
->>>>>   1 file changed, 11 insertions(+), 14 deletions(-)
->>>>>
->>>
->>> I hate to do this, but isn't it actually my patch posted here
->>> https://lkml.org/lkml/2013/8/1/510
->>>
->>> which was tagged as `wrong'?
->>
->> Sergey,
->>
->> My apologies; I was mistaken regarding this problem being a lockdep
->> regression (although it's still a false positive from lockdep). Once
->> I had worked around some issues with the nouveau driver, I was able to
->> reproduce the lockdep report on 3.10.
->>
-> no problem.
->
->> I included Artem's lockdep report in the changelog because I received
->> that first, on 30 July.
->>
->> My patch below is not the same as your patch of 1 Aug. This patch
->> preserves the protected access of termios.c_cc[VMIN] and termios.c_cc[VTIME]
->> (via the MIN_CHAR() and TIME_CHAR() macros).
->
-> fair enough. v3 was protecting VMIN/VTIME (my bad, I noticed this a bit later),
-> but I didn't submit it since v2 did not get positive response.
->
->> If you'd prefer, I could add to changelog:
->>
->>     Patch based on original posted here https://lkml.org/lkml/2013/8/1/510
->>     by Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
->
-> if you don't mind, that would be great.
+I think I have this slightly different in wireless-testing.  Johannes,
+please review and advise...
 
-Ok.
+John
 
-Greg,
-Should I re-spin a v2 to include the note above
-(or can you add it with Artem's Tested-by)?
+On Mon, Aug 12, 2013 at 11:53:27AM +1000, Stephen Rothwell wrote:
+> Hi John,
+> 
+> Today's linux-next merge of the wireless-next tree got a conflict in
+> drivers/net/wireless/iwlwifi/pcie/trans.c between commit eabc4ac5d760
+> ("iwlwifi: pcie: disable L1 Active after pci_enable_device") from
+> thewireless tree and commit f2532b04b2ec ("iwlwifi: pcie: don't disable
+> L1 for newest NICs") from the wireless-next tree.
+> 
+> I fixed it up (maybe - see below) and can carry the fix as necessary (no
+> action is required).
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/net/wireless/iwlwifi/pcie/trans.c
+> index 390e2f0,e52d1ce..0000000
+> --- a/drivers/net/wireless/iwlwifi/pcie/trans.c
+> +++ b/drivers/net/wireless/iwlwifi/pcie/trans.c
+> @@@ -1502,16 -1400,22 +1400,22 @@@ struct iwl_trans *iwl_trans_pcie_alloc(
+>   	spin_lock_init(&trans_pcie->reg_lock);
+>   	init_waitqueue_head(&trans_pcie->ucode_write_waitq);
+>   
+>  +	if (pci_enable_device(pdev)) {
+>  +		err = -ENODEV;
+>  +		goto out_no_pci;
+>  +	}
+>  +
+> - 	/* W/A - seems to solve weird behavior. We need to remove this if we
+> - 	 * don't want to stay in L1 all the time. This wastes a lot of power */
+> - 	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
+> - 			       PCIE_LINK_STATE_CLKPM);
+> + 	if (!cfg->base_params->pcie_l1_allowed) {
+> + 		/*
+> + 		 * W/A - seems to solve weird behavior. We need to remove this
+> + 		 * if we don't want to stay in L1 all the time. This wastes a
+> + 		 * lot of power.
+> + 		 */
+> + 		pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S |
+> + 				       PCIE_LINK_STATE_L1 |
+> + 				       PCIE_LINK_STATE_CLKPM);
+> + 	}
+>   
+>  -	if (pci_enable_device(pdev)) {
+>  -		err = -ENODEV;
+>  -		goto out_no_pci;
+>  -	}
+>  -
+>   	pci_set_master(pdev);
+>   
+>   	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(36));
 
-Regards,
-Peter Hurley
+
+
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
