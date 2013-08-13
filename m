@@ -1,64 +1,76 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Aug 13 [ screen corruption in graphical mode ]
-Date: Tue, 13 Aug 2013 21:05:41 +0200
-Message-ID: <CA+icZUXwSRPoZ8bQ6xaoNz27fQKPtg3HiZRENQ5UEpHE_kmEag@mail.gmail.com>
-References: <CA+icZUUKH6Fa8WksqA69FXKUUJmKsNdXv0ZJH50HA2mFavfPCg@mail.gmail.com>
-	<CA+icZUXC73i4hO7LHDQ=85__JtrZmSMB+KyUnS+G6vRmm_=tkg@mail.gmail.com>
-	<CA+icZUXdS3EuXyGZiS1--rMu6H0ospzCiK_CXgPv8mOk0sMt+Q@mail.gmail.com>
-	<20130813163439.GA8805@cantiga.alporthouse.com>
-	<CA+icZUX8HZD3z-uwTMWX9CoLdYYqyPVuhH-vWGhJuoonvMQTbQ@mail.gmail.com>
-	<CA+icZUU1tbHGVPgjXNvsq-F44O6umbhp_bFcoLE35HZ0zTqo2g@mail.gmail.com>
-	<20130813171324.GB8805@cantiga.alporthouse.com>
-	<CA+icZUWFqpObp_6KzJExPs2pkJOofaKw6CKv8J0=VTfyVy_Uew@mail.gmail.com>
-	<20130813180129.GC8805@cantiga.alporthouse.com>
-	<CA+icZUWcF6bdoD1pSbbtBTAYNMC9237Eas7SemS6kPpnY=c2Sw@mail.gmail.com>
-	<20130813185322.GA5982@cantiga.alporthouse.com>
-Reply-To: sedat.dilek@gmail.com
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (usb-gadget tree related)
+Date: Tue, 13 Aug 2013 14:48:03 -0500
+Message-ID: <20130813194803.GA11075@radagast>
+References: <20130813181719.e2dea691c1e3c19bd6306983@canb.auug.org.au>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:40440 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757094Ab3HMTFn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Aug 2013 15:05:43 -0400
-In-Reply-To: <20130813185322.GA5982@cantiga.alporthouse.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Chris Wilson <chris@chris-wilson.co.uk>, Sedat Dilek <sedat.dilek@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Dave Airlie <airlied@gmail.com>, DRI <dri-devel@lists.freedesktop.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, "s.dilek" <s.dilek@jpberlin.de>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130813181719.e2dea691c1e3c19bd6306983@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Aug 13, 2013 at 8:53 PM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> On Tue, Aug 13, 2013 at 08:40:37PM +0200, Sedat Dilek wrote:
->> On Tue, Aug 13, 2013 at 8:01 PM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
->> > On Tue, Aug 13, 2013 at 07:53:25PM +0200, Sedat Dilek wrote:
->> >> Files attached.
->> >
->> > Can you also please attach a full dmesg so I can check for anything
->> > unusual?
->> >
->
-> Nothing scarred me on a couple of read throughs.
->
-> What happens if you try:
->
-> diff --git a/drivers/gpu/drm/i915/i915_gem_stolen.c b/drivers/gpu/drm/i915/i915_gem_stolen.c
-> index 112c5e1..9828d9b 100644
-> --- a/drivers/gpu/drm/i915/i915_gem_stolen.c
-> +++ b/drivers/gpu/drm/i915/i915_gem_stolen.c
-> @@ -284,7 +284,7 @@ i915_gem_object_create_stolen(struct drm_device *dev, u32 size)
->                 return NULL;
->
->         ret = drm_mm_insert_node(&dev_priv->mm.stolen, stolen, size,
-> -                                4096, DRM_MM_SEARCH_DEFAULT);
-> +                                1024*1024, DRM_MM_SEARCH_DEFAULT);
->         if (ret) {
->                 kfree(stolen);
->                 return NULL;
->
-> --
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Now, 2/3 till 3/4 of my LightDM greeter screen is a black bar (seen
-from the top).
-On the bottom I can read "Ubuntu 12.04 LTS" with the known background.
-So-to-say 3/4 "blind".
+Hi,
 
-- Sedat -
+On Tue, Aug 13, 2013 at 06:17:19PM +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the final tree, today's linux-next build (powerpc allyescon=
+fig)
+> failed like this:
+>=20
+> drivers/usb/phy/phy-am335x-control.c: In function 'am335x_control_usb_pro=
+be':
+> drivers/usb/phy/phy-am335x-control.c:117:2: error: implicit declaration o=
+f function 'IS_ERR' [-Werror=3Dimplicit-function-declaration]
+>   if (IS_ERR(ctrl_usb->phy_reg))
+>   ^
+> drivers/usb/phy/phy-am335x-control.c:118:3: error: implicit declaration o=
+f function 'PTR_ERR' [-Werror=3Dimplicit-function-declaration]
+>    return PTR_ERR(ctrl_usb->phy_reg);
+>    ^
+>=20
+> Caused by commit 3bb869c8b3f1 ("usb: phy: Add AM335x PHY driver") from
+> the usb-gadget tree.  Forgot to include linux/err.h.
+>=20
+> I have reverted that commit for today.
+
+damn, I didn't catch that. Sebastian, can you send a patch ?
+
+--=20
+balbi
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSCo1yAAoJEIaOsuA1yqREQfEP+wS2HyvwAyY1/Hn3jF660aH4
+f0Q6n8vM3OIJqr8zICuRJO697nOtpp8GPvb+iePiHDcl4pO48bYC1TnuEyumDvAh
+ZCaJNfnSp94G9FSMPgSVRsz3qCcohn4dUCgERHwayolOO5Vec6pGsCwnTfIvLhPd
+aka33Hbi2h872xi7DCRl/3USgKTNSeBDdzq6LFa4GRkmSmHnb39mrddw/nZ882Yk
+FfDxQDnswc6FmpAGPz9a/IsEmqkKGmcWbQvlRotcacmlKUD1982BonZbk8QUc9ja
+1MEKmoiN7L0Cajvat9fMX6TbIV2NZwy9UonW3/zqIInttgBtW4dEbSqaVk7AOK+V
+WeU0wlSdD0Xix4Koqo1s3Z2ri1c8KcNnU7Xa9evD9f4KlDCXvH3d2HrAjy8MTmoW
+FHBLSobfwJgRvnBE17Tn7OuWVOHCbqZ/mmz4ws8OqUaRsCkmr1/NviY9IxTxoyOc
+Ukq7HDSqzRzYGtnGzcJGCCf1q+m0N/pd/x8N4ZWbjOv0RR+eICw99bg1hdIDIT51
+krvSkjFAMZ6f9+1IbriVONgaeARfIjP4ia/iSfiAPSLNBq+5R3MZYJIZsyMwTbf3
+CTN7CfkwfqvJOXMBu7U9b338H32s7iOAR1E0YpfR0CcWmwKt/hYjVxEaWj5lPdpz
+/stK34ZANCzIrg/mzWpD
+=aCVv
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
