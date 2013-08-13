@@ -1,39 +1,53 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] usb: phy: am335x: include linux/err.h
-Date: Tue, 13 Aug 2013 10:57:08 +0200
-Message-ID: <20130813085707.GB23842@linutronix.de>
-References: <20130813181719.e2dea691c1e3c19bd6306983@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Aug 13 [ screen corruption in graphical mode ]
+Date: Tue, 13 Aug 2013 11:10:18 +0200
+Message-ID: <CA+icZUWmee5nTZCGvFb4vLpna5vUn+RJ-V9pHpKPFaTc96BG5Q@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130813181719.e2dea691c1e3c19bd6306983@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-we0-f176.google.com ([74.125.82.176]:46423 "EHLO
+	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754225Ab3HMJKT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Aug 2013 05:10:19 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Dave Airlie <airlied@gmail.com>, Chris Wilson <chris@chris-wilson.co.uk>, DRI <dri-devel@lists.freedesktop.org>, intel-gfx <intel-gfx@lists.freedesktop.org>
 
-Stephen Rothwell reported that this driver does not compile on PowerPC
-due to this missing include. One could argue why this driver is enabled
-on PowerPC in the first place but it sure isn't wrong to include headers
-for used function instead of to rely that they sneak in.
+On Tue, Aug 13, 2013 at 10:28 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Changes since 20130812:
+>
+> The ext4 tree gained a conflict against Linus' tree.
+>
+> The infiniband tree gained a build failure for which I applied a merge
+> fix patch and another so I used the version from next-20130812.
+>
+> The tty tree gained conflicts against the devicetree and tile trees.
+>
+> The usb tree gained a conflict against the net-next tree.
+>
+> The usb-gadget tree gained a build failure for which I reverted a commit.
+>
+> The ptr-ret tree gained a conflict against the staging tree.
+>
+> The akpm tree gained a conflict against the staging tree.
+>
+> ----------------------------------------------------------------------------
+>
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- drivers/usb/phy/phy-am335x-control.c | 1 +
- 1 file changed, 1 insertion(+)
+Hi,
 
-diff --git a/drivers/usb/phy/phy-am335x-control.c b/drivers/usb/phy/phy-am335x-control.c
-index 35494f1..7597545 100644
---- a/drivers/usb/phy/phy-am335x-control.c
-+++ b/drivers/usb/phy/phy-am335x-control.c
-@@ -1,5 +1,6 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/err.h>
- #include <linux/of.h>
- #include <linux/io.h>
- 
--- 
-1.8.4.rc1
+with today's next-20130813 I cannot see 1/10 of my desktop-screen's
+top, it's simply black.
+I can estimate the URL line in Firefox (or open a new tab blindly and
+get a known URL from my autocompleted history).
+
+My Xorg stack did not change: libdrm-2.4.46 | mesa-9.16 | intel-ddx-2.4.14.
+next-20130808 was OK - no screen corruptions.
+
+Any idea, hint?
+
+- Sedat -
