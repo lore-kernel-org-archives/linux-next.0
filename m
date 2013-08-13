@@ -1,89 +1,33 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Aug 13 [ screen corruption in graphical mode ]
-Date: Tue, 13 Aug 2013 18:37:15 +0200
-Message-ID: <CA+icZUX8HZD3z-uwTMWX9CoLdYYqyPVuhH-vWGhJuoonvMQTbQ@mail.gmail.com>
-References: <20130813092554.GA4519@cantiga.alporthouse.com>
-	<CA+icZUUrJt_sJqp0CNMuM_b36tvv_rUskegLY5zcnm0w+JcW5Q@mail.gmail.com>
-	<20130813093920.GB4519@cantiga.alporthouse.com>
-	<CA+icZUVEcCTbBre99FWiDXRAMKcdQxUagXE-2-rO9g=YVUAieQ@mail.gmail.com>
-	<20130813095259.GC4519@cantiga.alporthouse.com>
-	<CA+icZUX6KM3dKrdX3Qkwg-DeBYobjQ+WG6oQEUjJQG3Q=qf+Sg@mail.gmail.com>
-	<CA+icZUWPdivbDc=cBUR2BJzKGwWwK-P0OP0CZ5EfCupii7sP_w@mail.gmail.com>
-	<CA+icZUUKH6Fa8WksqA69FXKUUJmKsNdXv0ZJH50HA2mFavfPCg@mail.gmail.com>
-	<CA+icZUXC73i4hO7LHDQ=85__JtrZmSMB+KyUnS+G6vRmm_=tkg@mail.gmail.com>
-	<CA+icZUXdS3EuXyGZiS1--rMu6H0ospzCiK_CXgPv8mOk0sMt+Q@mail.gmail.com>
-	<20130813163439.GA8805@cantiga.alporthouse.com>
-Reply-To: sedat.dilek@gmail.com
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Aug 13 (xfs)
+Date: Tue, 13 Aug 2013 09:59:51 -0700
+Message-ID: <520A6607.7060002@infradead.org>
+References: <20130813182832.16d18ef3dbc267c1a229bcd6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130813163439.GA8805@cantiga.alporthouse.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Wilson <chris@chris-wilson.co.uk>, Sedat Dilek <sedat.dilek@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Dave Airlie <airlied@gmail.com>, DRI <dri-devel@lists.freedesktop.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, "s.dilek" <s.dilek@jpberlin.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:60004 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754645Ab3HMQ74 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Aug 2013 12:59:56 -0400
+In-Reply-To: <20130813182832.16d18ef3dbc267c1a229bcd6@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com
 
-On Tue, Aug 13, 2013 at 6:34 PM, Chris Wilson <chris@chris-wilson.co.uk=
-> wrote:
-> On Tue, Aug 13, 2013 at 06:23:29PM +0200, Sedat Dilek wrote:
->> On Tue, Aug 13, 2013 at 5:59 PM, Sedat Dilek <sedat.dilek@gmail.com>=
- wrote:
->> > I have bisected the issue on Linux v3.11-rc5 + drm-intel-nightly:
->> >
->> > 5456fe3882812aba251886e36fe55bfefb8e8829 is the first bad commit
->> > commit 5456fe3882812aba251886e36fe55bfefb8e8829
->> > Author: Chris Wilson <chris@chris-wilson.co.uk>
->> > Date:   Thu Aug 8 14:41:07 2013 +0100
->> >
->> >     drm/i915: Allocate LLC ringbuffers from stolen
->> >
->> >     As stolen objects now behave identically (wrt to default LLC c=
-acheing)
->> >     as their normal system counterparts, we no longer have to diff=
-erentiate
->> >     our usage for ringbuffers. So allocate them from stolen on SNB=
-+ as well.
->> >
->> >     Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
->> >     Reviewed-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.inte=
-l.com>
->> >     Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->> >
->> > :040000 040000 de063a052f39095f4d2f51b49caef9f827df41e8
->> > 1c819aa5501a9fcc9912a5c7c037c71b9b9e9a6b M      drivers
->> >
->> > See also attached files!
->> >
->>
->> With the attached revert-patch my system is OK (with my customized X=
- stack).
->
-> No indication of a GPU hang? I'm puzzled as to how this ends up with =
-the
-> scanout being misread.
->
-> cat /sys/kernel/debug/dri/0/i915_gem_stolen
-> cat /sys/kernel/debug/dri/0/i915_gem_framebuffer
->
-> would be interesting.
+On 08/13/13 01:28, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20130812:
+> 
 
-With revert-patch applied:
+on i386:
 
-$ sudo cat /sys/kernel/debug/dri/0/i915_gem_stolen
-Stolen:
-   ffff88007f6f5200: p g     4128KiB 77 00 0 0 0 uncached (name: 1)
-(pinned x 1) (display) (ggtt offset: 00072000, size: 00408000)
-(stolen: 00000000) (p mappable)
-Total 1 objects, 4227072 bytes, 4227072 GTT size
+fs/built-in.o: In function `xfs_log_calc_minimum_size':
+(.text+0x1797a9): undefined reference to `__udivdi3'
 
-$ sudo cat /sys/kernel/debug/dri/0/i915_gem_framebuffer
-fbcon size: 1366 x 768, depth 24, 32 bpp, refcount 2, obj
-ffff88007f6f5200: p g     4128KiB 77 00 0 0 0 uncached (name: 1)
-(pinned x 1) (display) (ggtt offset: 00072000, size: 00408000)
-(stolen: 00000000) (p mappable)
-user size: 1366 x 768, depth 24, 32 bpp, refcount 3, obj
-ffff88007f6f5080: pXg     5120KiB 36 02 124873 124873 0 uncached dirty
-(name: 3) (pinned x 1) (display) (fence: 0) (ggtt offset: 0047a000,
-size: 00500000) (p mappable) (blitter ring)
 
-- Sedat -
+-- 
+~Randy
