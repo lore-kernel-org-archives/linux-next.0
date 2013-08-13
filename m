@@ -1,33 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the tile tree
-Date: Tue, 13 Aug 2013 15:43:46 +1000
-Message-ID: <20130813154346.fb2e52f791fb6e2e3e2fbfcc@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the net-next tree
+Date: Tue, 13 Aug 2013 16:13:59 +1000
+Message-ID: <20130813161359.0613bddf9bbf983253333f30@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Aug_2013_15_43_46_+1000_=DCbKSS.NfcdotNm"
+ boundary="Signature=_Tue__13_Aug_2013_16_13_59_+1000_q2NBtoo=EXcmLy5y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46837 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:52640 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751879Ab3HMFns (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Aug 2013 01:43:48 -0400
+	with ESMTP id S1754354Ab3HMGOH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Aug 2013 02:14:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Metcalf <cmetcalf@tilera.com>, Srinivas Kandagatla <srinivas.kandagatla@st.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <ming.lei@canonical.com>
 
---Signature=_Tue__13_Aug_2013_15_43_46_+1000_=DCbKSS.NfcdotNm
+--Signature=_Tue__13_Aug_2013_16_13_59_+1000_q2NBtoo=EXcmLy5y
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got a conflict in
-include/uapi/linux/serial_core.h between commit 002abee2d681 ("tilegx:
-Add tty serial support for TILE-Gx on-chip UART") from the tile tree and
-commit c4b058560762 ("serial:st-asc: Add ST ASC driver") from the tty
-tree.
+Today's linux-next merge of the usb tree got a conflict in
+include/linux/usb/usbnet.h between commit a88c32ae15f2 ("USBNET:
+centralize computing of max rx/tx qlen") from the net-next tree and
+commit 638c5115a794 ("USBNET: support DMA SG") from the usb tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,42 +35,39 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/uapi/linux/serial_core.h
-index b466487,e40ebe1..0000000
---- a/include/uapi/linux/serial_core.h
-+++ b/include/uapi/linux/serial_core.h
-@@@ -232,7 -232,7 +232,10 @@@
-  /* SH-SCI */
-  #define PORT_HSCIF	104
+diff --cc include/linux/usb/usbnet.h
+index 8fbc008,2b47e63..0000000
+--- a/include/linux/usb/usbnet.h
++++ b/include/linux/usb/usbnet.h
+@@@ -34,7 -34,7 +34,8 @@@ struct usbnet=20
+  	struct mutex		phy_mutex;
+  	unsigned char		suspend_count;
+  	unsigned char		pkt_cnt, pkt_err;
+ +	unsigned short		rx_qlen, tx_qlen;
++ 	unsigned		can_dma_sg:1;
  =20
- +/* Tilera TILE-Gx UART */
- +#define PORT_TILEGX	105
- +
-+ /* ST ASC type numbers */
- -#define PORT_ASC       105
-++#define PORT_ASC       106
-+=20
-  #endif /* _UAPILINUX_SERIAL_CORE_H */
+  	/* i/o info: pipes etc */
+  	unsigned		in, out;
 
---Signature=_Tue__13_Aug_2013_15_43_46_+1000_=DCbKSS.NfcdotNm
+--Signature=_Tue__13_Aug_2013_16_13_59_+1000_q2NBtoo=EXcmLy5y
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSCceSAAoJEECxmPOUX5FE5FQP/jbxBDprazepjGdJ3IqQxSqH
-l4H2tXb2TcpwGAhiBy/+6QZx5e1YfKr2lP4As/wjU/NFymajYq3e1cFxZFBYi8Lh
-Jkq4SRkGjz9VSOaymxq940bXFcACMnWUmkfuZMxIyaO1mb54dD09GBgFmtm5+hU1
-Kr9Blwoeo+yXnK2hLxyZLw3nHd7JdPR71Ec4XMncQzm7mPuVWFiCIYjXlgv89II1
-+B0zOfJJnnYM/EMd5MPXDte/ijk8BMryNxUTy2vBrqvaUBlQR6+GUUjA26I0MJoO
-m5ZNDk50g2Z38ezT6ob6kisVytzTZDmuKg9filR6So3gbb55W7gDfEuCwHUaBFTl
-kg7cwFs1/TE5y2ssss8LsjtoyrfS8ViYH+V6hZw5Phx7Ia4hCf2ujGTT81gLx2GM
-LhaqaldAyqA1U8l+K8BwPE1r8b94EuvsahaSvBfZD9m+3IYziWkglzDV+kmdzj42
-Tn9TJ/d789mulWHh/U/NbioH5y60hFZAcb0G+gpgm5s4FVKAWT1URj9z8+qmU/jI
-uEciwYM0/k8q/njsttcSVRHBEHAWiZRu8zVtVdCwzisjRn6RwpokZs5ZA2zuD/2l
-f4Wz9U9SkFOcfYJCVgE+qoUYlvj8fXvWe0k3QFV65Svc7pa+u8olLhMLIYZ3Dzbt
-8UURrQTcf45gO2XOl9yL
-=k9Kq
+iQIcBAEBCAAGBQJSCc6rAAoJEECxmPOUX5FE2ukP/jGIGxaMvyFbQ1WgLw57jIcq
+xM70s2Yp0kK8MOOcfWjUA8f2EV/e2B3vDmNH8bRd9+rpJNqB10JgWNSoQTC6H4Jv
+aQsrD6PpOUWVOfxOanmjBSDOCLriYWyqqIAtvhPaJxLMZc++yQx+mCizfCqz6OJd
++vw2JkCr1Wghmhs2ZYwgkU3aRjBaZyNf0z8Ex8K0l9rvK3C6FQSftTFZjVq4tYGa
+4uBc9dtV4H8NjqZQsDuntlScqY/LlV5zEvQv5gaFm7DUzCyDpRKgdc6CFCooEfn3
+xkmOArnPdZtXoC95Sy9r4x8onrHUCsAb17mBOxVD2OJ0fB+RsnAPp8thveSOsFRs
+3G7sOnOXjMTIX3wN4yWtMZOppkm/aqWuqLTNlEwjIoyMMWeov4Cvg2XwPdCS2Aum
+aXOHE6Qq6B8rckSPy/V6GKwjlUPd+mFa7s7lD2hdHC7McNTUfRmPcSDKf+c8eiWy
+AfrLrgCtjGI0Xc5t2jYpFovowByrz7C/SZ9o2rhUTcyF/Q2/KX/Q6zzJuLlRiVrn
+PcbFv929l40vSW/D7bu8aHRuMTdhUWdG+VRJqt7/M+Im3RL7fkr1cjYYClIQKh04
+Hr5vZFhoD5beeHs1U3yLSs2164p3uLtBHoMBNoeEw1jycgfNXUhuwJwwogo83eQ2
+tM2tp6+tbtSn61KVjRvq
+=e0S0
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Aug_2013_15_43_46_+1000_=DCbKSS.NfcdotNm--
+--Signature=_Tue__13_Aug_2013_16_13_59_+1000_q2NBtoo=EXcmLy5y--
