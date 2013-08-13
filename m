@@ -1,32 +1,107 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: linux-next: Tree for Aug 13 [ screen corruption in graphical
- mode ]
-Date: Tue, 13 Aug 2013 10:39:20 +0100
-Message-ID: <20130813093920.GB4519@cantiga.alporthouse.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Aug 13 [ screen corruption in graphical mode ]
+Date: Tue, 13 Aug 2013 11:47:19 +0200
+Message-ID: <CA+icZUVEcCTbBre99FWiDXRAMKcdQxUagXE-2-rO9g=YVUAieQ@mail.gmail.com>
 References: <CA+icZUWmee5nTZCGvFb4vLpna5vUn+RJ-V9pHpKPFaTc96BG5Q@mail.gmail.com>
- <20130813092554.GA4519@cantiga.alporthouse.com>
- <CA+icZUUrJt_sJqp0CNMuM_b36tvv_rUskegLY5zcnm0w+JcW5Q@mail.gmail.com>
+	<20130813092554.GA4519@cantiga.alporthouse.com>
+	<CA+icZUUrJt_sJqp0CNMuM_b36tvv_rUskegLY5zcnm0w+JcW5Q@mail.gmail.com>
+	<20130813093920.GB4519@cantiga.alporthouse.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary=089e01419acc81eefa04e3d1205b
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s16502780.onlinehome-server.info ([87.106.93.118]:59901 "EHLO
-	fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755633Ab3HMJjy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Aug 2013 05:39:54 -0400
-Content-Disposition: inline
-In-Reply-To: <CA+icZUUrJt_sJqp0CNMuM_b36tvv_rUskegLY5zcnm0w+JcW5Q@mail.gmail.com>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:49955 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755909Ab3HMJrV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Aug 2013 05:47:21 -0400
+In-Reply-To: <20130813093920.GB4519@cantiga.alporthouse.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Dave Airlie <airlied@gmail.com>, DRI <dri-devel@lists.freedesktop.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, "s.dilek" <s.dilek@jpberlin.de>
+To: Chris Wilson <chris@chris-wilson.co.uk>, Sedat Dilek <sedat.dilek@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Dave Airlie <airlied@gmail.com>, DRI <dri-devel@lists.freedesktop.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, "s.dilek" <s.dilek@jpberlin.de>
 
-On Tue, Aug 13, 2013 at 11:35:53AM +0200, Sedat Dilek wrote:
-> After a logout from my "BROKEN" Unity-2D session - the login-screen
-> for LightDM seems to be OK.
-> Then entering my Unity-2D desktop is OK - no screen corruptions.
+--089e01419acc81eefa04e3d1205b
+Content-Type: text/plain; charset=UTF-8
 
-What hardware and display do you have?
--Chris
+On Tue, Aug 13, 2013 at 11:39 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+> On Tue, Aug 13, 2013 at 11:35:53AM +0200, Sedat Dilek wrote:
+>> After a logout from my "BROKEN" Unity-2D session - the login-screen
+>> for LightDM seems to be OK.
+>> Then entering my Unity-2D desktop is OK - no screen corruptions.
+>
+> What hardware and display do you have?
 
--- 
-Chris Wilson, Intel Open Source Technology Centre
+It's a Samsung ultrabook with SandyBridge CPU.
+
+[   333.291] (--) intel(0): Integrated Graphics Chipset: Intel(R) HD
+Graphics 3000
+
+xrand output attached.
+
+- Sedat -
+
+P.S.: I switched to intel-ddx v2-21-14-35-g5840bf in the meantime.
+
+--089e01419acc81eefa04e3d1205b
+Content-Type: text/plain; charset=US-ASCII; name="xrandr-verbose.txt"
+Content-Disposition: attachment; filename="xrandr-verbose.txt"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_hkaxf6m80
+
+U2NyZWVuIDA6IG1pbmltdW0gMzIwIHggMjAwLCBjdXJyZW50IDEzNjYgeCA3NjgsIG1heGltdW0g
+ODE5MiB4IDgxOTIKTFZEUzEgY29ubmVjdGVkIDEzNjZ4NzY4KzArMCAoMHg0NSkgbm9ybWFsIChu
+b3JtYWwgbGVmdCBpbnZlcnRlZCByaWdodCB4IGF4aXMgeSBheGlzKSAwbW0geCAwbW0KCUlkZW50
+aWZpZXI6IDB4NDEKCVRpbWVzdGFtcDogIDMzOTU3MQoJU3VicGl4ZWw6ICAgaG9yaXpvbnRhbCBy
+Z2IKCUdhbW1hOiAgICAgIDEuMDoxLjA6MS4wCglCcmlnaHRuZXNzOiAxLjAKCUNsb25lczogICAg
+CglDUlRDOiAgICAgICAwCglDUlRDczogICAgICAwIDEKCVRyYW5zZm9ybTogIDEuMDAwMDAwIDAu
+MDAwMDAwIDAuMDAwMDAwCgkgICAgICAgICAgICAwLjAwMDAwMCAxLjAwMDAwMCAwLjAwMDAwMAoJ
+ICAgICAgICAgICAgMC4wMDAwMDAgMC4wMDAwMDAgMS4wMDAwMDAKCSAgICAgICAgICAgZmlsdGVy
+OiAKCUJBQ0tMSUdIVDogNyAoMHgwMDAwMDAwNykJcmFuZ2U6ICAoMCw3KQoJQmFja2xpZ2h0OiA3
+ICgweDAwMDAwMDA3KQlyYW5nZTogICgwLDcpCglzY2FsaW5nIG1vZGU6CUZ1bGwgYXNwZWN0CgkJ
+c3VwcG9ydGVkOiBOb25lICAgICAgICAgRnVsbCAgICAgICAgIENlbnRlciAgICAgICBGdWxsIGFz
+cGVjdCAKICAxMzY2eDc2OCAoMHg0NSkgICA3MC43TUh6IC1IU3luYyAtVlN5bmMgKmN1cnJlbnQg
+K3ByZWZlcnJlZAogICAgICAgIGg6IHdpZHRoICAxMzY2IHN0YXJ0IDE0MTQgZW5kIDE0NDYgdG90
+YWwgMTQ4NiBza2V3ICAgIDAgY2xvY2sgICA0Ny42S0h6CiAgICAgICAgdjogaGVpZ2h0ICA3Njgg
+c3RhcnQgIDc3MCBlbmQgIDc3NSB0b3RhbCAgNzkyICAgICAgICAgICBjbG9jayAgIDYwLjFIegog
+IDEzNjB4NzY4ICgweDQ2KSAgIDg0LjhNSHogLUhTeW5jICtWU3luYwogICAgICAgIGg6IHdpZHRo
+ICAxMzYwIHN0YXJ0IDE0MzIgZW5kIDE1NjggdG90YWwgMTc3NiBza2V3ICAgIDAgY2xvY2sgICA0
+Ny43S0h6CiAgICAgICAgdjogaGVpZ2h0ICA3Njggc3RhcnQgIDc3MSBlbmQgIDc4MSB0b3RhbCAg
+Nzk4ICAgICAgICAgICBjbG9jayAgIDU5LjhIegogIDEzNjB4NzY4ICgweDQ3KSAgIDcyLjBNSHog
+K0hTeW5jIC1WU3luYwogICAgICAgIGg6IHdpZHRoICAxMzYwIHN0YXJ0IDE0MDggZW5kIDE0NDAg
+dG90YWwgMTUyMCBza2V3ICAgIDAgY2xvY2sgICA0Ny40S0h6CiAgICAgICAgdjogaGVpZ2h0ICA3
+Njggc3RhcnQgIDc3MSBlbmQgIDc4MSB0b3RhbCAgNzkwICAgICAgICAgICBjbG9jayAgIDYwLjBI
+egogIDEwMjR4NzY4ICgweDQ4KSAgIDY1LjBNSHogLUhTeW5jIC1WU3luYwogICAgICAgIGg6IHdp
+ZHRoICAxMDI0IHN0YXJ0IDEwNDggZW5kIDExODQgdG90YWwgMTM0NCBza2V3ICAgIDAgY2xvY2sg
+ICA0OC40S0h6CiAgICAgICAgdjogaGVpZ2h0ICA3Njggc3RhcnQgIDc3MSBlbmQgIDc3NyB0b3Rh
+bCAgODA2ICAgICAgICAgICBjbG9jayAgIDYwLjBIegogIDgwMHg2MDAgKDB4NDkpICAgNDAuME1I
+eiArSFN5bmMgK1ZTeW5jCiAgICAgICAgaDogd2lkdGggICA4MDAgc3RhcnQgIDg0MCBlbmQgIDk2
+OCB0b3RhbCAxMDU2IHNrZXcgICAgMCBjbG9jayAgIDM3LjlLSHoKICAgICAgICB2OiBoZWlnaHQg
+IDYwMCBzdGFydCAgNjAxIGVuZCAgNjA1IHRvdGFsICA2MjggICAgICAgICAgIGNsb2NrICAgNjAu
+M0h6CiAgODAweDYwMCAoMHg0YSkgICAzNi4wTUh6ICtIU3luYyArVlN5bmMKICAgICAgICBoOiB3
+aWR0aCAgIDgwMCBzdGFydCAgODI0IGVuZCAgODk2IHRvdGFsIDEwMjQgc2tldyAgICAwIGNsb2Nr
+ICAgMzUuMktIegogICAgICAgIHY6IGhlaWdodCAgNjAwIHN0YXJ0ICA2MDEgZW5kICA2MDMgdG90
+YWwgIDYyNSAgICAgICAgICAgY2xvY2sgICA1Ni4ySHoKICA2NDB4NDgwICgweDRiKSAgIDI1LjJN
+SHogLUhTeW5jIC1WU3luYwogICAgICAgIGg6IHdpZHRoICAgNjQwIHN0YXJ0ICA2NTYgZW5kICA3
+NTIgdG90YWwgIDgwMCBza2V3ICAgIDAgY2xvY2sgICAzMS41S0h6CiAgICAgICAgdjogaGVpZ2h0
+ICA0ODAgc3RhcnQgIDQ5MCBlbmQgIDQ5MiB0b3RhbCAgNTI1ICAgICAgICAgICBjbG9jayAgIDU5
+LjlIegpWR0ExIGRpc2Nvbm5lY3RlZCAobm9ybWFsIGxlZnQgaW52ZXJ0ZWQgcmlnaHQgeCBheGlz
+IHkgYXhpcykKCUlkZW50aWZpZXI6IDB4NDIKCVRpbWVzdGFtcDogIDMzOTU3MQoJU3VicGl4ZWw6
+ICAgdW5rbm93bgoJQ2xvbmVzOiAgICAKCUNSVENzOiAgICAgIDAgMQoJVHJhbnNmb3JtOiAgMS4w
+MDAwMDAgMC4wMDAwMDAgMC4wMDAwMDAKCSAgICAgICAgICAgIDAuMDAwMDAwIDEuMDAwMDAwIDAu
+MDAwMDAwCgkgICAgICAgICAgICAwLjAwMDAwMCAwLjAwMDAwMCAxLjAwMDAwMAoJICAgICAgICAg
+ICBmaWx0ZXI6IApIRE1JMSBkaXNjb25uZWN0ZWQgKG5vcm1hbCBsZWZ0IGludmVydGVkIHJpZ2h0
+IHggYXhpcyB5IGF4aXMpCglJZGVudGlmaWVyOiAweDQzCglUaW1lc3RhbXA6ICAzMzk1NzEKCVN1
+YnBpeGVsOiAgIHVua25vd24KCUNsb25lczogICAgCglDUlRDczogICAgICAwIDEKCVRyYW5zZm9y
+bTogIDEuMDAwMDAwIDAuMDAwMDAwIDAuMDAwMDAwCgkgICAgICAgICAgICAwLjAwMDAwMCAxLjAw
+MDAwMCAwLjAwMDAwMAoJICAgICAgICAgICAgMC4wMDAwMDAgMC4wMDAwMDAgMS4wMDAwMDAKCSAg
+ICAgICAgICAgZmlsdGVyOiAKCUJyb2FkY2FzdCBSR0I6CUF1dG9tYXRpYwoJCXN1cHBvcnRlZDog
+QXV0b21hdGljICAgIEZ1bGwgICAgICAgICBMaW1pdGVkIDE2OjIKCWF1ZGlvOglhdXRvCgkJc3Vw
+cG9ydGVkOiBmb3JjZS1kdmkgICAgb2ZmICAgICAgICAgIGF1dG8gICAgICAgICBvbiAgICAgICAg
+ICAKRFAxIGRpc2Nvbm5lY3RlZCAobm9ybWFsIGxlZnQgaW52ZXJ0ZWQgcmlnaHQgeCBheGlzIHkg
+YXhpcykKCUlkZW50aWZpZXI6IDB4NDQKCVRpbWVzdGFtcDogIDMzOTU3MQoJU3VicGl4ZWw6ICAg
+dW5rbm93bgoJQ2xvbmVzOiAgICAKCUNSVENzOiAgICAgIDAgMQoJVHJhbnNmb3JtOiAgMS4wMDAw
+MDAgMC4wMDAwMDAgMC4wMDAwMDAKCSAgICAgICAgICAgIDAuMDAwMDAwIDEuMDAwMDAwIDAuMDAw
+MDAwCgkgICAgICAgICAgICAwLjAwMDAwMCAwLjAwMDAwMCAxLjAwMDAwMAoJICAgICAgICAgICBm
+aWx0ZXI6IAoJQnJvYWRjYXN0IFJHQjoJQXV0b21hdGljCgkJc3VwcG9ydGVkOiBBdXRvbWF0aWMg
+ICAgRnVsbCAgICAgICAgIExpbWl0ZWQgMTY6MgoJYXVkaW86CWF1dG8KCQlzdXBwb3J0ZWQ6IGZv
+cmNlLWR2aSAgICBvZmYgICAgICAgICAgYXV0byAgICAgICAgIG9uICAgICAgICAgIAo=
+--089e01419acc81eefa04e3d1205b--
