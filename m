@@ -1,72 +1,32 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Aug 13 [ screen corruption in
-	graphical mode ]
-Date: Tue, 13 Aug 2013 11:35:53 +0200
-Message-ID: <CA+icZUUrJt_sJqp0CNMuM_b36tvv_rUskegLY5zcnm0w+JcW5Q@mail.gmail.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Subject: Re: linux-next: Tree for Aug 13 [ screen corruption in graphical
+ mode ]
+Date: Tue, 13 Aug 2013 10:39:20 +0100
+Message-ID: <20130813093920.GB4519@cantiga.alporthouse.com>
 References: <CA+icZUWmee5nTZCGvFb4vLpna5vUn+RJ-V9pHpKPFaTc96BG5Q@mail.gmail.com>
-	<20130813092554.GA4519@cantiga.alporthouse.com>
-Reply-To: sedat.dilek@gmail.com
+ <20130813092554.GA4519@cantiga.alporthouse.com>
+ <CA+icZUUrJt_sJqp0CNMuM_b36tvv_rUskegLY5zcnm0w+JcW5Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <20130813092554.GA4519@cantiga.alporthouse.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
-	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
-	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Sender: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
-Errors-To: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
-To: Chris Wilson <chris@chris-wilson.co.uk>, Sedat Dilek <sedat.dilek@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Dave Airlie <airlied@gmail.com>, DRI <dri-devel@lists.freedesktop.org>, intel-gfx <intel-gfx@lists.freedesktop.org>
-Cc: "s.dilek" <s.dilek@jpberlin.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from s16502780.onlinehome-server.info ([87.106.93.118]:59901 "EHLO
+	fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755633Ab3HMJjy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Aug 2013 05:39:54 -0400
+Content-Disposition: inline
+In-Reply-To: <CA+icZUUrJt_sJqp0CNMuM_b36tvv_rUskegLY5zcnm0w+JcW5Q@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Dave Airlie <airlied@gmail.com>, DRI <dri-devel@lists.freedesktop.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, "s.dilek" <s.dilek@jpberlin.de>
 
-On Tue, Aug 13, 2013 at 11:25 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> On Tue, Aug 13, 2013 at 11:10:18AM +0200, Sedat Dilek wrote:
->> Hi,
->>
->> with today's next-20130813 I cannot see 1/10 of my desktop-screen's
->> top, it's simply black.
->> I can estimate the URL line in Firefox (or open a new tab blindly and
->> get a known URL from my autocompleted history).
->
-> Can you attach a photograph?
->
+On Tue, Aug 13, 2013 at 11:35:53AM +0200, Sedat Dilek wrote:
+> After a logout from my "BROKEN" Unity-2D session - the login-screen
+> for LightDM seems to be OK.
+> Then entering my Unity-2D desktop is OK - no screen corruptions.
 
-It's a black bar on the top of my desktop-screen - approx. 1/10.
+What hardware and display do you have?
+-Chris
 
-It looks like this is also in the VT on bootup before entering LightDM.
-
->> My Xorg stack did not change: libdrm-2.4.46 | mesa-9.16 | intel-ddx-2.4.14.
->> next-20130808 was OK - no screen corruptions.
->>
->> Any idea, hint?
->
-> Can you please try:
->
-> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-> index af1b2f0..b0f181d 100644
-> --- a/drivers/gpu/drm/i915/intel_display.c
-> +++ b/drivers/gpu/drm/i915/intel_display.c
-> @@ -1837,7 +1837,7 @@ intel_pin_and_fence_fb_obj(struct drm_device *dev,
->                 break;
->         case I915_TILING_X:
->                 /* pin() will align the object as required by fence */
-> -               alignment = 0;
-> +               alignment = 256 * 1024;
->                 break;
->         case I915_TILING_Y:
->                 /* Despite that we check this in framebuffer_init userspace can
->
-> --
-
-NO, that did not help.
-
-After a logout from my "BROKEN" Unity-2D session - the login-screen
-for LightDM seems to be OK.
-Then entering my Unity-2D desktop is OK - no screen corruptions.
-
-- Sedat -
+-- 
+Chris Wilson, Intel Open Source Technology Centre
