@@ -1,35 +1,60 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with the tile tree
-Date: Mon, 12 Aug 2013 23:12:56 -0700
-Message-ID: <20130813061256.GA9854@kroah.com>
-References: <20130813154346.fb2e52f791fb6e2e3e2fbfcc@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ptr-ret tree with the staging tree
+Date: Tue, 13 Aug 2013 17:10:31 +1000
+Message-ID: <20130813171031.d365f152275f5736803f4413@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__13_Aug_2013_17_10_31_+1000_ohovDC=6.Ja8axCY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:59180 "EHLO
-	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755319Ab3HMGXc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Aug 2013 02:23:32 -0400
-Content-Disposition: inline
-In-Reply-To: <20130813154346.fb2e52f791fb6e2e3e2fbfcc@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:49906 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755093Ab3HMHKg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Aug 2013 03:10:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Metcalf <cmetcalf@tilera.com>, Srinivas Kandagatla <srinivas.kandagatla@st.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
 
-On Tue, Aug 13, 2013 at 03:43:46PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the tty tree got a conflict in
-> include/uapi/linux/serial_core.h between commit 002abee2d681 ("tilegx:
-> Add tty serial support for TILE-Gx on-chip UART") from the tile tree and
-> commit c4b058560762 ("serial:st-asc: Add ST ASC driver") from the tty
-> tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Signature=_Tue__13_Aug_2013_17_10_31_+1000_ohovDC=6.Ja8axCY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix looks fine to me, thanks.
+Hi Rusty,
 
-greg k-h
+Today's linux-next merge of the ptr-ret tree got a conflict in
+drivers/staging/zcache/zcache-main.c between commit 962564604873
+("staging: zcache: delete it") from the staging tree and commit
+8a1d41cfeaf5 ("staging/zcache: don't use PTR_RET()") from the ptr-ret
+tree.
+
+I fixed it up (the former removes the file, so I did that) and can carry
+the fix as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__13_Aug_2013_17_10_31_+1000_ohovDC=6.Ja8axCY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSCdvnAAoJEECxmPOUX5FEKp4P/03S2+4fowekGDGx/k6LaYz0
+S1XaWYJu5VmpjAL9quo8PhV3Pv0iM/YXBayOZZVNcSshV0im5J6/yn6wVQDsmv0F
+yqJJwixyPEfedO5PCkD1BkvlsXEGWtwjb2/6UFP2B1YywgI2Gs30aO2UBP+TViqg
+tIjhbUIhzPctcYn/cDC/jrisAMk4yxyi+Wyh41wjXsNiMUQxx0hUcLT4IPHzuPCX
+nnSGRjJ/Vff5JbxE2ENr6KzzSOj4Xpoa5O3uCp1K+EJ9KcoZhQDkJa4GyoUHYGCo
+rN3GoeK5pkwMY8AxOGCze4598ng5+qGPew979CFFWf91dKGwatLaO26TQKkceknp
+zJxBZsmg+maU7yMC7ztloc05pvwOUni3jTD5z1/aBlmNbPT+WM4Kp6+/+Jvug5xv
+g7wAhJypaIjorJ/ISX+3ghsc7xWfxCfjIFGei68zAZ4qRECILh3bj/VWyinHcvvH
+tU6hLRA2to2Tm8Cn3WGoqcXqoiEmZhFpQwQ3LfnoAFHnnsl8zwPHOQX8QzT4yHOT
+RtMI9gAdbDer3HjDHUuMv44ufUOGJmP646zXgqr2HNffQ8VVHOWY5vlVD1eGnAR+
+BUYN09DfbVH6O/PjDbbB2O6PHjktWgb5n8kLeuK0SPk2MMFkNhuY/OM/gSZLN5Ge
+cUW8z9AS+QNLGAQYhyVl
+=cD3a
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__13_Aug_2013_17_10_31_+1000_ohovDC=6.Ja8axCY--
