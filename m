@@ -1,101 +1,60 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: Tree for Aug 8 (not CONFIG_PCI_MSI conflict)
-Date: Mon, 12 Aug 2013 10:38:58 -0600
-Message-ID: <CAErSpo52KKY9mRc7wduFqYYpKQakEBa5KrJ0P3J9su6P5tJ6gQ@mail.gmail.com>
-References: <20130808170822.82bf33d3cf5100f5e2646815@canb.auug.org.au>
- <5203F978.2050504@infradead.org> <20130809145939.GE25111@titan.lakedaemon.net>
- <52051BC2.2060004@infradead.org> <20130809185036.GG25111@titan.lakedaemon.net>
- <CAErSpo6S9uYTEhoS-+4EZv41pc0bu6jvcMaGX7WR9hY4o+2dsA@mail.gmail.com> <20130812131833.GI25111@titan.lakedaemon.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ext4 tree with Linus' tree
+Date: Tue, 13 Aug 2013 11:33:33 +1000
+Message-ID: <20130813113333.016c4c319edb0ac9c249ea2d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__13_Aug_2013_11_33_33_+1000_nKXoFj2UyNd=VOl4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f177.google.com ([209.85.223.177]:55626 "EHLO
-	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757146Ab3HLQjU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Aug 2013 12:39:20 -0400
-Received: by mail-ie0-f177.google.com with SMTP id a11so8117544iee.8
-        for <linux-next@vger.kernel.org>; Mon, 12 Aug 2013 09:39:18 -0700 (PDT)
-In-Reply-To: <20130812131833.GI25111@titan.lakedaemon.net>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45580 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756429Ab3HMBdh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Aug 2013 21:33:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next list <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2013 at 7:18 AM, Jason Cooper <jason@lakedaemon.net> wrote:
-> On Sat, Aug 10, 2013 at 08:01:49AM -0600, Bjorn Helgaas wrote:
->> On Fri, Aug 9, 2013 at 12:50 PM, Jason Cooper <jason@lakedaemon.net> wrote:
->> > Randy,
->> >
->> > On Fri, Aug 09, 2013 at 09:41:38AM -0700, Randy Dunlap wrote:
->> >> On 08/09/13 07:59, Jason Cooper wrote:
->> >> > Randy,
->> >> >
->> >> > On Thu, Aug 08, 2013 at 01:03:04PM -0700, Randy Dunlap wrote:
->> >> >> On 08/08/13 00:08, Stephen Rothwell wrote:
->> >> >>> Hi all,
->> >> >>>
->> >> >>> Changes since 20130807:
->> >> >>>
->> >> >>
->> >> >> on i386 and x86_64:
->> >> >> when CONFIG_PCI_MSI is not enabled:
->> >> >>
->> >> >> There are many of these errors:
->> >> >> include/linux/msi.h:65:6: error: expected identifier or '(' before 'void'
->> >> >> include/linux/msi.h:65:6: error: expected ')' before numeric constant
->> >> >>
->> >> >> because arch/x86/include/asm/pci.h defines:
->> >> >> #define default_teardown_msi_irqs  NULL
->> >> >
->> >> > Do you have an example config you used?
->> >>
->> >> Sure, attached. (or I have 14 of them)
->> >
->> > Thanks, I was able to reproduce the error.  I'm not real familiar with
->> > this area of the code, but the relief is it doesn't appear to be caused
->> > by the mvebu changes (well, relief for us ;-) ).
->> >
->> > At any rate, give this a spin and see if it works for you
->> >
->> > If it's acceptable, I'll do an official patch for Bjorn.
->> >
->> > thx,
->> >
->> > Jason.
->> >
->> > ---------->8----------
->> > diff --git a/arch/x86/include/asm/pci.h b/arch/x86/include/asm/pci.h
->> > index d9e9e6c..6169414 100644
->> > --- a/arch/x86/include/asm/pci.h
->> > +++ b/arch/x86/include/asm/pci.h
->> > @@ -138,8 +138,8 @@ void default_restore_msi_irqs(struct pci_dev *dev, int irq);
->> >  #else
->> >  #define native_setup_msi_irqs          NULL
->> >  #define native_teardown_msi_irq                NULL
->> > -#define default_teardown_msi_irqs      NULL
->> > -#define default_restore_msi_irqs       NULL
->> > +void __weak default_teardown_msi_irqs(struct pci_dev *dev) { }
->> > +void __weak default_restore_msi_irqs(struct pci_dev *dev, int irq) { }
->>
->> I don't really like this solution of putting the empty implementation
->> in the header file, because then a weak body is generated in the
->> object of every source file that includes the header.
->>
->> default_teardown_msi_irqs() and default_restore_msi_irqs() seem like
->> fairly internal MSI functions, so I wonder why we need them defined at
->> all when CONFIG_PCI_MSI=n.  It seems like any uses of them should be
->> in code that's only compiled when CONFIG_PCI_MSI=y.  But I haven't
->> reproduced the problem and investigated yet.
->
-> I first tried commenting out the definitions after reproducing the
-> problem.  It also failed miserably.
->
-> Please take a look at Thomas' latest MSI patch series,
->
->   [PATCHv9 01/10] PCI: use weak functions for MSI arch-specific functions
->
-> I think his solution is much nicer than mine.
+--Signature=_Tue__13_Aug_2013_11_33_33_+1000_nKXoFj2UyNd=VOl4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, I'll assume I don't need to do anything until I hear otherwise.
+Hi Theodore,
 
-Bjorn
+Today's linux-next merge of the ext4 tree got a conflict in
+fs/ext4/ioctl.c between commit cde2d7a796f7 ("ext4: flush the extent
+status cache during EXT4_IOC_SWAP_BOOT") from Linus' tree and commit
+0dee1a241030 ("ext4: swap all the extent_status LRU fields during
+EXT4_IOC_SWAP_BOOT") from the ext4 tree.
+
+I fixed it up (I guessed that the ext4 tree version is a better fix(?) so
+used that) and can carry the fix as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__13_Aug_2013_11_33_33_+1000_nKXoFj2UyNd=VOl4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSCYztAAoJEECxmPOUX5FEdCQQAITI8ipXEku6jM7fpusGNXr2
+7TaXaWN1BqwkXZt2KyfCzwdPjiu7wypAs9bf/XbQbTtVS8+OGj3wnobZzkNeCuDb
+ZQGpLqJvKNHPoWpaRuEbBOkLalopwqdX9N1x6XARBkq+psLk5TZgMo07NWAwjsOQ
+Z2gTqsS5H64udVLpuIBnyHAYJj90AJQYkyb/rsxt5Z8ET5j93m2z3vtw2zdK/qed
+hcny76DlFLSl3xzfY0H1fVO2irEgPY2B7TfCm8AR1CGYPhdkvbEVPCt0HsbhHyM9
+aVPIpUoWVFFnGHl6sEmxR6w3/JoqZq31/nfStZXLsnl21W/iVHukrLTej5gsLRVW
+xbXB+ebmymvhgFQ2/DXweSQGxNkqv94RTRWtIi2t9HMAr4i0bLKkJ3Wc3bTFyXwn
+R6eJs/MgH/0IbwYjgqu4hOwMF+kFiH8mP56ao6uDJqhRqdq8Ye8uDMN9Uyvkg59l
+HAQLASEqGKtwWOAtqWi6YYQs5Fb/5dyXLKKMeGDnAnRhzwj0S71R7gALFub+uumw
+1dWVwDcWspskzbGQ83r5tU94Dr4MjHWKNUJ5ZWQx656Sdbe3ZyCLirKsqxSrJs8N
+g51TbdCqbHgoJ30YIFsQrFxlig8MCHO5PvFJr8hjXaLNohMiO0ew+3RrheeJHI/U
+XLv61onncR24mrJpy5JY
+=bKJe
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__13_Aug_2013_11_33_33_+1000_nKXoFj2UyNd=VOl4--
