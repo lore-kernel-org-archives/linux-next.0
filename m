@@ -1,60 +1,111 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ext4 tree with Linus' tree
-Date: Tue, 13 Aug 2013 11:33:33 +1000
-Message-ID: <20130813113333.016c4c319edb0ac9c249ea2d@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the devicetree tree
+Date: Tue, 13 Aug 2013 15:41:06 +1000
+Message-ID: <20130813154106.f89661732443289013035481@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Aug_2013_11_33_33_+1000_nKXoFj2UyNd=VOl4"
+ boundary="Signature=_Tue__13_Aug_2013_15_41_06_+1000_tTQsGXWOOk+xNmHL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45580 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43076 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756429Ab3HMBdh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Aug 2013 21:33:37 -0400
+	with ESMTP id S1751879Ab3HMFlS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Aug 2013 01:41:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Grant Likely <grant.likely@secretlab.ca>, Sascha Hauer <s.hauer@pengutronix.de>
 
---Signature=_Tue__13_Aug_2013_11_33_33_+1000_nKXoFj2UyNd=VOl4
+--Signature=_Tue__13_Aug_2013_15_41_06_+1000_tTQsGXWOOk+xNmHL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Theodore,
+Hi Greg,
 
-Today's linux-next merge of the ext4 tree got a conflict in
-fs/ext4/ioctl.c between commit cde2d7a796f7 ("ext4: flush the extent
-status cache during EXT4_IOC_SWAP_BOOT") from Linus' tree and commit
-0dee1a241030 ("ext4: swap all the extent_status LRU fields during
-EXT4_IOC_SWAP_BOOT") from the ext4 tree.
+Today's linux-next merge of the tty tree got a conflict in include/linux/of=
+.h between commit 2adfffa22350 ("OF: make of_property_for_each_{u32|string}=
+() use parameters if OF is not enabled") from the devicetree tree and commi=
+t 5c19e95216b9 ("OF: Add helper for matching against linux,stdout-path") fr=
+om the tty tree.
 
-I fixed it up (I guessed that the ext4 tree version is a better fix(?) so
-used that) and can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
+Out of interest, why does of_device_is_stdout_path() not return bool?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__13_Aug_2013_11_33_33_+1000_nKXoFj2UyNd=VOl4
+diff --cc include/linux/of.h
+index 90a8811,429e168..0000000
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@@ -331,7 -337,14 +331,9 @@@ const __be32 *of_prop_next_u32(struct p
+   *         printk("String value: %s\n", s);
+   */
+  const char *of_prop_next_string(struct property *prop, const char *cur);
+ -#define of_property_for_each_string(np, propname, prop, s)	\
+ -	for (prop =3D of_find_property(np, propname, NULL),	\
+ -		s =3D of_prop_next_string(prop, NULL);		\
+ -		s;						\
+ -		s =3D of_prop_next_string(prop, s))
+ =20
++ int of_device_is_stdout_path(struct device_node *dn);
++=20
+  #else /* CONFIG_OF */
+ =20
+  static inline const char* of_node_full_name(struct device_node *np)
+@@@ -494,20 -507,17 +496,25 @@@ static inline int of_machine_is_compati
+  	return 0;
+  }
+ =20
+ +static inline const __be32 *of_prop_next_u32(struct property *prop,
+ +		const __be32 *cur, u32 *pu)
+ +{
+ +	return NULL;
+ +}
+ +
+ +static inline const char *of_prop_next_string(struct property *prop,
+ +		const char *cur)
+ +{
+ +	return NULL;
+ +}
+ +
++ static inline int of_device_is_stdout_path(struct device_node *dn)
++ {
++ 	return 0;
++ }
++=20
+  #define of_match_ptr(_ptr)	NULL
+  #define of_match_node(_matches, _node)	NULL
+ -#define of_property_for_each_u32(np, propname, prop, p, u) \
+ -	while (0)
+ -#define of_property_for_each_string(np, propname, prop, s) \
+ -	while (0)
+  #endif /* CONFIG_OF */
+ =20
+  #ifndef of_node_to_nid
+
+--Signature=_Tue__13_Aug_2013_15_41_06_+1000_tTQsGXWOOk+xNmHL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSCYztAAoJEECxmPOUX5FEdCQQAITI8ipXEku6jM7fpusGNXr2
-7TaXaWN1BqwkXZt2KyfCzwdPjiu7wypAs9bf/XbQbTtVS8+OGj3wnobZzkNeCuDb
-ZQGpLqJvKNHPoWpaRuEbBOkLalopwqdX9N1x6XARBkq+psLk5TZgMo07NWAwjsOQ
-Z2gTqsS5H64udVLpuIBnyHAYJj90AJQYkyb/rsxt5Z8ET5j93m2z3vtw2zdK/qed
-hcny76DlFLSl3xzfY0H1fVO2irEgPY2B7TfCm8AR1CGYPhdkvbEVPCt0HsbhHyM9
-aVPIpUoWVFFnGHl6sEmxR6w3/JoqZq31/nfStZXLsnl21W/iVHukrLTej5gsLRVW
-xbXB+ebmymvhgFQ2/DXweSQGxNkqv94RTRWtIi2t9HMAr4i0bLKkJ3Wc3bTFyXwn
-R6eJs/MgH/0IbwYjgqu4hOwMF+kFiH8mP56ao6uDJqhRqdq8Ye8uDMN9Uyvkg59l
-HAQLASEqGKtwWOAtqWi6YYQs5Fb/5dyXLKKMeGDnAnRhzwj0S71R7gALFub+uumw
-1dWVwDcWspskzbGQ83r5tU94Dr4MjHWKNUJ5ZWQx656Sdbe3ZyCLirKsqxSrJs8N
-g51TbdCqbHgoJ30YIFsQrFxlig8MCHO5PvFJr8hjXaLNohMiO0ew+3RrheeJHI/U
-XLv61onncR24mrJpy5JY
-=bKJe
+iQIcBAEBCAAGBQJSCcb2AAoJEECxmPOUX5FEY/YP/1EoYAlxQ3EB0YZ2hsIQOnr3
+cu9bZIqno1gVeJYeas3bN8+d6VsBFBTERJ9x6lNdKP9DGuUYjBE1WA++hHnyAhYi
+Rjqkggn6FgVVdG9ZFJViEvYcqE/ZT6EB4j1PrpeYTTndh4ZfW9x+k3evRUbTVJba
+CTUn/od2WXf2eAZJgEI3rP7TLuw/41U2MbijAltLUSiJlJ7zCCIYoNRK+NIzgbXl
+Q3fQRcSAYWSr8b28hvGX5gIUdr4xCjvLG82kWDBjDOuEMO75AIJGPIDr2knf8ZjK
+n+6oyPHk4QZOBlfwM9RZmHoTeMJ4KzVaLFG7TAOeCg22iDK3LQCeaLHTMkvnWqu6
++CWUARZo/hk/ktnTQcCXbfCH5aAwYcgO11oft//2IXyWJSx1r/wMLImX/03UVyuX
+cMJ5rSUigxcRttEtZvAgdCmdp2uy/H/c7dLWhRcy2IwakplpU3zR7XhRsHJ67PVa
+P2qZ8UAQaYbDmZpxDPL98zEerFTpFBBcNPamhS0MlUj6kPyL1QNvYFoNxBhEp1Mg
+c43TZeYdY9Yxq11eLiWiHKh6pUx2AY7s8DRHS7FBnaPd5xO3FQdH/EVReC2hAFAv
+UFsgoBroZumIqibhgYjYgyTHtv6pQYHbdE44zQqT4pt6/4bD270f2WawGJTgdPjG
+Dvvpa7qotF+j9cW+RBDE
+=4Z8c
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Aug_2013_11_33_33_+1000_nKXoFj2UyNd=VOl4--
+--Signature=_Tue__13_Aug_2013_15_41_06_+1000_tTQsGXWOOk+xNmHL--
