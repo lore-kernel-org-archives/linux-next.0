@@ -1,42 +1,52 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: manual merge of the arm-current tree with Linus' tree
-Date: Wed, 14 Aug 2013 12:01:01 +0200
-Message-ID: <20130814100101.GC10849@gmail.com>
-References: <20130814111837.9a692a77b35ba8cbb4a9149b@canb.auug.org.au>
+From: David Herrmann <dh.herrmann@gmail.com>
+Subject: Re: linux-next: manual merge of the tip tree with the omap_dss2 tree
+Date: Wed, 14 Aug 2013 13:53:30 +0200
+Message-ID: <CANq1E4QKtbLoGhgZSPNM2QW_j38FiRjm5wNotZn8fnvouQQDpQ@mail.gmail.com>
+References: <20130814143152.6586492341a573f87c64a5df@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f47.google.com ([74.125.83.47]:47042 "EHLO
-	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752326Ab3HNKBG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Aug 2013 06:01:06 -0400
-Content-Disposition: inline
-In-Reply-To: <20130814111837.9a692a77b35ba8cbb4a9149b@canb.auug.org.au>
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:46668 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751526Ab3HNLxb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Aug 2013 07:53:31 -0400
+In-Reply-To: <20130814143152.6586492341a573f87c64a5df@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Vince Weaver <vincent.weaver@maine.edu>, Linus <torvalds@linux-foundation.org>, Will Deacon <will.deacon@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
 
+Hi
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Wed, Aug 14, 2013 at 6:31 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the tip tree got a conflict in
+> drivers/video/simplefb.c between commit dbb5ff4c2300 ("simplefb: add
+> support for a8b8g8r8 pixel format") from the omap_dss2 tree and commit
+> 5ef76da644bf ("fbdev: simplefb: add init through platform_data") from the
+> tip tree.
+>
+> I fixed it up (I think - see below, please check - I used the latter
+> version of the above file) and can carry the fix as necessary (no action
+> is required).
 
-> Hi Russell,
-> 
-> Today's linux-next merge of the arm-current tree got a conflict in 
-> arch/arm/kernel/perf_event.c between commit b88a2595b6d8 ("perf/arm: Fix 
-> armpmu_map_hw_event()") from Linus' tree and commit d9f966357b14 ("ARM: 
-> 7810/1: perf: Fix array out of bounds access in armpmu_map_hw_event()") 
-> from the arm-current tree.
-> 
-> These are the same patch except for the return code (and the much more 
-> comprehensive commit message in the arm-current tree version).  I fixed 
-> it up (using the arm-current tree version - return -EINVAL instead of 
-> -ENOENT - I have no way to guess which is right) and can carry the fix 
-> as necessary (no action is required).
+Looks good. Thanks!
+David
 
--EINVAL would be the better/cleaner one, so when this gets merged upstream 
-we should pick up Russell's version. It does not affect functionality.
-
-Thanks,
-
-	Ingo
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>
+> diff --git a/include/linux/platform_data/simplefb.h b/include/linux/platform_data/simplefb.h
+> index 53774b0..c395d4c 100644
+> --- a/include/linux/platform_data/simplefb.h
+> +++ b/include/linux/platform_data/simplefb.h
+> @@ -27,6 +27,7 @@
+>         { "a8r8g8b8", 32, {16, 8}, {8, 8}, {0, 8}, {24, 8}, DRM_FORMAT_ARGB8888 }, \
+>         { "x2r10g10b10", 32, {20, 10}, {10, 10}, {0, 10}, {0, 0}, DRM_FORMAT_XRGB2101010 }, \
+>         { "a2r10g10b10", 32, {20, 10}, {10, 10}, {0, 10}, {30, 2}, DRM_FORMAT_ARGB2101010 }, \
+> +       { "a8b8g8r8", 32, {0, 8}, {8, 8}, {16, 8}, {24, 8}, DRM_FORMAT_ABGR8888 }, \
+>  }
+>
+>  /*
