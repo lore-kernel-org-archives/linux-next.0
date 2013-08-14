@@ -1,75 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the omap_dss2 tree
-Date: Wed, 14 Aug 2013 14:31:52 +1000
-Message-ID: <20130814143152.6586492341a573f87c64a5df@canb.auug.org.au>
+Subject: linux-next: manual merge of the mvebu tree with the pci tree
+Date: Wed, 14 Aug 2013 16:18:40 +1000
+Message-ID: <20130814161840.dcee2b1354579cce7ff81730@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__14_Aug_2013_14_31_52_+1000_+ImLovAU8C4nR2Aa"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, David Herrmann <dh.herrmann@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__14_Aug_2013_16_18_40_+1000_l2QvE9vgSaqtk6Iw"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36026 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752051Ab3HNGSy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Aug 2013 02:18:54 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Bjorn Helgaas <bhelgaas@google.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
---Signature=_Wed__14_Aug_2013_14_31_52_+1000_+ImLovAU8C4nR2Aa
+--Signature=_Wed__14_Aug_2013_16_18_40_+1000_l2QvE9vgSaqtk6Iw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-drivers/video/simplefb.c between commit dbb5ff4c2300 ("simplefb: add
-support for a8b8g8r8 pixel format") from the omap_dss2 tree and commit
-5ef76da644bf ("fbdev: simplefb: add init through platform_data") from the
-tip tree.
+Today's linux-next merge of the mvebu tree got a conflict in
+drivers/pci/host/Kconfig between commit 5477a33b51b7 ("PCI: mvebu: Make
+Marvell PCIe driver depend on OF") from the pci tree and commit
+31d896ade95d ("PCI: mvebu: add support for Marvell Dove SoCs") from the
+mvebu tree.
 
-I fixed it up (I think - see below, please check - I used the latter
-version of the above file) and can carry the fix as necessary (no action
+I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --git a/include/linux/platform_data/simplefb.h b/include/linux/platfor=
-m_data/simplefb.h
-index 53774b0..c395d4c 100644
---- a/include/linux/platform_data/simplefb.h
-+++ b/include/linux/platform_data/simplefb.h
-@@ -27,6 +27,7 @@
- 	{ "a8r8g8b8", 32, {16, 8}, {8, 8}, {0, 8}, {24, 8}, DRM_FORMAT_ARGB8888 }=
-, \
- 	{ "x2r10g10b10", 32, {20, 10}, {10, 10}, {0, 10}, {0, 0}, DRM_FORMAT_XRGB=
-2101010 }, \
- 	{ "a2r10g10b10", 32, {20, 10}, {10, 10}, {0, 10}, {30, 2}, DRM_FORMAT_ARG=
-B2101010 }, \
-+	{ "a8b8g8r8", 32, {0, 8}, {8, 8}, {16, 8}, {24, 8}, DRM_FORMAT_ABGR8888 }=
-, \
- }
-=20
- /*
+diff --cc drivers/pci/host/Kconfig
+index e5ba4eb,492eec9..0000000
+--- a/drivers/pci/host/Kconfig
++++ b/drivers/pci/host/Kconfig
+@@@ -3,8 -3,7 +3,8 @@@ menu "PCI host controller drivers
+ =20
+  config PCI_MVEBU
+  	bool "Marvell EBU PCIe controller"
+- 	depends on ARCH_MVEBU || ARCH_KIRKWOOD
++ 	depends on ARCH_MVEBU || ARCH_DOVE || ARCH_KIRKWOOD
+ +	depends on OF
+ =20
+  config PCIE_DW
+  	bool
 
---Signature=_Wed__14_Aug_2013_14_31_52_+1000_+ImLovAU8C4nR2Aa
+--Signature=_Wed__14_Aug_2013_16_18_40_+1000_l2QvE9vgSaqtk6Iw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSCwg9AAoJEECxmPOUX5FE+44P+gJFrI68rnT1bD7NjXWZ6yub
-q4gS0SMB6535vUY5IjotvfLgrvDjmPQoc/I/0ap1LWjmjahG98TaZD2L7xY5XRqP
-s9r4ZvVDlMTny4GJ4V+q1pn6mUbtF2DXBtIrIQ9+twYi5pzSiyAACc0noadBZHGa
-V/VDNQIUVkp/iILFPcoNFPe6J8c3U1B17+Y0UMG+WFk7LqOcmL4tyNyBKjwgngFg
-BxCgsOzkPR+hdthH0YMK3bZfmIdCRk+FIeGS2oeYIdsNm2SQ/2tW2yc91309dqou
-x2mptrLH+anEXZLlUdy25f55f8agtiXd3/rJQW1Ojl2LlZL9XxzsnGYF2aqt/6zy
-njzFlMXUmUMzrwcAcdP4HLAGuSGv4B9mXBmMnc+KOWi2beAdxLYH4/zRiBoqLThA
-Ji8fDvTbSjGeF4yOPi1Mq1QjIxBYEggy2FLCQZe0kGHwn7nLcoik79/X5JibGNcX
-bAvbanHFVYYN6wNP/edny7cnG0A+fcy7HxbX4aitrxqBvdzXbXn+U8AvANEcEuq2
-shQHaR9AmelBEoQyNmKFudPw9a/79dDYDywpVOy7xkLXknLtvfIyXUKIzLrLCQjR
-b3ziPeBVmfeUvLt1LlRVPW4XfwMXyc9pjPWbd4NREKwB+F6MtXdKPwBYCeaAamPi
-fDX2cCwWVImeqbTm/s/n
-=9pmN
+iQIcBAEBCAAGBQJSCyFEAAoJEECxmPOUX5FEuzYP/0NehFO9OLcm8oAGZPIkURBT
+CFgol0fLD98ONrzi9h3XCv1ZwadhmoSz3INRcpT4Kdthk8gmJeNA6a+7yGJVCGbc
+Fk7LxYtZwSVoB8lLMehjcqDTa50R4QcnPhNPmkjXQEtPx0Gl8OqpZTSFoKrhUXdz
+/95YDLuiy8tJgmQ7UYmveM6GUWgjbY47Q0756BF6NR2zJA01Z5p0j8FnvEwlQEoS
+w1uVa4MHmqspTdbJ6orKJpI1FCgXYqJDWN8ug4i6VkLmGG/a15XIbqYtPVvRqNP6
+t/tP0hTemf6Ks0hAW5DHgYDZCEPPFFvhP8vOjT0frsmnLjvgvdfOcGMDsduHWmZB
+UU0fsT5DoHAsSFtx7IX9scwoCcGD93agxi36nolXRXclmLFpShE+MPfzSZdeGWsw
+d3foPw6nqYhjiFgGXgku0RQUtDIO4SsfSoYEA1lO25359iTlNZGfZdXtIJcR0qxc
+QUR3B4OT/5IlwTwj09eMdGUnfTXFNHh0ATGuGhP2TmLUAznA9QePE1pmgtQG94Y5
+q7HLadyTH0TJTwyFHZaSrdqFmiFD8N+g55FA9pIWhFMLcQ+m92YPz9uc8bvbhmte
+0WXY3u/USbB40+YZMb6zxVVIMWrkbz6Dy+cww4xqn2kINhkgYWqLU6nntjJDII2n
+QexprF9szYiEh1cH1N+d
+=1TkN
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__14_Aug_2013_14_31_52_+1000_+ImLovAU8C4nR2Aa--
+--Signature=_Wed__14_Aug_2013_16_18_40_+1000_l2QvE9vgSaqtk6Iw--
