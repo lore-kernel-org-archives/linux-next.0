@@ -1,66 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-current tree with Linus' tree
-Date: Wed, 14 Aug 2013 11:18:37 +1000
-Message-ID: <20130814111837.9a692a77b35ba8cbb4a9149b@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the omap_dss2 tree
+Date: Wed, 14 Aug 2013 14:31:52 +1000
+Message-ID: <20130814143152.6586492341a573f87c64a5df@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__14_Aug_2013_11_18_37_+1000_huD=kGzHHCaJkfm5"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53893 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758288Ab3HNBS5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Aug 2013 21:18:57 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Ingo Molnar <mingo@kernel.org>, Vince Weaver <vincent.weaver@maine.edu>, Linus <torvalds@linux-foundation.org>, Will Deacon <will.deacon@arm.com>
+ boundary="Signature=_Wed__14_Aug_2013_14_31_52_+1000_+ImLovAU8C4nR2Aa"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, David Herrmann <dh.herrmann@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__14_Aug_2013_11_18_37_+1000_huD=kGzHHCaJkfm5
+--Signature=_Wed__14_Aug_2013_14_31_52_+1000_+ImLovAU8C4nR2Aa
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+Hi all,
 
-Today's linux-next merge of the arm-current tree got a conflict in
-arch/arm/kernel/perf_event.c between commit b88a2595b6d8 ("perf/arm: Fix
-armpmu_map_hw_event()") from Linus' tree and commit d9f966357b14 ("ARM:
-7810/1: perf: Fix array out of bounds access in armpmu_map_hw_event()")
-from the arm-current tree.
+Today's linux-next merge of the tip tree got a conflict in
+drivers/video/simplefb.c between commit dbb5ff4c2300 ("simplefb: add
+support for a8b8g8r8 pixel format") from the omap_dss2 tree and commit
+5ef76da644bf ("fbdev: simplefb: add init through platform_data") from the
+tip tree.
 
-These are the same patch except for the return code (and the much more
-comprehensive commit message in the arm-current tree version).  I fixed it =
-up
-(using the arm-current tree version - return -EINVAL instead of -ENOENT - I=
- have
-no way to guess which is right) and can carry the fix as necessary (no
-action is required).
+I fixed it up (I think - see below, please check - I used the latter
+version of the above file) and can carry the fix as necessary (no action
+is required).
 
-P.S. the version in Linus' tree has no Signed-off-by from the author.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__14_Aug_2013_11_18_37_+1000_huD=kGzHHCaJkfm5
+diff --git a/include/linux/platform_data/simplefb.h b/include/linux/platfor=
+m_data/simplefb.h
+index 53774b0..c395d4c 100644
+--- a/include/linux/platform_data/simplefb.h
++++ b/include/linux/platform_data/simplefb.h
+@@ -27,6 +27,7 @@
+ 	{ "a8r8g8b8", 32, {16, 8}, {8, 8}, {0, 8}, {24, 8}, DRM_FORMAT_ARGB8888 }=
+, \
+ 	{ "x2r10g10b10", 32, {20, 10}, {10, 10}, {0, 10}, {0, 0}, DRM_FORMAT_XRGB=
+2101010 }, \
+ 	{ "a2r10g10b10", 32, {20, 10}, {10, 10}, {0, 10}, {30, 2}, DRM_FORMAT_ARG=
+B2101010 }, \
++	{ "a8b8g8r8", 32, {0, 8}, {8, 8}, {16, 8}, {24, 8}, DRM_FORMAT_ABGR8888 }=
+, \
+ }
+=20
+ /*
+
+--Signature=_Wed__14_Aug_2013_14_31_52_+1000_+ImLovAU8C4nR2Aa
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSCtr1AAoJEECxmPOUX5FEY8wP/RsHZGINzj4bSVGiUL/ao3OY
-Rc0SZvHjms5WsWgQDOC/kk6Cvz9DFKYvTJrwKk1GMum32PfZqSJoQ3bSakYG9pXg
-yLXx3oyn+Su20WHXbuDNAv6AkE7NdCYpy0yZs6PSBoa5PeoSxOTdvvd8HS4/KcXP
-8DP1PdQuzye3hRIKY0zEnhXdX64YyH5l95hX6atbrL2hDpXCMDuP1utPKLsJLhEP
-IKnCwOtv2R92a+dwoho7mH+1fSAlpjGGrixpxCdKBP/Fn9uWo5Q9sa8WqcF85NwU
-Tr+odBZJOmInr6ZCJezPX9hpL/t/c8lmT7dk+3pcu1wBzah00NNC9HZUYIFK/OaF
-5YDRTlq7IuFSeaOiqT61XCI5jiyAo5/ZTDbV8xhBfQEqqtEha5WJuzZxNhpqFsGY
-wXz/I7Xv1U4UMx+BfwywuMaYaqOLia5SO4uPJkbN22oFEVy1AmuXr6Z9k8oQ+qm5
-1kPYTrv3CXqNR76oVx85MyuIS0RjxhyVnY6yH0wIMZc/+mFtWCduZ03z/vdlJTTS
-i4A4gsBttgwUBffe/L170okL9lOGje2w7hsk8XTOc0vPlatuCyQMAZDZUhAzMLbE
-YPNak5lo7ew1Dbo6hDZRkFUWCRJSX35CaaLQxnd/r6Vzm8OMXChnBgD2V1tnTL8Z
-8XzCL7jPRzEA7/gpKUjF
-=B+uc
+iQIcBAEBCAAGBQJSCwg9AAoJEECxmPOUX5FE+44P+gJFrI68rnT1bD7NjXWZ6yub
+q4gS0SMB6535vUY5IjotvfLgrvDjmPQoc/I/0ap1LWjmjahG98TaZD2L7xY5XRqP
+s9r4ZvVDlMTny4GJ4V+q1pn6mUbtF2DXBtIrIQ9+twYi5pzSiyAACc0noadBZHGa
+V/VDNQIUVkp/iILFPcoNFPe6J8c3U1B17+Y0UMG+WFk7LqOcmL4tyNyBKjwgngFg
+BxCgsOzkPR+hdthH0YMK3bZfmIdCRk+FIeGS2oeYIdsNm2SQ/2tW2yc91309dqou
+x2mptrLH+anEXZLlUdy25f55f8agtiXd3/rJQW1Ojl2LlZL9XxzsnGYF2aqt/6zy
+njzFlMXUmUMzrwcAcdP4HLAGuSGv4B9mXBmMnc+KOWi2beAdxLYH4/zRiBoqLThA
+Ji8fDvTbSjGeF4yOPi1Mq1QjIxBYEggy2FLCQZe0kGHwn7nLcoik79/X5JibGNcX
+bAvbanHFVYYN6wNP/edny7cnG0A+fcy7HxbX4aitrxqBvdzXbXn+U8AvANEcEuq2
+shQHaR9AmelBEoQyNmKFudPw9a/79dDYDywpVOy7xkLXknLtvfIyXUKIzLrLCQjR
+b3ziPeBVmfeUvLt1LlRVPW4XfwMXyc9pjPWbd4NREKwB+F6MtXdKPwBYCeaAamPi
+fDX2cCwWVImeqbTm/s/n
+=9pmN
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__14_Aug_2013_11_18_37_+1000_huD=kGzHHCaJkfm5--
+--Signature=_Wed__14_Aug_2013_14_31_52_+1000_+ImLovAU8C4nR2Aa--
