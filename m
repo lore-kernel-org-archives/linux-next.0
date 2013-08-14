@@ -1,205 +1,113 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with the pci tree
-Date: Wed, 14 Aug 2013 16:22:33 +1000
-Message-ID: <20130814162233.9265a6c8feaaabd0b690985c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (slab tree
+ related)
+Date: Wed, 14 Aug 2013 17:53:42 +1000
+Message-ID: <20130814175342.111954e36f405607af3e8eec@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__14_Aug_2013_16_22_33_+1000_IoOe9yTT_JbqAU=M"
+ boundary="Signature=_Wed__14_Aug_2013_17_53_42_+1000_M2OzE3okoiuXlw1G"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58281 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:36176 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752212Ab3HNGWg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Aug 2013 02:22:36 -0400
+	with ESMTP id S1757923Ab3HNHxx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Aug 2013 03:53:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tushar Behera <tushar.behera@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Pekka Enberg <penberg@kernel.org>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__14_Aug_2013_16_22_33_+1000_IoOe9yTT_JbqAU=M
+--Signature=_Wed__14_Aug_2013_17_53_42_+1000_M2OzE3okoiuXlw1G
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mvebu tree got a conflict in
-drivers/pci/host/pci-mvebu.c between commit f48fbf9c7e89 ("PCI: mvebu:
-Convert to use devm_ioremap_resource") from the pci tree and commit
-826727641b2a ("PCI: mvebu: move clock enable before register access")
-from the mvebu tree.
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from include/linux/xattr.h:14:0,
+                 from include/linux/cgroup.h:21,
+                 from include/linux/memcontrol.h:22,
+                 from include/linux/swap.h:8,
+                 from include/linux/suspend.h:4,
+                 from arch/powerpc/kernel/asm-offsets.c:24:
+include/linux/slab.h:587:21: error: redefinition of 'kmalloc_node'
+ static inline void *kmalloc_node(size_t size, gfp_t flags, int node)
+                     ^
+include/linux/slab.h:429:30: note: previous definition of 'kmalloc_node' wa=
+s here
+ static __always_inline void *kmalloc_node(size_t size, gfp_t flags, int no=
+de)
+                              ^
+include/linux/slab.h:592:21: error: redefinition of '__kmalloc_node'
+ static inline void *__kmalloc_node(size_t size, gfp_t flags, int node)
+                     ^
+In file included from include/linux/xattr.h:14:0,
+                 from include/linux/cgroup.h:21,
+                 from include/linux/memcontrol.h:22,
+                 from include/linux/swap.h:8,
+                 from include/linux/suspend.h:4,
+                 from arch/powerpc/kernel/asm-offsets.c:24:
+include/linux/slab.h:302:30: note: previous definition of '__kmalloc_node' =
+was here
+ static __always_inline void *__kmalloc_node(size_t size, gfp_t flags, int =
+node)
+                              ^
+In file included from include/linux/xattr.h:14:0,
+                 from include/linux/cgroup.h:21,
+                 from include/linux/memcontrol.h:22,
+                 from include/linux/swap.h:8,
+                 from include/linux/suspend.h:4,
+                 from arch/powerpc/kernel/asm-offsets.c:24:
+include/linux/slab.h:599:21: error: redefinition of 'kmem_cache_alloc_node'
+ static inline void *kmem_cache_alloc_node(struct kmem_cache *cachep,
+                     ^
+In file included from include/linux/xattr.h:14:0,
+                 from include/linux/cgroup.h:21,
+                 from include/linux/memcontrol.h:22,
+                 from include/linux/swap.h:8,
+                 from include/linux/suspend.h:4,
+                 from arch/powerpc/kernel/asm-offsets.c:24:
+include/linux/slab.h:307:30: note: previous definition of 'kmem_cache_alloc=
+_node' was here
+ static __always_inline void *kmem_cache_alloc_node(struct kmem_cache *s, g=
+fp_t flags, int node)
+                              ^
 
+Probably caused by commit 1a1d0328975f ("mm/sl[aou]b: Move kmalloc_node
+functions to common code") from the slab tree.
+
+This build has CONFIG_NUMA and CONFIG_SLOB undefined.
+
+I have reverted that commit and commits eab6f38ab23c ("mm/sl[aou]b: Move
+kmalloc definitions to slab.h"), c8f12ea82f92 ("sl[aou]b: Remove
+unnecessary #includes") and 8876832d0466 ("slub: remove
+verify_mem_not_deleted()") that followed it.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pci/host/pci-mvebu.c
-index ce1543a,88c6790..0000000
---- a/drivers/pci/host/pci-mvebu.c
-+++ b/drivers/pci/host/pci-mvebu.c
-@@@ -725,12 -741,71 +741,71 @@@ static void __iomem *mvebu_pcie_map_reg
- =20
-  	ret =3D of_address_to_resource(np, 0, &regs);
-  	if (ret)
- -		return NULL;
- +		return ERR_PTR(ret);
- =20
- -	return devm_request_and_ioremap(&pdev->dev, &regs);
- +	return devm_ioremap_resource(&pdev->dev, &regs);
-  }
- =20
-- static int __init mvebu_pcie_probe(struct platform_device *pdev)
-+ #define DT_FLAGS_TO_TYPE(flags)       (((flags) >> 24) & 0x03)
-+ #define    DT_TYPE_IO                 0x1
-+ #define    DT_TYPE_MEM32              0x2
-+ #define DT_CPUADDR_TO_TARGET(cpuaddr) (((cpuaddr) >> 56) & 0xFF)
-+ #define DT_CPUADDR_TO_ATTR(cpuaddr)   (((cpuaddr) >> 48) & 0xFF)
-+=20
-+ static int mvebu_get_tgt_attr(struct device_node *np, int devfn,
-+ 			      unsigned long type, int *tgt, int *attr)
-+ {
-+ 	const int na =3D 3, ns =3D 2;
-+ 	const __be32 *range;
-+ 	int rlen, nranges, rangesz, pna, i;
-+=20
-+ 	range =3D of_get_property(np, "ranges", &rlen);
-+ 	if (!range)
-+ 		return -EINVAL;
-+=20
-+ 	pna =3D of_n_addr_cells(np);
-+ 	rangesz =3D pna + na + ns;
-+ 	nranges =3D rlen / sizeof(__be32) / rangesz;
-+=20
-+ 	for (i =3D 0; i < nranges; i++) {
-+ 		u32 flags =3D of_read_number(range, 1);
-+ 		u32 slot =3D of_read_number(range, 2);
-+ 		u64 cpuaddr =3D of_read_number(range + na, pna);
-+ 		unsigned long rtype;
-+=20
-+ 		if (DT_FLAGS_TO_TYPE(flags) =3D=3D DT_TYPE_IO)
-+ 			rtype =3D IORESOURCE_IO;
-+ 		else if (DT_FLAGS_TO_TYPE(flags) =3D=3D DT_TYPE_MEM32)
-+ 			rtype =3D IORESOURCE_MEM;
-+=20
-+ 		if (slot =3D=3D PCI_SLOT(devfn) && type =3D=3D rtype) {
-+ 			*tgt =3D DT_CPUADDR_TO_TARGET(cpuaddr);
-+ 			*attr =3D DT_CPUADDR_TO_ATTR(cpuaddr);
-+ 			return 0;
-+ 		}
-+=20
-+ 		range +=3D rangesz;
-+ 	}
-+=20
-+ 	return -ENOENT;
-+ }
-+=20
-+ static void mvebu_pcie_msi_enable(struct mvebu_pcie *pcie)
-+ {
-+ 	struct device_node *msi_node;
-+=20
-+ 	msi_node =3D of_parse_phandle(pcie->pdev->dev.of_node,
-+ 				    "msi-parent", 0);
-+ 	if (!msi_node)
-+ 		return;
-+=20
-+ 	pcie->msi =3D of_pci_find_msi_chip_by_node(msi_node);
-+=20
-+ 	if (pcie->msi)
-+ 		pcie->msi->dev =3D &pcie->pdev->dev;
-+ }
-+=20
-+ static int mvebu_pcie_probe(struct platform_device *pdev)
-  {
-  	struct mvebu_pcie *pcie;
-  	struct device_node *np =3D pdev->dev.of_node;
-@@@ -816,11 -888,62 +888,63 @@@
-  		if (port->devfn < 0)
-  			continue;
- =20
-+ 		ret =3D mvebu_get_tgt_attr(np, port->devfn, IORESOURCE_MEM,
-+ 					 &port->mem_target, &port->mem_attr);
-+ 		if (ret < 0) {
-+ 			dev_err(&pdev->dev, "PCIe%d.%d: cannot get tgt/attr for mem window\n",
-+ 				port->port, port->lane);
-+ 			continue;
-+ 		}
-+=20
-+ 		ret =3D mvebu_get_tgt_attr(np, port->devfn, IORESOURCE_IO,
-+ 					 &port->io_target, &port->io_attr);
-+ 		if (ret < 0) {
-+ 			dev_err(&pdev->dev, "PCIe%d.%d: cannot get tgt/attr for io window\n",
-+ 				port->port, port->lane);
-+ 			continue;
-+ 		}
-+=20
-+ 		port->reset_gpio =3D of_get_named_gpio_flags(child,
-+ 						   "reset-gpios", 0, &flags);
-+ 		if (gpio_is_valid(port->reset_gpio)) {
-+ 			u32 reset_udelay =3D 20000;
-+=20
-+ 			port->reset_active_low =3D flags & OF_GPIO_ACTIVE_LOW;
-+ 			port->reset_name =3D kasprintf(GFP_KERNEL,
-+ 				     "pcie%d.%d-reset", port->port, port->lane);
-+ 			of_property_read_u32(child, "reset-delay-us",
-+ 					     &reset_udelay);
-+=20
-+ 			ret =3D devm_gpio_request_one(&pdev->dev,
-+ 			    port->reset_gpio, GPIOF_DIR_OUT, port->reset_name);
-+ 			if (ret) {
-+ 				if (ret =3D=3D -EPROBE_DEFER)
-+ 					return ret;
-+ 				continue;
-+ 			}
-+=20
-+ 			gpio_set_value(port->reset_gpio,
-+ 				       (port->reset_active_low) ? 1 : 0);
-+ 			udelay(reset_udelay);
-+ 		}
-+=20
-+ 		port->clk =3D of_clk_get_by_name(child, NULL);
-+ 		if (IS_ERR(port->clk)) {
-+ 			dev_err(&pdev->dev, "PCIe%d.%d: cannot get clock\n",
-+ 			       port->port, port->lane);
-+ 			continue;
-+ 		}
-+=20
-+ 		ret =3D clk_prepare_enable(port->clk);
-+ 		if (ret)
-+ 			continue;
-+=20
-  		port->base =3D mvebu_pcie_map_registers(pdev, child, port);
- -		if (!port->base) {
- +		if (IS_ERR(port->base)) {
-  			dev_err(&pdev->dev, "PCIe%d.%d: cannot map registers\n",
-  				port->port, port->lane);
-+ 			clk_disable_unprepare(port->clk);
- +			port->base =3D NULL;
-  			continue;
-  		}
- =20
-
---Signature=_Wed__14_Aug_2013_16_22_33_+1000_IoOe9yTT_JbqAU=M
+--Signature=_Wed__14_Aug_2013_17_53_42_+1000_M2OzE3okoiuXlw1G
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSCyIpAAoJEECxmPOUX5FEf0EP/1f3/4akMyJPyqh3m0lLJyI5
-3P6Y1WlwQgdVX1wPwW3GnxgHyWQZ9LIxPxPIGerxJw9G5ouluUbixwlfefvswo5Z
-oFTej8EqQgDn2g0/0WxJNtawpdh5oPSyScXJ74N4wl5Gs079Q1g8Lle2KpOpyYgK
-t8Scn1jDcL8qMlNU9cVWPmTmI5l2p8WWQMnyKwH59u0h7+ofeq5QNnkMx73zsMVI
-Og5LfvBTyPB03HHMUr5ilyxm+SQZctEu34n7Pt2cH+Zw/Bvocd3UqT3MRaLGuZeY
-Rk7y3F4psBdr6X8vgl/XrkYh/nhamU/fwJ4AXv3pTJdtOEnA40alKrOltqXdScmd
-3KJTwO//sKlh6jXqyWPgTIrBpz0YmHEF+VzuhM9AbYtrL1JlEh7qkFucF+nPPa5K
-LufmpACqTNZt8uCoIkRyx3uXlsCpNRFSp/5E1QkEP3dVNDP9xZnqb29yXWW9eQ5C
-L1Cuyh4frfpBaav7bUL1n7RY0eoAlooWLMR/CtRBQ4RGVuuxM7VPlXzcTnZX7zio
-f1lq/80ZISs2CRVzN2QrjDjALwlN8y0rNcuVWp4iTKtjdXN4NTOW+GdRRjWiIBQC
-2CcvEb78uxmz955KKdVAyckzIRShnr+kuT/+FBD+GNYxLiq5wKHBC+WVyrz0AsMl
-o49OrvP4yOHPY5IMOK5k
-=NJ7v
+iQIcBAEBCAAGBQJSCzeLAAoJEECxmPOUX5FEWXkP/RWoY8djJ2YUiTZBdsWWasGH
+szlZNQnrWhy75IVVvJA58MUtugvxSzAMy109+UZKonUAgDXY1Z5nG4oqN+VBT2XD
+FE1rDIEa0gkGVqO/hLjXpfKow+Qtqn8fy8YZuAHVqeabplnUMUjR4YJEMwdvYWxK
+qBoxhZVdCPHaLiypRSJETXtR5Ud2IK7+ivVWIlHdwsCVGOlRH4F2SRQ0cw6EwCTf
+64BG4X/XgrmdUI5qaDQHOU5bIZCtM2U/OtMhRLxU6+EwGlPQ8kyV3BbS3kSTOMXt
+EVngiYweQ1ZKOMmaTiNU8g8DxNTNaSS3klBnJBDHhw3yXky/PDdGgMul2zmH9mSR
+t9HA4iAxaJ+EJ4gY1vMOhrcgX8BpVmeyOgsUM6bl/cLuThxYQY1/Rhh+XvsnCmZU
+M5c58f9qgSJ6CNcEDK0MRlOfi2/ZzTalEtZ5b/btYRQIHazsWA6sew6HkdBo4pTp
+LVRre2lO/3h/Osk3R2zsJPWt5iiR/27Yw+NuDPoKNS719bUcMK52AIYGgmP/158i
+dOy6ouc8MPm4mEn/jiBBclTgHepNMCs3vPjfQM18sti5RbKHzpcd3EQA4jVYaHpd
+nisJxMce6CBEeJxXj48MX/1sIpwq9mFd1s+TIWyJZKpJZVFBvpJ08uoXaF8+SzaB
+GMxE7knb3BgAp4kmkusP
+=nEqg
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__14_Aug_2013_16_22_33_+1000_IoOe9yTT_JbqAU=M--
+--Signature=_Wed__14_Aug_2013_17_53_42_+1000_M2OzE3okoiuXlw1G--
