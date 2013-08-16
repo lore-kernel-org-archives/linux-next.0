@@ -1,55 +1,47 @@
 From: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
-Subject: [PATCH] usb: phy: am335x-control: make it compile with
-Date: Fri, 16 Aug 2013 17:32:49 +0200
-Message-ID: <20130816153249.GA3570@breakpoint.cc>
+Subject: [PATCH] dma: cpp41: make it compile with CONFIG_BUG=n
+Date: Fri, 16 Aug 2013 17:40:55 +0200
+Message-ID: <20130816154055.GB3570@breakpoint.cc>
 References: <20130815165829.6a401f104ee2a98dd48bcb58@canb.auug.org.au>
  <520D0AD7.6050002@infradead.org>
  <520E0304.5050906@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from Chamillionaire.breakpoint.cc ([80.244.247.6]:33562 "EHLO
+Received: from Chamillionaire.breakpoint.cc ([80.244.247.6]:33589 "EHLO
 	Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753901Ab3HPPdS (ORCPT
+	by vger.kernel.org with ESMTP id S1753239Ab3HPPlN (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 16 Aug 2013 11:33:18 -0400
+	Fri, 16 Aug 2013 11:41:13 -0400
 Content-Disposition: inline
 In-Reply-To: <520E0304.5050906@ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Felipe Balbi <balbi@ti.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Roger Quadros <rogerq@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Roger Quadros <rogerq@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>
 
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Randy reported this
-|drivers/usb/phy/phy-am335x-control.c:45:3: error: implicit declaration
-|of function '__WARN' [-Werror=implicit-function-declaration]
+Before Randy figures out that this does not compile with CONFIG_BUG=n
+here is a fix for it.
 
-and left it as an excercice to figure out that this happens only with
-CONFIG_BUG=n. As a fix I replace it with WARN_ON(). And there is a space
-before return so fix this, too.
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/usb/phy/phy-am335x-control.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/cppi41.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/phy/phy-am335x-control.c b/drivers/usb/phy/phy-am335x-control.c
-index 7597545..22cf07d 100644
---- a/drivers/usb/phy/phy-am335x-control.c
-+++ b/drivers/usb/phy/phy-am335x-control.c
-@@ -42,8 +42,8 @@ static void am335x_phy_power(struct phy_control *phy_ctrl, u32 id, bool on)
- 		reg = AM335X_USB1_CTRL;
- 		break;
- 	default:
--		__WARN();
--		 return;
-+		WARN_ON(1);
-+		return;
- 	}
- 
- 	val = readl(usb_ctrl->phy_reg + reg);
+diff --git a/drivers/dma/cppi41.c b/drivers/dma/cppi41.c
+index 5dcebca..e696178 100644
+--- a/drivers/dma/cppi41.c
++++ b/drivers/dma/cppi41.c
+@@ -579,7 +579,7 @@ static int cppi41_tear_down_chan(struct cppi41_channel *c)
+ 				WARN_ON(!c->is_tx && !(pd0 & TD_DESC_IS_RX));
+ 				WARN_ON((pd0 & 0x1f) != c->port_num);
+ 			} else {
+-				__WARN();
++				WARN_ON_ONCE(1);
+ 			}
+ 			c->td_seen = 1;
+ 		}
 -- 
 1.8.4.rc2
