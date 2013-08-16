@@ -1,58 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
- (akpm-current tree related)
-Date: Fri, 16 Aug 2013 17:16:52 +1000
-Message-ID: <20130816171652.18da175d7d411677beab7fde@canb.auug.org.au>
+Subject: Re: [PATCH next] fix unused variable compiler warning
+Date: Fri, 16 Aug 2013 17:19:32 +1000
+Message-ID: <20130816171932.1906a8be5caa7f89756b3c06@canb.auug.org.au>
+References: <1376635714.2642.6.camel@ThinkPad-T5421>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__16_Aug_2013_17_16_52_+1000_g2.ZLZoMnZ5Edm7Z"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
+ boundary="Signature=_Fri__16_Aug_2013_17_19_32_+1000_=/MrA5047P17eVT+"
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <1376635714.2642.6.camel@ThinkPad-T5421>
+Sender: linux-ext4-owner@vger.kernel.org
+To: lizhongfs@gmail.com
+Cc: linux-next list <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__16_Aug_2013_17_16_52_+1000_g2.ZLZoMnZ5Edm7Z
+--Signature=_Fri__16_Aug_2013_17_19_32_+1000_=/MrA5047P17eVT+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi,
 
-After merging the final tree, today's linux-next build (arm defconfig)
-failed like this:
+You should probably have cc'd the ext4 maintainers (cc'd).
 
-arch/arm/kernel/built-in.o: In function `parse_tag_ramdisk':
-io.c:(.init.text+0xc4c): undefined reference to `rd_size'
+On Fri, 16 Aug 2013 14:48:34 +0800 Li Zhong <lizhongfs@gmail.com> wrote:
+>
+> fs/ext4/extents_status.c:950:6: warning: unused variable
+> 'ret' [-Wunused-variable]
+>=20
+> Signed-off-by: Li Zhong <lizhongfs@gmail.com>
+> ---
+>  fs/ext4/extents_status.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
+> index dc709e1..6708257 100644
+> --- a/fs/ext4/extents_status.c
+> +++ b/fs/ext4/extents_status.c
+> @@ -947,7 +947,7 @@ static int __ext4_es_shrink(struct ext4_sb_info *sbi,=
+ int nr_to_scan,
+>  	struct ext4_inode_info *ei;
+>  	struct list_head *cur, *tmp;
+>  	LIST_HEAD(skipped);
+> -	int ret, nr_shrunk =3D 0;
+> +	int nr_shrunk =3D 0;
+>  	int retried =3D 0, skip_precached =3D 1, nr_skipped =3D 0;
+> =20
+>  	spin_lock(&sbi->s_es_lru_lock);
+>=20
 
-Caused by commit bf27a0131289 ("drivers/block/brd.c: make 'rd_size'
-static") from the akpm-current tree.
-
-I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__16_Aug_2013_17_16_52_+1000_g2.ZLZoMnZ5Edm7Z
+--Signature=_Fri__16_Aug_2013_17_19_32_+1000_=/MrA5047P17eVT+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSDdHkAAoJEECxmPOUX5FEqr4P/3l913zog4gYrJC3MdjYTknC
-IoHTmK1krW9CN+ZF989PQm/8q42UxjfJ4IjerlH7PJxGFyiPBJaawSWixHbQDidF
-/x8DqqQzo57DJ1fMj6e1Cp/MZ4J/g8OBXBibKKfAABPEqnXSBDyLoa3TRNUyHjNY
-49zOCWhBoDWxtYrGgwJXCFjKRbUxjheFL3Kbx+EbSbQan0u213SxHW8QPcvgP4RE
-s1NP1+2QaAyKddY4+ZW1NKdowkhS7dCRsegkb54mn6M7+3bD3VXtE5wt8lJFUgdV
-LV00zWZrIrsyxj/xc2I2NWZNWgZox2/SC2ZJ8Ruu8cbHlaANNIuMsAeX/S58H1ar
-aWnclsFyAaA24KTp65RT7vU9fEwnE2xDvPe+o+m+/E/847cMuGaviRbhWfycIXdo
-S+v56/XWzxSWY6i5hsuDb8wsQS1j3wwKUM2QZX0NMV6+ddIWxJmi7CDtGwbm1osB
-lsuVLxiJhVqn64LIOPKBfRUopYKTOa8anp/l+WCf43UHSjB4XvQhhmCtv0uADYJC
-veGDdrsGoeARwVHhj9RbE6KTzd0/0CRa2W029NVHAUH0VaII2TKB1JeT0PfLi24R
-PRUbec8I05AdKajxia1I7fSryibFMlf6vy7UuFiRmx1YUNSHer3nd0rty9gM+b6h
-yn7h0dL8uBk+Ddik/Ff7
-=JaLs
+iQIcBAEBCAAGBQJSDdKEAAoJEECxmPOUX5FEz6sQAIHF4w4EUN715tV+HiC6fVzc
+CG8QJ6Ziz9+vFHqJWQud5sxDQz2K2WmnhuEg9MKoL4X/VDIjJB7XkPR4unbYFch9
+pOofCFTRzLr8OqHkXbKdrXpvTaMrlwfKMDwtsEGQcWJ6rhlsLobdGMxIIqub1fQV
+w274YYzsNhP84v4c3Xf7crKyjD8bta585U/5E69lY9z9z9XJOO0t1z608mDEy6KH
+PY5Fbuab0WBPeDP2xmLYkPL9tOzNIbVy+Y2xgwdLkd51889Zsf/eZghJ7QJ1snod
+DUAzY2W3ajoQbGIh7HR6GEu+MwcGOuzORGOCO3GK9XVAEQ7UqcsIx2MpSGPqDLrl
+wjAHlbvCl098ibK3lkawVPyms4I5pBLuJbmI57k3h2ocup6zZY8r5usKZcklrtgk
+mz2Ji/9FzjZ58qvD8/12AD9Qxa9EyGp7lGgLPRMH0UaGe1koTdXYjcYgRdioXIwY
+vAmCtHZZKRlW2M0Zpxi3JJxIUDYUVhdXqJe28QmRK547IN46zcbbUveNmMN+BPSI
+SJyr/C4oU839DGCMbUAqkTZ+Ds87UHhJigLrct5tQ2L4a3hukbQVBf+EtpLxW25k
+SmHDmZyT1utpQCK4xEPDEMSztKdY/wpa/bbLNfxA6QFFzzTc+gTiu+manfza6F6W
+qeHokcnpyqLVHfHuC6D8
+=oVwv
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__16_Aug_2013_17_16_52_+1000_g2.ZLZoMnZ5Edm7Z--
+--Signature=_Fri__16_Aug_2013_17_19_32_+1000_=/MrA5047P17eVT+--
