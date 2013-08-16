@@ -1,42 +1,33 @@
-From: Li Zefan <lizefan@huawei.com>
-Subject: Re: [RFC PATCH next]cgroup: use css_get() in cgroup_create() to check
- CSS_ROOT
-Date: Fri, 16 Aug 2013 18:16:18 +0800
-Message-ID: <520DFBF2.5050903@huawei.com>
-References: <1376647034.2642.22.camel@ThinkPad-T5421>
+From: Roger Quadros <rogerq@ti.com>
+Subject: Re: linux-next: Tree for Aug 15 (usb/phy/phy-am335x-control.c)
+Date: Fri, 16 Aug 2013 13:46:28 +0300
+Message-ID: <520E0304.5050906@ti.com>
+References: <20130815165829.6a401f104ee2a98dd48bcb58@canb.auug.org.au> <520D0AD7.6050002@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([119.145.14.64]:56019 "EHLO
-	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752257Ab3HPKQW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Aug 2013 06:16:22 -0400
-In-Reply-To: <1376647034.2642.22.camel@ThinkPad-T5421>
+Received: from comal.ext.ti.com ([198.47.26.152]:49921 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752555Ab3HPKrE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 16 Aug 2013 06:47:04 -0400
+In-Reply-To: <520D0AD7.6050002@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Li Zhong <zhong@linux.vnet.ibm.com>
-Cc: linux-next list <linux-next@vger.kernel.org>, Tejun Heo <tj@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-On 2013/8/16 17:57, Li Zhong wrote:
-> It seems that the root css doesn't have refcnt allocated(not needed?),
-> and would cause the booting error attached.
++Sebastian,
+
+On 08/15/2013 08:07 PM, Randy Dunlap wrote:
+> On 08/14/13 23:58, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20130814:
+>>
 > 
-> This patch tries to use css_get() to not increase the refcnt if parent
-> is root.
-...
-> diff --git a/kernel/cgroup.c b/kernel/cgroup.c
-> index 723194f..781f8cd 100644
-> --- a/kernel/cgroup.c
-> +++ b/kernel/cgroup.c
-> @@ -4485,7 +4485,7 @@ static long cgroup_create(struct cgroup *parent, struct dentry *dentry,
->  		struct cgroup_subsys_state *css = css_ar[ss->subsys_id];
->  
->  		dget(dentry);
-> -		percpu_ref_get(&css->parent->refcnt);
-> +		css_get(css->parent);
-
-We use css_put() to drop this refcnt, so it makes sense to use css_get()
-for consistency.
-
-Acked-by: Li Zefan <lizefan@huawei.com>
+> on i386 and x86_64:
+> 
+> drivers/usb/phy/phy-am335x-control.c:45:3: error: implicit declaration of function '__WARN' [-Werror=implicit-function-declaration]
+> 
+> 
