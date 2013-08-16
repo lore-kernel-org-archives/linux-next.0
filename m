@@ -1,32 +1,55 @@
-From: David Teigland <teigland@redhat.com>
-Subject: Re: linux-next: manual merge of the dlm tree with Linus' tree
-Date: Fri, 16 Aug 2013 11:04:41 -0400
-Message-ID: <20130816150441.GA20568@redhat.com>
-References: <20130816114050.5f4bf4b21f1bde305235ac42@canb.auug.org.au>
+From: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Subject: [PATCH] usb: phy: am335x-control: make it compile with
+Date: Fri, 16 Aug 2013 17:32:49 +0200
+Message-ID: <20130816153249.GA3570@breakpoint.cc>
+References: <20130815165829.6a401f104ee2a98dd48bcb58@canb.auug.org.au>
+ <520D0AD7.6050002@infradead.org>
+ <520E0304.5050906@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:64462 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752952Ab3HPPEx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 16 Aug 2013 11:04:53 -0400
+Received: from Chamillionaire.breakpoint.cc ([80.244.247.6]:33562 "EHLO
+	Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753901Ab3HPPdS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 16 Aug 2013 11:33:18 -0400
 Content-Disposition: inline
-In-Reply-To: <20130816114050.5f4bf4b21f1bde305235ac42@canb.auug.org.au>
+In-Reply-To: <520E0304.5050906@ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+To: Felipe Balbi <balbi@ti.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Roger Quadros <rogerq@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-On Fri, Aug 16, 2013 at 11:40:50AM +1000, Stephen Rothwell wrote:
-> Hi David,
-> 
-> Today's linux-next merge of the dlm tree got a conflict in fs/dlm/user.c
-> between commit 201d3dfa4da1 ("dlm: kill the unnecessary and wrong
-> device_close()->recalc_sigpending()") from Linus' tree and commit
-> c6ca7bc91d51 ("dlm: remove signal blocking") from the dlm tree.
-> 
-> I fixed it up (the latter is a superset of the former, so I just used it)
-> and can carry the fix as necessary (no action is required).
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Thanks, what's the procedure to get the right thing merged in the end?
-Apply Oleg's patch to my tree followed by my own?
+Randy reported this
+|drivers/usb/phy/phy-am335x-control.c:45:3: error: implicit declaration
+|of function '__WARN' [-Werror=implicit-function-declaration]
+
+and left it as an excercice to figure out that this happens only with
+CONFIG_BUG=n. As a fix I replace it with WARN_ON(). And there is a space
+before return so fix this, too.
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ drivers/usb/phy/phy-am335x-control.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/phy/phy-am335x-control.c b/drivers/usb/phy/phy-am335x-control.c
+index 7597545..22cf07d 100644
+--- a/drivers/usb/phy/phy-am335x-control.c
++++ b/drivers/usb/phy/phy-am335x-control.c
+@@ -42,8 +42,8 @@ static void am335x_phy_power(struct phy_control *phy_ctrl, u32 id, bool on)
+ 		reg = AM335X_USB1_CTRL;
+ 		break;
+ 	default:
+-		__WARN();
+-		 return;
++		WARN_ON(1);
++		return;
+ 	}
+ 
+ 	val = readl(usb_ctrl->phy_reg + reg);
+-- 
+1.8.4.rc2
