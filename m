@@ -1,83 +1,47 @@
-From: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Subject: Re: linux-next: build failure after merge of the ext4 tree
-Date: Fri, 16 Aug 2013 20:02:40 +0200
-Message-ID: <20130816180240.GA2715@free.fr>
-References: <20130807153840.4f2997b603397c07aca98b2d@canb.auug.org.au>
- <87zjsted0c.fsf@linaro.org>
- <20130808102228.d2034d3a4c986d2970926ab9@canb.auug.org.au>
- <20130808103614.a039da2f236154b52329b28b@canb.auug.org.au>
- <20130808191650.GB3282@free.fr>
- <20130808215449.GD3282@free.fr>
- <20130809114248.GA5691@merkur.ravnborg.org>
- <20130811213923.GA5312@free.fr>
- <520E24CE.9040604@suse.cz>
- <20130816171448.GA13841@merkur.ravnborg.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Aug 16 (lustre)
+Date: Fri, 16 Aug 2013 13:33:02 -0700
+Message-ID: <520E8C7E.90802@infradead.org>
+References: <20130816171634.8cb22a8f67d6dce8669d9899@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130816171448.GA13841@merkur.ravnborg.org>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Michal Marek <mmarek@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>, Kevin Hilman <khilman@linaro.org>, sedat.dilek@gmail.com, Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux kbuild ML <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20130816171634.8cb22a8f67d6dce8669d9899@canb.auug.org.au>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Peng Tao <tao.peng@emc.com>, linux-next@vger.kernel.org, hpdd-discuss <hpdd-discuss@ml01.01.org>
 List-Id: linux-next.vger.kernel.org
 
-Sam, Michal, All,
+On 08/16/13 00:16, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20130815:
+> 
 
-On 2013-08-16 19:14 +0200, Sam Ravnborg spake thusly:
-> On Fri, Aug 16, 2013 at 03:10:38PM +0200, Michal Marek wrote:
-> > On 11.8.2013 23:39, Yann E. MORIN wrote:
-> > > On 2013-08-09 13:42 +0200, Sam Ravnborg spake thusly:
-> > >> If we drop the special handling of "MODULES" and introduced
-> > >> the following in we may fix it - hopefully:
-> > >>
-> > >> config MODULES
-> > >> 	option modules
-> > >>
-> > >> The option handling is already in place. It is even documented :-)
-> > > 
-> > > Yes, indeed, that one is pretty easy! :-)
-> > > 
-> > >> At least we could then drop the sym_lookup here (zconf.y):
-> > >>         if (!modules_sym->prop) {
-> > >>                 struct property *prop;
-> > >>
-> > >>                 prop = prop_alloc(P_DEFAULT, modules_sym);
-> > >>                 prop->expr = expr_alloc_symbol(sym_lookup("MODULES", 0));
-> > >>         }
-> > >> Without the sym_lookup I think the symbol will not be defined and tus not marked valid.
-> > > 
-> > > Sorry, I don't understand what we should do here.
-> > > 
-> > > From what I understand, here's what happens:
-> > >   - there's no symbol that declared the 'modules' option, so the
-> > >     modules_sym->prop is NULL;
-> > >   - so we look for the symbol 'MODULES' and use that as the symbol used
-> > >     to evaluate if tristates are enabled.
-> > > 
-> > > So, now we have 'option modules' added to MODULES, we never enter this
-> > > if() condition.
-> > > 
-> > > But what would happen to other projects that do not have a symbol set
-> > > with 'option modules' and no 'MODULES' symbol? Surely, those projects do
-> > > not need tristates, but what should the code do in this case?
-> > > 
-> > > So, I don't know what to replace this 'sym_lookup("MODULES", 0)' with.
-> > 
-> > If the Kconfig files do not provide any symbol with 'option modules',
-> > then set modules_sym to a dummy bool with the value 'n'?
-> This is my thinking too - to use the symbol "n".
-> But I wanted to try it out - but so far have not had time for it.
+lustre needs to depend on PROC_FS or provide stub functions for when
+CONFIG_PROC_FS is not enabled, otherwise there are build errors and
+warnings:
 
-OK, I'll tackle this. Thanks for the info. :-)
 
-Regards,
-Yann E. MORIN.
+drivers/staging/lustre/lustre/lmv/lproc_lmv.c: In function 'lprocfs_lmv_init_vars':
+drivers/staging/lustre/lustre/lmv/lproc_lmv.c:232:26: error: 'lprocfs_lmv_module_vars' undeclared (first use in this function)
+drivers/staging/lustre/lustre/lmv/lproc_lmv.c:232:26: note: each undeclared identifier is reported only once for each function it appears in
+drivers/staging/lustre/lustre/lmv/lproc_lmv.c:233:26: error: 'lprocfs_lmv_obd_vars' undeclared (first use in this function)
+drivers/staging/lustre/lustre/lmv/lproc_lmv.c: At top level:
+drivers/staging/lustre/lustre/lmv/lproc_lmv.c:45:28: warning: 'lprocfs_module_vars' defined but not used [-Wunused-variable]
+drivers/staging/lustre/lustre/lmv/lproc_lmv.c:46:28: warning: 'lprocfs_obd_vars' defined but not used [-Wunused-variable]
+
+
+
 
 -- 
-.-----------------.--------------------.------------------.--------------------.
-|  Yann E. MORIN  | Real-Time Embedded | /"\ ASCII RIBBON | Erics' conspiracy: |
-| +33 662 376 056 | Software  Designer | \ / CAMPAIGN     |  ___               |
-| +33 223 225 172 `------------.-------:  X  AGAINST      |  \e/  There is no  |
-| http://ymorin.is-a-geek.org/ | _/*\_ | / \ HTML MAIL    |   v   conspiracy.  |
-'------------------------------^-------^------------------^--------------------'
+~Randy
