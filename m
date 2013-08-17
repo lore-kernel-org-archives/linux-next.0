@@ -1,47 +1,74 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Aug 16 (lustre)
-Date: Fri, 16 Aug 2013 13:33:02 -0700
-Message-ID: <520E8C7E.90802@infradead.org>
-References: <20130816171634.8cb22a8f67d6dce8669d9899@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the dlm tree with Linus' tree
+Date: Sat, 17 Aug 2013 20:27:34 +1000
+Message-ID: <20130817102734.GA12640@rothwell.emu.id.au>
+References: <20130816114050.5f4bf4b21f1bde305235ac42@canb.auug.org.au>
+ <20130816150441.GA20568@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20130816171634.8cb22a8f67d6dce8669d9899@canb.auug.org.au>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Peng Tao <tao.peng@emc.com>, linux-next@vger.kernel.org, hpdd-discuss <hpdd-discuss@ml01.01.org>
-List-Id: linux-next.vger.kernel.org
-
-On 08/16/13 00:16, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20130815:
-> 
-
-lustre needs to depend on PROC_FS or provide stub functions for when
-CONFIG_PROC_FS is not enabled, otherwise there are build errors and
-warnings:
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56206 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752596Ab3HQK1k (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Aug 2013 06:27:40 -0400
+Content-Disposition: inline
+In-Reply-To: <20130816150441.GA20568@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Teigland <teigland@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
 
 
-drivers/staging/lustre/lustre/lmv/lproc_lmv.c: In function 'lprocfs_lmv_init_vars':
-drivers/staging/lustre/lustre/lmv/lproc_lmv.c:232:26: error: 'lprocfs_lmv_module_vars' undeclared (first use in this function)
-drivers/staging/lustre/lustre/lmv/lproc_lmv.c:232:26: note: each undeclared identifier is reported only once for each function it appears in
-drivers/staging/lustre/lustre/lmv/lproc_lmv.c:233:26: error: 'lprocfs_lmv_obd_vars' undeclared (first use in this function)
-drivers/staging/lustre/lustre/lmv/lproc_lmv.c: At top level:
-drivers/staging/lustre/lustre/lmv/lproc_lmv.c:45:28: warning: 'lprocfs_module_vars' defined but not used [-Wunused-variable]
-drivers/staging/lustre/lustre/lmv/lproc_lmv.c:46:28: warning: 'lprocfs_obd_vars' defined but not used [-Wunused-variable]
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi David,
 
+On Fri, Aug 16, 2013 at 11:04:41AM -0400, David Teigland wrote:
+> On Fri, Aug 16, 2013 at 11:40:50AM +1000, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next merge of the dlm tree got a conflict in fs/dlm/user.c
+> > between commit 201d3dfa4da1 ("dlm: kill the unnecessary and wrong
+> > device_close()->recalc_sigpending()") from Linus' tree and commit
+> > c6ca7bc91d51 ("dlm: remove signal blocking") from the dlm tree.
+> >=20
+> > I fixed it up (the latter is a superset of the former, so I just used i=
+t)
+> > and can carry the fix as necessary (no action is required).
+>=20
+> Thanks, what's the procedure to get the right thing merged in the end?
+> Apply Oleg's patch to my tree followed by my own?
 
+Just leave it alone, Linus will do what I did when he merges the dlm
+tree during the next merge window (or whenever he is asked to merge it).
 
--- 
-~Randy
+--=20
+Cheers,
+Stephen Rothwell
+
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.14 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSD1AVAAoJEECxmPOUX5FEw74P/0jenVaWFFxXsTo4oKeBGeXs
++NC6JshPMgWqgDB+1NLUjeQwvk4CiXEcSZrqihq7PpFfsQALtYchK0skGyNY3nPp
+HQMUWhonUWwmpZsvUrzC9hYty8LWquWRw6PLF1lHVfrHBgtxhi4r68PFD9bOia5Z
+viIUaYGnMI6A623Q9fVrcotOfpT2R2PlENbKZv+BXOfQHWZKN4DTaN4tbBei0Daz
+yjhk8fAqQv/LGQ14hNh8EkW063UHIosyFJePB4AhhrQtB9sRTQE1RHLxDxdKemGM
+5hT5oKrj9qeoJp02eFRnFmo5VtUGyHAyq+EVL7nnTki0+ouT5mpPzYpvcTSU1vrZ
+XKyzKLCdEXoA6PLJUYfSY3xomfokokzugd3vvS/kU1msb6KJ/qmzPStjiZuT7cj0
+DqlkUAZre5f2PqtqRakSBc4vQ6rVfA7PMyb1zCxMkGh0SZ+6zTf11ScqyioTeodz
+7jjDT2dvzzujvKilHZ93A4rlOlcJfgeL9NsRpw2wz2673cXPlBLgt/gVkg7HYXyZ
+i/Wm+DEj+7W2GU3m0RSXYIu8BQE3pqxVDQntOvkOlRvc58QFzvOF+VFDt6pwq2lW
+sFBHdpj2MbaFI6qvU42V8jCNit/JjVGc2/X9AEJc3ajIpZjwheC4m8LULizcYMvv
+a0a15wfpEZdFbaAmDUn9
+=3aA3
+-----END PGP SIGNATURE-----
+
+--PNTmBPCT7hxwcZjr--
