@@ -1,74 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the dlm tree with Linus' tree
-Date: Sat, 17 Aug 2013 20:27:34 +1000
-Message-ID: <20130817102734.GA12640@rothwell.emu.id.au>
-References: <20130816114050.5f4bf4b21f1bde305235ac42@canb.auug.org.au>
- <20130816150441.GA20568@redhat.com>
+Subject: linux-next: build failure after merge of the libata tree
+Date: Mon, 19 Aug 2013 11:54:01 +1000
+Message-ID: <20130819115401.1f3ce4c2479645d72fb5cb00@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__19_Aug_2013_11_54_01_+1000_KorYN.xCxdaoY1YO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56206 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:59939 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752596Ab3HQK1k (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Aug 2013 06:27:40 -0400
-Content-Disposition: inline
-In-Reply-To: <20130816150441.GA20568@redhat.com>
+	with ESMTP id S1751601Ab3HSByL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Aug 2013 21:54:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Teigland <teigland@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Terry Suereth <terry.suereth@gmail.com>, stable@vger.kernel.org
 
-
---PNTmBPCT7hxwcZjr
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Mon__19_Aug_2013_11_54_01_+1000_KorYN.xCxdaoY1YO
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+Hi Tejun,
 
-On Fri, Aug 16, 2013 at 11:04:41AM -0400, David Teigland wrote:
-> On Fri, Aug 16, 2013 at 11:40:50AM +1000, Stephen Rothwell wrote:
-> >=20
-> > Today's linux-next merge of the dlm tree got a conflict in fs/dlm/user.c
-> > between commit 201d3dfa4da1 ("dlm: kill the unnecessary and wrong
-> > device_close()->recalc_sigpending()") from Linus' tree and commit
-> > c6ca7bc91d51 ("dlm: remove signal blocking") from the dlm tree.
-> >=20
-> > I fixed it up (the latter is a superset of the former, so I just used i=
-t)
-> > and can carry the fix as necessary (no action is required).
->=20
-> Thanks, what's the procedure to get the right thing merged in the end?
-> Apply Oleg's patch to my tree followed by my own?
+After merging the libata tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Just leave it alone, Linus will do what I did when he merges the dlm
-tree during the next merge window (or whenever he is asked to merge it).
+drivers/ata/libata-pmp.c: In function 'sata_pmp_quirks':
+drivers/ata/libata-pmp.c:386:36: error: invalid suffix "x26" on integer con=
+stant
+  if (vendor =3D=3D 0x1095 && (devid =3D=3D 0x3x26 || devid =3D=3D 0x3826))=
+ {
+                                    ^
 
+Caused by commit f1a313ad86b9 ("libata: apply behavioral quirks to sil3826 =
+PMP").
+
+I have used the libata tree from next-20130816 for today.
 --=20
 Cheers,
-Stephen Rothwell
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---PNTmBPCT7hxwcZjr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Signature=_Mon__19_Aug_2013_11_54_01_+1000_KorYN.xCxdaoY1YO
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSD1AVAAoJEECxmPOUX5FEw74P/0jenVaWFFxXsTo4oKeBGeXs
-+NC6JshPMgWqgDB+1NLUjeQwvk4CiXEcSZrqihq7PpFfsQALtYchK0skGyNY3nPp
-HQMUWhonUWwmpZsvUrzC9hYty8LWquWRw6PLF1lHVfrHBgtxhi4r68PFD9bOia5Z
-viIUaYGnMI6A623Q9fVrcotOfpT2R2PlENbKZv+BXOfQHWZKN4DTaN4tbBei0Daz
-yjhk8fAqQv/LGQ14hNh8EkW063UHIosyFJePB4AhhrQtB9sRTQE1RHLxDxdKemGM
-5hT5oKrj9qeoJp02eFRnFmo5VtUGyHAyq+EVL7nnTki0+ouT5mpPzYpvcTSU1vrZ
-XKyzKLCdEXoA6PLJUYfSY3xomfokokzugd3vvS/kU1msb6KJ/qmzPStjiZuT7cj0
-DqlkUAZre5f2PqtqRakSBc4vQ6rVfA7PMyb1zCxMkGh0SZ+6zTf11ScqyioTeodz
-7jjDT2dvzzujvKilHZ93A4rlOlcJfgeL9NsRpw2wz2673cXPlBLgt/gVkg7HYXyZ
-i/Wm+DEj+7W2GU3m0RSXYIu8BQE3pqxVDQntOvkOlRvc58QFzvOF+VFDt6pwq2lW
-sFBHdpj2MbaFI6qvU42V8jCNit/JjVGc2/X9AEJc3ajIpZjwheC4m8LULizcYMvv
-a0a15wfpEZdFbaAmDUn9
-=3aA3
+iQIcBAEBCAAGBQJSEXq+AAoJEECxmPOUX5FETUwP/RvmnLVh+vaQ9l8rnjjLGQAE
+41lffm96WyLfyk3uFlmXS4eWka2lP0+FocJZp2edjh3sKUNgoVI/u8tegyWTht3D
+V0q3aCz+MHJzLrQJ2EgKcPzRMhtal+RlZnorVOGRL7eJlpJ5l+g77NTvUEt/1TB5
+1xwZuVSOiwmvyNKV+3Tethp4nhPAG6I9Zn75TIUTaPqGDoEiD9SNYLQYp0Sjol3q
++918Sw1O+za77run4BfY8BoLrn1KmLtLT2KNeHgesODGokiI9g0NB/dbiPaPOlh8
+eTKM2YrBVobdN3egzqz5mc40n8DIflHdf0pTkcyd3S4uTt95hmarHCLY3xnpRnsJ
+dnssHO4LAtGw4WSaWkZzcsblheXGPnVawZ6aJE3jMkK9GrsP91mw4q1mqHPHIpCL
+Fh4Syr3afqcsNnIj/2dsjMSpZ8xxCY36orqG6+0797iaxsSp6/2GTSwtFxoL7/Kk
+R1SP0Rbx0V6fMOS+OnCZ7AZWeNEYskxgaeVwVxA4siDsYlhogAiP/fu/K6lHRz3U
+NqTnf3Am1/cLEmwlvhDl8p0PTJ/6s10KfyLDBczldiSkF1snNmFGHmrEDlzGUmyJ
+r/rBbg69pikdyY2SAK8othVGtFfO7kiVyLjTVtE0wEa1EldB35H6Om+DdTvUKIWW
+bBNBHBklny121vcDs9gl
+=CoHh
 -----END PGP SIGNATURE-----
 
---PNTmBPCT7hxwcZjr--
+--Signature=_Mon__19_Aug_2013_11_54_01_+1000_KorYN.xCxdaoY1YO--
