@@ -1,117 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Date: Mon, 19 Aug 2013 14:09:21 +1000
-Message-ID: <20130819140921.7c43b398fdc9eb6e53b631ab@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Mon, 19 Aug 2013 14:26:33 +1000
+Message-ID: <20130819142633.82fb06bfa3bc0276fb09cbea@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__19_Aug_2013_14_09_21_+1000_B=zTrAtOf3MlJasK"
+ boundary="Signature=_Mon__19_Aug_2013_14_26_33_+1000_3oZC2P4HQ_zcx3UF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38558 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41676 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750730Ab3HSEJh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Aug 2013 00:09:37 -0400
+	with ESMTP id S1750743Ab3HSE0m (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Aug 2013 00:26:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stratos Karafotis <stratosk@semaphore.gr>, "Rafael J. Wysocki" <rjw@sisk.pl>, Jason Wang <jasowang@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
 
---Signature=_Mon__19_Aug_2013_14_09_21_+1000_B=zTrAtOf3MlJasK
+--Signature=_Mon__19_Aug_2013_14_26_33_+1000_3oZC2P4HQ_zcx3UF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/include/asm/processor.h between commit 61c63e5ed3b9 ("cpufreq:
-Remove unused APERF/MPERF support") from the pm tree and commit
-96e39ac0e9d1 ("x86: Introduce hypervisor_cpuid_base()") from the tip tree.
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+arch/x86/kernel/paravirt.c:66:0: warning: "DEF_NATIVE" redefined [enabled b=
+y default]
+ #define DEF_NATIVE(ops, name, code)     \
+ ^
+In file included from arch/x86/include/asm/ptrace.h:65:0,
+                 from arch/x86/include/asm/alternative.h:8,
+                 from arch/x86/include/asm/bitops.h:16,
+                 from include/linux/bitops.h:22,
+                 from include/linux/kernel.h:10,
+                 from include/linux/cache.h:4,
+                 from include/linux/time.h:4,
+                 from include/linux/stat.h:18,
+                 from include/linux/module.h:10,
+                 from arch/x86/kernel/paravirt.c:22:
+arch/x86/include/asm/paravirt_types.h:391:0: note: this is the location of =
+the previous definition
+ #define DEF_NATIVE(ops, name, code)      \
+ ^
+
+Introduced by commit 9a55fdbe941e ("x86, asmlinkage, paravirt: Add
+__visible/asmlinkage to xen paravirt ops").  The 2 definitions used to be
+identical ... maybe there should be only one.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/include/asm/processor.h
-index 4f4a3d9,61a5533..0000000
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@@ -942,6 -942,50 +942,21 @@@ extern int set_tsc_mode(unsigned int va
- =20
-  extern u16 amd_get_nb_id(int cpu);
- =20
- -struct aperfmperf {
- -	u64 aperf, mperf;
- -};
- -
- -static inline void get_aperfmperf(struct aperfmperf *am)
- -{
- -	WARN_ON_ONCE(!boot_cpu_has(X86_FEATURE_APERFMPERF));
- -
- -	rdmsrl(MSR_IA32_APERF, am->aperf);
- -	rdmsrl(MSR_IA32_MPERF, am->mperf);
- -}
- -
- -#define APERFMPERF_SHIFT 10
- -
- -static inline
- -unsigned long calc_aperfmperf_ratio(struct aperfmperf *old,
- -				    struct aperfmperf *new)
- -{
- -	u64 aperf =3D new->aperf - old->aperf;
- -	u64 mperf =3D new->mperf - old->mperf;
- -	unsigned long ratio =3D aperf;
- -
- -	mperf >>=3D APERFMPERF_SHIFT;
- -	if (mperf)
- -		ratio =3D div64_u64(aperf, mperf);
- -
- -	return ratio;
- -}
- -
-+ static inline uint32_t hypervisor_cpuid_base(const char *sig, uint32_t le=
-aves)
-+ {
-+ 	uint32_t base, eax, signature[3];
-+=20
-+ 	for (base =3D 0x40000000; base < 0x40010000; base +=3D 0x100) {
-+ 		cpuid(base, &eax, &signature[0], &signature[1], &signature[2]);
-+=20
-+ 		if (!memcmp(sig, signature, 12) &&
-+ 		    (leaves =3D=3D 0 || ((eax - base) >=3D leaves)))
-+ 			return base;
-+ 	}
-+=20
-+ 	return 0;
-+ }
-+=20
-  extern unsigned long arch_align_stack(unsigned long sp);
-  extern void free_init_pages(char *what, unsigned long begin, unsigned lon=
-g end);
- =20
-
---Signature=_Mon__19_Aug_2013_14_09_21_+1000_B=zTrAtOf3MlJasK
+--Signature=_Mon__19_Aug_2013_14_26_33_+1000_3oZC2P4HQ_zcx3UF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSEZp1AAoJEECxmPOUX5FE2tcP/R05/uNPDZiPcFbcRd7CfMIX
-rv9Gdk/vW9pGkYyI7XhjL1qlr3VWeWGNPMkY/5GsuS82MOxI+wJgZy61MeC7oNk6
-0sxY5KEOU66w6/GsjnuRzSmLQ1OQRKfVxfk4lSX4dz3ez4yTO63euICFrY3Dr6Ir
-EXNdBJFLvQkibkb1tdlX+fMNJ6P6RHiWYJcO8m/O2criMm6QjkGgbMgwWOcXPoPM
-EktZztgJelhb5TbpXlL4Q+4KdPkhsXPyOgzPvVri428WyhFjiEBik+g054+Ilcqb
-OEvQ6w6YvF3kR8n7/rVsAGgnz+8Y6ecIT/Z5Hl5E1uBGAUsuMW6usVqYAnnmeK+h
-368Rr6W+NhvdsEi2pOSVy7LswA0Y3QvM2RECtXDg1M/OkohfRxGU97thnppdNbyg
-LMXWklXgqmmF07do/ygOyHBkb2kth45J52gEitFpVKDQIRdNtt6yvYe8lh6qIH4+
-EbxHoLkKkX7XKHA5U2Kx5AbQLugrVk6J8B6H3EGvSBO5i7hEyNaSyWRmZ6gMRUhI
-XFXS5GQkGkQOCjiWa/4XDxxc6ZnTm81Sb1cXnn58qdnXVFUX9+flSzfyO8QRCv7+
-THCChsyrCaJZac//y2ySjEJZVij5jVIcqJ1kt36hWraU0FUj9exsXaS2gdZT3Tw8
-ZWa2fnfqyesTuIHqRx9t
-=8QhQ
+iQIcBAEBCAAGBQJSEZ5+AAoJEECxmPOUX5FE8Z4P/i6vg13dI1gcRvsSMJIznPVI
+A1G3xLrjg/TvqRyuNxilN97LnLR/Y855lELBZ7VbE/XLRBLUsa95E/KVw+BMAkig
+KixLY/czBdbYo6Z5fykTmqTY8X9GlqNzznPKgm1X69vcwjJxZa2oyKa4bN9MPx0q
+3+j5qszT/gnICtGfJEcq4Ua31AciRAEzoFevrMRQB1X/DtQY2jMV8qolF3OeHpsD
+VgFfk/umj15n4pv5aIvdM++TQgLputaompoKQ4kbgl/VhhboNFVnJlgsGc2809tM
+CFKEyoVkkGrVscah1hxMpJ5VR1i0ojjwrq5YrPsj0T0DcHmjvnoe9t6jEDuSEFzA
+W3uyl6BNiv7YJFylUk8KjneoTdRLdTL/H2a+EZwSIqrLLTux3KV9xYnsCRMRS16F
+rdPfJyr+wi8zB7f3jVHIg+AWhPeiW+W6Aifdfb3VmltBJVWK/TjRio+Fo6oSVga6
+QeqX0xkAYRXdgA9l//TrmhXYVhZ+xFhghGWdazlhlsFZDSTG9YXvIdUkEOib+pkt
+eULbgpSlTFdiwDxxpj7erAUlqLkrWBbEru0pz9IbbvKxLtHPu0Kp+K3rjPjGqxGE
+VefQqu36yONA3IKBwwyDxqXkbe+sPbBh/PItF7+NH0eK4CR6tiK+B+QmDS4OxK3z
+zXxaf1ufSBG8dU41bTi5
+=ekZl
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Aug_2013_14_09_21_+1000_B=zTrAtOf3MlJasK--
+--Signature=_Mon__19_Aug_2013_14_26_33_+1000_3oZC2P4HQ_zcx3UF--
