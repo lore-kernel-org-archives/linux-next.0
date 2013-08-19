@@ -1,77 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the tip tree
-Date: Mon, 19 Aug 2013 14:26:33 +1000
-Message-ID: <20130819142633.82fb06bfa3bc0276fb09cbea@canb.auug.org.au>
+Subject: linux-next: manual merge of the mvebu tree with the arm-soc tree
+Date: Mon, 19 Aug 2013 16:05:37 +1000
+Message-ID: <20130819160537.1eeb0a9ebc269def138e016b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__19_Aug_2013_14_26_33_+1000_3oZC2P4HQ_zcx3UF"
+ boundary="Signature=_Mon__19_Aug_2013_16_05_37_+1000_/xmyB5cbSM1eyhf3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41676 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35081 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750743Ab3HSE0m (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Aug 2013 00:26:42 -0400
+	with ESMTP id S1750806Ab3HSGFu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Aug 2013 02:05:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
---Signature=_Mon__19_Aug_2013_14_26_33_+1000_3oZC2P4HQ_zcx3UF
+--Signature=_Mon__19_Aug_2013_16_05_37_+1000_/xmyB5cbSM1eyhf3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+Today's linux-next merge of the mvebu tree got conflicts in various files
+between merges and commits in the arm-soc tree and merges in the mvebu
+tree.
 
-arch/x86/kernel/paravirt.c:66:0: warning: "DEF_NATIVE" redefined [enabled b=
-y default]
- #define DEF_NATIVE(ops, name, code)     \
- ^
-In file included from arch/x86/include/asm/ptrace.h:65:0,
-                 from arch/x86/include/asm/alternative.h:8,
-                 from arch/x86/include/asm/bitops.h:16,
-                 from include/linux/bitops.h:22,
-                 from include/linux/kernel.h:10,
-                 from include/linux/cache.h:4,
-                 from include/linux/time.h:4,
-                 from include/linux/stat.h:18,
-                 from include/linux/module.h:10,
-                 from arch/x86/kernel/paravirt.c:22:
-arch/x86/include/asm/paravirt_types.h:391:0: note: this is the location of =
-the previous definition
- #define DEF_NATIVE(ops, name, code)      \
- ^
+These merges/commits in the mvebu tree appear to be from a previous
+version of the arm-soc tree that the mvebu tree has been rebased upon.
+Please don't do that - the arm-soc tree as a whole is not stable.
 
-Introduced by commit 9a55fdbe941e ("x86, asmlinkage, paravirt: Add
-__visible/asmlinkage to xen paravirt ops").  The 2 definitions used to be
-identical ... maybe there should be only one.
+I fixed it up (I used the version from the current arm-soc tree) and can
+carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__19_Aug_2013_14_26_33_+1000_3oZC2P4HQ_zcx3UF
+--Signature=_Mon__19_Aug_2013_16_05_37_+1000_/xmyB5cbSM1eyhf3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSEZ5+AAoJEECxmPOUX5FE8Z4P/i6vg13dI1gcRvsSMJIznPVI
-A1G3xLrjg/TvqRyuNxilN97LnLR/Y855lELBZ7VbE/XLRBLUsa95E/KVw+BMAkig
-KixLY/czBdbYo6Z5fykTmqTY8X9GlqNzznPKgm1X69vcwjJxZa2oyKa4bN9MPx0q
-3+j5qszT/gnICtGfJEcq4Ua31AciRAEzoFevrMRQB1X/DtQY2jMV8qolF3OeHpsD
-VgFfk/umj15n4pv5aIvdM++TQgLputaompoKQ4kbgl/VhhboNFVnJlgsGc2809tM
-CFKEyoVkkGrVscah1hxMpJ5VR1i0ojjwrq5YrPsj0T0DcHmjvnoe9t6jEDuSEFzA
-W3uyl6BNiv7YJFylUk8KjneoTdRLdTL/H2a+EZwSIqrLLTux3KV9xYnsCRMRS16F
-rdPfJyr+wi8zB7f3jVHIg+AWhPeiW+W6Aifdfb3VmltBJVWK/TjRio+Fo6oSVga6
-QeqX0xkAYRXdgA9l//TrmhXYVhZ+xFhghGWdazlhlsFZDSTG9YXvIdUkEOib+pkt
-eULbgpSlTFdiwDxxpj7erAUlqLkrWBbEru0pz9IbbvKxLtHPu0Kp+K3rjPjGqxGE
-VefQqu36yONA3IKBwwyDxqXkbe+sPbBh/PItF7+NH0eK4CR6tiK+B+QmDS4OxK3z
-zXxaf1ufSBG8dU41bTi5
-=ekZl
+iQIcBAEBCAAGBQJSEbW1AAoJEECxmPOUX5FErskQAJhoI9Ye/dqY0RwUFF6aEWb6
+DPkmFARs1lw5m9V+v8pE1aBrehWKqV1MrX8GfT8N4QfFXxfMubS6oeT+8+5nf94s
+lK8VDagAq1fAGDUwkH1PfNqGLfY4U/iQVDJ+EViAuuYlDMZ0m/8HibzjItLkSjLb
+igsQhJzqvK639VlyPGxcEGoc/asiCMRtmO4yJlyh7tdXF2DM4OjyJ7mKCy5uhnb1
+hhEk7JD4f/4p/tMc17sY2K5dPJz4EWUeFyJVzPPzGPSjy7/ZF86ujmnuQ2jbGQBk
+0lSLfV/bvKXXdCDZMj25UVkwSG7Y60k/CN2tXhtKOv7l4N2+8du+w89WsT6qoS40
+tAm3EI6hmHwfb54D2Aap4b2FXPxQt/NbEIMvI2nzNh2AyKjr9Fy0zyZ7zTrZiu+g
+hmrm7MxsKlRp7RlOPWvwPVmhuNPn89QpYwUXb0xJ5NZQj1AsmTiOqkWFhpf1Apa9
+A+Jp4S2jHZO1jPHyaXJpoyDy5Do9m4NtilXcNKnnk1X4avKAh4s1c3TIXXLI5HfI
+CJDDx0IrnE2GHk6QNCcQibsnKo57xf2HSmMbAFljw4OCnlIzY7v0I5zhVKLGEdp5
+HWfTkwpIWOuWSB4+ZVP3xr0Tf2exj+bGe4EoIGThm9ZmLringZRqtkQd4eESNY4V
+nRHGo7oAJa+tRKKO9wYx
+=GwiS
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Aug_2013_14_26_33_+1000_3oZC2P4HQ_zcx3UF--
+--Signature=_Mon__19_Aug_2013_16_05_37_+1000_/xmyB5cbSM1eyhf3--
