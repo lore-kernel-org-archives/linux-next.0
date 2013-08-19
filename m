@@ -1,62 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with the arm-soc tree
-Date: Mon, 19 Aug 2013 16:05:37 +1000
-Message-ID: <20130819160537.1eeb0a9ebc269def138e016b@canb.auug.org.au>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH] dma: cpp41: make it compile with CONFIG_BUG=n
+Date: Mon, 19 Aug 2013 11:36:20 +0530
+Message-ID: <20130819060620.GV32147@intel.com>
+References: <20130815165829.6a401f104ee2a98dd48bcb58@canb.auug.org.au>
+ <520D0AD7.6050002@infradead.org>
+ <520E0304.5050906@ti.com>
+ <20130816154055.GB3570@breakpoint.cc>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__19_Aug_2013_16_05_37_+1000_/xmyB5cbSM1eyhf3"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35081 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750806Ab3HSGFu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Aug 2013 02:05:50 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-
---Signature=_Mon__19_Aug_2013_16_05_37_+1000_/xmyB5cbSM1eyhf3
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20130816154055.GB3570@breakpoint.cc>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Cc: Felipe Balbi <balbi@ti.com>, Randy Dunlap <rdunlap@infradead.org>, Roger Quadros <rogerq@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Dan Williams <djbw@fb.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Fri, Aug 16, 2013 at 05:40:55PM +0200, Sebastian Andrzej Siewior wrote:
+> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> 
+> Before Randy figures out that this does not compile with CONFIG_BUG=n
+> here is a fix for it.
+> 
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Acked-by: Vinod Koul <vinod.koul@intel.com>
 
-Today's linux-next merge of the mvebu tree got conflicts in various files
-between merges and commits in the arm-soc tree and merges in the mvebu
-tree.
+~Vinod
+> ---
+>  drivers/dma/cppi41.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/cppi41.c b/drivers/dma/cppi41.c
+> index 5dcebca..e696178 100644
+> --- a/drivers/dma/cppi41.c
+> +++ b/drivers/dma/cppi41.c
+> @@ -579,7 +579,7 @@ static int cppi41_tear_down_chan(struct cppi41_channel *c)
+>  				WARN_ON(!c->is_tx && !(pd0 & TD_DESC_IS_RX));
+>  				WARN_ON((pd0 & 0x1f) != c->port_num);
+>  			} else {
+> -				__WARN();
+> +				WARN_ON_ONCE(1);
+>  			}
+>  			c->td_seen = 1;
+>  		}
+> -- 
+> 1.8.4.rc2
+> 
 
-These merges/commits in the mvebu tree appear to be from a previous
-version of the arm-soc tree that the mvebu tree has been rebased upon.
-Please don't do that - the arm-soc tree as a whole is not stable.
-
-I fixed it up (I used the version from the current arm-soc tree) and can
-carry the fix as necessary (no action is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__19_Aug_2013_16_05_37_+1000_/xmyB5cbSM1eyhf3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSEbW1AAoJEECxmPOUX5FErskQAJhoI9Ye/dqY0RwUFF6aEWb6
-DPkmFARs1lw5m9V+v8pE1aBrehWKqV1MrX8GfT8N4QfFXxfMubS6oeT+8+5nf94s
-lK8VDagAq1fAGDUwkH1PfNqGLfY4U/iQVDJ+EViAuuYlDMZ0m/8HibzjItLkSjLb
-igsQhJzqvK639VlyPGxcEGoc/asiCMRtmO4yJlyh7tdXF2DM4OjyJ7mKCy5uhnb1
-hhEk7JD4f/4p/tMc17sY2K5dPJz4EWUeFyJVzPPzGPSjy7/ZF86ujmnuQ2jbGQBk
-0lSLfV/bvKXXdCDZMj25UVkwSG7Y60k/CN2tXhtKOv7l4N2+8du+w89WsT6qoS40
-tAm3EI6hmHwfb54D2Aap4b2FXPxQt/NbEIMvI2nzNh2AyKjr9Fy0zyZ7zTrZiu+g
-hmrm7MxsKlRp7RlOPWvwPVmhuNPn89QpYwUXb0xJ5NZQj1AsmTiOqkWFhpf1Apa9
-A+Jp4S2jHZO1jPHyaXJpoyDy5Do9m4NtilXcNKnnk1X4avKAh4s1c3TIXXLI5HfI
-CJDDx0IrnE2GHk6QNCcQibsnKo57xf2HSmMbAFljw4OCnlIzY7v0I5zhVKLGEdp5
-HWfTkwpIWOuWSB4+ZVP3xr0Tf2exj+bGe4EoIGThm9ZmLringZRqtkQd4eESNY4V
-nRHGo7oAJa+tRKKO9wYx
-=GwiS
------END PGP SIGNATURE-----
-
---Signature=_Mon__19_Aug_2013_16_05_37_+1000_/xmyB5cbSM1eyhf3--
+-- 
