@@ -1,50 +1,54 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH] dma: cpp41: make it compile with CONFIG_BUG=n
-Date: Mon, 19 Aug 2013 11:36:20 +0530
-Message-ID: <20130819060620.GV32147@intel.com>
-References: <20130815165829.6a401f104ee2a98dd48bcb58@canb.auug.org.au>
- <520D0AD7.6050002@infradead.org>
- <520E0304.5050906@ti.com>
- <20130816154055.GB3570@breakpoint.cc>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Date: Mon, 19 Aug 2013 08:58:17 +0200
+Message-ID: <20130819065817.GB23742@gmail.com>
+References: <20130819142633.82fb06bfa3bc0276fb09cbea@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:47306 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750838Ab3HSG6W (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Aug 2013 02:58:22 -0400
 Content-Disposition: inline
-In-Reply-To: <20130816154055.GB3570@breakpoint.cc>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
-Cc: Felipe Balbi <balbi@ti.com>, Randy Dunlap <rdunlap@infradead.org>, Roger Quadros <rogerq@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Dan Williams <djbw@fb.com>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20130819142633.82fb06bfa3bc0276fb09cbea@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andi Kleen <andi@firstfloor.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
 
-On Fri, Aug 16, 2013 at 05:40:55PM +0200, Sebastian Andrzej Siewior wrote:
-> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> 
-> Before Randy figures out that this does not compile with CONFIG_BUG=n
-> here is a fix for it.
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
 
-~Vinod
-> ---
->  drivers/dma/cppi41.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/cppi41.c b/drivers/dma/cppi41.c
-> index 5dcebca..e696178 100644
-> --- a/drivers/dma/cppi41.c
-> +++ b/drivers/dma/cppi41.c
-> @@ -579,7 +579,7 @@ static int cppi41_tear_down_chan(struct cppi41_channel *c)
->  				WARN_ON(!c->is_tx && !(pd0 & TD_DESC_IS_RX));
->  				WARN_ON((pd0 & 0x1f) != c->port_num);
->  			} else {
-> -				__WARN();
-> +				WARN_ON_ONCE(1);
->  			}
->  			c->td_seen = 1;
->  		}
-> -- 
-> 1.8.4.rc2
-> 
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
--- 
+> Hi all,
+> 
+> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+> 
+> arch/x86/kernel/paravirt.c:66:0: warning: "DEF_NATIVE" redefined [enabled by default]
+>  #define DEF_NATIVE(ops, name, code)     \
+>  ^
+> In file included from arch/x86/include/asm/ptrace.h:65:0,
+>                  from arch/x86/include/asm/alternative.h:8,
+>                  from arch/x86/include/asm/bitops.h:16,
+>                  from include/linux/bitops.h:22,
+>                  from include/linux/kernel.h:10,
+>                  from include/linux/cache.h:4,
+>                  from include/linux/time.h:4,
+>                  from include/linux/stat.h:18,
+>                  from include/linux/module.h:10,
+>                  from arch/x86/kernel/paravirt.c:22:
+> arch/x86/include/asm/paravirt_types.h:391:0: note: this is the location of the previous definition
+>  #define DEF_NATIVE(ops, name, code)      \
+>  ^
+> 
+> Introduced by commit 9a55fdbe941e ("x86, asmlinkage, paravirt: Add
+> __visible/asmlinkage to xen paravirt ops").  The 2 definitions used to be
+> identical ... maybe there should be only one.
+
+Andi, please send a fix for this build warning, against 
+tip:x86/asmlinkage.
+
+Thanks,
+
+	Ingo
