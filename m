@@ -1,87 +1,88 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: [PATCH]amilo-rfkill: add depends on i8042 in Kconfig
-Date: Tue, 20 Aug 2013 13:05:36 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1308201305160.21654@pobox.suse.cz>
-References: <alpine.DEB.2.02.1306181705530.28460@M2420> <1371560680.3495.121.camel@deadeye.wl.decadent.org.uk> <51C07608.2070406@infradead.org> <CADJHv_vZiPsDUiLrFao41rRVduf+AYFm0NuvpNaCW8S3KrAjnA@mail.gmail.com> <51CC6B09.5080809@infradead.org>
- <CADJHv_sSn9oU-xg5qgoHRKDeyHRCqy8VuPJW5_punHd45inzsA@mail.gmail.com>
+From: Dwight Engen <dwight.engen@oracle.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Tue, 20 Aug 2013 12:07:02 -0400
+Message-ID: <20130820120702.000b044e@oracle.com>
+References: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <CADJHv_sSn9oU-xg5qgoHRKDeyHRCqy8VuPJW5_punHd45inzsA@mail.gmail.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Xiong Zhou <jencce.kernel@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Ben Hutchings <ben@decadent.org.uk>, matthew.garrett@nebula.com, platform-driver-x86@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Davis <jim.epost@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:27206 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751097Ab3HTQHt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Aug 2013 12:07:49 -0400
+In-Reply-To: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ben Myers <bpm@sgi.com>, David Chinner <david@fromorbit.com>, xfs@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Gao feng <gaofeng@cn.fujitsu.com>, Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, cbe-oss-dev@lists.ozlabs.org
 
-On Fri, 12 Jul 2013, Xiong Zhou wrote:
+On Tue, 20 Aug 2013 17:20:52 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> >>>>> Fix randconfig build failure for Amilo x86 platform driver.
-> >>>>> AMILO_RFKILL requires SERIO_I8042 being available.
-> >>>>>
-> >>>>> amilo-rfkill.c:(.text+0x108b5b): undefined reference to `i8042_lock_chip'
-> >>>>> amilo-rfkill.c:(.text+0x108b69): undefined reference to `i8042_command'
-> >>>>> amilo-rfkill.c:(.text+0x108b71): undefined reference to `i8042_unlock_chip'
-> >>>>>
-> >>>>> Reported-by: Jim Davis <jim.epost@gmail.com>
-> >>>>> Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
-> >>>>
-> >>>> Acked-by: Ben Hutchings <ben@decadent.org.uk>
-> >>>>
-> >>>> But I thought somehow sent this same fix a while back...
-> >>>
-> >>> Yes, I reported it and sent a patch for it that you acked...
-> >>> I guess my patch was never picked up.
-> >>>
-> >>
-> >> ... Better someone pick this up.
-> >>
-> >
-> > This build error is still occurring in linux-next (20130627).
-> > I first reported it and posted a patch for it on May-15 2013.
-> >
-> > Please merge either patch...
-> >
-> > Is anybody out there?
-> >
-> >
-> >>
-> >>>>
-> >>>> Ben.
-> >>>>
-> >>>>> ---
-> >>>>>  drivers/platform/x86/Kconfig |    1 +
-> >>>>>  1 file changed, 1 insertion(+)
-> >>>>>
-> >>>>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> >>>>> index 8577261..37645b9 100644
-> >>>>> --- a/drivers/platform/x86/Kconfig
-> >>>>> +++ b/drivers/platform/x86/Kconfig
-> >>>>> @@ -176,6 +176,7 @@ config FUJITSU_TABLET
-> >>>>>  config AMILO_RFKILL
-> >>>>>      tristate "Fujitsu-Siemens Amilo rfkill support"
-> >>>>>      depends on RFKILL
-> >>>>> +    depends on SERIO_I8042
-> >>>>>      ---help---
-> >>>>>        This is a driver for enabling wifi on some Fujitsu-Siemens Amilo
-> >>>>>        laptops.
-> >>>>
-> >>>
-> >>>
-> >>> --
-> >>> ~Randy
-> >> --
-> >
-> >
-> > --
-> > ~Randy
+> Hi all,
 > 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 > 
+> arch/powerpc/platforms/cell/spufs/inode.c: In function
+> 'spufs_parse_options':
+> arch/powerpc/platforms/cell/spufs/inode.c:623:16: error: incompatible
+> types when assigning to type 'kuid_t' from type 'int' root->i_uid =
+> option; ^ arch/powerpc/platforms/cell/spufs/inode.c:628:16: error:
+> incompatible types when assigning to type 'kgid_t' from type 'int'
+> root->i_gid = option; ^
 > 
-> cc Jiri Kosina <trivial@kernel.org>
+> Caused by commit d6970d4b726c ("enable building user namespace with
+> xfs") from the xfs tree (that was fun to find :-)).
+> 
+> I have reverted that commit for today.  It could probably be replaced
+> with a patch that just changed XFS_FS to SPU_FS in the
+> UIDGID_CONVERTED config dependency - or someone could fix up SPU_FS.
 
-Please resend the patch properly, it's not easy to dig it from the 
-multi-depth quoted text.
+Hi, (already sent this email based on Intel's kbuild robot this
+morning, sorry for the dup to those who already got it). 
 
--- 
-Jiri Kosina
-SUSE Labs
+Yep this looks to me like SPU_FS should have been in the list of
+stuff that had not been UIDGID_CONVERTED, but reviving
+UIDGID_CONVERTED and adding SPU_FS to it won't work for
+non powerpc arch because SPU_FS = n won't be defined. The following can
+be used to mark it as incompatible with USER_NS:
+
+diff --git a/arch/powerpc/platforms/cell/Kconfig
+b/arch/powerpc/platforms/cell/Kconfig index 9978f59..fcf8336 100644
+--- a/arch/powerpc/platforms/cell/Kconfig
++++ b/arch/powerpc/platforms/cell/Kconfig
+@@ -61,6 +61,7 @@ config SPU_FS
+        tristate "SPU file system"
+        default m
+        depends on PPC_CELL
++       depends on USER_NS=n
+        select SPU_BASE
+        select MEMORY_HOTPLUG
+        help
+
+Or if the rest of spufs is already okay for user namespace (I have not
+checked it, but this seems to be the only place it is dealing with
+uid/gid), then the following will fix these particular errors
+(cross-compile tested, but I don't have a powerpc to run test on):
+
+diff --git a/arch/powerpc/platforms/cell/spufs/inode.c b/arch/powerpc/platforms/cell/spufs/inode.c
+index f390042..90fb308 100644
+--- a/arch/powerpc/platforms/cell/spufs/inode.c
++++ b/arch/powerpc/platforms/cell/spufs/inode.c
+@@ -620,12 +620,12 @@ spufs_parse_options(struct super_block *sb, char *options, struct inode *root)
+                case Opt_uid:
+                        if (match_int(&args[0], &option))
+                                return 0;
+-                       root->i_uid = option;
++                       root->i_uid = make_kuid(&init_user_ns, option);
+                        break;
+                case Opt_gid:
+                        if (match_int(&args[0], &option))
+                                return 0;
+-                       root->i_gid = option;
++                       root->i_gid = make_kgid(&init_user_ns, option);
+                        break;
+                case Opt_mode:
+                        if (match_octal(&args[0], &option))
