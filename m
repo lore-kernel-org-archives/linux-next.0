@@ -1,58 +1,29 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: linux-next: manual merge of the mvebu tree with the arm-soc
- tree
-Date: Mon, 19 Aug 2013 17:38:33 -0400
-Message-ID: <20130819213833.GB13964@titan.lakedaemon.net>
-References: <20130819160537.1eeb0a9ebc269def138e016b@canb.auug.org.au>
- <20130819205736.GA13964@titan.lakedaemon.net>
- <CAOesGMhRo1X=w=2-pKNz-eXiviWg3aqtVyW=f43RfigTS4dRmg@mail.gmail.com>
+From: Andi Kleen <andi@firstfloor.org>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Date: Tue, 20 Aug 2013 02:52:34 +0200
+Message-ID: <20130820005234.GX19750@two.firstfloor.org>
+References: <20130819142633.82fb06bfa3bc0276fb09cbea@canb.auug.org.au>
+ <20130819065817.GB23742@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:59531 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751121Ab3HSVix (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Aug 2013 17:38:53 -0400
+Received: from one.firstfloor.org ([193.170.194.197]:56693 "EHLO
+	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751652Ab3HTAwh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Aug 2013 20:52:37 -0400
 Content-Disposition: inline
-In-Reply-To: <CAOesGMhRo1X=w=2-pKNz-eXiviWg3aqtVyW=f43RfigTS4dRmg@mail.gmail.com>
+In-Reply-To: <20130819065817.GB23742@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andi Kleen <andi@firstfloor.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
 
-On Mon, Aug 19, 2013 at 02:09:00PM -0700, Olof Johansson wrote:
-> it's this commit:
+> > Introduced by commit 9a55fdbe941e ("x86, asmlinkage, paravirt: Add
+> > __visible/asmlinkage to xen paravirt ops").  The 2 definitions used to be
+> > identical ... maybe there should be only one.
 > 
-> commit 89602312c5755c87a5ca6ba8ef6b0fce9d510951
-> Merge: a0cec78 f23afe2
-> Author:     Jason Cooper <jason@lakedaemon.net>
-> AuthorDate: Wed Aug 14 18:55:13 2013 +0000
-> Commit:     Jason Cooper <jason@lakedaemon.net>
-> CommitDate: Wed Aug 14 18:55:13 2013 +0000
-> 
->     Merge remote-tracking branch 'arm-soc/for-next' into mvebu/drivers
-> 
+> Andi, please send a fix for this build warning, against 
+> tip:x86/asmlinkage.
 
-grmbl... Yep, that's my mistake.  I usually do a temp branch for
-merge-testing against arm-soc/for-next and building.  Apparently I
-forgot to make the branch first.  My apologies.
-
-I've fixed up mvebu/drivers, and I'm build testing a rebuilt for-next
-now.
-
-> You merged back the for-next branch from arm-soc into your tree. Big no-no.
-
-Yep, \shame/.
-
-> This brings up the subject of subplatform trees and conflicts and
-> -next. I wonder if we should ask Stephen to put all these trees in a
-> category where if they have any substantial conflicts or weirdness
-> like this, that he just drops it for the current -next build instead
-> of spending effort on them.
-
-Agreed.  A tree hierarchy of sorts.  mvebu and other sub-arch trees
-should definitely be dropped for the day with minimal investigation.
-
-thx,
-
-Jason.
+I resent the patch. Thanks for the headsup.
+-Andi
