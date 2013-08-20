@@ -1,78 +1,50 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [RFC PATCH next]cpufreq: fix bad unlock balance on !CONFIG_SMP
-Date: Tue, 20 Aug 2013 12:01:27 +0530
-Message-ID: <CAKohponB8P0wBBzqckzy2oyTB9Qa6hF+GJHRdFD5owP5=nS7Cw@mail.gmail.com>
-References: <1376975510.3788.9.camel@ThinkPad-T5421>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Date: Tue, 20 Aug 2013 08:42:09 +0200
+Message-ID: <20130820064209.GB9518@gmail.com>
+References: <20130819142633.82fb06bfa3bc0276fb09cbea@canb.auug.org.au>
+ <20130819065817.GB23742@gmail.com>
+ <20130820005234.GX19750@two.firstfloor.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:47638 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751941Ab3HTGb2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Aug 2013 02:31:28 -0400
-Received: by mail-ob0-f171.google.com with SMTP id tb18so14562obb.2
-        for <linux-next@vger.kernel.org>; Mon, 19 Aug 2013 23:31:28 -0700 (PDT)
-In-Reply-To: <1376975510.3788.9.camel@ThinkPad-T5421>
+Received: from mail-ea0-f177.google.com ([209.85.215.177]:61569 "EHLO
+	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751406Ab3HTGmN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Aug 2013 02:42:13 -0400
+Content-Disposition: inline
+In-Reply-To: <20130820005234.GX19750@two.firstfloor.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Li Zhong <zhong@linux.vnet.ibm.com>
-Cc: linux-next list <linux-next@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+To: Andi Kleen <andi@firstfloor.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
 
-On 20 August 2013 10:41, Li Zhong <zhong@linux.vnet.ibm.com> wrote:
-> This patch tries to fix lockdep complaint attached below.
->
-> It seems that we should always read acquire the cpufreq_rwsem, whether
-> CONFIG_SMP is enabled or not. And CONFIG_HOTPLUG_CPU depends on
-> CONFIG_SMP, so it seems we don't need CONFIG_SMP for the code enabled by
-> CONFIG_HOTPLUG_CPU.
->
-> [    0.504191] =====================================
-> [    0.504627] [ BUG: bad unlock balance detected! ]
-> [    0.504627] 3.11.0-rc6-next-20130819 #1 Not tainted
-> [    0.504627] -------------------------------------
-> [    0.504627] swapper/1 is trying to release lock (cpufreq_rwsem) at:
-> [    0.504627] [<ffffffff813d927a>] cpufreq_add_dev+0x13a/0x3e0
-> [    0.504627] but there are no more locks to release!
-> [    0.504627]
-> [    0.504627] other info that might help us debug this:
-> [    0.504627] 1 lock held by swapper/1:
-> [    0.504627]  #0:  (subsys mutex#4){+.+.+.}, at: [<ffffffff8134a7bf>] subsys_interface_register+0x4f/0xe0
-> [    0.504627]
-> [    0.504627] stack backtrace:
-> [    0.504627] CPU: 0 PID: 1 Comm: swapper Not tainted 3.11.0-rc6-next-20130819 #1
-> [    0.504627] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2007
-> [    0.504627]  ffffffff813d927a ffff88007f847c98 ffffffff814c062b ffff88007f847cc8
-> [    0.504627]  ffffffff81098bce ffff88007f847cf8 ffffffff81aadc30 ffffffff813d927a
-> [    0.504627]  00000000ffffffff ffff88007f847d68 ffffffff8109d0be 0000000000000006
-> [    0.504627] Call Trace:
-> [    0.504627]  [<ffffffff813d927a>] ? cpufreq_add_dev+0x13a/0x3e0
-> [    0.504627]  [<ffffffff814c062b>] dump_stack+0x19/0x1b
-> [    0.504627]  [<ffffffff81098bce>] print_unlock_imbalance_bug+0xfe/0x110
-> [    0.504627]  [<ffffffff813d927a>] ? cpufreq_add_dev+0x13a/0x3e0
-> [    0.504627]  [<ffffffff8109d0be>] lock_release_non_nested+0x1ee/0x310
-> [    0.504627]  [<ffffffff81099d0e>] ? mark_held_locks+0xae/0x120
-> [    0.504627]  [<ffffffff811510cb>] ? kfree+0xcb/0x1d0
-> [    0.504627]  [<ffffffff813d77ea>] ? cpufreq_policy_free+0x4a/0x60
-> [    0.504627]  [<ffffffff813d927a>] ? cpufreq_add_dev+0x13a/0x3e0
-> [    0.504627]  [<ffffffff8109d2a4>] lock_release+0xc4/0x250
-> [    0.504627]  [<ffffffff8106c9f3>] up_read+0x23/0x40
-> [    0.504627]  [<ffffffff813d927a>] cpufreq_add_dev+0x13a/0x3e0
-> [    0.504627]  [<ffffffff8134a809>] subsys_interface_register+0x99/0xe0
-> [    0.504627]  [<ffffffff81b19f3b>] ? cpufreq_gov_dbs_init+0x12/0x12
-> [    0.504627]  [<ffffffff813d7f0d>] cpufreq_register_driver+0x9d/0x1d0
-> [    0.504627]  [<ffffffff81b19f3b>] ? cpufreq_gov_dbs_init+0x12/0x12
-> [    0.504627]  [<ffffffff81b1a039>] acpi_cpufreq_init+0xfe/0x1f8
-> [    0.504627]  [<ffffffff810002ba>] do_one_initcall+0xda/0x180
-> [    0.504627]  [<ffffffff81ae301e>] kernel_init_freeable+0x12c/0x1bb
-> [    0.504627]  [<ffffffff81ae2841>] ? do_early_param+0x8c/0x8c
-> [    0.504627]  [<ffffffff814b4dd0>] ? rest_init+0x140/0x140
-> [    0.504627]  [<ffffffff814b4dde>] kernel_init+0xe/0xf0
-> [    0.504627]  [<ffffffff814d029a>] ret_from_fork+0x7a/0xb0
-> [    0.504627]  [<ffffffff814b4dd0>] ? rest_init+0x140/0x140
->
-> Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
-> ---
->  drivers/cpufreq/cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-and-Tested-by: Viresh Kumar <viresh.kumar@linaro.org>
+* Andi Kleen <andi@firstfloor.org> wrote:
+
+> > > Introduced by commit 9a55fdbe941e ("x86, asmlinkage, paravirt: Add
+> > > __visible/asmlinkage to xen paravirt ops").  The 2 definitions used to be
+> > > identical ... maybe there should be only one.
+> > 
+> > Andi, please send a fix for this build warning, against 
+> > tip:x86/asmlinkage.
+> 
+> I resent the patch. Thanks for the headsup.
+
+I suspect hpa missed it because the patch was opaque and 
+non-descriptive: the title talks about a 'warning' that is 
+supposedly fixed but the changelog does not explain what 
+warning it is and why the change matters.
+
+Please use the customary changelog style we use in the 
+kernel:
+
+  " Current code does (A), this has a problem when (B).
+    We can improve this doing (C), because (D)."
+
+I've seen this pattern of deficient changelogs a dozen 
+times in your patches this year alone ...
+
+Thanks,
+
+        Ingo
