@@ -1,88 +1,36 @@
-From: Dwight Engen <dwight.engen@oracle.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Tue, 20 Aug 2013 12:07:02 -0400
-Message-ID: <20130820120702.000b044e@oracle.com>
-References: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+Subject: Re: [PATCH V8 00/33] loop: Issue O_DIRECT aio using bio_vec
+Date: Tue, 20 Aug 2013 14:13:15 -0500
+Message-ID: <5213BFCB.3010503@oracle.com>
+References: <1374774659-13121-1-git-send-email-dave.kleikamp@oracle.com> <20130820130056.GA9652@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:27206 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751097Ab3HTQHt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Aug 2013 12:07:49 -0400
-In-Reply-To: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ben Myers <bpm@sgi.com>, David Chinner <david@fromorbit.com>, xfs@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Gao feng <gaofeng@cn.fujitsu.com>, Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, cbe-oss-dev@lists.ozlabs.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130820130056.GA9652@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christoph Hellwig <hch@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, "Maxim V. Patlasov" <mpatlasov@parallels.com>, Zach Brown <zab@zabbo.net>, Linux-Next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 20 Aug 2013 17:20:52 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Stephen,
+Would you be willing to pick up
+git://github.com/kleikamp/linux-shaggy.git for-next
+into linux-next?
 
-> Hi all,
+There will be some unclean merges, and I can send you updated patches
+created against your latest tree. I'm not exactly sure of your process
+wrt cleaning up merges, but I guess they would help.
+
+Thanks,
+Shaggy
+
+On 08/20/2013 08:00 AM, Christoph Hellwig wrote:
+> As I've seen very few replies to this:  how do we ensure this gets
+> picked up for the 3.12 merge window?  The series has been a reposted
+> a few times without complaints or major changes, but the ball still
+> doesn't seem to get rolling.
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> I'd really like to do some ecryptfs and scsi target work that is going
+> to rely on this soon.
 > 
-> arch/powerpc/platforms/cell/spufs/inode.c: In function
-> 'spufs_parse_options':
-> arch/powerpc/platforms/cell/spufs/inode.c:623:16: error: incompatible
-> types when assigning to type 'kuid_t' from type 'int' root->i_uid =
-> option; ^ arch/powerpc/platforms/cell/spufs/inode.c:628:16: error:
-> incompatible types when assigning to type 'kgid_t' from type 'int'
-> root->i_gid = option; ^
-> 
-> Caused by commit d6970d4b726c ("enable building user namespace with
-> xfs") from the xfs tree (that was fun to find :-)).
-> 
-> I have reverted that commit for today.  It could probably be replaced
-> with a patch that just changed XFS_FS to SPU_FS in the
-> UIDGID_CONVERTED config dependency - or someone could fix up SPU_FS.
-
-Hi, (already sent this email based on Intel's kbuild robot this
-morning, sorry for the dup to those who already got it). 
-
-Yep this looks to me like SPU_FS should have been in the list of
-stuff that had not been UIDGID_CONVERTED, but reviving
-UIDGID_CONVERTED and adding SPU_FS to it won't work for
-non powerpc arch because SPU_FS = n won't be defined. The following can
-be used to mark it as incompatible with USER_NS:
-
-diff --git a/arch/powerpc/platforms/cell/Kconfig
-b/arch/powerpc/platforms/cell/Kconfig index 9978f59..fcf8336 100644
---- a/arch/powerpc/platforms/cell/Kconfig
-+++ b/arch/powerpc/platforms/cell/Kconfig
-@@ -61,6 +61,7 @@ config SPU_FS
-        tristate "SPU file system"
-        default m
-        depends on PPC_CELL
-+       depends on USER_NS=n
-        select SPU_BASE
-        select MEMORY_HOTPLUG
-        help
-
-Or if the rest of spufs is already okay for user namespace (I have not
-checked it, but this seems to be the only place it is dealing with
-uid/gid), then the following will fix these particular errors
-(cross-compile tested, but I don't have a powerpc to run test on):
-
-diff --git a/arch/powerpc/platforms/cell/spufs/inode.c b/arch/powerpc/platforms/cell/spufs/inode.c
-index f390042..90fb308 100644
---- a/arch/powerpc/platforms/cell/spufs/inode.c
-+++ b/arch/powerpc/platforms/cell/spufs/inode.c
-@@ -620,12 +620,12 @@ spufs_parse_options(struct super_block *sb, char *options, struct inode *root)
-                case Opt_uid:
-                        if (match_int(&args[0], &option))
-                                return 0;
--                       root->i_uid = option;
-+                       root->i_uid = make_kuid(&init_user_ns, option);
-                        break;
-                case Opt_gid:
-                        if (match_int(&args[0], &option))
-                                return 0;
--                       root->i_gid = option;
-+                       root->i_gid = make_kgid(&init_user_ns, option);
-                        break;
-                case Opt_mode:
-                        if (match_octal(&args[0], &option))
