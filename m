@@ -1,79 +1,87 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: linux-next: manual merge of the xilinx tree
-Date: Tue, 20 Aug 2013 12:58:32 +0200
-Message-ID: <52134BD8.4050004@monstr.eu>
-References: <20130703111030.c0df2a231fc3e4ba6cb566cd@canb.auug.org.au> <51D3BC5C.1080505@monstr.eu> <20130703160247.bc20792d7bfaef893ee72137@canb.auug.org.au>
-Reply-To: monstr@monstr.eu
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [PATCH]amilo-rfkill: add depends on i8042 in Kconfig
+Date: Tue, 20 Aug 2013 13:05:36 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1308201305160.21654@pobox.suse.cz>
+References: <alpine.DEB.2.02.1306181705530.28460@M2420> <1371560680.3495.121.camel@deadeye.wl.decadent.org.uk> <51C07608.2070406@infradead.org> <CADJHv_vZiPsDUiLrFao41rRVduf+AYFm0NuvpNaCW8S3KrAjnA@mail.gmail.com> <51CC6B09.5080809@infradead.org>
+ <CADJHv_sSn9oU-xg5qgoHRKDeyHRCqy8VuPJW5_punHd45inzsA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="WH6bNNW73KUdKPRV14JJL3FBhxIPlKCLi"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ea0-f171.google.com ([209.85.215.171]:47294 "EHLO
-	mail-ea0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750905Ab3HTK6m (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Aug 2013 06:58:42 -0400
-Received: by mail-ea0-f171.google.com with SMTP id n15so135985ead.2
-        for <linux-next@vger.kernel.org>; Tue, 20 Aug 2013 03:58:41 -0700 (PDT)
-In-Reply-To: <20130703160247.bc20792d7bfaef893ee72137@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michal Simek <michal.simek@xilinx.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <CADJHv_sSn9oU-xg5qgoHRKDeyHRCqy8VuPJW5_punHd45inzsA@mail.gmail.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Xiong Zhou <jencce.kernel@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Ben Hutchings <ben@decadent.org.uk>, matthew.garrett@nebula.com, platform-driver-x86@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Davis <jim.epost@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---WH6bNNW73KUdKPRV14JJL3FBhxIPlKCLi
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Fri, 12 Jul 2013, Xiong Zhou wrote:
 
-Hi Stephen,
+> >>>>> Fix randconfig build failure for Amilo x86 platform driver.
+> >>>>> AMILO_RFKILL requires SERIO_I8042 being available.
+> >>>>>
+> >>>>> amilo-rfkill.c:(.text+0x108b5b): undefined reference to `i8042_lock_chip'
+> >>>>> amilo-rfkill.c:(.text+0x108b69): undefined reference to `i8042_command'
+> >>>>> amilo-rfkill.c:(.text+0x108b71): undefined reference to `i8042_unlock_chip'
+> >>>>>
+> >>>>> Reported-by: Jim Davis <jim.epost@gmail.com>
+> >>>>> Signed-off-by: Xiong Zhou <jencce.kernel@gmail.com>
+> >>>>
+> >>>> Acked-by: Ben Hutchings <ben@decadent.org.uk>
+> >>>>
+> >>>> But I thought somehow sent this same fix a while back...
+> >>>
+> >>> Yes, I reported it and sent a patch for it that you acked...
+> >>> I guess my patch was never picked up.
+> >>>
+> >>
+> >> ... Better someone pick this up.
+> >>
+> >
+> > This build error is still occurring in linux-next (20130627).
+> > I first reported it and posted a patch for it on May-15 2013.
+> >
+> > Please merge either patch...
+> >
+> > Is anybody out there?
+> >
+> >
+> >>
+> >>>>
+> >>>> Ben.
+> >>>>
+> >>>>> ---
+> >>>>>  drivers/platform/x86/Kconfig |    1 +
+> >>>>>  1 file changed, 1 insertion(+)
+> >>>>>
+> >>>>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> >>>>> index 8577261..37645b9 100644
+> >>>>> --- a/drivers/platform/x86/Kconfig
+> >>>>> +++ b/drivers/platform/x86/Kconfig
+> >>>>> @@ -176,6 +176,7 @@ config FUJITSU_TABLET
+> >>>>>  config AMILO_RFKILL
+> >>>>>      tristate "Fujitsu-Siemens Amilo rfkill support"
+> >>>>>      depends on RFKILL
+> >>>>> +    depends on SERIO_I8042
+> >>>>>      ---help---
+> >>>>>        This is a driver for enabling wifi on some Fujitsu-Siemens Amilo
+> >>>>>        laptops.
+> >>>>
+> >>>
+> >>>
+> >>> --
+> >>> ~Randy
+> >> --
+> >
+> >
+> > --
+> > ~Randy
+> 
+> 
+> 
+> cc Jiri Kosina <trivial@kernel.org>
 
-On 07/03/2013 08:02 AM, Stephen Rothwell wrote:
-> Hi Michal,
->=20
-> On Wed, 03 Jul 2013 07:53:32 +0200 Michal Simek <monstr@monstr.eu> wrot=
-e:
->>
->> I have fixed it - it should be fixed there soon.
->=20
-> Thanks.
->=20
->> But I am thinking about removing this tree from linux-next
->> because we are pushing arm changes through arm-soc tree
->> and they require to have specific feature branches.
->=20
-> Just let me know when you decide.
->=20
+Please resend the patch properly, it's not easy to dig it from the 
+multi-depth quoted text.
 
-Please remove this tree from the linux-next testing.
-
-xilinx          git     git://git.xilinx.com/linux-xlnx.git#arm-next
-
-Thanks,
-Michal
-
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
-Maintainer of Linux kernel - Xilinx Zynq ARM architecture
-Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
-
-
-
---WH6bNNW73KUdKPRV14JJL3FBhxIPlKCLi
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iEYEARECAAYFAlITS9gACgkQykllyylKDCGBVgCfdb44aj53d6wTxUDPxilbQzB3
-LVsAoIJR/52TSElNsHiZYVcVrOHOtKal
-=mDww
------END PGP SIGNATURE-----
-
---WH6bNNW73KUdKPRV14JJL3FBhxIPlKCLi--
+-- 
+Jiri Kosina
+SUSE Labs
