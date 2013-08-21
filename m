@@ -1,46 +1,59 @@
-From: Jeremy Kerr <jk@ozlabs.org>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Wed, 21 Aug 2013 14:30:04 +0800
-Message-ID: <52145E6C.80404@ozlabs.org>
-References: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
-	<20130820120702.000b044e@oracle.com>
-	<201308202246.30869.arnd@arndb.de>
-	<20130821010822.220f592a@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the aio tree with the aio-direct tree
+Date: Wed, 21 Aug 2013 17:21:16 +1000
+Message-ID: <20130821172116.f873e18722024300b39a5ae8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
-In-Reply-To: <20130821010822.220f592a@oracle.com>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Dwight Engen <dwight.engen@oracle.com>
-Cc: cbe-oss-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, Ben Myers <bpm@sgi.com>, linux-next@vger.kernel.org, Gao feng <gaofeng@cn.fujitsu.com>, linuxppc-dev@lists.ozlabs.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__21_Aug_2013_17_21_16_+1000_ibeN=Xtivde4k7pt"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58539 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752394Ab3HUHVc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 03:21:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Benjamin LaHaise <bcrl@kvack.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <koverstreet@google.com>, Dave Kleikamp <dave.kleikamp@oracle.com>
 
-Hi all,
+--Signature=_Wed__21_Aug_2013_17_21_16_+1000_ibeN=Xtivde4k7pt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Yes, I agree. The other filesystems that take an Opt_uid as well do use
-> current_user_ns() and not init_user_ns. They also do a uid_valid()
-> check and fail the mount (or fallback to GLOBAL_ROOT_UID). So I think
-> that would look like this:
+Hi Benjamin,
 
-Looks good to me. Builds and mounts as expected.
+Today's linux-next merge of the aio tree got a conflict in
+fs/nfs/direct.c between commit 072d62aa3a83 ("nfs: simplify swap") from
+the aio-direct tree and commit 73a7075e3f6e ("aio: Kill aio_rw_vect_retry
+()") from the aio tree.
 
-Acked-by: Jeremy Kerr <jk@ozlabs.org>
+I fixed it up (the former also removed the line removed by the latter)
+and can carry the fix as necessary (no action is required).
 
+--=20
 Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Signature=_Wed__21_Aug_2013_17_21_16_+1000_ibeN=Xtivde4k7pt
+Content-Type: application/pgp-signature
 
-Jeremy
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+iQIcBAEBCAAGBQJSFGp0AAoJEECxmPOUX5FEtK0P/101mRsgfLG+6nFJpGmciIEK
+dsWKkqB/rIY9n31g9EWxYACc0wVoipHh5U7K/Opfr0GI50HIUdQHREAB8mdPLuxp
+DnaUxlTmRInhRiNDyusGlXoR5ye4OqcgBSFdSVqx1lQSA/sLsthVHHzklgVOc5WL
+bkQ7xRyVQIghuPRmryYnlajLvKcP1J7JU1NLMcnb08+fCGTWycyF2fQrpht8wD9M
+PVMDegROfm3MXBynPecwp0X18t0szm7U4P6pWMGmaWoi5/MsX7bLpOKAojOHIzdH
+Ra+Ql7EIzufPjBcKlgkQYw2HwWjvmGV6ayKmyvhsSNxUQNzwhnWKZ9uk0dFmFWdu
+U39HcaKTcDyytBWEwBThguA6pkZ40LOE3PYZIEODVl31d5hM7BATbZcjikf/oJIF
+YOlV64xx7M3RfrcWnqBW+7GlbCNfpTqThL8nOQ2denZrL/vrc1uekJBp47kgU5RD
+dR7gpssyXEIIib8Qfs+5+4LBJjWRGppQG8iFPyWaH3s0UmoVEbnyy8qetrTMUd5D
+IUwCQWYbQvfWVe7ANnsqJrSd8BkT4+fDyIqQQdLeEg99ZpvZF3qmIAWjRAzb9vz2
+foZt/1BiCIL0x58mtiDQhW/9txgePZtPP9j6I7jhzG0Nm/2xAJy6X7e5x2aS2PuA
+wgOj+7P93E1hSj9RMWXt
+=CnE8
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__21_Aug_2013_17_21_16_+1000_ibeN=Xtivde4k7pt--
