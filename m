@@ -1,23 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the modules
- tree
-Date: Wed, 21 Aug 2013 18:01:37 +1000
-Message-ID: <20130821180137.c3b4d9240ce859e9e8f8ede9@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ aio-direct tree
+Date: Wed, 21 Aug 2013 18:34:22 +1000
+Message-ID: <20130821183422.af59fd4ceaa9f1d7464cc705@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Aug_2013_18_01_37_+1000_ReMJgBQfHkV6Uz.a"
+ boundary="Signature=_Wed__21_Aug_2013_18_34_22_+1000_X2zFBRdFiz7SAFbJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47133 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:60617 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751368Ab3HUIBo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 04:01:44 -0400
+	with ESMTP id S1751365Ab3HUIed (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 04:34:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Christoph Jaeger <christophjaeger@linux.com>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, Dave Kleikamp <dave.kleikamp@oracle.com>, Matthew Wilcox <willy@linux.intel.com>
 
---Signature=_Wed__21_Aug_2013_18_01_37_+1000_ReMJgBQfHkV6Uz.a
+--Signature=_Wed__21_Aug_2013_18_34_22_+1000_X2zFBRdFiz7SAFbJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -25,10 +25,9 @@ Content-Transfer-Encoding: quoted-printable
 Hi Andrew,
 
 Today's linux-next merge of the akpm-current tree got a conflict in
-kernel/params.c between commit 79ac6834c255 ("module: fix sprintf format
-specifier in param_get_byte()") from the modules tree and commit
-55bba1b7fcce ("kernel: replace strict_strto*() with kstrto*()") from the
-akpm-current tree.
+mm/shmem.c between commit b080082bc3e8 ("tmpfs: add support for read_iter
+and write_iter") from the aio-direct tree and commit c6dc71ff08f7 ("mm:
+drop actor argument of do_shmem_file_read()") from the akpm-current tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,57 +36,52 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc kernel/params.c
-index e5f8f17,1f228a3..0000000
---- a/kernel/params.c
-+++ b/kernel/params.c
-@@@ -253,13 -252,13 +253,13 @@@ int parse_args(const char *doing
-  	EXPORT_SYMBOL(param_ops_##name)
- =20
- =20
-- STANDARD_PARAM_DEF(byte, unsigned char, "%hhu", unsigned long, strict_str=
-toul);
-- STANDARD_PARAM_DEF(short, short, "%hi", long, strict_strtol);
-- STANDARD_PARAM_DEF(ushort, unsigned short, "%hu", unsigned long, strict_s=
-trtoul);
-- STANDARD_PARAM_DEF(int, int, "%i", long, strict_strtol);
-- STANDARD_PARAM_DEF(uint, unsigned int, "%u", unsigned long, strict_strtou=
-l);
-- STANDARD_PARAM_DEF(long, long, "%li", long, strict_strtol);
-- STANDARD_PARAM_DEF(ulong, unsigned long, "%lu", unsigned long, strict_str=
-toul);
- -STANDARD_PARAM_DEF(byte, unsigned char, "%c", unsigned long, kstrtoul);
-++STANDARD_PARAM_DEF(byte, unsigned char, "%hhu", unsigned long, kstrtoul);
-+ STANDARD_PARAM_DEF(short, short, "%hi", long, kstrtol);
-+ STANDARD_PARAM_DEF(ushort, unsigned short, "%hu", unsigned long, kstrtoul=
-);
-+ STANDARD_PARAM_DEF(int, int, "%i", long, kstrtol);
-+ STANDARD_PARAM_DEF(uint, unsigned int, "%u", unsigned long, kstrtoul);
-+ STANDARD_PARAM_DEF(long, long, "%li", long, kstrtol);
-+ STANDARD_PARAM_DEF(ulong, unsigned long, "%lu", unsigned long, kstrtoul);
- =20
-  int param_set_charp(const char *val, const struct kernel_param *kp)
-  {
+diff --cc mm/shmem.c
+index 786d390,75010ba..0000000
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@@ -1555,13 -1546,14 +1555,14 @@@ static ssize_t shmem_file_read_iter(str
+  		 * Ok, we have the page, and it's up-to-date, so
+  		 * now we can copy it to user space...
+  		 *
+- 		 * The actor routine returns how many bytes were actually used..
+ -		 * The file_read_actor routine returns how many bytes were actually
+ -		 * used..
+++		 * The file_read_iter_actor routine returns how many bytes
+++		 * were actually used..
+  		 * NOTE! This may not be the same as how much of a user buffer
+  		 * we filled up (we may be padding etc), so we can only update
+- 		 * "pos" here (the actor routine has to update the user buffer
+ -		 * "pos" here (file_read_actor has to update the user buffer
+--		 * pointers and the remaining count).
+++		 * "pos" here (file_read_iter_actor has to update the user
+++		 * buffer pointers and the remaining count).
+  		 */
+ -		ret =3D file_read_actor(desc, page, offset, nr);
+ +		ret =3D file_read_iter_actor(&desc, page, offset, nr);
+  		offset +=3D ret;
+  		index +=3D offset >> PAGE_CACHE_SHIFT;
+  		offset &=3D ~PAGE_CACHE_MASK;
 
---Signature=_Wed__21_Aug_2013_18_01_37_+1000_ReMJgBQfHkV6Uz.a
+--Signature=_Wed__21_Aug_2013_18_34_22_+1000_X2zFBRdFiz7SAFbJ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSFHPhAAoJEECxmPOUX5FE/tYQAKOnT1Qsp/flyhDzL+n+UMcQ
-OuTFugz8Wy+F1RiDP7JPRy/Bs783ut0RC+YM6p0UIYEs8JA4OX+IrBB9KvlMWEvK
-ovZ4sTwjqg18x0MXOmWkWPbK9yVZlJ6H+02SsHriM19nESHFzpTnPJiHO8U8fW+8
-8XCEkZ3zhhWJjhp1x7GDIlgZdbuh+BC9b7g8JkJwMyFnBKtTgd0rKRFQBnGv4+uT
-4yHZEjlckNLHMYh/8Acsb1909PDqlxoFRvY1swy8ANs0JKwIfYbDH7eoIJ+7ZJ++
-TDSohG6w/j+QK2aVb6coGi9wfvOagJdkG9p8SwP62rFsrFbBEpPvPuFa3XFQ5v/2
-ndI+liZ0sIBsWHQidvoP8UGFvn/68RqloRIZTyRiRMR61km6476C2i/Jj3ep1htv
-Q4Ij7vJQeBwlkRhd37bHB2XeHQU2WQ2gF25s8oa9kReoDGqhWYLIV6nHq/hKOqA5
-a5BTvve/HBsbfQy5eGY8G/tI7r273+kLEV9EnzbR2CTjLzVwji0SdXG/VVY9O1sh
-H0uMlYWTFxNgOQb1hvI1KNco7bk/fI/I4t8Y5myoNGNjyVoHctZP1vPl9YuMVa5k
-+j9V2UIxxTZeeSnWG1cKKUHY/3Eb4tzfoBH7FPVu231oXBoMwKpu7+HqEM3RXZmv
-KpJAM+VpgeyT/vDIXiud
-=RB9h
+iQIcBAEBCAAGBQJSFHuTAAoJEECxmPOUX5FEOv0P/3El0GsR+z1UDTO2ltqEL+jl
+i3+L79o3FU4xSk4flFRkj/5Z8p/YVMKK49hc0qMSmKLA5IJZRNKWMpvNyoRHb9Yk
+OdRrpDoSXOjbce8cLQjLaO0VvAyTr5MMAxVC/3k3C4oScjFDzCiNttO8KNCzUwxR
+EOkY9v2DJoINccAwmsf8n5n7UQjCpXQrl5Iv1UrxTQpmBzdvcQNABlvnsj5T8X4S
+7FcwGOULHsG9dDTteqz/bjXDZDCQKS87kV7YwM3kF7bUVLcsuKTCscXjd61wesQC
+gkYA5EfHLccD+ir4DWrazZBKpTA98NXDtwtKfgfSvazQG+gf+XeNCuLtsYjFD8S5
+r6svLziJWgXcWgwQHj2PIs+Qa4Kinxllj+uYsyTkqcKkXZBg01YAk4068s7Vf0i3
+L2bK8H8iJEVDMW/wbqCeUU6v4rdV4FL1OCQXa78/8jTDUy3QSO7Ezs1AfZDG6Tsm
+5WTcXHPBUNLl0KK7VvY1zrbN1cFjVy5pT0opCkmKTXQio6acOYsVzVSGd4sVMnuR
+90+9jnAgHpJiJDMjeXZfNdXodDCjodpKvxfTVMael2yGZ8wjV9T0FeQAQNettXci
+v1gQzPNcm+FtnQ5U+sWfRgCxYo9fzKGIaEizo2J6s7pYpM6fk9gUBRD7JmrqFURY
+q3yfGm39scsTBWVpRJ/k
+=Ad3x
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__21_Aug_2013_18_01_37_+1000_ReMJgBQfHkV6Uz.a--
+--Signature=_Wed__21_Aug_2013_18_34_22_+1000_X2zFBRdFiz7SAFbJ--
