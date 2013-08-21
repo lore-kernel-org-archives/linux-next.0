@@ -1,46 +1,83 @@
-From: Ben Myers <bpm@sgi.com>
-Subject: Re: [PATCH] powerpc/spufs: convert userns uid/gid mount options to
-	kuid/kgid
-Date: Wed, 21 Aug 2013 15:24:17 -0500
-Message-ID: <20130821202417.GN5262@sgi.com>
-References: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
-	<20130821155654.GI5262@sgi.com>
-	<20130821143351.5840d556@oracle.com>
-	<201308212205.27789.arnd@arndb.de>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: Tree for Aug 21 [ screen corruption in graphical
+ mode ]
+Date: Wed, 21 Aug 2013 23:20:12 +0200
+Message-ID: <20130821212012.GH26909@phenom.ffwll.local>
+References: <CA+icZUUkS-UptLRM1CfcaHH=8UD-ZaHbXr8wFkA+YKyk-rPjvg@mail.gmail.com>
+ <20130821134441.GE26909@phenom.ffwll.local>
+ <CA+icZUVLau7AgZvcnWKjx=tc4WeuJ3qEH7qQta+YLKDmxk6QvA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <201308212205.27789.arnd@arndb.de>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Jeremy Kerr <jk@ozlabs.org>, Dwight Engen <dwight.engen@oracle.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: cbe-oss-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, linux-next@vger.kernel.org, Gao feng <gaofeng@cn.fujitsu.com>, linuxppc-dev@lists.ozlabs.org
+In-Reply-To: <CA+icZUVLau7AgZvcnWKjx=tc4WeuJ3qEH7qQta+YLKDmxk6QvA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Aug 21, 2013 at 10:05:27PM +0200, Arnd Bergmann wrote:
-> On Wednesday 21 August 2013, Dwight Engen wrote:
-> > 
-> > Acked-by: Jeremy Kerr <jk@ozlabs.org>
-> > Tested-by: Jeremy Kerr <jk@ozlabs.org>
-> > Signed-off-by: Dwight Engen <dwight.engen@oracle.com>
+On Wed, Aug 21, 2013 at 08:11:27PM +0200, Sedat Dilek wrote:
+> On Wed, Aug 21, 2013 at 3:44 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> > On Wed, Aug 21, 2013 at 12:35:08PM +0200, Sedat Dilek wrote:
+> >> On Wed, Aug 21, 2013 at 11:21 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >> > Hi all,
+> >> >
+> >> > There will be no linux-next trees on Aug 23 or 26.
+> >> >
+> >> > Changes since 20130820:
+> >> >
+> >> > New tree: aio-direct
+> >> >
+> >> > Removed tree: xilinx (at maintainer's request)
+> >> >
+> >> > The xfs tree still had its build failure for which I reverted a commit.
+> >> >
+> >> > The trivial tree gained conflicts against the crypto, net-next and
+> >> > wireless trees.
+> >> >
+> >> > The aio tree gained conflicts against the aio-direct tree.
+> >> >
+> >> > The akpm-current tree gained conflicts against the modules and aio-direct
+> >> > trees.
+> >> >
+> >> > ----------------------------------------------------------------------------
+> >> >
+> >>
+> >> Hi,
+> >>
+> >> I still have this issue with next-20130821 and "Linux v3.11-rc6 plus
+> >> drm-intel-nightly on top"
+> >> Any new development on this?
+> >> Patches?
+> >
+> > Tbh I'm at a loss what we could try above&beyond what Chris has already
+> > tried out.
+> >
+> >> Currently, I have two workarounds:
+> >>
+> >> [1] Revert this commit:
+> >>
+> >> commit 5456fe3882812aba251886e36fe55bfefb8e8829
+> >> "drm/i915: Allocate LLC ringbuffers from stolen"
+> >
+> > Since with a rather decent chance the next testing cycle I'll do this
+> > friday will be the last chunk of features for 3.12 I'll probably drop the
+> > above patch from my queue and we can try again in 3.13.
+> >
 > 
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Inspired by [1] I have switched from UXA to SNA...
+> ...and applied "[PATCH] drm/i915: Cleaning up the relocate entry
+> function" on top of next-20130821...
+> ...and can NOT see the screen corruptions anymore.
+> 
+> Can you explain that?
 
-Applied.
+If the relocate cleanup patch [1] is indeed required, then I can't explain
+this at all. Can you please double-check that this is really it, and that
+it's not the uxa->sna switch?
 
-Thanks,
-	-Ben
-
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+Thanks, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
