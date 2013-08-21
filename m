@@ -1,121 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH V8 00/33] loop: Issue O_DIRECT aio using bio_vec
-Date: Wed, 21 Aug 2013 10:14:03 +1000
-Message-ID: <20130821101403.1706678a4bbdebec4756ee54@canb.auug.org.au>
-References: <1374774659-13121-1-git-send-email-dave.kleikamp@oracle.com>
-	<20130820130056.GA9652@infradead.org>
-	<5213BFCB.3010503@oracle.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Wed, 21 Aug 2013 10:22:46 +1000
+Message-ID: <20130821102246.4e3c4c8fe549d8c7760da96d@canb.auug.org.au>
+References: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
+	<20130820120702.000b044e@oracle.com>
+	<20130820192844.GC5262@sgi.com>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============6071519106055482795=="
+Return-path: <xfs-bounces@oss.sgi.com>
+In-Reply-To: <20130820192844.GC5262@sgi.com>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: Ben Myers <bpm@sgi.com>
+Cc: cbe-oss-dev@lists.ozlabs.org, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Dwight Engen <dwight.engen@oracle.com>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, linux-next@vger.kernel.org, Jeremy Kerr <jk@ozlabs.org>, linuxppc-dev@lists.ozlabs.org, Gao feng <gaofeng@cn.fujitsu.com>
+List-Id: linux-next.vger.kernel.org
+
+--===============6071519106055482795==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Aug_2013_10_14_03_+1000_F0EHGU7YJHFB65j6"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40435 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751236Ab3HUAOR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Aug 2013 20:14:17 -0400
-In-Reply-To: <5213BFCB.3010503@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, "Maxim V. Patlasov" <mpatlasov@parallels.com>, Zach Brown <zab@zabbo.net>, Linux-Next <linux-next@vger.kernel.org>
+ boundary="Signature=_Wed__21_Aug_2013_10_22_46_+1000_EeAL.9Y2BRkRXAed"
 
---Signature=_Wed__21_Aug_2013_10_14_03_+1000_F0EHGU7YJHFB65j6
+--Signature=_Wed__21_Aug_2013_10_22_46_+1000_EeAL.9Y2BRkRXAed
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Ben,
 
-On Tue, 20 Aug 2013 14:13:15 -0500 Dave Kleikamp <dave.kleikamp@oracle.com>=
- wrote:
+On Tue, 20 Aug 2013 14:28:44 -0500 Ben Myers <bpm@sgi.com> wrote:
 >
-> Would you be willing to pick up
-> git://github.com/kleikamp/linux-shaggy.git for-next
-> into linux-next?
+> I'd prefer not to break Stephen's tree two days in a row.  We could just =
+revert
+> d6970d4b726c in the xfs tree for the time being as Stephen has done, but =
+given
+> the choice would prefer the fix.  Do you have a preference between the two
+> approaches that Dwight has posted?  The first seems more conservative...
 
-I have added that from today.
-
-> There will be some unclean merges, and I can send you updated patches
-> created against your latest tree. I'm not exactly sure of your process
-> wrt cleaning up merges, but I guess they would help.
-
-Since I will merge your tree into linux-next, I only need to fix merge
-conflicts, so while those patches can be a guide, they are mostly not
-needed.
-
-> On 08/20/2013 08:00 AM, Christoph Hellwig wrote:
-> > As I've seen very few replies to this:  how do we ensure this gets
-> > picked up for the 3.12 merge window?  The series has been a reposted
-> > a few times without complaints or major changes, but the ball still
-> > doesn't seem to get rolling.
-> >=20
-> > I'd really like to do some ecryptfs and scsi target work that is going
-> > to rely on this soon.
-
-If this happens, then it is important that your (Dave's) tree is not
-rebased/rewritten and that any other tree that depend on it merges your
-tree.
-
-I will merge your tree relatively early, that way the merge conflicts will
-be spread over several other merges and hopefully each be fairly minor.
-
-I gave called your tree "aio-direct", please let me know fi you think
-there is a better name.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+I will automatically revert that commit when I merge the xfs tree until
+some other solution is forthcoming (so you don't have to do the revert in
+the xfs tree).  This does need to be fixed fairly soon, though.
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Wed__21_Aug_2013_10_14_03_+1000_F0EHGU7YJHFB65j6
+--Signature=_Wed__21_Aug_2013_10_22_46_+1000_EeAL.9Y2BRkRXAed
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSFAZRAAoJEECxmPOUX5FEDaoQAJ1LBBb3PPzZwqsnBi++NGMx
-9nJeVVmixXPdsiqG0y+APLA+xt8hEhdmqsgPrd9/dR0Z1DF0/0pLwEGFidQvVrmF
-sxVPPELTiIdFslFU/Pgci3CR6DeBYbcoNIhnx3Bumy+kw/EIEm3JPEecObRz8dfF
-MzhoWhFN8B0MSxGKitrE6YSt2aOfH9UpZvVxaUP9atD7TbYRpDJh/4SCrWRsakMF
-CfL86Yc9vY84udQMtmm0BhBCU+78pSChDmQA5TZUayjkf7DU21qJN8DGQx68WbGX
-YXRbNlqTe5CFqPIEZb+DGFOz0JXgQrI53bRmKUSprhbgOJQIrDKvUKYE5nc4D2V4
-yPz2h0HpF81exan7aEAMGTgFymgJ0s2iqEESl5cGHZ6mhOJEKLv89jLOkewcaXca
-TiY5uURgp4bVzBxQLck+5MsX26+RkoR4eHPK8HFVb/xO4c4FUbJFCeXK0Jd5Dc1n
-/9d/pmFrFfHcIDjHHT9JK2zQfBDQrX+MUKyHpYe4WG/FfqRRQMLqub4rORW39o5K
-+Dz/ojOk2W0syXL85jswu9BVbZDyVjMfW9ctKHy8e/qb9/Ov3/rDC3peEOPAdHeE
-pQCugjyfTv7bLftLn5CTyhXeojT5ea1MD5H8hoR4mFemA3jKbB4Hm4LMQEhpYBgy
-7Vg78QszJdWioOj8GZIe
-=IBCy
+iQIcBAEBCAAGBQJSFAhWAAoJEECxmPOUX5FEoQEP/1hWbSlulJwAxE5gM1Z5Sx2S
+yniC9fDmRFaPz69pVNy+9CsF1JJvsT6eu1hDd4wb1F8wjBGK2AiE60uAkBTwBIXw
+zS8/IBfRclEMxxZH7Jx95chFTr3CaqT5z+APhw4tpSurMr38wi94UTY9+m5KdylW
+odgp3cjD4hXfchikf0Pg4zA+yH11vTTmh63QV3IExOHFATRCI5wFGd2BGbb6hNzo
+e6t7h6maWqRjYEuyz9kSCxtgQzHeAIrFPuNUA/N42kJ3EFvYhVERAqwMJgeqYYRs
+S/9hz599YtSJrQZ7gvTVqpVu2AQ4jBaioWKGFlWZ8tsZmhhykLY9T+yOjHMLmBS0
+k9+7Q7ehDBlEHF4v9ZIs1OciQ7cT8SpvH7La+9759ofdCGl7PtjFfTfoGnGj62j/
+DwAD1cUtbxZ/JcEERqWNfZ60i3HTRWkt3xw0oU4fMuQ3HcWIfwrSY4J0+h2cJBGC
+OK/cU4JNKKZRg6H8w4zne7uTkljkO9MmrF3nQ4FatUgcSLnY5frkzhaP238P4Hgu
+3ZWKyBoL34k9tYYuS/cvOqrn3wI8Xm/viqZNoK1pnVmHR49f/3dHv0tCoMROROZa
+F76/j9qMi8gY3vhi9sEhBDkWZXDLgyoprcJaCXvmkU/ridGcQmnIm7UcdssySaHO
+aMCnucNRR2B0iW65vxV1
+=KhY3
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__21_Aug_2013_10_14_03_+1000_F0EHGU7YJHFB65j6--
+--Signature=_Wed__21_Aug_2013_10_22_46_+1000_EeAL.9Y2BRkRXAed--
+
+
+--===============6071519106055482795==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
+
+--===============6071519106055482795==--
