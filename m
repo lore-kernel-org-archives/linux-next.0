@@ -1,72 +1,53 @@
-From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
-Subject: [PATCH linux-next] ipv6: fix missing braces in ip6_tnl_add_linklocal
-Date: Thu, 22 Aug 2013 00:19:57 +0200
-Message-ID: <1377123597-26515-1-git-send-email-vincent.stehle@laposte.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: queue GPIO operations instead of defering
+Date: Thu, 22 Aug 2013 01:04:23 +0200
+Message-ID: <CACRpkdbNh6ooBh-dhT=KKHQMZ=uK_AQMsreTg56kVXE5cE1ohQ@mail.gmail.com>
+References: <1376751410-14560-1-git-send-email-linus.walleij@linaro.org>
+	<52127035.7000909@wwwdotorg.org>
+	<5214FCB6.4040200@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtpfb2-g21.free.fr ([212.27.42.10]:51274 "EHLO
-	smtpfb2-g21.free.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752261Ab3HUWVN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 18:21:13 -0400
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:37797 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751963Ab3HUXEX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 19:04:23 -0400
+Received: by mail-oa0-f49.google.com with SMTP id n10so2134110oag.22
+        for <linux-next@vger.kernel.org>; Wed, 21 Aug 2013 16:04:23 -0700 (PDT)
+In-Reply-To: <5214FCB6.4040200@wwwdotorg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, Ding Tianhong <dingtianhong@huawei.com>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Warren <swarren@nvidia.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Lars Poeschel <poeschel@lemonage.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 
-Braces have been removed by mistake by commit df8372c 'ipv6: fix checkp=
-atch
-errors in net/ipv6/addrconf.c'.
+On Wed, Aug 21, 2013 at 7:45 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 08/19/2013 01:21 PM, Stephen Warren wrote:
+>> On 08/17/2013 08:56 AM, Linus Walleij wrote:
+>>> We currently defer probing of the caller if a pinctrl GPIO
+>>> request or direction setting comes in before the range mapping
+>>> a certain GPIO to a certain pin controller is available.
+>>>
+>>> This can end up with a circular dependency: the GPIO driver
+>>> needs the pin controller to be ready and the pin controller
+>>> need the GPIO driver to be ready. This also happens if
+>>> pin controllers and GPIO controllers compiled as modules
+>>> are inserted in a certain order.
+>>>
+>>> To break this circular dependence, queue any GPIO
+>>> operations coming to the framework until the range is ready,
+>>> instead of deferring the probe of the caller.
+>>
+>> I just noticed that next-20130819 is failing on the Tegra114 Dalmore
+>> board because of this patch. The kernel log is below. Reverting this
+>> patch solves the problem
+>
+> Linus, any thoughts here?
 
-This fixes the following compilation warning:
+None whatsoever, but logically it should be that your pinctrl+GPIO
+driver pair depends on the GPIO driver coming first and having it's probing
+deferred.
 
-  net/ipv6/addrconf.c: In function =E2=80=98addrconf_notify=E2=80=99:
-  net/ipv6/addrconf.c:2793:22: warning: =E2=80=98link_dev=E2=80=99 may =
-be used uninitialized in this function [-Wmaybe-uninitialized]
-  net/ipv6/addrconf.c:2802:21: note: =E2=80=98link_dev=E2=80=99 was dec=
-lared here
+I'll rip out that patch for the time being...
 
-Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
-Cc: James Morris <jmorris@namei.org>
-Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc: Patrick McHardy <kaber@trash.net>
-Cc: Ding Tianhong <dingtianhong@huawei.com>
----
-
-
-Hi,
-
-This can be seen in e.g. Linux next-20130821.
-
-Best regards,
-
-V.
-
-
- net/ipv6/addrconf.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
-index 980aa98..b2f2e6d 100644
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -2803,10 +2803,11 @@ static void ip6_tnl_add_linklocal(struct inet6_=
-dev *idev)
- 	struct net *net =3D dev_net(idev->dev);
-=20
- 	/* first try to inherit the link-local address from the link device *=
-/
--	if (idev->dev->iflink)
-+	if (idev->dev->iflink) {
- 		link_dev =3D __dev_get_by_index(net, idev->dev->iflink);
- 		if (link_dev && !ipv6_inherit_linklocal(idev, link_dev))
- 			return;
-+	}
-=20
- 	/* then try to inherit it from any device */
- 	for_each_netdev(net, link_dev) {
---=20
-1.7.10.4
+Yours,
+Linus Walleij
