@@ -1,90 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the wireless tree
-Date: Wed, 21 Aug 2013 14:20:36 +1000
-Message-ID: <20130821142036.e7d5e9fec3c2e1e96363a9c7@canb.auug.org.au>
+From: Dwight Engen <dwight.engen@oracle.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Wed, 21 Aug 2013 01:08:22 -0400
+Message-ID: <20130821010822.220f592a@oracle.com>
+References: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
+	<20130820120702.000b044e@oracle.com>
+	<201308202246.30869.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Aug_2013_14_20_36_+1000__8VmOlH=pLdYeOWG"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42005 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751995Ab3HUEUk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 00:20:40 -0400
+Received: from aserp1040.oracle.com ([141.146.126.69]:29806 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751773Ab3HUFIz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 01:08:55 -0400
+In-Reply-To: <201308202246.30869.arnd@arndb.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: cbe-oss-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, Ben Myers <bpm@sgi.com>, linux-next@vger.kernel.org, Gao feng <gaofeng@cn.fujitsu.com>, linuxppc-dev@lists.ozlabs.org, Jeremy Kerr <jk@ozlabs.org>
 
---Signature=_Wed__21_Aug_2013_14_20_36_+1000__8VmOlH=pLdYeOWG
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 20 Aug 2013 22:46:30 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-Hi Jiri,
+> On Tuesday 20 August 2013, Dwight Engen wrote:
+> > diff --git a/arch/powerpc/platforms/cell/spufs/inode.c
+> > b/arch/powerpc/platforms/cell/spufs/inode.c index f390042..90fb308
+> > 100644 --- a/arch/powerpc/platforms/cell/spufs/inode.c
+> > +++ b/arch/powerpc/platforms/cell/spufs/inode.c
+> > @@ -620,12 +620,12 @@ spufs_parse_options(struct super_block *sb,
+> > char *options, struct inode *root) case Opt_uid:
+> >                         if (match_int(&args[0], &option))
+> >                                 return 0;
+> > -                       root->i_uid = option;
+> > +                       root->i_uid = make_kuid(&init_user_ns,
+> > option); break;
+> >                 case Opt_gid:
+> >                         if (match_int(&args[0], &option))
+> >                                 return 0;
+> > -                       root->i_gid = option;
+> > +                       root->i_gid = make_kgid(&init_user_ns,
+> > option); break;
+> >                 case Opt_mode:
+> >                         if (match_octal(&args[0], &option))
+> 
+> Doesn't this mean the uid/gid is taken from the initial namespace
+> rather than from the namespace of the 'mount' process calling this? I
+> think the logical choice would be to have the UID be the one that
+> gets passed here in the caller's namespace.
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/net/wireless/iwlwifi/mvm/time-event.c between commit 057397943eee
-("iwlwifi: mvm: disconnect if time event scheduling fails") from the
-wireless tree and commit 0b1587b18bfe ("treewide: Fix typo in printk")
-from the trivial tree.
+Yes, I agree. The other filesystems that take an Opt_uid as well do use
+current_user_ns() and not init_user_ns. They also do a uid_valid()
+check and fail the mount (or fallback to GLOBAL_ROOT_UID). So I think
+that would look like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+diff --git a/arch/powerpc/platforms/cell/spufs/inode.c b/arch/powerpc/platforms/cell/spufs/inode.c
+index f390042..87ba7cf 100644
+--- a/arch/powerpc/platforms/cell/spufs/inode.c
++++ b/arch/powerpc/platforms/cell/spufs/inode.c
+@@ -620,12 +620,16 @@ spufs_parse_options(struct super_block *sb, char *options, struct inode *root)
+                case Opt_uid:
+                        if (match_int(&args[0], &option))
+                                return 0;
+-                       root->i_uid = option;
++                       root->i_uid = make_kuid(current_user_ns(), option);
++                       if (!uid_valid(root->i_uid))
++                               return 0;
+                        break;
+                case Opt_gid:
+                        if (match_int(&args[0], &option))
+                                return 0;
+-                       root->i_gid = option;
++                       root->i_gid = make_kgid(current_user_ns(), option);
++                       if (!gid_valid(root->i_gid))
++                               return 0;
+                        break;
+                case Opt_mode:
+                        if (match_octal(&args[0], &option))
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/net/wireless/iwlwifi/mvm/time-event.c
-index c17b74c,39b3ffb..0000000
---- a/drivers/net/wireless/iwlwifi/mvm/time-event.c
-+++ b/drivers/net/wireless/iwlwifi/mvm/time-event.c
-@@@ -198,12 -180,19 +198,12 @@@ static void iwl_mvm_te_handle_notif(str
-  		 * By now, we should have finished association
-  		 * and know the dtim period.
-  		 */
- -		if (te_data->vif->type =3D=3D NL80211_IFTYPE_STATION &&
- -		    (!te_data->vif->bss_conf.assoc ||
- -		     !te_data->vif->bss_conf.dtim_period)) {
- -			IWL_ERR(mvm,
- -				"No association and the time event is over already...\n");
- -			ieee80211_connection_loss(te_data->vif);
- -		}
- -
- +		iwl_mvm_te_check_disconnect(mvm, te_data->vif,
-- 			"No assocation and the time event is over already...");
-++			"No association and the time event is over already...");
-  		iwl_mvm_te_clear_data(mvm, te_data);
- -	} else if (le32_to_cpu(notif->action) & TE_NOTIF_HOST_EVENT_START) {
- +	} else if (le32_to_cpu(notif->action) & TE_V2_NOTIF_HOST_EVENT_START) {
-  		te_data->running =3D true;
- -		te_data->end_jiffies =3D jiffies +
- -			TU_TO_JIFFIES(te_data->duration);
- +		te_data->end_jiffies =3D TU_TO_EXP_TIME(te_data->duration);
- =20
-  		if (te_data->vif->type =3D=3D NL80211_IFTYPE_P2P_DEVICE) {
-  			set_bit(IWL_MVM_STATUS_ROC_RUNNING, &mvm->status);
-
---Signature=_Wed__21_Aug_2013_14_20_36_+1000__8VmOlH=pLdYeOWG
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSFEAUAAoJEECxmPOUX5FEQugQAKLhJ5ay2TMzI3+OmFPQzATM
-Y0UfEV2gZ/mBmJesdh3dv+0oPfii87UcJouU6D83VnO1AUcgM+S81IspJ0rAdRIC
-xuUDRFsDXtJBiHq6k0iXUJz7iXiuhXv+sdru+LZwvlXLP+gFuTghWDeIhpxJ1w2/
-1jMHcrIkTkZbWl4w1A49BGW8NAkpduzYp3zsyVs1p0Rc1SMVJnEdc3OtxwZ7HFL2
-/P/G8lyub4ijs0UtAbhi3f6lrHDww9Z8PG8jwamQ0xvUi10x7lTh+oI69FZMY9zw
-vjJPCJYQgkh2ZRily5G55FGCYd3ZvNb0OYxCkjE/fnjkQHG9Qy9yTkCkwaxpZM6O
-blvPLHNYIbgBeryZp52fd+OrKP8mku2JQp/wlZj21XZf1kXAVdPY5AbsljNA2q0G
-7lZFupk6t96J0zpVVT7iiGjHg78MfOEeqICjqCYZpG65cJ/K3iz/zwK+2jCwqWK5
-qZziqpzBd51HAKpNWxJoBhgxt8dSMWC378p4HcZCV3bqvrRhimMJfRRhrFzUDSsj
-Aa7wvE+eHxamHg2RkBDEsRYpS+dIhhl/fLH+MrqUdRLTOHrH+TTOs4XyVcvzFE2E
-m0miUKBFGZyTtJ31KcTDtkDdqII3bnykf1aPR5OZmu56oLxmz8rsfSPvaskaH/2O
-M55c2j61FpXptBiK1Cw7
-=U9MF
------END PGP SIGNATURE-----
-
---Signature=_Wed__21_Aug_2013_14_20_36_+1000__8VmOlH=pLdYeOWG--
+Again, I have not run tested this so we may just want to disable SPU_FS
+with USER_NS until they can be tested together.
