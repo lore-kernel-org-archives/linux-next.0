@@ -1,62 +1,90 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2] pinctrl: queue GPIO operations instead of defering
-Date: Wed, 21 Aug 2013 11:45:26 -0600
-Message-ID: <5214FCB6.4040200@wwwdotorg.org>
-References: <1376751410-14560-1-git-send-email-linus.walleij@linaro.org> <52127035.7000909@wwwdotorg.org>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Aug 21 [ screen corruption in graphical mode ]
+Date: Wed, 21 Aug 2013 20:11:27 +0200
+Message-ID: <CA+icZUVLau7AgZvcnWKjx=tc4WeuJ3qEH7qQta+YLKDmxk6QvA@mail.gmail.com>
+References: <CA+icZUUkS-UptLRM1CfcaHH=8UD-ZaHbXr8wFkA+YKyk-rPjvg@mail.gmail.com>
+	<20130821134441.GE26909@phenom.ffwll.local>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:38545 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751820Ab3HURpa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 13:45:30 -0400
-In-Reply-To: <52127035.7000909@wwwdotorg.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@nvidia.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Lars Poeschel <poeschel@lemonage.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: multipart/mixed; boundary=f46d043c82621c12da04e4791ad1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130821134441.GE26909@phenom.ffwll.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sedat Dilek <sedat.dilek@gmail.com>, Chris Wilson <chris@chris-wilson.co.uk>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+List-Id: linux-next.vger.kernel.org
 
-On 08/19/2013 01:21 PM, Stephen Warren wrote:
-> On 08/17/2013 08:56 AM, Linus Walleij wrote:
->> We currently defer probing of the caller if a pinctrl GPIO
->> request or direction setting comes in before the range mapping
->> a certain GPIO to a certain pin controller is available.
+--f46d043c82621c12da04e4791ad1
+Content-Type: text/plain; charset=UTF-8
+
+On Wed, Aug 21, 2013 at 3:44 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Wed, Aug 21, 2013 at 12:35:08PM +0200, Sedat Dilek wrote:
+>> On Wed, Aug 21, 2013 at 11:21 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> > Hi all,
+>> >
+>> > There will be no linux-next trees on Aug 23 or 26.
+>> >
+>> > Changes since 20130820:
+>> >
+>> > New tree: aio-direct
+>> >
+>> > Removed tree: xilinx (at maintainer's request)
+>> >
+>> > The xfs tree still had its build failure for which I reverted a commit.
+>> >
+>> > The trivial tree gained conflicts against the crypto, net-next and
+>> > wireless trees.
+>> >
+>> > The aio tree gained conflicts against the aio-direct tree.
+>> >
+>> > The akpm-current tree gained conflicts against the modules and aio-direct
+>> > trees.
+>> >
+>> > ----------------------------------------------------------------------------
+>> >
 >>
->> This can end up with a circular dependency: the GPIO driver
->> needs the pin controller to be ready and the pin controller
->> need the GPIO driver to be ready. This also happens if
->> pin controllers and GPIO controllers compiled as modules
->> are inserted in a certain order.
+>> Hi,
 >>
->> To break this circular dependence, queue any GPIO
->> operations coming to the framework until the range is ready,
->> instead of deferring the probe of the caller.
-> 
-> I just noticed that next-20130819 is failing on the Tegra114 Dalmore
-> board because of this patch. The kernel log is below. Reverting this
-> patch solves the problem
+>> I still have this issue with next-20130821 and "Linux v3.11-rc6 plus
+>> drm-intel-nightly on top"
+>> Any new development on this?
+>> Patches?
+>
+> Tbh I'm at a loss what we could try above&beyond what Chris has already
+> tried out.
+>
+>> Currently, I have two workarounds:
+>>
+>> [1] Revert this commit:
+>>
+>> commit 5456fe3882812aba251886e36fe55bfefb8e8829
+>> "drm/i915: Allocate LLC ringbuffers from stolen"
+>
+> Since with a rather decent chance the next testing cycle I'll do this
+> friday will be the last chunk of features for 3.12 I'll probably drop the
+> above patch from my queue and we can try again in 3.13.
+>
 
-Linus, any thoughts here?
+Inspired by [1] I have switched from UXA to SNA...
+...and applied "[PATCH] drm/i915: Cleaning up the relocate entry
+function" on top of next-20130821...
+...and can NOT see the screen corruptions anymore.
 
->> [   12.427751] tegra114-pinctrl 70000868.pinmux: pin USB_VBUS_EN0 PN4 already requested by Tegra GPIOs:108; cannot claim for Tegra GPIOs:108
->> [   12.440320] tegra114-pinctrl 70000868.pinmux: pin-108 (Tegra GPIOs:108) status -22
->> [   12.447965] usb1_vbus: Failed to request enable GPIO108: -22
->> [   12.454306] reg-fixed-voltage 3.regulator: Failed to register regulator: -22
->> [   12.461508] reg-fixed-voltage: probe of 3.regulator failed with error -22
->> [   12.469659] tegra114-pinctrl 70000868.pinmux: pin SPDIF_IN PK6 already requested by Tegra GPIOs:86; cannot claim for Tegra GPIOs:86
->> [   12.481606] tegra114-pinctrl 70000868.pinmux: pin-86 (Tegra GPIOs:86) status -22
->> [   12.489052] usb2_vbus: Failed to request enable GPIO86: -22
->> [   12.495226] reg-fixed-voltage 4.regulator: Failed to register regulator: -22
->> [   12.502449] reg-fixed-voltage: probe of 4.regulator failed with error -22
->> [   12.510542] tegra114-pinctrl 70000868.pinmux: pin GMI_CLK PK1 already requested by Tegra GPIOs:81; cannot claim for Tegra GPIOs:81
->> [   12.522403] tegra114-pinctrl 70000868.pinmux: pin-81 (Tegra GPIOs:81) status -22
->> [   12.529896] vdd_hdmi_5v0: Failed to request enable GPIO81: -22
->> [   12.536281] reg-fixed-voltage 5.regulator: Failed to register regulator: -22
->> [   12.543465] reg-fixed-voltage: probe of 5.regulator failed with error -22
->> [   12.552509] vdd_cam_1v8_reg: 1800 mV 
->> [   12.558205] platform 7d008000.usb: Driver tegra-ehci requests probe deferral
->> [   12.566600] platform 7d008000.usb-phy: Driver tegra-phy requests probe deferral
->> [   12.577475] input: gpio-keys.2 as /devices/soc0/gpio-keys.2/input/input1
->> [   12.588329] platform 7d008000.usb: Driver tegra-ehci requests probe deferral
->> [   12.596967] platform 7d008000.usb-phy: Driver tegra-phy requests probe deferral
+Can you explain that?
+
+- Sedat -
+
+[1] http://cynic.cc/blog//posts/sna_acceleration_vs_uxa/
+[2] http://lists.freedesktop.org/archives/intel-gfx/2013-August/032182.html
+[3] https://patchwork.kernel.org/patch/2847846/
+
+--f46d043c82621c12da04e4791ad1
+Content-Type: application/octet-stream; name="xorg.conf"
+Content-Disposition: attachment; filename="xorg.conf"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_hkmuwrga0
+
+U2VjdGlvbiAiRGV2aWNlIgogICAgICAgIElkZW50aWZpZXIgIkludGVsIEdyYXBoaWNzIgogICAg
+ICAgIERyaXZlciAiaW50ZWwiCiAgICAgICAgT3B0aW9uICJBY2NlbE1ldGhvZCIgInNuYSIKRW5k
+U2VjdGlvbgo=
+--f46d043c82621c12da04e4791ad1--
