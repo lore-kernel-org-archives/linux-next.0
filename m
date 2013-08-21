@@ -1,89 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Wed, 21 Aug 2013 10:22:46 +1000
-Message-ID: <20130821102246.4e3c4c8fe549d8c7760da96d@canb.auug.org.au>
-References: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
-	<20130820120702.000b044e@oracle.com>
-	<20130820192844.GC5262@sgi.com>
+Subject: linux-next: manual merge of the trivial tree with the crypto tree
+Date: Wed, 21 Aug 2013 14:08:46 +1000
+Message-ID: <20130821140846.d4d85896c7d5afb06b6fc16a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6071519106055482795=="
-Return-path: <xfs-bounces@oss.sgi.com>
-In-Reply-To: <20130820192844.GC5262@sgi.com>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Ben Myers <bpm@sgi.com>
-Cc: cbe-oss-dev@lists.ozlabs.org, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Dwight Engen <dwight.engen@oracle.com>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, linux-next@vger.kernel.org, Jeremy Kerr <jk@ozlabs.org>, linuxppc-dev@lists.ozlabs.org, Gao feng <gaofeng@cn.fujitsu.com>
-List-Id: linux-next.vger.kernel.org
-
---===============6071519106055482795==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Aug_2013_10_22_46_+1000_EeAL.9Y2BRkRXAed"
+ boundary="Signature=_Wed__21_Aug_2013_14_08_46_+1000_VMym3w9L9bSB4R9C"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47699 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751500Ab3HUEI6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 00:08:58 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Joe Perches <joe@perches.com>, Herbert Xu <herbert@gondor.apana.org.au>
 
---Signature=_Wed__21_Aug_2013_10_22_46_+1000_EeAL.9Y2BRkRXAed
+--Signature=_Wed__21_Aug_2013_14_08_46_+1000_VMym3w9L9bSB4R9C
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ben,
+Hi Jiri,
 
-On Tue, 20 Aug 2013 14:28:44 -0500 Ben Myers <bpm@sgi.com> wrote:
->
-> I'd prefer not to break Stephen's tree two days in a row.  We could just =
-revert
-> d6970d4b726c in the xfs tree for the time being as Stephen has done, but =
-given
-> the choice would prefer the fix.  Do you have a preference between the two
-> approaches that Dwight has posted?  The first seems more conservative...
+Today's linux-next merge of the trivial tree got a conflict in
+drivers/crypto/ux500/hash/hash_core.c between commit 69d2884debaa
+("crypto: ux500 - Fix logging, make arrays const, neatening") from the
+crypto tree and commit 0b1587b18bfe ("treewide: Fix typo in printk") from
+the trivial tree.
 
-I will automatically revert that commit when I merge the xfs tree until
-some other solution is forthcoming (so you don't have to do the revert in
-the xfs tree).  This does need to be fixed fairly soon, though.
+I fixed it up (the former is a superset of the latter, so I used that)
+and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__21_Aug_2013_10_22_46_+1000_EeAL.9Y2BRkRXAed
+--Signature=_Wed__21_Aug_2013_14_08_46_+1000_VMym3w9L9bSB4R9C
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSFAhWAAoJEECxmPOUX5FEoQEP/1hWbSlulJwAxE5gM1Z5Sx2S
-yniC9fDmRFaPz69pVNy+9CsF1JJvsT6eu1hDd4wb1F8wjBGK2AiE60uAkBTwBIXw
-zS8/IBfRclEMxxZH7Jx95chFTr3CaqT5z+APhw4tpSurMr38wi94UTY9+m5KdylW
-odgp3cjD4hXfchikf0Pg4zA+yH11vTTmh63QV3IExOHFATRCI5wFGd2BGbb6hNzo
-e6t7h6maWqRjYEuyz9kSCxtgQzHeAIrFPuNUA/N42kJ3EFvYhVERAqwMJgeqYYRs
-S/9hz599YtSJrQZ7gvTVqpVu2AQ4jBaioWKGFlWZ8tsZmhhykLY9T+yOjHMLmBS0
-k9+7Q7ehDBlEHF4v9ZIs1OciQ7cT8SpvH7La+9759ofdCGl7PtjFfTfoGnGj62j/
-DwAD1cUtbxZ/JcEERqWNfZ60i3HTRWkt3xw0oU4fMuQ3HcWIfwrSY4J0+h2cJBGC
-OK/cU4JNKKZRg6H8w4zne7uTkljkO9MmrF3nQ4FatUgcSLnY5frkzhaP238P4Hgu
-3ZWKyBoL34k9tYYuS/cvOqrn3wI8Xm/viqZNoK1pnVmHR49f/3dHv0tCoMROROZa
-F76/j9qMi8gY3vhi9sEhBDkWZXDLgyoprcJaCXvmkU/ridGcQmnIm7UcdssySaHO
-aMCnucNRR2B0iW65vxV1
-=KhY3
+iQIcBAEBCAAGBQJSFD1SAAoJEECxmPOUX5FEub0P/RPTOm3P3WJ+/fwT6w6LJ0DW
+FxAVq+C9DwZ74y7dTx49ff8okL+5da0uX1iT6fXzv+DOkMD/qZZ/vSOAU/YZ7Slf
++3TNVaOur8bMBHHF/xKjBB1yAMbJ9uGqZuTYMyn+bvajmMQJksqdGisFLk9WUGSr
+2DtSuTg2xtC9VUyPMO7YSPJtAYhR4AZ3Lecukk4R6ZjYDqu9X7nETHRZG1XS/Nzv
+Rl0c+xJbRWFS5efzG/EhtPve48FBFGmBmhz03QjHYAd4RJ+g09dWmFIMIpBHke0A
+lscIdBeabCnKSashpg+YhJbri47nXX26xNGE7HkZ0DTt4VBlkUoDm+uk0hAQBLo2
+lkZc0t6dvXcT+6D0Yfr6Nkex6BjgGlHdGO4TVXydaEmrVVyBXq4u2c1hTz6+vYqW
+av12BMk+l8oH5Xsse72KnpTGH7lwm0KMGC1NxR+f+ZsNbiAAZWq0aRi94SN7N4Ht
+h3/ls9dwC3R5HvpHiqsm49PsLMdYWEo5/7TsaSvsAvBLQIoL/0UDoMRCRhQ7ep3F
+16ssdJhV3bStOM0iUrp6hOT8ZlK9Plk5IIaD9ZSmQrElMwpcx1gH/JcYlj/Hyv1O
+y4KxghCQgG5mcD7g5rHHW6L9BDpaQy3yShyFBf2ETRo8gAViu6SixvEXCiMJUbuY
+pSw69N69ZuZv5oegdOHr
+=503s
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__21_Aug_2013_10_22_46_+1000_EeAL.9Y2BRkRXAed--
-
-
---===============6071519106055482795==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
-
---===============6071519106055482795==--
+--Signature=_Wed__21_Aug_2013_14_08_46_+1000_VMym3w9L9bSB4R9C--
