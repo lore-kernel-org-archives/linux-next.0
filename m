@@ -1,56 +1,64 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Tue, 20 Aug 2013 22:46:30 +0200
-Message-ID: <201308202246.30869.arnd@arndb.de>
-References: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
-	<20130820120702.000b044e@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the xilinx tree
+Date: Wed, 21 Aug 2013 10:01:27 +1000
+Message-ID: <20130821100127.8cd8aecce7f186f087016bef@canb.auug.org.au>
+References: <20130703111030.c0df2a231fc3e4ba6cb566cd@canb.auug.org.au>
+	<51D3BC5C.1080505@monstr.eu>
+	<20130703160247.bc20792d7bfaef893ee72137@canb.auug.org.au>
+	<52134BD8.4050004@monstr.eu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
-In-Reply-To: <20130820120702.000b044e@oracle.com>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Dwight Engen <dwight.engen@oracle.com>
-Cc: cbe-oss-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, Ben Myers <bpm@sgi.com>, linux-next@vger.kernel.org, Gao feng <gaofeng@cn.fujitsu.com>, linuxppc-dev@lists.ozlabs.org, Jeremy Kerr <jk@ozlabs.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__21_Aug_2013_10_01_27_+1000_kO1G4pFbUC75c4Ti"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38797 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751471Ab3HUABm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Aug 2013 20:01:42 -0400
+In-Reply-To: <52134BD8.4050004@monstr.eu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: monstr@monstr.eu
+Cc: Michal Simek <michal.simek@xilinx.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tuesday 20 August 2013, Dwight Engen wrote:
-> diff --git a/arch/powerpc/platforms/cell/spufs/inode.c b/arch/powerpc/platforms/cell/spufs/inode.c
-> index f390042..90fb308 100644
-> --- a/arch/powerpc/platforms/cell/spufs/inode.c
-> +++ b/arch/powerpc/platforms/cell/spufs/inode.c
-> @@ -620,12 +620,12 @@ spufs_parse_options(struct super_block *sb, char *options, struct inode *root)
->                 case Opt_uid:
->                         if (match_int(&args[0], &option))
->                                 return 0;
-> -                       root->i_uid = option;
-> +                       root->i_uid = make_kuid(&init_user_ns, option);
->                         break;
->                 case Opt_gid:
->                         if (match_int(&args[0], &option))
->                                 return 0;
-> -                       root->i_gid = option;
-> +                       root->i_gid = make_kgid(&init_user_ns, option);
->                         break;
->                 case Opt_mode:
->                         if (match_octal(&args[0], &option))
+--Signature=_Wed__21_Aug_2013_10_01_27_+1000_kO1G4pFbUC75c4Ti
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Doesn't this mean the uid/gid is taken from the initial namespace rather than
-from the namespace of the 'mount' process calling this? I think the logical
-choice would be to have the UID be the one that gets passed here in the caller's
-namespace.
+Hi Michal,
 
-	Arnd
+On Tue, 20 Aug 2013 12:58:32 +0200 Michal Simek <monstr@monstr.eu> wrote:
+>
+> Please remove this tree from the linux-next testing.
+>=20
+> xilinx          git     git://git.xilinx.com/linux-xlnx.git#arm-next
 
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+Done.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__21_Aug_2013_10_01_27_+1000_kO1G4pFbUC75c4Ti
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSFANbAAoJEECxmPOUX5FE7zQQAI6QW6ZrSd542PR4bctYgMgt
+n7j5dBnCAmzLYOz/ZdlwtAaB5S+dxa69nvQbOgMdVffl+1YiiBeNey5n6bZJA38A
+/nKM7jFQD+xm3oamnLX60O9+zZPuERkmlWxO/1IIqbwZu1UwfIUYKIJszqIZn0MG
+iIlexqzKXeZi12+YwpI8Ao2YwUnE8aTTXz/JKI742UO4b3rDk7O5UTbZVNpijKz6
+HdHJTV3bn1oISkEkmSH5j/hOg+pUZ+J15L/jDEI5eGfGN83+6eJZXc8gNH7Zxtlv
+yCMbPCfdc/cZ2A/RJ84OQonz5MQjJQyet5bifRNinEww4sv8IlXeBz0bpT5go8m9
+D1lKOTP5PF4kOfwI814oNFYUFO/sV1eXlOWSgJFqyK+ajSdODUMfx7jCeChis2Rm
+SoDSZ11nOqR6SLTd2woNK5y+aYYaaM6iLd5oPcWJc+zGdYtwt+KyXQk2Wx4C5N0G
+PCf//rfcLFdwZiyXPCBLo8RXnl9gP6u5Rnp/pfJ9A7u5WPzjkOVPtHA6mrvs1sLp
+NmEWRSaCi0QwQ/MTwTWNU8iD4x6XDvKfVrflvssoaBniq2rSzev5/8VbnOJcUB/D
+Umz/SqPNkupGx+/YYSEjAT3v5UdE254VdmVBKWSilhHWx82i1iC1VNcetKQ37ASb
+puUTZrm6cZjJe17K13d+
+=vMdC
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__21_Aug_2013_10_01_27_+1000_kO1G4pFbUC75c4Ti--
