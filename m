@@ -1,81 +1,107 @@
-From: Dwight Engen <dwight.engen@oracle.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Wed, 21 Aug 2013 01:08:22 -0400
-Message-ID: <20130821010822.220f592a@oracle.com>
-References: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
-	<20130820120702.000b044e@oracle.com>
-	<201308202246.30869.arnd@arndb.de>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [RFC PATCH next]cpufreq: fix bad unlock balance on !CONFIG_SMP
+Date: Wed, 21 Aug 2013 10:56:25 +0530
+Message-ID: <CAKohpo=DXmw4Mvd=xvQqDh4VQXWt0Xrg0TA_D1qHXVAf4ikNmw@mail.gmail.com>
+References: <1376975510.3788.9.camel@ThinkPad-T5421>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:29806 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751773Ab3HUFIz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 01:08:55 -0400
-In-Reply-To: <201308202246.30869.arnd@arndb.de>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:36132 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751855Ab3HUF00 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 01:26:26 -0400
+Received: by mail-ob0-f173.google.com with SMTP id ta17so2337732obb.18
+        for <linux-next@vger.kernel.org>; Tue, 20 Aug 2013 22:26:26 -0700 (PDT)
+In-Reply-To: <1376975510.3788.9.camel@ThinkPad-T5421>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: cbe-oss-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, Ben Myers <bpm@sgi.com>, linux-next@vger.kernel.org, Gao feng <gaofeng@cn.fujitsu.com>, linuxppc-dev@lists.ozlabs.org, Jeremy Kerr <jk@ozlabs.org>
+To: Li Zhong <zhong@linux.vnet.ibm.com>
+Cc: linux-next list <linux-next@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Fengguang Wu <fengguang.wu@intel.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>
 
-On Tue, 20 Aug 2013 22:46:30 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+On 20 August 2013 10:41, Li Zhong <zhong@linux.vnet.ibm.com> wrote:
+> This patch tries to fix lockdep complaint attached below.
+>
+> It seems that we should always read acquire the cpufreq_rwsem, whether
+> CONFIG_SMP is enabled or not. And CONFIG_HOTPLUG_CPU depends on
+> CONFIG_SMP, so it seems we don't need CONFIG_SMP for the code enabled by
+> CONFIG_HOTPLUG_CPU.
 
-> On Tuesday 20 August 2013, Dwight Engen wrote:
-> > diff --git a/arch/powerpc/platforms/cell/spufs/inode.c
-> > b/arch/powerpc/platforms/cell/spufs/inode.c index f390042..90fb308
-> > 100644 --- a/arch/powerpc/platforms/cell/spufs/inode.c
-> > +++ b/arch/powerpc/platforms/cell/spufs/inode.c
-> > @@ -620,12 +620,12 @@ spufs_parse_options(struct super_block *sb,
-> > char *options, struct inode *root) case Opt_uid:
-> >                         if (match_int(&args[0], &option))
-> >                                 return 0;
-> > -                       root->i_uid = option;
-> > +                       root->i_uid = make_kuid(&init_user_ns,
-> > option); break;
-> >                 case Opt_gid:
-> >                         if (match_int(&args[0], &option))
-> >                                 return 0;
-> > -                       root->i_gid = option;
-> > +                       root->i_gid = make_kgid(&init_user_ns,
-> > option); break;
-> >                 case Opt_mode:
-> >                         if (match_octal(&args[0], &option))
-> 
-> Doesn't this mean the uid/gid is taken from the initial namespace
-> rather than from the namespace of the 'mount' process calling this? I
-> think the logical choice would be to have the UID be the one that
-> gets passed here in the caller's namespace.
+I just figured out you haven't sent this mail to correct lists, added
+them now..
 
-Yes, I agree. The other filesystems that take an Opt_uid as well do use
-current_user_ns() and not init_user_ns. They also do a uid_valid()
-check and fail the mount (or fallback to GLOBAL_ROOT_UID). So I think
-that would look like this:
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/arch/powerpc/platforms/cell/spufs/inode.c b/arch/powerpc/platforms/cell/spufs/inode.c
-index f390042..87ba7cf 100644
---- a/arch/powerpc/platforms/cell/spufs/inode.c
-+++ b/arch/powerpc/platforms/cell/spufs/inode.c
-@@ -620,12 +620,16 @@ spufs_parse_options(struct super_block *sb, char *options, struct inode *root)
-                case Opt_uid:
-                        if (match_int(&args[0], &option))
-                                return 0;
--                       root->i_uid = option;
-+                       root->i_uid = make_kuid(current_user_ns(), option);
-+                       if (!uid_valid(root->i_uid))
-+                               return 0;
-                        break;
-                case Opt_gid:
-                        if (match_int(&args[0], &option))
-                                return 0;
--                       root->i_gid = option;
-+                       root->i_gid = make_kgid(current_user_ns(), option);
-+                       if (!gid_valid(root->i_gid))
-+                               return 0;
-                        break;
-                case Opt_mode:
-                        if (match_octal(&args[0], &option))
+--
+viresh
 
-Again, I have not run tested this so we may just want to disable SPU_FS
-with USER_NS until they can be tested together.
+> [    0.504191] =====================================
+> [    0.504627] [ BUG: bad unlock balance detected! ]
+> [    0.504627] 3.11.0-rc6-next-20130819 #1 Not tainted
+> [    0.504627] -------------------------------------
+> [    0.504627] swapper/1 is trying to release lock (cpufreq_rwsem) at:
+> [    0.504627] [<ffffffff813d927a>] cpufreq_add_dev+0x13a/0x3e0
+> [    0.504627] but there are no more locks to release!
+> [    0.504627]
+> [    0.504627] other info that might help us debug this:
+> [    0.504627] 1 lock held by swapper/1:
+> [    0.504627]  #0:  (subsys mutex#4){+.+.+.}, at: [<ffffffff8134a7bf>] subsys_interface_register+0x4f/0xe0
+> [    0.504627]
+> [    0.504627] stack backtrace:
+> [    0.504627] CPU: 0 PID: 1 Comm: swapper Not tainted 3.11.0-rc6-next-20130819 #1
+> [    0.504627] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2007
+> [    0.504627]  ffffffff813d927a ffff88007f847c98 ffffffff814c062b ffff88007f847cc8
+> [    0.504627]  ffffffff81098bce ffff88007f847cf8 ffffffff81aadc30 ffffffff813d927a
+> [    0.504627]  00000000ffffffff ffff88007f847d68 ffffffff8109d0be 0000000000000006
+> [    0.504627] Call Trace:
+> [    0.504627]  [<ffffffff813d927a>] ? cpufreq_add_dev+0x13a/0x3e0
+> [    0.504627]  [<ffffffff814c062b>] dump_stack+0x19/0x1b
+> [    0.504627]  [<ffffffff81098bce>] print_unlock_imbalance_bug+0xfe/0x110
+> [    0.504627]  [<ffffffff813d927a>] ? cpufreq_add_dev+0x13a/0x3e0
+> [    0.504627]  [<ffffffff8109d0be>] lock_release_non_nested+0x1ee/0x310
+> [    0.504627]  [<ffffffff81099d0e>] ? mark_held_locks+0xae/0x120
+> [    0.504627]  [<ffffffff811510cb>] ? kfree+0xcb/0x1d0
+> [    0.504627]  [<ffffffff813d77ea>] ? cpufreq_policy_free+0x4a/0x60
+> [    0.504627]  [<ffffffff813d927a>] ? cpufreq_add_dev+0x13a/0x3e0
+> [    0.504627]  [<ffffffff8109d2a4>] lock_release+0xc4/0x250
+> [    0.504627]  [<ffffffff8106c9f3>] up_read+0x23/0x40
+> [    0.504627]  [<ffffffff813d927a>] cpufreq_add_dev+0x13a/0x3e0
+> [    0.504627]  [<ffffffff8134a809>] subsys_interface_register+0x99/0xe0
+> [    0.504627]  [<ffffffff81b19f3b>] ? cpufreq_gov_dbs_init+0x12/0x12
+> [    0.504627]  [<ffffffff813d7f0d>] cpufreq_register_driver+0x9d/0x1d0
+> [    0.504627]  [<ffffffff81b19f3b>] ? cpufreq_gov_dbs_init+0x12/0x12
+> [    0.504627]  [<ffffffff81b1a039>] acpi_cpufreq_init+0xfe/0x1f8
+> [    0.504627]  [<ffffffff810002ba>] do_one_initcall+0xda/0x180
+> [    0.504627]  [<ffffffff81ae301e>] kernel_init_freeable+0x12c/0x1bb
+> [    0.504627]  [<ffffffff81ae2841>] ? do_early_param+0x8c/0x8c
+> [    0.504627]  [<ffffffff814b4dd0>] ? rest_init+0x140/0x140
+> [    0.504627]  [<ffffffff814b4dde>] kernel_init+0xe/0xf0
+> [    0.504627]  [<ffffffff814d029a>] ret_from_fork+0x7a/0xb0
+> [    0.504627]  [<ffffffff814b4dd0>] ? rest_init+0x140/0x140
+>
+> Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
+> ---
+>  drivers/cpufreq/cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index c0ef84d..8408957 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -986,6 +986,7 @@ static int __cpufreq_add_dev(struct device *dev, struct subsys_interface *sif,
+>                 cpufreq_cpu_put(policy);
+>                 return 0;
+>         }
+> +#endif
+>
+>         if (!down_read_trylock(&cpufreq_rwsem))
+>                 return 0;
+> @@ -1004,7 +1005,6 @@ static int __cpufreq_add_dev(struct device *dev, struct subsys_interface *sif,
+>         }
+>         read_unlock_irqrestore(&cpufreq_driver_lock, flags);
+>  #endif
+> -#endif
+>
+>         if (frozen)
+>                 /* Restore the saved policy when doing light-weight init */
+>
+>
