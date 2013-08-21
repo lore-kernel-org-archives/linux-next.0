@@ -1,53 +1,73 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: queue GPIO operations instead of defering
-Date: Thu, 22 Aug 2013 01:04:23 +0200
-Message-ID: <CACRpkdbNh6ooBh-dhT=KKHQMZ=uK_AQMsreTg56kVXE5cE1ohQ@mail.gmail.com>
-References: <1376751410-14560-1-git-send-email-linus.walleij@linaro.org>
-	<52127035.7000909@wwwdotorg.org>
-	<5214FCB6.4040200@wwwdotorg.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the aio tree
+Date: Thu, 22 Aug 2013 09:53:29 +1000
+Message-ID: <20130822095329.212e1bde8fcd3515284819a1@canb.auug.org.au>
+References: <20130821174522.3af60c89647476d2aab5f47c@canb.auug.org.au>
+	<5214E23B.9060608@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__22_Aug_2013_09_53_29_+1000_/=5GuMAT1M_7Uaaf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:37797 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751963Ab3HUXEX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 19:04:23 -0400
-Received: by mail-oa0-f49.google.com with SMTP id n10so2134110oag.22
-        for <linux-next@vger.kernel.org>; Wed, 21 Aug 2013 16:04:23 -0700 (PDT)
-In-Reply-To: <5214FCB6.4040200@wwwdotorg.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39173 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753309Ab3HUXxj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 19:53:39 -0400
+In-Reply-To: <5214E23B.9060608@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Warren <swarren@nvidia.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Lars Poeschel <poeschel@lemonage.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: Benjamin LaHaise <bcrl@kvack.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2013 at 7:45 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 08/19/2013 01:21 PM, Stephen Warren wrote:
->> On 08/17/2013 08:56 AM, Linus Walleij wrote:
->>> We currently defer probing of the caller if a pinctrl GPIO
->>> request or direction setting comes in before the range mapping
->>> a certain GPIO to a certain pin controller is available.
->>>
->>> This can end up with a circular dependency: the GPIO driver
->>> needs the pin controller to be ready and the pin controller
->>> need the GPIO driver to be ready. This also happens if
->>> pin controllers and GPIO controllers compiled as modules
->>> are inserted in a certain order.
->>>
->>> To break this circular dependence, queue any GPIO
->>> operations coming to the framework until the range is ready,
->>> instead of deferring the probe of the caller.
->>
->> I just noticed that next-20130819 is failing on the Tegra114 Dalmore
->> board because of this patch. The kernel log is below. Reverting this
->> patch solves the problem
+--Signature=_Thu__22_Aug_2013_09_53_29_+1000_/=5GuMAT1M_7Uaaf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dave,
+
+On Wed, 21 Aug 2013 10:52:27 -0500 Dave Kleikamp <dave.kleikamp@oracle.com>=
+ wrote:
 >
-> Linus, any thoughts here?
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>=20
+> There's another problem after the merge. Now that buf is passed into
+> aio_run_iocb(), ki_iter is no longer needed. It's not getting
+> initialized and causes an oops.
+>=20
+> Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
 
-None whatsoever, but logically it should be that your pinctrl+GPIO
-driver pair depends on the GPIO driver coming first and having it's probing
-deferred.
+OK, thanks, this will be applied to the aio tree merge today.
 
-I'll rip out that patch for the time being...
+> - ---
 
-Yours,
-Linus Walleij
+BTW, your GPG clearsigning corrupts patches.  You can clearsign them
+using the --not-dash-escaped option to gpg (I think).  I fixed this up.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__22_Aug_2013_09_53_29_+1000_/=5GuMAT1M_7Uaaf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSFVL9AAoJEECxmPOUX5FEnugQAJdIqAWZuP+7TOTaZNSfwyLT
+aSKcljV3sRN0BsI+Hsx2xVI35dR2HASlWz2I6uD5sXoJqZ9JC5631e0XkkCFW18i
+pcys24kXzv1qlH7e76FGC1sf+4Kql+AYQ8aEMzScyNqFVuwzWZL4cZJME8sGT3zq
+1KPwwAlalmixCOqs8YSYCiPYSgjQhCCev/yYku+j/WUxeSHeKR2Vh90eiHImbrjJ
+nSzg8QZbu7QTAYPCZohyPeVeuGcfoM9zvH1KYQ7CfIE7Q2ObvExapPuGgeOJZZtu
+tmtSXyjEyJ+1i0hv3/mAuWQ0rViK8vtg0jauuyOh/kBJLiZlMYJ77qJRCWpZAUYH
+yzK6zTwY01458+k8FFGf09xS39Ne4+EuCQYbukbxvM/S8igJf60gFO7fvB2GZFqc
+9YQY8HlVSu/sqZt77HxpbrI6Wt8OQ/vNzoyrRcrty4b66Kqdg/ZAH1rD16rAg3O3
+gPy20Lrr3lh25tChRenGQrr/SB4scD9JgyTbO4QHdhf8Euh9tcowrwnAzXT6uLjT
+EGWpvMB/Sqq/BMuxLR0f9YoNBiDQKVLf7udpLo6xpaQKPMzvD/wlKZ2FUAOGkOtp
+vfcyrOmrUJsQsho0fuO8t0AExBGtGG64L/SJQJAL94lvNm5g/pkkwcTpHLEwUAGg
+63MaeaIOxk2nx1AFqGgN
+=Svum
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__22_Aug_2013_09_53_29_+1000_/=5GuMAT1M_7Uaaf--
