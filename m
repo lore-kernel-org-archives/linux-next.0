@@ -1,81 +1,52 @@
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
-Subject: Re: linux-next: build failure after merge of the aio tree
-Date: Wed, 21 Aug 2013 10:52:27 -0500
-Message-ID: <5214E23B.9060608@oracle.com>
-References: <20130821174522.3af60c89647476d2aab5f47c@canb.auug.org.au>
+From: Ben Myers <bpm@sgi.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Wed, 21 Aug 2013 10:54:16 -0500
+Message-ID: <20130821155416.GH5262@sgi.com>
+References: <20130820172052.1f0d89ddf6a1a40ef70333fd@canb.auug.org.au>
+	<20130820120702.000b044e@oracle.com>
+	<20130820192844.GC5262@sgi.com>
+	<20130821102246.4e3c4c8fe549d8c7760da96d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130821174522.3af60c89647476d2aab5f47c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <xfs-bounces@oss.sgi.com>
+Content-Disposition: inline
+In-Reply-To: <20130821102246.4e3c4c8fe549d8c7760da96d@canb.auug.org.au>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benjamin LaHaise <bcrl@kvack.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: cbe-oss-dev@lists.ozlabs.org, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Dwight Engen <dwight.engen@oracle.com>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, linux-next@vger.kernel.org, Jeremy Kerr <jk@ozlabs.org>, linuxppc-dev@lists.ozlabs.org, Gao feng <gaofeng@cn.fujitsu.com>
 List-Id: linux-next.vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hey Stephen,
 
-Stephen,
+On Wed, Aug 21, 2013 at 10:22:46AM +1000, Stephen Rothwell wrote:
+> On Tue, 20 Aug 2013 14:28:44 -0500 Ben Myers <bpm@sgi.com> wrote:
+> > I'd prefer not to break Stephen's tree two days in a row.  We could just revert
+> > d6970d4b726c in the xfs tree for the time being as Stephen has done, but given
+> > the choice would prefer the fix.  Do you have a preference between the two
+> > approaches that Dwight has posted?  The first seems more conservative...
+> 
+> I will automatically revert that commit when I merge the xfs tree until
+> some other solution is forthcoming (so you don't have to do the revert in
+> the xfs tree).
 
-There's another problem after the merge. Now that buf is passed into
-aio_run_iocb(), ki_iter is no longer needed. It's not getting
-initialized and causes an oops.
+Gah.  That makes sense.  ;)
 
-Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
-- ---
- fs/aio.c            | 4 ++--
- include/linux/aio.h | 1 -
- 2 files changed, 2 insertions(+), 3 deletions(-)
+> This does need to be fixed fairly soon, though.
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 59b46cd..9f783e3 100644
-- --- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1281,11 +1281,11 @@ rw_common:
- 		break;
- 
- 	case IOCB_CMD_READ_ITER:
-- -		ret = aio_read_iter(req, req->ki_iter);
-+		ret = aio_read_iter(req, (void *)buf);
- 		break;
- 
- 	case IOCB_CMD_WRITE_ITER:
-- -		ret = aio_write_iter(req, req->ki_iter);
-+		ret = aio_write_iter(req, (void *)buf);
- 		break;
- 
- 	case IOCB_CMD_FDSYNC:
-diff --git a/include/linux/aio.h b/include/linux/aio.h
-index 4fab377..c08d3ed 100644
-- --- a/include/linux/aio.h
-+++ b/include/linux/aio.h
-@@ -54,7 +54,6 @@ struct kiocb {
- 	 * this is the underlying eventfd context to deliver events to.
- 	 */
- 	struct eventfd_ctx	*ki_eventfd;
-- -	struct iov_iter		*ki_iter;
- };
- 
- static inline bool is_sync_kiocb(struct kiocb *kiocb)
-- -- 
-1.8.3.4
+Agreed, thanks.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+-Ben
 
-iQIcBAEBAgAGBQJSFOI7AAoJEDaohF61QIxkuW4P/3XIggPvVE3ZypC2Qno9UwtB
-KXCVu0A0eLNbA6tB82vCWaQ7IblazoCOAex74qpGGrSB4ReS8yJDHkqnFR1aK8i4
-Jyi2EONVUzAq5ijH9amZQfFWwcXBsH6nb2uEcv/xQ2/lc1hPCl3kIy/fKYVRWfYB
-7YfX5J3VQnrI28B8NEccfqtTdQlYGp7VaRbh9dKVsudjBZZW9LAMkNcWoFuJzL9l
-mAtubeUSaq9F7Dp6p/8whXyh5Ue2jPKo2m87B1et9Y5RN+K45uX3hTUJcAdKY72k
-p9U4KNTCFG5o5FfsxI62B3/41R7KeOSe0PvILmb822vxLBnQWgF+fTScswKDDUcP
-BFLoKE0WeCgzBiIPLEHaxJZSW7wUJqYAYGrnHRM8yFjJHUMDkWjiNN/597MDbijF
-5BBj+gLN2GiBxKQcjtZRTXpUZ2pThLhPYpz/REtS134wz3Hp+ftsytHISCeUUoso
-Icf8qd+JmggLOugdXg0gq7LAAc7Wnm91TJ79jsXFc7HPRBKl7AflS3e5poSQoy+Y
-YZfVCUWV8LAnnB/fa9JobCIajIOebhhODpd5Y1hcqd9YDrqzhF3KlwyQkAmy9e2x
-kX2dvHcumSNkYzWmQnP8Yol7oDWA9XXaL0nYRKDkpy/3F9+pCeheO1bY7tUnMD9F
-34UQznE6M8rRkgiRKGDe
-=WSg+
------END PGP SIGNATURE-----
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
