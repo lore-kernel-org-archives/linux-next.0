@@ -1,83 +1,72 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: Tree for Aug 21 [ screen corruption in graphical
- mode ]
-Date: Wed, 21 Aug 2013 23:20:12 +0200
-Message-ID: <20130821212012.GH26909@phenom.ffwll.local>
-References: <CA+icZUUkS-UptLRM1CfcaHH=8UD-ZaHbXr8wFkA+YKyk-rPjvg@mail.gmail.com>
- <20130821134441.GE26909@phenom.ffwll.local>
- <CA+icZUVLau7AgZvcnWKjx=tc4WeuJ3qEH7qQta+YLKDmxk6QvA@mail.gmail.com>
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
+Subject: [PATCH linux-next] ipv6: fix missing braces in ip6_tnl_add_linklocal
+Date: Thu, 22 Aug 2013 00:19:57 +0200
+Message-ID: <1377123597-26515-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+icZUVLau7AgZvcnWKjx=tc4WeuJ3qEH7qQta+YLKDmxk6QvA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtpfb2-g21.free.fr ([212.27.42.10]:51274 "EHLO
+	smtpfb2-g21.free.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752261Ab3HUWVN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 18:21:13 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, Ding Tianhong <dingtianhong@huawei.com>
 
-On Wed, Aug 21, 2013 at 08:11:27PM +0200, Sedat Dilek wrote:
-> On Wed, Aug 21, 2013 at 3:44 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > On Wed, Aug 21, 2013 at 12:35:08PM +0200, Sedat Dilek wrote:
-> >> On Wed, Aug 21, 2013 at 11:21 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >> > Hi all,
-> >> >
-> >> > There will be no linux-next trees on Aug 23 or 26.
-> >> >
-> >> > Changes since 20130820:
-> >> >
-> >> > New tree: aio-direct
-> >> >
-> >> > Removed tree: xilinx (at maintainer's request)
-> >> >
-> >> > The xfs tree still had its build failure for which I reverted a commit.
-> >> >
-> >> > The trivial tree gained conflicts against the crypto, net-next and
-> >> > wireless trees.
-> >> >
-> >> > The aio tree gained conflicts against the aio-direct tree.
-> >> >
-> >> > The akpm-current tree gained conflicts against the modules and aio-direct
-> >> > trees.
-> >> >
-> >> > ----------------------------------------------------------------------------
-> >> >
-> >>
-> >> Hi,
-> >>
-> >> I still have this issue with next-20130821 and "Linux v3.11-rc6 plus
-> >> drm-intel-nightly on top"
-> >> Any new development on this?
-> >> Patches?
-> >
-> > Tbh I'm at a loss what we could try above&beyond what Chris has already
-> > tried out.
-> >
-> >> Currently, I have two workarounds:
-> >>
-> >> [1] Revert this commit:
-> >>
-> >> commit 5456fe3882812aba251886e36fe55bfefb8e8829
-> >> "drm/i915: Allocate LLC ringbuffers from stolen"
-> >
-> > Since with a rather decent chance the next testing cycle I'll do this
-> > friday will be the last chunk of features for 3.12 I'll probably drop the
-> > above patch from my queue and we can try again in 3.13.
-> >
-> 
-> Inspired by [1] I have switched from UXA to SNA...
-> ...and applied "[PATCH] drm/i915: Cleaning up the relocate entry
-> function" on top of next-20130821...
-> ...and can NOT see the screen corruptions anymore.
-> 
-> Can you explain that?
+Braces have been removed by mistake by commit df8372c 'ipv6: fix checkp=
+atch
+errors in net/ipv6/addrconf.c'.
 
-If the relocate cleanup patch [1] is indeed required, then I can't explain
-this at all. Can you please double-check that this is really it, and that
-it's not the uxa->sna switch?
+This fixes the following compilation warning:
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+  net/ipv6/addrconf.c: In function =E2=80=98addrconf_notify=E2=80=99:
+  net/ipv6/addrconf.c:2793:22: warning: =E2=80=98link_dev=E2=80=99 may =
+be used uninitialized in this function [-Wmaybe-uninitialized]
+  net/ipv6/addrconf.c:2802:21: note: =E2=80=98link_dev=E2=80=99 was dec=
+lared here
+
+Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
+Cc: James Morris <jmorris@namei.org>
+Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: Patrick McHardy <kaber@trash.net>
+Cc: Ding Tianhong <dingtianhong@huawei.com>
+---
+
+
+Hi,
+
+This can be seen in e.g. Linux next-20130821.
+
+Best regards,
+
+V.
+
+
+ net/ipv6/addrconf.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index 980aa98..b2f2e6d 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -2803,10 +2803,11 @@ static void ip6_tnl_add_linklocal(struct inet6_=
+dev *idev)
+ 	struct net *net =3D dev_net(idev->dev);
+=20
+ 	/* first try to inherit the link-local address from the link device *=
+/
+-	if (idev->dev->iflink)
++	if (idev->dev->iflink) {
+ 		link_dev =3D __dev_get_by_index(net, idev->dev->iflink);
+ 		if (link_dev && !ipv6_inherit_linklocal(idev, link_dev))
+ 			return;
++	}
+=20
+ 	/* then try to inherit it from any device */
+ 	for_each_netdev(net, link_dev) {
+--=20
+1.7.10.4
