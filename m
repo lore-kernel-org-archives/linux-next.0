@@ -1,90 +1,31 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Aug 21 [ screen corruption in graphical mode ]
-Date: Wed, 21 Aug 2013 20:11:27 +0200
-Message-ID: <CA+icZUVLau7AgZvcnWKjx=tc4WeuJ3qEH7qQta+YLKDmxk6QvA@mail.gmail.com>
-References: <CA+icZUUkS-UptLRM1CfcaHH=8UD-ZaHbXr8wFkA+YKyk-rPjvg@mail.gmail.com>
-	<20130821134441.GE26909@phenom.ffwll.local>
-Reply-To: sedat.dilek@gmail.com
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Date: Wed, 21 Aug 2013 11:15:00 -0700 (PDT)
+Message-ID: <20130821.111500.578777610906041340.davem@davemloft.net>
+References: <20130821191041.712893827d8000c6dca8781b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=f46d043c82621c12da04e4791ad1
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130821134441.GE26909@phenom.ffwll.local>
+In-Reply-To: <20130821191041.712893827d8000c6dca8781b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>, Chris Wilson <chris@chris-wilson.co.uk>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dingtianhong@huawei.com
 List-Id: linux-next.vger.kernel.org
 
---f46d043c82621c12da04e4791ad1
-Content-Type: text/plain; charset=UTF-8
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 21 Aug 2013 19:10:41 +1000
 
-On Wed, Aug 21, 2013 at 3:44 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> On Wed, Aug 21, 2013 at 12:35:08PM +0200, Sedat Dilek wrote:
->> On Wed, Aug 21, 2013 at 11:21 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> > Hi all,
->> >
->> > There will be no linux-next trees on Aug 23 or 26.
->> >
->> > Changes since 20130820:
->> >
->> > New tree: aio-direct
->> >
->> > Removed tree: xilinx (at maintainer's request)
->> >
->> > The xfs tree still had its build failure for which I reverted a commit.
->> >
->> > The trivial tree gained conflicts against the crypto, net-next and
->> > wireless trees.
->> >
->> > The aio tree gained conflicts against the aio-direct tree.
->> >
->> > The akpm-current tree gained conflicts against the modules and aio-direct
->> > trees.
->> >
->> > ----------------------------------------------------------------------------
->> >
->>
->> Hi,
->>
->> I still have this issue with next-20130821 and "Linux v3.11-rc6 plus
->> drm-intel-nightly on top"
->> Any new development on this?
->> Patches?
->
-> Tbh I'm at a loss what we could try above&beyond what Chris has already
-> tried out.
->
->> Currently, I have two workarounds:
->>
->> [1] Revert this commit:
->>
->> commit 5456fe3882812aba251886e36fe55bfefb8e8829
->> "drm/i915: Allocate LLC ringbuffers from stolen"
->
-> Since with a rather decent chance the next testing cycle I'll do this
-> friday will be the last chunk of features for 3.12 I'll probably drop the
-> above patch from my queue and we can try again in 3.13.
->
+> Hi all,
+> 
+> After merging the net-next tree, today's linux-next build (i386 defconfig
+> and probably others) produced this warning:
+> 
+> net/ipv6/addrconf.c: In function 'addrconf_notify':
+> net/ipv6/addrconf.c:2793:22: warning: 'link_dev' may be used uninitialized in this function [-Wuninitialized]
+> net/ipv6/addrconf.c:2802:21: note: 'link_dev' was declared here
+> 
+> Introduced by commit df8372ca747f ("ipv6: fix checkpatch errors in
+> net/ipv6/addrconf.c").  It looks like here are some missing braces.
 
-Inspired by [1] I have switched from UXA to SNA...
-...and applied "[PATCH] drm/i915: Cleaning up the relocate entry
-function" on top of next-20130821...
-...and can NOT see the screen corruptions anymore.
-
-Can you explain that?
-
-- Sedat -
-
-[1] http://cynic.cc/blog//posts/sna_acceleration_vs_uxa/
-[2] http://lists.freedesktop.org/archives/intel-gfx/2013-August/032182.html
-[3] https://patchwork.kernel.org/patch/2847846/
-
---f46d043c82621c12da04e4791ad1
-Content-Type: application/octet-stream; name="xorg.conf"
-Content-Disposition: attachment; filename="xorg.conf"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_hkmuwrga0
-
-U2VjdGlvbiAiRGV2aWNlIgogICAgICAgIElkZW50aWZpZXIgIkludGVsIEdyYXBoaWNzIgogICAg
-ICAgIERyaXZlciAiaW50ZWwiCiAgICAgICAgT3B0aW9uICJBY2NlbE1ldGhvZCIgInNuYSIKRW5k
-U2VjdGlvbgo=
---f46d043c82621c12da04e4791ad1--
+Yes, which has since been reverted.
