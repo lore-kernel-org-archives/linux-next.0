@@ -1,77 +1,81 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH -next] s390: fix tlb_gather_mmu fallout
-Date: Wed, 21 Aug 2013 17:12:33 +0200
-Message-ID: <20130821151233.GA19384@osiris>
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+Subject: Re: linux-next: build failure after merge of the aio tree
+Date: Wed, 21 Aug 2013 10:52:27 -0500
+Message-ID: <5214E23B.9060608@oracle.com>
+References: <20130821174522.3af60c89647476d2aab5f47c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp10.uk.ibm.com ([195.75.94.106]:33848 "EHLO
-	e06smtp10.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751609Ab3HUPMh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 11:12:37 -0400
-Received: from /spool/local
-	by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-	Wed, 21 Aug 2013 16:09:33 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-	by d06dlp01.portsmouth.uk.ibm.com (Postfix) with ESMTP id 41D1F17D805D
-	for <linux-next@vger.kernel.org>; Wed, 21 Aug 2013 16:14:30 +0100 (BST)
-Received: from d06av05.portsmouth.uk.ibm.com (d06av05.portsmouth.uk.ibm.com [9.149.37.229])
-	by b06cxnps4076.portsmouth.uk.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id r7LFCNts65208330
-	for <linux-next@vger.kernel.org>; Wed, 21 Aug 2013 15:12:23 GMT
-Received: from d06av05.portsmouth.uk.ibm.com (localhost [127.0.0.1])
-	by d06av05.portsmouth.uk.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id r7LFCYEW012930
-	for <linux-next@vger.kernel.org>; Wed, 21 Aug 2013 09:12:34 -0600
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130821174522.3af60c89647476d2aab5f47c@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, linux-next@vger.kernel.org
+Cc: Benjamin LaHaise <bcrl@kvack.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-could you please add the compile fix below to linux-next?
+Stephen,
 
-=46rom 263466205a86ff8103a465f45f649b14ac5b1218 Mon Sep 17 00:00:00 200=
-1
-=46rom: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Wed, 21 Aug 2013 16:46:25 +0200
-Subject: [PATCH] s390: fix tlb_gather_mmu fallout
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
+There's another problem after the merge. Now that buf is passed into
+aio_run_iocb(), ki_iter is no longer needed. It's not getting
+initialized and causes an oops.
 
-With commit 2b047252 "Fix TLB gather virtual address range invalidation
-corner cases" tlb_gather_mmu() got a new argument.
-There is however a patch in the kvm/linux-next tree "KVM: s390: allow s=
-ie
-enablement for multi-threaded programs" which now causes breakage in
-linux-next:
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+- ---
+ fs/aio.c            | 4 ++--
+ include/linux/aio.h | 1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-arch/s390/mm/pgtable.c: In function =E2=80=98s390_enable_sie=E2=80=99:
-arch/s390/mm/pgtable.c:1175:2: error: too few arguments to function =E2=
-=80=98tlb_gather_mmu=E2=80=99
+diff --git a/fs/aio.c b/fs/aio.c
+index 59b46cd..9f783e3 100644
+- --- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1281,11 +1281,11 @@ rw_common:
+ 		break;
+ 
+ 	case IOCB_CMD_READ_ITER:
+- -		ret = aio_read_iter(req, req->ki_iter);
++		ret = aio_read_iter(req, (void *)buf);
+ 		break;
+ 
+ 	case IOCB_CMD_WRITE_ITER:
+- -		ret = aio_write_iter(req, req->ki_iter);
++		ret = aio_write_iter(req, (void *)buf);
+ 		break;
+ 
+ 	case IOCB_CMD_FDSYNC:
+diff --git a/include/linux/aio.h b/include/linux/aio.h
+index 4fab377..c08d3ed 100644
+- --- a/include/linux/aio.h
++++ b/include/linux/aio.h
+@@ -54,7 +54,6 @@ struct kiocb {
+ 	 * this is the underlying eventfd context to deliver events to.
+ 	 */
+ 	struct eventfd_ctx	*ki_eventfd;
+- -	struct iov_iter		*ki_iter;
+ };
+ 
+ static inline bool is_sync_kiocb(struct kiocb *kiocb)
+- -- 
+1.8.3.4
 
-So let's fix just this.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
----
- arch/s390/mm/pgtable.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/s390/mm/pgtable.c b/arch/s390/mm/pgtable.c
-index ef34519..8a123da 100644
---- a/arch/s390/mm/pgtable.c
-+++ b/arch/s390/mm/pgtable.c
-@@ -1172,7 +1172,7 @@ int s390_enable_sie(void)
- 	thp_split_mm(mm);
- 	/* Reallocate the page tables with pgstes */
- 	mm->context.has_pgste =3D 1;
--	tlb_gather_mmu(&tlb, mm, 0);
-+	tlb_gather_mmu(&tlb, mm, 0, TASK_SIZE);
- 	page_table_realloc(&tlb, mm, 0, TASK_SIZE);
- 	tlb_finish_mmu(&tlb, 0, -1);
- 	up_write(&mm->mmap_sem);
---=20
-1.8.2.3
+iQIcBAEBAgAGBQJSFOI7AAoJEDaohF61QIxkuW4P/3XIggPvVE3ZypC2Qno9UwtB
+KXCVu0A0eLNbA6tB82vCWaQ7IblazoCOAex74qpGGrSB4ReS8yJDHkqnFR1aK8i4
+Jyi2EONVUzAq5ijH9amZQfFWwcXBsH6nb2uEcv/xQ2/lc1hPCl3kIy/fKYVRWfYB
+7YfX5J3VQnrI28B8NEccfqtTdQlYGp7VaRbh9dKVsudjBZZW9LAMkNcWoFuJzL9l
+mAtubeUSaq9F7Dp6p/8whXyh5Ue2jPKo2m87B1et9Y5RN+K45uX3hTUJcAdKY72k
+p9U4KNTCFG5o5FfsxI62B3/41R7KeOSe0PvILmb822vxLBnQWgF+fTScswKDDUcP
+BFLoKE0WeCgzBiIPLEHaxJZSW7wUJqYAYGrnHRM8yFjJHUMDkWjiNN/597MDbijF
+5BBj+gLN2GiBxKQcjtZRTXpUZ2pThLhPYpz/REtS134wz3Hp+ftsytHISCeUUoso
+Icf8qd+JmggLOugdXg0gq7LAAc7Wnm91TJ79jsXFc7HPRBKl7AflS3e5poSQoy+Y
+YZfVCUWV8LAnnB/fa9JobCIajIOebhhODpd5Y1hcqd9YDrqzhF3KlwyQkAmy9e2x
+kX2dvHcumSNkYzWmQnP8Yol7oDWA9XXaL0nYRKDkpy/3F9+pCeheO1bY7tUnMD9F
+34UQznE6M8rRkgiRKGDe
+=WSg+
+-----END PGP SIGNATURE-----
