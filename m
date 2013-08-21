@@ -1,118 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the aio tree
-Date: Wed, 21 Aug 2013 17:45:22 +1000
-Message-ID: <20130821174522.3af60c89647476d2aab5f47c@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the modules
+ tree
+Date: Wed, 21 Aug 2013 18:01:37 +1000
+Message-ID: <20130821180137.c3b4d9240ce859e9e8f8ede9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Aug_2013_17_45_22_+1000_yJ/1qc7x6FF3IJwW"
+ boundary="Signature=_Wed__21_Aug_2013_18_01_37_+1000_ReMJgBQfHkV6Uz.a"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56862 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:47133 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752470Ab3HUHp3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 03:45:29 -0400
+	with ESMTP id S1751368Ab3HUIBo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Aug 2013 04:01:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin LaHaise <bcrl@kvack.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Kleikamp <dave.kleikamp@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Christoph Jaeger <christophjaeger@linux.com>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Wed__21_Aug_2013_17_45_22_+1000_yJ/1qc7x6FF3IJwW
+--Signature=_Wed__21_Aug_2013_18_01_37_+1000_ReMJgBQfHkV6Uz.a
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Benjamin,
+Hi Andrew,
 
-After merging the aio tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in
+kernel/params.c between commit 79ac6834c255 ("module: fix sprintf format
+specifier in param_get_byte()") from the modules tree and commit
+55bba1b7fcce ("kernel: replace strict_strto*() with kstrto*()") from the
+akpm-current tree.
 
-fs/aio.c: In function 'aio_kernel_init_rw':
-fs/aio.c:1359:6: error: 'struct kiocb' has no member named 'ki_left'
-  iocb->ki_left =3D nr;
-      ^
-fs/aio.c: In function 'aio_kernel_submit':
-fs/aio.c:1394:6: error: 'struct kiocb' has no member named 'ki_opcode'
-  iocb->ki_opcode =3D op;
-      ^
-fs/aio.c:1395:6: error: 'struct kiocb' has no member named 'ki_buf'
-  iocb->ki_buf =3D (char __user *)(unsigned long)ptr;
-      ^
-fs/aio.c:1398:2: error: too few arguments to function 'aio_run_iocb'
-  ret =3D aio_run_iocb(iocb, 0);
-  ^
-fs/aio.c:1217:16: note: declared here
- static ssize_t aio_run_iocb(struct kiocb *req, unsigned opcode,
-                ^
-
-Caused by commit af9fa2024c38 ("aio: add aio_kernel_() interface") from
-the aio-direct tree interacting with commit 8bc92afcf7f5 ("aio: Kill
-unneeded kiocb members") from the aio tree.
-
-I applied the following merge fix patch (and I can carry it as necessary
-- thanks, Dave, for the hint patches):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 21 Aug 2013 17:42:14 +1000
-Subject: [PATCH] aio: semantic fixup
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/aio.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/fs/aio.c b/fs/aio.c
-index 39fb7b0..59b46cd 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1356,7 +1356,6 @@ void aio_kernel_init_rw(struct kiocb *iocb, struct fi=
-le *filp,
- 			size_t nr, loff_t off)
- {
- 	iocb->ki_filp =3D filp;
--	iocb->ki_left =3D nr;
- 	iocb->ki_nbytes =3D nr;
- 	iocb->ki_pos =3D off;
- 	iocb->ki_ctx =3D (void *)-1;
-@@ -1391,11 +1390,7 @@ int aio_kernel_submit(struct kiocb *iocb, unsigned s=
-hort op, void *ptr)
- 	BUG_ON(!iocb->ki_obj.complete);
- 	BUG_ON(!iocb->ki_filp);
-=20
--	iocb->ki_opcode =3D op;
--	iocb->ki_buf =3D (char __user *)(unsigned long)ptr;
--	iocb->ki_iter =3D ptr;
--
--	ret =3D aio_run_iocb(iocb, 0);
-+	ret =3D aio_run_iocb(iocb, op, ptr, 0);
-=20
- 	if (ret)
- 		aio_kernel_free(iocb);
---=20
-1.8.4.rc3
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__21_Aug_2013_17_45_22_+1000_yJ/1qc7x6FF3IJwW
+diff --cc kernel/params.c
+index e5f8f17,1f228a3..0000000
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@@ -253,13 -252,13 +253,13 @@@ int parse_args(const char *doing
+  	EXPORT_SYMBOL(param_ops_##name)
+ =20
+ =20
+- STANDARD_PARAM_DEF(byte, unsigned char, "%hhu", unsigned long, strict_str=
+toul);
+- STANDARD_PARAM_DEF(short, short, "%hi", long, strict_strtol);
+- STANDARD_PARAM_DEF(ushort, unsigned short, "%hu", unsigned long, strict_s=
+trtoul);
+- STANDARD_PARAM_DEF(int, int, "%i", long, strict_strtol);
+- STANDARD_PARAM_DEF(uint, unsigned int, "%u", unsigned long, strict_strtou=
+l);
+- STANDARD_PARAM_DEF(long, long, "%li", long, strict_strtol);
+- STANDARD_PARAM_DEF(ulong, unsigned long, "%lu", unsigned long, strict_str=
+toul);
+ -STANDARD_PARAM_DEF(byte, unsigned char, "%c", unsigned long, kstrtoul);
+++STANDARD_PARAM_DEF(byte, unsigned char, "%hhu", unsigned long, kstrtoul);
++ STANDARD_PARAM_DEF(short, short, "%hi", long, kstrtol);
++ STANDARD_PARAM_DEF(ushort, unsigned short, "%hu", unsigned long, kstrtoul=
+);
++ STANDARD_PARAM_DEF(int, int, "%i", long, kstrtol);
++ STANDARD_PARAM_DEF(uint, unsigned int, "%u", unsigned long, kstrtoul);
++ STANDARD_PARAM_DEF(long, long, "%li", long, kstrtol);
++ STANDARD_PARAM_DEF(ulong, unsigned long, "%lu", unsigned long, kstrtoul);
+ =20
+  int param_set_charp(const char *val, const struct kernel_param *kp)
+  {
+
+--Signature=_Wed__21_Aug_2013_18_01_37_+1000_ReMJgBQfHkV6Uz.a
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSFHAXAAoJEECxmPOUX5FE760QAKEaY/I6xKe59/7lNOARR6MO
-GzjV1LuAGN+ancE8jn47S8sSEsK0USeyAupgrBS/Eu32PP+3+pI3GZkBTd6HYcJg
-Px6S1pH5xGmFw3gR8BTQdWYlLN4rg5f6FCR8qGdMfWGPZeX0c/HDVMHUUH5mL/hI
-LFqoQ6ZEZFHbQK3zB4vgrBat4FBTch3FskXE2gQVzTB5lJa6AfWf0YbDgrIyMOPP
-Fr2F8UzlNgKr+XcTFzA0AaI9JXEsFmcY6m3EDe/svi6NTtUphlyl0JQ5NHWZcGC3
-A0I8hZSraAbK2zdGwIK+KDkhCsWzNblooB/JhKbrqt4S4mu89y3mqPsHGIkP1cNP
-kSUYYZrQQk5aA6GIR8uXwRsNIIyDSm0EYTedzymIWb5nvXLPi1hsREhdA12YtE2Y
-bviMqKC1dh6AXxq4ixygQaMMdSDG0cIGEMEV7PW0xQOfVnz48dg9klYeQYuEr7my
-8Mh2b/PcbjEO6lB6BSGw2lCPDYjxy5upbeGM/ycxUBRftf5ZNh157kRU39Ak5Dio
-QdzEOXtLMSX8RPYY3r0cC8ZNnCAdQEUH9m11+L/dcoUsyOTXRE/TtU1lYxt4TqUa
-Nwg/amHtFDIYM9yMEQQRB15xEU2DQ19bPWKRZWheqrBzt8ucSqyLSbxZzIRYuQrH
-fKit9CN2gJU5NOFPhXHX
-=P+OO
+iQIcBAEBCAAGBQJSFHPhAAoJEECxmPOUX5FE/tYQAKOnT1Qsp/flyhDzL+n+UMcQ
+OuTFugz8Wy+F1RiDP7JPRy/Bs783ut0RC+YM6p0UIYEs8JA4OX+IrBB9KvlMWEvK
+ovZ4sTwjqg18x0MXOmWkWPbK9yVZlJ6H+02SsHriM19nESHFzpTnPJiHO8U8fW+8
+8XCEkZ3zhhWJjhp1x7GDIlgZdbuh+BC9b7g8JkJwMyFnBKtTgd0rKRFQBnGv4+uT
+4yHZEjlckNLHMYh/8Acsb1909PDqlxoFRvY1swy8ANs0JKwIfYbDH7eoIJ+7ZJ++
+TDSohG6w/j+QK2aVb6coGi9wfvOagJdkG9p8SwP62rFsrFbBEpPvPuFa3XFQ5v/2
+ndI+liZ0sIBsWHQidvoP8UGFvn/68RqloRIZTyRiRMR61km6476C2i/Jj3ep1htv
+Q4Ij7vJQeBwlkRhd37bHB2XeHQU2WQ2gF25s8oa9kReoDGqhWYLIV6nHq/hKOqA5
+a5BTvve/HBsbfQy5eGY8G/tI7r273+kLEV9EnzbR2CTjLzVwji0SdXG/VVY9O1sh
+H0uMlYWTFxNgOQb1hvI1KNco7bk/fI/I4t8Y5myoNGNjyVoHctZP1vPl9YuMVa5k
++j9V2UIxxTZeeSnWG1cKKUHY/3Eb4tzfoBH7FPVu231oXBoMwKpu7+HqEM3RXZmv
+KpJAM+VpgeyT/vDIXiud
+=RB9h
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__21_Aug_2013_17_45_22_+1000_yJ/1qc7x6FF3IJwW--
+--Signature=_Wed__21_Aug_2013_18_01_37_+1000_ReMJgBQfHkV6Uz.a--
