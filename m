@@ -1,83 +1,101 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the driver-core tree
-Date: Thu, 22 Aug 2013 15:39:42 +1000
-Message-ID: <20130822153942.66d098b122092d6944186c53@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Aug 21 [ screen corruption in graphical mode ]
+Date: Thu, 22 Aug 2013 08:32:47 +0200
+Message-ID: <CA+icZUUoZ3WRNChLJ8vfP_MxJhTu2annkWCmB8jnqOxNKSEtOg@mail.gmail.com>
+References: <CA+icZUUkS-UptLRM1CfcaHH=8UD-ZaHbXr8wFkA+YKyk-rPjvg@mail.gmail.com>
+	<20130821134441.GE26909@phenom.ffwll.local>
+	<CA+icZUVLau7AgZvcnWKjx=tc4WeuJ3qEH7qQta+YLKDmxk6QvA@mail.gmail.com>
+	<20130821212012.GH26909@phenom.ffwll.local>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__22_Aug_2013_15_39_42_+1000_xu6L31DNtu3aEjw4"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44558 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753485Ab3HVFjx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Aug 2013 01:39:53 -0400
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:60952 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752806Ab3HVGcs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Aug 2013 02:32:48 -0400
+In-Reply-To: <20130821212012.GH26909@phenom.ffwll.local>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sedat Dilek <sedat.dilek@gmail.com>, Chris Wilson <chris@chris-wilson.co.uk>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 
---Signature=_Thu__22_Aug_2013_15_39_42_+1000_xu6L31DNtu3aEjw4
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 21, 2013 at 11:20 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Wed, Aug 21, 2013 at 08:11:27PM +0200, Sedat Dilek wrote:
+>> On Wed, Aug 21, 2013 at 3:44 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>> > On Wed, Aug 21, 2013 at 12:35:08PM +0200, Sedat Dilek wrote:
+>> >> On Wed, Aug 21, 2013 at 11:21 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> >> > Hi all,
+>> >> >
+>> >> > There will be no linux-next trees on Aug 23 or 26.
+>> >> >
+>> >> > Changes since 20130820:
+>> >> >
+>> >> > New tree: aio-direct
+>> >> >
+>> >> > Removed tree: xilinx (at maintainer's request)
+>> >> >
+>> >> > The xfs tree still had its build failure for which I reverted a commit.
+>> >> >
+>> >> > The trivial tree gained conflicts against the crypto, net-next and
+>> >> > wireless trees.
+>> >> >
+>> >> > The aio tree gained conflicts against the aio-direct tree.
+>> >> >
+>> >> > The akpm-current tree gained conflicts against the modules and aio-direct
+>> >> > trees.
+>> >> >
+>> >> > ----------------------------------------------------------------------------
+>> >> >
+>> >>
+>> >> Hi,
+>> >>
+>> >> I still have this issue with next-20130821 and "Linux v3.11-rc6 plus
+>> >> drm-intel-nightly on top"
+>> >> Any new development on this?
+>> >> Patches?
+>> >
+>> > Tbh I'm at a loss what we could try above&beyond what Chris has already
+>> > tried out.
+>> >
+>> >> Currently, I have two workarounds:
+>> >>
+>> >> [1] Revert this commit:
+>> >>
+>> >> commit 5456fe3882812aba251886e36fe55bfefb8e8829
+>> >> "drm/i915: Allocate LLC ringbuffers from stolen"
+>> >
+>> > Since with a rather decent chance the next testing cycle I'll do this
+>> > friday will be the last chunk of features for 3.12 I'll probably drop the
+>> > above patch from my queue and we can try again in 3.13.
+>> >
+>>
+>> Inspired by [1] I have switched from UXA to SNA...
+>> ...and applied "[PATCH] drm/i915: Cleaning up the relocate entry
+>> function" on top of next-20130821...
+>> ...and can NOT see the screen corruptions anymore.
+>>
+>> Can you explain that?
+>
+> If the relocate cleanup patch [1] is indeed required, then I can't explain
+> this at all. Can you please double-check that this is really it, and that
+> it's not the uxa->sna switch?
+>
 
-Hi Greg,
+It's independent of the applied patch.
+My problem goes away with SNA but still exists with UXA.
 
-After merging the driver-core tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+As said in my previous analysis... switching back to Ubuntu's graphics
+did not show the symptoms, too.
 
-In file included from include/linux/kobject.h:21:0,
-                 from include/linux/module.h:16,
-                 from drivers/acpi/bgrt.c:11:
-drivers/acpi/bgrt.c: In function 'bgrt_init':
-drivers/acpi/bgrt.c:89:23: error: 'image_attr' undeclared (first use in thi=
-s function)
-  sysfs_bin_attr_init(&image_attr);
-                       ^
-include/linux/sysfs.h:53:3: note: in definition of macro 'sysfs_attr_init'
-  (attr)->key =3D &__key;    \
-   ^
-drivers/acpi/bgrt.c:89:2: note: in expansion of macro 'sysfs_bin_attr_init'
-  sysfs_bin_attr_init(&image_attr);
-  ^
-drivers/acpi/bgrt.c:89:23: note: each undeclared identifier is reported onl=
-y once for each function it appears in
-  sysfs_bin_attr_init(&image_attr);
-                       ^
-include/linux/sysfs.h:53:3: note: in definition of macro 'sysfs_attr_init'
-  (attr)->key =3D &__key;    \
-   ^
-drivers/acpi/bgrt.c:89:2: note: in expansion of macro 'sysfs_bin_attr_init'
-  sysfs_bin_attr_init(&image_attr);
-  ^
+It's interesting to see, it is a problem of the intel-ddx.
 
-Presumably caused by commit 65f44679580d ("ACPI: bgrt: take advantage of
-binary sysfs groups").
+Anyway, SNA seems here to be approx. 20% faster in gtkperf-0.40, so I
+will use it.
 
-I have used the driver-core tree from next-20130821 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I am open and willing to test any patches you will provide.
+Please, let me know.
 
---Signature=_Thu__22_Aug_2013_15_39_42_+1000_xu6L31DNtu3aEjw4
-Content-Type: application/pgp-signature
+Thanks.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSFaQjAAoJEECxmPOUX5FEJL4P/iVRRqTfywf6uQxiftjXPzkT
-edBmxPKBIJTFdpnN+cPbhavAtJj5Hd6SJF7PX+Yr3zdZuGrU0zRz70ucS12lobjz
-qLNKD2f5mXrHpcxrRkrh00d5ilBHngCtD7tbB5vSoccVPcS0dZhWmnmLw05U3Muu
-tYlHKbNy1NFWnjHtrnOHCv5MME3ydCyAdGlfvcxsU+ghF/aaa6JCZ9/i2omYu5z5
-TghwmZdOtFtspqIN5QEQwSc80iBet9f84LosVErEDBIwqyMt5PA6dOruKl6iEduB
-pmwtZXrjD4PBrbSGdhn+4i2JLQzknCu/xjWU8lusboujIxfBMAEisxLTlw0dqVHG
-bRrBTQwDDoyEGzVQ8hCGkvO8ZfJUbnxa7Nch6CsCD5P1XGr1Bvp1OLouPgK7NNJU
-MInLQlsSBT+og5oG2VW6m60AlDwV4I5qlJ47s60zdrYO8yXTIO67i2YSOK6/NiMa
-k7nx7Yt5i/Yn2ShBMrZ3NZ7WOUrZGRtXHIDtsk4NWvuRxNZagycQSnioTiYfRt13
-8eMfBrtmRn5bfgINSTK/fZ9GQzM9vVEDOTyI7AO5f7pMTmrRoKNdIE9M8YA1HzHd
-dcw1rwZuKWKS2PYzzes/AzJMAjFCaQ971zJT4DxlIRiQucIZbtf44s7rZIla1xjr
-884ZXfKqN0svGnNKlW3P
-=xMWK
------END PGP SIGNATURE-----
-
---Signature=_Thu__22_Aug_2013_15_39_42_+1000_xu6L31DNtu3aEjw4--
+- Sedat -
