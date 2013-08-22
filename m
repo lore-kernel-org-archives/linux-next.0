@@ -1,79 +1,83 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the workqueues tree with the trivial
- tree
-Date: Thu, 22 Aug 2013 15:07:03 +1000
-Message-ID: <20130822150703.88405aaf749c77c01dfc5712@canb.auug.org.au>
+From: Li Zhong <zhong@linux.vnet.ibm.com>
+Subject: Re: [RFC PATCH next]module: Fix mod->mkobj.kobj potentially freed
+ too early
+Date: Thu, 22 Aug 2013 13:37:58 +0800
+Message-ID: <1377149878.2633.40.camel@ThinkPad-T5421>
+References: <1377078598.2709.25.camel@ThinkPad-T5421>
+	 <20130821161819.GA14364@kroah.com>
+	 <1377138846.2633.25.camel@ThinkPad-T5421> <20130822040333.GB4821@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__22_Aug_2013_15_07_03_+1000_Fa4Lt5/x3a=Nt/0U"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yacine Belkadi <yacine.belkadi.1@gmail.com>, Jiri Kosina <jkosina@suse.cz>, Libin <huawei.libin@huawei.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp04.au.ibm.com ([202.81.31.146]:34183 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752527Ab3HVFiI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Aug 2013 01:38:08 -0400
+Received: from /spool/local
+	by e23smtp04.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <zhong@linux.vnet.ibm.com>;
+	Thu, 22 Aug 2013 15:21:08 +1000
+In-Reply-To: <20130822040333.GB4821@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-next list <linux-next@vger.kernel.org>, rusty@rustcorp.com.au, LKML <linux-kernel@vger.kernel.org>, rmk+kernel@arm.linux.org.uk
 
---Signature=_Thu__22_Aug_2013_15_07_03_+1000_Fa4Lt5/x3a=Nt/0U
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2013-08-21 at 21:03 -0700, Greg KH wrote:
+> On Thu, Aug 22, 2013 at 10:34:06AM +0800, Li Zhong wrote:
+> > On Wed, 2013-08-21 at 09:18 -0700, Greg KH wrote:
+> > > On Wed, Aug 21, 2013 at 05:49:58PM +0800, Li Zhong wrote:
+> > > > DEBUG_KOBJECT_RELEASE helps to find the issue attached below.
+> > > > 
+> > > > After some investigation, it seems the reason is:
+> > > > The mod->mkobj.kobj(ffffffffa01600d0 below) is freed together with mod
+> > > > itself in free_module(). However, its children still hold references to
+> > > > it, as the delay caused by DEBUG_KOBJECT_RELEASE. So when the
+> > > > child(holders below) tries to decrease the reference count to its parent
+> > > > in kobject_del(), BUG happens as it tries to access already freed memory.
+> > > 
+> > > Ah, thanks for tracking this down.  I had seen this in my local testing,
+> > > but wasn't able to figure out the offending code.
+> > > 
+> > > > This patch tries to fix it by waiting for the mod->mkobj.kobj to be
+> > > > really released in the module removing process (and some error code
+> > > > paths).
+> > > 
+> > > Nasty, we should just be freeing the structure in the release function,
+> > > why doesn't that work?
+> > 
+> > Hi Greg,
+> > 
+> > It seems I didn't describe it clearly in the previous mail. I'm trying
+> > to do it better below: 
+> > 
+> > mod->mkobj.kobj is embedded in module_kobject(not a pointer):
+> > struct module_kobject {
+> >         struct kobject kobj;
+> > 	...
+> > 
+> > and allocated with the module memory. So we could see the parent below
+> > ffffffffa01600d0 is between MODULES_VADDR (ffffffffa0000000) and
+> > MODULES_END(ffffffffff000000). 
+> > 
+> > It seem to me that the mkobj.kobj is freed by module_free(mod,
+> > mod->module_core). 
+> 
+> Ick, you are right.  If a kobject is being embedded in an object, it
+> should control the lifespan of the object, not somewhere else like is
+> happening here.
+> 
+> The best solution for this is to make the kobject a pointer, not
+> embedded in the structure, that will fix this issue, right?
 
-Hi Tejun,
+Yes, I think so. I'll try to write a fix using this way, thanks for your
+suggestion.
 
-Today's linux-next merge of the workqueues tree got a conflict in
-kernel/workqueue.c between commit d185af300fe4 ("workqueue: fix some
-scripts/kernel-doc warnings") from the trivial tree and commit
-2d498db9814c ("workqueue: Fix manage_workers() RETURNS description") from
-the workqueues tree.
+Thanks, Zhong
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc kernel/workqueue.c
-index c60de8e,34b139a..0000000
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@@ -2038,9 -2033,12 +2039,12 @@@ static bool maybe_destroy_workers(struc
-   * spin_lock_irq(pool->lock) which may be released and regrabbed
-   * multiple times.  Does GFP_KERNEL allocations.
-   *
- - * RETURNS:
- + * Return:
--  * spin_lock_irq(pool->lock) which may be released and regrabbed
--  * multiple times.  Does GFP_KERNEL allocations.
-+  * %false if the pool don't need management and the caller can safely sta=
-rt
-+  * processing works, %true indicates that the function released pool->lock
-+  * and reacquired it to perform some management function and that the
-+  * conditions that the caller verified while holding the lock before
-+  * calling the function might no longer be true.
-   */
-  static bool manage_workers(struct worker *worker)
-  {
-
---Signature=_Thu__22_Aug_2013_15_07_03_+1000_Fa4Lt5/x3a=Nt/0U
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSFZx6AAoJEECxmPOUX5FE0iIP/34ia2aOZs6zoWUX3yOYcbv+
-ymXvTUEUoq/H6tX9iUC2R6YaxAi2jt6zbB3LDsi/m+JIV96VdaIC9UNEYYHtaQke
-e6Dwcqs6xXQNOEROCs1CflvAmKJgsKI58mgYJeAK7o+5C0vrqKNq/8wAkhiXFZn5
-B1RC0QmR+kSclbsghkn+RGMdBl5cKxxdSnnHMDMtwSQ1pwx1Rws0mBIC31TafqNy
-+sc+8CC3lX4wuh0kivSywa1DEQrPrXyVebvIDV8+2En6vQ5VUrymJkTH5hOYLS+T
-cwk29H/qnqxrSGPXpay86xHtQA8zuDApnmbCFkk+02PZgVVnXVIpQMLyZFoUVA63
-0o/akVcxSCVnz1tuE1lyl925RnZPFxMzdrhVAOl6dLkx7HULW1uCzF//A1naOXTu
-k5SIVxn5Zcl3V5Jcn1Aj8nn/dhVVMBfXMS+av0P4MxLqkbW4VrW5OKozz8HaPlRE
-wWL0dYeUHyZ/UPut0ssLYv5mlC+vLzMpxxwUAoQKpqvpMMCTtuXBp/BUMWriLosH
-gDVbiXKoCKCPgM55KbiEB34CqFnLvUP+rRzit45a0xI3+TBDiTy/PqyN5iyvt2u5
-IpeMSz86dymvdhOPxi37dv8T6CTCubyrgfP2sti7ATvpoMrRMhab+Btf7BncDK+g
-wqAWnV55jQavIKobgHKF
-=t/2z
------END PGP SIGNATURE-----
-
---Signature=_Thu__22_Aug_2013_15_07_03_+1000_Fa4Lt5/x3a=Nt/0U--
+> 
+> thanks,
+> 
+> greg k-h
+> 
