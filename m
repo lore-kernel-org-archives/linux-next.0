@@ -1,83 +1,83 @@
-From: Li Zhong <zhong@linux.vnet.ibm.com>
-Subject: Re: [RFC PATCH next]module: Fix mod->mkobj.kobj potentially freed
- too early
-Date: Thu, 22 Aug 2013 13:37:58 +0800
-Message-ID: <1377149878.2633.40.camel@ThinkPad-T5421>
-References: <1377078598.2709.25.camel@ThinkPad-T5421>
-	 <20130821161819.GA14364@kroah.com>
-	 <1377138846.2633.25.camel@ThinkPad-T5421> <20130822040333.GB4821@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Thu, 22 Aug 2013 15:39:42 +1000
+Message-ID: <20130822153942.66d098b122092d6944186c53@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__22_Aug_2013_15_39_42_+1000_xu6L31DNtu3aEjw4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp04.au.ibm.com ([202.81.31.146]:34183 "EHLO
-	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752527Ab3HVFiI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Aug 2013 01:38:08 -0400
-Received: from /spool/local
-	by e23smtp04.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <zhong@linux.vnet.ibm.com>;
-	Thu, 22 Aug 2013 15:21:08 +1000
-In-Reply-To: <20130822040333.GB4821@kroah.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44558 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753485Ab3HVFjx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Aug 2013 01:39:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-next list <linux-next@vger.kernel.org>, rusty@rustcorp.com.au, LKML <linux-kernel@vger.kernel.org>, rmk+kernel@arm.linux.org.uk
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2013-08-21 at 21:03 -0700, Greg KH wrote:
-> On Thu, Aug 22, 2013 at 10:34:06AM +0800, Li Zhong wrote:
-> > On Wed, 2013-08-21 at 09:18 -0700, Greg KH wrote:
-> > > On Wed, Aug 21, 2013 at 05:49:58PM +0800, Li Zhong wrote:
-> > > > DEBUG_KOBJECT_RELEASE helps to find the issue attached below.
-> > > > 
-> > > > After some investigation, it seems the reason is:
-> > > > The mod->mkobj.kobj(ffffffffa01600d0 below) is freed together with mod
-> > > > itself in free_module(). However, its children still hold references to
-> > > > it, as the delay caused by DEBUG_KOBJECT_RELEASE. So when the
-> > > > child(holders below) tries to decrease the reference count to its parent
-> > > > in kobject_del(), BUG happens as it tries to access already freed memory.
-> > > 
-> > > Ah, thanks for tracking this down.  I had seen this in my local testing,
-> > > but wasn't able to figure out the offending code.
-> > > 
-> > > > This patch tries to fix it by waiting for the mod->mkobj.kobj to be
-> > > > really released in the module removing process (and some error code
-> > > > paths).
-> > > 
-> > > Nasty, we should just be freeing the structure in the release function,
-> > > why doesn't that work?
-> > 
-> > Hi Greg,
-> > 
-> > It seems I didn't describe it clearly in the previous mail. I'm trying
-> > to do it better below: 
-> > 
-> > mod->mkobj.kobj is embedded in module_kobject(not a pointer):
-> > struct module_kobject {
-> >         struct kobject kobj;
-> > 	...
-> > 
-> > and allocated with the module memory. So we could see the parent below
-> > ffffffffa01600d0 is between MODULES_VADDR (ffffffffa0000000) and
-> > MODULES_END(ffffffffff000000). 
-> > 
-> > It seem to me that the mkobj.kobj is freed by module_free(mod,
-> > mod->module_core). 
-> 
-> Ick, you are right.  If a kobject is being embedded in an object, it
-> should control the lifespan of the object, not somewhere else like is
-> happening here.
-> 
-> The best solution for this is to make the kobject a pointer, not
-> embedded in the structure, that will fix this issue, right?
+--Signature=_Thu__22_Aug_2013_15_39_42_+1000_xu6L31DNtu3aEjw4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I think so. I'll try to write a fix using this way, thanks for your
-suggestion.
+Hi Greg,
 
-Thanks, Zhong
+After merging the driver-core tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-> 
-> thanks,
-> 
-> greg k-h
-> 
+In file included from include/linux/kobject.h:21:0,
+                 from include/linux/module.h:16,
+                 from drivers/acpi/bgrt.c:11:
+drivers/acpi/bgrt.c: In function 'bgrt_init':
+drivers/acpi/bgrt.c:89:23: error: 'image_attr' undeclared (first use in thi=
+s function)
+  sysfs_bin_attr_init(&image_attr);
+                       ^
+include/linux/sysfs.h:53:3: note: in definition of macro 'sysfs_attr_init'
+  (attr)->key =3D &__key;    \
+   ^
+drivers/acpi/bgrt.c:89:2: note: in expansion of macro 'sysfs_bin_attr_init'
+  sysfs_bin_attr_init(&image_attr);
+  ^
+drivers/acpi/bgrt.c:89:23: note: each undeclared identifier is reported onl=
+y once for each function it appears in
+  sysfs_bin_attr_init(&image_attr);
+                       ^
+include/linux/sysfs.h:53:3: note: in definition of macro 'sysfs_attr_init'
+  (attr)->key =3D &__key;    \
+   ^
+drivers/acpi/bgrt.c:89:2: note: in expansion of macro 'sysfs_bin_attr_init'
+  sysfs_bin_attr_init(&image_attr);
+  ^
+
+Presumably caused by commit 65f44679580d ("ACPI: bgrt: take advantage of
+binary sysfs groups").
+
+I have used the driver-core tree from next-20130821 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__22_Aug_2013_15_39_42_+1000_xu6L31DNtu3aEjw4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSFaQjAAoJEECxmPOUX5FEJL4P/iVRRqTfywf6uQxiftjXPzkT
+edBmxPKBIJTFdpnN+cPbhavAtJj5Hd6SJF7PX+Yr3zdZuGrU0zRz70ucS12lobjz
+qLNKD2f5mXrHpcxrRkrh00d5ilBHngCtD7tbB5vSoccVPcS0dZhWmnmLw05U3Muu
+tYlHKbNy1NFWnjHtrnOHCv5MME3ydCyAdGlfvcxsU+ghF/aaa6JCZ9/i2omYu5z5
+TghwmZdOtFtspqIN5QEQwSc80iBet9f84LosVErEDBIwqyMt5PA6dOruKl6iEduB
+pmwtZXrjD4PBrbSGdhn+4i2JLQzknCu/xjWU8lusboujIxfBMAEisxLTlw0dqVHG
+bRrBTQwDDoyEGzVQ8hCGkvO8ZfJUbnxa7Nch6CsCD5P1XGr1Bvp1OLouPgK7NNJU
+MInLQlsSBT+og5oG2VW6m60AlDwV4I5qlJ47s60zdrYO8yXTIO67i2YSOK6/NiMa
+k7nx7Yt5i/Yn2ShBMrZ3NZ7WOUrZGRtXHIDtsk4NWvuRxNZagycQSnioTiYfRt13
+8eMfBrtmRn5bfgINSTK/fZ9GQzM9vVEDOTyI7AO5f7pMTmrRoKNdIE9M8YA1HzHd
+dcw1rwZuKWKS2PYzzes/AzJMAjFCaQ971zJT4DxlIRiQucIZbtf44s7rZIla1xjr
+884ZXfKqN0svGnNKlW3P
+=xMWK
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__22_Aug_2013_15_39_42_+1000_xu6L31DNtu3aEjw4--
