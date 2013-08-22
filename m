@@ -1,46 +1,60 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: linux-next: Tree for Aug 21 [ screen corruption in graphical mode ]
-Date: Thu, 22 Aug 2013 13:32:16 +0200
-Message-ID: <CAKMK7uHfPb67Mshczxv6aPwwjQMb-tFwmdg8aH0VVSHnSyLiwA@mail.gmail.com>
-References: <CA+icZUUkS-UptLRM1CfcaHH=8UD-ZaHbXr8wFkA+YKyk-rPjvg@mail.gmail.com>
-	<20130821134441.GE26909@phenom.ffwll.local>
-	<CA+icZUVLau7AgZvcnWKjx=tc4WeuJ3qEH7qQta+YLKDmxk6QvA@mail.gmail.com>
-	<20130821212012.GH26909@phenom.ffwll.local>
-	<CA+icZUUoZ3WRNChLJ8vfP_MxJhTu2annkWCmB8jnqOxNKSEtOg@mail.gmail.com>
-	<20130822072417.GM26909@phenom.ffwll.local>
-	<CA+icZUXoebf4p1pp6wkaOMFbfVjjL1+wDbYF+SvLUjkm991Rcg@mail.gmail.com>
-	<CAKMK7uG5AntN=nQ6TWUwNgXJh7tATu5TacccYah36sXnLAmAiQ@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Thu, 22 Aug 2013 08:36:25 -0700
+Message-ID: <20130822153625.GA5354@kroah.com>
+References: <20130822153942.66d098b122092d6944186c53@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKMK7uG5AntN=nQ6TWUwNgXJh7tATu5TacccYah36sXnLAmAiQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "s.dilek" <s.dilek@jpberlin.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:37452 "EHLO
+	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752563Ab3HVPec (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 Aug 2013 11:34:32 -0400
+Content-Disposition: inline
+In-Reply-To: <20130822153942.66d098b122092d6944186c53@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2013 at 1:30 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> On Thu, Aug 22, 2013 at 1:13 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->> dmesg (a lot of traces) and kernel-config attached.
->>
->> UXA causes still screen corruption.
->
-> Hm, was only a slim chance that this patch would fix anything - I
-> think you'd always see an oops when you'd hit this bug instead of just
-> a bit of corruption.
+On Thu, Aug 22, 2013 at 03:39:42PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> In file included from include/linux/kobject.h:21:0,
+>                  from include/linux/module.h:16,
+>                  from drivers/acpi/bgrt.c:11:
+> drivers/acpi/bgrt.c: In function 'bgrt_init':
+> drivers/acpi/bgrt.c:89:23: error: 'image_attr' undeclared (first use in this function)
+>   sysfs_bin_attr_init(&image_attr);
+>                        ^
+> include/linux/sysfs.h:53:3: note: in definition of macro 'sysfs_attr_init'
+>   (attr)->key = &__key;    \
+>    ^
+> drivers/acpi/bgrt.c:89:2: note: in expansion of macro 'sysfs_bin_attr_init'
+>   sysfs_bin_attr_init(&image_attr);
+>   ^
+> drivers/acpi/bgrt.c:89:23: note: each undeclared identifier is reported only once for each function it appears in
+>   sysfs_bin_attr_init(&image_attr);
+>                        ^
+> include/linux/sysfs.h:53:3: note: in definition of macro 'sysfs_attr_init'
+>   (attr)->key = &__key;    \
+>    ^
+> drivers/acpi/bgrt.c:89:2: note: in expansion of macro 'sysfs_bin_attr_init'
+>   sysfs_bin_attr_init(&image_attr);
+>   ^
+> 
+> Presumably caused by commit 65f44679580d ("ACPI: bgrt: take advantage of
+> binary sysfs groups").
 
-Ok, I think it's time to throw in the towel a bit. I've dropped
+It's as if I never even built the patch I submitted, I have no idea what
+happened here, sorry about that.
 
+I've now fixed it up, it should be fine for the next linux-next release.
 
-commit d46f1c3f1372e3a72fab97c60480aa4a1084387f
-Author: Chris Wilson <chris@chris-wilson.co.uk>
-Date:   Thu Aug 8 14:41:06 2013 +0100
+thanks,
 
-    drm/i915: Allow the GPU to cache stolen memory
-
-from my queue. I guess we can retry for 3.13 again.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+greg k-h
