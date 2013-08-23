@@ -1,84 +1,85 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RFC 11/14] powerpc: Eliminate NO_IRQ usage
-Date: Fri, 23 Aug 2013 15:22:51 +0200
-Message-ID: <CAMuHMdXtzwRY7VJe2EUssEPwGbFHwuHkwqbA+pi4N_Eujx3sNA@mail.gmail.com>
-References: <1326313337-24603-1-git-send-email-grant.likely@secretlab.ca>
-	<1326313337-24603-12-git-send-email-grant.likely@secretlab.ca>
-	<CAMuHMdV=pSG+CtvGqr1c9nDKeHCU0cVQcFkfAo5iMMna2HOvZg@mail.gmail.com>
-	<CACxGe6s3wit88ynuzYsBZBvijHmAfJNeY9LH2T5S9iY7kJtg=w@mail.gmail.com>
-	<CAMuHMdW0EE9MiwoOzvg_2VBf5QvYpgJ8bHsjV1HL8iN5HyhxYA@mail.gmail.com>
+Subject: [PATCH -next] staging: lustre: Use proper constant types for L*_POISON values
+Date: Fri, 23 Aug 2013 17:46:48 +0200
+Message-ID: <1377272808-21686-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:33890 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753350Ab3HWNWw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Aug 2013 09:22:52 -0400
-In-Reply-To: <CAMuHMdW0EE9MiwoOzvg_2VBf5QvYpgJ8bHsjV1HL8iN5HyhxYA@mail.gmail.com>
+Received: from juliette.telenet-ops.be ([195.130.137.74]:35180 "EHLO
+	juliette.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753699Ab3HWPrH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Aug 2013 11:47:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Rob Herring <rob.herring@calxeda.com>, Thomas Gleixner <tglx@linutronix.de>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Russell King <linux@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>, linux-s390 <linux-s390@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Fri, Aug 23, 2013 at 3:18 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, Jul 26, 2013 at 5:56 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
->> On Thu, Jul 25, 2013 at 3:58 PM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->>> On Wed, Jan 11, 2012 at 9:22 PM, Grant Likely <grant.likely@secretlab.ca> wrote:
->>>> NO_IRQ is evil.  Stop using it in arch/powerpc and powerpc device drivers
->>>
->>>> diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
->>>> index 3e06696..55c6ff9 100644
->>>> --- a/sound/soc/fsl/fsl_ssi.c
->>>> +++ b/sound/soc/fsl/fsl_ssi.c
->>>> @@ -666,7 +666,7 @@ static int __devinit fsl_ssi_probe(struct platform_device *pdev)
->>>>         ssi_private->ssi_phys = res.start;
->>>>
->>>>         ssi_private->irq = irq_of_parse_and_map(np, 0);
->>>> -       if (ssi_private->irq == NO_IRQ) {
->>>> +       if (!ssi_private->irq) {
->>>>                 dev_err(&pdev->dev, "no irq for node %s\n", np->full_name);
->>>>                 ret = -ENXIO;
->>>>                 goto error_iomap;
->>>
->>> What's the plan with this patch?
->>>
->>> This is now failing on xtensa, as it's one of the architectures that doesn't
->>> define NO_IRQ. Only arm, c6x, mn10300, openrisc, parisc, powerpc, and sparc
->>> define it.
->>
->> Wow. I'd pretty much dropped that patch because I didn't have time to
->> chase it down. It should be pursued though.
->>
->> In that particular case it is safe I think to apply the change. PPC
->> defines NO_IRQ to be 0 anyway.
->
-> Note that we still have arches that define it as nonzero:
->
-> arch/arm/include/asm/irq.h:#define NO_IRQ ((unsigned int)(-1))
-> arch/mn10300/include/asm/irq.h:#define NO_IRQ INT_MAX
-> arch/openrisc/include/asm/irq.h:#define NO_IRQ (-1)
-> arch/parisc/include/asm/irq.h:#define NO_IRQ (-1)
-> arch/sparc/include/asm/irq_32.h:#define NO_IRQ 0xffffffff
-> arch/sparc/include/asm/irq_64.h:#define NO_IRQ 0xffffffff
->
-> Only c6x and powerpc use zero, and thus are ready to drop NO_IRQ.
+On 32-bit m68k, I get lots of warnings like:
 
-s390 just gained "NO_IRQ support" in -next, in commit
-e15a9dcfdec29786d1830c5b7beaf02a288a89e1 ("s390: convert interrupt
-handling to use generic hardirq"):
+    warning: integer constant is too large for =E2=80=98long=E2=80=99 t=
+ype
 
-/* This number is used when no interrupt has been assigned */
-#define NO_IRQ         0
+Switch the L*_POISON definitions from too-large constants and casts
+to the proper constant types to fix this.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+The values in drivers/staging/lustre/lustre/include/linux/lustre_lib.h
+don't seem to be used, as LP_POISON is already defined at that point?
 
-                        Geert
+ .../lustre/include/linux/libcfs/linux/kp30.h       |   10 +++++++---
+ .../lustre/lustre/include/linux/lustre_lib.h       |   10 ++++------
+ 2 files changed, 11 insertions(+), 9 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/staging/lustre/include/linux/libcfs/linux/kp30.h b=
+/drivers/staging/lustre/include/linux/libcfs/linux/kp30.h
+index 073f4d1..c204b67 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/linux/kp30.h
++++ b/drivers/staging/lustre/include/linux/libcfs/linux/kp30.h
+@@ -187,9 +187,13 @@ extern int  lwt_snapshot (cfs_cycles_t *now, int *=
+ncpu, int *total_size,
+ # endif
+ #endif
+=20
+-# define LI_POISON ((int)0x5a5a5a5a5a5a5a5a)
+-# define LL_POISON ((long)0x5a5a5a5a5a5a5a5a)
+-# define LP_POISON ((void *)(long)0x5a5a5a5a5a5a5a5a)
++# define LI_POISON 0x5a5a5a5a
++#if BITS_PER_LONG > 32
++# define LL_POISON 0x5a5a5a5a5a5a5a5aL
++#else
++# define LL_POISON 0x5a5a5a5aL
++#endif
++# define LP_POISON ((void *)LL_POISON)
+=20
+ /* this is a bit chunky */
+=20
+diff --git a/drivers/staging/lustre/lustre/include/linux/lustre_lib.h b=
+/drivers/staging/lustre/lustre/include/linux/lustre_lib.h
+index b2f755a..57f3b01 100644
+--- a/drivers/staging/lustre/lustre/include/linux/lustre_lib.h
++++ b/drivers/staging/lustre/lustre/include/linux/lustre_lib.h
+@@ -53,15 +53,13 @@
+ # include <linux/lustre_common.h>
+=20
+ #ifndef LP_POISON
++# define LI_POISON 0x5a5a5a5a
+ #if BITS_PER_LONG > 32
+-# define LI_POISON ((int)0x5a5a5a5a5a5a5a5a)
+-# define LL_POISON ((long)0x5a5a5a5a5a5a5a5a)
+-# define LP_POISON ((void *)(long)0x5a5a5a5a5a5a5a5a)
++# define LL_POISON 0x5a5a5a5a5a5a5a5aL
+ #else
+-# define LI_POISON ((int)0x5a5a5a5a)
+-# define LL_POISON ((long)0x5a5a5a5a)
+-# define LP_POISON ((void *)(long)0x5a5a5a5a)
++# define LL_POISON 0x5a5a5a5aL
+ #endif
++# define LP_POISON ((void *)LL_POISON)
+ #endif
+=20
+ /* This macro is only for compatibility reasons with older Linux Lustr=
+e user
+--=20
+1.7.9.5
