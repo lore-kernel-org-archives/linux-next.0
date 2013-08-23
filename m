@@ -1,10 +1,9 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 Subject: Re: linux-next: Tree for Aug 21 [ screen corruption in
-	graphical mode ]
-Date: Fri, 23 Aug 2013 10:04:37 +0200
-Message-ID: <CA+icZUUm=k9-G2M8+V-QkL3Tkv=5LXy_pyRKFnVSFjzF_vsX=A@mail.gmail.com>
-References: <CA+icZUUkS-UptLRM1CfcaHH=8UD-ZaHbXr8wFkA+YKyk-rPjvg@mail.gmail.com>
-	<20130821134441.GE26909@phenom.ffwll.local>
+ graphical mode ]
+Date: Fri, 23 Aug 2013 09:34:28 +0100
+Message-ID: <20130823083428.GB21757@nuc-i3427.alporthouse.com>
+References: <20130821134441.GE26909@phenom.ffwll.local>
 	<CA+icZUVLau7AgZvcnWKjx=tc4WeuJ3qEH7qQta+YLKDmxk6QvA@mail.gmail.com>
 	<20130821212012.GH26909@phenom.ffwll.local>
 	<CA+icZUUoZ3WRNChLJ8vfP_MxJhTu2annkWCmB8jnqOxNKSEtOg@mail.gmail.com>
@@ -13,12 +12,13 @@ References: <CA+icZUUkS-UptLRM1CfcaHH=8UD-ZaHbXr8wFkA+YKyk-rPjvg@mail.gmail.com>
 	<CAKMK7uG5AntN=nQ6TWUwNgXJh7tATu5TacccYah36sXnLAmAiQ@mail.gmail.com>
 	<CAKMK7uHfPb67Mshczxv6aPwwjQMb-tFwmdg8aH0VVSHnSyLiwA@mail.gmail.com>
 	<CA+icZUWy4V_6YSa_wMeZRZ=1w08YihumWXPikJdkiuPgkOb_mw@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+	<CA+icZUUm=k9-G2M8+V-QkL3Tkv=5LXy_pyRKFnVSFjzF_vsX=A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <CA+icZUWy4V_6YSa_wMeZRZ=1w08YihumWXPikJdkiuPgkOb_mw@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <CA+icZUUm=k9-G2M8+V-QkL3Tkv=5LXy_pyRKFnVSFjzF_vsX=A@mail.gmail.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
 	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
@@ -28,59 +28,68 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
 	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
 Sender: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
 Errors-To: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Aug 23, 2013 at 9:55 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Thu, Aug 22, 2013 at 1:32 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->> On Thu, Aug 22, 2013 at 1:30 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->>> On Thu, Aug 22, 2013 at 1:13 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>>> dmesg (a lot of traces) and kernel-config attached.
->>>>
->>>> UXA causes still screen corruption.
->>>
->>> Hm, was only a slim chance that this patch would fix anything - I
->>> think you'd always see an oops when you'd hit this bug instead of just
->>> a bit of corruption.
->>
->> Ok, I think it's time to throw in the towel a bit. I've dropped
->>
->>
->> commit d46f1c3f1372e3a72fab97c60480aa4a1084387f
->> Author: Chris Wilson <chris@chris-wilson.co.uk>
->> Date:   Thu Aug 8 14:41:06 2013 +0100
->>
->>     drm/i915: Allow the GPU to cache stolen memory
->>
->> from my queue. I guess we can retry for 3.13 again.
->
-> I am sorry to keep someone's work to be delayed, really.
-> I would have liked to see this fixed (and I have spent some time on it).
->
-> Which patches did you exactly drop?
->
+On Fri, Aug 23, 2013 at 10:04:37AM +0200, Sedat Dilek wrote:
+> On Fri, Aug 23, 2013 at 9:55 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> > On Thu, Aug 22, 2013 at 1:32 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> >> On Thu, Aug 22, 2013 at 1:30 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> >>> On Thu, Aug 22, 2013 at 1:13 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> >>>> dmesg (a lot of traces) and kernel-config attached.
+> >>>>
+> >>>> UXA causes still screen corruption.
+> >>>
+> >>> Hm, was only a slim chance that this patch would fix anything - I
+> >>> think you'd always see an oops when you'd hit this bug instead of just
+> >>> a bit of corruption.
+> >>
+> >> Ok, I think it's time to throw in the towel a bit. I've dropped
+> >>
+> >>
+> >> commit d46f1c3f1372e3a72fab97c60480aa4a1084387f
+> >> Author: Chris Wilson <chris@chris-wilson.co.uk>
+> >> Date:   Thu Aug 8 14:41:06 2013 +0100
+> >>
+> >>     drm/i915: Allow the GPU to cache stolen memory
 
-Sorry for bombing you with question...
+Hmm, wrong patch. Unless you have a good reason, you just want to drop
+the ringbuffers in stolen.
 
-I am trying latest Linus-tree HEAD with the drm-intel-nightly I made
-my last testings.
+> >> from my queue. I guess we can retry for 3.13 again.
+> >
+> > I am sorry to keep someone's work to be delayed, really.
+> > I would have liked to see this fixed (and I have spent some time on it).
 
-Are any of these TLB / x86-get_unmapped_area fixes of interested...
-has any effects on the reported issue?
+It's just a minor memory optimization (reclaiming less than a megabyte
+of system memory).
 
-I still wonder what is the root-cause...
-I mean if SNA is OK but UXA not and Linux graphics stack is that complex.
-( Can't say if user-space like unity isn't involved... ).
+> > Which patches did you exactly drop?
+> >
+> 
+> Sorry for bombing you with question...
+> 
+> I am trying latest Linus-tree HEAD with the drm-intel-nightly I made
+> my last testings.
+> 
+> Are any of these TLB / x86-get_unmapped_area fixes of interested...
+> has any effects on the reported issue?
 
-- Sedat -
+It should not. Of concern is how the GPU views the world which has its
+own independent set of TLBs and mapping tables - and access to those
+should always be uncached from the CPU's perspective.
+ 
+> I still wonder what is the root-cause...
+> I mean if SNA is OK but UXA not and Linux graphics stack is that complex.
+> ( Can't say if user-space like unity isn't involved... ).
 
-[1] Fix TLB gather virtual address range invalidation corner cases
-http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/patch/?id=2b047252d087be7f2ba088b4933cd904f92e6fce
+All that userspace can affect here is the timing and inital contents of
+the framebuffer, everything else is controlled by the kernel. All the
+testing we have done so far imply that the kernel's view of the machine
+state is consistent with our expectations, but the display is doing
+something inexplicable.
+-Chris
 
-[2] Revert "x86 get_unmapped_area(): use proper mmap base for
-bottom-up direction"
-http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/patch/?id=5ea80f76a56605a190a7ea16846c82aa63dbd0aa
-
-[3] x86 get_unmapped_area: Access mmap_legacy_base through mm_struct member
-http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/patch/?id=41aacc1eea645c99edbe8fbcf78a97dc9b862adc
+-- 
+Chris Wilson, Intel Open Source Technology Centre
