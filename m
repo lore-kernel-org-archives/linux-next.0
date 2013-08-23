@@ -1,45 +1,70 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH -next] staging: dgnc: driver.c: Add missing #include
- <linux/slab.h>
-Date: Fri, 23 Aug 2013 14:23:49 +0200
-Message-ID: <1377260629-1696-1-git-send-email-geert@linux-m68k.org>
+Subject: Re: [RFC 11/14] powerpc: Eliminate NO_IRQ usage
+Date: Fri, 23 Aug 2013 15:18:36 +0200
+Message-ID: <CAMuHMdW0EE9MiwoOzvg_2VBf5QvYpgJ8bHsjV1HL8iN5HyhxYA@mail.gmail.com>
+References: <1326313337-24603-1-git-send-email-grant.likely@secretlab.ca>
+	<1326313337-24603-12-git-send-email-grant.likely@secretlab.ca>
+	<CAMuHMdV=pSG+CtvGqr1c9nDKeHCU0cVQcFkfAo5iMMna2HOvZg@mail.gmail.com>
+	<CACxGe6s3wit88ynuzYsBZBvijHmAfJNeY9LH2T5S9iY7kJtg=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Lidza Louina <lidza.louina@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <CACxGe6s3wit88ynuzYsBZBvijHmAfJNeY9LH2T5S9iY7kJtg=w@mail.gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Rob Herring <rob.herring@calxeda.com>, Thomas Gleixner <tglx@linutronix.de>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Russell King <linux@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-bTY4ay9zcGFyYzY0IGFsbG1vZGNvbmZpZzoKCmRyaXZlcnMvc3RhZ2luZy9kZ25jL2RnbmNfZHJp
-dmVyLmM6IEluIGZ1bmN0aW9uIOKAmGRnbmNfY2xlYW51cF9ib2FyZOKAmToKZHJpdmVycy9zdGFn
-aW5nL2RnbmMvZGduY19kcml2ZXIuYzo0NTk6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBv
-ZiBmdW5jdGlvbiDigJhrZnJlZeKAmQpkcml2ZXJzL3N0YWdpbmcvZGduYy9kZ25jX2RyaXZlci5j
-OiBJbiBmdW5jdGlvbiDigJhkZ25jX2RyaXZlcl9rem1hbGxvY+KAmToKZHJpdmVycy9zdGFnaW5n
-L2RnbmMvZGduY19kcml2ZXIuYzo5MDU6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBm
-dW5jdGlvbiDigJhrbWFsbG9j4oCZCmRyaXZlcnMvc3RhZ2luZy9kZ25jL2RnbmNfZHJpdmVyLmM6
-OTA1OiB3YXJuaW5nOiBpbml0aWFsaXphdGlvbiBtYWtlcyBwb2ludGVyIGZyb20gaW50ZWdlciB3
-aXRob3V0IGEgY2FzdAoKU2lnbmVkLW9mZi1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBs
-aW51eC1tNjhrLm9yZz4KLS0tCmh0dHA6Ly9raXNza2IuZWxsZXJtYW4uaWQuYXUva2lzc2tiL2J1
-aWxkcmVzdWx0LzkzNTY3NjQvCmh0dHA6Ly9raXNza2IuZWxsZXJtYW4uaWQuYXUva2lzc2tiL2J1
-aWxkcmVzdWx0LzkzNTYwMTYvCgogZHJpdmVycy9zdGFnaW5nL2RnbmMvZGduY19kcml2ZXIuYyB8
-ICAgIDEgKwogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCgpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9zdGFnaW5nL2RnbmMvZGduY19kcml2ZXIuYyBiL2RyaXZlcnMvc3RhZ2luZy9kZ25jL2Rn
-bmNfZHJpdmVyLmMKaW5kZXggZmE0ZTkxYS4uODAzMjM2OCAxMDA2NDQKLS0tIGEvZHJpdmVycy9z
-dGFnaW5nL2RnbmMvZGduY19kcml2ZXIuYworKysgYi9kcml2ZXJzL3N0YWdpbmcvZGduYy9kZ25j
-X2RyaXZlci5jCkBAIC0zNCw2ICszNCw3IEBACiAjaW5jbHVkZSA8bGludXgvdmVyc2lvbi5oPgog
-I2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgogI2luY2x1ZGUgPGxpbnV4L3BjaS5oPgorI2luY2x1
-ZGUgPGxpbnV4L3NsYWIuaD4KIAogI2lmIExJTlVYX1ZFUlNJT05fQ09ERSA+PSBLRVJORUxfVkVS
-U0lPTigyLDYsMzkpCiAjaW5jbHVkZSA8bGludXgvc2NoZWQuaD4KLS0gCjEuNy45LjUKCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRldmVsIG1haWxpbmcg
-bGlzdApkZXZlbEBsaW51eGRyaXZlcnByb2plY3Qub3JnCmh0dHA6Ly9kcml2ZXJkZXYubGludXhk
-cml2ZXJwcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaXZlcmRldi1kZXZlbAo=
+On Fri, Jul 26, 2013 at 5:56 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
+> On Thu, Jul 25, 2013 at 3:58 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Wed, Jan 11, 2012 at 9:22 PM, Grant Likely <grant.likely@secretlab.ca> wrote:
+>>> NO_IRQ is evil.  Stop using it in arch/powerpc and powerpc device drivers
+>>
+>>> diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
+>>> index 3e06696..55c6ff9 100644
+>>> --- a/sound/soc/fsl/fsl_ssi.c
+>>> +++ b/sound/soc/fsl/fsl_ssi.c
+>>> @@ -666,7 +666,7 @@ static int __devinit fsl_ssi_probe(struct platform_device *pdev)
+>>>         ssi_private->ssi_phys = res.start;
+>>>
+>>>         ssi_private->irq = irq_of_parse_and_map(np, 0);
+>>> -       if (ssi_private->irq == NO_IRQ) {
+>>> +       if (!ssi_private->irq) {
+>>>                 dev_err(&pdev->dev, "no irq for node %s\n", np->full_name);
+>>>                 ret = -ENXIO;
+>>>                 goto error_iomap;
+>>
+>> What's the plan with this patch?
+>>
+>> This is now failing on xtensa, as it's one of the architectures that doesn't
+>> define NO_IRQ. Only arm, c6x, mn10300, openrisc, parisc, powerpc, and sparc
+>> define it.
+>
+> Wow. I'd pretty much dropped that patch because I didn't have time to
+> chase it down. It should be pursued though.
+>
+> In that particular case it is safe I think to apply the change. PPC
+> defines NO_IRQ to be 0 anyway.
+
+Note that we still have arches that define it as nonzero:
+
+arch/arm/include/asm/irq.h:#define NO_IRQ ((unsigned int)(-1))
+arch/mn10300/include/asm/irq.h:#define NO_IRQ INT_MAX
+arch/openrisc/include/asm/irq.h:#define NO_IRQ (-1)
+arch/parisc/include/asm/irq.h:#define NO_IRQ (-1)
+arch/sparc/include/asm/irq_32.h:#define NO_IRQ 0xffffffff
+arch/sparc/include/asm/irq_64.h:#define NO_IRQ 0xffffffff
+
+Only c6x and powerpc use zero, and thus are ready to drop NO_IRQ.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
