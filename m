@@ -1,42 +1,80 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH -next] staging: lustre: Use proper constant types for
- L*_POISON values
-Date: Fri, 23 Aug 2013 10:21:02 -0700
-Message-ID: <20130823172102.GA20400@kroah.com>
-References: <1377272808-21686-1-git-send-email-geert@linux-m68k.org>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Aug 21 [ screen corruption in graphical mode ]
+Date: Sat, 24 Aug 2013 11:35:00 +0200
+Message-ID: <CA+icZUUbgso-HpAJeY6NRf4ZdKY=AxaNgUGQsMpQ0Z2U0pQvXA@mail.gmail.com>
+References: <20130821134441.GE26909@phenom.ffwll.local>
+	<CA+icZUVLau7AgZvcnWKjx=tc4WeuJ3qEH7qQta+YLKDmxk6QvA@mail.gmail.com>
+	<20130821212012.GH26909@phenom.ffwll.local>
+	<CA+icZUUoZ3WRNChLJ8vfP_MxJhTu2annkWCmB8jnqOxNKSEtOg@mail.gmail.com>
+	<20130822072417.GM26909@phenom.ffwll.local>
+	<CA+icZUXoebf4p1pp6wkaOMFbfVjjL1+wDbYF+SvLUjkm991Rcg@mail.gmail.com>
+	<CAKMK7uG5AntN=nQ6TWUwNgXJh7tATu5TacccYah36sXnLAmAiQ@mail.gmail.com>
+	<CAKMK7uHfPb67Mshczxv6aPwwjQMb-tFwmdg8aH0VVSHnSyLiwA@mail.gmail.com>
+	<CA+icZUWy4V_6YSa_wMeZRZ=1w08YihumWXPikJdkiuPgkOb_mw@mail.gmail.com>
+	<CA+icZUUm=k9-G2M8+V-QkL3Tkv=5LXy_pyRKFnVSFjzF_vsX=A@mail.gmail.com>
+	<20130823083428.GB21757@nuc-i3427.alporthouse.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <1377272808-21686-1-git-send-email-geert@linux-m68k.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devel@driverdev.osuosl.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:54989 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754971Ab3HXJfC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 24 Aug 2013 05:35:02 -0400
+In-Reply-To: <20130823083428.GB21757@nuc-i3427.alporthouse.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Chris Wilson <chris@chris-wilson.co.uk>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-T24gRnJpLCBBdWcgMjMsIDIwMTMgYXQgMDU6NDY6NDhQTSArMDIwMCwgR2VlcnQgVXl0dGVyaG9l
-dmVuIHdyb3RlOgo+IE9uIDMyLWJpdCBtNjhrLCBJIGdldCBsb3RzIG9mIHdhcm5pbmdzIGxpa2U6
-Cj4gCj4gICAgIHdhcm5pbmc6IGludGVnZXIgY29uc3RhbnQgaXMgdG9vIGxhcmdlIGZvciDigJhs
-b25n4oCZIHR5cGUKPiAKPiBTd2l0Y2ggdGhlIEwqX1BPSVNPTiBkZWZpbml0aW9ucyBmcm9tIHRv
-by1sYXJnZSBjb25zdGFudHMgYW5kIGNhc3RzCj4gdG8gdGhlIHByb3BlciBjb25zdGFudCB0eXBl
-cyB0byBmaXggdGhpcy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdl
-ZXJ0QGxpbnV4LW02OGsub3JnPgo+IC0tLQo+IFRoZSB2YWx1ZXMgaW4gZHJpdmVycy9zdGFnaW5n
-L2x1c3RyZS9sdXN0cmUvaW5jbHVkZS9saW51eC9sdXN0cmVfbGliLmgKPiBkb24ndCBzZWVtIHRv
-IGJlIHVzZWQsIGFzIExQX1BPSVNPTiBpcyBhbHJlYWR5IGRlZmluZWQgYXQgdGhhdCBwb2ludD8K
-ClByb2JhYmx5LiAgSSBkb24ndCBzZWUgd2hlcmUgYW55b25lIGV2ZW4gdXNlcyB0aGVzZSAicG9p
-c29uIiB2YWx1ZXMsCmV4Y2VwdCB0byBjaGVjayB2YXJpYWJsZXMgdG8gZW5zdXJlIHRoZXkgZG9u
-J3QgY29udGFpbiB0aGUgdmFsdWUsIHdoaWNoCmlzIGFsd2F5cyBnb2luZyB0byBiZSB0cnVlIGFz
-IG5vIG9uZSBzZXRzIHRoZW0uCgpPaCB3ZWxsLCBtb3JlIGRlYWQgY29kZSBpbiB0aGUgZHJpdmVy
-LCBub3RoaW5nIG5ldy4uLgoKdGhhbmtzLAoKZ3JlZyBrLWgKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZGV2ZWwgbWFpbGluZyBsaXN0CmRldmVsQGxpbnV4
-ZHJpdmVycHJvamVjdC5vcmcKaHR0cDovL2RyaXZlcmRldi5saW51eGRyaXZlcnByb2plY3Qub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpdmVyZGV2LWRldmVsCg==
+On Fri, Aug 23, 2013 at 10:34 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+> On Fri, Aug 23, 2013 at 10:04:37AM +0200, Sedat Dilek wrote:
+>> On Fri, Aug 23, 2013 at 9:55 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> > On Thu, Aug 22, 2013 at 1:32 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>> >> On Thu, Aug 22, 2013 at 1:30 PM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>> >>> On Thu, Aug 22, 2013 at 1:13 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> >>>> dmesg (a lot of traces) and kernel-config attached.
+>> >>>>
+>> >>>> UXA causes still screen corruption.
+>> >>>
+>> >>> Hm, was only a slim chance that this patch would fix anything - I
+>> >>> think you'd always see an oops when you'd hit this bug instead of just
+>> >>> a bit of corruption.
+>> >>
+>> >> Ok, I think it's time to throw in the towel a bit. I've dropped
+>> >>
+>> >>
+>> >> commit d46f1c3f1372e3a72fab97c60480aa4a1084387f
+>> >> Author: Chris Wilson <chris@chris-wilson.co.uk>
+>> >> Date:   Thu Aug 8 14:41:06 2013 +0100
+>> >>
+>> >>     drm/i915: Allow the GPU to cache stolen memory
+>
+> Hmm, wrong patch. Unless you have a good reason, you just want to drop
+> the ringbuffers in stolen.
+>
+>> >> from my queue. I guess we can retry for 3.13 again.
+
+Just to clarify...
+
+I pulled in today's d-i-n (e1a7374a9920cbbb085ca310e50c903d182d1ca9)
+on top of Linus-git HEAD (v3.11-rc6-139-g89b53e5).
+
+This is the list of drm/i915 patches containing "stolen":
+
+      drm/i915: Free stolen node on failed preallocation
+      drm/i915: Verify that our stolen memory doesn't conflict
+      drm/i915: Use Graphics Base of Stolen Memory on all gen3+
+      drm/i915: List objects allocated from stolen memory in debugfs
+      drm/i915: Allow the GPU to cache stolen memory <--- *** NOT DROPPED ***
+      drm/i915: less magic for stolen preallocated objects w/o gtt offset
+      drm/i915: WARN if the bios reserved range is bigger than stolen size
+      drm/i915: disable stolen mem for OVERLAY_NEEDS_PHYSICAL
+      drm/i915: clarify error paths in create_stolen_for_preallocated
+
+So the culprit patch "drm/i915: Allocate LLC ringbuffers from stolen"
+seems to be gone.
+I have not compared against my other cumulated patches.
+As far as I understood Daniel he dropped a patchset, but I might have
+understood him wrong.
+
+- Sedat -
