@@ -1,7 +1,7 @@
 From: Sedat Dilek <sedat.dilek@gmail.com>
 Subject: Re: linux-next: Tree for Aug 21 [ screen corruption in graphical mode ]
-Date: Sat, 24 Aug 2013 11:35:00 +0200
-Message-ID: <CA+icZUUbgso-HpAJeY6NRf4ZdKY=AxaNgUGQsMpQ0Z2U0pQvXA@mail.gmail.com>
+Date: Sat, 24 Aug 2013 12:55:05 +0200
+Message-ID: <CA+icZUVLyJmYFFosvhf35REGnyo58vkp=5dqtcgz1Q+-XwoQmw@mail.gmail.com>
 References: <20130821134441.GE26909@phenom.ffwll.local>
 	<CA+icZUVLau7AgZvcnWKjx=tc4WeuJ3qEH7qQta+YLKDmxk6QvA@mail.gmail.com>
 	<20130821212012.GH26909@phenom.ffwll.local>
@@ -17,10 +17,10 @@ Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:54989 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754971Ab3HXJfC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 24 Aug 2013 05:35:02 -0400
+Received: from mail-we0-f176.google.com ([74.125.82.176]:37826 "EHLO
+	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753726Ab3HXKzH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 24 Aug 2013 06:55:07 -0400
 In-Reply-To: <20130823083428.GB21757@nuc-i3427.alporthouse.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
@@ -53,28 +53,43 @@ On Fri, Aug 23, 2013 at 10:34 AM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
 > the ringbuffers in stolen.
 >
 >> >> from my queue. I guess we can retry for 3.13 again.
+>> >
+>> > I am sorry to keep someone's work to be delayed, really.
+>> > I would have liked to see this fixed (and I have spent some time on it).
+>
+> It's just a minor memory optimization (reclaiming less than a megabyte
+> of system memory).
+>
+>> > Which patches did you exactly drop?
+>> >
+>>
+>> Sorry for bombing you with question...
+>>
+>> I am trying latest Linus-tree HEAD with the drm-intel-nightly I made
+>> my last testings.
+>>
+>> Are any of these TLB / x86-get_unmapped_area fixes of interested...
+>> has any effects on the reported issue?
+>
+> It should not. Of concern is how the GPU views the world which has its
+> own independent set of TLBs and mapping tables - and access to those
+> should always be uncached from the CPU's perspective.
+>
+>> I still wonder what is the root-cause...
+>> I mean if SNA is OK but UXA not and Linux graphics stack is that complex.
+>> ( Can't say if user-space like unity isn't involved... ).
+>
+> All that userspace can affect here is the timing and inital contents of
+> the framebuffer, everything else is controlled by the kernel. All the
+> testing we have done so far imply that the kernel's view of the machine
+> state is consistent with our expectations, but the display is doing
+> something inexplicable.
 
-Just to clarify...
+Can this be a problem?
 
-I pulled in today's d-i-n (e1a7374a9920cbbb085ca310e50c903d182d1ca9)
-on top of Linus-git HEAD (v3.11-rc6-139-g89b53e5).
-
-This is the list of drm/i915 patches containing "stolen":
-
-      drm/i915: Free stolen node on failed preallocation
-      drm/i915: Verify that our stolen memory doesn't conflict
-      drm/i915: Use Graphics Base of Stolen Memory on all gen3+
-      drm/i915: List objects allocated from stolen memory in debugfs
-      drm/i915: Allow the GPU to cache stolen memory <--- *** NOT DROPPED ***
-      drm/i915: less magic for stolen preallocated objects w/o gtt offset
-      drm/i915: WARN if the bios reserved range is bigger than stolen size
-      drm/i915: disable stolen mem for OVERLAY_NEEDS_PHYSICAL
-      drm/i915: clarify error paths in create_stolen_for_preallocated
-
-So the culprit patch "drm/i915: Allocate LLC ringbuffers from stolen"
-seems to be gone.
-I have not compared against my other cumulated patches.
-As far as I understood Daniel he dropped a patchset, but I might have
-understood him wrong.
+[ dmesg ]
+[   27.949704] [drm] Wrong MCH_SSKPD value: 0x16040307
+[   27.949708] [drm] This can cause pipe underruns and display issues.
+[   27.949709] [drm] Please upgrade your BIOS to fix this.
 
 - Sedat -
