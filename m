@@ -1,73 +1,63 @@
-From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: linux-next: manual merge of the clk tree with Linus' tree
-Date: Tue, 27 Aug 2013 11:09:52 +0100
-Message-ID: <521C7AF0.1020903@imgtec.com>
-References: <20130827190304.c3f2f891f20d078d66b703b1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the cgroup tree
+Date: Tue, 27 Aug 2013 20:17:16 +1000
+Message-ID: <20130827201716.528af63c96b66bb2446fc4b7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="X09MRfRa7snNnIFpOU1B33IOENhS5vHj3"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130827190304.c3f2f891f20d078d66b703b1@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Soren Brinkmann <soren.brinkmann@xilinx.com>, Michal Simek <michal.simek@xilinx.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__27_Aug_2013_20_17_16_+1000_UekfnnaPGZXSR4Aw"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52800 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752158Ab3H0KR2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 06:17:28 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---X09MRfRa7snNnIFpOU1B33IOENhS5vHj3
-Content-Type: text/plain; charset=ISO-8859-1
+--Signature=_Tue__27_Aug_2013_20_17_16_+1000_UekfnnaPGZXSR4Aw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 27/08/13 10:03, Stephen Rothwell wrote:
-> Hi Mike,
->=20
-> Today's linux-next merge of the clk tree got a conflict in
-> drivers/clk/zynq/clkc.c between commits 252957cc3a2d ("clk/zynq/clkc: A=
-dd
-> dedicated spinlock for the SWDT") and 765b7d4c4cb3
-> ("clk/zynq/clkc: Add CLK_SET_RATE_PARENT flag to ethernet muxes") from
-> Linus' tree and commit 819c1de344c5 ("clk: add CLK_SET_RATE_NO_REPARENT=
+Hi Tejun,
 
-> flag") from the clk tree.
->=20
-> I fixed it up (see below and in a couple of places I chose
-> CLK_SET_RATE_NO_REPARENT over CLK_SET_RATE_PARENT, which may, of course=
-,
-> be wrong) and can carry the fix as necessary (no action is required).
+After merging the cgroup tree, today's linux-next build (i386 defconfig)
+produced this warning:
 
-The case you mentioned looks correct to me.
+kernel/cgroup.c: In function 'css_from_id':
+kernel/cgroup.c:5723:3: warning: passing argument 2 of 'cgroup_css' makes p=
+ointer from integer without a cast [enabled by default]
+kernel/cgroup.c:237:36: note: expected 'struct cgroup_subsys *' but argumen=
+t is of type 'int'
 
-I can't see todays -next yet, but if by "choose CLK_SET_RATE_NO_REPARENT
-over CLK_SET_RATE_PARENT" you mean one branch adds CLK_SET_RATE_PARENT,
-clk-next adds CLK_SET_RATE_NO_REPARENT, and the resolution ends up with
-only CLK_SET_RATE_NOREPARENT then that sounds wrong, as the two flags
-are orthogonal.
+Introduced by commit ca8bdcaff0d7 ("cgroup: make cgroup_css() take
+cgroup_subsys * instead and allow NULL subsys").
 
-Thanks
-James
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
---X09MRfRa7snNnIFpOU1B33IOENhS5vHj3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+--Signature=_Tue__27_Aug_2013_20_17_16_+1000_UekfnnaPGZXSR4Aw
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.13 (GNU/Linux)
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSHHr2AAoJEKHZs+irPybfGHgP/j6sDUy2LuGW1itm+H+lXGHf
-DTmo6IBsWN1F2nn0LOpY1SnA/qSrmGoWTz9OSGuLq2UCUxDGJ/QYPMjl9E6TWqjI
-h7GaByf832kqqKbHvU+MQNadNP7SEhPHopgTBcedvTwLUd1myxkUN+Y1tEs/x9ne
-H9vj5faQqZ1xQ6D+6jfUfN3R7iTacXQiaJ5DaQF8UMdcDd8AdQmSSFk6R1XFfydZ
-ULGJfoLORCswPzhjQqyvUW3h4M7etGrDZKiQDNHt8K3levC48KPxnBkt6pd2JzgT
-Roq8TuBRadI9QQEYdNBjQ+2nYdirl8qUAcVt/wH0NUKp58rgp7R1jiaiCIB9vVEd
-10KICgTGkF2nFtyi6iPHkn92Xeehj85A/Vb5C9NV0wNpVfvyWR/59jvuZDLWcCHT
-SWNQ+am6OeHZx4q31eToJRYlnRICNImY4TpLfURC/ZrG/if4JNxkr9ttE6RFVhGq
-mQZSVw0CzUgZd9X+nl1WagCMi3r04gX4Q+LnfVBAEiYWn0768Pj5j9oaNkD3/kWm
-JIVdKSg+0mD2ewAIzuzFD2RhKLT7csZL+Ae/nrMb6wSjjCDcjPgmRRvlvRq+4DpV
-0QJ5TaPK4sCxluGDr54ZJ63fF1CkhXHs9iVcHrM8QAt4hTWKMpB/9NStk8PdRUH/
-CHyFfXsR31T8gKY9BYSX
-=EOm4
+iQIcBAEBCAAGBQJSHHywAAoJEECxmPOUX5FE3FkQAKXwiIkYSNqui8B+5Enj7rAD
+Y3p9reaCL+Ug8ppDdThjdPcthVoSAw3FPgqH1bgDqqI34SfY3IEjF8bwEUnPqCr4
+jkqMvtFKCgvWTOfO7TASGmVr4/8X1oz8BbzVZY5tzCccxLgthbjdhU+2Sleb7KW0
+6x1LRVMGJPbiqU8wvvUZsEfuYuQlK9IKlJieKW8FjDenzWnRhWNePSGD/Yw/9uYC
+PxpQJgm5DVrgV3FK8wVWLSxCXpEOSDokeCtmEuhbbUe6jBAfiWDzLdcmZE3nVxiE
+X2MssBX9eQ1f4kBGGm12H8IuZrrevsX1c817rzYvGCM1vB2cQLq5wLgOdHcv2A3S
+CImdlEheoa3J3ukpndra4exaxygqgXeJQpxptVYYZVlqg3SrQLr4+5160dFTaStd
+eZU6TtM/QJmHDghjL19W6Hkx4/4OyK1fRlqr5OBdo+YCfU4ctZg+i14/8akAJuW6
+z9RzjXWK/se80QDVsj9JVn+kjexC8ZVsEFs98HbobuH7AbBcKEramZikZUB+U9Bb
+YPo/ROP8JHhCiYa4V0KN3ZYekauth5U+2sf3Ld6uOa5Rv5bZILMSiK0FdIS/AhuH
+H9O7WFx0NEaRLN+e5RKeCAc8v/y3ORlQXhAsKk+uW4EfWAQNtsveXlwp03e5r2VT
+/stjoZEN9tJVVlMe1wVc
+=LDOS
 -----END PGP SIGNATURE-----
 
---X09MRfRa7snNnIFpOU1B33IOENhS5vHj3--
+--Signature=_Tue__27_Aug_2013_20_17_16_+1000_UekfnnaPGZXSR4Aw--
