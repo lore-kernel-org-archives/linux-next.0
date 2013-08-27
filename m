@@ -1,40 +1,67 @@
 From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build failure after merge of the libata tree
-Date: Tue, 27 Aug 2013 14:09:17 -0400
-Message-ID: <20130827180917.GA12212@mtj.dyndns.org>
-References: <20130827125049.62d12bba371fe8d9df85a227@canb.auug.org.au>
- <521C3E89.3090905@intel.com>
+Subject: Re: linux-next: build warning after merge of the cgroup tree
+Date: Tue, 27 Aug 2013 14:33:44 -0400
+Message-ID: <20130827183344.GB12212@mtj.dyndns.org>
+References: <20130827201716.528af63c96b66bb2446fc4b7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f178.google.com ([209.85.216.178]:32882 "EHLO
-	mail-qc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751592Ab3H0SJZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 14:09:25 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <521C3E89.3090905@intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Aaron Lu <aaron.lu@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+In-Reply-To: <20130827201716.528af63c96b66bb2446fc4b7@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Aug 27, 2013 at 01:52:09PM +0800, Aaron Lu wrote:
-> From: Aaron Lu <aaron.lu@intel.com>
-> Subject: [PATCH] ata: acpi: Remove ata_dev_acpi_handle stub in libata.h
+On Tue, Aug 27, 2013 at 08:17:16PM +1000, Stephen Rothwell wrote:
+> Hi Tejun,
 > 
-> The ata_dev_acpi_handle is defined in libata-acpi.c and the only
-> external user is libata-zpodd.c, which is built when CONFIG_ATA_ACPI
-> is set, so there is no need to make an empty stub function for
-> !CONFIG_ATA_ACPI case in libata.h. It also causes compile errors due to
-> acpi_handle is not defined when !CONFIG_ACPI. This patch fixes this
-> problem by removing the empty stub.
+> After merging the cgroup tree, today's linux-next build (i386 defconfig)
+> produced this warning:
 > 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> kernel/cgroup.c: In function 'css_from_id':
+> kernel/cgroup.c:5723:3: warning: passing argument 2 of 'cgroup_css' makes pointer from integer without a cast [enabled by default]
+> kernel/cgroup.c:237:36: note: expected 'struct cgroup_subsys *' but argument is of type 'int'
+> 
+> Introduced by commit ca8bdcaff0d7 ("cgroup: make cgroup_css() take
+> cgroup_subsys * instead and allow NULL subsys").
 
-Yeap, tested and works.  Applied to libata/for-3.12.  Thanks.
+Yeap, the conversion missed a newly added function, which BTW
+currently doesn't have any users.  Applied the following fix.
 
-Stephen, sorry about the trouble.
+Thanks a lot!
 
+>From d1625964da51bda61306ad3ec45307a799c21f08 Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Tue, 27 Aug 2013 14:27:23 -0400
+Subject: [PATCH] cgroup: fix cgroup_css() invocation in css_from_id()
+
+ca8bdcaff0 ("cgroup: make cgroup_css() take cgroup_subsys * instead
+and allow NULL subsys") missed one conversion in css_from_id(), which
+was newly added.  As css_from_id() doesn't have any user yet, this
+doesn't break anything other than generating a build warning.
+
+Convert it.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+---
+ kernel/cgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/cgroup.c b/kernel/cgroup.c
+index e76698d..b5f4989 100644
+--- a/kernel/cgroup.c
++++ b/kernel/cgroup.c
+@@ -5729,7 +5729,7 @@ struct cgroup_subsys_state *css_from_id(int id, struct cgroup_subsys *ss)
+ 
+ 	cgrp = idr_find(&ss->root->cgroup_idr, id);
+ 	if (cgrp)
+-		return cgroup_css(cgrp, ss->subsys_id);
++		return cgroup_css(cgrp, ss);
+ 	return NULL;
+ }
+ 
 -- 
-tejun
+1.8.3.1
