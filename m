@@ -1,70 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the libata tree
-Date: Tue, 27 Aug 2013 12:50:49 +1000
-Message-ID: <20130827125049.62d12bba371fe8d9df85a227@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with the powerpc tree
+Date: Tue, 27 Aug 2013 13:05:07 +1000
+Message-ID: <20130827130507.27bd4ceda462db1751bfc30d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Aug_2013_12_50_49_+1000_=k7K61buwNQ=beQf"
+ boundary="Signature=_Tue__27_Aug_2013_13_05_07_+1000_=PZhilQHd=xvTHH+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44171 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:34202 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751783Ab3H0CvA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Aug 2013 22:51:00 -0400
+	with ESMTP id S1751807Ab3H0DFR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Aug 2013 23:05:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Grant Likely <grant.likely@linaro.org>, Ian Munsie <imunsie@au1.ibm.com>, linuxppc-dev@lists.ozlabs.org
 
---Signature=_Tue__27_Aug_2013_12_50_49_+1000_=k7K61buwNQ=beQf
+--Signature=_Tue__27_Aug_2013_13_05_07_+1000_=PZhilQHd=xvTHH+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi Rafael,
 
-After merging the libata tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the pm tree got a conflict in
+arch/powerpc/kernel/prom.c between commit dc0e643afc50 ("powerpc: Make
+prom.c device tree accesses endian safe") from the powerpc tree and
+commits 819d596568d8 ("powerpc: refactor of_get_cpu_node to support other
+architectures") and 183912d352a2 ("of: move of_get_cpu_node
+implementation to DT core library") from the pm tree.
 
-In file included from drivers/ata/libata-pmp.c:14:0:
-drivers/ata/libata.h:136:1: error: unknown type name 'acpi_handle'
- static inline acpi_handle ata_dev_acpi_handle(struct ata_device *dev) { re=
-turn NULL; }
- ^
+I think that the latter superceded the conflicting fixes in the former,
+so I just used the latter and can carry the fix as necessary (no action
+is required).
 
-And several others.
-
-Caused by commit f1bc1e4c44b1 ("ata: acpi: rework the ata acpi bind
-support").  All the world does not have the ACPI include files
-included via some other path ... nor wants them, I suspect.
-
-I have used the libata tree from next-20130822 for today.
-
-P.S. drivers/ata/libata.h seems to assume that a lot of other stuff is
-included that it does not include explicitly ...
+P.S. Rafael, I used both your addresses because I have had a bounce from
+the sisk.pl one in the past ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__27_Aug_2013_12_50_49_+1000_=k7K61buwNQ=beQf
+--Signature=_Tue__27_Aug_2013_13_05_07_+1000_=PZhilQHd=xvTHH+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSHBQNAAoJEECxmPOUX5FEzCgP/Rr758i/nJeBaVal/H4XxTwM
-UxfYZXJZ5dAKV/ht7HZLNJ3xxj0efKEzZ8mH3hLDy05JRBDZILA+StLgBjsoD004
-tM+IWYiootA2aDBUKOGzt2JcS2t61AWXZmxFhesdU+CiUzvu4fnVVF2sdR3WLBY2
-Xfh0N3S3aqcudLeXPPAsz0UgcQCYOn8st45Nd3Q3j57SwwOxW4ycnk7FPTrAtCP4
-3+k6TfC0w+flrbLOqWGZlJQG7yU9t7aqGCywl0CZCN9U9cGIsWKf19149wPnfLhY
-kASn2Xi6RIx21eUpdKXLmO/7Rt20PDLfAqeihp4b0+ySne+oRjAvZuzA0gtgfRh2
-JLreCGHRsTrSlca4pFi95xjeCnkfle2o69osXggGw6Yx093OW2AcV7cBdD56tQ0I
-6uGXCRhAr0+LrNarvz75SDBy6Y0FNoTmzNm2BLxVjIv321aQtM5AZmqTCb2XHOCP
-0EngFX84VaTxMunNi7CIiskNxIsxnALOqjdDx/cWgbgLCdGLeXYvRWEjjigFc3es
-kv6FrOAlJ0bydcB7Q8o9rb0MDxn/G13eTAcBotMqnow/ck6Fv46A+0GuLNjUMkg2
-MiYRMF7g9nMq80YkDQFISJxS6q/wZ/cX23CASzOEyN3bJhY+ryjz7BkukbQW98Kc
-jiKZ5kzRgZsDFV1H1uMb
-=FLgJ
+iQIcBAEBCAAGBQJSHBdnAAoJEECxmPOUX5FEPyUP/iZE8GL5yG0uUsWBUzM0PFtF
+3ua5VbUd/Anzakk+gOjswUtbC/BhdTluHwLuEEi2oKzj6XqHA1NfNVT8k+o13shl
+/lOZzDEcxqFpkbItJrsMDW9n5eRBw2TebAbqa03Hx9fDvBuZkTQVS1QWpHuggu1D
+tN1wr4ktpMM9odR/jYzN12WHYO7Lk3AADvpNkVU0/VUuBRpKCzwvN3DRi0XJ6jp8
+QNXRgrYj9b+ESdpFY/4Hg+4wk7CLb6rxgH+85RfgAynv5zie/GVTA13wksvI9WLm
+Zk1ZQRGuz8Tt8qAs3enLiunOnsbF/W41SQkjB7/gLYCzqwF65mFUIRKZz1IBAKuf
+aJSi/GFe3qwg8DDXQxlnQ9DyNYWbl6Wf12F5Au5E6Cw6yhvNPdHd3Z9m+gRFs1nx
+O0Q48xVWVuq6RFpJ0rxUuzjaWF4EQRCLXX20iQZ0Kjd3BCWGdnVc3Pxh8TmdoSwF
+a1O4nGGp6/06xkUptzJ4dpHGvKzDDfjkPdJui2WoilcW4fknSQtXKvy40oGWRQQM
+/PUb2vpUJeg/UPEw+v3+7BOrcGvPq2w8y6xs8Qxg9BuvFLm+ofnPt7lLlgn9Gijy
+9S0+ReZKN4nRpTYzN1tFh27oM1RbQWGIta87PSUrxgV6qJqWhG9vRDTdaKgxHk6b
+ZDrOB0nPC9PAzIGkr8kM
+=3JKn
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_Aug_2013_12_50_49_+1000_=k7K61buwNQ=beQf--
+--Signature=_Tue__27_Aug_2013_13_05_07_+1000_=PZhilQHd=xvTHH+--
