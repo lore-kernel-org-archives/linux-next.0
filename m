@@ -1,121 +1,64 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: (unknown)
-Date: Mon, 26 Aug 2013 20:28:10 +0300
-Message-ID: <20130826172810.GA31068@redhat.com>
-References: <CA+icZUXyizuCR3YDfFXD5hCkgycFYGzMHaJxg=m9UackT7uzGQ@mail.gmail.com>
- <CAKMK7uFzwiztE8H1rvSDWQmw08JGoKdnTs5BYqxdrHwb=pK50A@mail.gmail.com>
- <CA+icZUXnHaT75NhhSx+AhcMEKybHugH9+hV_mS5h5-cimFdz6A@mail.gmail.com>
- <CA+icZUVQ_UO_VnN9+Q7B3hhuFmw4XPEw19rhO+T4jU5hLGWaTQ@mail.gmail.com>
- <CA+icZUW3K7RyUcfdos7aOkrEOd3To0kSns+G3GSfkPqqwo7z=w@mail.gmail.com>
- <20130826130511.GA21082@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the f2fs tree
+Date: Tue, 27 Aug 2013 11:41:09 +1000
+Message-ID: <20130827114109.89e5a99f6dd954d44d73bbf0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__27_Aug_2013_11_41_09_+1000_NYo6_7ZvNJYqICPK"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45039 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752425Ab3H0Blo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Aug 2013 21:41:44 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Tue__27_Aug_2013_11_41_09_+1000_NYo6_7ZvNJYqICPK
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20130826130511.GA21082@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: "Barnes, Jesse" <jbarnes@virtuousgeek.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2013 at 04:05:11PM +0300, Michael S. Tsirkin wrote:
-> On Wed, Aug 21, 2013 at 11:22:58AM +0200, Sedat Dilek wrote:
-> > [ Re: [Intel-gfx] i915 producing warnings with kernel 3.11-rc5 ]
-> > 
-> > Hi,
-> > 
-> > saw your posting in [1]... can you try the patches below?
-> > Not sure if they apply.
-> > Did you try v3.11-rc6(+)... or drm-intel-nightly?
-> > 
-> > Regards,
-> > - Sedat -
-> > 
-> > [1] http://lists.freedesktop.org/archives/intel-gfx/2013-August/032154.html
-> 
-> Same thing observed with v3.11-rc7.
+Hi Jaegeuk,
 
-Looks like when this happens, external monitor does not work.
-It shows this message:
-"not optimum mode: recommended mode 1280x1024 60Hz"
-while this is exactly what I configured in xrandr.
+After merging the f2fs tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
+fs/f2fs/namei.c: In function 'f2fs_rename':
+fs/f2fs/namei.c:450:31: error: expected ';' before ':' token
+   update_inode_page(old_inode):
+                               ^
 
+Caused by commit 2e569fefc95a ("f2fs: fix omitting to update inode page").
 
-> 
-> > 
-> > ---------- Forwarded message ----------
-> > From: Sedat Dilek <sedat.dilek@gmail.com>
-> > Date: Tue, Jul 2, 2013 at 7:31 AM
-> > Subject: Re: linux-next: Tree for Jul 1 [ drm-intel-next: Several call-traces ]
-> > To: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: "Barnes, Jesse" <jbarnes@virtuousgeek.org>, Stephen Rothwell
-> > <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux
-> > Kernel Mailing List <linux-kernel@vger.kernel.org>, intel-gfx
-> > <intel-gfx@lists.freedesktop.org>, DRI
-> > <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@gmail.com>
-> > 
-> > 
-> > On Mon, Jul 1, 2013 at 11:03 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> > > On Mon, Jul 1, 2013 at 10:52 AM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> > >> On Mon, Jul 1, 2013 at 10:49 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> > >>> On Mon, Jul 1, 2013 at 9:59 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >>>> Hi all,
-> > >>>>
-> > >>>> Changes since 20130628:
-> > >>>>
-> > >>>> The regulator tree gained a build failure so I used the version from
-> > >>>> next-20130628.
-> > >>>>
-> > >>>> The trivial tree gained a conflict against the fbdev tree.
-> > >>>>
-> > >>>> The arm-soc tree gained a conflict against the net-next tree.
-> > >>>>
-> > >>>> The akpm tree lost a few patches that turned up elsewhere and I removed 2
-> > >>>> that were causing run time problems.
-> > >>>>
-> > >>>
-> > >>> [ CC drm and drm-intel folks ]
-> > >>>
-> > >>> [ Did not check any relevant MLs ]
-> > >>>
-> > >>> Please, see attached dmesg output.
-> > >>
-> > >> Clock mismatch, one for Jesse to figure out. Note that this patch is
-> > >> for 3.12, I simply haven't yet gotten around to properly split my
-> > >> patch queue so a few spilled into -next. I'll do that now.
-> > >
-> > > I like lightspeed-fast replies :-).
-> > >
-> > > Guess "drm/i915: get mode clock when reading the pipe config v9" [1]
-> > > is the cause.
-> > >
-> > 
-> > Problem solved by applying these patches to next-20130701 from
-> > intel-gfx patchwork-service [0]:
-> > 
-> >    [1/2] drm/i915: fixup messages in pipe_config_compare
-> >    [2/2] drm/i915: get clock config when checking CRTC state too
-> > 
-> > AFAICS 2/2 was folded into updated "drm/i915: get mode clock when
-> > reading the pipe config v9" [3].
-> > 
-> > It would be kind to be CCed on the patches and get also some credits.
-> > Also a CC to the report in linux-next should IMHO be done.
-> > 
-> > - Sedat -
-> > 
-> > [0] https://patchwork.kernel.org/project/intel-gfx/list/
-> > [1] https://patchwork.kernel.org/patch/2809031/
-> > [2] https://patchwork.kernel.org/patch/2809021/
-> > [3] http://cgit.freedesktop.org/~danvet/drm-intel/commit/?h=drm-intel-nightly&id=f1f644dc66cbaf5a4c7dcde683361536b41885b9
-> > 
-> > > - Sedat -
-> > >
-> > > [1] http://cgit.freedesktop.org/~danvet/drm-intel/commit/?h=drm-intel-next-queued&id=d325d8b4f351f9d45e7c8baabf581fd21f343133
-> > >
-> > >> -Daniel
-> > >> --
-> > >> Daniel Vetter
-> > >> Software Engineer, Intel Corporation
-> > >> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Not even build tested :-(
+
+I have used the f2fs tree from next-20130822 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__27_Aug_2013_11_41_09_+1000_NYo6_7ZvNJYqICPK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSHAPSAAoJEECxmPOUX5FE6tgQAJ4PYJI/M/YJb/an4twIWJk1
+xCZVyjjOJrxuWbVnOqsC+GmwgkZDz3fuqeke65nsapgm5maDkz0BmBU2EBCtWhIm
+QdFXQIQUqbf3MOs7bbwillYqaIKrVS4jMdvP3WbMhZw+BVbs+Ox+sBbyivzzOQ6a
+kY2KKd31B9dSezGt+qk2BTCxY9wn4/iQg523jKz9vWekLGpoWIcpbb62mzQCkD/s
+UqY85k5bZ0zd5z6sY5s0n39IMHmrIR75zE2dAKvk27wxhijIy9ai+RQYD5Ao5hfI
+hXgBrt31YsnECh3Rppfbzo/KWo3Wvb/MV9BZ/li3EWoJk9y9O6/dSmziVsIB1Hl1
+oxE9cRIJ9ZvNQwk11oD0lUpqc0vqbzlhmfYB/OzHmcZp6Qyg4G5i9IXgRNKF3mz0
+Alf62EzIsW1OOMHD6LldNtXk2XC/14TF0aQp9lZ4mV9Opk14yBB9xV+eammwvZ4v
+9s3c+T54h496+nr2UzWfu6uoqE3NKnMI8Yoc+G86FFShazi1KgK6qHE+IfqSP/b9
+ffV54HOwie7CPD/YWlKxF6m9YpCFbsFxlePPtwp4/3EVquKV0oVJZouzdCj8pGhQ
+/nb6s/v4SNdtskpM+cO1RgBH56/yxCZM+ZwJqxx17tRZ6BJqChWGrjS682QtNbE5
+4BY53cWwoyLQiSQ7v/NU
+=bXSA
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Aug_2013_11_41_09_+1000_NYo6_7ZvNJYqICPK--
