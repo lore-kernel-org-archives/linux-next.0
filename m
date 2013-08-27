@@ -1,64 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the f2fs tree
-Date: Tue, 27 Aug 2013 11:41:09 +1000
-Message-ID: <20130827114109.89e5a99f6dd954d44d73bbf0@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the libata tree
+Date: Tue, 27 Aug 2013 12:50:49 +1000
+Message-ID: <20130827125049.62d12bba371fe8d9df85a227@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Aug_2013_11_41_09_+1000_NYo6_7ZvNJYqICPK"
+ boundary="Signature=_Tue__27_Aug_2013_12_50_49_+1000_=k7K61buwNQ=beQf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45039 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44171 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752425Ab3H0Blo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Aug 2013 21:41:44 -0400
+	with ESMTP id S1751783Ab3H0CvA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Aug 2013 22:51:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>
 
---Signature=_Tue__27_Aug_2013_11_41_09_+1000_NYo6_7ZvNJYqICPK
+--Signature=_Tue__27_Aug_2013_12_50_49_+1000_=k7K61buwNQ=beQf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jaegeuk,
+Hi Tejun,
 
-After merging the f2fs tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the libata tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-fs/f2fs/namei.c: In function 'f2fs_rename':
-fs/f2fs/namei.c:450:31: error: expected ';' before ':' token
-   update_inode_page(old_inode):
-                               ^
+In file included from drivers/ata/libata-pmp.c:14:0:
+drivers/ata/libata.h:136:1: error: unknown type name 'acpi_handle'
+ static inline acpi_handle ata_dev_acpi_handle(struct ata_device *dev) { re=
+turn NULL; }
+ ^
 
-Caused by commit 2e569fefc95a ("f2fs: fix omitting to update inode page").
+And several others.
 
-Not even build tested :-(
+Caused by commit f1bc1e4c44b1 ("ata: acpi: rework the ata acpi bind
+support").  All the world does not have the ACPI include files
+included via some other path ... nor wants them, I suspect.
 
-I have used the f2fs tree from next-20130822 for today.
+I have used the libata tree from next-20130822 for today.
+
+P.S. drivers/ata/libata.h seems to assume that a lot of other stuff is
+included that it does not include explicitly ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__27_Aug_2013_11_41_09_+1000_NYo6_7ZvNJYqICPK
+--Signature=_Tue__27_Aug_2013_12_50_49_+1000_=k7K61buwNQ=beQf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSHAPSAAoJEECxmPOUX5FE6tgQAJ4PYJI/M/YJb/an4twIWJk1
-xCZVyjjOJrxuWbVnOqsC+GmwgkZDz3fuqeke65nsapgm5maDkz0BmBU2EBCtWhIm
-QdFXQIQUqbf3MOs7bbwillYqaIKrVS4jMdvP3WbMhZw+BVbs+Ox+sBbyivzzOQ6a
-kY2KKd31B9dSezGt+qk2BTCxY9wn4/iQg523jKz9vWekLGpoWIcpbb62mzQCkD/s
-UqY85k5bZ0zd5z6sY5s0n39IMHmrIR75zE2dAKvk27wxhijIy9ai+RQYD5Ao5hfI
-hXgBrt31YsnECh3Rppfbzo/KWo3Wvb/MV9BZ/li3EWoJk9y9O6/dSmziVsIB1Hl1
-oxE9cRIJ9ZvNQwk11oD0lUpqc0vqbzlhmfYB/OzHmcZp6Qyg4G5i9IXgRNKF3mz0
-Alf62EzIsW1OOMHD6LldNtXk2XC/14TF0aQp9lZ4mV9Opk14yBB9xV+eammwvZ4v
-9s3c+T54h496+nr2UzWfu6uoqE3NKnMI8Yoc+G86FFShazi1KgK6qHE+IfqSP/b9
-ffV54HOwie7CPD/YWlKxF6m9YpCFbsFxlePPtwp4/3EVquKV0oVJZouzdCj8pGhQ
-/nb6s/v4SNdtskpM+cO1RgBH56/yxCZM+ZwJqxx17tRZ6BJqChWGrjS682QtNbE5
-4BY53cWwoyLQiSQ7v/NU
-=bXSA
+iQIcBAEBCAAGBQJSHBQNAAoJEECxmPOUX5FEzCgP/Rr758i/nJeBaVal/H4XxTwM
+UxfYZXJZ5dAKV/ht7HZLNJ3xxj0efKEzZ8mH3hLDy05JRBDZILA+StLgBjsoD004
+tM+IWYiootA2aDBUKOGzt2JcS2t61AWXZmxFhesdU+CiUzvu4fnVVF2sdR3WLBY2
+Xfh0N3S3aqcudLeXPPAsz0UgcQCYOn8st45Nd3Q3j57SwwOxW4ycnk7FPTrAtCP4
+3+k6TfC0w+flrbLOqWGZlJQG7yU9t7aqGCywl0CZCN9U9cGIsWKf19149wPnfLhY
+kASn2Xi6RIx21eUpdKXLmO/7Rt20PDLfAqeihp4b0+ySne+oRjAvZuzA0gtgfRh2
+JLreCGHRsTrSlca4pFi95xjeCnkfle2o69osXggGw6Yx093OW2AcV7cBdD56tQ0I
+6uGXCRhAr0+LrNarvz75SDBy6Y0FNoTmzNm2BLxVjIv321aQtM5AZmqTCb2XHOCP
+0EngFX84VaTxMunNi7CIiskNxIsxnALOqjdDx/cWgbgLCdGLeXYvRWEjjigFc3es
+kv6FrOAlJ0bydcB7Q8o9rb0MDxn/G13eTAcBotMqnow/ck6Fv46A+0GuLNjUMkg2
+MiYRMF7g9nMq80YkDQFISJxS6q/wZ/cX23CASzOEyN3bJhY+ryjz7BkukbQW98Kc
+jiKZ5kzRgZsDFV1H1uMb
+=FLgJ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_Aug_2013_11_41_09_+1000_NYo6_7ZvNJYqICPK--
+--Signature=_Tue__27_Aug_2013_12_50_49_+1000_=k7K61buwNQ=beQf--
