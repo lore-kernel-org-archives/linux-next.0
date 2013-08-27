@@ -1,67 +1,111 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build warning after merge of the cgroup tree
-Date: Tue, 27 Aug 2013 14:33:44 -0400
-Message-ID: <20130827183344.GB12212@mtj.dyndns.org>
-References: <20130827201716.528af63c96b66bb2446fc4b7@canb.auug.org.au>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the usb tree
+Date: Tue, 27 Aug 2013 13:37:32 -0500
+Message-ID: <20130827183732.GP3005@radagast>
+References: <20130827181353.319c150858829df1bb68d60b@canb.auug.org.au>
+ <521C6961.9020103@linutronix.de>
+ <CABxcv=mg6t5wPqpF3j5sr_76qfZ7N7KgpWhcKSGoPTOcaR=V6A@mail.gmail.com>
+ <521CA888.1080909@baylibre.com>
+ <521CAF59.1090203@linutronix.de>
+ <521CB046.9070408@baylibre.com>
+ <521CB18B.4080000@linutronix.de>
+ <521CB239.6050409@baylibre.com>
+ <521CB403.8010307@linutronix.de>
+ <20130827173732.GC21564@kroah.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zyDKzlOwWcg4zI1m"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:36745 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751715Ab3H0Sin (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Aug 2013 14:38:43 -0400
 Content-Disposition: inline
-In-Reply-To: <20130827201716.528af63c96b66bb2446fc4b7@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20130827173732.GC21564@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Benoit Cousson <bcousson@baylibre.com>, Javier Martinez Canillas <javier@dowhile0.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, "khilman@linaro.org" <khilman@linaro.org>
 
-On Tue, Aug 27, 2013 at 08:17:16PM +1000, Stephen Rothwell wrote:
-> Hi Tejun,
-> 
-> After merging the cgroup tree, today's linux-next build (i386 defconfig)
-> produced this warning:
-> 
-> kernel/cgroup.c: In function 'css_from_id':
-> kernel/cgroup.c:5723:3: warning: passing argument 2 of 'cgroup_css' makes pointer from integer without a cast [enabled by default]
-> kernel/cgroup.c:237:36: note: expected 'struct cgroup_subsys *' but argument is of type 'int'
-> 
-> Introduced by commit ca8bdcaff0d7 ("cgroup: make cgroup_css() take
-> cgroup_subsys * instead and allow NULL subsys").
+--zyDKzlOwWcg4zI1m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yeap, the conversion missed a newly added function, which BTW
-currently doesn't have any users.  Applied the following fix.
+Hi,
 
-Thanks a lot!
+On Tue, Aug 27, 2013 at 10:37:32AM -0700, Greg KH wrote:
+> On Tue, Aug 27, 2013 at 04:13:23PM +0200, Sebastian Andrzej Siewior wrote:
+> > On 08/27/2013 04:05 PM, Benoit Cousson wrote:
+> > > On 27/08/2013 16:02, Sebastian Andrzej Siewior wrote:
+> > >> On 08/27/2013 03:57 PM, Benoit Cousson wrote:
+> > >>> + Kevin,
+> > >>>
+> > >>> On 27/08/2013 15:53, Sebastian Andrzej Siewior wrote:
+> > >>>> What do we do now?
+> > >>>
+> > >>> Cannot you just merge the stable arm-soc/dt branch into your branch
+> > >>> before applying your patches?
+> > >>
+> > >> That is up to Greg. This changes sat in his usb-next tree for a while
+> > >> now. And before they hit Greg they were in Felipe's tree for a while.
+> > >>
+> > >> To be exact, last .dts change via USB was:
+> > >>
+> > >> Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > >> AuthorDate: Thu Jun 20 12:13:04 2013 +0200
+> > >> Commit:     Felipe Balbi <balbi@ti.com>
+> > >> CommitDate: Fri Aug 9 17:40:16 2013 +0300
+> > >>
+> > >>     usb: musb dma: add cppi41 dma driver
+> > >=20
+> > > Mmm, if that branch is supposed to be stable, I'm not sure it will be
+> > > doable...
+> > >=20
+> > > Maybe we should do the other way around? And merge usb-next into
+> > > arm-soc/dt.
+> > >=20
+> > > Kevin, Olof?
+> >=20
+> > Please be aware that I have no response so far regarding [0] from Greg.
+> >=20
+> > [0] http://www.spinics.net/lists/linux-usb/msg92595.html
+>=20
+> Nor will you, given that I am not the one to take these patches, Felipe
+> is.  I noticed now that you said "please route around Felipe", but
+> sorry, no, I'm not going to do that unless there's a really good reason.
+> Felipe seems to be around at the moment, please work with him on this.
 
->From d1625964da51bda61306ad3ec45307a799c21f08 Mon Sep 17 00:00:00 2001
-From: Tejun Heo <tj@kernel.org>
-Date: Tue, 27 Aug 2013 14:27:23 -0400
-Subject: [PATCH] cgroup: fix cgroup_css() invocation in css_from_id()
+If you will still take a 'part2' pull request from me, I can send you
+urgent bugfixes by friday. If I have some time left, I can even try to
+get that sorted out by tomorrow.
 
-ca8bdcaff0 ("cgroup: make cgroup_css() take cgroup_subsys * instead
-and allow NULL subsys") missed one conversion in css_from_id(), which
-was newly added.  As css_from_id() doesn't have any user yet, this
-doesn't break anything other than generating a build warning.
+cheers
 
-Convert it.
+--=20
+balbi
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
----
- kernel/cgroup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--zyDKzlOwWcg4zI1m
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-diff --git a/kernel/cgroup.c b/kernel/cgroup.c
-index e76698d..b5f4989 100644
---- a/kernel/cgroup.c
-+++ b/kernel/cgroup.c
-@@ -5729,7 +5729,7 @@ struct cgroup_subsys_state *css_from_id(int id, struct cgroup_subsys *ss)
- 
- 	cgrp = idr_find(&ss->root->cgroup_idr, id);
- 	if (cgrp)
--		return cgroup_css(cgrp, ss->subsys_id);
-+		return cgroup_css(cgrp, ss);
- 	return NULL;
- }
- 
--- 
-1.8.3.1
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSHPHsAAoJEIaOsuA1yqREvbkP+QHprTQtdnFUmvyRKAxyODl4
+lnoANWRL4+/uVt1RaRBuYjji6FgwwmZRAoReKcwysCpdLONwfeav00jfLBBZfnrE
+AFKZczbBneubE0iHlkthg9YX9XHouJzz3isbrJtogGmYpbL40sENz+rYoBlhd7tc
+T84kpZ0QL91Z3vIRnziBu3LM2THIUhUe/H64oDoPF8e2KPBT9eiWx1tTje+EaWqg
+6EHMKQEkILptQ5CI7/qRy38Cz3CXhtTdpcjPzO242MBUUM8wl9ULHDknBCxzGOui
+C03d8JbE/tXTp7NM8PICGK5dlIupxByFnCE9apDaTQSYd6K4+u2WbaRL2nRwOxDR
+pJ9B/TArQhwnIbXwgT3pKTF5EIR6jE//bougbnrFSh19zM71nm5SnOGwLIJ6qMNn
+SQKOWPgQ72yKbKbnCYhbxQbbi1yC7NVMLgDFCCVIfTUGFa3X0z2CFrc4oHFU9ivU
+JKVe/pCb+QkBqXlJPjRBjK4Cw3yZxytQuZhA4GXTYYw2g9BTEjwfEdFbBGz/Dcxq
+EDzuuxCWjslS3RWN70bxhHlxDVc2R76AYIcoktPR34LJhLcsolnJa2qEXIfbTyJ+
+9eygUTTCCkfd9+7G3guGQ+6jRA0Qqu1ZBR6EDdWUoLY0Qq/WkSv2CpZlykKEIQq7
+LknpQ4ZKN242WHipb4Qi
+=kGKt
+-----END PGP SIGNATURE-----
+
+--zyDKzlOwWcg4zI1m--
