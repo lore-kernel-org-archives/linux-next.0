@@ -1,97 +1,184 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the regulator tree with the pm tree
-Date: Tue, 27 Aug 2013 15:37:54 +1000
-Message-ID: <20130827153754.a28ce27a424e4cbeab503079@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [RFC PATCH v2 next]module: Fix mod->mkobj.kobj potentially freed too early
+Date: Tue, 27 Aug 2013 14:08:27 +0930
+Message-ID: <87bo4jd9z0.fsf@rustcorp.com.au>
+References: <1377078598.2709.25.camel@ThinkPad-T5421> <20130821161819.GA14364@kroah.com> <1377138846.2633.25.camel@ThinkPad-T5421> <20130822040333.GB4821@kroah.com> <1377157075.2633.63.camel@ThinkPad-T5421> <20130825040734.GA18107@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Aug_2013_15_37_54_+1000_E5qAAE6vV7i5Swd2"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:47418 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752347Ab3H0FsC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Aug 2013 01:48:02 -0400
+In-Reply-To: <20130825040734.GA18107@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>, Li Zhong <zhong@linux.vnet.ibm.com>
+Cc: linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, rmk+kernel@arm.linux.org.uk
 
---Signature=_Tue__27_Aug_2013_15_37_54_+1000_E5qAAE6vV7i5Swd2
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Greg KH <gregkh@linuxfoundation.org> writes:
+> On Thu, Aug 22, 2013 at 03:37:55PM +0800, Li Zhong wrote:
+>> DEBUG_KOBJECT_RELEASE helps to find the issue attached below.
+> People are starting to hit these types of issues, and I'd like to take
+> this one out of the picture.
+>
+> Rusty, any objection to me taking this through my driver-core tree,
+> where this new config option shows up?
 
-Hi all,
+The original fix was better.
 
-Today's linux-next merge of the regulator tree got a conflict in
-drivers/cpufreq/cpufreq-cpu0.c between commit f837a9b5ab05 ("cpufreq:
-cpufreq-cpu0: remove device tree parsing for cpu nodes") from the  tree
-and commit 7d748971c0c0 ("cpufreq: cpufreq-cpu0: Use
-devm_regulator_get_optional()") from the regulator tree.
+Moving the module_kobject out and giving it its own lifetime solves this
+immediate issue, but it still means there's an accessible module_kobject
+around referring to a module which doesn't exist any more.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Original copied below, feel free to take it.
 
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Rusty.
 
-diff --cc drivers/cpufreq/cpufreq-cpu0.c
-index bad620e,e9dedb2..0000000
---- a/drivers/cpufreq/cpufreq-cpu0.c
-+++ b/drivers/cpufreq/cpufreq-cpu0.c
-@@@ -174,18 -174,30 +174,18 @@@ static struct cpufreq_driver cpu0_cpufr
- =20
-  static int cpu0_cpufreq_probe(struct platform_device *pdev)
-  {
- -	struct device_node *np, *parent;
- +	struct device_node *np;
-  	int ret;
- =20
- -	parent =3D of_find_node_by_path("/cpus");
- -	if (!parent) {
- -		pr_err("failed to find OF /cpus\n");
- -		return -ENOENT;
- -	}
- -
- -	for_each_child_of_node(parent, np) {
- -		if (of_get_property(np, "operating-points", NULL))
- -			break;
- -	}
- +	cpu_dev =3D &pdev->dev;
- =20
- +	np =3D of_node_get(cpu_dev->of_node);
-  	if (!np) {
-  		pr_err("failed to find cpu0 node\n");
- -		ret =3D -ENOENT;
- -		goto out_put_parent;
- +		return -ENOENT;
-  	}
- =20
-- 	cpu_reg =3D devm_regulator_get(cpu_dev, "cpu0");
- -	cpu_dev =3D &pdev->dev;
- -	cpu_dev->of_node =3D np;
- -
-+ 	cpu_reg =3D devm_regulator_get_optional(cpu_dev, "cpu0");
-  	if (IS_ERR(cpu_reg)) {
-  		/*
-  		 * If cpu0 regulator supply node is present, but regulator is
+From: Li Zhong <zhong@linux.vnet.ibm.com>
+Subject: module: Fix mod->mkobj.kobj potentially freed too early
 
---Signature=_Tue__27_Aug_2013_15_37_54_+1000_E5qAAE6vV7i5Swd2
-Content-Type: application/pgp-signature
+DEBUG_KOBJECT_RELEASE helps to find the issue attached below.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+After some investigation, it seems the reason is:
+The mod->mkobj.kobj(ffffffffa01600d0 below) is freed together with mod
+itself in free_module(). However, its children still hold references to
+it, as the delay caused by DEBUG_KOBJECT_RELEASE. So when the
+child(holders below) tries to decrease the reference count to its parent
+in kobject_del(), BUG happens as it tries to access already freed memory.
 
-iQIcBAEBCAAGBQJSHDs3AAoJEECxmPOUX5FETU4P/i6CxKU7/WAm8s4Csi/igLu3
-Adcp8dY7KVzthEEQMNOacV3tBptJWa+gqC5e9nuDfp+b6FCA5cT1scDQLkEQ5TUo
-uhrG8v78/Gf3cG84SLyxqAbPxbz0WFT8GWEkChzNDai8g9wMYD1i+jgyn4PCUC0J
-900bl4ZSkKJQnQBfvUVrYTWFNsKultWJnu5LNe2s7VINEhCegWC/CTAhhkdGGlU+
-UjF3BWpgLoG7ecxMjpg/xb8ihBOTkT+A4jOina9aEMhM96n1VL4OASk2sA03achv
-xqAUFTJs6MEZozFzlYR+lc/9bEb5Ipj1Cbp0uNFpHV3I8Nuz6EPwCmzm8p5LJKv/
-/fdy9BNViRsJF79d+WE5bRgsuHDAdUEeXiym0XLmM6n9XJqM7RSY/m8/RebuNH9t
-ECRDpZwxa3Gh3Kj/lcDjlS+FUoRpIdl4Sc5XliKwusAkvsnzjpPM3UivNf9NQEZ1
-RJVu5lUl9RgVBB2zp+DzVtEtsAKE5u9QvVqXH+5+oRV0YChB4YXYjG90Wv0Y2RdQ
-a8jl21EhB/LlFktD2XKBoUj/WySSUdJDq+KO7P4PGcxsQkP1vBDW6a42Lr9bONHx
-/8ZjwOpHiZNc+f3IHMeLEugNmxjaISkIKXRYGA+H/BN7LYE6Bxjb7/TBIKb7eSLV
-i56LkZs93wmwf/Jrw/4p
-=jSbf
------END PGP SIGNATURE-----
+This patch tries to fix it by waiting for the mod->mkobj.kobj to be
+really released in the module removing process (and some error code
+paths).
 
---Signature=_Tue__27_Aug_2013_15_37_54_+1000_E5qAAE6vV7i5Swd2--
+[ 1844.175287] kobject: 'holders' (ffff88007c1f1600): kobject_release, parent ffffffffa01600d0 (delayed)
+[ 1844.178991] kobject: 'notes' (ffff8800370b2a00): kobject_release, parent ffffffffa01600d0 (delayed)
+[ 1845.180118] kobject: 'holders' (ffff88007c1f1600): kobject_cleanup, parent ffffffffa01600d0
+[ 1845.182130] kobject: 'holders' (ffff88007c1f1600): auto cleanup kobject_del
+[ 1845.184120] BUG: unable to handle kernel paging request at ffffffffa01601d0
+[ 1845.185026] IP: [<ffffffff812cda81>] kobject_put+0x11/0x60
+[ 1845.185026] PGD 1a13067 PUD 1a14063 PMD 7bd30067 PTE 0
+[ 1845.185026] Oops: 0000 [#1] PREEMPT
+[ 1845.185026] Modules linked in: xfs libcrc32c [last unloaded: kprobe_example]
+[ 1845.185026] CPU: 0 PID: 18 Comm: kworker/0:1 Tainted: G           O 3.11.0-rc6-next-20130819+ #1
+[ 1845.185026] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2007
+[ 1845.185026] Workqueue: events kobject_delayed_cleanup
+[ 1845.185026] task: ffff88007ca51f00 ti: ffff88007ca5c000 task.ti: ffff88007ca5c000
+[ 1845.185026] RIP: 0010:[<ffffffff812cda81>]  [<ffffffff812cda81>] kobject_put+0x11/0x60
+[ 1845.185026] RSP: 0018:ffff88007ca5dd08  EFLAGS: 00010282
+[ 1845.185026] RAX: 0000000000002000 RBX: ffffffffa01600d0 RCX: ffffffff8177d638
+[ 1845.185026] RDX: ffff88007ca5dc18 RSI: 0000000000000000 RDI: ffffffffa01600d0
+[ 1845.185026] RBP: ffff88007ca5dd18 R08: ffffffff824e9810 R09: ffffffffffffffff
+[ 1845.185026] R10: ffff8800ffffffff R11: dead4ead00000001 R12: ffffffff81a95040
+[ 1845.185026] R13: ffff88007b27a960 R14: ffff88007c1f1600 R15: 0000000000000000
+[ 1845.185026] FS:  0000000000000000(0000) GS:ffffffff81a23000(0000) knlGS:0000000000000000
+[ 1845.185026] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+[ 1845.185026] CR2: ffffffffa01601d0 CR3: 0000000037207000 CR4: 00000000000006b0
+[ 1845.185026] Stack:
+[ 1845.185026]  ffff88007c1f1600 ffff88007c1f1600 ffff88007ca5dd38 ffffffff812cdb7e
+[ 1845.185026]  0000000000000000 ffff88007c1f1640 ffff88007ca5dd68 ffffffff812cdbfe
+[ 1845.185026]  ffff88007c974800 ffff88007c1f1640 ffff88007ff61a00 0000000000000000
+[ 1845.185026] Call Trace:
+[ 1845.185026]  [<ffffffff812cdb7e>] kobject_del+0x2e/0x40
+[ 1845.185026]  [<ffffffff812cdbfe>] kobject_delayed_cleanup+0x6e/0x1d0
+[ 1845.185026]  [<ffffffff81063a45>] process_one_work+0x1e5/0x670
+[ 1845.185026]  [<ffffffff810639e3>] ? process_one_work+0x183/0x670
+[ 1845.185026]  [<ffffffff810642b3>] worker_thread+0x113/0x370
+[ 1845.185026]  [<ffffffff810641a0>] ? rescuer_thread+0x290/0x290
+[ 1845.185026]  [<ffffffff8106bfba>] kthread+0xda/0xe0
+[ 1845.185026]  [<ffffffff814ff0f0>] ? _raw_spin_unlock_irq+0x30/0x60
+[ 1845.185026]  [<ffffffff8106bee0>] ? kthread_create_on_node+0x130/0x130
+[ 1845.185026]  [<ffffffff8150751a>] ret_from_fork+0x7a/0xb0
+[ 1845.185026]  [<ffffffff8106bee0>] ? kthread_create_on_node+0x130/0x130
+[ 1845.185026] Code: 81 48 c7 c7 28 95 ad 81 31 c0 e8 9b da 01 00 e9 4f ff ff ff 66 0f 1f 44 00 00 55 48 89 e5 53 48 89 fb 48 83 ec 08 48 85 ff 74 1d <f6> 87 00 01 00 00 01 74 1e 48 8d 7b 38 83 6b 38 01 0f 94 c0 84
+[ 1845.185026] RIP  [<ffffffff812cda81>] kobject_put+0x11/0x60
+[ 1845.185026]  RSP <ffff88007ca5dd08>
+[ 1845.185026] CR2: ffffffffa01601d0
+[ 1845.185026] ---[ end trace 49a70afd109f5653 ]---
+
+Signed-off-by: Li Zhong <zhong@linux.vnet.ibm.com>
+Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+---
+ include/linux/module.h |  1 +
+ kernel/module.c        | 14 +++++++++++---
+ kernel/params.c        |  7 +++++++
+ 3 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 504035f..05f2447 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -42,6 +42,7 @@ struct module_kobject {
+ 	struct module *mod;
+ 	struct kobject *drivers_dir;
+ 	struct module_param_attrs *mp;
++	struct completion *kobj_completion;
+ };
+ 
+ struct module_attribute {
+diff --git a/kernel/module.c b/kernel/module.c
+index 40ee1dc..9f5ddae 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1612,6 +1612,14 @@ static void module_remove_modinfo_attrs(struct module *mod)
+ 	kfree(mod->modinfo_attrs);
+ }
+ 
++static void mod_kobject_put(struct module *mod)
++{
++	DECLARE_COMPLETION_ONSTACK(c);
++	mod->mkobj.kobj_completion = &c;
++	kobject_put(&mod->mkobj.kobj);
++	wait_for_completion(&c);
++}
++
+ static int mod_sysfs_init(struct module *mod)
+ {
+ 	int err;
+@@ -1639,7 +1647,7 @@ static int mod_sysfs_init(struct module *mod)
+ 	err = kobject_init_and_add(&mod->mkobj.kobj, &module_ktype, NULL,
+ 				   "%s", mod->name);
+ 	if (err)
+-		kobject_put(&mod->mkobj.kobj);
++		mod_kobject_put(mod);
+ 
+ 	/* delay uevent until full sysfs population */
+ out:
+@@ -1683,7 +1691,7 @@ out_unreg_param:
+ out_unreg_holders:
+ 	kobject_put(mod->holders_dir);
+ out_unreg:
+-	kobject_put(&mod->mkobj.kobj);
++	mod_kobject_put(mod);
+ out:
+ 	return err;
+ }
+@@ -1692,7 +1700,7 @@ static void mod_sysfs_fini(struct module *mod)
+ {
+ 	remove_notes_attrs(mod);
+ 	remove_sect_attrs(mod);
+-	kobject_put(&mod->mkobj.kobj);
++	mod_kobject_put(mod);
+ }
+ 
+ #else /* !CONFIG_SYSFS */
+diff --git a/kernel/params.c b/kernel/params.c
+index e5f8f17..501bde4 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -915,7 +915,14 @@ static const struct kset_uevent_ops module_uevent_ops = {
+ struct kset *module_kset;
+ int module_sysfs_initialized;
+ 
++static void module_kobj_release(struct kobject *kobj)
++{
++	struct module_kobject *mk = to_module_kobject(kobj);
++	complete(mk->kobj_completion);
++}
++
+ struct kobj_type module_ktype = {
++	.release   =	module_kobj_release,
+ 	.sysfs_ops =	&module_sysfs_ops,
+ };
+ 
