@@ -1,114 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the pm tree
-Date: Tue, 27 Aug 2013 18:33:13 +1000
-Message-ID: <20130827183313.aa7d51c6dd0b21cd8168aa35@canb.auug.org.au>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the usb tree
+Date: Tue, 27 Aug 2013 10:54:57 +0200
+Message-ID: <521C6961.9020103@linutronix.de>
+References: <20130827181353.319c150858829df1bb68d60b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Aug_2013_18_33_13_+1000_SrurXuJyzmAiLZRy"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42497 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752716Ab3H0IdR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 04:33:17 -0400
+Received: from www.linutronix.de ([62.245.132.108]:35666 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753596Ab3H0IzG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 04:55:06 -0400
+In-Reply-To: <20130827181353.319c150858829df1bb68d60b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>
 
---Signature=_Tue__27_Aug_2013_18_33_13_+1000_SrurXuJyzmAiLZRy
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 08/27/2013 10:13 AM, Stephen Rothwell wrote:
 
-Hi all,
+> Today's linux-next merge of the arm-soc tree got a conflict in 
+> arch/arm/boot/dts/am335x-bone.dts between commit 97238b35d5bb
+> ("usb: musb: dsps: use proper child nodes") from the  tree and
+> commit 63f6b2550aa0 ("ARM: dts: AM33XX: don't redefine OCP bus and
+> device nodes") from the arm-soc tree.
+> 
+> I fixed it up (probably incorrectly - see below) and can carry the
+> fix as necessary (no action is required).
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-mvebu/platsmp.c between commit f6cec7cd0777 ("ARM: mvebu:
-remove device tree parsing for cpu nodes") from the  tree and commit
-994c8c94b419 ("ARM: mvebu: Remove the harcoded BootROM window
-allocation") from the arm-soc tree.
+You added the OCP node back and the USB nodes as I had them which
+should be fine.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+How do we solve the conflict for the merge window? Is it possible for
+the ARM-SOC tree to create a topic branch for this commit?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Greg: I do have a pending pull / patches [0] which also change the dts
+nodes according to the latest feedback + enabling an additional USB
+port in bone.
+If you take this in I could update the nodes later (with the topic
+branch merged) accordingly to the way it has been done in the ARM-SOC
+tree - unless you have other preferences.
 
-diff --cc arch/arm/mach-mvebu/platsmp.c
-index 594b63d,4f960f0..0000000
---- a/arch/arm/mach-mvebu/platsmp.c
-+++ b/arch/arm/mach-mvebu/platsmp.c
-@@@ -29,28 -30,31 +30,31 @@@
-  #include "pmsu.h"
-  #include "coherency.h"
- =20
-+ #define AXP_BOOTROM_BASE 0xfff00000
-+ #define AXP_BOOTROM_SIZE 0x100000
-+=20
- +static struct clk *__init get_cpu_clk(int cpu)
- +{
- +	struct clk *cpu_clk;
- +	struct device_node *np =3D of_get_cpu_node(cpu, NULL);
- +
- +	if (WARN(!np, "missing cpu node\n"))
- +		return NULL;
- +	cpu_clk =3D of_clk_get(np, 0);
- +	if (WARN_ON(IS_ERR(cpu_clk)))
- +		return NULL;
- +	return cpu_clk;
- +}
- +
-  void __init set_secondary_cpus_clock(void)
-  {
- -	int thiscpu;
- +	int thiscpu, cpu;
-  	unsigned long rate;
- -	struct clk *cpu_clk =3D NULL;
- -	struct device_node *np =3D NULL;
- +	struct clk *cpu_clk;
- =20
-  	thiscpu =3D smp_processor_id();
- -	for_each_node_by_type(np, "cpu") {
- -		int err;
- -		int cpu;
- -
- -		err =3D of_property_read_u32(np, "reg", &cpu);
- -		if (WARN_ON(err))
- -			return;
- -
- -		if (cpu =3D=3D thiscpu) {
- -			cpu_clk =3D of_clk_get(np, 0);
- -			break;
- -		}
- -	}
- -	if (WARN_ON(IS_ERR(cpu_clk)))
- +	cpu_clk =3D get_cpu_clk(thiscpu);
- +	if (!cpu_clk)
-  		return;
-  	clk_prepare_enable(cpu_clk);
-  	rate =3D clk_get_rate(cpu_clk);
+[0] http://www.spinics.net/lists/linux-usb/msg92595.html
 
---Signature=_Tue__27_Aug_2013_18_33_13_+1000_SrurXuJyzmAiLZRy
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSHGRJAAoJEECxmPOUX5FErSYP/1HeP3Jq0+XG6HEYPQ8K5Z2n
-G5i/yx03OKYEz2TO5DOaTuxHl4J30xxelvpjah+ReAQmlNADTkgY91EMYehTBH0F
-j51JWfTYcusmSPvrOwTywJ9LyKpayHRu/z5XKLKslI70zeIorhKdwNP7oPsZ/kWj
-nLzO5dlj1pafgSFe7JnOJn2yGGGM0J24MgtJHRgJgK4ShEyfmtofyjh8gVr+eg23
-3eeBFMF4GqpriuWCqM45D/QoVL9LeOxXt0uBUtPyXt/wyAa+Nq1wL+9g0vLP8sHR
-3psRfpxHlvqFZzsD4gf6lj5PliHxLdEJ4QGV7AHkIvxxk/Wn5GrlZt3m2LmE+mcQ
-Vle8qoUn2ivXfZa8Ow9/QMp74FC05I0qm+2PL1eGgovU32C2gaJmvUKmcckLb1Me
-fCGVmbPgvI40vJkI2pm7uGmDx8mNS6CzDdLhoD1ndZM/ROqhIB8l3U6h7b+dtZvK
-wZNsE+iRXBhITngjrhiA/qPDl+v22qgnwAh27sKeJxAvjJHwz2oSxG2wAplxfajH
-/a48j4JTs7giKGoT2hm0E0MXA81C/IKCjlYoT/+QRF1Yo5P5hsgknCOfZG3o0xwI
-BkztJFC5qJIbOy2qtMN1cTxX3eKJjFdy+0UmqX0uCGP5e9PxDJLTsHu1EfPwmOWk
-+Q9rBkfsPo7b4ISx7dSM
-=pQqz
------END PGP SIGNATURE-----
-
---Signature=_Tue__27_Aug_2013_18_33_13_+1000_SrurXuJyzmAiLZRy--
+Sebastian
