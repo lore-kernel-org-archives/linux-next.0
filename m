@@ -1,37 +1,130 @@
-From: Sage Weil <sage@inktank.com>
-Subject: Re: linux-next: Tree for Aug 27 (ceph)
-Date: Tue, 27 Aug 2013 12:29:40 -0700 (PDT)
-Message-ID: <alpine.DEB.2.00.1308271229230.24783@cobra.newdream.net>
-References: <20130827203008.1c54283d628ef706f51a866a@canb.auug.org.au> <521CF7D6.5090807@infradead.org>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the usb tree
+Date: Tue, 27 Aug 2013 14:56:52 -0500
+Message-ID: <20130827195652.GE3005@radagast>
+References: <CABxcv=mg6t5wPqpF3j5sr_76qfZ7N7KgpWhcKSGoPTOcaR=V6A@mail.gmail.com>
+ <521CA888.1080909@baylibre.com>
+ <521CAF59.1090203@linutronix.de>
+ <521CB046.9070408@baylibre.com>
+ <521CB18B.4080000@linutronix.de>
+ <521CB239.6050409@baylibre.com>
+ <521CB403.8010307@linutronix.de>
+ <20130827173732.GC21564@kroah.com>
+ <20130827183732.GP3005@radagast>
+ <20130827193021.GA30113@kroah.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fLJtL2Vwvoz5kz8d"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cobra.newdream.net ([66.33.216.30]:53333 "EHLO
-	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753298Ab3H0T3l (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 15:29:41 -0400
-In-Reply-To: <521CF7D6.5090807@infradead.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:35027 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753421Ab3H0T6C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 15:58:02 -0400
+Content-Disposition: inline
+In-Reply-To: <20130827193021.GA30113@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Felipe Balbi <balbi@ti.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Benoit Cousson <bcousson@baylibre.com>, Javier Martinez Canillas <javier@dowhile0.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, "khilman@linaro.org" <khilman@linaro.org>
 
-On Tue, 27 Aug 2013, Randy Dunlap wrote:
-> On 08/27/13 03:30, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > I should know better than to take time off around -rc7 :-)
-> > 
-> > Changes since 20130822:
-> > 
-> 
-> on i386:
-> 
-> fs/built-in.o: In function `ceph_fallocate':
-> file.c:(.text+0x20b171): undefined reference to `__divdi3'
+--fLJtL2Vwvoz5kz8d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've fixed this up in the ceph tree.
+Hi,
 
-Thanks!
-sage
- 
+On Tue, Aug 27, 2013 at 12:30:21PM -0700, Greg KH wrote:
+> On Tue, Aug 27, 2013 at 01:37:32PM -0500, Felipe Balbi wrote:
+> > Hi,
+> >=20
+> > On Tue, Aug 27, 2013 at 10:37:32AM -0700, Greg KH wrote:
+> > > On Tue, Aug 27, 2013 at 04:13:23PM +0200, Sebastian Andrzej Siewior w=
+rote:
+> > > > On 08/27/2013 04:05 PM, Benoit Cousson wrote:
+> > > > > On 27/08/2013 16:02, Sebastian Andrzej Siewior wrote:
+> > > > >> On 08/27/2013 03:57 PM, Benoit Cousson wrote:
+> > > > >>> + Kevin,
+> > > > >>>
+> > > > >>> On 27/08/2013 15:53, Sebastian Andrzej Siewior wrote:
+> > > > >>>> What do we do now?
+> > > > >>>
+> > > > >>> Cannot you just merge the stable arm-soc/dt branch into your br=
+anch
+> > > > >>> before applying your patches?
+> > > > >>
+> > > > >> That is up to Greg. This changes sat in his usb-next tree for a =
+while
+> > > > >> now. And before they hit Greg they were in Felipe's tree for a w=
+hile.
+> > > > >>
+> > > > >> To be exact, last .dts change via USB was:
+> > > > >>
+> > > > >> Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > > > >> AuthorDate: Thu Jun 20 12:13:04 2013 +0200
+> > > > >> Commit:     Felipe Balbi <balbi@ti.com>
+> > > > >> CommitDate: Fri Aug 9 17:40:16 2013 +0300
+> > > > >>
+> > > > >>     usb: musb dma: add cppi41 dma driver
+> > > > >=20
+> > > > > Mmm, if that branch is supposed to be stable, I'm not sure it wil=
+l be
+> > > > > doable...
+> > > > >=20
+> > > > > Maybe we should do the other way around? And merge usb-next into
+> > > > > arm-soc/dt.
+> > > > >=20
+> > > > > Kevin, Olof?
+> > > >=20
+> > > > Please be aware that I have no response so far regarding [0] from G=
+reg.
+> > > >=20
+> > > > [0] http://www.spinics.net/lists/linux-usb/msg92595.html
+> > >=20
+> > > Nor will you, given that I am not the one to take these patches, Feli=
+pe
+> > > is.  I noticed now that you said "please route around Felipe", but
+> > > sorry, no, I'm not going to do that unless there's a really good reas=
+on.
+> > > Felipe seems to be around at the moment, please work with him on this.
+> >=20
+> > If you will still take a 'part2' pull request from me, I can send you
+> > urgent bugfixes by friday. If I have some time left, I can even try to
+> > get that sorted out by tomorrow.
+>=20
+> For 3.12 stuff, like "fixes", sure, I can take them this week, that
+> should give us a week or so for linux-next testing, right?
+
+that's correct. I have most of them already queued up, let me just go
+over my linux-usb maildir again and make sure I got all the important
+stuff in.
+
+cheers, thanks for opening this 'window'.
+
+--=20
+balbi
+
+--fLJtL2Vwvoz5kz8d
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSHQSEAAoJEIaOsuA1yqRE/v8P/09fTxEq3rzBWWKN5gJapG7O
+eG0xpfEVvQFUWbet7DWRQjehRc8bVVemPsH295hv2yV1yUGoJIps5RQnv6vbj2Ka
+fMTs0G7YDoHDDkg2SgxqeTRxGoLgnuE4QXqzgRZhsyGSjTfBYhUDjfQyGVGGgy2a
++Nmri9qm6JcTfCpwxeSQsSZnT1XYda7p2WCmLcJ21fJymmOaanNoQG9wh15U2qFJ
+z33YOaZwOFLfrYNkyWaXo4lbNNXb0c43GlnF3fbKnoAhWiL1LJj/FOTW6sN7yd1d
+ZzhZzKdhVGSekH/RK8ehitVBHlRgZMNpQ2MdhUsFLnp2NdcGb6l2jwCf1GgXwBiy
+qniR0kqaTSB6fHtRQYq0EutLdsa4xGEPn5M106D9MLiYxWolUhqyLRmu64FGIb7D
+JwIO3SWhecaf2xQWtkOBn8k5o06kzwNsEh8qFs2uk6YXlBDQcVaBoXXuUvkP5Xpx
+g2yETkFoTB5WIHOC7IUnpTIxAe/msi3P9XFs0G2TAJePxYWGvilKSaQvWtS5f/LG
+Ta5AcrtDQHHF46qzU68iIlxVRuMohdfywYme1qcp/sdkVpFbvotxmwKDKOUIirVr
+ARAlH7gdH8vy8SKP2qHsImKU+rkgicM1azRBAiD5L6TFuHR+20euSTR9/I9CM71+
+kSjYqYdRlgVn6Yqwieqg
+=0im4
+-----END PGP SIGNATURE-----
+
+--fLJtL2Vwvoz5kz8d--
