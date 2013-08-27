@@ -1,76 +1,73 @@
-From: Aaron Lu <aaron.lu@intel.com>
-Subject: Re: linux-next: build failure after merge of the libata tree
-Date: Tue, 27 Aug 2013 13:52:09 +0800
-Message-ID: <521C3E89.3090905@intel.com>
-References: <20130827125049.62d12bba371fe8d9df85a227@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the spi tree
+Date: Tue, 27 Aug 2013 16:15:11 +1000
+Message-ID: <20130827161511.47ee5028fa50811a2adf586d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <20130827125049.62d12bba371fe8d9df85a227@canb.auug.org.au>
-Sender: linux-ide-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__27_Aug_2013_16_15_11_+1000_V3ADD0VYBAtYAx9h"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60505 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752441Ab3H0GPU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 02:15:20 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sourav Poddar <sourav.poddar@ti.com>
 
-On 08/27/2013 10:50 AM, Stephen Rothwell wrote:
-> Hi Tejun,
-> 
-> After merging the libata tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> In file included from drivers/ata/libata-pmp.c:14:0:
-> drivers/ata/libata.h:136:1: error: unknown type name 'acpi_handle'
->  static inline acpi_handle ata_dev_acpi_handle(struct ata_device *dev) { return NULL; }
->  ^
-> 
-> And several others.
-> 
-> Caused by commit f1bc1e4c44b1 ("ata: acpi: rework the ata acpi bind
-> support").  All the world does not have the ACPI include files
-> included via some other path ... nor wants them, I suspect.
+--Signature=_Tue__27_Aug_2013_16_15_11_+1000_V3ADD0VYBAtYAx9h
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for the trouble, my bad.
-Does the below patch fix the problem?
+Hi Mark,
 
-From: Aaron Lu <aaron.lu@intel.com>
-Subject: [PATCH] ata: acpi: Remove ata_dev_acpi_handle stub in libata.h
+After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-The ata_dev_acpi_handle is defined in libata-acpi.c and the only
-external user is libata-zpodd.c, which is built when CONFIG_ATA_ACPI
-is set, so there is no need to make an empty stub function for
-!CONFIG_ATA_ACPI case in libata.h. It also causes compile errors due to
-acpi_handle is not defined when !CONFIG_ACPI. This patch fixes this
-problem by removing the empty stub.
+In file included from drivers/spi/spi-ti-qspi.c:19:0:
+include/linux/module.h:87:32: error: '__mod_of_device_table' aliased to und=
+efined symbol 'dra7xxx_qspi_match'
+ extern const struct gtype##_id __mod_##gtype##_table  \
+                                ^
+include/linux/module.h:145:3: note: in expansion of macro 'MODULE_GENERIC_T=
+ABLE'
+   MODULE_GENERIC_TABLE(type##_device,name)
+   ^
+drivers/spi/spi-ti-qspi.c:458:1: note: in expansion of macro 'MODULE_DEVICE=
+_TABLE'
+ MODULE_DEVICE_TABLE(of, dra7xxx_qspi_match);
+ ^
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Aaron Lu <aaron.lu@intel.com>
----
- drivers/ata/libata.h | 1 -
- 1 file changed, 1 deletion(-)
+Caused by commit 505a14954e2d ("spi/qspi: Add qspi flash controller").
 
-diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
-index 3e9cc95..eeeb778 100644
---- a/drivers/ata/libata.h
-+++ b/drivers/ata/libata.h
-@@ -133,7 +133,6 @@ static inline void ata_acpi_set_state(struct ata_port *ap,
- 				      pm_message_t state) { }
- static inline void ata_acpi_bind_port(struct ata_port *ap) {}
- static inline void ata_acpi_bind_dev(struct ata_device *dev) {}
--static inline acpi_handle ata_dev_acpi_handle(struct ata_device *dev) { return NULL; }
- static inline void ata_scsi_acpi_bind(struct ata_device *dev) {}
- static inline void ata_scsi_acpi_unbind(struct ata_device *dev) {}
- #endif
--- 
-1.8.3.2.10.g43d11f4
+Clearly not build tested as a module. :-(
 
-Thanks,
-Aaron
+I have used the spi tree from next-20130822 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> 
-> I have used the libata tree from next-20130822 for today.
-> 
-> P.S. drivers/ata/libata.h seems to assume that a lot of other stuff is
-> included that it does not include explicitly ...
-> 
+--Signature=_Tue__27_Aug_2013_16_15_11_+1000_V3ADD0VYBAtYAx9h
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSHEPzAAoJEECxmPOUX5FELAEQAJ9zwiPutAgsjcEl8FnrMFAu
+4BdVB1QI1yzTMfjkGYjWlr2ZpaQLTOtLCr5PGbGu3G/ZzAkAQK62k2sW8QzqbZmu
+KsSFeapqtsxwGNJGSxl+oDNs0bZink9U8EtGhOdLSbr6BPMHeZUikEyEtdryACZ7
+hhAstIzjgfdJW+MuG5nGMlr5kIM68ENGMltcb0Tut7uJ9zlzchjfAvgbZeid4seb
+GpMrasl0ddmvqkxy2OrZJri9//Tg3uJOsugc04ky26Wts3vseuXzH8aBY+sv/4B1
++m0pJt8jSWYhP0NYNtg7CA/IOKzvyKxk6AR8y+Ha4vP+l+hLiBcEVS1kimYMrrP/
+PuVT7buE4ZzAslI+aMf/eTjAaCzp8oKhxImbzlOBWTnJOAhIGvFtIXcxkiQDhUV6
+mS++R+MmJLoy9/IoUGyZVA2WW/IOP9cWHmca/8ON4TIgGehHTaQwAxysSJY3zx0k
++Hj7AlCiGZQYn07U4UbHribw61Ewhz8In5NcYDPG2G+8Vt73gWHUw0eGDPGCL/C/
+V5sS0BpGbjkBq1vXKL+P9RfQyEK/jxhQa2ljthj5vsqeKsWy+HJqMSTtlMM6AUkp
+mxdWsU5pjl4YwbuEzLXWgIIGm86R8aKezPTD8LbdnVCxPzZq4jjA6IDOEFr07pHV
+TOA7uTyXuU92jlA3iJLh
+=75bk
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Aug_2013_16_15_11_+1000_V3ADD0VYBAtYAx9h--
