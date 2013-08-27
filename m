@@ -1,70 +1,45 @@
-From: Kevin Hilman <khilman@linaro.org>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Subject: Re: linux-next: manual merge of the arm-soc tree with the usb tree
-Date: Tue, 27 Aug 2013 08:01:18 -0700
-Message-ID: <878uznxjnl.fsf@linaro.org>
-References: <20130827181353.319c150858829df1bb68d60b@canb.auug.org.au>
-	<521C6961.9020103@linutronix.de>
-	<CABxcv=mg6t5wPqpF3j5sr_76qfZ7N7KgpWhcKSGoPTOcaR=V6A@mail.gmail.com>
-	<521CA888.1080909@baylibre.com> <521CAF59.1090203@linutronix.de>
-	<521CB046.9070408@baylibre.com>
+Date: Tue, 27 Aug 2013 17:25:23 +0200
+Message-ID: <521CC4E3.8030204@linutronix.de>
+References: <20130827181353.319c150858829df1bb68d60b@canb.auug.org.au> <521C6961.9020103@linutronix.de> <CABxcv=mg6t5wPqpF3j5sr_76qfZ7N7KgpWhcKSGoPTOcaR=V6A@mail.gmail.com> <521CA888.1080909@baylibre.com> <521CAF59.1090203@linutronix.de> <521CB046.9070408@baylibre.com> <878uznxjnl.fsf@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f50.google.com ([209.85.160.50]:33601 "EHLO
-	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752337Ab3H0PBV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 11:01:21 -0400
-Received: by mail-pb0-f50.google.com with SMTP id uo5so4983060pbc.9
-        for <linux-next@vger.kernel.org>; Tue, 27 Aug 2013 08:01:21 -0700 (PDT)
-In-Reply-To: <521CB046.9070408@baylibre.com> (Benoit Cousson's message of
-	"Tue, 27 Aug 2013 15:57:26 +0200")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Benoit Cousson <bcousson@baylibre.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Javier Martinez Canillas <javier@dowhile0.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <878uznxjnl.fsf@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@linaro.org>
+Cc: Benoit Cousson <bcousson@baylibre.com>, Javier Martinez Canillas <javier@dowhile0.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
-Benoit Cousson <bcousson@baylibre.com> writes:
-
-> + Kevin,
->
-> On 27/08/2013 15:53, Sebastian Andrzej Siewior wrote:
->> On 08/27/2013 03:24 PM, Benoit Cousson wrote:
->>> Hi Sebatian,
+On 08/27/2013 05:01 PM, Kevin Hilman wrote:
+>>> What do we do now?
 >>
->> Hi Benoit,
->>
->>> Yes. DT patches are an endless source of merge conflicts if they are
->>> merge throught different trees.
->>
->> Usually there are small conflicts because two people added / changed a
->> node nearby. This patch turned the .dts file almost upside down.
->
-> Yes, that's true.
->
->>> What was discussed with Olof and Arnd during Connect is that we should
->>> avoid merging DT patches outside arm-soc tree to avoid that kind of
->>> situation.
->>
->> I am aware of this now. However these changes belonged together because
->> a) they belonged together and b) would break the driver until the .dts
->> changes and driver code is in-sync.
->> In future I am going to ask you for a topic branch so I can get my
->> changes in one piece without breaking stuff in the middle.
->>
->> What do we do now?
->
-> Cannot you just merge the stable arm-soc/dt branch into your branch
-> before applying your patches?
+>> Cannot you just merge the stable arm-soc/dt branch into your branch
+>> before applying your patches?
+> 
+> Unfortunately, the next/dt branch of arm-soc is not necessarily stable
+> so should *not* be merged.  In fact none of the arm-soc branches should
+> be considered stable.
+> 
+> As was already mentioned, this should be split up into driver changes
+> and DTS changes through arm-soc.  They'll both merge for v3.12.
 
-Unfortunately, the next/dt branch of arm-soc is not necessarily stable
-so should *not* be merged.  In fact none of the arm-soc branches should
-be considered stable.
+But splitting will break the driver until .dts & code is in sync again.
 
-As was already mentioned, this should be split up into driver changes
-and DTS changes through arm-soc.  They'll both merge for v3.12.
+> BTW, how did this patch get merged without a signoff/ack from the OMAP
+> DT maintainer in the first place?  Hmm, looks like Benoit was not copied
+> nor was linux-omap or linux-arm-kernel copied in the original mails.
 
-BTW, how did this patch get merged without a signoff/ack from the OMAP
-DT maintainer in the first place?  Hmm, looks like Benoit was not copied
-nor was linux-omap or linux-arm-kernel copied in the original mails.
+Hmm. I had Benoit's okay [0] to do the change "as long as Felipe is
+fine with it". I indeed forgot to Cc Benoit on the dts changes.
+For the phy-rename Felipe pinged you and we did the topic-branch, here
+I forgot.
 
-Kevin
+> 
+> Kevin
+
+[0] http://www.spinics.net/lists/linux-usb/msg88423.html
+
+Sebastian
