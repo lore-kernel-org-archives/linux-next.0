@@ -1,18 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
-Date: Tue, 27 Aug 2013 18:29:35 +1000
-Message-ID: <20130827182935.ff4005b60cc1ce80d32d5e46@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the pm tree
+Date: Tue, 27 Aug 2013 18:33:13 +1000
+Message-ID: <20130827183313.aa7d51c6dd0b21cd8168aa35@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Aug_2013_18_29_35_+1000_myFMxkUhaRHXyFwO"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Tue__27_Aug_2013_18_33_13_+1000_SrurXuJyzmAiLZRy"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:42497 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752716Ab3H0IdR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 04:33:17 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>
 
---Signature=_Tue__27_Aug_2013_18_29_35_+1000_myFMxkUhaRHXyFwO
+--Signature=_Tue__27_Aug_2013_18_33_13_+1000_SrurXuJyzmAiLZRy
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -20,10 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/boot/dts/tegra20-trimslice.dts between commit 30ca2226bea6
-("ARM: tegra: always enable USB VBUS regulators") from Linus' tree and
-commit 23f95ef2d951 ("ARM: tegra: use TEGRA_GPIO() in a couple more
-places") from the arm-soc tree.
+arch/arm/mach-mvebu/platsmp.c between commit f6cec7cd0777 ("ARM: mvebu:
+remove device tree parsing for cpu nodes") from the  tree and commit
+994c8c94b419 ("ARM: mvebu: Remove the harcoded BootROM window
+allocation") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -32,80 +36,79 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/tegra20-trimslice.dts
-index 1e9d33a,22e227f..0000000
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@@ -310,8 -310,19 +310,18 @@@
-  		nvidia,sys-clock-req-active-high;
-  	};
+diff --cc arch/arm/mach-mvebu/platsmp.c
+index 594b63d,4f960f0..0000000
+--- a/arch/arm/mach-mvebu/platsmp.c
++++ b/arch/arm/mach-mvebu/platsmp.c
+@@@ -29,28 -30,31 +30,31 @@@
+  #include "pmsu.h"
+  #include "coherency.h"
  =20
-+ 	pcie-controller {
-+ 		status =3D "okay";
-+ 		pex-clk-supply =3D <&pci_clk_reg>;
-+ 		vdd-supply =3D <&pci_vdd_reg>;
++ #define AXP_BOOTROM_BASE 0xfff00000
++ #define AXP_BOOTROM_SIZE 0x100000
 +=20
-+ 		pci@1,0 {
-+ 			status =3D "okay";
-+ 		};
-+ 	};
-+=20
-  	usb@c5000000 {
-  		status =3D "okay";
- -		nvidia,vbus-gpio =3D <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
-  	};
+ +static struct clk *__init get_cpu_clk(int cpu)
+ +{
+ +	struct clk *cpu_clk;
+ +	struct device_node *np =3D of_get_cpu_node(cpu, NULL);
+ +
+ +	if (WARN(!np, "missing cpu node\n"))
+ +		return NULL;
+ +	cpu_clk =3D of_clk_get(np, 0);
+ +	if (WARN_ON(IS_ERR(cpu_clk)))
+ +		return NULL;
+ +	return cpu_clk;
+ +}
+ +
+  void __init set_secondary_cpus_clock(void)
+  {
+ -	int thiscpu;
+ +	int thiscpu, cpu;
+  	unsigned long rate;
+ -	struct clk *cpu_clk =3D NULL;
+ -	struct device_node *np =3D NULL;
+ +	struct clk *cpu_clk;
  =20
-  	usb-phy@c5000000 {
-@@@ -410,10 -421,26 +420,28 @@@
-  			regulator-min-microvolt =3D <5000000>;
-  			regulator-max-microvolt =3D <5000000>;
-  			enable-active-high;
-- 			gpio =3D <&gpio 170 0>; /* PV2 */
-+ 			gpio =3D <&gpio TEGRA_GPIO(V, 2) 0>;
- +			regulator-always-on;
- +			regulator-boot-on;
-  		};
-+=20
-+ 		pci_clk_reg: regulator@3 {
-+ 			compatible =3D "regulator-fixed";
-+ 			reg =3D <3>;
-+ 			regulator-name =3D "pci_clk";
-+ 			regulator-min-microvolt =3D <3300000>;
-+ 			regulator-max-microvolt =3D <3300000>;
-+ 			regulator-always-on;
-+ 		};
-+=20
-+ 		pci_vdd_reg: regulator@4 {
-+ 			compatible =3D "regulator-fixed";
-+ 			reg =3D <4>;
-+ 			regulator-name =3D "pci_vdd";
-+ 			regulator-min-microvolt =3D <1050000>;
-+ 			regulator-max-microvolt =3D <1050000>;
-+ 			regulator-always-on;
-+ 		};
-  	};
- =20
-  	sound {
+  	thiscpu =3D smp_processor_id();
+ -	for_each_node_by_type(np, "cpu") {
+ -		int err;
+ -		int cpu;
+ -
+ -		err =3D of_property_read_u32(np, "reg", &cpu);
+ -		if (WARN_ON(err))
+ -			return;
+ -
+ -		if (cpu =3D=3D thiscpu) {
+ -			cpu_clk =3D of_clk_get(np, 0);
+ -			break;
+ -		}
+ -	}
+ -	if (WARN_ON(IS_ERR(cpu_clk)))
+ +	cpu_clk =3D get_cpu_clk(thiscpu);
+ +	if (!cpu_clk)
+  		return;
+  	clk_prepare_enable(cpu_clk);
+  	rate =3D clk_get_rate(cpu_clk);
 
---Signature=_Tue__27_Aug_2013_18_29_35_+1000_myFMxkUhaRHXyFwO
+--Signature=_Tue__27_Aug_2013_18_33_13_+1000_SrurXuJyzmAiLZRy
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSHGNvAAoJEECxmPOUX5FEAWUP/3I/dv3b0g8Fs7vBUwEZ7D3Q
-cQFsoVBCaXnypswBHCWQaO4sGiWpxOl/4Qc6til6X0k/F3vW+2JWTvUgPCP2FHQY
-vniE8gGec3+3BvtUbeO4uQGeYxV0mWJCjaRIAYftE0ZNGlS9grkRew/xlSQR/zQf
-pBNjWU8Zuqc/8ltKl5dK0zRw4A7A2ErsV9YggcBj/69G4AnP+dtgwlJY7u7HsZvR
-h85jA9sqSd3qwO6dofRnftAzgFvylnjnFft6oV6d1W917epTM4YKBcGNPF30ugUK
-ARQvN5mRu3h0S5z1VJ/zDPGpqqakI9q1RxRh3VxhC/gKINdKDhHPk4/ncCxSSRrq
-oZNuAI2Bq+TSA+GxE4lj37f2nY1p6m/UhSYCTXlz/rqe0ZclQIE83cESh89+dqmW
-7H56x+K+brzDdt5clLmCpUZq7YP6I3rkv1wvbZ0z6Mcs/BJjvacub/GwBttz7uW7
-SZdYPrG7rrxOzGANBozrvT4g8l7ixX9i0JTXupF3JchBoL7vWoeIJC5iF+wRiXEk
-ytdVHv9eCrpNSbGKnodtDtpRg7g24ahj/WU3JfNEwFR7jLBvhLjF9x2eRFb4zR1n
-P7rrAvJqCFhW23Vbm3O/EkNaWW11cp+moi6Muw6WmV+MutrlkQDbaFY1q04a3aF/
-GXIPG9FAWAHBwn6Desek
-=74QI
+iQIcBAEBCAAGBQJSHGRJAAoJEECxmPOUX5FErSYP/1HeP3Jq0+XG6HEYPQ8K5Z2n
+G5i/yx03OKYEz2TO5DOaTuxHl4J30xxelvpjah+ReAQmlNADTkgY91EMYehTBH0F
+j51JWfTYcusmSPvrOwTywJ9LyKpayHRu/z5XKLKslI70zeIorhKdwNP7oPsZ/kWj
+nLzO5dlj1pafgSFe7JnOJn2yGGGM0J24MgtJHRgJgK4ShEyfmtofyjh8gVr+eg23
+3eeBFMF4GqpriuWCqM45D/QoVL9LeOxXt0uBUtPyXt/wyAa+Nq1wL+9g0vLP8sHR
+3psRfpxHlvqFZzsD4gf6lj5PliHxLdEJ4QGV7AHkIvxxk/Wn5GrlZt3m2LmE+mcQ
+Vle8qoUn2ivXfZa8Ow9/QMp74FC05I0qm+2PL1eGgovU32C2gaJmvUKmcckLb1Me
+fCGVmbPgvI40vJkI2pm7uGmDx8mNS6CzDdLhoD1ndZM/ROqhIB8l3U6h7b+dtZvK
+wZNsE+iRXBhITngjrhiA/qPDl+v22qgnwAh27sKeJxAvjJHwz2oSxG2wAplxfajH
+/a48j4JTs7giKGoT2hm0E0MXA81C/IKCjlYoT/+QRF1Yo5P5hsgknCOfZG3o0xwI
+BkztJFC5qJIbOy2qtMN1cTxX3eKJjFdy+0UmqX0uCGP5e9PxDJLTsHu1EfPwmOWk
++Q9rBkfsPo7b4ISx7dSM
+=pQqz
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_Aug_2013_18_29_35_+1000_myFMxkUhaRHXyFwO--
+--Signature=_Tue__27_Aug_2013_18_33_13_+1000_SrurXuJyzmAiLZRy--
