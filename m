@@ -1,43 +1,85 @@
-From: Sourav Poddar <sourav.poddar@ti.com>
-Subject: Re: linux-next: build failure after merge of the spi tree
-Date: Tue, 27 Aug 2013 12:50:11 +0530
-Message-ID: <521C532B.7030009@ti.com>
-References: <20130827161511.47ee5028fa50811a2adf586d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi tree with the infiniband tree
+Date: Tue, 27 Aug 2013 17:43:17 +1000
+Message-ID: <20130827174317.10e4f4b7a244f2bf640a9b59@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__27_Aug_2013_17_43_17_+1000_Yr5m4xcjOCaPAzWS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:35559 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752349Ab3H0HUV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Aug 2013 03:20:21 -0400
-In-Reply-To: <20130827161511.47ee5028fa50811a2adf586d@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37482 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752824Ab3H0Hn3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 03:43:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>, Shlomo Pongratz <shlomop@mellanox.com>, Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org
 
-Hi,
-On Tuesday 27 August 2013 11:45 AM, Stephen Rothwell wrote:
-> Hi Mark,
->
-> After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->
-> In file included from drivers/spi/spi-ti-qspi.c:19:0:
-> include/linux/module.h:87:32: error: '__mod_of_device_table' aliased to undefined symbol 'dra7xxx_qspi_match'
->   extern const struct gtype##_id __mod_##gtype##_table  \
->                                  ^
-> include/linux/module.h:145:3: note: in expansion of macro 'MODULE_GENERIC_TABLE'
->     MODULE_GENERIC_TABLE(type##_device,name)
->     ^
-> drivers/spi/spi-ti-qspi.c:458:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
->   MODULE_DEVICE_TABLE(of, dra7xxx_qspi_match);
->   ^
->
-> Caused by commit 505a14954e2d ("spi/qspi: Add qspi flash controller").
->
-> Clearly not build tested as a module. :-(
-Yes, module build test was missed.  I will send a patch for this
-to Mark.
-> I have used the spi tree from next-20130822 for today.
+--Signature=_Tue__27_Aug_2013_17_43_17_+1000_Yr5m4xcjOCaPAzWS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi James,
+
+Today's linux-next merge of the scsi tree got a conflict in
+drivers/infiniband/ulp/iser/iser_initiator.c between commit b7f04513090c
+("IB/iser: Accept session->cmds_max from user space") from the infiniband
+tree and commit 6a06a4b8cff8 ("[SCSI] IB/iser: Add Discovery support")
+from the scsi tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/infiniband/ulp/iser/iser_initiator.c
+index bdc38f4,b31fa1d..0000000
+--- a/drivers/infiniband/ulp/iser/iser_initiator.c
++++ b/drivers/infiniband/ulp/iser/iser_initiator.c
+@@@ -342,10 -249,15 +343,16 @@@ static int iser_post_rx_bufs(struct isc
+  	WARN_ON(iser_conn->ib_conn->post_recv_buf_count !=3D 1);
+  	WARN_ON(atomic_read(&iser_conn->ib_conn->post_send_buf_count) !=3D 0);
+ =20
+- 	iser_dbg("Initially post: %d\n", iser_conn->ib_conn->min_posted_rx);
++ 	if (session->discovery_sess) {
++ 		iser_info("Discovery session, re-using login RX buffer\n");
++ 		return 0;
++ 	} else
++ 		iser_info("Normal session, posting batch of RX %d buffers\n",
+ -			  ISER_MIN_POSTED_RX);
+++			  iser_conn->ib_conn->min_posted_rx);
++=20
+  	/* Initial post receive buffers */
+ -	if (iser_post_recvm(iser_conn->ib_conn, ISER_MIN_POSTED_RX))
+ +	if (iser_post_recvm(iser_conn->ib_conn,
+ +			    iser_conn->ib_conn->min_posted_rx))
+  		return -ENOMEM;
+ =20
+  	return 0;
+
+--Signature=_Tue__27_Aug_2013_17_43_17_+1000_Yr5m4xcjOCaPAzWS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSHFiaAAoJEECxmPOUX5FE8wIP/3p66oVR07GoiJ/SOQ6MHjd8
+KsDEm88hO7BS8ERBW66QpW0jqSYJzFCzf8KSRA7pJ/ky88iNnpkkHzNZrqSyZdpF
+DOFR/FaBYdVm1xRD/TdizviZt5qMRRcdMLPlfXPKLgzWhaMeokz2FfgjOfg66nU3
+eDSaaRmg+YlnDWYmBKxRfpOgmocPa7g+dgpB0HdLvf56oHCh0jUyO10gIuC5ik3m
+2+MMTnS954z1N4BP8gLdS5nPzTmTbCJbamPnP0QfLF+W4Ao89Ueiu71UvdkyoIwM
+yLBDMdGtycqHxMC+PDLgWE5ZGHAeKuykaV818bXgbmf3vZ1VPNu9AayHd6L7ouDh
+HMXEys7gOlhTc3Z8HhMqM5sU81fhaWhMKY/7RgpIjDkImaE6jUF0wHwoURFQJADv
+Kr5h60bH6h6tm0yEDnyrDO/indnWNBg9RH3KwF7/LqlHhj8lyfnzMjUv0icZ4Svq
+HO89hH4zVCCCcExNyRvZIq17RLiTvraBtZ5vX7iVqEKt6XT6wNtFn3WI+AVP9v5Q
+JHtSfXE5494immJKeBwwridqqA1O/FjTS0rX9nQITTHFRcbd5Ky7KT2BraLK3rlG
+/lRtWgNdmUd289JkjTvrMeEvrFEp5Q91vL/dCAVqli2aUoahDuVUUd+Z4wIJ1kMr
+J2WtVevaC0Y75iVojFab
+=uio2
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Aug_2013_17_43_17_+1000_Yr5m4xcjOCaPAzWS--
