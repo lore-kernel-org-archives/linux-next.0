@@ -1,18 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the usb tree
-Date: Tue, 27 Aug 2013 18:24:14 +1000
-Message-ID: <20130827182414.33ff08dc24b6762dec907f82@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
+Date: Tue, 27 Aug 2013 18:26:58 +1000
+Message-ID: <20130827182658.a82bec791f85c98c69751388@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Aug_2013_18_24_14_+1000__kkvTL4MoAks0Fe4"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Tue__27_Aug_2013_18_26_58_+1000_phZKq.4Es=_6mhk4"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36975 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752889Ab3H0I1A (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 04:27:00 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>, Benoit Cousson <bcousson@baylibre.com>, Kishon Vijay Abraham I <kishon@ti.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 
---Signature=_Tue__27_Aug_2013_18_24_14_+1000__kkvTL4MoAks0Fe4
+--Signature=_Tue__27_Aug_2013_18_26_58_+1000_phZKq.4Es=_6mhk4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -20,9 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/boot/dts/omap5.dtsi between commit 22a5aa170c52 ("usb: dwc3:
-core: switch to snps,dwc3") from the usb tree and commit ec0a71838da2
-("ARM: OMAP5: dts: fix reg property size") from the arm-soc tree.
+arch/arm/boot/dts/tegra20-seaboard.dts between commit 30ca2226bea6 ("ARM:
+tegra: always enable USB VBUS regulators") from Linus' tree and commit
+23f95ef2d951 ("ARM: tegra: use TEGRA_GPIO() in a couple more places")
+from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -31,41 +36,41 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/omap5.dtsi
-index 07be2cd,4fc0912..0000000
---- a/arch/arm/boot/dts/omap5.dtsi
-+++ b/arch/arm/boot/dts/omap5.dtsi
-@@@ -644,8 -644,8 +644,8 @@@
-  			utmi-mode =3D <2>;
-  			ranges;
-  			dwc3@4a030000 {
- -				compatible =3D "synopsys,dwc3";
- +				compatible =3D "snps,dwc3";
-- 				reg =3D <0x4a030000 0x1000>;
-+ 				reg =3D <0x4a030000 0x10000>;
-  				interrupts =3D <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
-  				usb-phy =3D <&usb2_phy>, <&usb3_phy>;
-  				tx-fifo-resize;
+diff --cc arch/arm/boot/dts/tegra20-seaboard.dts
+index c824253,f44a9b8..0000000
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@@ -828,9 -829,7 +828,9 @@@
+  			regulator-min-microvolt =3D <5000000>;
+  			regulator-max-microvolt =3D <5000000>;
+  			enable-active-high;
+- 			gpio =3D <&gpio 24 0>; /* PD0 */
++ 			gpio =3D <&gpio TEGRA_GPIO(D, 0) 0>;
+ +			regulator-always-on;
+ +			regulator-boot-on;
+  		};
+  	};
+ =20
 
---Signature=_Tue__27_Aug_2013_18_24_14_+1000__kkvTL4MoAks0Fe4
+--Signature=_Tue__27_Aug_2013_18_26_58_+1000_phZKq.4Es=_6mhk4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSHGIuAAoJEECxmPOUX5FEL5MQAJwph0/0RVcZxhU8HRDgX49y
-f0ayiHfU+fWPhyrC95YpzeQCngsqgndprQGYWFSmfkIP6rWVL3NBDuJt2WzZZgKf
-CJ9sLuxupJQ6CWjtceptAGtxwJg8Foxtr7Dn1PMv4Is/Ljv+E/xqHevv7T1Igi7+
-4SqA7WdCC2tvsK8lvtsrQVdSrtAU43DU0lITFTKZyZFj3G3oh66GpXpoqX7/QJ7K
-AL01HSAnRpY8Hs+bLXBy+EhIHlBD2Cl12QeJNoVLy9WT0TVumQp6AduzYltkq0Tk
-UKkJ1lGoK0KDcsnUzquUwSPUvFuz5LShC+Ntsd+PBIT84Lxk6yvAVs4ZGiLdx2lM
-U+FxpYBDBcXBtY4L9jb+vTgBn8nVtvc5u0/tZkF7ylQUP4zPes1FRnLT9ZuoI/c+
-KULKAw9hWBzYQuCW53hqksx2BOJWenBfqt0Gt/Y9JAzm3D03q/8Xx2PPT6ZtKEK3
-U1S8isPinxpw/QobyVt/qYe4zx78JO4TrX8uTH5xtEw+Ni8u4hMXYOjeoCUJCu8D
-e5qh+4QbX0MQoKByGusnztbyt6n7t2bLjUFMCv4I0ySSvzsnJka4NUuh0Cup/QTt
-3TnSiLDC5j71SMdRAlgf30bsnjzJrUedEC8518gnufQEXw3mP+dV2sNCCEPYCc+8
-MLu9N1WsfkCwOl0vtwLV
-=Am1h
+iQIcBAEBCAAGBQJSHGLSAAoJEECxmPOUX5FETHUP/18cNPI/FwsQfX0+pLUkmzEG
+a1pHASO6XM+pk2mbqPVn/vQfs9pt7LBiKA8LgGHmqCN8gB/qy0PfsDSmCsdLcOe0
+dh9qgPFU1RlDljhCP5TNyrSCLlm1kRFrG/1XzbqMMHs20xwLZbhGTqN495tFhYBV
+4Ti9LB48AGSLE2Amptg+52azupyHyEErOjVUNYlJwev+LvOMRFqqTaVaUKH788Og
+fzWxlhe9las2VxneLjXTwwOroDme38eQGHgN2cXETp5qO/ek/J1AQhUo/zoyXvBk
+DXYc7celYTy55sEmyFyCjBQ54GAPSfiI1WPXq7TIirUFdZSb4BjXBmWo9K3XdWQR
+H2HqsUXTZncOGu7XsffNVKPiatLnX+bvhyXvZjTYVTQkH0FJp0DdVrGr6t71S19F
+ZSh51NznlV6lHoZGBNbJa9I4c2weuGBjuAXnsx8vX6MyuqtkxU0+mOycUUsAzQzY
++DFpnUMI+g6tPYU/dNn+KOqhCyZrG3uqT4bn77bzcS6AyD9fkSWsD5jcNgERwwtT
+3SghWukYT53aFAW4w3MDlTnqIULn16IjUeoBeWIJZcLsEKgwKVIZuqOWgiXQbw7g
+avA2jVCgfzzmkKbADmXyCkfIZuDN5goDseOUG4qI43BA0P8EyaiPrYVhXFfx9KC3
+7Aoq8Xz2YwErtwVo9tW1
+=VOg3
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_Aug_2013_18_24_14_+1000__kkvTL4MoAks0Fe4--
+--Signature=_Tue__27_Aug_2013_18_26_58_+1000_phZKq.4Es=_6mhk4--
