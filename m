@@ -1,73 +1,58 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: mmotm 2013-08-27-16-51 uploaded
-Date: Wed, 28 Aug 2013 11:42:20 -0700
-Message-ID: <20130828184218.GB19754@codeaurora.org>
-References: <20130827235227.99DB95A41D6@corp2gmr1-2.hot.corp.google.com>
- <521D494F.1010507@codeaurora.org>
- <20130827182616.f9396ed6.akpm@linux-foundation.org>
+From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Subject: Re: linux-next: Tree for Aug 28 [ xhci build breakage ]
+Date: Wed, 28 Aug 2013 14:15:46 -0700
+Message-ID: <20130828211546.GH26483@xanatos>
+References: <CA+icZUUTBYMxLPBv2fq86h3dxyANhtpd6=Q4XGMscrntPNA9bQ@mail.gmail.com>
+ <CA+icZUW6JMa6VoRJ62AUZDpYm2_q_tzSM0Ryb56RNnCdEhwQyA@mail.gmail.com>
+ <CA+icZUVTzMxS4f3kZnauDkrpf4vwMbS3zd7ECOhE37S_FF83UA@mail.gmail.com>
+ <CA+icZUVsG-1J2oYF+AeHsxonG2ABW4d0464yijNwaq7R5k94SQ@mail.gmail.com>
+ <521DD43D.7070605@samsung.com>
+ <CA+icZUWQp0k8jMqY=_DYW2Ev1cEhpev=iQNnc=NbHNgHNbifTA@mail.gmail.com>
+ <521DD6BD.4030700@samsung.com>
+ <20130828165938.GA26483@xanatos>
+ <521E3259.6040201@samsung.com>
+ <CA+icZUUj-gyqmEFo54N_62KCgByAu1n9n=dHgg3aTC53zA9TRQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20130827182616.f9396ed6.akpm@linux-foundation.org>
-Sender: owner-linux-mm@kvack.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, voice.shen@atmel.com, Russell King - ARM Linux <linux@arm.linux.org.uk>
+In-Reply-To: <CA+icZUUj-gyqmEFo54N_62KCgByAu1n9n=dHgg3aTC53zA9TRQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Dmitry Kasatkin <d.kasatkin@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 08/27, Andrew Morton wrote:
-> On Tue, 27 Aug 2013 17:50:23 -0700 Stephen Boyd <sboyd@codeaurora.org> wrote:
+On Wed, Aug 28, 2013 at 07:39:14PM +0200, Sedat Dilek wrote:
+> On Wed, Aug 28, 2013 at 7:24 PM, Dmitry Kasatkin <d.kasatkin@samsung.com> wrote:
+> Still noone answered me why "drivers/usb/host/xhci-ring.c" does NOT
+> include <linux/device.h> (dev_info_ratelimited() and other defines).
+> I am expecting that... even I see...
 > 
-> > On 08/27/13 16:52, akpm@linux-foundation.org wrote:
-> > > * kernel-time-sched_clockc-correct-the-comparison-parameter-of-mhz.patch
-> > >
-> > 
-> > I believe Russell nacked this change[1]? This should probably be dropped
-> > unless there's been more discussion. Or maybe reworked into a comment in
-> > the code that doesn't lead to the same change again.
-> > 
-> > [1] https://lkml.org/lkml/2013/8/7/95
+>           drivers/usb/host/.xhci-ring.o.cmd:715:  include/linux/device.h \
 > 
-> Well OK, but the code looks totally wrong.  Care to send a comment patch
-> so the next confused person doesn't "fix" it?
+> ...where I don't know why this happens.
+> 
+> ( For me this is a bit more important than """trimming""" my
+> responses, I keep the history... )
+> 
+> - Sedat -
+> 
+> P.S.: List of includes in xhci-ring.c
+> 
+> $ grep ^'#include' -nr drivers/usb/host/xhci-ring.c
+> 67:#include <linux/scatterlist.h>
+> 68:#include <linux/slab.h>
+> 69:#include "xhci.h"
+> 70:#include "xhci-trace.h"
 
-Sure, how about this?
+Because a header that xhci-ring.c uses includes device.h instead.
 
----8<----
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH] sched_clock: Document 4Mhz vs 1Mhz decision
+drivers/usb/host/xhci/xhci-ring.c includes
+drivers/usb/host/xhci.h which includes
+include/linux/usb.h which includes
+include/linux/device.h
 
-Bo Shen sent a patch to change this to 1Mhz instead of 4Mhz but
-according to Russell King the use of 4Mhz was intentional. Add a
-comment to this effect so that others don't try to change the
-code as well.
+All USB host controllers depend on including usb.h, so I don't think
+there's a need for the driver to explicitly include device.h.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- kernel/time/sched_clock.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
-index a326f27..1e9e298 100644
---- a/kernel/time/sched_clock.c
-+++ b/kernel/time/sched_clock.c
-@@ -128,6 +128,10 @@ void __init setup_sched_clock(u32 (*read)(void), int bits, unsigned long rate)
- 	clocks_calc_mult_shift(&cd.mult, &cd.shift, rate, NSEC_PER_SEC, 0);
- 
- 	r = rate;
-+	/*
-+	 * Use 4MHz instead of 1MHz so that things like 1.832Mhz show as
-+	 * 1832Khz
-+	 */
- 	if (r >= 4000000) {
- 		r /= 1000000;
- 		r_unit = 'M';
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-hosted by The Linux Foundation
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Sarah Sharp
