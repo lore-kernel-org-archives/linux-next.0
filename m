@@ -1,7 +1,7 @@
 From: Sedat Dilek <sedat.dilek@gmail.com>
 Subject: Re: linux-next: Tree for Aug 28 [ xhci build breakage ]
-Date: Wed, 28 Aug 2013 12:58:41 +0200
-Message-ID: <CA+icZUUndfWjQ7_DYOUYLs-aUTznAkz-EF-=knf37HQ09WXfxw@mail.gmail.com>
+Date: Wed, 28 Aug 2013 13:19:40 +0200
+Message-ID: <CA+icZUUte64QQaK3UP-gbDqZV7Eft27829apXR90sBXi8E6=+g@mail.gmail.com>
 References: <CA+icZUUTBYMxLPBv2fq86h3dxyANhtpd6=Q4XGMscrntPNA9bQ@mail.gmail.com>
 	<CA+icZUW6JMa6VoRJ62AUZDpYm2_q_tzSM0Ryb56RNnCdEhwQyA@mail.gmail.com>
 	<CA+icZUVTzMxS4f3kZnauDkrpf4vwMbS3zd7ECOhE37S_FF83UA@mail.gmail.com>
@@ -12,12 +12,16 @@ References: <CA+icZUUTBYMxLPBv2fq86h3dxyANhtpd6=Q4XGMscrntPNA9bQ@mail.gmail.com>
 Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:58709 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752677Ab3H1LTm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Aug 2013 07:19:42 -0400
 In-Reply-To: <521DD6BD.4030700@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Dmitry Kasatkin <d.kasatkin@samsung.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sarah Sharp <sarah.a.sharp@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
 
 On Wed, Aug 28, 2013 at 12:53 PM, Dmitry Kasatkin
 <d.kasatkin@samsung.com> wrote:
@@ -127,12 +131,13 @@ On Wed, Aug 28, 2013 at 12:53 PM, Dmitry Kasatkin
 > 1/2 - was not applied
 > https://patchwork.kernel.org/patch/2850217/
 >
+
+Tested-by: Sedat Dilek <sedat.dilek@gmail.com> (against next-20130828).
+
+- Sedat -
+
 > 2/2 - this one was applied
 > https://patchwork.kernel.org/patch/2850218/
 >
 > - Dmitry
 >
-
-Thanks for the patchwork-URLs, it's easier to apply from there.
-
-- Sedat -
