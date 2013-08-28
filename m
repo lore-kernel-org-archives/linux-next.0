@@ -1,38 +1,54 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the usb tree
-Date: Wed, 28 Aug 2013 10:26:44 -0700
-Message-ID: <20130828172644.GD5012@kroah.com>
-References: <20130828164506.3f8497c59e07b0ccaaa44aec@canb.auug.org.au>
+From: Dmitry Kasatkin <d.kasatkin@samsung.com>
+Subject: Re: linux-next: Tree for Aug 28 [ xhci build breakage ]
+Date: Wed, 28 Aug 2013 20:24:41 +0300
+Message-ID: <521E3259.6040201@samsung.com>
+References: <CA+icZUUTBYMxLPBv2fq86h3dxyANhtpd6=Q4XGMscrntPNA9bQ@mail.gmail.com>
+ <CA+icZUW6JMa6VoRJ62AUZDpYm2_q_tzSM0Ryb56RNnCdEhwQyA@mail.gmail.com>
+ <CA+icZUVTzMxS4f3kZnauDkrpf4vwMbS3zd7ECOhE37S_FF83UA@mail.gmail.com>
+ <CA+icZUVsG-1J2oYF+AeHsxonG2ABW4d0464yijNwaq7R5k94SQ@mail.gmail.com>
+ <521DD43D.7070605@samsung.com>
+ <CA+icZUWQp0k8jMqY=_DYW2Ev1cEhpev=iQNnc=NbHNgHNbifTA@mail.gmail.com>
+ <521DD6BD.4030700@samsung.com> <20130828165938.GA26483@xanatos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:55717 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752305Ab3H1RY3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Aug 2013 13:24:29 -0400
-Content-Disposition: inline
-In-Reply-To: <20130828164506.3f8497c59e07b0ccaaa44aec@canb.auug.org.au>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:17377 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753566Ab3H1RYr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Aug 2013 13:24:47 -0400
+In-reply-to: <20130828165938.GA26483@xanatos>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, avier Martinez Canillas <javier.martinez@collabora.co.uk>, Benoit Cousson <bcousson@baylibre.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Felipe Balbi <balbi@ti.com>
+To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, sedat.dilek@gmail.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
 
-On Wed, Aug 28, 2013 at 04:45:06PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the arm-soc tree got conflicts in
-> arch/arm/boot/dts/am335x-bone.dts, arch/arm/boot/dts/am335x-evm.dts and
-> arch/arm/boot/dts/am335x-evmsk.dts between commit c031a7d41934 ("usb:
-> usb: dsps: update code according to the binding document") from the usb
-> tree and commits 63f6b2550aa0 ("ARM: dts: AM33XX: don't redefine OCP bus
-> and device nodes"), 781f17983015 ("usb: musb: am335x-evm: Do not remove
-> the session bit HOST-only mode") and 2ae847a1b10f ("usb: musb: am335x:
-> add second port to beagle bone") from the arm-soc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+On 28/08/13 19:59, Sarah Sharp wrote:
+> Please trim your replies.
+>
+> On Wed, Aug 28, 2013 at 01:53:49PM +0300, Dmitry Kasatkin wrote:
+>>>>> That change seems to cause the problems:
+>>>>>
+>>>>> commit 0730d52a86919300a39a2be37f6c140997dfb82f
+>>>>> "xhci:prevent "callbacks suppressed" when debug is not enabled"
+>>>>>
+>>>>> - Sedat -
+>>>>>
+>>>>> [1] http://git.kernel.org/cgit/linux/kernel/git/gregkh/usb.git/commit/drivers/usb/host/xhci-ring.c?h=usb-next&id=0730d52a86919300a39a2be37f6c140997dfb82f
+>>>>>
+>>>> Hello,
+>>>>
+>>>> [PATCHv2 1/2] was not applied before.
+>>>> I pointed this out few hours ago...
+> So commit 0730d52a86919300a39a2be37f6c140997dfb82f 'xhci:prevent
+> "callbacks suppressed" when debug is not enabled' needed to be applied
+> after your first patch?  And basically applying that patch alone breaks
+> the build?
 
-Thanks, that looks good.
+Right...
+May be I had to stress it somehow... sorry.
 
-greg k-h
+> Ugh.  Sorry about this.  Greg, how do you want to handle this?
+>
+> Sarah "needs a vacation" Sharp
+>
