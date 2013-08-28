@@ -1,58 +1,58 @@
-From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Subject: Re: linux-next: Tree for Aug 28 [ xhci build breakage ]
-Date: Wed, 28 Aug 2013 14:15:46 -0700
-Message-ID: <20130828211546.GH26483@xanatos>
-References: <CA+icZUUTBYMxLPBv2fq86h3dxyANhtpd6=Q4XGMscrntPNA9bQ@mail.gmail.com>
- <CA+icZUW6JMa6VoRJ62AUZDpYm2_q_tzSM0Ryb56RNnCdEhwQyA@mail.gmail.com>
- <CA+icZUVTzMxS4f3kZnauDkrpf4vwMbS3zd7ECOhE37S_FF83UA@mail.gmail.com>
- <CA+icZUVsG-1J2oYF+AeHsxonG2ABW4d0464yijNwaq7R5k94SQ@mail.gmail.com>
- <521DD43D.7070605@samsung.com>
- <CA+icZUWQp0k8jMqY=_DYW2Ev1cEhpev=iQNnc=NbHNgHNbifTA@mail.gmail.com>
- <521DD6BD.4030700@samsung.com>
- <20130828165938.GA26483@xanatos>
- <521E3259.6040201@samsung.com>
- <CA+icZUUj-gyqmEFo54N_62KCgByAu1n9n=dHgg3aTC53zA9TRQ@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: 32337ea "ASoC: warn if we will overwrite the DAI stream widgets"
+Date: Wed, 28 Aug 2013 17:28:24 -0600
+Message-ID: <521E8798.10206@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+icZUUj-gyqmEFo54N_62KCgByAu1n9n=dHgg3aTC53zA9TRQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Dmitry Kasatkin <d.kasatkin@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+Cc: "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Steev Klimaszewski <steev-4jv++OSWV9OTkO8mciVlQg@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Aug 28, 2013 at 07:39:14PM +0200, Sedat Dilek wrote:
-> On Wed, Aug 28, 2013 at 7:24 PM, Dmitry Kasatkin <d.kasatkin@samsung.com> wrote:
-> Still noone answered me why "drivers/usb/host/xhci-ring.c" does NOT
-> include <linux/device.h> (dev_info_ratelimited() and other defines).
-> I am expecting that... even I see...
-> 
->           drivers/usb/host/.xhci-ring.o.cmd:715:  include/linux/device.h \
-> 
-> ...where I don't know why this happens.
-> 
-> ( For me this is a bit more important than """trimming""" my
-> responses, I keep the history... )
-> 
-> - Sedat -
-> 
-> P.S.: List of includes in xhci-ring.c
-> 
-> $ grep ^'#include' -nr drivers/usb/host/xhci-ring.c
-> 67:#include <linux/scatterlist.h>
-> 68:#include <linux/slab.h>
-> 69:#include "xhci.h"
-> 70:#include "xhci-trace.h"
+Russell, if the warning in commit 32337ea "ASoC: warn if we will
+overwrite the DAI stream widgets" fires, what do I need to do to the
+ASoC driver to fix it? (I'm deliberately ignoring any other issues with
+this patch, and looking only to discover what is apparently wrong with
+my driver that's triggering this...).
 
-Because a header that xhci-ring.c uses includes device.h instead.
+Steev Klimaszewski reported this warning to me, and I've repro'd it
+running next-20130827 on a couple of Tegra systems (TrimSlice and
+Seaboard at least), using sound/soc/tegra/tegra_{trimslice,wm8903}.c,
+and associated ASoC components.
 
-drivers/usb/host/xhci/xhci-ring.c includes
-drivers/usb/host/xhci.h which includes
-include/linux/usb.h which includes
-include/linux/device.h
-
-All USB host controllers depend on including usb.h, so I don't think
-there's a need for the driver to explicitly include device.h.
-
-Sarah Sharp
+For the record, the commit description is:
+>     ASoC: warn if we will overwrite the DAI stream widgets
+>     
+>     The DAI stream widgets can end up being created multiple times if the
+>     CPU DAI and DMA/platform components share the same struct device.  This
+>     bug has been reported in various forms to the ASoC maintainer(s) several
+>     times, yet they refuse to acknowledge this:
+>     
+>     > Essentially all the dmaengine based platforms in mainline use a shared
+>     > device for DMA and DAI; I'm fairly sure someone would have mentioned if
+>     > there were problems.
+>     >
+>     > As you have been repeatedly told the Kirkwood drivers are the first
+>     > drivers submitted to mainline which use DPCM and therefore it is not
+>     > surprising that there are a few issues which need to be worked through,
+>     > there were a few revisions to the framework which went in as a result of
+>     > review during the mainline merge.  The problem you are seeing here is
+>     > due to this being the first platform with a *shared* device to use DPCM.
+>     
+>     This is inspite of stating multiple times that this has nothing to do
+>     with DPCM what so ever.  So, having tried to convince them over the
+>     last month that this is the case, and them being obstructive and/or
+>     obtuse, this is the only way left open to convince them that there is
+>     a problem here.
+>     
+>     It is only through complete frustration over their inability to recognise
+>     that there could be a problem that I am putting this into linux-next;
+>     this is not something I want to do, but they leave me no other choice.
+>     
+>     If they are correct, then this patch will have no effect what so ever.
+>     If I am correct, there will be warnings produced where a CPU DAI and
+>     DMA/platform component shares the same struct device.
+>     
+>     Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
