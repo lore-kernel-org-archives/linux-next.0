@@ -1,53 +1,36 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: Tree for Aug 28 [ xhci build breakage ]
-Date: Wed, 28 Aug 2013 10:18:24 -0700
-Message-ID: <20130828171824.GA5012@kroah.com>
-References: <CA+icZUUTBYMxLPBv2fq86h3dxyANhtpd6=Q4XGMscrntPNA9bQ@mail.gmail.com>
- <CA+icZUW6JMa6VoRJ62AUZDpYm2_q_tzSM0Ryb56RNnCdEhwQyA@mail.gmail.com>
- <CA+icZUVTzMxS4f3kZnauDkrpf4vwMbS3zd7ECOhE37S_FF83UA@mail.gmail.com>
- <CA+icZUVsG-1J2oYF+AeHsxonG2ABW4d0464yijNwaq7R5k94SQ@mail.gmail.com>
- <521DD43D.7070605@samsung.com>
- <CA+icZUWQp0k8jMqY=_DYW2Ev1cEhpev=iQNnc=NbHNgHNbifTA@mail.gmail.com>
- <521DD6BD.4030700@samsung.com>
- <20130828165938.GA26483@xanatos>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the dma-mapping tree with the
+ driver-core tree
+Date: Wed, 28 Aug 2013 10:26:18 -0700
+Message-ID: <20130828172618.GC5012@kroah.com>
+References: <20130828170503.de07a17bcd5994a7434477da@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:49825 "EHLO
+	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752829Ab3H1RYF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Aug 2013 13:24:05 -0400
 Content-Disposition: inline
-In-Reply-To: <20130828165938.GA26483@xanatos>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Cc: Dmitry Kasatkin <d.kasatkin@samsung.com>, sedat.dilek@gmail.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20130828170503.de07a17bcd5994a7434477da@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hanjun Guo <hanjun.guo@linaro.org>
 
-On Wed, Aug 28, 2013 at 09:59:38AM -0700, Sarah Sharp wrote:
-> Please trim your replies.
+On Wed, Aug 28, 2013 at 05:05:03PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Wed, Aug 28, 2013 at 01:53:49PM +0300, Dmitry Kasatkin wrote:
-> > >>> That change seems to cause the problems:
-> > >>>
-> > >>> commit 0730d52a86919300a39a2be37f6c140997dfb82f
-> > >>> "xhci:prevent "callbacks suppressed" when debug is not enabled"
-> > >>>
-> > >>> - Sedat -
-> > >>>
-> > >>> [1] http://git.kernel.org/cgit/linux/kernel/git/gregkh/usb.git/commit/drivers/usb/host/xhci-ring.c?h=usb-next&id=0730d52a86919300a39a2be37f6c140997dfb82f
-> > >>>
-> > >> Hello,
-> > >>
-> > >> [PATCHv2 1/2] was not applied before.
-> > >> I pointed this out few hours ago...
+> Today's linux-next merge of the dma-mapping tree got a conflict in
+> drivers/base/dma-contiguous.c between commit cebcac7c59e8 ("drivers /
+> dma-contiguous: Fix __init attribute location") from the driver-core tree
+> and commit a2547380393a ("drivers: dma-contiguous: clean source code and
+> prepare for device tree") from the dma-mapping tree.
 > 
-> So commit 0730d52a86919300a39a2be37f6c140997dfb82f 'xhci:prevent
-> "callbacks suppressed" when debug is not enabled' needed to be applied
-> after your first patch?  And basically applying that patch alone breaks
-> the build?
-> 
-> Ugh.  Sorry about this.  Greg, how do you want to handle this?
+> I fixed it up (the latter is a superset of the former, so I used that)
+> and can carry the fix as necessary (no action is required).
 
-See my other response about your pull request, how about tacking it onto
-there?
-
-thanks,
+Sounds good, thanks.
 
 greg k-h
