@@ -1,89 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm-soc tree with Linus' tree
-Date: Wed, 28 Aug 2013 10:06:50 +1000
-Message-ID: <20130828100650.717c22af5bea88e89371393d@canb.auug.org.au>
-References: <20130827182935.ff4005b60cc1ce80d32d5e46@canb.auug.org.au>
-	<521CD111.9030905@wwwdotorg.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: mmotm 2013-08-27-16-51 uploaded
+Date: Tue, 27 Aug 2013 17:50:23 -0700
+Message-ID: <521D494F.1010507@codeaurora.org>
+References: <20130827235227.99DB95A41D6@corp2gmr1-2.hot.corp.google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Aug_2013_10_06_50_+1000_m9n_HWRyBT=K9xCW"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39517 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752594Ab3H1AGw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Aug 2013 20:06:52 -0400
-In-Reply-To: <521CD111.9030905@wwwdotorg.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20130827235227.99DB95A41D6@corp2gmr1-2.hot.corp.google.com>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, voice.shen@atmel.com, Russell King - ARM Linux <linux@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__28_Aug_2013_10_06_50_+1000_m9n_HWRyBT=K9xCW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Stephen,
-
-On Tue, 27 Aug 2013 10:17:21 -0600 Stephen Warren <swarren@wwwdotorg.org> w=
-rote:
+On 08/27/13 16:52, akpm@linux-foundation.org wrote:
+> * kernel-time-sched_clockc-correct-the-comparison-parameter-of-mhz.patch
 >
-> On 08/27/2013 02:29 AM, Stephen Rothwell wrote:
-> >=20
-> > Today's linux-next merge of the arm-soc tree got a conflict in=20
-> > arch/arm/boot/dts/tegra20-trimslice.dts between commit
-> > 30ca2226bea6 ("ARM: tegra: always enable USB VBUS regulators") from
-> > Linus' tree and commit 23f95ef2d951 ("ARM: tegra: use TEGRA_GPIO()
-> > in a couple more places") from the arm-soc tree.
-> >=20
-> > I fixed it up (see below) and can carry the fix as necessary (no
-> > action is required).
->=20
-> > diff --cc arch/arm/boot/dts/tegra20-trimslice.dts
->=20
-> > usb@c5000000 { status =3D "okay"; -		nvidia,vbus-gpio =3D <&gpio
-> > TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>; };
->=20
-> That chunk isn't part of either of the two commits above.
 
-Yeah.
+I believe Russell nacked this change[1]? This should probably be dropped
+unless there's been more discussion. Or maybe reworked into a comment in
+the code that doesn't lead to the same change again.
 
-> It is however part of commit 103566e "arm: tegra: Remove obsolete
-> nvidia,vbus-gpio properties" from the USB tree, so it's fine that the
-> change is part of linux-next.
->
-> I'm just not sure if it's expected for that chunk to show up in this
-> merge resolution email? If it's normal, then there's no problem; the
-> issue would be with me not having too much git merge conflict
-> resolution experience:-)
+[1] https://lkml.org/lkml/2013/8/7/95
 
-It did not actually cause a conflict that I had to fix manually, but is
-part of the overall merge changes.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__28_Aug_2013_10_06_50_+1000_m9n_HWRyBT=K9xCW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSHT8aAAoJEECxmPOUX5FEwmIP/jrDc6YFUiWT17SGcaIGBDZn
-p5VEMV15KR3bPwMbEG3VB9bPBrYdokSM93i/q5bKTHehHMKoMRg6xFKytstxQJlZ
-dREaA4gTpYN/H6/zNcwiUvXz/cRxbeBBIcgroErbLehHlDzdws3opCuTfJbK3LKq
-k8WGqAwMItorzVs5k0fjhv+ia6UtLngscJO+BS3quOCZWtUwtKfiUIlDLnciCZIE
-cItUv+B5NcHyJfZ4BI33eoEyxKS/fSL8+Dpg+1oMeT0UzAhjbQXqXSKnNY03z7pg
-G+EQqjuRUYnDV8MiF5CiJfq4QFKsil9obmysVee8oKlWBhClwQCGQzHjTbxOAyGj
-NLkfXSYPxKz4sm2r3JSiRBNNvJcS1lyIAremD+rC+IC658P0xW7A5ghicN7iYpbm
-DPgsAW8MWB0+xXFuUdDdeiZqmN3aQPf4wRPNsvOQhs1sH+IE2CfkojCHNCG7HVW1
-DB0Z82PJXtkIDo9rKkOBuvCule4HTL7PWyR5PeA21wfigrlkq+ac5hQ6Ypm+6DkM
-sJpRFys3ExkY57etzBx+5h0o1z1h4wNvbJJZBFPfeQJdFIc1S3flWF9nZAxmVXKN
-nIyVIknUEMLPsebt3UmlDx08rohkl4+rcZGK18JZkyA9Fyl0LPj/C8BRRihS99oJ
-gO8wwnjimd1rGNoNx3kx
-=STmp
------END PGP SIGNATURE-----
-
---Signature=_Wed__28_Aug_2013_10_06_50_+1000_m9n_HWRyBT=K9xCW--
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
