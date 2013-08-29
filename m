@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the pm tree
-Date: Thu, 29 Aug 2013 18:04:25 +1000
-Message-ID: <20130829180425.4aa3d164f01cc65b215187fe@canb.auug.org.au>
+Subject: linux-next: manual merge of the renesas tree with the v4l-dvb tree
+Date: Thu, 29 Aug 2013 18:18:54 +1000
+Message-ID: <20130829181854.e380fb3508d41d88eb98f15d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Aug_2013_18_04_25_+1000_zJ8Qzz224/Dy0fV6"
+ boundary="Signature=_Thu__29_Aug_2013_18_18_54_+1000_.AiSYS=Q4akC=Tt5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56528 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:46085 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753830Ab3H2IE2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 04:04:28 -0400
+	with ESMTP id S1752020Ab3H2ITE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 04:19:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sahara <keun-o.park@windriver.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vladimir Barinov <vladimir.barinov@cogentembedded.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
 
---Signature=_Thu__29_Aug_2013_18_04_25_+1000_zJ8Qzz224/Dy0fV6
+--Signature=_Thu__29_Aug_2013_18_18_54_+1000_.AiSYS=Q4akC=Tt5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Simon,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/cpuidle/Makefile between commits b98e01ad4ed9 ("cpuidle: Add
-Kconfig.arm and move calxeda, kirkwood and zynq") and d3f2950f2ade ("ARM:
-ux500: cpuidle: Move ux500 cpuidle driver to drivers/cpuidle") from the
-pm tree and commit 14d2c34cfa00 ("cpuidle: big.LITTLE: vexpress-TC2 CPU
-idle driver") from the arm-soc tree.
+Today's linux-next merge of the renesas tree got a conflict in
+arch/arm/configs/marzen_defconfig between commit e0c332c671e7 ("[media]
+ARM: shmobile: Marzen: enable VIN and ADV7180 in defconfig") from the
+v4l-dvb tree and commit febedc9c9fe3 ("ARM: shmobile: marzen: Select
+DRM_RCAR_DU in defconfig") from the renesas tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,46 +36,46 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/cpuidle/Makefile
-index 0b9d200,3b6445c..0000000
---- a/drivers/cpuidle/Makefile
-+++ b/drivers/cpuidle/Makefile
-@@@ -5,9 -5,7 +5,10 @@@
-  obj-y +=3D cpuidle.o driver.o governor.o sysfs.o governors/
-  obj-$(CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED) +=3D coupled.o
- =20
- -obj-$(CONFIG_CPU_IDLE_CALXEDA) +=3D cpuidle-calxeda.o
- -obj-$(CONFIG_ARCH_KIRKWOOD) +=3D cpuidle-kirkwood.o
- -obj-$(CONFIG_CPU_IDLE_ZYNQ) +=3D cpuidle-zynq.o
- -obj-$(CONFIG_CPU_IDLE_BIG_LITTLE) +=3D cpuidle-big_little.o
- +#########################################################################=
-#########
- +# ARM SoC drivers
- +obj-$(CONFIG_ARM_HIGHBANK_CPUIDLE)	+=3D cpuidle-calxeda.o
- +obj-$(CONFIG_ARM_KIRKWOOD_CPUIDLE)	+=3D cpuidle-kirkwood.o
- +obj-$(CONFIG_ARM_ZYNQ_CPUIDLE)		+=3D cpuidle-zynq.o
- +obj-$(CONFIG_ARM_U8500_CPUIDLE)         +=3D cpuidle-ux500.o
-++obj-$(CONFIG_CPU_IDLE_BIG_LITTLE)       +=3D cpuidle-big_little.o
+diff --cc arch/arm/configs/marzen_defconfig
+index 000e920,26f30be..0000000
+--- a/arch/arm/configs/marzen_defconfig
++++ b/arch/arm/configs/marzen_defconfig
+@@@ -85,13 -85,8 +85,15 @@@ CONFIG_GPIO_RCAR=3D
+  CONFIG_THERMAL=3Dy
+  CONFIG_RCAR_THERMAL=3Dy
+  CONFIG_SSB=3Dy
+ +CONFIG_MEDIA_SUPPORT=3Dy
+ +CONFIG_MEDIA_CAMERA_SUPPORT=3Dy
+ +CONFIG_V4L_PLATFORM_DRIVERS=3Dy
+ +CONFIG_SOC_CAMERA=3Dy
+ +CONFIG_VIDEO_RCAR_VIN=3Dy
+ +# CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
+ +CONFIG_VIDEO_ADV7180=3Dy
++ CONFIG_DRM=3Dy
++ CONFIG_DRM_RCAR_DU=3Dy
+  CONFIG_USB=3Dy
+  CONFIG_USB_RCAR_PHY=3Dy
+  CONFIG_MMC=3Dy
 
---Signature=_Thu__29_Aug_2013_18_04_25_+1000_zJ8Qzz224/Dy0fV6
+--Signature=_Thu__29_Aug_2013_18_18_54_+1000_.AiSYS=Q4akC=Tt5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSHwCJAAoJEECxmPOUX5FEZTwP/1KyjYCYBHT7qYuJEexclw1C
-bh3lB3/JMgpEL32bk6EZBhO76efkXh2sh74vgcRh+g0qpwVKJQ/j2qn6C3kwAZnG
-Pcrz3YJfIVsTM77fvSrpa1rznRd17Q0x+m0wcik7hr11F7fX0Bkju9cGK3RXnmKl
-KaiK/eSiqczD8lwUA2KZvndx08SeW7T4GUDOHHJxmbRnFFiMmv8zHptjhINS6tHJ
-n2ye1wOx5W0UIBeeEZd4coUVkR8S5fe5PmmKzurdjRYzQBTs2t+e3FgxI12b/VqZ
-ngTRQcJ6Wzpq1aiBu4cflVXgS5v3UjSvtJH9TQNUtY2UKEM597FblgZJ2lpRresn
-Q4/3mID0JJ58L5ewVj0jDtDIDTCG34yXp+2U//8GN7/svUVXD7sxrRHhi3/trg/8
-Xy1bMUE/huMFJfpGlPncoQx00Dz3KegHl8gOij7LdDXNtmmoZCK3zgWK2RyDgb2S
-ZNGFEypKKOgJWKt3ZKy6mPpFSJvzvGRZbIyFGwBlEyO+PZuSiUFGxFqWv3/D22hV
-loChnt+UzaTTBbg0QA6nu/edxyRp2KgFxWEC3xhmCbWp0Tgl4KHM5OG15SdQ331A
-dJeEtHm3Gt587bfEMLqdizaF6P9HgZsoTHYzLWV2vljd/f2q3Pd281OMWGvgEoBd
-btU4RgBZFYB+LjMgWK2N
-=gz8b
+iQIcBAEBCAAGBQJSHwPyAAoJEECxmPOUX5FEAdAP/RcCvb9qZW1IpAXvYcDYzBX5
+vTxHVXVG1ZBbNgwD7Na9PZ0KG+JvyVNrrAOrZpyW5R9rGvXu2kvDu6dVM/NDaVi5
+uOpiynnrIBA8RE2iv8BFCf19hgPzXUMSgcK56dwyv7YyyPhbyC8H9OLt0ubRu3Nq
+XBML1hlshMqch6bMz4Noxd56tx/X1mBRB7toa4OxUcpx7InVOKwT4qMRAW5CPgas
+EyfVplSbPqwsbIcSDxGcfrbCFh29KK8La+hgTvmZjq3sdUrK/nb5Kn1z+zRB9TOX
+hiSQOTe3zCprBketfBW4h2ZxeAfABMoXaMVzxR10tm4pLjw0++MHM2p59DJQ6cv4
+ogrpMfhXQvE2UNQpAFXoNTCV21bLecY0S/4OfBHbDNgAzW9BtVAK4l6WgYVP5lCk
+ZwPJiBj5fSCkqUDHSG3rZ5qmaHAYgAx7/xT8sr4IVTQXx7xiVy9YqxfIaVvV1mRR
+FNTjSa86lcP0MAPAFbADMNI2f/IrzDtaSuBfA7jvhLtW1j+RCEX9a3GyG0xXjkhj
+N2DSaeFJVz17PPRwM/PycEQgByA+V/4mdA3Fg6wPi+mTf/ISSm21//f/sVby4mli
+7l2GcpGhMNFbiJhrxs/JIlCjXjQzHpExsl/fJiF+VDbbj4QZoBr2DEzcgd6q4vga
+NdscWte1bx7w7FKQIcfD
+=eoig
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__29_Aug_2013_18_04_25_+1000_zJ8Qzz224/Dy0fV6--
+--Signature=_Thu__29_Aug_2013_18_18_54_+1000_.AiSYS=Q4akC=Tt5--
