@@ -1,81 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the renesas tree with the v4l-dvb tree
-Date: Thu, 29 Aug 2013 18:18:54 +1000
-Message-ID: <20130829181854.e380fb3508d41d88eb98f15d@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the selinux tree
+Date: Thu, 29 Aug 2013 19:23:18 +1000
+Message-ID: <20130829192318.94d3e9b1c8d4f6f05c385e24@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Aug_2013_18_18_54_+1000_.AiSYS=Q4akC=Tt5"
+ boundary="Signature=_Thu__29_Aug_2013_19_23_18_+1000_+.wESdYhrRxZgeVa"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46085 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56454 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752020Ab3H2ITE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 04:19:04 -0400
+	with ESMTP id S1751711Ab3H2JX1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 05:23:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vladimir Barinov <vladimir.barinov@cogentembedded.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>
 
---Signature=_Thu__29_Aug_2013_18_18_54_+1000_.AiSYS=Q4akC=Tt5
+--Signature=_Thu__29_Aug_2013_19_23_18_+1000_+.wESdYhrRxZgeVa
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Simon,
+Hi Andrew,
 
-Today's linux-next merge of the renesas tree got a conflict in
-arch/arm/configs/marzen_defconfig between commit e0c332c671e7 ("[media]
-ARM: shmobile: Marzen: enable VIN and ADV7180 in defconfig") from the
-v4l-dvb tree and commit febedc9c9fe3 ("ARM: shmobile: marzen: Select
-DRM_RCAR_DU in defconfig") from the renesas tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I have dropped the patch "revert "SELinux: do not handle seclabel as a
+special flag"" from the akpm tree as the patch that it reverted was
+dropped form the selinux tree (along with everything else in that tree).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/configs/marzen_defconfig
-index 000e920,26f30be..0000000
---- a/arch/arm/configs/marzen_defconfig
-+++ b/arch/arm/configs/marzen_defconfig
-@@@ -85,13 -85,8 +85,15 @@@ CONFIG_GPIO_RCAR=3D
-  CONFIG_THERMAL=3Dy
-  CONFIG_RCAR_THERMAL=3Dy
-  CONFIG_SSB=3Dy
- +CONFIG_MEDIA_SUPPORT=3Dy
- +CONFIG_MEDIA_CAMERA_SUPPORT=3Dy
- +CONFIG_V4L_PLATFORM_DRIVERS=3Dy
- +CONFIG_SOC_CAMERA=3Dy
- +CONFIG_VIDEO_RCAR_VIN=3Dy
- +# CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
- +CONFIG_VIDEO_ADV7180=3Dy
-+ CONFIG_DRM=3Dy
-+ CONFIG_DRM_RCAR_DU=3Dy
-  CONFIG_USB=3Dy
-  CONFIG_USB_RCAR_PHY=3Dy
-  CONFIG_MMC=3Dy
-
---Signature=_Thu__29_Aug_2013_18_18_54_+1000_.AiSYS=Q4akC=Tt5
+--Signature=_Thu__29_Aug_2013_19_23_18_+1000_+.wESdYhrRxZgeVa
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSHwPyAAoJEECxmPOUX5FEAdAP/RcCvb9qZW1IpAXvYcDYzBX5
-vTxHVXVG1ZBbNgwD7Na9PZ0KG+JvyVNrrAOrZpyW5R9rGvXu2kvDu6dVM/NDaVi5
-uOpiynnrIBA8RE2iv8BFCf19hgPzXUMSgcK56dwyv7YyyPhbyC8H9OLt0ubRu3Nq
-XBML1hlshMqch6bMz4Noxd56tx/X1mBRB7toa4OxUcpx7InVOKwT4qMRAW5CPgas
-EyfVplSbPqwsbIcSDxGcfrbCFh29KK8La+hgTvmZjq3sdUrK/nb5Kn1z+zRB9TOX
-hiSQOTe3zCprBketfBW4h2ZxeAfABMoXaMVzxR10tm4pLjw0++MHM2p59DJQ6cv4
-ogrpMfhXQvE2UNQpAFXoNTCV21bLecY0S/4OfBHbDNgAzW9BtVAK4l6WgYVP5lCk
-ZwPJiBj5fSCkqUDHSG3rZ5qmaHAYgAx7/xT8sr4IVTQXx7xiVy9YqxfIaVvV1mRR
-FNTjSa86lcP0MAPAFbADMNI2f/IrzDtaSuBfA7jvhLtW1j+RCEX9a3GyG0xXjkhj
-N2DSaeFJVz17PPRwM/PycEQgByA+V/4mdA3Fg6wPi+mTf/ISSm21//f/sVby4mli
-7l2GcpGhMNFbiJhrxs/JIlCjXjQzHpExsl/fJiF+VDbbj4QZoBr2DEzcgd6q4vga
-NdscWte1bx7w7FKQIcfD
-=eoig
+iQIcBAEBCAAGBQJSHxMKAAoJEECxmPOUX5FEx2MQAInH26bdyA33e/0QlkICdmnk
+xCZdhrZ66BeMp82o0sYYeJ8hYLQ6bmDJGRuSPF5RxRVC1mZtml4LiqhTPv172yFM
+1yHjPhCXJzUDfW+70HlR2GdHUVCpxrE+dke3PgcJhzjwtxgsTy14bFdiRIAsz1cp
+nopgQcz35Q2H64N4cPQU5D76VxRh7YIm19uwe68rC7WToQMNh6jPTvKRrh0rl4sj
+52hxUdJbxqgjBLUuTh+Si6WaCtpUE65tR2SbMfk/Pdrh6CWauNfSb6YTHb97KbL+
+LwkTw9PzHN0E08M9Lb2mIUa9O8JR4fSTQDTfovujqLUvA4RcBKEp7CP3E9zhRto3
+eVM2kj1Ukd0EeZc2lFeWDIkoZ0AMr6qDNl8twaU3wpbShJXw89HMZEj97js90tv0
+YIyZM5w++vxPU4Z5ofGo4t7/6HKYv5jm0uF+djlfKGSNl8KR1x2kjKCCB1ZmdvPZ
+n2Usvt6k9nvjeMMjq4qdv3Qrm8CwzzDsJ1/w7/B8vtDuEnzaQgY66iI3Qg8n/rmw
+I9aJdNf1cQKoIOLxgChl4qjbFXHWnJKUMNokoTHjUjqXl2o34oGJEdkM45b2Q6eI
+p6o8qaSuhAqn+n8933TDfEQNlO8+0yFLOWceXvjvZz0gKr/KUJubhBS3CwryUur9
+exjUJbAexKCTz7+QhqMU
+=xAOZ
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__29_Aug_2013_18_18_54_+1000_.AiSYS=Q4akC=Tt5--
+--Signature=_Thu__29_Aug_2013_19_23_18_+1000_+.wESdYhrRxZgeVa--
