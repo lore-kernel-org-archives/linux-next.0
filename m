@@ -1,90 +1,119 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Thu, 29 Aug 2013 12:48:14 +1000
-Message-ID: <20130829124814.2c2547a15b5e8927a4a805a1@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: ipc-msg broken again on 3.11-rc7? (was Re: linux-next: Tree for
+ Jun 21 [ BROKEN ipc/ipc-msg ])
+Date: Thu, 29 Aug 2013 05:04:40 +0200
+Message-ID: <CA+icZUUrZG8pYqKcHY3DcYAuuw=vbdUvs6ZXDq5meBMjj6suFg@mail.gmail.com>
+References: <CA+icZUXuw7QBn4CPLLuiVUjHin0m6GRdbczGw=bZY+Z60sXNow@mail.gmail.com>
+	<CA+icZUVbUD1tUa_ORtn_ZZebpp3gXXHGAcNe0NdYPXPMPoABuA@mail.gmail.com>
+	<1372192414.1888.8.camel@buesod1.americas.hpqcorp.net>
+	<CA+icZUXgOd=URJBH5MGAZKdvdkMpFt+5mRxtzuDzq_vFHpoc2A@mail.gmail.com>
+	<1372202983.1888.22.camel@buesod1.americas.hpqcorp.net>
+	<521DE5D7.4040305@synopsys.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Aug_2013_12_48_14_+1000_oeDwcYh/VejLl4GF"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51647 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752186Ab3H2CsX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Aug 2013 22:48:23 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms+renesas@verge.net.au>, Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <521DE5D7.4040305@synopsys.com>
+Sender: owner-linux-mm@kvack.org
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Manfred Spraul <manfred@colorfullife.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__29_Aug_2013_12_48_14_+1000_oeDwcYh/VejLl4GF
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 28, 2013 at 1:58 PM, Vineet Gupta
+<Vineet.Gupta1@synopsys.com> wrote:
+> Hi David,
+>
+> On 06/26/2013 04:59 AM, Davidlohr Bueso wrote:
+>> On Tue, 2013-06-25 at 23:41 +0200, Sedat Dilek wrote:
+>>> On Tue, Jun 25, 2013 at 10:33 PM, Davidlohr Bueso
+>>> <davidlohr.bueso@hp.com> wrote:
+>>>> On Tue, 2013-06-25 at 18:10 +0200, Sedat Dilek wrote:
+>>>> [...]
+>>>>
+>>>>> I did some more testing with Linux-Testing-Project (release:
+>>>>> ltp-full-20130503) and next-20130624 (Monday) which has still the
+>>>>> issue, here.
+>>>>>
+>>>>> If I revert the mentioned two commits from my local
+>>>>> revert-ipc-next20130624-5089fd1c6a6a-ab9efc2d0db5 GIT repo, everything
+>>>>> is fine.
+>>>>>
+>>>>> I have tested the LTP ***IPC*** and ***SYSCALLS*** testcases.
+>>>>>
+>>>>>    root# ./runltp -f ipc
+>>>>>
+>>>>>    root# ./runltp -f syscalls
+>>>>
+>>>> These are nice test cases!
+>>>>
+>>>> So I was able to reproduce the issue with LTP and manually running
+>>>> msgctl08. We seemed to be racing at find_msg(), so take to q_perm lock
+>>>> before calling it. The following changes fixes the issue and passes all
+>>>> 'runltp -f syscall' tests, could you give it a try?
+>>>>
+>>>
+>>> Cool, that fixes the issues here.
+>>>
+>>> Building with fakeroot & make deb-pkg is now OK, again.
+>>>
+>>> The syscalls/msgctl08 test-case ran successfully!
+>>
+>> Andrew, could you pick this one up? I've made the patch on top of
+>> 3.10.0-rc7-next-20130625
+>
+> LTP msgctl08 hangs on 3.11-rc7 (ARC port) with some of my local changes. I
+> bisected it, sigh... didn't look at this thread earlier :-( and landed into this.
+>
+> ------------->8------------------------------------
+> 3dd1f784ed6603d7ab1043e51e6371235edf2313 is the first bad commit
+> commit 3dd1f784ed6603d7ab1043e51e6371235edf2313
+> Author: Davidlohr Bueso <davidlohr.bueso@hp.com>
+> Date:   Mon Jul 8 16:01:17 2013 -0700
+>
+>     ipc,msg: shorten critical region in msgsnd
+>
+>     do_msgsnd() is another function that does too many things with the ipc
+>     object lock acquired.  Take it only when needed when actually updating
+>     msq.
+> ------------->8------------------------------------
+>
+> If I revert 3dd1f784ed66 and 9ad66ae "ipc: remove unused functions" - the test
+> passes. I can confirm that linux-next also has the issue (didn't try the revert
+> there though).
+>
+> 1. arc 3.11-rc7 config attached (UP + PREEMPT)
+> 2. dmesg prints "msgmni has been set to 479"
+> 3. LTP output (this is slightly dated source, so prints might vary)
+>
+> ------------->8------------------------------------
+> <<<test_start>>>
+> tag=msgctl08 stime=1377689180
+> cmdline="msgctl08"
+> contacts=""
+> analysis=exit
+> initiation_status="ok"
+> <<<test_output>>>
+> ------------->8-------- hung here ------------------
+>
+>
+> Let me know if you need more data/test help.
+>
 
-Hi Mauro,
+Cannot say much to your constellation as I had the issue on x86-64 and
+Linux-next.
+But I have just seen a post-v3.11-rc7 IPC-fix in [1].
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-arch/arm/mach-shmobile/board-bockw.c between commit fa3e0cee12fb ("ARM:
-shmobile: BOCK-W: fix SDHI0 PFC settings") from Linus' tree and commit
-9c43952d0f1e ("[media] ARM: shmobile: BOCK-W: add VIN and ML86V7667
-support") from the v4l-dvb tree.
+I have here a v3.11-rc7 kernel with drm-intel-nightly on top... did not run LTP.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Which LTP release do you use?
+Might be good to attach your kernel-config for followers?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+- Sedat -
 
-diff --cc arch/arm/mach-shmobile/board-bockw.c
-index 3354a85,7d44f66..0000000
---- a/arch/arm/mach-shmobile/board-bockw.c
-+++ b/arch/arm/mach-shmobile/board-bockw.c
-@@@ -167,13 -188,17 +188,23 @@@ static const struct pinctrl_map bockw_p
-  				  "usb1", "usb1"),
-  	/* SDHI0 */
-  	PIN_MAP_MUX_GROUP_DEFAULT("sh_mobile_sdhi.0", "pfc-r8a7778",
- -				  "sdhi0", "sdhi0"),
- +				  "sdhi0_data4", "sdhi0"),
- +	PIN_MAP_MUX_GROUP_DEFAULT("sh_mobile_sdhi.0", "pfc-r8a7778",
- +				  "sdhi0_ctrl", "sdhi0"),
- +	PIN_MAP_MUX_GROUP_DEFAULT("sh_mobile_sdhi.0", "pfc-r8a7778",
- +				  "sdhi0_cd", "sdhi0"),
- +	PIN_MAP_MUX_GROUP_DEFAULT("sh_mobile_sdhi.0", "pfc-r8a7778",
- +				  "sdhi0_wp", "sdhi0"),
-+ 	/* VIN0 */
-+ 	PIN_MAP_MUX_GROUP_DEFAULT("r8a7778-vin.0", "pfc-r8a7778",
-+ 				  "vin0_clk", "vin0"),
-+ 	PIN_MAP_MUX_GROUP_DEFAULT("r8a7778-vin.0", "pfc-r8a7778",
-+ 				  "vin0_data8", "vin0"),
-+ 	/* VIN1 */
-+ 	PIN_MAP_MUX_GROUP_DEFAULT("r8a7778-vin.1", "pfc-r8a7778",
-+ 				  "vin1_clk", "vin1"),
-+ 	PIN_MAP_MUX_GROUP_DEFAULT("r8a7778-vin.1", "pfc-r8a7778",
-+ 				  "vin1_data8", "vin1"),
-  };
- =20
-  #define FPGA	0x18200000
+[1] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=368ae537e056acd3f751fa276f48423f06803922
 
---Signature=_Thu__29_Aug_2013_12_48_14_+1000_oeDwcYh/VejLl4GF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSHrZyAAoJEECxmPOUX5FEJPAP/AvSxPYfrEoa6qyzT6BoCyHK
-/CAYBc1TRi6hsioZISuy+VPMihzVyOLm5B4LceQCw5MuTo1FlexzGQbygJ233Efy
-R+QEHLos+tBpNFIKCgxsw7EkTMGCFc+m7vvooy1VdSMCMZYORsLs/Lpk2Pwux0zQ
-tvl4aTSQMaN5HtDbLluzFFigCW4UPbrROuoLdgzjSeudxMXcWqrLvod8A2qJjoif
-0jBKxkR/Wr7Lv2ZYM4cnRxu6lJTrdyT/eXMWXFLGAh0aSiwh4XcoEShgCYaFbqft
-M9DGKdleWfSgkxgih2knc34G0q9LfUa9BqnpNbe7/CIQq22l75DO+XpmaVBFm02r
-kqKTpeJ+Ysun0wcCPIYcBZ/5TQEdVhWLdN+ssdVigT7z9nTYl4vcFLwstZJpGo7y
-ciRxGf5qWoAEeRnqr1XJqDJ5UIjjAbDHaLAgBBIHvQDi5rtaoQTG4mxS+OH9Mn9M
-/PzrEC2IAQN6uxnEVA9qAJnDGSSvxR3mQi/sZj9jwXcSOzhWEO3NfniOPtnQa5Sw
-h3kKbfh/ikXx7gjITcGLpBC/QgJyiWb+HRQLRnMmlZ7Wi4wUC3/C3fkBRZos2tuq
-9ViDqZwpNdBQ5h7A5/U1jn2NfBNtcPXCURdopnYypDji0C0A6g0peBmrm5Ddthfw
-qxpfo4akvAIVoYHUYfVR
-=Oj5N
------END PGP SIGNATURE-----
-
---Signature=_Thu__29_Aug_2013_12_48_14_+1000_oeDwcYh/VejLl4GF--
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
