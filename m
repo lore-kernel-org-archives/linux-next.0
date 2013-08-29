@@ -1,91 +1,129 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the v4l-dvb tree
-Date: Thu, 29 Aug 2013 17:40:34 +1000
-Message-ID: <20130829174034.9594cef414d41a2943160ba3@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: manual merge of the pinctrl tree with Linus' tree
+Date: Thu, 29 Aug 2013 09:45:54 +0200
+Message-ID: <CACRpkdbHtjvY_VypnCQZNU2N1YqWtUv_grTK30A+tgEP3a0uwQ@mail.gmail.com>
+References: <20130829171704.7a7630dd19d19ccdb9aaf384@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Aug_2013_17_40_34_+1000_GGH=8Gv2bXAaNVu0"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130829171704.7a7630dd19d19ccdb9aaf384@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Barinov <vladimir.barinov@cogentembedded.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Magnus Damm <damm@opensource.se>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Linus Walleij <linus.walleij@stericsson.com>, Sherman Yin <syin@broadcom.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__29_Aug_2013_17_40_34_+1000_GGH=8Gv2bXAaNVu0
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 29, 2013 at 9:17 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi all,
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-shmobile/board-marzen.c between commit 7cef5e7fd1ab
-("[media] ARM: shmobile: Marzen: add VIN and ADV7180 support") from the
-v4l-dvb tree and commits 85469abe4930 ("ARM: shmobile: Remove Marzen use
-of <mach/hardware.h>") and fee529df76ff ("ARM: shmobile: r8a7779: cleanup
-registration of usb phy") from the arm-soc tree.
+I made a bit different fix, I just lock the spinlock around the entire
+loop, as this is not doing any delays or anything like that and
+just hammer a few registers with the settings, it makes sense to
+have that inside a single lock:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+--- a/drivers/pinctrl/pinctrl-sunxi.c
++++ b/drivers/pinctrl/pinctrl-sunxi.c
+@@@ -282,48 -282,57 +283,51 @@@ static int sunxi_pconf_group_set(struc
+        u32 val, mask;
+        u16 strength;
+        u8 dlevel;
+ +      int i;
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+ -      switch (pinconf_to_config_param(config)) {
+ -      case PIN_CONFIG_DRIVE_STRENGTH:
+ -              strength = pinconf_to_config_argument(config);
+ -              if (strength > 40)
+ -                      return -EINVAL;
+ -              /*
+ -               * We convert from mA to what the register expects:
+ -               *   0: 10mA
+ -               *   1: 20mA
+ -               *   2: 30mA
+ -               *   3: 40mA
+ -               */
+ -              dlevel = strength / 10 - 1;
+ -
+ -              spin_lock_irqsave(&pctl->lock, flags);
+ -
+ -              val = readl(pctl->membase + sunxi_dlevel_reg(g->pin));
+ -              mask = DLEVEL_PINS_MASK << sunxi_dlevel_offset(g->pin);
+ -              writel((val & ~mask) | dlevel << sunxi_dlevel_offset(g->pin),
+ -                      pctl->membase + sunxi_dlevel_reg(g->pin));
+ -
+ -              spin_unlock_irqrestore(&pctl->lock, flags);
+ -              break;
+ -      case PIN_CONFIG_BIAS_PULL_UP:
+ -              spin_lock_irqsave(&pctl->lock, flags);
+ -
+ -              val = readl(pctl->membase + sunxi_pull_reg(g->pin));
+ -              mask = PULL_PINS_MASK << sunxi_pull_offset(g->pin);
+ -              writel((val & ~mask) | 1 << sunxi_pull_offset(g->pin),
+ -                      pctl->membase + sunxi_pull_reg(g->pin));
+ -
+ -              spin_unlock_irqrestore(&pctl->lock, flags);
+ -              break;
+ -      case PIN_CONFIG_BIAS_PULL_DOWN:
+ -              spin_lock_irqsave(&pctl->lock, flags);
+ -
+ -              val = readl(pctl->membase + sunxi_pull_reg(g->pin));
+ -              mask = PULL_PINS_MASK << sunxi_pull_offset(g->pin);
+ -              writel((val & ~mask) | 2 << sunxi_pull_offset(g->pin),
+ -                      pctl->membase + sunxi_pull_reg(g->pin));
+++      spin_lock_irqsave(&pctl->lock, flags);
++
+ -              spin_unlock_irqrestore(&pctl->lock, flags);
+ -              break;
+ -      default:
+ -              break;
+ -      }
+ +      for (i = 0; i < num_configs; i++) {
+ +              switch (pinconf_to_config_param(configs[i])) {
+ +              case PIN_CONFIG_DRIVE_STRENGTH:
+ +                      strength = pinconf_to_config_argument(configs[i]);
+ +                      if (strength > 40)
+ +                              return -EINVAL;
+ +                      /*
+ +                       * We convert from mA to what the register expects:
+ +                       *   0: 10mA
+ +                       *   1: 20mA
+ +                       *   2: 30mA
+ +                       *   3: 40mA
+ +                       */
+ +                      dlevel = strength / 10 - 1;
+ +                      val = readl(pctl->membase + sunxi_dlevel_reg(g->pin));
+ +                      mask = DLEVEL_PINS_MASK << sunxi_dlevel_offset(g->pin);
+ +                      writel((val & ~mask)
+ +                              | dlevel << sunxi_dlevel_offset(g->pin),
+ +                              pctl->membase + sunxi_dlevel_reg(g->pin));
+ +                      break;
+ +              case PIN_CONFIG_BIAS_PULL_UP:
+ +                      val = readl(pctl->membase + sunxi_pull_reg(g->pin));
+ +                      mask = PULL_PINS_MASK << sunxi_pull_offset(g->pin);
+ +                      writel((val & ~mask) | 1 << sunxi_pull_offset(g->pin),
+ +                              pctl->membase + sunxi_pull_reg(g->pin));
+ +                      break;
++              case PIN_CONFIG_BIAS_PULL_DOWN:
+ +                      val = readl(pctl->membase + sunxi_pull_reg(g->pin));
+ +                      mask = PULL_PINS_MASK << sunxi_pull_offset(g->pin);
+ +                      writel((val & ~mask) | 2 << sunxi_pull_offset(g->pin),
+ +                              pctl->membase + sunxi_pull_reg(g->pin));
+ +                      break;
+ +              default:
+ +                      break;
+ +              }
+-
+ +              /* cache the config value */
+ +              g->config = configs[i];
+ +      } /* for each config */
 
-diff --cc arch/arm/mach-shmobile/board-marzen.c
-index ca7fb2e,3551b54..0000000
---- a/arch/arm/mach-shmobile/board-marzen.c
-+++ b/arch/arm/mach-shmobile/board-marzen.c
-@@@ -38,8 -38,6 +39,7 @@@
-  #include <linux/mmc/host.h>
-  #include <linux/mmc/sh_mobile_sdhi.h>
-  #include <linux/mfd/tmio.h>
- +#include <media/soc_camera.h>
-- #include <mach/hardware.h>
-  #include <mach/r8a7779.h>
-  #include <mach/common.h>
-  #include <mach/irqs.h>
-@@@ -212,8 -203,7 +231,9 @@@ static struct platform_device *marzen_d
-  	&thermal_device,
-  	&hspi_device,
-  	&leds_device,
- +	&camera0_device,
- +	&camera1_device,
-+ 	&usb_phy,
-  };
- =20
-  static const struct pinctrl_map marzen_pinctrl_map[] =3D {
-@@@ -274,9 -254,6 +294,8 @@@ static void __init marzen_init(void
-  	r8a7779_init_irq_extpin(1); /* IRQ1 as individual interrupt */
- =20
-  	r8a7779_add_standard_devices();
-- 	r8a7779_add_usb_phy_device(&usb_phy_platform_data);
- +	r8a7779_add_vin_device(1, &vin_platform_data);
- +	r8a7779_add_vin_device(3, &vin_platform_data);
-  	platform_add_devices(marzen_devices, ARRAY_SIZE(marzen_devices));
+ -      /* cache the config value */
+ -      g->config = config;
+++      spin_unlock_irqrestore(&pctl->lock, flags);
++
+        return 0;
   }
- =20
 
---Signature=_Thu__29_Aug_2013_17_40_34_+1000_GGH=8Gv2bXAaNVu0
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSHvryAAoJEECxmPOUX5FE8OUP/3dDQQeJcBzSc6Xqb6qfNueo
-x/wgM4R05jrYyoRQO5txB67kiDskBPupKE+CIwZ1ZTbp7R2tBliFy9dR2CIEEbHs
-Z0d8BhqtZtjs2+IYlwgcXtPzXS0c0KTWARB1DiKNoTmymXtQcJnHqa2EIDdZ+aNY
-nYvoukQdglzq1ovCAd1FEOF9el0ImGnAUFLyAU7lhOWO5hbKoG8UT+cEdYKtAjee
-hrTZvUGEu/Fhr35xoP8NiCd8r2PCY12DIpbBfFjJldcQnL9KogOvETQx1GJ0yTGc
-PQ8cYa5wRLm4NJOPfKkok/82+lDN5PA7BvWb9CgxtcZpO9fUJEUcg1OMRQOusXmF
-/gQm/ojKtzmbJH+N65vHNGjgdfLbvSvkbQ078z0Dbuij+676WTzlidlJPrQkxQf0
-KJMKfNq+AvIBYbfIM3ERFrKrgYQEfj1tWVaCWhL9x98eLHB7UUDcAzue145wVpSp
-wlvfXwnFvFtJ24LC5hkleQt1WivzcQF+NwvG65U2w7fycwLFXe8GRvXIbGQ3nCHA
-+j4lutWcS1p4+c+I367BTVKE0dJKH48jXyQLLnp54O0HQpkr9iaZZvLPQZDKCwZf
-yaFM+aU8F9Xcb7Ao27njkFHjsZ0QAux7oeHhkJCwQNWbeezd9RPs0yJBCZCBnYiw
-s0ZKpXTwIdgr8gXqO/U7
-=VRhz
------END PGP SIGNATURE-----
-
---Signature=_Thu__29_Aug_2013_17_40_34_+1000_GGH=8Gv2bXAaNVu0--
+Yours,
+Linus Walleij
