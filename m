@@ -1,41 +1,47 @@
-From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Subject: Re: linux-next: Tree for Aug 28 [ xhci build breakage ]
-Date: Thu, 29 Aug 2013 09:54:01 -0700
-Message-ID: <20130829165401.GA5538@xanatos>
-References: <CA+icZUVTzMxS4f3kZnauDkrpf4vwMbS3zd7ECOhE37S_FF83UA@mail.gmail.com>
- <CA+icZUVsG-1J2oYF+AeHsxonG2ABW4d0464yijNwaq7R5k94SQ@mail.gmail.com>
- <521DD43D.7070605@samsung.com>
- <CA+icZUWQp0k8jMqY=_DYW2Ev1cEhpev=iQNnc=NbHNgHNbifTA@mail.gmail.com>
- <521DD6BD.4030700@samsung.com>
- <20130828165938.GA26483@xanatos>
- <521E3259.6040201@samsung.com>
- <CA+icZUUj-gyqmEFo54N_62KCgByAu1n9n=dHgg3aTC53zA9TRQ@mail.gmail.com>
- <20130828211546.GH26483@xanatos>
- <CA+icZUWNVCtRn_aK0ndXxmqutM4Sc_PJN4ei0m5phu6-CwO_+g@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: manual merge of the pinctrl tree with Linus' tree
+Date: Thu, 29 Aug 2013 19:20:19 +0200
+Message-ID: <CACRpkdY-4+CJpCwGsbpb7mo0zRevEmpmoyirxeB9FbU0sS=GsQ@mail.gmail.com>
+References: <20130829171704.7a7630dd19d19ccdb9aaf384@canb.auug.org.au>
+	<CACRpkdbHtjvY_VypnCQZNU2N1YqWtUv_grTK30A+tgEP3a0uwQ@mail.gmail.com>
+	<051069C10411E24D9749790C498526FA1BDE034D@SJEXCHMB12.corp.ad.broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:54312 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754885Ab3H2QyB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 Aug 2013 12:54:01 -0400
-Content-Disposition: inline
-In-Reply-To: <CA+icZUWNVCtRn_aK0ndXxmqutM4Sc_PJN4ei0m5phu6-CwO_+g@mail.gmail.com>
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:37997 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753754Ab3H2RUU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 13:20:20 -0400
+Received: by mail-oa0-f48.google.com with SMTP id o17so979266oag.35
+        for <linux-next@vger.kernel.org>; Thu, 29 Aug 2013 10:20:19 -0700 (PDT)
+In-Reply-To: <051069C10411E24D9749790C498526FA1BDE034D@SJEXCHMB12.corp.ad.broadcom.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Dmitry Kasatkin <d.kasatkin@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
+To: Sherman Yin <syin@broadcom.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Linus Walleij <linus.walleij@stericsson.com>
 
-On Thu, Aug 29, 2013 at 10:02:13AM +0200, Sedat Dilek wrote:
-> P.S.: The forgotten patch is now in usb-next, but I don't see any
-> credits, coins, gold, platin...
+On Thu, Aug 29, 2013 at 5:24 PM, Sherman Yin <syin@broadcom.com> wrote:
 
-Thank you for reporting this.  Your name was mentioned in the tag Greg
-pulled:
+> Hmm, I fixed this the first time I ported over to LinusW's devel tree,
+> but when I rebased on Sunday, the spin lock commit seemed to be
+> reverted or gone.
 
-https://git.kernel.org/cgit/linux/kernel/git/gregkh/usb.git/commit/?h=usb-next&id=ff49896aa45de286f3cbfda800fc92665374546a
+My pinctrl devel branch was branched off of v3.11-rc1, and the
+spinlock changes were in some later -rc and I didn't merge
+them in until now, because I thought they were orthogonal.
 
-As for the non-credit tokens of appreciation, I don't have any gold bars
-handy, and I don't do bitcoins, sorry. :)
+How wrong I was. So merged in -rc7 now and pushed, please
+check the end result or linux-next.
 
-Sarah Sharp
+> Note the following return in between the locking and unlocking -
+> need an unlock there?
+>
+>> +              case PIN_CONFIG_DRIVE_STRENGTH:
+>> +                      strength = pinconf_to_config_argument(configs[i]);
+>> +                      if (strength > 40)
+>> +                              return -EINVAL;
+
+Argh. Send a patch with your reported-by tag...
+
+Yours,
+Linus Walleij
