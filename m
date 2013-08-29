@@ -1,98 +1,48 @@
-From: Benoit Cousson <bcousson@baylibre.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the usb tree
-Date: Thu, 29 Aug 2013 12:06:32 +0200
-Message-ID: <521F1D28.7070003@baylibre.com>
-References: <CABxcv=mg6t5wPqpF3j5sr_76qfZ7N7KgpWhcKSGoPTOcaR=V6A@mail.gmail.com> <521CA888.1080909@baylibre.com> <521CAF59.1090203@linutronix.de> <521CB046.9070408@baylibre.com> <521CB18B.4080000@linutronix.de> <521CB239.6050409@baylibre.com> <521CB403.8010307@linutronix.de> <20130827173732.GC21564@kroah.com> <20130827183732.GP3005@radagast> <20130827193021.GA30113@kroah.com> <20130827195652.GE3005@radagast>
+From: Maxim Patlasov <mpatlasov@parallels.com>
+Subject: Re: linux-next: build warnings after merge of the akpm-current tree
+Date: Thu, 29 Aug 2013 15:24:46 +0400
+Message-ID: <521F2F7E.8010702@parallels.com>
+References: <20130829194741.ff75bb1ce06207d5d3a703de@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:32964 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754706Ab3H2KGg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 06:06:36 -0400
-Received: by mail-bk0-f46.google.com with SMTP id 6so79374bkj.33
-        for <linux-next@vger.kernel.org>; Thu, 29 Aug 2013 03:06:35 -0700 (PDT)
-In-Reply-To: <20130827195652.GE3005@radagast>
+Received: from relay.parallels.com ([195.214.232.42]:38539 "EHLO
+	relay.parallels.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756298Ab3H2LY5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 07:24:57 -0400
+In-Reply-To: <20130829194741.ff75bb1ce06207d5d3a703de@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: balbi@ti.com
-Cc: Greg KH <greg@kroah.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Javier Martinez Canillas <javier@dowhile0.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, "khilman@linaro.org" <khilman@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Felipe
+Hi Stephen,
 
-On 27/08/2013 21:56, Felipe Balbi wrote:
-> Hi,
+08/29/2013 01:47 PM, Stephen Rothwell =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> Hi Andrew,
 >
-> On Tue, Aug 27, 2013 at 12:30:21PM -0700, Greg KH wrote:
->> On Tue, Aug 27, 2013 at 01:37:32PM -0500, Felipe Balbi wrote:
->>> Hi,
->>>
->>> On Tue, Aug 27, 2013 at 10:37:32AM -0700, Greg KH wrote:
->>>> On Tue, Aug 27, 2013 at 04:13:23PM +0200, Sebastian Andrzej Siewior wrote:
->>>>> On 08/27/2013 04:05 PM, Benoit Cousson wrote:
->>>>>> On 27/08/2013 16:02, Sebastian Andrzej Siewior wrote:
->>>>>>> On 08/27/2013 03:57 PM, Benoit Cousson wrote:
->>>>>>>> + Kevin,
->>>>>>>>
->>>>>>>> On 27/08/2013 15:53, Sebastian Andrzej Siewior wrote:
->>>>>>>>> What do we do now?
->>>>>>>>
->>>>>>>> Cannot you just merge the stable arm-soc/dt branch into your branch
->>>>>>>> before applying your patches?
->>>>>>>
->>>>>>> That is up to Greg. This changes sat in his usb-next tree for a while
->>>>>>> now. And before they hit Greg they were in Felipe's tree for a while.
->>>>>>>
->>>>>>> To be exact, last .dts change via USB was:
->>>>>>>
->>>>>>> Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->>>>>>> AuthorDate: Thu Jun 20 12:13:04 2013 +0200
->>>>>>> Commit:     Felipe Balbi <balbi@ti.com>
->>>>>>> CommitDate: Fri Aug 9 17:40:16 2013 +0300
->>>>>>>
->>>>>>>      usb: musb dma: add cppi41 dma driver
->>>>>>
->>>>>> Mmm, if that branch is supposed to be stable, I'm not sure it will be
->>>>>> doable...
->>>>>>
->>>>>> Maybe we should do the other way around? And merge usb-next into
->>>>>> arm-soc/dt.
->>>>>>
->>>>>> Kevin, Olof?
->>>>>
->>>>> Please be aware that I have no response so far regarding [0] from Greg.
->>>>>
->>>>> [0] http://www.spinics.net/lists/linux-usb/msg92595.html
->>>>
->>>> Nor will you, given that I am not the one to take these patches, Felipe
->>>> is.  I noticed now that you said "please route around Felipe", but
->>>> sorry, no, I'm not going to do that unless there's a really good reason.
->>>> Felipe seems to be around at the moment, please work with him on this.
->>>
->>> If you will still take a 'part2' pull request from me, I can send you
->>> urgent bugfixes by friday. If I have some time left, I can even try to
->>> get that sorted out by tomorrow.
->>
->> For 3.12 stuff, like "fixes", sure, I can take them this week, that
->> should give us a week or so for linux-next testing, right?
+> After merging the akpm tree, today's linux-next build (sparc64 defcon=
+fig
+> and others) produced these warnings:
 >
-> that's correct. I have most of them already queued up, let me just go
-> over my linux-usb maildir again and make sure I got all the important
-> stuff in.
+> mm/page-writeback.c: In function 'balance_dirty_pages_ratelimited':
+> mm/page-writeback.c:1450:13: warning: 'bdi_thresh' may be used uninit=
+ialized in this function [-Wuninitialized]
+> mm/page-writeback.c:1372:16: note: 'bdi_thresh' was declared here
+> mm/page-writeback.c:1226:16: warning: 'bdi_dirty' may be used uniniti=
+alized in this function [-Wuninitialized]
+> mm/page-writeback.c:1369:16: note: 'bdi_dirty' was declared here
 >
-> cheers, thanks for opening this 'window'.
+> Possibly introduced by commit 34c547af1e23 ("mm/page-writeback.c: add
+> strictlimit feature"), but I am not sure anything can be done about t=
+hem.
+>
 
-There are two patches in my DTS tree that conflict with the usb-next.
+This looks as gcc glitch. So far as I didn't observe the warnings, the=20
+version of gcc does matter. May be moving the definitions of the two=20
+variables into for(;;){...} would help. Could you please give it a try?
 
-I will remove that one (ARM: dts: AM33XX: don't redefine OCP bus and 
-device nodes) , as suggested by Olof, since it is the biggest source of 
-conflict from my tree.
-
-The second one is easily fixable, and Stephen already did it, but it 
-will be even better it you could take it in your tree.
-This is the patch you did that I just slightly renamed (ARM: OMAP5: dts: 
-fix reg property size).
-
-Regards,
-Benoit
+Thanks,
+Maxim
