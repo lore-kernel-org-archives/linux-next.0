@@ -1,22 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the arm-soc tree with the v4l-dvb tree
-Date: Thu, 29 Aug 2013 17:35:07 +1000
-Message-ID: <20130829173507.d46106011201747a12a70eaf@canb.auug.org.au>
+Date: Thu, 29 Aug 2013 17:40:34 +1000
+Message-ID: <20130829174034.9594cef414d41a2943160ba3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Aug_2013_17_35_07_+1000_a./s5GhrBwxwt.w+"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59943 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752511Ab3H2HfS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 03:35:18 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Thu__29_Aug_2013_17_40_34_+1000_GGH=8Gv2bXAaNVu0"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Barinov <vladimir.barinov@cogentembedded.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Simon Horman <horms+renesas@verge.net.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Barinov <vladimir.barinov@cogentembedded.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Magnus Damm <damm@opensource.se>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__29_Aug_2013_17_35_07_+1000_a./s5GhrBwxwt.w+
+--Signature=_Thu__29_Aug_2013_17_40_34_+1000_GGH=8Gv2bXAaNVu0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,10 +20,11 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-shmobile/board-bockw.c between commit 9c43952d0f1e
-("[media] ARM: shmobile: BOCK-W: add VIN and ML86V7667 support") from the
-v4l-dvb tree and commit bockw_init ("ARM: shmobile: r8a7778: cleanup
-registration of mmcif") from the arm-soc tree.
+arch/arm/mach-shmobile/board-marzen.c between commit 7cef5e7fd1ab
+("[media] ARM: shmobile: Marzen: add VIN and ADV7180 support") from the
+v4l-dvb tree and commits 85469abe4930 ("ARM: shmobile: Remove Marzen use
+of <mach/hardware.h>") and fee529df76ff ("ARM: shmobile: r8a7779: cleanup
+registration of usb phy") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,52 +33,59 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-shmobile/board-bockw.c
-index 35dd7f2,255e97e..0000000
---- a/arch/arm/mach-shmobile/board-bockw.c
-+++ b/arch/arm/mach-shmobile/board-bockw.c
-@@@ -217,21 -205,7 +235,17 @@@ static void __init bockw_init(void
-  	r8a7778_clock_init();
-  	r8a7778_init_irq_extpin(1);
-  	r8a7778_add_standard_devices();
-- 	r8a7778_add_usb_phy_device(&usb_phy_platform_data);
-  	r8a7778_add_ether_device(&ether_platform_data);
-- 	r8a7778_add_i2c_device(0);
-- 	r8a7778_add_hspi_device(0);
-- 	r8a7778_add_mmc_device(&sh_mmcif_plat);
- +	r8a7778_add_vin_device(0, &vin_platform_data);
- +	/* VIN1 has a pin conflict with Ether */
- +	if (!IS_ENABLED(CONFIG_SH_ETH))
- +		r8a7778_add_vin_device(1, &vin_platform_data);
- +	platform_device_register_data(&platform_bus, "soc-camera-pdrv", 0,
- +				      &iclink0_ml86v7667,
- +				      sizeof(iclink0_ml86v7667));
- +	platform_device_register_data(&platform_bus, "soc-camera-pdrv", 1,
- +				      &iclink1_ml86v7667,
- +				      sizeof(iclink1_ml86v7667));
+diff --cc arch/arm/mach-shmobile/board-marzen.c
+index ca7fb2e,3551b54..0000000
+--- a/arch/arm/mach-shmobile/board-marzen.c
++++ b/arch/arm/mach-shmobile/board-marzen.c
+@@@ -38,8 -38,6 +39,7 @@@
+  #include <linux/mmc/host.h>
+  #include <linux/mmc/sh_mobile_sdhi.h>
+  #include <linux/mfd/tmio.h>
+ +#include <media/soc_camera.h>
+- #include <mach/hardware.h>
+  #include <mach/r8a7779.h>
+  #include <mach/common.h>
+  #include <mach/irqs.h>
+@@@ -212,8 -203,7 +231,9 @@@ static struct platform_device *marzen_d
+  	&thermal_device,
+  	&hspi_device,
+  	&leds_device,
+ +	&camera0_device,
+ +	&camera1_device,
++ 	&usb_phy,
+  };
  =20
-  	i2c_register_board_info(0, i2c0_devices,
-  				ARRAY_SIZE(i2c0_devices));
+  static const struct pinctrl_map marzen_pinctrl_map[] =3D {
+@@@ -274,9 -254,6 +294,8 @@@ static void __init marzen_init(void
+  	r8a7779_init_irq_extpin(1); /* IRQ1 as individual interrupt */
+ =20
+  	r8a7779_add_standard_devices();
+- 	r8a7779_add_usb_phy_device(&usb_phy_platform_data);
+ +	r8a7779_add_vin_device(1, &vin_platform_data);
+ +	r8a7779_add_vin_device(3, &vin_platform_data);
+  	platform_add_devices(marzen_devices, ARRAY_SIZE(marzen_devices));
+  }
+ =20
 
---Signature=_Thu__29_Aug_2013_17_35_07_+1000_a./s5GhrBwxwt.w+
+--Signature=_Thu__29_Aug_2013_17_40_34_+1000_GGH=8Gv2bXAaNVu0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSHvmvAAoJEECxmPOUX5FE/dYP/3adtfHbkhbgtChN5ueSURPU
-1sWZQIJMNYjc7vYmdXZYY1j3iKuWhtlsTGxbHHkDbrpgpLjyrUWt3LfSwdREzPv3
-9LXp4BgSqcn4s9bfx57UwVN5oIJGKSICt4vqEpkaRJxyIfMUCkdUUzmoxTh56Itw
-DZlJxLUPb2NTvPjc3v3snK9iQ8UVXMozu1grGc26xhzEbY6Wyajba9w5Gklfjsvw
-oRTH4v1pFko105Tl5WHXGJMfX5bh6eJza+1jSB6Sdn3OIstG/hRRnhlCTXrP81mI
-zNq+OK+0ehsg7zOnIBngiI7QTVhwPvnpos9sjaXyKhqZHKIHIxD9o8jB0kUFvsGx
-DQ9H2+2iEd1idp2zNvCUorLWtIlg/6WHSM0NJB8QMjXhyeo7tuKksAjSxsvl1kLD
-eDxIEsg/ujoFl5wAVuNkCsiCm8BeFbwUkMoU34PUjzsYnK5+B45oMgrgFx4hgreS
-DIkNhMyaS1DGVqBcEEwLG4O2SE2csgDYI59KZoDgUi3OwYUzT2bCgysgKb+s+N6E
-P1cHn94q05nqEbuR7HEVFfWdUOXtES/10uDjXaeaXSBcg8mG3Ghzfthc/zpchLRr
-o4FIF9pkb0BWHDw6ZAsBV34GswHY6nuDOrcNZIxr+Jtiinyfp7yN/hvUpwVM8+Su
-RgcTmPOvNN94kDfFd62O
-=y8Np
+iQIcBAEBCAAGBQJSHvryAAoJEECxmPOUX5FE8OUP/3dDQQeJcBzSc6Xqb6qfNueo
+x/wgM4R05jrYyoRQO5txB67kiDskBPupKE+CIwZ1ZTbp7R2tBliFy9dR2CIEEbHs
+Z0d8BhqtZtjs2+IYlwgcXtPzXS0c0KTWARB1DiKNoTmymXtQcJnHqa2EIDdZ+aNY
+nYvoukQdglzq1ovCAd1FEOF9el0ImGnAUFLyAU7lhOWO5hbKoG8UT+cEdYKtAjee
+hrTZvUGEu/Fhr35xoP8NiCd8r2PCY12DIpbBfFjJldcQnL9KogOvETQx1GJ0yTGc
+PQ8cYa5wRLm4NJOPfKkok/82+lDN5PA7BvWb9CgxtcZpO9fUJEUcg1OMRQOusXmF
+/gQm/ojKtzmbJH+N65vHNGjgdfLbvSvkbQ078z0Dbuij+676WTzlidlJPrQkxQf0
+KJMKfNq+AvIBYbfIM3ERFrKrgYQEfj1tWVaCWhL9x98eLHB7UUDcAzue145wVpSp
+wlvfXwnFvFtJ24LC5hkleQt1WivzcQF+NwvG65U2w7fycwLFXe8GRvXIbGQ3nCHA
++j4lutWcS1p4+c+I367BTVKE0dJKH48jXyQLLnp54O0HQpkr9iaZZvLPQZDKCwZf
+yaFM+aU8F9Xcb7Ao27njkFHjsZ0QAux7oeHhkJCwQNWbeezd9RPs0yJBCZCBnYiw
+s0ZKpXTwIdgr8gXqO/U7
+=VRhz
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__29_Aug_2013_17_35_07_+1000_a./s5GhrBwxwt.w+--
+--Signature=_Thu__29_Aug_2013_17_40_34_+1000_GGH=8Gv2bXAaNVu0--
