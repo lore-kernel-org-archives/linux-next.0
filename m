@@ -1,77 +1,82 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Aug 28 [ xhci build breakage ]
-Date: Thu, 29 Aug 2013 10:02:13 +0200
-Message-ID: <CA+icZUWNVCtRn_aK0ndXxmqutM4Sc_PJN4ei0m5phu6-CwO_+g@mail.gmail.com>
-References: <CA+icZUUTBYMxLPBv2fq86h3dxyANhtpd6=Q4XGMscrntPNA9bQ@mail.gmail.com>
-	<CA+icZUW6JMa6VoRJ62AUZDpYm2_q_tzSM0Ryb56RNnCdEhwQyA@mail.gmail.com>
-	<CA+icZUVTzMxS4f3kZnauDkrpf4vwMbS3zd7ECOhE37S_FF83UA@mail.gmail.com>
-	<CA+icZUVsG-1J2oYF+AeHsxonG2ABW4d0464yijNwaq7R5k94SQ@mail.gmail.com>
-	<521DD43D.7070605@samsung.com>
-	<CA+icZUWQp0k8jMqY=_DYW2Ev1cEhpev=iQNnc=NbHNgHNbifTA@mail.gmail.com>
-	<521DD6BD.4030700@samsung.com>
-	<20130828165938.GA26483@xanatos>
-	<521E3259.6040201@samsung.com>
-	<CA+icZUUj-gyqmEFo54N_62KCgByAu1n9n=dHgg3aTC53zA9TRQ@mail.gmail.com>
-	<20130828211546.GH26483@xanatos>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the pm tree
+Date: Thu, 29 Aug 2013 18:04:25 +1000
+Message-ID: <20130829180425.4aa3d164f01cc65b215187fe@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__29_Aug_2013_18_04_25_+1000_zJ8Qzz224/Dy0fV6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f41.google.com ([74.125.82.41]:65068 "EHLO
-	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755641Ab3H2ICP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 04:02:15 -0400
-In-Reply-To: <20130828211546.GH26483@xanatos>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56528 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753830Ab3H2IE2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 04:04:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Cc: Dmitry Kasatkin <d.kasatkin@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sahara <keun-o.park@windriver.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-On Wed, Aug 28, 2013 at 11:15 PM, Sarah Sharp
-<sarah.a.sharp@linux.intel.com> wrote:
-> On Wed, Aug 28, 2013 at 07:39:14PM +0200, Sedat Dilek wrote:
->> On Wed, Aug 28, 2013 at 7:24 PM, Dmitry Kasatkin <d.kasatkin@samsung.com> wrote:
->> Still noone answered me why "drivers/usb/host/xhci-ring.c" does NOT
->> include <linux/device.h> (dev_info_ratelimited() and other defines).
->> I am expecting that... even I see...
->>
->>           drivers/usb/host/.xhci-ring.o.cmd:715:  include/linux/device.h \
->>
->> ...where I don't know why this happens.
->>
->> ( For me this is a bit more important than """trimming""" my
->> responses, I keep the history... )
->>
->> - Sedat -
->>
->> P.S.: List of includes in xhci-ring.c
->>
->> $ grep ^'#include' -nr drivers/usb/host/xhci-ring.c
->> 67:#include <linux/scatterlist.h>
->> 68:#include <linux/slab.h>
->> 69:#include "xhci.h"
->> 70:#include "xhci-trace.h"
->
-> Because a header that xhci-ring.c uses includes device.h instead.
->
-> drivers/usb/host/xhci/xhci-ring.c includes
-> drivers/usb/host/xhci.h which includes
-> include/linux/usb.h which includes
-> include/linux/device.h
->
-> All USB host controllers depend on including usb.h, so I don't think
-> there's a need for the driver to explicitly include device.h.
->
+--Signature=_Thu__29_Aug_2013_18_04_25_+1000_zJ8Qzz224/Dy0fV6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the explanations.
-On the one hand it is a fine thingie to place include-files at one
-single place - think of renamed or moved (uapi) include-files.
-Looking at xhci-ring.c means for me to dig through 3 or 4 files as
-someone not dealing everyday with USB stuff.
+Hi all,
 
-What is the effect of CONFIG_DYNAMIC_DEBUG=[y|n] in the affected code?
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/cpuidle/Makefile between commits b98e01ad4ed9 ("cpuidle: Add
+Kconfig.arm and move calxeda, kirkwood and zynq") and d3f2950f2ade ("ARM:
+ux500: cpuidle: Move ux500 cpuidle driver to drivers/cpuidle") from the
+pm tree and commit 14d2c34cfa00 ("cpuidle: big.LITTLE: vexpress-TC2 CPU
+idle driver") from the arm-soc tree.
 
-- Sedat -
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-P.S.: The forgotten patch is now in usb-next, but I don't see any
-credits, coins, gold, platin...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/cpuidle/Makefile
+index 0b9d200,3b6445c..0000000
+--- a/drivers/cpuidle/Makefile
++++ b/drivers/cpuidle/Makefile
+@@@ -5,9 -5,7 +5,10 @@@
+  obj-y +=3D cpuidle.o driver.o governor.o sysfs.o governors/
+  obj-$(CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED) +=3D coupled.o
+ =20
+ -obj-$(CONFIG_CPU_IDLE_CALXEDA) +=3D cpuidle-calxeda.o
+ -obj-$(CONFIG_ARCH_KIRKWOOD) +=3D cpuidle-kirkwood.o
+ -obj-$(CONFIG_CPU_IDLE_ZYNQ) +=3D cpuidle-zynq.o
+ -obj-$(CONFIG_CPU_IDLE_BIG_LITTLE) +=3D cpuidle-big_little.o
+ +#########################################################################=
+#########
+ +# ARM SoC drivers
+ +obj-$(CONFIG_ARM_HIGHBANK_CPUIDLE)	+=3D cpuidle-calxeda.o
+ +obj-$(CONFIG_ARM_KIRKWOOD_CPUIDLE)	+=3D cpuidle-kirkwood.o
+ +obj-$(CONFIG_ARM_ZYNQ_CPUIDLE)		+=3D cpuidle-zynq.o
+ +obj-$(CONFIG_ARM_U8500_CPUIDLE)         +=3D cpuidle-ux500.o
+++obj-$(CONFIG_CPU_IDLE_BIG_LITTLE)       +=3D cpuidle-big_little.o
+
+--Signature=_Thu__29_Aug_2013_18_04_25_+1000_zJ8Qzz224/Dy0fV6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSHwCJAAoJEECxmPOUX5FEZTwP/1KyjYCYBHT7qYuJEexclw1C
+bh3lB3/JMgpEL32bk6EZBhO76efkXh2sh74vgcRh+g0qpwVKJQ/j2qn6C3kwAZnG
+Pcrz3YJfIVsTM77fvSrpa1rznRd17Q0x+m0wcik7hr11F7fX0Bkju9cGK3RXnmKl
+KaiK/eSiqczD8lwUA2KZvndx08SeW7T4GUDOHHJxmbRnFFiMmv8zHptjhINS6tHJ
+n2ye1wOx5W0UIBeeEZd4coUVkR8S5fe5PmmKzurdjRYzQBTs2t+e3FgxI12b/VqZ
+ngTRQcJ6Wzpq1aiBu4cflVXgS5v3UjSvtJH9TQNUtY2UKEM597FblgZJ2lpRresn
+Q4/3mID0JJ58L5ewVj0jDtDIDTCG34yXp+2U//8GN7/svUVXD7sxrRHhi3/trg/8
+Xy1bMUE/huMFJfpGlPncoQx00Dz3KegHl8gOij7LdDXNtmmoZCK3zgWK2RyDgb2S
+ZNGFEypKKOgJWKt3ZKy6mPpFSJvzvGRZbIyFGwBlEyO+PZuSiUFGxFqWv3/D22hV
+loChnt+UzaTTBbg0QA6nu/edxyRp2KgFxWEC3xhmCbWp0Tgl4KHM5OG15SdQ331A
+dJeEtHm3Gt587bfEMLqdizaF6P9HgZsoTHYzLWV2vljd/f2q3Pd281OMWGvgEoBd
+btU4RgBZFYB+LjMgWK2N
+=gz8b
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__29_Aug_2013_18_04_25_+1000_zJ8Qzz224/Dy0fV6--
