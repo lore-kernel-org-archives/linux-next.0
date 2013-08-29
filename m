@@ -1,35 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: manual merge of the pinctrl tree with Linus' tree
-Date: Thu, 29 Aug 2013 19:21:21 +0200
-Message-ID: <CACRpkdYRqXuqqtVyPY_99tCEhX=wHKuQ0=m9ptVFHKOD4tUteQ@mail.gmail.com>
-References: <20130829171704.7a7630dd19d19ccdb9aaf384@canb.auug.org.au>
-	<CACRpkdbHtjvY_VypnCQZNU2N1YqWtUv_grTK30A+tgEP3a0uwQ@mail.gmail.com>
-	<051069C10411E24D9749790C498526FA1BDE034D@SJEXCHMB12.corp.ad.broadcom.com>
-	<CACRpkdY-4+CJpCwGsbpb7mo0zRevEmpmoyirxeB9FbU0sS=GsQ@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the pm tree
+Date: Thu, 29 Aug 2013 10:57:15 -0700
+Message-ID: <20130829175715.GH18542@quad.lixom.net>
+References: <20130829180425.4aa3d164f01cc65b215187fe@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY-4+CJpCwGsbpb7mo0zRevEmpmoyirxeB9FbU0sS=GsQ@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20130829180425.4aa3d164f01cc65b215187fe@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sherman Yin <syin@broadcom.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Linus Walleij <linus.walleij@stericsson.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sahara <keun-o.park@windriver.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Aug 29, 2013 at 7:20 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Thu, Aug 29, 2013 at 06:04:25PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> drivers/cpuidle/Makefile between commits b98e01ad4ed9 ("cpuidle: Add
+> Kconfig.arm and move calxeda, kirkwood and zynq") and d3f2950f2ade ("ARM:
+> ux500: cpuidle: Move ux500 cpuidle driver to drivers/cpuidle") from the
+> pm tree and commit 14d2c34cfa00 ("cpuidle: big.LITTLE: vexpress-TC2 CPU
+> idle driver") from the arm-soc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/cpuidle/Makefile
+> index 0b9d200,3b6445c..0000000
+> --- a/drivers/cpuidle/Makefile
+> +++ b/drivers/cpuidle/Makefile
+> @@@ -5,9 -5,7 +5,10 @@@
+>   obj-y += cpuidle.o driver.o governor.o sysfs.o governors/
+>   obj-$(CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED) += coupled.o
+>   
+>  -obj-$(CONFIG_CPU_IDLE_CALXEDA) += cpuidle-calxeda.o
+>  -obj-$(CONFIG_ARCH_KIRKWOOD) += cpuidle-kirkwood.o
+>  -obj-$(CONFIG_CPU_IDLE_ZYNQ) += cpuidle-zynq.o
+>  -obj-$(CONFIG_CPU_IDLE_BIG_LITTLE) += cpuidle-big_little.o
+>  +##################################################################################
+>  +# ARM SoC drivers
+>  +obj-$(CONFIG_ARM_HIGHBANK_CPUIDLE)	+= cpuidle-calxeda.o
+>  +obj-$(CONFIG_ARM_KIRKWOOD_CPUIDLE)	+= cpuidle-kirkwood.o
+>  +obj-$(CONFIG_ARM_ZYNQ_CPUIDLE)		+= cpuidle-zynq.o
+>  +obj-$(CONFIG_ARM_U8500_CPUIDLE)         += cpuidle-ux500.o
+> ++obj-$(CONFIG_CPU_IDLE_BIG_LITTLE)       += cpuidle-big_little.o
 
->> Note the following return in between the locking and unlocking -
->> need an unlock there?
->>
->>> +              case PIN_CONFIG_DRIVE_STRENGTH:
->>> +                      strength = pinconf_to_config_argument(configs[i]);
->>> +                      if (strength > 40)
->>> +                              return -EINVAL;
->
-> Argh. Send a patch with your reported-by tag...
 
-Not SEND, I mean SENT, I just SENT a patch...
-subject "pinctrl: sunxi: drop lock on error path"
-sorry for the confusion.
+Might want to sort u8500 before zynq, but otherwise looks fine.
 
-Yours,
-Linus Walleij
+
+-Olof
