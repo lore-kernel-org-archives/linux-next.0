@@ -1,52 +1,66 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: 32337ea "ASoC: warn if we will overwrite the DAI
-	stream	widgets"
-Date: Thu, 29 Aug 2013 01:01:26 +0100
-Message-ID: <20130829000126.GQ6617@n2100.arm.linux.org.uk>
-References: <521E8798.10206@wwwdotorg.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: status of the memblock tree
+Date: Thu, 29 Aug 2013 10:37:32 +1000
+Message-ID: <20130829103732.426fdfdeb3da0c3c209f132c@canb.auug.org.au>
+References: <20130828163459.3eb7fc0d7ae531494f605831@canb.auug.org.au>
+	<20130828122809.GC18348@mtj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__29_Aug_2013_10_37_32_+1000_5HBviv_+ojst.wfV"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35856 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751675Ab3H2Aho (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Aug 2013 20:37:44 -0400
+In-Reply-To: <20130828122809.GC18348@mtj.dyndns.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Thu__29_Aug_2013_10_37_32_+1000_5HBviv_+ojst.wfV
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <521E8798.10206@wwwdotorg.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Steev Klimaszewski <steev@pwnieexpress.com>, Liam Girdwood <lrg@ti.com>, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2013 at 05:28:24PM -0600, Stephen Warren wrote:
-> Russell, if the warning in commit 32337ea "ASoC: warn if we will
-> overwrite the DAI stream widgets" fires, what do I need to do to the
-> ASoC driver to fix it? (I'm deliberately ignoring any other issues with
-> this patch, and looking only to discover what is apparently wrong with
-> my driver that's triggering this...).
-> 
-> Steev Klimaszewski reported this warning to me, and I've repro'd it
-> running next-20130827 on a couple of Tegra systems (TrimSlice and
-> Seaboard at least), using sound/soc/tegra/tegra_{trimslice,wm8903}.c,
-> and associated ASoC components.
+Hi Tejun,
 
-I chucked this into linux-next in order to prove that the issue I had
-been reporting was not specific to my systems here (because I was making
-absolutely no useful progress with Mark.)  Mark finally admitted for the
-first time that there's a bug here yesterday, so I've now dropped the
-patch out of linux-next (either that's coincidental or cause and effect).
-In any case, it's served its purpose.
+On Wed, 28 Aug 2013 08:28:09 -0400 Tejun Heo <tj@kernel.org> wrote:
+>
+> On Wed, Aug 28, 2013 at 04:34:59PM +1000, Stephen Rothwell wrote:
+> > I was wondering if the memblock tree needs to exist any more.  The last
+> > commit to it was in December 2011 and was merged into Linus' tree during
+> > the v3.3 merge window.
+>=20
+> After the rewrite was complete, the tree was never used.  I think it
+> can be put to rest now.  Ingo is routing all memblock changes now.
 
-As for how to solve the underlying problem, I have no idea - I've been
-asking the same question of Mark for the last three weeks and just been
-getting a load of drivel about "it's because you're using DPCM" and
-other *totally useless* suggestions about the code I'm trying to get
-working.
+I have removed it.
 
-Liam says he's working on "a patch" last week, so I assume that this
-issue will eventually be resolved.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__29_Aug_2013_10_37_32_+1000_5HBviv_+ojst.wfV
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSHpfRAAoJEECxmPOUX5FE62wQAKTozp+fUod8RvV+3AubaDjo
+5OsyeD7mwV2Z0MMrA6DQc2MPPsGB0ZNMqMhqO6cNt4rroi4r/FZXGiRVZjF4AKwr
+TH3I5zCVxa2E/dtia6BxXU28fmro8fJnm71BGXlIm7BQLoGAsaHR70fvWuLIsg8R
+Us/3UFjum4m5pCZqzRYEDtnCgJKHepBAexoYXHmJmH4skoHlKvEipbahTzUE8M/V
+SsPnB63Mxir/MB9Gxs43tsT64QJ1geW7dyKwRUOR670/b3P63C7wy/zzxRCLQXq7
+Evqo0b2VL+i24kmbTsFPdLJ5PX1Wj5QPiRQ30/KHw5YqPI2rhDs4/aB8W1tJYxft
+DnkopaY4YY7g66bQgW0O0r5M+O71o1zRUWRfPHNg2XXRcem8rHXdaBKSt5VeDYTR
+Ma/AbEeW0WJ47sQ1mBkjCUVV3JdXn6QfBUq51tHZLHSw7tuxsNrwwZ+t0uL2V/2O
+oyiKGLCClgvMYAWItwS/QyiDPCb/FUHu8UAOsxb48Sv7BLck8LTzpgOV1iHnZX9d
+giNId7sE6tZmr2uKagOD2vOGQYbshxlo7bd9Y/m/ZKEJhxjXGeI17yRGD+JRrtVx
+vmKHsFIgPrEbxVj2bi0H6b4VSJ820csCKW6TJf4D3XbqqV+5N11sVYhTnXGUpUkg
+o4xtBX3R7eLBeZPArJt9
+=IW8B
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__29_Aug_2013_10_37_32_+1000_5HBviv_+ojst.wfV--
