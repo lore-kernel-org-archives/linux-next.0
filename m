@@ -1,130 +1,166 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with the drm tree
-Date: Thu, 29 Aug 2013 14:09:06 +1000
-Message-ID: <20130829140906.2c4b5dea4453266265018c0b@canb.auug.org.au>
+Subject: linux-next: manual merge of the pinctrl tree with Linus' tree
+Date: Thu, 29 Aug 2013 17:17:04 +1000
+Message-ID: <20130829171704.7a7630dd19d19ccdb9aaf384@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Aug_2013_14_09_06_+1000_CXyhuRdgVG/puWv0"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53474 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752696Ab3H2EJU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 00:09:20 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shobhit Kumar <shobhit.kumar@intel.com>, Ilia Mirkin <imirkin@alum.mit.edu>, Dave Airlie <airlied@linux.ie>
+ boundary="Signature=_Thu__29_Aug_2013_17_17_04_+1000_XmkXVoQxD.QLYN1K"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Linus Walleij <linus.walleij@stericsson.com>, Sherman Yin <syin@broadcom.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__29_Aug_2013_14_09_06_+1000_CXyhuRdgVG/puWv0
+--Signature=_Thu__29_Aug_2013_17_17_04_+1000_XmkXVoQxD.QLYN1K
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Linus,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/drm_crtc.c between commit b21e3afe2357 ("drm: use ida to
-allocate connector ids") from the drm tree and commit 88cd8b8b1503 ("drm:
-add MIPI DSI encoder and connector types") from the drm-intel tree.
+Today's linux-next merge of the pinctrl tree got a conflict in
+drivers/pinctrl/pinctrl-sunxi.c between commit 1bee963db9dd ("pinctrl:
+sunxi: Add spinlocks") from Linus' tree and commit 03b054e9696c
+("pinctrl: Pass all configs to driver on pin_config_set()") from the
+pinctrl tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
-=20
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/drm_crtc.c
-index 54b4169,190827d..0000000
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@@ -186,22 -193,23 +186,23 @@@ struct drm_conn_prop_enum_list=20
-   * Connector and encoder types.
-   */
-  static struct drm_conn_prop_enum_list drm_connector_enum_list[] =3D
- -{	{ DRM_MODE_CONNECTOR_Unknown, "Unknown", 0 },
- -	{ DRM_MODE_CONNECTOR_VGA, "VGA", 0 },
- -	{ DRM_MODE_CONNECTOR_DVII, "DVI-I", 0 },
- -	{ DRM_MODE_CONNECTOR_DVID, "DVI-D", 0 },
- -	{ DRM_MODE_CONNECTOR_DVIA, "DVI-A", 0 },
- -	{ DRM_MODE_CONNECTOR_Composite, "Composite", 0 },
- -	{ DRM_MODE_CONNECTOR_SVIDEO, "SVIDEO", 0 },
- -	{ DRM_MODE_CONNECTOR_LVDS, "LVDS", 0 },
- -	{ DRM_MODE_CONNECTOR_Component, "Component", 0 },
- -	{ DRM_MODE_CONNECTOR_9PinDIN, "DIN", 0 },
- -	{ DRM_MODE_CONNECTOR_DisplayPort, "DP", 0 },
- -	{ DRM_MODE_CONNECTOR_HDMIA, "HDMI-A", 0 },
- -	{ DRM_MODE_CONNECTOR_HDMIB, "HDMI-B", 0 },
- -	{ DRM_MODE_CONNECTOR_TV, "TV", 0 },
- -	{ DRM_MODE_CONNECTOR_eDP, "eDP", 0 },
- -	{ DRM_MODE_CONNECTOR_VIRTUAL, "Virtual", 0},
- +{	{ DRM_MODE_CONNECTOR_Unknown, "Unknown" },
- +	{ DRM_MODE_CONNECTOR_VGA, "VGA" },
- +	{ DRM_MODE_CONNECTOR_DVII, "DVI-I" },
- +	{ DRM_MODE_CONNECTOR_DVID, "DVI-D" },
- +	{ DRM_MODE_CONNECTOR_DVIA, "DVI-A" },
- +	{ DRM_MODE_CONNECTOR_Composite, "Composite" },
- +	{ DRM_MODE_CONNECTOR_SVIDEO, "SVIDEO" },
- +	{ DRM_MODE_CONNECTOR_LVDS, "LVDS" },
- +	{ DRM_MODE_CONNECTOR_Component, "Component" },
- +	{ DRM_MODE_CONNECTOR_9PinDIN, "DIN" },
- +	{ DRM_MODE_CONNECTOR_DisplayPort, "DP" },
- +	{ DRM_MODE_CONNECTOR_HDMIA, "HDMI-A" },
- +	{ DRM_MODE_CONNECTOR_HDMIB, "HDMI-B" },
- +	{ DRM_MODE_CONNECTOR_TV, "TV" },
- +	{ DRM_MODE_CONNECTOR_eDP, "eDP" },
- +	{ DRM_MODE_CONNECTOR_VIRTUAL, "Virtual" },
-+ 	{ DRM_MODE_CONNECTOR_DSI, "DSI" },
-  };
+diff --cc drivers/pinctrl/pinctrl-sunxi.c
+index 94716c7,8dbd465..0000000
+--- a/drivers/pinctrl/pinctrl-sunxi.c
++++ b/drivers/pinctrl/pinctrl-sunxi.c
+@@@ -282,56 -282,47 +283,60 @@@ static int sunxi_pconf_group_set(struc
+  	u32 val, mask;
+  	u16 strength;
+  	u8 dlevel;
++ 	int i;
  =20
-  static const struct drm_prop_enum_list drm_encoder_enum_list[] =3D
-@@@ -211,24 -219,9 +212,25 @@@
-  	{ DRM_MODE_ENCODER_LVDS, "LVDS" },
-  	{ DRM_MODE_ENCODER_TVDAC, "TV" },
-  	{ DRM_MODE_ENCODER_VIRTUAL, "Virtual" },
-+ 	{ DRM_MODE_ENCODER_DSI, "DSI" },
-  };
+- 	switch (pinconf_to_config_param(config)) {
+- 	case PIN_CONFIG_DRIVE_STRENGTH:
+- 		strength =3D pinconf_to_config_argument(config);
+- 		if (strength > 40)
+- 			return -EINVAL;
+- 		/*
+- 		 * We convert from mA to what the register expects:
+- 		 *   0: 10mA
+- 		 *   1: 20mA
+- 		 *   2: 30mA
+- 		 *   3: 40mA
+- 		 */
+- 		dlevel =3D strength / 10 - 1;
+-=20
+- 		spin_lock_irqsave(&pctl->lock, flags);
+-=20
+- 		val =3D readl(pctl->membase + sunxi_dlevel_reg(g->pin));
+- 	        mask =3D DLEVEL_PINS_MASK << sunxi_dlevel_offset(g->pin);
+- 		writel((val & ~mask) | dlevel << sunxi_dlevel_offset(g->pin),
+- 			pctl->membase + sunxi_dlevel_reg(g->pin));
+-=20
+- 		spin_unlock_irqrestore(&pctl->lock, flags);
+- 		break;
+- 	case PIN_CONFIG_BIAS_PULL_UP:
+- 		spin_lock_irqsave(&pctl->lock, flags);
++ 	for (i =3D 0; i < num_configs; i++) {
++ 		switch (pinconf_to_config_param(configs[i])) {
++ 		case PIN_CONFIG_DRIVE_STRENGTH:
++ 			strength =3D pinconf_to_config_argument(configs[i]);
++ 			if (strength > 40)
++ 				return -EINVAL;
++ 			/*
++ 			 * We convert from mA to what the register expects:
++ 			 *   0: 10mA
++ 			 *   1: 20mA
++ 			 *   2: 30mA
++ 			 *   3: 40mA
++ 			 */
++ 			dlevel =3D strength / 10 - 1;
+++
+++			spin_lock_irqsave(&pctl->lock, flags);
+++
++ 			val =3D readl(pctl->membase + sunxi_dlevel_reg(g->pin));
++ 			mask =3D DLEVEL_PINS_MASK << sunxi_dlevel_offset(g->pin);
++ 			writel((val & ~mask)
++ 				| dlevel << sunxi_dlevel_offset(g->pin),
++ 				pctl->membase + sunxi_dlevel_reg(g->pin));
+++
+++			spin_unlock_irqrestore(&pctl->lock, flags);
++ 			break;
++ 		case PIN_CONFIG_BIAS_PULL_UP:
+++			spin_lock_irqsave(&pctl->lock, flags);
+ +
+- 		val =3D readl(pctl->membase + sunxi_pull_reg(g->pin));
+- 		mask =3D PULL_PINS_MASK << sunxi_pull_offset(g->pin);
+- 		writel((val & ~mask) | 1 << sunxi_pull_offset(g->pin),
+- 			pctl->membase + sunxi_pull_reg(g->pin));
++ 			val =3D readl(pctl->membase + sunxi_pull_reg(g->pin));
++ 			mask =3D PULL_PINS_MASK << sunxi_pull_offset(g->pin);
++ 			writel((val & ~mask) | 1 << sunxi_pull_offset(g->pin),
++ 				pctl->membase + sunxi_pull_reg(g->pin));
+ +
+- 		spin_unlock_irqrestore(&pctl->lock, flags);
+- 		break;
+- 	case PIN_CONFIG_BIAS_PULL_DOWN:
+- 		spin_lock_irqsave(&pctl->lock, flags);
+++			spin_unlock_irqrestore(&pctl->lock, flags);
++ 			break;
++ 		case PIN_CONFIG_BIAS_PULL_DOWN:
+++			spin_lock_irqsave(&pctl->lock, flags);
+ +
+- 		val =3D readl(pctl->membase + sunxi_pull_reg(g->pin));
+- 		mask =3D PULL_PINS_MASK << sunxi_pull_offset(g->pin);
+- 		writel((val & ~mask) | 2 << sunxi_pull_offset(g->pin),
+- 			pctl->membase + sunxi_pull_reg(g->pin));
++ 			val =3D readl(pctl->membase + sunxi_pull_reg(g->pin));
++ 			mask =3D PULL_PINS_MASK << sunxi_pull_offset(g->pin);
++ 			writel((val & ~mask) | 2 << sunxi_pull_offset(g->pin),
++ 				pctl->membase + sunxi_pull_reg(g->pin));
+ +
+- 		spin_unlock_irqrestore(&pctl->lock, flags);
+- 		break;
+- 	default:
+- 		break;
+- 	}
+++			spin_unlock_irqrestore(&pctl->lock, flags);
++ 			break;
++ 		default:
++ 			break;
++ 		}
  =20
- +void drm_connector_ida_init(void)
- +{
- +	int i;
- +
- +	for (i =3D 0; i < ARRAY_SIZE(drm_connector_enum_list); i++)
- +		ida_init(&drm_connector_enum_list[i].ida);
- +}
- +
- +void drm_connector_ida_destroy(void)
- +{
- +	int i;
- +
- +	for (i =3D 0; i < ARRAY_SIZE(drm_connector_enum_list); i++)
- +		ida_destroy(&drm_connector_enum_list[i].ida);
- +}
- +
-  const char *drm_get_encoder_name(const struct drm_encoder *encoder)
-  {
-  	static char buf[32];
+- 	/* cache the config value */
+- 	g->config =3D config;
++ 		/* cache the config value */
++ 		g->config =3D configs[i];
++ 	} /* for each config */
+ =20
+  	return 0;
+  }
 
---Signature=_Thu__29_Aug_2013_14_09_06_+1000_CXyhuRdgVG/puWv0
+--Signature=_Thu__29_Aug_2013_17_17_04_+1000_XmkXVoQxD.QLYN1K
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSHslmAAoJEECxmPOUX5FEXbMP/jIG0EMVlIS7RmN4mwHQFACT
-5BcOuQMhH2eAU8l3Rnc0LA7BhVKmRunbxYmQQh5ZrmgBLCVFfb/6L/WXzE0D9JsR
-dDgWpxx07P/sxJ4wYiKLwUpHvDTHY2TSrqVr+Mn2wGwFAY7ukVOYfW9ehV92F0ib
-j1H+oC34nMt/AbNCL8XwMqlJfhgDe6dGnUR8aW5JMhX4MZXGZzS4URyALFYB+aN8
-HVqo745Qqd8vKb7/KMWswoWQsfUZGQvd+VQlStwRSuWj/9yomV67WMAeP9mnauCu
-QDUn+5zdWCycfEo3EYgzic+/Rx0uGKzGszgktX0QvQXAn1/vmxMncEsiN81DZCKV
-UBYW4DWSd5ySj24+45nWBq6ephFlqZj7i767WC9ejzB9UJM+qk2t0tHI0+FrsYMn
-Vjldri+cJEFGAO3KFUZogm47oyu+bVafktNP/iXNxqwIsFmGi5R4Jigxj9hPFqf0
-06VBr0YCIfTCqHpuc9SiHRJYh+BVBBpVaZl4tjutW4sJiss1XLPL3TQOqwgL5xrL
-fKvPB+TfF0Rabme+c1AEq3GRFvadWc88PVT/yXc3J8bAsq0Gxe+YC1pT3ssQll6s
-fzK1ispJ01MdAtMvMInARCf3ffVOsMgBrUEn9QHdnZnFtlSfgJ+h7maw/B4h1UyS
-HwZ1IeCObqbdI4ZHpYww
-=M3pV
+iQIcBAEBCAAGBQJSHvV1AAoJEECxmPOUX5FE3XAQAIv5UP+9DLJWzJ8lAA6cj7B7
+ocovw5w1bKsDTRt5NlrTS8xn9HRTPQD2fNvBrTo0RZ/vF+OYE5x6R0aBXhaE9/ET
+ObPsyWRRi4yTqs+p3zqxFTq4/lTzN5ljbIBF/duK4OUMZ1MV+t/c7Nm2cYcUwoQ7
+Ksss2GdIMUUB7Dbf/iO4skxrIoUZTZ70Eyh+0cbjGIVIEM3F2HfxoXUDJFez2RxT
+FaSdZzzI1XBqUm7wcEQUlvf0V3L7cacwCYk/6BuasYQIafbNpVjjgytRwYq8vLx2
+VZwFZPCPgV61cJsd9oLBPRnb25nkNaMr2RFBvYoB83H636T8yPWQpiaIjAuL3Ps5
+HQ0DdCQEgU3oupH1Z2YIalQg4oqDpRYBlJ+UEDsfVKyJbcRrn0j2BmtuE1WA7+mE
+uF96CCgmxFCm0BB1P3lyL6AVAQIIF0FFMPpUxaKiFBBs+Q5Yf9+v8Jp6qwwO7nTQ
+hll8UO9hK+vOqKzoCJ8Ciynpe/29u1UNDXHhO3sv+RhjIi5PptvQjoCoq5Q8BFhH
+Uq1O1qc+sgf0rynBNe/WrHlSFDja9BZB6EeBRYItNPXkiy5rYlSWwqivSK1n6L1t
+gFm6bXP3j816rkIdRMMX30gXbjRxDGFtxUvbaRJni5kUvU+AWjOxkuCcb0CPC6IW
+At0U1cVIh7nAPUlDl+q6
+=bABg
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__29_Aug_2013_14_09_06_+1000_CXyhuRdgVG/puWv0--
+--Signature=_Thu__29_Aug_2013_17_17_04_+1000_XmkXVoQxD.QLYN1K--
