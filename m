@@ -1,66 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: status of the memblock tree
-Date: Thu, 29 Aug 2013 10:37:32 +1000
-Message-ID: <20130829103732.426fdfdeb3da0c3c209f132c@canb.auug.org.au>
-References: <20130828163459.3eb7fc0d7ae531494f605831@canb.auug.org.au>
-	<20130828122809.GC18348@mtj.dyndns.org>
+Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
+Date: Thu, 29 Aug 2013 12:48:14 +1000
+Message-ID: <20130829124814.2c2547a15b5e8927a4a805a1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Aug_2013_10_37_32_+1000_5HBviv_+ojst.wfV"
+ boundary="Signature=_Thu__29_Aug_2013_12_48_14_+1000_oeDwcYh/VejLl4GF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35856 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:51647 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751675Ab3H2Aho (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Aug 2013 20:37:44 -0400
-In-Reply-To: <20130828122809.GC18348@mtj.dyndns.org>
+	with ESMTP id S1752186Ab3H2CsX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Aug 2013 22:48:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms+renesas@verge.net.au>, Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
---Signature=_Thu__29_Aug_2013_10_37_32_+1000_5HBviv_+ojst.wfV
+--Signature=_Thu__29_Aug_2013_12_48_14_+1000_oeDwcYh/VejLl4GF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi Mauro,
 
-On Wed, 28 Aug 2013 08:28:09 -0400 Tejun Heo <tj@kernel.org> wrote:
->
-> On Wed, Aug 28, 2013 at 04:34:59PM +1000, Stephen Rothwell wrote:
-> > I was wondering if the memblock tree needs to exist any more.  The last
-> > commit to it was in December 2011 and was merged into Linus' tree during
-> > the v3.3 merge window.
->=20
-> After the rewrite was complete, the tree was never used.  I think it
-> can be put to rest now.  Ingo is routing all memblock changes now.
+Today's linux-next merge of the v4l-dvb tree got a conflict in
+arch/arm/mach-shmobile/board-bockw.c between commit fa3e0cee12fb ("ARM:
+shmobile: BOCK-W: fix SDHI0 PFC settings") from Linus' tree and commit
+9c43952d0f1e ("[media] ARM: shmobile: BOCK-W: add VIN and ML86V7667
+support") from the v4l-dvb tree.
 
-I have removed it.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__29_Aug_2013_10_37_32_+1000_5HBviv_+ojst.wfV
+diff --cc arch/arm/mach-shmobile/board-bockw.c
+index 3354a85,7d44f66..0000000
+--- a/arch/arm/mach-shmobile/board-bockw.c
++++ b/arch/arm/mach-shmobile/board-bockw.c
+@@@ -167,13 -188,17 +188,23 @@@ static const struct pinctrl_map bockw_p
+  				  "usb1", "usb1"),
+  	/* SDHI0 */
+  	PIN_MAP_MUX_GROUP_DEFAULT("sh_mobile_sdhi.0", "pfc-r8a7778",
+ -				  "sdhi0", "sdhi0"),
+ +				  "sdhi0_data4", "sdhi0"),
+ +	PIN_MAP_MUX_GROUP_DEFAULT("sh_mobile_sdhi.0", "pfc-r8a7778",
+ +				  "sdhi0_ctrl", "sdhi0"),
+ +	PIN_MAP_MUX_GROUP_DEFAULT("sh_mobile_sdhi.0", "pfc-r8a7778",
+ +				  "sdhi0_cd", "sdhi0"),
+ +	PIN_MAP_MUX_GROUP_DEFAULT("sh_mobile_sdhi.0", "pfc-r8a7778",
+ +				  "sdhi0_wp", "sdhi0"),
++ 	/* VIN0 */
++ 	PIN_MAP_MUX_GROUP_DEFAULT("r8a7778-vin.0", "pfc-r8a7778",
++ 				  "vin0_clk", "vin0"),
++ 	PIN_MAP_MUX_GROUP_DEFAULT("r8a7778-vin.0", "pfc-r8a7778",
++ 				  "vin0_data8", "vin0"),
++ 	/* VIN1 */
++ 	PIN_MAP_MUX_GROUP_DEFAULT("r8a7778-vin.1", "pfc-r8a7778",
++ 				  "vin1_clk", "vin1"),
++ 	PIN_MAP_MUX_GROUP_DEFAULT("r8a7778-vin.1", "pfc-r8a7778",
++ 				  "vin1_data8", "vin1"),
+  };
+ =20
+  #define FPGA	0x18200000
+
+--Signature=_Thu__29_Aug_2013_12_48_14_+1000_oeDwcYh/VejLl4GF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSHpfRAAoJEECxmPOUX5FE62wQAKTozp+fUod8RvV+3AubaDjo
-5OsyeD7mwV2Z0MMrA6DQc2MPPsGB0ZNMqMhqO6cNt4rroi4r/FZXGiRVZjF4AKwr
-TH3I5zCVxa2E/dtia6BxXU28fmro8fJnm71BGXlIm7BQLoGAsaHR70fvWuLIsg8R
-Us/3UFjum4m5pCZqzRYEDtnCgJKHepBAexoYXHmJmH4skoHlKvEipbahTzUE8M/V
-SsPnB63Mxir/MB9Gxs43tsT64QJ1geW7dyKwRUOR670/b3P63C7wy/zzxRCLQXq7
-Evqo0b2VL+i24kmbTsFPdLJ5PX1Wj5QPiRQ30/KHw5YqPI2rhDs4/aB8W1tJYxft
-DnkopaY4YY7g66bQgW0O0r5M+O71o1zRUWRfPHNg2XXRcem8rHXdaBKSt5VeDYTR
-Ma/AbEeW0WJ47sQ1mBkjCUVV3JdXn6QfBUq51tHZLHSw7tuxsNrwwZ+t0uL2V/2O
-oyiKGLCClgvMYAWItwS/QyiDPCb/FUHu8UAOsxb48Sv7BLck8LTzpgOV1iHnZX9d
-giNId7sE6tZmr2uKagOD2vOGQYbshxlo7bd9Y/m/ZKEJhxjXGeI17yRGD+JRrtVx
-vmKHsFIgPrEbxVj2bi0H6b4VSJ820csCKW6TJf4D3XbqqV+5N11sVYhTnXGUpUkg
-o4xtBX3R7eLBeZPArJt9
-=IW8B
+iQIcBAEBCAAGBQJSHrZyAAoJEECxmPOUX5FEJPAP/AvSxPYfrEoa6qyzT6BoCyHK
+/CAYBc1TRi6hsioZISuy+VPMihzVyOLm5B4LceQCw5MuTo1FlexzGQbygJ233Efy
+R+QEHLos+tBpNFIKCgxsw7EkTMGCFc+m7vvooy1VdSMCMZYORsLs/Lpk2Pwux0zQ
+tvl4aTSQMaN5HtDbLluzFFigCW4UPbrROuoLdgzjSeudxMXcWqrLvod8A2qJjoif
+0jBKxkR/Wr7Lv2ZYM4cnRxu6lJTrdyT/eXMWXFLGAh0aSiwh4XcoEShgCYaFbqft
+M9DGKdleWfSgkxgih2knc34G0q9LfUa9BqnpNbe7/CIQq22l75DO+XpmaVBFm02r
+kqKTpeJ+Ysun0wcCPIYcBZ/5TQEdVhWLdN+ssdVigT7z9nTYl4vcFLwstZJpGo7y
+ciRxGf5qWoAEeRnqr1XJqDJ5UIjjAbDHaLAgBBIHvQDi5rtaoQTG4mxS+OH9Mn9M
+/PzrEC2IAQN6uxnEVA9qAJnDGSSvxR3mQi/sZj9jwXcSOzhWEO3NfniOPtnQa5Sw
+h3kKbfh/ikXx7gjITcGLpBC/QgJyiWb+HRQLRnMmlZ7Wi4wUC3/C3fkBRZos2tuq
+9ViDqZwpNdBQ5h7A5/U1jn2NfBNtcPXCURdopnYypDji0C0A6g0peBmrm5Ddthfw
+qxpfo4akvAIVoYHUYfVR
+=Oj5N
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__29_Aug_2013_10_37_32_+1000_5HBviv_+ojst.wfV--
+--Signature=_Thu__29_Aug_2013_12_48_14_+1000_oeDwcYh/VejLl4GF--
