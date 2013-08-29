@@ -1,57 +1,74 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the pm tree
-Date: Thu, 29 Aug 2013 10:57:15 -0700
-Message-ID: <20130829175715.GH18542@quad.lixom.net>
-References: <20130829180425.4aa3d164f01cc65b215187fe@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build warnings after merge of the akpm-current tree
+Date: Thu, 29 Aug 2013 12:42:08 -0700
+Message-ID: <20130829124208.7b97594d8a8723d45d1bad34@linux-foundation.org>
+References: <20130829194741.ff75bb1ce06207d5d3a703de@canb.auug.org.au>
+	<521F2F7E.8010702@parallels.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130829180425.4aa3d164f01cc65b215187fe@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sahara <keun-o.park@windriver.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36213 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755556Ab3H2TmK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 15:42:10 -0400
+In-Reply-To: <521F2F7E.8010702@parallels.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Maxim Patlasov <mpatlasov@parallels.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2013 at 06:04:25PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Thu, 29 Aug 2013 15:24:46 +0400 Maxim Patlasov <mpatlasov@parallels.com> wrote:
+
+> Hi Stephen,
 > 
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> drivers/cpuidle/Makefile between commits b98e01ad4ed9 ("cpuidle: Add
-> Kconfig.arm and move calxeda, kirkwood and zynq") and d3f2950f2ade ("ARM:
-> ux500: cpuidle: Move ux500 cpuidle driver to drivers/cpuidle") from the
-> pm tree and commit 14d2c34cfa00 ("cpuidle: big.LITTLE: vexpress-TC2 CPU
-> idle driver") from the arm-soc tree.
+> 08/29/2013 01:47 PM, Stephen Rothwell __________:
+> > Hi Andrew,
+> >
+> > After merging the akpm tree, today's linux-next build (sparc64 defconfig
+> > and others) produced these warnings:
+> >
+> > mm/page-writeback.c: In function 'balance_dirty_pages_ratelimited':
+> > mm/page-writeback.c:1450:13: warning: 'bdi_thresh' may be used uninitialized in this function [-Wuninitialized]
+> > mm/page-writeback.c:1372:16: note: 'bdi_thresh' was declared here
+> > mm/page-writeback.c:1226:16: warning: 'bdi_dirty' may be used uninitialized in this function [-Wuninitialized]
+> > mm/page-writeback.c:1369:16: note: 'bdi_dirty' was declared here
+> >
+> > Possibly introduced by commit 34c547af1e23 ("mm/page-writeback.c: add
+> > strictlimit feature"), but I am not sure anything can be done about them.
+> >
 > 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc drivers/cpuidle/Makefile
-> index 0b9d200,3b6445c..0000000
-> --- a/drivers/cpuidle/Makefile
-> +++ b/drivers/cpuidle/Makefile
-> @@@ -5,9 -5,7 +5,10 @@@
->   obj-y += cpuidle.o driver.o governor.o sysfs.o governors/
->   obj-$(CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED) += coupled.o
->   
->  -obj-$(CONFIG_CPU_IDLE_CALXEDA) += cpuidle-calxeda.o
->  -obj-$(CONFIG_ARCH_KIRKWOOD) += cpuidle-kirkwood.o
->  -obj-$(CONFIG_CPU_IDLE_ZYNQ) += cpuidle-zynq.o
->  -obj-$(CONFIG_CPU_IDLE_BIG_LITTLE) += cpuidle-big_little.o
->  +##################################################################################
->  +# ARM SoC drivers
->  +obj-$(CONFIG_ARM_HIGHBANK_CPUIDLE)	+= cpuidle-calxeda.o
->  +obj-$(CONFIG_ARM_KIRKWOOD_CPUIDLE)	+= cpuidle-kirkwood.o
->  +obj-$(CONFIG_ARM_ZYNQ_CPUIDLE)		+= cpuidle-zynq.o
->  +obj-$(CONFIG_ARM_U8500_CPUIDLE)         += cpuidle-ux500.o
-> ++obj-$(CONFIG_CPU_IDLE_BIG_LITTLE)       += cpuidle-big_little.o
+> This looks as gcc glitch. So far as I didn't observe the warnings, the 
+> version of gcc does matter. May be moving the definitions of the two 
+> variables into for(;;){...} would help. Could you please give it a try?
 
+Shuffling the definitions around won't help.  To fix this we'll need to
+add more code and I hate adding runtime overhead to address
+compile-time issues.  So...
 
-Might want to sort u8500 before zynq, but otherwise looks fine.
-
-
--Olof
+--- a/mm/page-writeback.c~a
++++ a/mm/page-writeback.c
+@@ -1366,10 +1366,8 @@ static void balance_dirty_pages(struct a
+ {
+ 	unsigned long nr_reclaimable;	/* = file_dirty + unstable_nfs */
+ 	unsigned long nr_dirty;  /* = file_dirty + writeback + unstable_nfs */
+-	unsigned long bdi_dirty;
+ 	unsigned long background_thresh;
+ 	unsigned long dirty_thresh;
+-	unsigned long bdi_thresh;
+ 	long period;
+ 	long pause;
+ 	long max_pause;
+@@ -1385,8 +1383,10 @@ static void balance_dirty_pages(struct a
+ 
+ 	for (;;) {
+ 		unsigned long now = jiffies;
+-		unsigned long dirty;
++		unsigned long uninitialized_var(bdi_thresh);
+ 		unsigned long thresh;
++		unsigned long uninitialized_var(bdi_dirty);
++		unsigned long dirty;
+ 		unsigned long bg_thresh;
+ 
+ 		/*
+_
