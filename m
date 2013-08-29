@@ -1,55 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the selinux tree
-Date: Thu, 29 Aug 2013 19:23:18 +1000
-Message-ID: <20130829192318.94d3e9b1c8d4f6f05c385e24@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the akpm-current tree
+Date: Thu, 29 Aug 2013 19:47:41 +1000
+Message-ID: <20130829194741.ff75bb1ce06207d5d3a703de@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Aug_2013_19_23_18_+1000_+.wESdYhrRxZgeVa"
+ boundary="Signature=_Thu__29_Aug_2013_19_47_41_+1000_s2wjfsFJbCaUOeif"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56454 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48303 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751711Ab3H2JX1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 05:23:27 -0400
+	with ESMTP id S1751650Ab3H2Jrv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 05:47:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxim Patlasov <mpatlasov@parallels.com>
 
---Signature=_Thu__29_Aug_2013_19_23_18_+1000_+.wESdYhrRxZgeVa
+--Signature=_Thu__29_Aug_2013_19_47_41_+1000_s2wjfsFJbCaUOeif
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-I have dropped the patch "revert "SELinux: do not handle seclabel as a
-special flag"" from the akpm tree as the patch that it reverted was
-dropped form the selinux tree (along with everything else in that tree).
+After merging the akpm tree, today's linux-next build (sparc64 defconfig
+and others) produced these warnings:
+
+mm/page-writeback.c: In function 'balance_dirty_pages_ratelimited':
+mm/page-writeback.c:1450:13: warning: 'bdi_thresh' may be used uninitialize=
+d in this function [-Wuninitialized]
+mm/page-writeback.c:1372:16: note: 'bdi_thresh' was declared here
+mm/page-writeback.c:1226:16: warning: 'bdi_dirty' may be used uninitialized=
+ in this function [-Wuninitialized]
+mm/page-writeback.c:1369:16: note: 'bdi_dirty' was declared here
+
+Possibly introduced by commit 34c547af1e23 ("mm/page-writeback.c: add
+strictlimit feature"), but I am not sure anything can be done about them.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__29_Aug_2013_19_23_18_+1000_+.wESdYhrRxZgeVa
+--Signature=_Thu__29_Aug_2013_19_47_41_+1000_s2wjfsFJbCaUOeif
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSHxMKAAoJEECxmPOUX5FEx2MQAInH26bdyA33e/0QlkICdmnk
-xCZdhrZ66BeMp82o0sYYeJ8hYLQ6bmDJGRuSPF5RxRVC1mZtml4LiqhTPv172yFM
-1yHjPhCXJzUDfW+70HlR2GdHUVCpxrE+dke3PgcJhzjwtxgsTy14bFdiRIAsz1cp
-nopgQcz35Q2H64N4cPQU5D76VxRh7YIm19uwe68rC7WToQMNh6jPTvKRrh0rl4sj
-52hxUdJbxqgjBLUuTh+Si6WaCtpUE65tR2SbMfk/Pdrh6CWauNfSb6YTHb97KbL+
-LwkTw9PzHN0E08M9Lb2mIUa9O8JR4fSTQDTfovujqLUvA4RcBKEp7CP3E9zhRto3
-eVM2kj1Ukd0EeZc2lFeWDIkoZ0AMr6qDNl8twaU3wpbShJXw89HMZEj97js90tv0
-YIyZM5w++vxPU4Z5ofGo4t7/6HKYv5jm0uF+djlfKGSNl8KR1x2kjKCCB1ZmdvPZ
-n2Usvt6k9nvjeMMjq4qdv3Qrm8CwzzDsJ1/w7/B8vtDuEnzaQgY66iI3Qg8n/rmw
-I9aJdNf1cQKoIOLxgChl4qjbFXHWnJKUMNokoTHjUjqXl2o34oGJEdkM45b2Q6eI
-p6o8qaSuhAqn+n8933TDfEQNlO8+0yFLOWceXvjvZz0gKr/KUJubhBS3CwryUur9
-exjUJbAexKCTz7+QhqMU
-=xAOZ
+iQIcBAEBCAAGBQJSHxjCAAoJEECxmPOUX5FEWJ4P/3x9Fuu5bcMWuPECFAMQvLW2
+U6HgkJh9rmTz1ZMOWwy9I9psVWnZnnnWOMQfnbRjn9aTvh0++56/xAJLLAHjM8qD
++bTNBHrhsmK2mk1ZiK60SDkQTTUWsXKULtufSFWME9O52DYNjA9I1pz9j84odxd2
+z1FHIY90P4YXvosdI6eQcvAGoTwqiij0eqR1OX7xurxoQvmqkfxDYrDVwNBpRKlD
+wkTdVdkKihX/01i+mElgib0iSUGmTEkwQtxlgbclGJyuGToGgasCWZTNqm9mS+gI
+6y896k4xBKFu98cvme98yKqv4+rmmrqaDvG7h+Kn3K3gtaUXqJWmZznQ6P29m2O2
+Ct9qWy54vKPYix34O/jgyVf0zRsvgAijsXZheAhnbnv47DCS5dfiMp6Zgbthj+TO
+x1GmaLWfYEouEYDISHxPa8951CHEMMAqlB5dLtTZUdzTr26ueqBQAh6U0mqjdmB4
+PWNUX7B3vzS0wcYc8A1hS/nG2UBzbYNI9mu/2hqpyc8/3w/1MD3GTMV8Qj+VLa7h
+/qJVDVe+BtFkE+xMEWE/BSWBzii6Tyj2Uyzg82/a1L7AGHnsdP1q/y1I1QpvBG/E
+0ZMWRLjslQTwSJp0YsM8QcW6ipAUmsRMtcWluqjSFe+hOrKCDJfUOo/vnzCcFvDd
+ovK5ukDbpcHGifvBiIeX
+=4nd2
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__29_Aug_2013_19_23_18_+1000_+.wESdYhrRxZgeVa--
+--Signature=_Thu__29_Aug_2013_19_47_41_+1000_s2wjfsFJbCaUOeif--
