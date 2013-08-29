@@ -1,92 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the v4l-dvb tree
-Date: Thu, 29 Aug 2013 17:59:32 +1000
-Message-ID: <20130829175932.de8fe48f48a152172dd3d770@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Aug 28 [ xhci build breakage ]
+Date: Thu, 29 Aug 2013 10:02:13 +0200
+Message-ID: <CA+icZUWNVCtRn_aK0ndXxmqutM4Sc_PJN4ei0m5phu6-CwO_+g@mail.gmail.com>
+References: <CA+icZUUTBYMxLPBv2fq86h3dxyANhtpd6=Q4XGMscrntPNA9bQ@mail.gmail.com>
+	<CA+icZUW6JMa6VoRJ62AUZDpYm2_q_tzSM0Ryb56RNnCdEhwQyA@mail.gmail.com>
+	<CA+icZUVTzMxS4f3kZnauDkrpf4vwMbS3zd7ECOhE37S_FF83UA@mail.gmail.com>
+	<CA+icZUVsG-1J2oYF+AeHsxonG2ABW4d0464yijNwaq7R5k94SQ@mail.gmail.com>
+	<521DD43D.7070605@samsung.com>
+	<CA+icZUWQp0k8jMqY=_DYW2Ev1cEhpev=iQNnc=NbHNgHNbifTA@mail.gmail.com>
+	<521DD6BD.4030700@samsung.com>
+	<20130828165938.GA26483@xanatos>
+	<521E3259.6040201@samsung.com>
+	<CA+icZUUj-gyqmEFo54N_62KCgByAu1n9n=dHgg3aTC53zA9TRQ@mail.gmail.com>
+	<20130828211546.GH26483@xanatos>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Aug_2013_17_59_32_+1000_+pQ.1qqPSxuDjH7Q"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35325 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754860Ab3H2H7f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 03:59:35 -0400
+Received: from mail-wg0-f41.google.com ([74.125.82.41]:65068 "EHLO
+	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755641Ab3H2ICP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 04:02:15 -0400
+In-Reply-To: <20130828211546.GH26483@xanatos>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Barinov <vladimir.barinov@cogentembedded.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Cc: Dmitry Kasatkin <d.kasatkin@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
 
---Signature=_Thu__29_Aug_2013_17_59_32_+1000_+pQ.1qqPSxuDjH7Q
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 28, 2013 at 11:15 PM, Sarah Sharp
+<sarah.a.sharp@linux.intel.com> wrote:
+> On Wed, Aug 28, 2013 at 07:39:14PM +0200, Sedat Dilek wrote:
+>> On Wed, Aug 28, 2013 at 7:24 PM, Dmitry Kasatkin <d.kasatkin@samsung.com> wrote:
+>> Still noone answered me why "drivers/usb/host/xhci-ring.c" does NOT
+>> include <linux/device.h> (dev_info_ratelimited() and other defines).
+>> I am expecting that... even I see...
+>>
+>>           drivers/usb/host/.xhci-ring.o.cmd:715:  include/linux/device.h \
+>>
+>> ...where I don't know why this happens.
+>>
+>> ( For me this is a bit more important than """trimming""" my
+>> responses, I keep the history... )
+>>
+>> - Sedat -
+>>
+>> P.S.: List of includes in xhci-ring.c
+>>
+>> $ grep ^'#include' -nr drivers/usb/host/xhci-ring.c
+>> 67:#include <linux/scatterlist.h>
+>> 68:#include <linux/slab.h>
+>> 69:#include "xhci.h"
+>> 70:#include "xhci-trace.h"
+>
+> Because a header that xhci-ring.c uses includes device.h instead.
+>
+> drivers/usb/host/xhci/xhci-ring.c includes
+> drivers/usb/host/xhci.h which includes
+> include/linux/usb.h which includes
+> include/linux/device.h
+>
+> All USB host controllers depend on including usb.h, so I don't think
+> there's a need for the driver to explicitly include device.h.
+>
 
-Hi all,
+Thanks for the explanations.
+On the one hand it is a fine thingie to place include-files at one
+single place - think of renamed or moved (uapi) include-files.
+Looking at xhci-ring.c means for me to dig through 3 or 4 files as
+someone not dealing everyday with USB stuff.
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-shmobile/setup-r8a7779.c between commit 4714a0255eee
-("[media] ARM: shmobile: r8a7779: add VIN support") from the v4l-dvb tree
-and commit fee529df76ff ("ARM: shmobile: r8a7779: cleanup registration of
-usb phy") from the arm-soc tree.
+What is the effect of CONFIG_DYNAMIC_DEBUG=[y|n] in the affected code?
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+- Sedat -
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-shmobile/setup-r8a7779.c
-index 3d89288,6a99333..0000000
---- a/arch/arm/mach-shmobile/setup-r8a7779.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7779.c
-@@@ -629,24 -648,6 +675,16 @@@ void __init r8a7779_add_ether_device(st
-  					  pdata, sizeof(*pdata));
-  }
- =20
-- void __init r8a7779_add_usb_phy_device(struct rcar_phy_platform_data *pda=
-ta)
-- {
-- 	platform_device_register_resndata(&platform_bus, "rcar_usb_phy", -1,
-- 					  usb_phy_resources,
-- 					  ARRAY_SIZE(usb_phy_resources),
-- 					  pdata, sizeof(*pdata));
-- }
--=20
- +void __init r8a7779_add_vin_device(int id, struct rcar_vin_platform_data =
-*pdata)
- +{
- +	BUG_ON(id < 0 || id > 3);
- +
- +	vin_info_table[id]->data =3D pdata;
- +	vin_info_table[id]->size_data =3D sizeof(*pdata);
- +
- +	platform_device_register_full(vin_info_table[id]);
- +}
- +
-  /* do nothing for !CONFIG_SMP or !CONFIG_HAVE_TWD */
-  void __init __weak r8a7779_register_twd(void) { }
- =20
-
---Signature=_Thu__29_Aug_2013_17_59_32_+1000_+pQ.1qqPSxuDjH7Q
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSHv9kAAoJEECxmPOUX5FEH7wP/j9+2ZF9m6YHDhGTFs3qT8Tf
-2JxET/vyOBmEMWRkCPz8mpEmYVgzRSg2K9vnn3kLBftzwyhvPdJ6jAV6+mDPK4ek
-AaNIK8gGX4gf1Cpxd4sGllo/Lfpv7ycfB01D0YYrFps4NXIfdFe2lWOOQ0Meg6wZ
-nPK/QXX2LpCHaoe0AG/XNEAypzSgkVmU8hAaAuTPO2+Jv09+eK1Nlhda/e2JsCoV
-YsNauZFqFnahbADpkv4pl1qm0D/NBEYKVxQvGqggaskVcGoj/MsWxiNRsoIdZchP
-9Csdope9vJa1kE9265jnaUURcr1SznrLdU6TF9BVM2yK7PpR1XP5d0A5IsJigftT
-O+SOiZBhSE9fu9IKN0yopa6nMiV6OK+0RPKEhROKBHv0g1MjWTdYQmgUmbPAxJyq
-N3NSUZsnF9UYsFOHhfbeb8ScZFf2nuUeytI5OFf0Do8mJOqfAOLlgao1bZ4WH23r
-+4OYCLeXD3uFHXSA69XmfUEeEEQHC8JNsQSrnb26ACeUZPp2B3mFDxUav6gAD7bm
-gfblreyH+gSstQH8H0newYd4IAsXEhHcB6duNJEhRA1SQKOqGH079ejbOALEOJTp
-1rogbOzjxldZsnJHU5ZG3ht2y0J099gzHt8gOwYwvQyMUUB+uHLYNxZjSS/ra0RH
-TtSJZCHG8iiL2126N9mW
-=WkDm
------END PGP SIGNATURE-----
-
---Signature=_Thu__29_Aug_2013_17_59_32_+1000_+pQ.1qqPSxuDjH7Q--
+P.S.: The forgotten patch is now in usb-next, but I don't see any
+credits, coins, gold, platin...
