@@ -1,29 +1,118 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Fri, 30 Aug 2013 08:25:06 -0700
-Message-ID: <CA+55aFwWEqzGi7uW_xPt=eC0FC-5qnom=W4x87xbH_a2Oy4=6A@mail.gmail.com>
-References: <20130830181202.bea6400ec4d92744e05b5b9f@canb.auug.org.au>
+From: Davidlohr Bueso <dave.bueso@gmail.com>
+Subject: Re: ipc-msg broken again on 3.11-rc7?
+Date: Fri, 30 Aug 2013 13:31:41 -0300
+Message-ID: <CAMJEocr1SgxQw0bEzB3Ti9bvRY74TE5y9e+PLUsAL1mJbK=-ew@mail.gmail.com>
+References: <CA+icZUXuw7QBn4CPLLuiVUjHin0m6GRdbczGw=bZY+Z60sXNow@mail.gmail.com>
+	<CA+icZUVbUD1tUa_ORtn_ZZebpp3gXXHGAcNe0NdYPXPMPoABuA@mail.gmail.com>
+	<1372192414.1888.8.camel@buesod1.americas.hpqcorp.net>
+	<CA+icZUXgOd=URJBH5MGAZKdvdkMpFt+5mRxtzuDzq_vFHpoc2A@mail.gmail.com>
+	<1372202983.1888.22.camel@buesod1.americas.hpqcorp.net>
+	<521DE5D7.4040305@synopsys.com>
+	<CA+icZUUrZG8pYqKcHY3DcYAuuw=vbdUvs6ZXDq5meBMjj6suFg@mail.gmail.com>
+	<C2D7FE5348E1B147BCA15975FBA23075140FA3@IN01WEMBXA.internal.synopsys.com>
+	<CA+icZUUn-r8iq6TVMAKmgJpQm4FhOE4b4QN_Yy=1L=0Up=rkBA@mail.gmail.com>
+	<52205597.3090609@synopsys.com>
+	<CA+icZUW=YXMC_2Qt=cYYz6w_fVW8TS4=Pvbx7BGtzjGt+31rLQ@mail.gmail.com>
+	<C2D7FE5348E1B147BCA15975FBA230751411CB@IN01WEMBXA.internal.synopsys.com>
+	<CALE5RAvaa4bb-9xAnBe07Yp2n+Nn4uGEgqpLrKMuOE8hhZv00Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f50.google.com ([209.85.212.50]:52661 "EHLO
-	mail-vb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756600Ab3H3PZI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Aug 2013 11:25:08 -0400
-In-Reply-To: <20130830181202.bea6400ec4d92744e05b5b9f@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Waiman Long <Waiman.Long@hp.com>, Namjae Jeon <namjae.jeon@samsung.com>, Ravishankar N <ravi.n1@samsung.com>, Amit Sahrawat <a.sahrawat@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <CALE5RAvaa4bb-9xAnBe07Yp2n+Nn4uGEgqpLrKMuOE8hhZv00Q@mail.gmail.com>
+Sender: owner-linux-mm@kvack.org
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>, sedat.dilek@gmail.com, linus Torvalds <torvalds@linux-foundation.org>, Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Manfred Spraul <manfred@colorfullife.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Aug 30, 2013 at 1:12 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+> Date: Fri, Aug 30, 2013 at 4:46 AM
+> Subject: Re: ipc-msg broken again on 3.11-rc7?
+> To: "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>
+> Cc: linus Torvalds <torvalds@linux-foundation.org>, Davidlohr Bueso <davi=
+dlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-k=
+ernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Mor=
+ton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen =
+<andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Manfred Spraul <manf=
+red@colorfullife.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
 >
-> I don't know if it is safe to read d_lockref.count without locking
+>
+> On 08/30/2013 01:57 PM, Sedat Dilek wrote:
+> > On Fri, Aug 30, 2013 at 10:19 AM, Vineet Gupta <vineetg76@gmail.com> wr=
+ote:
+> >> Ping ?
+> >>
+> >> It seems 3.11 is pretty close to releasing but we stil have LTP msgctl=
+08 causing a
+> >> hang (atleast on ARC) for both linux-next 20130829 as well as Linus tr=
+ee.
+> >>
+> >> So far, I haven't seemed to have drawn attention of people involved.
+> >>
 
-That's not the issue. Since commit 84d08fa888e7 ("helper for reading
-->d_count") non-core VFS code shouldn't try to access d_count directly
-at all. So instead of "dentry->d_count" it should use
-"d_count(dentry)". Then the code doesn't need to know about lockrefs
-or anything like that at all.
+I apologize for the delay, I am on vacations and wasnt interrupting my
+days at the beach by checking email.
 
-               Linus
+You mention that the msgctl08 test case just hangs, nothing
+interesting in dmesg appart from "msgmni has been set to 479" (which
+is a standard initialization message anyways)?
+
+After a quick glance, I suspect that the problem might be because we
+are calling security_msg_queue_msgsnd() without taking the lock. This
+is similar to the issue Sedat reported in the original thread with
+find_msg() concerning msgrcv. The rest of the code looks otherwise
+standard. Unfortunately I dont have a computer available to write/test
+such a fix. I think we can move calls to security_msg_queue_msgsnd()
+to be done right before ss_add(), which would simplify the code
+changes, something like:
+
+...
+
+/* queue full, wait: */
+if (msgflg & IPC_NOWAIT) {
+     err =3D -EAGAIN;
+     goto out_unlock1;
+}
+
+ipc_lock_object(&msq->q_perm);
+err =3D security_msg_queue_msgsnd(msq, msg, msgflg);
+if (err)
+    goto out_unlock0;
+
+ss_add(msq, &s);
+
+...
+
+
+Thanks,
+Davidlohr
+
+
+> >
+> > Hi Vineet,
+> >
+> > I remember fakeroot was an another good test-case for me to test this
+> > IPC breakage.
+> > Attached is my build-script for Linux-next (tested with Debian/Ubuntu).
+> > ( Cannot say if you can play with it in your environment. )
+>
+> Hi Sedat,
+>
+> I have a simpler buildroot based rootfs (initramfs based) and LTP is run =
+off of
+> NFS, although running of a local storage doesn't make a difference.
+>
+> For me msgctl08 standalone (w/o hassle of running full LTP) is enough to =
+trigger
+> it consistently.
+>
+> P.S. sorry my sender address kept flipping - mailer was broken !
+>
+> -Vineet
+>
+>
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
