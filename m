@@ -1,214 +1,34 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Aug 30 (brcmfmac)
-Date: Fri, 30 Aug 2013 14:12:25 -0700
-Message-ID: <52210AB9.2090104@infradead.org>
-References: <20130829200013.d9dde1eb64686a32c661b5d3@canb.auug.org.au>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: 1f324e3 ipv6: Don't depend on per socket memory for neighbour
+ discovery messages
+Date: Fri, 30 Aug 2013 18:19:21 -0300
+Message-ID: <CAOMZO5AHm5UO8LJ6WNThSABRHO3BoAb82hOAB+2B=rypJGY4dQ@mail.gmail.com>
+References: <5220F691.4020808@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20130829200013.d9dde1eb64686a32c661b5d3@canb.auug.org.au>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless <linux-wireless@vger.kernel.org>, brcm80211-dev-list@broadcom.com, linux-kbuild@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vb0-f53.google.com ([209.85.212.53]:57549 "EHLO
+	mail-vb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753769Ab3H3VTW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Aug 2013 17:19:22 -0400
+In-Reply-To: <5220F691.4020808@wwwdotorg.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thomas Graf <tgraf@suug.ch>, Eric Dumazet <eric.dumazet@gmail.com>, Hannes Frederic Sowa <hannes@stressinduktion.org>, "David S. Miller" <davem@davemloft.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-On 08/29/13 03:00, Stephen Rothwell wrote:
-> Hi all,
-> 
+On Fri, Aug 30, 2013 at 4:46 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> Commit 1f324e3 "ipv6: Don't depend on per socket memory for neighbour
+> discovery messages" appears to cause issues for me. If I run
+> next-20130830, I see the issue, but if I then just revert that one
+> patch, I don't see any problem, and can use the network without issue.
+>
+> The problem is: with a network device enabled (in my case, a USB
+> Ethernet dongle, although I don't know if the type is relevant), then
+> the system appears to hang soon after enabling the interface; neither
+> the serial console nor the framebuffer echo my typing, and the cursor on
+> the framebuffer stops flashing. After a short delay, I see the following
+> kernel spew:
 
-on x86_64:
-
-when
-CONFIG_MMC=m
-CONFIG_BRCMUTIL=y
-CONFIG_BRCMFMAC=y
-CONFIG_BRCMFMAC_SDIO=y
-
-
-This bool kconfig symbol:
-
-config BRCMFMAC_SDIO
-	bool "SDIO bus interface support for FullMAC driver"
-	depends on MMC
-
-allows BRCMFMAC_SDIO to be y even when MMC=m.
-
-Is there a reasonable solution to this?
-
-
-This causes many build errors:
-
-drivers/built-in.o: In function `brcmf_sdio_assert_info':
-dhd_sdio.c:(.text+0x39609b): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x3960d9): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdio_readframes':
-dhd_sdio.c:(.text+0x396a62): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x396a9b): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x396ae6): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x396b1b): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x396bd9): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x396c03): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x396f76): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x396fcc): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x397115): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x3972d0): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x397632): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x397699): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x39770b): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x397731): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x397796): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x3977b6): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x3977ff): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x3978b6): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x397940): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x397963): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x3979c1): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x397a90): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x397ab7): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdbrcm_txpkt.constprop.16':
-dhd_sdio.c:(.text+0x3981d7): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x398213): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x3985d6): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdbrcm_release':
-dhd_sdio.c:(.text+0x398a5e): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x398a85): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdbrcm_probe':
-(.text+0x398d04): undefined reference to `sdio_claim_host'
-drivers/built-in.o: In function `brcmf_sdbrcm_probe':
-(.text+0x398d3c): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdbrcm_probe':
-(.text+0x398e91): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdbrcm_probe':
-(.text+0x399087): undefined reference to `sdio_claim_host'
-drivers/built-in.o: In function `brcmf_sdbrcm_probe':
-(.text+0x3990d0): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdio_readshared':
-dhd_sdio.c:(.text+0x39953c): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x39956e): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdbrcm_bus_txctl':
-dhd_sdio.c:(.text+0x399c14): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x399c2d): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x399cac): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x399cf0): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x399ec8): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x399efe): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x399ff4): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdbrcm_bus_stop':
-dhd_sdio.c:(.text+0x39a0cb): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x39a179): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdio_dataworker':
-dhd_sdio.c:(.text+0x39a281): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x39a2f1): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x39a852): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x39a86d): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x39aa08): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x39aa4a): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x39aaa1): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x39aac1): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdbrcm_bus_init':
-dhd_sdio.c:(.text+0x39acdb): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x39ad05): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x39ad29): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x39b086): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x39b2c7): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdbrcm_watchdog_thread':
-dhd_sdio.c:(.text+0x39b6dc): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x39b6f7): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x39b735): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x39b75b): undefined reference to `sdio_release_host'
-dhd_sdio.c:(.text+0x39b790): undefined reference to `sdio_claim_host'
-dhd_sdio.c:(.text+0x39b7ae): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdio_buffrw':
-bcmsdh.c:(.text+0x39bf67): undefined reference to `mmc_set_data_timeout'
-bcmsdh.c:(.text+0x39bf76): undefined reference to `mmc_wait_for_req'
-bcmsdh.c:(.text+0x39c180): undefined reference to `sdio_readsb'
-bcmsdh.c:(.text+0x39c19d): undefined reference to `sdio_memcpy_fromio'
-bcmsdh.c:(.text+0x39c211): undefined reference to `sdio_memcpy_toio'
-drivers/built-in.o: In function `brcmf_sdio_intr_unregister':
-(.text+0x39c6fd): undefined reference to `sdio_claim_host'
-drivers/built-in.o: In function `brcmf_sdio_intr_unregister':
-(.text+0x39c706): undefined reference to `sdio_release_irq'
-drivers/built-in.o: In function `brcmf_sdio_intr_unregister':
-(.text+0x39c70f): undefined reference to `sdio_release_irq'
-drivers/built-in.o: In function `brcmf_sdio_intr_unregister':
-(.text+0x39c718): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdio_intr_unregister':
-(.text+0x39c72d): undefined reference to `sdio_claim_host'
-drivers/built-in.o: In function `brcmf_sdio_intr_unregister':
-(.text+0x39c758): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdio_intr_register':
-(.text+0x39c809): undefined reference to `sdio_claim_host'
-drivers/built-in.o: In function `brcmf_sdio_intr_register':
-(.text+0x39c819): undefined reference to `sdio_claim_irq'
-drivers/built-in.o: In function `brcmf_sdio_intr_register':
-(.text+0x39c829): undefined reference to `sdio_claim_irq'
-drivers/built-in.o: In function `brcmf_sdio_intr_register':
-(.text+0x39c832): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdio_intr_register':
-(.text+0x39c906): undefined reference to `sdio_claim_host'
-drivers/built-in.o: In function `brcmf_sdio_intr_register':
-(.text+0x39c962): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdio_ramrw':
-(.text+0x39ce75): undefined reference to `sdio_claim_host'
-drivers/built-in.o: In function `brcmf_sdio_ramrw':
-(.text+0x39cfc1): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdio_pd_probe':
-bcmsdh_sdmmc.c:(.text+0x39d177): undefined reference to `sdio_register_driver'
-drivers/built-in.o: In function `brcmf_sdio_suspend':
-bcmsdh_sdmmc.c:(.text+0x39d1f5): undefined reference to `sdio_get_host_pm_caps'
-bcmsdh_sdmmc.c:(.text+0x39d207): undefined reference to `sdio_set_host_pm_flags'
-drivers/built-in.o: In function `brcmf_sdio_pd_remove':
-bcmsdh_sdmmc.c:(.text+0x39d268): undefined reference to `sdio_unregister_driver'
-drivers/built-in.o: In function `brcmf_sdioh_request_byte':
-(.text+0x39d78e): undefined reference to `sdio_f0_readb'
-drivers/built-in.o: In function `brcmf_sdioh_request_byte':
-(.text+0x39d7c4): undefined reference to `sdio_writeb'
-drivers/built-in.o: In function `brcmf_sdioh_request_byte':
-(.text+0x39d7fd): undefined reference to `sdio_f0_writeb'
-drivers/built-in.o: In function `brcmf_sdioh_request_byte':
-(.text+0x39d81c): undefined reference to `sdio_readb'
-drivers/built-in.o: In function `brcmf_sdioh_request_byte':
-(.text+0x39d844): undefined reference to `sdio_enable_func'
-drivers/built-in.o: In function `brcmf_sdioh_request_byte':
-(.text+0x39d889): undefined reference to `sdio_writeb'
-drivers/built-in.o: In function `brcmf_sdioh_request_byte':
-(.text+0x39d8a1): undefined reference to `sdio_disable_func'
-drivers/built-in.o: In function `brcmf_sdioh_request_word':
-(.text+0x39d96c): undefined reference to `sdio_readw'
-drivers/built-in.o: In function `brcmf_sdioh_request_word':
-(.text+0x39d9b7): undefined reference to `sdio_writew'
-drivers/built-in.o: In function `brcmf_sdioh_request_word':
-(.text+0x39d9cc): undefined reference to `sdio_readl'
-drivers/built-in.o: In function `brcmf_sdioh_request_word':
-(.text+0x39d9f2): undefined reference to `sdio_writel'
-drivers/built-in.o: In function `brcmf_sdioh_attach':
-(.text+0x39da5a): undefined reference to `sdio_claim_host'
-drivers/built-in.o: In function `brcmf_sdioh_attach':
-(.text+0x39da69): undefined reference to `sdio_set_block_size'
-drivers/built-in.o: In function `brcmf_sdioh_attach':
-(.text+0x39da83): undefined reference to `sdio_set_block_size'
-drivers/built-in.o: In function `brcmf_sdioh_attach':
-(.text+0x39db3e): undefined reference to `sdio_enable_func'
-drivers/built-in.o: In function `brcmf_sdioh_attach':
-(.text+0x39db48): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdioh_detach':
-(.text+0x39dbab): undefined reference to `sdio_claim_host'
-drivers/built-in.o: In function `brcmf_sdioh_detach':
-(.text+0x39dbb4): undefined reference to `sdio_disable_func'
-drivers/built-in.o: In function `brcmf_sdioh_detach':
-(.text+0x39dbbd): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdioh_detach':
-(.text+0x39dbc6): undefined reference to `sdio_claim_host'
-drivers/built-in.o: In function `brcmf_sdioh_detach':
-(.text+0x39dbcf): undefined reference to `sdio_disable_func'
-drivers/built-in.o: In function `brcmf_sdioh_detach':
-(.text+0x39dbd8): undefined reference to `sdio_release_host'
-drivers/built-in.o: In function `brcmf_sdio_exit':
-(.text+0x39dc38): undefined reference to `sdio_unregister_driver'
-drivers/built-in.o: In function `brcmf_sdio_init':
-(.text+0x39dca2): undefined reference to `sdio_register_driver'
-
-
--- 
-~Randy
+I see the same problem on a ARM system (mx6 board) using the built-in
+ethernet driver (fec).
