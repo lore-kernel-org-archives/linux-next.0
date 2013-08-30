@@ -1,67 +1,86 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: Re: ipc-msg broken again on 3.11-rc7?
-Date: Fri, 30 Aug 2013 08:46:39 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA230751411CB@IN01WEMBXA.internal.synopsys.com>
-References: <CA+icZUXuw7QBn4CPLLuiVUjHin0m6GRdbczGw=bZY+Z60sXNow@mail.gmail.com>
- <CA+icZUVbUD1tUa_ORtn_ZZebpp3gXXHGAcNe0NdYPXPMPoABuA@mail.gmail.com>
- <1372192414.1888.8.camel@buesod1.americas.hpqcorp.net>
- <CA+icZUXgOd=URJBH5MGAZKdvdkMpFt+5mRxtzuDzq_vFHpoc2A@mail.gmail.com>
- <1372202983.1888.22.camel@buesod1.americas.hpqcorp.net>
- <521DE5D7.4040305@synopsys.com>
- <CA+icZUUrZG8pYqKcHY3DcYAuuw=vbdUvs6ZXDq5meBMjj6suFg@mail.gmail.com>
- <C2D7FE5348E1B147BCA15975FBA23075140FA3@IN01WEMBXA.internal.synopsys.com>
- <CA+icZUUn-r8iq6TVMAKmgJpQm4FhOE4b4QN_Yy=1L=0Up=rkBA@mail.gmail.com>
- <52205597.3090609@synopsys.com>
- <CA+icZUW=YXMC_2Qt=cYYz6w_fVW8TS4=Pvbx7BGtzjGt+31rLQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Date: Fri, 30 Aug 2013 18:55:46 +1000
+Message-ID: <20130830185546.69a289c2bef2173cc1ededf4@canb.auug.org.au>
+References: <20130819142633.82fb06bfa3bc0276fb09cbea@canb.auug.org.au>
+	<20130819065817.GB23742@gmail.com>
+	<20130820005234.GX19750@two.firstfloor.org>
+	<20130820064209.GB9518@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__30_Aug_2013_18_55_46_+1000_a0fguXyJr.tb2=c2"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56772 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753651Ab3H3Iz5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Aug 2013 04:55:57 -0400
+In-Reply-To: <20130820064209.GB9518@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Andi Kleen <andi@firstfloor.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+
+--Signature=_Fri__30_Aug_2013_18_55_46_+1000_a0fguXyJr.tb2=c2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-Content-Language: en-US
-Sender: owner-linux-mm@kvack.org
-To: "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>
-Cc: linus Torvalds <torvalds@linux-foundation.org>, Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Manfred
- Spraul <manfred@colorfullife.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
-List-Id: linux-next.vger.kernel.org
 
-On 08/30/2013 01:57 PM, Sedat Dilek wrote:=0A=
-> On Fri, Aug 30, 2013 at 10:19 AM, Vineet Gupta <vineetg76@gmail.com> wrot=
-e:=0A=
->> Ping ?=0A=
->>=0A=
->> It seems 3.11 is pretty close to releasing but we stil have LTP msgctl08=
- causing a=0A=
->> hang (atleast on ARC) for both linux-next 20130829 as well as Linus tree=
-.=0A=
->>=0A=
->> So far, I haven't seemed to have drawn attention of people involved.=0A=
->>=0A=
-> =0A=
-> Hi Vineet,=0A=
-> =0A=
-> I remember fakeroot was an another good test-case for me to test this=0A=
-> IPC breakage.=0A=
-> Attached is my build-script for Linux-next (tested with Debian/Ubuntu).=
-=0A=
-> ( Cannot say if you can play with it in your environment. )=0A=
-=0A=
-Hi Sedat,=0A=
-=0A=
-I have a simpler buildroot based rootfs (initramfs based) and LTP is run of=
-f of=0A=
-NFS, although running of a local storage doesn't make a difference.=0A=
-=0A=
-For me msgctl08 standalone (w/o hassle of running full LTP) is enough to tr=
-igger=0A=
-it consistently.=0A=
-=0A=
-P.S. sorry my sender address kept flipping - mailer was broken !=0A=
-=0A=
--Vineet=0A=
-=0A=
+Hi all,
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+On Tue, 20 Aug 2013 08:42:09 +0200 Ingo Molnar <mingo@kernel.org> wrote:
+>
+> * Andi Kleen <andi@firstfloor.org> wrote:
+>=20
+> > > > Introduced by commit 9a55fdbe941e ("x86, asmlinkage, paravirt: Add
+> > > > __visible/asmlinkage to xen paravirt ops").  The 2 definitions used=
+ to be
+> > > > identical ... maybe there should be only one.
+> > >=20
+> > > Andi, please send a fix for this build warning, against=20
+> > > tip:x86/asmlinkage.
+> >=20
+> > I resent the patch. Thanks for the headsup.
+>=20
+> I suspect hpa missed it because the patch was opaque and=20
+> non-descriptive: the title talks about a 'warning' that is=20
+> supposedly fixed but the changelog does not explain what=20
+> warning it is and why the change matters.
+>=20
+> Please use the customary changelog style we use in the=20
+> kernel:
+>=20
+>   " Current code does (A), this has a problem when (B).
+>     We can improve this doing (C), because (D)."
+>=20
+> I've seen this pattern of deficient changelogs a dozen=20
+> times in your patches this year alone ...
+
+Ping?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__30_Aug_2013_18_55_46_+1000_a0fguXyJr.tb2=c2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSIF4WAAoJEECxmPOUX5FE0wgP/1pdTFAe+sVoGnxbwkqvqcPk
+MFRCVqYQcyp26ago7b9nstVL+vOL2UpXOMAMnv8Sgs9X2RY0SaYrgMJeHio15hTJ
+8Pk73d7ry8mzmHc8az7OPPbbngw1GeMh+WKEgv/bsO5aLOjKDrw8+hVoMwn8bl8P
+cUkytMm5tCPSBXSMCEVqrnJOf/X2rBmPpnunWgDGvusRsMy10VM7meWMMsxxB9pr
+xQjzKeiY4HxHe1R087+MQ03K1bd/ZDFhp0Cawjdce6EX6F+8bjFcjO++l8Ut+uia
+xHvzQO2UHr844VHFqJjk1RJ+4AZff0RcTvnrGRk+2KclKs6q9mUUCdIZqThGneFW
+2dNAiivZEg0Q31/Nv+S0SKIvciHcEiIkRns3VioUF3Cd8RbTniDxJRskUlGW0DXR
+DqlOXU5cSqNzAfOG3OyHSeN2rAC5ywNtrF4P6L5uNV0gzOk4cSXtkMwg1OrYt1Gz
+jAJpzXfz8cY4n3KHT6osShMRFI3ttpuYVmBAWNfdPK6T51491d20Cd+Aam5At7Ar
+64fMGAPoZ0EF26dFSmfjOo2BzZ0V6NQI/bF1ZmHbdQ47+gVgTiu+sTFtk1Nv9OzU
+PXD4SVwYqx3233FD0MEke3UlbHahDQeWCX5c/R6/G/Hj+Pc6Vv2EOSw/hApRA3iP
+s2/kpxzP8H0t5pAMsdSr
+=yMIG
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__30_Aug_2013_18_55_46_+1000_a0fguXyJr.tb2=c2--
