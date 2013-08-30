@@ -1,118 +1,36 @@
-From: Davidlohr Bueso <dave.bueso@gmail.com>
-Subject: Re: ipc-msg broken again on 3.11-rc7?
-Date: Fri, 30 Aug 2013 13:31:41 -0300
-Message-ID: <CAMJEocr1SgxQw0bEzB3Ti9bvRY74TE5y9e+PLUsAL1mJbK=-ew@mail.gmail.com>
-References: <CA+icZUXuw7QBn4CPLLuiVUjHin0m6GRdbczGw=bZY+Z60sXNow@mail.gmail.com>
-	<CA+icZUVbUD1tUa_ORtn_ZZebpp3gXXHGAcNe0NdYPXPMPoABuA@mail.gmail.com>
-	<1372192414.1888.8.camel@buesod1.americas.hpqcorp.net>
-	<CA+icZUXgOd=URJBH5MGAZKdvdkMpFt+5mRxtzuDzq_vFHpoc2A@mail.gmail.com>
-	<1372202983.1888.22.camel@buesod1.americas.hpqcorp.net>
-	<521DE5D7.4040305@synopsys.com>
-	<CA+icZUUrZG8pYqKcHY3DcYAuuw=vbdUvs6ZXDq5meBMjj6suFg@mail.gmail.com>
-	<C2D7FE5348E1B147BCA15975FBA23075140FA3@IN01WEMBXA.internal.synopsys.com>
-	<CA+icZUUn-r8iq6TVMAKmgJpQm4FhOE4b4QN_Yy=1L=0Up=rkBA@mail.gmail.com>
-	<52205597.3090609@synopsys.com>
-	<CA+icZUW=YXMC_2Qt=cYYz6w_fVW8TS4=Pvbx7BGtzjGt+31rLQ@mail.gmail.com>
-	<C2D7FE5348E1B147BCA15975FBA230751411CB@IN01WEMBXA.internal.synopsys.com>
-	<CALE5RAvaa4bb-9xAnBe07Yp2n+Nn4uGEgqpLrKMuOE8hhZv00Q@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the aio tree
+Date: Fri, 30 Aug 2013 10:38:25 -0700
+Message-ID: <CA+55aFwfaW0zZJ5_5Yhyq7+wickG0A3MPzseZ922fy56dJNAAg@mail.gmail.com>
+References: <20130830175509.39d7fbfd96a4e726ba739d26@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <CALE5RAvaa4bb-9xAnBe07Yp2n+Nn4uGEgqpLrKMuOE8hhZv00Q@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>, sedat.dilek@gmail.com, linus Torvalds <torvalds@linux-foundation.org>, Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Manfred Spraul <manfred@colorfullife.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vb0-f51.google.com ([209.85.212.51]:61211 "EHLO
+	mail-vb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753861Ab3H3Ri0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Aug 2013 13:38:26 -0400
+In-Reply-To: <20130830175509.39d7fbfd96a4e726ba739d26@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Benjamin LaHaise <bcrl@kvack.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Waiman Long <Waiman.Long@hp.com>
 
-> From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-> Date: Fri, Aug 30, 2013 at 4:46 AM
-> Subject: Re: ipc-msg broken again on 3.11-rc7?
-> To: "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>
-> Cc: linus Torvalds <torvalds@linux-foundation.org>, Davidlohr Bueso <davi=
-dlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-k=
-ernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Mor=
-ton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen =
-<andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Manfred Spraul <manf=
-red@colorfullife.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
->
->
-> On 08/30/2013 01:57 PM, Sedat Dilek wrote:
-> > On Fri, Aug 30, 2013 at 10:19 AM, Vineet Gupta <vineetg76@gmail.com> wr=
-ote:
-> >> Ping ?
-> >>
-> >> It seems 3.11 is pretty close to releasing but we stil have LTP msgctl=
-08 causing a
-> >> hang (atleast on ARC) for both linux-next 20130829 as well as Linus tr=
-ee.
-> >>
-> >> So far, I haven't seemed to have drawn attention of people involved.
-> >>
+On Fri, Aug 30, 2013 at 12:55 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> -                       aio_ring_file->f_path.dentry->d_count,
+> +                       aio_ring_file->f_path.dentry->d_lockref.count,
 
-I apologize for the delay, I am on vacations and wasnt interrupting my
-days at the beach by checking email.
+This is wrong. If you really want the dentry count (which I doubt, I
+don't see why this code would care _even_ just for a debug printout),
+you should use
 
-You mention that the msgctl08 test case just hangs, nothing
-interesting in dmesg appart from "msgmni has been set to 479" (which
-is a standard initialization message anyways)?
+   d_count(aio_ring_file->f_dentry)
 
-After a quick glance, I suspect that the problem might be because we
-are calling security_msg_queue_msgsnd() without taking the lock. This
-is similar to the issue Sedat reported in the original thread with
-find_msg() concerning msgrcv. The rest of the code looks otherwise
-standard. Unfortunately I dont have a computer available to write/test
-such a fix. I think we can move calls to security_msg_queue_msgsnd()
-to be done right before ss_add(), which would simplify the code
-changes, something like:
+instead these days. That will get the count from the right place,
+regardless of any lockref issues or anything else (and f_dentry may be
+the "old" way to get the dentry, but it's still supported and unlikely
+to go away. No point in writing out "f_path.dentry" unless you *want*
+to be aware of the fact that f_path has both a dentry and a mnt member
+- but most people really don't care about the mnt information).
 
-...
-
-/* queue full, wait: */
-if (msgflg & IPC_NOWAIT) {
-     err =3D -EAGAIN;
-     goto out_unlock1;
-}
-
-ipc_lock_object(&msq->q_perm);
-err =3D security_msg_queue_msgsnd(msq, msg, msgflg);
-if (err)
-    goto out_unlock0;
-
-ss_add(msq, &s);
-
-...
-
-
-Thanks,
-Davidlohr
-
-
-> >
-> > Hi Vineet,
-> >
-> > I remember fakeroot was an another good test-case for me to test this
-> > IPC breakage.
-> > Attached is my build-script for Linux-next (tested with Debian/Ubuntu).
-> > ( Cannot say if you can play with it in your environment. )
->
-> Hi Sedat,
->
-> I have a simpler buildroot based rootfs (initramfs based) and LTP is run =
-off of
-> NFS, although running of a local storage doesn't make a difference.
->
-> For me msgctl08 standalone (w/o hassle of running full LTP) is enough to =
-trigger
-> it consistently.
->
-> P.S. sorry my sender address kept flipping - mailer was broken !
->
-> -Vineet
->
->
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+            Linus
