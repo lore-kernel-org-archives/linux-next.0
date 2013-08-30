@@ -1,52 +1,120 @@
-From: Jesse Gross <jesse@nicira.com>
-Subject: Re: [-next] openvswitch BUILD_BUG_ON failed
-Date: Thu, 29 Aug 2013 18:11:25 -0700
-Message-ID: <CAEP_g=-XxgK9HVxvcaW3RS2zfa+77pB4cqfLFC0rcV7QJc+2BQ@mail.gmail.com>
-References: <CAMuHMdVG9FmZNayrf7HMz4kC4X5QELeXUFjjzpAM80ND_QOm8A@mail.gmail.com>
- <CAEP_g=-XvRiHPzSAp2rgC9Hxdd+pGEHvSTEJ1A1SkWnk1-6xZA@mail.gmail.com> <20130829.181001.145658561677052552.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound tree with the drm tree
+Date: Fri, 30 Aug 2013 13:03:55 +1000
+Message-ID: <20130830130355.02cefec7e2308390a506fd1d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__30_Aug_2013_13_03_55_+1000_HiLpskYynwPmCto6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog130.obsmtp.com ([74.125.149.143]:43582 "HELO
-	na3sys009aog130.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1751924Ab3H3BLt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 Aug 2013 21:11:49 -0400
-Received: by mail-la0-f47.google.com with SMTP id eo20so994244lab.20
-        for <linux-next@vger.kernel.org>; Thu, 29 Aug 2013 18:11:48 -0700 (PDT)
-In-Reply-To: <20130829.181001.145658561677052552.davem@davemloft.net>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44635 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752074Ab3H3DEN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Aug 2013 23:04:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: geert@linux-m68k.org, Andy Zhou <azhou@nicira.com>, "dev@openvswitch.org" <dev@openvswitch.org>, netdev <netdev@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Airlie <airlied@linux.ie>, Wang Xingchao <xingchao.wang@linux.intel.com>
 
-On Thu, Aug 29, 2013 at 3:10 PM, David Miller <davem@davemloft.net> wrote:
-> From: Jesse Gross <jesse@nicira.com>
-> Date: Thu, 29 Aug 2013 14:42:22 -0700
->
->> On Thu, Aug 29, 2013 at 2:21 PM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->>> However, I have some doubts about other alignment "enforcements":
->>>
->>> "__aligned(__alignof__(long))" makes the whole struct aligned to the
->>> alignment rule for "long":
->>>    1. This is only 2 bytes on m68k, i.e. != sizeof(long).
->>>    2. This is 4 bytes on many 32-bit platforms, which may be less than the
->>>       default alignment for "__be64" (cfr. some members of struct
->>>       ovs_key_ipv4_tunnel), so this may make those 64-bit members unaligned.
->>
->> Do any of those 32-bit architectures actually care about alignment of
->> 64 bit values? On 32-bit x86, a long is 32 bits but the alignment
->> requirement of __be64 is also 32 bit.
->
-> All except x86-32 do, it is in fact the odd man out with respect to this
-> issue.
+--Signature=_Fri__30_Aug_2013_13_03_55_+1000_HiLpskYynwPmCto6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, good to know.
+Hi Takashi,
 
-Andy, do you want to modify your patch to just drop the alignment
-specification as Geert suggested (but definitely keep the new build
-assert that you added)? It's probably better to just send the patch to
-netdev (against net-next) as well since you'll likely get better
-comments there and we can fix this faster if you cut out the
-middleman.
+Today's linux-next merge of the sound tree got a conflict in
+sound/pci/hda/hda_intel.c between commit 246efa4a072f ("snd/hda: add
+runtime suspend/resume on optimus support (v4)") from the drm tree and
+commit 7d4f606c50ff ("ALSA: hda - WAKEEN feature enabling for runtime
+pm") from the sound tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc sound/pci/hda/hda_intel.c
+index bf5e58e,c6c9829..0000000
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@@ -2975,12 -2971,10 +2975,16 @@@ static int azx_runtime_suspend(struct d
+  	struct snd_card *card =3D dev_get_drvdata(dev);
+  	struct azx *chip =3D card->private_data;
+ =20
+ +	if (chip->disabled)
+ +		return 0;
+ +
+ +	if (!(chip->driver_caps & AZX_DCAPS_PM_RUNTIME))
+ +		return 0;
+ +
++ 	/* enable controller wake up event */
++ 	azx_writew(chip, WAKEEN, azx_readw(chip, WAKEEN) |
++ 		  STATESTS_INT_MASK);
++=20
+  	azx_stop_chip(chip);
+  	azx_enter_link_reset(chip);
+  	azx_clear_irq_pending(chip);
+@@@ -2993,17 -2987,31 +2997,37 @@@ static int azx_runtime_resume(struct de
+  {
+  	struct snd_card *card =3D dev_get_drvdata(dev);
+  	struct azx *chip =3D card->private_data;
++ 	struct hda_bus *bus;
++ 	struct hda_codec *codec;
++ 	int status;
+ =20
+ +	if (chip->disabled)
+ +		return 0;
+ +
+ +	if (!(chip->driver_caps & AZX_DCAPS_PM_RUNTIME))
+ +		return 0;
+ +
+  	if (chip->driver_caps & AZX_DCAPS_I915_POWERWELL)
+  		hda_display_power(true);
++=20
++ 	/* Read STATESTS before controller reset */
++ 	status =3D azx_readw(chip, STATESTS);
++=20
+  	azx_init_pci(chip);
+  	azx_init_chip(chip, 1);
++=20
++ 	bus =3D chip->bus;
++ 	if (status && bus) {
++ 		list_for_each_entry(codec, &bus->codec_list, list)
++ 			if (status & (1 << codec->addr))
++ 				queue_delayed_work(codec->bus->workq,
++ 						   &codec->jackpoll_work, codec->jackpoll_interval);
++ 	}
++=20
++ 	/* disable controller Wake Up event*/
++ 	azx_writew(chip, WAKEEN, azx_readw(chip, WAKEEN) &
++ 			~STATESTS_INT_MASK);
++=20
+  	return 0;
+  }
+ =20
+
+--Signature=_Fri__30_Aug_2013_13_03_55_+1000_HiLpskYynwPmCto6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSIAugAAoJEECxmPOUX5FE/K0P/j/E3WLwZxyh7iLhX5KjdItV
+6Ls9L5fRrqfM2Nc7P+/J9avcevlDCrinLoVVt2fgrSqMUOUx24iQuFaqoNaa1k9k
+6Mg4DyaQ8ZfcE3CuWecK4+ZrDpRq9hSd1yF0kKi2dAbk//Z7hiIRfkPitK25T5+s
+VfzP+kv+g1S2xO/HtHD1T9cs6azhkyIp8cDNe53s1zXklu+nmXkaqi9G3vxttCHW
+59JnD+gMu9Ngad/9xMFGhxQXHvn5e1c2/fvR6HY2QgNURUFLgNq3sVhVysJR4oCe
++6bupJckf7eWJ/h2YysQG75vGPOjEZb39MAN1SEAObXrMbyGsb65dWxgSO7XaPvr
+QrSwRlVT926Zs5A4pw45G0Te+OsbzkpIMWtf4+v8KlWj0UyHlqk5/CCUizlQW0mG
+yHs4Elb6xN4EFm3nY30DwZwAezf4t4mhEKxZk7rHqwLBkFSHxWMOlh8zNJgF3RqJ
+nOvPoX33F02Jo18MftdSYgyIxGNFQ8OQaeaw283K2nT2AkcO9a81z2XhNAnZwWKV
+xzH73Ssg4qcyBqxeynXaTCTq0jvRgXE+RfdMOiFeAfFBH9z8j7t4ziuQ3mSS3apg
+mcBsXItMU/ZlFt5Fbq0G6xJMrWzmYb/OgmnsD02A8uAnqadAFjx4EbG7OGI+iP/L
+7P5A/Iy1K1iBAhlKmCHu
+=U0Re
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__30_Aug_2013_13_03_55_+1000_HiLpskYynwPmCto6--
