@@ -1,68 +1,37 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [-next] openvswitch BUILD_BUG_ON failed
-Date: Sat, 31 Aug 2013 14:11:24 +0200
-Message-ID: <CAMuHMdU3M9uUFKd3EQ0HbcAvf5e62PA4NJG_mQHhpvZwFJnUWQ@mail.gmail.com>
-References: <CAMuHMdVG9FmZNayrf7HMz4kC4X5QELeXUFjjzpAM80ND_QOm8A@mail.gmail.com>
-	<CAEP_g=-XvRiHPzSAp2rgC9Hxdd+pGEHvSTEJ1A1SkWnk1-6xZA@mail.gmail.com>
-	<20130829.181001.145658561677052552.davem@davemloft.net>
-	<CAEP_g=-XxgK9HVxvcaW3RS2zfa+77pB4cqfLFC0rcV7QJc+2BQ@mail.gmail.com>
+Subject: Re: linux-next: Tree for Aug 30 (brcmfmac)
+Date: Sat, 31 Aug 2013 19:37:36 +0200
+Message-ID: <CAMuHMdXFmWyiUJF+4HbD=6oGPVXHBAVx=rOC7u=motTQFCKn7g@mail.gmail.com>
+References: <20130829200013.d9dde1eb64686a32c661b5d3@canb.auug.org.au>
+	<52210AB9.2090104@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:57300 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752158Ab3HaML0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 31 Aug 2013 08:11:26 -0400
-In-Reply-To: <CAEP_g=-XxgK9HVxvcaW3RS2zfa+77pB4cqfLFC0rcV7QJc+2BQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jesse Gross <jesse@nicira.com>
-Cc: David Miller <davem@davemloft.net>, Andy Zhou <azhou@nicira.com>, "dev@openvswitch.org" <dev@openvswitch.org>, netdev <netdev@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <52210AB9.2090104@infradead.org>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, brcm80211-dev-list@broadcom.com, linux-kbuild <linux-kbuild@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Aug 30, 2013 at 3:11 AM, Jesse Gross <jesse@nicira.com> wrote:
-> On Thu, Aug 29, 2013 at 3:10 PM, David Miller <davem@davemloft.net> wrote:
->> From: Jesse Gross <jesse@nicira.com>
->> Date: Thu, 29 Aug 2013 14:42:22 -0700
->>
->>> On Thu, Aug 29, 2013 at 2:21 PM, Geert Uytterhoeven
->>> <geert@linux-m68k.org> wrote:
->>>> However, I have some doubts about other alignment "enforcements":
->>>>
->>>> "__aligned(__alignof__(long))" makes the whole struct aligned to the
->>>> alignment rule for "long":
->>>>    1. This is only 2 bytes on m68k, i.e. != sizeof(long).
->>>>    2. This is 4 bytes on many 32-bit platforms, which may be less than the
->>>>       default alignment for "__be64" (cfr. some members of struct
->>>>       ovs_key_ipv4_tunnel), so this may make those 64-bit members unaligned.
->>>
->>> Do any of those 32-bit architectures actually care about alignment of
->>> 64 bit values? On 32-bit x86, a long is 32 bits but the alignment
->>> requirement of __be64 is also 32 bit.
->>
->> All except x86-32 do, it is in fact the odd man out with respect to this
->> issue.
+On Fri, Aug 30, 2013 at 11:12 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> This bool kconfig symbol:
 >
-> Thanks, good to know.
+> config BRCMFMAC_SDIO
+>         bool "SDIO bus interface support for FullMAC driver"
+>         depends on MMC
 >
-> Andy, do you want to modify your patch to just drop the alignment
-> specification as Geert suggested (but definitely keep the new build
-> assert that you added)? It's probably better to just send the patch to
-> netdev (against net-next) as well since you'll likely get better
-> comments there and we can fix this faster if you cut out the
-> middleman.
+> allows BRCMFMAC_SDIO to be y even when MMC=m.
+>
+> Is there a reasonable solution to this?
 
-Why do you want to keep the build asserts?
-Is this in-memory structure also transfered as-is over the network?
-If yes, you definitely want the padding.
+In order of preference:
+1. Make it tristate
+2. depends on MMC=y
 
-Nevertheless, as the struct contains u32 and even __be64 members, the
-size of the struct will always be a multiple of the alignment unit for
-64-bit quantities (and thus also for long), as per the C standard.
-Hence the check
+However, the first solution cannot be used as there are several
+"#ifdef CONFIG_BRCMFMAC_SDIO" in the code itself.
 
-    BUILD_BUG_ON(sizeof(struct sw_flow_key) % __alignof__(long));
-
-will only catch bad compiler bugs or people adding __packed to the struct.
+Note that there's a similar issue with BRCMFMAC_USB and USB.
 
 Gr{oetje,eeting}s,
 
