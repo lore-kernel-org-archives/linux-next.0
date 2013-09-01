@@ -1,70 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 2 Sep 2013 09:53:48 +1000
-Message-ID: <20130902095348.b8687db80751d2cce4cad8bc@canb.auug.org.au>
-References: <20130830181202.bea6400ec4d92744e05b5b9f@canb.auug.org.au>
-	<CA+55aFwWEqzGi7uW_xPt=eC0FC-5qnom=W4x87xbH_a2Oy4=6A@mail.gmail.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [RFC PATCH v2 next]module: Fix mod->mkobj.kobj potentially freed too early
+Date: Mon, 02 Sep 2013 09:21:55 +0930
+Message-ID: <871u58ayn8.fsf@rustcorp.com.au>
+References: <1377078598.2709.25.camel@ThinkPad-T5421> <20130821161819.GA14364@kroah.com> <1377138846.2633.25.camel@ThinkPad-T5421> <20130822040333.GB4821@kroah.com> <1377157075.2633.63.camel@ThinkPad-T5421> <20130825040734.GA18107@kroah.com> <87bo4jd9z0.fsf@rustcorp.com.au> <20130827062135.GA3395@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__2_Sep_2013_09_53_48_+1000__A69wq1F6x/5+1xL"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49529 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753305Ab3IAXxu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Sep 2013 19:53:50 -0400
-In-Reply-To: <CA+55aFwWEqzGi7uW_xPt=eC0FC-5qnom=W4x87xbH_a2Oy4=6A@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Waiman Long <Waiman.Long@hp.com>, Namjae Jeon <namjae.jeon@samsung.com>, Ravishankar N <ravi.n1@samsung.com>, Amit Sahrawat <a.sahrawat@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130827062135.GA3395@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, rmk+kernel@arm.linux.org.uk
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__2_Sep_2013_09_53_48_+1000__A69wq1F6x/5+1xL
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Linus,
-
-On Fri, 30 Aug 2013 08:25:06 -0700 Linus Torvalds <torvalds@linux-foundatio=
-n.org> wrote:
+Greg KH <gregkh@linuxfoundation.org> writes:
+> On Tue, Aug 27, 2013 at 02:08:27PM +0930, Rusty Russell wrote:
+>> Greg KH <gregkh@linuxfoundation.org> writes:
+>> > On Thu, Aug 22, 2013 at 03:37:55PM +0800, Li Zhong wrote:
+>> >> DEBUG_KOBJECT_RELEASE helps to find the issue attached below.
+>> > People are starting to hit these types of issues, and I'd like to take
+>> > this one out of the picture.
+>> >
+>> > Rusty, any objection to me taking this through my driver-core tree,
+>> > where this new config option shows up?
+>> 
+>> The original fix was better.
+>> 
+>> Moving the module_kobject out and giving it its own lifetime solves this
+>> immediate issue, but it still means there's an accessible module_kobject
+>> around referring to a module which doesn't exist any more.
 >
-> On Fri, Aug 30, 2013 at 1:12 AM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> >
-> > I don't know if it is safe to read d_lockref.count without locking
->=20
-> That's not the issue. Since commit 84d08fa888e7 ("helper for reading
-> ->d_count") non-core VFS code shouldn't try to access d_count directly
-> at all. So instead of "dentry->d_count" it should use
-> "d_count(dentry)". Then the code doesn't need to know about lockrefs
-> or anything like that at all.
+> That's ok, it could happen before as well.  What's wrong with that?
+>
+>> Original copied below, feel free to take it.
+>
+> You are just sitting and sleeping until someone drops the last reference
+> to the module.  What if userspace grabs a reference from sysfs?  That
+> could never return, I don't think you want to stall that out.
 
-Thanks for that.  I will implement that temporary fix in linux-next today
-unless Andrew has been busy over the weekend.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+In your scenario, what happens if userspace grabs a reference via sysfs?
+It then tries to use module_kobj->mod which points into freed memory?
 
---Signature=_Mon__2_Sep_2013_09_53_48_+1000__A69wq1F6x/5+1xL
-Content-Type: application/pgp-signature
+eg. show_modinfo_##field or show_refcnt.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+Is there an owner field I'm missing somewhere which stops this from
+happening?  Otherwise, we can't unload the module until it's done.
 
-iQIcBAEBCAAGBQJSI9OMAAoJEECxmPOUX5FEbngP/2Tzu5CM0fFVY2el3x9ubNXu
-eW/C95ybFmDk1wS4AX4OFdOa8bgsRxk9hNgWTrODG5l8vEVbtfc4Yjpp/t5NkKJW
-iGnD8e/TK7urwZqyGF4rU9vf7d2cSOnWTLwy+smr4D/LDS1atdLDUbXNa68Uj5rE
-fk1BFskiEnHq0p5FCpfLV0A0yzW8mleVp4R/2e3zlhZEOrs8Guto+ipCJkrkQu/Y
-7Y5as6AEliElIxUO8HHArgTIJ8p6HA3Os5Z164NtTcRtFj7o7yeb9sdZ8I5sRlNL
-h7N9VdxpZ3p5I69mzhjrDo0zulZtu6hMQOugNYYaeQ2dNrkDvY/wtqgS7FQZvuGZ
-uiYMAQ2R5f0GdXnUyaVZjHcylE/cU1MWe2ppEIADE1w0yN1LPG50bkAsQfJKaB2o
-vPr/vOLLfPoPUrtakOZtny1u8Re0l9bOJZYXosT9ZyjyVgA8nuaA/sHmPdueMEWH
-+Ch8RnyGVlJhd/wA7vMCh+9P6ofzMNOtPbalfXGy3xutNSvZIZkI8HR+6DYqeCqg
-fn14ad9SCPTc1lt4P62L4BA8o2VdJUxhopr1rLTrcN1rphujZbTeN8ku4aDreeOq
-nnVtW/Ej9Se/sVYXhZGBeagKyTUpX94EIOnWBQ14jnPF3oQJrDOGMSmIDoYr1iy9
-iZLXs5W2eBiZNn2YgQRq
-=tCUU
------END PGP SIGNATURE-----
+> I'd prefer not having 2 things determining the lifecycle of a single
+> object, that's messy, and not needed at all.
 
---Signature=_Mon__2_Sep_2013_09_53_48_+1000__A69wq1F6x/5+1xL--
+Normally you'd grab a reference to the module via an owner pointer.
+Doing that in kobject seems like overkill, so we're working around it
+here...
+
+Hope that clarifies,
+Rusty.
