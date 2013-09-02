@@ -1,84 +1,97 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [RFC PATCH v2 next]module: Fix mod->mkobj.kobj potentially freed
- too early
-Date: Sun, 1 Sep 2013 17:43:53 -0700
-Message-ID: <20130902004353.GA13495@kroah.com>
-References: <1377078598.2709.25.camel@ThinkPad-T5421>
- <20130821161819.GA14364@kroah.com>
- <1377138846.2633.25.camel@ThinkPad-T5421>
- <20130822040333.GB4821@kroah.com>
- <1377157075.2633.63.camel@ThinkPad-T5421>
- <20130825040734.GA18107@kroah.com>
- <87bo4jd9z0.fsf@rustcorp.com.au>
- <20130827062135.GA3395@kroah.com>
- <871u58ayn8.fsf@rustcorp.com.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Mon, 2 Sep 2013 13:12:12 +1000
+Message-ID: <20130902131212.4cd51e16f04732b01c58df34@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40151 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753816Ab3IBAny (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Sep 2013 20:43:54 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__2_Sep_2013_13_12_12_+1000_8oIN2pp.lMwK7C0J"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Byungho An <bh74.an@samsung.com>, Sonic Zhang <sonic.zhang@analog.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Mon__2_Sep_2013_13_12_12_+1000_8oIN2pp.lMwK7C0J
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <871u58ayn8.fsf@rustcorp.com.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Li Zhong <zhong@linux.vnet.ibm.com>, linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, rmk+kernel@arm.linux.org.uk
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 02, 2013 at 09:21:55AM +0930, Rusty Russell wrote:
-> Greg KH <gregkh@linuxfoundation.org> writes:
-> > On Tue, Aug 27, 2013 at 02:08:27PM +0930, Rusty Russell wrote:
-> >> Greg KH <gregkh@linuxfoundation.org> writes:
-> >> > On Thu, Aug 22, 2013 at 03:37:55PM +0800, Li Zhong wrote:
-> >> >> DEBUG_KOBJECT_RELEASE helps to find the issue attached below.
-> >> > People are starting to hit these types of issues, and I'd like to take
-> >> > this one out of the picture.
-> >> >
-> >> > Rusty, any objection to me taking this through my driver-core tree,
-> >> > where this new config option shows up?
-> >> 
-> >> The original fix was better.
-> >> 
-> >> Moving the module_kobject out and giving it its own lifetime solves this
-> >> immediate issue, but it still means there's an accessible module_kobject
-> >> around referring to a module which doesn't exist any more.
-> >
-> > That's ok, it could happen before as well.  What's wrong with that?
-> >
-> >> Original copied below, feel free to take it.
-> >
-> > You are just sitting and sleeping until someone drops the last reference
-> > to the module.  What if userspace grabs a reference from sysfs?  That
-> > could never return, I don't think you want to stall that out.
-> 
-> In your scenario, what happens if userspace grabs a reference via sysfs?
-> It then tries to use module_kobj->mod which points into freed memory?
-> 
-> eg. show_modinfo_##field or show_refcnt.
+Hi all,
 
-The sysfs file will not be able to be "called" as Tejun fixed that up a
-long time ago, but yes, you are right, it really doesn't solve the
-issue.
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c between commit
+64c3b252e9fc ("net: stmmac: fixed the pbl setting with DT") from the
+tree and commit e2a240c7d3bc ("driver:net:stmmac: Disable DMA store and
+forward mode if platform data force_thresh_dma_mode is set") from the
+net-next tree.
 
-> Is there an owner field I'm missing somewhere which stops this from
-> happening?  Otherwise, we can't unload the module until it's done.
+I fixed it up (I think - see below) and can carry the fix as necessary (no
+action is required).
 
-Good point.
 
-> > I'd prefer not having 2 things determining the lifecycle of a single
-> > object, that's messy, and not needed at all.
-> 
-> Normally you'd grab a reference to the module via an owner pointer.
-> Doing that in kobject seems like overkill, so we're working around it
-> here...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Ok, fair enough, your version is fine, feel free to add a:
+diff --cc drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 1c83a44,623ebc5..0000000
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@@ -71,18 -71,19 +71,23 @@@ static int stmmac_probe_config_dt(struc
+  		plat->force_sf_dma_mode =3D 1;
+  	}
+ =20
+ -	dma_cfg =3D devm_kzalloc(&pdev->dev, sizeof(*dma_cfg), GFP_KERNEL);
+ -	if (!dma_cfg)
+ -		return -ENOMEM;
+ -
+ -	plat->dma_cfg =3D dma_cfg;
+ -	of_property_read_u32(np, "snps,pbl", &dma_cfg->pbl);
+ -	dma_cfg->fixed_burst =3D of_property_read_bool(np, "snps,fixed-burst");
+ -	dma_cfg->mixed_burst =3D of_property_read_bool(np, "snps,mixed-burst");
+ +	if (of_find_property(np, "snps,pbl", NULL)) {
+ +		dma_cfg =3D devm_kzalloc(&pdev->dev, sizeof(*dma_cfg),
+ +				       GFP_KERNEL);
+ +		if (!dma_cfg)
+ +			return -ENOMEM;
+ +		plat->dma_cfg =3D dma_cfg;
+ +		of_property_read_u32(np, "snps,pbl", &dma_cfg->pbl);
+ +		dma_cfg->fixed_burst =3D
+ +			of_property_read_bool(np, "snps,fixed-burst");
+ +		dma_cfg->mixed_burst =3D
+ +			of_property_read_bool(np, "snps,mixed-burst");
+ +	}
++ 	plat->force_thresh_dma_mode =3D of_property_read_bool(np, "snps,force_th=
+resh_dma_mode");
++ 	if (plat->force_thresh_dma_mode) {
++ 		plat->force_sf_dma_mode =3D 0;
++ 		pr_warn("force_sf_dma_mode is ignored if force_thresh_dma_mode is set."=
+);
++ 	}
+ =20
+  	return 0;
+  }
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+--Signature=_Mon__2_Sep_2013_13_12_12_+1000_8oIN2pp.lMwK7C0J
+Content-Type: application/pgp-signature
 
-if you want it.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-thanks,
+iQIcBAEBCAAGBQJSJAIQAAoJEECxmPOUX5FEPwIP/2sohm21ZbYNlvdJfHKjWgGW
+Qqjh1jtq/zZdNsRX//I4BS82Oj+JT8OVPB8WtSRrur1RpcPPr45i8JzRy42/PV8K
+uk0YV+mO3595Lhg0p9LIn+Lqx1ei6wShsP8JVLuU2edqpWMaXzooJ7aRuTfezaSD
+XBJM7VrswUADWRDblOgF+fEFPjxUitiircUB05C8KwzaKKtkVJoaC0sqrSr4DyQ8
+kJeRcst7/AqIYbkJiVeZ2lg8rsjaXOTM5ZSUVfYwoycBQQyBIuy94pSGzmL1uH9u
+FV47rI6QWc8LiwDtFNzyZSbYHtCbTr2Nwv9A5danIsPMX7e+DyJi8gRJWF6w4T0G
+fEw6XmH2MYWvjil5+KOP+qUsGbaxm4JN/w7Qd/gfB3yZ1ZLT5dlQd3c0P5X+gnAa
+LDUP70Z4HladEVuBjwjuAGzKIwhpCznAxX7wuN7OOmJvup4HpjRqgjYmSFIeoeTZ
+CigUQR6O7vnKXR/2G7Xon+iFiiCiDb41eSygu3zUflnMb4r3NyZHv4OeAs5MZ6fU
+SHnNz762CV8tQ9GYs7ll02Ugt5sK/NnEOTWmEyLmpaw6KibHosg5u8vGmlrhefin
+oq8lrN03TGZ6yVNgLqIdjrI+QdcXt6Lplx2kNsi2H/RzaQBnlSp17Y2u218qkS4Z
+uful+Zz6igaJIM+WORLB
+=O7OQ
+-----END PGP SIGNATURE-----
 
-greg k-h
+--Signature=_Mon__2_Sep_2013_13_12_12_+1000_8oIN2pp.lMwK7C0J--
