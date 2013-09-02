@@ -1,97 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Mon, 2 Sep 2013 13:12:12 +1000
-Message-ID: <20130902131212.4cd51e16f04732b01c58df34@canb.auug.org.au>
+Subject: linux-next: manual merge of the ipsec-next tree with Linus' tree
+Date: Mon, 2 Sep 2013 13:40:36 +1000
+Message-ID: <20130902134036.94e1a4c9d6b2453dd99d4100@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__2_Sep_2013_13_12_12_+1000_8oIN2pp.lMwK7C0J"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Byungho An <bh74.an@samsung.com>, Sonic Zhang <sonic.zhang@analog.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__2_Sep_2013_13_40_36_+1000__B/wI3fmgtJDqFLn"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44316 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755458Ab3IBDkp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Sep 2013 23:40:45 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fan Du <fan.du@windriver.com>, Hannes Frederic Sowa <hannes@stressinduktion.org>
 
---Signature=_Mon__2_Sep_2013_13_12_12_+1000_8oIN2pp.lMwK7C0J
+--Signature=_Mon__2_Sep_2013_13_40_36_+1000__B/wI3fmgtJDqFLn
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Steffen,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c between commit
-64c3b252e9fc ("net: stmmac: fixed the pbl setting with DT") from the
-tree and commit e2a240c7d3bc ("driver:net:stmmac: Disable DMA store and
-forward mode if platform data force_thresh_dma_mode is set") from the
-net-next tree.
+Today's linux-next merge of the ipsec-next tree got a conflict in
+include/net/xfrm.h between commit 628e341f319f ("xfrm: make local error
+reporting more robust") from Linus' tree and commit aba826958830
+("{ipv4,xfrm}: Introduce xfrm_tunnel_notifier for xfrm tunnel mode
+callback") from the ipsec-next tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary (no
-action is required).
-
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 1c83a44,623ebc5..0000000
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@@ -71,18 -71,19 +71,23 @@@ static int stmmac_probe_config_dt(struc
-  		plat->force_sf_dma_mode =3D 1;
-  	}
- =20
- -	dma_cfg =3D devm_kzalloc(&pdev->dev, sizeof(*dma_cfg), GFP_KERNEL);
- -	if (!dma_cfg)
- -		return -ENOMEM;
- -
- -	plat->dma_cfg =3D dma_cfg;
- -	of_property_read_u32(np, "snps,pbl", &dma_cfg->pbl);
- -	dma_cfg->fixed_burst =3D of_property_read_bool(np, "snps,fixed-burst");
- -	dma_cfg->mixed_burst =3D of_property_read_bool(np, "snps,mixed-burst");
- +	if (of_find_property(np, "snps,pbl", NULL)) {
- +		dma_cfg =3D devm_kzalloc(&pdev->dev, sizeof(*dma_cfg),
- +				       GFP_KERNEL);
- +		if (!dma_cfg)
- +			return -ENOMEM;
- +		plat->dma_cfg =3D dma_cfg;
- +		of_property_read_u32(np, "snps,pbl", &dma_cfg->pbl);
- +		dma_cfg->fixed_burst =3D
- +			of_property_read_bool(np, "snps,fixed-burst");
- +		dma_cfg->mixed_burst =3D
- +			of_property_read_bool(np, "snps,mixed-burst");
- +	}
-+ 	plat->force_thresh_dma_mode =3D of_property_read_bool(np, "snps,force_th=
-resh_dma_mode");
-+ 	if (plat->force_thresh_dma_mode) {
-+ 		plat->force_sf_dma_mode =3D 0;
-+ 		pr_warn("force_sf_dma_mode is ignored if force_thresh_dma_mode is set."=
+diff --cc include/net/xfrm.h
+index e253bf0,c7afa6e..0000000
+--- a/include/net/xfrm.h
++++ b/include/net/xfrm.h
+@@@ -1499,9 -1501,8 +1505,9 @@@ extern int xfrm4_output(struct sk_buff=20
+  extern int xfrm4_output_finish(struct sk_buff *skb);
+  extern int xfrm4_tunnel_register(struct xfrm_tunnel *handler, unsigned sh=
+ort family);
+  extern int xfrm4_tunnel_deregister(struct xfrm_tunnel *handler, unsigned =
+short family);
+- extern int xfrm4_mode_tunnel_input_register(struct xfrm_tunnel *handler);
+- extern int xfrm4_mode_tunnel_input_deregister(struct xfrm_tunnel *handler=
 );
-+ 	}
- =20
-  	return 0;
-  }
++ extern int xfrm4_mode_tunnel_input_register(struct xfrm_tunnel_notifier *=
+handler);
++ extern int xfrm4_mode_tunnel_input_deregister(struct xfrm_tunnel_notifier=
+ *handler);
+ +extern void xfrm4_local_error(struct sk_buff *skb, u32 mtu);
+  extern int xfrm6_extract_header(struct sk_buff *skb);
+  extern int xfrm6_extract_input(struct xfrm_state *x, struct sk_buff *skb);
+  extern int xfrm6_rcv_spi(struct sk_buff *skb, int nexthdr, __be32 spi);
 
---Signature=_Mon__2_Sep_2013_13_12_12_+1000_8oIN2pp.lMwK7C0J
+--Signature=_Mon__2_Sep_2013_13_40_36_+1000__B/wI3fmgtJDqFLn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSJAIQAAoJEECxmPOUX5FEPwIP/2sohm21ZbYNlvdJfHKjWgGW
-Qqjh1jtq/zZdNsRX//I4BS82Oj+JT8OVPB8WtSRrur1RpcPPr45i8JzRy42/PV8K
-uk0YV+mO3595Lhg0p9LIn+Lqx1ei6wShsP8JVLuU2edqpWMaXzooJ7aRuTfezaSD
-XBJM7VrswUADWRDblOgF+fEFPjxUitiircUB05C8KwzaKKtkVJoaC0sqrSr4DyQ8
-kJeRcst7/AqIYbkJiVeZ2lg8rsjaXOTM5ZSUVfYwoycBQQyBIuy94pSGzmL1uH9u
-FV47rI6QWc8LiwDtFNzyZSbYHtCbTr2Nwv9A5danIsPMX7e+DyJi8gRJWF6w4T0G
-fEw6XmH2MYWvjil5+KOP+qUsGbaxm4JN/w7Qd/gfB3yZ1ZLT5dlQd3c0P5X+gnAa
-LDUP70Z4HladEVuBjwjuAGzKIwhpCznAxX7wuN7OOmJvup4HpjRqgjYmSFIeoeTZ
-CigUQR6O7vnKXR/2G7Xon+iFiiCiDb41eSygu3zUflnMb4r3NyZHv4OeAs5MZ6fU
-SHnNz762CV8tQ9GYs7ll02Ugt5sK/NnEOTWmEyLmpaw6KibHosg5u8vGmlrhefin
-oq8lrN03TGZ6yVNgLqIdjrI+QdcXt6Lplx2kNsi2H/RzaQBnlSp17Y2u218qkS4Z
-uful+Zz6igaJIM+WORLB
-=O7OQ
+iQIcBAEBCAAGBQJSJAi4AAoJEECxmPOUX5FEI+MP/0KWu2zhR0TRSDbFh1F50E63
+r/izeB2MuJ+i2ABwqXvIOvSfM1z7GXRxMqdRUnl7Fa5PD3iinJzcJvhCThSfXynV
+Qp2nGFhmO766gaxGJ3sv+0uu1h7naHDDWOTFb1WAbBNfOZ3xUcTE1cxjC4tG3lB1
+VGxcSh7AvJ3njIFhg3vIz48sTFlqWaQELqTamK74Q7szE54oi37WKbz+XYKT5aAE
+CQjtiqxAzY4kXiScq8pe12jm41V+lAGwgSM+VRsqDYEkevfMQdCFUolZzArt5TqX
+rhI9qiTkZHibp96T34lVffHP/h+Z5DwfHL8aUEWvPk27HHG3U2SBnxY8rbIW/emP
+tVy1XDadwonz7/unCFnnnXRrhrcWUNorOEsvWrwEXNL+54qDXB404vjCKNU/2KEk
+k8ZAl6pGL1V+7oxhVGsleMgMTAMYeHqlEz6fdLrs3MsshI9Mj9LLXDdnFkZoJ934
+ev2zY+zWVMEifJ6ZiZhiEBSfdqkDvMr2+8DWgv2HqzgpPS84gABqkR6eXwYiigI5
+dObwtzAlPBpuRfpRxDWU1rmUKNnPi6ZkpG+w/Wb4AJAXbYLpPhLEr/+FSvuxYPTZ
+MxdiCV2vIH2asNTGWJ9+jqOL9/72DzsblDl8fc1yThPiPO6mWdijgO/9ianGnNYi
+FGF1iiAIIJQcaO0AGAZZ
+=IK2W
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__2_Sep_2013_13_12_12_+1000_8oIN2pp.lMwK7C0J--
+--Signature=_Mon__2_Sep_2013_13_40_36_+1000__B/wI3fmgtJDqFLn--
