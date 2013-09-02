@@ -1,19 +1,19 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (drm tree
- related)
-Date: Mon, 2 Sep 2013 19:01:23 +1000
-Message-ID: <20130902190123.e3cd30ac95fcefa1aaa95c8b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Mon, 2 Sep 2013 19:11:20 +1000
+Message-ID: <20130902191120.645dab701e2a68bb2ac6ba33@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__2_Sep_2013_19_01_23_+1000_E=+6H/YZgo46ENDt"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>
+ boundary="Signature=_Mon__2_Sep_2013_19_11_20_+1000_6C8R8lGtzEmq_WU/"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cong Wang <amwang@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__2_Sep_2013_19_01_23_+1000_E=+6H/YZgo46ENDt
+--Signature=_Mon__2_Sep_2013_19_11_20_+1000_6C8R8lGtzEmq_WU/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -23,72 +23,39 @@ Hi all,
 After merging the final tree, today's linux-next build (powerpc
 allyesconfig) failed like this:
 
-drivers/gpu/drm/radeon/ci_dpm.c: In function 'ci_request_link_speed_change_=
-before_state_change':
-drivers/gpu/drm/radeon/ci_dpm.c:4212:4: error: implicit declaration of func=
-tion 'radeon_acpi_pcie_performance_request' [-Werror=3Dimplicit-function-de=
-claration]
-    if (radeon_acpi_pcie_performance_request(rdev, PCIE_PERF_REQ_PECI_GEN3,=
- false) =3D=3D 0)
-    ^
+drivers/net/vxlan.c: In function 'vxlan6_xmit_skb':
+drivers/net/vxlan.c:1441:3: error: implicit declaration of function 'csum_i=
+pv6_magic' [-Werror=3Dimplicit-function-declaration]
+   uh->check =3D csum_ipv6_magic(saddr, daddr, skb->len,
+   ^
 
-Caused by commit cc8dbbb4f62a ("drm/radeon: add dpm support for CI dGPUs
-(v2)").  These calls need protecting with CONFIG_ACPI (like is done in
-cypress_dpm.c, I guess).
+Caused by commit e4c7ed415387 ("vxlan: add ipv6 support").
 
-I tried reverting commit 9c725e5bcdae ("Merge branch 'drm-next-3.12' of
-git://people.freedesktop.org/~agd5f/linux into drm-next") but that failed
-because that branch is based on v3.11-rc7 (!) which is later than the
-base of the drm tree (v3.11-rc3).  :-(
+Please read Rule 1 in Documentation/SubmitChecklist.
 
-I added this fix up patch for today (it may be wrong, butfixes the build
-failure).
+I added the following patch for today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 2 Sep 2013 18:57:41 +1000
-Subject: [PATCH] drm/radeon: protect ACPI calls with CONFIG_ACPI
+Date: Mon, 2 Sep 2013 19:04:51 +1000
+Subject: [PATCH] vxlan: include the file that declares csum_ipv6_magic
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/gpu/drm/radeon/ci_dpm.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/vxlan.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/radeon/ci_dpm.c b/drivers/gpu/drm/radeon/ci_dp=
-m.c
-index 916630f..3cce533 100644
---- a/drivers/gpu/drm/radeon/ci_dpm.c
-+++ b/drivers/gpu/drm/radeon/ci_dpm.c
-@@ -4208,6 +4208,7 @@ static void ci_request_link_speed_change_before_state=
-_change(struct radeon_devic
- 	pi->pspp_notify_required =3D false;
- 	if (target_link_speed > current_link_speed) {
- 		switch (target_link_speed) {
-+#ifdef CONFIG_ACPI
- 		case RADEON_PCIE_GEN3:
- 			if (radeon_acpi_pcie_performance_request(rdev, PCIE_PERF_REQ_PECI_GEN3,=
- false) =3D=3D 0)
- 				break;
-@@ -4217,6 +4218,7 @@ static void ci_request_link_speed_change_before_state=
-_change(struct radeon_devic
- 		case RADEON_PCIE_GEN2:
- 			if (radeon_acpi_pcie_performance_request(rdev, PCIE_PERF_REQ_PECI_GEN2,=
- false) =3D=3D 0)
- 				break;
-+#endif
- 		default:
- 			pi->force_pcie_gen =3D ci_get_current_pcie_speed(rdev);
- 			break;
-@@ -4248,7 +4250,9 @@ static void ci_notify_link_speed_change_after_state_c=
-hange(struct radeon_device
- 		    (ci_get_current_pcie_speed(rdev) > 0))
- 			return;
+diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
+index 3ffb22d..35c78b3 100644
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -44,6 +44,7 @@
+ #include <net/ipv6.h>
+ #include <net/addrconf.h>
+ #include <net/ip6_tunnel.h>
++#include <net/ip6_checksum.h>
+ #endif
 =20
-+#ifdef CONFIG_ACPI
- 		radeon_acpi_pcie_performance_request(rdev, request, false);
-+#endif
- 	}
- }
-=20
+ #define VXLAN_VERSION	"0.1"
 --=20
 1.8.4.rc3
 
@@ -96,25 +63,25 @@ hange(struct radeon_device
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__2_Sep_2013_19_01_23_+1000_E=+6H/YZgo46ENDt
+--Signature=_Mon__2_Sep_2013_19_11_20_+1000_6C8R8lGtzEmq_WU/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSJFPnAAoJEECxmPOUX5FEHlAQAJ6YOPAllK+gx/SJVaBElA3/
-DFoVVphPrFTXjFdnZ44llfLlbSffcHta80AX1GJB1Kgqm0IaK+lqA6CRMA2LpYyG
-WsRPeqb1reYwejPqnCQL++PJZnQ/X/ozaO+me6TigFOA72iAiHnB6N1qkgiI5Rts
-0h57/1ZgfTlxdFl9Wk06gsH6Iw20tIJNXLqLUgovZGvLlnFRFJYJcbPYW7OCHU8E
-CJMXqkQjyA2eFYUpGwJp8VYEbf6dosAkS4WWJYxnC91MRFk+zeiJlv4s/R8V75MO
-IAG/+iHLSakWCVKgr6yyFkCK4vVRwk18Kp1HjYXlkYKkTebcx3wccIiPOngzksqc
-BuZl3u2DV1FptuzsfvZKdMIp03GAc8+xWaIFEDmKcH7ZHg7L99L4TREbC8AfTM0s
-NSBCytDf8DMUg9BNBAA+P5wLA5OxOv7bUwXZuswEeSb3GM78xgZDA5o+GH5YZ/ee
-s7lkAMgVtcyOvQ8/ScyYhrYhfjSodOKRtwxgnLGP5cfqFeQr7Jac8gUmCVsY6vTb
-3QGj1j4Ir3ASNtbJhm9g/xAMSVqiYYxawkGStlJWlNadUlVp6LSdfsUmi2jgxbmE
-Co0U1ahQvnobryzU0Km3HifHd44kDA6RipIuA5eJ8gm6hLooCC7S9xwrP+MlBjcQ
-uXDimN2GiwBeKxZx2eup
-=uOoi
+iQIcBAEBCAAGBQJSJFY4AAoJEECxmPOUX5FEsQoP/ivHGLtqVNgi1PRd7WIuSvZS
+0BbO4i+L8c/rN7oHzelDk2/V6AZG585Crf8e3LMxQ9TotJ7iZQKNm7oA9KiWyxd1
+FYuXBOnf5VmglAdQxInIYYZOWSttCKsuQegohHlYHNowP/orGfhmdKbf9XfWpMb7
+AePqgsbYYhmr8uf2yB9NNsqgZMacRNuWPs621mqr4BV0IF5bQHgwLPwU8RTYz419
+hiCH6tsJR0dvGG/nGCQAOyiqOWqUMJkXI8PaeGgEYxzODPE6IXqGIVR3rYEf5wJh
+GkoVPznJOSoDJwkxClaowlWsd5VM3Kxho/JRyJ9olJz86XtIXnEYgzL2OeSPzBla
+VO6xMzalSZjLNxJJqPZntU2++oVNctcQJ9zTsKIDwXNor1sKv4KIl/c2lm974p8A
+wms4iVCj3Cp9OM067MCvckrNyIC/qVBqbZ3HGMf6NMBcBJkIyC2GQn29HH/HRM7S
+QBxPqvnl1TBfz9DgqTQqaQFFiNxO4PO6JJV5FmiO3oPCxi0GvCaLGBiCrAp7YssO
+ULHO1p/LMAgHiORJLUvbhBLprV8mJJOK4guxprde9h0Ofp3icI7wv1JYPBnpMcG2
+vG6RV2tcYCzx3MwZlKE71nBxb2JAYwA1JJjqh55XlCeG/RMlpduBOKcfCHLQinob
+ZF/v+4rMaDe/r2BTTWjH
+=hJpj
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__2_Sep_2013_19_01_23_+1000_E=+6H/YZgo46ENDt--
+--Signature=_Mon__2_Sep_2013_19_11_20_+1000_6C8R8lGtzEmq_WU/--
