@@ -1,63 +1,73 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: ipc msg now works (was Re: ipc-msg broken again on 3.11-rc7?)
-Date: Wed, 4 Sep 2013 00:46:50 +0200
-Message-ID: <CA+icZUU5TQEH-SX9G97RFqfgUs1i2YHPU=HvUOY+YDKrU4RNzQ@mail.gmail.com>
-References: <CA+icZUXuw7QBn4CPLLuiVUjHin0m6GRdbczGw=bZY+Z60sXNow@mail.gmail.com>
-	<CA+icZUUn-r8iq6TVMAKmgJpQm4FhOE4b4QN_Yy=1L=0Up=rkBA@mail.gmail.com>
-	<52205597.3090609@synopsys.com>
-	<CA+icZUW=YXMC_2Qt=cYYz6w_fVW8TS4=Pvbx7BGtzjGt+31rLQ@mail.gmail.com>
-	<C2D7FE5348E1B147BCA15975FBA230751411CB@IN01WEMBXA.internal.synopsys.com>
-	<CALE5RAvaa4bb-9xAnBe07Yp2n+Nn4uGEgqpLrKMuOE8hhZv00Q@mail.gmail.com>
-	<CAMJEocr1SgxQw0bEzB3Ti9bvRY74TE5y9e+PLUsAL1mJbK=-ew@mail.gmail.com>
-	<CA+55aFy8tbBpac57fU4CN3jMDz46kCKT7+7GCpb18CscXuOnGA@mail.gmail.com>
-	<C2D7FE5348E1B147BCA15975FBA230751413F4@IN01WEMBXA.internal.synopsys.com>
-	<5224BCF6.2080401@colorfullife.com>
-	<C2D7FE5348E1B147BCA15975FBA23075141642@IN01WEMBXA.internal.synopsys.com>
-	<5225A466.2080303@colorfullife.com>
-	<C2D7FE5348E1B147BCA15975FBA2307514165E@IN01WEMBXA.internal.synopsys.com>
-	<5225AA8D.6080403@colorfullife.com>
-	<C2D7FE5348E1B147BCA15975FBA2307514168F@IN01WEMBXA.internal.synopsys.com>
-	<5225B716.3090708@colorfullife.com>
-	<C2D7FE5348E1B147BCA15975FBA230751416DC@IN01WEMBXA.internal.synopsys.com>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linus-next: update to the drm-intel-fixes tree
+Date: Wed, 4 Sep 2013 09:45:41 +1000
+Message-ID: <20130904094541.234e016eb3981d3b546c4cd1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA230751416DC@IN01WEMBXA.internal.synopsys.com>
-Sender: owner-linux-mm@kvack.org
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: Manfred Spraul <manfred@colorfullife.com>, Linus Torvalds <torvalds@linux-foundation.org>, Davidlohr Bueso <dave.bueso@gmail.com>, Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__4_Sep_2013_09_45_41_+1000_chqsS9ASEPHhQbuQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43099 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761447Ab3ICXpy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Sep 2013 19:45:54 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org
 
-On Tue, Sep 3, 2013 at 12:32 PM, Vineet Gupta
-<Vineet.Gupta1@synopsys.com> wrote:
-> On 09/03/2013 03:47 PM, Manfred Spraul wrote:
->> Hi Vineet,
->>
->> On 09/03/2013 11:51 AM, Vineet Gupta wrote:
->>> On 09/03/2013 02:53 PM, Manfred Spraul wrote:
->>>> The access to msq->q_cbytes is not protected.
->>>>
->>>> Vineet, could you try to move the test for free space after ipc_lock?
->>>> I.e. the lock must not get dropped between testing for free space and
->>>> enqueueing the messages.
->>> Hmm, the code movement is not trivial. I broke even the simplest of cases (patch
->>> attached). This includes the additional change which Linus/Davidlohr had asked for.
->> The attached patch should work. Could you try it?
->>
->
-> Yes this did the trick, now the default config of 100k iterations + 16 processes
-> runs to completion.
->
+--Signature=_Wed__4_Sep_2013_09_45_41_+1000_chqsS9ASEPHhQbuQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Manfred's patch "ipc/msg.c: Fix lost wakeup in msgsnd()." is now upstream.
+Hi Daniel,
 
-- Sedat -
+This morning after fetching the drm-intel-fixes tree, I have discovered
+that you have just added a whole set of patches on top of Dave's drm tree
+and made that the drm-intel-fixes tree.  I understood that this tree was
+for fixes to Linus' tree for the current release cycle.  Given that
+Dave's tree has not been merged by Linus (yet), this is a bit
+inconsistent.  Not only that, but now if I merge your tree early (which
+is what I do with the -fixes trees), I will also merge all of Dave's
+tree.  That in turn would mean that I would have missed the (what would
+have been automatically applied) merge for I am carrying for Dave's
+tree.  :-(
 
-[1] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=bebcb928c820d0ee83aca4b192adc195e43e66a2
+I am going to have to drop your -fixes tree for today.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+If these are fixes for stuff in Linus' tree, then they should have been
+based on Linus' tree - if they are fixes for Dave's tree, then they
+should have been in your drm-intel tree, right?
+
+(fetches more trees ...)
+And now, I discover that they are the latter :-)
+
+So your -fixes tree will be dropped, but all those patches will still be
+merged via you drm-intel tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__4_Sep_2013_09_45_41_+1000_chqsS9ASEPHhQbuQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSJnSpAAoJEECxmPOUX5FEkE0P/iSkEgo6E4xfYc+ZPCb3C2Ex
+3TBWejSBzMug2i0XKs9UbvEYty5otnJsj0EJcfxQ0H7e3dQBoVkbz3hVkelYbISc
+ed49hNrTTG0AqisDjjk9CCadR7GxE4UJQG2F4LfQPOmscyP2jCuK/TL1qOqxeC7Y
+YWp2/+0pM7bNqADGroqFRwSnLALxfGceQweSYR/cJ/OD5+2LxrRgTaq1cx2PC1v4
+tb1tu1du5lDZv7VAY6ZnAAK5WLPw/6CIYpVzzSq7eTXA0uuJEMm4rfyx4ywwE7Ck
+fz86aXb7Llr1UhUcLQGW3cnaLdSuWfMGJt0G4xNLKITLKT3omGBi4epbVhoNmJmA
+7GGxgP6GxPiJuLiOjRrAQktc5SInlUumdpYMpTg5tSRbwH1lAdISki/2dUCASlZm
+29wSmzzxA6HWVOMgs9ODvt7pziyIwJpn03gMOkWuOFQc5S9/NtCW8bXwaNv2cjnE
+JJyyZHSZsOu7OMQ/2OEPbQcMT52aGecYXwRysjhsD1hSEeLOI+x/9/bFxvRuhYYl
+/5mV60fErIPSPHCSVan644nOMnjt6oO7LZ6N9G42Rplb4VDAdx5D6wzYEtOXtDLz
+5olYd2npNNz9R+AY8NQEat4Hh7Ju+lQQDhe0UT8+yWbW7Jmr02PEUONIK3HTwDrc
+YReNOc0yCT7LuGEkllVY
+=v7Op
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__4_Sep_2013_09_45_41_+1000_chqsS9ASEPHhQbuQ--
