@@ -1,95 +1,48 @@
-From: Manfred Spraul <manfred@colorfullife.com>
-Subject: Re: ipc-msg broken again on 3.11-rc7?
-Date: Tue, 03 Sep 2013 11:23:25 +0200
-Message-ID: <5225AA8D.6080403@colorfullife.com>
-References: <CA+icZUXuw7QBn4CPLLuiVUjHin0m6GRdbczGw=bZY+Z60sXNow@mail.gmail.com> <CA+icZUUrZG8pYqKcHY3DcYAuuw=vbdUvs6ZXDq5meBMjj6suFg@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA23075140FA3@IN01WEMBXA.internal.synopsys.com> <CA+icZUUn-r8iq6TVMAKmgJpQm4FhOE4b4QN_Yy=1L=0Up=rkBA@mail.gmail.com> <52205597.3090609@synopsys.com> <CA+icZUW=YXMC_2Qt=cYYz6w_fVW8TS4=Pvbx7BGtzjGt+31rLQ@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA230751411CB@IN01WEMBXA.internal.synopsys.com> <CALE5RAvaa4bb-9xAnBe07Yp2n+Nn4uGEgqpLrKMuOE8hhZv00Q@mail.gmail.com> <CAMJEocr1SgxQw0bEzB3Ti9bvRY74TE5y9e+PLUsAL1mJbK=-ew@mail.gmail.com> <CA+55aFy8tbBpac57fU4CN3jMDz46kCKT7+7GCpb18CscXuOnGA@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA230751413F4@IN01WEMBXA.internal.synopsys.com> <5224BCF6.2080401@colorfullife.com> <C2D7FE5348E1B1
- 47BCA15975FBA23075141642@IN01WEMBXA.internal.synopsys.com> <5225A466.2080303@colorfullife.com> <C2D7FE5348E1B147BCA15975FBA2307514165E@IN01WEMBXA.internal.synopsys.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH -next] m68k/m68knommu: Implement __get_user_unaligned/__put_user_unaligned()
+Date: Tue,  3 Sep 2013 11:30:34 +0200
+Message-ID: <1378200634-24716-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA2307514165E@IN01WEMBXA.internal.synopsys.com>
-Sender: owner-linux-mm@kvack.org
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Davidlohr Bueso <dave.bueso@gmail.com>, Sedat Dilek <sedat.dilek@gmail.com>, Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-m68k-owner@vger.kernel.org>
+Sender: linux-m68k-owner@vger.kernel.org
+To: linux-m68k@lists.linux-m68k.org, linux-arch@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-Id: linux-next.vger.kernel.org
 
-On 09/03/2013 11:16 AM, Vineet Gupta wrote:
-> On 09/03/2013 02:27 PM, Manfred Spraul wrote:
->> On 09/03/2013 10:44 AM, Vineet Gupta wrote:
->>>> b) Could you check that it is not just a performance regression?
->>>>        Does ./msgctl08 1000 16 hang, too?
->>> Nope that doesn't hang. The minimal configuration that hangs reliably is msgctl
->>> 50000 2
->>>
->>> With this config there are 3 processes.
->>> ...
->>>     555   554 root     S     1208  0.4   0  0.0 ./msgctl08 50000 2
->>>     554   551 root     S     1208  0.4   0  0.0 ./msgctl08 50000 2
->>>     551   496 root     S     1208  0.4   0  0.0 ./msgctl08 50000 2
->>> ...
->>>
->>> [ARCLinux]$ cat /proc/551/stack
->>> [<80aec3c6>] do_wait+0xa02/0xc94
->>> [<80aecad2>] SyS_wait4+0x52/0xa4
->>> [<80ae24fc>] ret_from_system_call+0x0/0x4
->>>
->>> [ARCLinux]$ cat /proc/555/stack
->>> [<80c2950e>] SyS_msgrcv+0x252/0x420
->>> [<80ae24fc>] ret_from_system_call+0x0/0x4
->>>
->>> [ARCLinux]$ cat /proc/554/stack
->>> [<80c28c82>] do_msgsnd+0x116/0x35c
->>> [<80ae24fc>] ret_from_system_call+0x0/0x4
->>>
->>> Is this a case of lost wakeup or some such. I'm running with some more diagnostics
->>> and will report soon ...
->> What is the output of ipcs -q? Is the queue full or empty when it hangs?
->> I.e. do we forget to wake up a receiver or forget to wake up a sender?
-> / # ipcs -q
->
-> ------ Message Queues --------
-> key        msqid      owner      perms      used-bytes   messages
-> 0x72d83160 163841     root       600        0            0
->
->
-Ok, a sender is sleeping - even though there are no messages in the queue.
-Perhaps it is the race that I mentioned in a previous mail:
->       for (;;) {
->                 struct msg_sender s;
->
->                 err = -EACCES;
->                 if (ipcperms(ns, &msq->q_perm, S_IWUGO))
->                         goto out_unlock1;
->
->                 err = security_msg_queue_msgsnd(msq, msg, msgflg);
->                 if (err)
->                         goto out_unlock1;
->
->                 if (msgsz + msq->q_cbytes <= msq->q_qbytes &&
->                                 1 + msq->q_qnum <= msq->q_qbytes) {
->                         break;
->                 }
->
-[snip]
->         if (!pipelined_send(msq, msg)) {
->                 /* no one is waiting for this message, enqueue it */
->                 list_add_tail(&msg->m_list, &msq->q_messages);
->                 msq->q_cbytes += msgsz;
->                 msq->q_qnum++;
->                 atomic_add(msgsz, &ns->msg_bytes);
+fs/btrfs/ioctl.c: In function =E2=80=98btrfs_ioctl_file_extent_same=E2=80=
+=99:
+fs/btrfs/ioctl.c:2802: error: implicit declaration of function =E2=80=98=
+__put_user_unaligned=E2=80=99
 
-The access to msq->q_cbytes is not protected.
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+http://kisskb.ellerman.id.au/kisskb/buildresult/9455452/
 
-Vineet, could you try to move the test for free space after ipc_lock?
-I.e. the lock must not get dropped between testing for free space and 
-enqueueing the messages.
+Btrfs is the first user of __put_user_unaligned() outside the compat co=
+de,
+hence now all 32-bit architectures should make sure to implement this, =
+too.
 
---
-     Manfred
+ arch/m68k/include/asm/uaccess.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+diff --git a/arch/m68k/include/asm/uaccess.h b/arch/m68k/include/asm/ua=
+ccess.h
+index 639c731..3fadc4a 100644
+--- a/arch/m68k/include/asm/uaccess.h
++++ b/arch/m68k/include/asm/uaccess.h
+@@ -3,3 +3,10 @@
+ #else
+ #include <asm/uaccess_mm.h>
+ #endif
++
++#ifdef CONFIG_CPU_HAS_NO_UNALIGNED
++#include <asm-generic/uaccess-unaligned.h>
++#else
++#define __get_user_unaligned(x, ptr)	__get_user((x), (ptr))
++#define __put_user_unaligned(x, ptr)	__put_user((x), (ptr))
++#endif
+--=20
+1.7.9.5
