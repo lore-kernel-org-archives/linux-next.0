@@ -1,54 +1,57 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: ipc msg now works (was Re: ipc-msg broken again on 3.11-rc7?)
-Date: Tue, 3 Sep 2013 10:32:04 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA230751416DC@IN01WEMBXA.internal.synopsys.com>
-References: <CA+icZUXuw7QBn4CPLLuiVUjHin0m6GRdbczGw=bZY+Z60sXNow@mail.gmail.com>
- <CA+icZUUn-r8iq6TVMAKmgJpQm4FhOE4b4QN_Yy=1L=0Up=rkBA@mail.gmail.com>
- <52205597.3090609@synopsys.com>
- <CA+icZUW=YXMC_2Qt=cYYz6w_fVW8TS4=Pvbx7BGtzjGt+31rLQ@mail.gmail.com>
- <C2D7FE5348E1B147BCA15975FBA230751411CB@IN01WEMBXA.internal.synopsys.com>
- <CALE5RAvaa4bb-9xAnBe07Yp2n+Nn4uGEgqpLrKMuOE8hhZv00Q@mail.gmail.com>
- <CAMJEocr1SgxQw0bEzB3Ti9bvRY74TE5y9e+PLUsAL1mJbK=-ew@mail.gmail.com>
- <CA+55aFy8tbBpac57fU4CN3jMDz46kCKT7+7GCpb18CscXuOnGA@mail.gmail.com>
- <C2D7FE5348E1B147BCA15975FBA230751413F4@IN01WEMBXA.internal.synopsys.com>
- <5224BCF6.2080401@colorfullife.com>
- <C2D7FE5348E1B147BCA15975FBA23075141642@IN01WEMBXA.internal.synopsys.com>
- <5225A466.2080303@colorfullife.com>
- <C2D7FE5348E1B147BCA15975FBA2307514165E@IN01WEMBXA.internal.synopsys.com>
- <5225AA8D.6080403@colorfullife.com>
- <C2D7FE5348E1B147BCA15975FBA2307514168F@IN01WEMBXA.internal.synopsys.com>
- <5225B716.3090708@colorfullife.com>
+From: Michael Tokarev <mjt@tls.msk.ru>
+Subject: Re: [PATCH 00/10] autofs4 - rename autofs4 to autofs
+Date: Tue, 03 Sep 2013 15:28:48 +0400
+Message-ID: <5225C7F0.10103@msgid.tls.msk.ru>
+References: <20130831114133.11807.35953.stgit@perseus.themaw.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from us02smtp2.synopsys.com ([198.182.60.77]:36922 "EHLO
-	alvesta.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759881Ab3ICKcI convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Sep 2013 06:32:08 -0400
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Manfred Spraul <manfred@colorfullife.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Davidlohr Bueso <dave.bueso@gmail.com>, Sedat Dilek <sedat.dilek@gmail.com>, Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <autofs-owner@vger.kernel.org>
+In-Reply-To: <20130831114133.11807.35953.stgit@perseus.themaw.net>
+Sender: autofs-owner@vger.kernel.org
+To: Ian Kent <raven@themaw.net>
+Cc: linux-next@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, autofs mailing list <autofs@vger.kernel.org>, Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 09/03/2013 03:47 PM, Manfred Spraul wrote:
-> Hi Vineet,
->
-> On 09/03/2013 11:51 AM, Vineet Gupta wrote:
->> On 09/03/2013 02:53 PM, Manfred Spraul wrote:
->>> The access to msq->q_cbytes is not protected.
->>>
->>> Vineet, could you try to move the test for free space after ipc_lock?
->>> I.e. the lock must not get dropped between testing for free space and
->>> enqueueing the messages.
->> Hmm, the code movement is not trivial. I broke even the simplest of cases (patch
->> attached). This includes the additional change which Linus/Davidlohr had asked for.
-> The attached patch should work. Could you try it?
->
+31.08.2013 15:42, Ian Kent wrote:
+[...]
+> By leaving a Kconfig and Makefile in fs/autofs4 (to build autofs4.ko)
+> with a deprication message sub-system maintainers and other users will
+> make any needed changes before these are removed after two kernel versions.
+> IMHO the presence of the warning is reason enough to leave a build stub
+> rather than do a straight out rename.
 
-Yes this did the trick, now the default config of 100k iterations + 16 processes
-runs to completion.
+Why do you want to continue building autofs4.ko? (or allowing to)
+What's actually wrong with a stright rename?
+If the new module can be auto-loaded by both name (by providing an
+alias), there's no need to keep ability to build autofs4.ko, I think.
 
-Thx,
--Vineet
+Well, maybe except of the case when autofs is needed in initramfs (like
+for systemd).  For this, indeed, you can keep autofs4.ko which is a
+dummy depending on autofs.ko...
+
+> Ian Kent (10):
+>       autofs4 - coding style fixes
+>       autofs4 - fix string.h include in auto_dev-ioctl.h
+>       autofs4 - move linux/auto_dev-ioctl.h to uapi/linux
+>       autofs - merge auto_fs.h and auto_fs4.h
+>       autofs - use autofs instead of autofs4 everywhere
+>       autofs - copy autofs4 to autofs
+>       autofs - create autofs Kconfig and Makefile
+>       autofs - update fs/autofs4/Kconfig
+>       autofs - update fs/autofs4/Makefile
+>       autofs - delete fs/autofs4
+
+By doing it this way, you're losing all git history.
+If you perform stright rename and git detects it, you
+can use, eg, git log --follow to see whole hostory
+across rename.  This way you create new files without
+history.
+
+So I strongly shuggest actually renaming the subdirectory
+(together with appropriate kconfig/makefile changes so
+things are bisectable), and creating the stubs after this.
+
+Thanks,
+
+/mjt
