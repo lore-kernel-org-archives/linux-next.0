@@ -1,77 +1,95 @@
-From: Ian Kent <raven@themaw.net>
-Subject: Re: [PATCH 00/10] autofs4 - rename autofs4 to autofs
-Date: Tue, 03 Sep 2013 20:47:13 +0800
-Message-ID: <1378212433.2310.3.camel@perseus.fritz.box>
-References: <20130831114133.11807.35953.stgit@perseus.themaw.net>
-	 <5225C7F0.10103@msgid.tls.msk.ru>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Manfred Spraul <manfred@colorfullife.com>
+Subject: [PATCH] ipc/msg.c: Fix lost wakeup in msgsnd().
+Date: Tue,  3 Sep 2013 16:00:08 +0200
+Message-ID: <1378216808-2564-1-git-send-email-manfred@colorfullife.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:55687 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752353Ab3ICMrU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Sep 2013 08:47:20 -0400
-In-Reply-To: <5225C7F0.10103@msgid.tls.msk.ru>
+Received: from mail-bk0-f49.google.com ([209.85.214.49]:62657 "EHLO
+	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932858Ab3ICOA3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Sep 2013 10:00:29 -0400
+Received: by mail-bk0-f49.google.com with SMTP id r7so2104394bkg.36
+        for <linux-next@vger.kernel.org>; Tue, 03 Sep 2013 07:00:28 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Tokarev <mjt@tls.msk.ru>
-Cc: linux-next@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, autofs mailing list <autofs@vger.kernel.org>, Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Davidlohr Bueso <dave.bueso@gmail.com>, Sedat Dilek <sedat.dilek@gmail.com>, Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Jonathan Gonzalez <jgonzalez@linets.cl>, Vineet Gupta <Vineet.Gupta1@synopsys.com>, Manfred Spraul <manfred@colorfullife.com>
 
-On Tue, 2013-09-03 at 15:28 +0400, Michael Tokarev wrote:
-> 31.08.2013 15:42, Ian Kent wrote:
-> [...]
-> > By leaving a Kconfig and Makefile in fs/autofs4 (to build autofs4.ko)
-> > with a deprication message sub-system maintainers and other users will
-> > make any needed changes before these are removed after two kernel versions.
-> > IMHO the presence of the warning is reason enough to leave a build stub
-> > rather than do a straight out rename.
-> 
-> Why do you want to continue building autofs4.ko? (or allowing to)
-> What's actually wrong with a stright rename?
-> If the new module can be auto-loaded by both name (by providing an
-> alias), there's no need to keep ability to build autofs4.ko, I think.
+The check if the queue is full and adding current to the wait queue of pending
+msgsnd() operations (ss_add()) must be atomic.
 
-The hope is that within two subsequent kernel versions, when it is
-removed, people that need to change will have noticed this and made the
-needed changes. That's scripts that may have looked for autofs4.ko to
-work around the auto-load problem, aliases that won't work now, kernel
-configurations, etc...
+Otherwise:
+- the thread that performs msgsnd() finds a full queue and decides to sleep.
+- the thread that performs msgrcv() calls first reads all messages from the
+  queue and then sleep, because the queue is empty.
+- the msgrcv() calls do not perform any wakeups, because the msgsnd() task
+  has not yet called ss_add().
+- then the msgsnd()-thread first calls ss_add() and then sleeps.
+Net result: msgsnd() and msgrcv() both sleep forever.
 
-The configuration message for autofs4 now says these things and says the
-module is going to be removed.
+Observed with msgctl08 from ltp with a preemptible kernel.
 
-> 
-> Well, maybe except of the case when autofs is needed in initramfs (like
-> for systemd).  For this, indeed, you can keep autofs4.ko which is a
-> dummy depending on autofs.ko...
-> 
-> > Ian Kent (10):
-> >       autofs4 - coding style fixes
-> >       autofs4 - fix string.h include in auto_dev-ioctl.h
-> >       autofs4 - move linux/auto_dev-ioctl.h to uapi/linux
-> >       autofs - merge auto_fs.h and auto_fs4.h
-> >       autofs - use autofs instead of autofs4 everywhere
-> >       autofs - copy autofs4 to autofs
-> >       autofs - create autofs Kconfig and Makefile
-> >       autofs - update fs/autofs4/Kconfig
-> >       autofs - update fs/autofs4/Makefile
-> >       autofs - delete fs/autofs4
-> 
-> By doing it this way, you're losing all git history.
-> If you perform stright rename and git detects it, you
-> can use, eg, git log --follow to see whole hostory
-> across rename.  This way you create new files without
-> history.
-> 
-> So I strongly shuggest actually renaming the subdirectory
-> (together with appropriate kconfig/makefile changes so
-> things are bisectable), and creating the stubs after this.
-> 
-> Thanks,
-> 
-> /mjt
-> --
-> To unsubscribe from this list: send the line "unsubscribe autofs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Fix: Call ipc_lock_object() before performing the check.
+
+The patch also moves security_msg_queue_msgsnd() under ipc_lock_object:
+- msgctl(IPC_SET) explicitely mentions that it tries to expunge any pending
+  operations that are not allowed anymore with the new permissions.
+  If security_msg_queue_msgsnd() is called without locks, then there might be
+  races.
+- it makes the patch much simpler.
+
+Reported-by: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
+---
+ ipc/msg.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/ipc/msg.c b/ipc/msg.c
+index 9f29d9e..b65fdf1 100644
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@ -680,16 +680,18 @@ long do_msgsnd(int msqid, long mtype, void __user *mtext,
+ 		goto out_unlock1;
+ 	}
+ 
++	ipc_lock_object(&msq->q_perm);
++
+ 	for (;;) {
+ 		struct msg_sender s;
+ 
+ 		err = -EACCES;
+ 		if (ipcperms(ns, &msq->q_perm, S_IWUGO))
+-			goto out_unlock1;
++			goto out_unlock0;
+ 
+ 		err = security_msg_queue_msgsnd(msq, msg, msgflg);
+ 		if (err)
+-			goto out_unlock1;
++			goto out_unlock0;
+ 
+ 		if (msgsz + msq->q_cbytes <= msq->q_qbytes &&
+ 				1 + msq->q_qnum <= msq->q_qbytes) {
+@@ -699,10 +701,9 @@ long do_msgsnd(int msqid, long mtype, void __user *mtext,
+ 		/* queue full, wait: */
+ 		if (msgflg & IPC_NOWAIT) {
+ 			err = -EAGAIN;
+-			goto out_unlock1;
++			goto out_unlock0;
+ 		}
+ 
+-		ipc_lock_object(&msq->q_perm);
+ 		ss_add(msq, &s);
+ 
+ 		if (!ipc_rcu_getref(msq)) {
+@@ -730,10 +731,7 @@ long do_msgsnd(int msqid, long mtype, void __user *mtext,
+ 			goto out_unlock0;
+ 		}
+ 
+-		ipc_unlock_object(&msq->q_perm);
+ 	}
+-
+-	ipc_lock_object(&msq->q_perm);
+ 	msq->q_lspid = task_tgid_vnr(current);
+ 	msq->q_stime = get_seconds();
+ 
+-- 
+1.8.3.1
