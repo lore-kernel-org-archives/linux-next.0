@@ -1,71 +1,154 @@
-From: Jesse Gross <jesse@nicira.com>
-Subject: Re: [-next] openvswitch BUILD_BUG_ON failed
-Date: Tue, 3 Sep 2013 14:44:32 -0700
-Message-ID: <CAEP_g=-BWdWJ5WtNy0=Eq8GJp84i88QbGq-gQcANBhCKajcJsQ@mail.gmail.com>
-References: <CAMuHMdVG9FmZNayrf7HMz4kC4X5QELeXUFjjzpAM80ND_QOm8A@mail.gmail.com>
- <CAEP_g=-XvRiHPzSAp2rgC9Hxdd+pGEHvSTEJ1A1SkWnk1-6xZA@mail.gmail.com>
- <20130829.181001.145658561677052552.davem@davemloft.net> <CAEP_g=-XxgK9HVxvcaW3RS2zfa+77pB4cqfLFC0rcV7QJc+2BQ@mail.gmail.com>
- <CAMuHMdU3M9uUFKd3EQ0HbcAvf5e62PA4NJG_mQHhpvZwFJnUWQ@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: [PATCH] ipc/msg.c: Fix lost wakeup in msgsnd().
+Date: Tue, 3 Sep 2013 23:56:23 +0200
+Message-ID: <CA+icZUUThSZTRTfyLUfutoAHCmkMr1p0MQh7013JY8cto1schA@mail.gmail.com>
+References: <1378216808-2564-1-git-send-email-manfred@colorfullife.com>
+	<CA+icZUUdnK3Kc9OFNjcEsZYigbyytsFk90_HaqqUWh9cvq5+0w@mail.gmail.com>
+	<52260F45.6040702@colorfullife.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdU3M9uUFKd3EQ0HbcAvf5e62PA4NJG_mQHhpvZwFJnUWQ@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: David Miller <davem@davemloft.net>, Andy Zhou <azhou@nicira.com>, "dev@openvswitch.org" <dev@openvswitch.org>, netdev <netdev@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <52260F45.6040702@colorfullife.com>
+Sender: owner-linux-mm@kvack.org
+To: Manfred Spraul <manfred@colorfullife.com>
+Cc: Greg KH <greg@kroah.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Davidlohr Bueso <dave.bueso@gmail.com>, Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Jonathan Gonzalez <jgonzalez@linets.cl>, Vineet Gupta <Vineet.Gupta1@synopsys.com>
 List-Id: linux-next.vger.kernel.org
 
-On Sat, Aug 31, 2013 at 5:11 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, Aug 30, 2013 at 3:11 AM, Jesse Gross <jesse@nicira.com> wrote:
->> On Thu, Aug 29, 2013 at 3:10 PM, David Miller <davem@davemloft.net> wrote:
->>> From: Jesse Gross <jesse@nicira.com>
->>> Date: Thu, 29 Aug 2013 14:42:22 -0700
->>>
->>>> On Thu, Aug 29, 2013 at 2:21 PM, Geert Uytterhoeven
->>>> <geert@linux-m68k.org> wrote:
->>>>> However, I have some doubts about other alignment "enforcements":
->>>>>
->>>>> "__aligned(__alignof__(long))" makes the whole struct aligned to the
->>>>> alignment rule for "long":
->>>>>    1. This is only 2 bytes on m68k, i.e. != sizeof(long).
->>>>>    2. This is 4 bytes on many 32-bit platforms, which may be less than the
->>>>>       default alignment for "__be64" (cfr. some members of struct
->>>>>       ovs_key_ipv4_tunnel), so this may make those 64-bit members unaligned.
->>>>
->>>> Do any of those 32-bit architectures actually care about alignment of
->>>> 64 bit values? On 32-bit x86, a long is 32 bits but the alignment
->>>> requirement of __be64 is also 32 bit.
->>>
->>> All except x86-32 do, it is in fact the odd man out with respect to this
->>> issue.
+On Tue, Sep 3, 2013 at 6:33 PM, Manfred Spraul <manfred@colorfullife.com> wrote:
+> Hi Sedat,
+>
+>
+> On 09/03/2013 06:13 PM, Sedat Dilek wrote:
 >>
->> Thanks, good to know.
+>> On Tue, Sep 3, 2013 at 4:00 PM, Manfred Spraul <manfred@colorfullife.com>
+>> wrote:
+>>>
+>>> The check if the queue is full and adding current to the wait queue of
+>>> pending
+>>> msgsnd() operations (ss_add()) must be atomic.
+>>>
+>>> Otherwise:
+>>> - the thread that performs msgsnd() finds a full queue and decides to
+>>> sleep.
+>>> - the thread that performs msgrcv() calls first reads all messages from
+>>> the
+>>>    queue and then sleep, because the queue is empty.
 >>
->> Andy, do you want to modify your patch to just drop the alignment
->> specification as Geert suggested (but definitely keep the new build
->> assert that you added)? It's probably better to just send the patch to
->> netdev (against net-next) as well since you'll likely get better
->> comments there and we can fix this faster if you cut out the
->> middleman.
+>> reads -> sleeps
 >
-> Why do you want to keep the build asserts?
-> Is this in-memory structure also transfered as-is over the network?
-> If yes, you definitely want the padding.
-
-Well they caught this bug and really don't cost anything.
-
-> Nevertheless, as the struct contains u32 and even __be64 members, the
-> size of the struct will always be a multiple of the alignment unit for
-> 64-bit quantities (and thus also for long), as per the C standard.
-> Hence the check
+> Correct.
 >
->     BUILD_BUG_ON(sizeof(struct sw_flow_key) % __alignof__(long));
+>>> - the msgrcv() calls do not perform any wakeups, because the msgsnd()
+>>> task
+>>>    has not yet called ss_add().
+>>> - then the msgsnd()-thread first calls ss_add() and then sleeps.
+>>> Net result: msgsnd() and msgrcv() both sleep forever.
+>>>
+>> I don't know what and why "net result" - net in sense of networking?
 >
-> will only catch bad compiler bugs or people adding __packed to the struct.
+> http://en.wiktionary.org/wiki/net#Adjective
+> I.e.: Ignore/remove the "Net".
+>
+>
+>>> Observed with msgctl08 from ltp with a preemptible kernel.
+>>>
+>> ...on ARC arch (that sounds funny somehow).
+>>
+>>> Fix: Call ipc_lock_object() before performing the check.
+>>>
+>>> The patch also moves security_msg_queue_msgsnd() under ipc_lock_object:
+>>> - msgctl(IPC_SET) explicitely mentions that it tries to expunge any
+>>> pending
+>>>    operations that are not allowed anymore with the new permissions.
+>>>    If security_msg_queue_msgsnd() is called without locks, then there
+>>> might be
+>>>    races.
+>>> - it makes the patch much simpler.
+>>>
+>>> Reported-by: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+>>> Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
+>>
+>> I guess this is missing a "CC: stable" as Vineet reported against
+>> Linux v3.11-rc7 (and should enter v3.11.1)?
+>
+> Yes. I didn't notice that Linus already released 3.11.
+>
 
-It's possible that we might want to pack the structure in the future.
-More generally though, the contents of the struct is really
-independent of the alignment requirements here because we're accessing
-it as an array of bytes in long-sized chunks so implicitly depending
-on the size of the members is not that great.
+Linus pushed your patch upstream... with typos fixed and "CC: stable #3.11".
+Thanks to all involved people!
+
+- Sedat -
+
+[1] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=bebcb928c820d0ee83aca4b192adc195e43e66a2
+
+> --
+>     Manfred
+>
+>> - Sedat -
+>>
+>>> ---
+>>>   ipc/msg.c | 12 +++++-------
+>>>   1 file changed, 5 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/ipc/msg.c b/ipc/msg.c
+>>> index 9f29d9e..b65fdf1 100644
+>>> --- a/ipc/msg.c
+>>> +++ b/ipc/msg.c
+>>> @@ -680,16 +680,18 @@ long do_msgsnd(int msqid, long mtype, void __user
+>>> *mtext,
+>>>                  goto out_unlock1;
+>>>          }
+>>>
+>>> +       ipc_lock_object(&msq->q_perm);
+>>> +
+>>>          for (;;) {
+>>>                  struct msg_sender s;
+>>>
+>>>                  err = -EACCES;
+>>>                  if (ipcperms(ns, &msq->q_perm, S_IWUGO))
+>>> -                       goto out_unlock1;
+>>> +                       goto out_unlock0;
+>>>
+>>>                  err = security_msg_queue_msgsnd(msq, msg, msgflg);
+>>>                  if (err)
+>>> -                       goto out_unlock1;
+>>> +                       goto out_unlock0;
+>>>
+>>>                  if (msgsz + msq->q_cbytes <= msq->q_qbytes &&
+>>>                                  1 + msq->q_qnum <= msq->q_qbytes) {
+>>> @@ -699,10 +701,9 @@ long do_msgsnd(int msqid, long mtype, void __user
+>>> *mtext,
+>>>                  /* queue full, wait: */
+>>>                  if (msgflg & IPC_NOWAIT) {
+>>>                          err = -EAGAIN;
+>>> -                       goto out_unlock1;
+>>> +                       goto out_unlock0;
+>>>                  }
+>>>
+>>> -               ipc_lock_object(&msq->q_perm);
+>>>                  ss_add(msq, &s);
+>>>
+>>>                  if (!ipc_rcu_getref(msq)) {
+>>> @@ -730,10 +731,7 @@ long do_msgsnd(int msqid, long mtype, void __user
+>>> *mtext,
+>>>                          goto out_unlock0;
+>>>                  }
+>>>
+>>> -               ipc_unlock_object(&msq->q_perm);
+>>>          }
+>>> -
+>>> -       ipc_lock_object(&msq->q_perm);
+>>>          msq->q_lspid = task_tgid_vnr(current);
+>>>          msq->q_stime = get_seconds();
+>>>
+>>> --
+>>> 1.8.3.1
+>>>
+>
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
