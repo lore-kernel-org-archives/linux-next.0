@@ -1,99 +1,62 @@
-From: Manfred Spraul <manfred@colorfullife.com>
-Subject: Re: ipc-msg broken again on 3.11-rc7?
-Date: Tue, 03 Sep 2013 09:49:48 +0200
-Message-ID: <5225949C.9030201@colorfullife.com>
-References: <CA+icZUXuw7QBn4CPLLuiVUjHin0m6GRdbczGw=bZY+Z60sXNow@mail.gmail.com> <521DE5D7.4040305@synopsys.com> <CA+icZUUrZG8pYqKcHY3DcYAuuw=vbdUvs6ZXDq5meBMjj6suFg@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA23075140FA3@IN01WEMBXA.internal.synopsys.com> <CA+icZUUn-r8iq6TVMAKmgJpQm4FhOE4b4QN_Yy=1L=0Up=rkBA@mail.gmail.com> <52205597.3090609@synopsys.com> <CA+icZUW=YXMC_2Qt=cYYz6w_fVW8TS4=Pvbx7BGtzjGt+31rLQ@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA230751411CB@IN01WEMBXA.internal.synopsys.com> <CALE5RAvaa4bb-9xAnBe07Yp2n+Nn4uGEgqpLrKMuOE8hhZv00Q@mail.gmail.com> <CAMJEocr1SgxQw0bEzB3Ti9bvRY74TE5y9e+PLUsAL1mJbK=-ew@mail.gmail.com> <CA+55aFy8tbBpac57fU4CN3jMDz46kCKT7+7GCpb18CscXuOnGA@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA230751413F4@IN01WEMBXA.internal.synopsys.com> <5224BCF6.2080401@c
- olorfullife.com> <CA+icZUVc6fhW+TTB56x68LooS8DqhA8n3CQzgKkXQmbyH+ryUQ@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA2307514160B@IN01WEMBXA.internal.synopsys.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (arm tree
+ related)
+Date: Tue, 3 Sep 2013 18:18:24 +1000
+Message-ID: <20130903181824.796e74465274b23387d3e715@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
- boundary="------------020005030001010506050103"
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA2307514160B@IN01WEMBXA.internal.synopsys.com>
-Sender: owner-linux-mm@kvack.org
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Davidlohr Bueso <dave.bueso@gmail.com>, Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__3_Sep_2013_18_18_24_+1000_Vo7TE_.TH=BmtE7/"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51022 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759429Ab3ICISf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Sep 2013 04:18:35 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>
 
-This is a multi-part message in MIME format.
---------------020005030001010506050103
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+--Signature=_Tue__3_Sep_2013_18_18_24_+1000_Vo7TE_.TH=BmtE7/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vineet,
+Hi all,
 
-On 09/03/2013 09:34 AM, Vineet Gupta wrote:
-> However assuming we are going ahead with debugging this - can you 
-> please confirm whether you see the issue on x86 as well as I have not 
-> tested that ? I vaguely remember one of your earlier posts suggested 
-> you did Thx, -Vineet 
-I'm unable to reproduce the issue so far. I ran
-- something like 4000 stock msgctl08 with 4 cores on x86.
-- a few runs with modified msgctl08 with either slowed down reader or 
-slowed down writer threads. (i.e.: force queue full or queue empty waits).
-- a few runs (modified&unmodified) with all but one core taken offline.
+After merging the final tree, today's linux-next build (arm defconfig)
+failed like this:
 
-I have not yet tested with PREEMPT enabled.
+arch/arm/kernel/built-in.o: In function `setup_arch':
+io.c:(.init.text+0x594): undefined reference to `erratum_a15_798181_init'
 
-A few more ideas:
-- what is the output of ipcs -q? Are the queues empty or full?
-- what is the output of then WCHAN field with ps when it hangs?
-Something like
-/ #ps/ -o pid,f,stat,pcpu,pmem,psr,/wchan/=/WIDE/-/WCHAN/ -o comm,args
+Presumably caused by commit 34905a33184a ("ARM: 7804/2: Add check for
+Cortex-A15 errata 798181 ECO").  This build does not have CONFIG_SMP set.
 
---
-     Manfred
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---------------020005030001010506050103
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+--Signature=_Tue__3_Sep_2013_18_18_24_+1000_Vo7TE_.TH=BmtE7/
+Content-Type: application/pgp-signature
 
-<html>
-  <head>
-    <meta content="text/html; charset=ISO-8859-1"
-      http-equiv="Content-Type">
-  </head>
-  <body bgcolor="#FFFFFF" text="#000000">
-    <div class="moz-cite-prefix">Hi Vineet,<br>
-      <br>
-      On 09/03/2013 09:34 AM, Vineet Gupta wrote:<br>
-    </div>
-    <blockquote
-cite="mid:C2D7FE5348E1B147BCA15975FBA2307514160B@IN01WEMBXA.internal.synopsys.com"
-      type="cite">
-      However assuming we are going ahead with debugging this - can you
-      please confirm
-      whether you see the issue on x86 as well as I have not tested that
-      ? I vaguely
-      remember one of your earlier posts suggested you did
-      Thx,
-      -Vineet
-    </blockquote>
-    I'm unable to reproduce the issue so far. I ran<br>
-    - something like 4000 stock msgctl08 with 4 cores on x86.<br>
-    - a few runs with modified msgctl08 with either slowed down reader
-    or slowed down writer threads. (i.e.: force queue full or queue
-    empty waits).<br>
-    - a few runs (modified&amp;unmodified) with all but one core taken
-    offline.<br>
-    <br>
-    I have not yet tested with PREEMPT enabled.<br>
-    <br>
-    A few more ideas:<br>
-    - what is the output of ipcs -q? Are the queues empty or full?<br>
-    - what is the output of then WCHAN field with ps when it hangs?<br>
-    Something like<br>
-    <span class="st"><em>&nbsp;#ps</em> -o pid,f,stat,pcpu,<wbr>pmem,psr,<em>wchan</em>=<em>WIDE</em>-<em>WCHAN</em>
-      -o comm,args</span><br>
-    <br>
-    --<br>
-    &nbsp;&nbsp;&nbsp; Manfred<br>
-  </body>
-</html>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
---------------020005030001010506050103--
+iQIcBAEBCAAGBQJSJZtUAAoJEECxmPOUX5FEhdEP/A+HRpLywse2dMJwMv+CDt3r
+BmUnLYLlTRrso2dJ6Rk63RWc/dZYZOHMmYjHneoFYUjnQol/P+hF8ER1TonntsvX
+ZDso+E128XBdN2ZO5HHBl8LI6rdnjOptYHDmDhh7L0Xp9ccN9nTaoQQfY43EYxRz
+fQ58hFBy8T1C2TXI45WpoZrQ+ctbBroGqLAlQ37fcexmF01bbGJn4igD/uHkl9Xf
+zGIvrWtov1Nm5I10yc7QInS/xHN8u2IQcETN266McWRy0wgsbTpSOluiKDlV2dTz
+nFNu+d+K7tUW221rGzvF+1+vpkrt4YuRhUAP8F2e0yT4cQYo+KLkqbj0xZ7dgMur
+qy8Kz7juHOIDhaoL5YFxdu+p21A4KuHCWO8bBnk+8rYtlyyZDB6UQGaV9Nx99kzE
+od4MgHOX2NnYeby+GZxnVvrm9ZgKO+pcNuHYeXisIKAc3BJZelUlQIubXqOHkRWp
+sxksTh/wIgShWBhx56dUOalVc0+vXMKFrn7l6eqs+daHYmv9XJWDhuTpMtwQgjm4
+kjKRRzsOl5GMK1Coui7dY+n9eUh26xmx5XrRkUrlrLusLcbQz3m3xROjY0elLPsr
+BBmgs6ehSJVPHSXqIX+D/vZU5eHFyizhJNXLyMcwoBG6uTu9c+EogLPVsmVw5uBU
+7k3FPSxtz/aUWC4/3Smc
+=IIzA
+-----END PGP SIGNATURE-----
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--Signature=_Tue__3_Sep_2013_18_18_24_+1000_Vo7TE_.TH=BmtE7/--
