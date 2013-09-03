@@ -1,63 +1,96 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+From: Manfred Spraul <manfred@colorfullife.com>
 Subject: Re: ipc-msg broken again on 3.11-rc7?
-Date: Tue, 3 Sep 2013 07:34:53 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA2307514160B@IN01WEMBXA.internal.synopsys.com>
-References: <CA+icZUXuw7QBn4CPLLuiVUjHin0m6GRdbczGw=bZY+Z60sXNow@mail.gmail.com>
-	<1372192414.1888.8.camel@buesod1.americas.hpqcorp.net>
-	<CA+icZUXgOd=URJBH5MGAZKdvdkMpFt+5mRxtzuDzq_vFHpoc2A@mail.gmail.com>
-	<1372202983.1888.22.camel@buesod1.americas.hpqcorp.net>
-	<521DE5D7.4040305@synopsys.com>
-	<CA+icZUUrZG8pYqKcHY3DcYAuuw=vbdUvs6ZXDq5meBMjj6suFg@mail.gmail.com>
-	<C2D7FE5348E1B147BCA15975FBA23075140FA3@IN01WEMBXA.internal.synopsys.com>
-	<CA+icZUUn-r8iq6TVMAKmgJpQm4FhOE4b4QN_Yy=1L=0Up=rkBA@mail.gmail.com>
-	<52205597.3090609@synopsys.com>
-	<CA+icZUW=YXMC_2Qt=cYYz6w_fVW8TS4=Pvbx7BGtzjGt+31rLQ@mail.gmail.com>
-	<C2D7FE5348E1B147BCA15975FBA230751411CB@IN01WEMBXA.internal.synopsys.com>
-	<CALE5RAvaa4bb-9xAnBe07Yp2n+Nn4uGEgqpLrKMuOE8hhZv00Q@mail.gmail.com>
-	<CAMJEocr1SgxQw0bEzB3Ti9bvRY74TE5y9e+PLUsAL1mJbK=-ew@mail.gmail.com>
-	<CA+55aFy8tbBpac57fU4CN3jMDz46kCKT7+7GCpb18CscXuOnGA@mail.gmail.com>
-	<C2D7FE5348E1B147BCA15975FBA230751413F4@IN01WEMBXA.internal.synopsys.com>
-	<5224BCF6.2080401@colorfullife.com>
- <CA+icZUVc6fhW+TTB56x68LooS8DqhA8n3CQzgKkXQmbyH+ryUQ@mail.gmail.com>
+Date: Tue, 03 Sep 2013 09:49:48 +0200
+Message-ID: <5225949C.9030201@colorfullife.com>
+References: <CA+icZUXuw7QBn4CPLLuiVUjHin0m6GRdbczGw=bZY+Z60sXNow@mail.gmail.com> <521DE5D7.4040305@synopsys.com> <CA+icZUUrZG8pYqKcHY3DcYAuuw=vbdUvs6ZXDq5meBMjj6suFg@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA23075140FA3@IN01WEMBXA.internal.synopsys.com> <CA+icZUUn-r8iq6TVMAKmgJpQm4FhOE4b4QN_Yy=1L=0Up=rkBA@mail.gmail.com> <52205597.3090609@synopsys.com> <CA+icZUW=YXMC_2Qt=cYYz6w_fVW8TS4=Pvbx7BGtzjGt+31rLQ@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA230751411CB@IN01WEMBXA.internal.synopsys.com> <CALE5RAvaa4bb-9xAnBe07Yp2n+Nn4uGEgqpLrKMuOE8hhZv00Q@mail.gmail.com> <CAMJEocr1SgxQw0bEzB3Ti9bvRY74TE5y9e+PLUsAL1mJbK=-ew@mail.gmail.com> <CA+55aFy8tbBpac57fU4CN3jMDz46kCKT7+7GCpb18CscXuOnGA@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA230751413F4@IN01WEMBXA.internal.synopsys.com> <5224BCF6.2080401@c
+ olorfullife.com> <CA+icZUVc6fhW+TTB56x68LooS8DqhA8n3CQzgKkXQmbyH+ryUQ@mail.gmail.com> <C2D7FE5348E1B147BCA15975FBA2307514160B@IN01WEMBXA.internal.synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/alternative;
+ boundary="------------020005030001010506050103"
 Return-path: <owner-linux-mm@kvack.org>
-Content-Language: en-US
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA2307514160B@IN01WEMBXA.internal.synopsys.com>
 Sender: owner-linux-mm@kvack.org
-To: "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>
-Cc: Manfred Spraul <manfred@colorfullife.com>, Linus Torvalds <torvalds@linux-foundation.org>, Davidlohr Bueso <dave.bueso@gmail.com>, Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen
- Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Davidlohr Bueso <dave.bueso@gmail.com>, Davidlohr Bueso <davidlohr.bueso@hp.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, Andi Kleen <andi@firstfloor.org>, Rik van Riel <riel@redhat.com>, Jonathan Gonzalez <jgonzalez@linets.cl>
 List-Id: linux-next.vger.kernel.org
 
-On 09/03/2013 12:46 PM, Sedat Dilek wrote:=0A=
-> Just FYI:=0A=
->=0A=
-> Linux Testing Project (LTP) will do a new release in the 1st September we=
-ek.=0A=
-> Some IPC test-suites were reworked.=0A=
-> Manfred can you look at them ("...msgctl08 uses one queue for each=0A=
-> thread pair.").=0A=
-> ( Might be worth to throw some words at the LTP mailing-list (that=0A=
-> test-case is not ideal, etc.)? )=0A=
->=0A=
-=0A=
-Well we had a userspace test working before (3.10) and now it won't. In Lin=
-ux=0A=
-world that is not something we do in general - although there could be exce=
-ptions=0A=
-because the test is not idea etc - anyways not my call !=0A=
-=0A=
-However assuming we are going ahead with debugging this - can you please co=
-nfirm=0A=
-whether you see the issue on x86 as well as I have not tested that ? I vagu=
-ely=0A=
-remember one of your earlier posts suggested you did=0A=
-=0A=
-Thx,=0A=
--Vineet=0A=
-=0A=
-=0A=
+This is a multi-part message in MIME format.
+--------------020005030001010506050103
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi Vineet,
+
+On 09/03/2013 09:34 AM, Vineet Gupta wrote:
+> However assuming we are going ahead with debugging this - can you 
+> please confirm whether you see the issue on x86 as well as I have not 
+> tested that ? I vaguely remember one of your earlier posts suggested 
+> you did Thx, -Vineet 
+I'm unable to reproduce the issue so far. I ran
+- something like 4000 stock msgctl08 with 4 cores on x86.
+- a few runs with modified msgctl08 with either slowed down reader or 
+slowed down writer threads. (i.e.: force queue full or queue empty waits).
+- a few runs (modified&unmodified) with all but one core taken offline.
+
+I have not yet tested with PREEMPT enabled.
+
+A few more ideas:
+- what is the output of ipcs -q? Are the queues empty or full?
+- what is the output of then WCHAN field with ps when it hangs?
+Something like
+/ #ps/ -o pid,f,stat,pcpu,pmem,psr,/wchan/=/WIDE/-/WCHAN/ -o comm,args
+
+--
+     Manfred
+
+--------------020005030001010506050103
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+  </head>
+  <body bgcolor="#FFFFFF" text="#000000">
+    <div class="moz-cite-prefix">Hi Vineet,<br>
+      <br>
+      On 09/03/2013 09:34 AM, Vineet Gupta wrote:<br>
+    </div>
+    <blockquote
+cite="mid:C2D7FE5348E1B147BCA15975FBA2307514160B@IN01WEMBXA.internal.synopsys.com"
+      type="cite">
+      However assuming we are going ahead with debugging this - can you
+      please confirm
+      whether you see the issue on x86 as well as I have not tested that
+      ? I vaguely
+      remember one of your earlier posts suggested you did
+      Thx,
+      -Vineet
+    </blockquote>
+    I'm unable to reproduce the issue so far. I ran<br>
+    - something like 4000 stock msgctl08 with 4 cores on x86.<br>
+    - a few runs with modified msgctl08 with either slowed down reader
+    or slowed down writer threads. (i.e.: force queue full or queue
+    empty waits).<br>
+    - a few runs (modified&amp;unmodified) with all but one core taken
+    offline.<br>
+    <br>
+    I have not yet tested with PREEMPT enabled.<br>
+    <br>
+    A few more ideas:<br>
+    - what is the output of ipcs -q? Are the queues empty or full?<br>
+    - what is the output of then WCHAN field with ps when it hangs?<br>
+    Something like<br>
+    <span class="st"><em>&nbsp;#ps</em> -o pid,f,stat,pcpu,<wbr>pmem,psr,<em>wchan</em>=<em>WIDE</em>-<em>WCHAN</em>
+      -o comm,args</span><br>
+    <br>
+    --<br>
+    &nbsp;&nbsp;&nbsp; Manfred<br>
+  </body>
+</html>
+
+--------------020005030001010506050103--
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
