@@ -1,57 +1,82 @@
-From: Michael Tokarev <mjt@tls.msk.ru>
-Subject: Re: [PATCH 00/10] autofs4 - rename autofs4 to autofs
-Date: Tue, 03 Sep 2013 15:28:48 +0400
-Message-ID: <5225C7F0.10103@msgid.tls.msk.ru>
-References: <20130831114133.11807.35953.stgit@perseus.themaw.net>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree (arm
+ tree related)
+Date: Tue, 03 Sep 2013 07:46:25 -0500
+Message-ID: <5225DA21.3000102@gmail.com>
+References: <20130903181824.796e74465274b23387d3e715@canb.auug.org.au> <20130903090414.GA25658@flint.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <autofs-owner@vger.kernel.org>
-In-Reply-To: <20130831114133.11807.35953.stgit@perseus.themaw.net>
-Sender: autofs-owner@vger.kernel.org
-To: Ian Kent <raven@themaw.net>
-Cc: linux-next@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, autofs mailing list <autofs@vger.kernel.org>, Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:61255 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932710Ab3ICMqy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Sep 2013 08:46:54 -0400
+In-Reply-To: <20130903090414.GA25658@flint.arm.linux.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-31.08.2013 15:42, Ian Kent wrote:
-[...]
-> By leaving a Kconfig and Makefile in fs/autofs4 (to build autofs4.ko)
-> with a deprication message sub-system maintainers and other users will
-> make any needed changes before these are removed after two kernel versions.
-> IMHO the presence of the warning is reason enough to leave a build stub
-> rather than do a straight out rename.
+On 09/03/2013 04:04 AM, Russell King wrote:
+> On Tue, Sep 03, 2013 at 06:18:24PM +1000, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> After merging the final tree, today's linux-next build (arm defconfig)
+>> failed like this:
+>>
+>> arch/arm/kernel/built-in.o: In function `setup_arch':
+>> io.c:(.init.text+0x594): undefined reference to `erratum_a15_798181_init'
+>>
+>> Presumably caused by commit 34905a33184a ("ARM: 7804/2: Add check for
+>> Cortex-A15 errata 798181 ECO").  This build does not have CONFIG_SMP set.
+>>
+>> I have reverted that commit for today.
+> 
+> Yep, and I think I'm going to do the same, rather than try and fix it.
+> 
 
-Why do you want to continue building autofs4.ko? (or allowing to)
-What's actually wrong with a stright rename?
-If the new module can be auto-loaded by both name (by providing an
-alias), there's no need to keep ability to build autofs4.ko, I think.
+Ah crap, I guess I should have left the ifdefs instead of trying to use
+IS_ENABLED.
 
-Well, maybe except of the case when autofs is needed in initramfs (like
-for systemd).  For this, indeed, you can keep autofs4.ko which is a
-dummy depending on autofs.ko...
+Here's a fix if you want it. Otherwise I can fold this in and resubmit it
+rebased on top of Will's barriers series.
 
-> Ian Kent (10):
->       autofs4 - coding style fixes
->       autofs4 - fix string.h include in auto_dev-ioctl.h
->       autofs4 - move linux/auto_dev-ioctl.h to uapi/linux
->       autofs - merge auto_fs.h and auto_fs4.h
->       autofs - use autofs instead of autofs4 everywhere
->       autofs - copy autofs4 to autofs
->       autofs - create autofs Kconfig and Makefile
->       autofs - update fs/autofs4/Kconfig
->       autofs - update fs/autofs4/Makefile
->       autofs - delete fs/autofs4
+Rob
 
-By doing it this way, you're losing all git history.
-If you perform stright rename and git detects it, you
-can use, eg, git log --follow to see whole hostory
-across rename.  This way you create new files without
-history.
+8<--------------------------------------------
+From: Rob Herring <rob.herring@calxeda.com>
+Date: Tue, 3 Sep 2013 07:35:41 -0500
+Subject: [PATCH] ARM: fix undefined reference to erratum_a15_798181_init on
+ !SMP
 
-So I strongly shuggest actually renaming the subdirectory
-(together with appropriate kconfig/makefile changes so
-things are bisectable), and creating the stubs after this.
+Fix build error on !SMP builds introduced by commit 34905a33184a ("ARM:
+804/2: Add check for Cortex-A15 errata 798181 ECO"):
 
-Thanks,
+arch/arm/kernel/built-in.o: In function `setup_arch':
+io.c:(.init.text+0x594): undefined reference to `erratum_a15_798181_init'
 
-/mjt
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+---
+ arch/arm/include/asm/tlbflush.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/include/asm/tlbflush.h b/arch/arm/include/asm/tlbflush.h
+index decff8d..e6217a1 100644
+--- a/arch/arm/include/asm/tlbflush.h
++++ b/arch/arm/include/asm/tlbflush.h
+@@ -443,7 +443,11 @@ static inline void local_flush_bp_all(void)
+ 		isb();
+ }
+ 
++#ifdef CONFIG_ARM_ERRATA_798181
+ extern void erratum_a15_798181_init(void);
++#else
++static inline void erratum_a15_798181_init(void) {}
++#endif
+ extern bool (*erratum_a15_798181_handler)(void);
+ 
+ static inline bool erratum_a15_798181(void)
+-- 
+1.8.1.2
