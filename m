@@ -1,22 +1,45 @@
-From: Kent Overstreet <kmo-PEzghdH756F8UrSeD/g0lQ@public.gmane.org>
-Subject: Re: [PATCH -next] bcache: fix btree printk format warning
-Date: Wed, 4 Sep 2013 11:59:38 -0700
-Message-ID: <20130904185938.GB27467@kmo-pixel>
+From: Florian Westphal <fw@strlen.de>
+Subject: Re: linux-next: Tree for Sep 4 (netfilter: xt_TPROXY)
+Date: Wed, 4 Sep 2013 23:09:40 +0200
+Message-ID: <20130904210940.GP32493@breakpoint.cc>
 References: <20130904181300.06fbf0698863cfaacf9fad9a@canb.auug.org.au>
- <52277576.5020805@infradead.org>
+ <52277212.5020006@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-bcache-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <netfilter-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <52277576.5020805-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Sender: linux-bcache-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-bcache-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <52277212.5020006@infradead.org>
+Sender: netfilter-devel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Sep 04, 2013 at 11:01:26AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 09/04/13 01:13, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Please do not add any code for v3.13 to your linux-next included branches
+> > until after v3.12-rc1 is released.
+> > 
+> > Changes since 20130902:
+> > 
 > 
-> Fix printk format warning on i386:
+> on x86_64:
+> 
+> when CONFIG_IPV6=m
+> and CONFIG_NETFILTER_XT_TARGET_TPROXY=y:
+> 
+> net/built-in.o: In function `tproxy_tg6_v1':
+> xt_TPROXY.c:(.text+0x5dc05): undefined reference to `udp6_lib_lookup'
+> xt_TPROXY.c:(.text+0x5e32f): undefined reference to `udp6_lib_lookup'
+> xt_TPROXY.c:(.text+0x5e432): undefined reference to `udp6_lib_lookup'
+> net/built-in.o: In function `tproxy_tg_init':
+> xt_TPROXY.c:(.init.text+0x1540): undefined reference to `nf_defrag_ipv6_enable'
 
-I've sent out the fix for this, Jens just hasn't pulled it yet.
+Thanks for reporting.
+
+I can reproduce same error with 3.10.6 stable tree, so its not
+a recent problem.
+
+As always, the tempting solution is to just forbid TPROXY=y with IPV6=m but
+it would be better to get rid of the ipv6 link time deps..
