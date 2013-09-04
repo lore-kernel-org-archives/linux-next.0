@@ -1,53 +1,43 @@
-From: Sujit Reddy Thumma <sthumma@codeaurora.org>
-Subject: Re: linux-next: build warning after merge of the scsi tree
-Date: Wed, 04 Sep 2013 15:24:27 +0530
-Message-ID: <52270353.1040904@codeaurora.org>
-References: <20130902182817.87a961aa251604b630620028@canb.auug.org.au> <5226FACC.9030107@codeaurora.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Sep 4 (netfilter: xt_TPROXY)
+Date: Wed, 04 Sep 2013 10:46:58 -0700
+Message-ID: <52277212.5020006@infradead.org>
+References: <20130904181300.06fbf0698863cfaacf9fad9a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:51087 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934205Ab3IDJyd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Sep 2013 05:54:33 -0400
-In-Reply-To: <5226FACC.9030107@codeaurora.org>
+Received: from merlin.infradead.org ([205.233.59.134]:34294 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1763261Ab3IDRra (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Sep 2013 13:47:30 -0400
+In-Reply-To: <20130904181300.06fbf0698863cfaacf9fad9a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Santosh Y <santoshsy@gmail.com>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-On 9/4/2013 2:48 PM, Sujit Reddy Thumma wrote:
-> On 9/2/2013 1:58 PM, Stephen Rothwell wrote:
->> Hi James,
->>
->> After merging the scsi tree, today's linux-next build (x86_64
->> allmodconfig) produced this warning:
->>
->> drivers/scsi/ufs/ufshcd.c: In function 'ufshcd_eh_host_reset_handler':
->> drivers/scsi/ufs/ufshcd.c:2740:3: warning: 'flush_work_sync' is
->> deprecated (declared at
->> /scratch/sfr/next/include/linux/workqueue.h:624)
->> [-Wdeprecated-declarations]
->>     flush_work_sync(&hba->eh_work);
->>     ^
->
-> James, would you like to pick up follow-up patch @
-> http://marc.info/?l=linux-scsi&m=137819519527432&w=2
-> or let me update the commit c1e846ab4422 fixing this?
+On 09/04/13 01:13, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Please do not add any code for v3.13 to your linux-next included branches
+> until after v3.12-rc1 is released.
+> 
+> Changes since 20130902:
+> 
 
-Ignore this.
-I saw you have dropped the patchset already. I will fix and post the
-updated patches soon. Thanks.
+on x86_64:
 
->
->>
->> Introduced by commit c1e846ab4422 ("[SCSI] ufs: Fix device and host reset
->> methods").  flush_work_sync was deprecated by commit 43829731dd37
->> ("workqueue: deprecate flush[_delayed]_work_sync()") before v3.7-rc1.
->>
->
+when CONFIG_IPV6=m
+and CONFIG_NETFILTER_XT_TARGET_TPROXY=y:
+
+net/built-in.o: In function `tproxy_tg6_v1':
+xt_TPROXY.c:(.text+0x5dc05): undefined reference to `udp6_lib_lookup'
+xt_TPROXY.c:(.text+0x5e32f): undefined reference to `udp6_lib_lookup'
+xt_TPROXY.c:(.text+0x5e432): undefined reference to `udp6_lib_lookup'
+net/built-in.o: In function `tproxy_tg_init':
+xt_TPROXY.c:(.init.text+0x1540): undefined reference to `nf_defrag_ipv6_enable'
+
 
 -- 
-Regards,
-Sujit
+~Randy
