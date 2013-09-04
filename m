@@ -1,83 +1,40 @@
-From: Jesse Gross <jesse@nicira.com>
-Subject: Re: [-next] openvswitch BUILD_BUG_ON failed
-Date: Wed, 4 Sep 2013 10:53:29 -0700
-Message-ID: <CAEP_g=8Q6-i+wSfdcW4X1uYm2_8hqmE3R3_EC7PpHNbkpxK82A@mail.gmail.com>
-References: <CAMuHMdVG9FmZNayrf7HMz4kC4X5QELeXUFjjzpAM80ND_QOm8A@mail.gmail.com>
- <CAEP_g=-XvRiHPzSAp2rgC9Hxdd+pGEHvSTEJ1A1SkWnk1-6xZA@mail.gmail.com>
- <20130829.181001.145658561677052552.davem@davemloft.net> <CAEP_g=-XxgK9HVxvcaW3RS2zfa+77pB4cqfLFC0rcV7QJc+2BQ@mail.gmail.com>
- <CAMuHMdU3M9uUFKd3EQ0HbcAvf5e62PA4NJG_mQHhpvZwFJnUWQ@mail.gmail.com>
- <CAEP_g=-BWdWJ5WtNy0=Eq8GJp84i88QbGq-gQcANBhCKajcJsQ@mail.gmail.com> <CAMuHMdVvB+GMwMrP2mieXbqAM7mn3nF_1ezbiYVBLKdsL5aCJg@mail.gmail.com>
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: [PATCH -next] bcache: fix btree printk format warning
+Date: Wed, 04 Sep 2013 11:01:26 -0700
+Message-ID: <52277576.5020805@infradead.org>
+References: <20130904181300.06fbf0698863cfaacf9fad9a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdVvB+GMwMrP2mieXbqAM7mn3nF_1ezbiYVBLKdsL5aCJg@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: David Miller <davem@davemloft.net>, Andy Zhou <azhou@nicira.com>, "dev@openvswitch.org" <dev@openvswitch.org>, netdev <netdev@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-bcache-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130904181300.06fbf0698863cfaacf9fad9a-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-bcache-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Kent Overstreet <kmo-PEzghdH756F8UrSeD/g0lQ@public.gmane.org>, linux-bcache-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 3, 2013 at 11:55 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Tue, Sep 3, 2013 at 11:44 PM, Jesse Gross <jesse@nicira.com> wrote:
->> On Sat, Aug 31, 2013 at 5:11 AM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->>> On Fri, Aug 30, 2013 at 3:11 AM, Jesse Gross <jesse@nicira.com> wrote:
->>>> On Thu, Aug 29, 2013 at 3:10 PM, David Miller <davem@davemloft.net> wrote:
->>>>> From: Jesse Gross <jesse@nicira.com>
->>>>> Date: Thu, 29 Aug 2013 14:42:22 -0700
->>>>>
->>>>>> On Thu, Aug 29, 2013 at 2:21 PM, Geert Uytterhoeven
->>>>>> <geert@linux-m68k.org> wrote:
->>>>>>> However, I have some doubts about other alignment "enforcements":
->>>>>>>
->>>>>>> "__aligned(__alignof__(long))" makes the whole struct aligned to the
->>>>>>> alignment rule for "long":
->>>>>>>    1. This is only 2 bytes on m68k, i.e. != sizeof(long).
->>>>>>>    2. This is 4 bytes on many 32-bit platforms, which may be less than the
->>>>>>>       default alignment for "__be64" (cfr. some members of struct
->>>>>>>       ovs_key_ipv4_tunnel), so this may make those 64-bit members unaligned.
->>>>>>
->>>>>> Do any of those 32-bit architectures actually care about alignment of
->>>>>> 64 bit values? On 32-bit x86, a long is 32 bits but the alignment
->>>>>> requirement of __be64 is also 32 bit.
->>>>>
->>>>> All except x86-32 do, it is in fact the odd man out with respect to this
->>>>> issue.
->>>>
->>>> Thanks, good to know.
->>>>
->>>> Andy, do you want to modify your patch to just drop the alignment
->>>> specification as Geert suggested (but definitely keep the new build
->>>> assert that you added)? It's probably better to just send the patch to
->>>> netdev (against net-next) as well since you'll likely get better
->>>> comments there and we can fix this faster if you cut out the
->>>> middleman.
->>>
->>> Why do you want to keep the build asserts?
->>> Is this in-memory structure also transfered as-is over the network?
->>> If yes, you definitely want the padding.
->>
->> Well they caught this bug and really don't cost anything.
->>
->>> Nevertheless, as the struct contains u32 and even __be64 members, the
->>> size of the struct will always be a multiple of the alignment unit for
->>> 64-bit quantities (and thus also for long), as per the C standard.
->>> Hence the check
->>>
->>>     BUILD_BUG_ON(sizeof(struct sw_flow_key) % __alignof__(long));
->>>
->>> will only catch bad compiler bugs or people adding __packed to the struct.
->>
->> It's possible that we might want to pack the structure in the future.
->> More generally though, the contents of the struct is really
->> independent of the alignment requirements here because we're accessing
->> it as an array of bytes in long-sized chunks so implicitly depending
->> on the size of the members is not that great.
->
-> So you're accessing it as an array of bytes in long-sized chunks.
-> What are you doing with this accessed data?
-> Transfering over the network?
-> Storing on disk?
-> Then it must be portable across machines and architectures, right?
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
 
-It's just an in-memory hash table lookup. No one else ever sees it.
+Fix printk format warning on i386:
+
+drivers/md/bcache/btree.c: In function 'bch_btree_node_read':
+drivers/md/bcache/btree.c:259:8: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' [-Wformat]
+
+Signed-off-by: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc:	Kent Overstreet <kmo-PEzghdH756F8UrSeD/g0lQ@public.gmane.org>
+Cc:	linux-bcache-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+---
+ drivers/md/bcache/btree.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20130904.orig/drivers/md/bcache/btree.c
++++ linux-next-20130904/drivers/md/bcache/btree.c
+@@ -255,7 +255,7 @@ void bch_btree_node_read(struct btree *b
+ 
+ 	return;
+ err:
+-	bch_cache_set_error(b->c, "io error reading bucket %lu",
++	bch_cache_set_error(b->c, "io error reading bucket %zu",
+ 			    PTR_BUCKET_NR(b->c, &b->key, 0));
+ }
+ 
