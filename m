@@ -1,45 +1,54 @@
-From: Florian Westphal <fw@strlen.de>
-Subject: Re: linux-next: Tree for Sep 4 (netfilter: xt_TPROXY)
-Date: Wed, 4 Sep 2013 23:09:40 +0200
-Message-ID: <20130904210940.GP32493@breakpoint.cc>
-References: <20130904181300.06fbf0698863cfaacf9fad9a@canb.auug.org.au>
- <52277212.5020006@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: rebase of the h8300-remove tree
+Date: Thu, 5 Sep 2013 09:56:57 +1000
+Message-ID: <20130905095657.a3d9b1d461295bdd02efe0ec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <netfilter-devel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__5_Sep_2013_09_56_57_+1000_16YkWgf1bwTcOxDv"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:32877 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753612Ab3IDX5G (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Sep 2013 19:57:06 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Thu__5_Sep_2013_09_56_57_+1000_16YkWgf1bwTcOxDv
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <52277212.5020006@infradead.org>
-Sender: netfilter-devel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 09/04/13 01:13, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Please do not add any code for v3.13 to your linux-next included branches
-> > until after v3.12-rc1 is released.
-> > 
-> > Changes since 20130902:
-> > 
-> 
-> on x86_64:
-> 
-> when CONFIG_IPV6=m
-> and CONFIG_NETFILTER_XT_TARGET_TPROXY=y:
-> 
-> net/built-in.o: In function `tproxy_tg6_v1':
-> xt_TPROXY.c:(.text+0x5dc05): undefined reference to `udp6_lib_lookup'
-> xt_TPROXY.c:(.text+0x5e32f): undefined reference to `udp6_lib_lookup'
-> xt_TPROXY.c:(.text+0x5e432): undefined reference to `udp6_lib_lookup'
-> net/built-in.o: In function `tproxy_tg_init':
-> xt_TPROXY.c:(.init.text+0x1540): undefined reference to `nf_defrag_ipv6_enable'
+Hi Guenter,
 
-Thanks for reporting.
+Why did you bother rebasing the h8300-remove tree?  None of the patches
+changed at all (not that that would matter).
 
-I can reproduce same error with 3.10.6 stable tree, so its not
-a recent problem.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-As always, the tempting solution is to just forbid TPROXY=y with IPV6=m but
-it would be better to get rid of the ipv6 link time deps..
+--Signature=_Thu__5_Sep_2013_09_56_57_+1000_16YkWgf1bwTcOxDv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSJ8jMAAoJEECxmPOUX5FEwO8P+wat8I5ClmpwZObfIYVeRFTC
+6Ve8gzoMsPkVLfzMwVA6xT7H06rNmIKkfaUXUcm8hfetSCD68P5YuBw0V4gCcvMH
+KWgAoMNLTwiw2gk1OMLSHIWT6yTA1QHeZdMQK0fZCS4vfk/27IKCaE34wGbrZW3l
+iQ8wWfJsdmn8GdHttxQdDmVyJSzM4J+Ro7J0Ae/hem8oM8deRDdJawdX+dkakvsj
++obgVqvkBDCWhqjLVi8TrePm8AaMN2QV8k8Y9QX8NgDWjmOmGSfyutFUSSXm/UgG
+SWHzTqyI/T8gxXn9IhCSPtKOESJs/XDNAlZhK8Qp0wBCp+MSnzJkFH6QPYD5d9iq
+KpHYgjIM02oy2n6tkOevDWIwrQORs06b7KzZkloUKWgJSrf1u6tyT9eAcGcoIgUW
+0/Bz7kgFdHWXmEI63JsOWHQxTnaxRhYDEv9w+PdawMLT9a5Ww0pxwL+93q9tdPEf
+cVUePhxeepxOZSM1dARa9e+Pp/4zequ3cf1GzWHfSEuX8NOBUjioOGtnq0851D9m
+3acI50hMSaZRg3V32+sbmkqA099NnZZLM73zZbW5wN0uf//Xcsv/LcO81hUvC+sY
+xx29qxQZUMOCAkbr+XQhXZMre8HWGTQE4o0uZwt0esnQypoHlesM2uGTpy1lBWTT
+L70hYQo8EX0nsQlXDRoN
+=81/p
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__5_Sep_2013_09_56_57_+1000_16YkWgf1bwTcOxDv--
