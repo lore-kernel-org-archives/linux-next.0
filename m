@@ -1,91 +1,52 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Sep 5 (netfilter: xt_socket.c)
-Date: Thu, 05 Sep 2013 13:23:16 -0700
-Message-ID: <5228E834.8060604@infradead.org>
-References: <20130905193249.8b7c57afd5e39349ff5508bb@canb.auug.org.au> <5228C140.1010504@infradead.org> <20130905.143830.660252697193033003.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: problem fetching the watchdog tree
+Date: Fri, 6 Sep 2013 09:05:50 +1000
+Message-ID: <20130906090550.1b995b91877609b9361f99ae@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:59863 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751616Ab3IEUXw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Sep 2013 16:23:52 -0400
-In-Reply-To: <20130905.143830.660252697193033003.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__6_Sep_2013_09_05_50_+1000_9S53j=lu+xmyD5sG"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 09/05/13 11:38, David Miller wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> Date: Thu, 05 Sep 2013 10:37:04 -0700
-> 
->> On 09/05/13 02:32, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Please do not add any code for v3.13 to your linux-next included branches
->>> until after v3.12-rc1 is released.
->>>
->>> Changes since 20130904:
->>>
->>
->> on x86_64:
->>
->> when CONFIG_IPV6=m
->> and CONFIG_NETFILTER_XT_MATCH_SOCKET=y:
->>
->> net/built-in.o: In function `socket_mt6_v1_v2':
->> xt_socket.c:(.text+0x51b55): undefined reference to `udp6_lib_lookup'
->> net/built-in.o: In function `socket_mt_init':
->> xt_socket.c:(.init.text+0x1ef8): undefined reference to `nf_defrag_ipv6_enable'
-> 
-> I just commited the following to fix this:
-> 
-> --------------------
-> [PATCH] netfilter: Fix build errors with xt_socket.c
-> 
-> As reported by Randy Dunlap:
-> 
-> ====================
-> when CONFIG_IPV6=m
-> and CONFIG_NETFILTER_XT_MATCH_SOCKET=y:
-> 
-> net/built-in.o: In function `socket_mt6_v1_v2':
-> xt_socket.c:(.text+0x51b55): undefined reference to `udp6_lib_lookup'
-> net/built-in.o: In function `socket_mt_init':
-> xt_socket.c:(.init.text+0x1ef8): undefined reference to `nf_defrag_ipv6_enable'
-> ====================
-> 
-> Like several other modules under net/netfilter/ we have to
-> have a dependency "IPV6 disabled or set compatibly with this
-> module" clause.
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
+--Signature=_Fri__6_Sep_2013_09_05_50_+1000_9S53j=lu+xmyD5sG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Hi Wim,
 
-Thanks.
+Fetching the wireless tree yesterday and today produced this error:
 
-> ---
->  net/netfilter/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-> index 62a171a..6e839b6 100644
-> --- a/net/netfilter/Kconfig
-> +++ b/net/netfilter/Kconfig
-> @@ -1175,6 +1175,7 @@ config NETFILTER_XT_MATCH_SOCKET
->  	depends on NETFILTER_XTABLES
->  	depends on NETFILTER_ADVANCED
->  	depends on !NF_CONNTRACK || NF_CONNTRACK
-> +	depends on (IPV6 || IPV6=n)
->  	select NF_DEFRAG_IPV4
->  	select NF_DEFRAG_IPV6 if IP6_NF_IPTABLES
->  	help
-> 
+fatal: unable to connect to www.linux-watchdog.org:
+www.linux-watchdog.org[0: 83.149.101.17]: errno=3DConnection refused
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-~Randy
+--Signature=_Fri__6_Sep_2013_09_05_50_+1000_9S53j=lu+xmyD5sG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSKQ5SAAoJEECxmPOUX5FE8lQP/0J9XA1ayMzI3JJlqCYVMNnu
+1TgBLcGCqipt5Nmbr5Ukr+XsH9bfWUiScV7OZSCg0WCuIG7rEU5kD3RP1OiApDcV
+XtV24Xb+FpwZOLxPCQoDJOjQnEtIG+y1n5FwkSw5kb6G7grCAoW+ir8MnsgNDqFW
+PrmeM38wcd8sQ1WLM7b5612D/Y6ffJndIvqtbNq202/QUTNf4qfwdIZUNRSA6viw
+0r/gg9E5POduYxARB8CiNdOHiWlTCrAwz+I45dlIAlBM+W6inaVVO0Rdl5hq510I
+J5alh4ViOBuYAn21Gs88/Kg8o536HlT1/zmo9CAAHesUEnVwE1lf399w/0w118N0
+LFqGspKEsdIUOuYgCRIiSt3jj/FNxvxwEcD684XNfKnr7DMKS1g+urtLy77eZ2vM
+u39uo/CeOnAVxOOvZD/cA8kQ9eZRdOyihWum/6KODQdTlUgBjUSfjKcW74/qlUuE
+s9oiyygE+gEES6+UXyjj6DbAF16LHQUQRm/gf+P7tby7BVst9YU5A/4p4aRz6QUj
+I3CXAgLOcPPC6P+MbX+K/ufNk+/bmTUBNyl1WiE9JpkAsP0OLJHxJ46qQ7c6jw8r
+ifgSQ4M1b1XJ3+zElgEKUxZ3hHvSEpiEffVQsqa1RHpmiXrgdarRilE4i1UoQhOp
+BLFzcNzQ/TEe5myVrkGB
+=Tuer
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Sep_2013_09_05_50_+1000_9S53j=lu+xmyD5sG--
