@@ -1,57 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the h8300-remove tree with the net tree
-Date: Thu, 5 Sep 2013 11:00:43 +1000
-Message-ID: <20130905110043.cbea8acff9a1b1b3b199e0ea@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the aio-direct tree
+Date: Thu, 5 Sep 2013 12:54:57 +1000
+Message-ID: <20130905125457.5f1e5e843167a0aaee7816f8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Sep_2013_11_00_43_+1000_IHydXZVq+vLqSmnL"
+ boundary="Signature=_Thu__5_Sep_2013_12_54_57_+1000_tuKIiw7JTIe7Gwrj"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chen Gang <gang.chen@asianux.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Asias He <asias@redhat.com>, Dave Kleikamp <dave.kleikamp@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__5_Sep_2013_11_00_43_+1000_IHydXZVq+vLqSmnL
+--Signature=_Thu__5_Sep_2013_12_54_57_+1000_tuKIiw7JTIe7Gwrj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Guenter,
+Hi Al,
 
-Today's linux-next merge of the h8300-remove tree got a conflict in
-drivers/net/ethernet/8390/Kconfig between commit 061ba049abc6 ("drivers:
-net: ethernet: 8390: Kconfig: add H8300H_AKI3068NET and H8300H_H8MAX
-dependancy for NE_H8300") from the net tree and commit d5bfa4f18b55
-("net/ethernet: Drop H8/300 Ethernet driver") from the h8300-remove tree.
+Today's linux-next merge of the vfs tree got a conflict in fs/block_dev.c
+between commit b176eedb2a8b ("block_dev: add support for read_iter,
+write_iter") from the aio-direct tree and commit 02afc27faec9
+("direct-io: Handle O_(D)SYNC AIO") from the vfs tree.
 
-I fixed it up (The latter removes the entry that is updated by the
-former, so I did that) and can carry the fix as necessary (no action is
-required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__5_Sep_2013_11_00_43_+1000_IHydXZVq+vLqSmnL
+diff --cc fs/block_dev.c
+index 89d8ec5,1173a4e..0000000
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@@ -1517,8 -1518,8 +1517,8 @@@ ssize_t blkdev_write_iter(struct kiocb=20
+  	BUG_ON(iocb->ki_pos !=3D pos);
+ =20
+  	blk_start_plug(&plug);
+ -	ret =3D __generic_file_aio_write(iocb, iov, nr_segs, &iocb->ki_pos);
+ +	ret =3D __generic_file_write_iter(iocb, iter, &iocb->ki_pos);
+- 	if (ret > 0 || ret =3D=3D -EIOCBQUEUED) {
++ 	if (ret > 0) {
+  		ssize_t err;
+ =20
+  		err =3D generic_write_sync(file, pos, ret);
+
+--Signature=_Thu__5_Sep_2013_12_54_57_+1000_tuKIiw7JTIe7Gwrj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSJ9e/AAoJEECxmPOUX5FEISoQAKDBbioVwzCmYemsRpkyhI96
-frpiPKK0UPofJIfDjZcMWg35XjjJQzCfNTfMaTCitzpRvnqwoYRB/RlVABVjnb9y
-QIVnL/OSVcLCYaTuG/3W2dnIjL/jhbDSdplyYQMZtLAs6Zzj6GJUbhitVPvjSgjH
-5cgdCRgbji7jWXOZiNWfWXQyf9HaBmJYHhpcdodkWwMqBz1xwwLZMskap7sWQuhI
-Hu8Xvh6KYhuoeVKcXaBA6arGMlcNdoef/9svj2iA3r3Ek4yq0O6D7darUVpdg6of
-bWtpt7kDxYPL3BvtVGhYrGlrwoEJ6b6X8cRz3NNI/xkFVNM75QY0jAEMSg1jPzs/
-+2xLexAOPJEL23z4jbEy46Q5nlazTZdCe5s8PRopZcb8eKM3/UeQj2TZOh87ccg+
-1ykIWYkqzzfvJofp75YklM49UzMTEYAMOV9SOSmwJxGj7QFVy4ywsUHloTcNLeQ8
-9Ymg2aYrzSP2QW7GDryiPOnRiG8RM0wx4rqQNajrfwBw1Tus7BOqkRURJZTBx3Dy
-C1Vv/uq2aCEzSmaORZ25Yeb/SJEsUge6+hu58902rgmPOBNb0vbOmIteS9AEu7uq
-eLfFiJhCFMWUOcMnwdzJQfzruWAtc/9lYxcA0DFvcC3wFfXXuRRzVAgjMiEQhVMG
-7tBGnLWk8dVLOaAGChQ5
-=KW3T
+iQIcBAEBCAAGBQJSJ/KEAAoJEECxmPOUX5FErI8P+wcdEsGVQY7VIkBuFu1+aK8X
+mw/jWtOhO2ojoPhm7QPi28+5wIHoXc6M8aUVlvJ4MSCWxi5WqYHqVMtruWq1tQ5a
+vOhScZzFe130GUWGfvYFftN3p2KVSjrtrO3LMM3RRnvmEz6moHOb5EZGs1GzO9s0
+N/H69UeBBQZlYO5SV56YMBGKpmNVf8RvJgarn39DIF6Kj5dpApFWY/l1EZm2m0Z6
+SSfS4WQQzlgUCb9OZB9FD8uvEe0hH6oQ4xwly0TiejM8D5luYhy8oehHAESjVUfn
+QRjQy845wJDx8MH/nYSwcm578pLCjtmZqIq6eM/Rn18lG4Mtcw/urg3jmnFg1ITI
+OoiTIVN2K8jH38TLweXiTlZCmdfkHqOCnMM3PiSaZ6dPvo28UgvWWiu+HEeKkDAl
+xS2zarHSXMhqjHO0cKmHoCTjVE7uhPIitK7/xh89MQE8bo2G1bud77URAUcMvexV
+75AzxzxbHWWZO2NjOALAMuCNGRIOZQdNJXxbkXT1wvjf+CdLmLcphQKWXPxeg9tN
+hnACqHK3MAEsdXSh+nZZy4eoEVZNT1ImgXuXjz8YEoFV0JfkLmQEHHAnC2WmCO1K
+pMEhDlTZ7tgBdp0qMyr6PIKHEJcscpo0CGLFgYAgW/6itRYDG8CxpzZyWy+R4Cax
+qxPIDWMm3oSrNC+VtHSZ
+=xCYl
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__5_Sep_2013_11_00_43_+1000_IHydXZVq+vLqSmnL--
+--Signature=_Thu__5_Sep_2013_12_54_57_+1000_tuKIiw7JTIe7Gwrj--
