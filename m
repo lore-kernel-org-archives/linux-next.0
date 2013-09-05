@@ -1,74 +1,60 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: rebase of the jdelvare-hwmon quilt series
-Date: Thu, 5 Sep 2013 09:25:36 +0200
-Message-ID: <20130905092536.44dbe86a@endymion.delvare>
-References: <20130905101903.0198dbbfdf9e9172fb9b55b2@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: bad commits in the drivers-x86 tree
+Date: Thu, 5 Sep 2013 17:32:22 +1000
+Message-ID: <20130905173222.946719639b05b3b4b3f9b8fd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__5_Sep_2013_17_32_22_+1000_.9fwO6jY.PErX+Ng"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zoneX.GCU-Squad.org ([194.213.125.0]:18330 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757301Ab3IEHZs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Sep 2013 03:25:48 -0400
-In-Reply-To: <20130905101903.0198dbbfdf9e9172fb9b55b2@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53083 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757301Ab3IEHcc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Sep 2013 03:32:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Matthew Garrett <mjg59@srcf.ucam.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
+--Signature=_Thu__5_Sep_2013_17_32_22_+1000_.9fwO6jY.PErX+Ng
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 5 Sep 2013 10:19:03 +1000, Stephen Rothwell wrote:
-> Why did you bother rebasing the jdelvare-hwmon quilt series?  None of the
-> patches changed (not that that even matters).
+Hi Matthew,
 
-I'm not "rebasing". Rebasing is a git thing, and I'm using quilt, not
-git, to feed linux-next. Until the patches hit Linus' tree, I am not
-maintaining a tree, I am maintaining a patch set on top of a moving
-tree. I only use git to send my pull request to Linus to make things
-easier for him.
+Unfortunately, it looks like you cherry-picked (or somehow) managed to
+get copies of quite a few commits from Linus' tree into your tree.  Maybe
+a failed rebase?  This has been causing conflicts in linux-next for the
+past couple of days and I am sure that Linus will not want to pull your
+tree in its current state.
 
-What you see is just how quilt works. That's nothing to worry about.
-I've been working that way for over 6 years. I am curious why you
-started yelling at me about this 3 months ago when it has proven to
-work just fine for 6 years. You asked me to tag what my quilt series
-was based on, and I did. You asked me to get my patches in linux-next
-ASAP so that they get more testing, and I do.
+I suggest that you reset it to the state it was in the day before
+yesterday (commit 41c8bd1c75ef8e85) and try again.
 
-Last time, you mentioned a problem with testing results being lost when
-I "rebase" my quilt series". I don't quite think it's true for hwmon
-patches as the subsystem is pretty much self-contained (the things I am
-working on at least) plus I do built-test and to some extent run-test
-the patches continuously, so I am confident my approach isn't breaking
-bisectability.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-But I have heard you nevertheless and already slightly changed my
-process. I will no longer be "rebasing" during the merge window, i.e.
-the first pull request I send during the merge window, which contains
-the patches that have been waiting or have been added since the
-previous merge window, will now be based on the just-released .0
-kernel, rather than the current pre-rc1 state of Linus' tree at the
-time I issue the pull request. Hopefully this should address your "test
-results are lost" concern.
+--Signature=_Thu__5_Sep_2013_17_32_22_+1000_.9fwO6jY.PErX+Ng
+Content-Type: application/pgp-signature
 
-I don't think there's much more I can offer. I have to work with a
-relatively recent tree so I have to "rebase" from times to times
-anyway. At least once per development cycle, right? And I don't think
-it would be very reasonable to stay on -rc1 all the time. That's why I
-follow upstream development between -rc1 and final, and will only stop
-doing so between final and -rc1. Staying with .0 wouldn't be reasonable
-either, there's a reason why we maintain stable kernels trees. I don't
-think you want developers to base their work on the previous stable
-kernel, right?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-You see, I don't want to make your life harder or anything. It's just
-that your request doesn't make sense to me. "Don't rebase" is not
-something I can do much with, as I do have to follow upstream
-development and rebase at some point in time anyway. If you propose a
-complete workflow which is better than what I do today, I'll be happy
-to consider switching to it. But just telling me to skip one mandatory
-step in my current workflow is simply not helping, sorry.
+iQIcBAEBCAAGBQJSKDOKAAoJEECxmPOUX5FEwcwP/0BnVGb0GybMD+46MA4ucepe
+Ahl2RWTPY94myU6is/8IXCgQpAKgwU3V9wPAUUh4QXwEdnT+/PB5wAQIgATXDgYN
+Vu8SB/4HO0uLYw3idgg8q27TXwpjKo2b7dUvbKIDdlnVlknWjQbnzcTXrYE+4tQG
+0IUF/Ymc8yOJmjijWVIuNpV074KOwPOZViGLKcjXYaio5jjZp1ENENFYVOpC9fic
+2DlZVpAVq1I+7HD/L0KxwVZIVcY3ObH63l9Db+pyiF0TPLKqQ7rNn6+SWiDeizfC
+yovsqzsI/vWPvxnVPZbkKrQZM9LkiS9FxcFmgqrNIBKocadjp7UtVZOQprnIPjdF
+f4PsQjn078GZW8nTBjbKJySof5G7VHR0lCBONJzby/4KTRu+CjUvnB31efP88IJa
+vgg5hgM20fWCGUh0ZUJ7ugodY5h14ttoGgua8cNuSy8PTvUvT2Y2XGOkU/lhQNPS
+ekKX7tVXTK51dSj5+lqK2vUmOdN7Iw1SZ8J5l4/oPl2Yg6ulcv4ZAynUBtJ5Ih8S
+NFj8pAoghgdFbvGSp5dtVV7yInvnpJ5sBp25nW9fUXZ4vkXzYf6u8qrJFXv3fc8d
+kJcjPbJBaf3QduftIDOsC1eM3hQfRO6T6gNmkWfmKz56fxYH84ZdGWO9Zb17PCCe
+7gF0DX2v9oZQXWGgMrDO
+=vbNz
+-----END PGP SIGNATURE-----
 
--- 
-Jean Delvare
+--Signature=_Thu__5_Sep_2013_17_32_22_+1000_.9fwO6jY.PErX+Ng--
