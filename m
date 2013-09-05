@@ -1,80 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for Sep 5 (netfilter: xt_socket.c)
-Date: Thu, 05 Sep 2013 14:38:30 -0400 (EDT)
-Message-ID: <20130905.143830.660252697193033003.davem@davemloft.net>
-References: <20130905193249.8b7c57afd5e39349ff5508bb@canb.auug.org.au>
-	<5228C140.1010504@infradead.org>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: mmotm 2013-08-27-16-51 uploaded
+Date: Thu, 5 Sep 2013 13:05:38 -0700
+Message-ID: <CAGa+x85d-RWYPkmTVapzcYFEzPhUU7YLJHZVGK0cGc=AudYubQ@mail.gmail.com>
+References: <20130827235227.99DB95A41D6@corp2gmr1-2.hot.corp.google.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netfilter-devel-owner@vger.kernel.org>
-In-Reply-To: <5228C140.1010504@infradead.org>
-Sender: netfilter-devel-owner@vger.kernel.org
-To: rdunlap@infradead.org
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-we0-f169.google.com ([74.125.82.169]:54933 "EHLO
+	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755660Ab3IEUFj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Sep 2013 16:05:39 -0400
+Received: by mail-we0-f169.google.com with SMTP id t60so2183501wes.0
+        for <linux-next@vger.kernel.org>; Thu, 05 Sep 2013 13:05:38 -0700 (PDT)
+In-Reply-To: <20130827235227.99DB95A41D6@corp2gmr1-2.hot.corp.google.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, vbabka@suse.cz, Olof Johansson <olof@lixom.net>
 
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Thu, 05 Sep 2013 10:37:04 -0700
+On Tue, Aug 27, 2013 at 4:52 PM,  <akpm@linux-foundation.org> wrote:
 
-> On 09/05/13 02:32, Stephen Rothwell wrote:
->> Hi all,
->> 
->> Please do not add any code for v3.13 to your linux-next included branches
->> until after v3.12-rc1 is released.
->> 
->> Changes since 20130904:
->> 
-> 
-> on x86_64:
-> 
-> when CONFIG_IPV6=m
-> and CONFIG_NETFILTER_XT_MATCH_SOCKET=y:
-> 
-> net/built-in.o: In function `socket_mt6_v1_v2':
-> xt_socket.c:(.text+0x51b55): undefined reference to `udp6_lib_lookup'
-> net/built-in.o: In function `socket_mt_init':
-> xt_socket.c:(.init.text+0x1ef8): undefined reference to `nf_defrag_ipv6_enable'
+> This mmotm tree contains the following patches against 3.11-rc7:
+> (patches marked "*" will be included in linux-next)
 
-I just commited the following to fix this:
+[...]
 
---------------------
-[PATCH] netfilter: Fix build errors with xt_socket.c
+> * mm-munlock-manual-pte-walk-in-fast-path-instead-of-follow_page_mask.patch
 
-As reported by Randy Dunlap:
+As has already been pointed out[1], this one introduced a new warning
+in -next (also lovingly acknowledged in the mmotm series file[2]) and
+it seems that Vlastimil has posted an updated version[3].  Any plans
+to pick up the new version for -next (or at least drop the one causing
+the new warning?)
 
-====================
-when CONFIG_IPV6=m
-and CONFIG_NETFILTER_XT_MATCH_SOCKET=y:
+Kevin
 
-net/built-in.o: In function `socket_mt6_v1_v2':
-xt_socket.c:(.text+0x51b55): undefined reference to `udp6_lib_lookup'
-net/built-in.o: In function `socket_mt_init':
-xt_socket.c:(.init.text+0x1ef8): undefined reference to `nf_defrag_ipv6_enable'
-====================
 
-Like several other modules under net/netfilter/ we have to
-have a dependency "IPV6 disabled or set compatibly with this
-module" clause.
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- net/netfilter/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index 62a171a..6e839b6 100644
---- a/net/netfilter/Kconfig
-+++ b/net/netfilter/Kconfig
-@@ -1175,6 +1175,7 @@ config NETFILTER_XT_MATCH_SOCKET
- 	depends on NETFILTER_XTABLES
- 	depends on NETFILTER_ADVANCED
- 	depends on !NF_CONNTRACK || NF_CONNTRACK
-+	depends on (IPV6 || IPV6=n)
- 	select NF_DEFRAG_IPV4
- 	select NF_DEFRAG_IPV6 if IP6_NF_IPTABLES
- 	help
--- 
-1.7.11.7
-
+[1] http://marc.info/?l=linux-mm&m=137764226521459&w=2
+[2] http://www.ozlabs.org/~akpm/mmotm/series
+[2] http://marc.info/?l=linux-mm&m=137778135631351&w=2
