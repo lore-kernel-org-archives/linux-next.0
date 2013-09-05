@@ -1,76 +1,74 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Thu, 5 Sep 2013 15:23:08 +1000
-Message-ID: <20130905152308.d0a720cfb23b8b647e6558e6@canb.auug.org.au>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: linux-next: rebase of the jdelvare-hwmon quilt series
+Date: Thu, 5 Sep 2013 09:25:36 +0200
+Message-ID: <20130905092536.44dbe86a@endymion.delvare>
+References: <20130905101903.0198dbbfdf9e9172fb9b55b2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Sep_2013_15_23_08_+1000_HigrxOBgWcQ2gCbG"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Frederic Sowa <hannes@stressinduktion.org>, Nicolas Dichtel <nicolas.dichtel@6wind.com>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Thu__5_Sep_2013_15_23_08_+1000_HigrxOBgWcQ2gCbG
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from zoneX.GCU-Squad.org ([194.213.125.0]:18330 "EHLO
+	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757301Ab3IEHZs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Sep 2013 03:25:48 -0400
+In-Reply-To: <20130905101903.0198dbbfdf9e9172fb9b55b2@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+Hi Stephen,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/ipv6/sit.c between commit 3d483058c8c8 ("ipv6: wire up
-skb->encapsulation") from Linus' tree and commit 8b7ed2d91d6a
-("iptunnels: remove net arg from iptunnel_xmit()") from the net-next tree.
+On Thu, 5 Sep 2013 10:19:03 +1000, Stephen Rothwell wrote:
+> Why did you bother rebasing the jdelvare-hwmon quilt series?  None of the
+> patches changed (not that that even matters).
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I'm not "rebasing". Rebasing is a git thing, and I'm using quilt, not
+git, to feed linux-next. Until the patches hit Linus' tree, I am not
+maintaining a tree, I am maintaining a patch set on top of a moving
+tree. I only use git to send my pull request to Linus to make things
+easier for him.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+What you see is just how quilt works. That's nothing to worry about.
+I've been working that way for over 6 years. I am curious why you
+started yelling at me about this 3 months ago when it has proven to
+work just fine for 6 years. You asked me to tag what my quilt series
+was based on, and I did. You asked me to get my patches in linux-next
+ASAP so that they get more testing, and I do.
 
-diff --cc net/ipv6/sit.c
-index 21b25dd,19abcc9..0000000
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@@ -886,13 -881,8 +879,13 @@@ static netdev_tx_t ipip6_tunnel_xmit(st
-  		ttl =3D iph6->hop_limit;
-  	tos =3D INET_ECN_encapsulate(tos, ipv6_get_dsfield(iph6));
- =20
- +	if (likely(!skb->encapsulation)) {
- +		skb_reset_inner_headers(skb);
- +		skb->encapsulation =3D 1;
- +	}
- +
-- 	err =3D iptunnel_xmit(dev_net(dev), rt, skb, fl4.saddr, fl4.daddr,
-- 			    IPPROTO_IPV6, tos, ttl, df);
-+ 	err =3D iptunnel_xmit(rt, skb, fl4.saddr, fl4.daddr, IPPROTO_IPV6, tos,
-+ 			    ttl, df, !net_eq(tunnel->net, dev_net(dev)));
-  	iptunnel_xmit_stats(err, &dev->stats, dev->tstats);
-  	return NETDEV_TX_OK;
- =20
+Last time, you mentioned a problem with testing results being lost when
+I "rebase" my quilt series". I don't quite think it's true for hwmon
+patches as the subsystem is pretty much self-contained (the things I am
+working on at least) plus I do built-test and to some extent run-test
+the patches continuously, so I am confident my approach isn't breaking
+bisectability.
 
---Signature=_Thu__5_Sep_2013_15_23_08_+1000_HigrxOBgWcQ2gCbG
-Content-Type: application/pgp-signature
+But I have heard you nevertheless and already slightly changed my
+process. I will no longer be "rebasing" during the merge window, i.e.
+the first pull request I send during the merge window, which contains
+the patches that have been waiting or have been added since the
+previous merge window, will now be based on the just-released .0
+kernel, rather than the current pre-rc1 state of Linus' tree at the
+time I issue the pull request. Hopefully this should address your "test
+results are lost" concern.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+I don't think there's much more I can offer. I have to work with a
+relatively recent tree so I have to "rebase" from times to times
+anyway. At least once per development cycle, right? And I don't think
+it would be very reasonable to stay on -rc1 all the time. That's why I
+follow upstream development between -rc1 and final, and will only stop
+doing so between final and -rc1. Staying with .0 wouldn't be reasonable
+either, there's a reason why we maintain stable kernels trees. I don't
+think you want developers to base their work on the previous stable
+kernel, right?
 
-iQIcBAEBCAAGBQJSKBU8AAoJEECxmPOUX5FELvkQAKBk1VIghskjnDz4tlAKIItF
-xYK2PnL47WbsD+wIMzq0hROrrCcKMolCToOsdKdEHpny8C1jbymKCnJwP4IRGXyn
-GmHDZmTeydKptaRUFtMQXcxHUyJpa+jp6jNfwCfa1pqOX1czLTIpoNXeq2tz4Y75
-GGcbuYuYd+N+NrPXJtDh7Jx1igTPQUpYp7+QXcvv1c9M7iS+ntXMnUy4kC1PaGvF
-gptvVYf/OpZmzimDiFQbpfXei3axOqqT0xwXy5XDrBEKjJSJwSLvnVOICl/9ytB2
-KHI3iSY6xCtcyfkg33W8+0Ji3j2ZbU0t/Dh3iu5KF78DVUx+/1q/ESnUDWw2E30F
-wVZ4kYnJtPFrrjfl6EJ3iRkfnZIZef3aJkrd4lNmfJGbzGN5/wgH19+DAfllezX3
-ZHWZpMQngFJiIQvAg7i6MVhDjFeVwr3fhjUTcGmXFjamHvvBiS2hd4g+qenuV4aY
-UKgdPiUINlFNmrPmMyWXDSALO5/LA8fgcjb6QBPvasqoLKkIneH8+ejY0xu+ahz9
-JF2EX4RZjhboDnDE7FcnVs7JUaTCLAaJnacfX38tSgT7/wZ293heeKJqd5QOTJlj
-cj/qCm+qIVbYH0WVTW4BHRS7lYxQqZKuDs8t/NO9Pco8voieCTl4LdVuzn7rytjB
-XbVY5neTW90EHkgYa+p4
-=1NFJ
------END PGP SIGNATURE-----
+You see, I don't want to make your life harder or anything. It's just
+that your request doesn't make sense to me. "Don't rebase" is not
+something I can do much with, as I do have to follow upstream
+development and rebase at some point in time anyway. If you propose a
+complete workflow which is better than what I do today, I'll be happy
+to consider switching to it. But just telling me to skip one mandatory
+step in my current workflow is simply not helping, sorry.
 
---Signature=_Thu__5_Sep_2013_15_23_08_+1000_HigrxOBgWcQ2gCbG--
+-- 
+Jean Delvare
