@@ -1,32 +1,54 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: rebase of the h8300-remove tree
-Date: Wed, 4 Sep 2013 17:12:07 -0700
-Message-ID: <20130905001207.GA16300@roeck-us.net>
-References: <20130905095657.a3d9b1d461295bdd02efe0ec@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: rebase of the jdelvare-hwmon quilt series
+Date: Thu, 5 Sep 2013 10:19:03 +1000
+Message-ID: <20130905101903.0198dbbfdf9e9172fb9b55b2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__5_Sep_2013_10_19_03_+1000_=C9Ehnly1u37HYi1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:46287 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752523Ab3IEAML (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Sep 2013 20:12:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20130905095657.a3d9b1d461295bdd02efe0ec@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59111 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752991Ab3IEATG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Sep 2013 20:19:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jean Delvare <khali@linux-fr.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2013 at 09:56:57AM +1000, Stephen Rothwell wrote:
-> Hi Guenter,
-> 
-> Why did you bother rebasing the h8300-remove tree?  None of the patches
-> changed at all (not that that would matter).
-> 
-Just wanted it based on v3.11. But you are right, it was unnecessary.
-Won't happen again.
+--Signature=_Thu__5_Sep_2013_10_19_03_+1000_=C9Ehnly1u37HYi1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Note that I don't plan to send it to Linus in this commit window.
-I thought about it, but it seems to be a bit too hasty.
+Hi Jean,
 
-Guenter
+Why did you bother rebasing the jdelvare-hwmon quilt series?  None of the
+patches changed (not that that even matters).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__5_Sep_2013_10_19_03_+1000_=C9Ehnly1u37HYi1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSJ833AAoJEECxmPOUX5FEZgcP/09pTaVEojLsXvDetcO9a/90
+Nd2oPKKTAt1Sp/SI5jcO+fPz5sLuAIUspH7NP5cf0S9qXFNXZwzPdt8eKprtLmDV
+sS6mUDLcyKp4e8EihuE55XItBJqgyZnvimPFe2fxgW9X29ahfKbVCcLo/j5Jl+77
+/ZuwgLlG1y8LI4us4svameMGE8WzRImpubqkFdSqajreqCYTpUHMqwr466oFe+kl
+cVqx4VnleAgyyyseGdRNpiTp4Zdepsatsa60W9YzDyioXRfzwN791l6UxlypA0Wq
+H82xih6r2/owYJDiJetNG859RF7PEXv6sC19TLTEbcOvTcYJzwP2GeLLGA5TgBZ4
+ZP+YmxFTb1L7a6T4KCHzxw7AzPgehX2W22jcga11uRBcpbGlW+3Ao+ZxPHhrSs2k
+zl4WchQ0dV7/hZ53QZJ9cN/XCGar3stfx+UZpx1rVP+/7/+efspl+lYYjtza9MCQ
+JxNK6zunfa8a5RKixuo9pTYNImobx49iWjVK1yjiybP7P8qYZpN3hGNBXK6ZuHcb
+8Mz4ITCWzYLwa0lfDgyJs6VEOV3w+K0KIt8gY7I21W09hhLg9MjgDHk3v+Xg4W2/
+7Rxw77o3dBOmMQilbMLA48FCScl83JQ/M2zRttFY9UtN2JVJN85E/fksGRjae32c
+K/whTTUg9uiknv2z5+Oh
+=I5t/
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__5_Sep_2013_10_19_03_+1000_=C9Ehnly1u37HYi1--
