@@ -1,47 +1,38 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [GIT PATCH] Staging driver patches for 3.12-rc1
-Date: Thu, 5 Sep 2013 18:54:41 +0200
-Message-ID: <CAMuHMdVx=Fa9Gw7iDARDRcxNXHNf0+J0FE+LLKup1RSnqijs=g@mail.gmail.com>
-References: <20130902235853.GD4544@kroah.com>
-	<CAMuHMdXfpMJeTPb4e11_oyqH5TRtTxrUMOnL9GKdSjv3VxDFww@mail.gmail.com>
-	<20130905150527.GA21185@kroah.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Sep 5 (netfilter: xt_socket.c)
+Date: Thu, 05 Sep 2013 10:37:04 -0700
+Message-ID: <5228C140.1010504@infradead.org>
+References: <20130905193249.8b7c57afd5e39349ff5508bb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:47478 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751522Ab3IEQyl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Sep 2013 12:54:41 -0400
-In-Reply-To: <20130905150527.GA21185@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: devel@linuxdriverproject.org, Andrew Morton <akpm@linux-foundation.org>, Linux-Next <linux-next@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130905193249.8b7c57afd5e39349ff5508bb@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, netfilter-devel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Sep 5, 2013 at 5:05 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Thu, Sep 05, 2013 at 04:09:48PM +0200, Geert Uytterhoeven wrote:
->> On Tue, Sep 3, 2013 at 1:58 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
->> > Here's the bit staging tree pull request for 3.12-rc1.
->> >
->> > Lots of staging driver updates, and fixes.  Lustre is finally enabled in
->> > the build, and lots of cleanup started happening in it.  There's a new
->>
->> Lustre fails modpost on (at least) 4 architectures due to unexported arch
->> support functions: m68k, mips, parisc and sparc64 (patches sent).
->
-> Odd, what functions were not present in those arches that lustre uses
-> that no other kernel code uses?
+On 09/05/13 02:32, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Please do not add any code for v3.13 to your linux-next included branches
+> until after v3.12-rc1 is released.
+> 
+> Changes since 20130904:
+> 
 
-All architectures provided copy_from_user_page() for builtin code, but
-somed lacked symbol exports.
+on x86_64:
 
-Gr{oetje,eeting}s,
+when CONFIG_IPV6=m
+and CONFIG_NETFILTER_XT_MATCH_SOCKET=y:
 
-                        Geert
+net/built-in.o: In function `socket_mt6_v1_v2':
+xt_socket.c:(.text+0x51b55): undefined reference to `udp6_lib_lookup'
+net/built-in.o: In function `socket_mt_init':
+xt_socket.c:(.init.text+0x1ef8): undefined reference to `nf_defrag_ipv6_enable'
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+-- 
+~Randy
