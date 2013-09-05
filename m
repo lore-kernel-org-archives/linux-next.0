@@ -1,52 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: problem fetching the watchdog tree
-Date: Fri, 6 Sep 2013 09:05:50 +1000
-Message-ID: <20130906090550.1b995b91877609b9361f99ae@canb.auug.org.au>
+Subject: linux-next: back merge of Linus' tree into the vfio tree
+Date: Fri, 6 Sep 2013 09:08:26 +1000
+Message-ID: <20130906090826.947212e7d5383837bff881f5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__6_Sep_2013_09_05_50_+1000_9S53j=lu+xmyD5sG"
+ boundary="Signature=_Fri__6_Sep_2013_09_08_26_+1000_39_qIMhPXIIZUKEd"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wim Van Sebroeck <wim@iguana.be>
+To: Alex Williamson <alex.williamson@redhat.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__6_Sep_2013_09_05_50_+1000_9S53j=lu+xmyD5sG
+--Signature=_Fri__6_Sep_2013_09_08_26_+1000_39_qIMhPXIIZUKEd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wim,
+Hi Alex,
 
-Fetching the wireless tree yesterday and today produced this error:
-
-fatal: unable to connect to www.linux-watchdog.org:
-www.linux-watchdog.org[0: 83.149.101.17]: errno=3DConnection refused
+I noticed that you have back merged Linus' tree into yours.  Linus
+usually takes a dim view of that - especially when there is no
+explanation in the merge commit message.  i.e. you shouldn't to that
+unless you really need to - and then you should explain why you did it.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__6_Sep_2013_09_05_50_+1000_9S53j=lu+xmyD5sG
+--Signature=_Fri__6_Sep_2013_09_08_26_+1000_39_qIMhPXIIZUKEd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSKQ5SAAoJEECxmPOUX5FE8lQP/0J9XA1ayMzI3JJlqCYVMNnu
-1TgBLcGCqipt5Nmbr5Ukr+XsH9bfWUiScV7OZSCg0WCuIG7rEU5kD3RP1OiApDcV
-XtV24Xb+FpwZOLxPCQoDJOjQnEtIG+y1n5FwkSw5kb6G7grCAoW+ir8MnsgNDqFW
-PrmeM38wcd8sQ1WLM7b5612D/Y6ffJndIvqtbNq202/QUTNf4qfwdIZUNRSA6viw
-0r/gg9E5POduYxARB8CiNdOHiWlTCrAwz+I45dlIAlBM+W6inaVVO0Rdl5hq510I
-J5alh4ViOBuYAn21Gs88/Kg8o536HlT1/zmo9CAAHesUEnVwE1lf399w/0w118N0
-LFqGspKEsdIUOuYgCRIiSt3jj/FNxvxwEcD684XNfKnr7DMKS1g+urtLy77eZ2vM
-u39uo/CeOnAVxOOvZD/cA8kQ9eZRdOyihWum/6KODQdTlUgBjUSfjKcW74/qlUuE
-s9oiyygE+gEES6+UXyjj6DbAF16LHQUQRm/gf+P7tby7BVst9YU5A/4p4aRz6QUj
-I3CXAgLOcPPC6P+MbX+K/ufNk+/bmTUBNyl1WiE9JpkAsP0OLJHxJ46qQ7c6jw8r
-ifgSQ4M1b1XJ3+zElgEKUxZ3hHvSEpiEffVQsqa1RHpmiXrgdarRilE4i1UoQhOp
-BLFzcNzQ/TEe5myVrkGB
-=Tuer
+iQIcBAEBCAAGBQJSKQ7qAAoJEECxmPOUX5FE5HEP/3vh4FdyUh2GOdC/OC3oVrhC
+rborWwf14FoaDeZmUu9Su6/I0gJD56mwIaJwC3LilFqTD1rY+20+DyVLX/N0GHe9
+tdvV9QtMhHu7Gui8EkMPeuslpEti2TAM3brXhudK59y3xsbC8bkq0QOKstlGR24C
+h1Z/968Skrzs3NjKLGhgJq1hxwi6b3irbyAXdNR4Fjc+jXlAWYIVGki/6gFNhXzm
+8q+0sXYQIizWr5hIZ4d7DmWqw0uqPFQ5ODxD1EE0MN0/W/54RdjmPRlL20joIqn/
+WnsuPk+3D/sEf7k2jBanoL7cvHZiukELAU3Y+CpzQbDqd2KoSz9URJ7NZRCw5bfr
+qhl7eh1Jt3NvMip0ommbSNXvtl6fuKGt78SxM565OWFaXvMHghNulCPXXb78hONN
+IaLja9gab82XMj2s/i9rrxyEwlU9Hr15ZZewwimfvywth7OAVdcQd5u8Dp35hERZ
+4otRpU3oNqQ9G/OWGJE1EgNutf4DjtDZxuWe17YmKxghinsjHWdeiROkW6dv1oim
+Z2/0ihTAucROwDkJr4Xb20dcU2uqsE/fUzTXcZAN3lK9+zFKimhNedAVGiSHkgFK
+K5xx9U9HMHl1A32bS7FvWGXJFzdQQdrWsYTHuKm7m0e7urRFcw0iulhGNiUqKaD3
+z6Kz3/01wFpNE7IFO7MH
+=eYpg
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__6_Sep_2013_09_05_50_+1000_9S53j=lu+xmyD5sG--
+--Signature=_Fri__6_Sep_2013_09_08_26_+1000_39_qIMhPXIIZUKEd--
