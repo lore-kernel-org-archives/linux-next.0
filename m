@@ -1,55 +1,38 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: build warning after merge of the final tree (Linus'
- tree related - vai vfs tree)
-Date: Fri, 6 Sep 2013 10:52:52 +0200
-Message-ID: <CAMuHMdXib30o3-70EuYj3to0==b7LfwPbivF9DaBrpHPejsDFg@mail.gmail.com>
-References: <20130906171916.41b5f48d1aaccca594d1e760@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Aug 30 (nouveau)
+Date: Fri, 06 Sep 2013 10:14:47 -0700
+Message-ID: <522A0D87.7020201@infradead.org>
+References: <20130829200013.d9dde1eb64686a32c661b5d3@canb.auug.org.au> <5220F9A3.8030307@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:46924 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750788Ab3IFIwx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Sep 2013 04:52:53 -0400
-In-Reply-To: <20130906171916.41b5f48d1aaccca594d1e760@canb.auug.org.au>
+Received: from merlin.infradead.org ([205.233.59.134]:47252 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753696Ab3IFRPW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Sep 2013 13:15:22 -0400
+In-Reply-To: <5220F9A3.8030307@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
 
-On Fri, Sep 6, 2013 at 9:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> After merging the final tree, today's linux-next build (arm defconfig)
-> produced this warning:
->
-> fs/direct-io.c: In function 'sb_init_dio_done_wq':
-> fs/direct-io.c:557:2: warning: value computed is not used [-Wunused-value]
->
-> This is:
->
->         cmpxchg(&sb->s_dio_done_wq, NULL, wq);
->
-> Introduced by commit 7b7a8665edd8 ("direct-io: Implement generic deferred
-> AIO completions").
+On 08/30/13 12:59, Randy Dunlap wrote:
+> On 08/29/13 03:00, Stephen Rothwell wrote:
+>> Hi all,
+>>
+> 
+> 
+> on x86_64:
+> 
+> ERROR: "nouveau_switcheroo_optimus_dsm" [drivers/gpu/drm/nouveau/nouveau.ko] undefined!
+> 
+> 
+> Full randconfig file is attached.
+> 
+> 
 
-This happens for include/asm-generic/cmpxchg.h and several other
-arch-specific implementations that cast the return value of cmpxchg()
-like
+This build error still happens in linux-next of 20130906.
 
-#define cmpxchg(ptr, o, n)   ((__typeof__(*(ptr)))__cmpxchg(....
-
-If the caller of cmpxchg() doesn't use the return value, we get a
-compiler warning,
-at least with some versions of gcc.
-
-Any idea how to fix this once and for good?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+~Randy
