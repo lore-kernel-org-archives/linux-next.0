@@ -1,38 +1,43 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Aug 30 (nouveau)
-Date: Fri, 06 Sep 2013 10:14:47 -0700
-Message-ID: <522A0D87.7020201@infradead.org>
-References: <20130829200013.d9dde1eb64686a32c661b5d3@canb.auug.org.au> <5220F9A3.8030307@infradead.org>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: linux-next: Tree for Sep 3 (x86_init.c)
+Date: Fri, 06 Sep 2013 20:46:17 -0700
+Message-ID: <522AA189.6030406@zytor.com>
+References: <20130903182937.f32c2acb338c72bea55b14a7@canb.auug.org.au> <5226316B.5050805@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:47252 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753696Ab3IFRPW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Sep 2013 13:15:22 -0400
-In-Reply-To: <5220F9A3.8030307@infradead.org>
+Received: from terminus.zytor.com ([198.137.202.10]:33508 "EHLO mail.zytor.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750807Ab3IGDrj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Sep 2013 23:47:39 -0400
+In-Reply-To: <5226316B.5050805@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, X86 ML <x86@kernel.org>
 
-On 08/30/13 12:59, Randy Dunlap wrote:
-> On 08/29/13 03:00, Stephen Rothwell wrote:
+On 09/03/2013 11:58 AM, Randy Dunlap wrote:
+> On 09/03/13 01:29, Stephen Rothwell wrote:
 >> Hi all,
 >>
+>> Changes since 20130902:
+>>
 > 
+> on i386, when
+> CONFIG_SMP is not enabled
+> CONFIG_X86_UP_APIC is not enabled
 > 
-> on x86_64:
+> arch/x86/built-in.o:(.data+0x540): undefined reference to `native_setup_msi_irqs'
+> arch/x86/built-in.o:(.data+0x548): undefined reference to `native_teardown_msi_irq'
 > 
-> ERROR: "nouveau_switcheroo_optimus_dsm" [drivers/gpu/drm/nouveau/nouveau.ko] undefined!
-> 
+> Looks like recent changes for CONFIG_PCI_MSI should not be built for the config
+> that is listed above.
 > 
 > Full randconfig file is attached.
 > 
-> 
 
-This build error still happens in linux-next of 20130906.
+Specifically, CONFIG_PCI_MSI probably needs to depend on APIC support,
+which is compiled out in the above case.
 
--- 
-~Randy
+	-hpa
