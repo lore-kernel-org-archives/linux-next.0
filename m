@@ -1,82 +1,74 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: build warning after merge of the final tree (Linus'
- tree related - vai vfs tree)
-Date: Mon, 9 Sep 2013 09:45:52 -0700
-Message-ID: <CAOesGMjyFVGXGiK9uccg+jeANP6EH4nbbpCHgkucvo9au8kjvQ@mail.gmail.com>
-References: <20130906171916.41b5f48d1aaccca594d1e760@canb.auug.org.au>
-	<CAMuHMdXib30o3-70EuYj3to0==b7LfwPbivF9DaBrpHPejsDFg@mail.gmail.com>
-	<20130909032154.GA18168@quad.lixom.net>
-	<20130909143954.GE1612@quack.suse.cz>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the pm tree
+Date: Mon, 9 Sep 2013 10:22:16 -0700
+Message-ID: <CAGa+x878Kz6mw9UduLtTBTJN3DSfKQeaCvG_-8WTW1QpVadSow@mail.gmail.com>
+References: <20130829180425.4aa3d164f01cc65b215187fe@canb.auug.org.au>
+	<20130829175715.GH18542@quad.lixom.net>
+	<20130902180900.GC11030@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:47422 "EHLO
-	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753604Ab3IIQpx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Sep 2013 12:45:53 -0400
-Received: by mail-wg0-f43.google.com with SMTP id z12so5585607wgg.22
-        for <linux-next@vger.kernel.org>; Mon, 09 Sep 2013 09:45:52 -0700 (PDT)
-In-Reply-To: <20130909143954.GE1612@quack.suse.cz>
+Received: from mail-we0-f172.google.com ([74.125.82.172]:34187 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752750Ab3IIRWS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Sep 2013 13:22:18 -0400
+Received: by mail-we0-f172.google.com with SMTP id w61so4617169wes.31
+        for <linux-next@vger.kernel.org>; Mon, 09 Sep 2013 10:22:17 -0700 (PDT)
+In-Reply-To: <20130902180900.GC11030@e102568-lin.cambridge.arm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Olof Johansson <olof@lixom.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Sahara <keun-o.park@windriver.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Arnd Bergmann <arnd@arndb.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Sep 9, 2013 at 7:39 AM, Jan Kara <jack@suse.cz> wrote:
-> On Sun 08-09-13 20:21:54, Olof Johansson wrote:
->> On Fri, Sep 06, 2013 at 10:52:52AM +0200, Geert Uytterhoeven wrote:
->> > On Fri, Sep 6, 2013 at 9:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> > > After merging the final tree, today's linux-next build (arm defconfig)
->> > > produced this warning:
->> > >
->> > > fs/direct-io.c: In function 'sb_init_dio_done_wq':
->> > > fs/direct-io.c:557:2: warning: value computed is not used [-Wunused-value]
->> > >
->> > > This is:
->> > >
->> > >         cmpxchg(&sb->s_dio_done_wq, NULL, wq);
->> > >
->> > > Introduced by commit 7b7a8665edd8 ("direct-io: Implement generic deferred
->> > > AIO completions").
+On Mon, Sep 2, 2013 at 11:09 AM, Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+> On Thu, Aug 29, 2013 at 06:57:15PM +0100, Olof Johansson wrote:
+>> On Thu, Aug 29, 2013 at 06:04:25PM +1000, Stephen Rothwell wrote:
+>> > Hi all,
 >> >
->> > This happens for include/asm-generic/cmpxchg.h and several other
->> > arch-specific implementations that cast the return value of cmpxchg()
->> > like
+>> > Today's linux-next merge of the arm-soc tree got a conflict in
+>> > drivers/cpuidle/Makefile between commits b98e01ad4ed9 ("cpuidle: Add
+>> > Kconfig.arm and move calxeda, kirkwood and zynq") and d3f2950f2ade ("ARM:
+>> > ux500: cpuidle: Move ux500 cpuidle driver to drivers/cpuidle") from the
+>> > pm tree and commit 14d2c34cfa00 ("cpuidle: big.LITTLE: vexpress-TC2 CPU
+>> > idle driver") from the arm-soc tree.
 >> >
->> > #define cmpxchg(ptr, o, n)   ((__typeof__(*(ptr)))__cmpxchg(....
+>> > I fixed it up (see below) and can carry the fix as necessary (no action
+>> > is required).
 >> >
->> > If the caller of cmpxchg() doesn't use the return value, we get a
->> > compiler warning,
->> > at least with some versions of gcc.
+>> > --
+>> > Cheers,
+>> > Stephen Rothwell                    sfr@canb.auug.org.au
 >> >
->> > Any idea how to fix this once and for good?
+>> > diff --cc drivers/cpuidle/Makefile
+>> > index 0b9d200,3b6445c..0000000
+>> > --- a/drivers/cpuidle/Makefile
+>> > +++ b/drivers/cpuidle/Makefile
+>> > @@@ -5,9 -5,7 +5,10 @@@
+>> >   obj-y += cpuidle.o driver.o governor.o sysfs.o governors/
+>> >   obj-$(CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED) += coupled.o
+>> >
+>> >  -obj-$(CONFIG_CPU_IDLE_CALXEDA) += cpuidle-calxeda.o
+>> >  -obj-$(CONFIG_ARCH_KIRKWOOD) += cpuidle-kirkwood.o
+>> >  -obj-$(CONFIG_CPU_IDLE_ZYNQ) += cpuidle-zynq.o
+>> >  -obj-$(CONFIG_CPU_IDLE_BIG_LITTLE) += cpuidle-big_little.o
+>> >  +##################################################################################
+>> >  +# ARM SoC drivers
+>> >  +obj-$(CONFIG_ARM_HIGHBANK_CPUIDLE)        += cpuidle-calxeda.o
+>> >  +obj-$(CONFIG_ARM_KIRKWOOD_CPUIDLE)        += cpuidle-kirkwood.o
+>> >  +obj-$(CONFIG_ARM_ZYNQ_CPUIDLE)            += cpuidle-zynq.o
+>> >  +obj-$(CONFIG_ARM_U8500_CPUIDLE)         += cpuidle-ux500.o
+>> > ++obj-$(CONFIG_CPU_IDLE_BIG_LITTLE)       += cpuidle-big_little.o
 >>
->> Should it be fixed? Chances are that the caller needs to do actions
->> depending on if the change happened, and checking the value afterwards
->> is inherently racy.
 >>
->> For this specific fs/direct-io.c case it seems to be safe since the
->> workqueue is only ever set and never cleared, but it might still be a
->> good idea to do:
->   I'm not against this change - feel free to add my:
-> Reviewed-by: Jan Kara <jack@suse.cz>
+>> Might want to sort u8500 before zynq, but otherwise looks fine.
 >
->   to it and merge it. However I maintain there are valid usecases where you
-> do not care about the return value so warning about it doesn't seem right.
+> I noticed that owing to the merge, CONFIG_CPU_IDLE_BIG_LITTLE should be moved
+> to the newly introduced Kconfig.arm. How are we going to handle this ? It is
+> just a matter of renaming the config entry and moving it to Kconfig.arm.
+>
 
-Yes, similar to (some) __must_check-annotated functions.
+For the merge window, we'll merge it as is, but a rename
+cleanup/rename patch for v3.12-rc would be appreciated.
 
-> OTOH thinking about it some more I agree we have other precedents where
-> sometimes-correct-often-bugs constructs are warned about and I can see how
-> people can consider cmpxchg() to be that case. But in that case we should:
->   a) be consistent among architectures about the warning
->   b) comment at cmpxchg definition that you are supposed to check its
->      return value. If you really know what you are doing, you can cast the
->      return value to (void) and comment why it's safe.
-
-Unfortunately cmpxchg() is a #define since it needs to use __typeof__.
-Marking it __must_check isn't feasible. I'm open for better
-suggestions.
-
-
--Olof
+Kevin
