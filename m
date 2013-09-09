@@ -1,64 +1,105 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Mon, 9 Sep 2013 12:33:28 +1000
-Message-ID: <20130909123328.123599b5147d68276bccea1a@canb.auug.org.au>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: build warning after merge of the final tree (Linus'
+ tree related - vai vfs tree)
+Date: Sun, 8 Sep 2013 20:21:54 -0700
+Message-ID: <20130909032154.GA18168@quad.lixom.net>
+References: <20130906171916.41b5f48d1aaccca594d1e760@canb.auug.org.au>
+ <CAMuHMdXib30o3-70EuYj3to0==b7LfwPbivF9DaBrpHPejsDFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__9_Sep_2013_12_33_28_+1000_CBLYvXLeo32lV6dk"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47376 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751464Ab3IICdp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Sep 2013 22:33:45 -0400
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:59380 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751677Ab3IIDWb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Sep 2013 23:22:31 -0400
+Received: by mail-pd0-f180.google.com with SMTP id y10so5594122pdj.39
+        for <linux-next@vger.kernel.org>; Sun, 08 Sep 2013 20:22:31 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXib30o3-70EuYj3to0==b7LfwPbivF9DaBrpHPejsDFg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ian Kent <raven@themaw.net>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>
 
---Signature=_Mon__9_Sep_2013_12_33_28_+1000_CBLYvXLeo32lV6dk
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Sep 06, 2013 at 10:52:52AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Sep 6, 2013 at 9:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > After merging the final tree, today's linux-next build (arm defconfig)
+> > produced this warning:
+> >
+> > fs/direct-io.c: In function 'sb_init_dio_done_wq':
+> > fs/direct-io.c:557:2: warning: value computed is not used [-Wunused-value]
+> >
+> > This is:
+> >
+> >         cmpxchg(&sb->s_dio_done_wq, NULL, wq);
+> >
+> > Introduced by commit 7b7a8665edd8 ("direct-io: Implement generic deferred
+> > AIO completions").
+> 
+> This happens for include/asm-generic/cmpxchg.h and several other
+> arch-specific implementations that cast the return value of cmpxchg()
+> like
+> 
+> #define cmpxchg(ptr, o, n)   ((__typeof__(*(ptr)))__cmpxchg(....
+> 
+> If the caller of cmpxchg() doesn't use the return value, we get a
+> compiler warning,
+> at least with some versions of gcc.
+> 
+> Any idea how to fix this once and for good?
 
-Hi Al,
+Should it be fixed? Chances are that the caller needs to do actions
+depending on if the change happened, and checking the value afterwards
+is inherently racy.
 
-After merging the vfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+For this specific fs/direct-io.c case it seems to be safe since the
+workqueue is only ever set and never cleared, but it might still be a
+good idea to do:
 
-fs/autofs4/dev-ioctl.c: In function 'find_autofs_mount':
-fs/autofs4/dev-ioctl.c:193:2: error: implicit declaration of function 'user=
-_path_mntpointat' [-Werror=3Dimplicit-function-declaration]
-  int err =3D user_path_mntpointat(AT_FDCWD, pathname, 0, &path);
-  ^
 
-Caused by commit b3a19b078049 ("autofs4 - fix device ioctl mount lookup").
+---8<----------8<----------8<----------8<----------8<----------8<----------8<--
 
-I have used the vfs tree form next-20130906 for today.
+>From 7fdfa2da727aa9153a7df919c240abfe4f564d7a Mon Sep 17 00:00:00 2001
+From: Olof Johansson <olof@lixom.net>
+Date: Sun, 8 Sep 2013 20:12:57 -0700
+Subject: [PATCH] direct-io: Use return from cmpxchg to decide of assignment happened
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Not using the return value can in the generic case be racy, so it's better to
+use the expected way of using that instead of comparing later.
 
---Signature=_Mon__9_Sep_2013_12_33_28_+1000_CBLYvXLeo32lV6dk
-Content-Type: application/pgp-signature
+This also resolved the warning caused on ARM and other architectures:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+fs/direct-io.c: In function 'sb_init_dio_done_wq':
+fs/direct-io.c:557:2: warning: value computed is not used [-Wunused-value]
 
-iQIcBAEBCAAGBQJSLTN/AAoJEECxmPOUX5FEJK4P/jwdARAr+wgSg09ZWil96HQt
-f5TdlAD1CNGMEA1Ks17D2zXBVd6vkUwqkjamZ1/nQril0twrB6HLjvnF4YvTK8C5
-WBja1UYflFV2cgQuWmfhMIMeQOCX91MVGCbilPUr0z2uN+yOAAMBm9HeyAhnqisq
-4HhaVCDNumGDSYN7R3w2UWdcQSF+W3oU/73siiLMYCKdkC/EIzEpqJk+dqSn2Ce0
-UVuf6C5+v9nKnZZfNhjJqvHdq5j0fvHgbKgyZ58Vw4ZXknrLXQ8dE0ZCaT0lGDUB
-9G+l7eAYTztcZsXqdipVHo3yIDTKt2wSSlSzfagWD02M6kxKt+5iv6iB8H4tU797
-zpCqlRtE5b07+POib5xBdcIKd4wpW8DWtQD25MGjMDIqpHchp1lXX4Zat/sOdTRv
-lp+9kb7dlpuWGrevyw2uykvzDXFKNmGYPr2slHsWykmnMJECjHLikFqM78Sc6X9s
-tuDPmBaotGW46YNjGJ3J0QxpiKSU2wEBUUy/PZGDdZk1yuNJF8I4dmuaAhrMAZGL
-dgvFCZbkqXRaJHrJRytpplZ4qG9jgej9IPDnlG9A/09ilIjf9u6Ay0uJnLOVMJP9
-PayLvQ0kLLctVtyq7ultvGe7OaPsTHCnlV1NdGnfQQjJkP0eLMe5vM+KxtEbQdxh
-o4CPY3wDErn7PjfPyxUy
-=Aymm
------END PGP SIGNATURE-----
+Signed-off-by: Olof Johansson <olof@lixom.net>
+---
+ fs/direct-io.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---Signature=_Mon__9_Sep_2013_12_33_28_+1000_CBLYvXLeo32lV6dk--
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index 1782023..0e04142 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -544,6 +544,7 @@ static inline int dio_bio_reap(struct dio *dio, struct dio_submit *sdio)
+  */
+ static int sb_init_dio_done_wq(struct super_block *sb)
+ {
++	struct workqueue_struct *old;
+ 	struct workqueue_struct *wq = alloc_workqueue("dio/%s",
+ 						      WQ_MEM_RECLAIM, 0,
+ 						      sb->s_id);
+@@ -552,9 +553,9 @@ static int sb_init_dio_done_wq(struct super_block *sb)
+ 	/*
+ 	 * This has to be atomic as more DIOs can race to create the workqueue
+ 	 */
+-	cmpxchg(&sb->s_dio_done_wq, NULL, wq);
++	old = cmpxchg(&sb->s_dio_done_wq, NULL, wq);
+ 	/* Someone created workqueue before us? Free ours... */
+-	if (wq != sb->s_dio_done_wq)
++	if (old)
+ 		destroy_workqueue(wq);
+ 	return 0;
+ }
+-- 
+1.7.10.4
