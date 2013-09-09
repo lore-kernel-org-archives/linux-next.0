@@ -1,105 +1,75 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: build warning after merge of the final tree (Linus'
- tree related - vai vfs tree)
-Date: Sun, 8 Sep 2013 20:21:54 -0700
-Message-ID: <20130909032154.GA18168@quad.lixom.net>
-References: <20130906171916.41b5f48d1aaccca594d1e760@canb.auug.org.au>
- <CAMuHMdXib30o3-70EuYj3to0==b7LfwPbivF9DaBrpHPejsDFg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 9 Sep 2013 15:16:19 +1000
+Message-ID: <20130909151619.ea53601d59e61545aa5aea71@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__9_Sep_2013_15_16_19_+1000_jIAZBk/JMAGEajUc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:59380 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751677Ab3IIDWb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Sep 2013 23:22:31 -0400
-Received: by mail-pd0-f180.google.com with SMTP id y10so5594122pdj.39
-        for <linux-next@vger.kernel.org>; Sun, 08 Sep 2013 20:22:31 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXib30o3-70EuYj3to0==b7LfwPbivF9DaBrpHPejsDFg@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40764 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751836Ab3IIFQc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Sep 2013 01:16:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, Al Viro <viro@zeniv.linux.org.uk>, Dave Chinner <dchinner@redhat.com>
 
-On Fri, Sep 06, 2013 at 10:52:52AM +0200, Geert Uytterhoeven wrote:
-> On Fri, Sep 6, 2013 at 9:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > After merging the final tree, today's linux-next build (arm defconfig)
-> > produced this warning:
-> >
-> > fs/direct-io.c: In function 'sb_init_dio_done_wq':
-> > fs/direct-io.c:557:2: warning: value computed is not used [-Wunused-value]
-> >
-> > This is:
-> >
-> >         cmpxchg(&sb->s_dio_done_wq, NULL, wq);
-> >
-> > Introduced by commit 7b7a8665edd8 ("direct-io: Implement generic deferred
-> > AIO completions").
-> 
-> This happens for include/asm-generic/cmpxchg.h and several other
-> arch-specific implementations that cast the return value of cmpxchg()
-> like
-> 
-> #define cmpxchg(ptr, o, n)   ((__typeof__(*(ptr)))__cmpxchg(....
-> 
-> If the caller of cmpxchg() doesn't use the return value, we get a
-> compiler warning,
-> at least with some versions of gcc.
-> 
-> Any idea how to fix this once and for good?
+--Signature=_Mon__9_Sep_2013_15_16_19_+1000_jIAZBk/JMAGEajUc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Should it be fixed? Chances are that the caller needs to do actions
-depending on if the change happened, and checking the value afterwards
-is inherently racy.
+Hi Andrew,
 
-For this specific fs/direct-io.c case it seems to be safe since the
-workqueue is only ever set and never cleared, but it might still be a
-good idea to do:
+Today's linux-next merge of the akpm tree got a conflict in fs/internal.h
+between commit eed810076685 ("vfs: check unlinked ancestors before
+mount") from Linus' tree and commit  "shrinker: convert superblock
+shrinkers to new API" from the akpm tree.
 
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
----8<----------8<----------8<----------8<----------8<----------8<----------8<--
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
->From 7fdfa2da727aa9153a7df919c240abfe4f564d7a Mon Sep 17 00:00:00 2001
-From: Olof Johansson <olof@lixom.net>
-Date: Sun, 8 Sep 2013 20:12:57 -0700
-Subject: [PATCH] direct-io: Use return from cmpxchg to decide of assignment happened
+diff --cc fs/internal.h
+index 62f05e9,c909014..0000000
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@@ -126,7 -127,7 +127,8 @@@ extern int invalidate_inodes(struct sup
+   * dcache.c
+   */
+  extern struct dentry *__d_alloc(struct super_block *, const struct qstr *=
+);
+ +extern int d_set_mounted(struct dentry *dentry);
++ extern long prune_dcache_sb(struct super_block *sb, unsigned long nr_to_s=
+can);
+ =20
+  /*
+   * read_write.c
 
-Not using the return value can in the generic case be racy, so it's better to
-use the expected way of using that instead of comparing later.
+--Signature=_Mon__9_Sep_2013_15_16_19_+1000_jIAZBk/JMAGEajUc
+Content-Type: application/pgp-signature
 
-This also resolved the warning caused on ARM and other architectures:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-fs/direct-io.c: In function 'sb_init_dio_done_wq':
-fs/direct-io.c:557:2: warning: value computed is not used [-Wunused-value]
+iQIcBAEBCAAGBQJSLVmoAAoJEECxmPOUX5FELwwP/1XE0yv4JcZVrPCuthXOJybf
+eB3pAwQOnytZPRlKQv1g+8wGCyK9ymBGiE/l9HUvMQBLmanZWVAWVz6oKfagvuT/
+ysMD1Mp/9cZ9q3YEzspA8XdWk70zcgl3f2PpGgPkX+z5B+Godh6x3IIJnlUvRENt
+otYYNcDYDF/uQsqKmMRcjV0Jwl9cPIm50EoPeOLtnQt1cCZ3sIOLSRsI6zN31t+Z
+qIJxlmoOoTlLnLD8q4lsGrN4f9CvCTdXvtVr/6dhP6z83ffeTOtAKoTkfbsauIxR
+e5MEWt0mm86yVHPreux7pZApD339ad1qxEpT1eiyzdfpHFs0oru3A1S7vsNhnt8z
+oHATuD26cXyFZe5x+Dpz8Z82p7HIzWNBhesVP5kD20m5jL0OWqgEg+Wyobwn5xFL
+5Lq5w59H8qJAZyiEtFkPBrYB4R0BBLVn5wZaNTCwjZqnvEoMa+Bc/HMOmwZN0T3V
+o3aIp8SSB08KIiWQKkRfJHYGpNDGSidODnzDTDu4axr72bL6jPZYQL+fpAJbs4xn
+NdAggGML4bqMSmNoKCSqfNh4ont6RPX2XSAHFrw03hWhD7u6BVIy7ZIu7xwYhrTD
+oHDC9SW/5hj9ejDixWobSETPxE27By2PqRYmUrLR7LUYLQTpUD121QFNrLhiAXyI
+gOnlCkqZBCwbL3L1HE5D
+=aVdB
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
----
- fs/direct-io.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 1782023..0e04142 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -544,6 +544,7 @@ static inline int dio_bio_reap(struct dio *dio, struct dio_submit *sdio)
-  */
- static int sb_init_dio_done_wq(struct super_block *sb)
- {
-+	struct workqueue_struct *old;
- 	struct workqueue_struct *wq = alloc_workqueue("dio/%s",
- 						      WQ_MEM_RECLAIM, 0,
- 						      sb->s_id);
-@@ -552,9 +553,9 @@ static int sb_init_dio_done_wq(struct super_block *sb)
- 	/*
- 	 * This has to be atomic as more DIOs can race to create the workqueue
- 	 */
--	cmpxchg(&sb->s_dio_done_wq, NULL, wq);
-+	old = cmpxchg(&sb->s_dio_done_wq, NULL, wq);
- 	/* Someone created workqueue before us? Free ours... */
--	if (wq != sb->s_dio_done_wq)
-+	if (old)
- 		destroy_workqueue(wq);
- 	return 0;
- }
--- 
-1.7.10.4
+--Signature=_Mon__9_Sep_2013_15_16_19_+1000_jIAZBk/JMAGEajUc--
