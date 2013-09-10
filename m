@@ -1,78 +1,178 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the pm tree
-Date: Tue, 10 Sep 2013 09:59:50 +0100
-Message-ID: <20130910085950.GB16716@e102568-lin.cambridge.arm.com>
-References: <20130829180425.4aa3d164f01cc65b215187fe@canb.auug.org.au>
- <20130829175715.GH18542@quad.lixom.net>
- <20130902180900.GC11030@e102568-lin.cambridge.arm.com>
- <CAGa+x878Kz6mw9UduLtTBTJN3DSfKQeaCvG_-8WTW1QpVadSow@mail.gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Tue, 10 Sep 2013 15:27:53 -0700
+Message-ID: <20130910152753.662599171456233c5f91edb4@linux-foundation.org>
+References: <20130910143807.4c32d548e08d2184061f52cb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:43841 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758Ab3IJI7z convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 04:59:55 -0400
-In-Reply-To: <CAGa+x878Kz6mw9UduLtTBTJN3DSfKQeaCvG_-8WTW1QpVadSow@mail.gmail.com>
-Content-Disposition: inline
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40029 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751232Ab3IJW1y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 18:27:54 -0400
+In-Reply-To: <20130910143807.4c32d548e08d2184061f52cb@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kevin Hilman <khilman@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Sahara <keun-o.park@windriver.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Arnd Bergmann <arnd@arndb.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Dave Chinner <dchinner@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
 
-On Mon, Sep 09, 2013 at 06:22:16PM +0100, Kevin Hilman wrote:
-> On Mon, Sep 2, 2013 at 11:09 AM, Lorenzo Pieralisi
-> <lorenzo.pieralisi@arm.com> wrote:
-> > On Thu, Aug 29, 2013 at 06:57:15PM +0100, Olof Johansson wrote:
-> >> On Thu, Aug 29, 2013 at 06:04:25PM +1000, Stephen Rothwell wrote:
-> >> > Hi all,
-> >> >
-> >> > Today's linux-next merge of the arm-soc tree got a conflict in
-> >> > drivers/cpuidle/Makefile between commits b98e01ad4ed9 ("cpuidle: Add
-> >> > Kconfig.arm and move calxeda, kirkwood and zynq") and d3f2950f2ade ("ARM:
-> >> > ux500: cpuidle: Move ux500 cpuidle driver to drivers/cpuidle") from the
-> >> > pm tree and commit 14d2c34cfa00 ("cpuidle: big.LITTLE: vexpress-TC2 CPU
-> >> > idle driver") from the arm-soc tree.
-> >> >
-> >> > I fixed it up (see below) and can carry the fix as necessary (no action
-> >> > is required).
-> >> >
-> >> > --
-> >> > Cheers,
-> >> > Stephen Rothwell                    sfr@canb.auug.org.au
-> >> >
-> >> > diff --cc drivers/cpuidle/Makefile
-> >> > index 0b9d200,3b6445c..0000000
-> >> > --- a/drivers/cpuidle/Makefile
-> >> > +++ b/drivers/cpuidle/Makefile
-> >> > @@@ -5,9 -5,7 +5,10 @@@
-> >> >   obj-y += cpuidle.o driver.o governor.o sysfs.o governors/
-> >> >   obj-$(CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED) += coupled.o
-> >> >
-> >> >  -obj-$(CONFIG_CPU_IDLE_CALXEDA) += cpuidle-calxeda.o
-> >> >  -obj-$(CONFIG_ARCH_KIRKWOOD) += cpuidle-kirkwood.o
-> >> >  -obj-$(CONFIG_CPU_IDLE_ZYNQ) += cpuidle-zynq.o
-> >> >  -obj-$(CONFIG_CPU_IDLE_BIG_LITTLE) += cpuidle-big_little.o
-> >> >  +##################################################################################
-> >> >  +# ARM SoC drivers
-> >> >  +obj-$(CONFIG_ARM_HIGHBANK_CPUIDLE)        += cpuidle-calxeda.o
-> >> >  +obj-$(CONFIG_ARM_KIRKWOOD_CPUIDLE)        += cpuidle-kirkwood.o
-> >> >  +obj-$(CONFIG_ARM_ZYNQ_CPUIDLE)            += cpuidle-zynq.o
-> >> >  +obj-$(CONFIG_ARM_U8500_CPUIDLE)         += cpuidle-ux500.o
-> >> > ++obj-$(CONFIG_CPU_IDLE_BIG_LITTLE)       += cpuidle-big_little.o
-> >>
-> >>
-> >> Might want to sort u8500 before zynq, but otherwise looks fine.
-> >
-> > I noticed that owing to the merge, CONFIG_CPU_IDLE_BIG_LITTLE should be moved
-> > to the newly introduced Kconfig.arm. How are we going to handle this ? It is
-> > just a matter of renaming the config entry and moving it to Kconfig.arm.
-> >
+On Tue, 10 Sep 2013 14:38:07 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Andrew,
 > 
-> For the merge window, we'll merge it as is, but a rename
-> cleanup/rename patch for v3.12-rc would be appreciated.
+> Today's linux-next merge of the akpm tree got a conflict in fs/dcache.c
+> between commit 8aab6a27332b ("vfs: reorganize dput() memory accesses")
+> from Linus' tree and commit "dcache: convert to use new lru list
+> infrastructure" from the akpm tree.
+> 
+> /me mutters about development happening during the merge window -
+> especially when Andrew is absent.
+> 
+> I have no idea if this will be correct, but I just used the version from
+> the akpm tree (effectively reverting parts of commit 8aab6a27332b) and
+> can carry the fix as necessary (no action is required).
 
-Agreed, thanks Kevin.
+This is rather a fiasco.  "vfs: reorganize dput() memory accesses" made
+rather a mess of a 46 patch series which has been under development and
+test for two cycles so far.
 
-Lorenzo
+I reverted it so I could get it all to apply and build with some
+confidence that I didn't break anything.  Then I went to re-apply "vfs:
+reorganize dput() memory accesses" on top but I'm unsure that it's the
+right thing to do.  ->d_lru is now reused for s_dentry_lru and for the
+shrink list and for the dispose list, so simply testing its
+list_emptiness doesn't work any more.  And it's unobvious that the
+problem which "vfs: reorganize dput() memory accesses" addresses still
+exists, or whether it was worsened or whatever.
+
+And given that "vfs: reorganize dput() memory accesses" was driven by
+careful profiling work, there's not a lot of point in going any further
+until the new code is profiled and comparisons are performed.
+
+Am moderately frustrated by all of this.  It would be nice if the vfs
+maintainer could have, you know, paid some attention to a massive great
+vfs patchset instead of blithely wrecking it :(
+
+
+Dave, can you please eyeball the below and have a think about its
+applicability under the new regime?  Thanks.
+
+Right now I'm not very confident in all of this.  I think what I'll do
+is send the patches out for re-re-re-review right now and I'll ask Al
+and Linus to please find some time to think them over.
+
+
+
+
+commit 8aab6a27332bbf2abfcb35224738394e784d940b
+Author:     Linus Torvalds <torvalds@linux-foundation.org>
+AuthorDate: Sun Sep 8 13:26:18 2013 -0700
+Commit:     Linus Torvalds <torvalds@linux-foundation.org>
+CommitDate: Sun Sep 8 13:26:18 2013 -0700
+
+    vfs: reorganize dput() memory accesses
+    
+    This is me being a bit OCD after all the dentry optimization work this
+    merge window: profiles end up showing 'dput()' as a rather expensive
+    operation, and there were two unrelated bad reasons for that.
+    
+    The first reason was reading d_lockref.count for debugging purposes,
+    which touches the lockref cacheline (for reads) before really need to.
+    More importantly, the debugging test in question is _wrong_, and has
+    hidden bugs.  It's true that we can only sleep when the count goes down
+    to zero, but the test as-is hides the much more subtle bug that happens
+    if we race with somebody else deleting the file.
+    
+    Anyway we _will_ touch that cacheline, but let's do it for a write and
+    in the right routine (ie in "lockref_put_or_lock()") which annotates the
+    costs better.  So remove the misleading debug code.
+    
+    The other was an unnecessary access to the cacheline that contains the
+    d_lru list, just to check whether we already were on the LRU list or
+    not.  This is exactly what we have d_flags for, so that we can avoid
+    touching extra cache lines for the common case.  So just add another bit
+    for "is this dentry on the LRU".
+    
+    Finally, mark the tests properly likely/unlikely, so that the common
+    fast-paths are dense in the instruction stream.
+    
+    This makes the profiles look much saner.
+    
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 761e31b..bf3c4f9 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -308,8 +308,9 @@ static void dentry_unlink_inode(struct dentry * dentry)
+  */
+ static void dentry_lru_add(struct dentry *dentry)
+ {
+-	if (list_empty(&dentry->d_lru)) {
++	if (unlikely(!(dentry->d_flags & DCACHE_LRU_LIST))) {
+ 		spin_lock(&dcache_lru_lock);
++		dentry->d_flags |= DCACHE_LRU_LIST;
+ 		list_add(&dentry->d_lru, &dentry->d_sb->s_dentry_lru);
+ 		dentry->d_sb->s_nr_dentry_unused++;
+ 		dentry_stat.nr_unused++;
+@@ -320,7 +321,7 @@ static void dentry_lru_add(struct dentry *dentry)
+ static void __dentry_lru_del(struct dentry *dentry)
+ {
+ 	list_del_init(&dentry->d_lru);
+-	dentry->d_flags &= ~DCACHE_SHRINK_LIST;
++	dentry->d_flags &= ~(DCACHE_SHRINK_LIST | DCACHE_LRU_LIST);
+ 	dentry->d_sb->s_nr_dentry_unused--;
+ 	dentry_stat.nr_unused--;
+ }
+@@ -341,6 +342,7 @@ static void dentry_lru_move_list(struct dentry *dentry, struct list_head *list)
+ {
+ 	spin_lock(&dcache_lru_lock);
+ 	if (list_empty(&dentry->d_lru)) {
++		dentry->d_flags |= DCACHE_LRU_LIST;
+ 		list_add_tail(&dentry->d_lru, list);
+ 		dentry->d_sb->s_nr_dentry_unused++;
+ 		dentry_stat.nr_unused++;
+@@ -509,24 +511,22 @@ relock:
+  */
+ void dput(struct dentry *dentry)
+ {
+-	if (!dentry)
++	if (unlikely(!dentry))
+ 		return;
+ 
+ repeat:
+-	if (dentry->d_lockref.count == 1)
+-		might_sleep();
+ 	if (lockref_put_or_lock(&dentry->d_lockref))
+ 		return;
+ 
+-	if (dentry->d_flags & DCACHE_OP_DELETE) {
++	/* Unreachable? Get rid of it */
++	if (unlikely(d_unhashed(dentry)))
++		goto kill_it;
++
++	if (unlikely(dentry->d_flags & DCACHE_OP_DELETE)) {
+ 		if (dentry->d_op->d_delete(dentry))
+ 			goto kill_it;
+ 	}
+ 
+-	/* Unreachable? Get rid of it */
+- 	if (d_unhashed(dentry))
+-		goto kill_it;
+-
+ 	dentry->d_flags |= DCACHE_REFERENCED;
+ 	dentry_lru_add(dentry);
+ 
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index fe50f3d..feaa8d8 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -208,6 +208,7 @@ struct dentry_operations {
+ #define DCACHE_MANAGED_DENTRY \
+ 	(DCACHE_MOUNTED|DCACHE_NEED_AUTOMOUNT|DCACHE_MANAGE_TRANSIT)
+ 
++#define DCACHE_LRU_LIST		0x80000
+ #define DCACHE_DENTRY_KILLED	0x100000
+ 
+ extern seqlock_t rename_lock;
