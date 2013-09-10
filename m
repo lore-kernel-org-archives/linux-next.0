@@ -1,76 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the dmaengine tree with the slave-dma
- tree
-Date: Tue, 10 Sep 2013 11:56:21 +1000
-Message-ID: <20130910115621.fae74fee9d3d17a1e91feed4@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Tue, 10 Sep 2013 14:09:23 +1000
+Message-ID: <20130910140923.5a75463c9f8803afe14c4498@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Sep_2013_11_56_21_+1000_6hiUpFNtnFTl/qmA"
+ boundary="Signature=_Tue__10_Sep_2013_14_09_23_+1000_kB.GLPHwKc56J=u7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45653 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43609 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751210Ab3IJB4k (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Sep 2013 21:56:40 -0400
+	with ESMTP id S1751648Ab3IJEJd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 00:09:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Mason <jon.mason@intel.com>, Zhangfei Gao <zhangfei.gao@linaro.org>, Vinod Koul <vinod.koul@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
---Signature=_Tue__10_Sep_2013_11_56_21_+1000_6hiUpFNtnFTl/qmA
+--Signature=_Tue__10_Sep_2013_14_09_23_+1000_kB.GLPHwKc56J=u7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
+Hi Andrew,
 
-Today's linux-next merge of the dmaengine tree got a conflict in
-include/linux/dmaengine.h between commit 7bb587f4eef8 ("dmaengine: add
-interface of dma_get_slave_channel") from the slave-dma tree and commit
-4a43f394a082 ("dmaengine: dma_sync_wait and dma_find_channel undefined")
-from the dmaengine tree.
+Today's linux-next merge of the akpm tree got a conflict in fs/dcache.c
+between commit 8aab6a27332b ("vfs: reorganize dput() memory accesses")
+from Linus' tree and commit "dentry: move to per-sb LRU locks" from the
+akpm tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/dmaengine.h
-index 2601186,0c72b89..0000000
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@@ -1030,8 -1006,6 +1042,7 @@@ static inline void dma_release_channel(
-  int dma_async_device_register(struct dma_device *device);
-  void dma_async_device_unregister(struct dma_device *device);
-  void dma_run_dependencies(struct dma_async_tx_descriptor *tx);
-- struct dma_chan *dma_find_channel(enum dma_transaction_type tx_type);
- +struct dma_chan *dma_get_slave_channel(struct dma_chan *chan);
-  struct dma_chan *net_dma_find_channel(void);
-  #define dma_request_channel(mask, x, y) __dma_request_channel(&(mask), x,=
- y)
-  #define dma_request_slave_channel_compat(mask, x, y, dev, name) \
+diff --cc fs/dcache.c
+index 664554e,6e212bd..0000000
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@@ -362,9 -332,8 +361,9 @@@ static void dentry_unlink_inode(struct=20
+   */
+  static void dentry_lru_add(struct dentry *dentry)
+  {
+ -	if (list_empty(&dentry->d_lru)) {
+ +	if (unlikely(!(dentry->d_flags & DCACHE_LRU_LIST))) {
+- 		spin_lock(&dcache_lru_lock);
++ 		spin_lock(&dentry->d_sb->s_dentry_lru_lock);
+ +		dentry->d_flags |=3D DCACHE_LRU_LIST;
+  		list_add(&dentry->d_lru, &dentry->d_sb->s_dentry_lru);
+  		dentry->d_sb->s_nr_dentry_unused++;
+  		this_cpu_inc(nr_dentry_unused);
+@@@ -394,9 -363,8 +393,9 @@@ static void dentry_lru_del(struct dentr
+ =20
+  static void dentry_lru_move_list(struct dentry *dentry, struct list_head =
+*list)
+  {
+- 	spin_lock(&dcache_lru_lock);
++ 	spin_lock(&dentry->d_sb->s_dentry_lru_lock);
+  	if (list_empty(&dentry->d_lru)) {
+ +		dentry->d_flags |=3D DCACHE_LRU_LIST;
+  		list_add_tail(&dentry->d_lru, list);
+  		dentry->d_sb->s_nr_dentry_unused++;
+  		this_cpu_inc(nr_dentry_unused);
 
---Signature=_Tue__10_Sep_2013_11_56_21_+1000_6hiUpFNtnFTl/qmA
+--Signature=_Tue__10_Sep_2013_14_09_23_+1000_kB.GLPHwKc56J=u7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSLnxQAAoJEECxmPOUX5FE5JwP/1v41FYf6xGUzVAI6EyWI/zA
-DFfz+2ThJEn1jStknlNxPxSUJIHDSjCJjYJbxkVSf/Xx304r/EO7AWmZO2jZP1On
-WShFT20D1b6V1L5sBIiLOTBnczxV584tDcib25zsk8/pOAB9wYVhsQ0v66Uby+A+
-2f+Y4qDIWcNbKxEtvu0p65sKrXaQ14kmVTBUVIOVN89CMC+EQYYPZZVxEp+geznQ
-YI7auuSOw9MzCR+uJK++xo+Wo+lb1hsNqZWghq/qwI1lGa2YiRv9n0l+gz9CvhhI
-d3Gimvdrb4TKQallugQqqgRV429yd2729zXwqlyoQvNcgn8BmFS0KHhcUVuyPZKp
-Kk22i3rwti6xjO3l2Oa8iqw97wv79aGDl6RY/TcLV2cTETjrmA1aenwhFzGJKV7x
-Rp7oYTuLGavxeKsAJ6H4SO1k3i/nOf3ly/J79Xb8/dp+lNUUHkBn++FJjLbckTI6
-LziD0mkLmXOw9Tly1WSTdHjOc3k6XKhE/bNjvtL0qw3mf/86Cze5Q7e84Z4VWLEn
-4Pq6IBx41Dpt4i06sabnp/ErD6CSgnmRt6mtjrzCGJFX6ippzmvjtV/lxvXtCC0X
-VPdH+vSZPziI46k6eW1QZw9q7Q/6zvR1lZJrSUUimIEY7NMx5Ryk3FYOqo6v/KCI
-LveuXmMVjCgOx4U1VAcN
-=E/kx
+iQIcBAEBCAAGBQJSLpt4AAoJEECxmPOUX5FEyfwP/jaxEdevtgDZsoNhaVtqr4hQ
+YqEAujdrs19MZ2YJ0VPXlNIFQHRUyb6ZvmmT6DeT+4lIU0dIDJ0Mn66pH4PB+lhq
+84yQ8L2896k3ptUxj5ohiFax7Ec6EQM2zurU2wbaKXJHqpmrhk8pmNtS4nfJ/s0t
+B8SBrU+EoLe+rgxbjCfBSWEYzLvo8x4Z6sVnHXinf5GnuDAx/gMG3xRqio7p3Zjh
+PHKE2X3vx51AVDXaD/OxPq/UuYAJshew63MwCsPBpfX2h6QgIeAeZQqw/bLTWd6v
+0MID+3Fizj8th9hTC6jJjABW8nAWPyKM9z1QqO9Pxh8fSQOycbCF5IahXxrp6q2O
+32o8T5lSOwcgZe1iHxRE2RjAvkBcd4YODott1D7224xPtGR1APRCBqZGIFPHVF7y
+qPqI8VdNyv4Z5DMWb/acPrUNQMS/KoUMkgxkniilOJFWDYA7Bqj+S8+H7ymkGy4h
+VU/zaFg/CIOTeWcc+oG1HJRLeixh/cl7EKiJJyt16tPTS4kl2ylOsezpD1btX9MF
+x7hYJXlN6bShiLT4sDsc0UigfaxI7iYVIFT7ggYOkxWfuKKbL+31YaDECmbMAMgm
+vtLJNfliyRuTYOQoHNan+DyMv2gdA+EqJVi80W91Q8A4qu9wSCPx5MfWsjU49Yt+
+zq8jrE43CRWa8Dhb8tpv
+=uH32
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Sep_2013_11_56_21_+1000_6hiUpFNtnFTl/qmA--
+--Signature=_Tue__10_Sep_2013_14_09_23_+1000_kB.GLPHwKc56J=u7--
