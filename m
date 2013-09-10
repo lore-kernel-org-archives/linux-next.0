@@ -1,95 +1,139 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Tue, 10 Sep 2013 14:12:00 +1000
-Message-ID: <20130910141200.750478a4a78799c5c97bc277@canb.auug.org.au>
-References: <20130910140923.5a75463c9f8803afe14c4498@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Tue, 10 Sep 2013 14:21:50 +1000
+Message-ID: <20130910142150.23c1dc3b9f44a6f55e4ad1fe@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Sep_2013_14_12_00_+1000_5wQh9PV.rrVcTJ.q"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130910140923.5a75463c9f8803afe14c4498@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Tue__10_Sep_2013_14_21_50_+1000_0bz.8nI8gYfB=Y3d"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:55557 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751377Ab3IJEV7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 00:21:59 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Dave Chinner <dchinner@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>
 
---Signature=_Tue__10_Sep_2013_14_12_00_+1000_5wQh9PV.rrVcTJ.q
+--Signature=_Tue__10_Sep_2013_14_21_50_+1000_0bz.8nI8gYfB=Y3d
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-[ Just adding Dave Chinner to the cc list]
+Hi Andrew,
 
-On Tue, 10 Sep 2013 14:09:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Hi Andrew,
->=20
-> Today's linux-next merge of the akpm tree got a conflict in fs/dcache.c
-> between commit 8aab6a27332b ("vfs: reorganize dput() memory accesses")
-> from Linus' tree and commit "dentry: move to per-sb LRU locks" from the
-> akpm tree.
->=20
-> I fixed it up (I think - see below) and can carry the fix as necessary
-> (no action is required).
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc fs/dcache.c
-> index 664554e,6e212bd..0000000
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@@ -362,9 -332,8 +361,9 @@@ static void dentry_unlink_inode(struct=20
->    */
->   static void dentry_lru_add(struct dentry *dentry)
->   {
->  -	if (list_empty(&dentry->d_lru)) {
->  +	if (unlikely(!(dentry->d_flags & DCACHE_LRU_LIST))) {
-> - 		spin_lock(&dcache_lru_lock);
-> + 		spin_lock(&dentry->d_sb->s_dentry_lru_lock);
->  +		dentry->d_flags |=3D DCACHE_LRU_LIST;
->   		list_add(&dentry->d_lru, &dentry->d_sb->s_dentry_lru);
->   		dentry->d_sb->s_nr_dentry_unused++;
->   		this_cpu_inc(nr_dentry_unused);
-> @@@ -394,9 -363,8 +393,9 @@@ static void dentry_lru_del(struct dentr
->  =20
->   static void dentry_lru_move_list(struct dentry *dentry, struct list_hea=
-d *list)
->   {
-> - 	spin_lock(&dcache_lru_lock);
-> + 	spin_lock(&dentry->d_sb->s_dentry_lru_lock);
->   	if (list_empty(&dentry->d_lru)) {
->  +		dentry->d_flags |=3D DCACHE_LRU_LIST;
->   		list_add_tail(&dentry->d_lru, list);
->   		dentry->d_sb->s_nr_dentry_unused++;
->   		this_cpu_inc(nr_dentry_unused);
+Today's linux-next merge of the akpm tree got a conflict in fs/dcache.c
+between commits 8aab6a27332b ("vfs: reorganize dput() memory accesses")
+and 0d98439ea3c6 ("vfs: use lockred "dead" flag to mark unrecoverably
+dead dentries") from Linus' tree and commit "dcache: remove dentries from
+LRU before putting on dispose list" from the akpm tree.
+
+I fixed it up (hopefully - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__10_Sep_2013_14_12_00_+1000_5wQh9PV.rrVcTJ.q
+diff --cc fs/dcache.c
+index a4cc2eb,43a1c0e..0000000
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@@ -374,7 -344,6 +374,7 @@@ static void dentry_lru_add(struct dentr
+  static void __dentry_lru_del(struct dentry *dentry)
+  {
+  	list_del_init(&dentry->d_lru);
+- 	dentry->d_flags &=3D ~(DCACHE_SHRINK_LIST | DCACHE_LRU_LIST);
+++	dentry->d_flags &=3D ~DCACHE_LRU_LIST;
+  	dentry->d_sb->s_nr_dentry_unused--;
+  	this_cpu_dec(nr_dentry_unused);
+  }
+@@@ -393,14 -372,15 +403,16 @@@ static void dentry_lru_del(struct dentr
+ =20
+  static void dentry_lru_move_list(struct dentry *dentry, struct list_head =
+*list)
+  {
++ 	BUG_ON(dentry->d_flags & DCACHE_SHRINK_LIST);
++=20
+  	spin_lock(&dentry->d_sb->s_dentry_lru_lock);
+  	if (list_empty(&dentry->d_lru)) {
+ +		dentry->d_flags |=3D DCACHE_LRU_LIST;
+  		list_add_tail(&dentry->d_lru, list);
+- 		dentry->d_sb->s_nr_dentry_unused++;
+- 		this_cpu_inc(nr_dentry_unused);
+  	} else {
+  		list_move_tail(&dentry->d_lru, list);
++ 		dentry->d_sb->s_nr_dentry_unused--;
++ 		this_cpu_dec(nr_dentry_unused);
+  	}
+  	spin_unlock(&dentry->d_sb->s_dentry_lru_lock);
+  }
+@@@ -498,7 -478,8 +510,8 @@@ EXPORT_SYMBOL(d_drop)
+   * If ref is non-zero, then decrement the refcount too.
+   * Returns dentry requiring refcount drop, or NULL if we're done.
+   */
+- static inline struct dentry *dentry_kill(struct dentry *dentry)
++ static inline struct dentry *
+ -dentry_kill(struct dentry *dentry, int ref, int unlock_on_failure)
+++dentry_kill(struct dentry *dentry, int unlock_on_failure)
+  	__releases(dentry->d_lock)
+  {
+  	struct inode *inode;
+@@@ -591,7 -573,7 +606,7 @@@ repeat
+  	return;
+ =20
+  kill_it:
+- 	dentry =3D dentry_kill(dentry);
+ -	dentry =3D dentry_kill(dentry, 1, 1);
+++	dentry =3D dentry_kill(dentry, 1);
+  	if (dentry)
+  		goto repeat;
+  }
+@@@ -816,7 -798,7 +831,7 @@@ static struct dentry * try_prune_one_de
+  {
+  	struct dentry *parent;
+ =20
+- 	parent =3D dentry_kill(dentry);
+ -	parent =3D dentry_kill(dentry, 0, 0);
+++	parent =3D dentry_kill(dentry, 0);
+  	/*
+  	 * If dentry_kill returns NULL, we have nothing more to do.
+  	 * if it returns the same dentry, trylocks failed. In either
+@@@ -836,9 -818,10 +851,10 @@@
+  	dentry =3D parent;
+  	while (dentry) {
+  		if (lockref_put_or_lock(&dentry->d_lockref))
+- 			return;
+- 		dentry =3D dentry_kill(dentry);
++ 			return NULL;
+ -		dentry =3D dentry_kill(dentry, 1, 1);
+++		dentry =3D dentry_kill(dentry, 1);
+  	}
++ 	return NULL;
+  }
+ =20
+  static void shrink_dentry_list(struct list_head *list)
+
+--Signature=_Tue__10_Sep_2013_14_21_50_+1000_0bz.8nI8gYfB=Y3d
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSLpwUAAoJEECxmPOUX5FEj6QP/R8RAW3pTYuZtgdypEljfLtd
-ZADMEPqP745RptNzXzBusb7tr5FI+SJLRi+F5d2yla5X7LqtsARdohujgspxoViv
-LOerT8SPXnKe0Hkb5m25r38cSxWCuGCEk+zXBTTVk8BYG2p2C3c2wQ0YHDoefKsX
-b8PD3NSOSNjQpsTINCplJ9f2I6aaaZsaETwo8t1xrPZtoUu7Ys+QtWkOS30YTQCI
-I6uTq9z0Xp+UU0pbrEX2MXahkxuYo6qYdj8AMoWWNFRAWq1l2Qge5bBPdYeY3jzV
-LOfTAiqodKDOIY6n9Rod/uQq2TJhedmTBnWFz3cbJaWzc8USubMtjzSYyyeqnI3A
-X2gqeX6zID+fVtUzNXU9ClKQNDyX9AsZ9bq8yZ4+K7GeQVzYIjs4L12udbb8jZCu
-6aa+yLQ311ESwGhcAWAsx3pZ738SrfCRjZSLUhr/NEePhIrXquHPjfWzAtGudeia
-R4kHRCExp6wwDHK6fg0VjNfqSYUG/LE6ThdW0o5gGjx5CsylaC1IZpWLYnsNluPJ
-03Ft4xhD7shMCNWPSf/iguzoWTiH7YYId/4BKtrcySnTkRWJxw0un35eNFs1zjcT
-FkPDtyTwklU9FeiDIMZfzFL2yzRIYXOmy6eOEhfcof+uK/oaKcy6za1TvY/9TdLa
-Md+2RwYIolGclsNUWqMO
-=H00O
+iQIcBAEBCAAGBQJSLp5iAAoJEECxmPOUX5FEpKEP+wU12m6rUj+nlMz8XwKEqCsN
+fIpOF62oYyPq04Gz6as91hqJ3IK5y+1XiUIa77ol87lx3UTMk0U6On37eDuiqbIP
+25WMzCqCFUn3oFjTUw8xFQM15akqyculBsYDisd6klKBWWpPFdrLDpWYy+oX3v+i
+k9tv6g9xVEbTF6+KO8YUKJRpLm0y9PYWu+uadDj4xrDVLArE7O+4bHwDhsbKokDo
+EOSDb/K0GJrXChJyrTyf8Ba8X9/Swx5lxP27PtvMXO25/LzAxgZwVH+O3YgzQuxb
+gzz2gBIK6SDYdatGJBHc0Q46HR+d0bdYqnWNNKITQaIqHtGvPeYe+ivE7ojKLf9d
+FJF76+Vutj6l0BmQ678xiYw/zcuvaeq0YZK3/q020R4a/vcUsQTZA5O6E5IhC+/s
+zwnqiAlvtgja36xB8ufgXa1by96NRxMYiYxaBNyCY3K1f+4z02aCb2fD8nIPYPep
+ciSSfxzw6j7/UuSf1OcmfAZYaZrdI4tqEGNS2oSttkKPjvgEzc1J6Ct1OZX0tZZB
+oXCn2xPfG1v+gdRiW3JOInLH9bmoTnZBPHeXs1/ahKz6ttHoQB3DiPctsWzL17y3
+9UEt5lbsw6iP1xh8qiYrhHIVGlZZXkrGoIEJZ7AajLzsMPfbJrGeeeI/8cERZvOr
+q4G/BuamcF9vpqZhfFtf
+=xrzZ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Sep_2013_14_12_00_+1000_5wQh9PV.rrVcTJ.q--
+--Signature=_Tue__10_Sep_2013_14_21_50_+1000_0bz.8nI8gYfB=Y3d--
