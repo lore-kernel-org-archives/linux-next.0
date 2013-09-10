@@ -1,42 +1,30 @@
 From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Tue, 10 Sep 2013 15:41:16 -0700
-Message-ID: <20130910154116.cc4afe048213a779040ea3cc@linux-foundation.org>
+Date: Tue, 10 Sep 2013 15:44:00 -0700
+Message-ID: <20130910154400.75bb3328fbb9eaa937715652@linux-foundation.org>
 References: <20130910143807.4c32d548e08d2184061f52cb@canb.auug.org.au>
 	<20130910152753.662599171456233c5f91edb4@linux-foundation.org>
-	<20130910222924.GB13318@ZenIV.linux.org.uk>
-	<20130910153520.14e49cd32feb16d45eb8abac@linux-foundation.org>
-	<20130910223624.GC13318@ZenIV.linux.org.uk>
+	<CA+55aFwiK+=7N3EDoX+s8dVCoraba9bCPrgqHgsMKppogEFBnw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40193 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40199 "EHLO
 	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751336Ab3IJWlR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 18:41:17 -0400
-In-Reply-To: <20130910223624.GC13318@ZenIV.linux.org.uk>
+	with ESMTP id S1751420Ab3IJWoB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 18:44:01 -0400
+In-Reply-To: <CA+55aFwiK+=7N3EDoX+s8dVCoraba9bCPrgqHgsMKppogEFBnw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Chinner <dchinner@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
 
-On Tue, 10 Sep 2013 23:36:24 +0100 Al Viro <viro@ZenIV.linux.org.uk> wrote:
+On Tue, 10 Sep 2013 15:35:04 -0700 Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> On Tue, Sep 10, 2013 at 03:35:20PM -0700, Andrew Morton wrote:
-> > On Tue, 10 Sep 2013 23:29:24 +0100 Al Viro <viro@ZenIV.linux.org.uk> wrote:
-> > 
-> > > On Tue, Sep 10, 2013 at 03:27:53PM -0700, Andrew Morton wrote:
-> > > 
-> > > > This is rather a fiasco.  "vfs: reorganize dput() memory accesses" made
-> > > > rather a mess of a 46 patch series which has been under development and
-> > > > test for two cycles so far.
-> > > 
-> > > Check vfs.git#for-next...
-> > 
-> > Why?  What is in it?
-> 
-> Initial attempt to port that very thing on top of current mainline.
+> So I'd (once again) suggest you base your pile of patches on the
+> previous stable kernel, and that linux-next take it *first* rather
+> than take it last.
 
-Obtained from where?  There are a whole pile of fixes resulting from
-review and linux-next testing.  Are they included?
+That's what we're now doing.  But this particular patchset was
+different because it's changing multiple subsystems, several of which
+are concurrently being changed in an uncoordinated fashion.
