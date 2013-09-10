@@ -1,47 +1,48 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Al Viro <viro@ZenIV.linux.org.uk>
 Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Tue, 10 Sep 2013 16:37:19 -0700
-Message-ID: <CA+55aFwXXsk47WrAqF6yuVXOQHuNpxT7x-=MmLsNBptyzjH1zQ@mail.gmail.com>
+Date: Wed, 11 Sep 2013 00:53:49 +0100
+Message-ID: <20130910235349.GG13318@ZenIV.linux.org.uk>
 References: <20130910143807.4c32d548e08d2184061f52cb@canb.auug.org.au>
-	<20130910152753.662599171456233c5f91edb4@linux-foundation.org>
-	<20130910222924.GB13318@ZenIV.linux.org.uk>
-	<20130910153520.14e49cd32feb16d45eb8abac@linux-foundation.org>
-	<20130910223624.GC13318@ZenIV.linux.org.uk>
-	<20130910154116.cc4afe048213a779040ea3cc@linux-foundation.org>
-	<20130910224823.GE13318@ZenIV.linux.org.uk>
-	<20130910225934.GF13318@ZenIV.linux.org.uk>
+ <20130910152753.662599171456233c5f91edb4@linux-foundation.org>
+ <20130910222924.GB13318@ZenIV.linux.org.uk>
+ <20130910153520.14e49cd32feb16d45eb8abac@linux-foundation.org>
+ <20130910223624.GC13318@ZenIV.linux.org.uk>
+ <20130910154116.cc4afe048213a779040ea3cc@linux-foundation.org>
+ <20130910224823.GE13318@ZenIV.linux.org.uk>
+ <20130910225934.GF13318@ZenIV.linux.org.uk>
+ <CA+55aFwXXsk47WrAqF6yuVXOQHuNpxT7x-=MmLsNBptyzjH1zQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:43975 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751207Ab3IJXhU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 19:37:20 -0400
-In-Reply-To: <20130910225934.GF13318@ZenIV.linux.org.uk>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59425 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751402Ab3IJXxy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 19:53:54 -0400
+Content-Disposition: inline
+In-Reply-To: <CA+55aFwXXsk47WrAqF6yuVXOQHuNpxT7x-=MmLsNBptyzjH1zQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>
 
-On Tue, Sep 10, 2013 at 3:59 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> It's not that bad, actually; I think the variant I've pushed right now
-> (vfs.git#for-next, head at f5e1dd34561e0fb06400b378d595198918833021) should
-> be doing the right thing.  It ought to cover everything in your branch
-> in -next from "fs: bump inode and dentry counters to long" on to the
-> end of queue.
+On Tue, Sep 10, 2013 at 04:37:19PM -0700, Linus Torvalds wrote:
+> On Tue, Sep 10, 2013 at 3:59 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > It's not that bad, actually; I think the variant I've pushed right now
+> > (vfs.git#for-next, head at f5e1dd34561e0fb06400b378d595198918833021) should
+> > be doing the right thing.  It ought to cover everything in your branch
+> > in -next from "fs: bump inode and dentry counters to long" on to the
+> > end of queue.
+> 
+> >From a quick look, this looks pretty broken:
+> 
+>     if (list_lru_add(&dentry->d_sb->s_dentry_lru, &dentry->d_lru))
+>         this_cpu_inc(nr_dentry_unused);
+>     dentry->d_flags |= DCACHE_LRU_LIST;
+> 
+> because if that list_lru_add() can fail, then we shouldn't set the
+> DCACHE_LRU_LIST bit either.
 
->From a quick look, this looks pretty broken:
-
-    if (list_lru_add(&dentry->d_sb->s_dentry_lru, &dentry->d_lru))
-        this_cpu_inc(nr_dentry_unused);
-    dentry->d_flags |= DCACHE_LRU_LIST;
-
-because if that list_lru_add() can fail, then we shouldn't set the
-DCACHE_LRU_LIST bit either.
-
-That said, I don't see how it can fail. We only do this with the
-dentry locked, and when it's not already on the LRU list. So I think
-the "if()" is just misleading and unnecessary - but the code works.
-
-              Linus
+list_lru_add() can fail if it's already on the list; leaving the counter
+alone should've been conditional on that, setting the flag - no.  Said
+that, it probably should be WARN_ON(!...); this_cpu_inc(); ... |= ...;
