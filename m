@@ -1,30 +1,34 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Al Viro <viro@ZenIV.linux.org.uk>
 Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Tue, 10 Sep 2013 15:44:00 -0700
-Message-ID: <20130910154400.75bb3328fbb9eaa937715652@linux-foundation.org>
+Date: Tue, 10 Sep 2013 23:48:23 +0100
+Message-ID: <20130910224823.GE13318@ZenIV.linux.org.uk>
 References: <20130910143807.4c32d548e08d2184061f52cb@canb.auug.org.au>
-	<20130910152753.662599171456233c5f91edb4@linux-foundation.org>
-	<CA+55aFwiK+=7N3EDoX+s8dVCoraba9bCPrgqHgsMKppogEFBnw@mail.gmail.com>
+ <20130910152753.662599171456233c5f91edb4@linux-foundation.org>
+ <20130910222924.GB13318@ZenIV.linux.org.uk>
+ <20130910153520.14e49cd32feb16d45eb8abac@linux-foundation.org>
+ <20130910223624.GC13318@ZenIV.linux.org.uk>
+ <20130910154116.cc4afe048213a779040ea3cc@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40199 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751420Ab3IJWoB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 18:44:01 -0400
-In-Reply-To: <CA+55aFwiK+=7N3EDoX+s8dVCoraba9bCPrgqHgsMKppogEFBnw@mail.gmail.com>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59346 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751230Ab3IJWs2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 18:48:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20130910154116.cc4afe048213a779040ea3cc@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Chinner <dchinner@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>
 
-On Tue, 10 Sep 2013 15:35:04 -0700 Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Tue, Sep 10, 2013 at 03:41:16PM -0700, Andrew Morton wrote:
 
-> So I'd (once again) suggest you base your pile of patches on the
-> previous stable kernel, and that linux-next take it *first* rather
-> than take it last.
+> Obtained from where?  There are a whole pile of fixes resulting from
+> review and linux-next testing.  Are they included?
 
-That's what we're now doing.  But this particular patchset was
-different because it's changing multiple subsystems, several of which
-are concurrently being changed in an uncoordinated fashion.
+-next and yes.  The trivial ones - folded into the commits they are fixing
+(I mean, ones directly following the commit being fixed).  The rest included
+as individual commits.
+
+I'm looking through the DCACHE_LRU_LIST mess right now...
