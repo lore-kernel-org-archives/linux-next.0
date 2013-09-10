@@ -1,54 +1,76 @@
-From: Jon Mason <jon.mason@intel.com>
-Subject: Re: linux-next: Tree for Sep 9 (ntb)
-Date: Mon, 9 Sep 2013 16:19:47 -0700
-Message-ID: <20130909231947.GB17587@jonmason-lab>
-References: <20130909161616.0d663a37c9d5b6b3a2a2735a@canb.auug.org.au>
- <522E0FA3.6060900@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the dmaengine tree with the slave-dma
+ tree
+Date: Tue, 10 Sep 2013 11:56:21 +1000
+Message-ID: <20130910115621.fae74fee9d3d17a1e91feed4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__10_Sep_2013_11_56_21_+1000_6hiUpFNtnFTl/qmA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:46597 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756037Ab3IIXTs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Sep 2013 19:19:48 -0400
-Content-Disposition: inline
-In-Reply-To: <522E0FA3.6060900@infradead.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45653 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751210Ab3IJB4k (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Sep 2013 21:56:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Mason <jon.mason@intel.com>, Zhangfei Gao <zhangfei.gao@linaro.org>, Vinod Koul <vinod.koul@intel.com>
 
-On Mon, Sep 09, 2013 at 11:12:51AM -0700, Randy Dunlap wrote:
-> On 09/08/13 23:16, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Please do not add any code for v3.13 to your linux-next included branches
-> > until after v3.12-rc1 is released.
-> > 
-> > Changes since 20130906:
-> > 
-> 
-> 
-> on x86_64:
-> 
-> drivers/built-in.o: In function `ntb_transport_free_queue':
-> (.text+0x150344): undefined reference to `dma_sync_wait'
-> drivers/built-in.o: In function `ntb_transport_create_queue':
-> (.text+0x1504b5): undefined reference to `dma_find_channel'
-> drivers/built-in.o: In function `ntb_transport_rx':
-> ntb_transport.c:(.text+0x150c65): undefined reference to `dma_sync_wait'
-> 
-> 
-> ntb_transport.c uses several dma_*() interfaces.
-> It looks like it needs to select DMA_ENGINE at a minimum.
+--Signature=_Tue__10_Sep_2013_11_56_21_+1000_6hiUpFNtnFTl/qmA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Discussed it with Dan Williams, and will have a patch out shortly
-correct it.
+Hi Dan,
 
-Thanks,
-Jon
+Today's linux-next merge of the dmaengine tree got a conflict in
+include/linux/dmaengine.h between commit 7bb587f4eef8 ("dmaengine: add
+interface of dma_get_slave_channel") from the slave-dma tree and commit
+4a43f394a082 ("dmaengine: dma_sync_wait and dma_find_channel undefined")
+from the dmaengine tree.
 
-> 
-> 
-> -- 
-> ~Randy
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/linux/dmaengine.h
+index 2601186,0c72b89..0000000
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@@ -1030,8 -1006,6 +1042,7 @@@ static inline void dma_release_channel(
+  int dma_async_device_register(struct dma_device *device);
+  void dma_async_device_unregister(struct dma_device *device);
+  void dma_run_dependencies(struct dma_async_tx_descriptor *tx);
+- struct dma_chan *dma_find_channel(enum dma_transaction_type tx_type);
+ +struct dma_chan *dma_get_slave_channel(struct dma_chan *chan);
+  struct dma_chan *net_dma_find_channel(void);
+  #define dma_request_channel(mask, x, y) __dma_request_channel(&(mask), x,=
+ y)
+  #define dma_request_slave_channel_compat(mask, x, y, dev, name) \
+
+--Signature=_Tue__10_Sep_2013_11_56_21_+1000_6hiUpFNtnFTl/qmA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSLnxQAAoJEECxmPOUX5FE5JwP/1v41FYf6xGUzVAI6EyWI/zA
+DFfz+2ThJEn1jStknlNxPxSUJIHDSjCJjYJbxkVSf/Xx304r/EO7AWmZO2jZP1On
+WShFT20D1b6V1L5sBIiLOTBnczxV584tDcib25zsk8/pOAB9wYVhsQ0v66Uby+A+
+2f+Y4qDIWcNbKxEtvu0p65sKrXaQ14kmVTBUVIOVN89CMC+EQYYPZZVxEp+geznQ
+YI7auuSOw9MzCR+uJK++xo+Wo+lb1hsNqZWghq/qwI1lGa2YiRv9n0l+gz9CvhhI
+d3Gimvdrb4TKQallugQqqgRV429yd2729zXwqlyoQvNcgn8BmFS0KHhcUVuyPZKp
+Kk22i3rwti6xjO3l2Oa8iqw97wv79aGDl6RY/TcLV2cTETjrmA1aenwhFzGJKV7x
+Rp7oYTuLGavxeKsAJ6H4SO1k3i/nOf3ly/J79Xb8/dp+lNUUHkBn++FJjLbckTI6
+LziD0mkLmXOw9Tly1WSTdHjOc3k6XKhE/bNjvtL0qw3mf/86Cze5Q7e84Z4VWLEn
+4Pq6IBx41Dpt4i06sabnp/ErD6CSgnmRt6mtjrzCGJFX6ippzmvjtV/lxvXtCC0X
+VPdH+vSZPziI46k6eW1QZw9q7Q/6zvR1lZJrSUUimIEY7NMx5Ryk3FYOqo6v/KCI
+LveuXmMVjCgOx4U1VAcN
+=E/kx
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Sep_2013_11_56_21_+1000_6hiUpFNtnFTl/qmA--
