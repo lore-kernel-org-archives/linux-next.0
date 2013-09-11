@@ -1,63 +1,80 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Tue, 10 Sep 2013 17:41:29 -0700
-Message-ID: <CA+55aFwHMdOsyMO70DpPaBLMtuDSu43v4Gi0Vc1aKVyJhHrT=g@mail.gmail.com>
+Date: Wed, 11 Sep 2013 14:30:47 +1000
+Message-ID: <20130911143047.8cc69ea05e0d2c1e4db9fbd9@canb.auug.org.au>
 References: <20130910143807.4c32d548e08d2184061f52cb@canb.auug.org.au>
 	<20130910152753.662599171456233c5f91edb4@linux-foundation.org>
-	<CA+55aFwiK+=7N3EDoX+s8dVCoraba9bCPrgqHgsMKppogEFBnw@mail.gmail.com>
-	<20130910154400.75bb3328fbb9eaa937715652@linux-foundation.org>
-	<20130911103005.edd86001b641e53becc05ad2@canb.auug.org.au>
+	<20130910222924.GB13318@ZenIV.linux.org.uk>
+	<20130910153520.14e49cd32feb16d45eb8abac@linux-foundation.org>
+	<20130910223624.GC13318@ZenIV.linux.org.uk>
+	<20130910154116.cc4afe048213a779040ea3cc@linux-foundation.org>
+	<20130910224823.GE13318@ZenIV.linux.org.uk>
+	<20130910225934.GF13318@ZenIV.linux.org.uk>
+	<20130910161302.75efbdd7a3a0e6fccc797804@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__11_Sep_2013_14_30_47_+1000_QwZtL_UrO0g0M7uQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f180.google.com ([209.85.220.180]:54393 "EHLO
-	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751912Ab3IKAla (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 20:41:30 -0400
-In-Reply-To: <20130911103005.edd86001b641e53becc05ad2@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54807 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755029Ab3IKEbD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Sep 2013 00:31:03 -0400
+In-Reply-To: <20130910161302.75efbdd7a3a0e6fccc797804@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Chinner <dchinner@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Dave Chinner <dchinner@redhat.com>, Glauber Costa <glommer@openvz.org>
 
-On Tue, Sep 10, 2013 at 5:30 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Wed__11_Sep_2013_14_30_47_+1000_QwZtL_UrO0g0M7uQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Andrew,
+
+On Tue, 10 Sep 2013 16:13:02 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
 >
-> So, Andrew, you should be able to just about send those 375 patches to
-> Linus (I know that there may be some fix folding to do before that) and
-> have him apply them on top of v3.11-rc7-14-gfa8218d in a separate branch
-> and then merge that branch.
+> On Tue, 10 Sep 2013 23:59:34 +0100 Al Viro <viro@ZenIV.linux.org.uk> wrot=
+e:
+> >
+> > It's not that bad, actually; I think the variant I've pushed right now
+> > (vfs.git#for-next, head at f5e1dd34561e0fb06400b378d595198918833021) sh=
+ould
+> > be doing the right thing.  It ought to cover everything in your branch
+> > in -next from "fs: bump inode and dentry counters to long" on to the
+> > end of queue.
+>=20
+> That's the correct starting point.  The end point should be
+> "staging/lustre/libcfs: cleanup linux-mem.h".
 
-That's how I have been doing Andrew's patch-bombs anyway, since I
-started asking him what they were based on (they *usually* apply on
-top of my current tip, but during the merge window so much happens
-that it wasn't all that unusual that one or two patches didn't quite
-apply). So these days I just always do a "git checkout -b akpm
-<base-andrew-gives-me>" and apply the patches that way.
+OK, so I have removed that set of patches from the copy of the -mm tree
+that is in linux-next today.
 
-It's just that normally the base is within about six hours of my tip
-anyway. This would be the first time it's way back.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-But I much prefer having more of a merge of well-tested code over
-having an easier merge of something that was rebased. That's
-especially true if the rebasing ends up delaying me getting the
-patches in the first place. I detest having merge windows where the
-last few days are busy, I'd really much rather have a couple of days
-with very little going on before doing the -rc1 (in the hope that rc1
-actually ends up being pretty good).
+--Signature=_Wed__11_Sep_2013_14_30_47_+1000_QwZtL_UrO0g0M7uQ
+Content-Type: application/pgp-signature
 
-> I have included the "git diff-tree --cc"
-> output from my merge of that into linux-next yesterday.  Some of it is
-> not applicable yet (since there are still some other outstanding trees),
-> but it gives you some idea of how little the merge is a problem.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-Yes. We actually seldom have real merge problems. The only really
-annoying merges tend to be when somebody did something that isn't
-really code-related, like sorting a big list of entries (Makefiles,
-Kconfig files, device tree cleanups) and then both sides do a fair
-amount of changes on their respective - and very different - sides.
+iQIcBAEBCAAGBQJSL/H8AAoJEECxmPOUX5FEFDsP/ROJLp3UZK+Cm20F5Un30/Nx
+u6hOjrsUgwiivliMQiEv/q0u8VshtwSi7hKH71889aDa8wgMktZl3HR7jzX63Ezm
+4dDMiFg1/E2iBxcFW/bJeiAjUvLJpxf2jrZoHMyU6AVVsM50jGRK5zpKEPcl6/x7
++hNijigOLPUYmybP3NFA6Dc0s/4RsTPi20dgL9LG3iUHtu/dQ4xcrwJke56rISDL
+SSbmZXES3wMC6YUCIVgb7aXDNS2yf9WSHH7ghnkh62RVZ8YrPdc+sFfrVpkmngE2
+/bBJ5gxL+/OpyBAvk2Zi8/54CNXNSD7oEMML9JBaqCkMLa7VTg70JLIednzu+SHP
+yyiywzRI9wBchj0BTkkqZqlgnmna74IUbKQTksy9kGna7PQSPIrB92eEyeY4BBUL
+fSWDUMq95xJzdILBx1sewDfrR1f0QyZC4VG/7ihtpgapXN56flTH3VNvbMZseePv
+uZSdB412u366P+/GmR9Km8DTgQSsE5Nr9QOwe6QC1HAX7K/U0tbFIpgtBpW0LZJj
+ohrfG/PRhYUbcQuotxL0bdV4GtB6aGoOm+bFpjftGxq8A7PNlLRc1hTpZ8evRXkh
+Lu90uw7TH1nyFqwrt6wXkMAjpUpeIH1vo/wCbuJnGxCAzDnNP/WHw/DYyOqH4Qkl
+1kAsy0YyHIfL/f646EL+
+=5Mqn
+-----END PGP SIGNATURE-----
 
-The "multiple people worked on the same code" part is fairly unusual,
-and particular if I know the code and can even compile it, it's all
-fine.
-
-              Linus
+--Signature=_Wed__11_Sep_2013_14_30_47_+1000_QwZtL_UrO0g0M7uQ--
