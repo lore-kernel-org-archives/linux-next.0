@@ -1,59 +1,63 @@
-From: Dave Chinner <dchinner@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Wed, 11 Sep 2013 10:39:05 +1000
-Message-ID: <20130911003905.GD2445@devil.localdomain>
-References: <20130910152753.662599171456233c5f91edb4@linux-foundation.org>
- <20130910222924.GB13318@ZenIV.linux.org.uk>
- <20130910153520.14e49cd32feb16d45eb8abac@linux-foundation.org>
- <20130910223624.GC13318@ZenIV.linux.org.uk>
- <20130910154116.cc4afe048213a779040ea3cc@linux-foundation.org>
- <20130910224823.GE13318@ZenIV.linux.org.uk>
- <20130910225934.GF13318@ZenIV.linux.org.uk>
- <CA+55aFwXXsk47WrAqF6yuVXOQHuNpxT7x-=MmLsNBptyzjH1zQ@mail.gmail.com>
- <20130910235349.GG13318@ZenIV.linux.org.uk>
- <CA+55aFwMdZAVJLakx=xxY2QXaRdOxaPGMttU=P=2tH6+RNJeog@mail.gmail.com>
+Date: Tue, 10 Sep 2013 17:41:29 -0700
+Message-ID: <CA+55aFwHMdOsyMO70DpPaBLMtuDSu43v4Gi0Vc1aKVyJhHrT=g@mail.gmail.com>
+References: <20130910143807.4c32d548e08d2184061f52cb@canb.auug.org.au>
+	<20130910152753.662599171456233c5f91edb4@linux-foundation.org>
+	<CA+55aFwiK+=7N3EDoX+s8dVCoraba9bCPrgqHgsMKppogEFBnw@mail.gmail.com>
+	<20130910154400.75bb3328fbb9eaa937715652@linux-foundation.org>
+	<20130911103005.edd86001b641e53becc05ad2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:39409 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751871Ab3IKAjQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Sep 2013 20:39:16 -0400
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwMdZAVJLakx=xxY2QXaRdOxaPGMttU=P=2tH6+RNJeog@mail.gmail.com>
+Received: from mail-vc0-f180.google.com ([209.85.220.180]:54393 "EHLO
+	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751912Ab3IKAla (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Sep 2013 20:41:30 -0400
+In-Reply-To: <20130911103005.edd86001b641e53becc05ad2@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Glauber Costa <glommer@openvz.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Chinner <dchinner@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
 
-On Tue, Sep 10, 2013 at 05:01:23PM -0700, Linus Torvalds wrote:
-> On Tue, Sep 10, 2013 at 4:53 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > list_lru_add() can fail if it's already on the list; leaving the counter
-> > alone should've been conditional on that, setting the flag - no.  Said
-> > that, it probably should be WARN_ON(!...); this_cpu_inc(); ... |= ...;
-> 
-> That WARN_ON_(!..) might indeed be better (maybe just WARN_ON_ONCE())..
-> 
-> That DCACHE_LRU_LIST bit needs to be coherent with "the dentry->d_lru
-> entry is on _some_ list" (whether it's the dentry one or the shrinker
-> one), so if that list_lru_add() ever fails, that would be a sign of
-> badness.
-> 
-> And that whole function is very performance-critical, to the point
-> where we not only don't want to call down to list_lry_add(), we don't
-> even want to touch the d_lru list entry itself to even _look_ if it's
-> empty or not, because that will take a cache miss. Which was obviously
-> the whole reason for that DCACHE_LRU_LIST bit existing...
+On Tue, Sep 10, 2013 at 5:30 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> So, Andrew, you should be able to just about send those 375 patches to
+> Linus (I know that there may be some fix folding to do before that) and
+> have him apply them on top of v3.11-rc7-14-gfa8218d in a separate branch
+> and then merge that branch.
 
-Guys, I'm about to be out of the office for 4-5 days, so this is
-real bad timing for me. When I get back I'll put some effort into
-validating that everything still works properly and performs as
-expected.
+That's how I have been doing Andrew's patch-bombs anyway, since I
+started asking him what they were based on (they *usually* apply on
+top of my current tip, but during the merge window so much happens
+that it wasn't all that unusual that one or two patches didn't quite
+apply). So these days I just always do a "git checkout -b akpm
+<base-andrew-gives-me>" and apply the patches that way.
 
-Cheers,
+It's just that normally the base is within about six hours of my tip
+anyway. This would be the first time it's way back.
 
-Dave.
--- 
-Dave Chinner
-dchinner@redhat.com
+But I much prefer having more of a merge of well-tested code over
+having an easier merge of something that was rebased. That's
+especially true if the rebasing ends up delaying me getting the
+patches in the first place. I detest having merge windows where the
+last few days are busy, I'd really much rather have a couple of days
+with very little going on before doing the -rc1 (in the hope that rc1
+actually ends up being pretty good).
+
+> I have included the "git diff-tree --cc"
+> output from my merge of that into linux-next yesterday.  Some of it is
+> not applicable yet (since there are still some other outstanding trees),
+> but it gives you some idea of how little the merge is a problem.
+
+Yes. We actually seldom have real merge problems. The only really
+annoying merges tend to be when somebody did something that isn't
+really code-related, like sorting a big list of entries (Makefiles,
+Kconfig files, device tree cleanups) and then both sides do a fair
+amount of changes on their respective - and very different - sides.
+
+The "multiple people worked on the same code" part is fairly unusual,
+and particular if I know the code and can even compile it, it's all
+fine.
+
+              Linus
