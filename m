@@ -1,7 +1,7 @@
 From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Fri, 13 Sep 2013 12:28:06 -0700
-Message-ID: <CA+55aFy5uS4o0NL3PnjSKxSG=rYwaRjv07ibLZvJxZpVz2Kvxw@mail.gmail.com>
+Date: Fri, 13 Sep 2013 12:54:09 -0700
+Message-ID: <CA+55aFyZLBkcUtMYNPXafPth+CdCc=L9D=XqG_51uTYxsgchLA@mail.gmail.com>
 References: <20130910143807.4c32d548e08d2184061f52cb@canb.auug.org.au>
 	<20130910152753.662599171456233c5f91edb4@linux-foundation.org>
 	<20130910222924.GB13318@ZenIV.linux.org.uk>
@@ -17,10 +17,10 @@ References: <20130910143807.4c32d548e08d2184061f52cb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f176.google.com ([209.85.220.176]:45684 "EHLO
-	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754155Ab3IMT2H (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Sep 2013 15:28:07 -0400
+Received: from mail-ve0-f172.google.com ([209.85.128.172]:37203 "EHLO
+	mail-ve0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754938Ab3IMTyK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Sep 2013 15:54:10 -0400
 In-Reply-To: <CA+55aFyaRsk-KkjppTnqDxy8+y5z9Yvi3TpMZwgGJ7ad7kwM4g@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
@@ -30,15 +30,16 @@ Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.o
 On Fri, Sep 13, 2013 at 12:12 PM, Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> Does it work? Who knows.. But *if* it works, I think it has a higher
-> chance of getting all the rules for bits and free object counting
-> right.
->
-> Somebody not in a plane please double-check my low-oxygen-pressure thinking..
+>  - d_lru_isolate: this is when the LRU callbacks ask us to remove the
+> entry from the list. This is different from d_lru_del() only in that
+> it uses the raw list removal, not the lru list helper function. I'm
+> not sure that's right, but that's what the code used to do.
 
-Ok, it seems to work for me, even when memory pressure causes the
-dentries to be shrunk.
+Yes, verified. The LRU isolation functions are called with the lru
+list lock held, so d_lru_isolate() basically just does the
+list)_del_init() and our own state management.
 
-I still would like people (ie Al, in particular), to double-check everything.
+Anyway, I fixed a typo in a comment (nd_dentry_unused ->
+nr_dentry_unused) but the patch still looks good to me.
 
-                     Linus
+                   Linus
