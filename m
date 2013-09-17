@@ -1,56 +1,45 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next stats (Was: Linux 3.12-rc1)
-Date: Tue, 17 Sep 2013 09:26:41 +0200
-Message-ID: <CA+icZUWPG2PQx3-c=UeRsad=qbPY=iXyqSGpEhD8RdXdHkHuzQ@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Sekhar Nori <nsekhar@ti.com>
+Subject: Re: linux-next: old trees
+Date: Tue, 17 Sep 2013 16:44:32 +0530
+Message-ID: <52383998.6080504@ti.com>
+References: <20130917170124.0afa2e103a9977355ad7c72c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:59799 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751763Ab3IQH0n (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Sep 2013 03:26:43 -0400
+Received: from arroyo.ext.ti.com ([192.94.94.40]:46079 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752481Ab3IQLON (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Sep 2013 07:14:13 -0400
+In-Reply-To: <20130917170124.0afa2e103a9977355ad7c72c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 
 Hi Stephen,
 
-I am subscribed to linux-next but I did not receive [1].
-If you did not CC linux-next, can you do this next time?
-Thanks.
+On Tuesday 17 September 2013 12:31 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> This message is bcc'd to each of the contacts for the trees listed below,
+> so apologies if you get two copies.
+> 
+> I have been inspired to check the ages of the trees included in
+> linux-next.  Below I have listed all the trees that have not been
+> commited to in the past 6 months.  Please let me know if the tree is not
+> longer in use.  I don't mind keeping these trees in linux-next if they
+> will have continued use, but would like to remove any that are no longer
+> needed.
+> 
+> Tree		Last commit
+> ----		-----------
 
-Your stats have a lot of number, I am not sure if I read/interpret
-them correctly.
-Just one number is interesting for me:
-How many commits/patches were taken from Linux-next tree 1:1 into v3.12-rc1?
-Percentage of them to the total number of commits v3.11..v3.12-rc1?
-IOW: How successful is Linux-next?
+> davinci		2 years, 2 months ago
 
-I am irritated by the number of SHA-IDs vs. number of subject-lines.
-If those patches went into v3.12-rc1 from Linux-next both should be
-nearly the same.
-Can you explain that?
-
-How many trees of maintainers/submaintainers were taken from their
-"for-next" trees [2]?
-IOW: Without any changes, special preperations "for-linus" (aka
-"for-v3.12-rc1")?
-IOW #2: How effective work maintainers :-)!
-
-To summarize: I am interested in what went from -next to -rc1 in the
-last merge-window.
-
-Thanks for clarification in advance.
+You can remove the davinci tree from linux-next since the patches are
+now reaching linux-next through ARM-SoC tree. Apologies for not asking
+you to remove it for so long.
 
 Regards,
-- Sedat -
-
-P.S.: While digging through the scripts-dir I found "diffconfig". For
-your stats I highly recommend to see which Kconfig-options are 1. new
-2. changed (name or Y|M|N, especially M->Y).
-
-
-[1] http://marc.info/?l=linux-kernel&m=137939708327120&w=2
-[2] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees
+Sekhar
