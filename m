@@ -1,45 +1,62 @@
-From: Antti Palosaari <crope@iki.fi>
-Subject: Re: randconfig build error with next-20130917, in drivers/staging/media/msi3101
-Date: Tue, 17 Sep 2013 20:13:29 +0300
-Message-ID: <52388DB9.9020406@iki.fi>
-References: <CA+r1Zhig6Xc_-jw=nGqd18j0MfTbpLRZoVYYtFZ2wY5LUp6J5w@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: old trees
+Date: Wed, 18 Sep 2013 09:09:58 +1000
+Message-ID: <20130918090958.5f08fff3d69c42aa64a95fc3@canb.auug.org.au>
+References: <20130917170124.0afa2e103a9977355ad7c72c@canb.auug.org.au>
+	<52383998.6080504@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__18_Sep_2013_09_09_58_+1000_/lp.dTcHYgdZJyYk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kapsi.fi ([217.30.184.167]:40272 "EHLO mail.kapsi.fi"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752884Ab3IQROQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Sep 2013 13:14:16 -0400
-In-Reply-To: <CA+r1Zhig6Xc_-jw=nGqd18j0MfTbpLRZoVYYtFZ2wY5LUp6J5w@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36779 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753983Ab3IQXKK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Sep 2013 19:10:10 -0400
+In-Reply-To: <52383998.6080504@ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <m.chehab@samsung.com>
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 
-Hello Jim,
+--Signature=_Wed__18_Sep_2013_09_09_58_+1000_/lp.dTcHYgdZJyYk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That is maybe 5th times I got that same bug report :-] It is already 
-fixed. Mauro tends to handle pending patches once per release candidate, 
-so I think fix will be in next very soon (during this week).
+Hi Sekhar,
 
-https://patchwork.kernel.org/patch/2856771/
-https://lkml.org/lkml/2013/9/12/824
-
-regards
-Antti
-
-
-On 09/17/2013 08:05 PM, Jim Davis wrote:
-> Building with the attached random configuration file,
+On Tue, 17 Sep 2013 16:44:32 +0530 Sekhar Nori <nsekhar@ti.com> wrote:
 >
->    LD      init/built-in.o
-> drivers/built-in.o: In function `msi3101_probe':
-> /home/jim/linux-randbuild/2/drivers/staging/media/msi3101/sdr-msi3101.c:1847:
-> undefined reference to `vb2_vmalloc_memops'
-> make: *** [vmlinux] Error 1
->
+> You can remove the davinci tree from linux-next since the patches are
+> now reaching linux-next through ARM-SoC tree. Apologies for not asking
+> you to remove it for so long.
 
+Done.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.auhttp://www.canb.auu=
+g.org.au/~sfr/
 
--- 
-http://palosaari.fi/
+--Signature=_Wed__18_Sep_2013_09_09_58_+1000_/lp.dTcHYgdZJyYk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSOOFLAAoJEECxmPOUX5FEuOMP/jQrMNuoeHgriEOpgCTC+d1l
+M+6Ku6Pm/bBP3TJuH+jLeWy+NuokS1xCeFFUcaTeeCUjDovlYZrgHZSVOszDnUG8
+lFidsHI95urm1IqHlehkBpnrQv5N/0VUTgYH5VhGhawMRDAxKgq00tOVIQd8KpLQ
+o7RS6NkQRx43j01T9RgHhkSfSi/813q0Ay9WEkiXbyerXNLxvLWVrlAYRpDh4D9B
+i/oaSQeCSfc9G9YV5tNHTFbHQxPoUdbsj7o2+qXKP2jLzHLUoQEWok07gyYR1GER
+W46zXtXPuMKVlMjCICvgEud23UenI+b2n9WcEFjwJLWNUL7I9h+xWNab6p3iwpk5
+dlGXCCnZNs3Cv3jLMCtbIDfKnG760viUrNROL+vPQ1W2/ypjB6HbwVOYR2AAAw2t
+lusBZFvofKPjNndPTu0DwGP5haI8YbaisnEeHKi0+vUAsCoPCK18u+irWkOepT5R
+psiESZZjduLa9JwdSaolVOeAHJTqzu1PZ2jUhyUuBXq4+o0zSyY/BRuPIG29o/pJ
+IDXsxR5bU5G9K8IsLW1kwh2ZhDanvxDxBp7MbUF0JSVcFBNd1zBv8D/qNwjyu2wP
+iv806CouSb7t9Ad5peLeJbVyUBBZ6DXm8Xut306WP2XBg0leleIH/nyH6zpqqdJs
+WrsDNhmS/UejJz1U/uTi
+=s8nz
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__18_Sep_2013_09_09_58_+1000_/lp.dTcHYgdZJyYk--
