@@ -1,41 +1,70 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the vfs tree with the aio-direct tree
-Date: Wed, 18 Sep 2013 03:00:35 +0100
-Message-ID: <20130918020035.GK13318@ZenIV.linux.org.uk>
-References: <20130918105638.6fa7c29605c14b408b7f5a7e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Wed, 18 Sep 2013 13:12:37 +1000
+Message-ID: <20130918131237.b8272e45ec6c4ebf360cb4e5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__18_Sep_2013_13_12_37_+1000_cp0aiI_vM2ahoyCN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:60896 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751136Ab3IRCAi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Sep 2013 22:00:38 -0400
-Content-Disposition: inline
-In-Reply-To: <20130918105638.6fa7c29605c14b408b7f5a7e@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53139 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751136Ab3IRDMs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Sep 2013 23:12:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Kleikamp <dave.kleikamp@oracle.com>, Zach Brown <zab@zabbo.net>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, George Cherian <george.cherian@ti.com>
 
-On Wed, Sep 18, 2013 at 10:56:38AM +1000, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> Today's linux-next merge of the vfs tree got conflicts in fs/nfs/direct.c
-> and fs/nfs/file.c between commits b9517433d65d ("dio: Convert direct_IO
-> to use iov_iter"), a8431c667ae8 ("nfs: add support for read_iter,
-> write_iter") and a1b8ec384b73 ("nfs: simplify swap") from the aio-direct
-> tree and commit c18d1ec44f7a ("nfs: use %p[dD] instead of open-coded (and
-> often racy) equivalents") from the vfs tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Signature=_Wed__18_Sep_2013_13_12_37_+1000_cp0aiI_vM2ahoyCN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hrm...  FWIW, I would greatly prefer to offload these printk patches to
-NFS and NFSD trees.  Didn't get around to that yet, but...
+Hi Linus,
 
-As for aio-direct...  Two questions:
-	* had anybody tried to measure the effect on branch predictor from
-introducing that method vector?  Commit d6afd4c4 ("iov_iter: hide iovec
-details behind ops function pointers")
-	* WTF does aforementioned commit lack its author's s-o-b?  The same
-goes for a lot of zab's commits in there...
+After merging the gpio tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/gpio/gpio-pcf857x.c: In function 'pcf857x_irq_domain_map':
+drivers/gpio/gpio-pcf857x.c:206:2: error: implicit declaration of function =
+'set_irq_flags' [-Werror=3Dimplicit-function-declaration]
+  set_irq_flags(virq, IRQF_VALID);
+  ^
+drivers/gpio/gpio-pcf857x.c:206:22: error: 'IRQF_VALID' undeclared (first u=
+se in this function)
+  set_irq_flags(virq, IRQF_VALID);
+                      ^
+
+Caused by commit 21fd3cd1874a ("gpio: pcf857x: call the gpio user handler
+iff gpio_to_irq is done").
+
+set_irq_flags() only exists on arm (and arm64).
+
+I have used the gpio tree from next-20130917 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__18_Sep_2013_13_12_37_+1000_cp0aiI_vM2ahoyCN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSORopAAoJEECxmPOUX5FEyYoP/jN80s8NHyODtL37dsKff8uf
+7kquFFDquOkyecp42OCIZnj9nS9ZAhJrtyfMg/XChHu8jpgQUeOpuVlZ4Db1yC7O
+PSlpik/gJGJdMWJvoovWTpIu9CLLh4hHgDESNXS/btc+IRsl4D7OFoAZDDJj4L+y
+HnA+wA20WdQQeVXSN8XCGj4O5Pk595B5NOaGC106aGSDNp9ClhJCv5bFQSk7vSTl
+mAEF0bhlQRojrNQ5eNfFXd+650P/vSvE36lEvSWsUzY/cNPe758f6P6yqdpoJ4xo
+Hbwef1fYFsHHPI+9xrrPZXY1krCTI7T0SFSJ44QM9fFTTuZbj7j9HaBozG9qrTY1
+mQn6pH0TQWWAobus2Z4o4BmQjAjB6iKMsYeocCxel1/AWr/M/VfhYMnU+RbmC7N3
+aa1kyzrg6bCop64xhuAwp4D/swYLShDMnJUCJZuT4dXOpI9BJ/FsAM4m+Aaq4RjG
+JBskOp6t5sfPmlnnFKV4yLtKbG3vw/c4uO45AGm45fLcx3xhVshzUk6HHErTLXHL
++TjiZ1+feZQSXqKNdXSkKKb+ymNl9jhy3gRk2ANjANJ1wuaKgV2MqYefdDR73Sfe
+pxaMyT6daTaJh89jyCSho2ZcQ0cNldeqPECL3sPdpldarTnqr2rlmqNbGwlEp7WB
+zgyPpI9lYgqMOZ6Fi9HE
+=0GWJ
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__18_Sep_2013_13_12_37_+1000_cp0aiI_vM2ahoyCN--
