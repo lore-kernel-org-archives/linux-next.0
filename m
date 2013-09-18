@@ -1,35 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Wed, 18 Sep 2013 13:24:36 +0200
-Message-ID: <CACRpkdY3Ox8fZPph-je5OvL9YFD1O2WVt6Ga-_UoAqokRdRiRA@mail.gmail.com>
-References: <20130918131237.b8272e45ec6c4ebf360cb4e5@canb.auug.org.au>
+From: Zach Brown <zab@redhat.com>
+Subject: Re: linux-next: manual merge of the vfs tree with the aio-direct tree
+Date: Wed, 18 Sep 2013 10:06:30 -0700
+Message-ID: <20130918170630.GA2103@lenny.msi.event>
+References: <20130918105638.6fa7c29605c14b408b7f5a7e@canb.auug.org.au>
+ <20130918020035.GK13318@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:47729 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751904Ab3IRLYh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Sep 2013 07:24:37 -0400
-Received: by mail-ob0-f182.google.com with SMTP id wo20so7407376obc.27
-        for <linux-next@vger.kernel.org>; Wed, 18 Sep 2013 04:24:36 -0700 (PDT)
-In-Reply-To: <20130918131237.b8272e45ec6c4ebf360cb4e5@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:34018 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753302Ab3IRRGk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Sep 2013 13:06:40 -0400
+Content-Disposition: inline
+In-Reply-To: <20130918020035.GK13318@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, George Cherian <george.cherian@ti.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Kleikamp <dave.kleikamp@oracle.com>
 
-On Wed, Sep 18, 2013 at 5:12 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> As for aio-direct...  Two questions:
+> 	* had anybody tried to measure the effect on branch predictor from
+> introducing that method vector?  Commit d6afd4c4 ("iov_iter: hide iovec
+> details behind ops function pointers")
 
-> After merging the gpio tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/gpio/gpio-pcf857x.c: In function 'pcf857x_irq_domain_map':
-> drivers/gpio/gpio-pcf857x.c:206:2: error: implicit declaration of function 'set_irq_flags' [-Werror=implicit-function-declaration]
->   set_irq_flags(virq, IRQF_VALID);
->   ^
+FWIW, I never did.  I only went that route to begin with because the few
+alternatives I tried before that were even more ugly :(.  It's been long
+enough that I can't quite remember what I'd tried, though.
 
-How typical to miss this. OK I've submitted a fix and pushed
-to my tree.
-
-Yours,
-Linus Walleij
+- z
