@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the aio-direct tree
-Date: Wed, 18 Sep 2013 10:56:38 +1000
-Message-ID: <20130918105638.6fa7c29605c14b408b7f5a7e@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
+Date: Wed, 18 Sep 2013 11:20:54 +1000
+Message-ID: <20130918112054.1f8f983461cc9ead5b9a635f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__18_Sep_2013_10_56_38_+1000_5IZ2ZzozJRguP6_K"
+ boundary="Signature=_Wed__18_Sep_2013_11_20_54_+1000_LlF4iHQGUOGViQX4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33509 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:37201 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750741Ab3IRA4r (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Sep 2013 20:56:47 -0400
+	with ESMTP id S1750942Ab3IRBVD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Sep 2013 21:21:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Kleikamp <dave.kleikamp@oracle.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
 
---Signature=_Wed__18_Sep_2013_10_56_38_+1000_5IZ2ZzozJRguP6_K
+--Signature=_Wed__18_Sep_2013_11_20_54_+1000_LlF4iHQGUOGViQX4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi all,
 
-Today's linux-next merge of the vfs tree got conflicts in fs/nfs/direct.c
-and fs/nfs/file.c between commits b9517433d65d ("dio: Convert direct_IO
-to use iov_iter"), a8431c667ae8 ("nfs: add support for read_iter,
-write_iter") and a1b8ec384b73 ("nfs: simplify swap") from the aio-direct
-tree and commit c18d1ec44f7a ("nfs: use %p[dD] instead of open-coded (and
-often racy) equivalents") from the vfs tree.
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/i915_gem.c between commit 7dc19d5affd7 ("drivers:
+convert shrinkers to new count/scan API") from the  tree and commit
+e656a6cba0fe ("drm/i915: inline vma_create into lookup_or_create_vma")
+from the drm-intel tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,170 +36,93 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/nfs/direct.c
-index 239c2fe,d71d66c..0000000
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@@ -118,18 -117,26 +118,17 @@@ static inline int put_dreq(struct nfs_d
-   * @nr_segs: size of iovec array
-   *
-   * The presence of this routine in the address space ops vector means
- - * the NFS client supports direct I/O. However, for most direct IO, we
- - * shunt off direct read and write requests before the VFS gets them,
- - * so this method is only ever called for swap.
- + * the NFS client supports direct I/O. However, we shunt off direct
- + * read and write requests before the VFS gets them, so this method
- + * should never be called.
-   */
- -ssize_t nfs_direct_IO(int rw, struct kiocb *iocb, const struct iovec *iov=
-, loff_t pos, unsigned long nr_segs)
- +ssize_t nfs_direct_IO(int rw, struct kiocb *iocb, struct iov_iter *iter,
- +		      loff_t pos)
-  {
-- 	dprintk("NFS: nfs_direct_IO (%s) off/no(%Ld/%lu) EINVAL\n",
-- 			iocb->ki_filp->f_path.dentry->d_name.name,
-- 			(long long) pos, iter->nr_segs);
- -#ifndef CONFIG_NFS_SWAP
-+ 	dprintk("NFS: nfs_direct_IO (%pD) off/no(%Ld/%lu) EINVAL\n",
- -			iocb->ki_filp, (long long) pos, nr_segs);
-++			iocb->ki_filp, (long long) pos, iter->nr_segs);
+diff --cc drivers/gpu/drm/i915/i915_gem.c
+index df9253d,d00d24f..0000000
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@@ -4886,61 -4912,3 +4940,37 @@@ unsigned long i915_gem_obj_size(struct=20
  =20
-  	return -EINVAL;
- -#else
- -	VM_BUG_ON(iocb->ki_nbytes !=3D PAGE_SIZE);
- -
- -	if (rw =3D=3D READ || rw =3D=3D KERNEL_READ)
- -		return nfs_file_direct_read(iocb, iov, nr_segs, pos,
- -				rw =3D=3D READ ? true : false);
- -	return nfs_file_direct_write(iocb, iov, nr_segs, pos,
- -				rw =3D=3D WRITE ? true : false);
- -#endif /* CONFIG_NFS_SWAP */
-  }
- =20
-  static void nfs_direct_release_pages(struct page **pages, unsigned int np=
-ages)
-@@@ -1010,13 -905,11 +1009,11 @@@ ssize_t nfs_file_direct_read(struct kio
-  	struct address_space *mapping =3D file->f_mapping;
-  	size_t count;
- =20
- -	count =3D iov_length(iov, nr_segs);
- +	count =3D iov_iter_count(iter);
-  	nfs_add_stats(mapping->host, NFSIOS_DIRECTREADBYTES, count);
- =20
-- 	dfprintk(FILE, "NFS: direct read(%s/%s, %zd@%Ld)\n",
-- 		file->f_path.dentry->d_parent->d_name.name,
-- 		file->f_path.dentry->d_name.name,
-- 		count, (long long) pos);
-+ 	dfprintk(FILE, "NFS: direct read(%pD2, %zd@%Ld)\n",
-+ 		file, count, (long long) pos);
- =20
-  	retval =3D 0;
-  	if (!count)
-@@@ -1065,13 -959,11 +1062,11 @@@ ssize_t nfs_file_direct_write(struct ki
-  	struct address_space *mapping =3D file->f_mapping;
-  	size_t count;
- =20
- -	count =3D iov_length(iov, nr_segs);
- +	count =3D iov_iter_count(iter);
-  	nfs_add_stats(mapping->host, NFSIOS_DIRECTWRITTENBYTES, count);
- =20
-- 	dfprintk(FILE, "NFS: direct write(%s/%s, %zd@%Ld)\n",
-- 		file->f_path.dentry->d_parent->d_name.name,
-- 		file->f_path.dentry->d_name.name,
-- 		count, (long long) pos);
-+ 	dfprintk(FILE, "NFS: direct write(%pD2, %zd@%Ld)\n",
-+ 		file, count, (long long) pos);
- =20
-  	retval =3D generic_write_checks(file, &pos, &count, 0);
-  	if (retval)
-diff --cc fs/nfs/file.c
-index 19ac4fd,e2fcacf..0000000
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@@ -174,18 -165,18 +165,17 @@@ nfs_file_flush(struct file *file, fl_ow
-  EXPORT_SYMBOL_GPL(nfs_file_flush);
- =20
-  ssize_t
- -nfs_file_read(struct kiocb *iocb, const struct iovec *iov,
- -		unsigned long nr_segs, loff_t pos)
- +nfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter, loff_t pos)
-  {
-- 	struct dentry * dentry =3D iocb->ki_filp->f_path.dentry;
-- 	struct inode * inode =3D dentry->d_inode;
-+ 	struct inode *inode =3D file_inode(iocb->ki_filp);
-  	ssize_t result;
- =20
-  	if (iocb->ki_filp->f_flags & O_DIRECT)
- -		return nfs_file_direct_read(iocb, iov, nr_segs, pos, true);
- +		return nfs_file_direct_read(iocb, iter, pos);
- =20
-- 	dprintk("NFS: read_iter(%s/%s, %lu@%lu)\n",
-- 		dentry->d_parent->d_name.name, dentry->d_name.name,
- -	dprintk("NFS: read(%pD2, %lu@%lu)\n",
-++	dprintk("NFS: read_iter(%pD2, %lu@%lu)\n",
-+ 		iocb->ki_filp,
- -		(unsigned long) iov_length(iov, nr_segs), (unsigned long) pos);
- +		(unsigned long) iov_iter_count(iter), (unsigned long) pos);
- =20
-  	result =3D nfs_revalidate_mapping(inode, iocb->ki_filp->f_mapping);
-  	if (!result) {
-@@@ -655,25 -634,24 +633,24 @@@ static int nfs_need_sync_write(struct f
   	return 0;
   }
- =20
- -ssize_t nfs_file_write(struct kiocb *iocb, const struct iovec *iov,
- -		       unsigned long nr_segs, loff_t pos)
- +ssize_t nfs_file_write_iter(struct kiocb *iocb, struct iov_iter *iter,
- +			    loff_t pos)
-  {
-- 	struct dentry * dentry =3D iocb->ki_filp->f_path.dentry;
-- 	struct inode * inode =3D dentry->d_inode;
-+ 	struct file *file =3D iocb->ki_filp;
-+ 	struct inode *inode =3D file_inode(file);
-  	unsigned long written =3D 0;
-  	ssize_t result;
- -	size_t count =3D iov_length(iov, nr_segs);
- +	size_t count =3D iov_iter_count(iter);
- =20
-- 	result =3D nfs_key_timeout_notify(iocb->ki_filp, inode);
-+ 	result =3D nfs_key_timeout_notify(file, inode);
-  	if (result)
-  		return result;
- =20
-- 	if (iocb->ki_filp->f_flags & O_DIRECT)
-+ 	if (file->f_flags & O_DIRECT)
- -		return nfs_file_direct_write(iocb, iov, nr_segs, pos, true);
- +		return nfs_file_direct_write(iocb, iter, pos);
- =20
-- 	dprintk("NFS: write_iter(%s/%s, %lu@%lld)\n",
-- 		dentry->d_parent->d_name.name, dentry->d_name.name,
-- 		(unsigned long) count, (long long) pos);
- -	dprintk("NFS: write(%pD2, %lu@%Ld)\n",
-++	dprintk("NFS: write_iter(%pD2, %lu@%Ld)\n",
-+ 		file, (unsigned long) count, (long long) pos);
- =20
-  	result =3D -EBUSY;
-  	if (IS_SWAPFILE(inode))
+ +
+ +static unsigned long
+ +i915_gem_inactive_scan(struct shrinker *shrinker, struct shrink_control *=
+sc)
+ +{
+ +	struct drm_i915_private *dev_priv =3D
+ +		container_of(shrinker,
+ +			     struct drm_i915_private,
+ +			     mm.inactive_shrinker);
+ +	struct drm_device *dev =3D dev_priv->dev;
+ +	int nr_to_scan =3D sc->nr_to_scan;
+ +	unsigned long freed;
+ +	bool unlock =3D true;
+ +
+ +	if (!mutex_trylock(&dev->struct_mutex)) {
+ +		if (!mutex_is_locked_by(&dev->struct_mutex, current))
+ +			return 0;
+ +
+ +		if (dev_priv->mm.shrinker_no_lock_stealing)
+ +			return 0;
+ +
+ +		unlock =3D false;
+ +	}
+ +
+ +	freed =3D i915_gem_purge(dev_priv, nr_to_scan);
+ +	if (freed < nr_to_scan)
+ +		freed +=3D __i915_gem_shrink(dev_priv, nr_to_scan,
+ +							false);
+ +	if (freed < nr_to_scan)
+ +		freed +=3D i915_gem_shrink_all(dev_priv);
+ +
+ +	if (unlock)
+ +		mutex_unlock(&dev->struct_mutex);
+ +	return freed;
+ +}
+-=20
+- struct i915_vma *i915_gem_obj_to_vma(struct drm_i915_gem_object *obj,
+- 				     struct i915_address_space *vm)
+- {
+- 	struct i915_vma *vma;
+- 	list_for_each_entry(vma, &obj->vma_list, vma_link)
+- 		if (vma->vm =3D=3D vm)
+- 			return vma;
+-=20
+- 	return NULL;
+- }
+-=20
+- struct i915_vma *
+- i915_gem_obj_lookup_or_create_vma(struct drm_i915_gem_object *obj,
+- 				  struct i915_address_space *vm)
+- {
+- 	struct i915_vma *vma;
+-=20
+- 	vma =3D i915_gem_obj_to_vma(obj, vm);
+- 	if (!vma)
+- 		vma =3D i915_gem_vma_create(obj, vm);
+-=20
+- 	return vma;
+- }
 
---Signature=_Wed__18_Sep_2013_10_56_38_+1000_5IZ2ZzozJRguP6_K
+--Signature=_Wed__18_Sep_2013_11_20_54_+1000_LlF4iHQGUOGViQX4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSOPpLAAoJEECxmPOUX5FEQQcQAJPC34Ph2FthDeUeNz8Ti8Xh
-Lf4z0/guGEPNLFllPQKj5gf5+NpC14d9M6DS7+QvEZO97UlqstsxCRLEBEuJc2Z2
-zX3WVVNfM/YyijQ4BIORgIZI+t7PDF+dTpugeQNJ1Lh7xQ8ML+Q2Lug/Bf1ezAp/
-G806jgeEkdgeJgb6cFMJcHknxEG5LdV0QJRx4YpEVWz1N0uvvAgQRDYLvg11atEA
-p5xpeHNv3rBl4XVQax9bR47EMqoboVzeXDZATIFHrBik1Kjkiwdji3CbjggOf86C
-E6CEOQNHEm+wIR3aQqqo0T72/ByiyY9Psga5L0UWwygN4wznG/kqPeqxeGNcTMi2
-D9gng2/bcAfWnqx/+HYttDQJ1XxntzucnQqBF+RTPSyogYCgy5ZDZ7V6fO8CPsBz
-gze1SF2uBcskt4eCXxGcuETrUra+OXoYT6zaotXca5hxhXEkULEuKJcg/ujvsft3
-yIC0JdX6w77dJrR2kYIz+Nc8ioQIZrJuWdVC7L/3IZmpOryWDsBe0VlOpF6nAYiY
-4x7NF4i/gmH9UmFICV1FtkJiTFsT8Vzd60O/TzeboF/G+yuExxyBLoyzY1rKaf7g
-ni5+sBXK+Na4k2QtvIKLhZ58gd5YL+w3B4K4DvgebYaeGm43VWG2i3F/IwwMazGD
-+e00LsXi13KBPXDQV9Kk
-=srLD
+iQIcBAEBCAAGBQJSOP/6AAoJEECxmPOUX5FEz8YP/jc8u9YpbnZV4xNzBFl3Q5+D
+yXx+rpanXAsZSWEIOheJMWDknMQ2DZfqI7Zyrk/1HAZ3a87bdOo2N8O8dp75pHRk
+wctc+LFhs7fLGrtM2qgoNnJWW8W4vubA8PFxFynMEGR8URJOHIPJxAa8nyLyx8+/
+HW1p3JxipwImurMZY6E69kUFk7qxNTQ2RZxi+NKQA3h2+z50BVsiz7bpghssuZCN
+qvahgLrsgGJ5OPinjE+YPXMwwgZTq/8Bs/EI1CfJIFznC5uSNN/drFQxUG1j+2Ml
+CrKr1U5wydy9yDPPvUn4AWSsdapy32TqiSMwITIXvN1YE0WQGgTLuGJYWmcZX6bg
+9kyvgxRSYsi1zDNKYM0hp9ZQBnYCypFu9TcwDJEpMa3jnVuc2lyZKfQTf5eiIu+Y
+sLyJtpFuMC589YOqkeVlY3hSUW510YW4qoxHu/jC2Y2oZQlCeMcGKuERiF7q8cR8
+R0AgPRIG8mkl7ucZDxEWRjoN7SZp70pZhSm9WA1ANxJ7dbLDdhOXG9Qjlb+6dBuc
+Ujvs1cjDx4xZkjBzuNV3USOoEaphChkgoZFyPQRZ70MBCdxnRSO3dGQviOKmuxsP
+GwXsm+Tpvh14H69didG3djnxxoXrJl/CoZwuBHp/gdW/N5uHtj7X7X+m7CNDXxcj
+00MgPUYYPRdgS3m3kmHj
+=BPq6
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__18_Sep_2013_10_56_38_+1000_5IZ2ZzozJRguP6_K--
+--Signature=_Wed__18_Sep_2013_11_20_54_+1000_LlF4iHQGUOGViQX4--
