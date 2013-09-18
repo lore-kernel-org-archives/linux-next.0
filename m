@@ -1,83 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Wed, 18 Sep 2013 11:25:30 +1000
-Message-ID: <20130918112530.4595070b1c7f4ec72e0ea8b6@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: manual merge of the vfs tree with the aio-direct tree
+Date: Wed, 18 Sep 2013 03:00:35 +0100
+Message-ID: <20130918020035.GK13318@ZenIV.linux.org.uk>
+References: <20130918105638.6fa7c29605c14b408b7f5a7e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__18_Sep_2013_11_25_30_+1000_Z5yerY9ArOcnP5/I"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43611 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750942Ab3IRBZh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Sep 2013 21:25:37 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:60896 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751136Ab3IRCAi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Sep 2013 22:00:38 -0400
+Content-Disposition: inline
+In-Reply-To: <20130918105638.6fa7c29605c14b408b7f5a7e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlZpbGxlIFN5cmrDpGzDpCI=?= <ville.syrjala@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Kleikamp <dave.kleikamp@oracle.com>, Zach Brown <zab@zabbo.net>
 
---Signature=_Wed__18_Sep_2013_11_25_30_+1000_Z5yerY9ArOcnP5/I
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 18, 2013 at 10:56:38AM +1000, Stephen Rothwell wrote:
+> Hi Al,
+> 
+> Today's linux-next merge of the vfs tree got conflicts in fs/nfs/direct.c
+> and fs/nfs/file.c between commits b9517433d65d ("dio: Convert direct_IO
+> to use iov_iter"), a8431c667ae8 ("nfs: add support for read_iter,
+> write_iter") and a1b8ec384b73 ("nfs: simplify swap") from the aio-direct
+> tree and commit c18d1ec44f7a ("nfs: use %p[dD] instead of open-coded (and
+> often racy) equivalents") from the vfs tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hi all,
+Hrm...  FWIW, I would greatly prefer to offload these printk patches to
+NFS and NFSD trees.  Didn't get around to that yet, but...
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_drv.h between commit 6e1b4fdad515 ("drm/i915:
-Delay disabling of VGA memory until vgacon->fbcon handoff is done") from
-Linus' tree and commit eb14cb747bc5 ("drm/i915: Add state readout and
-checking for has_dp_encoder and dp_m_n") from the drm-intel tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/gpu/drm/i915/intel_drv.h
-index 28cae80,b85354f..0000000
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@@ -793,6 -814,13 +815,14 @@@ extern void hsw_pc8_disable_interrupts(
-  extern void hsw_pc8_restore_interrupts(struct drm_device *dev);
-  extern void intel_aux_display_runtime_get(struct drm_i915_private *dev_pr=
-iv);
-  extern void intel_aux_display_runtime_put(struct drm_i915_private *dev_pr=
-iv);
- +extern void i915_disable_vga_mem(struct drm_device *dev);
-+ extern void intel_dp_get_m_n(struct intel_crtc *crtc,
-+ 			     struct intel_crtc_config *pipe_config);
-+ extern int intel_dotclock_calculate(int link_freq,
-+ 				    const struct intel_link_m_n *m_n);
-+ extern void ironlake_check_encoder_dotclock(const struct intel_crtc_confi=
-g *pipe_config,
-+ 					    int dotclock);
-+=20
-+ extern bool intel_crtc_active(struct drm_crtc *crtc);
- =20
-  #endif /* __INTEL_DRV_H__ */
-
---Signature=_Wed__18_Sep_2013_11_25_30_+1000_Z5yerY9ArOcnP5/I
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSOQEOAAoJEECxmPOUX5FEn1QP/2cgamnYcf1ONAiEnHEn742j
-oMPMxuRvSf5WuAD4lN+XVwp2N8M/3u1cFIqSiRLgFmscC8Q+qxRIX4dCDseeZ63J
-5f74hD1i1ua0ac2Rk5dmQ2GySbY8ZVE/qOkoIZF3aLkKA4AU+DRZNTJPjgN5X7re
-HdCsCxkYoOfdqHoxm/bt6REsW9pRl7Z4R5xd7Ev179/QLnhv1hZlC0mh7u0N9OD6
-Ux8dpkHZf7/Li1bquwfWQcCaBJzLXK/wUrK/YuGo9H3zRZvf8cs2hpUMK0+am/e9
-bix19GRGLFI/rkchz9z1+30LX578gbzK5+joUX24nnllwqekFrcC7B5qLwhQVQZt
-PS+eyd2yoEufNQGalA4JnFe/9Iq75FdKSu80LNSeL4/scNjHp5DbA0BhlZBYOoHp
-Ss5hbxWv5hx3b6fqJYokM0ExWUY5jYsiM5UziuncRMBH7giGSt8273+JbwIkvNE5
-tAycTZzK30li1OuiDXQk2hNGmR4oAHjNg718yaRvfshPsywfrjGSnbsw7CE2qdnQ
-Z1n7WzNazlDIO6ibOVfipVKAqqhBEvyUla+3zonHyQ4rLm8JgnwPZJJr2JdSxlr+
-WeRpusUmrvpvslszvqOUpWzz+368oDfbEpS/330ihsZXk2LNPsn2P8R2IaDVz1Sq
-OazJfUjC8dxNYwQU3NV4
-=ky7I
------END PGP SIGNATURE-----
-
---Signature=_Wed__18_Sep_2013_11_25_30_+1000_Z5yerY9ArOcnP5/I--
+As for aio-direct...  Two questions:
+	* had anybody tried to measure the effect on branch predictor from
+introducing that method vector?  Commit d6afd4c4 ("iov_iter: hide iovec
+details behind ops function pointers")
+	* WTF does aforementioned commit lack its author's s-o-b?  The same
+goes for a lot of zab's commits in there...
