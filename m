@@ -1,57 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: taking a break
-Date: Fri, 20 Sep 2013 14:46:12 +1000
-Message-ID: <20130920144612.5741656ad6ffa8e6739d391c@canb.auug.org.au>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: taking a break
+Date: Thu, 19 Sep 2013 21:56:55 -0700
+Message-ID: <CAOesGMjO0JQ8Whm_MEXrOnFFPAG8MXBiQpddV6e8jRR6rcCkTQ@mail.gmail.com>
+References: <20130920144612.5741656ad6ffa8e6739d391c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__20_Sep_2013_14_46_12_+1000_FOplH5v_oOSKg.=G"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47637 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753964Ab3ITEqP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Sep 2013 00:46:15 -0400
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:41934 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753464Ab3ITE44 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Sep 2013 00:56:56 -0400
+Received: by mail-wi0-f172.google.com with SMTP id hn9so6573263wib.17
+        for <linux-next@vger.kernel.org>; Thu, 19 Sep 2013 21:56:55 -0700 (PDT)
+In-Reply-To: <20130920144612.5741656ad6ffa8e6739d391c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, "ksummit-2013-discuss@lists.linuxfoundation.org" <ksummit-2013-discuss@lists.linuxfoundation.org>
 
---Signature=_Fri__20_Sep_2013_14_46_12_+1000_FOplH5v_oOSKg.=G
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 19, 2013 at 9:46 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> I will be having a 3 week break leading up to the kernel
+> summit.  This means that next-20130927 (next Friday) will be the last
+> linux-next release until next-20131028 (or maybe 29 depending on
+> jetlag).  I presume that Linus will be up to v3.12-rc7 by then and -rc7
+> is often the last before a release ... Please plan accordingly.
 
-Hi all,
+This brings up a subject that could be good to discuss at KS: Do you
+want a backup to share your workload and for hand-off at times like
+this?
 
-I will be having a 3 week break leading up to the kernel
-summit.  This means that next-20130927 (next Friday) will be the last
-linux-next release until next-20131028 (or maybe 29 depending on
-jetlag).  I presume that Linus will be up to v3.12-rc7 by then and -rc7
-is often the last before a release ... Please plan accordingly.
+You've been carrying the load of linux-next alone for years now, and
+having someone that can take over every now and then seems like a good
+idea. You've been doing an outstanding job but everybody need downtime
+sometimes.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Linux-next is incredibly valuable for _so_ many of us, and a big part
+of the value is in the continuous frequent releases that allows us to
+catch issues quickly when they are staged, and keep bisectability as
+high as possible. It also helps us discover early on when someone is
+merging code through a maintainer they shouldn't (due to conflicts).
+It will be very much missed during your well-deserved vacation.
 
---Signature=_Fri__20_Sep_2013_14_46_12_+1000_FOplH5v_oOSKg.=G
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSO9MUAAoJEECxmPOUX5FEpU0P/jUlSWYg9lQrpHaRTXJawFyJ
-sgJ5hb960kA0PTbaZE+ULrUKZ1EvAmivUQq/dllXk+NEKKogHESX1vVBleC/s1WO
-Eje8faxYeTY8DMuK7XLwlgi/Yom1w0p/eKnAHo0jekuU22JxjO64T8MhupTA2Mtj
-PraHRxGoAr26Ff+r6o9JB6guYw3I51xVWimY1PQfOvhdJDYYmRZh18DXo7VPIGgW
-93UN5O5c4yHZW0JXSXrw9qzLWvcF/RqNzNXPomfQFA4GK5ASPRWsRuqAc7UB1ZUj
-KnQZIbJzTaHpV4ZtYm52tNgbIcc/tZzpQu8Hx+BHSARCh8SD/noCfiYBhwl9/gn8
-qlsOfFFhw7UtMxwgIzzDSNRfk3A+fhpQ60JNS9MswZSG9f2AYhYapTdd1XaGhRJT
-nJ0hNN/vNf0S3uxvrLWq8ZoxPr0EPgxAUFYKgYZoPiUw44p8QmKytXtCy3xzjIY9
-jDL3dVBkzLvkgxosXoFQlLjkVdNcR1PpNbzJEzU1xMZEfpesgHK/JIot+WfAGjYe
-uoTSaLv3Ga1e0RDLA3vIJdA80iTyepsz8CGHaatludy1AwxBZMovOcEOGxQJ1rTm
-mxzvQhiin181q6/ejPK/imwdE+P0DRHcns0nenUDgQ4I8VY5GIffd+gVUdqPeqNk
-bA6RnsfwN5JYOQsNux6k
-=2y29
------END PGP SIGNATURE-----
-
---Signature=_Fri__20_Sep_2013_14_46_12_+1000_FOplH5v_oOSKg.=G--
+-Olof
