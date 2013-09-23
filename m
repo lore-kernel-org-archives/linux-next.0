@@ -1,81 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the random tree
-Date: Mon, 23 Sep 2013 14:39:24 +1000
-Message-ID: <20130923143924.730ce3cbffbebdb7f82ce2cf@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the random tree
+Date: Mon, 23 Sep 2013 14:42:50 +1000
+Message-ID: <20130923144250.9bd2ffb8ace7fd58480ebcb6@canb.auug.org.au>
+References: <20130923143924.730ce3cbffbebdb7f82ce2cf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Sep_2013_14_39_24_+1000_iTaHe_7xUJiZAMzk"
+ boundary="Signature=_Mon__23_Sep_2013_14_42_50_+1000_/+TESG//G+pBOsPA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49838 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40828 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751650Ab3IWEjh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Sep 2013 00:39:37 -0400
+	with ESMTP id S1752095Ab3IWEm4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Sep 2013 00:42:56 -0400
+In-Reply-To: <20130923143924.730ce3cbffbebdb7f82ce2cf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Theodore Ts'o <tytso@mit.edu>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__23_Sep_2013_14_39_24_+1000_iTaHe_7xUJiZAMzk
+--Signature=_Mon__23_Sep_2013_14_42_50_+1000_/+TESG//G+pBOsPA
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Ted,
 
-After merging the random tree, today's linux-next build (powerpc64
-allnoconfig) produced this warning:
+On Mon, 23 Sep 2013 14:39:24 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the random tree, today's linux-next build (powerpc64
+> allnoconfig) produced this warning:
+>=20
+> In file included from include/linux/kernel.h:10:0,
+>                  from include/linux/sched.h:15,
+>                  from include/linux/utsname.h:5,
+>                  from drivers/char/random.c:238:
+> drivers/char/random.c: In function 'add_interrupt_randomness':
+> include/linux/bitops.h:96:2: warning: 'input[3]' may be used uninitialize=
+d in this function [-Wmaybe-uninitialized]
+>   return (word << shift) | (word >> (32 - shift));
+>   ^
+> drivers/char/random.c:827:10: note: 'input[3]' was declared here
+>   __u32   input[4], cycles =3D random_get_entropy();
+>           ^
+> In file included from include/linux/kernel.h:10:0,
+>                  from include/linux/sched.h:15,
+>                  from include/linux/utsname.h:5,
+>                  from drivers/char/random.c:238:
+> include/linux/bitops.h:96:2: warning: 'input[2]' may be used uninitialize=
+d in this function [-Wmaybe-uninitialized]
+>   return (word << shift) | (word >> (32 - shift));
+>   ^
+> drivers/char/random.c:827:10: note: 'input[2]' was declared here
+>   __u32   input[4], cycles =3D random_get_entropy();
+>           ^
+>=20
+> Probably introduced by commit d5693ae494f2 ("random: speed up the
+> fast_mix function by a factor of four").
 
-In file included from include/linux/kernel.h:10:0,
-                 from include/linux/sched.h:15,
-                 from include/linux/utsname.h:5,
-                 from drivers/char/random.c:238:
-drivers/char/random.c: In function 'add_interrupt_randomness':
-include/linux/bitops.h:96:2: warning: 'input[3]' may be used uninitialized =
-in this function [-Wmaybe-uninitialized]
-  return (word << shift) | (word >> (32 - shift));
-  ^
-drivers/char/random.c:827:10: note: 'input[3]' was declared here
-  __u32   input[4], cycles =3D random_get_entropy();
-          ^
-In file included from include/linux/kernel.h:10:0,
-                 from include/linux/sched.h:15,
-                 from include/linux/utsname.h:5,
-                 from drivers/char/random.c:238:
-include/linux/bitops.h:96:2: warning: 'input[2]' may be used uninitialized =
-in this function [-Wmaybe-uninitialized]
-  return (word << shift) | (word >> (32 - shift));
-  ^
-drivers/char/random.c:827:10: note: 'input[2]' was declared here
-  __u32   input[4], cycles =3D random_get_entropy();
-          ^
-
-Probably introduced by commit d5693ae494f2 ("random: speed up the
-fast_mix function by a factor of four").
+i386 defconfig produces similar (to make testing easier).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__23_Sep_2013_14_39_24_+1000_iTaHe_7xUJiZAMzk
+--Signature=_Mon__23_Sep_2013_14_42_50_+1000_/+TESG//G+pBOsPA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSP8YAAAoJEECxmPOUX5FE+m0QAJWgmU9AyaZoUtEDdChgLk4K
-Clv/gM2LGNUL9O2B3UjLbYOjEEtaZ3dlKwAP+GUZ2k+AMNGCrAp65lbdlYmLPYdJ
-A8opNMS5RB9+MwMexhYVK2yPwR4Ualn7Qw+i2rpk2Y3PUcQxXaxO4aSqObgNN4ii
-3hAqQZ32RcCc2ts45Syz5ImENP4W1Dt9ArmL7k366SF/10aZ0IIIioCPx8b5gkoM
-FoMdztFrkEkhI8J8zMzyBY9DvUkGPM0mjgEEpvyJ8BOPXtxMq+f9nWCLqTNDCj2z
-v0iHAFZDGDTmGJsT5nNn7/NeCU/D6Ogrve3SSwUBcg7Kxq3SXfZVK5/xzIoY3Afi
-DwQmWWj/HihWnnb2FhMNCwqWGovIVxrByZ+PMV5OP9TgwPhaQIcP8OoddB0OWSUq
-PRt8bXybefQ2Ypq0F/4W6vItJhpT7fdYdn4MdiVStzGab2dXUiq2V3q2faqc4D7Y
-bfxex3qB1Jy9axMXQGWV8UI7a0NtkJCluKF0W4w/EGIbSwbvFNhNTomF2I0It/kb
-ShRN/0HDDdgOSypb9xr59NXkPTqC8FeMRP3bcMNZuN8LVKu355H3ezcmFD4s5Bkg
-T41SxWp2nxZKJKHmYJxL0XQ4kVoJbNhgghAsCTvBpfPZ7tHq0DPveHob7I/T7s9P
-QPikyuJJjHAzy2GtoIpi
-=PUeG
+iQIcBAEBCAAGBQJSP8bOAAoJEECxmPOUX5FEvqkQAKW4y9WFJKzsHQNmNkaFIdlA
+TcOun7hrdNCugew6WJj7cXp4SFI8C5uRYqi9C5uFRWYGNB4JU7/sRmc5rZOTIgQQ
+D+rV8GSr8+LlETh9rMiQ78czMq2irN42o2DMOzxbV/2QSKPZRvCPgSBO+VT+oOUO
+kIb6X+rktiWLCe81cAPa/abKdT7Mh20vCb75FDIlsmaZSiGA74x6cD7/Zr8k0LAZ
+vrkrELWTpCvlY16OjCKouOaZqpSrJNnACn/Rc/mayTkVd+3NGoSk/HDwW4X0rrdu
+uzBSG6aRfU4tvrhQCgr7g2D5uKw5GlI5iB5S8ZxGK/1ixZ0SQ5BALSpnvmXChKA/
+EWYfqzinSK2QSh6S0G9ZAs0TtRFv56PhapSWO04PSN69weTCB9fD/f1LOHXpg0mV
+fYOxTBzu+UHsbOUxUodZuO76WvcKtVrPPP9iy6nxvS0vbucoXfNUdVovHa7l1+pT
+aXblpiMiPAlbXsdteSKonEO7xg1WkVBGTLmnWQH1saMGk84lMSKIfE/rroWNtYoR
+raQa15Tq2BTUG+BJmuMhj5PrIX23cGUHMYJG76pyBRW7EzidwmNfrIIrswa6gAci
+1HO3RJg9QvELdFaRWy+V8CwoXlhlsaEue+KjIJi0+vb2vJPOiECQoqJGoab8T2YO
+SG9ETo5C+ps2f2D3Ojd+
+=cIQZ
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_Sep_2013_14_39_24_+1000_iTaHe_7xUJiZAMzk--
+--Signature=_Mon__23_Sep_2013_14_42_50_+1000_/+TESG//G+pBOsPA--
