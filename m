@@ -1,23 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the staging tree with the
  staging.current tree
-Date: Mon, 23 Sep 2013 13:16:58 +1000
-Message-ID: <20130923131658.ef9c825e013ed36de2047044@canb.auug.org.au>
+Date: Mon, 23 Sep 2013 13:21:22 +1000
+Message-ID: <20130923132122.584a5166d14d0ec6d6f1a3a4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Sep_2013_13_16_58_+1000_L6k6+SO35K74gi1q"
+ boundary="Signature=_Mon__23_Sep_2013_13_21_22_+1000_9XhKD1TmTMv3bfnu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53636 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44495 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752824Ab3IWDRP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Sep 2013 23:17:15 -0400
+	with ESMTP id S1753051Ab3IWDV2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Sep 2013 23:21:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Meerwald <pmeerw@pmeerw.net>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yann Droneaud <ydroneaud@opteya.com>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
 
---Signature=_Mon__23_Sep_2013_13_16_58_+1000_L6k6+SO35K74gi1q
+--Signature=_Mon__23_Sep_2013_13_21_22_+1000_9XhKD1TmTMv3bfnu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -25,11 +25,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the staging tree got a conflict in
-drivers/iio/industrialio-buffer.c between commit d66e0452bf6b ("iio: Fix
-crash when scan_bytes is computed with active_scan_mask =3D=3D NUL") from t=
-he
-staging.current tree and commit 705ee2c98a37 ("iio:buffer: Simplify
-iio_buffer_is_active()") from the staging tree.
+drivers/iio/industrialio-event.c between commit cadc2125e140 ("iio: fix:
+Keep a reference to the IIO device for open file descriptors") from the
+staging.current tree and commit a646fbf0fd11 ("iio: use anon_inode_getfd
+() with O_CLOEXEC flag") from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -38,50 +37,44 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/iio/industrialio-buffer.c
-index 2710f72,2361fbc..0000000
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@@ -546,16 -521,9 +540,16 @@@ int iio_update_buffers(struct iio_dev *
-  			 * Roll back.
-  			 * Note can only occur when adding a buffer.
-  			 */
-- 			list_del(&insert_buffer->buffer_list);
-+ 			list_del_init(&insert_buffer->buffer_list);
- -			indio_dev->active_scan_mask =3D old_mask;
- -			success =3D -EINVAL;
- +			if (old_mask) {
- +				indio_dev->active_scan_mask =3D old_mask;
- +				success =3D -EINVAL;
- +			}
- +			else {
- +				kfree(compound_mask);
- +				ret =3D -EINVAL;
- +				goto error_ret;
- +			}
-  		}
-  	} else {
-  		indio_dev->active_scan_mask =3D compound_mask;
+diff --cc drivers/iio/industrialio-event.c
+index 6be65ef,2390e3d..0000000
+--- a/drivers/iio/industrialio-event.c
++++ b/drivers/iio/industrialio-event.c
+@@@ -163,10 -158,8 +163,10 @@@ int iio_event_getfd(struct iio_dev *ind
+  		return -EBUSY;
+  	}
+  	spin_unlock_irq(&ev_int->wait.lock);
+ -	fd =3D anon_inode_getfd("iio:event",
+ -				&iio_event_chrdev_fileops, ev_int, O_RDONLY | O_CLOEXEC);
+ +	iio_device_get(indio_dev);
+ +
+ +	fd =3D anon_inode_getfd("iio:event", &iio_event_chrdev_fileops,
+- 				indio_dev, O_RDONLY);
+++				indio_dev, O_RDONLY | O_CLOEXEC);
+  	if (fd < 0) {
+  		spin_lock_irq(&ev_int->wait.lock);
+  		__clear_bit(IIO_BUSY_BIT_POS, &ev_int->flags);
 
---Signature=_Mon__23_Sep_2013_13_16_58_+1000_L6k6+SO35K74gi1q
+--Signature=_Mon__23_Sep_2013_13_21_22_+1000_9XhKD1TmTMv3bfnu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSP7KvAAoJEECxmPOUX5FEq50P/RnV7ZTWZB1ttMfWUJfI5mdL
-dUcgS0Cf32+hO6CBL/peL7s4s7ONGixe2VNjpPe+JpCZB8d6qLIUU87C2wfYPCEe
-Mz+HDLPmmxYvTm2sYSItfNDMrQY6wpViohpIFzqwz0VED9B475MpD/LuD8gB393u
-CIhsyS3gAecxZ2V3rbYGXDOTs7denesYFS5bFdSJl/xZ2p68Iy+iatDw9h0fsBwt
-I46lSi/glw7rFkRJkodfHZtCIEY27ium86+1GzoTRgHwq1d8fJw9rVpq+DSriLSS
-4gT9GUy0ZuFLR0IaMCkX19Jk+TDCvxAmgU7DpOdfIGR+eUpQSmsnZvTfcl5MlaTu
-JMLibmuInv4wr/gzxB9rHm+pNAQjP1ydZXU1wXL5imwwqViWaFlvz7u9CuZg9qA6
-uVXPgsJ/Dp0JAEypbDZQWNL+WzlrwI1pscaOxfPpW2zAYjTx6pe7HHXmnyAPTtaI
-k+3jLl+VlksrZQUD04TWKt9shxeGsnL3XXUe5kOdL4PY/UQa3d8pn50xH656kGAZ
-Mjt2Q2yQKFWALXWiqwqLXpp3YFCiu0cetWiOMJ2FgANpalE6gW2A1txDnHiVN/Ed
-/7jn5u6sGkVLCmnU8G41Ruw/extXDKsgX9kthgC1Jm9affSVKFy80mYEG762gy3E
-3U0eP8x0nJ4Nj6p98WkY
-=cnnh
+iQIcBAEBCAAGBQJSP7O2AAoJEECxmPOUX5FE9FUP/155Xeg/5ve/SahoD0++N5tA
+JmpxxCHXh+liVdduB29GiNEE6kesew3n/G8O9X+uD6xwtWXbkxzDX8++0T9pWR7A
+Rr/qYemvCbQaDoxngLclcCLwAVYv4XgRZvFxUbCXkbhqLSJxUTVQjtZIln7M8QiE
+UkwB7ZZOX0VMAgQ+p5zkH/h7nJw69AyveJ/aqyEyRnFMhxrhRMisGikk6Adaw5qL
+TWjKTf/nks+GxE97PNPC40fmFAMQ6km3bljp2y5niYYlxzsqWhX78Lgzk2zOl9hp
+ENk1JLEr0AokMixCKvctmM6q9trp4f2cTHIAX/c5fZqcCJh2GqXOHQyFY7BhNPhh
+GteAhic+hZkS6VRwFq/LmS/+t9q5/jon4REbw9Oa48KC3mdNveIFlE8hdinYICdr
+zZYYNDVvSHLi+rDOlj0Kqi0bwaSiBEadx07sOLFupGaCI9TnIRfvaJi/1vUqxaFl
+OO19xJInMGBJJ8/9R+Tuilpfn+Axa0JzXNIKyO8vIP0JYeWPusmguYhN4F9FCgAz
+9PqgxonVhcLoozj0N3Htt64svcZXNiyzqE/gX58xMcuRLlPMQ8u2pZfaC0Fg0jRE
+Vilrdb01BskyfMpp0ULVlwTlR2VvgSTbSfhR3HKOV1mCCBALoE6pdrXRlkiH+bvY
++Tp6NaZsgeYAF86mk3hN
+=Kvn0
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_Sep_2013_13_16_58_+1000_L6k6+SO35K74gi1q--
+--Signature=_Mon__23_Sep_2013_13_21_22_+1000_9XhKD1TmTMv3bfnu--
