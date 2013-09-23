@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the
- staging.current tree
-Date: Mon, 23 Sep 2013 13:21:22 +1000
-Message-ID: <20130923132122.584a5166d14d0ec6d6f1a3a4@canb.auug.org.au>
+Subject: linux-next: manual merge of the random tree with Linus' tree
+Date: Mon, 23 Sep 2013 14:04:01 +1000
+Message-ID: <20130923140401.67e7bb4560620a561d4dfe6e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Sep_2013_13_21_22_+1000_9XhKD1TmTMv3bfnu"
+ boundary="Signature=_Mon__23_Sep_2013_14_04_01_+1000_4u81gCCd1BIAt8cd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44495 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41762 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753051Ab3IWDV2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Sep 2013 23:21:28 -0400
+	with ESMTP id S1751571Ab3IWEEP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Sep 2013 00:04:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yann Droneaud <ydroneaud@opteya.com>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
 
---Signature=_Mon__23_Sep_2013_13_21_22_+1000_9XhKD1TmTMv3bfnu
+--Signature=_Mon__23_Sep_2013_14_04_01_+1000_4u81gCCd1BIAt8cd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Theodore,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/iio/industrialio-event.c between commit cadc2125e140 ("iio: fix:
-Keep a reference to the IIO device for open file descriptors") from the
-staging.current tree and commit a646fbf0fd11 ("iio: use anon_inode_getfd
-() with O_CLOEXEC flag") from the staging tree.
+Today's linux-next merge of the random tree got a conflict in init/main.c
+between commit 65f382fd0c8f ("context_tracking: Ground setup for static
+key use") from Linus' tree and commit 382521d2478b ("random: run
+random_int_secret_init() run after all late_initcalls") from the random
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,44 +36,39 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/iio/industrialio-event.c
-index 6be65ef,2390e3d..0000000
---- a/drivers/iio/industrialio-event.c
-+++ b/drivers/iio/industrialio-event.c
-@@@ -163,10 -158,8 +163,10 @@@ int iio_event_getfd(struct iio_dev *ind
-  		return -EBUSY;
-  	}
-  	spin_unlock_irq(&ev_int->wait.lock);
- -	fd =3D anon_inode_getfd("iio:event",
- -				&iio_event_chrdev_fileops, ev_int, O_RDONLY | O_CLOEXEC);
- +	iio_device_get(indio_dev);
- +
- +	fd =3D anon_inode_getfd("iio:event", &iio_event_chrdev_fileops,
-- 				indio_dev, O_RDONLY);
-++				indio_dev, O_RDONLY | O_CLOEXEC);
-  	if (fd < 0) {
-  		spin_lock_irq(&ev_int->wait.lock);
-  		__clear_bit(IIO_BUSY_BIT_POS, &ev_int->flags);
+diff --cc init/main.c
+index af310af,586cd33..0000000
+--- a/init/main.c
++++ b/init/main.c
+@@@ -75,7 -75,7 +75,8 @@@
+  #include <linux/blkdev.h>
+  #include <linux/elevator.h>
+  #include <linux/sched_clock.h>
+ +#include <linux/context_tracking.h>
++ #include <linux/random.h>
+ =20
+  #include <asm/io.h>
+  #include <asm/bugs.h>
 
---Signature=_Mon__23_Sep_2013_13_21_22_+1000_9XhKD1TmTMv3bfnu
+--Signature=_Mon__23_Sep_2013_14_04_01_+1000_4u81gCCd1BIAt8cd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSP7O2AAoJEECxmPOUX5FE9FUP/155Xeg/5ve/SahoD0++N5tA
-JmpxxCHXh+liVdduB29GiNEE6kesew3n/G8O9X+uD6xwtWXbkxzDX8++0T9pWR7A
-Rr/qYemvCbQaDoxngLclcCLwAVYv4XgRZvFxUbCXkbhqLSJxUTVQjtZIln7M8QiE
-UkwB7ZZOX0VMAgQ+p5zkH/h7nJw69AyveJ/aqyEyRnFMhxrhRMisGikk6Adaw5qL
-TWjKTf/nks+GxE97PNPC40fmFAMQ6km3bljp2y5niYYlxzsqWhX78Lgzk2zOl9hp
-ENk1JLEr0AokMixCKvctmM6q9trp4f2cTHIAX/c5fZqcCJh2GqXOHQyFY7BhNPhh
-GteAhic+hZkS6VRwFq/LmS/+t9q5/jon4REbw9Oa48KC3mdNveIFlE8hdinYICdr
-zZYYNDVvSHLi+rDOlj0Kqi0bwaSiBEadx07sOLFupGaCI9TnIRfvaJi/1vUqxaFl
-OO19xJInMGBJJ8/9R+Tuilpfn+Axa0JzXNIKyO8vIP0JYeWPusmguYhN4F9FCgAz
-9PqgxonVhcLoozj0N3Htt64svcZXNiyzqE/gX58xMcuRLlPMQ8u2pZfaC0Fg0jRE
-Vilrdb01BskyfMpp0ULVlwTlR2VvgSTbSfhR3HKOV1mCCBALoE6pdrXRlkiH+bvY
-+Tp6NaZsgeYAF86mk3hN
-=Kvn0
+iQIcBAEBCAAGBQJSP722AAoJEECxmPOUX5FEMQkQAJ1cYJYtrjEOu/67vCUYp2eq
+OlEiVPEhZu6fpP/X9bymZrdsW3pwHQU82zgoTRaE2WBsNarIQcNoqjpCN/5rL6XW
+M0RuQYnq1K+kkM1E+A78285hhFbx/gTAkvDxjEKnXtrN/jD7Kt1IM7pObAbgjBnH
+Rpcr/oTaPdchxVrUgSDAGyO5M+ja+L+3e/MGfzyLiDLIpAtET+STvfI+fEpamp62
+QveY6dXaq4CRqHSsWfvOv89Uz9lAJvK1P1OFYey8GLStnACPZmorBS6IZttEE9WC
+GIEUGnssOo62UQN27+6ljDb5LUA9Sfg8jEQIYZ2X+M+e7XCa2bfqfvQpCJrcwKbZ
+aFdIgJJ+660w2+us5JBAB8CvmTEedrghiyZmBtUWTInpg/McMoJWO9L+kgtezzie
+9FzcpDIh0st+Q6/7DnSMvSm9gfWaWBBbLXuQ5TGGMZuSmaJLi0uI3cjzNyeqktgK
+81+rLNV4K3p7XmzKMoyREc/TWcn6RDA5VC/vHaRgvrjsntvynuAiEhvcGpv22f+Z
+owovIedXSF5CThI+A8txOmBLX2YNoc70YNzWbq/VXRIF7o0+oi3TA668BDtzxFXp
+IMxdGkJautCj8xSKULIblSLqfcHR/2B3TqI8XHTSQSpzYkbuQxdYeTJ35tjyqVk6
+wCsCp0P6DwoeVU2zQpw2
+=htev
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_Sep_2013_13_21_22_+1000_9XhKD1TmTMv3bfnu--
+--Signature=_Mon__23_Sep_2013_14_04_01_+1000_4u81gCCd1BIAt8cd--
