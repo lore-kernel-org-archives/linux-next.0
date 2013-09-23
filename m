@@ -1,44 +1,73 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: linux-next: manual merge of the staging tree with the staging.current tree
-Date: Mon, 23 Sep 2013 06:54:22 +0100
-Message-ID: <0636907b-8117-4501-a6b5-ab485e928145@email.android.com>
-References: <20130923131658.ef9c825e013ed36de2047044@canb.auug.org.au>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: linux-next: manual merge of the omap_dss2 tree with the fbdev
+ tree
+Date: Mon, 23 Sep 2013 10:30:43 +0300
+Message-ID: <523FEE23.3010503@ti.com>
+References: <20130923122856.0a3dbf72a44dfef1238d7a1c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="28jeBTfKc6NqHBBtb979RANTenTO3hlo9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from saturn.retrosnub.co.uk ([178.18.118.26]:49025 "EHLO
-	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752544Ab3IWFy0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Sep 2013 01:54:26 -0400
-In-Reply-To: <20130923131658.ef9c825e013ed36de2047044@canb.auug.org.au>
+Received: from bear.ext.ti.com ([192.94.94.41]:35413 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752288Ab3IWHbF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Sep 2013 03:31:05 -0400
+In-Reply-To: <20130923122856.0a3dbf72a44dfef1238d7a1c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Meerwald <pmeerw@pmeerw.net>, Lars-Peter Clausen <lars@metafoo.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
+
+--28jeBTfKc6NqHBBtb979RANTenTO3hlo9
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Hi Stephen, Jean-Christophe,
+
+On 23/09/13 05:28, Stephen Rothwell wrote:
+> Hi Tomi,
+>=20
+> Today's linux-next merge of the omap_dss2 tree got a conflict in
+> drivers/video/atmel_lcdfb.c between commits a17c2e7b704f ("video:
+> atmel_lcdfb: fix platform data struct") and 5e8be022fb5b ("video:
+> atmel_lcdfb: add device tree suport") from the fbdev tree and commit
+> a5d58be0796a ("video: atmel_lcdfb: use dev_get_platdata()") from the
+> omap_dss2 tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no action=
+
+> is required).
+
+Jean-Christophe's tree seems to contain some old commits, never pushed
+to mainline. Jean-Christophe, can you reset your for-next branch?
+
+ Tomi
 
 
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->Hi Greg,
->
->Today's linux-next merge of the staging tree got a conflict in
->drivers/iio/industrialio-buffer.c between commit d66e0452bf6b ("iio:
->Fix
->crash when scan_bytes is computed with active_scan_mask == NUL") from
->the
->staging.current tree and commit 705ee2c98a37 ("iio:buffer: Simplify
->iio_buffer_is_active()") from the staging tree.
->
->I fixed it up (see below) and can carry the fix as necessary (no action
->is required).
+--28jeBTfKc6NqHBBtb979RANTenTO3hlo9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Thanks Stephen.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-The merge is correct.
+iQIcBAEBAgAGBQJSP+4qAAoJEPo9qoy8lh71T0cQAIqsOR5wc+ztUiUvOZ1j9gzw
+36woOr+nkWv617/Dbzfw4zAqgBgdQRvv0kvBo1Zu+p860g5WLj+LxiQ9+j+rr49B
+R+21Zxvo3W6ACLidCQy6uG7Kg2wo1Qj5+rEPsFuKiinip+PiPAy8Cter/TSGn1D5
+H7f8nK42By0fHCMFkFsITl0klo2d7TLFU6v6BLAbPKaOo8IGnSL09f3vrEOTMfzM
+LOYRVXFru7rZyEaMCIjnqp9GfIq2yve7mUkxxw45Ep5MYROTOJUNI2oXm71k5mN4
+zAqQltOhNk34K4qUGwXPUUC3jpDMb0qkAeoq/hmsyEbQX4j5Ak1jGSabB8/pCINX
+ynlHvD1/f8Gqg4gISXugwH8gjH9sWElNxSbAC0YHybBNl/YcKWRWCUSOWJ9rgQcN
+14WHM2CxwEGVRsoQnQMMz7+wpDbRjClWPAAYntaDT78yNOc37jAvUkETsSURuMPO
+L/KGtpEE8MH7n4sWHwsJWbjnsTlBPWooeT2VwaEyjr1Q//yAwld5/OD24zTrs5kF
+df0KwOjMqt2VK9sAfDgKKgH5MCcUQlRm0u9XFFpHoqfLwRS5twwHaIsknRcQo1AI
+P1rS+Kols9CTaMv9+00GsVhWfxXaJ/XzjvgqORn5OfMh3aRnhDLgqnN0P8ixyvKp
+uClHNoHPnYnGwvSUoD7O
+=Fu+n
+-----END PGP SIGNATURE-----
 
-Jonathan
-
--- 
-Sent from my Android phone with K-9 Mail. Please excuse my brevity.
+--28jeBTfKc6NqHBBtb979RANTenTO3hlo9--
