@@ -1,130 +1,66 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: Fwd: linux-next: Tree for Jul 1 [ drm-intel-next:
- Several call-traces ]
-Date: Sun, 22 Sep 2013 17:14:10 +0300
-Message-ID: <20130922141410.GA1974@redhat.com>
-References: <CA+icZUXyizuCR3YDfFXD5hCkgycFYGzMHaJxg=m9UackT7uzGQ@mail.gmail.com>
-	<CAKMK7uFzwiztE8H1rvSDWQmw08JGoKdnTs5BYqxdrHwb=pK50A@mail.gmail.com>
-	<CA+icZUXnHaT75NhhSx+AhcMEKybHugH9+hV_mS5h5-cimFdz6A@mail.gmail.com>
-	<CA+icZUVQ_UO_VnN9+Q7B3hhuFmw4XPEw19rhO+T4jU5hLGWaTQ@mail.gmail.com>
-	<CA+icZUW3K7RyUcfdos7aOkrEOd3To0kSns+G3GSfkPqqwo7z=w@mail.gmail.com>
-	<20130826130511.GA21082@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: old trees
+Date: Mon, 23 Sep 2013 10:02:14 +1000
+Message-ID: <20130923100214.7e28c4203211bcfa9e07a2b3@canb.auug.org.au>
+References: <20130917170124.0afa2e103a9977355ad7c72c@canb.auug.org.au>
+	<20130920183517.GH5707@phenom.dumpdata.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20130826130511.GA21082@redhat.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
-	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
-	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Sender: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
-Errors-To: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__23_Sep_2013_10_02_14_+1000_9_Z9/AfSi05/vbfg"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130920183517.GH5707@phenom.dumpdata.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Aug 26, 2013 at 04:05:11PM +0300, Michael S. Tsirkin wrote:
-> On Wed, Aug 21, 2013 at 11:22:58AM +0200, Sedat Dilek wrote:
-> > [ Re: [Intel-gfx] i915 producing warnings with kernel 3.11-rc5 ]
-> > 
-> > Hi,
-> > 
-> > saw your posting in [1]... can you try the patches below?
-> > Not sure if they apply.
-> > Did you try v3.11-rc6(+)... or drm-intel-nightly?
-> > 
-> > Regards,
-> > - Sedat -
-> > 
-> > [1] http://lists.freedesktop.org/archives/intel-gfx/2013-August/032154.html
-> 
-> Same thing observed with v3.11-rc7.
+--Signature=_Mon__23_Sep_2013_10_02_14_+1000_9_Z9/AfSi05/vbfg
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I still see this with 3.11.
-Following this message, my VGA monitor goes blank and
-shows an error suggesting a wrong resolution or frequency are set.
-Anyone?
+Hi Konrad,
 
+On Fri, 20 Sep 2013 14:35:17 -0400 Konrad Rzeszutek Wilk <konrad.wilk@oracl=
+e.com> wrote:
+>
+> > ibft		1 year, 9 months ago
+>=20
+> Can go away.
+>=20
+> > swiotlb		11 months ago
+>=20
+> Need it. Don't remove it pls.
+>=20
+> > tmem		11 months ago
+>=20
+> Can go away.
 
-> 
-> > 
-> > ---------- Forwarded message ----------
-> > From: Sedat Dilek <sedat.dilek@gmail.com>
-> > Date: Tue, Jul 2, 2013 at 7:31 AM
-> > Subject: Re: linux-next: Tree for Jul 1 [ drm-intel-next: Several call-traces ]
-> > To: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: "Barnes, Jesse" <jbarnes@virtuousgeek.org>, Stephen Rothwell
-> > <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux
-> > Kernel Mailing List <linux-kernel@vger.kernel.org>, intel-gfx
-> > <intel-gfx@lists.freedesktop.org>, DRI
-> > <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@gmail.com>
-> > 
-> > 
-> > On Mon, Jul 1, 2013 at 11:03 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> > > On Mon, Jul 1, 2013 at 10:52 AM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> > >> On Mon, Jul 1, 2013 at 10:49 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> > >>> On Mon, Jul 1, 2013 at 9:59 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >>>> Hi all,
-> > >>>>
-> > >>>> Changes since 20130628:
-> > >>>>
-> > >>>> The regulator tree gained a build failure so I used the version from
-> > >>>> next-20130628.
-> > >>>>
-> > >>>> The trivial tree gained a conflict against the fbdev tree.
-> > >>>>
-> > >>>> The arm-soc tree gained a conflict against the net-next tree.
-> > >>>>
-> > >>>> The akpm tree lost a few patches that turned up elsewhere and I removed 2
-> > >>>> that were causing run time problems.
-> > >>>>
-> > >>>
-> > >>> [ CC drm and drm-intel folks ]
-> > >>>
-> > >>> [ Did not check any relevant MLs ]
-> > >>>
-> > >>> Please, see attached dmesg output.
-> > >>
-> > >> Clock mismatch, one for Jesse to figure out. Note that this patch is
-> > >> for 3.12, I simply haven't yet gotten around to properly split my
-> > >> patch queue so a few spilled into -next. I'll do that now.
-> > >
-> > > I like lightspeed-fast replies :-).
-> > >
-> > > Guess "drm/i915: get mode clock when reading the pipe config v9" [1]
-> > > is the cause.
-> > >
-> > 
-> > Problem solved by applying these patches to next-20130701 from
-> > intel-gfx patchwork-service [0]:
-> > 
-> >    [1/2] drm/i915: fixup messages in pipe_config_compare
-> >    [2/2] drm/i915: get clock config when checking CRTC state too
-> > 
-> > AFAICS 2/2 was folded into updated "drm/i915: get mode clock when
-> > reading the pipe config v9" [3].
-> > 
-> > It would be kind to be CCed on the patches and get also some credits.
-> > Also a CC to the report in linux-next should IMHO be done.
-> > 
-> > - Sedat -
-> > 
-> > [0] https://patchwork.kernel.org/project/intel-gfx/list/
-> > [1] https://patchwork.kernel.org/patch/2809031/
-> > [2] https://patchwork.kernel.org/patch/2809021/
-> > [3] http://cgit.freedesktop.org/~danvet/drm-intel/commit/?h=drm-intel-nightly&id=f1f644dc66cbaf5a4c7dcde683361536b41885b9
-> > 
-> > > - Sedat -
-> > >
-> > > [1] http://cgit.freedesktop.org/~danvet/drm-intel/commit/?h=drm-intel-next-queued&id=d325d8b4f351f9d45e7c8baabf581fd21f343133
-> > >
-> > >> -Daniel
-> > >> --
-> > >> Daniel Vetter
-> > >> Software Engineer, Intel Corporation
-> > >> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+OK, 2 removed.  Thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__23_Sep_2013_10_02_14_+1000_9_Z9/AfSi05/vbfg
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSP4ULAAoJEECxmPOUX5FEHE8P/1dVVaDp48rrL6gj2GSkahrQ
+ZtzzJ1lMfw8u7j7F1DmX7vdVeiOAwJJ6IMmlROhxngfOaV3d2VnRvs4dLN4HZezP
+1dngxW7APEwhoMsOoof7T8m+elAn0qvU+5BZ+XIw0jpRmGqOo70xhxuuZyT3by32
+K1osB79dLVr55NT28TVnFT11ykFTvvV0JRm0n8Zd94D2xqW4YvpUaXkdaKjGLCyA
+1j8LFULrlqRKUkfIrieEUdWyp0wKM+tWEbwvncqcqgPUK+5Z0qLpRGa/XpQW2N2y
+J6aKmpW5xCYcxfRd67IOqSNW9i4kMWISsP8cddrKR3EQ6xT1JJWFj/N31vaGJnJa
+Y3QJKS2ui20/6VRO8WrTaR4QJpOENfdZUb7rZRDZxzsSlumvEiAvsKOE4RvOpr/T
+9mZB0oGt2n3OKPDwOvI1ApRc/FPk7smfBFi2OsPNoSEoQQHpt7M9aGC5uAohvOAW
+Q7DHKBmUPClidzHAjVLeq1BXkPji3PAv966CLBSlfM5euPgEZiDZk7WKEsM0wr2d
+/7YJmHnaaLsjd9WuA0L2pKiYhbfzxMAfO6XxTEh4qMsZENDhxi3/7o+serD5wE8w
+ZulGD4CMntgGjz0Px/x4YP2PLZqxlzu946nwLgpLTnUvvKrbMSXZqx3KPuT87sX8
+ri7h+6g5vxpWZ+/D+SE5
+=5dK4
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__23_Sep_2013_10_02_14_+1000_9_Z9/AfSi05/vbfg--
