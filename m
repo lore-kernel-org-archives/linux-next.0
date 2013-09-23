@@ -1,34 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap_dss2 tree with the fbdev tree
-Date: Mon, 23 Sep 2013 12:28:56 +1000
-Message-ID: <20130923122856.0a3dbf72a44dfef1238d7a1c@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Mon, 23 Sep 2013 13:16:58 +1000
+Message-ID: <20130923131658.ef9c825e013ed36de2047044@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Sep_2013_12_28_56_+1000_aoHLZ.OH/kjfJaJ="
+ boundary="Signature=_Mon__23_Sep_2013_13_16_58_+1000_L6k6+SO35K74gi1q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50446 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53636 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753023Ab3IWC3J (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Sep 2013 22:29:09 -0400
+	with ESMTP id S1752824Ab3IWDRP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Sep 2013 23:17:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Meerwald <pmeerw@pmeerw.net>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
 
---Signature=_Mon__23_Sep_2013_12_28_56_+1000_aoHLZ.OH/kjfJaJ=
+--Signature=_Mon__23_Sep_2013_13_16_58_+1000_L6k6+SO35K74gi1q
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tomi,
+Hi Greg,
 
-Today's linux-next merge of the omap_dss2 tree got a conflict in
-drivers/video/atmel_lcdfb.c between commits a17c2e7b704f ("video:
-atmel_lcdfb: fix platform data struct") and 5e8be022fb5b ("video:
-atmel_lcdfb: add device tree suport") from the fbdev tree and commit
-a5d58be0796a ("video: atmel_lcdfb: use dev_get_platdata()") from the
-omap_dss2 tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/iio/industrialio-buffer.c between commit d66e0452bf6b ("iio: Fix
+crash when scan_bytes is computed with active_scan_mask =3D=3D NUL") from t=
+he
+staging.current tree and commit 705ee2c98a37 ("iio:buffer: Simplify
+iio_buffer_is_active()") from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,78 +38,50 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/video/atmel_lcdfb.c
-index bf9c5d0,df05550..0000000
---- a/drivers/video/atmel_lcdfb.c
-+++ b/drivers/video/atmel_lcdfb.c
-@@@ -1157,30 -934,19 +1157,30 @@@ static int __init atmel_lcdfb_probe(str
-  	}
- =20
-  	sinfo =3D info->par;
- +	sinfo->pdev =3D pdev;
- +	sinfo->info =3D info;
- =20
- -	if (dev_get_platdata(dev)) {
- -		pdata_sinfo =3D dev_get_platdata(dev);
- -		sinfo->default_bpp =3D pdata_sinfo->default_bpp;
- -		sinfo->default_dmacon =3D pdata_sinfo->default_dmacon;
- -		sinfo->default_lcdcon2 =3D pdata_sinfo->default_lcdcon2;
- -		sinfo->default_monspecs =3D pdata_sinfo->default_monspecs;
- -		sinfo->atmel_lcdfb_power_control =3D pdata_sinfo->atmel_lcdfb_power_con=
-trol;
- -		sinfo->guard_time =3D pdata_sinfo->guard_time;
- -		sinfo->smem_len =3D pdata_sinfo->smem_len;
- -		sinfo->lcdcon_is_backlight =3D pdata_sinfo->lcdcon_is_backlight;
- -		sinfo->lcdcon_pol_negative =3D pdata_sinfo->lcdcon_pol_negative;
- -		sinfo->lcd_wiring_mode =3D pdata_sinfo->lcd_wiring_mode;
- +	INIT_LIST_HEAD(&info->modelist);
- +
- +	if (pdev->dev.of_node) {
- +		ret =3D atmel_lcdfb_of_init(sinfo);
- +		if (ret)
- +			goto free_info;
-- 	} else if (dev->platform_data) {
-++	} else if (dev_get_platdata(dev)) {
- +		struct fb_monspecs *monspecs;
- +		int i;
- +
-- 		pdata =3D dev->platform_data;
-++		pdata =3D dev_get_platdata(dev);
- +		monspecs =3D pdata->default_monspecs;
- +		sinfo->pdata =3D *pdata;
- +
- +		for (i =3D 0; i < monspecs->modedb_len; i++)
- +			fb_add_videomode(&monspecs->modedb[i], &info->modelist);
- +
- +		sinfo->config =3D atmel_lcdfb_get_config(pdev);
- +
- +		info->var.bits_per_pixel =3D pdata->default_bpp ? pdata->default_bpp : =
-16;
- +		memcpy(&info->monspecs, pdata->default_monspecs, sizeof(info->monspecs)=
-);
+diff --cc drivers/iio/industrialio-buffer.c
+index 2710f72,2361fbc..0000000
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@@ -546,16 -521,9 +540,16 @@@ int iio_update_buffers(struct iio_dev *
+  			 * Roll back.
+  			 * Note can only occur when adding a buffer.
+  			 */
+- 			list_del(&insert_buffer->buffer_list);
++ 			list_del_init(&insert_buffer->buffer_list);
+ -			indio_dev->active_scan_mask =3D old_mask;
+ -			success =3D -EINVAL;
+ +			if (old_mask) {
+ +				indio_dev->active_scan_mask =3D old_mask;
+ +				success =3D -EINVAL;
+ +			}
+ +			else {
+ +				kfree(compound_mask);
+ +				ret =3D -EINVAL;
+ +				goto error_ret;
+ +			}
+  		}
   	} else {
-  		dev_err(dev, "cannot get default configuration\n");
-  		goto free_info;
+  		indio_dev->active_scan_mask =3D compound_mask;
 
---Signature=_Mon__23_Sep_2013_12_28_56_+1000_aoHLZ.OH/kjfJaJ=
+--Signature=_Mon__23_Sep_2013_13_16_58_+1000_L6k6+SO35K74gi1q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSP6dtAAoJEECxmPOUX5FEAzUP/2UURG6Q8bxflQQKj6Dx+1Qd
-UyuEcnnxoYoGtthuWVYlnhM/eysu+0qIAdkjKhv48LEZaAh5NoaceihJvq+62+Th
-03i4x8hvtmCafM8CflctR5j4Az2D3BpOCW2rlTm0JXxdPXil6Y9I4WvivPgBJGdL
-kE4vsdIXBKO3MX6cjbf5nM3tS9BXxPQj9RXebIAb8WCSjAZruKDd/JpskWdRslVB
-3QWPoncBjiRU+yUEbVlJdJaIfmaCECOjfthJc3EWoe3eJ6cOtyXKIaYB02jho5gF
-6Ch3D7rZp9TNLEcC6O2MkXVgZGbT5XjnzYtWbL2PRz75WwUSxYHDhAHd9OthF0lw
-fEHqv8aPp8EgyfYIUOdgQ5UXvChTsNw92yrE/AUoVQF7XpiwLpgQMThc1gLAzCAA
-Xu5ueyxkv93rY+cwuBhDTyqz68lQOjDJiuWs3N3iBjEOptoolS3vL3uVNIBT//Fl
-FdKE5yBUxuOcIEe34Kr2CVhktkhEEiA/Z2Wlrbe619dnl3V5X2+qTFoBw4YfJuxy
-P7PlbfkPijmuQWOrr0yseFbordDBbItWjHEJeL1Y4bgvUQXN1WOgol4/EiVlPkeZ
-IGHawyIHQWefI1t2i/olBgI00Ryh1WUsKCDlkf38nuYYRtThqN1edn8JhOswYvnq
-W3j68c2y2lsVKryrrUAq
-=Wxz2
+iQIcBAEBCAAGBQJSP7KvAAoJEECxmPOUX5FEq50P/RnV7ZTWZB1ttMfWUJfI5mdL
+dUcgS0Cf32+hO6CBL/peL7s4s7ONGixe2VNjpPe+JpCZB8d6qLIUU87C2wfYPCEe
+Mz+HDLPmmxYvTm2sYSItfNDMrQY6wpViohpIFzqwz0VED9B475MpD/LuD8gB393u
+CIhsyS3gAecxZ2V3rbYGXDOTs7denesYFS5bFdSJl/xZ2p68Iy+iatDw9h0fsBwt
+I46lSi/glw7rFkRJkodfHZtCIEY27ium86+1GzoTRgHwq1d8fJw9rVpq+DSriLSS
+4gT9GUy0ZuFLR0IaMCkX19Jk+TDCvxAmgU7DpOdfIGR+eUpQSmsnZvTfcl5MlaTu
+JMLibmuInv4wr/gzxB9rHm+pNAQjP1ydZXU1wXL5imwwqViWaFlvz7u9CuZg9qA6
+uVXPgsJ/Dp0JAEypbDZQWNL+WzlrwI1pscaOxfPpW2zAYjTx6pe7HHXmnyAPTtaI
+k+3jLl+VlksrZQUD04TWKt9shxeGsnL3XXUe5kOdL4PY/UQa3d8pn50xH656kGAZ
+Mjt2Q2yQKFWALXWiqwqLXpp3YFCiu0cetWiOMJ2FgANpalE6gW2A1txDnHiVN/Ed
+/7jn5u6sGkVLCmnU8G41Ruw/extXDKsgX9kthgC1Jm9affSVKFy80mYEG762gy3E
+3U0eP8x0nJ4Nj6p98WkY
+=cnnh
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_Sep_2013_12_28_56_+1000_aoHLZ.OH/kjfJaJ=--
+--Signature=_Mon__23_Sep_2013_13_16_58_+1000_L6k6+SO35K74gi1q--
