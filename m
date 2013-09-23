@@ -1,83 +1,114 @@
-From: Jim Davis <jim.epost@gmail.com>
-Subject: Re: Problem building i386_defconfig with next-20130920
-Date: Sun, 22 Sep 2013 19:20:29 -0700
-Message-ID: <CA+r1ZhhEM82DFi5fniBtNFN7TK9j7NCU+BNQnE+wdFsisiFe0A@mail.gmail.com>
-References: <CA+r1ZhjS+97EhQYXYSg-U9-SCrymoDmMu9JceBVyj7Wt0N3vgQ@mail.gmail.com>
-	<20130923102050.bb0859b9b44d834a44facae1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap_dss2 tree with the fbdev tree
+Date: Mon, 23 Sep 2013 12:28:56 +1000
+Message-ID: <20130923122856.0a3dbf72a44dfef1238d7a1c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__23_Sep_2013_12_28_56_+1000_aoHLZ.OH/kjfJaJ="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f175.google.com ([209.85.216.175]:50859 "EHLO
-	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753156Ab3IWCUa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Sep 2013 22:20:30 -0400
-Received: by mail-qc0-f175.google.com with SMTP id v2so1680668qcr.6
-        for <linux-next@vger.kernel.org>; Sun, 22 Sep 2013 19:20:29 -0700 (PDT)
-In-Reply-To: <20130923102050.bb0859b9b44d834a44facae1@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50446 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753023Ab3IWC3J (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Sep 2013 22:29:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
 
-I think it's a gcc version issue on my system.  I'm running Ubuntu
-13.04, and after that upgrade the compiler version was 4.8.1. I tried
-downgrading to gcc 4.4 and that got past the error.
+--Signature=_Mon__23_Sep_2013_12_28_56_+1000_aoHLZ.OH/kjfJaJ=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- My gcc-fu is way too weak to figure out why the newer version was
-causing problems, but there has for some time also been a problem
-compiling the seccomp filter example program, that also seemed to
-point to an issue with the Ubuntu build setup -- or at least the
-Ubuntu build setup on my system.
+Hi Tomi,
 
-On Sun, Sep 22, 2013 at 5:20 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Jim,
->
-> On Fri, 20 Sep 2013 10:07:42 -0700 Jim Davis <jim.epost@gmail.com> wrote:
->>
->> Trying to build a x86 kernel is failing with
->>
->> kernel/bounds.c:1:0: error: CPU you selected does not support x86-64
->> instruction set
->>  /*
->>  ^
->> kernel/bounds.c:1:0: warning: -mregparm is ignored in 64-bit mode
->> [enabled by default]
->> make[1]: *** [kernel/bounds.s] Error 1
->> make: *** [prepare0] Error 2
->>
->> Here's the steps I've gone through in detail, just in case it's pilot error :/
->>
->> jim@krebstar:~/linux$ make distclean
->>   CLEAN   arch/x86/tools
->>   CLEAN   .tmp_versions
->>   CLEAN   scripts/basic
->>   CLEAN   scripts/kconfig
->>   CLEAN   include/config include/generated arch/x86/include/generated
->>   CLEAN   .config include/generated/uapi/linux/version.h
->> jim@krebstar:~/linux$ git clean -fdx
->> jim@krebstar:~/linux$ git remote -v
->> linux-next    git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->> (fetch)
->> linux-next    git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->> (push)
->> origin    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->> (fetch)
->> origin    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->> (push)
->> jim@krebstar:~/linux$ git remote update
->> Fetching origin
->> Fetching linux-next
->> jim@krebstar:~/linux$ git describe
->> v3.12-rc1
->> jim@krebstar:~/linux$ git tag | grep '^next-' | tail -1
->> next-20130920
->> jim@krebstar:~/linux$ make i386_defconfig
->
-> So, you are building v3.12-rc1, not linux-next ... i386_defconfig is one
-> of the builds I do before releasing linux-next (but not on just Linus'
-> tree) and it did not fail for me on Friday (gcc 4.6.3 if it matters), so
-> maybe this is fixed by something after -rc1 or in linux-next.
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+Today's linux-next merge of the omap_dss2 tree got a conflict in
+drivers/video/atmel_lcdfb.c between commits a17c2e7b704f ("video:
+atmel_lcdfb: fix platform data struct") and 5e8be022fb5b ("video:
+atmel_lcdfb: add device tree suport") from the fbdev tree and commit
+a5d58be0796a ("video: atmel_lcdfb: use dev_get_platdata()") from the
+omap_dss2 tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/video/atmel_lcdfb.c
+index bf9c5d0,df05550..0000000
+--- a/drivers/video/atmel_lcdfb.c
++++ b/drivers/video/atmel_lcdfb.c
+@@@ -1157,30 -934,19 +1157,30 @@@ static int __init atmel_lcdfb_probe(str
+  	}
+ =20
+  	sinfo =3D info->par;
+ +	sinfo->pdev =3D pdev;
+ +	sinfo->info =3D info;
+ =20
+ -	if (dev_get_platdata(dev)) {
+ -		pdata_sinfo =3D dev_get_platdata(dev);
+ -		sinfo->default_bpp =3D pdata_sinfo->default_bpp;
+ -		sinfo->default_dmacon =3D pdata_sinfo->default_dmacon;
+ -		sinfo->default_lcdcon2 =3D pdata_sinfo->default_lcdcon2;
+ -		sinfo->default_monspecs =3D pdata_sinfo->default_monspecs;
+ -		sinfo->atmel_lcdfb_power_control =3D pdata_sinfo->atmel_lcdfb_power_con=
+trol;
+ -		sinfo->guard_time =3D pdata_sinfo->guard_time;
+ -		sinfo->smem_len =3D pdata_sinfo->smem_len;
+ -		sinfo->lcdcon_is_backlight =3D pdata_sinfo->lcdcon_is_backlight;
+ -		sinfo->lcdcon_pol_negative =3D pdata_sinfo->lcdcon_pol_negative;
+ -		sinfo->lcd_wiring_mode =3D pdata_sinfo->lcd_wiring_mode;
+ +	INIT_LIST_HEAD(&info->modelist);
+ +
+ +	if (pdev->dev.of_node) {
+ +		ret =3D atmel_lcdfb_of_init(sinfo);
+ +		if (ret)
+ +			goto free_info;
+- 	} else if (dev->platform_data) {
+++	} else if (dev_get_platdata(dev)) {
+ +		struct fb_monspecs *monspecs;
+ +		int i;
+ +
+- 		pdata =3D dev->platform_data;
+++		pdata =3D dev_get_platdata(dev);
+ +		monspecs =3D pdata->default_monspecs;
+ +		sinfo->pdata =3D *pdata;
+ +
+ +		for (i =3D 0; i < monspecs->modedb_len; i++)
+ +			fb_add_videomode(&monspecs->modedb[i], &info->modelist);
+ +
+ +		sinfo->config =3D atmel_lcdfb_get_config(pdev);
+ +
+ +		info->var.bits_per_pixel =3D pdata->default_bpp ? pdata->default_bpp : =
+16;
+ +		memcpy(&info->monspecs, pdata->default_monspecs, sizeof(info->monspecs)=
+);
+  	} else {
+  		dev_err(dev, "cannot get default configuration\n");
+  		goto free_info;
+
+--Signature=_Mon__23_Sep_2013_12_28_56_+1000_aoHLZ.OH/kjfJaJ=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSP6dtAAoJEECxmPOUX5FEAzUP/2UURG6Q8bxflQQKj6Dx+1Qd
+UyuEcnnxoYoGtthuWVYlnhM/eysu+0qIAdkjKhv48LEZaAh5NoaceihJvq+62+Th
+03i4x8hvtmCafM8CflctR5j4Az2D3BpOCW2rlTm0JXxdPXil6Y9I4WvivPgBJGdL
+kE4vsdIXBKO3MX6cjbf5nM3tS9BXxPQj9RXebIAb8WCSjAZruKDd/JpskWdRslVB
+3QWPoncBjiRU+yUEbVlJdJaIfmaCECOjfthJc3EWoe3eJ6cOtyXKIaYB02jho5gF
+6Ch3D7rZp9TNLEcC6O2MkXVgZGbT5XjnzYtWbL2PRz75WwUSxYHDhAHd9OthF0lw
+fEHqv8aPp8EgyfYIUOdgQ5UXvChTsNw92yrE/AUoVQF7XpiwLpgQMThc1gLAzCAA
+Xu5ueyxkv93rY+cwuBhDTyqz68lQOjDJiuWs3N3iBjEOptoolS3vL3uVNIBT//Fl
+FdKE5yBUxuOcIEe34Kr2CVhktkhEEiA/Z2Wlrbe619dnl3V5X2+qTFoBw4YfJuxy
+P7PlbfkPijmuQWOrr0yseFbordDBbItWjHEJeL1Y4bgvUQXN1WOgol4/EiVlPkeZ
+IGHawyIHQWefI1t2i/olBgI00Ryh1WUsKCDlkf38nuYYRtThqN1edn8JhOswYvnq
+W3j68c2y2lsVKryrrUAq
+=Wxz2
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__23_Sep_2013_12_28_56_+1000_aoHLZ.OH/kjfJaJ=--
