@@ -1,73 +1,65 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: linux-next: manual merge of the omap_dss2 tree with the fbdev
- tree
-Date: Mon, 23 Sep 2013 10:30:43 +0300
-Message-ID: <523FEE23.3010503@ti.com>
-References: <20130923122856.0a3dbf72a44dfef1238d7a1c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (random
+ tree related)
+Date: Mon, 23 Sep 2013 17:33:21 +1000
+Message-ID: <20130923173321.9139c9a3d895faff75b31e4e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="28jeBTfKc6NqHBBtb979RANTenTO3hlo9"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__23_Sep_2013_17_33_21_+1000_G3ThOsjB.kPmEAOe"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:35413 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752288Ab3IWHbF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Sep 2013 03:31:05 -0400
-In-Reply-To: <20130923122856.0a3dbf72a44dfef1238d7a1c@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35236 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752467Ab3IWHdm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Sep 2013 03:33:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---28jeBTfKc6NqHBBtb979RANTenTO3hlo9
-Content-Type: text/plain; charset=ISO-8859-1
+--Signature=_Mon__23_Sep_2013_17_33_21_+1000_G3ThOsjB.kPmEAOe
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen, Jean-Christophe,
+Hi all,
 
-On 23/09/13 05:28, Stephen Rothwell wrote:
-> Hi Tomi,
->=20
-> Today's linux-next merge of the omap_dss2 tree got a conflict in
-> drivers/video/atmel_lcdfb.c between commits a17c2e7b704f ("video:
-> atmel_lcdfb: fix platform data struct") and 5e8be022fb5b ("video:
-> atmel_lcdfb: add device tree suport") from the fbdev tree and commit
-> a5d58be0796a ("video: atmel_lcdfb: use dev_get_platdata()") from the
-> omap_dss2 tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no action=
+After merging the final tree, today's linux-next build (arm defconfig)
+failed like this:
 
-> is required).
+In file included from include/linux/sched.h:17:0,
+                 from arch/arm/kernel/asm-offsets.c:13:
+include/linux/timex.h: In function 'random_get_entropy':
+include/linux/timex.h:80:2: error: implicit declaration of function 'read_c=
+urrent_timer' [-Werror=3Dimplicit-function-declaration]
 
-Jean-Christophe's tree seems to contain some old commits, never pushed
-to mainline. Jean-Christophe, can you reset your for-next branch?
+Caused by commit 5030b0ad98ec ("random: allow architectures to optionally
+define random_get_entropy()") from the random tree.
 
- Tomi
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
-
---28jeBTfKc6NqHBBtb979RANTenTO3hlo9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+--Signature=_Mon__23_Sep_2013_17_33_21_+1000_G3ThOsjB.kPmEAOe
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSP+4qAAoJEPo9qoy8lh71T0cQAIqsOR5wc+ztUiUvOZ1j9gzw
-36woOr+nkWv617/Dbzfw4zAqgBgdQRvv0kvBo1Zu+p860g5WLj+LxiQ9+j+rr49B
-R+21Zxvo3W6ACLidCQy6uG7Kg2wo1Qj5+rEPsFuKiinip+PiPAy8Cter/TSGn1D5
-H7f8nK42By0fHCMFkFsITl0klo2d7TLFU6v6BLAbPKaOo8IGnSL09f3vrEOTMfzM
-LOYRVXFru7rZyEaMCIjnqp9GfIq2yve7mUkxxw45Ep5MYROTOJUNI2oXm71k5mN4
-zAqQltOhNk34K4qUGwXPUUC3jpDMb0qkAeoq/hmsyEbQX4j5Ak1jGSabB8/pCINX
-ynlHvD1/f8Gqg4gISXugwH8gjH9sWElNxSbAC0YHybBNl/YcKWRWCUSOWJ9rgQcN
-14WHM2CxwEGVRsoQnQMMz7+wpDbRjClWPAAYntaDT78yNOc37jAvUkETsSURuMPO
-L/KGtpEE8MH7n4sWHwsJWbjnsTlBPWooeT2VwaEyjr1Q//yAwld5/OD24zTrs5kF
-df0KwOjMqt2VK9sAfDgKKgH5MCcUQlRm0u9XFFpHoqfLwRS5twwHaIsknRcQo1AI
-P1rS+Kols9CTaMv9+00GsVhWfxXaJ/XzjvgqORn5OfMh3aRnhDLgqnN0P8ixyvKp
-uClHNoHPnYnGwvSUoD7O
-=Fu+n
+iQIcBAEBCAAGBQJSP+7HAAoJEECxmPOUX5FEyecQAJZRyJEXiOCf7VTKSB5CvcLS
+EQcGbH1FfBMDwNUF1j4G1Z+3+C6Zzj7uOPSFDR9hUFA8d4ZIWbKXjZu/SQilqsf3
+tANoPKAOkUj2Duii30Ve/dzdutEtcdBT9fWunKAUDicKRxMgjKxXrAXPE2FELy02
+rv2yQ9+scOva6aQgz6/+RJXAkpvliplk6hgQg307UF2aSaVIEDVGpSKOLB/xaAlT
+QNJeurymlzCvU1i02KR4lBlBuO/z9loP+AunNkupskzbyYcUGOxIXIb+YSzFarBW
+uhnpA7gfwPtBewAtC1QY2i3PoD16pHRiKQxdnpf0KJp3Wh0xEzonQf1Zrl5iYZ6N
+eXh+Uh8/MI+KSkkby3QJvRwkU8MIfxnsT2j+jitBHq4vR0LXLADHnRi+gt4lE8L2
+CYPFg8l86H/fuTWVSsUAIgOs/LC2hWL5L2n8RPqaWCD1u7LxPPmcdtwK3JH+RMNk
+I6yGTIDVOba9QLs4BBmH3R6gIdlTnEV/vNqn0NkN7+EowR2bBDs9pDUKigMOaHsY
+CouQKCGWWQ6YuDBn4FwfMNqa1v0MbXGCskmUstVBm3zL8NC02O/MnlISAcB5NUpc
+jvNKbuCWzYudDjhRfsQpJ8BRHZ6zqf8e92Z6DdwhvzJErUpQetcbBNBKqxEKNr9V
+mS9WKdNVDzJ52hNNOu1e
+=rmn8
 -----END PGP SIGNATURE-----
 
---28jeBTfKc6NqHBBtb979RANTenTO3hlo9--
+--Signature=_Mon__23_Sep_2013_17_33_21_+1000_G3ThOsjB.kPmEAOe--
