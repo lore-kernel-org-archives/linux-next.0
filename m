@@ -1,74 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the random tree with Linus' tree
-Date: Mon, 23 Sep 2013 14:04:01 +1000
-Message-ID: <20130923140401.67e7bb4560620a561d4dfe6e@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the block tree
+Date: Mon, 23 Sep 2013 14:29:01 +1000
+Message-ID: <20130923142901.46a29b6727d0b8b290ad942b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Sep_2013_14_04_01_+1000_4u81gCCd1BIAt8cd"
+ boundary="Signature=_Mon__23_Sep_2013_14_29_01_+1000_4gZ/4rfAstXHXueU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41762 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48895 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751571Ab3IWEEP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Sep 2013 00:04:15 -0400
+	with ESMTP id S1751835Ab3IWE3J (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Sep 2013 00:29:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Mon__23_Sep_2013_14_04_01_+1000_4u81gCCd1BIAt8cd
+--Signature=_Mon__23_Sep_2013_14_29_01_+1000_4gZ/4rfAstXHXueU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Theodore,
+Hi Jens,
 
-Today's linux-next merge of the random tree got a conflict in init/main.c
-between commit 65f382fd0c8f ("context_tracking: Ground setup for static
-key use") from Linus' tree and commit 382521d2478b ("random: run
-random_int_secret_init() run after all late_initcalls") from the random
-tree.
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from include/linux/kernel.h:13:0,
+                 from drivers/block/skd_main.c:19:
+drivers/block/skd_main.c: In function 'skd_cons_skmsg':
+drivers/block/skd_main.c:4562:33: warning: format '%u' expects argument of =
+type 'unsigned int', but argument 5 has type 'long unsigned int' [-Wformat=
+=3D]
+   (unsigned long) sizeof(struct skd_fitmsg_context) *
+                                 ^
+include/linux/printk.h:216:33: note: in definition of macro 'pr_err'
+  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+                                 ^
+drivers/block/skd_main.c:4559:2: note: in expansion of macro 'VPRINTK'
+  VPRINTK(skdev, "skmsg_table kzalloc, struct %u, count %u total %lu\n",
+  ^
+
+and several more.
+
+Introduced by commit 0e2c4a3a6c0c ("drivers/block/skd_main.c: fix a few
+things, disable on 32-bit"). sizeof() needs %zu to print, right?
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc init/main.c
-index af310af,586cd33..0000000
---- a/init/main.c
-+++ b/init/main.c
-@@@ -75,7 -75,7 +75,8 @@@
-  #include <linux/blkdev.h>
-  #include <linux/elevator.h>
-  #include <linux/sched_clock.h>
- +#include <linux/context_tracking.h>
-+ #include <linux/random.h>
- =20
-  #include <asm/io.h>
-  #include <asm/bugs.h>
-
---Signature=_Mon__23_Sep_2013_14_04_01_+1000_4u81gCCd1BIAt8cd
+--Signature=_Mon__23_Sep_2013_14_29_01_+1000_4gZ/4rfAstXHXueU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSP722AAoJEECxmPOUX5FEMQkQAJ1cYJYtrjEOu/67vCUYp2eq
-OlEiVPEhZu6fpP/X9bymZrdsW3pwHQU82zgoTRaE2WBsNarIQcNoqjpCN/5rL6XW
-M0RuQYnq1K+kkM1E+A78285hhFbx/gTAkvDxjEKnXtrN/jD7Kt1IM7pObAbgjBnH
-Rpcr/oTaPdchxVrUgSDAGyO5M+ja+L+3e/MGfzyLiDLIpAtET+STvfI+fEpamp62
-QveY6dXaq4CRqHSsWfvOv89Uz9lAJvK1P1OFYey8GLStnACPZmorBS6IZttEE9WC
-GIEUGnssOo62UQN27+6ljDb5LUA9Sfg8jEQIYZ2X+M+e7XCa2bfqfvQpCJrcwKbZ
-aFdIgJJ+660w2+us5JBAB8CvmTEedrghiyZmBtUWTInpg/McMoJWO9L+kgtezzie
-9FzcpDIh0st+Q6/7DnSMvSm9gfWaWBBbLXuQ5TGGMZuSmaJLi0uI3cjzNyeqktgK
-81+rLNV4K3p7XmzKMoyREc/TWcn6RDA5VC/vHaRgvrjsntvynuAiEhvcGpv22f+Z
-owovIedXSF5CThI+A8txOmBLX2YNoc70YNzWbq/VXRIF7o0+oi3TA668BDtzxFXp
-IMxdGkJautCj8xSKULIblSLqfcHR/2B3TqI8XHTSQSpzYkbuQxdYeTJ35tjyqVk6
-wCsCp0P6DwoeVU2zQpw2
-=htev
+iQIcBAEBCAAGBQJSP8OSAAoJEECxmPOUX5FElfUP/ic2TyVC4jgmJqOxQ036lMlW
+snt0vSxrXxJcxEaDtOwk+pDXoNtt+yPRx7+8mb45YgckH/djUq6UaBwn0dx+7dhc
+Oa8W17nGW8ey2Qc7zvh1JhAs/rxHISmR4BxdQtIbioYmHxn6yMIH+SJp7FOzh8lZ
+v4ogGhOyn5ZmGtOf/pw3BHpsCBk2bLk3Qd3D1CfEOnLszCzIOOsNtyVxpEVJLXc1
+YldBQptOeMpnxdhObxNhnB5TE9Knc/KvlMxdTlr2S0uvyzeyGxsgc9yICMK+vBok
+dr1Jz9NzrFzi1mqDLU0wfeoNi5qB7X3MwiYp7bWtd9qLAXLactrbVFbpfx6lDPPv
+Dfw0n6H9f23x/3i9pl4UAlP/YiIHZQjf/ozw67RbMX1VifJHjG5QFcU6wbALTgZg
+YTMwc4LqUZV0Ne1NoQI0Hvyct4W0U9kuWuQBwOK2KJPQBpse3ukzmAEe/od1jExs
+yIuKzHDmWLJoB7oduZlMilMDwtNlt5ha9nofKPG+ZS/OwcmGzuo97N1T4oAgHrDU
+Xf2vfv2Y+jSbrt9u3KtaD8jjnRELPdXDNYbJGrTOgvIUnGsqkngATkDYI6lhHLMh
+RRRKc0fiTXSBDjs05VynkgYSXCnelmdsuz5f5vQ8vi/Q6303/9dkpo2vnVYnI791
+r+U/Y5ownsWtxc+u5v/3
+=4iL1
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_Sep_2013_14_04_01_+1000_4u81gCCd1BIAt8cd--
+--Signature=_Mon__23_Sep_2013_14_29_01_+1000_4gZ/4rfAstXHXueU--
