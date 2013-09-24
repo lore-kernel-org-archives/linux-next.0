@@ -1,53 +1,69 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Sep 24 (video/mb862xx)
-Date: Tue, 24 Sep 2013 12:05:15 -0700
-Message-ID: <5241E26B.3080901@infradead.org>
-References: <20130924144341.772ef648fe8ea2137160596f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the ipsec-next tree with the
+ net-next tree
+Date: Wed, 25 Sep 2013 09:59:19 +1000
+Message-ID: <20130925095919.143635403832766c1b190202@canb.auug.org.au>
+References: <20130924121629.f818475ddf308b0494cfce2a@canb.auug.org.au>
+	<20130924102505.GS7660@secunet.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:56809 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754374Ab3IXTFe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Sep 2013 15:05:34 -0400
-In-Reply-To: <20130924144341.772ef648fe8ea2137160596f@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anatolij Gustschin <agust@denx.de>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__25_Sep_2013_09_59_19_+1000__nzaazIW/4Ty6+L+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130924102505.GS7660@secunet.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fan Du <fan.du@windriver.com>, Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 09/23/13 21:43, Stephen Rothwell wrote:
-> Hi all,
-> 
-> 
-> Changes since 20130923:
-> 
+--Signature=_Wed__25_Sep_2013_09_59_19_+1000__nzaazIW/4Ty6+L+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-on i386:
+Hi Steffen,
 
-when CONFIG_I2C=m and
-CONFIG_FB_MB862XX=y
-CONFIG_FB_MB862XX_PCI_GDC=y
-CONFIG_FB_MB862XX_I2C=y
+On Tue, 24 Sep 2013 12:25:05 +0200 Steffen Klassert <steffen.klassert@secun=
+et.com> wrote:
+>
+> On Tue, Sep 24, 2013 at 12:16:29PM +1000, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next merge of the ipsec-next tree got a conflict in
+> > include/net/xfrm.h between commit d511337a1eda ("xfrm.h: Remove extern
+> > from function prototypes") from the net-next tree and commit aba8269588=
+30
+> > ("{ipv4,xfrm}: Introduce xfrm_tunnel_notifier for xfrm tunnel mode
+> > callback") from the ipsec-next tree.
+>=20
+> Thanks for the information, I'll do a rebase of the ipsec-next
+> tree tomorrow.
 
+Did you miss the end of the next paragraph:  "no action is required"?
+Dave can fix this up (like I did) when he merges your tree into his.
 
-drivers/built-in.o: In function `mb862xx_i2c_init':
-(.text+0x68a1c): undefined reference to `i2c_add_adapter'
-drivers/built-in.o: In function `mb862xx_i2c_exit':
-(.text+0x68a6e): undefined reference to `i2c_del_adapter'
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Signature=_Wed__25_Sep_2013_09_59_19_+1000__nzaazIW/4Ty6+L+
+Content-Type: application/pgp-signature
 
-Caused by this kconfig bool:
-config FB_MB862XX_I2C
-	bool "Support I2C bus on MB862XX GDC"
-	depends on FB_MB862XX && I2C
-	default y
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-which == 'y' even when CONFIG_I2C = m.
+iQIcBAEBCAAGBQJSQidbAAoJEECxmPOUX5FEAwIP/RgTSWX4xAWn60xXfQd1+CXE
+TjU81PxvOY5x0XdhBwTV0roBojZ9hFKyIvf4MfSRTnT2GJqLmMY9KGqFStow7ojf
+NxGR/cTIZx32fkxPIIvJJdzpQvtz/egKugPst3XgA5dN6yD8J6tycs6xa1IlMrfo
+FI7jvp244pw3DtNvoDYDU8qdRX+Y14PGcGoSjD/qVkyQX2p8T+X1xe0DFkqEu4CN
+NX4JEkNaiHGfhSj7blpUvGbUgXg20ur7chl/pKz7/KPA6dmzTI64/CzAMAWdzXl5
+o+j8pRhrjfp9+pLb9MaZ/v7vG//9BkdjzNjnm32yVSNj7tn2Kr7p4nrrqR6/2UVn
+mcghspP8rlFcoQ/Wx0NXTWNa7PKLtuCQmJRHIChk7l8iXbo5dzHSCP3hf4Rqg1EI
+qkAbfkc72ov1E/ejgdRn1cP6Q6QFcVt3/hZW8E3qF9lAfOYSKLpqGfYwasJH1e0B
+psC0bVGYQIfOySQDO18dSkWYK5C6b8UfaWZqddABlErCIAXi1g8u7LgpkMq6QXzu
+0dL5nlUrkZeb5lgClg6tKItRzrPAbIdL68bjUituhSD14VL5yFnlYjAYS4nr8fs4
+yE6GJe9gaEYsphU7rt4GgQftHUVjJy2JoL/SW03Z+KWuTdD/jgR052i6P+FjFfN9
+o+hRX/LUr4nBmy0aylEO
+=IsD7
+-----END PGP SIGNATURE-----
 
-
-
-
--- 
-~Randy
+--Signature=_Wed__25_Sep_2013_09_59_19_+1000__nzaazIW/4Ty6+L+--
