@@ -1,31 +1,53 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Subject: Re: linux-next: manual merge of the ipsec-next tree with the
- net-next tree
-Date: Tue, 24 Sep 2013 12:25:05 +0200
-Message-ID: <20130924102505.GS7660@secunet.com>
-References: <20130924121629.f818475ddf308b0494cfce2a@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Sep 24 (video/mb862xx)
+Date: Tue, 24 Sep 2013 12:05:15 -0700
+Message-ID: <5241E26B.3080901@infradead.org>
+References: <20130924144341.772ef648fe8ea2137160596f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130924121629.f818475ddf308b0494cfce2a@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:56809 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754374Ab3IXTFe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Sep 2013 15:05:34 -0400
+In-Reply-To: <20130924144341.772ef648fe8ea2137160596f@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fan Du <fan.du@windriver.com>, Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anatolij Gustschin <agust@denx.de>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>
 
-Hi Stephen.
-
-On Tue, Sep 24, 2013 at 12:16:29PM +1000, Stephen Rothwell wrote:
-> Hi Steffen,
+On 09/23/13 21:43, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Today's linux-next merge of the ipsec-next tree got a conflict in
-> include/net/xfrm.h between commit d511337a1eda ("xfrm.h: Remove extern
-> from function prototypes") from the net-next tree and commit aba826958830
-> ("{ipv4,xfrm}: Introduce xfrm_tunnel_notifier for xfrm tunnel mode
-> callback") from the ipsec-next tree.
+> 
+> Changes since 20130923:
 > 
 
-Thanks for the information, I'll do a rebase of the ipsec-next
-tree tomorrow.
+on i386:
+
+when CONFIG_I2C=m and
+CONFIG_FB_MB862XX=y
+CONFIG_FB_MB862XX_PCI_GDC=y
+CONFIG_FB_MB862XX_I2C=y
+
+
+drivers/built-in.o: In function `mb862xx_i2c_init':
+(.text+0x68a1c): undefined reference to `i2c_add_adapter'
+drivers/built-in.o: In function `mb862xx_i2c_exit':
+(.text+0x68a6e): undefined reference to `i2c_del_adapter'
+
+
+Caused by this kconfig bool:
+config FB_MB862XX_I2C
+	bool "Support I2C bus on MB862XX GDC"
+	depends on FB_MB862XX && I2C
+	default y
+
+which == 'y' even when CONFIG_I2C = m.
+
+
+
+
+-- 
+~Randy
