@@ -1,90 +1,161 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with the
- drm-intel-fixes tree
-Date: Wed, 25 Sep 2013 12:00:35 +1000
-Message-ID: <20130925120035.901f8f3eae222ae061fe3a07@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Wed, 25 Sep 2013 13:11:13 +1000
+Message-ID: <20130925131113.5106bbddf4b56b77c7ba12ca@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__25_Sep_2013_12_00_35_+1000_j3/RLc2heZv/nmto"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40204 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753204Ab3IYCAu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Sep 2013 22:00:50 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlZpbGxlIFN5cmrDpGzDpCI=?= <ville.syrjala@linux.intel.com>
+ boundary="Signature=_Wed__25_Sep_2013_13_11_13_+1000_v_stM=jMstKfRuJS"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__25_Sep_2013_12_00_35_+1000_j3/RLc2heZv/nmto
+--Signature=_Wed__25_Sep_2013_13_11_13_+1000_v_stM=jMstKfRuJS
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jens,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_display.c between commit 67c72a122541
-("drm/i915: preserve pipe A quirk in i9xx_set_pipeconf") from the
-drm-intel-fixes tree and commit cf532bb25592 ("drm/i915: Move double wide
-mode handling into pipe_config") from the drm-intel tree.
+Today's linux-next merge of the block tree got a conflict in
+drivers/md/bcache/request.c between commit c0f04d88e46d ("bcache: Fix
+flushes in writeback mode") from Linus' tree and commit 53027147e43c
+("bcache: Prune struct btree_op") and dd879364df83 ("bcache: Break up struc=
+t search") from the block tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I wasn't sure, but I used the version from Linus' tree -
+see below) and can carry the fix as necessary (no action is required).
 
+There were several other patches that affect this area that were commited
+directly to Linus' tree today ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/intel_display.c
-index e5822e7,d12d563..0000000
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@@ -4775,21 -4881,8 +4881,12 @@@ static void i9xx_set_pipeconf(struct in
+diff --cc drivers/md/bcache/request.c
+index 71eb233,231b108..0000000
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@@ -979,68 -1059,52 +1059,55 @@@ static void cached_dev_write(struct cac
  =20
-  	pipeconf =3D 0;
+  	if (should_writeback(dc, s->orig_bio,
+  			     cache_mode(dc, bio),
+- 			     s->op.skip)) {
+- 		s->op.skip =3D false;
+- 		s->writeback =3D true;
++ 			     s->iop.bypass)) {
++ 		s->iop.bypass =3D false;
++ 		s->iop.writeback =3D true;
+  	}
  =20
- +	if (dev_priv->quirks & QUIRK_PIPEA_FORCE &&
- +	    I915_READ(PIPECONF(intel_crtc->pipe)) & PIPECONF_ENABLE)
- +		pipeconf |=3D PIPECONF_ENABLE;
+- 	if (s->op.skip)
+- 		goto skip;
+-=20
+- 	trace_bcache_write(s->orig_bio, s->writeback, s->op.skip);
++ 	if (s->iop.bypass) {
++ 		s->iop.bio =3D s->orig_bio;
++ 		bio_get(s->iop.bio);
+ =20
+- 	if (!s->writeback) {
+- 		s->op.cache_bio =3D bio_clone_bioset(bio, GFP_NOIO,
+- 						   dc->disk.bio_split);
+-=20
+- 		closure_bio_submit(bio, cl, s->d);
+- 	} else {
++ 		if (!(bio->bi_rw & REQ_DISCARD) ||
++ 		    blk_queue_discard(bdev_get_queue(dc->bdev)))
++ 			closure_bio_submit(bio, cl, s->d);
++ 	} else if (s->iop.writeback) {
+  		bch_writeback_add(dc);
+ =20
+ -		if (s->iop.flush_journal) {
+ +		if (bio->bi_rw & REQ_FLUSH) {
+  			/* Also need to send a flush to the backing device */
+ -			s->iop.bio =3D bio_clone_bioset(bio, GFP_NOIO,
+ -						      dc->disk.bio_split);
+ +			struct bio *flush =3D bio_alloc_bioset(0, GFP_NOIO,
+ +							     dc->disk.bio_split);
+ =20
+ -			bio->bi_size =3D 0;
+ -			bio->bi_vcnt =3D 0;
+ -			closure_bio_submit(bio, cl, s->d);
+ +			flush->bi_rw	=3D WRITE_FLUSH;
+ +			flush->bi_bdev	=3D bio->bi_bdev;
+ +			flush->bi_end_io =3D request_endio;
+ +			flush->bi_private =3D cl;
  +
-- 	if (intel_crtc->pipe =3D=3D 0 && INTEL_INFO(dev)->gen < 4) {
-- 		/* Enable pixel doubling when the dot clock is > 90% of the (display)
-- 		 * core speed.
-- 		 *
-- 		 * XXX: No double-wide on 915GM pipe B. Is that the only reason for the
-- 		 * pipe =3D=3D 0 check?
-- 		 */
-- 		if (intel_crtc->config.requested_mode.clock >
-- 		    dev_priv->display.get_display_clock_speed(dev) * 9 / 10)
-- 			pipeconf |=3D PIPECONF_DOUBLE_WIDE;
+ +			closure_bio_submit(flush, cl, s->d);
+  		} else {
+- 			s->op.cache_bio =3D bio;
++ 			s->iop.bio =3D bio;
+  		}
 - 	}
-+ 	if (intel_crtc->config.double_wide)
-+ 		pipeconf |=3D PIPECONF_DOUBLE_WIDE;
+- out:
+- 	closure_call(&s->op.cl, bch_insert_data, NULL, cl);
+- 	continue_at(cl, cached_dev_write_complete, NULL);
+- skip:
+- 	s->op.skip =3D true;
+- 	s->op.cache_bio =3D s->orig_bio;
+- 	bio_get(s->op.cache_bio);
++ 	} else {
++ 		s->iop.bio =3D bio_clone_bioset(bio, GFP_NOIO,
++ 					      dc->disk.bio_split);
  =20
-  	/* only g4x and later have fancy bpc/dither controls */
-  	if (IS_G4X(dev) || IS_VALLEYVIEW(dev)) {
+- 	if ((bio->bi_rw & REQ_DISCARD) &&
+- 	    !blk_queue_discard(bdev_get_queue(dc->bdev)))
+- 		goto out;
++ 		closure_bio_submit(bio, cl, s->d);
++ 	}
+ =20
+- 	closure_bio_submit(bio, cl, s->d);
+- 	goto out;
++ 	closure_call(&s->iop.cl, bch_data_insert, NULL, cl);
++ 	continue_at(cl, cached_dev_write_complete, NULL);
+  }
+ =20
+- static void request_nodata(struct cached_dev *dc, struct search *s)
++ static void cached_dev_nodata(struct closure *cl)
+  {
+- 	struct closure *cl =3D &s->cl;
++ 	struct search *s =3D container_of(cl, struct search, cl);
+  	struct bio *bio =3D &s->bio.bio;
+ =20
+- 	if (bio->bi_rw & REQ_DISCARD) {
+- 		request_write(dc, s);
+- 		return;
+- 	}
+-=20
+- 	if (s->op.flush_journal)
+- 		bch_journal_meta(s->op.c, cl);
++ 	if (s->iop.flush_journal)
++ 		bch_journal_meta(s->iop.c, cl);
+ =20
++ 	/* If it's a flush, we send the flush to the backing device too */
+  	closure_bio_submit(bio, cl, s->d);
+ =20
+  	continue_at(cl, cached_dev_bio_complete, NULL);
 
---Signature=_Wed__25_Sep_2013_12_00_35_+1000_j3/RLc2heZv/nmto
+--Signature=_Wed__25_Sep_2013_13_11_13_+1000_v_stM=jMstKfRuJS
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSQkPHAAoJEECxmPOUX5FEgJIQAIn4FURSLPXfo8bqnZTyBQJa
-5PXYI4XinEc3b3CEX7iGDXMuXgeInee+UXYcCX//J2XG6FOiPG5doPFY/dS+td0x
-bJEnRC485Z+Sj4Uir3RmiZsUzUvWXRvh76zhz7gjYPXYFSTnKhRQ3iHWhfUDOf4H
-Mlj0jmVuNT6P9YsHity6qUywqq1YNAghDmr7s/OnQgomImEJh3/YPK9gE4+qPart
-e9ylVwOOtJfPFEBKOe4YoRqUxSmgL7zj6u4szz8wzazytlqLdJ8sNe7pTu7WzQIO
-iz2xMoNHVRkXsmtJ9D37TovGbNCCdgHWir6mtKoQFWm0a9kwV07Vmt4pfYttvvaU
-9ls8FbhqX4R57rK3vhJpqQ/IQJLAV9Mv+ZE1fSRT09PsVV0+ZqaKAlQzgf5xSuGe
-4te9aIdkTJch1/EYmdomKZVIc8umuwimFJYjdriR3zs4i9drXENnAyyinlaBkj7y
-AOO2mpDzF6Sawxv2EKBGa2iuVNUjs1H6MWFBblMlpraQ1fkuLHtpKVS2rO13Ak05
-Q9YFov/02A6N/2YhPMcnx0R/LGNDbGZpwhkxfHX6AIoxkHaKgEmLrObWdFCOpWd1
-IiParS5TvoRBhrSPzLDOuW20uUi2p/z2VAjwKqTKpXZqJ65/q5+LZK2bILmT8/gA
-L+xeGGu9iC/3xIHT1Pqc
-=O0nM
+iQIcBAEBCAAGBQJSQlRWAAoJEECxmPOUX5FEd4IP/2fcq686jj9l4utnre6y3Q8M
+bx/lvN6bCfsiheCheNHNEPUy1XjeIhFpudWNk2Utbajl4xxWXxBNLHlLq8zsPYsn
+AISRjapQsO1DNxGrXSQckmsYPvnnQ4TuEBV92Unvqr0tBUiiTtPacxGdURwwDpXC
+zkdtgRGWgJo8GqRv9Y3zy8NOrp0TAVP9vwhDzHFjtf8I+PeY+gG7FR9z1+Brrk82
+G9DrDja68Jc80o6j9X4SZyg/kw9mGvtp0DDc+giatsDrEBdQh3YJdb5tyQCqU4vH
+eb+Y57cAq6jlH23t0EQ+isVbBZjKSK+GtaPUOAMXXjdRufM510BZjkfCXM8DkpIP
+BjuJdUbJOZqduWHtY1bzt8b7iEiMhRUAnLIIiXnzLBFHCCp90zNIXEwJdC7saEX1
+yqB2Ysal7ML1U/mmnYBYcGtIQyJJizFzsjoJVkLObe8WRHT4/B+QsY+SXsrbDRmJ
+aSCoQgYYQvK5IFjnFQKggnlC0ZBoJBtxHX5zNpOCdqgkXjR8WUHO/GAk5tOdR0nU
+T5kMk1f+c5HB6FleX+PpExcnR5xd/h2GhUvr3e7mB+YysFdd3wr2X8p1ixHRGs7A
+J86qZYhZRE7PaaFnmw2G+isGLNHqwvJeCEBmSSRuyK9JblCmKfHoMkpEoY8S1DaI
+0sFaXH1HQz0BWYEJEcBU
+=ZTHw
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__25_Sep_2013_12_00_35_+1000_j3/RLc2heZv/nmto--
+--Signature=_Wed__25_Sep_2013_13_11_13_+1000_v_stM=jMstKfRuJS--
