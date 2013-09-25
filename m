@@ -1,161 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Wed, 25 Sep 2013 13:11:13 +1000
-Message-ID: <20130925131113.5106bbddf4b56b77c7ba12ca@canb.auug.org.au>
+From: Dave Airlie <airlied@gmail.com>
+Subject: Re: Fwd: linux-next: Tree for Jul 1 [ drm-intel-next: Several
+ call-traces ]
+Date: Wed, 25 Sep 2013 13:17:52 +1000
+Message-ID: <CAPM=9ty_o7VZx+sfDRSwh7U9BC+gOLd7P-cc856+PDBXR-UMEA@mail.gmail.com>
+References: <CA+icZUXyizuCR3YDfFXD5hCkgycFYGzMHaJxg=m9UackT7uzGQ@mail.gmail.com>
+	<CAKMK7uFzwiztE8H1rvSDWQmw08JGoKdnTs5BYqxdrHwb=pK50A@mail.gmail.com>
+	<CA+icZUXnHaT75NhhSx+AhcMEKybHugH9+hV_mS5h5-cimFdz6A@mail.gmail.com>
+	<CA+icZUVQ_UO_VnN9+Q7B3hhuFmw4XPEw19rhO+T4jU5hLGWaTQ@mail.gmail.com>
+	<CA+icZUW3K7RyUcfdos7aOkrEOd3To0kSns+G3GSfkPqqwo7z=w@mail.gmail.com>
+	<20130826130511.GA21082@redhat.com>
+	<20130922141410.GA1974@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__25_Sep_2013_13_11_13_+1000_v_stM=jMstKfRuJS"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:58581 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753991Ab3IYDRy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Sep 2013 23:17:54 -0400
+In-Reply-To: <20130922141410.GA1974@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Sedat Dilek <sedat.dilek@gmail.com>, "Barnes, Jesse" <jbarnes@virtuousgeek.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
 
---Signature=_Wed__25_Sep_2013_13_11_13_+1000_v_stM=jMstKfRuJS
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Sep 23, 2013 at 12:14 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Mon, Aug 26, 2013 at 04:05:11PM +0300, Michael S. Tsirkin wrote:
+>> On Wed, Aug 21, 2013 at 11:22:58AM +0200, Sedat Dilek wrote:
+>> > [ Re: [Intel-gfx] i915 producing warnings with kernel 3.11-rc5 ]
+>> >
+>> > Hi,
+>> >
+>> > saw your posting in [1]... can you try the patches below?
+>> > Not sure if they apply.
+>> > Did you try v3.11-rc6(+)... or drm-intel-nightly?
+>> >
+>> > Regards,
+>> > - Sedat -
+>> >
+>> > [1] http://lists.freedesktop.org/archives/intel-gfx/2013-August/032154.html
+>>
+>> Same thing observed with v3.11-rc7.
+>
+> I still see this with 3.11.
+> Following this message, my VGA monitor goes blank and
+> shows an error suggesting a wrong resolution or frequency are set.
+> Anyone?
 
-Hi Jens,
+Daniel, Jesse?
 
-Today's linux-next merge of the block tree got a conflict in
-drivers/md/bcache/request.c between commit c0f04d88e46d ("bcache: Fix
-flushes in writeback mode") from Linus' tree and commit 53027147e43c
-("bcache: Prune struct btree_op") and dd879364df83 ("bcache: Break up struc=
-t search") from the block tree.
+still ongoing I think.
 
-I fixed it up (I wasn't sure, but I used the version from Linus' tree -
-see below) and can carry the fix as necessary (no action is required).
-
-There were several other patches that affect this area that were commited
-directly to Linus' tree today ...
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/md/bcache/request.c
-index 71eb233,231b108..0000000
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@@ -979,68 -1059,52 +1059,55 @@@ static void cached_dev_write(struct cac
- =20
-  	if (should_writeback(dc, s->orig_bio,
-  			     cache_mode(dc, bio),
-- 			     s->op.skip)) {
-- 		s->op.skip =3D false;
-- 		s->writeback =3D true;
-+ 			     s->iop.bypass)) {
-+ 		s->iop.bypass =3D false;
-+ 		s->iop.writeback =3D true;
-  	}
- =20
-- 	if (s->op.skip)
-- 		goto skip;
--=20
-- 	trace_bcache_write(s->orig_bio, s->writeback, s->op.skip);
-+ 	if (s->iop.bypass) {
-+ 		s->iop.bio =3D s->orig_bio;
-+ 		bio_get(s->iop.bio);
- =20
-- 	if (!s->writeback) {
-- 		s->op.cache_bio =3D bio_clone_bioset(bio, GFP_NOIO,
-- 						   dc->disk.bio_split);
--=20
-- 		closure_bio_submit(bio, cl, s->d);
-- 	} else {
-+ 		if (!(bio->bi_rw & REQ_DISCARD) ||
-+ 		    blk_queue_discard(bdev_get_queue(dc->bdev)))
-+ 			closure_bio_submit(bio, cl, s->d);
-+ 	} else if (s->iop.writeback) {
-  		bch_writeback_add(dc);
- =20
- -		if (s->iop.flush_journal) {
- +		if (bio->bi_rw & REQ_FLUSH) {
-  			/* Also need to send a flush to the backing device */
- -			s->iop.bio =3D bio_clone_bioset(bio, GFP_NOIO,
- -						      dc->disk.bio_split);
- +			struct bio *flush =3D bio_alloc_bioset(0, GFP_NOIO,
- +							     dc->disk.bio_split);
- =20
- -			bio->bi_size =3D 0;
- -			bio->bi_vcnt =3D 0;
- -			closure_bio_submit(bio, cl, s->d);
- +			flush->bi_rw	=3D WRITE_FLUSH;
- +			flush->bi_bdev	=3D bio->bi_bdev;
- +			flush->bi_end_io =3D request_endio;
- +			flush->bi_private =3D cl;
- +
- +			closure_bio_submit(flush, cl, s->d);
-  		} else {
-- 			s->op.cache_bio =3D bio;
-+ 			s->iop.bio =3D bio;
-  		}
-- 	}
-- out:
-- 	closure_call(&s->op.cl, bch_insert_data, NULL, cl);
-- 	continue_at(cl, cached_dev_write_complete, NULL);
-- skip:
-- 	s->op.skip =3D true;
-- 	s->op.cache_bio =3D s->orig_bio;
-- 	bio_get(s->op.cache_bio);
-+ 	} else {
-+ 		s->iop.bio =3D bio_clone_bioset(bio, GFP_NOIO,
-+ 					      dc->disk.bio_split);
- =20
-- 	if ((bio->bi_rw & REQ_DISCARD) &&
-- 	    !blk_queue_discard(bdev_get_queue(dc->bdev)))
-- 		goto out;
-+ 		closure_bio_submit(bio, cl, s->d);
-+ 	}
- =20
-- 	closure_bio_submit(bio, cl, s->d);
-- 	goto out;
-+ 	closure_call(&s->iop.cl, bch_data_insert, NULL, cl);
-+ 	continue_at(cl, cached_dev_write_complete, NULL);
-  }
- =20
-- static void request_nodata(struct cached_dev *dc, struct search *s)
-+ static void cached_dev_nodata(struct closure *cl)
-  {
-- 	struct closure *cl =3D &s->cl;
-+ 	struct search *s =3D container_of(cl, struct search, cl);
-  	struct bio *bio =3D &s->bio.bio;
- =20
-- 	if (bio->bi_rw & REQ_DISCARD) {
-- 		request_write(dc, s);
-- 		return;
-- 	}
--=20
-- 	if (s->op.flush_journal)
-- 		bch_journal_meta(s->op.c, cl);
-+ 	if (s->iop.flush_journal)
-+ 		bch_journal_meta(s->iop.c, cl);
- =20
-+ 	/* If it's a flush, we send the flush to the backing device too */
-  	closure_bio_submit(bio, cl, s->d);
- =20
-  	continue_at(cl, cached_dev_bio_complete, NULL);
-
---Signature=_Wed__25_Sep_2013_13_11_13_+1000_v_stM=jMstKfRuJS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSQlRWAAoJEECxmPOUX5FEd4IP/2fcq686jj9l4utnre6y3Q8M
-bx/lvN6bCfsiheCheNHNEPUy1XjeIhFpudWNk2Utbajl4xxWXxBNLHlLq8zsPYsn
-AISRjapQsO1DNxGrXSQckmsYPvnnQ4TuEBV92Unvqr0tBUiiTtPacxGdURwwDpXC
-zkdtgRGWgJo8GqRv9Y3zy8NOrp0TAVP9vwhDzHFjtf8I+PeY+gG7FR9z1+Brrk82
-G9DrDja68Jc80o6j9X4SZyg/kw9mGvtp0DDc+giatsDrEBdQh3YJdb5tyQCqU4vH
-eb+Y57cAq6jlH23t0EQ+isVbBZjKSK+GtaPUOAMXXjdRufM510BZjkfCXM8DkpIP
-BjuJdUbJOZqduWHtY1bzt8b7iEiMhRUAnLIIiXnzLBFHCCp90zNIXEwJdC7saEX1
-yqB2Ysal7ML1U/mmnYBYcGtIQyJJizFzsjoJVkLObe8WRHT4/B+QsY+SXsrbDRmJ
-aSCoQgYYQvK5IFjnFQKggnlC0ZBoJBtxHX5zNpOCdqgkXjR8WUHO/GAk5tOdR0nU
-T5kMk1f+c5HB6FleX+PpExcnR5xd/h2GhUvr3e7mB+YysFdd3wr2X8p1ixHRGs7A
-J86qZYhZRE7PaaFnmw2G+isGLNHqwvJeCEBmSSRuyK9JblCmKfHoMkpEoY8S1DaI
-0sFaXH1HQz0BWYEJEcBU
-=ZTHw
------END PGP SIGNATURE-----
-
---Signature=_Wed__25_Sep_2013_13_11_13_+1000_v_stM=jMstKfRuJS--
+Dave.
