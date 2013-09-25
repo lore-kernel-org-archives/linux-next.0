@@ -1,69 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the ipsec-next tree with the
- net-next tree
-Date: Wed, 25 Sep 2013 09:59:19 +1000
-Message-ID: <20130925095919.143635403832766c1b190202@canb.auug.org.au>
-References: <20130924121629.f818475ddf308b0494cfce2a@canb.auug.org.au>
-	<20130924102505.GS7660@secunet.com>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Wed, 25 Sep 2013 11:06:43 +1000
+Message-ID: <20130925110643.db5fa154bea3838ed6affa45@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__25_Sep_2013_09_59_19_+1000__nzaazIW/4Ty6+L+"
+ boundary="Signature=_Wed__25_Sep_2013_11_06_43_+1000_=pbgY2xoeaNwF_sN"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130924102505.GS7660@secunet.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fan Du <fan.du@windriver.com>, Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergei Trofimovich <slyfox@gentoo.org>, Timur Tabi <timur@freescale.com>, Greg KH <greg@kroah.com>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__25_Sep_2013_09_59_19_+1000__nzaazIW/4Ty6+L+
+--Signature=_Wed__25_Sep_2013_11_06_43_+1000_=pbgY2xoeaNwF_sN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Steffen,
+Hi Andrew,
 
-On Tue, 24 Sep 2013 12:25:05 +0200 Steffen Klassert <steffen.klassert@secun=
-et.com> wrote:
->
-> On Tue, Sep 24, 2013 at 12:16:29PM +1000, Stephen Rothwell wrote:
-> >=20
-> > Today's linux-next merge of the ipsec-next tree got a conflict in
-> > include/net/xfrm.h between commit d511337a1eda ("xfrm.h: Remove extern
-> > from function prototypes") from the net-next tree and commit aba8269588=
-30
-> > ("{ipv4,xfrm}: Introduce xfrm_tunnel_notifier for xfrm tunnel mode
-> > callback") from the ipsec-next tree.
->=20
-> Thanks for the information, I'll do a rebase of the ipsec-next
-> tree tomorrow.
+After merging the akpm tree, linux-next builds (powerpc allmodconfig)
+fail like this:
 
-Did you miss the end of the next paragraph:  "no action is required"?
-Dave can fix this up (like I did) when he merges your tree into his.
+drivers/tty/ehv_bytechan.c:362:1: error: type defaults to 'int' in declarat=
+ion of 'console_initcall' [-Werror=3Dimplicit-int]
 
+Caused by commit 0f01cf96c2d4 ("./Makefile: enable -Werror=3Dimplicit-int
+and -Werror=3Dstrict-prototypes by default") which has bee in linux-next
+since Aug 16.  This commit exposed that fact that
+drivers/tty/ehv_bytechan.c can be built as a module, but has a
+console_initcall (which is not available to modules).  This was
+originally introduced in commit dcd83aaff1c8 ("tty/powerpc: introduce the
+ePAPR embedded hypervisor byte channel driver") in v3.2.
+
+Anyone got a good solution?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__25_Sep_2013_09_59_19_+1000__nzaazIW/4Ty6+L+
+--Signature=_Wed__25_Sep_2013_11_06_43_+1000_=pbgY2xoeaNwF_sN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSQidbAAoJEECxmPOUX5FEAwIP/RgTSWX4xAWn60xXfQd1+CXE
-TjU81PxvOY5x0XdhBwTV0roBojZ9hFKyIvf4MfSRTnT2GJqLmMY9KGqFStow7ojf
-NxGR/cTIZx32fkxPIIvJJdzpQvtz/egKugPst3XgA5dN6yD8J6tycs6xa1IlMrfo
-FI7jvp244pw3DtNvoDYDU8qdRX+Y14PGcGoSjD/qVkyQX2p8T+X1xe0DFkqEu4CN
-NX4JEkNaiHGfhSj7blpUvGbUgXg20ur7chl/pKz7/KPA6dmzTI64/CzAMAWdzXl5
-o+j8pRhrjfp9+pLb9MaZ/v7vG//9BkdjzNjnm32yVSNj7tn2Kr7p4nrrqR6/2UVn
-mcghspP8rlFcoQ/Wx0NXTWNa7PKLtuCQmJRHIChk7l8iXbo5dzHSCP3hf4Rqg1EI
-qkAbfkc72ov1E/ejgdRn1cP6Q6QFcVt3/hZW8E3qF9lAfOYSKLpqGfYwasJH1e0B
-psC0bVGYQIfOySQDO18dSkWYK5C6b8UfaWZqddABlErCIAXi1g8u7LgpkMq6QXzu
-0dL5nlUrkZeb5lgClg6tKItRzrPAbIdL68bjUituhSD14VL5yFnlYjAYS4nr8fs4
-yE6GJe9gaEYsphU7rt4GgQftHUVjJy2JoL/SW03Z+KWuTdD/jgR052i6P+FjFfN9
-o+hRX/LUr4nBmy0aylEO
-=IsD7
+iQIcBAEBCAAGBQJSQjcnAAoJEECxmPOUX5FELSEP+wWHQRnG45pvXpbVMeSo+VE7
+s8ZvM2trltNujcLG55fIlDVpMqEmOCOXCNVBWNw1PBzTzFtocm7TsgtDgRITu5T8
+DUM/tAH2d9ySvzK1AkY9fM2ZhRs+LUZKI/jqAu08yjoAgUAXgVedwM3E7fKNYa31
+nR9xXJm1LIcTDN2MDPzaBxTnxWzD3Q9O04jiuyRh8V9V7VU+qGugxzgUHisxnxLm
+rrPDowhQlwA9xmncvGxreyrlAsZECoakZ5kEs04SPHx15Na+KKavcvEnfXg5IuxE
+7BgVEpBukLrvpe19epY99EJCAv0i0/ZDhN7mg0b5V/Gjf5Xy6MboMSRfrL8w9ic3
+YrGXK4LNHQUMtwBpNB3fZM6XToKKvqdOi7qsptly+RkXvzhnwI44kNG1/OsLvO39
+EsGmy+8ToskaCTTgymIJQh5O0HgmQGA5ROo4o9UJwz4vZ6GUL3Uey60XLe9z9G29
+w24DOYnLycGZ4U3AIlGEjpk8zhEZb4PMsuFdjWmOCsEPj44l+P+kZkZ5fpHJDBON
+6fhhE6XmX9ugSvYtXkuPvioUuw3yKQD7HNF9xXvhNaBw+BPA/ESclzxsRtOk5Ga7
+yx7q/aEnRsh3HJU+au6b2zb277GYb8cAWt1eBliOx2IV6+8jpMdeO0ywXjS3q5tb
+ZgcNrMgrBoSb9Fl+bWIf
+=92ne
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__25_Sep_2013_09_59_19_+1000__nzaazIW/4Ty6+L+--
+--Signature=_Wed__25_Sep_2013_11_06_43_+1000_=pbgY2xoeaNwF_sN--
