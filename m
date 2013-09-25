@@ -1,82 +1,72 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Wed, 25 Sep 2013 14:43:28 -0700
-Message-ID: <20130925144328.c679dc74178e78e188386b5a@linux-foundation.org>
-References: <20130925110643.db5fa154bea3838ed6affa45@canb.auug.org.au>
-	<20130925132612.d1685bc8fb72558eef6fb09d@linux-foundation.org>
-	<alpine.LNX.2.00.1309251426150.2479@eggly.anvils>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: old trees
+Date: Thu, 26 Sep 2013 09:46:43 +1000
+Message-ID: <20130926094643.af7512875525514047eb51c1@canb.auug.org.au>
+References: <20130917170124.0afa2e103a9977355ad7c72c@canb.auug.org.au>
+	<20130925072729.351516b9@lwn.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__26_Sep_2013_09_46_43_+1000_tYr4_pl/oUCpD6rZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750814Ab3IYVn3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Sep 2013 17:43:29 -0400
-In-Reply-To: <alpine.LNX.2.00.1309251426150.2479@eggly.anvils>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52001 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750825Ab3IYXqx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Sep 2013 19:46:53 -0400
+In-Reply-To: <20130925072729.351516b9@lwn.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Frederic Weisbecker <fweisbec@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergei Trofimovich <slyfox@gentoo.org>, Timur Tabi <timur@freescale.com>, Greg KH <greg@kroah.com>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 
-On Wed, 25 Sep 2013 14:32:14 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
+--Signature=_Thu__26_Sep_2013_09_46_43_+1000_tYr4_pl/oUCpD6rZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, 25 Sep 2013, Andrew Morton wrote:
-> > On Wed, 25 Sep 2013 11:06:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > Hi Andrew,
-> > > 
-> > > After merging the akpm tree, linux-next builds (powerpc allmodconfig)
-> > > fail like this:
-> > 
-> > I can't get powerpc to build at all at present:
-> > 
-> >   CHK     include/config/kernel.release
-> >   CHK     include/generated/uapi/linux/version.h
-> >   CHK     include/generated/utsrelease.h
-> >   CC      arch/powerpc/kernel/asm-offsets.s
-> > In file included from include/linux/vtime.h:6,
-> >                  from include/linux/hardirq.h:7,
-> >                  from include/linux/memcontrol.h:24,
-> >                  from include/linux/swap.h:8,
-> >                  from include/linux/suspend.h:4,
-> >                  from arch/powerpc/kernel/asm-offsets.c:24:
-> > arch/powerpc/include/generated/asm/vtime.h:1:31: error: asm-generic/vtime.h: No such file or directory
-> 
-> That caught me too: include/asm-generic/vtime.h is a patch-unfriendly
-> 0-length file in the git tree;
+Hi Jon,
 
-hm, this?
+On Wed, 25 Sep 2013 07:27:29 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
+>
+> On Tue, 17 Sep 2013 17:01:24 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > jc_docs		2 years, 6 months ago
+>=20
+> I was afraid it would be the oldest tree on the list, but it's not even
+> close...:)
 
+Yeah, amazing innit! ;-)
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: include/asm-generic/vtime.h: avoid zero-length file
+> I've been meaning to do some stuff there for a bit; the problem is that
+> life keeps getting in the way.  If it's not a hassle for you, I'd just
+> as soon keep it around, things have *got* to clear out one of these
+> days...
 
-patch(1) can't handle zero-length files - it appears to simply not create
-the file, so my powerpc build fails.
+No worries, consider it preserved :-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Put something in here to make life easier.
+--Signature=_Thu__26_Sep_2013_09_46_43_+1000_tYr4_pl/oUCpD6rZ
+Content-Type: application/pgp-signature
 
-Cc: Hugh Dickins <hughd@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
 
- include/asm-generic/vtime.h |    1 +
- 1 file changed, 1 insertion(+)
+iQIcBAEBCAAGBQJSQ3XoAAoJEECxmPOUX5FEcD0P/3354CuFdGs/J+izgE6TTmJR
+AN3Cek6tDgEw+qWKBfyTCuZKny0yBydd+szjIGLGQ6LSiBjg4CJVNszMqXbt20mh
+jT3HwRxsKk8ZFwLpQ0lmBtTFjh3MkBKF3gFInMscxVSFU5ehFV3fRHl7IZ2BxzY5
+DpcXyx6K9XoG8FUwbhXGZseB7CwLZlsg3XgvwFGPASk5r+DJvK/ASTZXDaherVen
+d3Jt890llQnkV690BprYJzOoG5fSOA6CvZfUZFNNTKv1YwkK1TE5Q3gc71/8p7ig
+SgEq2gpoOfKJwEyrjLhl6MN8T6QwUbLhTu9HoVRwEf5Isd8XYu2sh3sCjQY3Dte+
+HCdVAs1bLXO7Ho84LJjIHPOtsfM0onWM56kEJzSogpO1ov4PNqSK+yv5TCpNiHIn
+gcKwH3w59LG6rqeGcMKcA5E6ZmMNUr/a0N/fa/mcoN8HSMfAFNeRGOtHdOmmh//I
+XJRdPuvzBHI7660YxdfwtOPnnwdr5cl7TQKsrQCaYiz3TTrjWJ4adG6a44whFEpv
+g98rMH/gWG8jNhdKHXqGZBB2y8LdPkeETgpHhsfS07UXRoZD1wTX/KZb8naxCJOr
+1f5tKALjtovWVEcinQ+Wu86aYUxYidNe4rcmpzlehBF6yhl0Aqqyx7BUFUGpt5v+
+TBIMfuV61xMAzuHRmkP8
+=s0WH
+-----END PGP SIGNATURE-----
 
-diff -puN /dev/null include/asm-generic/vtime.h
---- /dev/null
-+++ a/include/asm-generic/vtime.h
-@@ -0,0 +1 @@
-+/* no content, but patch(1) dislikes empty files */
-_
-
-
-
-> I wonder what use it's supposed to have.
-
-Frederic, can you please confirm that include/asm-generic/vtime.h is
-supposed to be empty?
-
-> (And I'm not very keen on the growing trend for symlinks in the git tree.)
-
-ooh, that explains why I lost my arch/microblaze/boot/dts/system.dts.
+--Signature=_Thu__26_Sep_2013_09_46_43_+1000_tYr4_pl/oUCpD6rZ--
