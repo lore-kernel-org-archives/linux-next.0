@@ -1,73 +1,47 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Hugh Dickins <hughd@google.com>
 Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Wed, 25 Sep 2013 13:26:12 -0700
-Message-ID: <20130925132612.d1685bc8fb72558eef6fb09d@linux-foundation.org>
-References: <20130925110643.db5fa154bea3838ed6affa45@canb.auug.org.au>
+Date: Wed, 25 Sep 2013 14:32:14 -0700 (PDT)
+Message-ID: <alpine.LNX.2.00.1309251426150.2479@eggly.anvils>
+References: <20130925110643.db5fa154bea3838ed6affa45@canb.auug.org.au> <20130925132612.d1685bc8fb72558eef6fb09d@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130925110643.db5fa154bea3838ed6affa45@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergei Trofimovich <slyfox@gentoo.org>, Timur Tabi <timur@freescale.com>, Greg KH <greg@kroah.com>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:62548 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755411Ab3IYVcq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Sep 2013 17:32:46 -0400
+Received: by mail-pa0-f46.google.com with SMTP id fa1so377927pad.19
+        for <linux-next@vger.kernel.org>; Wed, 25 Sep 2013 14:32:46 -0700 (PDT)
+In-Reply-To: <20130925132612.d1685bc8fb72558eef6fb09d@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Frederic Weisbecker <fweisbec@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergei Trofimovich <slyfox@gentoo.org>, Timur Tabi <timur@freescale.com>, Greg KH <greg@kroah.com>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
-On Wed, 25 Sep 2013 11:06:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Andrew,
+On Wed, 25 Sep 2013, Andrew Morton wrote:
+> On Wed, 25 Sep 2013 11:06:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi Andrew,
+> > 
+> > After merging the akpm tree, linux-next builds (powerpc allmodconfig)
+> > fail like this:
 > 
-> After merging the akpm tree, linux-next builds (powerpc allmodconfig)
-> fail like this:
-
-I can't get powerpc to build at all at present:
-
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  CHK     include/generated/utsrelease.h
-  CC      arch/powerpc/kernel/asm-offsets.s
-In file included from include/linux/vtime.h:6,
-                 from include/linux/hardirq.h:7,
-                 from include/linux/memcontrol.h:24,
-                 from include/linux/swap.h:8,
-                 from include/linux/suspend.h:4,
-                 from arch/powerpc/kernel/asm-offsets.c:24:
-arch/powerpc/include/generated/asm/vtime.h:1:31: error: asm-generic/vtime.h: No such file or directory
-
-> drivers/tty/ehv_bytechan.c:362:1: error: type defaults to 'int' in declaration of 'console_initcall' [-Werror=implicit-int]
+> I can't get powerpc to build at all at present:
 > 
-> Caused by commit 0f01cf96c2d4 ("./Makefile: enable -Werror=implicit-int
-> and -Werror=strict-prototypes by default") which has bee in linux-next
-> since Aug 16.  This commit exposed that fact that
-> drivers/tty/ehv_bytechan.c can be built as a module, but has a
-> console_initcall (which is not available to modules).  This was
-> originally introduced in commit dcd83aaff1c8 ("tty/powerpc: introduce the
-> ePAPR embedded hypervisor byte channel driver") in v3.2.
-> 
-> Anyone got a good solution?
+>   CHK     include/config/kernel.release
+>   CHK     include/generated/uapi/linux/version.h
+>   CHK     include/generated/utsrelease.h
+>   CC      arch/powerpc/kernel/asm-offsets.s
+> In file included from include/linux/vtime.h:6,
+>                  from include/linux/hardirq.h:7,
+>                  from include/linux/memcontrol.h:24,
+>                  from include/linux/swap.h:8,
+>                  from include/linux/suspend.h:4,
+>                  from arch/powerpc/kernel/asm-offsets.c:24:
+> arch/powerpc/include/generated/asm/vtime.h:1:31: error: asm-generic/vtime.h: No such file or directory
 
-console_initcall() is a macro defined in init.h.  But we forgot to
-provide a version for #ifdef MODULE.
+That caught me too: include/asm-generic/vtime.h is a patch-unfriendly
+0-length file in the git tree; I wonder what use it's supposed to have.
 
-At include/linux/init.h line 284 we see:
+(And I'm not very keen on the growing trend for symlinks in the git tree.)
 
-/* Don't use these in loadable modules, but some people do... */
-#define early_initcall(fn)		module_init(fn)
-#define core_initcall(fn)		module_init(fn)
-...
-
-So we *could* add console_initcall() there.  But the problem is that it
-won't work as desired - when the driver is loaded as a module,
-ehv_bc_console_init() will be called at modprobe time, which is far far
-later than console_initcall-time.
-
-So the ehv_bytechan.c developers need to work out what they want to do
-here.  Do we disallow building that driver as a module?  Or do we
-permit that, and run ehv_bc_console_init() at modprobe time (needs
-testing!).
-
-If the latter then I'd be reluctant to add a modular version of
-console_initcall() because the thing's very presence is misleading. 
-otoh, drivers which use such a console_initcall() _might_ work, and
-everyone tests their drivers both built-in and as modules, don't they? 
-Don't they?
+Hugh
