@@ -1,138 +1,91 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ceph tree
-Date: Thu, 26 Sep 2013 11:15:00 +1000
-Message-ID: <20130926111500.cb583a5fe861bd4699a4e9d7@canb.auug.org.au>
+From: majianpeng <majianpeng@gmail.com>
+Subject: Re: linux-next: build failure after merge of the ceph tree
+Date: Thu, 26 Sep 2013 09:20:39 +0800
+Message-ID: <201309260920374598440@gmail.com>
+References: <20130926111500.cb583a5fe861bd4699a4e9d7@canb.auug.org.au>
+Reply-To: majianpeng <majianpeng@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__26_Sep_2013_11_15_00_+1000_iq6LVudnh/wlCoo3"
+Content-Type: text/plain;
+	charset="gb2312"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53916 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751251Ab3IZBPN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Sep 2013 21:15:13 -0400
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:51176 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751116Ab3IZBUn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Sep 2013 21:20:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sage Weil <sage@newdream.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, majianpeng <majianpeng@gmail.com>, Kent Overstreet <koverstreet@google.com>, Benjamin LaHaise <bcrl@kvack.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Sage Weil <sage@newdream.net>
+Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Kent Overstreet <koverstreet@google.com>, Benjamin LaHaise <bcrl@kvack.org>
 
---Signature=_Thu__26_Sep_2013_11_15_00_+1000_iq6LVudnh/wlCoo3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Sage,
-
-After merging the ceph tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-In file included from include/linux/kernel.h:14:0,
-                 from include/linux/cache.h:4,
-                 from include/linux/time.h:4,
-                 from include/linux/stat.h:18,
-                 from include/linux/module.h:10,
-                 from fs/ceph/file.c:3:
-fs/ceph/file.c: In function 'ceph_sync_read':
-fs/ceph/file.c:421:21: error: 'struct kiocb' has no member named 'ki_left'
-       (unsigned)iocb->ki_left,
-                     ^
-include/linux/dynamic_debug.h:79:10: note: in definition of macro 'dynamic_=
-pr_debug'
-        ##__VA_ARGS__);  \
-          ^
-include/linux/ceph/ceph_debug.h:17:2: note: in expansion of macro 'pr_debug'
-  pr_debug("%.*s %12.12s:%-4d : " fmt,    \
-  ^
-fs/ceph/file.c:420:2: note: in expansion of macro 'dout'
-  dout("sync_read on file %p %llu~%u %s\n", file, off,
-  ^
-fs/ceph/file.c:430:17: error: 'struct kiocb' has no member named 'ki_left'
-       off + iocb->ki_left);
-                 ^
-fs/ceph/file.c:436:25: error: 'struct iov_iter' has no member named 'iov'
-    void __user *data =3D i->iov[0].iov_base + i->iov_offset;
-                         ^
-fs/ceph/file.c:437:18: error: 'struct iov_iter' has no member named 'iov'
-    size_t len =3D i->iov[0].iov_len - i->iov_offset;
-                  ^
-fs/ceph/file.c:458:20: error: 'struct kiocb' has no member named 'ki_left'
-   size_t len =3D iocb->ki_left;
-                    ^
-fs/ceph/file.c:471:26: error: 'struct iov_iter' has no member named 'iov'
-     void __user *data =3D i->iov[0].iov_base
-                          ^
-In file included from include/linux/cache.h:4:0,
-                 from include/linux/time.h:4,
-                 from include/linux/stat.h:18,
-                 from include/linux/module.h:10,
-                 from fs/ceph/file.c:3:
-fs/ceph/file.c:473:14: error: 'struct iov_iter' has no member named 'iov'
-     l =3D min(i->iov[0].iov_len - i->iov_offset,
-              ^
-include/linux/kernel.h:670:9: note: in definition of macro 'min'
-  typeof(x) _min1 =3D (x);   \
-         ^
-fs/ceph/file.c:473:14: error: 'struct iov_iter' has no member named 'iov'
-     l =3D min(i->iov[0].iov_len - i->iov_offset,
-              ^
-include/linux/kernel.h:670:21: note: in definition of macro 'min'
-  typeof(x) _min1 =3D (x);   \
-                     ^
-include/linux/kernel.h:672:17: warning: comparison of distinct pointer type=
-s lacks a cast [enabled by default]
-  (void) (&_min1 =3D=3D &_min2);  \
-                 ^
-fs/ceph/file.c:473:9: note: in expansion of macro 'min'
-     l =3D min(i->iov[0].iov_len - i->iov_offset,
-         ^
-fs/ceph/file.c:496:7: error: 'struct kiocb' has no member named 'ki_left'
-   iocb->ki_left -=3D ret;
-       ^
-fs/ceph/file.c: In function 'ceph_sync_direct_write':
-fs/ceph/file.c:588:24: error: 'struct iov_iter' has no member named 'iov'
-   void __user *data =3D i.iov->iov_base + i.iov_offset;
-                        ^
-fs/ceph/file.c:589:14: error: 'struct iov_iter' has no member named 'iov'
-   u64 len =3D i.iov->iov_len - i.iov_offset;
-              ^
-fs/ceph/file.c: In function 'ceph_aio_read':
-fs/ceph/file.c:839:7: error: 'struct kiocb' has no member named 'ki_left'
-   iocb->ki_left =3D len;
-       ^
-fs/ceph/file.c:870:8: error: 'struct kiocb' has no member named 'ki_left'
-    iocb->ki_left) {
-        ^
-
-Caused by commit e6c9af8b8f11 ("ceph: implement readv/preadv for sync
-operation").  ki_left was removed by commit 73a7075e3f6e ("aio: Kill
-aio_rw_vect_retry()") during the merge window ... basing new work for
-v3.13 on v3.11 is a bit problematic.
-
-I have used the ceph tree from next-20130925 for today.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__26_Sep_2013_11_15_00_+1000_iq6LVudnh/wlCoo3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSQ4qZAAoJEECxmPOUX5FE+8YP/2E3UmPwilzIyq9JL8o/0G3d
-TR2b8kBb/e9CQqFaPFsxZwSm2Th1UUSaITWisnTrxXIyTuYKPO1qhtV03+Lwa/uZ
-crriDkV4oeVzC5rR8lxv5s8IRnjGcTN4CDwkY2NIqHxzVMBaOc23gjf3L6fxdMge
-XgTVtt1dkQAyDey5mV6epSQcNgfhdbqyL8k6vzK/MJxVwzi8IzF4lW2Ne+giXKYv
-sQa0niovjMItIk6U1QJF1F8wyCNVq7PHuxm4i6ac7lXiYkNYA5mk3OAIoOEXf3ZD
-98ykc154NFycnacNGwT26qHmZ8Dru+XwTYrrJ48N9Gty28G0+NXbbUnCQxw7grmt
-H786XAWELc8LSVgs2Nc3vdTo3H1pHwLVVAbj9wj2qNtpAK+1QfCIapLgg4fTAChi
-Rni0b5PRU4z2gpGdtOsAC2ARBIXeD50qCsZfv1i2+4qeHBZwl6T84EUaD151nN/6
-zc3+hwUtz9guDWj63CzgvrJsHA90UpQLypi3PVAqlTfIYkjqruuh5Q4GUVTpUQJN
-w8AjP/zctCE1dK7Xo1Vdx4ch5RDe8X76G6sLPmlpucMyxTSRgs3ysCwOgxvCih0V
-5KsyR59LkHbI06RzLhnpScMfTMFzdJvneis7Pj7q1mzsE3LSwkYTkn4TnazAknSV
-snSgWwBuSEEaj8XvXPng
-=aXfx
------END PGP SIGNATURE-----
-
---Signature=_Thu__26_Sep_2013_11_15_00_+1000_iq6LVudnh/wlCoo3--
+U29ycnkgZm9yIHRoYXQsIGkgbm90aWNlIHRoZSBjb21taXQgNzNhNzA3NWUzZjZlLkJ1dCBpIG1p
+c3JlYWQgaXQuDQpJJ2xsIG1vZGlmeSB0aGlzIGFzIHNvb24gYXMgcG9zc2libGUuDQoNClRoYW5r
+cyENCkppYW5wZW5nIE1hDQo+SGkgU2FnZSwNCj4NCj5BZnRlciBtZXJnaW5nIHRoZSBjZXBoIHRy
+ZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoeDg2XzY0DQo+YWxsbW9kY29uZmlnKSBmYWls
+ZWQgbGlrZSB0aGlzOg0KPg0KPkluIGZpbGUgaW5jbHVkZWQgZnJvbSBpbmNsdWRlL2xpbnV4L2tl
+cm5lbC5oOjE0OjAsDQo+ICAgICAgICAgICAgICAgICBmcm9tIGluY2x1ZGUvbGludXgvY2FjaGUu
+aDo0LA0KPiAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L3RpbWUuaDo0LA0KPiAg
+ICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L3N0YXQuaDoxOCwNCj4gICAgICAgICAg
+ICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9tb2R1bGUuaDoxMCwNCj4gICAgICAgICAgICAgICAg
+IGZyb20gZnMvY2VwaC9maWxlLmM6MzoNCj5mcy9jZXBoL2ZpbGUuYzogSW4gZnVuY3Rpb24gJ2Nl
+cGhfc3luY19yZWFkJzoNCj5mcy9jZXBoL2ZpbGUuYzo0MjE6MjE6IGVycm9yOiAnc3RydWN0IGtp
+b2NiJyBoYXMgbm8gbWVtYmVyIG5hbWVkICdraV9sZWZ0Jw0KPiAgICAgICAodW5zaWduZWQpaW9j
+Yi0+a2lfbGVmdCwNCj4gICAgICAgICAgICAgICAgICAgICBeDQo+aW5jbHVkZS9saW51eC9keW5h
+bWljX2RlYnVnLmg6Nzk6MTA6IG5vdGU6IGluIGRlZmluaXRpb24gb2YgbWFjcm8gJ2R5bmFtaWNf
+cHJfZGVidWcnDQo+ICAgICAgICAjI19fVkFfQVJHU19fKTsgIFwNCj4gICAgICAgICAgXg0KPmlu
+Y2x1ZGUvbGludXgvY2VwaC9jZXBoX2RlYnVnLmg6MTc6Mjogbm90ZTogaW4gZXhwYW5zaW9uIG9m
+IG1hY3JvICdwcl9kZWJ1ZycNCj4gIHByX2RlYnVnKCIlLipzICUxMi4xMnM6JS00ZCA6ICIgZm10
+LCAgICBcDQo+ICBeDQo+ZnMvY2VwaC9maWxlLmM6NDIwOjI6IG5vdGU6IGluIGV4cGFuc2lvbiBv
+ZiBtYWNybyAnZG91dCcNCj4gIGRvdXQoInN5bmNfcmVhZCBvbiBmaWxlICVwICVsbHV+JXUgJXNc
+biIsIGZpbGUsIG9mZiwNCj4gIF4NCj5mcy9jZXBoL2ZpbGUuYzo0MzA6MTc6IGVycm9yOiAnc3Ry
+dWN0IGtpb2NiJyBoYXMgbm8gbWVtYmVyIG5hbWVkICdraV9sZWZ0Jw0KPiAgICAgICBvZmYgKyBp
+b2NiLT5raV9sZWZ0KTsNCj4gICAgICAgICAgICAgICAgIF4NCj5mcy9jZXBoL2ZpbGUuYzo0MzY6
+MjU6IGVycm9yOiAnc3RydWN0IGlvdl9pdGVyJyBoYXMgbm8gbWVtYmVyIG5hbWVkICdpb3YnDQo+
+ICAgIHZvaWQgX191c2VyICpkYXRhID0gaS0+aW92WzBdLmlvdl9iYXNlICsgaS0+aW92X29mZnNl
+dDsNCj4gICAgICAgICAgICAgICAgICAgICAgICAgXg0KPmZzL2NlcGgvZmlsZS5jOjQzNzoxODog
+ZXJyb3I6ICdzdHJ1Y3QgaW92X2l0ZXInIGhhcyBubyBtZW1iZXIgbmFtZWQgJ2lvdicNCj4gICAg
+c2l6ZV90IGxlbiA9IGktPmlvdlswXS5pb3ZfbGVuIC0gaS0+aW92X29mZnNldDsNCj4gICAgICAg
+ICAgICAgICAgICBeDQo+ZnMvY2VwaC9maWxlLmM6NDU4OjIwOiBlcnJvcjogJ3N0cnVjdCBraW9j
+YicgaGFzIG5vIG1lbWJlciBuYW1lZCAna2lfbGVmdCcNCj4gICBzaXplX3QgbGVuID0gaW9jYi0+
+a2lfbGVmdDsNCj4gICAgICAgICAgICAgICAgICAgIF4NCj5mcy9jZXBoL2ZpbGUuYzo0NzE6MjY6
+IGVycm9yOiAnc3RydWN0IGlvdl9pdGVyJyBoYXMgbm8gbWVtYmVyIG5hbWVkICdpb3YnDQo+ICAg
+ICB2b2lkIF9fdXNlciAqZGF0YSA9IGktPmlvdlswXS5pb3ZfYmFzZQ0KPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgXg0KPkluIGZpbGUgaW5jbHVkZWQgZnJvbSBpbmNsdWRlL2xpbnV4L2NhY2hl
+Lmg6NDowLA0KPiAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L3RpbWUuaDo0LA0K
+PiAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L3N0YXQuaDoxOCwNCj4gICAgICAg
+ICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9tb2R1bGUuaDoxMCwNCj4gICAgICAgICAgICAg
+ICAgIGZyb20gZnMvY2VwaC9maWxlLmM6MzoNCj5mcy9jZXBoL2ZpbGUuYzo0NzM6MTQ6IGVycm9y
+OiAnc3RydWN0IGlvdl9pdGVyJyBoYXMgbm8gbWVtYmVyIG5hbWVkICdpb3YnDQo+ICAgICBsID0g
+bWluKGktPmlvdlswXS5pb3ZfbGVuIC0gaS0+aW92X29mZnNldCwNCj4gICAgICAgICAgICAgIF4N
+Cj5pbmNsdWRlL2xpbnV4L2tlcm5lbC5oOjY3MDo5OiBub3RlOiBpbiBkZWZpbml0aW9uIG9mIG1h
+Y3JvICdtaW4nDQo+ICB0eXBlb2YoeCkgX21pbjEgPSAoeCk7ICAgXA0KPiAgICAgICAgIF4NCj5m
+cy9jZXBoL2ZpbGUuYzo0NzM6MTQ6IGVycm9yOiAnc3RydWN0IGlvdl9pdGVyJyBoYXMgbm8gbWVt
+YmVyIG5hbWVkICdpb3YnDQo+ICAgICBsID0gbWluKGktPmlvdlswXS5pb3ZfbGVuIC0gaS0+aW92
+X29mZnNldCwNCj4gICAgICAgICAgICAgIF4NCj5pbmNsdWRlL2xpbnV4L2tlcm5lbC5oOjY3MDoy
+MTogbm90ZTogaW4gZGVmaW5pdGlvbiBvZiBtYWNybyAnbWluJw0KPiAgdHlwZW9mKHgpIF9taW4x
+ID0gKHgpOyAgIFwNCj4gICAgICAgICAgICAgICAgICAgICBeDQo+aW5jbHVkZS9saW51eC9rZXJu
+ZWwuaDo2NzI6MTc6IHdhcm5pbmc6IGNvbXBhcmlzb24gb2YgZGlzdGluY3QgcG9pbnRlciB0eXBl
+cyBsYWNrcyBhIGNhc3QgW2VuYWJsZWQgYnkgZGVmYXVsdF0NCj4gICh2b2lkKSAoJl9taW4xID09
+ICZfbWluMik7ICBcDQo+ICAgICAgICAgICAgICAgICBeDQo+ZnMvY2VwaC9maWxlLmM6NDczOjk6
+IG5vdGU6IGluIGV4cGFuc2lvbiBvZiBtYWNybyAnbWluJw0KPiAgICAgbCA9IG1pbihpLT5pb3Zb
+MF0uaW92X2xlbiAtIGktPmlvdl9vZmZzZXQsDQo+ICAgICAgICAgXg0KPmZzL2NlcGgvZmlsZS5j
+OjQ5Njo3OiBlcnJvcjogJ3N0cnVjdCBraW9jYicgaGFzIG5vIG1lbWJlciBuYW1lZCAna2lfbGVm
+dCcNCj4gICBpb2NiLT5raV9sZWZ0IC09IHJldDsNCj4gICAgICAgXg0KPmZzL2NlcGgvZmlsZS5j
+OiBJbiBmdW5jdGlvbiAnY2VwaF9zeW5jX2RpcmVjdF93cml0ZSc6DQo+ZnMvY2VwaC9maWxlLmM6
+NTg4OjI0OiBlcnJvcjogJ3N0cnVjdCBpb3ZfaXRlcicgaGFzIG5vIG1lbWJlciBuYW1lZCAnaW92
+Jw0KPiAgIHZvaWQgX191c2VyICpkYXRhID0gaS5pb3YtPmlvdl9iYXNlICsgaS5pb3Zfb2Zmc2V0
+Ow0KPiAgICAgICAgICAgICAgICAgICAgICAgIF4NCj5mcy9jZXBoL2ZpbGUuYzo1ODk6MTQ6IGVy
+cm9yOiAnc3RydWN0IGlvdl9pdGVyJyBoYXMgbm8gbWVtYmVyIG5hbWVkICdpb3YnDQo+ICAgdTY0
+IGxlbiA9IGkuaW92LT5pb3ZfbGVuIC0gaS5pb3Zfb2Zmc2V0Ow0KPiAgICAgICAgICAgICAgXg0K
+PmZzL2NlcGgvZmlsZS5jOiBJbiBmdW5jdGlvbiAnY2VwaF9haW9fcmVhZCc6DQo+ZnMvY2VwaC9m
+aWxlLmM6ODM5Ojc6IGVycm9yOiAnc3RydWN0IGtpb2NiJyBoYXMgbm8gbWVtYmVyIG5hbWVkICdr
+aV9sZWZ0Jw0KPiAgIGlvY2ItPmtpX2xlZnQgPSBsZW47DQo+ICAgICAgIF4NCj5mcy9jZXBoL2Zp
+bGUuYzo4NzA6ODogZXJyb3I6ICdzdHJ1Y3Qga2lvY2InIGhhcyBubyBtZW1iZXIgbmFtZWQgJ2tp
+X2xlZnQnDQo+ICAgIGlvY2ItPmtpX2xlZnQpIHsNCj4gICAgICAgIF4NCj4NCj5DYXVzZWQgYnkg
+Y29tbWl0IGU2YzlhZjhiOGYxMSAoImNlcGg6IGltcGxlbWVudCByZWFkdi9wcmVhZHYgZm9yIHN5
+bmMNCj5vcGVyYXRpb24iKS4gIGtpX2xlZnQgd2FzIHJlbW92ZWQgYnkgY29tbWl0IDczYTcwNzVl
+M2Y2ZSAoImFpbzogS2lsbA0KPmFpb19yd192ZWN0X3JldHJ5KCkiKSBkdXJpbmcgdGhlIG1lcmdl
+IHdpbmRvdyAuLi4gYmFzaW5nIG5ldyB3b3JrIGZvcg0KPnYzLjEzIG9uIHYzLjExIGlzIGEgYml0
+IHByb2JsZW1hdGljLg0KPg0KPkkgaGF2ZSB1c2VkIHRoZSBjZXBoIHRyZWUgZnJvbSBuZXh0LTIw
+MTMwOTI1IGZvciB0b2RheS4NCj4NCj4tLSANCj5DaGVlcnMsDQo+U3RlcGhlbiBSb3Rod2VsbCAg
+ICAgICAgICAgICAgICAgICAgc2ZyQGNhbmIuYXV1Zy5vcmcuYXUNCj4=
