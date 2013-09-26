@@ -1,122 +1,77 @@
-From: Sage Weil <sage@inktank.com>
-Subject: Re: linux-next: build failure after merge of the ceph tree
-Date: Wed, 25 Sep 2013 18:26:03 -0700 (PDT)
-Message-ID: <alpine.DEB.2.00.1309251824460.12714@cobra.newdream.net>
-References: <20130926111500.cb583a5fe861bd4699a4e9d7@canb.auug.org.au> <201309260920374598440@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: New GPG key
+Date: Thu, 26 Sep 2013 12:19:53 +1000
+Message-ID: <20130926121953.d22cf18caf611ee36f8bf71a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cobra.newdream.net ([66.33.216.30]:33326 "EHLO
-	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754777Ab3IZB0E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Sep 2013 21:26:04 -0400
-In-Reply-To: <201309260920374598440@gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60527 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754553Ab3IZCT4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Sep 2013 22:19:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: majianpeng <majianpeng@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sage Weil <sage@newdream.net>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Kent Overstreet <koverstreet@google.com>, Benjamin LaHaise <bcrl@kvack.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Thu, 26 Sep 2013, majianpeng wrote:
-> Sorry for that, i notice the commit 73a7075e3f6e.But i misread it.
-> I'll modify this as soon as possible.
+Hi all,
 
-Thanks!  For now I'll drop this patch and rebase the queue against 
-3.12-rc2.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-Thanks, Stephen!
-sage
+I have just generated a new daily use key as my previous key is about
+to expire.  This new key is signed by my old key, my signing key and my
+tag signing key.  I have clear signed this message with both my new and
+old keys.
 
-> 
-> Thanks!
-> Jianpeng Ma
-> >Hi Sage,
-> >
-> >After merging the ceph tree, today's linux-next build (x86_64
-> >allmodconfig) failed like this:
-> >
-> >In file included from include/linux/kernel.h:14:0,
-> >                 from include/linux/cache.h:4,
-> >                 from include/linux/time.h:4,
-> >                 from include/linux/stat.h:18,
-> >                 from include/linux/module.h:10,
-> >                 from fs/ceph/file.c:3:
-> >fs/ceph/file.c: In function 'ceph_sync_read':
-> >fs/ceph/file.c:421:21: error: 'struct kiocb' has no member named 'ki_left'
-> >       (unsigned)iocb->ki_left,
-> >                     ^
-> >include/linux/dynamic_debug.h:79:10: note: in definition of macro 'dynamic_pr_debug'
-> >        ##__VA_ARGS__);  \
-> >          ^
-> >include/linux/ceph/ceph_debug.h:17:2: note: in expansion of macro 'pr_debug'
-> >  pr_debug("%.*s %12.12s:%-4d : " fmt,    \
-> >  ^
-> >fs/ceph/file.c:420:2: note: in expansion of macro 'dout'
-> >  dout("sync_read on file %p %llu~%u %s\n", file, off,
-> >  ^
-> >fs/ceph/file.c:430:17: error: 'struct kiocb' has no member named 'ki_left'
-> >       off + iocb->ki_left);
-> >                 ^
-> >fs/ceph/file.c:436:25: error: 'struct iov_iter' has no member named 'iov'
-> >    void __user *data = i->iov[0].iov_base + i->iov_offset;
-> >                         ^
-> >fs/ceph/file.c:437:18: error: 'struct iov_iter' has no member named 'iov'
-> >    size_t len = i->iov[0].iov_len - i->iov_offset;
-> >                  ^
-> >fs/ceph/file.c:458:20: error: 'struct kiocb' has no member named 'ki_left'
-> >   size_t len = iocb->ki_left;
-> >                    ^
-> >fs/ceph/file.c:471:26: error: 'struct iov_iter' has no member named 'iov'
-> >     void __user *data = i->iov[0].iov_base
-> >                          ^
-> >In file included from include/linux/cache.h:4:0,
-> >                 from include/linux/time.h:4,
-> >                 from include/linux/stat.h:18,
-> >                 from include/linux/module.h:10,
-> >                 from fs/ceph/file.c:3:
-> >fs/ceph/file.c:473:14: error: 'struct iov_iter' has no member named 'iov'
-> >     l = min(i->iov[0].iov_len - i->iov_offset,
-> >              ^
-> >include/linux/kernel.h:670:9: note: in definition of macro 'min'
-> >  typeof(x) _min1 = (x);   \
-> >         ^
-> >fs/ceph/file.c:473:14: error: 'struct iov_iter' has no member named 'iov'
-> >     l = min(i->iov[0].iov_len - i->iov_offset,
-> >              ^
-> >include/linux/kernel.h:670:21: note: in definition of macro 'min'
-> >  typeof(x) _min1 = (x);   \
-> >                     ^
-> >include/linux/kernel.h:672:17: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> >  (void) (&_min1 == &_min2);  \
-> >                 ^
-> >fs/ceph/file.c:473:9: note: in expansion of macro 'min'
-> >     l = min(i->iov[0].iov_len - i->iov_offset,
-> >         ^
-> >fs/ceph/file.c:496:7: error: 'struct kiocb' has no member named 'ki_left'
-> >   iocb->ki_left -= ret;
-> >       ^
-> >fs/ceph/file.c: In function 'ceph_sync_direct_write':
-> >fs/ceph/file.c:588:24: error: 'struct iov_iter' has no member named 'iov'
-> >   void __user *data = i.iov->iov_base + i.iov_offset;
-> >                        ^
-> >fs/ceph/file.c:589:14: error: 'struct iov_iter' has no member named 'iov'
-> >   u64 len = i.iov->iov_len - i.iov_offset;
-> >              ^
-> >fs/ceph/file.c: In function 'ceph_aio_read':
-> >fs/ceph/file.c:839:7: error: 'struct kiocb' has no member named 'ki_left'
-> >   iocb->ki_left = len;
-> >       ^
-> >fs/ceph/file.c:870:8: error: 'struct kiocb' has no member named 'ki_left'
-> >    iocb->ki_left) {
-> >        ^
-> >
-> >Caused by commit e6c9af8b8f11 ("ceph: implement readv/preadv for sync
-> >operation").  ki_left was removed by commit 73a7075e3f6e ("aio: Kill
-> >aio_rw_vect_retry()") during the merge window ... basing new work for
-> >v3.13 on v3.11 is a bit problematic.
-> >
-> >I have used the ceph tree from next-20130925 for today.
-> >
-> >-- 
-> >Cheers,
-> >Stephen Rothwell                    sfr@canb.auug.org.au
-> >
+I will begin using this new key to sign/encrypt stuff from later today.
+This is just a heads up in case anyone notices the change.
+
+This is my new key:
+
+pub   4096R/2BED9C15 2013-09-26 [expires: 2015-12-15]
+      Key fingerprint = 8049 83EF 2613 1EF8 71AA  03DF C0D3 6BC2 2BED 9C15
+uid                  Stephen Rothwell <sfr@canb.auug.org.au>
+sub   4096R/1DFDD986 2013-09-26 [expires: 2015-12-15]
+
+This is my old key (expires on October 3):
+
+pub   4096R/945F9144 2011-10-04 [expires: 2013-10-03]
+      Key fingerprint = 5F52 1C5A DE65 8803 821C  2819 40B1 98F3 945F 9144
+uid                  Stephen Rothwell <sfr@canb.auug.org.au>
+sub   4096R/1E1967B3 2011-10-04 [expires: 2013-10-03]
+
+Both keys should be in the key servers.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSQ5mRAAoJEECxmPOUX5FEfuoP/iY39V9SrVkCexeYl5coKMnK
+gVfLANqm7WzabN1r0r/t4H6FuSXWGZ3Z75yG4WAQTAKCYYNKs4kvF0KWJIN47Tdp
+DNP56sta8KpxhHvOPoqEPhAR57b61st03SUrSSeGkGDXjwJnYQLJUrjzIggIsKNz
+mAUdb6u3vXs/s4WIoBN+R0Nwi/utthURZNcfWMe29F7aVes5yKLyywsnaAnYBDTP
+mqrnPk6fO9fmYQZF+KPNfHqY+YfpUQNoTenk4ZVoAqJa6KuQm0EBKdI+HGwrDdt4
+iF+hP2dVot3WdQJU3Mvy6oWV5TF3eDLyRfReF+ZoxdYQ2uEFVRWXHtvaq0NUrjTq
+FiSZxZrJh3XY+nhAqseEyBL9bw8IVpa8YLLGqBFpZek++hEp/YNybjBXelHAfEn/
+lt5oNopGgdF8yy4miWxX8B4cGb54F5X639tDRI54wg87poHdiT5XewoYcwQzBoOT
+JRayuxvXrf3geD5AaoHBY8vsxbCcAyLlnjh2JC9ewdPWYwW1UvxBQbkEMzkvGWBQ
+pMaMbRT5DEElLvaGH7AUjnnOSiavSrYg+U8Pf+YGzLo/232tF/4/n4HRY6OfnVJC
+lUKgLdHavwZqzACsgkG7W+5wt4kFfij9clsYOnNt44rp6ykln6JfNFzomJPOu/kF
+Eio8aOcp0Sq64QYKxXXniQIcBAEBCAAGBQJSQ5mRAAoJEMDTa8Ir7ZwVfuoP/RdL
+FpB7WrlP9SPJ59TGvORL0EAqslbuFaMwoyssuqw+jfGC9D6HCEv/f1Zes0n92A9+
+w2Tm5mYlnTwmZuhNxHXmy5UWGRLeF2Cv0rFlUZ/F+d2HEcyxQXKq8QogDj6dWkRf
+pRIgXTWEWl5jT6VptQzYVru7oTLcHmalni8hkDrERzwDQ5OmrEI39UK+yd6u35+2
+Q6goqEXsPyJoJ5brGthPjiXTEFimf7EJ3VpoUzrNrrPrVICJwDqTBYZJEosQiNFU
+mXg5E/88DimroXCpGPHqYnL5+uTWUHLRHs+e1Igmq22HT3qzIQWhnJHznd+JZRda
+O2esBECwxtpVWs03BPWRgqsw9LdwEtSUvxYWbiErY4UBC8cY3nzGD/ioZ4ANu4TK
+P15/e7Tk+LZMmVIvEEKwOrANvPHT0PJEhHEtxnsrAMOOOzUbzCBGCXXqSSMQdL/J
+agNS1g+DxmriDVWiH2PhWeBiEQ0QLkFJQFFnBqd9FyRLA07iGsKTkG5EQ+2qJlWd
+juFDnnRJ1iuf47dW0p6qCPiHpQX+UPq6dk8HUj4ty/L1Dv3jSKJAR8GhHbI7HrHF
+WE3dn4UGwTR913Pf/JFufXEbE7Agwm+MEKcd+QJ+XAyvAcsnNWBKaMltmh+Bm+zZ
+StVSBy8QdlYQk17qqvbySeIxJKUksUZRfrJH7Kbk
+=pjRe
+-----END PGP SIGNATURE-----
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
