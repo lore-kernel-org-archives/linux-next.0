@@ -1,100 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the char-misc tree
-Date: Fri, 27 Sep 2013 17:10:29 +1000
-Message-ID: <20130927171029.609cf783d3f9645ebe7117c0@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 27 Sep 2013 18:02:19 +1000
+Message-ID: <20130927180219.f15e4e7fa60ee7ffb929abef@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Sep_2013_17_10_29_+1000_aFGmXdV+AYEzeWiF"
+ boundary="Signature=_Fri__27_Sep_2013_18_02_19_+1000_PpK5qOhWuX93smtp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59402 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:46723 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751050Ab3I0HKm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Sep 2013 03:10:42 -0400
+	with ESMTP id S1751813Ab3I0ICd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Sep 2013 04:02:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Sudeep Dutt <sudeep.dutt@intel.com>, Dasaratharaman Chandramouli <dasaratharaman.chandramouli@intel.com>, Ashutosh Dixit <ashutosh.dixit@intel.com>, Caz Yokoyama <Caz.Yokoyama@intel.com>, Harshavardhan R Kharche <harshavardhan.r.kharche@intel.com>, Nikhil Rao <nikhil.rao@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Tang Chen <tangchen@cn.fujitsu.com>
 
---Signature=_Fri__27_Sep_2013_17_10_29_+1000_aFGmXdV+AYEzeWiF
+--Signature=_Fri__27_Sep_2013_18_02_19_+1000_PpK5qOhWuX93smtp
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-After merging the char-misc tree, today's linux-next build (x86_64
+After merging the akpm-current tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-drivers/misc/mic/host/mic_main.c: In function 'mic_probe':
-drivers/misc/mic/host/mic_main.c:320:3: error: too many arguments to functi=
-on 'sysfs_get_dirent'
-   NULL, "state");
-   ^
-In file included from include/linux/kobject.h:21:0,
-                 from include/linux/module.h:16,
-                 from drivers/misc/mic/host/mic_main.c:26:
-include/linux/sysfs.h:465:1: note: declared here
- sysfs_get_dirent(struct sysfs_dirent *parent_sd, const unsigned char *name)
- ^
+arch/x86/mm/init.c: In function 'memory_map_bottom_up':
+arch/x86/mm/init.c:512:18: error: 'STEP_SIZE_SHIFT' undeclared (first use i=
+n this function)
+    step_size <<=3D STEP_SIZE_SHIFT;
+                  ^
 
-Caused by commit 3a6a9201897c ("Intel MIC Host Driver, card OS state
-management") interacting with commit 388975cccaaf ("sysfs: clean up
-sysfs_get_dirent()") from the driver-core tree.
+Caused by commit 21376f622b03 ("x86/mem-hotplug: support initializing
+page tables in bottom-up mode") interacting with commit 6979287a7df6
+("x86/mm: Add 'step_size' comments to init_mem_mapping()") from the tip
+tree.
 
-I added this merge fix patch:
+I added the following merge fix patch:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 27 Sep 2013 17:07:12 +1000
-Subject: [PATCH] Intel MIC Host Driver: fix for sysfs_get_dirent API change
+Date: Fri, 27 Sep 2013 17:58:55 +1000
+Subject: [PATCH] x86/mem-hotplug: fix for bad merge
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/misc/mic/host/mic_main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/x86/mm/init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/mic/host/mic_main.c b/drivers/misc/mic/host/mic_m=
-ain.c
-index a8965d4..28c8490 100644
---- a/drivers/misc/mic/host/mic_main.c
-+++ b/drivers/misc/mic/host/mic_main.c
-@@ -316,8 +316,7 @@ static int mic_probe(struct pci_dev *pdev,
- 			"device_create_with_groups failed rc %d\n", rc);
- 		goto smpt_uninit;
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index cb77179..58bb4e9 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -509,7 +509,7 @@ static void __init memory_map_bottom_up(unsigned long m=
+ap_start,
+ 		start =3D next;
+=20
+ 		if (new_mapped_ram_size > mapped_ram_size)
+-			step_size <<=3D STEP_SIZE_SHIFT;
++			step_size =3D get_new_step_size(step_size);
+ 		mapped_ram_size +=3D new_mapped_ram_size;
  	}
--	mdev->state_sysfs =3D sysfs_get_dirent(mdev->sdev->kobj.sd,
--		NULL, "state");
-+	mdev->state_sysfs =3D sysfs_get_dirent(mdev->sdev->kobj.sd, "state");
- 	if (!mdev->state_sysfs) {
- 		rc =3D -ENODEV;
- 		dev_err(&pdev->dev, "sysfs_get_dirent failed rc %d\n", rc);
+ }
 --=20
 1.8.4.rc3
-
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__27_Sep_2013_17_10_29_+1000_aFGmXdV+AYEzeWiF
+--Signature=_Fri__27_Sep_2013_18_02_19_+1000_PpK5qOhWuX93smtp
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSRS9qAAoJEMDTa8Ir7ZwVwrIP/0lJQVy8Neql76KIJ1ctTdWV
-e5HtVbp2fwrvj23nOfTVOsuqNbyalPiTKF9BmPX0GK7e87Lf4z61EhLmg2oCGjjQ
-xSepSEXsJbEM+gP208pobGgx6W4RobIkanHQ1xa/dk420T4mqLSCFW552iBdDKRi
-c+Bpfe5F2mRjUwrvd+CSu+tU9UdZ3aJAkccPz+osQAZAc/5iwsy/5CA0fuDZ6yOP
-3x7BuVAEESwEVgkWcqcZXGI68qwFgfxKM2ngW5uyeIcSy8FTdDrEdKMBk/iwNQ5l
-G41DK8SjLteLaqf7WNFaV8zINu2hvGKhdG2+P+2QEB/4OVm5LVY+bh3gjkodGvxi
-GKZUXqij6vyN007SwiViAaXKjH9sNtHubd7qZVYf4Kqd05keoJtwUTFB3oBatQZ5
-408HLoIvJZ+MqRo7yOJawcP+tW+CK/juSfP4tqpC7iKTs7mn+jSHW6dWpbvFsXNA
-ewZzy69fElDHvXN8QPPJ71vmtQ97pyhe/eSYcd0VQcprZzX3HRtaHcoeTNgTQZva
-IW9JjeFpyO08nnYuUiDrk4JSxaF9FaxzIonWHn8S00+EmaVaZ7pa1UXDlWJZ4Hlk
-c1dPGECruaQhtoq8wfbz5gcnqKd8II9cUjFr0nVzQO1e73Nr01xmkXdBwhxAHJzI
-RQu3Td45Mg31KKSZiLMo
-=HrbI
+iQIcBAEBCAAGBQJSRTuPAAoJEMDTa8Ir7ZwVZCoP/R10JDMXWwSOifoFh0jXVgQk
+hsANilCSb5Y0qV3aLaZR+WRW/fKipK0J919bqZtwZ5hIUdd6pJLtQdHGVvS6aFPF
+10g0dRwEGvCl2WLClEj8/omcf/bN0N5Mi4aL+XJAuqM8D16PVAetu1OR1yzzKHiA
+SfbuwGE+2uuMciLtoRcvXUOl4vzwFcVRWMg/8+amPA3HUCg8EbOFzdKNXduw3Zi2
+avzN5Y/OmvWsO0jVpg8JZSs9AM/0YbyLbY+Tkue1CvVbkyuEX8HW2dUeSuQLLEw8
+GwvR4mrlq6XQZ2tnjyi7oWpY4YGQhMT5L6ZXryKMQ+IG1fPEm6iv1Mi+6SnaJdFi
+/4ea7ayG224Pktq8RXTu62OF4ddP9SexQzLa3/JVEIctD7gAPwGQFuUQkbDaiuvg
+FYGnv4CGXM8mMgz7xfdwp28sZ5RvhNJvMVJNFt6X3jXnyvGAjTW2g7UbW1AKQZrf
+0plCAnxMerDQV5zDQ7jIfBPxpX5qQ4GwW3y8EvMy1337o4nc6a3IU8dXgWd0NmP2
+WPxCgiUTqOJ5jKZI+msDO0n48svx/U2frZlD+XGIjeZQj4XvQyHhaeA4xIy9Q6HP
+gAh1iZKygJVvmSHDj2TvFDFCo0nkga41SRXeWhcEXMDEI4YyKabIeGBNbULMTmFI
+pI9hUrOv9XUzrU195mXJ
+=5U1N
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Sep_2013_17_10_29_+1000_aFGmXdV+AYEzeWiF--
+--Signature=_Fri__27_Sep_2013_18_02_19_+1000_PpK5qOhWuX93smtp--
