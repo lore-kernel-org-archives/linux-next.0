@@ -1,60 +1,100 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the h8300-remove tree
-Date: Fri, 27 Sep 2013 16:12:38 +1000
-Message-ID: <20130927161238.f168bf3544c56ae1c1dcf439@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the char-misc tree
+Date: Fri, 27 Sep 2013 17:10:29 +1000
+Message-ID: <20130927171029.609cf783d3f9645ebe7117c0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Sep_2013_16_12_38_+1000_HjQS8z=Z8=9kJNu9"
+ boundary="Signature=_Fri__27_Sep_2013_17_10_29_+1000_aFGmXdV+AYEzeWiF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36074 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:59402 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750984Ab3I0GMs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Sep 2013 02:12:48 -0400
+	with ESMTP id S1751050Ab3I0HKm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Sep 2013 03:10:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Sudeep Dutt <sudeep.dutt@intel.com>, Dasaratharaman Chandramouli <dasaratharaman.chandramouli@intel.com>, Ashutosh Dixit <ashutosh.dixit@intel.com>, Caz Yokoyama <Caz.Yokoyama@intel.com>, Harshavardhan R Kharche <harshavardhan.r.kharche@intel.com>, Nikhil Rao <nikhil.rao@intel.com>
 
---Signature=_Fri__27_Sep_2013_16_12_38_+1000_HjQS8z=Z8=9kJNu9
+--Signature=_Fri__27_Sep_2013_17_10_29_+1000_aFGmXdV+AYEzeWiF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/h8300/include/asm/Kbuild between commit 4b0847842204 ("Drop support
-for Renesas H8/300 (h8300) architecture") from the h8300-remove tree and
-commit a787870924db ("sched, arch: Create asm/preempt.h") from the tip
-tree.
+After merging the char-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I just removed the file and can carry the fix as necessary (no action
-is required).
+drivers/misc/mic/host/mic_main.c: In function 'mic_probe':
+drivers/misc/mic/host/mic_main.c:320:3: error: too many arguments to functi=
+on 'sysfs_get_dirent'
+   NULL, "state");
+   ^
+In file included from include/linux/kobject.h:21:0,
+                 from include/linux/module.h:16,
+                 from drivers/misc/mic/host/mic_main.c:26:
+include/linux/sysfs.h:465:1: note: declared here
+ sysfs_get_dirent(struct sysfs_dirent *parent_sd, const unsigned char *name)
+ ^
+
+Caused by commit 3a6a9201897c ("Intel MIC Host Driver, card OS state
+management") interacting with commit 388975cccaaf ("sysfs: clean up
+sysfs_get_dirent()") from the driver-core tree.
+
+I added this merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 27 Sep 2013 17:07:12 +1000
+Subject: [PATCH] Intel MIC Host Driver: fix for sysfs_get_dirent API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/misc/mic/host/mic_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/misc/mic/host/mic_main.c b/drivers/misc/mic/host/mic_m=
+ain.c
+index a8965d4..28c8490 100644
+--- a/drivers/misc/mic/host/mic_main.c
++++ b/drivers/misc/mic/host/mic_main.c
+@@ -316,8 +316,7 @@ static int mic_probe(struct pci_dev *pdev,
+ 			"device_create_with_groups failed rc %d\n", rc);
+ 		goto smpt_uninit;
+ 	}
+-	mdev->state_sysfs =3D sysfs_get_dirent(mdev->sdev->kobj.sd,
+-		NULL, "state");
++	mdev->state_sysfs =3D sysfs_get_dirent(mdev->sdev->kobj.sd, "state");
+ 	if (!mdev->state_sysfs) {
+ 		rc =3D -ENODEV;
+ 		dev_err(&pdev->dev, "sysfs_get_dirent failed rc %d\n", rc);
+--=20
+1.8.4.rc3
+
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__27_Sep_2013_16_12_38_+1000_HjQS8z=Z8=9kJNu9
+--Signature=_Fri__27_Sep_2013_17_10_29_+1000_aFGmXdV+AYEzeWiF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSRSHaAAoJEMDTa8Ir7ZwV70IP/1rdfNuVoM8Ehjtm0uJfkqAK
-KZba64S10kVEK/pwZWZIfkOx6M7j8Wv7DB28y4g8OFzlnd8vS/LoDh/sYIlWTjpl
-qcke3RkCmr2qJvf99VzzUCKeaAXeuzeNWq73r/U6gJTjzGxxw2U9TRhbsW0o0EBJ
-qbPZX+EQ0ZetNjFCerx6B2vJbVA9qnMPMostAwrrOP+sYjDlH5Ugxk1gAJfjQLSP
-tPbNpnt6kzcBMf2V3PVEhL647v53RHseKsC6CwiIWwIrWHtOi529g5m8+95pqyzv
-HV+u8COJqutQa9ryNG4+kgZo4mQDCgks0ym/K0ObSZI63+l9SLMncLDihUAXLVpV
-fnmzuDSuy0XGZ6vkIIT4/t/HflHkX9enga+864yP04qzWK6IKD8pV2ZdSj58eRWq
-7KNsmzadkLgG/npc3bV5WyKicadoG3ST9jRnElfSTonsDBgwWy5lYL2MIrHWCXga
-I8tSj6KUebb/zogzMMnJYh+6KUUcDNcbqtwux0EXzUf0qliCdIZ+E2xeZJpi1aFt
-5aJhz/terZ//LqFw3KfaETl8OOy9wGTC7JCiy6NN975m3O0CpT2e5ZUhNwg2ijB7
-gv2QRmk6RzpcS7hOHkHylC3STLgthA3CxHa3XawpqnVmd5x0nuplqXCNC3IsTyoi
-RiXiIT2Q/nWh9wquKGgX
-=HbSL
+iQIcBAEBCAAGBQJSRS9qAAoJEMDTa8Ir7ZwVwrIP/0lJQVy8Neql76KIJ1ctTdWV
+e5HtVbp2fwrvj23nOfTVOsuqNbyalPiTKF9BmPX0GK7e87Lf4z61EhLmg2oCGjjQ
+xSepSEXsJbEM+gP208pobGgx6W4RobIkanHQ1xa/dk420T4mqLSCFW552iBdDKRi
+c+Bpfe5F2mRjUwrvd+CSu+tU9UdZ3aJAkccPz+osQAZAc/5iwsy/5CA0fuDZ6yOP
+3x7BuVAEESwEVgkWcqcZXGI68qwFgfxKM2ngW5uyeIcSy8FTdDrEdKMBk/iwNQ5l
+G41DK8SjLteLaqf7WNFaV8zINu2hvGKhdG2+P+2QEB/4OVm5LVY+bh3gjkodGvxi
+GKZUXqij6vyN007SwiViAaXKjH9sNtHubd7qZVYf4Kqd05keoJtwUTFB3oBatQZ5
+408HLoIvJZ+MqRo7yOJawcP+tW+CK/juSfP4tqpC7iKTs7mn+jSHW6dWpbvFsXNA
+ewZzy69fElDHvXN8QPPJ71vmtQ97pyhe/eSYcd0VQcprZzX3HRtaHcoeTNgTQZva
+IW9JjeFpyO08nnYuUiDrk4JSxaF9FaxzIonWHn8S00+EmaVaZ7pa1UXDlWJZ4Hlk
+c1dPGECruaQhtoq8wfbz5gcnqKd8II9cUjFr0nVzQO1e73Nr01xmkXdBwhxAHJzI
+RQu3Td45Mg31KKSZiLMo
+=HrbI
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Sep_2013_16_12_38_+1000_HjQS8z=Z8=9kJNu9--
+--Signature=_Fri__27_Sep_2013_17_10_29_+1000_aFGmXdV+AYEzeWiF--
