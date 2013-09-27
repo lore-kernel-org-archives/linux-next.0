@@ -1,82 +1,117 @@
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
-Subject: Re: linux-next: build failure after merge of the ceph tree
-Date: Thu, 26 Sep 2013 21:36:07 -0500
-Message-ID: <5244EF17.30905@oracle.com>
-References: <20130927113100.5c261c61856e26da4cf8f949@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the wireless
+ tree
+Date: Fri, 27 Sep 2013 13:03:13 +1000
+Message-ID: <20130927130313.4e925fa7a760acfc3bf890e1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__27_Sep_2013_13_03_13_+1000_aMkG73iMLFohWM2_"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130927113100.5c261c61856e26da4cf8f949@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Sage Weil <sage@newdream.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, majianpeng <majianpeng@gmail.com>, Zach Brown <zab@zabbo.net>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arend van Spriel <arend@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Joe Perches <joe@perches.com>
 List-Id: linux-next.vger.kernel.org
 
-On 09/26/2013 08:31 PM, Stephen Rothwell wrote:
-> Hi Sage,
-> 
-> After merging the ceph tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> fs/ceph/file.c: In function 'ceph_sync_direct_write':
-> fs/ceph/file.c:545:24: error: 'struct iov_iter' has no member named 'iov'
->    void __user *data = i.iov->iov_base + i.iov_offset;
->                         ^
-> fs/ceph/file.c:546:14: error: 'struct iov_iter' has no member named 'iov'
->    u64 len = i.iov->iov_len - i.iov_offset;
->               ^
-> 
-> This also happened yesterday but was swamped by the other error (now fixed).
-> 
-> Caused by commit d4ce96db671b ("ceph: Implement writev/pwritev for sync
-> operation") interacting with commit f6794d33a5ec ("iov_iter: hide iovec
-> details behind ops function pointers") from the aio-direct tree.
-> 
-> I applied the following merge fix patch (but there may be a better
-> solution):
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 27 Sep 2013 11:28:05 +1000
-> Subject: [PATCH] ceph: fix up for iov_iter changes
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/ceph/file.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 5cf034e..1216372 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -542,8 +542,8 @@ ceph_sync_direct_write(struct kiocb *iocb, const struct iovec *iov,
->  	iov_iter_init(&i, iov, nr_segs, count, 0);
->  
->  	while (iov_iter_count(&i) > 0) {
-> -		void __user *data = i.iov->iov_base + i.iov_offset;
-> -		u64 len = i.iov->iov_len - i.iov_offset;
-> +		void __user *data = iov_iter_iovec(&i)->iov_base + i.iov_offset;
-> +		u64 len = iov_iter_iovec(&i)->iov_len - i.iov_offset;
->  
->  		page_align = (unsigned long)data & ~PAGE_MASK;
->  
+--Signature=_Fri__27_Sep_2013_13_03_13_+1000_aMkG73iMLFohWM2_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-iov_iter_iovec(&i) will resolve to iov, so this is a little simpler
+Hi all,
 
-Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
----
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 5cf034e..d9aa924 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -542,8 +542,8 @@ ceph_sync_direct_write(struct kiocb *iocb, const
-struct iovec *iov,
- 	iov_iter_init(&i, iov, nr_segs, count, 0);
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/wireless/brcm80211/brcmfmac/dhd_bus.h between commit
+db4efbbeb457 ("brcmfmac: obtain platform data upon module
+initialization") from the wireless tree and commit 9bd91f3c00bd
+("brcm80211: Remove extern from function prototypes") from the net-next
+tree.
 
- 	while (iov_iter_count(&i) > 0) {
--		void __user *data = i.iov->iov_base + i.iov_offset;
--		u64 len = i.iov->iov_len - i.iov_offset;
-+		void __user *data = iov->iov_base + i.iov_offset;
-+		u64 len = iov->iov_len - i.iov_offset;
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
- 		page_align = (unsigned long)data & ~PAGE_MASK;
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/wireless/brcm80211/brcmfmac/dhd_bus.h
+index 74156f8,5bc0276..0000000
+--- a/drivers/net/wireless/brcm80211/brcmfmac/dhd_bus.h
++++ b/drivers/net/wireless/brcm80211/brcmfmac/dhd_bus.h
+@@@ -132,35 -132,33 +132,34 @@@ struct pktq *brcmf_bus_gettxq(struct br
+   * interface functions from common layer
+   */
+ =20
+- extern bool brcmf_c_prec_enq(struct device *dev, struct pktq *q,
+- 			 struct sk_buff *pkt, int prec);
++ bool brcmf_c_prec_enq(struct device *dev, struct pktq *q, struct sk_buff =
+*pkt,
++ 		      int prec);
+ =20
+  /* Receive frame for delivery to OS.  Callee disposes of rxp. */
+- extern void brcmf_rx_frames(struct device *dev, struct sk_buff_head *rxli=
+st);
++ void brcmf_rx_frames(struct device *dev, struct sk_buff_head *rxlist);
+ =20
+  /* Indication from bus module regarding presence/insertion of dongle. */
+- extern int brcmf_attach(uint bus_hdrlen, struct device *dev);
++ int brcmf_attach(uint bus_hdrlen, struct device *dev);
+  /* Indication from bus module regarding removal/absence of dongle */
+- extern void brcmf_detach(struct device *dev);
++ void brcmf_detach(struct device *dev);
+  /* Indication from bus module that dongle should be reset */
+- extern void brcmf_dev_reset(struct device *dev);
++ void brcmf_dev_reset(struct device *dev);
+  /* Indication from bus module to change flow-control state */
+- extern void brcmf_txflowblock(struct device *dev, bool state);
++ void brcmf_txflowblock(struct device *dev, bool state);
+ =20
+  /* Notify the bus has transferred the tx packet to firmware */
+- extern void brcmf_txcomplete(struct device *dev, struct sk_buff *txp,
+- 			     bool success);
++ void brcmf_txcomplete(struct device *dev, struct sk_buff *txp, bool succe=
+ss);
+ =20
+- extern int brcmf_bus_start(struct device *dev);
++ int brcmf_bus_start(struct device *dev);
+ =20
+  #ifdef CONFIG_BRCMFMAC_SDIO
+- extern void brcmf_sdio_exit(void);
+- extern void brcmf_sdio_init(void);
+- extern void brcmf_sdio_register(void);
++ void brcmf_sdio_exit(void);
++ void brcmf_sdio_init(void);
+++void brcmf_sdio_register(void);
+  #endif
+  #ifdef CONFIG_BRCMFMAC_USB
+- extern void brcmf_usb_exit(void);
+- extern void brcmf_usb_register(void);
++ void brcmf_usb_exit(void);
+ -void brcmf_usb_init(void);
+++void brcmf_usb_register(void);
+  #endif
+ =20
+  #endif				/* _BRCMF_BUS_H_ */
+
+--Signature=_Fri__27_Sep_2013_13_03_13_+1000_aMkG73iMLFohWM2_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSRPV1AAoJEMDTa8Ir7ZwVGBEP/3KCIGh5pgG9yOhGVqxsZmJv
+yczsq+vGDoiuzgxjSMRoTpuq76s1WxWfLlS//lmJffch6RwmrhO1dcgqGDPDDfyy
+kNyR/TbGblVHg2Adu8+dkIkJMYWgx+VDgrvc+h31hNaYsma14V4qbe1le9qzWqqy
+ciYiTUOUNjRsXBnulRe1S+D1/CCAvoiDjdPM4VPm56Pv+NFUc8Tjy455BWM8wuhu
+dNczWws4E4JNCVibqUK//DHj+EK88AMNOQG/+bGg/+rm56Fyx14YxJuryTrCgy8C
+fxZzg0DPUnbu54dxFndDDj6qm9ezQWLYEdPtrTwblhbBQdBykaxLTjmkLwlGDxD4
+jmyEl1nJ1ExgMq14CuCZ5KcnuVuAzIuAPIxNmn1b48ryC07wrhC6qMxQ2kvg3Yx+
+d610JoaLDX8Sd1307HuQJmKOdOFgzmW+VsH6aOwPmmIOIyL1loYCM51S+80OdjKG
+u0jQq/o/SN3WHQ5oETIhRV0Z4AH3x1aejknH36CTVD2QuVcYmFxcF6mGpoX9dXT+
+nfVdeo5pRC5sN/mR7aEkyC265PLPQCYHFv2sDH1xwizQTC618S64/14o3sZ2wwp7
+layotLn9q3dFy/O0l45F4XRohCE95IzxBEyTRkt8caLoYcqiAqELLS8or7UBeb9i
+UvwJeGGT9qPxEo8Lh6z/
+=DHkv
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__27_Sep_2013_13_03_13_+1000_aMkG73iMLFohWM2_--
