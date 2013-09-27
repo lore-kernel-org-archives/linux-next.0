@@ -1,93 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Fri, 27 Sep 2013 18:02:19 +1000
-Message-ID: <20130927180219.f15e4e7fa60ee7ffb929abef@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (tty tree
+ related)
+Date: Fri, 27 Sep 2013 18:21:17 +1000
+Message-ID: <20130927182117.42cdf5287fa1e9b40dd3f8e9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Sep_2013_18_02_19_+1000_PpK5qOhWuX93smtp"
+ boundary="Signature=_Fri__27_Sep_2013_18_21_17_+1000_wKOpSls_94jqdSAN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46723 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41038 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751813Ab3I0ICd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Sep 2013 04:02:33 -0400
+	with ESMTP id S1751370Ab3I0IV0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Sep 2013 04:21:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Tang Chen <tangchen@cn.fujitsu.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
---Signature=_Fri__27_Sep_2013_18_02_19_+1000_PpK5qOhWuX93smtp
+--Signature=_Fri__27_Sep_2013_18_21_17_+1000_wKOpSls_94jqdSAN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-After merging the akpm-current tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-arch/x86/mm/init.c: In function 'memory_map_bottom_up':
-arch/x86/mm/init.c:512:18: error: 'STEP_SIZE_SHIFT' undeclared (first use i=
-n this function)
-    step_size <<=3D STEP_SIZE_SHIFT;
-                  ^
+drivers/tty/serial/8250/8250_dw.c: In function 'dw8250_probe':
+drivers/tty/serial/8250/8250_dw.c:341:3: error: too many arguments to funct=
+ion 'dw8250_probe_acpi'
+   err =3D dw8250_probe_acpi(&uart, data);
+   ^
+drivers/tty/serial/8250/8250_dw.c:281:19: note: declared here
+ static inline int dw8250_probe_acpi(struct uart_8250_port *up)
+                   ^
 
-Caused by commit 21376f622b03 ("x86/mem-hotplug: support initializing
-page tables in bottom-up mode") interacting with commit 6979287a7df6
-("x86/mm: Add 'step_size' comments to init_mem_mapping()") from the tip
-tree.
+Caused by commit fe95855539fd ("serial: 8250_dw: don't limit DMA support
+to ACPI") from the tty tree.
 
-I added the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 27 Sep 2013 17:58:55 +1000
-Subject: [PATCH] x86/mem-hotplug: fix for bad merge
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/mm/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index cb77179..58bb4e9 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -509,7 +509,7 @@ static void __init memory_map_bottom_up(unsigned long m=
-ap_start,
- 		start =3D next;
-=20
- 		if (new_mapped_ram_size > mapped_ram_size)
--			step_size <<=3D STEP_SIZE_SHIFT;
-+			step_size =3D get_new_step_size(step_size);
- 		mapped_ram_size +=3D new_mapped_ram_size;
- 	}
- }
---=20
-1.8.4.rc3
-
+I have reverted that commit for today (and commit 7fb8c56c7fa0 ("serial:
+8250_dw: provide a filter for DMA channel detection") that depends on it).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__27_Sep_2013_18_02_19_+1000_PpK5qOhWuX93smtp
+--Signature=_Fri__27_Sep_2013_18_21_17_+1000_wKOpSls_94jqdSAN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSRTuPAAoJEMDTa8Ir7ZwVZCoP/R10JDMXWwSOifoFh0jXVgQk
-hsANilCSb5Y0qV3aLaZR+WRW/fKipK0J919bqZtwZ5hIUdd6pJLtQdHGVvS6aFPF
-10g0dRwEGvCl2WLClEj8/omcf/bN0N5Mi4aL+XJAuqM8D16PVAetu1OR1yzzKHiA
-SfbuwGE+2uuMciLtoRcvXUOl4vzwFcVRWMg/8+amPA3HUCg8EbOFzdKNXduw3Zi2
-avzN5Y/OmvWsO0jVpg8JZSs9AM/0YbyLbY+Tkue1CvVbkyuEX8HW2dUeSuQLLEw8
-GwvR4mrlq6XQZ2tnjyi7oWpY4YGQhMT5L6ZXryKMQ+IG1fPEm6iv1Mi+6SnaJdFi
-/4ea7ayG224Pktq8RXTu62OF4ddP9SexQzLa3/JVEIctD7gAPwGQFuUQkbDaiuvg
-FYGnv4CGXM8mMgz7xfdwp28sZ5RvhNJvMVJNFt6X3jXnyvGAjTW2g7UbW1AKQZrf
-0plCAnxMerDQV5zDQ7jIfBPxpX5qQ4GwW3y8EvMy1337o4nc6a3IU8dXgWd0NmP2
-WPxCgiUTqOJ5jKZI+msDO0n48svx/U2frZlD+XGIjeZQj4XvQyHhaeA4xIy9Q6HP
-gAh1iZKygJVvmSHDj2TvFDFCo0nkga41SRXeWhcEXMDEI4YyKabIeGBNbULMTmFI
-pI9hUrOv9XUzrU195mXJ
-=5U1N
+iQIcBAEBCAAGBQJSRUACAAoJEMDTa8Ir7ZwV3sgP/0TChbm/lVzfvOKygcR/zbn/
+gHWi+SHDhzqX+tsuqJOoiNgNqzLtZ1Y6SOXqHJMPDXY66MF2b68s0YnJpQCleYJE
+wKtdG8uXPFYZFsXp9EcObYnl5ZTobo3EsVjuLiO6tfdKaZrjQ6bJTyiH2BRk++TZ
+0bx2eN6X4Peq96Av0t4Ntccfikfb+jVHYCPzhDzjMl7w3d4oFd/Cin7DIcQ8rDSO
+HQ/0DOrDTywq2RAno7YNEnIXJlrtYxUemL0JuAoQYKr57kQYk8QH9GS/m6PLiof1
+GaGSMYgwUn8OHqxjO2svWw/TgtTCHBXAYW61UyfcJYeC9pGXK3+yIyvWb2AbjY1y
+37WP1IR00ta8tfPYlfEKqN/u6dG2geIACK2wu4fv0cKx5uMp4CRkV5kQjdCrPobn
+N6s7Q8Rjly2l0+hksrmv+ZhtZrE0Q0bFozEe4Z6lbFCuFAh9Nex/Y63Iep3TC2Js
+Zxf3igKj/Yw8EzjBOQKZ7RB5QT8wu6pwFqaNIVMj7GP3Hf/UTDhshaOQs0lhDdXU
+7ibCNKJTwfLQx/dhVsHqKNmxUnwVkoarcpi8PfB0khxBHqgmmflV44L9YEqxY2xX
+QDmx1UEHtHbxvRJyYLNQhiyBRbgC1Egh14ZQtaaZvx+eQBH9dYMMCUjFLKWqRGPv
++Zqcw/fzw8F49u71q5ZY
+=ruou
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Sep_2013_18_02_19_+1000_PpK5qOhWuX93smtp--
+--Signature=_Fri__27_Sep_2013_18_21_17_+1000_wKOpSls_94jqdSAN--
