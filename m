@@ -1,23 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (tty tree
- related)
-Date: Fri, 27 Sep 2013 18:21:17 +1000
-Message-ID: <20130927182117.42cdf5287fa1e9b40dd3f8e9@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Fri, 27 Sep 2013 18:32:46 +1000
+Message-ID: <20130927183246.13094a90de1676232e17d30e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Sep_2013_18_21_17_+1000_wKOpSls_94jqdSAN"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41038 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751370Ab3I0IV0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Sep 2013 04:21:26 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>
+ boundary="Signature=_Fri__27_Sep_2013_18_32_46_+1000_nMNKTlfWPLafoASb"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dong Aisheng <b29396@freescale.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__27_Sep_2013_18_21_17_+1000_wKOpSls_94jqdSAN
+--Signature=_Fri__27_Sep_2013_18_32_46_+1000_nMNKTlfWPLafoASb
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -27,43 +22,86 @@ Hi all,
 After merging the final tree, today's linux-next build (powerpc
 allyesconfig) failed like this:
 
-drivers/tty/serial/8250/8250_dw.c: In function 'dw8250_probe':
-drivers/tty/serial/8250/8250_dw.c:341:3: error: too many arguments to funct=
-ion 'dw8250_probe_acpi'
-   err =3D dw8250_probe_acpi(&uart, data);
-   ^
-drivers/tty/serial/8250/8250_dw.c:281:19: note: declared here
- static inline int dw8250_probe_acpi(struct uart_8250_port *up)
-                   ^
+In file included from include/linux/kernel.h:14:0,
+                 from include/linux/debug_locks.h:4,
+                 from include/linux/lockdep.h:23,
+                 from include/linux/sysfs.h:18,
+                 from include/linux/kobject.h:21,
+                 from include/linux/device.h:17,
+                 from arch/powerpc/include/asm/io.h:27,
+                 from include/linux/io.h:22,
+                 from drivers/mmc/host/sdhci-of-esdhc.c:17:
+drivers/mmc/host/sdhci-of-esdhc.c: In function 'esdhc_of_set_clock':
+drivers/mmc/host/sdhci-of-esdhc.c:230:10: error: 'host_clock' undeclared (f=
+irst use in this function)
+   clock, host_clock / pre_div / div);
+          ^
+include/linux/dynamic_debug.h:87:9: note: in definition of macro 'dynamic_d=
+ev_dbg'
+       ##__VA_ARGS__);  \
+         ^
+drivers/mmc/host/sdhci-of-esdhc.c:229:2: note: in expansion of macro 'dev_d=
+bg'
+  dev_dbg(mmc_dev(host->mmc), "desired SD clock: %d, actual: %d\n",
+  ^
 
-Caused by commit fe95855539fd ("serial: 8250_dw: don't limit DMA support
-to ACPI") from the tty tree.
+Caused by commit d31fc00a71b4 ("mmc: sdhci-esdhc: move common
+esdhc_set_clock to platform driver") from the mmc tree.
 
-I have reverted that commit for today (and commit 7fb8c56c7fa0 ("serial:
-8250_dw: provide a filter for DMA channel detection") that depends on it).
+I applied this temporary fix (reverting looked too hard):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 27 Sep 2013 18:28:29 +1000
+Subject: [PATCH] mmc: sdhci-esdhc: temporary build fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/mmc/host/sdhci-of-esdhc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-=
+esdhc.c
+index b1605a1..82d22ff 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -226,8 +226,8 @@ static void esdhc_of_set_clock(struct sdhci_host *host,=
+ unsigned int clock)
+ 	while (host->max_clk / pre_div / div > clock && div < 16)
+ 		div++;
+=20
+-	dev_dbg(mmc_dev(host->mmc), "desired SD clock: %d, actual: %d\n",
+-		clock, host_clock / pre_div / div);
++	// dev_dbg(mmc_dev(host->mmc), "desired SD clock: %d, actual: %d\n",
++	//	clock, host_clock / pre_div / div);
+=20
+ 	pre_div >>=3D 1;
+ 	div--;
+--=20
+1.8.4.rc3
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__27_Sep_2013_18_21_17_+1000_wKOpSls_94jqdSAN
+--Signature=_Fri__27_Sep_2013_18_32_46_+1000_nMNKTlfWPLafoASb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSRUACAAoJEMDTa8Ir7ZwV3sgP/0TChbm/lVzfvOKygcR/zbn/
-gHWi+SHDhzqX+tsuqJOoiNgNqzLtZ1Y6SOXqHJMPDXY66MF2b68s0YnJpQCleYJE
-wKtdG8uXPFYZFsXp9EcObYnl5ZTobo3EsVjuLiO6tfdKaZrjQ6bJTyiH2BRk++TZ
-0bx2eN6X4Peq96Av0t4Ntccfikfb+jVHYCPzhDzjMl7w3d4oFd/Cin7DIcQ8rDSO
-HQ/0DOrDTywq2RAno7YNEnIXJlrtYxUemL0JuAoQYKr57kQYk8QH9GS/m6PLiof1
-GaGSMYgwUn8OHqxjO2svWw/TgtTCHBXAYW61UyfcJYeC9pGXK3+yIyvWb2AbjY1y
-37WP1IR00ta8tfPYlfEKqN/u6dG2geIACK2wu4fv0cKx5uMp4CRkV5kQjdCrPobn
-N6s7Q8Rjly2l0+hksrmv+ZhtZrE0Q0bFozEe4Z6lbFCuFAh9Nex/Y63Iep3TC2Js
-Zxf3igKj/Yw8EzjBOQKZ7RB5QT8wu6pwFqaNIVMj7GP3Hf/UTDhshaOQs0lhDdXU
-7ibCNKJTwfLQx/dhVsHqKNmxUnwVkoarcpi8PfB0khxBHqgmmflV44L9YEqxY2xX
-QDmx1UEHtHbxvRJyYLNQhiyBRbgC1Egh14ZQtaaZvx+eQBH9dYMMCUjFLKWqRGPv
-+Zqcw/fzw8F49u71q5ZY
-=ruou
+iQIcBAEBCAAGBQJSRUKyAAoJEMDTa8Ir7ZwVw94P/idQaD10dufANhNQFrwk4E0h
+jtiZx0o8RXNEMfkFVBwNYAIH3MErx08vVgvnfz8bns1TtqiRdnn+fVYTDZua+Cv1
+wflI2XImwU5TgKfBh5q4nHGXGS1vbJdYDfQrV3eaWvGymZVMSkxEFcgYntT33Hnx
+lR7DQSgI9X5DWqkczoxId/IlRUW2AHgvsrhkL4DFGaozVGHpRtszIRc31CTbM/zh
+ZmsINmKXo0V0qfPQohDK/EEOAeon+Z1IRwBt9AGO2+XVTrpqU1OcmuF4z5d2kXe3
+SjZVYUvT0oa5YPUAPTaCGKKrwF4AFfUj8VKkIv75LQyPkhFHyAOZKK/JWSM+b+fm
+w/9/v1fnmj5jx3BX0mDG8T7EbfPBxDh7uQHgKzblC7UNP7yLMtMjRTqud9Y4Js6c
+NSIf9I32WNOkyxLscDo2WKx1Ka0y078jdLnfnBvMt1rLg8VmEmyx8BtqeS2RAEit
+uC6PXHLYFrf1i8Gg6SmZdEEN70s45rE604W+1ILXljDlGuGc4SyngCKuAvJ8G21o
+tKoiNzldZ1nBTkbsl1SuqIt5MU01z3zma2kMDIxm4g3/RG8IRx+MbZKIGAQSn1Qx
+9Ts7ruckMtT4n50kLmmmaL4ckWaFTe+c5fIVXMqJTzF0oOlSVLBoBAAqLywA/Oxt
+2L88UZQggx5koHuDoEd0
+=w4dn
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Sep_2013_18_21_17_+1000_wKOpSls_94jqdSAN--
+--Signature=_Fri__27_Sep_2013_18_32_46_+1000_nMNKTlfWPLafoASb--
