@@ -1,43 +1,60 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: linux-next: manual merge of the wireless-next tree
-Date: Mon, 30 Sep 2013 13:26:13 +0200
-Message-ID: <1380540373-25352-11-git-send-email-treding@nvidia.com>
+Subject: linux-next: manual merge of the drm-intel tree
+Date: Mon, 30 Sep 2013 13:26:06 +0200
+Message-ID: <1380540373-25352-4-git-send-email-treding@nvidia.com>
 References: <1380540373-25352-1-git-send-email-treding@nvidia.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f54.google.com ([209.85.214.54]:54706 "EHLO
-	mail-bk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755085Ab3I3L2Q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Sep 2013 07:28:16 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
 In-Reply-To: <1380540373-25352-1-git-send-email-treding@nvidia.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: intel-gfx@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+List-Id: linux-next.vger.kernel.org
 
-Today's linux-next merge of the wireless-next tree got conflicts in
+Today's linux-next merge of the drm-intel tree got conflicts in
 
-	drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
+	drivers/gpu/drm/i915/intel_display.c
 
 I fixed it up (see below). Please check if the resolution looks correct.
 
 Thanks,
 Thierry
 ---
-diff --cc drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
-index f8973e5,80a0893..bb319b0
---- a/drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
-+++ b/drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
-@@@ -217,10 -222,10 +215,9 @@@ void _rtl92ce_phy_lc_calibrate(struct i
-  void rtl92c_phy_set_rfpath_switch(struct ieee80211_hw *hw, bool bmain);
-  bool rtl92c_phy_config_rf_with_headerfile(struct ieee80211_hw *hw,
-  					  enum radio_path rfpath);
- -bool rtl8192_phy_check_is_legal_rfpath(struct ieee80211_hw *hw,
- -					      u32 rfpath);
- +bool rtl8192_phy_check_is_legal_rfpath(struct ieee80211_hw *hw, u32 rfpath);
-- bool rtl92c_phy_set_io_cmd(struct ieee80211_hw *hw, enum io_type iotype);
-  bool rtl92ce_phy_set_rf_power_state(struct ieee80211_hw *hw,
- -					  enum rf_pwrstate rfpwr_state);
- +				    enum rf_pwrstate rfpwr_state);
-  void rtl92ce_phy_set_rf_on(struct ieee80211_hw *hw);
-  bool rtl92c_phy_set_io_cmd(struct ieee80211_hw *hw, enum io_type iotype);
-  void rtl92c_phy_set_io(struct ieee80211_hw *hw);
+diff --cc drivers/gpu/drm/i915/intel_display.c
+index e5822e7,cbbdab6..76870f0
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@@ -4775,21 -4882,8 +4882,12 @@@ static void i9xx_set_pipeconf(struct in
+  
+  	pipeconf = 0;
+  
+ +	if (dev_priv->quirks & QUIRK_PIPEA_FORCE &&
+ +	    I915_READ(PIPECONF(intel_crtc->pipe)) & PIPECONF_ENABLE)
+ +		pipeconf |= PIPECONF_ENABLE;
+ +
+- 	if (intel_crtc->pipe == 0 && INTEL_INFO(dev)->gen < 4) {
+- 		/* Enable pixel doubling when the dot clock is > 90% of the (display)
+- 		 * core speed.
+- 		 *
+- 		 * XXX: No double-wide on 915GM pipe B. Is that the only reason for the
+- 		 * pipe == 0 check?
+- 		 */
+- 		if (intel_crtc->config.requested_mode.clock >
+- 		    dev_priv->display.get_display_clock_speed(dev) * 9 / 10)
+- 			pipeconf |= PIPECONF_DOUBLE_WIDE;
+- 	}
++ 	if (intel_crtc->config.double_wide)
++ 		pipeconf |= PIPECONF_DOUBLE_WIDE;
+  
+  	/* only g4x and later have fancy bpc/dither controls */
+  	if (IS_G4X(dev) || IS_VALLEYVIEW(dev)) {
