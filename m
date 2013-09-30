@@ -1,35 +1,53 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: linux-next: manual merge of the drm-intel tree
-Date: Mon, 30 Sep 2013 13:32:38 +0200
-Message-ID: <CAKMK7uHpz3AbsdxZR84AHDzAg9k3DHU8p81-jWD5samOq-2Naw@mail.gmail.com>
-References: <1380540373-25352-1-git-send-email-treding@nvidia.com>
-	<1380540373-25352-4-git-send-email-treding@nvidia.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: linux-next: manual merge of the wireless-next tree
+Date: Mon, 30 Sep 2013 09:26:15 -0500
+Message-ID: <52498A07.1050800@lwfinger.net>
+References: <1380540373-25352-1-git-send-email-treding@nvidia.com> <1380540373-25352-11-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:45045 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754456Ab3I3Lcj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Sep 2013 07:32:39 -0400
-Received: by mail-ie0-f172.google.com with SMTP id x13so9820993ief.17
-        for <linux-next@vger.kernel.org>; Mon, 30 Sep 2013 04:32:39 -0700 (PDT)
-In-Reply-To: <1380540373-25352-4-git-send-email-treding@nvidia.com>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:37765 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754531Ab3I3O0S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Sep 2013 10:26:18 -0400
+In-Reply-To: <1380540373-25352-11-git-send-email-treding@nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: intel-gfx <intel-gfx@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2013 at 1:26 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> Today's linux-next merge of the drm-intel tree got conflicts in
+On 09/30/2013 06:26 AM, Thierry Reding wrote:
+> Today's linux-next merge of the wireless-next tree got conflicts in
 >
->         drivers/gpu/drm/i915/intel_display.c
+> 	drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
 >
 > I fixed it up (see below). Please check if the resolution looks correct.
+>
+> Thanks,
+> Thierry
+> ---
+> diff --cc drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
+> index f8973e5,80a0893..bb319b0
+> --- a/drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
+> +++ b/drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
+> @@@ -217,10 -222,10 +215,9 @@@ void _rtl92ce_phy_lc_calibrate(struct i
+>    void rtl92c_phy_set_rfpath_switch(struct ieee80211_hw *hw, bool bmain);
+>    bool rtl92c_phy_config_rf_with_headerfile(struct ieee80211_hw *hw,
+>    					  enum radio_path rfpath);
+>   -bool rtl8192_phy_check_is_legal_rfpath(struct ieee80211_hw *hw,
+>   -					      u32 rfpath);
+>   +bool rtl8192_phy_check_is_legal_rfpath(struct ieee80211_hw *hw, u32 rfpath);
+> - bool rtl92c_phy_set_io_cmd(struct ieee80211_hw *hw, enum io_type iotype);
+>    bool rtl92ce_phy_set_rf_power_state(struct ieee80211_hw *hw,
+>   -					  enum rf_pwrstate rfpwr_state);
+>   +				    enum rf_pwrstate rfpwr_state);
+>    void rtl92ce_phy_set_rf_on(struct ieee80211_hw *hw);
+>    bool rtl92c_phy_set_io_cmd(struct ieee80211_hw *hw, enum io_type iotype);
+>    void rtl92c_phy_set_io(struct ieee80211_hw *hw);
 
-Looks good.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Thierry,
+
+Yes, your fix is correct.
+
+Larry
