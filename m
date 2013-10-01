@@ -1,53 +1,71 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Subject: Re: linux-next: manual merge of the wireless-next tree
-Date: Mon, 30 Sep 2013 09:26:15 -0500
-Message-ID: <52498A07.1050800@lwfinger.net>
-References: <1380540373-25352-1-git-send-email-treding@nvidia.com> <1380540373-25352-11-git-send-email-treding@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: linux-next: Tree for Oct 1
+Date: Tue, 1 Oct 2013 13:03:45 +0200
+Message-ID: <20131001110344.GA20249@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:37765 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754531Ab3I3O0S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Sep 2013 10:26:18 -0400
-In-Reply-To: <1380540373-25352-11-git-send-email-treding@nvidia.com>
+Received: from mail-bk0-f44.google.com ([209.85.214.44]:61814 "EHLO
+	mail-bk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752610Ab3JALFa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Oct 2013 07:05:30 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
 
-On 09/30/2013 06:26 AM, Thierry Reding wrote:
-> Today's linux-next merge of the wireless-next tree got conflicts in
->
-> 	drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
->
-> I fixed it up (see below). Please check if the resolution looks correct.
->
-> Thanks,
-> Thierry
-> ---
-> diff --cc drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
-> index f8973e5,80a0893..bb319b0
-> --- a/drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
-> +++ b/drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
-> @@@ -217,10 -222,10 +215,9 @@@ void _rtl92ce_phy_lc_calibrate(struct i
->    void rtl92c_phy_set_rfpath_switch(struct ieee80211_hw *hw, bool bmain);
->    bool rtl92c_phy_config_rf_with_headerfile(struct ieee80211_hw *hw,
->    					  enum radio_path rfpath);
->   -bool rtl8192_phy_check_is_legal_rfpath(struct ieee80211_hw *hw,
->   -					      u32 rfpath);
->   +bool rtl8192_phy_check_is_legal_rfpath(struct ieee80211_hw *hw, u32 rfpath);
-> - bool rtl92c_phy_set_io_cmd(struct ieee80211_hw *hw, enum io_type iotype);
->    bool rtl92ce_phy_set_rf_power_state(struct ieee80211_hw *hw,
->   -					  enum rf_pwrstate rfpwr_state);
->   +				    enum rf_pwrstate rfpwr_state);
->    void rtl92ce_phy_set_rf_on(struct ieee80211_hw *hw);
->    bool rtl92c_phy_set_io_cmd(struct ieee80211_hw *hw, enum io_type iotype);
->    void rtl92c_phy_set_io(struct ieee80211_hw *hw);
 
-Thierry,
+--BOKacYhQ+x31HxR3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes, your fix is correct.
+Hi all,
 
-Larry
+I've uploaded today's linux-next tree to the master branch of the
+repository below:
+
+	git://gitorious.org/thierryreding/linux-next.git
+
+A next-20131001 tag is also provided for convenience.
+
+The situation is pretty much the same as yesterday. Some conflicts went
+away, but most remained. i386 and x86_64 default configuration builds
+show no breakage and ARM default configurations are still being built.
+Yesterday's run didn't show any merge-related breakage. I found a single
+build issue for i.MX which was trivial to fix and sent out a patch.
+
+I received a response from a few people to the conflict notifications,
+so I won't be sending those out again. For those that I haven't received
+any replies and for new conflicts, new notifications will be sent
+shortly.
+
+It looks as if I will be able to do another linux-next tree tomorrow,
+but not on Thursday and Friday, so Mark Brown will be doing those. If
+anyone else is interested in helping out you're very welcome.
+
+Thierry
+
+--BOKacYhQ+x31HxR3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSSqwQAAoJEN0jrNd/PrOh+sMP/A+HP88gqyHINs957Rs8nEmU
+upATkY3ZlsGXjnwlqKGMLgqP0x4jEwYJ+GstJbsmexQ5nS9aO591rHkhHVaPc/0d
+6pymfortWVPAb8PVYqcFJwUX9J3q8ZFu0/5QQ6Kj0bBJ8+KBaNxNSM1ItejkgfaR
+CHfSULG3rdZafIXZggHoH3hhx568oIzTtzW92ibluWrf3GvJgtzdGRD0Ak53Ws5Y
+z+tSflZIcgl4MCyWNlHbQjD0VXVXhnOey/UVRXplS6OH+AXgOH49z2y0QPaMM9Xh
+fjpDvQDFJ+mIqXsUrgMpyEGzF/XcWvgTP6n/DDDK+DzhohiBnxzHJi4Yb1NI7z2H
+Ehfp8AUc8UlmVVX97VfREVn6SAVdAiJnMiA65U9fUuLYi2n7dsJDJUVb04qaH+OB
+q9mdK/VB7YTEvP17P2Hw2R0o8zDuoENibb3REOzw4B511WU8W6EUppzzSZPmouqO
+AfccB6cOKpHodF1IUOdm+9nCO09LRknwon633D9dxmN2J2JF4fkUH077ddCl4HCn
+WJ/x1htkskmqXMT4PbiTvY6JoCMolpvv+SbYsgiRrvYpHqzTTzROGPAl6o+XHx15
+HVEo9uUMZZlzwWrqLzpbaSVaVnWnK4yvFTDF77iZZTcCHoWykzrnXIwkicRI50lK
+a0jHJMfV/6NMdQD7c/CC
+=KeTd
+-----END PGP SIGNATURE-----
+
+--BOKacYhQ+x31HxR3--
