@@ -1,71 +1,148 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: linux-next: Tree for Oct 1
-Date: Tue, 1 Oct 2013 13:03:45 +0200
-Message-ID: <20131001110344.GA20249@ulmo.nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
+Subject: linux-next: manual merge of the block tree
+Date: Tue,  1 Oct 2013 13:07:18 +0200
+Message-ID: <1380625644-11331-2-git-send-email-treding@nvidia.com>
+References: <20131001110344.GA20249@ulmo.nvidia.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f44.google.com ([209.85.214.44]:61814 "EHLO
-	mail-bk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752610Ab3JALFa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Oct 2013 07:05:30 -0400
-Content-Disposition: inline
+Received: from mail-bk0-f52.google.com ([209.85.214.52]:60171 "EHLO
+	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752964Ab3JALJM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Oct 2013 07:09:12 -0400
+In-Reply-To: <20131001110344.GA20249@ulmo.nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>, Kent Overstreet <kmo@daterainc.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Today's linux-next merge of the block tree got conflicts in:
 
---BOKacYhQ+x31HxR3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+	drivers/md/bcache/bcache.h
+	drivers/md/bcache/bset.c
+	drivers/md/bcache/journal.c
+	drivers/md/bcache/request.c
+	drivers/md/bcache/writeback.c
 
-Hi all,
+I fixed it up (see below). Please check if the resolution looks correct.
 
-I've uploaded today's linux-next tree to the master branch of the
-repository below:
-
-	git://gitorious.org/thierryreding/linux-next.git
-
-A next-20131001 tag is also provided for convenience.
-
-The situation is pretty much the same as yesterday. Some conflicts went
-away, but most remained. i386 and x86_64 default configuration builds
-show no breakage and ARM default configurations are still being built.
-Yesterday's run didn't show any merge-related breakage. I found a single
-build issue for i.MX which was trivial to fix and sent out a patch.
-
-I received a response from a few people to the conflict notifications,
-so I won't be sending those out again. For those that I haven't received
-any replies and for new conflicts, new notifications will be sent
-shortly.
-
-It looks as if I will be able to do another linux-next tree tomorrow,
-but not on Thursday and Friday, so Mark Brown will be doing those. If
-anyone else is interested in helping out you're very welcome.
-
+Thanks,
 Thierry
-
---BOKacYhQ+x31HxR3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSSqwQAAoJEN0jrNd/PrOh+sMP/A+HP88gqyHINs957Rs8nEmU
-upATkY3ZlsGXjnwlqKGMLgqP0x4jEwYJ+GstJbsmexQ5nS9aO591rHkhHVaPc/0d
-6pymfortWVPAb8PVYqcFJwUX9J3q8ZFu0/5QQ6Kj0bBJ8+KBaNxNSM1ItejkgfaR
-CHfSULG3rdZafIXZggHoH3hhx568oIzTtzW92ibluWrf3GvJgtzdGRD0Ak53Ws5Y
-z+tSflZIcgl4MCyWNlHbQjD0VXVXhnOey/UVRXplS6OH+AXgOH49z2y0QPaMM9Xh
-fjpDvQDFJ+mIqXsUrgMpyEGzF/XcWvgTP6n/DDDK+DzhohiBnxzHJi4Yb1NI7z2H
-Ehfp8AUc8UlmVVX97VfREVn6SAVdAiJnMiA65U9fUuLYi2n7dsJDJUVb04qaH+OB
-q9mdK/VB7YTEvP17P2Hw2R0o8zDuoENibb3REOzw4B511WU8W6EUppzzSZPmouqO
-AfccB6cOKpHodF1IUOdm+9nCO09LRknwon633D9dxmN2J2JF4fkUH077ddCl4HCn
-WJ/x1htkskmqXMT4PbiTvY6JoCMolpvv+SbYsgiRrvYpHqzTTzROGPAl6o+XHx15
-HVEo9uUMZZlzwWrqLzpbaSVaVnWnK4yvFTDF77iZZTcCHoWykzrnXIwkicRI50lK
-a0jHJMfV/6NMdQD7c/CC
-=KeTd
------END PGP SIGNATURE-----
-
---BOKacYhQ+x31HxR3--
+---
+diff --cc drivers/md/bcache/btree.c
+index f42fc7e,117a12a..1ccb702
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@@ -633,10 -712,10 +707,10 @@@ static unsigned long bch_mca_scan(struc
+  			break;
+  
+  		if (++i > 3 &&
+- 		    !mca_reap(b, NULL, 0)) {
++ 		    !mca_reap(b, 0, false)) {
+  			mca_data_free(b);
+  			rw_unlock(true, b);
+ -			--nr;
+ +			freed++;
+  		}
+  	}
+  
+diff --cc drivers/md/bcache/request.c
+index 71eb233,231b108..49ee1cf
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@@ -979,68 -1059,52 +1059,55 @@@ static void cached_dev_write(struct cac
+  
+  	if (should_writeback(dc, s->orig_bio,
+  			     cache_mode(dc, bio),
+- 			     s->op.skip)) {
+- 		s->op.skip = false;
+- 		s->writeback = true;
++ 			     s->iop.bypass)) {
++ 		s->iop.bypass = false;
++ 		s->iop.writeback = true;
+  	}
+  
+- 	if (s->op.skip)
+- 		goto skip;
+- 
+- 	trace_bcache_write(s->orig_bio, s->writeback, s->op.skip);
++ 	if (s->iop.bypass) {
++ 		s->iop.bio = s->orig_bio;
++ 		bio_get(s->iop.bio);
+  
+- 	if (!s->writeback) {
+- 		s->op.cache_bio = bio_clone_bioset(bio, GFP_NOIO,
+- 						   dc->disk.bio_split);
+- 
+- 		closure_bio_submit(bio, cl, s->d);
+- 	} else {
++ 		if (!(bio->bi_rw & REQ_DISCARD) ||
++ 		    blk_queue_discard(bdev_get_queue(dc->bdev)))
++ 			closure_bio_submit(bio, cl, s->d);
++ 	} else if (s->iop.writeback) {
+  		bch_writeback_add(dc);
+  
+ -		if (s->iop.flush_journal) {
+ +		if (bio->bi_rw & REQ_FLUSH) {
+  			/* Also need to send a flush to the backing device */
+ -			s->iop.bio = bio_clone_bioset(bio, GFP_NOIO,
+ -						      dc->disk.bio_split);
+ +			struct bio *flush = bio_alloc_bioset(0, GFP_NOIO,
+ +							     dc->disk.bio_split);
+  
+ -			bio->bi_size = 0;
+ -			bio->bi_vcnt = 0;
+ -			closure_bio_submit(bio, cl, s->d);
+ +			flush->bi_rw	= WRITE_FLUSH;
+ +			flush->bi_bdev	= bio->bi_bdev;
+ +			flush->bi_end_io = request_endio;
+ +			flush->bi_private = cl;
+ +
+ +			closure_bio_submit(flush, cl, s->d);
+  		} else {
+- 			s->op.cache_bio = bio;
++ 			s->iop.bio = bio;
+  		}
+- 	}
+- out:
+- 	closure_call(&s->op.cl, bch_insert_data, NULL, cl);
+- 	continue_at(cl, cached_dev_write_complete, NULL);
+- skip:
+- 	s->op.skip = true;
+- 	s->op.cache_bio = s->orig_bio;
+- 	bio_get(s->op.cache_bio);
++ 	} else {
++ 		s->iop.bio = bio_clone_bioset(bio, GFP_NOIO,
++ 					      dc->disk.bio_split);
+  
+- 	if ((bio->bi_rw & REQ_DISCARD) &&
+- 	    !blk_queue_discard(bdev_get_queue(dc->bdev)))
+- 		goto out;
++ 		closure_bio_submit(bio, cl, s->d);
++ 	}
+  
+- 	closure_bio_submit(bio, cl, s->d);
+- 	goto out;
++ 	closure_call(&s->iop.cl, bch_data_insert, NULL, cl);
++ 	continue_at(cl, cached_dev_write_complete, NULL);
+  }
+  
+- static void request_nodata(struct cached_dev *dc, struct search *s)
++ static void cached_dev_nodata(struct closure *cl)
+  {
+- 	struct closure *cl = &s->cl;
++ 	struct search *s = container_of(cl, struct search, cl);
+  	struct bio *bio = &s->bio.bio;
+  
+- 	if (bio->bi_rw & REQ_DISCARD) {
+- 		request_write(dc, s);
+- 		return;
+- 	}
+- 
+- 	if (s->op.flush_journal)
+- 		bch_journal_meta(s->op.c, cl);
++ 	if (s->iop.flush_journal)
++ 		bch_journal_meta(s->iop.c, cl);
+  
++ 	/* If it's a flush, we send the flush to the backing device too */
+  	closure_bio_submit(bio, cl, s->d);
+  
+  	continue_at(cl, cached_dev_bio_complete, NULL);
