@@ -1,131 +1,163 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: linux-next: manual merge of the net-next tree
-Date: Tue,  1 Oct 2013 13:07:21 +0200
-Message-ID: <1380625644-11331-5-git-send-email-treding@nvidia.com>
+Subject: linux-next: manual merge of the vfs tree
+Date: Tue,  1 Oct 2013 13:07:24 +0200
+Message-ID: <1380625644-11331-8-git-send-email-treding@nvidia.com>
 References: <20131001110344.GA20249@ulmo.nvidia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20131001110344.GA20249@ulmo.nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "David S. Miller" <davem@davemloft.net>, Brett Rudley <brudley@broadcom.com>, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>
+To: Trond Myklebust <Trond.Myklebust@netapp.com>, Dave Kleikamp <dave.kleikamp@oracle.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Today's linux-next merge of the net-next tree got conflicts in
+Today's linux-next merge of the vfs tree got conflicts in:
 
-	arch/h8300/include/uapi/asm/socket.h
-	drivers/net/usb/qmi_wwan.c
-	drivers/net/wireless/brcm80211/brcmfmac/dhd_bus.h
-	include/net/secure_seq.h
+	fs/nfs/direct.c
+	fs/nfs/file.c
 
-I removed the h8300 file and fixed up the other three (see below).
-Please check if the resolution looks correct.
+I fixed them up (see below). Please check if the resolution looks correct.
 
 Thanks,
 Thierry
 ---
-diff --cc drivers/net/usb/qmi_wwan.c
-index 3d6aaf7,0e59f9e..d03b6b6
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@@ -714,7 -729,8 +729,8 @@@ static const struct usb_device_id produ
-  	{QMI_FIXED_INTF(0x2357, 0x0201, 4)},	/* TP-LINK HSUPA Modem MA180 */
-  	{QMI_FIXED_INTF(0x2357, 0x9000, 4)},	/* TP-LINK MA260 */
-  	{QMI_FIXED_INTF(0x1bc7, 0x1200, 5)},	/* Telit LE920 */
-+ 	{QMI_FIXED_INTF(0x1bc7, 0x1201, 2)},	/* Telit LE920 */
- -	{QMI_FIXED_INTF(0x1e2d, 0x12d1, 4)},	/* Cinterion PLxx */
- +	{QMI_FIXED_INTF(0x1e2d, 0x0060, 4)},	/* Cinterion PLxx */
-  
-  	/* 4. Gobi 1000 devices */
-  	{QMI_GOBI1K_DEVICE(0x05c6, 0x9212)},	/* Acer Gobi Modem Device */
-diff --cc drivers/net/wireless/brcm80211/brcmfmac/dhd_bus.h
-index 74156f8,5bc0276..7f1340d
---- a/drivers/net/wireless/brcm80211/brcmfmac/dhd_bus.h
-+++ b/drivers/net/wireless/brcm80211/brcmfmac/dhd_bus.h
-@@@ -132,35 -132,33 +132,34 @@@ struct pktq *brcmf_bus_gettxq(struct br
-   * interface functions from common layer
+diff --cc fs/nfs/direct.c
+index 239c2fe,d71d66c..e83817c
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@@ -118,18 -117,26 +118,17 @@@ static inline int put_dreq(struct nfs_d
+   * @nr_segs: size of iovec array
+   *
+   * The presence of this routine in the address space ops vector means
+ - * the NFS client supports direct I/O. However, for most direct IO, we
+ - * shunt off direct read and write requests before the VFS gets them,
+ - * so this method is only ever called for swap.
+ + * the NFS client supports direct I/O. However, we shunt off direct
+ + * read and write requests before the VFS gets them, so this method
+ + * should never be called.
    */
+ -ssize_t nfs_direct_IO(int rw, struct kiocb *iocb, const struct iovec *iov, loff_t pos, unsigned long nr_segs)
+ +ssize_t nfs_direct_IO(int rw, struct kiocb *iocb, struct iov_iter *iter,
+ +		      loff_t pos)
+  {
+- 	dprintk("NFS: nfs_direct_IO (%s) off/no(%Ld/%lu) EINVAL\n",
+- 			iocb->ki_filp->f_path.dentry->d_name.name,
+- 			(long long) pos, iter->nr_segs);
+ -#ifndef CONFIG_NFS_SWAP
++ 	dprintk("NFS: nfs_direct_IO (%pD) off/no(%Ld/%lu) EINVAL\n",
++ 			iocb->ki_filp, (long long) pos, nr_segs);
   
-- extern bool brcmf_c_prec_enq(struct device *dev, struct pktq *q,
-- 			 struct sk_buff *pkt, int prec);
-+ bool brcmf_c_prec_enq(struct device *dev, struct pktq *q, struct sk_buff *pkt,
-+ 		      int prec);
+  	return -EINVAL;
+ -#else
+ -	VM_BUG_ON(iocb->ki_nbytes != PAGE_SIZE);
+ -
+ -	if (rw == READ || rw == KERNEL_READ)
+ -		return nfs_file_direct_read(iocb, iov, nr_segs, pos,
+ -				rw == READ ? true : false);
+ -	return nfs_file_direct_write(iocb, iov, nr_segs, pos,
+ -				rw == WRITE ? true : false);
+ -#endif /* CONFIG_NFS_SWAP */
+  }
   
-  /* Receive frame for delivery to OS.  Callee disposes of rxp. */
-- extern void brcmf_rx_frames(struct device *dev, struct sk_buff_head *rxlist);
-+ void brcmf_rx_frames(struct device *dev, struct sk_buff_head *rxlist);
+  static void nfs_direct_release_pages(struct page **pages, unsigned int npages)
+@@@ -1010,13 -905,11 +1009,11 @@@ ssize_t nfs_file_direct_read(struct kio
+  	struct address_space *mapping = file->f_mapping;
+  	size_t count;
   
-  /* Indication from bus module regarding presence/insertion of dongle. */
-- extern int brcmf_attach(uint bus_hdrlen, struct device *dev);
-+ int brcmf_attach(uint bus_hdrlen, struct device *dev);
-  /* Indication from bus module regarding removal/absence of dongle */
-- extern void brcmf_detach(struct device *dev);
-+ void brcmf_detach(struct device *dev);
-  /* Indication from bus module that dongle should be reset */
-- extern void brcmf_dev_reset(struct device *dev);
-+ void brcmf_dev_reset(struct device *dev);
-  /* Indication from bus module to change flow-control state */
-- extern void brcmf_txflowblock(struct device *dev, bool state);
-+ void brcmf_txflowblock(struct device *dev, bool state);
+ -	count = iov_length(iov, nr_segs);
+ +	count = iov_iter_count(iter);
+  	nfs_add_stats(mapping->host, NFSIOS_DIRECTREADBYTES, count);
   
-  /* Notify the bus has transferred the tx packet to firmware */
-- extern void brcmf_txcomplete(struct device *dev, struct sk_buff *txp,
-- 			     bool success);
-+ void brcmf_txcomplete(struct device *dev, struct sk_buff *txp, bool success);
+- 	dfprintk(FILE, "NFS: direct read(%s/%s, %zd@%Ld)\n",
+- 		file->f_path.dentry->d_parent->d_name.name,
+- 		file->f_path.dentry->d_name.name,
+- 		count, (long long) pos);
++ 	dfprintk(FILE, "NFS: direct read(%pD2, %zd@%Ld)\n",
++ 		file, count, (long long) pos);
   
-- extern int brcmf_bus_start(struct device *dev);
-+ int brcmf_bus_start(struct device *dev);
+  	retval = 0;
+  	if (!count)
+@@@ -1065,13 -959,11 +1062,11 @@@ ssize_t nfs_file_direct_write(struct ki
+  	struct address_space *mapping = file->f_mapping;
+  	size_t count;
   
-  #ifdef CONFIG_BRCMFMAC_SDIO
-- extern void brcmf_sdio_exit(void);
-- extern void brcmf_sdio_init(void);
-- extern void brcmf_sdio_register(void);
-+ void brcmf_sdio_exit(void);
-+ void brcmf_sdio_init(void);
-++void brcmf_sdio_register(void);
-  #endif
-  #ifdef CONFIG_BRCMFMAC_USB
-- extern void brcmf_usb_exit(void);
-- extern void brcmf_usb_register(void);
-+ void brcmf_usb_exit(void);
- -void brcmf_usb_init(void);
-++void brcmf_usb_register(void);
-  #endif
+ -	count = iov_length(iov, nr_segs);
+ +	count = iov_iter_count(iter);
+  	nfs_add_stats(mapping->host, NFSIOS_DIRECTWRITTENBYTES, count);
   
-  #endif				/* _BRCMF_BUS_H_ */
-diff --cc include/net/secure_seq.h
-index c2e542b,52c1a90..f257486
---- a/include/net/secure_seq.h
-+++ b/include/net/secure_seq.h
-@@@ -3,18 -3,19 +3,18 @@@
+- 	dfprintk(FILE, "NFS: direct write(%s/%s, %zd@%Ld)\n",
+- 		file->f_path.dentry->d_parent->d_name.name,
+- 		file->f_path.dentry->d_name.name,
+- 		count, (long long) pos);
++ 	dfprintk(FILE, "NFS: direct write(%pD2, %zd@%Ld)\n",
++ 		file, count, (long long) pos);
   
-  #include <linux/types.h>
+  	retval = generic_write_checks(file, &pos, &count, 0);
+  	if (retval)
+diff --cc fs/nfs/file.c
+index 19ac4fd,e2fcacf..cb66d5f
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@@ -174,18 -165,18 +165,17 @@@ nfs_file_flush(struct file *file, fl_ow
+  EXPORT_SYMBOL_GPL(nfs_file_flush);
   
-- extern __u32 secure_ip_id(__be32 daddr);
-- extern __u32 secure_ipv6_id(const __be32 daddr[4]);
-- extern u32 secure_ipv4_port_ephemeral(__be32 saddr, __be32 daddr, __be16 dport);
-- extern u32 secure_ipv6_port_ephemeral(const __be32 *saddr, const __be32 *daddr,
-- 				      __be16 dport);
-- extern __u32 secure_tcp_sequence_number(__be32 saddr, __be32 daddr,
-- 					__be16 sport, __be16 dport);
-- extern __u32 secure_tcpv6_sequence_number(const __be32 *saddr, const __be32 *daddr,
-- 					  __be16 sport, __be16 dport);
-- extern u64 secure_dccp_sequence_number(__be32 saddr, __be32 daddr,
-- 				       __be16 sport, __be16 dport);
-- extern u64 secure_dccpv6_sequence_number(__be32 *saddr, __be32 *daddr,
-- 					 __be16 sport, __be16 dport);
- -void net_secret_init(void);
-+ __u32 secure_ip_id(__be32 daddr);
-+ __u32 secure_ipv6_id(const __be32 daddr[4]);
-+ u32 secure_ipv4_port_ephemeral(__be32 saddr, __be32 daddr, __be16 dport);
-+ u32 secure_ipv6_port_ephemeral(const __be32 *saddr, const __be32 *daddr,
-+ 			       __be16 dport);
-+ __u32 secure_tcp_sequence_number(__be32 saddr, __be32 daddr,
-+ 				 __be16 sport, __be16 dport);
-+ __u32 secure_tcpv6_sequence_number(const __be32 *saddr, const __be32 *daddr,
-+ 				   __be16 sport, __be16 dport);
-+ u64 secure_dccp_sequence_number(__be32 saddr, __be32 daddr,
-+ 				__be16 sport, __be16 dport);
-+ u64 secure_dccpv6_sequence_number(__be32 *saddr, __be32 *daddr,
-+ 				  __be16 sport, __be16 dport);
+  ssize_t
+ -nfs_file_read(struct kiocb *iocb, const struct iovec *iov,
+ -		unsigned long nr_segs, loff_t pos)
+ +nfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter, loff_t pos)
+  {
+- 	struct dentry * dentry = iocb->ki_filp->f_path.dentry;
+- 	struct inode * inode = dentry->d_inode;
++ 	struct inode *inode = file_inode(iocb->ki_filp);
+  	ssize_t result;
   
-  #endif /* _NET_SECURE_SEQ */
+  	if (iocb->ki_filp->f_flags & O_DIRECT)
+ -		return nfs_file_direct_read(iocb, iov, nr_segs, pos, true);
+ +		return nfs_file_direct_read(iocb, iter, pos);
+  
+- 	dprintk("NFS: read_iter(%s/%s, %lu@%lu)\n",
+- 		dentry->d_parent->d_name.name, dentry->d_name.name,
+- 		(unsigned long) iov_iter_count(iter), (unsigned long) pos);
+ -	dprintk("NFS: read(%pD2, %lu@%lu)\n",
+++	dprintk("NFS: read_iter(%pD2, %lu@%lu)\n",
++ 		iocb->ki_filp,
++ 		(unsigned long) iov_length(iov, nr_segs), (unsigned long) pos);
+  
+  	result = nfs_revalidate_mapping(inode, iocb->ki_filp->f_mapping);
+  	if (!result) {
+@@@ -655,25 -634,24 +633,24 @@@ static int nfs_need_sync_write(struct f
+  	return 0;
+  }
+  
+ -ssize_t nfs_file_write(struct kiocb *iocb, const struct iovec *iov,
+ -		       unsigned long nr_segs, loff_t pos)
+ +ssize_t nfs_file_write_iter(struct kiocb *iocb, struct iov_iter *iter,
+ +			    loff_t pos)
+  {
+- 	struct dentry * dentry = iocb->ki_filp->f_path.dentry;
+- 	struct inode * inode = dentry->d_inode;
++ 	struct file *file = iocb->ki_filp;
++ 	struct inode *inode = file_inode(file);
+  	unsigned long written = 0;
+  	ssize_t result;
+ -	size_t count = iov_length(iov, nr_segs);
+ +	size_t count = iov_iter_count(iter);
+  
+- 	result = nfs_key_timeout_notify(iocb->ki_filp, inode);
++ 	result = nfs_key_timeout_notify(file, inode);
+  	if (result)
+  		return result;
+  
+- 	if (iocb->ki_filp->f_flags & O_DIRECT)
++ 	if (file->f_flags & O_DIRECT)
+ -		return nfs_file_direct_write(iocb, iov, nr_segs, pos, true);
+ +		return nfs_file_direct_write(iocb, iter, pos);
+  
+- 	dprintk("NFS: write_iter(%s/%s, %lu@%lld)\n",
+- 		dentry->d_parent->d_name.name, dentry->d_name.name,
+- 		(unsigned long) count, (long long) pos);
+ -	dprintk("NFS: write(%pD2, %lu@%Ld)\n",
+++	dprintk("NFS: write_iter(%pD2, %lu@%Ld)\n",
++ 		file, (unsigned long) count, (long long) pos);
+  
+  	result = -EBUSY;
+  	if (IS_SWAPFILE(inode))
