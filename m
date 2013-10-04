@@ -1,54 +1,79 @@
 From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: linux-next: Tree for Oct 3
-Date: Fri, 4 Oct 2013 10:52:40 -0700
-Message-ID: <20131004175240.GA9301@roeck-us.net>
+Date: Fri, 4 Oct 2013 12:45:04 -0700
+Message-ID: <20131004194504.GA32457@roeck-us.net>
 References: <20131004010230.GI27287@sirena.org.uk>
  <524E50DB.3060707@roeck-us.net>
- <CAOesGMhc5WYRFcBVSHShg6h8hn4HueGZtGCFKkzfX4SQEe_5LQ@mail.gmail.com>
- <524EC658.90706@roeck-us.net>
- <20131004143440.GO27287@sirena.org.uk>
- <CAOesGMhrF+RB9O2f1JGtkT02amZQCx1nUo0GjmeBErYiSHSVZA@mail.gmail.com>
+ <20131004102839.GJ27287@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:56518 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750988Ab3JDRwr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Oct 2013 13:52:47 -0400
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:50529 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751222Ab3JDTpL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Oct 2013 15:45:11 -0400
 Content-Disposition: inline
-In-Reply-To: <CAOesGMhrF+RB9O2f1JGtkT02amZQCx1nUo0GjmeBErYiSHSVZA@mail.gmail.com>
+In-Reply-To: <20131004102839.GJ27287@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-On Fri, Oct 04, 2013 at 10:00:20AM -0700, Olof Johansson wrote:
-> On Fri, Oct 4, 2013 at 7:34 AM, Mark Brown <broonie@kernel.org> wrote:
-> > On Fri, Oct 04, 2013 at 06:44:56AM -0700, Guenter Roeck wrote:
-> >
-> >> Great summaries. Do you have a single builder, or several builders and
-> >> collect the results ? Either case, any chance sharing the buildbot scripts ?
-> >
-> > There's a repo at:
-> >
-> >   git://git.linaro.org/people/khilman/build-scripts.git
+On Fri, Oct 04, 2013 at 11:28:39AM +0100, Mark Brown wrote:
+> On Thu, Oct 03, 2013 at 10:23:39PM -0700, Guenter Roeck wrote:
+> > On 10/03/2013 06:02 PM, Mark Brown wrote:
 > 
-> A git url is frustrating, especially when the gitweb isn't configured
-> to use the same paths.
+> > >Due to the length of time taken to run all the allmodconfigs I skipped
+> > >the defconfig tests; I know Olof has the ARM stuff covered in his
+> > >autobuilder.  I'm going to use allyesconfig tomorrow since that should
+> > >run faster so hopefully I can cover the ARM, i386 and x86_64 configs
+> > >again.
 > 
-> https://git.linaro.org/gitweb?p=people/khilman/build-scripts.git;a=summary
+> > I could try to set up the buildbot farm I am using for -stable candidates
+> > to also test the -next tree. Would that help ?
 > 
-I was able to clone it, though.
+> Yes, that'd be great.  Like Olof said ARM is pretty well covered but
+> adding more platforms would be very helpful.
 
-> > (Olof and Kevin have been collaborating on them).
-> 
-> What I use is quite different from that, but the origins are more or
-> less the same.
-> 
-No problem. I'll see if there is anything I can use to improve my buildbot
-scripts. My key problem is that I have not figured out how to merge
-results from multiple builders into a single summary e-mail. Hope I can
-solve that problem at some point. Time is always the problem.
+Ok, here are the results based on v3.12-rc3-3771-gedc72f7.
 
-Thanks,
+Build summary:
+	total: 110 pass: 86 skipped: 4 fail: 20
+
+'skipped' means the configuration does not (or no longer) exist. 
+
+Failed builds:
+	arm:allmodconfig
+	arm:ape6evm_defconfig
+	arm:marzen_defconfig
+	arm:armadillo800eva_defconfig
+	arm:mackerel_defconfig
+	blackfin:defconfig
+	metag:defconfig
+	metag:meta1_defconfig
+	metag:meta2_defconfig
+	metag:meta2_smp_defconfig
+	mips:defconfig
+	mips:bcm63xx_defconfig
+	mips:nlm_xlp_defconfig
+	mips:fuloong2e_defconfig
+	mips:e55_defconfig
+	mips:malta_defconfig
+	powerpc:ppc64e_defconfig
+	powerpc:chroma_defconfig
+	powerpc:mpc85xx_smp_defconfig
+	sparc64:allmodconfig
+
+mips and mips64 qemu tests fail as well. mips test builds but hangs early in
+boot, mips64 fails to build.
+
+On the plus side, the sh qemu warning (WARNING traceback during boot)
+is no longer observed.
+
+Details are at http://server.roeck-us.net:8010/builders.
+
+If everything works as intended, updates to the repository should trigger an
+automatic re-build. No guarantees, though - I had some trouble with the initial
+checkout.
+
 Guenter
