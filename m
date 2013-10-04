@@ -1,58 +1,62 @@
-From: Guenter Roeck <linux@roeck-us.net>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: linux-next: Tree for Oct 3
-Date: Fri, 04 Oct 2013 06:44:56 -0700
-Message-ID: <524EC658.90706@roeck-us.net>
-References: <20131004010230.GI27287@sirena.org.uk>	<524E50DB.3060707@roeck-us.net> <CAOesGMhc5WYRFcBVSHShg6h8hn4HueGZtGCFKkzfX4SQEe_5LQ@mail.gmail.com>
+Date: Fri, 4 Oct 2013 15:34:40 +0100
+Message-ID: <20131004143440.GO27287@sirena.org.uk>
+References: <20131004010230.GI27287@sirena.org.uk>
+ <524E50DB.3060707@roeck-us.net>
+ <CAOesGMhc5WYRFcBVSHShg6h8hn4HueGZtGCFKkzfX4SQEe_5LQ@mail.gmail.com>
+ <524EC658.90706@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="eUJndGal4TJgqj0h"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:54916 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754482Ab3JDNpF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Oct 2013 09:45:05 -0400
-In-Reply-To: <CAOesGMhc5WYRFcBVSHShg6h8hn4HueGZtGCFKkzfX4SQEe_5LQ@mail.gmail.com>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:42613 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753525Ab3JDOet (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Oct 2013 10:34:49 -0400
+Content-Disposition: inline
+In-Reply-To: <524EC658.90706@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Olof Johansson <olof@lixom.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 10/03/2013 10:41 PM, Olof Johansson wrote:
-> On Thu, Oct 3, 2013 at 10:23 PM, Guenter Roeck <linux@roeck-us.net> wrote:
->> On 10/03/2013 06:02 PM, Mark Brown wrote:
->>>
->>> Hi all,
->>>
->>> Better late than never I've uploaded today's linux-next tree to the
->>> master branch of the repository below:
->>>
->>>           git://gitorious.org/thierryreding/linux-next.git
->>>
->>> A next-20131003 tag is also provided for convenience.
->>>
->>> A few new conflicts today caused by the removal of the h8300
->>> architecture which I didn't report for triviality.  Several new build
->>> failures were found as a result of running allmodconfig tests between
->>> merges all of which have been reported and I'm still carrying the i.MX
->>> fix that Thierry has been carrying.
->>>
->>> Due to the length of time taken to run all the allmodconfigs I skipped
->>> the defconfig tests; I know Olof has the ARM stuff covered in his
->>> autobuilder.  I'm going to use allyesconfig tomorrow since that should
->>> run faster so hopefully I can cover the ARM, i386 and x86_64 configs
->>> again.
->>>
->>
->> I could try to set up the buildbot farm I am using for -stable candidates
->> to also test the -next tree. Would that help ?
->
-> ARM is pretty well-covered by my builds, I post results at:
->
-> http://lists.linaro.org/mailman/listinfo/kernel-build-reports
->
 
-Great summaries. Do you have a single builder, or several builders and
-collect the results ? Either case, any chance sharing the buildbot scripts ?
+--eUJndGal4TJgqj0h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Guenter
+On Fri, Oct 04, 2013 at 06:44:56AM -0700, Guenter Roeck wrote:
+
+> Great summaries. Do you have a single builder, or several builders and
+> collect the results ? Either case, any chance sharing the buildbot scripts ?
+
+There's a repo at:
+
+  git://git.linaro.org/people/khilman/build-scripts.git
+
+(Olof and Kevin have been collaborating on them).
+
+--eUJndGal4TJgqj0h
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSTtH9AAoJELSic+t+oim9a18P/RhcKmbkhbzQ0ie8oh4wkh/H
+XJM9DA8+VGkukp+kpWJkAUcgvINw20uztHxHWF6Xvz7NqyZFN0rnsSyatC16vhDk
+IxsS480kIHS81uUfA44nNoM1w1loc1c1n+RrP8K60vX7KzAyC+NBOvlA7/d6cRV1
+ad7R7xqwZcEKARLKKMVMXCW7di3cx2sDDNRWHBB6uSVrv2BgMLogqzcxjCaoFTLK
+OYe1yE3328JaIJcAEMaZZiQcUGO6J4dllAoplnEqAuzSrEXQRZmYcEgvWKltM3h6
+TiU+jGVczk7oZZ7pUh8llJoJwW2KP9ZdPGe6Yvd9x6VJ6yCqHDnK8sMQxzA6Y3lJ
+rAEZvvlXenx2dkKdMM8CGVG8X7Ic7+yjVZsMWht7rIV/4iuG2x49HUV1zBJB5VOi
+/LKfT7PGlgzaaw6VqLa81bSm/9Uj64i/rEtjZg3B2nZj8mtT3ZDau1D4GxL9ftIc
+4ulMe5TgJyJV8La7YnKaQ6IY8Wvf8aB2mvzMJgTaramnA20TmmeTINGu1MWPbDr7
+R9OJPCn8piz5dm93rBAuRaodaxePOqKDfnkcFsaCLXNXqcrKKfuKGUOKNrSuI2c/
+lBWrTlfGgom6T7u/al2ofrC0lzBXWs8yMr3fFmkdJk0MGVRhCkZqtVr9dWj4o1rR
+rGWONTXQQHtoPNqVii8n
+=mffX
+-----END PGP SIGNATURE-----
+
+--eUJndGal4TJgqj0h--
