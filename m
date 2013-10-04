@@ -1,46 +1,75 @@
 From: Olof Johansson <olof@lixom.net>
 Subject: Re: linux-next: Tree for Oct 3
-Date: Fri, 4 Oct 2013 10:00:20 -0700
-Message-ID: <CAOesGMhrF+RB9O2f1JGtkT02amZQCx1nUo0GjmeBErYiSHSVZA@mail.gmail.com>
+Date: Fri, 4 Oct 2013 10:04:20 -0700
+Message-ID: <CAOesGMj_DoC4iHsTMdbZ4sSOkbt-6nhaQgyFxtdvN96gXxyaxg@mail.gmail.com>
 References: <20131004010230.GI27287@sirena.org.uk>
 	<524E50DB.3060707@roeck-us.net>
 	<CAOesGMhc5WYRFcBVSHShg6h8hn4HueGZtGCFKkzfX4SQEe_5LQ@mail.gmail.com>
 	<524EC658.90706@roeck-us.net>
-	<20131004143440.GO27287@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qe0-f47.google.com ([209.85.128.47]:39289 "EHLO
-	mail-qe0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750880Ab3JDRAW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Oct 2013 13:00:22 -0400
-Received: by mail-qe0-f47.google.com with SMTP id b4so3200937qen.6
-        for <linux-next@vger.kernel.org>; Fri, 04 Oct 2013 10:00:21 -0700 (PDT)
-In-Reply-To: <20131004143440.GO27287@sirena.org.uk>
+Received: from mail-qc0-f172.google.com ([209.85.216.172]:62019 "EHLO
+	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750983Ab3JDREU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Oct 2013 13:04:20 -0400
+Received: by mail-qc0-f172.google.com with SMTP id l13so3020533qcy.17
+        for <linux-next@vger.kernel.org>; Fri, 04 Oct 2013 10:04:20 -0700 (PDT)
+In-Reply-To: <524EC658.90706@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Oct 4, 2013 at 7:34 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Oct 04, 2013 at 06:44:56AM -0700, Guenter Roeck wrote:
+On Fri, Oct 4, 2013 at 6:44 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On 10/03/2013 10:41 PM, Olof Johansson wrote:
+>>
+>> On Thu, Oct 3, 2013 at 10:23 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+>>>
+>>> On 10/03/2013 06:02 PM, Mark Brown wrote:
+>>>>
+>>>>
+>>>> Hi all,
+>>>>
+>>>> Better late than never I've uploaded today's linux-next tree to the
+>>>> master branch of the repository below:
+>>>>
+>>>>           git://gitorious.org/thierryreding/linux-next.git
+>>>>
+>>>> A next-20131003 tag is also provided for convenience.
+>>>>
+>>>> A few new conflicts today caused by the removal of the h8300
+>>>> architecture which I didn't report for triviality.  Several new build
+>>>> failures were found as a result of running allmodconfig tests between
+>>>> merges all of which have been reported and I'm still carrying the i.MX
+>>>> fix that Thierry has been carrying.
+>>>>
+>>>> Due to the length of time taken to run all the allmodconfigs I skipped
+>>>> the defconfig tests; I know Olof has the ARM stuff covered in his
+>>>> autobuilder.  I'm going to use allyesconfig tomorrow since that should
+>>>> run faster so hopefully I can cover the ARM, i386 and x86_64 configs
+>>>> again.
+>>>>
+>>>
+>>> I could try to set up the buildbot farm I am using for -stable candidates
+>>> to also test the -next tree. Would that help ?
+>>
+>>
+>> ARM is pretty well-covered by my builds, I post results at:
+>>
+>> http://lists.linaro.org/mailman/listinfo/kernel-build-reports
+>>
 >
->> Great summaries. Do you have a single builder, or several builders and
->> collect the results ? Either case, any chance sharing the buildbot scripts ?
->
-> There's a repo at:
->
->   git://git.linaro.org/people/khilman/build-scripts.git
+> Great summaries. Do you have a single builder, or several builders and
+> collect the results ? Either case, any chance sharing the buildbot scripts ?
 
-A git url is frustrating, especially when the gitweb isn't configured
-to use the same paths.
+My buildbot scripts are some pretty ugly hacks that I don't
+particularly feel like publishing to the world. I can send you a copy
+though.
 
-https://git.linaro.org/gitweb?p=people/khilman/build-scripts.git;a=summary
-
-> (Olof and Kevin have been collaborating on them).
-
-What I use is quite different from that, but the origins are more or
-less the same.
+The builder is one single beefy machine that i have on loan. It
+wouldn't be hard to make it distributed instead though; I've toyed
+around with prototypes for that in the past.
 
 
 -Olof
