@@ -1,60 +1,66 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: Build failure after merge of the char-misc tree
-Date: Thu, 3 Oct 2013 17:11:34 -0700
-Message-ID: <20131004001134.GA29624@kroah.com>
-References: <20131003235419.GG27287@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: Tree for Oct 3
+Date: Fri, 4 Oct 2013 02:02:30 +0100
+Message-ID: <20131004010230.GI27287@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59268 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751826Ab3JDALg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Oct 2013 20:11:36 -0400
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="bmlge7Pg4VPvffji"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20131003235419.GG27287@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Sudeep Dutt <sudeep.dutt@intel.com>, Dasaratharaman Chandramouli <dasaratharaman.chandramouli@intel.com>, Ashutosh Dixit <ashutosh.dixit@intel.com>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Oct 04, 2013 at 12:54:19AM +0100, Mark Brown wrote:
-> After merging the char-misc tree into -next an x86 allmodconfig build=
- fails
-> with:
->=20
-> drivers/misc/mic/host/mic_main.c: In function =E2=80=98mic_probe=E2=80=
-=99:
-> drivers/misc/mic/host/mic_main.c:320:3: error: too many arguments to =
-function =E2=80=98sysfs_get_dirent=E2=80=99
->    NULL, "state");
->    ^
-> In file included from include/linux/kobject.h:21:0,
->                  from include/linux/module.h:16,
->                  from drivers/misc/mic/host/mic_main.c:26:
-> include/linux/sysfs.h:465:1: note: declared here
->  sysfs_get_dirent(struct sysfs_dirent *parent_sd, const unsigned char
-> *name)
->  ^
-> make[4]: *** [drivers/misc/mic/host/mic_main.o] Error 1
->=20
-> caused by an interaction between the addition of the Intel MIC host
-> driver and commit 388975cccaaf1 (sysfs: clean up sysfs_get_dirent())
-> from the driver-current tree.
->=20
-> I've applied the patch below and can carry it for the time being.
->=20
-> From abbabb4580f45accf74f95aed6fe35b26ae8d009 Mon Sep 17 00:00:00 200=
-1
-> From: Mark Brown <broonie@linaro.org>
-> Date: Fri, 4 Oct 2013 00:53:01 +0100
-> Subject: [PATCH] misc: mic: Update for sysfs_get_dirent() cleanups
->=20
-> Signed-off-by: Mark Brown <broonie@linaro.org>
-> ---
->  drivers/misc/mic/host/mic_main.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
 
-That patch looks great, thanks.
+--bmlge7Pg4VPvffji
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-greg k-h
+Hi all,
+
+Better late than never I've uploaded today's linux-next tree to the
+master branch of the repository below:
+
+        git://gitorious.org/thierryreding/linux-next.git
+
+A next-20131003 tag is also provided for convenience.
+
+A few new conflicts today caused by the removal of the h8300
+architecture which I didn't report for triviality.  Several new build
+failures were found as a result of running allmodconfig tests between
+merges all of which have been reported and I'm still carrying the i.MX
+fix that Thierry has been carrying.
+
+Due to the length of time taken to run all the allmodconfigs I skipped
+the defconfig tests; I know Olof has the ARM stuff covered in his
+autobuilder.  I'm going to use allyesconfig tomorrow since that should
+run faster so hopefully I can cover the ARM, i386 and x86_64 configs
+again.
+
+Thanks,
+Mark
+
+--bmlge7Pg4VPvffji
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSThOjAAoJELSic+t+oim9coUP/2MWLFf5xVCF74dvN5XcX2xT
+1k9pAc/8fJ9JhZxx2ifRknUlc4NxXgbkRoEry0toSXnONGTm02b2PEZl0nrAA9Xa
+vPtHwx+LPkWpZ2DLxygBwzkEpkf7S78zphQmJMYBGiXLlJoCgpYYbJAOeY0jGQEz
+ubUFPJxSemFZbWTf0/TZMzvxpZ151g6Q39TipwYBWl2Rc2OvBbku0kRBRMEoQyKj
+MWjUmYoZeA7sPiBzxIDjGi8bAcUH9PRlcsgUxUnrREIUXOXXdY/vaPub2xPtmEU5
+WxX9wdGddFXSO4qaEpCW/zN+RJHr6IpjlU8qpx8EGATwueu5XvZ2YP/j27Gj8EBN
+HcaCItPd1ENgEwh9A8tEZbF6VOVGlDGIMdLI6Huf4GffRK28gmziD2Pte42NTBPu
+m8cxOWWXwFsI8LJmY0E4zLKgJu4lDEGuDGssaN5QyNtfpVpiJTXlHuCt7frEjjOe
+T7ONHgIEvpOC+avoCLqXW6EYpyIOXS4oSxkdZWDMyjVa2TfK7tFmYpIMqYYy+XtF
+vMdbd8n9MvpQObeqqIxgJzvogvCJRyAwXSPqtUO/cjaCy4/phlECZkh6ERDEOqEq
+EQIh4Wn83S2H2U/zXzEgDDVJOYGuwhQJnJ2YF7Kv+n5YCzusmNJfSH+plwzMeX9p
+axToiMs23TXhCCUvdgO2
+=5b5l
+-----END PGP SIGNATURE-----
+
+--bmlge7Pg4VPvffji--
