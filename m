@@ -1,59 +1,73 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: [PATCH] kernel/panic.c: reduce 1 byte usage for print tainted
- buffer.
-Date: Sat, 05 Oct 2013 23:53:37 +0800
-Message-ID: <52503601.50208@asianux.com>
-References: <5250354F.4020506@asianux.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Conflict in merge of the the random tree
+Date: Sat, 5 Oct 2013 20:14:13 +0100
+Message-ID: <20131005191413.GY27287@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CgKfkX9/bwndGexZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from intranet.asianux.com ([58.214.24.6]:51801 "EHLO
-	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752161Ab3JEPyk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 5 Oct 2013 11:54:40 -0400
-In-Reply-To: <5250354F.4020506@asianux.com>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:51428 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752284Ab3JETOV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 5 Oct 2013 15:14:21 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Rusty Russell <rusty@rustcorp.com.au>, Robin Holt <holt@sgi.com>, athorlton@sgi.com, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org
-
-Hello Al Viro:
-
-How about 2nd patch, is it correct?
-
-I have finished my 2 patches which for an evaluation by you.  ;-)
-
-Thanks.
-
-On 10/05/2013 11:50 PM, Chen Gang wrote:
-> sizeof("Tainted: ") already counts '\0', and after first sprintf(), 's'
-> will start from the current string end (its' value is '\0').
-> 
-> So need not add additional 1 byte for maximized usage of 'buf' in
-> print_tainted().
-> 
-> 
-> Signed-off-by: Chen Gang <gang.chen@asianux.com>
-> ---
->  kernel/panic.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index b6c482c..c00b4ce 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -233,7 +233,7 @@ static const struct tnt tnts[] = {
->   */
->  const char *print_tainted(void)
->  {
-> -	static char buf[ARRAY_SIZE(tnts) + sizeof("Tainted: ") + 1];
-> +	static char buf[ARRAY_SIZE(tnts) + sizeof("Tainted: ")];
->  
->  	if (tainted_mask) {
->  		char *s;
-> 
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
 
 
--- 
-Chen Gang
+--CgKfkX9/bwndGexZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+While merging the random tree into -next there was a trivial conflict
+in drivers/char/random.c between 0244ad004a54e3 (Remove GENERIC_HARDIRQ
+config option) and 557360455b (random: push extra entropy to the output
+pools).
+
+I've fixed this up as below:
+
+diff --cc drivers/char/random.c
+index 7737b5b,f126bd2..0000000
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@@ -255,8 -255,12 +255,9 @@@
+  #include <linux/fips.h>
+  #include <linux/ptrace.h>
+  #include <linux/kmemcheck.h>
+ +#include <linux/irq.h>
++ #include <linux/workqueue.h>
+ =20
+ -#ifdef CONFIG_GENERIC_HARDIRQS
+ -# include <linux/irq.h>
+ -#endif
+ -
+  #include <asm/processor.h>
+  #include <asm/uaccess.h>
+  #include <asm/irq.h>
+
+--CgKfkX9/bwndGexZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSUGUBAAoJELSic+t+oim9KhoP/2MIOkvzCSwZZR0nW77MN+mM
+l+p+5JLYdPod65BSbg2BVG11Zc/tdCFN2nPJ02tIUyhyWZPqwm9e4nN+FhzcRSzO
+FNzSaZbKfbph3gkBFObK7UPKYtMeZOXZ21fqhZ3e4/WAUh+KekTXxMPT2msQue23
+eG24hp2uCmrPEP8znM/Fif5CgdXVtRvreWevHKds18AfhP4tRK0kLn2IaYx+m0JG
+UIKibch8cAQ5YLKxXOXYJ3OUrwRiA9BDqO77lfS7spJADrHug4Fj7s150/7yYzE+
+rO6wvYNt5jPTMfL9HBvGruM46BT+WV6rfudKW0uOpXoDt5huVtM0uKen/MSTNcro
+bymqmXO8DTRK3XHav34r+enNPLVAUvYrXxciP2I/WnJH8ZKqczPWVX21cHYhUjhl
+xpwHqlBFWyhXJjmytQXJGI8RX5DBm3B8F9pe5TicWByyLbF/AGlU6pxnNhVwbY2J
+Nz0fOklspDUXq2spm3bUS/NfFrVZa/5VHLBHJAkfIXLgO71p2PFdtfs5N79NLjGK
+B8gRRs0KEH1TcBYaLVlFfn+CgoRJI4MWQ4res19UvehKeeyQNFPCIYUz7lGtBA3M
+AHw6jwGE7o39jXdbJspUeqE+8p5fXkNd0jAQFicNAuZJve4AGJjhGDWFr2GaebuG
+3N45Hyw83n0o2v318cop
+=m1iq
+-----END PGP SIGNATURE-----
+
+--CgKfkX9/bwndGexZ--
