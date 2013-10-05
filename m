@@ -1,71 +1,81 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Conflict in merge of the the drm-intel tree
-Date: Fri, 4 Oct 2013 22:02:50 +0100
-Message-ID: <20131004210250.GV27287@sirena.org.uk>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Oct 3
+Date: Fri, 04 Oct 2013 19:07:29 -0700
+Message-ID: <524F7461.4010703@roeck-us.net>
+References: <20131004010230.GI27287@sirena.org.uk>	<524E50DB.3060707@roeck-us.net>	<CAOesGMhc5WYRFcBVSHShg6h8hn4HueGZtGCFKkzfX4SQEe_5LQ@mail.gmail.com>	<524EC658.90706@roeck-us.net> <CAOesGMj_DoC4iHsTMdbZ4sSOkbt-6nhaQgyFxtdvN96gXxyaxg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HEWbDiF3bQmv4WB2"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:34472 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753529Ab3JDVDd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Oct 2013 17:03:33 -0400
-Content-Disposition: inline
+Received: from mail.active-venture.com ([67.228.131.205]:55673 "EHLO
+	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751374Ab3JECHe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Oct 2013 22:07:34 -0400
+In-Reply-To: <CAOesGMj_DoC4iHsTMdbZ4sSOkbt-6nhaQgyFxtdvN96gXxyaxg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rodrigo Vivi <rodrigo.vivi@gmail.com>, Ben Widawsky <benjamin.widawsky@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
+On 10/04/2013 10:04 AM, Olof Johansson wrote:
+> On Fri, Oct 4, 2013 at 6:44 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+>> On 10/03/2013 10:41 PM, Olof Johansson wrote:
+>>>
+>>> On Thu, Oct 3, 2013 at 10:23 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+>>>>
+>>>> On 10/03/2013 06:02 PM, Mark Brown wrote:
+>>>>>
+>>>>>
+>>>>> Hi all,
+>>>>>
+>>>>> Better late than never I've uploaded today's linux-next tree to the
+>>>>> master branch of the repository below:
+>>>>>
+>>>>>            git://gitorious.org/thierryreding/linux-next.git
+>>>>>
+>>>>> A next-20131003 tag is also provided for convenience.
+>>>>>
+>>>>> A few new conflicts today caused by the removal of the h8300
+>>>>> architecture which I didn't report for triviality.  Several new build
+>>>>> failures were found as a result of running allmodconfig tests between
+>>>>> merges all of which have been reported and I'm still carrying the i.MX
+>>>>> fix that Thierry has been carrying.
+>>>>>
+>>>>> Due to the length of time taken to run all the allmodconfigs I skipped
+>>>>> the defconfig tests; I know Olof has the ARM stuff covered in his
+>>>>> autobuilder.  I'm going to use allyesconfig tomorrow since that should
+>>>>> run faster so hopefully I can cover the ARM, i386 and x86_64 configs
+>>>>> again.
+>>>>>
+>>>>
+>>>> I could try to set up the buildbot farm I am using for -stable candidates
+>>>> to also test the -next tree. Would that help ?
+>>>
+>>>
+>>> ARM is pretty well-covered by my builds, I post results at:
+>>>
+>>> http://lists.linaro.org/mailman/listinfo/kernel-build-reports
+>>>
+>>
+>> Great summaries. Do you have a single builder, or several builders and
+>> collect the results ? Either case, any chance sharing the buildbot scripts ?
+>
+> My buildbot scripts are some pretty ugly hacks that I don't
+> particularly feel like publishing to the world. I can send you a copy
+> though.
+>
+Not much different to the quality of mine :). Would be great if you can send me a copy.
 
---HEWbDiF3bQmv4WB2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For my scripts, I still have some secrets in there like my gmail password
+in the clear. I'll have to make sure it is removed before I can publish it.
 
-While merging the drm-intel tree into -next there were conflicts in
-drivers/gpu/drm/i915/intel_dp.c between 0cc4b69960 (drm/i915: Mask LPSP
-to get PSR working even with Power Well in use by audio) in the drm tree
-and 18b5992c37 (drm/i915: Calculate PSR register offsets from base +
-gen) from the drm-intel tree.
+> The builder is one single beefy machine that i have on loan. It
+> wouldn't be hard to make it distributed instead though; I've toyed
+> around with prototypes for that in the past.
+>
+I would love to have something like that .. mine essentially consists
+of four PCs with quad-core CPUs, plus two smaller systems which are
+not always online.
 
-I've fixed this up as below:
-
-diff --cc drivers/gpu/drm/i915/intel_dp.c
-index bc6579e,0f77b8c..0000000
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@@ -1549,8 -1558,8 +1558,8 @@@ static void intel_edp_psr_setup(struct=20
-  	intel_edp_psr_write_vsc(intel_dp, &psr_vsc);
- =20
-  	/* Avoid continuous PSR exit by masking memup and hpd */
-- 	I915_WRITE(EDP_PSR_DEBUG_CTL, EDP_PSR_DEBUG_MASK_MEMUP |
-+ 	I915_WRITE(EDP_PSR_DEBUG_CTL(dev), EDP_PSR_DEBUG_MASK_MEMUP |
- -		   EDP_PSR_DEBUG_MASK_HPD);
- +		   EDP_PSR_DEBUG_MASK_HPD | EDP_PSR_DEBUG_MASK_LPSP);
- =20
-  	intel_dp->psr_setup_done =3D true;
-  }
-
---HEWbDiF3bQmv4WB2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSTyz3AAoJELSic+t+oim9XvoQAJalqkcwvndjvAkGbdmoxNE+
-o/C4lVXHKoKypnbqNmNhGgeZxzebdgt1cdLDU3TFUbsQiVNWQeqe8fIezPYDH/wR
-N52a544aZq9Oic6DAft28Hrq3uCcqpigFwtKuxclwyHhYMnzbU/8R/PFa4zk2JT0
-DVqXLkqV0FO4f7D//HupZICp/ywacfRDpYENeZFJ32FLYUNeS1pQ1QE5lDtTfSRp
-+5uZyyJXTeKUv1ImNnAGnV4DcC9FitmSZORbqdBkdmGndxIwdw6YScC5rmqF9VkW
-uEz6rRdWXTowXgqZb3JOOqOf2PUiA4fIYsNMCZM67y+a9txzL9EcbPaVrlsN9gUw
-TykYumeFCiFWbxN6yGopgyRmXenqx2LB+wIN+KyJk1JN+VcknW7R2RDCsC5svYZa
-AU1FaHdEaQoIuZv9223ZmOt3LXFZJP+Gj/Jb13iS2ydKKsWF3NRjZA85ULT69+U9
-M0vKpm12Pcxiq6w4SsGfwOfeNrjjJxsP2TpazxTJMdXdqW7MQDIjVRJer2Ha7JzK
-4hHTlRwzkrA36WEUGpBIC5S1qoi51SRuQFt/5bW0mqyIcA1jvKG5ONuLUnfinWnQ
-mHx+rR8G349rgPtCTkGxjSsh+31yLUXaKLRi8IcPj0onHg7VtqQXlOcTGs8MOvMo
-FlMtmljakbe6GltUbKyt
-=b/f+
------END PGP SIGNATURE-----
-
---HEWbDiF3bQmv4WB2--
+Thanks,
+Guenter
