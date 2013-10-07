@@ -1,48 +1,53 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: linux-next: manual merge of the wireless-next tree
-Date: Mon, 07 Oct 2013 09:17:36 -0700
-Message-ID: <1381162656.2081.179.camel@joe-AO722>
-References: <1381159127-11067-1-git-send-email-treding@nvidia.com>
-	 <1381159127-11067-5-git-send-email-treding@nvidia.com>
-	 <5252D7E4.2050509@lwfinger.net> <1381161393.2081.177.camel@joe-AO722>
-	 <5252DC9C.8090803@lwfinger.net>
+From: Alex Thorlton <athorlton@sgi.com>
+Subject: Re: [PATCH] kernel/panic.c: reduce 1 byte usage for print tainted
+ buffer.
+Date: Mon, 7 Oct 2013 11:35:29 -0500
+Message-ID: <20131007163529.GB2860@sgi.com>
+References: <5250354F.4020506@asianux.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtprelay0069.hostedemail.com ([216.40.44.69]:46398 "EHLO
-	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755529Ab3JGQRk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Oct 2013 12:17:40 -0400
-In-Reply-To: <5252DC9C.8090803@lwfinger.net>
+Received: from relay2.sgi.com ([192.48.179.30]:40805 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1756701Ab3JGQfb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Oct 2013 12:35:31 -0400
+Content-Disposition: inline
+In-Reply-To: <5250354F.4020506@asianux.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Thierry Reding <thierry.reding@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, Arend van Spriel <arend@broadcom.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chen Gang <gang.chen@asianux.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Rusty Russell <rusty@rustcorp.com.au>, Robin Holt <holt@sgi.com>, Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org
 
-On Mon, 2013-10-07 at 11:09 -0500, Larry Finger wrote:
-> On 10/07/2013 10:56 AM, Joe Perches wrote:
-> > On Mon, 2013-10-07 at 10:48 -0500, Larry Finger wrote:
-> >> On 10/07/2013 10:18 AM, Thierry Reding wrote:
-> >>> Today's linux-next merge of the wireless-next tree got conflicts in:
-> >>>
-> >>> 	drivers/net/wireless/brcm80211/brcmfmac/dhd_bus.h
-> >>> 	drivers/net/wireless/rtlwifi/rtl8188ee/phy.h
-> >>> 	drivers/net/wireless/rtlwifi/rtl8192ce/phy.h
-> >>> 	drivers/net/wireless/rtlwifi/rtl8192de/phy.h
-> >>> 	drivers/net/wireless/rtlwifi/rtl8723ae/phy.h
-> > []
-> >> Yes, the patches for rtlwifi problems are correct. All of these problems would
-> >> have been avoided if changes to wireless drivers were sent to the wireless tree
-> >> rather than direct submission to net-next!!!!
-> >
-> > They were and you acked it.
-> > https://lkml.org/lkml/2013/9/25/589
-> >
-> > Who picks it up first and applies it is
-> > not in my domain.
+On Sat, Oct 05, 2013 at 11:50:39PM +0800, Chen Gang wrote:
+> sizeof("Tainted: ") already counts '\0', and after first sprintf(), 's'
+> will start from the current string end (its' value is '\0').
 > 
-> Fair enough. I should have asked DaveM to let John apply those changes.
+> So need not add additional 1 byte for maximized usage of 'buf' in
+> print_tainted().
+>
 
-Or maybe John could merge changes from net-next
-into wireless-next a bit more often.
+Looks fine to me; nothing too crazy going on here.  By the way, Robin
+isn't with us here at SGI any more.  He's at Cray, now, but I don't know
+his e-mail there :/
+ 
+> 
+> Signed-off-by: Chen Gang <gang.chen@asianux.com>
+> ---
+>  kernel/panic.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index b6c482c..c00b4ce 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -233,7 +233,7 @@ static const struct tnt tnts[] = {
+>   */
+>  const char *print_tainted(void)
+>  {
+> -	static char buf[ARRAY_SIZE(tnts) + sizeof("Tainted: ") + 1];
+> +	static char buf[ARRAY_SIZE(tnts) + sizeof("Tainted: ")];
+>  
+>  	if (tainted_mask) {
+>  		char *s;
+> -- 
+> 1.7.7.6
