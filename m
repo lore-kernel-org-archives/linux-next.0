@@ -1,39 +1,33 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: linux-next: manual merge of the drm-intel tree
-Date: Mon,  7 Oct 2013 17:18:45 +0200
-Message-ID: <1381159127-11067-3-git-send-email-treding@nvidia.com>
+Subject: linux-next: build failure after merge of the mips tree
+Date: Mon,  7 Oct 2013 17:18:44 +0200
+Message-ID: <1381159127-11067-2-git-send-email-treding@nvidia.com>
 References: <1381159127-11067-1-git-send-email-treding@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-mips-bounce@linux-mips.org>
 In-Reply-To: <1381159127-11067-1-git-send-email-treding@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Ben Widawsky <benjamin.widawsky@intel.com>, Rodrigo Vivi <rodrigo.vivi@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Greg Ungerer <gerg@snapgear.com>, Ralf Baechle <ralf@linux-mips.org>, Ashok Kumar <ashoks@broadcom.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
 List-Id: linux-next.vger.kernel.org
 
-Today's linux-next merge of the drm-intel tree got a conflict in:
+Today's linux-next merge fails to build on various default configuration
+builds. This seems to be caused by the following commit:
 
-	drivers/gpu/drm/i915/intel_dp.c
+	5395d97 MIPS: Fix start of free memory when using initrd
 
-caused by commits 0cc4b69 (drm/i915: Mask LPSP to get PSR working even with
-Power Well in use by audio.) and 18b5992 (drm/i915: Calculate PSR register
-offsets from base + gen). I fixed it up (see below). Please verify that the
-resolution looks correct.
+Looking at the patchwork URLs in that commit message, Greg's original
+patch seems to have been fine, but Ashok's patch uses the initrd_end
+symbol outside of the section protected by an CONFIG_BLK_DEV_INITRD
+#ifdef and therefore causes to fail during linking.
 
-Thanks,
+I've reverted the patch in today's linux-next tree.
+
 Thierry
----
-diff --cc drivers/gpu/drm/i915/intel_dp.c
-index bc6579e,c4c280c..f349931
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@@ -1549,8 -1558,8 +1558,8 @@@ static void intel_edp_psr_setup(struct 
-  	intel_edp_psr_write_vsc(intel_dp, &psr_vsc);
-  
-  	/* Avoid continuous PSR exit by masking memup and hpd */
-- 	I915_WRITE(EDP_PSR_DEBUG_CTL, EDP_PSR_DEBUG_MASK_MEMUP |
-+ 	I915_WRITE(EDP_PSR_DEBUG_CTL(dev), EDP_PSR_DEBUG_MASK_MEMUP |
- -		   EDP_PSR_DEBUG_MASK_HPD);
- +		   EDP_PSR_DEBUG_MASK_HPD | EDP_PSR_DEBUG_MASK_LPSP);
-  
-  	intel_dp->psr_setup_done = true;
-  }
