@@ -1,65 +1,67 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Oct 9
-Date: Wed, 9 Oct 2013 08:44:24 -0700
-Message-ID: <20131009154424.GA8564@roeck-us.net>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: linux-next: manual merge of the imx-mxs tree
+Date: Wed, 9 Oct 2013 13:56:25 -0300
+Message-ID: <CAOMZO5CVZHNWcash5cb4MiMCU0K2R+X4Jio3vpaMA4VwE81QkQ@mail.gmail.com>
 References: <1381328067-1593-1-git-send-email-treding@nvidia.com>
- <20131009152906.GA8018@roeck-us.net>
+	<1381328067-1593-5-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f54.google.com ([209.85.160.54]:64803 "EHLO
-	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752100Ab3JIPob (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Oct 2013 11:44:31 -0400
-Content-Disposition: inline
-In-Reply-To: <20131009152906.GA8018@roeck-us.net>
+Received: from mail-wg0-f50.google.com ([74.125.82.50]:38842 "EHLO
+	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752079Ab3JIQ40 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Oct 2013 12:56:26 -0400
+In-Reply-To: <1381328067-1593-5-git-send-email-treding@nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawn.guo@linaro.org>, Fabio Estevam <fabio.estevam@freescale.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-On Wed, Oct 09, 2013 at 08:29:06AM -0700, Guenter Roeck wrote:
-> On Wed, Oct 09, 2013 at 04:14:22PM +0200, Thierry Reding wrote:
-> > Hi all,
-> > 
-> > I've uploaded today's linux-next tree to the master branch of the
-> > repository below:
-> > 
-> >         git://gitorious.org/thierryreding/linux-next.git
-> > 
-> > A next-20131009 tag is also provided for convenience.
-> > 
-> > Gained a few conflicts, but nothing too exciting. x86, ARM, PowerPC and
-> > MIPS default configurations build fine. There were some build failures
-> > unrelated to the merge, most of which I fixed and added as patches on
-> > top of the final merge.
-> > 
-> Build results:
-> 	total: 110 pass: 93 skipped: 4 fail: 13
-> 	[3.12-rc4: total: 110 pass: 105 skipped: 3 fail: 2]
-> 
-> Failed builds:
-> 	alpha:allmodconfig
-> 	arm:allmodconfig
-> 	blackfin:defconfig
-> 	i386:allyesconfig
-> 	i386:allmodconfig
-> 	m68k:allmodconfig
-> 	mips:allmodconfig
-> 	mips:nlm_xlp_defconfig
-> 	powerpc:allmodconfig
-> 	sparc64:allmodconfig
-> 	x86_64:allmodconfig
-> 	x86_64:allyesconfig
-> 	xtensa:allmodconfig
-> 
-> Many of the failures are due to ceph:
-> 
-> fs/ceph/file.c: In function 'ceph_sync_read':
-> fs/ceph/file.c:437:25: error: 'struct iov_iter' has no member named 'iov'
-> ...
-> 
-Sorry, that was the result for yesterday's tree. I should have results for the
-October 9 tree in a couple of hours.
+Hi Thierry,
 
-Guenter
+On Wed, Oct 9, 2013 at 11:14 AM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> Today's linux-next merge of the imx-mxs tree got conflicts in
+>
+>         arch/arm/mach-imx/clk-imx51-imx53.c
+>         arch/arm/mach-imx/mach-imx6q.c
+>
+> caused by commits 0efe995 (ARM: mach-imx: clk-imx51-imx53: Retrieve base
+> address and irq from dt), d2b36f6 (ARM: imx: replace imx6q_restart()
+> with mxc_restart()) and 4d9d18a (ARM: imx: remove custom .init_time
+> hook).
+>
+> I fixed them up (see below). Please verify that the resolution looks
+> good.
+...
+
+>  +static void __init mx53_clocks_init(struct device_node *np)
+>   {
+> -       int i;
+> +       int i, irq;
+>         unsigned long r;
+>  -      struct device_node *np;
+> +       void __iomem *base;
+>
+>         clk[pll1_sw] = imx_clk_pllv2("pll1_sw", "osc", MX53_DPLL1_BASE);
+>         clk[pll2_sw] = imx_clk_pllv2("pll2_sw", "osc", MX53_DPLL2_BASE);
+> @@@ -568,5 -567,22 +569,13 @@@
+>
+>         r = clk_round_rate(clk[usboh3_per_gate], 54000000);
+>         clk_set_rate(clk[usboh3_per_gate], r);
+> +
+> +       np = of_find_compatible_node(NULL, NULL, "fsl,imx53-gpt");
+> +       base = of_iomap(np, 0);
+> +       WARN_ON(!base);
+> +       irq = irq_of_parse_and_map(np, 0);
+> +       mxc_timer_init(base, irq);
+> +
+> +       return 0;
+
+This 'return 0' should be removed as the  function now changed to void.
+
+I have sent a patch fixing it.
+
+Regards,
+
+Fabio Estevam
