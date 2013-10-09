@@ -1,43 +1,27 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: linux-next: manual merge of the mvebu tree
-Date: Wed, 9 Oct 2013 10:37:27 -0400
-Message-ID: <20131009143727.GD5402@titan.lakedaemon.net>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Subject: Re: [PATCH] ipv6: Unbreak build
+Date: Wed, 09 Oct 2013 07:41:43 -0700
+Message-ID: <1381329703.4971.18.camel@edumazet-glaptop.roam.corp.google.com>
 References: <1381328067-1593-1-git-send-email-treding@nvidia.com>
- <1381328067-1593-6-git-send-email-treding@nvidia.com>
+	 <1381328067-1593-2-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:36310 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754051Ab3JIOh3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Oct 2013 10:37:29 -0400
-Content-Disposition: inline
-In-Reply-To: <1381328067-1593-6-git-send-email-treding@nvidia.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1381328067-1593-2-git-send-email-treding@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Thierry,
+On Wed, 2013-10-09 at 16:14 +0200, Thierry Reding wrote:
+> IPv6 specific fields in struct sock_common are accessed in various
+> places even if IPv6 support is disabled. Fix this by including the
+> fields unconditionally.
 
-On Wed, Oct 09, 2013 at 04:14:27PM +0200, Thierry Reding wrote:
-> Today's linux-next merge of the mvebu tree got conflicts in
+Well no. There is a reason we keep CONFIG_IPV6 at all.
 
-I looked in your scripts repo, and couldn't find the script you use to
-send out this email thread :(  Since I can't create a patch, I'll just
-ask, could you include the commit id of the branch you pulled in the
-email?
+The right fix is under review :
+http://patchwork.ozlabs.org/patch/281784/
 
-eg:
-
-Today's linux-next merge of the mvebu tree (477cdaf) got conflicts in
-...
-
-I had uploaded a new for-next branch less than 30 minutes before you
-sent this out, so I wasn't sure which you were working with.  Not a big
-deal, just thought I'd pass along the idea for the next time you're
-tweaking your scripts.
-
-thx,
-
-Jason.
+Thanks
