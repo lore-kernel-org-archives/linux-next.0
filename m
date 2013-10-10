@@ -1,84 +1,66 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Jason Cooper <jason@lakedaemon.net>
 Subject: Re: linux-next: manual merge of the mvebu tree
-Date: Thu, 10 Oct 2013 12:57:03 +0200
-Message-ID: <20131010105702.GD6735@ulmo.nvidia.com>
+Date: Thu, 10 Oct 2013 07:40:46 -0400
+Message-ID: <20131010114046.GE5402@titan.lakedaemon.net>
 References: <1381328067-1593-1-git-send-email-treding@nvidia.com>
  <1381328067-1593-6-git-send-email-treding@nvidia.com>
  <20131009143727.GD5402@titan.lakedaemon.net>
+ <20131010105702.GD6735@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hxkXGo8AKqTJ+9QI"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:55213 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752365Ab3JJK7I (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Oct 2013 06:59:08 -0400
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:47513 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754484Ab3JJLks (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Oct 2013 07:40:48 -0400
 Content-Disposition: inline
-In-Reply-To: <20131009143727.GD5402@titan.lakedaemon.net>
+In-Reply-To: <20131010105702.GD6735@ulmo.nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>
+To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On Thu, Oct 10, 2013 at 12:57:03PM +0200, Thierry Reding wrote:
+> On Wed, Oct 09, 2013 at 10:37:27AM -0400, Jason Cooper wrote:
+> > Thierry,
+> > 
+> > On Wed, Oct 09, 2013 at 04:14:27PM +0200, Thierry Reding wrote:
+> > > Today's linux-next merge of the mvebu tree got conflicts in
+> > 
+> > I looked in your scripts repo, and couldn't find the script you use to
+> > send out this email thread :( 
+> 
+> Well, that's because I'm doing them manually.
 
---hxkXGo8AKqTJ+9QI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+:)  Nice.  I do like the threading, it provides a nice consolidated
+summary of the day's tree.
 
-On Wed, Oct 09, 2013 at 10:37:27AM -0400, Jason Cooper wrote:
-> Thierry,
->=20
-> On Wed, Oct 09, 2013 at 04:14:27PM +0200, Thierry Reding wrote:
-> > Today's linux-next merge of the mvebu tree got conflicts in
->=20
-> I looked in your scripts repo, and couldn't find the script you use to
-> send out this email thread :(=20
+> > Since I can't create a patch, I'll just ask, could you include the
+> > commit id of the branch you pulled in the email?
+> > 
+> > eg:
+> > 
+> > Today's linux-next merge of the mvebu tree (477cdaf) got conflicts in
+> > ...
+> > 
+> > I had uploaded a new for-next branch less than 30 minutes before you
+> > sent this out, so I wasn't sure which you were working with.  Not a big
+> > deal, just thought I'd pass along the idea for the next time you're
+> > tweaking your scripts.
+> 
+> It should be possible to extend the Next/fetch script with something
+> that writes the SHA1 of each tree to a file. Stephen's linux-next trees
+> contain such a file (Next/SHA1s). I'll see if I can find the time to
+> update my scripts to do the same. That won't make it magically appear in
+> the notification email, but I can probably remember to do that in the
+> future.
 
-Well, that's because I'm doing them manually.
+No, not necessary.  I don't want to add unnecessary work to your plate.
+If the script modification put it in the email notification
+automagically, it might be worth doing, but if a tree owner is already
+looking at your -next tree, it's trivial to go one step further and look
+at the merge commit (which is what I did in this case).
 
-> Since I can't create a patch, I'll just ask, could you include the
-> commit id of the branch you pulled in the email?
->=20
-> eg:
->=20
-> Today's linux-next merge of the mvebu tree (477cdaf) got conflicts in
-> ...
->=20
-> I had uploaded a new for-next branch less than 30 minutes before you
-> sent this out, so I wasn't sure which you were working with.  Not a big
-> deal, just thought I'd pass along the idea for the next time you're
-> tweaking your scripts.
+thanks, and sorry for the noise.
 
-It should be possible to extend the Next/fetch script with something
-that writes the SHA1 of each tree to a file. Stephen's linux-next trees
-contain such a file (Next/SHA1s). I'll see if I can find the time to
-update my scripts to do the same. That won't make it magically appear in
-the notification email, but I can probably remember to do that in the
-future.
-
-Thanks,
-Thierry
-
---hxkXGo8AKqTJ+9QI
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSVof+AAoJEN0jrNd/PrOhw1oP/RpYaSfS+OzmAWn55AtTzbAg
-T1Wnhtui0pZB6/v4YJKmwsV9ZiNKgvQ5VOLDHTk1blUVP8DJlpD7PDHNURhvxd6o
-7RooOZLQxqY2lKNuPV3upMMBr5yReDNJzi7xYLXknYT74uGKCQh1rrOj2sYIL0B9
-Fia9e6/mdhKO10cyIXHVReoYpjuD+jxJ6UOCagphV9TqtLbdu9O5Noehap37MwTP
-fa6GWsafEjp9UoZjczfS8odVwb2mrWf4gTDqH5USIE+a+W0csTS/CinngaSW5n6k
-cLrbK1Wew2FCuVlCAR9jPfVT1vi92K326fY888C6bmEDPUsuAa9eDUmNx8CL7X8w
-C9Ioh1E0e1hxWa9dKGMkKdnrfA+PjB1qq671H8CcjDPdEoWuWYof4MdzIpomVWHi
-50TupxvB3YZ3dL7YQWH475wWxcanDxoro1FziNzh01/k79KIKs2aGA8TqRMsf7w2
-/7Nlh80LQenA8OA1fxpU++qO1bQjuP2HwnmzKcxae3RhHHiF/GFZLBiyYC98xMAe
-Q8/gBWPFMZVCyvXqi54rktetS7DWwAx8Flc0+qsTbQ/NzUfGax34Se7s/f8DYzwc
-ZexId/IS8NEiUymQ4AupsnyrWTW2P/RdE2QR5s4aoUrjbbjciZkG6kMIjwgjYX+F
-8CytO40E351BS/jbczYW
-=sXFz
------END PGP SIGNATURE-----
-
---hxkXGo8AKqTJ+9QI--
+Jason.
