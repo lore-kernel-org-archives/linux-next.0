@@ -1,52 +1,55 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the omap_dss2 tree
-Date: Thu, 10 Oct 2013 18:50:20 +0100
-Message-ID: <20131010175020.GS21581@sirena.org.uk>
+Subject: linux-next: manual merge of the usb-gadget tree
+Date: Thu, 10 Oct 2013 22:20:30 +0100
+Message-ID: <20131010212030.GV21581@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Kg4mXnqz7C/eEpmA"
+	protocol="application/pgp-signature"; boundary="n6e+1ms4ENB7zzLn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:41779 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:35116 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755863Ab3JJRu1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Oct 2013 13:50:27 -0400
+	with ESMTP id S1751919Ab3JJVVA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Oct 2013 17:21:00 -0400
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Archit Taneja <archit@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ricardo Neri <ricardo.neri@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
+To: Russell King <rmk+kernel@arm.linux.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Felipe Balbi <balbi@ti.com>
+Cc: linux-usb@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
 
 
---Kg4mXnqz7C/eEpmA
+--n6e+1ms4ENB7zzLn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Today's linux-next merge of the omap_dss2 tree got conflicts in
-drivers/video/omap2/dss/hdmi4_core.[ch] caused by ef26958a (omapdss:
-HDMI: Rename hdmi driver files to nicer names) interacting with a range
-of commits from Ricardo Neri in the fbdev tree and possibly some other
-stuff.  git is unfortunately not giving me a useful diff right now :/
+Today's linux-next merge of the usb-gadget tree got conflicts in
+drivers/usb/musb/davinci.c caused by an add in ea78201e2 (usb: musb:
+davinci: fix resources passed to MUSB driver for DM6467) adjacent to
+the modification of the device registration in 4c9ad1059 (DMA-API: usb:
+musb: use platform_device_register_full() to avoid directly messing with
+dma masks) from the ARM tree.
 
---Kg4mXnqz7C/eEpmA
+I've fixed trivially and can carry as required.
+
+--n6e+1ms4ENB7zzLn
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSVujZAAoJELSic+t+oim9tRsP/2qlXUFON7LesGn9lMvdx1sv
-OVHSiDXkSTRw8QN5gdZGVgIoCdUDzGsKkJMR6kTUNGTjgWxyukFj0ScOkTchYKXq
-tMW2YlMNi+cNBKXnX+Destt9Wi/pws6LQSSitT8XDmnX9V8QfrLQDhBY2yQ/Ekew
-N1/oIj+D909ODMEkHVKYhgbWh45ScDHMBVyDlc5z04bZb+BmWkm9TMH2ORfoVYhI
-oaEevVZD4CXwYAkd1iiaO7PXo7ye08LLzg8X01wnbyMZWDbHBdwdS5nyHfi2xh5A
-amY9Zgf19ZG4hxbbmheg7MoQlOSnl1fohJSg9dTkE4saOHoXV+rA0eqwoZhxuEK2
-WgGbpXFqvMnp8G1BUfNwtPuBmPWon1fAIQARNo/3aEj2TD2XdFD1MbhzyqrBSo0e
-g36/z5K76sToX3cJgAD0V2Lf52ODkor7xqEhhbWt0PIadjBrGKKm4X18vQlXoDpD
-4YSv57U9ZQzJPyjDG9jLR1kEjJVtC8wDfks2VPLbtaPQq4XbXBoM6YrsGBK5ncVT
-NET6BK2imHbgyVO8sxCqETWvZ7FPpRcpvGMzIP11GY4OOBSy4x5f6iHlvcEmyMZ4
-mPKh9vLzNwIP2DYA1Ei0XA7CW9VAZOMjPiqOQmH9Hh1Mg6RPX63gfuMjzho8EYhU
-t6TLKIvyVInKef49UXGO
-=KMwQ
+iQIcBAEBAgAGBQJSVxobAAoJELSic+t+oim9/qgP/RNbnGpcK/IYci+ayu7askU1
+cj+2+zBxmAC8Ygi0goYvk5IqBrMiLo5LzCV3MjEj47M1fDxQOnlOL/wuWnZipTxE
+SLStZfyw102uipvkaq7Howf02e/gUQ9mbJNqfFsdKf0ABQJDMhghrm06lQhpCN7C
+IWLtOC5g0IANijm1pFYIT9WOs4ss40FHEmWA3FpisrUiinN4SHVvnH33A9LU+6rK
+6pRMUN6ciia1TPbkFWDSBeGrgbXtjVyBEnbF0ROeCjtAQ+GbZpHfu8eGZdvl444R
+QAblRvHn0JfKaEfM8leyOXXVfpAObsUmGPDGgFVozbTBrOFAIF3VSbvLKXgeys8c
+/4cWDr2lQfYv77J/aVSTF0mxSe5Kk1u7+GLcdewYrmrljwCzB+SK+KeejWkcCr5C
+JFzT3QL3P3QPsrCP2NWJp+FQW9zZt6gvBFRLR2tNs8sI1ooJceNxMW47RM+y0IdQ
+r3kQzuY+nL4HlUuI9AIJD4GOY6vwANLJ4OGDf+qR40cqVpiviDnmDZ1jhdA59+tA
+ZVTht4T8CWcfoEpuhTUbSz0iIroTU3D02tPExQojjUYHUvRyM2h+ovQmIbrwAE0U
+MYfsu6GUsuwhfrTZiAjWpGeBbLAjCmjtqWlisVzqzefQn4UfrylVcsG9vxVb8AUj
+4QdJHp3pqtsKY5g89vAL
+=ckCF
 -----END PGP SIGNATURE-----
 
---Kg4mXnqz7C/eEpmA--
+--n6e+1ms4ENB7zzLn--
