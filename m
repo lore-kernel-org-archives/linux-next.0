@@ -1,69 +1,67 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Oct 9
-Date: Wed, 9 Oct 2013 10:55:35 -0700
-Message-ID: <20131009175535.GA8847@roeck-us.net>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] ipv6: Unbreak build
+Date: Thu, 10 Oct 2013 12:48:41 +0200
+Message-ID: <20131010104840.GC6735@ulmo.nvidia.com>
 References: <1381328067-1593-1-git-send-email-treding@nvidia.com>
- <20131009152906.GA8018@roeck-us.net>
- <20131009154424.GA8564@roeck-us.net>
+ <1381328067-1593-2-git-send-email-treding@nvidia.com>
+ <1381329703.4971.18.camel@edumazet-glaptop.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:64621 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752357Ab3JIRzm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Oct 2013 13:55:42 -0400
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Bu8it7iiRSEf40bY"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20131009154424.GA8564@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+In-Reply-To: <1381329703.4971.18.camel@edumazet-glaptop.roam.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Oct 09, 2013 at 08:44:24AM -0700, Guenter Roeck wrote:
-> On Wed, Oct 09, 2013 at 08:29:06AM -0700, Guenter Roeck wrote:
-> > On Wed, Oct 09, 2013 at 04:14:22PM +0200, Thierry Reding wrote:
-> > > Hi all,
-> > > 
-> > > I've uploaded today's linux-next tree to the master branch of the
-> > > repository below:
-> > > 
-> > >         git://gitorious.org/thierryreding/linux-next.git
-> > > 
-> > > A next-20131009 tag is also provided for convenience.
-> > > 
-> > > Gained a few conflicts, but nothing too exciting. x86, ARM, PowerPC and
-> > > MIPS default configurations build fine. There were some build failures
-> > > unrelated to the merge, most of which I fixed and added as patches on
-> > > top of the final merge.
-> > > 
-> > Build results:
-> > 	total: 110 pass: 93 skipped: 4 fail: 13
-> > 	[3.12-rc4: total: 110 pass: 105 skipped: 3 fail: 2]
-> > 
-> > Failed builds:
-> > 	alpha:allmodconfig
-> > 	arm:allmodconfig
-> > 	blackfin:defconfig
-> > 	i386:allyesconfig
-> > 	i386:allmodconfig
-> > 	m68k:allmodconfig
-> > 	mips:allmodconfig
-> > 	mips:nlm_xlp_defconfig
-> > 	powerpc:allmodconfig
-> > 	sparc64:allmodconfig
-> > 	x86_64:allmodconfig
-> > 	x86_64:allyesconfig
-> > 	xtensa:allmodconfig
-> > 
-> > Many of the failures are due to ceph:
-> > 
-> > fs/ceph/file.c: In function 'ceph_sync_read':
-> > fs/ceph/file.c:437:25: error: 'struct iov_iter' has no member named 'iov'
-> > ...
-> > 
-> Sorry, that was the result for yesterday's tree. I should have results for the
-> October 9 tree in a couple of hours.
-> 
-October 9 results are exactly the same.
 
-Guenter
+--Bu8it7iiRSEf40bY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 09, 2013 at 07:41:43AM -0700, Eric Dumazet wrote:
+> On Wed, 2013-10-09 at 16:14 +0200, Thierry Reding wrote:
+> > IPv6 specific fields in struct sock_common are accessed in various
+> > places even if IPv6 support is disabled. Fix this by including the
+> > fields unconditionally.
+>=20
+> Well no. There is a reason we keep CONFIG_IPV6 at all.
+>=20
+> The right fix is under review :
+> http://patchwork.ozlabs.org/patch/281784/
+
+Yes that's obviously the better fix. In fact doing exactly that was my
+first instinct as well, but it seemed to be more invasive and I really
+just wanted a temporary fix for the build errors.
+
+I see that David has already applied the above patch, so this band-aid
+should no longer be necessary.
+
+Thanks,
+Thierry
+
+--Bu8it7iiRSEf40bY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSVoYHAAoJEN0jrNd/PrOhIXYP+gNpXFuh+Bd1Py/xhUCh1ix3
+DXdWfnJeYufP1npI1ifzhMSun6R6zakksF1agRz+ZKEunTAMhoypvZP/sj+py5I6
+SB1Fl1IY3N9fpnlhJtaDj6EBItVTz+N4xTEZ12d0I5d/58hrEeW1IVmMkzCEhPPt
+dGGZ1dgit4ZNv0tM3KMXIeMvdTqGjlTz6vaRKMjDheS33k3rikbvxHQ/qiU2zeEF
+cC4RecX8/SL6pyxD9FLJSiTK3M+wRCyKWkEwxdSSF/zDBfsxgLCCsotliJG8prnd
+3z1T1GhLVIGy++B9xkUvzQDglaSXRuHxToZwJCYjD68NDgHXosIwOQpYUVKHIMGZ
+FLVWgYIM9/zjNpqChr33bNCZECzeVC+2USMkOHwxczYLfQKvhihbuEh6CZAg0vNg
+9OMl2XnUWmlOyzsAPiamKz0mCCD/aBFDCOXj33tBFKk+ui0YKIeCP3n8M6UlouQ2
+ZRgf1vj80vax18KOuSBkExZrAOb6TtUWNECgL0vH7kqwL6T+Z7wPwp+DykCpQYjV
+YDi578FXyJXmMrqCYi1PKEnHlmg2Z+FHzssabTdy0bDWrmBKOh89oZ90WixOYTyf
+bMyOAAWg0HnRUT2pIbbscEGnlZjxRpWQGdvD5FdvSiEtKDP16p4fCK2vGdKwK3RK
+K1v/eHcnABXZztDQp9OQ
+=HTVF
+-----END PGP SIGNATURE-----
+
+--Bu8it7iiRSEf40bY--
