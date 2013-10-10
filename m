@@ -1,66 +1,124 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: linux-next: manual merge of the mvebu tree
-Date: Thu, 10 Oct 2013 07:40:46 -0400
-Message-ID: <20131010114046.GE5402@titan.lakedaemon.net>
-References: <1381328067-1593-1-git-send-email-treding@nvidia.com>
- <1381328067-1593-6-git-send-email-treding@nvidia.com>
- <20131009143727.GD5402@titan.lakedaemon.net>
- <20131010105702.GD6735@ulmo.nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the drm-intel tree
+Date: Thu, 10 Oct 2013 17:51:57 +0100
+Message-ID: <20131010165157.GP21581@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:47513 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754484Ab3JJLks (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Oct 2013 07:40:48 -0400
+Content-Type: multipart/mixed; boundary="===============2087368455=="
+Return-path: <intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Sender: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
+Errors-To: intel-gfx-bounces+gcfxdi-intel-gfx=m.gmane.org@lists.freedesktop.org
+To: Jani Nikula <jani.nikula@intel.com>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, Dave Airlie <airlied@redhat.com>, Paulo Zanoni <paulo.r.zanoni@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: intel-gfx@lists.freedesktop.org, linux-next@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+List-Id: linux-next.vger.kernel.org
+
+
+--===============2087368455==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9RHkgBN4Ly9iZsmR"
 Content-Disposition: inline
-In-Reply-To: <20131010105702.GD6735@ulmo.nvidia.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2013 at 12:57:03PM +0200, Thierry Reding wrote:
-> On Wed, Oct 09, 2013 at 10:37:27AM -0400, Jason Cooper wrote:
-> > Thierry,
-> > 
-> > On Wed, Oct 09, 2013 at 04:14:27PM +0200, Thierry Reding wrote:
-> > > Today's linux-next merge of the mvebu tree got conflicts in
-> > 
-> > I looked in your scripts repo, and couldn't find the script you use to
-> > send out this email thread :( 
-> 
-> Well, that's because I'm doing them manually.
 
-:)  Nice.  I do like the threading, it provides a nice consolidated
-summary of the day's tree.
+--9RHkgBN4Ly9iZsmR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > Since I can't create a patch, I'll just ask, could you include the
-> > commit id of the branch you pulled in the email?
-> > 
-> > eg:
-> > 
-> > Today's linux-next merge of the mvebu tree (477cdaf) got conflicts in
-> > ...
-> > 
-> > I had uploaded a new for-next branch less than 30 minutes before you
-> > sent this out, so I wasn't sure which you were working with.  Not a big
-> > deal, just thought I'd pass along the idea for the next time you're
-> > tweaking your scripts.
-> 
-> It should be possible to extend the Next/fetch script with something
-> that writes the SHA1 of each tree to a file. Stephen's linux-next trees
-> contain such a file (Next/SHA1s). I'll see if I can find the time to
-> update my scripts to do the same. That won't make it magically appear in
-> the notification email, but I can probably remember to do that in the
-> future.
+Today's linux-next merge of the drm-intel tree got additional conflicts
+in drivers/gpu/drm/i915/intel_drv.h as a result of interactions between
+6aba5b6cf098 (drm/i915/dp: get rid of intel_dp->link_configuration) and
+various commits from Paulo Zanoni staticising functions.  I've fixed up
+by changing the resolution to that below and can carry:
 
-No, not necessary.  I don't want to add unnecessary work to your plate.
-If the script modification put it in the email notification
-automagically, it might be worth doing, but if a tree owner is already
-looking at your -next tree, it's trivial to go one step further and look
-at the merge commit (which is what I did in this case).
+diff --cc drivers/gpu/drm/i915/i915_dma.c
+index 637b695,df6efbf..0c86c48
+--- a/drivers/gpu/drm/i915/i915_dma.c
++++ b/drivers/gpu/drm/i915/i915_dma.c
+@@@ -1330,9 -1333,11 +1333,11 @@@ static int i915_load_modeset_init(struc
+ =20
+  	/* Always safe in the mode setting case. */
+  	/* FIXME: do pre/post-mode set stuff in core KMS code */
+ -	dev->vblank_disable_allowed =3D 1;
+ +	dev->vblank_disable_allowed =3D true;
+- 	if (INTEL_INFO(dev)->num_pipes =3D=3D 0)
++ 	if (INTEL_INFO(dev)->num_pipes =3D=3D 0) {
++ 		intel_display_power_put(dev, POWER_DOMAIN_VGA);
+  		return 0;
++ 	}
+ =20
+  	ret =3D intel_fbdev_init(dev);
+  	if (ret)
+@@@ -1473,7 -1480,14 +1480,7 @@@ int i915_driver_load(struct drm_device=20
+  	if (info->gen >=3D 6 && !drm_core_check_feature(dev, DRIVER_MODESET))
+  		return -ENODEV;
+ =20
+- 	dev_priv =3D kzalloc(sizeof(drm_i915_private_t), GFP_KERNEL);
+ -	/* i915 has 4 more counters */
+ -	dev->counters +=3D 4;
+ -	dev->types[6] =3D _DRM_STAT_IRQ;
+ -	dev->types[7] =3D _DRM_STAT_PRIMARY;
+ -	dev->types[8] =3D _DRM_STAT_SECONDARY;
+ -	dev->types[9] =3D _DRM_STAT_DMA;
+ -
++ 	dev_priv =3D kzalloc(sizeof(*dev_priv), GFP_KERNEL);
+  	if (dev_priv =3D=3D NULL)
+  		return -ENOMEM;
+ =20
+diff --cc drivers/gpu/drm/i915/intel_dp.c
+index 98f3b64,f831464..c392ad2
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@@ -1532,8 -1558,8 +1541,8 @@@ static void intel_edp_psr_setup(struct=20
+  	intel_edp_psr_write_vsc(intel_dp, &psr_vsc);
+ =20
+  	/* Avoid continuous PSR exit by masking memup and hpd */
+- 	I915_WRITE(EDP_PSR_DEBUG_CTL, EDP_PSR_DEBUG_MASK_MEMUP |
++ 	I915_WRITE(EDP_PSR_DEBUG_CTL(dev), EDP_PSR_DEBUG_MASK_MEMUP |
+ -		   EDP_PSR_DEBUG_MASK_HPD);
+ +		   EDP_PSR_DEBUG_MASK_HPD | EDP_PSR_DEBUG_MASK_LPSP);
+ =20
+  	intel_dp->psr_setup_done =3D true;
+  }
 
-thanks, and sorry for the noise.
+--9RHkgBN4Ly9iZsmR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Jason.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSVtspAAoJELSic+t+oim9xy4P/2U3KAyMFC9/TJZP6H+Fttb4
+Ojv6xQsg7zELYqQJcr8D6O9ymD9GpBCQbi64G1hkXRAPGQ4DH5Jf+DWV8/TPnuM4
+I5mBbll3fvurICyxvk0t7TRqVpZCsGMlsIVfiYfnTKCI7gd1RRbvWsxtYFCryopU
+NdCyj34lXxVurzKivyByBkIlTAlQ5SXVhA4KveFApuF2t0D10tSq55C0yjr+hhHt
+WLX0xit6H+xpJ/ZQTYPcF0uk3L6VpUjh6METoJ9VArWNnzA0DA0qbXMj3oFE9s+U
+bIOD0ewydVweDk9zuMP1UFOIXvi+jFz8bi+ifBMMLYRUkXVxsEc/AUDs1jIUwNLO
+toIIk+CB4VyV9ILf49KOnxN41mIiboPmDChQSXN93qdeBd2I/LSIe6sOb7MIVLe+
+VrXyGzdoQ/eaiadgokxjnja5fUsyE/qOSYgw4b5uN4YjbHjmn8fzxxlbVOK7o28b
+cLEYc+gzSrFoIWelgtVxLsKqZKxtGdWmgIutjta9licA2kScNlotV1a069BCF4LU
+FF+M/CT4i0N3zxujFY2nIpNC+aRxy7keBqp022DWCgtxuySd3zhFQLrtvMx3cnoL
+hmimXpPPP59UOo7z4OXjVLV9TB7mvi81x3PjNy1GGR2TbLz989p7yDew4l9t1mRO
+KOpiKw0vNacjIdsHjatg
+=p00h
+-----END PGP SIGNATURE-----
+
+--9RHkgBN4Ly9iZsmR--
+
+--===============2087368455==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Intel-gfx mailing list
+Intel-gfx@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/intel-gfx
+
+--===============2087368455==--
