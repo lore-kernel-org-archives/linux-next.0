@@ -1,62 +1,67 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: Tree for Oct 10
-Date: Thu, 10 Oct 2013 23:55:07 +0100
-Message-ID: <20131010225507.GY21581@sirena.org.uk>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: linux-next: manual merge of the omap_dss2 tree
+Date: Fri, 11 Oct 2013 08:18:34 +0300
+Message-ID: <52578A2A.10304@ti.com>
+References: <20131010175020.GS21581@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="i4WgBwpUkbQcesZD"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:35647 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751288Ab3JJWzN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Oct 2013 18:55:13 -0400
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+	protocol="application/pgp-signature";
+	boundary="XNqRQXMNldPvDr7dARvo8RFQxgfO1pSIR"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131010175020.GS21581@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Cc: Archit Taneja <archit@ti.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
+List-Id: linux-next.vger.kernel.org
+
+--XNqRQXMNldPvDr7dARvo8RFQxgfO1pSIR
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Hi Mark, Jean-Christophe,
+
+On 10/10/13 20:50, Mark Brown wrote:
+> Today's linux-next merge of the omap_dss2 tree got conflicts in
+> drivers/video/omap2/dss/hdmi4_core.[ch] caused by ef26958a (omapdss:
+> HDMI: Rename hdmi driver files to nicer names) interacting with a range=
+
+> of commits from Ricardo Neri in the fbdev tree and possibly some other
+> stuff.  git is unfortunately not giving me a useful diff right now :/
+
+Jean-Christophe has slightly different versions of my patches in his
+fbdev for-next branch, so they conflict with my updated versions.
+
+Jean-Christophe, I expected this to happen with the current way of you
+having a copy of my for-next branch in yours. Can I now take your
+atmel_lcdfb patches to my for-next, and you'll remove all patches from
+your for-next?
+
+ Tomi
 
 
---i4WgBwpUkbQcesZD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi all,
-
-I've uploaded today's linux-next tree to the master branch of the
-repository below:
-
-        git://gitorious.org/thierryreding/linux-next.git
-
-A next-20131010 tag is also provided for convenience.
-
-There were a few new conflicts which have been reported, each merge
-builds fine with x86 allmodconfig.  A few cross tree integration fixes
-are still being carried but nothing new.
-
-Thanks,
-Mark
-
---i4WgBwpUkbQcesZD
+--XNqRQXMNldPvDr7dARvo8RFQxgfO1pSIR
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iQIcBAEBAgAGBQJSVzBIAAoJELSic+t+oim9s8MP/RQXxvQjzKaieWM5+rHjjIC/
-qjhLhrDnychkzZRItGFoLp29Qp9gh+x67xtHJyCUEHPYpfnGNYozS8gEchai1ojK
-H35Fe9bou925TPZBHlqD0hP4eWI5V5FRPW46sPDZkYP1y2JlYEzrJTVoD6kNx0Ut
-oyZAJs5FgYxv9IJB4Bu/mPMcR6ruY71/0ik+77CTcFrZhdI7N9sLWDCr7GCjq6+x
-FfCJL57UF4N7rI2pk4Pj/lJg68X37tbdjNRwSpmbp07K7zkytmQMHkwTejwAOxKy
-jzKKHIUNoDFxc2m5qrKHG1fv78S0agzXegT0aDr9VD4x39tufCcRMpjewTvryd+O
-iLi1iqrHGpE22kCb1SWZ0t2oroShIOrfODjghxo99cJ6mNPuhY1v/txI0LodUAZi
-t0Et/XTVXFk6TSIBRvnSm1yDrzlDi1tLkKgGkdX5c9LRptfhcYnSjVyQyxQWK8B+
-1L3ZiSmbaItF6ZoFyzuK/Gqia4bFzDwfzX2bKtGpGPPMAQcj9XcB2povkUCYkyO6
-TC7exw94FFB3l4S4UFB9uLPiaiIwPtvmdOAak7E25UVXX7I2BBxP874C+4AsWRP3
-C/GsEZncWv0k9rXeIybpngvJn5Ei4goWIgUz23/v07gz4NvcBsuEa1bRZomaibMz
-d+SlaagluZiGpScu5jwx
-=P0E+
+iQIcBAEBAgAGBQJSV4oqAAoJEPo9qoy8lh71j9EP/3p2wrXE1HG9AxVh7vTQfL+z
+k/ER29SY3vxgDBXgKwoVTAy8Ui1/h9wrx1gfOLYbJck3vjKMSfW1bjJn8Sx2TNZg
+0yImVz8jcJg1Hx7hfwaygFysRnyqniKHw2H0uVRUW8j0b0W9/6EwwAdruHBAcWN1
+xvUKTVMsOKzZqhtf7jr600Gn0XBffMaXOgd2vgRaSicaTFfJRe1NzbKynn52qKu0
+8GRHFrwEyhsatNPy5UEmtG/aKhQDrqNuEYXavi9/Puv/qB0W/fY84LvI0Sv7uDEM
+3/GQbvvm4pYcHaKJpGrhoI+B9GUmamOQ+S9crZPXp4sOCgM7J+6co9//QWaoVHb2
+62gs2a1lsSagc5H6wykChKRzv3KovVo+w8uzgLfvLSXIWU1FD1ze1gPAfbOX9OOy
+6v0KD1ApGxGUTSKUBUSpgTZ0Pq5qNFmxKSz7TofVMZezq7k8++rsMT3ywKJlAyNC
+y4VGWFa8TZUwgf9cSNrfm7bST1E9I2cqWxbl8ioM/RGFqpzAxFzy1OaFrLeHmKVh
+DIOXZa5lNfBJUO6YDY+O011h1HbdBTEYTktoN12370VtTKY8w2WepUnC3yA2mvkI
+Fcqf1NyU7IN0TCeFKR/NQh9vkbWpzVvcrlFuKjjrU2t+o6wZqVbtYN3BgJ3Vyv2Q
+nqeKKrSdBLbrlL/CK844
+=J0Qn
 -----END PGP SIGNATURE-----
 
---i4WgBwpUkbQcesZD--
+--XNqRQXMNldPvDr7dARvo8RFQxgfO1pSIR--
