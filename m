@@ -1,62 +1,78 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: Tree for Oct 11
-Date: Sat, 12 Oct 2013 18:21:50 +0100
-Message-ID: <20131012172150.GN2443@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Sep 30
+Date: Sun, 13 Oct 2013 07:30:46 +1100
+Message-ID: <20131013073046.9608a959d93dbc04687980c6@canb.auug.org.au>
+References: <20130930102033.GA9251@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xdWF/UuCWMRSqXrg"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sun__13_Oct_2013_07_30_46_+1100_b+UZCxUFEv3r7JBo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:56994 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752244Ab3JLRW4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 12 Oct 2013 13:22:56 -0400
-Content-Disposition: inline
+Received: from haggis.pcug.org.au ([203.10.76.10]:36261 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752732Ab3JLUay (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 12 Oct 2013 16:30:54 -0400
+In-Reply-To: <20130930102033.GA9251@ulmo.nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
---xdWF/UuCWMRSqXrg
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Sun__13_Oct_2013_07_30_46_+1100_b+UZCxUFEv3r7JBo
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Thierry, Mark,
 
-I've uploaded today's linux-next tree to the master branch of the
-repository below:
+On Mon, 30 Sep 2013 12:20:34 +0200 Thierry Reding <thierry.reding@gmail.com=
+> wrote:
+>
+> As I'm sure is the case for many of us, I've become very dependent upon
+> the linux-next tree. So everytime Stephen goes on vacation I break out
+> in a cold sweat.
+>=20
+> Here's my attempt at providing temporary service until Stephen is back.
 
-        git://gitorious.org/thierryreding/linux-next.git
+OK, WOW!  I cannot thank you guys enough for taking this on.  I have been
+very reticent to ask anyone to do this in my absence as I know how much
+time it can take away from anything else you may want to do.
 
-A next-20131011 tag is also provided for convenience.
+=46rom other messages I have seen, you guys seem to be doing a good job - I
+might just extend my holiday ;-)
 
-There was one new conflict which has been reported, each merge builds
-fine with x86 allmodconfig.  A few cross tree integration fixes are
-still being carried but nothing new.
+So thank you very much.
 
-Thanks,
-Mark
+> I took some notes about conflicts, but I lack any contact information
+> for the trees so unless I can scrape some useful information from the
+> MAINTAINERS file I will just have to send them out to LKML and hope that
+> the right people look at them.
 
---xdWF/UuCWMRSqXrg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I will forward you and Mark my contacts list in another email.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Sun__13_Oct_2013_07_30_46_+1100_b+UZCxUFEv3r7JBo
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSWYUqAAoJELSic+t+oim9xAwP/1SI3+YLofs0Cat9wD9wsXeD
-5NN1xoF3LCQugga9XnWD68qHQBkvYkyzwI/DBuJlL2vL3CzKR+MTmzem5Q8ftoiT
-QDaoP1lc9GCNYntyl4YNT8p98O7Q922kNDWj+yCtqaAudxlq2uEw0ptB3XqpwyN4
-qb57YlZKuoew+D6melRE8BnYPPa9GkummWwd+6XSroZuMGHVOz3Qux98c/BHgGJL
-s+5S2//tW+o/sM96N/PFvGaxTzLKak95cTOSkvs8wY6cyzZlQlWwn4iYAzwWsgNc
-hbyYYd9oKNL3BJDnQ6aZGN4OIsXlwJnDVDgbxxdVmu/fnx417KJtMUFzGH5NlIlP
-mxTwXSnJ0405kxPuFqKHqHljfEGtUilNoZny8pKLwPwMUT7z0Iq2Pj8S8PH2KDTQ
-bTs9VbgYx67eMSpm5rrFMLtDbNo1kffnDDfmMAv/uwQwIktqwIJ7v/2Zhnvm1aAX
-ZR0yuBDU6XS8RGp0xthMpN6WW2lBSxZM2wliJjDus+IjMTgYakYOqZn70tHVbiUj
-0FTyvLuBrwwNbYMk502n40KaOGWYJsmLarq6wvCEZqnswDsCxqYvvpgXS8Q+bsVX
-mDZUhc3FiT2bu8Zyt8I+5Oheg6OlzZhdnlu7nsmp7YlWauLhHP68C2in0UtQzgJf
-qHt+VJMHQ7ZhP2ZLz10J
-=GV2B
+iQIcBAEBCAAGBQJSWbF7AAoJEMDTa8Ir7ZwVcjUP/3467zMYt7AtxYHh6M6l+RQC
+knAPvJHQCBD3s3NLoNXvQZ0a4QGTkllzm0q+ECyd1qV3JKu1LvDHtWcsdHeaVg+K
+pbMlFSCel9WgU1D+Snq8jAyN6xOmlk8rlo7BU3mvjM70idz13YzZNJZE/usVy7Ux
+xXUDZxqvFpXyvvl+Z9k8mFq8QYYOYe1tDM5/FEshNO8tnXsjKTAjFyPUenhKdKT2
+69C5K6ZkA53mNibuxL5VhNEu8+I3xoCx6xfDdTyFjtjJlDK3sLjig9A3QGVFB9pp
+jp9dfIYoZNW0yoskNQ0dwEO5bqqP3vuWhpZsHardIyaFXiEnUN2afXpUSsuaVwNf
+GRRlPKtH+TLP/hauBH8eXItpMAs1vbYT3hunkSbOKbNNeFCgkgFmHdWDZBGKHcR/
+UghBisdaEsLCG6hYs7Xxsn6ypjJh8X/8FoZf1pOlwijFApnsfWahf2axUWm+0YUz
+fUIqr6ljsrZmWYFx5mmioiDHjOcI0B7AdOahN9rzfT/HZ+m6Sm9b6oxbDPndu3N+
+4x4FQLxhT02XOwkDq+j/RbNYds/di0CHf41lhOm4RGSjx6p1PGsXOaUAZ313zGML
+6bkw2JKHPaPqiN1RDHDENzVZ+KvOb/5Dy4na0ZrocJn3RfQWIjIO0Ht+12hpNzsD
+q8U8LF3g2hvOfgZRCXpT
+=BKA/
 -----END PGP SIGNATURE-----
 
---xdWF/UuCWMRSqXrg--
+--Signature=_Sun__13_Oct_2013_07_30_46_+1100_b+UZCxUFEv3r7JBo--
