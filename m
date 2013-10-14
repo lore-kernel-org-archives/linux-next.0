@@ -1,47 +1,60 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: linux-next: manual merge of the drm tree
-Date: Mon, 14 Oct 2013 16:48:04 +0200
-Message-ID: <1381762088-18880-4-git-send-email-treding@nvidia.com>
+Subject: linux-next: manual merge of the pm tree
+Date: Mon, 14 Oct 2013 16:48:07 +0200
+Message-ID: <1381762088-18880-7-git-send-email-treding@nvidia.com>
 References: <1381762088-18880-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1381762088-18880-1-git-send-email-treding@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
+To: Wolfram Sang <wsa@the-dreams.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lars-Peter Clausen <lars@metafoo.de>, Lv Zheng <lv.zheng@intel.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Today's linux-next merge of the drm tree got conflicts in
+Today's linux-next merge of the pm tree (5d5e5df) got conflicts in
 
-	drivers/gpu/drm/i915/intel_drv.h
+	drivers/i2c/i2c-core.c
 
-caused by commits e1264eb (Revert "drm/i915: Delay disabling of VGA memory
-until vgacon->fbcon handoff is done"), 20ddf66 (drm/i915: Make
-intel_crtc_active() available outside intel_pm.c), 18442d0 (drm/i915: Fix
-port_clock and adjusted_mode.clock readout all over), 6878da0 (drm/i915:
-Add intel_dotclock_calculate()) and eb14cb7 (drm/i915: Add state readout
-and checking for has_dp_encoder and dp_m_n).
+caused by commits 0acc2b3 (i2c: Remove redundant 'driver' field from the
+i2c_client struct) and a76e9bd (i2c: attach/detach I2C client device to
+the ACPI power domain).
 
-I fixed them up (see below). Please verify that the resolution looks good.
+I fixed them up (see below). Please verify that the resolution looks
+good.
 
 Thanks,
 Thierry
 ---
-diff --cc drivers/gpu/drm/i915/intel_drv.h
-index 9b7b68f,287bbef..39bfdb3
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@@ -793,5 -817,14 +817,13 @@@ extern void hsw_pc8_disable_interrupts(
-  extern void hsw_pc8_restore_interrupts(struct drm_device *dev);
-  extern void intel_aux_display_runtime_get(struct drm_i915_private *dev_priv);
-  extern void intel_aux_display_runtime_put(struct drm_i915_private *dev_priv);
-+ extern void intel_dp_get_m_n(struct intel_crtc *crtc,
-+ 			     struct intel_crtc_config *pipe_config);
-+ extern int intel_dotclock_calculate(int link_freq,
-+ 				    const struct intel_link_m_n *m_n);
-+ extern void ironlake_check_encoder_dotclock(const struct intel_crtc_config *pipe_config,
-+ 					    int dotclock);
-+ 
-+ extern bool intel_crtc_active(struct drm_crtc *crtc);
- -extern void i915_disable_vga_mem(struct drm_device *dev);
+diff --cc drivers/i2c/i2c-core.c
+index 111b2c6,03a8ae6..5923cfa
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@@ -254,10 -254,13 +254,12 @@@ static int i2c_device_probe(struct devi
+  					client->flags & I2C_CLIENT_WAKE);
+  	dev_dbg(dev, "probe\n");
   
-  #endif /* __INTEL_DRV_H__ */
++ 	acpi_dev_pm_attach(&client->dev, true);
+  	status = driver->probe(client, i2c_match_id(driver->id_table, client));
+- 	if (status)
++ 	if (status) {
+ -		client->driver = NULL;
+  		i2c_set_clientdata(client, NULL);
+- 
++ 		acpi_dev_pm_detach(&client->dev, true);
++ 	}
+  	return status;
+  }
+  
+@@@ -278,9 -281,11 +280,9 @@@ static int i2c_device_remove(struct dev
+  		dev->driver = NULL;
+  		status = 0;
+  	}
+ -	if (status == 0) {
+ -		client->driver = NULL;
+ +	if (status == 0)
+  		i2c_set_clientdata(client, NULL);
+- 
+ -	}
++ 	acpi_dev_pm_detach(&client->dev, true);
+  	return status;
+  }
+  
