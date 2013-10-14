@@ -1,65 +1,75 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] staging/mt29f_spinand: fix build error when ONDIEECC
- not enabled
-Date: Mon, 14 Oct 2013 12:39:37 -0700
-Message-ID: <525C4879.4030705@infradead.org>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH -next] netdev: inet_timewait_sock.h missing semi-colon
+ when KMEMCHECK is enabled
+Date: Mon, 14 Oct 2013 12:53:57 -0700
+Message-ID: <1381780437.12919.3.camel@joe-AO722>
 References: <1381762088-18880-1-git-send-email-treding@nvidia.com>
+	 <525C47C0.2000907@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:38054 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756346Ab3JNTkF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Oct 2013 15:40:05 -0400
-In-Reply-To: <1381762088-18880-1-git-send-email-treding@nvidia.com>
+Received: from smtprelay0155.hostedemail.com ([216.40.44.155]:35162 "EHLO
+	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754984Ab3JNTyB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Oct 2013 15:54:01 -0400
+In-Reply-To: <525C47C0.2000907@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>, Kamlakant Patel <kamlakant.patel@broadcom.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mona Anonuevo <manonuevo@micron.com>, linux-mtd@lists.infradead.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Mon, 2013-10-14 at 12:36 -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix (a few hundred) build errors due to missing semi-colon when
+> KMEMCHECK is enabled:
+> 
+>   include/net/inet_timewait_sock.h:139:2: error: expected ',', ';' or '}' before 'int'
+>   include/net/inet_timewait_sock.h:148:28: error: 'const struct inet_timewait_sock' has no member named 'tw_death_node'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+>  include/net/inet_timewait_sock.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- next-2013-1014.orig/include/net/inet_timewait_sock.h
+> +++ next-2013-1014/include/net/inet_timewait_sock.h
+> @@ -135,7 +135,7 @@ struct inet_timewait_sock {
+>  				tw_transparent  : 1,
+>  				tw_pad		: 6,	/* 6 bits hole */
+>  				tw_tos		: 8,
+> -				tw_pad2		: 16 /* 16 bits hole */
+> +				tw_pad2		: 16;	/* 16 bits hole */
+>  	kmemcheck_bitfield_end(flags);
+>  	u32			tw_ttd;
+>  	struct inet_bind_bucket	*tw_tb;
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
-Fix build error when CONFIG_MTD_SPINAND_ONDIEECC is not enabled
-by moving an inline function outside of that #ifdef block.
+Shouldn't this be done in kmemcheck.h?
 
-drivers/staging/mt29f_spinand/mt29f_spinand.c: In function 'spinand_read_byte':
-drivers/staging/mt29f_spinand/mt29f_spinand.c:665:9: error: implicit declaration of function 'mtd_to_state' [-Werror=implicit-function-declaration]
-drivers/staging/mt29f_spinand/mt29f_spinand.c:665:32: warning: initialization makes pointer from integer without a cast [enabled by default]
-drivers/staging/mt29f_spinand/mt29f_spinand.c: In function 'spinand_write_buf':
-drivers/staging/mt29f_spinand/mt29f_spinand.c:700:32: warning: initialization makes pointer from integer without a cast [enabled by default]
-drivers/staging/mt29f_spinand/mt29f_spinand.c: In function 'spinand_read_buf':
-drivers/staging/mt29f_spinand/mt29f_spinand.c:707:32: warning: initialization makes pointer from integer without a cast [enabled by default]
+ include/linux/kmemcheck.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Kamlakant Patel <kamlakant.patel@broadcom.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mona Anonuevo <manonuevo@micron.com>
-Cc: linux-mtd@lists.infradead.org
----
- drivers/staging/mt29f_spinand/mt29f_spinand.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
---- next-2013-1014.orig/drivers/staging/mt29f_spinand/mt29f_spinand.c
-+++ next-2013-1014/drivers/staging/mt29f_spinand/mt29f_spinand.c
-@@ -28,9 +28,6 @@
- /*
-  * OOB area specification layout:  Total 32 available free bytes.
+diff --git a/include/linux/kmemcheck.h b/include/linux/kmemcheck.h
+index 39f8453..b9ffad5 100644
+--- a/include/linux/kmemcheck.h
++++ b/include/linux/kmemcheck.h
+@@ -62,10 +62,10 @@ bool kmemcheck_is_obj_initialized(unsigned long addr, size_t size);
+  *     kmemcheck_annotate_bitfield(a, flags);
   */
--#ifdef CONFIG_MTD_SPINAND_ONDIEECC
--static int enable_hw_ecc;
--static int enable_read_hw_ecc;
+ #define kmemcheck_bitfield_begin(name)	\
+-	int name##_begin[0];
++	int name##_begin[0]
  
- static inline struct spinand_state *mtd_to_state(struct mtd_info *mtd)
- {
-@@ -41,6 +38,10 @@ static inline struct spinand_state *mtd_
- 	return state;
- }
+ #define kmemcheck_bitfield_end(name)	\
+-	int name##_end[0];
++	int name##_end[0]
  
-+#ifdef CONFIG_MTD_SPINAND_ONDIEECC
-+static int enable_hw_ecc;
-+static int enable_read_hw_ecc;
-+
- static struct nand_ecclayout spinand_oob_64 = {
- 	.eccbytes = 24,
- 	.eccpos = {
+ #define kmemcheck_annotate_bitfield(ptr, name)				\
+ 	do {								\
