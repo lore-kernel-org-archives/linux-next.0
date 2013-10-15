@@ -1,55 +1,45 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: linux-next: Tree for Oct 14 (bcache)
-Date: Tue, 15 Oct 2013 10:36:09 +0100
-Message-ID: <20131015093609.GT2443@sirena.org.uk>
-References: <1381762088-18880-1-git-send-email-treding@nvidia.com>
- <525C3EC2.20404@infradead.org>
- <20131014202723.GQ2443@sirena.org.uk>
- <20131015084631.GK7856@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] [media] staging: media: Fix build for iMON LIRC driver
+Date: Tue, 15 Oct 2013 16:02:43 +0200
+Message-ID: <1381845763-10487-3-git-send-email-treding@nvidia.com>
+References: <1381845763-10487-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bIK/Xm5bvUaTMa1a"
-Return-path: <linux-bcache-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20131015084631.GK7856-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-bcache-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kent Overstreet <kmo-PEzghdH756F8UrSeD/g0lQ@public.gmane.org>, linux-bcache-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1381845763-10487-1-git-send-email-treding@nvidia.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Archana kumari <archanakumari959@gmail.com>
+Cc: devel@driverdev.osuosl.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
+Add a missing , between parameters in a call to dev_info().
 
---bIK/Xm5bvUaTMa1a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/staging/media/lirc/lirc_imon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Tue, Oct 15, 2013 at 10:46:32AM +0200, Thierry Reding wrote:
-
-> Oh wait, they were applied right after the merges that broke. I hadn't
-> checked for that.
-
-Yeah, it's because I've been doing incremental build checks - the builds
-fail at the point the tree gets merged in.
-
---bIK/Xm5bvUaTMa1a
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSXQyFAAoJELSic+t+oim9EYwP/A2MPJ+vNq610cxv+vxPa/DQ
-4M8teRS8iNcdCgqxdd/vkspZz6F0retJqXKOUBa+gN/IF2DTWzLbAJBsas0lZCUk
-JXoMJU7H/VgqeJmoZmQRsf1rM0ZmM08dUWnV6QKmAGldwSOtRW4+LA9vm3zZDZWe
-IF7tJaAtHOfQEUar0EYIZlmzl3AKtQW6HEky2uYFx97nAFjeEQm6r9ajn+D4lpll
-Pio9uBq9+Bkl/CEvwjp2F/Kpc/wPbOqdYI7YpZuOEDK6+4EOyXc/n9Zq8BsTcQo0
-YhfgwpmcNtc0cwAy3pRU7oE9VnC50Lcs7Pfa1wdDJXi5SWr6KAKShbLWRukRqjKo
-1lRIM6XvNt8KYxZja7lckfglE7SAYfwbuNEiUrOcTV2zzS6mtsvXVtWynrKXV8Bp
-YJN0qXJfDmlJ0jyNC4slzoeOp84RaOWij1+JyuO2H2KHz8Rdfol4vRVOquPOEk6z
-bbtYurL1tKJJBHftSC14WDUxGGsHxIRYMHeIohfWZ+xyTd9LFWsnDsCLgysGgRCi
-9StG2Y1OZCWfbcQ1ihnXyxDThaLKMqxvXbpo9EoA4NBGqsDBteLp86svYBExmWuj
-Fb1cJbu960k7lYHb+55gV0IRj0qNhEXkiPTdkBSGaP9QvcvOpHNZ+ofaHw8DIxGE
-uqcXLhCAIctLIVu80cUU
-=NiVj
------END PGP SIGNATURE-----
-
---bIK/Xm5bvUaTMa1a--
+diff --git a/drivers/staging/media/lirc/lirc_imon.c b/drivers/staging/media/lirc/lirc_imon.c
+index 8180187..91c3e2d 100644
+--- a/drivers/staging/media/lirc/lirc_imon.c
++++ b/drivers/staging/media/lirc/lirc_imon.c
+@@ -925,7 +925,7 @@ static int imon_probe(struct usb_interface *interface,
+ 		if (usb_register_dev(interface, &imon_class)) {
+ 			/* Not a fatal error, so ignore */
+ 			dev_info(dev,
+-			       "%s: could not get a minor number for display\n"
++			       "%s: could not get a minor number for display\n",
+ 						__func__);
+ 		}
+ 	}
+-- 
+1.8.4
