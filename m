@@ -1,34 +1,33 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH -next] netdev: inet_timewait_sock.h missing semi-colon
- when KMEMCHECK is enabled
-Date: Mon, 14 Oct 2013 14:25:51 -0700
-Message-ID: <1381785951.12919.8.camel@joe-AO722>
-References: <1381762088-18880-1-git-send-email-treding@nvidia.com>
-	 <525C47C0.2000907@infradead.org> <1381780437.12919.3.camel@joe-AO722>
-	 <525C5863.1000505@infradead.org>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: [Consult] About linux-next branches
+Date: Tue, 15 Oct 2013 10:32:08 +0800
+Message-ID: <525CA928.8000909@asianux.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <525C5863.1000505@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from intranet.asianux.com ([58.214.24.6]:29233 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755893Ab3JOCdM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Oct 2013 22:33:12 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, 2013-10-14 at 13:47 -0700, Randy Dunlap wrote:
-> On 10/14/13 12:53, Joe Perches wrote:
-> > On Mon, 2013-10-14 at 12:36 -0700, Randy Dunlap wrote:
-> >> From: Randy Dunlap <rdunlap@infradead.org>
-> >>
-> >> Fix (a few hundred) build errors due to missing semi-colon when
-> >> KMEMCHECK is enabled:
+Hello All:
 
-keyword: enabled...
+I am developing with linux-next tree which have multiple branches.
 
-> > Shouldn't this be done in kmemcheck.h?
-> 
-> This patch makes sense and probably should be merged
-> but it does not fix the build errors that I reported.
+Now I use "git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git"
+which is not updated within 2 weeks. But it seems other linux-next
+branches continue updating.
 
-Duh, enabled.  Yeah, you're sure...
+So need I choose another linux-next tree for developing?
+
+
+Welcome any members' suggestions or completions.
+
+Thanks.
+-- 
+Chen Gang
