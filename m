@@ -1,47 +1,44 @@
-From: Christoffer Dall <christoffer.dall@linaro.org>
-Subject: Re: linux-next: manual merge of the kvm-arm tree
-Date: Wed, 16 Oct 2013 12:09:48 -0700
-Message-ID: <CAMJs5B-v9gC_Rk6V63K+ge4mK388igqA7oQx8oYM=WaVXLd-EQ@mail.gmail.com>
-References: <1381949500-501-1-git-send-email-treding@nvidia.com>
-	<1381949500-501-3-git-send-email-treding@nvidia.com>
-	<525EE1BC.3050605@arm.com>
-	<CAMJs5B85FwnXN3YE5-KagSjYDH0aSeVYgcwvSXy8=LGfw=STaw@mail.gmail.com>
-	<20131016190431.GA552@ulmo.nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH -next] misc: fix various misc/mic/host/ build errors
+Date: Wed, 16 Oct 2013 12:26:48 -0700
+Message-ID: <20131016192648.GA19637@kroah.com>
+References: <1381762088-18880-1-git-send-email-treding@nvidia.com>
+ <525C481E.1010908@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131016190431.GA552@ulmo.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Jonathan Austin <Jonathan.Austin@arm.com>, Olof Johansson <olof@lixom.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Gleb Natapov <gleb@redhat.com>, Mark Brown <broonie@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36710 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754052Ab3JPT0t (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Oct 2013 15:26:49 -0400
+Content-Disposition: inline
+In-Reply-To: <525C481E.1010908@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Harshavardhan R Kharche <harshavardhan.r.kharche@intel.com>, Ashutosh Dixit <ashutosh.dixit@intel.com>, Nikhil Rao <nikhil.rao@intel.com>, Sudeep Dutt <sudeep.dutt@intel.com>
 
-On 16 October 2013 12:04, Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Wed, Oct 16, 2013 at 12:02:08PM -0700, Christoffer Dall wrote:
->> On 16 October 2013 11:58, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> > On 16/10/13 19:51, Thierry Reding wrote:
->> >> Today's linux-next merge of the kvm-arm tree got conflicts in
->> >>
->> >>       arch/arm/kvm/reset.c
->> >>
->> >> caused by commits e8c2d99 (KVM: ARM: Add support for Cortex-A7) and ac570e0
->> >> (ARM: kvm: rename cpu_reset to avoid name clash).
->> >>
->> >> I've fixed them up (see below). Please verify that the resolution looks
->> >> good.
->> >
->> > Looks good to me (I have the same resolution in my own tree).
->> >
->> Yes, fix is good.
->>
->> This will stay a conflict until kvm/next and kvm/fixes merge, which
->> doesn't happen before after the merge window, usually.  If that's
->> going to cause too many headaches, maybe we need to talk to the KVM
->> guys (cc'ed) about a solution until then.
->
-> It shouldn't be a problem. Mark and I share the rerere cache, so unless
-> the conflict changes somehow it'll get resolved automatically in future
-> merges.
->
-Cool, I had no idea how you dealt with these merges, but I figured a
-daily manual operation was probably not how it works:)
+On Mon, Oct 14, 2013 at 12:38:06PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix various build errors (on x86_64) for drivers/misc/mic/host/:
+> 
+>   drivers/misc/mic/host/mic_main.c:378:3: error: too many arguments to function 'sysfs_get_dirent'
+>   drivers/misc/mic/host/mic_intr.h:134:58: warning: 'struct pci_dev' declared inside parameter list [enabled by default]
+>   drivers/misc/mic/host/mic_intr.h:134:58: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+>   drivers/misc/mic/host/mic_intr.h:135:58: warning: 'struct pci_dev' declared inside parameter list [enabled by default]
+>   drivers/misc/mic/host/mic_device.h:169:2: error: implicit declaration of function 'ioread32' [-Werror=implicit-function-declaration]
+>   drivers/misc/mic/host/mic_device.h: In function 'mic_mmio_read':
+>   drivers/misc/mic/host/mic_device.h:169:2: error: implicit declaration of function 'ioread32' [-Werror=implicit-function-declaration]
+>   drivers/misc/mic/host/mic_device.h: In function 'mic_mmio_write':
+>   drivers/misc/mic/host/mic_device.h:183:2: error: implicit declaration of function 'iowrite32' [-Werror=implicit-function-declaration]
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Harshavardhan R Kharche <harshavardhan.r.kharche@intel.com>
+> Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Nikhil Rao <nikhil.rao@intel.com>
+> Cc: Sudeep Dutt <sudeep.dutt@intel.com>
+
+This is a -next issue only at this point in time, I thought it was in
+the -next tree as a "fixup" already?
