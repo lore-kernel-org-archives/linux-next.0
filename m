@@ -1,61 +1,63 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: linux-next: manual merge of the tip tree
-Date: Wed, 16 Oct 2013 22:44:37 +0200
-Message-ID: <20131016204436.GC6579@mithrandir>
-References: <1381949500-501-1-git-send-email-treding@nvidia.com>
- <1381949500-501-2-git-send-email-treding@nvidia.com>
- <20131016200645.GD10651@twins.programming.kicks-ass.net>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH -next] misc: fix various misc/mic/host/ build errors
+Date: Wed, 16 Oct 2013 21:47:40 +0100
+Message-ID: <20131016204740.GB2443@sirena.org.uk>
+References: <1381762088-18880-1-git-send-email-treding@nvidia.com>
+ <525C481E.1010908@infradead.org>
+ <20131016192648.GA19637@kroah.com>
+ <525EEBD4.7070800@infradead.org>
+ <20131016194440.GA14416@kroah.com>
+ <20131016203024.GA6579@mithrandir>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="raC6veAxrt5nqIoY"
+	protocol="application/pgp-signature"; boundary="sRz9TtPC492wKWn6"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20131016200645.GD10651@twins.programming.kicks-ass.net>
+In-Reply-To: <20131016203024.GA6579@mithrandir>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Shaohua Li <shli@kernel.org>, NeilBrown <neilb@suse.de>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Harshavardhan R Kharche <harshavardhan.r.kharche@intel.com>, Ashutosh Dixit <ashutosh.dixit@intel.com>, Nikhil Rao <nikhil.rao@intel.com>, Sudeep Dutt <sudeep.dutt@intel.com>
 List-Id: linux-next.vger.kernel.org
 
 
---raC6veAxrt5nqIoY
+--sRz9TtPC492wKWn6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2013 at 10:06:45PM +0200, Peter Zijlstra wrote:
-> On Wed, Oct 16, 2013 at 08:51:39PM +0200, Thierry Reding wrote:
-> > Today's linux-next merge of the tip tree got a conflict in
-> >=20
-> > 	include/linux/wait.h
-> >=20
-> > caused by commits 1ab2460 (wait: add wait_event_cmd()) and fb869b6
-> > (sched/wait: Clean up wait.h details a bit).
->=20
-> Gargh, where did that come from?!
+On Wed, Oct 16, 2013 at 10:30:25PM +0200, Thierry Reding wrote:
+> On Wed, Oct 16, 2013 at 12:44:40PM -0700, Greg Kroah-Hartman wrote:
 
-FWIW, commit 1ab2460 came in through Neil's md tree.
+> > The driver maintainers have nothing to do with this, it's a sysfs change
+> > in my driver-core tree that causes this issue.
 
-Thierry
+> Well, we do carry a patch to fix this, but that generally doesn't get
+> carried to Linus' tree automatically as far as I know. So I guess it's
+> fine for now, but when the merge window opens you'll need to make sure
 
---raC6veAxrt5nqIoY
-Content-Type: application/pgp-signature
+Yeah.  This one was one of the ones that went AWOL for a few days due to
+being in the middle of the trees I'd produced (due to me doing the
+merges).
+
+--sRz9TtPC492wKWn6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSXvq0AAoJEN0jrNd/PrOhCSwP/2hGQ2o+YfJp34jfd2HnZ+VE
-qXK2760KP2DaZfCuiXfemNAe+KxPD+rzgP8KJ+IpzlR4sYuezPcsIR1/6gLl0L5c
-+3rYJsm6UYK4vpcAik+h9pFg0EFarjpDikeRBYXxNKnwFFi1PjrG+mq2sj1KtPWq
-MFI9sTlZ90MFmz3X5TwjyWCzeThRM29l6Rj5H1ZChoOUm3nbyG8CN3TgJFF9wKLB
-E08Ji+Zvxa+DDP95VaNhQSyJVRsFeE/k9V94sLDUHa92kVCGfbml7KAbSmmbjdwV
-qY2T9P8XlP4xQHLfS7Wwdsx9rxStFpsMRyvRpnUtLGInGIa8SWmuANXFcZ9hZG7h
-x7mwaJVPSBO0xBMnO6P4AJkDomORK2iMfUXDuU7TcuvzY62G/DcWJZG0KMI1Tr3I
-eusfKh5k0tdMGK6Hm+UzYLL4aW3Q6JRxphvTUJ52bvTxUSDWAx6OE+bv+swY4FFT
-EVLYxnFEM56Lwq2BtuxagMdoP/9hKvW3p0s5xcYe4kh9fHvd0u6pHTawZZZFXDX8
-KZElti4fllM02+WhPSd1KfEyKrJLtBbxQgruxoCpSBR35hYzo/rDuOv6km/2gR2e
-l50dz+oT+e7SWD9O6TwoncZ3ThLzPCIc9SGWm+S3oDLBnc1kWesqIQuBu+sOZCpx
-T5y3I7kIKIa0t+Y1gbT8
-=X6yq
+iQIcBAEBAgAGBQJSXvtpAAoJELSic+t+oim9Z1EP/0ZccVP1A2d3fDx2qvEByOxW
+voN7eiMSDnU2O8IMAEXwdZEpvAFNdCLfoTKfYJ8YFElbqelwTbnh+1OVtnfH0QBn
+sS81/JLE5w9HQIBvOyzkDSbgPI+JKyGTF+8nZZDLKQvc2I6SPbYXd7JM6Ux7h0OP
+dzbSdwsF7EhJwZ5UwaxmQDXA/Hm1xCdvom6M3zE5nEY5b+si3E9SKUflWOeX7BTN
+c/puPksJS2GSmPr8TdhmcSVtr51KcDKi8bw6W/0X1KQcRsg4cdlqQkpzd+fY3ylZ
+NK44bwRn5SA1LtxES4OWpgSg5wGS790aT/mREqnDEcmpuJbjFTrEMPJDdmwPYAHE
+b0GtpSGtm84fz4Or2tuOQAI3p313qKJwmoWXBKZEnTo4rVnl4aZ81dck6PfH1ocN
+wWf5YkelgGx761ELkZkl2Iq6Ied16/7NCxfOvRvsQ+sNuIIHAUHCbaTMkmRt0v53
++02gIKX7dhq0ST0GsugCnwVshl6jys/bEvxz0QsB/WABMCCP2TNe0c/Q6A30VZkF
+LbSLgGgcvhqALzVR/SxXTBao6idf4M5IsosTyBHXr4zI36t24yeRGA3knG0Is63S
+GzXtzQDxbSSKKuFF4ok+dHZYcmVPx9WClKryy+EKnSYYRE2g89lQl7oSn2ZL5nD3
+7dkhbx8Nx2ELe/Rwg6uP
+=qwVv
 -----END PGP SIGNATURE-----
 
---raC6veAxrt5nqIoY--
+--sRz9TtPC492wKWn6--
