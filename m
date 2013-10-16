@@ -1,57 +1,46 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree
-Date: Wed, 16 Oct 2013 11:20:04 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1310161118070.12405@pobox.suse.cz>
-References: <1381845763-10487-1-git-send-email-treding@nvidia.com> <1381845763-10487-2-git-send-email-treding@nvidia.com> <alpine.DEB.2.10.1310161057190.13374@blackhole.kfki.hu>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] [media] staging: media: Fix build for iMON LIRC driver
+Date: Wed, 16 Oct 2013 07:12:13 -0700
+Message-ID: <20131016141213.GA17567@kroah.com>
+References: <1381845763-10487-1-git-send-email-treding@nvidia.com>
+ <1381845763-10487-3-git-send-email-treding@nvidia.com>
+ <20131016070340.GC11731@mwanda>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:53673 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760182Ab3JPJUI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Oct 2013 05:20:08 -0400
-In-Reply-To: <alpine.DEB.2.10.1310161057190.13374@blackhole.kfki.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Maxime Jayat <maxime@artisandeveloppeur.fr>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Disposition: inline
+In-Reply-To: <20131016070340.GC11731@mwanda>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: devel@driverdev.osuosl.org, Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, Archana kumari <archanakumari959@gmail.com>, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 16 Oct 2013, Jozsef Kadlecsik wrote:
-
-> > Today's linux-next merge of the trivial tree got conflicts in
+On Wed, Oct 16, 2013 at 10:03:40AM +0300, Dan Carpenter wrote:
+> On Tue, Oct 15, 2013 at 04:02:43PM +0200, Thierry Reding wrote:
+> > Add a missing , between parameters in a call to dev_info().
 > > 
-> > 	net/netfilter/xt_set.c
-> > 
-> > caused by commits 3f79410 (treewide: Fix common typo in "identify") and
-> > bd3129f (netfilter: ipset: order matches and targets separatedly in
-> > xt_set.c).
-> > 
-> > I fixed them up (see below). Please verify that the resolution looks
-> > good.
 > 
-> I don't really get it: patch bd3129f was part of a patchset, which was 
-> applied to net-next and there it was complete.
+> Greg already reverted the original patch.
 > 
-> There's none of the patchset in question in linux-next, so what's the 
-> trivial tree? Where's lost what?
-> 
-> [The patch below doesn't look good, because it should contain the removed 
-> part for the revision 1 match due to the reordering in the file.]
+> The original patch wasn't sent to the list.  Archana, use
+> scripts/get_maintainer.pl to find out who to send patches to.  Don't
+> CC the linux-kernel list though because they don't care about details in
+> staging.
 
-This is just a super-simple conflict between
+Archana sent it through the OPW submission process, which has it's own
+mailing list, so as to not bother the driverdev mailing list.  It was
+my fault that I missed this error and took the patch, which is why I
+reverted it.
 
-	https://git.kernel.org/cgit/linux/kernel/git/davem/net-next.git/commit/?id=bd3129f
+thanks,
 
-and
-
-	https://git.kernel.org/cgit/linux/kernel/git/jikos/trivial.git/diff/net/netfilter/xt_set.c?h=for-next&id=3f79410c7c
-
-I don't think it needs any special handling, do you? I can of course drop 
-the respective hunk from my tree and let you handle it in net-next if you 
-wish.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
+greg k-h
