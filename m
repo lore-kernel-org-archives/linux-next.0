@@ -1,50 +1,31 @@
-From: Christoffer Dall <christoffer.dall@linaro.org>
-Subject: Re: linux-next: manual merge of the kvm-arm tree
-Date: Thu, 17 Oct 2013 09:53:11 -0700
-Message-ID: <CAMJs5B9KnfuUrxpfhnYUm1UmZf2jmATsfn6MrsXGBzOX6vz54A@mail.gmail.com>
-References: <1381949500-501-1-git-send-email-treding@nvidia.com>
-	<1381949500-501-3-git-send-email-treding@nvidia.com>
-	<525EE1BC.3050605@arm.com>
-	<CAMJs5B85FwnXN3YE5-KagSjYDH0aSeVYgcwvSXy8=LGfw=STaw@mail.gmail.com>
-	<20131017145522.GH30802@redhat.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -next] netdev: inet_timewait_sock.h missing semi-colon
+ when KMEMCHECK is enabled
+Date: Thu, 17 Oct 2013 15:57:24 -0400 (EDT)
+Message-ID: <20131017.155724.740238353182278175.davem@davemloft.net>
+References: <1381762088-18880-1-git-send-email-treding@nvidia.com>
+	<525C47C0.2000907@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:57695 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755352Ab3JQQxN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Oct 2013 12:53:13 -0400
-Received: by mail-wi0-f173.google.com with SMTP id ey11so3098374wid.6
-        for <linux-next@vger.kernel.org>; Thu, 17 Oct 2013 09:53:12 -0700 (PDT)
-In-Reply-To: <20131017145522.GH30802@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Gleb Natapov <gleb@redhat.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Austin <Jonathan.Austin@arm.com>, Olof Johansson <olof@lixom.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <525C47C0.2000907@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rdunlap@infradead.org
+Cc: thierry.reding@gmail.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, broonie@kernel.org, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 17 October 2013 07:55, Gleb Natapov <gleb@redhat.com> wrote:
-> On Wed, Oct 16, 2013 at 12:02:08PM -0700, Christoffer Dall wrote:
->> On 16 October 2013 11:58, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> > On 16/10/13 19:51, Thierry Reding wrote:
->> >> Today's linux-next merge of the kvm-arm tree got conflicts in
->> >>
->> >>       arch/arm/kvm/reset.c
->> >>
->> >> caused by commits e8c2d99 (KVM: ARM: Add support for Cortex-A7) and ac570e0
->> >> (ARM: kvm: rename cpu_reset to avoid name clash).
->> >>
->> >> I've fixed them up (see below). Please verify that the resolution looks
->> >> good.
->> >
->> > Looks good to me (I have the same resolution in my own tree).
->> >
->> Yes, fix is good.
->>
->> This will stay a conflict until kvm/next and kvm/fixes merge, which
->> doesn't happen before after the merge window, usually.  If that's
-> So in this case it happened today because part of powerpc patches where
-> based on commit after -rc4 and I had to merge to be able to pull them.
-> Christoffer can you look at queue branch of kvm.git and see that the
-> resolution is correct?
->
-Yes, the resolution is correct. Thanks.
+From: Randy Dunlap <rdunlap@infradead.org>
+Date: Mon, 14 Oct 2013 12:36:32 -0700
+
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix (a few hundred) build errors due to missing semi-colon when
+> KMEMCHECK is enabled:
+> 
+>   include/net/inet_timewait_sock.h:139:2: error: expected ',', ';' or '}' before 'int'
+>   include/net/inet_timewait_sock.h:148:28: error: 'const struct inet_timewait_sock' has no member named 'tw_death_node'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+
+Applied, thanks Randy.
