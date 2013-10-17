@@ -1,53 +1,81 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Oct 16
-Date: Wed, 16 Oct 2013 22:12:54 -0700
-Message-ID: <525F71D6.5080805@roeck-us.net>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: manual merge of the tip tree
+Date: Thu, 17 Oct 2013 11:23:49 +0200
+Message-ID: <20131017092349.GL2675@laptop.programming.kicks-ass.net>
 References: <1381949500-501-1-git-send-email-treding@nvidia.com>
+ <1381949500-501-2-git-send-email-treding@nvidia.com>
+ <20131016200645.GD10651@twins.programming.kicks-ass.net>
+ <20131016201410.GA26785@twins.programming.kicks-ass.net>
+ <20131017073100.2cab1ffa@notabene.brown>
+ <20131016205207.GE10651@twins.programming.kicks-ass.net>
+ <20131017122859.67432627@notabene.brown>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:49448 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750739Ab3JQFNA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Oct 2013 01:13:00 -0400
-In-Reply-To: <1381949500-501-1-git-send-email-treding@nvidia.com>
+Received: from merlin.infradead.org ([205.233.59.134]:47021 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752756Ab3JQJX5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Oct 2013 05:23:57 -0400
+Content-Disposition: inline
+In-Reply-To: <20131017122859.67432627@notabene.brown>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Shaohua Li <shli@kernel.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/16/2013 11:51 AM, Thierry Reding wrote:
-> Hi all,
->
-> I've uploaded today's linux-next tree to the master branch of the
-> repository below:
->
->          git://gitorious.org/thierryreding/linux-next.git
->
-> A next-20131016 tag is also provided for convenience.
->
-> Gained two new conflicts, but nothing too exciting. x86 and ARM default
-> configurations as well as the x86 allmodconfig mostly build fine on the
-> final tree. There was a failure for the ARM at91x40_defconfig, but the
-> proper fix wasn't immediately obvious to me, so I've left it broken for
-> now.
->
+On Thu, Oct 17, 2013 at 12:28:59PM +1100, NeilBrown wrote:
+> I always run with lockdep enabled, and I have done at least basic testing
 
-Upside: mips qemu run now passes (mips64 qemu build still fails).
+Very good!
 
-Downside: Up to 13 build failures, from 12.
+> > 
+> > Stuff like:
+> > 
+> > +	for (i = 0; i < NR_STRIPE_HASH_LOCKS; i++)
+> > +		spin_lock_init(conf->hash_locks + i);
+> > 
+> > And:
+> > 
+> > +static void __lock_all_hash_locks(struct r5conf *conf)
+> > +{
+> > +	int i;
+> > +	for (i = 0; i < NR_STRIPE_HASH_LOCKS; i++)
+> > +		spin_lock(conf->hash_locks + i);
+> > +}
+> > 
+> > Tends to complain real loud.
+> 
+> Why is that?
+> Because "conf->hash_locks + i" gets used as the "name" of the lockdep map for
+> each one, and when they are all locked it looks like nested locking??
 
-Besides the mips64 qemu build, current failures are:
+Exactly so; they all share the same class (and name) because they have
+the same init site; so indeed the multiple lock will look like a nested
+lock.
 
-arm:allmodconfig
-blackfin:defconfig
-mips:nlm_xlp_defconfig
-mips:cavium_octeon_defconfig
-powerpc: (7 out of 14)
-sparc64:allmodconfig
-xtensa:allmodconfig (new failure)
+> Do you have a suggestion for how to make this work?
+> Would
+>     spin_lock_nested(conf->hash_locks + i, i)
+> do the trick?
 
-Details are at http://server.roeck-us.net:8010/builders.
+	spin_lock_nest_lock(conf->hash_locks + i, &conf->device_lock);
 
-Guenter
+Would be the better option; your suggestion might just work because
+NR_STRIP_HASH_LOCKS is 8 and we have exactly 8 subclasses available, but
+any increase to NR_STRIPE_HASH_LOCKS will make things explode again.
+
+The spin_lock_nest_lock() annotation tells that the lock order is
+irrelevant because all such multiple acquisitions are serialized under
+the other lock.
+
+Also, if in future you feel the need to increase NR_STRIP_HASH_LOCKS,
+please keep it <= 64 or so; if you have a need to go above that, please
+yell and we'll see if we can do something smarter.
+
+This is because of:
+ - each spin_lock() increases preempt_count and that's 8 bits; we
+   wouldn't want to overflow that
+ - each consecutive nested spin_lock() increases the total acquisition
+   wait-time for all locks. Note that the worst case acquisition time
+   for even a single hash lock is gated by the complete acquisition time
+   of all of them in this scenario.
