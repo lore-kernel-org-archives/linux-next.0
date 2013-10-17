@@ -1,7 +1,7 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH -next] misc: fix various misc/mic/host/ build errors
-Date: Thu, 17 Oct 2013 07:15:34 -0700
-Message-ID: <20131017141534.GA22319@kroah.com>
+Date: Thu, 17 Oct 2013 15:16:29 +0100
+Message-ID: <20131017141629.GP2443@sirena.org.uk>
 References: <1381762088-18880-1-git-send-email-treding@nvidia.com>
  <525C481E.1010908@infradead.org>
  <20131016192648.GA19637@kroah.com>
@@ -11,77 +11,59 @@ References: <1381762088-18880-1-git-send-email-treding@nvidia.com>
  <20131016203727.GB1633@kroah.com>
  <20131017140224.GA32734@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IBB0LaKsiecTRaga"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42859 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755007Ab3JQOOY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Oct 2013 10:14:24 -0400
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:52081 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755703Ab3JQOQg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Oct 2013 10:16:36 -0400
 Content-Disposition: inline
 In-Reply-To: <20131017140224.GA32734@ulmo.nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Harshavardhan R Kharche <harshavardhan.r.kharche@intel.com>, Ashutosh Dixit <ashutosh.dixit@intel.com>, Nikhil Rao <nikhil.rao@intel.com>, Sudeep Dutt <sudeep.dutt@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Harshavardhan R Kharche <harshavardhan.r.kharche@intel.com>, Ashutosh Dixit <ashutosh.dixit@intel.com>, Nikhil Rao <nikhil.rao@intel.com>, Sudeep Dutt <sudeep.dutt@intel.com>
+
+
+--IBB0LaKsiecTRaga
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 On Thu, Oct 17, 2013 at 04:02:25PM +0200, Thierry Reding wrote:
 > On Wed, Oct 16, 2013 at 01:37:27PM -0700, Greg Kroah-Hartman wrote:
-> > On Wed, Oct 16, 2013 at 10:30:25PM +0200, Thierry Reding wrote:
-> > > On Wed, Oct 16, 2013 at 12:44:40PM -0700, Greg Kroah-Hartman wrote:
-> > > > On Wed, Oct 16, 2013 at 12:41:08PM -0700, Randy Dunlap wrote:
-> > > > > On 10/16/13 12:26, Greg Kroah-Hartman wrote:
-> > > > > > On Mon, Oct 14, 2013 at 12:38:06PM -0700, Randy Dunlap wrote:
-> > > > > >> From: Randy Dunlap <rdunlap@infradead.org>
-> > > > > >>
-> > > > > >> Fix various build errors (on x86_64) for drivers/misc/mic/host/:
-> > > > > >>
-> > > > > >>   drivers/misc/mic/host/mic_main.c:378:3: error: too many arguments to function 'sysfs_get_dirent'
-> > > > > >>   drivers/misc/mic/host/mic_intr.h:134:58: warning: 'struct pci_dev' declared inside parameter list [enabled by default]
-> > > > > >>   drivers/misc/mic/host/mic_intr.h:134:58: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-> > > > > >>   drivers/misc/mic/host/mic_intr.h:135:58: warning: 'struct pci_dev' declared inside parameter list [enabled by default]
-> > > > > >>   drivers/misc/mic/host/mic_device.h:169:2: error: implicit declaration of function 'ioread32' [-Werror=implicit-function-declaration]
-> > > > > >>   drivers/misc/mic/host/mic_device.h: In function 'mic_mmio_read':
-> > > > > >>   drivers/misc/mic/host/mic_device.h:169:2: error: implicit declaration of function 'ioread32' [-Werror=implicit-function-declaration]
-> > > > > >>   drivers/misc/mic/host/mic_device.h: In function 'mic_mmio_write':
-> > > > > >>   drivers/misc/mic/host/mic_device.h:183:2: error: implicit declaration of function 'iowrite32' [-Werror=implicit-function-declaration]
-> > > > > >>
-> > > > > >> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> > > > > >> Cc: Harshavardhan R Kharche <harshavardhan.r.kharche@intel.com>
-> > > > > >> Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>
-> > > > > >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > > >> Cc: Nikhil Rao <nikhil.rao@intel.com>
-> > > > > >> Cc: Sudeep Dutt <sudeep.dutt@intel.com>
-> > > > > > 
-> > > > > > This is a -next issue only at this point in time, I thought it was in
-> > > > > > the -next tree as a "fixup" already?
-> > > > > 
-> > > > > Are you asking the driver maintainers?
-> > > > 
-> > > > No, the linux-next maintainers.
-> > > > 
-> > > > The driver maintainers have nothing to do with this, it's a sysfs change
-> > > > in my driver-core tree that causes this issue.
-> > > 
-> > > Well, we do carry a patch to fix this, but that generally doesn't get
-> > > carried to Linus' tree automatically as far as I know. So I guess it's
-> > > fine for now, but when the merge window opens you'll need to make sure
-> > > that Linus merges the branches in the correct order so that the build
-> > > doesn't break in between.
-> > 
+
 > > Yes, I'll do that as part of my normal tree submission process.
-> 
+
 > Actually, ensuring correct merge order won't be enough, will it? That
 > doesn't magically fixes that the function's signature actually changed.
-> 
+
 > Shouldn't the update of the sysfs_get_dirent() call be fixed within the
 > same patch that updates the sysfs_get_dirent() signature?
 
-Yes, _if_ those files are actually part of that tree, but they aren't
-(they got added in my staging-next tree, while these sysfs changes are
-in my driver-next tree.)
+They're applied in different trees so they're both OK by themselves,
+it's the merge that brings the two together that needs to do the fixup.
 
-So the trees on their own build just fine, it's only when you merge them
-that there is an issue.  This happens all the time when apis change,
-nothing new here...
+--IBB0LaKsiecTRaga
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-greg k-h
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSX/E6AAoJELSic+t+oim9UB8QAJKCsjHtGq7dHGsDi7siixA8
+c+c5Ob/eZKb+a21Mr6eUgpZV68bYcdG4sqQc8yvJXzjL4Kl0c6NMM819/kz/5kZE
+ajLt3WNWblvv6dhgMgwX1mwhCckst/fF8rzitMsplpCLP93BZ2ZMOhiLyZCcmgmi
+/2nEPlKVZ67VL+el4TX1vBFC3hLuz0g8h3SfAXNeSMBemc+c7fBCl+rRybJaeCRD
+sGBogx60t5kUfBFNc4Zfo/ziJUNIcj2kWnruAYHh0LHvpBDYrgJoz8VYc77ORLbt
+2YQWbDi+OZ/ctwoEcHYScur1kE3gF8m+l6xd/a36erbmmWL19FSih0WCDhWgh/Oa
+kpmcX8HcuGUFo/L4Tm72i9OGbuMrm7Z54CO2YFfdSiGC4p/xK+fhIgPqUc1iF8sX
+jRYG2d3EqC66wgwRyl4id1/04BQALrzMBWZx9uMX8vSUU7FwwTZksFLSdZFst3+W
+/QjxiCQq4CULM5IYBYAEapVe0051AE/nElGX18NoUxFAa02XweG36RA/TiHL5l3u
+Y3S17C26K5qS7lxMeHYWLyrEQEJTiZzQOlymee/QMpa7Ohq6W816WPE+UFuxrBqR
+BBlLvTJLR81c2XFm8iVY0mL4xaB92RSGQEI6vuRHVpwk+2dCe/CD9AqNw+ZaJ57c
+k556fO+TWo2eg1FUiiFq
+=0Hed
+-----END PGP SIGNATURE-----
+
+--IBB0LaKsiecTRaga--
