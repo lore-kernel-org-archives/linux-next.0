@@ -1,41 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: Tree for Oct 17 (pinctrl-single.c)
-Date: Fri, 18 Oct 2013 21:43:28 +0200
-Message-ID: <CACRpkdaz22N8-9Rg8vR=KGOEL5P6sZm6Hh5PT4Uq381+QmPs7g@mail.gmail.com>
-References: <20131018003847.GH2443@sirena.org.uk>
-	<5261792C.7030203@infradead.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH net-next] em_ipset: use dev_net() accessor
+Date: Fri, 18 Oct 2013 16:23:29 -0400 (EDT)
+Message-ID: <20131018.162329.1919694379284940208.davem@davemloft.net>
+References: <20131016153949.5f2257b4@nehalam.linuxnetplumber.net>
+	<525F2D7D.7010708@infradead.org>
+	<20131016172934.7913a297@nehalam.linuxnetplumber.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5261792C.7030203@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "pinctl-single.c" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:58140 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751712Ab3JRUXb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Oct 2013 16:23:31 -0400
+In-Reply-To: <20131016172934.7913a297@nehalam.linuxnetplumber.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: stephen@networkplumber.org
+Cc: rdunlap@infradead.org, lve@guap.ru, thierry.reding@gmail.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, broonie@kernel.org, netdev@vger.kernel.org, jhs@mojatatu.com
 
-On Fri, Oct 18, 2013 at 8:08 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 10/17/13 17:38, Mark Brown wrote:
->> Hi all,
->>
->> I've uploaded today's linux-next tree to the master branch of the
->> repository below:
->>
->>         git://gitorious.org/thierryreding/linux-next.git
->>
->> A next-20131017 tag is also provided for convenience.
->>
->> One new conflict today but otherwise uneventful.  x86_64 allmodconfigs
->> build after each merge but no other build tests were done.
->
-> on i386:
->
-> drivers/pinctrl/pinctrl-single.c: In function 'pcs_irqdomain_map':
-> drivers/pinctrl/pinctrl-single.c:1750:2: error: implicit declaration of function 'set_irq_flags' [-Werror=implicit-function-declaration]
-> drivers/pinctrl/pinctrl-single.c:1750:21: error: 'IRQF_VALID' undeclared (first use in this function)
-> drivers/pinctrl/pinctrl-single.c:1750:34: error: 'IRQF_PROBE' undeclared (first use in this function)
+From: Stephen Hemminger <stephen@networkplumber.org>
+Date: Wed, 16 Oct 2013 17:29:34 -0700
 
-Hmmmm this looks like Tony's baby and the offending patch is
-not in the pinctrl tree, I bet he'll have a fix for it in no time.
+> Randy found that if network namespace not enabled then
+> nd_net does not exist and would cause compilation failure.
+> 
+> This is handled correctly by using the dev_net() macro.
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-Yours,
-Linus Walleij
+Applied, thanks everyone.
