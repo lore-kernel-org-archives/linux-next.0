@@ -1,70 +1,50 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: linux-next: Tree for Oct 17
-Date: Fri, 18 Oct 2013 10:22:36 +0200
-Message-ID: <20131018082236.GA25694@ulmo.nvidia.com>
-References: <20131018003847.GH2443@sirena.org.uk>
- <20131018074526.GA30578@quad.lixom.net>
+Date: Fri, 18 Oct 2013 04:33:46 -0700
+Message-ID: <52611C9A.8080707@roeck-us.net>
+References: <20131018003847.GH2443@sirena.org.uk> <20131018074526.GA30578@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2138952007213189419=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.active-venture.com ([67.228.131.205]:57337 "EHLO
+	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753101Ab3JRLd5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Oct 2013 07:33:57 -0400
 In-Reply-To: <20131018074526.GA30578@quad.lixom.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>
-Cc: khilman@linaro.org, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, khilman@linaro.org
 
-
---===============2138952007213189419==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
-Content-Disposition: inline
-
-
---BXVAT5kNtrzKuDFl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Oct 18, 2013 at 12:45:26AM -0700, Olof Johansson wrote:
+On 10/18/2013 12:45 AM, Olof Johansson wrote:
 > On Fri, Oct 18, 2013 at 01:38:47AM +0100, Mark Brown wrote:
-> > Hi all,
-> >=20
-> > I've uploaded today's linux-next tree to the master branch of the
-> > repository below:
-> >=20
-> >         git://gitorious.org/thierryreding/linux-next.git >=20
-> > A next-20131017 tag is also provided for convenience.
-> >=20
-> > One new conflict today but otherwise uneventful.  x86_64 allmodconfigs
-> > build after each merge but no other build tests were done.
->=20
+>> Hi all,
+>>
+>> I've uploaded today's linux-next tree to the master branch of the
+>> repository below:
+>>
+>>          git://gitorious.org/thierryreding/linux-next.git >
+>> A next-20131017 tag is also provided for convenience.
+>>
+>> One new conflict today but otherwise uneventful.  x86_64 allmodconfigs
+>> build after each merge but no other build tests were done.
+>
 > Hi,
->=20
+>
 > I'm seeing a fairly large fallout on boot testing. See
-> http://lists.linaro.org/pipermail/kernel-build-reports/2013-October/00071=
-9.html
-> for full list (I need to start providing longer backlogs for failures, th=
-e top
+> http://lists.linaro.org/pipermail/kernel-build-reports/2013-October/000719.html
+> for full list (I need to start providing longer backlogs for failures, the top
 > of the oopses is lost in the email).
->=20
+>
 > For example, on dove (SolidRun Cubox) I see:
->=20
-> [    0.707248] Unable to handle kernel NULL pointer dereference at virtua=
-l address 00000054
-> [    0.715297] pgd =3D c0004000
-> [    0.717984] [00000054] *pgd=3D00000000
+>
+> [    0.707248] Unable to handle kernel NULL pointer dereference at virtual address 00000054
+> [    0.715297] pgd = c0004000
+> [    0.717984] [00000054] *pgd=00000000
 > [    0.721548] Internal error: Oops: 5 [#1] ARM
 > [    0.725794] Modules linked in:
-> [    0.728841] CPU: 0 PID: 1 Comm: swapper Not tainted 3.12.0-rc5-next-20=
-131017 #1
+> [    0.728841] CPU: 0 PID: 1 Comm: swapper Not tainted 3.12.0-rc5-next-20131017 #1
 > [    0.736114] task: ef035c00 ti: ef036000 task.ti: ef036000
 > [    0.741497] PC is at kfree+0x54/0xc4
 > [    0.745063] LR is at ata_host_register+0x3c/0x290
@@ -73,115 +53,96 @@ l address 00000054
 > [    0.761159] r10: 00000000  r9 : ef061810  r8 : c0519fc8
 > [    0.766353] r7 : c0519fc8  r6 : a0000113  r5 : ffffffff  r4 : ef1c9dd0
 > [    0.772850] r3 : c0fc8fe0  r2 : c07c9000  r1 : 40000000  r0 : 00000000
-> [    0.779349] Flags: nZcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segm=
-ent kernel
+> [    0.779349] Flags: nZcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
 > [    0.786708] Control: 10c5387d  Table: 00004019  DAC: 00000015
-> [    0.792428] Process swapper (pid: 1, stack limit =3D 0xef036248)
+> [    0.792428] Process swapper (pid: 1, stack limit = 0xef036248)
 > [    0.798234] Stack: (0xef037da8 to 0xef038000)
-> [    0.957218] [<c008ad28>] (kfree+0x54/0xc4) from [<c023e168>] (ata_host=
-_register+0x3c/0x290)
-> [    0.965542] [<c023e168>] (ata_host_register+0x3c/0x290) from [<c023e49=
-8>] (ata_host_activate+0xdc/0x118)
-> [    0.974992] [<c023e498>] (ata_host_activate+0xdc/0x118) from [<c025113=
-0>] (mv_platform_probe+0x2dc/0x36c)
-> [    0.984527] [<c0251130>] (mv_platform_probe+0x2dc/0x36c) from [<c021b6=
-c4>] (platform_drv_probe+0x18/0x48)
-> [    0.994051] [<c021b6c4>] (platform_drv_probe+0x18/0x48) from [<c0219e8=
-8>] (really_probe+0x74/0x1fc)
-> [    1.003062] [<c0219e88>] (really_probe+0x74/0x1fc) from [<c021a0fc>] (=
-__driver_attach+0x98/0x9c)
-> [    1.011804] [<c021a0fc>] (__driver_attach+0x98/0x9c) from [<c02186cc>]=
- (bus_for_each_dev+0x60/0x94)
-> [    1.020808] [<c02186cc>] (bus_for_each_dev+0x60/0x94) from [<c0219728>=
-] (bus_add_driver+0x148/0x1f0)
-> [    1.029898] [<c0219728>] (bus_add_driver+0x148/0x1f0) from [<c021a700>=
-] (driver_register+0x78/0xf8)
-> [    1.038911] [<c021a700>] (driver_register+0x78/0xf8) from [<c04e2ed0>]=
- (mv_init+0x30/0x50)
-> [    1.047144] [<c04e2ed0>] (mv_init+0x30/0x50) from [<c000877c>] (do_one=
-_initcall+0x100/0x14c)
-> [    1.055557] [<c000877c>] (do_one_initcall+0x100/0x14c) from [<c04cead4=
->] (kernel_init_freeable+0x120/0x1c0)
-> [    1.065259] [<c04cead4>] (kernel_init_freeable+0x120/0x1c0) from [<c03=
-8fe30>] (kernel_init+0x8/0x158)
-> [    1.074441] [<c038fe30>] (kernel_init+0x8/0x158) from [<c000e0b8>] (re=
-t_from_fork+0x14/0x3c)
+> [    0.957218] [<c008ad28>] (kfree+0x54/0xc4) from [<c023e168>] (ata_host_register+0x3c/0x290)
+> [    0.965542] [<c023e168>] (ata_host_register+0x3c/0x290) from [<c023e498>] (ata_host_activate+0xdc/0x118)
+> [    0.974992] [<c023e498>] (ata_host_activate+0xdc/0x118) from [<c0251130>] (mv_platform_probe+0x2dc/0x36c)
+> [    0.984527] [<c0251130>] (mv_platform_probe+0x2dc/0x36c) from [<c021b6c4>] (platform_drv_probe+0x18/0x48)
+> [    0.994051] [<c021b6c4>] (platform_drv_probe+0x18/0x48) from [<c0219e88>] (really_probe+0x74/0x1fc)
+> [    1.003062] [<c0219e88>] (really_probe+0x74/0x1fc) from [<c021a0fc>] (__driver_attach+0x98/0x9c)
+> [    1.011804] [<c021a0fc>] (__driver_attach+0x98/0x9c) from [<c02186cc>] (bus_for_each_dev+0x60/0x94)
+> [    1.020808] [<c02186cc>] (bus_for_each_dev+0x60/0x94) from [<c0219728>] (bus_add_driver+0x148/0x1f0)
+> [    1.029898] [<c0219728>] (bus_add_driver+0x148/0x1f0) from [<c021a700>] (driver_register+0x78/0xf8)
+> [    1.038911] [<c021a700>] (driver_register+0x78/0xf8) from [<c04e2ed0>] (mv_init+0x30/0x50)
+> [    1.047144] [<c04e2ed0>] (mv_init+0x30/0x50) from [<c000877c>] (do_one_initcall+0x100/0x14c)
+> [    1.055557] [<c000877c>] (do_one_initcall+0x100/0x14c) from [<c04cead4>] (kernel_init_freeable+0x120/0x1c0)
+> [    1.065259] [<c04cead4>] (kernel_init_freeable+0x120/0x1c0) from [<c038fe30>] (kernel_init+0x8/0x158)
+> [    1.074441] [<c038fe30>] (kernel_init+0x8/0x158) from [<c000e0b8>] (ret_from_fork+0x14/0x3c)
 > [    1.082841] Code: e0823283 e3110902 1593301c e593001c (e5904054)
->=20
->=20
-> I bisected it down to commit 55acc602faae7c10e53acdca0c70f4936c2539c6, wh=
-ich
-> is really weird. That is:
->=20
-> commit 55acc602faae7c10e53acdca0c70f4936c2539c6
-> Merge: e32face ba6857b
-> Author:     Mark Brown <broonie@linaro.org>
-> AuthorDate: Thu Oct 17 23:55:55 2013 +0100
-> Commit:     Mark Brown <broonie@linaro.org>
-> CommitDate: Thu Oct 17 23:55:55 2013 +0100
->=20
->     Merge remote-tracking branch 'driver-core/driver-core-next'
->    =20
->     Conflicts:
->         include/linux/netdevice.h
->=20
->=20
-> But there isn't anything controversial in the merge commit.
->=20
-> I tried checking out either side of that merge, and they both boot
-> fine. I redid the merge myself, and I get no delta compared to your
-> merge and I still get the same failure.
->=20
-> I've got more failures than dove, I'll try bisecting a few of the others
-> in the morning (it's late here), hopefully they will help indicate what's
-> actually going wrong. I'm guessing something just happens to move around
-> enough to expose a different problem once the two branches are merged.
+>
 
-Looking at that oops it seems like host is actually NULL when kfree() is
-called in ata_host_register(). That seems to only happen when freeing up
-any of the unused ports, which is strange in itself because Cubox seems
-to only register a single one. Also if host is indeed NULL, then things
-should go haywire much sooner.
+My 'sh' qemu run fails with:
 
-Looks like you won't easily find out what's going on here unless you get
-into it somewhat deeper and perhaps trace what exactly fails and why the
-NULL pointer is even there in the first place.
+BUG: unable to handle kernel paging request at 00006e81
+PC: [<8c1f10ce>] ata_finalize_port_ops+0x4e/0xc0
+pgd = 8c401150
+[00006e81] *pgd=00000000
+Oops: 0000 [#1]
+Modules linked in:
 
-Thierry
+CPU: 0 PID: 1 Comm: swapper Not tainted 3.12.0-rc5-next-20131017-06210-gdaa01b0 #1
+task: 8fc27be0 ti: 8fc28000 task.ti: 8fc28000
+PC is at ata_finalize_port_ops+0x4e/0xc0
+PR is at ata_host_start+0x48/0x1c0
+PC  : 8c1f10ce SP  : 8fc29e0c SR  : 40008001 TEA : 00006e81
+R0  : 00000000 R1  : 8fc83018 R2  : 00006e81 R3  : 00000000
+R4  : 8fc83000 R5  : 000000bc R6  : 00006e69 R7  : 8fc830f0
+R8  : 8fd47cac R9  : 8fd47cac R10 : 00000000 R11 : 8c207d80
+R12 : 8c1f1080 R13 : 00000000 R14 : 00000064
+MACH: 00000000 MACL: 00000001 GBR : 00000000 PR  : 8c1f21e8
 
---BXVAT5kNtrzKuDFl
-Content-Type: application/pgp-signature
+Call trace:
+  [<8c1f807e>] ata_host_activate+0x1e/0x120
+  [<8c207d80>] ata_sff_interrupt+0x0/0x240
+  [<8c209ed6>] pata_platform_probe+0x76/0x120
+  [<8c209ed6>] pata_platform_probe+0x76/0x120
+  [<8c1cf440>] platform_get_resource+0x0/0x60
+  [<8c1cfeda>] platform_drv_probe+0x1a/0x60
+  [<8c012800>] arch_local_save_flags+0x0/0x20
+  [<8c1ce1ee>] driver_probe_device+0x6e/0x260
+  [<8c012820>] arch_local_irq_restore+0x0/0x40
+  [<8c1cc4c0>] klist_devices_put+0x0/0x20
+  [<8c1ce466>] __driver_attach+0x86/0xa0
+  [<8c2fa800>] mutex_lock+0x0/0x60
+  [<8c1cc8c8>] bus_for_each_dev+0x48/0x80
+  [<8c1cc620>] next_device+0x0/0x20
+  [<8c1ce3e0>] __driver_attach+0x0/0xa0
+  [<8c1cd862>] bus_add_driver+0xc2/0x220
+  [<8c1ce90c>] driver_register+0x4c/0x120
+  [<8c3eeccc>] pata_platform_driver_init+0x0/0x14
+  [<8c011244>] do_one_initcall+0x1c4/0x280
+  [<8c3eeccc>] pata_platform_driver_init+0x0/0x14
+  [<8c059160>] register_irq_proc+0x0/0xa0
+  [<8c10b6f0>] proc_create_data+0x50/0xe0
+  [<8c03f2b8>] parse_args+0x218/0x3a0
+  [<8c03f000>] parameq+0x0/0xa0
+  [<8c012820>] arch_local_irq_restore+0x0/0x40
+  [<8c3e0a06>] kernel_init_freeable+0xce/0x1c8
+  [<8c011080>] do_one_initcall+0x0/0x280
+  [<8c3e0158>] repair_env_string+0x0/0x80
+  [<8c2f492c>] kernel_init+0xc/0xe0
+  [<8c012820>] arch_local_irq_restore+0x0/0x40
+  [<8c04a580>] schedule_tail+0x0/0x60
+  [<8c0181e8>] ret_from_kernel_thread+0xc/0x14
+  [<8c04a580>] schedule_tail+0x0/0x60
+  [<8c2f4920>] kernel_init+0x0/0xe0
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Code:
+   8c1f10c8:  mov.l     @r1, r3
+   8c1f10ca:  tst       r3, r3
+   8c1f10cc:  bf        8c1f10c0
+->8c1f10ce:  mov.l     @r2, r3
+   8c1f10d0:  mov.l     r3, @r1
+   8c1f10d2:  add       #4, r1
+   8c1f10d4:  cmp/hi    r1, r7
+   8c1f10d6:  bt.s      8c1f10c8
+   8c1f10d8:  add       #4, r2
 
-iQIcBAEBAgAGBQJSYO/MAAoJEN0jrNd/PrOhG4gQAI7CYAgF33ClhA/feXohRZp2
-aYz0pyggcGkr3N4vY8TKiiUuPhElU6LfNgio7aK79LSxipca52X6aCSMFFoavcgD
-viN0lybCiZpOwvxHV9dD0ePFdLW2zA/cYYWaMimfqIvHHG9O2E6UYNy3WM2cj322
-hps1uoRbS0gMCfOSIhRwB0gckWKFaYN3s3Wour863BIqVxxmzzirz1u4ET4LBtw6
-RhhgpKTuZ9t61kr6rgKxbbk2joInVGUXuOc7cuPnrWyYNCuYg2Yz6F8G5iOSeMgn
-qPlUGNBqq8Md/rfwKqOFBxoYb+l7eQfDhn9s1beZTNiwk72Grg6UKr7e7jTetE8N
-4791EQ3R7ypbXT6fKoddjOo7GP7Wdot0dF/edvFfICS3Azt/9q5FZwN+Qse0UjW6
-D3O+inD9lBsv5CktKJa3dsGyidzxStUEGAgpIqjj26G+dM3UnpfBzrRqOy85uo7Y
-Ao2gXz1n/XtNmi7ZhPWJBB1KY5MN9WQ5bq3lOTwo74oPJ5X7eafwc7W2MtSRGAgA
-cVEWH+IwdsFbhBowG/EfZmdNDkEywrZwJ9kMnha7dpILyodPWRNmFXjuG7n8jmFO
-tk0I6489/KpJk+GehhjMJ3cznvKZgiJEWT5pXLKvNrqraZiqfWIMLqyqOoqWxOaU
-wwgf/3mrNH0UdyylDZzQ
-=Cejq
------END PGP SIGNATURE-----
+I can try to bisect later today if needed, but it looks similar.
 
---BXVAT5kNtrzKuDFl--
+Also, the parisc:a500_defconfig is a new build failure.
 
-
---===============2138952007213189419==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============2138952007213189419==--
+Guenter
