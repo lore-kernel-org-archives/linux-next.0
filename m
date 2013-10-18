@@ -1,25 +1,19 @@
-From: Kevin Hilman <khilman@linaro.org>
+From: Olof Johansson <olof@lixom.net>
 Subject: Re: linux-next: Tree for Oct 17
-Date: Fri, 18 Oct 2013 10:01:07 -0700
-Message-ID: <CAGa+x8412ZwBGYNNszvV__psjLvCeS3p7rJgxf-9ztP0HaUA9g@mail.gmail.com>
+Date: Fri, 18 Oct 2013 10:55:43 -0700
+Message-ID: <CAOesGMj_mLp1CMS+L6EuV9Lqq3YFrOxerQjBVGA+iAghotte2A@mail.gmail.com>
 References: <20131018003847.GH2443@sirena.org.uk>
 	<20131018074526.GA30578@quad.lixom.net>
 	<20131018082236.GA25694@ulmo.nvidia.com>
 	<CAGa+x85fVXitWiOcRcMWRsPZ-D7tqinbTazDAtww3+JWtJzpCQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f49.google.com ([74.125.82.49]:50668 "EHLO
-	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756409Ab3JRRBI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Oct 2013 13:01:08 -0400
-Received: by mail-wg0-f49.google.com with SMTP id x12so4142494wgg.16
-        for <linux-next@vger.kernel.org>; Fri, 18 Oct 2013 10:01:07 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <CAGa+x85fVXitWiOcRcMWRsPZ-D7tqinbTazDAtww3+JWtJzpCQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@linaro.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-next.vger.kernel.org
 
 On Fri, Oct 18, 2013 at 9:22 AM, Kevin Hilman <khilman@linaro.org> wrote:
 > On Fri, Oct 18, 2013 at 1:22 AM, Thierry Reding
@@ -122,6 +116,10 @@ On Fri, Oct 18, 2013 at 9:22 AM, Kevin Hilman <khilman@linaro.org> wrote:
 > i.MX6 wandboard and snowball booting again.  Looking into the details
 > about why now...
 
-Fix proposed: http://lists.infradead.org/pipermail/linux-arm-kernel/2013-October/206073.html
+Yep, I can confirm this fixes cubox as well. I had bisected down to
+the same patch but didn't have time to send email before I had school
+dropoff and a meeting, so now it's all sorted. Excellent timing,
+thanks. :)
 
-Kevin
+
+-Olof
