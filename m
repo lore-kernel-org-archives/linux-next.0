@@ -1,33 +1,91 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH net-next] em_ipset: use dev_net() accessor
-Date: Fri, 18 Oct 2013 16:23:29 -0400 (EDT)
-Message-ID: <20131018.162329.1919694379284940208.davem@davemloft.net>
-References: <20131016153949.5f2257b4@nehalam.linuxnetplumber.net>
-	<525F2D7D.7010708@infradead.org>
-	<20131016172934.7913a297@nehalam.linuxnetplumber.net>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: Tree for Oct 17 (pinctrl-single.c)
+Date: Fri, 18 Oct 2013 16:39:51 -0700
+Message-ID: <20131018233951.GU15154@atomide.com>
+References: <20131018003847.GH2443@sirena.org.uk>
+ <5261792C.7030203@infradead.org>
+ <CACRpkdaz22N8-9Rg8vR=KGOEL5P6sZm6Hh5PT4Uq381+QmPs7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:58140 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751712Ab3JRUXb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Oct 2013 16:23:31 -0400
-In-Reply-To: <20131016172934.7913a297@nehalam.linuxnetplumber.net>
+Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:52737 "EHLO
+	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754406Ab3JRXj6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Oct 2013 19:39:58 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaz22N8-9Rg8vR=KGOEL5P6sZm6Hh5PT4Uq381+QmPs7g@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: stephen@networkplumber.org
-Cc: rdunlap@infradead.org, lve@guap.ru, thierry.reding@gmail.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, broonie@kernel.org, netdev@vger.kernel.org, jhs@mojatatu.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "pinctl-single.c" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Stephen Hemminger <stephen@networkplumber.org>
-Date: Wed, 16 Oct 2013 17:29:34 -0700
-
-> Randy found that if network namespace not enabled then
-> nd_net does not exist and would cause compilation failure.
+* Linus Walleij <linus.walleij@linaro.org> [131018 12:43]:
+> On Fri, Oct 18, 2013 at 8:08 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> > On 10/17/13 17:38, Mark Brown wrote:
+> >> Hi all,
+> >>
+> >> I've uploaded today's linux-next tree to the master branch of the
+> >> repository below:
+> >>
+> >>         git://gitorious.org/thierryreding/linux-next.git
+> >>
+> >> A next-20131017 tag is also provided for convenience.
+> >>
+> >> One new conflict today but otherwise uneventful.  x86_64 allmodconfigs
+> >> build after each merge but no other build tests were done.
+> >
+> > on i386:
+> >
+> > drivers/pinctrl/pinctrl-single.c: In function 'pcs_irqdomain_map':
+> > drivers/pinctrl/pinctrl-single.c:1750:2: error: implicit declaration of function 'set_irq_flags' [-Werror=implicit-function-declaration]
+> > drivers/pinctrl/pinctrl-single.c:1750:21: error: 'IRQF_VALID' undeclared (first use in this function)
+> > drivers/pinctrl/pinctrl-single.c:1750:34: error: 'IRQF_PROBE' undeclared (first use in this function)
 > 
-> This is handled correctly by using the dev_net() macro.
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
+> Hmmmm this looks like Tony's baby and the offending patch is
+> not in the pinctrl tree, I bet he'll have a fix for it in no time.
 
-Applied, thanks everyone.
+Ouch sorry about that. I'll send a pull request for the
+following fix ASAP. Build tested with Randy's randconfig.
+
+Regards,
+
+Tony
+
+8< ------------------------
+From: Tony Lindgren <tony@atomide.com>
+Date: Fri, 18 Oct 2013 16:20:05 -0700
+Subject: [PATCH] pinctrl: single: Fix build when not built on ARM
+
+Looks like we need a little bit of arch specific handling
+with the generic IRQ. Fix the issue with an ifdef the
+same way as other drivers do.
+
+ARM needs things set to IRQF_VALID, which also then sets
+noprobe. Others seem to use just irq_set_noprobe().
+
+Otherwise we can get:
+
+drivers/pinctrl/pinctrl-single.c: In function 'pcs_irqdomain_map':
+drivers/pinctrl/pinctrl-single.c:1750:2: error: implicit declaration of function 'set_irq_flags' [-Werror=implicit-function-declaration]
+drivers/pinctrl/pinctrl-single.c:1750:21: error: 'IRQF_VALID' undeclared (first use in this function)
+drivers/pinctrl/pinctrl-single.c:1750:34: error: 'IRQF_PROBE' undeclared (first use in this function)
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1743,7 +1743,12 @@ static int pcs_irqdomain_map(struct irq_domain *d, unsigned int irq,
+ 	irq_set_chip_data(irq, pcs_soc);
+ 	irq_set_chip_and_handler(irq, &pcs->chip,
+ 				 handle_level_irq);
+-	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++
++#ifdef CONFIG_ARM
++	set_irq_flags(irq, IRQF_VALID);
++#else
++	irq_set_noprobe(irq);
++#endif
+ 
+ 	return 0;
+ }
