@@ -1,32 +1,58 @@
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: Re: linux-next: manual merge of the tip tree
-Date: Fri, 18 Oct 2013 01:50:40 +0400
-Message-ID: <20131017215040.GJ6789@moon>
-References: <20131017212319.GS2443@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: Tree for Oct 17
+Date: Fri, 18 Oct 2013 01:38:47 +0100
+Message-ID: <20131018003847.GH2443@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="sGAnhWvQjEzjNQQq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f178.google.com ([209.85.217.178]:53358 "EHLO
-	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762435Ab3JQVup (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Oct 2013 17:50:45 -0400
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:41988 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752671Ab3JRAjJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Oct 2013 20:39:09 -0400
 Content-Disposition: inline
-In-Reply-To: <20131017212319.GS2443@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2013 at 10:23:19PM +0100, Mark Brown wrote:
-> Today's linux-next merge of the kvm-arm tree got conflicts in
-> mm/mprotect.c between c3d16e1652 (mm: migration: do not lose soft dirty
-> bit if page is in migration state) from Linus' tree and e920e14c (mm: Do
-> not flush TLB during protection change if !pte_present &&
-> !migration_entry) from the tip tree.
-> 
-> I've fixed up as below and can carry as required.
->
 
-Thanks a lot, dirty bit handling looks good!
+--sGAnhWvQjEzjNQQq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	Cyrill
+Hi all,
+
+I've uploaded today's linux-next tree to the master branch of the
+repository below:
+
+        git://gitorious.org/thierryreding/linux-next.git
+
+A next-20131017 tag is also provided for convenience.
+
+One new conflict today but otherwise uneventful.  x86_64 allmodconfigs
+build after each merge but no other build tests were done.
+
+--sGAnhWvQjEzjNQQq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSYIMTAAoJELSic+t+oim9kq4QAIcvedgnMyGGXYRgZR+HRSPW
+VSZW19cX1Q2l6WPccnCT+ePq5w6aBAh3WzYphcrNiS1BjrCYWEV1lL59w+seOHEo
+o7u/cwuu16oeRLmKLnT7SPx5INg2fM0W1QT7nQTtMTaIHOr8rg0qVKnT3SqEzfmv
+hCOzGjHnZDLaKczq1OkiG5R9gkWCYErXlHRmljzTnbYjGry448P/DCUiuVZO81l5
++C14lXxr+kcTj261L/EJWx2qM1MeuiR30qI7OUULVGuR5jMY6qAqosZl6F8j5YFW
+d5dl1bo1Uyp8vF1HbeU21/jphL8qKRg2+vYNqEg0NghnlRodpHUW0yH/qchNmC8q
+DNQDqIDrHfUnPkZbUsCFnGmHWbbvXtYGDUrBku3QlrK1Ws5+RyTMc4sIt4VrDgfh
+UR/Wl28W9nZoybGmEeythcwXYukCxcAiKRixHUwKzjIPnHFZxlwizRbL34By2RRj
+Dgi8HIiaPF6GyxIfXfn4Kr+wUwb/qw2WicoHO0V3Ou1ooOPsV74LIZ7xABfBY3es
+Crva38aYUrS5erVY8xyo8IUtmF9u8ltfg0kfMH4E2smlmXTCiW0NyFBpefM+zj1r
+GhEZTo3NNlu5vWVHtei6sInDdlNlbEi3EfLG5EtlBxWoZecHPn0vS82/icBXXOZK
+h4W1b1ClbRLl853M7R8J
+=K6Hm
+-----END PGP SIGNATURE-----
+
+--sGAnhWvQjEzjNQQq--
