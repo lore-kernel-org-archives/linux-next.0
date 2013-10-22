@@ -1,47 +1,50 @@
-From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: [PATCH -next] staging/iio/adc: MXS_LRADC depends on INPUT
-Date: Mon, 21 Oct 2013 21:49:47 -0700
-Message-ID: <526603EB.3060504@infradead.org>
-References: <CA+r1Zhjo08EEoHsWkeDDKoc8Le6eDq4fZxZaa1Jc8cfOLsLsMg@mail.gmail.com>
+From: Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH -next] staging/iio/adc: MXS_LRADC depends on INPUT
+Date: Tue, 22 Oct 2013 06:51:03 +0200
+Message-ID: <201310220651.03499.marex@denx.de>
+References: <CA+r1Zhjo08EEoHsWkeDDKoc8Le6eDq4fZxZaa1Jc8cfOLsLsMg@mail.gmail.com> <526603EB.3060504@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CA+r1Zhjo08EEoHsWkeDDKoc8Le6eDq4fZxZaa1Jc8cfOLsLsMg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jim Davis <jim.epost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.10]:49386 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751268Ab3JVEvN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Oct 2013 00:51:13 -0400
+In-Reply-To: <526603EB.3060504@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jim Davis <jim.epost@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jic23@kernel.org, gregkh@linuxfoundation.org, linux-iio@vger.kernel.org
 
-From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Dear Randy Dunlap,
 
-mxs-lradc.c uses many input_() functions so it should
-depend on INPUT to fix build errors.
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> mxs-lradc.c uses many input_() functions so it should
+> depend on INPUT to fix build errors.
+> 
+> drivers/built-in.o: In function `mxs_lradc_ts_unregister':
+> drivers/staging/iio/adc/mxs-lradc.c:905: undefined reference to
+> `input_unregister_device' drivers/staging/iio/adc/mxs-lradc.c:905:
+> undefined reference to `input_unregister_device' drivers/built-in.o: In
+> function `input_report_abs':
+> include/linux/input.h:399: undefined reference to `input_event'
+> include/linux/input.h:399: undefined reference to `input_event'
+> include/linux/input.h:399: undefined reference to `input_event'
+> drivers/built-in.o: In function `input_report_key':
+> include/linux/input.h:389: undefined reference to `input_event'
+> drivers/built-in.o: In function `input_sync':
+> include/linux/input.h:414: undefined reference to `input_event'
+> drivers/built-in.o:include/linux/input.h:389: more undefined references to
+> `input_event' follow
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 
-drivers/built-in.o: In function `mxs_lradc_ts_unregister':
-drivers/staging/iio/adc/mxs-lradc.c:905: undefined reference to `input_unregister_device'
-drivers/staging/iio/adc/mxs-lradc.c:905: undefined reference to `input_unregister_device'
-drivers/built-in.o: In function `input_report_abs':
-include/linux/input.h:399: undefined reference to `input_event'
-include/linux/input.h:399: undefined reference to `input_event'
-include/linux/input.h:399: undefined reference to `input_event'
-drivers/built-in.o: In function `input_report_key':
-include/linux/input.h:389: undefined reference to `input_event'
-drivers/built-in.o: In function `input_sync':
-include/linux/input.h:414: undefined reference to `input_event'
-drivers/built-in.o:include/linux/input.h:389: more undefined references to `input_event' follow
+Acked-by: Marek Vasut <marex@denx.de>
 
-Signed-off-by: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
----
- drivers/staging/iio/adc/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Thanks!
 
---- next-2013-1021.orig/drivers/staging/iio/adc/Kconfig
-+++ next-2013-1021/drivers/staging/iio/adc/Kconfig
-@@ -114,6 +114,7 @@ config LPC32XX_ADC
- config MXS_LRADC
- 	tristate "Freescale i.MX23/i.MX28 LRADC"
- 	depends on ARCH_MXS || COMPILE_TEST
-+	depends on INPUT
- 	select STMP_DEVICE
- 	select IIO_BUFFER
- 	select IIO_TRIGGERED_BUFFER
+Best regards,
+Marek Vasut
