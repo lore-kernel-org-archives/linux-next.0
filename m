@@ -1,142 +1,47 @@
-From: NeilBrown <neilb@suse.de>
-Subject: Re: linux-next: manual merge of the tip tree
-Date: Tue, 22 Oct 2013 13:09:53 +1100
-Message-ID: <20131022130953.29fc5ac3@notabene.brown>
-References: <1381949500-501-1-git-send-email-treding@nvidia.com>
-	<1381949500-501-2-git-send-email-treding@nvidia.com>
-	<20131016200645.GD10651@twins.programming.kicks-ass.net>
-	<20131016201410.GA26785@twins.programming.kicks-ass.net>
-	<20131017073100.2cab1ffa@notabene.brown>
-	<20131016205207.GE10651@twins.programming.kicks-ass.net>
-	<20131017122859.67432627@notabene.brown>
-	<20131017092349.GL2675@laptop.programming.kicks-ass.net>
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: [PATCH -next] staging/iio/adc: MXS_LRADC depends on INPUT
+Date: Mon, 21 Oct 2013 21:49:47 -0700
+Message-ID: <526603EB.3060504@infradead.org>
+References: <CA+r1Zhjo08EEoHsWkeDDKoc8Le6eDq4fZxZaa1Jc8cfOLsLsMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/NM7nuvxjn6cDahB6FRlUJBb"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131017092349.GL2675@laptop.programming.kicks-ass.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Shaohua Li <shli@kernel.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CA+r1Zhjo08EEoHsWkeDDKoc8Le6eDq4fZxZaa1Jc8cfOLsLsMg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jim Davis <jim.epost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/NM7nuvxjn6cDahB6FRlUJBb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
 
-On Thu, 17 Oct 2013 11:23:49 +0200 Peter Zijlstra <peterz@infradead.org>
-wrote:
+mxs-lradc.c uses many input_() functions so it should
+depend on INPUT to fix build errors.
 
-> On Thu, Oct 17, 2013 at 12:28:59PM +1100, NeilBrown wrote:
-> > I always run with lockdep enabled, and I have done at least basic testi=
-ng
->=20
-> Very good!
->=20
-> > >=20
-> > > Stuff like:
-> > >=20
-> > > +	for (i =3D 0; i < NR_STRIPE_HASH_LOCKS; i++)
-> > > +		spin_lock_init(conf->hash_locks + i);
-> > >=20
-> > > And:
-> > >=20
-> > > +static void __lock_all_hash_locks(struct r5conf *conf)
-> > > +{
-> > > +	int i;
-> > > +	for (i =3D 0; i < NR_STRIPE_HASH_LOCKS; i++)
-> > > +		spin_lock(conf->hash_locks + i);
-> > > +}
-> > >=20
-> > > Tends to complain real loud.
-> >=20
-> > Why is that?
-> > Because "conf->hash_locks + i" gets used as the "name" of the lockdep m=
-ap for
-> > each one, and when they are all locked it looks like nested locking??
->=20
-> Exactly so; they all share the same class (and name) because they have
-> the same init site; so indeed the multiple lock will look like a nested
-> lock.
->=20
-> > Do you have a suggestion for how to make this work?
-> > Would
-> >     spin_lock_nested(conf->hash_locks + i, i)
-> > do the trick?
->=20
-> 	spin_lock_nest_lock(conf->hash_locks + i, &conf->device_lock);
+drivers/built-in.o: In function `mxs_lradc_ts_unregister':
+drivers/staging/iio/adc/mxs-lradc.c:905: undefined reference to `input_unregister_device'
+drivers/staging/iio/adc/mxs-lradc.c:905: undefined reference to `input_unregister_device'
+drivers/built-in.o: In function `input_report_abs':
+include/linux/input.h:399: undefined reference to `input_event'
+include/linux/input.h:399: undefined reference to `input_event'
+include/linux/input.h:399: undefined reference to `input_event'
+drivers/built-in.o: In function `input_report_key':
+include/linux/input.h:389: undefined reference to `input_event'
+drivers/built-in.o: In function `input_sync':
+include/linux/input.h:414: undefined reference to `input_event'
+drivers/built-in.o:include/linux/input.h:389: more undefined references to `input_event' follow
 
-Unfortunately this doesn't work as the order is backwards.
-hash_lock is taken first, then (when necessary) device lock.
-(hash_lock is needed more often, so we split it up to reduce contention.
- device lock is needed less often, but sometimes when hash_lock is held).
+Signed-off-by: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+---
+ drivers/staging/iio/adc/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-I've currently got:
-	spin_lock_init(conf->hash_locks);
-	for (i =3D 1; i < NR_STRIPE_HASH_LOCKS; i++)
-		spin_lock_init(conf->hash_locks + i);
-
-and
-
-	spin_lock(conf->hash_locks);
-	for (i =3D 1; i < NR_STRIPE_HASH_LOCKS; i++)
-		spin_lock_nest_lock(conf->hash_locks + i, conf->hash_locks);
-	spin_lock(&conf->device_lock);
-
-which doesn't trigger any lockdep warnings and isn't too ugly.
-
-Does it seem OK to you?
-
-Thanks,
-NeilBrown
-
-
->=20
-> Would be the better option; your suggestion might just work because
-> NR_STRIP_HASH_LOCKS is 8 and we have exactly 8 subclasses available, but
-> any increase to NR_STRIPE_HASH_LOCKS will make things explode again.
->=20
-> The spin_lock_nest_lock() annotation tells that the lock order is
-> irrelevant because all such multiple acquisitions are serialized under
-> the other lock.
->=20
-> Also, if in future you feel the need to increase NR_STRIP_HASH_LOCKS,
-> please keep it <=3D 64 or so; if you have a need to go above that, please
-> yell and we'll see if we can do something smarter.
-
-I've added a comment to this effect in the code.
-
-
->=20
-> This is because of:
->  - each spin_lock() increases preempt_count and that's 8 bits; we
->    wouldn't want to overflow that
->  - each consecutive nested spin_lock() increases the total acquisition
->    wait-time for all locks. Note that the worst case acquisition time
->    for even a single hash lock is gated by the complete acquisition time
->    of all of them in this scenario.
-
-
---Sig_/NM7nuvxjn6cDahB6FRlUJBb
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIVAwUBUmXecjnsnt1WYoG5AQJgPxAAhMNAQG299BHYgwRB/Q18TBGM5ISXjELq
-0qJP3uY+R37GoNJdBf0P5asgbB8wMGCswTNQVbR8is1vdAbQrfd773lfKPdsFFM5
-/eNfL9or3r6zzgHjwj5lF+qZfDXRcQUMIk4wXe0VOXElVKq+64cJ16p1KPyXwgfL
-weweIwQNNhlKGffm1LprfvQN6fW6q66+WqGtDmO9nP8o228N3eaIKLtla2nyzLvE
-1sULDW8T6pOdTGRJ6cX1NAAMiqmlnc+Dr5fU2Z6T6fbVjZCfklHJnm3D5aAMVr8Q
-ihumO/+xNVg+2dDO8swSzDATNCj8jVzQ8+8WPI9iDbyy2rHRN3HBscWf4U9MVeMc
-Su94jIV9g8epIRd689sUHU/juBc3v8PQDmRp5uEXCOQRp24cTrTdCFbYJ5pWuPTG
-QRIqXTq5qwMqGAWvlO0GGqBxgogxwiYzMcpgw5yl0t7xWc3/rWWr/KMiSsEwrGI8
-a4uuRlkKhHZKfw44X8ysnYdCRJsPdsTAn9zpgyzQaKwCvVI5yR1pLXv1NCqYMFy7
-f7fjKCKt1XV68hyN81M5devfP1fxKaxQV2E5+AGWXaDtBXTUfWYBa2KURNQM8ldj
-Gp1b8AdCFRC/zW2d4QtipAKPG+3rfoA4vuSQyGO+0szqkNdmMoJoRAsdnlQK5HkI
-ddEndjn49w0=
-=i9Et
------END PGP SIGNATURE-----
-
---Sig_/NM7nuvxjn6cDahB6FRlUJBb--
+--- next-2013-1021.orig/drivers/staging/iio/adc/Kconfig
++++ next-2013-1021/drivers/staging/iio/adc/Kconfig
+@@ -114,6 +114,7 @@ config LPC32XX_ADC
+ config MXS_LRADC
+ 	tristate "Freescale i.MX23/i.MX28 LRADC"
+ 	depends on ARCH_MXS || COMPILE_TEST
++	depends on INPUT
+ 	select STMP_DEVICE
+ 	select IIO_BUFFER
+ 	select IIO_TRIGGERED_BUFFER
