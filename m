@@ -1,51 +1,55 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] tracing/events: Fix swiotlb tracepoint creation
-Date: Wed, 23 Oct 2013 13:32:04 +0200
-Message-ID: <1382527924-12892-1-git-send-email-treding@nvidia.com>
-References: <20131022180625.GD20496@phenom.dumpdata.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131022180625.GD20496@phenom.dumpdata.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Jim Davis <jim.epost@gmail.com>, Zoltan Kiss <zoltan.kiss@citrix.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Subject: [PATCH] PowerCap: Convert class code to use dev_groups
+Date: Wed, 23 Oct 2013 13:37:35 +0200
+Message-ID: <1382528255-12781-1-git-send-email-treding@nvidia.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bk0-f41.google.com ([209.85.214.41]:44315 "EHLO
+	mail-bk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752559Ab3JWLkI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Oct 2013 07:40:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Tracepoints are only created when Xen support is enabled, but they are
-also referenced within lib/swiotlb.c. So unless Xen support is enabled
-the tracepoints will be missing, therefore causing builds to fail. Fix
-this by moving the tracepoint creation to lib/swiotlb.c, which works
-nicely because the Xen swiotlb support selects the generic swiotlb
-support.
+The newly added power capping framework uses the obsolete .dev_attrs
+field of struct class. However this field will be removed in 3.13, so
+convert the code to use the .dev_groups field instead.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/xen/swiotlb-xen.c | 1 -
- lib/swiotlb.c             | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+Compile-tested only.
+---
+ drivers/powercap/powercap_sys.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-index b310810..44af9d8 100644
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -43,7 +43,6 @@
- #include <xen/xen-ops.h>
- #include <xen/hvc-console.h>
+diff --git a/drivers/powercap/powercap_sys.c b/drivers/powercap/powercap_sys.c
+index c22fa4c..21814f9 100644
+--- a/drivers/powercap/powercap_sys.c
++++ b/drivers/powercap/powercap_sys.c
+@@ -472,16 +472,18 @@ static ssize_t enabled_store(struct device *dev,
+ 	return -ENOSYS;
+ }
  
--#define CREATE_TRACE_POINTS
- #include <trace/events/swiotlb.h>
- /*
-  * Used to do a quick range check in swiotlb_tbl_unmap_single and
-diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index f0d8419..5558706 100644
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -38,6 +38,7 @@
- #include <linux/bootmem.h>
- #include <linux/iommu-helper.h>
+-static struct device_attribute powercap_def_attrs[] = {
+-		__ATTR(enabled, S_IWUSR | S_IRUGO, enabled_show,
+-							enabled_store),
+-		__ATTR_NULL
++static DEVICE_ATTR_RW(enabled);
++
++static struct attribute *powercap_attrs[] = {
++	&dev_attr_enabled.attr,
++	NULL,
+ };
++ATTRIBUTE_GROUPS(powercap);
  
-+#define CREATE_TRACE_POINTS
- #include <trace/events/swiotlb.h>
+ static struct class powercap_class = {
+ 	.name = "powercap",
+ 	.dev_release = powercap_release,
+-	.dev_attrs = powercap_def_attrs,
++	.dev_groups = powercap_groups,
+ };
  
- #define OFFSET(val,align) ((unsigned long)	\
+ struct powercap_zone *powercap_register_zone(
 -- 
 1.8.4
