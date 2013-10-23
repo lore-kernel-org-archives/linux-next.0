@@ -1,52 +1,29 @@
-From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH -next] staging/iio/adc: MXS_LRADC depends on INPUT
-Date: Wed, 23 Oct 2013 16:55:56 +0100
-Message-ID: <5267F18C.2020107@kernel.org>
-References: <CA+r1Zhjo08EEoHsWkeDDKoc8Le6eDq4fZxZaa1Jc8cfOLsLsMg@mail.gmail.com> <526603EB.3060504@infradead.org> <201310220651.03499.marex@denx.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201310220651.03499.marex-ynQEQJNshbs@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: Jim Davis <jim.epost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: linux-next: Tree for Oct 23
+Date: Wed, 23 Oct 2013 17:13:22 +0200
+Message-ID: <1382541202-6614-1-git-send-email-treding@nvidia.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bk0-f49.google.com ([209.85.214.49]:38220 "EHLO
+	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750936Ab3JWPPz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Oct 2013 11:15:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
 
-On 10/22/13 05:51, Marek Vasut wrote:
-> Dear Randy Dunlap,
-> 
->> From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
->>
->> mxs-lradc.c uses many input_() functions so it should
->> depend on INPUT to fix build errors.
->>
->> drivers/built-in.o: In function `mxs_lradc_ts_unregister':
->> drivers/staging/iio/adc/mxs-lradc.c:905: undefined reference to
->> `input_unregister_device' drivers/staging/iio/adc/mxs-lradc.c:905:
->> undefined reference to `input_unregister_device' drivers/built-in.o: In
->> function `input_report_abs':
->> include/linux/input.h:399: undefined reference to `input_event'
->> include/linux/input.h:399: undefined reference to `input_event'
->> include/linux/input.h:399: undefined reference to `input_event'
->> drivers/built-in.o: In function `input_report_key':
->> include/linux/input.h:389: undefined reference to `input_event'
->> drivers/built-in.o: In function `input_sync':
->> include/linux/input.h:414: undefined reference to `input_event'
->> drivers/built-in.o:include/linux/input.h:389: more undefined references to
->> `input_event' follow
->>
->> Signed-off-by: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-> 
-> Acked-by: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-> 
-Applied to the togreg branch of iio.git
+Hi all,
 
-Thanks,
+I've uploaded today's linux-next tree to the master branch of the
+repository below:
 
-Jonathan
-> Thanks!
-> 
-> Best regards,
-> Marek Vasut
-> 
+        git://gitorious.org/thierryreding/linux-next.git
+
+A next-20131023 tag is also provided for convenience.
+
+No new conflicts. I've fixed various build failures, so 32-bit and 64-bit
+allmodconfigs build fine on x86. ARM and x86 default configurations also
+build fine. Most of the patches to fix the build failures have been sent
+to the respective maintainers.
+
+Thierry
