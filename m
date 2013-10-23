@@ -1,29 +1,27 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: linux-next: Tree for Oct 23
-Date: Wed, 23 Oct 2013 17:13:22 +0200
-Message-ID: <1382541202-6614-1-git-send-email-treding@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] PowerCap: Convert class code to use dev_groups
+Date: Wed, 23 Oct 2013 16:59:05 +0100
+Message-ID: <20131023155905.GA6976@kroah.com>
+References: <1382528255-12781-1-git-send-email-treding@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f49.google.com ([209.85.214.49]:38220 "EHLO
-	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750936Ab3JWPPz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Oct 2013 11:15:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47011 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751525Ab3JWQA0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Oct 2013 12:00:26 -0400
+Content-Disposition: inline
+In-Reply-To: <1382528255-12781-1-git-send-email-treding@nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+On Wed, Oct 23, 2013 at 01:37:35PM +0200, Thierry Reding wrote:
+> The newly added power capping framework uses the obsolete .dev_attrs
+> field of struct class. However this field will be removed in 3.13, so
+> convert the code to use the .dev_groups field instead.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-I've uploaded today's linux-next tree to the master branch of the
-repository below:
-
-        git://gitorious.org/thierryreding/linux-next.git
-
-A next-20131023 tag is also provided for convenience.
-
-No new conflicts. I've fixed various build failures, so 32-bit and 64-bit
-allmodconfigs build fine on x86. ARM and x86 default configurations also
-build fine. Most of the patches to fix the build failures have been sent
-to the respective maintainers.
-
-Thierry
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
