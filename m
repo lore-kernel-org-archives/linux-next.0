@@ -1,144 +1,63 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree
-Date: Wed, 23 Oct 2013 05:19:03 -0700
-Message-ID: <20131023121903.GT15154@atomide.com>
-References: <1382369814-7582-1-git-send-email-treding@nvidia.com>
- <1382454649-16442-1-git-send-email-treding@nvidia.com>
- <1382454649-16442-4-git-send-email-treding@nvidia.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [PATCH] tracing/events: Fix swiotlb tracepoint creation
+Date: Wed, 23 Oct 2013 09:41:38 -0400
+Message-ID: <20131023134138.GA27771@phenom.dumpdata.com>
+References: <20131022180625.GD20496@phenom.dumpdata.com>
+ <1382527924-12892-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:47068 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751752Ab3JWNlo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Oct 2013 09:41:44 -0400
 Content-Disposition: inline
-In-Reply-To: <1382454649-16442-4-git-send-email-treding@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1382527924-12892-1-git-send-email-treding@nvidia.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Greg KH <greg@kroah.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: Jim Davis <jim.epost@gmail.com>, Zoltan Kiss <zoltan.kiss@citrix.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-* Thierry Reding <thierry.reding@gmail.com> [131022 08:13]:
-> Today's linux-next merge of the arm-soc tree got a conflict in
+On Wed, Oct 23, 2013 at 01:32:04PM +0200, Thierry Reding wrote:
+> Tracepoints are only created when Xen support is enabled, but they are
+> also referenced within lib/swiotlb.c. So unless Xen support is enabled
+> the tracepoints will be missing, therefore causing builds to fail. Fix
+> this by moving the tracepoint creation to lib/swiotlb.c, which works
+> nicely because the Xen swiotlb support selects the generic swiotlb
+> support.
+
+Sweet. Thanks!
 > 
-> 	arch/arm/boot/dts/omap3-evm.dts
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/xen/swiotlb-xen.c | 1 -
+>  lib/swiotlb.c             | 1 +
+>  2 files changed, 1 insertion(+), 1 deletion(-)
 > 
-> caused by commits 975d963 (ARM: dts: omap: update usb_otg_hs data) and
-> 465ce68 (ARM: dts: Add common support for omap3-evm).
+> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+> index b310810..44af9d8 100644
+> --- a/drivers/xen/swiotlb-xen.c
+> +++ b/drivers/xen/swiotlb-xen.c
+> @@ -43,7 +43,6 @@
+>  #include <xen/xen-ops.h>
+>  #include <xen/hvc-console.h>
+>  
+> -#define CREATE_TRACE_POINTS
+>  #include <trace/events/swiotlb.h>
+>  /*
+>   * Used to do a quick range check in swiotlb_tbl_unmap_single and
+> diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+> index f0d8419..5558706 100644
+> --- a/lib/swiotlb.c
+> +++ b/lib/swiotlb.c
+> @@ -38,6 +38,7 @@
+>  #include <linux/bootmem.h>
+>  #include <linux/iommu-helper.h>
+>  
+> +#define CREATE_TRACE_POINTS
+>  #include <trace/events/swiotlb.h>
+>  
+>  #define OFFSET(val,align) ((unsigned long)	\
+> -- 
+> 1.8.4
 > 
-> I fixed it up (see below). Please verify that the resolution looks good.
-> Note that the resolution adds the phys and phy-names properties in the
-> usb_otg_hs node to complement the common omap3-evm DTSI introduced in
-> 465ce68 with the changes done in 975d963.
-
-Sigh there was no conflict in sight when I acked patch "ARM: dts: Add common
-support for omap3-evm", then I created the omap3-evm-common.dtsi not
-remembering about the earlier patch. So a totally self-inflicted merge
-conflict again and more proof that the dts files need to be always
-merged seprately from the drivers.
-
-The merge conflict below looks correct thanks.
-
-Regards,
-
-Tony
- 
-> diff --cc arch/arm/boot/dts/omap3-evm-common.dtsi
-> index 0000000,b549329..3007e79
-> mode 000000,100644..100644
-> --- a/arch/arm/boot/dts/omap3-evm-common.dtsi
-> +++ b/arch/arm/boot/dts/omap3-evm-common.dtsi
-> @@@ -1,0 -1,94 +1,96 @@@
-> + /*
-> +  * Common support for omap3 EVM boards
-> +  */
-> + 
-> + #include "omap-gpmc-smsc911x.dtsi"
-> + 
-> + / {
-> + 	cpus {
-> + 		cpu@0 {
-> + 			cpu0-supply = <&vcc>;
-> + 		};
-> + 	};
-> + 
-> + 	leds {
-> + 		compatible = "gpio-leds";
-> + 		ledb {
-> + 			label = "omap3evm::ledb";
-> + 			gpios = <&twl_gpio 19 GPIO_ACTIVE_HIGH>; /* LEDB */
-> + 			linux,default-trigger = "default-on";
-> + 		};
-> + 	};
-> + 
-> + 	wl12xx_vmmc: wl12xx_vmmc {
-> + 		compatible = "regulator-fixed";
-> + 		regulator-name = "vwl1271";
-> + 		regulator-min-microvolt = <1800000>;
-> + 		regulator-max-microvolt = <1800000>;
-> + 		gpio = <&gpio5 22 0>;	/* gpio150 */
-> + 		startup-delay-us = <70000>;
-> + 		enable-active-high;
-> + 		vin-supply = <&vmmc2>;
-> + 	};
-> + };
-> + 
-> + &i2c1 {
-> + 	clock-frequency = <2600000>;
-> + 
-> + 	twl: twl@48 {
-> + 		reg = <0x48>;
-> + 		interrupts = <7>; /* SYS_NIRQ cascaded to intc */
-> + 		interrupt-parent = <&intc>;
-> + 	};
-> + };
-> + 
-> + #include "twl4030.dtsi"
-> + #include "twl4030_omap3.dtsi"
-> + 
-> + &i2c2 {
-> + 	clock-frequency = <400000>;
-> + };
-> + 
-> + &i2c3 {
-> + 	clock-frequency = <400000>;
-> + 
-> + 	/*
-> + 	 * TVP5146 Video decoder-in for analog input support.
-> + 	 */
-> + 	tvp5146@5c {
-> + 		compatible = "ti,tvp5146m2";
-> + 		reg = <0x5c>;
-> + 	};
-> + };
-> + 
-> + &mmc1 {
-> + 	vmmc-supply = <&vmmc1>;
-> + 	vmmc_aux-supply = <&vsim>;
-> + 	bus-width = <8>;
-> + };
-> + 
-> + &mmc2 {
-> + 	vmmc-supply = <&wl12xx_vmmc>;
-> + 	non-removable;
-> + 	bus-width = <4>;
-> + 	cap-power-off-card;
-> + };
-> + 
-> + &twl_gpio {
-> + 	ti,use-leds;
-> + };
-> + 
-> + &usb_otg_hs {
-> + 	interface-type = <0>;
-> + 	usb-phy = <&usb2_phy>;
-> ++	phys = <&usb2_phy>;
-> ++	phy-names = "usb2-phy";
-> + 	mode = <3>;
-> + 	power = <50>;
-> + };
-> + 
-> + &gpmc {
-> + 	ethernet@gpmc {
-> + 		interrupt-parent = <&gpio6>;
-> + 		interrupts = <16 8>;
-> + 		reg = <5 0 0xff>;
-> + 	};
-> + };
