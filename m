@@ -1,63 +1,52 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: [PATCH] tracing/events: Fix swiotlb tracepoint creation
-Date: Wed, 23 Oct 2013 09:41:38 -0400
-Message-ID: <20131023134138.GA27771@phenom.dumpdata.com>
-References: <20131022180625.GD20496@phenom.dumpdata.com>
- <1382527924-12892-1-git-send-email-treding@nvidia.com>
+From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH -next] staging/iio/adc: MXS_LRADC depends on INPUT
+Date: Wed, 23 Oct 2013 16:55:56 +0100
+Message-ID: <5267F18C.2020107@kernel.org>
+References: <CA+r1Zhjo08EEoHsWkeDDKoc8Le6eDq4fZxZaa1Jc8cfOLsLsMg@mail.gmail.com> <526603EB.3060504@infradead.org> <201310220651.03499.marex@denx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:47068 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751752Ab3JWNlo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Oct 2013 09:41:44 -0400
-Content-Disposition: inline
-In-Reply-To: <1382527924-12892-1-git-send-email-treding@nvidia.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jim Davis <jim.epost@gmail.com>, Zoltan Kiss <zoltan.kiss@citrix.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201310220651.03499.marex-ynQEQJNshbs@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: Jim Davis <jim.epost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Oct 23, 2013 at 01:32:04PM +0200, Thierry Reding wrote:
-> Tracepoints are only created when Xen support is enabled, but they are
-> also referenced within lib/swiotlb.c. So unless Xen support is enabled
-> the tracepoints will be missing, therefore causing builds to fail. Fix
-> this by moving the tracepoint creation to lib/swiotlb.c, which works
-> nicely because the Xen swiotlb support selects the generic swiotlb
-> support.
+On 10/22/13 05:51, Marek Vasut wrote:
+> Dear Randy Dunlap,
+> 
+>> From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+>>
+>> mxs-lradc.c uses many input_() functions so it should
+>> depend on INPUT to fix build errors.
+>>
+>> drivers/built-in.o: In function `mxs_lradc_ts_unregister':
+>> drivers/staging/iio/adc/mxs-lradc.c:905: undefined reference to
+>> `input_unregister_device' drivers/staging/iio/adc/mxs-lradc.c:905:
+>> undefined reference to `input_unregister_device' drivers/built-in.o: In
+>> function `input_report_abs':
+>> include/linux/input.h:399: undefined reference to `input_event'
+>> include/linux/input.h:399: undefined reference to `input_event'
+>> include/linux/input.h:399: undefined reference to `input_event'
+>> drivers/built-in.o: In function `input_report_key':
+>> include/linux/input.h:389: undefined reference to `input_event'
+>> drivers/built-in.o: In function `input_sync':
+>> include/linux/input.h:414: undefined reference to `input_event'
+>> drivers/built-in.o:include/linux/input.h:389: more undefined references to
+>> `input_event' follow
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+> 
+> Acked-by: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+> 
+Applied to the togreg branch of iio.git
 
-Sweet. Thanks!
+Thanks,
+
+Jonathan
+> Thanks!
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/xen/swiotlb-xen.c | 1 -
->  lib/swiotlb.c             | 1 +
->  2 files changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-> index b310810..44af9d8 100644
-> --- a/drivers/xen/swiotlb-xen.c
-> +++ b/drivers/xen/swiotlb-xen.c
-> @@ -43,7 +43,6 @@
->  #include <xen/xen-ops.h>
->  #include <xen/hvc-console.h>
->  
-> -#define CREATE_TRACE_POINTS
->  #include <trace/events/swiotlb.h>
->  /*
->   * Used to do a quick range check in swiotlb_tbl_unmap_single and
-> diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-> index f0d8419..5558706 100644
-> --- a/lib/swiotlb.c
-> +++ b/lib/swiotlb.c
-> @@ -38,6 +38,7 @@
->  #include <linux/bootmem.h>
->  #include <linux/iommu-helper.h>
->  
-> +#define CREATE_TRACE_POINTS
->  #include <trace/events/swiotlb.h>
->  
->  #define OFFSET(val,align) ((unsigned long)	\
-> -- 
-> 1.8.4
+> Best regards,
+> Marek Vasut
 > 
