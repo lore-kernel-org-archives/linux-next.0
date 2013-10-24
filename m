@@ -1,86 +1,29 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: linux-next: Tree for Oct 23
-Date: Thu, 24 Oct 2013 09:41:40 +0200
-Message-ID: <20131024074137.GB9403@ulmo.nvidia.com>
-References: <1382541202-6614-1-git-send-email-treding@nvidia.com>
- <CA+icZUUUauzttknp3nK=hE=88gHrz6aC8AsbYR2W_1Uqo8nz8g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PmA2V3Z32TCmWXqI"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f43.google.com ([209.85.214.43]:48757 "EHLO
-	mail-bk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752517Ab3JXHln (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Oct 2013 03:41:43 -0400
-Content-Disposition: inline
-In-Reply-To: <CA+icZUUUauzttknp3nK=hE=88gHrz6aC8AsbYR2W_1Uqo8nz8g@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Subject: linux-next: Tree for Oct 24
+Date: Thu, 24 Oct 2013 18:31:29 +0200
+Message-ID: <1382632289-18523-1-git-send-email-treding@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
+Hi all,
 
---PmA2V3Z32TCmWXqI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I've uploaded today's linux-next tree to the master branch of the
+repository below:
 
-On Thu, Oct 24, 2013 at 09:20:53AM +0200, Sedat Dilek wrote:
-> On Wed, Oct 23, 2013 at 5:13 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > Hi all,
-> >
-> > I've uploaded today's linux-next tree to the master branch of the
-> > repository below:
-> >
-> >         git://gitorious.org/thierryreding/linux-next.git
-> >
->=20
-> WebGit URL?
->=20
-> Browsing "https://gitorious.org/thierryreding" gives me a...
->=20
-> "This Git object is too large to be displayed in the browser
->=20
-> Consider cloning the repository locally and look at the object there"
+        git://gitorious.org/thierryreding/linux-next.git
 
-I should work if you go to:
+A next-20131024 tag is also provided for convenience.
 
-	https://gitorious.org/thierryreding/linux-next
+Quite a few new conflicts. Some of them non-trivial. I've fixed another
+set of build failures, so 32-bit and 64-bit allmodconfigs build fine on
+x86. ARM and x86 default configurations also build fine. PowerPC is in
+pretty bad shape, mostly due to some OF header rework going on.
 
-> Thierry, you were talking about moving to a <kernel.org> address, what
-> happened?
-
-I decided against it because people were starting to actively use the
-temporary location and I didn't want yet another change in URL to
-prevent testing from happening.
-
-My hope is that the next time Stephen needs a break, and provided that
-I'd be able and willing to volunteer for the job again, we will be
-better prepared and make the transition more seemless by using the
-standard location to begin with.
+I'm somewhat short on time today, so I probably won't manage to send out
+detailed conflict reports out today. I'll try to do that tomorrow,
+though.
 
 Thierry
-
---PmA2V3Z32TCmWXqI
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSaM8xAAoJEN0jrNd/PrOhFTMP/Ap8wUXYuTd5f40n1agtc//0
-9OcF+NjLMNXoIewUn3PexFt9qYZftB7SJ7idOP8Tf9NmFw9hCUwv7BMpTrZnrSdD
-mWzl2MzPnYTXxrXem8EYKhlTQI86QkSXFiYRhbfxR7JEdJpkoqTFiseoEdZ01nhQ
-ZlUoEkuwsLKhdl8f0uFPIdXbJ6U4/M2MqxL8D7nStTZDode+gCeyIcWeOra8c3Zw
-FVT4rzT4n6n99loHerDNmWxwPBOIgTwMn8j+mxPrw3DwQczzn87nKW2Q6cRTLN0U
-h+HwafmzbYBQrYyQT0engeWNwghE83GvkxnI0QvrfDD5TGUFL9mbU8UiBuv3qUpl
-9A+aYcs0GuoJbgwy5MDmUepY/pt7af0OC93BrDpzF6O0SOWzcKYSmvdyRgqSOcFL
-PhYlP9IMrmxLJ15j8cHkMlZBXHuz6A2wkBj3NwY2nfO5gVIP+4Uw01pRwKjow0kh
-98VDfPN1cFRA33LAlkpTsgE100QTPba0/1jAqHqP/oSNKsbgFGuX88YXEQtFQyr5
-0kmBQ7quTSmNpU/yUm5UtY3sTAqmuKyOUmDFQsRdw2xqTr6+K2fLEZT4HBb10s9r
-mmqKdjXjpa0485UifCUETibcSi6sIE1bdn5xFh+R5PUDOF8buN2egWLrqx6kD1Ab
-izV79otqd5dRK1bcNqbr
-=oEsp
------END PGP SIGNATURE-----
-
---PmA2V3Z32TCmWXqI--
