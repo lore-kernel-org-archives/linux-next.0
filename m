@@ -1,42 +1,44 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: linux-next: manual merge of the h8300-remove tree
-Date: Fri, 25 Oct 2013 15:03:40 +0200
-Message-ID: <1382706224-8859-2-git-send-email-treding@nvidia.com>
+Subject: linux-next: manual merge of the kvm-arm tree
+Date: Fri, 25 Oct 2013 15:03:43 +0200
+Message-ID: <1382706224-8859-5-git-send-email-treding@nvidia.com>
 References: <1382632289-18523-1-git-send-email-treding@nvidia.com>
  <1382706224-8859-1-git-send-email-treding@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ea0-f179.google.com ([209.85.215.179]:55332 "EHLO
+	mail-ea0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753658Ab3JYNDz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Oct 2013 09:03:55 -0400
 In-Reply-To: <1382706224-8859-1-git-send-email-treding@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Mark Salter <msalter@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jonathan Austin <jonathan.austin@arm.com>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
-Today's linux-next tree of the h8300-remove tree got a conflict in
+Today's linux-next merge of the kvm-arm tree got a conflict in
 
-	drivers/parport/Kconfig
+	arch/arm/kvm/reset.c
 
-caused by commits e9783b0 (Revert "drivers: parport: Kconfig: exclude h8300
-for PARPORT_PC") and d90c3eb (Kconfig cleanup (PARPORT_PC dependencies)).
+caused by commits e8c2d99 (KVM: ARM: Add support for Cortex-A7) and 7999b4d
+(ARM: KVM: drop limitation to 4 CPU VMs).
 
 I fixed it up (see below). Please verify that the resolution looks good.
 
 Thanks,
 Thierry
 ---
-diff --cc drivers/parport/Kconfig
-index f536685,dc82ef0..2225237
---- a/drivers/parport/Kconfig
-+++ b/drivers/parport/Kconfig
-@@@ -41,8 -35,10 +41,7 @@@ if PARPOR
-  
-  config PARPORT_PC
-  	tristate "PC-style hardware"
- -	depends on (!SPARC64 || PCI) && !SPARC32 && !M32R && !FRV && !S390 && \
- -		(!M68K || ISA) && !MN10300 && !AVR32 && !BLACKFIN && \
- -		!XTENSA && !CRIS
- -
- +	depends on ARCH_MIGHT_HAVE_PC_PARPORT
-- 
-  	---help---
-  	  You should say Y here if you have a PC-style parallel port. All
-  	  IBM PC compatible computers and some Alphas have PC-style
+diff --cc arch/arm/kvm/reset.c
+index d153e64,2c5add0..f558c07
+--- a/arch/arm/kvm/reset.c
++++ b/arch/arm/kvm/reset.c
+@@@ -64,9 -62,7 +62,7 @@@ int kvm_reset_vcpu(struct kvm_vcpu *vcp
+  	switch (vcpu->arch.target) {
+  	case KVM_ARM_TARGET_CORTEX_A7:
+  	case KVM_ARM_TARGET_CORTEX_A15:
+- 		if (vcpu->vcpu_id > cortexa_max_cpu_idx)
+- 			return -EINVAL;
+ -		cpu_reset = &cortexa_regs_reset;
+ +		reset_regs = &cortexa_regs_reset;
+  		vcpu->arch.midr = read_cpuid_id();
+  		cpu_vtimer_irq = &cortexa_vtimer_irq;
+  		break;
