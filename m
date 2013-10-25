@@ -1,49 +1,49 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for Oct 24
-Date: Fri, 25 Oct 2013 20:04:36 +0200
-Message-ID: <CAMuHMdWMQxpJfRm+wTun0dgiex3WNPwqKOf4EimfqQOnfUrbJQ@mail.gmail.com>
-References: <1382632289-18523-1-git-send-email-treding@nvidia.com>
-	<5269FB5E.6010901@roeck-us.net>
-	<20131025083525.GF19622@ulmo.nvidia.com>
-	<CAOesGMg+Xi3+MZrPbRiMGFe2cQFjN9qaif9u5gW_tDzK62EB7w@mail.gmail.com>
-	<20131025133512.GA1551@ulmo.nvidia.com>
-	<CAOesGMh=VLEuFgZuwrJnPsbxnr1Y528CVUdq313Ey5SVUb-jsw@mail.gmail.com>
-	<20131025141707.GA27461@ulmo.nvidia.com>
-	<20131025150228.GA5501@roeck-us.net>
-	<20131025151717.GA3782@ulmo.nvidia.com>
-	<20131025171721.GB8091@roeck-us.net>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Oct 25 (powercap_sys.c)
+Date: Fri, 25 Oct 2013 12:46:29 -0700
+Message-ID: <526ACA95.9030904@infradead.org>
+References: <1382713426-2680-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:56774 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753244Ab3JYSEg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Oct 2013 14:04:36 -0400
-In-Reply-To: <20131025171721.GB8091@roeck-us.net>
+Received: from merlin.infradead.org ([205.233.59.134]:41713 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753110Ab3JYTqe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Oct 2013 15:46:34 -0400
+In-Reply-To: <1382713426-2680-1-git-send-email-treding@nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Olof Johansson <olof@lixom.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-On Fri, Oct 25, 2013 at 7:17 PM, Guenter Roeck <linux@roeck-us.net> wrote:
-> I think one problem we have is how to report breakages. Any summary
-> mail or web page doesn't help if no one looks at it. It does help lot
-> to send specific e-mail along the line of "Commit 'bla' caused build 'x'
-> to fail as follows" to the respective mailing list and patch authors,
-> but that takes a lot of time which at least I don't have. And people
-> might get annoyed by automated e-mails, so that might not be a good
-> idea either.
+On 10/25/13 08:03, Thierry Reding wrote:
+> Hi all,
+> 
+> I've uploaded today's linux-next tree to the master branch of the
+> repository below:
+> 
+>         git://gitorious.org/thierryreding/linux-next.git
+> 
+> A next-20131025 tag is also provided for convenience.
+> 
+> One new trivial conflicts and a new build failure caused by an incorrect
+> use of the genpool allocator.
+> 
+> Upon a request from Olof Johansson I've only included fixes for build
+> breakage as a result of interactions between the various trees. But
+> since I've fixed many of the other build failures already, I've pushed
+> those to a separate tag (next-20131025-fixes). That builds fine on x86
+> 32-bit and 64-bit allmodconfigs as well as ARM and x86 default
+> configurations. Most of the PowerPC build errors have also been fixed.
 
-In theory, these blame emails can be automated using some git bisect
-scripting.
+on i386:
 
-Gr{oetje,eeting}s,
+drivers/powercap/powercap_sys.c:484:2: error: unknown field 'dev_attrs' specified in initializer
+drivers/powercap/powercap_sys.c:484:2: warning: initialization from incompatible pointer type [enabled by default]
+drivers/powercap/powercap_sys.c:484:2: warning: (near initialization for 'powercap_class.suspend') [enabled by default]
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+~Randy
