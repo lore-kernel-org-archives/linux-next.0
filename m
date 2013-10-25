@@ -1,70 +1,52 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: Tree for Oct 24
-Date: Fri, 25 Oct 2013 06:16:02 -0700
-Message-ID: <CAOesGMg+Xi3+MZrPbRiMGFe2cQFjN9qaif9u5gW_tDzK62EB7w@mail.gmail.com>
+From: Mark Salter <msalter@redhat.com>
+Subject: Re: linux-next: manual merge of the c6x tree
+Date: Fri, 25 Oct 2013 09:22:57 -0400
+Message-ID: <1382707377.1768.89.camel@deneb.redhat.com>
 References: <1382632289-18523-1-git-send-email-treding@nvidia.com>
-	<5269FB5E.6010901@roeck-us.net>
-	<20131025083525.GF19622@ulmo.nvidia.com>
+	 <1382706224-8859-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qe0-f42.google.com ([209.85.128.42]:51030 "EHLO
-	mail-qe0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752117Ab3JYNQD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Oct 2013 09:16:03 -0400
-Received: by mail-qe0-f42.google.com with SMTP id gc15so2361719qeb.1
-        for <linux-next@vger.kernel.org>; Fri, 25 Oct 2013 06:16:02 -0700 (PDT)
-In-Reply-To: <20131025083525.GF19622@ulmo.nvidia.com>
+Received: from mx1.redhat.com ([209.132.183.28]:44414 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753815Ab3JYNXT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 25 Oct 2013 09:23:19 -0400
+In-Reply-To: <1382706224-8859-1-git-send-email-treding@nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will.deacon@arm.com>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2013 at 1:35 AM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Thu, Oct 24, 2013 at 10:02:22PM -0700, Guenter Roeck wrote:
->> On 10/24/2013 09:31 AM, Thierry Reding wrote:
->> >Hi all,
->> >
->> >I've uploaded today's linux-next tree to the master branch of the
->> >repository below:
->> >
->> >         git://gitorious.org/thierryreding/linux-next.git
->> >
->> >A next-20131024 tag is also provided for convenience.
->> >
->> >Quite a few new conflicts. Some of them non-trivial. I've fixed another
->> >set of build failures, so 32-bit and 64-bit allmodconfigs build fine on
->> >x86. ARM and x86 default configurations also build fine. PowerPC is in
->> >pretty bad shape, mostly due to some OF header rework going on.
->> >
->>
->> Hmm ... I see
->>
->> Building arm:defconfig ... failed
->> --------------
->> Error log:
->> drivers/built-in.o: In function `mmc_gpio_request_cd':
->> clkdev.c:(.text+0x74cf8): undefined reference to `devm_gpio_request_one'
->> make: *** [vmlinux] Error 1
->>
->> Otherwise pretty much the same as yesterday, with a build log of
->>       total: 110 pass: 88 skipped: 4 fail: 18
->>
->> This is with "v3.12-rc5-7941-g765f88c".
->
-> Yeah, I saw the devm_gpio_request_one() errors too. They happened for 3
-> boards on ARM I think. Must have forgotten to update the summary email.
-> I'll see if I can come up with a patch to fix the GPIO related build
-> failures, or at least report it to LinusW or Alexandre.
+On Fri, 2013-10-25 at 15:03 +0200, Thierry Reding wrote:
+> Today's linux-next merge of the c6x tree got a conflict in
+> 
+> 	arch/arm/Kconfig
+> 
+> caused by commits 148104c (ARM: 7854/1: lockref: add support for lockless
+> lockrefs using cmpxchg64) and commit d701884 (arm: select
+> ARCH_MIGHT_HAVE_PC_PARPORT).
+> 
+> I fixed it up (see below). Please verify that the resolution looks good.
 
-Hmm.
+> Thanks,
+> Thierry
+> ---
+> diff --cc arch/arm/Kconfig
+> index c06647d,7db8abe0..b6a708e
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@@ -5,7 -5,7 +5,8 @@@ config AR
+>   	select ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE
+>   	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+>   	select ARCH_HAVE_CUSTOM_GPIO_H
+>  +	select ARCH_USE_CMPXCHG_LOCKREF
+> + 	select ARCH_MIGHT_HAVE_PC_PARPORT
+>   	select ARCH_WANT_IPC_PARSE_VERSION
+>   	select BUILDTIME_EXTABLE_SORT if MMU
+>   	select CLONE_BACKWARDS
 
-Please don't apply fixes like these directly to your tree, keep the
-broken parts (or drop the tree that introduced it). It makes the
-process of getting the fixes in where they really have to go much more
-error prone, since there's no way to track whether they have landed in
-the right place yet or not.
+ARCH_USE_CMPXCHG_LOCKREF needs to come after ARCH_MIGHT_HAVE_PC_PARPORT
+to keep things sorted alphabetically. Other than that, its fine.
 
-
--Olof
+--Mark
