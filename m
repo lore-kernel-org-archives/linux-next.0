@@ -1,62 +1,67 @@
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: linux-next: Tree for Oct 25 (powercap_sys.c)
-Date: Fri, 25 Oct 2013 15:30:16 -0700
-Message-ID: <526AF0F8.6030100@linux.intel.com>
-References: <1382713426-2680-1-git-send-email-treding@nvidia.com> <526ACA95.9030904@infradead.org> <526AEE08.5080706@linux.intel.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] PowerCap: Replace dev_attrs with dev_groups
+Date: Fri, 25 Oct 2013 15:30:19 -0700
+Message-ID: <526AF0FB.5060508@infradead.org>
+References: <1382739255-25134-1-git-send-email-srinivas.pandruvada@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:24878 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752292Ab3JYWaT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 25 Oct 2013 18:30:19 -0400
-In-Reply-To: <526AEE08.5080706@linux.intel.com>
+Received: from merlin.infradead.org ([205.233.59.134]:43725 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752837Ab3JYWaW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Oct 2013 18:30:22 -0400
+In-Reply-To: <1382739255-25134-1-git-send-email-srinivas.pandruvada@linux.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, linux-next@vger.kernel.org
+Cc: broonie@kernel.org, rafael.j.wysocki@intel.com, jacob.jun.pan@linux.intel.com, thierry.reding@gmail.com
+
+On 10/25/13 15:14, Srinivas Pandruvada wrote:
+> struct class no longer contains dev_attrs field. Replace dev_attrs
+> with dev_groups field.
+> This caused compile error on latest linux-next tree.
+> 
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> ---
+>  drivers/powercap/powercap_sys.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/powercap/powercap_sys.c b/drivers/powercap/powercap_sys.c
+> index c22fa4c..af07211 100644
+> --- a/drivers/powercap/powercap_sys.c
+> +++ b/drivers/powercap/powercap_sys.c
+> @@ -471,17 +471,18 @@ static ssize_t enabled_store(struct device *dev,
+>  
+>  	return -ENOSYS;
+>  }
+> +static DEVICE_ATTR_RW(enabled);
+>  
+> -static struct device_attribute powercap_def_attrs[] = {
+> -		__ATTR(enabled, S_IWUSR | S_IRUGO, enabled_show,
+> -							enabled_store),
+> -		__ATTR_NULL
+> +static struct attribute *powercap_dev_attrs[] = {
+> +	&dev_attr_enabled.attr,
+> +	NULL
+>  };
+> +ATTRIBUTE_GROUPS(powercap_dev);
+>  
+>  static struct class powercap_class = {
+>  	.name = "powercap",
+>  	.dev_release = powercap_release,
+> -	.dev_attrs = powercap_def_attrs,
+> +	.dev_groups = powercap_dev_groups,
+>  };
+>  
+>  struct powercap_zone *powercap_register_zone(
+> 
 
 
-Ignore my patch. Already a patch by Thierry Reding is in PM next tree.
-
-Thanks,
-Srinivas
-
-
-On 10/25/2013 03:17 PM, Srinivas Pandruvada wrote:
->
-> On 10/25/2013 12:46 PM, Randy Dunlap wrote:
->> On 10/25/13 08:03, Thierry Reding wrote:
->>> Hi all,
->>>
->>> I've uploaded today's linux-next tree to the master branch of the
->>> repository below:
->>>
->>>          git://gitorious.org/thierryreding/linux-next.git
->>>
->>> A next-20131025 tag is also provided for convenience.
->>>
->>> One new trivial conflicts and a new build failure caused by an 
->>> incorrect
->>> use of the genpool allocator.
->>>
->>> Upon a request from Olof Johansson I've only included fixes for build
->>> breakage as a result of interactions between the various trees. But
->>> since I've fixed many of the other build failures already, I've pushed
->>> those to a separate tag (next-20131025-fixes). That builds fine on x86
->>> 32-bit and 64-bit allmodconfigs as well as ARM and x86 default
->>> configurations. Most of the PowerPC build errors have also been fixed.
->> on i386:
->>
->> drivers/powercap/powercap_sys.c:484:2: error: unknown field 
->> 'dev_attrs' specified in initializer
->> drivers/powercap/powercap_sys.c:484:2: warning: initialization from 
->> incompatible pointer type [enabled by default]
->> drivers/powercap/powercap_sys.c:484:2: warning: (near initialization 
->> for 'powercap_class.suspend') [enabled by default]
-> Submitted patch and copied to you all.
->
-> Thanks,
-> Srinivas
->
+-- 
+~Randy
