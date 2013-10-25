@@ -1,52 +1,70 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: linux-next: manual merge of the kvm-arm tree
-Date: Fri, 25 Oct 2013 14:07:41 +0100
-Message-ID: <526A6D1D.8080504@arm.com>
-References: <1382632289-18523-1-git-send-email-treding@nvidia.com> <1382706224-8859-1-git-send-email-treding@nvidia.com> <1382706224-8859-5-git-send-email-treding@nvidia.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: Tree for Oct 24
+Date: Fri, 25 Oct 2013 06:16:02 -0700
+Message-ID: <CAOesGMg+Xi3+MZrPbRiMGFe2cQFjN9qaif9u5gW_tDzK62EB7w@mail.gmail.com>
+References: <1382632289-18523-1-git-send-email-treding@nvidia.com>
+	<5269FB5E.6010901@roeck-us.net>
+	<20131025083525.GF19622@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1382706224-8859-5-git-send-email-treding@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qe0-f42.google.com ([209.85.128.42]:51030 "EHLO
+	mail-qe0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752117Ab3JYNQD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Oct 2013 09:16:03 -0400
+Received: by mail-qe0-f42.google.com with SMTP id gc15so2361719qeb.1
+        for <linux-next@vger.kernel.org>; Fri, 25 Oct 2013 06:16:02 -0700 (PDT)
+In-Reply-To: <20131025083525.GF19622@ulmo.nvidia.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Austin <Jonathan.Austin@arm.com>, Christoffer Dall <cdall@cs.columbia.edu>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Guenter Roeck <linux@roeck-us.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 
-On 25/10/13 14:03, Thierry Reding wrote:
-> Today's linux-next merge of the kvm-arm tree got a conflict in
-> 
-> 	arch/arm/kvm/reset.c
-> 
-> caused by commits e8c2d99 (KVM: ARM: Add support for Cortex-A7) and 7999b4d
-> (ARM: KVM: drop limitation to 4 CPU VMs).
-> 
-> I fixed it up (see below). Please verify that the resolution looks good.
+On Fri, Oct 25, 2013 at 1:35 AM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Thu, Oct 24, 2013 at 10:02:22PM -0700, Guenter Roeck wrote:
+>> On 10/24/2013 09:31 AM, Thierry Reding wrote:
+>> >Hi all,
+>> >
+>> >I've uploaded today's linux-next tree to the master branch of the
+>> >repository below:
+>> >
+>> >         git://gitorious.org/thierryreding/linux-next.git
+>> >
+>> >A next-20131024 tag is also provided for convenience.
+>> >
+>> >Quite a few new conflicts. Some of them non-trivial. I've fixed another
+>> >set of build failures, so 32-bit and 64-bit allmodconfigs build fine on
+>> >x86. ARM and x86 default configurations also build fine. PowerPC is in
+>> >pretty bad shape, mostly due to some OF header rework going on.
+>> >
+>>
+>> Hmm ... I see
+>>
+>> Building arm:defconfig ... failed
+>> --------------
+>> Error log:
+>> drivers/built-in.o: In function `mmc_gpio_request_cd':
+>> clkdev.c:(.text+0x74cf8): undefined reference to `devm_gpio_request_one'
+>> make: *** [vmlinux] Error 1
+>>
+>> Otherwise pretty much the same as yesterday, with a build log of
+>>       total: 110 pass: 88 skipped: 4 fail: 18
+>>
+>> This is with "v3.12-rc5-7941-g765f88c".
+>
+> Yeah, I saw the devm_gpio_request_one() errors too. They happened for 3
+> boards on ARM I think. Must have forgotten to update the summary email.
+> I'll see if I can come up with a patch to fix the GPIO related build
+> failures, or at least report it to LinusW or Alexandre.
 
-Looks good. Thanks Thierry.
+Hmm.
 
-	M.
-
-> Thanks,
-> Thierry
-> ---
-> diff --cc arch/arm/kvm/reset.c
-> index d153e64,2c5add0..f558c07
-> --- a/arch/arm/kvm/reset.c
-> +++ b/arch/arm/kvm/reset.c
-> @@@ -64,9 -62,7 +62,7 @@@ int kvm_reset_vcpu(struct kvm_vcpu *vcp
->   	switch (vcpu->arch.target) {
->   	case KVM_ARM_TARGET_CORTEX_A7:
->   	case KVM_ARM_TARGET_CORTEX_A15:
-> - 		if (vcpu->vcpu_id > cortexa_max_cpu_idx)
-> - 			return -EINVAL;
->  -		cpu_reset = &cortexa_regs_reset;
->  +		reset_regs = &cortexa_regs_reset;
->   		vcpu->arch.midr = read_cpuid_id();
->   		cpu_vtimer_irq = &cortexa_vtimer_irq;
->   		break;
-> 
+Please don't apply fixes like these directly to your tree, keep the
+broken parts (or drop the tree that introduced it). It makes the
+process of getting the fixes in where they really have to go much more
+error prone, since there's no way to track whether they have landed in
+the right place yet or not.
 
 
--- 
-Jazz is not dead. It just smells funny...
+-Olof
