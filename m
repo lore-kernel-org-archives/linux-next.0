@@ -1,53 +1,49 @@
 From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] PowerCap: Replace dev_attrs with dev_groups
-Date: Fri, 25 Oct 2013 15:14:15 -0700
-Message-ID: <1382739255-25134-1-git-send-email-srinivas.pandruvada@linux.intel.com>
+Subject: Re: linux-next: Tree for Oct 25 (powercap_sys.c)
+Date: Fri, 25 Oct 2013 15:17:44 -0700
+Message-ID: <526AEE08.5080706@linux.intel.com>
+References: <1382713426-2680-1-git-send-email-treding@nvidia.com> <526ACA95.9030904@infradead.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:33068 "EHLO mga09.intel.com"
+Received: from mga14.intel.com ([143.182.124.37]:7871 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751487Ab3JYWOf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 25 Oct 2013 18:14:35 -0400
+	id S1751321Ab3JYWRq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 25 Oct 2013 18:17:46 -0400
+In-Reply-To: <526ACA95.9030904@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: broonie@kernel.org, rdunlap@infradead.org, rafael.j.wysocki@intel.com, jacob.jun.pan@linux.intel.com, thierry.reding@gmail.com, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-struct class no longer contains dev_attrs field. Replace dev_attrs
-with dev_groups field.
-This caused compile error on latest linux-next tree.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/powercap/powercap_sys.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+On 10/25/2013 12:46 PM, Randy Dunlap wrote:
+> On 10/25/13 08:03, Thierry Reding wrote:
+>> Hi all,
+>>
+>> I've uploaded today's linux-next tree to the master branch of the
+>> repository below:
+>>
+>>          git://gitorious.org/thierryreding/linux-next.git
+>>
+>> A next-20131025 tag is also provided for convenience.
+>>
+>> One new trivial conflicts and a new build failure caused by an incorrect
+>> use of the genpool allocator.
+>>
+>> Upon a request from Olof Johansson I've only included fixes for build
+>> breakage as a result of interactions between the various trees. But
+>> since I've fixed many of the other build failures already, I've pushed
+>> those to a separate tag (next-20131025-fixes). That builds fine on x86
+>> 32-bit and 64-bit allmodconfigs as well as ARM and x86 default
+>> configurations. Most of the PowerPC build errors have also been fixed.
+> on i386:
+>
+> drivers/powercap/powercap_sys.c:484:2: error: unknown field 'dev_attrs' specified in initializer
+> drivers/powercap/powercap_sys.c:484:2: warning: initialization from incompatible pointer type [enabled by default]
+> drivers/powercap/powercap_sys.c:484:2: warning: (near initialization for 'powercap_class.suspend') [enabled by default]
+Submitted patch and copied to you all.
 
-diff --git a/drivers/powercap/powercap_sys.c b/drivers/powercap/powercap_sys.c
-index c22fa4c..af07211 100644
---- a/drivers/powercap/powercap_sys.c
-+++ b/drivers/powercap/powercap_sys.c
-@@ -471,17 +471,18 @@ static ssize_t enabled_store(struct device *dev,
- 
- 	return -ENOSYS;
- }
-+static DEVICE_ATTR_RW(enabled);
- 
--static struct device_attribute powercap_def_attrs[] = {
--		__ATTR(enabled, S_IWUSR | S_IRUGO, enabled_show,
--							enabled_store),
--		__ATTR_NULL
-+static struct attribute *powercap_dev_attrs[] = {
-+	&dev_attr_enabled.attr,
-+	NULL
- };
-+ATTRIBUTE_GROUPS(powercap_dev);
- 
- static struct class powercap_class = {
- 	.name = "powercap",
- 	.dev_release = powercap_release,
--	.dev_attrs = powercap_def_attrs,
-+	.dev_groups = powercap_dev_groups,
- };
- 
- struct powercap_zone *powercap_register_zone(
--- 
-1.8.3.1
+Thanks,
+Srinivas
