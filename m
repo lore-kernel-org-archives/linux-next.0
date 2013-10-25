@@ -1,72 +1,72 @@
-From: "Dmitry Kravkov" <dmitry@broadcom.com>
-Subject: RE: linux-next: manual merge of the arm tree
-Date: Fri, 25 Oct 2013 15:20:40 +0000
-Message-ID: <504C9EFCA2D0054393414C9CB605C37F20DDD3E1@SJEXCHMB06.corp.ad.broadcom.com>
-References: <1382454517-4074-1-git-send-email-treding@nvidia.com>
- <1382454517-4074-2-git-send-email-treding@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: Tree for Oct 24
+Date: Fri, 25 Oct 2013 16:45:46 +0100
+Message-ID: <20131025154546.GE26122@sirena.org.uk>
+References: <1382632289-18523-1-git-send-email-treding@nvidia.com>
+ <5269FB5E.6010901@roeck-us.net>
+ <20131025083525.GF19622@ulmo.nvidia.com>
+ <CAOesGMg+Xi3+MZrPbRiMGFe2cQFjN9qaif9u5gW_tDzK62EB7w@mail.gmail.com>
+ <20131025132422.GC12932@sirena.org.uk>
+ <CAOesGMjuT0ntb6awo0PVtccqvFfo_Lzj1zyGNX=C4BrVLBow7w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="h56sxpGKRmy85csR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms3.broadcom.com ([216.31.210.19]:4144 "EHLO mms3.broadcom.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753336Ab3JYPU4 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Oct 2013 11:20:56 -0400
-In-Reply-To: <1382454517-4074-2-git-send-email-treding@nvidia.com>
-Content-Language: en-US
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:54758 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751604Ab3JYPpu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Oct 2013 11:45:50 -0400
+Content-Disposition: inline
+In-Reply-To: <CAOesGMjuT0ntb6awo0PVtccqvFfo_Lzj1zyGNX=C4BrVLBow7w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Russell King <rmk@arm.linux.org.uk>, Merav Sicron <meravs@broadcom.com>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Guenter Roeck <linux@roeck-us.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-> -----Original Message-----
-> From: netdev-owner@vger.kernel.org [mailto:netdev-
-> owner@vger.kernel.org] On Behalf Of Thierry Reding
-> Sent: Tuesday, October 22, 2013 6:09 PM
-> To: Russell King; Merav Sicron; David Miller; netdev@vger.kernel.org
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: linux-next: manual merge of the arm tree
-> 
-> Today's linux-next merge of the arm tree got a conflict in
-> 
-> 	drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-> 
-> caused by commits 1bfa2c4 (DMA-API: net: broadcom/bnx2x: replace
-> dma_set_mask()+dma_set_coherent_mask() with new helper) and edd3147
-> (bnx2x: Set NETIF_F_HIGHDMA unconditionally).
-> 
-> I fixed it up (see below). Please verify that the resolution looks good.
-> 
-> Thanks,
-> Thierry
-> ---
-> diff --cc drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-> index b42f89c,38bf998..767aafb
-> --- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-> +++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-> @@@ -12117,12 -12079,9 +12117,8 @@@ static int
-> bnx2x_set_coherency_mask(str
->   {
->   	struct device *dev = &bp->pdev->dev;
-> 
-> - 	if (dma_set_mask(dev, DMA_BIT_MASK(64)) == 0) {
-> - 		if (dma_set_coherent_mask(dev, DMA_BIT_MASK(64)) != 0) {
-> - 			dev_err(dev, "dma_set_coherent_mask failed,
-> aborting\n");
-> - 			return -EIO;
-> - 		}
-> - 	} else if (dma_set_mask(dev, DMA_BIT_MASK(32)) != 0) {
->  -	if (dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64)) == 0) {
->  -		bp->flags |= USING_DAC_FLAG;
->  -	} else if (dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32)) !=
-> 0) {
-> ++	if (dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64)) != 0 &&
-> ++	    dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32)) != 0) {
->   		dev_err(dev, "System does not support DMA, aborting\n");
->   		return -EIO;
->   	}
 
-The fix is correct. Thanks, Thierry.
-Acked-by: Dmitry Kravkov <dmitry@broadcom.com>
- 
+--h56sxpGKRmy85csR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Oct 25, 2013 at 06:33:43AM -0700, Olof Johansson wrote:
+> On Fri, Oct 25, 2013 at 6:24 AM, Mark Brown <broonie@kernel.org> wrote:
+
+> > The rule I was applying (which I think is the same as Stephen applies)
+> > is that I'd fix anything that was definitely the result of a merge issue
+> > (like the build failure in misc due to a sysfs API change in the sysfs
+> > tree) but not anything that was just plain broken in the tree in
+> > isolation.
+
+> Some of those might still make sense, but as many as possible of them
+> should be pushed down into the trees where they belong, even if
+> they're strictly not needed there (as long as they don't break the
+> standalone tree, of course).
+
+Right, this is strictly for issues generated as a result of a change in
+one tree that cause an issue when merged with another tree like adding a
+user of an API in one tree that has had an incompatible change in
+another.
+
+--h56sxpGKRmy85csR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSapImAAoJELSic+t+oim9iNYP/A/PZkN51WNfyDoaDR6hk846
+cei8Ez3QqxFzL4rja7Pm2WVs6AD2uP0ojJ/K6y9x8s9VV9K3DQuUVdyOxSy8nab2
+d3MyG8h4hFyIvOK/ciLDf63QWnUfCQ3ve2e2Zn5bA+aimQ+Zl1kg3D4mJ/WR411h
+n8+QbAOLUFxDo0OdG1t7JNnRHXb31uRXERscHxqCKFKPNaw02W7UmkgBGogULcjR
+fkPz3dQubXpes1DY0Bg2PeWXexcRtfsRI0qsmV7uEk8pCyK2IrkjlJq+gS50Zlc4
+LYQlYy+h1/awLkTI/FyHvm7Jh7bfq7mntOw+y9ofP+rjIhyNYpiG7wK7DJuKtsKX
+g+EPJjpF7lW48tUnVZ1L5KhpVb56nS69EmdOa8+xMx0zDd2wiVcO42NOdAh01Bew
+U3ZAZEsFu8SAXDkUTrF+nXG1eNcJ1VQ/F8B64HTbucZQ2plesU6mDbtl6P4C1SUa
+BjUc9aclaNFS0ujpP7eZkkybs5znTx1Kz3XIzJ8XNTr6Wa3fTG0xZ7mVOuc9UF1K
+k6iA8s/2h7JKjjk2Px2tRxFxwgR4AN40X21YRWb/Q9ti5tcIf1b//+nrO4M6xIHw
+aJ2/IJyLLR+pF1tlUwn6esruvThHwj+YlsHK5W93Hj0502fjzDMS5mfkTSRGUTxu
+pQEF9tLjlGRMLO6NSZmG
+=+kX7
+-----END PGP SIGNATURE-----
+
+--h56sxpGKRmy85csR--
