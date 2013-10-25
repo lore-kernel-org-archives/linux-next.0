@@ -1,52 +1,73 @@
-From: Mark Salter <msalter@redhat.com>
-Subject: Re: linux-next: manual merge of the c6x tree
-Date: Fri, 25 Oct 2013 09:22:57 -0400
-Message-ID: <1382707377.1768.89.camel@deneb.redhat.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: Tree for Oct 24
+Date: Fri, 25 Oct 2013 14:24:22 +0100
+Message-ID: <20131025132422.GC12932@sirena.org.uk>
 References: <1382632289-18523-1-git-send-email-treding@nvidia.com>
-	 <1382706224-8859-1-git-send-email-treding@nvidia.com>
+ <5269FB5E.6010901@roeck-us.net>
+ <20131025083525.GF19622@ulmo.nvidia.com>
+ <CAOesGMg+Xi3+MZrPbRiMGFe2cQFjN9qaif9u5gW_tDzK62EB7w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="aT9PWwzfKXlsBJM1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:44414 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753815Ab3JYNXT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 25 Oct 2013 09:23:19 -0400
-In-Reply-To: <1382706224-8859-1-git-send-email-treding@nvidia.com>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:48704 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752821Ab3JYNY2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Oct 2013 09:24:28 -0400
+Content-Disposition: inline
+In-Reply-To: <CAOesGMg+Xi3+MZrPbRiMGFe2cQFjN9qaif9u5gW_tDzK62EB7w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Will Deacon <will.deacon@arm.com>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Guenter Roeck <linux@roeck-us.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, 2013-10-25 at 15:03 +0200, Thierry Reding wrote:
-> Today's linux-next merge of the c6x tree got a conflict in
-> 
-> 	arch/arm/Kconfig
-> 
-> caused by commits 148104c (ARM: 7854/1: lockref: add support for lockless
-> lockrefs using cmpxchg64) and commit d701884 (arm: select
-> ARCH_MIGHT_HAVE_PC_PARPORT).
-> 
-> I fixed it up (see below). Please verify that the resolution looks good.
 
-> Thanks,
-> Thierry
-> ---
-> diff --cc arch/arm/Kconfig
-> index c06647d,7db8abe0..b6a708e
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@@ -5,7 -5,7 +5,8 @@@ config AR
->   	select ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE
->   	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
->   	select ARCH_HAVE_CUSTOM_GPIO_H
->  +	select ARCH_USE_CMPXCHG_LOCKREF
-> + 	select ARCH_MIGHT_HAVE_PC_PARPORT
->   	select ARCH_WANT_IPC_PARSE_VERSION
->   	select BUILDTIME_EXTABLE_SORT if MMU
->   	select CLONE_BACKWARDS
+--aT9PWwzfKXlsBJM1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-ARCH_USE_CMPXCHG_LOCKREF needs to come after ARCH_MIGHT_HAVE_PC_PARPORT
-to keep things sorted alphabetically. Other than that, its fine.
+On Fri, Oct 25, 2013 at 06:16:02AM -0700, Olof Johansson wrote:
+> On Fri, Oct 25, 2013 at 1:35 AM, Thierry Reding
 
---Mark
+> > Yeah, I saw the devm_gpio_request_one() errors too. They happened for 3
+> > boards on ARM I think. Must have forgotten to update the summary email.
+> > I'll see if I can come up with a patch to fix the GPIO related build
+> > failures, or at least report it to LinusW or Alexandre.
+
+> Hmm.
+
+> Please don't apply fixes like these directly to your tree, keep the
+> broken parts (or drop the tree that introduced it). It makes the
+> process of getting the fixes in where they really have to go much more
+> error prone, since there's no way to track whether they have landed in
+> the right place yet or not.
+
+The rule I was applying (which I think is the same as Stephen applies)
+is that I'd fix anything that was definitely the result of a merge issue
+(like the build failure in misc due to a sysfs API change in the sysfs
+tree) but not anything that was just plain broken in the tree in
+isolation.
+
+--aT9PWwzfKXlsBJM1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSanEDAAoJELSic+t+oim95O0P/i8fNoNQ3dN64VER+ZzZB90Y
+SrCy+Q/F2FsQy4MwM+Hw1QIt0d8gFegkyevdxSCH3fvjc3JJ4z+iCfCL08/k0PG1
+eiXuZahQLFmm2cN8vuyRG3k/tyO9FMm8WpN67lNNDVJpQGBDp05hgCiq/b5fOnoR
+NJjjxq58UyCt4tYIJG2bSXMLWp/wVSeLdhWPsP4oUZoiX18mdkqWjytEnibzJVt5
+hubsS0C2DNeh2phJQ18Tyv77DMLtutyULRmT4aIxCSXvjB9Hd2RPh5g4dCQk6D8y
+OIcvzc8r1Mf53Zf/GumdY93bDG4IlYa8hREKD6bwGO8imgJw7rc3S1no/0mZMAZ4
+cdFBzFhm9LxTAI77y9FGKBQ6TnmBDNkZIQzBebzodLaDKUmbwkfsJtiwSKo0iQVQ
+4ZWH8oSWXATcVYAcxgCRdrpabVCMYJOzbM86aTFuWk9SHcZTcsHxqBGccnge81L5
+wvqiyUwUh03hVTACQG+Epv0g46fPRBXkJvZerY+k4fV6lOO7OMEyCwSmCu6anXG6
++IiVPOmBGZydgpJJsDSoCT0d7wwi7BhBn1kTVmmmUqjcVYOrPHENwCu5gmRmCuZo
+9NYpI3u4E6V4PVqSPDURSl/HyjUcfN40f2siija2J8EH6q6/UgVIATlh0+SpHVe+
+loVlS8Mm8URE1aBrIR7h
+=Dxcs
+-----END PGP SIGNATURE-----
+
+--aT9PWwzfKXlsBJM1--
