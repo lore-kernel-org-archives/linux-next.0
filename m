@@ -1,30 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 28 Oct 2013 15:23:25 +1100
-Message-ID: <20131028152325.420fa47f1a2620168acbf002@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 28 Oct 2013 16:11:12 +1100
+Message-ID: <20131028161112.bc9ff9e8728cf29554dfa05d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Oct_2013_15_23_25_+1100_t5NoZKEre7yDn8xF"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Somnath Kotur <somnath.kotur@emulex.com>, Sathya Perla <sathya.perla@emulex.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__28_Oct_2013_16_11_12_+1100_fHtOfGffAl8QdIWN"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:33005 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752039Ab3J1FLZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 01:11:25 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlZpbGxlIFN5cmrDpGzDpCI=?= <ville.syrjala@linux.intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
 
---Signature=_Mon__28_Oct_2013_15_23_25_+1100_t5NoZKEre7yDn8xF
+--Signature=_Mon__28_Oct_2013_16_11_12_+1100_fHtOfGffAl8QdIWN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Dave,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/emulex/benet/be.h between commit e9e2a904ef0a
-("be2net: Warn users of possible broken functionality on BE2 cards with
-very old FW versions with latest driver") from the net tree and commit
-6384a4d0dcf9 ("be2net: add support for ndo_busy_poll") from the net-next
-tree.
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/i915_dma.c between commit e1264ebe9ff4 ("Revert
+"drm/i915: Delay disabling of VGA memory until vgacon->fbcon handoff is
+done"") from Linus' tree and commit ce352550327b ("drm/i915: Fix
+unclaimed register access due to delayed VGA memory disable") from the
+drm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -33,163 +37,44 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/ethernet/emulex/benet/be.h
-index c99dac6a9ddf,b2765ebb0268..000000000000
---- a/drivers/net/ethernet/emulex/benet/be.h
-+++ b/drivers/net/ethernet/emulex/benet/be.h
-@@@ -696,23 -733,114 +733,123 @@@ static inline int qnq_async_evt_rcvd(st
-  	return adapter->flags & BE_FLAGS_QNQ_ASYNC_EVT_RCVD;
-  }
+diff --cc drivers/gpu/drm/i915/i915_dma.c
+index d5c784d48671,437886641d90..000000000000
+--- a/drivers/gpu/drm/i915/i915_dma.c
++++ b/drivers/gpu/drm/i915/i915_dma.c
+@@@ -1348,6 -1358,13 +1355,8 @@@ static int i915_load_modeset_init(struc
+  	 */
+  	intel_fbdev_initial_config(dev);
  =20
- +static inline int fw_major_num(const char *fw_ver)
- +{
- +	int fw_major =3D 0;
- +
- +	sscanf(fw_ver, "%d.", &fw_major);
- +
- +	return fw_major;
- +}
- +
-- extern void be_cq_notify(struct be_adapter *adapter, u16 qid, bool arm,
-- 		u16 num_popped);
-- extern void be_link_status_update(struct be_adapter *adapter, u8 link_sta=
-tus);
-- extern void be_parse_stats(struct be_adapter *adapter);
-- extern int be_load_fw(struct be_adapter *adapter, u8 *func);
-- extern bool be_is_wol_supported(struct be_adapter *adapter);
-- extern bool be_pause_supported(struct be_adapter *adapter);
-- extern u32 be_get_fw_log_level(struct be_adapter *adapter);
-+ #ifdef CONFIG_NET_RX_BUSY_POLL
-+ static inline bool be_lock_napi(struct be_eq_obj *eqo)
-+ {
-+ 	bool status =3D true;
+ -	/*
+ -	 * Must do this after fbcon init so that
+ -	 * vgacon_save_screen() works during the handover.
+ -	 */
+ -	i915_disable_vga_mem(dev);
++ 	intel_display_power_put(dev, POWER_DOMAIN_VGA);
 +=20
-+ 	spin_lock(&eqo->lock); /* BH is already disabled */
-+ 	if (eqo->state & BE_EQ_LOCKED) {
-+ 		WARN_ON(eqo->state & BE_EQ_NAPI);
-+ 		eqo->state |=3D BE_EQ_NAPI_YIELD;
-+ 		status =3D false;
-+ 	} else {
-+ 		eqo->state =3D BE_EQ_NAPI;
-+ 	}
-+ 	spin_unlock(&eqo->lock);
-+ 	return status;
-+ }
-+=20
-+ static inline void be_unlock_napi(struct be_eq_obj *eqo)
-+ {
-+ 	spin_lock(&eqo->lock); /* BH is already disabled */
-+=20
-+ 	WARN_ON(eqo->state & (BE_EQ_POLL | BE_EQ_NAPI_YIELD));
-+ 	eqo->state =3D BE_EQ_IDLE;
-+=20
-+ 	spin_unlock(&eqo->lock);
-+ }
-+=20
-+ static inline bool be_lock_busy_poll(struct be_eq_obj *eqo)
-+ {
-+ 	bool status =3D true;
-+=20
-+ 	spin_lock_bh(&eqo->lock);
-+ 	if (eqo->state & BE_EQ_LOCKED) {
-+ 		eqo->state |=3D BE_EQ_POLL_YIELD;
-+ 		status =3D false;
-+ 	} else {
-+ 		eqo->state |=3D BE_EQ_POLL;
-+ 	}
-+ 	spin_unlock_bh(&eqo->lock);
-+ 	return status;
-+ }
-+=20
-+ static inline void be_unlock_busy_poll(struct be_eq_obj *eqo)
-+ {
-+ 	spin_lock_bh(&eqo->lock);
-+=20
-+ 	WARN_ON(eqo->state & (BE_EQ_NAPI));
-+ 	eqo->state =3D BE_EQ_IDLE;
-+=20
-+ 	spin_unlock_bh(&eqo->lock);
-+ }
-+=20
-+ static inline void be_enable_busy_poll(struct be_eq_obj *eqo)
-+ {
-+ 	spin_lock_init(&eqo->lock);
-+ 	eqo->state =3D BE_EQ_IDLE;
-+ }
-+=20
-+ static inline void be_disable_busy_poll(struct be_eq_obj *eqo)
-+ {
-+ 	local_bh_disable();
-+=20
-+ 	/* It's enough to just acquire napi lock on the eqo to stop
-+ 	 * be_busy_poll() from processing any queueus.
-+ 	 */
-+ 	while (!be_lock_napi(eqo))
-+ 		mdelay(1);
-+=20
-+ 	local_bh_enable();
-+ }
-+=20
-+ #else /* CONFIG_NET_RX_BUSY_POLL */
-+=20
-+ static inline bool be_lock_napi(struct be_eq_obj *eqo)
-+ {
-+ 	return true;
-+ }
-+=20
-+ static inline void be_unlock_napi(struct be_eq_obj *eqo)
-+ {
-+ }
-+=20
-+ static inline bool be_lock_busy_poll(struct be_eq_obj *eqo)
-+ {
-+ 	return false;
-+ }
-+=20
-+ static inline void be_unlock_busy_poll(struct be_eq_obj *eqo)
-+ {
-+ }
-+=20
-+ static inline void be_enable_busy_poll(struct be_eq_obj *eqo)
-+ {
-+ }
-+=20
-+ static inline void be_disable_busy_poll(struct be_eq_obj *eqo)
-+ {
-+ }
-+ #endif /* CONFIG_NET_RX_BUSY_POLL */
-+=20
-+ void be_cq_notify(struct be_adapter *adapter, u16 qid, bool arm,
-+ 		  u16 num_popped);
-+ void be_link_status_update(struct be_adapter *adapter, u8 link_status);
-+ void be_parse_stats(struct be_adapter *adapter);
-+ int be_load_fw(struct be_adapter *adapter, u8 *func);
-+ bool be_is_wol_supported(struct be_adapter *adapter);
-+ bool be_pause_supported(struct be_adapter *adapter);
-+ u32 be_get_fw_log_level(struct be_adapter *adapter);
-  int be_update_queues(struct be_adapter *adapter);
-  int be_poll(struct napi_struct *napi, int budget);
+  	/* Only enable hotplug handling once the fbdev is fully set up. */
+  	dev_priv->enable_hotplug_processing =3D true;
  =20
 
---Signature=_Mon__28_Oct_2013_15_23_25_+1100_t5NoZKEre7yDn8xF
+--Signature=_Mon__28_Oct_2013_16_11_12_+1100_fHtOfGffAl8QdIWN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSbebBAAoJEMDTa8Ir7ZwV7WoP/3kA0YToUtYYFmtwB8Q3WFBi
-uKoy2ndDr11M4wQwcviixkgwz5Ag9U2w2LYUCZdHGLkfbcTYT/lzh477hFyBi8+F
-ylaCNfU+2lSX7TBNlN058zGwm5vbi3Eo9D3+hfK2pmFDwK6iKWpp++32JrJurcD4
-2K3yF0LqYKJzYxoZJ23wLG7/IKmiuKEm6SooQcmAL+Ha4kHg2Hh/d9hC4wf7D0Qc
-yT0ipRNXAQTmczKkCykaMXNmz15Ewl+4V4diqZgYbBhcSuSR9LxLEYlQFFShJisb
-L6G+uEurgQH4wIV0eUJ1o63BuzZRXf6YPuuxeK2MBNnxe9qq/V9b04FFO5koTngP
-kaw6lpAYYV0k1neG3NEurxTiz04H9vXJ7hmIANCItdO9BEEba271aoYHafVKP3L2
-f6M/U1hLe4YYoGGQx4nqhG3PTd8pG9cibxOmrgwnklFtvyqBpe13frma8DWM21Tb
-DCFhYSseW3u1qhEFzGHnrslMrrUD2ME+J1ZPbdBOwigeRJON/ZnVHWZFqKkzKUxA
-OtD063w1NnAu94BsjyH7+PPRKWshhz8iMhI4QbuSpvRxgcrB4sPR+aF4mlKQ6iWr
-jWc5YiCDZK68WYG3cfGeG/QsgYXUfaCOm1i7AHXrae2zsCf4d+Y4SExBSRZrm8hf
-RvNe/lKwnzooa5cRKsE3
-=mFUx
+iQIcBAEBCAAGBQJSbfH1AAoJEMDTa8Ir7ZwVqM8P/2IrE72caY22/7YlveONt90R
+9oWzi9yQbjA4/8xku1Ac98t46ylU2OWG8yJDz/KiyNi5zmTW6V6WvL8luEUSzXbA
+vZzfaCurupfWknF0vpri20QYJF/UcrXHpgIn+Ott0/nk05dGocTnyTFpRzfmNIIe
+DVeNE/yy5Hh/R5hwiF3Sa2J4LK0q7tsxLzIwoHJ0+EcQZc8Q7CyuCZ8Sb3x0mPT9
+iLNNwpfxDUERX5Diw1w5lHPkpTyNADaPRR1hCVRcQbwcFQjZGZJ5uGPgh0bF1E4y
+MVSggJBMsP5Sg1b+MM7zjwj8ysx/wm7I///aRZvmZFHIdKWnUxtTn5joHl9DMM+M
+qkVTujqLdkt+iH2wLwpKpWOmBoCnt97lCHq3lHQ+/l2idjFalgosbfb6E/55upa3
+i0unPYkkBr+TyzJMy12weRdzW8gezycwfOceiLiLoeRSW78EIsLdTVYVi3EOeqNZ
+l5DxiqGjPR1neg/pHsm6QZ3jCxhNVevD0w+d3p9sGcPEGR4GfuVjhbCBxLsgOPXJ
+oVJS9guanIDL7Vpfagu1lMr1IIwlNnul6gmF59jnn0NfCTV2/TY7MURaTIIncPtB
+cnKj8+ea0JlM/wKPY7dPsnmmayMsQJnoXzq9bsssOQRzIbFQC53SHB+MHDjymbab
+m7g2FZaO8yc+uvvqJ0Sl
+=nRj0
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Oct_2013_15_23_25_+1100_t5NoZKEre7yDn8xF--
+--Signature=_Mon__28_Oct_2013_16_11_12_+1100_fHtOfGffAl8QdIWN--
