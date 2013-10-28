@@ -1,22 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Mon, 28 Oct 2013 16:11:12 +1100
-Message-ID: <20131028161112.bc9ff9e8728cf29554dfa05d@canb.auug.org.au>
+Date: Mon, 28 Oct 2013 16:28:26 +1100
+Message-ID: <20131028162826.19047f4f1686a375d8de0beb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Oct_2013_16_11_12_+1100_fHtOfGffAl8QdIWN"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33005 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752039Ab3J1FLZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 01:11:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Mon__28_Oct_2013_16_28_26_+1100_1YpAtSvv/X2I0w3p"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlZpbGxlIFN5cmrDpGzDpCI=?= <ville.syrjala@linux.intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Widawsky <benjamin.widawsky@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Paulo Zanoni <paulo.r.zanoni@intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__28_Oct_2013_16_11_12_+1100_fHtOfGffAl8QdIWN
+--Signature=_Mon__28_Oct_2013_16_28_26_+1100_1YpAtSvv/X2I0w3p
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,57 +20,38 @@ Content-Transfer-Encoding: quoted-printable
 Hi Dave,
 
 Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/i915/i915_dma.c between commit e1264ebe9ff4 ("Revert
-"drm/i915: Delay disabling of VGA memory until vgacon->fbcon handoff is
-done"") from Linus' tree and commit ce352550327b ("drm/i915: Fix
-unclaimed register access due to delayed VGA memory disable") from the
-drm tree.
+drivers/gpu/drm/i915/i915_drv.c between commit 828c79087cec ("drm/i915:
+Disable GGTT PTEs on GEN6+ suspend") from Linus' tree and commit
+9d49c0ef4089 ("drm/i915: move more code to __i915_drm_thaw") from the drm
+tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the section of code added to i915_drm_thaw by the first
+patch looks as though it could not do anything, so I just used the latter
+patch) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/i915_dma.c
-index d5c784d48671,437886641d90..000000000000
---- a/drivers/gpu/drm/i915/i915_dma.c
-+++ b/drivers/gpu/drm/i915/i915_dma.c
-@@@ -1348,6 -1358,13 +1355,8 @@@ static int i915_load_modeset_init(struc
-  	 */
-  	intel_fbdev_initial_config(dev);
- =20
- -	/*
- -	 * Must do this after fbcon init so that
- -	 * vgacon_save_screen() works during the handover.
- -	 */
- -	i915_disable_vga_mem(dev);
-+ 	intel_display_power_put(dev, POWER_DOMAIN_VGA);
-+=20
-  	/* Only enable hotplug handling once the fbdev is fully set up. */
-  	dev_priv->enable_hotplug_processing =3D true;
- =20
-
---Signature=_Mon__28_Oct_2013_16_11_12_+1100_fHtOfGffAl8QdIWN
+--Signature=_Mon__28_Oct_2013_16_28_26_+1100_1YpAtSvv/X2I0w3p
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSbfH1AAoJEMDTa8Ir7ZwVqM8P/2IrE72caY22/7YlveONt90R
-9oWzi9yQbjA4/8xku1Ac98t46ylU2OWG8yJDz/KiyNi5zmTW6V6WvL8luEUSzXbA
-vZzfaCurupfWknF0vpri20QYJF/UcrXHpgIn+Ott0/nk05dGocTnyTFpRzfmNIIe
-DVeNE/yy5Hh/R5hwiF3Sa2J4LK0q7tsxLzIwoHJ0+EcQZc8Q7CyuCZ8Sb3x0mPT9
-iLNNwpfxDUERX5Diw1w5lHPkpTyNADaPRR1hCVRcQbwcFQjZGZJ5uGPgh0bF1E4y
-MVSggJBMsP5Sg1b+MM7zjwj8ysx/wm7I///aRZvmZFHIdKWnUxtTn5joHl9DMM+M
-qkVTujqLdkt+iH2wLwpKpWOmBoCnt97lCHq3lHQ+/l2idjFalgosbfb6E/55upa3
-i0unPYkkBr+TyzJMy12weRdzW8gezycwfOceiLiLoeRSW78EIsLdTVYVi3EOeqNZ
-l5DxiqGjPR1neg/pHsm6QZ3jCxhNVevD0w+d3p9sGcPEGR4GfuVjhbCBxLsgOPXJ
-oVJS9guanIDL7Vpfagu1lMr1IIwlNnul6gmF59jnn0NfCTV2/TY7MURaTIIncPtB
-cnKj8+ea0JlM/wKPY7dPsnmmayMsQJnoXzq9bsssOQRzIbFQC53SHB+MHDjymbab
-m7g2FZaO8yc+uvvqJ0Sl
-=nRj0
+iQIcBAEBCAAGBQJSbfX/AAoJEMDTa8Ir7ZwVmOMP/2dmq/n6GzOzJo3cGRNpMLXx
+3MuEqU2RvQd+oIrQAccfeWoqI5Sqznxt0R/08d7W0MYTvGx4ZS748OG2p6ezk/dN
+Fm8/r2sm2HgcFcXYirROnpy23KLjyNgqZrmGpjwmjd984xdVD1cdMzuy0v+usMUY
+8VIdI59PBasiiqBCFFfPeQlcanX8DmFHinDQJ+eGd4R/2NK/wWG17U3pPDKDvS+1
+rDPXAiIicH72XkQYH1d/+7DcdOP9xeG/jYtEz7PWm3cqaWMti0tJAwfu7BhPCttz
+WGVt37fkwgchRfB7eMZCpZzAWl8b8RVPNBdhB+FxaGalT9rHCTVBu7yQpMEA6Zia
+aLLR9K6Pzl12HS/CkQDAYriHVIRLQjAmmT+BPuJzfCI7mBS11TLZD5lI8OcP+1gY
+hQJvFUfLkGzWocLLTtoOseeLZvKlxUkin8Jqyq1zi9W2/cyAjf9xHdJxe+ODHG4I
+v5Pvbq1IA/4pFpg9K3p81bKWSrEtucQI2CrlOC4pz835ELeYfXIO0h4UPgSWWpXb
+ivjNLZ8MNMkpBvmbGkl+/Nlg8+6zmFKgdTZAblThK2XP678qtVyWcA3KNTcJgUVE
+yIjLoBjzGcNq3u8psUmfxL72IgNg+mWnVRf9iY29IXQMcrGxFSKv91/0elPXoLY6
+/2dIWIXm661YNJxqZrRO
+=kgju
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Oct_2013_16_11_12_+1100_fHtOfGffAl8QdIWN--
+--Signature=_Mon__28_Oct_2013_16_28_26_+1100_1YpAtSvv/X2I0w3p--
