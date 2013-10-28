@@ -1,99 +1,107 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: linux-next: Tree for Oct 25
-Date: Mon, 28 Oct 2013 09:01:24 +0100
-Message-ID: <20131028080109.GE6629@ulmo.nvidia.com>
-References: <1382713426-2680-1-git-send-email-treding@nvidia.com>
- <526AF150.1030004@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the dt-rh tree
+Date: Mon, 28 Oct 2013 19:38:14 +1100
+Message-ID: <20131028193814.6d9416904eb8fac2f441c8af@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2E/hm+v6kSLEYT3h"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__28_Oct_2013_19_38_14_+1100_75ecpV9NO7gk+cMv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f52.google.com ([209.85.214.52]:65122 "EHLO
-	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750920Ab3J1IB2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 04:01:28 -0400
-Content-Disposition: inline
-In-Reply-To: <526AF150.1030004@infradead.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46983 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751848Ab3J1IiY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 04:38:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>
+To: Rob Herring <robherring2@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Ellerman <michael@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>
 
-
---2E/hm+v6kSLEYT3h
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Mon__28_Oct_2013_19_38_14_+1100_75ecpV9NO7gk+cMv
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 25, 2013 at 03:31:44PM -0700, Randy Dunlap wrote:
-> On 10/25/13 08:03, Thierry Reding wrote:
-> > Hi all,
-> >=20
-> > I've uploaded today's linux-next tree to the master branch of the
-> > repository below:
-> >=20
-> >         git://gitorious.org/thierryreding/linux-next.git
-> >=20
-> > A next-20131025 tag is also provided for convenience.
-> >=20
-> > One new trivial conflicts and a new build failure caused by an incorrect
-> > use of the genpool allocator.
-> >=20
-> > Upon a request from Olof Johansson I've only included fixes for build
-> > breakage as a result of interactions between the various trees. But
-> > since I've fixed many of the other build failures already, I've pushed
-> > those to a separate tag (next-20131025-fixes). That builds fine on x86
-> > 32-bit and 64-bit allmodconfigs as well as ARM and x86 default
-> > configurations. Most of the PowerPC build errors have also been fixed.
->=20
-> That's unfortunate.  The fixes should be part of the tree IMO.
+Hi Rob,
 
-Cc'ing Olof and Stephen.
+After merging the dt-rh tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Perhaps something like the above scheme might be a good compromise. On
-one hand, many people are using linux-next for their daily work, myself
-included. That implies that if linux-next doesn't build, people either
-use a previous one that does build (so we don't get as much testing of
-new trees as we possibly could) or they fix the build errors themselves
-which in turn may cause potentially many people to have to fix the same
-issues. On the other hand, if patches to fix build issues are included
-then people might just assume that there are no problems.
+arch/powerpc/platforms/powernv/rng.c: In function 'rng_init_per_cpu':
+arch/powerpc/platforms/powernv/rng.c:64:2: error: implicit declaration of f=
+unction 'of_get_ibm_chip_id' [-Werror=3Dimplicit-function-declaration]
+  chip_id =3D of_get_ibm_chip_id(dn);
+  ^
+arch/powerpc/platforms/powernv/rng.c: In function 'rng_create':
+arch/powerpc/platforms/powernv/rng.c:85:2: error: implicit declaration of f=
+unction 'of_iomap' [-Werror=3Dimplicit-function-declaration]
+  rng->regs =3D of_iomap(dn, 0);
+  ^
+arch/powerpc/platforms/powernv/rng.c:85:12: error: assignment makes pointer=
+ from integer without a cast [-Werror]
+  rng->regs =3D of_iomap(dn, 0);
+            ^
 
-I know that linux-next is a ton of work already and I don't expect this
-to be done by Stephen alone. Perhaps people could collaborate some more
-and provide a separate tag with additional build fixes and make sure
-they get merged into the appropriate subsystems.
+Caused by commit a4da0d50b2a0 ("powerpc: Implement
+arch_get_random_long/int() for powernv") from the powerpc tree
+interacting with commit b5b4bb3f6a11 ("of: only include prom.h on sparc")
+from the dt-rh tree.
 
-With such a scheme next-YYYYMMDD could serve as a metric of how good or
-broken the various trees are, while next-YYYYMMDD-fixes would be a base
-that people could use for daily work, with a set of known build fixes.
-Perhaps it could even contain fixes for non-build issues, such as boot
-failures, if we can come up with those quickly enough to make sense in a
-linux-next context.
+I added this merge fix patch (which will need to be sent to Linus when
+these two trees get merged, or could be applied now to the powerpc tree):
 
-Any thought?
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 28 Oct 2013 19:34:41 +1100
+Subject: [PATCH] powerpc: add include of prom.h to fix powernv/rng.c build
 
-Thierry
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/platforms/powernv/rng.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---2E/hm+v6kSLEYT3h
+diff --git a/arch/powerpc/platforms/powernv/rng.c b/arch/powerpc/platforms/=
+powernv/rng.c
+index 02db7d73cf8b..483b06640efb 100644
+--- a/arch/powerpc/platforms/powernv/rng.c
++++ b/arch/powerpc/platforms/powernv/rng.c
+@@ -11,10 +11,12 @@
+=20
+ #include <linux/kernel.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/slab.h>
+ #include <asm/archrandom.h>
+ #include <asm/io.h>
++#include <asm/prom.h>
+ #include <asm/machdep.h>
+=20
+=20
+--=20
+1.8.4.rc3
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__28_Oct_2013_19_38_14_+1100_75ecpV9NO7gk+cMv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSbhnSAAoJEN0jrNd/PrOhoq4P/jcj1Ck3y4DBSHMqDBaFU68p
-M7E5dhHI6B+tij/ZGx0kq5a7rS9aiUa4JbJWtr0E/9HiaoWGWwaKyvcnL7QFwTBj
-X4asB9PBxmFO5/40q/TIUOOqx7KBLLIeu9NnOy3ku14AbYiGrKSJhAG91jUih1Oh
-8UvYBxrMkj9wpbVNCbOo7zrQT/rEADl3mbhJSKcmL+bhSs7+Bo691/f+nHvrrXow
-3SlLdsW579oTQCKmfSNtgz/oO9Fu0+QmfTMFmCZN0mbZA9TN/5Rvpj1gBR9qRpx1
-pZmEmbZr7lm+ZyQA7dtW3HRUxtrG84WbkM+p+iEVMJvBGk7N95oN9ISORtu05EdP
-zIm0eZIym6+agkCxf2Qs5qAREBU0k/9+rbbz+RslN/ymhpAXfI0wdCvIa53yIMqV
-c2vqpIH0RwihwzgZuY47X5CAGhiBiX9qwbFyd/JXCmfUtMwAa+glcfeNtghUjGI6
-tEl9BduxmGxNiGq4jNtwL682yphaLxFVjqXtLdJ3gPTZPGIKdJW8uzryVe3TZEf8
-dpLsfmRqbaQOmdgiZVIku9GWgfZhuKINhvH+bWIC42NxPc0tJH8qIH8ibUZC8TTj
-eeNrX/Znf5zM6cSDxuFBR9X7eOw8ImykOmYZnQXNdUTawqUndzG0OlAgCNQg6iQL
-PuKMFjkBcZgISA7z80wA
-=Ostl
+iQIcBAEBCAAGBQJSbiJ6AAoJEMDTa8Ir7ZwVpUsP/Ruhp0QFi0oNsc3o2OcrKrYb
+GN/xWgAnaoyh4CChDMF2EEOcJ1ijsyVZfB2jVHJOfd/SxMEPbaQY1eE7vbNnlc8n
+iTfaqUQ6kLqz6fgsg3vHQI3sDDte1IkCIcI03wjVnaJKUv8CP+f1v/KDpyAxstFy
+vGYXuoEnnSUL8E8vSQuxIsAQ64YsW4gYo9t/N3SOeNS+PTiQzP0Y6GFddVMVWFJR
+X7fi/0WLKNL5FoJIzhzmV9sme7MLMrp70qmFYpZS1Yyu2XQuXelj/q1DbsJm7WD4
+vfPtS8ma37gWGODL0Czpy969V//1IYC5Hm6z1H5ubuLTk8p4QoOXxHgJmEFvbHhN
+9EfbNZva7kn6AwiXKGf8vggTZhOoqD78vJIHGyw4bbB656RkR4I5m1KztTc08pRs
+s+TpPAxObxvmvNwbcKDtCr+M2mPImtpUbmi9ROnds+/t1UTVtJ6D0jM/Xt8L2Yjr
+cW93YyrCXzgsoJIK894aXcaMLoIPNKRbZn5o9ZqjnSkOHDBuH10DhhTiCDbTgL8f
+SQqkQVKoqrtHRdP13iUwojwiYiF/uFvEzVphagOxEPHsoAk9kAAcTJK7mbwopKGN
+1wV8E0bE1c95pxB/LeoISvGqF0/oAwcdFclN8vCyk5DOYnSg8bJRJHa9eoAUTIhj
+Yd964SCk/aff2jMavBhU
+=WFLG
 -----END PGP SIGNATURE-----
 
---2E/hm+v6kSLEYT3h--
+--Signature=_Mon__28_Oct_2013_19_38_14_+1100_75ecpV9NO7gk+cMv--
