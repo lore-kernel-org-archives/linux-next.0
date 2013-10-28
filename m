@@ -1,71 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the drm tree with the
- drm-intel-fixes tree
-Date: Mon, 28 Oct 2013 17:12:26 +1100
-Message-ID: <20131028171226.a06b0d5448200409fbd39aae@canb.auug.org.au>
-References: <20131028164609.bdec95d18a41b59fc37fbae1@canb.auug.org.au>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: linux-next: manual merge of the c6x tree
+Date: Mon, 28 Oct 2013 08:34:46 +0100
+Message-ID: <20131028073446.GB6629@ulmo.nvidia.com>
+References: <1382632289-18523-1-git-send-email-treding@nvidia.com>
+ <1382706224-8859-1-git-send-email-treding@nvidia.com>
+ <20131026131938.GT16735@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Oct_2013_17_12_26_+1100_mG/K2p8N2_SyZCHu"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="s2ZSL+KKDSLx8OML"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:39041 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751737Ab3J1GMg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 02:12:36 -0400
-In-Reply-To: <20131028164609.bdec95d18a41b59fc37fbae1@canb.auug.org.au>
+Received: from mail-bk0-f45.google.com ([209.85.214.45]:49677 "EHLO
+	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755686Ab3J1Hev (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 03:34:51 -0400
+Content-Disposition: inline
+In-Reply-To: <20131026131938.GT16735@n2100.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@gmail.com>, Ben Widawsky <benjamin.widawsky@intel.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Will Deacon <will.deacon@arm.com>, Mark Salter <msalter@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__28_Oct_2013_17_12_26_+1100_mG/K2p8N2_SyZCHu
-Content-Type: text/plain; charset=US-ASCII
+
+--s2ZSL+KKDSLx8OML
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+On Sat, Oct 26, 2013 at 02:19:38PM +0100, Russell King - ARM Linux wrote:
+> On Fri, Oct 25, 2013 at 03:03:39PM +0200, Thierry Reding wrote:
+> > diff --cc arch/arm/Kconfig
+> > index c06647d,7db8abe0..b6a708e
+> > --- a/arch/arm/Kconfig
+> > +++ b/arch/arm/Kconfig
+> > @@@ -5,7 -5,7 +5,8 @@@ config AR
+> >   	select ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE
+> >   	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+> >   	select ARCH_HAVE_CUSTOM_GPIO_H
+> >  +	select ARCH_USE_CMPXCHG_LOCKREF
+> > + 	select ARCH_MIGHT_HAVE_PC_PARPORT
+> >   	select ARCH_WANT_IPC_PARSE_VERSION
+>=20
+> Thanks.  Generally we want these things to be arranged alphabetically to
+> reduce the longer term chances of hitting merge conflicts, but in this
+> case it wouldn't make any difference.
 
-On Mon, 28 Oct 2013 16:46:09 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> @@@ -1486,8 -1542,8 +1562,8 @@@ static void intel_edp_psr_setup(struct=20
->   	intel_edp_psr_write_vsc(intel_dp, &psr_vsc);
->  =20
->   	/* Avoid continuous PSR exit by masking memup and hpd */
->  -	I915_WRITE(EDP_PSR_DEBUG_CTL(dev), EDP_PSR_DEBUG_MASK_MEMUP |
->  +	I915_WRITE(EDP_PSR_DEBUG_CTL, EDP_PSR_DEBUG_MASK_MEMUP |
-> - 		   EDP_PSR_DEBUG_MASK_HPD | EDP_PSR_DEBUG_MASK_LPSP);
-> + 		   EDP_PSR_DEBUG_MASK_HPD);
->  =20
->   	intel_dp->psr_setup_done =3D true;
->   }
+I was aiming for alphabetical order... guess I need to revisit my ABCs.
 
-This last hunk is wrong.  I fixed it up to do the reverse of the above.
+Thierry
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__28_Oct_2013_17_12_26_+1100_mG/K2p8N2_SyZCHu
+--s2ZSL+KKDSLx8OML
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSbgBPAAoJEMDTa8Ir7ZwV5eoP/RUVkZQ6l2BbYFxvDr36chvt
-yMOL07sNuM9WDJnh0qwv06pTpqdzeOlvgNHOcyrQbFO3MMvwXVYQbRusJmOZvLJE
-i0kdzhKi3C8BC8RZhrRczjXirLok71xAdzjTdGPV8yRonObwNLxy0IztaSbMNqTD
-U0zxmlGYI2Ye4l6Gx4XQyqS6y5+YvaGOrmNks8RU0HnYRnpAoxb75LpZ4Ga2KX5b
-TFbkbk0txrEKU2uqLQAC5o0S3ykzfLsCq6r494nlf1gA39gFdh4Izt6b78crZ1bl
-3eA6/YHoJDut2cmnCDluKwEGY+1WxNyWCC4dPzQ7ThQIqjj+GikqSaf11Mh80vZj
-CA4IyAuPYv8zxKBEaZH53UCTRQNXJ65462UKK9+J0nj98qXdYPJw0RlZOFt7rIQO
-Fx6bZi7Y2I4yDY5cIineNzN0Xxfo/HV++yEzhq+iPOIoC9KR5+ULHSDixG2UiGCr
-UyyLs904HpLjy5V2WF9qz6Wq6jpwQJers202T4S6eOL5TlHw0y54Y2nRZBVtoABl
-YJZAD9sbapmP9Z8FKolEhfh5ZPCUF8Q/Wb13SeQEpKXS+Qh5MF5r3kaSBAoCGS4/
-9REB9uR7jUqhPuZUCRWdZdoVWjzaxWZV5Z4atGN9Km0SfMUHBnOMNFVqEghAVXrQ
-ASJNU9buHRKD7M79+oP7
-=WSox
+iQIcBAEBAgAGBQJSbhOWAAoJEN0jrNd/PrOh+7kQALb+ksrdhjNtYs56DmDp50qO
+4ZL7e4SN0WrLJMxu8HE1mLY8+kBByz7IccJkRsnZ9WyfjysdT/3zPw1F7zUJta4f
+YQv7tqLwl+O72Le56pWEymN1eQmtBin7srJmx6TsdjTHyFs42ZN0RxLf9H+yfcOc
+wCa1XKYC2D4/6Skcm1WKThM05Jbe5lda8dvAzvRploS6jBziJtb7frcZUmSnt2qf
+qBHlNRgXOHKvKZi89wD1NWT+Rqbbi6czDLnQb/ThowGZa6iMKi/Ms7Rd0b0lGew3
+4F+hKhrI0iRCwdwbaJ2UeAVKie/TcK0vOtQt+NQbkABlHHQwgdvrC/U5N3Uol08J
+FMFiAQ2oCYFbrlZ/UtLjnxLfN+yYaspoefxDnKfj2+tMhV3lmPgoBrG6IP/Zu7eM
+qqVhRLtGgtITPumlWH1guxEQ5rBKjRAGipaHY1P3Gxn275hatsMxYVPZ/LqyWy/h
+5ferH+nllpDRun24cSf+xhAuEF0Zjet8iHmnND0HsrHKEWP2zDStdLDeqGPiDZ7z
+Tv9o2chiA6DlOATOoGztOGrtuSszUbCWt6qIOu8dc0hmoVgf3fnW861fUbatWUmT
+O3qFzhhUnAbDH4m3mDiy9ExMEez114MMusPicEKD0T9J6+nDj7Dn8/7ATZ+tPWet
+rB2Dt3FXR3GBSLmfHmz8
+=Mtng
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Oct_2013_17_12_26_+1100_mG/K2p8N2_SyZCHu--
+--s2ZSL+KKDSLx8OML--
