@@ -1,103 +1,104 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the staging
- tree
-Date: Tue, 29 Oct 2013 00:27:59 +1100
-Message-ID: <20131029002759.fb9032e6b249a5945e7caa5b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (gpio tree
+ related)
+Date: Tue, 29 Oct 2013 01:12:23 +1100
+Message-ID: <20131029011223.58b51e529acced32d6dae82a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__29_Oct_2013_00_27_59_+1100_YKhmNHlLGLI7GQoF"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Jonathan Cameron <jic23@kernel.org>, Greg KH <greg@kroah.com>, Alexander Holler <holler@ahsoftware.de>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__29_Oct_2013_01_12_23_+1100_sUeUiK0B.aBzesoh"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44248 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756367Ab3J1OMg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 10:12:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
---Signature=_Tue__29_Oct_2013_00_27_59_+1100_YKhmNHlLGLI7GQoF
+--Signature=_Tue__29_Oct_2013_01_12_23_+1100_sUeUiK0B.aBzesoh
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-Today's linux-next merge of the akpm-current tree got a conflict in
-drivers/rtc/rtc-hid-sensor-time.c between commit 476b9547e872 ("HID RTC:
-Open sensor hub open close") from the staging tree and commit
-356c3c0a98b8 ("drivers/rtc/rtc-hid-sensor-time.c: enable HID input
-processing early") from the akpm-current tree.
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from include/asm-generic/gpio.h:13:0,
+                 from include/linux/gpio.h:51,
+                 from include/linux/of_gpio.h:20,
+                 from arch/powerpc/sysdev/ppc4xx_gpio.c:29:
+include/linux/gpio/driver.h:85:14: error: 'struct seq_file' declared inside=
+ parameter list [-Werror]
+include/linux/gpio/driver.h:85:14: error: its scope is only this definition=
+ or declaration, which is probably not what you want [-Werror]
+
+Caused by commit 79a9becda894 ("gpiolib: export descriptor-based GPIO
+interface") from the gpio tree.
+
+I have applied this fix up patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 29 Oct 2013 01:06:23 +1100
+Subject: [PATCH] gpiolib: provide a declaration of seq_file in gpio/driver.h
+
+Fixes this build error:
+
+In file included from include/asm-generic/gpio.h:13:0,
+                 from include/linux/gpio.h:51,
+                 from include/linux/of_gpio.h:20,
+                 from arch/powerpc/sysdev/ppc4xx_gpio.c:29:
+include/linux/gpio/driver.h:85:14: error: 'struct seq_file' declared inside=
+ parameter list [-Werror]
+include/linux/gpio/driver.h:85:14: error: its scope is only this definition=
+ or declaration, which is probably not what you want [-Werror]
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/gpio/driver.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index cd9da3885d79..656a27efb2c8 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -5,6 +5,7 @@
+=20
+ struct device;
+ struct gpio_desc;
++struct seq_file;
+=20
+ /**
+  * struct gpio_chip - abstract a GPIO controller
+--=20
+1.8.4.rc3
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/rtc/rtc-hid-sensor-time.c
-index 45560ffb038d,22254f08cea2..000000000000
---- a/drivers/rtc/rtc-hid-sensor-time.c
-+++ b/drivers/rtc/rtc-hid-sensor-time.c
-@@@ -275,21 -275,22 +275,28 @@@ static int hid_time_probe(struct platfo
-  		return ret;
-  	}
- =20
- +	ret =3D sensor_hub_device_open(hsdev);
- +	if (ret) {
- +		dev_err(&pdev->dev, "failed to open sensor hub device!\n");
- +		goto err_open;
- +	}
- +
-+ 	/*
-+ 	 * Enable HID input processing early in order to be able to read the
-+ 	 * clock already in devm_rtc_device_register().
-+ 	 */
-+ 	hid_device_io_start(hsdev->hdev);
-+=20
-  	time_state->rtc =3D devm_rtc_device_register(&pdev->dev,
-  					"hid-sensor-time", &hid_time_rtc_ops,
-  					THIS_MODULE);
- =20
-  	if (IS_ERR_OR_NULL(time_state->rtc)) {
-+ 		hid_device_io_stop(hsdev->hdev);
-  		ret =3D time_state->rtc ? PTR_ERR(time_state->rtc) : -ENODEV;
-  		time_state->rtc =3D NULL;
- -		sensor_hub_remove_callback(hsdev, HID_USAGE_SENSOR_TIME);
-  		dev_err(&pdev->dev, "rtc device register failed!\n");
- +		goto err_rtc;
-  	}
- =20
-  	return ret;
-@@@ -303,9 -298,8 +310,9 @@@ err_open
- =20
-  static int hid_time_remove(struct platform_device *pdev)
-  {
-- 	struct hid_sensor_hub_device *hsdev =3D pdev->dev.platform_data;
-+ 	struct hid_sensor_hub_device *hsdev =3D dev_get_platdata(&pdev->dev);
- =20
- +	sensor_hub_device_close(hsdev);
-  	sensor_hub_remove_callback(hsdev, HID_USAGE_SENSOR_TIME);
- =20
-  	return 0;
-
---Signature=_Tue__29_Oct_2013_00_27_59_+1100_YKhmNHlLGLI7GQoF
+--Signature=_Tue__29_Oct_2013_01_12_23_+1100_sUeUiK0B.aBzesoh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSbmZjAAoJEMDTa8Ir7ZwVAyIP/Rmf4H6nB1fTPRmMDvPvINxO
-wh3z4auMDep4f8jl0IcYQaxIHbjZ1x9uQYX9VChIbcBRsVZm+jE12CKK7E74XIxF
-mXn3Wexm+sPqzfA9HT0mSE9gRzXiJ9mBS5sz4JdfOmAX+oCwOUiMbNZTB0gDZHNB
-ByW4Q2DF0V0MTJT7WbvpwiYmgYZ8ZTNJ3Pye83U7v29SpOJJqBFiDUcpVbjisyTT
-+Y7KYc7+ruvnWVU1TglQHDVeeY8hg++oOb+oMfgjGWI7oVMe0kxKCaeB7T3J6rxe
-nsx5uFev4Cz3jZ6/1dvcXVRkxM82aCpUEEDMN1SToiCgR1qLUkot2UCpEbZ6rpEE
-eW+PT+YEAWtTUXdPymDnkoJB3dDf/EgR7HHifEtVTcDNshB8O6wAAkgSJMhgw4j0
-DyAEWqhmmLu40qytc3ql8btBxvcSYxq1kDX2PXM8lgH3qD1hlfNY3RIMY2TgxRWu
-D+83hr7kbb/DRsNDk3Sletgm1Hei7ThA8qtW8M0h3Sb92sUSJ5nhS6D/NgFiaJGQ
-u9JU35MweTxx04JmMuHcNJgBeIAbMNVnMLwMKYosIovK2VvjBxiE9AyEDYbYUiup
-Wn14WR0QaHiEACmtiyyxLzXxFjGc131fhOaFZtyzEIrVcSVPDL+MQqvVkwwwQY9f
-kz+D0/BS+q9eimbE5g+2
-=nPsQ
+iQIcBAEBCAAGBQJSbnDOAAoJEMDTa8Ir7ZwVO1MQAIV7oeJkUNoJKppfFAIHxtB7
+iy7upH9LxUyutAV0ZD4yUODh6H2X4ZA3XAikADps3PkCh3MYi0htaBrmhKiJ4Lkh
+jP2lvYMEkGbjTh/84uSRWsfU9rhe5IlZfJe5SaWwVX9nZsE2PKQ0MKdCNpnT8mQr
+De0HIC1wyA33WgJe5yU+K5gfeo+3trbBQurEi4IzSFrlWvuK7z32y3bnaO2HLa0z
+1YOgrrv5YrKGQo0OYaPD++9VuEF59gkfj2sc4/Xw6w3H8Fx4dAKTjHqzCK/qREPT
++8bxkIxhJsNkZmzRAjQHtnf1NLoSQtBnzYK91gcxmYLJGgPh7U/LIe/WXDEVXT2R
+zZJXHgQuqE9dfrcVxrDFgSjY089+2/t2tetHaasCvlWvUGDDbgolB/d0b8Uc2aEu
+tGaBJb2PkM6t6kH+juKQ+MR8ZWpFSMS3RPdsBmwh/7LLQsbIGtNj3WnYPyrHJOcs
+QEk0D2ZvgHG0nzyMfMtnLZ/6DNfobz1d6nPdh7LdXbGB/OuMKUpHC+/sKuB0+HGj
+F1Zm4ia5tpTZJ9MPvbDBUer38NkY1yDgZ3RT+BPpiMaywh96udrD0EytyMt0gVNj
+7SXx8ZNLXDysDT2DNRBe5yf79QM3EXOZG5pFT+Z8fhGYeqynWzojl3HRA6OkPxY5
+bQUHqJ92ymrWQ156U+71
+=oj3X
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__29_Oct_2013_00_27_59_+1100_YKhmNHlLGLI7GQoF--
+--Signature=_Tue__29_Oct_2013_01_12_23_+1100_sUeUiK0B.aBzesoh--
