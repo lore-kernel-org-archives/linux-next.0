@@ -1,93 +1,195 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: linux-next: Tree for Oct 18 (netdev: nf_tables_bridge.c)
-Date: Mon, 28 Oct 2013 00:29:00 +0100
-Message-ID: <20131027232900.GA19541@localhost>
-References: <20131019125057.GZ2443@sirena.org.uk>
- <5262BFD5.4060204@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 28 Oct 2013 15:23:25 +1100
+Message-ID: <20131028152325.420fa47f1a2620168acbf002@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="SUOF0GtieIMvvwua"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.us.es ([193.147.175.20]:42944 "EHLO mail.us.es"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755027Ab3J0X3F (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 27 Oct 2013 19:29:05 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__28_Oct_2013_15_23_25_+1100_t5NoZKEre7yDn8xF"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Somnath Kotur <somnath.kotur@emulex.com>, Sathya Perla <sathya.perla@emulex.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Mon__28_Oct_2013_15_23_25_+1100_t5NoZKEre7yDn8xF
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <5262BFD5.4060204@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Patrick McHardy <kaber@trash.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, netfilter-devel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/emulex/benet/be.h between commit e9e2a904ef0a
+("be2net: Warn users of possible broken functionality on BE2 cards with
+very old FW versions with latest driver") from the net tree and commit
+6384a4d0dcf9 ("be2net: add support for ndo_busy_poll") from the net-next
+tree.
 
-On Sat, Oct 19, 2013 at 10:22:29AM -0700, Randy Dunlap wrote:
-> On 10/19/13 05:50, Mark Brown wrote:
-> > Hi all,
-> > 
-> > I've uploaded today's linux-next tree to the master branch of the
-> > repository below:
-> > 
-> >         git://gitorious.org/thierryreding/linux-next.git
-> > 
-> > A next-20131018 tag is also provided for convenience.
-> > 
-> > A few new conflicts today but otherwise uneventful.  x86_64 allmodconfig
-> > builds after each merge but no other build tests were done.
-> 
-> on i386:
-> 
-> when CONFIG_NF_TABLES[_MODULE] is not enabled,
-> but CONFIG_NF_TABLES_BRIDGE is enabled:
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Patch attached, thanks for reporting.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---SUOF0GtieIMvvwua
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="0001-netfilter-bridge-fix-nf_tables-bridge-dependencies-w.patch"
+diff --cc drivers/net/ethernet/emulex/benet/be.h
+index c99dac6a9ddf,b2765ebb0268..000000000000
+--- a/drivers/net/ethernet/emulex/benet/be.h
++++ b/drivers/net/ethernet/emulex/benet/be.h
+@@@ -696,23 -733,114 +733,123 @@@ static inline int qnq_async_evt_rcvd(st
+  	return adapter->flags & BE_FLAGS_QNQ_ASYNC_EVT_RCVD;
+  }
+ =20
+ +static inline int fw_major_num(const char *fw_ver)
+ +{
+ +	int fw_major =3D 0;
+ +
+ +	sscanf(fw_ver, "%d.", &fw_major);
+ +
+ +	return fw_major;
+ +}
+ +
+- extern void be_cq_notify(struct be_adapter *adapter, u16 qid, bool arm,
+- 		u16 num_popped);
+- extern void be_link_status_update(struct be_adapter *adapter, u8 link_sta=
+tus);
+- extern void be_parse_stats(struct be_adapter *adapter);
+- extern int be_load_fw(struct be_adapter *adapter, u8 *func);
+- extern bool be_is_wol_supported(struct be_adapter *adapter);
+- extern bool be_pause_supported(struct be_adapter *adapter);
+- extern u32 be_get_fw_log_level(struct be_adapter *adapter);
++ #ifdef CONFIG_NET_RX_BUSY_POLL
++ static inline bool be_lock_napi(struct be_eq_obj *eqo)
++ {
++ 	bool status =3D true;
++=20
++ 	spin_lock(&eqo->lock); /* BH is already disabled */
++ 	if (eqo->state & BE_EQ_LOCKED) {
++ 		WARN_ON(eqo->state & BE_EQ_NAPI);
++ 		eqo->state |=3D BE_EQ_NAPI_YIELD;
++ 		status =3D false;
++ 	} else {
++ 		eqo->state =3D BE_EQ_NAPI;
++ 	}
++ 	spin_unlock(&eqo->lock);
++ 	return status;
++ }
++=20
++ static inline void be_unlock_napi(struct be_eq_obj *eqo)
++ {
++ 	spin_lock(&eqo->lock); /* BH is already disabled */
++=20
++ 	WARN_ON(eqo->state & (BE_EQ_POLL | BE_EQ_NAPI_YIELD));
++ 	eqo->state =3D BE_EQ_IDLE;
++=20
++ 	spin_unlock(&eqo->lock);
++ }
++=20
++ static inline bool be_lock_busy_poll(struct be_eq_obj *eqo)
++ {
++ 	bool status =3D true;
++=20
++ 	spin_lock_bh(&eqo->lock);
++ 	if (eqo->state & BE_EQ_LOCKED) {
++ 		eqo->state |=3D BE_EQ_POLL_YIELD;
++ 		status =3D false;
++ 	} else {
++ 		eqo->state |=3D BE_EQ_POLL;
++ 	}
++ 	spin_unlock_bh(&eqo->lock);
++ 	return status;
++ }
++=20
++ static inline void be_unlock_busy_poll(struct be_eq_obj *eqo)
++ {
++ 	spin_lock_bh(&eqo->lock);
++=20
++ 	WARN_ON(eqo->state & (BE_EQ_NAPI));
++ 	eqo->state =3D BE_EQ_IDLE;
++=20
++ 	spin_unlock_bh(&eqo->lock);
++ }
++=20
++ static inline void be_enable_busy_poll(struct be_eq_obj *eqo)
++ {
++ 	spin_lock_init(&eqo->lock);
++ 	eqo->state =3D BE_EQ_IDLE;
++ }
++=20
++ static inline void be_disable_busy_poll(struct be_eq_obj *eqo)
++ {
++ 	local_bh_disable();
++=20
++ 	/* It's enough to just acquire napi lock on the eqo to stop
++ 	 * be_busy_poll() from processing any queueus.
++ 	 */
++ 	while (!be_lock_napi(eqo))
++ 		mdelay(1);
++=20
++ 	local_bh_enable();
++ }
++=20
++ #else /* CONFIG_NET_RX_BUSY_POLL */
++=20
++ static inline bool be_lock_napi(struct be_eq_obj *eqo)
++ {
++ 	return true;
++ }
++=20
++ static inline void be_unlock_napi(struct be_eq_obj *eqo)
++ {
++ }
++=20
++ static inline bool be_lock_busy_poll(struct be_eq_obj *eqo)
++ {
++ 	return false;
++ }
++=20
++ static inline void be_unlock_busy_poll(struct be_eq_obj *eqo)
++ {
++ }
++=20
++ static inline void be_enable_busy_poll(struct be_eq_obj *eqo)
++ {
++ }
++=20
++ static inline void be_disable_busy_poll(struct be_eq_obj *eqo)
++ {
++ }
++ #endif /* CONFIG_NET_RX_BUSY_POLL */
++=20
++ void be_cq_notify(struct be_adapter *adapter, u16 qid, bool arm,
++ 		  u16 num_popped);
++ void be_link_status_update(struct be_adapter *adapter, u8 link_status);
++ void be_parse_stats(struct be_adapter *adapter);
++ int be_load_fw(struct be_adapter *adapter, u8 *func);
++ bool be_is_wol_supported(struct be_adapter *adapter);
++ bool be_pause_supported(struct be_adapter *adapter);
++ u32 be_get_fw_log_level(struct be_adapter *adapter);
+  int be_update_queues(struct be_adapter *adapter);
+  int be_poll(struct napi_struct *napi, int budget);
+ =20
 
->From 2724ade097d59aaa3879ca485ae0fd61994cbc38 Mon Sep 17 00:00:00 2001
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Mon, 28 Oct 2013 00:18:33 +0100
-Subject: [PATCH] netfilter: bridge: fix nf_tables bridge dependencies with
- main core
+--Signature=_Mon__28_Oct_2013_15_23_25_+1100_t5NoZKEre7yDn8xF
+Content-Type: application/pgp-signature
 
-when CONFIG_NF_TABLES[_MODULE] is not enabled,
-but CONFIG_NF_TABLES_BRIDGE is enabled:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-net/bridge/netfilter/nf_tables_bridge.c: In function 'nf_tables_bridge_init_net':
-net/bridge/netfilter/nf_tables_bridge.c:24:5: error: 'struct net' has no member named 'nft'
-net/bridge/netfilter/nf_tables_bridge.c:25:9: error: 'struct net' has no member named 'nft'
-net/bridge/netfilter/nf_tables_bridge.c:28:2: error: 'struct net' has no member named 'nft'
-net/bridge/netfilter/nf_tables_bridge.c:30:34: error: 'struct net' has no member named 'nft'
-net/bridge/netfilter/nf_tables_bridge.c:35:11: error: 'struct net' has no member named 'nft'
-net/bridge/netfilter/nf_tables_bridge.c: In function 'nf_tables_bridge_exit_net':
-net/bridge/netfilter/nf_tables_bridge.c:41:27: error: 'struct net' has no member named 'nft'
-net/bridge/netfilter/nf_tables_bridge.c:42:11: error: 'struct net' has no member named 'nft'
+iQIcBAEBCAAGBQJSbebBAAoJEMDTa8Ir7ZwV7WoP/3kA0YToUtYYFmtwB8Q3WFBi
+uKoy2ndDr11M4wQwcviixkgwz5Ag9U2w2LYUCZdHGLkfbcTYT/lzh477hFyBi8+F
+ylaCNfU+2lSX7TBNlN058zGwm5vbi3Eo9D3+hfK2pmFDwK6iKWpp++32JrJurcD4
+2K3yF0LqYKJzYxoZJ23wLG7/IKmiuKEm6SooQcmAL+Ha4kHg2Hh/d9hC4wf7D0Qc
+yT0ipRNXAQTmczKkCykaMXNmz15Ewl+4V4diqZgYbBhcSuSR9LxLEYlQFFShJisb
+L6G+uEurgQH4wIV0eUJ1o63BuzZRXf6YPuuxeK2MBNnxe9qq/V9b04FFO5koTngP
+kaw6lpAYYV0k1neG3NEurxTiz04H9vXJ7hmIANCItdO9BEEba271aoYHafVKP3L2
+f6M/U1hLe4YYoGGQx4nqhG3PTd8pG9cibxOmrgwnklFtvyqBpe13frma8DWM21Tb
+DCFhYSseW3u1qhEFzGHnrslMrrUD2ME+J1ZPbdBOwigeRJON/ZnVHWZFqKkzKUxA
+OtD063w1NnAu94BsjyH7+PPRKWshhz8iMhI4QbuSpvRxgcrB4sPR+aF4mlKQ6iWr
+jWc5YiCDZK68WYG3cfGeG/QsgYXUfaCOm1i7AHXrae2zsCf4d+Y4SExBSRZrm8hf
+RvNe/lKwnzooa5cRKsE3
+=mFUx
+-----END PGP SIGNATURE-----
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
----
- net/bridge/netfilter/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/net/bridge/netfilter/Kconfig b/net/bridge/netfilter/Kconfig
-index 68f8128..5ca74a0 100644
---- a/net/bridge/netfilter/Kconfig
-+++ b/net/bridge/netfilter/Kconfig
-@@ -3,6 +3,7 @@
- #
- #
- config NF_TABLES_BRIDGE
-+	depends on NF_TABLES
- 	tristate "Ethernet Bridge nf_tables support"
- 
- menuconfig BRIDGE_NF_EBTABLES
--- 
-1.7.10.4
-
-
---SUOF0GtieIMvvwua--
+--Signature=_Mon__28_Oct_2013_15_23_25_+1100_t5NoZKEre7yDn8xF--
