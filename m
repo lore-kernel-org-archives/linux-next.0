@@ -1,79 +1,75 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Mon, 28 Oct 2013 09:33:33 -0700
-Message-ID: <20131028163333.GA4797@kroah.com>
-References: <20131029013317.a33ae4ff86b88ea17bb58e74@canb.auug.org.au>
- <2bf73b4c-8905-4889-bdd1-6bdae2c54bbd@CH1EHSMHS036.ehs.local>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: Tree for Oct 25
+Date: Mon, 28 Oct 2013 09:53:01 -0700
+Message-ID: <20131028165301.GN13643@sirena.org.uk>
+References: <1382713426-2680-1-git-send-email-treding@nvidia.com>
+ <526AF150.1030004@infradead.org>
+ <20131028080109.GE6629@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:42745 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756609Ab3J1Qdf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Oct 2013 12:33:35 -0400
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="95CBLwa+io9O2zXc"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <2bf73b4c-8905-4889-bdd1-6bdae2c54bbd@CH1EHSMHS036.ehs.local>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Suneel Garapati <suneelg@xilinx.com>, Vlad Lungu <vlad.lungu@windriver.com>
+In-Reply-To: <20131028080109.GE6629@ulmo.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Oct 28, 2013 at 09:05:37AM -0700, S=F6ren Brinkmann wrote:
-> On Tue, Oct 29, 2013 at 01:33:17AM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> >=20
-> > drivers/tty/serial/xilinx_uartps.c: In function 'xuartps_clk_notifi=
-er_cb':
-> > drivers/tty/serial/xilinx_uartps.c:436:7: error: 'PRE_RATE_CHANGE' =
-undeclared (first use in this function)
-> >   case PRE_RATE_CHANGE:
-> >        ^
-> > drivers/tty/serial/xilinx_uartps.c:436:7: note: each undeclared ide=
-ntifier is reported only once for each function it appears in
-> > drivers/tty/serial/xilinx_uartps.c:446:36: error: dereferencing poi=
-nter to incomplete type
-> >    if (!xuartps_calc_baud_divs(ndata->new_rate, xuartps->baud,
-> >                                     ^
-> > drivers/tty/serial/xilinx_uartps.c:461:7: error: 'POST_RATE_CHANGE'=
- undeclared (first use in this function)
-> >   case POST_RATE_CHANGE:
-> >        ^
-> > drivers/tty/serial/xilinx_uartps.c:470:24: error: dereferencing poi=
-nter to incomplete type
-> >    port->uartclk =3D ndata->new_rate;
-> >                         ^
-> > drivers/tty/serial/xilinx_uartps.c:475:7: error: 'ABORT_RATE_CHANGE=
-' undeclared (first use in this function)
-> >   case ABORT_RATE_CHANGE:
-> >        ^
-> > drivers/tty/serial/xilinx_uartps.c: In function 'xuartps_probe':
-> > drivers/tty/serial/xilinx_uartps.c:1385:2: error: implicit declarat=
-ion of function 'clk_notifier_register' [-Werror=3Dimplicit-function-de=
-claration]
-> >   if (clk_notifier_register(xuartps_data->refclk,
-> >   ^
-> > drivers/tty/serial/xilinx_uartps.c:1418:2: error: implicit declarat=
-ion of function 'clk_notifier_unregister' [-Werror=3Dimplicit-function-=
-declaration]
-> >   clk_notifier_unregister(xuartps_data->refclk,
-> >   ^
-> >=20
-> > Caused by commits in the tty tree.
-> >=20
-> > I have left this broken for today.
->=20
-> I already sent a series to Greg which should fix the x86 build of the
-> tty tree. I think he didn't apply those patches yet.
 
-Yes, I have them, sorry, been traveling, will get to them later today..=
-=2E
+--95CBLwa+io9O2zXc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-thanks,
+On Mon, Oct 28, 2013 at 09:01:24AM +0100, Thierry Reding wrote:
 
-greg k-h
+> Perhaps something like the above scheme might be a good compromise. On
+> one hand, many people are using linux-next for their daily work, myself
+> included. That implies that if linux-next doesn't build, people either
+> use a previous one that does build (so we don't get as much testing of
+> new trees as we possibly could) or they fix the build errors themselves
+> which in turn may cause potentially many people to have to fix the same
+> issues. On the other hand, if patches to fix build issues are included
+> then people might just assume that there are no problems.
+
+This is one of the things that the per merge build tests really help
+with - they filter out the vast majority of errors by just not letting
+updates into -next (which applies some backpressure to get thing fixed
+in the original tree too).
+
+> With such a scheme next-YYYYMMDD could serve as a metric of how good or
+> broken the various trees are, while next-YYYYMMDD-fixes would be a base
+> that people could use for daily work, with a set of known build fixes.
+> Perhaps it could even contain fixes for non-build issues, such as boot
+> failures, if we can come up with those quickly enough to make sense in a
+> linux-next context.
+
+> Any thought?
+
+This seems really tough to do given the rate of change of -next -
+there's about 24 hours to get fixes in there before you have to rebase
+forwards again.
+
+--95CBLwa+io9O2zXc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSbpZqAAoJELSic+t+oim9hIMP/2yETnhq8MolJhqmeM2eAl2u
+/bYN8Z2fHC5Ab3aggT/IKq7HddUv4aU+PGvNvIPaEKNqhOF9Oc8UrZv+rx5QEBAa
+yAChNOcK9ATjhCP/SzM0/F/HwdLzFFGKdAwskPPtnRzKZysUqdq56uzr4A0q4VKN
+M0ukcjB4cPoJ4/tyEXjMLa8dnFIA3RtaTl8efZmdMi0sZOUPy2Uogm8JBwL64rFS
+8mxAWOHxpvcu8YVAbL6HrXEE8jz4Jq3CHFywin/tnmjJPmfStGp4t96IsLQ8/+xw
+J2GAkcH+hBt5V7pe4P4e3Y/iUf70CnFQdKcyS+OJL33QlIiTnKJh2ipHKjDEj8Y7
+sxNKGsQn9Wdeut7k8opRvjc/DHnai+9hV4B+bJC+Fkd6A+M1JSDkZ3m/CXgoNTY5
+T2yhT+gnLZBEDzj5HHBcm3thu2BG7y7F7HcAOJboCn1X4VhQIKAw8UcjBSNYBFtE
+WwvbHpF/DTKIBG24jPAhhc4lAWyiZuu9BbgwiwtvCVIJ0duZBxLBwVDf4Dp+VOQp
+grHB4I9WG19k4lzIKofq0OqGiYpLcmZvN2J6qQw2aohUjGbgFCPhB/HpUS7gE5g6
+AqHQahyK4h8R6UTLyhvGEqmwtXjvL+VqWg+SW2joaAW0w2sdHo0qmhl7WNIz9IWI
+06B5U8RXChbwDWIQlwcl
+=xLA5
+-----END PGP SIGNATURE-----
+
+--95CBLwa+io9O2zXc--
