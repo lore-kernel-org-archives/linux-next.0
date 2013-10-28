@@ -1,101 +1,50 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Mon, 28 Oct 2013 15:49:31 +0100
-Message-ID: <526E797B.9000903@monstr.eu>
-References: <20131029013317.a33ae4ff86b88ea17bb58e74@canb.auug.org.au>
-Reply-To: monstr@monstr.eu
+From: Mike Snitzer <snitzer@redhat.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (device-mapper tree related)
+Date: Mon, 28 Oct 2013 10:57:29 -0400
+Message-ID: <20131028145728.GA24780@redhat.com>
+References: <20131029013339.e13fe6dda17949fd32bb88b3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="xmttpKbA8Xuj3J3AfOgsA0gXO4tsPGd00"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131029013317.a33ae4ff86b88ea17bb58e74@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20131029013339.e13fe6dda17949fd32bb88b3@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Soren Brinkmann <soren.brinkmann@xilinx.com>, Lars-Peter Clausen <lars@metafoo.de>, Suneel Garapati <suneelg@xilinx.com>, Vlad Lungu <vlad.lungu@windriver.com>
+Cc: Alasdair G Kergon <agk@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heinz Mauelshagen <heinzm@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---xmttpKbA8Xuj3J3AfOgsA0gXO4tsPGd00
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Mon, Oct 28 2013 at 10:33am -0400,
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On 10/28/2013 03:33 PM, Stephen Rothwell wrote:
 > Hi all,
->=20
+> 
 > After merging the final tree, today's linux-next build (powerpc
 > allyesconfig) failed like this:
->=20
-> drivers/tty/serial/xilinx_uartps.c: In function 'xuartps_clk_notifier_c=
-b':
-> drivers/tty/serial/xilinx_uartps.c:436:7: error: 'PRE_RATE_CHANGE' unde=
-clared (first use in this function)
->   case PRE_RATE_CHANGE:
->        ^
-> drivers/tty/serial/xilinx_uartps.c:436:7: note: each undeclared identif=
-ier is reported only once for each function it appears in
-> drivers/tty/serial/xilinx_uartps.c:446:36: error: dereferencing pointer=
- to incomplete type
->    if (!xuartps_calc_baud_divs(ndata->new_rate, xuartps->baud,
->                                     ^
-> drivers/tty/serial/xilinx_uartps.c:461:7: error: 'POST_RATE_CHANGE' und=
-eclared (first use in this function)
->   case POST_RATE_CHANGE:
->        ^
-> drivers/tty/serial/xilinx_uartps.c:470:24: error: dereferencing pointer=
- to incomplete type
->    port->uartclk =3D ndata->new_rate;
->                         ^
-> drivers/tty/serial/xilinx_uartps.c:475:7: error: 'ABORT_RATE_CHANGE' un=
-declared (first use in this function)
->   case ABORT_RATE_CHANGE:
->        ^
-> drivers/tty/serial/xilinx_uartps.c: In function 'xuartps_probe':
-> drivers/tty/serial/xilinx_uartps.c:1385:2: error: implicit declaration =
-of function 'clk_notifier_register' [-Werror=3Dimplicit-function-declarat=
-ion]
->   if (clk_notifier_register(xuartps_data->refclk,
+> 
+> drivers/md/dm-cache-policy-hints.c: In function 'alloc_hash':
+> drivers/md/dm-cache-policy-hints.c:94:2: error: implicit declaration of function 'vzalloc' [-Werror=implicit-function-declaration]
+>   hash->table = vzalloc(sizeof(*hash->table) * hash->nr_buckets);
 >   ^
-> drivers/tty/serial/xilinx_uartps.c:1418:2: error: implicit declaration =
-of function 'clk_notifier_unregister' [-Werror=3Dimplicit-function-declar=
-ation]
->   clk_notifier_unregister(xuartps_data->refclk,
+> drivers/md/dm-cache-policy-hints.c:94:14: warning: assignment makes pointer from integer without a cast [enabled by default]
+>   hash->table = vzalloc(sizeof(*hash->table) * hash->nr_buckets);
+>               ^
+> drivers/md/dm-cache-policy-hints.c: In function 'free_hash':
+> drivers/md/dm-cache-policy-hints.c:101:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
+>   vfree(hash->table);
 >   ^
->=20
-> Caused by commits in the tty tree.
->=20
-> I have left this broken for today.
->=20
+> drivers/md/dm-cache-policy-hints.c: In function 'alloc_bitset':
+> drivers/md/dm-cache-policy-hints.c:184:2: warning: return makes pointer from integer without a cast [enabled by default]
+>   return vzalloc(sizeof(unsigned long) * bit_set_nr_words(nr_cblocks));
+>   ^
+> 
+> Caused by commit ce567d11e819 ("dm cache: add hints policy") from the
+> device-mapper tree.
+> 
+> I have just left this broken for today.
 
-Soren: Please correct me if I am wrong.
-But this should be fixed by:
-"[PATCH 3/3] tty: xuartps: Fix build error when COMMON_CLK is not set"
+I just pushed an update to linux-dm.git's 'for-next' branch which adds
+3 missing #includes to drivers/md/dm-cache-policy-hints.c
 
 Thanks,
-Michal
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
-Maintainer of Linux kernel - Xilinx Zynq ARM architecture
-Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
-
-
-
---xmttpKbA8Xuj3J3AfOgsA0gXO4tsPGd00
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iEYEARECAAYFAlJueXsACgkQykllyylKDCEroQCglGsovvzwq9ib5GvZHVzMlF8W
-8acAn3QdO0AhyftPoEknmMG3UNT2Pp4k
-=seVI
------END PGP SIGNATURE-----
-
---xmttpKbA8Xuj3J3AfOgsA0gXO4tsPGd00--
+Mike
