@@ -1,110 +1,58 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: linux-next: build failure after merge of the final tree (fbdev
- tree related)
-Date: Mon, 28 Oct 2013 15:39:47 +0100
-Message-ID: <526E7733.6020509@monstr.eu>
-References: <20131029012317.b9ba8173dee5bac1a5bd2404@canb.auug.org.au>
-Reply-To: monstr@monstr.eu
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (sound tree
+ related)
+Date: Tue, 29 Oct 2013 01:42:34 +1100
+Message-ID: <20131029014234.fa29fdc685dbd73934cf1768@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="phaUscxRjMls7GwoljvDcqWqcqC4NI2ep"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f44.google.com ([74.125.83.44]:61378 "EHLO
-	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754442Ab3J1Ojv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 10:39:51 -0400
-Received: by mail-ee0-f44.google.com with SMTP id c4so2996226eek.31
-        for <linux-next@vger.kernel.org>; Mon, 28 Oct 2013 07:39:50 -0700 (PDT)
-In-Reply-To: <20131029012317.b9ba8173dee5bac1a5bd2404@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__29_Oct_2013_01_42_34_+1100_GP1HOqiORDW6=VfB"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolin Chen <b42378@freescale.com>
+List-Id: linux-next.vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---phaUscxRjMls7GwoljvDcqWqcqC4NI2ep
-Content-Type: text/plain; charset=ISO-8859-1
+--Signature=_Tue__29_Oct_2013_01_42_34_+1100_GP1HOqiORDW6=VfB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 10/28/2013 03:23 PM, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the final tree, today's linux-next build (powerpc
-> ppc44x_defconfig) failed like this:
->=20
-> drivers/video/xilinxfb.c: In function 'xilinxfb_of_probe':
-> drivers/video/xilinxfb.c:431:30: error: 'op' undeclared (first use in t=
-his function)
->=20
-> Caused by commit 353846fb8bb7 ("video: xilinxfb: Use standard variable
-> name convention") from the fbdev tree.
->=20
-> I have applied the following fix patch for today:
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 29 Oct 2013 01:18:22 +1100
-> Subject: [PATCH] video: xilinxfb: Fix for "Use standard variable name c=
-onvention"
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/video/xilinxfb.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/video/xilinxfb.c b/drivers/video/xilinxfb.c
-> index 9eedf9673b7f..6ff1a91e9dfd 100644
-> --- a/drivers/video/xilinxfb.c
-> +++ b/drivers/video/xilinxfb.c
-> @@ -428,11 +428,11 @@ static int xilinxfb_of_probe(struct platform_devi=
-ce *pdev)
->  #ifdef CONFIG_PPC_DCR
->  	else {
->  		int start;
-> -		start =3D dcr_resource_start(op->dev.of_node, 0);
-> -		drvdata->dcr_len =3D dcr_resource_len(op->dev.of_node, 0);
-> -		drvdata->dcr_host =3D dcr_map(op->dev.of_node, start, drvdata->dcr_l=
-en);
-> +		start =3D dcr_resource_start(pdev->dev.of_node, 0);
-> +		drvdata->dcr_len =3D dcr_resource_len(pdev->dev.of_node, 0);
-> +		drvdata->dcr_host =3D dcr_map(pdev->dev.of_node, start, drvdata->dcr=
-_len);
->  		if (!DCR_MAP_OK(drvdata->dcr_host)) {
-> -			dev_err(&op->dev, "invalid DCR address\n");
-> +			dev_err(&pdev->dev, "invalid DCR address\n");
->  			return -ENODEV;
->  		}
->  	}
->=20
+Hi all,
 
-Your fix is correct.
+After merging the final tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-Tested-by: Michal Simek <monstr@monstr.eu>
+sound/built-in.o: In function `snd_free_dev_iram':
+(.text+0x17028): undefined reference to `gen_pool_free'
 
-Thanks,
-Michal
+Presumably caused by commit 055032142c42 ("ALSA: Add SoC on-chip internal
+ram support for DMA buffer allocation") from the sound tree.
 
+I have left this broken for today.
 --=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
-Maintainer of Linux kernel - Xilinx Zynq ARM architecture
-Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
-
---phaUscxRjMls7GwoljvDcqWqcqC4NI2ep
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+--Signature=_Tue__29_Oct_2013_01_42_34_+1100_GP1HOqiORDW6=VfB
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-iEYEARECAAYFAlJudzMACgkQykllyylKDCGTPgCfdqzPmLHNXCgFeqNWC4YNz0z+
-EmAAn0mpKPX/pL6295OqX/mryMC45WgX
-=Nz5B
+iQIcBAEBCAAGBQJSbnffAAoJEMDTa8Ir7ZwVDrMP/3cBbSqHvqLv/Ve+DDeGQ3RX
+fU0RuJNQA+gj2qzyjCTvzFFBiMjW20ZrD584xoLIh0ZvEwhj/2P9grhwwvyLTpge
+kOd0X+XiV95ru/fEuxf6MwVI4N1PpdzXedE6Z8k4QUqlg9ZklDTMEVhyaZE1DaFz
+qvGC/NUBUCjiCC6l1/+alaGblB+FR3zunyqGOtQwF2oy2QJsbTSFODxXSd6/dzOR
+pxz4ICKu7CJMQDSj17a1IKxRzKmuYciBQlizjCVzwDuMMOOTN0wVXhzfi1sH2jKP
+zyKqKexa3DySoz5Ta0VkHOcVZW1wIBg90OYys+TIrH/h/eU+7GnXZ+29yTF60DHz
+PZaxoNPp0MSCewSahHbeH+8BV8+po2d/YBVA7DFOF/Gshdrk/d8QiqvtU72JnjlO
+vpV7kYRzijUmf5QdxM9IizgC/3jLCY4Vo42p/pwvaIp7Td8evXwibWbN4KIlfgY3
+PxsngJe/ssLfee4rmU1v7fCkgUh82vtkqIE+P4eWfiCcb+4bmbUBKkXsOVA58MFw
+qh/pUm9erhQOaO2E9p7uR4BQ7+hIa4EGOMYPc13Lg5k2yFWgjGEZKh55MTACmWgu
+DRD++JsJNOZjiqNwi9xn05PtL5wZbQPnQdHARCnlXRb9rMXVkmO46LltiF4aXWIM
+aGyj1Q6P+IrwrLdaVQF0
+=kltc
 -----END PGP SIGNATURE-----
 
---phaUscxRjMls7GwoljvDcqWqcqC4NI2ep--
+--Signature=_Tue__29_Oct_2013_01_42_34_+1100_GP1HOqiORDW6=VfB--
