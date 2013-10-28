@@ -1,23 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (fbdev tree
+Subject: linux-next: build failure after merge of the final tree (tty tree
  related)
-Date: Tue, 29 Oct 2013 01:23:17 +1100
-Message-ID: <20131029012317.b9ba8173dee5bac1a5bd2404@canb.auug.org.au>
+Date: Tue, 29 Oct 2013 01:33:17 +1100
+Message-ID: <20131029013317.a33ae4ff86b88ea17bb58e74@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__29_Oct_2013_01_23_17_+1100_DShg+nNpREjrw96n"
+ boundary="Signature=_Tue__29_Oct_2013_01_33_17_+1100_6ks+RfSX9gj2x=0x"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43615 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35155 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756545Ab3J1OXa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 10:23:30 -0400
+	with ESMTP id S1756230Ab3J1Od1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 10:33:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Soren Brinkmann <soren.brinkmann@xilinx.com>, Lars-Peter Clausen <lars@metafoo.de>, Suneel Garapati <suneelg@xilinx.com>, Vlad Lungu <vlad.lungu@windriver.com>, Greg KH <greg@kroah.com>
 
---Signature=_Tue__29_Oct_2013_01_23_17_+1100_DShg+nNpREjrw96n
+--Signature=_Tue__29_Oct_2013_01_33_17_+1100_6ks+RfSX9gj2x=0x
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -25,75 +24,67 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 After merging the final tree, today's linux-next build (powerpc
-ppc44x_defconfig) failed like this:
+allyesconfig) failed like this:
 
-drivers/video/xilinxfb.c: In function 'xilinxfb_of_probe':
-drivers/video/xilinxfb.c:431:30: error: 'op' undeclared (first use in this =
-function)
+drivers/tty/serial/xilinx_uartps.c: In function 'xuartps_clk_notifier_cb':
+drivers/tty/serial/xilinx_uartps.c:436:7: error: 'PRE_RATE_CHANGE' undeclar=
+ed (first use in this function)
+  case PRE_RATE_CHANGE:
+       ^
+drivers/tty/serial/xilinx_uartps.c:436:7: note: each undeclared identifier =
+is reported only once for each function it appears in
+drivers/tty/serial/xilinx_uartps.c:446:36: error: dereferencing pointer to =
+incomplete type
+   if (!xuartps_calc_baud_divs(ndata->new_rate, xuartps->baud,
+                                    ^
+drivers/tty/serial/xilinx_uartps.c:461:7: error: 'POST_RATE_CHANGE' undecla=
+red (first use in this function)
+  case POST_RATE_CHANGE:
+       ^
+drivers/tty/serial/xilinx_uartps.c:470:24: error: dereferencing pointer to =
+incomplete type
+   port->uartclk =3D ndata->new_rate;
+                        ^
+drivers/tty/serial/xilinx_uartps.c:475:7: error: 'ABORT_RATE_CHANGE' undecl=
+ared (first use in this function)
+  case ABORT_RATE_CHANGE:
+       ^
+drivers/tty/serial/xilinx_uartps.c: In function 'xuartps_probe':
+drivers/tty/serial/xilinx_uartps.c:1385:2: error: implicit declaration of f=
+unction 'clk_notifier_register' [-Werror=3Dimplicit-function-declaration]
+  if (clk_notifier_register(xuartps_data->refclk,
+  ^
+drivers/tty/serial/xilinx_uartps.c:1418:2: error: implicit declaration of f=
+unction 'clk_notifier_unregister' [-Werror=3Dimplicit-function-declaration]
+  clk_notifier_unregister(xuartps_data->refclk,
+  ^
 
-Caused by commit 353846fb8bb7 ("video: xilinxfb: Use standard variable
-name convention") from the fbdev tree.
+Caused by commits in the tty tree.
 
-I have applied the following fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 29 Oct 2013 01:18:22 +1100
-Subject: [PATCH] video: xilinxfb: Fix for "Use standard variable name conve=
-ntion"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/video/xilinxfb.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/video/xilinxfb.c b/drivers/video/xilinxfb.c
-index 9eedf9673b7f..6ff1a91e9dfd 100644
---- a/drivers/video/xilinxfb.c
-+++ b/drivers/video/xilinxfb.c
-@@ -428,11 +428,11 @@ static int xilinxfb_of_probe(struct platform_device *=
-pdev)
- #ifdef CONFIG_PPC_DCR
- 	else {
- 		int start;
--		start =3D dcr_resource_start(op->dev.of_node, 0);
--		drvdata->dcr_len =3D dcr_resource_len(op->dev.of_node, 0);
--		drvdata->dcr_host =3D dcr_map(op->dev.of_node, start, drvdata->dcr_len);
-+		start =3D dcr_resource_start(pdev->dev.of_node, 0);
-+		drvdata->dcr_len =3D dcr_resource_len(pdev->dev.of_node, 0);
-+		drvdata->dcr_host =3D dcr_map(pdev->dev.of_node, start, drvdata->dcr_len=
-);
- 		if (!DCR_MAP_OK(drvdata->dcr_host)) {
--			dev_err(&op->dev, "invalid DCR address\n");
-+			dev_err(&pdev->dev, "invalid DCR address\n");
- 			return -ENODEV;
- 		}
- 	}
---=20
-1.8.4.rc3
-
+I have left this broken for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__29_Oct_2013_01_23_17_+1100_DShg+nNpREjrw96n
+--Signature=_Tue__29_Oct_2013_01_33_17_+1100_6ks+RfSX9gj2x=0x
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSbnNbAAoJEMDTa8Ir7ZwVnooP/1LS+f9SxGMr6WGR2JJtFZ8E
-jojjonFKb6Fs8lLRUuEOeBDbPEW/SmRu0dkNhsPHU1vGIKUtKfI+dVL9Y9ZBF45k
-IQwmMATMOK9Z7R78s2cXW0rB7+8lrCtWRSNdWXJDSj0hrDnrrzwNCRTtwla/9tWZ
-N7vg94dG7lDLNaBgZqjiEuH0k1BTcLk++PNi4c0X2zdEx5242do3Uk1Bx97P19ej
-Gbud4ZsK/pQhyBJcdTJLNZOIPWR6Owg30wf/xECw73lbe6hmjxa2DTLlhRXriUgR
-1wgBt7yRnGVymZwM8l6GFYcOTyU3SUATbE0uIR5rGs/Pwf8dFavgMUQJlkv7IF6/
-5XSBpD7XPKGpNyqMNHt2epQn+WFB0jY8taV1Aa9Vlh2vVY0xtfHGQ9hsR9lvf/rt
-w4tXAjO79kfUbvIZrm4ue92vkWhAcQwtml+sPeYqR6C8CElfU6+EUFlSQ14X7WeW
-DIbNyC488mbwOcPIH0Sw1q2kC4mssScMuiqGqlsOjQ/w7EZSYCXvPwTUbSV7mQvL
-5T1sKr7257CPDse95eYD1QgfPANFI2k76N28/TaG+onwbqcMRZZb7XiI32Xy7+d0
-C4kz9SjfTJWoSKwTIjIadhE6b0k1g/cvlwtORdwdir10yQCkLXA9rdjw6UroiseR
-FVx0ce0MWTfXhYWsjPA9
-=h1yv
+iQIcBAEBCAAGBQJSbnWyAAoJEMDTa8Ir7ZwVmZ4P/0UEoINvgLcACpJBh8kjeyag
+yL7Olc4U9VsFps0O4Zs+28YF+e/Rnla0cysgki3drC9TON6g8Lz80Z0/JcN5e/tq
+rMNYaV41lHxYvDbk/bX0O8qKosDFuzQg8NE62xYTy3jE0XTSUpjTQaIh0Z1PodSy
+RA24gX09YmfcX9j6NtykXbnLj14phDKWthEoh6dTBgdaedaKomL59iju8XQPBRYq
+UwCqaMsk/bbvU2tjtcWI3JCjW6RLGujk8BBR0ZKifyR7N7XuLqCuS93zhpq3SpOk
+1uJA3qOIlHT8v0dJxGa84uHigRrtjJehcGlr3RDimZPoYmpY0GuiogHBaO903RRt
+Y9XkU+3U8LWDHVviEH61TIfm0DEzPFhXniYAY9hQhok9Sw+DqyiDmc+VAE5fNDMl
+fEPquuiraizOE2n4POvKlFxUHK5qyhbHjjEynrCiJ59v6UWPgYtexxdQVz/hudLH
+VPCWsUHDgW2AzGKHuZK85xVtYbs7M8lWpMojsUtkiDBCyuYgcCLVX3DQHP1RL1sr
+NFUV76JX54GZmj0fj64P0uTSOguglck+zBuYt2gZ0Esbbo9yRPxc1H+zBFMWFF+U
+POU4LyDIIgUJGFJaFOdpZ5Mu1jSwNNYb49EikI6MI12RTrLG27RclOk1+xh2FygF
+NxMq8svlz7tMrOS7/tX3
+=iaHC
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__29_Oct_2013_01_23_17_+1100_DShg+nNpREjrw96n--
+--Signature=_Tue__29_Oct_2013_01_33_17_+1100_6ks+RfSX9gj2x=0x--
