@@ -1,23 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (gpio tree
+Subject: linux-next: build failure after merge of the final tree (fbdev tree
  related)
-Date: Tue, 29 Oct 2013 01:12:23 +1100
-Message-ID: <20131029011223.58b51e529acced32d6dae82a@canb.auug.org.au>
+Date: Tue, 29 Oct 2013 01:23:17 +1100
+Message-ID: <20131029012317.b9ba8173dee5bac1a5bd2404@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__29_Oct_2013_01_12_23_+1100_sUeUiK0B.aBzesoh"
+ boundary="Signature=_Tue__29_Oct_2013_01_23_17_+1100_DShg+nNpREjrw96n"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44248 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43615 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756367Ab3J1OMg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 10:12:36 -0400
+	with ESMTP id S1756545Ab3J1OXa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 10:23:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>
 
---Signature=_Tue__29_Oct_2013_01_12_23_+1100_sUeUiK0B.aBzesoh
+--Signature=_Tue__29_Oct_2013_01_23_17_+1100_DShg+nNpREjrw96n
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -27,52 +27,47 @@ Hi all,
 After merging the final tree, today's linux-next build (powerpc
 ppc44x_defconfig) failed like this:
 
-In file included from include/asm-generic/gpio.h:13:0,
-                 from include/linux/gpio.h:51,
-                 from include/linux/of_gpio.h:20,
-                 from arch/powerpc/sysdev/ppc4xx_gpio.c:29:
-include/linux/gpio/driver.h:85:14: error: 'struct seq_file' declared inside=
- parameter list [-Werror]
-include/linux/gpio/driver.h:85:14: error: its scope is only this definition=
- or declaration, which is probably not what you want [-Werror]
+drivers/video/xilinxfb.c: In function 'xilinxfb_of_probe':
+drivers/video/xilinxfb.c:431:30: error: 'op' undeclared (first use in this =
+function)
 
-Caused by commit 79a9becda894 ("gpiolib: export descriptor-based GPIO
-interface") from the gpio tree.
+Caused by commit 353846fb8bb7 ("video: xilinxfb: Use standard variable
+name convention") from the fbdev tree.
 
-I have applied this fix up patch for today:
+I have applied the following fix patch for today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 29 Oct 2013 01:06:23 +1100
-Subject: [PATCH] gpiolib: provide a declaration of seq_file in gpio/driver.h
-
-Fixes this build error:
-
-In file included from include/asm-generic/gpio.h:13:0,
-                 from include/linux/gpio.h:51,
-                 from include/linux/of_gpio.h:20,
-                 from arch/powerpc/sysdev/ppc4xx_gpio.c:29:
-include/linux/gpio/driver.h:85:14: error: 'struct seq_file' declared inside=
- parameter list [-Werror]
-include/linux/gpio/driver.h:85:14: error: its scope is only this definition=
- or declaration, which is probably not what you want [-Werror]
+Date: Tue, 29 Oct 2013 01:18:22 +1100
+Subject: [PATCH] video: xilinxfb: Fix for "Use standard variable name conve=
+ntion"
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- include/linux/gpio/driver.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/video/xilinxfb.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index cd9da3885d79..656a27efb2c8 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -5,6 +5,7 @@
-=20
- struct device;
- struct gpio_desc;
-+struct seq_file;
-=20
- /**
-  * struct gpio_chip - abstract a GPIO controller
+diff --git a/drivers/video/xilinxfb.c b/drivers/video/xilinxfb.c
+index 9eedf9673b7f..6ff1a91e9dfd 100644
+--- a/drivers/video/xilinxfb.c
++++ b/drivers/video/xilinxfb.c
+@@ -428,11 +428,11 @@ static int xilinxfb_of_probe(struct platform_device *=
+pdev)
+ #ifdef CONFIG_PPC_DCR
+ 	else {
+ 		int start;
+-		start =3D dcr_resource_start(op->dev.of_node, 0);
+-		drvdata->dcr_len =3D dcr_resource_len(op->dev.of_node, 0);
+-		drvdata->dcr_host =3D dcr_map(op->dev.of_node, start, drvdata->dcr_len);
++		start =3D dcr_resource_start(pdev->dev.of_node, 0);
++		drvdata->dcr_len =3D dcr_resource_len(pdev->dev.of_node, 0);
++		drvdata->dcr_host =3D dcr_map(pdev->dev.of_node, start, drvdata->dcr_len=
+);
+ 		if (!DCR_MAP_OK(drvdata->dcr_host)) {
+-			dev_err(&op->dev, "invalid DCR address\n");
++			dev_err(&pdev->dev, "invalid DCR address\n");
+ 			return -ENODEV;
+ 		}
+ 	}
 --=20
 1.8.4.rc3
 
@@ -80,25 +75,25 @@ index cd9da3885d79..656a27efb2c8 100644
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__29_Oct_2013_01_12_23_+1100_sUeUiK0B.aBzesoh
+--Signature=_Tue__29_Oct_2013_01_23_17_+1100_DShg+nNpREjrw96n
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSbnDOAAoJEMDTa8Ir7ZwVO1MQAIV7oeJkUNoJKppfFAIHxtB7
-iy7upH9LxUyutAV0ZD4yUODh6H2X4ZA3XAikADps3PkCh3MYi0htaBrmhKiJ4Lkh
-jP2lvYMEkGbjTh/84uSRWsfU9rhe5IlZfJe5SaWwVX9nZsE2PKQ0MKdCNpnT8mQr
-De0HIC1wyA33WgJe5yU+K5gfeo+3trbBQurEi4IzSFrlWvuK7z32y3bnaO2HLa0z
-1YOgrrv5YrKGQo0OYaPD++9VuEF59gkfj2sc4/Xw6w3H8Fx4dAKTjHqzCK/qREPT
-+8bxkIxhJsNkZmzRAjQHtnf1NLoSQtBnzYK91gcxmYLJGgPh7U/LIe/WXDEVXT2R
-zZJXHgQuqE9dfrcVxrDFgSjY089+2/t2tetHaasCvlWvUGDDbgolB/d0b8Uc2aEu
-tGaBJb2PkM6t6kH+juKQ+MR8ZWpFSMS3RPdsBmwh/7LLQsbIGtNj3WnYPyrHJOcs
-QEk0D2ZvgHG0nzyMfMtnLZ/6DNfobz1d6nPdh7LdXbGB/OuMKUpHC+/sKuB0+HGj
-F1Zm4ia5tpTZJ9MPvbDBUer38NkY1yDgZ3RT+BPpiMaywh96udrD0EytyMt0gVNj
-7SXx8ZNLXDysDT2DNRBe5yf79QM3EXOZG5pFT+Z8fhGYeqynWzojl3HRA6OkPxY5
-bQUHqJ92ymrWQ156U+71
-=oj3X
+iQIcBAEBCAAGBQJSbnNbAAoJEMDTa8Ir7ZwVnooP/1LS+f9SxGMr6WGR2JJtFZ8E
+jojjonFKb6Fs8lLRUuEOeBDbPEW/SmRu0dkNhsPHU1vGIKUtKfI+dVL9Y9ZBF45k
+IQwmMATMOK9Z7R78s2cXW0rB7+8lrCtWRSNdWXJDSj0hrDnrrzwNCRTtwla/9tWZ
+N7vg94dG7lDLNaBgZqjiEuH0k1BTcLk++PNi4c0X2zdEx5242do3Uk1Bx97P19ej
+Gbud4ZsK/pQhyBJcdTJLNZOIPWR6Owg30wf/xECw73lbe6hmjxa2DTLlhRXriUgR
+1wgBt7yRnGVymZwM8l6GFYcOTyU3SUATbE0uIR5rGs/Pwf8dFavgMUQJlkv7IF6/
+5XSBpD7XPKGpNyqMNHt2epQn+WFB0jY8taV1Aa9Vlh2vVY0xtfHGQ9hsR9lvf/rt
+w4tXAjO79kfUbvIZrm4ue92vkWhAcQwtml+sPeYqR6C8CElfU6+EUFlSQ14X7WeW
+DIbNyC488mbwOcPIH0Sw1q2kC4mssScMuiqGqlsOjQ/w7EZSYCXvPwTUbSV7mQvL
+5T1sKr7257CPDse95eYD1QgfPANFI2k76N28/TaG+onwbqcMRZZb7XiI32Xy7+d0
+C4kz9SjfTJWoSKwTIjIadhE6b0k1g/cvlwtORdwdir10yQCkLXA9rdjw6UroiseR
+FVx0ce0MWTfXhYWsjPA9
+=h1yv
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__29_Oct_2013_01_12_23_+1100_sUeUiK0B.aBzesoh--
+--Signature=_Tue__29_Oct_2013_01_23_17_+1100_DShg+nNpREjrw96n--
