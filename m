@@ -1,33 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the mmc tree
-Date: Mon, 28 Oct 2013 22:20:07 +1100
-Message-ID: <20131028222007.30619a9f7d18f5acd9b1ae60@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the  tree
+Date: Mon, 28 Oct 2013 23:01:52 +1100
+Message-ID: <20131028230152.46d44ec81ac368fa00191225@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Oct_2013_22_20_07_+1100_0MRmy.RDzThOFZz0"
+ boundary="Signature=_Mon__28_Oct_2013_23_01_52_+1100_8wwTyVDxS_udWB/X"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42556 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:60931 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755563Ab3J1LUX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 07:20:23 -0400
+	with ESMTP id S1754908Ab3J1MCH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 08:02:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <jhovold@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <cjb@laptop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kishon Vijay Abraham I <kishon@ti.com>
 
---Signature=_Mon__28_Oct_2013_22_20_07_+1100_0MRmy.RDzThOFZz0
+--Signature=_Mon__28_Oct_2013_23_01_52_+1100_8wwTyVDxS_udWB/X
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the driver-core tree got a conflict in
-drivers/mmc/host/mvsdio.c between commit 50596285e0be ("mmc: mvsdio:
-Remove redundant suspend and resume callbacks") from the mmc tree and
-commit 1867adee6ed7 ("mmc: mvsdio: fix deferred probe from __init") from
-the driver-core tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/Kconfig between commit 12cc4b3827f8 ("PowerCap: Add to drivers
+Kconfig and Makefile") from the pm tree and commit ff764963479a
+("drivers: phy: add generic PHY framework") from the usb tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,42 +35,39 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/mmc/host/mvsdio.c
-index 22ba4d33e95b,deecee08c288..000000000000
---- a/drivers/mmc/host/mvsdio.c
-+++ b/drivers/mmc/host/mvsdio.c
-@@@ -845,7 -872,10 +845,8 @@@ static const struct of_device_id mvsdio
-  MODULE_DEVICE_TABLE(of, mvsdio_dt_ids);
+diff --cc drivers/Kconfig
+index 969e9871785c,8f451449abd3..000000000000
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@@ -166,6 -166,6 +166,8 @@@ source "drivers/reset/Kconfig
  =20
-  static struct platform_driver mvsd_driver =3D {
-- 	.remove		=3D __exit_p(mvsd_remove),
-+ 	.probe		=3D mvsd_probe,
-+ 	.remove		=3D mvsd_remove,
- -	.suspend	=3D mvsd_suspend,
- -	.resume		=3D mvsd_resume,
-  	.driver		=3D {
-  		.name	=3D DRIVER_NAME,
-  		.of_match_table =3D mvsdio_dt_ids,
+  source "drivers/fmc/Kconfig"
+ =20
+ +source "drivers/powercap/Kconfig"
+ +
++ source "drivers/phy/Kconfig"
++=20
+  endmenu
 
---Signature=_Mon__28_Oct_2013_22_20_07_+1100_0MRmy.RDzThOFZz0
+--Signature=_Mon__28_Oct_2013_23_01_52_+1100_8wwTyVDxS_udWB/X
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSbkhsAAoJEMDTa8Ir7ZwVEKMP/2f7Mz0GCWpalD0R8CAwbT0y
-ROms8T3aXpzWAYj5i150KXa93gYphFg2/pDRyEmxPyX9WleS/pCkiBmhamNLyVTd
-PoQoaF+6OPY5qKyGoadJvsUJZCA+KLW70HtdnpvK9SBZ3yZTb+JflLys2bMR3Bh7
-uTxjY/iDH6mj1jg3xneDgKtzU7kT7c/yyRoG/BuxAmrSXXQVwqcqW0Qt70ObmOUE
-pIDYV3PYAWp6dR7DRvQDRboRpupLRst6F1HrIy/jtpR7TahlsC6wGZqZltYtRIL/
-Ex6ECBOuqOHulpK8srl9Wyn0xAZewKHis+Si7QA03UJnZqGM5BNEWpr/QlcSIR2q
-5Z6iTqssYKT1D9cS7QTr55y++vMEmDqhDPrfQ9cjE7o/OjnsS9jxkWhd5x2yM9yt
-JLPv3F6e4ApKYH+NsC1nQ3kG2qV4P0LyfRDO/2MnuCfQo0YN/8O0P2w7gGWvPFiM
-0FA3NLDTN6vLwiRmDw78FySjDRZul5dPYKtGzNDnGM7idFEwsRnaCz81rPbNsarV
-HHwmAlCdt7QmH3IKkoNTTT2bWEk2mXg3kR922/7uWV8R0VXEMV0S2VYfiobP8h+7
-o0emFj6oLnqob6RxUOW5bI5jZk91C5cgObvUjP4C1qTjBO0kUrIXM5syqahIkd49
-btAr2D86RpqQkQijte07
-=fQ5p
+iQIcBAEBCAAGBQJSblI2AAoJEMDTa8Ir7ZwVTMoP/R4sVs6rKvdw+ZXyYvWlKpDM
+z6DoaDu5dJp2dUA3u14qOgEbh88SIyVtbuKJ8u1JCcd5Gll9gjQCf5pWIOMOkmOu
+NajvTnEQYysuhHVjTCO5Y7Y2n+/5IU098/DdCS1HWz0Qgsg/llmwcJxMvDQpBUo5
+syDDLVS0qslROey7pD9ZROT5P/CfHyl6AC3O2u+hC3HMvfIrCIoQXv0YnyAFGQ8F
+4NbNL860w2wUIemKd8R8a2TYZXlD5NKtpGIhI+XodZ3pKu4FhmnPfPlnYG9IV//W
+6qZrl0lzEeYpQvoOrSnlRo/f8cr2B5KBovoqPTLkfwTcnWPbHUGp2+nG9TmMmgza
+ro5H9NzCWAJBKjfqL42NCF8EMgK7ru0kxAE2hajYehwXQlOewfqSO7awyyj2O5zs
+/C6hSGy22TxDw5ZY386TqpslDuqCpBr6+i8UiOYugFoHh4D1IH7rNDhf9L1j3uAJ
+UACGA5FX+B5KWjFyQ7Bvu3w23E/Ej/t3rckwRYFIo1l86+6G2VUFq/wE/2eORyCG
+691aHRvzIS0Vys7DAbCabsXkQ+ntn2JYGc7Ir1jmFb1Bt/0ksVy8NMIPkApuX3Yc
+uqmoVGew+ENAiKiqwumlm7E/2eGaC2/g9duMTOZyMVRQXZxsTx575G8A6CiJAsMJ
+dkuqRETk0Z88gN1TkBGp
+=hs2O
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Oct_2013_22_20_07_+1100_0MRmy.RDzThOFZz0--
+--Signature=_Mon__28_Oct_2013_23_01_52_+1100_8wwTyVDxS_udWB/X--
