@@ -1,49 +1,104 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the tip tree
-Date: Mon, 28 Oct 2013 08:45:37 +0000
-Message-ID: <20131028084537.GH16735@n2100.arm.linux.org.uk>
-References: <1382632289-18523-1-git-send-email-treding@nvidia.com> <1382706224-8859-1-git-send-email-treding@nvidia.com> <1382706224-8859-4-git-send-email-treding@nvidia.com> <20131025132553.GE9999@mudshark.cambridge.arm.com> <20131026084033.GA14237@gmail.com> <20131026140125.GA13424@mudshark.cambridge.arm.com> <20131027071237.GA448@gmail.com> <20131027100047.GY16735@n2100.arm.linux.org.uk> <20131028074716.GC6629@ulmo.nvidia.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Mon, 28 Oct 2013 20:24:42 +1100
+Message-ID: <20131028202442.5033ddf42639863d5f1dcf67@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__28_Oct_2013_20_24_42_+1100_vfWK/gyPhHXn7=c9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:41772 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750998Ab3J1Iqn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 04:46:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20131028074716.GC6629@ulmo.nvidia.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60022 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755563Ab3J1JY6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 05:24:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Will Deacon <will.deacon@arm.com>, Jean Pihet <jean.pihet@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2013 at 08:47:22AM +0100, Thierry Reding wrote:
-> On Sun, Oct 27, 2013 at 10:00:48AM +0000, Russell King - ARM Linux wrote:
-> > On Sun, Oct 27, 2013 at 08:12:37AM +0100, Ingo Molnar wrote:
-> > > 
-> > > * Will Deacon <will.deacon@arm.com> wrote:
-> > > > In future, I'll push back on any perf changes outside of arch/ in my 
-> > > > tree, but that doesn't help us get out of the current situation: the 
-> > > > patches are currently sitting in rmk's tree for 3.13, so that won't meet 
-> > > > with -tip (outside of next) until Linus pulls them both. What can we do 
-> > > > about that?
-> > > 
-> > > Unless you guys want to do a revert I guess there's not much to do but to 
-> > > warn Linus in the ARM pull request that a conflict is coming up.
-> > 
-> > From Will's description, it sounded like this could be quite hairy to
-> > fix up, so I'd like to include the conflict resolution in the pull
-> > request so Linus has something to refer to if needed.  Could someone
-> > please forward me that?
-> 
-> Hi Russell,
-> 
-> I've attached the relevant parts of the resolution, although I'm not
-> sure if anybody's actually confirmed that it's correct.
+--Signature=_Mon__28_Oct_2013_20_24_42_+1100_vfWK/gyPhHXn7=c9
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm not sure whether that can happen any time before -final - Will is
-(storm dependent) flying out to Linaro Connect today, and I've no idea
-who to turn to for this to be tested for ARM.
+Hi all,
 
-I guess we have some time given that Linus has released -rc7 and his
-comments during the Kernel Summit/in the rc7 announcement.
+After merging the tip tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+In file included from /scratch/sfr/next/include/linux/mmzone.h:9:0,
+                 from /scratch/sfr/next/include/linux/gfp.h:4,
+                 from /scratch/sfr/next/include/linux/kmod.h:22,
+                 from /scratch/sfr/next/include/linux/module.h:13,
+                 from /scratch/sfr/next/block/blk-mq.c:2:
+/scratch/sfr/next/block/blk-mq.c: In function 'blk_mq_queue_enter':
+/scratch/sfr/next/include/linux/wait.h:772:2: error: expected ';' before '_=
+_ret'
+  __ret;        \
+  ^
+/scratch/sfr/next/block/blk-mq.c:108:8: note: in expansion of macro 'wait_e=
+vent_interruptible_lock_irq'
+  ret =3D wait_event_interruptible_lock_irq(q->mq_freeze_wq,
+        ^
+/scratch/sfr/next/block/blk-mq.c:108:6: error: void value not ignored as it=
+ ought to be
+  ret =3D wait_event_interruptible_lock_irq(q->mq_freeze_wq,
+      ^
+
+Caused by commit 35a2af94c7ce ("sched/wait: Make the __wait_event*()
+interface more friendly").
+
+Since this was also in next-20131025, I applied the following merge fix
+commit for today, please fix this in the tip tree.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 28 Oct 2013 20:19:27 +1100
+Subject: [PATCH] sched/wait: fix missing semicolon
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/wait.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index 7f8caa519128..fcc968087f05 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -768,7 +768,7 @@ do {									\
+ 	int __ret =3D 0;							\
+ 	if (!(condition))						\
+ 		__ret =3D __wait_event_interruptible_lock_irq(wq,		\
+-						condition, lock,)	\
++						condition, lock,);	\
+ 	__ret;								\
+ })
+=20
+--=20
+1.8.4.rc3
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__28_Oct_2013_20_24_42_+1100_vfWK/gyPhHXn7=c9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSbi1fAAoJEMDTa8Ir7ZwV5KIP/1pIhud1/lJlLmVOe4EgUm5M
+/oFPj/w+CGWEmcuq+bMce8KLhEBzxRv7L8vkqUCKP4kdQvWTv5meAUGgsUbmsb5j
+5ImFB/rMONRZm66NBAh8wP7x1Q33uxwav5ywAcfFl+QuFXwd3tHZRYzWMdoB1c+h
+YVAP6mt3ZaCcUD+hCFTD99ahPzhsHyXlhbffYKkgsgc/14uvCiUz4srZv76G+Ivb
+1dEpBjTN4noLm+5VEj5TbTTa7Qdj6TrceAi1RZMQDIcOZJ5o1NR6qrNG7gpFwq8O
+gI1pG8+M33Yt1G2DMnrmtFrRMOuDu2hlcxwSwGQnJ1KynHwDbhpME0ei8z0PWdhe
+hkrGAi8fcGJvPIWf1oNDcVApR2r+3hzoVuj0+gLmrPZ/7MnM65yUPJqf1nQiMFqw
+6HeuUyWLu0oE+fuZp+1xHF2x2FhJcVr09NA89KLOD6z10KmIWIgcgvbm4ySDB7pB
+QlOuWKkhGhJht0HWkPHequub6kfk4R8ugtz0N3YmegLvWiDhr0qCfFQO5oZlDR6Q
+pvOJOe4TatfTi2seJa++rgqsq58Q2WUgHQaZ1SYmIeVHtf2hFwbfoY2iaWpiXUOO
+fO7ZrWUmI8tL3CZ/irKwARsoN18M5zL0RiVKFUv7/WMRlZ/A7HJRdWrxR0ifaAU3
+mEVu+u7sMqW+2Nu5jl0p
+=LFxX
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__28_Oct_2013_20_24_42_+1100_vfWK/gyPhHXn7=c9--
