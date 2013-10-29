@@ -1,121 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the pci tree
-Date: Tue, 29 Oct 2013 17:33:11 +1100
-Message-ID: <20131029173311.1872490e2255157a5528d405@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Tue, 29 Oct 2013 18:04:02 +1100
+Message-ID: <20131029180402.5b62321cff41e1352a7ba3f7@canb.auug.org.au>
+References: <20131029013317.a33ae4ff86b88ea17bb58e74@canb.auug.org.au>
+	<2bf73b4c-8905-4889-bdd1-6bdae2c54bbd@CH1EHSMHS036.ehs.local>
+	<20131028163333.GA4797@kroah.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__29_Oct_2013_17_33_11_+1100_N+qGZw1O+lzBdCEJ"
+ boundary="Signature=_Tue__29_Oct_2013_18_04_02_+1100_/b8lvFT.ReI05eoY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53081 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55910 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751208Ab3J2Gdi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Oct 2013 02:33:38 -0400
+	with ESMTP id S1751324Ab3J2HEU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Oct 2013 03:04:20 -0400
+In-Reply-To: <20131028163333.GA4797@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Chen, Gong" <gong.chen@linux.intel.com>, Tony Luck <tony.luck@intel.com>, Bjorn Helgaas <bhelgaas@google.com>
+To: Greg KH <greg@kroah.com>
+Cc: =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Suneel Garapati <suneelg@xilinx.com>, Vlad Lungu <vlad.lungu@windriver.com>
 
---Signature=_Tue__29_Oct_2013_17_33_11_+1100_N+qGZw1O+lzBdCEJ
-Content-Type: text/plain; charset=US-ASCII
+--Signature=_Tue__29_Oct_2013_18_04_02_+1100_/b8lvFT.ReI05eoY
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-include/linux/acpi.h between commit c8678473609b ("ACPI: Tidy acpi_run_osc
-() declarations") from the pci tree and commit 4b3db708b114 ("ACPI, x86:
-Extended error log driver for x86 platform") from the tip tree.
+On Mon, 28 Oct 2013 09:33:33 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> On Mon, Oct 28, 2013 at 09:05:37AM -0700, S=C3=B6ren Brinkmann wrote:
+> > On Tue, Oct 29, 2013 at 01:33:17AM +1100, Stephen Rothwell wrote:
+> > >=20
+> > > After merging the final tree, today's linux-next build (powerpc
+> > > allyesconfig) failed like this:
+> > >=20
+> > > drivers/tty/serial/xilinx_uartps.c: In function 'xuartps_clk_notifier=
+_cb':
+> > > drivers/tty/serial/xilinx_uartps.c:436:7: error: 'PRE_RATE_CHANGE' un=
+declared (first use in this function)
+> > >   case PRE_RATE_CHANGE:
+> > >        ^
+> > > drivers/tty/serial/xilinx_uartps.c:436:7: note: each undeclared ident=
+ifier is reported only once for each function it appears in
+> > > drivers/tty/serial/xilinx_uartps.c:446:36: error: dereferencing point=
+er to incomplete type
+> > >    if (!xuartps_calc_baud_divs(ndata->new_rate, xuartps->baud,
+> > >                                     ^
+> > >=20
+> > > Caused by commits in the tty tree.
+> > >=20
+> > > I have left this broken for today.
+> >=20
+> > I already sent a series to Greg which should fix the x86 build of the
+> > tty tree. I think he didn't apply those patches yet.
+>=20
+> Yes, I have them, sorry, been traveling, will get to them later today...
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
+As a temporary work around, I will disable xilinx_uartps in linux-next
+today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/acpi.h
-index 35e68358ad06,c30bac8503bc..000000000000
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@@ -294,33 -294,32 +294,34 @@@ void __init acpi_nvs_nosave_s3(void)
-  #endif /* CONFIG_PM_SLEEP */
- =20
-  struct acpi_osc_context {
- -	char *uuid_str; /* uuid string */
- +	char *uuid_str;			/* UUID string */
-  	int rev;
- -	struct acpi_buffer cap; /* arg2/arg3 */
- -	struct acpi_buffer ret; /* free by caller if success */
- +	struct acpi_buffer cap;		/* list of DWORD capabilities */
- +	struct acpi_buffer ret;		/* free by caller if success */
-  };
- =20
- -#define OSC_QUERY_TYPE			0
- -#define OSC_SUPPORT_TYPE 		1
- -#define OSC_CONTROL_TYPE		2
- -
- -/* _OSC DW0 Definition */
- -#define OSC_QUERY_ENABLE		1
- -#define OSC_REQUEST_ERROR		2
- -#define OSC_INVALID_UUID_ERROR		4
- -#define OSC_INVALID_REVISION_ERROR	8
- -#define OSC_CAPABILITIES_MASK_ERROR	16
- -
-+ acpi_status acpi_str_to_uuid(char *str, u8 *uuid);
-  acpi_status acpi_run_osc(acpi_handle handle, struct acpi_osc_context *con=
-text);
- =20
- -/* platform-wide _OSC bits */
- -#define OSC_SB_PAD_SUPPORT		1
- -#define OSC_SB_PPC_OST_SUPPORT		2
- -#define OSC_SB_PR3_SUPPORT		4
- -#define OSC_SB_HOTPLUG_OST_SUPPORT	8
- -#define OSC_SB_APEI_SUPPORT		16
- +/* Indexes into _OSC Capabilities Buffer (DWORDs 2 & 3 are device-specifi=
-c) */
- +#define OSC_QUERY_DWORD				0	/* DWORD 1 */
- +#define OSC_SUPPORT_DWORD			1	/* DWORD 2 */
- +#define OSC_CONTROL_DWORD			2	/* DWORD 3 */
- +
- +/* _OSC Capabilities DWORD 1: Query/Control and Error Returns (generic) */
- +#define OSC_QUERY_ENABLE			0x00000001  /* input */
- +#define OSC_REQUEST_ERROR			0x00000002  /* return */
- +#define OSC_INVALID_UUID_ERROR			0x00000004  /* return */
- +#define OSC_INVALID_REVISION_ERROR		0x00000008  /* return */
- +#define OSC_CAPABILITIES_MASK_ERROR		0x00000010  /* return */
- +
- +/* Platform-Wide Capabilities _OSC: Capabilities DWORD 2: Support Field */
- +#define OSC_SB_PAD_SUPPORT			0x00000001
- +#define OSC_SB_PPC_OST_SUPPORT			0x00000002
- +#define OSC_SB_PR3_SUPPORT			0x00000004
- +#define OSC_SB_HOTPLUG_OST_SUPPORT		0x00000008
- +#define OSC_SB_APEI_SUPPORT			0x00000010
- +#define OSC_SB_CPC_SUPPORT			0x00000020
- =20
-  extern bool osc_sb_apei_support_acked;
- =20
-
---Signature=_Tue__29_Oct_2013_17_33_11_+1100_N+qGZw1O+lzBdCEJ
+--Signature=_Tue__29_Oct_2013_18_04_02_+1100_/b8lvFT.ReI05eoY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSb1arAAoJEMDTa8Ir7ZwV0Y8P/RHLRvGInWxT1GIOQH0irC8V
-rJU2cp7mbCACILbzve7SEAJDGcdUm4bVSgSSptM4SpzEuVASv49XGwJ5BExzgK69
-WxkJfSX1/OpcQ4uilO2Bqy5wR9Y4lXcDhCWKTTljhD4mtlAP2EP/Lj/yfJ4BDrnE
-PsLs9vXuP1YldBC7jY4TUeWXdoMndPECW58wooXoaC4WOwkgBifwRAuwDhQ5IZHK
-NVvLgBJd/GWdqOf8BXAb42J9dI8OyohUrthOn3T66SA8Y0dSBcCd31zEz0P4nsOo
-1F38IIgudPxI51hhkSh2Ip12v1CTYpjDavbPI23h5uvT7/8ZcpEyju6Pu+o24twd
-L6Gu5qK238MtJHeMHzSKfaSPLFKb61HM1MJPNme7nfI05scBdUL1bcpsPnGFbaRs
-3xbAeI274g+pvJdRSpUNgaRVuKIY/FSToTYCjbci2CG5Tb0PSkzsd+AP8ae0FKEn
-QMdlpyuw0fPTakmIm+zs7Vg7+e/0cFe1rl9CbQRJL7jj48y9Y01eZKaIpwtqNXwj
-HsrsE38bE/qicR8Zk7dMs+4tTgYV02gVrfob+pyr1h6kYxOvAXA6EuQoXz2y0oMs
-i+5W1TvJQ0/8B3JMmc+CnzktKjscxxTv5Tp52sc1s1qxdO8x9B5PdwuJnw8CjkTx
-wc5kWhoC7mY+b9gKTrcQ
-=ZbFF
+iQIcBAEBCAAGBQJSb13nAAoJEMDTa8Ir7ZwVha8QAIalVo62HIGWWl7CkhT+ji10
+F/7p9vkspOeo+lsSSoih9Q/+Lae6E/br/YgHdgPlK/18BELjkrx8TkqcNIBoD6uR
++iYUq/sNe9f6FBN0Li8nFHNa2npIdXyi3ooBPcD/kIA6uoFAX9OiSEFrFDwQ9PTn
+ogzOTPV55y3Ivmwd8y79da63uFB0LRSTj8BOYyDI73iOunDakQHsSURT+AKp+c+0
+DD3/9n1mvvIkhU83oXVJMKdAogzHF6gL3OtdPiovT37mwPupG19OpchW3yOA8N0s
+VGNzIHKV5jCsKAEzuBgaAGncO3mu8RQx9+fqVVWz0eb35lZ9Ea9+DD7RD2aF36ZG
+yx3jH6a5rsvmX9zHcuwVkflUOfD10FsopMrDwGtyA5kgpjxKJ/f2dTVb1amBPCb5
+4hvTrH0x6rRyzK8uQoKxZ4kVb0ohSrLeBDNhMhw6+JsY6pKkok7W+WaMbllaUJ9W
+ydaC9wPlhqGQawBhjtqBZ5PpRjRIt5xWRmSxHHs3GHiCxa8/bPc1hdyPwC+WMgT+
+yoiY2nl8CKzPglgsaEv3sKG1xXk3OQK3qjuclJVOhxtElFJpglzCa/K3a6dDjN7f
+UMwc3pWGoFsEXoNblp8/WU2jbU+7B537jL24HJjV76pO9e45tv3gsNW8YcjEDI9D
+aQ/DnMmsj7pvwoNe+RtR
+=4l50
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__29_Oct_2013_17_33_11_+1100_N+qGZw1O+lzBdCEJ--
+--Signature=_Tue__29_Oct_2013_18_04_02_+1100_/b8lvFT.ReI05eoY--
