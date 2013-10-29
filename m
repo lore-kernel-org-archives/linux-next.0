@@ -1,111 +1,98 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the v9fs tree
-Date: Tue, 29 Oct 2013 13:46:08 +1100
-Message-ID: <20131029134608.3544a5cc3d17fd2bec78f2c1@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Tue, 29 Oct 2013 17:00:53 +1100
+Message-ID: <20131029170053.c1a6473af8ff8d63f09aff78@canb.auug.org.au>
+References: <20131028202442.5033ddf42639863d5f1dcf67@canb.auug.org.au>
+	<20131028101823.GA3512@ulmo.nvidia.com>
+	<20131028102604.GA6127@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__29_Oct_2013_13_46_08_+1100_KvRovJsPMGTHQ218"
+ boundary="Signature=_Tue__29_Oct_2013_17_00_53_+1100_qdVuWAmHPUmp5nE3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50289 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40094 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757884Ab3J2Cq0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Oct 2013 22:46:26 -0400
+	with ESMTP id S1751842Ab3J2GBR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Oct 2013 02:01:17 -0400
+In-Reply-To: <20131028102604.GA6127@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dominique Martinet <dominique.martinet@cea.fr>, Eric Van Hensbergen <ericvh@gmail.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__29_Oct_2013_13_46_08_+1100_KvRovJsPMGTHQ218
+--Signature=_Tue__29_Oct_2013_17_00_53_+1100_qdVuWAmHPUmp5nE3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Ingo,
 
-Today's linux-next merge of the vfs tree got conflicts in
-fs/9p/vfs_file.c, fs/9p/vfs_inode_dotl.c and fs/9p/vfs_inode.c between
-commit 94876b5bb6a8 ("9P: introduction of a new cache=3Dmmap model") from
-the v9fs tree and commit 2b052ff59861 ("9p: make v9fs_cache_inode_
-{get,put,set}_cookie empty inlines for !9P_CACHEFS") from the vfs tree.
+On Mon, 28 Oct 2013 11:26:04 +0100 Ingo Molnar <mingo@kernel.org> wrote:
+>
+> * Thierry Reding <thierry.reding@gmail.com> wrote:
+>=20
+> > On Mon, Oct 28, 2013 at 08:24:42PM +1100, Stephen Rothwell wrote:
+> > >=20
+> > > After merging the tip tree, today's linux-next build (powerpc
+> > > ppc64_defconfig) failed like this:
+> > >=20
+> > > In file included from /scratch/sfr/next/include/linux/mmzone.h:9:0,
+> > >                  from /scratch/sfr/next/include/linux/gfp.h:4,
+> > >                  from /scratch/sfr/next/include/linux/kmod.h:22,
+> > >                  from /scratch/sfr/next/include/linux/module.h:13,
+> > >                  from /scratch/sfr/next/block/blk-mq.c:2:
+> > > /scratch/sfr/next/block/blk-mq.c: In function 'blk_mq_queue_enter':
+> > > /scratch/sfr/next/include/linux/wait.h:772:2: error: expected ';' bef=
+ore '__ret'
+> > >   __ret;        \
+> > >   ^
+> > > /scratch/sfr/next/block/blk-mq.c:108:8: note: in expansion of macro '=
+wait_event_interruptible_lock_irq'
+> > >   ret =3D wait_event_interruptible_lock_irq(q->mq_freeze_wq,
+> > >         ^
+> > > /scratch/sfr/next/block/blk-mq.c:108:6: error: void value not ignored=
+ as it ought to be
+> > >   ret =3D wait_event_interruptible_lock_irq(q->mq_freeze_wq,
+> > >       ^
+> > >=20
+> > > Caused by commit 35a2af94c7ce ("sched/wait: Make the __wait_event*()
+> > > interface more friendly").
+> > >=20
+> > > Since this was also in next-20131025, I applied the following merge f=
+ix
+> > > commit for today, please fix this in the tip tree.
+> >=20
+> > FWIW I got confirmation on Oct 23 that this had been committed to the
+> > tip tree. So I guess it just wasn't pushed yet.
+>=20
+> I merged the fix intoo the linux-next branch earlier today so it=20
+> should be resolved soon.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Excellent, thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/9p/vfs_file.c
-index d1ab081f6a4e,a0df3e73c2b1..000000000000
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@@ -107,12 -105,8 +107,10 @@@ int v9fs_file_open(struct inode *inode
-  		v9inode->writeback_fid =3D (void *) fid;
-  	}
-  	mutex_unlock(&v9inode->v_mutex);
-- #ifdef CONFIG_9P_FSCACHE
- -	if (v9ses->cache)
- +	/* previous check would also set cookie with CACHE_LOOSE?
- +	 * set_cookie does a check if v9inode->fscache anyway... */
- +	if (v9ses->cache =3D=3D CACHE_FSCACHE)
-  		v9fs_cache_inode_set_cookie(inode, file);
-- #endif
-  	return 0;
-  out_error:
-  	p9_client_clunk(file->private_data);
-diff --cc fs/9p/vfs_inode.c
-index fd077485426b,4e65aa903345..000000000000
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@@ -911,10 -901,8 +907,8 @@@ v9fs_vfs_atomic_open(struct inode *dir
-  		goto error;
- =20
-  	file->private_data =3D fid;
-- #ifdef CONFIG_9P_FSCACHE
- -	if (v9ses->cache)
- +	if (v9ses->cache =3D=3D CACHE_LOOSE || v9ses->cache =3D=3D CACHE_FSCACHE)
-  		v9fs_cache_inode_set_cookie(dentry->d_inode, file);
-- #endif
- =20
-  	*opened |=3D FILE_CREATED;
-  out:
-diff --cc fs/9p/vfs_inode_dotl.c
-index e68ca293fc9d,4c10edec26a0..000000000000
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@@ -356,10 -353,8 +354,8 @@@ v9fs_vfs_atomic_open_dotl(struct inode=20
-  	if (err)
-  		goto err_clunk_old_fid;
-  	file->private_data =3D ofid;
-- #ifdef CONFIG_9P_FSCACHE
- -	if (v9ses->cache)
- +	if (v9ses->cache =3D=3D CACHE_LOOSE || v9ses->cache =3D=3D CACHE_FSCACHE)
-  		v9fs_cache_inode_set_cookie(inode, file);
-- #endif
-  	*opened |=3D FILE_CREATED;
-  out:
-  	v9fs_put_acl(dacl, pacl);
-
---Signature=_Tue__29_Oct_2013_13_46_08_+1100_KvRovJsPMGTHQ218
+--Signature=_Tue__29_Oct_2013_17_00_53_+1100_qdVuWAmHPUmp5nE3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSbyF5AAoJEMDTa8Ir7ZwVW2QP/ijIB6SHSnhIFrt+NHXk1Mq4
-PB7MN0ZMJlNgNYqqZzP6m/Rd5kJ/wec/yB1MIq60FzcEWcz/bpLRAVcBSvwDZIVl
-Pr4DkGba1bzxz0Hp8162z7Vq7gt5fcSzGghd/OWFJ2WmSm8pQkcRhqIGiO5wd8lD
-E/jm9foVaOdZNT9EJ6HNeHfeTmKFbinaP7FgRlzx9gh2jUUlHCEMNpKGJcZjf6i7
-jeRBgPlSgGefAx3FkV+/KpyyQjGQ7LYCmgZSCr5sbgB53RDHuJfUUwuTFxB+j2TM
-RZuh+4dmRcaMTcfm3N0dBMg511pdd5i4h1Y28ziKDA0nZRZAxoy+5nfE0dGqhZeI
-HMR7k+g90uZTVaTqfMYPsOrhLyKe3fJTnUZgY5zzwJH2uDzBivPm6FOTritW88Sg
-4ko9AhDtD+RDzNsuhPtOA44M9wNIPAmKQNjpOZnWpw4t0qbomc82ks0y5kX+pK9t
-a3or9y89Wx7a0bN7+GeNgGEdEkWIuRpcQiyYwaQ60P97j+0avHvrdwN04pgsljaz
-As/jJ4Ua1P/9lCsPiEiD5qNXjnf/nuhBphCSQSl6uHg/9p/xcMLIqZT/or90kH9m
-5tk+tnqF3lqDYeYZi+JNtPU6gnHSY+HBMU0wxfflhAq0xQFBLnkTDEcMKWVeSsGS
-o+YRiFt1iqJWUxnY4hEm
-=qk/O
+iQIcBAEBCAAGBQJSb08ZAAoJEMDTa8Ir7ZwVk/MP/ReT+bkKeFRZeXXjSNhh3zcr
+OW5/Bg1d9RZntDnt/mDE+JuiH4wQZJx/vq85lZcXWgAX6TcyY+J7cLlkuwKLFPVk
+8KqfG4PtkVmgA/IdCHp74+slU+rFwp7/cQMNcHiBsGUWwT6aipLzn+8Tj0H2qXJm
+H4XaDiCAJP3Rqe1xEgJziCmDTDd1hl8U1TLsK9AobCN12tuK6Bt5/uD0zNO2V1yj
+z35mEFMExQIEkxqIgBlr0BN0GNQmN3wht0OYQKuqpLyd+95VZseiQgwCDm6vGVVn
+S+CdQUmSkDvptee4tdwhLVLzDNa2x3viJE8cS+NXB/sXivcsCQ+UqpIYOf+CyJMU
+RIf5AJCNgCj0BSdZaFb4SxBgsY6wHx/hqmYear7TG7elBkecNLqPwM5KDVZAwqb9
+VVkDFLDadtm/Vjh0OYi5yITZwW8OyVlhRYTKcQSQ4TZGt23HVgbzDrOZ9wFSMYpJ
+QrPBHV4gQFZFO3rz+E6xMipTVz6ZXsjFxnRAJ9oprc4qAP4VxHawF1l9+EHta7CN
+3I3eUK29R/jWMXeC4gL5B3X1R4E2xNM9kqVMxclfRsJurCeDw549h1R6WoTsC7Xw
+URzp2b85/37sRB5E4MUbxpNc2F/uz4r+aVgwUpdsXak2Uc/uAkPWIgVP/h0cHGpy
+T9h3ykkibWZh8EN3yLkO
+=DkVt
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__29_Oct_2013_13_46_08_+1100_KvRovJsPMGTHQ218--
+--Signature=_Tue__29_Oct_2013_17_00_53_+1100_qdVuWAmHPUmp5nE3--
