@@ -1,97 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (gpio tree
- related)
-Date: Tue, 29 Oct 2013 20:10:13 +1100
-Message-ID: <20131029201013.cc93b7f5eca956bf6ff04e68@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Tue, 29 Oct 2013 20:16:22 +1100
+Message-ID: <20131029201622.c8cb7bea9b360a98a2c66f74@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__29_Oct_2013_20_10_13_+1100_A+n2vQ00.otZShiP"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Tue__29_Oct_2013_20_16_22_+1100__AXsz9ZMzX/oBmyL"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54542 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751168Ab3J2JQa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Oct 2013 05:16:30 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__29_Oct_2013_20_10_13_+1100_A+n2vQ00.otZShiP
+--Signature=_Tue__29_Oct_2013_20_16_22_+1100__AXsz9ZMzX/oBmyL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (sparc32 defconfig)
+After merging the final tree, today's linux-next build (arm defconfig)
 failed like this:
 
-In file included from drivers/spi/spi.c:33:0:
-include/linux/of_gpio.h: In function 'of_get_named_gpio_flags':
-include/linux/of_gpio.h:93:3: error: implicit declaration of function 'desc=
-_to_gpio' [-Werror=3Dimplicit-function-declaration]
+drivers/built-in.o: In function `mmc_gpio_request_cd':
+clkdev.c:(.text+0x75c3c): undefined reference to `devm_gpio_request_one'
 
-Caused by commit af8b6375a829 ("gpiolib: port of_ functions to use
-gpiod") from the gpio tree.
-
-I have applied the following patch for today (it should go into the gpio
-tree if it is considered correct):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 29 Oct 2013 20:05:12 +1100
-Subject: [PATCH] gpiolib: include gpio/consumer.h in of_gpio.h for
- desc_to_gpio()
-
-Fixes this build error on sparc:
-
-In file included from drivers/spi/spi.c:33:0:
-include/linux/of_gpio.h: In function 'of_get_named_gpio_flags':
-include/linux/of_gpio.h:93:3: error: implicit declaration of function 'desc=
-_to_gpio' [-Werror=3Dimplicit-function-declaration]
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/of_gpio.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index d71f2cc141ae..f14123a5a9df 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -19,9 +19,9 @@
- #include <linux/errno.h>
- #include <linux/gpio.h>
- #include <linux/of.h>
-+#include <linux/gpio/consumer.h>
-=20
- struct device_node;
--struct gpio_desc;
-=20
- /*
-  * This is Linux-specific flags. By default controllers' and Linux' mapping
---=20
-1.8.4.rc3
-
+CONFIG_GPIO_DEVRES is not defined for this build.  I am not sure what
+made the above error show up, and I have left it broken for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__29_Oct_2013_20_10_13_+1100_A+n2vQ00.otZShiP
+--Signature=_Tue__29_Oct_2013_20_16_22_+1100__AXsz9ZMzX/oBmyL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSb3t6AAoJEMDTa8Ir7ZwVk+EP/RjA6TBts6xcve05dI8XNBk5
-/3IrQk2KeClJTczJJJbJ5kNQ1/VYuW8Pk1rvqWFRAJ3CYH7wKGXAIwvQ+8y1nzag
-W6uZJE1uJNGbjRl/cugkVfPdmWG0R5UGMd36LXS3jjuyy+LkUo6GRXcnXDe6nab1
-1h0nZBT7NN3qtQ3YtFFdT+zkwozYTCIt3LR6BSbZj3S75tdpMECUPd/oQ84ALM+D
-vxUYfTIW4VOYq559p1U7UQlLsKoUGEyT0AjhdOQ5lJ7rk9yy0JMmuJ+krqWmBpiB
-0rAaEtCzawinv5vl1PtnoNAihLELberV/s4KmN97zDjBftu6EmCgy5kqP7NHsOsP
-5UhGYL0FFCTvIyxHoxmOJqBqeJVtrob0VoyquKoOEryIGIuNwL8hnMpCb7AlVGZc
-mEjFAbGrYijblvwoMhWlp6ded6nzNwbmFe4edb7YWpD8iVblznakeGSR8FU9JiJl
-IsLRfLnumT/onq1hFp5mSyasgO9jTh3XoNAL7iotlwyRoUh/ZNAfgYMM1JvusdOH
-bu5j7oDsWYmmht/luOECpAUGFcesOSYv2usBvp15w1yt4yTCcNR109PVIQzUs3F/
-ADRx3VhvPKna+zJZXsEPGE+qQAxORW+l4ZBPh9+sgEM62KY1onwuLwVuc78wE6hq
-YqnbQGjFw5wLVfOYw5lm
-=2vcx
+iQIcBAEBCAAGBQJSb3zrAAoJEMDTa8Ir7ZwVTtYP/RNVc7Usvfv0PaiNtC25e9Gf
+adwK2FUODYX4TUOw+ttxmJGlLIzPqIctiVRbzuDuVItyotaVyZEduCYbdNUWDX0W
+39YrPptVkfi7iwtAZZ++dKAtmoyrIWE3ar5yk5JbC9Ha+HBz9tDVzmL5ilR0RbWg
+MQMusGGXjKmdits+Zz2CGLQpOOxd1soL7wYkRNwB6a1/HMPQfEXHbcPdTlOBt+/2
+5ytWijEGerghZ+KAZARDawcSqEU65TWYSet6qZrZSm1AVhsr4tGKOgxFfSLm69ZB
+0nhumeEOpc9wJv+JSx2tlwmnZ6Kd3FZ5sGZ8el+K4xew1sN2hySsDcoe6aw2f3oq
+Nigado/y52NwKPzYn9tklgAg5gRAS6JtP1kI+47eoVmpZ2q29bOYzez/dqi2LVV2
+v/YEg836yc66PLfEHVeKtSQfTvMfxWHCFCdynQv6C9f2ElnAYdebcjOcF3Bno5Y9
+cX08Q+BnXVN6NrrdRMGR3GWp+RadmB+BeMdsr3aGB/HmctP1yRwqp+aKkEshMZQw
+C8JzDKhIkGJ+kWNxSYvnBbtf330vkrnDEx7a4ubYMd8ITTOPhgBsw51Gz47QceHg
+hDNN5WUABotl58CPQXhSTp4AvQOWfxrtCCJBCQOWqjFE77Jgyvqf4PR6FD+8/WOb
+3AazwOkK3LOUz3C+uvTi
+=PCH9
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__29_Oct_2013_20_10_13_+1100_A+n2vQ00.otZShiP--
+--Signature=_Tue__29_Oct_2013_20_16_22_+1100__AXsz9ZMzX/oBmyL--
