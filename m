@@ -1,88 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Tue, 29 Oct 2013 18:04:02 +1100
-Message-ID: <20131029180402.5b62321cff41e1352a7ba3f7@canb.auug.org.au>
-References: <20131029013317.a33ae4ff86b88ea17bb58e74@canb.auug.org.au>
-	<2bf73b4c-8905-4889-bdd1-6bdae2c54bbd@CH1EHSMHS036.ehs.local>
-	<20131028163333.GA4797@kroah.com>
+Subject: linux-next: manual merge of the arm-soc tree with the  tree
+Date: Tue, 29 Oct 2013 18:57:14 +1100
+Message-ID: <20131029185714.f6a1eef0e6700b989bbdf5dc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__29_Oct_2013_18_04_02_+1100_/b8lvFT.ReI05eoY"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55910 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751324Ab3J2HEU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Oct 2013 03:04:20 -0400
-In-Reply-To: <20131028163333.GA4797@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Suneel Garapati <suneelg@xilinx.com>, Vlad Lungu <vlad.lungu@windriver.com>
+ boundary="Signature=_Tue__29_Oct_2013_18_57_14_+1100_+KuC8KQGUKEsinI+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__29_Oct_2013_18_04_02_+1100_/b8lvFT.ReI05eoY
-Content-Type: text/plain; charset=UTF-8
+--Signature=_Tue__29_Oct_2013_18_57_14_+1100_+KuC8KQGUKEsinI+
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 28 Oct 2013 09:33:33 -0700 Greg KH <greg@kroah.com> wrote:
->
-> On Mon, Oct 28, 2013 at 09:05:37AM -0700, S=C3=B6ren Brinkmann wrote:
-> > On Tue, Oct 29, 2013 at 01:33:17AM +1100, Stephen Rothwell wrote:
-> > >=20
-> > > After merging the final tree, today's linux-next build (powerpc
-> > > allyesconfig) failed like this:
-> > >=20
-> > > drivers/tty/serial/xilinx_uartps.c: In function 'xuartps_clk_notifier=
-_cb':
-> > > drivers/tty/serial/xilinx_uartps.c:436:7: error: 'PRE_RATE_CHANGE' un=
-declared (first use in this function)
-> > >   case PRE_RATE_CHANGE:
-> > >        ^
-> > > drivers/tty/serial/xilinx_uartps.c:436:7: note: each undeclared ident=
-ifier is reported only once for each function it appears in
-> > > drivers/tty/serial/xilinx_uartps.c:446:36: error: dereferencing point=
-er to incomplete type
-> > >    if (!xuartps_calc_baud_divs(ndata->new_rate, xuartps->baud,
-> > >                                     ^
-> > >=20
-> > > Caused by commits in the tty tree.
-> > >=20
-> > > I have left this broken for today.
-> >=20
-> > I already sent a series to Greg which should fix the x86 build of the
-> > tty tree. I think he didn't apply those patches yet.
->=20
-> Yes, I have them, sorry, been traveling, will get to them later today...
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/Kconfig between commit 85649711a895 ("ARM: gemini: delete
+<mach/gpio.h>") from the gpio tree and commit f3372c01816e ("ARM: gemini:
+convert to GENERIC_CLOCKEVENTS") from the arm-soc tree.
 
-As a temporary work around, I will disable xilinx_uartps in linux-next
-today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__29_Oct_2013_18_04_02_+1100_/b8lvFT.ReI05eoY
+diff --cc arch/arm/Kconfig
+index 55be62c92b60,04163fece49f..000000000000
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@@ -391,8 -385,10 +390,9 @@@ config ARCH_CLPS711
+  config ARCH_GEMINI
+  	bool "Cortina Systems Gemini"
+  	select ARCH_REQUIRE_GPIOLIB
+- 	select ARCH_USES_GETTIMEOFFSET
++ 	select CLKSRC_MMIO
+  	select CPU_FA526
++ 	select GENERIC_CLOCKEVENTS
+ -	select NEED_MACH_GPIO_H
+  	help
+  	  Support for the Cortina Systems Gemini family SoCs
+ =20
+
+--Signature=_Tue__29_Oct_2013_18_57_14_+1100_+KuC8KQGUKEsinI+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSb13nAAoJEMDTa8Ir7ZwVha8QAIalVo62HIGWWl7CkhT+ji10
-F/7p9vkspOeo+lsSSoih9Q/+Lae6E/br/YgHdgPlK/18BELjkrx8TkqcNIBoD6uR
-+iYUq/sNe9f6FBN0Li8nFHNa2npIdXyi3ooBPcD/kIA6uoFAX9OiSEFrFDwQ9PTn
-ogzOTPV55y3Ivmwd8y79da63uFB0LRSTj8BOYyDI73iOunDakQHsSURT+AKp+c+0
-DD3/9n1mvvIkhU83oXVJMKdAogzHF6gL3OtdPiovT37mwPupG19OpchW3yOA8N0s
-VGNzIHKV5jCsKAEzuBgaAGncO3mu8RQx9+fqVVWz0eb35lZ9Ea9+DD7RD2aF36ZG
-yx3jH6a5rsvmX9zHcuwVkflUOfD10FsopMrDwGtyA5kgpjxKJ/f2dTVb1amBPCb5
-4hvTrH0x6rRyzK8uQoKxZ4kVb0ohSrLeBDNhMhw6+JsY6pKkok7W+WaMbllaUJ9W
-ydaC9wPlhqGQawBhjtqBZ5PpRjRIt5xWRmSxHHs3GHiCxa8/bPc1hdyPwC+WMgT+
-yoiY2nl8CKzPglgsaEv3sKG1xXk3OQK3qjuclJVOhxtElFJpglzCa/K3a6dDjN7f
-UMwc3pWGoFsEXoNblp8/WU2jbU+7B537jL24HJjV76pO9e45tv3gsNW8YcjEDI9D
-aQ/DnMmsj7pvwoNe+RtR
-=4l50
+iQIcBAEBCAAGBQJSb2peAAoJEMDTa8Ir7ZwVECsP/1jI8IAV3tqXnS7odzRtlbVa
+tph2rtv4SI9IQ3dwk4LCh0h4SQmzUwW+1PqQyJ2xQSk6lc/Big6cVfriIUK39Fa6
+nrbINZoA3VHdB2ONZZzfDuLaqvx7YEwgN1j5CZXg7bazyGr3THbyAD04w/J0gSeI
+RoddLBOl7ZDUUPnSHBl05e3RUgalEizIk5hV2Wo4giC0QPCkMPYn58tPX43tSJ+w
+swbA49caGkCPXiBnwa+yJywUNRZb7lZoPz9R3gBNOksdB2tuFgKiKaDITc/BAZwh
+JwgU6taQlxlx0x9hsBcWor0h4eFRDjVp48OimWOHgKdRPcOTDX9XgQZXKpptubY7
+W/Oha8Ix64HlAIBgxn1kUJe0VGQvVkyH1GtGZk+ZR//oculnGnqRtqczxAFGbfRF
+Ib9MJwYBNG13IS62koBFKxdErrgQMt+2RkVsFStEc6jkcVdna9RlHdC4AQAHUSiB
+wl+gQc0Mcl6dk4IqTw2egH2l32WBKC5S0I554FNuIf5qDUD5ocZ41zukJDZsfrrl
+CoqkhXBC2QCM0u70GLbZlEVFg+TTFd8dbrX27nB6V1dx6kCfI114QXdCoTraegzE
+npBbvTtQbvOXyDqLbwLHI1VC8+EiEnsve9sFWnj+nVQa7ovicOJ17GahqwU7l7t9
++dEWilcqZKooV9IBYRtf
+=mq9d
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__29_Oct_2013_18_04_02_+1100_/b8lvFT.ReI05eoY--
+--Signature=_Tue__29_Oct_2013_18_57_14_+1100_+KuC8KQGUKEsinI+--
