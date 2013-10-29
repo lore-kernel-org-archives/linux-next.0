@@ -1,106 +1,97 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: linux-next: build failure after merge of the final tree (fbdev
- tree related)
-Date: Tue, 29 Oct 2013 10:50:28 +0200
-Message-ID: <526F76D4.5090404@ti.com>
-References: <20131029012317.b9ba8173dee5bac1a5bd2404@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (gpio tree
+ related)
+Date: Tue, 29 Oct 2013 20:10:13 +1100
+Message-ID: <20131029201013.cc93b7f5eca956bf6ff04e68@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="QehwGFLxiRbx444Pr0ffx2WnvrcgQ7G9T"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:36045 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751040Ab3J2Iur (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 29 Oct 2013 04:50:47 -0400
-In-Reply-To: <20131029012317.b9ba8173dee5bac1a5bd2404@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__29_Oct_2013_20_10_13_+1100_A+n2vQ00.otZShiP"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+List-Id: linux-next.vger.kernel.org
 
---QehwGFLxiRbx444Pr0ffx2WnvrcgQ7G9T
-Content-Type: text/plain; charset=ISO-8859-1
+--Signature=_Tue__29_Oct_2013_20_10_13_+1100_A+n2vQ00.otZShiP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 28/10/13 16:23, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the final tree, today's linux-next build (powerpc
-> ppc44x_defconfig) failed like this:
->=20
-> drivers/video/xilinxfb.c: In function 'xilinxfb_of_probe':
-> drivers/video/xilinxfb.c:431:30: error: 'op' undeclared (first use in t=
-his function)
->=20
-> Caused by commit 353846fb8bb7 ("video: xilinxfb: Use standard variable
-> name convention") from the fbdev tree.
->=20
-> I have applied the following fix patch for today:
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 29 Oct 2013 01:18:22 +1100
-> Subject: [PATCH] video: xilinxfb: Fix for "Use standard variable name c=
-onvention"
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/video/xilinxfb.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/video/xilinxfb.c b/drivers/video/xilinxfb.c
-> index 9eedf9673b7f..6ff1a91e9dfd 100644
-> --- a/drivers/video/xilinxfb.c
-> +++ b/drivers/video/xilinxfb.c
-> @@ -428,11 +428,11 @@ static int xilinxfb_of_probe(struct platform_devi=
-ce *pdev)
->  #ifdef CONFIG_PPC_DCR
->  	else {
->  		int start;
-> -		start =3D dcr_resource_start(op->dev.of_node, 0);
-> -		drvdata->dcr_len =3D dcr_resource_len(op->dev.of_node, 0);
-> -		drvdata->dcr_host =3D dcr_map(op->dev.of_node, start, drvdata->dcr_l=
-en);
-> +		start =3D dcr_resource_start(pdev->dev.of_node, 0);
-> +		drvdata->dcr_len =3D dcr_resource_len(pdev->dev.of_node, 0);
-> +		drvdata->dcr_host =3D dcr_map(pdev->dev.of_node, start, drvdata->dcr=
-_len);
->  		if (!DCR_MAP_OK(drvdata->dcr_host)) {
-> -			dev_err(&op->dev, "invalid DCR address\n");
-> +			dev_err(&pdev->dev, "invalid DCR address\n");
->  			return -ENODEV;
->  		}
->  	}
->=20
+Hi all,
 
-Thanks, I have applied this to the fbdev tree.
+After merging the final tree, today's linux-next build (sparc32 defconfig)
+failed like this:
 
- Tomi
+In file included from drivers/spi/spi.c:33:0:
+include/linux/of_gpio.h: In function 'of_get_named_gpio_flags':
+include/linux/of_gpio.h:93:3: error: implicit declaration of function 'desc=
+_to_gpio' [-Werror=3Dimplicit-function-declaration]
 
+Caused by commit af8b6375a829 ("gpiolib: port of_ functions to use
+gpiod") from the gpio tree.
 
+I have applied the following patch for today (it should go into the gpio
+tree if it is considered correct):
 
---QehwGFLxiRbx444Pr0ffx2WnvrcgQ7G9T
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 29 Oct 2013 20:05:12 +1100
+Subject: [PATCH] gpiolib: include gpio/consumer.h in of_gpio.h for
+ desc_to_gpio()
+
+Fixes this build error on sparc:
+
+In file included from drivers/spi/spi.c:33:0:
+include/linux/of_gpio.h: In function 'of_get_named_gpio_flags':
+include/linux/of_gpio.h:93:3: error: implicit declaration of function 'desc=
+_to_gpio' [-Werror=3Dimplicit-function-declaration]
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/of_gpio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
+index d71f2cc141ae..f14123a5a9df 100644
+--- a/include/linux/of_gpio.h
++++ b/include/linux/of_gpio.h
+@@ -19,9 +19,9 @@
+ #include <linux/errno.h>
+ #include <linux/gpio.h>
+ #include <linux/of.h>
++#include <linux/gpio/consumer.h>
+=20
+ struct device_node;
+-struct gpio_desc;
+=20
+ /*
+  * This is Linux-specific flags. By default controllers' and Linux' mapping
+--=20
+1.8.4.rc3
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__29_Oct_2013_20_10_13_+1100_A+n2vQ00.otZShiP
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSb3bUAAoJEPo9qoy8lh71ef4P/1l2B9oEZJ2swaRrUsDof+x4
-opbHCrM4V9I5pYYeAJMqFcWMTDMXOevjTJd4ZsJxUNzniv59BZVeizNgZqtjoOH1
-LhQiMZe4tq0/KTC6nNAMkz+ly2dZCniZp8WMYcbJCeNoMfDk9Iq1n1UTrQO6Mav4
-LWjGYe8BfOKp1h6Wlio8XhxSSJC/8sNoEGAvUb5d7Qjemos7eFh9bP835wLMfWNl
-VvGDrQzn2whDi7WhqZ65MbuIMcEK16sk4H1AqtXjmMp0brJQMFAPAfTI6Gy3Nebe
-Zl9eTu917xI+rJUJEw2KQ5f3bIx7VmQSw/BdgmNUKEw8bbVrGDPwuALU3A6FogZG
-YpOOO2z65qe6HAcA5bfxsY4myWpWokMfZV+7csFKLmmjdE3nr+HjzhHaeTQ5JbEQ
-RMtE0LxDdRGgiOrcthwzUV09GMnp9FLaVF8Ux7bHZG0ccvDRiD+/UyIxund/rjmT
-fDUyF0mgekzJc5uwORzMVj8AthjEeSzC8Xe+12AJI/yX+m+E6Tk5FD6EO9r3kZpm
-VKHa2myiOurqWutVZ/EUP91ItEU2QkYLwQRLpMatnz+es093Pz563Q7xSr/dvfpK
-3tIOahLSzVHwlrqRDWms+72hm729hKl9yeV4AlpdoErTs6fcWbRWjRP9eTydUHPe
-k89yJF/Jcx20QRkkEUDx
-=rzv3
+iQIcBAEBCAAGBQJSb3t6AAoJEMDTa8Ir7ZwVk+EP/RjA6TBts6xcve05dI8XNBk5
+/3IrQk2KeClJTczJJJbJ5kNQ1/VYuW8Pk1rvqWFRAJ3CYH7wKGXAIwvQ+8y1nzag
+W6uZJE1uJNGbjRl/cugkVfPdmWG0R5UGMd36LXS3jjuyy+LkUo6GRXcnXDe6nab1
+1h0nZBT7NN3qtQ3YtFFdT+zkwozYTCIt3LR6BSbZj3S75tdpMECUPd/oQ84ALM+D
+vxUYfTIW4VOYq559p1U7UQlLsKoUGEyT0AjhdOQ5lJ7rk9yy0JMmuJ+krqWmBpiB
+0rAaEtCzawinv5vl1PtnoNAihLELberV/s4KmN97zDjBftu6EmCgy5kqP7NHsOsP
+5UhGYL0FFCTvIyxHoxmOJqBqeJVtrob0VoyquKoOEryIGIuNwL8hnMpCb7AlVGZc
+mEjFAbGrYijblvwoMhWlp6ded6nzNwbmFe4edb7YWpD8iVblznakeGSR8FU9JiJl
+IsLRfLnumT/onq1hFp5mSyasgO9jTh3XoNAL7iotlwyRoUh/ZNAfgYMM1JvusdOH
+bu5j7oDsWYmmht/luOECpAUGFcesOSYv2usBvp15w1yt4yTCcNR109PVIQzUs3F/
+ADRx3VhvPKna+zJZXsEPGE+qQAxORW+l4ZBPh9+sgEM62KY1onwuLwVuc78wE6hq
+YqnbQGjFw5wLVfOYw5lm
+=2vcx
 -----END PGP SIGNATURE-----
 
---QehwGFLxiRbx444Pr0ffx2WnvrcgQ7G9T--
+--Signature=_Tue__29_Oct_2013_20_10_13_+1100_A+n2vQ00.otZShiP--
