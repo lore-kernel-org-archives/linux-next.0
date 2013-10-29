@@ -1,98 +1,121 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 29 Oct 2013 17:00:53 +1100
-Message-ID: <20131029170053.c1a6473af8ff8d63f09aff78@canb.auug.org.au>
-References: <20131028202442.5033ddf42639863d5f1dcf67@canb.auug.org.au>
-	<20131028101823.GA3512@ulmo.nvidia.com>
-	<20131028102604.GA6127@gmail.com>
+Subject: linux-next: manual merge of the tip tree with the pci tree
+Date: Tue, 29 Oct 2013 17:33:11 +1100
+Message-ID: <20131029173311.1872490e2255157a5528d405@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__29_Oct_2013_17_00_53_+1100_qdVuWAmHPUmp5nE3"
+ boundary="Signature=_Tue__29_Oct_2013_17_33_11_+1100_N+qGZw1O+lzBdCEJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40094 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53081 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751842Ab3J2GBR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Oct 2013 02:01:17 -0400
-In-Reply-To: <20131028102604.GA6127@gmail.com>
+	with ESMTP id S1751208Ab3J2Gdi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Oct 2013 02:33:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Chen, Gong" <gong.chen@linux.intel.com>, Tony Luck <tony.luck@intel.com>, Bjorn Helgaas <bhelgaas@google.com>
 
---Signature=_Tue__29_Oct_2013_17_00_53_+1100_qdVuWAmHPUmp5nE3
+--Signature=_Tue__29_Oct_2013_17_33_11_+1100_N+qGZw1O+lzBdCEJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ingo,
+Hi all,
 
-On Mon, 28 Oct 2013 11:26:04 +0100 Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Thierry Reding <thierry.reding@gmail.com> wrote:
->=20
-> > On Mon, Oct 28, 2013 at 08:24:42PM +1100, Stephen Rothwell wrote:
-> > >=20
-> > > After merging the tip tree, today's linux-next build (powerpc
-> > > ppc64_defconfig) failed like this:
-> > >=20
-> > > In file included from /scratch/sfr/next/include/linux/mmzone.h:9:0,
-> > >                  from /scratch/sfr/next/include/linux/gfp.h:4,
-> > >                  from /scratch/sfr/next/include/linux/kmod.h:22,
-> > >                  from /scratch/sfr/next/include/linux/module.h:13,
-> > >                  from /scratch/sfr/next/block/blk-mq.c:2:
-> > > /scratch/sfr/next/block/blk-mq.c: In function 'blk_mq_queue_enter':
-> > > /scratch/sfr/next/include/linux/wait.h:772:2: error: expected ';' bef=
-ore '__ret'
-> > >   __ret;        \
-> > >   ^
-> > > /scratch/sfr/next/block/blk-mq.c:108:8: note: in expansion of macro '=
-wait_event_interruptible_lock_irq'
-> > >   ret =3D wait_event_interruptible_lock_irq(q->mq_freeze_wq,
-> > >         ^
-> > > /scratch/sfr/next/block/blk-mq.c:108:6: error: void value not ignored=
- as it ought to be
-> > >   ret =3D wait_event_interruptible_lock_irq(q->mq_freeze_wq,
-> > >       ^
-> > >=20
-> > > Caused by commit 35a2af94c7ce ("sched/wait: Make the __wait_event*()
-> > > interface more friendly").
-> > >=20
-> > > Since this was also in next-20131025, I applied the following merge f=
-ix
-> > > commit for today, please fix this in the tip tree.
-> >=20
-> > FWIW I got confirmation on Oct 23 that this had been committed to the
-> > tip tree. So I guess it just wasn't pushed yet.
->=20
-> I merged the fix intoo the linux-next branch earlier today so it=20
-> should be resolved soon.
+Today's linux-next merge of the tip tree got a conflict in
+include/linux/acpi.h between commit c8678473609b ("ACPI: Tidy acpi_run_osc
+() declarations") from the pci tree and commit 4b3db708b114 ("ACPI, x86:
+Extended error log driver for x86 platform") from the tip tree.
 
-Excellent, thanks.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__29_Oct_2013_17_00_53_+1100_qdVuWAmHPUmp5nE3
+diff --cc include/linux/acpi.h
+index 35e68358ad06,c30bac8503bc..000000000000
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@@ -294,33 -294,32 +294,34 @@@ void __init acpi_nvs_nosave_s3(void)
+  #endif /* CONFIG_PM_SLEEP */
+ =20
+  struct acpi_osc_context {
+ -	char *uuid_str; /* uuid string */
+ +	char *uuid_str;			/* UUID string */
+  	int rev;
+ -	struct acpi_buffer cap; /* arg2/arg3 */
+ -	struct acpi_buffer ret; /* free by caller if success */
+ +	struct acpi_buffer cap;		/* list of DWORD capabilities */
+ +	struct acpi_buffer ret;		/* free by caller if success */
+  };
+ =20
+ -#define OSC_QUERY_TYPE			0
+ -#define OSC_SUPPORT_TYPE 		1
+ -#define OSC_CONTROL_TYPE		2
+ -
+ -/* _OSC DW0 Definition */
+ -#define OSC_QUERY_ENABLE		1
+ -#define OSC_REQUEST_ERROR		2
+ -#define OSC_INVALID_UUID_ERROR		4
+ -#define OSC_INVALID_REVISION_ERROR	8
+ -#define OSC_CAPABILITIES_MASK_ERROR	16
+ -
++ acpi_status acpi_str_to_uuid(char *str, u8 *uuid);
+  acpi_status acpi_run_osc(acpi_handle handle, struct acpi_osc_context *con=
+text);
+ =20
+ -/* platform-wide _OSC bits */
+ -#define OSC_SB_PAD_SUPPORT		1
+ -#define OSC_SB_PPC_OST_SUPPORT		2
+ -#define OSC_SB_PR3_SUPPORT		4
+ -#define OSC_SB_HOTPLUG_OST_SUPPORT	8
+ -#define OSC_SB_APEI_SUPPORT		16
+ +/* Indexes into _OSC Capabilities Buffer (DWORDs 2 & 3 are device-specifi=
+c) */
+ +#define OSC_QUERY_DWORD				0	/* DWORD 1 */
+ +#define OSC_SUPPORT_DWORD			1	/* DWORD 2 */
+ +#define OSC_CONTROL_DWORD			2	/* DWORD 3 */
+ +
+ +/* _OSC Capabilities DWORD 1: Query/Control and Error Returns (generic) */
+ +#define OSC_QUERY_ENABLE			0x00000001  /* input */
+ +#define OSC_REQUEST_ERROR			0x00000002  /* return */
+ +#define OSC_INVALID_UUID_ERROR			0x00000004  /* return */
+ +#define OSC_INVALID_REVISION_ERROR		0x00000008  /* return */
+ +#define OSC_CAPABILITIES_MASK_ERROR		0x00000010  /* return */
+ +
+ +/* Platform-Wide Capabilities _OSC: Capabilities DWORD 2: Support Field */
+ +#define OSC_SB_PAD_SUPPORT			0x00000001
+ +#define OSC_SB_PPC_OST_SUPPORT			0x00000002
+ +#define OSC_SB_PR3_SUPPORT			0x00000004
+ +#define OSC_SB_HOTPLUG_OST_SUPPORT		0x00000008
+ +#define OSC_SB_APEI_SUPPORT			0x00000010
+ +#define OSC_SB_CPC_SUPPORT			0x00000020
+ =20
+  extern bool osc_sb_apei_support_acked;
+ =20
+
+--Signature=_Tue__29_Oct_2013_17_33_11_+1100_N+qGZw1O+lzBdCEJ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSb08ZAAoJEMDTa8Ir7ZwVk/MP/ReT+bkKeFRZeXXjSNhh3zcr
-OW5/Bg1d9RZntDnt/mDE+JuiH4wQZJx/vq85lZcXWgAX6TcyY+J7cLlkuwKLFPVk
-8KqfG4PtkVmgA/IdCHp74+slU+rFwp7/cQMNcHiBsGUWwT6aipLzn+8Tj0H2qXJm
-H4XaDiCAJP3Rqe1xEgJziCmDTDd1hl8U1TLsK9AobCN12tuK6Bt5/uD0zNO2V1yj
-z35mEFMExQIEkxqIgBlr0BN0GNQmN3wht0OYQKuqpLyd+95VZseiQgwCDm6vGVVn
-S+CdQUmSkDvptee4tdwhLVLzDNa2x3viJE8cS+NXB/sXivcsCQ+UqpIYOf+CyJMU
-RIf5AJCNgCj0BSdZaFb4SxBgsY6wHx/hqmYear7TG7elBkecNLqPwM5KDVZAwqb9
-VVkDFLDadtm/Vjh0OYi5yITZwW8OyVlhRYTKcQSQ4TZGt23HVgbzDrOZ9wFSMYpJ
-QrPBHV4gQFZFO3rz+E6xMipTVz6ZXsjFxnRAJ9oprc4qAP4VxHawF1l9+EHta7CN
-3I3eUK29R/jWMXeC4gL5B3X1R4E2xNM9kqVMxclfRsJurCeDw549h1R6WoTsC7Xw
-URzp2b85/37sRB5E4MUbxpNc2F/uz4r+aVgwUpdsXak2Uc/uAkPWIgVP/h0cHGpy
-T9h3ykkibWZh8EN3yLkO
-=DkVt
+iQIcBAEBCAAGBQJSb1arAAoJEMDTa8Ir7ZwV0Y8P/RHLRvGInWxT1GIOQH0irC8V
+rJU2cp7mbCACILbzve7SEAJDGcdUm4bVSgSSptM4SpzEuVASv49XGwJ5BExzgK69
+WxkJfSX1/OpcQ4uilO2Bqy5wR9Y4lXcDhCWKTTljhD4mtlAP2EP/Lj/yfJ4BDrnE
+PsLs9vXuP1YldBC7jY4TUeWXdoMndPECW58wooXoaC4WOwkgBifwRAuwDhQ5IZHK
+NVvLgBJd/GWdqOf8BXAb42J9dI8OyohUrthOn3T66SA8Y0dSBcCd31zEz0P4nsOo
+1F38IIgudPxI51hhkSh2Ip12v1CTYpjDavbPI23h5uvT7/8ZcpEyju6Pu+o24twd
+L6Gu5qK238MtJHeMHzSKfaSPLFKb61HM1MJPNme7nfI05scBdUL1bcpsPnGFbaRs
+3xbAeI274g+pvJdRSpUNgaRVuKIY/FSToTYCjbci2CG5Tb0PSkzsd+AP8ae0FKEn
+QMdlpyuw0fPTakmIm+zs7Vg7+e/0cFe1rl9CbQRJL7jj48y9Y01eZKaIpwtqNXwj
+HsrsE38bE/qicR8Zk7dMs+4tTgYV02gVrfob+pyr1h6kYxOvAXA6EuQoXz2y0oMs
+i+5W1TvJQ0/8B3JMmc+CnzktKjscxxTv5Tp52sc1s1qxdO8x9B5PdwuJnw8CjkTx
+wc5kWhoC7mY+b9gKTrcQ
+=ZbFF
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__29_Oct_2013_17_00_53_+1100_qdVuWAmHPUmp5nE3--
+--Signature=_Tue__29_Oct_2013_17_33_11_+1100_N+qGZw1O+lzBdCEJ--
