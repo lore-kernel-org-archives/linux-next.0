@@ -1,72 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next build failure
-Date: Thu, 31 Oct 2013 07:37:00 +1100
-Message-ID: <20131031073700.f9642ce6c35674a45b3905bc@canb.auug.org.au>
-References: <1383146865.11574.3.camel@deneb.redhat.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH -next] Fix printk_once build errors due to
+ __read_mostly
+Date: Wed, 30 Oct 2013 13:48:39 -0700
+Message-ID: <20131030134839.8bdf70cc68d1bf0beb1fb63a@linux-foundation.org>
+References: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__31_Oct_2013_07_37_00_+1100_O+I9JuAxaFYHRTJW"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45372 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752343Ab3J3UhL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Oct 2013 16:37:11 -0400
-In-Reply-To: <1383146865.11574.3.camel@deneb.redhat.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48008 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751797Ab3J3Usk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Oct 2013 16:48:40 -0400
+In-Reply-To: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Salter <msalter@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, ccross@android.com, Andrew Morton <akpm@linux-foundation.org>
+To: James Hogan <james.hogan@imgtec.com>
+Cc: Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-metag@vger.kernel.org
 
---Signature=_Thu__31_Oct_2013_07_37_00_+1100_O+I9JuAxaFYHRTJW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 30 Oct 2013 10:18:21 +0000 James Hogan <james.hogan@imgtec.com> wrote:
 
-[Jut add Andrew to the cc list]
+> Commit 3e39c1ab04ba (printk: mark printk_once test variable
+> __read_mostly) added __read_mostly to the __print_once bool in the
+> printk_once() macro, but __read_mostly is defined in <linux/cache.h>
+> which isn't included from <linux/printk.h>. This results in build errors
+> like this:
+> 
+> arch/metag/mm/l2cache.c: In function 'meta_l2c_setup':
+> arch/metag/mm/l2cache.c:56: error: '__read_mostly' undeclared
+> 
+> This is fixed by adding an include of <linux/cache.h> from
+> <linux/printk.h> since I don't think printk_once() users should need to
+> include <linux/cache.h> for it to work.
+> 
+> Note that this actually adds a recursive include, since <linux/cache.h>
+> includes <linux/kernel.h>, which includes <linux/printk.h>. The actual
+> dependencies are all in macros so it doesn't actually seem to result in
+> any build failures, but it's clearly less than ideal.
 
-On Wed, 30 Oct 2013 11:27:45 -0400 Mark Salter <msalter@redhat.com> wrote:
->
-> This patch causes a build failure for no-MMU builds:
->=20
->   commit 41df2957cb010edfa2f9d394d3617da6beeeb660
->   Author: Colin Cross <ccross@android.com>
->   Date:   Wed Oct 30 11:45:39 2013 +1100
->=20
->       mm: add a field to store names for private anonymous memory
->    =20
-> The problem is:
->=20
->   kernel/built-in.o: In function `sys_prctl':
->   (.text+0x19854): undefined reference to `madvise_set_anon_name'
->=20
-> madvise doesn't make sense without an MMU.
->=20
-> --Mark
+Yitch.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> Signed-off-by: James Hogan <james.hogan@imgtec.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: linux-metag@vger.kernel.org
+> ---
+> This build failure was caught in today's linux-next.
+> 
+> I'm not too keen on this due to the recursive include. Is it better to
+> just workaround the problem by including <linux/cache.h> from the .c
+> file that fails to build, or should the original patch be removed
+> instead?
 
---Signature=_Thu__31_Oct_2013_07_37_00_+1100_O+I9JuAxaFYHRTJW
-Content-Type: application/pgp-signature
+Well, these patches make the kernel worse.  We should make it better,
+not worse.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+One approach would be to add a new printk_once.h, which includes
+printk.h and cache.h.
 
-iQIcBAEBCAAGBQJScW3yAAoJEMDTa8Ir7ZwV7xEP/jbNCZtFOWZoRIYDhpwe5ciS
-+P+cD/5N/TjbUvVJXQVhwn75cg1jIIujuxaJx98jtrwdHxqSmks63XeIMaT7Kr6o
-havPP/q9cemVo8DFgDV+YcUoRpScI64wNtuPjgzuQVtXTBCnZQZlJDah5H7DjcXg
-Ty6AmF5MvNTyIWdmfI/U3W/IUSISiSHGPjzI+lQ5lDKQ3stJ9pp6Q+S8KF8H4s6e
-SewwnsEqzhe7j/PQgnw3xTOH7LOFLrcH4QU7n3/GeBVt9kkAMYcx+unYOrN7LY6D
-E11aclOBmifcNR1kGUiJkhQ/C5V6SiJBSH10527X59XOzcKg1cg2U0dF6JcTCWAE
-omXfKaTMzGeow/WChH3HyGEiuBOYZ7ycFNXvqQ9fcsHTLkJnwmTHppxdQj+8pTg5
-KXWNJDP5O5yXECChgQtSy84oDD1ay41XShHrDhhEdmVrwCb1ZonelCladziKsOI+
-Y+pscLbY10FF6NUoDE8xAieqwQfu1MBYqIiYmZXjaddwCGtedFFQgy7vP9eHbaio
-qJ2Ak+jvJ+9+JLZ9P9VQu9Tg7qVgXt0LMJmVkR6X2b1GpMSe1uoHfWj/+ipLZkU6
-1OogjBZIAomoq0C2P322l/Lw8SZFR3Oub7j7G1QBIdhqlvdrcRtYYlqGA+rmM6kg
-y/XUkSFrv5Tf7TKi3/E5
-=Auu9
------END PGP SIGNATURE-----
-
---Signature=_Thu__31_Oct_2013_07_37_00_+1100_O+I9JuAxaFYHRTJW--
+I can't immediately think of a nice solution so I guess for now I'll
+drop printk-mark-printk_once-test-variable-__read_mostly.patch.
