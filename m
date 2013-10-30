@@ -1,95 +1,90 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2013-10-29-16-22 uploaded (input)
-Date: Tue, 29 Oct 2013 18:57:36 -0700
-Message-ID: <52706790.9090602@infradead.org>
-References: <20131029232351.D2E6F31C173@corp2gmr1-1.hot.corp.google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 30 Oct 2013 13:14:13 +1100
+Message-ID: <20131030131413.51b3be1c0b0ac49b15eb6a5d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__30_Oct_2013_13_14_13_+1100_M2eGa+aZxh.SWkwU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:35744 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751470Ab3J3B5j (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Oct 2013 21:57:39 -0400
-In-Reply-To: <20131029232351.D2E6F31C173@corp2gmr1-1.hot.corp.google.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:41213 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751167Ab3J3COY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Oct 2013 22:14:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: Samuel Thibault <samuel.thibault@ens-lyon.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nikolay Aleksandrov <nikolay@redhat.com>, Joe Perches <joe@perches.com>
 
-On 10/29/13 16:23, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2013-10-29-16-22 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (3.x
-> or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
-> 
-> This tree is partially included in linux-next.  To see which patches are
-> included in linux-next, consult the `series' file.  Only the patches
-> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> linux-next.
-> 
-> A git tree which contains the memory management portion of this tree is
-> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-> by Michal Hocko.  It contains the patches which are between the
-> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-> file, http://www.ozlabs.org/~akpm/mmotm/series.
+--Signature=_Wed__30_Oct_2013_13_14_13_+1100_M2eGa+aZxh.SWkwU
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-on 10 i386 builds, I see around 800 build errors like these:
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/netconsole.c between commit c7c6effdeffc ("netconsole: fix
+multiple race conditions") from the net tree and commit 22ded57729e6
+("netconsole: Convert to pr_<level>") from the net-next tree.
 
-arc_ps2.c:(.text+0x500): multiple definition of `input_led_connect'
-arc_ps2.c:(.text+0x510): multiple definition of `input_led_disconnect'
-twl4030-irq.c:(.text+0x3d0): multiple definition of `input_led_connect'
-twl4030-irq.c:(.text+0x3e0): multiple definition of `input_led_disconnect'
-twl6030-irq.c:(.text+0x0): multiple definition of `input_led_connect'
-twl6030-irq.c:(.text+0x10): multiple definition of `input_led_disconnect'
-twl4030-madc.c:(.text+0xaa0): multiple definition of `input_led_connect'
-twl4030-madc.c:(.text+0xab0): multiple definition of `input_led_disconnect'
-da9052-irq.c:(.text+0x20): multiple definition of `input_led_connect'
-da9052-irq.c:(.text+0x30): multiple definition of `input_led_disconnect'
-da9052-core.c:(.text+0x80): multiple definition of `input_led_connect'
-da9052-core.c:(.text+0x90): multiple definition of `input_led_disconnect'
-da9052-i2c.c:(.text+0x1b0): multiple definition of `input_led_connect'
-da9052-i2c.c:(.text+0x1c0): multiple definition of `input_led_disconnect'
-(.text+0x60): multiple definition of `input_led_connect'
-(.text+0x70): multiple definition of `input_led_disconnect'
-ozusbsvc1.c:(.text+0x110): multiple definition of `input_led_connect'
-ozusbsvc1.c:(.text+0x120): multiple definition of `input_led_disconnect'
-(.text+0xe3f0): multiple definition of `input_led_connect'
-(.text+0xe400): multiple definition of `input_led_disconnect'
-(.text+0x12eb10): multiple definition of `input_led_connect'
-(.text+0x12eb20): multiple definition of `input_led_disconnect'
-(.text+0x5f2c0): multiple definition of `input_led_connect'
-(.text+0x5f2d0): multiple definition of `input_led_disconnect'
-(.text+0x98b0): multiple definition of `input_led_connect'
-(.text+0x98c0): multiple definition of `input_led_disconnect'
-(.text+0x26f20): multiple definition of `input_led_connect'
-(.text+0x26f30): multiple definition of `input_led_disconnect'
-(.text+0x2850): multiple definition of `input_led_connect'
-(.text+0x2860): multiple definition of `input_led_disconnect'
+(Thanks for removing that spare blank line :-))
 
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-I suspect input-route-kbd-leds-through-the-generic-leds-layer.patch
-but I'm not sure of it.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+diff --cc drivers/net/netconsole.c
+index c9a15925a1f7,a8ef4c4b94be..000000000000
+--- a/drivers/net/netconsole.c
++++ b/drivers/net/netconsole.c
+@@@ -333,18 -336,14 +335,18 @@@ static ssize_t store_enabled(struct net
+  		netpoll_print_options(&nt->np);
+ =20
+  		err =3D netpoll_setup(&nt->np);
+ -		if (err) {
+ -			mutex_unlock(&nt->mutex);
+ +		if (err)
+  			return err;
+ -		}
+ =20
+- 		printk(KERN_INFO "netconsole: network logging started\n");
++ 		pr_info("network logging started\n");
+ -
+  	} else {	/* 0 */
+ +		/* We need to disable the netconsole before cleaning it up
+ +		 * otherwise we might end up in write_msg() with
+ +		 * nt->np.dev =3D=3D NULL and nt->enabled =3D=3D 1
+ +		 */
+ +		spin_lock_irqsave(&target_list_lock, flags);
+ +		nt->enabled =3D 0;
+ +		spin_unlock_irqrestore(&target_list_lock, flags);
+  		netpoll_cleanup(&nt->np);
+  	}
+ =20
 
+--Signature=_Wed__30_Oct_2013_13_14_13_+1100_M2eGa+aZxh.SWkwU
+Content-Type: application/pgp-signature
 
--- 
-~Randy
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJScGt5AAoJEMDTa8Ir7ZwVB88P/jc+1moeyOiW1LD5b0WAp2Xf
+Cy3mnffXsXc4mu9AkHPHidyI0fyXzO9sWiuR53Q8ezGep8Zc5GsS47oRKLxNzmwe
+zTtO33cAt/FYQuyw8bezzcGeytdt3CLm0AK0n1LX6We6+K2DQU7Ky+XUf1+82Hn8
+SQqu4AYfR2lqmPZRgR3492gTOXeO+PRf+vMAsEDQu7kwZzf/b54FGNjGDttU25s+
+NLmfVVAxlpctfY9BpwaTCUwxUhE3iH/D4g7OltLftmkvL1HWAqqdNV7nt4xrhjng
+e6YiAmX6f13QswR8ZkovR6NvJWzcstN1rmH2gRe8oW8rwLQugNaPlNJwPvqebBSV
+1m6NHDzjSKoHTQcaJs2QMLl+quZatQlcjWhwtmU/Qw8W/HaG8vHyHKVMQ5bkkGyV
+8wALM7ujvmmswgdmNy783B4fgOo/mPo/wWi6ELY1GDUQSY9qJVtHJAuW2E4xUsBO
+vLnDqDrPUoCr4dxtnFB4BCCCqwgcgS8u4PV0fFW/GevIOiELt61/y73LDhjSswk0
+ed2otAimsvqKhOass51tUxtuzJIotPMXBUReGKZ+szKLpBa79KNYOGJsM1CDhgdt
+o55TKET43LVEuHcAQWaDFAKwrM3V1Dx2XYAX3itHSDnppuHK5BDuN06MnOgJmBOd
+0l1qiRkHaeXVEUc6I0Gk
+=7mnK
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__30_Oct_2013_13_14_13_+1100_M2eGa+aZxh.SWkwU--
