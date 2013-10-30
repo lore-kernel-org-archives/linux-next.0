@@ -1,53 +1,60 @@
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Subject: [PATCH] Fix build without CONFIG_INPUT_LEDS [Was: mmotm
- 2013-10-29-16-22 uploaded (input)]
-Date: Wed, 30 Oct 2013 12:46:24 +0100
-Message-ID: <20131030114624.GY5442@type.youpi.perso.aquilenet.fr>
-References: <20131029232351.D2E6F31C173@corp2gmr1-1.hot.corp.google.com>
- <52706790.9090602@infradead.org>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [RFC PATCH -next] Fix printk_once build errors due to
+ __read_mostly
+Date: Wed, 30 Oct 2013 06:46:50 -0700
+Message-ID: <1383140810.12439.69.camel@joe-AO722>
+References: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <52706790.9090602@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtprelay0098.hostedemail.com ([216.40.44.98]:54843 "EHLO
+	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751611Ab3J3Nqy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Oct 2013 09:46:54 -0400
+In-Reply-To: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Hogan <james.hogan@imgtec.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-metag@vger.kernel.org
 
-Randy Dunlap, le Tue 29 Oct 2013 18:57:36 -0700, a =E9crit :
-> arc_ps2.c:(.text+0x500): multiple definition of `input_led_connect'
+On Wed, 2013-10-30 at 10:18 +0000, James Hogan wrote:
+> Commit 3e39c1ab04ba (printk: mark printk_once test variable
+> __read_mostly) added __read_mostly to the __print_once bool in the
+> printk_once() macro, but __read_mostly is defined in <linux/cache.h>
+> which isn't included from <linux/printk.h>. This results in build errors
+> like this:
+> 
+> arch/metag/mm/l2cache.c: In function 'meta_l2c_setup':
+> arch/metag/mm/l2cache.c:56: error: '__read_mostly' undeclared
+> 
+> This is fixed by adding an include of <linux/cache.h> from
+> <linux/printk.h> since I don't think printk_once() users should need to
+> include <linux/cache.h> for it to work.
+> 
+> Note that this actually adds a recursive include, since <linux/cache.h>
+> includes <linux/kernel.h>, which includes <linux/printk.h>. The actual
+> dependencies are all in macros so it doesn't actually seem to result in
+> any build failures, but it's clearly less than ideal.
 
-D'oh.  I indeed hadn't tested the inlines, sorry about this.
+Thanks James.
 
-Andrew, could you add the following patch on top of
-input-route-kbd-leds-through-the-generic-leds-layer.patch
-or perhaps rather fold into it?
+Oh well.  Pity about the recursive #include.
+It seems most every actual use of __read_mostly gets
+that cache.h include indirectly.
 
-Samuel
+Perhaps it's better just to remove the __read_mostly patch
+as the __read_mostly value is pretty low.
 
+Andrew, could you please remove my __read_mostly patch?
 
+I preferred that printk.h not be a file that
+could be independently used via #include.
 
-Really mark inlines as static inlines, so they are not defined multiple
-times.
+https://lkml.org/lkml/2011/5/25/331
+https://lkml.org/lkml/2011/5/25/333
 
-Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+and that only kernel.h should be used.
 
---- include/linux/input.h.orig	2013-10-30 12:42:41.169038670 +0100
-+++ include/linux/input.h	2013-10-30 12:42:42.908987157 +0100
-@@ -540,12 +540,12 @@
-=20
- #else
-=20
--int input_led_connect(struct input_dev *dev)
-+static inline int input_led_connect(struct input_dev *dev)
- {
- 	return 0;
- }
-=20
--void input_led_disconnect(struct input_dev *dev)
-+static inline void input_led_disconnect(struct input_dev *dev)
- {
- }
-=20
+Maybe that's still a better approach.
