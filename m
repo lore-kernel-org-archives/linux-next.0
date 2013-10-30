@@ -1,55 +1,72 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 29/51] DMA-API: ata: pata_octeon_cf: convert to use
-	dma_coerce_mask_and_coherent()
-Date: Wed, 30 Oct 2013 20:08:54 +0100
-Message-ID: <CAMuHMdWqAL6MN5VJrpAPC1fq3QtRWZ3UUMG3+6W5vEKSEm5N9g@mail.gmail.com>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
-	<E1VMmAk-0007iq-IU@rmk-PC.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next build failure
+Date: Thu, 31 Oct 2013 07:37:00 +1100
+Message-ID: <20131031073700.f9642ce6c35674a45b3905bc@canb.auug.org.au>
+References: <1383146865.11574.3.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <E1VMmAk-0007iq-IU@rmk-PC.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, Linux MMC List <linux-mmc@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, linux-nvme@lists.infradead.org, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>, linux-samsung-soc@vger.kernel.org, scsi <linux-scsi@vger.kernel.org>, e1000-devel@lists.sourceforge.net, Linux-Next <linux-next@vger.kernel.org>, b43-dev@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>, devicetree@vger.kernel.org, DRI Development <dri-devel@lists.freedesktop.org>, linux-tegra@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.o>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__31_Oct_2013_07_37_00_+1100_O+I9JuAxaFYHRTJW"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45372 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752343Ab3J3UhL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Oct 2013 16:37:11 -0400
+In-Reply-To: <1383146865.11574.3.camel@deneb.redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Salter <msalter@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, ccross@android.com, Andrew Morton <akpm@linux-foundation.org>
 
-On Thu, Sep 19, 2013 at 11:54 PM, Russell King
-<rmk+kernel@arm.linux.org.uk> wrote:
-> diff --git a/drivers/ata/pata_octeon_cf.c b/drivers/ata/pata_octeon_cf.c
-> index c51bbb9..6231d43 100644
-> --- a/drivers/ata/pata_octeon_cf.c
-> +++ b/drivers/ata/pata_octeon_cf.c
-> @@ -1014,8 +1014,9 @@ static int octeon_cf_probe(struct platform_device *pdev)
->         }
->         cf_port->c0 = ap->ioaddr.ctl_addr;
+--Signature=_Thu__31_Oct_2013_07_37_00_+1100_O+I9JuAxaFYHRTJW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+[Jut add Andrew to the cc list]
+
+On Wed, 30 Oct 2013 11:27:45 -0400 Mark Salter <msalter@redhat.com> wrote:
 >
-> -       pdev->dev.coherent_dma_mask = DMA_BIT_MASK(64);
-> -       pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
-> +       rv = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-> +       if (rv)
-> +               return ret;
+> This patch causes a build failure for no-MMU builds:
+>=20
+>   commit 41df2957cb010edfa2f9d394d3617da6beeeb660
+>   Author: Colin Cross <ccross@android.com>
+>   Date:   Wed Oct 30 11:45:39 2013 +1100
+>=20
+>       mm: add a field to store names for private anonymous memory
+>    =20
+> The problem is:
+>=20
+>   kernel/built-in.o: In function `sys_prctl':
+>   (.text+0x19854): undefined reference to `madvise_set_anon_name'
+>=20
+> madvise doesn't make sense without an MMU.
+>=20
+> --Mark
 
-return rv;
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/9959184/
+--Signature=_Thu__31_Oct_2013_07_37_00_+1100_O+I9JuAxaFYHRTJW
+Content-Type: application/pgp-signature
 
-Gr{oetje,eeting}s,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-                        Geert
+iQIcBAEBCAAGBQJScW3yAAoJEMDTa8Ir7ZwV7xEP/jbNCZtFOWZoRIYDhpwe5ciS
++P+cD/5N/TjbUvVJXQVhwn75cg1jIIujuxaJx98jtrwdHxqSmks63XeIMaT7Kr6o
+havPP/q9cemVo8DFgDV+YcUoRpScI64wNtuPjgzuQVtXTBCnZQZlJDah5H7DjcXg
+Ty6AmF5MvNTyIWdmfI/U3W/IUSISiSHGPjzI+lQ5lDKQ3stJ9pp6Q+S8KF8H4s6e
+SewwnsEqzhe7j/PQgnw3xTOH7LOFLrcH4QU7n3/GeBVt9kkAMYcx+unYOrN7LY6D
+E11aclOBmifcNR1kGUiJkhQ/C5V6SiJBSH10527X59XOzcKg1cg2U0dF6JcTCWAE
+omXfKaTMzGeow/WChH3HyGEiuBOYZ7ycFNXvqQ9fcsHTLkJnwmTHppxdQj+8pTg5
+KXWNJDP5O5yXECChgQtSy84oDD1ay41XShHrDhhEdmVrwCb1ZonelCladziKsOI+
+Y+pscLbY10FF6NUoDE8xAieqwQfu1MBYqIiYmZXjaddwCGtedFFQgy7vP9eHbaio
+qJ2Ak+jvJ+9+JLZ9P9VQu9Tg7qVgXt0LMJmVkR6X2b1GpMSe1uoHfWj/+ipLZkU6
+1OogjBZIAomoq0C2P322l/Lw8SZFR3Oub7j7G1QBIdhqlvdrcRtYYlqGA+rmM6kg
+y/XUkSFrv5Tf7TKi3/E5
+=Auu9
+-----END PGP SIGNATURE-----
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--Signature=_Thu__31_Oct_2013_07_37_00_+1100_O+I9JuAxaFYHRTJW--
