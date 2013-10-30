@@ -1,60 +1,33 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [RFC PATCH -next] Fix printk_once build errors due to
- __read_mostly
-Date: Wed, 30 Oct 2013 06:46:50 -0700
-Message-ID: <1383140810.12439.69.camel@joe-AO722>
-References: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>
+From: Mark Salter <msalter@redhat.com>
+Subject: linux-next build failure
+Date: Wed, 30 Oct 2013 11:27:45 -0400
+Message-ID: <1383146865.11574.3.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtprelay0098.hostedemail.com ([216.40.44.98]:54843 "EHLO
-	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751611Ab3J3Nqy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Oct 2013 09:46:54 -0400
-In-Reply-To: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>
+Received: from mx1.redhat.com ([209.132.183.28]:29581 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752455Ab3J3P1u (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Oct 2013 11:27:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-metag@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, ccross@android.com
 
-On Wed, 2013-10-30 at 10:18 +0000, James Hogan wrote:
-> Commit 3e39c1ab04ba (printk: mark printk_once test variable
-> __read_mostly) added __read_mostly to the __print_once bool in the
-> printk_once() macro, but __read_mostly is defined in <linux/cache.h>
-> which isn't included from <linux/printk.h>. This results in build errors
-> like this:
-> 
-> arch/metag/mm/l2cache.c: In function 'meta_l2c_setup':
-> arch/metag/mm/l2cache.c:56: error: '__read_mostly' undeclared
-> 
-> This is fixed by adding an include of <linux/cache.h> from
-> <linux/printk.h> since I don't think printk_once() users should need to
-> include <linux/cache.h> for it to work.
-> 
-> Note that this actually adds a recursive include, since <linux/cache.h>
-> includes <linux/kernel.h>, which includes <linux/printk.h>. The actual
-> dependencies are all in macros so it doesn't actually seem to result in
-> any build failures, but it's clearly less than ideal.
+This patch causes a build failure for no-MMU builds:
 
-Thanks James.
+  commit 41df2957cb010edfa2f9d394d3617da6beeeb660
+  Author: Colin Cross <ccross@android.com>
+  Date:   Wed Oct 30 11:45:39 2013 +1100
 
-Oh well.  Pity about the recursive #include.
-It seems most every actual use of __read_mostly gets
-that cache.h include indirectly.
+      mm: add a field to store names for private anonymous memory
+    
+The problem is:
 
-Perhaps it's better just to remove the __read_mostly patch
-as the __read_mostly value is pretty low.
+  kernel/built-in.o: In function `sys_prctl':
+  (.text+0x19854): undefined reference to `madvise_set_anon_name'
 
-Andrew, could you please remove my __read_mostly patch?
+madvise doesn't make sense without an MMU.
 
-I preferred that printk.h not be a file that
-could be independently used via #include.
-
-https://lkml.org/lkml/2011/5/25/331
-https://lkml.org/lkml/2011/5/25/333
-
-and that only kernel.h should be used.
-
-Maybe that's still a better approach.
+--Mark
