@@ -1,79 +1,95 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: [PATCH] Fix build without CONFIG_INPUT_LEDS [Was: mmotm
  2013-10-29-16-22 uploaded (input)]
-Date: Wed, 30 Oct 2013 16:23:34 -0700
-Message-ID: <20131030162334.f4d14c0b1b135cb38dce5dfb@linux-foundation.org>
+Date: Thu, 31 Oct 2013 10:27:59 +1100
+Message-ID: <20131031102759.9feb5963975c5ce97193d6d5@canb.auug.org.au>
 References: <20131029232351.D2E6F31C173@corp2gmr1-1.hot.corp.google.com>
 	<52706790.9090602@infradead.org>
 	<20131030114624.GY5442@type.youpi.perso.aquilenet.fr>
 	<20131031102012.599a7a256c48feed7832a208@canb.auug.org.au>
+	<20131030162334.f4d14c0b1b135cb38dce5dfb@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__31_Oct_2013_10_27_59_+1100_=ir5aj7e==4HWhYy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49959 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754534Ab3J3XXf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Oct 2013 19:23:35 -0400
-In-Reply-To: <20131031102012.599a7a256c48feed7832a208@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54924 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752532Ab3J3X2I (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Oct 2013 19:28:08 -0400
+In-Reply-To: <20131030162334.f4d14c0b1b135cb38dce5dfb@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Samuel Thibault <samuel.thibault@ens-lyon.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Thu, 31 Oct 2013 10:20:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Thu__31_Oct_2013_10_27_59_+1100_=ir5aj7e==4HWhYy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> On Wed, 30 Oct 2013 12:46:24 +0100 Samuel Thibault <samuel.thibault@ens-lyon.org> wrote:
-> >
-> > Randy Dunlap, le Tue 29 Oct 2013 18:57:36 -0700, a __crit :
-> > > arc_ps2.c:(.text+0x500): multiple definition of `input_led_connect'
-> > 
-> > D'oh.  I indeed hadn't tested the inlines, sorry about this.
-> > 
-> > Andrew, could you add the following patch on top of
-> > input-route-kbd-leds-through-the-generic-leds-layer.patch
-> > or perhaps rather fold into it?
-> > 
-> > Samuel
-> > 
-> > 
-> > 
-> > Really mark inlines as static inlines, so they are not defined multiple
-> > times.
-> > 
-> > Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
-> 
-> I have added that as a fix patch for the akpm-current tree for today.
+Hi Andrew,
 
-It needs this as well.
+On Wed, 30 Oct 2013 16:23:34 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>=20
+> It needs this as well.
+>=20
+> From: Andrew Morton <akpm@linux-foundation.org>
+> Subject: input-route-kbd-leds-through-the-generic-leds-layer-fix-fix
+>=20
+> use IS_ENABLED to pick up CONFIG_INPUT_LEDS=3Dm
+>=20
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: John Crispin <blogic@openwrt.org>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Samuel Thibault <samuel.thibault@ens-lyon.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>=20
+>  include/linux/input.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff -puN include/linux/input.h~input-route-kbd-leds-through-the-generic-=
+leds-layer-fix-fix include/linux/input.h
+> --- a/include/linux/input.h~input-route-kbd-leds-through-the-generic-leds=
+-layer-fix-fix
+> +++ a/include/linux/input.h
+> @@ -533,7 +533,7 @@ int input_ff_erase(struct input_dev *dev
+>  int input_ff_create_memless(struct input_dev *dev, void *data,
+>  		int (*play_effect)(struct input_dev *, void *, struct ff_effect *));
+> =20
+> -#ifdef CONFIG_INPUT_LEDS
+> +#if IS_ENABLED(CONFIG_INPUT_LEDS)
+> =20
+>  int input_led_connect(struct input_dev *dev);
+>  void input_led_disconnect(struct input_dev *dev);
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: input-route-kbd-leds-through-the-generic-leds-layer-fix-fix
+Added.
 
-use IS_ENABLED to pick up CONFIG_INPUT_LEDS=m
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: John Crispin <blogic@openwrt.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
+--Signature=_Thu__31_Oct_2013_10_27_59_+1100_=ir5aj7e==4HWhYy
+Content-Type: application/pgp-signature
 
- include/linux/input.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-diff -puN include/linux/input.h~input-route-kbd-leds-through-the-generic-leds-layer-fix-fix include/linux/input.h
---- a/include/linux/input.h~input-route-kbd-leds-through-the-generic-leds-layer-fix-fix
-+++ a/include/linux/input.h
-@@ -533,7 +533,7 @@ int input_ff_erase(struct input_dev *dev
- int input_ff_create_memless(struct input_dev *dev, void *data,
- 		int (*play_effect)(struct input_dev *, void *, struct ff_effect *));
- 
--#ifdef CONFIG_INPUT_LEDS
-+#if IS_ENABLED(CONFIG_INPUT_LEDS)
- 
- int input_led_connect(struct input_dev *dev);
- void input_led_disconnect(struct input_dev *dev);
-_
+iQIcBAEBCAAGBQJScZYDAAoJEMDTa8Ir7ZwV86sP/jkJMfjS/Oawy0YOuF4cgNT4
+FPTdV3TxVr68pn9IUgaVRPM/D2jeYHbVMwBoy0Xc3ZGj10hKCwEmomgfbPC0/hw4
+Vtb8Sq6Yv6rH80FQ7cA1fkt42swH3AhSNkeFiFdbxADcHTFecLiWUc7pH8bUWgTC
+cB5cEr7/N/xqyKQmNBUbl9DdA1VNENRk/EWXbgIO6JrR2HgsK9Qsq+zgqo75GP1s
+urj64XCsQlD7lAqx5AKqedaqxFIg9S8nC7NXj/ynBEQOvrqqlTR0YxZrECzQf+Zo
+1hrhMWLdSAVdtnuMB8Er0RdG06YLd7jmdiOwaX8QK7+bkp0Ar1DhY4nBm1dSKxhQ
+fd3fscDMPhi+23UtGqRT+wg3tcX2qFO8bC+fxiH4nM8bdlrVbWpjf37iOz0Gp2iX
+dYaGC1m0dhY9bII9nT6Jbz4tNPiAnZMw+T6U36ScnPqDssKDJxgkW1olG6ndQ0wK
+LKsL8H7h15x8vebCYidMfKWGQLHwyp24a6p1TVX7MVkiFTWCIGJChRqv4SDQ5e/K
+Qfvl7ahcX2B1vzjOId4CxUAFYfUijirzhzZ54pFZsz3fNmCsQwB7nwWG/0gP2dd6
+h/SrKkgX3+zwFThxziMn+KZYH2tWZSrypTVjBsvuRkjIJtN+xWNOx7oTe3sPMY7I
+EZCRM4wiqsObB8RgO4OE
+=ELbV
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__31_Oct_2013_10_27_59_+1100_=ir5aj7e==4HWhYy--
