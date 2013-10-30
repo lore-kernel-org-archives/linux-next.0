@@ -1,69 +1,93 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [RFC PATCH -next] Fix printk_once build errors due to
- __read_mostly
-Date: Wed, 30 Oct 2013 10:02:02 -0700
-Message-ID: <1383152522.9435.29.camel@joe-AO722>
-References: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>
+From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Subject: Re: linux-next: manual merge of the xen-tip tree with the  tree
+Date: Wed, 30 Oct 2013 17:34:28 +0000
+Message-ID: <alpine.DEB.2.02.1310301733230.26077@kaball.uk.xensource.com>
+References: <20131030160956.dfa5c1900c2decb0018061b9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="US-ASCII"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtprelay0151.hostedemail.com ([216.40.44.151]:35964 "EHLO
-	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751330Ab3J3RCG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Oct 2013 13:02:06 -0400
-In-Reply-To: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>
+Received: from smtp.citrix.com ([66.165.176.89]:27422 "EHLO SMTP.CITRIX.COM"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753893Ab3J3Rfk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Oct 2013 13:35:40 -0400
+In-Reply-To: <20131030160956.dfa5c1900c2decb0018061b9@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-metag@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Santosh Shilimkar <santosh.shilimkar@ti.com>
 
-On Wed, 2013-10-30 at 10:18 +0000, James Hogan wrote:
-> Commit 3e39c1ab04ba (printk: mark printk_once test variable
-> __read_mostly) added __read_mostly to the __print_once bool in the
-> printk_once() macro, but __read_mostly is defined in <linux/cache.h>
-> which isn't included from <linux/printk.h>. This results in build errors
-> like this:
-> 
-> arch/metag/mm/l2cache.c: In function 'meta_l2c_setup':
-> arch/metag/mm/l2cache.c:56: error: '__read_mostly' undeclared
-> 
-> This is fixed by adding an include of <linux/cache.h> from
-> <linux/printk.h> since I don't think printk_once() users should need to
-> include <linux/cache.h> for it to work.
-> 
-> Note that this actually adds a recursive include, since <linux/cache.h>
-> includes <linux/kernel.h>, which includes <linux/printk.h>. The actual
-> dependencies are all in macros so it doesn't actually seem to result in
-> any build failures, but it's clearly less than ideal.
-[]
-> I'm not too keen on this due to the recursive include. Is it better to
-> just workaround the problem by including <linux/cache.h> from the .c
-> file that fails to build, or should the original patch be removed
-> instead?
+Looks fine thanks!
+Just an heads up: I'll be updating the Xen code below soon so this
+conflict might come up again.
 
-Maybe also using this would help avoid some of the
-circular dependency:
----
- include/linux/cache.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/cache.h b/include/linux/cache.h
-index 4c57065..17e7e82 100644
---- a/include/linux/cache.h
-+++ b/include/linux/cache.h
-@@ -1,11 +1,11 @@
- #ifndef __LINUX_CACHE_H
- #define __LINUX_CACHE_H
- 
--#include <linux/kernel.h>
-+#include <uapi/linux/kernel.h>
- #include <asm/cache.h>
- 
- #ifndef L1_CACHE_ALIGN
--#define L1_CACHE_ALIGN(x) ALIGN(x, L1_CACHE_BYTES)
-+#define L1_CACHE_ALIGN(x) __ALIGN_KERNEL(x, L1_CACHE_BYTES)
- #endif
- 
- #ifndef SMP_CACHE_BYTES
+On Wed, 30 Oct 2013, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the xen-tip tree got a conflict in
+> arch/arm/include/asm/dma-mapping.h between commit 223016339ce7 ("ARM:
+> 7805/1: mm: change max*pfn to include the physical offset of memory")
+> from the arm tree and commit 06e6295bcece ("arm: make SWIOTLB available")
+> from the xen-tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/include/asm/dma-mapping.h
+> index 863cd84eb1a2,f5945d4e4e9f..000000000000
+> --- a/arch/arm/include/asm/dma-mapping.h
+> +++ b/arch/arm/include/asm/dma-mapping.h
+> @@@ -87,13 -98,42 +99,49 @@@ static inline dma_addr_t virt_to_dma(st
+>   }
+>   #endif
+>   
+>  +/* The ARM override for dma_max_pfn() */
+>  +static inline unsigned long dma_max_pfn(struct device *dev)
+>  +{
+>  +	return PHYS_PFN_OFFSET + dma_to_pfn(dev, *dev->dma_mask);
+>  +}
+>  +#define dma_max_pfn(dev) dma_max_pfn(dev)
+>  +
+> + static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
+> + {
+> + 	unsigned int offset = paddr & ~PAGE_MASK;
+> + 	return pfn_to_dma(dev, __phys_to_pfn(paddr)) + offset;
+> + }
+> + 
+> + static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dev_addr)
+> + {
+> + 	unsigned int offset = dev_addr & ~PAGE_MASK;
+> + 	return __pfn_to_phys(dma_to_pfn(dev, dev_addr)) + offset;
+> + }
+> + 
+> + static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
+> + {
+> + 	u64 limit, mask;
+> + 	
+> + 	if (dev->dma_mask)
+> + 		mask = *dev->dma_mask;
+> + 	else 
+> + 		mask = dev->coherent_dma_mask;
+> + 
+> + 	if (mask == 0)
+> + 		return 0;
+> + 
+> + 	limit = (mask + 1) & ~mask;
+> + 	if (limit && size > limit)
+> + 		return 0;
+> + 
+> + 	if ((addr | (addr + size - 1)) & ~mask)
+> + 		return 0;
+> + 
+> + 	return 1;
+> + }
+> + 
+> + static inline void dma_mark_clean(void *addr, size_t size) { }
+> + 
+>   /*
+>    * DMA errors are defined by all-bits-set in the DMA address.
+>    */
+> 
