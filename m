@@ -1,103 +1,95 @@
-From: Joe Perches <joe@perches.com>
-Subject: [PATCH V2] printk/cache: Mark printk_once test variable
- __read_mostly
-Date: Wed, 30 Oct 2013 16:01:42 -0700
-Message-ID: <1383174102.9435.54.camel@joe-AO722>
-References: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>
-	 <20131030134839.8bdf70cc68d1bf0beb1fb63a@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next build failure
+Date: Thu, 31 Oct 2013 10:17:50 +1100
+Message-ID: <20131031101750.194748bcf59ab6d91b247257@canb.auug.org.au>
+References: <1383146865.11574.3.camel@deneb.redhat.com>
+	<20131031073700.f9642ce6c35674a45b3905bc@canb.auug.org.au>
+	<20131030135042.9c40bca11370c2cfef29ff51@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__31_Oct_2013_10_17_50_+1100_VMpW83tcllj2v5c0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtprelay0221.hostedemail.com ([216.40.44.221]:51838 "EHLO
-	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751369Ab3J3XBr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Oct 2013 19:01:47 -0400
-In-Reply-To: <20131030134839.8bdf70cc68d1bf0beb1fb63a@linux-foundation.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:36997 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751167Ab3J3XSD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Oct 2013 19:18:03 -0400
+In-Reply-To: <20131030135042.9c40bca11370c2cfef29ff51@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: James Hogan <james.hogan@imgtec.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-metag@vger.kernel.org
+Cc: Mark Salter <msalter@redhat.com>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, ccross@android.com
 
-Add #include <linux/cache.h> to define __read_mostly.
+--Signature=_Thu__31_Oct_2013_10_17_50_+1100_VMpW83tcllj2v5c0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Convert cache.h to use uapi/linux/kernel.h instead
-of linux/kernel.h to avoid recursive #includes.
+Hi Andrew,
 
-Convert the ALIGN macro to __KERNEL_ALIGN.
+On Wed, 30 Oct 2013 13:50:42 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>
+> On Thu, 31 Oct 2013 07:37:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+>=20
+> > [Jut add Andrew to the cc list]
+> >=20
+> > On Wed, 30 Oct 2013 11:27:45 -0400 Mark Salter <msalter@redhat.com> wro=
+te:
+> > >
+> > > This patch causes a build failure for no-MMU builds:
+> > >=20
+> > >   commit 41df2957cb010edfa2f9d394d3617da6beeeb660
+> > >   Author: Colin Cross <ccross@android.com>
+> > >   Date:   Wed Oct 30 11:45:39 2013 +1100
+> > >=20
+> > >       mm: add a field to store names for private anonymous memory
+> > >    =20
+> > > The problem is:
+> > >=20
+> > >   kernel/built-in.o: In function `sys_prctl':
+> > >   (.text+0x19854): undefined reference to `madvise_set_anon_name'
+> > >=20
+> > > madvise doesn't make sense without an MMU.
+> > >=20
+> > > --Mark
+>=20
+> OK, thanks.  I'll drop
+>=20
+> mm-rearrange-madvise-code-to-allow-for-reuse.patch
+> mm-add-a-field-to-store-names-for-private-anonymous-memory.patch
+> mm-add-a-field-to-store-names-for-private-anonymous-memory-fix.patch
+> mm-add-a-field-to-store-names-for-private-anonymous-memory-fix-fix-2.patch
+>=20
+> for now.  They have other question marks - let's revisit everything
+> after 3.13-rc1.
 
-printk_once only sets the bool variable tested
-once so mark it __read_mostly.
+I have removed them from my copy of the mmotm tree ...
 
-Neaten the alignment so it matches the rest of the
-pr_<level>_once #defines too.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
-V2: Add cache.h which was nearly always used
-    indirectly via #include <some_other_file.h>,
-    generally module.h
-    Update cache.h to avoid recursive #include
+--Signature=_Thu__31_Oct_2013_10_17_50_+1100_VMpW83tcllj2v5c0
+Content-Type: application/pgp-signature
 
- include/linux/cache.h  |  4 ++--
- include/linux/printk.h | 19 ++++++++++---------
- 2 files changed, 12 insertions(+), 11 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-diff --git a/include/linux/cache.h b/include/linux/cache.h
-index 4c57065..63a1d97 100644
---- a/include/linux/cache.h
-+++ b/include/linux/cache.h
-@@ -1,11 +1,11 @@
- #ifndef __LINUX_CACHE_H
- #define __LINUX_CACHE_H
- 
--#include <linux/kernel.h>
-+#include <uapi/linux/kernel.h>
- #include <asm/cache.h>
- 
- #ifndef L1_CACHE_ALIGN
--#define L1_CACHE_ALIGN(x) ALIGN(x, L1_CACHE_BYTES)
-+#define L1_CACHE_ALIGN(x) __KERNEL_ALIGN(x, L1_CACHE_BYTES)
- #endif
- 
- #ifndef SMP_CACHE_BYTES
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index e6131a78..2449da9 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -5,6 +5,7 @@
- #include <linux/init.h>
- #include <linux/kern_levels.h>
- #include <linux/linkage.h>
-+#include <linux/cache.h>
- 
- extern const char linux_banner[];
- extern const char linux_proc_banner[];
-@@ -251,17 +252,17 @@ extern asmlinkage void dump_stack(void) __cold;
-  */
- 
- #ifdef CONFIG_PRINTK
--#define printk_once(fmt, ...)			\
--({						\
--	static bool __print_once;		\
--						\
--	if (!__print_once) {			\
--		__print_once = true;		\
--		printk(fmt, ##__VA_ARGS__);	\
--	}					\
-+#define printk_once(fmt, ...)					\
-+({								\
-+	static bool __print_once __read_mostly;			\
-+								\
-+	if (!__print_once) {					\
-+		__print_once = true;				\
-+		printk(fmt, ##__VA_ARGS__);			\
-+	}							\
- })
- #else
--#define printk_once(fmt, ...)			\
-+#define printk_once(fmt, ...)					\
- 	no_printk(fmt, ##__VA_ARGS__)
- #endif
- 
+iQIcBAEBCAAGBQJScZOiAAoJEMDTa8Ir7ZwVUNgP/3RQ+ChujJ0+I/rB5fyULIbN
+50iFTiKRlq7saK2Nsg38E1m3/RVayeDjyS1bwjYUwIls3/vH/qrUwrxR0e0pLTbg
+RRsT+Ya9awc/Knqm2GH+tmYuLfpWApFNF9YykJdtu3ulEo6pboZpRybbtYNHfSRv
+2idZtYymy4lki+91OjR/aI1Vx0W7KntVpe5+aSVNnYUxT+MMhhewt1jIqH871/kG
+vddjEpAalK22Y7B5CkdXUTFIdyRrZ5OdR1r9f+2TeDvwJ+fvD/z+cTJMIpLu9CrH
+Da7eEoNPeZJbQO0vsGmx1KehMQyCuZlnDcOKzIIGfbe/Zh9NM2J773u7kvpLzthu
+Liv5qb+yNV9gwJsqmOKM6N/i5ROdLnEDR48GA9EKIqxpAJU1pQnCe7sXW98EwE1b
+cNT9GbrccAKdmClVFBCO6EpLRVFXG8XJ3Y8DYNDbW41sDtBYbI/KABNuVqLPwMjT
+k3z6XzyUpGKNcIg/S1Cqhzo/kb/q/YhHj73G2h+p5TDJg1N8G45DdIgFvRFu2W/h
+ZBLOduoC7ikSVKBPIg5rydQqTE+OBRPL2yE256xCKpC52xRnuWNu071Ceug9d+TY
+9FcL8l/GEp8UT7w8k/py/HeKMW1v0VJ31IFYVAp4wiK0u/RpWrXmGyH1Q56TmscF
+kncqO4eY9zIw+9TABJtv
+=e6mw
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__31_Oct_2013_10_17_50_+1100_VMpW83tcllj2v5c0--
