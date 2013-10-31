@@ -1,61 +1,69 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the
- devicetree tree
-Date: Thu, 31 Oct 2013 08:57:13 -0400
-Message-ID: <20131031125713.GK26784@titan.lakedaemon.net>
-References: <20131031192354.32945644fbdca2e0d6ca5455@canb.auug.org.au>
+From: Philippe Proulx <philippe.proulx@savoirfairelinux.com>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Thu, 31 Oct 2013 09:09:51 -0400 (EDT)
+Message-ID: <73605653.13929.1383224991870.JavaMail.root@mail>
+References: <CA+icZUWYHSU3yvsW6fB5aKJ0LQVaY0afsF2DiS9=m_bzy80=hw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:45049 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753970Ab3JaM5T (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Oct 2013 08:57:19 -0400
-Content-Disposition: inline
-In-Reply-To: <20131031192354.32945644fbdca2e0d6ca5455@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <CA+icZUWYHSU3yvsW6fB5aKJ0LQVaY0afsF2DiS9=m_bzy80=hw@mail.gmail.com>
+Sender: linux-serial-owner@vger.kernel.org
+To: sedat dilek <sedat.dilek@gmail.com>
+Cc: Greg KH <greg@kroah.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
-Stephen,
-
-Glad to see you're back at it!  Nice meeting you and your wife in
-Edinburgh.
-
-Adding Thomas Petazzoni to the Cc.
-
-On Thu, Oct 31, 2013 at 07:23:54PM +1100, Stephen Rothwell wrote:
-> Hi all,
+----- Original Message -----
+> From: "Sedat Dilek" <sedat.dilek@gmail.com>
+> To: "Stephen Rothwell" <sfr@canb.auug.org.au>, "Philippe Proulx" <philippe.proulx@savoirfairelinux.com>
+> Cc: "Greg KH" <greg@kroah.com>, "linux-next" <linux-next@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
+> linux-serial@vger.kernel.org
+> Sent: Thursday, 31 October, 2013 6:35:23 AM
+> Subject: Re: linux-next: build failure after merge of the tty tree
 > 
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> drivers/pci/host/pci-mvebu.c between commit 16b84e5a505c ("of/irq: Create
-> of_irq_parse_and_map_pci() to consolidate arch code.") from the
-> devicetree tree and commit e5615c30c1c9 ("PCI: mvebu: remove
-> subsys_initcall") from the arm-soc tree.
+> On Thu, Oct 31, 2013 at 8:40 AM, Stephen Rothwell
+> <sfr@canb.auug.org.au> wrote:
+> > Hi Greg,
+> >
+> > After merging the tty tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> >
+> > drivers/tty/serial/omap-serial.c: In function 'serial_omap_probe':
+> > drivers/tty/serial/omap-serial.c:1724:22: error: expected ')'
+> > before numeric constant
+> > drivers/tty/serial/omap-serial.c:1724:22: warning: format '%d'
+> > expects a matching 'int' argument [-Wformat]
+> >
+> > Caused by commit e5f9bf72efbc ("serial: omap: fix a few checkpatch
+> > warnings").  There is a missing ',' in the dev_warn() ...
+> >
+> > I have used the version of the tty tree from next-20131030 for
+> > today.
+> >
 > 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> [ Add CC to linux-serial ML ]
+> 
+> Happy HelloWien and WelcomeBackStephen!
+> 
+> That was only checkpatch-tested, eh :-)?
+> 
+> @@ -1724,8 +1722,9 @@ static int serial_omap_probe(struct
+> platform_device *pdev)
+> up->port.uartclk = omap_up_info->uartclk;
+> if (!up->port.uartclk) {
+> up->port.uartclk = DEFAULT_CLK_SPEED;
+> - dev_warn(&pdev->dev, "No clock speed specified: using default:"
+> - "%d\n", DEFAULT_CLK_SPEED);
+> + dev_warn(&pdev->dev,
+> + "No clock speed specified: using default: %d\n" <--- Comma missing
+> here!
 
-This looks fine by me.
+Oops, something obviously went wrong in my process. Sorry about this.
 
-thx,
+Do you want me to fix this commit?
 
-Jason.
-
-> diff --cc drivers/pci/host/pci-mvebu.c
-> index 07ddb3a13c6e,80b2250ea19a..000000000000
-> --- a/drivers/pci/host/pci-mvebu.c
-> +++ b/drivers/pci/host/pci-mvebu.c
-> @@@ -693,9 -732,10 +719,10 @@@ static void mvebu_pcie_enable(struct mv
->   	hw.private_data   = (void **)&pcie;
->   	hw.setup          = mvebu_pcie_setup;
->   	hw.scan           = mvebu_pcie_scan_bus;
->  -	hw.map_irq        = mvebu_pcie_map_irq;
->  +	hw.map_irq        = of_irq_parse_and_map_pci;
->   	hw.ops            = &mvebu_pcie_ops;
->   	hw.align_resource = mvebu_pcie_align_resource;
-> + 	hw.add_bus        = mvebu_pcie_add_bus;
->   
->   	pci_common_init(&hw);
->   }
+> + DEFAULT_CLK_SPEED);
+> }
+> 
+> - Sedat -
+> 
