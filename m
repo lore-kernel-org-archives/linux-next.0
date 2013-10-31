@@ -1,82 +1,67 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH -next] s390/dasd: hold request queue sysfs lock when calling
- elevator_init()
-Date: Thu, 31 Oct 2013 14:21:52 +0100
-Message-ID: <20131031132152.GD5551@osiris>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: [PATCH V2] printk/cache: Mark printk_once test variable __read_mostly
+Date: Thu, 31 Oct 2013 13:35:49 +0000
+Message-ID: <52725CB5.5090903@imgtec.com>
+References: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>  <20131030134839.8bdf70cc68d1bf0beb1fb63a@linux-foundation.org> <1383174102.9435.54.camel@joe-AO722>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp15.uk.ibm.com ([195.75.94.111]:43833 "EHLO
-	e06smtp15.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753660Ab3JaNXO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Oct 2013 09:23:14 -0400
-Received: from /spool/local
-	by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-	Thu, 31 Oct 2013 13:23:13 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-	by d06dlp01.portsmouth.uk.ibm.com (Postfix) with ESMTP id 06A3117D805F
-	for <linux-next@vger.kernel.org>; Thu, 31 Oct 2013 13:22:45 +0000 (GMT)
-Received: from d06av02.portsmouth.uk.ibm.com (d06av02.portsmouth.uk.ibm.com [9.149.37.228])
-	by b06cxnps3075.portsmouth.uk.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id r9VDLgqM56754318
-	for <linux-next@vger.kernel.org>; Thu, 31 Oct 2013 13:21:42 GMT
-Received: from d06av02.portsmouth.uk.ibm.com (localhost [127.0.0.1])
-	by d06av02.portsmouth.uk.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id r9VDLrDS017110
-	for <linux-next@vger.kernel.org>; Thu, 31 Oct 2013 07:21:55 -0600
-Content-Disposition: inline
+Received: from multi.imgtec.com ([194.200.65.239]:33151 "EHLO multi.imgtec.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752435Ab3JaNfw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Oct 2013 09:35:52 -0400
+In-Reply-To: <1383174102.9435.54.camel@joe-AO722>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomoki Sekiyama <tomoki.sekiyama@hds.com>, Jens Axboe <axboe@kernel.dk>, Stefan Weinhuber <wein@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-metag@vger.kernel.org
 
-Hi Tomoki and Jens,
+On 30/10/13 23:01, Joe Perches wrote:
+> Add #include <linux/cache.h> to define __read_mostly.
+> 
+> Convert cache.h to use uapi/linux/kernel.h instead
+> of linux/kernel.h to avoid recursive #includes.
+> 
+> Convert the ALIGN macro to __KERNEL_ALIGN.
+> 
+> printk_once only sets the bool variable tested
+> once so mark it __read_mostly.
+> 
+> Neaten the alignment so it matches the rest of the
+> pr_<level>_once #defines too.
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+> V2: Add cache.h which was nearly always used
+>     indirectly via #include <some_other_file.h>,
+>     generally module.h
+>     Update cache.h to avoid recursive #include
+> 
+>  include/linux/cache.h  |  4 ++--
+>  include/linux/printk.h | 19 ++++++++++---------
+>  2 files changed, 12 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/cache.h b/include/linux/cache.h
+> index 4c57065..63a1d97 100644
+> --- a/include/linux/cache.h
+> +++ b/include/linux/cache.h
+> @@ -1,11 +1,11 @@
+>  #ifndef __LINUX_CACHE_H
+>  #define __LINUX_CACHE_H
+>  
+> -#include <linux/kernel.h>
+> +#include <uapi/linux/kernel.h>
+>  #include <asm/cache.h>
+>  
+>  #ifndef L1_CACHE_ALIGN
+> -#define L1_CACHE_ALIGN(x) ALIGN(x, L1_CACHE_BYTES)
+> +#define L1_CACHE_ALIGN(x) __KERNEL_ALIGN(x, L1_CACHE_BYTES)
 
-due to a change in linux-next the patch below is needed for s390 as well.
-It looks to me as if the easiest way to get this patch upstream during
-the next merge would be via the s390 tree.
-Even though I'd much more like if we could get rid of the elevator_init()
-call from the dasd driver, but Stefan is still reluctant ;)
+I think that should be __ALIGN_KERNEL (same applies to commit message).
 
->From a59819b17c4a2d06b48ee44236d848161d8d8bb9 Mon Sep 17 00:00:00 2001
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Thu, 31 Oct 2013 13:24:28 +0100
-Subject: [PATCH] s390/dasd: hold request queue sysfs lock when calling
- elevator_init()
+Otherwise this patch looks good to me and builds all Meta defconfigs fine.
+Reviewed-by: James Hogan <james.hogan@imgtec.com>
 
-"elevator: Fix a race in elevator switching and md device initialization"
-changed the semantics of elevator_init() in a way that now enforces to hold
-the corresponding request queue's sysfs_lock when calling elevator_init()
-to fix a race.
-The patch did not convert the s390 dasd device driver which is the only
-device driver which also calls elevator_init(). So add the missing locking.
-
-Cc: Tomoki Sekiyama <tomoki.sekiyama@hds.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
----
- drivers/s390/block/dasd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/s390/block/dasd.c b/drivers/s390/block/dasd.c
-index 244f77f844f0..f302efa937ef 100644
---- a/drivers/s390/block/dasd.c
-+++ b/drivers/s390/block/dasd.c
-@@ -2979,12 +2979,12 @@ static int dasd_alloc_queue(struct dasd_block *block)
- 
- 	elevator_exit(block->request_queue->elevator);
- 	block->request_queue->elevator = NULL;
-+	mutex_lock(&block->request_queue->sysfs_lock);
- 	rc = elevator_init(block->request_queue, "deadline");
--	if (rc) {
-+	if (rc)
- 		blk_cleanup_queue(block->request_queue);
--		return rc;
--	}
--	return 0;
-+	mutex_unlock(&block->request_queue->sysfs_lock);
-+	return rc;
- }
- 
- /*
--- 
-1.8.3.4
+Thanks
+James
