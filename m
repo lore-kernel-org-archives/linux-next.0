@@ -1,45 +1,101 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] media/platform/marvell-ccic: fix cafe_ccic build error
-Date: Thu, 31 Oct 2013 11:07:28 -0700
-Message-ID: <52729C60.6000408@infradead.org>
-References: <20131031210027.cb3604b9589e0b7a1599dbd2@canb.auug.org.au>
+From: Joe Perches <joe@perches.com>
+Subject: [PATCH V3] printk/cache: Mark printk_once test variable
+ __read_mostly
+Date: Thu, 31 Oct 2013 11:29:33 -0700
+Message-ID: <1383244173.8740.9.camel@joe-AO722>
+References: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>
+	 <20131030134839.8bdf70cc68d1bf0beb1fb63a@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:49336 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754599Ab3JaSHe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Oct 2013 14:07:34 -0400
-In-Reply-To: <20131031210027.cb3604b9589e0b7a1599dbd2@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131030134839.8bdf70cc68d1bf0beb1fb63a@linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: James Hogan <james.hogan@imgtec.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-metag@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Add #include <linux/cache.h> to define __read_mostly.
 
-The cafe_ccic driver (the mcam-core.c part of it) uses dma_sg
-interfaces so it needs to select VIDEOBUF2_DMA_SG to prevent
-build errors.
+Convert cache.h to use uapi/linux/kernel.h instead
+of linux/kernel.h to avoid recursive #includes.
 
-drivers/built-in.o: In function `mcam_v4l_open':
-mcam-core.c:(.text+0x14643e): undefined reference to `vb2_dma_sg_memops'
+Convert the ALIGN macro to __ALIGN_KERNEL.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>
+printk_once only sets the bool variable tested
+once so mark it __read_mostly.
+
+Neaten the alignment so it matches the rest of the
+pr_<level>_once #defines too.
+
+Signed-off-by: Joe Perches <joe@perches.com>
+Reviewed-by: James Hogan <james.hogan@imgtec.com>
 ---
- drivers/media/platform/marvell-ccic/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+V3: Fix cache.h conversion and actually
+    compiled/built defconfig x86.
+V2: Add cache.h which was nearly always used
+    indirectly via #include <some_other_file.h>,
+    generally module.h
+    Update cache.h to avoid recursive #include
 
---- linux-next-20131031.orig/drivers/media/platform/marvell-ccic/Kconfig
-+++ linux-next-20131031/drivers/media/platform/marvell-ccic/Kconfig
-@@ -4,6 +4,7 @@ config VIDEO_CAFE_CCIC
- 	select VIDEO_OV7670
- 	select VIDEOBUF2_VMALLOC
- 	select VIDEOBUF2_DMA_CONTIG
-+	select VIDEOBUF2_DMA_SG
- 	---help---
- 	  This is a video4linux2 driver for the Marvell 88ALP01 integrated
- 	  CMOS camera controller.  This is the controller found on first-
+ include/linux/cache.h  |  4 ++--
+ include/linux/printk.h | 19 ++++++++++---------
+ 2 files changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/include/linux/cache.h b/include/linux/cache.h
+index 4c57065..17e7e82 100644
+--- a/include/linux/cache.h
++++ b/include/linux/cache.h
+@@ -1,11 +1,11 @@
+ #ifndef __LINUX_CACHE_H
+ #define __LINUX_CACHE_H
+ 
+-#include <linux/kernel.h>
++#include <uapi/linux/kernel.h>
+ #include <asm/cache.h>
+ 
+ #ifndef L1_CACHE_ALIGN
+-#define L1_CACHE_ALIGN(x) ALIGN(x, L1_CACHE_BYTES)
++#define L1_CACHE_ALIGN(x) __ALIGN_KERNEL(x, L1_CACHE_BYTES)
+ #endif
+ 
+ #ifndef SMP_CACHE_BYTES
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index e6131a78..2449da9 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -5,6 +5,7 @@
+ #include <linux/init.h>
+ #include <linux/kern_levels.h>
+ #include <linux/linkage.h>
++#include <linux/cache.h>
+ 
+ extern const char linux_banner[];
+ extern const char linux_proc_banner[];
+@@ -251,17 +252,17 @@ extern asmlinkage void dump_stack(void) __cold;
+  */
+ 
+ #ifdef CONFIG_PRINTK
+-#define printk_once(fmt, ...)			\
+-({						\
+-	static bool __print_once;		\
+-						\
+-	if (!__print_once) {			\
+-		__print_once = true;		\
+-		printk(fmt, ##__VA_ARGS__);	\
+-	}					\
++#define printk_once(fmt, ...)					\
++({								\
++	static bool __print_once __read_mostly;			\
++								\
++	if (!__print_once) {					\
++		__print_once = true;				\
++		printk(fmt, ##__VA_ARGS__);			\
++	}							\
+ })
+ #else
+-#define printk_once(fmt, ...)			\
++#define printk_once(fmt, ...)					\
+ 	no_printk(fmt, ##__VA_ARGS__)
+ #endif
+ 
