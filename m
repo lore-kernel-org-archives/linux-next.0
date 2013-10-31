@@ -1,64 +1,102 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tty tree
-Date: Thu, 31 Oct 2013 18:40:15 +1100
-Message-ID: <20131031184015.adc000259e9931fd0b5d5cf7@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the devicetree
+ tree
+Date: Thu, 31 Oct 2013 19:18:54 +1100
+Message-ID: <20131031191854.f182b66eaf9e03d78e18e27f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__31_Oct_2013_18_40_15_+1100_9Qu7nDNPJ7_4YSFw"
+ boundary="Signature=_Thu__31_Oct_2013_19_18_54_+1100_XxZE1KrCNiQEDWIW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40585 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:60124 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751086Ab3JaHk1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Oct 2013 03:40:27 -0400
+	with ESMTP id S1752003Ab3JaITJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Oct 2013 04:19:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philippe Proulx <philippe.proulx@savoirfairelinux.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Thu__31_Oct_2013_18_40_15_+1100_9Qu7nDNPJ7_4YSFw
+--Signature=_Thu__31_Oct_2013_19_18_54_+1100_XxZE1KrCNiQEDWIW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-After merging the tty tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-integrator/pci_v3.c between commit 16b84e5a505c ("of/irq:
+Create of_irq_parse_and_map_pci() to consolidate arch code") from the
+devicetree tree and commit d7057e1de8d6 ("ARM: integrator: delete
+non-devicetree boot path") from the arm-soc tree.
 
-drivers/tty/serial/omap-serial.c: In function 'serial_omap_probe':
-drivers/tty/serial/omap-serial.c:1724:22: error: expected ')' before numeri=
-c constant
-drivers/tty/serial/omap-serial.c:1724:22: warning: format '%d' expects a ma=
-tching 'int' argument [-Wformat]
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit e5f9bf72efbc ("serial: omap: fix a few checkpatch
-warnings").  There is a missing ',' in the dev_warn() ...
-
-I have used the version of the tty tree from next-20131030 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__31_Oct_2013_18_40_15_+1100_9Qu7nDNPJ7_4YSFw
+diff --cc arch/arm/mach-integrator/pci_v3.c
+index a87e510fe0c4,c9c5a33bc802..000000000000
+--- a/arch/arm/mach-integrator/pci_v3.c
++++ b/arch/arm/mach-integrator/pci_v3.c
+@@@ -809,21 -808,22 +808,6 @@@ static u8 __init pci_v3_swizzle(struct=20
+  	return pci_common_swizzle(dev, pinp);
+  }
+ =20
+- static int irq_tab[4] __initdata =3D {
+- 	IRQ_AP_PCIINT0,	IRQ_AP_PCIINT1,	IRQ_AP_PCIINT2,	IRQ_AP_PCIINT3
+- };
+-=20
+- /*
+-  * map the specified device/slot/pin to an IRQ.  This works out such
+-  * that slot 9 pin 1 is INT0, pin 2 is INT1, and slot 10 pin 1 is INT1.
+-  */
+- static int __init pci_v3_map_irq(const struct pci_dev *dev, u8 slot, u8 p=
+in)
+ -static int __init pci_v3_map_irq_dt(const struct pci_dev *dev, u8 slot, u=
+8 pin)
+--{
+- 	int intnr =3D ((slot - 9) + (pin - 1)) & 3;
+ -	struct of_irq oirq;
+ -	int ret;
+--
+- 	return irq_tab[intnr];
+ -	ret =3D of_irq_map_pci(dev, &oirq);
+ -	if (ret) {
+ -		dev_err(&dev->dev, "of_irq_map_pci() %d\n", ret);
+ -		/* Proper return code 0 =3D=3D NO_IRQ */
+ -		return 0;
+ -	}
+ -
+ -	return irq_create_of_mapping(oirq.controller, oirq.specifier,
+ -				     oirq.size);
+--}
+--
+  static struct hw_pci pci_v3 __initdata =3D {
+  	.swizzle		=3D pci_v3_swizzle,
+  	.setup			=3D pci_v3_setup,
+
+--Signature=_Thu__31_Oct_2013_19_18_54_+1100_XxZE1KrCNiQEDWIW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJScglkAAoJEMDTa8Ir7ZwVZO0P/0jjp55VkKU5FlGBCVuQD+Hl
-WVUT2xJmLgfKhOfpsmHRGziCiC9dfBBJA7/WUci5QfJPA6FrQwnO0bpiKgYGNzHk
-2uCb6Wq7+g0G61LHB5hE85n5+8b/kfNB9elUModUFHerkj7oS0enGV3vF0VCB4Zh
-19OmZ+1owdAx2PgULLytLcixpPBgoV1fAfsYHguoHKuiljAWGsxikzi4YMrFjlVv
-8pvA32i19PAumwKdxcKrbpgvUpoiibLjyxFxSK9vn4AzyO4vwkv8Uls2tgUOEXnG
-kwn64oTphf7OGXY49tfSokdu2HnSZOe6HIb/+hMKdviYt/etu65wa9v7R2/lHhB6
-HMXpRvlbfr2vr7aVNlRMBhtEcRl6G+M9YZeaOE4jdixtS4e7OvDmwYmNsMkraeGw
-YSON5QqiV+iES65Wjk79CAxQhRDAwnLmbFrv/6kLjIknNzz26j2lkLWGB9ASf3Xu
-XP28zBcslw/9EHDyKIGekN7xDGrbceDSccuATW57NQ3jIlobPWvpJ9ur73RcfEmF
-wnpLpMT912PTK80QsRK/qWoeG/ZZ/eiikyDXDISP1Uif0ZtPE5O6LnHijKlPmzIE
-IehGOA61jidtn/uhnVIFoHjCCdg7ESv27+53aZqsAFt5Dzpdo5QpiSZzqcOzVuQQ
-Toh+wVIVky38mSgRSUcE
-=9+yQ
+iQIcBAEBCAAGBQJSchJzAAoJEMDTa8Ir7ZwV5ukP/048UE0cA/WunX2Ft8BdPSnl
+K4g75EAiLleTDZvq/oRMMVO/TLJLm2Jqr4Rv9h8EgJ2Sap0gzfvzt9ccRp1B0uOc
+gfFwIlbbemh5spLfYJ0Zxn//immGkVMDIH504ZbrB1sDUYU5W8Ii4x5NixoRQ/08
+qQnc6Av5s3k2ve3kx1QJ1DMebwulrgDXfNiHl9ZsgBSAvXM8wr0IOoD3D0i+8DX9
+19IEflDBhBtbumFOABNsOW6Ucg4+8etXmVdHq5DM2wIkIan5wwntYCyk9iJimF+L
+lgfUBsRJ2Jb80iOFiI/Q/lwV6MIot/gz7lwGooc8K9slgmhtwTmm+hh/EWnrI1bW
+mjsroJefuxvMPqfEqCXTDMTYFGdWvP6qeBxxdCK+3vVaVcegkdFdyTXT/M5J7d+0
+2QPfE/0xCdOdQBpCD5gXrNv45wdROaPFLwZo1otbD4GEEP7Bz28mbrcX4A5xJ479
+PN9NiMgn2qAyoHezFh9BHLwxdc/vkXYev6ILUHlzRL6XVa/sP8ARLQgZZnRE1ovs
+lIA1s9Ya/vkX+AU4Hg6AgO9jckXC6EoH3bsmai9z+ec8kU255uid9mgG64uoxo1t
+M+b1Grd1+aJxU8bU+Ee6UfGCDUsf/Z7YR2+nbxLL9d8DNMLb65p6ga4BAMRtEY34
+x+YcFPsAUc289aiRJtJY
+=VSMB
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__31_Oct_2013_18_40_15_+1100_9Qu7nDNPJ7_4YSFw--
+--Signature=_Thu__31_Oct_2013_19_18_54_+1100_XxZE1KrCNiQEDWIW--
