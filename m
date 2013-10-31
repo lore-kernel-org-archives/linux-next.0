@@ -1,56 +1,33 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v7 5/5] clk: Implement clk_unregister()
-Date: Thu, 31 Oct 2013 13:07:44 -0600
-Message-ID: <5272AA80.1030804@wwwdotorg.org>
-References: <1383076268-8984-1-git-send-email-s.nawrocki@samsung.com> <1383076268-8984-6-git-send-email-s.nawrocki@samsung.com> <5272A24A.30800@wwwdotorg.org> <5272A7A0.7020800@samsung.com>
+Subject: Re: [PATCH] clk: Properly initialize reference count
+Date: Thu, 31 Oct 2013 13:09:11 -0600
+Message-ID: <5272AAD7.9050305@wwwdotorg.org>
+References: <1383220962-26836-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:51787 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:51280 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755207Ab3JaTHs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Oct 2013 15:07:48 -0400
-In-Reply-To: <5272A7A0.7020800@samsung.com>
+	with ESMTP id S1750763Ab3JaTJO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Oct 2013 15:09:14 -0400
+In-Reply-To: <1383220962-26836-1-git-send-email-treding@nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, jiada_wang@mentor.com, kyungmin.park@samsung.com, laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org, linux-mips@linux-mips.org, linux-sh@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Mike Turquette <mturquette@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On 10/31/2013 12:55 PM, Sylwester Nawrocki wrote:
-> On 31/10/13 19:32, Stephen Warren wrote:
->> On 10/29/2013 01:51 PM, Sylwester Nawrocki wrote:
->>>> clk_unregister() is currently not implemented and it is required when
->>>> a clock provider module needs to be unloaded.
->>>>
->>>> Normally the clock supplier module is prevented to be unloaded by
->>>> taking reference on the module in clk_get().
->>>>
->>>> For cases when the clock supplier module deinitializes despite the
->>>> consumers of its clocks holding a reference on the module, e.g. when
->>>> the driver is unbound through "unbind" sysfs attribute, there are
->>>> empty clock ops added. These ops are assigned temporarily to struct
->>>> clk and used until all consumers release the clock, to avoid invoking
->>>> callbacks from the module which just got removed.
->>
->> This patch is now in Mike's clk-next and hence next-20131031, and causes
->> both a WARN and an OOPS when booting the Tegra Dalmore board. (See log
->> below)
->>
->> If I do the following to fix some other issues:
->>
->> 1) Apply:
->> http://www.spinics.net/lists/arm-kernel/msg283619.html
->> clk: fix boot panic with non-dev-associated clocks
->>
->> 2) Merge some Tegra-specific bug-fixes:
->> https://lkml.org/lkml/2013/10/29/771
->> Re: pull request for Tegra clock rework and Tegra124 clock support
->>
->> ... then revert this patch a336ed7 "clk: Implement clk_unregister()",
->> everything works again.
-> 
-> Does it still crash when you apply this patch
-> http://www.spinics.net/lists/arm-kernel/msg283550.html ?
+On 10/31/2013 06:02 AM, Thierry Reding wrote:
+> Commit a336ed7 (clk: Implement clk_unregister()) initializes the kref in
+> clk_set_parent(), which is obviously the wrong place. Further research
+> shows that the original patches initialized it correctly, so it probably
+> ended up in clk_set_parent() by mistake during manual application of the
+> patch.
 
-Yes, that seems to work, thanks.
+Tested-by: Stephen Warren <swarren@nvidia.com>
+
+BTW, it'd be nice to Cc fixes like this to linux-next@vger.kernel.org; I
+/might/ have avoided doing a bisect if I'd seen this patch first!
+
+I see the benefit of that "linux-next plus today's accumulated
+bug-fixes" tree that I think you proposed:-)
