@@ -1,76 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the devicetree tree with the crypto
- tree
-Date: Thu, 31 Oct 2013 17:22:53 +1100
-Message-ID: <20131031172253.fc313254e18e3242fa2cd540@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Thu, 31 Oct 2013 18:40:15 +1100
+Message-ID: <20131031184015.adc000259e9931fd0b5d5cf7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__31_Oct_2013_17_22_53_+1100_w6Sow2tsXdubDudt"
+ boundary="Signature=_Thu__31_Oct_2013_18_40_15_+1100_9Qu7nDNPJ7_4YSFw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46258 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40585 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750855Ab3JaGXI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Oct 2013 02:23:08 -0400
+	with ESMTP id S1751086Ab3JaHk1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Oct 2013 03:40:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Ruchika Gupta <ruchika.gupta@freescale.com>, Herbert Xu <herbert@gondor.apana.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philippe Proulx <philippe.proulx@savoirfairelinux.com>
 
---Signature=_Thu__31_Oct_2013_17_22_53_+1100_w6Sow2tsXdubDudt
+--Signature=_Thu__31_Oct_2013_18_40_15_+1100_9Qu7nDNPJ7_4YSFw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
+Hi Greg,
 
-Today's linux-next merge of the devicetree tree got a conflict in
-drivers/crypto/caam/jr.c between commit 313ea293e9c4 ("crypto: caam - Add
-Platform driver for Job Ring") from the crypto tree and commit
-f7578496a671 ("of/irq: Use irq_of_parse_and_map()") from the devicetree
-tree.
+After merging the tty tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/tty/serial/omap-serial.c: In function 'serial_omap_probe':
+drivers/tty/serial/omap-serial.c:1724:22: error: expected ')' before numeri=
+c constant
+drivers/tty/serial/omap-serial.c:1724:22: warning: format '%d' expects a ma=
+tching 'int' argument [-Wformat]
 
+Caused by commit e5f9bf72efbc ("serial: omap: fix a few checkpatch
+warnings").  There is a missing ',' in the dev_warn() ...
+
+I have used the version of the tty tree from next-20131030 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/crypto/caam/jr.c
-index 636bb53125ab,517a16d87e4b..000000000000
---- a/drivers/crypto/caam/jr.c
-+++ b/drivers/crypto/caam/jr.c
-@@@ -480,7 -403,7 +480,7 @@@ static int caam_jr_probe(struct platfor
-  		dma_set_mask(jrdev, DMA_BIT_MASK(32));
- =20
-  	/* Identify the interrupt */
-- 	jrpriv->irq =3D of_irq_to_resource(nprop, 0, NULL);
- -	jrpriv->irq =3D irq_of_parse_and_map(np, 0);
-++	jrpriv->irq =3D irq_of_parse_and_map(nprop, 0);
- =20
-  	/* Now do the platform independent part */
-  	error =3D caam_jr_init(jrdev); /* now turn on hardware */
-
---Signature=_Thu__31_Oct_2013_17_22_53_+1100_w6Sow2tsXdubDudt
+--Signature=_Thu__31_Oct_2013_18_40_15_+1100_9Qu7nDNPJ7_4YSFw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJScfdGAAoJEMDTa8Ir7ZwVt+AP/0k+HwP83ZOyktDVxuoFshQC
-F8KPtZ0w4YgUoUaTw73RAEyzg47sWRZzLbXwwusAqwfFfVk5kUR67f1q+yUWBz1e
-L2Ql6/Ywb7vkFfCUM+zJREgQHeodPZC01vaUQ7BPLGmx08lSmR0ETEwLPnESxp6X
-9lWuC3PoryL9S/p2H7huG9iH1wV9fLDB0GFVfnTIdmg8tji6dXl43oe2BpwOjvOB
-XJ42ykxbY3zB0CgEcTclMDGCBrDcNc9hiHTfLIlufRa23ErBExJl8wmJqX+AH5sm
-jnM03iWSZaofy03DLukFj4VB/3i/E8oE6Nno3LpRRTLznAp+HFwa/lTKDFFHVCNH
-Q7fvIDte2n9YRLcqM0aIRYfdIlAAG8QycPEj6lbYbrxaAsZut4Bq5ULjQI5pyKOz
-n4t9tbV7sdZ4gzO5pAZKfY4FRp28vVe0j8iavC7mRs4PoMm7c4iqL+PmB5HIrnz1
-YFMQc5ZGMs9TG6VqDE77i4CvfXRCL+jjPkMjFJCPZITVz5yYsmzHwMhdYnADFJz6
-mNqmoJ/6cPLBypDbD22xDaNfjI28xIhUo48AhWf2kYvek/02MHsrtv96WZ/mWxGj
-ZKLyBc+yb8AmXsBPjoqhuMq6z/zGsSf6+/JC4gGvdRuA7FcjnRCn+73b1YbtEcH/
-/wjIdloiZaQ99kNwmrWk
-=zsZX
+iQIcBAEBCAAGBQJScglkAAoJEMDTa8Ir7ZwVZO0P/0jjp55VkKU5FlGBCVuQD+Hl
+WVUT2xJmLgfKhOfpsmHRGziCiC9dfBBJA7/WUci5QfJPA6FrQwnO0bpiKgYGNzHk
+2uCb6Wq7+g0G61LHB5hE85n5+8b/kfNB9elUModUFHerkj7oS0enGV3vF0VCB4Zh
+19OmZ+1owdAx2PgULLytLcixpPBgoV1fAfsYHguoHKuiljAWGsxikzi4YMrFjlVv
+8pvA32i19PAumwKdxcKrbpgvUpoiibLjyxFxSK9vn4AzyO4vwkv8Uls2tgUOEXnG
+kwn64oTphf7OGXY49tfSokdu2HnSZOe6HIb/+hMKdviYt/etu65wa9v7R2/lHhB6
+HMXpRvlbfr2vr7aVNlRMBhtEcRl6G+M9YZeaOE4jdixtS4e7OvDmwYmNsMkraeGw
+YSON5QqiV+iES65Wjk79CAxQhRDAwnLmbFrv/6kLjIknNzz26j2lkLWGB9ASf3Xu
+XP28zBcslw/9EHDyKIGekN7xDGrbceDSccuATW57NQ3jIlobPWvpJ9ur73RcfEmF
+wnpLpMT912PTK80QsRK/qWoeG/ZZ/eiikyDXDISP1Uif0ZtPE5O6LnHijKlPmzIE
+IehGOA61jidtn/uhnVIFoHjCCdg7ESv27+53aZqsAFt5Dzpdo5QpiSZzqcOzVuQQ
+Toh+wVIVky38mSgRSUcE
+=9+yQ
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__31_Oct_2013_17_22_53_+1100_w6Sow2tsXdubDudt--
+--Signature=_Thu__31_Oct_2013_18_40_15_+1100_9Qu7nDNPJ7_4YSFw--
