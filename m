@@ -1,68 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the squashfs tree
-Date: Fri, 1 Nov 2013 11:57:23 +1100
-Message-ID: <20131101115723.8faa858bf8a5dadf17d251fb@canb.auug.org.au>
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Subject: Re: linux-next: Tree for Oct 31 (input & leds)
+Date: Fri, 1 Nov 2013 02:21:29 +0100
+Message-ID: <20131101012129.GW7325@type.youpi.perso.aquilenet.fr>
+References: <20131031210027.cb3604b9589e0b7a1599dbd2@canb.auug.org.au>
+ <52729BCB.1000700@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__1_Nov_2013_11_57_23_+1100_wRfaJ6g_UIc63bH6"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46870 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753678Ab3KAA5g (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Oct 2013 20:57:36 -0400
+Received: from toccata.ens-lyon.org ([140.77.166.68]:40950 "EHLO
+	toccata.ens-lyon.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754219Ab3KABVd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Oct 2013 21:21:33 -0400
+Content-Disposition: inline
+In-Reply-To: <52729BCB.1000700@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Phillip Lougher <phillip@lougher.demon.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@type.youpi.perso.aquilenet.fr
 
---Signature=_Fri__1_Nov_2013_11_57_23_+1100_wRfaJ6g_UIc63bH6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Randy Dunlap, le Thu 31 Oct 2013 11:04:59 -0700, a =E9crit :
+> On 10/31/13 03:00, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Changes since 20131030:
+> >=20
+> > The net-next tree gained a conflict against the net tree.
+> >=20
+> > The devicetree tree gained a conflict against the crypto tree.
+> >=20
+> > The tty tree gained a build failure so I used the version from
+> > next-20131030.
+> >=20
+> > The arm-soc tree gained conflicts against the devicetree tree.
+>=20
+>=20
+> on i386, when both
+> CONFIG_INPUT=3Dm
+> CONFIG_INPUT_LEDS=3Dm
+>=20
+> ERROR: "input_led_disconnect" [drivers/input/input-core.ko] undefined=
+!
+> ERROR: "input_led_connect" [drivers/input/input-core.ko] undefined!
+>=20
+>=20
+> Full randconfig file is attached.
 
-Hi Phillip,
+Ah, right, in that config an export is needed, here is a patch.
 
-After merging the squashfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Samuel
 
-fs/squashfs/decompressor_single.c: In function 'squashfs_decompressor_creat=
-e':
-fs/squashfs/decompressor_single.c:40:2: error: implicit declaration of func=
-tion 'free' [-Werror=3Dimplicit-function-declaration]
-  free(comp_opts);
-  ^
-fs/squashfs/decompressor_single.c:40:2: warning: incompatible implicit decl=
-aration of built-in function 'free' [enabled by default]
 
-Caused by commit 99d59ddb8a06 ("Squashfs: Refactor decompressor interface
-and code").
 
-I have used the squashfs tree from next-20131031 for today.
+Export input led symbols for input core module.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
 
---Signature=_Fri__1_Nov_2013_11_57_23_+1100_wRfaJ6g_UIc63bH6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJScvx4AAoJEMDTa8Ir7ZwV7E4P/i2TdoiyCAvDGx/I9EsQN5ix
-5KeUIJQTeQH+DrIUQlTH+0aJGq/kB3Glh9HbRiq37iJo7ttHINlKiRSzH1EPQ8jQ
-ra9bjRiRoNeyhHDGHsQ8GFO6myi28whWwiBitk+zO9ROKHYA9jDRzkzWFgzZQN+p
-9AOUpHozNLk+RrJVaitmvacDF/Hvpz7K2jesP2Qb8VAV1GPFNPIRw1l99VCcJpxU
-ycMzXln7V2OlAowr0tyT+ba3nwCoFPhzJ5oGT44+1t/R6TmWi1sqTVt/Rc7eZZ8B
-91R0svtezrSEgFVDzSenKPpYTt5QSbYgn5W9td+HANnbZHSH0lZHbqlo8g+V2EaC
-OmrAjPC9qkXBKuMpKpdgJwsrV3rnKWO97UAvqaZl+2SNVlMvmxx1vfp+15xJJn7W
-uH3T+FNtbFR+UQjLfvQHQvmhMS7+T6pUM3jXn7BF7mqL4QHerb7ml8l0McZ6lSiL
-CTpycCqw2UMcvSpHzHh+Yjt1LB2DWIUl35E/6RDpL+i2Db5EHgk4UtIfS4PaR5qw
-RsxROHCeNqgkcb2RcJOgnLVQZl5XZyi+fHFH1EphS+3lTl4LE9uWn4NIKmFmRN50
-CHPvPOWdqan9Fjum+Z51TsT8Rxa37EqiY+wXsxa6gpd7JuFjQxFpwqqqIBBZl9Kd
-ebAhCBMmE0+a2IDyBnub
-=chje
------END PGP SIGNATURE-----
-
---Signature=_Fri__1_Nov_2013_11_57_23_+1100_wRfaJ6g_UIc63bH6--
+--- drivers/input/leds.c.orig	2013-11-01 01:43:38.889584308 +0100
++++ drivers/input/leds.c	2013-11-01 01:44:02.060916781 +0100
+@@ -210,6 +210,7 @@
+ 	input_led_delete(dev);
+ 	return error;
+ }
++EXPORT_SYMBOL_GPL(input_led_connect);
+=20
+ /* Disconnected input device. Clean it, and deregister now-useless VT =
+LEDs
+  * and triggers.  */
+@@ -241,6 +242,7 @@
+ 	}
+ 	mutex_unlock(&vt_led_registered_lock);
+ }
++EXPORT_SYMBOL_GPL(input_led_disconnect);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("User LED support for input layer");
