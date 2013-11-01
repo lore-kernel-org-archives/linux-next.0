@@ -1,76 +1,81 @@
-From: Phillip Lougher <phillip@lougher.demon.co.uk>
-Subject: Re: linux-next: build failure after merge of the squashfs tree
-Date: Fri, 01 Nov 2013 04:09:05 +0000
-Message-ID: <52732961.4030501@lougher.demon.co.uk>
-References: <20131101115723.8faa858bf8a5dadf17d251fb@canb.auug.org.au> <52731AA2.1060800@lougher.demon.co.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the dt-rh tree with the powerpc tree
+Date: Fri, 1 Nov 2013 16:20:02 +1100
+Message-ID: <20131101162002.4dd386299ec42e8d8d032be2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__1_Nov_2013_16_20_02_+1100_Azk4V4sl5ProHJGI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mdfmta004.mxout.tch.inty.net ([91.221.169.45]:45302 "EHLO
-	smtp.demon.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750740Ab3KAEJJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 00:09:09 -0400
-In-Reply-To: <52731AA2.1060800@lougher.demon.co.uk>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47432 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750912Ab3KAFUP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 01:20:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Phillip Lougher <phillip@lougher.demon.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
 
-On 01/11/13 03:06, Phillip Lougher wrote:
-> On 01/11/13 00:57, Stephen Rothwell wrote:
->> Hi Phillip,
->>
->> After merging the squashfs tree, today's linux-next build (powerpc
->> ppc64_defconfig) failed like this:
->>
->> fs/squashfs/decompressor_single.c: In function 'squashfs_decompressor_create':
->> fs/squashfs/decompressor_single.c:40:2: error: implicit declaration of function 'free' [-Werror=implicit-function-declaration]
->>    free(comp_opts);
->>    ^
->
-> Yup, applied and pushed the wrong patch.
->
-> I noticed shortly afterwards, and pushed the correct patch, but you
-> obviously had already done your pull.
->
-> Squashfs: Refactor decompressor interface and code
-> committer Phillip Lougher <phillip@squashfs.org.uk> 2013-10-31 23:06:37 (GMT)
->
-> These things happen when you rush to get the patches ready for the linux-next
-> tree.
->
-> Squashfs is spare-time work for me, which means I often have no choice to
-> work on it during the night.  Previously when pushing such work for the
-> linux-next tree I notice it never gets picked up until the next day, because
-> a push at 4 AM is simply too late to get it into the linux-next tree for that
-> day because you're in Australia.
->
-> So I work out you pull around 11 PM GMT my time, and rush to get the patches
-> ready for then.  Screw up and this time around the process is even more
-> thankless and humiliating than normal.
->
-> Why don't you holier than thou guys get off your pedestals sometime and
-> see what it's like for the hobbyists who don't get paid to do the work.
->
-> Yeah maybe I'm getting to the point where I considering stopping doing
-> this, because it has become utterly thankless.
+--Signature=_Fri__1_Nov_2013_16_20_02_+1100_Azk4V4sl5ProHJGI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Apologies.  I was annoyed at myself and let my frustration show.
+Hi Rob,
 
-Phillip
+Today's linux-next merge of the dt-rh tree got a conflict in
+arch/powerpc/include/asm/prom.h between commit a3e31b458844 ("of: Move
+definition of of_find_next_cache_node into common code") from the powerpc
+tree and commit 0c3f061c195c ("of: implement of_node_to_nid as a weak
+function") from the dt-rh tree.
 
->
-> Cheers
->
-> Phillip
->
->
->> fs/squashfs/decompressor_single.c:40:2: warning: incompatible implicit declaration of built-in function 'free' [enabled by default]
->>
->> Caused by commit 99d59ddb8a06 ("Squashfs: Refactor decompressor interface
->> and code").
->>
->> I have used the squashfs tree from next-20131031 for today.
->>
->
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/powerpc/include/asm/prom.h
+index bf09e5a065b8,7687f82a3217..000000000000
+--- a/arch/powerpc/include/asm/prom.h
++++ b/arch/powerpc/include/asm/prom.h
+@@@ -44,13 -39,9 +39,6 @@@ void of_parse_dma_window(struct device_
+ =20
+  extern void kdump_move_device_tree(void);
+ =20
+- #ifdef CONFIG_NUMA
+- extern int of_node_to_nid(struct device_node *device);
+- #else
+- static inline int of_node_to_nid(struct device_node *device) { return 0; }
+- #endif
+- #define of_node_to_nid of_node_to_nid
+ -/* cache lookup */
+ -struct device_node *of_find_next_cache_node(struct device_node *np);
+--
+  extern void of_instantiate_rtc(void);
+ =20
+  extern int of_get_ibm_chip_id(struct device_node *np);
+
+--Signature=_Fri__1_Nov_2013_16_20_02_+1100_Azk4V4sl5ProHJGI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSczoGAAoJEMDTa8Ir7ZwVQscP/2C098l7rMl4UoyCn0cKgN1V
+LZ+FIGzUZeUMwcymyPmrUZ5f0ZlnHW9ls9oOQx/ndjm1V9EXJa54YxB7Htn+Xu/I
+2GQTLy461n+OT1glpWx6e4LqtKrWJuNK8e/oXl9fxvp81zvSorNnx700+wanNvM1
+F4OjC8KOVg+eIsiOw6MgM27BFphod1MtoDRSHM0ilj1qeVXlTrfjcPgy7VFgd5yu
+RUTna1KoSTkWtpAIjELJBxaq4g5H/JjhHGGtNEamLHe/ON45KceMU3FCehKcYvEl
+8YBfRE+33ByYeKsuC4rqU8jEsBFJEKajV3y0EqpEaAeT1DTeQ2tPuQ/pZUgzTWj2
+X1ii4cc+o265wcAAyEn4TOLR7kP1jwUiyGALZNQ/RDZnwuZ9UJRKgePc+A2F6UuY
+VnBKDv+EldK6Ka92kofCrodIklmjQTNu5zE4+Gjdjml4m90a5G0vpeP6fgEnDRTl
+hS5jlc/fstW7h9InlmIrlX5jxL4A6XNdQymfU8hV5hmS4Je6NkAnUGupjSwtqg2c
+dKJHjSbLXkwXdOXd0IThdq+xm/l6HF7/3u7tMZF8lEcqajQuHM3R+xGDmCyq1xl7
+Np70w9R01auNc2p8i8jvQsTrCfwEuLB82ceSAec76bV5RVnJcj0wBWJtgEroDX1K
+PaEb3XAB4lValxWhd5MB
+=Q0uK
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_Nov_2013_16_20_02_+1100_Azk4V4sl5ProHJGI--
