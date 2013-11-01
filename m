@@ -1,65 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] scripts/kallsyms: filter symbols not in kernel address
- space
-Date: Fri, 1 Nov 2013 15:38:33 +1100
-Message-ID: <20131101153833.bbf03337eaf943052dae662b@canb.auug.org.au>
-References: <1382975339-25831-1-git-send-email-tom.leiming@gmail.com>
-	<20131031154311.e65d16d79ba540ced736413b@linux-foundation.org>
-	<CACVXFVMJmQJd0cFaZcmZZvFpUQUmTPJRj87QBVr0kbgZxjq8dw@mail.gmail.com>
-	<87d2mkc0gk.fsf@rustcorp.com.au>
+Subject: linux-next: manual merge of the leds tree with the powerpc tree
+Date: Fri, 1 Nov 2013 17:30:03 +1100
+Message-ID: <20131101173003.e0c6ce3749c3b6b1dd0c109e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__1_Nov_2013_15_38_33_+1100_RC_UZZaYZDPCdw3A"
+ boundary="Signature=_Fri__1_Nov_2013_17_30_03_+1100_lV_Mhy=AcuA8NU51"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60215 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:36867 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751682Ab3KAGVx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 02:21:53 -0400
-In-Reply-To: <87d2mkc0gk.fsf@rustcorp.com.au>
+	with ESMTP id S1752061Ab3KAGaX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 02:30:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Ming Lei <tom.leiming@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Michal Marek <mmarek@suse.cz>, linux-next@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>
 
---Signature=_Fri__1_Nov_2013_15_38_33_+1100_RC_UZZaYZDPCdw3A
+--Signature=_Fri__1_Nov_2013_17_30_03_+1100_lV_Mhy=AcuA8NU51
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Bryan,
 
-On Fri, 01 Nov 2013 13:06:27 +1030 Rusty Russell <rusty@rustcorp.com.au> wr=
-ote:
->
-> Stephen, please run this on todays' linux-next, so I can push to Linus
-> asap.  Thanks...
+Today's linux-next merge of the leds tree got a conflict in
+include/linux/of.h between commit a3e31b458844 ("of: Move definition of
+of_find_next_cache_node into common code") from the powerpc tree and
+commit 954e04b9491a ("of: introduce of_get_available_child_count") from
+the leds tree.
 
-OK, I will apply this near the end of linux-next today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__1_Nov_2013_15_38_33_+1100_RC_UZZaYZDPCdw3A
+diff --cc include/linux/of.h
+index 2567ccd32482,54c25606a997..000000000000
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@@ -228,8 -226,17 +228,19 @@@ static inline int of_get_child_count(co
+  	return num;
+  }
+ =20
++ static inline int of_get_available_child_count(const struct device_node *=
+np)
++ {
++ 	struct device_node *child;
++ 	int num =3D 0;
++=20
++ 	for_each_available_child_of_node(np, child)
++ 		num++;
++=20
++ 	return num;
++ }
++=20
+ +/* cache lookup */
+ +extern struct device_node *of_find_next_cache_node(const struct device_no=
+de *);
+  extern struct device_node *of_find_node_with_property(
+  	struct device_node *from, const char *prop_name);
+  #define for_each_node_with_property(dn, prop_name) \
+
+--Signature=_Fri__1_Nov_2013_17_30_03_+1100_lV_Mhy=AcuA8NU51
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSczBJAAoJEMDTa8Ir7ZwVfB4P/jspCBjug90gO00RyJe6iUd9
-oXi/kO+66I/DEfUA27fjOTN73A+EZ93C7uGW8Ow/euPti7pRzjCTc594/49NWoC9
-kEeX3blXnOD/DJg0jB7ZRD+k4Nj6WpH29Kg8oUMXWVHO1ab1rHsF2x2wGgdwVL2X
-BIhZYlv8f5c8m7Hcg1AaaNBulseE8AGxo71q3/8eqeNhukcgFyzAxagnrgBT0nBQ
-MbEq1cuPk1Be/kBrTzwHU/WAIVMB841L/s8BHaliJg0JbPa8SVXjX3mra3NswVeJ
-1gqnQ2I6KXpedWvbqcJMhPIxs1a0N358gOqvZ+Z/g1wAov7GGIULht/soFkVbnY1
-7eldeOAaKd5VlDYuQT/qOlZg2yMec7/RH47t5eQvrEFazacN06tYDoiePu79eYAk
-hrBfQpVfE/LKNR39YnIi2sff/Zxy5PiiUpYeCWT7IgR9UhJ7ud/+nhzqEBiie8Rv
-lPLFAasqlk5lbTFDPlS8nKg0/ZQHqLjjq6RWqdVjqJzLtjM1fkrD01NV/xThW+IQ
-NdOVCzv+AhNXxi0TcRQPlxojVQxeKGL6gztTb+RWYGlVJsJuVeqk1BJXYCUdUObL
-w6mU8dowyFB/4yQtI0OCVttY87X2oLfvKi2UMLXF3ANkc09oueFpjUR5xoHqn2aV
-YCH021PGiSem1OGScxsn
-=gQCg
+iQIcBAEBCAAGBQJSc0p7AAoJEMDTa8Ir7ZwVl/8QAJWtuhVg8uOAN7G7iF1eGduD
+ozXSY7MvHBARyJStAQXxh78MdtBFBO+Di1sCz3Jkw/qxQByMv9mMCzk4yt0X18nh
+HI+NGztvW1rIhv/GyWyi2KyWzBzn7ohnD5TNLHUPeyn9DU380uaN9jbRD84OBPdq
+F253svnKv2ct6O9336uFUN3H1Q53HJQoDOv2aSc/g3WXzSydBqm21g+zIV87QbyG
+fNKObJw56yBsluUk5nYo1P5cUGLAkkklafy5PVIKxyulOgro/lIC9ckrNNd8BuD0
+0Ir2PSwdCUOxHLDZgide+70LM0uF39DOCFAWBtDp0XY2bBGhkiRLOgHk7wlFC3SG
+Iy/7J/6bvrGVNu/QdNsmZi9MK7nslxYCOU14iRYEWRAoNLe9ctATz0hrOj4l037g
+Nl/IbzeBvbdb6wuE7uxLUfpbMY+7KxP9vDxDL/2OTiROz/wthHlo4KYi7ga6guen
+JoWHKBegPyBzGPclLWEpmfHfmgZ7quZHOtN5Nv8IPbbz4/N9Ci7MsipROyyIoO0m
+E7RNmuEr8b9Q7F7hYYoxLlmI3q5lHtdS7sgOkYBZ9KSsXHCCyeW5B4oQ9epeMPO9
+c+RQBPAX2vpTWrZa7Sjxr2JOKfVaG4EYyPbjyesysqcYWFCmZc3+yDQap3YuOKTn
+u+L9kywvQX7yXyfvDJ33
+=0lYh
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__1_Nov_2013_15_38_33_+1100_RC_UZZaYZDPCdw3A--
+--Signature=_Fri__1_Nov_2013_17_30_03_+1100_lV_Mhy=AcuA8NU51--
