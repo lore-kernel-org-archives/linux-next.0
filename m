@@ -1,38 +1,59 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the block tree with the  tree
-Date: Fri, 01 Nov 2013 09:10:43 -0600
-Message-ID: <5273C473.5070803@kernel.dk>
-References: <20131101142026.10390b6e3f70de348770c137@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:53521 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751810Ab3KAPK6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 11:10:58 -0400
-In-Reply-To: <20131101142026.10390b6e3f70de348770c137@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zach Brown <zab@zabbo.net>, Dave Kleikamp <dave.kleikamp@oracle.com>, Kent Overstreet <kmo@daterainc.com>
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: Tree for Oct 31 (crypto, rsa, mpi)
+Date: Fri, 01 Nov 2013 15:16:11 +0000
+Message-ID: <5808.1383318971@warthog.procyon.org.uk>
+References: <5272C55E.7050004@infradead.org> <20131031210027.cb3604b9589e0b7a1599dbd2@canb.auug.org.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5272C55E.7050004@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 10/31/2013 09:20 PM, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> Today's linux-next merge of the block tree got a conflict in
-> drivers/block/loop.c between commit 2486740b52fd ("loop: use aio to
-> perform io on the underlying file") from the aio-direct tree and commit
-> ed2d2f9a8265 ("block: Abstract out bvec iterator") from the block tree.
-> 
-> I fixed it up (I think - see below - I have also attached the final
-> resulting file) and can carry the fix as necessary (no action is
-> required).
-> 
 
-What tree is this from? It'd be a lot more convenient to fold that loop
-patch into my tree, especially since the block tree in linux-next failed
-after this merge.
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
--- 
-Jens Axboe
+> crypto/built-in.o: In function `RSA_verify_signature':
+> rsa.c:(.text+0x1d347): undefined reference to `mpi_get_nbits'
+> rsa.c:(.text+0x1d354): undefined reference to `mpi_get_nbits'
+> ...
+
+Does the attached patch fix it for you?
+
+David
+---
+KEYS: The RSA public key algorithm needs to select MPILIB
+
+The RSA public key algorithm needs to select MPILIB directly in Kconfig as the
+'select' directive is not recursive and is thus MPILIB is not enabled by
+selecting MPILIB_EXTRA.
+
+Without this, the following errors can occur:
+
+	crypto/built-in.o: In function `RSA_verify_signature':
+	rsa.c:(.text+0x1d347): undefined reference to `mpi_get_nbits'
+	rsa.c:(.text+0x1d354): undefined reference to `mpi_get_nbits'
+	rsa.c:(.text+0x1d36e): undefined reference to `mpi_cmp_ui'
+	rsa.c:(.text+0x1d382): undefined reference to `mpi_cmp'
+	rsa.c:(.text+0x1d391): undefined reference to `mpi_alloc'
+	rsa.c:(.text+0x1d3b0): undefined reference to `mpi_powm'
+	rsa.c:(.text+0x1d3c3): undefined reference to `mpi_free'
+	rsa.c:(.text+0x1d3d8): undefined reference to `mpi_get_buffer'
+	rsa.c:(.text+0x1d4d4): undefined reference to `mpi_free'
+	rsa.c:(.text+0x1d503): undefined reference to `mpi_get_nbits'
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+index 82e7d6b0c276..03a6eb95ab50 100644
+--- a/crypto/asymmetric_keys/Kconfig
++++ b/crypto/asymmetric_keys/Kconfig
+@@ -23,6 +23,7 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+ config PUBLIC_KEY_ALGO_RSA
+ 	tristate "RSA public-key algorithm"
+ 	select MPILIB_EXTRA
++	select MPILIB
+ 	help
+ 	  This option enables support for the RSA algorithm (PKCS#1, RFC3447).
+ 
