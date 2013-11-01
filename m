@@ -1,53 +1,46 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [PATCH driver-core-next] sysfs: use generic_file_llseek() for
- sysfs_file_operations
-Date: Fri, 1 Nov 2013 19:40:36 +0100
-Message-ID: <20131101184036.GA3597@osiris>
-References: <20131031114358.GA5551@osiris>
- <20131031172506.GE11698@mtj.dyndns.org>
- <20131101141348.GA5411@osiris>
- <20131101143542.GC20005@htj.dyndns.org>
- <20131101150448.GB18600@kroah.com>
- <20131101150800.GE20005@htj.dyndns.org>
- <20131101161443.GA4593@kroah.com>
- <20131101171653.GA3669@htj.dyndns.org>
- <20131101171913.GA2241@kroah.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RFC 4/9] of/irq: Refactor interrupt-map parsing
+Date: Fri, 01 Nov 2013 13:07:33 -0600
+Message-ID: <5273FBF5.2080004@wwwdotorg.org>
+References: <1381869563-16083-1-git-send-email-grant.likely@linaro.org> <1381869563-16083-5-git-send-email-grant.likely@linaro.org> <CAOesGMj03kgJXttm80pHvPYeqg5hOaeOJAJ4DA8tf5LxqdArrQ@mail.gmail.com> <CACxGe6uE+KvycQq3XBavRcvprff6PhBaxX54W_Cb1cfuVpMXvQ@mail.gmail.com> <20131031185714.GA12646@quad.lixom.net> <20131101175317.A812AC40868@trevor.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp12.uk.ibm.com ([195.75.94.108]:58429 "EHLO
-	e06smtp12.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752328Ab3KASl4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 14:41:56 -0400
-Received: from /spool/local
-	by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-	Fri, 1 Nov 2013 18:41:55 -0000
-Content-Disposition: inline
-In-Reply-To: <20131101171913.GA2241@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tejun Heo <tj@kernel.org>, Kay Sievers <kay@vrfy.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131101175317.A812AC40868-WNowdnHR2B42iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Nov 01, 2013 at 10:19:13AM -0700, Greg Kroah-Hartman wrote:
-> On Fri, Nov 01, 2013 at 01:16:53PM -0400, Tejun Heo wrote:
-> > Hey, Greg.
-> > 
-> > Here's proper patch with description and SOB.  I'll be traveling from
-> > tomorrow so I might not be responsive for some days.  Can you please
-> > apply it once Heiko confirms it fixes the issue?
+On 11/01/2013 11:53 AM, Grant Likely wrote:
+> On Thu, 31 Oct 2013 11:57:14 -0700, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+>> On Wed, Oct 30, 2013 at 02:25:21PM -0700, Grant Likely wrote:
+>>> (Sorry for HTML mail)
+>>>
+>>> Can you put #define DEBUG at the top of drivers/of/irq.c and send me the
+>>> log output from before and after the commit?
+>>
+>> Here you go, quite verbose log below.
+>>
+>> Looks like we're tripping the "no reg passed in" checks, not sure if related.
 > 
-> Will do.
+> I think I've found the bug. See if this helps...
 > 
-> Heiko, let me know if this fixes your problem or not, thanks.
+> From 54a6d89d63361f8117ff69e4b65efabb12b897c7 Mon Sep 17 00:00:00 2001
+> From: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Date: Fri, 1 Nov 2013 10:50:50 -0700
+> Subject: [PATCH] of: Fixup interrupt parsing failure.
 
-Yes it does fix the problem. strace output looks like before:
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-[pid  2495] open("/sys/class/net/eth0/broadcast", O_RDONLY) = 5
-[pid  2495] lseek(5, 0, SEEK_END)       = 4096
-[pid  2495] lseek(5, 0, SEEK_SET)       = 0
-[pid  2495] read(5, "ff:ff:ff:ff:ff:ff\n", 4096) = 18
-[pid  2495] close(5)                    = 0
+Thanks, this fixes the clocksource errors that I was seeing when
+performing CPU hotplug, as mentioned in:
 
-Tested-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+https://lkml.org/lkml/2013/10/31/430
+Re: [RFC 4/9] of/irq: Refactor interrupt-map parsing [CPU hotplug
+clockevents issue]
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
