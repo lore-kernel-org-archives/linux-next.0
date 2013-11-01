@@ -1,46 +1,74 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC 4/9] of/irq: Refactor interrupt-map parsing
-Date: Fri, 01 Nov 2013 13:07:33 -0600
-Message-ID: <5273FBF5.2080004@wwwdotorg.org>
-References: <1381869563-16083-1-git-send-email-grant.likely@linaro.org> <1381869563-16083-5-git-send-email-grant.likely@linaro.org> <CAOesGMj03kgJXttm80pHvPYeqg5hOaeOJAJ4DA8tf5LxqdArrQ@mail.gmail.com> <CACxGe6uE+KvycQq3XBavRcvprff6PhBaxX54W_Cb1cfuVpMXvQ@mail.gmail.com> <20131031185714.GA12646@quad.lixom.net> <20131101175317.A812AC40868@trevor.secretlab.ca>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: Tree for Oct 30 (include/xen/swiotlb-xen.h)
+Date: Fri, 1 Nov 2013 15:37:20 -0400
+Message-ID: <20131101193720.GB15622@phenom.dumpdata.com>
+References: <20131030184511.c90aa7f40fec6b2e1652f394@canb.auug.org.au>
+ <527153A3.5020404@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131101175317.A812AC40868-WNowdnHR2B42iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:31485 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751872Ab3KATi4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 15:38:56 -0400
+Content-Disposition: inline
+In-Reply-To: <527153A3.5020404@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
 
-On 11/01/2013 11:53 AM, Grant Likely wrote:
-> On Thu, 31 Oct 2013 11:57:14 -0700, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
->> On Wed, Oct 30, 2013 at 02:25:21PM -0700, Grant Likely wrote:
->>> (Sorry for HTML mail)
->>>
->>> Can you put #define DEBUG at the top of drivers/of/irq.c and send me the
->>> log output from before and after the commit?
->>
->> Here you go, quite verbose log below.
->>
->> Looks like we're tripping the "no reg passed in" checks, not sure if related.
+On Wed, Oct 30, 2013 at 11:44:51AM -0700, Randy Dunlap wrote:
+> On 10/30/13 00:45, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > News:  I am now doing an arm multi_v7_defconfig build between each merge.
+> > 
+> > Changes since 20131029:
+> > 
+> > The arm defconfig build is fixed again.
+> > 
+> > The net-next tree gained a conflict against the net tree.
+> > 
+> > The xen-tip tree gained a conflict against the arm tree.
+> > 
+> > The akpm-current tree gained a conflict against the tip tree and a build
+> > failure for which I reverted 3 commits.
+> > 
+> > Various build problems from yesterday have been resolved.
 > 
-> I think I've found the bug. See if this helps...
+> on x86_64:
+
+Stefano, please fix that.
+
 > 
-> From 54a6d89d63361f8117ff69e4b65efabb12b897c7 Mon Sep 17 00:00:00 2001
-> From: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Date: Fri, 1 Nov 2013 10:50:50 -0700
-> Subject: [PATCH] of: Fixup interrupt parsing failure.
-
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Thanks, this fixes the clocksource errors that I was seeing when
-performing CPU hotplug, as mentioned in:
-
-https://lkml.org/lkml/2013/10/31/430
-Re: [RFC 4/9] of/irq: Refactor interrupt-map parsing [CPU hotplug
-clockevents issue]
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> In file included from include/xen/swiotlb-xen.h:4:0,
+>                  from drivers/xen/grant-table.c:52:
+> include/linux/swiotlb.h:45:13: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:45:13: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+> include/linux/swiotlb.h:49:28: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:54:14: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:68:15: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:71:18: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:75:14: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:79:9: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:83:44: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:88:17: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:92:26: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:96:21: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:100:29: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/linux/swiotlb.h:104:24: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> In file included from drivers/xen/grant-table.c:52:0:
+> include/xen/swiotlb-xen.h:21:19: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/xen/swiotlb-xen.h:25:15: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/xen/swiotlb-xen.h:29:12: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/xen/swiotlb-xen.h:34:14: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/xen/swiotlb-xen.h:38:23: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/xen/swiotlb-xen.h:42:25: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/xen/swiotlb-xen.h:46:26: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> include/xen/swiotlb-xen.h:50:28: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
+> 
+> 
+> 
+> -- 
+> ~Randy
