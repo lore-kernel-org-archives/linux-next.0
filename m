@@ -1,80 +1,85 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: linux-next fixes
-Date: Fri, 1 Nov 2013 10:36:39 +0100
-Message-ID: <20131101093638.GE27864@ulmo.nvidia.com>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [BUG -next] sysfs change breaks userspace
+Date: Fri, 1 Nov 2013 15:13:48 +0100
+Message-ID: <20131101141348.GA5411@osiris>
+References: <20131031114358.GA5551@osiris>
+ <20131031172506.GE11698@mtj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pY3vCvL1qV+PayAL"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f52.google.com ([209.85.214.52]:63230 "EHLO
-	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751380Ab3KAJgn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 05:36:43 -0400
-Received: by mail-bk0-f52.google.com with SMTP id u14so1027138bkz.25
-        for <linux-next@vger.kernel.org>; Fri, 01 Nov 2013 02:36:41 -0700 (PDT)
+Received: from e06smtp12.uk.ibm.com ([195.75.94.108]:57621 "EHLO
+	e06smtp12.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753318Ab3KAONz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 10:13:55 -0400
+Received: from /spool/local
+	by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+	Fri, 1 Nov 2013 14:13:53 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+	by d06dlp02.portsmouth.uk.ibm.com (Postfix) with ESMTP id A3461219005E
+	for <linux-next@vger.kernel.org>; Fri,  1 Nov 2013 14:13:49 +0000 (GMT)
+Received: from d06av08.portsmouth.uk.ibm.com (d06av08.portsmouth.uk.ibm.com [9.149.37.249])
+	by b06cxnps4075.portsmouth.uk.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id rA1EDbvg66650222
+	for <linux-next@vger.kernel.org>; Fri, 1 Nov 2013 14:13:37 GMT
+Received: from d06av08.portsmouth.uk.ibm.com (localhost [127.0.0.1])
+	by d06av08.portsmouth.uk.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id rA1EDmDI009497
+	for <linux-next@vger.kernel.org>; Fri, 1 Nov 2013 08:13:49 -0600
 Content-Disposition: inline
+In-Reply-To: <20131031172506.GE11698@mtj.dyndns.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>
+To: Tejun Heo <tj@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kay Sievers <kay@vrfy.org>, linux-next@vger.kernel.org
 
+On Thu, Oct 31, 2013 at 01:25:06PM -0400, Tejun Heo wrote:
+> Hello, Heiko.
+> 
+> On Thu, Oct 31, 2013 at 12:43:58PM +0100, Heiko Carstens wrote:
+> > Hi Tejun,
+> > 
+> > I just tried out linux-next and my network doesn't come up anymore.
+> > Userspace fails like this:
+> > 
+> > network[2211]: Bringing up interface eth0:  sysfs read broadcast value: Invalid argument
+> > 
+> > I bisected that down to:
+> > 
+> > commit 13c589d5b0ac654d9da7e490a2dd548e6b86b4a5
+> > Author: Tejun Heo <tj@kernel.org>
+> > Date:   Tue Oct 1 17:42:02 2013 -0400
+> > 
+> >     sysfs: use seq_file when reading regular files
+> 
+> Heh, intereting.  The content doesn't change over multiple show
+> invocations, so the behavior shouldn't change at all for the attribute
+> and seq_file handles seeking and partial reads correctly.  No idea
+> what could go wrong there.  It probably was reading
+> /sys/devices/BLAHBLAH/net/NETIF/broadcast file.  Can you please locate
+> the file and do "ls -l" and "cat" on it?  If that looks normal, can
+> you please strace the network interface config program / script /
+> whatever?  BTW, what are you running on the system?
 
---pY3vCvL1qV+PayAL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ok, here we go:
 
-Hi Stephen,
+before your patch it was like this:
 
-There have been some discussions lately revolving around the topic of
-linux-next fixes. That is, commits that people come up with over the
-course of a day to fix issues found in the latest linux-next trees.
+[pid  2888] open("/sys/class/net/eth0/broadcast", O_RDONLY) = 5
+[pid  2888] lseek(5, 0, SEEK_END)       = 4096
+[pid  2888] lseek(5, 0, SEEK_SET)       = 0
+[pid  2888] read(5, "ff:ff:ff:ff:ff:ff\n", 4096) = 18
+[pid  2888] close(5)                    = 0
 
-It's a fact that many people rely on linux-next for everyday work, so
-whenever things break in linux-next a lot of people end up chasing the
-same bugs and posting the same patches (or not posting them for that
-matter).
+With your patch applied I get this:
 
-A lot of developer time is wasted that way, so I originally proposed
-that we could set up a separate linux-next-fixes tree where we collect
-patches of interest. I volunteer to do that, since, well, I'm doing it
-anyway as part of my daily routine. Timezone-wise it also fits pretty
-well, since I usually start my day sometime around when you publish
-linux-next.
+[pid  2450] open("/sys/class/net/eth0/broadcast", O_RDONLY) = 5
+[pid  2450] lseek(5, 0, SEEK_END)       = -1 EINVAL (Invalid argument)
+[pid  2450] lseek(5, 0, SEEK_SET)       = 0
+[pid  2450] read(5, 0x557421e8, 4294967295) = -1 EINVAL (Invalid argument)
+[pid  2450] close(5)                    = 0
 
-If we can establish a canonical location where such fixes are
-accumulated, people could fetch those at the same time they fetch the
-linux-next tree and automatically get fixes.
+So the problem is that lseek with SEEK_END doesn't work.
+Afterwards the process tried to use the return value of lseek as number of
+bytes to be read, which doesn't work ;)
 
-One idea was to carry those fixes within the linux-next tree, within
-separate tags (next-YYYYMMDD-fixes). If you don't feel comfortable with
-that I suppose we could also set up a separate repository. It that case
-I think it would still make sense to run it as part of the "Linux Next
-Group" on kernel.org.
-
-What do you think? If it's something you'd be okay with I can contact
-the administrators to have me added to the linux-next group.
-
-Thierry
-
---pY3vCvL1qV+PayAL
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSc3YmAAoJEN0jrNd/PrOhUCoP/jXRiv4lVk1k58nWKuG51mdy
-d3WeNbEJ2Db+yk7rVdzrCHp4wmN9gSIFCQn/7XuBSOm0YQ8hx6pE1DLurjs9KVvH
-WRnS3nHbxsxNPJItWxA4XgUNZaBmsGiO65BBrO87kxnsJMaKKHMqE2Bbs3Z3pzq+
-ihDbj4OIDduepf3tURGP0D4Ndj+GVJ8YilOLEE2YAyDW4IqDjq0PTh3qVUmeH8gl
-ZGKqHVriVuoEcJBhq2f339lnYYR8vdFrt+LDOV209zRk8jjKA4uDnHhZh1pV+ZtI
-85NCMPw3K8EW5py5DKjRMnAXJPJBh8NLfqfn+Pkzy08eDtAXpGsI3drkUC0tT3Pu
-8/2DpL85MSz2TULHY6IPBry3VDelUH1jp5Yz14Gcelhw5HA/Kk0jXgKFimDLKP2y
-ViCBqe3AGetnhMPxJ4uXC4zcLgs/eruyMPPvtqpG6OV4hnR3yMjmsmc2Ax1tU+q8
-Yat6q+VvT5Rqb0JHojnv7aVWwI/DFvXI0S31x3RCiVBlCiEzO2pLof8xjvQlrM8K
-UZsHVYsanjqEl5+PRYgAtDNuPMzgIufC43f/UekkAgD+pCjgeGpwBwFi4tI/mz4E
-VXdaYKC90P+R/J7Ae8Pknx+lwaA2B0WkdVoD3Y55ws+aR3P3Oi1KEBfFtUo1b2qK
-qHvV3J/b5NZ5Y42Aq2Wo
-=tqr1
------END PGP SIGNATURE-----
-
---pY3vCvL1qV+PayAL--
+This is a Fedora 17 like system on s390. It's a bit special since the kernel
+is 64 bit and whole user space is 32 bit.
