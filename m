@@ -1,81 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the dt-rh tree with the powerpc tree
-Date: Fri, 1 Nov 2013 16:20:02 +1100
-Message-ID: <20131101162002.4dd386299ec42e8d8d032be2@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-ppc tree with the  tree
+Date: Fri, 1 Nov 2013 17:05:45 +1100
+Message-ID: <20131101170545.380292f4ac4109b8cd3a72f0@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0636418232870203377=="
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Alexander Graf <agraf@suse.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: Scott Wood <scottwood@freescale.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bharat Bhushan <r65777@freescale.com>
+List-Id: linux-next.vger.kernel.org
+
+--===============0636418232870203377==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__1_Nov_2013_16_20_02_+1100_Azk4V4sl5ProHJGI"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47432 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750912Ab3KAFUP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 01:20:15 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rob Herring <robherring2@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+ boundary="Signature=_Fri__1_Nov_2013_17_05_45_+1100_xT1EskGmA1xRZOJO"
 
---Signature=_Fri__1_Nov_2013_16_20_02_+1100_Azk4V4sl5ProHJGI
+--Signature=_Fri__1_Nov_2013_17_05_45_+1100_xT1EskGmA1xRZOJO
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+Hi Alexander,
 
-Today's linux-next merge of the dt-rh tree got a conflict in
-arch/powerpc/include/asm/prom.h between commit a3e31b458844 ("of: Move
-definition of of_find_next_cache_node into common code") from the powerpc
-tree and commit 0c3f061c195c ("of: implement of_node_to_nid as a weak
-function") from the dt-rh tree.
+Today's linux-next merge of the kvm-ppc tree got a conflict in
+arch/powerpc/include/asm/processor.h between commit 51ae8d4a2b9e
+("powerpc: move debug registers in a structure") from the powerpc tree
+and commit 95791988fec6 ("powerpc: move debug registers in a structure")
+from the kvm-ppc tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Different version of the same patch.  I used the powerpc tree version
+(there wer other changes there).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/powerpc/include/asm/prom.h
-index bf09e5a065b8,7687f82a3217..000000000000
---- a/arch/powerpc/include/asm/prom.h
-+++ b/arch/powerpc/include/asm/prom.h
-@@@ -44,13 -39,9 +39,6 @@@ void of_parse_dma_window(struct device_
- =20
-  extern void kdump_move_device_tree(void);
- =20
-- #ifdef CONFIG_NUMA
-- extern int of_node_to_nid(struct device_node *device);
-- #else
-- static inline int of_node_to_nid(struct device_node *device) { return 0; }
-- #endif
-- #define of_node_to_nid of_node_to_nid
- -/* cache lookup */
- -struct device_node *of_find_next_cache_node(struct device_node *np);
---
-  extern void of_instantiate_rtc(void);
- =20
-  extern int of_get_ibm_chip_id(struct device_node *np);
-
---Signature=_Fri__1_Nov_2013_16_20_02_+1100_Azk4V4sl5ProHJGI
+--Signature=_Fri__1_Nov_2013_17_05_45_+1100_xT1EskGmA1xRZOJO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSczoGAAoJEMDTa8Ir7ZwVQscP/2C098l7rMl4UoyCn0cKgN1V
-LZ+FIGzUZeUMwcymyPmrUZ5f0ZlnHW9ls9oOQx/ndjm1V9EXJa54YxB7Htn+Xu/I
-2GQTLy461n+OT1glpWx6e4LqtKrWJuNK8e/oXl9fxvp81zvSorNnx700+wanNvM1
-F4OjC8KOVg+eIsiOw6MgM27BFphod1MtoDRSHM0ilj1qeVXlTrfjcPgy7VFgd5yu
-RUTna1KoSTkWtpAIjELJBxaq4g5H/JjhHGGtNEamLHe/ON45KceMU3FCehKcYvEl
-8YBfRE+33ByYeKsuC4rqU8jEsBFJEKajV3y0EqpEaAeT1DTeQ2tPuQ/pZUgzTWj2
-X1ii4cc+o265wcAAyEn4TOLR7kP1jwUiyGALZNQ/RDZnwuZ9UJRKgePc+A2F6UuY
-VnBKDv+EldK6Ka92kofCrodIklmjQTNu5zE4+Gjdjml4m90a5G0vpeP6fgEnDRTl
-hS5jlc/fstW7h9InlmIrlX5jxL4A6XNdQymfU8hV5hmS4Je6NkAnUGupjSwtqg2c
-dKJHjSbLXkwXdOXd0IThdq+xm/l6HF7/3u7tMZF8lEcqajQuHM3R+xGDmCyq1xl7
-Np70w9R01auNc2p8i8jvQsTrCfwEuLB82ceSAec76bV5RVnJcj0wBWJtgEroDX1K
-PaEb3XAB4lValxWhd5MB
-=Q0uK
+iQIcBAEBCAAGBQJSc0S9AAoJEMDTa8Ir7ZwV2ocP/1esZbdj3gQw5B9/j6MSWs5k
+0AKBaI+/mjTx4VbxtrGKcwAcvpc7EHitdPfumlvl/oyGmaGuSCCAXm1BUElp4YIK
+kNgMSknpSQyPIaSmg2jhzHmjeCb/4uJpCSFLBRh2SPbK+8eYrJeqtjzKEsT75b97
+/ocvTtoNyUImY9KebKyFVSgDfXjQ08gkTdxhwGTeLAhLo29JrhyHh4eX4+fDaoJA
+ixpD6R9TA+9jPPP4wcvf6e01SsLi/R3EpkMbeajg8vDHXRXXDcJ2F5YKwRc2aC/T
+xUxSq00MmBdfiW1Gqad9NifNEgfabJCwr6/V3PVB3nPxccNE48StqYtplHRZeVjP
+upTQ8xTGMjfBxvHJUVglxNdqVaR0ZFas28rX2EgKc2waCtgdtL6g12lyVV5k8bfD
+nyDnZUxN4x5Kmtt6cOOtJJ+FO/N+2x+MRutnWY0RkTnUsEzg7oJpXy83SeBP2zQ9
+LvR7PmvXda63cxtj0dbDBaIfO0plz2ndOOK8Cj9BWSAA5K2+1OD9z3/pFdg7KnCy
+IRADeQ8gmL0h3wDcZLkrTnVRCq9sxJJ0k3h8iQS7UX51Bw6qIfnDbGfaBxX6rlTC
+NwZ+vumH5IApy4rNdfi3jSZ0Pz+Hv1PD8EBxICBXgQ6LNeB37YW4RUQsaq+S86K2
+RauS801JglsQShbq38hw
+=nuwj
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__1_Nov_2013_16_20_02_+1100_Azk4V4sl5ProHJGI--
+--Signature=_Fri__1_Nov_2013_17_05_45_+1100_xT1EskGmA1xRZOJO--
+
+--===============0636418232870203377==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linuxppc-dev mailing list
+Linuxppc-dev@lists.ozlabs.org
+https://lists.ozlabs.org/listinfo/linuxppc-dev
+--===============0636418232870203377==--
