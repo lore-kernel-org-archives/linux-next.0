@@ -1,69 +1,75 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: Tree for Nov 1 (xen_swiotllb)
-Date: Fri, 1 Nov 2013 15:43:24 -0400
-Message-ID: <20131101194324.GC15622@phenom.dumpdata.com>
-References: <20131101191138.442028fb1f243c7f9c7f0844@canb.auug.org.au>
- <5273EFFA.1030400@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the block tree with the  tree
+Date: Sat, 2 Nov 2013 07:22:52 +1100
+Message-ID: <20131102072252.88d2380fa392705b912dbfad@canb.auug.org.au>
+References: <20131101142026.10390b6e3f70de348770c137@canb.auug.org.au>
+	<5273C473.5070803@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sat__2_Nov_2013_07_22_52_+1100_d2+_P.ARWbIEpCCt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:34021 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751872Ab3KATo5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 15:44:57 -0400
-Content-Disposition: inline
-In-Reply-To: <5273EFFA.1030400@infradead.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60623 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751457Ab3KAUXG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Nov 2013 16:23:06 -0400
+In-Reply-To: <5273C473.5070803@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zach Brown <zab@zabbo.net>, Dave Kleikamp <dave.kleikamp@oracle.com>, Kent Overstreet <kmo@daterainc.com>
 
-On Fri, Nov 01, 2013 at 11:16:26AM -0700, Randy Dunlap wrote:
-> On 11/01/13 01:11, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20131031:
-> > 
-> > The squashfs tree gained a build failure so I used the version from
-> > next-20131031.
-> > 
-> > The block tree gained conflicts against the f2fs, aio-direct and Linus'
-> > trees and a build failure and generated several warnings so I used the
-> > version from next-20131031.
-> > 
-> > The dt-rh tree gained a conflict against the powerpc tree.
-> > 
-> > The kvm-ppc tree gained a conflict against the powerpc tree.
-> > 
-> > The leds tree gained a conflict against the powerpc tree.
-> > 
-> > The tty tree lost its build failure.
-> 
-> 
-> on x86_64, when CONFIG_PCI is not enabled:
-> 
-> arch/x86/built-in.o: In function `pci_xen_swiotlb_init_late':
-> (.text+0x102cc): undefined reference to `pci_request_acs'
-> arch/x86/built-in.o: In function `pci_xen_swiotlb_init':
-> (.init.text+0x3f6c): undefined reference to `pci_request_acs'
+--Signature=_Sat__2_Nov_2013_07_22_52_+1100_d2+_P.ARWbIEpCCt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Stefano,
+Hi Jens,
 
-Please fix that. I think it is commit 83862ccfc0a03212fde43b4ac29c28381828768b
-Author: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Date:   Thu Oct 10 13:40:44 2013 +0000
+On Fri, 01 Nov 2013 09:10:43 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 10/31/2013 09:20 PM, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next merge of the block tree got a conflict in
+> > drivers/block/loop.c between commit 2486740b52fd ("loop: use aio to
+> > perform io on the underlying file") from the aio-direct tree and commit
+> > ed2d2f9a8265 ("block: Abstract out bvec iterator") from the block tree.
+> >=20
+> > I fixed it up (I think - see below - I have also attached the final
+> > resulting file) and can carry the fix as necessary (no action is
+> > required).
+> >=20
+>=20
+> What tree is this from? It'd be a lot more convenient to fold that loop
+> patch into my tree, especially since the block tree in linux-next failed
+> after this merge.
 
-    xen/arm,arm64: enable SWIOTLB_XEN
+I can only agree with you.  It is from the aio-direct tree (probably
+misnamed by me) (git://github.com/kleikamp/linux-shaggy.git#for-next) run
+by Dave Kleikamp.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-that is causing this. Is it safe to add:
+--Signature=_Sat__2_Nov_2013_07_22_52_+1100_d2+_P.ARWbIEpCCt
+Content-Type: application/pgp-signature
 
-       depends on PCI
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-back on it?
+iQIcBAEBCAAGBQJSdA2iAAoJEMDTa8Ir7ZwVyAEP/0g5vyTlZ1PLhLrBCsnHSt03
+nwreetoVLetnKVmmwstzwhABigKlxCYExXr1WOKjtIGR2/6x+2BU5sfceOXmKrER
+UIX41dhnx2E1awAUmljyqYbKSK1iDf34FFkPdzTO9DKsl0wO38yit7fAgOag40/e
+IkciU0t6bYpeNjiPQPO9TNyLmpwsjNy5DOht7vYDIDllwaxeoOh3xQYWfuQUuvlL
+txlyh814lXqX7krEJEHd/9DuVVI+yVjBgad+rPzXN/6dS0XAaWi7rybjblMphHph
+nm07rE6WfOZZuaRemZD98KGL5zt6J9yvKwF6qoojfPzEwZ79x4DBeZV4f1dOYZv+
+hd8utCXeC2Rxwzb7K8jSZ2HwKeacq9JDF+SmRXkxzEEaK9nChBnIFyLEGcT6XWCh
+paabjQbn4Vqn9KTUxu0J8FL/qcD/fXWf2IirDmZvO7eRgeYteNCYnIF9NU7yP3/8
+1ioEfMPRXxv7CwmSWBhdqZ4Ctncxv2M7yD4hBrvzJbC5XcFO/ZckWmJcOle00Vmd
+QKwu9CDhArT9oZXcgZ2Srp4dO5it2NZa+LNkys0oP8+YmcNywNhcAI9f5g2jsVcW
+4ZX0x3nJpW2mc7suH0j+2RNL1f7sNkufPcxXEB0K2FtTxjFpPj/L+b+Ic/7jul6S
+bNQje2OXfAfKOi+MX4SL
+=6+eX
+-----END PGP SIGNATURE-----
 
-Thanks.
-
-> 
-> 
-> -- 
-> ~Randy
+--Signature=_Sat__2_Nov_2013_07_22_52_+1100_d2+_P.ARWbIEpCCt--
