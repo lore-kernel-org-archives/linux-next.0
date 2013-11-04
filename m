@@ -1,74 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the random tree with Linus' tree
-Date: Mon, 4 Nov 2013 17:04:11 +1100
-Message-ID: <20131104170411.ccd38895fb4cdc347f9cf912@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Mon, 4 Nov 2013 17:52:51 +1100
+Message-ID: <20131104175251.817bdd5b55652625b2b6e0ed@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Nov_2013_17_04_11_+1100_44nvzJDM0uRvqkvQ"
+ boundary="Signature=_Mon__4_Nov_2013_17_52_51_+1100_8tOFGPiURo_Wm4+u"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40092 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:46465 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750760Ab3KDGEY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Nov 2013 01:04:24 -0500
+	with ESMTP id S1752900Ab3KDGxD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Nov 2013 01:53:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Mark Brown <broonie@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolin Chen <b42378@freescale.com>
 
---Signature=_Mon__4_Nov_2013_17_04_11_+1100_44nvzJDM0uRvqkvQ
+--Signature=_Mon__4_Nov_2013_17_52_51_+1100_8tOFGPiURo_Wm4+u
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ted,
+Hi all,
 
-Today's linux-next merge of the random tree got a conflict in
-drivers/base/core.c between commit 63967685605b ("driver core: add
-#include <linux/sysfs.h> to core files") from Linus' tree and commit
-f0ed2b943a53 ("random: use device attach events for entropy") from the
-random tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+sound/soc/soc-pcm.c: In function 'soc_pcm_open':
+sound/soc/soc-pcm.c:186:2: error: implicit declaration of function 'pinctrl=
+_pm_select_default_state' [-Werror=3Dimplicit-function-declaration]
+  pinctrl_pm_select_default_state(cpu_dai->dev);
+  ^
+sound/soc/soc-pcm.c:323:3: error: implicit declaration of function 'pinctrl=
+_pm_select_sleep_state' [-Werror=3Dimplicit-function-declaration]
+   pinctrl_pm_select_sleep_state(codec_dai->dev);
+   ^
 
+Caused by commit fc1a38653793 ("ASoC: Add pinctrl PM to components of
+active DAIs") from the sound-asoc tree.
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/base/core.c
-index 67b180d855b2,5e98fc379d0f..000000000000
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@@ -26,7 -26,7 +26,8 @@@
-  #include <linux/async.h>
-  #include <linux/pm_runtime.h>
-  #include <linux/netdevice.h>
- +#include <linux/sysfs.h>
-+ #include <linux/random.h>
- =20
-  #include "base.h"
-  #include "power/power.h"
-
---Signature=_Mon__4_Nov_2013_17_04_11_+1100_44nvzJDM0uRvqkvQ
+--Signature=_Mon__4_Nov_2013_17_52_51_+1100_8tOFGPiURo_Wm4+u
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSdzjgAAoJEMDTa8Ir7ZwVYBEP+wdrwsJB/cxc+6QPXJqsNA8i
-uR76QmydEI1yMGUeOFp15CJmmBniPw0K/28OthiD1aW1x6zih8tguYpJquO1vfK/
-TMB76Jpk4Ml1uKe5gBcMcCi4B2I5RXDnJ2vnC/Enq78/NmQ8GqA526+baNExzunr
-CW04bgjeoC6R9Eg498VJfZUDq2HaK08exiv5RJgCd0roUNKBuQ5SSBAPS+l8nTVE
-YXKMyd2brWmhA6Db0oR3v+xcDoKLKb4kUmI2NkwXOPZaRuz/F/+ErrZzXLS02+31
-g8IGRptZ0Q3ZmqsqfGHW4rkj675yc5tpFE9DFGRDY9kFLwrNQbmmUBndhVNpZw4I
-8fdUgQlXlAdhHrLlipmUrPt3ZM/cd2k8udWutlUZ4w1KWOdVnHmwdFrES2YZk2gF
-mH0VWgIvoIYYrwz6sO08X6+EU0sEz7uZbYVb31ZZo7nvHXwQPDUwdeXht4ZblJNM
-QIdg1PRo/DE10XH3PYBD1zVuDxeWVA2GLVtDBYyCK+nCtZZ4bPcSOdbnYdSsedLO
-XHT82dEaZZWgisV9xchoQhjCES0mdOtgK3n0yhKxpSVIQGkea0ZGBIl8kKfuHBA3
-C3pnUe1ocNTOaZOZhQmzAztH5J08RGzV97eDJm5Hd8rWLWBDOFG6MJsfq8fCUIC1
-HO9rzJNxtWITU3JCUcfS
-=FSNm
+iQIcBAEBCAAGBQJSd0RIAAoJEMDTa8Ir7ZwVcZUP/220tpFTjMI4/l7kX0DvYBib
+OURhZXSY+CsPBjrH7yrpH3JkO96eDyjAK0Q5HPEL6dP/IeN5Fwjon6bLhvwlw0pS
+YFWU8xyynURyR2hALig6hM8tts9wJ/PzGcJoSEtRRA1JyGNgFkzMFqpUY9S2HrwW
+mRZP+j6COm/qvORxx1e4XTSHTpPjcivVJAOLl7/bLPvd38cVXvb8JsKQ9UokNUsN
+ClGn/+PhoaCaqrLtlKalFYTyyHpkLTHKQ0SsoTtoL5bN2M3EFPEYHV1JM0rqCHmD
+kDFZTA9zU2udXBXbZi5JpuJUD+HOBs19UZsZcmlPMJeWuoKITmRoC5pr+vHRIOC2
+U1Zs/yOuNw1O5w/TgP/ZL+/wv91ibMi6iHKV6kpqr0zC6in/FLcvVWfRmRCmvKUp
+cmqLduEFQ3JyJ2/XCc5CQbVQ00EnX0BO4Fi8vNcPQqiWk60821DRaSCdpPiqk3tA
+gMlD4kee0SHJrts/fc3ljhrMok1HYbXvqH5liB2WD565pWs6Q7Q9M6LSQUETdZKP
+IuXeVpCYBwfftCcTblnTElypZBbqThii2/NtF4IpD9+pUifSJSa/KdusxY4GEUtz
+z+Ri2mpE9fgzJN21yw+uZyiE8ixJo3VSwfQ4ifepzXCEYE8dl6hSpw2qoqsY4t8n
+kZY/fcFXeAD4mfRMYU+I
+=Kawf
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Nov_2013_17_04_11_+1100_44nvzJDM0uRvqkvQ--
+--Signature=_Mon__4_Nov_2013_17_52_51_+1100_8tOFGPiURo_Wm4+u--
