@@ -1,65 +1,74 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: linux-next: build warning after merge of the infiniband tree
-Date: Mon, 4 Nov 2013 15:55:26 +1100
-Message-ID: <20131104155526.10e5aed0cd9512c47a82529f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the random tree with Linus' tree
+Date: Mon, 4 Nov 2013 17:04:11 +1100
+Message-ID: <20131104170411.ccd38895fb4cdc347f9cf912@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Nov_2013_15_55_26_+1100_TFsx_mP4jFPg50uV"
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__4_Nov_2013_17_04_11_+1100_44nvzJDM0uRvqkvQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40092 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750760Ab3KDGEY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Nov 2013 01:04:24 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---Signature=_Mon__4_Nov_2013_15_55_26_+1100_TFsx_mP4jFPg50uV
+--Signature=_Mon__4_Nov_2013_17_04_11_+1100_44nvzJDM0uRvqkvQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Ted,
 
-After merging the infiniband tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Today's linux-next merge of the random tree got a conflict in
+drivers/base/core.c between commit 63967685605b ("driver core: add
+#include <linux/sysfs.h> to core files") from Linus' tree and commit
+f0ed2b943a53 ("random: use device attach events for entropy") from the
+random tree.
 
-drivers/infiniband/hw/ipath/ipath_user_sdma.c: In function 'ipath_user_sdma=
-_pin_pages':
-drivers/infiniband/hw/ipath/ipath_user_sdma.c:283:6: warning: 'j' is used u=
-ninitialized in this function [-Wuninitialized]
-  ret =3D get_user_pages_fast(addr, j, 0, pages);
-      ^
-
-Introduced by commit 18fec3c6bdcb ("IB/ipath: Convert
-ipath_user_sdma_pin_pages() to use get_user_pages_fast()").  How did that
-pass review or testing?
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__4_Nov_2013_15_55_26_+1100_TFsx_mP4jFPg50uV
+diff --cc drivers/base/core.c
+index 67b180d855b2,5e98fc379d0f..000000000000
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@@ -26,7 -26,7 +26,8 @@@
+  #include <linux/async.h>
+  #include <linux/pm_runtime.h>
+  #include <linux/netdevice.h>
+ +#include <linux/sysfs.h>
++ #include <linux/random.h>
+ =20
+  #include "base.h"
+  #include "power/power.h"
+
+--Signature=_Mon__4_Nov_2013_17_04_11_+1100_44nvzJDM0uRvqkvQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSdyjCAAoJEMDTa8Ir7ZwVpUAP/1PJ2JlCkkQzdQLxm0X5+qrY
-GmvlI0Y8JZGc7ntnrn34IXRuwZBtRjhHeNEDtSgGhWvyUhhzycs/HLYiN1qj51S8
-X+v6MgCQsOHr8SEDBWK1BcSbqjfRu39FJgqokMBZe3pkBbsRtSLu/CeSkJsUSLm9
-bBt0sF5d3evwHkHmlrq+8EpCo9Yx9V477JWMZQXpjzV4Uo4ymFXHMvosY0Y8fsCj
-djQu/7JXwIFEvNFpt+m5JoPdischM4yA4754hDDywBIzGd0+EPH/Ww7+09NCicl6
-7rSBDFExXSVnBSN/52TwmhFoGGnlwB3By+NcCEo6YHJuiviQBOuBZczDh3LQKd89
-hihZtvCn2yRpoddmiMQ9ryfaSEuJNAZE8tni1ekZHxrmjUbo+/pjIdoZ+UL8E2xU
-o3ZLapT+RUd1GtZJmeF/OsDfUQLb5wVCCpwIxYdN/2xSlPsOeei6SzkKOFxlhg0h
-EMwG6p4qCKFOHE4it24hjMWwtHQihVsvUXmVoqzzDmllLoMUg7tFpF/A834ywFhF
-8V9svBURg7sdCtCbekqUMORYsJrIbcFAg6Y00zMi4ig/i6BWMaW+1iAvD0uK7s+0
-LwsaCpnLoHP2osQ4HEjFq7pqKsZQCuXkbLRcO9PlRdOS2x8DARAUoHAIlsRjSpUa
-W/PoffsPy6aCrSX7JDDx
-=oP+q
+iQIcBAEBCAAGBQJSdzjgAAoJEMDTa8Ir7ZwVYBEP+wdrwsJB/cxc+6QPXJqsNA8i
+uR76QmydEI1yMGUeOFp15CJmmBniPw0K/28OthiD1aW1x6zih8tguYpJquO1vfK/
+TMB76Jpk4Ml1uKe5gBcMcCi4B2I5RXDnJ2vnC/Enq78/NmQ8GqA526+baNExzunr
+CW04bgjeoC6R9Eg498VJfZUDq2HaK08exiv5RJgCd0roUNKBuQ5SSBAPS+l8nTVE
+YXKMyd2brWmhA6Db0oR3v+xcDoKLKb4kUmI2NkwXOPZaRuz/F/+ErrZzXLS02+31
+g8IGRptZ0Q3ZmqsqfGHW4rkj675yc5tpFE9DFGRDY9kFLwrNQbmmUBndhVNpZw4I
+8fdUgQlXlAdhHrLlipmUrPt3ZM/cd2k8udWutlUZ4w1KWOdVnHmwdFrES2YZk2gF
+mH0VWgIvoIYYrwz6sO08X6+EU0sEz7uZbYVb31ZZo7nvHXwQPDUwdeXht4ZblJNM
+QIdg1PRo/DE10XH3PYBD1zVuDxeWVA2GLVtDBYyCK+nCtZZ4bPcSOdbnYdSsedLO
+XHT82dEaZZWgisV9xchoQhjCES0mdOtgK3n0yhKxpSVIQGkea0ZGBIl8kKfuHBA3
+C3pnUe1ocNTOaZOZhQmzAztH5J08RGzV97eDJm5Hd8rWLWBDOFG6MJsfq8fCUIC1
+HO9rzJNxtWITU3JCUcfS
+=FSNm
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Nov_2013_15_55_26_+1100_TFsx_mP4jFPg50uV--
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Signature=_Mon__4_Nov_2013_17_04_11_+1100_44nvzJDM0uRvqkvQ--
