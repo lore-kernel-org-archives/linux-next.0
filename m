@@ -1,44 +1,39 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH -next] random: needs linux/device.h for struct device
-Date: Mon, 4 Nov 2013 11:32:48 -0500
-Message-ID: <20131104163248.GC7108@thunk.org>
-References: <20131104175916.763e3c0cf001b9f948f2baa7@canb.auug.org.au>
- <5277C5F8.3080609@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] PowerCap: Error with option -Werror=format-security
+Date: Mon,  4 Nov 2013 08:53:10 -0800
+Message-ID: <1383583990-9618-1-git-send-email-srinivas.pandruvada@linux.intel.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from imap.thunk.org ([74.207.234.97]:54124 "EHLO imap.thunk.org"
+Received: from mga09.intel.com ([134.134.136.24]:50905 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753397Ab3KDQc6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Nov 2013 11:32:58 -0500
-Content-Disposition: inline
-In-Reply-To: <5277C5F8.3080609@infradead.org>
+	id S1752605Ab3KDQxk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Nov 2013 11:53:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-next@vger.kernel.org
+Cc: keescook@chromium.org, fengguang.wu@intel.com, rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-On Mon, Nov 04, 2013 at 08:06:16AM -0800, Randy Dunlap wrote:
-> on x86_64:
-> 
-> drivers/char/random.c: In function 'add_device_attach_randomness':
-> drivers/char/random.c:837:41: error: dereferencing pointer to incomplete type
-> 
-> 
-> need to #include <linux/device.h> for struct device, I think.
+Fix compile error with gcc option: -Werror=format-security for
+dev_set_name(&control_type->dev, name)
+Changed to
+dev_set_name(&control_type->dev, "%s", name);
 
-The patch which introduced this is going to be dropped from the random
-tree because I'm concerned the amount of entropy that will be added
-will get overstated, especially on CPU's that don't have cycle
-counters (ARM and MIPS in particular).
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ drivers/powercap/powercap_sys.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I plan to rework it to be safer, although I suspect using device
-attach times simply won't be doable on CPU's that don't have a cycle
-counter register, or some other fine-grained, highly light-weight
-timer (I can't use the clocksource infrastructure since those time
-sources are not necessarily available during early boot, and there is
-no guarantee how expensive some of the clock sources might be; some
-can be quite expensive, <cough> IBM X440 servers with their
-"scalability cable" <cough>).
-
-	   	       	    	    	 - Ted
+diff --git a/drivers/powercap/powercap_sys.c b/drivers/powercap/powercap_sys.c
+index 21814f9..8d0fe43 100644
+--- a/drivers/powercap/powercap_sys.c
++++ b/drivers/powercap/powercap_sys.c
+@@ -625,7 +625,7 @@ struct powercap_control_type *powercap_register_control_type(
+ 	control_type->ops = ops;
+ 	INIT_LIST_HEAD(&control_type->node);
+ 	control_type->dev.class = &powercap_class;
+-	dev_set_name(&control_type->dev, name);
++	dev_set_name(&control_type->dev, "%s", name);
+ 	result = device_register(&control_type->dev);
+ 	if (result) {
+ 		if (control_type->allocated)
+-- 
+1.7.11.7
