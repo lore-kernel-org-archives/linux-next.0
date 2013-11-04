@@ -1,58 +1,66 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Mon, 4 Nov 2013 09:06:17 -0800
-Message-ID: <20131104170617.GN2493@sirena.org.uk>
-References: <20131104175251.817bdd5b55652625b2b6e0ed@canb.auug.org.au>
+From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Subject: Re: linux-next: Tree for Oct 30 (include/xen/swiotlb-xen.h)
+Date: Mon, 4 Nov 2013 18:14:26 +0000
+Message-ID: <alpine.DEB.2.02.1311041801470.26077@kaball.uk.xensource.com>
+References: <20131030184511.c90aa7f40fec6b2e1652f394@canb.auug.org.au> <527153A3.5020404@infradead.org> <20131101193720.GB15622@phenom.dumpdata.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nc/lueCMLdgjBWoP"
+Content-Type: text/plain; charset="US-ASCII"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:47049 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751854Ab3KDRI3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Nov 2013 12:08:29 -0500
-Content-Disposition: inline
-In-Reply-To: <20131104175251.817bdd5b55652625b2b6e0ed@canb.auug.org.au>
+Received: from smtp.citrix.com ([66.165.176.89]:42050 "EHLO SMTP.CITRIX.COM"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750746Ab3KDSPn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Nov 2013 13:15:43 -0500
+In-Reply-To: <20131101193720.GB15622@phenom.dumpdata.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolin Chen <b42378@freescale.com>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+
+On Fri, 1 Nov 2013, Konrad Rzeszutek Wilk wrote:
+> On Wed, Oct 30, 2013 at 11:44:51AM -0700, Randy Dunlap wrote:
+> > On 10/30/13 00:45, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > News:  I am now doing an arm multi_v7_defconfig build between each merge.
+> > > 
+> > > Changes since 20131029:
+> > > 
+> > > The arm defconfig build is fixed again.
+> > > 
+> > > The net-next tree gained a conflict against the net tree.
+> > > 
+> > > The xen-tip tree gained a conflict against the arm tree.
+> > > 
+> > > The akpm-current tree gained a conflict against the tip tree and a build
+> > > failure for which I reverted 3 commits.
+> > > 
+> > > Various build problems from yesterday have been resolved.
+> > 
+> > on x86_64:
+> 
+> Stefano, please fix that.
+ 
+Thanks for the notification. I am appending the fix that I am about to
+apply to xentip/linux-next.
 
 
---nc/lueCMLdgjBWoP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+commit bb5ebdb6a674c59cd7b5d159d6ca3c0084ee60e1
+Author: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Date:   Mon Nov 4 17:54:27 2013 +0000
 
-On Mon, Nov 04, 2013 at 05:52:51PM +1100, Stephen Rothwell wrote:
+    swiotlb-xen: missing include dma-direction.h
+    
+    Signed-off-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
 
-> Caused by commit fc1a38653793 ("ASoC: Add pinctrl PM to components of
-> active DAIs") from the sound-asoc tree.
-
-> I have reverted that commit for today.
-
-Thanks, I'd already reverted it in my tree after a report from Fengguang
-but that must've been after you fetched the trees for today.
-
---nc/lueCMLdgjBWoP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSd9QFAAoJELSic+t+oim9aTUP/0VmpzdrH7cP6+60PQQda7Ac
-zwhpieTtEeFSWQMCLocYn7wn39irhazerLy9NWYguGadjkcNFA0vOhynFCU45CF8
-FzcUUvWD35YWB/8SATba7icqh0VyqhjMVHP3Vib7XGo1Pre8pNidG3LfQAr75fjz
-6J2Z0vsFrLyY+u555A/FlG1N0BTSxJUfnYTcJxZ8kfgNVmLRTHOqnRDZ7WYFdESE
-AUJCz2WOFDXTInNKG0MvxgRmmNcuay1aINr9Kfe5SzsRvT8QG6SxwjMcImkFELam
-yCVJuWRRud1SfS5sdBXtexZYXrxuAE38cSga2E+ZoX9GK0Mcn+L+5oZP2i5wjcPq
-BGTUyukEd4SAmJORylaGMEYi4uLqgA0noQmrBe0phWC8w/fB6eVspJCnE+LnaemD
-4+vf+/uwNwNXcAB+BwOBY5t8G+1wF94Jt2+aNZDOrg4JIFJpbYhESH5JB2rkmlVR
-jvAdj56DCOxtgQYHRsfao54WIBSHBCCzRqDeAcVTYDpn4T30fWJwdwOWpXbuwXL1
-+pPPPNfGBhNvACcILkYrEPK3w4alT/DmtQibccaJ+AuuEYTiR621ETG3m8d06YDZ
-MeTfcb7X+MKViOabI83U6QdIHvrC2LcGRMy7RWTJwJVa01tgeFwalHsaVfSJGyv/
-F1pFRJkaDbe9YB3/Kw9z
-=zmjQ
------END PGP SIGNATURE-----
-
---nc/lueCMLdgjBWoP--
+diff --git a/include/xen/swiotlb-xen.h b/include/xen/swiotlb-xen.h
+index 7b64465..8b2eb93 100644
+--- a/include/xen/swiotlb-xen.h
++++ b/include/xen/swiotlb-xen.h
+@@ -1,6 +1,7 @@
+ #ifndef __LINUX_SWIOTLB_XEN_H
+ #define __LINUX_SWIOTLB_XEN_H
+ 
++#include <linux/dma-direction.h>
+ #include <linux/swiotlb.h>
+ 
+ extern int xen_swiotlb_init(int verbose, bool early);
