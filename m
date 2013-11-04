@@ -1,66 +1,106 @@
 From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Subject: Re: linux-next: Tree for Oct 30 (include/xen/swiotlb-xen.h)
-Date: Mon, 4 Nov 2013 18:14:26 +0000
-Message-ID: <alpine.DEB.2.02.1311041801470.26077@kaball.uk.xensource.com>
-References: <20131030184511.c90aa7f40fec6b2e1652f394@canb.auug.org.au> <527153A3.5020404@infradead.org> <20131101193720.GB15622@phenom.dumpdata.com>
+Subject: Re: linux-next: Tree for Nov 1 (xen_swiotllb)
+Date: Mon, 4 Nov 2013 18:20:42 +0000
+Message-ID: <alpine.DEB.2.02.1311041800540.26077@kaball.uk.xensource.com>
+References: <20131101191138.442028fb1f243c7f9c7f0844@canb.auug.org.au> <5273EFFA.1030400@infradead.org> <20131101194324.GC15622@phenom.dumpdata.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.citrix.com ([66.165.176.89]:42050 "EHLO SMTP.CITRIX.COM"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750746Ab3KDSPn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Nov 2013 13:15:43 -0500
-In-Reply-To: <20131101193720.GB15622@phenom.dumpdata.com>
+Received: from smtp02.citrix.com ([66.165.176.63]:39342 "EHLO
+	SMTP02.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750719Ab3KDSV6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Nov 2013 13:21:58 -0500
+In-Reply-To: <20131101194324.GC15622@phenom.dumpdata.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Cc: Randy Dunlap <rdunlap@infradead.org>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
 
 On Fri, 1 Nov 2013, Konrad Rzeszutek Wilk wrote:
-> On Wed, Oct 30, 2013 at 11:44:51AM -0700, Randy Dunlap wrote:
-> > On 10/30/13 00:45, Stephen Rothwell wrote:
+> On Fri, Nov 01, 2013 at 11:16:26AM -0700, Randy Dunlap wrote:
+> > On 11/01/13 01:11, Stephen Rothwell wrote:
 > > > Hi all,
 > > > 
-> > > News:  I am now doing an arm multi_v7_defconfig build between each merge.
+> > > Changes since 20131031:
 > > > 
-> > > Changes since 20131029:
+> > > The squashfs tree gained a build failure so I used the version from
+> > > next-20131031.
 > > > 
-> > > The arm defconfig build is fixed again.
+> > > The block tree gained conflicts against the f2fs, aio-direct and Linus'
+> > > trees and a build failure and generated several warnings so I used the
+> > > version from next-20131031.
 > > > 
-> > > The net-next tree gained a conflict against the net tree.
+> > > The dt-rh tree gained a conflict against the powerpc tree.
 > > > 
-> > > The xen-tip tree gained a conflict against the arm tree.
+> > > The kvm-ppc tree gained a conflict against the powerpc tree.
 > > > 
-> > > The akpm-current tree gained a conflict against the tip tree and a build
-> > > failure for which I reverted 3 commits.
+> > > The leds tree gained a conflict against the powerpc tree.
 > > > 
-> > > Various build problems from yesterday have been resolved.
+> > > The tty tree lost its build failure.
 > > 
-> > on x86_64:
+> > 
+> > on x86_64, when CONFIG_PCI is not enabled:
+> > 
+> > arch/x86/built-in.o: In function `pci_xen_swiotlb_init_late':
+> > (.text+0x102cc): undefined reference to `pci_request_acs'
+> > arch/x86/built-in.o: In function `pci_xen_swiotlb_init':
+> > (.init.text+0x3f6c): undefined reference to `pci_request_acs'
 > 
-> Stefano, please fix that.
+> Stefano,
+> 
+> Please fix that. I think it is commit 83862ccfc0a03212fde43b4ac29c28381828768b
+> Author: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+> Date:   Thu Oct 10 13:40:44 2013 +0000
+> 
+>     xen/arm,arm64: enable SWIOTLB_XEN
+> 
+> that is causing this. Is it safe to add:
+> 
+>        depends on PCI
+> 
+> back on it?
  
-Thanks for the notification. I am appending the fix that I am about to
-apply to xentip/linux-next.
+On ARM it is possible to use the swiotlb without PCI support.
+Ideally we wouldn't even build arch/x86/xen/pci-swiotlb-xen.c if
+CONFIG_PCI was missing. However other core x86 kernel stuff seem to have
+similar issues, for example arch/x86/kernel/pci-swiotlb.c build with or
+without CONFIG_PCI and references pci_xen_swiotlb_detect.
+I think that the right solution would be to completely disentangle
+CONFIG_PCI from swiotlb related stuff, but for the moment I went for the
+easy fix:
 
 
-commit bb5ebdb6a674c59cd7b5d159d6ca3c0084ee60e1
+commit 1e6d541cc26683d0f347e1cedfee1bc57e3f8875
 Author: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Date:   Mon Nov 4 17:54:27 2013 +0000
+Date:   Mon Nov 4 18:11:54 2013 +0000
 
-    swiotlb-xen: missing include dma-direction.h
+    pci-swiotlb-xen: call pci_request_acs only ifdef CONFIG_PCI
     
     Signed-off-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
 
-diff --git a/include/xen/swiotlb-xen.h b/include/xen/swiotlb-xen.h
-index 7b64465..8b2eb93 100644
---- a/include/xen/swiotlb-xen.h
-+++ b/include/xen/swiotlb-xen.h
-@@ -1,6 +1,7 @@
- #ifndef __LINUX_SWIOTLB_XEN_H
- #define __LINUX_SWIOTLB_XEN_H
+diff --git a/arch/x86/xen/pci-swiotlb-xen.c b/arch/x86/xen/pci-swiotlb-xen.c
+index 9695704..0e98e5d 100644
+--- a/arch/x86/xen/pci-swiotlb-xen.c
++++ b/arch/x86/xen/pci-swiotlb-xen.c
+@@ -75,8 +75,10 @@ void __init pci_xen_swiotlb_init(void)
+ 		xen_swiotlb_init(1, true /* early */);
+ 		dma_ops = &xen_swiotlb_dma_ops;
  
-+#include <linux/dma-direction.h>
- #include <linux/swiotlb.h>
++#ifdef CONFIG_PCI
+ 		/* Make sure ACS will be enabled */
+ 		pci_request_acs();
++#endif
+ 	}
+ }
  
- extern int xen_swiotlb_init(int verbose, bool early);
+@@ -92,8 +94,10 @@ int pci_xen_swiotlb_init_late(void)
+ 		return rc;
+ 
+ 	dma_ops = &xen_swiotlb_dma_ops;
++#ifdef CONFIG_PCI
+ 	/* Make sure ACS will be enabled */
+ 	pci_request_acs();
++#endif
+ 
+ 	return 0;
+ }
