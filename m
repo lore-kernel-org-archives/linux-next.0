@@ -1,33 +1,35 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: manual merge of the random tree with Linus' tree
-Date: Mon, 4 Nov 2013 04:39:12 -0800
-Message-ID: <20131104123912.GA22288@kroah.com>
-References: <20131104170411.ccd38895fb4cdc347f9cf912@canb.auug.org.au>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: linux-next: manual merge of the dt-rh tree with the imx-mxs tree
+Date: Mon, 4 Nov 2013 21:17:41 +0800
+Message-ID: <20131104131739.GC24970@S2101-09.ap.freescale.net>
+References: <20131104152739.92ae486e7d418221c6a48a1e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from co9ehsobe004.messaging.microsoft.com ([207.46.163.27]:37463
+	"EHLO co9outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751782Ab3KDNRL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Nov 2013 08:17:11 -0500
 Content-Disposition: inline
-In-Reply-To: <20131104170411.ccd38895fb4cdc347f9cf912@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20131104152739.92ae486e7d418221c6a48a1e@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: Rob Herring <robherring2@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rostislav Lisovy <lisovy@gmail.com>, Silvio F <silvio.fricke@gmail.com>
 
-On Mon, Nov 04, 2013 at 05:04:11PM +1100, Stephen Rothwell wrote:
-> Hi Ted,
+On Mon, Nov 04, 2013 at 03:27:39PM +1100, Stephen Rothwell wrote:
+> Hi Rob,
 > 
-> Today's linux-next merge of the random tree got a conflict in
-> drivers/base/core.c between commit 63967685605b ("driver core: add
-> #include <linux/sysfs.h> to core files") from Linus' tree and commit
-> f0ed2b943a53 ("random: use device attach events for entropy") from the
-> random tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> Today's linux-next merge of the dt-rh tree got a conflict in
+> Documentation/devicetree/bindings/vendor-prefixes.txt between commit
+> 064d7f6c985a ("ARM: dts: Add vendor prefix for Voipac Technologies
+> s.r.o") from the imx-mxs tree and commit d6c3073e7fb5 ("DT: sort
+> vendor-prefixes.txt") from the dt-rh tree.
 
-I think Ted is going to drop this patch from his tree as it didn't work
-properly, right Ted?
+Hi Rob,
 
-thanks,
+Would you like to apply the patch "ARM: dts: Add vendor prefix for
+Voipac Technologies s.r.o" on your tree, so that we can save this
+conflict?  If so, I will drop the patch from my tree.  Just let me know.
 
-greg k-h
+Shawn
