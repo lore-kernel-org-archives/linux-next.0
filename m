@@ -1,38 +1,34 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: randconfig build error with next-20131104, in security/integrity
-Date: Tue, 05 Nov 2013 07:55:16 -0500
-Message-ID: <1383656116.17256.0.camel@dhcp-9-2-203-236.watson.ibm.com>
-References: <CA+r1Zhir86Mdmps5N1awK7mJxf1CWgkr-RDKYVhmpj_3+oYyYQ@mail.gmail.com>
-	 <1383606829.15186.25.camel@dhcp-9-2-203-236.watson.ibm.com>
-	 <201311052112.DCC60296.MFOOFSOHJVtLQF@I-love.SAKURA.ne.jp>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the block tree
+Date: Tue, 5 Nov 2013 05:08:33 -0800
+Message-ID: <20131105130833.GC19906@kroah.com>
+References: <20131105160924.4da55b7e36aa2ab93443fdda@canb.auug.org.au>
+ <20131105052010.GA14557@kroah.com>
+ <20131105094926.GA12440@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <201311052112.DCC60296.MFOOFSOHJVtLQF@I-love.SAKURA.ne.jp>
-Sender: linux-security-module-owner@vger.kernel.org
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: jim.epost@gmail.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, james.l.morris@oracle.com, linux-security-module@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:44157 "EHLO
+	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754607Ab3KENGT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Nov 2013 08:06:19 -0500
+Content-Disposition: inline
+In-Reply-To: <20131105094926.GA12440@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>, Jens Axboe <axboe@kernel.dk>
 
-On Tue, 2013-11-05 at 21:12 +0900, Tetsuo Handa wrote:
-> Mimi Zohar wrote:
-> > @@ -132,24 +133,22 @@ static inline int integrity_digsig_verify(const unsigned int id,
-> >  	return -EOPNOTSUPP;
-> >  }
-> >  
-> > +static int integrity_init_keyring(const unsigned int id)
+On Tue, Nov 05, 2013 at 01:49:26AM -0800, Christoph Hellwig wrote:
+> On Mon, Nov 04, 2013 at 09:20:10PM -0800, Greg KH wrote:
+> > > I fixed it up (see below) and can carry the fix as necessary (no action
+> > > is required).
+> > 
+> > Looks good to me, thanks.
 > 
-> Please add inline keyword, or compiler makes noisy warning.
+> The lloop driver should simply be dropped.  It's a duplication of loop
+> which had some lustre-specific hacks that are replaced with generic
+> improvements already in linux-next.
 
-Thanks!
-
-Mimi
-
-> > +{
-> > +	return 0;
-> > +}
-> >  #endif /* CONFIG_INTEGRITY_SIGNATURE */
-> 
-
-
+That's fine with me, I figure it will be deleted eventually by someone
+sending me a patch to do so...
