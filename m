@@ -1,110 +1,98 @@
 From: Jens Axboe <axboe@kernel.dk>
 Subject: Re: Boot failure on Arndale with next-20131105
-Date: Tue, 05 Nov 2013 12:33:55 -0700
-Message-ID: <52794823.7080503@kernel.dk>
-References: <CAHbNUh1Cw3bc4WR0VcD1H_eKYqGBtv_215_euh6mwTbZ41ejUw@mail.gmail.com>
+Date: Tue, 05 Nov 2013 12:59:30 -0700
+Message-ID: <52794E22.5030807@kernel.dk>
+References: <CAHbNUh1Cw3bc4WR0VcD1H_eKYqGBtv_215_euh6mwTbZ41ejUw@mail.gmail.com> <1451170.jb5zbRXgpt@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+ boundary="------------020109080607070201030409"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:38193 "EHLO
+Received: from merlin.infradead.org ([205.233.59.134]:38633 "EHLO
 	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752140Ab3KETeP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Nov 2013 14:34:15 -0500
-In-Reply-To: <CAHbNUh1Cw3bc4WR0VcD1H_eKYqGBtv_215_euh6mwTbZ41ejUw@mail.gmail.com>
+	with ESMTP id S1755239Ab3KET7v (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Nov 2013 14:59:51 -0500
+In-Reply-To: <1451170.jb5zbRXgpt@amdc1227>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tushar Behera <tushar.behera@linaro.org>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Cc: Chris Mason <chris.mason@fusionio.com>
+To: Tomasz Figa <t.figa@samsung.com>, Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Chris Mason <chris.mason@fusionio.com>
 
-On 11/05/2013 04:49 AM, Tushar Behera wrote:
+This is a multi-part message in MIME format.
+--------------020109080607070201030409
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+On 11/05/2013 09:42 AM, Tomasz Figa wrote:
 > Hi,
 > 
-> We are having a boot-time kernel panic on Samsung's Exynos5250-based
-> Arndale board with next-20131105. Bisect points to following commit.
+> On Tuesday 05 of November 2013 17:19:00 Tushar Behera wrote:
+>> Hi,
+>>
+>> We are having a boot-time kernel panic on Samsung's Exynos5250-based
+>> Arndale board with next-20131105. Bisect points to following commit.
+>>
+>> <<<
+>> commit febca1baea1cfe2d7a0271385d89b03d5fb34f94
+>> Author: Chris Mason <chris.mason@fusionio.com>
+>> Date:   Thu Oct 31 13:32:42 2013 -0600
+>>
+>>     block: setup bi_vcnt on clones
+>>
+>>     commit 9fc6286f347d changed the cloning code to make clones cheaper for
+>>     the case where we don't need to clone the iovec array.  But,
+>>     the new clone needs the bi_vnct from the original.
+>>
+>>     Signed-off-by: Chris Mason <chris.mason@fusionio.com>
+>>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>>>
+>>
+>> Reverting above commit, Arndale is able to boot again.
 > 
-> <<<
-> commit febca1baea1cfe2d7a0271385d89b03d5fb34f94
-> Author: Chris Mason <chris.mason@fusionio.com>
-> Date:   Thu Oct 31 13:32:42 2013 -0600
-> 
->     block: setup bi_vcnt on clones
-> 
->     commit 9fc6286f347d changed the cloning code to make clones cheaper for
->     the case where we don't need to clone the iovec array.  But,
->     the new clone needs the bi_vnct from the original.
-> 
->     Signed-off-by: Chris Mason <chris.mason@fusionio.com>
->     Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>>
-> 
-> Reverting above commit, Arndale is able to boot again.
-> 
-> Excerpts from the boot log (just in case, it helps in debugging).
-> 
-> [    1.972062] Unable to handle kernel paging request at virtual
-> address 025e63a0
-> [    1.981164] pgd = c0004000
-> [    1.982375] [025e63a0] *pgd=00000000
-> [    1.985875] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-> [    1.991086] Modules linked in:
-> [    1.994076] CPU: 0 PID: 1178 Comm: mmcqd/0 Not tainted
-> 3.12.0-rc5-00051-gfebca1b #21
-> [    2.001683] task: ef3530c0 ti: ee82e000 task.ti: ee82e000
-> [    2.006981] PC is at dma_cache_maint_page+0x84/0x174
-> [    2.011842] LR is at 0x6
-> 
-> [    2.043532] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM
-> Segment kernel
-> [    2.050708] Control: 10c5387d  Table: 4000406a  DAC: 00000015
-> [    2.056342] Process mmcqd/0 (pid: 1178, stack limit = 0xee82e240)
-> [    2.062321] Stack: (0xee82fd58 to 0xee830000)
-> 
-> [ ... ]
-> 
-> [    2.275352] [<c0015768>] (dma_cache_maint_page+0x84/0x174) from
-> [<c0015880>] (__dma_page_cpu_to_dev+0x28/0xa0)
-> [    2.285170] [<c0015880>] (__dma_page_cpu_to_dev+0x28/0xa0) from
-> [<c00159a4>] (arm_dma_map_page+0x6c/0x70)
-> [    2.294565] [<c00159a4>] (arm_dma_map_page+0x6c/0x70) from
-> [<c0015d28>] (arm_dma_map_sg+0x74/0xec)
-> [    2.303366] [<c0015d28>] (arm_dma_map_sg+0x74/0xec) from
-> [<c02bf534>] (dw_mci_pre_dma_transfer.isra.16+0x124/0x15c)
-> [    2.313614] [<c02bf534>]
-> (dw_mci_pre_dma_transfer.isra.16+0x124/0x15c) from [<c02bf8d4>]
-> (dw_mci_pre_req+0x44/0x50)
-> [    2.323863] [<c02bf8d4>] (dw_mci_pre_req+0x44/0x50) from
-> [<c02a8970>] (mmc_start_req+0x3c/0x39c)
-> [    2.332486] [<c02a8970>] (mmc_start_req+0x3c/0x39c) from
-> [<c02b606c>] (mmc_blk_issue_rw_rq+0xbc/0xa9c)
-> [    2.341625] [<c02b606c>] (mmc_blk_issue_rw_rq+0xbc/0xa9c) from
-> [<c02b6c14>] (mmc_blk_issue_rq+0x1c8/0x498)
-> [    2.351106] [<c02b6c14>] (mmc_blk_issue_rq+0x1c8/0x498) from
-> [<c02b75d4>] (mmc_queue_thread+0xa4/0x144)
-> [    2.360331] [<c02b75d4>] (mmc_queue_thread+0xa4/0x144) from
-> [<c0038614>] (kthread+0xb4/0xb8)
-> [    2.368616] [<c0038614>] (kthread+0xb4/0xb8) from [<c000e2f8>]
-> (ret_from_fork+0x14/0x3c)
-> [    2.376556] Code: 17e81051 10822181 e592c000 e3ccc003 (e79c2007)
-> [    2.382570] ---[ end trace df06b64b1b7fa443 ]---
-> 
-> [ ... ]
-> 
-> Begin: Mounting root file system ... Begin: Running /scripts/local-top ... done.
-> Gave up waiting for root device.  Common problems:
->  - Boot args (cat /proc/cmdline)
->    - Check rootdelay= (did the system wait long enough?)
->    - Check root= (did the system wait for the right device?)
->  - Missing modules (cat /proc/modules; ls /dev)
-> ALERT!  /dev/mmcblk1p3 does not exist.  Dropping to a shell!
-> FATAL: Could not load
-> /lib/modules/3.12.0-rc5-00051-gfebca1b/modules.dep: No such file or
-> directory
-> FATAL: Could not load
-> /lib/modules/3.12.0-rc5-00051-gfebca1b/modules.dep: No such file or
-> directory
+> I can confirm exactly the same behavior on Exynos 4210-based Trats board,
+> with exactly the same bisection results.
 
-Very weird! What file system is being used?
+Can either (or both) of you try this?
 
 -- 
 Jens Axboe
+
+
+--------------020109080607070201030409
+Content-Type: text/x-patch;
+ name="dm-clone.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="dm-clone.patch"
+
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 8e6174c..a1177e1 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1123,8 +1123,13 @@ struct clone_info {
+ 
+ static void bio_setup_sector(struct bio *bio, sector_t sector, sector_t len)
+ {
+-	bio->bi_iter.bi_sector = sector;
+-	bio->bi_iter.bi_size = to_bytes(len);
++	if (len) {
++		bio->bi_iter.bi_sector = sector;
++		bio->bi_iter.bi_size = to_bytes(len);
++	} else {
++		bio->bi_iter.bi_size = 0;
++		bio->bi_vcnt = 0;
++	}
+ }
+ 
+ /*
+@@ -1178,8 +1183,7 @@ static void __clone_and_map_simple_bio(struct clone_info *ci,
+ 	 * and discard, so no need for concern about wasted bvec allocations.
+ 	 */
+ 	 __bio_clone(clone, ci->bio);
+-	if (len)
+-		bio_setup_sector(clone, ci->sector, len);
++	bio_setup_sector(clone, ci->sector, len);
+ 
+ 	__map_bio(tio);
+ }
+
+--------------020109080607070201030409--
