@@ -1,185 +1,107 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: since-3.12 branch opened for mm git tree (was: Re: mmotm
- 2013-11-04-16-11 uploaded)
-Date: Tue, 5 Nov 2013 12:00:43 +0100
-Message-ID: <20131105110043.GA5882@dhcp22.suse.cz>
-References: <20131105001242.C881431C25D@corp2gmr1-1.hot.corp.google.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Boot failure on Arndale with next-20131105
+Date: Tue, 5 Nov 2013 17:19:00 +0530
+Message-ID: <CAHbNUh1Cw3bc4WR0VcD1H_eKYqGBtv_215_euh6mwTbZ41ejUw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:36016 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751943Ab3KELAp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Nov 2013 06:00:45 -0500
-Content-Disposition: inline
-In-Reply-To: <20131105001242.C881431C25D@corp2gmr1-1.hot.corp.google.com>
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:56568 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754196Ab3KELtB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Nov 2013 06:49:01 -0500
+Received: by mail-oa0-f51.google.com with SMTP id o6so418507oag.10
+        for <linux-next@vger.kernel.org>; Tue, 05 Nov 2013 03:49:01 -0800 (PST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Chris Mason <chris.mason@fusionio.com>
 
 Hi,
-mm git tree goes on again after some pause while I was on vacation.
 
-I have just created since-3.12 branch in mm git tree
-(http://git.kernel.org/?p=linux/kernel/git/mhocko/mm.git;a=summary). It
-is based on v3.12 tag in Linus tree and mmotm 2013-11-04-16-11.
+We are having a boot-time kernel panic on Samsung's Exynos5250-based
+Arndale board with next-20131105. Bisect points to following commit.
 
-I have merged Tejun's cgroups/for-3.13 branch to pull css_id changes.
+<<<
+commit febca1baea1cfe2d7a0271385d89b03d5fb34f94
+Author: Chris Mason <chris.mason@fusionio.com>
+Date:   Thu Oct 31 13:32:42 2013 -0600
 
-As usual mmotm trees are tagged with signed tag
-(finger print BB43 1E25 7FB8 660F F2F1  D22D 48E2 09A2 B310 E347)
+    block: setup bi_vcnt on clones
 
-The current shortlog says:
-Akira Takeuchi (1):
-      mm: ensure get_unmapped_area() returns higher address than mmap_min_addr
+    commit 9fc6286f347d changed the cloning code to make clones cheaper for
+    the case where we don't need to clone the iovec array.  But,
+    the new clone needs the bi_vnct from the original.
 
-Andrew Morton (1):
-      mm-thp-khugepaged-add-policy-for-finding-target-node-fix
+    Signed-off-by: Chris Mason <chris.mason@fusionio.com>
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>
 
-Bob Liu (2):
-      mm: thp: cleanup: mv alloc_hugepage to better place
-      mm: thp: khugepaged: add policy for finding target node
+Reverting above commit, Arndale is able to boot again.
 
-Catalin Marinas (1):
-      mm: kmemleak: avoid false negatives on vmalloc'ed objects
+Excerpts from the boot log (just in case, it helps in debugging).
 
-Christian Hesse (1):
-      Documentation/vm/zswap.txt: fix typos
+[    1.972062] Unable to handle kernel paging request at virtual
+address 025e63a0
+[    1.981164] pgd = c0004000
+[    1.982375] [025e63a0] *pgd=00000000
+[    1.985875] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+[    1.991086] Modules linked in:
+[    1.994076] CPU: 0 PID: 1178 Comm: mmcqd/0 Not tainted
+3.12.0-rc5-00051-gfebca1b #21
+[    2.001683] task: ef3530c0 ti: ee82e000 task.ti: ee82e000
+[    2.006981] PC is at dma_cache_maint_page+0x84/0x174
+[    2.011842] LR is at 0x6
 
-Daeseok Youn (1):
-      mm/bootmem.c: remove unused local `map'
+[    2.043532] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM
+Segment kernel
+[    2.050708] Control: 10c5387d  Table: 4000406a  DAC: 00000015
+[    2.056342] Process mmcqd/0 (pid: 1178, stack limit = 0xee82e240)
+[    2.062321] Stack: (0xee82fd58 to 0xee830000)
 
-Damien Ramonda (1):
-      readahead: fix sequential read cache miss detection
+[ ... ]
 
-David Rientjes (1):
-      mm, mempolicy: make mpol_to_str robust and always succeed
+[    2.275352] [<c0015768>] (dma_cache_maint_page+0x84/0x174) from
+[<c0015880>] (__dma_page_cpu_to_dev+0x28/0xa0)
+[    2.285170] [<c0015880>] (__dma_page_cpu_to_dev+0x28/0xa0) from
+[<c00159a4>] (arm_dma_map_page+0x6c/0x70)
+[    2.294565] [<c00159a4>] (arm_dma_map_page+0x6c/0x70) from
+[<c0015d28>] (arm_dma_map_sg+0x74/0xec)
+[    2.303366] [<c0015d28>] (arm_dma_map_sg+0x74/0xec) from
+[<c02bf534>] (dw_mci_pre_dma_transfer.isra.16+0x124/0x15c)
+[    2.313614] [<c02bf534>]
+(dw_mci_pre_dma_transfer.isra.16+0x124/0x15c) from [<c02bf8d4>]
+(dw_mci_pre_req+0x44/0x50)
+[    2.323863] [<c02bf8d4>] (dw_mci_pre_req+0x44/0x50) from
+[<c02a8970>] (mmc_start_req+0x3c/0x39c)
+[    2.332486] [<c02a8970>] (mmc_start_req+0x3c/0x39c) from
+[<c02b606c>] (mmc_blk_issue_rw_rq+0xbc/0xa9c)
+[    2.341625] [<c02b606c>] (mmc_blk_issue_rw_rq+0xbc/0xa9c) from
+[<c02b6c14>] (mmc_blk_issue_rq+0x1c8/0x498)
+[    2.351106] [<c02b6c14>] (mmc_blk_issue_rq+0x1c8/0x498) from
+[<c02b75d4>] (mmc_queue_thread+0xa4/0x144)
+[    2.360331] [<c02b75d4>] (mmc_queue_thread+0xa4/0x144) from
+[<c0038614>] (kthread+0xb4/0xb8)
+[    2.368616] [<c0038614>] (kthread+0xb4/0xb8) from [<c000e2f8>]
+(ret_from_fork+0x14/0x3c)
+[    2.376556] Code: 17e81051 10822181 e592c000 e3ccc003 (e79c2007)
+[    2.382570] ---[ end trace df06b64b1b7fa443 ]---
 
-Fengguang Wu (1):
-      swap: swapin_nr_pages() can be static
+[ ... ]
 
-Greg Thelen (1):
-      memcg: refactor mem_control_numa_stat_show()
+Begin: Mounting root file system ... Begin: Running /scripts/local-top ... done.
+Gave up waiting for root device.  Common problems:
+ - Boot args (cat /proc/cmdline)
+   - Check rootdelay= (did the system wait long enough?)
+   - Check root= (did the system wait for the right device?)
+ - Missing modules (cat /proc/modules; ls /dev)
+ALERT!  /dev/mmcblk1p3 does not exist.  Dropping to a shell!
+FATAL: Could not load
+/lib/modules/3.12.0-rc5-00051-gfebca1b/modules.dep: No such file or
+directory
+FATAL: Could not load
+/lib/modules/3.12.0-rc5-00051-gfebca1b/modules.dep: No such file or
+directory
 
-Heiko Carstens (2):
-      mmap: arch_get_unmapped_area(): use proper mmap base for bottom up direction
-      s390/mmap: randomize mmap base for bottom up direction
-
-Jan Kara (4):
-      writeback: do not sync data dirtied after sync start
-      writeback: use older_than_this_is_set instead of magic older_than_this == 0
-      writeback-do-not-sync-data-dirtied-after-sync-start-fix-2.txt
-      writeback-do-not-sync-data-dirtied-after-sync-start-fix-3
-
-Jerome Marchand (1):
-      mm/compaction.c: update comment about zone lock in isolate_freepages_block
-
-Jianguo Wu (4):
-      mm/vmalloc: use NUMA_NO_NODE
-      mm/huge_memory.c: fix stale comments of transparent_hugepage_flags
-      mm/arch: use NUMA_NO_NODE
-      mm/mempolicy: use NUMA_NO_NODE
-
-Joe Perches (1):
-      ksm: Remove redundant __GFP_ZERO from kcalloc
-
-KOSAKI Motohiro (3):
-      mm: fix page_group_by_mobility_disabled breakage
-      mm: get rid of unnecessary overhead of trace_mm_page_alloc_extfrag()
-      mm: __rmqueue_fallback() should respect pageblock type
-
-Krzysztof Kozlowski (2):
-      frontswap: enable call to invalidate area on swapoff
-      swap: fix setting PAGE_SIZE blocksize during swapoff/swapon race
-
-Li Zefan (5):
-      memcg: convert to use cgroup_is_descendant()
-      memcg: convert to use cgroup id
-      memcg: fail to create cgroup if the cgroup id is too big
-      memcg: stop using css id
-      cgroup: kill css_id
-
-Mel Gorman (1):
-      mm: do not walk all of system memory during show_mem
-
-Michal Hocko (1):
-      Merge remote-tracking branch 'cgroups/for-3.13' into mmotm
-
-Naoya Horiguchi (5):
-      mm: remove obsolete comments about page table lock
-      mm/memory-failure.c: move set_migratetype_isolate() outside get_any_page()
-      /proc/pid/smaps: show VM_SOFTDIRTY flag in VmFlags line
-      smaps-show-vm_softdirty-flag-in-vmflags-line-fix
-      tools/vm/page-types.c: support KPF_SOFTDIRTY bit
-
-Qiang Huang (4):
-      mm: add a helper function to check may oom condition
-      memcg, kmem: Use is_root_cache instead of hard code
-      memcg, kmem: rename cache_from_memcg to cache_from_memcg_idx
-      memcg, kmem: use cache_from_memcg_idx instead of hard code
-
-Robin Holt (1):
-      mm/nobootmem.c: have __free_pages_memory() free in larger chunks.
-
-Serge Hallyn (1):
-      device_cgroup: remove can_attach
-
-Seth Jennings (1):
-      mm/swapfile.c: fix comment typos
-
-Shaohua Li (1):
-      swap: add a simple detector for inappropriate swapin readahead
-
-Tang Chen (6):
-      mm/memblock.c: factor out of top-down allocation
-      mm/memblock.c: introduce bottom-up allocation mode
-      x86/mm: factor out of top-down direct mapping setup
-      x86/mem-hotplug: support initialize page tables in bottom-up
-      x86, acpi, crash, kdump: do reserve_crashkernel() after SRAT is parsed.
-      mem-hotplug: introduce movable_node boot option
-
-Toshi Kani (3):
-      cpu/mem hotplug: add try_online_node() for cpu_up()
-      mm: set N_CPU to node_states during boot
-      mm: clear N_CPU from node_states at CPU offline
-
-Wanpeng Li (4):
-      mm/vmalloc: don't set area->caller twice
-      mm/vmalloc: fix show vmap_area information race with vmap_area tear down
-      mm/vmalloc: revert "mm/vmalloc.c: check VM_UNINITIALIZED flag in s_show instead of show_numa_info"
-      revert mm/vmalloc.c: emit the failure message before return
-
-Weijie Yang (3):
-      mm/zswap: avoid unnecessary page scanning
-      mm/zswap: bugfix: memory leak when invalidate and reclaim occur concurrently
-      mm/zswap: refactor the get/put routines
-
-Xishi Qiu (7):
-      mm/arch: use __free_reserved_page() to simplify the code
-      drivers/video/acornfb.c: use __free_reserved_page() to simplify the code
-      mm: use pgdat_end_pfn() to simplify the code in arch
-      mm: use pgdat_end_pfn() to simplify the code in others
-      mm: use populated_zone() instead of if(zone->present_pages)
-      mm/memory_hotplug.c: rename the function is_memblock_offlined_cb()
-      mm/memory_hotplug.c: use pfn_to_nid() instead of page_to_nid(pfn_to_page())
-
-Ying Han (1):
-      memcg: support hierarchical memory.numa_stats
-
-Zhang Yanfei (4):
-      mm/sparsemem: use PAGES_PER_SECTION to remove redundant nr_pages parameter
-      mm/sparsemem: fix a bug in free_map_bootmem when CONFIG_SPARSEMEM_VMEMMAP
-      mm-sparsemem-fix-a-bug-in-free_map_bootmem-when-config_sparsemem_vmemmap-v2
-      mm/page_alloc.c: remove unused marco LONG_ALIGN
-
-Zheng Liu (1):
-      mm: improve the description for dirty_background_ratio/dirty_ratio sysctl
-
-Zhi Yong Wu (2):
-      arch/x86/mm/init.c: fix incorrect function name in alloc_low_pages()
-      mm/page_alloc.c: fix comment in zlc_setup()
 
 -- 
-Michal Hocko
-SUSE Labs
+Tushar Behera
