@@ -1,120 +1,106 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: audit in linux-next
-Date: Wed, 6 Nov 2013 09:52:09 +1100
-Message-ID: <20131106095209.715a7bc82f3722982e1687d7@canb.auug.org.au>
-References: <1383669356.28218.61.camel@flatline.rdu.redhat.com>
+Subject: Re: linux-next: build warnings after merge of the modules tree
+Date: Wed, 6 Nov 2013 10:07:41 +1100
+Message-ID: <20131106100741.6dd82590c3a24f6a32fce247@canb.auug.org.au>
+References: <20131104134134.48665968dd006e3310333993@canb.auug.org.au>
+	<87fvrba8su.fsf@rustcorp.com.au>
+	<20131105141702.GE1962@tassilo.jf.intel.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__6_Nov_2013_09_52_09_+1100_c5d3=OarG.H0Lspq"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46743 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755208Ab3KEWwQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Nov 2013 17:52:16 -0500
-In-Reply-To: <1383669356.28218.61.camel@flatline.rdu.redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: rbriggs@redhat.com, aviro@redhat.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+ boundary="Signature=_Wed__6_Nov_2013_10_07_41_+1100_Pnx5z6+=5oQy6/tP"
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <20131105141702.GE1962@tassilo.jf.intel.com>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__6_Nov_2013_09_52_09_+1100_c5d3=OarG.H0Lspq
+--Signature=_Wed__6_Nov_2013_10_07_41_+1100_Pnx5z6+=5oQy6/tP
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Rusty,
 
-On Tue, 05 Nov 2013 11:35:56 -0500 Eric Paris <eparis@redhat.com> wrote:
+On Tue, 5 Nov 2013 06:17:02 -0800 Andi Kleen <ak@linux.intel.com> wrote:
 >
-> Weeee audit in linux-next again.  I seem to fail a lot.
+> > modpost creates an entry when it sees the CRC, then when it sees the
+> > actual symbol, it complains that it's seen it before.  The preloaded
+> > flag already exists for the equivalent case where we loaded from
+> > Module.symvers, so use that.
+>=20
+> Looks good. Thanks for fixing.
 
-:-)
+I added this as a merge fix today (thanks):
 
-> Al, can you please tell Stephen you hate audit, you will never update
-> your trees and you are washing your hands of it completely?  Your trees
-> are dead and should be dropped.
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: modpost: fix bogus 'exported twice' warnings.
 
-I have dropped them.
+Andi's change in e0f244c63fc9 ("asmlinkage, module: Make ksymtab and
+kcrctab symbols and __this_module __visible") make the crc appear
+first in the symbol table.
 
-> Stephen can you pull into linux next the master branch from
-> git://git.infradead.org/users/eparis/audit.git
+modpost creates an entry when it sees the CRC, then when it sees the
+actual symbol, it complains that it's seen it before.  The preloaded
+flag already exists for the equivalent case where we loaded from
+Module.symvers, so use that.
 
-Added from today.  (and more widely advertised)
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Tested-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
 
-> I'd like you to pull now, even though the window is open.  I plan to ask
-> Linus to pull for this window.  I obviously should have been getting
-> into your tree for the whole cycle, but at least a week or so is better
-> than nothing.  Thinking about a pull request is what made me realize we
-> never actually got that done last window...  Or the window before.  Or
-> the one before that...
-
-Well, yes ... ;-)
-
-> In another cycle or two I might ask to have trees changed again to one
-> rbriggs owns, but for now, I think I'll still sit in the middle, even if
-> I suck as a maintainer.
-
-No worries.
-
-> You will have a merge conflict in fs/exec.c   It is pretty simple.  My
-> example merge commit is below.  Instructions to solve the conflict:
-
-Thanks for the heads up.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 9b873ac6ed7b..5c677a3e7487 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -164,7 +164,7 @@ struct symbol {
+ 	unsigned int vmlinux:1;    /* 1 if symbol is defined in vmlinux */
+ 	unsigned int kernel:1;     /* 1 if symbol is from kernel
+ 				    *  (only for external modules) **/
+-	unsigned int preloaded:1;  /* 1 if symbol from Module.symvers */
++	unsigned int preloaded:1;  /* 1 if symbol from Module.symvers, or crc */
+ 	enum export  export;       /* Type of export */
+ 	char name[0];
+ };
+@@ -332,8 +332,11 @@ static void sym_update_crc(const char *name, struct mo=
+dule *mod,
+ {
+ 	struct symbol *s =3D find_symbol(name);
+=20
+-	if (!s)
++	if (!s) {
+ 		s =3D new_symbol(name, mod, export);
++		/* Don't complain when we find it later. */
++		s->preloaded =3D 1;
++	}
+ 	s->crc =3D crc;
+ 	s->crc_valid =3D 1;
+ }
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Wed__6_Nov_2013_09_52_09_+1100_c5d3=OarG.H0Lspq
+--Signature=_Wed__6_Nov_2013_10_07_41_+1100_Pnx5z6+=5oQy6/tP
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSeXaeAAoJEMDTa8Ir7ZwV3XEP/3bxQj2AKGOOPvrwYVKXwyk+
-Ss1w7hq+yRjJXNWYjarmLJvAjXMSTAq8DINJOk2eWbsYsgalEl3CL/WmYR4a6JTS
-6B9TfsWWPgRz2yYZ+4Co/jcPWlljlMHd+5s9LqWjTUDwZb0lbeil33UhuC6Wgs9x
-2SlLRilVpygdZJVwjm4rStYFe2P8itsaLXOClhyVsEJb57eTTipfpMazSeUwJHeM
-xpeyGL2YtpeE6ThXzG4qXN5mR/CXZ7F4XNJrx4zXNsvc35toZ8tM+utxUYolN7Xx
-359NhPbcMUj9AamcHXGRQ+RGpxhUjIyfbMN/QrMCM6ANQWAvCldDMWQosxeSL2lC
-GSlgegzK8BCNL04KBP2H4Q5pt+XmvowTCtcJvbPrv8+sJDLoy065XCtKZ35MVKIn
-HlpPX1myP8NpUmqFusI0FMTtlCMCHLerwY8r1rUIuTOWb4Wcqd/ahgTLhk2oQYa6
-s5ziEVRQ7bh8Vm7aPtnaoriCqM36uLqkDZzxyNVdGB/OwWK0e/fRxM7a9m15tz09
-aUQGiVWllzA2D4Iy1yXjG+qUzRsNCQI0uOY+zREJ6H4xZlJ85REzbDSnO/Q/z+Lb
-wrtjYoiU4Qg2vf0XDJUeo3MaCYGyx4TsoD2zOKFipFUXCx2V3GHdQ1iahSQbXYQo
-amaCgfH3RaXVGbI3FZav
-=Bf8A
+iQIcBAEBCAAGBQJSeXpBAAoJEMDTa8Ir7ZwVZpwP/AiH/fj6T9CWvO5F/5fFsYdS
+PnNTvZBLauuBEZYCZgeCKM7QekQDwlK5lfWh4GfoEdnQRD0RjdKfFp7jq8Uj0LO9
+lfU7kmC/8bVBYpBR5LsaPoEG62YaM2k7+TiUVC8eWD7VewlJTeUdsYsm4oQAaKZE
+iPq+w3WqP8lw3wBOYDUsW8xa2n5imG0EIZU868g3WrJtvNhBgNF9pTnusVdj47hO
+Ik0jZ1yR14V0GyLRcQJzekT/f1PLNOqIusKahev3UHLAH8kiTb0ujYhQS4SFIYNR
+v6XjaCJIqb4CdiF+4LRNbrm5DrC7fMslMsoKivDHKSA7UnpXOKRpgaJgv6JfPlCr
+Fsh4KICTnwilBd+kDftUbVIVbaKx4ncyoanYOV8Xiyd9lz8U+VldbvlyJ9F7O5uz
+2hPh0m3TwhKR+OetnC3gYxYpTiVbNlvVHM+9Px9sCllzIbf0WPajDRiOX5Dqeg+E
+WYpDNkqHGsiSKCwEJeQZekDM5s0v3eU6wEK4XKYzMctCkVzU45NulKRm66uU7BDd
+VHbRsW5bh0kwYkwY41RlhGcO2LZHN7/2Cja3GBBBsOt7xF5Jo+05EuvetntzXX+m
+OU6DwyAEp+H605XZWFQhGfNUfAjOktnE16oYoG3EoQLJddmRb+OXQv4hjFaSIhPC
+IqtOM8OEvnxL/ajcm5AN
+=tiy7
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__6_Nov_2013_09_52_09_+1100_c5d3=OarG.H0Lspq--
+--Signature=_Wed__6_Nov_2013_10_07_41_+1100_Pnx5z6+=5oQy6/tP--
