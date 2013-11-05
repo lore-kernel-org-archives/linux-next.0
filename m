@@ -1,53 +1,28 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] PowerCap: Error with option -Werror=format-security
-Date: Tue, 05 Nov 2013 15:25:38 +0100
-Message-ID: <17745805.W16rbqgmuH@vostro.rjw.lan>
-References: <1383583990-9618-1-git-send-email-srinivas.pandruvada@linux.intel.com> <CAGXu5jJeixN6bAJh6KJWExyKiyJHFsFWboL7Z0Xtn2F-71zg5w@mail.gmail.com>
+From: Andi Kleen <ak@linux.intel.com>
+Subject: Re: linux-next: build warnings after merge of the modules tree
+Date: Tue, 5 Nov 2013 06:17:02 -0800
+Message-ID: <20131105141702.GE1962@tassilo.jf.intel.com>
+References: <20131104134134.48665968dd006e3310333993@canb.auug.org.au>
+ <87fvrba8su.fsf@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAGXu5jJeixN6bAJh6KJWExyKiyJHFsFWboL7Z0Xtn2F-71zg5w@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Linux-Next <linux-next@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:51670 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754932Ab3KEORP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Nov 2013 09:17:15 -0500
+Content-Disposition: inline
+In-Reply-To: <87fvrba8su.fsf@rustcorp.com.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
 
-On Monday, November 04, 2013 11:51:25 AM Kees Cook wrote:
-> On Mon, Nov 4, 2013 at 8:53 AM, Srinivas Pandruvada
-> <srinivas.pandruvada@linux.intel.com> wrote:
-> > Fix compile error with gcc option: -Werror=format-security for
-> > dev_set_name(&control_type->dev, name)
-> > Changed to
-> > dev_set_name(&control_type->dev, "%s", name);
-> >
-> > Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> > ---
-> >  drivers/powercap/powercap_sys.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/powercap/powercap_sys.c b/drivers/powercap/powercap_sys.c
-> > index 21814f9..8d0fe43 100644
-> > --- a/drivers/powercap/powercap_sys.c
-> > +++ b/drivers/powercap/powercap_sys.c
-> > @@ -625,7 +625,7 @@ struct powercap_control_type *powercap_register_control_type(
-> >         control_type->ops = ops;
-> >         INIT_LIST_HEAD(&control_type->node);
-> >         control_type->dev.class = &powercap_class;
-> > -       dev_set_name(&control_type->dev, name);
-> > +       dev_set_name(&control_type->dev, "%s", name);
-> >         result = device_register(&control_type->dev);
-> >         if (result) {
-> >                 if (control_type->allocated)
-> > --
-> > 1.7.11.7
-> 
-> Thanks for getting this fixed!
-> 
-> Acked-by: Kees Cook <keescook@chromium.org>
+> modpost creates an entry when it sees the CRC, then when it sees the
+> actual symbol, it complains that it's seen it before.  The preloaded
+> flag already exists for the equivalent case where we loaded from
+> Module.symvers, so use that.
 
-Queued up for 3.13, thanks!
+Looks good. Thanks for fixing.
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+-Andi
