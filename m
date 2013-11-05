@@ -1,80 +1,84 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: build warnings after merge of the modules tree
-Date: Tue, 05 Nov 2013 12:50:33 +1030
-Message-ID: <87fvrba8su.fsf@rustcorp.com.au>
-References: <20131104134134.48665968dd006e3310333993@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the device-mapper tree
+Date: Tue, 5 Nov 2013 14:32:48 +1100
+Message-ID: <20131105143248.551f68c3cd9fe1902860c1ff@canb.auug.org.au>
+References: <20131105135128.496b8b2f599d11f2d30ad70c@canb.auug.org.au>
+	<20131105032054.GA19421@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__5_Nov_2013_14_32_48_+1100_hL/mePQhPZ8dZ1RJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:60762 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750819Ab3KED12 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Nov 2013 22:27:28 -0500
-In-Reply-To: <20131104134134.48665968dd006e3310333993@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54328 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751451Ab3KEDdA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Nov 2013 22:33:00 -0500
+In-Reply-To: <20131105032054.GA19421@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, linux-kbuild@vger.kernel.org
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Alasdair G Kergon <agk@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>, Jens Axboe <axboe@kernel.dk>, Joe Thornber <ejt@redhat.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> Hi Rusty,
->
-> After merging the modules tree, today's linux-next build (x86_64
-> allmodconfig) produced these warning:
->
-> WARNING: vmlinux: 'pci_restore_msi_state' exported twice. Previous export was in vmlinux
-> WARNING: vmlinux: '__mod_zone_page_state' exported twice. Previous export was in vmlinux
-> WARNING: vmlinux: 'scsi_prep_return' exported twice. Previous export was in vmlinux
-> WARNING: vmlinux: 'hvc_poll' exported twice. Previous export was in vmlinux
-> WARNING: vmlinux: 'nfs_clear_inode' exported twice. Previous export was in vmlinux
->
-> (just some samples ... it scrolled off my scrollback :-()
->
-> Presumably caused by commit e0f244c63fc9 ("asmlinkage, module: Make
-> ksymtab and kcrctab symbols and __this_module __visible").  (reverting
-> that commit makes the warnings go away.)
+--Signature=_Tue__5_Nov_2013_14_32_48_+1100_hL/mePQhPZ8dZ1RJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This works for me.... feedback please!
+Hi Mike,
 
+On Mon, 4 Nov 2013 22:20:54 -0500 Mike Snitzer <snitzer@redhat.com> wrote:
+>
+> On Mon, Nov 04 2013 at  9:51pm -0500,
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > After merging the device-mapper tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > drivers/md/dm-cache-target.c: In function 'bio_writes_complete_block':
+> > drivers/md/dm-cache-target.c:1020:7: error: 'struct bio' has no member =
+named 'bi_size'
+> >    (bio->bi_size =3D=3D (cache->sectors_per_block << SECTOR_SHIFT));
+> >        ^
+> >=20
+> > Caused by commit 1bd270d800ec ("dm cache: promotion optimisation for
+> > writes") interacting with commit ed2d2f9a8265 ("block: Abstract out bvec
+> > iterator") from the block tree.
+> >=20
+> > I applied this fix up patch and can carry it as necessary:
+>=20
+> Yes that is needed, as is this (which begs the question: how should I be
+
+I will add that tomorrow.
+
+> handling the fact that post-merge changes are needed?  Especially since
+> Linus will need the changes too):
+
+Who ever gets their tree in last has to tell Linus about these extra
+merge fix ups as part of their pull request.
+
+--=20
 Cheers,
-Rusty.
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-modpost: fix bogus 'exported twice' warnings.
+--Signature=_Tue__5_Nov_2013_14_32_48_+1100_hL/mePQhPZ8dZ1RJ
+Content-Type: application/pgp-signature
 
-Andi's change in e0f244c63fc9 ("asmlinkage, module: Make ksymtab and
-kcrctab symbols and __this_module __visible") make the crc appear
-first in the symbol table.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-modpost creates an entry when it sees the CRC, then when it sees the
-actual symbol, it complains that it's seen it before.  The preloaded
-flag already exists for the equivalent case where we loaded from
-Module.symvers, so use that.
+iQIcBAEBCAAGBQJSeGbmAAoJEMDTa8Ir7ZwVDBYP/R1nvGsP+jOQYgm4Yz2RgnZV
+DEYbaRtn+FsM4eboqAIJaAgg3OtyUlMh/bif6WtEghjGW2HEvjqzVraBEmxPqukb
+f00oBsoWoBffqERVKL51ZQVf8pRltQUGY99lD5sEfve5f2tcTxqZSXA/VFBE0Kye
+GhRQYmjKIVvD/rvvSqojhWqhOD39BVDEQ47Vpc/7XwwK6gvUT4bHOf3CAgx/dM9Z
+O19rqHPyLYpZrJuFVUA8TeKtlpjy/YgyKKmdL3wONu5SvjvdNj9phOYyCQDUXIJz
+ZG/JE+TWnBwG7PLIJU6TqYlmsP999MlvG1xB10FaTLxPf5JJbRrMQJGdTxZ+RH1A
+aufiOGo3H51pJghI4+81Pwtlx+7c5SeouzJxOQIb7nJdlIXi5umqi3D+Lkh+3pwF
+iD/kmUrJ40ljfzKk8/hbjZJzF1VBo8F7LcM/f6+cRTtvRRWKDEmzFflN3k/lQRf5
+jF5CwQzl7/eRZpkAxovzhI+Eu8CmPydKnkZd673Xm5nWQf4xex1gZr1v76gBIBow
+1Fs5P0WiO77hanscBVNWrqjaNHcaowCjXXys2HaykZ3G8qsNZslnUML+/pPdPRG2
+yYiQieAeGFYDXuBR3XLdOuYBe5WCbG8GrHSWLw0GSBRDNpX1l46jVt7/h7huIY2h
+1qGjxgHl3cGNr0yTynGt
+=QDFG
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
-
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 9b873ac6ed7b..5c677a3e7487 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -164,7 +164,7 @@ struct symbol {
- 	unsigned int vmlinux:1;    /* 1 if symbol is defined in vmlinux */
- 	unsigned int kernel:1;     /* 1 if symbol is from kernel
- 				    *  (only for external modules) **/
--	unsigned int preloaded:1;  /* 1 if symbol from Module.symvers */
-+	unsigned int preloaded:1;  /* 1 if symbol from Module.symvers, or crc */
- 	enum export  export;       /* Type of export */
- 	char name[0];
- };
-@@ -332,8 +332,11 @@ static void sym_update_crc(const char *name, struct module *mod,
- {
- 	struct symbol *s = find_symbol(name);
- 
--	if (!s)
-+	if (!s) {
- 		s = new_symbol(name, mod, export);
-+		/* Don't complain when we find it later. */
-+		s->preloaded = 1;
-+	}
- 	s->crc = crc;
- 	s->crc_valid = 1;
- }
+--Signature=_Tue__5_Nov_2013_14_32_48_+1100_hL/mePQhPZ8dZ1RJ--
