@@ -1,66 +1,61 @@
-From: Jens Axboe <axboe@kernel.dk>
+From: Olof Johansson <olof@lixom.net>
 Subject: Re: Boot failure on Arndale with next-20131105
-Date: Tue, 05 Nov 2013 14:25:00 -0700
-Message-ID: <5279622C.8040509@kernel.dk>
-References: <CAHbNUh1Cw3bc4WR0VcD1H_eKYqGBtv_215_euh6mwTbZ41ejUw@mail.gmail.com> <1451170.jb5zbRXgpt@amdc1227> <52792D13.70704@wwwdotorg.org>
+Date: Tue, 5 Nov 2013 13:27:42 -0800
+Message-ID: <CAOesGMhTu_bifFUNDGPsd9Hmn50W_OHF_+LgscF4WLyNY-bHQg@mail.gmail.com>
+References: <CAHbNUh1Cw3bc4WR0VcD1H_eKYqGBtv_215_euh6mwTbZ41ejUw@mail.gmail.com>
+	<52794823.7080503@kernel.dk>
+	<CAOesGMj1xXXM-gNgWQwBKOczpJtM7CobYy4h7Fe=4W3U43EJGQ@mail.gmail.com>
+	<20131105203308.3802.45122@localhost.localdomain>
+	<CAOesGMirg=ex9hLCjGBpj0cMhLeQ5cJQoRv72tgg7PoSKWUDhA@mail.gmail.com>
+	<20131105205623.3802.5166@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:39979 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755159Ab3KEVZV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Nov 2013 16:25:21 -0500
-In-Reply-To: <52792D13.70704@wwwdotorg.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Chris Mason <chris.mason@fusionio.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131105205623.3802.5166@localhost.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chris Mason <chris.mason@fusionio.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Tushar Behera <tushar.behera@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kent Overstreet <kmo@daterainc.com>
+List-Id: linux-next.vger.kernel.org
 
-On 11/05/2013 10:38 AM, Stephen Warren wrote:
-> I note that compiling next-20131105 generates quite a few warnings re=
-:
-> uninitialized variables. Reverting the commit doesn't solve those.
->=20
->> block/blk-merge.c: In function =91blk_bio_map_sg=92:
->> block/blk-merge.c:133:8: warning: =91bvprv.bv_len=92 may be used uni=
-nitialized in this function [-Wmaybe-uninitialized]
->> block/blk-merge.c:233:23: note: =91bvprv.bv_len=92 was declared here
->> block/blk-merge.c:133:8: warning: =91bvprv.bv_offset=92 may be used =
-uninitialized in this function [-Wmaybe-uninitialized]
->> block/blk-merge.c:233:23: note: =91bvprv.bv_offset=92 was declared h=
-ere
->> block/blk-merge.c:133:8: warning: =91bvprv.bv_page=92 may be used un=
-initialized in this function [-Wmaybe-uninitialized]
->> block/blk-merge.c:233:23: note: =91bvprv.bv_page=92 was declared her=
-e
->> block/blk-merge.c: In function =91blk_rq_map_sg=92:
->> block/blk-merge.c:133:8: warning: =91bvprv.bv_page=92 may be used un=
-initialized in this function [-Wmaybe-uninitialized]
->> block/blk-merge.c:171:23: note: =91bvprv.bv_page=92 was declared her=
-e
->> block/blk-merge.c:133:8: warning: =91bvprv.bv_offset=92 may be used =
-uninitialized in this function [-Wmaybe-uninitialized]
->> block/blk-merge.c:171:23: note: =91bvprv.bv_offset=92 was declared h=
-ere
->> block/blk-merge.c:133:8: warning: =91bvprv.bv_len=92 may be used uni=
-nitialized in this function [-Wmaybe-uninitialized]
->> block/blk-merge.c:171:23: note: =91bvprv.bv_len=92 was declared here
->> block/blk-merge.c: In function =91attempt_merge=92:
->> block/blk-merge.c:108:7: warning: =91end_bv.bv_offset=92 may be used=
- uninitialized in this function [-Wmaybe-uninitialized]
->> block/blk-merge.c:89:17: note: =91end_bv.bv_offset=92 was declared h=
-ere
->> block/blk-merge.c:108:7: warning: =91end_bv.bv_page=92 may be used u=
-ninitialized in this function [-Wmaybe-uninitialized]
->> block/blk-merge.c:89:17: note: =91end_bv.bv_page=92 was declared her=
-e
->> block/blk-merge.c:108:7: warning: =91end_bv.bv_len=92 may be used un=
-initialized in this function [-Wmaybe-uninitialized]
->> block/blk-merge.c:89:17: note: =91end_bv.bv_len=92 was declared here
+On Tue, Nov 5, 2013 at 12:56 PM, Chris Mason <chris.mason@fusionio.com> wrote:
+> Quoting Olof Johansson (2013-11-05 15:38:33)
+>> On Tue, Nov 5, 2013 at 12:33 PM, Chris Mason <chris.mason@fusionio.com> wrote:
+>> > Quoting Olof Johansson (2013-11-05 15:23:51)
+>> >> On Tue, Nov 5, 2013 at 11:33 AM, Jens Axboe <axboe@kernel.dk> wrote:
+>> >
+>> > [ horrible crashes fixed by removing my patch ]
+>> >
+>> >> > Very weird! What file system is being used?
+>> >>
+>> >> Most of my failures have happened on regular MMC cards with ext4
+>> >> filesystems on them.
+>> >>
+>> >> Note that the panic happens during device probe / partition table
+>> >> scanning, not after mounting the filesystem.
+>> >>
+>> >> Giving your patch a go now across the board. I'm very concerned about
+>> >> the reports of bisectability, build failures and heaps of warnings
+>> >> though. Did the 0-day builder pick up any of those? :-/
+>> >>
+>> >
+>> > Hmmm, is bcache in your config?
+>>
+>> Doesn't look that way -- no ARM defconfigs enable it (it's what I
+>> build and boot), and the option defaults to off and nothing selects
+>> it.
+>
+> Ok, I think I see it.  My guess is that you're hitting bounce buffers.
+> __blk_queue_bounce is the only caller of the bio splitting code I can
+> see that you might be hitting.
+>
+> My first patch exposed a lurking bug in bio_clone_biovec.  Basically
+> bio->bi_vcnt is being doubled instead of initialized.
+>
+> This patch is only compile tested, but I think it'll fix it.
 
-Looks like an incomplete merge. The patch to silence those warnings
-(which aren't bugs, BTW) is definitely in my for-next branch.
+Thanks, giving it a go now (will have results in 30+ minutes). Jens'
+patch didn't make a difference, which makes sense given lack of dm
+usage.
 
---=20
-Jens Axboe
+
+-Olof
