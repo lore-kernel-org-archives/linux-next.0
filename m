@@ -1,28 +1,62 @@
-From: Andi Kleen <ak@linux.intel.com>
-Subject: Re: linux-next: build warnings after merge of the modules tree
-Date: Tue, 5 Nov 2013 06:17:02 -0800
-Message-ID: <20131105141702.GE1962@tassilo.jf.intel.com>
-References: <20131104134134.48665968dd006e3310333993@canb.auug.org.au>
- <87fvrba8su.fsf@rustcorp.com.au>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: build failure after merge of the device-mapper tree
+Date: Tue, 05 Nov 2013 09:22:11 -0700
+Message-ID: <52791B33.9060001@kernel.dk>
+References: <20131105135128.496b8b2f599d11f2d30ad70c@canb.auug.org.au> <20131105032054.GA19421@redhat.com> <20131105143248.551f68c3cd9fe1902860c1ff@canb.auug.org.au> <20131105125456.GA25219@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:51670 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754932Ab3KEORP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Nov 2013 09:17:15 -0500
-Content-Disposition: inline
-In-Reply-To: <87fvrba8su.fsf@rustcorp.com.au>
+Received: from merlin.infradead.org ([205.233.59.134]:34039 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751455Ab3KEQWd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Nov 2013 11:22:33 -0500
+In-Reply-To: <20131105125456.GA25219@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+To: Mike Snitzer <snitzer@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alasdair G Kergon <agk@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>, Joe Thornber <ejt@redhat.com>
 
-> modpost creates an entry when it sees the CRC, then when it sees the
-> actual symbol, it complains that it's seen it before.  The preloaded
-> flag already exists for the equivalent case where we loaded from
-> Module.symvers, so use that.
+On 11/05/2013 05:54 AM, Mike Snitzer wrote:
+> On Mon, Nov 04 2013 at 10:32pm -0500,
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+>> Hi Mike,
+>>
+>> On Mon, 4 Nov 2013 22:20:54 -0500 Mike Snitzer <snitzer@redhat.com> wrote:
+>>>
+>>> On Mon, Nov 04 2013 at  9:51pm -0500,
+>>> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>
+>>>> After merging the device-mapper tree, today's linux-next build (x86_64
+>>>> allmodconfig) failed like this:
+>>>>
+>>>> drivers/md/dm-cache-target.c: In function 'bio_writes_complete_block':
+>>>> drivers/md/dm-cache-target.c:1020:7: error: 'struct bio' has no member named 'bi_size'
+>>>>    (bio->bi_size == (cache->sectors_per_block << SECTOR_SHIFT));
+>>>>        ^
+>>>>
+>>>> Caused by commit 1bd270d800ec ("dm cache: promotion optimisation for
+>>>> writes") interacting with commit ed2d2f9a8265 ("block: Abstract out bvec
+>>>> iterator") from the block tree.
+>>>>
+>>>> I applied this fix up patch and can carry it as necessary:
+>>>
+>>> Yes that is needed, as is this (which begs the question: how should I be
+>>
+>> I will add that tomorrow.
+>>
+>>> handling the fact that post-merge changes are needed?  Especially since
+>>> Linus will need the changes too):
+>>
+>> Who ever gets their tree in last has to tell Linus about these extra
+>> merge fix ups as part of their pull request.
+> 
+> OK, that's what I thought, thanks for confirming.
 
-Looks good. Thanks for fixing.
+Just a heads up that I plan on sending the block bits shortly, hopefully
+merging sooner rather than later. This round is huge, so I'd like to get
+it in asap.
 
--Andi
+-- 
+Jens Axboe
