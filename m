@@ -1,34 +1,53 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the block tree
-Date: Tue, 5 Nov 2013 05:08:33 -0800
-Message-ID: <20131105130833.GC19906@kroah.com>
-References: <20131105160924.4da55b7e36aa2ab93443fdda@canb.auug.org.au>
- <20131105052010.GA14557@kroah.com>
- <20131105094926.GA12440@infradead.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] PowerCap: Error with option -Werror=format-security
+Date: Tue, 05 Nov 2013 15:25:38 +0100
+Message-ID: <17745805.W16rbqgmuH@vostro.rjw.lan>
+References: <1383583990-9618-1-git-send-email-srinivas.pandruvada@linux.intel.com> <CAGXu5jJeixN6bAJh6KJWExyKiyJHFsFWboL7Z0Xtn2F-71zg5w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:44157 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754607Ab3KENGT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Nov 2013 08:06:19 -0500
-Content-Disposition: inline
-In-Reply-To: <20131105094926.GA12440@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>, Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAGXu5jJeixN6bAJh6KJWExyKiyJHFsFWboL7Z0Xtn2F-71zg5w@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kees Cook <keescook@chromium.org>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Linux-Next <linux-next@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Nov 05, 2013 at 01:49:26AM -0800, Christoph Hellwig wrote:
-> On Mon, Nov 04, 2013 at 09:20:10PM -0800, Greg KH wrote:
-> > > I fixed it up (see below) and can carry the fix as necessary (no action
-> > > is required).
-> > 
-> > Looks good to me, thanks.
+On Monday, November 04, 2013 11:51:25 AM Kees Cook wrote:
+> On Mon, Nov 4, 2013 at 8:53 AM, Srinivas Pandruvada
+> <srinivas.pandruvada@linux.intel.com> wrote:
+> > Fix compile error with gcc option: -Werror=format-security for
+> > dev_set_name(&control_type->dev, name)
+> > Changed to
+> > dev_set_name(&control_type->dev, "%s", name);
+> >
+> > Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> > ---
+> >  drivers/powercap/powercap_sys.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/powercap/powercap_sys.c b/drivers/powercap/powercap_sys.c
+> > index 21814f9..8d0fe43 100644
+> > --- a/drivers/powercap/powercap_sys.c
+> > +++ b/drivers/powercap/powercap_sys.c
+> > @@ -625,7 +625,7 @@ struct powercap_control_type *powercap_register_control_type(
+> >         control_type->ops = ops;
+> >         INIT_LIST_HEAD(&control_type->node);
+> >         control_type->dev.class = &powercap_class;
+> > -       dev_set_name(&control_type->dev, name);
+> > +       dev_set_name(&control_type->dev, "%s", name);
+> >         result = device_register(&control_type->dev);
+> >         if (result) {
+> >                 if (control_type->allocated)
+> > --
+> > 1.7.11.7
 > 
-> The lloop driver should simply be dropped.  It's a duplication of loop
-> which had some lustre-specific hacks that are replaced with generic
-> improvements already in linux-next.
+> Thanks for getting this fixed!
+> 
+> Acked-by: Kees Cook <keescook@chromium.org>
 
-That's fine with me, I figure it will be deleted eventually by someone
-sending me a patch to do so...
+Queued up for 3.13, thanks!
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
