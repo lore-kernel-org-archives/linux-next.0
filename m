@@ -1,106 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the modules tree
-Date: Wed, 6 Nov 2013 10:07:41 +1100
-Message-ID: <20131106100741.6dd82590c3a24f6a32fce247@canb.auug.org.au>
-References: <20131104134134.48665968dd006e3310333993@canb.auug.org.au>
-	<87fvrba8su.fsf@rustcorp.com.au>
-	<20131105141702.GE1962@tassilo.jf.intel.com>
+From: Chris Mason <chris.mason@fusionio.com>
+Subject: Re: Boot failure on Arndale with next-20131105
+Date: Tue, 5 Nov 2013 19:04:32 -0500
+Message-ID: <20131106000432.3802.22331@localhost.localdomain>
+References: <CAHbNUh1Cw3bc4WR0VcD1H_eKYqGBtv_215_euh6mwTbZ41ejUw@mail.gmail.com>
+ <52794823.7080503@kernel.dk>
+ <CAOesGMj1xXXM-gNgWQwBKOczpJtM7CobYy4h7Fe=4W3U43EJGQ@mail.gmail.com>
+ <20131105203308.3802.45122@localhost.localdomain>
+ <CAOesGMirg=ex9hLCjGBpj0cMhLeQ5cJQoRv72tgg7PoSKWUDhA@mail.gmail.com>
+ <20131105205623.3802.5166@localhost.localdomain>
+ <52796BE1.5010306@wwwdotorg.org>
+ <CAOesGMiyp3VNUZf=A_MMVAKsdqtE8nJqNuNCmZh6PO2zkU-oTA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__6_Nov_2013_10_07_41_+1100_Pnx5z6+=5oQy6/tP"
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20131105141702.GE1962@tassilo.jf.intel.com>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from dkim1.fusionio.com ([66.114.96.53]:60142 "EHLO
+	dkim1.fusionio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755558Ab3KFAEi convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Nov 2013 19:04:38 -0500
+Received: from mx1.fusionio.com (unknown [10.101.1.160])
+	by dkim1.fusionio.com (Postfix) with ESMTP id DB9AD7C06CD
+	for <linux-next@vger.kernel.org>; Tue,  5 Nov 2013 17:04:37 -0700 (MST)
+In-Reply-To: <CAOesGMiyp3VNUZf=A_MMVAKsdqtE8nJqNuNCmZh6PO2zkU-oTA@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Tushar Behera <tushar.behera@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Kent Overstreet <kmo@daterainc.com>
 
---Signature=_Wed__6_Nov_2013_10_07_41_+1100_Pnx5z6+=5oQy6/tP
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Quoting Olof Johansson (2013-11-05 17:41:42)
+> On Tue, Nov 5, 2013 at 2:06 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> > On 11/05/2013 01:56 PM, Chris Mason wrote:
+> >> Quoting Olof Johansson (2013-11-05 15:38:33)
+> >>> On Tue, Nov 5, 2013 at 12:33 PM, Chris Mason <chris.mason@fusionio.com> wrote:
+> >>>> Quoting Olof Johansson (2013-11-05 15:23:51)
+> >>>>> On Tue, Nov 5, 2013 at 11:33 AM, Jens Axboe <axboe@kernel.dk> wrote:
+> >>>>
+> >>>> [ horrible crashes fixed by removing my patch ]
+> >>>>
+> > ...
+> >> Ok, I think I see it.  My guess is that you're hitting bounce buffers.
+> >> __blk_queue_bounce is the only caller of the bio splitting code I can
+> >> see that you might be hitting.
+> >>
+> >> My first patch exposed a lurking bug in bio_clone_biovec.  Basically
+> >> bio->bi_vcnt is being doubled instead of initialized.
+> >>
+> >> This patch is only compile tested, but I think it'll fix it.
+> >
+> > Tested-by: Stephen Warren <swarren@nvidia.com>
+> > (this fixes the issue on Tegra30/Beaver at least)
+> 
+> Tested-by: Olof Johansson <olof@lixom.net>
+> 
+> This resolves boot failures on:
+> * Tegra30/beaver
+> * OMAP4/panda
+> * i.MX6/wandboard
+> 
+> Thanks Chris!
 
-Hi Rusty,
+Perfect, thanks for bisecting and trying the patches.  Kent, if things
+get rebased, could you please fold this patch and my bi_vcnt patch in?
 
-On Tue, 5 Nov 2013 06:17:02 -0800 Andi Kleen <ak@linux.intel.com> wrote:
->
-> > modpost creates an entry when it sees the CRC, then when it sees the
-> > actual symbol, it complains that it's seen it before.  The preloaded
-> > flag already exists for the equivalent case where we loaded from
-> > Module.symvers, so use that.
->=20
-> Looks good. Thanks for fixing.
-
-I added this as a merge fix today (thanks):
-
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: modpost: fix bogus 'exported twice' warnings.
-
-Andi's change in e0f244c63fc9 ("asmlinkage, module: Make ksymtab and
-kcrctab symbols and __this_module __visible") make the crc appear
-first in the symbol table.
-
-modpost creates an entry when it sees the CRC, then when it sees the
-actual symbol, it complains that it's seen it before.  The preloaded
-flag already exists for the equivalent case where we loaded from
-Module.symvers, so use that.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Tested-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
-
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 9b873ac6ed7b..5c677a3e7487 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -164,7 +164,7 @@ struct symbol {
- 	unsigned int vmlinux:1;    /* 1 if symbol is defined in vmlinux */
- 	unsigned int kernel:1;     /* 1 if symbol is from kernel
- 				    *  (only for external modules) **/
--	unsigned int preloaded:1;  /* 1 if symbol from Module.symvers */
-+	unsigned int preloaded:1;  /* 1 if symbol from Module.symvers, or crc */
- 	enum export  export;       /* Type of export */
- 	char name[0];
- };
-@@ -332,8 +332,11 @@ static void sym_update_crc(const char *name, struct mo=
-dule *mod,
- {
- 	struct symbol *s =3D find_symbol(name);
-=20
--	if (!s)
-+	if (!s) {
- 		s =3D new_symbol(name, mod, export);
-+		/* Don't complain when we find it later. */
-+		s->preloaded =3D 1;
-+	}
- 	s->crc =3D crc;
- 	s->crc_valid =3D 1;
- }
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__6_Nov_2013_10_07_41_+1100_Pnx5z6+=5oQy6/tP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSeXpBAAoJEMDTa8Ir7ZwVZpwP/AiH/fj6T9CWvO5F/5fFsYdS
-PnNTvZBLauuBEZYCZgeCKM7QekQDwlK5lfWh4GfoEdnQRD0RjdKfFp7jq8Uj0LO9
-lfU7kmC/8bVBYpBR5LsaPoEG62YaM2k7+TiUVC8eWD7VewlJTeUdsYsm4oQAaKZE
-iPq+w3WqP8lw3wBOYDUsW8xa2n5imG0EIZU868g3WrJtvNhBgNF9pTnusVdj47hO
-Ik0jZ1yR14V0GyLRcQJzekT/f1PLNOqIusKahev3UHLAH8kiTb0ujYhQS4SFIYNR
-v6XjaCJIqb4CdiF+4LRNbrm5DrC7fMslMsoKivDHKSA7UnpXOKRpgaJgv6JfPlCr
-Fsh4KICTnwilBd+kDftUbVIVbaKx4ncyoanYOV8Xiyd9lz8U+VldbvlyJ9F7O5uz
-2hPh0m3TwhKR+OetnC3gYxYpTiVbNlvVHM+9Px9sCllzIbf0WPajDRiOX5Dqeg+E
-WYpDNkqHGsiSKCwEJeQZekDM5s0v3eU6wEK4XKYzMctCkVzU45NulKRm66uU7BDd
-VHbRsW5bh0kwYkwY41RlhGcO2LZHN7/2Cja3GBBBsOt7xF5Jo+05EuvetntzXX+m
-OU6DwyAEp+H605XZWFQhGfNUfAjOktnE16oYoG3EoQLJddmRb+OXQv4hjFaSIhPC
-IqtOM8OEvnxL/ajcm5AN
-=tiy7
------END PGP SIGNATURE-----
-
---Signature=_Wed__6_Nov_2013_10_07_41_+1100_Pnx5z6+=5oQy6/tP--
+-chris
