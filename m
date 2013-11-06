@@ -1,96 +1,56 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: linux-next: manual merge of the gpio tree with the arm-soc and
- cortex trees
-Date: Wed, 6 Nov 2013 09:41:17 +0100
-Message-ID: <20131106084117.GT14892@pengutronix.de>
-References: <20131106191454.5f45b0b5300f03e74a6a09eb@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the net-next tree
+Date: Wed, 6 Nov 2013 19:55:17 +1100
+Message-ID: <20131106195517.044921fa5141fa781f8c87a9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:58245 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932099Ab3KFIlU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Nov 2013 03:41:20 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__6_Nov_2013_19_55_17_+1100_zGp4lZPEjr2T9.em"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Pablo Neira Ayuso <pablo@netfilter.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__6_Nov_2013_19_55_17_+1100_zGp4lZPEjr2T9.em
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20131106191454.5f45b0b5300f03e74a6a09eb@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: quoted-printable
 
-Hello Stephen,
+Hi Andrew,
 
-On Wed, Nov 06, 2013 at 07:14:54PM +1100, Stephen Rothwell wrote:
-> Hi Linus,
->=20
-> Today's linux-next merge of the gpio tree got a conflict in
-> arch/arm/Kconfig between commit f3372c01816e ("ARM: gemini: convert t=
-o
-> GENERIC_CLOCKEVENTS") from the arm-soc tree and f5caa3b59e18 ("ARM:
-> deprecate mach/timex.h for !ARCH_MULTIPLATFORM") from the cortex tree=
- and
-> commits ffde39ea61ea ("ARM: mmp: delete the custom GPIO header"),
-> 88f718e3fa4d ("ARM: pxa: delete the custom GPIO header") and 85649711=
-a895
-> ("ARM: gemini: delete <mach/gpio.h>") from the gpio tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no acti=
-on
-> is required).
-looks correct.
+Today's linux-next merge of the akpm tree got a conflict in
+net/netfilter/ipset/ip_set_hash_netnet.c between commit 1a869205c75c
+("netfilter: ipset: The unnamed union initialization may lead to
+compilation error") from the net-next tree and commit
+"net/netfilter/ipset/ip_set_hash_netnet.c: fix build with older gcc" from
+the akpm tree.
 
-BTW, "cortex" is a bit too general. My tree is only about Cortex-M. Als=
-o
-you can drop -2.6 from the URL.
-
-Best regards
-Uwe
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc arch/arm/Kconfig
-> index 568d6471dd18,c6debe07f036..000000000000
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@@ -397,10 -386,8 +397,9 @@@ config ARCH_CLPS711
->   config ARCH_GEMINI
->   	bool "Cortina Systems Gemini"
->   	select ARCH_REQUIRE_GPIOLIB
->  -	select ARCH_USES_GETTIMEOFFSET
->  +	select CLKSRC_MMIO
->   	select CPU_FA526
->  +	select GENERIC_CLOCKEVENTS
-> - 	select NEED_MACH_GPIO_H
->   	help
->   	  Support for the Cortina Systems Gemini family SoCs
->  =20
-> @@@ -593,8 -558,6 +592,7 @@@ config ARCH_MM
->   	select GPIO_PXA
->   	select IRQ_DOMAIN
->   	select MULTI_IRQ_HANDLER
-> - 	select NEED_MACH_GPIO_H
->  +	select NEED_MACH_TIMEX_H
->   	select PINCTRL
->   	select PLAT_PXA
->   	select SPARSE_IRQ
-> @@@ -658,8 -620,6 +656,7 @@@ config ARCH_PX
->   	select GPIO_PXA
->   	select HAVE_IDE
->   	select MULTI_IRQ_HANDLER
-> - 	select NEED_MACH_GPIO_H
->  +	select NEED_MACH_TIMEX_H
->   	select PLAT_PXA
->   	select SPARSE_IRQ
->   	help
-
-
+The latter is a subset of the former. so I just dropped the latter.
 
 --=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__6_Nov_2013_19_55_17_+1100_zGp4lZPEjr2T9.em
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSegP7AAoJEMDTa8Ir7ZwVjYUQAJQWDoNmcHTaa544TaUEh25e
+ZKVJhCmjKRm4K1i45yTrbYEz7F4FUQUG9i5fyoxhfAkcZdpgtYgqrZVJkiTyQfUk
+uL3eXSC1B+Dh26TMiDj9ORUd7No3+RBfk2Z6fHzxAFRfJ0WWHTbeqN0ipiWLUA7y
+vE+pSR1YYupDAtP4pruePAIp3uo+wzrNo2RZrVAEg4Dw3uLOPjhZPi1ei0CkazUT
+n7Txt+ltOFsu0g8kwf/oJ+2Nf6tF8dgROrdPoNzuGGYlDlpE8LvHbyHA3Udsbs78
+mNhqul7qOhhkeqsp2kQTR1I9d5VoL5IQZkyPU3wdpiW7Wk4Si6aX8pm+LSdy5R+L
+Mdt4s0+N4DuOAc969cKA4FTb7Eb0OQ4OBElMehwMFtU+nMxWSj0Rty7KZtniYVGj
+a+zlklhgmhG1b24VBk+y2+wBoJhlwihAwcJVvVL/J1RO+ixGCYYkKAXv6c5L2A9R
+eSCr55pI4Tpgehevgj9IPPDNbLsigI16Ee+mgSd74DqZUnXln7+H1Qv2XqNk72VI
+aB79FP4O0B3H0+PnhaxumQgIsUpRR/zoq9OCfezQyC5t39OShuPHJS3xgAzA4UcH
+vujyzdG+kNHT1Twbu9tf49AGrRx72VDkVW/L8+P3m7+T3IgwuaJ3lvLslGAPNmvO
+9dM8faaZAgspc/SrR9Ta
+=J9Un
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__6_Nov_2013_19_55_17_+1100_zGp4lZPEjr2T9.em--
