@@ -1,33 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen-tip tree with the arm tree
-Date: Wed, 6 Nov 2013 18:17:40 +1100
-Message-ID: <20131106181740.c5e7e966a750909290ba1f94@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the arm-soc and
+ cortex trees
+Date: Wed, 6 Nov 2013 19:14:54 +1100
+Message-ID: <20131106191454.5f45b0b5300f03e74a6a09eb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__6_Nov_2013_18_17_40_+1100_cbaUBxQ1cYXv8GWg"
+ boundary="Signature=_Wed__6_Nov_2013_19_14_54_+1100_y8bxG1i+DucTpGYW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57409 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44965 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932113Ab3KFHSA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Nov 2013 02:18:00 -0500
+	with ESMTP id S1750924Ab3KFIPI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Nov 2013 03:15:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, Russell King <rmk@arm.linux.org.uk>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2?= =?UTF-8?B?bmlnIg==?= <u.kleine-koenig@pengutronix.de>
 
---Signature=_Wed__6_Nov_2013_18_17_40_+1100_cbaUBxQ1cYXv8GWg
+--Signature=_Wed__6_Nov_2013_19_14_54_+1100_y8bxG1i+DucTpGYW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Linus,
 
-Today's linux-next merge of the xen-tip tree got a conflict in
-arch/arm/include/asm/dma-mapping.h between commit 6a6a5c15d871 ("ARM:
-7805/1: mm: change max*pfn to include the physical offset of memory")
-from the arm tree and commit e24b7aa368a0 ("arm: make SWIOTLB available")
-from the xen-tip tree.
+Today's linux-next merge of the gpio tree got a conflict in
+arch/arm/Kconfig between commit f3372c01816e ("ARM: gemini: convert to
+GENERIC_CLOCKEVENTS") from the arm-soc tree and f5caa3b59e18 ("ARM:
+deprecate mach/timex.h for !ARCH_MULTIPLATFORM") from the cortex tree and
+commits ffde39ea61ea ("ARM: mmp: delete the custom GPIO header"),
+88f718e3fa4d ("ARM: pxa: delete the custom GPIO header") and 85649711a895
+("ARM: gemini: delete <mach/gpio.h>") from the gpio tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,80 +39,60 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/include/asm/dma-mapping.h
-index 863cd84eb1a2,8acfef48124a..000000000000
---- a/arch/arm/include/asm/dma-mapping.h
-+++ b/arch/arm/include/asm/dma-mapping.h
-@@@ -87,13 -97,39 +98,46 @@@ static inline dma_addr_t virt_to_dma(st
-  }
-  #endif
+diff --cc arch/arm/Kconfig
+index 568d6471dd18,c6debe07f036..000000000000
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@@ -397,10 -386,8 +397,9 @@@ config ARCH_CLPS711
+  config ARCH_GEMINI
+  	bool "Cortina Systems Gemini"
+  	select ARCH_REQUIRE_GPIOLIB
+ -	select ARCH_USES_GETTIMEOFFSET
+ +	select CLKSRC_MMIO
+  	select CPU_FA526
+ +	select GENERIC_CLOCKEVENTS
+- 	select NEED_MACH_GPIO_H
+  	help
+  	  Support for the Cortina Systems Gemini family SoCs
  =20
-+ static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t padd=
-r)
-+ {
-+ 	unsigned int offset =3D paddr & ~PAGE_MASK;
-+ 	return pfn_to_dma(dev, __phys_to_pfn(paddr)) + offset;
-+ }
-+=20
-+ static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dev_=
-addr)
-+ {
-+ 	unsigned int offset =3D dev_addr & ~PAGE_MASK;
-+ 	return __pfn_to_phys(dma_to_pfn(dev, dev_addr)) + offset;
-+ }
-+=20
-+ static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_=
-t size)
-+ {
-+ 	u64 limit, mask;
-+=20
-+ 	if (!dev->dma_mask)
-+ 		return 0;
-+=20
-+ 	mask =3D *dev->dma_mask;
-+=20
-+ 	limit =3D (mask + 1) & ~mask;
-+ 	if (limit && size > limit)
-+ 		return 0;
-+=20
-+ 	if ((addr | (addr + size - 1)) & ~mask)
-+ 		return 0;
-+=20
-+ 	return 1;
-+ }
-+=20
-+ static inline void dma_mark_clean(void *addr, size_t size) { }
-+=20
- +/* The ARM override for dma_max_pfn() */
- +static inline unsigned long dma_max_pfn(struct device *dev)
- +{
- +	return PHYS_PFN_OFFSET + dma_to_pfn(dev, *dev->dma_mask);
- +}
- +#define dma_max_pfn(dev) dma_max_pfn(dev)
- +
-  /*
-   * DMA errors are defined by all-bits-set in the DMA address.
-   */
+@@@ -593,8 -558,6 +592,7 @@@ config ARCH_MM
+  	select GPIO_PXA
+  	select IRQ_DOMAIN
+  	select MULTI_IRQ_HANDLER
+- 	select NEED_MACH_GPIO_H
+ +	select NEED_MACH_TIMEX_H
+  	select PINCTRL
+  	select PLAT_PXA
+  	select SPARSE_IRQ
+@@@ -658,8 -620,6 +656,7 @@@ config ARCH_PX
+  	select GPIO_PXA
+  	select HAVE_IDE
+  	select MULTI_IRQ_HANDLER
+- 	select NEED_MACH_GPIO_H
+ +	select NEED_MACH_TIMEX_H
+  	select PLAT_PXA
+  	select SPARSE_IRQ
+  	help
 
---Signature=_Wed__6_Nov_2013_18_17_40_+1100_cbaUBxQ1cYXv8GWg
+--Signature=_Wed__6_Nov_2013_19_14_54_+1100_y8bxG1i+DucTpGYW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSee0ZAAoJEMDTa8Ir7ZwVHv8P/0I12ssfd/91CQGeSSLmw5Oz
-rTPg+coKwjK4JrxLOWcJHRqkEGhw4WUwGjBdAog2Gh+tU1NCsRYIIEJs1wKTIdG8
-Hk6CZJAtaXOt1YgMy8nErW0kLZp3EpsVWAhebq7FxaiIGh2fDOdlx/7XEon4Gk8i
-4x7TRqWGtJdym7XyPFy3VZpXW73KvQ16P8oxdGrWoUJaDs+v9lNEic9PEpd3LqM3
-O5LLH05gIsW+KJv46B/HqHti8cupf8DFSGg/MS5lPqlicVUBuBcK2yvmNx3iieML
-7PcgKRDwikkf19qSwl2ZlR4n+5MjP3mRYAhqmDPJhY7s/rpUExNDKaaaIk3TX81v
-jSRZrWbKkHxXpeDOpnUL4jvdyUCfdxUXSsQTpD5j1v1XNiHzefIp+UvK6q1FnglQ
-EtNUhrCgz3glGWMyg3RAQebG+cRIilx0BtPVO3XUvbtK4QqCfBYJd/uo+lyKmeUj
-IgAi7jefFS5I2X3t37WT4HeHoEjPZ9mEQHweeR/28k358YnSMEo7v6vbjE0I5WUF
-2z5Y5bTdYprxyyZ+WNBRJN7PmCDK/uTOxOy5oFzzJhGJN0gdmpRWU2XvsJdVNK1f
-iikd5EOvPDLp0rIho9oojc8GDsymqj/oO/32mf9r19cYntwmBQiTp4dg/+SEcGFk
-5QZF3QE8usF5CkprrQXp
-=fF1q
+iQIcBAEBCAAGBQJSefqDAAoJEMDTa8Ir7ZwVQ/MP/Race/J+Lb9uhNafqypyW253
+U+dflHaEaExFmuneLmMwaMRzaZD5ek60F/IiCHr+ZDErPf2qjzhZB3xiwHmt5qFJ
+VoIu97EvHuRqLVJKur7lHZ6uBo4EOq6GJXNzDFjKn4yLYjZ+4bOTMqGkXJzAG1bm
+rAnx0X5qnGcSYQancIpsbjlZYkPahYeGPztcWrm7W/fomnuPtiaBVOgVsQ7aDols
+jXe+Bzi6xPoS4/Q1KPNPAGAwXfsRWL8ofNNLLxVfcY/irhrgs3rn28cmpeHI6vld
+Usrm6ifvxKD8ZhxuC6Th2l2/fPidC02Arwo9cCvWRFQqgkzXSGVVVkX6ovEs4bmY
+H3OQkvkLr0LDUWRARls/XDekBK31w363YQm1zc1KAmnV2UKG0kVHIWUbLuewUVFZ
+4eWvMfemGORpCn2aNI7YM/jzO08881XS3nBPFFCNyB1JQlcPJx6uS6BgJMfyDhDU
+qpa0ZWCTaSGFpU0aLRkzMiAUBJhMacy4kd4Hk1zjAvINDFhHd6movlU1e6n9eTGo
+ifMgXB/L1ofBrY39OJjMj+sNk7cXAY55cob/lpKec1jPtJ70bL4DaFrqBtVt+kJi
+p24s+hjJlZo4cCqt30a7N32kUTPE1RtUperAuhBfDA1offU0+G8m4WiR4roxGYc7
+jZos3oufnklJK28KZnbN
+=8P4D
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__6_Nov_2013_18_17_40_+1100_cbaUBxQ1cYXv8GWg--
+--Signature=_Wed__6_Nov_2013_19_14_54_+1100_y8bxG1i+DucTpGYW--
