@@ -1,73 +1,115 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the audit tree
-Date: Wed, 6 Nov 2013 17:27:34 +1100
-Message-ID: <20131106172734.28986a5907009f84aead4e8b@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen-tip tree with the arm tree
+Date: Wed, 6 Nov 2013 18:17:40 +1100
+Message-ID: <20131106181740.c5e7e966a750909290ba1f94@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__6_Nov_2013_17_27_34_+1100_b6AjtAdFqg2oX2Ih"
+ boundary="Signature=_Wed__6_Nov_2013_18_17_40_+1100_cbaUBxQ1cYXv8GWg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58030 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:57409 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750815Ab3KFG1p (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Nov 2013 01:27:45 -0500
+	with ESMTP id S932113Ab3KFHSA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Nov 2013 02:18:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, Russell King <rmk@arm.linux.org.uk>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>
 
---Signature=_Wed__6_Nov_2013_17_27_34_+1100_b6AjtAdFqg2oX2Ih
+--Signature=_Wed__6_Nov_2013_18_17_40_+1100_cbaUBxQ1cYXv8GWg
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi all,
 
-After merging the audit tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the xen-tip tree got a conflict in
+arch/arm/include/asm/dma-mapping.h between commit 6a6a5c15d871 ("ARM:
+7805/1: mm: change max*pfn to include the physical offset of memory")
+from the arm tree and commit e24b7aa368a0 ("arm: make SWIOTLB available")
+from the xen-tip tree.
 
-kernel/auditsc.c: In function 'audit_set_loginuid':
-kernel/auditsc.c:2003:15: error: incompatible types when assigning to type =
-'kuid_t' from type 'int'
-  oldsessionid =3D audit_get_sessionid(current);
-               ^
-kernel/auditsc.c:2016:2: error: incompatible type for argument 3 of 'audit_=
-log_set_loginuid'
-  audit_log_set_loginuid(oldloginuid, loginuid, oldsessionid, sessionid, rc=
-);
-  ^
-kernel/auditsc.c:1967:13: note: expected 'unsigned int' but argument is of =
-type 'kuid_t'
- static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
-             ^
-
-Caused by commit da0a610497ce ("audit: loginuid functions coding style").
-
-I have used the version of the audit tree from next-20131105 for today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__6_Nov_2013_17_27_34_+1100_b6AjtAdFqg2oX2Ih
+diff --cc arch/arm/include/asm/dma-mapping.h
+index 863cd84eb1a2,8acfef48124a..000000000000
+--- a/arch/arm/include/asm/dma-mapping.h
++++ b/arch/arm/include/asm/dma-mapping.h
+@@@ -87,13 -97,39 +98,46 @@@ static inline dma_addr_t virt_to_dma(st
+  }
+  #endif
+ =20
++ static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t padd=
+r)
++ {
++ 	unsigned int offset =3D paddr & ~PAGE_MASK;
++ 	return pfn_to_dma(dev, __phys_to_pfn(paddr)) + offset;
++ }
++=20
++ static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dev_=
+addr)
++ {
++ 	unsigned int offset =3D dev_addr & ~PAGE_MASK;
++ 	return __pfn_to_phys(dma_to_pfn(dev, dev_addr)) + offset;
++ }
++=20
++ static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_=
+t size)
++ {
++ 	u64 limit, mask;
++=20
++ 	if (!dev->dma_mask)
++ 		return 0;
++=20
++ 	mask =3D *dev->dma_mask;
++=20
++ 	limit =3D (mask + 1) & ~mask;
++ 	if (limit && size > limit)
++ 		return 0;
++=20
++ 	if ((addr | (addr + size - 1)) & ~mask)
++ 		return 0;
++=20
++ 	return 1;
++ }
++=20
++ static inline void dma_mark_clean(void *addr, size_t size) { }
++=20
+ +/* The ARM override for dma_max_pfn() */
+ +static inline unsigned long dma_max_pfn(struct device *dev)
+ +{
+ +	return PHYS_PFN_OFFSET + dma_to_pfn(dev, *dev->dma_mask);
+ +}
+ +#define dma_max_pfn(dev) dma_max_pfn(dev)
+ +
+  /*
+   * DMA errors are defined by all-bits-set in the DMA address.
+   */
+
+--Signature=_Wed__6_Nov_2013_18_17_40_+1100_cbaUBxQ1cYXv8GWg
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSeeFaAAoJEMDTa8Ir7ZwV2PYP/A+jkpXiuQvx5c2crUC2WUEK
-WmzNPn67YsnPakU1mRZwJQA0xFrgZMui6R5i8isOuo2DRWINPIQaMqY/pMN5BncP
-/0F0CoKpvUg5yiE4d3aBHkjTiKbVt9119lL1Z8hi+uPdM5EQHwHBP+ZeWkoDY/ZF
-JCtZjsnZ6J8v3fzlTtadfetQ4nTcmXgtJF4MKBwqqZcSswWideTRdMgZEZnr8tw7
-rFiujJQ1gi3FUqMqlJk5GbNl36Ohcpu1SngA/s11HX4V8LKjLphWWA5/PF1Iti6+
-rKxTNbYdRRvutaOiYKIBJkXI/lMSIgCepqB8nqPI+KGuDYBXPP4WWcSijrOTuOrs
-ilckRNgnSVPp7XsCDgfk+8VLN6RXhdka6fytR1Lf8UgQ//xmQf33s8RG++z2HSco
-Xd5/iYKYCSQLxLDKz7/GR21EuyWWc1K3S5717bQCMq9KvrP4NEPM63Sbqej4ugx7
-578vcJw4tlWHhwSuiAzna6WirNgZXpe8cIKQQUIJ84QDS7yA/emmzb+ZHTCE8vcq
-XCaXZ86/gD3k/NYq5/DWVLfHc+9er1u6J/VbA7nvA038H2KYG780nY7B5ZnCfK80
-hjy9/P7GKYQAKXQEYHl4MZkyJjP8Vh1sJFAPe6ga5FFPQIFBI76GyDZzf2Pox7SM
-ccGN3QPZXOirWYsz8pk/
-=kfK1
+iQIcBAEBCAAGBQJSee0ZAAoJEMDTa8Ir7ZwVHv8P/0I12ssfd/91CQGeSSLmw5Oz
+rTPg+coKwjK4JrxLOWcJHRqkEGhw4WUwGjBdAog2Gh+tU1NCsRYIIEJs1wKTIdG8
+Hk6CZJAtaXOt1YgMy8nErW0kLZp3EpsVWAhebq7FxaiIGh2fDOdlx/7XEon4Gk8i
+4x7TRqWGtJdym7XyPFy3VZpXW73KvQ16P8oxdGrWoUJaDs+v9lNEic9PEpd3LqM3
+O5LLH05gIsW+KJv46B/HqHti8cupf8DFSGg/MS5lPqlicVUBuBcK2yvmNx3iieML
+7PcgKRDwikkf19qSwl2ZlR4n+5MjP3mRYAhqmDPJhY7s/rpUExNDKaaaIk3TX81v
+jSRZrWbKkHxXpeDOpnUL4jvdyUCfdxUXSsQTpD5j1v1XNiHzefIp+UvK6q1FnglQ
+EtNUhrCgz3glGWMyg3RAQebG+cRIilx0BtPVO3XUvbtK4QqCfBYJd/uo+lyKmeUj
+IgAi7jefFS5I2X3t37WT4HeHoEjPZ9mEQHweeR/28k358YnSMEo7v6vbjE0I5WUF
+2z5Y5bTdYprxyyZ+WNBRJN7PmCDK/uTOxOy5oFzzJhGJN0gdmpRWU2XvsJdVNK1f
+iikd5EOvPDLp0rIho9oojc8GDsymqj/oO/32mf9r19cYntwmBQiTp4dg/+SEcGFk
+5QZF3QE8usF5CkprrQXp
+=fF1q
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__6_Nov_2013_17_27_34_+1100_b6AjtAdFqg2oX2Ih--
+--Signature=_Wed__6_Nov_2013_18_17_40_+1100_cbaUBxQ1cYXv8GWg--
