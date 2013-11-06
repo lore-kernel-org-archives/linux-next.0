@@ -1,42 +1,43 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: Re: linux-next: build failure after merge of the audit tree
-Date: Wed, 06 Nov 2013 11:54:57 -0500
-Message-ID: <1383756897.28218.66.camel@flatline.rdu.redhat.com>
-References: <20131106172734.28986a5907009f84aead4e8b@canb.auug.org.au>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: wrong merge of rt2x00/rt2800pci.c in linux-next
+Date: Wed, 06 Nov 2013 19:13:42 +0100
+Message-ID: <527A86D6.1030807@hauke-m.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:16589 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754348Ab3KFQzC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Nov 2013 11:55:02 -0500
-In-Reply-To: <20131106172734.28986a5907009f84aead4e8b@canb.auug.org.au>
+Received: from server19320154104.serverpool.info ([193.201.54.104]:49284 "EHLO
+	hauke-m.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750747Ab3KFSNu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Nov 2013 13:13:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>
+Cc: stefani@seibold.net, Gabor Juhos <juhosg@openwrt.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
 
-On Wed, 2013-11-06 at 17:27 +1100, Stephen Rothwell wrote:
-> Hi Eric,
-> 
-> After merging the audit tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> kernel/auditsc.c: In function 'audit_set_loginuid':
-> kernel/auditsc.c:2003:15: error: incompatible types when assigning to type 'kuid_t' from type 'int'
->   oldsessionid = audit_get_sessionid(current);
->                ^
-> kernel/auditsc.c:2016:2: error: incompatible type for argument 3 of 'audit_log_set_loginuid'
->   audit_log_set_loginuid(oldloginuid, loginuid, oldsessionid, sessionid, rc);
->   ^
-> kernel/auditsc.c:1967:13: note: expected 'unsigned int' but argument is of type 'kuid_t'
->  static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
->              ^
-> 
-> Caused by commit da0a610497ce ("audit: loginuid functions coding style").
-> 
-> I have used the version of the audit tree from next-20131105 for today.
-> 
+Hi,
 
-Should be fixed for tomorrow.  Thank you.
+I was looking at linux-next-20131106 and the conflict in
+drivers/net/wireless/rt2x00/rt2800pci.c was solved wrong. The function
+rt2800pci_txstatus_interrupt() was moved from rt2800pci.c to
+rt2800mmio_txstatus_interrupt() in rt2800mmio.c in commit
+8d03e77218ff4bc59e4645438acbd3c5c7e0f654 , the change done in
+3bbfe1d952cd4d2e29bfcb31f109b5d74d1aa847 should be done there.
+
+This should be added to the merge 749550cb657ae5fb896b3b33070ae48f37813d13:
+
+Hauke
+
+--- a/drivers/net/wireless/rt2x00/rt2800mmio.c
++++ b/drivers/net/wireless/rt2x00/rt2800mmio.c
+@@ -446,7 +446,7 @@ static void rt2800mmio_txstatus_interrupt(struct
+rt2x00_dev *rt2x00dev)
+ 		if (!rt2x00_get_field32(status, TX_STA_FIFO_VALID))
+ 			break;
+
+-		if (!kfifo_put(&rt2x00dev->txstatus_fifo, &status)) {
++		if (!kfifo_put(&rt2x00dev->txstatus_fifo, status)) {
+ 			rt2x00_warn(rt2x00dev, "TX status FIFO overrun, drop tx status
+report\n");
+ 			break;
+ 		}
