@@ -1,57 +1,57 @@
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
-Subject: Re: linux-next: manual merge of the block tree with the  tree
-Date: Thu, 07 Nov 2013 13:38:28 -0600
-Message-ID: <527BEC34.4000008@oracle.com>
-References: <20131101142026.10390b6e3f70de348770c137@canb.auug.org.au> <5273C473.5070803@kernel.dk> <20131102072252.88d2380fa392705b912dbfad@canb.auug.org.au> <52740EB1.2070901@kernel.dk> <527411DD.7050008@oracle.com> <527414DE.9090704@kernel.dk> <52756583.2030808@oracle.com> <527BE7FA.90904@oracle.com> <20131107192545.GA20624@moria.home.lan>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: reminder
+Date: Fri, 8 Nov 2013 10:25:00 +1100
+Message-ID: <20131108102500.f4664a8a7d23bc21d794ad6a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__8_Nov_2013_10_25_00_+1100_95rz4ypv55/zIDPI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:47376 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751336Ab3KGTik (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Nov 2013 14:38:40 -0500
-In-Reply-To: <20131107192545.GA20624@moria.home.lan>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44860 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753323Ab3KGXZK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Nov 2013 18:25:10 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kent Overstreet <kmo@daterainc.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zach Brown <zab@zabbo.net>, Olof Johansson <olof@lixom.net>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
+--Signature=_Fri__8_Nov_2013_10_25_00_+1100_95rz4ypv55/zIDPI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 11/07/2013 01:25 PM, Kent Overstreet wrote:
-> On Thu, Nov 07, 2013 at 01:20:26PM -0600, Dave Kleikamp wrote:
->> On 11/02/2013 03:50 PM, Dave Kleikamp wrote:
->>> On 11/01/2013 03:53 PM, Jens Axboe wrote:
->>
->>>> So we've three immediate options:
->>>>
->>>> 1) You base it on top of the block tree
->>>> 2) I carry the loop updates
->>>> 3) You hand Stephen a merge patch for the resulting merge of the two
->>>
->>> Attached is a merge patch and the merged loop.c. I'm having problems
->>> with the loop driver with both the block and my tree. I'll continue to
->>> look at that, but everything should build cleanly with this.
->>
->> Looking back, I obviously rushed the last patch out. This merge patch,
->> and the resulting loop.c, fix my problem. My code is working with Jens'
->> block tree now.
->>
->> Jens,
->> I ended up replacing a call to bio_iovec_idx() with __bvec_iter_bvec()
->> since the former was removed. It's not very elegant, but it works. I'm
->> open to suggestions on a cleaner fix, but it can wait until one or both
->> of these trees is merged.
-> 
-> No, that's definitely wrong. Read Documentation/block/biovecs.txt - you
-> need to use either the new bio_iovec() or bio_iovec() iter. I can do the
-> conversion later today.
+Just a reminder to *not* add any v3.14 material to linux-next until after
+v3.13-rc1 has been released.
 
-I appreciate your help. The patchset requires that the iov_iter
-structure can contain either a user-space iovec or a bio_vec, so that
-the iov_iter can be passed down transparently into the filesystems. I'll
-be happy any way we can get that to work.
+Also, please resist the temptation to rebase your trees before sending
+them upstream.
 
-Thanks,
-Shaggy
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__8_Nov_2013_10_25_00_+1100_95rz4ypv55/zIDPI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSfCFSAAoJEMDTa8Ir7ZwVnEIP/2phoeCjee1ankVUejx411JU
+cohW8jxM9+XQPOOk1kCdL8n7pPhCoKGpEmhyrc3ynqA8mQWBRPnJHOxLOPfUDMua
+HwUCfIges6krcY6yZ36Vdi1Vic2iLTSrYc9YRj30oAkqpFngZC3dxK8JJgfRnTwi
+7SwlyXjV9tFagVMXpHaMLH0JH6H3QTNu8lnbBWB6l+UmKTTB1VgJBPKxT1lYPK7a
+vN4tTM3C1glO8RYxGbKmG5J7O7zLzAKkrFoZq8ydicTL0XfDIKmvgKezlZvNSGSJ
+gXxS2+Thhu622SuK9x6qVbYYTA5/2z00vLJO4IAgF2TKsZ8K3hsGyRFPEUfG/MtK
+KCSVipJCGxa9/OHLPObE2G98e3i0lZTbhGvyfvnz7oLWGUbMXwqyFmOzUcuG1MkY
+eca2OqyvCh6uZkysu7v7veBS86nE6LJG+bZaaoz8DNZxDrNp6+zYRW9OOWSmFnCr
+bxYejzQPDJS8xrcvVk1Kb3azhDF879JU32Arvd9bDBzLepSpsImWIRlor+W9Ahpv
+gkkZNFW1nwta+zXTiIW5PWDzTnUWsT9KTVrGkb9DndMeOouF3RHFvEw3AVD/ohO8
+sJ8cgrwapD1HIL2U/DX4nbIGHqLQyZvsib4WT4dgtQlzO0SK1Dlyba97SvIbkcg+
+K1vVXyWpQeyFD6mZShuH
+=D01C
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__8_Nov_2013_10_25_00_+1100_95rz4ypv55/zIDPI--
