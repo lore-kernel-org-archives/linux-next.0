@@ -1,56 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Thu, 7 Nov 2013 13:21:02 +1100
-Message-ID: <20131107132102.17d5f340fdf80dc0faa80c4c@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with the drm tree
+Date: Thu, 7 Nov 2013 13:37:51 +1100
+Message-ID: <20131107133751.95ceeb3ddf512a0af6f78f2a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__7_Nov_2013_13_21_02_+1100_dqOA/LMkTNZ1gD2J"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>
+Content-Type: multipart/mixed; boundary="===============0455333074=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__7_Nov_2013_13_21_02_+1100_dqOA/LMkTNZ1gD2J
+--===============0455333074==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__7_Nov_2013_13_37_51_+1100_cMYts=mQQgxRz=4R"
+
+--Signature=_Thu__7_Nov_2013_13_37_51_+1100_cMYts=mQQgxRz=4R
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/radeon/radeon_connectors.c between commit 108dc8e8b44a
-("drm/radeon: rework audio option") from Linus' tree and commit
-ad41550666f8 ("drm/radeon: enable hdmi audio by default") from the drm
-tree.
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/intel_panel.c between commit 5bdebb183c97
+("drm/sysfs: sort out minor and connector device object lifetimes") from
+the drm tree and commit 752aa88a1e78 ("drm/i915: make backlight functions
+take a connector") from the drm-intel tree.
 
-I fixed it up (I used the latter version) and can carry the fix as
-necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__7_Nov_2013_13_21_02_+1100_dqOA/LMkTNZ1gD2J
+diff --cc drivers/gpu/drm/i915/intel_panel.c
+index 09b2994c9b37,cad41ac330e8..000000000000
+--- a/drivers/gpu/drm/i915/intel_panel.c
++++ b/drivers/gpu/drm/i915/intel_panel.c
+@@@ -726,7 -802,8 +802,8 @@@ int intel_panel_setup_backlight(struct=20
+  	}
+  	dev_priv->backlight.device =3D
+  		backlight_device_register("intel_backlight",
+- 					  connector->kdev, dev,
+ -					  &connector->kdev,
+++					  connector->kdev,
++ 					  to_intel_connector(connector),
+  					  &intel_panel_bl_ops, &props);
+ =20
+  	if (IS_ERR(dev_priv->backlight.device)) {
+
+--Signature=_Thu__7_Nov_2013_13_37_51_+1100_cMYts=mQQgxRz=4R
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSevkTAAoJEMDTa8Ir7ZwVt3sQAIHLsZiiMcz5CTjUfUCaCPDQ
-/A5jywTGrsa8hhgMqtoquzEkOd0BoRZb7DAwG3OSX49Rv3g5WJeAtVOFmdDPQg0U
-01iWGyBnLCnJwi3hItYTSQchhoRiInDQEL6vxqqJZkxDVXz7NQ50ngw6QS5XFcVO
-P2UBy8L5oYkHRlMvqKP/kD8pTehdc6WVzBIPagp2bkaKwJy9guX2L8TfgULYoDQW
-O2WJqQHP8qWzt6nZ5QuPonHSi12L1BT84zVHCgwW2567WmCkCNuSX1m3JvluHUHM
-GM7fZSlTHvCaZ6op0JQtjB9LvesUopCMI2AqlTo2S/LvL/OUhqqljrOAvBI4J7cZ
-MSupzQdaSXnaNIweXSKG/ae6ZnzV7+Cs4Z3yvN9EHxcf5oD2ybNB/MzOF8PcRjEd
-5wJ+YXkRdrUQ31yczUafJlo2i4niV0dJI6ORWk4HvoeVzmOkZgtAcNUEdkj9GNAC
-48AgkG7mzFoTNF0/FPWp9e0BhTohkL5HIGcU4fCJi6K9jVSqAZkIQM1+J3RRd8nH
-XG07ReIgsleYiGFPuWFpW7Xxw0IPZlCMdXpTAzwfIRcg0xyxwg9klzEc67yAm21R
-2NveU++e0nfX2+Atx9ULomQshRkM05xyB/y+QcaeIzxBzzWFXDR4lL7ArbcXQdmB
-2pXKePaIY5oYX6w9Ind/
-=U+Gv
+iQIcBAEBCAAGBQJSev0EAAoJEMDTa8Ir7ZwV38UP/iQx9XMRlFMmfJ4xEzWMhCbH
+J+Lt7eRL0gQhTWTN5Pek5/eDe/Bj8QDg2O89JGERBddh8iVghxlV6SQIIfYN/XLY
+R/I1Y399hb4/C1hNxCWt4L7guwL1yZGA/I83gl6LGf51O7Tx9Guuhi4sCUcJnWUk
+nu3+vDw2eIBDwZTM0OYzSdbqDftqM2rRqia40jksBQ4as0iUfk+x0Tj8SW/F41zs
+Kq2D8L68Huq8NtocZZsvO6Gq53nVicmfX3FpAVZ5nvdfcWozBQDvyY3PI/mppd10
+J4C4PZ/bEqn8QFbaAlU7ToxP8XvRN0alqajeIpME7TgSyePk4IlFaL88yB/AZyTh
+o4IXtnDz4zkEUMkkhMXBZ4PukGw1dvyngwlnC5pATHcCv7j9/w8/3XoVS14xRnUC
+6MYVIxSyEoB9UHcc8qkZeGGxgrx0NdFLAhm0u6i2QpYuRLK2py0XarOVZIyUziUb
+Syo1B4ud4mS0ucWgbJgKRtqlkpzBG9JRnRwrvrKOyXO9feC2tweTouJq5QJhPOfC
+zB1xnRfSK2xKt+/QBK3OWtJsXJ03uJSHt8OuuphhOgXmbWbPExwDnE6l+gxpqbzf
+WVlUckjO1CqNWXGqXGgiuvdQMJ98BAwxxvlY4b95UB5Zp/2Nn78vMB+Wd+a/yt0K
+Fjq1LLceg0t/SEf6M7eV
+=DQ8q
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__7_Nov_2013_13_21_02_+1100_dqOA/LMkTNZ1gD2J--
+--Signature=_Thu__7_Nov_2013_13_37_51_+1100_cMYts=mQQgxRz=4R--
+
+--===============0455333074==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0455333074==--
