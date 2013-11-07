@@ -1,57 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: reminder
-Date: Fri, 8 Nov 2013 10:25:00 +1100
-Message-ID: <20131108102500.f4664a8a7d23bc21d794ad6a@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the gpio tree with the arm-soc and
+ cortex trees
+Date: Fri, 8 Nov 2013 10:38:29 +1100
+Message-ID: <20131108103829.0f485201de58f423c8dd3e7d@canb.auug.org.au>
+References: <20131106191454.5f45b0b5300f03e74a6a09eb@canb.auug.org.au>
+	<20131106084117.GT14892@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Nov_2013_10_25_00_+1100_95rz4ypv55/zIDPI"
+ boundary="Signature=_Fri__8_Nov_2013_10_38_29_+1100_4ui.E0uy5K7IEDsQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44860 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33498 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753323Ab3KGXZK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Nov 2013 18:25:10 -0500
+	with ESMTP id S1752648Ab3KGXiq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Nov 2013 18:38:46 -0500
+In-Reply-To: <20131106084117.GT14892@pengutronix.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
---Signature=_Fri__8_Nov_2013_10_25_00_+1100_95rz4ypv55/zIDPI
-Content-Type: text/plain; charset=US-ASCII
+--Signature=_Fri__8_Nov_2013_10_38_29_+1100_4ui.E0uy5K7IEDsQ
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Uwe,
 
-Just a reminder to *not* add any v3.14 material to linux-next until after
-v3.13-rc1 has been released.
+On Wed, 6 Nov 2013 09:41:17 +0100 Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pe=
+ngutronix.de> wrote:
+>
+> BTW, "cortex" is a bit too general. My tree is only about Cortex-M. Also
+> you can drop -2.6 from the URL.
 
-Also, please resist the temptation to rebase your trees before sending
-them upstream.
+Updated both, thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__8_Nov_2013_10_25_00_+1100_95rz4ypv55/zIDPI
+--Signature=_Fri__8_Nov_2013_10_38_29_+1100_4ui.E0uy5K7IEDsQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSfCFSAAoJEMDTa8Ir7ZwVnEIP/2phoeCjee1ankVUejx411JU
-cohW8jxM9+XQPOOk1kCdL8n7pPhCoKGpEmhyrc3ynqA8mQWBRPnJHOxLOPfUDMua
-HwUCfIges6krcY6yZ36Vdi1Vic2iLTSrYc9YRj30oAkqpFngZC3dxK8JJgfRnTwi
-7SwlyXjV9tFagVMXpHaMLH0JH6H3QTNu8lnbBWB6l+UmKTTB1VgJBPKxT1lYPK7a
-vN4tTM3C1glO8RYxGbKmG5J7O7zLzAKkrFoZq8ydicTL0XfDIKmvgKezlZvNSGSJ
-gXxS2+Thhu622SuK9x6qVbYYTA5/2z00vLJO4IAgF2TKsZ8K3hsGyRFPEUfG/MtK
-KCSVipJCGxa9/OHLPObE2G98e3i0lZTbhGvyfvnz7oLWGUbMXwqyFmOzUcuG1MkY
-eca2OqyvCh6uZkysu7v7veBS86nE6LJG+bZaaoz8DNZxDrNp6+zYRW9OOWSmFnCr
-bxYejzQPDJS8xrcvVk1Kb3azhDF879JU32Arvd9bDBzLepSpsImWIRlor+W9Ahpv
-gkkZNFW1nwta+zXTiIW5PWDzTnUWsT9KTVrGkb9DndMeOouF3RHFvEw3AVD/ohO8
-sJ8cgrwapD1HIL2U/DX4nbIGHqLQyZvsib4WT4dgtQlzO0SK1Dlyba97SvIbkcg+
-K1vVXyWpQeyFD6mZShuH
-=D01C
+iQIcBAEBCAAGBQJSfCR9AAoJEMDTa8Ir7ZwVZdIQAIUBAMDilemPCxPxe0Sx0EUu
+R/YrIWLWD0SfxUpCeunszQwo8o7xt4I2i8y0ASzi3hJA/YgCJKCZR7J30ErGdsWr
+VQyQtSsxPQ6ctmZtlfVdDMjKazkmHW0q/cLDlZh4bAv/R53SnXBYoOnQI6V7FlIH
+vjdF1Z4KNOFaIbycN3yme2v1OJKbrxHZsZDuL7MYau1xrDAljozJW19PsIaVG39r
+oDpsnlw8qG6U47F90aYlGZ4cHBq0MnsobX3QwqgDe/fNyU0jLqRq9TSRgcPH1Dvh
+g2aMs4B3gPbGHsjc0t1Ih6/MZ57UmTGR5FjMMH+uBMNDeC52sujHsxFNBRfaejQA
+xE5H+Ctw8RFSA8HO2wGa5h+ZFT9nK0vUaG36l2Y9uEKZjsJ2kAd0NhbVD6qvIesj
+zL9Vyq3JkWjGKhHSXorhqm8/reT4dmWP50xavU/DcGDxib/8/t61tY6FqjTZ+LrK
+3mNcAr/s7LmZueHuNmYXmnR0Iub/5dWmkNiaxwF5pgZ8okD3XjsgHzeOiWF0hO4T
+7Wre4WYA4U/uLPioBk6S147Y04w0puYIoRkKacUC9DO2OUfmpLDtsIQZXsya6Pq9
+ohkFJJDpxKCuXeHKxrbMANLUWIc6Y+HpAEERwQbJmQ9vrBq3+v4qb1a4Mc7AIWyd
+K5sjNZnLVz4b1EInrUZ8
+=Swhw
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__8_Nov_2013_10_25_00_+1100_95rz4ypv55/zIDPI--
+--Signature=_Fri__8_Nov_2013_10_38_29_+1100_4ui.E0uy5K7IEDsQ--
