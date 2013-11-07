@@ -1,22 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Thu, 7 Nov 2013 13:10:39 +1100
-Message-ID: <20131107131039.ba60e7db9538175c7a479666@canb.auug.org.au>
+Date: Thu, 7 Nov 2013 13:21:02 +1100
+Message-ID: <20131107132102.17d5f340fdf80dc0faa80c4c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__7_Nov_2013_13_10_39_+1100_d8w388ay+Kcr3MGg"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41471 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751361Ab3KGCKv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Nov 2013 21:10:51 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Thu__7_Nov_2013_13_21_02_+1100_dqOA/LMkTNZ1gD2J"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__7_Nov_2013_13_10_39_+1100_d8w388ay+Kcr3MGg
+--Signature=_Thu__7_Nov_2013_13_21_02_+1100_dqOA/LMkTNZ1gD2J
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,37 +20,37 @@ Content-Transfer-Encoding: quoted-printable
 Hi Dave,
 
 Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/radeon/atombios_encoders.c between commit c23632d4e57c
-("Alex Deucher <alexander.deucher@amd.com>") from Linus' tree and commit
-43a340262ad4 ("drm/radeon/atom: don't call [EN|DIS]ABLE_OUTPUT on
-DCE3.x") from the drm tree.
+drivers/gpu/drm/radeon/radeon_connectors.c between commit 108dc8e8b44a
+("drm/radeon: rework audio option") from Linus' tree and commit
+ad41550666f8 ("drm/radeon: enable hdmi audio by default") from the drm
+tree.
 
-I fixed it up (just using the latter version) and can carry the fix as
+I fixed it up (I used the latter version) and can carry the fix as
 necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__7_Nov_2013_13_10_39_+1100_d8w388ay+Kcr3MGg
+--Signature=_Thu__7_Nov_2013_13_21_02_+1100_dqOA/LMkTNZ1gD2J
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSevakAAoJEMDTa8Ir7ZwVmKAP/3byXWHIFK9qU+jramHe5SOv
-BTPOgtb4HGus+2AoB+27A7iyM39NXSxZKoyidAQ2aYsXszW45sWi5IKwRVCgvF6f
-DhpmOIpWpPEYPXhJCu0w9/4qcCuUGq5Y6/VDeqw3qlae9MoJ0yzvCGB1RAdLwwFv
-M9BUHAlIJToPT64GSu3yDkVCzr+TAwbrR6GOnw5/9c5HqZDUmeJjGe+0NSoIes0y
-NKO6LNRF09KOe6ihRTxxwqL7KkFBz0nVenBTHOUR6mi70oo48+pDwPFSE/YP7elc
-3HtdY0odk3xELqM0b9/2LhT2UfMPuhxZfPrBICPMkXJ77UQy16deKVzR/hEgJPrK
-banSTiP8AD2+Wel+EWumHRKq6E2SB+Nj+KqCYV5RuEA78gTtEjajx6LfUbejFsaq
-o9z7dei6Qze9qw8e1fC5PRdra42XVa1po7RadYtUXqnLTxi9JkyRLbMmw6AIJ5nF
-vlMTPN7zI5ME4wZOcP7Q5GulBrcKjBZp7Iyq29uRs8KuRaQ92q8NhHEmQo5kwiiE
-4v3ED06RpaTSL6ETMMMqg1KIV6/VcYLWQmKYK8EyBUrSRVaoWMXHfP+Kfj3tYWsq
-pZMlvbZh8JZY4WpcUp9SqzQYZQIlz2nqV1efbzKxm+OZGabJ2ZVQ/WLOmUQiDMVB
-kAGSTlODSgP363wUwzlh
-=N1yZ
+iQIcBAEBCAAGBQJSevkTAAoJEMDTa8Ir7ZwVt3sQAIHLsZiiMcz5CTjUfUCaCPDQ
+/A5jywTGrsa8hhgMqtoquzEkOd0BoRZb7DAwG3OSX49Rv3g5WJeAtVOFmdDPQg0U
+01iWGyBnLCnJwi3hItYTSQchhoRiInDQEL6vxqqJZkxDVXz7NQ50ngw6QS5XFcVO
+P2UBy8L5oYkHRlMvqKP/kD8pTehdc6WVzBIPagp2bkaKwJy9guX2L8TfgULYoDQW
+O2WJqQHP8qWzt6nZ5QuPonHSi12L1BT84zVHCgwW2567WmCkCNuSX1m3JvluHUHM
+GM7fZSlTHvCaZ6op0JQtjB9LvesUopCMI2AqlTo2S/LvL/OUhqqljrOAvBI4J7cZ
+MSupzQdaSXnaNIweXSKG/ae6ZnzV7+Cs4Z3yvN9EHxcf5oD2ybNB/MzOF8PcRjEd
+5wJ+YXkRdrUQ31yczUafJlo2i4niV0dJI6ORWk4HvoeVzmOkZgtAcNUEdkj9GNAC
+48AgkG7mzFoTNF0/FPWp9e0BhTohkL5HIGcU4fCJi6K9jVSqAZkIQM1+J3RRd8nH
+XG07ReIgsleYiGFPuWFpW7Xxw0IPZlCMdXpTAzwfIRcg0xyxwg9klzEc67yAm21R
+2NveU++e0nfX2+Atx9ULomQshRkM05xyB/y+QcaeIzxBzzWFXDR4lL7ArbcXQdmB
+2pXKePaIY5oYX6w9Ind/
+=U+Gv
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__7_Nov_2013_13_10_39_+1100_d8w388ay+Kcr3MGg--
+--Signature=_Thu__7_Nov_2013_13_21_02_+1100_dqOA/LMkTNZ1gD2J--
