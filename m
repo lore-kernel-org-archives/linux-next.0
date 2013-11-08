@@ -1,101 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Fri, 8 Nov 2013 12:01:57 +1100
-Message-ID: <20131108120157.de84e99fedd328c7d8ca7a27@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the block tree with the  tree
+Date: Fri, 8 Nov 2013 12:53:07 +1100
+Message-ID: <20131108125307.613427c04a7527c4359e6443@canb.auug.org.au>
+References: <20131101142026.10390b6e3f70de348770c137@canb.auug.org.au>
+	<5273C473.5070803@kernel.dk>
+	<20131102072252.88d2380fa392705b912dbfad@canb.auug.org.au>
+	<52740EB1.2070901@kernel.dk>
+	<527411DD.7050008@oracle.com>
+	<527414DE.9090704@kernel.dk>
+	<52756583.2030808@oracle.com>
+	<527BE7FA.90904@oracle.com>
+	<20131107192545.GA20624@moria.home.lan>
+	<527C2AA9.9040608@oracle.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Nov_2013_12_01_57_+1100_Y+XooKzI++/YQDva"
+ boundary="Signature=_Fri__8_Nov_2013_12_53_07_+1100_MAeV.Yun8aTmfuh9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35227 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58239 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752755Ab3KHBCO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Nov 2013 20:02:14 -0500
+	with ESMTP id S1752964Ab3KHBxf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Nov 2013 20:53:35 -0500
+In-Reply-To: <527C2AA9.9040608@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthias Beyer <mail@beyermatthias.de>, Greg KH <greg@kroah.com>
+To: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: Kent Overstreet <kmo@daterainc.com>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zach Brown <zab@zabbo.net>, Olof Johansson <olof@lixom.net>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Fri__8_Nov_2013_12_01_57_+1100_Y+XooKzI++/YQDva
+--Signature=_Fri__8_Nov_2013_12_53_07_+1100_MAeV.Yun8aTmfuh9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi all,
 
-Today's linux-next merge of the vfs tree got a conflict in
-drivers/usb/core/file.c between commit 469271f8c48f ("drivers: usb: core:
-{file,hub,sysfs,usb}.c: Whitespace fixes") from Linus' tree and commit
-e84f9e57b90c ("consolidate the reassignments of ->f_op in ->open()
-instances") from the vfs tree.
+On Thu, 07 Nov 2013 18:04:57 -0600 Dave Kleikamp <dave.kleikamp@oracle.com>=
+ wrote:
+>
+> Can you please drop the aio-direct tree for the time being?
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+OK, I was afraid of this, but, yes, I can drop it.  I am not quite sure
+what affect this will have on Andrew's tree, though (hopefully not too
+much).
+
+This is a bit disappointing.  Dave's stuff have been sitting in
+linux-next for quite some time (probably too long) so it is not as if
+Kent and Jens (should) have been unaware of it.
+
+> My stuff is not aligning very well with the immutable biovecs and Kent
+> has a different approach in mind. I'll be working with him on a
+> replacement that will hopefully be simpler.
+
+Presumably not before v3.14, right?
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/usb/core/file.c
-index 3bdfbf88a0ae,fe0d8365411a..000000000000
---- a/drivers/usb/core/file.c
-+++ b/drivers/usb/core/file.c
-@@@ -27,29 -27,21 +27,21 @@@
-  static const struct file_operations *usb_minors[MAX_USB_MINORS];
-  static DECLARE_RWSEM(minor_rwsem);
- =20
- -static int usb_open(struct inode * inode, struct file * file)
- +static int usb_open(struct inode *inode, struct file *file)
-  {
-- 	int minor =3D iminor(inode);
-- 	const struct file_operations *c;
-  	int err =3D -ENODEV;
-- 	const struct file_operations *old_fops, *new_fops =3D NULL;
-+ 	const struct file_operations *new_fops;
- =20
-  	down_read(&minor_rwsem);
-- 	c =3D usb_minors[minor];
-+ 	new_fops =3D fops_get(usb_minors[iminor(inode)]);
- =20
-- 	if (!c || !(new_fops =3D fops_get(c)))
-+ 	if (!new_fops)
-  		goto done;
- =20
-- 	old_fops =3D file->f_op;
-- 	file->f_op =3D new_fops;
-+ 	replace_fops(file, new_fops);
-  	/* Curiouser and curiouser... NULL ->open() as "no device" ? */
-  	if (file->f_op->open)
- -		err =3D file->f_op->open(inode,file);
- +		err =3D file->f_op->open(inode, file);
-- 	if (err) {
-- 		fops_put(file->f_op);
-- 		file->f_op =3D fops_get(old_fops);
-- 	}
-- 	fops_put(old_fops);
-   done:
-  	up_read(&minor_rwsem);
-  	return err;
-
---Signature=_Fri__8_Nov_2013_12_01_57_+1100_Y+XooKzI++/YQDva
+--Signature=_Fri__8_Nov_2013_12_53_07_+1100_MAeV.Yun8aTmfuh9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSfDgJAAoJEMDTa8Ir7ZwVaqwQAIe4DsoMkHGKBk2qkICXGNMr
-+/efy5vFpBdghWoal6nxc3LZirCWv9kaxXxSH3CcBpYolVgw0iMuIQ1QijvzakGT
-BHEcVzUP2BgjenaiOe+zvae6OOmx/cMwStFueTfwxdw0Woo+V1gWnpbmP7EwblXL
-248hJi+i0aqzm6NfJe+oEENBCFGKlKHfnWp6h/zepFx1hlE4zCONa+t8fUxgiGT0
-UHTKFB7k/Ww5kxJyXf8LprQ/DaN9ZHYYgJ7dKD078Y25Rkey73Tkri3E0ejppXLl
-G+MEDVL6/JhK9n0xoSeWbbCz8H6oXtJvgasGTSjESJgcuDchVko40y7K5UR1qAiu
-aa4s6Y4iFoC1EZhO0lejFtgsfccBSenHl+IqE3VTX1+JhjvM1Obg1F03weUwiPOJ
-RdXPXD1by3pUHOAzfYJwZW9O75jALHF8ACF6aa8emYnYWxQMChlSyHk1lDczmZiH
-40KZ15HiGHviuJvfdu/LbU0vpnaUNvIJBaG0OpTzTSdB1StEKvNh1oVZn2EmwPm6
-jARVyIe5DpatPvFTV6FPyH8ZyiF4y3psWiwJ+douI1z2bZF+VEXs9CMkU77/J31A
-iIA3frO99ZRsxCS9ZXzCT2mhAwDD2AzmLzVWogFprG182ix3VRY+7UvDDHMSm+u5
-X6PDHGqe5MI1HFk5xXmt
-=Nwxr
+iQIcBAEBCAAGBQJSfEQLAAoJEMDTa8Ir7ZwV/BwQAIK1xA9TbqYE0pPtRJ3OpIYf
+c2K8ntg8Y7tplVs7jStDx/GkUPWu1x78aaYwphNH1HwVAgzta1UDlJtbtrXRbG5c
+j3MswqSXvDpktXT5agQJruBqzGTU8maU3ZPvn9aFaSPhY9o7gJM/JuqdkZ+jh3fb
+Dqw9fiDLnW/NQDVC4l8fSz8hX9/1NxcqJknzDh5qAn4DNM0rp1RCWSELdHW7hwKX
+PtoBvcfSP+NdJxGPCO6F0J4XF1Q19Hqj2EIYqAhKSDtQHwfKpVZvEfF4PNfm5CFz
+SozqXREd9S0IOGyXXtmxr9ttZW44bxN+KEnkKmXELgcXjwQR+LlMFhI6e/Y/mPJN
+vIPqMxM44ABPz1oKYOPlvZBQyocs8NReTHzZYJj4+XrGP412lyymgQGAF4JXycdd
+aYiCXjcGF+k4aIAIRzDboU4C2VYHvGAhyw0gBZbFlru3fRH6vUv4TSiKbvzFnl1W
+rRjpnrgQvCylUwiF6neVISPAbnbpwJVaGN7b8K6GDi4vBurhv2G/GIr+JF4df+l5
+4ZSzyjhlAKxHzcjCnR3Y/1IdM4ghOK42m6xmr5pfsTH+at1Lo4k8khV87XPeRTmq
+htKT/utGy8MAqzQmekPWVpSJAsHYl1iNT2nEYJUinDNodhIN3w2e63UhWWRB1FcD
+aulj9tzjIlBG3+/Ipb1D
+=Sv1p
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__8_Nov_2013_12_01_57_+1100_Y+XooKzI++/YQDva--
+--Signature=_Fri__8_Nov_2013_12_53_07_+1100_MAeV.Yun8aTmfuh9--
