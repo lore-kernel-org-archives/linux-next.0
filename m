@@ -1,57 +1,35 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the block tree with the  tree
-Date: Fri, 8 Nov 2013 09:15:08 -0700
-Message-ID: <20131108161508.GL10212@kernel.dk>
-References: <527414DE.9090704@kernel.dk>
- <52756583.2030808@oracle.com>
- <527BE7FA.90904@oracle.com>
- <20131107192545.GA20624@moria.home.lan>
- <527C2AA9.9040608@oracle.com>
- <20131108125307.613427c04a7527c4359e6443@canb.auug.org.au>
- <20131108020805.GI3842@kmo>
- <527C4D35.8000907@oracle.com>
- <20131108073324.GA31662@infradead.org>
- <20131108152915.GI10212@kernel.dk>
+From: Mark Salter <msalter@redhat.com>
+Subject: linux-next build failure
+Date: Fri, 08 Nov 2013 11:51:57 -0500
+Message-ID: <1383929517.11574.92.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:53773 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756278Ab3KHQPP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 11:15:15 -0500
-Content-Disposition: inline
-In-Reply-To: <20131108152915.GI10212@kernel.dk>
+Received: from mx1.redhat.com ([209.132.183.28]:25093 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757423Ab3KHQwA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 Nov 2013 11:52:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Dave Kleikamp <dave.kleikamp@oracle.com>, Kent Overstreet <kmo@daterainc.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zach Brown <zab@zabbo.net>, Olof Johansson <olof@lixom.net>, Andrew Morton <akpm@linux-foundation.org>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, Nov 08 2013, Jens Axboe wrote:
-> On Thu, Nov 07 2013, Christoph Hellwig wrote:
-> > Btw, I have to state that I very much disagree with dropping the
-> > direct I/O kernel changes, and I also very much disagree with keeping
-> > the immutable iovecs in.
-> > 
-> > For the latter I think the immutable iovecs are useful and do want to
-> > see them eventually, but they were merged at the latest possible point
-> > in the merge window and cause breakage all over the tree, so they very
-> > clearly are not ready at this point, and I fear even more breakage if
-> > they do get merged.
-> 
-> I agree, I've had this very conversation with Kent as well. The merge of
-> it has gone a lot worse than I had feared, and the resulting series at
-> this point is a non-bisectable mess. The fallback plan was to pull it
-> from the 3.13 tree and shove it into a 3.14 tree with more for-next
-> simmering.
-> 
-> It is in progress, just takes a while...
+I'm seeing a build failure for a no-MMU system:
 
-And it's done and pushed out. for-3.13/drivers is still missing the
-bcache bits, those will get merged back in once they don't depend on the
-immutable changes anymore.
+   mm/built-in.o: In function `__vm_enough_memory':
+  (.text+0x1ce70): undefined reference to `vm_commit_limit'
+  fs/built-in.o: In function `meminfo_proc_show':
+  meminfo.c:(.text+0x6852c): undefined reference to `vm_commit_limit'
 
-Dave, this should make your life easier. And Stephen, if you pull the
-new for-next, it should make yours a lot easier as well.
 
--- 
-Jens Axboe
+This patch added vm_commit_limit() to mm/mmap.c, but no-mmu systems
+use mm/nommu.c instead.
+
+commit 50e05119f980037b474043434cb713bf6f859734
+Author: Andrew Morton <akpm@linux-foundation.org>
+Date:   Thu Nov 7 12:01:09 2013 +1100
+
+    mm-factor-commit-limit-calculation-fix
+    
+    uninline vm_commit_limit()
