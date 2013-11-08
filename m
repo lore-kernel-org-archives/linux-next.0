@@ -1,72 +1,51 @@
-From: Oleg Nesterov <oleg@redhat.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the vfs
-	tree
-Date: Fri, 8 Nov 2013 14:48:59 +0100
-Message-ID: <20131108134859.GA4461@redhat.com>
-References: <20131108183001.2564151a619f8f6df3db543a@canb.auug.org.au> <20131108125915.GA1000@redhat.com>
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+Subject: Re: linux-next: manual merge of the block tree with the  tree
+Date: Fri, 08 Nov 2013 09:10:39 -0600
+Message-ID: <527CFEEF.6040708@oracle.com>
+References: <52740EB1.2070901@kernel.dk> <527411DD.7050008@oracle.com> <527414DE.9090704@kernel.dk> <52756583.2030808@oracle.com> <527BE7FA.90904@oracle.com> <20131107192545.GA20624@moria.home.lan> <527C2AA9.9040608@oracle.com> <20131108125307.613427c04a7527c4359e6443@canb.auug.org.au> <20131108020805.GI3842@kmo> <527C4D35.8000907@oracle.com> <20131108073324.GA31662@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:53952 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753533Ab3KHNrf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 8 Nov 2013 08:47:35 -0500
-Content-Disposition: inline
-In-Reply-To: <20131108125915.GA1000@redhat.com>
+Received: from userp1040.oracle.com ([156.151.31.81]:32479 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757783Ab3KHPL2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 10:11:28 -0500
+In-Reply-To: <20131108073324.GA31662@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Kent Overstreet <kmo@daterainc.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zach Brown <zab@zabbo.net>, Olof Johansson <olof@lixom.net>, Andrew Morton <akpm@linux-foundation.org>
 
-On 11/08, Oleg Nesterov wrote:
->
-> On 11/08, Stephen Rothwell wrote:
-> >
-> > Hi Andrew,
-> >
-> > Today's linux-next merge of the akpm-current tree got a conflict in
-> > fs/anon_inodes.c between commit 24b0303e9532 ("take anon inode allocation
-> > to libfs.c") from the vfs tree and commit 02f3ac4386d9 ("anon_inodefs:
-> > forbid open via /proc") from the akpm-current tree.
-> >
-> > I just dropped the akpm-current changes for today - they should probably
-> > be applied to fs/libfs.c.
->
-> Well, this probably means that
->
-> 	anon_inodefs-forbid-open-via-proc.patch
->
-> should be dropped. I'll rediff this patch against vfs.git
+On 11/08/2013 01:33 AM, Christoph Hellwig wrote:
+> Btw, I have to state that I very much disagree with dropping the
+> direct I/O kernel changes, and I also very much disagree with keeping
+> the immutable iovecs in.
+> 
+> For the latter I think the immutable iovecs are useful and do want to
+> see them eventually, but they were merged at the latest possible point
+> in the merge window and cause breakage all over the tree, so they very
+> clearly are not ready at this point, and I fear even more breakage if
+> they do get merged.
+> 
+> The changes for direct I/O from kernel space have been in for a long
+> time, and they are blocking multiple consumers of the interface from
+> getting submitted for about a year now.  Even if the guts of the
+> direct-io code will get a write based on another patchset from Kent
+> that will go on top of the immutable iovec changes we need the
+> interfaces now and not another year down the road.
 
-24b0303e9532 also removes anon_inode_fops. It seems that it was not really
-needed anyway, inode_init_always() does inode->i_fop = empty_fops...
+Sorry Christoph,
+I guess I made a rash decision to pull this from linux-next. I
+underestimated the dependencies others had on this.
 
-So probably we can simply change empty_fops but I need to recheck.
+Stephen,
+How about you pick this up again for now? Unfortunately, I'm going to be
+on a cruise next week and basically out of touch after today until a
+week from Monday. That will give Kent some more time to ponder things
+before I ask Linus to merge it.
 
-Oleg.
+Thanks,
+Sorry for being a hassle.
 
---- x/fs/inode.c
-+++ x/fs/inode.c
-@@ -114,6 +114,11 @@ int proc_nr_inodes(ctl_table *table, int
- }
- #endif
- 
-+static int empty_open(struct inode *inode, struct file *file)
-+{
-+	return -ENXIO;
-+}
-+
- /**
-  * inode_init_always - perform inode structure intialisation
-  * @sb: superblock inode belongs to
-@@ -125,7 +130,9 @@ int proc_nr_inodes(ctl_table *table, int
- int inode_init_always(struct super_block *sb, struct inode *inode)
- {
- 	static const struct inode_operations empty_iops;
--	static const struct file_operations empty_fops;
-+	static const struct file_operations empty_fops = {
-+		.open = empty_open,
-+	};
- 	struct address_space *const mapping = &inode->i_data;
- 
- 	inode->i_sb = sb;
+Shaggy
