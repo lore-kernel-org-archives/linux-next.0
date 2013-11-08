@@ -1,59 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the vfs tree
-Date: Fri, 8 Nov 2013 18:30:01 +1100
-Message-ID: <20131108183001.2564151a619f8f6df3db543a@canb.auug.org.au>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: linux-next: manual merge of the block tree with the  tree
+Date: Thu, 7 Nov 2013 23:33:24 -0800
+Message-ID: <20131108073324.GA31662@infradead.org>
+References: <52740EB1.2070901@kernel.dk>
+ <527411DD.7050008@oracle.com>
+ <527414DE.9090704@kernel.dk>
+ <52756583.2030808@oracle.com>
+ <527BE7FA.90904@oracle.com>
+ <20131107192545.GA20624@moria.home.lan>
+ <527C2AA9.9040608@oracle.com>
+ <20131108125307.613427c04a7527c4359e6443@canb.auug.org.au>
+ <20131108020805.GI3842@kmo>
+ <527C4D35.8000907@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Nov_2013_18_30_01_+1100_qmBGfF3oh9juQr8M"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60560 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752858Ab3KHHaP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 02:30:15 -0500
+Received: from bombadil.infradead.org ([198.137.202.9]:56498 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750889Ab3KHHdd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 02:33:33 -0500
+Content-Disposition: inline
+In-Reply-To: <527C4D35.8000907@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
+To: Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: Kent Overstreet <kmo@daterainc.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zach Brown <zab@zabbo.net>, Olof Johansson <olof@lixom.net>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Fri__8_Nov_2013_18_30_01_+1100_qmBGfF3oh9juQr8M
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Btw, I have to state that I very much disagree with dropping the
+direct I/O kernel changes, and I also very much disagree with keeping
+the immutable iovecs in.
 
-Hi Andrew,
+For the latter I think the immutable iovecs are useful and do want to
+see them eventually, but they were merged at the latest possible point
+in the merge window and cause breakage all over the tree, so they very
+clearly are not ready at this point, and I fear even more breakage if
+they do get merged.
 
-Today's linux-next merge of the akpm-current tree got a conflict in
-fs/anon_inodes.c between commit 24b0303e9532 ("take anon inode allocation
-to libfs.c") from the vfs tree and commit 02f3ac4386d9 ("anon_inodefs:
-forbid open via /proc") from the akpm-current tree.
-
-I just dropped the akpm-current changes for today - they should probably
-be applied to fs/libfs.c.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__8_Nov_2013_18_30_01_+1100_qmBGfF3oh9juQr8M
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSfJL9AAoJEMDTa8Ir7ZwV5QYP/iaOov15GwSMRqL4JY85IDIy
-q6AiWUvrgg8LCLpuCB6X9mLMZue92VRaihsTwx1YZ+xeCc/uT4z0GAckuPo5xs0W
-vI4GXN0h/6/Ul+if7UxN4v0Bx3GNKqx1Lv0iHBgV9stiLIEmQjha5yVHjDc+rkrC
-66tpI2Y6eAHNL7rTOtTP4G1z0LOMfk6RIdUKyfLzB7AJxMVuV9m41KtZw3JSEgc7
-C3TwPBvuyJGLs4Tz7bUjidKb/R10Wd8kcjaB5MU2NavQbKnOTqr2MVpU/smaaRu8
-ecghZ64tvu6yAmfAtnk5stGOaL2++FaTZzIExytcXffRo3GxrBuyvGFMkAmAMi4N
-k3cskCzq2F6NDlWFADLj3kXBw+P8N3PIoQNDgEB40GLkLkTQkrOJ2EhT19UE/QB0
-wvasv890F04v38sFkXDU0sB5tb1wBPukQqw7puicq54TZ7vw22OCnENxerBbWSav
-yirlkQrIs9+/BFMO1yApxghIqVp6WRYtlHuNDvPa/LQSKdc7hd4ynP5t+XWCanWF
-eGweK/VmynmlH6C/GA1nUYZc6b95FBLkvazNvwXSb04PkrjhR9RYELLZYjvrR+gv
-Nu9Pdm/1H2Zyl7nZp9aC0AKRsa9PS7M1KH/QoxXYx1MFaGWhpk5vQ5Klb3Cw1EDN
-GP7VRjOyMSWCMEpMTdOj
-=7A+b
------END PGP SIGNATURE-----
-
---Signature=_Fri__8_Nov_2013_18_30_01_+1100_qmBGfF3oh9juQr8M--
+The changes for direct I/O from kernel space have been in for a long
+time, and they are blocking multiple consumers of the interface from
+getting submitted for about a year now.  Even if the guts of the
+direct-io code will get a write based on another patchset from Kent
+that will go on top of the immutable iovec changes we need the
+interfaces now and not another year down the road.
