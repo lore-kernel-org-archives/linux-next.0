@@ -1,35 +1,83 @@
-From: Mark Salter <msalter@redhat.com>
-Subject: linux-next build failure
-Date: Fri, 08 Nov 2013 11:51:57 -0500
-Message-ID: <1383929517.11574.92.camel@deneb.redhat.com>
+From: Zach Brown <zab@redhat.com>
+Subject: Re: linux-next: manual merge of the block tree with the  tree
+Date: Fri, 8 Nov 2013 09:56:08 -0800
+Message-ID: <20131108175608.GK6710@lenny.home.zabbo.net>
+References: <20131108020805.GI3842@kmo>
+ <527C4D35.8000907@oracle.com>
+ <20131108073324.GA31662@infradead.org>
+ <20131108073959.GA17807@kmo-pixel>
+ <20131108074445.GA11595@infradead.org>
+ <20131108075617.GB17807@kmo-pixel>
+ <20131108080221.GA31866@infradead.org>
+ <20131108081737.GA27885@kmo-pixel>
+ <20131108083251.GA20121@infradead.org>
+ <20131108092106.GA30271@kmo-pixel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:25093 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:47554 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757423Ab3KHQwA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 8 Nov 2013 11:52:00 -0500
+	id S1757426Ab3KHR4p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 Nov 2013 12:56:45 -0500
+Content-Disposition: inline
+In-Reply-To: <20131108092106.GA30271@kmo-pixel>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Kent Overstreet <kmo@daterainc.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Dave Kleikamp <dave.kleikamp@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Andrew Morton <akpm@linux-foundation.org>
 
-I'm seeing a build failure for a no-MMU system:
+> > > That make sense? I can show you more concretely what I'm working on if
+> > > you want. Or if I'm full of crap and this is useless for what you guys
+> > > want I'm sure you'll let me know :)
+> > 
+> > It sounds interesting, but also a little confusing at this point, at
+> > least from the non-block side of view.
+> 
+> Zach, you want to chime in? He was involved in the discussion yesterday,
+> he might be able to explain this stuff better than I.
 
-   mm/built-in.o: In function `__vm_enough_memory':
-  (.text+0x1ce70): undefined reference to `vm_commit_limit'
-  fs/built-in.o: In function `meminfo_proc_show':
-  meminfo.c:(.text+0x6852c): undefined reference to `vm_commit_limit'
+I can try.  I may not do the *best* job because I've been on the
+periphery of most of this since I left the proof of concept back at
+Oracle :).
 
+The first part is passing in pages instead of mapped addresses.  That's
+where the iov_iter argument came from.  A ham-fisted proof of concept to
+try to abstract iterating over any old type of memory.  But it's not
+*really* abstract because dio magically knows (look for gross
+iov_iter_has_iovec() callers) whether the memory is in iovecs or bio
+pages when its verifying alignment, pinning or not, etc.  In the end
+it's little more than syntactic sugar to try and pretend that two
+interfaces are one.
 
-This patch added vm_commit_limit() to mm/mmap.c, but no-mmu systems
-use mm/nommu.c instead.
+For expedience, this iov_iter approach used the loop's bio to store the
+pages in the iov_iter rather than translating the bio's pages to a page
+array in the iov_iter.
 
-commit 50e05119f980037b474043434cb713bf6f859734
-Author: Andrew Morton <akpm@linux-foundation.org>
-Date:   Thu Nov 7 12:01:09 2013 +1100
+So the first part of what I think Kent is picturing is to take that to
+its logical conclusion and have the caller describe the io memory and
+offset with a bio instead of explicit address and offset arguments.
+This way dio can do nice bio management operations to kick off its
+device bios rather than having to clumsily build them from either
+incoming pages or mapped user addresses that are hidden in iov_iter.
 
-    mm-factor-commit-limit-calculation-fix
-    
-    uninline vm_commit_limit()
+I'm imagining cutting the current dio up in to two phases.  One that
+pins user pages and puts them in bios and one that maps those file bios
+to device bios and submits them.  Then the fop method becomes the second
+phase so that loop can call it with its file bios.  Call it
+->submit_file_bio() instead of ->do_direct_IO(), maybe?
+
+The other part of this series that isn't getting as much attention,
+though, is async submission and completion.  This patch introduces a
+weird in-kernel aio submission interface that adds special cases to aio.
+In this new bio world order we could get rid of that complication by
+relying on the bio's ->bi_end_io() for completion.
+
+I suppose a high level view of this strategy is to move more towards a
+stack where layers have matching inputs and outputs.  If both dio and
+loop take bios as input and translate them into submitted output bios
+then the stacking becomes more natural.
+
+That's the blue sky fantasy anyway.  There's a lot of detail being
+glossed over.  I want to see what the patches look like.
+
+- z
