@@ -1,63 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the gpio tree with the arm-soc and
- cortex trees
-Date: Fri, 8 Nov 2013 10:38:29 +1100
-Message-ID: <20131108103829.0f485201de58f423c8dd3e7d@canb.auug.org.au>
-References: <20131106191454.5f45b0b5300f03e74a6a09eb@canb.auug.org.au>
-	<20131106084117.GT14892@pengutronix.de>
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+Subject: Re: linux-next: manual merge of the block tree with the  tree
+Date: Thu, 07 Nov 2013 18:04:57 -0600
+Message-ID: <527C2AA9.9040608@oracle.com>
+References: <20131101142026.10390b6e3f70de348770c137@canb.auug.org.au> <5273C473.5070803@kernel.dk> <20131102072252.88d2380fa392705b912dbfad@canb.auug.org.au> <52740EB1.2070901@kernel.dk> <527411DD.7050008@oracle.com> <527414DE.9090704@kernel.dk> <52756583.2030808@oracle.com> <527BE7FA.90904@oracle.com> <20131107192545.GA20624@moria.home.lan>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Nov_2013_10_38_29_+1100_4ui.E0uy5K7IEDsQ"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33498 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752648Ab3KGXiq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Nov 2013 18:38:46 -0500
-In-Reply-To: <20131106084117.GT14892@pengutronix.de>
+Received: from aserp1040.oracle.com ([141.146.126.69]:43625 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756503Ab3KHAFV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Nov 2013 19:05:21 -0500
+In-Reply-To: <20131107192545.GA20624@moria.home.lan>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kent Overstreet <kmo@daterainc.com>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zach Brown <zab@zabbo.net>, Olof Johansson <olof@lixom.net>
 
---Signature=_Fri__8_Nov_2013_10_38_29_+1100_4ui.E0uy5K7IEDsQ
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/07/2013 01:25 PM, Kent Overstreet wrote:
+> On Thu, Nov 07, 2013 at 01:20:26PM -0600, Dave Kleikamp wrote:
 
-Hi Uwe,
+>> I ended up replacing a call to bio_iovec_idx() with __bvec_iter_bvec()
+>> since the former was removed. It's not very elegant, but it works. I'm
+>> open to suggestions on a cleaner fix, but it can wait until one or both
+>> of these trees is merged.
+> 
+> No, that's definitely wrong. Read Documentation/block/biovecs.txt - you
+> need to use either the new bio_iovec() or bio_iovec() iter. I can do the
+> conversion later today.
 
-On Wed, 6 Nov 2013 09:41:17 +0100 Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pe=
-ngutronix.de> wrote:
->
-> BTW, "cortex" is a bit too general. My tree is only about Cortex-M. Also
-> you can drop -2.6 from the URL.
+Stephen,
+Can you please drop the aio-direct tree for the time being?
 
-Updated both, thanks.
+My stuff is not aligning very well with the immutable biovecs and Kent
+has a different approach in mind. I'll be working with him on a
+replacement that will hopefully be simpler.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__8_Nov_2013_10_38_29_+1100_4ui.E0uy5K7IEDsQ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSfCR9AAoJEMDTa8Ir7ZwVZdIQAIUBAMDilemPCxPxe0Sx0EUu
-R/YrIWLWD0SfxUpCeunszQwo8o7xt4I2i8y0ASzi3hJA/YgCJKCZR7J30ErGdsWr
-VQyQtSsxPQ6ctmZtlfVdDMjKazkmHW0q/cLDlZh4bAv/R53SnXBYoOnQI6V7FlIH
-vjdF1Z4KNOFaIbycN3yme2v1OJKbrxHZsZDuL7MYau1xrDAljozJW19PsIaVG39r
-oDpsnlw8qG6U47F90aYlGZ4cHBq0MnsobX3QwqgDe/fNyU0jLqRq9TSRgcPH1Dvh
-g2aMs4B3gPbGHsjc0t1Ih6/MZ57UmTGR5FjMMH+uBMNDeC52sujHsxFNBRfaejQA
-xE5H+Ctw8RFSA8HO2wGa5h+ZFT9nK0vUaG36l2Y9uEKZjsJ2kAd0NhbVD6qvIesj
-zL9Vyq3JkWjGKhHSXorhqm8/reT4dmWP50xavU/DcGDxib/8/t61tY6FqjTZ+LrK
-3mNcAr/s7LmZueHuNmYXmnR0Iub/5dWmkNiaxwF5pgZ8okD3XjsgHzeOiWF0hO4T
-7Wre4WYA4U/uLPioBk6S147Y04w0puYIoRkKacUC9DO2OUfmpLDtsIQZXsya6Pq9
-ohkFJJDpxKCuXeHKxrbMANLUWIc6Y+HpAEERwQbJmQ9vrBq3+v4qb1a4Mc7AIWyd
-K5sjNZnLVz4b1EInrUZ8
-=Swhw
------END PGP SIGNATURE-----
-
---Signature=_Fri__8_Nov_2013_10_38_29_+1100_4ui.E0uy5K7IEDsQ--
+Thanks,
+Shaggy
