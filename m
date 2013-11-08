@@ -1,44 +1,93 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: linux-next: manual merge of the block tree with the  tree
-Date: Thu, 7 Nov 2013 23:33:24 -0800
-Message-ID: <20131108073324.GA31662@infradead.org>
-References: <52740EB1.2070901@kernel.dk>
- <527411DD.7050008@oracle.com>
- <527414DE.9090704@kernel.dk>
- <52756583.2030808@oracle.com>
- <527BE7FA.90904@oracle.com>
- <20131107192545.GA20624@moria.home.lan>
- <527C2AA9.9040608@oracle.com>
- <20131108125307.613427c04a7527c4359e6443@canb.auug.org.au>
- <20131108020805.GI3842@kmo>
- <527C4D35.8000907@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the vfs tree
+Date: Fri, 8 Nov 2013 18:35:52 +1100
+Message-ID: <20131108183552.dbe7c66fa6dee7f84bf73b44@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__8_Nov_2013_18_35_52_+1100_ui8wPWY2hB2n2/Wp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:56498 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750889Ab3KHHdd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 02:33:33 -0500
-Content-Disposition: inline
-In-Reply-To: <527C4D35.8000907@oracle.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:57669 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752819Ab3KHHgH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 02:36:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc: Kent Overstreet <kmo@daterainc.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zach Brown <zab@zabbo.net>, Olof Johansson <olof@lixom.net>, Andrew Morton <akpm@linux-foundation.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sukadev Bhattiprolu <sukadev@us.ibm.com>, Miklos Szeredi <mszeredi@suse.cz>
 
-Btw, I have to state that I very much disagree with dropping the
-direct I/O kernel changes, and I also very much disagree with keeping
-the immutable iovecs in.
+--Signature=_Fri__8_Nov_2013_18_35_52_+1100_ui8wPWY2hB2n2/Wp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For the latter I think the immutable iovecs are useful and do want to
-see them eventually, but they were merged at the latest possible point
-in the merge window and cause breakage all over the tree, so they very
-clearly are not ready at this point, and I fear even more breakage if
-they do get merged.
+Hi Andrew,
 
-The changes for direct I/O from kernel space have been in for a long
-time, and they are blocking multiple consumers of the interface from
-getting submitted for about a year now.  Even if the guts of the
-direct-io code will get a write based on another patchset from Kent
-that will go on top of the immutable iovec changes we need the
-interfaces now and not another year down the road.
+Today's linux-next merge of the akpm-current tree got a conflict in
+fs/autofs4/inode.c between commit baa40671d3e3 ("autofs4: make freeing
+sbi rcu-delayed") from the vfs tree and commit e4af471815fc ("autofs4:
+allow autofs to work outside the initial PID namespace") from the
+akpm-current tree.
+
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/autofs4/inode.c
+index 3b9cc9b973c2,1b045ecfcea2..000000000000
+--- a/fs/autofs4/inode.c
++++ b/fs/autofs4/inode.c
+@@@ -56,13 -56,20 +56,15 @@@ void autofs4_kill_sb(struct super_bloc
+  	 * just call kill_anon_super when we are called from
+  	 * deactivate_super.
+  	 */
+- 	if (sbi) /* Free wait queues, close pipe */
+ -	if (!sbi)
+ -		goto out_kill_sb;
+ -
+ -	/* Free wait queues, close pipe */
+ -	autofs4_catatonic_mode(sbi);
+ -
+ -	put_pid(sbi->oz_pgrp);
+ -
+ -	sb->s_fs_info =3D NULL;
+ -	kfree(sbi);
+++	if (sbi) { /* Free wait queues, close pipe */
+ +		autofs4_catatonic_mode(sbi);
+++		put_pid(sbi->oz_pgrp);
+++	}
+ =20
+ -out_kill_sb:
+  	DPRINTK("shutting down");
+  	kill_litter_super(sb);
+ +	if (sbi)
+ +		kfree_rcu(sbi, rcu);
+  }
+ =20
+  static int autofs4_show_options(struct seq_file *m, struct dentry *root)
+
+--Signature=_Fri__8_Nov_2013_18_35_52_+1100_ui8wPWY2hB2n2/Wp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSfJRcAAoJEMDTa8Ir7ZwVw5cP/3p39MhpV80EeU/DoGYVGpvL
+lmVGMIzxnO7RsHxs/9cvccClJgtqVPYcbwkNg6TYnIgfOk6Y8OFvcYBJjg5TYo9+
+AA90FuVu947yZD+qUWgPNHKzfYtQrpyCUh6z4DX/hG1DdVyzLgcd20rH4IEONGZF
+jv6vI0rpKmHFn3w1CV8oggyMJ/xHIrQcl4qxc8Wa0/ydNjW9MuGK+1PiO7ELvBCt
+ESM94D9dCSP9RuVyuWHV9XcXrK2Nfyv7C1jeIwGULnEICxWBM223fmxA8e0jJMNq
+2aQnqT8+nsQ9Q8lg1wPl1S+vqfOUM+D1JvRdfk4AP40nKU7ndB4LZRVdLNC4RVP+
+tSgjmbgwFt+Vxc670CjMxjujfX7/ZhIeG9HhUVqIDdvzAVt1Fjd4LZaUnj2EL2+m
+QCF/NgCXs7aaR2zHQTXJVmbU/ln0/6KEy0ALkMge8slrUiTrP2U+pznuMQf69UKw
+UBk8e7qKrYmAXoLI6Xi+5dRLzsprPHcZ+9K9tewg3S2sPR9yvLYFbIIgRbXHGi9y
+I22PXPdY/CmSKoy4w4O9wx3mcp2bNz3BnUuREhuI3PcDeKRvayRDAJUT0DGEGuW5
+l3V/R5zftcF7Znb+gOwvl/MM2LvaABduCH3ITTbd6xv3GPgzdt37d8IF4zwctOan
+1iBJ26CR8PaNkqy3veAC
+=dUG6
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__8_Nov_2013_18_35_52_+1100_ui8wPWY2hB2n2/Wp--
