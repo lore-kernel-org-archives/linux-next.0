@@ -1,72 +1,52 @@
 From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
+Subject: Re: linux-next: manual merge of the akpm-current tree with the vfs
  tree
-Date: Fri, 8 Nov 2013 10:58:12 -0800
-Message-ID: <20131108185812.GB11311@jtriplet-mobl1>
-References: <20131108184805.ec16e3b5cc08834cb5d4f812@canb.auug.org.au>
+Date: Fri, 8 Nov 2013 10:58:41 -0800
+Message-ID: <20131108185841.GC11311@jtriplet-mobl1>
+References: <20131108183806.809acb8b1608c42457d64e5a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:51574 "EHLO
-	relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758050Ab3KHS6W (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 13:58:22 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20131108184805.ec16e3b5cc08834cb5d4f812@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20131108183806.809acb8b1608c42457d64e5a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Nov 08, 2013 at 06:48:05PM +1100, Stephen Rothwell wrote:
+On Fri, Nov 08, 2013 at 06:38:06PM +1100, Stephen Rothwell wrote:
 > Hi Andrew,
 > 
 > Today's linux-next merge of the akpm-current tree got a conflict in
-> kernel/Makefile between commits 60fc28746a7b ("locking: Move the spinlock
-> code to kernel/locking/") and cd4d241d57c9 ("locking: Move the lglocks
-> code to kernel/locking/") from the tip tree and commit f5639052d567
+> include/linux/lglock.h between commit 4314ff760e8b ("no need to keep
+> brlock macros anymore...") from the vfs tree and commit f5639052d567
 > ("lglock: map to spinlock when !CONFIG_SMP") from the akpm-current tree.
 > 
-> I fixed it up (dropping the kernel/Makefile section of the akpm-current
-> commit and adding the below patch) and can carry the fix as necessary (no
-> action is required).
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Won't splitting the Makefile change into a separate commit break
-bisection, in particular if you have the changes adding inlines but you
-also compile in lglock.o?  Shouldn't this be squashed into the merge
-itself, keeping the kernel/Makefile section of my original patch?
+This looks like the right fix.
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 8 Nov 2013 18:45:25 +1100
-> Subject: [PATCH] lglock: fixup for code movement
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  kernel/locking/Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/locking/Makefile b/kernel/locking/Makefile
-> index baab8e5e7f66..bb3c65930a20 100644
-> --- a/kernel/locking/Makefile
-> +++ b/kernel/locking/Makefile
-> @@ -1,5 +1,5 @@
->  
-> -obj-y += mutex.o semaphore.o rwsem.o lglock.o
-> +obj-y += mutex.o semaphore.o rwsem.o
->  
->  ifdef CONFIG_FUNCTION_TRACER
->  CFLAGS_REMOVE_lockdep.o = -pg
-> @@ -8,6 +8,7 @@ CFLAGS_REMOVE_mutex-debug.o = -pg
->  CFLAGS_REMOVE_rtmutex-debug.o = -pg
->  endif
->  
-> +obj-$(CONFIG_SMP) += lglock.o
->  obj-$(CONFIG_DEBUG_MUTEXES) += mutex-debug.o
->  obj-$(CONFIG_LOCKDEP) += lockdep.o
->  ifeq ($(CONFIG_PROC_FS),y)
-> -- 
-> 1.8.4.2
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> diff --cc include/linux/lglock.h
+> index 96549abe8842,6561b1c0fa63..000000000000
+> --- a/include/linux/lglock.h
+> +++ b/include/linux/lglock.h
+> @@@ -25,6 -25,18 +25,8 @@@
+>   #include <linux/cpu.h>
+>   #include <linux/notifier.h>
+>   
+>  -/* can make br locks by using local lock for read side, global lock for write */
+>  -#define br_lock_init(name)	lg_lock_init(name, #name)
+>  -#define br_read_lock(name)	lg_local_lock(name)
+>  -#define br_read_unlock(name)	lg_local_unlock(name)
+>  -#define br_write_lock(name)	lg_global_lock(name)
+>  -#define br_write_unlock(name)	lg_global_unlock(name)
+>  -
+>  -#define DEFINE_BRLOCK(name)		DEFINE_LGLOCK(name)
+>  -#define DEFINE_STATIC_BRLOCK(name)	DEFINE_STATIC_LGLOCK(name)
+>  -
+> + #ifdef CONFIG_SMP
+> + 
+>   #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>   #define LOCKDEP_INIT_MAP lockdep_init_map
+>   #else
