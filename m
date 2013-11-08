@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the userns tree
-Date: Fri, 8 Nov 2013 17:58:48 +1100
-Message-ID: <20131108175848.6ca49f0ee8fe2a6c1125394a@canb.auug.org.au>
+Date: Fri, 8 Nov 2013 18:07:59 +1100
+Message-ID: <20131108180759.12dab53816900b1b58c1ea1b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Nov_2013_17_58_48_+1100_zPUBli5BQXfnIU=h"
+ boundary="Signature=_Fri__8_Nov_2013_18_07_59_+1100_wNYv58u5cR1bxlPN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58253 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:47800 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752779Ab3KHG7C (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 01:59:02 -0500
+	with ESMTP id S1752606Ab3KHHIL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 02:08:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "Eric W. Biederman" <ebiederm@xmission.com>, Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__8_Nov_2013_17_58_48_+1100_zPUBli5BQXfnIU=h
+--Signature=_Fri__8_Nov_2013_18_07_59_+1100_wNYv58u5cR1bxlPN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -26,67 +26,53 @@ Hi Eric,
 After merging the userns tree, today's linux-next build (powerpc
 ppc64_defconfig) failed like this:
 
-fs/namei.c: In function 'covered':
-fs/namei.c:3528:2: error: too many arguments to function '__lookup_mnt'
-  is_covered =3D d_mountpoint(dentry) && __lookup_mnt(mnt, dentry, 1);
+fs/namespace.c: In function 'detach_mounts':
+fs/namespace.c:1340:2: error: implicit declaration of function 'br_write_lo=
+ck' [-Werror=3Dimplicit-function-declaration]
+  br_write_lock(&vfsmount_lock);
+  ^
+fs/namespace.c:1340:17: error: 'vfsmount_lock' undeclared (first use in thi=
+s function)
+  br_write_lock(&vfsmount_lock);
+                 ^
+fs/namespace.c:1340:17: note: each undeclared identifier is reported only o=
+nce for each function it appears in
+fs/namespace.c:1345:2: error: implicit declaration of function 'br_write_un=
+lock' [-Werror=3Dimplicit-function-declaration]
+  br_write_unlock(&vfsmount_lock);
   ^
 
-Caused by my incomplete merge resolution between commits 474279dc0f77
-("split __lookup_mnt() in two functions") from the vfs tree and
-a3b4491433f2 ("vfs: Don't allow overwriting mounts in the current mount
-namespace") from the userns tree.
+Caused by the interaction between commit d7e58b8abc4f ("vfs: Add a
+function to lazily unmount all mounts from any dentry. v3") from the
+userns tree and commit 84550b9356af ("RCU'd vfsmounts") from the vfs tree.
 
-I added the following fix up patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 8 Nov 2013 17:56:35 +1100
-Subject: [PATCH] vfs: merge fixup for __lookup_mnt() API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 83463500c582..03d999bf9a89 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3525,7 +3525,7 @@ static bool covered(struct vfsmount *mnt, struct dent=
-ry *dentry)
- 	bool is_covered;
-=20
- 	rcu_read_lock();
--	is_covered =3D d_mountpoint(dentry) && __lookup_mnt(mnt, dentry, 1);
-+	is_covered =3D d_mountpoint(dentry) && __lookup_mnt(mnt, dentry);
- 	rcu_read_unlock();
-=20
- 	return is_covered;
---=20
-1.8.4.2
+I don't know how to fix this up, so I have just dropped the userns tree
+for today.  I only dropped that tree because it was the latter of the two
+conflicting trees.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__8_Nov_2013_17_58_48_+1100_zPUBli5BQXfnIU=h
+--Signature=_Fri__8_Nov_2013_18_07_59_+1100_wNYv58u5cR1bxlPN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSfIutAAoJEMDTa8Ir7ZwVGFcP/13tx2QByMG2bR6nGIh+qq7u
-C6c2QwCIVqxdg7YV0GZ16HQWpch1G93Oo+n2iN0wkHnwC33ud726Fx84t0876kzJ
-BTMbR38DU57yPZQu7uHTACc4hfYV3tDRgBxqaZdReOka4EQYC8tcY/2fPKFbjQAy
-CDhxdGo3fphqCVk0AGTZhq64/1voU5h9oCiOj1L3uD60W/kyuC8rbuQ2nH2Vt5nz
-qYC1ACBro9Gqr1o9y8BRv65MSwH1fxpV1U66UUG+bPYtZ1UBLtdFwpShX2bwXxla
-req9DUqKppzVn+o7Eo930MCux5+TZZWGik9M37R+xOeatvfgMkaNO8cQ/Zp+6ueR
-Caihk2mX77QkukCvZdEFK9UYRv5H/eg+ETM40ujYKLUwtkjc0ohEOUkx7GVP1mDg
-1zBSpCKDQOPdGPnQHAd2N935PE1a+paD8TEjB82/T8r1gumpLXE471c1FytEgoq+
-agct2HMtp29cnzsPSEZeKzqbYwnXR+NauX9S/TcJLbcO1g/lOyyfjEPKyJ8vQHK0
-r2N2epiR3NE21tnBBrP6ejrnBKAE9ZCZuqWFtwIG5+K8+fQjwNHB2urfdSQ505Yx
-MSkg+d9siyz7CGTAs+3UTcJsLBCpX3SxCA9g597acv2xfYMtPSLiONjV/Y5mAb9V
-qyUBOlPfzkBpAXuw40O0
-=jwaJ
+iQIcBAEBCAAGBQJSfI3UAAoJEMDTa8Ir7ZwVL9sP/RyIx4Bgz5gVke55WsKNc42T
+SI0qdqOtanceP/3pBjtdA37UAkJD8YZgFZE/k5TU6bNHuG+rnhY9B/oVY+IxNaqX
+vRV0je3ibChGj5SLWEKjMhiJXyBAGutfDSLXwkwHAjF5Yrq8XNBT+h9pBZ1MiDH+
+e/mIvRs2RS0eUpANRRPA2VaVORoHw2DKE09E0UFPuuINy6kLyOjRUoHPQEpX9iZU
+E3faTzOogI5iypiwGLw1ZicmP45Xpqz1islBMjamKcPyVUNzjrwgASzbZ81auHkr
+OEpDmhdxZpmmhIUrD/I4wC3+uoNbEbt7tprVmpEKD6lWrmg94eSQpLZhoFJ/buyG
+K+KccIPrLecOqW3M8lWb+e2lG3ibORhmKi/6Q3kzi1DRv9n8fhGiEXA1uonrxPA7
+6/zJ77hoQS05eqo3/DgIOh3JTs1uPQAXTGrqbn3dewEVBkgUjT2xM1rXFVJ5Gk08
+1TgF+m6+tpQTAj2t8YKEJJK5fhFtAne0hifx99Hj0jr07KOucCXVksCjWhBOB8p9
+Ybn2dDZojQBh8WPUmqAB82U7Wq8oA/Xy3nzUnxXCu/pUj0YVc3doLdOHGDvQ1zmP
+7ZtpJjD3XHUEFlreDeUbdh+VCPoDnyUxU/5v+CqozSTsLnOZqCE0S/YfNlrebfSV
+057F149Gk5aVSaraB/nL
+=78F/
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__8_Nov_2013_17_58_48_+1100_zPUBli5BQXfnIU=h--
+--Signature=_Fri__8_Nov_2013_18_07_59_+1100_wNYv58u5cR1bxlPN--
