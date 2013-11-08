@@ -1,80 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the vfs tree
-Date: Fri, 8 Nov 2013 18:38:06 +1100
-Message-ID: <20131108183806.809acb8b1608c42457d64e5a@canb.auug.org.au>
+From: Kent Overstreet <kmo@daterainc.com>
+Subject: Re: linux-next: manual merge of the block tree with the  tree
+Date: Thu, 7 Nov 2013 23:39:59 -0800
+Message-ID: <20131108073959.GA17807@kmo-pixel>
+References: <527411DD.7050008@oracle.com>
+ <527414DE.9090704@kernel.dk>
+ <52756583.2030808@oracle.com>
+ <527BE7FA.90904@oracle.com>
+ <20131107192545.GA20624@moria.home.lan>
+ <527C2AA9.9040608@oracle.com>
+ <20131108125307.613427c04a7527c4359e6443@canb.auug.org.au>
+ <20131108020805.GI3842@kmo>
+ <527C4D35.8000907@oracle.com>
+ <20131108073324.GA31662@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Nov_2013_18_38_06_+1100_ZwT_OYA8B4OyjWau"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__8_Nov_2013_18_38_06_+1100_ZwT_OYA8B4OyjWau
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:37077 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751444Ab3KHHjp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 02:39:45 -0500
+Received: by mail-pa0-f49.google.com with SMTP id lj1so1829707pab.36
+        for <linux-next@vger.kernel.org>; Thu, 07 Nov 2013 23:39:45 -0800 (PST)
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20131108073324.GA31662@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Dave Kleikamp <dave.kleikamp@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zach Brown <zab@zabbo.net>, Olof Johansson <olof@lixom.net>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Andrew,
+On Thu, Nov 07, 2013 at 11:33:24PM -0800, Christoph Hellwig wrote:
+> The changes for direct I/O from kernel space have been in for a long
+> time, and they are blocking multiple consumers of the interface from
+> getting submitted for about a year now.  Even if the guts of the
+> direct-io code will get a write based on another patchset from Kent
+> that will go on top of the immutable iovec changes we need the
+> interfaces now and not another year down the road.
 
-Today's linux-next merge of the akpm-current tree got a conflict in
-include/linux/lglock.h between commit 4314ff760e8b ("no need to keep
-brlock macros anymore...") from the vfs tree and commit f5639052d567
-("lglock: map to spinlock when !CONFIG_SMP") from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc include/linux/lglock.h
-index 96549abe8842,6561b1c0fa63..000000000000
---- a/include/linux/lglock.h
-+++ b/include/linux/lglock.h
-@@@ -25,6 -25,18 +25,8 @@@
-  #include <linux/cpu.h>
-  #include <linux/notifier.h>
- =20
- -/* can make br locks by using local lock for read side, global lock for w=
-rite */
- -#define br_lock_init(name)	lg_lock_init(name, #name)
- -#define br_read_lock(name)	lg_local_lock(name)
- -#define br_read_unlock(name)	lg_local_unlock(name)
- -#define br_write_lock(name)	lg_global_lock(name)
- -#define br_write_unlock(name)	lg_global_unlock(name)
- -
- -#define DEFINE_BRLOCK(name)		DEFINE_LGLOCK(name)
- -#define DEFINE_STATIC_BRLOCK(name)	DEFINE_STATIC_LGLOCK(name)
- -
-+ #ifdef CONFIG_SMP
-+=20
-  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-  #define LOCKDEP_INIT_MAP lockdep_init_map
-  #else
-
---Signature=_Fri__8_Nov_2013_18_38_06_+1100_ZwT_OYA8B4OyjWau
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSfJTiAAoJEMDTa8Ir7ZwV3WgP+wQjRvPteL2aMAm47ahWgsR+
-1MtoAOh+Js5JVaDy68HNYDv1N9eMyZ+dH5uejhy6XEaY5FXBRtCFbbnlV+54fqRa
-SCF/mfANpBi9YIVeiUO+J4qRufw6AxPmsO5nOMg3pRh1GkuG5uJZADhQ7EfYImNz
-q7Qdmat+rX8+zdQS9sOQEEWnhgEDtzctA2vjCLxsL7S1NZGnM0UNGDeC/M0bH/g4
-c+7hlXf/zUhKihwSiOxjjxX08dcJhZBZk1yescr0B3ZlSkEwJtV8BXigLq8s9kqU
-31A+SsCgz4oV43VO/5ejROzpAgJMpj9UTSI9Xpr+zHY1oiAnTE/ytNYeD02Msjxq
-xF6UHEL3gQaYJFCLRu55blsKQZqXu4adYDDz25KU+Yyl6+uNZDQXlAkNdsVhoFAW
-Mk5DOJ9XNcdWstg/MJ1syvws1rJCmrYQq/kJd0R4iyW+aY/qXo9OXnVTCoKJLOtF
-roY/cl8f3ihc2XoTIW44NhefY9T5nuClamKLpII7sD8iqr3na7Mg0nyttYdRmWgO
-FJw2IdCdbJWM1sq1gX5+T0a5Yv7QMs7F3tmFrUIkzTG0/ES11kSlZxJI3Zailqpz
-xpEUxQY+1o0C//nNRehMM663arSnrKsf8KsKGOQbvZ9wDXd0sbyPD+wrcFrhbEGM
-NchLWsiBREysJnyx0Mjc
-=oPj+
------END PGP SIGNATURE-----
-
---Signature=_Fri__8_Nov_2013_18_38_06_+1100_ZwT_OYA8B4OyjWau--
+What else is blocked on this patch series? Honest question.
