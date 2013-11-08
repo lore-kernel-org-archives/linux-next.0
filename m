@@ -1,56 +1,58 @@
 From: ebiederm@xmission.com (Eric W. Biederman)
 Subject: Re: linux-next: build failure after merge of the userns tree
-Date: Fri, 08 Nov 2013 14:50:42 -0800
-Message-ID: <87ob5uwlrx.fsf@xmission.com>
-References: <20131108175848.6ca49f0ee8fe2a6c1125394a@canb.auug.org.au>
-	<20131108072732.GA27537@infradead.org>
+Date: Fri, 08 Nov 2013 15:15:17 -0800
+Message-ID: <87r4aqscxm.fsf@xmission.com>
+References: <20131108180759.12dab53816900b1b58c1ea1b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out01.mta.xmission.com ([166.70.13.231]:51426 "EHLO
-	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757570Ab3KHWvD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 17:51:03 -0500
-In-Reply-To: <20131108072732.GA27537@infradead.org> (Christoph Hellwig's
-	message of "Thu, 7 Nov 2013 23:27:32 -0800")
+Received: from out03.mta.xmission.com ([166.70.13.233]:46069 "EHLO
+	out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757800Ab3KHXP3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 18:15:29 -0500
+In-Reply-To: <20131108180759.12dab53816900b1b58c1ea1b@canb.auug.org.au>
+	(Stephen Rothwell's message of "Fri, 8 Nov 2013 18:07:59 +1100")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> writes:
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-> On Fri, Nov 08, 2013 at 05:58:48PM +1100, Stephen Rothwell wrote:
->> Hi Eric,
->> 
->> After merging the userns tree, today's linux-next build (powerpc
->> ppc64_defconfig) failed like this:
->> 
->> fs/namei.c: In function 'covered':
->> fs/namei.c:3528:2: error: too many arguments to function '__lookup_mnt'
->>   is_covered = d_mountpoint(dentry) && __lookup_mnt(mnt, dentry, 1);
->>   ^
->> 
->> Caused by my incomplete merge resolution between commits 474279dc0f77
->> ("split __lookup_mnt() in two functions") from the vfs tree and
->> a3b4491433f2 ("vfs: Don't allow overwriting mounts in the current mount
->> namespace") from the userns tree.
+> Hi Eric,
 >
-> Btw, I don't think the userns tree has any business touching lookup
-> and mount semantics in namei.c without an explicit VFS signoff.
+> After merging the userns tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 >
-> Please drop the tree for now.
+> fs/namespace.c: In function 'detach_mounts':
+> fs/namespace.c:1340:2: error: implicit declaration of function 'br_write_lock' [-Werror=implicit-function-declaration]
+>   br_write_lock(&vfsmount_lock);
+>   ^
+> fs/namespace.c:1340:17: error: 'vfsmount_lock' undeclared (first use in this function)
+>   br_write_lock(&vfsmount_lock);
+>                  ^
+> fs/namespace.c:1340:17: note: each undeclared identifier is reported only once for each function it appears in
+> fs/namespace.c:1345:2: error: implicit declaration of function 'br_write_unlock' [-Werror=implicit-function-declaration]
+>   br_write_unlock(&vfsmount_lock);
+>   ^
+>
+> Caused by the interaction between commit d7e58b8abc4f ("vfs: Add a
+> function to lazily unmount all mounts from any dentry. v3") from the
+> userns tree and commit 84550b9356af ("RCU'd vfsmounts") from the vfs tree.
+>
+> I don't know how to fix this up, so I have just dropped the userns tree
+> for today.  I only dropped that tree because it was the latter of the two
+> conflicting trees.
 
-This is ultimatley a pretty siginficant bug user namespace fix.  So the
-code absolutely has business being in the user namespace tree.  The code
-has been reviewed and people did not scream.  I asked if Al wanted to
-take the patches and if not I would take them through my tree.
+Yeah.  Al has somethng cooking where he renamed the lock.
 
-Al was watching the conversation so I assumed that no answer to that
-request was sufficient to take these patches in my tree.
+It looks like this just needs the trivial change:
+s/br_write_lock(&vfsmount_lock)/lock_mount_hash()/
+s/br_write_unlock(&vfsmount_lock)/unlock_mount_hash()/
 
-I fully intend to take responsibility for these patches and work through
-whatever issues they have, and I intend to send Linus my pull request.
-As such dropping the userns tree from linux-next seems inappropriate.
+Certainly that is all it needed when I closely inspected an earlier
+version of Al's changes.  He changed the name of the lock and I just
+happen to be using it.  In this case I don't think any of the semantics
+have changed.
 
 Eric
