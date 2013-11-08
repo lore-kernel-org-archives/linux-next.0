@@ -1,193 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the userns tree with the vfs tree
-Date: Fri, 8 Nov 2013 17:50:55 +1100
-Message-ID: <20131108175055.4c050e6770e0047aec42dae3@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the userns tree
+Date: Fri, 8 Nov 2013 17:58:48 +1100
+Message-ID: <20131108175848.6ca49f0ee8fe2a6c1125394a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Nov_2013_17_50_55_+1100_vwOTmEs261=2CWWS"
+ boundary="Signature=_Fri__8_Nov_2013_17_58_48_+1100_zPUBli5BQXfnIU=h"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41979 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58253 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752538Ab3KHGu5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 01:50:57 -0500
+	with ESMTP id S1752779Ab3KHG7C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 01:59:02 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>, Al Viro <viro@ZenIV.linux.org.uk>
+To: "Eric W. Biederman" <ebiederm@xmission.com>, Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__8_Nov_2013_17_50_55_+1100_vwOTmEs261=2CWWS
+--Signature=_Fri__8_Nov_2013_17_58_48_+1100_zPUBli5BQXfnIU=h
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Eric,
 
-Today's linux-next merge of the userns tree got a conflict in fs/dcache.c
-between commit 84550b9356af ("RCU'd vfsmounts") from the vfs tree and
-commit 40216baa0101 ("vfs: Lazily remove mounts on unlinked files and
-directories. v2") from the userns tree.
+After merging the userns tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+fs/namei.c: In function 'covered':
+fs/namei.c:3528:2: error: too many arguments to function '__lookup_mnt'
+  is_covered =3D d_mountpoint(dentry) && __lookup_mnt(mnt, dentry, 1);
+  ^
 
-Al, I do have to wonder why a commit whose whole commit message is:
+Caused by my incomplete merge resolution between commits 474279dc0f77
+("split __lookup_mnt() in two functions") from the vfs tree and
+a3b4491433f2 ("vfs: Don't allow overwriting mounts in the current mount
+namespace") from the userns tree.
 
-"RCU'd vfsmounts
-   =20
-_very_ preliminary, barely tested."
+I added the following fix up patch:
 
-is in linux-next as is not being kept over for v3.14 at this point.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 8 Nov 2013 17:56:35 +1100
+Subject: [PATCH] vfs: merge fixup for __lookup_mnt() API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 83463500c582..03d999bf9a89 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3525,7 +3525,7 @@ static bool covered(struct vfsmount *mnt, struct dent=
+ry *dentry)
+ 	bool is_covered;
+=20
+ 	rcu_read_lock();
+-	is_covered =3D d_mountpoint(dentry) && __lookup_mnt(mnt, dentry, 1);
++	is_covered =3D d_mountpoint(dentry) && __lookup_mnt(mnt, dentry);
+ 	rcu_read_unlock();
+=20
+ 	return is_covered;
+--=20
+1.8.4.2
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/dcache.c
-index 6f418c540f76,1e9bf96b0132..000000000000
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@@ -1362,110 -1478,17 +1362,101 @@@ void shrink_dcache_parent(struct dentr
-  }
-  EXPORT_SYMBOL(shrink_dcache_parent);
- =20
- +static enum d_walk_ret umount_collect(void *_data, struct dentry *dentry)
- +{
- +	struct select_data *data =3D _data;
- +	enum d_walk_ret ret =3D D_WALK_CONTINUE;
- +
- +	if (dentry->d_lockref.count) {
- +		dentry_lru_del(dentry);
- +		if (likely(!list_empty(&dentry->d_subdirs)))
- +			goto out;
- +		if (dentry =3D=3D data->start && dentry->d_lockref.count =3D=3D 1)
- +			goto out;
- +		printk(KERN_ERR
- +		       "BUG: Dentry %p{i=3D%lx,n=3D%s}"
- +		       " still in use (%d)"
- +		       " [unmount of %s %s]\n",
- +		       dentry,
- +		       dentry->d_inode ?
- +		       dentry->d_inode->i_ino : 0UL,
- +		       dentry->d_name.name,
- +		       dentry->d_lockref.count,
- +		       dentry->d_sb->s_type->name,
- +		       dentry->d_sb->s_id);
- +		BUG();
- +	} else if (!(dentry->d_flags & DCACHE_SHRINK_LIST)) {
- +		/*
- +		 * We can't use d_lru_shrink_move() because we
- +		 * need to get the global LRU lock and do the
- +		 * LRU accounting.
- +		 */
- +		d_lru_del(dentry);
- +		d_shrink_add(dentry, &data->dispose);
- +		data->found++;
- +		ret =3D D_WALK_NORETRY;
- +	}
- +out:
- +	if (data->found && need_resched())
- +		ret =3D D_WALK_QUIT;
- +	return ret;
- +}
- +
- +/*
- + * destroy the dentries attached to a superblock on unmounting
- + */
- +void shrink_dcache_for_umount(struct super_block *sb)
- +{
- +	struct dentry *dentry;
- +
- +	if (down_read_trylock(&sb->s_umount))
- +		BUG();
- +
- +	dentry =3D sb->s_root;
- +	sb->s_root =3D NULL;
- +	for (;;) {
- +		struct select_data data;
- +
- +		INIT_LIST_HEAD(&data.dispose);
- +		data.start =3D dentry;
- +		data.found =3D 0;
- +
- +		d_walk(dentry, &data, umount_collect, NULL);
- +		if (!data.found)
- +			break;
- +
- +		shrink_dentry_list(&data.dispose);
- +		cond_resched();
- +	}
- +	d_drop(dentry);
- +	dput(dentry);
- +
- +	while (!hlist_bl_empty(&sb->s_anon)) {
- +		struct select_data data;
- +		dentry =3D hlist_bl_entry(hlist_bl_first(&sb->s_anon), struct dentry, d=
-_hash);
- +
- +		INIT_LIST_HEAD(&data.dispose);
- +		data.start =3D NULL;
- +		data.found =3D 0;
- +
- +		d_walk(dentry, &data, umount_collect, NULL);
- +		if (data.found)
- +			shrink_dentry_list(&data.dispose);
- +		cond_resched();
- +	}
- +}
- +
-- static enum d_walk_ret check_and_collect(void *_data, struct dentry *dent=
-ry)
-+ struct detach_data {
-+ 	struct dentry *found;
-+ };
-+ static enum d_walk_ret do_detach_submounts(void *ptr, struct dentry *dent=
-ry)
-  {
-- 	struct select_data *data =3D _data;
-+ 	struct detach_data *data =3D ptr;
- =20
-- 	if (d_mountpoint(dentry)) {
-- 		data->found =3D -EBUSY;
-- 		return D_WALK_QUIT;
-- 	}
-+ 	if (d_mountpoint(dentry))
-+ 		data->found =3D dentry;
- =20
-- 	return select_collect(_data, dentry);
-- }
--=20
-- static void check_and_drop(void *_data)
-- {
-- 	struct select_data *data =3D _data;
--=20
-- 	if (d_mountpoint(data->start))
-- 		data->found =3D -EBUSY;
-- 	if (!data->found)
-- 		__d_drop(data->start);
-+ 	return data->found ? D_WALK_QUIT : D_WALK_CONTINUE;
-  }
- =20
-  /**
-
---Signature=_Fri__8_Nov_2013_17_50_55_+1100_vwOTmEs261=2CWWS
+--Signature=_Fri__8_Nov_2013_17_58_48_+1100_zPUBli5BQXfnIU=h
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSfInPAAoJEMDTa8Ir7ZwVKBsP/jubQB36dM2aJA0SYgC/r7Qf
-1n8/DoweNpVmUhwGlNH98TUhzwMFoCDOiJ4cFw8k303UCXoCTrKmoFYJSW+qcEF7
-XyQbk0+30UIopmainKeO+PqQP0N58fNnPEBA7ZD+gpre8FIh4lqymMnRYX7Uic7f
-4awXsJLFL2n4HAxTWnwCBpK2hEaSLVKuj1ZBJ+Zae/eDUoTIOYdbPLP4TEzz9R40
-ooMqeqVzb3LKuswhgNH45A4COGbwF1aTNZ0P4qWSNVpqK7srTRMcoEq5sxP+vXhm
-31unTEZXFgE31gpxQ3i5kF2/AqY+DueKlyhB73lNoXsdlBJJiRy8DTyE9Cs4Uqar
-1ozu/GdtOnWV7Mem2zZTqJUmKGLujdXSgGAm30Bnk0ToMfV+Zvtg+tUjaGQRSv+V
-7LJusV7eGx89TcNnje0Ihi2qbYDoymrdYXxxa6AVvVcHjH0j/q2ZwDOPL3cXWu3I
-p3CQiGc6FSWDi710qAFhfgnA7SE45+/x8h980bkXSQwhwDHhVOkVtVniBfOX0i4h
-2CMQKkfUwBlTAv+OYrAbbGR9wyxmrEWGbwUlfwthqopKGM0xhJK1f5LzpXKAzWP/
-U1ta1h/pt0HveDf9Gvc5PVRElWaHe39XTQwuMpDeWNmUlZTQxBbfru9g5P3Gc8uz
-Ko44WSs5RBO3VgpwayH6
-=x6rl
+iQIcBAEBCAAGBQJSfIutAAoJEMDTa8Ir7ZwVGFcP/13tx2QByMG2bR6nGIh+qq7u
+C6c2QwCIVqxdg7YV0GZ16HQWpch1G93Oo+n2iN0wkHnwC33ud726Fx84t0876kzJ
+BTMbR38DU57yPZQu7uHTACc4hfYV3tDRgBxqaZdReOka4EQYC8tcY/2fPKFbjQAy
+CDhxdGo3fphqCVk0AGTZhq64/1voU5h9oCiOj1L3uD60W/kyuC8rbuQ2nH2Vt5nz
+qYC1ACBro9Gqr1o9y8BRv65MSwH1fxpV1U66UUG+bPYtZ1UBLtdFwpShX2bwXxla
+req9DUqKppzVn+o7Eo930MCux5+TZZWGik9M37R+xOeatvfgMkaNO8cQ/Zp+6ueR
+Caihk2mX77QkukCvZdEFK9UYRv5H/eg+ETM40ujYKLUwtkjc0ohEOUkx7GVP1mDg
+1zBSpCKDQOPdGPnQHAd2N935PE1a+paD8TEjB82/T8r1gumpLXE471c1FytEgoq+
+agct2HMtp29cnzsPSEZeKzqbYwnXR+NauX9S/TcJLbcO1g/lOyyfjEPKyJ8vQHK0
+r2N2epiR3NE21tnBBrP6ejrnBKAE9ZCZuqWFtwIG5+K8+fQjwNHB2urfdSQ505Yx
+MSkg+d9siyz7CGTAs+3UTcJsLBCpX3SxCA9g597acv2xfYMtPSLiONjV/Y5mAb9V
+qyUBOlPfzkBpAXuw40O0
+=jwaJ
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__8_Nov_2013_17_50_55_+1100_vwOTmEs261=2CWWS--
+--Signature=_Fri__8_Nov_2013_17_58_48_+1100_zPUBli5BQXfnIU=h--
