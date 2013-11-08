@@ -1,84 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the net-next tree
-Date: Fri, 8 Nov 2013 15:58:33 +1100
-Message-ID: <20131108155833.873fd4dcd27a56e0ff8f6df0@canb.auug.org.au>
+Subject: linux-next: manual merge of the target-updates tree with Linus'
+ tree
+Date: Fri, 8 Nov 2013 17:01:13 +1100
+Message-ID: <20131108170113.7e9a88ecc8c409815a2548fa@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Nov_2013_15_58_33_+1100_H=8xqEuf.VyzzWFE"
+ boundary="Signature=_Fri__8_Nov_2013_17_01_13_+1100_y+9bHSsXYWL=RtHY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43059 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:38225 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754244Ab3KHE7B (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Nov 2013 23:59:01 -0500
+	with ESMTP id S1750828Ab3KHGBk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 01:01:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Jason Wang <jasowang@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matias Bjorling <m@bjorling.me>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Fri__8_Nov_2013_15_58_33_+1100_H=8xqEuf.VyzzWFE
+--Signature=_Fri__8_Nov_2013_17_01_13_+1100_y+9bHSsXYWL=RtHY
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Nicholas,
 
-Today's linux-next merge of the tip tree got a conflict in
-drivers/net/virtio_net.c between commit 9bb8ca86075f ("virtio-net: switch
-to use XPS to choose txq") from the net-next tree and commit 827da44c6141
-("net: Explicitly initialize u64_stats_sync structures for lockdep") from
-the tip tree.
+Today's linux-next merge of the target-updates tree got a conflict in
+lib/percpu-refcount.c between commit 5e9dd373dea4 ("percpu_refcount:
+export symbols") from Linus' tree and commit c9e8d128fe31
+("percpu-refcount: Add EXPORT_SYMBOL to use percpu_ref from modules")
+from the target-updates tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the version from Linus' tree used EXPORT_SYMBOL_GPL, so I
+used that) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/virtio_net.c
-index 7d0eff710913,ee384f3d612b..000000000000
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@@ -1584,6 -1569,18 +1584,14 @@@ static int virtnet_probe(struct virtio_
-  	if (vi->stats =3D=3D NULL)
-  		goto free;
- =20
-+ 	for_each_possible_cpu(i) {
-+ 		struct virtnet_stats *virtnet_stats;
-+ 		virtnet_stats =3D per_cpu_ptr(vi->stats, i);
-+ 		u64_stats_init(&virtnet_stats->tx_syncp);
-+ 		u64_stats_init(&virtnet_stats->rx_syncp);
-+ 	}
-+=20
-+=20
- -	vi->vq_index =3D alloc_percpu(int);
- -	if (vi->vq_index =3D=3D NULL)
- -		goto free_stats;
- -
-  	mutex_init(&vi->config_lock);
-  	vi->config_enable =3D true;
-  	INIT_WORK(&vi->config_work, virtnet_config_changed_work);
-
---Signature=_Fri__8_Nov_2013_15_58_33_+1100_H=8xqEuf.VyzzWFE
+--Signature=_Fri__8_Nov_2013_17_01_13_+1100_y+9bHSsXYWL=RtHY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSfG99AAoJEMDTa8Ir7ZwV2QMP/2RR4y4YwTc0bvFOlEGSNfzT
-bLVbCx8HpqOavx6pxgNteOsIsPPGPuZH1cJAVzaSohmnHHTBbt0ZrjsxUDATpIhX
-VyfaFmKUN7YgZRXYjyM8GNxBdMGrL4dGM4v5SNIL5IwXvoUA+FrE3mwvvZC0IuUf
-kGE/QQL6Jky8kk6irJsAHHPuVkDFMCym2FQTjHdX2/XR3X3mPSnAyiMBEXmtDw1s
-FYMz0f8vdHO4pOo/TZmy74g5uo3wnr/nXfpChFxpIlgfGFZDMhiGzhzEVkgEllbl
-DCY/hgTTBZioDlIc79KPistTtB3kcbCqVcXKdB3fHTCB4bj0VZCL/sy+PxbBKhnV
-PDzbUmKzRtRL9G83JKTY5OgjjdJ9i5eCgh1fiiuNe1LCkn8XWRZnl9yQUIdh7DcI
-JFKSwEPCNsQYebkrblgFeLhLqIKSNapaesoAFML0Dra3ZYWK0Fd879NfSirSy3/m
-fDZ6sOupoOFbZafkEC1Mb14ukLh+J/uwFEpiUpE1SlL9rvPZY8qsMJJcXbdQcDyD
-2ZVS/KKiiB6b1kCNeaJmu+tT/JZONWryMO4DoJZY/DOzI0HQ40QC2YhLx54qiQs1
-r5qPR+YNIgeQDTZ2aCBPIBonnJxN86uwbGF4M2kFB0ZSmE9MPITUc7WAk7IaJYRP
-6K7aqxdtudyPTSW2AM6o
-=JEKM
+iQIcBAEBCAAGBQJSfH4uAAoJEMDTa8Ir7ZwVImwP/0OtOQd+Z9SimD6cZUAES+kb
+6C7uu451JVte2pRMG34OBitxyC5vFvx7nvlvN65W3WGvtIuk5lx9B0D90s0dqTCM
+g3CTGNbDEUSJsWPs5ftuw7yknZPLrtJz8SgVSTDhVIpfBhH3wikm9Fydvo5T9r4e
+COe1GeDEdBMk58Z9yAt8AnqNxc6KuTsXK2j/FeMvdisU6a5SC3787pUeF36J4DMt
+8vTbY/jip5l7FymHYzObaD4ZQn31ZmlMtEgUhYKjGZTCMWS7KMG2wnhgfdyQmBDs
+SgJkm6M6h0Nxf2cYHiv66ZrRA6pd71a1FsDkGEp9My2pjM5nTybEhSUa5zAAIOQ1
+JH/9BV11S4KbCqXmCNo3Rhd2P45SG06FT3NQV5EEHx9nqYM2rbmRklg4kcqBfgUi
+gUdpNgo70EJbrb97CGamyoHGOWuk6ZDV6P/qFPP3k9cY3ELA3CKBi4mYAVqgDq5z
+DyjRU6nB6RlNiA9i2ZwogeK9G0pc7nwiFQMazrtAsGaTvc4HdxHomnP1zg3CTMob
+1bcAYFddN0QIcXyVIi1p+p84zf2nqK0vZ65hZGIf3wYuTszXVKj+K+/+JCZDyrmz
+KqcrKqknrLfsaxoQLfPGXPAJ8eBdmCwEeGRPOjFDeUNMQtfiVV8b8mrWHagMJvBl
+9ipY8b0lOPiC+/wJfFGT
+=IAwd
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__8_Nov_2013_15_58_33_+1100_H=8xqEuf.VyzzWFE--
+--Signature=_Fri__8_Nov_2013_17_01_13_+1100_y+9bHSsXYWL=RtHY--
