@@ -1,43 +1,35 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
- tree
-Date: Fri, 8 Nov 2013 16:19:18 -0800
-Message-ID: <20131109001917.GA25715@jtriplet-mobl1>
-References: <20131108184805.ec16e3b5cc08834cb5d4f812@canb.auug.org.au>
- <20131108185812.GB11311@jtriplet-mobl1>
- <20131109102058.4edc71a4a367d3d6c92844aa@canb.auug.org.au>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: linux-next: build failure after merge of the userns tree
+Date: Sat, 9 Nov 2013 00:32:15 -0800
+Message-ID: <20131109083215.GA12574@infradead.org>
+References: <20131108175848.6ca49f0ee8fe2a6c1125394a@canb.auug.org.au>
+ <20131108072732.GA27537@infradead.org>
+ <87ob5uwlrx.fsf@xmission.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:36296 "EHLO
-	relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751087Ab3KIAT3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Nov 2013 19:19:29 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20131109102058.4edc71a4a367d3d6c92844aa@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <87ob5uwlrx.fsf@xmission.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, Nov 09, 2013 at 10:20:58AM +1100, Stephen Rothwell wrote:
-> Hi Josh,
+On Fri, Nov 08, 2013 at 02:50:42PM -0800, Eric W. Biederman wrote:
+> Al was watching the conversation so I assumed that no answer to that
+> request was sufficient to take these patches in my tree.
+>
+> I fully intend to take responsibility for these patches and work through
+> whatever issues they have, and I intend to send Linus my pull request.
+> As such dropping the userns tree from linux-next seems inappropriate.
 > 
-> On Fri, 8 Nov 2013 10:58:12 -0800 Josh Triplett <josh@joshtriplett.org> wrote:
-> >
-> > Won't splitting the Makefile change into a separate commit break
-> > bisection, in particular if you have the changes adding inlines but you
-> > also compile in lglock.o?  Shouldn't this be squashed into the merge
-> > itself, keeping the kernel/Makefile section of my original patch?
-> 
-> Actually it is not a problem because that fix patch was applied to the
-> merge commit between the part of Andrew's tree that depends only on
-> Linus' tree and the rest of linux-next.  So each side of the merge is ok
-> and the merge commit itself fixes up the conflict.
-> 
-> I just split it this way for my work flow purposes.
 
-Ah, I see.  That wasn't obvious to me from your previous mail explaining
-your fix. :)
+It's not.  Really, if you do touch core code and do not get a maintainer
+respone it surely does not mean you can merge it through your tree.
 
-- Josh Triplett
+It usually either means this stuff is so bad that it's not even worth
+responding to or that the maintainer and core revierers of the area
+are busy.  In this case it's probably a combination of both.
+
+> Eric
+---end quoted text---
