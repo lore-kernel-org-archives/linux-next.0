@@ -1,41 +1,101 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the aio-direct tree with the vfs tree
-Date: Mon, 11 Nov 2013 03:20:52 +0000
-Message-ID: <20131111032052.GV13318@ZenIV.linux.org.uk>
-References: <20131111125328.ef8f0641ccdbb28a0d0564da@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the userns tree
+Date: Mon, 11 Nov 2013 16:25:18 +1100
+Message-ID: <20131111162518.bdf27fe160af288ce8ea1bf2@canb.auug.org.au>
+References: <20131108180759.12dab53816900b1b58c1ea1b@canb.auug.org.au>
+	<87r4aqscxm.fsf@xmission.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__11_Nov_2013_16_25_18_+1100_cp+wVpDrLaaZXw9j"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41036 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751003Ab3KKDU7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 10 Nov 2013 22:20:59 -0500
-Content-Disposition: inline
-In-Reply-To: <20131111125328.ef8f0641ccdbb28a0d0564da@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39693 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751135Ab3KKFZe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Nov 2013 00:25:34 -0500
+In-Reply-To: <87r4aqscxm.fsf@xmission.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Kleikamp <dave.kleikamp@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Nov 11, 2013 at 12:53:28PM +1100, Stephen Rothwell wrote:
-> Hi Dave,
-> 
-> Today's linux-next merge of the aio-direct tree got a conflict in
-> drivers/mtd/nand/nandsim.c between commit 72c2d5319200 ("file->f_op is
-> never NULL...") from the vfs tree and commit dd458300240b ("fs: create
-> file_readable() and file_writable() functions") from the aio-direct tree.
-> 
-> I fixed it up (I just used the aio-direct tree version) and can carry the
-> fix as necessary (no action is required).
+--Signature=_Mon__11_Nov_2013_16_25_18_+1100_cp+wVpDrLaaZXw9j
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hrm...  Pity that this thing sits in the middle of aio-direct; it would
-make more sense to take it in vfs.git ;-/  There are several more places
-where we get the conflicts of the same sort.
+Hi Eric,
 
-FWIW, I have two nitpicks with these helpers:
-	a) checks for NULL argument do not belong there
-	b) please, please, do not breed more instances of that stupid
-'filp' thing; AFAICS, it's an example of really bad taste on part of
-AST - it stands for 'file pointer' and yes, it's a minixism.  Linus has
-used that naming convention in 0.01 and it spread when people copied
-stuff.  There's a perfectly good identifier - 'file'...
+On Fri, 08 Nov 2013 15:15:17 -0800 ebiederm@xmission.com (Eric W. Biederman=
+) wrote:
+>
+> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>=20
+> > After merging the userns tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >
+> > fs/namespace.c: In function 'detach_mounts':
+> > fs/namespace.c:1340:2: error: implicit declaration of function 'br_writ=
+e_lock' [-Werror=3Dimplicit-function-declaration]
+> >   br_write_lock(&vfsmount_lock);
+> >   ^
+> > fs/namespace.c:1340:17: error: 'vfsmount_lock' undeclared (first use in=
+ this function)
+> >   br_write_lock(&vfsmount_lock);
+> >                  ^
+> > fs/namespace.c:1340:17: note: each undeclared identifier is reported on=
+ly once for each function it appears in
+> > fs/namespace.c:1345:2: error: implicit declaration of function 'br_writ=
+e_unlock' [-Werror=3Dimplicit-function-declaration]
+> >   br_write_unlock(&vfsmount_lock);
+> >   ^
+> >
+> > Caused by the interaction between commit d7e58b8abc4f ("vfs: Add a
+> > function to lazily unmount all mounts from any dentry. v3") from the
+> > userns tree and commit 84550b9356af ("RCU'd vfsmounts") from the vfs tr=
+ee.
+> >
+> > I don't know how to fix this up, so I have just dropped the userns tree
+> > for today.  I only dropped that tree because it was the latter of the t=
+wo
+> > conflicting trees.
+>=20
+> Yeah.  Al has somethng cooking where he renamed the lock.
+>=20
+> It looks like this just needs the trivial change:
+> s/br_write_lock(&vfsmount_lock)/lock_mount_hash()/
+> s/br_write_unlock(&vfsmount_lock)/unlock_mount_hash()/
+>=20
+> Certainly that is all it needed when I closely inspected an earlier
+> version of Al's changes.  He changed the name of the lock and I just
+> happen to be using it.  In this case I don't think any of the semantics
+> have changed.
+
+OK, I added that as a merge fixup patch today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__11_Nov_2013_16_25_18_+1100_cp+wVpDrLaaZXw9j
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSgGpEAAoJEMDTa8Ir7ZwVFd0P/RUWVnkQyK+cU018lZkrNB4F
+t8WZQwf4qo6Zhk0dqOSHAv9h5Zw+WWpdoEvR3cQ/hVGjCAJjVehRQOzei9jjsrP8
+lSpXpznBHFzNiDnM83gEQWQ7KRCRmTXN6le5OOxML7CUVZji9PvS70eHxc39viIE
+ZsXxw/OyWoh7RLgpy19TO/hFsQu543gsh5dEQegqtpQKHtZU2wF5wKxGM4sdvVqx
+hUf62OHoLxMx0uBhazqzPImvHgWGgIOwcgIj444hioP+UdIxm498hjBpcWA9J1qd
+/Cv5ZPviPtpkhbHLL/GCY7rQkA6tNF9cIsS2+wdOoDAh5np04fa85tY5AZll8kYo
+joib7cFuSE4DhUqyanUSQIiV8oFqH6TXvDWnmlo9XYq+SXhfW4ZT1NI8lTPi1Rps
+CxhzQj+4SXYvz5Ia0Kbx9wjS8qEDm/M3IzFjx8WgyOp4EnPg+cTvB6Pxsws/1VbM
+1O+KiMeZ1cADzLaE0JeOGoeYdFjRyNslBOOXoFDKkTPaI8mCadF8w6G149GM0w23
+qABzpML4dXPv7pm0uXCCAFarxSJRc++EIqUrW9AQLO6UlbKC3h1DC3gsQB5calH2
+uS/1xjsElFwCPIabLtgqSHkJjAi1SI78oaVqoKhB3DG1Y2XiUnSn6+g3XmRIAZZJ
+rIVzyK3czdSn7U8KZGQI
+=dZtA
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__11_Nov_2013_16_25_18_+1100_cp+wVpDrLaaZXw9j--
