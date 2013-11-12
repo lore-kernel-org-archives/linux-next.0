@@ -1,34 +1,45 @@
-From: <11122121@PetersonWest102.onmicrosoft.com>
-Subject: XMAS LOAN
-Date: Wed, 13 Nov 2013 02:26:55 +0530
-Message-ID: <02005fcd-07a7-4465-b239-ab33cc06fe5a@SINPR06MB009.apcprd06.prod.outlook.com>
-Reply-To: <petersonloanfundingcompany1@gmail.com>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: linux-next: manual merge of the random tree with the net-next
+ tree
+Date: Tue, 12 Nov 2013 18:02:42 -0500
+Message-ID: <20131112230242.GA1643@thunk.org>
+References: <20131112155549.c160273993147244ed6bc81d@canb.auug.org.au>
+ <5281ED01.5020204@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from emea01-am1-ndr.ptr.protection.outlook.com ([157.56.116.100]:56651
-	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752905Ab3KLU44 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Nov 2013 15:56:56 -0500
-Content-Description: Mail message body
+Received: from imap.thunk.org ([74.207.234.97]:57182 "EHLO imap.thunk.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755191Ab3KLXCy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Nov 2013 18:02:54 -0500
+Content-Disposition: inline
+In-Reply-To: <5281ED01.5020204@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Recipients <11122121@PetersonWest102.onmicrosoft.com>
+To: Daniel Borkmann <dborkman@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Frederic Sowa <hannes@stressinduktion.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-Dear Sir/Madam
-Are you in debts or Do you need loan to start up a business or do you need christmas loan? We give out all types of loans from $3,000.00 to $100,000,000.00 at 3%, Just address your email to  Mr. Peterson West (petersonloanfundingcompany1@gmail.com) with the following  information:
+On Tue, Nov 12, 2013 at 09:55:29AM +0100, Daniel Borkmann wrote:
+> 
+> As per Hannes' suggestion, the result should look like (see cover
+> letter in [1]):
+> 
+> if (r->entropy_total > 128) {
+> 	r->initialized = 1;
+> 	r->entropy_total = 0;
+> 	if (r == &nonblocking_pool) {
+> 		prandom_reseed_late();
+> 		pr_notice("random: %s pool is initialized\n",
+> 			  r->name);
+> 	}
+> }
 
-1: Names:...
-2: Country....
-3: Loan Amount:....
-4: Loan Duration....
-5: Phone Number:....
-6: Monthly Income:......
-7: State:.......
-Note:All reply should be forwarded only to petersonloanfundingcompany1@gmail.com for immediate attention.
-Contact us now and get an urgent loan within two (2) days!!!
+Agreed.  What's the schedule for pushing net-dev to Linus?  I'm
+currently at Korea Linux Forum, and I was originally planning on
+pushing random.git to Linus sometime today, but I'm also willing to
+wait for net-dev to go first.  Either way, we should make sure Linus
+is aware of the agreed-upon resolution of the merge conflict.
 
-Regards,
-Mr.Peterson West
+Cheers,
+
+						- Ted
