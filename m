@@ -1,108 +1,98 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the input tree with Linus' tree
-Date: Tue, 12 Nov 2013 12:58:42 +1100
-Message-ID: <20131112125842.0f7b06add01d795cbcdce5bf@canb.auug.org.au>
+Subject: linux-next: manual merge of the random tree with the net-next tree
+Date: Tue, 12 Nov 2013 15:55:49 +1100
+Message-ID: <20131112155549.c160273993147244ed6bc81d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__12_Nov_2013_12_58_42_+1100_cFu+UbzkcCUk.Fny"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Matt Porter <mporter@ti.com>, Benoit Cousson <bcousson@baylibre.com>, Joel Fernandes <joelf@ti.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__12_Nov_2013_15_55_49_+1100_sxF61Q2z/L/7tjR3"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50426 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751360Ab3KLE4C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Nov 2013 23:56:02 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Frederic Sowa <hannes@stressinduktion.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Daniel Borkmann <dborkman@redhat.com>
 
---Signature=_Tue__12_Nov_2013_12_58_42_+1100_cFu+UbzkcCUk.Fny
+--Signature=_Tue__12_Nov_2013_15_55_49_+1100_sxF61Q2z/L/7tjR3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+Hi Ted,
 
-Today's linux-next merge of the input tree got a conflict in
-arch/arm/boot/dts/am335x-evmsk.dts between commit 55b4452b4b70 ("ARM:
-dts: AM33XX: Add MMC support and documentation") (and others) from Linus'
-tree and commit 2c027b7c48a8 ("arm: dts: am335x sk: add touchscreen
-support") from the input tree.
+Today's linux-next merge of the random tree got a conflict in
+drivers/char/random.c between commit 0244ad004a54 ("random32: add
+prandom_reseed_late() and call when nonblocking pool becomes
+initialized") from the net-next tree and commit 301f0595c0e7 ("random:
+printk notifications for urandom pool initialization") from the random
+tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (probably not properly - see below) and can carry the fix
+as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/am335x-evmsk.dts
-index 03febf85fd2f,d7c2c0c58437..000000000000
---- a/arch/arm/boot/dts/am335x-evmsk.dts
-+++ b/arch/arm/boot/dts/am335x-evmsk.dts
-@@@ -452,36 -420,12 +452,46 @@@
-  	phy-mode =3D "rgmii-txid";
-  };
+diff --cc drivers/char/random.c
+index 4fe5609eeb72,cdf4cfb2da4d..000000000000
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@@ -255,8 -255,12 +255,9 @@@
+  #include <linux/fips.h>
+  #include <linux/ptrace.h>
+  #include <linux/kmemcheck.h>
+ +#include <linux/irq.h>
++ #include <linux/workqueue.h>
  =20
- +&mmc1 {
- +	status =3D "okay";
- +	vmmc-supply =3D <&vmmc_reg>;
- +	bus-width =3D <4>;
- +};
- +
- +&sham {
- +	status =3D "okay";
- +};
- +
- +&aes {
- +	status =3D "okay";
- +};
- +
- +&gpio0 {
- +	ti,no-reset-on-init;
- +};
- +
- +&mcasp1 {
- +		pinctrl-names =3D "default";
- +		pinctrl-0 =3D <&mcasp1_pins>;
- +
- +		status =3D "okay";
- +
- +		op-mode =3D <0>;          /* MCASP_IIS_MODE */
- +		tdm-slots =3D <2>;
- +		/* 4 serializers */
- +		serial-dir =3D <  /* 0: INACTIVE, 1: TX, 2: RX */
- +			0 0 1 2
- +		>;
- +		tx-num-evt =3D <1>;
- +		rx-num-evt =3D <1>;
- +};
-++
-+ &tscadc {
-+ 	status =3D "okay";
-+ 	tsc {
-+ 		ti,wires =3D <4>;
-+ 		ti,x-plate-resistance =3D <200>;
-+ 		ti,coordinate-readouts =3D <5>;
-+ 		ti,wire-config =3D <0x00 0x11 0x22 0x33>;
-+ 	};
-+ };
+ -#ifdef CONFIG_GENERIC_HARDIRQS
+ -# include <linux/irq.h>
+ -#endif
+ -
+  #include <asm/processor.h>
+  #include <asm/uaccess.h>
+  #include <asm/irq.h>
+@@@ -601,12 -654,14 +651,16 @@@ retry
+  	if (cmpxchg(&r->entropy_count, orig, entropy_count) !=3D orig)
+  		goto retry;
+ =20
++ 	r->entropy_total +=3D nbits;
+  	if (!r->initialized && nbits > 0) {
+- 		r->entropy_total +=3D nbits;
+  		if (r->entropy_total > 128) {
++ 			if (r =3D=3D &nonblocking_pool)
++ 				pr_notice("random: %s pool is initialized\n",
++ 					  r->name);
+  			r->initialized =3D 1;
+ +			if (r =3D=3D &nonblocking_pool)
+ +				prandom_reseed_late();
++ 			r->entropy_total =3D 0;
+  		}
+  	}
+ =20
 
---Signature=_Tue__12_Nov_2013_12_58_42_+1100_cFu+UbzkcCUk.Fny
+--Signature=_Tue__12_Nov_2013_15_55_49_+1100_sxF61Q2z/L/7tjR3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSgYtWAAoJEMDTa8Ir7ZwVMhsQAIT2kW1edUpicLsEs2DP8uOO
-A33d/IRzrKxTMlXlziPe3UNqmE6M8fE34QejxNdGMHsZgEsJj5Wp0OT7d0ZeUOhM
-1h7hOnu93FSVVAgW6S8SBzLqPH3NFschVKSFOLqk/dvW7pKHzkGUuDa2jqpReFx+
-VpBjrFeolfw81cbBPRk1wuvWO9ZJVcrtoZvcP7lUQ7lGyr6So4sQVcF+/0c7PRaD
-u7TmrdsvMoaRcNEFAWen9CjFRBOIQxecaOkkILpRyeSk6soyzhYhNjtL/6gYXMUz
-Ei2kStdNkvCNflMHPRRqZjnc8WQLfc0JaK1/yXm87hAXUAbzK20RkLb4BF7I4UPQ
-fOF4tHL0LfOIrEQd+TBE90/GLRGleiJ+VU6TJQfH73M9iaj2Ww8W6/quztiVslpH
-oSAkzk1r5yxXMEgbxvYC3GJ1KgQ8mx36mKNzC4wC4LicCoGPiH8SXpr5oYZLpBT4
-RbUUCsw9bcVXTHVeY9rbV1RuVIjY9zIMhVVVXJ68iofwba0v0dq+dxUq+CyGP+OW
-ZL5czSDvc5mPdLVdfTnXkfBzdrzaa1gxYxrJ84k+o43y8EcNIGBSfNNAkRylyruR
-pefa+gzLW8LWnM8h58wqaoFFgW09HZ4+mX+9h0n5ao+5JeCwdoEO9tyJv12d7sUA
-0ye8Qi1KzX9SIhvgu3k1
-=TK2R
+iQIcBAEBCAAGBQJSgbTZAAoJEMDTa8Ir7ZwVM6EP/jqWGOkXLehMTDq3k35DvAcC
+OG9bp4ifSD5JdYoqBaiFxE1L5cCMv8UONj8CYmRkkcCGK1t0Y6/MLxY6424lb7lA
+7ZMlOkOZ7bgu4E9xDOcYj9IJNhKKC740EoLvBVbjGdZ4tAGyx2IcUCdK8j38iV4r
+W0D5SZtgMWqBBgwhVwkcDNCjeOhLzhgPqBjQC9lDQJHbsTJ8963A4BM82ViiBY9Y
+MfpvG60ol/Kdxh2SZqpsNiBL0/Myx5cdka2Kj5vMdlB/Zq2f6NsirdgN05GsKUDf
+CBajnETNTZSifYIA9+11Vidz+ql1DwoQc6tZd0fNZpGU6hZ/lec/3fwT/TGTG8jc
+OQVG8Vju3E+4FgEujhSGzIhLF0gERwNsyNXadROrl6LfGBnkzpYoOgZE2/3CWAn7
+SDcc1Y2BTI6RM93O0s/ukMpKu6HaEXrbZ6o0jjn+6vs+EcCtM/rhkuw4INlPUwqD
+NEY46pFAhcLCoLO1OJgB0qz+JPGJH1xhHeahfOIngTiLUXr75xbYePKzfWXidyfJ
+DGZAPkPdBxoqyHkQbAmKaCse9Hx8wneBGLnORn/6kW6O/TBnsPgtwnf4vs7O8M8I
+Af8g0vfZndS4eyIaFmsb6uK83OPS7tzL1cfL14Wif76pHspG02Wt8ka3ZRUOrDD6
+8oOsGUf6NVhYUrGe7rgo
+=vFsE
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__12_Nov_2013_12_58_42_+1100_cFu+UbzkcCUk.Fny--
+--Signature=_Tue__12_Nov_2013_15_55_49_+1100_sxF61Q2z/L/7tjR3--
