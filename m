@@ -1,21 +1,25 @@
-From: ''Fredrick Loan Investment''
-	<cocacola0021@mentesbrim.onmicrosoft.com>
-Subject: Xmas Loan ...Apply Now
-Date: Wed, 13 Nov 2013 14:24:45 +0530
-Message-ID: <3be1501d-03d5-4a48-a7ea-0e84c55d9b9f__4607.97631317309$1384333206$gmane$org@HKXPR02MB215.apcprd02.prod.outlook.com>
-Reply-To: <fredrickplc@qq.com>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [RFC PATCH next] fix unpaired rcu lock in prepend_path()
+Date: Wed, 13 Nov 2013 12:28:48 +0000
+Message-ID: <20131113122848.GZ13318@ZenIV.linux.org.uk>
+References: <1384327311.19669.8.camel@ThinkPad-T5421>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from emea01-am1-ndr.ptr.protection.outlook.com ([157.56.116.103]:40379
-	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S932752Ab3KMIzP convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Nov 2013 03:55:15 -0500
-Content-Description: Mail message body
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45615 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758789Ab3KMM2u (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Nov 2013 07:28:50 -0500
+Content-Disposition: inline
+In-Reply-To: <1384327311.19669.8.camel@ThinkPad-T5421>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Recipients <cocacola0021@mentesbrim.onmicrosoft.com>
+To: Li Zhong <zhong@linux.vnet.ibm.com>
+Cc: linux-next list <linux-next@vger.kernel.org>
 
-Do you need a loan ? if yes contact fredrickplc@qq.com for more.
+On Wed, Nov 13, 2013 at 03:21:51PM +0800, Li Zhong wrote:
+> The patch tries to fix following complaint(next-1112) caused by unpaired
+> rcu_read_lock/unlock in function prepend_path():
+
+Frankly, I wonder if it wouldn't be better to shift rcu_read_unlock()
+past the second done_seqretry() in there...
