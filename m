@@ -1,25 +1,37 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [RFC PATCH next] fix unpaired rcu lock in prepend_path()
-Date: Wed, 13 Nov 2013 12:28:48 +0000
-Message-ID: <20131113122848.GZ13318@ZenIV.linux.org.uk>
-References: <1384327311.19669.8.camel@ThinkPad-T5421>
+From: Tony Luck <tony.luck@gmail.com>
+Subject: Re: [PATCH V3] printk/cache: Mark printk_once test variable __read_mostly
+Date: Wed, 13 Nov 2013 11:31:06 -0800
+Message-ID: <CA+8MBbJKN174=ybMNE7Z+oT7KjNBzgdy9cvhb_kACvXAbTo9XA@mail.gmail.com>
+References: <1383128301-20231-1-git-send-email-james.hogan@imgtec.com>
+	<20131030134839.8bdf70cc68d1bf0beb1fb63a@linux-foundation.org>
+	<1383244173.8740.9.camel@joe-AO722>
+	<CA+8MBb+rrAWSTTvO4cx32ju-QOAG6aHHxR9B=sLtGXR3q8DF0A@mail.gmail.com>
+	<1384302563.3665.28.camel@joe-AO722>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:45615 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758789Ab3KMM2u (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Nov 2013 07:28:50 -0500
-Content-Disposition: inline
-In-Reply-To: <1384327311.19669.8.camel@ThinkPad-T5421>
+Received: from mail-vb0-f49.google.com ([209.85.212.49]:37841 "EHLO
+	mail-vb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757046Ab3KMTbI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Nov 2013 14:31:08 -0500
+In-Reply-To: <1384302563.3665.28.camel@joe-AO722>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Li Zhong <zhong@linux.vnet.ibm.com>
-Cc: linux-next list <linux-next@vger.kernel.org>
+To: Joe Perches <joe@perches.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, James Hogan <james.hogan@imgtec.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-metag@vger.kernel.org
 
-On Wed, Nov 13, 2013 at 03:21:51PM +0800, Li Zhong wrote:
-> The patch tries to fix following complaint(next-1112) caused by unpaired
-> rcu_read_lock/unlock in function prepend_path():
+On Tue, Nov 12, 2013 at 4:29 PM, Joe Perches <joe@perches.com> wrote:
+> try this:
+>
+> https://lkml.org/lkml/2013/10/30/604
+>
+>
 
-Frankly, I wonder if it wouldn't be better to shift rcu_read_unlock()
-past the second done_seqretry() in there...
+How is that any different from what is in linux-next?  It still
+has the same change to cache.h that reduces the nested
+#includes that currently make the build work.
+
+-#include <linux/kernel.h>
++#include <uapi/linux/kernel.h>
+
+-Tony
