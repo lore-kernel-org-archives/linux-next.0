@@ -1,33 +1,24 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Nov 14 (lustre)
-Date: Thu, 14 Nov 2013 11:04:28 -0800
-Message-ID: <52851EBC.9010803@infradead.org>
-References: <20131114152253.105a4978427b3cd0555ee877@canb.auug.org.au>
+From: "Mr. Mark William" <001@INFO293.onmicrosoft.com>
+Subject: Apply for loan at 3% interest rate
+Date: Fri, 15 Nov 2013 01:36:12 +0100
+Message-ID: <3d976fe6-0c51-497d-85a3-a69b9d27a4ef@SINPR04MB076.apcprd04.prod.outlook.com>
+Reply-To: <info.asurant@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:34790 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755260Ab3KNTE4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Nov 2013 14:04:56 -0500
-In-Reply-To: <20131114152253.105a4978427b3cd0555ee877@canb.auug.org.au>
+Received: from emea01-am1-ndr.ptr.protection.outlook.com ([157.56.116.106]:11164
+	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1755188Ab3KOAwz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Nov 2013 19:52:55 -0500
+Content-Description: Mail message body
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, peng tao <bergwolf@gmail.com>, Peng Tao <tao.peng@emc.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, andreas.dilger@intel.com, hpdd-discuss <hpdd-discuss@ml01.01.org>
+To: Recipients <001@INFO293.onmicrosoft.com>
 
-On 11/13/13 20:22, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Please do *not* add any v3.14 material to linux-next until after
-> v3.13-rc1 is released.
-> 
-> Changes since 20131113:
-> 
+Apply for loan at 3% interest rate, Contact us with your requirement via Email; info.asurant@gmail.com for more information.
+Try us and be convinced.
 
-Please fix MANY build errors that show up when CONFIG_PROC_FS is not enabled.
-
-thanks.
--- 
-~Randy
+Micro Finance Institutions Inc.
+Mark William.
