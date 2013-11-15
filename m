@@ -1,33 +1,94 @@
-From: "Peng, Tao" <tao.peng@emc.com>
-Subject: RE: linux-next: Tree for Nov 14 (lustre)
-Date: Fri, 15 Nov 2013 01:58:07 +0000
-Message-ID: <1882637210201641A747464075FFC6491D1D9C45@MX101CL02.corp.emc.com>
-References: <20131114152253.105a4978427b3cd0555ee877@canb.auug.org.au>
- <52851EBC.9010803@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the sparc-next tree
+Date: Fri, 15 Nov 2013 15:57:33 +1100
+Message-ID: <20131115155733.b05306db95bc04bcb76c83f9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__15_Nov_2013_15_57_33_+1100_PubQaX/XC9j_AMYj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailuogwhop.emc.com ([168.159.213.141]:29458 "EHLO
-	mailuogwhop.emc.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755148Ab3KOCVA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Nov 2013 21:21:00 -0500
-In-Reply-To: <52851EBC.9010803@infradead.org>
-Content-Language: en-US
+Received: from haggis.pcug.org.au ([203.10.76.10]:45214 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932323Ab3KOE5r (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Nov 2013 23:57:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, peng tao <bergwolf@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "andreas.dilger@intel.com" <andreas.dilger@intel.com>, hpdd-discuss <hpdd-discuss@ml01.01.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IFJhbmR5IER1bmxhcCBbbWFp
-bHRvOnJkdW5sYXBAaW5mcmFkZWFkLm9yZ10NCj5TZW50OiBGcmlkYXksIE5vdmVtYmVyIDE1LCAy
-MDEzIDM6MDQgQU0NCj5UbzogU3RlcGhlbiBSb3Rod2VsbDsgbGludXgtbmV4dEB2Z2VyLmtlcm5l
-bC5vcmcNCj5DYzogTEtNTDsgcGVuZyB0YW87IFBlbmcsIFRhbzsgR3JlZyBLcm9haC1IYXJ0bWFu
-Ow0KPmFuZHJlYXMuZGlsZ2VyQGludGVsLmNvbTsgaHBkZC1kaXNjdXNzDQo+U3ViamVjdDogUmU6
-IGxpbnV4LW5leHQ6IFRyZWUgZm9yIE5vdiAxNCAobHVzdHJlKQ0KPg0KPk9uIDExLzEzLzEzIDIw
-OjIyLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3RlOg0KPj4gSGkgYWxsLA0KPj4NCj4+IFBsZWFzZSBk
-byAqbm90KiBhZGQgYW55IHYzLjE0IG1hdGVyaWFsIHRvIGxpbnV4LW5leHQgdW50aWwgYWZ0ZXIN
-Cj4+IHYzLjEzLXJjMSBpcyByZWxlYXNlZC4NCj4+DQo+PiBDaGFuZ2VzIHNpbmNlIDIwMTMxMTEz
-Og0KPj4NCj4NCj5QbGVhc2UgZml4IE1BTlkgYnVpbGQgZXJyb3JzIHRoYXQgc2hvdyB1cCB3aGVu
-IENPTkZJR19QUk9DX0ZTIGlzIG5vdA0KPmVuYWJsZWQuDQo+DQpJJ2xsIGxvb2sgaW50byB0aGlz
-Lg0KDQpUaGFua3MsDQpUYW8NCg0K
+--Signature=_Fri__15_Nov_2013_15_57_33_+1100_PubQaX/XC9j_AMYj
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Andrew,
+
+Today's linux-next merge of the akpm tree got a conflict in
+arch/sparc/mm/init_64.c between commit 37b3a8ff3e08 ("sparc64: Move from
+4MB to 8MB huge pages") from the sparc-next tree and commit "sparc:
+handle pgtable_page_ctor() fail" from the akpm tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/sparc/mm/init_64.c
+index bd6430ded69f,d6de9353ee11..000000000000
+--- a/arch/sparc/mm/init_64.c
++++ b/arch/sparc/mm/init_64.c
+@@@ -2563,16 -2511,21 +2563,16 @@@ pte_t *pte_alloc_one_kernel(struct mm_s
+  pgtable_t pte_alloc_one(struct mm_struct *mm,
+  			unsigned long address)
+  {
+ -	struct page *page;
+ -	pte_t *pte;
+ -
+ -	pte =3D get_from_cache(mm);
+ -	if (pte)
+ -		return pte;
+ +	struct page *page =3D alloc_page(GFP_KERNEL | __GFP_NOTRACK |
+ +				       __GFP_REPEAT | __GFP_ZERO);
+- 	pte_t *pte =3D NULL;
+ =20
+- 	if (page) {
+- 		pgtable_page_ctor(page);
+- 		pte =3D (pte_t *) page_address(page);
+ -	page =3D __alloc_for_cache(mm);
++ 	if (!page)
++ 		return NULL;
++ 	if (!pgtable_page_ctor(page)) {
++ 		free_hot_cold_page(page, 0);
++ 		return NULL;
+  	}
+-=20
+- 	return pte;
++ 	return (pte_t *) page_address(page);
+  }
+ =20
+  void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
+
+--Signature=_Fri__15_Nov_2013_15_57_33_+1100_PubQaX/XC9j_AMYj
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJShanBAAoJEMDTa8Ir7ZwVackP/iZ/8ue6eBn0VdjXBryFbMA3
+2Y/wSOpUhBN6eWEw7B67/v3Hv3iWq/6cav/cXBa/2i6f88SGzfQYlDcrJjP4BKy8
+1FQW+cOLIF86CAHmdwJoQw2N911DmLI4M9dKd58cocCO1WJb1KAP37ubn8YiYWX0
+jogSouCfxNk0/LtBbmpiaEYJpgeeO83w7m01F0Dx06iE5tvIKv+j191M44Lsry2h
+pxJJi/8lf0o3l0OAtwchhvXNzjLRcLlEp7CkmyEiUkO7ZfZdTTgXQEeQ0MmJiXy6
+fmg4VKk/XVVqxhLn1p884y6eN5DmV6FGoRGJl1YYL8CeU4/cGyE3aCy5yysSrt6k
+0vZ8zCqSXcdFNi6ukJ/8QVYwebH4cMEwyUslp90COrqRh3Kgcq0HJesXkj2kmCZk
+PdswugylHECKuOX2DU98tX7NSjQ5nk7e3xLdUKsZlESiPpunusM9YfFpWAR2zehL
++a53ndmhQo3TNy/yFUqp94OzCxLRGEsoFR7phP0hrpx4WD5SEU2lHQj2DhY2wi7V
+0utmgWrupaS0WBk1J0Ccyc6zQ+cGulrazyD5z4SyBSxSkqyvcpL1UO1n1aL58OnQ
+3Yif4I7sd3WDWyjb7EXXKlq9MtJ/Yyh039XPJAcJXrqC4V0IeBSVdZIYdB3DVW0G
+Qyvae32XtSxyGUczRJll
+=TM/d
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__15_Nov_2013_15_57_33_+1100_PubQaX/XC9j_AMYj--
