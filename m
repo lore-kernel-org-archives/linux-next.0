@@ -1,93 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the dmaengine tree with the slave-dma
- tree
-Date: Fri, 15 Nov 2013 12:56:04 +1100
-Message-ID: <20131115125604.a12f24a58bcbf91cc26cc20e@canb.auug.org.au>
+From: "Peng, Tao" <tao.peng@emc.com>
+Subject: RE: linux-next: Tree for Nov 14 (lustre)
+Date: Fri, 15 Nov 2013 01:58:07 +0000
+Message-ID: <1882637210201641A747464075FFC6491D1D9C45@MX101CL02.corp.emc.com>
+References: <20131114152253.105a4978427b3cd0555ee877@canb.auug.org.au>
+ <52851EBC.9010803@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__15_Nov_2013_12_56_04_+1100_5hfUh=U8=qyGJA_g"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52924 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754742Ab3KOB4P (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Nov 2013 20:56:15 -0500
+Received: from mailuogwhop.emc.com ([168.159.213.141]:29458 "EHLO
+	mailuogwhop.emc.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755148Ab3KOCVA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Nov 2013 21:21:00 -0500
+In-Reply-To: <52851EBC.9010803@infradead.org>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, peng tao <bergwolf@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "andreas.dilger@intel.com" <andreas.dilger@intel.com>, hpdd-discuss <hpdd-discuss@ml01.01.org>
 
---Signature=_Fri__15_Nov_2013_12_56_04_+1100_5hfUh=U8=qyGJA_g
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Dan,
-
-Today's linux-next merge of the dmaengine tree got a conflict in
-drivers/dma/dmatest.c between commit 19e9f99f273b ("dmaengine: dmatest:
-use DMA_COMPLETE for dma completion status") from the slave-dma tree and
-commit 872f05c6e9a3 ("dmatest: replace stored results mechanism, with
-uniform messages") from the dmaengine tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/dma/dmatest.c
-index 59e287f56dfc,329b7cf02f8e..000000000000
---- a/drivers/dma/dmatest.c
-+++ b/drivers/dma/dmatest.c
-@@@ -735,17 -633,17 +633,17 @@@ static int dmatest_func(void *data
-  			 * free it this time?" dancing.  For now, just
-  			 * leave it dangling.
-  			 */
-- 			thread_result_add(info, result, DMATEST_ET_TIMEOUT,
-- 					  total_tests, src_off, dst_off,
-- 					  len, 0);
-+ 			dmaengine_unmap_put(um);
-+ 			result("test timed out", total_tests, src_off, dst_off,
-+ 			       len, 0);
-  			failed_tests++;
-  			continue;
- -		} else if (status !=3D DMA_SUCCESS) {
- +		} else if (status !=3D DMA_COMPLETE) {
-- 			enum dmatest_error_type type =3D (status =3D=3D DMA_ERROR) ?
-- 				DMATEST_ET_DMA_ERROR : DMATEST_ET_DMA_IN_PROGRESS;
-- 			thread_result_add(info, result, type,
-- 					  total_tests, src_off, dst_off,
-- 					  len, status);
-+ 			dmaengine_unmap_put(um);
-+ 			result(status =3D=3D DMA_ERROR ?
-+ 			       "completion error status" :
-+ 			       "completion busy status", total_tests, src_off,
-+ 			       dst_off, len, ret);
-  			failed_tests++;
-  			continue;
-  		}
-
---Signature=_Fri__15_Nov_2013_12_56_04_+1100_5hfUh=U8=qyGJA_g
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJShX85AAoJEMDTa8Ir7ZwVtJ8P/2PSXyCg3s8LenKqGaLz+rfJ
-LXTJodkSgRq4MpECtr0sYou9E6H7ftPO6UNqH6kq6m/Za3Yw1gbqoG+i2dzMG4uE
-ZSPR4ox1v/l4/h1Mdi6e12X7Tinnb9n9P8/4CF/cpk3KdgcSEkw3N43JchgAFnj9
-B7GcbtKI7MBq3xPCoFVhdzf0sgavMzJB9/BE895pjCW+uyTotKwcO0Fc5iJ40kzG
-fnL/G6PBIrmVHeAhc6PbtwhRr+uO8//ZaR+mE5gC5SAoWRg/xQ4aOuw6mwsfg63f
-DmF7NGzOpIg60SE2qFvZia8OrJUergsZl9gr7CacEumUgtmxRNO7qw4trAQ76zoR
-Yl4MMNu6fPiN2MbS9CNUKS+TTNZKLQZKe78yi0L2Ncumy2G4p3gXDUImSpszJqbr
-vzgXPfzAksr2OYKL6nOMoFAvRil9L1MHPWPHFAkZvDrjlouSY+bdlZm/cLhQnjtG
-q1MvBw2okPUbEhO/8OMNuYur8WcOHOy6RJZ4H0ku0kDyMXU7mB/0DycAwemDlYlT
-ZIJzw5hs3rG9059EpjJxm6awu3zWcXn03mr8ZvXYKkNcItbrj3dbWJ4vtl/MKX8c
-yArXwDb+8ezsXApPCg5TfEvsNsobFxGb7rguf3fTrHFFFCQ75OvhJX6w5yBmADe9
-X9VUK020G67LP557SRo7
-=s+aE
------END PGP SIGNATURE-----
-
---Signature=_Fri__15_Nov_2013_12_56_04_+1100_5hfUh=U8=qyGJA_g--
+DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IFJhbmR5IER1bmxhcCBbbWFp
+bHRvOnJkdW5sYXBAaW5mcmFkZWFkLm9yZ10NCj5TZW50OiBGcmlkYXksIE5vdmVtYmVyIDE1LCAy
+MDEzIDM6MDQgQU0NCj5UbzogU3RlcGhlbiBSb3Rod2VsbDsgbGludXgtbmV4dEB2Z2VyLmtlcm5l
+bC5vcmcNCj5DYzogTEtNTDsgcGVuZyB0YW87IFBlbmcsIFRhbzsgR3JlZyBLcm9haC1IYXJ0bWFu
+Ow0KPmFuZHJlYXMuZGlsZ2VyQGludGVsLmNvbTsgaHBkZC1kaXNjdXNzDQo+U3ViamVjdDogUmU6
+IGxpbnV4LW5leHQ6IFRyZWUgZm9yIE5vdiAxNCAobHVzdHJlKQ0KPg0KPk9uIDExLzEzLzEzIDIw
+OjIyLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3RlOg0KPj4gSGkgYWxsLA0KPj4NCj4+IFBsZWFzZSBk
+byAqbm90KiBhZGQgYW55IHYzLjE0IG1hdGVyaWFsIHRvIGxpbnV4LW5leHQgdW50aWwgYWZ0ZXIN
+Cj4+IHYzLjEzLXJjMSBpcyByZWxlYXNlZC4NCj4+DQo+PiBDaGFuZ2VzIHNpbmNlIDIwMTMxMTEz
+Og0KPj4NCj4NCj5QbGVhc2UgZml4IE1BTlkgYnVpbGQgZXJyb3JzIHRoYXQgc2hvdyB1cCB3aGVu
+IENPTkZJR19QUk9DX0ZTIGlzIG5vdA0KPmVuYWJsZWQuDQo+DQpJJ2xsIGxvb2sgaW50byB0aGlz
+Lg0KDQpUaGFua3MsDQpUYW8NCg0K
