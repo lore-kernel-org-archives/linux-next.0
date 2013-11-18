@@ -1,47 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Mon, 18 Nov 2013 18:09:35 -0500 (EST)
-Message-ID: <20131118.180935.73842675326744218.davem@davemloft.net>
-References: <20131118141933.7314374b0157183e0613599d@canb.auug.org.au>
-	<20131118084941.A9C76E0090@blue.fi.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: error fetching the cifs tree
+Date: Tue, 19 Nov 2013 10:20:47 +1100
+Message-ID: <20131119102047.a103f012e381f64da3cd4c2d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__19_Nov_2013_10_20_47_+1100_oNZ+XiZ1h_TD+mjK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:50634 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751415Ab3KRXJg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Nov 2013 18:09:36 -0500
-In-Reply-To: <20131118084941.A9C76E0090@blue.fi.intel.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44030 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751301Ab3KRXU5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Nov 2013 18:20:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kirill.shutemov@linux.intel.com
-Cc: sfr@canb.auug.org.au, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Date: Mon, 18 Nov 2013 10:49:41 +0200 (EET)
+--Signature=_Tue__19_Nov_2013_10_20_47_+1100_oNZ+XiZ1h_TD+mjK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Stephen Rothwell wrote:
->> Hi all,
->> 
->> After merging the final tree, today's linux-next build (sparc64 defconfig)
->> failed like this:
->> 
->> arch/sparc/mm/init_64.c: In function 'pte_alloc_one':
->> arch/sparc/mm/init_64.c:2568:9: error: unused variable 'pte' [-Werror=unused-variable]
->> 
->> Caused by the merge between commit 37b3a8ff3e08 ("sparc64: Move from 4MB
->> to 8MB huge pages") and commit 1ae9ae5f7df7 ("sparc: handle
->> pgtable_page_ctor() fail") (I had the following merge fix in linux-next,
->> but it didn't seem to propagate upstream - may have forgotten to point it
->> out :-().
->> 
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Mon, 18 Nov 2013 14:16:40 +1100
->> Subject: [PATCH] sparc64: merge fix
->> 
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> 
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Hi all,
 
-Applied, thanks everyone.
+Fetching the cifs tree produces this error:
+
+fatal: Couldn't find remote ref refs/heads/for-next
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__19_Nov_2013_10_20_47_+1100_oNZ+XiZ1h_TD+mjK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSiqDTAAoJEMDTa8Ir7ZwV3ZwP/iLvov1ua4pZwyDiZca8rM+r
+gnoxeqhectEXtlfcQ86Jm4vSGRmZloH0gS8qsKFv5bi2AoQ1dswZ9kBZnd+Teb/W
+CLsq/4C+MBByQFraoVRh8Vf8AJUmbvoC7KsnGsfQcUiqM3c2Ig4vY4bwlYRTo3PS
+LHLjODQPfON642CQJvdS2y5CRXCfKj/GkyJFqjEo3HLEYZ1Ks+GAK+VCbuBgRYPe
+NcctQ6yVD6Wf7+t2Iw+ZXIoo+KyMsztNCsQQty2UP4nw9GY7Z2KyRQvf7pt4lnkz
+ti+uJfFFg9Upw171DRnEPJX55QF/fwEk02Fo9k7tIRYGs8EgM4uaYab3bUKeluHu
+h7EbfQTSlleeh+OJkB4FIoY8BCt423Sa+saj90Me6Nib8OOIjo3JNlbzPTpvOTe2
+CYmnj/oHMKmv/PXZVLBwY4rCYPTJenJpJw0GYhqua8usY5jZpu2mCP+dpC+YItOR
+1riiJX840D+Zgz97K0dF1GsQLLh2rnf2L5dv7cy5Zn4TW4xqv1FXqvWRbgbVj4n2
++XwYxt9p3kwPYg1ZTkj5LfhtcP6rqdvcvXPOSeTzaBRycC5ugnYt1W5/nAHalfMy
+MSKdB+QwKaZYBGSobNqqv00ienFOe1e1/ZNv6RZ9Rww0H0kFVE6rogUWmXhm/mB7
+q2G/Dbih47SKS+Ixt/ss
+=OrWj
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_Nov_2013_10_20_47_+1100_oNZ+XiZ1h_TD+mjK--
