@@ -1,62 +1,47 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: Tree for Nov 15 (target_core_mod)
-Date: Mon, 18 Nov 2013 11:46:55 -0800
-Message-ID: <1384804015.4307.11.camel@haakon3.risingtidesystems.com>
-References: <20131115162455.b45631434f6417b221f2a4d5@canb.auug.org.au>
-	 <52865CB7.3070608@infradead.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Mon, 18 Nov 2013 18:09:35 -0500 (EST)
+Message-ID: <20131118.180935.73842675326744218.davem@davemloft.net>
+References: <20131118141933.7314374b0157183e0613599d@canb.auug.org.au>
+	<20131118084941.A9C76E0090@blue.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linux-iscsi.org ([67.23.28.174]:47833 "EHLO
-	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751544Ab3KRTrK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Nov 2013 14:47:10 -0500
-In-Reply-To: <52865CB7.3070608@infradead.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:50634 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751415Ab3KRXJg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Nov 2013 18:09:36 -0500
+In-Reply-To: <20131118084941.A9C76E0090@blue.fi.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, target-devel <target-devel@vger.kernel.org>, kmo@daterainc.com, Tejun Heo <tj@kernel.org>
+To: kirill.shutemov@linux.intel.com
+Cc: sfr@canb.auug.org.au, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 2013-11-15 at 09:41 -0800, Randy Dunlap wrote:
-> On 11/14/13 21:24, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Please do *not* add any v3.14 material to linux-next until after
-> > v3.13-rc1 is released.
-> > 
-> > Changes since 20131114:
-> > 
-> 
-> 
-> on i386:
-> 
-> 
-> ERROR: "percpu_ref_cancel_init" [drivers/target/target_core_mod.ko] undefined!
-> ERROR: "percpu_ref_kill_and_confirm" [drivers/target/target_core_mod.ko] undefined!
-> ERROR: "percpu_ref_init" [drivers/target/target_core_mod.ko] undefined!
-> 
-> 
-> Full randconfig file is attached.
-> 
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Date: Mon, 18 Nov 2013 10:49:41 +0200 (EET)
 
-Mmmm, confirmed that lib/Makefile not including percpu-refcount.o in
-obj-y is the problem here..  (CC'ing Tejun + Kent).
+> Stephen Rothwell wrote:
+>> Hi all,
+>> 
+>> After merging the final tree, today's linux-next build (sparc64 defconfig)
+>> failed like this:
+>> 
+>> arch/sparc/mm/init_64.c: In function 'pte_alloc_one':
+>> arch/sparc/mm/init_64.c:2568:9: error: unused variable 'pte' [-Werror=unused-variable]
+>> 
+>> Caused by the merge between commit 37b3a8ff3e08 ("sparc64: Move from 4MB
+>> to 8MB huge pages") and commit 1ae9ae5f7df7 ("sparc: handle
+>> pgtable_page_ctor() fail") (I had the following merge fix in linux-next,
+>> but it didn't seem to propagate upstream - may have forgotten to point it
+>> out :-().
+>> 
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Mon, 18 Nov 2013 14:16:40 +1100
+>> Subject: [PATCH] sparc64: merge fix
+>> 
+>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> 
+> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Applying the following patch to target-pending/for-next now..
-
---nab
-
-diff --git a/lib/Makefile b/lib/Makefile
-index f3bb2cb..eaa946d 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -26,7 +26,7 @@ obj-y += bcd.o div64.o sort.o parser.o halfmd4.o debug_locks.o random32.o \
-         bust_spinlocks.o hexdump.o kasprintf.o bitmap.o scatterlist.o \
-         gcd.o lcm.o list_sort.o uuid.o flex_array.o iovec.o clz_ctz.o \
-         bsearch.o find_last_bit.o find_next_bit.o llist.o memweight.o kfifo.o \
--        percpu_ida.o
-+        percpu-refcount.o percpu_ida.o
- obj-y += string_helpers.o
- obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
- obj-y += kstrtox.o
+Applied, thanks everyone.
