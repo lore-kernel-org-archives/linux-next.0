@@ -1,86 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (nfs tree
- related)
-Date: Mon, 18 Nov 2013 13:20:14 +1100
-Message-ID: <20131118132014.e574f520e4000d797bd5b3ba@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Mon, 18 Nov 2013 14:01:14 +1100
+Message-ID: <20131118140114.f7d4c4aadb5a033d1de53518@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__18_Nov_2013_13_20_14_+1100_HtIdVr1VvAH8AQfE"
+ boundary="Signature=_Mon__18_Nov_2013_14_01_14_+1100_PABJ42lacCKvz514"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52355 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:58629 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751292Ab3KRCUY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Nov 2013 21:20:24 -0500
+	with ESMTP id S1751082Ab3KRDB0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Nov 2013 22:01:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anna Schumaker <bjschuma@netapp.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
---Signature=_Mon__18_Nov_2013_13_20_14_+1100_HtIdVr1VvAH8AQfE
+--Signature=_Mon__18_Nov_2013_14_01_14_+1100_PABJ42lacCKvz514
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-ppc44x_defconfig) failed like this:
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-fs/nfs/dir.c: In function 'nfs_readdir_xdr_to_array':
-fs/nfs/dir.c:593:2: error: implicit declaration of function 'nfs4_label_all=
-oc' [-Werror=3Dimplicit-function-declaration]
-fs/nfs/dir.c:593:14: warning: assignment makes pointer from integer without=
- a cast [enabled by default]
-fs/nfs/dir.c:629:2: error: implicit declaration of function 'nfs4_label_fre=
-e' [-Werror=3Dimplicit-function-declaration]
-fs/nfs/dir.c: In function 'nfs_lookup_revalidate':
-fs/nfs/dir.c:1088:8: warning: assignment makes pointer from integer without=
- a cast [enabled by default]
-fs/nfs/dir.c: In function 'nfs_lookup':
-fs/nfs/dir.c:1296:8: warning: assignment makes pointer from integer without=
- a cast [enabled by default]
-fs/nfs/inode.c: In function '__nfs_revalidate_inode':
-fs/nfs/inode.c:890:2: error: implicit declaration of function 'nfs4_label_a=
-lloc' [-Werror=3Dimplicit-function-declaration]
-fs/nfs/inode.c:890:8: warning: assignment makes pointer from integer withou=
-t a cast [enabled by default]
-fs/nfs/inode.c:927:2: error: implicit declaration of function 'nfs4_label_f=
-ree' [-Werror=3Dimplicit-function-declaration]
-fs/nfs/super.c: In function 'nfs_parse_mount_options':
-fs/nfs/super.c:1406:17: error: 'NFS4_MAX_MINOR_VERSION' undeclared (first u=
-se in this function)
-fs/nfs/super.c:1406:17: note: each undeclared identifier is reported only o=
-nce for each function it appears in
+In file included from arch/sparc/include/asm/tlbflush_64.h:4:0,
+                 from arch/sparc/include/asm/tlbflush.h:4,
+                 from arch/sparc/include/asm/pgtable_64.h:961,
+                 from arch/sparc/include/asm/pgtable.h:4,
+                 from arch/sparc/mm/tsb.c:10:
+include/linux/mm.h: In function 'pgtable_init':
+include/linux/mm.h:1391:2: error: implicit declaration of function 'pgtable=
+_cache_init' [-Werror=3Dimplicit-function-declaration]
+In file included from arch/sparc/include/asm/pgtable.h:4:0,
+                 from arch/sparc/mm/tsb.c:10:
+arch/sparc/include/asm/pgtable_64.h: At top level:
+arch/sparc/include/asm/pgtable_64.h:978:13: error: conflicting types for 'p=
+gtable_cache_init' [-Werror]
+include/linux/mm.h:1391:2: note: previous implicit declaration of 'pgtable_=
+cache_init' was here
 
-Presumably caused by commit 4b45df7999f9 ("NFS: Enabling v4.2 should not
-recompile nfsd and lockd").
+Caused by commit ea1e7ed33708 ("mm: create a separate slab for page->ptl
+allocation") from Linus' tree.  I have not seen that patch in linux-next
+before today :-(
 
 I have reverted that commit for today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__18_Nov_2013_13_20_14_+1100_HtIdVr1VvAH8AQfE
+--Signature=_Mon__18_Nov_2013_14_01_14_+1100_PABJ42lacCKvz514
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSiXliAAoJEMDTa8Ir7ZwVtU0QAIn5Cft+OU72h81sQjEt6n8j
-b4OgVgClNCBtq1yhLEh5Hjcc3Pe4d9ycVS2PQINtL/qxSVk4Hnzhgm7c0w3s3lZK
-wFH8pEwmUO5bmGlmIeg4L+h6FTazr3aMnFTjSgQdoQqV68X2w3e+oTB2G0115r/J
-YqYIXJio2q1LpDh5PTigQOjEw4oo4b3JWPC0KixPlifpNhG9LiegyxcHh+3BjdPB
-H6Y3OKfhXu/fO3QQ+c7TeihVUqzN/gkGUYJBnDATvP1d+FJo+vRBQ9x8e2R7MWuo
-SwKoCtpPKZP1Kt1fCQ5xfid80GaPc5jkKYF97wOwX9F+lVPcK3mmxSPLOVIJuhW8
-TvmPGpWjIZhcfQls9lZy0gAJUeLKLUGo2oyn2mEGP6I7i8wfA+fjRyPZIBmMQL1V
-bXmLRN5BX2hlWbO5m8VAF97Fce8rqxaaJxKVm3yXv1irzskzeTbJ2E6meZ7AkOHT
-UO6NvdtTedeNK32qqLle4sTDs+WAS0YHC3CTjTsx+LKZvmv1I3hpS8bgpv35LUHc
-4I6bp24PpflAxtm3KKiHifDFHpsVmbrvCBqhYZWDEPoWDtPrMDXTy1GQ0+5VHxuu
-z4acUzXji91l8htaC2jzaL+ikX5pyTvY5IY6iFfMqaLTQsG+J7+TcVBd9st1IKR6
-Gw0n8MIg+ZqjIW230K3R
-=cZMM
+iQIcBAEBCAAGBQJSiYL+AAoJEMDTa8Ir7ZwVJuwP/RzMnVZ7CmXl9jF+c3az+Xon
+Y589YVdwD2iKSGV3bVDU74f6mdf9aAEGjHUGTdlgHTz/DId1x/ZdofVR0DhZwNBS
+dlOxRwPqx2DbOoS6TgIcFyo77HElSk/XFXgbzssYNtINVUbREady36MQt8cCJdLm
+aCXg0AU+gsci5kdsNXUusWeQVm2Dev9MV9sCtP2iu3yvZRdExqEqboQQfciDkId9
+P3Ubq+tugzu7kDhSb6lt58I9XE5rgCoHRNQenkRzZqWCErvWGFGFEBh4CDyR39iU
+Ye+lCamCbu5vz4zu09kRqOFArtKAVNFWVnCpWtUokB16CHwza5rsjFh8YcB0CDCZ
+n3d0V8xGVgE2l9IhslJrH7FAmr6x3gGSdrB+322XRNOgE7oSTRQ3F9IOzH+xHBJv
+3GQCmUPCDRNV85YcURWbBHHLb/B5BUdcBIkqEYkE616oHyDv2m3QnMmkQWZKxpUs
+4eYPRmTrypVir02YHfMVcdIvyDeS4YjshuS/MK9gNUPjcQBE0UDbX++slztOHWMJ
+E1kIQ/Z+JZq6KMwj0Rp8Ow3aUMwbpehkr0hCRZhtSWdX2gUdfsJc1sUBfqCq9eKr
+7N/iF47xpRo5M63ydy0ssLXx7SWHAF7LVCCJj+h4An/uEzoPqVeK2q1rV0vZMEZ+
+hHwBFQByo4vQ50ZuAExy
+=SRF8
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__18_Nov_2013_13_20_14_+1100_HtIdVr1VvAH8AQfE--
+--Signature=_Mon__18_Nov_2013_14_01_14_+1100_PABJ42lacCKvz514--
