@@ -1,63 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfs tree
-Date: Tue, 19 Nov 2013 11:01:27 +1100
-Message-ID: <20131119110127.7cad0aa4d64f4641f76b761d@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the pm tree
+Date: Tue, 19 Nov 2013 12:43:57 +1100
+Message-ID: <20131119124357.a6191743b0f568d40c8291d5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__19_Nov_2013_11_01_27_+1100__9_axXg1MyPflY5y"
+ boundary="Signature=_Tue__19_Nov_2013_12_43_57_+1100_=kZeRQy5826sBfi0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60441 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48892 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751321Ab3KSABk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Nov 2013 19:01:40 -0500
+	with ESMTP id S1751341Ab3KSBoJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Nov 2013 20:44:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anna Schumaker <bjschuma@netapp.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
---Signature=_Tue__19_Nov_2013_11_01_27_+1100__9_axXg1MyPflY5y
+--Signature=_Tue__19_Nov_2013_12_43_57_+1100_=kZeRQy5826sBfi0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Trond,
+Hi Linus,
 
-After merging the nfs tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the gpio tree got a conflict in
+drivers/gpio/gpiolib.c between commit 7b1998116bbb ("ACPI / driver core:
+Store an ACPI device pointer in struct acpi_dev_node") from the pm tree
+and commit f760f1967ee8 ("gpiolib: use dedicated flags for GPIO
+properties") from the gpio tree.
 
-In file included from fs/nfs/dns_resolve.c:52:0:
-fs/nfs/netns.h:28:15: error: 'NFS4_MAX_MINOR_VERSION' undeclared here (not =
-in a function)
-  int cb_users[NFS4_MAX_MINOR_VERSION + 1];
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Presumably caused by commit 1a29448203ea ("NFS: Enabling v4.2 should not
-recompile nfsd and lockd").  This commit is not doing well :-(
-
-I have reverted that commit again for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__19_Nov_2013_11_01_27_+1100__9_axXg1MyPflY5y
+diff --cc drivers/gpio/gpiolib.c
+index 4e10b10d3ddd,48d1a67ed488..000000000000
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@@ -13,7 -13,7 +13,8 @@@
+  #include <linux/acpi_gpio.h>
+  #include <linux/idr.h>
+  #include <linux/slab.h>
+ +#include <linux/acpi.h>
++ #include <linux/gpio/driver.h>
+ =20
+  #define CREATE_TRACE_POINTS
+  #include <trace/events/gpio.h>
+
+--Signature=_Tue__19_Nov_2013_12_43_57_+1100_=kZeRQy5826sBfi0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSiqpbAAoJEMDTa8Ir7ZwVxk0P/idqqU0xJiDTGAJnzab5UnQZ
-xQZ+fl5s/uHd+DwfZQ02gxKmDIlIfimkyKd5gGKe+yNpkKUPbLQRvV2NfrNLT5pX
-aOVb7ZReQjV7jTYa3tEbEG8igYPS5+7DOu0xKHyC+IyCLATwn9AcY2INwRp9MTg3
-nJHkafq1hD/vOs3E6v3NW1Xeebh7GkUrAuFK5r98zPs0vOYm+j8uAbFeE8st8RLC
-UzPyMlbuIeJskM/+WIvbKbtGBa6v+EzCC5BUrLcOKPpT0sso4HUkRZs8j+LF9n6q
-D2U+xRsvDbUjWNNxjVGAsUZRMHOWtZY1s1nVt2Knz3028fUWwDmioa1yrgW7oD3K
-EJVL2bDFePflJeXX5jX9RE9SgoL+TYBFIBESK7IiedaqRuHpR3QMY8J4rg46izgZ
-eD135+Ncfvg2FEds/+t+HjCxnwgXSw1RdwhCl+dBhpbxQyebbRmrzcOVDYp4GBHK
-Efw8goFN+kdRbt4lyaHtSocyzZGK47ofh6HL5MCQlbgMiY/6dQ58ZIoYN/7tFk6v
-7JLnwgw0AMXtj56PJ1tiqlUtCrTh6L9gPk17J+QlFbk1lwt1CDyc8C2CsLuYYTIL
-3N1OvgzdWEl8a9+vZbbWiAh6RWt2NXu+ZM3Yl1IREdGdKj6L4MYod7G0+pIjhauG
-nbqadTTDKI1Zl5XSrTI0
-=cIap
+iQIcBAEBCAAGBQJSisJhAAoJEMDTa8Ir7ZwVK6cP/3FoZjxUJgXaeH0rwJZJqOCP
+CcreoXBl9xBvX1f/pSaG8XZ+qdJ++ms/hR0zXVjMDrznucc/3DxI2y1hpAr2oMXf
+ceQPRzFv4ZIShKpeJGIHvZCuUENa16MiY+EMJbNfb1cM4h3DDZz5bzoclr/uIoTv
+MuIIEeI/mpi96HdOFaXxCHpYdIfoRcd1efbHWZ0IXVcTIffEIbtMnfK7S9SFhy3O
+yC+dWy2AZ3Gll5H565yG9CzKaSulO8O+ZpO9qsU59QS3scWSEcT7KvgfQK4vcCSw
+twDOhtFYBsiklNbBnmRP4L5PyzP0csTsf/HtHgmIzLGzvRV6TPCDeTM3gH3U84+u
+Oty2Orlh7DE38xITOqn1INrBSgkrVlVh4aG7BBsRiw+dIQlQif2NXmJVv1pLcywN
+TTDRqBqYsSokZ6x0EOWTxGDzu0yOfb+XplsUqymg121jczxsWMCkA3tkg5wMZwwe
+lBffsCKXZK65O4OTlv36Kwcq3JJQhBdcoPj33a8T1NOzcXZDACip5svXb7y2s6LX
+c7o9x9koiKYegeUODmX1KsyOdg+eibHpFZCXwPmxYygp0GZG82fBSonElbv3ei0x
+O8UXwSt9W7KlAo4Qib//RTGj4hmf7vQzBAfbn5RD5I1Cbm+N3NZqfgb03cRCXXeM
+hOFGmfGveXTQyrsMzisC
+=Zx0D
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__19_Nov_2013_11_01_27_+1100__9_axXg1MyPflY5y--
+--Signature=_Tue__19_Nov_2013_12_43_57_+1100_=kZeRQy5826sBfi0--
