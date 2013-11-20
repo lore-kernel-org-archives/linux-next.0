@@ -1,34 +1,69 @@
-From: John Doe <foobar5252@hotmail.com>
-Subject: Windows does not like =?utf-8?b?YGF1eGA=?= file names.
-Date: Tue, 19 Nov 2013 23:15:07 +0000 (UTC)
-Message-ID: <loom.20131120T000349-818@post.gmane.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Windows does not like `aux` file names.
+Date: Wed, 20 Nov 2013 11:10:25 +1100
+Message-ID: <20131120111025.32a2033aa7ef205e3d39c572@canb.auug.org.au>
+References: <loom.20131120T000349-818@post.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__20_Nov_2013_11_10_25_+1100_1zz+Dqgvml6S33nR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:60154 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752166Ab3KSXUF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Nov 2013 18:20:05 -0500
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glkn-linux-next@m.gmane.org>)
-	id 1ViuaR-0007t5-Ty
-	for linux-next@vger.kernel.org; Wed, 20 Nov 2013 00:20:04 +0100
-Received: from h246.46.28.71.dynamic.ip.windstream.net ([71.28.46.246])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-next@vger.kernel.org>; Wed, 20 Nov 2013 00:20:03 +0100
-Received: from foobar5252 by h246.46.28.71.dynamic.ip.windstream.net with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-next@vger.kernel.org>; Wed, 20 Nov 2013 00:20:03 +0100
+Received: from haggis.pcug.org.au ([203.10.76.10]:57293 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752199Ab3KTAKk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Nov 2013 19:10:40 -0500
+In-Reply-To: <loom.20131120T000349-818@post.gmane.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: John Doe <foobar5252@hotmail.com>
+Cc: linux-next@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, LKML <linux-kernel@vger.kernel.org>, Dave Airlie <airlied@linux.ie>
+
+--Signature=_Wed__20_Nov_2013_11_10_25_+1100_1zz+Dqgvml6S33nR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-drivers/gpu/drm/nouveau/core/subdev/i2c/aux.c 
+On Tue, 19 Nov 2013 23:15:07 +0000 (UTC) John Doe <foobar5252@hotmail.com> =
+wrote:
+>
+> drivers/gpu/drm/nouveau/core/subdev/i2c/aux.c=20
+>=20
+> When trying to clone the linux kernel on Windows, that file will fail due=
+ to
+> Windows not liking the file name `aux` since it's one of the reserved wor=
+ds
+> used for DOS devices.
 
-When trying to clone the linux kernel on Windows, that file will fail due to
-Windows not liking the file name `aux` since it's one of the reserved words
-used for DOS devices.
+That file was created by commit 4196faa86232 ("drm/nouveau/i2c: port to
+subdev interfaces") and has been in the main kernel tree since v3.7-rc1.
+
+This is not a problem with linux-next as such.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__20_Nov_2013_11_10_25_+1100_1zz+Dqgvml6S33nR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSi/31AAoJEMDTa8Ir7ZwVc8gP/1GH6mot62/s8BzZski45HCm
+uSRfNSBEVkUpFuS4cNy+4gNTgPIFkkOpI6YYZNTO7akXXEAXCPgDEvhqTsg6DS/o
+kKRKpiVpF6HDgdmOwuLz3T8819dxh6tuKwxCaiZ6wTP+jK1t1qZj9nOETR+pyPo/
+zeKmArPsPmV5SKK4A+iMZiMEe2z1N0n328Lh/yAMUI7jiCX9pM8iO/clQxlUTOec
+cw2n39O6U8vQL9I6/epD395AGhsTSPKHxuYYt90/f5OuWwVInrFi68fPyin6m/Eu
+URbgaVBD81yapzt2jMS2U+aRMbnRaUA6P6tQvYt8+FlaLBMLLl7ExJjhIroCx8NB
+WKB4OEogEU2lTmUDlLfqpCrJMPGFkmxnyoavwu0Uf4lIk3cLLfYdLkuhenCK8TR2
+VEaqadYPfGi71AUxaDqneClcDHkrxfDfhF2IomrLWNFOK9osXgitpUNG/5u55HsS
+TZ4yF6ExDfQbTmTxp3tIlisn9Abn4SVR4LjAD3UKj1IRn3cIuSRHbHGTlyRZC52C
+jRg0cU/kWVB4BUC5JJeanZW0u+wSZpHIm2XXBHkR15tpDLsuShHwbFNJ0Hc8SANr
+jcnj3MisUNkURRJYZF+LbCxRFe1mc34uTc5jZ/YwubaIJSlXkIJ895GcgO5TjY9D
+kh90s14pjtFfqpYA8H2X
+=JTo0
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__20_Nov_2013_11_10_25_+1100_1zz+Dqgvml6S33nR--
