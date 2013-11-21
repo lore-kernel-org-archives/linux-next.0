@@ -1,55 +1,46 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: mmotm 2013-11-20-16-13 uploaded (arch/um/kernel/sysrq.c)
-Date: Thu, 21 Nov 2013 09:15:38 +0100
-Message-ID: <4049956.nmFOrVzcI3@sandpuppy>
-References: <20131121001408.17DC85A41C6@corp2gmr1-2.hot.corp.google.com> <528D5935.6070907@infradead.org>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: build failure after merge of the final tree (Linus'
+ tree related - powerpc)
+Date: Thu, 21 Nov 2013 23:11:28 +1100
+Message-ID: <20131121121127.GG15913@concordia>
+References: <20131121134622.a853064a1b5a8355e5077737@canb.auug.org.au>
+ <20131121143334.44be4231@kryten>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <528D5935.6070907@infradead.org>
-Sender: owner-linux-mm@kvack.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, user-mode-linux-devel@lists.sourceforge.net
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:41195 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753866Ab3KUMLa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Nov 2013 07:11:30 -0500
+Content-Disposition: inline
+In-Reply-To: <20131121143334.44be4231@kryten>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Anton Blanchard <anton@samba.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-Am Mittwoch, 20. November 2013, 16:52:05 schrieb Randy Dunlap:
-> On 11/20/13 16:14, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2013-11-20-16-13 has been uploaded to
-> > 
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > mmotm-readme.txt says
-> > 
-> > README for mm-of-the-moment:
-> > 
-> > http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
+On Thu, Nov 21, 2013 at 02:33:34PM +1100, Anton Blanchard wrote:
 > 
-> on i386:
-> (with um i386 defconfig)
+> Hi,
 > 
-> arch/um/kernel/sysrq.c:22:13: error: expected identifier or '(' before 'do'
-> um/kernel/sysrq.c:22:13: error: expected identifier or '(' before 'while'
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > <stdin>:1:0: error: -mcall-aixdesc must be big endian
 > 
-> 
-> so sysrq.c is picking up <linux/stacktrace.h> somehow and not liking it.
+> Urgh, allyesconfig is building an LE kernel. Ian: do we need to reverse
+> the polarity of the option, and call it CONFIG_CPU_BIG_ENDIAN?
 
-um/kernel/sysrq.c has
-static void print_stack_trace(unsigned long *sp, unsigned long bp)
-and linux/stracktrace.h has
-# define print_stack_trace(trace, spaces)               do { } while (0)
+More or less. See what we did with PPC_WERROR, for the same reasons, so
+that it was off for an allyesconfig.
 
-So um's print_stack_trace needs to be renamed.
-Thanks a lot for reporting!
+    config PPC_DISABLE_WERROR
+            bool "Don't build arch/powerpc code with -Werror"
+            default n
+    
+    config PPC_WERROR
+            bool
+            depends on !PPC_DISABLE_WERROR
+            default y
 
-Thanks,
-//richard
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+cheers
