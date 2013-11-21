@@ -1,32 +1,35 @@
-From: Anton Blanchard <anton@samba.org>
-Subject: Re: linux-next: build failure after merge of the final tree (Linus'
- tree related - powerpc)
-Date: Thu, 21 Nov 2013 14:33:34 +1100
-Message-ID: <20131121143334.44be4231@kryten>
-References: <20131121134622.a853064a1b5a8355e5077737@canb.auug.org.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: randconfig build error with next-20131120, in
+ drivers/input/touchscreen
+Date: Wed, 20 Nov 2013 21:07:34 -0800
+Message-ID: <20131121050733.GD4702@core.coreip.homeip.net>
+References: <CA+r1ZhimRvYuw2SAajEM6y-P2TL3KMdAMyX6UQ0BFb-peRMn5A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:41076 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751133Ab3KUDdf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Nov 2013 22:33:35 -0500
-In-Reply-To: <20131121134622.a853064a1b5a8355e5077737@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CA+r1ZhimRvYuw2SAajEM6y-P2TL3KMdAMyX6UQ0BFb-peRMn5A@mail.gmail.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rydberg@euromail.se, floe@butterbrot.org, dh.herrmann@gmail.com, linux-input@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
+Hi Jim,
 
-Hi,
-
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+On Wed, Nov 20, 2013 at 11:23:31AM -0700, Jim Davis wrote:
+> Building with the attached random configuration file,
 > 
-> <stdin>:1:0: error: -mcall-aixdesc must be big endian
+> drivers/built-in.o: In function `sur40_disconnect':
+> sur40.c:(.text+0x15c1cc): undefined reference to
+> `input_unregister_polled_device'
+> sur40.c:(.text+0x15c1d5): undefined reference to `input_free_polled_device'
+> drivers/built-in.o: In function `sur40_probe':
+> sur40.c:(.text+0x15c47a): undefined reference to `input_allocate_polled_device'
+> sur40.c:(.text+0x15c65b): undefined reference to `input_register_polled_device'
+> sur40.c:(.text+0x15c68b): undefined reference to `input_free_polled_device'
+> make: *** [vmlinux] Error 1
 
-Urgh, allyesconfig is building an LE kernel. Ian: do we need to reverse
-the polarity of the option, and call it CONFIG_CPU_BIG_ENDIAN?
+Thanks for the report. I amended the commit to select INPUT_POLLDEV.
 
-Anton
+-- 
+Dmitry
