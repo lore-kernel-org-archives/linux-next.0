@@ -1,47 +1,105 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2013-11-20-16-13 uploaded (arch/um/kernel/sysrq.c)
-Date: Wed, 20 Nov 2013 16:52:05 -0800
-Message-ID: <528D5935.6070907@infradead.org>
-References: <20131121001408.17DC85A41C6@corp2gmr1-2.hot.corp.google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (Linus'
+ tree related - powerpc)
+Date: Thu, 21 Nov 2013 13:46:22 +1100
+Message-ID: <20131121134622.a853064a1b5a8355e5077737@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20131121001408.17DC85A41C6@corp2gmr1-2.hot.corp.google.com>
-Sender: owner-linux-mm@kvack.org
-To: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Richard Weinberger <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net
+Content-Type: multipart/mixed; boundary="===============3759104183444479349=="
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Blanchard <anton@samba.org>
 List-Id: linux-next.vger.kernel.org
 
-On 11/20/13 16:14, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2013-11-20-16-13 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
+--===============3759104183444479349==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__21_Nov_2013_13_46_22_+1100_vfGZ4JQYADJS.m_v"
 
-on i386:
-(with um i386 defconfig)
+--Signature=_Thu__21_Nov_2013_13_46_22_+1100_vfGZ4JQYADJS.m_v
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-arch/um/kernel/sysrq.c:22:13: error: expected identifier or '(' before 'do'
-um/kernel/sysrq.c:22:13: error: expected identifier or '(' before 'while'
+Hi all,
 
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-so sysrq.c is picking up <linux/stacktrace.h> somehow and not liking it.
+<stdin>:1:0: error: -mcall-aixdesc must be big endian
+<stdin>:1:0: error: -mcall-aixdesc must be big endian
+scripts/gcc-version.sh: line 31: printf: #: invalid number
+scripts/gcc-version.sh: line 31: printf: #: invalid number
+<stdin>:1:0: error: -mcall-aixdesc must be big endian
+<stdin>:1:0: error: -mcall-aixdesc must be big endian
+scripts/gcc-version.sh: line 31: printf: #: invalid number
+scripts/gcc-version.sh: line 31: printf: #: invalid number
+<stdin>:1:0: error: -mcall-aixdesc must be big endian
+<stdin>:1:0: error: -mcall-aixdesc must be big endian
+<stdin>:1:0: error: -mcall-aixdesc must be big endian
+scripts/gcc-version.sh: line 29: printf: #: invalid number
+scripts/gcc-version.sh: line 29: printf: #: invalid number
+scripts/gcc-version.sh: line 29: printf: #: invalid number
+/bin/sh: line 0: test: 0001 6000 0160: integer expression expected
+scripts/mod/empty.c:1:0: error: -mcall-aixdesc must be big endian
+ /* empty file to figure out endianness / word size */
+ ^
+scripts/mod/devicetable-offsets.c:1:0: error: -mcall-aixdesc must be big en=
+dian
+ #include <linux/kbuild.h>
+ ^
+kernel/bounds.c:1:0: error: -mcall-aixdesc must be big endian
+ /*
+ ^
 
+Caused by commit 7c105b63bd98 ("powerpc: Add CONFIG_CPU_LITTLE_ENDIAN
+kernel config option").
 
--- 
-~Randy
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--Signature=_Thu__21_Nov_2013_13_46_22_+1100_vfGZ4JQYADJS.m_v
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSjXQDAAoJEMDTa8Ir7ZwV9ckQAIHy/rvp/8a5qLLvKtDsBLXt
+a9PPF3A6+6XtYN70jFOYZV1P5uRvmJEXrNywBCKPj2pcBvlLl7iorZOsYt4It1K3
+Gzd7TBvGtknwKqA4DtBojqijf1Zr1NTPItxEKv4Aen+1WXPyJBvPCqsr8ioH0tz8
+1SG548BD4QHdrig/KXElrHAjKjNPi6N4MwAN3x0aBPIQc6fjty4PJlFJRADfAOwE
+3x4LvgRzVY/j1CpUUIkBlCDf74FORNbhmoGjlOZ3TmirM/u8WED7ErJmZEvDui8c
+D2/DnTwjb7dEuDUye3e54o427VPWBUcGzCXBZL4lRzKAi2lBynmZNpzq8/atETAc
+X+A181wBGbKdpXWqFf8ESAHHejbJvBOkSYiWody64cuxyiitAS664YC/ujCct7xU
+Zc6ioGsFpMbnNOhG765+qyzmkpTUQH0GDj5ReF93JGb9i9ZG6mAP7fpOeKT7iHc+
+NHKSYHa3FrwRMNDtCyxgT3I7Z4zbvgYIG/n+xXbtyaD2tx94KrTaM0Wd7w7VW4BB
+tmVOwCrOJGONUSKkt91yeyGCl9O0ZJfHDn6zcNDid1m6gW50+vnYOUE+976dJaAB
+s+pxWz/5Kq3pYGkd0oBlVTTzNbID99gn7Edq8TuVk6//CsrRfElSuMwYXozCZX7i
+BtU5MnFMYzzBQjvKyjcG
+=WRj1
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__21_Nov_2013_13_46_22_+1100_vfGZ4JQYADJS.m_v--
+
+--===============3759104183444479349==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linuxppc-dev mailing list
+Linuxppc-dev@lists.ozlabs.org
+https://lists.ozlabs.org/listinfo/linuxppc-dev
+--===============3759104183444479349==--
