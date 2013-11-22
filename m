@@ -1,66 +1,57 @@
-From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
-Subject: [PATCH linux-next] hisax: disable build for big-endian arm
-Date: Fri, 22 Nov 2013 00:49:54 +0100
-Message-ID: <1385077794-17022-1-git-send-email-vincent.stehle@laposte.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: are the commits in the logfs tree ever going to be
+ merged?
+Date: Fri, 22 Nov 2013 11:13:02 +1100
+Message-ID: <20131122111302.06c53abd22995961b1f200ec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__22_Nov_2013_11_13_02_+1100_r_22DPBRaW.5Bo3j"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1-g21.free.fr ([212.27.42.1]:39234 "EHLO smtp1-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751663Ab3KUX7V (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Nov 2013 18:59:21 -0500
+Received: from dspam.tip.net.au ([203.10.76.12]:51302 "EHLO members.tip.net.au"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754786Ab3KVANP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Nov 2013 19:13:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, Karsten Keil <isdn@linux-pingi.de>
+To: Prasad Joshi <prasadjoshi.linux@gmail.com>, =?UTF-8?B?IkrDtnJuIEVuZ2Vs?= =?UTF-8?B?Ig==?= <joern@logfs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tristan Lelong <tristan.lelong@blunderer.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-Teles PCI and HFC PCI-bus refuse to build on big-endian ARM; disable th=
-em in
-Kconfig.
+--Signature=_Fri__22_Nov_2013_11_13_02_+1100_r_22DPBRaW.5Bo3j
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
-Cc: Karsten Keil <isdn@linux-pingi.de>
----
+Hi all,
 
-Hi,
+I noticed that the commits in the logfs tree
+(git://github.com/prasad-joshi/logfs_upstream.git#master) have been
+around since September and November, 2012.  Are they ever going to be
+merged?  Or is this tree defunct?
 
-This can be seen on e.g. linux next-20131121 with arm allyesconfig.
-
-Best regards,
-
-V.
-
- drivers/isdn/hisax/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/isdn/hisax/Kconfig b/drivers/isdn/hisax/Kconfig
-index d9edcc9..53dbb75 100644
---- a/drivers/isdn/hisax/Kconfig
-+++ b/drivers/isdn/hisax/Kconfig
-@@ -109,7 +109,7 @@ config HISAX_16_3
-=20
- config HISAX_TELESPCI
- 	bool "Teles PCI"
--	depends on PCI && (BROKEN || !(SPARC || PPC || PARISC || M68K || (MIP=
-S && !CPU_LITTLE_ENDIAN) || FRV || (XTENSA && !CPU_LITTLE_ENDIAN)))
-+	depends on PCI && (BROKEN || !(SPARC || PPC || PARISC || M68K || (MIP=
-S && !CPU_LITTLE_ENDIAN) || FRV || (XTENSA && !CPU_LITTLE_ENDIAN) || (A=
-RM && !CPU_LITTLE_ENDIAN)))
- 	help
- 	  This enables HiSax support for the Teles PCI.
- 	  See <file:Documentation/isdn/README.HiSax> on how to configure it.
-@@ -318,7 +318,7 @@ config HISAX_GAZEL
-=20
- config HISAX_HFC_PCI
- 	bool "HFC PCI-Bus cards"
--	depends on PCI && (BROKEN || !(SPARC || PPC || PARISC || M68K || (MIP=
-S && !CPU_LITTLE_ENDIAN) || FRV || (XTENSA && !CPU_LITTLE_ENDIAN)))
-+	depends on PCI && (BROKEN || !(SPARC || PPC || PARISC || M68K || (MIP=
-S && !CPU_LITTLE_ENDIAN) || FRV || (XTENSA && !CPU_LITTLE_ENDIAN) || (A=
-RM && !CPU_LITTLE_ENDIAN)))
- 	help
- 	  This enables HiSax support for the HFC-S PCI 2BDS0 based cards.
-=20
 --=20
-1.8.4.2
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__22_Nov_2013_11_13_02_+1100_r_22DPBRaW.5Bo3j
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSjqGSAAoJEMDTa8Ir7ZwV8YEP/3kGMo2vE+3IKdl7wDYT6etY
+oqVKpttw/Qai9S1sCaj/CBpy4OwyeOuVT4DbapuwJCsLSVCwXx0Q0GE1J97jpEaB
+Cd+O8oNbZM5kOkPprKeFofT3M2eSEgEeASPnlJfb4MYKW92Mqp5m8L93WSDDIsaH
+TTm+iCeIWgSOMz58ORCPOSJlhUxneGLNDqmzQSHEOPathcvibJaVieCgU5f9l5pS
+Je8G5F/QT3ywNYBFF/3xlxo81kO3i6C28EIK4svq4l1gt0B8abFMINAz68/BLV9p
+SXOc2NpwSzjzNTDzmqy9x3AV8KkRDMt3G/ToFgpWjmsFd2CWHFHVdOFkkgZZmk8r
+0Q5iv81pPBGfzaVnAepTYR5hWIM2kkx9vQIbdMCF+oMsgsmacPTKHvPE+j3OZYBZ
+J2Ec8ebFlQikViBP9MvmuSKTFjAkg2PcSVuGUUGyKUR4cVswNG0xDLkWj5wDVmBd
+fmjByXDN/OKttDtpO8GskoTiI8YuVUCn7uRW410hyrj8L0uf5Df/ak05F0FxO4U1
+CbUI6lypKaUfbQES9DcRAU/E4NpYD9uLi1pCtC83n61Tp+qbRsA4c1PKoxwVreaj
+nkK3IxG0lSlL85r7v3ijvVdjOTH2LyYX8QnV+mB2o5WlFIJTJ1xbJKNkD81IbuwK
+vkoNTmoc7nzZbYbx7l4S
+=J0NP
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__22_Nov_2013_11_13_02_+1100_r_22DPBRaW.5Bo3j--
