@@ -1,237 +1,184 @@
-From: akpm@linux-foundation.org
-Subject: mmotm 2013-11-22-16-50 uploaded
-Date: Fri, 22 Nov 2013 16:51:08 -0800
-Message-ID: <20131123005108.B1FA95A41FE@corp2gmr1-2.hot.corp.google.com>
-Return-path: <owner-linux-mm@kvack.org>
-Sender: owner-linux-mm@kvack.org
-To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next stats (Was: Linux 3.13-rc1 is out)
+Date: Mon, 25 Nov 2013 11:10:05 +1100
+Message-ID: <20131125111005.e85b207a474ef992c385c8df@canb.auug.org.au>
+References: <CA+55aFxK5hkhteiL5cyPtHX5reup6aOiHQTCDKKdBsHiWsroGA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__25_Nov_2013_11_10_05_+1100_fYoGDdes67=4Rhs4"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48218 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751914Ab3KYAKP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 24 Nov 2013 19:10:15 -0500
+In-Reply-To: <CA+55aFxK5hkhteiL5cyPtHX5reup6aOiHQTCDKKdBsHiWsroGA@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-The mm-of-the-moment snapshot 2013-11-22-16-50 has been uploaded to
+--Signature=_Mon__25_Nov_2013_11_10_05_+1100_fYoGDdes67=4Rhs4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   http://www.ozlabs.org/~akpm/mmotm/
+On Fri, 22 Nov 2013 12:36:37 -0800 Linus Torvalds <torvalds@linux-foundatio=
+n.org> wrote:
+>
+> Talking about mistakes... I suspect it was a mistake to have that
+> extra week before the merge window opened, and I probably should just
+> have done a 3.12-rc8 instead. Because the linux-next statistics look
+> suspicious, and we had extra stuff show up there not just in that
+> first week. Clearly people took that "let's have an extra week of
+> merge window" and extrapolated it a bit too much. Oh, well. Live and
+> learn.
 
-mmotm-readme.txt says
+As usual, the executive friendly graph is at
+http://neuling.org/linux-next-size.html :-)
 
-README for mm-of-the-moment:
+(No merge commits counted, next-20131105 was the linux-next based on v3.12)
 
-http://www.ozlabs.org/~akpm/mmotm/
+Commits in v3.13-rc1 (relative to v3.12): 10518		(v3.12-rc11:	9474)
+Commits in next-20131105:		   9029		(next-20130903:	8891)
+Commits with the same SHA1:		   7979		(		7991)
+Commits with the same patch_id:		    621	(1)	(		 472)
+Commits with the same subject line:	     70	(1)	(		  70)
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+(1) not counting those in the lines above.
 
-You will need quilt to apply these patches to the latest Linus release (3.x
-or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+So commits in -rc1 that were in next-20131105:	8670	82.4%	(8533	90.1%)
+Commits in -rc1 that were not in next-20131105:	1848	17.6%	( 941	 9.9%)
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+So worse than last time, probably because of the 1 week delay.
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+[Aside: if I use next-20131111 as a base (when Linus' starting doing
+merges in earnest), the stats look like this:
 
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
+Commits in next-20131111:		   9906
+Commits with the same SHA1:		   9156
+Commits with the same patch_id:		    354	(1)
+Commits with the same subject line:	     41	(1)
 
+So commits in -rc1 that were in next-20131111:	9551	90.8%
+Commits in -rc1 that were not in next-20131105:	 967	 9.2%
 
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
+So, much more in line with previous releases.
+]
 
-http://git.cmpxchg.org/?p=linux-mmotm.git;a=summary
+Some breakdown of the list of extra commits (relative to next-20131105)
+in -rc1:
 
-To develop on top of mmotm git:
+Top ten first word of commit summary:
 
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
+    337 drm
+    115 btrfs
+     83 perf
+     68 alsa
+     50 asoc
+     49 arm
+     46 net
+     31 powerpc
+     27 netfilter
+     27 acpi
 
-To rebase a branch with older patches to a new mmotm release:
+Top ten authors:
 
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
+     66 Ben Skeggs <bskeggs@redhat.com>
+     63 Takashi Iwai <tiwai@suse.de>
+     63 Al Viro <viro@zeniv.linux.org.uk>
+     46 Alex Deucher <alexander.deucher@amd.com>
+     39 Ben Widawsky <benjamin.widawsky@intel.com>
+     33 Josef Bacik <jbacik@fusionio.com>
+     31 Johannes Berg <johannes.berg@intel.com>
+     29 J. Bruce Fields <bfields@redhat.com>
+     29 Dan Carpenter <dan.carpenter@oracle.com>
+     27 Peter Zijlstra <peterz@infradead.org>
 
+Top ten commiters:
 
+    195 David S. Miller <davem@davemloft.net>
+    117 Chris Mason <chris.mason@fusionio.com>
+     95 Daniel Vetter <daniel.vetter@ffwll.ch>
+     94 Al Viro <viro@zeniv.linux.org.uk>
+     86 Ben Skeggs <bskeggs@redhat.com>
+     82 Arnaldo Carvalho de Melo <acme@redhat.com>
+     74 Alex Deucher <alexander.deucher@amd.com>
+     69 Takashi Iwai <tiwai@suse.de>
+     53 Dave Airlie <airlied@redhat.com>
+     52 Mark Brown <broonie@linaro.org>
 
+There are also 358 commits in next-20131105 that didn't make it into
+v3.13-rc1.
 
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
+Top ten first word of commit summary:
 
-A git copy of this tree is available at
+     51 arm
+     40 crypto
+     21 block
+     11 x86
+     11 ocfs2
+     11 dm
+     10 ceph
+     10 bluetooth
+      9 iov_iter
+      9 9p
 
-	http://git.cmpxchg.org/?p=linux-mmots.git;a=summary
+Top ten authors:
 
-and use of this tree is similar to
-http://git.cmpxchg.org/?p=linux-mmotm.git, described above.
+     27 Kent Overstreet <kmo@daterainc.com>
+     22 Dave Kleikamp <dave.kleikamp@oracle.com>
+     19 Andrew Morton <akpm@linux-foundation.org>
+      9 Zach Brown <zab@zabbo.net>
+      9 Denis Carikli <denis@eukrea.com>
+      8 Geyslan G. Bem <geyslan@gmail.com>
+      7 Sachin Kamat <sachin.kamat@linaro.org>
+      7 Kees Cook <keescook@chromium.org>
+      7 Alex Porosanu <alexandru.porosanu@freescale.com>
+      6 Yan, Zheng <zheng.z.yan@intel.com>
 
+Some of Andrew's patches are fixes for other patches in his tree (and
+have been merged into those).
 
-This mmotm tree contains the following patches against 3.13-rc1:
-(patches marked "*" will be included in linux-next)
+Top ten commiters:
 
-  arch-alpha-kernel-systblss-remove-debug-check.patch
-  i-need-old-gcc.patch
-* include-linux-hugetlbh-make-isolate_huge_page-an-inline.patch
-* documentation-docbook-device-driverstmpl-fix-generation-of-device-drivers.patch
-* mm-memcg-do-not-declare-oom-from-__gfp_nofail-allocations.patch
-* drivers-rtc-rtc-at91rm9200c-correct-alarm-over-day-month-wrap.patch
-* drivers-rtc-rtc-s5mc-fix-info-rtc-assignment.patch
-* arch-x86-mnify-pte_to_pgoff-and-pgoff_to_pte-helpers.patch
-* x86-mm-get-aslr-work-for-hugetlb-mappings.patch
-* dma-debug-enhance-dma_debug_device_change-to-check-for-mapping-errors.patch
-* drm-fb-helper-dont-sleep-for-screen-unblank-when-an-oopps-is-in-progress.patch
-* drm-cirrus-correct-register-values-for-16bpp.patch
-* drm-nouveau-make-vga_switcheroo-code-depend-on-vga_switcheroo.patch
-* drivers-gpu-drm-drm_edid_loadc-make-edid_load-return-a-void.patch
-* genirq-correct-fuzzy-and-fragile-irq_retval-definition.patch
-* sched_clock-document-4mhz-vs-1mhz-decision.patch
-* kernel-timerc-convert-kmalloc_nodegfp_zero-to-kzalloc_node.patch
-* kernel-time-tick-commonc-document-tick_do_timer_cpu.patch
-* input-route-kbd-leds-through-the-generic-leds-layer.patch
-* drivers-net-irda-donauboe-convert-to-module_pci_driver.patch
-* ocfs2-free-allocated-clusters-if-error-occurs-after-ocfs2_claim_clusters.patch
-* ocfs2-o2net-incorrect-to-terminate-accepting-connections-loop-upon-rejecting-an-invalid-one.patch
-* ocfs2-should-call-ocfs2_journal_access_di-before-ocfs2_delete_entry-in-ocfs2_orphan_del.patch
-* ocfs2-llseek-requires-ocfs2-inode-lock-for-the-file-in-seek_end.patch
-* ocfs2-fix-issue-that-ocfs2_setattr-does-not-deal-with-new_i_size==i_size.patch
-* ocfs2-update-inode-size-after-zeronig-the-hole.patch
-* scsi-do-not-call-do_div-with-a-64-bit-divisor.patch
-* drivers-scsi-megaraid-megaraid_mmc-missing-bounds-check-in-mimd_to_kioc.patch
-* drivers-cdrom-gdromc-remove-deprecated-irqf_disabled.patch
-* drivers-block-sx8c-use-module_pci_driver.patch
-* drivers-block-sx8c-remove-unnecessary-pci_set_drvdata.patch
-* drivers-block-paride-pgc-underflow-bug-in-pg_write.patch
-* hpsa-return-0-from-driver-probe-function-on-success-not-1.patch
-* drivers-block-ccissc-cciss_init_one-use-proper-errnos.patch
-* blk-mq-use-__smp_call_function_single-directly.patch
-* block-blk-mq-cpuc-use-hotcpu_notifier.patch
-* block-remove-unrelated-header-files-and-export-symbol.patch
-* mtd-cmdlinepart-use-cmdline-partition-parser-lib.patch
-* mtd-cmdlinepart-use-cmdline-partition-parser-lib-fix.patch
-* mtd-cmdlinepart-use-cmdline-partition-parser-lib-fix-fix.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* posix_acl-uninlining.patch
-* watchdog-trigger-all-cpu-backtrace-when-locked-up-and-going-to-panic.patch
-* xfs-underflow-bug-in-xfs_attrlist_by_handle.patch
-  mm.patch
-* mm-hugetlbfs-add-some-vm_bug_ons-to-catch-non-hugetlbfs-pages.patch
-* mm-memcg-avoid-oom-notification-when-current-needs-access-to-memory-reserves.patch
-* mm-hugetlb-use-get_page_foll-in-follow_hugetlb_page.patch
-* mm-hugetlbfs-move-the-put-get_page-slab-and-hugetlbfs-optimization-in-a-faster-path.patch
-* mm-thp-optimize-compound_trans_huge.patch
-* mm-tail-page-refcounting-optimization-for-slab-and-hugetlbfs.patch
-* mm-hugetlbfs-use-__compound_tail_refcounted-in-__get_page_tail-too.patch
-* mm-hugetlbc-simplify-pageheadhuge-and-pagehuge.patch
-* mm-swapc-reorganize-put_compound_page.patch
-* mm-hugetlbc-defer-pageheadhuge-symbol-export.patch
-* proc-meminfo-provide-estimated-available-memory.patch
-* mm-get-rid-of-unnecessary-pageblock-scanning-in-setup_zone_migrate_reserve.patch
-* mm-get-rid-of-unnecessary-pageblock-scanning-in-setup_zone_migrate_reserve-fix.patch
-* mm-create-a-separate-slab-for-page-ptl-allocation-try-two.patch
-* mm-memory-failure-fix-the-typo-in-me_pagecache_dirty.patch
-* mm-memory-failure-fix-the-typo-in-me_pagecache_dirty-fix.patch
-* mm-call-mmu-notifiers-when-copying-a-hugetlb-page-range.patch
-* swap-fix-setting-page_size-blocksize-during-swapoff-swapon-race.patch
-* swap-add-a-simple-detector-for-inappropriate-swapin-readahead.patch
-* swap-add-a-simple-detector-for-inappropriate-swapin-readahead-fix.patch
-* arch-um-kernel-sysrqc-rename-print_stack_trace.patch
-* kernel-use-lockless-list-for-smp_call_function_single.patch
-* asm-typesh-remove-include-asm-generic-int-l64h.patch
-* drivers-mailbox-omap-make-mbox-irq-signed-for-error-handling.patch
-* drivers-misc-ti-st-st_corec-fix-null-dereference-on-protocol-type-check.patch
-* lib-parserc-add-match_wildcard-function.patch
-* lib-parserc-put-export_symbols-in-the-conventional-place.patch
-* dynamic_debug-add-wildcard-support-to-filter-files-functions-modules.patch
-* dynamic-debug-howtotxt-update-since-new-wildcard-support.patch
-* printk-cache-mark-printk_once-test-variable-__read_mostly.patch
-* printk-cache-mark-printk_once-test-variable-__read_mostly-fix.patch
-* get_maintainer-add-commit-author-information-to-rolestats.patch
-* maintainers-add-an-entry-for-the-macintosh-hfsplus-filesystem.patch
-* kstrtox-remove-redundant-cleanup.patch
-* cmdline-fix-style-issues.patch
-* lib-cmdlinec-declare-exported-symbols-immediately.patch
-* kernel-paramsc-improve-standard-definitions.patch
-* kernel-paramsc-improve-standard-definitions-checkpatch-fixes.patch
-* lib-add-crc64-ecma-module.patch
-* checkpatchpl-check-for-function-declarations-without-arguments.patch
-* binfmt_elfc-use-get_random_int-to-fix-entropy-depleting.patch
-* fs-ramfs-file-nommuc-make-ramfs_nommu_get_unmapped_area-and-ramfs_nommu_mmap-static.patch
-* fs-ramfs-move-ramfs_aops-to-inodec.patch
-* init-mainc-remove-unused-declaration-of-tc_init.patch
-* autofs4-allow-autofs-to-work-outside-the-initial-pid-namespace.patch
-* autofs4-translate-pids-to-the-right-namespace-for-the-daemon.patch
-* drivers-rtc-rtc-at91sam9c-include-mach-hardwareh-explicitly.patch
-* drivers-rtc-rtc-as3722-use-devm-for-rtc-and-irq-registration.patch
-* fat-add-i_disksize-to-represent-uninitialized-size.patch
-* fat-add-fat_fallocate-operation.patch
-* fat-zero-out-seek-range-on-_fat_get_block.patch
-* fat-fallback-to-buffered-write-in-case-of-fallocatded-region-on-direct-io.patch
-* fat-permit-to-return-phy-block-number-by-fibmap-in-fallocated-region.patch
-* documentation-filesystems-sysfstxt-fix-device_attribute-declaration.patch
-* kmod-run-usermodehelpers-only-on-cpus-allowed-for-kthreadd-v2.patch
-* kmod-run-usermodehelpers-only-on-cpus-allowed-for-kthreadd-v2-fix.patch
-* kmod-run-usermodehelpers-only-on-cpus-allowed-for-kthreadd-v2-checkpatch-fixes.patch
-* coredump-set_dumpable-fix-the-theoretical-race-with-itself.patch
-* coredump-kill-mmf_dumpable-and-mmf_dump_securely.patch
-* coredump-make-__get_dumpable-get_dumpable-inline-kill-fs-coredumph.patch
-* exit_state-kill-task_is_dead.patch
-* proc-cleanup-simplify-get_task_state-task_state_array.patch
-* proc-fix-the-potential-use-after-free-in-first_tid.patch
-* proc-change-first_tid-to-use-while_each_thread-rather-than-next_thread.patch
-* proc-dont-abuse-group_leader-in-proc_task_readdir-paths.patch
-* proc-fix-f_pos-overflows-in-first_tid.patch
-* fork-no-need-to-initialize-child-exit_state.patch
-* exec-check_unsafe_exec-use-while_each_thread-rather-than-next_thread.patch
-* exec-check_unsafe_exec-kill-the-dead-eagain-and-clear_in_exec-logic.patch
-* exec-move-the-final-allow_write_access-fput-into-free_bprm.patch
-* exec-kill-task_struct-did_exec.patch
-* fs-proc-arrayc-change-do_task_stat-to-use-while_each_thread.patch
-* kernel-sysc-k_getrusage-can-use-while_each_thread.patch
-* kernel-signalc-change-do_signal_stop-do_sigaction-to-use-while_each_thread.patch
-* lib-cpumask-make-cpumask_offstack-usable-without-debug-dependency.patch
-* kernel-kexecc-use-vscnprintf-instead-of-vsnprintf-in-vmcoreinfo_append_str.patch
-* kexec-migrate-to-reboot-cpu.patch
-* rbtree-test-move-rb_node-to-the-middle-of-the-test-struct.patch
-* rbtree-test-test-rbtree_postorder_for_each_entry_safe.patch
-* net-netfilter-ipset-ip_set_hash_netifacec-use-rbtree-postorder-iteration-instead-of-opencoding.patch
-* fs-ubifs-use-rbtree-postorder-iteration-helper-instead-of-opencoding.patch
-* fs-ext4-use-rbtree-postorder-iteration-helper-instead-of-opencoding.patch
-* fs-jffs2-use-rbtree-postorder-iteration-helper-instead-of-opencoding.patch
-* fs-ext3-use-rbtree-postorder-iteration-helper-instead-of-opencoding.patch
-* drivers-mtd-ubi-use-rbtree-postorder-iteration-helper-instead-of-opencoding.patch
-* arch-sh-kernel-dwarfc-use-rbtree-postorder-iteration-helper-instead-of-solution-using-repeated-rb_erase.patch
-* pps-add-non-blocking-option-to-pps_fetch-ioctl.patch
-* drivers-memstick-host-rtsx_pci_msc-fix-ms-card-data-transfer-bug.patch
-* drivers-w1-masters-w1-gpioc-add-strong-pullup-emulation.patch
-* lib-decompress_unlz4c-always-set-an-error-return-code-on-failures.patch
-  linux-next.patch
-  linux-next-git-rejects.patch
-* mm-add-strictlimit-knob-v2.patch
-  debugging-keep-track-of-page-owners.patch
-  make-sure-nobodys-leaking-resources.patch
-  journal_add_journal_head-debug.patch
-  releasing-resources-with-children.patch
-  make-frame_pointer-default=y.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  mutex-subsystem-synchro-test-module.patch
-  slab-leaks3-default-y.patch
-  put_bh-debug.patch
-  add-debugging-aid-for-memory-initialisation-problems.patch
-  workaround-for-a-pci-restoring-bug.patch
-  single_open-seq_release-leak-diagnostics.patch
+     93 Stephen Rothwell <sfr@canb.auug.org.au>
+     48 Herbert Xu <herbert@gondor.apana.org.au>
+     33 Dave Kleikamp <dave.kleikamp@oracle.com>
+     30 Jens Axboe <axboe@kernel.dk>
+     27 Shawn Guo <shawn.guo@linaro.org>
+     17 Kukjin Kim <kgene.kim@samsung.com>
+     11 Mauro Carvalho Chehab <m.chehab@samsung.com>
+     10 Jason Wessel <jason.wessel@windriver.com>
+      9 Sage Weil <sage@inktank.com>
+      9 Eric Van Hensbergen <ericvh@gmail.com>
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Those commits by me are from the quilt series (mainly Andrew's mmotm
+tree).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__25_Nov_2013_11_10_05_+1100_fYoGDdes67=4Rhs4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSkpVhAAoJEMDTa8Ir7ZwVg/gP/3rtMMCoQdFm6q15I4kR4kAR
+uO62Hsgw7OTzTBEuPD/Jj3kv+fHjRkQa06QqVsxwPICib5iPZRDNZ2N6I+WfnUb7
+Nh+1ud4ANw6M/aF5MKkZi71ZTd9b3X+OJZgBLwh5tDR7wzu+rDvXML4MihbtLrR2
+k04rHgiZrSlySkEQq4y234KVV3uC5hAqezBtC7Lb/YIgca31LElFtItqF1LFKlSQ
+BwE4cQuWR8ze/PLtLF5dSU5pJiNKgfwNpqk0Im+wmfrTlkYiSlUCcDS/NF1UIDAj
+KkI5ntjVtOKt8RFjdKtfvBDc2B6jSjtHmh9ZETM58fI7y6+9yEVNlqan3ZRFgofe
+1sblesdIQm7NSe5ARLHkX46oBIZn8ndEEfoUzVy6VImBcrwBhf7LzNJXfMNzcrTT
+eP6WyonMgX6OqJt3Y1N2RXuiDjGDDPMJbZNzMbBflqD0fcL55hQYqrUDEeIliQ5b
+SxKPdYFXBqRwTY/2UB112TNfIood/iY/LoWSqIhjpbRTH7DggRWzGya6UFjCeTym
+Hm6jjqRbaZVq2gpKN2RXajO9CuXOVimjPjw4EyrPzMQurpwKgOsucu2fGwRnUhSH
+bf+TEHnA2jq39nMY2DLGrvN499TfUrX1jA6P7VAYXoGk49FnJJpm5jMThRenpQSu
+vBd1o7PNsRcYaoqfDCnR
+=CzyK
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__25_Nov_2013_11_10_05_+1100_fYoGDdes67=4Rhs4--
