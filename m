@@ -1,94 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Request to add chromeos platform tree to -next
-Date: Tue, 26 Nov 2013 10:40:55 +1100
-Message-ID: <20131126104055.1b682623f32543d5027ecaff@canb.auug.org.au>
-References: <20131125194116.GA22485@quad.lixom.net>
+Subject: linux-next: manual merge of the block tree with the f2fs tree
+Date: Tue, 26 Nov 2013 11:56:13 +1100
+Message-ID: <20131126115613.55f5f0f544c57677be035582@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__26_Nov_2013_10_40_55_+1100_h6tB05xROksXPu7t"
+ boundary="Signature=_Tue__26_Nov_2013_11_56_13_+1100_OzYtznVzW2nEngnp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46430 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33709 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753186Ab3KYXlD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Nov 2013 18:41:03 -0500
-In-Reply-To: <20131125194116.GA22485@quad.lixom.net>
+	with ESMTP id S1750869Ab3KZA4c (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Nov 2013 19:56:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, matthew.garrett@nebula.com
+To: Jens Axboe <axboe@kernel.dk>, Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
 
---Signature=_Tue__26_Nov_2013_10_40_55_+1100_h6tB05xROksXPu7t
+--Signature=_Tue__26_Nov_2013_11_56_13_+1100_OzYtznVzW2nEngnp
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Olof,
+Hi Jens,
 
-On Mon, 25 Nov 2013 11:41:16 -0800 Olof Johansson <olof@lixom.net> wrote:
->
-> I'm starting a git repo for the chromeos platform glue (x86 and ARM down
-> the road, so far just x86 contents). Can you please add to linux-next?
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/olof/chrome-platform.git
->=20
-> Branch is for-next.
+Today's linux-next merge of the block tree got a conflict in
+fs/f2fs/segment.c between commit a79ad49b87f4 ("f2fs: introduce a bio
+array for per-page write bios") from the f2fs tree and commit
+4f024f3797c4 ("block: Abstract out bvec iterator") from the block tree.
 
-Added from today with just you as the contact.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
+diff --cc fs/f2fs/segment.c
+index 1c84b7e15631,36e8afd8e1e4..000000000000
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@@ -908,9 -681,9 +906,9 @@@ retry
+  		}
+ =20
+  		bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+ -		sbi->bio[type] =3D f2fs_bio_alloc(bdev, bio_blocks);
+ -		sbi->bio[type]->bi_iter.bi_sector =3D SECTOR_FROM_BLOCK(sbi, blk_addr);
+ -		sbi->bio[type]->bi_private =3D priv;
+ +		io->bio =3D f2fs_bio_alloc(bdev, bio_blocks);
+- 		io->bio->bi_sector =3D SECTOR_FROM_BLOCK(sbi, blk_addr);
+++		io->bio->bi_iter.bi_sector =3D SECTOR_FROM_BLOCK(sbi, blk_addr);
+ +		io->bio->bi_private =3D priv;
+  		/*
+  		 * The end_io will be assigned at the sumbission phase.
+  		 * Until then, let bio_add_page() merge consecutive IOs as much
 
---Signature=_Tue__26_Nov_2013_10_40_55_+1100_h6tB05xROksXPu7t
+--Signature=_Tue__26_Nov_2013_11_56_13_+1100_OzYtznVzW2nEngnp
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSk+ALAAoJEMDTa8Ir7ZwVzFMP/Rd/d3LaEgcRE/zQeEej0HZz
-FNDBlXBvxpWyQNrofKkSxvK800J97INvNW5c75OX4dem5elp7U2ZpR5cl3CiB3jl
-azXihiw7VBcwnl4CIwc2gpM4IuRUcNIhNDB/IKMdmcyYrGOayESCmhy9h5Sre4Ux
-qJ53+n3TDu936WZtYdrL347CQlyi2Ic1icwM4yJ2sMUB+fZPo0pm9occR3HLEIPy
-wmy5lLoI+KpztNxU4n2+X28Syq6RBfwEcxh9FE0LeKEicBarybxfA2n0I3e+ixUo
-h4DiWPpCOjMbDKlzmc6OeONWpSdc49WKCmXhwkGhhT/xZH5IUahuf4JVfwHUGz7U
-BRPezCCQGiN/M5NhWko9Epkro6eaafWoIeC5BtAj2IWb0wv2/o+G2yXwN6JTxHDA
-sxi3tSrRMbDthvP7a0DAEEc+aeYhAuTkub/pV2bqXg6ObyDEPbbXKQjPm3uiCBPC
-EUdL2st1JIWKSOVBGaLjgREaean8XLujcviWslneYQHa8XiBr6iQPB7wdyXp3Ypy
-AtHgQxeiq5XbQ63TDQBeOO1tYMbP6NZj39Q8WiM+2CVAaYQUoHC04XjBfWmjInUp
-5lhJdqMrOvDrGEOzd5qsKSopDpfJbSiUje8AZ0fvnDuDG9hbydZokTDE86dlJ+aL
-bqZOgpUDZRmVZptLVRSZ
-=2qFR
+iQIbBAEBCAAGBQJSk/G1AAoJEMDTa8Ir7ZwVaegP91Z65vVLzYn0ZEGUFqJnYt1l
+L4HQJD+Sy/bYM2sFwjVAzzr88XU9yyJMWeKOhnnPqcbmcLZsc8BdlQndYw/wNdjr
+7pFa4tkaqaUNnbGIwTF8HWcvLB09WSM/3uVZqC4vMiZ7FqUz3NZ/++3zobO1krsy
+Y7oO8q/WZeoToJeSZ6AVgoykUsSBmVM2dASAoQ565Sau5MBLdcdgI+e8uxy1JaXj
+xvosWh253NIpgLEthSS5f9j2UQWQbu2cpuszE+rv8PlSKVN46w6nj3V4f4Ub0yZK
+hwx78+fmXAeLWkBX548OKwCOm/yGLvFz19JCdXq4gPK0hA57dFm0PY5xnjJosqFS
+FsBQISNdjQlfu7C8ULK+TySoNnqLtiODZ1YiAVytIXRIZ71q9DIg29211nmXDTXY
+jckhi7UKYSyVyMjjip9Le7/zKAJnj5Sxj2zpGcrDv8TmmZldxgTxruSA74e0iBmm
+Vz4gtB/Wulc4kGBBCx5yB45fMrqff8EFdjMb3gLxPJE8IQPgGqiNnpYRYnwBT585
+rsQFufVETyL6Xa0qmlVKmYGO0yebSPMYwWy1PCmC++DAizODCV6w6jjrwlLZdt0d
+I2vlnfg69V7pzVmMr/fBiVXzc7QI2fOxxVh9FxucbJAmK6LnSBh3ttAHKLhpnjaf
+Ulo6kKVV/4NkhWPpjnQ=
+=BqO+
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Nov_2013_10_40_55_+1100_h6tB05xROksXPu7t--
+--Signature=_Tue__26_Nov_2013_11_56_13_+1100_OzYtznVzW2nEngnp--
